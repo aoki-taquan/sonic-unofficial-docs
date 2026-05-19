@@ -264,6 +264,46 @@ CLI と YANG で許容範囲が意図的に乖離している。
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 根拠: `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` L219-232, L481-492 全行精読。
+> 詳細証跡: `meta/_intermediate/cdb-flow/vrrp-track-side-effects.md`
+
+`VRRP_TRACK` / `VRRP6_TRACK` への SET / DEL は **他の DB（APPL_DB / STATE_DB / ASIC_DB）へ直接書き込まない**。変更は CONFIG_DB から FRR `vrrpd` のインメモリ track 設定に反映されるのみであり、DB への副次書き込みは発生しない。
+
+### SET 時
+
+| # | 副次書き込み先 | 内容 | 条件 |
+|---|--------------|------|------|
+| — | なし（DB 書き込みなし） | FRR `vrrpd` がインメモリの priority 計算パラメータを更新する | 常時 |
+
+`vrrpd` は `zebra` 経由で受信するインタフェース Up/Down イベントと `priority_increment` 値を組み合わせて VRRP priority を再計算し、VRRP Advertisement パケットの priority フィールドを更新する。この priority 変化が VRRP 状態遷移（Backup → Master）を引き起こした場合は、下流の波及効果として `vrrpsyncd` が `APPL_DB VRRP_TABLE` を更新し、さらに `vrrporch` が `ASIC_DB` へ仮想 RIF / VIP ルートエントリを追加する。ただしこれは VRRP_TRACK 変更の直接結果ではなく、VRRP 状態機械の遷移に伴う別コンポーネントの書き込みである。
+
+### DEL 時
+
+| # | 副次書き込み先 | 内容 | 条件 |
+|---|--------------|------|------|
+| — | なし（DB 書き込みなし） | FRR `vrrpd` がインメモリから track 設定を削除し priority を再計算 | 常時 |
+
+追跡インタフェースが削除されると、そのインタフェースによる priority 減算が解消される。priority が増加して現インスタンスが Master に昇格する場合は SET 時と同様の下流波及が発生しうる。
+
+### 下流波及チェーン（参考）
+
+VRRP_TRACK 変更に起因する priority 再計算が VRRP 状態遷移を引き起こした場合の間接的な書き込みチェーン（VRRP_TRACK 自身は直接関与しない）:
+
+```
+VRRP_TRACK priority_increment 変化
+  → FRR vrrpd: priority 再計算 → VRRP Advertisement 送信
+  → VRRP 状態遷移発生時:
+      vrrpsyncd: Linux macvlan インタフェース状態変化
+        → APPL_DB VRRP_TABLE SET/DEL (Master 状態の VIP/VMAC エントリ)
+          → vrrporch: ASIC_DB 仮想 RIF / VIP ルートエントリ追加・削除
+```
+
+> **Evidence**: `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` L219-232 (macvlanmgrd / vrrpsyncd / vrrporch の役割分担), L481-492 (Uplink interface tracking の設計)
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: `sonic-utilities/config/main.py` (`add_track_interface()` L6993-7040, `remove_track_interface()` L7045-7077); `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` (CONFIG_DB changes L308-315, Uplink interface tracking L481-492); `SONiC/doc/vrrp/sonic-vrrp.yang` (VRRP_TRACK container L136-177). <https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py>
