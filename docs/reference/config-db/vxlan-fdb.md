@@ -174,6 +174,30 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`orchagent/fdborch.cpp` の静的解析から抽出した、`VXLAN_FDB_TABLE` 処理が暗黙的に依存するテーブル・オブジェクト一覧。中間ノート: `meta/_intermediate/cdb-flow/vxlan-fdb-cross-refs.md`。
+
+| 参照先テーブル/オブジェクト | 参照種別 | 依存方向 | コード根拠 |
+|---------------------------|---------|---------|-----------|
+| `PORT` 群 (PortsOrch `allPortsReady`) | 全ポート初期化ガード | VXLAN_FDB_TABLE → PortsOrch | `fdborch.cpp:711-714` — `m_portsOrch->allPortsReady()` が false の間は全イベントを `m_toSync` に留め置き処理しない |
+| `VLAN` (PortsOrch) | VLAN OID 解決 | VXLAN_FDB_TABLE → VLAN | `fdborch.cpp:739-759` — `m_portsOrch->getPort(keys[0], vlan)` で key の VlanName から VLAN OID を取得; SET は次周回再試行、DEL は即破棄 |
+| `VXLAN_TUNNEL` (VxlanTunnelOrch) | リモート VTEP ポート名解決 (DIP モード) | VXLAN_FDB_TABLE → VXLAN_TUNNEL | `fdborch.cpp:834,836,843` — `isDipTunnelsSupported() == true` 時に `getTunnelPortName(remote_ip)` で VTEP ポートを解決; `remote_vtep` 空なら即破棄 (`fdborch.cpp:838-841`) |
+| `VXLAN_EVPN_NVO` (EvpnNvoOrch) | source VTEP 解決 (非 DIP モード) | VXLAN_FDB_TABLE → VXLAN_EVPN_NVO | `fdborch.cpp:847-854` — `isDipTunnelsSupported() == false` 時に `evpn_nvo_orch->getEVPNVtep()` で source VTEP を取得; NULL なら即破棄 |
+
+### 依存解決の順序制約
+
+1. PortsOrch の `allPortsReady()` が true になるまで全 `APP_VXLAN_FDB_TABLE` イベントはブロックされる（`fdborch.cpp:711-714`）。
+2. `VLAN` が PortsOrch に登録されていないと SET イベントが次周回に延期され続ける（`fdborch.cpp:739,758`）。
+3. DIP モードでは `VXLAN_TUNNEL` エントリが先に存在し VxlanTunnelOrch がトンネルポートを作成済みである必要がある（`fdborch.cpp:834,843`）。
+4. 非 DIP モードでは `VXLAN_EVPN_NVO` が先に書かれ EvpnNvoOrch が source VTEP を登録済みである必要がある（`fdborch.cpp:847-848`）。
+5. 条件 3・4 が未満足の場合は `m_toSync.erase` で**再試行なし破棄**となるため、手動再投入が必要。
+
+<!-- evidence: sonic-swss/orchagent/fdborch.cpp:711-714,739-759,832-854 -->
+
+<!-- /cross-refs -->
+
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp; sonic-swss/orchagent/fdborch.cpp -->
