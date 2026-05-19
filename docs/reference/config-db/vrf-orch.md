@@ -302,6 +302,37 @@ DEL CONFIG_DB VRF|VrfRed
 詳細解析: `meta/_intermediate/cdb-flow/vrf-orch-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp:12-15`, `sonic-swss-common/common/schema.h:80,84,429-430`
+
+### vrfmgr.cpp 数値定数
+
+| 定数名 | 値 | 用途 |
+|---|---|---|
+| `VRF_TABLE_START` | `1001` | 通常 VRF へ割り当てるルーティングテーブル ID の開始値。`vrfmgr.cpp:12` |
+| `VRF_TABLE_END` | `5097` | 通常 VRF ルーティングテーブル ID の終端値 (exclusive)。最大同時 VRF 数 = **4096**。`vrfmgr.cpp:13` |
+| `TABLE_LOCAL_PREF` | `1001` | `ip rule add pref 1001 table local` で `pref 0` の local テーブルルールを置き換えるときに使う preference 値。`vrfmgr.cpp:14` |
+| `MGMT_VRF_TABLE_ID` | `6000` | `mgmt` VRF 専用の固定ルーティングテーブル ID。`vrfName == "mgmt"` 時は `getFreeTable()` を呼ばず直接使用。`vrfmgr.cpp:15` |
+
+> **`TABLE_LOCAL_PREF` と `VRF_TABLE_START` が同値 (1001) である理由**: `l3mdev-table` カーネルモジュールが `pref 0` の local テーブルルールを前提とする設計上の問題を回避するため、local テーブルを VRF テーブル ID 範囲の先頭 (`1001`) に移動させる。偶然の一致ではなく設計による。
+
+### schema.h テーブル名定数
+
+| マクロ名 | 文字列値 | DB | ソース |
+|---|---|---|---|
+| `APP_VRF_TABLE_NAME` | `"VRF_TABLE"` | APPL_DB | `schema.h:80` |
+| `APP_VXLAN_VRF_TABLE_NAME` | `"VXLAN_VRF_TABLE"` | APPL_DB | `schema.h:84` |
+| `STATE_VRF_TABLE_NAME` | `"VRF_TABLE"` | STATE_DB | `schema.h:429` |
+| `STATE_VRF_OBJECT_TABLE_NAME` | `"VRF_OBJECT_TABLE"` | STATE_DB | `schema.h:430` |
+
+!!! note "テーブル ID プール設計"
+    ルーティングテーブル ID `1001`〜`5096` は `vrfmgr.cpp:28` の for ループで `m_freeTables` キューに積まれる。プール枯渇時（4096 VRF 使用済み）は `getFreeTable()` が `0` を返し `setLink()` が失敗するが、STATE_DB.set / APPL_DB.set は継続実行されるため「Linux VRF デバイスなし + SAI VR あり」の中間状態が生じうる。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/vrf-orch-constants.md` 参照。
+<!-- /constants -->
+
 ## 例外条件・特殊挙動
 
 - **VRF 削除タイミング**: VRFOrch が STATE_VRF_OBJECT_TABLE のエントリを削除するまで vrfmgrd は `ip link del` を遅延する。INTERFACE / ROUTE テーブルが VRF を参照中の場合は `ref_count` が非ゼロで `delOperation` が `false` を返して再キュー。
