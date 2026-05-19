@@ -293,6 +293,67 @@ DB 書込ではないが以下の副作用が発生する:
 SIGHUP は `logger.cpp` 自体が送信するのではなく `config syslog level` CLI ツール側の動作である点に注意。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査対象: `sonic-swss-common/common/logger.cpp` L192-262、`common/loglevel.cpp` L42-206、`common/subscriberstatetable.cpp` L20-24、`common/schema.h` L16
+> 中間ノート: `meta/_intermediate/cdb-flow/log-config-pubsub.md`
+
+### 購読チャンネル
+
+`LOGGER` テーブルに対する購読者は各デーモン自身の `settingThread` のみ。外部プロセスが `LOGGER` を購読する実装はソース内に存在しない。
+
+| チャンネル | DB (dbId) | テーブル | 購読クラス | 購読者 |
+|---|---|---|---|---|
+| CONFIG_DB | CONFIG_DB (dbId=4) | `LOGGER` (`CFG_LOGGER_TABLE_NAME`) | `SubscriberStateTable` | 各デーモン (`orchagent`、`syncd` 等) の `settingThread` |
+
+### `SubscriberStateTable` による keyspace PSUBSCRIBE
+
+`Logger::settingThread()` (`logger.cpp:195-199`) は CONFIG_DB の `LOGGER` テーブルを `SubscriberStateTable` で購読する:
+
+```cpp
+DBConnector db("CONFIG_DB", 0);
+auto table = std::make_shared<SubscriberStateTable>(&db, CFG_LOGGER_TABLE_NAME);
+select.addSelectable(table.get());
+```
+
+`SubscriberStateTable` は内部 (`subscriberstatetable.cpp:20-24`) で次のパターンを PSUBSCRIBE する:
+
+```
+__keyspace@4__:LOGGER|*
+```
+
+CONFIG_DB の dbId は `schema.h:16` で `4` と定義される。`HSET "LOGGER|orchagent" LOGLEVEL DEBUG` が実行されると `__keyspace@4__:LOGGER|orchagent` チャネルに `hset` イベントが PUBLISH され、`settingThread` が受信する。
+
+### 書き込み側 — `swss::Table::hset()` (Redis 直接書き込み)
+
+`swssloglevel` ツール (`loglevel.cpp:42-44`) および `linkToDbWithOutput()` (`logger.cpp:127`) は `swss::Table` を使い Redis `HSET` を直接発行する。`ProducerStateTable` / `NotificationProducer` は使用しない。
+
+| 書き込み元 | 使用 API | Redis コマンド |
+|---|---|---|
+| `swssloglevel -l <level> -c <component>` | `swss::Table::hset()` | `HSET LOGGER\|<component> LOGLEVEL <value>` |
+| デーモン起動時 (`linkToDbWithOutput()`) | `swss::Table::set()` | `HSET LOGGER\|<component> LOGLEVEL <value> LOGOUTPUT <value>` |
+| デーモン起動時読み取り | `swss::Table::hget()` | `HGET LOGGER\|<component> LOGLEVEL` / `LOGOUTPUT` |
+
+### ループ構造とタイムアウト
+
+`settingThread` は `select.select(&selectable, 1000)` (`logger.cpp:208`) で **1000 ms タイムアウト** のブロッキング select を実行する:
+
+| 戻り値 | 処理 |
+|---|---|
+| `Select::TIMEOUT` | `SWSS_LOG_DEBUG` → `continue`（ポーリング継続） |
+| `Select::ERROR` | `SWSS_LOG_NOTICE` → `continue`（エラー後も継続） |
+| `m_stopEvent` | `break`（スレッド終了） |
+| keyspace 通知 | `pop(koValues)` → `op == SET_COMMAND` かつ登録済みコンポーネント名のみ処理 |
+
+CONFIG_DB への `HSET` から `settingThread` が反映するまでの最大遅延は **1000 ms**（タイムアウト次第）。
+
+### 起動時スナップショット
+
+`SubscriberStateTable` 自体は起動時スナップショット機能を持たない。デーモン起動時の既存 LOGLEVEL/LOGOUTPUT は `linkToDbWithOutput()` の `table.hget()` (`logger.cpp:132-139`) で直接読み取る。スナップショット取得は `settingThread` ではなく初期化パスが担当する。
+
+<!-- /pubsub -->
+
 ## 制約
 
 - `LOGLEVEL` は `mandatory true`（YANG）。エントリ作成時に必須
