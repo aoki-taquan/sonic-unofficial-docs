@@ -428,6 +428,53 @@ intfmgrd (swss::Select, SELECT_TIMEOUT=1000 ms)
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/portsyncd/linksync.cpp`, `sonic-swss/orchagent/portsorch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
+> 中間調査: `meta/_intermediate/cdb-flow/state-db-port-platform.md`
+
+### portsyncd — プラットフォーム差なし
+
+`linksync.cpp` に `getenv("platform")`、`gMySwitchType`、ASIC 種別参照が存在しない。`state`、`admin_status`、`mtu`、`netdev_oper_status` フィールドの書き込みは全プラットフォーム共通。
+
+### `isMlnxPlatform()` — PORT_TABLE への影響なし
+
+`portsorch.cpp:689` の `isMlnxPlatform()`（`getenv("platform")` で MLNX 文字列を確認）は Flex Counter のトリムスタットプラグイン登録可否にのみ使われ（`portsorch.cpp:858`）、STATE_DB PORT_TABLE フィールドの書き込みには影響しない。
+
+### `supported_fecs` — ベンダー SAI 依存
+
+| 条件 | STATE_DB の挙動 |
+|------|----------------|
+| SAI が `SAI_PORT_ATTR_SUPPORTED_FEC_MODE` を未サポート | `supported_fecs` フィールドが書き込まれない（フィールド不在） |
+| SAI がサポート + `fec_override_sup`=true（`SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` capability あり） | `supported_fecs` の末尾に `"auto"` が付加される |
+| SAI がサポート + `fec_override_sup`=false | `"auto"` エントリなしで書き込み |
+
+`fec_override_sup` は SAI `sai_query_attribute_capability()` の結果に基づく（`portsorch.cpp:990-1003`）。
+
+### `host_tx_ready` — Gearbox / CMIS 依存
+
+| 構成 | `host_tx_ready` の書込み主体 |
+|------|---------------------------|
+| Gearbox なし・`m_cmisModuleAsicSyncSupported=false` | orchagent が admin UP/DOWN 変化時に直接 `hset()` を呼ぶ（`portsorch.cpp:2253, 2246`） |
+| Gearbox 搭載（`m_gearboxEnabled=true`） | `setGearboxPortsAttr()` 結果次第で true/false 決定。フィールド名・値は同一 |
+| CMIS 対応 ASIC（`m_cmisModuleAsicSyncSupported=true`） | orchagent は直接書かない。SAI コールバック `on_port_host_tx_ready`（`portsorch.cpp:977`）が書き込む。フィールド名・値は同一 |
+
+### `switch_type` 別の有効性
+
+| switch_type | PORT_TABLE への影響 |
+|-------------|-------------------|
+| `"switch"` | 通常動作。全フィールドが適宜書き込まれる |
+| `"voq"` | PORT_TABLE 書き込みロジックに変化なし。VOQ 固有処理（System Port、LAG ID 等）は別テーブルに分離 |
+| `"dpu"` | 初期化時の System Port 取得・1Q ブリッジ削除がスキップされるが、PORT_TABLE フィールド書き込みに差異なし |
+| `"fabric"` | `FabricOrchDaemon` では `PortsOrch` が起動しない。orchagent 由来フィールド（`speed`、`fec`、`host_tx_ready` 等）は書き込まれない。`portsyncd` 由来フィールド（`state`、`admin_status`、`mtu`、`netdev_oper_status`）は通常通り書き込まれる |
+
+### multi-asic / VOQ chassis
+
+multi-asic 構成では各 asic namespace に独立した `portsyncd` / `PortsOrch` が存在し、それぞれの namespace 内 STATE_DB に書き込む。フィールド・値・書込みロジックに namespace 間の差異はなく、書込みスコープが namespace に閉じているだけである。
+
+<!-- /platform -->
+
 ## 購読者（consumer）
 
 | プロセス | 参照フィールド | 用途 |
