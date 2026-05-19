@@ -260,4 +260,58 @@ show fips status
 
 <!-- /defaults -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+ソース: `sonic-host-services/scripts/hostcfgd`（`FipsCfg` クラス、L1753–1846）
+
+### hostcfgd 起動時 — `load()` フェーズ
+
+| 失敗条件 | 検出箇所 | 結果 |
+|---|---|---|
+| `FIPS\|global` エントリが CONFIG_DB に存在しない (`common_config` が空) | `hostcfgd:1777-1779` — `not common_config` 判定 | `syslog LOG_INFO` で skip ログを出して即 return。`/etc/fips/fips_enable` は変更されない（前回起動時の状態維持） |
+| `/proc/cmdline` 読み取り失敗 | `hostcfgd:1770-1773` — `open(PROC_CMDLINE)` | Python 例外が FipsCfg `__init__` から伝播し、hostcfgd 起動自体が失敗する |
+| `/etc/sonic/fips.json` が存在するが JSON 形式不正 | `hostcfgd:1766-1769` — `json.load(f)` | `json.JSONDecodeError` が `read_config()` から伝播し、`load()` / `update()` が失敗。`DEFAULT_FIPS_RESTART_SERVICES` にフォールバックしない |
+
+### `update_noneenforce_config()` — `/etc/fips/fips_enable` 書き込み
+
+| 失敗条件 | 検出箇所 | 結果 |
+|---|---|---|
+| `/etc/fips/` ディレクトリ作成失敗 (`PermissionError` など) | `hostcfgd:1807` — `os.makedirs(...)` | 例外が `update()` へ伝播。STATE_DB への `config_datetime` 書込みが行われず、次の変更イベントでも再実行される |
+| `/etc/fips/fips_enable` 書き込み失敗 | `hostcfgd:1808-1809` — `open(..., 'w')` | 同上。ファイルが変更されないため、OpenSSL FIPS モードが切り替わらない |
+
+### `restart()` — サービス再起動
+
+| 失敗条件 | 検出箇所 | 結果 |
+|---|---|---|
+| `cur_enforced=True`（現行 kernel が FIPS enforce 済み）| `hostcfgd:1813-1815` | サービス再起動をスキップ。`LOG_INFO` ログのみ出力 |
+| `FIPS_STATS\|state.config_datetime` が既に mtime より新しい | `hostcfgd:1821-1823` | サービス再起動をスキップ（二重再起動防止）。`LOG_INFO` ログのみ出力 |
+| `systemctl -t service --state=running -o json` 出力が空または JSON 解析失敗 | `hostcfgd:1828-1829` — `not output` / `json.loads` | 対象サービスリストが空のため再起動ゼロ件で終了。エラーログは出ない（サイレントスキップ） |
+| 個別サービス (`ssh`, `telemetry.service`, `restapi`) の `systemctl restart` 失敗 | `hostcfgd:1835` — `run_cmd(...)` | 例外をキャッチしないため propagate する。後続サービスの再起動が実施されない可能性がある |
+
+### `update_enforce_config()` — bootloader grub 書き込み
+
+| 失敗条件 | 検出箇所 | 結果 |
+|---|---|---|
+| `bootloader.get_bootloader()` が bootloader を特定できない | `hostcfgd:1838` | 例外が `update()` へ伝播。`enforce` の変更は次回 boot に反映されない |
+| `loader.get_next_image()` 失敗 | `hostcfgd:1840` | 同上 |
+| `loader.set_fips(image, self.enforce)` 失敗（grub 書込みエラーなど）| `hostcfgd:1846` | 例外が `update()` へ伝播。grub エントリは変更されず、`enforce` 設定は次回 boot に反映されない |
+| 既に同一 enforce 値が設定済み | `hostcfgd:1841-1843` | `loader.set_fips` をスキップ。`LOG_INFO` ログのみ出力（正常系） |
+
+!!! warning "サービス再起動の部分失敗はサイレント"
+    `restart()` では `systemctl restart` 失敗時の例外ハンドリングがないため、例えば `ssh` の再起動に失敗してもログが不足し、後続の `telemetry.service` / `restapi` が再起動されないまま処理が終わる可能性がある。`show fips status` と `sudo systemctl is-active ssh telemetry.service restapi` で手動確認を推奨。
+
+!!! note "enforce 失敗時の影響範囲"
+    `update_enforce_config()` が失敗した場合、`update_noneenforce_config()` は既に実行済みのため `/etc/fips/fips_enable` は更新される。OpenSSL FIPS enable は切り替わるが、bootloader の FIPS enforce (`sonic_fips=1`) は次回 boot に反映されない非一貫状態になる。
+
+<!-- evidence:
+  hostcfgd:1753-1846 — FipsCfg クラス全体
+  hostcfgd:1777-1779 — common_config 空 skip ロジック
+  hostcfgd:1766-1769 — fips.json 読み取り
+  hostcfgd:1795-1809 — update_noneenforce_config: fips_enable ファイル書込み
+  hostcfgd:1811-1835 — restart(): cur_enforced skip / 二重再起動防止 / systemctl restart
+  hostcfgd:1837-1846 — update_enforce_config(): bootloader get/set
+-->
+<!-- /failure -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
