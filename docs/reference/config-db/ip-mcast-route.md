@@ -170,6 +170,73 @@ RPF group は最初の IPMC エントリ追加時に自動作成され (`createD
 
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存・タイミング依存 (Phase B)
+
+> 根拠: `ip_multicast_manager.cpp` `validateSetIpMulticastEntry()` L493-533、`validateIpMulticastEntry()` L471-491、`l3_multicast_manager.cpp` `validateReplicas()` L978-1057 全行精読。
+> evidence: `meta/_intermediate/cdb-flow/ip-mcast-route-ordering.md`
+
+P4RT フレームワークは依存オブジェクトが未存在の場合に即座に `SWSS_RC_NOT_FOUND` を返す。**pending キューや自動 retry は存在しない**。コントローラ (`p4rt-app`) が依存関係を守った順序で書き込む必要がある。
+
+### 検出された順序依存
+
+| # | 書き込みテーブル | 必須先行 | 不成立時の挙動 |
+|---|-----------------|---------|---------------|
+| 1 | `FIXED_IPV4/IPV6_MULTICAST_TABLE` | `REPLICATION_IP_MULTICAST_TABLE` (同一 `multicast_group_id`) | 即時 `SWSS_RC_NOT_FOUND`・エントリ破棄 |
+| 2 | `REPLICATION_IP_MULTICAST_TABLE` | `MULTICAST_ROUTER_INTERFACE_TABLE` (全 replica の `(port, instance)`) | 即時 `SWSS_RC_NOT_FOUND`・エントリ破棄 |
+| 3 | `FIXED_IPV4/IPV6_MULTICAST_TABLE` | VRF (VrfOrch) — 非空 `vrf_id` のみ | 即時 `SWSS_RC_NOT_FOUND`・エントリ破棄 |
+
+### 依存 1: FIXED テーブル → REPLICATION_IP_MULTICAST_TABLE
+
+`validateSetIpMulticastEntry()` (`ip_multicast_manager.cpp:L509-514`) が `param/multicast_group_id` を
+P4OidMapper で検索し、`SAI_OBJECT_TYPE_IPMC_GROUP` の OID が未登録の場合は即座にエラーを返す:
+
+```cpp
+if (!m_p4OidMapper->existsOID(SAI_OBJECT_TYPE_IPMC_GROUP,
+                              ip_multicast_entry.multicast_group_id)) {
+  return ReturnCode(StatusCode::SWSS_RC_NOT_FOUND)
+         << "No multicast group ID found for "
+         << QuotedVar(ip_multicast_entry.multicast_group_id);
+}
+```
+
+`L3MulticastManager` が `REPLICATION_IP_MULTICAST_TABLE` を消化して SAI `IPMC_GROUP` を作成し
+P4OidMapper に OID を登録してから `FIXED_*_MULTICAST_TABLE` を書き込む必要がある。
+
+### 依存 2: REPLICATION テーブル → MULTICAST_ROUTER_INTERFACE_TABLE
+
+`validateReplicas()` (`l3_multicast_manager.cpp:L1002-1008`) が各レプリカの `(port, instance)` を
+`L3MulticastManager` の内部テーブルで検索し、対応する `MULTICAST_ROUTER_INTERFACE_TABLE`
+エントリが未登録の場合は即座にエラーを返す:
+
+```cpp
+if (router_interface_entry_ptr == nullptr) {
+  return ReturnCode(StatusCode::SWSS_RC_NOT_FOUND)
+         << "No corresponding "
+         << APP_P4RT_MULTICAST_ROUTER_INTERFACE_TABLE_NAME
+         << " entry found for multicast group " << ...;
+}
+```
+
+### 依存 3: FIXED テーブル → VRF
+
+`validateIpMulticastEntry()` (`ip_multicast_manager.cpp:L477-481`) が非空の `vrf_id` を VrfOrch で確認し、
+未登録の場合は即座にエラーを返す。デフォルト VRF (`vrf_id` 空文字列) はチェックをスキップする。
+
+### 推奨書込み順序
+
+```
+1. VRF を CONFIG_DB に投入 (非デフォルト VRF 使用時のみ)
+2. MULTICAST_ROUTER_INTERFACE_TABLE を APP_DB に投入
+3. REPLICATION_IP_MULTICAST_TABLE を APP_DB に投入
+4. FIXED_IPV4/IPV6_MULTICAST_TABLE を APP_DB に投入
+```
+
+DEL 時は逆順: `FIXED_*` → `REPLICATION_*` → `MULTICAST_ROUTER_INTERFACE_TABLE` の順で削除する。
+`REPLICATION_IP_MULTICAST_TABLE` に対する参照カウント (`increaseRefCount`/`decreaseRefCount`) が
+IpMulticastManager 内で管理されており、参照が残っているグループを先に削除しようとすると SAI 削除が失敗する。
+<!-- /ordering -->
+
 ## 購読者
 
 | コンポーネント | テーブル | SAI 操作 |
