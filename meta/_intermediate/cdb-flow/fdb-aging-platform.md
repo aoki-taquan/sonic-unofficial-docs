@@ -1,58 +1,74 @@
-# fdb-aging Phase H: プラットフォーム / SAI Capability 差異
+# fdb-aging Phase H — プラットフォーム差異スキャンノート
 
-## 調査対象
+Generated: 2026-05-19
+Target doc: docs/reference/config-db/fdb-aging.md
 
-- `sonic-swss/orchagent/switchorch.cpp`
-- `sonic-buildimage/dockers/docker-orchagent/switch.json.j2`
+対象: APPL_DB `SWITCH_TABLE:switch` の `fdb_aging_time` フィールド
+スキャン範囲: `switch.json.j2:35-48`, `switchorch.cpp:49,664-666`, `orchdaemon.cpp:190`
 
-## 主要知見
+---
 
-### 1. DPU プラットフォーム: fdb_aging_time 注入なし
+## 1. プラットフォーム識別の主体
 
-`switch.json.j2:35` の条件分岐:
+`SwitchOrch::doAppSwitchTableTask()` (`switchorch.cpp:595-748`) には `isMlnxPlatform()` のようなプラットフォーム識別コードが一切存在しない。`SAI_SWITCH_ATTR_FDB_AGING_TIME` の処理は `to_uint<uint32_t>(value)` でキャストするのみで、プラットフォーム条件分岐はない (`switchorch.cpp:664-666`)。
+
+プラットフォーム差異は SAI レイヤより上位の **`switch.json.j2` テンプレート展開時**にのみ発生する。
+
+---
+
+## 2. switch.json.j2 による注入可否の差異
+
+`switch.json.j2:35` の Jinja2 条件式:
 
 ```jinja2
 {% if not DEVICE_METADATA.localhost.switch_type or DEVICE_METADATA.localhost.switch_type != "dpu" %}
     "ecmp_hash_seed": "{{ hash_seed_value }}",
     "lag_hash_seed": "{{ hash_seed_value }}",
     "fdb_aging_time": "600",
-```
-
-`switch_type == "dpu"` のノードでは `fdb_aging_time` を含む SWITCH_TABLE:switch 全体のフィールドセットが生成されない。
-結果として SAI `SAI_SWITCH_ATTR_FDB_AGING_TIME` はハードウェアリセット時の初期値のまま。
-
-### 2. chassis-packet プラットフォーム: fdb_aging_time は注入される
-
-```jinja2
-{% if not DEVICE_METADATA.localhost.switch_type or DEVICE_METADATA.localhost.switch_type != "chassis-packet" %}
-    "ecmp_hash_offset": "{{ ecmp_hash_offset_value }}",
-    "lag_hash_offset": "{{ lag_hash_offset_value }}",
+...
 {% endif %}
 ```
 
-`chassis-packet` は `dpu` ブロックの内側にはない（`switch_type != "dpu"` 条件を満たす）ため `fdb_aging_time: 600` は注入される。
-`ecmp_hash_offset` / `lag_hash_offset` のみスキップされる。
+`switch_type == "dpu"` のノード（SmartSwitch DPU スロット）では `fdb_aging_time` フィールドが APPL_DB に**注入されない**。
 
-### 3. SAI Capability クエリなし
+| `switch_type` 値 | `fdb_aging_time` 注入 | 備考 |
+|---|---|---|
+| 未設定（通常スイッチ） | される (`"600"`) | ToRRouter / LeafRouter / SpineRouter 等 |
+| `"dpu"` | されない | SmartSwitch DPU スロット (DASH ノード) |
+| `"chassis-packet"` | される (`"600"`) | `dpu` でないため条件を通過 |
+| その他 (任意文字列) | される (`"600"`) | `dpu` 以外は全て注入 |
 
-`switchorch.cpp` を全体精読した結果、`SAI_SWITCH_ATTR_FDB_AGING_TIME` に対して `querySwitchCapability()` / `sai_query_attribute_capability()` を呼び出す箇所は存在しない（grep "querySwitchCapability.*FDB_AGING" で 0 件）。
+evidence: `sonic-buildimage/dockers/docker-orchagent/switch.json.j2:35-38`
+evidence (DPU 非注入の実証): `sonic-buildimage/src/sonic-config-engine/tests/sample_output/t1-smartswitch-dpu.json` — `SWITCH_TABLE` エントリが存在しない
 
-他の属性（ECMP hash offset, LAG hash offset, ASIC SDK health event, PFC DLR 等）は capability クエリが実装されているが、FDB aging time は非対応 ASIC での `SAI_STATUS_NOT_SUPPORTED` 返却を直接 `handleSaiSetStatus()` に委ねる設計。
+---
 
-### 4. VS (仮想スイッチ) での挙動
+## 3. DPU 環境での SAI 挙動
 
-`sonic-sairedis` の vslib warm.bin ファイルで確認:
-- `bcm56850.warm.bin:4480`: `SAI_OBJECT_TYPE_SWITCH oid:0x2100000000 SAI_SWITCH_ATTR_FDB_AGING_TIME 0`
-- `mlnx2700.warm.bin:3808`: `SAI_OBJECT_TYPE_SWITCH oid:0x2100000000 SAI_SWITCH_ATTR_FDB_AGING_TIME 0`
+`switch_type == "dpu"` のノードでは `fdb_aging_time` が APPL_DB に書き込まれないため、SAI `SAI_SWITCH_ATTR_FDB_AGING_TIME` は orchagent 起動時の ASIC ハードウェアデフォルト値のままになる。SONiC は DPU ノードを DASH (Data-plane Acceleration with Disaggregated Hardware) ターゲットとして扱い、従来の Ethernet スイッチング (FDB aging) を必要としない。
 
-VS プラットフォームの warm reboot ダンプでは aging time が `0`（無効）として記録されている。
-これは warm-reboot 時の意図的な `setAgingFDB(0)` が適用された状態のスナップショット。
+---
 
-### 5. サマリ
+## 4. ASIC 固有 SAI capability の有無
 
-| プラットフォーム種別 | fdb_aging_time 注入 | 初期値 | SAI Capability クエリ |
+`switchorch.cpp:683-703` では `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_OFFSET` および `SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_OFFSET` に対して `querySwitchCapability()` による SAI capability チェックが実施されているが、`SAI_SWITCH_ATTR_FDB_AGING_TIME` (`switchorch.cpp:664-666`) にはこのチェックが存在しない。すべての ASIC において `SAI_SWITCH_ATTR_FDB_AGING_TIME` は capability チェックなしで直接 `set_switch_attribute()` される。
+
+---
+
+## 5. multi-asic 環境
+
+`orchdaemon.cpp:190` で `platform = getenv("platform")` が取得されるが、`SwitchOrch` はこの値を `fdb_aging_time` の処理で使用しない。multi-asic 環境では各 asic namespace ごとに orchagent が起動し、それぞれ独立した `switch.json.j2` 展開により `fdb_aging_time: "600"` が注入される。`switch.json.j2:28-31` の `namespace_id` は `ecmp_hash_seed` / `lag_hash_seed` のオフセット計算にのみ使用され、`fdb_aging_time` には影響しない。
+
+evidence: `switch.json.j2:28-31`, `t2-switch-masic1.json` (全 asic 共通 `"fdb_aging_time": "600"`)
+
+---
+
+## まとめ
+
+| 条件 | `fdb_aging_time` 注入 | SAI 設定値 | 備考 |
 |---|---|---|---|
-| 標準スイッチ (`switch_type` 未設定) | あり (600 秒) | 600 秒 | なし (直接 SET) |
-| `chassis-packet` | あり (600 秒) | 600 秒 | なし (直接 SET) |
-| `dpu` | なし | ASIC ハードウェアデフォルト | 該当なし (書き込み自体が発生しない) |
-| VS (テスト) | あり (600 秒) → warm 後 0 | warm 後 0 | なし |
+| 通常スイッチ (switch_type 未設定) | あり | `600` 秒 | ToR / Leaf / Spine 等 |
+| chassis-packet ノード | あり | `600` 秒 | chassis-packet は `dpu` 条件を通過 |
+| SmartSwitch DPU (switch_type=dpu) | なし | ASIC ハードウェアデフォルト | DASH ターゲット; FDB aging 不要 |
+| multi-asic 各 namespace | あり | `600` 秒 (全 namespace 共通) | namespace_id は aging time に影響しない |
+| 全 ASIC ベンダー共通 | — | SAI capability チェックなし | 直接 set_switch_attribute() |

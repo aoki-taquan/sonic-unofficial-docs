@@ -366,3 +366,75 @@ CONFIG_DB MCLAG_UNIQUE_IP SET
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-side-effects.md`
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclagsyncd.cpp L41,L93-98 / sonic-swss/mclagsyncd/mclaglink.cpp L910-948,L962-967,L1088-1180 / sonic-swss/mclagsyncd/mclag.h L23,L56,L91 / sonic-buildimage/src/iccpd/src/mlacp_link_handler.c L3186-3292 -->
+
+### CONFIG_DB 購読: SubscriberStateTable（遅延登録）
+
+`mclagsyncd` は **起動時には `MCLAG_UNIQUE_IP` を購読しない**。`MCLAG_DOMAIN` の初回 SET 成功後に `addDomainCfgDependentSelectables()` が呼ばれ、そこで初めて `SubscriberStateTable` が生成・`Select` に追加される。
+
+```cpp
+// mclaglink.cpp:921
+p_mclag_unique_ip_cfg_tbl = new SubscriberStateTable(
+    p_config_db.get(), CFG_MCLAG_UNIQUE_IP_TABLE_NAME);
+
+// mclaglink.cpp:944-948
+if (p_mclag_unique_ip_cfg_tbl) {
+    m_select->addSelectable(getMclagUniqueCfgTable());
+}
+```
+
+swss-common の `SubscriberStateTable` 実装は以下を Redis に発行する:
+
+```
+PSUBSCRIBE __keyspace@4__:MCLAG_UNIQUE_IP|*
+```
+
+DB 番号 4 = CONFIG_DB。コンストラクタ呼び出し時に `KEYS MCLAG_UNIQUE_IP|*` で既存エントリを走査し、SET イベントとして再生（起動時のスナップショット取得）。
+
+### 主ループのディスパッチ
+
+`mclagsyncd.cpp:93-98` でエントリを `pops()` して `mclagsyncdSendMclagUniqueIpCfg()` へ渡す:
+
+```cpp
+else if (temps == (Selectable *)mclag.getMclagUniqueCfgTable()) {
+    std::deque<KeyOpFieldsValuesTuple> entries;
+    mclag.getMclagUniqueCfgTable()->pops(entries);
+    mclag.mclagsyncdSendMclagUniqueIpCfg(entries);
+}
+```
+
+`s.select(&temps)` はタイムアウト無しのブロッキング呼び出し（swss-common `select.h` のデフォルト `timeout = std::numeric_limits<unsigned int>::max()`）。
+
+### mclagsyncd → iccpd: TCP IPC
+
+`mclagsyncdSendMclagUniqueIpCfg()` が `::write(m_connection_socket, ...)` で `MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_UNIQUE_IP`（type=5）を送信する。
+
+```
+CONFIG_DB ──PSUBSCRIBE __keyspace@4__:MCLAG_UNIQUE_IP|*──▶ mclagsyncd
+  ──TCP 127.0.0.6:2626 (MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_UNIQUE_IP)──▶ iccpd
+    ──iccp_mclagsyncd_mclag_unique_ip_cfg_handler() (mlacp_link_handler.c:3186)
+```
+
+TCP 定数: `MCLAG_DEFAULT_IP = 0x7f000006`（127.0.0.6）、`MCLAG_DEFAULT_PORT = 2626`（`mclag.h:23,56`）。mclagsyncd が TCP サーバとして `listen / accept` し、iccpd が接続する。
+
+### 逆方向: iccpd → mclagsyncd → APPL_DB
+
+STANDBY ノードかつ L3 モードの場合、iccpd が `MCLAG_MSG_TYPE_SET_INTF_MAC` を返送し、mclagsyncd の `setIntfMac()` → APPL_DB `INTF_TABLE|<vlan_if>` に `mac_addr` を書き込む（`mclaglink.cpp:435-460`）。この経路の詳細は Phase F 参照。
+
+### 購読解除（MCLAG_DOMAIN DEL 時）
+
+`delDomainCfgDependentSelectables()` で `m_select->removeSelectable()` → `delete` によって `SubscriberStateTable` が解放される（`mclaglink.cpp:962-967`）。
+
+### タイムアウト・リトライ
+
+| デーモン | select タイムアウト | リトライ |
+|---------|-------------------|--------|
+| mclagsyncd | 無限（明示設定なし） | `MclagConnectionClosedException` で即時 `accept()` 再試行 |
+| iccpd | 自前スケジューラ（`select` ベース） | `CONNECT_INTERVAL_SEC = 1` 秒で TCP 再接続 |
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-pubsub.md`
+<!-- /pubsub -->
