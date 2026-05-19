@@ -183,6 +183,82 @@ if platform_info.get('switch_type') == 'dpu':
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> **調査根拠**: `flexcounterorch.cpp`, `dashorch.cpp`, `dashorch.h`, `dashcounter.h`, `enable_counters.py`, `device_info.py` 全行精読 (2026-05-19)  
+> 詳細証跡: `meta/_intermediate/cdb-flow/dpu-counter-cross-refs.md`
+
+`FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` はいずれも YANG leafref を持たないが、
+実行時に以下のテーブル・リソースを暗黙参照する。
+
+| # | 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+|---|--------|-----|---------|-------------|--------------|------|
+| 1 | `DEVICE_METADATA\|localhost.switch_type` | CONFIG_DB | 読み取り | なし | DPU 自動有効化に必須 | `enable_counters.py:42-45`, `device_info.py:563-566` |
+| 2 | `PORT` (PortsOrch `allPortsReady()`) | — | 状態確認 (起動順序ガード) | なし | `FlexCounterOrch` 処理開始の前提 | `flexcounterorch.cpp:164-166` |
+| 3 | `APP_DASH_ENI_TABLE` → `DashOrch::eni_entries_` | APPL_DB | 間接 (DashOrch 内部マップ) | なし | カウンタ ID 投入に実質必須 | `dashorch.cpp:69`, `dashorch.h:128` |
+| 4 | `COUNTERS_ENI_NAME_MAP` | COUNTERS_DB | 書き込み (DashOrch が生産) | なし | `counterpoll` / `show dash counters eni` の前提 | `dashorch.cpp:68`, `schema.h:249` |
+| 5 | `DEVICE_METADATA\|localhost.create_only_config_db_buffers` | CONFIG_DB | 読み取り (初期化のみ) | なし | ENI/DASH_METER 処理パスに非直接 | `flexcounterorch.cpp:114` |
+
+### DEVICE_METADATA|localhost.switch_type — DPU 自動有効化スイッチ
+
+`enable_counters.py` は起動後 60〜180 秒で `device_info.get_platform_info()` を呼び出し、
+`DEVICE_METADATA|localhost` の `switch_type` フィールドを読み取る。
+
+```python
+# enable_counters.py:37-45
+def enable_counters():
+    db = swsscommon.ConfigDBConnector()
+    db.connect()
+    dpu_counters = ["ENI","DASH_METER"]
+    platform_info = device_info.get_platform_info(db)
+    if platform_info.get('switch_type') == 'dpu':
+        for key in dpu_counters:
+            enable_counter_group(db, key)
+```
+
+`switch_type` が `'dpu'` でない場合、または `switch_type` キーが欠如している場合、
+ENI / DASH_METER への `FLEX_COUNTER_STATUS=enable` 書き込みは行われず、カウンタは無効のままとなる。YANG leafref なし。
+
+### PORT (allPortsReady) — FlexCounterOrch 起動順序ガード
+
+```cpp
+// flexcounterorch.cpp:164-166
+if (gPortsOrch && !gPortsOrch->allPortsReady())
+{
+    return;
+}
+```
+
+`FlexCounterOrch::doTask()` は `gPortsOrch->allPortsReady()` が `false` の間、
+`FLEX_COUNTER_TABLE|ENI` / `|DASH_METER` の SET メッセージを処理しない（`m_toSync` に残留）。
+DPU ノードでは物理ポートが存在しない場合もあるが、`gPortsOrch` が `nullptr` でない限りこのガードが適用される。
+
+### APP_DASH_ENI_TABLE → DashOrch::eni_entries_ — カウンタ ID 投入の前提
+
+`DashCounter<ENI>::refreshStats()` が走査する `eni_entries_` は、`DashOrch` が APPL_DB の
+`APP_DASH_ENI_TABLE` から ENI エントリを受信するたびに `addEniEntry()` で更新される。
+
+- `FLEX_COUNTER_STATUS=enable` が処理された時点で `eni_entries_` が空の場合: FLEX_COUNTER_DB への ENI カウンタ ID 書込みは発生しない
+- 後から ENI エントリが追加された時点で `EniCounter.addToFC(eni_id, eni)` (`dashorch.cpp:751`) が個別に `setCounterIdList` を実行し、カウンタ登録が完了する
+
+YANG leafref なし。`APP_DASH_ENI_TABLE` は APPL_DB 側の DPU 専用運用経路。
+
+### COUNTERS_ENI_NAME_MAP — show / counterpoll の前提
+
+`DashOrch` は ENI 追加/削除のたびに `COUNTERS_DB|COUNTERS_ENI_NAME_MAP` に
+ENI 名 → OID のマッピングを書き込む (`dashorch.cpp:1382, 1395`)。
+`show dash counters eni` や `counterpoll` はこのマップを参照してカウンタ値を表示する。
+FLEX_COUNTER_TABLE|ENI の `enable` が実際に機能するためには、
+`COUNTERS_ENI_NAME_MAP` に対応エントリが存在することが実用上の前提となる。
+
+!!! note "すべての参照は YANG leafref なし"
+    `sonic-flex_counter.yang` の ENI / DASH_METER コンテナには leafref 定義が存在しない。
+    ここに記載した暗黙参照はすべて実装コードのロジックのみで成立しており、
+    YANG バリデーションによる強制はない。
+
+<!-- /cross-refs -->
+
 ## 制約
 
 - `POLL_INTERVAL`: 100 以上 (uint32 上限 4294967295)
