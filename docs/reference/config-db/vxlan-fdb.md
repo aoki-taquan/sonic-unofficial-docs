@@ -368,6 +368,43 @@ VXLAN_FDB_TABLE エントリ削除によって当該トンネルポートの FDB
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`FdbOrch` は APPL_DB の `APP_VXLAN_FDB_TABLE_NAME` を **`ConsumerStateTable`** で購読する。APPL_DB 起源のテーブルは `Orch::addConsumer()` の DB 種別分岐で `ConsumerStateTable` が選ばれ、Redis の ProducerStateTable が書き込む channel を購読する（keyspace 通知ではなく channel ベース Pub/Sub）。
+
+詳細スキャンノート: `meta/_intermediate/cdb-flow/vxlan-fdb-pubsub.md`
+
+### メインテーブル購読
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス | `ConsumerStateTable` (APPL_DB / `Orch::addConsumer` の `else` 分岐) |
+| 購読対象 | `VXLAN_FDB_TABLE` (APPL_DB)、`APP_FDB_TABLE`、`APP_MCLAG_FDB_TABLE` の 3 テーブルを同一 `FdbOrch` インスタンスで処理 |
+| key 区切り | `VXLAN_FDB_TABLE|<VlanName>:<MAC>` (TableNameSeparator 既定 `|`) |
+| POP_BATCH_SIZE | `gBatchSize` (orchagent グローバル、既定 128) |
+| 優先度 (`pri`) | `FdbOrch::fdborch_pri = 20` (`fdborch.cpp:25`) |
+| 起動時スナップショット | APPL_DB 既存エントリを SET イベントとして再配信（warm-restart は `refillToSync(&m_fdbStateTable)` で再取り込み） |
+| TTL | 未設定 (APPL_DB は永続) |
+| ディスパッチ | `Consumer::execute()` → `FdbOrch::doTask(Consumer&)` (`fdborch.cpp:707`) → `table_name == APP_VXLAN_FDB_TABLE_NAME` 分岐 → `origin = FDB_ORIGIN_VXLAN_ADVERTIZED` |
+
+### 追加 Executor（FdbOrch ctor 内で登録）
+
+FdbOrch は本体テーブル購読に加え、2 つの `NotificationConsumer` を持つ (`fdborch.cpp:39-48`):
+
+| Executor 名 | DB | channel | ハンドラ | 用途 |
+|------------|-----|---------|---------|------|
+| `FLUSHFDBREQUEST` | APPL_DB | `FLUSHFDBREQUEST` | `doTask(NotificationConsumer&)` @ `fdborch.cpp:923` | FDB フラッシュ要求の受信 |
+| `FDB_NOTIFICATIONS` | ASIC_DB | `NOTIFICATIONS` | `doTask(NotificationConsumer&)` @ `fdborch.cpp:1048` — `op == "fdb_event"` | SAI からの MAC 学習 / 老化イベント受信 → STATE_DB `FDB_TABLE` へ反映 |
+
+`FDB_NOTIFICATIONS` は SAI → ASIC_DB → orchagent という逆方向フローで、ローカル学習 MAC を STATE_DB に書き込む主要経路。`VXLAN_FDB_TABLE` 由来エントリは STATE_DB に書かれないため、このパスは VXLAN FDB には関係しない（[副次 DB 書込参照](#副次-db-書込-phase-f)）。
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/fdborch.cpp:27-49 (FdbOrch ctor, ConsumerStateTable + NotificationConsumer 登録) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:226-235 (app_fdb_tables + FdbOrch 生成) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/fdborch.cpp:25 (fdborch_pri = 20) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/fdborch.cpp:707-727 (doTask table_name 分岐) -->
+<!-- /pubsub -->
+
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp; sonic-swss/orchagent/fdborch.cpp -->
