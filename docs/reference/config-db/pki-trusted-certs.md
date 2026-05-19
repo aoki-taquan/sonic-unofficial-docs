@@ -495,6 +495,28 @@ gNSI Certz (`gnsi_certz.go`) はプロファイル管理に CONFIG_DB を使用�
 > **Evidence**: `sonic-gnmi/gnmi_server/gnsi_certz.go` 全体スキャン — `ConfigDBConnector.subscribe()` / `SubscriberStateTable` / `ConsumerStateTable` の使用なし確認。`sonic-swss` / `sonic-swss-common` でも `SECURITY_PROFILES` / `SECURITY_GLOBAL` のキーワード一致なし。
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pki-trusted-certs-platform.md -->
+
+**プラットフォーム差なし**: `SECURITY_PROFILES` / `SECURITY_GLOBAL` テーブルおよび gNSI Certz の実装は ASIC 非依存であり、プラットフォーム固有の分岐を持たない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | gNSI Certz は SAI を経由しない。証明書管理はファイルシステム (`/keys/*.lnk`) と STATE_DB HSET のみ (`gnsi_certz.go` 全体に `getenv("platform")` / `#ifdef` 分岐なし) |
+| multi-asic (`is_multi_npu()`) | 影響なし | `SECURITY_PROFILES` ハンドラは community master 未実装。gNSI Certz は host-scoped CONFIG_DB を対象とする設計であり `asicN` namespace を参照しない |
+| VOQ chassis (supervisor + line cards) | 各 host で独立 | PKI / gNSI Certz は host OS レベルで動作。chassis 全体での集中証明書管理機構はなく、各 host の `docker-sonic-telemetry` が独立して動作する |
+| SmartSwitch DPU | 非適用 | `docker-sonic-telemetry` は DPU 上では起動しない。NPU 側でのみ稼働する |
+| YANG deviation | なし | `sonic-pki.yang` にプラットフォーム固有の deviation / augment はない (`sonic-mgmt-common/cvl/testdata/schema/sonic-pki.yang` 全体) |
+
+### community master 未実装による非影響範囲
+
+`SECURITY_PROFILES` を消費する production ハンドラ (orchagent / translib / certmgr) が community master に存在しないため、将来の実装でもホスト OS レベルの証明書管理に限られる見込みであり、プラットフォーム差が生じる可能性は低い。
+
+証跡: `sonic-gnmi/gnmi_server/gnsi_certz.go` 全体 (`getenv("platform")` / `PLATFORM` 環境変数参照なし), `sonic-mgmt-common/cvl/testdata/schema/sonic-pki.yang` 全体 (deviation なし)
+<!-- /platform -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: [`GNMI`](gnmi.md) (`GNMI|certs` で証明書パスを設定), [`TELEMETRY`](telemetry.md)
