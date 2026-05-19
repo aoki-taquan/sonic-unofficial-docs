@@ -4,7 +4,7 @@ description: "SWITCH_TABLE の fdb_aging_time フィールド — FDB (Forwardin
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-16
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/switchorch.cpp
@@ -331,5 +331,64 @@ cross-refs としての依存テーブルはない（Phase B 順序依存とし�
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/fdb-aging-F.md` を参照。
 <!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/fdb-aging-platform.md -->
+
+`SAI_SWITCH_ATTR_FDB_AGING_TIME` はプラットフォームによって**注入有無**が異なる。SwitchOrch は capability クエリを行わず、SAI の返却値（`SAI_STATUS_*`）を `handleSaiSetStatus()` に委ねる設計である。
+
+### switch_type 別の注入挙動
+
+| `switch_type` 値 | `fdb_aging_time` 注入 | 起動時初期値 | 備考 |
+|---|---|---|---|
+| 未設定（標準スイッチ） | あり（`600` 秒） | 600 秒 | `switch.json.j2:35-38` |
+| `chassis-packet` | あり（`600` 秒） | 600 秒 | `ecmp_hash_offset` / `lag_hash_offset` はスキップされるが `fdb_aging_time` は注入される (`switch.json.j2:39`) |
+| `dpu` | なし | ASIC ハードウェアデフォルト | `switch.json.j2:35` の外側ブロック全体がスキップ。`SAI_SWITCH_ATTR_FDB_AGING_TIME` は orchagent から一切設定されない |
+
+#### DPU プラットフォームでの不注入メカニズム
+
+```jinja2
+{# switch.json.j2:35-48 #}
+{% if not DEVICE_METADATA.localhost.switch_type or DEVICE_METADATA.localhost.switch_type != "dpu" %}
+    "ecmp_hash_seed": "{{ hash_seed_value }}",
+    "lag_hash_seed": "{{ hash_seed_value }}",
+    "fdb_aging_time": "600",
+    ...
+{% endif %}
+```
+
+`switch_type == "dpu"` の場合、このブロック全体が展開されないため `SWITCH_TABLE:switch` に `fdb_aging_time` フィールドが書き込まれず、`SwitchOrch::doAppSwitchTableTask()` が `fdb_aging_time` を処理するトリガー自体が発生しない。
+
+### SAI Capability クエリの非実装
+
+`switchorch.cpp` 全体を精読した結果、`SAI_SWITCH_ATTR_FDB_AGING_TIME` に対する `sai_query_attribute_capability()` / `querySwitchCapability()` 呼び出しは**存在しない**（他の属性 — `SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_OFFSET`・`SAI_SWITCH_ATTR_ASIC_SDK_HEALTH_EVENT_NOTIFY`・`SAI_QUEUE_ATTR_PFC_DLR_INIT` 等は capability クエリが実装されている）。
+
+FDB aging time は SAI 仕様上すべてのスイッチ ASIC で必須属性（`SAI_SWITCH_ATTR_FDB_AGING_TIME`）として定義されているため、実装上 capability クエリが不要と判断されている。非対応 ASIC の場合は `set_switch_attribute()` が `SAI_STATUS_NOT_SUPPORTED` を返し、`handleSaiSetStatus()` で ERROR ログ + task_failed として処理される。
+
+### VS（仮想スイッチ）での観測値
+
+`sonic-sairedis` の vslib warm dump では、warm-reboot 後のスナップショットで aging time が `0` として記録される:
+
+```
+# bcm56850.warm.bin:4480
+SAI_OBJECT_TYPE_SWITCH oid:0x2100000000 SAI_SWITCH_ATTR_FDB_AGING_TIME 0
+# mlnx2700.warm.bin:3808
+SAI_OBJECT_TYPE_SWITCH oid:0x2100000000 SAI_SWITCH_ATTR_FDB_AGING_TIME 0
+```
+
+これは warm-reboot パスの `setAgingFDB(0)` が ASIC に適用された後のスナップショットであり、VS プラットフォームでは 0 値が SAI レベルで正常に受理されることを示す。
+
+### プラットフォーム差異サマリ
+
+| # | 観点 | 差異内容 | ソース |
+|---|------|---------|--------|
+| 1 | DPU ノード | `fdb_aging_time` 未注入 → SAI 未設定 | `switch.json.j2:35` |
+| 2 | chassis-packet ノード | `fdb_aging_time` 注入あり（600 秒） | `switch.json.j2:39` |
+| 3 | SAI capability クエリ | 未実装（直接 SET のみ） | `switchorch.cpp:664-666` |
+| 4 | VS プラットフォーム | `fdb_aging_time: 0`（warm 後）を受理 | `bcm56850.warm.bin:4480` |
+
+<!-- /platform -->
 
 <!-- glossary-links-injected: fdb-aging -->
