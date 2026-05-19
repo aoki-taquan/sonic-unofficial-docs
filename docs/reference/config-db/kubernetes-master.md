@@ -264,6 +264,66 @@ SELECT_TIMEOUT = 1000  # ms
 > **Evidence**: `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:157-158, 292-307, 306-307, 411-414, 423, 435-437, 440, 505-506, 659-681`; 詳細スキャン結果は `meta/_intermediate/cdb-flow/kubernetes-master-side-effects.md` 参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査対象: `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py` L204-217, L249-288, L329-359, L466-475, L640-646
+> 調査日: 2026-05-19
+
+`ctrmgrd` は `MainServer.register_handler()` を通じて全テーブルを `swsscommon.SubscriberStateTable` で購読する (ctrmgrd.py:204-217)。`KUBERNETES_MASTER` への書き込みは Redis keyspace 通知として配信される。APPL_DB 中継・ProducerStateTable・ConsumerStateTable は使用しない。
+
+### 購読チャンネル一覧
+
+| チャンネル | DB | テーブル名 | 購読クラス | 購読者 | 発行元 |
+|---|---|---|---|---|---|
+| CONFIG_DB → ctrmgrd | CONFIG_DB | `KUBERNETES_MASTER` | `SubscriberStateTable` | `RemoteServerHandler.on_config_update()` | `sonic-utilities/config/kube.py` (CLI) |
+| CONFIG_DB → ctrmgrd | CONFIG_DB | `FEATURE` | `SubscriberStateTable` | `FeatureTransitionHandler.on_config_update()` | `hostcfgd`、各管理 daemon |
+| STATE_DB → ctrmgrd | STATE_DB | `FEATURE` | `SubscriberStateTable` | `FeatureTransitionHandler.on_state_update()` | `containercfgd`、systemd service proxy |
+| STATE_DB → ctrmgrd | STATE_DB | `KUBE_LABELS` | `SubscriberStateTable` | `LabelsPendingHandler.on_update()` | `ctrmgrd` 自身（`set_node_labels()`、`FeatureTransitionHandler`） |
+
+### CONFIG_DB:KUBERNETES_MASTER 経路（`RemoteServerHandler`）
+
+`RemoteServerHandler.__init__()` (ctrmgrd.py:333-334) が `server.register_handler(CONFIG_DB_NAME, SERVER_TABLE, self.on_config_update)` を呼び出す。`MainServer.register_handler()` (ctrmgrd.py:204-217) は `SubscriberStateTable` を生成して `selector.addSelectable()` に登録する。
+
+- Redis keyspace 通知: `PSUBSCRIBE __keyspace@4__:KUBERNETES_MASTER|*`
+- 受信キー: `SERVER`（単一エントリ）
+- ハンドラ: `on_config_update()` → `handle_update()` → `do_join()` / `do_reset()`
+- **起動時スナップショット**: `SubscriberStateTable` は購読開始前の既存エントリを buffer に流し込む。加えて ctrmgrd.py:335-336 が `get_db_entry()` で初期値を明示読み出しするため、起動時の既存設定は必ず反映される。
+
+### CONFIG_DB + STATE_DB:FEATURE 経路（`FeatureTransitionHandler`）
+
+`FeatureTransitionHandler.__init__()` (ctrmgrd.py:466-475) が CONFIG_DB と STATE_DB の両 `FEATURE` テーブルを購読する。
+
+- `on_config_update()`: `set_owner` 変化時のみ `handle_update()` を呼ぶ。STATE_DB 側のデータ（`ct_owner`、`remote_state`）がまだ届いていない場合は処理を保留する（ctrmgrd.py:533-543）
+- `on_state_update()`: `remote_state` 変化時に `handle_update()` を呼ぶ。CONFIG_DB 側のデータがある場合のみ実行
+
+両イベントが揃うまで `handle_update()` の実行を待機する設計であり、イベント到着の順序依存は排除されている。
+
+### STATE_DB:KUBE_LABELS 経路（`LabelsPendingHandler`）
+
+`LabelsPendingHandler` (ctrmgrd.py:640-685) は `STATE_DB:KUBE_LABELS` テーブルを購読し、`SET` キーの更新を検知して Kubernetes API Server へラベルを反映する。
+
+- `remote_connected == True` かつ `pending == False` の場合のみ即時 `kube_write_labels()` を実行
+- `remote_connected == False`（join 未完了）の場合はラベルをバッファリングし、join 成功時に `do_join()` が直接 `update_node_labels()` を呼んで反映する（ctrmgrd.py:439-440）
+
+### Select ループによるディスパッチ
+
+`MainServer.run()` (ctrmgrd.py:249-288) の select ループが全 `SubscriberStateTable` を共通の `swsscommon.Select` インスタンスで多重化する。タイムアウト値は `SELECT_TIMEOUT = 1000 ms`（ctrmgrd.py:181）。
+
+```text
+selector.select(1000ms)
+  └─ for subscriber in self.subscribers:
+       key, op, fvs = subscriber.pop()
+       → callback(key, op, dict(fvs))
+```
+
+複数テーブルへの同時更新は Python `set` の反復順でディスパッチされるため処理順序は不定。ただし `KUBERNETES_MASTER` と `FEATURE` は別クラスのハンドラで独立処理されるため相互干渉はない。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/kubernetes-master-pubsub.md` 参照。
+
+<!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:181,204-217,249-288,329-334,340-342,363-390,439-440,466-475,515-543,546-580,640-685 -->
+<!-- /pubsub -->
+
 <!-- defaults -->
 ## フィールドデフォルト
 
