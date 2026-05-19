@@ -386,6 +386,62 @@ warm-reboot 後は `refillToSync()` (`pfcwdorch.cpp:1108`) が `APPL_DB:PFC_WD_I
 <!-- evidence: sonic-swss/orchagent/pfcwdorch.cpp:724-728 (NotificationConsumer 登録), sonic-swss/orchagent/pfc_detect_broadcom.lua:75-77,79,82,130,138 (Lua HGET/PUBLISH), sonic-swss/orchagent/pfcwdorch.cpp:890-916 (doTask NotificationConsumer 処理) -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-platform.md -->
+
+`pfcwdorch` はプラットフォーム (`getenv("platform")`) に応じて Lua プラグインの選択・storm ハンドラ・SAI 操作が分岐し、COUNTERS_DB への書き込みの有無や動作が変わる。
+
+### Lua プラグイン選択 (プラットフォーム別 detect スクリプト)
+
+`PfcWdSwOrch` コンストラクタ (`pfcwdorch.cpp:693-700`) で `pfc_detect_<platform>.lua` を動的に選択する。
+
+| プラットフォーム値 | detect Lua | restore Lua |
+|----------------|-----------|------------|
+| `broadcom` | `pfc_detect_broadcom.lua` | `pfc_restore.lua` |
+| `cisco-8000` | `pfc_detect_cisco-8000.lua` | `pfc_restore_cisco-8000.lua` |
+| `mellanox` | `pfc_detect_mellanox.lua` | `pfc_restore.lua` |
+| `barefoot` | `pfc_detect_barefoot.lua` | `pfc_restore.lua` |
+| `marvell-prestera` | `pfc_detect_marvell-prestera.lua` | `pfc_restore.lua` |
+| `marvell-teralynx` | `pfc_detect_marvell-teralynx.lua` | `pfc_restore.lua` |
+| `clounix` | `pfc_detect_clounix.lua` | `pfc_restore.lua` |
+| `nephos` | `pfc_detect_nephos.lua` | `pfc_restore.lua` |
+| `vs` | `pfc_detect_vs.lua` | `pfc_restore.lua` |
+
+Cisco 8000 のみ restore スクリプトが専用ファイルに分離されている。`platform` 環境変数が未定義の場合は `SWSS_LOG_ERROR` を出力して初期化失敗となり、COUNTERS_DB への書き込みは一切行われない。
+
+### Cisco 8000 固有制約
+
+| 制約 | コード | COUNTERS_DB への影響 |
+|------|--------|---------------------|
+| `action=forward` は拒否 | `pfcwdorch.cpp:233-235` | `task_invalid_entry` → 書き込みなし |
+| storm 検知時に PFC マスク変更をスキップ | `pfcactionhandler.cpp:548-552` | `PFC_WD_STATUS=stormed` は書かれるが ハードウェア PFC ビットは変更されない |
+| 専用 restore スクリプト使用 | `pfcwdorch.cpp:697-698` | restore 判定ロジックが他プラットフォームと異なる |
+
+### Broadcom + PFC DLR INIT 有効環境
+
+`gSwitchOrch->checkPfcDlrInitEnable()` が `true` の場合に以下の動作が変わる。
+
+**スイッチレベル action の強制統一**: 最初の `pfcwd start` 時に `SAI_SWITCH_ATTR_PFC_DLR_PACKET_ACTION` をスイッチ全体に設定する (`pfcwdorch.cpp:244-252`)。2 ポート目以降で異なる `action` を指定すると `task_invalid_entry` となり、COUNTERS_DB への書き込みが行われない (`pfcwdorch.cpp:257-262`)。
+
+**PFC マスク変更スキップ**: DLR INIT 有効時は `PfcWdLossyHandler` が storm 検知時の `getPortPfc` / `setPortPfc` をスキップする (`pfcactionhandler.cpp:548-552`)。代わりに `SAI_QUEUE_ATTR_PFC_DLR_INIT` を `true` / `false` で切り替える DLR ハンドラを使用する (`pfcactionhandler.cpp:230, 253, 273, 296`)。
+
+**Broadcom DLR なし** (通常構成): `PfcWdLossyHandler` が storm 検知時にハードウェア PFC マスクを変更する標準パスを使用する。
+
+### プラットフォーム別 COUNTERS_DB 書き込みまとめ
+
+| 条件 | COUNTERS_DB への影響 |
+|------|---------------------|
+| `platform` 未定義 | 初期化失敗 → 書き込みなし |
+| Cisco 8000 + `action=forward` | `task_invalid_entry` → 書き込みなし |
+| Broadcom + DLR + 複数ポートで `action` 不一致 | `task_invalid_entry` → 書き込みなし |
+| PFC lossless TC が未設定 (全プラットフォーム) | `registerInWdDb()` が空集合で return → 書き込みなし |
+| VS (仮想スイッチ) | 正常書き込みだが storm 検知は模擬実装 |
+| その他プラットフォーム | 標準フロー通りに書き込み |
+
+<!-- /platform -->
+
 ## 確認コマンド
 
 ```bash
