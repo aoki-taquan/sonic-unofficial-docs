@@ -323,6 +323,69 @@ sai_status = sai_scheduler_group_api->set_scheduler_group_attribute(group_id, &a
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### 購読方式: SubscriberStateTable + Keyspace Notification
+
+`QosOrch` は `Orch::addConsumer()` 経由で CONFIG_DB（DB 4）の `SCHEDULER` テーブルを **`SubscriberStateTable`** で購読する（`orchdaemon.cpp:384`, `orch.cpp:1186-1190`）。
+
+`SubscriberStateTable` はコンストラクタ内で Redis の **Keyspace Notification** チャネルを `PSUBSCRIBE` する:
+
+```
+PSUBSCRIBE __keyspace@4__:SCHEDULER|*
+```
+
+CONFIG_DB の `SCHEDULER|<name>` エントリに対して `SET` / `DEL` / `HSET` / `HDEL` 等の書き込みが発生すると、Redis が当該チャネルへ通知を発行する（`subscriberstatetable.cpp:20-24`）。
+
+| 項目 | 内容 |
+|------|------|
+| 購読 DB | CONFIG_DB（DB 4） |
+| チャネルパターン | `__keyspace@4__:SCHEDULER\|*` |
+| 購読クラス | `swss::SubscriberStateTable` |
+| 通知発火条件 | `SCHEDULER\|<name>` キーへの任意の書き込み操作（SET / DEL / HSET / HDEL 等） |
+
+### orchagent メインループ — epoll ベースの select
+
+`OrchDaemon::orchMain()` は `swss::Select`（Linux epoll ラッパー）に全 Orch のセレクタを登録し、`SELECT_TIMEOUT`（1000 ms）を指定して永続ループする（`orchdaemon.cpp:943-959`）:
+
+```cpp
+// orchdaemon.cpp:959
+ret = m_select->select(&s, SELECT_TIMEOUT);
+```
+
+Redis Keyspace Notification が到着すると epoll が wakeup し、対応する `SubscriberStateTable` がセレクタ `s` として返る。`OrchDaemon` は `s->execute()` → `Consumer::execute()` → `QosOrch::doTask(Consumer&)` → `handleSchedulerTable()` の呼び出しチェーンで処理する。
+
+### イベント到達タイムライン（SCHEDULER SET 時）
+
+```
+redis-server: SCHEDULER|scheduler.0 HSET (type=WRR weight=10)
+    ↓ Keyspace Notification 発行
+    PUBLISH __keyspace@4__:SCHEDULER|scheduler.0  hset
+        ↓
+orchagent SubscriberStateTable::readData() が pmessage を受信
+    ↓
+swss::Select::select() が epoll_wait() から wakeup
+    ↓
+OrchDaemon::orchMain() → Consumer::execute()
+    ↓
+QosOrch::doTask(Consumer&) → m_qos_handler_map["SCHEDULER"]
+    ↓
+QosOrch::handleSchedulerTable() → sai_scheduler_api->create_scheduler() / set_scheduler_attribute()
+    ↓
+ASIC_DB への SAI 書き込み
+```
+
+### 通知の遅延・バッチ処理
+
+- `SubscriberStateTable::pops()` は 1 回の readData() 呼び出しで複数の pmessage をバッファに積む（`subscriberstatetable.cpp:58-73`）。複数キーへの連続書き込みがあった場合、次の `select()` サイクルでまとめて処理される。
+- `SELECT_TIMEOUT`（1000 ms）以内にイベントがない場合は `TIMEOUT` を返し、`flush()` による SAI パイプラインのフラッシュを行う。タイムアウトは SCHEDULER 処理の遅延上限に影響しない（通常はイベント到着即時処理）。
+- `allPortsReady()` が `false` の間は `doTask()` の冒頭チェックでスキップされ、イベントは `m_toSync` に蓄積される（`qosorch.cpp:2258-2261`）。PortsOrch が全ポート初期化を完了した時点で再処理が走る。
+
+> **参照ソース**: `orchestagent/orchdaemon.cpp:384, 943-959`（メインループ・addConsumer）、`orchagent/orch.cpp:1186-1190`（addConsumer / SubscriberStateTable 選択）、`common/subscriberstatetable.cpp:17-24`（PSUBSCRIBE 発行）、`common/subscriberstatetable.cpp:45-73`（readData / バッファリング）
+
+<!-- /pubsub -->
+
 ## YANG-実装 Discrepancy まとめ
 
 | フィールド | YANG 定義 | qosorch 実装 | 分類 |
