@@ -423,6 +423,80 @@ STP_PORT テーブル処理
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-port-side-effects.md -->
+
+`stpmgrd` (`sonic-swss/cfgmgr/stpmgr.cpp`) は `STP_PORT` SET/DEL イベントを `doStpPortTask()` → `processStpPortAttr()` で処理する。
+CONFIG_DB 以外の永続ストレージ（STATE_DB / APPL_DB / ASIC_DB）への直接書き込みは発生しない。
+副次効果は **stpd への IPC 送信** と **内部フラグ `stpPortTask` の立て上げ** の 2 種類のみ。
+
+### 1. stpd への IPC 送信（STP_PORT_CONFIG メッセージ）
+
+`processStpPortAttr()` (`stpmgr.cpp:624`) の末尾:
+
+```cpp
+sendMsgStpd(STP_PORT_CONFIG, len, reinterpret_cast<void *>(msg));
+```
+
+| メッセージ型 | ソケットパス | 送信タイミング |
+|---|---|---|
+| `STP_PORT_CONFIG` | `/var/run/stpipc.sock` (STPD_SOCK_NAME) | SET/DEL いずれも calloc 成功後 |
+
+stpd への IPC 送信はベストエフォートで、`sendto()` 失敗時はエラーログのみで再送なし。
+CONFIG_DB エントリはすでに消費済みのため設定が永久消失する（Phase D 参照）。
+
+証跡: `stpmgr.cpp:519-628`
+
+---
+
+### 2. stpPortTask フラグの true 化（後段テーブルのゲート解除）
+
+`doStpPortTask()` (`stpmgr.cpp:637-638`):
+
+```cpp
+if (stpPortTask == false)
+    stpPortTask = true;
+```
+
+このフラグが立つことで後段テーブルの処理が解禁される:
+
+| 影響を受けるタスク | ガード参照箇所 | 解禁される処理 |
+|---|---|---|
+| `doStpVlanTask()` | `stpmgr.cpp:183` | `stpPortTask == false && !isStpPortEmpty()` の場合 defer → 解除 |
+| `doStpVlanPortTask()` | `stpmgr.cpp:448` | `stpPortTask == false` の場合 defer → 解除 |
+| `doStpMstInstPortTask()` | `stpmgr.cpp:1160` | `stpPortTask == false` の場合 defer → 解除 |
+
+`STP_PORT` の最初の SET/DEL 受信が `STP_VLAN`・`STP_VLAN_PORT`・`STP_MST_PORT` のゲートキーパーとして機能する。
+
+証跡: `stpmgr.cpp:637-638, 183, 448, 1160`
+
+---
+
+### STATE_DB の利用（読み取り専用）
+
+`stpmgrd` は STATE_DB を読み取りにのみ使用し、書き込みは行わない:
+
+| STATE_DB テーブル | 用途 | 参照箇所 |
+|---|---|---|
+| `STATE_VLAN_MEMBER_TABLE` | `getAllPortVlan()` — SET 処理時にポート所属 VLAN 一覧を取得 | `stpmgr.cpp:978-1025` |
+| `STATE_VLAN_TABLE` | `isVlanStateOk()` — VLAN ready 確認 | 各 task 関数 |
+| `STATE_LAG_TABLE` | `isLagStateOk()` — LAG ready 確認 | 各 task 関数 |
+| `STATE_STP_TABLE` | `getStpMaxInstances()` — MST 最大インスタンス数取得（60秒ポーリング） | MST 処理 |
+
+### 副次効果サマリ
+
+```
+STP_PORT SET/DEL
+  ├── sendMsgStpd(STP_PORT_CONFIG) → /var/run/stpipc.sock (stpd へ IPC)
+  └── stpPortTask = true          → STP_VLAN / STP_VLAN_PORT / STP_MST_PORT の defer 解除
+```
+
+CONFIG_DB 以外の永続 DB への書き込みは **発生しない**。
+
+<!-- /side-effects -->
+
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
 | # | 種別 | フィールド | 内容 |
