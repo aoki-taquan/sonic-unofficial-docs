@@ -256,6 +256,24 @@ Dell 等のベンダー向け gNMI/translib スタック（`sonic-mgmt-common` t
 > **Evidence**: `sonic-swss/orchagent/aclorch.cpp` 全体を `HARDWARE`・`COUNTER_MODE`・`LOOKUP_MODE`・`TCAM_SHARING`・`ACCESS_LIST` で grep → 0 件。`sonic-utilities`・`sonic-gnmi`（本番コード）でも同様 0 件。詳細は `meta/_intermediate/cdb-flow/hardware-side-effects.md` を参照。
 <!-- /side-effects -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: `HARDWARE|ACCESS_LIST` は community sonic-swss/orchagent が**購読しない dead consumer** のため、ASIC 種別・プラットフォーム文字列による挙動分岐は一切存在しない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Barefoot / Cisco-8000 等) | 影響なし | `orchagent/aclorch.cpp` 全体で `COUNTER_MODE` / `LOOKUP_MODE` / `TCAM_SHARING` の参照 0 件。SAI 非経由 |
+| multi-asic (`is_multi_npu()`) | 影響なし | HARDWARE テーブルを処理するプロセスが community コードに存在しないため、namespace 分割の影響を受けない |
+| VOQ chassis (supervisor + line cards) | 影響なし | 同上 |
+| プラットフォーム文字列 (`broadcom` / `mellanox` 等) による分岐 | なし | `aclorch.cpp` の `platform` / `sub_platform` による capability 判定は ACL_TABLE / ACL_RULE 処理経路にのみ存在し、HARDWARE テーブルの読み込みには到達しない |
+
+!!! note "testdata での複数 LOOKUP_MODE 値について"
+    sonic-gnmi/testdata には `advanced`・`LEGACY` が、sonic-mgmt-common/dbinit.py には `optimized` が観測されており、これらはプラットフォームまたはベンダー差を示唆する。しかし community orchagent はこれらの値を一切読み取らないため、**community コードパスでのプラットフォーム差は生じない**。ベンダー向け translib（sonic-mgmt-common transformer 層）での差異は community リポジトリ外のため本ページの対象外。
+
+詳細根拠は `meta/_intermediate/cdb-flow/hardware-platform.md` を参照。
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: sonic-net/sonic-gnmi `testdata/db_dump.json` @ eb635b7679b260c3fd0786a6d0734fc8e82c9a22
