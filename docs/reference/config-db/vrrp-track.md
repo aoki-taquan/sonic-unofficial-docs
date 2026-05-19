@@ -304,6 +304,45 @@ VRRP_TRACK priority_increment 変化
 > **Evidence**: `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` L219-232 (macvlanmgrd / vrrpsyncd / vrrporch の役割分担), L481-492 (Uplink interface tracking の設計)
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは **macvlanmgrd が単独で購読する**。`VRRP` テーブルとは異なり、VRRP_TRACK の変更は APPL_DB / ASIC_DB へ直接伝播しない。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-pubsub.md)。
+
+### 購読方式一覧
+
+| コンポーネント | コンテナ | 購読元 | 購読 API | 書き込み先 |
+|---|---|---|---|---|
+| `macvlanmgrd` | BGP | CONFIG_DB `VRRP_TRACK` / `VRRP6_TRACK` | `SubscriberStateTable` (keyspace) | FRR vrrpd (vtysh 経由、DB 書き込みなし) |
+
+### 通知フロー
+
+```
+CLI / YANG → CONFIG_DB HSET "VRRP_TRACK|<intf>|<vrid>|<track_intf>"
+  ↓ Redis keyspace PUBLISH "__keyspace@4__:VRRP_TRACK|<intf>|<vrid>|<track_intf>" "hset"
+macvlanmgrd SubscriberStateTable 受信 (BGP コンテナ)
+  ↓ vtysh コマンドで FRR vrrpd に track 設定投入
+vrrpd がインメモリの track 設定を更新 (DB 書き込みなし)
+  ↓ zebra からの netlink インタフェース状態変化通知と組み合わせて priority 再計算
+vrrpd が VRRP Advertisement パケット送信 (priority フィールド更新)
+```
+
+### macvlanmgrd — CONFIG_DB SubscriberStateTable
+
+`macvlanmgrd` は BGP コンテナ内で動作し、CONFIG_DB の `VRRP` / `VRRP6` / `VRRP_TRACK` / `VRRP6_TRACK` の全 4 テーブルを `SubscriberStateTable` で一括購読する。`VRRP_TRACK` 変更受信時は vtysh 経由で FRR `vrrpd` に track 設定を投入する。Linux カーネルへの netlink 書き込みや APPL_DB への書き込みは発生しない（HLD L219-225）。
+
+| 購読テーブル | PSUBSCRIBE パターン | 処理内容 |
+|---|---|---|
+| `VRRP_TRACK` | `__keyspace@4__:VRRP_TRACK\|*` | vtysh 経由で vrrpd に track 設定投入 |
+| `VRRP6_TRACK` | `__keyspace@4__:VRRP6_TRACK\|*` | vtysh 経由で vrrpd に track 設定投入 |
+
+### vrrpsyncd / vrrporch との関係
+
+`VRRP_TRACK` 変更は `vrrpsyncd` や `vrrporch` には**直接影響しない**。VRRP_TRACK 変更に起因する priority 再計算が VRRP 状態遷移（Master/Backup 切替）を引き起こした場合のみ、下流の `vrrpsyncd` → APPL_DB → `vrrporch` → ASIC_DB チェーンが間接的に動作する（詳細は副次 DB 書込セクション参照）。
+
+> **Evidence**: HLD L219-225 (macvlanmgrd の役割)、HLD L461-492 (Modules Design and Flows)、HLD L268 (Consumer: macvlanmgrd)
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: `sonic-utilities/config/main.py` (`add_track_interface()` L6993-7040, `remove_track_interface()` L7045-7077); `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` (CONFIG_DB changes L308-315, Uplink interface tracking L481-492); `SONiC/doc/vrrp/sonic-vrrp.yang` (VRRP_TRACK container L136-177). <https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py>
