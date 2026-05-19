@@ -365,6 +365,59 @@ Consumer: `SwitchOrch::doCfgSuppressAsicSdkHealthEventTableTask()` (`orchagent/s
 `registerAsicSdkHealthEventCategories()` は `void` 関数であり、SAI 失敗時に呼び出し元へ `false` を返さない。このため `doCfgSuppressAsicSdkHealthEventTableTask()` は SAI 設定成否に関わらずエントリを `erase(it)` で消費し、次のエントリへ進む（`switchorch.cpp:1489`）。SAI 登録失敗が発生しても orchagent 内の `m_supportedAsicSdkHealthEventAttributes` は変化せず、**その severity の health event フィルタが意図通り設定されない状態が永続する**。復旧には当該エントリを再投入（DEL → SET）するか orchagent を再起動する必要がある。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`SUPPRESS_ASIC_SDK_HEALTH_EVENT` テーブルの処理で使われる、CONFIG_DB / YANG では管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/switchorch.cpp` と `sonic-swss-common/common/schema.h`。
+
+### テーブル名マクロ
+
+| マクロ | 値 | evidence |
+|--------|----|----------|
+| `CFG_SUPPRESS_ASIC_SDK_HEALTH_EVENT_NAME` | `"SUPPRESS_ASIC_SDK_HEALTH_EVENT"` | `schema.h:394` |
+
+### severity キー → SAI 属性マッピング
+
+`switch_asic_sdk_health_event_severity_to_switch_attribute_map`（`switchorch.cpp:71-76`）で固定。YANG `leaf-list` の allowed values と一致する。
+
+| CONFIG_DB キー (severity) | 対応 SAI 属性 |
+|--------------------------|--------------|
+| `"fatal"` | `SAI_SWITCH_ATTR_REG_FATAL_SWITCH_ASIC_SDK_HEALTH_CATEGORY` |
+| `"warning"` | `SAI_SWITCH_ATTR_REG_WARNING_SWITCH_ASIC_SDK_HEALTH_CATEGORY` |
+| `"notice"` | `SAI_SWITCH_ATTR_REG_NOTICE_SWITCH_ASIC_SDK_HEALTH_CATEGORY` |
+
+これ以外の severity 文字列は `std::out_of_range` → `SWSS_LOG_ERROR("Unknown severity %s in SUPPRESS_ASIC_SDK_HEALTH_EVENT table", ...)` でエントリを消費・スキップ（`switchorch.cpp:1435-1440`）。
+
+### `categories` フィールド値 → SAI カテゴリ定数
+
+`switch_asic_sdk_health_event_category_map`（`switchorch.cpp:93-100`）で固定。
+
+| CONFIG_DB 値 | 対応 SAI 定数 |
+|-------------|-------------|
+| `"software"` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_SW` |
+| `"firmware"` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_FW` |
+| `"cpu_hw"` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_CPU_HW` |
+| `"asic_hw"` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_ASIC_HW` |
+
+不明文字列は `SWSS_LOG_ERROR("Unknown ASIC/SDK health category %s to suppress", ...)` + `continue`（`switchorch.cpp:1384`）。
+
+### デフォルト登録カテゴリセット (categories 未指定時)
+
+`switch_asic_sdk_health_event_category_universal_set` = {SW, FW, CPU_HW, ASIC_HW} 全 4 カテゴリ（`switchorch.cpp:101-106`）。`categories` フィールドが空または未指定の場合、全カテゴリが SAI 登録対象になる（抑制なし）。
+
+### categories フィールドのセパレータ
+
+`tokenize(suppressed_category_list, ',')` によるカンマ区切り（`switchorch.cpp:1375`）。スペースのストリップは行われないため、`"software, firmware"` のようにスペースを含めると不明カテゴリとして `SWSS_LOG_ERROR` が発生する。
+
+### SAI 対応確認に使われる属性定数
+
+| 属性 | 用途 | evidence |
+|------|------|----------|
+| `SAI_SWITCH_ATTR_SWITCH_ASIC_SDK_HEALTH_EVENT_NOTIFY` | ASIC SDK health event 機能の対応有無をクエリ | `switchorch.cpp:218` |
+
+詳細根拠は `meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-constants.md` を参照。
+<!-- /constants -->
+
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
