@@ -215,6 +215,57 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp` L712-740, L817-926, L1272-1280; `sonic-swss/neighsyncd/neighsync.cpp` L193-243; `sonic-utilities/config/main.py` L9451-9484
+> 調査日: 2026-05-19
+
+### フィールド名・値文字列リテラル
+
+| 種別 | 値 | 用途 | ソース |
+|------|-----|------|--------|
+| フィールド名 | `"ipv6_use_link_local_only"` | CONFIG_DB フィールド名。`intfmgr.cpp` が parse し APP_DB fvTuple に転送。`neighsync.cpp` が検索キーとして使用。CLI が `mod_entry` / `get_entry` に指定 | intfmgr.cpp:817,926; neighsync.cpp:227; config/main.py:9453 |
+| 有効値 | `"enable"` | link-local 有効化値。`== "enable"` リテラル比較で判定 | intfmgr.cpp:915; neighsync.cpp:230; config/main.py:9461 |
+| 無効値 | `"disable"` | link-local 無効化値。YANG `default disable` と一致 | intfmgr.cpp:920; config/main.py:9482 |
+
+### インターフェース名プレフィクス (neighsync.cpp:197-222)
+
+`isLinkLocalEnabled()` はインターフェース名プレフィクスで参照先 CONFIG_DB テーブルを振り分ける。
+
+| プレフィクス文字列 | 参照テーブル | サポート状況 |
+|---|---|---|
+| `"Vlan"` | `VLAN_INTERFACE` | supported |
+| `"PortChannel"` | `PORTCHANNEL_INTERFACE` | supported |
+| `"Ethernet"` | `INTERFACE` | supported |
+| 上記以外 (`eth0`, `lo`, `docker0` 等) | — | **non-supported → `false` 返却** |
+
+プレフィクス比較は `std::string::compare(0, strlen("<prefix>"), "<prefix>")` のリテラルマッチ。サブインターフェース (`Ethernet0.10`) は `"Ethernet"` にマッチするため `INTERFACE` テーブルを参照する。
+
+### アドレス判定定数 (intfmgr.cpp:727)
+
+`delIpv6LinkLocalNeigh()` は `IpAddress::AddrScope::LINK_SCOPE` で近傍エントリが link-local (FE80::/10) か判定する。このスコープ定数は `swsscommon` の `IpAddress` クラスで定義されており、`ip neigh del` 対象を link-local のみに限定する。
+
+### sysctl キー (intfmgr.cpp:1276)
+
+`enableIpv6Flag()` はインターフェースの IPv6 を有効化する際に以下の sysctl を実行する。
+
+| sysctl パラメータ | 設定値 | 用途 |
+|---|---|---|
+| `net.ipv6.conf.<alias>.disable_ipv6` | `0` | IPv6 無効状態のインターフェースを再有効化 |
+
+パラメータ名はコードに直接リテラルとして埋め込まれている（CONFIG_DB / YANG 管理外）。
+
+### YANG スキーマ定数
+
+| 定数 | 値 | ソース |
+|------|-----|--------|
+| `default` | `disable` | `sonic-interface.yang:99` |
+| 型 | `stypes:mode-status` = `enum enable \| enum disable` | `sonic-types.yang` |
+
+詳細は `meta/_intermediate/cdb-flow/ipv6-link-local-constants.md` を参照。
+<!-- /constants -->
+
 ## 購読者
 
 | コンポーネント | 役割 | テーブル |
