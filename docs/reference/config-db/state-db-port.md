@@ -272,6 +272,48 @@ YANG/スキーマ定義外の fallback。`linksync.cpp` および `portsorch.cpp
 
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 証跡: `meta/_intermediate/cdb-flow/state-db-port-ordering.md`
+
+### portsyncd (linksync.cpp) 定義定数
+
+| 定数 | 値 | 定義ファイル | 用途 |
+|------|----|------------|------|
+| `INTFS_PREFIX` | `"Ethernet"` | `linksync.cpp:30` | フロントパネルポートのプレフィックス判定。RTM_NEWLINK 受信時にこのプレフィックスを持たないキーは処理対象から除外される |
+| `LAG_PREFIX` | `"PortChannel"` | `linksync.cpp:31` | LAG インタフェースのプレフィックス判定。LAG も STATE_DB PORT_TABLE 対象 |
+| `VLAN_DRV_NAME` | `"bridge"` | `linksync.cpp:27` | VLAN インタフェースのカーネルドライバ名。このドライバ名を持つ RTM_NEWLINK は `m_isBridgePort` フラグ処理に使われる |
+| `TEAM_DRV_NAME` | `"team"` | `linksync.cpp:28` | LAG 判定用ドライバ名。`type == "team"` の場合 LAG として処理 |
+
+### PortsOrch (portsorch.cpp) 定義定数
+
+| 定数 | 値 | 定義ファイル | 用途 |
+|------|----|------------|------|
+| `DEFAULT_SYSTEM_PORT_MTU` | `9100` | `portsorch.cpp:79` | VoQ / DistributedEthternet システムポートの初期 MTU。CONFIG_DB 設定に関わらずこの値が適用される |
+| `PORT_STATE_POLLING_SEC` | `5` 秒 | `portsorch.cpp:86` | ポート oper 状態のポーリング間隔。`port_state_change` 通知が届かなかった場合の補完ポーリング周期 |
+| `PORT_SPEED_LIST_DEFAULT_SIZE` | `16` | `portsorch.cpp:85` | `getPortSupportedSpeeds()` の SAI 取得バッファ初期サイズ。SAI が 16 種超の速度を返した場合バッファを拡張して再取得 |
+| `DEFAULT_HOSTIF_TX_QUEUE` | `7` | `portsorch.cpp:83` | HostIf （CPU ポート）の TX キュー番号デフォルト値。最高優先度キュー |
+
+### ポーリング間隔定数（FLEX_COUNTER_DB 書き込み値）
+
+以下の定数は FLEX_COUNTER_DB 経由で syncd へ伝達され、カウンタポーリング動作を決定する（`portsorch.cpp:87-93`）。YANG の `poll_interval` 制約（100〜4294967295 ms）の対象外。
+
+| 定数 | 値 | 対象グループ |
+|------|----|------------|
+| `PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `1000` ms | `PORT`・`WRED_ECN_PORT` |
+| `PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS` | `60000` ms | `PORT_BUFFER_DROP` |
+| `PORT_PHY_ATTR_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | `PORT_PHY_ATTR` |
+| `QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | `QUEUE`・`WRED_ECN_QUEUE` |
+| `QUEUE_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `60000` ms | `QUEUE_WATERMARK` |
+| `PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `60000` ms | `PG_WATERMARK` |
+| `PG_DROP_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | `PG_DROP` |
+
+!!! note "CONFIG_DB による上書き"
+    上記定数は起動時に FLEX_COUNTER_DB に書き込まれる初期値。`counterpoll interval` コマンドで CONFIG_DB `FLEX_COUNTER_TABLE.<group>.POLL_INTERVAL` を設定すると後から上書き可能。`counterpoll show` が表示する値と起動直後の実挙動が異なる場合があるのはこのため。
+
+<!-- /constants -->
+
 ## 購読者（consumer）
 
 | プロセス | 参照フィールド | 用途 |
