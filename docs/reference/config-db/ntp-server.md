@@ -260,6 +260,41 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`NTP_SERVER` テーブルの変更を受けた `hostcfgd` の `NtpCfg` ハンドラは、**CONFIG_DB 以外のいかなる DB にも書き込みを行わない**。副作用はすべてホスト OS ファイルシステムの変更とサービス再起動に閉じる。
+
+### DB 書込み有無
+
+| DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | **なし** | `NtpCfg.ntp_srv_key_update()` に ProducerTable / Table.set() 呼び出しが 0 件 (`hostcfgd:1366-1406`) |
+| STATE_DB | **なし** | `NtpCfg` クラスは `state_db_conn` を保持せず STATE_DB に一切アクセスしない (`hostcfgd:1272-1407`) |
+| COUNTERS_DB | **なし** | NTP はデータプレーン統計を持たない。`hostcfgd` 全体に COUNTERS_DB 書き込みなし |
+| ASIC_DB | **なし** | SAI 非経由。NTP は CPU 側でのみ処理され、ASIC プログラムは発生しない |
+| FLEX_COUNTER_DB | **なし** | FlexCounter 不使用 |
+
+### ホスト OS への副次作用
+
+| 副次作用 | トリガー | 対象 | 証拠 |
+|---|---|---|---|
+| `chrony.conf.j2` テンプレート再生成 | `NTP_SERVER` SET / DEL | `/etc/chrony/chrony.conf` — サーバエントリの追加・削除 | `hostcfgd:1397-1398; chrony.conf.j2` |
+| `chrony.keys.j2` テンプレート再生成 | `NTP_KEY` が同時に取得される（NTP_SERVER 変更のたびに全 NTP_KEY も合算処理） | `/etc/chrony/chrony.keys` — 認証鍵エントリの更新 | `hostcfgd:1398; chrony.keys.j2` |
+| `systemctl restart chrony` 実行 | `NTP_SERVER` が前回キャッシュと差分あり | `chrony` デーモン再起動 → NTP 同期一時中断 | `hostcfgd:1280,1398` |
+| iptables / ip6tables ルール更新 | **NTP_SERVER 変更では発火しない** — `caclmgrd` は `FEATURE` テーブルと `MGMT_INTERFACE` を購読するが `NTP_SERVER` を直接監視しない | — | `caclmgrd:96-100,281,1166` |
+
+!!! warning "NTP_SERVER 変更 = 一時的な NTP 同期断"
+    `NTP_SERVER` テーブルへのいかなる変更（サーバ追加・削除・フィールド更新）も `systemctl restart chrony` をトリガーする。再起動中は NTP 同期が中断し、chrony が新しいサーバへの時刻問い合わせを再開するまで数十秒〜数分の空白が生じる。ピーク時間帯の変更は避けることを推奨。
+
+### キャッシュ更新の副次的性質
+
+`ntp_srv_key_update()` は `systemctl restart chrony` が成功した場合のみ `self.cache['servers']` / `self.cache['keys']` を更新する (`hostcfgd:1404-1406`)。chrony 再起動失敗時はキャッシュが古い状態のままとなり、次回の `NTP_SERVER` / `NTP_KEY` 変更イベントで差分が残るため自動再処理が保証される設計となっている。
+
+> **コード証跡**: `hostcfgd:1272-1407` (`NtpCfg` クラス全体)、`caclmgrd:96-100` (NTP ACL サービス定義)。全行精読で STATE_DB / APPL_DB / COUNTERS_DB への書き込みが 0 件であることを確認。
+
+<!-- /side-effects -->
+
 ## 関連サブテーブル
 
 - `NTP|global` (container, single-instance):
