@@ -314,4 +314,53 @@ show fips status
 -->
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`hostcfgd` の `FipsCfg` クラスが使用するハードコード定数の一覧。これらは CONFIG_DB / YANG で変更できず、ソースコード上に直接埋め込まれている。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L100-108 -->
+
+### ファイルパス定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `FIPS_CONFIG_FILE` | `/etc/sonic/fips.json` | 再起動対象サービスリスト (`restart_services`) を上書きするオプション設定ファイルのパス。存在しない場合は `DEFAULT_FIPS_RESTART_SERVICES` を使用 | hostcfgd L101 |
+| `OPENSSL_FIPS_CONFIG_FILE` | `/etc/fips/fips_enable` | OpenSSL FIPS モード有効化フラグを保持するファイルのパス。値 `"0"` / `"1"` で制御。ディレクトリが存在しない場合は `os.makedirs` で自動作成 | hostcfgd L102 |
+| `PROC_CMDLINE` | `/proc/cmdline` | 現行 kernel の FIPS enforce 状態を確認するための読み取り専用ファイル。`sonic_fips=1` または `fips=1` の有無で `cur_enforced` を判定 | hostcfgd L108 |
+
+### サービス再起動デフォルトリスト
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `DEFAULT_FIPS_RESTART_SERVICES` | `['ssh', 'telemetry.service', 'restapi']` | FIPS 設定変更時に再起動する systemd unit のデフォルトリスト。`/etc/sonic/fips.json` が存在する場合はその `restart_services` キーの値で上書きされる | hostcfgd L103 |
+
+### OpenSSL FIPS ファイル値リテラル
+
+| リテラル | 値 | 用途 | ソース |
+|----------|----|------|--------|
+| FIPS 無効値 | `"0"` | `/etc/fips/fips_enable` に書き込む FIPS 無効化値 | hostcfgd L1801 |
+| FIPS 有効値 | `"1"` | `/etc/fips/fips_enable` に書き込む FIPS 有効化値 | hostcfgd L1803 |
+
+### kernel コマンドライン検出文字列
+
+| リテラル | 用途 | ソース |
+|----------|------|--------|
+| `'sonic_fips=1'` | SONiC 独自の FIPS enforce カーネルパラメータ。`/proc/cmdline` 中に存在する場合 `cur_enforced=True` と判定 | hostcfgd L1773 |
+| `'fips=1'` | 汎用 Linux FIPS カーネルパラメータ（RHEL 系互換）。上記と OR で判定 | hostcfgd L1773 |
+
+### STATE_DB キー / フィールドリテラル
+
+| リテラル | 用途 | ソース |
+|----------|------|--------|
+| `'FIPS_STATS\|state'` | STATE_DB への設定変更タイムスタンプ記録先キー | hostcfgd L1792, L1821 |
+| `'config_datetime'` | タイムスタンプフィールド名。`datetime.utcnow().isoformat()` を書き込む。`restart()` がこの値と `/etc/fips/fips_enable` の mtime を比較して二重再起動を防止 | hostcfgd L1792, L1821 |
+
+### 注記
+
+- `RESTART_SERVICES_KEY` は `hostcfgd:1769` で参照されているが、同ファイル内に定義が見当たらない（`conf.get(RESTART_SERVICES_KEY, [])` の形で使われている）。実行時に `NameError` を引き起こす潜在的バグと思われる。`DEFAULT_FIPS_RESTART_SERVICES` がフォールバックとなっているため、`/etc/sonic/fips.json` が存在しない通常環境では影響しない。
+- STATE_DB キー `FIPS_STATS|state` は YANG に定義がなく、`hostcfgd` が直接 `state_db_conn.hset()` / `hget()` で操作する。他コンポーネントからの読み取りは `show fips status` 相当のコマンドが行う。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
