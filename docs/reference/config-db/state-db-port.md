@@ -236,6 +236,30 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 > 中間調査詳細: `meta/_intermediate/cdb-flow/state-db-port-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+以下の定数は `sonic-swss/orchagent/portsorch.cpp`、`sonic-swss/orchagent/portsorch.h`、`sonic-swss/portsyncd/linksync.cpp` から検出したマジックナンバー・閾値。いずれも CONFIG_DB では変更不可のハードコード値。
+
+| 定数 / マジック値 | 値 | 定義場所 | 意味・影響 |
+|------------------|-----|----------|-----------|
+| `PORT_STATE_POLLING_SEC` | `5` | `portsorch.cpp:86` | `m_port_state_poller` の SelectableTimer 周期 [秒]。SAI イベント通知が失敗した場合に `refreshPortStatus()` がポート oper 状態を最大 5 秒遅れで STATE_DB に書き込む |
+| `PORT_SPEED_LIST_DEFAULT_SIZE` | `16` | `portsorch.cpp:85` | `getPortSupportedSpeeds()` の SAI クエリ用 vector 初期サイズ。サポート速度数が 16 を超える場合は SAI が `SAI_STATUS_BUFFER_OVERFLOW` を返し、vector が自動リサイズされる |
+| `MAX_MACSEC_SECTAG_SIZE` | `32` | `portsorch.h:28` | MACsec SecTAG ヘッダのバイトサイズ。`setPortMtu()` 内で MACsec 有効時の SAI MTU 設定値を `requested_mtu - 32` で算出するため、MACsec 環境では STATE_DB `mtu` フィールドがカーネル設定値より 32 大きくなる可能性がある (`portsorch.cpp:6756-6759`) |
+| `"ok"` | 文字列リテラル | `linksync.cpp:196` | `state` フィールドの固定値。RTM\_NEWLINK 受信時に必ずこの値が書き込まれ、`"error"` 等の他の値はコードに存在しない |
+| `"N/A"` | 文字列リテラル | `portsorch.cpp:9855, 9919, 3292` | `speed` / `fec` / `supported_fecs` のフォールバック文字列。SAI 取得失敗・変換不可時にフィールド不在ではなく `"N/A"` 文字列として書き込まれる |
+| `"false"` | 文字列リテラル | `portsorch.cpp:2203, 2274` | `host_tx_ready` の初期値。`initHostTxReadyState()` でフィールド未設定時、および admin DOWN / Gearbox 失敗時に書き込まれる |
+| `"off"` | 文字列リテラル | `portsorch.cpp:11351` | `link_training_status` のローカル変数初期値。LT が無効または SAI 取得不可の場合に書き込まれる |
+
+!!! note "PORT_STATE_POLLING_SEC の影響"
+    SAI event-driven 通知（`port_state_change` コールバック）が正常に機能している間はポーリングの影響は小さい。ただし通知が欠落した場合、STATE_DB の `speed` / `fec` 更新は最大 5 秒遅延する。consumer が即時性を要求する場合は通知ベースのパス（`SubscriberStateTable` など）を利用すること。
+
+!!! note "MACsec 環境での `mtu` 乖離"
+    MACsec が有効なポートでは、orchagent が SAI に設定する MTU は `CONFIG_DB PORT.mtu - 32` になる。一方 STATE_DB `PORT_TABLE.mtu` は `portsyncd` がカーネル netdev の MTU を直接読み出す。カーネル側 MTU を MACsec を考慮した値に設定している場合、STATE_DB 値と CONFIG_DB 設定値が一致しないことがある。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/state-db-port-constants.md`
+<!-- /constants -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト（Phase A — コード由来）
 
