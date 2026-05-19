@@ -241,6 +241,74 @@ bootstrap 時に生成されるすべてのエンティティ (Cert / TrustBundl
 -->
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`SECURITY_PROFILES` / `SECURITY_GLOBAL` の失敗経路は **CVL バリデーション層** と **gNSI Certz RPC 層** の 2 つに分かれる。community master ではこれらのテーブルを消費する orchagent/translib ハンドラが未実装のため、CONFIG_DB 書き込み時の失敗は CVL のみが制御する。
+
+### CVL バリデーション失敗
+
+#### SET 時
+
+| 操作 | 失敗条件 | CVL エラーコード | ErrAppTag |
+|------|---------|-----------------|-----------|
+| `SECURITY_GLOBAL\|global security_profile=X` 書き込み | `SECURITY_PROFILES\|X` が存在しない | `CVL_SEMANTIC_ERROR` | `invalid-value` (leafref 違反) |
+
+#### DEL 時
+
+| 操作 | 失敗条件 | CVL エラーコード | ErrAppTag |
+|------|---------|-----------------|-----------|
+| `SECURITY_PROFILES\|X` 削除 | `SECURITY_GLOBAL\|global.security_profile=X` が参照中 | `CVL_SEMANTIC_ERROR` | `instance-in-use` |
+
+CVL エラーは呼び出し元 (`sonic-configd` / `translib`) に返却され、CONFIG_DB への書き込みは行われない。`cvl_test.go:2506-2537` の `TestValidateEditConfig_Delete_Dep_Leafref_singleton` が `instance-in-use` エラーを確認している。
+
+### gNSI Certz Rotate RPC 失敗
+
+`certz.Rotate` は双方向 streaming RPC であり、失敗時は `revertProfile()` を呼んで変更をロールバックする。
+
+| 失敗ケース | gRPC ステータスコード | `revertProfile` 呼出し |
+|-----------|---------------------|----------------------|
+| 並行 Rotate 試行 (`certzMu.TryLock()` 失敗) | `codes.Aborted` — "concurrent certz.Rotate RPCs are not allowed" | 不要（未着手） |
+| ストリーム途中で EOF (Finalize なし) | `codes.Aborted` — "No Finalize message" | あり |
+| ストリーム recv エラー | `codes.Aborted` — "Stream recv err: ..." | あり |
+| `processRotateRequest` 失敗 | `codes.Aborted` — "Process err: ..." | あり |
+| `finalizeProfile` 失敗 | `codes.Unknown` — "Failed to remove the old credentials: ..." | — |
+
+`revertProfile` はロールバック処理を行うが、**gNSI Certz プロセスがクラッシュした場合**（`writeEntityFreshness` ループの途中）は、一部エンティティのフレッシュネスのみが STATE_DB に書き込まれた中間状態が残りうる。CONFIG_DB は無影響。
+
+### Upload 内バリデーション失敗 (doUpload)
+
+| 失敗ケース | gRPC ステータスコード |
+|-----------|---------------------|
+| `entities` が空 | `codes.InvalidArgument` — "entity cannot be empty" |
+| `created_on == 0` | `codes.InvalidArgument` — "created_on cannot be empty" |
+| `version` が空文字 | `codes.InvalidArgument` — "version cannot be empty" |
+| CRL エンティティ & `CertCRLConfig` 未設定 | `codes.Aborted` — "CRL not configured" |
+| エンティティ型が不明 | `codes.Internal` — "failed to find entity type: ..." |
+| `saveEntities` 失敗 (ファイル書き込みエラー等) | `codes.Aborted` — "Entity save err: ..." |
+| `activateEntity` 失敗 | `codes.Aborted` — "Entity activate err: ..." |
+
+### 未実装 RPC (Unimplemented)
+
+| RPC | gRPC ステータスコード |
+|-----|---------------------|
+| `AddProfile` | `codes.Unimplemented` — "method AddProfile not implemented" |
+| `DeleteProfile` | `codes.Unimplemented` — "method DeleteProfile not implemented" |
+| `GetProfileList` | `codes.Unimplemented` — "method GetProfileList not implemented" |
+
+<!-- evidence:
+  sonic-mgmt-common/cvl/cvl_test.go:2506-2537 — TestValidateEditConfig_Delete_Dep_Leafref_singleton (instance-in-use)
+  sonic-mgmt-common/cvl/testdata/schema/sonic-security-global.yang:29-35 — security_profile leafref (invalid-value on missing ref)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:232-235 — certzMu.TryLock() → codes.Aborted (concurrent Rotate)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:247-254 — EOF/recv-error → revertProfile → codes.Aborted
+  sonic-gnmi/gnmi_server/gnsi_certz.go:260-262 — finalizeProfile 失敗 → codes.Unknown
+  sonic-gnmi/gnmi_server/gnsi_certz.go:274-276 — processRotateRequest 失敗 → revertProfile → codes.Aborted
+  sonic-gnmi/gnmi_server/gnsi_certz.go:385-427 — doUpload バリデーション (entity/created_on/version/CRL/save/activate)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:163-169 — AddProfile/DeleteProfile/GetProfileList → codes.Unimplemented
+  sonic-gnmi/gnmi_server/gnsi_certz.go:134-138 — writeEntityFreshness 途中クラッシュで STATE_DB 中間状態残存リスク
+-->
+<!-- /failure -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: [`GNMI`](gnmi.md) (`GNMI|certs` で証明書パスを設定), [`TELEMETRY`](telemetry.md)
