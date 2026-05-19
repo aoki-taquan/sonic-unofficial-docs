@@ -544,6 +544,61 @@ queuestat
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/orchagent/portsorch.cpp` (ref:4305596156d7)
+> 詳細証跡: `meta/_intermediate/cdb-flow/queue-counter-platform.md`
+
+COUNTERS_DB QUEUE カウンタのフィールドセット・マッピングテーブル・ポーリング対象は、スイッチタイプ（`gMySwitchType`）と ASIC の SAI ケイパビリティによって変化する。
+
+### VOQ シャーシ — `voq_stat_ids` の追加と `COUNTERS_VOQ_NAME_MAP`
+
+`gMySwitchType == "voq"` の構成では通常 BOX スイッチと以下が異なる:
+
+| 差分 | VOQ シャーシ | 通常 BOX |
+|------|------------|--------|
+| Credit WD カウンタ | `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が `COUNTER_ID_LIST` に追加 | 含まれない |
+| キュー名 → OID マップ | `COUNTERS_VOQ_NAME_MAP` (`m_voqTable`) に書き込み | `COUNTERS_QUEUE_NAME_MAP` |
+| カウンタ有効化 | VoQ カウンタは `isQueueCounterEnabled()` を **バイパス**、常時有効 | `BUFFER_QUEUE` 設定が必要 |
+| `Port::SYSTEM` ポート | VoQ システムポートとして存在、全 egress queue を対象に登録 | 存在しない |
+
+ポーリング登録 (portsorch.cpp:8484) のコード:
+
+```cpp
+// gMySwitchType != "voq" の場合のみカウンタ有効フラグをチェック
+if ((gMySwitchType != "voq") && !queuesState.isQueueCounterEnabled(queueRealIndex))
+{
+    continue;
+}
+```
+
+### WRED ケイパビリティ — ASIC 依存の動的検出
+
+`initCounterCapabilities()` (portsorch.cpp:1850-1921) が起動時に `sai_query_stats_capability(switchId, SAI_OBJECT_TYPE_QUEUE, ...)` を呼び、ASIC の WRED 統計サポートを STATE_DB `QUEUE_COUNTER_CAPABILITIES` テーブルへ書き込む:
+
+| ASIC ケイパビリティ | `COUNTERS:<oid>` の WRED フィールド | `QUEUE_COUNTER_CAPABILITIES` |
+|-------------------|-----------------------------------|-----------------------------|
+| SAI クエリ成功 + サポートあり | `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` 等が書き込まれる | `isSupported=true` |
+| SAI クエリ成功 + 非サポート | フィールドが `COUNTER_ID_LIST` に含まれない（silent 非追加） | `isSupported=false` |
+| SAI クエリ失敗 | 全 WRED フラグが `false`、WRED カウンタはポーリングされない | `isSupported=false` (全件) |
+
+`counterpoll wred-ecn-queue enable` / `wredstat` は `QUEUE_COUNTER_CAPABILITIES` を参照して表示・操作対象を決定する。
+
+### DPU — キュー ID 未初期化
+
+`gMySwitchType == "dpu"` では `postPortInit()` が `initializePortBufferMaximumParameters()` をスキップし、一部プラットフォームではキュー ID (`port.m_queue_ids`) が初期化されない (portsorch.cpp:6449-6455 コメント参照)。キュー ID が空のポートでは `addQueueFlexCountersPerPortPerQueueIndex()` が実質的に何も登録しない。
+
+### Packet Trimming フィールド — 全 ASIC で COUNTER_ID_LIST に含まれる
+
+`SAI_QUEUE_STAT_TRIM_PACKETS` / `SAI_QUEUE_STAT_DROPPED_TRIM_PACKETS` / `SAI_QUEUE_STAT_TX_TRIM_PACKETS` は Trimming 機能の有効・無効に関わらず `queue_stat_ids` (portsorch.cpp:389-398) に静的に含まれる。Trimming 非対応 ASIC では `COUNTERS:<oid>` の値は `0` または `N/A` となる。
+
+### フィールドセット・テーブル名自体はプラットフォーム共通
+
+`queue_stat_ids`（Trimming フィールドを含む 7 項目）・`queueWatermarkStatIds`（1 項目）の定義、`COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_QUEUE_PORT_MAP` / `COUNTERS_QUEUE_INDEX_MAP` / `COUNTERS_QUEUE_TYPE_MAP` のテーブル名・フィールド名・DB 番号（2）はすべて VOQ 以外のプラットフォームで共通。ASIC SDK の SAI 実装差異は `COUNTERS:<oid>` の個別フィールド値に現れるが、テーブル構造自体は変化しない。
+
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
