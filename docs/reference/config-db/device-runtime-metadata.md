@@ -432,4 +432,36 @@ ASIC 番号の起点 `"0"` がハードコードされており、ASIC 1 以降�
 `featured` / `sysmonitor.py` はいずれも SAI 非経由であり、APPL_DB / ASIC_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き込みは一切発生しない。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `sonic-host-services/scripts/featured:137-145,193-196`; `sonic-buildimage/src/system-health/health_checker/sysmonitor.py:217-226`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:67,75,90,106-107` 精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/device-runtime-metadata-pubsub.md`
+
+`DEVICE_RUNTIME_METADATA` は Redis に永続化されない **仮想テーブル** であり、`device_info.get_device_runtime_metadata()` 呼び出しによってインメモリで生成される。このため Redis keyspace notification (`PSUBSCRIBE`) や `SubscriberStateTable` / `ConsumerStateTable` による subscribe は **一切存在しない**。
+
+### Redis pub/sub の不在
+
+| 購読方式 | 採用有無 | 理由 |
+|---------|---------|------|
+| `SubscriberStateTable` (C++ swss) | なし | テーブルが Redis に存在しないため不可 |
+| `ConsumerStateTable` / `Orch` | なし | 同上 |
+| `ConfigDBConnector.subscribe()` (Python) | なし | 同上 |
+| keyspace 通知 (PSUBSCRIBE) | なし | Redis に書き込まれないためイベントが発生しない |
+
+### Consumer の取得パターン
+
+すべての consumer が `device_info.get_device_runtime_metadata()` の **直接関数呼び出し**でデータを取得する。
+
+| consumer | 取得タイミング | 格納先 | evidence |
+|---------|--------------|--------|---------|
+| `featured` (`FeatureHandler.__init__`) | デーモン起動時 1 回のみ | `self._device_running_config` インスタンス変数 | `featured:145` |
+| `sysmonitor.py` (`get_service_from_feature_table`) | `config reload` 等の CONFIG_DB FEATURE 変化検知時に都度 | ローカル変数 `device_config` | `sysmonitor.py:220` |
+| `sonic-cfggen` / `init_cfg.json.j2` | システム起動時テンプレートレンダリング (1 回限り) | Jinja2 変数辞書 | `init_cfg.json.j2:67,75,90,106-107` |
+
+### runtime 変更通知の非サポート
+
+`DEVICE_RUNTIME_METADATA` の値はシステム起動時に決定するハードウェア由来の静的メタデータ（プラットフォーム種別・ポート設定ファイルの有無・MACsec 対応）であり、実行中に変化しないことを前提とした設計になっている。`featured` はデーモン起動時に取得した `_device_running_config` を再取得・更新する仕組みを持たないため、起動後にプラットフォームのメタデータが変化した場合は `featured` の再起動が必要となる。
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: e33fec70e206 -->
