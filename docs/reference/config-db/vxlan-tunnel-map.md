@@ -297,6 +297,64 @@ HW にマッピング実体が存在しない状態となる。後続の `delOpe
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-pubsub.md; sonic-swss/cfgmgr/vxlanmgrd.cpp; sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-swss/orchagent/vxlanorch.cpp -->
+
+`VXLAN_TUNNEL_MAP` テーブルは **vxlanmgrd → APPL_DB → orchagent** の 2 段階パイプラインで処理される。
+
+### 購読チャンネル一覧
+
+| 購読者 | DB | テーブル名 | API 種別 | ハンドラ |
+|--------|-----|----------|---------|---------|
+| `vxlanmgrd` (VxlanMgr) | CONFIG_DB (dbId=4) | `VXLAN_TUNNEL_MAP` | ConsumerStateTable (Orch 継承) | `doVxlanTunnelMapCreateTask` / `doVxlanTunnelMapDeleteTask` |
+| orchagent (VxlanTunnelMapOrch) | APPL_DB (dbId=0) | `APP_VXLAN_TUNNEL_MAP_TABLE` | ConsumerStateTable (Orch2 継承) | `VxlanTunnelMapOrch::addOperation` / `delOperation` |
+
+### 第 1 段: CONFIG_DB → vxlanmgrd
+
+`vxlanmgrd.cpp:46-51` で `CFG_VXLAN_TUNNEL_MAP_TABLE_NAME` を含むテーブルリストを `VxlanMgr` に渡す。メインループ (`vxlanmgrd.cpp:88-116`) は `s.select(&sel, SELECT_TIMEOUT=1000ms)` でイベントを待機し、検出時に `VxlanMgr::doTask(Consumer&)` を呼び出す。
+
+`doTask` でのルーティング (`vxlanmgr.cpp:235-238`):
+
+```cpp
+else if (table_name == CFG_VXLAN_TUNNEL_MAP_TABLE_NAME) {
+    task_result = doVxlanTunnelMapCreateTask(t);   // SET_COMMAND
+    // or
+    task_result = doVxlanTunnelMapDeleteTask(t);   // DEL_COMMAND
+}
+```
+
+### 第 2 段: APPL_DB ProducerStateTable → orchagent
+
+`doVxlanTunnelMapCreateTask` が成功すると `addAppDBTunnelMapTable()` (`vxlanmgr.cpp:943`) で `m_appVxlanTunnelMapTable.set(...)` を呼び出し、`APP_VXLAN_TUNNEL_MAP_TABLE` に転記する。orchagent の `VxlanTunnelMapOrch` はこのテーブルを ConsumerStateTable で購読し (`orchdaemon.cpp:352`)、`addOperation()` でハードウェアへの SAI 呼び出しを実行する。
+
+### STATE_DB への副次書き込み
+
+| 操作 | テーブル | キー | フィールド | コードロケーション |
+|------|---------|------|----------|-----------------|
+| SET 成功時 | `STATE_NEIGH_SUPPRESS_VLAN_TABLE` | `Vlan<id>` | `netdev=<tunnel>-<vlan_id>` | `vxlanmgr.cpp:618` |
+| DEL 時 | `STATE_NEIGH_SUPPRESS_VLAN_TABLE` | `Vlan<id>` | (削除) | `vxlanmgr.cpp:668` |
+
+vlanmgrd がこの STATE_DB エントリを参照して ARP/ND Suppression フラグを更新する。
+
+### イベントフロー全体
+
+```
+CONFIG_DB HSET "VXLAN_TUNNEL_MAP|tunnel1|map1" vlan Vlan100 vni 1000
+  ↓ Redis keyspace notification → vxlanmgrd ConsumerStateTable バッファ
+s.select(1000ms) で検出 → VxlanMgr::doTask() → doVxlanTunnelMapCreateTask()
+  ↓ createVxlanNetdevice(): ip link add ... type vxlan + bridge join
+  ↓ m_stateNeighSuppressVlanTable.set("Vlan100", {netdev=tunnel1-100})
+  ↓ m_appVxlanTunnelMapTable.set("tunnel1:map1", fvs)  ← APPL_DB 書込
+APPL_DB 書込 → Redis Lists → orchagent VxlanTunnelMapOrch ConsumerStateTable
+  ↓ addOperation(): VLAN / VXLAN_TUNNEL 存在確認
+  ↓ createTunnelHw() (初回のみ: encap/decap mapper → tunnel → tunnel-term を一括 SAI 生成)
+  ↓ sai_tunnel_api->create_tunnel_map_entry() で VNI↔VLAN マッピングを HW 登録
+```
+
+<!-- /pubsub -->
+
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
 <!-- evidence: sonic-swss/cfgmgr/vxlanmgr.cpp; sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang -->
