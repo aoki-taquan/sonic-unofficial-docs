@@ -23,6 +23,18 @@ sources:
   - repo: sonic-net/sonic-gnmi
     path: gnmi_server/clientCertAuth.go
     ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+  - repo: sonic-net/sonic-gnmi
+    path: gnmi_server/constants_native.go
+    ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+  - repo: sonic-net/sonic-gnmi
+    path: gnmi_server/constants_translib.go
+    ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+  - repo: sonic-net/sonic-gnmi
+    path: gnmi_server/jwtAuth.go
+    ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+  - repo: sonic-net/sonic-gnmi
+    path: dialout/dialout_client_cli/dialout_client_cli.go
+    ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
 related:
   config_db:
     - GNMI
@@ -404,6 +416,75 @@ gNMI サブシステムは CONFIG_DB テーブルのうち GNMI / GNMI_CLIENT_CE
 | 接続先コレクターへの dial-out 接続失敗 | `dialout_client.go` retry ループ | バックオフ再試行 — 接続確立まで継続 | gRPC エラーログ | `dialout_client.go` |
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`GNMI` / `GNMI_CLIENT_CERT` / `TELEMETRY_CLIENT` テーブルおよび関連デーモン内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-net/sonic-gnmi/telemetry/telemetry.go` と `dockers/docker-sonic-gnmi/gnmi-native.sh`。
+
+### Unix ソケット・JWT 認証インターバル
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `unix_socket` デフォルト | `/var/run/gnmi/gnmi.sock` | ローカル TLS なし接続パス。CONFIG_DB 対応フィールドなし | `telemetry.go:175` |
+| `jwt_refresh_int` | `900` 秒 (15 分) | JWT トークンをリフレッシュ可能になる期限前秒数。CONFIG_DB 対応フィールドなし | `telemetry.go:183` |
+| `jwt_valid_int` | `3600` 秒 (1 時間) | JWT トークン有効期間。CONFIG_DB 対応フィールドなし | `telemetry.go:184` |
+
+### 証明書・CRL・gNOI 固定パス
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `ca_cert_lnk` | `/keys/ca_cert.lnk` | CA 証明書シンボリックリンク生成先 (`GNMI\|certs.ca_crt` 設定時は同ディレクトリに変更) | `telemetry.go:199` |
+| `server_cert_lnk` | `/keys/server_cert.lnk` | サーバ証明書シンボリックリンク生成先 | `telemetry.go:200` |
+| `server_key_lnk` | `/keys/server_key.lnk` | サーバ秘密鍵シンボリックリンク生成先 | `telemetry.go:201` |
+| `img_dir` | `/tmp/host_tmp` | gNOI ファイル転送先一時ディレクトリ (tmpfs 上; コンテナ再起動で消去) | `telemetry.go:195` |
+| `cert_crl_dir` | `/mtls/crl` | CRL ファイル格納ディレクトリ | `telemetry.go:203` |
+| `grpc_meta` | `/keys/grpc-version.json` | gRPC 証明書メタデータ JSON | `telemetry.go:204` |
+| `authz_meta` | `/keys/authz-version.json` | authz ポリシーメタデータ JSON | `telemetry.go:205` |
+| `authorization_policy_file` | `/keys/authorization_policy.json` | authz ポリシー JSON (`authz_policy_enabled=true` 時参照) | `telemetry.go:207` |
+
+### gRPC メッセージサイズ上限
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `max_recv_msg_size` | `4 MiB` (4,194,304 B) | サーバ受信最大メッセージサイズ。CONFIG_DB 対応フィールドなし | `telemetry.go:209` |
+| `max_send_msg_size` | `4 MiB` (4,194,304 B) | サーバ送信最大メッセージサイズ。CONFIG_DB 対応フィールドなし | `telemetry.go:210` |
+
+> **運用注意**: ポート数の多いスイッチで Subscribe レスポンスが 4 MiB を超える場合、gRPC レベルのエラーが発生する。CONFIG_DB では変更不可。
+
+### gnmi-native.sh 固定環境変数・終了コード
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `EXIT_TELEMETRY_VARS_FILE_NOT_FOUND` | `1` | テンプレートファイル (`telemetry_vars.j2`) 未存在時の終了コード | `gnmi-native.sh:3` |
+| `INCORRECT_TELEMETRY_VALUE` | `2` | `port` / `threshold` / `idle_conn_duration` 値不正時の終了コード | `gnmi-native.sh:4` |
+| `TELEMETRY_VARS_FILE` | `/usr/share/sonic/templates/telemetry_vars.j2` | CONFIG_DB → CLI フラグ変換テンプレートパス | `gnmi-native.sh:5` |
+| `GRPC_GO_LOG_VERBOSITY_LEVEL` | `99` | gRPC Go ライブラリ内部ログ冗長レベル (最大値 = 全量出力) | `gnmi-native.sh:26` |
+| `GRPC_GO_LOG_SEVERITY_LEVEL` | `info` | gRPC Go ライブラリ内部ログ severity フィルタ | `gnmi-native.sh:27` |
+| `CVL_SCHEMA_PATH` | `/usr/sbin/schema` | CVL スキーマディレクトリパス | `gnmi-native.sh:30` |
+| SmartSwitch ZMQ ポート | `8100` | `subtype == "SmartSwitch"` 時に付与する `-zmq_port` 値。`GNMI` テーブルに対応フィールドなし | `gnmi-native.sh:91` |
+
+> **注意**: `GRPC_GO_LOG_VERBOSITY_LEVEL=99` は gRPC ライブラリ内部ログを全量出力する。`GNMI|gnmi.log_level` が制御するのは `telemetry` の glog レベルのみであり、gRPC ライブラリログとは独立している。
+
+### ビルドタグ定数
+
+| 定数 | デフォルト値 | ビルドタグ | ソース |
+|------|------------|----------|--------|
+| `ENABLE_NATIVE_WRITE` | `false` | ビルドタグ `gnmi_native_write` 未指定時 | `constants_native.go:5` |
+| `ENABLE_TRANSLIB_WRITE` | `false` | ビルドタグ `gnmi_translib_write` 未指定時 | `constants_translib.go:5` |
+
+管理フレームワーク統合ビルド (`gnmi_translib_write` タグ付き) では `ENABLE_TRANSLIB_WRITE = true` となり、デフォルト `user_auth` が `password+jwt` に変わる (`telemetry.go:217-222`)。コミュニティ版標準SONiC ビルドでは常に `false`。
+
+### dial-out クライアント固定デフォルト
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `RetryInterval` | `30` 秒 | 接続再試行間隔初期値 | `dialout_client_cli.go:21,31` |
+| `Encoding` | `JSON_IETF` (固定) | エンコーディング。DB から変更不可 (`dialout_client.go:502` で強制上書き) | `dialout_client_cli.go:22` |
+| `Unidirectional` | `true` (固定) | サーバ応答なし一方向モード。DB から変更不可 (`dialout_client.go:505` で強制上書き) | `dialout_client_cli.go:23,32` |
+
+詳細な定数一覧 (JWT 変数宣言箇所、ビルドタグ _write バリアント等) は `meta/_intermediate/cdb-flow/gnmi-server-constants.md` を参照。
+<!-- /constants -->
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
