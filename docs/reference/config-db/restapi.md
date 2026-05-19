@@ -415,4 +415,46 @@ RESTAPI テーブルの設定は `rest-server.sh` が起動時に一括読み込
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `rest-server.sh`, `supervisord.conf`, `mgmt_vars.j2`, `sonic-restapi.yang` 精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/restapi-constants.md`
+
+### rest-server.sh 起動スクリプト定数
+
+| 定数名 | 値 | 用途 | evidence |
+|-------|----|------|---------|
+| `EXIT_MGMT_VARS_FILE_NOT_FOUND` | `1` | `mgmt_vars.j2` 未存在時の exit code | `rest-server.sh:4` |
+| `MGMT_VARS_FILE` | `/usr/share/sonic/templates/mgmt_vars.j2` | sonic-cfggen が読み込む Jinja2 テンプレートの固定パス | `rest-server.sh:5` |
+| `CLIENT_AUTH` フォールバック | `"user"` | `RESTAPI\|config.client_auth` 未設定時のデフォルト認証モード。YANG `default true` (boolean) と**異なる文字列**で実装上の乖離点 | `rest-server.sh:20,30` |
+| `generate_cert --host` | `"localhost,127.0.0.1"` | 証明書自動生成時の固定ホスト名 | `rest-server.sh:47` |
+| `SERVER_CRT` (自動生成時) | `/tmp/cert.pem` | 証明書未設定時の自己署名証明書パス | `rest-server.sh:48` |
+| `SERVER_KEY` (自動生成時) | `/tmp/key.pem` | 証明書未設定時の秘密鍵パス | `rest-server.sh:49` |
+| `REST_SERVER_ARGS` 固定引数 | `-ui /rest_ui -logtostderr` | `rest_server` に常時付与される起動引数。UI パスとログ出力先が固定 | `rest-server.sh:53` |
+| `CVL_SCHEMA_PATH` | `/usr/sbin/schema` | CVL (YANG バリデーション) が参照するスキーマディレクトリ | `rest-server.sh:64` |
+
+### supervisord.conf プロセス定数
+
+| 設定キー | 値 | 用途 | evidence |
+|---------|-----|------|---------|
+| `[rest-server] priority` | `3` | supervisord 起動優先度。`rsyslogd(1)` → `start(2)` → `rest-server(3)` の順序を保証 | `supervisord.conf:39` |
+| `[rest-server] autorestart` | `true` | `rest_server` 終了時の自動再起動有効 | `supervisord.conf:41` |
+| `dependent_startup_wait_for` | `start:exited` | `start.sh` 完了後に `rest-server.sh` を起動する依存順序設定 | `supervisord.conf:47` |
+| `logfile_maxbytes` | `1MB` | supervisord ログファイル最大サイズ | `supervisord.conf:2` |
+
+### YANG スキーマ定数 (sonic-restapi.yang)
+
+| フィールド | 定数値 | 種別 | evidence |
+|-----------|--------|------|---------|
+| `config.client_auth` | `true` | YANG `default` 文 (boolean) | `sonic-restapi.yang:64` |
+| `config.allow_insecure` | `false` | YANG `default` 文 (boolean) | `sonic-restapi.yang:79` |
+| `config.log_level` pattern | `"trace\|info"` | YANG `pattern` 制約。違反値は sonic-yang バリデーション拒否 | `sonic-restapi.yang:70` |
+| `certs.ca_crt` pattern | `(/[a-zA-Z0-9_-]+)*/([a-zA-Z0-9_-]+).([a-z]+)` | ファイルパス形式制約 | `sonic-restapi.yang:31` |
+| `certs.server_crt` pattern | `(/[a-zA-Z0-9_-]+)*/([a-zA-Z0-9_-]+).crt` | `.crt` 拡張子強制 | `sonic-restapi.yang:37` |
+| `certs.server_key` pattern | `(/[a-zA-Z0-9_-]+)*/([a-zA-Z0-9_-]+).key` | `.key` 拡張子強制 | `sonic-restapi.yang:50` |
+| `certs.client_crt_cname` pattern | `((\*\.)?[a-zA-Z0-9_\-\.]+,)*((\*\.)?[a-zA-Z0-9_\-\.]+)` | CN 形式制約（ワイルドカード可、末尾カンマ不可） | `sonic-restapi.yang:44` |
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
