@@ -321,6 +321,53 @@ HLD および `eventd.cpp` の定数から導出する[^1][^3]。
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> **調査根拠**: `sonic-buildimage/src/sonic-eventd/src/eventd.cpp`、`sonic-swss-common/common/events_common.h` の `RET_ON_ERR` マクロ定義および `run_eventd_service()` 関数全体。
+
+`eventd` プロセス内の失敗は `RET_ON_ERR` マクロ (`events_common.h:47-52`) で一元処理される。条件が偽の場合、`SWSS_LOG_INFO` でエラーを syslog 出力し `goto out` でクリーンアップコードへジャンプする。致命的な失敗はプロセス終了に至る。
+
+### 初期化フェーズの失敗パターン
+
+| # | 失敗ケース | 発生箇所 | 挙動 | 復旧手段 |
+|---|-----------|---------|------|---------|
+| 1 | `zmq_ctx_new()` 失敗 | `run_eventd_service():672` | syslog 出力後プロセス終了 | supervisord が自動再起動 |
+| 2 | `get_config_data(CACHE_MAX_CNT)` が 0 以下を返す | `run_eventd_service():675` | プロセス終了。`/etc/sonic/init_cfg.json` 内の `cache_max_cnt` が不正値の場合に発生 | 設定ファイルを修正して eventd 再起動 |
+| 3 | `eventd_proxy::init()` 失敗 — ZMQ ポート bind 失敗 | `run_eventd_service():680`、`eventd_proxy::run():78-93` | proxy スレッドが `m_init_result=1; m_init_done=true` をセットし `init()` が失敗を返す → プロセス終了 | ポート競合（5570/5571/5573）を解消して再起動 |
+| 4 | `event_service::init_server()` 失敗 | `run_eventd_service():682` | プロセス終了 | eventd 再起動 |
+| 5 | `stats_collector::start()` — COUNTERS_DB 接続失敗 | `stats_collector::start():184` | `RET_ON_ERR` で start() が失敗を返し、呼び出し元がプロセス終了 | Redis サービス起動後に eventd 再起動 |
+
+### キャプチャサービスの失敗パターン（non-fatal）
+
+| # | 失敗ケース | 発生箇所 | 挙動 | 影響 |
+|---|-----------|---------|------|------|
+| 6 | `capture_service::INIT_CAPTURE` 失敗 | `run_eventd_service():696` | `SWSS_LOG_WARN` 出力 + `skip_caching = true` + `capture.reset()` | **プロセスは継続**。`EVENT_CACHE_READ` は以降すべて `resp=-1` を返す。イベント配信自体は継続する |
+| 7 | `START_CAPTURE` 失敗 | `run_eventd_service():700` | プロセス終了（`RET_ON_ERR`） | eventd 再起動が必要 |
+| 8 | `capture_service::do_capture()` 内 ZMQ ソケット失敗 | `capture_service::do_capture():414-423` | `goto out` でキャプチャスレッドのみ終了。`m_cap_run = false` になるため呼び出し元がエラーを検出可能 | キャッシュ収集が無効化 |
+| 9 | `capture_service::set_control()` に 1 ステップ超の遷移要求 | `eventd.cpp:557` | `RET_ON_ERR` でキャプチャスレッド停止、`goto out` | telemetry の誤操作が原因。`m_cap_run` が false のままになりリカバリ不可。eventd 再起動が必要 |
+
+### ランタイムフェーズの失敗パターン
+
+| # | 失敗ケース | 発生箇所 | 挙動 |
+|---|-----------|---------|------|
+| 10 | `service.channel_read()` 失敗（制御チャネル読み込みエラー） | `run_eventd_service():710` | プロセス終了 |
+| 11 | `service.channel_write()` 失敗（応答送信エラー） | `run_eventd_service():822` | プロセス終了 |
+| 12 | `event_receive()` での例外 | `stats_collector::run_collector():266-271` | `SWSS_LOG_ERROR` 出力後 rc=-1 として継続。heartbeat カウンタ処理分岐に入り次ループへ |
+| 13 | heartbeat `event_publish()` 失敗 | `stats_collector::run_collector():293` | `SWSS_LOG_ERROR("Failed to publish heartbeat rc=%d")` 出力後ループ継続。heartbeat 欠落するが eventd は継続 |
+| 14 | キャッシュ内の不正フォーマットイベント | `capture_service::do_capture():522` | `SWSS_LOG_ERROR` 出力。当該イベントをスキップして次イベント処理へ |
+
+### `evprofile` / `eventd.json` の読み込み失敗
+
+| ファイル | 失敗時の挙動 |
+|---------|-----------|
+| `/etc/evprofile/default.json` 不在 | `static_event_map` が空のまま起動。全イベントが `enable=true` 扱いで通過する（HLD section 3.1.2） |
+| `/etc/evprofile/default.json` JSON 不正 | パース失敗。`static_event_map` 未構築のまま起動。syslog にエラーログ |
+| `/etc/eventd.json` 不在 / 読み込み失敗 | HLD 設計では `no-of-records`/`no-of-days` のデフォルト値（40000件/30日）が使われる想定。ただし現行 `eventd.cpp` に読み込みロジックが確認できないため実際の挙動は不明 |
+
+> **証跡**: `run_eventd_service()` (L656-827)、`eventd_proxy::run()` (L72-123)、`stats_collector::start()` (L172-196)、`stats_collector::run_collector()` (L229-312)、`capture_service::do_capture()` (L383-530)、`capture_service::set_control()` (L545-620)、`events_common.h:RET_ON_ERR` (L47-52)。
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework HLD. section 3.1.5 (Event Profile), 3.1.7 (Event Table and Alarm Table). <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
