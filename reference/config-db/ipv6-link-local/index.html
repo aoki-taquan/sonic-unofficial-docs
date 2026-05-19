@@ -26414,7 +26414,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断リファレンス (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="横断リファレンス (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照マップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        整合性メモ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -26436,7 +26475,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連制約
@@ -26458,7 +26497,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -26469,7 +26508,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -26480,7 +26519,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -34938,7 +34977,46 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        横断リファレンス (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="横断リファレンス (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照マップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        整合性メモ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -34960,7 +35038,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連制約
@@ -34982,7 +35060,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34993,7 +35071,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35004,7 +35082,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35189,7 +35267,134 @@
 <p><strong>disable 時の即時 neigh 削除 (依存 #4)</strong>: <code>intfmgrd</code> が <code>"disable"</code> イベントを受け取ると、<code>m_ipv6LinkLocalModeList.erase(alias)</code> と <code>delIpv6LinkLocalNeigh(alias)</code> を同一処理内で同期的に実行する。この削除は CONFIG_DB イベント受信時に即時トリガーされる。<code>"disable"</code> 書込みと APP_DB NEIGH_TABLE 削除は実質的に同時であるため、運用変更時には接続中の BGP unnumbered セッションへの影響を考慮すること（evidence: <code>intfmgr.cpp:920-923</code>）。</p>
 <!-- /ordering -->
 
-<h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- cross-refs -->
+<h2 id="phase-c">横断リファレンス (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>ipv6_use_link_local_only</code> フィールドはインターフェース系 3 テーブルで共有され、複数の swss daemon・CLI・YANG モジュールから参照される。</p>
+<h3 id="_6">参照マップ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>識別子</th>
+<th>参照位置</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB</td>
+<td><code>INTERFACE</code> (属性ロウ)</td>
+<td><code>cfgmgr/intfmgr.cpp:817-820</code></td>
+<td>Ethernet 系の一次格納</td>
+</tr>
+<tr>
+<td>CONFIG_DB</td>
+<td><code>PORTCHANNEL_INTERFACE</code></td>
+<td>同上 (共通 parser)</td>
+<td>PortChannel 系の一次格納</td>
+</tr>
+<tr>
+<td>CONFIG_DB</td>
+<td><code>VLAN_INTERFACE</code></td>
+<td>同上 (共通 parser)</td>
+<td>VLAN 系の一次格納</td>
+</tr>
+<tr>
+<td>CONFIG_DB</td>
+<td><code>PORT</code> / <code>PORTCHANNEL</code> / <code>VLAN</code></td>
+<td><code>show/main.py:1611-1623</code></td>
+<td><code>show ipv6 link-local-mode</code> の母集合</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>PORT_TABLE</code> / <code>LAG_TABLE</code> / <code>VLAN_TABLE</code></td>
+<td><code>intfmgr.cpp:833-837</code> (<code>isIntfStateOk</code>)</td>
+<td>APP_DB 転送の gating (Phase B 既述)</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>VRF_TABLE</code></td>
+<td><code>intfmgr.cpp:839-843</code></td>
+<td>VRF バインド時の gating (Phase B 既述)</td>
+</tr>
+<tr>
+<td>APP_DB</td>
+<td><code>INTF_TABLE</code></td>
+<td><code>intfmgr.cpp:926</code> (<code>fvTuple</code>)</td>
+<td><code>"enable"</code> 時に転送、ただし orchagent は dead consumer</td>
+</tr>
+<tr>
+<td>APP_DB</td>
+<td><code>NEIGH_TABLE</code></td>
+<td><code>neighsyncd/neighsync.cpp:227</code></td>
+<td>link-local neigh 登録時のフィルタキー</td>
+</tr>
+<tr>
+<td>daemon</td>
+<td><code>intfmgrd</code></td>
+<td><code>cfgmgr/intfmgr.cpp</code></td>
+<td>CONFIG_DB → APP_DB 転送と <code>m_ipv6LinkLocalModeList</code> 管理</td>
+</tr>
+<tr>
+<td>daemon</td>
+<td><code>neighsyncd</code></td>
+<td><code>neighsync.cpp:193-239</code></td>
+<td><strong>CONFIG_DB を直接参照</strong> (APP_DB 経由ではない)</td>
+</tr>
+<tr>
+<td>daemon</td>
+<td><code>orchagent</code> IntfsOrch</td>
+<td><code>orchagent/intfsorch.cpp</code></td>
+<td>APP_DB を購読するが本フィールドを SAI 転送しない (dead consumer)</td>
+</tr>
+<tr>
+<td>CLI (config)</td>
+<td><code>config interface ipv6 enable/disable use-link-local-only</code></td>
+<td><code>config/main.py:L9462-L9484</code></td>
+<td>個別 IF への書込み、テーブルは <code>get_interface_table_name()</code> で判別</td>
+</tr>
+<tr>
+<td>CLI (config)</td>
+<td><code>config ipv6 enable/disable link-local</code></td>
+<td><code>config/main.py</code> (<code>enable_ipv6_link_local_all</code> 系)</td>
+<td>全 IF 一括、VLAN/PortChannel member は除外</td>
+</tr>
+<tr>
+<td>CLI (show)</td>
+<td><code>show ipv6 link-local-mode</code></td>
+<td><code>show/main.py:1611-1630</code></td>
+<td><code>PORT</code>/<code>PORTCHANNEL</code>/<code>VLAN</code> と INTERFACE 属性ロウの join 表示</td>
+</tr>
+<tr>
+<td>YANG</td>
+<td><code>sonic-interface:INTERFACE_LIST/ipv6_use_link_local_only</code></td>
+<td><code>sonic-interface.yang:95-99</code></td>
+<td>スキーマ宣言、<code>default disable</code></td>
+</tr>
+<tr>
+<td>YANG</td>
+<td><code>sonic-portchannel-interface</code> / <code>sonic-vlan-interface</code></td>
+<td>同様の leaf</td>
+<td>PortChannel / VLAN 用</td>
+</tr>
+<tr>
+<td>YANG 型</td>
+<td><code>sonic-types:mode-status</code></td>
+<td><code>sonic-types.yang</code></td>
+<td><code>enum enable</code> / <code>enum disable</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">整合性メモ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>三テーブル共有</strong>: <code>INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> / <code>VLAN_INTERFACE</code> はフィールド名・型・semantics が完全に同一で、<code>intfmgr.cpp</code> の <code>doIntfGeneralTask()</code> が共通 parser で処理する。CLI レイヤだけが <code>get_interface_table_name(interface_name)</code> で書き分ける</li>
+<li><strong>APP_DB は dead path</strong>: <code>intfmgr</code> は <code>INTF_TABLE</code> に <code>ipv6_use_link_local_only</code> を転送するが、orchagent IntfsOrch は受信しても SAI に渡さない。実効的な依存先は <code>neighsyncd</code> であり、しかも <code>neighsyncd</code> は CONFIG_DB を直接参照するため APP_DB の値変更は実質的に観測者がいない</li>
+<li><strong><code>show</code> 母集合の非対称</strong>: <code>show ipv6 link-local-mode</code> は PORT / PORTCHANNEL / VLAN を全件走査し、INTERFACE 属性ロウが欠如するポートを <code>Disabled</code> 表示する。属性ロウ削除と <code>"disable"</code> 設定はランタイム上区別されない (Phase A の "disable は属性ロウ自体を削除する" 挙動と整合)</li>
+<li><strong>YANG default と実装の役割分担</strong>: YANG <code>default disable</code> はスキーマ宣言上の値で、<code>intfmgr</code> のフィールド欠如時 fallback (APP_DB に書かない) とは別レイヤ。YANG validation を通った絶対無設定状態でも <code>intfmgrd</code> は何もしない</li>
+</ul>
+<!-- /cross-refs -->
+
+<h2 id="_8">購読者<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35230,7 +35435,7 @@
 </span></code></pre></div>
 <p><code>config ipv6 enable link-local</code> は VLAN member ポートおよび PortChannel member ポートを自動スキップする。Loopback (<code>lo</code>) と OOB (<code>eth0</code>) は対象外。</p>
 <p><code>show ipv6 link-local-mode</code> は PORT / PORTCHANNEL / VLAN テーブルを基準に表示するため、Loopback は表示されない。INTERFACE エントリが存在しないポートは <code>Disabled</code> 表示。</p>
-<h2 id="_7">関連制約<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_9">関連制約<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li>VLAN member として登録されたポートへの <code>enable</code> は CLI で拒否される (明示エラー)</li>
 <li>PortChannel member として登録されたポートへの <code>enable</code> は CLI で拒否される (明示エラー)</li>
@@ -35244,15 +35449,15 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_10">関連リファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../../yang/sonic-interface/"><code>sonic-interface</code></a></li>
 <li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../interface/">INTERFACE テーブル</a></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h2 id="_10">関連ページ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連ページ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../">CONFIG_DB index</a></li>
 <li><a href="../interface/">INTERFACE テーブル</a></li>
