@@ -477,7 +477,10 @@ DualToR の Mux トンネル識別に使われる定数。`TunnelDecapOrch` が�
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-CONFIG_DB `SUBNET_DECAP` テーブルの変更に伴って `TunnelDecapOrch` が副次的に書き込む DB エントリは以下のとおり。
+<!-- evidence: meta/_intermediate/cdb-flow/subnet-decap-side-effects.md -->
+<!-- source: sonic-swss/orchagent/tunneldecaporch.cpp, routeorch.cpp, vnetorch.cpp -->
+
+CONFIG_DB `SUBNET_DECAP` テーブルの変更に伴って `TunnelDecapOrch` が副次的に書き込む DB エントリは以下のとおり。ASIC_DB への `sai_tunnel_api` 呼び出し（主作用）はこの表から除外する。
 
 ### STATE_DB への直接書込
 
@@ -485,8 +488,8 @@ CONFIG_DB `SUBNET_DECAP` テーブルの変更に伴って `TunnelDecapOrch` が
 
 | 副次キー | DB | 書込タイミング | evidence |
 |---------|-----|---------------|----------|
-| `STATE_TUNNEL_DECAP_TABLE:<tunnel_name>` | STATE_DB | `addDecapTunnel()` / `delDecapTunnel()` 完了時 | `tunneldecaporch.cpp:34, 287` |
-| `STATE_TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<term_key>` | STATE_DB | `addDecapTunnelTermEntry()` / `delDecapTunnelTermEntry()` 完了時 | `tunneldecaporch.cpp:35` |
+| `STATE_TUNNEL_DECAP_TABLE:<tunnel_name>` | STATE_DB | `addDecapTunnel()` / `delDecapTunnel()` 完了時 | `tunneldecaporch.cpp:34, 287, 1531, 1536` |
+| `STATE_TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<term_key>` | STATE_DB | `addDecapTunnelTermEntry()` / `delDecapTunnelTermEntry()` 完了時 | `tunneldecaporch.cpp:35, 1560, 1566` |
 
 これらの STATE_DB エントリは `show` コマンド系や他サービスが tunnel/term の有効状態を確認するために読み取る。
 
@@ -496,14 +499,14 @@ CONFIG_DB `SUBNET_DECAP` テーブルの変更に伴って `TunnelDecapOrch` が
 
 | 副次キー | DB | 書込トリガー | evidence |
 |---------|-----|------------|----------|
-| `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:<vip_prefix>` (MP2MP, vip) | APP_DB | IPv4 VIP ルート追加 | `routeorch.cpp:3220-3251` |
+| `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:<vip_prefix>` (MP2MP, vip) | APP_DB | IPv4 VIP ルート追加 | `routeorch.cpp:2714-2717, 3220-3238` |
 | `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET_V6:<vip_prefix>` (MP2MP, vip) | APP_DB | IPv6 VIP ルート追加 | `vnetorch.cpp:1563-1594` |
 
 `SUBNET_DECAP.enable=false` または `SUBNET_DECAP` が未設定の場合は上記の VIP 系 tunnel term が **生成されない**（既存 term は DEL されない — GC なし）。
 
 ### APPL_DB / COUNTERS_DB への書込
 
-`TunnelDecapOrch` 自身は APPL_DB・COUNTERS_DB への直接書込を行わない。ASIC_DB への反映は SAI (`sai_tunnel_api`) 経由で orchagent フレームワークが管理する。
+`TunnelDecapOrch` 自身は APPL_DB・COUNTERS_DB への直接書込を行わない。ASIC_DB への反映は SAI (`sai_tunnel_api`) 経由で orchagent フレームワークが管理する。FLEX_COUNTER_DB / APPL_STATE_DB / LOGLEVEL_DB / CONFIG_DB への書込みも検出されなかった。
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/subnet-decap-side-effects.md` を参照。
 <!-- /side-effects -->

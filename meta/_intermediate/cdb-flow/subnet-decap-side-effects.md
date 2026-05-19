@@ -19,8 +19,8 @@
 
 | キー | DB | 書込タイミング | evidence |
 |------|----|---------------|----------|
-| `STATE_TUNNEL_DECAP_TABLE:<tunnel_name>` | STATE_DB | トンネルオブジェクト追加 / 削除完了時 | tunneldecaporch.cpp:34, 287 |
-| `STATE_TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<term_key>` | STATE_DB | tunnel term 追加 / 削除完了時 | tunneldecaporch.cpp:35 |
+| `STATE_TUNNEL_DECAP_TABLE:<tunnel_name>` | STATE_DB | トンネルオブジェクト追加 / 削除完了時 | tunneldecaporch.cpp:34, 287, 1531, 1536 |
+| `STATE_TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<term_key>` | STATE_DB | tunnel term 追加 / 削除完了時 | tunneldecaporch.cpp:35, 1560, 1566 |
 
 ### APP_DB 書込（間接：RouteOrch / VNetRouteOrch 経由）
 
@@ -28,7 +28,7 @@
 
 | キー | DB | 書込トリガー | evidence |
 |------|----|------------|----------|
-| `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:<vip_prefix>` | APP_DB | VIP ルート追加（`subnet_type: vip`、MP2MP） | routeorch.cpp:3220-3251 |
+| `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:<vip_prefix>` | APP_DB | VIP ルート追加（`subnet_type: vip`、MP2MP） | routeorch.cpp:2714-2717, 3220-3251 |
 | `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET_V6:<vip_prefix>` | APP_DB | IPv6 VIP ルート追加 | vnetorch.cpp:1563-1594 |
 
 ### APPL_DB / COUNTERS_DB / ASIC_DB への直接書込
