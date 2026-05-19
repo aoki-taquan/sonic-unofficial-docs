@@ -52,6 +52,53 @@ SONiC ホストを Kubernetes worker としてマスターに参加させるた�
 <!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:23,169-173,339-356,370-413,444-455,467-511,688-694; sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.service:3-6 -->
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+`ctrmgrd` は `KUBERNETES_MASTER` テーブルを購読するだけでなく、join 完了後のラベル設定・フィーチャー所有権移行のために複数の CONFIG_DB / STATE_DB テーブルを参照・書き込む。`sonic-kubernetes_master.yang` には `leafref` 宣言は存在しないため、以下はすべてコードレベルの暗黙参照である。
+
+### CONFIG_DB — 起動時読み出し
+
+| テーブル | キー | フィールド | 参照種別 | 用途 | evidence |
+|---|---|---|---|---|---|
+| `DEVICE_METADATA` | `localhost` | `type` | get_db_entry（起動時） | Kubernetes ノードラベル生成時に `deployment_type` を取得して `STATE_DB:KUBE_LABELS\|SET` に書き込む | ctrmgrd.py:297-299 |
+
+### CONFIG_DB — subscribe 連動
+
+| テーブル | キー | フィールド | 参照種別 | 用途 | evidence |
+|---|---|---|---|---|---|
+| `FEATURE` | `<feature>` | `set_owner` | SubscriberStateTable | `set_owner=kube` になると `KUBE_LABELS|SET.<feat>_enabled=true` を書き込みサービス再起動を判断する | ctrmgrd.py:471-472,488,505-506 |
+
+### STATE_DB — 起動時読み出し
+
+| テーブル | キー | フィールド | 参照種別 | 用途 | evidence |
+|---|---|---|---|---|---|
+| `KUBERNETES_MASTER` | `SERVER` | `update_time` | get_db_entry（起動時） | 値が空なら初回起動と判断し `JOIN_LATENCY`（デフォルト 10 秒）を挿入する | ctrmgrd.py:341-342,349-356 |
+
+### STATE_DB — subscribe 連動
+
+| テーブル | キー | フィールド | 参照種別 | 用途 | evidence |
+|---|---|---|---|---|---|
+| `FEATURE` | `<feature>` | `ct_owner`, `remote_state` | SubscriberStateTable | `set_owner` と組み合わせて `handle_update()` を呼び、サービス再起動とラベル変更を制御する | ctrmgrd.py:473-474,478-511 |
+
+### STATE_DB — ctrmgrd が連動して書き込む副作用テーブル
+
+`KUBERNETES_MASTER` の変化がトリガーとなって ctrmgrd が書き込む STATE_DB テーブル。
+
+| 書き込み先 | キー | フィールド | 書込元 | タイミング | evidence |
+|---|---|---|---|---|---|
+| `KUBERNETES_MASTER` | `SERVER` | `connected`, `update_time`, `ip`, `port` | RemoteServerHandler | join 成功 / リセット時 | ctrmgrd.py:413-414 |
+| `KUBE_LABELS` | `SET` | `sonic_version`, `hwsku`, `deployment_type`, `worker.sonic/platform` | set_node_labels() | join 成功後（`do_join()` → `set_node_labels()`） | ctrmgrd.py:306-307,440 |
+| `KUBE_LABELS` | `SET` | `<feat>_enabled` | FeatureTransitionHandler | `FEATURE.set_owner` 変化時 | ctrmgrd.py:505-506 |
+| `FEATURE` | `<feature>` | `restart` | restart_systemd_service() | サービス再起動が必要な場合 | ctrmgrd.py:157-158 |
+
+> **FEATURE との双方向参照**: `FEATURE.set_owner` の変化が `KUBERNETES_MASTER` 接続の副作用（ラベル付け）を引き起こし、逆に `KUBERNETES_MASTER` 接続状態が `FEATURE` の起動モード遷移に影響する。両テーブルは相互依存関係にある（Phase B `ordering` 依存 #5 参照）。
+
+詳細解析: `meta/_intermediate/cdb-flow/kubernetes-master-cross-refs.md`
+
+<!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:157-158,292-307,333-342,413-414,440,471-474,488,505-506 -->
+<!-- /cross-refs -->
+
 <!-- defaults -->
 ## フィールドデフォルト
 
