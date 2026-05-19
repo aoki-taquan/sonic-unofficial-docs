@@ -519,3 +519,55 @@ FLEX_COUNTER_DB 登録は `FLEX_COUNTER_UPD_TIMER`（1 秒間隔）経由で非�
 > **スキャン証跡**: `copporch.cpp` L126-152 (coppmgrd APPL_DB 書込)、L222-236 (updateTrapOperStatus)、L419-493 (genetlink hostif table create/remove)、L499-533 (applyAttributesToTrapIds + bindTrapCounter)、L657-714 (createGenetlinkHostIf/removeGenetlinkHostIf)、L833-851 (processCoppRule genetlink 分岐)、L1418-1495 (bindTrapCounter/unbindTrapCounter)。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-side-effects.md`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`genetlink_name` / `genetlink_mcgrp_name` フィールドは CONFIG_DB → coppmgrd → APPL_DB → CoppOrch → SAI という多段 Producer/Consumer パイプラインを経由して適用される。フィールド値は各段で透過的に転送され、最終的に SAI genetlink HostIf の生成に使われる。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル/テーブル |
+|------|------|-------------------|
+| CONFIG_DB `COPP_GROUP\|*` → `CoppMgr` | `SubscriberStateTable` | keyspace notification (`CFG_COPP_GROUP_TABLE_NAME` 等) |
+| `CoppMgr` → APPL_DB `COPP_TABLE\|*` | `ProducerStateTable` | Redis Streams (`APP_COPP_TABLE_NAME`) |
+| APPL_DB `COPP_TABLE\|*` → `CoppOrch` | `Consumer`（`Orch` 基底） | keyspace notification (`APP_COPP_TABLE_NAME`) |
+| `CoppOrch` → SAI | 直接 API 呼び出し | `sai_hostif_api->create_hostif()` / `create_hostif_table_entry()` |
+
+### SubscriberStateTable の動作
+
+`coppmgrd.cpp:28-32` で `cfg_copp_tables = {CFG_COPP_TRAP_TABLE_NAME, CFG_COPP_GROUP_TABLE_NAME, CFG_FEATURE_TABLE_NAME}` を引数に `CoppMgr` を生成する。基底クラス `Orch` が `SubscriberStateTable` を生成し、CONFIG_DB `COPP_GROUP|*` の変化を keyspace notification で受信する。`doCoppGroupTask()` が全フィールド（`genetlink_name` / `genetlink_mcgrp_name` を含む）を読み出し、`m_appCoppTable.set()` で APPL_DB に転記する（`coppmgr.cpp:510-530`）。coppmgr はこれらフィールドを特別処理せず透過転送する。
+
+### select() ループとブロッキングポイント
+
+- `coppmgrd`: `SELECT_TIMEOUT = 1000 ms` (`coppmgrd.cpp:17`)。タイムアウト時も `coppmgr.doTask()` を呼ぶため、定常ポーリングとして機能する。
+- `orchagent`: `CoppOrch::doTask(Consumer&)` 冒頭 (`copporch.cpp:885-888`) で `gPortsOrch->allPortsReady()` をチェックする。全ポート初期化完了まで APPL_DB イベントは `m_toSync` に蓄積され、genetlink HostIf 作成は保留される。これが genetlink port-binding 適用の**唯一のブロッキングポイント**。
+
+### genetlink_name / genetlink_mcgrp_name を読む consumer
+
+| コンポーネント | 読み出し方式 | 用途 |
+|--------------|------------|------|
+| `show copp config` (`show/copp.py`) | CONFIG_DB `COPP_GROUP` フィールドを直接表示 | 設定値の確認 |
+| `dump copp` プラグイン (`dump/plugins/copp.py`) | APPL_DB `COPP_TABLE` フィールドを集約表示 | デバッグ用 DB エントリ一覧 |
+
+APPL_DB の `COPP_TABLE` から `genetlink_name` / `genetlink_mcgrp_name` を非同期 subscribe するデーモンは存在しない。`CoppOrch` が受信して SAI に適用するのみ。
+
+### データフロー図
+
+```
+CONFIG_DB[COPP_GROUP|<group-name>] (genetlink_name, genetlink_mcgrp_name, ...)
+  ↓ SubscriberStateTable (keyspace notification)
+coppmgrd: CoppMgr::doCoppGroupTask()
+  ↓ ProducerStateTable::set()
+APPL_DB[COPP_TABLE|<group-name>] (全フィールド透過転送)
+  ↓ Consumer (keyspace notification)
+orchagent: CoppOrch::doTask()
+  ↓   [allPortsReady() チェック — PortsOrch 完了まで保留]
+  ↓ processCoppRule() → getAttribsFromTrapGroup()
+  ↓   genetlink_attribs が非空の場合のみ:
+  ↓ createGenetlinkHostIf() → sai_hostif_api->create_hostif() (TYPE_GENETLINK)
+  ↓ createGenetlinkHostIfTable() → sai_hostif_api->create_hostif_table_entry() (CHANNEL_TYPE_GENETLINK)
+```
+
+> **スキャン証跡**: `coppmgrd.cpp` 全行読了。`coppmgr.cpp` L298-310, L510-530 読了。`copporch.cpp` L191-215, L880-935 読了。`orchdaemon.cpp` L341 確認。`show/copp.py` `dump/plugins/copp.py` で genetlink 読み出し consumer 不在を確認。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-pubsub.md`
+<!-- /pubsub -->
+
