@@ -524,4 +524,64 @@ CONFIG_DB フィールド名文字列および `dscp_value` / `queue_index` の�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/switch-trimming-pubsub.md`
+
+### Redis 購読方式
+
+`SwitchOrch` は `Orch(connectors)` 基底クラスコンストラクタに `TableConnector` ベクタを渡す (`orchdaemon.cpp:200-214`)。`Orch::addConsumer()` (`orch.cpp:1186-1196`) は DB ID が `CONFIG_DB` である場合に **`SubscriberStateTable`** を選択する:
+
+```cpp
+if (db->getDbId() == CONFIG_DB || ...)
+    addExecutor(new Consumer(new SubscriberStateTable(db, tableName, ...), this, tableName));
+else
+    addExecutor(new Consumer(new ConsumerStateTable(db, tableName, ...), this, tableName));
+```
+
+`SWITCH_TRIMMING` は CONFIG_DB テーブルであるため `SubscriberStateTable` が使用される。これは Redis の **keyspace 通知** (`PSUBSCRIBE __keyspace@4__:SWITCH_TRIMMING|*`) で変更イベントを受信する仕組みであり、`ProducerStateTable` ベースの channel PUBLISH/SUBSCRIBE とは異なる。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル/API |
+|------|------|----------------|
+| CLI `config switch-trimming` → CONFIG_DB `SWITCH_TRIMMING` | `ConfigDBConnector.set_entry()` (HSET) | なし (keyspace 通知を Redis が自動発行) |
+| CONFIG_DB `SWITCH_TRIMMING` → `SwitchOrch` | `SubscriberStateTable` (keyspace 通知受信) | Redis `PSUBSCRIBE __keyspace@4__:SWITCH_TRIMMING|*` |
+
+`SwitchOrch` 以外に CONFIG_DB `SWITCH_TRIMMING` を購読するデーモン・サービスは存在しない。
+
+### ハンドラ呼び出し経路
+
+```
+config switch-trimming global size 512
+  ↓ HSET "SWITCH_TRIMMING|GLOBAL" size "512"
+Redis keyspace PUBLISH "__keyspace@4__:SWITCH_TRIMMING|GLOBAL"  "hset"
+  ↓ SubscriberStateTable::pops() でイベント取得
+SwitchOrch::doTask() → tableName == CFG_SWITCH_TRIMMING_TABLE_NAME
+  ↓ doCfgSwitchTrimmingTableTask() (switchorch.cpp:1511)
+    └─ setSwitchTrimming() → sai_switch_api->set_switch_attribute()
+```
+
+### CLI のアクセスパターン
+
+`show switch-trimming global` (`show/plugins/sonic-trimming.py:73`) は `cfgdb.get_table(CFG_SWITCH_TRIMMING)` (HGETALL のオンデマンド polling) で読み出す。keyspace 通知の購読はしない。
+
+`show switch-trimming capabilities` は STATE_DB `SWITCH_CAPABILITY|switch` を読み出す（`SWITCH_TRIMMING` テーブルとは別）。
+
+### 下流通知チャンネル
+
+`SwitchOrch` は `SWITCH_TRIMMING` 処理経路で `ProducerStateTable` / `NotificationProducer` を保有しないため、下流への追加通知は発生しない。
+
+| 経路 | 状態 |
+|------|------|
+| APPL_DB への転送 | **なし** |
+| STATE_DB への書込み → keyspace 通知 | **なし** (起動時 capability 書込は CONFIG_DB SET と無関係) |
+| `syncd` → ASIC_DB (間接) | SAI API 経由で syncd が非同期に反映 (`<!-- side-effects -->` 参照) |
+
+<!-- evidence: sonic-swss/orchagent/orchdaemon.cpp L196-214 (TableConnector switch_tables ベクタ) -->
+<!-- evidence: sonic-swss/orchagent/orch.cpp L1186-1196 (addConsumer — SubscriberStateTable 選択) -->
+<!-- evidence: sonic-swss/orchagent/switchorch.cpp L1511 (tableName == CFG_SWITCH_TRIMMING_TABLE_NAME) -->
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: ff319d2bdac9 -->
