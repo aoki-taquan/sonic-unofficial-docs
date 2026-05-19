@@ -27,6 +27,18 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: dockers/docker-orchagent/orchagent.sh
     ref: HEAD
+  - repo: sonic-net/sonic-buildimage
+    path: dockers/docker-orchagent/enable_counters.py
+    ref: HEAD
+  - repo: sonic-net/sonic-buildimage
+    path: dockers/docker-orchagent/switch.json.j2
+    ref: HEAD
+  - repo: sonic-net/sonic-buildimage
+    path: dockers/docker-orchagent/ipinip.json.j2
+    ref: HEAD
+  - repo: sonic-net/sonic-buildimage
+    path: dockers/docker-orchagent/orch_zmq_tables.conf.j2
+    ref: HEAD
 related:
   config_db:
     - DEVICE_METADATA
@@ -440,6 +452,130 @@ SmartSwitch DPU として動作させるためには `switch_type = "dpu"` が�
 
 詳細スキャン証跡は `meta/_intermediate/cdb-flow/dpu-orch-side-effects.md` を参照。
 <!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+`DpuOrchDaemon` の動作は `DEVICE_METADATA|localhost` の `switch_type = "dpu"` で固定されるが、ASIC プラットフォーム (`platform` 環境変数 = `asic_type`) および `subtype` フィールドによってさらに細かい分岐が存在する。
+
+### `platform` 分岐: MAC アドレス取得元 (orchagent.sh)
+
+`orchagent.sh` は `swss_vars.j2` 経由で `asic_type` を `export platform=<value>` として取得し、orchagent に渡す MAC アドレスの取得インターフェースを分岐する。DPU 向け主要プラットフォームは以下:
+
+| `platform` 値 | MAC 取得元 | 対象 DPU |
+|--------------|-----------|---------|
+| `nvidia-bluefield` | `eth0`（swss_vars.j2 経由） | NVIDIA BlueField シリーズ |
+| `pensando` | `int_mnic0` → `eth0-midplane` フォールバック | AMD/Pensando Elba |
+| それ以外 | `eth0`（汎用フォールバック） | — |
+
+```bash
+# orchagent.sh:86-92
+elif [ "$platform" == "nvidia-bluefield" ]; then
+    ORCHAGENT_ARGS+="-m $MAC_ADDRESS"
+elif [ "$platform" == "pensando" ]; then
+    MAC_ADDRESS=$(ip link show int_mnic0 | grep ether | awk '{print $2}')
+    if [ "$MAC_ADDRESS" == "" ]; then
+        MAC_ADDRESS=$(ip link show eth0-midplane | grep ether | awk '{print $2}')
+    fi
+    ORCHAGENT_ARGS+="-m $MAC_ADDRESS"
+```
+
+`switch_type = "dpu"` のときの `-b 65536 -z zmq_sync -k 65536` 付与（Phase A / Phase B 記述済み）とは独立して、この MAC 分岐も適用される。
+
+### `subtype` 分岐: ZMQ アドレス (orchagent.sh)
+
+```bash
+# orchagent.sh:107-116
+LOCALHOST_SUBTYPE=`sonic-db-cli CONFIG_DB hget "DEVICE_METADATA|localhost" "subtype"`
+if [[ x"${LOCALHOST_SUBTYPE}" == x"SmartSwitch" ]]; then
+    midplane_mgmt_state=$( ip -json -4 addr show eth0-midplane | jq -r ".[0].operstate" )
+    if [[ $midplane_mgmt_state == "UP" ]]; then
+        ORCHAGENT_ARGS+=" -q tcp://eth0-midplane"
+    else
+        ORCHAGENT_ARGS+=" -q tcp://127.0.0.1"
+    fi
+else
+    ORCHAGENT_ARGS+=" -q tcp://127.0.0.1"
+fi
+```
+
+| 動作環境 | `subtype` | ZMQ `-q` アドレス |
+|---------|-----------|-----------------|
+| SmartSwitch NPU 側 (`subtype=SmartSwitch`) | `SmartSwitch` | `tcp://eth0-midplane`（midplane UP 時）/ `tcp://127.0.0.1`（DOWN 時） |
+| DPU 上 orchagent (`switch_type=dpu`) | 通常未設定 | `tcp://127.0.0.1` |
+
+DPU 上の orchagent は `subtype` を通常持たないため、ZMQ アドレスは常に `tcp://127.0.0.1` (loopback) になる。SmartSwitch NPU 側は `subtype = "SmartSwitch"` を使い midplane 経由で DPU 側と通信する。
+
+### `subtype = "SmartSwitch"` 分岐: DashEniFwdOrch 追加 (OrchDaemon::init)
+
+```cpp
+// orchdaemon.cpp:613-618
+if (gMySwitchSubType == "SmartSwitch")
+{
+    DashEniFwdOrch *dash_eni_fwd_orch = new DashEniFwdOrch(m_configDb, m_applDb,
+        APP_DASH_ENI_FORWARD_TABLE, gNeighOrch);
+    gDirectory.set(dash_eni_fwd_orch);
+    m_orchList.push_back(dash_eni_fwd_orch);
+}
+```
+
+NPU 側の `OrchDaemon::init()` 内で `subtype = "SmartSwitch"` のとき `DashEniFwdOrch` が追加される。`DpuOrchDaemon::init()` は冒頭で `OrchDaemon::init()` を呼ぶ（Phase B 依存 #3）ため、DPU 上でも NPU 上でも `subtype` による分岐が実行される。
+
+### `switch_type = "dpu"` 分岐: switch.json.j2 — SWITCH_TABLE 初期設定スキップ
+
+```jinja
+{# switch.json.j2:35 #}
+{% if not DEVICE_METADATA.localhost.switch_type or DEVICE_METADATA.localhost.switch_type != "dpu" %}
+    "ecmp_hash_seed": "...",
+    "lag_hash_seed": "...",
+    "fdb_aging_time": "600",
+    "ecmp_hash_offset": "...",
+    "lag_hash_offset": "...",
+    "ordered_ecmp": "..."
+{% endif %}
+```
+
+`switch_type = "dpu"` のとき `SWITCH_TABLE:switch` への ECMP hash seed・LAG hash seed・FDB aging time・ordered_ecmp の設定が生成されない。DPU の SAI は標準 NPU の ECMP / FDB エージング機能を持たないためである。
+
+### `switch_type = "dpu"` 分岐: ipinip.json.j2 — IP-in-IP デカプ設定スキップ
+
+```jinja
+{# ipinip.json.j2:1-3 #}
+{% if DEVICE_METADATA['localhost']['switch_type'] == "dpu" %}
+[]
+{% else %}
+...（通常 NPU 用 TUNNEL_DECAP_TABLE / TUNNEL_DECAP_TERM_TABLE 生成）...
+{% endif %}
+```
+
+`switch_type = "dpu"` のとき `ipinip.json.j2` は空配列 `[]` を出力し、`TUNNEL_DECAP_TABLE` / `TUNNEL_DECAP_TERM_TABLE` が一切生成されない。DPU は IP-in-IP デカプセルを DASH パイプラインで処理するため orchagent 側の汎用トンネルデカプ設定は不要である。
+
+### `switch_type = "dpu"` 分岐: enable_counters.py — ENI / DASH_METER カウンタ有効化
+
+```python
+# enable_counters.py:42-45
+dpu_counters = ["ENI", "DASH_METER"]
+if platform_info.get('switch_type') == 'dpu':
+    for key in dpu_counters:
+        enable_counter_group(db, key)
+```
+
+`switch_type = "dpu"` のとき `FLEX_COUNTER_TABLE` の `ENI` および `DASH_METER` エントリが `FLEX_COUNTER_STATUS = enable` で書き込まれる。通常 NPU では有効化されない DPU 固有カウンタグループである。
+
+### まとめ: `switch_type = "dpu"` が影響するプラットフォーム差分
+
+| 分岐軸 | 条件 | 挙動 | evidence |
+|--------|------|------|---------|
+| `platform` | `nvidia-bluefield` | MAC 取得: `eth0` | `orchagent.sh:86` |
+| `platform` | `pensando` | MAC 取得: `int_mnic0` → `eth0-midplane` | `orchagent.sh:88-91` |
+| `subtype` | `SmartSwitch` | ZMQ `-q tcp://eth0-midplane`（midplane UP 時） | `orchagent.sh:107-113` |
+| `subtype` | `SmartSwitch` | `DashEniFwdOrch` を NPU 側 `OrchDaemon` に追加 | `orchdaemon.cpp:613-618` |
+| `switch_type` | `dpu` | ECMP/FDB 設定スキップ (`switch.json.j2`) | `switch.json.j2:35` |
+| `switch_type` | `dpu` | IP-in-IP デカプ設定スキップ (`ipinip.json.j2`) | `ipinip.json.j2:1` |
+| `switch_type` | `dpu` | ENI / DASH_METER FLEX カウンタ有効化 | `enable_counters.py:43` |
+
+> **参照**: 詳細スキャン証跡は `meta/_intermediate/cdb-flow/dpu-orch-platform.md` を参照。
+<!-- /platform -->
 
 ## 引用元
 
