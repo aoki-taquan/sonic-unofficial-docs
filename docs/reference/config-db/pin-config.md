@@ -436,4 +436,49 @@ CONFIG_DB `P4RT` テーブルを読み込む `p4rt.sh` は DB への書き戻し
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `sonic-buildimage/dockers/docker-sonic-p4rt/p4rt.sh` L1–99、`p4rt_vars.j2` L1–5 を精読 (2026-05-19)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pin-config-pubsub.md -->
+
+`P4RT` テーブルは **SubscriberStateTable・ConsumerStateTable・ProducerStateTable のいずれも使用しない**。
+`p4rt.sh` がコンテナ起動時に `sonic-cfggen -d -t p4rt_vars.j2` を**一回だけ**呼び出して CONFIG_DB をスナップショット取得し、
+各フィールドを `p4rt` バイナリの起動引数に変換する。CONFIG_DB の変更イベントを watch する仕組みは存在しない。
+
+### 読み込みシーケンス
+
+```
+p4rt.sh
+  L13: P4RT_VARS=$(sonic-cfggen -d -t /usr/share/sonic/templates/p4rt_vars.j2)
+         ↓ p4rt_vars.j2 を Jinja2 展開
+         ↓ P4RT["certs"] / P4RT["p4rt_app"] / DEVICE_METADATA["x509"] → JSON
+  L15–17: jq で各フィールドを変数に展開
+  L21–97: P4RT_ARGS を構築（TLS 条件分岐 + オプション引数）
+  L99:    exec /usr/local/bin/p4rt ${P4RT_ARGS}
+```
+
+### DB 購読チャンネル一覧
+
+| 区間 | 方式 | 備考 |
+|------|------|------|
+| CONFIG_DB → p4rt.sh | `sonic-cfggen -d` 一括読み込み（シングルショット） | イベント駆動なし |
+| p4rt バイナリ → APPL_DB `P4RT_*` | gRPC リクエスト起点の直接書き込み | CONFIG_DB `P4RT` テーブルとは独立 |
+
+**SubscriberStateTable / ConsumerStateTable / ProducerStateTable の使用: なし**
+
+### 変更反映タイミング
+
+CONFIG_DB `P4RT` テーブルへの変更は `p4rt` コンテナ稼働中には反映されない。
+`sonic-cfggen -d -t` はコンテナ起動時のシングルショットであるため、設定変更後は
+`systemctl restart p4rt` によるコンテナ再起動が必要（evidence: `p4rt.sh:L13`）。
+
+### 関連コンポーネントの pubsub（CONFIG_DB `P4RT` とは独立）
+
+`sonic-swss/orchagent/p4orch/` の P4 orch 群は APPL_DB の `P4RT_TABLE:*` 等を `ConsumerStateTable` で購読するが、
+これは外部 P4Runtime gRPC コントローラからの書き込み起点であり、CONFIG_DB `P4RT` テーブルの変更通知とは別経路。
+
+<!-- /pubsub -->
+
 <!-- glossary-links-injected -->
