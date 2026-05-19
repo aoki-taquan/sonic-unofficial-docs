@@ -246,6 +246,60 @@ EVPN DIP トンネルは CONFIG_DB エントリを持たず、`APP_DB EVPN_REMOT
 <!-- evidence: vxlanorch.cpp:1133 (ref decrement error); vxlanorch.cpp:1213,1222,1235 (deleteDynamicDIPTunnel); vxlanorch.cpp:1689,1696,1701-1704 (addTunnelUser guards); vxlanorch.cpp:2483-2494 (VLAN+VNI checks); vxlanorch.cpp:2499 (L3 VNI ignore); vxlanorch.cpp:2513,2520 (tunnelPort checks); vxlanorch.cpp:2567,2575,2582,2593 (delOperation) -->
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/vxlanorch.h`、`sonic-swss/orchagent/vxlanorch.cpp`、`sonic-swss-common/common/schema.h`
+
+### 名前プレフィックス定数
+
+| 定数 | 値 | 用途 | 根拠 |
+|------|----|------|------|
+| `EVPN_TUNNEL_NAME_PREFIX` | `"EVPN_"` | DIP トンネル名: `EVPN_<remote_vtep_ip>` | `vxlanorch.h:43` |
+| `EVPN_TUNNEL_PORT_PREFIX` | `"Port_EVPN_"` | DIP トンネルポート名: `Port_EVPN_<remote_vtep_ip>` | `vxlanorch.h:42` |
+
+### 数値境界値
+
+| 定数 | 値 | 用途 | 根拠 |
+|------|----|------|------|
+| `MIN_VLAN_ID` | `1` | VLAN ID 下限 — `to_uint<sai_vlan_id_t>()` の境界チェック | `vxlanorch.h:45` |
+| `MAX_VLAN_ID` | `4095` | VLAN ID 上限 (IEEE 802.1Q) | `vxlanorch.h:46` |
+| `MAX_VNI_ID` | `16777215` (= 2²⁴ − 1) | VNI 上限 (24-bit)。超過時は `SWSS_LOG_WARN` + `return false` | `vxlanorch.h:48` |
+| `DEFAULT_TUNNEL_ENCAP_TTL` | `255` | CLI 生成トンネルのデフォルト encap TTL。EVPN DIP トンネルは TTL 属性を SAI に渡さないため**適用外** | `vxlanorch.h:49` |
+
+### tunnel_creation_src_t enum
+
+| enum 値 | 意味 | 用途 |
+|---------|------|------|
+| `TNL_CREATION_SRC_CLI` | CLI 生成トンネル | peer_mode 判定・`tnl_src` 分岐 |
+| `TNL_CREATION_SRC_EVPN` | EVPN 動的生成トンネル | EVPN DIP トンネルはこの値で固定 (`vxlanorch.cpp:1160`) |
+
+`TNL_CREATION_SRC_EVPN` は peer_mode を `SAI_TUNNEL_PEER_MODE_P2P` に固定する分岐 (`vxlanorch.cpp:903`) と、STATE_DB `tnl_src="EVPN"` 書き込みの分岐 (`vxlanorch.cpp:1934-1939`) で参照される。
+
+### STATE_DB / APP_DB テーブル名定数
+
+| 定数 | 値 | 根拠 |
+|------|----|------|
+| `STATE_VXLAN_TUNNEL_TABLE_NAME` | `"VXLAN_TUNNEL_TABLE"` | `schema.h:435` |
+| `APP_VXLAN_REMOTE_VNI_TABLE_NAME` | `"VXLAN_REMOTE_VNI_TABLE"` | `schema.h:88` |
+
+DIP トンネルの生成・oper status 変更はすべて `STATE_VXLAN_TUNNEL_TABLE_NAME` に書き込まれ、
+`EvpnRemoteVnip2pOrch` は `APP_VXLAN_REMOTE_VNI_TABLE_NAME` を購読して処理を行う。
+
+### STATE_DB フィールドのハードコード文字列値
+
+| フィールド | ハードコード値 | タイミング | 根拠 |
+|-----------|--------------|-----------|------|
+| `tnl_src` | `"EVPN"` | 初期登録時 | `vxlanorch.cpp:1939` |
+| `operstatus` | `"down"` | 初期登録時 / down 遷移 | `vxlanorch.cpp:1942`, `1905` |
+| `operstatus` | `"up"` | up 遷移 | `vxlanorch.cpp:1901` |
+| VLAN メンバ `tagging_mode` | `"untagged"` | flood domain 追加時 (設計上の注記あり) | `vxlanorch.cpp:2525`, `2685` |
+
+詳細解析: `meta/_intermediate/cdb-flow/vxlan-evpn-tunnel-constants.md`
+
+<!-- evidence: vxlanorch.h:42-49 (prefix/bounds defines); vxlanorch.h:52-55 (tunnel_creation_src_t); vxlanorch.cpp:903,1160,1169 (enum 参照); vxlanorch.cpp:1901,1905,1934-1942 (STATE_DB ハードコード値); vxlanorch.cpp:2037,2461,2621 (VNI/VLAN 境界チェック); schema.h:88,435 (テーブル名定数) -->
+<!-- /constants -->
+
 ## 例外条件・特殊挙動
 
 - **isDipTunnelsSupported() = false の場合**: DIP トンネルは作成されず、リモート VTEP の
