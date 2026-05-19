@@ -569,4 +569,33 @@ orchagent / VNetOrch (orchagent/vnetorch.cpp L377)
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+### Ordered ECMP サポート — ASIC Capability 依存
+
+`VNetRouteOrch` が `VNET_ROUTE_TUNNEL` の ECMP Next Hop Group を作成する際、`gSwitchOrch->checkOrderedEcmpEnable()` の SAI capability 問い合わせ結果に基づいて NHG type を決定する (`vnetorch.cpp:804`)。
+
+| ASIC capability | NHG type | 動作 |
+|----------------|---------|------|
+| Ordered ECMP 対応かつ有効化 | `SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP` | endpoint の優先順序を [ASIC](../../reference/glossary.md#term-asic) が保持 |
+| 非対応または無効 | `SAI_NEXT_HOP_GROUP_TYPE_ECMP` | 通常 ECMP (ラウンドロビン) |
+
+`checkOrderedEcmpEnable()` は起動時に SAI switch attribute をクエリし、[ASIC](../../reference/glossary.md#term-asic) が非対応の場合は false を返す。このため非対応 [ASIC](../../reference/glossary.md#term-asic) で Ordered ECMP ビットが設定されることはなく、`create_next_hop_group()` 失敗は発生しない。
+
+### ベンダー固有コードなし
+
+`vnetorch.cpp` / `vxlanmgr.cpp` には `platform` 環境変数参照・ベンダー文字列判定 (`mellanox` / `broadcom` 等) が存在しない。VNET の [SAI](../../reference/glossary.md#term-sai) 操作 (`sai_virtual_router_api` / `sai_route_api` / `sai_next_hop_group_api`) は標準 [SAI](../../reference/glossary.md#term-sai) インタフェース経由で呼ばれ、[ASIC](../../reference/glossary.md#term-asic) 固有の最適化は [SAI](../../reference/glossary.md#term-sai) 実装層に委譲される。
+
+### VNET_EXEC モード (VRF 固定)
+
+`vnetorch.h` では `VNET_EXEC_VRF` と `VNET_EXEC_BRIDGE` の 2 モードが定義されているが、`orchdaemon.cpp:276` では常に `VNET_EXEC_VRF` が使用される。コミュニティ SONiC では BRIDGE モードは無効。
+
+### VoQ / Multi-ASIC
+
+VNET テーブル処理に VoQ / multi-ASIC 分岐は存在しない。VNET は単一 [ASIC](../../reference/glossary.md#term-asic) 構成を前提とした機能。
+
+> **スキャン証跡**: `vnetorch.cpp:804,841,2778`（Ordered ECMP NHG type 分岐）、`vnetorch.h:63-67`（VNET_EXEC enum）、`orchdaemon.cpp:276`（VRF モード固定）、`vxlanmgr.cpp` 全体（ベンダー分岐 0 件確認）
+<!-- /platform -->
+
 <!-- glossary-links-injected: f94986e6b96c -->
