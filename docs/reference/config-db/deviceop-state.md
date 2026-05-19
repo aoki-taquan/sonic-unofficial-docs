@@ -221,6 +221,57 @@ DEVICE_NEIGHBOR は CONFIG_DB の読み取り専用テーブルとして機能�
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:265-287`; `show/interfaces/__init__.py:317-319`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-150,219-224`
 <!-- /failure -->
 
+<!-- hardcoded-constants -->
+## ハードコード定数 (Phase E)
+
+DEVICE_NEIGHBOR テーブルの consumer（主に `pfcwd`・`ecnconfig`）が内部で使用するハードコード定数を整理する。これらの定数は YANG / CONFIG_DB に設定項目として存在せず、コードに直接埋め込まれている。
+
+### pfcwd — `start_default` で適用されるデフォルト値
+
+`pfcwd start_default` (`pfcwd/main.py:36-41,421-434`) は DEVICE_NEIGHBOR のキー集合（外部ポート一覧）を取得した後、以下のハードコード定数を用いて各ポートの PFC Watchdog パラメータを自動計算する。
+
+| 定数名 | 値 | 用途 | 参照箇所 |
+|--------|-----|------|---------|
+| `DEFAULT_PORT_NUM` | `32` | ポート数スケーリングの基準値。`multiply = max(1, (port_num-1)//32+1)` で計算 | `pfcwd/main.py:40,424` |
+| `DEFAULT_POLL_INTERVAL` | `200` (ms) | `POLL_INTERVAL = DEFAULT_POLL_INTERVAL * multiply`。multiply > 1 の場合スケールアップ | `pfcwd/main.py:39,426` |
+| `MAX_POLL_INTERVAL_TIME` | `1000` (ms) | `pfc_wd_poll_interval_time` の上限。超過時は 1000 ms にクランプ | `pfcwd/main.py:36,427-428` |
+| `DEFAULT_DETECTION_TIME` | `200` (ms) | `detection_time = DEFAULT_DETECTION_TIME * multiply` | `pfcwd/main.py:37,431` |
+| `DEFAULT_RESTORATION_TIME` | `200` (ms) | `restoration_time = DEFAULT_RESTORATION_TIME * multiply` | `pfcwd/main.py:38,432` |
+| `DEFAULT_ACTION` | `'drop'` | PFC ストーム検出時のデフォルトアクション（drop / forward / alert から選択） | `pfcwd/main.py:41,433` |
+| `DEFAULT_PFC_HISTORY_STATUS` | `"disable"` | PFC 統計履歴機能のデフォルト無効化 | `pfcwd/main.py:42,434` |
+
+!!! note "スケーリングロジック"
+    `multiply = max(1, (port_num-1)//32+1)` は ポート数 `port_num`（`PORT` テーブルのキー数）を 32 単位で切り上げる。例: ポート 1〜32 では multiply=1、33〜64 では multiply=2。`detection_time`・`restoration_time`・`POLL_INTERVAL` がこの乗数でスケールする（`pfcwd/main.py:424-432`）。DEVICE_NEIGHBOR のエントリ数ではなく **PORT テーブルのキー数**がスケールの基準である点に注意。
+
+### ecnconfig — バックエンドポートのソート定数
+
+`ecnconfig` (`scripts/ecnconfig:289-293`) は DEVICE_NEIGHBOR から取得したポートキーを数値順にソートする際、バックエンドポート（`'Ethernet-BPxy'` 形式）を通常ポートの末尾に配置するためにオフセットを加算する。
+
+| 定数 | 値 | 用途 |
+|------|-----|------|
+| バックエンドポートオフセット（無名） | `1024` | `int(k[11:]) + 1024` として計算。`'Ethernet-BPxy'` のポート番号に加算することで、通常の `'Ethernetxy'`（`int(k[8:])`）より常に大きい値になり末尾ソートを保証 |
+
+```python
+self.ports_key.sort(
+    key = lambda k: int(k[8:]) if "BP" not in k else int(k[11:]) + 1024
+)
+```
+
+このオフセット `1024` はコード内でシンボル化されていない無名定数であり、設定変更の手段は存在しない（`scripts/ecnconfig:291-293`）。
+
+### bgpcfgd — `loopbacks` ハードコードリスト
+
+`BGPPeerMgrBase.__init__` (`managers_bgp.py:100`) は次の固定値を持つ。
+
+```python
+self.loopbacks = ["Loopback0"]
+```
+
+BGP neighbor 処理において Loopback0 を特別扱いする参照先として使われる。DEVICE_NEIGHBOR に Loopback0 が含まれていても bgpcfgd がこの定数リストで Loopback0 を参照する経路が存在する（ネイバー名ではなくループバック IP 解決用）。
+
+> **Evidence**: `sonic-utilities` `pfcwd/main.py:36-42,405-442`; `scripts/ecnconfig:289-293`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:100`
+<!-- /hardcoded-constants -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
