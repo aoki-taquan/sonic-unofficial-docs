@@ -225,7 +225,7 @@ sudo grep -i "pfc watchdog\|pfcwd" /var/log/syslog
 
 <!-- /failure -->
 
-<!-- hardcoded-constants -->
+<!-- constants -->
 ## ハードコード定数 (Phase E)
 
 <!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-constants.md -->
@@ -253,7 +253,7 @@ sudo grep -i "pfc watchdog\|pfcwd" /var/log/syslog
 
 **フィールド名のリテラル固定**: `PFC_WD_STATUS`、`PFC_WD_QUEUE_STATS_DEADLOCK_DETECTED` 等のフィールド名はすべて C++ マクロとして `pfcactionhandler.cpp` の先頭に定義されており、YANG モデルや CONFIG_DB スキーマによる検証外に置かれている。Lua プラグインおよび `show pfcwd stats` が同じ文字列リテラルを参照することで整合性が保たれている。
 
-<!-- /hardcoded-constants -->
+<!-- /constants -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
