@@ -205,6 +205,72 @@ dialout 起動 (priority=4, telemetry:running 待機)
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — telemetryd が読み出す関連テーブル (Phase C)
+
+<!-- evidence:
+source: sonic-gnmi/pkg/bypass/bypass.go#L148-L168 (master)
+excerpt: |
+  hwsku, err := rclient.HGet(context.Background(), "DEVICE_METADATA|localhost", "hwsku").Result()
+  ...
+  for _, prefix := range AllowedSKUPrefixes {
+      if strings.HasPrefix(hwsku, prefix) { return true }
+  }
+source: sonic-gnmi/gnmi_server/connection_manager.go#L32-L61 (master)
+excerpt: |
+  res, _ := rclient.HGetAll(context.Background(), "TELEMETRY_CONNECTIONS").Result()
+source: sonic-gnmi/pkg/interceptors/dpuproxy/resolver.go#L66-L102 (master)
+excerpt: |
+  configKey := fmt.Sprintf("%s%s", DPUConfigTablePrefix, dpuIndex)  // "DPU|dpu<N>"
+  configFields, err := r.configClient.HGetAll(ctx, configKey)
+  gnmiPort, ok := configFields["gnmi_port"]
+-->
+
+`telemetryd` (sonic-gnmi) は gRPC カウンタの増分ロジックに連動して、複数のテーブルを暗黙的に参照する。
+
+### CONFIG_DB — `DEVICE_METADATA|localhost`
+
+| 参照フィールド | 参照箇所 | 参照タイミング | 用途 |
+|--------------|---------|--------------|------|
+| `hwsku` | `bypass.checkSKU()` (`bypass.go:156`) | `Set()` RPC で bypass 条件判定時（毎リクエスト） | HwSku が `Cisco-8102` / `Cisco-8101` / `Cisco-8223` の前方一致であれば `GNMI_SET_BYPASS` を増分する高速パスへ進む |
+
+> `checkSKU()` はキャッシュなしで毎回 CONFIG_DB (DB 4) に Redis `HGet` を発行する。bypass 高速パスを使わない環境では呼ばれない。
+
+### STATE_DB — `TELEMETRY_CONNECTIONS`
+
+| 操作 | 参照箇所 | タイミング |
+|------|---------|----------|
+| `HGetAll` → 全削除 | `connection_manager.go:52-60` | `telemetryd` 起動時（古い接続エントリをクリア） |
+| `HSet` | `storeKeyRedis()` | gRPC 接続確立時（接続情報を STATE_DB に記録） |
+| `HDel` | `deleteKeyRedis()` | gRPC 接続切断時（接続情報を STATE_DB から削除） |
+
+> `TELEMETRY_CONNECTIONS` は CONFIG_DB ではなく STATE_DB (DB 6) に格納される。カウンタの増分とは独立しているが、同一プロセスが管理する接続状態追跡テーブルである。
+
+### CONFIG_DB — `DPU|dpu<N>` / STATE_DB — `CHASSIS_MIDPLANE_TABLE|DPU<N>` （SmartSwitch 環境のみ）
+
+| テーブル/DB | 参照フィールド | 参照箇所 | 用途 |
+|------------|--------------|---------|------|
+| `DPU\|dpu<N>` (CONFIG_DB) | `gnmi_port` | `dpuproxy/resolver.go:98` | DPU への転送先 gRPC ポート決定（未設定時デフォルト `8080`） |
+| `CHASSIS_MIDPLANE_TABLE\|DPU<N>` (STATE_DB) | `ip_address`, `access` | `dpuproxy/resolver.go:69` | DPU の IP アドレスと到達性確認 |
+
+> SmartSwitch 構成 (`pkg/interceptors/dpuproxy/`) でのみ使用。通常の SONiC ではこの参照は発生しない。
+
+### CONFIG_DB — `GNMI` テーブル（間接参照）
+
+`GNMI` テーブルは `telemetryd` 自身がランタイムに直接読むのではなく、`hostcfgd` の `GnmiCfg` ハンドラが変化を検知して telemetry コンテナを再起動するという**間接パターン**をとる。ただし `GNMI|gnmi.save_on_set = true` 設定時には `Set()` RPC 処理後に `ConfigSave()` (`server.go:1057`) が呼ばれ `DBUS_CONFIG_SAVE` カウンタが増分されるため、`GNMI` テーブルの設定がカウンタ増分挙動に間接的に影響する。
+
+| CONFIG_DB キー | 参照フィールド | カウンタへの影響 |
+|---------------|--------------|---------------|
+| `GNMI\|gnmi` | `save_on_set` | `true` の場合、各 `Set()` RPC で `DBUS_CONFIG_SAVE` カウンタが増分される |
+
+### 範囲外（隣接テーブルとの区別）
+
+- **`COUNTERS_DB`** — sonic-gnmi の `sonic_data_client` が gNMI Get/Subscribe のデータソースとして参照するが、共有メモリカウンタの増分ロジックとは無関係。
+- **`APPL_DB`** — gNMI Set の書き込み先になりうるが、カウンタ自体はテーブルを問わず `GNMI_SET` または `GNMI_SET_FAIL` が増分されるだけで、APPL_DB を参照してカウンタを変えるパスは存在しない。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/gnmi-counter-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 <!-- ops-hint -->
 ## 運用ヒント
 
