@@ -409,4 +409,31 @@ P4RT テーブルには専用 YANG モデルが存在しないため leafref は
 > これらは CONFIG_DB フィールドとバイナリ引数の対応を定義するものであり、設定値ではない。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+CONFIG_DB `P4RT` テーブルを読み込む `p4rt.sh` は DB への書き戻しを**一切行わない**。副作用はすべてファイルシステムまたは p4rt バイナリの間接動作に閉じる。
+
+<!-- evidence: meta/_intermediate/cdb-flow/pin-config-side-effects.md -->
+
+| 副次 DB | 書込有無 | 根拠 |
+|---------|---------|------|
+| APPL_DB | なし | `p4rt.sh` に `sonic-db-cli` / `ProducerStateTable` 等の DB 書込コードなし |
+| STATE_DB | なし | 同上 |
+| COUNTERS_DB | なし | 同上 |
+| ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB | なし | SAI 非経由（Linux コンテナ起動スクリプト） |
+
+### ファイルシステムへの副次書き換え（DB 外）
+
+| 対象 | 操作 | 発動条件 | evidence |
+|------|------|---------|----------|
+| `$(dirname ${p4rt_unix_socket})` | `mkdir -p` でソケット用ディレクトリを自動作成 | `p4rt_unix_socket` フィールドが設定されているとき | `p4rt.sh:L92–94` |
+| `save_forwarding_config_file` パス | p4rt バイナリ起動後、P4Runtime 転送設定をファイルに書き込む | `save_forwarding_config_file` フィールドが設定されているとき | `p4rt.sh:L84–87`（バイナリ内実装） |
+
+### p4rt バイナリが管理する APPL_DB 書込（間接）
+
+`p4rt` バイナリ自体は gRPC 経由で受信した P4Runtime リクエストを APPL_DB `P4RT_*` テーブルへ書き込む。ただしこれは CONFIG_DB `P4RT` テーブルの読込に伴う直接の副次書込ではなく、外部コントローラからの gRPC リクエストドリブンの書込であるため、`p4rt.sh` の副次 DB 書込とは区別する。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected -->
