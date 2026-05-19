@@ -415,6 +415,65 @@ tunnel が存在しない場合 (#11) や `src_ip` が未設定の場合 (#12) �
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/subnet-decap-constants.md -->
+<!-- source: sonic-swss/orchagent/tunneldecaporch.cpp, sonic-swss/orchagent/tunneldecaporch.h, sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2 -->
+
+`TunnelDecapOrch` は `SUBNET_DECAP` テーブルの処理に関連するトンネル名・MTU・各種モード値をソースコードにハードコードしている。これらは CONFIG_DB の `SUBNET_DECAP` フィールドから変更できない。
+
+### オーバーレイ RIF の MTU（`tunneldecaporch.cpp:14`）
+
+```c
+#define OVERLAY_RIF_DEFAULT_MTU 9100
+```
+
+decap トンネルのオーバーレイ RIF 作成時に固定値 `9100` バイトが設定される（`tunneldecaporch.cpp:749-750`）。`SUBNET_DECAP` テーブルに MTU フィールドは存在せず、CONFIG_DB からの変更手段がない。
+
+### トンネル名（`tunneldecaporch.h:97-103`）
+
+```cpp
+SubnetDecapConfig subnetDecapConfig = {
+    false, "", "",
+    "IPINIP_SUBNET",      // tunnel
+    "IPINIP_SUBNET_V6"    // tunnel_v6
+};
+```
+
+| 定数 | 値 | 用途 |
+|------|----|------|
+| `subnetDecapConfig.tunnel` | `"IPINIP_SUBNET"` | IPv4 subnet decap トンネルオブジェクト名 |
+| `subnetDecapConfig.tunnel_v6` | `"IPINIP_SUBNET_V6"` | IPv6 subnet decap トンネルオブジェクト名 |
+
+`doDecapTunnelTermTask()` はこれらの名前で APP_DB の `TUNNEL_DECAP_TABLE` を検索する。名前が一致するトンネルが存在しない場合、term は `unhandledDecapTerms` キューに積まれたまま SAI に反映されない。`ipinip.json.j2` も同名でトンネルオブジェクトを生成するため、名前の変更は不可能（`tunneldecaporch.cpp:392-394`）。
+
+### ビルド時テンプレートによるトンネルパラメータ（`ipinip.json.j2:95-210`）
+
+`ipinip.json.j2` が生成する `TUNNEL_DECAP_TABLE:IPINIP_SUBNET` / `IPINIP_SUBNET_V6` エントリのパラメータは以下の通り固定される。`SUBNET_DECAP` テーブルフィールドには対応する設定項目が存在しない。
+
+| パラメータ | 固定値 | 条件・備考 |
+|-----------|--------|-----------|
+| `ecn_mode` | `"copy_from_outer"` | 全プラットフォーム固定。SAI create-only のため作成後の変更はスキップ (`tunneldecaporch.cpp:179`) |
+| `ttl_mode` | `"pipe"` | 全プラットフォーム固定 |
+| `dscp_mode` | `"uniform"` | Broadcom T1 ToR (`DEVICE_METADATA.localhost.type == "ToRRouter"` かつ `ASIC_VENDOR == "broadcom"`) |
+| `dscp_mode` | `"pipe"` | 上記以外の全プラットフォーム（デフォルト） |
+
+!!! note "`ecn_mode` は SAI create-only"
+    `ecn_mode` は SAI トンネルオブジェクト作成時にしか設定できない属性（`SAI_TUNNEL_ATTR_DECAP_ECN_MODE` は create-only）。`ipinip.json.j2` の値 `"copy_from_outer"` がビルド時に設定された後は変更不可。変更を試みると `SWSS_LOG_WARN("Skip setting ecn_mode since the SAI attribute is create only")` が出力されてスキップされる（`tunneldecaporch.cpp:179`）。
+
+### Mux トンネル名定数（`tunneldecaporch.h:21`）
+
+```c
+#define MUX_TUNNEL "MuxTunnel0"
+```
+
+DualToR の Mux トンネル識別に使われる定数。`TunnelDecapOrch` が同クラスで管理するため、`SUBNET_DECAP` 処理とトンネルオブジェクトの区別に影響する。CONFIG_DB から変更不可。
+
+> **Evidence**: `sonic-swss` `orchagent/tunneldecaporch.cpp:14,749-750`、`orchagent/tunneldecaporch.h:21,97-103`、`sonic-buildimage` `dockers/docker-orchagent/ipinip.json.j2:95-210`
+
+<!-- /constants -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
