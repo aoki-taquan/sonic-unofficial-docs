@@ -432,6 +432,42 @@ rsyslogd 起動 (priority=1)
 <!-- evidence: sonic-net/sonic-gnmi:gnmi_server/connection_manager.go:32-61,65,94-116,127 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:gnmi_server/client_subscribe.go:84 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:gnmi_server/server.go:528 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:common_utils/context.go (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:common_utils/shareMem.go (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22) -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`GNMI|gnmi` / `GNMI|certs` テーブルに対する Redis Subscribe は**存在しない**。`gnmi-native.sh` 起動スクリプトが `sonic-cfggen -d` コマンドで CONFIG_DB を**起動時に 1 回だけ読み取り**、得られた値を Go バイナリの CLI フラグへ変換して `exec` する。以降の CONFIG_DB 変更は **コンテナ再起動までテレメトリデーモンに反映されない**（hot reload なし）。
+
+`GNMI_CLIENT_CERT|<CommonName>` は gNMI RPC ごとに `configDbConnector.Get_entry()` で**直接ポーリング**（subscribe なし）。`swsscommon.SubscriberStateTable` / `ConsumerStateTable` は一切使用しない。
+
+| テーブル | 購読方式 | タイミング | 購読者 |
+|---------|---------|-----------|--------|
+| `GNMI\|gnmi` (CONFIG_DB) | 購読なし — `sonic-cfggen -d` 一括読み取り | コンテナ起動時 1 回 | `gnmi-native.sh` |
+| `GNMI\|certs` (CONFIG_DB) | 同上 | コンテナ起動時 1 回 | `gnmi-native.sh` |
+| `DEVICE_METADATA\|localhost` (CONFIG_DB) | 購読なし — `sonic-db-cli` inline 読み取り | コンテナ起動時 1 回 | `gnmi-native.sh` |
+| `GNMI_CLIENT_CERT\|<CN>` (CONFIG_DB) | 購読なし — `Get_entry()` 直接読み取り | 各 gNMI RPC リクエスト時 | `gnmi_server/clientCertAuth.go` |
+| `TELEMETRY_CONNECTIONS` (STATE_DB) | 書込み専用 (subscribe なし) | Subscribe RPC 開始 / 終了時 | `gnmi_server/connection_manager.go` |
+
+### 証明書ファイルの fsnotify 監視
+
+TLS 証明書ファイル（`server_crt` / `server_key` / `ca_crt` が指し示すパス）は、Redis 経由ではなく `fsnotify.Watcher` でファイルシステムレベルで監視する。証明書ファイルが更新されると `serverControlSignal` チャネルに `ServerRestart` が送信され、gRPC サーバを再起動して新しい TLS 設定を反映する。CONFIG_DB の証明書パスフィールド自体はコンテナ再起動なしには更新されない。
+
+```
+fsnotify.Watcher 監視（telemetry.go:434-448）
+  ファイル変更イベント受信
+  ↓ serverControlSignal ← ServerRestart
+  gRPC サーバ停止 → 新 tls.Config でサーバ再起動
+  ↓ STATE_DB: TELEMETRY_CONNECTIONS は PrepareRedis() で全エントリ初期化
+```
+
+### channel PUBLISH 経路の有無
+
+`GNMI|gnmi` テーブルへの書込みは `ConsumerStateTable`/`SubscriberStateTable` チャネルを経由しない。Redis `PUBLISH` は発生しない。したがって orchagent やその他のプロセスへの cascading notification は**発生しない**。
+
+<!-- evidence: sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh:19-98 (ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd); sonic-net/sonic-gnmi:telemetry/telemetry.go:434-476 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:gnmi_server/clientCertAuth.go:254-277 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:gnmi_server/connection_manager.go:32-61 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22) -->
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
