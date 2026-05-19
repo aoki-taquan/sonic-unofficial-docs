@@ -192,6 +192,30 @@ YANG の `string` 型にはデフォルトの長さ上限はなく、`sonic-rout
 <!-- evidence: sonic-route-map.yang:125-134; frrcfgd.py table_handler_list L2293-2338 (ROUTE_MAP_SET 出現なし) -->
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `frrcfgd.py` 全文 grep (`ROUTE_MAP_SET` 出現なし); `bgpcfgd` ソース全文 grep (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/route-map-set-side-effects.md`
+
+`ROUTE_MAP_SET` テーブルへの SET / DEL に伴う**副次 DB 書込は存在しない**。frrcfgd・bgpcfgd・orchagent のいずれも本テーブルを購読しないため、APPL_DB / STATE_DB / ASIC_DB / COUNTERS_DB への書込は構造的に発生しない。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | frrcfgd / bgpcfgd が ROUTE_MAP_SET を購読しないため AppDB への転送は発生しない |
+| STATE_DB | なし | ROUTE_MAP_SET の処理コードが存在せず、status 書き戻しも存在しない |
+| ASIC_DB | なし | orchagent が ROUTE_MAP_SET を購読しないため SAI 経路を経由しない |
+| COUNTERS_DB | なし | routing エントリのためのカウンタテーブルは存在しない |
+| FLEX_COUNTER_DB | なし | カウンタ設定対象外 |
+| LOGLEVEL_DB | なし | ROUTE_MAP_SET 処理コードが存在しないため |
+
+### gNMI / NETCONF パスの副作用
+
+gNMI / NETCONF 経由で YANG 検証が有効な場合、leafref 整合性エラーは `google.rpc.Status` として RPC レスポンスに返される。これは DB 書込ではなく RPC 応答レベルの副作用であり、CONFIG_DB および他 DB への書込は発生しない。
+
+<!-- evidence: frrcfgd.py table_handler_list L2293-2338 (ROUTE_MAP_SET 出現なし); bgpcfgd/ grep (出現なし); orchagent/ grep (出現なし) -->
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
