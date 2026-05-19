@@ -314,6 +314,52 @@ orchagent 側は `ZmqConsumerStateTable` で ZMQ メッセージを受信する�
 <!-- evidence: sonic-swss-common/common/zmqserver.h:13,31 (MQ_WATERMARK=10000, DEFAULT_POP_BATCH_SIZE=128) -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/lib/orch_zmq_config.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-buildimage/dockers/docker-orchagent/orchagent.sh`
+
+### 共通: ZMQ ロジック自体はプラットフォーム非依存
+
+`orch_zmq_config.cpp` / `orchdaemon.cpp` に `getenv("platform")` / `MLNX_PLATFORM_SUBSTRING` 等の ASIC 種別判定はない。ZMQ チャネルのセットアップはすべての ASIC 種別で共通コードパスを使用する。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `orch_zmq_config.cpp` にプラットフォーム分岐なし |
+| multi-asic (multi-NPU) | ZMQ ポートに NAMESPACE_ID オフセットが付く | `get_zmq_port()` (`orch_zmq_config.cpp:37-51`) が `NAMESPACE_ID` 環境変数を読み取り `8100 + NAMESPACE_ID + 1` を計算。global namespace では `NAMESPACE_ID` 未設定 → ポート固定 8100 |
+| VOQ chassis | 影響なし | `switch_type == "voq"` 向けの ZMQ 固有分岐はなし |
+
+### SmartSwitch 専用: ZMQ アドレスと DPU ポート
+
+ZMQ の**アドレス・ポート**はプラットフォームで変化する:
+
+| プラットフォーム | ZMQ サーバアドレス | ポート | 根拠 |
+|----------------|-------------------|--------|------|
+| 一般 (`subtype` なし) | `tcp://127.0.0.1` | `8100` | `orchagent.sh:105-118` (デフォルト分岐) |
+| SmartSwitch NPU (`subtype=SmartSwitch`, `eth0-midplane` UP) | `tcp://eth0-midplane` | `8100` | `orchagent.sh:107-112` |
+| SmartSwitch NPU (`subtype=SmartSwitch`, `eth0-midplane` DOWN) | `tcp://127.0.0.1` | `8100` | `orchagent.sh:113-117` |
+| SmartSwitch DPU (`switch_type=dpu`) | DPU 側 `orchagent.sh` で決定 | `DPU|<name>.orchagent_zmq_port` または `8100 + NS_ID + 1` | `orchagent.sh:38-39` + `orch_zmq_config.cpp:37-51` |
+
+`orchagent_zmq_port` (`DPU|<name>`) は SmartSwitch 環境**のみ**に存在する CONFIG_DB フィールドであり、一般プラットフォームでは不要。
+
+### DpuOrchDaemon と ZMQ サーバ
+
+SmartSwitch の DPU orchagent は `DpuOrchDaemon` として動作し、`ZMQ_SYNC` モード (`-z zmq_sync -k 65536`) で起動する。これは `orchagent.sh:38-39` で `switch_type == "dpu"` のときに強制付与される引数であり、一般プラットフォームでは付与されない。
+
+### multi-asic のポート計算
+
+```cpp
+// orch_zmq_config.cpp:37-51
+int zmq_port = ORCH_ZMQ_PORT;  // 8100
+if (namespace_id != "")
+{
+    zmq_port = ORCH_ZMQ_PORT + stoi(namespace_id) + 1;
+}
+```
+
+asic0 → 8101、asic1 → 8102 のようにオフセットされる。global namespace (NAMESPACE_ID 未設定) → 8100 固定。
+<!-- /platform -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
