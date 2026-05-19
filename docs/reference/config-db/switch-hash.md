@@ -458,6 +458,55 @@ else
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/switch-hash-platform.md`
+
+`SwitchOrch` の SWITCH_HASH 処理経路には `BRCM_PLATFORM_SUBSTRING` / `MLNX_PLATFORM_SUBSTRING` などの **platform 文字列分岐が存在しない**。プラットフォーム差異はすべて **SAI capability クエリ** 経由で実行時に動的決定される。
+
+### SAI capability クエリの構造
+
+起動時に `SwitchCapabilities` コンストラクタ (`switch_capabilities.cpp:156-163`) が 6 種類のクエリを実行する:
+
+1. `queryHashCapabilities()` — `SAI_OBJECT_TYPE_HASH` / `SAI_HASH_ATTR_NATIVE_HASH_FIELD_LIST` の enum capability + attr capability
+2. `querySwitchCapabilities()` — ECMP/LAG hash・ECMP/LAG hash algorithm 各属性の attr/enum capability
+
+クエリ結果は `isAttrSupported` / `isEnumSupported` フラグに格納され、`STATE_DB:SWITCH_CAPABILITY|switch` に書き込まれる。
+
+### STATE_DB への capability 書込 (`STATE_SWITCH_CAPABILITY_TABLE_NAME`)
+
+`schema.h:417` の `#define STATE_SWITCH_CAPABILITY_TABLE_NAME "SWITCH_CAPABILITY"` が指すテーブルに以下フィールドが設定される:
+
+| フィールド | 値例 | 意味 |
+|---|---|---|
+| `HASH\|NATIVE_HASH_FIELD_LIST` | `"DST_MAC,SRC_MAC,..."` / `"N/A"` | ASIC がサポートする hash-field リスト (enum 未対応なら `N/A`) |
+| `ECMP_HASH_CAPABLE` | `"true"` / `"false"` | ECMP hash フィールドリスト設定の対応可否 |
+| `LAG_HASH_CAPABLE` | `"true"` / `"false"` | LAG hash フィールドリスト設定の対応可否 |
+| `ECMP_HASH_ALGORITHM` | `"CRC,XOR,..."` / `"N/A"` | ECMP hash algorithm のサポートリスト |
+| `ECMP_HASH_ALGORITHM_CAPABLE` | `"true"` / `"false"` | ECMP hash algorithm 設定の対応可否 |
+| `LAG_HASH_ALGORITHM` | `"CRC,XOR,..."` / `"N/A"` | LAG hash algorithm のサポートリスト |
+| `LAG_HASH_ALGORITHM_CAPABLE` | `"true"` / `"false"` | LAG hash algorithm 設定の対応可否 |
+
+### プラットフォーム別動作差
+
+`isSwitchEcmpHashSupported()` は `nativeHashFieldList.isAttrSupported && ecmpHash.isAttrSupported` で判定する。いずれかの SAI クエリが失敗すると `false` になり、SWITCH_HASH SET は `LOG_WARN("Switch ECMP hash configuration is not supported: skipping ...")` でサイレントに握り潰される。
+
+hash-field の enum capability が取得できた ASIC では、ASIC 非サポートフィールドを含む SET を `validateSwitchHashFieldCap()` が `LOG_ERROR` で拒否する。enum capability クエリが失敗した場合はバリデーションをスキップして全フィールドを許容する（`switch_capabilities.cpp:194-198`）。
+
+### VS (Virtual Switch)
+
+`libsaivs` は `sai_query_attribute_capability` / `sai_query_attribute_enum_values_capability` が `SAI_STATUS_NOT_IMPLEMENTED` を返すため、全 `isAttrSupported`/`isEnumSupported` フラグが `false` のまま STATE_DB に書き込まれる。SWITCH_HASH SET はすべて `LOG_WARN` でスキップされ SAI には反映されない。
+
+### 確認コマンド
+
+```bash
+sonic-db-cli STATE_DB hgetall 'SWITCH_CAPABILITY|switch'
+show switch-hash capabilities
+```
+
+<!-- /platform -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
