@@ -325,6 +325,16 @@ SAI への反映も起こらない。
 | 7 | `SAI_SWITCH_ATTR_TAM_TEL_TYPE_CONFIG_CHANGE_NOTIFY` set 失敗 | `HFTelOrch()` 初期化 | `runtime_error` → orchagent abort → systemd 再起動 | `ERROR "Failed to set SAI_SWITCH_ATTR_TAM_TEL_TYPE_CONFIG_CHANGE_NOTIFY"` |
 | 8 | `SAI_SWITCH_ATTR_TAM_OBJECT_ID` set 失敗 | `HFTelOrch()` 初期化 | 同上 | `ERROR "Failed to set SAI_SWITCH_ATTR_TAM_OBJECT_ID"` |
 
+### HFTelOrch doTask() 処理失敗
+
+| 失敗条件 | 結果 | 根拠 |
+|---------|------|------|
+| 未知のテーブル名 | ERROR ログ → `task_failed`（永続スキップ） | `hftelorch.cpp:623` |
+| 未知のオペレーション型 | ERROR ログ → `task_failed`（永続スキップ） | `hftelorch.cpp:598, 618` |
+| 処理例外送出 | ERROR ログ → `task_failed`（永続スキップ） | `hftelorch.cpp:628-633` |
+| プロファイルが `canBeUpdated()=false`（ストリーム稼働中） | `task_need_retry`（次サイクルで再試行） | `hftelorch.cpp:275` |
+| グループのプロファイルが未発見 | `task_need_retry` | `hftelorch.cpp:340-345` |
+
 ### portsorch Path Tracing TAM 失敗
 
 `portsorch` は Path Tracing のために SAI TAM オブジェクトを作成する。`SAI_TAM_INT_ATTR_DEVICE_ID` は `TAM_DEVICE_TABLE.deviceid` を読まず固定値 `0` を使用する[^3]。

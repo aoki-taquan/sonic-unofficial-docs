@@ -1,32 +1,49 @@
-# gnmi-dialin pubsub 調査メモ (Phase G)
+# gnmi-dialin — Phase G pubsub 調査証跡
 
-## 調査日: 2026-05-19
-## 対象: sonic-net/sonic-gnmi, sonic-net/sonic-buildimage
+調査日: 2026-05-19
+対象ページ: docs/reference/config-db/gnmi-dialin.md
+対象テーブル: GNMI|gnmi, GNMI|certs
 
-## 結論
+## 主な調査結果
 
-`GNMI|gnmi` / `GNMI|certs` テーブルに対する Redis Subscribe は存在しない。
-起動スクリプト `gnmi-native.sh` が `sonic-cfggen -d` で起動時 1 回だけ読み取る。
+### GNMI|gnmi / GNMI|certs — ポイントインタイム読み取り (Pub/Sub なし)
 
-## SubscriberStateTable / ConsumerStateTable の使用有無
+- `gnmi-native.sh` は起動時に `sonic-cfggen -d -t telemetry_vars.j2` を 1 回実行してスナップショットを取得する
+- テンプレート `telemetry_vars.j2` は `GNMI["gnmi"]`, `GNMI["certs"]`, `DEVICE_METADATA["x509"]` を JSON 化する
+- コンテナ稼働中の CONFIG_DB 変更は `telemetry` プロセスに通知されない — コンテナ再起動のみ反映手段
+- `swsscommon.SubscriberStateTable` / `ConsumerStateTable` は一切使用しない
+- 例外: TLS 証明書ファイルは `fsnotify` で動的リロードされるが、ファイルシステム監視であり CONFIG_DB テーブルの Pub/Sub ではない
 
-- `grep -r "SubscriberStateTable\|ConsumerStateTable" sonic-gnmi/` → 0 件
-- CONFIG_DB への Subscribe は一切なし
-- `GNMI_CLIENT_CERT` は `Get_entry()` による直接ポーリングのみ
+### GNMI_CLIENT_CERT — 接続ごとポイントインタイム読み取り
 
-## fsnotify による証明書監視
+- `clientCertAuth.go:PopulateAuthStructByCommonName()` が各 gNMI RPC 接続時に
+  `ConfigDBConnector.Connect(false).Get_entry()` で `GNMI_CLIENT_CERT|<CN>` を読み取る
+- Subscribe ではなく都度読み取りのため、エントリ追加/削除はコンテナ再起動不要で即時反映される
 
-`telemetry.go:434-448` で `fsnotify.Watcher` を作成し、証明書ファイルを監視。
-ファイル変更時に `serverControlSignal` へ `ServerRestart` を送信 → gRPC サーバ再起動。
+### DEVICE_METADATA|localhost.hwsku — RPC ごとポイントインタイム読み取り
 
-## STATE_DB 書込み
+- `pkg/bypass/bypass.go:IsAllowedSKU()` が SmartSwitch 向け gNMI Set RPC 時に
+  `ConfigDBConnector.Get_entry()` で hwsku を読み取り CVL bypass 判定を行う
 
-`connection_manager.go:32-61` で Subscribe RPC の開始/終了時に
-`TELEMETRY_CONNECTIONS` Hash に `HSet` / `HDel` を行う（write-only、subscribe なし）。
+### TELEMETRY_CLIENT — PSUBSCRIBE (dial-out モード)
 
-## evidence
+- `dialout_client.go:DialOutRun()` が `PSUBSCRIBE "__keyspace@<N>__:TELEMETRY_CLIENT|*"` を張り
+  dial-out テレメトリ設定の変更をリアルタイム監視する
+- 初回スナップショット (`KEYS TELEMETRY_CLIENT|*`) + 差分通知の 2 段構成
+
+### gNMI Subscribe RPC — 任意 DB テーブルの keyspace 購読
+
+- gNMI Subscribe RPC 受信時、`db_client.go:dbTableKeySubscribe()` が要求パスに対応する
+  Redis DB へ `PSubscribe __keyspace@<N>__:<table>|<key>*` を張る
+- `GNMI|gnmi` テーブル自体は監視対象外
+
+## evidence refs
 
 - sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh:19-98 (ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
-- sonic-net/sonic-gnmi:telemetry/telemetry.go:434-476 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
-- sonic-net/sonic-gnmi:gnmi_server/clientCertAuth.go:254-277 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+- sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/telemetry_vars.j2:1-5
+- sonic-net/sonic-gnmi:telemetry/telemetry.go:434-456 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+- sonic-net/sonic-gnmi:gnmi_server/clientCertAuth.go:259-261 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+- sonic-net/sonic-gnmi:pkg/bypass/bypass.go:148-168 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
 - sonic-net/sonic-gnmi:gnmi_server/connection_manager.go:32-61 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+- sonic-net/sonic-gnmi:dialout/dialout_client/dialout_client.go:646-745 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+- sonic-net/sonic-gnmi:sonic_data_client/db_client.go:1419-1447 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)

@@ -884,7 +884,7 @@ TTL は設定されない（CONFIG_DB は永続ストレージ前提）。
 
 <!-- /pubsub -->
 
-<!-- platform-diff -->
+<!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-platform.md -->
@@ -956,7 +956,7 @@ PVST モード有効化時に `stpmgr` は Cisco PVST+ マルチキャストア�
 
 [^4]: `sonic-swss/orchagent/stporch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp>
 
-<!-- /platform-diff -->
+<!-- /platform -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 

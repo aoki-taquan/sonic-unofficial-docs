@@ -160,6 +160,69 @@ join 成功直後に `set_node_labels()` → `LabelsPendingHandler.update_node_l
 詳細調査ノートは `meta/_intermediate/cdb-flow/kubernetes-master-failure.md` 参照。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/kubernetes-master-constants.md`
+
+### タイマー定数 (`ctrmgrd.py:112-118`)
+
+`ctrmgrd` が使用するリトライ・遅延タイマーはすべてコード内にデフォルト値を持ち、`/etc/sonic/remote_ctr.config.json` が存在する場合のみ上書きされる。ファイルが存在しない場合はコード埋め込み値がそのまま使われる。
+
+| 変数名 | JSON キー | デフォルト値 | 用途 |
+|--------|-----------|-------------|------|
+| `JOIN_LATENCY` | `"join_latency_on_boot_seconds"` | **10 秒** | 初回起動時の kubelet join 遅延 |
+| `JOIN_RETRY` | `"retry_join_interval_seconds"` | **10 秒** | join 失敗時のリトライ間隔 |
+| `LABEL_RETRY` | `"retry_labels_update_seconds"` | **2 秒** | ラベル書き込み失敗時のリトライ間隔 |
+| `TAG_IMAGE_LATEST` | `"tag_latest_image_on_wait_seconds"` | **5 秒** | latest イメージタグ付け待機時間 |
+| `TAG_RETRY` | `"retry_tag_latest_seconds"` | **5 秒** | タグ付け失敗時のリトライ間隔 |
+| `CLEAN_IMAGE_RETRY` | `"retry_clean_image_seconds"` | **5 秒** | 旧イメージ削除失敗時のリトライ間隔 |
+| `USE_K8S_PROXY` | `"use_k8s_as_http_proxy"` | `""` (無効) | K8s を HTTP プロキシとして使用するか |
+
+### 設定ファイルパス定数 (`ctrmgrd.py:23`)
+
+```python
+SONIC_CTR_CONFIG = "/etc/sonic/remote_ctr.config.json"
+```
+
+タイマー定数の外部上書き用 JSON ファイルのパスはハードコードされており、このパス以外にファイルを配置しても読み込まれない。
+
+### CONFIG_DB / STATE_DB フィールド名定数 (`ctrmgrd.py:30-45`)
+
+| 種別 | 変数名 | 値 (文字列) | 用途 |
+|------|--------|------------|------|
+| CONFIG_DB | `SERVER_KEY` | `"SERVER"` | `KUBERNETES_MASTER` テーブルの単一 key 名 |
+| CONFIG_DB | `CFG_SER_PORT` | デフォルト `"6443"` | API server デフォルトポート (YANG `default` 宣言とも一致) |
+| STATE_DB | `ST_SER_CONNECTED` | `"connected"` | join 成否フラグ (`"true"` / `"false"`) |
+| STATE_DB | `ST_SER_UPDATE_TS` | `"update_time"` | 最終 join タイムスタンプ (初回起動判定に使用) |
+
+### 所有者モード定数 (`ctrmgrd.py:59-62`)
+
+```python
+MODE_KUBE = OWNER_KUBE = "kube"
+MODE_LOCAL = OWNER_LOCAL = "local"
+```
+
+`FEATURE.set_owner` の値と照合するための文字列定数。`"kube"` / `"local"` 以外の値は `handle_update()` 内で未定義動作になる。
+
+### KUBE_LABELS テーブル名定数 (`ctrmgrd.py:56-57`)
+
+| 変数名 | 値 | 用途 |
+|--------|----|------|
+| `KUBE_LABEL_TABLE` | `"KUBE_LABELS"` | STATE_DB のラベルテーブル名 |
+| `KUBE_LABEL_SET_KEY` | `"SET"` | ラベルテーブル内の単一 key |
+
+### SELECT_TIMEOUT 定数 (`ctrmgrd.py:181`)
+
+```python
+SELECT_TIMEOUT = 1000  # ms
+```
+
+メインループの `swsscommon.Select.select()` タイムアウト値。1000 ms 間隔でイベントポーリングする。設定変更不可。
+
+<!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:23,30-45,56-57,59-62,74,103-118,181 -->
+<!-- /constants -->
+
 <!-- defaults -->
 ## フィールドデフォルト
 

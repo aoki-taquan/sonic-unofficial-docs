@@ -198,6 +198,54 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 
 <!-- /cross-refs -->
 
+<!-- failure-behavior -->
+## 失敗挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-failure.md`
+
+`VXLAN_FDB_TABLE` は APP_DB テーブルであり、書き込みは `fdbsyncd` が行い、消費は `orchagent/FdbOrch::doTask()` が行う。失敗経路は **fdbsyncd 側**（netlink イベント処理・warm-restart）と **orchagent 側**（APP_DB エントリ処理・SAI 操作）の 2 層に分かれる。
+
+<!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp:580-583,609-612,639-642; sonic-swss/fdbsyncd/fdbsync.h:15; sonic-swss/orchagent/fdborch.cpp:711-713,739-759,801-808,836-854,870-895,917-918,1291-1318,1531-1542 -->
+
+### A. fdbsyncd 側の失敗パターン
+
+| # | 失敗条件 | 挙動 | retry | evidence |
+|---|----------|------|-------|---------|
+| 1 | warm-restart タイマー進行中 (120 秒) | `macAddVxlan` / `macUpdateVxlan` / `macDelVxlan` が APP_DB へ直接書かず `AppRestartAssist::insertToMap()` でキャッシュ蓄積。タイマー完了後の reconcile フェーズで差分を一括反映 | 自動 (reconcile) | `fdbsync.cpp:580-583, 609-612, 639-642; fdbsync.h:15` |
+| 2 | netlink MAC が `00:00:00:00:00:00` (BUM / IMET) | `VXLAN_FDB_TABLE` に書かず `APP_VXLAN_REMOTE_VNI_TABLE_NAME` に書く | なし | `fdbsync.cpp:805` |
+| 3 | 非 VXLAN インタフェースの netlink イベント | `isVxlanIntf == false` → スキップ | なし | `fdbsync.cpp` |
+
+### B. orchagent (FdbOrch) 側の失敗パターン
+
+| # | 失敗条件 | 挙動 | retry | evidence |
+|---|----------|------|-------|---------|
+| 4 | `allPortsReady() == false` | `doTask()` が early return。`m_toSync` に蓄積されたまま全処理がブロック | 自動 (ポート初期化完了後の次イベントループ) | `fdborch.cpp:711-713` |
+| 5 | VLAN が PortsOrch に未登録 (SET) | `it++` で次周回再試行（無限ポーリング） | 自動 | `fdborch.cpp:739-759` |
+| 6 | VLAN が PortsOrch に未登録 (DEL) + `stoi` 成功 | `deleteFdbEntryFromSavedFDB()` を呼んで `erase(it)` 破棄 | なし | `fdborch.cpp:744-754` |
+| 7 | VLAN が PortsOrch に未登録 (DEL) + `stoi` 例外 | `erase(it)` で即破棄 | なし | `fdborch.cpp:748-750` |
+| 8 | `remote_vtep` が不正 IP 文字列 | `IpAddress()` が例外 → `SWSS_LOG_NOTICE` → `remote_ip = ""` → break | なし (後続で #9 により破棄) | `fdborch.cpp:801-808` |
+| 9 | `remote_vtep` が空 (DIP トンネルモード) | `erase(it)` で即破棄 | なし | `fdborch.cpp:838-841` |
+| 10 | EVPN NVO source VTEP が NULL (非 DIP モード) | `erase(it)` で即破棄 | なし | `fdborch.cpp:848-852` |
+| 11 | `addFdbEntry()` が `false` を返す (SAI 生成失敗等) | `it++` で次周回再試行 | 自動 | `fdborch.cpp:870-895` |
+| 12 | ポートが未作成または bridge_port_id が `SAI_NULL_OBJECT_ID` | `saved_fdb_entries[port_name]` にパーク → `return true`。ポート作成完了時にコールバック経由で再試行 | 自動 | `fdborch.cpp:1297-1303` |
+| 13 | ポートが VLAN メンバーでない | 同上 (`saved_fdb_entries` パーク) | 自動 | `fdborch.cpp:1313-1318` |
+| 14 | SAI `create_fdb_entry()` 失敗 | `SWSS_LOG_ERROR` → `handleSaiCreateStatus()` → `parseHandleSaiStatusFailure()` → `false`。`doTask()` 側で `it++` 再試行 | 自動 | `fdborch.cpp:1531-1542` |
+| 15 | 不明 OP (SET / DEL 以外) | `SWSS_LOG_ERROR` → `erase(it)` 即破棄 | なし | `fdborch.cpp:917-918` |
+
+### C. 失敗別サマリ
+
+| ケース | 最悪の結果 | 回復方法 |
+|---|---|---|
+| warm-restart 120 秒タイムアウト超過 | reconcile が完了せず古いエントリが残存 | `fdbsyncd` の warm-restart 完了を待つ / 再起動 |
+| `remote_vtep` 不正 IP | エントリ即破棄（VXLAN FDB 未登録、パケット転送不可） | `fdbsyncd` が正しい IP を再送信するか手動で APP_DB を修正 |
+| EVPN NVO 未設定で VXLAN FDB エントリが先着 | エントリ即破棄 | EVPN NVO を設定後、BGP / `fdbsyncd` が再学習するのを待つ |
+| SAI `create_fdb_entry` 失敗 | 次周回で自動再試行。ASIC リソース枯渇時は再試行が続く | `show vxlan remotemac` でエントリが現れるか確認 |
+
+!!! note "`VXLAN_FDB_TABLE` に失敗ステータスは書かれない"
+    orchagent は `VXLAN_FDB_TABLE` の失敗を STATE_DB / ERROR_TABLE には記録しない。失敗は `SWSS_LOG_*` 経由でのみ `/var/log/swss/orchagent.log` に出力される。エントリの存否は `sonic-db-cli APPL_DB keys 'VXLAN_FDB_TABLE:*'` または `show vxlan remotemac` で確認する。
+
+<!-- /failure-behavior -->
+
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp; sonic-swss/orchagent/fdborch.cpp -->

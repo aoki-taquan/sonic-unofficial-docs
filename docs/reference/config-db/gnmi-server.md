@@ -572,6 +572,35 @@ gNMI サブシステム (`telemetry` / `dialout_client_cli`) は GNMI / GNMI_CLI
 詳細な証跡は `meta/_intermediate/cdb-flow/gnmi-server-side-effects.md` を参照。
 <!-- /side-effects -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+GNMI / GNMI_CLIENT_CERT / TELEMETRY_CLIENT テーブルの定義・処理ロジックは **ほぼ全プラットフォームで同一**。差分は SmartSwitch の 1 点に局所化される。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | gNMI サーバは SAI 非経由。`telemetry.go` / `gnmi-native.sh` を `platform\|asic\|vendor\|broadcom\|mellanox` で grep して 0 ヒット |
+| multi-asic (`GetDbAllNamespaces()`) | CONFIG_DB テーブル自体に影響なし | `sonic_data_client/db_client.go:initRedisDbClients()` が全 namespace のデータ DB クライアントを初期化するのは gNMI パス解決 (Subscribe/Get) のためであり、GNMI / TELEMETRY_CLIENT テーブルのスキーマ・書込先には影響しない |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | GNMI テーブルは host CONFIG_DB スコープ。`gnmi-native.sh` の `sonic-cfggen -d` は host DB のみ参照し `asicN` namespace を iterate しない |
+| SmartSwitch (`DEVICE_METADATA\|localhost.subtype == "SmartSwitch"`) | **ZMQ ポート付与あり** | `gnmi-native.sh:89-92` が `LOCALHOST_SUBTYPE` を評価し、`"SmartSwitch"` の場合のみ `-zmq_port=8100` を `telemetry` 起動引数に追加する。非 SmartSwitch 機では ZMQ ポートは付与されず Redis ベース通信のみ。GNMI テーブルに `zmq_port` フィールドは存在しない |
+| VRF (`MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled`) | VRF 対応機種全般で共通 | `gnmi-native.sh:95-98` で `--vrf mgmt` を付与。特定 ASIC への依存なし |
+| ビルドタグ (`gnmi_native_write` / `gnmi_translib_write`) | ASIC 非依存 | 管理フレームワーク統合の有無に依存するビルド時条件分岐。コミュニティ版標準 SONiC では常に `false` (`constants_native.go:5`, `constants_translib.go:5`) |
+
+### SmartSwitch ZMQ 分岐の詳細
+
+```bash
+# gnmi-native.sh:89-92
+LOCALHOST_SUBTYPE=`sonic-db-cli CONFIG_DB hget "DEVICE_METADATA|localhost" "subtype"`
+if [[ x"${LOCALHOST_SUBTYPE}" == x"SmartSwitch" ]]; then
+    TELEMETRY_ARGS+=" -zmq_port=8100"
+fi
+```
+
+`-zmq_port=8100` が付与されると `telemetry.go` は Redis ベースの Pub/Sub 通信に加えて orchagent との ZMQ チャネルを開設する。SmartSwitch 以外の機種では ZMQ チャネルは開設されない。値 `8100` はハードコード定数であり CONFIG_DB で変更不可 (Phase E 参照)。
+
+詳細根拠は `meta/_intermediate/cdb-flow/gnmi-server-platform.md` を参照。
+<!-- /platform -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
