@@ -503,6 +503,37 @@ gP4Orch = new P4Orch(m_applDb, p4rt_tables, m_p4OrchZmqServer, vrf_orch, gCoppOr
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 根拠: `sonic-buildimage/rules/config:206`、`slave.mk:222-241`、`files/build_templates/init_cfg.json.j2:83`、`orchdaemon.cpp:847-849,1292-1310`
+> evidence: `meta/_intermediate/cdb-flow/ip-mcast-route-platform.md`
+
+`IpMulticastManager` / `L3MulticastManager` の処理ロジックに **platform 固有のコードパスは存在しない**。`ip_multicast_manager.cpp` / `l3_multicast_manager.cpp` を `platform|vendor|chassis|multi_asic|is_multi_npu` で grep した結果はすべて 0 ヒット（C++ `namespace` キーワード除く）。SAI 呼び出しは汎用 SAI プリミティブのみ使用する。
+
+### P4RT はビルドオプション — `INCLUDE_P4RT`
+
+| ビルド変数 | デフォルト | 有効化条件 |
+|-----------|-----------|-----------|
+| `INCLUDE_P4RT` | `n` (`rules/config:206`) | 環境変数 `SONIC_INCLUDE_P4RT=y` が設定された場合のみ |
+
+`slave.mk:226-241` により **`armhf` および `arm64` では Bazel が利用不可のため強制的に `INCLUDE_P4RT = n`** にリセットされる。community upstream の `device/` ディレクトリ内に `INCLUDE_P4RT = y` を指定している platform は確認されない。
+
+`INCLUDE_P4RT = n` のビルドでは `docker-sonic-p4rt` コンテナが含まれず、`REPLICATION_IP_MULTICAST_TABLE` / `FIXED_IPV4_MULTICAST_TABLE` / `FIXED_IPV6_MULTICAST_TABLE` はシステム上に存在しない。
+
+### multi-asic / VOQ chassis での挙動
+
+`init_cfg.json.j2:83` の feature タプル `("p4rt", "disabled", false, "enabled")` の第 3 要素 `false` が `has_per_asic_scope=False` を示す。multi-asic 環境でも `p4rt` コンテナは host namespace に **1 個のみ** 起動し、`asic0..N` の Redis には展開されない。ZMQ エンドポイント `"ipc:///zmq_swss/p4orch_zmq_swss_ep"` も host 固定 (`orchdaemon.h:121`)。
+
+### FabricOrchDaemon での非対応
+
+`orchdaemon.cpp:1292-1310` の `FabricOrchDaemon::init()` には `gP4Orch` の初期化が存在しない。Fabric ノード（LC/SC のファブリックポートのみ管理するノード）では P4Orch が起動せず、IP マルチキャストテーブルは利用不可。`DpuOrchDaemon` は基底クラス `OrchDaemon::init()` を継承するため P4Orch が生成される。
+
+### SAI 実装要件
+
+`SAI_OBJECT_TYPE_IPMC_GROUP` / `SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER` / `SAI_OBJECT_TYPE_IPMC_ENTRY` / `SAI_OBJECT_TYPE_RPF_GROUP` を実装した SAI アダプタが必要。Virtual Switch (VS) SAI はこれらをスタブ実装する。スキーマ・書込パス自体に platform 条件分岐はなく、SAI 実装の可否のみが差異となる。
+<!-- /platform -->
+
 ## 購読者
 
 | コンポーネント | テーブル | SAI 操作 |
