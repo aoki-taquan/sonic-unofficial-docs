@@ -296,6 +296,43 @@ RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけで
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次書込・副次動作 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/radius-side-effects.md`
+> ソース: `sonic-host-services/scripts/hostcfgd` L641-860 (`modify_conf_file`)
+
+`RADIUS` の SET/DEL を受けた `hostcfgd` (`AaaCfg`) の処理経路では **Redis DB（STATE_DB / APPL_DB / COUNTERS_DB 等）への書き込みは一切発生しない**。副次動作はすべて OS ファイルシステムへの設定ファイル再生成と systemd サービス制御。
+
+### PAM 設定ファイル再生成
+
+| ファイルパス | 操作 | 条件 | evidence |
+|-------------|------|------|---------|
+| `/etc/pam.d/common-auth-sonic` | Jinja2 テンプレートから上書き (`.tmp` 経由 atomic rename) | `RADIUS\|global` SET/DEL 時に常時 | `hostcfgd:716-731` |
+| `/etc/pam.d/sshd` | `@include common-auth` → `common-auth-sonic` に置換 (または逆) | `PAM_AUTH_CONF` ファイルの存否に応じて | `hostcfgd:733-738` |
+| `/etc/pam.d/login` | 同上 | 同上 | `hostcfgd:733-738` |
+| `/etc/pam_radius_auth.d/<ip>_<auth_port>.conf` | 新規作成または上書き (パーミッション 0600) | `RADIUS_SERVER` エントリが存在する場合 (各サーバ 1 ファイル) | `hostcfgd:826-837` |
+
+### NSS / RADIUS NSS 設定ファイル再生成
+
+| ファイルパス | 操作 | 条件 | evidence |
+|-------------|------|------|---------|
+| `/etc/nsswitch.conf` | `passwd` / `group` / `shadow` 行の `radius` エントリを追加または削除 (`sed -i` 相当) | `AAA.authentication.login` に `radius` が含まれる場合に追加、それ以外は削除 | `hostcfgd:748-760` |
+| `/etc/radius_nss.conf` | Jinja2 テンプレート (`NSS_RADIUS_CONF_TEMPLATE`) から全体再生成 | 常時 | `hostcfgd:820-823` |
+
+### systemd サービス制御
+
+| サービス | 操作 | 条件 | evidence |
+|---------|------|------|---------|
+| `aaastatsd` | `service aaastatsd start` | `AAA.authentication.login` に `radius` があり、かつ `RADIUS.statistics = True` | `hostcfgd:840-851` |
+| `aaastatsd` | `service aaastatsd stop` | 上記以外のすべての場合 | `hostcfgd:840-851` |
+
+### Redis DB への書き込み: なし
+
+`modify_conf_file()` は `swsscommon` の `Table.set()` / `ProducerStateTable` / `ConfigDBConnector.set_entry()` を一切呼び出さない。RADIUS 処理経路は CONFIG_DB から読み取るのみで、他の Redis DB への書き戻しは行わない。
+
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト・Fallback
 
