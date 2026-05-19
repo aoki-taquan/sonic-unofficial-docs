@@ -328,6 +328,57 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`PbhOrch` が `PBH_RULE` の SET / DEL を処理した後に CONFIG_DB 以外の DB へ書き込む副次エントリを整理する。
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-rule-side-effects.md -->
+<!-- source: sonic-swss/orchagent/pbhorch.cpp:633, aclorch.cpp:4980-4983,6040-6048, aclorch.h:45,116, pbh/pbhrule.h:8 -->
+
+### COUNTERS_DB / `ACL_COUNTER_RULE_MAP` (flow_counter=ENABLED 時のみ)
+
+`AclRulePbh` はデフォルト `createCounter=false` (`pbhrule.h:8`)。`flow_counter=ENABLED` が CONFIG_DB に設定された場合のみ `createCounter=true` として構築され、`addAclRule()` が `registerFlexCounter()` を呼び出す。
+
+| トリガ | 操作 | key / フィールド | evidence |
+|--------|------|-----------------|---------|
+| `flow_counter=ENABLED` で SET 成功 | `hset` | `ACL_COUNTER_RULE_MAP` の `<table_name>:<rule_name>` = counter OID | `aclorch.cpp:6041` |
+| DEL 成功（`flow_counter=ENABLED` だったルール） | `hdel` | `ACL_COUNTER_RULE_MAP` の `<table_name>:<rule_name>` | `aclorch.cpp:6047` |
+
+定数: `COUNTERS_ACL_COUNTER_RULE_MAP = "ACL_COUNTER_RULE_MAP"` (`aclorch.h:45`)。
+
+### FLEX_COUNTER_DB / `ACL_STAT_COUNTER` (flow_counter=ENABLED 時のみ)
+
+`registerFlexCounter()` が `m_flex_counter_manager.setCounterIdList(oid, CounterType::ACL_COUNTER, attrs)` を呼び、FLEX_COUNTER_DB にポーリング設定を書き込む。
+
+| トリガ | 操作 | キー | フィールド | evidence |
+|--------|------|------|-----------|---------|
+| `flow_counter=ENABLED` で SET 成功 | `set` | `ACL_STAT_COUNTER:<counter_oid>` | `ACL_COUNTER_ATTR_ID_LIST=<attrs>` | `aclorch.cpp:6040` |
+| DEL 成功（`flow_counter=ENABLED` だったルール） | `del` | `ACL_STAT_COUNTER:<counter_oid>` | — | `aclorch.cpp:6048` |
+
+定数: `ACL_COUNTER_FLEX_COUNTER_GROUP = "ACL_STAT_COUNTER"` (`aclorch.h:116`)。FLEX_COUNTER_DB = 5 (`schema.h:18`)。
+
+!!! note "flow_counter=DISABLED（デフォルト）の場合"
+    `flow_counter` 省略時のデフォルトは `DISABLED` (`pbhmgr.cpp:1012-1023`)。`createCounter=false` のため `registerFlexCounter()` は呼ばれず、COUNTERS_DB および FLEX_COUNTER_DB への書き込みは発生しない。
+
+### STATE_DB — 書き込みなし
+
+`setAclRuleStatus()` は `AclOrch::doTask()` の汎用 `ACL_RULE` / `APP_ACL_RULE` 処理経路 (`aclorch.cpp:5668-5726`) からのみ呼ばれる。`PBH_RULE` は `PbhOrch` の独立した処理経路を使い (`createPbhRule()` が `addAclRule()` を直接呼ぶ; `pbhorch.cpp:633`)、`setAclRuleStatus()` は呼ばれない。
+
+→ **STATE_DB への `ACL_RULE_TABLE` 書き込みは発生しない**。`show pbh rule` の状態確認は PbhOrch 内部キャッシュ (`pbhHlpr`) を参照する。
+
+### 副次書込サマリ
+
+| DB | テーブル名 | 条件 | 操作 | evidence |
+|-----|---------|------|------|---------|
+| COUNTERS_DB | `ACL_COUNTER_RULE_MAP` | `flow_counter=ENABLED` のみ | `hset` / `hdel` | `aclorch.cpp:6041,6047` |
+| FLEX_COUNTER_DB | `ACL_STAT_COUNTER` | `flow_counter=ENABLED` のみ | `set` / `del` | `aclorch.cpp:6040,6048` |
+| STATE_DB | `ACL_RULE_TABLE` | — | **書き込みなし** | `pbhorch.cpp:633` |
+| APPL_DB | — | — | **書き込みなし** | — |
+| ASIC_DB | — | SAI 経由のみ | `syncd` が書き込む（orchagent 直接書込なし） | — |
+
+<!-- /side-effects -->
+
 ## key 構造
 
 ```text
