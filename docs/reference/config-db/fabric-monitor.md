@@ -286,6 +286,44 @@ APPL_DB に `FABRIC_MONITOR_DATA` エントリが存在する場合は CONFIG_DB
 > **Evidence**: `sonic-swss` `orchagent/fabricportsorch.cpp:21-48,84-88,106,434-439,766,817,1133,1137,1350,1647,1697`; `cfgmgr/fabricmgr.cpp` — 定数定義なし
 <!-- /constants -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> **調査根拠**: `orchdaemon.cpp:601-611,1292-1303`; `main.cpp:997-1010`; `fabricportsorch.cpp:104-110,1201-1219,1577-1580` 全行精読 (2026-05-19)
+
+`FABRIC_MONITOR` テーブルは VOQ Chassis または Fabric Card 専用機能であり、通常の ToR / `switch` タイプでは監視処理が実行されない。
+
+### スイッチタイプ別の動作差異
+
+| `gMySwitchType` | `FabricPortsOrch` 起動 | `fabricPortStatEnabled` | Switch drop counter タイマー | 容量警告ログ出力 |
+|---|---|---|---|---|
+| `voq` (VOQ Chassis line card / supervisor) | あり (`OrchDaemon` + `m_fabricEnabled=true`) | `true` | 500 ms (`SWITCH_DEBUG_COUNTER_POLLING_INTERVAL_MS`) | あり (`SWSS_LOG_NOTICE`) |
+| `fabric` (Fabric Card) | あり (`FabricOrchDaemon`) | `false` | 60,000 ms (`FABRIC_SWITCH_DEBUG_COUNTER_POLLING_INTERVAL_MS`) | なし |
+| `switch` / `chassis-packet` / `dpu` / その他 | **なし** — `m_fabricEnabled=false` のまま `OrchDaemon::init` の `if (m_fabricEnabled)` ブロックに入らない | — | — | — |
+
+### voq と fabric の主要差異
+
+**voq**:
+
+`main.cpp:1000-1004` が `orchDaemon->setFabricEnabled(true)` を呼び、`setFabricPortStatEnabled(true)` / `setFabricQueueStatEnabled(false)` も設定する。`OrchDaemon::init` L601-609 で `FabricPortsOrch(applDb, tables, true, false)` として生成。FlexCounter によるポート統計収集が有効。
+
+`updateFabricCapacity()` 内の `gMySwitchType == "voq"` 条件 (fabricportsorch.cpp:1201,1214) が真になるため、fabric 容量が閾値を下回った / 超えた際に `SWSS_LOG_NOTICE` で通知ログを出力する。
+
+**fabric**:
+
+`main.cpp:1007-1009` が `FabricOrchDaemon` を生成し、その `init()` (orchdaemon.cpp:1302) が `FabricPortsOrch(applDb, tables)` を stat フラグなしで生成。FlexCounter ポート統計収集は無効。Switch drop counter ポーリング間隔は 60 秒 (voq の 120 倍)。容量警告ログは出力されない。
+
+**switch / ToR など**:
+
+`FabricPortsOrch` 未生成。`fabricmgrd` は APPL_DB に書き込むが、orchagent 側に consumer が存在しないため CONFIG_DB の設定値は監視処理に到達しない。FABRIC_MONITOR テーブルへの書き込み自体は拒否されないが、実質的に無効。
+
+### fabricmgrd のプラットフォーム非依存性
+
+`fabricmgrd` (`cfgmgr/fabricmgrd.cpp`) は `gMySwitchType` を参照しない。`CONFIG_DB.FABRIC_MONITOR` の変化をスイッチタイプによらず常に購読し、無条件に `APPL_DB.APP_FABRIC_MONITOR_DATA_TABLE` へ転写する。プラットフォーム差はすべて orchagent 側 (`FabricPortsOrch` の生成有無と `gMySwitchType` 条件分岐) で吸収される。
+
+詳細根拠は `meta/_intermediate/cdb-flow/fabric-monitor-platform.md` を参照。
+<!-- /platform -->
+
 ## 購読者
 
 - ファブリックモニタ daemon（プラットフォーム / [orchagent](../../reference/glossary.md#term-orchagent) の FabricPortOrch 拡張）
