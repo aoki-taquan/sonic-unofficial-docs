@@ -354,6 +354,80 @@ APPL_DB への中継はなく、STATE_DB への書き込みもない。CLI (`con
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-table-platform.md -->
+
+`PBH_TABLE` の処理は `PbhCapabilities` クラスが orchagent 起動時に環境変数 `ASIC_VENDOR` を読み取り、プラットフォーム（`GENERIC` / `MELLANOX`）を判定する。判定結果は起動直後に STATE_DB `PBH_CAPABILITIES` テーブルへ書き出される。`PBH_TABLE` のフィールド自体は両プラットフォームで同一動作だが、関連する `PBH_HASH` / `PBH_RULE` の UPDATE 可否に差異がある。
+
+### プラットフォーム識別 (pbhcap.cpp:310-335)
+
+```cpp
+// pbhcap.cpp — PBH_PLATFORM_ENV_VAR = "ASIC_VENDOR"
+const auto *envVar = std::getenv("ASIC_VENDOR");
+if (platform == "mellanox")  { asicVendor = PbhAsicVendor::MELLANOX; }
+else                          { asicVendor = PbhAsicVendor::GENERIC;  }
+```
+
+`ASIC_VENDOR` 未設定時は `SWSS_LOG_WARN` を出して `GENERIC` にフォールバックする。`"broadcom"` / `"cisco-8000"` 等の文字列は GENERIC 扱いになる（Mellanox 判定は完全一致 `"mellanox"` のみ）。
+
+### フィールド capability の差異
+
+`PBH_TABLE.interface_list` / `PBH_TABLE.description` は**両プラットフォームとも UPDATE のみ**許可。ADD は `createPbhTable()` 経由で処理され、REMOVE は DEL イベントで対応するため、capability 検証は UPDATE 時のみ実施される。
+
+関連エンティティ（`PBH_HASH` / `PBH_RULE`）で差異が発生する:
+
+| エンティティ | フィールド | GENERIC | MELLANOX | 違反時の挙動 |
+|---|---|:---:|:---:|---|
+| `PBH_TABLE` | `interface_list` | UPDATE | UPDATE | 同一。UPDATE 不可時は `SWSS_LOG_ERROR` + `return false` |
+| `PBH_TABLE` | `description` | UPDATE | UPDATE | 同一。同上 |
+| `PBH_HASH` | `hash_field_list` | UPDATE | **空（なし）** | Mellanox では UPDATE が `SWSS_LOG_ERROR("Failed to validate field(hash_field_list): capability(UPDATE) is not supported")` + `return false` → `PBH_HASH` の `hash_field_list` 変更不可 |
+| `PBH_RULE` | `hash` / `packet_action` | UPDATE (W/A なし) | UPDATE + **W/A** | Mellanox では `disableAction()` 先行必須 (下記参照) |
+
+### Mellanox W/A: PBH_RULE hash / packet_action UPDATE (pbhorch.cpp:839-863)
+
+Mellanox プラットフォームでは `updatePbhRule()` 内で `hash` または `packet_action` フィールドを UPDATE する際、SAI レベルで rule の action を一時無効化してから更新する workaround が適用される:
+
+```cpp
+// pbhorch.cpp:839-863
+if (this->pbhCap.getAsicVendor() == PbhAsicVendor::MELLANOX)
+{
+    if (cond1 || cond2)  // hash or packet_action in uFields
+    {
+        auto pbhRulePtr = dynamic_cast<AclRulePbh*>(this->aclOrch->getAclRule(rule.table, rule.name));
+        if (!pbhRulePtr->disableAction()) {
+            SWSS_LOG_ERROR("Failed to disable PBH rule(%s) action", rule.key.c_str());
+            return false;
+        }
+    }
+}
+```
+
+`disableAction()` が失敗した場合は `return false` で更新を中断。SAI の Mellanox 実装が attribute update 時に action の無効化を要求するためのプラットフォーム固有パスである。
+
+### STATE_DB への capabilities 書き出し
+
+`PbhCapabilities::writePbhVendorCapabilitiesToDb()` (pbhcap.cpp:442-452) が orchagent 起動時に STATE_DB の `PBH_CAPABILITIES` テーブルへ capability を書き込む。
+
+```
+STATE_DB:PBH_CAPABILITIES|table       → interface_list, description の対応 capability 文字列
+STATE_DB:PBH_CAPABILITIES|rule        → priority, gre_key, ..., hash, packet_action, flow_counter
+STATE_DB:PBH_CAPABILITIES|hash        → hash_field_list の capability 文字列
+STATE_DB:PBH_CAPABILITIES|hash-field  → hash_field, ip_mask, sequence_id
+```
+
+capability 値は `"ADD,UPDATE,REMOVE"` / `"UPDATE"` / `""` (空) の組み合わせ。`sonic-swss-common/common/schema.h:419` で `STATE_PBH_CAPABILITIES_TABLE_NAME = "PBH_CAPABILITIES"` と定義。
+
+### プラットフォーム別サマリ
+
+| プラットフォーム | PBH_TABLE フィールド UPDATE | PBH_HASH.hash_field_list UPDATE | PBH_RULE hash/packet_action UPDATE |
+|---|:---:|:---:|:---:|
+| GENERIC (broadcom / cisco-8000 / 非 Mellanox) | yes | yes | yes（W/A なし） |
+| MELLANOX | yes | **no** | yes（W/A あり: `disableAction()` 先行） |
+
+<!-- /platform -->
+
 ## key 構造
 
 ```text
