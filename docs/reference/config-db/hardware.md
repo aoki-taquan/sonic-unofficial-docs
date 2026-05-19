@@ -155,6 +155,28 @@ Dell 等のベンダー向け gNMI/translib スタック（`sonic-mgmt-common` t
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`HARDWARE` テーブルは community sonic-swss/orchagent に**購読されない**（dead consumer）。このため、書き込み自体の成否と ACL ハードウェア設定の反映との間に失敗パスは存在しない。
+
+### 失敗パス一覧
+
+| # | 失敗トリガー | 挙動 | 備考 |
+|---|------------|------|------|
+| 1 | `HARDWARE\|ACCESS_LIST` の `HSET` が Redis 書込みエラー | Redis 自体のエラー（メモリ不足等）としてクライアントに返る。consumer がいないため ASIC / SAI への二次影響なし | community SONiC での通常運用では発生しない |
+| 2 | `COUNTER_MODE` / `LOOKUP_MODE` に不正値を書き込む | YANG CVL 検証なし（YANG モジュール未定義）、consumer なし。書込みは成功し CONFIG_DB に保存されるが ASIC 設定には影響しない | 実質 no-op |
+| 3 | `TCAM_SHARING` の leaf-list エンコーディング不正（`@` サフィックス欠落） | Redis に通常フィールドとして格納。consumer がいないため実害なし。ただしベンダー translib が期待する leaf-list 形式と乖離する | community では無影響 |
+| 4 | orchagent 起動中・停止中にかかわらず書き込む | orchagent は `HARDWARE` テーブルを購読していないため、いかなるタイミングでも ACL 設定変更は行われない | dead consumer |
+
+### community での失敗なし
+
+community sonic-swss は `HARDWARE` テーブルを読み取らないため、**書込みエラーが ACL 設定失敗に連鎖することはない**。SAI / ASIC への影響・rollback・retry ループも発生しない。
+
+ベンダー向け gNMI/translib スタック（`sonic-mgmt-common` transformer 層）では別途失敗パスが存在しうるが、当該コードは community リポジトリ外のため本ページの対象外とする。
+
+<!-- /failure -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
@@ -184,6 +206,35 @@ Dell 等のベンダー向け gNMI/translib スタック（`sonic-mgmt-common` t
 
 詳細探索証跡: `meta/_intermediate/cdb-flow/hardware-defaults.md`
 <!-- /defaults -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査対象: `sonic-swss/orchagent/aclorch.cpp`、`sonic-gnmi/testdata/db_dump.json`、`sonic-mgmt-common/tools/test/dbinit.py`
+> 調査日: 2026-05-19
+
+`HARDWARE` テーブルは community sonic-swss/orchagent が**購読しない dead consumer**のため、orchagent コードパスにはフィールド値を参照するハードコード定数が存在しない（`COUNTER_MODE` / `LOOKUP_MODE` / `TCAM_SHARING` / `ACCESS_LIST` の参照 0 件）。
+
+### テストデータで観測された値文字列
+
+正式な有効値集合として定義するソースコードは community リポジトリ内に存在しないが、テストデータでは以下の文字列が観測されている。
+
+| フィールド | 観測値 | 出典 |
+|-----------|--------|------|
+| `COUNTER_MODE` | `"per-rule"` | `sonic-gnmi/testdata/db_dump.json`、`sonic-mgmt-common/tools/test/dbinit.py` |
+| `COUNTER_MODE` | `"PER-RULE"` | `sonic-gnmi/testdata/db_dump.json`（`HARDWARE_TABLE` 変種） |
+| `LOOKUP_MODE` | `"advanced"` | `sonic-gnmi/testdata/db_dump.json` |
+| `LOOKUP_MODE` | `"optimized"` | `sonic-mgmt-common/tools/test/dbinit.py` |
+| `LOOKUP_MODE` | `"LEGACY"` | `sonic-gnmi/testdata/db_dump.json`（`HARDWARE_TABLE` 変種） |
+| `TCAM_SHARING@` | `""` (空 leaf-list) | `sonic-gnmi/testdata/db_dump.json` |
+
+!!! warning "有効値セットは未定義"
+    上記はテストデータで観測された値であり、community SONiC コードが定義する公式の有効値ではない。
+    YANG モジュールが存在しないため enum 制約もなく、任意の文字列を書き込んでも CVL はエラーにならない。
+    consumer が存在しないため実際の ASIC 動作への影響もない。
+
+詳細探索証跡: `meta/_intermediate/cdb-flow/hardware-constants.md`
+<!-- /constants -->
 
 ## 引用元
 

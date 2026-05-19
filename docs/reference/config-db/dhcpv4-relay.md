@@ -347,6 +347,42 @@ syslog(LOG_WARNING, "[DHCPV4_RELAY] Dropping server reply for %s: VLAN socket no
 > **Evidence**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay.cpp:372-450, 806, 1355-1380, 1515-1568`; `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay_mgr.cpp:112-117, 125-127, 377-459`
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`sonic-dhcpv4-relay` (`dhcp4relay` プロセス) が `DHCPV4_RELAY` テーブルの設定を処理する際、本テーブル以外の DB への副次書き込みを行う。以下にその全容を整理する。
+
+### COUNTERS_DB — `COUNTERS_DHCPV4` テーブル (定期書き込み)
+
+| 書き込み先 DB | テーブル名 | キー形式 | フィールド | 書き込みタイミング |
+|---|---|---|---|---|
+| `COUNTERS_DB` | `COUNTERS_DHCPV4` | `<Vlan>` + `\|` + `RX` または `TX` | `Discover`, `Offer`, `Request`, `Decline`, `Acknowledge`, `NegativeAcknowledge`, `Release`, `Inform`, `Unknown`, `Malformed`, `Dropped` | 30 秒おきに専用スレッドが `db_update_loop()` を実行 |
+
+- `dhcp_cntr_table.start_db_updates()` が `loop_relay()` の起動直後に呼ばれ、専用スレッドが `DHCPCounter_table::db_update_loop()` を 30 秒おきに実行する (`dhcp4relay.cpp:1571`, `dhcp4relay_stats.h:12: DHCP_RELAY_DB_UPDATE_TIMER_VAL = 30`)。
+- スレッドは `COUNTERS_DB` に `swss::Table("COUNTERS_DHCPV4")` を開き、各 VLAN × 方向 (RX/TX) × メッセージタイプのカウンタを累積値で書き込む。既存の Redis 値を読み出してローカルのデルタ値を加算してから書き戻すため、再起動をまたいでも値が単調増加する。
+- カウンタは RX 側 (`relay_client_packet_handler()`) と TX 側 (`relay_server_packet_handler()`) で `dhcp_cntr_table.increment_counter()` を呼び出してメモリ上のキャッシュに積み上げられ、30 秒ごとに一括して DB に反映される。
+- VLAN の追加時に `initialize_interface(vlan)` が呼ばれてキャッシュエントリが 0 初期化される。VLAN の削除時は `remove_interface(vlan)` でキャッシュが消去されるが、COUNTERS_DB 上の過去のカウンタエントリは自動削除されない (`dhcp4relay.cpp:842-846`)。
+
+### 書き込み量の見積もり
+
+```
+COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|RX  {Discover: N, Offer: N, ..., Dropped: N}
+COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|TX  {Discover: N, Offer: N, ..., Dropped: N}
+```
+
+1 VLAN あたり RX + TX = 2 エントリ、各エントリに 11 フィールド。VLAN 数が増えてもカウンタ書き込み頻度は 30 秒固定。
+
+### CONFIG_DB / APPL_DB / STATE_DB への副次書き込み
+
+`sonic-dhcpv4-relay` は CONFIG_DB・APPL_DB・STATE_DB への書き込みは行わない。STATE_DB は `DHCP_SERVER_IPV4_SERVER_IP` と `INTERFACE_TABLE` を subscribe して読み出すのみ。
+
+### APPL_DB 経由パス
+
+なし。`DHCPV4_RELAY` は APPL_DB 中継なし、SAI 非経由の Linux カーネル relay であるため、orchagent への通知は発生しない。
+
+> **スキャン証跡**: `dhcp4relay_stats.cpp` 全行読了。`dhcp4relay.cpp:86-87, 591-828, 1570-1571` 読了。`dhcp4relay_stats.h:12` 読了。`dhcp4relay_mgr.cpp:56-90, 510-518, 762-771` 読了。副次書き込み先は `COUNTERS_DB.COUNTERS_DHCPV4` のみ確認。CONFIG_DB / APPL_DB への書き込みなし。
+<!-- /side-effects -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 

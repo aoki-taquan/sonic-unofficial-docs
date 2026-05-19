@@ -452,4 +452,55 @@ IP プレフィクスロウ SET パス (keys.size() == 2):
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査対象: `sonic-swss/orchagent/main.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/portsorch.cpp`
+> 調査日: 2026-05-19
+
+### switch_type による有効性
+
+`VOQ_INBAND_INTERFACE` テーブルは **`switch_type == "voq"` の場合のみ** 実質的に機能する。
+
+| switch_type | 挙動 |
+|-------------|------|
+| `"voq"` | `intfmgrd` が購読 → APP_DB に relay → orchagent `IntfsOrch` / `PortsOrch` が SAI 設定 → VOQ inband ポートを使用 |
+| `"switch"` (通常スイッチ) | `intfmgrd` は表を購読しているがコード分岐 (`intfmgr.cpp:1195`) は `switch_type=="voq"` 前提で生成された設定のためあり得ない。`PortsOrch::setVoqInbandIntf()` も呼ばれない |
+| `"fabric"` | `FabricOrchDaemon` を使用し `IntfsOrch` 自体が起動しない。テーブルは完全に無視される |
+
+### SAI レベルの前提
+
+orchagent が `switch_type == "voq"` のとき `sai_create_switch()` に次の属性を渡す（`main.cpp:697-707`）:
+
+| SAI 属性 | 値 | 意味 |
+|----------|-----|------|
+| `SAI_SWITCH_ATTR_TYPE` | `SAI_SWITCH_TYPE_VOQ` | SAI に VOQ 動作モードを宣言 |
+| `SAI_SWITCH_ATTR_SWITCH_ID` | `gVoqMySwitchId` | DEVICE_METADATA.localhost.switch_id から取得 |
+| `SAI_SWITCH_ATTR_MAX_SYSTEM_CORES` | `gVoqMaxCores` | DEVICE_METADATA.localhost.max_cores から取得 |
+| `SAI_SWITCH_ATTR_SYSTEM_PORT_CONFIG_LIST` | システムポートリスト | SYSTEM_PORT テーブルから生成。0 件なら `exit(EXIT_FAILURE)` |
+
+`SAI_SWITCH_TYPE_VOQ` をサポートしない ASIC では orchagent 起動時点で SAI エラーが発生し、`VOQ_INBAND_INTERFACE` の処理に到達しない。
+
+### multi-asic VOQ chassis vs. standalone VOQ
+
+| 構成 | `gMultiAsicVoq` | 影響 |
+|------|----------------|------|
+| multi-asic chassis（`CHASSIS_APP_DB` 利用可能） | `true` | LAG / System Port が CHASSIS_APP_DB に同期される。`VOQ_INBAND_INTERFACE` 処理自体に差はないが、inband ポートのリモートネイバールートが supervisor 経由で他 asic に配信される |
+| standalone VOQ（`CHASSIS_APP_DB` 不在） | `false` | CHASSIS_APP_DB への同期なし。LAG/System Port の chassis 共有は行われないが、inband インタフェースの APP_DB relay / SAI 設定は同一 |
+
+### IPv6 metric 差分（switch_type 依存）
+
+`intfmgr.cpp:103-106` において `mySwitchType == "voq"` 時のみ IPv6 アドレス追加コマンドに `metric 256` を付与する。通常スイッチ (`"switch"`) では metric 指定なし（カーネルデフォルト 0 またはカーネル任意値）。
+
+| switch_type | `ip -6 address add` オプション | 理由 |
+|-------------|-------------------------------|------|
+| `"voq"` | `metric 256` を付加 | inband 接続ルートとカーネルの connected route metric を同値にして eBGP/iBGP ECMP を成立させる |
+| その他 | metric 指定なし | VOQ 固有の ECMP 要件なし |
+
+### ベンダー ASIC 固有性
+
+VOQ SAI (`SAI_SWITCH_TYPE_VOQ`) を実装しているベンダー ASIC に限定される。コミュニティ SONiC では Cisco 8000 シリーズなどが代表例として挙げられるが、SONiC コードは ASIC 種別を直接確認せず `switch_type` 設定のみで判定する。
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 6981be1a469d -->

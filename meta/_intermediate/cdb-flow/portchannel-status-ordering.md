@@ -1,97 +1,123 @@
-# APPL_DB LAG_TABLE (portchannel-status) — Phase B: 書込み順依存調査メモ
+# Phase B: APPL_DB LAG_TABLE (portchannel-status) 書込み順依存調査
 
-調査日: 2026-05-18
-対象: `docs/reference/config-db/portchannel-status.md`
-証跡ソース: `teamsyncd/teamsync.cpp` (sonic-swss)、`cfgmgr/teammgr.cpp` (sonic-swss)、`orchagent/portsorch.cpp` (sonic-swss)
+## 対象ファイル
 
----
+- `sonic-swss/teamsyncd/teamsync.cpp` (SHA: 4305596156d70e9797e8a881b3d19b46de0bce0d)
+- `sonic-swss/cfgmgr/teammgr.cpp` (同上)
+- `sonic-swss/orchagent/portsorch.cpp` (同上)
 
-## 1. 書き込み元プロセスと APPL_DB 書込みタイミング
+## APPL_DB LAG_TABLE の書き込み元と順序
 
-### teamsyncd — カーネル RTM_NEWLINK 駆動
+APPL_DB `LAG_TABLE` には 2 プロセスが書き込む:
 
-- `teamsync.cpp:140-157` — `RTM_NEWLINK` を受信すると `addLag()` を呼び出す。
-- `addLag()` は **APPL_DB LAG_TABLE を先に書き込み**（`m_lagTable.set()`）、成功した場合のみ続けて **STATE_DB LAG_TABLE を書き込む**（`m_stateLagTable.set()`）。
-- コードコメント: "STATE_DB is written only after the team instance is successfully created to prevent dependent services (e.g. intfmgrd) from acting on a LAG that teamd has not yet finished setting up" (`teamsync.cpp:191-196`)
-- **順序**: `APPL_DB LAG_TABLE` 書込み → `TeamPortSync` オブジェクト生成成功 → `STATE_DB LAG_TABLE` 書込み
-- warm reboot 時は `m_stateLagTablePreserved` に蓄積し、reconcile 完了後にまとめて適用する（`teamsync.cpp:199-200`）。
+1. **teamsyncd** — カーネル netlink `RTM_NEWLINK` イベントを受けて即座に `admin_status` / `oper_status` / `mtu` を書き込む
+   - コード: `teamsync.cpp:156-161` (`TeamSync::addLag()` — `m_lagTable.set(lagName, fvVector)`)
+   - タイミング: teamd がカーネルデバイスを作成し RTM_NEWLINK が発火した時点
+   - **前提条件なし**: portsyncd 完了を待たない。カーネルイベント駆動
 
-### teammgrd — CONFIG_DB PORTCHANNEL 変更駆動
+2. **teammgrd** — CONFIG_DB `PORTCHANNEL` の SET を受けて `admin_status` / `mtu` / `tpid` / `learn_mode` を書き込む
+   - コード: `teammgr.cpp:314, 513-515, 542-545, 556-559` (`TeamMgr::doLagTask()`)
+   - タイミング: `addLag()` 完了後、フィールド順に適用
 
-- `teammgr.cpp:303-323` — `doLagTask()` が SET を処理する際の順序:
-  1. `addLag()` — teamd プロセスを起動して Linux bond デバイスを作成。失敗した場合 `task_need_retry` で保留。
-  2. `setLagAdminStatus()` — `ip link set dev <lag> up|down` をカーネルに発行。APPL_DB への直接書込みはなく、カーネル状態変化が RTM_NEWLINK として teamsyncd に伝達される。
-  3. `setLagMtu()` — `ip link set dev <lag> mtu <mtu>` 後、`m_appLagTable.set(alias, fvs)` で APPL_DB の `mtu` フィールドを直接書き込む (`teammgr.cpp:512-515`)。
-  4. `setLagLearnMode()` — APPL_DB に `learn_mode` フィールドを直接書き込む (`teammgr.cpp:553-559`)。
-  5. `setLagTpid()` — APPL_DB に `tpid` フィールドを直接書き込む (`teammgr.cpp:538-545`)。
+## orchagent (PortsOrch) の処理順序
 
----
+`PortsOrch::doTask()` (`portsorch.cpp:6464-6487`) は以下の固定順序でテーブルを drain する:
 
-## 2. 先行必須テーブル (SET 受信前に充足が必要な依存)
+```
+1. APP_PORT_TABLE
+2. APP_LAG_TABLE       ← LAG_TABLE はここで処理
+3. APP_LAG_MEMBER_TABLE
+4. APP_VLAN_TABLE
+5. APP_VLAN_MEMBER_TABLE
+```
 
-### PORT_CONFIG_DONE / allPortsReady が必須
+### LAG 処理のブロック条件
 
-- `portsorch.cpp:6513-6517` — orchagent は `allPortsReady()` が true になるまで LAG 含む全 SET をブロックする。
-- **順序依存**: portsyncd が CONFIG_DB|PORT を全件処理して `PortConfigDone` → `PortInitDone` が発行されるまで、APPL_DB LAG_TABLE からの orchagent 処理は開始されない。
+`PortsOrch::doTask(Consumer)` (`portsorch.cpp:6513-6517`) では `allPortsReady()` が `false` の間、
+LAG / VLAN / VLAN_MEMBER 処理をブロックする:
 
-### STATE_LAG_TABLE (STATE_DB) が先行必須 — PORTCHANNEL_MEMBER 追加時
+```cpp
+if (!allPortsReady())
+{
+    return;
+}
+```
 
-- `teammgr.cpp:89-102, 357` — `isLagStateOk()` が false（STATE_DB の LAG エントリ未存在）の場合、`PORTCHANNEL_MEMBER` タスクをスキップしてリトライ待機する。
-- **順序依存**: LAG メンバーの追加は teamsyncd が STATE_DB LAG_TABLE を書き込んだ後でなければ処理されない。
+`allPortsReady()` は `m_initDone && m_pendingPortSet.empty()` で判定される (`portsorch.cpp:1687`)。
+`m_initDone` は portsyncd が発行する `PortInitDone` 通知を受けて true になる。
 
----
+## SET 時の先行必須テーブル
 
-## 3. APPL_DB → orchagent 処理の順序
+| 先行テーブル / 条件 | 理由 | ソース |
+|---|---|---|
+| `APP_PORT_TABLE` (PortInitDone) | orchagent は `allPortsReady()` が true になるまで `doLagTask()` に到達しない。teamsyncd → APPL_DB 書き込みは独立に行われるが、orchagent 側の処理は APP_PORT_TABLE 処理完了まで保留 | `portsorch.cpp:6513-6517, 1687` |
+| STATE_DB `PORT_TABLE` (LAG_MEMBER 追加時のみ) | `TeamMgr::doLagMemberTask()` (`teammgr.cpp:357`) が `isPortStateOk(member)` を確認。STATE_DB `PORT_TABLE` の `state: ok` がなければ LAG_MEMBER 追加を `task_need_retry` で保留 | `teammgr.cpp:357, 67-86` |
+| STATE_DB `LAG_TABLE` (LAG_MEMBER 追加時のみ) | 同じく `isLagStateOk(lag)` を確認。teamsyncd が STATE_DB `LAG_TABLE` に書き込み (`state: ok`) するまで LAG_MEMBER 追加は保留 | `teammgr.cpp:357, 89-97` |
 
-orchagent (`PortsOrch::doLagTask()`) が APPL_DB LAG_TABLE を ConsumerStateTable で受信した場合の処理順:
+## SET 時のフィールド適用順序 (teamsyncd → teammgrd)
 
-1. `m_portList.find(alias)` で LAG オブジェクトが存在しない場合 → `addLag()` で SAI `create_lag()` を呼ぶ (`portsorch.cpp:6133-6139`)。
-2. `oper_status` フィールドが存在する場合 → `updatePortOperStatus()` で SAI / 内部ポートオブジェクトを更新 (`portsorch.cpp:6153-6157`)。
-3. `mtu` フィールドが存在する場合 → `l.m_mtu` を更新し、L3 インタフェース (`m_rif_id`) があれば `setRouterIntfsMtu()` を呼び出す。子インタフェースの MTU も連動して更新 (`updateChildPortsMtu()`) される (`portsorch.cpp:6158-6168`)。
-4. `tpid` フィールドが存在する場合 → `setLagTpid()` で SAI 属性を更新 (`portsorch.cpp:6170-6184`)。
-5. `learn_mode` フィールドが存在する場合 → `setBridgePortLearnMode()` で SAI 属性を更新 (`portsorch.cpp:6186-6200`)。
+teamsyncd と teammgrd は並行動作するが、それぞれ独立した順序でフィールドを APPL_DB に書き込む:
 
----
+### teamsyncd 側 (teamsync.cpp:156-161)
 
-## 4. DEL 順 (先行削除が必要なエントリ)
+```cpp
+FieldValueTuple a("admin_status", admin_state ? "up" : "down");
+FieldValueTuple o("oper_status", oper_state ? "up" : "down");
+FieldValueTuple m("mtu", std::to_string(mtu));
+fvVector.push_back(a);
+fvVector.push_back(o);
+fvVector.push_back(m);
+m_lagTable.set(lagName, fvVector);  // 一括書き込み
+```
 
-APPL_DB LAG_TABLE エントリを DEL する前に orchagent が要求する先行削除:
+3 フィールドを 1 回の `set()` で書き込む。原子的操作。
 
-1. **LAG_MEMBER_TABLE の全エントリ** — `LagOrch::removeLag()` は `non-empty LAG` の場合エラーを返す。
-2. **INTF_TABLE のルータインタフェース** — `ref_count > 0` の LAG は SAI DEL が拒否される。
-3. **VLAN 所属** — LAG が VLAN メンバーのまま DEL すると `"Failed to remove LAG ... it is still in VLAN"` エラー。
+### teammgrd 側 (teammgr.cpp の doLagTask)
 
----
+```
+1. addLag()            — teamd プロセス起動 + カーネル bond デバイス作成
+2. setLagAdminStatus() — APPL_DB admin_status 書き込み (teammgr.cpp:314)
+3. setLagMtu()         — APPL_DB mtu 書き込み (teammgr.cpp:512-515)
+4. setLagLearnMode()   — CONFIG_DB に learn_mode がある場合のみ (teammgr.cpp:316-320)
+5. setLagTpid()        — CONFIG_DB に tpid がある場合のみ (teammgr.cpp:321-323)
+```
 
-## 5. warm reboot 時の書込み順序変化
+## DEL 時の削除順序
 
-- teamsyncd は warm reboot モード時に `m_lagTable.create_temp_view()` を作成し、RTM_NEWLINK イベントを temp view に集積する (`teamsync.cpp:41-43`)。
-- warm reboot タイマー満了後 `m_lagTable.apply_temp_view()` で一括適用する (`teamsync.cpp:88-89`)。
-- この間、STATE_DB LAG_TABLE への書込みは `m_stateLagTablePreserved` に蓄積され、reconcile 完了後にまとめて適用される。
-- **consumer が観測しうる中間状態**: warm reboot 期間中は APPL_DB LAG_TABLE が古い値を保持したまま STATE_DB LAG_TABLE が更新されない状態が続く。
+APPL_DB `LAG_TABLE` のエントリを削除するには以下が先行必須:
 
----
+| ステップ | 削除対象 | 省略時の動作 |
+|---|---|---|
+| 1 | `APP_VLAN_MEMBER_TABLE` (LAG が VLAN に所属する場合) | orchagent が LAG 削除前に VLAN メンバ参照をチェックする |
+| 2 | `APP_LAG_MEMBER_TABLE` (全メンバポート) | teamsyncd が LAG 削除時に member table を先に del する |
+| 3 | `LAG_TABLE` DEL | `TeamsSync::removeLag()` / `TeamMgr::removeLag()` が書き込む |
 
-## 順序依存サマリ
+## 起動時シーケンス
 
-| # | 依存関係 | 方向 | 緩和策 |
-|---|----------|------|--------|
-| 1 | APPL_DB LAG_TABLE 書込み → STATE_DB LAG_TABLE 書込み | 強制先行（teamsyncd 内） | team instance 生成成功後のみ STATE_DB に書かれる |
-| 2 | `PortConfigDone` / `allPortsReady()` → orchagent LAG 処理開始 | 強制先行 | portsyncd ready まで orchagent はブロック |
-| 3 | STATE_DB LAG_TABLE ready → PORTCHANNEL_MEMBER SET | 強制先行 | teammgrd が自動リトライ待機 |
-| 4 | LAG_MEMBER_TABLE DEL → LAG_TABLE DEL | 推奨先行 | 逆順では orchagent が non-empty LAG エラー |
-| 5 | INTF_TABLE / VLAN_MEMBER DEL → LAG_TABLE DEL | 強制先行（ref_count / VLAN 制約） | 参照解放まで SAI DEL が拒否される |
+```
+CONFIG_DB PORTCHANNEL SET
+  ↓
+TeamMgr::addLag() → teamd プロセス起動
+  ↓
+teamd がカーネル bond デバイス作成 → RTM_NEWLINK 発火
+  ↓
+TeamSync::addLag() → APPL_DB LAG_TABLE 書き込み (admin_status/oper_status/mtu)
+                   → STATE_DB LAG_TABLE 書き込み (state: ok)
+  ↓
+portsyncd が PortInitDone → orchagent::allPortsReady() = true
+  ↓
+PortsOrch::doLagTask() が APPL_DB LAG_TABLE を処理 → SAI create_lag()
+  ↓
+PORTCHANNEL_MEMBER 追加 → isPortStateOk + isLagStateOk 確認 → addLagMember()
+```
 
----
+## 証跡
 
-## ソース証跡
-
-| 知見 | ファイル | 行 |
-|------|---------|-----|
-| APPL_DB 先書き → STATE_DB 後書き | `sonic-swss/teamsyncd/teamsync.cpp` | 157, 175, 203 |
-| STATE_DB 遅延書込みコメント | `sonic-swss/teamsyncd/teamsync.cpp` | 191-196 |
-| addLag() → setLagAdminStatus() → setLagMtu() 順 | `sonic-swss/cfgmgr/teammgr.cpp` | 303-323 |
-| setLagMtu() APPL_DB 直接書込み | `sonic-swss/cfgmgr/teammgr.cpp` | 512-515 |
-| isLagStateOk() STATE_DB 先行チェック | `sonic-swss/cfgmgr/teammgr.cpp` | 89-102, 357 |
-| allPortsReady() ブロック | `sonic-swss/orchagent/portsorch.cpp` | 6513-6517 |
-| orchagent doLagTask() フィールド処理順 | `sonic-swss/orchagent/portsorch.cpp` | 6133-6200 |
+- `portsorch.cpp:6464-6487`: `PortsOrch::doTask()` — tableOrder でのドレイン順
+- `portsorch.cpp:6513-6517`: LAG 処理前の `allPortsReady()` ガード
+- `portsorch.cpp:1685-1688`: `allPortsReady()` = `m_initDone && m_pendingPortSet.empty()`
+- `teamsync.cpp:146-162`: `TeamSync::addLag()` — APPL_DB 一括書き込み
+- `teamsync.cpp:198-223`: `TeamSync::addLag()` — STATE_DB `state: ok` 書き込み (team_init 後)
+- `teammgr.cpp:302-330`: `TeamMgr::doLagTask()` — SET フィールド順適用
+- `teammgr.cpp:357`: `doLagMemberTask()` の `isPortStateOk` + `isLagStateOk` ガード
+- `teammgr.cpp:67-97`: `isPortStateOk()` / `isLagStateOk()` 実装
