@@ -686,6 +686,71 @@ SAI 失敗時は RESPONSE_CHANNEL 通知は送出されるが、APPL_STATE_DB �
 
 ---
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+`RouteOrch` の通知機構は 2 種類の Redis 通信を利用する: ResponsePublisher による Pub/Sub チャネル通知と、内部 NextHopObserver によるプロセス内コールバック。
+
+### ResponsePublisher — `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL`
+
+`ResponsePublisher::publish()` は `ProducerStateTable` ではなく Redis の `PUBLISH` コマンドで直接チャネルに送信する (`response_publisher.cpp` L93–148)[^3]。
+
+| 項目 | 詳細 |
+|------|------|
+| チャネル名 | `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` |
+| 生成方法 | `"APPL_DB_" + APP_ROUTE_TABLE_NAME + "_RESPONSE_CHANNEL"` で動的生成（実質固定値） |
+| 書き込み側 | `orchagent` (`RouteOrch::publishRouteState()` → `ResponsePublisher::publish()`) |
+| バッファリング | `setBuffered(true)` により `doTask()` 末尾の `flush()` まで遅延 (`routeorch.cpp` L57, L1231) |
+| 購読側 | `fpmsyncd` (`fpmsyncd.cpp` L78–120、`routesync.cpp` L3156–3190) |
+| 購読条件 | `CONFIG_DB DEVICE_METADATA\|localhost.suppress-fib-pending = "enabled"` 時のみ |
+| メッセージ形式 | `(status_code, key, [(err_str, <val>), (protocol, <val>)])` |
+| バッキングストア | APPL_STATE_DB への永続書き込みも同時に行う（SET 成功時のみ） |
+
+`fpmsyncd` 側の購読コード (`fpmsyncd.cpp` L78–120)[^4]:
+
+```cpp
+const auto routeResponseChannelName =
+    std::string("APPL_DB_") + APP_ROUTE_TABLE_NAME + "_RESPONSE_CHANNEL";
+std::string suppressionEnabledStr;
+deviceMetadataTable.hget("localhost", "suppress-fib-pending", suppressionEnabledStr);
+if (suppressionEnabledStr == "enabled")
+{
+    routeResponseChannel = std::make_unique<NotificationConsumer>(
+        &applStateDb, routeResponseChannelName);
+    sync.setSuppressionEnabled(true);
+}
+```
+
+Redis Pub/Sub はメッセージをバッファリングしないため、fpmsyncd が購読を開始する前に送出された通知は消失する。
+
+### NextHopObserver — プロセス内コールバック
+
+`NextHopObserver` は Redis を介さない orchagent プロセス内の直接コールバック機構。
+
+| 項目 | 詳細 |
+|------|------|
+| 通知方式 | C++ 仮想関数 `observer->update(SUBJECT_TYPE_NEXTHOP_CHANGE, &update)` の直接呼び出し |
+| 登録方法 | Observer が `RouteOrch::attach(this, dstIp, vrf_id)` を呼んで登録 |
+| 解除方法 | `RouteOrch::detach(this, dstIp, vrf_id)` |
+| 即時通知 | `attach()` 時点で最長プレフィックスマッチが存在する場合、同期的に即時通知 |
+| Redis 通信 | なし（orchagent プロセス内のみ） |
+
+主要 Observer と登録箇所:
+
+| Observer | `attach()` 箇所 | 監視 IP |
+|---------|----------------|---------|
+| `MirrorOrch` | `mirrororch.cpp` L517 | ミラーセッションの宛先 IP |
+| `NatOrch` | `natorch.cpp` L414, L458, L504, L591 | DNAT / 双方向 NAT の変換先 IP |
+| `NeighOrch` | ネイバー解決時 | ネイバーの IP アドレス |
+
+### orchagent select ループとタイムアウト
+
+`orchdaemon` の select タイムアウトは `SELECT_TIMEOUT = 1000` ms (`orchdaemon.cpp` L23)[^5]。各バッチサイクルで `m_orchList` の全 `doTask()` を順次実行した後、`doTask()` 末尾の `flush()` で RESPONSE_CHANNEL 通知がまとめて送出される。
+
+<!-- /pubsub -->
+
+---
+
 ## 制約
 
 - `publishRouteState()` は SET 操作時のみ `protocol` を送信する。DEL 操作時は `fvs` が空のため APPL_STATE_DB からエントリが削除される。
