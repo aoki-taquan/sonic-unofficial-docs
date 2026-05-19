@@ -300,6 +300,73 @@ DIP トンネルの生成・oper status 変更はすべて `STATE_VXLAN_TUNNEL_T
 <!-- evidence: vxlanorch.h:42-49 (prefix/bounds defines); vxlanorch.h:52-55 (tunnel_creation_src_t); vxlanorch.cpp:903,1160,1169 (enum 参照); vxlanorch.cpp:1901,1905,1934-1942 (STATE_DB ハードコード値); vxlanorch.cpp:2037,2461,2621 (VNI/VLAN 境界チェック); schema.h:88,435 (テーブル名定数) -->
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込・副作用 (Phase F)
+
+EVPN DIP トンネルは APP_DB `EVPN_REMOTE_VNI_TABLE` の処理を起点に **SAI・STATE_DB・COUNTERS_DB** の 3 系統に副次書込を行う。CONFIG_DB への直接書込はない。
+
+### SAI: P2P トンネル生成 (`createTunnelHw`)
+
+DIP トンネル初回生成時 (`VxlanTunnel::createDynamicDIPTunnel()`) に SAI トンネルオブジェクトを作成する。
+
+- **SAI API**: `sai_tunnel_api->create_tunnel_map()` + `create_tunnel()` (vxlanorch.cpp:141, 399)
+- **mapper_list**: `TUNNEL_MAP_T_VLAN` + `TUNNEL_MAP_T_VIRTUAL_ROUTER` のみ (`TUNNELMAP_SET_VLAN` + `TUNNELMAP_SET_VRF`。BRIDGE は含まない) (vxlanorch.cpp:1167-1169)
+- **tunnel 生成モード**: `TUNNEL_MAP_USE_COMMON_ENCAP_DECAP` — 親 VTEP トンネルのマップを共用 (vxlanorch.cpp:1169)
+- **peer_mode**: `SAI_TUNNEL_PEER_MODE_P2P` — `TNL_CREATION_SRC_EVPN` 固定 (vxlanorch.cpp:903)
+- **with_term**: `false` — SAI tunnel termination entry を生成しない (vxlanorch.cpp:1169)
+- **トリガー**: `tnl_users_` マップにリモート VTEP が未存在の場合のみ実行 (vxlanorch.cpp:1155-1170)
+
+### SAI: VLAN メンバ追加 (`addVlanMember`)
+
+DIP トンネルポートを VLAN flood domain に追加する。
+
+- **呼び出し元**: `EvpnRemoteVnip2pOrch::addOperation()` (vxlanorch.cpp:2527)
+- **SAI API**: `gPortsOrch->addVlanMember()` — SAI `create_vlan_member()`
+- **tagging_mode**: `"untagged"` ハードコード (vxlanorch.cpp:2526)
+- **削除**: `EvpnRemoteVnip2pOrch::delOperation()` が `gPortsOrch->removeVlanMember()` を呼ぶ (vxlanorch.cpp:2591)
+
+### STATE_DB: `VXLAN_TUNNEL_TABLE` 書込
+
+DIP トンネル生成・削除に連動して STATE_DB に書き込む。
+
+| 操作 | STATE_DB キー | 書込フィールド | ソース |
+|------|-------------|--------------|--------|
+| 生成時 (add=true) | `VXLAN_TUNNEL_TABLE\|EVPN_<remote_vtep_ip>` | `src_ip`, `dst_ip`, `tnl_src="EVPN"`, `operstatus="down"` | `vxlanorch.cpp:1930-1943` |
+| oper up | 同上 | `operstatus="up"` | `vxlanorch.cpp:1901` |
+| oper down | 同上 | `operstatus="down"` | `vxlanorch.cpp:1905` |
+| 削除時 (add=false) | 同上 | (del — エントリ削除) | `vxlanorch.cpp:1953` |
+
+WarmBoot 時: すでにエントリが存在する場合は上書きせず SKIP する (`vxlanorch.cpp:1927-1948`)。
+
+### COUNTERS_DB: FlexCounter 登録
+
+DIP トンネル用 SAI OID が生成されると FlexCounter に登録され、統計収集が開始される。
+
+- **登録**: `VxlanTunnelOrch::addTunnelToFlexCounter()` — `m_pendingAddToFlexCntr` キューへ追加 (vxlanorch.cpp:1342-1344)。実際の COUNTERS_DB 書込は FlexCounter タイマー (10 秒間隔) で実行
+- **解除**: `VxlanTunnelOrch::removeTunnelFromFlexCounter()` — `COUNTERS_TUNNEL_NAME_MAP` / `COUNTERS_TUNNEL_TYPE_MAP` からエントリ削除 (vxlanorch.cpp:1365-1367)
+- **カウンタ統計**: `tunnel_rates.lua` Lua スクリプトが COUNTERS_DB に集計値を書き込む
+
+### インメモリ状態の副次変更
+
+| データ構造 | 変更タイミング | 内容 |
+|-----------|-------------|------|
+| `VxlanTunnel::tnl_users_` | DIP トンネル生成・削除 | `remote_vtep → tunnel_refcnt_t` マップへの追加・削除 (vxlanorch.cpp:1165, 1230) |
+| `VxlanTunnelOrch::vxlan_tunnel_table_` | DIP トンネル生成・削除 | `addTunnel()` / `delTunnel()` でトンネルオブジェクト管理 (vxlanorch.cpp:1161, 1232) |
+| `VxlanTunnel::active_` | SAI トンネル生成成功時 | `true` に設定。SAI 失敗時は `false` のまま (vxlanorch.cpp:869) |
+
+### 副作用サマリ
+
+| 操作 | SAI | STATE_DB | COUNTERS_DB | PortsOrch |
+|------|-----|---------|-------------|-----------|
+| DIP トンネル初回生成 | `create_tunnel_map` + `create_tunnel` | `VXLAN_TUNNEL_TABLE` set | FlexCounter 登録 | (なし) |
+| VLAN メンバ追加 | `create_vlan_member` | (なし) | (なし) | `addVlanMember()` |
+| oper status 変化 | (なし) | `operstatus` 更新 | (なし) | (なし) |
+| DIP トンネル削除 | `remove_tunnel` + `remove_tunnel_map` | `VXLAN_TUNNEL_TABLE` del | FlexCounter 解除 | (なし) |
+| VLAN メンバ削除 | `remove_vlan_member` | (なし) | (なし) | `removeVlanMember()` |
+
+<!-- evidence: vxlanorch.cpp:1155-1170 (createDynamicDIPTunnel SAI生成); vxlanorch.cpp:1161,1232 (addTunnel/delTunnel); vxlanorch.cpp:1226-1228 (deleteTunnelHw); vxlanorch.cpp:1342-1367 (FlexCounter); vxlanorch.cpp:1930-1953 (STATE_DB書込); vxlanorch.cpp:2526-2527 (addVlanMember); vxlanorch.cpp:2591 (removeVlanMember) -->
+<!-- /side-effects -->
+
 ## 例外条件・特殊挙動
 
 - **isDipTunnelsSupported() = false の場合**: DIP トンネルは作成されず、リモート VTEP の
