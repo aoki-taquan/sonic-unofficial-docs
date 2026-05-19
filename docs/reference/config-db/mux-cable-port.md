@@ -462,6 +462,56 @@ CONFIG_DB `MUX_CABLE` の SET が orchagent で処理された後、APPL_DB を�
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-platform.md`
+> ソース: `sonic-platform-daemons/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py` (master)、`sonic-linkmgrd/src/DbInterface.cpp` (master)
+
+### `cable_type` フィールドによる処理分岐
+
+`check_mux_cable_port_type()` (`y_cable_helper.py:309-317`) が `MUX_CABLE|<port>.cable_type` を読み取り、処理経路を完全に分岐する:
+
+| `cable_type` 値 | 処理経路 | 追加制御 |
+|---|---|---|
+| `"active-active"` | `get_muxcable_info_for_active_active()` 専用経路 | gRPC チャンネル (`grpc_client`) 経由でケーブル制御、`setup_grpc_channel_for_port()` が呼ばれる |
+| `"active-standby"` | 従来 Y-cable ベンダー API 経路 | SFP 経由でケーブル制御 |
+| フィールド不在 | `linkmgrd/src/DbInterface.cpp:827` が `"active-standby"` にフォールバック | デフォルト扱い |
+
+`active-active` モードは gRPC ベースの制御を必要とするため、追加の gRPC 設定が必要。通常の DualToR は `active-standby` を使用する。
+
+### VS (Virtual Switch) / Mux Simulator モード
+
+`y_cable_is_platform_vs = True`（`init_ports_status_for_y_cable(is_vs=True)` で有効化）の場合:
+
+| 関数 | 通常動作 | VS モード |
+|---|---|---|
+| `y_cable_wrapper_get_presence()` | 物理 SFP 存在確認 | 常に `True` を返す（SFP なしでも存在扱い） |
+| `y_cable_wrapper_get_transceiver_info()` | SFP からトランシーバー情報取得 | VS 用ダミー情報を返す |
+
+`/etc/sonic/mux_simulator.json` が存在する場合、トランシーバー情報の `manufacturer` を `"microsoft"`、`model` を `"simulated"` に上書きする（`y_cable_helper.py:200-207`）。これにより `y_cable_vendor_mapping` が Microsoft の Mux Simulator API モジュールを動的ロードし、物理 Y-cable の代わりにソフトウェアシミュレーションで動作する。
+
+### ベンダー固有 Y-cable ドライバの動的ロード
+
+`y_cable_helper.py:1203-1232` の初期化フローでは、`manufacturer` と `model` の組み合わせをキーとして `y_cable_vendor_mapping.mapping` からベンダー固有モジュール名を解決し、`importlib.import_module()` で動的ロードする。
+
+| 条件 | ドライバ |
+|---|---|
+| `manufacturer = "microsoft"` かつ `mux_simulator.json` 存在 | Microsoft Mux Simulator（VS/testbed 用） |
+| ベンダー SFP トランシーバー | `y_cable_vendor_mapping` でベンダー毎に異なる実装モジュール |
+| `y_cable_vendor_mapping` にエントリなし | `LOG_ERROR` → そのポートの Y-cable 初期化スキップ |
+
+### `pseudo-cable` — mux_info_dict 書き込みスキップ
+
+`post_port_mux_info_to_db()` (`y_cable_helper.py:2200`) は以下の条件で STATE_DB への書き込みをスキップする:
+
+- `cable_type == 'pseudo-cable'`
+- `y_cable_wrapper_get_presence()` が `False`（物理 SFP 不在）
+
+この場合、`mux_tbl` および `y_cable_tbl` への STATE_DB 書き込みは行われない。
+
+<!-- /platform -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 上位ページ: [`MUX_CABLE`](mux-cable.md) — テーブル全体の概要・値依存挙動・Phase 6/7/8 分析
