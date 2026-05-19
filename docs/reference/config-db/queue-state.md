@@ -375,6 +375,40 @@ STATE_DB の `notify-keyspace-events` 設定に関わらず、orchagent / consum
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/queue-state-platform.md`
+
+### WRED/ECN サポート可否は SAI 実装に依存
+
+`initCounterCapabilities()` は `sai_query_stats_capability(switchId, SAI_OBJECT_TYPE_QUEUE, ...)` の返却リストに基づき `isSupported` を決定する。この SAI API はベンダーの libsai 実装に依存するため、プラットフォームにより結果が異なる。
+
+| プラットフォーム / 条件 | `QUEUE_COUNTER_CAPABILITIES` への影響 |
+|----------------------|--------------------------------------|
+| WRED 完全サポート ASIC (BCM 等) | 4 フラグすべて `"true"` になりうる |
+| WRED 部分サポート ASIC (ECN のみ等) | 対応する統計フラグのみ `"true"`（4 フラグは独立） |
+| WRED 非サポート ASIC / VS | 全フラグ `"false"`（クエリ成功でも対応統計なし、またはクエリ失敗） |
+| DPU (SmartSwitch DPU) | 全フラグ `"false"` が一般的（DPU SAI は WRED キュー統計未対応が多い） |
+
+`initCounterCapabilities()` 自体は `isMlnxPlatform()` 等のプラットフォーム識別分岐を持たず、SAI クエリ結果のみで判定する（`portsorch.cpp:1881-1921`）。
+
+### DPU — キュー OID 未初期化
+
+`gMySwitchType == "dpu"` の場合、`initializeQueuesBulk()` がスキップされるため（`portsorch.cpp:6589`）、`port.m_queue_ids` は未初期化のまま。`initCounterCapabilities()` は DPU でもスキップされないが、DPU SAI 実装が WRED/ECN キュー統計をサポートしない場合は全フラグ `"false"` となる。
+
+### VoQ スイッチ — FlexCounter 対象が全キューに拡張
+
+`gMySwitchType == "voq"` の場合、`FlexCounterOrch::getQueueConfigurations()` は `create_only_config_db_buffers` の値によらず全キューを対象とする（`flexcounterorch.cpp:544-553`）。`QUEUE_COUNTER_CAPABILITIES` の書き込みロジック自体に VoQ 分岐はなく、SAI クエリ結果のみで決まる。
+
+### プラットフォーム無依存部分
+
+- **書き込みロジック**: 4 キー初期化 → SAI クエリ → 条件付き上書きのシーケンスにプラットフォーム分岐なし
+- **キー名文字列**: `WRED_ECN_QUEUE_*` のリテラルはコードハードコードでプラットフォーム不変
+- **consumer**: `wredstat` / `portstat.py` は `isSupported` を直接 GET するのみで、プラットフォーム識別ロジックを持たない
+
+<!-- /platform -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`FLEX_COUNTER_TABLE`](flex-counter-table.md) — WRED_ECN_QUEUE グループの enable/disable 設定
