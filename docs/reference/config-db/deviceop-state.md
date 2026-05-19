@@ -221,7 +221,7 @@ DEVICE_NEIGHBOR は CONFIG_DB の読み取り専用テーブルとして機能�
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:265-287`; `show/interfaces/__init__.py:317-319`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-150,219-224`
 <!-- /failure -->
 
-<!-- hardcoded-constants -->
+<!-- constants -->
 ## ハードコード定数 (Phase E)
 
 DEVICE_NEIGHBOR テーブルの consumer（主に `pfcwd`・`ecnconfig`）が内部で使用するハードコード定数を整理する。これらの定数は YANG / CONFIG_DB に設定項目として存在せず、コードに直接埋め込まれている。
@@ -270,7 +270,66 @@ self.loopbacks = ["Loopback0"]
 BGP neighbor 処理において Loopback0 を特別扱いする参照先として使われる。DEVICE_NEIGHBOR に Loopback0 が含まれていても bgpcfgd がこの定数リストで Loopback0 を参照する経路が存在する（ネイバー名ではなくループバック IP 解決用）。
 
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:36-42,405-442`; `scripts/ecnconfig:289-293`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:100`
-<!-- /hardcoded-constants -->
+<!-- /constants -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+DEVICE_NEIGHBOR テーブルを参照する consumer のうち、`ecnconfig` が `switch_type` および multi-ASIC 環境で明確な分岐を持つ。`pfcwd` は multi-ASIC 環境でネームスペースごとに独立実行される。
+
+### ecnconfig — `voq` switch_type 分岐 (`ecnconfig:264-293`)
+
+`ecnconfig` の `gen_ports_key()` は `DEVICE_METADATA.localhost.switch_type` を参照して分岐する。
+
+```python
+switch_type = device_info.get_localhost_info('switch_type', self.config_db)
+if switch_type == 'voq':
+    # QUEUE テーブルからポートを導出（DEVICE_NEIGHBOR を使わない）
+    q_table = self.config_db.get_table(QUEUE_TABLE_NAME)
+    ...
+else:
+    # 非 voq: DEVICE_NEIGHBOR からポートを取得
+    port_table = self.config_db.get_table(DEVICE_NEIGHBOR_TABLE_NAME)
+    self.ports_key = list(port_table.keys())
+    if len(self.ports_key) == 0:
+        raise Exception("No active ports detected in table 'DEVICE_NEIGHBOR'")
+```
+
+| `switch_type` 値 | ポート決定元 | DEVICE_NEIGHBOR 参照 | 空テーブル時の挙動 |
+|------------------|------------|---------------------|-----------------|
+| `'voq'` | `QUEUE` テーブル (hostname\|asic\|port 形式) | **なし** | 影響なし（DEVICE_NEIGHBOR を読まない） |
+| それ以外（default, `'fabric'` 等） | `DEVICE_NEIGHBOR` テーブル | あり | `Exception("No active ports detected...")` で停止 |
+
+VoQ (Virtual output queuing) スイッチは Cisco-8000 等の分散スイッチングプラットフォームで使用される。VoQ 環境では隣接テーブル（DEVICE_NEIGHBOR）ではなくシステム全体のキューテーブル（QUEUE）でポートを管理するため、ecnconfig における DEVICE_NEIGHBOR の必須制約は適用されない。
+
+### ecnconfig — multi-ASIC バックエンドポートソート (`ecnconfig:289-293`)
+
+非 voq 環境の `gen_ports_key()` は DEVICE_NEIGHBOR から取得したポートキーをソートする際、バックエンドポート（`'Ethernet-BPxy'` 形式）を通常ポートの末尾に配置する。
+
+```python
+self.ports_key.sort(
+    key = lambda k: int(k[8:]) if "BP" not in k else int(k[11:]) + 1024
+)
+```
+
+`Ethernet-BPxy` はマルチ ASIC プラットフォームで ASIC 間を繋ぐバックエンドポートの命名規則。シングル ASIC 環境では `'BP'` を含むポート名が存在しないため、このソートロジックは実質的に通常の数値ソートと等価になる。
+
+| 環境 | ポート命名 | ソート後の配置 |
+|------|----------|-------------|
+| シングル ASIC | `Ethernet0`, `Ethernet4`, ... | 数値順 |
+| multi-ASIC | `Ethernet0`, ..., `Ethernet-BP0`, `Ethernet-BP4`, ... | 通常ポート → バックエンドポートの順 |
+
+### pfcwd — multi-ASIC ネームスペース対応 (`pfcwd/main.py:404-416`)
+
+`PfcwdCmd.start_default()` は `@multi_asic_util.run_on_multi_asic` で修飾される。multi-ASIC 環境では各ネームスペース（`asic0` / `asic1` / ...）の `ConfigDBConnector` に対して独立して実行され、ネームスペースごとの `DEVICE_NEIGHBOR` テーブルを参照する。
+
+- **シングル ASIC**: デフォルトネームスペースの `DEVICE_NEIGHBOR` を 1 回参照し、外部ポート + バックプレーンポートで `active_ports` を構成
+- **multi-ASIC**: 各 ASIC ネームスペースの `DEVICE_NEIGHBOR` を独立参照。`get_bp_ports()` は `PORT[port].role == 'Int'` かつ `admin_status == 'up'` のポートを bp_ports として追加するが、シングル ASIC では通常 `role='Int'` のポートが存在しないため bp_ports は空
+
+`DEVICE_NEIGHBOR` と `PORT` テーブルへのアクセスは両方とも同一ネームスペース内で完結するため、ネームスペース間の参照競合は発生しない。
+
+> **Evidence**: `sonic-utilities` `scripts/ecnconfig:264-293`; `pfcwd/main.py:111-119,404-444`; 中間調査 `meta/_intermediate/cdb-flow/deviceop-state-constants.md`
+<!-- /platform -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
