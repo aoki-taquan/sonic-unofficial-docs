@@ -315,3 +315,54 @@ docker exec iccpd tail -f /var/log/syslog
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-constants.md`
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L435-460 / sonic-buildimage/src/iccpd/src/mlacp_link_handler.c L3186-3292 / sonic-buildimage/src/iccpd/src/iccp_netlink.c L2245-2365,L460-510 -->
+
+`MCLAG_UNIQUE_IP` を CONFIG_DB に書き込むと `mclagsyncd` → `iccpd` → `mclagsyncd` の往復 IPC を経て以下の副次 DB 書込みが発生する場合がある。
+
+### APPL_DB INTF_TABLE — mac_addr 更新
+
+`MCLAG_UNIQUE_IP` SET/DEL により **STANDBY ノードかつ VLAN IF が L3 モード**（IP アドレス設定済み）の場合に、mclagsyncd が APPL_DB `INTF_TABLE` に MAC アドレスを書き込む。
+
+| キー | フィールド | 書込トリガー | evidence |
+|---|---|---|---|
+| `INTF_TABLE\|<if_name>` (例: `Vlan100`) | `mac_addr = <active_system_id>` | UNIQUE_IP ADD: STANDBY が VLAN IF の MAC をアクティブピアの `system_id` に上書き | `iccp_netlink.c:update_vlan_if_mac_on_standby()`, `mclaglink.cpp:setIntfMac()` |
+| `INTF_TABLE\|<if_name>` | `mac_addr = <local_system_id>` | UNIQUE_IP DEL: STANDBY が VLAN IF の MAC を自ノードの `system_id` に戻す | `iccp_netlink.c:recover_vlan_if_mac_on_standby()`, `mclaglink.cpp:setIntfMac()` |
+
+**発火条件**:
+
+1. `csm->role_type == STP_ROLE_STANDBY`（スタンバイノードのみ）
+2. `local_if_is_l3_mode(lif)` が true（VLAN IF が L3 モード）
+3. ICCP セッションが確立済みで `MLACP(csm).remote_system.system_id` が初期化済み
+
+書込み経路:
+```
+CONFIG_DB MCLAG_UNIQUE_IP SET
+  → mclagsyncd: mclagsyncdSendMclagUniqueIpCfg() (mclaglink.cpp:1088)
+    → iccpd TCP IPC (MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_UNIQUE_IP)
+      → iccpd: iccp_mclagsyncd_mclag_unique_ip_cfg_handler() (mlacp_link_handler.c:3186)
+        → lif->is_l3_proto_enabled = true
+        → update_vlan_if_mac_on_standby(lif, 6)       [STANDBY かつ L3 mode 時]
+          → iccp_set_interface_ipadd_mac(lif, macaddr) (iccp_netlink.c:460)
+            → TCP IPC MCLAG_MSG_TYPE_SET_INTF_MAC → mclagsyncd
+              → setIntfMac() (mclaglink.cpp:435)
+                → APPL_DB INTF_TABLE|<vlan_if>  mac_addr=<system_mac>
+```
+
+### STATE_DB への書込みはなし
+
+`MCLAG_UNIQUE_IP` SET/DEL 処理パス自体は STATE_DB への書込みを行わない。STATE_DB `STATE_MCLAG_TABLE` / `STATE_MCLAG_LOCAL_INTF_TABLE` / `STATE_MCLAG_REMOTE_INTF_TABLE` への書込みは ICCP セッション状態変化・ロールネゴシエーション完了等によってトリガーされ、`MCLAG_UNIQUE_IP` 処理とは独立したイベント駆動。
+
+### ASIC_DB は読取専用
+
+`mclagsyncd` は FDB ポート解決のために ASIC_DB を読取専用で参照するが、`MCLAG_UNIQUE_IP` 処理パスで直接参照することはない。
+
+### ピア間 ICCP 通信
+
+`iccp_mclagsyncd_mclag_unique_ip_cfg_handler()` は `syn_local_neigh_mac_info_to_peer()` を呼び出してピア iccpd へネイバー / MAC 情報を ICCP プロトコルで同期するが、これは iccpd ↔ iccpd 間の TCP 通信であり SONiC Redis DB への直接書込みではない。
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-side-effects.md`
+<!-- /side-effects -->
