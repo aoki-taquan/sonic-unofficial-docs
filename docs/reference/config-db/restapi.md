@@ -457,4 +457,34 @@ RESTAPI テーブルの設定は `rest-server.sh` が起動時に一括読み込
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> **調査根拠**: `sonic-host-services/scripts/hostcfgd` L100-103, L1756-1845 (FipsCfg クラス); `rest-server.sh`; `supervisord.conf`; `db_migrator.py` L608-619 精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/restapi-side-effects.md`
+
+RESTAPI は管理プレーン専用テーブルであり、CONFIG_DB への書込みが他 DB テーブルに副次的に書き込む経路は存在しない。
+
+| 副次 DB | テーブル / キー | 書込内容 | 根拠 |
+|---|---|---|---|
+| — | — | なし | APPL_DB / ASIC_DB / COUNTERS_DB / FLEX_COUNTER_DB / STATE_DB への書込み経路なし |
+
+### FIPS 変更による間接的な restapi 再起動 (DB 外副作用)
+
+`hostcfgd` の `FipsCfg` クラスは `DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi']` を保持する (`hostcfgd:103`)。`FIPS` テーブルが変更されると `fips_handler()` → `update()` → `restart()` 経路で `systemctl restart restapi` が実行される (`hostcfgd:1826-1833`)。
+
+これは **RESTAPI テーブルへの書込みが引き起こす副作用ではなく**、FIPS テーブル変更が restapi コンテナを再起動させる一方向の依存関係である。この再起動により `rest-server.sh` が CONFIG_DB の RESTAPI テーブルを再読み込みする副次効果がある。
+
+| トリガ | 副次動作 | DB 書込み | evidence |
+|--------|---------|-----------|----------|
+| `FIPS` テーブル変更 (enable / enforce フィールド) | `systemctl restart restapi` が実行される | STATE_DB `FIPS_STATS\|state.config_datetime` への書込み (FIPS 固有。RESTAPI 変更とは無関係) | `hostcfgd:1792, 1826-1833` |
+| `RESTAPI\|config` / `RESTAPI\|certs` 変更 | **なし** (hot reload 未対応。コンテナ再起動まで反映されない) | なし | `rest-server.sh` 起動時一括読み込み |
+
+### ファイルシステム副作用（DB 外）
+
+証明書未設定時、`rest-server.sh` が `/tmp/cert.pem` / `/tmp/key.pem` を自動生成する (`rest-server.sh:46-49`)。これは DB 副作用ではなくファイルシステム副作用。
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L100-103 (`DEFAULT_FIPS_RESTART_SERVICES`), L1756-1845 (`FipsCfg.restart()`); `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh` L44-49 (証明書自動生成); `sonic-utilities/scripts/db_migrator.py` L608-619 (`migrate_restapi`). 詳細は `meta/_intermediate/cdb-flow/restapi-side-effects.md` 参照。
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
