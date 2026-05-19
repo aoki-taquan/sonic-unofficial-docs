@@ -384,6 +384,51 @@ else
 
 ---
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`NhgOrch` および `CbfNhgOrch` は SAI 経由で ASIC に NHG を反映する主作用のほかに、**COUNTERS_DB** の `CRM` テーブルへ副次的なカウンタ書込を行う。STATE_DB / FLEX_COUNTER_DB / APPL_DB / CONFIG_DB への直接書込みは確認されない。
+
+| 副次 DB | テーブル / キー | 書込フィールド | 書込タイミング |
+|---|---|---|---|
+| COUNTERS_DB | `CRM:STATS` (hash) | `crm_stats_nexthop_group_used` / `crm_stats_nexthop_group_available` | NHG の SAI 作成・削除に連動して in-memory カウンタを増減 → CRM ポーリングタイマー発火時に反映 |
+| COUNTERS_DB | `CRM:STATS` (hash) | `crm_stats_nexthop_group_member_used` / `crm_stats_nexthop_group_member_available` | NHG メンバーの SAI 作成・削除に連動して in-memory カウンタを増減 → CRM ポーリングタイマー発火時に反映 |
+
+### カウンタ増減のトリガ
+
+**NHG グループ作成 (inc)**: `NextHopGroup::sync()` 内で `sai_next_hop_group_api->create_next_hop_group()` が成功すると `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` を呼ぶ (`nhgorch.cpp:795`)。`CbfNhg::sync()` も同様に `create_next_hop_group` 成功後に `incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` を呼ぶ (`cbfnhgorch.cpp:358`)。
+
+**NHG グループ削除 (dec)**: `NextHopGroupBase::remove()` 内で `sai_next_hop_group_api->remove_next_hop_group()` 成功後に `gCrmOrch->decCrmResUsedCounter(CRM_NEXTHOP_GROUP)` を呼ぶ (`nhgbase.h:277`)。`CbfNhg` も同じ基底クラス実装を経由する。
+
+**NHG メンバー作成 (inc) / 削除 (dec)**:
+
+```cpp
+// nhgbase.h:132  — NextHopGroupMemberBase::sync() — SAI member 作成成功時
+gCrmOrch->incCrmResUsedCounter(CrmResourceType::CRM_NEXTHOP_GROUP_MEMBER);
+
+// nhgbase.h:151  — NextHopGroupMemberBase::remove() — SAI member 削除成功時
+gCrmOrch->decCrmResUsedCounter(CrmResourceType::CRM_NEXTHOP_GROUP_MEMBER);
+```
+
+### COUNTERS_DB への実際の書込み
+
+in-memory カウンタは即時 COUNTERS_DB に書かれるのではなく、`CrmOrch::updateCrmCountersTable()` が `CRM_COUNTERS_POLL` タイマー発火時にバッチで書き込む (`crmorch.cpp:1067-1115`):
+
+```cpp
+// crmorch.cpp:1067-1083
+m_countersCrmTable->set(cnt.first, attrs);
+// → COUNTERS_DB:CRM:STATS
+//   crm_stats_nexthop_group_used / crm_stats_nexthop_group_member_used
+//   crm_stats_nexthop_group_available / crm_stats_nexthop_group_member_available
+```
+
+テーブル名定数: `sonic-swss-common/common/schema.h:237` `COUNTERS_CRM_TABLE = "CRM"`。フィールド名: `crmorch.cpp:360-361` (used)、`crmorch.cpp:314-315` (available)。
+
+> **Evidence**: `nhgorch.cpp:795` (NHG inc)、`nhgbase.h:277` (NHG dec)、`nhgbase.h:132/151` (member inc/dec)、`cbfnhgorch.cpp:358` (CBF NHG inc)、`crmorch.cpp:1067-1115` (COUNTERS_DB 書込)、`schema.h:237` (テーブル名定数)。詳細調査ログ: `meta/_intermediate/cdb-flow/nhg-table-side-effects.md`。
+<!-- /side-effects -->
+
+---
+
 ## 購読者
 
 | テーブル | 購読者 | SAI API |
