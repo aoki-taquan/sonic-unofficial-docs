@@ -392,6 +392,23 @@ APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない�
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: `eventd` は ZMQ ブローカーおよびファイルベース設定 (`init_cfg.json`) のみで動作し、SAI / ASIC ベンダー依存コードを一切持たない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Cisco-8000 等) | 影響なし | `eventd.cpp` / `eventd.h` / `events_common.cpp` に `getenv("platform")` 参照・ASIC 種別分岐はゼロ。SAI API 呼び出しなし (`eventd.cpp` 全行確認) |
+| multi-asic (`IS_MULTI_NPU`) | 影響なし | `eventd` は単一コンテナとして host network namespace で動作する。`asicN` namespace への個別接続・ループ処理なし。`IS_MULTI_NPU` / `gMySwitchType` 参照もなし |
+| VOQ chassis (supervisor + line cards) | 各ノードで独立動作 | `eventd` は各ノードの `docker-eventd` コンテナとして独立起動する。ノード間でイベントを集約する仕組みは community master に存在しない |
+| VS (仮想スイッチ / sonic-vs) | 完全サポート (差異なし) | `eventd_ut.cpp` テストが VS 環境で動作する。ZMQ ポートアドレスは `init_cfg.json` で変更可能なため環境依存なし |
+| ベンダー固有 eventd プラグイン | なし | `rsyslog_plugin/` は `eventd` 本体と別バイナリ。syslog テキストを ZMQ に変換する補助コンポーネントであり、platform 条件分岐を持たない (`rsyslog_plugin/rsyslog_plugin.cpp` 全行確認) |
+
+> **スキャン証跡**: `sonic-buildimage/src/sonic-eventd/src/eventd.cpp`・`eventd.h`・`rsyslog_plugin/rsyslog_plugin.cpp`・`sonic-swss-common/common/events_common.cpp`・`events.cpp` を `platform|PLATFORM|asic|ASIC|multi_npu|IS_MULTI_NPU|chassis|vendor` で grep → 全ファイル 0 ヒット。platform 分岐なしを確認。
+
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework HLD. <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>

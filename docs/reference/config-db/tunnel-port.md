@@ -338,6 +338,53 @@ SAI ポートステータス変化イベント
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+VXLAN トンネルポートの生成モデルはプラットフォームの SAI 実装が `SAI_TUNNEL_ATTR_PEER_MODE` として `SAI_TUNNEL_PEER_MODE_P2P` をサポートするかどうかで二分される。この違いは `VxlanTunnelOrch` コンストラクタが SAI ケイパビリティクエリを実行することで起動時に確定し、以後 `isDipTunnelsSupported()` フラグで全処理パスを切り替える[^1]。
+
+### SAI ケイパビリティクエリ（起動時決定）
+
+```
+VxlanTunnelOrch::VxlanTunnelOrch() [vxlanorch.cpp:1245]
+  → sai_query_attribute_enum_values_capability(
+        gSwitchId,
+        SAI_OBJECT_TYPE_TUNNEL,
+        SAI_TUNNEL_ATTR_PEER_MODE,
+        &values)
+  → SAI_STATUS_SUCCESS かつ P2P を含む → is_dip_tunnel_supported = true
+  → それ以外 (失敗 / P2P 未含) → is_dip_tunnel_supported = false
+```
+
+`sai_query_attribute_enum_values_capability` が `SAI_STATUS_SUCCESS` 以外を返す場合はデフォルトで `true`（P2P サポートあり）とみなされる (`vxlanorch.cpp:1261`)。
+
+### プラットフォームモード別の挙動差異
+
+| 項目 | DIP サポートあり (`isDipTunnelsSupported() == true`) | DIP サポートなし (`isDipTunnelsSupported() == false`) |
+|------|------------------------------------------------------|------------------------------------------------------|
+| EVPN DIP トンネルポート (`Port_EVPN_*`) | リモート VTEP ごとに P2P SAI トンネルと個別ブリッジポートを生成 | 生成されない (`addTunnelUser()` が `return false` で終了) |
+| Local SRC VTEP ポート (`Port_SRC_VTEP_*`) | 使用しない (`VxlanTunnelMapOrch::addOperation` では `getTunnelPort` 呼び出しをスキップ) | `VXLAN_TUNNEL_MAP` 処理時に単一ポートを生成し、全リモート VTEP を共用 |
+| SAI トンネル `PEER_MODE` | `SAI_TUNNEL_PEER_MODE_P2P` (DIP ごと) | `SAI_TUNNEL_PEER_MODE_P2MP` (共用) |
+| `EvpnRemoteVni` Orch 登録 | `EvpnRemoteVnip2pOrch` (p2p) | `EvpnRemoteVnip2mpOrch` (p2mp) |
+| orchdaemon での Orch 選択 | `orchdaemon.cpp:577` | `orchdaemon.cpp:582` |
+
+### プラットフォームモードの確認方法
+
+```bash
+# orchagent 起動ログで確認
+journalctl -u swss | grep -E "dip_tunnel|DIP"
+
+# STATE_DB に Port_EVPN_* が存在すれば DIP サポートあり
+sonic-db-cli STATE_DB keys 'VXLAN_TUNNEL_TABLE|*'
+```
+
+!!! warning "DIP サポートなし環境での EVPN 制限"
+    `isDipTunnelsSupported() == false` の環境では `Port_EVPN_*` が生成されず、すべてのリモート VTEP が単一の `Port_SRC_VTEP_*` ポートを共用する。この場合、リモート VTEP ごとの FlexCounter 統計が取れず、リモート VTEP 単位のトラフィック分離もハードウェアレベルでは不可能となる。
+
+> 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-platform.md`
+
+<!-- /platform -->
+
 ## 例外条件・特殊挙動
 
 - **二重生成の防止**: `getTunnelPort()` が既存エントリを発見した場合 `addTunnel()` を呼ばない。ポートは 1 remote VTEP につき 1 つのみ存在する (`vxlanorch.cpp:1715`)。

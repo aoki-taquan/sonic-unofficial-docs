@@ -749,6 +749,38 @@ Redis Pub/Sub はメッセージをバッファリングしないため、fpmsyn
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+調査ソース: `orchagent/routeorch.cpp`、`orchagent/response_publisher.cpp`。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-orch-event-platform.md`。
+
+### ResponsePublisher — プラットフォーム差なし
+
+`publishRouteState()` および `ResponsePublisher::publish()` に `platform` 環境変数・`gMySwitchType` 等のプラットフォーム条件分岐は存在しない。通知は APPL_STATE_DB + `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` に全プラットフォーム共通で送出される。
+
+### NextHopObserver — プラットフォーム差なし
+
+`notifyNextHopChangeObservers()` 実装（`routeorch.cpp` L1270–1350）にプラットフォーム分岐はない。`RouteOrch::attach()` / `detach()` もプラットフォーム非依存。
+
+### RouteOrch 初期化 — Mellanox / VOQ での差（通知機構自体には非影響）
+
+RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字列に `"mellanox"` が含まれる場合に ECMP グループ数上限を `/32` 補正し、VOQ chassis では ECMP メンバー数を 128 に制限する (`routeorch.cpp` L109–123)。これらは ECMP グループ管理パラメータの差であり、`publishRouteState()` / `notifyNextHopChangeObservers()` の動作自体には影響しない。
+
+### プラットフォーム差サマリ
+
+| プラットフォーム | ResponsePublisher | NextHopObserver |
+|-----------------|-------------------|-----------------|
+| 標準 T0/T1/T2 | 変更なし | 変更なし |
+| Mellanox | 変更なし | 変更なし |
+| VOQ chassis | 変更なし | 変更なし |
+| SmartSwitch (NPU 側) | 変更なし | 変更なし |
+| multi-asic | 変更なし (namespace 独立) | 変更なし |
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/routeorch.cpp:83-87L (Mellanox ECMP グループ数補正) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/routeorch.cpp:109-123L (VOQ ECMP メンバー数制限) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/response_publisher.cpp (プラットフォーム分岐なし) -->
+<!-- /platform -->
+
 ---
 
 ## 制約

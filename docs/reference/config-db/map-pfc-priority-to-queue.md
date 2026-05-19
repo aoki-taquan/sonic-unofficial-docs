@@ -334,6 +334,53 @@ minigraph.py からの直接派生はなし。`config qos reload` 時に `qos_co
 
 <!-- /handler-branching -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/map-pfc-priority-to-queue-failure.md`
+
+対象テーブル: `MAP_PFC_PRIORITY_TO_QUEUE`。Consumer: `QosOrch::handlePfcToQueueTable()` / `QosOrch::doTask()` (`orchagent/qosorch.cpp`)。
+
+### 起動ガード
+
+`QosOrch::doTask()` 冒頭で `gPortsOrch->allPortsReady()` を確認する (`qosorch.cpp:2258`)。ポート構成完了前は即時 `return` し `Consumer::m_toSync` のエントリが滞留したまま暗黙 retry される（ログなし・CONFIG_DB 変更なし）。
+
+### SET 時の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| `allPortsReady() == false` | `doTask()` L2254-2261 | 早期 return、`m_toSync` 滞留 | ポート準備完了まで暗黙 retry |
+| `m_pendingRemove == true`（DEL pending 中に SET） | `processWorkItem()` L136-140 | `SWSS_LOG_NOTICE("Entry ... is pending remove")` → `task_need_retry` | PORT_QOS_MAP 参照解除後に自動解消 |
+| `convertFieldValuesToAttributes()` が false を返す | `processWorkItem()` L143-146 | `task_invalid_entry` でエントリ破棄 | なし |
+| `stoi()` 例外（`pfc_priority` / `qindex` に非数値） | `convertFieldValuesToAttributes()` L1001-1002 | try/catch なし → 例外伝播（YANG 正規経由では発生しない） | なし |
+| SAI `create_qos_map` 失敗（新規） | `addQosItem()` L1029-1033 | `SWSS_LOG_ERROR("Failed to create pfc_priority_to_queue map")` → `task_failed` → erase + `return` | なし（後続エントリもブロック） |
+| SAI `set_qos_map_attribute` 失敗（既存上書き） | `modifyQosItem()` L207-210 | `SWSS_LOG_ERROR("Failed to modify map")` → `task_failed` → erase + `return` | なし |
+
+> **実装ノート**: `PfcToQueueHandler::convertFieldValuesToAttributes()` は `stoi()` を try/catch なしで呼ぶ (`qosorch.cpp:1001-1002`)。YANG pattern `[0-7]?` が正規 API 経由では非数値を防ぐが、`sonic-db-cli` 等でバイパスした場合は `std::invalid_argument` 例外が呼び出し元まで伝播する可能性がある。
+
+### DEL 時の失敗パターン
+
+| 失敗ケース | 発生箇所 | 挙動 | retry |
+|---|---|---|---|
+| エントリ未登録（SAI OID なし） | `processWorkItem()` L177-181 | `SWSS_LOG_ERROR("Object with name:%s not found.")` → `task_invalid_entry` → erase | なし |
+| `PORT_QOS_MAP` から参照中 | `isObjectBeingReferenced()` L182-187 | `m_pendingRemove=true` + `task_need_retry` → `it++` | 参照解除まで無制限 retry |
+| SAI `remove_qos_map` 失敗 | `removeQosItem()` L218-222 | `SWSS_LOG_ERROR("Failed to remove QoS map.")` → `task_failed` → erase + `return` | なし |
+
+### `task_failed` 時の特殊挙動
+
+`doTask()` は `task_failed` で該当エントリを erase した後 `return` するため、同一 Consumer キュー内の後続エントリも当該イテレーションでは未処理となる (`qosorch.cpp:2284-2288`)。次の orchagent イベントループで再試行される。
+
+### エラー通知先
+
+- `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` → syslog のみ
+- `ERROR_TABLE` への書き込みなし
+- STATE_DB への反映なし（`MAP_PFC_PRIORITY_TO_QUEUE` は STATE_DB テーブルを持たない）
+- CONFIG_DB のエントリは失敗後も残存（`task_invalid_entry` の erase はメモリ上の `m_toSync` のみ）
+
+> **Evidence**: `qosorch.cpp:2254-2300` (`QosOrch::doTask(Consumer&)`); `qosorch.cpp:124-201` (`QosMapHandler::processWorkItem()`); `qosorch.cpp:991-1033` (`PfcToQueueHandler::convertFieldValuesToAttributes()`, `addQosItem()`)
+
+<!-- /failure -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
