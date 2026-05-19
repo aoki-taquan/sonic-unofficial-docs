@@ -335,6 +335,59 @@ NTP 処理は `hostcfgd` + テンプレートエンジンのパイプライン�
 
 <!-- /failure -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+`hostcfgd` (`NtpCfg`) および `chrony.conf.j2` / `chronyd-starter.sh` はプラットフォーム条件に応じて NTP の挙動を変える。以下は `NTP|global` フィールドに影響するプラットフォーム別差異の一覧。
+
+### 検出されたプラットフォーム差
+
+| プラットフォーム | 影響フィールド | 挙動 | evidence |
+|----------------|--------------|------|----------|
+| SmartSwitch NPU (`subtype=SmartSwitch` かつ `type!=SmartSwitchDPU`) | `server_role`、`dhcp` | `server_role=enabled` または `dhcp=enabled` のとき `allow` + `binddevice bridge-midplane` を `chrony.conf` に追加し、NTP server 機能を有効化 | `chrony.conf.j2:57-64` |
+| SmartSwitch DPU (`type=SmartSwitchDPU`) | `server_role` | `allow`/`binddevice` ブロックに到達しない。`server_role` は **dead field** | `chrony.conf.j2:58` |
+| 通常スイッチ (T0/T1 等) | `server_role`、`dhcp` | `server_role` / `dhcp` 値にかかわらず `allow` / `binddevice` は一切生成されない。`server_role` は **dead field** | `chrony.conf.j2:57-64` |
+| MGMT VRF 有効環境 (`mgmtVrfEnabled=true`) | `vrf` | `chronyd-starter.sh` がランタイムに `MGMT_VRF_CONFIG` を再確認し、`vrf=mgmt` のとき `ip vrf exec mgmt chronyd` で起動 | `chronyd-starter.sh:1-16` |
+| multi-asic / VOQ chassis | `src_intf` (EthernetX / PortChannelX) | host CONFIG_DB の `INTERFACE` / `PORTCHANNEL_INTERFACE` にアドレスが存在しない場合、`bindacqaddress` が空になり送信元 IP 制限が実質無効化 (silent degradation) | `chrony.conf.j2:86-116` |
+| any (MGMT VRF + `vrf=mgmt`) | `src_intf` | `chrony.conf.j2:109` が `vrf=mgmt` のとき `bindacqaddress` 生成を抑制。`src_intf` 設定は chrony.conf に反映されない | `chrony.conf.j2:109` |
+
+### SmartSwitch NTP server 自動有効化の詳細
+
+`chrony.conf.j2` L57-64 の分岐:
+
+```jinja2
+{% if device_metadata.subtype == 'SmartSwitch' and device_metadata.type != 'SmartSwitchDPU' -%}
+{% if global.server_role == 'enabled' or global.dhcp == 'enabled' -%}
+allow
+binddevice bridge-midplane
+{% endif -%}
+{% endif -%}
+```
+
+- `dhcp` フィールドのデフォルトは `enabled` (`init_cfg.json.j2:212`) であるため、SmartSwitch NPU では **オペレータが `server_role` / `dhcp` を明示的に `disabled` に設定しない限り** NTP server として動作する。
+- `binddevice bridge-midplane` は NPU-DPU 間ブリッジインタフェース。DPU 側が NPU を NTP server として参照する構成前提。
+- 非 SmartSwitch では `server_role` フィールドの設定値が何であれ chrony.conf への影響はない（dead field）。
+
+### MGMT VRF ランタイム再評価
+
+`chronyd-starter.sh` の VRF 選択ロジック:
+
+| `MGMT_VRF_CONFIG.mgmtVrfEnabled` | `NTP\|global.vrf` | chronyd 起動方法 |
+|-----------------------------------|-------------------|-----------------|
+| `false` (または読み取り失敗) | 任意 | デフォルト VRF で直接起動 |
+| `true` | `"default"` | デフォルト VRF で直接起動 |
+| `true` | `"mgmt"` 等 | `ip vrf exec mgmt /usr/sbin/chronyd` |
+
+MGMT VRF は single-asic / multi-asic 双方の host 単位で有効化される。`MgmtIfaceCfg.update_mgmt_vrf()` (`hostcfgd:1645-1693`) は `MGMT_VRF_CONFIG` 変更時に chrony を stop → interfaces-config restart → start の順で再起動し、`chronyd-starter.sh` を再評価させる。
+
+### multi-asic での src_intf 注意点
+
+`chrony.conf.j2` の `get_ip_on_interface` マクロは host CONFIG_DB のテーブルを参照して `bindacqaddress` を生成する。multi-asic 環境では `EthernetX` / `PortChannelX` はデータプレーン ASIC namespace に存在し、host CONFIG_DB の `INTERFACE` / `PORTCHANNEL_INTERFACE` にはアドレスが設定されないことがある。この場合 `bindacqaddress` が空になり、NTP パケットの送信元 IP 制限が silent に無効化される（エラーにはならない）。管理インタフェース経由で NTP を使う場合は `src_intf=eth0` または `Loopback0` 等を使うことを推奨する。
+
+調査メモ: `meta/_intermediate/cdb-flow/ntp-platform.md`
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: 8b572e7ecef7 -->
 
 <!-- derivation -->
