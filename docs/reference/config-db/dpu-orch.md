@@ -351,6 +351,48 @@ SmartSwitch DPU として動作させるためには `switch_type = "dpu"` が�
 > **証跡**: `getCfgSwitchType()` `main.cpp:242-265`、`get_feature_status()` `orch_zmq_config.cpp:81-103`、`DpuOrchDaemon::init()` `orchdaemon.cpp:1322-1419`、`doTaskApplianceTable()` `dashorch.cpp:386-438`。詳細グレップ証跡は `meta/_intermediate/cdb-flow/dpu-orch-failure.md` を参照。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`DpuOrchDaemon` および関連コンポーネントに存在する、CONFIG_DB / YANG で管理されない固定値の一覧。
+
+### orchagent.sh — DPU 起動引数固定値
+
+`switch_type = "dpu"` のとき `orchagent.sh` が orchagent プロセスに渡す引数はすべてスクリプト内ハードコードであり、CONFIG_DB フィールドで上書きできない。
+
+| 引数 | 固定値 | 意味 | ソース |
+|------|--------|------|--------|
+| `-b` (pop batch size) | `65536` | SelectableTable から 1 回のループで取り出すエントリ数上限。通常 NPU の `1024`・chassis-packet の `128` より大幅に増加し、DPU の高ボリューム処理に対応する | `orchagent.sh:29` |
+| `-z` (redis/zmq mode) | `zmq_sync` | orchagent の通信モードを ZMQ 同期モードに固定。`synchronous_mode` フィールド (`DEVICE_METADATA`) の値に関係なく適用される | `orchagent.sh:39` |
+| `-k` (max bulk size) | `65536` | ZMQ バルク送信上限。通常 NPU のデフォルト `1000` の約 65 倍 | `orchagent.sh:39` |
+
+### orch_zmq_config — ZMQ アドレス・ポート固定値
+
+| 定数 | 値 | 定義場所 | 用途 |
+|------|----|---------|------|
+| `ZMQ_LOCAL_ADDRESS` | `"tcp://localhost"` | `orch_zmq_config.h:16` | `create_local_zmq_client()` が ZMQ クライアントを生成するときに使うベースアドレス |
+| `ORCH_ZMQ_PORT` (基底ポート) | `8100` | `sonic-swss-common/common/zmqserver.h:16` | `get_zmq_port()` が計算の起点とするポート番号。`NAMESPACE_ID` が空の場合 `8100` がそのまま使われる。マルチ ASIC 環境では `8100 + namespace_id + 1` に加算される |
+| `ZMQ_TABLE_CONFIGFILE` | `"/etc/swss/orch_zmq_tables.conf"` | `orch_zmq_config.cpp:10` | `load_zmq_tables()` が読み込む ZMQ テーブルリストファイルのパス。内容は `orch_zmq_tables.conf.j2` テンプレートから生成される |
+
+### orch_zmq_config — フィーチャーフラグキー名
+
+| 定数 | 値 | 定義場所 | 用途 |
+|------|----|---------|------|
+| `ORCH_NORTHBOND_DASH_ZMQ_ENABLED` | `"orch_northbond_dash_zmq_enabled"` | `orch_zmq_config.h:21` | `get_feature_status()` が CONFIG_DB `DEVICE_METADATA|localhost` から読み出すフィールドキー名 |
+| `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` | `"orch_northbond_route_zmq_enabled"` | `orch_zmq_config.h:26` | 同上、ROUTE ZMQ フィーチャーフラグ用キー名 |
+
+### orchdaemon.h — P4Orch ZMQ エンドポイント固定値
+
+| 定数 | 値 | 定義場所 | 用途 |
+|------|----|---------|------|
+| `m_p4OrchZmqServerEp` | `"ipc:///zmq_swss/p4orch_zmq_swss_ep"` | `orchdaemon.h:121` | `OrchDaemon` が P4Orch 向けに生成する ZMQ サーバの IPC エンドポイント。DPU モードでは P4Orch を使用しないため、`DpuOrchDaemon::init()` では事実上参照されない |
+
+!!! note "上書き不可の定数"
+    `-b 65536`・`-z zmq_sync`・`-k 65536` の 3 引数は `orchagent.sh` が `switch_type = "dpu"` のとき無条件に付与し、CONFIG_DB / YANG フィールドで変更する手段は存在しない。これらの値を変更するにはシェルスクリプトの修正と orchagent の再起動が必要。
+
+詳細なソーススキャン証跡は `meta/_intermediate/cdb-flow/dpu-orch-constants.md` を参照。
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: DpuOrchDaemon クラス定義と起動条件: `sonic-swss/orchagent/orchdaemon.h:150-158`, `sonic-swss/orchagent/orchdaemon.cpp:1313-1419`, `sonic-swss/orchagent/main.cpp:981-994`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp>
