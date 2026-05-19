@@ -240,7 +240,7 @@ syncd が Switch MAC を確定するまで `doVlanTask()` は全タスクを保�
 
 <!-- /failure -->
 
-<!-- hardcoded-constants -->
+<!-- constants -->
 ## ハードコード定数 (Phase E)
 
 <!-- evidence: meta/_intermediate/cdb-flow/vlan-state-constants.md -->
@@ -268,7 +268,7 @@ syncd が Switch MAC を確定するまで `doVlanTask()` は全タスクを保�
 
 `doVlanTask()` は `stoi(key.substr(4))` で VLAN ID を抽出するが、2–4094 の範囲検証はコードに存在しない。範囲外の VLAN ID（0, 1, 4095 等）は Linux カーネルの dot1q が拒否するため `addHostVlan()` が例外を throw し vlanmgrd が再起動する。結果として **STATE_DB `VLAN_TABLE` には VLAN ID 2–4094 のキーのみ現れる**。
 
-<!-- /hardcoded-constants -->
+<!-- /constants -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
