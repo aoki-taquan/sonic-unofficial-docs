@@ -345,6 +345,53 @@ YANG definition が存在しないため、デフォルト値はすべて `event
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `sonic-swss-common/common/events_common.cpp` `read_init_config()` L38-83 / `sonic-buildimage/src/sonic-eventd/src/eventd.cpp` `run_eventd_service()` L656-704 / `stats_collector::start()` L172-225 精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/event-publisher-pubsub.md`
+
+### 購読方式: なし (ファイル起動時読み込みのみ — ZMQ が内部 pub/sub メカニズム)
+
+`init_cfg.json` の `"events"` 設定を **Redis keyspace 通知で購読するプロセスは存在しない**。
+`eventd` は起動時に `read_init_config(INIT_CFG_PATH)` (`events_common.cpp:38-83`) でファイルを直接読み込む。
+`SubscriberStateTable` / `ConsumerStateTable` / `ConfigDBConnector.subscribe()` はいずれも使用しない。
+
+代わりに `eventd` 自体が **ZeroMQ (ZMQ) ブローカー**として動作し、全コンテナ間のイベント転送に ZMQ を使用する。
+
+| コンポーネント | 通信方式 | 対象 | 備考 |
+|---|---|---|---|
+| `eventd` (`run_eventd_service`) | `ifstream` ファイル直接読み取り | `init_cfg.json ["events"]` キー | 起動時 1 回のみ。lazy 初期化後は `docker restart eventd` でのみ再読み込み |
+| パブリッシャー（全コンテナ） | ZMQ XSUB `zmq_connect` | `:5570` (`xsub_path`) | `events_init_publisher()` で接続。`eventd` proxy が XSUB/XPUB 間でメッセージを転送 |
+| サブスクライバー（telemetry 等） | ZMQ XPUB `zmq_connect` | `:5571` (`xpub_path`) | `events_init_subscriber()` で接続。`sonic-gnmi` も直接接続してイベントストリームを gNMI に転送 |
+| telemetry → eventd (キャッシュ制御) | ZMQ REQ/REP | `:5572` (`req_rep_path`) | `EVENT_CACHE_INIT` / `EVENT_CACHE_STOP_SUBCRIBER` / `EVENT_CACHE_READ` リクエスト |
+| `stats_collector` (内部) | ZMQ XPUB `events_init_subscriber` | `:5571` (`xpub_path`) | ハートビート・カウンタ収集用内部サブスクライバー (`eventd.cpp:244`) |
+| `hostcfgd` | 購読しない | — | — |
+| `orchagent` | 処理しない | — | — |
+
+### 変更の反映経路
+
+CONFIG_DB を経由しないため、Redis keyspace notification は発火しない:
+
+```
+管理者: /etc/sonic/init_cfg.json を手動編集
+  ↓ (Redis への書き込みなし — ファイル直接編集)
+systemctl restart eventd
+  ↓ run_eventd_service() → get_config_data() で init_cfg.json を再読み込み (eventd.cpp:674)
+  ↓ ZMQ ソケット再バインド (xsub:5570 / xpub:5571 / req_rep:5572 / capture:5573)
+全 ZMQ クライアント (パブリッシャー・サブスクライバー) が lazy connect で自動再接続
+```
+
+`config reload` は `init_cfg.json` を書き直さないため、ZMQ エンドポイント等の変更には
+手動での `init_cfg.json` 編集 + `systemctl restart eventd` が必要となる。
+
+### APPL_DB / SAI 中継
+
+なし。`init_cfg.json ["events"]` 設定は `eventd` の ZMQ フレームワーク起動パラメータとして機能し、
+APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない。
+
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework HLD. <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
