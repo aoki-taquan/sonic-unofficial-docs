@@ -343,6 +343,42 @@ docker-database コンテナ起動
 <!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L252-253 (自動再初期化) -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`database_config.json` は CONFIG_DB テーブルではなくインフラ層ファイルであるため、通常の CONFIG_DB テーブルが用いる Redis PUBLISH/SUBSCRIBE メカニズムは **一切使用しない**。`SonicDBConfig` クラスはファイルを起動時に一度読み込んでインメモリキャッシュに格納するのみで、keyspace notification の発行も受信も行わない。
+
+### 変更通知が不要な理由
+
+`database_config.json` が定義するのは **Redis インスタンスと DB ID のマッピング** というインフラ基盤であり、実行時に動的に変化しない前提で設計されている。変更を反映するには Redis インスタンス自体を再起動する必要があるため、pub/sub による差分通知では対応できない。
+
+| 経路 | 採用有無 | 根拠 |
+|------|---------|------|
+| Redis keyspace notification (PSUBSCRIBE) | **不使用** | CONFIG_DB テーブルでなく、変更を受信するサブスクライバーが存在しない |
+| `SubscriberStateTable` / `ConsumerStateTable` | **不使用** | `SonicDBConfig` は DB 接続クライアントを保持しない (`dbconnector.cpp` 全体で Subscribe 呼出ゼロ) |
+| `NotificationConsumer` / `NotificationProducer` | **不使用** | 同上 |
+| コンテナ再起動による再読み込み | **採用** | `docker-database-init.sh` が生成 → supervisord が Redis 再起動 → 各アプリが `SonicDBConfig::initialize()` で再読み込み |
+
+### 変更反映フロー
+
+```
+管理者が /etc/sonic/database_config.json を更新
+  ↓
+docker restart database  (または config reload 経由)
+  ↓
+docker-database-init.sh が再実行 → /var/run/redis/sonic-db/database_config.json を再生成
+  ↓
+supervisord が Redis インスタンスを再起動
+  ↓
+各アプリが再起動 → SonicDBConfig::initialize() でファイルを再読み込み
+（pub/sub チャンネルや keyspace notification は介在しない）
+```
+
+<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp (SonicDBConfig 全体: PUBLISH/SUBSCRIBE 呼出なし) -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh (生成・配置ロジック) -->
+
+<!-- /pubsub -->
+
 ## separator の役割
 
 `separator` はキー文字列でテーブル名と行キーを区切る文字:
