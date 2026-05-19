@@ -219,44 +219,52 @@ MCLAG_INTERFACE の SET/DEL を受けた mclagsyncd → iccpd → mclagsyncd IPC
 <!-- /cross-refs -->
 
 <!-- failure -->
-## 失敗挙動 (Phase D)
+## 失敗挙動マトリクス (Phase D)
 
-<!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-250 / sonic-swss/mclagsyncd/mclaglink.cpp L989-1086 / sonic-swss/mclagsyncd/mclagsyncd.cpp L44-124 -->
+<!-- evidence: sonic-swss/orchagent/mlagorch.cpp L45-52,136-155,193-234 / sonic-swss/mclagsyncd/mclaglink.cpp L918-960,989-1085 / sonic-swss/mclagsyncd/mclagsyncd.cpp L44-124 -->
 
-### MlagOrch 失敗パス（MCLAG_INTERFACE 操作）
+`MCLAG_INTERFACE` の SET/DEL を処理する 2 つの Consumer（`MlagOrch` と `mclagsyncd`）それぞれの失敗経路を整理する。
 
-| # | トリガー | 箇所 | 動作 | retry |
-|---|---------|------|------|-------|
-| 1 | 重複 MCLAG_INTERFACE ADD（`m_mlagIntfs` に既存） | `addMlagInterface()` L196-213 | `SWSS_LOG_ERROR("MLAG adds duplicate MLAG interface %s")` + notify なし | なし（`return true` でキューから除去） |
-| 2 | 未知 MCLAG_INTERFACE DEL（`m_mlagIntfs` に不在） | `delMlagInterface()` L219-233 | `SWSS_LOG_ERROR("MLAG deletes unknown MLAG interface %s")` + notify なし | なし（`return true` でキューから除去） |
-| 3 | 不明な op_type | `doMlagInterfaceTask()` L149-152 | `SWSS_LOG_ERROR("MLAG receives unknown operation type %s")` + erase | なし |
-| 4 | `allPortsReady()` 未完了 | `doTask()` L49-52 | 早期 return → エントリをキュー保留 | PortsOrch 起動後に自動再処理（保留であり失敗ではない） |
+### MlagOrch (orchagent) の失敗経路
 
-> `addMlagInterface()` / `delMlagInterface()` はどちらも常に `return true` を返すため、エラーが発生してもエントリはキューから除去される（再試行なし）。失敗は syslog のみ記録される。
+| # | 失敗条件 | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | `allPortsReady()` 未完了 | `mlagorch.cpp:49-52` | 即 `return`。エントリはキューに保留 | あり（PortsOrch 起動完了後に自動処理） |
+| 2 | 不明 operation type（SET / DEL 以外） | `mlagorch.cpp:148-151` | `SWSS_LOG_ERROR` + エントリ erase（ドロップ） | なし |
+| 3 | 重複 SET（既登録 if_name を再 SET） | `mlagorch.cpp:196-213` | `SWSS_LOG_ERROR("MLAG adds duplicate MLAG interface")` のみ。`m_mlagIntfs` 変更・Observer 通知なし。エントリは erase される | なし |
+| 4 | 未知 if_name の DEL（未登録 if_name を DEL） | `mlagorch.cpp:219-233` | `SWSS_LOG_ERROR("MLAG deletes unknown MLAG interface")` のみ。エントリは erase される | なし |
 
-### mclagsyncd 失敗パス（MCLAG_INTERFACE → iccpd IPC）
+`addMlagInterface()` / `delMlagInterface()` はどちらも常に `return true` を返す設計であるため、orchagent 側は **retry ループに入らない**。エラーが発生してもエントリは即座に erase され、再試行されない。
 
-| # | トリガー | 箇所 | 動作 | retry |
-|---|---------|------|------|-------|
-| 5 | キーから `<if_name>` 部が空 | `mclagsyncdSendMclagIfaceCfg()` L1022-1027 | `SWSS_LOG_ERROR("Invalid Key %s Format. No mclag iface specified")` + `continue` でエントリスキップ | なし |
-| 6 | iccpd への IPC 書き込み失敗（バッファ中間送信） | `mclagsyncdSendMclagIfaceCfg()` L1055-1060 | `SWSS_LOG_ERROR("...buffer full; write to m_connection_socket failed")` | なし（残バッファは継続処理） |
-| 7 | iccpd への IPC 書き込み失敗（最終送信） | `mclagsyncdSendMclagIfaceCfg()` L1078-1084 | `SWSS_LOG_ERROR("mclagsycnd to ICCPD, mclag iface cfg send; write to m_connection_socket failed")` | なし（iccpd はメンバー情報を受け取れず ICCP 不完全） |
+### mclagsyncd の失敗経路
+
+| # | 失敗条件 | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 5 | MCLAG_DOMAIN が未 SET の状態で MCLAG_INTERFACE を書く | `mclaglink.cpp:918`（購読テーブル未生成） | `mclagsyncd` は MCLAG_INTERFACE を購読していないため**完全に無視**（エラーログなし） | なし（ICCP セッション再確立後に iccpd が再 fetch） |
+| 6 | key の `<if_name>` 部分が空 | `mclaglink.cpp:1022-1027` | `SWSS_LOG_ERROR("Invalid Key ... No mclag iface specified")` → `continue` で当該エントリをスキップ | なし |
+| 7 | iccpd 向け IPC `write()` 失敗（バッファ中間送信） | `mclaglink.cpp:1055-1060` | `SWSS_LOG_ERROR` のみ。デーモン継続 | なし（残バッファは継続処理） |
+| 8 | iccpd 向け IPC `write()` 失敗（最終送信） | `mclaglink.cpp:1078-1084` | `SWSS_LOG_ERROR` のみ。iccpd への MCLAG_INTERFACE 通知が欠落 | なし（ICCP セッション再確立時に再 fetch） |
+| 9 | iccpd からの malformed メッセージ受信 | `mclaglink.cpp:1901-1902` | `system_error` throw → mclagsyncd プロセス終了 (`return 0`) | systemd による restart |
 
 ### IPC 接続断・再接続時の自動リカバリ
 
-`mclagsyncd.cpp` の外側 `while(1)` ループは iccpd との接続断 (`MclagConnectionClosedException`) を捕捉して再接続を行う。再接続後は `mclagsyncdFetchMclagInterfaceConfigFromConfigdb()` を呼び、CONFIG_DB の全 MCLAG_INTERFACE エントリを再読み込みして iccpd へ再送信する。
+`mclagsyncd.cpp` の外側 `while(1)` ループは iccpd との接続断 (`MclagConnectionClosedException`) を捕捉して再接続する。再接続後は `mclagsyncdFetchMclagInterfaceConfigFromConfigdb()` を呼び、CONFIG_DB の全 MCLAG_INTERFACE エントリを再読み込みして iccpd へ再送信する（evidence: `mclagsyncd.cpp:57-58,112-115`）。
 
-- MCLAG_INTERFACE の IPC 送信失敗は iccpd 再起動 / 接続断で自動回復する
-- evidence: `mclagsyncd.cpp:57-58,112-115`
+ケース #7〜#8（IPC 送信失敗）は iccpd 再起動 / 接続断で自動回復する。ケース #9（malformed メッセージ）は `MclagConnectionClosedException` と異なり while(1) で再接続せず、systemd が mclagsyncd を restart する。
 
-!!! warning "malformed メッセージ受信時は mclagsyncd プロセスが終了"
-    iccpd から malformed メッセージ（`mclag_msg_ok()` 検証失敗）を受信すると `system_error` が throw され、`catch (const exception& e)` ブロックで `return 0` → mclagsyncd プロセス終了となる。`MclagConnectionClosedException` と異なり **while(1) で再接続しない**。systemd が mclagsyncd を restart する。
-    evidence: `mclagsyncd.cpp:116-120`, `mclaglink.cpp:1901-1902`
+### 失敗後の復旧パス
+
+- **ケース #1 (allPortsReady 未完了)**: エントリは orchagent の Consumer キューに残り、PortsOrch 起動完了後の次回 `doTask()` 呼び出しで自動処理される。
+- **ケース #2〜#4 (MlagOrch 側エラー)**: エントリは erase されて失われる。再設定には CLI または sonic-db-cli での再 SET が必要。
+- **ケース #5 (mclagsyncd 購読未開始)**: MCLAG_DOMAIN を SET してから MCLAG_INTERFACE を再 SET することで解消。
+- **ケース #6〜#8 (mclagsyncd IPC 失敗)**: ICCP セッションが再確立されると CONFIG_DB を全量再 fetch して iccpd に送信する。
+
+!!! warning "silent drop に注意"
+    ケース #5（MCLAG_DOMAIN 未設定時の MCLAG_INTERFACE 書込）はエラーログが一切出力されず、mclagsyncd 側で完全に無視される。`show mclag interface` で期待したエントリが出ない場合は MCLAG_DOMAIN の存在確認と mclagsyncd ログの確認を行うこと。
 
 ### STATE_DB / ERROR_TABLE への記録
 
-- `MlagOrch` は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ
-- `mclagsyncd` も MCLAG_INTERFACE 処理失敗時は STATE_DB を更新しない（STATE_DB への書き込みは iccpd からの応答受信後に行われるため、iccpd への送信に失敗した場合は STATE_DB も更新されない）
+`MlagOrch` は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。`mclagsyncd` も MCLAG_INTERFACE 処理失敗時は STATE_DB を更新しない（STATE_DB への書き込みは iccpd からの応答受信後に行われるため、iccpd への送信に失敗した場合は STATE_DB も更新されない）。
 
 ```bash
 # orchagent ログで MCLAG_INTERFACE 失敗確認

@@ -78,7 +78,7 @@ if (mclag_ifaces.empty())
 - iccpd へは送信されない。STATE_DB への書込みなし
 - evidence: `mclaglink.cpp:1022-1027`
 
-### iccpd への IPC 書き込み失敗（バッファフル）(L1057-1060)
+### iccpd への IPC 書き込み失敗（バッファ中間送信）(L1057-1060)
 
 ```cpp
 if (write <= 0)
