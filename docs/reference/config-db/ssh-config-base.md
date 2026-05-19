@@ -313,6 +313,67 @@ SSH_CONFIG_NAMES = {
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-side-effects.md`
+
+`SSH_SERVER|POLICIES` エントリへの SET/DEL が CONFIG_DB に書き込まれると、`hostcfgd` の `ssh_handler` が 2 クラスを連鎖呼び出しする。APPL_DB / STATE_DB / ASIC_DB への直接書き込みは一切発生しない。
+
+### 副次書込先サマリ
+
+| 副次書込先 | ファイル / サービス | 書込者 | 条件 |
+|---|---|---|---|
+| ファイルシステム | `/etc/ssh/sshd_config` | `SshServer.set_policies()` | `sshd -T` 検証成功後 |
+| サービス再起動 | `ssh.service` (systemd) | `systemctl restart ssh` | `sshd -T` 検証成功後 |
+| ファイルシステム | `/etc/pam.d/pam-limits-conf` | `PamLimitsCfg.render_conf_file()` | PAM limits 更新時 (常時) |
+| ファイルシステム | `/etc/security/limits.conf` | `PamLimitsCfg.render_conf_file()` | PAM limits 更新時 (常時) |
+| APPL_DB | なし | — | — |
+| STATE_DB | なし | — | — |
+| ASIC_DB | なし | — | — |
+
+### `/etc/ssh/sshd_config` の更新と ssh 再起動
+
+`SshServer.set_policies()` は次の手順でファイルを更新する。
+
+```
+copy2(sshd_config → sshd_config.tmp)          # L1113
+modify_single_file_inplace(sshd_config.tmp)   # L1142 × フィールド数
+sshd -T -f sshd_config.tmp                    # L1150 — 検証
+  ├─ returncode == 0
+  │   ├─ os.rename(sshd_config.tmp, sshd_config)  # L1152
+  │   └─ systemctl restart ssh                     # L1154
+  └─ returncode != 0
+      └─ os.remove(sshd_config.tmp)               # L1160 — ロールバック
+```
+
+`sshd -T` が失敗した場合は一時ファイルを削除してロールバックする。`sshd_config` は変更されず `ssh` サービスも再起動されない。
+
+`systemctl restart ssh` が例外を投げた場合は `except Exception` で捕捉し ERR ログのみ記録する。このとき `sshd_config` は新しい内容に書き換え済みだが `ssh.service` は再起動されていない不整合状態となる（詳細は Phase D 参照）。
+
+### PAM limits ファイルの更新
+
+`ssh_handler` は `set_policies()` の後に必ず `pamLimitsCfg.update_config_file()` を呼び出す（`hostcfgd` L2299）。このメソッドは `max_sessions` の現在値に関わらず Jinja2 テンプレートをレンダリングして次の 2 ファイルを上書きする。
+
+| ファイル | テンプレート | 内容 |
+|---------|------------|------|
+| `/etc/pam.d/pam-limits-conf` | `pam_limits.j2` | pam_limits モジュールの有効化 |
+| `/etc/security/limits.conf` | `limits.conf.j2` | `maxlogins <N>` または空（無制限） |
+
+`max_sessions == 0`（デフォルト）の場合、`self.max_sessions` が `None` となりテンプレートは `maxlogins` 行を出力しない（無制限）。
+
+### STATE_DB 書込なしの根拠
+
+`HostConfigDaemon` は起動時に `DBConnector(STATE_DB, 0)` を保持するが、この接続は `FipsCfg` クラスが `FIPS_STATS|state` に統計を書き込むためのものであり、SSH ハンドラーチェーンからは参照されない（`hostcfgd` L2160、L2210）。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1110-1160 (SshServer.set_policies) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1152-1155 (systemctl restart ssh) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1418-1479 (PamLimitsCfg.update_config_file / render_conf_file) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2297-2301 (ssh_handler) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2160 (state_db_conn FIPS 専用) -->
+
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
