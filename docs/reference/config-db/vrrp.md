@@ -453,6 +453,48 @@ vrrporch ConsumerStateTable 受信 → SAI API → syncd → ASIC_DB
 > **Evidence**: HLD L219-235 (Container セクション)、HLD L460-492 (Modules Design and Flows)、HLD L407-436 (APPL_DB Changes)
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vrrp-platform.md -->
+
+### ベンダー SAI — `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL` 対応差
+
+VRRP 仮想ルータインターフェース (Virtual RIF) は `create_router_interface()` に `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL = true` を付与することで作成される。ただし、**一部ベンダーの SAI 実装はこの属性をサポートしない**。
+
+`vrrporch` は `sai_query_attribute_capability()` でプラットフォームの対応状況を確認し、未サポートの場合は属性を付与せずに通常 RIF として作成する（HLD L520）。
+
+| プラットフォーム状況 | 挙動 | 機能影響 |
+|------------------|------|---------|
+| `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL` をサポート | Virtual RIF として作成。Neighbor エントリを持てない読み取り専用 RIF に最適化。ASIC リソースを節約 | 最適動作 |
+| 未サポート (`sai_query_attribute_capability` 失敗) | 属性なしで通常 RIF として作成 | 機能は維持。ASIC リソースは無駄に消費される場合あり |
+
+RFC 5798 準拠の Virtual RIF では `ADMIN state`・`MTU size`・`packet action`・`multicast enable` の各属性が無効となる（SAI 仕様）。通常 RIF として作成した場合はこれらのリソース最適化が適用されない。
+
+### COPP トラップ（VRRP / VRRPv6）— プラットフォーム共通
+
+VRRP コントロールパケットの受信は `copporch.cpp` で登録される SAI ホストインターフェーストラップで処理される:
+
+| トラップ名 | SAI 値 | 対象 |
+|-----------|--------|------|
+| `vrrp` | `SAI_HOSTIF_TRAP_TYPE_VRRP` | VRRPv2/v3 (IPv4) コントロールパケット |
+| `vrrpv6` | `SAI_HOSTIF_TRAP_TYPE_VRRPV6` | VRRPv3 (IPv6) コントロールパケット |
+
+これらは標準 SAI トラップであり、ベンダー固有の分岐はない（copporch.cpp:73, 78）。
+
+### Multi-ASIC / VOQ / DPU — 未定義
+
+VRRP_Adaptation_HLD には multi-asic・VOQ chassis・DPU に関する記述がない。VRRP は Linux macvlan デバイスと FRR `vrrpd` を用いた Linux ネットワークスタック上の機能であるため、ASIC 種別・マルチ ASIC 構成への直接依存は最小となる。
+
+| 構成 | 状況 |
+|------|------|
+| 通常シングル ASIC | 正常動作（設計対象） |
+| Multi-ASIC (`is_multi_npu=True`) | HLD で非対応。`macvlanmgrd` はホスト CONFIG_DB のみを参照し、`asicN` namespace を走査しない |
+| VOQ chassis | HLD で未定義 |
+| DPU (`gMySwitchType = "dpu"`) | HLD で未定義 |
+
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: VRRP Adaptation HLD: `sonic-net/SONiC`, `doc/vrrp/VRRP_Adaptation_HLD.md`. <https://github.com/sonic-net/SONiC/blob/master/doc/vrrp/VRRP_Adaptation_HLD.md>
