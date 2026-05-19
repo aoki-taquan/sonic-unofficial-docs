@@ -333,6 +333,60 @@ cross-refs としての依存テーブルはない（Phase B 順序依存とし�
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/fdb-aging-F.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/fdb-aging-pubsub.md -->
+<!-- source: sonic-swss/orchagent/switchorch.cpp ref:master -->
+<!-- source: sonic-swss/orchagent/orchdaemon.cpp ref:master -->
+<!-- source: sonic-swss/orchagent/orch.cpp ref:master -->
+
+`fdb_aging_time` は `APPL_DB SWITCH_TABLE:switch` の 1 フィールドとして書き込まれる。`SwitchOrch` が `APP_SWITCH_TABLE_NAME` を Consumer として保持し、`Orch::addConsumer()` の DB ID 分岐により **`ConsumerStateTable`**（Redis Lists 方式）が割り当てられる。`SubscriberStateTable`（keyspace 通知）は CONFIG_DB / STATE_DB / CHASSIS_APP_DB 専用であり、APPL_DB には使われない。
+
+```cpp
+// orchdaemon.cpp:197-212
+TableConnector app_switch_table(m_applDb, APP_SWITCH_TABLE_NAME);
+vector<TableConnector> switch_tables = {
+    conf_switch_hash, conf_switch_trim, conf_switch_fast_linkup,
+    conf_asic_sensors, conf_suppress_asic_sdk_health_categories,
+    app_switch_table   // APPL_DB → ConsumerStateTable
+};
+gSwitchOrch = new SwitchOrch(m_applDb, switch_tables, stateDbSwitchTable);
+```
+
+```cpp
+// orch.cpp:1186-1196
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == CHASSIS_APP_DB)
+        addExecutor(new Consumer(new SubscriberStateTable(...), this, tableName));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+### 購読チャンネル一覧
+
+| 購読者 | 購読 API | 購読テーブル | DB | 優先度 |
+|--------|---------|--------------|-----|--------|
+| `orchagent` (`SwitchOrch`) | `swss::ConsumerStateTable` | `SWITCH_TABLE` | APPL_DB | デフォルト |
+
+### 発行元一覧
+
+| 発行元 | 発行 API | 書込テーブル | トリガー |
+|--------|---------|--------------|---------|
+| `swssconfig switch.json` | `swssconfig` / `ProducerStateTable` | `SWITCH_TABLE:switch` (APPL_DB) | orchagent コンテナ起動時 |
+| `sonic-db-cli`（手動） | `HSET` | `SWITCH_TABLE:switch` (APPL_DB) | 管理者手動操作 |
+
+### バッチサイズと起動時スナップショット
+
+`ConsumerStateTable` は `gBatchSize`（デフォルト 128）件をまとめて `pops()` で取得する。`SubscriberStateTable` と異なり起動時の既存エントリ自動再配信（スナップショット）は行われない。orchagent 再起動時は `swssconfig.sh` が再度 `swssconfig switch.json` を実行して `SWITCH_TABLE:switch` に書き込むことで、`fdb_aging_time` を含む全フィールドが再設定される（Phase B 記載の `sleep 1` によるタイミング保証の対象）。
+
+### RESTARTCHECK 通知チャンネル
+
+`SwitchOrch` は `RESTARTCHECKREPLY` という `NotificationProducer` と `m_restartCheckNotificationConsumer`（`NotificationConsumer`）も持つが、これは warm-reboot 再起動可否を通知する独立チャンネルであり `fdb_aging_time` の pub/sub フローとは無関係。
+<!-- /pubsub -->
+
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
