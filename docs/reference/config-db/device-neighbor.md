@@ -366,4 +366,87 @@ minigraph.py が生成するエントリは常に `{'name': <隣接ホスト名>
 - **bgpcfgd の check_neig_meta フラグ (依存 #3)**: `check_neig_meta = True` の場合のみ DEVICE_NEIGHBOR_METADATA の存在チェックを行う。フラグの初期値は `True`（通常構成）。`return False` 後は bgpcfgd が次のイベントループで再試行するため、DEVICE_NEIGHBOR_METADATA が後から書き込まれれば自動復旧する。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+### テーブル名文字列リテラル
+
+`DEVICE_NEIGHBOR` を参照する各コンポーネントは、テーブル名を以下の文字列リテラルまたは定数としてハードコードする。YANG / CONFIG_DB スキーマ定義とは独立して管理されており、テーブル名が変更された場合は各コンポーネントを個別に修正する必要がある。
+
+| リテラル / 定数名 | 値 | コンポーネント | evidence |
+|-----------------|-----|--------------|---------|
+| `DEVICE_NEIGHBOR_TABLE_NAME` | `"DEVICE_NEIGHBOR"` | `ecnconfig` — ポート一覧取得用テーブル名定数 | `ecnconfig:93` |
+| `get_table('DEVICE_NEIGHBOR')` | `"DEVICE_NEIGHBOR"` | `pfcwd/main.py` — 外部ポート一覧取得 | `pfcwd/main.py:413` |
+| `get_table("DEVICE_NEIGHBOR")` | `"DEVICE_NEIGHBOR"` | `show/interfaces/__init__.py` — `show interfaces expected` | `show/interfaces/__init__.py:316` |
+| `results['DEVICE_NEIGHBOR']` | `"DEVICE_NEIGHBOR"` | `minigraph.py` — CONFIG_DB 書き込み dict キー | `minigraph.py:2637` |
+
+### YANG 文字列長制約
+
+| フィールド | 制約 | YANG ソース |
+|-----------|------|------------|
+| `peer_name` | `length 1..255` | `sonic-device_neighbor.yang:35-36` |
+| `name` | `length 1..255` | `sonic-device_neighbor.yang:42-43` |
+| `port` | `length 1..255` | `sonic-device_neighbor.yang:61-62` |
+| `type` | `length 1..255` | `sonic-device_neighbor.yang:68-69` |
+| `mgmt_addr` | `inet:ip-address`（IPv4/IPv6） | `sonic-device_neighbor.yang:46` |
+| `local_port` | leafref → `PORT_LIST.name`（長さ制約は PORT 側） | `sonic-device_neighbor.yang:52-55` |
+
+### minigraph リンク種別フィルタ文字列
+
+`minigraph.py` は `DeviceInterfaceLinks` セクションを処理する際に、リンク種別を以下のハードコード文字列で分類する。DEVICE_NEIGHBOR に取り込まれるリンク種別と除外対象が明示的に制御される。
+
+| 文字列 | 扱い | evidence |
+|--------|------|---------|
+| `"DeviceInterfaceLink"` | DEVICE_NEIGHBOR へ取り込む | `minigraph.py:631,636` |
+| `"UnderlayInterfaceLink"` | DEVICE_NEIGHBOR へ取り込む | `minigraph.py:636` |
+| `"DeviceMgmtLink"` | 管理リンク — DEVICE_NEIGHBOR へは取り込まない | `minigraph.py:636,648,655` |
+| `"DeviceSerialLink"` | シリアルリンク — DEVICE_NEIGHBOR へは取り込まない | `minigraph.py:610` |
+
+### minigraph 生成エントリのフィールドセット
+
+minigraph.py が生成するエントリは **`name` と `port` の 2 フィールドのみ**。これはハードコードされた dict リテラルで構成される:
+
+```python
+neighbors[port] = {'name': startdevice, 'port': endport}
+```
+
+`mgmt_addr`・`local_port`・`type` は minigraph 経由では DEVICE_NEIGHBOR テーブルに書き込まれない。<!-- evidence: minigraph.py:649,655 -->
+
+### ポートソート定数（ecnconfig）
+
+`ecnconfig` は `DEVICE_NEIGHBOR.keys()` から取得したポート一覧を以下のキー関数でソートする:
+
+```python
+self.ports_key.sort(
+    key = lambda k: int(k[8:]) if "BP" not in k else int(k[11:]) + 1024
+)
+```
+
+- `k[8:]`: `"Ethernet"` プレフィックス（8 文字）をスキップして数値部分を抽出
+- `"BP"` 含む場合（バックプレーンポート `Ethernet-BPxy`）: `k[11:]` + `1024` でソート末尾へ配置
+
+これらの数値（8・11・1024）は YANG 未定義のハードコード値。<!-- evidence: ecnconfig:291-294 -->
+
+### ポート description 生成フォーマット（minigraph）
+
+ポートに `description` が設定されていない場合、minigraph.py が DEVICE_NEIGHBOR 情報から自動設定する:
+
+```python
+port['description'] = "%s:%s" % (neighbors[port_name]['name'], neighbors[port_name]['port'])
+```
+
+形式: `<隣接ホスト名>:<隣接ポート名>`（コロン区切り、ハードコード）<!-- evidence: minigraph.py:2465 -->
+
+### ハードコードエラーメッセージ文字列
+
+| コンポーネント | メッセージ | evidence |
+|--------------|----------|---------|
+| `minigraph.py` | `"Warning: ignore interface '%s' in DEVICE_NEIGHBOR as it is not in the port_config.ini"` | `minigraph.py:2635` |
+| `ecnconfig` | `"No active ports detected in table '{}'"` (format 引数: `DEVICE_NEIGHBOR_TABLE_NAME`) | `ecnconfig:287` |
+| `show/interfaces/__init__.py` | `"DEVICE_NEIGHBOR information is not present."` | `show/interfaces/__init__.py:318` |
+| `managers_bgp.py` | `"DEVICE_NEIGHBOR_METADATA is not ready for neighbor '%s' - '%s'"` | `managers_bgp.py:222` |
+
+> **スキャン証跡**: `ecnconfig:93,282-294` 読了。`pfcwd/main.py:98,413` 読了。`show/interfaces/__init__.py:316-323` 読了。`minigraph.py:610,631-655,2465,2635-2637` 読了。`sonic-device_neighbor.yang` 全行読了。定数 5 種別 15 件を確認。詳細は `meta/_intermediate/cdb-flow/device-neighbor-constants.md` 参照。
+<!-- /constants -->
+
 <!-- glossary-links-injected: 2c4f81fa98e5 -->
