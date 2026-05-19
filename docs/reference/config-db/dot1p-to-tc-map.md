@@ -293,4 +293,38 @@ show qos map dot1p-tc
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+`Dot1pToTcMapHandler::processWorkItem()` / `QosMapHandler::processWorkItem()`（`sonic-swss/orchagent/qosorch.cpp`）における SET / DEL 失敗条件と結果を網羅する。
+
+<!-- evidence: meta/_intermediate/cdb-flow/dot1p-to-tc-map-failure.md -->
+
+### SET 失敗マトリクス
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| 既存オブジェクトが `m_pendingRemove == true` の状態で SET | `qosorch.cpp:136-139` | `task_need_retry` — m_toSync 残留、次 doTask() で再評価 | `"Entry %s %s is pending remove, need retry"` (NOTICE) | `qosorch.cpp:138` |
+| `dot1p` フィールドが非数値 (`std::invalid_argument`) | `qosorch.cpp:375-378` | 該当エントリのみサイレント脱落、残りエントリで SAI 生成継続 | `"Invalid dot1p to tc argument %s:%s to %s()"` (ERROR) | `qosorch.cpp:377` |
+| `dot1p` / `tc` フィールドが数値範囲超過 (`std::out_of_range`) | `qosorch.cpp:380-383` | 該当エントリのみサイレント脱落、残りエントリで SAI 生成継続 | `"Out of range dot1p to tc argument %s:%s to %s()"` (ERROR) | `qosorch.cpp:382` |
+| SAI `create_qos_map` 失敗（新規作成） | `qosorch.cpp:412-416`, `162-166` | `task_failed` — m_toSync からエントリ削除。retry なし | `"Failed to create dot1p_to_tc map. status: %s"` (ERROR) | `qosorch.cpp:415` |
+| SAI `set_qos_map_attribute` 失敗（既存更新） | `qosorch.cpp:206-213`, `151-155` | `task_failed` — m_toSync からエントリ削除。既存 SAI オブジェクトは変更前状態に留まる | `"Failed to set [%s:%s]"` (ERROR) | `qosorch.cpp:153` |
+
+### DEL 失敗マトリクス
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| 存在しないオブジェクトへの DEL | `qosorch.cpp:176-179` | `task_invalid_entry` — ノーオペレーション | `"Object with name:%s not found."` (ERROR) | `qosorch.cpp:178` |
+| `PORT_QOS_MAP` から参照中の DEL | `qosorch.cpp:181-186` | `m_pendingRemove = true` + `task_need_retry` — 参照解除後に自動 DEL 再実行 | `"Can't remove object %s due to being referenced (%s)"` (NOTICE) | `qosorch.cpp:184` |
+| SAI `remove_qos_map` 失敗 | `qosorch.cpp:188-191`, `220-224` | `task_failed` — SAI オブジェクト残存、CONFIG_DB/SAI 乖離 | `"Failed to remove QoS map. db name:%s sai object:..."` (ERROR) | `qosorch.cpp:190` |
+
+### 補足
+
+- **フィールド変換失敗のサイレント脱落**: `convertFieldValuesToAttributes()` は変換失敗エントリを `continue` でスキップし `return true` を維持する。そのため `processWorkItem()` には成功として返り、呼び出し元にエラーが伝播しない。CONFIG_DB には全エントリが記録されるが SAI には有効エントリのみ反映される（書き込み vs 実行時の乖離）。
+- **`task_invalid_entry`** はエントリを m_toSync から破棄し再試行しない。YANG バリデーション通過後の不正データが入った場合のみ発生する。
+- **`task_need_retry`** はエントリを m_toSync に残留させ次の `doTask()` で再評価する。自動回復するが完了タイミングは不確定。
+- QosOrch は失敗時に STATE_DB / ERROR_TABLE への書き込みを行わない。ASIC_DB への反映確認は `sonic-db-cli ASIC_DB hgetall 'ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:*'` で行う。
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: b1003b21c66f -->
