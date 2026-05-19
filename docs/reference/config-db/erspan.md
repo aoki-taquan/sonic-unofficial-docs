@@ -312,6 +312,55 @@ MIRROR_SESSION SET
 
 <!-- /cdb-exceptions -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`MirrorOrch` (`mirrororch.cpp` / `mirrororch.h`) 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。これらの値は ERSPAN セッションの SAI 設定・STATE_DB 書き込み値・バリデーション上限に直接影響する。
+
+### MirrorEntry コンストラクタ初期値
+
+| 定数 / フィールド | 値 | 用途 | ソース |
+|------------------|----|------|--------|
+| `dscp` 初期値 | `8` (CS1 相当) | `MirrorEntry` コンストラクタで初期化。CONFIG_DB に `dscp` フィールドがない場合に使用される。`activateSession()` が `TOS = dscp << 2 = 32` として SAI へ渡す | `mirrororch.cpp:L60` |
+| `ttl` 初期値 | `255` | `MirrorEntry` コンストラクタで初期化。CONFIG_DB に `ttl` フィールドがない場合に使用される。`SAI_MIRROR_SESSION_ATTR_TTL = 255` として SAI へ渡す | `mirrororch.cpp:L61` |
+| `queue` 初期値 | `0` | `MirrorEntry` コンストラクタで初期化。`queue == 0` のとき `SAI_MIRROR_SESSION_ATTR_TC` を SAI に送らない（global TC を使用） | `mirrororch.cpp:L62` |
+| `greType` 非 Mellanox | `0x88be` | Mellanox プラットフォーム以外でのデフォルト GRE EtherType（ERSPAN Type II / Cisco 互換）。YANG `default` と一致 | `mirrororch.cpp:L71` |
+| `greType` Mellanox | `0x8949` | `platform == "mellanox"` 時のデフォルト GRE EtherType（ERSPAN Type III / Broadcom 互換）。YANG `default 0x88be` と乖離 | `mirrororch.cpp:L67` |
+
+### SAI 属性ハードコード値
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `MIRROR_SESSION_DEFAULT_VLAN_PRI` | `0` | nexthop が VLAN ポートの場合に SAI `SAI_MIRROR_SESSION_ATTR_VLAN_PRI` へ設定する固定値 | `mirrororch.cpp:L35, L997, L1250` |
+| `MIRROR_SESSION_DEFAULT_VLAN_CFI` | `0` | nexthop が VLAN ポートの場合に SAI `SAI_MIRROR_SESSION_ATTR_VLAN_CFI` へ設定する固定値 | `mirrororch.cpp:L36, L1001, L1254` |
+| `MIRROR_SESSION_IP_HDR_VER_4` | `4` | IPv4 ヘッダバージョン。`dst_ip` が v4 アドレスのとき `SAI_MIRROR_SESSION_ATTR_IPHDR_VERSION = 4` | `mirrororch.cpp:L37` |
+| `MIRROR_SESSION_IP_HDR_VER_6` | `6` | IPv6 ヘッダバージョン。`dst_ip` が v6 アドレスのとき `SAI_MIRROR_SESSION_ATTR_IPHDR_VERSION = 6` | `mirrororch.cpp:L38` |
+| `MIRROR_SESSION_DSCP_SHIFT` | `2` | DSCP 値を左シフトして TOS バイト変換する際のシフト量（TOS = dscp << 2） | `mirrororch.cpp:L39` |
+| `MIRROR_SESSION_DSCP_MIN` / `MIRROR_SESSION_DSCP_MAX` | `0` / `63` | `to_uint<uint8_t>()` の範囲バリデーション上下限。範囲外は `std::exception` → `task_invalid_entry` | `mirrororch.cpp:L40-41` |
+| ERSPAN カプセル化タイプ | `SAI_ERSPAN_ENCAPSULATION_TYPE_MIRROR_L3_GRE_TUNNEL` | ERSPAN セッションに固定設定される SAI カプセル化タイプ。CONFIG_DB から変更不可 | `mirrororch.cpp:L1006` |
+
+### TC 上限フォールバック
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `MIRROR_SESSION_DEFAULT_NUM_TC` | `255` | `SAI_SWITCH_ATTR_QOS_MAX_NUMBER_OF_TRAFFIC_CLASSES` の SAI 取得失敗時のフォールバック値。`m_maxNumTC = 255` となり `queue >= m_maxNumTC` の上限チェックが実質無効化される | `mirrororch.cpp:L45, L104` |
+
+### STATE_DB フィールド値定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `MIRROR_SESSION_STATUS_ACTIVE` | `"active"` | `activateSession()` 成功後に `STATE_DB MIRROR_SESSION_TABLE.<name>.status` へ書き込む固定文字列 | `mirrororch.cpp:L16` |
+| `MIRROR_SESSION_STATUS_INACTIVE` | `"inactive"` | `deactivateSession()` 後に `status` へ書き込む固定文字列。セッションが inactive 状態になるすべてのケースで使用 | `mirrororch.cpp:L17` |
+
+### プラットフォーム判定文字列
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `MLNX_PLATFORM_SUBSTRING` | `"mellanox"` | `getenv("platform")` の戻り値と比較して Mellanox プラットフォームを判定。`greType` の分岐に使用（`mirrororch.cpp:L395, L65`）。完全一致比較（`== MLNX_PLATFORM_SUBSTRING`）であり、部分一致ではない点に注意 | `orch.h:L42` |
+
+> **スキャン証跡**: `mirrororch.cpp` L14-45 (define 定数), L57-77 (MirrorEntry コンストラクタ), L100-109 (m_maxNumTC 初期化), L395 (platform getenv), L997-1011 (VLAN PRI/CFI + IP HDR VER), L1003-1007 (ERSPAN カプセル化タイプ) 読了。`mirrororch.h` L36, L99-100 読了。`orch.h` L42 読了。定数 6 種別 16 件を確認。
+<!-- /constants -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス（ERSPAN 固有）
 
