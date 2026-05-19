@@ -456,6 +456,40 @@ consumer 側（on-demand polling、doTask() イテレーション内）
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
+> 中間調査: `meta/_intermediate/cdb-flow/state-vrf-platform.md`
+
+### VRF_TABLE — プラットフォーム差なし
+
+`vrfmgrd` は `gMySwitchType` / ASIC 種別参照を一切持たない。`VRF_TABLE_START=1001`、`VRF_TABLE_END=5097`、`MGMT_VRF_TABLE_ID=6000` の各定数はコードにハードコードされており、ハードウェア種別・`switch_type` によって変化しない（`vrfmgr.cpp:12-15`）。
+
+### VRF_OBJECT_TABLE — プラットフォーム差なし
+
+`vrforch.cpp` に `platform` / `gMySwitchType` / `ASIC_TYPE` 参照が存在しない。`VRFOrch` は SAI `create_virtual_router()` / `remove_virtual_router()` の成否のみに基づいて `state="ok"` を書き込む（`vrforch.cpp:120, 150, 193`）。
+
+### switch_type 別の有効性
+
+| switch_type | VRF_TABLE | VRF_OBJECT_TABLE |
+|-------------|-----------|-----------------|
+| `"switch"` / `"voq"` | `vrfmgrd` が書き込む（通常動作） | `VRFOrch` が書き込む（通常動作） |
+| `"fabric"` | `vrfmgrd` 自体は起動しているが、fabric ノードに VRF 設定は通常投入されない | `FabricOrchDaemon` では `VRFOrch` が起動しないため書き込まれない |
+
+!!! note "fabric ノードの挙動"
+    `FabricOrchDaemon`（`switch_type="fabric"`）では `VRFOrch` が生成されない（`orchdaemon.cpp:283` は `OrchDaemon` 専用）。fabric ノードは VRF 機能を持たないため `VRF_OBJECT_TABLE` にエントリが書かれることはない。
+
+### SAI ベンダー差
+
+ベンダー SAI が `SAI_API_VIRTUAL_ROUTER` を非対応とした場合、orchagent 起動時の SAI 初期化エラーにより `VRFOrch` が機能しない。`VRF_OBJECT_TABLE` に書き込まれず、`vrfmgrd` の削除待機ループ（`isVrfObjExist()` が常に false）が即座に通過する。
+
+### multi-asic / VOQ chassis
+
+multi-asic 構成では各 asic namespace に独立した `vrfmgrd` プロセスと `VRFOrch` インスタンスが存在し、それぞれの namespace 内 STATE_DB に書き込む。フィールド・値・書込みロジックに namespace 間の差異はなく、書込みスコープが namespace に閉じているだけである。
+
+<!-- /platform -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
