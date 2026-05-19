@@ -500,6 +500,79 @@ ENI 削除時は `removeEniMapEntry()` → `m_eni_name_table->hdel("", name)` �
 詳細根拠は `meta/_intermediate/cdb-flow/dpu-counter-side.md` を参照。
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dpu-counter-pubsub.md -->
+<!-- source: sonic-swss/orchagent/flexcounterorch.cpp:60-93,127-167,299-305,
+     sonic-swss/orchagent/orchdaemon.cpp:620-628,1350-1352,
+     sonic-swss/orchagent/orch.cpp:1186-1196,
+     sonic-swss-common/common/subscriberstatetable.cpp:17-44,95-165,
+     sonic-swss/orchagent/saihelper.cpp:918-962 -->
+
+`FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` は CONFIG_DB (db 4) に保持され、
+`FlexCounterOrch` が **SubscriberStateTable** (Redis keyspace PSUBSCRIBE) を通じて変更通知を受け取る。
+
+### orchagent による CONFIG_DB 購読
+
+`FlexCounterOrch` は `orchdaemon.cpp:620-628` で生成され、`Orch::addConsumer()` (orch.cpp:1186-1196) が
+CONFIG_DB (dbId=4) に対して **SubscriberStateTable** を選択する。PSUBSCRIBE パターンは以下の通り:
+
+| テーブル | PSUBSCRIBE パターン |
+|---|---|
+| `FLEX_COUNTER_TABLE` | `__keyspace@4__:FLEX_COUNTER_TABLE\|*` |
+| `DEVICE_METADATA` | `__keyspace@4__:DEVICE_METADATA\|*` |
+
+`ENI` / `DASH_METER` サブキーへの書き込みはこのパターンで捕捉される。
+
+### 起動時スナップショット
+
+`SubscriberStateTable` ctor は PSUBSCRIBE 直後に `getKeys()` + HGETALL で既存全エントリを読み込み、
+`SET_COMMAND` として内部バッファに積む (subscriberstatetable.cpp:26-44)。
+orchagent 起動時に CONFIG_DB に ENI / DASH_METER エントリが既に存在すれば、**イベント待ちなしで即時 `doTask` に流れる**。
+ただし warm-start タイマー (60 秒) または `!allPortsReady()` ガードが先行するため、実処理は条件満了後になる。
+
+### DashOrch への委譲 (flexcounterorch.cpp:299-305)
+
+```cpp
+DashOrch* dash_orch = gDirectory.get<DashOrch*>();
+
+if (dash_orch && (key == ENI_KEY))
+{
+    dash_orch->handleFCStatusUpdate((value == "enable"));
+}
+if (dash_orch && (key == DASH_METER_KEY))
+{
+    dash_orch->handleMeterFCStatusUpdate((value == "enable"));
+}
+```
+
+`FLEX_COUNTER_STATUS` の変化は `DashOrch` へ関数呼び出しで委譲される。`dash_orch == nullptr` の場合は
+サイレントスキップ (DASH 機能なしビルド時)。`POLL_INTERVAL` は `setFlexCounterGroupPollInterval()` 経路で処理される。
+
+### orchagent → FLEX_COUNTER_DB 書き込み方式
+
+| モード | 書き込み API | 通知方式 |
+|--------|------------|---------|
+| Traditional (`--traditional-flexcounter`) | `ProducerTable::set()` (`saihelper.cpp:1047`) | `FLEX_COUNTER_TABLE_CHANNEL` で syncd が起床 |
+| 非 Traditional (デフォルト) | `SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER` 属性経由 (`saihelper.cpp:1055-1063`) | ASIC チャンネル経由。FLEX_COUNTER_DB への直接 PUBLISH は行わない |
+
+### Producer / Consumer ペアサマリ
+
+| 区間 | 方式 | チャンネル |
+|------|------|-----------|
+| CLI / `enable_counters.py` → CONFIG_DB | `ConfigDBConnector.mod_entry()` (直接 HSET) | keyspace `__keyspace@4__:FLEX_COUNTER_TABLE\|*` |
+| CONFIG_DB → `FlexCounterOrch` | `SubscriberStateTable` (PSUBSCRIBE) | keyspace notification |
+| `FlexCounterOrch` → `DashOrch` | 関数呼び出し (`handleFCStatusUpdate` / `handleMeterFCStatusUpdate`) | — (同プロセス内) |
+| `FlexCounterOrch` → FLEX_COUNTER_DB (traditional) | `ProducerTable` | `FLEX_COUNTER_TABLE_CHANNEL` (syncd が消費) |
+| `FlexCounterOrch` → syncd (非 traditional) | SAI Redis Attribute / ASIC channel | — |
+| syncd FlexCounter → COUNTERS_DB | `swss::Table::set()` (plain HSET) | **なし (PUBLISH 非発行)** |
+
+!!! warning "COUNTERS_DB は push 通知なし"
+    COUNTERS_DB へのカウンタ書き込みは plain HSET のため通知が発行されない。`counterpoll show` で STATUS が `enable` に見えても、ポーリング間隔 (デフォルト 10 秒) が経過するまで COUNTERS_DB の値は更新されない。`show dash counters eni` は実行時点の snapshot を表示する。
+
+<!-- /pubsub -->
+
 ## 制約
 
 - `POLL_INTERVAL`: 100 以上 (uint32 上限 4294967295)
