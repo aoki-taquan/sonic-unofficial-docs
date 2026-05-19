@@ -92,6 +92,62 @@ YANG に `default` 宣言がない。DB に設定しない場合は sshd の組�
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang L20-135 -->
 <!-- /defaults -->
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-ordering.md`
+
+### 先行必須テーブル
+
+`SSH_SERVER|POLICIES` は他 CONFIG_DB テーブルへの leafref を持たないため、書き込み前に先行必須テーブルは存在しない。
+
+| テーブル | 要否 | 理由 |
+|---------|------|------|
+| `DEVICE_METADATA\|localhost` | 任意（実質必須） | `PamLimitsCfg.update_config_file()` は `SSH_SERVER` と `DEVICE_METADATA` の両方が不在の場合に早期 return（`hostcfgd` L1430）。通常の SONiC デプロイでは常に存在 |
+| その他 CONFIG_DB テーブル | なし | `SshServer.set_policies()` は外部 OID 参照なし |
+
+### 起動時シーケンス
+
+```
+hostcfgd 起動
+  │
+  ├─ PamLimitsCfg.__init__() + update_config_file()   # L2191-2192
+  │   └─ SSH_SERVER が存在しなくても KeyError を catch してスキップ
+  ├─ SshServer.__init__()                              # L2201
+  │   └─ policies = {} のみ。sshd_config は変更しない
+  │
+  ├─ wait_till_system_init_done()  # systemd target 待機
+  │
+  ├─ sshscfg.load(ssh_server)   # L2265
+  │   └─ modify_conf_file() → set_policies()
+  │       ├─ copy2(sshd_config → sshd_config.tmp)
+  │       ├─ フィールドごとに modify_single_file_inplace で行内置換/追記
+  │       ├─ sshd -T -f sshd_config.tmp  (検証)
+  │       │   ├─ OK  → rename tmp→本番, systemctl restart ssh
+  │       │   └─ NG  → remove tmp (ロールバック), ERR ログのみ
+  │       └─ ※ max_sessions は continue でスキップ（PAM 管理）
+  │
+  ├─ pamLimitsCfg.update_config_file()   # L2277 (2 回目、確定値で上書き)
+  │
+  └─ subscribe('SSH_SERVER', ssh_handler)   # L2478
+      └─ ssh_handler → policies_update() + update_config_file()
+```
+
+### sshd 検証ゲート
+
+`set_policies()` の末尾で `sshd -T -f <tmp>` を実行し、非ゼロの場合は tmp を削除してロールバック（`systemctl restart ssh` もスキップ）。フィールド単位のロールバックは行われない（全フィールド適用 or 全棄却）。
+
+### max_sessions の書込み先分離
+
+`max_sessions` は `SSH_CONFIG_NAMES` に含まれず `set_policies()` 内で `continue`（スキップ）される。代わりに後続の `PamLimitsCfg.update_config_file()` が `/etc/security/limits.d/` に `maxlogins` として書き込む。このため `ssh_handler` では sshd_config 更新 → PAM limits 更新の順序が固定されている。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1161 (SshServer クラス) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2191-2277 (HostConfigDaemon.__init__ / load) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2297-2299 (ssh_handler) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2478 (subscribe SSH_SERVER) -->
+
+<!-- /ordering -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
