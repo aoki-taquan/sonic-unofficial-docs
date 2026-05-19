@@ -598,7 +598,7 @@ multi-ASIC 環境では各 ASIC ごとに独立した Redis インスタンス�
 -->
 <!-- /platform -->
 
-<!-- hardcoded-constants -->
+<!-- constants -->
 ## ハードコード定数 (Phase E)
 
 `telemetry` バイナリ (`telemetry.go`) および `gnmi-native.sh` 起動スクリプトに埋め込まれた固定値を整理する。これらは CONFIG_DB フィールドとは独立して動作し、設定変更なしに挙動に影響する。
@@ -691,7 +691,7 @@ CONFIG_DB に対応フィールドはなく、`gnmi-native.sh` からも設定�
   gnmi_server/constants_translib.go:5 — ENABLE_TRANSLIB_WRITE=false
   gnmi_server/jwtAuth.go:17-18 — JwtRefreshInt, JwtValidInt パッケージグローバル宣言
 -->
-<!-- /hardcoded-constants -->
+<!-- /constants -->
 
 [^1]: `sonic-buildimage` `dockers/docker-sonic-gnmi/gnmi-native.sh` — ConfigDB → telemetry 引数変換ロジック全体
 [^2]: `sonic-gnmi` `gnmi_server/clientCertAuth.go:254-284` — `PopulateAuthStructByCommonName()` による GNMI_CLIENT_CERT 参照
