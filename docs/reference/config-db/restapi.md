@@ -549,4 +549,23 @@ supervisord 起動
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: RESTAPI は管理プレーン専用機能であり、SAI を経由しないため ASIC 種別・ベンダー・multi-asic / VOQ chassis 構成による動作差は存在しない。
+
+> **調査根拠**: `rest-server.sh`, `mgmt_vars.j2`, `supervisord.conf`, `minigraph.py:2689-2701` 精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/restapi-platform.md`
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `rest-server.sh` は `sonic-cfggen -d -t mgmt_vars.j2` で CONFIG_DB を読み取るのみ。SAI 非経由 |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `mgmt_vars.j2` (4 行全体) に namespace / asic 分岐なし。`rest-server.sh` も `SONIC_ASIC_ID` / `SONIC_ASIC_COUNT` を参照しない |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | RESTAPI テーブルは host scope。chassis 全体での集中管理機構はなく、各 line card host で `rest-server.sh` が独立に CONFIG_DB を読み取る |
+| ベンダー固有 hook | なし | `docker-sonic-mgmt-framework/` 配下にベンダー条件分岐なし。`rest-server.sh` / `mgmt_vars.j2` / `supervisord.conf` の全行を検索しても `vendor` / `broadcom` / `mellanox` / `marvell` は 0 ヒット |
+| minigraph プラットフォーム分岐 | なし | `minigraph.py:2689-2701` で RESTAPI テーブルへの書込は無条件。`hwsku` / `platform` / `asic_type` による条件分岐なし |
+| テンプレート内プラットフォーム分岐 | なし | `mgmt_vars.j2` は `rest_server` と `x509` の 2 キーのみを展開する 4 行テンプレート。`platform` / `asic` 参照なし |
+
+<!-- /platform -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
