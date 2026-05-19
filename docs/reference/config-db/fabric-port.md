@@ -522,6 +522,68 @@ APPL_DB (DB=0)
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/fabric-port-platform.md -->
+<!-- source: sonic-swss/orchagent/main.cpp:990-1010, orchdaemon.cpp:1292-1305, fabricportsorch.cpp:80-133, portconfig.py:125-168 -->
+
+`FABRIC_PORT` テーブルのプラットフォーム依存は、(1) `switch_type` による FabricPortsOrch の起動差、(2) `fabric_port_config.ini` の列定義差、(3) FlexCounter 収集フラグの設定差という 3 経路で顕在化する。
+
+### switch_type による動作差 (`main.cpp:990-1010`)
+
+`gMySwitchType`（`DEVICE_METADATA.switch_type`）の値によって orchagent の起動モードが異なり、`FABRIC_PORT` テーブルを処理する `FabricPortsOrch` の有無・設定が変わる。
+
+| `switch_type` | OrchDaemon クラス | FabricPortsOrch | fabricPortStatEnabled | fabricQueueStatEnabled |
+|---------------|-------------------|-----------------|-----------------------|------------------------|
+| `voq` | `OrchDaemon` | あり | `true` | **`false`** |
+| `fabric` | `FabricOrchDaemon` | あり | `true`（デフォルト） | `true`（デフォルト） |
+| それ以外 | `OrchDaemon` | **なし** | — | — |
+
+`voq` 環境では `fabricQueueStatEnabled=false` が渡されるため、`generateQueueStats()` が即座に `return` し、`COUNTERS_FABRIC_QUEUE_NAME_MAP` への書き込みと `FABRIC_QUEUE_STAT_COUNTER` FlexCounter グループへの登録が行われない（`fabricportsorch.cpp:260-262`）。`fabric` 環境では両フラグとも `true` のためキュー統計も収集される。
+
+`switch_type` が `voq` でも `fabric` でもない通常の ToR / leaf スイッチでは `FABRIC_PORT` テーブルを監視するプロセスが存在せず、テーブルに書き込んでも何も起きない。
+
+### スイッチドロップカウンタのポーリング間隔差 (`fabricportsorch.cpp:104-110`)
+
+スイッチレベルのドロップカウンタ FlexCounter グループ（`SWITCH_DEBUG_COUNTER`）は `voq` と `fabric` の両方で作成されるが、ポーリング間隔が異なる。
+
+| `switch_type` | SWITCH_DEBUG_COUNTER ポーリング間隔 |
+|---------------|-------------------------------------|
+| `voq` | `SWITCH_DEBUG_COUNTER_POLLING_INTERVAL_MS` = 500 ms |
+| `fabric` | `FABRIC_SWITCH_DEBUG_COUNTER_POLLING_INTERVAL_MS` = 60,000 ms (60 秒) |
+
+fabric スイッチはポート数が多くポーリング負荷が高いため、`voq` の 120 倍のポーリング間隔が設定されている。
+
+### `fabric_port_config.ini` 列定義差 (`portconfig.py:150-168`)
+
+`fabric_port_config.ini` は `get_fabric_port_config()` によって読み込まれ、CONFIG_DB の `FABRIC_PORT` テーブルを初期化する。ヘッダ行の列名定義によってフィールドの有無が決まる。
+
+| プラットフォーム / モデル | ポート数 (lanes) | `isolateStatus` | `forceUnisolateStatus` |
+|--------------------------|------------------|-----------------|------------------------|
+| Arista 7800R3-48CQM2 LC (`x86_64-arista_7800r3_48cqm2_lc`) | Fabric0–111 (112 ポート) | あり | あり |
+| Arista 7800R3A-36D2 各バリアント | Fabric0–191 (192 ポート) | あり | あり |
+| Arista 7808R3A FM / 7804R3 FM (Supervisor) | Fabric0–191 (192 ポート) | あり | あり |
+| Nokia IXR7250E-36x400G / IXR7250-X3B | Fabric0–191 (192 ポート) | あり | あり |
+| SONiC-VM (Virtual Switch) | Fabric0–16 (17 ポート) | あり | **なし** |
+
+`forceUnisolateStatus` 列が存在しない場合（SONiC-VM 等）、`portconfig.py` は `titles = ['name', 'lanes', 'isolateStatus']` のデフォルトを使用しこのフィールドを CONFIG_DB に書き込まない。結果として `doFabricPortTask()` の force unisolate 処理（`forceUnisolateStatus` 差分比較）がスキップされ続ける（デフォルト 0 == STATE_DB 値 0 のため差分なし）。
+
+`alias` 列が存在しないプラットフォームでは、`portconfig.py:167` の `data.setdefault('alias', name)` によってポート名（`Fabric0` 等）が alias として自動設定され、CONFIG_DB に書き込まれる（全プラットフォーム共通動作）。
+
+### 設定初期化経路の差 (`portconfig.py:125-140`)
+
+起動時の `FABRIC_PORT` データ取得順序は以下のとおり:
+
+1. CONFIG_DB に `FABRIC_PORT` データが既存の場合: `config_db.get_table("FABRIC_PORT")` で直接読み取り、`fabric_port_config.ini` は参照しない
+2. CONFIG_DB が空の場合: `device_info.get_path_to_fabric_port_config_file(hwsku, asic_id)` でプラットフォーム固有の ini ファイルを検索・解析して CONFIG_DB に投入
+
+この動作により、再起動後は CONFIG_DB の値が優先され、ini ファイルの変更は CONFIG_DB を一旦フラッシュしないと反映されない。
+
+> **Evidence**: `sonic-swss` `orchagent/main.cpp:990-1010`、`orchagent/orchdaemon.cpp:103-130,609,1292-1305`、`orchagent/fabricportsorch.cpp:80-133,233,260`、`sonic-buildimage` `src/sonic-config-engine/portconfig.py:125-168`、`device/arista/x86_64-arista_7800r3_48cqm2_lc/fabric_port_config.ini`、`device/nokia/x86_64-nokia_ixr7250e_36x400g-r0/Nokia-IXR7250E-36x400G/fabric_port_config.ini`、`device/virtual/x86_64-kvm_x86_64-r0/SONiC-VM/fabric_port_config.ini`
+
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
