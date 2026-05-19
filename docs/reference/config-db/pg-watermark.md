@@ -271,6 +271,64 @@ YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上�
 
 ---
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 証跡: `meta/_intermediate/cdb-flow/pg-watermark-side-effects.md`
+
+`FLEX_COUNTER_TABLE|PG_WATERMARK` の `FLEX_COUNTER_STATUS` 変化を起点として、以下の副次 DB 書き込みが発生する。
+
+### ① FLEX_COUNTER_DB — グループ設定書き込み（orchagent init 時）
+
+`PortsOrch::init()` → `setFlexCounterGroupParameter()` (`portsorch.cpp:872-876`) が orchagent 起動時に **1 回**、`FLEX_COUNTER_GROUP_TABLE|PG_WATERMARK_STAT_COUNTER` へポーリング間隔 (`60000 ms`) と `STATS_MODE=READ_AND_CLEAR` を書き込む。これは CONFIG_DB の PG_WATERMARK エントリの有無に関係なく常時書かれる。
+
+| 副次 DB | テーブル / キー | フィールド | 書込内容 | 根拠 |
+|---------|---------------|---------|---------|------|
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|PG_WATERMARK_STAT_COUNTER` | `POLL_INTERVAL` | `"60000"` | `portsorch.cpp:872-876` |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_GROUP_TABLE\|PG_WATERMARK_STAT_COUNTER` | `STATS_MODE` | `"READ_AND_CLEAR"` | `portsorch.cpp:872-876` |
+
+### ② FLEX_COUNTER_DB — per-OID エントリ（enable/disable 時）
+
+`FLEX_COUNTER_STATUS=enable` を受信すると `addPriorityGroupWatermarkFlexCounters()` が `pg_watermark_manager.setCounterIdList()` (`portsorch.cpp:9051`) を呼び、PG OID ごとに SAI カウンタ ID リストを書き込む。`disable` 受信時は `clearCounterIdList()` (`portsorch.cpp:9095`) でエントリが削除される。
+
+| 副次 DB | テーブル / キー | フィールド | 書込内容 | 根拠 |
+|---------|---------------|---------|---------|------|
+| FLEX_COUNTER_DB | `PG_WATERMARK_STAT_COUNTER:<sai_pg_oid>` | `PG_WATERMARK_STAT_ID_LIST` | SAI カウンタ名リスト（XOFF_ROOM + SHARED の 2 統計） | `portsorch.cpp:9051` |
+
+### ③ COUNTERS_DB — PG マップ書き込み（BUFFER_PG SET イベント時）
+
+`BUFFER_PG` テーブルにエントリが書き込まれると、PG_WATERMARK の enable 状態に関わらず以下の 3 マップが更新される。`wredstat` / `watermarkstat` はこれらのマップから PG OID を逆引きする。
+
+| 副次 DB | テーブル / キー | 書込内容 | 根拠 |
+|---------|---------------|---------|------|
+| COUNTERS_DB | `COUNTERS_PG_NAME_MAP` | `<port>:<pg_index>` → `<sai_pg_oid>` | `portsorch.cpp:8937` |
+| COUNTERS_DB | `COUNTERS_PG_PORT_MAP` | `<sai_pg_oid>` → `<sai_port_oid>` | `portsorch.cpp:8938` |
+| COUNTERS_DB | `COUNTERS_PG_INDEX_MAP` | `<sai_pg_oid>` → `<pg_index>` | `portsorch.cpp:8939` |
+
+### ④ COUNTERS_DB — PERIODIC_WATERMARKS クリア（telemetry タイマー）
+
+PG_WATERMARK（または QUEUE_WATERMARK）が enable になると `WatermarkOrch::handleFcConfigUpdate()` が `m_telemetryTimer->start()` を呼ぶ。タイマー発火ごとに `clearSingleWm()` (`watermarkorch.cpp:258-266`) が `PERIODIC_WATERMARKS` テーブルの PG カウンタ 2 フィールドを `"0"` にリセットする。
+
+| 副次 DB | テーブル / キー | フィールド | 書込内容 | 条件 |
+|---------|---------------|---------|---------|------|
+| COUNTERS_DB | `PERIODIC_WATERMARKS\|<sai_pg_oid>` | `SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES` | `"0"`（クリア） | `m_wmStatus != 0`（telemetry タイマー動作中） |
+| COUNTERS_DB | `PERIODIC_WATERMARKS\|<sai_pg_oid>` | `SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES` | `"0"`（クリア） | 同上 |
+
+**注意**: both PG_WATERMARK と QUEUE_WATERMARK が disable になると `m_telemetryTimer->stop()` が呼ばれ、`PERIODIC_WATERMARKS` のクリアが停止する。`PERSISTENT_WATERMARKS` / `USER_WATERMARKS` は telemetry タイマーのクリア対象外で、`watermarkcfg clear` コマンドでのみ手動クリアされる。
+
+### 副次書き込みが発生しないケース
+
+| ケース | 理由 |
+|--------|------|
+| `FLEX_COUNTER_STATUS=disable`（または未設定） | FLEX_COUNTER_DB per-OID エントリが登録されず syncd ポーリングが発生しない |
+| `BUFFER_PG` テーブルが空 | PG OID がなく、FLEX_COUNTER_DB への per-OID エントリ登録も COUNTERS_DB マップ書き込みも発生しない |
+| PG_WATERMARK / QUEUE_WATERMARK が両方 disable | `m_wmStatus == 0` となり telemetry タイマーが停止し `PERIODIC_WATERMARKS` のクリアが発生しない |
+| orchagent 未起動 | `FLEX_COUNTER_GROUP_TABLE` 設定が書かれず syncd がグループを認識しない |
+
+<!-- /side-effects -->
+
+---
+
 ## 設定例
 
 ```json
