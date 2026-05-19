@@ -469,3 +469,69 @@ else if (temps == (Selectable *)mclag.getMclagIntfCfgTable()) {
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-pubsub.md`
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差・SAI capability 分岐 (Phase H)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L190-380 / sonic-swss/mclagsyncd/mclaglink.h L54-59 / sonic-swss/orchagent/mlagorch.cpp L193-234 -->
+
+### Port Isolation の 2 系統
+
+`mclagsyncd` が iccpd から受け取ったポート隔離指示を APPL_DB に変換する `MclagLink::setPortIsolate()`（`mclaglink.cpp:190`）は、`getenv("platform")` でプラットフォーム文字列を取得し、ホワイトリストと照合して 2 つのパスに分岐する（`mclaglink.cpp:192-202`）。
+
+| プラットフォーム（`getenv("platform")` の値） | 代表 ASIC / ベンダー | 隔離メカニズム |
+|---|---|---|
+| `"broadcom"` | Broadcom XGS / DNX | APPL_DB `ISOLATION_GROUP_TABLE` |
+| `"barefoot"` | Intel Tofino / Tofino2 | APPL_DB `ISOLATION_GROUP_TABLE` |
+| `"centec"` | Centec (CTC7132 等) | APPL_DB `ISOLATION_GROUP_TABLE` |
+| `"clounix"` | Clounix | APPL_DB `ISOLATION_GROUP_TABLE` |
+| `"marvell-prestera"` | Marvell Prestera (98DX 等) | APPL_DB `ISOLATION_GROUP_TABLE` |
+| `"marvell-teralynx"` | Marvell Teralynx | APPL_DB `ISOLATION_GROUP_TABLE` |
+| それ以外（`"mellanox"` / `nullptr` 等） | Mellanox/NVIDIA, VS 等 | APPL_DB ACL (`mclag` テーブル) |
+
+プラットフォーム文字列定数は `mclaglink.h:54-59` に直接定義される（`orchagent/orch.h` のコピー）。
+
+### ISOLATION_GROUP_TABLE パス（Broadcom / Barefoot / Centec / Clounix / Marvell）
+
+ホワイトリスト対応プラットフォームでは `APPL_DB:ISOLATION_GROUP_TABLE:MCLAG_ISO_GRP` を書き込む（`mclaglink.cpp:236-244`）。
+
+```text
+APPL_DB:ISOLATION_GROUP_TABLE:MCLAG_ISO_GRP
+  DESCRIPTION = "Isolation group for MCLAG"
+  TYPE        = "bridge-port"
+  PORTS       = <peer-link PortChannel>
+  MEMBERS     = <リモート MCLAG PortChannel のカンマ区切りリスト>
+```
+
+リモートインターフェース全断または ICCP セッション断（`op_hdr->op_len == 0`）のとき:
+- ICCP セッション稼働中 (`is_iccp_up == true`): `MEMBERS` を空にして `MCLAG_ISO_GRP` を更新（グループは保持）
+- ICCP セッション断 (`is_iccp_up == false`): `MCLAG_ISO_GRP` を DEL
+
+### ACL ベース隔離パス（Mellanox / その他・未設定）
+
+ホワイトリスト非対応（Mellanox/NVIDIA、VS、VPP、`platform` 未設定等）では `APPL_DB:ACL_TABLE_TABLE:mclag` と `APPL_DB:ACL_RULE_TABLE:mclag:mclag` を書き込む（`mclaglink.cpp:288-375`）。
+
+```text
+APPL_DB:ACL_TABLE_TABLE:mclag
+  policy_desc = "Mclag egress port isolate acl"
+  type        = "L3"
+  ports       = <peer-link PortChannel>
+
+APPL_DB:ACL_RULE_TABLE:mclag:mclag
+  IP_TYPE       = "ANY"
+  OUT_PORTS     = <リモート MCLAG PortChannel（Ethernet* は除外）>
+  PACKET_ACTION = "DROP"
+```
+
+`Ethernet` プレフィックスのポートは `OUT_PORTS` から除外される（`mclaglink.cpp:354-362`）。`op_hdr->op_len == 0` の場合は `ACL_TABLE_TABLE:mclag` を DEL する。`platform` が `nullptr`（未設定）の場合も ACL パスに落ちる。
+
+### MlagOrch は SAI 非依存・プラットフォーム差なし
+
+`orchagent/mlagorch.cpp` は SAI API を一切呼び出さない。`addMlagInterface()` / `delMlagInterface()` は内部 set (`m_mlagIntfs`) の更新と `SUBJECT_TYPE_MLAG_INTF_CHANGE` Observer 通知のみであり、プラットフォーム文字列参照も存在しない（`mlagorch.cpp:193-234`）。`FdbOrch` 側の MCLAG_INTERFACE 処理にもプラットフォーム分岐はない。
+
+### multi-ASIC / VoQ chassis 非対応
+
+`mlagorch.cpp` に `gMySwitchType == "voq"` 等の分岐はなく、`mclaglink.cpp` / `mclagsyncd.cpp` に `CHASSIS_APP_DB` 参照もない。MCLAG 機能は single-ASIC single-box 構成を前提とし、multi-ASIC / VoQ chassis 環境では動作保証なし。`docker-iccpd` は名前空間引数を取らず、単一の CONFIG_DB / STATE_DB / APPL_DB のみを参照する。
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-platform.md`
+<!-- /platform -->
