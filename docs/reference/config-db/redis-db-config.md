@@ -313,6 +313,36 @@ docker-database コンテナ起動
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`database_config.json` は CONFIG_DB テーブルではなくインフラ層ファイルである。`SonicDBConfig` がこのファイルを読み込んだ結果は **プロセス内のインメモリキャッシュ** (`m_inst_info` / `m_db_info` / `m_db_separator`) に格納されるのみで、他のRedis DB への副次書込は発生しない。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---------|---------|------|
+| CONFIG_DB | なし | `database_config.json` 自体が CONFIG_DB に格納されず、`SonicDBConfig` は CONFIG_DB へ書き込まない (`dbconnector.cpp` 全体でDB書込呼出ゼロ) |
+| APPL_DB | なし | `SonicDBConfig` は参照専用クラス。`parseDatabaseConfig()` / `initialize()` 内に Producer・Table・hset・set 呼出なし (`dbconnector.cpp:27-204`) |
+| STATE_DB | なし | `SonicDBConfig` は STATE_DB への接続を一切保持しない。起動完了通知を STATE_DB に書き込む仕組みも存在しない |
+| ASIC_DB / COUNTERS_DB / FLEX_COUNTER_DB | なし | SAI 非経由。`database_config.json` の変更は orchagent / syncd に伝播しない。SAI ドライバ側の DB ID も `schema.h` マクロで静的に固定 |
+| LOGLEVEL_DB | なし | `SonicDBConfig` の動作はログレベル DB を購読・書込しない |
+
+### `reset()` 実行時の副次効果
+
+`SonicDBConfig::reset()` を呼んでインメモリキャッシュをクリアした場合、既存の `DBConnector` インスタンスは **キャッシュ参照を失うが自動切断されない**。以降の `getDbInfo()` 系 API 呼び出しは再初期化をトリガーするか `out_of_range` を発生させる。
+
+| 状況 | 挙動 | evidence |
+|------|------|---------|
+| `reset()` 後に `initialize()` 再実行 | インメモリキャッシュを新設定で再構築。既存 `DBConnector` の TCP/UNIX 接続は継続されるが、接続先 DB ID が旧設定のまま残る場合は論理不整合が生じる | `dbconnector.cpp:209-218` |
+| `reset()` 後に `getDbInfo()` 等を呼ぶ | `m_init == false` のため自動的に `initialize(DEFAULT_SONIC_DB_CONFIG_FILE)` を実行 (デフォルトパスから再読み込み) | `dbconnector.cpp:252-253` |
+| `reset()` 後に namespace 指定 API を呼ぶ | `m_global_init == false` のため `SWSS_LOG_THROW` でプロセス即 abort | `dbconnector.cpp:229-231` |
+
+!!! note "実運用での reset() 使用"
+    `reset()` はテストコードと一部の設定リロードシナリオ専用と位置付けられる。本番環境での使用は原則 `docker-database` コンテナ再起動で代替する (`docker-database-init.sh` 参照)。
+
+<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L209-218 (reset 実装) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L252-253 (自動再初期化) -->
+<!-- /side-effects -->
+
 ## separator の役割
 
 `separator` はキー文字列でテーブル名と行キーを区切る文字:

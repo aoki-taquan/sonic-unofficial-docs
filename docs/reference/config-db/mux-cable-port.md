@@ -313,6 +313,81 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-side.md`
+
+<!-- evidence:
+  sonic-swss/orchagent/muxorch.cpp:2199,2285,2503-2513,2544,2559,2570,2633-2640
+  sonic-swss-common/common/schema.h:141,457,460
+  sonic-linkmgrd/src/DbInterface.cpp:317-346
+  sonic-platform-daemons/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py:597-631,741-746
+-->
+
+`MUX_CABLE|<ifname>` の処理を起点に、`orchagent (MuxOrch)`・`linkmgrd`・`ycabled` の 3 コンポーネントがそれぞれ副次テーブルへの書込みを行う。
+
+### orchagent (MuxOrch) による副次書込
+
+| 書込先 DB | テーブル名 | キー形式 | フィールド | トリガー | evidence |
+|-----------|-----------|---------|-----------|---------|---------|
+| STATE_DB | `MUX_CABLE_TABLE` (`STATE_MUX_CABLE_TABLE_NAME`) | `MUX_CABLE_TABLE\|<ifname>` | `neighbor_mode` = `host-route` / `prefix-route` | CONFIG_DB `MUX_CABLE` SET → `handleMuxCfg()` 処理時 1 回（MuxCable 新規作成時のみ）| `muxorch.cpp:2199, 2285` |
+| APPL_DB | `HW_MUX_CABLE_TABLE` (`APP_HW_MUX_CABLE_TABLE_NAME`) | `HW_MUX_CABLE_TABLE\|<ifname>` | `state` = `active` / `standby` | active / standby 遷移完了時 (`MuxCableOrch::updateMuxState()`) | `muxorch.cpp:2505, 2513` |
+| STATE_DB | `MUX_METRICS_TABLE` (`STATE_MUX_METRICS_TABLE_NAME`) | `MUX_METRICS_TABLE\|<ifname>` | `orch_switch_{active\|standby}_{start\|end}` = タイムスタンプ | 切替開始・完了時（性能計測用）| `muxorch.cpp:2503, 2544` |
+| STATE_DB | `MUX_CABLE_TABLE` | `MUX_CABLE_TABLE\|<ifname>` | `state` = `active` / `standby` / `unknown` / `error` | APPL_DB `HW_MUX_CABLE_TABLE` 状態報告受信時 (`MuxStateOrch::updateMuxState()`) | `muxorch.cpp:2633, 2640` |
+
+!!! note "STATE_DB `MUX_CABLE_TABLE` への 2 系統の書込"
+    `MuxOrch::handleMuxCfg()` が `neighbor_mode` を書き込む系統（`muxorch.cpp:2285`）と、`MuxStateOrch` が HW 報告状態を `state` として書き込む系統（`muxorch.cpp:2640`）は独立したコンストラクタ経路で同一テーブルに書き込む。前者は SET 時 1 回のみ、後者は `HW_MUX_CABLE_TABLE` 更新のたびに上書きされる。
+
+### linkmgrd による副次書込
+
+linkmgrd は CONFIG_DB の `MUX_CABLE` テーブルを読み込んだ結果をもとに、自身のステートマシン状態を以下のテーブルへ書き出す（`DbInterface.cpp:317-346`）:
+
+| 書込先 DB | テーブル名 | 用途 | evidence |
+|-----------|-----------|------|---------|
+| APPL_DB | `MUX_CABLE_TABLE` (`APP_MUX_CABLE_TABLE_NAME`) | mux 状態コマンド（active / standby 切替要求） | `DbInterface.cpp:317` |
+| APPL_DB | `PEER_HW_FORWARDING_STATE_TABLE` (`APP_PEER_HW_FORWARDING_STATE_TABLE_NAME`) | peer ToR への HW フォワーディング状態通知 | `DbInterface.cpp:320` |
+| APPL_DB | `MUX_CABLE_COMMAND_TABLE` (`APP_MUX_CABLE_COMMAND_TABLE_NAME`) | active / standby 切替コマンド | `DbInterface.cpp:323` |
+| APPL_DB | `FORWARDING_STATE_COMMAND_TABLE` (`APP_FORWARDING_STATE_COMMAND_TABLE_NAME`) | フォワーディング状態コマンド | `DbInterface.cpp:326` |
+| STATE_DB | `MUX_LINKMGR_TABLE` (`STATE_MUX_LINKMGR_TABLE_NAME`) | linkmgrd 内部状態 | `DbInterface.cpp:332` |
+| STATE_DB | `MUX_METRICS_TABLE` (`STATE_MUX_METRICS_TABLE_NAME`) | 切替メトリクス（タイムスタンプ） | `DbInterface.cpp:335` |
+| STATE_DB | `MUX_SWITCH_CAUSE` (`STATE_MUX_SWITCH_CAUSE_TABLE_NAME`) | mux 切替理由 | `DbInterface.cpp:341` |
+| STATE_DB | `MUX_CABLE_TABLE` (`STATE_MUX_CABLE_TABLE_NAME`) | mux 現在状態 | `DbInterface.cpp:346` |
+
+### ycabled による副次書込
+
+ycabled (`sonic-ycabled`) は gRPC 経由で MUX ケーブルハードウェアと通信し、HW 状態を STATE_DB へ書き出す:
+
+| 書込先 DB | テーブル名 | キー形式 | 書込内容 | トリガー | evidence |
+|-----------|-----------|---------|---------|---------|---------|
+| STATE_DB | `HW_MUX_CABLE_TABLE` (`STATE_HW_MUX_CABLE_TABLE_NAME`) | `HW_MUX_CABLE_TABLE\|<ifname>` | `state`, `read_side` 等の gRPC 取得値 | gRPC チャネル確立時・状態変化時 | `y_cable_helper.py:607, 627, 741-742` |
+| STATE_DB | `HW_MUX_CABLE_TABLE_PEER` | `HW_MUX_CABLE_TABLE_PEER\|<ifname>` | peer 側 HW mux 状態 | gRPC チャネル確立時・状態変化時 | `y_cable_helper.py:608, 631, 743-744` |
+| STATE_DB | `MUX_CABLE_INFO` (`MUX_CABLE_INFO_TABLE`) | `MUX_CABLE_INFO\|<ifname>` | ケーブル情報（ベンダー・バージョン等） | gRPC 経由でケーブル情報取得後 | `y_cable_helper.py:746, 1554` |
+
+### 副次書込の相互関係
+
+```
+CONFIG_DB MUX_CABLE|<ifname>  (SET)
+  ├─ orchagent MuxOrch::handleMuxCfg()
+  │    ├─ STATE_DB MUX_CABLE_TABLE|<ifname>  {neighbor_mode}    [1 回のみ]
+  │    └─ (SAI nexthop 設定)
+  │         └─ APPL_DB HW_MUX_CABLE_TABLE|<ifname>  {state}    [状態遷移ごと]
+  │              └─ STATE_DB MUX_CABLE_TABLE|<ifname>  {state}  [状態遷移ごと]
+  │              └─ STATE_DB MUX_METRICS_TABLE|<ifname>  {タイムスタンプ}
+  ├─ linkmgrd  (SubscriberStateTable)
+  │    ├─ APPL_DB MUX_CABLE_TABLE / MUX_CABLE_COMMAND_TABLE
+  │    ├─ STATE_DB MUX_LINKMGR_TABLE / MUX_METRICS_TABLE / MUX_SWITCH_CAUSE
+  │    └─ STATE_DB MUX_CABLE_TABLE|<ifname>  {state}
+  └─ ycabled  (起動時 + gRPC イベント)
+       ├─ STATE_DB HW_MUX_CABLE_TABLE|<ifname>
+       ├─ STATE_DB HW_MUX_CABLE_TABLE_PEER|<ifname>
+       └─ STATE_DB MUX_CABLE_INFO|<ifname>
+```
+
+`STATE_DB MUX_CABLE_TABLE|<ifname>` は orchagent と linkmgrd の 2 者が書き込む共有テーブルであり、書込フィールドが `neighbor_mode`（orchagent）と `state`（linkmgrd / orchagent MuxStateOrch）に分かれる。`MUX_METRICS_TABLE` も orchagent と linkmgrd が独立して書き込む。
+
+<!-- /side-effects -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 上位ページ: [`MUX_CABLE`](mux-cable.md) — テーブル全体の概要・値依存挙動・Phase 6/7/8 分析

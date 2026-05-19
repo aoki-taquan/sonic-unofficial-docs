@@ -447,4 +447,51 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副作用・波及効果 (Phase F)
+
+`WARM_RESTART` テーブルは直接 ASIC に波及しない設定テーブルだが、プロセス起動時の読み取りを通じて **STATE_DB への複数の書き込み** を副次的に発生させる。APPL_DB、ERROR_TABLE への書き込みはない。
+
+### STATE_DB への副次書き込み
+
+| 副次 DB | テーブル | フィールド | 操作 | 発生条件 | evidence |
+|---|---|---|---|---|---|
+| STATE_DB | `WARM_RESTART_TABLE` | `restore_count` | HSET (0 にリセット) | warm restart 無効時（`checkWarmStart()` が `false`）、または冷ブートフォールバック時 | `warm_restart.cpp:113` |
+| STATE_DB | `WARM_RESTART_TABLE` | `restore_count` | HSET (インクリメント) | warm restart 有効 + 前回の `restore_count` が存在する場合 | `warm_restart.cpp:133` |
+| STATE_DB | `WARM_RESTART_TABLE` | `state` | HSET | `WarmStart::setWarmStartState()` 呼び出し時。値は `initialized` / `replayed` / `reconciled` / `wsdisabled` のいずれか | `warm_restart.cpp:227` |
+| STATE_DB | `WARM_RESTART_TABLE` | `data_check_state` | HSET | `WarmStart::setDataCheckState()` 呼び出し時（`sonic-swss-common/common/warm_restart.cpp:247`） | `warm_restart.cpp:247` |
+| STATE_DB | `BGP_STATE_TABLE\|<AF>\|eoiu` | `state` / `timestamp` | SET | `bgp_eoiu_marker.py` が BGP EOR 収集後に書き込む。`bgp_eoiu=true` の場合のみ supervisord で起動 | `bgp_eoiu_marker.py:85-87` |
+| STATE_DB | `BGP_STATE_TABLE\|<AF>\|eoiu` | — | DEL | `bgp_eoiu_marker.py` の cleanup 処理（`clean_bgp_eoiu_marker()`） | `bgp_eoiu_marker.py:94-95` |
+
+### 発生プロセス別の STATE_DB 書き込み一覧
+
+各サービスが `WarmStart::setWarmStartState()` を呼ぶタイミングを示す。これらはすべて `STATE_DB:WARM_RESTART_TABLE|<app_name>.state` への書き込みとなる。
+
+| プロセス | 書き込むステート値 | タイミング | evidence |
+|---|---|---|---|
+| `orchagent` | `initialized` | warm restore 開始直後 | `orchdaemon.cpp:1099` |
+| `orchagent` | `reconciled` | `syncd_apply_view()` 完了後 | `orchdaemon.cpp:1170` |
+| `orchagent` | `restored` | `warmRestoreValidation()` 後 | `orchdaemon.cpp:1204` |
+| `intfmgrd` | `replayed` → `reconciled` | warm restore 完了時 | `intfmgr.cpp:289,292` |
+| `vlanmgrd` | `replayed` → `reconciled` | warm restore 完了時 | `vlanmgr.cpp:59,61` |
+| `vrfmgrd` | `replayed` → `reconciled` | warm restore 完了時 | `vrfmgrdyn.cpp:74,77` |
+| `tunnelmgrd` | `replayed` → `reconciled` | warm restore 完了時 | `tunnelmgr.cpp:423,425` |
+| `buffermgrd` | `initialized` | 起動時（warm start 時） | `buffermgrdyn.cpp:165` |
+
+### CONFIG_DB への書き戻し（fast-reboot 限定）
+
+`finalize-warmboot.sh` の `finalize_fast_reboot()` は fast-reboot 完了後に **CONFIG_DB の `WARM_RESTART|teamd` エントリを DEL** する（`finalize-warmboot.sh:175`）。これは warm restart 設定テーブル自体への書き戻しを伴う唯一の副作用であり、fast-reboot 経路専用。通常の warm restart では発生しない。
+
+### APPL_DB / ERROR_TABLE への副次書き込み
+
+| DB | 書き込み | 備考 |
+|---|---|---|
+| APPL_DB | **なし** | `WARM_RESTART` は CONFIG_DB → 各プロセス直接読み取り経路であり APPL_DB を経由しない |
+| ERROR_TABLE | **なし** | 失敗はログのみ（syslog）または例外によるプロセス abort |
+| ASIC_DB | 間接のみ | orchagent の warm restore 完了後に `syncd_apply_view()` 経由で間接的に ASIC_DB が更新されるが、`WARM_RESTART` テーブル自体が直接 SAI/ASIC に書き込むことはない |
+
+> **Evidence**: `sonic-swss-common/common/warm_restart.cpp:113,125,133,227,247`; `sonic-swss/orchagent/orchdaemon.cpp:1099,1170,1204`; `sonic-swss/cfgmgr/vlanmgr.cpp:59,61`; `sonic-swss/cfgmgr/intfmgr.cpp:289,292`; `sonic-swss/fpmsyncd/bgp_eoiu_marker.py:85-87,94-95`; `sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh:175`
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: ddc022697593 -->

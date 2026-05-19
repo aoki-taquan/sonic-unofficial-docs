@@ -437,17 +437,19 @@ rsyslogd 起動 (priority=1)
 
 ### GNMI|gnmi / GNMI|certs テーブルの読み取り方式
 
-`GNMI|gnmi` および `GNMI|certs` テーブルは **`sonic-cfggen` による起動時ポイントインタイム読み取り**のみで消費される。`ConsumerStateTable` / `SubscriberStateTable` (チャネルベース Pub/Sub) は使用しない。
+`GNMI|gnmi` および `GNMI|certs` テーブルに対する Redis Subscribe は**存在しない**。`gnmi-native.sh` 起動スクリプトが `sonic-cfggen -d` コマンドで CONFIG_DB を**起動時に 1 回だけ読み取り**、得られた値を Go バイナリの CLI フラグへ変換して `exec` する。以降の CONFIG_DB 変更は**コンテナ再起動までテレメトリデーモンに反映されない**（hot reload なし）。`swsscommon.SubscriberStateTable` / `ConsumerStateTable` は一切使用しない。
 
 | 消費者 | API 種別 | 対象テーブル | タイミング |
 |--------|---------|------------|-----------|
 | `gnmi-native.sh` | `sonic-cfggen -d -t telemetry_vars.j2` (一括スナップショット) | `GNMI\|gnmi`・`GNMI\|certs`・`DEVICE_METADATA\|localhost.x509` | コンテナ起動時 1 回のみ |
+| `gnmi-native.sh` | `sonic-db-cli CONFIG_DB hget` (inline 読み取り) | `DEVICE_METADATA\|localhost.subtype`・`MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` | コンテナ起動時 1 回のみ |
 | `clientCertAuth.go` — `PopulateAuthStructByCommonName()` | `ConfigDBConnector.Connect(false)` + `Get_entry()` (接続ごとポイントインタイム読み取り) | `GNMI_CLIENT_CERT\|<CN>` | gNMI クライアント接続ごと |
 | `bypass.go` — `IsAllowedSKU()` | `ConfigDBConnector.Get_entry()` (RPC ごとポイントインタイム読み取り) | `DEVICE_METADATA\|localhost.hwsku` | SmartSwitch gNMI Set RPC ごと |
+| `connection_manager.go` | `HSet` / `HDel` (書込み専用、subscribe なし) | `TELEMETRY_CONNECTIONS` (STATE_DB) | Subscribe RPC 開始 / 終了時 |
 
-`gnmi-native.sh` は `sonic-cfggen` の結果をシェル変数に保持したまま `exec telemetry` する。コンテナ稼働中に CONFIG_DB の `GNMI` エントリが変更されても `telemetry` プロセスへの通知は**一切発生しない**。`docker restart gnmi` が唯一の反映手段となる。
+### 証明書ファイルの fsnotify 監視
 
-例外として **TLS 証明書ファイル** は `fsnotify` で動的リロードされるが、これは `GNMI|certs` テーブル値の変更ではなくファイルシステムの変更を監視するものであり、設定パスの変更自体にはコンテナ再起動が必要 (`telemetry.go:453-456`)。
+TLS 証明書ファイル（`server_crt` / `server_key` / `ca_crt` が指し示すパス）は、Redis 経由ではなく `fsnotify.Watcher` でファイルシステムレベルで監視する。証明書ファイルが更新されると `serverControlSignal` チャネルに `ServerRestart` が送信され、gRPC サーバを再起動して新しい TLS 設定を反映する。CONFIG_DB の証明書パスフィールド自体はコンテナ再起動なしには更新されない (`telemetry.go:434-448`)。
 
 ### TELEMETRY_CLIENT テーブル — Redis keyspace 購読 (dial-out モード)
 
@@ -481,9 +483,11 @@ processTelemetryClientConfig(ctx, redisDb, key, op)
 
 <!-- evidence:
   gnmi-native.sh:19-22 — sonic-cfggen -d -t telemetry_vars.j2 による 1 回読み取り
-  telemetry.go:453-456 — fsnotify ウォッチャー作成 (証明書ファイル動的リロード)
+  gnmi-native.sh:89-98 — sonic-db-cli による subtype / mgmtVrfEnabled inline 読み取り
+  telemetry.go:434-448 — fsnotify ウォッチャー作成 (証明書ファイル動的リロード)
   gnmi_server/clientCertAuth.go:259-261 — ConfigDBConnector.Connect(false).Get_entry() (接続ごとポイントインタイム)
   pkg/bypass/bypass.go:148-168 — IsAllowedSKU ConfigDBConnector.Get_entry() (RPC ごと)
+  gnmi_server/connection_manager.go:32-61 — PrepareRedis / HSet / HDel (STATE_DB 書込み専用)
   dialout/dialout_client/dialout_client.go:646-745 — DialOutRun: TELEMETRY_CLIENT PSUBSCRIBE + 初回スナップショット
   dialout/dialout_client/dialout_client.go:686 — pattern "__keyspace@<N>__:TELEMETRY_CLIENT|*"
   sonic_data_client/db_client.go:1419-1447 — dbTableKeySubscribe: gNMI Subscribe RPC 用 PSubscribe

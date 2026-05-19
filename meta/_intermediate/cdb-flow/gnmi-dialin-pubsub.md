@@ -11,6 +11,7 @@
 - `gnmi-native.sh` は起動時に `sonic-cfggen -d -t telemetry_vars.j2` を 1 回実行してスナップショットを取得する
 - テンプレート `telemetry_vars.j2` は `GNMI["gnmi"]`, `GNMI["certs"]`, `DEVICE_METADATA["x509"]` を JSON 化する
 - コンテナ稼働中の CONFIG_DB 変更は `telemetry` プロセスに通知されない — コンテナ再起動のみ反映手段
+- `swsscommon.SubscriberStateTable` / `ConsumerStateTable` は一切使用しない
 - 例外: TLS 証明書ファイルは `fsnotify` で動的リロードされるが、ファイルシステム監視であり CONFIG_DB テーブルの Pub/Sub ではない
 
 ### GNMI_CLIENT_CERT — 接続ごとポイントインタイム読み取り
@@ -38,10 +39,11 @@
 
 ## evidence refs
 
-- sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh:19-22
+- sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh:19-98 (ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd)
 - sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/telemetry_vars.j2:1-5
-- sonic-net/sonic-gnmi:telemetry/telemetry.go:453-456
-- sonic-net/sonic-gnmi:gnmi_server/clientCertAuth.go:259-261
-- sonic-net/sonic-gnmi:pkg/bypass/bypass.go:148-168
-- sonic-net/sonic-gnmi:dialout/dialout_client/dialout_client.go:646-745
-- sonic-net/sonic-gnmi:sonic_data_client/db_client.go:1419-1447
+- sonic-net/sonic-gnmi:telemetry/telemetry.go:434-456 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+- sonic-net/sonic-gnmi:gnmi_server/clientCertAuth.go:259-261 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+- sonic-net/sonic-gnmi:pkg/bypass/bypass.go:148-168 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+- sonic-net/sonic-gnmi:gnmi_server/connection_manager.go:32-61 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+- sonic-net/sonic-gnmi:dialout/dialout_client/dialout_client.go:646-745 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
+- sonic-net/sonic-gnmi:sonic_data_client/db_client.go:1419-1447 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22)
