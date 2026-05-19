@@ -147,6 +147,102 @@ PBH_TABLE|<table_name>  DEL
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗・リトライ挙動 (Phase D)
+
+`PBH_TABLE` の処理失敗は `pbhmgr.cpp` の `parsePbhTable()` / `validatePbhTable()` と `pbhorch.cpp` の `deployPbhTableSetupTasks()` / `deployPbhTableRemoveTasks()` で発生する。`ACL_TABLE` とは異なり STATE_DB へのステータス書き込みはなく、失敗はすべて syslog (`SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE`) のみで通知される。詳細スキャンノートは `meta/_intermediate/cdb-flow/pbh-table-failure.md` を参照。
+
+### SET 時の失敗パターン
+
+| # | 失敗ケース | 発生箇所 | ログ | retry |
+|---|---|---|---|---|
+| 1 | `interface_list` / `description` 未設定（必須フィールド欠損） | `validatePbhTable()` `pbhmgr.cpp:968,974` | `SWSS_LOG_ERROR("Validation error: missing mandatory field(...)")` | なし — `pendingSetupMap` 未追加。再 SET が必要 |
+| 2 | 不明フィールド | `parsePbhTable()` `pbhmgr.cpp:487` | `SWSS_LOG_WARN("Unknown field(%s): skipping ...")` | N/A（スキップして処理続行） |
+| 3 | SAI ACL テーブル作成失敗 (`aclOrch->addAclTable()`) | `createPbhTable()` `pbhorch.cpp:288` | `SWSS_LOG_ERROR("Failed to create PBH table(%s) in SAI")` | なし — `deployPbhTableSetupTasks()` で `map.erase(it)`。原因解消後に再 SET |
+| 4 | 内部キャッシュ追加失敗 (`pbhHlpr.addPbhTable()`) | `createPbhTable()` `pbhorch.cpp:294` | `SWSS_LOG_ERROR("Failed to add PBH table(%s) to internal cache")` | なし — 同上 |
+| 5 | タスク重複競合 (`pbhTaskExists()` == true) | `doTask()` `pbhorch.cpp:1579` | `SWSS_LOG_WARN("Unable to process PBH table(%s): task already exists: adding a retry")` | あり — 次イベントループで自動再試行 |
+| 6 | オブジェクト重複（`getPbhTable()` 成功で SET） | `createPbhTable()` `pbhorch.cpp:237` | `SWSS_LOG_ERROR("...object already exists")` | なし |
+
+### DEL 時の失敗パターン
+
+| # | 失敗ケース | 発生箇所 | ログ | retry |
+|---|---|---|---|---|
+| 7 | 依存 `PBH_RULE` が存在（refCount > 0） | `deployPbhTableRemoveTasks()` `pbhorch.cpp:461` | `SWSS_LOG_NOTICE("Unable to remove PBH table(%s): object has dependencies: adding a retry")` | あり — `PBH_RULE` DEL 後に `hasDependencies()` が false になり自動回復 |
+| 8 | SAI ACL テーブル削除失敗 (`removePbhTable()`) | `deployPbhTableRemoveTasks()` `pbhorch.cpp:468` | `SWSS_LOG_ERROR("Failed to remove PBH table(%s): ASIC and CONFIG DB are diverged")` | なし — erase。原因解消後に再 DEL |
+| 9 | DEL 対象が内部キャッシュ不在 | `deployPbhTableRemoveTasks()` `pbhorch.cpp:454` | `SWSS_LOG_ERROR("Failed to remove PBH table(%s): object doesn't exist")` | なし — erase |
+
+### 失敗の伝播経路
+
+```text
+PBH_TABLE SET — 必須フィールド欠損 / SAI 失敗
+  ↓
+parsePbhTable() / createPbhTable() が false を返す
+  ↓
+deployPbhTableSetupTasks(): map.erase(it)  ← retry なし
+  ↓
+PBH_TABLE が SAI に未反映のまま
+  ↓
+後続 PBH_RULE の validateDependencies() が tableMap.find(rule.table) で失敗
+  → PBH_RULE も pendingSetupMap 保留 → SAI に未反映
+```
+
+### 注意点
+
+- `PbhOrch` は STATE_DB に PBH_TABLE のステータスを書き込まない。失敗確認は `/var/log/syslog` の `SWSS_LOG_ERROR` を参照すること。
+- SET 失敗後も CONFIG_DB のエントリは残る。orchagent は CONFIG_DB に書き戻さない。
+- SAI 失敗（ケース 3）は retry なしで "ASIC and CONFIG DB are diverged" 状態になる。`config reload` または個別の DEL → SET が回復手順。
+
+<!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/pbh-table-constants.md`
+
+`PBH_TABLE` を消費する `PbhOrch` と capability 管理層 (`pbhcap.cpp`) に存在する、[CONFIG_DB](../../reference/glossary.md#term-config_db) に格納されないハードコード定数の一覧。
+
+### 1. フィールド名文字列定数 (`pbhschema.h`)
+
+| 定数 | 値 | 用途 | evidence |
+|------|----|----|---------|
+| `PBH_TABLE_INTERFACE_LIST` | `"interface_list"` | `PBH_TABLE` の interface 集合フィールド名 | `sonic-swss/orchagent/pbh/pbhschema.h:5` |
+| `PBH_TABLE_DESCRIPTION` | `"description"` | `PBH_TABLE` の説明フィールド名 | `sonic-swss/orchagent/pbh/pbhschema.h:6` |
+
+### 2. ハードコードされた SAI ACL テーブル型定義 (`pbhorch.cpp`)
+
+`createPbhTable()` (`pbhorch.cpp:243-253`) は `static const pbhTableType` として SAI ACL テーブルの型を固定定義する。これらは CONFIG_DB の値に関わらず変更できない。
+
+| 属性 | 固定値 | 意味 |
+|------|--------|------|
+| bind point | `SAI_ACL_BIND_POINT_TYPE_PORT` + `SAI_ACL_BIND_POINT_TYPE_LAG` | PORT と LAG の両方に bind 可能 |
+| match 属性 (固定 6 属性) | `SAI_ACL_TABLE_ATTR_FIELD_GRE_KEY` / `ETHER_TYPE` / `IP_PROTOCOL` / `IPV6_NEXT_HEADER` / `L4_DST_PORT` / `INNER_ETHER_TYPE` | PBH テーブルが使用できる ACL match フィールド集合 |
+| stage | `ACL_STAGE_INGRESS` | PBH は常に ingress stage に適用 |
+
+### 3. プラットフォーム・capability 定数 (`pbhcap.cpp`)
+
+| 定数 | 値 | 用途 | evidence |
+|------|----|----|---------|
+| `PBH_PLATFORM_ENV_VAR` | `"ASIC_VENDOR"` | ASIC ベンダー判定の環境変数名 | `sonic-swss/orchagent/pbh/pbhcap.cpp:20` |
+| `PBH_PLATFORM_GENERIC` | `"generic"` | ASIC ベンダー: generic (デフォルト) | `sonic-swss/orchagent/pbh/pbhcap.cpp:21` |
+| `PBH_PLATFORM_MELLANOX` | `"mellanox"` | ASIC ベンダー: Mellanox | `sonic-swss/orchagent/pbh/pbhcap.cpp:22` |
+| `PBH_TABLE_CAPABILITIES_KEY` | `"table"` | STATE_DB `PBH_CAPABILITIES\|table` エントリキー | `sonic-swss/orchagent/pbh/pbhcap.cpp:25` |
+| `PBH_RULE_CAPABILITIES_KEY` | `"rule"` | STATE_DB `PBH_CAPABILITIES\|rule` エントリキー | `sonic-swss/orchagent/pbh/pbhcap.cpp:26` |
+| `PBH_HASH_CAPABILITIES_KEY` | `"hash"` | STATE_DB `PBH_CAPABILITIES\|hash` エントリキー | `sonic-swss/orchagent/pbh/pbhcap.cpp:27` |
+| `PBH_HASH_FIELD_CAPABILITIES_KEY` | `"hash-field"` | STATE_DB `PBH_CAPABILITIES\|hash-field` エントリキー | `sonic-swss/orchagent/pbh/pbhcap.cpp:28` |
+| `PBH_FIELD_CAPABILITY_ADD` | `"ADD"` | field capability 値: 追加可能 | `sonic-swss/orchagent/pbh/pbhcap.cpp:30` |
+| `PBH_FIELD_CAPABILITY_UPDATE` | `"UPDATE"` | field capability 値: 更新可能 | `sonic-swss/orchagent/pbh/pbhcap.cpp:31` |
+| `PBH_FIELD_CAPABILITY_REMOVE` | `"REMOVE"` | field capability 値: 削除可能 | `sonic-swss/orchagent/pbh/pbhcap.cpp:32` |
+| `PBH_STATE_DB_NAME` | `"STATE_DB"` | capability 書き込み先 DB 名 | `sonic-swss/orchagent/pbh/pbhcap.cpp:35` |
+| `PBH_STATE_DB_TIMEOUT` | `0` | DB 接続タイムアウト（即時/ブロックなし） | `sonic-swss/orchagent/pbh/pbhcap.cpp:36` |
+
+### 4. STATE_DB テーブル名 (`schema.h`)
+
+| 定数 | 値 | 用途 | evidence |
+|------|----|----|---------|
+| `STATE_PBH_CAPABILITIES_TABLE_NAME` | `"PBH_CAPABILITIES"` | PBH capability を書き込む STATE_DB テーブル名 | `sonic-swss-common/common/schema.h:419` |
+
+<!-- /constants -->
+
 ## key 構造
 
 ```text
