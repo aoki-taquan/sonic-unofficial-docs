@@ -257,4 +257,52 @@ SAI `SAI_SWITCH_ATTR_FDB_AGING_TIME` は orchagent 初期化時のハードウ�
 cross-refs としての依存テーブルはない（Phase B 順序依存として記載済み）。
 <!-- /cross-refs -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/fdb-aging-constants.md -->
+
+`fdb_aging_time` の処理に関わるハードコード定数は CONFIG_DB / YANG で管理されない。以下にソースコード上の全定数を列挙する。
+
+### switchorch.cpp の定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `SWITCH_STAT_COUNTER_POLLING_INTERVAL_MS` | `60000` ms (60 秒) | スイッチ統計カウンタの FlexCounter polling 間隔。`fdb_aging_time` 直接依存ではないが、SwitchOrch が管理する唯一の polling 定数 | `switchorch.cpp:32` |
+| SAI マッピングキー `"fdb_aging_time"` | 文字列リテラル | APPL_DB フィールド名 → `SAI_SWITCH_ATTR_FDB_AGING_TIME` の `switch_attribute_map` キー。文字列変更は後方互換性を破壊する | `switchorch.cpp:49` |
+| warm-reboot 時 aging 無効化値 | `0` (uint32_t 即値) | `setAgingFDB(0)` で渡される即値。SAI 仕様で `0` = aging 無効を規定。YANG / CONFIG_DB 管理外 | `orchdaemon.cpp:1068` |
+
+### switch.json.j2 のハードコード定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `fdb_aging_time` デフォルト | `"600"` 秒 | `switch_type != "dpu"` ノード向けに orchagent コンテナ起動時に自動注入されるデフォルト値。YANG / CONFIG_DB の直接管理なし | `switch.json.j2:38` |
+
+`switch_type == "dpu"` の場合このフィールドは注入されず、ASIC のハードウェアデフォルトが適用される。
+
+### swssconfig.sh のハードコード定数
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| swssconfig 実行後 sleep | `1` 秒 | `swssconfig switch.json` 実行ごとに挿入される待機時間。orchagent Consumer キュー処理完了のための時間的バッファ | `swssconfig.sh:100` |
+
+### SLEEP_MSECONDS
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `SLEEP_MSECONDS` | `500` ms | orchagent メインループ内のリトライ待機時間。warm-reboot 経路での `setAgingFDB(0)` を含む SAI 呼び出しリトライのバックオフ間隔 | `orch.h:57` |
+
+### 定数サマリ
+
+| # | 定数 | 値 | 管理 | ソース |
+|---|------|-----|------|--------|
+| 1 | デフォルト aging time | `600` 秒 | ハードコード (j2 テンプレート) | `switch.json.j2:38` |
+| 2 | warm-reboot 時 aging 無効値 | `0` | ハードコード (即値) | `orchdaemon.cpp:1068` |
+| 3 | SAI マッピングキー | `"fdb_aging_time"` | ハードコード (静的 map) | `switchorch.cpp:49` |
+| 4 | 統計 polling 間隔 | `60000` ms | ハードコード (`#define`) | `switchorch.cpp:32` |
+| 5 | swssconfig sleep | `1` 秒 | ハードコード (shell スクリプト) | `swssconfig.sh:100` |
+| 6 | リトライバックオフ | `500` ms | ハードコード (`#define`) | `orch.h:57` |
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: fdb-aging -->
