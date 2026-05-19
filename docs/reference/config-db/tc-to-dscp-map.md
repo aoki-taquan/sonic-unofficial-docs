@@ -532,3 +532,47 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 > **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp`（`qos_tables` ベクタ定義）、`sonic-swss/orchagent/qosorch.cpp:2231-2252`（drain 順序制御）、`sonic-swss-common/common/table.h:164`（`DEFAULT_POP_BATCH_SIZE`）。詳細スキャンと grep 結果は `meta/_intermediate/cdb-flow/tc-to-dscp-map-pubsub.md` を参照。
 
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tc-to-dscp-map-platform.md`
+
+### ビルド時注入の有無
+
+`qos_config.j2:334-337` は次の分岐で TC_TO_DSCP_MAP を生成する。どちらの条件も満たさない場合、テーブル自体が CONFIG_DB に存在しない（フォールバック else 節なし）:
+
+```
+(generate_tc_to_dscp_map is defined) AND tunnel_qos_remap_enable
+→ generate_tc_to_dscp_map() を呼び出す（AZURE_TUNNEL マップ注入）
+
+(generate_tc_to_dscp_map_per_sku is defined)
+→ generate_tc_to_dscp_map_per_sku() を呼び出す（SKU 個別マップ注入）
+```
+
+`tunnel_qos_remap_enable` は `SYSTEM_DEFAULTS.tunnel_qos_remap.status == 'enabled'` の場合に `true` になる（`qos_config.j2:142-145`）。
+
+### ASIC / プラットフォーム別マップ内容
+
+| プラットフォーム | 関数 | マップ名 | 特記事項 |
+|----------------|------|---------|---------|
+| Broadcom TH2 (common/profiles/th2/7260/BALANCED, RDMA-CENTRIC) | `generate_tc_to_dscp_map()` | `AZURE_TUNNEL` | TC 0-8 → DSCP。TC 8=33（ASIC 非対応の場合 `task_failed`） |
+| Arista 7050CX3-32S (BALANCED) | `generate_tc_to_dscp_map()` | `AZURE_TUNNEL` | TH2 系と同一の値 |
+| Mellanox SN4600C | `generate_tc_to_dscp_map()` | `AZURE_TUNNEL` | TC 2=2、TC 6=6（Broadcom の TC 2=0、TC 6=0 と相違） |
+| Arista 7060X6-64PE-B | `generate_tc_to_dscp_map_per_sku()` | `AZURE_DOWNLINK_BT1` | TC 8→DSCP 11 のみ定義。`tunnel_qos_remap_enable` 不問 |
+| Mellanox SN5600 (NVIDIA) | `generate_tc_to_dscp_map_per_sku()` | ToRRouter: `AZURE_DOWNLINK_BT0` / `AZURE_UPLINK_BT0`; LeafRouter: `AZURE_DOWNLINK_BT1` | `DEVICE_METADATA.localhost.type` でロール分岐。TC 8 のみ定義、DSCP 値はロールで異なる |
+| 上記以外（多数の汎用プラットフォーム） | 未定義 | なし | TC_TO_DSCP_MAP は生成されない。手動設定が必要な場合 `sonic-db-cli CONFIG_DB hset` で投入 |
+
+!!! note "Mellanox SN4600C と Broadcom 系の差分"
+    SN4600C の `AZURE_TUNNEL` マップは TC 2 → DSCP 2、TC 6 → DSCP 6 となっており、Broadcom TH2 系の TC 2 → 0、TC 6 → 0 と異なる。同一名 `AZURE_TUNNEL` でも ASIC により DSCP 割り当てが異なることに注意。
+
+### スイッチレベル適用なし
+
+`QosOrch::handleGlobalQosMap()` はスイッチレベルへの適用として `DSCP_TO_TC_MAP` のみを対象とする。`TC_TO_DSCP_MAP` を `PORT_QOS_MAP|global` に設定した場合は `"Qos map type %s is not supported at global level"` の WARN を出力してスキップされる（`qosorch.cpp:2012`）。TC_TO_DSCP_MAP は常に**ポート単位**または**トンネル単位**でのみ適用される。
+
+### multi-ASIC / VOQ chassis
+
+- `handleTcToDscpTable()` に multi-ASIC 判定なし。VOQ 分岐（`gMySwitchType == "voq"` チェック）は SCHEDULER / QUEUE 系のみで TC_TO_DSCP_MAP は対象外。
+- multi-ASIC 環境では各 ASIC の orchagent が自 namespace の CONFIG_DB を独立して処理する。TC_TO_DSCP_MAP の namespace 間伝播機構はない。
+
+<!-- /platform -->
