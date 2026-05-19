@@ -384,6 +384,48 @@ syncd FlexCounter スレッド: FLEX_COUNTER_DB を読んで SAI ポーリング
 
 ---
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`FLEX_COUNTER_TABLE|PG_WATERMARK` の処理ロジック自体は ASIC ベンダー・スイッチタイプに依存しないが、有効化後に実際に収集されるカウンタ値やカウンタの存在はプラットフォーム構成に依存する。
+
+### 管理デバイス (mgmt_device) — minigraph が強制 disable
+
+`sonic-buildimage/src/sonic-config-engine/minigraph.py:58` の `mgmt_disabled_counters` リストに `"PG_WATERMARK"` が含まれる[^3]。管理デバイスタイプ (`mgmt_device_types`) に分類されるスイッチでは、minigraph 生成時に CONFIG_DB の `FLEX_COUNTER_TABLE|PG_WATERMARK` に `FLEX_COUNTER_STATUS = "disable"` が明示的に書き込まれる。これにより管理デバイスでは PG watermark カウンタが自動的に無効化される。
+
+| プラットフォーム種別 | 挙動 |
+|-----------------|------|
+| 通常スイッチ（non-mgmt） | `FLEX_COUNTER_STATUS` 未設定（`disable` 相当） — ユーザーが `counterpoll watermark enable` で有効化可能 |
+| 管理デバイス (mgmt_device) | minigraph が `FLEX_COUNTER_STATUS = "disable"` を明示設定 — `counterpoll watermark enable` で上書き可能だが設定再生成時に元に戻る |
+
+### SAI カウンタサポート差 — ASIC 依存
+
+収集対象の 2 SAI カウンタはハードコードされており、ASIC が対応していない場合はサイレントに 0 値またはエラーが返る[^5]。
+
+| SAI カウンタ | ASIC 非対応時の挙動 |
+|-------------|------------------|
+| `SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES` | headroom（XOFF バッファ）非サポート ASIC では `SAI_STATUS_NOT_SUPPORTED` または常時 0。XOFF-based PFC を実装しない構成では意味のある値が得られない |
+| `SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES` | 通常ほとんどの ASIC でサポートされるが、仮想スイッチ（`vs` プラットフォーム）では SAI スタブが固定値または 0 を返す |
+
+orchagent は SAI エラーを PG watermark の設定失敗として扱わない（FlexCounter Manager が syncd 側でエラーを吸収する）。COUNTERS_DB に値が現れない場合は orchagent ログを確認する。
+
+### ファブリックポート / VoQ / DASH — PG_WATERMARK への影響なし
+
+| 構成 | 影響 |
+|------|------|
+| VoQ シャーシ (`gMySwitchType == "voq"`) | PG_WATERMARK グループの処理に VoQ 固有分岐なし。VoQ モードでも通常どおり `m_pg_watermark_enabled` フラグと `BUFFER_PG` 設定に基づき OID 登録される |
+| ファブリックポート (`gFabricPortsOrch` 有効) | PG_WATERMARK は ingress priority group カウンタ専用。ファブリックポートには PG が存在せず影響なし |
+| SmartSwitch DPU / DASH | `flexcounterorch.cpp` の DASH 系 orch 参照は ENI/HA グループ専用。PG_WATERMARK グループの処理パスに DASH 依存コードなし |
+| Gearbox（外付け PHY） | PG_WATERMARK は Gearbox の PORT/MACSEC グループと独立。Gearbox 有効 / 無効で PG watermark 動作は変化しない |
+
+### multi-asic / namespace
+
+multi-asic 構成では各 ASIC の namespace で orchagent が独立して起動し、それぞれが自 namespace の CONFIG_DB `FLEX_COUNTER_TABLE|PG_WATERMARK` を購読する。各 ASIC の BUFFER_PG エントリと SAI OID は namespace 間で分離されており、PG watermark カウンタも ASIC ごとに独立して COUNTERS_DB に書き込まれる。
+
+<!-- /platform -->
+
+---
+
 ## 設定例
 
 ```json
