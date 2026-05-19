@@ -456,6 +456,47 @@ consumer 側（on-demand polling、doTask() イテレーション内）
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/vxlanmgr.cpp`
+> 中間調査: `meta/_intermediate/cdb-flow/state-vrf-platform.md`
+
+### VRF_TABLE / VRF_OBJECT_TABLE — プラットフォーム非依存
+
+`vrfmgr.cpp` および `vrforch.cpp` のいずれにも `switch_type` / VOQ / chassis / multi_asic / platform への参照は存在しない。`VRF_TABLE` および `VRF_OBJECT_TABLE` の書き込みロジックはすべてのプラットフォームで共通である。
+
+| テーブル | 書き込みパス | プラットフォーム分岐 |
+|---------|------------|---------------------|
+| `VRF_TABLE` | `vrfmgr.cpp:289` — `m_stateVrfTable.set(vrfName, {{"state","ok"}})` | **なし** |
+| `VRF_OBJECT_TABLE` | `vrforch.cpp:120` — `m_stateVrfObjectTable.hset(vrf_name, "state", "ok")` | **なし** |
+
+### mgmt VRF の特殊扱い — 全プラットフォーム共通の設定フラグ依存
+
+mgmt VRF（`MGMT_VRF = "mgmt"`）は ASIC 種別ではなく CONFIG_DB `MGMT_VRF_CONFIG.mgmtVrfEnabled` フラグによって制御される。mgmt VRF が有効な場合の挙動は以下のとおりで、プラットフォームによる差異はない。
+
+| テーブル | mgmt VRF での挙動 | 理由 |
+|---------|----------------|------|
+| `VRF_TABLE\|mgmt` | **書き込まれる** — `vrfmgr.cpp:289` で通常 VRF と同一コードパスが実行される | `CFG_MGMT_VRF_CONFIG_TABLE_NAME` 受信後に `setLink()` → `m_stateVrfTable.set()` が実行される |
+| `VRF_OBJECT_TABLE\|mgmt` | **書き込まれない** — `VRFOrch` は mgmt VRF に対して SAI VR を作成しない | 起動時のデフォルト VR（SAI_NULL_OBJECT_ID 相当）を mgmt VRF として使用するため SAI API 呼び出し自体がスキップされる（vrforch.cpp に mgmt VRF 向け分岐なし） |
+
+この非対称性は mgmt VRF が有効かどうかという設定依存であり、ハードウェア差異ではない。`MGMT_VRF_TABLE_ID = 6000` は `setLink()` 内でハードコードされており（vrfmgr.cpp:180）、通常の VRF ID 管理プール（1001–5096）とは独立している。
+
+### `intfmgrd` の switch_type 参照 — VRF_TABLE 読み取りへの非影響
+
+`intfmgrd` は起動時に `DEVICE_METADATA.localhost.switch_type` を読み込み（intfmgr.cpp:72–75）、VOQ 構成時のみ IPv6 アドレス追加に `metric 256` を付加する（intfmgr.cpp:103–106）。ただしこれは `setIntfIp()` 内のカーネルコマンド生成ロジックであり、`VRF_TABLE` の参照（intfmgr.cpp:671, 680）は `switch_type` に関わらず同一コードパスで実行される。
+
+| 操作 | switch_type による差異 |
+|------|----------------------|
+| `VRF_TABLE` の readiness 確認（`m_stateVrfTable.get()`） | **なし** — 全プラットフォームで同一 |
+| IPv6 アドレス追加コマンド生成 | VOQ 時のみ `metric 256` を付加（VRF_TABLE 書き込みとは無関係） |
+
+### vxlanmgr — プラットフォーム非依存
+
+`vxlanmgr.cpp` に `switch_type` / VOQ / chassis の参照は存在しない。`isVrfStateOk()` 経由の `VRF_TABLE` polling は全プラットフォームで共通。
+
+<!-- /platform -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
