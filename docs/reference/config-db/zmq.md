@@ -263,6 +263,57 @@ orchagent の `load_zmq_tables()` (`orch_zmq_config.cpp:18-33`) がコンテナ�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+ZMQ 関連 CONFIG_DB フィールドは orchagent **起動時の一回のみ** `hget` で読まれる。`SubscriberStateTable` / `ConsumerStateTable` による購読は行われない。また、これらのフィールドが `true` に設定されると、対象 APPL_DB テーブルへの書き込み経路が Redis Pub/Sub から **ZeroMQ TCP ソケット**に切り替わるという特殊な構造を持つ。
+
+### CONFIG_DB 読み取り方式 — 購読なし
+
+```cpp
+// sonic-swss/lib/orch_zmq_config.cpp:88
+enabled = config_db.hget("DEVICE_METADATA|localhost", feature);
+```
+
+`orchdaemon.cpp:334` (route zmq) および `orchdaemon.cpp:1329` (dash zmq) が `get_feature_status()` 経由でこのパスを通る。orchagent は DEVICE_METADATA テーブルを ZMQ フラグのために購読しない。フィールド変更を orchagent に反映するにはコンテナ再起動が必要。
+
+| 項目 | 値 |
+|------|----|
+| 購読クラス | **なし**（`hget` による起動時スナップショット読み取りのみ） |
+| 変更の反映 | orchagent コンテナ再起動時のみ |
+| TTL | CONFIG_DB 全エントリで未設定（永続前提） |
+
+### ZMQ が置き換える Redis Pub/Sub 経路
+
+`orch_northbond_*_zmq_enabled` を `true` にすると、当該 APPL_DB テーブルへの書き込み経路が Redis Pub/Sub から ZeroMQ TCP ソケットに切り替わる。
+
+| フラグ | Redis 経路（無効時） | ZMQ 経路（有効時） |
+|--------|------------------|----------------|
+| `orch_northbond_dash_zmq_enabled=true` (デフォルト有効) | gNMI → ProducerStateTable → APPL_DB → ConsumerStateTable | gNMI → ZmqProducerStateTable → ZmqServer (TCP:8100) → ZmqConsumerStateTable |
+| `orch_northbond_route_zmq_enabled=true` | fpmsyncd → ProducerStateTable → APPL_DB → ConsumerStateTable | fpmsyncd → ZmqProducerStateTable → ZmqServer (TCP:8100) → ZmqConsumerStateTable |
+
+ZMQ 経路では Redis チャンネルへの `PUBLISH` は発生せず、APPL_DB に対応エントリが書き込まれない場合がある。
+
+### ZmqConsumerStateTable と ConsumerStateTable の比較
+
+orchagent 側は `ZmqConsumerStateTable` で ZMQ メッセージを受信する。`load_zmq_tables()` (`orch_zmq_config.cpp:18-33`) が起動時に `/etc/swss/orch_zmq_tables.conf` を読み込み、テーブルごとに `ZmqConsumerStateTable` を登録する。
+
+| 項目 | ConsumerStateTable (Redis) | ZmqConsumerStateTable (ZMQ) |
+|------|--------------------------|---------------------------|
+| トランスポート | Redis keyspace 通知 / PUBLISH | ZeroMQ TCP ソケット (lazy bind `zmqserver.h`) |
+| バッチサイズ | `gBatchSize` (既定 128) | `DEFAULT_POP_BATCH_SIZE = 128` (`zmqserver.h:31`) |
+| HWM | なし (Redis) | `MQ_WATERMARK = 10000` (`zmqserver.h:13`) |
+| 順序保証 | table 内 FIFO | `orderedQueue=true` のとき `m_queue` で FIFO 保証 |
+| bind タイミング | 不要 | 全ハンドラ登録後に `main.cpp:1036` で `zmqServer->bind()` |
+
+詳細解析: `meta/_intermediate/cdb-flow/zmq-pubsub.md`
+
+<!-- evidence: sonic-swss/lib/orch_zmq_config.cpp:88 (config_db.hget("DEVICE_METADATA|localhost", feature) — 購読なし) -->
+<!-- evidence: sonic-swss/orchagent/orchdaemon.cpp:334,1329 (get_feature_status() — 起動時一回読み) -->
+<!-- evidence: sonic-swss/lib/orch_zmq_config.cpp:64-79 (create_zmq_server() lazy bind) -->
+<!-- evidence: sonic-swss-common/common/zmqserver.h:13,31 (MQ_WATERMARK=10000, DEFAULT_POP_BATCH_SIZE=128) -->
+<!-- /pubsub -->
+
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
