@@ -405,6 +405,62 @@ FlexCounter グループ名（`FABRIC_PORT_STAT_COUNTER` / `FABRIC_QUEUE_STAT_CO
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+`FABRIC_PORT` テーブルの変更通知は CONFIG_DB → APPL_DB → orchagent という 2 段の **ProducerStateTable / ConsumerStateTable** パイプラインで伝達される。Python の `ConfigDBConnector.subscribe()` / keyspace PSUBSCRIBE は使用しない。
+
+### 購読方式まとめ
+
+| 購読者 | 購読 API | 購読 DB / テーブル | チャネル | SELECT タイムアウト |
+|--------|---------|-----------------|---------|------------------|
+| `fabricmgrd` (`FabricMgr` via `Orch` 基底) | `ConsumerStateTable` | CONFIG_DB (db 4) `FABRIC_PORT` | `FABRIC_PORT_CHANNEL@4` | 1,000 ms (`SELECT_TIMEOUT`) |
+| `orchagent` (`FabricPortsOrch` via `Orch` 基底) | `ConsumerStateTable` | APPL_DB (db 0) `FABRIC_PORT_TABLE` | `FABRIC_PORT_TABLE_CHANNEL@0` | 1,000 ms (`SELECT_TIMEOUT`) |
+
+書き込み側は `ProducerStateTable` で対応チャネルに PUBLISH する:
+
+| 書き込み主体 | 書き込み API | 宛先 DB / テーブル | PUBLISH チャネル |
+|------------|------------|-----------------|----------------|
+| `fabricmgrd` | `ProducerStateTable` (`m_appFabricPortTable`) | APPL_DB (db 0) `FABRIC_PORT_TABLE` | `FABRIC_PORT_TABLE_CHANNEL@0` |
+
+### CONFIG_DB 側（fabricmgrd）
+
+`fabricmgrd` の主ループ (`fabricmgrd.cpp:46-65`) は `swss::Select::select()` に 1,000 ms タイムアウトを指定してブロックする。
+
+`Orch` 基底クラスが `ConsumerStateTable` を生成し、`FABRIC_PORT_CHANNEL@4` の SUBSCRIBE を行う（`consumerstatetable.cpp:27`）。CONFIG_DB への変更が HSET された際に `ProducerStateTable` 側から `FABRIC_PORT_CHANNEL@4` へ PUBLISH が発行され、`fabricmgrd` が 1 秒以内に覚醒する。
+
+`FabricMgr::doTask(Consumer &consumer)` は SET 操作のみを処理し、受け取ったフィールドを 1 フィールドずつ `ProducerStateTable::set()` で APPL_DB `FABRIC_PORT_TABLE` に転送する（`fabricmgr.cpp:86-89`）。DEL 操作はコード上処理されず `m_toSync.erase(it)` で消費のみされる。
+
+```
+CONFIG_DB HSET "FABRIC_PORT|Fabric0" "isolateStatus" "True"
+  → ProducerStateTable → PUBLISH "FABRIC_PORT_CHANNEL@4" (swss 内部 lua script)
+    → fabricmgrd ConsumerStateTable 覚醒
+      → FabricMgr::doTask() → writeConfigToAppDb()
+        → ProducerStateTable.set() → APPL_DB HSET "FABRIC_PORT_TABLE|Fabric0" "isolateStatus" "True"
+          → PUBLISH "FABRIC_PORT_TABLE_CHANNEL@0"
+```
+
+### APPL_DB 側（FabricPortsOrch）
+
+`orchagent` の主ループも `Select::select()` 1,000 ms タイムアウトで `FABRIC_PORT_TABLE_CHANNEL@0` を監視する（`orchdaemon.cpp:23,959`）。
+
+`FabricPortsOrch::doTask(Consumer &consumer)` (L1549-1558) はテーブル名で分岐し、`APP_FABRIC_MONITOR_PORT_TABLE_NAME` の場合は `doFabricPortTask()` を呼び出す。
+
+### タイマー駆動（ポーリング）との関係
+
+`FabricPortsOrch` は ConsumerStateTable による通知駆動に加え、以下の 2 本のタイマーを持つ:
+
+| タイマー名 | 間隔 | 役割 |
+|-----------|------|------|
+| `FABRIC_POLL` (`m_timer`) | 30 秒 | `updateFabricPortState()` — STATE_DB への接続状態書き込み |
+| `FABRIC_DEBUG_POLL` (`m_debugTimer`) | 12 秒 | `updateFabricDebugCounters()` — CRC/FEC エラー率計算・自動 isolate 判定 |
+
+CONFIG_DB から `isolateStatus` 変更が来た場合は通知駆動（チャネル PUBLISH → ConsumerStateTable 覚醒）で処理されるが、STATE_DB の最新状態反映はタイマーポーリングまで待機する。起動時は `getFabricPortList()` が同期的に SAI ポートリストを取得し、完了後にタイマーを開始する。
+
+> **Evidence**: `sonic-swss` `cfgmgr/fabricmgrd.cpp:16,27-35,46-65`、`cfgmgr/fabricmgr.cpp:14-21,86-124`、`cfgmgr/fabricmgr.h:22`（`ProducerStateTable m_appFabricPortTable`）、`orchagent/fabricportsorch.cpp:80-133,1549-1558`、`orchagent/orchdaemon.cpp:23,26,603-609`、`sonic-swss-common` `common/consumerstatetable.cpp:27`、`common/table.h:85-96`（`getChannelName`）
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
