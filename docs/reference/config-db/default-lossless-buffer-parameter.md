@@ -220,6 +220,56 @@ show buffer profile
 
 > **スキャン証跡**: `DEFAULT_LOSSLESS_BUFFER_PARAMETER` のハンドラパス L1894-2010 全行読了。3 件分岐抽出。
 <!-- /handler-branching -->
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`DEFAULT_LOSSLESS_BUFFER_PARAMETER` の YANG leafref 定義は他テーブルへの直接 leafref を持たないが、`buffermgrdyn` のハンドラ実装では以下の 3 テーブルを暗黙参照している。
+
+### 1. BUFFER_POOL (CONFIG_DB)
+
+- **参照先テーブル**: `BUFFER_POOL|ingress_lossless_pool`
+- **参照方向**: キャッシュ存在チェック（読み取り）
+- **条件**: `DEFAULT_LOSSLESS_BUFFER_PARAMETER` への SET コマンド処理のたびに毎回確認
+- **参照元**: `buffermgrdyn.cpp:1985-1988`（`handleDefaultLossLessBufferParam()` の冒頭で `m_bufferPoolLookup.find(INGRESS_LOSSLESS_PG_POOL_NAME)` を実行）
+- **意味**:
+  - `BUFFER_POOL|ingress_lossless_pool` が `handleBufferPoolTable()` 経由で内部キャッシュ `m_bufferPoolLookup` に登録されていない場合、`task_need_retry` を返してキュー再処理に戻る。
+  - CONFIG_DB 書き込み順として「`BUFFER_POOL` よりも先に `DEFAULT_LOSSLESS_BUFFER_PARAMETER` が届いても処理が保留される」ことを意味する（詳細は Phase B 参照）。
+
+### 2. BUFFER_POOL_TABLE (APPL_STATE_DB)
+
+- **参照先テーブル**: `BUFFER_POOL_TABLE|ingress_lossless_pool`（APPL_STATE_DB）
+- **参照方向**: フィールド `xoff` の hget（読み取り）
+- **条件**: `over_subscribe_ratio` が 0 → 非ゼロへ遷移し かつ `m_portInitDone=true`（ポート初期化完了後）
+- **参照元**: `buffermgrdyn.cpp:2043`（`isSharedHeadroomPoolEnabledInSai()` 内）
+- **意味**:
+  - Shared Headroom Pool (SHP) を有効化しようとする際、`m_applStateBufferPoolTable.hget(INGRESS_LOSSLESS_PG_POOL_NAME, "xoff", xoff)` で SAI への反映済みを確認する。
+  - APPL_STATE_DB の `xoff` が空またはゼロであれば `isSharedHeadroomPoolEnabledInSai()` が `false` を返し `task_need_retry`。SAI 側の書き込み完了を待つ間接的な同期フロー。
+
+### 3. BUFFER_PROFILE (APPL_DB — 内部キャッシュ経由)
+
+- **参照先テーブル**: `BUFFER_PROFILE_TABLE`（APPL_DB、`m_bufferProfileLookup` キャッシュ経由）
+- **参照方向**: 全件読み取り + 再計算後書き込み
+- **条件**: `default_dynamic_th` 変更時、または `over_subscribe_ratio` の変化による SHP 有効/無効切替時
+- **参照元**: `buffermgrdyn.cpp:1657-1694`（`refreshSharedHeadroomPool()` 内のプロファイル再計算ループ）
+- **意味**:
+  - `m_bufferProfileLookup` を全走査し、`static_configured=false`（動的生成）の lossless `BUFFER_PROFILE` をすべて再計算する。
+  - 再計算した値は `doUpdateBufferProfileForSize()` → `m_applBufferProfileTable` 経由で APPL_DB の `BUFFER_PROFILE_TABLE` に書き込まれる。
+  - この書き込みが `BufferOrch` に通知され、最終的に SAI が更新される（CONFIG_DB 変更が SAI に伝播する経路）。
+
+### 参照関係サマリ
+
+```
+DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
+  ├─ [前提条件チェック]  BUFFER_POOL|ingress_lossless_pool (CONFIG_DB)
+  │                     → SET 処理時に pool キャッシュ存在を確認
+  ├─ [SAI 反映確認]      BUFFER_POOL_TABLE|ingress_lossless_pool.xoff (APPL_STATE_DB)
+  │                     → over_subscribe_ratio 有効化時に SAI 書込み完了を確認
+  └─ [再計算・書込み]    BUFFER_PROFILE_TABLE (APPL_DB)
+                        → default_dynamic_th / SHP 変化時に動的プロファイルを全件再生成
+```
+
+> **スキャン証跡**: `handleDefaultLossLessBufferParam` L1978-2050 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2050 全行読了、`refreshSharedHeadroomPool` L1592-1715 全行読了、`buffer_headroom_mellanox.lua` L100-115 読了、`buffer_pool_mellanox.lua` L255-275 読了。3 件暗黙参照抽出。
+<!-- /cross-refs -->
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
