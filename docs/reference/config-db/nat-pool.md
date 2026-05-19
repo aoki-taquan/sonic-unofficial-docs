@@ -434,6 +434,57 @@ NatOrch 初期化時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を照会して `
 詳細な定数一覧は `meta/_intermediate/cdb-flow/nat-pool-constants.md` を参照。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`NAT_POOL` エントリが処理されると、`natmgrd` → `orchagent / NatOrch` の経路で以下の副次書込が発生する。ソース: `sonic-swss/cfgmgr/natmgr.cpp`[^F1]、`sonic-swss/orchagent/natorch.cpp`[^F2]。
+
+**書込が発生する前提条件**: `isNatEnabled()` が true、かつ pool に紐づく `NAT_BINDINGS` エントリが存在し、L3 インタフェース readiness を満たしている場合のみ。いずれかを満たさない場合、以下の APPL_DB / ASIC_DB 書込はすべてスキップされる。
+
+### APPL_DB — NAT_DNAT_POOL_TABLE
+
+`NatMgr::addDynamicNatRule()` が `setDnatPoolfromNatPool(ADD, ip_range)` を呼び出し、pool 内の各 IP アドレスを 1 エントリずつ APPL_DB に書き込む。
+
+```
+NAT_DNAT_POOL_TABLE|<pool_ip>
+    NULL: NULL
+```
+
+| 操作 | 関数 | 挙動 | ソース |
+|------|------|------|--------|
+| pool SET + binding 存在 | `addDnatPoolEntry(destIp)` | 初回は ref-count=1 で `m_appNatDnatPoolProducer.set(destIp, {"NULL":"NULL"})` | `natmgr.cpp:1520` |
+| pool IP が複数 binding で共有 | `addDnatPoolEntry(destIp)` | ref-count を加算のみ。APPL_DB への重複書込なし | `natmgr.cpp:1508` |
+| pool DEL + binding 存在 | `removeDnatPoolEntry(destIp)` | ref-count を減算し 0 になった時点で `m_appNatDnatPoolProducer.del(destIp)` | `natmgr.cpp:1543` |
+
+ref-count は内部マップ `m_natDnatPoolInfo[destIp]` で管理される。複数の binding が同一 pool の IP アドレスを参照する場合、最後の binding が削除されるまで APPL_DB エントリは保持される。
+
+### ASIC_DB — SAI NAT エントリ (SAI_NAT_TYPE_DESTINATION_NAT_POOL)
+
+`NatOrch::doDnatPoolTableTask()` が `NAT_DNAT_POOL_TABLE` 変更を受けて `addHwDnatPoolEntry()` / `removeHwDnatPoolEntry()` を呼び出す。
+
+| 操作 | SAI API 呼び出し | SAI nat_type | ソース |
+|------|----------------|-------------|--------|
+| pool IP 追加 | `sai_nat_api->create_nat_entry()` | `SAI_NAT_TYPE_DESTINATION_NAT_POOL` | `natorch.cpp:1805` |
+| pool IP 削除 | `sai_nat_api->remove_nat_entry()` | `SAI_NAT_TYPE_DESTINATION_NAT_POOL` | `natorch.cpp:1837` |
+
+`addHwDnatPoolEntry()` は `isNatEnabled()` が false の場合に SAI 書込をスキップして success (`true`) を返す (`natorch.cpp:1789-1793`)。APPL_DB エントリは保持されるため、NAT が後から有効化されると `enableNatFeature()` → `addAllDnatPoolEntries()` で全 pool IP が遡及的に ASIC に投入される。
+
+### COUNTERS_DB — 初期化時の静的書込
+
+NatOrch の初期化時に SAI `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を照会し、取得値を `COUNTERS_GLOBAL_NAT|Values` の `MAX_NAT_ENTRIES` フィールドとして一度だけ書込む (`natorch.cpp:127`, `natorch.cpp:135`)。
+
+NAT pool エントリ追加・削除に直接連動した COUNTERS_DB 更新はない。DNAT エントリ数カウンタ (`DNAT_ENTRIES`) は `addHwDnatPoolEntry()` では更新されず、pool 経由で確立した SNAT/DNAT セッション数カウンタは NatOrch のヒットビットタイマー (5 秒周期) で更新される。
+
+### STATE_DB — 書込なし
+
+`NatMgr` および `NatOrch` は STATE_DB への書込を行わない。`STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_INTERFACE_TABLE` は L3 インタフェース readiness ガード用の**読み取り専用**アクセスのみ。
+
+[^F1]: natmgr APPL_DB 書込実装: `sonic-swss/cfgmgr/natmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/natmgr.cpp>
+[^F2]: NatOrch ASIC 書込実装: `sonic-swss/orchagent/natorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/natorch.cpp>
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-side-effects.md`
+<!-- /side-effects -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 
