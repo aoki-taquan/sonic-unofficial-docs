@@ -3,7 +3,7 @@ title: NEXTHOP_GROUP_TABLE / CLASS_BASED_NEXT_HOP_GROUP_TABLE
 description: "APPL_DB NEXTHOP_GROUP_TABLE および CLASS_BASED_NEXT_HOP_GROUP_TABLE — fpmsyncd が FRR から受け取った次ホップグループを APPL_DB に書き込み、orchagent の NhgOrch / CbfNhgOrch が SAI 経由で ASIC に反映する。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/nhgorch.cpp
@@ -12,10 +12,19 @@ sources:
     path: orchagent/cbf/cbfnhgorch.cpp
     ref: HEAD
   - repo: sonic-net/sonic-swss
+    path: orchagent/cbf/nhgmaporch.cpp
+    ref: HEAD
+  - repo: sonic-net/sonic-swss
+    path: orchagent/routeorch.cpp
+    ref: HEAD
+  - repo: sonic-net/sonic-swss
     path: fpmsyncd/routesync.cpp
     ref: HEAD
   - repo: sonic-net/sonic-swss-common
     path: common/schema.h
+    ref: HEAD
+  - repo: sonic-net/sonic-swss
+    path: orchagent/orch.h
     ref: HEAD
 related:
   config_db:
@@ -301,6 +310,77 @@ Consumer: `NhgOrch::doTask()` (`orchagent/nhgorch.cpp`) および `CbfNhgOrch::d
 
 SRv6 NHG はリソース枯渇時に temporary group を作成しないため、枯渇中はルート解決そのものが保留される。非 SRv6 NHG は temporary group (1 NH のみ) を経由して ECMP なしでルート解決を継続するが、リソース解放まで ECMP 動作は失われる。
 <!-- /failure -->
+
+---
+
+<!-- hardcoded-constants -->
+## ハードコード定数 (Phase E)
+
+`NhgOrch` (`orchagent/nhgorch.cpp`)・`CbfNhgOrch` (`orchagent/cbf/cbfnhgorch.cpp`)・`RouteOrch` (`orchagent/routeorch.cpp`) に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+
+### NHG 上限フォールバック値
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` の取得に失敗した場合の NHG 上限フォールバック値 | `routeorch.cpp:37,68` |
+| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | Mellanox プラットフォームで SAI が返す NHG 上限数（全メンバー数 1 前提の値）を ECMP グループ数に換算するための除数 | `routeorch.cpp:38,86` |
+
+`RouteOrch` 初期化時に `sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr)` で `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` を取得する。取得失敗時は `m_maxNextHopGroupCount = DEFAULT_NUMBER_OF_ECMP_GROUPS (128)` を使用する。Mellanox プラットフォーム（`MLNX_PLATFORM_SUBSTRING = "mellanox"`、`orch.h:42`）の場合、取得値を `DEFAULT_MAX_ECMP_GROUP_SIZE (32)` で割って最終的な上限とする（`routeorch.cpp:83-86`）。
+
+```cpp
+// routeorch.cpp:37-38
+#define DEFAULT_NUMBER_OF_ECMP_GROUPS   128
+#define DEFAULT_MAX_ECMP_GROUP_SIZE     32
+
+// routeorch.cpp:60-88（RouteOrch コンストラクタ）
+sai_status_t status = sai_switch_api->get_switch_attribute(gSwitchId, 1, &attr);
+if (status != SAI_STATUS_SUCCESS)
+{
+    m_maxNextHopGroupCount = DEFAULT_NUMBER_OF_ECMP_GROUPS;  // 128
+}
+else
+{
+    m_maxNextHopGroupCount = attr.value.s32;
+    char *platform = getenv("platform");
+    if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))
+    {
+        m_maxNextHopGroupCount /= DEFAULT_MAX_ECMP_GROUP_SIZE;  // /= 32
+    }
+}
+```
+
+### SAI グループタイプ固定値
+
+| 定数 | 値 | 適用箇所 | ソース |
+|------|----|---------|--------|
+| `SAI_NEXT_HOP_GROUP_TYPE_ECMP` | SAI 列挙体 | 通常 NEXTHOP_GROUP_TABLE エントリを SAI に create する際の `SAI_NEXT_HOP_GROUP_ATTR_TYPE` 値。YANG / CONFIG_DB で指定不可 | `nhgorch.cpp:771-772` |
+| `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` | SAI 列挙体 | CBF NHG を SAI に create する際の `SAI_NEXT_HOP_GROUP_ATTR_TYPE` 値。`CLASS_BASED_NEXT_HOP_GROUP_TABLE` エントリは常にこの型で作成される | `cbfnhgorch.cpp:301-302` |
+
+### メンバーウェイト送出閾値
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| weight 送出ゼロ閾値 | `0` | `weight == 0` のメンバーは `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT` 属性を SAI に送出しない。ASIC 側はウェイト未指定を等コスト ECMP として扱う | `nhgorch.cpp:1114` |
+
+### CBF メンバーインデックス開始値
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| CBF メンバー SAI INDEX 開始値 | `0` (`uint8_t`) | CBF NHG の各メンバーに付与する `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX` は追加順に `0, 1, 2, ...` と自動採番される。CONFIG_DB で指定不可。INDEX は `CREATE_ONLY` 属性のため順序変更時は全メンバーの remove → add が必要 | `cbfnhgorch.cpp:257-261` |
+
+### FC 数上限クエリとフォールバック
+
+| 定数 / 挙動 | 値 | 用途 | ソース |
+|------------|-----|------|--------|
+| FC 数フォールバック | `0` | `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` の取得失敗時に `max_num_fcs = 0` を使用。CBF NHG のメンバー数 vs FC 数の超過警告に影響する（`cbfnhgorch.cpp:311-315`） | `nhgmaporch.cpp:318-321` |
+| FC 数超過警告閾値 | `gNhgMapOrch->getMaxNumFcs()` 返値 | CBF NHG のメンバー数 > FC 数のとき `SWSS_LOG_WARN("More CBF NHG members configured than supported Forwarding Classes")` を出力するが、処理を中断しない | `cbfnhgorch.cpp:311-315` |
+
+!!! note "NHG 上限は起動時に 1 度だけ算出"
+    `m_maxNextHopGroupCount` は `RouteOrch` コンストラクタで SAI に問い合わせて確定し、以後変更されない。動的なリソース追加・削除には対応しておらず、ASIC がサポートする最大値の静的スナップショットとして機能する。
+
+!!! note "Mellanox プラットフォームの除算ロジック"
+    Mellanox 向けの `/= DEFAULT_MAX_ECMP_GROUP_SIZE` は「SAI が ECMP グループサイズ=1 を前提に返す最大グループ数」を「サイズ=32 を前提にした ECMP グループ数」に変換するワークアラウンドである（`routeorch.cpp:74-87` のコメント）。他プラットフォームでは除算なしで SAI 返値をそのまま使用する。
+<!-- /hardcoded-constants -->
 
 ---
 
