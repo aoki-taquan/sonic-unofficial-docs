@@ -458,4 +458,54 @@ Mellanox のみ 800Gbps (`800000`) エントリを追加で保持。Barefoot は
 > **スキャン証跡**: `buffer_headroom_mellanox.lua` 全行読了 (L1-180)、`buffer_headroom_barefoot.lua` 全行読了 (L1-141)。物理定数 5 種・IEEE テーブル 2 種・アライメント定数 1 種を抽出。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込み (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/lossless-traffic-pattern-side-effects.md`
+
+<!-- evidence: sonic-swss/cfgmgr/buffermgrdyn.cpp:603-641,890-920, sonic-swss/cfgmgr/buffer_headroom_mellanox.lua:91-100, sonic-swss/cfgmgr/buffer_headroom_barefoot.lua:80-90 -->
+
+`LOSSLESS_TRAFFIC_PATTERN` は `buffermgrdyn` の Lua ヘッドルーム計算プラグインが CONFIG_DB から直接参照する読み取り専用テーブルであり、フィールド変更が Lua 再実行を経由して APP_DB と STATE_DB に書き込みを引き起こす。
+
+### 副次書込み一覧
+
+| 副次 DB | テーブル / キー | フィールド | 書込み値 | トリガー | 書込み主体 | evidence |
+|---------|--------------|---------|---------|---------|---------|---------|
+| APP_DB | `APP_BUFFER_PROFILE_TABLE\|pg_lossless_<speed>_<cable>_profile` | `xon`, `xoff`, `size`, `xon_offset`, `dynamic_th` | Lua 計算結果の数値文字列 | `LOSSLESS_TRAFFIC_PATTERN` 変更 → `calculateHeadroomSize()` → Lua 実行 → `updateBufferProfileToDb()` | `buffermgrdyn` | `buffermgrdyn.cpp:919` |
+| STATE_DB | `BUFFER_PROFILE_TABLE\|pg_lossless_<speed>_<cable>_profile` | 同上 | 同上 | 同上 | `buffermgrdyn` | `buffermgrdyn.cpp:920` |
+
+### 詳細
+
+#### APP_DB / STATE_DB BUFFER_PROFILE_TABLE へのヘッドルーム値書込み
+
+`LOSSLESS_TRAFFIC_PATTERN` の `mtu` または `small_packet_percentage` が変更されると、`buffermgrdyn` は影響を受けるすべてのロスレス PG バッファプロファイル（キー形式 `pg_lossless_<speed>_<cable>[_mtu<mtu>]_profile`）に対して `calculateHeadroomSize()` を呼び出す (`buffermgrdyn.cpp:603-641`)。
+
+`calculateHeadroomSize()` は Lua スクリプト（`buffer_headroom_mellanox.lua` または `buffer_headroom_barefoot.lua`）を `swss::runRedisScript()` で実行する。Lua はその内部で CONFIG_DB の `LOSSLESS_TRAFFIC_PATTERN` を `KEYS 'LOSSLESS_TRAFFIC_PATTERN*'` + `HGETALL` で直接読み取り (`buffer_headroom_mellanox.lua:91-96`)、`mtu` と `small_packet_percentage` をヘッドルーム計算式に入力として使用する。
+
+計算結果（`xon`, `xoff`, `size`, `xon_offset`）は `updateBufferProfileToDb()` によって:
+- `APP_DB APP_BUFFER_PROFILE_TABLE|<profile_name>` に `m_applBufferProfileTable.set()` (`buffermgrdyn.cpp:919`)
+- `STATE_DB BUFFER_PROFILE_TABLE|<profile_name>` に `m_stateBufferProfileTable.set()` (`buffermgrdyn.cpp:920`)
+
+の両方へ書き込まれる。
+
+#### 伝播経路まとめ
+
+```
+CONFIG_DB.LOSSLESS_TRAFFIC_PATTERN 変更
+  ↓（Lua 内部で直接参照）
+buffer_headroom_<vendor>.lua: mtu/small_packet_percentage を読み取って計算
+  ↓（戻り値）
+buffermgrdyn.calculateHeadroomSize() → updateBufferProfileToDb()
+  ↓
+APP_DB.APP_BUFFER_PROFILE_TABLE|pg_lossless_*  ← SET (xon/xoff/size)
+STATE_DB.BUFFER_PROFILE_TABLE|pg_lossless_*    ← SET (xon/xoff/size)
+  ↓（APP_DB を購読）
+orchagent BufferOrch → SAI sai_buffer_api (ASIC_DB 経由)
+```
+
+!!! note "直接購読なし"
+    `buffermgrdyn` は `LOSSLESS_TRAFFIC_PATTERN` テーブルを直接 Subscribe していない。Lua プラグインが CONFIG_DB を実行時に読み取る設計であるため、このテーブルの変更が副次書込みをトリガーするのは、他のバッファ関連テーブル（`BUFFER_PROFILE`、`BUFFER_PG` 等）の変更やポート速度変更を受けて `calculateHeadroomSize()` が呼ばれたタイミングのみである。`LOSSLESS_TRAFFIC_PATTERN` 単体の変更は即時に再計算を誘発しない。
+
+<!-- /side-effects -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
