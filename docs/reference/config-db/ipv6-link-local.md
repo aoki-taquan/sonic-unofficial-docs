@@ -310,6 +310,79 @@ APP_DB.INTF_TABLE の `ipv6_use_link_local_only` フィールドは IntfsOrch (o
 | カーネル | 近隣テーブル | disable 時 | intfmgrd (`ip neigh del`) |
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`ipv6_use_link_local_only` フィールド周辺の Pub/Sub・通知経路を `intfmgrd.cpp` / `intfmgr.cpp` / `neighsync.cpp` から抽出した結果。
+
+### CONFIG_DB → IntfMgr (ConsumerStateTable)
+
+`intfmgrd` は起動時に以下のテーブルリストを `IntfMgr` コンストラクタに渡す（`intfmgrd.cpp:28-35`）:
+
+```cpp
+CFG_INTF_TABLE_NAME,           // "INTERFACE"
+CFG_LAG_INTF_TABLE_NAME,       // "PORTCHANNEL_INTERFACE"
+CFG_VLAN_INTF_TABLE_NAME,      // "VLAN_INTERFACE"
+CFG_LOOPBACK_INTERFACE_TABLE_NAME,
+CFG_VLAN_SUB_INTF_TABLE_NAME,
+CFG_VOQ_INBAND_INTERFACE_TABLE_NAME,
+```
+
+`IntfMgr` は `Orch(cfgDb, tableNames)` を継承するため、Orch 基底クラスが各テーブルを `ConsumerStateTable`（Redis keyspace notification）でラップして `Executor` に登録する。`ipv6_use_link_local_only` フィールドへの `HSET`/`DEL` が INTERFACE / PORTCHANNEL_INTERFACE / VLAN_INTERFACE テーブルで発生すると `doIntfGeneralTask()` が駆動される。明示的な `PUBLISH` コマンドは不要で、CONFIG_DB への書き込み自体がトリガとなる。
+
+### IntfMgr → APPL_DB (ProducerStateTable)
+
+`IntfMgr` コンストラクタで `ProducerStateTable` を宣言する（`intfmgr.cpp:42`）:
+
+```cpp
+m_appIntfTableProducer(appDb, APP_INTF_TABLE_NAME)
+```
+
+SET 処理内（`intfmgr.cpp:1053`）で `m_appIntfTableProducer.set(alias, data)` により `INTF_TABLE|<ifname>` に `ipv6_use_link_local_only` フィールドを書き込む。DEL 時は `m_appIntfTableProducer.del(alias)`（`intfmgr.cpp:1088`）。
+
+`IntfsOrch`（orchagent）は `APP_INTF_TABLE_NAME` を `ConsumerStateTable` で購読するが、`ipv6_use_link_local_only` フィールドを SAI に転送しないため **dead consumer** となる。
+
+### neighsyncd — CONFIG_DB 直接参照 (Table::get, 購読なし)
+
+`neighsync.cpp:25-27` で `Table` オブジェクト（SubscriberStateTable ではない）を宣言し、イベント駆動でなくポイントインタイム参照を行う:
+
+```cpp
+m_cfgInterfaceTable(cfgDb, CFG_INTF_TABLE_NAME),
+m_cfgLagInterfaceTable(cfgDb, CFG_LAG_INTF_TABLE_NAME),
+m_cfgVlanInterfaceTable(cfgDb, CFG_VLAN_INTF_TABLE_NAME),
+```
+
+`isLinkLocalEnabled()` は netlink `RTM_NEWNEIGH` / `RTM_DELNEIGH` イベント受信時に呼ばれ、CONFIG_DB を同期的に `get()` する。これにより `intfmgrd` の APP_DB 転送完了を待たずに CONFIG_DB 書き込みの瞬間からフィルタリングが有効になる（Phase B 依存 #3 で既述）。
+
+### 通信フロー概要
+
+```mermaid
+flowchart TD
+  CLI["config interface ipv6\n(CLI)"] -->|HSET| CDB[("CONFIG_DB\nINTERFACE / PORTCHANNEL_INTERFACE\n/ VLAN_INTERFACE")]
+  CDB -->|ConsumerStateTable\n(keyspace notification)| IntfMgr["IntfMgrd\n(swss)"]
+  IntfMgr -->|ProducerStateTable| APPL[("APPL_DB\nINTF_TABLE\|<ifname>")]
+  APPL -->|ConsumerStateTable| IntfsOrch["IntfsOrch\n(orchagent)\n※dead consumer"]
+
+  kernel["Linux kernel\nnetlink RTM_NEWNEIGH"] -->|rtnetlink socket| neighsyncd["neighsyncd\n(swss)"]
+  CDB -->|Table::get\n(直接参照)| neighsyncd
+  neighsyncd -->|ProducerStateTable\n(link-local enabled 時のみ)| NEIGH[("APPL_DB\nNEIGH_TABLE")]
+  NEIGH -->|ConsumerStateTable| NeighOrch["NeighOrch\n(orchagent)"]
+```
+
+### チャンネル種別まとめ
+
+| Publisher | チャンネル種別 | テーブル | Subscriber | 備考 |
+|-----------|-------------|---------|------------|------|
+| CLI / minigraph | ConsumerStateTable (Orch 継承) | `CONFIG_DB INTERFACE\|<name>` 等 | IntfMgrd | `HSET` トリガ |
+| IntfMgrd | ProducerStateTable | `APPL_DB INTF_TABLE\|<name>` | IntfsOrch | dead consumer（SAI 転送なし） |
+| kernel netlink | rtnetlink `RTM_NEWNEIGH` | — | neighsyncd | DB pubsub 外 |
+| neighsyncd | Table::get（直接参照） | `CONFIG_DB INTERFACE / PORTCHANNEL_INTERFACE / VLAN_INTERFACE` | — | 購読チャンネルなし、同期参照 |
+| neighsyncd | ProducerStateTable | `APPL_DB NEIGH_TABLE\|<intf>:<ip>` | NeighOrch | link-local enabled 時のみ ADD |
+
+> `ipv6_use_link_local_only` の処理経路に Redis `PUBLISH` コマンドや `Notifier` 機構は使用されていない。すべてのトリガは ConsumerStateTable（keyspace notification）または netlink イベントによる。
+
+<!-- /pubsub -->
+
 ## 購読者
 
 | コンポーネント | 役割 | テーブル |

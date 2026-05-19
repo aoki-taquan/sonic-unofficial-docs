@@ -260,6 +260,31 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-swss/orchagent/stporch.h (ref: master), sonic-swss/cfgmgr/stpmgr.h (ref: master), sonic-swss/cfgmgr/stpmgr.cpp (ref: master) -->
+
+`STP_TABLE|GLOBAL` の書き込みと読み取りに関与するハードコード定数の一覧。いずれも CONFIG_DB / YANG では設定不可。
+
+| 定数 | 値 | 定義箇所 | 用途 |
+|-----|----|---------|------|
+| `STP_INVALID_INSTANCE` | `0xFFFF` (65535) | `stporch.h:8` | 未割り当て STP インスタンス ID のセンチネル値。`updateMaxStpInstance()` 前に `m_defaultStpId` が未解決の場合に使用される |
+| `-1` 補正 (`max_stp_instance - 1`) | SAI 値 − 1 | `stporch.cpp:605` | SAI `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` の戻り値から 1 を減算した値を `max_stp_inst` として STATE_DB に書き込む。STP インスタンス ID が 0 始まりのため最大 ID = 上限数 − 1 |
+| `STP_DEFAULT_MAX_INSTANCES` | `255` | `stpmgr.h:38` | `stpmgrd` が STATE_DB から 60 秒以内に `max_stp_inst` を読み取れなかった場合のフォールバック値。実 HW の SAI 上限に依存しない安全値として使われる |
+| `max_delay` (タイムアウト上限) | `60` 秒 | `stpmgr.cpp:1384` | `getStpMaxInstances()` のポーリングループ上限。1 秒 × 60 回のビジーウェイトで `STP_TABLE|GLOBAL` の出現を待機する |
+| `L2_INSTANCE_MAX` | `MAX_VLANS` = `4096` | `stpmgr.h:34,37` | `stpmgrd` 内 `l2InstPool` (bitset) のサイズ上限。`max_stp_instances` が 4096 を超えることは想定されない |
+
+### 定数の影響詳細
+
+**`-1` 補正の意味**: `updateMaxStpInstance(uint32_t max_stp_instances)` (`stporch.cpp:605`) は `m_maxStpInstance = (sai_uint16_t)max_stp_instances - 1` で補正した値を STATE_DB に書き込む。例えば SAI が `max_stp_instance = 256` を返すと、STATE_DB には `max_stp_inst = 255` が書き込まれる。`stpmgrd` はこの値を上限 ID（0 始まりインデックスの最大値）として扱う。
+
+**フォールバック `255` と SAI 値の関係**: 実 HW の SAI 値が 255 以下の場合、SAI 値 − 1 = フォールバック値以下となるため問題は顕在化しない。SAI 値が 256 以上の HW では `orchagent` 起動に成功した場合のみ本来の最大インスタンス数が利用できる。`orchagent` が 60 秒以内に起動しない場合は HW 能力を下回る `255` がフォールバックとして使用される。
+
+**ポーリング間隔固定**: `getStpMaxInstances()` (`stpmgr.cpp:1389-1407`) の `sleep(1)` は固定値でチューニング不可。CONFIG_DB 上のタイムアウト設定も存在しない。
+
+<!-- /constants -->
+
 ## 例外条件・特殊挙動
 
 - **-1 補正**: `max_stp_inst` は SAI の返す最大数から -1 した値。STP インスタンス ID が 0 始まりのため、使用可能な最大インスタンス ID が `max_stp_inst` と一致する。
