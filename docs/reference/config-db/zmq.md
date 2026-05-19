@@ -259,6 +259,50 @@ ZMQ チャネル実装に存在する、CONFIG_DB / YANG では管理されな�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+ZMQ 関連フィールド（`orch_northbond_dash_zmq_enabled` / `orch_northbond_route_zmq_enabled` / `orchagent_zmq_port`）は CONFIG_DB の読み取り専用フィールドとして機能し、**永続的な STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB への副次書込みは発生しない**。ただし以下のファイルシステム副次作用とプロセス間接続変更が起動時に生じる。
+
+### A. `/etc/swss/orch_zmq_tables.conf` 生成（ファイルシステム）
+
+`orch_northbond_dash_zmq_enabled` および `orch_northbond_route_zmq_enabled` の値は、コンテナ起動時に Jinja2 テンプレート `orch_zmq_tables.conf.j2` が処理されることで `/etc/swss/orch_zmq_tables.conf` を生成する。orchagent は `load_zmq_tables()` でこのファイルを読み込み、ZMQ 経由で受け付けるテーブル名セットを決定する。
+
+| フィールド値 | conf ファイルへの影響 | evidence |
+|------------|-------------------|---------|
+| `orch_northbond_dash_zmq_enabled` != `"false"` (デフォルト含む) | `DASH_VNET_TABLE` 〜 `DASH_FLOW_DUMP_FILTER_TABLE` の 24 テーブルを conf に追記 | `orch_zmq_tables.conf.j2:1-25` |
+| `orch_northbond_route_zmq_enabled` == `"true"` | `ROUTE_TABLE` / `LABEL_ROUTE_TABLE` を conf に追記 | `orch_zmq_tables.conf.j2:26-29` |
+| 上記以外 / デフォルト | 該当テーブルを conf に追記しない（空ファイルまたは他テーブルのみ） | — |
+
+> conf ファイルはコンテナ再起動（`orchagent.sh` 経由の Jinja2 展開）ごとに再生成される。orchagent が起動中に直接 CONFIG_DB の変更を検出して再生成することはない。
+
+### B. fpmsyncd トランスポート選択（プロセス内部状態）
+
+`orch_northbond_route_zmq_enabled` の値に応じて、fpmsyncd 起動時に `RouteSync` が使用するプロデューサーテーブルの型が切り替わる。
+
+| フィールド値 | `ROUTE_TABLE` / `LABEL_ROUTE_TABLE` のトランスポート | evidence |
+|------------|---------------------------------------------------|---------|
+| `"true"` | `ZmqProducerStateTable`（ZMQ 経由で orchagent に直送） | `routesync.cpp:154-158` — `create_local_zmq_client()` が非 null を返す |
+| `"false"` または不在 | `ProducerStateTable`（Redis 経由） | `routesync.cpp:154-158` — `create_local_zmq_client()` が `nullptr` を返す → `createProducerStateTable()` は通常 `ProducerStateTable` を生成 |
+
+この選択は fpmsyncd 起動時の 1 回限りで、実行中の変更は無視される。`ZmqProducerStateTable` は `fgnhgorch.cpp:27` および `routeresync.cpp:25` でも同様に使用される。
+
+### C. gnmi `-zmq_port` 引数付与（SmartSwitch 限定）
+
+`subtype == "SmartSwitch"` のとき、`gnmi-native.sh:90-92` が gnmi プロセスに `-zmq_port=8100` を渡す。これは CONFIG_DB の `orchagent_zmq_port` フィールドではなくスクリプト内ハードコード値であり、gnmi が orchagent ZmqServer に接続する際のポートを指定する。
+
+### まとめ: DB 副次書込みなし
+
+| DB | 書込み | 理由 |
+|----|--------|------|
+| STATE_DB | なし | ZMQ フィールドは起動スクリプトと orchagent 初期化のみが参照 |
+| COUNTERS_DB | なし | ZMQ チャネル自体の統計は ZMQ ソケットで完結 |
+| FLEX_COUNTER_DB | なし | ZmqServer / ZmqClient は FlexCounter と無関係 |
+| APPL_DB | 間接的（書込み先変更のみ） | ZMQ 有効化で DASH テーブル / ROUTE テーブルの書込み経路が変わるが、エントリ数・内容は変わらない |
+
+> **Evidence**: `sonic-swss/lib/orch_zmq_config.cpp` （全体）; `sonic-swss/fpmsyncd/routesync.cpp:154-158`; `sonic-buildimage/dockers/docker-orchagent/orch_zmq_tables.conf.j2`; `sonic-buildimage/dockers/docker-orchagent/orchagent.sh:105-118`; `sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh:88-92`
+<!-- /side-effects -->
+
 ---
 
 ## DEVICE_METADATA|localhost の ZMQ フィールド
