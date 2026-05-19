@@ -259,6 +259,41 @@ ZMQ チャネル実装に存在する、CONFIG_DB / YANG では管理されな�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査対象: `sonic-swss/lib/orch_zmq_config.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`, `sonic-swss/fpmsyncd/routesync.cpp`, `sonic-swss-common/common/zmqserver.cpp`
+> 調査日: 2026-05-19
+
+ZMQ 関連 CONFIG_DB フィールド（`orch_northbond_dash_zmq_enabled` / `orch_northbond_route_zmq_enabled` / `orchagent_zmq_port`）の変化が引き起こす **CONFIG_DB 以外への副次的な DB 書込み**を示す。
+
+### 副次 DB 書込みの有無
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし（直接書込みなし） | ZMQ フィールドは起動時フラグとして読まれるのみ。`orch_zmq_config.cpp` に AppTable / ProducerStateTable 書込なし |
+| STATE_DB | なし | `orch_zmq_config.cpp`, `orchdaemon.cpp` に STATE_DB 書込なし |
+| ASIC_DB | なし | ZMQ はトランスポート層であり SAI を直接呼び出さない |
+| FLEX_COUNTER_DB | なし | 統計カウンタなし |
+| COUNTERS_DB | なし | ZMQ チャネル統計は CONFIG_DB / STATE_DB に書き込まれない |
+
+### 間接的な影響（DB 書込みではない）
+
+ZMQ フィールドは直接 DB 書込みを生じさせないが、以下の **間接的な副作用**が存在する:
+
+| トリガー | 副作用 | 根拠 |
+|---|---|---|
+| `orch_northbond_dash_zmq_enabled=true` (orchagent 起動時評価) | `/etc/swss/orch_zmq_tables.conf` に DASH テーブル名が追記される（ファイル書込み） | `orch_zmq_tables.conf.j2` — Jinja2 テンプレートが起動前に設定ファイルを生成 |
+| `orch_northbond_route_zmq_enabled=true` (orchagent 起動時評価) | `ROUTE_TABLE` / `LABEL_ROUTE_TABLE` が `orch_zmq_tables.conf` に追記される（ファイル書込み） | `orch_zmq_tables.conf.j2:27-31` |
+| ZMQ 経由で DASH/ROUTE テーブルの書込みが有効化される | orchagent が APPL_DB DASH_* / ROUTE_TABLE への ZmqConsumerStateTable を登録し、クライアント（gnmi/fpmsyncd）からの ZMQ メッセージを処理する | `orchdaemon.cpp:1329`, `routesync.cpp:155` |
+
+### まとめ
+
+`DEVICE_METADATA|localhost` の ZMQ フィールドおよび `DPU.orchagent_zmq_port` は、orchagent **起動時のみ**評価され、その後 CONFIG_DB の変化を購読しない。CONFIG_DB への書込み変化が直接 APPL_DB / STATE_DB / ASIC_DB に副次書込みを引き起こすパスは存在しない。影響はすべて orchagent の再起動後にのみ反映される設定ファイル生成に閉じる。
+
+詳細スキャン証跡: `meta/_intermediate/cdb-flow/zmq-side-effects.md`
+<!-- /side-effects -->
+
 ---
 
 ## DEVICE_METADATA|localhost の ZMQ フィールド
