@@ -155,6 +155,38 @@ YANG `sonic-logger.yang` にも `leafref` が存在せず、他モジュール�
 `config syslog level` は LOGLEVEL を書き込んだ後、同エントリの `require_manual_refresh` を確認し、`true` の場合にのみ `docker exec … supervisorctl signal HUP <program>` または `kill -SIGHUP <pid>` を実行する。他 CONFIG_DB テーブルとの結合処理は行わない。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 異常系・フォールバック挙動 (Phase D)
+
+`sonic-swss-common/common/logger.cpp` を全行精読した結果、以下の異常系・フォールバック挙動を検出した。中間ノート: `meta/_intermediate/cdb-flow/log-config-failure.md`。
+
+### 無効値フォールバック
+
+| フィールド | 無効値を SET した場合の挙動 | フォールバック値 | evidence |
+|---|---|---|---|
+| `LOGLEVEL` | `SWSS_LOG_ERROR` でエラーログを出力し `NOTICE` に自動フォールバック。デーモンは停止しない | `NOTICE` (`SWSS_NOTICE`) | `logger.cpp:81-84` (`swssPrioNotify()`) |
+| `LOGOUTPUT` | `SWSS_LOG_ERROR` でエラーログを出力し `SYSLOG` に自動フォールバック。デーモンは停止しない | `SYSLOG` (`SWSS_SYSLOG`) | `logger.cpp:103-106` (`swssOutputNotify()`) |
+
+いずれも `YANG` バリデーション非通過値であっても **デーモン停止なし・自動フォールバック** で処理される。
+
+### settingThread 内の異常系
+
+| シナリオ | 挙動 | 備考 |
+|---|---|---|
+| `select()` が `Select::ERROR` を返す | `SWSS_LOG_NOTICE` でエラーログ → `continue`（スレッド継続） | DB 一時切断などで発生。自動リカバリなし | 
+| `dynamic_cast<SubscriberStateTable *>` が NULL | `SWSS_LOG_ERROR` → `break`（`settingThread` 終了） | 内部不整合。デーモン再起動が必要 |
+| `op != SET_COMMAND`（DEL など） | `continue` で silently ignored | DEL は稼動中デーモンに反映されない |
+| 未登録コンポーネント名への SET | `continue` で silently ignored | エラーログなし |
+
+evidence: `logger.cpp:210-241`
+
+### DB 接続失敗
+
+- `linkToDbWithOutput()` は起動時に `DBConnector db("CONFIG_DB", 0)` で CONFIG_DB に接続する
+- DB 接続失敗時は `DBConnector` コンストラクタが例外をスローし、デーモン起動が失敗する可能性がある
+- `settingThread` 内に DB 再接続ロジックはなく、起動後の DB 切断は `Select::ERROR` の繰り返しとして観測されるがスレッドは継続する（自動リカバリなし）
+<!-- /failure -->
+
 ## 制約
 
 - `LOGLEVEL` は `mandatory true`（YANG）。エントリ作成時に必須
