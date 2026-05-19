@@ -175,6 +175,35 @@ hostcfgd 起動
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1425-1435 (PamLimitsCfg.update_config_file — DEVICE_METADATA|localhost early-return 条件) -->
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L67-75,1110-1168 -->
+
+`SSH_SFTP` テーブルは存在せず、SFTP サブシステムは CONFIG_DB の管理外（OS テンプレート固定）。Phase D の失敗挙動は「`SSH_SERVER|POLICIES` を更新する `SshServer.set_policies()` が失敗したとき、`Subsystem sftp` 行がどう扱われるか」に帰着する。
+
+### set_policies() 失敗時の SFTP 行への影響
+
+`SshServer.set_policies()` (`hostcfgd L1110-1168`) の主要な失敗経路:
+
+| 失敗シナリオ | Subsystem sftp 行の状態 | SFTP 接続の可否 | 回復方法 |
+|------------|----------------------|----------------|---------|
+| `sshd -T` バリデーション失敗 (`L1160-1163`) | 変更なし (旧 sshd_config 保持、`os.remove(tmp)` 実行) | **有効** | SSH_SERVER フィールドの誤設定を修正 |
+| `systemctl restart ssh` 失敗 (`L1164-1165`) | 新 sshd_config に存在 (行変更なし)、sshd は旧設定で稼働 | **有効** (旧 sshd でも Subsystem sftp 行は存在) | `sudo systemctl restart ssh` を手動実行 |
+| `copy2` 失敗 (例外、未 try/except) (`L1151`) | 変更なし (一時ファイル未生成) | **有効** | hostcfgd プロセスを再起動して回復 |
+| `openssh-server` パッケージ破損 | sshd_config に行は存在するが実体バイナリなし | **無効** (`/usr/lib/openssh/sftp-server` 不在) | `apt reinstall openssh-server` |
+
+### SFTP 固有の失敗経路
+
+`Subsystem sftp` 行は `SSH_CONFIG_NAMES` (`hostcfgd L67-75`) に含まれていないため、**CONFIG_DB 操作によって SFTP が意図せず無効化される失敗パターンは存在しない**。すべての `set_policies()` 失敗経路で `Subsystem sftp` 行は元の状態に保たれるか、同内容で引き継がれる。
+
+!!! note "スキャン証跡"
+    `sonic-host-services/scripts/hostcfgd L1110-1168` (`set_policies()` 全体) を確認。`copy2` 後の `rename` / `remove` 分岐と `sshd -T` ゲートを追跡。`Subsystem sftp` 行が変更対象に含まれないことを確認 — 誤読なし。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/ssh-sftp-failure.md` 参照。
+
+<!-- /failure -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

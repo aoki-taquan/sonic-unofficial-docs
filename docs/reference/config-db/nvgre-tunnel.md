@@ -391,6 +391,30 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/nvgre-tunnel-constants.md -->
+
+`sonic-swss/orchagent/nvgreorch.cpp` および `nvgreorch.h` を全行調査して検出した、CONFIG_DB / YANG では管理されないハードコード定数の一覧。
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `NVGRE_VSID_MAX_VALUE` | `16777214` (2^24 − 2) | `NvgreTunnelMapOrch::addOperation()` で `vsid > NVGRE_VSID_MAX_VALUE` チェックに使用。RFC 7637 で定義される 24bit VSID の最大値 | `nvgreorch.cpp:7, 496` |
+| MAP タイプセット | `{ MAP_T_VLAN, MAP_T_BRIDGE }` (固定 2 種) | `NvgreTunnel` 構築時に Encap + Decap 計 4 個のマッパーオブジェクトを常時作成。ユーザー設定で変更不可 | `nvgreorch.cpp:16-19` |
+| SAI トンネルタイプ | `SAI_TUNNEL_TYPE_NVGRE` | `sai_create_tunnel()` の type 引数として固定 | `nvgreorch.cpp:177` |
+| SAI termination タイプ | `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP` | `sai_create_tunnel_termination()` の type 引数として固定 (NVGRE は常に P2MP) | `nvgreorch.cpp:241` |
+| `gUnderlayIfId` | orchagent 起動時に `main.cpp` が SAI 初期化で確定するグローバル RIF OID | `sai_create_tunnel()` の underlay RIF 引数として渡す | `nvgreorch.cpp:312` |
+| `gVirtualRouterId` | orchagent 起動時に `main.cpp` が SAI 初期化で確定するデフォルト VR OID | `sai_create_tunnel_termination()` の VR OID 引数として渡す | `nvgreorch.cpp:313` |
+
+### 補足
+
+- `NVGRE_VSID_MAX_VALUE = 16777214` は YANG の `vsid` range (`0..16777214`) と一致しており、orchagent 側は YANG validate を通過した値をさらにコード上で再チェックする二段構えになっている。
+- MAP タイプは `MAP_T_VLAN` と `MAP_T_BRIDGE` の 2 種が常に作成される。これは `nvgreMapTypes` static 定数で宣言されており、実行時に変更する手段はない。
+- `gUnderlayIfId` / `gVirtualRouterId` はユーザーが CONFIG_DB に書き込む前提条件にはならない（orchagent が稼動していれば常に有効）が、orchagent 未起動時は NVGRE トンネル設定を処理できない。
+
+<!-- /constants -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 

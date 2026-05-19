@@ -1,66 +1,77 @@
-# ip-mcast-route — Phase F side-effects 調査メモ
+# ip-mcast-route: Phase F — 副次 DB 書込 (side-effects)
 
-## 調査対象ソース
+調査日: 2026-05-19  
+調査対象:
+- `sonic-net/sonic-swss` `orchagent/p4orch/ip_multicast_manager.cpp`
+- `sonic-net/sonic-swss` `orchagent/p4orch/l3_multicast_manager.cpp`
 
-- `sonic-swss/orchagent/p4orch/ip_multicast_manager.cpp`
-- `sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp`
+## 結論サマリー
 
-## 副作用一覧
+`REPLICATION_IP_MULTICAST_TABLE` / `FIXED_IPV4_MULTICAST_TABLE` / `FIXED_IPV6_MULTICAST_TABLE`
+への書き込みが引き起こす副次的な状態変化は以下に集約される。
 
-### IpMulticastManager が FIXED_IPV4/IPV6_MULTICAST_TABLE を処理する際の副作用
+1. **SAI ASIC 側への書き込み** (ASIC_STATE 経由; 主目的)
+2. **P4OidMapper 内部テーブル更新** (in-process OID キャッシュ; Redis DB ではない)
+3. **CRM カウンタ更新** (`COUNTERS_DB::CRM_IPMC_ENTRY` 相当; `gCrmOrch` 経由)
+4. **VRF 参照カウント更新** (`VRFOrch` 内部カウンタ; FIXED テーブルのみ)
+5. **APP_P4RT_TABLE へのステータス書き戻し** (失敗/成功通知; m_publisher 経由)
 
-**IPMC エントリ作成時 (`createIpMulticastEntries`, `ip_multicast_manager.cpp:L741-778`)**:
+STATE_DB / APPL_DB への直接書き込みは一切ない。COUNTERS_DB への書き込みは CRM 経由のみ。
 
-1. SAI `create_ipmc_entry` を呼び出す → ASIC_DB 経由で syncd が ASIC を更新
-2. `m_p4OidMapper->setDummyOID(SAI_OBJECT_TYPE_IPMC_ENTRY, ...)` — P4OidMapper 内部状態を更新
-3. `gCrmOrch->incCrmResUsedCounter(CrmResourceType::CRM_IPMC_ENTRY)` — CRM_DB の IPMC_ENTRY 使用量カウンタをインクリメント
-4. `m_vrfOrch->increaseVrfRefCount(ip_multicast_entry.vrf_id)` — VrfOrch 内部の参照カウントをインクリメント
-5. `m_p4OidMapper->increaseRefCount(SAI_OBJECT_TYPE_IPMC_GROUP, ...)` — IPMC_GROUP の参照カウントをインクリメント
+## 詳細
 
-**IPMC エントリ削除時 (`deleteIpMulticastEntries`, `ip_multicast_manager.cpp:L862-897`)**:
+### 1. SAI / ASIC_STATE
 
-1. SAI `remove_ipmc_entry` を呼び出す → ASIC_DB 経由で syncd が ASIC を更新
-2. `m_p4OidMapper->decreaseRefCount(SAI_OBJECT_TYPE_IPMC_GROUP, ...)` — IPMC_GROUP 参照カウント減少
-3. `m_p4OidMapper->eraseOID(SAI_OBJECT_TYPE_IPMC_ENTRY, ...)` — P4OidMapper から OID 削除
-4. `gCrmOrch->decCrmResUsedCounter(CrmResourceType::CRM_IPMC_ENTRY)` — CRM カウンタをデクリメント
-5. `m_vrfOrch->decreaseVrfRefCount(ip_multicast_entry.vrf_id)` — VRF 参照カウント減少
-6. `m_ipMulticastTable.size() == 0` → `deleteDefaultRpfGroup()` 呼び出し — 最後のエントリ削除時に RPF group も削除
+| 操作 | テーブル | SAI API | コード根拠 |
+|------|---------|---------|-----------|
+| REPLICATION SET | SAI_OBJECT_TYPE_IPMC_GROUP | `sai_ipmc_group_api->create_ipmc_group()` | `l3_multicast_manager.cpp:L2196` |
+| REPLICATION SET | SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER (replicas 数) | `sai_ipmc_group_api->create_ipmc_group_member()` | `l3_multicast_manager.cpp:L2262` |
+| REPLICATION DEL | SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER | `sai_ipmc_group_api->remove_ipmc_group_member()` | `l3_multicast_manager.cpp:L2552` |
+| REPLICATION DEL | SAI_OBJECT_TYPE_IPMC_GROUP | `sai_ipmc_group_api->remove_ipmc_group()` | `l3_multicast_manager.cpp:L2247` |
+| FIXED SET (初回のみ) | SAI_OBJECT_TYPE_RPF_GROUP + SAI_OBJECT_TYPE_RPF_GROUP_MEMBER | `sai_rpf_group_api->create_rpf_group()` / `create_rpf_group_member()` | `ip_multicast_manager.cpp:L651-665` |
+| FIXED SET | SAI_OBJECT_TYPE_IPMC_ENTRY | `sai_ipmc_api->create_ipmc_entry()` | `ip_multicast_manager.cpp:L761` |
+| FIXED DEL | SAI_OBJECT_TYPE_IPMC_ENTRY | `sai_ipmc_api->remove_ipmc_entry()` | `ip_multicast_manager.cpp:L874` |
+| FIXED DEL (最終エントリ削除後) | SAI_OBJECT_TYPE_RPF_GROUP_MEMBER + SAI_OBJECT_TYPE_RPF_GROUP | `sai_rpf_group_api->remove_rpf_group_member()` / `remove_rpf_group()` | `ip_multicast_manager.cpp:L688-694` |
 
-### L3MulticastManager が REPLICATION_IP_MULTICAST_TABLE を処理する際の副作用
+### 2. P4OidMapper 内部テーブル (in-process 非 Redis)
 
-**IPMC グループ作成時 (`addIpMulticastGroupEntry`, `l3_multicast_manager.cpp:L2187-2305`)**:
+| 操作 | SAI タイプ | キー | コード根拠 |
+|------|-----------|------|-----------|
+| REPLICATION SET 成功 | SAI_OBJECT_TYPE_IPMC_GROUP | multicast_group_id | `l3_multicast_manager.cpp:L2196` setOID |
+| REPLICATION SET 成功 | SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER | replica.key | `l3_multicast_manager.cpp:L2262` setOID |
+| REPLICATION DEL 成功 | SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER | replica.key | `l3_multicast_manager.cpp:L2552` eraseOID |
+| REPLICATION DEL 成功 | SAI_OBJECT_TYPE_IPMC_GROUP | multicast_group_id | `l3_multicast_manager.cpp:L2247` eraseOID |
+| FIXED SET 成功 | SAI_OBJECT_TYPE_IPMC_ENTRY | ip_multicast_entry_key | `ip_multicast_manager.cpp:L772` setDummyOID |
+| FIXED SET 成功 | SAI_OBJECT_TYPE_IPMC_GROUP (refcount増) | multicast_group_id | `ip_multicast_manager.cpp:L776` increaseRefCount |
+| FIXED DEL 成功 | SAI_OBJECT_TYPE_IPMC_GROUP (refcount減) | multicast_group_id | `ip_multicast_manager.cpp:L881` decreaseRefCount |
+| FIXED DEL 成功 | SAI_OBJECT_TYPE_IPMC_ENTRY | ip_multicast_entry_key | `ip_multicast_manager.cpp:L883` eraseOID |
 
-1. SAI `create_ipmc_group` を呼び出す → ASIC_DB 経由で syncd が ASIC を更新
-2. `m_p4OidMapper->setOID(SAI_OBJECT_TYPE_IPMC_GROUP, ...)` — P4OidMapper にグループ OID を登録
-3. SAI `create_ipmc_group_member` を各レプリカに対して呼び出す
-4. `m_p4OidMapper->setOID(SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER, ...)` — 各メンバーの OID を登録
-5. `m_p4OidMapper->increaseRefCount(SAI_OBJECT_TYPE_ROUTER_INTERFACE, router_interface_key)` — 参照先 MULTICAST_ROUTER_INTERFACE エントリの参照カウントをインクリメント
+### 3. CRM カウンタ (FIXED_IPV4/IPV6_MULTICAST_TABLE のみ)
 
-**`addL3MulticastRouterInterfaceEntry` (`l3_multicast_manager.cpp:L1795-1848`)**:
+| 操作 | CRM リソースタイプ | コード根拠 |
+|------|-----------------|-----------|
+| FIXED SET 成功 | `CRM_IPMC_ENTRY` (+ 1) | `ip_multicast_manager.cpp:L774` `gCrmOrch->incCrmResUsedCounter()` |
+| FIXED DEL 成功 | `CRM_IPMC_ENTRY` (- 1) | `ip_multicast_manager.cpp:L885` `gCrmOrch->decCrmResUsedCounter()` |
 
-1. SAI `create_router_interface` を呼び出す
-2. SAI `create_next_hop` を呼び出す (L2 以外)
-3. `gPortsOrch->increasePortRefCount(entry.multicast_replica_port)` — PortsOrch 内部の port 参照カウントをインクリメント
-4. `m_p4OidMapper->setOID(SAI_OBJECT_TYPE_ROUTER_INTERFACE, ...)` および `SAI_OBJECT_TYPE_NEXT_HOP` への OID 書き込み
+`REPLICATION_IP_MULTICAST_TABLE` の IPMC_GROUP / IPMC_GROUP_MEMBER に対応する CRM リソースタイプは
+`l3_multicast_manager.cpp` 内に存在しない (コメントアウト済み: `L387` `// attr.id = SAI_IPMC_ENTRY_ATTR_COUNTER_ID;`)。
 
-**`addL2MulticastRouterInterfaceEntry` (`l3_multicast_manager.cpp:L1850-1880`)**:
+### 4. VRF 参照カウント (FIXED_IPV4/IPV6_MULTICAST_TABLE のみ)
 
-1. `gPortsOrch->addBridgePort(port)` — PortsOrch が bridge port を作成 (SAI 呼び出しを含む)
-2. `gPortsOrch->increaseBridgePortRefCount(port)` — bridge port 参照カウントをインクリメント
-3. `m_p4OidMapper->setOID(SAI_OBJECT_TYPE_BRIDGE_PORT, ...)` — bridge port OID を登録
+| 操作 | VRF 操作 | コード根拠 |
+|------|---------|-----------|
+| FIXED SET 成功 (非空 vrf_id) | `VRFOrch::increaseVrfRefCount(vrf_id)` | `ip_multicast_manager.cpp:L775` |
+| FIXED DEL 成功 (非空 vrf_id) | `VRFOrch::decreaseVrfRefCount(vrf_id)` | `ip_multicast_manager.cpp:L886` |
 
-### APP_P4RT_TABLE へのステータス書き戻し
+VRF 参照カウントは VRFOrch のインプロセスカウンタ。Redis には書き込まれない。
 
-処理成否に関わらず、各バッチエントリの結果が `m_publisher->publish(APP_P4RT_TABLE_NAME, ...)` で APP_DB の `P4RT` テーブルに書き戻される。これがコントローラ (p4rt-app) への通知経路となる。
+### 5. APP_P4RT_TABLE ステータス書き戻し
 
-### CRM (Critical Resource Manager) カウンタへの影響
+処理成功・失敗ともに `m_publisher->publish(APP_P4RT_TABLE_NAME, ...)` でコントローラ (`p4rt-app`) へ
+ステータスコードを返す (`ip_multicast_manager.cpp:L132,L147,L159,L185,L230`)。
+バッチ中断時は残エントリに `SWSS_RC_NOT_EXECUTED` が付与される (`L183-189`)。
 
-`gCrmOrch->incCrmResUsedCounter(CrmResourceType::CRM_IPMC_ENTRY)` / `decCrmResUsedCounter` が呼ばれると、CrmOrch は `COUNTERS_DB` の `CRM:Stats` テーブルにある `crm_stats_ipmc_entry_used` フィールドを更新する (crmorch.cpp)。CRM 閾値に達した場合は syslog 警告も発生する。
+### 6. STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB への直接書き込み — なし
 
-### STATE_DB への書き込みなし
-
-両マネージャとも STATE_DB への直接書き込みは行わない。
-
-### CONFIG_DB への書き込みなし
-
-両マネージャとも CONFIG_DB への書き込みは行わない。
+grep 結果: `ip_multicast_manager.cpp` / `l3_multicast_manager.cpp` には `STATE_DB` `FLEX_COUNTER_DB`
+`NotificationProducer` 等の直接書き込みは存在しない。

@@ -379,6 +379,70 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-rule-pubsub.md -->
+<!-- source: sonic-swss/orchagent/pbhorch.cpp:88-96, orchdaemon.cpp:552-565, swss-common/orch.cpp:1186-1196, sonic-utilities/show/plugins/pbh.py:191-206,365-391,450-453 -->
+
+### Redis 購読方式
+
+`PbhOrch` は `Orch(connectorList)` でベースクラスに 4 テーブル
+（`CFG_PBH_TABLE_TABLE_NAME` / `CFG_PBH_RULE_TABLE_NAME` / `CFG_PBH_HASH_TABLE_NAME` / `CFG_PBH_HASH_FIELD_TABLE_NAME`）
+の `TableConnector` リストを渡す（`orchdaemon.cpp:552-565`）。
+`Orch::addConsumer()` が CONFIG_DB を検出して **`swss::SubscriberStateTable`**（Redis keyspace 通知ベース）を割り当てる（`orch.cpp:1186-1196`）。
+
+```cpp
+// orch.cpp:1186-1196
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == CHASSIS_APP_DB)
+        addExecutor(new Consumer(new SubscriberStateTable(db, tableName, DEFAULT_POP_BATCH_SIZE, pri), this, tableName));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+| 購読者 | 購読 API | 購読テーブル | バッチサイズ |
+|--------|---------|--------------|-----------|
+| `orchagent` (`PbhOrch`) | `swss::SubscriberStateTable` | `PBH_RULE` | `DEFAULT_POP_BATCH_SIZE = 128`（ハードコード、`table.h:164`） |
+
+APPL_DB で使われる `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）とは異なり、CONFIG_DB テーブルは keyspace 通知（`__keyspace@4__:PBH_RULE|<table>|<rule>` への `PSUBSCRIBE`）で変更を検知する。`gBatchSize`（`orchagent -b <n>` で上書き可）は CONFIG_DB 側には**適用されない**。
+
+### イベント受信フロー
+
+```
+config pbh rule add / sonic-cfggen / gNMI
+  ↓ cfgdb.set_entry("PBH_RULE", ...)
+CONFIG_DB: HSET "PBH_RULE|<table_name>|<rule_name>" <fields>
+  ↓ Redis keyspace event "__keyspace@4__:PBH_RULE|<table_name>|<rule_name>" "hset"
+OrchDaemon main loop: m_select->select(&s, 1000ms)
+  ↓ Consumer::execute() → SubscriberStateTable::pops()
+    └─ HGETALL "PBH_RULE|<table_name>|<rule_name>" で値再取得
+PbhOrch::doTask(consumer)  (pbhorch.cpp:1819-1821)
+  ↓ tableName == CFG_PBH_RULE_TABLE_NAME で doPbhRuleTask() へ委譲
+  ↓ deployPbhTasks()  (pbhorch.cpp:1836)
+createPbhRule() → AclOrch::addAclRule() → SAI: sai_acl_api->create_acl_entry()
+```
+
+### 読み取り側まとめ
+
+| 読み取り元 | 参照 DB / テーブル | 用途 |
+|-----------|----------------|------|
+| `show pbh rule` | CONFIG_DB `PBH_RULE`（直読み） | 設定値の表示 (`cfgdb_pipe.get_table()`) |
+| `show pbh statistics` | CONFIG_DB `PBH_RULE` + COUNTERS_DB `ACL_COUNTER_RULE_MAP` + `COUNTERS:<oid>` | `flow_counter=ENABLED` ルールのパケット / バイト数表示 |
+
+`show pbh rule` は orchagent の処理を経由せず CONFIG_DB を直接参照するため、SAI 反映状態とは独立して最新の設定を表示する。`show pbh statistics` の `ACL_COUNTER_RULE_MAP` は `AclOrch::registerFlexCounter()` が `flow_counter=ENABLED` の SET 成功時に書き込む（Phase F 参照）。
+
+### TTL / バックプレッシャー
+
+- TTL: なし（CONFIG_DB は永続）
+- バッチサイズ: `DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`、ハードコード）
+- SELECT タイムアウト: 1000 ms（OrchDaemon main loop）
+- 依存未解決時は `pendingSetupMap` で自動再試行（TTL なし、無制限 retry）
+
+<!-- /pubsub -->
+
 ## key 構造
 
 ```text
