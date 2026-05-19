@@ -1,6 +1,6 @@
 ---
 title: APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
-description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブルを詳解。Phase A+B+C 分析。"
+description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数を詳解。Phase A+B+C+D+E 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -478,6 +478,61 @@ StpOrch には専用の Warm Restart reconciliation 機構が実装されてい�
 | コンストラクタ SAI クエリ失敗 | orchagent 再起動のみ | 手動 |
 
 <!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-constants.md -->
+
+実装コードに直接定義されている文字列定数・enum 値・マジックナンバーを一覧化する。
+
+### マクロ定数 (`stporch.h`)
+
+| マクロ名 | 値 | 用途 |
+|---|---|---|
+| `STP_INVALID_INSTANCE` | `0xFFFF` | `stp_instance` フィールド欠落時の番兵値。`doStpTask()` が SET 処理をスキップする判定に使用 |
+| `APP_STP_INST_PORT_FLUSH_TABLE_NAME` | `"STP_INST_PORT_FLUSH_TABLE"` | APPL_DB テーブル名文字列定数 |
+
+### stp_state enum (`stporch.h:11–19`)
+
+STP プロトコル状態を数値で表す内部 enum。APPL_DB `STP_PORT_STATE_TABLE.state` フィールドに書き込まれる値と対応する。
+
+| enum 値 | 数値 | 説明 |
+|---|---|---|
+| `STP_STATE_DISABLED` | `0` | ポート無効 |
+| `STP_STATE_BLOCKING` | `1` | ブロッキング |
+| `STP_STATE_LISTENING` | `2` | リスニング |
+| `STP_STATE_LEARNING` | `3` | ラーニング |
+| `STP_STATE_FORWARDING` | `4` | フォワーディング |
+| `STP_STATE_INVALID` | `5` | 番兵値: `state` フィールド欠落または不正値 |
+
+!!! note "SAI は 3 状態のみ (`getStpSaiState()`)"
+    `STP_STATE_DISABLED(0)` と `STP_STATE_LISTENING(2)` は `SAI_STP_PORT_STATE_BLOCKING` にマップされる。
+    SAI 側の定数は `SAI_STP_PORT_STATE_BLOCKING` / `SAI_STP_PORT_STATE_LEARNING` / `SAI_STP_PORT_STATE_FORWARDING` の 3 値のみ。
+
+### SAI 初期値ハードコード (`stporch.cpp:245`)
+
+STP ポート (`create_stp_port`) 作成直後の初期状態として `SAI_STP_PORT_STATE_BLOCKING` がハードコードされている:
+
+```cpp
+attr[2].id = SAI_STP_PORT_ATTR_STATE;
+attr[2].value.s32 = SAI_STP_PORT_STATE_BLOCKING;  // ハードコード初期値
+sai_stp_api->create_stp_port(&stp_port_id, gSwitchId, 3, attr);
+```
+
+作成後に `set_stp_port_attribute()` で実際の状態に更新される。
+
+### off-by-one 定数 (`stporch.cpp:605`)
+
+`updateMaxStpInstance()` では SAI から取得した `MAX_STP_INSTANCE` 値から 1 を引いて保存・公開する:
+
+```cpp
+m_maxStpInstance = (sai_uint16_t)max_stp_instances - 1;
+```
+
+STATE_DB に書き込まれる `max_stp_inst` はインデックス最大値 (`max_stp_instances - 1`) であり、SAI の返す「インスタンス数」とは 1 差異がある (意図的 off-by-one)。
+
+<!-- /constants -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
