@@ -441,3 +441,65 @@ REST/gNMI 書き込み経路なし（手動 JSON 投入が主経路）。
 
 `-1` の場合 `createBfdSession()` は BFD セッション SET 時に `rx_interval` / `tx_interval` フィールドを付加しない（vnetorch.cpp:2078-2086）。これにより BFD デーモン側のデフォルトインターバルがそのまま使用される。
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/vnet-route-side-effects.md -->
+<!-- source: sonic-swss/orchagent/vnetorch.cpp -->
+
+`VNET_ROUTE` / `VNET_ROUTE_TUNNEL` の CONFIG_DB 書込は `VNetCfgRouteOrch` が即座に APPL_DB へ passthrough する。その後 APPL_DB 消費側の `VNetRouteOrch` が SAI 反映を行い、条件次第でさらに STATE_DB や APPL_DB（BFD）への副次書込が発生する。
+
+### 副次書込一覧
+
+| DB | テーブル | キー形式 | トリガ | 条件 |
+|----|---------|---------|--------|------|
+| APPL_DB | `VNET_ROUTE_TABLE` | `<vnet>:<prefix>` | CONFIG_DB SET/DEL | 常時（passthrough） |
+| APPL_DB | `VNET_ROUTE_TUNNEL_TABLE` | `<vnet>:<prefix>` | CONFIG_DB SET/DEL | 常時（passthrough） |
+| APPL_DB | `BFD_SESSION_TABLE` | `<type>:<vrf>:<iface>:<peer>` | `endpoint_monitor` 設定時 | `VNET_ROUTE_TUNNEL` の `endpoint_monitor` 指定時のみ |
+| STATE_DB | `VNET_ROUTE_TUNNEL_TABLE` | `<vnet>\|<prefix>` | BFD 状態変化時 | `endpoint_monitor` 指定時のみ |
+| STATE_DB | `ADVERTISE_NETWORK_TABLE` | `<prefix>` | SAI 経路反映後 | 親 `VNET` の `advertise_prefix=true` 時のみ |
+
+### 詳細
+
+#### APPL_DB passthrough（常時）
+
+`VNetCfgRouteOrch::doVnetRouteTask()` / `doVnetTunnelRouteTask()` が CONFIG_DB 書込と同一イテレーション内で即座に実行される（vnetorch.cpp:3638-3661）。KEY の区切り文字を `|` → `:` に変換するのみで、フィールドはそのまま転送する。
+
+- `VNET_ROUTE` → `APPL_DB/VNET_ROUTE_TABLE:<vnet>:<prefix>`
+- `VNET_ROUTE_TUNNEL` → `APPL_DB/VNET_ROUTE_TUNNEL_TABLE:<vnet>:<prefix>`
+
+#### APPL_DB / `BFD_SESSION_TABLE`（`endpoint_monitor` 指定時）
+
+`VNET_ROUTE_TUNNEL` に `endpoint_monitor` フィールドが設定されると、`VNetRouteOrch::createBfdSession()` が各 monitor IP に対して BFD セッションエントリを APPL_DB に書き込む（vnetorch.cpp:2046, 2078-2086）。
+
+- **キー**: `default:default:default:<monitor_ip>`（VRF・インタフェースはデフォルト）
+- **フィールド**: `local_addr`, `multihop`, `type`（`rx_interval` / `tx_interval` は `-1` のとき付加しない）
+- **DEL**: 経路削除時に `deleteBfdSession()` がエントリを削除する
+
+#### STATE_DB / `VNET_ROUTE_TUNNEL_TABLE`（endpoint_monitor 指定時）
+
+`gBfdOrch->attach(this)` で登録した BFD 状態変化コールバックが呼ばれると、`updateVnetRouteEntry()` が STATE_DB にトンネル経路の active/inactive 状態を書き込む（vnetorch.cpp:2572, 2614）。
+
+- **`state=active`**: BFD セッション UP — `active_endpoints` に現在 UP の endpoint IP を列挙
+- **`state=inactive`**: 全 endpoint の BFD がダウン — `active_endpoints` は空文字列
+- **タイミング**: CONFIG_DB 書込直後ではなく、BFD セッション状態が変化したタイミングで発生する
+
+定数: `STATE_VNET_RT_TUNNEL_TABLE_NAME = "VNET_ROUTE_TUNNEL_TABLE"` (`schema.h:495`)
+
+#### STATE_DB / `ADVERTISE_NETWORK_TABLE`（`advertise_prefix=true` 時）
+
+親 `VNET` エントリに `advertise_prefix=true` が設定されている場合、`VNetRouteOrch::setBgpNetwork()` が STATE_DB に書き込む（vnetorch.cpp:2645-2651）。
+
+- **SET**: `state=active` フィールドを書き込む。`fpmsyncd` / `bgpcfgd` が購読して BGP へ経路広告を通知する
+- **DEL**: 経路削除時にエントリを削除し、BGP 広告を取り消す
+- **条件**: VNET_ROUTE および VNET_ROUTE_TUNNEL どちらも発生しうる（親 VNET 設定次第）
+
+定数: `STATE_ADVERTISE_NETWORK_TABLE_NAME = "ADVERTISE_NETWORK_TABLE"` (`schema.h:496`)
+
+!!! note "副次書込の発生タイミング"
+    APPL_DB passthrough は CONFIG_DB 書込と同一イテレーション内で即座に発生する。一方 STATE_DB への書込は SAI 反映後（VNET / BFD セッション状態変化後）に発生するため、CONFIG_DB 書込からの遅延が生じる点に注意。
+
+!!! note "VNET_ROUTE（underlay）の STATE_DB 書込なし"
+    `VNET_ROUTE`（underlay 経路）は BFD モニタリングを行わないため、STATE_DB への書込は発生しない。STATE_DB 副次書込は `VNET_ROUTE_TUNNEL` かつ `endpoint_monitor` を設定した場合のみ生じる。
+<!-- /side-effects -->
