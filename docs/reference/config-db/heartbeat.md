@@ -352,6 +352,40 @@ CONFIG_DB `HEARTBEAT` テーブルの変更に伴って副次的に書き込ま�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `sonic-buildimage/src/sonic-supervisord-utilities/scripts/supervisor-proc-exit-listener:124-135` (`load_heartbeat_alert_interval`)、`sonic-buildimage/src/sonic-supervisord-utilities-rs/src/proc_exit_listener.rs:212-233` (Rust 版)、`sonic-buildimage/dockers/docker-orchagent/orchagent.sh:127-130` 精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/heartbeat-pubsub.md`
+
+### 購読方式: なし (起動時の一括読み込みのみ — Redis pub/sub 不使用)
+
+`HEARTBEAT` テーブルを読む全コンシューマは **Redis keyspace notification / ConsumerStateTable / SubscriberStateTable を使用しない**。CONFIG_DB への HSET 書き込みに対して Redis の publish 通知は発火するが、これを受け取る購読プロセスは存在しない。
+
+| コンポーネント | 読み方式 | タイミング | 備考 |
+|---|---|---|---|
+| `supervisor-proc-exit-listener` (Python) | `ConfigDBConnector.get_table("HEARTBEAT")` | 起動時 1 回のみ (`load_heartbeat_alert_interval()` L124-135) | 起動後に CONFIG_DB を再読しない。変更は daemon 再起動後に有効 |
+| `supervisor-proc-exit-listener` (Rust) | `config_db.get_table(HEARTBEAT_TABLE_NAME)` | 起動時 1 回のみ (`proc_exit_listener.rs:212-233`) | 同上 |
+| `orchagent.sh` | `sonic-db-cli CONFIG_DB hget "HEARTBEAT\|orchagent" heartbeat_interval` | orchagent 起動スクリプト実行時 1 回 (`orchagent.sh:127-130`) | 取得値を `-I <interval>` フラグとして orchagent プロセスに引数渡しする |
+| `eventd` | CONFIG_DB を**直接読まない** | — | ZeroMQ RPC (`GLOBAL_OPTION_HEARTBEAT`) 経由でのみ interval を受け取る |
+
+### 変更の反映経路
+
+Redis keyspace notification は発火するが受信側が存在しないため、実質的な反映経路は daemon 再起動のみ:
+
+```
+管理者: sonic-db-cli CONFIG_DB HSET "HEARTBEAT|<name>" alert_interval <v>
+  ↓ Redis keyspace notification "__keyspace@4__:HEARTBEAT|<name>" が PUBLISH される
+  ↓ (受信する SubscriberStateTable / ConsumerStateTable は存在しない — 通知は捨てられる)
+次回 supervisor-proc-exit-listener 再起動時に load_heartbeat_alert_interval() が再読み込み
+```
+
+### APPL_DB / SAI 中継
+
+なし。`HEARTBEAT` テーブルはホストサービス（supervisord 管理下デーモン）の監視設定であり、APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない。
+
+<!-- /pubsub -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
