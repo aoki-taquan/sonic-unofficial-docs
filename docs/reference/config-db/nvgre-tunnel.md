@@ -453,6 +453,44 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 詳細スキャン証跡: `meta/_intermediate/cdb-flow/nvgre-tunnel-side-effects.md`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/nvgre-tunnel-pubsub.md`
+> ソース: `sonic-swss/orchagent/orchdaemon.cpp` L361-364; `sonic-swss/orchagent/nvgreorch.h` L115,155; `sonic-swss/orchagent/orch.h` L389-410
+
+### 購読チャンネル一覧
+
+`NVGRE_TUNNEL` / `NVGRE_TUNNEL_MAP` は **CONFIG_DB 経路のみ**を持ち、APPL_DB 経由の購読チャンネルは存在しない。
+
+| 区間 | DB | テーブル名 | 購読クラス | 発行元 |
+|---|---|---|---|---|
+| CLI/CONFIG_DB → NvgreTunnelOrch | CONFIG_DB (dbId=4) | `NVGRE_TUNNEL` (`CFG_NVGRE_TUNNEL_TABLE_NAME`) | `SubscriberStateTable` | `config nvgre-tunnel add/del ...` (`sonic-utilities/config/plugins/nvgre_tunnel.py`) |
+| CLI/CONFIG_DB → NvgreTunnelMapOrch | CONFIG_DB (dbId=4) | `NVGRE_TUNNEL_MAP` (`CFG_NVGRE_TUNNEL_MAP_TABLE_NAME`) | `SubscriberStateTable` | 同上 |
+| NvgreTunnelOrch/MapOrch → syncd | ASIC_DB (syncd 経由) | — | SAI API 直接呼び出し | `sai_tunnel_api->create_tunnel()` / `create_tunnel_map_entry()` 等 |
+
+### 登録経路
+
+`orchdaemon.cpp:361` で `NvgreTunnelOrch(m_configDb, CFG_NVGRE_TUNNEL_TABLE_NAME)`、`orchdaemon.cpp:363` で `NvgreTunnelMapOrch(m_configDb, CFG_NVGRE_TUNNEL_MAP_TABLE_NAME)` を構築する。両クラスは `Orch2` ベース (`nvgreorch.h:115,155`)。`Orch2` コンストラクタが `Orch(db, tableName)` を呼び (`orch.h:392-395`)、`Orch::addConsumer()` (`orch.cpp:1186-1196`) が `m_configDb` の DB ID = CONFIG_DB を検出して `SubscriberStateTable` を選択する。
+
+### SubscriberStateTable の動作
+
+Redis keyspace 通知 `PSUBSCRIBE __keyspace@4__:NVGRE_TUNNEL|*` / `__keyspace@4__:NVGRE_TUNNEL_MAP|*` を購読。CONFIG_DB への `HSET "NVGRE_TUNNEL|<name>" ...` が PUBLISH されると `Orch2::doTask(Consumer&)` が `addOperation()` / `delOperation()` を呼ぶ。
+
+keyspace 通知のペイロードは Redis 操作名のみ。フィールド値は通知後に `HGETALL` で別途取得する (`subscriberstatetable.cpp:95-`)。
+
+**起動時スナップショット**: `SubscriberStateTable` ctor は PSUBSCRIBE 直後に既存エントリを `SET_COMMAND` として buffer に充填する (`subscriberstatetable.cpp:26-44`)。orchagent 再起動時に CONFIG_DB に残存する `NVGRE_TUNNEL|*` / `NVGRE_TUNNEL_MAP|*` エントリは遅延なく再配信され、`NvgreTunnelOrch` / `NvgreTunnelMapOrch` が再設定を実行する。
+
+### ProducerStateTable は不使用
+
+CONFIG_DB 経路では `ProducerStateTable` を使用しない。CLI (`sonic-utilities/config/plugins/nvgre_tunnel.py`) は `ConfigDBConnector.set_entry()` → 直接 Redis `HSET` で書き込む。APPL_DB への中継テーブルは存在せず、`NVGRE_TUNNEL` / `NVGRE_TUNNEL_MAP` の変更は常に CONFIG_DB → `SubscriberStateTable` → NvgreTunnelOrch → SAI の経路を通る。
+
+### orchList 内の位置
+
+`orchdaemon.cpp:598-599` で `m_orchList.push_back(nvgre_tunnel_orch)` / `m_orchList.push_back(nvgre_tunnel_map_orch)` が末尾に追加される。`gPortsOrch`（`m_orchList` の上位）への依存は `allPortsReady` ガードではなく `gPortsOrch->getVlanByVlanId()` の直接呼び出しで表現される (Phase B 参照)。
+
+<!-- /pubsub -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
