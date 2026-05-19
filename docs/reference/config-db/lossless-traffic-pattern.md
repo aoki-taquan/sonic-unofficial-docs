@@ -229,4 +229,59 @@ show buffer profile
 
 > **スキャン証跡**: `buffers_config.j2` L342-347 全行読了、`db_migrator.py` L414 確認、`buffer_headroom_mellanox.lua` L91-102, 146-147 全行読了、`buffer_headroom_barefoot.lua` L80-90, 114 全行読了、`sonic-lossless-traffic-pattern.yang` 全行読了。
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込順依存 (Task F Phase B)
+
+`LOSSLESS_TRAFFIC_PATTERN` はベンダー別 Lua プラグイン (`buffer_headroom_<vendor>.lua`) が
+`buffermgrdyn` から呼び出された際に CONFIG_DB から直接参照される。
+そのため、ヘッドルーム計算が走るより前にこのテーブルが CONFIG_DB に存在していなければならない。
+
+### BUFFER_POOL 先行必須
+
+`buffermgrdyn` はヘッドルーム計算全体を `m_bufferPoolReady` フラグで制御する。
+`m_bufferPoolReady == false` の間は Lua プラグイン自体が呼び出されないため、
+`LOSSLESS_TRAFFIC_PATTERN` が CONFIG_DB に存在していても headroom 計算は実行されない。
+
+| 依存テーブル | 理由 | 違反時の挙動 | evidence |
+|---|---|---|---|
+| `BUFFER_POOL` | `m_bufferPoolReady == false` のままでは Lua プラグインが呼ばれない | BUFFER_PROFILE の APPL_DB 書き込みがデファー。pool 登録後に `handlePendingBufferObjects()` が一括適用 | `buffermgrdyn.cpp:892-896` |
+
+### DEFAULT_LOSSLESS_BUFFER_PARAMETER 先行必須
+
+`buffermgrdyn` は `m_defaultThreshold` が空の場合もヘッドルーム計算をデファーする。
+`m_defaultThreshold` は `DEFAULT_LOSSLESS_BUFFER_PARAMETER` の `default_dynamic_th` フィールドから取得する。
+また Lua プラグイン自身も `DEFAULT_LOSSLESS_BUFFER_PARAMETER` テーブルを直接参照する。
+
+| 依存テーブル | 理由 | 違反時の挙動 | evidence |
+|---|---|---|---|
+| `DEFAULT_LOSSLESS_BUFFER_PARAMETER` | `m_defaultThreshold.empty()` でデファー。Lua 内でも `KEYS DEFAULT_LOSSLESS_BUFFER_PARAMETER*` + `HGET over_subscribe_ratio` を直接読む | BUFFER_PROFILE の APPL_DB 書き込みがデファー | `buffermgrdyn.cpp:1460` / `buffer_headroom_mellanox.lua:105-106` |
+
+### LOSSLESS_TRAFFIC_PATTERN 自身の存在必須制約
+
+`buffer_headroom_<vendor>.lua` は `KEYS 'LOSSLESS_TRAFFIC_PATTERN*'` でキー一覧を取得し、
+`lossless_traffic_keys[1]` に対して `HGETALL` を実行する。
+エントリが 0 件の場合 `lossless_traffic_keys[1]` は `nil` となり、
+`HGETALL nil` が Lua エラーとなってヘッドルーム計算全体が失敗する。
+その結果、動的バッファモデルにおける全ロスレスポートの BUFFER_PROFILE が
+APPL_DB に転送されず、PFC ヘッドルームが設定されない状態になる。
+
+| 条件 | 挙動 | evidence |
+|---|---|---|
+| `LOSSLESS_TRAFFIC_PATTERN` エントリが 0 件 | `lossless_traffic_keys[1]` が nil → `HGETALL nil` → Lua エラー → headroom 計算失敗 | `buffer_headroom_mellanox.lua:91-94` |
+| `LOSSLESS_TRAFFIC_PATTERN` エントリが 0 件 (Barefoot) | 同様: `lossless_traffic_keys[1]` が nil → `HGETALL nil` → エラー | `buffer_headroom_barefoot.lua:80-83` |
+
+### STATE_DB.ASIC_TABLE 先行必須 (Mellanox のみ)
+
+Mellanox 向け Lua プラグインは STATE_DB の `ASIC_TABLE` から `cell_size`、`pipeline_latency`、
+`mac_phy_delay`、`peer_response_time` を読み込む。
+これらは LOSSLESS_TRAFFIC_PATTERN の値 (`mtu`、`small_packet_percentage`) とともに
+ヘッドルーム計算式に入力される。
+
+| 依存テーブル | 理由 | 違反時の挙動 | evidence |
+|---|---|---|---|
+| `STATE_DB.ASIC_TABLE` (Mellanox) | `cell_size` 等の ASIC パラメータが取得できなければ計算式が `nil` 演算でエラー | headroom 計算失敗 → BUFFER_PROFILE が APPL_DB に転送されない | `buffer_headroom_mellanox.lua:61-80` |
+
+詳細スキャンノートは `meta/_intermediate/cdb-flow/lossless-traffic-pattern-ordering.md` を参照。
+<!-- /ordering -->
 <!-- glossary-links-injected: b5626ca1f0f9 -->
