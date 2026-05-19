@@ -287,6 +287,39 @@ asic_type = device_info.get_sonic_version_info()['asic_type']
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込み (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/image-state-side.md`
+
+<!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:292-306,440, sonic-sairedis/syncd/scripts/syncd_init_common.sh:20-21, sonic-buildimage/files/image_config/rsyslog/rsyslog-config.sh:33, sonic-utilities/generic_config_updater/field_operation_validators.py:33 -->
+
+`/etc/sonic/sonic_version.yml` の値を起点に副次的に DB へ書き込むのは `ctrmgrd` のみ。他のコンポーネント（`syncd_init_common.sh`・`rsyslog-config.sh`・`generic_config_updater`・`show version`・`db_migrator`）はファイル内容を読み取るが DB への書込は行わない。
+
+| 副次 DB | テーブル / キー | フィールド | 書込み値 | evidence |
+|---------|--------------|---------|---------|---------|
+| STATE_DB | `KUBE_LABEL_TABLE\|kube_labels` | `sonic_version` | `build_version` の値 | `ctrmgrd.py:301, 305-306` |
+
+### ctrmgrd による STATE_DB 書込みの詳細
+
+Kubernetes 環境 (`FEATURE` テーブルで `set_owner=kube` が設定されている場合) においてのみ動作する。`ctrmgrd.py:292-306` の `set_node_labels()` 関数が、`build_version` を Kubernetes ノードラベル `sonic_version` として STATE_DB の `KUBE_LABEL_TABLE|kube_labels` に書き込む。
+
+**書込みタイミング**: ctrmgrd 起動後に Kubernetes master 接続が確立した時点で 1 回だけ実行される (`ctrmgrd.py:440`)。以後は `sonic_version.yml` が変わっても再書込みされない（ctrmgrd 再起動が必要）。
+
+**非 Kubernetes 環境**: `set_node_labels()` が呼ばれないため、STATE_DB への副次書込みは一切発生しない。
+
+### 副次書込みなしのコンポーネント
+
+| コンポーネント | 参照フィールド | 用途 | DB 書込み |
+|---|---|---|---|
+| `syncd_init_common.sh` | `asic_type` | syncd 起動パラメータ決定 (`syncd_init_common.sh:20-21`) | なし（環境変数として利用） |
+| `rsyslog-config.sh` | `build_version` | rsyslog タグ文字列設定 (`rsyslog-config.sh:33`) | なし（設定ファイルのみ） |
+| `generic_config_updater` | `asic_type`、`build_version` | ASIC 固有バリデーション判定 (`field_operation_validators.py:33`) | なし |
+| `db_migrator.py` | `asic_type` | asic 固有マイグレーション分岐 (`db_migrator.py:96-97`) | なし（判定用途のみ） |
+| `show version` | 全フィールド | CLI 表示 | なし |
+
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: `sonic-buildimage/build_debian.sh` L642-654 — sonic_version.yml 生成処理。<https://github.com/sonic-net/sonic-buildimage/blob/master/build_debian.sh>

@@ -1,6 +1,6 @@
 ---
 title: DASH_ROUTE_RULE_TABLE テーブル
-description: "DASH_ROUTE_RULE_TABLE — DASH インバウンドルーティングエントリ (Inbound Routing Rule) を保持するテーブル。ENI・VNI・SIP プレフィックス・優先度をキーとして、VNI トンネルデカプセルと PA 検証を制御する。"
+description: "DASH_ROUTE_RULE_TABLE — DASH インバウンドルーティングエントリ (Inbound Routing Rule) を保持するテーブル。ENI・VNI・SIP プレフィックス・優先度をキーとして、VNI トンネルデカプセルと PA 検証を制御する。ZMQ 受信チャネル・APPL_STATE_DB フィードバックを含む Phase A-G 分析。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-14
@@ -351,5 +351,91 @@ it = consumer.m_toSync.erase(it);
 - **ASIC_DB**: SAI → syncd 経由（`DashRouteOrch` の直接書込なし）
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`DASH_ROUTE_RULE_TABLE` の受信・フィードバックは 2 系統の通信経路を使う。
+
+### 受信側: ZMQ チャネル (コントローラ → orchagent)
+
+`DashRouteOrch` は `ZmqOrch` を継承し、ZMQ 経由で protobuf メッセージを受け取る (`dashrouteorch.cpp:49-52`):
+
+```
+コントローラ
+  ZmqProducerStateTable → ZMQ ipc/tcp (protobuf バイナリ)
+    → ZmqServer (orchagent 内)
+      → ZmqConsumerStateTable::handleReceivedData()
+        → DashRouteOrch::doTaskRouteRuleTable()
+```
+
+`ZmqOrch::addConsumer()` が `ZmqConsumerStateTable` を生成し `ZmqServer` にテーブル名ベースのハンドラを登録する (`zmqorch.cpp:66`):
+
+```cpp
+addExecutor(new ZmqConsumer(
+    new ZmqConsumerStateTable(db, tableName, *zmqServer, gBatchSize, pri, dbPersistence),
+    this, tableName, orderedQueue));
+```
+
+`ZmqConsumerStateTable` コンストラクタで `ZmqServer` にハンドラ登録 (`zmqconsumerstatetable.cpp:47`):
+
+```cpp
+m_zmqServer.registerMessageHandler(m_db->getDbName(), tableName, this);
+```
+
+`ZmqServer` がメッセージを受信し、テーブル名でルーティングして `handleReceivedData()` を呼び出す。`SelectableEvent` で orchagent メインループ (`select()`) に fd 通知が来るため、タイムアウト（1000 ms）を待たず即時起動する (`orchdaemon.cpp:23`)。
+
+#### dbPersistence フラグ
+
+`ZmqOrch` のデフォルト `dbPersistence = true` のため `AsyncDBUpdater` が有効。ZMQ 経由で受信したメッセージは APPL_DB にも非同期で書き込まれる（Redis keyspace を通じた参照も可能になる）。
+
+#### ZMQ エンドポイント
+
+`orchdaemon.cpp:1329`: `ORCH_NORTHBOND_DASH_ZMQ_ENABLED` フィーチャーフラグが `true`（デフォルト有効）のとき DASH ZMQ が活性化される:
+
+```cpp
+if (get_feature_status(ORCH_NORTHBOND_DASH_ZMQ_ENABLED, true))
+    dash_zmq_server = m_zmqServer;
+```
+
+エンドポイントアドレスは orchagent 起動時の `-q` オプションで指定する (`main.cpp:114`):
+
+```
+-q zmq_server_address: ZMQ server address (default disable ZMQ)
+```
+
+### 送信側: APPL_STATE_DB フィードバック (orchagent → コントローラ)
+
+SAI プログラミング完了後、`DashRouteOrch` は APPL_STATE_DB の `DASH_ROUTE_RULE_TABLE` に結果を書き戻す:
+
+| 操作 | タイミング | メソッド | evidence |
+|------|-----------|---------|---------|
+| SET (result = "0" 成功) | pre-op 依存解決済みケース / post-op SAI flush 後 | `writeResultToDB(dash_route_rule_result_table_, key, result)` | `dashrouteorch.cpp:644, 705` |
+| SET (result = "1" 失敗) | post-op SAI 失敗確定後 | 同上 | `dashrouteorch.cpp:705` |
+| DEL (エントリ削除) | DEL 操作成功後 | `removeResultFromDB(dash_route_rule_result_table_, key)` | `dashrouteorch.cpp:656, 712` |
+
+`Table::set()` は APPL_STATE_DB (DB index 14) に HSET を行うとともに keyspace notification を PUBLISH する。コントローラは `__keyspace@14__:DASH_ROUTE_RULE_TABLE|<key>` チャネルへの PSUBSCRIBE でプログラミング完了を検知できる。
+
+### 通信フロー全体図
+
+```mermaid
+flowchart LR
+  CTRL["コントローラ\n(ZmqProducerStateTable)"]
+  ZS["ZmqServer\n(orchagent)"]
+  ZCST["ZmqConsumerStateTable\nDASH_ROUTE_RULE_TABLE"]
+  OA["DashRouteOrch\ndoTaskRouteRuleTable()"]
+  SAI["SAI DASH\nInbound Routing API"]
+  RES["APPL_STATE_DB\nDASH_ROUTE_RULE_TABLE\n(result)"]
+
+  CTRL -->|ZMQ protobuf| ZS
+  ZS -->|handleReceivedData| ZCST
+  ZCST --> OA
+  OA --> SAI
+  OA -->|writeResultToDB| RES
+  RES -->|keyspace PUBLISH| CTRL
+```
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/route-rule-pubsub.md`
+<!-- /pubsub -->
 
 [^1]: sonic-net/SONiC `doc/dash/dash-sonic-hld.md` §3.2.10 "ROUTE RULE TABLE - INBOUND" (ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)

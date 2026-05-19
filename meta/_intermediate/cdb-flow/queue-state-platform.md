@@ -1,58 +1,121 @@
-# QUEUE_COUNTER_CAPABILITIES (STATE_DB) — Phase H プラットフォーム差スキャンノート
+# QUEUE_COUNTER_CAPABILITIES (STATE_DB) — Phase H プラットフォーム差分調査ノート
 
-対象テーブル: `STATE_DB / QUEUE_COUNTER_CAPABILITIES`
-Consumer: `PortsOrch::initCounterCapabilities()` (`sonic-swss/orchagent/portsorch.cpp:1850-1963`)
-スキャン範囲: portsorch.cpp 全行精読、flexcounterorch.cpp 確認
-
----
-
-## プラットフォーム差の検出
-
-### 1. WRED/ECN キューカウンタ — SAI sai_query_stats_capability() の結果はプラットフォーム依存
-
-`initCounterCapabilities()` は `sai_query_stats_capability(switchId, SAI_OBJECT_TYPE_QUEUE, ...)` を呼び、返却された `sai_stat_capability_list_t` に `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` 等が含まれるかで `isSupported` を決定する。
-
-この SAI API の実装は ASIC ベンダーの libsai 実装に依存する。
-
-- **Broadcom (BCM) 系**: WRED/ECN カウンタをサポートする実装が一般的。クエリ結果に対応 SAI 統計が含まれる。
-- **Mellanox/NVIDIA 系**: プラットフォームによって WRED ECN マーキングと WRED ドロップの一方のみサポート、あるいは全サポートのケースがある。PortsOrch に Mellanox 固有の `isMlnxPlatform()` 関数（`portsorch.cpp:689-703`）が存在するが、`initCounterCapabilities()` 自体は `isMlnxPlatform()` の分岐を持たず、SAI クエリ結果のみで判定する。
-- **DPU (SmartSwitch DPU)**: `gMySwitchType == "dpu"` の場合、`initializeQueuesBulk()` がスキップされる（`portsorch.cpp:6589`）ため、queue OID リストが未初期化のまま。`initCounterCapabilities()` 自体は DPU でもスキップされないが、SAI DPU 実装が WRED/ECN キュー統計をサポートしない場合は全フラグ `"false"` となる。
-- **VS (Virtual Switch)**: SAI VS 実装では `sai_query_stats_capability` が `SAI_STATUS_NOT_SUPPORTED` または SUCCESS でも空リストを返すことがある。この場合も全フラグ `"false"` となる。
-
-evidence: `portsorch.cpp:1881-1921`
-
-### 2. `SAI_STATUS_NOT_SUPPORTED` / `SAI_STATUS_NOT_IMPLEMENTED` の扱い
-
-SAI 実装が `sai_query_stats_capability` 自体を未実装の場合、`SAI_STATUS_NOT_SUPPORTED` が返る。`initCounterCapabilities()` はこれを SAI クエリ失敗として扱い（`status != SAI_STATUS_SUCCESS` 分岐）、`SWSS_LOG_NOTICE` を出力して全フラグ `"false"` を確定する。
-
-特定 ASIC が部分的に WRED をサポートする例:
-- ECN マーキング（MARKED_PACKETS / MARKED_BYTES）のみサポートする場合 → WRED_DROPPED_* は `"false"`
-- WRED ドロップ（DROPPED_PACKETS / DROPPED_BYTES）のみサポートする場合 → ECN_MARKED_* は `"false"`
-
-4 つのフラグは独立して設定されるため、部分的な `"true"` / `"false"` の組み合わせが実運用上存在する。
-
-evidence: `portsorch.cpp:1889-1920`
-
-### 3. VoQ スイッチ — キューカウンタへの影響
-
-`gMySwitchType == "voq"` の場合、`FlexCounterOrch::getQueueConfigurations()` は `create_only_config_db_buffers` の値に関わらず全キューを対象とする（`flexcounterorch.cpp:544-553`）。ただし `QUEUE_COUNTER_CAPABILITIES` の書き込みロジックは VoQ 分岐を持たず、SAI クエリ結果のみで決まる。VoQ 環境では System Port ごとの VOQ（Virtual Output Queue）も `queue_stat_ids` + `voq_stat_ids` で管理されるが、`QUEUE_COUNTER_CAPABILITIES` に `voq_stat_ids` に対応するキーは定義されていない。
-
-evidence: `flexcounterorch.cpp:544-553`、`portsorch.cpp:8601-8614`
-
-### 4. プラットフォーム無依存部分
-
-- **書き込みロジック**: `initCounterCapabilities()` 内の 4 キー初期化 → SAI クエリ → 条件付き上書きのシーケンスはプラットフォーム分岐なし
-- **キー名文字列**: `WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` 等のリテラルはコードにハードコードされており、プラットフォームにより変わらない
-- **consumer の参照方法**: `wredstat` / `portstat.py` は `isSupported` フィールドを直接 GET し、プラットフォーム識別ロジックを持たない
+調査日: 2026-05-19
+対象ページ: `docs/reference/config-db/queue-state.md`
+対象テーブル: `STATE_DB QUEUE_COUNTER_CAPABILITIES`
+Producer: `PortsOrch::initCounterCapabilities()` (`sonic-swss/orchagent/portsorch.cpp:1850-1969`)
 
 ---
 
-## プラットフォーム差サマリ
+## 調査方針
 
-| プラットフォーム / 条件 | QUEUE_COUNTER_CAPABILITIES への影響 | 根拠 |
-|----------------------|----------------------------------|------|
-| WRED 完全サポート ASIC (BCM 等) | 4 フラグすべて `"true"` になりうる | `sai_query_stats_capability` が 4 統計を返す |
-| WRED 部分サポート ASIC | ECN のみ / WRED ドロップのみ `"true"` | 返却リストに含まれる統計のみ `"true"` |
-| WRED 非サポート ASIC / VS | 全フラグ `"false"` | クエリが SUCCESS でも対応統計なし、またはクエリ失敗 |
-| DPU (SmartSwitch) | 全フラグ `"false"` が一般的 | DPU SAI は WRED キュー統計未対応が多い |
-| VoQ スイッチ | FlexCounter 対象が全キューに拡張される（CAPABILITIES 書き込み自体はプラットフォーム差なし） | `getQueueConfigurations()` の分岐 |
+`initCounterCapabilities()` の全コードパスを精読し、`gMySwitchType` や `isChassisDbInUse()` 等の
+プラットフォーム条件分岐が存在するかを確認する。
+
+---
+
+## 1. initCounterCapabilities() — プラットフォーム条件分岐の有無
+
+`PortsOrch::initCounterCapabilities()` (`portsorch.cpp:1850-1969`) には
+`gMySwitchType` / `isChassisDbInUse()` / `m_cmisModuleAsicSyncSupported` 等の
+プラットフォーム条件分岐は一切存在しない。
+
+呼び出し元 (`portsorch.cpp:1107`) も無条件呼び出しであり、DPU / VOQ / 標準 BOX スイッチの
+いずれの構成でも実行される。
+
+```cpp
+// portsorch.cpp:1107 (構造的に無条件 — DPU / VOQ / 標準どれも到達)
+initCounterCapabilities(gSwitchId);
+```
+
+---
+
+## 2. 書き込まれるキー — 全プラットフォーム共通
+
+4 キーはハードコードされたリテラル文字列:
+
+```cpp
+// portsorch.cpp:1872-1875
+m_queueCounterCapabilitiesTable->set("WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER",  fieldValuesFalse);
+m_queueCounterCapabilitiesTable->set("WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER", fieldValuesFalse);
+m_queueCounterCapabilitiesTable->set("WRED_ECN_QUEUE_WRED_DROPPED_PKT_COUNTER",  fieldValuesFalse);
+m_queueCounterCapabilitiesTable->set("WRED_ECN_QUEUE_WRED_DROPPED_BYTE_COUNTER", fieldValuesFalse);
+```
+
+これらのキーは `gMySwitchType` に依存しない。DPU/VOQ 環境でも同じ 4 キーが書き込まれる。
+
+---
+
+## 3. `isSupported` の値 — SAI 実装依存
+
+`sai_query_stats_capability(gSwitchId, SAI_OBJECT_TYPE_QUEUE, ...)` の結果が唯一の
+プラットフォーム差分源。
+
+| ケース | 典型的プラットフォーム | 結果 |
+|--------|---------------------|------|
+| SAI が WRED/ECN キューカウンタをサポート | Broadcom ASIC (WRED 対応 SKU) | 対応キーが `"true"` |
+| SAI が `SAI_STATUS_SUCCESS` を返すが WRED 統計がリストに含まれない | WRED 未対応 SKU / ソフトウェア SAI | 全 4 キーが `"false"` |
+| SAI が `SAI_STATUS_NOT_SUPPORTED` / その他エラーを返す | Mellanox legacy / p4 SAI / vstest | 全 4 キーが `"false"` のまま確定 |
+| SAI が `SAI_STATUS_BUFFER_OVERFLOW` を返す | SAI ケイパビリティリストが大きいプラットフォーム | 1 回リトライ後、成功すれば通常フロー |
+
+---
+
+## 4. VOQ シャーシの影響
+
+VOQ (`gMySwitchType == "voq"`) でも `initCounterCapabilities()` は実行される。
+ただし WRED/ECN カウンタの FlexCounter 登録
+(`addWredQueueFlexCountersPerPortPerQueueIndex`) は、VOQ ポートに対して
+`m_port_voq_ids` を使用する (`portsorch.cpp:9583-9586`)。
+
+これは COUNTERS_DB への登録対象 OID の差異であり、`QUEUE_COUNTER_CAPABILITIES` テーブルの
+`isSupported` フィールド値には影響しない。
+
+VoQ はハードウェアで WRED/ECN をサポートしないことが多く、VOQ 環境では全 4 キーが
+`"false"` のままになるケースが実運用上多い。
+
+---
+
+## 5. DPU の影響
+
+DPU (`gMySwitchType == "dpu"`) でも `initCounterCapabilities()` は実行される。
+DPU の SAI 実装は WRED 統計をサポートしない場合が多く、全 4 キーが `"false"` となる可能性が高い。
+
+コードレベルでの DPU 条件分岐はない（DPU 用 skip なし）。
+
+---
+
+## 6. wred_queue_stat_ids — 全プラットフォーム共通
+
+```cpp
+// portsorch.cpp:429-435
+static const vector<sai_queue_stat_t> wred_queue_stat_ids =
+{
+    SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS,
+    SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES,
+    SAI_QUEUE_STAT_WRED_DROPPED_PACKETS,
+    SAI_QUEUE_STAT_WRED_DROPPED_BYTES
+};
+```
+
+4 つの SAI 統計 enum はプラットフォーム非依存の静的定数。
+
+---
+
+## 7. まとめ
+
+`QUEUE_COUNTER_CAPABILITIES` テーブルの構造（キー名・フィールド名）は
+全プラットフォームで共通。唯一のプラットフォーム差分は `isSupported` の値であり、
+それは `sai_query_stats_capability()` に対する SAI SDK の応答に依存する。
+
+WRED/ECN カウンタをサポートする SAI 実装 (主に Broadcom ASIC 系) では
+対応キーが `"true"` となるが、VOQ シャーシ / DPU / p4 SAI / vstest 環境では
+通常全て `"false"` となる。
+
+---
+
+## 証拠リンク
+
+- `sonic-swss/orchagent/portsorch.cpp:1850-1969` — `initCounterCapabilities()` 全実装
+- `sonic-swss/orchagent/portsorch.cpp:1107` — 無条件呼び出し
+- `sonic-swss/orchagent/portsorch.cpp:429-435` — `wred_queue_stat_ids` 定数
+- `sonic-swss/orchagent/portsorch.cpp:9574-9593` — `addWredQueueFlexCountersPerPortPerQueueIndex` (VOQ 対応)
