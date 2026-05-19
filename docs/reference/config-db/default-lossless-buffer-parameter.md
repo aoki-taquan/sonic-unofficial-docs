@@ -300,6 +300,38 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 
 > **スキャン証跡**: `handleDefaultLossLessBufferParam` L1978-2046 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2050 全行読了、`buffermgrdyn.cpp` L494-496 読了。4 件依存抽出。
 <!-- /ordering -->
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+### 購読方式 — SubscriberStateTable + keyspace PSUBSCRIBE
+
+`buffermgrdyn` は CONFIG_DB の `DEFAULT_LOSSLESS_BUFFER_PARAMETER` テーブルを `SubscriberStateTable` で購読する。`buffermgrd.cpp` L174-186 が渡す `vector<TableConnector>` に `TableConnector(&cfgDb, CFG_DEFAULT_LOSSLESS_BUFFER_PARAMETER)` (L183) が含まれ、`Orch::addConsumer()` (`orch.cpp:1188-1190`) が CONFIG_DB 向けに `SubscriberStateTable` を生成する。
+
+`SubscriberStateTable` は内部で Redis keyspace notification を PSUBSCRIBE する。
+
+| テーブル | DB | DB ID | PSUBSCRIBE パターン |
+|---------|-----|-------|-------------------|
+| `DEFAULT_LOSSLESS_BUFFER_PARAMETER` | CONFIG_DB | 4 | `__keyspace@4__:DEFAULT_LOSSLESS_BUFFER_PARAMETER\|*` |
+
+### 主ループ — SELECT_TIMEOUT 1000 ms
+
+`buffermgrd.cpp` L22 で `#define SELECT_TIMEOUT 1000` (ミリ秒)。主ループ (L220-238) は `s.select(&sel, 1000)` でブロックする。
+
+- **イベント到着時**: `Consumer::execute()` → `BufferMgrDynamic::doTask(Consumer&)` → `handleDefaultLossLessBufferParam()` が呼ばれる。
+- **タイムアウト時 (1000 ms)**: `buffmgr->doTask()` (引数なし) が呼ばれ、`task_need_retry` でキューに残った全エントリを再処理する。
+
+通常は keyspace notification が即時到達するため、CONFIG_DB 変更から処理開始までの実レイテンシは 1000 ms 以下。
+
+### 起動時の直接 hget
+
+`buffermgrdyn.cpp` L148-154 でコンストラクタ内に `m_cfgDefaultLosslessBufferParam.hget()` を直接呼び出し、起動時に既存エントリの `default_dynamic_th` を先行取得する。これは `SubscriberStateTable` 経由ではなく `Table` クラスの直接読み取りであり、デーモン起動時点で既に CONFIG_DB に存在するエントリを即座に反映する。
+
+### 書き込み側
+
+`DEFAULT_LOSSLESS_BUFFER_PARAMETER` は `buffermgrdyn` にとって**消費専用**テーブル。CONFIG_DB への書き込みは外部ツール (`sonic-cfggen`, `db_migrator.py`, 手動 `sonic-db-cli`) が `Table::set()` で直接 hset し、keyspace notification をトリガーする。`ProducerStateTable` は使用しない。
+
+> 詳細: `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-pubsub.md`
+<!-- /pubsub -->
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
