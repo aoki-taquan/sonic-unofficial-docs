@@ -322,6 +322,63 @@ reasoning: PORT_QOS_MAP DEL 時に set_port_attribute で各 SAI 属性を NULL 
 -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`DOT1P_TO_PG_MAP` テーブルは存在しないが、等価な 2 段マッピング経路を処理する `QosOrch` の Redis 通信メカニズムを示す。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | チャンネル / パターン |
+|------|------|----------------------|
+| CONFIG_DB → QosOrch (`DOT1P_TO_TC_MAP`) | `SubscriberStateTable` | `__keyspace@{config_db_id}__:DOT1P_TO_TC_MAP\|*` |
+| CONFIG_DB → QosOrch (`TC_TO_PRIORITY_GROUP_MAP`) | `SubscriberStateTable` | `__keyspace@{config_db_id}__:TC_TO_PRIORITY_GROUP_MAP\|*` |
+| CONFIG_DB → QosOrch (`PORT_QOS_MAP`) | `SubscriberStateTable` | `__keyspace@{config_db_id}__:PORT_QOS_MAP\|*` |
+| QosOrch → SAI | SAI API 直接呼び出し | `sai_qos_map_api->create_qos_map()` / `sai_port_api->set_port_attribute()` |
+
+### SubscriberStateTable の動作
+
+`QosOrch` は `Orch(db, tableNames)` 基底クラスを介して `CFG_DOT1P_TO_TC_MAP_TABLE_NAME` / `CFG_TC_TO_PRIORITY_GROUP_MAP_TABLE_NAME` / `CFG_PORT_QOS_MAP_TABLE_NAME` など計 15 テーブルに対する `SubscriberStateTable` を登録する (`orchdaemon.cpp:365-384`)。keyspace notification (`PSUBSCRIBE __keyspace@db__:<table>|*`) でエントリ変化を検出し、`pops()` で現在値を読み出す。APPL_DB への中継は行わない。
+
+### select() ループと doTask 実行順序
+
+orchdaemon は `Select::select()` を 1000 ms タイムアウトで実行する。イベント受信時は `Consumer::drain()` → `QosOrch::doTask()` が呼ばれる。
+
+`QosOrch::doTask()` (`qosorch.cpp:2231`) はカスタム drain 順序を実装する:
+
+1. `PORT_QOS_MAP` と `QUEUE` を **除く** 全テーブルを先に drain（`DOT1P_TO_TC_MAP`、`TC_TO_PRIORITY_GROUP_MAP` を含む）
+2. `PORT_QOS_MAP` を drain（参照先マップ解決済みの状態で実行）
+3. 最後に `QUEUE` を drain
+
+この順序により、`DOT1P_TO_TC_MAP` / `TC_TO_PRIORITY_GROUP_MAP` の SAI オブジェクト作成が `PORT_QOS_MAP` 処理より常に先行し、`task_need_retry` の発生を最小化する。
+
+`doTask(Consumer&)` の冒頭では `gPortsOrch->allPortsReady()` チェックがあり、全ポート初期化完了まで処理を保留する (`qosorch.cpp:2254-2258`)。
+
+### データフロー図
+
+```
+CONFIG_DB[DOT1P_TO_TC_MAP|<name>]
+  ↓ SubscriberStateTable (keyspace notification)
+  ↓ PSUBSCRIBE __keyspace@config_db_id__:DOT1P_TO_TC_MAP|*
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::drain() → QosOrch::doTask()
+  ↓   [pass 1: 非 PORT_QOS_MAP/QUEUE テーブルを先に drain]
+  ↓   → handleDot1pToTcTable() / handleTcToPgTable()
+  ↓   → sai_qos_map_api->create_qos_map()
+  ↓   [pass 2: PORT_QOS_MAP drain]
+  ↓   → handlePortQosMapTable()
+  ↓   → sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP)
+  ↓   → sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP)
+ASIC (sairedis → ASIC_DB 経由)
+
+APPL_DB 書き込み: なし
+STATE_DB 書き込み: なし
+NotificationConsumer: なし
+```
+
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:365-384`; `sonic-swss/orchagent/qosorch.cpp:1313,2231-2253`; `sonic-swss/orchagent/qosorch.cpp:1331` (`handleDot1pToTcTable` 登録)
+<!-- /pubsub -->
+
 ## 制約
 
 - `DOT1P_TO_PG_MAP` テーブルは存在しないため、このキー名で CONFIG_DB に書き込んでも `qosorch` は無視する
