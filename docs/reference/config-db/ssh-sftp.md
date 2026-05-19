@@ -272,6 +272,55 @@ hostcfgd 起動
 
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L67-75,1110-1160,1418-1479,2160,2297-2301 -->
+
+`SSH_SFTP` テーブルは存在せず、`Subsystem sftp` 行は CONFIG_DB 管理外の OS テンプレートに固定されている。SFTP サブシステム自体のエントリ変化に起因する副次書込は存在しない。`SSH_SERVER|POLICIES` の変化が `hostcfgd` 経由でファイルシステムを更新し、SFTP セッションに間接的に影響する。
+
+### 副次書込先サマリ
+
+| 副次書込先 | ファイル / サービス | 書込者 | 条件 |
+|---|---|---|---|
+| ファイルシステム | `/etc/ssh/sshd_config` | `SshServer.set_policies()` | `SSH_SERVER\|POLICIES` 変化時・`sshd -T` 検証成功後 |
+| サービス再起動 | `ssh.service` (systemd) | `run_cmd(['systemctl', 'restart', 'ssh'])` | `sshd -T` 検証成功後 |
+| ファイルシステム | `/etc/pam.d/pam-limits-conf` | `PamLimitsCfg.render_conf_file()` | `max_sessions` 変化時 |
+| ファイルシステム | `/etc/security/limits.conf` | `PamLimitsCfg.render_conf_file()` | `max_sessions` 変化時 |
+| APPL_DB | なし | — | — |
+| STATE_DB | なし | — | — |
+| ASIC_DB | なし | — | — |
+
+### sshd_config 更新と SFTP 行の引き継ぎ
+
+`SshServer.set_policies()` (`hostcfgd L1110-1160`) が実行されるたびに `copy2(SSH_CONFG, SSH_CONFG_TMP)` で現行 `/etc/ssh/sshd_config` を一時ファイルへコピーし、`SSH_CONFIG_NAMES` のキーのみを書き換える。`Subsystem` キーは `SSH_CONFIG_NAMES`（`L67-75`）に存在しないため、コピー元の `Subsystem sftp /usr/lib/openssh/sftp-server` 行は常に引き継がれる。
+
+```
+CONFIG_DB SSH_SERVER|POLICIES 変化
+  → hostcfgd ssh_handler
+      ├─ SshServer.set_policies()
+      │   ├─ copy2(sshd_config → sshd_config.tmp)   # Subsystem sftp 行をコピーで引き継ぎ
+      │   ├─ SSH_CONFIG_NAMES のキーを tmp に書き換え  # Subsystem キーは対象外
+      │   ├─ sshd -T -f tmp  (検証)
+      │   │   ├─ OK: rename tmp→sshd_config + systemctl restart ssh
+      │   │   └─ NG: os.remove(tmp)  (ロールバック)
+      │   └─ SFTP 行は変化なし
+      └─ PamLimitsCfg.update_config_file()
+          └─ /etc/pam.d/pam-limits-conf, /etc/security/limits.conf を更新
+```
+
+### SSH サービス再起動による SFTP セッション切断
+
+`systemctl restart ssh` は sshd の完全再起動を伴うため、既存の SSH/SFTP セッションはすべて切断される。新規セッションは再起動後の設定で接続される。SFTP サブシステムの有効状態自体は変わらない。
+
+### DB 書込なし根拠
+
+`SshServer.set_policies()` および `PamLimitsCfg.render_conf_file()` はいずれもファイルシステムとサービス管理のみを操作し、swsscommon DB API を呼び出さない。`HostConfigDaemon` が保持する `state_db_conn`（`hostcfgd:2160`）は FIPS 統計専用であり、SSH ハンドラーチェーンから APPL_DB / STATE_DB / ASIC_DB への書込は行われない。
+
+詳細調査ノートは `meta/_intermediate/cdb-flow/ssh-sftp-side-effects.md` 参照。
+
+<!-- /side-effects -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
