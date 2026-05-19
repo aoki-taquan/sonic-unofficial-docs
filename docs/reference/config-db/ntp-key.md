@@ -511,3 +511,52 @@ CONFIG_DB 変更 (NTP_KEY)
 
 詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-side-effects.md`。
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### Redis 購読方式
+
+`NTP_KEY` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@4__:NTP_KEY|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ |
+|--------|---------|--------------|---------|
+| `hostcfgd` (`NtpCfg` 経由) | `ConfigDBConnector.subscribe()` | `NTP_KEY` | `ntp_srv_key_handler` → `NtpCfg.ntp_srv_key_update()` |
+| `hostcfgd` | 同上 | `NTP_SERVER` | `ntp_srv_key_handler` → `NtpCfg.ntp_srv_key_update()` |
+| `hostcfgd` | 同上 | `NTP` (global) | `ntp_global_handler` → `NtpCfg.ntp_global_update()` |
+
+`hostcfgd` 以外で `NTP_KEY` テーブルを購読するプロセスは `sonic-swss/` に存在しない（orchagent / syncd / mgrd はいずれも NTP_KEY を購読しない）。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config ntp authentication-key add 1 --type sha256 --value <key>
+  ↓ HSET "NTP_KEY|1" type "sha256" value "<base64>"
+Redis keyspace PUBLISH "__keyspace@4__:NTP_KEY|1"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (table, key, data) を生成:
+  data is None → op="DEL"、else → op="SET"
+  ↓ HGETALL 呼出なし — ハンドラが get_table() で全件再取得
+ntp_srv_key_handler(key="1", op="SET", data={...})
+  ↓ NtpCfg.ntp_srv_key_update(
+         config_db.get_table("NTP_SERVER"),  ← NTP_SERVER 全件
+         config_db.get_table("NTP_KEY"))     ← NTP_KEY 全件
+  ↓ キャッシュ比較（差分なし → スキップ）
+  ↓ run_cmd(['systemctl', 'restart', 'chrony'])
+  ↓ ExecStartPre: chrony-config.sh → chrony.keys + chrony.conf 再生成
+```
+
+- keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は `get_table()` で**全件スナップショット**として取得する。
+- `NTP_KEY` と `NTP_SERVER` はどちらが変更されても同一ハンドラ (`ntp_srv_key_handler`) が両テーブルを全件取得して `ntp_srv_key_update()` に渡す。個別フィールドの差分処理は行わない。
+- `op` は `data is None ? "DEL" : "SET"` の 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない (`hostcfgd:2458-2465`)。
+- 起動時は `config_db.listen(init_data_handler=self.load)` (`hostcfgd:2528`) により、Subscribe ループ開始前に `NtpCfg.load()` が `NTP_GLOBAL` / `NTP_SERVER` / `NTP_KEY` を一括スナップショットでキャッシュに適用する。chrony の起動時設定は `ntp-config.service` テンプレートが担うため、`load()` は chrony 再起動をトリガーしない。
+
+### サービス再起動トリガー
+
+| 契機 | 操作 | コード |
+|------|------|--------|
+| `NTP_KEY` または `NTP_SERVER` 変更でキャッシュ差分あり | `systemctl restart chrony` (ExecStartPre で `chrony.keys` + `chrony.conf` 再生成) | `NtpCfg.ntp_srv_key_update()` — `hostcfgd:1396-1402` |
+| キャッシュ差分なし (同値更新) | chrony 再起動スキップ | `hostcfgd:1383-1386` |
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2458-2466` (`make_callback`)、`hostcfgd:2511-2517` (`subscribe` 登録)、`hostcfgd:2527-2528` (`listen`)、`hostcfgd:2387-2391` (`ntp_srv_key_handler`)、`hostcfgd:2255-2272` (起動時スナップショット)、`hostcfgd:1366-1406` (`ntp_srv_key_update`)。詳細分析 `meta/_intermediate/cdb-flow/ntp-key-pubsub.md`。
+<!-- /pubsub -->
