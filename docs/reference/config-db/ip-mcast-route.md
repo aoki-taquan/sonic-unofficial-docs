@@ -429,6 +429,80 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G) — ZMQ 経由の購読
+
+<!-- evidence: sonic-swss/orchagent/p4orch/p4orch.cpp:36-43,51-54,72-79 / orchdaemon.cpp:847-849 / orchdaemon.h:121 / ip_multicast_manager.cpp:84-93,132,147,159,185,230 / l3_multicast_manager.cpp:310-318,329-332,375,433,476,530 -->
+
+`FIXED_IPV4_MULTICAST_TABLE` / `FIXED_IPV6_MULTICAST_TABLE` / `FIXED_MULTICAST_ROUTER_INTERFACE_TABLE` / `REPLICATION_IP_MULTICAST_TABLE` はいずれも **通常の redis ConsumerStateTable / keyspace 通知パスを使わず、専用 ZMQ チャネル経由で配送される**。これは CONFIG_DB の `MIRROR_SESSION` 等を購読する通常の `Orch` + `ConsumerStateTable` 経路とは根本的に異なる通信モデルである。
+
+### 転送経路
+
+| 層 | クラス / 実体 | 役割 |
+|----|--------------|------|
+| 受信エンドポイント | `swss::ZmqServer` (`m_p4OrchZmqServer`、エンドポイント `"ipc:///zmq_swss/p4orch_zmq_swss_ep"`) | P4RT クライアントからの ZMQ フレームを受信 |
+| Orch 基底 | `P4Orch : public ZmqOrch` | 全 P4RT テーブルを 1 インスタンスで保有。`ZmqOrch(db, tableNames, zmqServer, orderedQueue=true, dbPersistence=false)` で初期化 |
+| ディスパッチ | `P4Orch::doTask(ConsumerBase &consumer)` | バッチ受信時に `APP_P4RT_TABLE_NAME` を検証し、`m_p4TableToManagerMap` でテーブル別マネージャに振り分け |
+| ハンドラ (FIXED テーブル) | `p4orch::IpMulticastManager` | `FIXED_IPV4_MULTICAST_TABLE` / `FIXED_IPV6_MULTICAST_TABLE` を処理 |
+| ハンドラ (REPLICATION / FIXED_MULTICAST_ROUTER_INTERFACE テーブル) | `p4orch::L3MulticastManager` | `REPLICATION_IP_MULTICAST_TABLE` / `FIXED_MULTICAST_ROUTER_INTERFACE_TABLE` を処理 |
+| 応答パス | `ResponsePublisher m_publisher("APPL_DB", buffered=true, db_write_thread=true, zmqServer)` | 処理結果ステータスを同じ `ZmqServer` 経由で P4RT クライアントに返す |
+
+### テーブル → マネージャ マッピング
+
+```cpp
+// p4orch.cpp:72-79
+m_p4TableToManagerMap[APP_P4RT_IPV4_MULTICAST_TABLE_NAME] =      // "FIXED_IPV4_MULTICAST_TABLE"
+    m_ipMulticastManager.get();
+m_p4TableToManagerMap[APP_P4RT_IPV6_MULTICAST_TABLE_NAME] =      // "FIXED_IPV6_MULTICAST_TABLE"
+    m_ipMulticastManager.get();
+m_p4TableToManagerMap[APP_P4RT_MULTICAST_ROUTER_INTERFACE_TABLE_NAME] =  // "FIXED_MULTICAST_ROUTER_INTERFACE_TABLE"
+    m_l3MulticastManager.get();
+m_p4TableToManagerMap[APP_P4RT_REPLICATION_IP_MULTICAST_TABLE_NAME] =    // "REPLICATION_IP_MULTICAST_TABLE"
+    m_l3MulticastManager.get();
+```
+
+### P4Orch コンストラクタ
+
+```cpp
+// orchagent/p4orch/p4orch.cpp:36-54
+P4Orch::P4Orch(swss::DBConnector* db, std::vector<std::string> tableNames,
+               ZmqServer* zmqServer, VRFOrch* vrfOrch, CoppOrch* coppOrch)
+    : ZmqOrch(db, tableNames, zmqServer, /*orderedQueue=*/true,
+              /*dbPersistence=*/false),
+      m_zmqServer(zmqServer),
+      m_publisher("APPL_DB", /*bool buffered=*/true,
+                  /*db_write_thread=*/true, zmqServer)
+{
+    // ...
+    m_l3MulticastManager = std::make_unique<p4orch::L3MulticastManager>(
+        &m_p4OidMapper, vrfOrch, &m_publisher);
+    m_ipMulticastManager = std::make_unique<p4orch::IpMulticastManager>(
+        &m_p4OidMapper, vrfOrch, &m_publisher);
+```
+
+`orchdaemon.cpp:847-849` で ZMQ サーバを生成し `P4Orch` に渡す:
+
+```cpp
+vector<string> p4rt_tables = {APP_P4RT_TABLE_NAME};  // orchdaemon.cpp:847
+m_p4OrchZmqServer = new swss::ZmqServer(m_p4OrchZmqServerEp, "", false, true);  // :848
+gP4Orch = new P4Orch(m_applDb, p4rt_tables, m_p4OrchZmqServer, vrf_orch, gCoppOrch);  // :849
+```
+
+### redis keyspace ベースとの差異
+
+- `p4rt_tables` は `{APP_P4RT_TABLE_NAME}` のみ (`orchdaemon.cpp:847`)。`ConsumerStateTable` の redis SUBSCRIBE / keyspace 通知は**使わない**。
+- そのため `redis-cli psubscribe '__keyspace@*__:FIXED_IPV4_MULTICAST_TABLE*'` 等での観測はできない。
+- P4RT クライアントは ZMQ ソケットに対して書き込み、orchagent 側 `ZmqServer` がキューに積み、`P4Orch::doTask` が同期的にドレインする。
+
+### 応答パブリッシュ
+
+各マネージャは `m_publisher->publish(APP_P4RT_TABLE_NAME, kfvKey(...), attrs, status, replace=true)` で処理結果を返す。バッチ中断時は未処理エントリに `SWSS_RC_NOT_EXECUTED` が付与される:
+
+- `IpMulticastManager::drain()`: `ip_multicast_manager.cpp:132, 147, 159, 185, 230`
+- `L3MulticastManager::drain()`: `l3_multicast_manager.cpp:375, 433, 448, 476, 530, 547, 562, 594`
+
+<!-- /pubsub -->
+
 ## 購読者
 
 | コンポーネント | テーブル | SAI 操作 |
