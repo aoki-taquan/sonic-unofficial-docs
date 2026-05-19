@@ -324,6 +324,55 @@ selector.select(1000ms)
 <!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:181,204-217,249-288,329-334,340-342,363-390,439-440,466-475,515-543,546-580,640-685 -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`KUBERNETES_MASTER` テーブルの処理コア (`ctrmgrd`) は **全プラットフォームで動作ロジックが同一**。`ctrmgrd.py` を `namespace|asic|multi_asic|is_multi_npu|chassis|per_asic` で grep してもヒット 0 件で、機種依存分岐コードは存在しない。プラットフォーム依存性は (1) ビルド時フラグによるパッケージ有無、(2) join 成功後に Kubernetes ラベルへ設定される文字列、の 2 点に限定される。
+
+### ビルド時フラグ `INCLUDE_KUBERNETES_MASTER` (rules/config:260)
+
+```makefile
+INCLUDE_KUBERNETES_MASTER ?= n
+```
+
+デフォルト `n`。`y` にセットした場合のみ kubelet / kubeadm パッケージがビルドイメージに組み込まれる (`build_debian.sh:271`、`sonic_debian_extension.j2:974`)。`n` のイメージでは `ctrmgrd` が `kube_join_master()` を呼んでも必ず失敗し、`connected = "false"` のまま JOIN_RETRY ループに入る。
+
+| ビルド設定 | 動作 |
+|-----------|------|
+| `INCLUDE_KUBERNETES_MASTER=n`（デフォルト） | kubelet / kubeadm 未インストール。join は常に失敗し JOIN_RETRY が継続する |
+| `INCLUDE_KUBERNETES_MASTER=y` | kubelet / kubeadm インストール済み。`ip` / `disable` 設定後に join 可能 |
+
+CI ビルド (`azure-pipelines-build.yml:148`) では VS (Virtual Switch) イメージのみ `y` でビルドしており、`broadcom` / `mellanox` 等のプラットフォームでは一般に `n` が使われる（ベンダー判断依存）。
+
+### `worker.sonic/platform` ラベルへの platform 文字列設定 (ctrmgrd.py:304-305)
+
+`set_node_labels()` は join 成功直後に `device_info.get_platform()` を呼び、その返り値を `STATE_DB:KUBE_LABELS|SET.worker.sonic/platform` に書き込む。
+
+```python
+platform = device_info.get_platform()
+labels["worker.sonic/platform"] = platform if platform is not None else ""
+```
+
+| 環境 | `get_platform()` の返り値 | `worker.sonic/platform` ラベル値 |
+|------|--------------------------|----------------------------------|
+| 実機（例: `x86_64-grub`） | プラットフォームディレクトリ名文字列 | そのまま送信 |
+| VS (Virtual Switch) / UNIT_TESTING | `None` または `""` の場合あり | 空文字列 `""` に置換 |
+
+この値は Kubernetes API Server への K8s ラベルとして送信されるだけで、ctrmgrd のローカル動作（join / reset / retry タイマー）には影響しない。`hwsku` ラベル (`ctrmgrd.py:302`) も同様に機種依存文字列だが処理ロジックへの影響はない。
+
+### multi-asic / VOQ chassis 非依存
+
+ctrmgrd.service は host namespace 固定の単一インスタンスとして動作し (`ctrmgrd.service:10`)、`SubscriberStateTable` は host namespace の `CONFIG_DB` / `STATE_DB` のみを購読する。multi-asic 環境でも:
+
+- ctrmgrd インスタンスは host に 1 個のみ
+- `asic0..N` の各 Redis には `KUBERNETES_MASTER` テーブルは存在しない
+- VOQ chassis の line card / supervisor も host 個別の `CONFIG_DB` を持ち、chassis 全体の集中制御経路はない
+
+詳細解析: `meta/_intermediate/cdb-flow/kubernetes-master-platform.md`
+
+<!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:290-307; sonic-buildimage/rules/config:258-260; sonic-buildimage/files/build_templates/sonic_debian_extension.j2:974-1011; sonic-buildimage/.azure-pipelines/azure-pipelines-build.yml:148; sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.service -->
+<!-- /platform -->
+
 <!-- defaults -->
 ## フィールドデフォルト
 
