@@ -629,6 +629,59 @@ ebtables -A FORWARD -d 01:00:0c:cc:cc:cd -j DROP
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込・システム副作用 (Phase F)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-side-effects.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp, sonic-swss/orchagent/stporch.cpp -->
+
+STP CONFIG_DB テーブルへの書き込みは、DB への副次書き込みよりも **Unix ドメインソケット IPC** と **カーネル ebtables** を主な副作用経路として使用する。
+
+### 1. `stpd` への IPC メッセージ (`stpmgr.cpp`)
+
+`StpMgr` は CONFIG_DB 変更を検知すると `sendMsgStpd()` 経由で `stpd` プロセスに Unix ドメインソケット (`/var/run/stpipc.sock`) 宛て `STP_IPC_MSG` を送信する。
+
+| CONFIG_DB テーブル | 送信メッセージ型 | evidence |
+|---|---|---|
+| `STP\|GLOBAL` (SET, PVST) | `STP_BRIDGE_CONFIG` | `stpmgr.cpp:171` |
+| `STP\|GLOBAL` (SET, MST モード) | `STP_MST_GLOBAL_CONFIG` | `stpmgr.cpp:402` |
+| `STP_VLAN` (SET) | `STP_VLAN_CONFIG` | `stpmgr.cpp:332` |
+| `STP_VLAN_PORT` (SET) | `STP_VLAN_PORT_CONFIG` | `stpmgr.cpp:441` |
+| `STP_PORT` (SET) | `STP_PORT_CONFIG` | `stpmgr.cpp:624` |
+| `STP_MST_INST` (SET) | `STP_MST_INST_CONFIG` | `stpmgr.cpp:1108` |
+| `STP_MST_PORT` (SET) | `STP_MST_INST_PORT_CONFIG` | `stpmgr.cpp:1152` |
+
+これらは DB への書き込みではなく `stpd` への通知。`stpd` が BPDU 送受信と STP ステートマシンを管理し、port state 変更結果を APP_DB (`APP_STP_PORT_STATE_TABLE` 等) に書き戻す。
+
+### 2. `ebtables` ルール追加・削除 (`stpmgr.cpp:47, 113, 161`)
+
+PVST モード切替時に `stpmgr` が `ebtables` をシステムコールで直接操作する。
+
+| CONFIG_DB 変化 | 副作用 |
+|---|---|
+| `STP\|GLOBAL.mode = "pvst"` 設定時 | `ebtables -A FORWARD -d 01:00:0c:cc:cc:cd -j DROP` |
+| `STP\|GLOBAL` DEL または STP 無効化時 | `ebtables -D FORWARD -d 01:00:0c:cc:cc:cd -j DROP` |
+
+`01:00:0c:cc:cc:cd` は Cisco PVST+ BPDU マルチキャスト MAC。カーネルのブリッジレイヤーでドロップすることで PVST+ BPDU のリークを防ぐ。DB を介さないカーネル状態変更。
+
+### 3. STATE_DB `STP_TABLE|GLOBAL.max_stp_inst` 書込 (`stporch.cpp:612`)
+
+`StpOrch` は orchagent 起動時に SAI から `sai_switch_attr_max_stp_instance` を取得し、STATE_DB の `STP_TABLE|GLOBAL` に `max_stp_inst` フィールドを 1 回書き込む。
+
+| 副次キー | DB | 書込タイミング | 読み手 |
+|---------|-----|---------------|--------|
+| `STP_TABLE\|GLOBAL.max_stp_inst` | STATE_DB | orchagent 起動時 1 回のみ | `stpmgr.cpp:1391` — PVST インスタンス数上限として使用 |
+
+CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。SAI 取得失敗時は `255` を書き込む。
+
+### CONFIG_DB / APP_DB への直接書込みなし
+
+`stpmgr.cpp` は CONFIG_DB への書き込みを行わない（`setEntry` / `del` 呼び出しゼロ件）。APP_DB へも `APP_PORT_TABLE` の読み取りのみ。STP 変化が間接的に引き起こす APP_DB の port state 書き込みはすべて `stpd` → `StpOrch` → `sai_stp_api` 経路を介する。
+
+> **Evidence**: `stpmgr.cpp` 全行走査で DB 書き込み呼び出しゼロ件を確認。`stporch.cpp:612` の `m_stpTable->set("GLOBAL", ...)` および `stpmgrd.cpp:36-37` のコネクション確認。
+
+<!-- /side-effects -->
+
 ## 関連ページ
 
 - [CONFIG_DB: VLAN](vlan.md)
