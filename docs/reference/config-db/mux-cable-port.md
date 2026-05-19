@@ -151,6 +151,51 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — linkmgrd / orchagent が読み出す関連テーブル (Phase C)
+
+`MUX_CABLE|<port>` エントリを処理するデーモンは、エントリ本体以外にも複数の CONFIG_DB / APPL_DB / STATE_DB テーブルを参照・監視する。
+
+### linkmgrd 起動時一括読み込み (DbInterface.cpp:1843-1849)
+
+linkmgrd の `run()` は `MUX_CABLE` フィールドを読む前に以下の 3 テーブルから前提情報を取得する。
+
+| テーブル (CONFIG_DB) | 参照箇所 | 用途 | evidence |
+|---------------------|---------|------|---------|
+| `DEVICE_METADATA` (`localhost.mac`) | `getTorMacAddress()` | ToR の MAC アドレスを取得。MUX ステートマシンの ToR ID として使用 | DbInterface.cpp:589,594 |
+| `VLAN` | `getVlanNames()` → `getVlanMacAddress()` | DualToR VLAN の MAC アドレスを取得 | DbInterface.cpp:609-613 |
+| `LOOPBACK_INTERFACE` (`Loopback2|*` / `Loopback3|*`) | `getLoopbackInterfacesInfo()` | Loopback2/3 の IPv4 アドレスを linkmgrd の src/dst IP として使用 | DbInterface.cpp:742-746,671-694 |
+
+### linkmgrd ランタイム subscribe (DbInterface.cpp:1819-1841)
+
+`MUX_CABLE` 以外にイベントループで監視するテーブル。
+
+| テーブル | DB | 用途 | evidence |
+|---------|----|------|---------|
+| `MUX_LINKMGR` | CONFIG_DB | Link Prober 設定 (`interval_v4` / `interval_v6` / `positive_signal_count` 等) の動的変更を受信 | DbInterface.cpp:1820,1887 |
+| `BGP_DEVICE_GLOBAL` | CONFIG_DB | `tsa_enabled` フラグ変更を受信し TSA (Traffic Shift Away) モードへ遷移 | DbInterface.cpp:1822,1892 |
+| `APP_PORT_TABLE` | APPL_DB | ポートのリンクアップ / ダウンを検知してステートマシンをトリガ | DbInterface.cpp:1827 |
+| `APP_MUX_CABLE_RESPONSE_TABLE` | APPL_DB | ycabled からの mux 切替完了応答を受信 | DbInterface.cpp:1829 |
+| `APP_FORWARDING_STATE_RESPONSE_TABLE` | APPL_DB | ycabled からの forwarding state 応答を受信 | DbInterface.cpp:1831 |
+| `STATE_MUX_CABLE_TABLE` | STATE_DB | orchagent が書き込む mux state 変化を監視 | DbInterface.cpp:1833 |
+| `STATE_ROUTE_TABLE` | STATE_DB | デフォルトルート存在 / 消失の通知を受信し Active/Standby 決定に利用 | DbInterface.cpp:1835 |
+| `MUX_CABLE_INFO_TABLE` | STATE_DB | ピア ToR のリンクステータスを取得 | DbInterface.cpp:1837 |
+| `STATE_PEER_HW_FORWARDING_STATE_TABLE` | STATE_DB | ピア ToR の admin forwarding state を取得 | DbInterface.cpp:1839 |
+| `STATE_ICMP_ECHO_SESSION_TABLE` | STATE_DB | ICMP エコーセッション状態を受信 | DbInterface.cpp:1841 |
+
+### orchagent (MuxOrch / MuxAclHandler) 側の暗黙参照 (muxorch.cpp)
+
+| テーブル | DB | 用途 | evidence |
+|---------|-----|------|---------|
+| `PEER_SWITCH` | CONFIG_DB | ピア ToR の IPv4 (`address_ipv4`) を取得して nexthop 切替に使用。`MUX_CABLE` 処理の前提条件 (Phase B 参照) | muxorch.cpp:2190,2348-2354 |
+| `SYSTEM_DEFAULTS` | CONFIG_DB | `mux_tunnel_egress_acl.status` を参照し MuxAclHandler が ingress/egress ACL どちらを適用するかを決定 | muxorch.cpp:1388-1390 |
+| `STATE_MUX_CABLE_TABLE` | STATE_DB | SAI 反映後に orchagent が mux state を書き戻す (読み書き両方) | muxorch.cpp:2199 |
+
+> `PEER_SWITCH` と `LOOPBACK_INTERFACE` は `MUX_CABLE|<port>` 処理開始前の前提条件でもある (Phase B 依存関係を参照)。
+
+詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/mux-cable-port-cross-refs.md` を参照。
+<!-- /cross-refs -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 上位ページ: [`MUX_CABLE`](mux-cable.md) — テーブル全体の概要・値依存挙動・Phase 6/7/8 分析
