@@ -260,6 +260,38 @@ CONFIG_DB の `LOGGER` テーブルにエントリが存在しない場合は、
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`LOGGER` テーブルへの SET/DEL は **他の Redis DB への副次書込を発生させない**。`Logger` は CONFIG_DB の `LOGGER` テーブルのみを読み書きし、`ProducerStateTable` / `NotificationProducer` などの通知機構も保有しない。
+
+| 副次 DB | 書込 | 根拠 |
+|---------|------|------|
+| STATE_DB | なし | `logger.cpp` に `StateDB` / `STATE_DB` へのアクセスなし |
+| APPL_DB | なし | 同上 |
+| COUNTERS_DB | なし | 同上 |
+| FLEX_COUNTER_DB | なし | 同上 |
+| ASIC_DB | なし | 同上 |
+| LOGLEVEL_DB (DB#3) | なし（通常運用時） | `db_migrator.py` (`db_migrator.py:1210-1226`) がスキーマ移行時に読み取り専用アクセスするが、LOGGER テーブル SET をトリガーとする副次書込ではない |
+
+### CONFIG_DB 自テーブルへの書き戻し（起動時のみ）
+
+`linkToDbWithOutput()` (`logger.cpp:143-149`) は、デーモン起動時に CONFIG_DB の `LOGGER|<component>` エントリが存在しない場合にのみ `table.set(dbName, fieldValues)` でデフォルト値（`LOGLEVEL=NOTICE`、`LOGOUTPUT=SYSLOG`）を書き込む。これは **自テーブル内の書き戻し** であり、他テーブルへの副次書込ではない。一度エントリが存在すれば再書き込みは行わない (`logger.cpp:131-141`)。
+
+### SAI API 副次呼び出し（DB 外副作用）
+
+`syncd` は起動時に全 `SAI_API_*` コンポーネントを `Logger::linkToDb()` で登録し、`saiLoglevelNotify` コールバックを設定する（`Syncd.cpp:5583-5587`）。LOGGER テーブルで `SAI_API_*` エントリの `LOGLEVEL` が変更されると:
+
+1. `settingThread` が `SubscriberStateTable` で変更を検知
+2. `saiLoglevelNotify(api, level)` が呼ばれる
+3. `m_vendorSai->logSet(api, logLevel)` = `sai_log_set()` が実行される (`Syncd.cpp:5551`)
+
+これは SAI アダプタ内部の verbosity 変更であり **Redis への書込は発生しない**。
+
+> **Evidence**: `sonic-swss-common/common/logger.cpp` L126-157 (`linkToDbWithOutput`)、L192-263 (`settingThread`)；`sonic-sairedis/syncd/Syncd.cpp` L5571-5588 (`setSaiApiLogLevel`)、L5540-5569 (`saiLoglevelNotify`)；詳細スキャンは `meta/_intermediate/cdb-flow/log-config-side-effects.md` を参照。
+
+<!-- /side-effects -->
+
 ## 制約
 
 - `LOGLEVEL` は `mandatory true`（YANG）。エントリ作成時に必須
