@@ -492,7 +492,7 @@ ICCP セッションが切断されると `scheduler_session_disconnect_handler(
 
 <!-- /failure -->
 
-<!-- hardcoded-constants -->
+<!-- constants -->
 ## ハードコード定数 (Phase E)
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-constants.md -->
@@ -533,7 +533,7 @@ iccpd の STP/ICCP 連携に関係するハードコード定数を列挙する�
 
 証跡: `scheduler.h:40-44`, `iccp_csm.h:53`, `iccp_csm.c:126`, `msg_format.h:103`, `mlacp_link_handler.c:3116-3120`, `sonic-mclag.yang:81,91`
 
-<!-- /hardcoded-constants -->
+<!-- /constants -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
