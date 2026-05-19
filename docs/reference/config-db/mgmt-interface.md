@@ -85,6 +85,29 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-mgmt_interface.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mgmt_interface.yang>
 
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`MGMT_INTERFACE` の Consumer は主に `hostcfgd` (`MgmtIfaceCfg`) と `interfaces-config`（`interfaces.j2` テンプレート）。変更検知時に `systemctl restart interfaces-config` を実行して `/etc/network/interfaces` を再生成するため、以下の順序依存が発生する。
+
+### 検出された順序依存
+
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `MGMT_VRF_CONFIG.mgmtVrfEnabled` → `MGMT_INTERFACE` 書込み | **推奨先行**（VRF 有効フラグが読まれるタイミングに影響） | `interfaces.j2` は再実行されるたびに最新値を参照する |
+| 2 | `SYSLOG_SERVER` → `MGMT_INTERFACE` 書込み | 推奨先行（`forced_mgmt_routes` 相当のログサーバ経路が正しく生成されるため） | `SYSLOG_SERVER` 未設定時は `10.20.6.16/32` がハードコードで注入される |
+| 3 | `MGMT_INTERFACE` 変更 → RADIUS `src_intf` 解決 | 先行推奨（`aaacfg.handle_radius_source_intf_ip_chg()` が呼ばれ RADIUS 送信元 IP が更新される） | `mgmt_intf_handler` が変更をトリガーするため後から更新すれば自動復旧 |
+
+### 主要な制約詳細
+
+**`MGMT_VRF_CONFIG` 先行推奨 (依存 #1)**: `interfaces.j2` は `MGMT_VRF_CONFIG['vrf_global']['mgmtVrfEnabled']` を参照して forced routes のルーティングテーブルを `default` または `mgmt (6000)` に切り替える（`interfaces.j2:9,88`）。`MGMT_VRF_CONFIG` が CONFIG_DB に存在しない状態で `MGMT_INTERFACE` を書き込むと、`interfaces.j2` は VRF なしとして `/etc/network/interfaces` を生成する。後から `MGMT_VRF_CONFIG` を追加すると `mgmt_vrf_handler` → `systemctl restart interfaces-config` が呼ばれて再生成される（evidence: `hostcfgd:2352-2358`）。
+
+**`SYSLOG_SERVER` 暗黙依存 (依存 #2)**: `interfaces.j2:101-113` は `SYSLOG_SERVER` の有無でルート注入先を切り替える。`SYSLOG_SERVER` が CONFIG_DB にない場合に `10.20.6.16/32` がハードコードで注入されるため、`SYSLOG_SERVER` を後から追加しても `interfaces-config` が再起動されるまでハードコードルートが残留する（evidence: `interfaces.j2:101-130`）。
+
+**RADIUS 送信元 IP 解決 (依存 #3)**: `mgmt_intf_handler()` は `MGMT_INTERFACE` の変更を受け取ると `aaacfg.handle_radius_source_intf_ip_chg(mgmt_intf_name)` を呼び RADIUS の送信元 IP を再解決する（`hostcfgd:2348-2350`）。RADIUS 設定が先に存在し `src_intf=eth0` が設定されている場合、`MGMT_INTERFACE` の IP 変更後に RADIUS 送信元 IP が自動更新される。この依存は `RADIUS_SERVER.src_intf` を使用する構成でのみ顕在化する。
+
+<!-- /ordering -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 

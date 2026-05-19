@@ -1,71 +1,50 @@
-# MGMT_INTERFACE テーブル — 書込み順依存調査メモ (Phase B)
+# MGMT_INTERFACE — Phase B 書込み順依存スキャンノート
 
-調査日: 2026-05-16
-調査対象:
-- `sonic-swss/cfgmgr/intfmgr.cpp`
-- `sonic-swss/cfgmgr/intfmgrd.cpp`
-
----
-
-## 1. 他テーブル先行必須
-
-### MGMT_INTERFACE は intfmgrd の購読対象外
-
-`intfmgrd.cpp:28-35` の購読テーブルリストに `MGMT_INTERFACE` は**含まれない**。管理インタフェース (`eth0`) の設定は `mgmtintfmgrd`（または同等デーモン）が担当し、Linux の management VRF 内で完結する。
-
-```cpp
-// intfmgrd.cpp:28-35
-vector<string> cfg_intf_tables = {
-    CFG_INTF_TABLE_NAME,
-    CFG_LAG_INTF_TABLE_NAME,
-    CFG_VLAN_INTF_TABLE_NAME,
-    CFG_LOOPBACK_INTERFACE_TABLE_NAME,
-    CFG_VLAN_SUB_INTF_TABLE_NAME,
-    CFG_VOQ_INBAND_INTERFACE_TABLE_NAME,
-};
-```
-
-### management VRF 関連の順序依存
-
-| 先行テーブル / 条件 | 依存の内容 |
-|------------------|-----------|
-| `MGMT_VRF_CONFIG.mgmtVrfEnabled = true` | 管理 VRF 有効時、`ip route add ... table mgmt` でルートを management VRF テーブルに追加する |
-| `MGMT_INTERFACE|eth0` 属性ロウ | IP プレフィクスロウより先に処理される必要がある（`isIntfCreated` パターン） |
-
-### VRF_MGMT 定数
-
-`intfmgr.cpp:26` で `VRF_MGMT = "mgmt"` と定義されている。`isIntfStateOk()` 内の `alias == VRF_MGMT` チェック（`intfmgr.cpp:677-684`）で `STATE_VRF_TABLE` を参照する。
+対象テーブル: `MGMT_INTERFACE`
+Consumer: `hostcfgd` (`MgmtIfaceCfg`) / `interfaces-config` (`interfaces.j2`)
+スキャン範囲: `sonic-host-services/scripts/hostcfgd:1608-1700, 2345-2360, 2485`; `sonic-buildimage/files/image_config/interfaces/interfaces.j2` 全行精読
 
 ---
 
-## 2. MGMT_INTERFACE 設定順序
+## 検出した順序依存・タイミング依存
 
-```
-1. MGMT_VRF_CONFIG (mgmtVrfEnabled) 設定           (management VRF 利用時)
-2. MGMT_INTERFACE|eth0 (属性ロウ) 投入             (IP/GW の設定より先)
-3. MGMT_INTERFACE|eth0|<ip_prefix> 投入            (属性ロウ処理完了後)
-4. ip address add <ip/plen> dev eth0               (デーモンが自動実行)
-5. ip route add default via <gw> dev eth0          (gwaddr が有効 IPv4 の場合)
-   または ip -6 route add default via <gw6>        (gwaddr が有効 IPv6 の場合)
-```
+### 1. MGMT_VRF_CONFIG 先行推奨 — VRF フラグが interfaces.j2 で参照される
 
-management VRF 有効時は手順 4-5 が netns mgmt 内で実行される。
+- `interfaces.j2:9,88` は `MGMT_VRF_CONFIG['vrf_global']['mgmtVrfEnabled']` を参照して `forced_mgmt_routes` のルーティングテーブルを `default` または mgmt VRF (table 6000) に切り替える。
+- `MGMT_VRF_CONFIG` が CONFIG_DB に存在しない（または `mgmtVrfEnabled != "true"`）状態で `MGMT_INTERFACE` を書き込むと、`interfaces-config` はデフォルト VRF モードで生成される。
+- 後から `MGMT_VRF_CONFIG` が追加されると `mgmt_vrf_handler` → `systemctl restart interfaces-config` → 再生成で最終的に一致する。
+- evidence: `hostcfgd:2352-2358`, `interfaces.j2:9,88`
+
+### 2. SYSLOG_SERVER 暗黙依存 — 未設定時に 10.20.6.16/32 がハードコード注入
+
+- `interfaces.j2:101-113`: `SYSLOG_SERVER` が定義されている場合は各サーバ IP への policy routing rule を mgmt table に追加。
+- `SYSLOG_SERVER` が**未設定**（または空）の場合は `10.20.6.16/32` がハードコードで mgmt VRF / default table に自動注入される。
+- `SYSLOG_SERVER` を後から追加すると `mgmt_intf_handler` 経由の `interfaces-config` 再起動がトリガーされないため、ハードコードルートが一時的に残留する。
+- **順序依存**: `SYSLOG_SERVER` を先に設定してから `MGMT_INTERFACE` を書くことで中間状態でのハードコードルート注入を回避できる。
+- evidence: `interfaces.j2:101-130`
+
+### 3. RADIUS src_intf 解決 — MGMT_INTERFACE 変更が RADIUS 送信元 IP を再決定
+
+- `hostcfgd:2345-2351` (`mgmt_intf_handler`):
+  1. `aaacfg.handle_radius_source_intf_ip_chg(mgmt_intf_name)` — MGMT_INTERFACE の IP が変わると RADIUS の src_intf に対応する IP を再解決
+  2. `aaacfg.handle_radius_nas_ip_chg(mgmt_intf_name)` — RADIUS NAS IP を再解決
+  3. `mgmtifacecfg.update_mgmt_iface()` → `systemctl restart interfaces-config`
+- **順序依存**: `RADIUS_SERVER.src_intf=eth0` が設定済みの状態で `MGMT_INTERFACE` の IP を変更すると自動で RADIUS 送信元 IP も更新される。
+- evidence: `hostcfgd:2345-2355`
+
+### 4. interfaces-config の再生成トリガー — 変更検知時のみ
+
+- `MgmtIfaceCfg.update_mgmt_iface()` は `data != self.iface_config_data.get(key)` のときのみ `systemctl restart interfaces-config` を呼ぶ（変更なしの場合はスキップ）。
+- **タイミング依存**: 同一の CONFIG_DB 値を繰り返し書き込んでも `interfaces-config` の再起動は発生しない（冪等）。
+- evidence: `hostcfgd:1630-1647`
 
 ---
 
-## 3. SAI 非経由の特記事項
+## 順序依存サマリ
 
-- `MGMT_INTERFACE` は orchagent を経由しない（SAI に届かない）
-- `gPortsOrch->getPort()` や `allPortsReady()` のチェックは適用されない
-- Linux カーネルの management netns / VRF でのみ処理が完結する
-
----
-
-## 4. まとめ（書込み順依存一覧）
-
-| 依存カテゴリ | 必須順序 | 備考 |
-|------------|---------|------|
-| MGMT_VRF_CONFIG → MGMT_INTERFACE | VRF 有効化後に IP 設定 | management VRF 利用時のみ |
-| 属性ロウ → IP prefix | `MGMT_INTERFACE|eth0` 先 → IP prefix ロウ後 | isIntfCreated パターン |
-| orchagent 依存 | **なし** | SAI 非経由 |
-| gwaddr ファミリ一致 | IPv4 gwaddr は IPv4 prefix と対応 | ファミリ不一致 → ERROR + スキップ |
+| # | 依存関係 | 方向 | 緩和策 |
+|---|----------|------|--------|
+| 1 | `MGMT_VRF_CONFIG.mgmtVrfEnabled` → `MGMT_INTERFACE` | 推奨先行 | `mgmt_vrf_handler` 後追い自動復旧 |
+| 2 | `SYSLOG_SERVER` → `MGMT_INTERFACE` | 推奨先行 | ハードコード `10.20.6.16/32` 注入を回避できる |
+| 3 | `MGMT_INTERFACE` 変更 → RADIUS `src_intf` 解決 | `mgmt_intf_handler` が自動トリガー | RADIUS_SERVER が先に存在していること |
+| 4 | 同一値の重複書き込み | 冪等（再起動なし） | — |
