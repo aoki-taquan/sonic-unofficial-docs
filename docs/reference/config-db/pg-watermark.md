@@ -329,6 +329,68 @@ PG_WATERMARK（または QUEUE_WATERMARK）が enable になると `WatermarkOrc
 
 ---
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/pg-watermark-pubsub.md`
+> 調査対象: `sonic-swss/orchagent/flexcounterorch.cpp`, `sonic-swss/orchagent/watermarkorch.cpp`, `sonic-swss/orchagent/portsorch.cpp`, `sonic-utilities/scripts/watermarkstat`
+
+PG_WATERMARK の制御経路は **CONFIG_DB → FlexCounterOrch/WatermarkOrch → FLEX_COUNTER_DB → syncd** という多段構成をとる。加えて、ウォーターマーク手動クリアには APPL_DB Redis pub/sub チャネルが使われる。
+
+### Producer/Consumer ペア
+
+| 区間 | 方式 | 詳細 |
+|------|------|------|
+| CONFIG_DB → FlexCounterOrch | `SubscriberStateTable`（keyspace notification） | `FLEX_COUNTER_TABLE|PG_WATERMARK` を購読。`FLEX_COUNTER_STATUS=enable` で `m_pg_watermark_enabled=true` をセット（`flexcounterorch.cpp:265-268`） |
+| CONFIG_DB → WatermarkOrch | `SubscriberStateTable`（keyspace notification） | 同エントリを購読。`handleFcConfigUpdate()` が telemetry タイマーを start/stop（`watermarkorch.cpp:116-141`） |
+| FlexCounterOrch → portsorch | 同プロセス内直接呼び出し | `getPgWatermarkCountersState()` でフラグ参照後、`addPriorityGroupWatermarkFlexCountersPerPortPerPgIndex()` を呼び出し PG OID を登録（`portsorch.cpp:8930-8933`） |
+| portsorch → syncd | FLEX_COUNTER_DB 直接書き込み | `pg_watermark_manager.setCounterIdList()` が `PG_WATERMARK_STAT_COUNTER:<sai_pg_oid>:PG_WATERMARK_STAT_ID_LIST` を書き込む（`portsorch.cpp:9051`） |
+| syncd → COUNTERS_DB | SAI ポーリング（READ_AND_CLEAR） | 60000 ms ごとに `sai_get_ingress_priority_group_stats()` を呼び、結果を `PERIODIC/PERSISTENT/USER_WATERMARKS|<sai_pg_oid>` に書き込む |
+| watermarkstat → APPL_DB | Redis `PUBLISH` | `send_clear_notification()` が `APPL_DB` の `WATERMARK_CLEAR_REQUEST` チャネルに `["USER","PG_HEADROOM"]` 等をパブリッシュ（`watermarkstat:325`） |
+| APPL_DB → WatermarkOrch | `NotificationConsumer` | `WatermarkOrch::doTask(NotificationConsumer&)` が `WATERMARK_CLEAR_REQUEST` を購読。`op="USER"/"PERSISTENT"`, `data="PG_HEADROOM"/"PG_SHARED"` で `clearSingleWm()` を呼び出す（`watermarkorch.cpp:144-230`） |
+
+### APPL_DB pub/sub によるウォーターマーク手動クリア
+
+`clear priority-group watermark headroom` / `watermarkstat -c -t pg_headroom` の実行は CONFIG_DB を経由せず、直接 APPL_DB パブリッシュ経路を使う。
+
+```text
+watermarkstat -c -t pg_headroom
+  ↓ APPL_DB PUBLISH WATERMARK_CLEAR_REQUEST '["USER","PG_HEADROOM"]'
+WatermarkOrch::doTask(NotificationConsumer&)
+  → clearSingleWm(USER_WATERMARKS, "SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES", m_pg_ids)
+  → COUNTERS_DB USER_WATERMARKS|<sai_pg_oid> XOFF_ROOM フィールドを "0" に
+```
+
+`-p` (persistent) フラグ付きの場合は `op="PERSISTENT"` となり `PERSISTENT_WATERMARKS` テーブルが対象になる。`PERIODIC_WATERMARKS` はクリアコマンドではなく telemetry タイマー（120 秒）によってのみリセットされる。
+
+### warm-start 遅延
+
+`FlexCounterOrch` は warm-start 時に `FLEX_COUNTER_DELAY_SEC = 60` 秒のタイマーが期限切れになるまで `doTask()` 全体をブロックする（`flexcounterorch.cpp:127,136`）。cold-start では即時処理可能（`m_delayTimerExpired = true`）。
+
+### データフロー概要
+
+```text
+CONFIG_DB[FLEX_COUNTER_TABLE|PG_WATERMARK] FLEX_COUNTER_STATUS=enable
+  ↓ SubscriberStateTable
+FlexCounterOrch::doTask() → m_pg_watermark_enabled=true
+  → portsorch::addPriorityGroupWatermarkFlexCounters()
+  → pg_watermark_manager.setCounterIdList()
+FLEX_COUNTER_DB[PG_WATERMARK_STAT_COUNTER:<oid>:PG_WATERMARK_STAT_ID_LIST]
+  ↓ syncd FlexCounter (60000ms, READ_AND_CLEAR)
+COUNTERS_DB[PERIODIC/PERSISTENT/USER_WATERMARKS|<oid>] ← SAI 統計値
+
+WatermarkOrch::doTask() → telemetry タイマー start (120s)
+  → COUNTERS_DB[PERIODIC_WATERMARKS|<oid>] 周期クリア
+
+watermarkstat -c → APPL_DB PUBLISH WATERMARK_CLEAR_REQUEST
+  → WatermarkOrch::doTask(NotificationConsumer)
+  → COUNTERS_DB[USER/PERSISTENT_WATERMARKS|<oid>] 手動クリア
+```
+
+<!-- /pubsub -->
+
+---
+
 ## 設定例
 
 ```json
