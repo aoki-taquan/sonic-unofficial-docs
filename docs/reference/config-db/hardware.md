@@ -274,6 +274,20 @@ Dell 等のベンダー向け gNMI/translib スタック（`sonic-mgmt-common` t
 詳細根拠は `meta/_intermediate/cdb-flow/hardware-platform.md` を参照。
 <!-- /platform -->
 
+## 実装との乖離
+
+`HARDWARE|ACCESS_LIST` テーブルは、ACL ハードウェア動作モード（カウンタ粒度 / ルックアップモード / TCAM 共有）を CONFIG_DB に宣言するための設計意図を持つが、community sonic-swss/orchagent はこのテーブルを**一切購読しない**。これが本ページにおける最大の実装乖離である。
+
+| 乖離点 | 設計意図 | 実装状況 |
+|--------|----------|----------|
+| `COUNTER_MODE` の反映 | ACL カウンタの粒度（per-rule 等）を ASIC に設定する | `orchagent/aclorch.cpp` で 0 件参照。SAI への反映なし |
+| `LOOKUP_MODE` の反映 | TCAM ルックアップ戦略（advanced / optimized / LEGACY）を ASIC に設定する | 同上。書き込んでも ASIC 設定は変わらない |
+| `TCAM_SHARING` の反映 | TCAM 共有グループを ASIC に設定する | 同上 |
+| YANG スキーマ定義 | CVL によるフィールド値検証 | `sonic-yang-models` に対応 YANG モジュールなし。不正値を書き込んでも CVL エラーにならない |
+| CLI サポート | `config hardware access-list` 等のコマンド | community SONiC に実装なし |
+
+**影響**: community SONiC においてこのテーブルに値を書き込んでも、ACL ハードウェア動作は一切変化しない。Dell 等のベンダー向け gNMI/translib スタック（`sonic-mgmt-common` transformer 層の vendored 拡張）でのみ消費されると推定されるが、community リポジトリ外のため検証不能。
+
 ## 引用元
 
 [^1]: sonic-net/sonic-gnmi `testdata/db_dump.json` @ eb635b7679b260c3fd0786a6d0734fc8e82c9a22
