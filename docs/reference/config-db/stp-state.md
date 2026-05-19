@@ -400,6 +400,23 @@ STP 設定変更の受信は `stpmgrd.cpp:43-65` の `TableConnector` 群 → `O
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> **調査根拠**: `stporch.cpp` / `stpmgr.cpp` / `stpmgrd.cpp` を `platform` / `is_multi_npu` / `chassis` / `vendor` / `mellanox` / `broadcom` で grep → 全 0 ヒット (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/stp-state-platform.md`
+
+`STP_TABLE|GLOBAL.max_stp_inst` の**値**は SAI `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` に依存するため ASIC ベンダーごとに異なるが、書き込み・読み取りの**コードパスは全プラットフォーム共通**。`stporch.cpp` に ASIC ベンダー分岐は存在しない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | `max_stp_inst` の**値**は ASIC 依存、コードパスは共通 | `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` は HW 能力値; `stporch.cpp:30-41` に vendor 分岐なし |
+| multi-asic (`is_multi_npu() == True`) | 各 asic の orchagent が独立して STATE_DB に書き込む。stpmgrd は host namespace のみ読み取り | `stporch.cpp` / `stpmgr.cpp` に `is_multi_npu` コールなし |
+| VOQ chassis (supervisor + line cards) | 各 line card stack が独立処理。cross-card 集約なし | `stporch.cpp` に chassis 分岐なし |
+| VS (Virtual Switch) | SAI が `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を未サポートの場合 STATE_DB 未書き込み → stpmgrd フォールバック `255` | `stpmgr.cpp:1407-1410`; VS SAI の実装依存 |
+
+<!-- /platform -->
+
 ## 例外条件・特殊挙動
 
 - **-1 補正**: `max_stp_inst` は SAI の返す最大数から -1 した値。STP インスタンス ID が 0 始まりのため、使用可能な最大インスタンス ID が `max_stp_inst` と一致する。
