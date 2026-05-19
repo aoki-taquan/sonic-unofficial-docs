@@ -29,6 +29,7 @@
 | `TAM_INT_IFA_FLOW_TABLE.sampling-rate` 最小値 | `1` | `sonic-ifa.yang:64` | `range "1..10000"` |
 | `TAM_INT_IFA_FLOW_TABLE.sampling-rate` 最大値 | `10000` | `sonic-ifa.yang:64` | 超過時 ErrAppTag `"Invalid IFA flow sampling rate."` |
 | `TAM_COLLECTOR_TABLE.port` 範囲 | `0..65535` (`inet:port-number`) | `sonic-tam.yang:57` | ポート番号 IANA 型 |
+| `TAM_COLLECTOR_TABLE` `must` `error-app-tag` | `ipaddres-type-mismatch`（typo: `s` 欠落） | `sonic-tam.yang:62` | CVL が実際に返す文字列（typo のまま固定） |
 
 ### portsorch.cpp の Path Tracing TAM ハードコード値
 

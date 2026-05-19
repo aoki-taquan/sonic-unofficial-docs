@@ -379,6 +379,9 @@ TAM テーブル群に関わる定数は YANG スキーマ由来のバリデー�
 | `TAM_INT_IFA_FLOW_TABLE.sampling-rate` エラータグ | `"Invalid IFA flow sampling rate."` | `sonic-ifa.yang:65` |
 | `TAM_COLLECTOR_TABLE.port` 範囲 | 0〜65535 (`inet:port-number`) | `sonic-tam.yang:57` |
 
+!!! warning "`ipaddres-type-mismatch` の typo"
+    `TAM_COLLECTOR_TABLE` の `must` 制約 `error-app-tag` は `ipaddres-type-mismatch`（`ipaddress` の `s` が 1 文字欠落、`sonic-tam.yang:62`）。CVL が実際に返すエラータグもこの typo 文字列で固定されているため、GNMI/REST クライアントがエラータグでマッチングする場合はこの文字列をそのまま使用する必要がある。
+
 ### portsorch Path Tracing TAM のランタイム定数
 
 `portsorch.cpp:createPtTam()` は `TAM_DEVICE_TABLE.deviceid` を CONFIG_DB から**読まず**、SAI TAM INT オブジェクトに以下の固定値を使用する。
