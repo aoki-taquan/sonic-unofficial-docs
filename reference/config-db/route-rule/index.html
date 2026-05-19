@@ -28087,6 +28087,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結果コード定数 (dashorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル名定数 (schema.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crm-crmorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM リソースタイプ定数 (crmorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI アクション定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-id-push" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 属性 ID 定数（条件付き push）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35188,6 +35260,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結果コード定数 (dashorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル名定数 (schema.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crm-crmorchh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM リソースタイプ定数 (crmorch.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI アクション定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai-id-push" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 属性 ID 定数（条件付き push）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35700,6 +35844,141 @@
 <p>SIP アドレスファミリ（IPv4 / IPv6）に応じて異なる CRM カウンタを更新する。<code>CrmOrch</code> がリソース上限監視に使用する。</p>
 <p>Evidence: <code>dashrouteorch.cpp</code> 全体スキャン; 詳細スキャンノートは <code>meta/_intermediate/cdb-flow/route-rule-cross-refs.md</code> を参照。</p>
 <!-- /cross-refs -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/route-rule-constants.md -->
+
+<p><code>DashRouteOrch</code> が <code>DASH_ROUTE_RULE_TABLE</code> 処理時に使用する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は <code>orchagent/dash/dashrouteorch.cpp</code>・<code>orchagent/dash/dashorch.h</code>・<code>common/schema.h</code>・<code>orchagent/crmorch.h</code>。</p>
+<h3 id="dashorchh">結果コード定数 (<code>dashorch.h</code>)<a class="headerlink" href="#dashorchh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DASH_RESULT_SUCCESS</code></td>
+<td><code>0</code></td>
+<td>SET / DEL 処理ループの初期値。SAI 成功時にそのまま result テーブルへ書き込まれる</td>
+<td><code>dashorch.h:35</code>; <code>dashrouteorch.cpp:585, 678</code></td>
+</tr>
+<tr>
+<td><code>DASH_RESULT_FAILURE</code></td>
+<td><code>1</code></td>
+<td><code>addInboundRoutingPost()</code> が SAI バルク create 失敗を検出した場合に上書きされる</td>
+<td><code>dashorch.h:36</code>; <code>dashrouteorch.cpp:702</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="schemah">テーブル名定数 (<code>schema.h</code>)<a class="headerlink" href="#schemah" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APP_DASH_ROUTE_RULE_TABLE_NAME</code></td>
+<td><code>"DASH_ROUTE_RULE_TABLE"</code></td>
+<td><code>dash_route_rule_result_table_</code> の構築時に使用。APPL_STATE_DB への SAI プログラミング結果書き戻し先テーブル名</td>
+<td><code>schema.h:187</code>; <code>dashrouteorch.cpp:57</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="crm-crmorchh">CRM リソースタイプ定数 (<code>crmorch.h</code>)<a class="headerlink" href="#crm-crmorchh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>分岐条件</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CRM_DASH_IPV4_INBOUND_ROUTING</code></td>
+<td><code>ctxt.sip.isV4() == true</code></td>
+<td>IPv4 SIP を持つ inbound routing エントリの CRM リソースカウンタ (inc/dec)</td>
+<td><code>crmorch.h:41</code>; <code>dashrouteorch.cpp:507, 546</code></td>
+</tr>
+<tr>
+<td><code>CRM_DASH_IPV6_INBOUND_ROUTING</code></td>
+<td><code>ctxt.sip.isV4() == false</code></td>
+<td>IPv6 SIP を持つ inbound routing エントリの CRM リソースカウンタ (inc/dec)</td>
+<td><code>crmorch.h:42</code>; <code>dashrouteorch.cpp:507, 546</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="sai">SAI アクション定数<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>選択条件</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP_PA_VALIDATE</code></td>
+<td><code>pa_validation == true</code></td>
+<td>PA アドレス検証付きのトンネルデカプセルを SAI に指示</td>
+<td><code>dashrouteorch.cpp:450</code></td>
+</tr>
+<tr>
+<td><code>SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP</code></td>
+<td><code>pa_validation == false</code> (proto3 デフォルト)</td>
+<td>PA 検証なしのトンネルデカプセルを SAI に指示</td>
+<td><code>dashrouteorch.cpp:450</code></td>
+</tr>
+</tbody>
+</table>
+<p>三項演算子 <code>ctxt.metadata.pa_validation() ? SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP_PA_VALIDATE : SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP</code> で選択される (<code>dashrouteorch.cpp:450</code>)。</p>
+<h3 id="sai-id-push">SAI 属性 ID 定数（条件付き push）<a class="headerlink" href="#sai-id-push" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>push 条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_INBOUND_ROUTING_ENTRY_ATTR_ACTION</code></td>
+<td>常時</td>
+<td><code>dashrouteorch.cpp:448</code></td>
+</tr>
+<tr>
+<td><code>SAI_INBOUND_ROUTING_ENTRY_ATTR_SRC_VNET_ID</code></td>
+<td><code>has_vnet()</code> が true の場合のみ</td>
+<td><code>dashrouteorch.cpp:453-458</code></td>
+</tr>
+<tr>
+<td><code>SAI_INBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_OR</code></td>
+<td><code>has_metering_class_or()</code> が true の場合のみ</td>
+<td><code>dashrouteorch.cpp:460-464</code></td>
+</tr>
+<tr>
+<td><code>SAI_INBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_AND</code></td>
+<td><code>has_metering_class_and()</code> が true の場合のみ</td>
+<td><code>dashrouteorch.cpp:466-470</code></td>
+</tr>
+</tbody>
+</table>
+<p>protobuf の <code>has_*()</code> で各フィールドの存在を確認してから <code>inbound_routing_attrs</code> に push する。フィールド不在時は SAI 属性を送らないため SAI ハードウェアのデフォルト値が適用される。</p>
+<!-- /constants -->
 
 <!-- failure -->
 <h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
