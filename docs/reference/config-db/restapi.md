@@ -299,4 +299,37 @@ REST/gNMI 書き込み経路なし
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`sonic-restapi.yang` には leafref / must / when 文がゼロ件であり、YANG スキーマレベルでの明示的 cross-table 参照は存在しない。
+代わりに `rest-server.sh` / `mgmt_vars.j2` / `minigraph.py` / `db_migrator.py` から抽出した **3 系統の暗黙依存**が実装レベルの cross-table 参照となる。
+
+<!-- evidence: meta/_intermediate/cdb-flow/restapi-cross-refs.md -->
+<!-- source: sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh -->
+<!-- source: sonic-buildimage/dockers/docker-sonic-mgmt-framework/mgmt_vars.j2 -->
+<!-- source: sonic-buildimage/src/sonic-config-engine/minigraph.py L2689-2702 -->
+<!-- source: sonic-utilities/scripts/db_migrator.py L608-619 -->
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | evidence |
+|--------------------------|---------|------|----------|
+| `DEVICE_METADATA\|localhost` (x509 サブオブジェクト) | 読み取り（cert フォールバック） | `RESTAPI\|certs` の `server_crt` / `server_key` / `ca_crt` が**全て未設定**の場合のみ参照。`server_crt` / `server_key` / `ca_crt` フィールドを取得する | `mgmt_vars.j2:3` `{% if "x509" in DEVICE_METADATA.keys() %}` → `rest-server.sh:34–41` |
+| `FEATURE\|restapi` | 読み取り（サービス有効化制御） | restapi コンテナ起動時に `state` / `auto_restart` / `has_global_scope` を参照。`state` が `disabled` の場合はコンテナ自体が起動せず RESTAPI テーブルが読まれない | `config_db.json`(mock): `FEATURE\|restapi` エントリ確認済み |
+| `REST_SERVER` (CONFIG_DB `RESTAPI` テーブルの jinja2 展開名) | `sonic-cfggen -d -t mgmt_vars.j2` で同一トランザクション参照 | `mgmt_vars.j2` L1: `REST_SERVER['default']` として `RESTAPI\|default`（= `RESTAPI\|config`）を展開 | `mgmt_vars.j2:1–2` |
+
+### 依存関係の詳細
+
+**`DEVICE_METADATA|localhost.x509` (cert フォールバック)**: `rest-server.sh` は `MGMT_VARS=$(sonic-cfggen -d -t mgmt_vars.j2)` を一括取得した後、`REST_SERVER.server_crt` / `server_key` / `ca_crt` が全て空であれば `X509=$(echo $MGMT_VARS | jq -r '.x509')` から証明書パスを読み出す (`rest-server.sh:27–41`)。`DEVICE_METADATA|localhost` に `x509` キーが存在しない場合は空文字列となり、最終的に `/tmp/` 自己署名証明書を自動生成する。本番環境では `RESTAPI|certs` を明示設定しないと `DEVICE_METADATA.x509` に依存することになる点に注意。
+
+**`FEATURE|restapi` (コンテナ起動制御)**: `FEATURE` テーブルは SONiC `hostcfgd` が管理し、`restapi` コンテナの起動・停止を制御する。`RESTAPI` テーブルに正しい値が設定されていても `FEATURE|restapi.state=disabled` であれば `rest-server.sh` は実行されない。`minigraph.py` は `RESTAPI` と `FEATURE` を同一解析パスで生成するため、minigraph 由来の環境では両者は常に整合する (`minigraph.py:2689–2702`)。
+
+**`db_migrator.py` の既存エントリ優先**: `migrate_restapi()` (`db_migrator.py:609–619`) は `config_db.get_entry('RESTAPI', 'config')` が空の場合のみ書き込む。既存エントリが存在する場合は上書きしない（アップグレード時に手動設定が保持される）。
+
+### 範囲外
+
+- APPL_DB / STATE_DB / COUNTERS_DB への書き込みなし（RESTAPI は管理プレーン専用機能）
+- orchagent / syncd への経路なし（SAI 経由の処理なし）
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: d5320e852f7a -->
