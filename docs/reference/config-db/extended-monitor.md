@@ -512,6 +512,53 @@ systemctl restart eventd
 > **Evidence**: `eventd.cpp:172-225` (stats_collector::start); `eventd.cpp:656-704` (run_eventd_service 起動シーケンス); `eventd.cpp:244` (内部サブスクライバー); HLD section 3.1.2, 3.1.3, 3.1.8
 <!-- /pubsub -->
 
+<!-- platform:start -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-eventd/src/eventd.cpp (全体),
+     sonic-net/sonic-buildimage/src/sonic-eventd/src/eventd.h (全体),
+     SONiC/doc/event-alarm-framework/event-alarm-framework.md -->
+
+### SAI・プラットフォーム依存なし（全 ASIC 共通）
+
+`eventd` は SAI API を呼び出さず、`getenv("platform")` 参照もなく、`#ifdef` によるプラットフォーム分岐も存在しない。ZMQ ブローカーとして Redis DB（EVENT_DB / COUNTERS_DB）への書き込みのみを行う純粋なユーザー空間デーモンであるため、**ASIC ベンダー・ハードウェア世代・スイッチチップの種類によって挙動は変わらない**[^4]。
+
+| プラットフォーム要素 | eventd の依存 |
+|---------------------|--------------|
+| SAI / ASIC ドライバ | なし |
+| `platform` 環境変数 | 参照しない |
+| `switch_type` (voq/chassis) | 参照しない |
+| CPU アーキテクチャ (x86/ARM) | 変わらない（ZMQ は CPU 非依存） |
+
+### VM・仮想環境での注意事項
+
+VM テストベッド（`sonic-vs`）でも `eventd` は同一バイナリで動作する。ただし ZMQ ソケットに接続するプロデューサー（`syncd`・`bgp`・`dhcp_relay` 等）の有無がイベント流量に影響する。VM では syncd が SAI イベントを生成しないため、`syncd_events_info.json` で定義されたイベントが発行されない。
+
+| 環境 | 影響 |
+|------|------|
+| 物理スイッチ | syncd/orchagent が SAI イベントを発行 → EVENT_DB に記録 |
+| sonic-vs（VM） | syncd が SAI イベントを発行しない → 該当イベント 0 件 |
+| どちらの環境でも同じ | ZMQ ブローカー・evprofile ロード・COUNTERS_DB 書き込みの動作 |
+
+### マルチ ASIC 構成
+
+マルチ ASIC 環境では `eventd` インスタンスが per-switch-ASIC ではなく **グローバルに 1 インスタンス**のみ起動する（`docker-eventd` は ASIC 数に依存しない単一コンテナ）。すべての ASIC のイベントは同一の ZMQ ブローカー（`tcp://127.0.0.1:5570` 等）に集約される。
+
+`COUNTERS_DB` インスタンスもシングル（`DBConnector("COUNTERS_DB", 0)`）であり、マルチ ASIC 用の namespace 分割はない（`eventd.cpp:178`）。
+
+### `/etc/evprofile/default.json` の内容はプラットフォーム共通
+
+`evprofile/default.json` は `sonic-eventd` パッケージに同梱され、全プラットフォーム共通のイベント定義が入っている[^5]。ASIC ベンダー固有のイベント型を追加する場合は別途カスタム evprofile を配置する（HLD section 3.1.5）。個別プラットフォームが `default.json` を上書きする公式な仕組みは現時点では未定義。
+
+### キャッシュメモリ上限 (`CACHE_MAX_CNT`) のプラットフォーム影響
+
+`MAX_CACHE_SIZE = MB(100) / EVT_SIZE_AVG (150 bytes) ≈ 699,050` イベントが上限のデフォルト値である（`eventd.cpp:31-33`）。`get_config_data(CACHE_MAX_CNT, MAX_CACHE_SIZE)` が `/etc/eventd.json` から上書き値を読む。RAM が少ない組み込みプラットフォームでは `eventd.json` で `cache_max_cnt` を下げる運用が推奨される（HLD section 3.1.7）。SAI・ASIC 種別とは無関係で、搭載 RAM 量のみに依存する。
+
+[^4]: eventd SAI 非依存コード: `sonic-buildimage/src/sonic-eventd/src/eventd.cpp` — SAI インクルードなし、`getenv("platform")` 呼び出しなし. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-eventd/src/eventd.cpp>
+[^5]: evprofile デフォルト定義: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` section 3.1.5. <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
+
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework HLD. section 3.1.5 (Event Profile), 3.1.7 (Event Table and Alarm Table). <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>

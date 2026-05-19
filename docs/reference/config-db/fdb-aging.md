@@ -158,4 +158,33 @@ warm-reboot パスで `checkRestartNoFreeze()` が false の場合、`orchdaemon
 - [FDB テーブル](fdb.md)
 - [DEVICE_METADATA テーブル](device-metadata.md)
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`fdb_aging_time` フィールドはコードの直接 leafref 参照を持たないが、値の**注入元テンプレート**
+`switch.json.j2` が CONFIG_DB `DEVICE_METADATA` を暗黙的に参照して注入条件を決定する。
+
+<!-- evidence: meta/_intermediate/cdb-flow/fdb-aging-cross-refs.md -->
+
+### switch.json.j2 → DEVICE_METADATA 参照一覧
+
+| 参照元 (テンプレート) | 参照先テーブル | 参照先フィールド | 参照タイミング | 効果 |
+|---|---|---|---|---|
+| `switch.json.j2:35` | `DEVICE_METADATA` | `localhost.switch_type` | orchagent コンテナ起動時 | `"dpu"` のとき `fdb_aging_time` 注入をスキップ |
+| `switch.json.j2:28-31` | `DEVICE_METADATA` | `localhost.namespace_id` | orchagent コンテナ起動時 | multi-asic 時の `ecmp_hash_seed` / `lag_hash_seed` オフセット計算（`fdb_aging_time` 自体には影響なし） |
+
+### 注入スキップ条件
+
+`DEVICE_METADATA|localhost` の `switch_type` が `"dpu"` に設定されている場合、`switch.json.j2` は
+`fdb_aging_time` フィールドを生成しない。この場合 APPL_DB `SWITCH_TABLE:switch` に当フィールドが書き込まれず、
+SAI `SAI_SWITCH_ATTR_FDB_AGING_TIME` は orchagent 初期化時のハードウェアデフォルト値のままになる。
+
+### 直接 APPL_DB 参照なし
+
+`SwitchOrch::doAppSwitchTableTask()` は `fdb_aging_time` 値を処理するにあたり、他の CONFIG_DB / APPL_DB
+テーブルを参照しない（値をそのまま `uint32_t` にキャストして SAI に渡す）。
+`orchdaemon.cpp` の warm-reboot パスが呼ぶ `setAgingFDB(0)` も APPL_DB を経由せず直接 SAI API を呼ぶため、
+cross-refs としての依存テーブルはない（Phase B 順序依存として記載済み）。
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: fdb-aging -->

@@ -562,4 +562,55 @@ CONFIG_DB DEVICE_NEIGHBOR|<peer_name> (SET/DEL)
 > **Evidence**: `sonic-buildimage` `dockers/docker-lldp/lldpmgrd:12-14,300-326`; `sonic-utilities` `pfcwd/main.py:413`; `scripts/ecnconfig:282-287`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/main.py:75-76`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/device-neighbor-platform.md`
+> スキャン範囲: `sonic-buildimage/src/sonic-config-engine/minigraph.py` 全行（重点: 599-839, 1719-1782, 2064-2120, 2186-2193, 2631-2641）
+
+`DEVICE_NEIGHBOR` は orchagent / SAI を経由しないため `getenv("platform")` による ASIC 種別分岐は存在しない。プラットフォーム差が生じるのは **minigraph.py によるテーブル生成時** のトポロジ種別（multi-ASIC pizza box / VoQ chassis / DualToR）に起因する差異のみである。
+
+### 非 multi-ASIC（pizza box）— 通常パス
+
+`parse_png()`（`minigraph.py:590`）が `<PngDec>` セクションを解析して `neighbors` を生成する。`DeviceInterfaceLink` と `UnderlayInterfaceLink` のみが DEVICE_NEIGHBOR に取り込まれ、`DeviceMgmtLink` / `DeviceSerialLink` は除外される（`minigraph.py:631-651`）。
+
+**DEVICE_NEIGHBOR_METADATA スコープ**: 自ホスト以外の**全デバイス**が登録される（`minigraph.py:2638-2639`）。DEVICE_NEIGHBOR に登場しないデバイスも含む広いスコープ。
+
+### multi-ASIC pizza box（asic_name 指定時）
+
+`parse_asic_png()`（`minigraph.py:779`）が使用される。リンクの `<ChassisInternal>` 要素によって外部リンク（`parse_asic_external_link()`）と内部リンク（`parse_asic_internal_link()`）に分類する。
+
+- **外部リンク**（`ChassisInternal == "false"`）: ポート名を `port_alias_asic_map` → `port_alias_map` の二段変換でエイリアス解決して DEVICE_NEIGHBOR に登録する。
+- **内部リンク**（`ChassisInternal == "true"`）: ASIC 間インターコネクト（BackEnd ポート）も DEVICE_NEIGHBOR に登録される。BackEnd ASIC では内部リンクのみが登録されるため、`pfcwd start_default` がポート一覧を DEVICE_NEIGHBOR から取得すると BackEnd ポートを外部ポートとして誤認する可能性がある。
+
+**DEVICE_NEIGHBOR_METADATA スコープ**: DEVICE_NEIGHBOR の `name` フィールドに登場するデバイス**のみ**が登録される（`minigraph.py:2640-2641`）。非 multi-ASIC より狭いスコープ。BGP セッション確立時に `bgpcfgd` が DEVICE_NEIGHBOR_METADATA を参照するため、スコープが狭いと BGP 確立に影響する。
+
+### VoQ chassis ラインカード（chassis_type == "VoQ"）
+
+`asic_hostname` が設定されるため multi-ASIC と同じ `parse_asic_png()` 分岐が適用される。VoQ 固有の差異:
+
+1. **内部 VoQ インターフェイス除外**: `voq_internal_intfs = ['cpu', 'recirc', 'inband']`（`minigraph.py:88`）で定義される内部インターフェイスは DEVICE_NEIGHBOR に登録されない。
+2. **`BGP_VOQ_CHASSIS_NEIGHBOR` テーブル**: VoQ chassis 専用の内部 BGP セッション用テーブルが別途生成される（`minigraph.py:2277`）。DEVICE_NEIGHBOR は外部 BGP neighbor 向けのまま。
+3. **Spine chassis frontend ロール**: `parse_spine_chassis_fe()`（`minigraph.py:1719`）が DEVICE_NEIGHBOR の `name` フィールドを参照し、隣接デバイスのタイプが `ChassisBackendRouter` でない場合にインターフェイスを `VnetFE` に enslaved させる（`minigraph.py:1749-1753`）。DEVICE_NEIGHBOR の `name` が vnet 割り当ての判定キーとして使われる。
+
+### DualToR（ActiveStandby / ActiveActive 冗長構成）
+
+`parse_png()` の通常パスで DEVICE_NEIGHBOR が生成される（変更なし）。DualToR 固有の差異:
+
+- `PEER_SWITCH` テーブルが生成され `DEVICE_METADATA.localhost.subtype = 'DualToR'` が設定される（`minigraph.py:2188-2189`）が、DEVICE_NEIGHBOR の内容は変わらない。
+- MUX ケーブル接続（`LogicalLink` タイプ）は `mux_cable_ports` dict を経由して `MUX_CABLE` テーブルへ書き込まれる（`minigraph.py:2617`）。DEVICE_NEIGHBOR には影響しない。
+- DEVICE_NEIGHBOR_METADATA は非 multi-ASIC の全デバイス登録パスが適用され、peer switch（対向 ToR）も含まれる。
+
+### プラットフォーム差サマリ
+
+| 構成 | 生成関数 | DEVICE_NEIGHBOR の内容 | DEVICE_NEIGHBOR_METADATA スコープ |
+|------|---------|----------------------|----------------------------------|
+| 非 multi-ASIC (pizza box) | `parse_png()` | 外部隣接のみ（DeviceInterfaceLink / UnderlayInterfaceLink） | 全デバイス（自ホスト除く） |
+| multi-ASIC pizza box | `parse_asic_png()` | 外部隣接 + 内部リンク（ChassisInternal で分類） | DEVICE_NEIGHBOR に登場するデバイスのみ |
+| VoQ chassis ラインカード | `parse_asic_png()` | 外部隣接 + 内部リンク（voq_internal_intfs を除く） | DEVICE_NEIGHBOR に登場するデバイスのみ |
+| DualToR | `parse_png()` | 外部隣接のみ（T0 トポロジ通常） | 全デバイス（peer switch 含む） |
+
+> **Evidence**: `sonic-buildimage` `src/sonic-config-engine/minigraph.py:85-88,178-179,599-724,727-778,779-839,1719-1782,2064-2120,2186-2193,2277,2616-2622,2631-2641`
+<!-- /platform -->
+
 <!-- glossary-links-injected: 2c4f81fa98e5 -->

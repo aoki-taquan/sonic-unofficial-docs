@@ -272,6 +272,54 @@ YANG default 外の fallback。`PortsOrch::updateDbPortOperFec` と `initPortSup
 
 <!-- /cdb-exceptions -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`PortsOrch` による FEC モード適用 (`doPortTask` → `setPortFec`) と FEC oper 値取得 (`getPortOperFec`) の失敗経路を整理する。STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドへの書込みは `swss::Table::set()` (void 返却) を使うため、**Redis 書込み自体の失敗はアプリ層では検出不可**。Redis 例外は orchagent プロセス abort → systemd 再起動という経路で回収される。
+
+<!-- evidence: meta/_intermediate/cdb-flow/fec-state-failure.md -->
+
+### FEC モード SET 時の失敗パターン (`doPortTask`)
+
+| # | 失敗ケース | 発生箇所 | 挙動 | retry | STATE_DB への影響 |
+|---|-----------|---------|------|-------|-----------------|
+| 1 | `fec_override_sup=false` かつ `fec=auto`（auto FEC 非対応プラットフォーム） | portsorch.cpp:5317-5321 | SWSS_LOG_ERROR → `erase(it)`（恒久スキップ） | なし | 書込なし |
+| 2 | `isFecModeSupported()` が false（プラットフォーム未サポート FEC モード） | portsorch.cpp:5323-5331 | SWSS_LOG_ERROR → `erase(it)`（恒久スキップ） | なし | 書込なし |
+| 3 | `setPortAdminStatus(false)` 失敗（FEC 適用前の port DOWN に失敗） | portsorch.cpp:5342-5350 | SWSS_LOG_ERROR → `it++`（無制限 retry） | 無制限 | 書込なし |
+| 4 | SAI `set_port_attribute(SAI_PORT_ATTR_FEC_MODE)` 失敗 | portsorch.cpp:2394-2401 | SWSS_LOG_ERROR → `handleSaiSetStatus` 判定 → 上位呼出元へ false 返却 | 条件次第 | 書込なし |
+| 5 | SAI `set_port_attribute(AUTO_NEG_FEC_MODE_OVERRIDE)` 失敗 | portsorch.cpp:2405-2408 | SWSS_LOG_ERROR → `handleSaiSetStatus` 判定 → false 返却 | 条件次第 | 書込なし |
+| 6 | `setPortFec()` が false を返した（SAI 失敗の上位検出） | portsorch.cpp:5356-5363 | SWSS_LOG_ERROR → `it++`（無制限 retry） | 無制限 | 書込なし |
+
+!!! warning "恒久スキップ（#1, #2）での APPL_DB 消費"
+    `erase(it)` パターンでは APPL_DB のタスクエントリが消費される。orchagent は再試行しないため、CONFIG_DB 側に FEC 設定が残っていても STATE_DB への適用は永久に行われない。systemd 再起動 + CONFIG_DB 再投入が回復手段となる。
+
+### `getPortOperFec` — SAI クエリ失敗
+
+| 失敗条件 | 発生箇所 | 結果 | STATE_DB の `fec` |
+|---------|---------|------|-----------------|
+| `port.m_type != Port::PHY`（LAG / VLAN ポート等） | portsorch.cpp:9998-10000 | `return false` → `fec_str = "N/A"` | `"N/A"` 書込み |
+| SAI `get_port_attribute(OPER_PORT_FEC_MODE)` 失敗 | portsorch.cpp:10007-10010 | SWSS_LOG_NOTICE → `return false` → `fec_str = "N/A"` | `"N/A"` 書込み |
+| `fecToStr()` 変換失敗（未知 SAI fec_mode） | portsorch.cpp:9684-9688 | SWSS_LOG_ERROR → `fec_str = "N/A"` | `"N/A"` 書込み |
+
+いずれの失敗経路でも `updateDbPortOperFec(port, "N/A")` が呼ばれ STATE_DB に `"N/A"` が書き込まれる。エラー停止はしない。
+
+### `isFecModeSupported` の特殊ケース（空集合 vs 非対応の逆転）
+
+| SAI クエリ結果 | `obj.supported` | `obj.data` | `isFecModeSupported()` 戻り値 | 設定への影響 |
+|--------------|----------------|-----------|------------------------------|-----------|
+| `NOT_SUPPORTED` / `NOT_IMPLEMENTED` | `false` | 空 | **`true`（バリデーションスキップ）** | FEC 設定を通す |
+| 成功、対応モード空集合 | `true` | 空 | **`false`（全モード拒否）** | #2 失敗で erase |
+| 成功、対応モードあり、指定モード含まず | `true` | 非空 | `false` | #2 失敗で erase |
+| 成功、対応モードあり、指定モード含む | `true` | 非空 | `true` | 正常適用 |
+
+証跡: portsorch.cpp:3205-3222（`isFecModeSupported`）、3244-3251（`getPortSupportedFecModes` NOT_IMPLEMENTED 分岐）。
+
+### 失敗後の `m_fec_cfg` フラグと再試行
+
+FEC SET 成功時のみ `p.m_fec_cfg = true` をセットして `m_portList` を更新する (portsorch.cpp:5366-5369)。失敗時は `m_fec_cfg=false` のまま。次サイクルで `m_fec_cfg` または `m_fec_mode != pCfg.fec.value` の変化検出条件が再評価され、retry ループが動く（`it++` パターンのみ。`erase(it)` パターンは再試行されない）。
+
+<!-- /failure -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`PORT` テーブル](port.md) — FEC の設定フィールド (`fec`)

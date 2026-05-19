@@ -478,15 +478,16 @@ ASIC 番号の起点 `"0"` がハードコードされており、ASIC 1 以降�
 
 ### `CHASSIS_METADATA` — chassis 種別による有無とフィールド値
 
-| プラットフォーム種別 | `CHASSIS_METADATA` 生成 | `module_type` | `chassis_type` | 判定根拠 |
+| プラットフォーム種別 | 判定条件 | `CHASSIS_METADATA` | `chassis_type` | `module_type` |
 |---|---|---|---|---|
-| 通常 ToR / Leaf / Spine (非 chassis) | **なし** | — | — | `is_chassis()=False` |
-| VOQ chassis (linecard) | 生成 | `'linecard'` | `'voq'` | `is_voq_chassis()=True`、`is_supervisor()=False` (`device_info.py:737-739`) |
-| VOQ chassis (supervisor) | 生成 | `'supervisor'` | `'voq'` | `is_voq_chassis()=True`、`platform_env.conf` に `supervisor=1` |
-| Packet chassis (linecard) | 生成 | `'linecard'` | `'packet'` | `is_packet_chassis()=True`、`is_supervisor()=False` (`device_info.py:637-639`) |
-| Packet chassis (supervisor) | 生成 | `'supervisor'` | `'packet'` | `is_packet_chassis()=True`、`platform_env.conf` に `supervisor=1` |
-| Virtual chassis (VS / テスト) | 生成 | `'linecard'` or `'supervisor'` | `'voq'` or `'packet'` | `asic_type == "vs"` (`sonic_version.yml`) かつ `switch_type` が `dummy-sup`/`voq`/`chassis-packet` のいずれか (`device_info.py:658-664`) |
-| Disaggregated chassis | **なし** | — | — | `is_voq_chassis()=True` だが `is_disaggregated_chassis()=True` のため `is_chassis()=False` (`device_info.py:642-668`) |
+| 標準 ToR / leaf (非シャーシ) | `is_chassis()=False` | **生成されない** | — | — |
+| VOQ chassis (linecard) | `switch_type=voq` + `chassisdb.conf` 存在 + `supervisor=1` なし | あり | `'voq'` | `'linecard'` |
+| VOQ chassis (supervisor) | `switch_type=voq` + `chassisdb.conf` 存在 + `platform_env.conf` に `supervisor=1` | あり | `'voq'` | `'supervisor'` |
+| Packet chassis | `switch_type=chassis-packet` | あり | `'packet'` | `supervisor=1` 有無で決定 |
+| Virtual chassis (VS) | `asic_type=vs` (`sonic_version.yml`) + `switch_type` が `dummy-sup`/`voq`/`chassis-packet` のいずれか | あり | `'voq'` or `'packet'` | VS 内 `supervisor=1` 有無 |
+| Disaggregated chassis | `switch_type=voq` + `disaggregated_chassis=1` in `platform_env.conf` | **生成されない** | — | — |
+
+(evidence: `device_info.py:630-668`, `device_info.py:737-739`)
 
 > `is_virtual_chassis()` は `get_platform_info().get('asic_type')` が `"vs"` であることを条件に含む。`asic_type` は `sonic_version.yml` から読み込まれる (`device_info.py:550-551, 660`)。
 
@@ -500,6 +501,8 @@ ASIC 番号の起点 `"0"` がハードコードされており、ASIC 1 以降�
 | Multi-ASIC プラットフォーム | ASIC #0 の `port_config.ini` 存否に依存 | `asic="0"` をハードコードして検索 (`device_info.py:741`) |
 | VS (Virtual Switch) テスト | `True` (通常) | VS プラットフォームのテスト hwsku に `port_config.ini` が付属する |
 
+Multi-NPU 環境では常に ASIC `"0"` のポート設定ファイルを確認する。ASIC 1 以降は確認しない (`device_info.py:741`)。
+
 ### `MACSEC_SUPPORTED` — `platform_env.conf` 依存
 
 | プラットフォーム種別 | 値 | 理由 |
@@ -508,11 +511,11 @@ ASIC 番号の起点 `"0"` がハードコードされており、ASIC 1 以降�
 | MACsec 対応ハードウェア (一部 Broadcom 等) | `True` | `platform_env.conf` に `macsec_enabled=1` が記述されている |
 | VS / コンテナ / テスト環境 | `False` | `platform_env.conf` 不在のため `is_macsec_supported()=0` |
 
-MACsec 対応の宣言は `platform_env.conf` の `macsec_enabled=1` 行のみで制御される。ASIC ベンダ別のハードコードや YANG スキーマ上の制約は存在しない。
+MACsec 対応の宣言は `platform_env.conf` の `macsec_enabled=1` 行のみで制御される。ASIC ベンダ別のハードコードや YANG スキーマ上の制約は存在しない (`device_info.py:720-721`, `700-702`)。
 
 ### SmartSwitch / DPU — 影響なし
 
-`is_smartswitch()` / `is_dpu()` は `platform.json` 内の `"DPUS"` / `"DPU"` キー存在を確認するが (`device_info.py:679-694`)、`get_device_runtime_metadata()` はこれらの関数を参照しない。SmartSwitch / DPU 構成であっても `DEVICE_RUNTIME_METADATA` のフィールド構造・値に直接の差は生じない。
+`is_smartswitch()` / `is_dpu()` は `platform.json` の `DPUS` / `DPU` キーを参照するが (`device_info.py:679-694`)、`get_device_runtime_metadata()` はこれらの関数を呼び出さない。SmartSwitch NPU 側も DPU カード側も、非シャーシ構成であれば `CHASSIS_METADATA` は生成されず `ETHERNET_PORTS_PRESENT` / `MACSEC_SUPPORTED` のみが返される (`device_info.py:735-747`)。
 
 > **Evidence**: `device_info.py:630-668` (`is_voq_chassis` / `is_packet_chassis` / `is_virtual_chassis` / `is_chassis`)、`device_info.py:699-732` (`is_supervisor` / `is_macsec_supported`)、`device_info.py:735-747` (`get_device_runtime_metadata`)
 <!-- /platform -->
