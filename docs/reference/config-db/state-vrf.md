@@ -456,6 +456,57 @@ consumer 側（on-demand polling、doTask() イテレーション内）
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: sonic-buildimage/dockers/docker-orchagent/supervisord.conf.j2 L247-262 / sonic-swss/cfgmgr/vrfmgr.cpp L148,176-183,289 / sonic-swss/orchagent/vrforch.cpp L74-78,93-120 / sonic-swss/orchagent/orchdaemon.cpp L283 -->
+
+`VRF_TABLE` / `VRF_OBJECT_TABLE` の書き込みコード（`vrfmgrd` / `VRFOrch`）には `getenv("platform")` による ASIC 種別分岐は存在しない。ただし以下の構成・プラットフォーム起因の差異がある。
+
+### fabric ASIC では vrfmgrd が起動しない
+
+`docker-orchagent/supervisord.conf.j2:247-262` の Jinja 条件により、fabric ASIC スロット（linecard の SAI ファブリック側プロセス）では `vrfmgrd` が起動しない:
+
+```jinja
+{% if is_fabric_asic == 0 %}
+[program:vrfmgrd]
+...
+{%- endif %}
+```
+
+| 構成 | `STATE_DB:VRF_TABLE` | `STATE_DB:VRF_OBJECT_TABLE` |
+|------|----------------------|-----------------------------|
+| 通常 NIC/NPU スロット (`is_fabric_asic == 0`) | `vrfmgrd` により書き込まれる | `VRFOrch` により書き込まれる |
+| fabric ASIC スロット (`is_fabric_asic == 1`) | **書き込まれない**（`vrfmgrd` 非起動） | **書き込まれない**（APP_DB にトリガなし） |
+
+`orchagent` 自体は fabric ASIC でも起動するが、APP_DB の `APP_VRF_TABLE_NAME` エントリが存在しないため `VRFOrch::addOperation()` が呼ばれず `VRF_OBJECT_TABLE` は空のまま。
+
+### mgmt VRF — VRF_TABLE は存在するが VRF_OBJECT_TABLE は存在しない
+
+VRF 名が `"mgmt"` の場合、コードが特殊扱いするためテーブルの存在に非対称性が生じる。これはプラットフォーム種別ではなく VRF 名（`"mgmt"` か否か）による分岐だが、mgmt VRF を持つかは構成（`MGMT_VRF_CONFIG.mgmtVrfEnabled`）次第。
+
+| テーブル | mgmt VRF の挙動 | 根拠 |
+|---------|----------------|------|
+| `STATE_DB:VRF_TABLE\|mgmt` | **書き込まれる**: `vrfmgrd` は `setLink("mgmt")` で Linux VRF デバイスを作成せず予約テーブル ID 6000 を使用するが、その後 `m_stateVrfTable.set(vrfName, {{"state","ok"}})` は呼ばれる | `vrfmgr.cpp:176-183,289` |
+| `STATE_DB:VRF_OBJECT_TABLE\|mgmt` | **書き込まれない**: `VRFOrch` は `mgmtVrfEnabled` / `in_band_mgmt_enabled` フィールドを `SWSS_LOG_INFO` + `continue` でスキップし SAI `create_virtual_router()` を呼ばない | `vrforch.cpp:74-78` |
+
+このため `isVrfObjExist("mgmt")` は常に `false` を返す。`vrfmgrd` の削除ループ (`isVrfObjExist()` を待機) は mgmt VRF では即座に完了する。
+
+### SAI 属性サポート — プラットフォーム条件なし
+
+`VRFOrch::addOperation()` は `SAI_VIRTUAL_ROUTER_ATTR_ADMIN_V4_STATE` / `SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS` / `SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_TTL1_PACKET_ACTION` / `SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_IP_OPTIONS_PACKET_ACTION` / `SAI_VIRTUAL_ROUTER_ATTR_UNKNOWN_L3_MULTICAST_PACKET_ACTION` を直接 SAI に渡す。これらに対して `getenv("platform")` による分岐は存在しない。各ベンダーの SAI がこれらの属性をサポートしない場合は `create_virtual_router()` / `set_virtual_router_attribute()` がエラーを返し、`handleSaiCreateStatus()` / `handleSaiSetStatus()` がエラー処理する。この場合 `VRF_OBJECT_TABLE` への書き込みは行われない。
+
+### プラットフォーム差サマリ
+
+| 差異点 | 条件 | STATE_DB への影響 |
+|--------|------|------------------|
+| `VRF_TABLE` / `VRF_OBJECT_TABLE` 非存在 | fabric ASIC スロット (`is_fabric_asic == 1`) | 両テーブルとも書き込まれない |
+| `VRF_TABLE\|mgmt` は存在するが `VRF_OBJECT_TABLE\|mgmt` は存在しない | `MGMT_VRF_CONFIG.mgmtVrfEnabled = "true"` の mgmt VRF | `VRF_TABLE` のみ書き込まれる |
+| ASIC 種別（Broadcom / Mellanox / Marvell 等）による挙動差 | なし | コード上の分岐なし |
+
+詳細根拠は `meta/_intermediate/cdb-flow/state-vrf-platform.md` を参照。
+<!-- /platform -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
