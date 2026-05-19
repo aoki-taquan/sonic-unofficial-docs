@@ -393,6 +393,56 @@ orchdaemon select() ループ
 > **Evidence**: `sonic-swss/orchagent/cbf/cbfnhgorch.cpp` L21-24 (コンストラクタ)、`sonic-swss/orchagent/nhgbase.h` L398-404 (`NhgOrchCommon` クラス定義)、`sonic-swss/orchagent/orch.cpp` L1194 (`ConsumerStateTable` 生成)、`sonic-swss/tests/test_nhg.py` L216 (`ProducerStateTable` 使用例)、`sonic-swss-common/common/schema.h` L56 (`APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME` 定義)
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+`CbfNhgOrch` の動作はプラットフォームが提供する SAI Capability によって以下の軸で分岐する。
+
+### SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED サポート
+
+CBF NHG は `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` を SAI に渡す (`cbfnhgorch.cpp:302`)。このグループ型のサポートはプラットフォーム依存であり、ASIC ベンダーごとに異なる。VS プラットフォームはスタブ実装として `SAI_STATUS_SUCCESS` を返すが実転送はない。
+
+### NHG 総数上限: Mellanox のみ補正
+
+`CbfNhgOrch::doTask()` の上限チェック (`cbfnhgorch.cpp:100`) は `gRouteOrch->getMaxNhgCount()` を参照する。この値は `RouteOrch` コンストラクタ (`routeorch.cpp:61-89`) が `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` で取得したものだが、Mellanox プラットフォーム（`getenv("platform")` に `"mellanox"` が含まれる場合）のみ `DEFAULT_MAX_ECMP_GROUP_SIZE = 32` で除算して補正される。CBF NHG と通常 NHG は同一カウンタを共有する。
+
+| プラットフォーム | 上限値 |
+|---|---|
+| Mellanox | `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS / 32` |
+| Broadcom / Marvell / その他 | `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` をそのまま使用 |
+
+### フォワーディングクラス数: SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES
+
+`NhgMapOrch::getMaxNumFcs()` (`nhgmaporch.cpp:299-325`) は初回呼び出し時に `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` を SAI から取得する。
+
+| 状況 | 結果 |
+|------|------|
+| SAI 対応 ASIC | `max_num_fcs = attr.value.u8`（ASIC 依存値） |
+| SAI 非対応 ASIC | `SWSS_LOG_WARN("Switch does not support FCs")` + `max_num_fcs = 0` → 全 FC 値が範囲外エラーで破棄される |
+
+`CbfNhg::sync()` (`cbfnhgorch.cpp:311-312`) はメンバー数が `getMaxNumFcs()` を超えると `SWSS_LOG_WARN` を出力するが処理は継続する。
+
+### NHG マップ収容数: sai_object_type_get_availability
+
+`NhgMapOrch` コンストラクタ (`nhgmaporch.cpp:26-34`) で `sai_object_type_get_availability(SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MAP)` を呼び出す。非対応 ASIC は `m_max_nhg_map_count = 0` のまま起動し、以降の `FC_TO_NHG_INDEX_MAP_TABLE` への全 SET が `SWSS_LOG_WARN` + `success=false` となる。この状態では `selection_map` の OID 解決が永続的に失敗し、CBF NHG の sync が完了しない。
+
+```cpp
+// orchagent/cbf/nhgmaporch.cpp:26-34
+if (sai_object_type_get_availability(gSwitchId, SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MAP,
+                                     0, nullptr, &m_max_nhg_map_count) != SAI_STATUS_SUCCESS)
+{
+    SWSS_LOG_WARN("Switch does not support NHG maps");
+    m_max_nhg_map_count = 0;
+}
+```
+
+### メンバー INDEX の CREATE_ONLY 制約
+
+`SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX` は SAI 仕様上 `CREATE_ONLY` 属性であるため、メンバー順序の変更時は全メンバーの remove → 再 sync が必須となる (`cbfnhgorch.cpp:509-516`)。この制約はプラットフォーム共通。
+
+詳細証跡: `meta/_intermediate/cdb-flow/cbf-nhg-platform.md`
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
