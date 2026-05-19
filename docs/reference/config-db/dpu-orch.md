@@ -286,6 +286,71 @@ reasoning: DashHaOrch が gBfdOrch を受け取ることで、BFD セッショ�
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dpu-orch-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`DpuOrchDaemon` の起動・動作時に発生しうる失敗を 5 系統に分類する。
+
+### A. `get_feature_status()` — CONFIG_DB 接続失敗時のフォールバック
+
+`DpuOrchDaemon::init()` 冒頭の `get_feature_status(ORCH_NORTHBOND_DASH_ZMQ_ENABLED, true)` は CONFIG_DB への hget をラップしており、`runtime_error` 例外をキャッチしてデフォルト値を返す:
+
+| 失敗条件 | 結果 | evidence |
+|---------|------|---------|
+| CONFIG_DB 接続失敗 (`runtime_error`) | `SWSS_LOG_ERROR` + `default_value` 返却。`init()` は中断しない | `orch_zmq_config.cpp:90-93` |
+| フィールド欠如 (`hget` null) | `SWSS_LOG_NOTICE` + `default_value` 返却 | `orch_zmq_config.cpp:97-99` |
+| 値が `"true"` 以外 (`"false"` 等) | `false` 返却 → `dash_zmq_server = nullptr` | `orch_zmq_config.cpp:103` |
+
+`orch_northbond_dash_zmq_enabled` の default_value は `true` のため、CONFIG_DB が参照不能でも ZMQ が有効化される方向でフォールバックする。`orch_northbond_route_zmq_enabled` の default_value は `false`。
+
+### B. `DPU_APPL_DB` / `DPU_APPL_STATE_DB` 接続失敗
+
+`switch_type = "dpu"` のとき `main.cpp:992-993` で `DBConnector("DPU_APPL_DB", ...)` / `DBConnector("DPU_APPL_STATE_DB", ...)` を生成する。`DBConnector` コンストラクタは Redis 接続失敗時に例外を送出するため、`main()` がキャッチせずに orchagent が abort し、systemd により再起動される。
+
+### C. `DpuOrchDaemon::init()` 失敗 → `exit(EXIT_FAILURE)`
+
+`orchdaemon.cpp:1322-1419` の `DpuOrchDaemon::init()` は DASH Orch 生成中に例外が発生すると `main.cpp:1017-1020` の次のガードで捕捉される:
+
+```cpp
+// main.cpp:1017-1020
+if (!orchDaemon->init()) {
+    SWSS_LOG_ERROR("Failed to initialize orchestration daemon");
+    exit(EXIT_FAILURE);
+}
+```
+
+`DpuOrchDaemon::init()` のコード上の `return false` パスは現存しない（`return true` のみ）。ただし `OrchDaemon::init()` 内で例外送出・false 返却がある場合も同様に `exit(EXIT_FAILURE)` → systemd 再起動となる。
+
+### D. DASH Orch の SAI 操作失敗 → retry / erase
+
+各 DASH Orch の `doTask*()` メソッドは以下の共通パターンで失敗を処理する:
+
+| 失敗ケース | `doTask()` 挙動 | `DPU_APPL_STATE_DB` 書込み | evidence |
+|-----------|----------------|--------------------------|---------|
+| `addXxx()` 失敗 (SAI API 戻り `!SAI_STATUS_SUCCESS`) | `result = DASH_RESULT_FAILURE` → `writeResultToDB()` → `it++`（次サイクル retry） | `result=1` (FAILURE) | `dashorch.cpp:416-419` |
+| `removeXxx()` 失敗 | `it++`（retry）。`removeResultFromDB()` を呼ばない | （前値保持） | `dashorch.cpp:428-430` |
+| protobuf parse 失敗 (`parsePbMessage` false) | `SWSS_LOG_WARN` → `erase(it)`（恒久スキップ） | （書込みなし） | `dashorch.cpp:404-408` |
+| 未知 op (`SET`/`DEL` 以外) | `SWSS_LOG_ERROR` → `erase(it)` | （書込みなし） | `dashorch.cpp:433-436` |
+
+`writeResultToDB()` は `DPU_APPL_STATE_DB` の対応テーブル（例: `DashOrch` → `APP_DASH_APPLIANCE_TABLE_NAME`）に `result` フィールドとして `0`（成功）/ `1`（失敗）を書き込む（`orchdaemon.cpp` の `DashOrch` コンストラクタで `app_state_db` が渡される）。
+
+!!! note "retry の上限なし"
+    `it++` による retry に上限は設定されていない。SAI API が常に失敗を返す場合（例: ASIC ファームウェア異常）、該当エントリは `DPU_APPL_STATE_DB` に `result=1` を書き続けたまま永続的に retry ループに入る。`orchagent restart` か DASH Orch 側の CONFIG/APPL 再投入が必要。
+
+### E. `switch_type` 不正値 — DpuOrchDaemon 非選択フォールバック
+
+`getCfgSwitchType()` (`main.cpp:260-264`) は `switch_type` の値が既知の enum 外の場合 `"switch"` にフォールバックし `SWSS_LOG_ERROR` を出力する:
+
+| 条件 | 挙動 |
+|------|------|
+| `switch_type` が `"voq"` / `"fabric"` / `"chassis-packet"` / `"switch"` / `"dpu"` 以外 | `SWSS_LOG_ERROR` + `switch_type = "switch"` フォールバック → `DpuOrchDaemon` 非選択、通常 NPU orchagent として起動 |
+| `switch_type` DB 読み取り失敗（hget 例外） | 同上: `"switch"` フォールバック |
+
+SmartSwitch DPU として動作させるためには `switch_type = "dpu"` が正確に設定されていなければならず、typo や欠落は orchagent 起動後にサイレントに NPU モードで動作するため注意が必要。
+
+> **証跡**: `getCfgSwitchType()` `main.cpp:242-265`、`get_feature_status()` `orch_zmq_config.cpp:81-103`、`DpuOrchDaemon::init()` `orchdaemon.cpp:1322-1419`、`doTaskApplianceTable()` `dashorch.cpp:386-438`。詳細グレップ証跡は `meta/_intermediate/cdb-flow/dpu-orch-failure.md` を参照。
+<!-- /failure -->
+
 ## 引用元
 
 [^1]: DpuOrchDaemon クラス定義と起動条件: `sonic-swss/orchagent/orchdaemon.h:150-158`, `sonic-swss/orchagent/orchdaemon.cpp:1313-1419`, `sonic-swss/orchagent/main.cpp:981-994`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp>
