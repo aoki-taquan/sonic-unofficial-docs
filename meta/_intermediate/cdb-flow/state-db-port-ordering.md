@@ -1,93 +1,70 @@
-# STATE_DB PORT_TABLE — Phase B 書込み順依存スキャンノート
+# STATE_DB PORT_TABLE — Phase B 書込み順依存調査
 
-対象ページ: `docs/reference/config-db/state-db-port.md`
-対象テーブル: `STATE_DB PORT_TABLE|Ethernet*`
-Producer:
-  - `portsyncd` (linksync.cpp)
-  - `PortsOrch` (portsorch.cpp)
-スキャン範囲:
-  - `LinkSync::LinkSync()` / `LinkSync::onMsg()` — 全行精読
-  - `PortsOrch::initPortSupportedSpeeds()` / `initPortSupportedFecModes()`
-  - `PortsOrch::initHostTxReadyState()` / `setHostTxReady()` / `setPortAdminStatus()`
-  - `PortsOrch::updateDbPortOperSpeed()` / `updateDbPortOperFec()`
-  - `PortsOrch::doPortTask()` 内の初期化シーケンス (portsorch.cpp:5494-5495, 6460-6462)
-  - `PortsOrch::refreshPortStatus()` (portsorch.cpp:9850-9930)
+調査日: 2026-05-19
+ソース: sonic-swss portsyncd/linksync.cpp, orchagent/portsorch.cpp, cfgmgr/intfmgr.cpp, cfgmgr/buffermgrdyn.cpp, cfgmgr/teammgr.cpp, cfgmgr/natmgr.cpp, cfgmgr/macsecmgr.cpp
 
----
+## portsyncd (linksync.cpp) の書込み前提条件
 
-## 検出した順序依存・タイミング依存
+linksync.cpp:193-194: RTM_NEWLINK イベントが届いても、`m_portTable.get(key, temp)` が false を返す場合（APP_DB PORT_TABLE に該当ポートが未登録）、STATE_DB への書き込みはスキップされる。
 
-### 1. APP_DB `PORT_TABLE` が先に存在しないと STATE_DB への書き込みがスキップされる
+### 順序: APP_DB PORT_TABLE → STATE_DB PORT_TABLE
 
-- `LinkSync::onMsg()` は RTM_NEWLINK 受信時に `m_portTable.get(key, temp)` で APP_DB `PORT_TABLE` にキーが存在するかを確認する (linksync.cpp:193)。
-- **APP_DB に未登録のポート名**（非 front-panel インタフェース、起動シーケンス中でまだ orchagent が APP_DB を書いていないポート）に対しては STATE_DB への書き込みが行われず、`g_portSet` にキーが残留する。
-- **順序依存（強制）**: portsyncd が STATE_DB に `state=ok` を書けるのは、orchagent が APP_DB `PORT_TABLE` にポートエントリを書き込んだ後。起動シーケンス中は APP_DB 書き込みが先行するまで STATE_DB エントリは不在。
-- evidence: `linksync.cpp:192-207`
+portsyncd が STATE_DB に `state=ok` を書くためには、portsyncd 起動時に APP_DB `PORT_TABLE` にポートが登録済みであることが必須。APP_DB への登録は orchagent が CONFIG_DB `PORT` テーブルを処理して PortInitDone を発行した後。
 
-### 2. 非 warm-reboot 時: 起動直後に既存インタフェースを DOWN → RTM_NEWLINK 再送でリカバリ
+```
+CONFIG_DB PORT → orchagent/PortsOrch → APP_DB PORT_TABLE (PortInitDone)
+    ↓
+portsyncd が RTM_NEWLINK 受信 → STATE_DB PORT_TABLE|<name> set {state=ok, ...}
+```
 
-- `LinkSync::LinkSync()` コンストラクタは非 warm-reboot 時に `ip link set Ethernet* down` を全フロントパネルポートに実行し (linksync.cpp:96-107)、`m_ifindexOldNameMap` にインデックスを記録する。
-- これにより起動前の古い STATE_DB 値は RTM_NEWLINK が再送されるまで**上書きされない**中間状態が発生する。
-- **順序依存**: 起動後の最初の RTM_NEWLINK 受信 → STATE_DB 書き込みの間に、consumer が旧値を読む可能性がある。
-- evidence: `linksync.cpp:44-108`, `linksync.cpp:172-177`（旧インタフェース無視ガード）
+## consumer からの観測順序制約
 
-### 3. `portsyncd` 書き込みフィールドは 1 回の `set()` でアトミックに更新される
+### intfmgrd: PORT_TABLE.state=ok が前提ゲート
 
-- RTM_NEWLINK 受信時、`state` / `admin_status` / `mtu` / `netdev_oper_status` の 4 フィールドが **1 回の `m_statePortTable.set()` 呼び出し**でまとめて書かれる (linksync.cpp:200-205)。
-- 個別フィールドの書き込みは行われない（`hset` ではなく `set`）。
-- **順序依存なし**（4 フィールドは atomic set）: ただし RTM_NEWLINK が複数回来る場合は上書きが繰り返される。
-- evidence: `linksync.cpp:199-205`
+`intfmgr.cpp:649-695` の `isIntfStateOk()` は Ethernet インタフェースについて `m_statePortTable.get(alias, temp)` + `state` フィールドの存在を確認する。state フィールドが不在または PORT_TABLE エントリ自体が不在の場合は `false` を返し、IP アドレス付与（INTF_TABLE 書き込み）を保留する。
 
-### 4. `PortsOrch` の `supported_speeds` / `supported_fecs` は `initPortSupportedFecModes()` で初期化、以後は変化しない
+- **強制先行**: STATE_DB `PORT_TABLE|<name> state=ok` が書かれるまで、`intfmgrd` は当該ポートへの IP アドレス設定を開始しない
+- コード根拠: `intfmgr.cpp:686-694` (isIntfStateOk) + `intfmgr.cpp:1115-1118` (setIntfIp ゲート)
 
-- `initPortSupportedSpeeds()` / `initPortSupportedFecModes()` はポート初期化の完了直後（`doPortTask` シーケンス内の最後、portsorch.cpp:6460-6462）に呼ばれる。
-- 一度 SAI クエリに成功すると `m_portSupportedSpeeds[port_id]` / `m_portSupportedFecModes[port_id]` にキャッシュされ、以後 `initPortSupportedSpeeds` は **即 return** する（portsorch.cpp:3163-3164）。
-- **順序依存**: `supported_speeds` / `supported_fecs` が STATE_DB に書かれるのは、PortsOrch がポートの SAI オブジェクト作成・serdes 設定・admin 状態設定を完了した後。起動直後は一時的に不在になる。
-- evidence: `portsorch.cpp:3159-3172` / `portsorch.cpp:6460`
+### buffermgrdyn: supported_speeds で動的バッファ再計算トリガー
 
-### 5. `host_tx_ready` は serdes 設定 → admin_status 設定 の順序に紐付いて書き込まれる
+`buffermgrdyn.cpp:2224-2254` の `handlePortStateTable()` は `FLEX_COUNTER_STATUS enable` 後に STATE_PORT_TABLE の `supported_speeds` フィールドを監視し、autoneg 有効ポートのバッファ PG 再計算を起動する。
 
-- `doPortTask` の初期化フェーズ: serdes 設定完了後 `initHostTxReadyState()` で `"false"` を初期書き込み (portsorch.cpp:5494-5495)。
-- `setPortAdminStatus()` 内での順序:
-  1. admin DOWN の場合: SAI set の**前**に `setHostTxReady("false")` を書く (portsorch.cpp:2220-2222)
-  2. SAI set 失敗時: `setHostTxReady("false")` を書く (portsorch.cpp:2232-2235)
-  3. admin UP + Gearbox OK + SAI 成功の場合: SAI set 成功**後**に `setHostTxReady("true")` を書く (portsorch.cpp:2257)
-- **順序依存（強制）**: `host_tx_ready = "true"` は SAI admin set 成功後にしか書かれない。SAI が失敗している間は `"false"` のまま。
-- **CMIS 例外**: `m_cmisModuleAsicSyncSupported = true` の場合、`setPortAdminStatus()` 内の `setHostTxReady()` 呼び出しはスキップされ、SAI コールバック `on_port_host_tx_ready` 経由で更新される（portsorch.cpp:977）。
+- **先行**: STATE_DB `PORT_TABLE|<name>` の `supported_speeds` フィールドが書かれた後に動的バッファ再計算が可能
+- `supported_speeds` は PortsOrch が SAI `get_port_attribute(SAI_PORT_ATTR_SUPPORTED_SPEED)` 取得後に書き込む
 
-- evidence: `portsorch.cpp:2215-2275`, `portsorch.cpp:5494-5495`
+### teammgrd: PORT_TABLE.state=ok でメンバー参加可否チェック
 
-### 6. `speed` / `fec` は oper UP 通知後にのみ更新される（DOWN 時は stale 残留）
+`teammgr.cpp:70-86` は LAG メンバーポートを追加する前に `m_statePortTable.get(alias, temp)` + `state` フィールドを確認する。存在しない場合はメンバーポート追加を保留。
 
-- `refreshPortStatus()` (portsorch.cpp:9895-9930) はポート oper UP 確認後にのみ `updateDbPortOperSpeed()` / `updateDbPortOperFec()` を呼ぶ。
-- ポートが oper DOWN になっても、speed / fec の STATE_DB フィールドは**削除も更新もされない**（最後の UP 時の値が残留）。
-- **順序依存（非対称）**: speed / fec は UP → DOWN 遷移でフィールドが古くなる一方向の依存。consumer は `netdev_oper_status != "up"` のときこれらの値を信頼しないこと。
-- evidence: `portsorch.cpp:9905-9930`
+### natmgr: PORT_TABLE エントリ存在で NAT エントリ有効化
 
-### 7. `rmt_adv_speeds` は autoneg 設定変更に紐付いて書き込まれる（CONFIG_DB 依存）
+`natmgr.cpp:119-126` は Ethernet ポートへの NAT 設定前に `m_statePortTable.get(port, temp)` を確認。エントリ未存在時は保留。
 
-- autoneg が ON に設定された場合のみ `rmt_adv_speeds` が `hset` で書かれる (portsorch.cpp:11338)。
-- autoneg が OFF に設定された場合は `hdel` でフィールドが削除される (portsorch.cpp:4862)。
-- **順序依存（CONFIG_DB 依存）**: `CONFIG_DB PORT.autoneg` の書き込みイベント駆動。autoneg の ON/OFF 切り替えのたびに書き込み/削除が切り替わる。
+### macsecmgr: state=ok かつ netdev_oper_status=up で MACsec セッション開始
 
----
+`macsecmgr.cpp:622-631` は `state=ok` AND `netdev_oper_status=up` の両条件が満たされた場合のみ MACsec セッション確立を開始する。`state=ok` 単独では不十分で oper up も必要。
 
-## 順序依存サマリ
+## 書込み削除の順序
 
-| # | 依存関係 | 方向 | 緩和策 |
-|---|----------|------|--------|
-| 1 | APP_DB `PORT_TABLE` の存在 → `portsyncd` の STATE_DB 書き込み許可 | **強制先行** | orchagent APP_DB 書き込み完了まで STATE_DB エントリは不在 |
-| 2 | 起動時 `ip link set down` → RTM_NEWLINK 再受信 → STATE_DB 更新 | 起動シーケンス依存 | 旧インタフェースからの RTM は無視ガードで除外 |
-| 3 | `portsyncd` 4 フィールドの atomic set | 同一 RTM_NEWLINK イベント内で原子的 | 順序依存なし |
-| 4 | PortsOrch ポート初期化完了 → `supported_speeds` / `supported_fecs` 書き込み | **強制先行**（serdes 設定後） | 起動直後は不在。SAI キャッシュ後は変化しない |
-| 5 | SAI admin set 成功 → `host_tx_ready = "true"` | **強制先行**（SAI 成功必須） | CMIS 環境は SAI コールバック経由 |
-| 6 | oper UP → speed / fec 更新 | oper UP 依存（DOWN 時 stale 残留） | consumer は `netdev_oper_status` で補正 |
-| 7 | `CONFIG_DB PORT.autoneg` 変更 → `rmt_adv_speeds` 書き込み/削除 | CONFIG_DB イベント依存 | autoneg OFF で自動 hdel |
+RTM_DELLINK 受信時は `m_statePortTable.del(key)` が即時実行される (linksync.cpp:183-185)。
+この時点で各 consumer (intfmgrd / teammgrd / natmgrd / macsecmgrd) はポートが「not ready」状態として扱う。
+対応する INTF_TABLE / LAG メンバー / NAT エントリ / MACsec セッションは consumer 側で個別に後続処理が行われる。
 
----
+## 起動シーケンスの順序依存サマリ
 
-## ページ反映方針
+```
+1. CONFIG_DB PORT テーブル設定済み
+   ↓
+2. orchagent/PortsOrch: CONFIG_DB PORT を処理 → APP_DB PORT_TABLE に書き込み → PortInitDone
+   ↓
+3. portsyncd: カーネル netlink RTM_NEWLINK を受信
+   → APP_DB PORT_TABLE にポートが存在することを確認
+   → STATE_DB PORT_TABLE|<name> set {state=ok, admin_status, mtu, netdev_oper_status}
+   ↓
+4. intfmgrd / teammgrd / natmgrd / macsecmgrd / buffermgrdyn が STATE_DB を参照して後続処理を開始
+   ↓
+5. PortsOrch: SAI からの oper 情報（speed / fec / host_tx_ready）を追記書き込み
+```
 
-- `<!-- ordering -->` ブロックをフィールド別詳細（`### link_training_status` セクション）の直後、`<!-- defaults -->` ブロックの前に挿入する。
-- サマリ表 + 主要制約（依存 #1 / #5 / #6）を含める。
-- 既存の `<!-- defaults -->` / `<!-- cdb-mermaid -->` ブロックは変更しない。
+step 3 と step 5 は独立した非同期イベント（netlink vs SAI callback）のため、STATE_DB に `state=ok` が書かれた直後は `speed` / `fec` / `host_tx_ready` フィールドが未設定の可能性がある。

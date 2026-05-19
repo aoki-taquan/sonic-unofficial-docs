@@ -712,6 +712,46 @@ ASIC / APPL_STATE_DB ROUTE_TABLE
 <!-- evidence: sonic-net/sonic-swss/orchagent/zmqorch.cpp:59-68L (ZmqConsumerStateTable 登録) -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+調査ソース: `fpmsyncd/routesync.cpp`、`fpmsyncd/fpmsyncd.cpp`、`orchagent/routeorch.cpp`。詳細スキャン結果は `meta/_intermediate/cdb-flow/route-handler-platform.md`。
+
+### fpmsyncd (RouteSync) — プラットフォーム差なし
+
+`routesync.cpp` / `fpmsyncd.cpp` に `getenv("platform")` および `gMySwitchType` 等のプラットフォーム条件分岐は存在しない。`MAX_MULTIPATH_NUM=514` は全プラットフォーム共通のハードコード定数 (`routesync.cpp` L121)。FPM ソケット接続・`ProducerStateTable` 書き込みパスはプラットフォーム非依存。ZMQ パス切り替えはプラットフォームではなく `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` フィーチャーフラグで制御される。
+
+### orchagent (RouteOrch) — Mellanox と VOQ で動作差あり
+
+#### Mellanox: ECMP グループ数上限の補正
+
+`RouteOrch` コンストラクタが `platform` 環境変数を参照し、`"mellanox"` が含まれる場合は SAI から取得した `m_maxNextHopGroupCount` を `DEFAULT_MAX_ECMP_GROUP_SIZE`（=32）で除算する (`routeorch.cpp` L83-87)。Mellanox ASIC は `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` として「ECMP サイズ=1 のときの最大グループ数」を返すため、実際の最大 ECMP グループ数はその 1/32 に補正される。この処理は RouteOrch の初期化時のみ実行され、経路書き込みロジック自体には影響しない。
+
+```
+MLNX_PLATFORM_SUBSTRING = "mellanox"  (orchagent/orch.h L42)
+DEFAULT_MAX_ECMP_GROUP_SIZE = 32       (routeorch.cpp L38)
+```
+
+#### VOQ chassis: ECMP メンバー数を 128 に制限
+
+`gMySwitchType == "voq"` かつ SAI から取得した最大 ECMP メンバー数が 128 以上の場合、RouteOrch が `SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT` を 128 に強制設定する (`routeorch.cpp` L109-123)。fpmsyncd 側の `MAX_MULTIPATH_NUM=514` より小さいため、VOQ chassis 環境では orchagent 側の SAI 制限が実質的な ECMP メンバー数の上限になる。fpmsyncd 自体は VOQ 向けの特別処理を持たない。
+
+### プラットフォーム差サマリ
+
+| プラットフォーム | fpmsyncd | orchagent (RouteOrch) |
+|-----------------|----------|-----------------------|
+| 標準 T0/T1/T2 | 変更なし | 変更なし |
+| Mellanox | 変更なし | ECMP グループ数上限を /32 補正 (初期化時のみ) |
+| VOQ chassis | 変更なし | ECMP メンバー数を 128 に制限 (SAI 設定) |
+| SmartSwitch (NPU 側) | 変更なし | 変更なし |
+| multi-asic | 変更なし | 変更なし (各 ASIC namespace 独立) |
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/routeorch.cpp:83-87L (Mellanox ECMP グループ数補正) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/routeorch.cpp:109-123L (VOQ ECMP メンバー数制限) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orch.h:42L (MLNX_PLATFORM_SUBSTRING = "mellanox") -->
+<!-- evidence: sonic-net/sonic-swss/fpmsyncd/routesync.cpp:121L (MAX_MULTIPATH_NUM = 514, 全プラットフォーム共通) -->
+<!-- /platform -->
+
 ## 制約
 
 - `nexthop_group` と `nexthop`/`ifname` を同時に持つ経路は orchagent がエラー棄却（`m_toSync` から削除）。

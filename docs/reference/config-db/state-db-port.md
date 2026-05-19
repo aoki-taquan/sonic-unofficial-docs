@@ -236,6 +236,30 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 > 中間調査詳細: `meta/_intermediate/cdb-flow/state-db-port-failure.md`
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+以下の定数は `sonic-swss/orchagent/portsorch.cpp`、`sonic-swss/orchagent/portsorch.h`、`sonic-swss/portsyncd/linksync.cpp` から検出したマジックナンバー・閾値。いずれも CONFIG_DB では変更不可のハードコード値。
+
+| 定数 / マジック値 | 値 | 定義場所 | 意味・影響 |
+|------------------|-----|----------|-----------|
+| `PORT_STATE_POLLING_SEC` | `5` | `portsorch.cpp:86` | `m_port_state_poller` の SelectableTimer 周期 [秒]。SAI イベント通知が失敗した場合に `refreshPortStatus()` がポート oper 状態を最大 5 秒遅れで STATE_DB に書き込む |
+| `PORT_SPEED_LIST_DEFAULT_SIZE` | `16` | `portsorch.cpp:85` | `getPortSupportedSpeeds()` の SAI クエリ用 vector 初期サイズ。サポート速度数が 16 を超える場合は SAI が `SAI_STATUS_BUFFER_OVERFLOW` を返し、vector が自動リサイズされる |
+| `MAX_MACSEC_SECTAG_SIZE` | `32` | `portsorch.h:28` | MACsec SecTAG ヘッダのバイトサイズ。`setPortMtu()` 内で MACsec 有効時の SAI MTU 設定値を `requested_mtu - 32` で算出するため、MACsec 環境では STATE_DB `mtu` フィールドがカーネル設定値より 32 大きくなる可能性がある (`portsorch.cpp:6756-6759`) |
+| `"ok"` | 文字列リテラル | `linksync.cpp:196` | `state` フィールドの固定値。RTM\_NEWLINK 受信時に必ずこの値が書き込まれ、`"error"` 等の他の値はコードに存在しない |
+| `"N/A"` | 文字列リテラル | `portsorch.cpp:9855, 9919, 3292` | `speed` / `fec` / `supported_fecs` のフォールバック文字列。SAI 取得失敗・変換不可時にフィールド不在ではなく `"N/A"` 文字列として書き込まれる |
+| `"false"` | 文字列リテラル | `portsorch.cpp:2203, 2274` | `host_tx_ready` の初期値。`initHostTxReadyState()` でフィールド未設定時、および admin DOWN / Gearbox 失敗時に書き込まれる |
+| `"off"` | 文字列リテラル | `portsorch.cpp:11351` | `link_training_status` のローカル変数初期値。LT が無効または SAI 取得不可の場合に書き込まれる |
+
+!!! note "PORT_STATE_POLLING_SEC の影響"
+    SAI event-driven 通知（`port_state_change` コールバック）が正常に機能している間はポーリングの影響は小さい。ただし通知が欠落した場合、STATE_DB の `speed` / `fec` 更新は最大 5 秒遅延する。consumer が即時性を要求する場合は通知ベースのパス（`SubscriberStateTable` など）を利用すること。
+
+!!! note "MACsec 環境での `mtu` 乖離"
+    MACsec が有効なポートでは、orchagent が SAI に設定する MTU は `CONFIG_DB PORT.mtu - 32` になる。一方 STATE_DB `PORT_TABLE.mtu` は `portsyncd` がカーネル netdev の MTU を直接読み出す。カーネル側 MTU を MACsec を考慮した値に設定している場合、STATE_DB 値と CONFIG_DB 設定値が一致しないことがある。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/state-db-port-constants.md`
+<!-- /constants -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト（Phase A — コード由来）
 
@@ -271,6 +295,48 @@ YANG/スキーマ定義外の fallback。`linksync.cpp` および `portsorch.cpp
 6. **`supported_speeds` の空文字列**: SAI が対応速度を返したが空集合だった場合、`swss::join(',', ...)` の結果は空文字列 `""` になる（フィールド不在ではなく空文字列として存在する）。フィールド不在（SAI NOT\_SUPPORTED 時）とは区別する必要がある。
 
 <!-- /defaults -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 証跡: `meta/_intermediate/cdb-flow/state-db-port-ordering.md`
+
+### portsyncd (linksync.cpp) 定義定数
+
+| 定数 | 値 | 定義ファイル | 用途 |
+|------|----|------------|------|
+| `INTFS_PREFIX` | `"Ethernet"` | `linksync.cpp:30` | フロントパネルポートのプレフィックス判定。RTM_NEWLINK 受信時にこのプレフィックスを持たないキーは処理対象から除外される |
+| `LAG_PREFIX` | `"PortChannel"` | `linksync.cpp:31` | LAG インタフェースのプレフィックス判定。LAG も STATE_DB PORT_TABLE 対象 |
+| `VLAN_DRV_NAME` | `"bridge"` | `linksync.cpp:27` | VLAN インタフェースのカーネルドライバ名。このドライバ名を持つ RTM_NEWLINK は `m_isBridgePort` フラグ処理に使われる |
+| `TEAM_DRV_NAME` | `"team"` | `linksync.cpp:28` | LAG 判定用ドライバ名。`type == "team"` の場合 LAG として処理 |
+
+### PortsOrch (portsorch.cpp) 定義定数
+
+| 定数 | 値 | 定義ファイル | 用途 |
+|------|----|------------|------|
+| `DEFAULT_SYSTEM_PORT_MTU` | `9100` | `portsorch.cpp:79` | VoQ / DistributedEthternet システムポートの初期 MTU。CONFIG_DB 設定に関わらずこの値が適用される |
+| `PORT_STATE_POLLING_SEC` | `5` 秒 | `portsorch.cpp:86` | ポート oper 状態のポーリング間隔。`port_state_change` 通知が届かなかった場合の補完ポーリング周期 |
+| `PORT_SPEED_LIST_DEFAULT_SIZE` | `16` | `portsorch.cpp:85` | `getPortSupportedSpeeds()` の SAI 取得バッファ初期サイズ。SAI が 16 種超の速度を返した場合バッファを拡張して再取得 |
+| `DEFAULT_HOSTIF_TX_QUEUE` | `7` | `portsorch.cpp:83` | HostIf （CPU ポート）の TX キュー番号デフォルト値。最高優先度キュー |
+
+### ポーリング間隔定数（FLEX_COUNTER_DB 書き込み値）
+
+以下の定数は FLEX_COUNTER_DB 経由で syncd へ伝達され、カウンタポーリング動作を決定する（`portsorch.cpp:87-93`）。YANG の `poll_interval` 制約（100〜4294967295 ms）の対象外。
+
+| 定数 | 値 | 対象グループ |
+|------|----|------------|
+| `PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `1000` ms | `PORT`・`WRED_ECN_PORT` |
+| `PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS` | `60000` ms | `PORT_BUFFER_DROP` |
+| `PORT_PHY_ATTR_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | `PORT_PHY_ATTR` |
+| `QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | `QUEUE`・`WRED_ECN_QUEUE` |
+| `QUEUE_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `60000` ms | `QUEUE_WATERMARK` |
+| `PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `60000` ms | `PG_WATERMARK` |
+| `PG_DROP_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | `PG_DROP` |
+
+!!! note "CONFIG_DB による上書き"
+    上記定数は起動時に FLEX_COUNTER_DB に書き込まれる初期値。`counterpoll interval` コマンドで CONFIG_DB `FLEX_COUNTER_TABLE.<group>.POLL_INTERVAL` を設定すると後から上書き可能。`counterpoll show` が表示する値と起動直後の実挙動が異なる場合があるのはこのため。
+
+<!-- /constants -->
 
 ## 購読者（consumer）
 
