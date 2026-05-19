@@ -237,6 +237,29 @@ DEL 時は逆順: `FIXED_*` → `REPLICATION_*` → `MULTICAST_ROUTER_INTERFACE_
 IpMulticastManager 内で管理されており、参照が残っているグループを先に削除しようとすると SAI 削除が失敗する。
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 (Phase C)
+
+> 根拠: `ip_multicast_manager.cpp:L477-481,L509-514,L775,L886`、`l3_multicast_manager.cpp:L1002-1008,L2196`、`vrforch.h:L58-119`、`orchdaemon.cpp:L283`、`schema.h:L73-80`
+> evidence: `meta/_intermediate/cdb-flow/ip-mcast-route-cross-refs.md`
+
+これらテーブルは APP_DB 上の P4RT ネームスペースに存在するため **YANG leafref は定義されていない**。ただしコード上の実行時参照として以下の暗黙依存が存在する。
+
+| 参照元 | 参照先 (DB:テーブル:キー) | 参照方法 | 未存在時の挙動 |
+|--------|--------------------------|---------|---------------|
+| `FIXED_IPV4/IPV6_MULTICAST_TABLE` | `APP_DB:VRF_TABLE:<vrf_name>` | `VRFOrch::isVRFexists()` (非空 `vrf_id` のみ) | `SWSS_RC_NOT_FOUND` で即拒否 |
+| `REPLICATION_IP_MULTICAST_TABLE` | `APP_DB:P4RT:FIXED_MULTICAST_ROUTER_INTERFACE_TABLE` (全 replica の `(port, instance)`) | `L3MulticastManager` 内部キャッシュ参照 | `SWSS_RC_NOT_FOUND` で即拒否 |
+| `FIXED_IPV4/IPV6_MULTICAST_TABLE` | P4OidMapper 内 `SAI_OBJECT_TYPE_IPMC_GROUP:multicast_group_id` | `P4OidMapper::existsOID()` | `SWSS_RC_NOT_FOUND` で即拒否 |
+
+### VRF 参照カウント管理
+
+`IpMulticastManager` は IPMC エントリ作成時に `m_vrfOrch->increaseVrfRefCount(vrf_id)` を呼び (`ip_multicast_manager.cpp:L775`)、削除時に `decreaseVrfRefCount` を呼ぶ (`L886`)。これにより VRF に対する参照カウントが正しく管理される。VRF を先に削除すると参照カウント不整合が発生するため、VRF 削除前に `FIXED_IPV4/IPV6_MULTICAST_TABLE` エントリをすべて削除する必要がある。
+
+### CONFIG_DB への直接依存なし
+
+`ip_multicast_manager.cpp` / `l3_multicast_manager.cpp` はいずれも CONFIG_DB を直接 subscribe / get しない。CONFIG_DB 依存は VRFOrch および P4Orch 上位レイヤが間接処理する。
+<!-- /cross-refs -->
+
 ## 購読者
 
 | コンポーネント | テーブル | SAI 操作 |
