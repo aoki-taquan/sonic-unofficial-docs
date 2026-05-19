@@ -394,4 +394,57 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 > 詳細スキャンノートは `meta/_intermediate/cdb-flow/warm-restart-failure.md` を参照。
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: meta/_intermediate/cdb-flow/warm-restart-constants.md -->
+<!-- source: sonic-swss-common/common/warm_restart.h; sonic-swss/fpmsyncd/fpmsyncd.cpp; sonic-swss/neighsyncd/neighsync.h; sonic-swss/warmrestart/warmRestartAssist.h -->
+
+`WARM_RESTART` テーブルのタイマー処理に関わるハードコード定数を示す。CONFIG_DB に対応フィールドを設定することで実行時に上書きできる「デフォルト値定数」と、CONFIG_DB からは変更できない「固定定数」の 2 種類が存在する。
+
+### タイマー上限・無効化定数（`warm_restart.h:8-9`）
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `MAXIMUM_WARMRESTART_TIMER_VALUE` | `9999` | `getWarmStartTimer()` 内でタイマー有効範囲の上限として使用。値がこれを超えると 0 を返しハードコードデフォルトへフォールバック（`warm_restart.cpp:161`） |
+| `DISABLE_WARMRESTART_TIMER_VALUE` | `9999`（`MAXIMUM_WARMRESTART_TIMER_VALUE` と同値） | タイマー無効化に使うセンチネル値。外部から変更不可 |
+
+これらの値は CONFIG_DB・DEVICE_METADATA いずれからも変更できない。
+
+### bgp タイマーデフォルト値（`fpmsyncd.cpp:46,51`）
+
+| 定数名 | 値 | 対応 CONFIG_DB フィールド | 用途 |
+|--------|-----|--------------------------|------|
+| `DEFAULT_ROUTING_RESTART_INTERVAL` | **120 秒** | `WARM_RESTART\|bgp.bgp_timer` | `getWarmStartTimer()` が 0 を返した場合（未設定・無効値・上限超過）に使用されるフォールバック（`fpmsyncd.cpp:160`） |
+| `DEFAULT_EOIU_HOLD_INTERVAL` | **3 秒** | `WARM_RESTART\|bgp.eoiu_hold_timer`（YANG・CLI 未公開フィールド） | BGP EOIU シグナル受信後のホールドタイマーフォールバック（`fpmsyncd.cpp:229`） |
+
+`DEFAULT_ROUTING_RESTART_INTERVAL = 120 秒` が実装上のデフォルトである。運用上 300 秒が参照設定として使われることがあるが、それはコードのデフォルトではない。
+
+### neighsyncd タイマーデフォルト値（`neighsync.h:10`）
+
+| 定数名 | 値 | 対応 CONFIG_DB フィールド | 用途 |
+|--------|-----|--------------------------|------|
+| `DEFAULT_NEIGHSYNC_WARMSTART_TIMER` | **5 秒** | `WARM_RESTART\|swss.neighsyncd_timer` | `neighsyncd` の `AppRestartAssist` コンストラクタに渡されるデフォルトタイマー。`getWarmStartTimer()` が 0 を返した場合に使用（`neighsync.cpp:30`） |
+
+### teamsyncd タイマーデフォルト値（`warmRestartAssist.h:104`）
+
+| 定数名 | 値 | 対応 CONFIG_DB フィールド | 用途 |
+|--------|-----|--------------------------|------|
+| `DEFAULT_INTERNAL_TIMER_VALUE` | **5 秒** | `WARM_RESTART\|teamd.teamsyncd_timer` | `teamsyncd` の warm-restart 猶予タイマーフォールバック |
+
+### 定数サマリ
+
+| 定数名 | 値 | CONFIG_DB フィールドで上書き可否 | ソース |
+|--------|-----|--------------------------------|--------|
+| `MAXIMUM_WARMRESTART_TIMER_VALUE` | 9999 | **不可**（固定） | `warm_restart.h:8` |
+| `DISABLE_WARMRESTART_TIMER_VALUE` | 9999 | **不可**（固定） | `warm_restart.h:9` |
+| `DEFAULT_ROUTING_RESTART_INTERVAL` | 120 秒 | **可**（`bgp_timer`） | `fpmsyncd.cpp:46` |
+| `DEFAULT_EOIU_HOLD_INTERVAL` | 3 秒 | **可**（`eoiu_hold_timer`、YANG 未公開） | `fpmsyncd.cpp:51` |
+| `DEFAULT_NEIGHSYNC_WARMSTART_TIMER` | 5 秒 | **可**（`neighsyncd_timer`） | `neighsync.h:10` |
+| `DEFAULT_INTERNAL_TIMER_VALUE` | 5 秒 | **可**（`teamsyncd_timer`） | `warmRestartAssist.h:104` |
+
+> **Evidence**: `sonic-swss-common` `common/warm_restart.h:8-9`、`common/warm_restart.cpp:153-172`; `sonic-swss` `fpmsyncd/fpmsyncd.cpp:46,51,155-165,226-230`、`neighsyncd/neighsync.h:10`、`neighsyncd/neighsync.cpp:30`、`warmrestart/warmRestartAssist.h:104`
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: ddc022697593 -->
