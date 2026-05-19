@@ -512,30 +512,51 @@ systemctl restart eventd
 > **Evidence**: `eventd.cpp:172-225` (stats_collector::start); `eventd.cpp:656-704` (run_eventd_service 起動シーケンス); `eventd.cpp:244` (内部サブスクライバー); HLD section 3.1.2, 3.1.3, 3.1.8
 <!-- /pubsub -->
 
-<!-- platform -->
-## プラットフォーム差 (Phase H)
+<!-- platform:start -->
+## プラットフォーム差異 (Phase H)
 
-`eventd` デーモン本体・設定ファイルスキーマはプラットフォーム非依存である。唯一の例外は `pmon` によるシステム LED 制御であり、HLD が明示的にプラットフォーム依存性を記述している。
+<!-- evidence: sonic-net/sonic-buildimage/src/sonic-eventd/src/eventd.cpp (全体),
+     sonic-net/sonic-buildimage/src/sonic-eventd/src/eventd.h (全体),
+     SONiC/doc/event-alarm-framework/event-alarm-framework.md -->
 
-| 観点 | 結果 | 根拠 |
-|------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `eventd.cpp` 全体に ASIC 分岐なし。ZMQ エンドポイントはハードコードの `tcp://127.0.0.1:5570〜5573` で固定 |
-| multi-asic (`is_multi_npu() == True`) | 影響なし | `docker-eventd` は host コンテナに 1 インスタンス。`asicN` namespace への接続・iterate なし。EVENT_DB は host Redis に 1 つ |
-| VOQ chassis (supervisor + line cards) | 各 host で独立起動 | 設定スキーマ・ファイルパスは同一。chassis 全体集中管理機構なし |
-| `/etc/evprofile/default.json` / `/etc/eventd.json` スキーマ | 差なし | プラットフォーム固有 evprofile ファイルなし。`docker-eventd/Dockerfile.j2` にプラットフォーム分岐なし |
-| `pmon` のシステム LED 制御 | **プラットフォーム依存** | BMC 管理型プラットフォームでは LED API が利用不可のため ALARM_STATS → LED 変換が無効化される (HLD section 3.1.4.1) |
+### SAI・プラットフォーム依存なし（全 ASIC 共通）
 
-### `pmon` LED 制御のプラットフォーム依存 (HLD section 3.1.4.1)
+`eventd` は SAI API を呼び出さず、`getenv("platform")` 参照もなく、`#ifdef` によるプラットフォーム分岐も存在しない。ZMQ ブローカーとして Redis DB（EVENT_DB / COUNTERS_DB）への書き込みのみを行う純粋なユーザー空間デーモンであるため、**ASIC ベンダー・ハードウェア世代・スイッチチップの種類によって挙動は変わらない**[^4]。
 
-HLD は次のように明記する:
+| プラットフォーム要素 | eventd の依存 |
+|---------------------|--------------|
+| SAI / ASIC ドライバ | なし |
+| `platform` 環境変数 | 参照しない |
+| `switch_type` (voq/chassis) | 参照しない |
+| CPU アーキテクチャ (x86/ARM) | 変わらない（ZMQ は CPU 非依存） |
 
-> "on most of the platforms the system/power/fan LEDs are managed by the BMC."  
-> "There is an API that can be invoked to control LED, but not all platforms will support that API if they are fully controlled by the BMC."  
-> "So, on certain platforms, system LED could not represent events on the system."
+### VM・仮想環境での注意事項
 
-`pmon` が `ALARM_STATS` を購読してシステム LED を制御する仕組みは framework の設計上の提案であり、**BMC 完全管理型プラットフォーム（多くのエンタープライズ向け HW）では LED API が利用不可のため LED 反映が無効化される**。`eventd` 自体は `ALARM_STATS` への書き込みを常に実行するが、LED への反映可否は `pmon` の LED ドライバ層の実装に委ねられており、`eventd` の設定スキーマや動作に差は生じない。
+VM テストベッド（`sonic-vs`）でも `eventd` は同一バイナリで動作する。ただし ZMQ ソケットに接続するプロデューサー（`syncd`・`bgp`・`dhcp_relay` 等）の有無がイベント流量に影響する。VM では syncd が SAI イベントを生成しないため、`syncd_events_info.json` で定義されたイベントが発行されない。
 
-詳細根拠は `meta/_intermediate/cdb-flow/extended-monitor-platform.md` を参照。
+| 環境 | 影響 |
+|------|------|
+| 物理スイッチ | syncd/orchagent が SAI イベントを発行 → EVENT_DB に記録 |
+| sonic-vs（VM） | syncd が SAI イベントを発行しない → 該当イベント 0 件 |
+| どちらの環境でも同じ | ZMQ ブローカー・evprofile ロード・COUNTERS_DB 書き込みの動作 |
+
+### マルチ ASIC 構成
+
+マルチ ASIC 環境では `eventd` インスタンスが per-switch-ASIC ではなく **グローバルに 1 インスタンス**のみ起動する（`docker-eventd` は ASIC 数に依存しない単一コンテナ）。すべての ASIC のイベントは同一の ZMQ ブローカー（`tcp://127.0.0.1:5570` 等）に集約される。
+
+`COUNTERS_DB` インスタンスもシングル（`DBConnector("COUNTERS_DB", 0)`）であり、マルチ ASIC 用の namespace 分割はない（`eventd.cpp:178`）。
+
+### `/etc/evprofile/default.json` の内容はプラットフォーム共通
+
+`evprofile/default.json` は `sonic-eventd` パッケージに同梱され、全プラットフォーム共通のイベント定義が入っている[^5]。ASIC ベンダー固有のイベント型を追加する場合は別途カスタム evprofile を配置する（HLD section 3.1.5）。個別プラットフォームが `default.json` を上書きする公式な仕組みは現時点では未定義。
+
+### キャッシュメモリ上限 (`CACHE_MAX_CNT`) のプラットフォーム影響
+
+`MAX_CACHE_SIZE = MB(100) / EVT_SIZE_AVG (150 bytes) ≈ 699,050` イベントが上限のデフォルト値である（`eventd.cpp:31-33`）。`get_config_data(CACHE_MAX_CNT, MAX_CACHE_SIZE)` が `/etc/eventd.json` から上書き値を読む。RAM が少ない組み込みプラットフォームでは `eventd.json` で `cache_max_cnt` を下げる運用が推奨される（HLD section 3.1.7）。SAI・ASIC 種別とは無関係で、搭載 RAM 量のみに依存する。
+
+[^4]: eventd SAI 非依存コード: `sonic-buildimage/src/sonic-eventd/src/eventd.cpp` — SAI インクルードなし、`getenv("platform")` 呼び出しなし. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-eventd/src/eventd.cpp>
+[^5]: evprofile デフォルト定義: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` section 3.1.5. <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
+
 <!-- /platform -->
 
 ## 引用元

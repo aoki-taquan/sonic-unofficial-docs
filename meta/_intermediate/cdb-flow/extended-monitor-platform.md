@@ -1,69 +1,57 @@
-# extended-monitor — Phase H: プラットフォーム差調査
-
-調査日: 2026-05-19  
-対象: `eventd` デーモン・`/etc/eventd.json`・`/etc/evprofile/default.json` のプラットフォーム差
+# extended-monitor (eventd 拡張監視設定) — Phase H: プラットフォーム差
 
 ## 調査対象ソース
 
-- `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — HLD section 3.1.4.1 (System LED)
-- `sonic-buildimage/src/sonic-eventd/src/eventd.cpp` — `run_eventd_service()` 全体
-- `sonic-buildimage/src/sonic-eventd/src/eventd.h` — 定数定義
-- `sonic-buildimage/dockers/docker-eventd/Dockerfile.j2` — コンテナビルド定義
-- `sonic-buildimage/dockers/docker-eventd/supervisord.conf` — 起動設定
+- `sonic-net/sonic-buildimage/src/sonic-eventd/src/eventd.cpp`
+- `sonic-net/sonic-buildimage/src/sonic-eventd/src/eventd.h`
+- `SONiC/doc/event-alarm-framework/event-alarm-framework.md`
 
----
+## 主要発見事項
 
-## 結論
+### 1. SAI・プラットフォーム依存なし
 
-**eventd 本体・設定ファイルスキーマはプラットフォーム差なし**。唯一の例外は `pmon` の LED 制御で、HLD が明示的にプラットフォーム依存性を記述している。
+`eventd.cpp` 全体を調査した結果：
+- `#include <sai*.h>` は存在しない
+- `getenv("platform")` 呼び出しはない
+- `#ifdef` によるプラットフォーム分岐は存在しない
+- `gMySwitchType == "voq"` チェックもない
 
----
+完全にプラットフォーム非依存の ZMQ ブローカー + Redis 書き込みデーモン。
 
-## 詳細
+### 2. DBConnector 呼び出し (eventd.cpp:178)
 
-### 1. eventd.cpp — プラットフォーム分岐なし
+```cpp
+m_counters_db = make_shared<swss::DBConnector>("COUNTERS_DB", 0, false);
+```
 
-`eventd.cpp` 全体 (840 行) を `platform`, `asic`, `multi`, `broadcom`, `mellanox`, `marvell`, `nvidia`, `chassis`, `namespace`, `vendor` で grep → **0 ヒット**。
+namespace 引数なし（0 = default）。マルチ ASIC namespace 分割なし。
 
-ZMQ エンドポイント (`xsub_path`, `xpub_path`, `capture_path`) のデフォルト値も `tcp://127.0.0.1:5570〜5573` の固定値であり、ASIC 種別・multi-asic namespace ごとの分岐は存在しない。
+### 3. MAX_CACHE_SIZE 計算 (eventd.cpp:31-33)
 
-### 2. docker-eventd コンテナビルド — プラットフォーム分岐なし
+```cpp
+#define EVT_SIZE_AVG 150
+#define MAX_CACHE_SIZE (MB(100) / (EVT_SIZE_AVG))
+```
 
-`dockers/docker-eventd/Dockerfile.j2` を `platform|asic|chassis|namespace|vendor` で grep → **0 ヒット**。ベースイメージは `docker-config-engine-trixie` で固定。プラットフォーム固有ファイルのコピーや条件インストールはなし。
+MB(100) = 100*1024*1024 = 104,857,600 bytes。
+MAX_CACHE_SIZE = 104,857,600 / 150 ≈ 699,050 events。
 
-`docker-eventd/supervisord.conf` も `platform|asic` で grep → **0 ヒット**。起動スクリプト `start.sh` は `RUNTIME_OWNER` の分岐のみ (kube vs local) で、プラットフォーム依存なし。
+### 4. get_config_data でファイルから上書き可能 (eventd.cpp:674)
 
-### 3. evprofile / eventd.json — プラットフォーム差なし
+```cpp
+cache_max = get_config_data(string(CACHE_MAX_CNT), (int)MAX_CACHE_SIZE);
+```
 
-`/etc/evprofile/default.json` および `/etc/eventd.json` はプラットフォーム共通フォーマット。  
-`sonic-buildimage/files/` および各 `platform/` ディレクトリにプラットフォーム固有 `evprofile` ファイルは存在しない。  
-`sonic-buildimage/dockers/docker-eventd/*.json` はイベントカテゴリ別の rsyslog プラグイン設定であり、evprofile とは別物。プラットフォーム分岐なし。
+`/etc/eventd.json` に `cache_max_cnt` が定義されていればその値を使う。RAM 少ないプラットフォームではこの値を下げる運用が想定される。
 
-### 4. pmon の LED 制御 — プラットフォーム依存あり (HLD 明記)
+### 5. VM での挙動差
 
-HLD section 3.1.4.1 が明示:
+sonic-vs では SAI が stub 実装のため、syncd が SAI イベントを生成しない。
+→ syncd 関連イベント（`syncd_events_info.json` 定義分）は EVENT_DB に記録されない。
+→ eventd 自体の動作（ZMQ ブローカー、COUNTERS_DB 書き込み）は変わらない。
 
-> "on most of the platforms the system/power/fan LEDs are managed by the BMC."  
-> "There is an API that can be invoked to control LED, but not all platforms will support that API if they are fully controlled by the BMC."  
-> "So, on certain platforms, system LED could not represent events on the system."
+### 6. evprofile デフォルト（HLD 3.1.5）
 
-`pmon` が `ALARM_STATS` を購読してシステム LED を制御する仕組みは framework 設計上の "提案" であり、**BMC 管理型プラットフォームでは LED API が利用不可のため LED 制御が無効化される**。ただしこれは `eventd` 本体・設定ファイルスキーマの差ではなく、`pmon` の LED ドライバ層の差である。`eventd` は ALARM_STATS を書くだけで、LEDへの反映可否には関与しない。
-
-### 5. multi-asic / VOQ chassis
-
-`eventd` は host コンテナ (`docker-eventd`) 内で 1 インスタンスのみ起動し、`asicN` namespace へのアクセスや namespace 間 ZMQ ソケットの複数化は行わない。multi-asic 環境でも EVENT_DB は 1 つのホスト Redis であり、ASIC ごとの分離は存在しない。
-
-VOQ chassis (supervisor + line cards) の各 host で独立した `docker-eventd` が起動するが、設定スキーマ・ファイルパスは同一。chassis 全体集中化機構なし。
-
----
-
-## まとめ
-
-| 観点 | 結果 | 根拠 |
-|------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `eventd.cpp` に ASIC 分岐なし |
-| multi-asic (`is_multi_npu() == True`) | 影響なし | eventd は host Redis に 1 インスタンス。namespace 分離なし |
-| VOQ chassis (supervisor + line cards) | 各 host で独立起動 | 設定スキーマ同一。集中管理機構なし |
-| evprofile / eventd.json フォーマット | 差なし | プラットフォーム固有ファイルなし |
-| docker-eventd コンテナビルド | 差なし | Dockerfile.j2 にプラットフォーム分岐なし |
-| pmon の LED 制御 | **プラットフォーム依存** | BMC 管理型では LED API 不可 (HLD section 3.1.4.1) |
+`/etc/evprofile/default.json` は全プラットフォーム共通パッケージに含まれる。
+ベンダー固有イベントを追加する際は別ファイルを `/etc/evprofile/` に配置。
+HLD にはカスタム evprofile の上書きマージ仕様は現時点で未定義。
