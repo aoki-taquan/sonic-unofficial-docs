@@ -195,6 +195,57 @@ Built by: johnar@jenkins-worker-8
 
 <!-- /cross-refs -->
 
+<!-- failure-behavior -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py:511-525, sonic-utilities/show/main.py:1718-1733, sonic-gnmi/sonic_data_client/non_db_client.go:302-336, sonic-utilities/generic_config_updater/field_operation_validators.py:33 -->
+
+`/etc/sonic/sonic_version.yml` は静的ファイルであり CONFIG_DB への書込みは行わないが、読み込み側の各コンポーネントで失敗時の挙動が異なる。
+
+### 失敗シナリオ一覧
+
+| # | 失敗トリガー | 影響コンポーネント | 挙動 | evidence |
+|---|------------|-----------------|------|---------|
+| 1 | ファイル不在 | `get_sonic_version_info()` | `None` を返す | `device_info.py:512-513` |
+| 2 | ファイル不在 → `show version` | sonic-utilities | `version_info['commit_id']` 等の直接キーアクセスで `TypeError` クラッシュ | `show/main.py:1731-1733` |
+| 3 | ファイル不在 / YAML パース失敗 | gNMI telemetry | `BuildVersion="sonic.NA"` + `Error` フィールドに理由文字列を格納して JSON 返却（graceful fallback） | `non_db_client.go:306-319` |
+| 4 | ファイル不在 → gcu バリデーション | generic_config_updater | `get_sonic_version_info()['asic_type']` の直接キーアクセスで `TypeError` 例外伝播、フィールド操作が失敗 | `field_operation_validators.py:33` |
+| 5 | `asic_type` フィールド欠落 | gcu バリデーション | `KeyError` 例外伝播 | `field_operation_validators.py:33` |
+| 6 | YAML パース失敗 | `get_sonic_version_info()` | `yaml.YAMLError` が呼び出し元に伝播（例外ハンドリングなし） | `device_info.py:519-523` |
+| 7 | ファイル書き換え（プロセス稼働中） | 全コンポーネント | キャッシュ固定のため再起動なしでは反映されない | `device_info.py:515-517`、`non_db_client.go:305` |
+
+### 詳細
+
+#### 1 & 2. ファイル不在時の `show version` クラッシュ
+
+`get_sonic_version_info()` は `os.path.isfile()` チェックで `None` を返す (`device_info.py:512-513`)。`show/main.py:1727-1730` は `.get(key, 'N/A')` で graceful fallback するが、**`show/main.py:1731-1733` の 3 行は直接キーアクセス** (`version_info['commit_id']`, `version_info['build_date']`, `version_info['built_by']`) であるため、`version_info` が `None` のとき `TypeError: 'NoneType' object is not subscriptable` が発生して `show version` がクラッシュする。
+
+#### 3. gNMI の graceful fallback
+
+`non_db_client.go:302-336` は `sync.Once` ブロック内でファイルを読み込む。ファイル読み込み失敗・YAML パース失敗のどちらでも:
+```
+BuildVersion = "sonic.NA"  // デフォルト値
+Error = <エラー文字列>      // 失敗理由
+```
+この構造体を JSON シリアライズして返す。telemetry クライアントは `Error` フィールドを確認することでファイル読み込み失敗を検出できる。
+
+#### 4 & 5. gcu (generic_config_updater) の例外伝播
+
+`field_operation_validators.py:33` は:
+```python
+asic_type = device_info.get_sonic_version_info()['asic_type']
+```
+と直接キーアクセスしており、`get_sonic_version_info()` が `None` を返した場合は `TypeError`、`asic_type` フィールドが YAML に存在しない場合は `KeyError` が上位に伝播する。これらは gcu のフィールド操作バリデーション全体を失敗させる。
+
+#### 7. キャッシュ固定と hot-reload 不可
+
+- **Python 側** (`device_info.py:515-517`): `global sonic_ver_info` に結果を保持し、`sonic_ver_info` が truthy な限り再読しない。`sonic-utilities`・`db_migrator` 等が影響。
+- **Go 側** (`non_db_client.go:305`): `sync.Once` で 1 回のみ読み込む。`InvalidateVersionFileStash()` API が存在するが、テストコードからのみ呼ばれるもので、本番 telemetry 稼働中は使用されない (`non_db_client.go:56-58`)。
+
+いずれも `/etc/sonic/sonic_version.yml` を書き換えた場合、**当該プロセスを再起動するまで旧バージョン情報が使われ続ける**。
+
+<!-- /failure-behavior -->
+
 ## 引用元
 
 [^1]: `sonic-buildimage/build_debian.sh` L642-654 — sonic_version.yml 生成処理。<https://github.com/sonic-net/sonic-buildimage/blob/master/build_debian.sh>
