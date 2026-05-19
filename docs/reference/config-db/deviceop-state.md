@@ -192,6 +192,35 @@ DEVICE_NEIGHBOR は **consumer が `get_table` で一括読み出しする**参�
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:97-119,405-424`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-154,219-224`
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+DEVICE_NEIGHBOR は CONFIG_DB の読み取り専用テーブルとして機能し、各 consumer が起動時にスナップショット取得（`get_table`）する。orchagent のような retry/ack ループは存在しないため、失敗は「consumer の動作停止」「サイレントな縮退」「処理延期」のいずれかで現れる。
+
+### consumer 別失敗パターン
+
+| consumer | 失敗ケース | 発生箇所 | 挙動 | retry / 回復 |
+|---------|-----------|---------|------|-------------|
+| `ecnconfig` (非 multi-ASIC) | DEVICE_NEIGHBOR テーブルが空 | `scripts/ecnconfig:287` | `Exception("No active ports detected in table 'DEVICE_NEIGHBOR'")` を raise → コマンド異常終了 | なし（再実行が必要） |
+| `pfcwd start_default` | DEVICE_NEIGHBOR テーブルが空 | `pfcwd/main.py:412` | `external_ports = []` としてサイレント継続。バックプレーンポートのみが `active_ports` に入る | なし（`pfcwd start_default` 再実行で回復） |
+| `pfcwd get_server_facing_ports` | DEVICE_NEIGHBOR エントリの `name` フィールドが欠落 | `pfcwd/main.py:102` | `candidates[port]['name']` で `KeyError` → pfcwd 起動シーケンス中断 | なし（エントリ修正後に再実行） |
+| `pfcwd get_server_facing_ports` | DEVICE_NEIGHBOR_METADATA に `type='server'` エントリがない | `pfcwd/main.py:106-107` | サーバー向けポート 0 件 → `VLAN_MEMBER` フォールバックへ（非自明挙動） | なし（VLAN_MEMBER でフォールバック継続） |
+| `bgpcfgd` (`check_neig_meta` 有効) | `data['name']` が DEVICE_NEIGHBOR_METADATA に不在 | `managers_bgp.py:220-223` | `log_info("DEVICE_NEIGHBOR_METADATA is not ready...")` → `return False`（ハンドラ延期） | DEVICE_NEIGHBOR_METADATA 書込み後に directory 機構が自動再処理 |
+| `show interfaces neighbor expected` | DEVICE_NEIGHBOR テーブルが None | `show/interfaces/__init__.py:317-319` | `"DEVICE_NEIGHBOR information is not present."` 表示して即 return | 表示のみ影響。runtime への副作用なし |
+
+### ecnconfig の起動前条件違反（最も影響が大きい失敗）
+
+`ecnconfig` は非 multi-ASIC 環境で DEVICE_NEIGHBOR を**必須入力**として扱う。テーブルが空の場合は Exception を raise してコマンド全体が異常終了する（`scripts/ecnconfig:282-287`）。この失敗は **retry 機構が存在しない**ため、DEVICE_NEIGHBOR にポートエントリが存在しない状態では `ecnconfig` コマンドの一切の操作（設定変更・表示）が不可能になる。
+
+一方 multi-ASIC 環境では `SYSTEM_PORT_TABLE` を代替として使用するため、DEVICE_NEIGHBOR が空でも影響を受けない（`scripts/ecnconfig:265-280`）。
+
+### bgpcfgd の延期処理（自動回復あり）
+
+`bgpcfgd` の `BGPPeerMgrBase` が `check_neig_meta = True` の場合、`add_peer()` 内で `data['name']` が DEVICE_NEIGHBOR_METADATA に存在しないと `return False` で処理を延期する（`managers_bgp.py:220-223`）。延期されたタスクは BGPPeerMgrBase の directory 機構が DEVICE_NEIGHBOR_METADATA の書込みを検知した後に自動再処理されるため、**DEVICE_NEIGHBOR_METADATA の書込み順序を正しく守れば自動回復する**。
+
+> **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:265-287`; `show/interfaces/__init__.py:317-319`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-150,219-224`
+<!-- /failure -->
+
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
