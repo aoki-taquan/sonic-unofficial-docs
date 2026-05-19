@@ -456,4 +456,68 @@ for service in self.restart_services:  # デフォルト: ['ssh', 'telemetry.ser
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査対象: `sonic-host-services/scripts/hostcfgd` L2456-2509 (`register_callbacks`)、L2433-2436 (`fips_config_handler`)、L2527-2528 (`start`/`listen`)
+> 調査日: 2026-05-19
+
+`FIPS` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@4__:FIPS|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は使用しない。
+
+### 購読チャンネル一覧
+
+| 購読者 | 購読 API | DB | テーブル | ハンドラ |
+|--------|---------|----|---------|---------| 
+| `hostcfgd` (`HostConfigDaemon`) | `ConfigDBConnector.subscribe()` | CONFIG_DB (dbId=4) | `FIPS` | `fips_config_handler` → `FipsCfg.fips_handler()` → `load()` + `update()` |
+
+`FIPS` テーブルを購読する他プロセスは存在しない（`pam_*` / `ssh` / `telemetry` は Redis を直接購読せず、再起動後にファイルシステムから設定を読む）。
+
+### keyspace 通知 → ハンドラ呼び出しの流れ
+
+```
+config fips enable
+  ↓ HSET "FIPS|global" enable "true"
+Redis keyspace PUBLISH "__keyspace@4__:FIPS|global" "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+make_callback() で (key, op, data) を生成
+  ↓ fips_config_handler(key="global", op="SET", data=<通知ペイロード>)
+    data = self.config_db.get_table("FIPS")   ← ペイロードを破棄し HGETALL で再取得
+  ↓ FipsCfg.fips_handler(data) → load() → update()
+    update_enforce_config() → bootloader grub 書換え（enforce 変更時のみ）
+    update_noneenforce_config() → /etc/fips/fips_enable 書換え
+    state_db_conn.hset('FIPS_STATS|state', 'config_datetime', ...)
+  ↓ restart() → systemctl restart ssh telemetry.service restapi
+```
+
+### 特記事項: HGETALL 再取得による全テーブル処理
+
+```python
+# hostcfgd:2433-2436
+def fips_config_handler(self, key, op, data):
+    syslog.syslog(syslog.LOG_INFO, 'FIPS table handler...')
+    data = self.config_db.get_table("FIPS")   # 通知ペイロードを破棄、全テーブル再取得
+    self.fipscfg.fips_handler(data)
+```
+
+keyspace 通知ペイロード（引数 `data`）は即座に破棄され、`config_db.get_table("FIPS")` で CONFIG_DB の `FIPS` テーブル全体を **HGETALL** し直す。これにより複数フィールドの同時更新があっても **最終状態のみ処理**される（デバウンス効果）。`op` の値（SET/DEL）も実質的に使用されない。
+
+### make_callback の op 判定
+
+```python
+def make_callback(func):
+    def callback(table, key, data):
+        op = "DEL" if data is None else "SET"
+        return func(key, op, data)
+    return callback
+```
+
+`data is None`（キー削除）のとき `op="DEL"` となるが、`fips_config_handler` は op を参照せず常に `get_table("FIPS")` を呼ぶため、`FIPS|global` キー削除時も `load()` が実行される（`common_config` が空になり `load()` は skip ログ出力で早期 return — hostcfgd:1777-1779）。
+
+### 起動時スナップショット
+
+`daemon.start()` が `config_db.listen(init_data_handler=self.load)` を呼ぶ（hostcfgd:2527-2528）。`listen()` は Subscribe ループ開始前に `HostConfigDaemon.load()` を一度実行し、`init_data.get('FIPS', {})` → `self.fipscfg.load(fips_cfg)` で既存 CONFIG_DB エントリを一括適用する（hostcfgd:2254, 2271）。これにより `hostcfgd` 再起動後も FIPS 設定が自動的に再適用される。
+
+> **Evidence**: `sonic-host-services/scripts/hostcfgd:2456-2509` (`register_callbacks`)、`:2433-2436` (`fips_config_handler`)、`:2527-2528` (`start`/`listen`)、`:2254,2271` (起動時スナップショット)、`:1777-1779` (DEL 時早期 return)。詳細分析: `meta/_intermediate/cdb-flow/fips-pubsub.md`
+<!-- /pubsub -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
