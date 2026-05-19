@@ -328,6 +328,51 @@ sshd_config バリデーション成功時に `systemctl restart ssh` が発行�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-sftp-pubsub.md`
+
+### Redis 購読方式
+
+`SSH_SFTP` テーブルは CONFIG_DB に存在しないため、**SFTP サブシステム専用の Redis 購読経路は存在しない**。`Subsystem sftp` 行は OS テンプレート (OpenSSH パッケージ) が `/etc/ssh/sshd_config` に静的に配置するものであり、`hostcfgd` の購読ループとは独立している。
+
+SFTP に間接的に影響する購読経路は `SSH_SERVER` テーブル経由のみ:
+
+| 購読者 | 購読 API | 購読テーブル | ハンドラ | SFTP への影響 |
+|--------|---------|--------------|---------|-------------|
+| `hostcfgd` (`SshServer` / `PamLimitsCfg` 経由) | `ConfigDBConnector.subscribe()` + `listen()` | `SSH_SERVER` | `ssh_handler` | 暗号スイート・ポート・セッション上限が SFTP セッションに間接適用 |
+
+`SSH_SFTP` を購読するプロセスは存在しない（テーブル自体が未定義）。`swsscommon.SubscriberStateTable` や `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は SFTP 関連では使用されない。
+
+### keyspace 通知フロー（間接影響経路）
+
+```
+config ssh-server policies ciphers aes128-ctr,aes256-ctr
+  ↓ HSET "SSH_SERVER|POLICIES" ciphers "aes128-ctr,aes256-ctr"
+Redis keyspace PUBLISH "__keyspace@4__:SSH_SERVER|POLICIES"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+ssh_handler(key="POLICIES", op=SET, data={ciphers:"aes128-ctr,aes256-ctr"})
+  ↓ SshServer.set_policies() → sshd_config 更新
+      ├─ Ciphers 行を書き換え (SFTP セッションにも同一暗号スイートが適用)
+      ├─ Subsystem sftp 行は変更なし (SSH_CONFIG_NAMES に Subsystem なし)
+      └─ systemctl restart ssh → 新セッションから変更適用
+```
+
+- `Subsystem sftp` 行そのものは keyspace 通知の対象にならない。
+- SFTP サブシステムの有効・無効を CONFIG_DB 側からトリガーする手段はない。
+
+### 起動時スナップショット
+
+起動時は `config_db.listen(init_data_handler=self.load)` (hostcfgd:2534) により `SSH_SERVER` の初期スナップショットが適用される。このタイミングでも `Subsystem sftp` 行は変更されず、OS テンプレート由来の値が保持される。
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2478 (subscribe SSH_SERVER — SSH_SFTP は購読なし) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2297-2299 (ssh_handler — SSH_SERVER のみ) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L67-75 (SSH_CONFIG_NAMES — Subsystem キーなし) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1110-1162 (set_policies — Subsystem sftp 行を変更しない) -->
+
+<!-- /pubsub -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
