@@ -322,6 +322,59 @@ else
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/queue-state-pubsub.md`
+
+### Producer/Consumer 構造
+
+`QUEUE_COUNTER_CAPABILITIES` は **orchagent 起動時 1 回のみ書き込まれる静的ステータステーブル**であり、Redis Pub/Sub や keyspace notification を使用しない。
+
+| 区間 | 方式 | 使用クラス / API |
+|------|------|----------------|
+| portsorch → STATE_DB | `Table::set()` (`HSET` 直接) | `swss::Table`（`portsorch.cpp:793`） |
+| consumer → STATE_DB | `SonicV2Connector.get()` → `HGET` 直接読み出し | `wredstat:196-197`、`portstat.py:297-312` |
+
+### Producer 詳細 — portsorch の書き込み
+
+`PortsOrch` コンストラクタ（`portsorch.cpp:793`）で `swss::Table` インスタンスを生成し、`initCounterCapabilities()` 内で `table->set()` を呼ぶ。`swss::Table` は内部で `HSET` を実行するため、Redis Pub/Sub の `LPUSH` + `PUBLISH` は発行されない。
+
+```cpp
+// portsorch.cpp:793
+m_queueCounterCapabilitiesTable = unique_ptr<Table>(
+    new Table(m_state_db.get(), STATE_QUEUE_COUNTER_CAPABILITIES_NAME));
+
+// portsorch.cpp:1872-1875 (initCounterCapabilities 内)
+m_queueCounterCapabilitiesTable->set("WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER",  fieldValuesFalse);
+m_queueCounterCapabilitiesTable->set("WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER", fieldValuesFalse);
+// ...（SAI クエリ成功後は fieldValuesTrue で上書き）
+```
+
+書き込みは `PortsOrch::PortsOrch()` → `init()` → `initCounterCapabilities(gSwitchId)` の呼び出しチェーンで起動時 **1 回のみ**実行される。CONFIG_DB イベントに反応した動的更新はない。
+
+### Consumer 詳細 — 直接 HGET による読み出し
+
+**wredstat** (`sonic-utilities/scripts/wredstat:196-197`):
+
+```python
+self.state_db = SonicV2Connector(use_unix_socket_path=False)
+self.state_db.connect(self.state_db.STATE_DB)
+```
+
+`wredstat` は `SonicV2Connector.get()` で `HGET QUEUE_COUNTER_CAPABILITIES|<cap_name> isSupported` を呼ぶ。SUBSCRIBE や keyspace notification は使用しない（毎コマンド実行時に都度 GET）。
+
+**portstat.py** (`sonic-utilities/utilities_common/portstat.py:297-312`): 兄弟テーブル `PORT_COUNTER_CAPABILITIES` を同様の直接 GET で参照する（`QUEUE_COUNTER_CAPABILITIES` への直接参照はなし）。
+
+### keyspace notification の不使用
+
+STATE_DB の `notify-keyspace-events` 設定に関わらず、orchagent / consumer のいずれも `SUBSCRIBE` / `PSUBSCRIBE` を使用しない。このため:
+
+- **consumer は orchagent の書き込み完了を待機しない**: `wredstat` は起動時に都度 GET するため、orchagent がまだ書き込む前に実行された場合は `None` が返り N/A 表示になる（Phase D 「orchagent 起動前の wredstat」参照）
+- **書き込み通知遅延は存在しない**: SET 後は即時 Redis に反映され、次回 GET で最新値が得られる
+
+<!-- /pubsub -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`FLEX_COUNTER_TABLE`](flex-counter-table.md) — WRED_ECN_QUEUE グループの enable/disable 設定
