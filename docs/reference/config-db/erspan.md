@@ -475,7 +475,7 @@ CONFIG_DB MIRROR_SESSION|<name> に SET/DEL
 > 中間調査詳細: `meta/_intermediate/cdb-flow/erspan-pubsub.md`
 <!-- /pubsub -->
 
-<!-- platform:start -->
+<!-- platform -->
 
 ## プラットフォーム / SAI Capability 差異 (Phase H)
 
