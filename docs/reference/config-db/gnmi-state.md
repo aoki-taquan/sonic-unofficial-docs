@@ -263,6 +263,38 @@ Redis Hash 内の **フィールド名** が接続識別子 (connection key)、*
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`TELEMETRY_CONNECTIONS` テーブルは **終端テーブル** であり、他の DB への副次書込を発生させない。詳細スキャンノート: [`meta/_intermediate/cdb-flow/gnmi-state-side-effects.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/gnmi-state-side-effects.md)。
+
+### 動作原理
+
+`telemetry` デーモンの `storeKeyRedis()` / `deleteKeyRedis()` は STATE_DB.TELEMETRY_CONNECTIONS への `HSet` / `HDel` を実行するのみであり、他の DB への連鎖書込は存在しない（`connection_manager.go:111-131`）。このテーブルは **CONFIG_DB → APPL_DB → ASIC_DB** の標準書込パイプラインから独立しており、orchagent や syncd は一切関与しない。
+
+### 副次書込なし（全 DB）
+
+| DB | 結論 | 理由 |
+|----|------|------|
+| CONFIG_DB | 書込なし | STATE_DB テーブルであり CONFIG_DB への書き戻し経路は存在しない |
+| APPL_DB | 書込なし | macvlanmgrd / syncmgrd 等のパイプラインに参加しない |
+| ASIC_DB | 書込なし | orchagent は TELEMETRY_CONNECTIONS を購読しない |
+| COUNTERS_DB | 書込なし | gNMI 接続専用カウンタは存在しない |
+| FLEX_COUNTER_DB | 書込なし | FlexCounter 登録はない |
+
+### 読み取り専用の consumer
+
+TELEMETRY_CONNECTIONS を読み取るコンポーネントは以下のみで、いずれも他 DB への書込を発生させない。
+
+| consumer | 操作 | 目的 |
+|----------|------|------|
+| `show gnmi` (sonic-utilities) | `HGetAll(TELEMETRY_CONNECTIONS)` | アクティブな Subscribe RPC 接続一覧の表示 |
+| `gnmi_server/server_test.go` | `HGetAll(TELEMETRY_CONNECTIONS)` | 単体テスト検証 |
+
+!!! note "間接的な影響"
+    `TELEMETRY_CONNECTIONS` への書込のトリガとなる Subscribe RPC 接続は、gNMI サーバが各種 DB を購読してクライアントへ通知を送るフローを開始する。しかしこれは TELEMETRY_CONNECTIONS テーブル自体の副次書込ではなく、gNMI サブスクリプションとしての動作である。
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
