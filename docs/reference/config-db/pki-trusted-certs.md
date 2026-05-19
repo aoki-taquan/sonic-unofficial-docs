@@ -315,6 +315,98 @@ Redis が利用不可の場合、`writeCredentialsMetadataToDB` が `"REDIS is n
 -->
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 詳細調査メモ: `meta/_intermediate/cdb-flow/pki-trusted-certs-constants.md`
+
+gNSI Certz は CONFIG_DB を直接参照しないため、CONFIG_DB レベルの定数は少ない。ただしプロファイル管理と STATE_DB 書込みで以下の定数が固定化される。
+
+### プロファイル・テーブル名定数
+
+| 定数名 | 値 | 役割 | ソース |
+|--------|-----|------|--------|
+| デフォルトプロファイル | `"gnxi"` | gNSI Certz 内部で起動時に自動生成されるプロファイル ID。CONFIG_DB `SECURITY_PROFILES` との連携なし | `gnsi_certz.go:30` |
+| STATE_DB テーブル | `CREDENTIALS` | gNSI Certz が証明書メタデータを書き込む STATE_DB テーブル名 | `gnsi_certz.go:48` |
+| STATE_DB entity ID | `CERT` / `CERT_VERSION` / `CREATED_ON` サフィックス | STATE_DB `CREDENTIALS\|CERT\|<profileID>` キーのフィールド命名規則。以下のエンティティフィールドで構成: | `gnsi_certz.go:32-40` |
+
+### State_DB フィールド命名 (entity + suffix パターン)
+
+| フィールド | 構成 | 値例 | ソース |
+|-----------|-----|------|--------|
+| `certificate_version` | `"certificate"` + `"_version"` | `"V1"` (bootstrap 初期値) | `gnsi_certz.go:33, 39, 188` |
+| `certificate_created_on` | `"certificate"` + `"_created_on"` | Unix nanoseconds | `gnsi_certz.go:33, 40` |
+| `ca_trust_bundle_version` | `"ca_trust_bundle"` + `"_version"` | `"V1"` (bootstrap 初期値) | `gnsi_certz.go:34, 39, 196` |
+| `ca_trust_bundle_created_on` | `"ca_trust_bundle"` + `"_created_on"` | Unix nanoseconds | `gnsi_certz.go:34, 40` |
+| `certificate_revocation_list_bundle_version` | `"certificate_revocation_list_bundle"` + `"_version"` | `"V1"` (bootstrap 初期値) | `gnsi_certz.go:35, 39, 203` |
+| `authentication_policy_version` | `"authentication_policy"` + `"_version"` | `"V1"` (bootstrap 初期値) | `gnsi_certz.go:36, 39, 210` |
+
+### Version 定数値 (bootstrap 初期化)
+
+起動時 `bootstrapDefaultProfile()` で全エンティティに適用:
+
+| バージョン | 用途 | ソース |
+|-----------|------|--------|
+| `"V1"` | bootstrap 時のすべてのエンティティ初期値 (Cert / TrustBundle / CrlBundle / AuthPolicy) | `gnsi_certz.go:188, 196, 203, 210` |
+
+Rotate RPC による更新時には、クライアント指定値 (空文字列拒否) で上書きされる。
+
+### Entity 処理順序の固定化 (enum iota)
+
+STATE_DB 書込みおよびストリーム処理の順序は enum で定義:
+
+```go
+const (
+    certType CertzType = iota      // 0: SERVER CERTIFICATE
+    tbType                         // 1: CA TRUST BUNDLE
+    crlType                        // 2: CRL BUNDLE
+    apType                         // 3: AUTHENTICATION POLICY
+)
+```
+
+この順序で `bootstrapDefaultProfile()` の for-loop (`gnsi_certz.go:134-138`) が STATE_DB への書込みを行う。並列化なし。
+
+### CRL 管理ディレクトリ定数
+
+| 定数 | 値 | 役割 | ソース |
+|------|-----|------|--------|
+| CRL デフォルトディレクトリ | `"crl"` | v0→v1 互換性のための CRL 配置先パス | `gnsi_certz.go:43` |
+| Flush サフィックス | `"_flush"` | CRL flush 時のサブディレクトリ名 | `gnsi_certz.go:44` |
+| 一時ディレクトリ | `"tmp"` | CRL 一時ファイル置き場 | `gnsi_certz.go:45` |
+
+### ファイル操作
+
+| 定数 | 値 | 用途 | ソース |
+|------|-----|------|--------|
+| バックアップ拡張子 | `".bak"` | Rotate 失敗時ロールバック用 (symbolinc link restore) | `gnsi_certz.go:47` |
+
+### Integrity Manifest ファイルパス
+
+| 定数 | デフォルト値 | 役割 | ソース |
+|------|------------|------|--------|
+| `integrityManifestFile` | `"/mbm/boot_manifest.cbor"` | gNSI Certz が読み込む boot integrity manifest ファイルパス（ハードコード。`srv.config.IntManFile` で上書き可能） | `gnsi_certz.go:54, 122-123` |
+
+---
+
+### 注記
+
+1. **VERSION `"V1"` は bootstrap 専用**: Rotate RPC での更新時はクライアント指定値を採用。空文字列は `codes.InvalidArgument` で拒否される。
+
+2. **`defaultProfile = "gnxi"` は CONFIG_DB 非依存**: gNSI Certz 内部管理。`SECURITY_PROFILES|<profile-name>` キーとは無関係。
+
+3. **CONFIG_DB ハンドラ未実装**: `SECURITY_PROFILES` テーブルを読む production ハンドラが community master に存在しないため、定数がハンドラロジック（順序・デフォルト値選択）に影響を与える経路は現時点で確認されていない。
+
+<!-- evidence:
+  sonic-gnmi/gnmi_server/gnsi_certz.go:29-49 — const ブロック (defaultProfile, certTbl, credentialsTbl, versionFld, createdFld 等)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:91-96 — Entity type enum (certType, tbType, crlType, apType の iota)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:134-138 — bootstrapDefaultProfile 内 for-loop (Entity 書込み固定順序)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:178-222 — bootstrapDefaultProfile (Version="V1" 初期化, 4 entity)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:385-416 — doUpload validation (version 必須, codes.InvalidArgument)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:54 — integrityManifestFile default path
+  sonic-gnmi/gnmi_server/gnsi_certz.go:122-123 — NewGNSICertzServer (IntManFile override)
+-->
+<!-- /constants -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: [`GNMI`](gnmi.md) (`GNMI|certs` で証明書パスを設定), [`TELEMETRY`](telemetry.md)
