@@ -194,6 +194,29 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 証跡: `stporch.cpp:17-43`, `stporch.cpp:603-617`, `stpmgr.cpp:1381-1413`
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+> **調査根拠**: `sonic-swss/orchagent/stporch.cpp` L17–43, L603–617、`sonic-swss/cfgmgr/stpmgrd.cpp` L68–88、`sonic-swss/cfgmgr/stpmgr.cpp` L1257–1274, L1381–1413 精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/stp-state-cross-refs.md`
+
+`STP_TABLE|GLOBAL` は他の CONFIG_DB テーブルを leafref で参照しない独立した STATE_DB エントリである。
+書き込み側 (`StpOrch`) は SAI のみを入力とし、読み取り側 (`stpmgrd`) は `PORT_TABLE|PortInitDone` を先行確認してから `STP_TABLE` を参照する。
+
+| 参照先テーブル / リソース | DB | 参照タイミング | 依存方向 | evidence |
+|---|---|---|---|---|
+| SAI `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` | SAI | orchagent 起動時 1 回 | **書き側の入力**。この SAI 属性値 −1 が `max_stp_inst` として STATE_DB に書き込まれる | `stporch.cpp:30–41, 609` |
+| `PORT_TABLE\|PortInitDone` | APPL_DB | stpmgrd 起動時、`STP_TABLE` 読み取りの**前** | **読み側ガード**。`isPortInitDone()` が `PortInitDone` エントリの存在を確認するまでポーリングし、確認後に `getStpMaxInstances()` を呼ぶ | `stpmgr.cpp:1257–1273`, `stpmgrd.cpp:72` |
+| `DEVICE_METADATA\|localhost` | CONFIG_DB | stpmgrd 起動時、`STP_TABLE` 読み取りの**直後** | **読み側の後続処理**（MAC アドレス取得）。`STP_TABLE` の値には影響しない | `stpmgrd.cpp:81–88` |
+
+!!! note "STP_TABLE は純粋な「SAI → STATE_DB」ブリッジ"
+    `StpOrch::updateMaxStpInstance()` (`stporch.cpp:603–617`) は SAI 属性値を計算して `m_stpTable->set("GLOBAL", ...)` を呼ぶだけで、他のテーブルを読み取らない。CONFIG_DB 上のどの STP 設定テーブル (`STP` / `STP_VLAN` / `STP_PORT`) の値も `max_stp_inst` の決定に関与しない。
+
+!!! note "「ポート初期化完了ガード」が唯一の実質的な順序制約"
+    `stpmgrd` が `STP_TABLE|GLOBAL` を読み取る前に `APPL_DB PORT_TABLE|PortInitDone` の存在を確認することで、`StpOrch` が orchagent として起動し SAI 初期化が完了するまでの間接的な待機が実現される。直接の leafref や YANG 制約ではなく、コード上の起動シーケンス設計による暗黙依存である。
+
+<!-- /cross-refs -->
+
 ## 例外条件・特殊挙動
 
 - **-1 補正**: `max_stp_inst` は SAI の返す最大数から -1 した値。STP インスタンス ID が 0 始まりのため、使用可能な最大インスタンス ID が `max_stp_inst` と一致する。
