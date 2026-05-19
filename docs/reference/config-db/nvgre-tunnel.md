@@ -415,6 +415,44 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査対象: `sonic-swss/orchagent/nvgreorch.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
+> 調査日: 2026-05-19
+
+`NVGRE_TUNNEL` / `NVGRE_TUNNEL_MAP` の SET/DEL が orchagent を経由して引き起こす CONFIG_DB 以外への書込みを示す。
+
+### ASIC_DB — SAI オブジェクト生成 (orchagent)
+
+`NvgreTunnelOrch` は CONFIG_DB の変化を直接 SAI API 呼び出しに変換し、ASIC_DB に SAI オブジェクトを作成する。syncd が ASIC_DB の変化を検知して実ハードウェアに反映する。
+
+| 操作 | 書込先 DB | SAI API / テーブル | 生成オブジェクト | ソース |
+|---|---|---|---|---|
+| SET `NVGRE_TUNNEL` | ASIC_DB | `sai_tunnel_map_api->create_tunnel_map()` ×4 | `SAI_OBJECT_TYPE_TUNNEL_MAP` (VLAN/BRIDGE 各 2 個: encap + decap) | `nvgreorch.cpp:106-155` |
+| SET `NVGRE_TUNNEL` | ASIC_DB | `sai_tunnel_api->create_tunnel()` | `SAI_OBJECT_TYPE_TUNNEL` (type=NVGRE) | `nvgreorch.cpp:177-205` |
+| SET `NVGRE_TUNNEL` | ASIC_DB | `sai_tunnel_api->create_tunnel_term_table_entry()` | `SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY` (P2MP) | `nvgreorch.cpp:235-261` |
+| SET `NVGRE_TUNNEL_MAP` | ASIC_DB | `sai_tunnel_map_api->create_tunnel_map_entry()` | `SAI_OBJECT_TYPE_TUNNEL_MAP_ENTRY` (VLAN ↔ VSID) | `nvgreorch.cpp:415-441` |
+| DEL `NVGRE_TUNNEL` | ASIC_DB | `sai_tunnel_api->remove_tunnel_term_table_entry()` / `remove_tunnel()` / `sai_tunnel_map_api->remove_tunnel_map()` | 上記 SAI オブジェクトの削除 | `nvgreorch.cpp:282-330` |
+| DEL `NVGRE_TUNNEL_MAP` | ASIC_DB | `sai_tunnel_map_api->remove_tunnel_map_entry()` | `SAI_OBJECT_TYPE_TUNNEL_MAP_ENTRY` の削除 | `nvgreorch.cpp:530-544` |
+
+### APPL_DB / STATE_DB への書込み
+
+`NvgreTunnelOrch` / `NvgreTunnelMapOrch` は APPL_DB や STATE_DB への書込みを行わない。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| APPL_DB | なし | `nvgreorch.cpp` 全行に ProducerStateTable / AppTable 書込なし |
+| STATE_DB | なし | `nvgreorch.cpp` 全行に StateTable 書込なし |
+| COUNTERS_DB | なし | NVGRE トンネル統計は別経路（FlexCounter）で管理されるが nvgreorch.cpp は FLEX_COUNTER_DB に直接書込みなし |
+
+### FLEX_COUNTER_DB への書込み
+
+`NvgreTunnelOrch` は FlexCounter への登録を行わない（`nvgreorch.cpp` に `addFlexCounter` / `FLEX_COUNTER_DB` 参照なし）。NVGRE トンネルのトラフィック統計はハードウェアサポート依存であり、SONiC の FlexCounter フレームワーク経由では管理されない。
+
+詳細スキャン証跡: `meta/_intermediate/cdb-flow/nvgre-tunnel-side-effects.md`
+<!-- /side-effects -->
+
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
 
