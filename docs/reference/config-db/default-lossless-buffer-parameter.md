@@ -294,6 +294,55 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 
 > **スキャン証跡**: `handleDefaultLossLessBufferParam` L1978-2046 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2050 全行読了、`buffermgrdyn.cpp` L494-496 読了。4 件依存抽出。
 <!-- /ordering -->
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+`buffermgrdyn` の `handleDefaultLossLessBufferParam()` (L1978-2033) が返す
+`task_process_status` と、ディスパッチャ `doTask()` (L3574-3610) による最終処置。
+
+### ディスパッチャ共通処理 (buffermgrdyn.cpp:3591-3608)
+
+| 返却ステータス | doTask 動作 | ログ | evidence |
+|---|---|---|---|
+| `task_success` (default) | エントリ erase → 次エントリ処理 | なし | `buffermgrdyn.cpp:3605-3606` |
+| `task_need_retry` | エントリ残置 (`it++`) → 次回 doTask まで保留 | `SWSS_LOG_INFO "Unable to process table update. Will retry..."` | `buffermgrdyn.cpp:3597-3600` |
+| `task_failed` | エントリ erase → ループ継続（残タスクも処理） | `SWSS_LOG_ERROR "Failed to process table update"` | `buffermgrdyn.cpp:3593-3596` |
+| `task_invalid_entry` | エントリ erase → ループ継続 | `SWSS_LOG_ERROR "Failed to process invalid entry, drop it"` | `buffermgrdyn.cpp:3601-3604` |
+
+> `buffermgrdyn` の `task_failed` はエントリを drop するが doTask 全体を打ち切らない点に注意。orchagent 等の他ディスパッチャと挙動が異なる。
+
+### handleDefaultLossLessBufferParam — 失敗・retry 経路 (L1978-2033)
+
+| 失敗条件 | 検出箇所 | 返却ステータス | ログ | 復旧方法 |
+|---|---|---|---|---|
+| `ingress_lossless_pool` が `m_bufferPoolLookup` に未登録 | L1985-1988 | `task_need_retry` | `SWSS_LOG_INFO "%s has not been configured, need to retry"` | `BUFFER_POOL|ingress_lossless_pool` が `handleBufferPoolTable()` 経由でキャッシュ登録されると自動解消 |
+| SET/DEL 以外の op コマンド受信 | L2009-2012 | `task_failed` | `SWSS_LOG_ERROR "Unsupported command %s received for DEFAULT_LOSSLESS_BUFFER_PARAMETER table"` | エントリ drop（通常は発生しない。CONFIG_DB からの SET/DEL のみ想定） |
+| `over_subscribe_ratio` が 0→非ゼロ遷移かつ `m_portInitDone=true` かつ SHP が SAI 未反映 | L2019-2024 | `task_need_retry` | `SWSS_LOG_INFO "Shared headroom pool is enabled but has not been applied to SAI, retrying"` (`isSharedHeadroomPoolEnabledInSai()` 内 L2046) | `BufferOrch` が `ingress_lossless_pool.xoff` を APPL_STATE_DB に書き込むと自動解消 |
+
+### refreshSharedHeadroomPool 内部の非伝播失敗 (L1592-1715)
+
+`over_subscribe_ratio` 変更時に `refreshSharedHeadroomPool()` が呼ばれ全 lossless プロファイルが再計算される。この再計算中の失敗は `handleDefaultLossLessBufferParam` に `task_need_retry` / `task_failed` として伝播しない点に注意。
+
+| 失敗条件 | 挙動 | ログ | evidence |
+|---|---|---|---|
+| Lua ヘッドルーム計算失敗 | 個別プロファイルの計算スキップ（更新なし） | `SWSS_LOG_WARN "Failed to calculate headroom for %s"` | `buffermgrdyn.cpp:622-648` |
+| バッファプール再計算 Lua スクリプト失敗 | プール更新スキップ | `SWSS_LOG_WARN "Lua scripts for buffer calculation were not executed successfully"` | `buffermgrdyn.cpp:815` |
+| プール xoff 値が MMU サイズ超過 | xoff を無視してプールサイズのみ更新継続 | `SWSS_LOG_ERROR "Buffer pool %s: Invalid xoff %s, exceeding the mmu size %s, ignored xoff"` | `buffermgrdyn.cpp:757-758` |
+| プールサイズが MMU サイズ超過 | エラーログのみ（配列更新は継続） | `SWSS_LOG_ERROR "Buffer pool %s: Invalid size %s, exceeding the mmu size %s"` | `buffermgrdyn.cpp:788` |
+
+### 失敗パターンサマリ
+
+| # | トリガー | ステータス | 自動回復 | 最終処置 |
+|---|---------|-----------|---------|---------|
+| 1 | `ingress_lossless_pool` キャッシュ未登録 | `task_need_retry` | あり（BUFFER_POOL SET 到着後） | エントリ残置・自動再処理 |
+| 2 | SET/DEL 以外の op | `task_failed` | なし（drop） | エントリ erase・ERROR ログ |
+| 3 | SHP 有効化時 SAI 未反映 | `task_need_retry` | あり（APPL_STATE_DB 更新後） | エントリ残置・自動再処理 |
+| 4 | Lua ヘッドルーム計算失敗 | —（handler 継続） | なし（WARN のみ） | プロファイル計算スキップ |
+
+> **config rollback**: `task_failed` でエントリが drop されても CONFIG_DB のエントリは残る。`m_defaultThreshold` / `m_overSubscribeRatio` の内部状態は変更前のまま保持され、CONFIG_DB との乖離が生じる場合は同じ key を再 SET するか `buffermgrd` を再起動して解消する。
+
+> **スキャン証跡**: `handleDefaultLossLessBufferParam` L1978-2033 全行読了、`isSharedHeadroomPoolEnabledInSai` L2034-2051 全行読了、`doTask(Consumer&)` L3574-3610 全行読了、`refreshSharedHeadroomPool` L1592-1715 全行読了。
+<!-- /failure -->
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
