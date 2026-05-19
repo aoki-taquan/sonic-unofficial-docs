@@ -190,3 +190,59 @@ show mux hwmode muxdirection Ethernet0
 - **HW_MUX_CABLE_TABLE の `"unknown"` は gRPC 問題のシグナル**: `soc_ipv4` が CONFIG_DB に設定されていない場合、ycabled は gRPC チャネルを確立せず (`y_cable_helper.py:672` の `soc_ipv4 in dict` 条件)、初期値として `"unknown"` が書き込まれる。`show mux status` の SERVER_STATUS 列が `unknown` の場合はこの状態を疑う。
 
 <!-- /defaults -->
+
+<!-- ordering -->
+## 書込み順依存 (Phase B)
+
+`MuxOrch` / `MuxCableOrch` / `MuxStateOrch`（`sonic-swss/orchagent/muxorch.cpp`）および `DbInterface`（`sonic-linkmgrd/src/DbInterface.cpp`）を精読した結果、以下の順序依存・タイミング依存を検出した。中間ノート: `meta/_intermediate/cdb-flow/mux-cable-state-ordering.md`。
+
+### 他テーブル先行必須（MUX_CABLE_TABLE 書込み前）
+
+| # | 先行条件 | 理由 | 違反時の挙動 |
+|---|---------|------|------------|
+| 1 | `CONFIG_DB PEER_SWITCH\|<ip>` SET | `MuxOrch::handleMuxCfg()` が `mux_peer_switch_.isZero()` をチェック (muxorch.cpp:2271) | `return false` でリクエストを再キュー。`MuxCable` オブジェクト未生成のため `MUX_CABLE_TABLE` は書かれない |
+| 2 | `CONFIG_DB MUX_CABLE\|<port>` SET | `MuxOrch::handleMuxCfg()` の呼出しを起点とする | `MUX_CABLE_TABLE` の `neighbor_mode` は新規ポート追加時のみ書込み。先行条件 #1 も同時に必要 |
+| 3 | `MuxOrch::isMuxExists()` が true | `MuxStateOrch::addOperation()` が `!mux_orch->isMuxExists(port_name)` をチェック (muxorch.cpp:2650) | `return false` で APP_DB HW_MUX_CABLE_TABLE の SET を再キュー。`MUX_CABLE_TABLE.state` は更新されない |
+
+**推奨書込み順序（初期設定）**:
+
+```text
+# 1. PEER_SWITCH を先に設定
+SET CONFIG_DB PEER_SWITCH|10.0.0.1
+
+# 2. MUX_CABLE を設定 → MuxOrch が MuxCable 生成
+#    → state = "standby" (cold boot) で MUX_CABLE_TABLE 書込み
+#    → neighbor_mode も同時に書込み
+SET CONFIG_DB MUX_CABLE|Ethernet0  server_ipv4=192.168.0.100/32  ...
+
+# 3. ycabled が HW_MUX_CABLE_TABLE を書き込む（非同期・独立）
+# 4. MuxStateOrch が APP_DB HW_MUX_CABLE_TABLE の状態を受け取って
+#    MUX_CABLE_TABLE.state を更新（MuxOrch 登録後に有効）
+```
+
+### MUX_CABLE_TABLE.state の遷移順序
+
+`MuxCable` オブジェクトは生成直後に初期 `state` を書き込む。その後の状態遷移は APP_DB 経由の orchagent ループで更新される。
+
+```
+MuxCable 生成
+  ↓ (cold boot)
+stateStandby() → updateMuxState("standby")  [muxorch.cpp:446-447]
+  ↓ (APP_DB から初期 hw_state 取得後)
+MuxStateOrch::addOperation() が hw_state == mux_state なら hw_state を MUX_CABLE_TABLE.state に上書き
+  または hw_state != mux_state なら "unknown" / "error" を書込み
+```
+
+warm restart の場合は `MUX_STATE_INIT` → `"init"` が最初に書かれ、APP_DB sync 完了後に `"active"` / `"standby"` に遷移する (muxorch.cpp:437-447)。
+
+### HW_MUX_CABLE_TABLE は独立した書込み経路
+
+`HW_MUX_CABLE_TABLE` は `sonic-ycabled` が gRPC 経由でハードウェアを直接クエリして書き込む。orchagent のパイプラインとは独立しており、MuxOrch の状態に関係なく書き込まれる。
+
+| consumer | 参照テーブル | 調停方式 |
+|---------|------------|---------|
+| `MuxStateOrch` | APP_DB `HW_MUX_CABLE_TABLE` | `!mux_orch->isMuxExists()` が true の間は `return false` で再キュー（**自動ポーリング**） |
+| `linkmgrd` | STATE_DB `MUX_CABLE_TABLE` | `handleGetMuxState()` で `hget` → `processGetMuxState()` に渡す。購読 (subscribe) ベースのため状態変更時に即時通知 (DbInterface.cpp:1833) |
+
+<!-- /ordering -->
+
