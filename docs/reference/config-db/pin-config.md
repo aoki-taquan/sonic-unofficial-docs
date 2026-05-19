@@ -378,4 +378,35 @@ P4RT テーブルには専用 YANG モデルが存在しないため leafref は
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`p4rt.sh` および関連テンプレートに存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+出典: `sonic-net/sonic-buildimage/dockers/docker-sonic-p4rt/p4rt.sh`（コミット `9ea932ec`）
+
+<!-- evidence: meta/_intermediate/cdb-flow/pin-config-constants.md -->
+
+### 終了コード
+
+| 定数名 | 値 | 用途 | ソース |
+|--------|----|------|--------|
+| `EXIT_P4RT_VARS_FILE_NOT_FOUND` | `1` | `p4rt_vars.j2` テンプレートが `/usr/share/sonic/templates/` に不在の場合の終了コード | `p4rt.sh:L3` |
+
+### ファイルシステムパス
+
+| 定数名（変数名またはリテラル） | 値 | 用途 | ソース |
+|----------------------------|----|------|--------|
+| `P4RT_VARS_FILE` | `/usr/share/sonic/templates/p4rt_vars.j2` | `sonic-cfggen -d -t` に渡す Jinja2 テンプレートパス。`readonly` 宣言。変更不可 | `p4rt.sh:L4` |
+| (exec リテラル) | `/usr/local/bin/p4rt` | P4Runtime gRPC サーババイナリの絶対パス。`exec /usr/local/bin/p4rt ${P4RT_ARGS}` に埋め込み | `p4rt.sh:L99` |
+
+### YANG / スキーマ定数
+
+`P4RT` テーブルには専用 YANG モデルが存在しない。YANG `default` 文によるスキーマ定数は **0 件**。
+フィールドデフォルト（ポート `9559` 等）はすべて `p4rt` バイナリ内部で保持されており、
+`p4rt.sh` 側には明示的なデフォルト値定数が存在しない（各フィールドは `jq -r '.field // empty'` で未設定時は引数なしとなる）。
+
+> **注意**: バイナリ起動引数名（`--p4rt_grpc_port`、`--use_insecure_server_credentials` 等）はスクリプト内にリテラルとして埋め込まれているが、
+> これらは CONFIG_DB フィールドとバイナリ引数の対応を定義するものであり、設定値ではない。
+<!-- /constants -->
+
 <!-- glossary-links-injected -->
