@@ -383,6 +383,34 @@ flowchart TD
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`ipv6_use_link_local_only` の処理経路は **全プラットフォームで同一**。`cfgmgr/intfmgr.cpp`・`neighsyncd/neighsync.cpp`・`sonic-interface.yang` をプラットフォーム識別キーワード (`multi_asic|is_multi_npu|chassis|asic[0-9]|namespace|platform|vendor|broadcom|mellanox|barefoot|cisco`) で検索してもヒット 0 件であり、機種依存コードが存在しない。
+
+### intfmgrd は per-asic スコープではない (host 単一インスタンス)
+
+`intfmgrd.cpp` はシングルインスタンスで起動し、複数 ASIC 構成でも追加インスタンスを持たない。`INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` テーブルは host namespace の CONFIG_DB のみに存在し、`asic0..N` の Redis には複製されない。
+
+| 構成 | 挙動 |
+|------|------|
+| single-asic | intfmgrd が 1 インスタンス、host CONFIG_DB を購読 |
+| multi-asic (VOQ chassis 含む) | intfmgrd は host 側で 1 インスタンスのみ起動。各 asic namespace の CONFIG_DB には `INTERFACE` テーブルが存在せず、per-asic intfmgrd インスタンスも起動しない |
+| Virtual Switch (VS) | 挙動は real ASIC と同一。sysctl は実行されるが Linux カーネルの動作に依存 |
+
+### Linux sysctl 依存（カーネルドライバ不問）
+
+`enableIpv6Flag()` が実行する `net.ipv6.conf.<alias>.disable_ipv6 = 0` は Linux カーネルの IPv6 スタック制御であり、ASIC / SAI ドライバとは独立している。SAI API の呼び出しは一切なく、ASIC_DB への書込も発生しない（dead consumer の確認は Phase G 済み）。このため、Broadcom / Mellanox / Barefoot / Cisco など ASIC 種別を問わず動作は一定である。
+
+### neighsyncd の動作もプラットフォーム不問
+
+`neighsync.cpp` の `isLinkLocalEnabled()` はプレフィクス文字列比較と CONFIG_DB 直接参照のみで構成されており（Phase E 定数表参照）、platform 定数・vendor フラグ・capability クエリを一切参照しない。link-local neigh の学習有効/無効判定は CONFIG_DB 値のみで決まる。
+
+### 差異が残る唯一の領域（インターフェース名種別）
+
+Phase E で示したインターフェース名プレフィクス (`Ethernet` / `PortChannel` / `Vlan`) によるテーブル振り分けは、特定 ASIC 機種固有ではなくインターフェース命名規則依存である。スマートスイッチ / DPU などで異なるプレフィクス名を持つインターフェース (`dpu0` 等) が登場した場合、`isLinkLocalEnabled()` が `false` を返して link-local neigh を無視するが、これはプラットフォーム分岐ではなく未サポートインターフェース種別として Phase D (#5) で既述。
+<!-- /platform -->
+
 ## 購読者
 
 | コンポーネント | 役割 | テーブル |

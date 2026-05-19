@@ -1,86 +1,86 @@
-# pbh-table — Phase H プラットフォーム差異
+# pbh-table — Phase H platform 調査ノート
 
-## 調査証跡
+## 調査対象ファイル
 
-- `sonic-swss/orchagent/pbh/pbhcap.cpp` — `PbhCapabilities::parsePbhAsicVendor()`, `PbhGenericFieldCapabilities`, `PbhMellanoxFieldCapabilities`
-- `sonic-swss/orchagent/pbh/pbhcap.h` — `PbhAsicVendor` enum, `PbhVendorFieldCapabilities`
-- `sonic-swss/orchagent/pbhorch.cpp` — `updatePbhTable()`, `updatePbhRule()` (Mellanox W/A L839-880)
+- `sonic-swss/orchagent/pbh/pbhcap.h` (PbhAsicVendor, PbhVendorFieldCapabilities クラス定義)
+- `sonic-swss/orchagent/pbh/pbhcap.cpp` (PbhCapabilities, PbhGenericFieldCapabilities, PbhMellanoxFieldCapabilities)
+- `sonic-swss/orchagent/pbhorch.cpp` (Mellanox W/A at line 839)
+- `sonic-swss-common/common/schema.h` (STATE_PBH_CAPABILITIES_TABLE_NAME)
 
 ## プラットフォーム識別方法
 
-`PbhCapabilities::parsePbhAsicVendor()` が環境変数 `ASIC_VENDOR` を読み取る (`pbhcap.cpp:22-24, 176-197`)。
+`PbhCapabilities::parsePbhAsicVendor()` (pbhcap.cpp:310-335) が起動時に環境変数 `ASIC_VENDOR` を読み取る。
 
-```c
-const char *envVar = std::getenv("ASIC_VENDOR");
-if (platform == PBH_PLATFORM_MELLANOX) → PbhAsicVendor::MELLANOX
-else                                   → PbhAsicVendor::GENERIC
+```cpp
+#define PBH_PLATFORM_ENV_VAR  "ASIC_VENDOR"
+#define PBH_PLATFORM_MELLANOX "mellanox"
+#define PBH_PLATFORM_GENERIC  "generic"
 ```
 
-認識するベンダー:
-- `"mellanox"` → MELLANOX
-- それ以外（broadcom, barefoot, cisco-8000 等）→ GENERIC
-- 環境変数未設定 → GENERIC (fallback, SWSS_LOG_WARN)
+- `ASIC_VENDOR == "mellanox"` → `PbhAsicVendor::MELLANOX`
+- その他 / 未設定 → `PbhAsicVendor::GENERIC`
 
-## プラットフォーム別フィールド操作可否
+未設定時は `SWSS_LOG_WARN("Failed to detect ASIC vendor: ... fallback to generic")` が出る。
 
-`PbhCapabilities` は起動時に vendor capabilities を決定し、STATE_DB `PBH_CAPABILITIES_TABLE` に書き出す。
+## ベンダー別フィールド capability
 
-### PBH_TABLE テーブル
+### Generic (非 Mellanox) — PbhGenericFieldCapabilities (pbhcap.cpp:107-124)
 
-| フィールド | GENERIC | MELLANOX |
-|-----------|---------|----------|
-| `interface_list` | **UPDATE** のみ | **UPDATE** のみ |
-| `description` | **UPDATE** のみ | **UPDATE** のみ |
+| エンティティ | フィールド | 対応 capability |
+|---|---|---|
+| PBH_TABLE | interface_list | UPDATE のみ |
+| PBH_TABLE | description | UPDATE のみ |
+| PBH_RULE | priority | UPDATE のみ |
+| PBH_RULE | gre_key / ether_type / ip_protocol / ipv6_next_header / l4_dst_port / inner_ether_type | ADD + UPDATE + REMOVE |
+| PBH_RULE | hash | UPDATE のみ |
+| PBH_RULE | packet_action / flow_counter | ADD + UPDATE + REMOVE |
+| PBH_HASH | hash_field_list | UPDATE のみ |
+| PBH_HASH_FIELD | hash_field / ip_mask / sequence_id | **空（なし）** — setPbhDefaults 未呼び出し |
 
-両 vendor とも **ADD/REMOVE は不可**（`interface_list`/`description` は UPDATE のみサポート）。
+注意: `PBH_HASH_FIELD` の hashField.* フィールドは Generic でも空セット。`setPbhDefaults` が呼ばれていないため ADD/UPDATE/REMOVE すべて不可として validate される。ただし実際の Hash Field 作成は `createPbhHashField()` 内で直接 SAI を呼ぶため、capability チェックは pbhorch.cpp の `validatePbhHashFieldCap()` 呼び出し (pbhorch.cpp:1410-1422) でのみ検証される。
 
-### PBH_HASH テーブル
+### Mellanox — PbhMellanoxFieldCapabilities (pbhcap.cpp:126-141)
 
-| フィールド | GENERIC | MELLANOX |
-|-----------|---------|----------|
-| `hash_field_list` | **UPDATE** のみ | **なし（空集合）** |
+Generic との差分:
 
-**MELLANOX では `hash_field_list` の UPDATE が不可能**（`PbhMellanoxFieldCapabilities` が `hash_field_list` を一切設定しない — `pbhcap.cpp:126-141`）。
+| エンティティ | フィールド | Generic | Mellanox |
+|---|---|---|---|
+| PBH_HASH | hash_field_list | UPDATE のみ | **空（なし）** — setPbhDefaults 未呼び出し |
+| PBH_RULE | packet_action / flow_counter | ADD+UPDATE+REMOVE | ADD+UPDATE+REMOVE (同じ) |
 
-### PBH_RULE テーブル
+つまり Mellanox では `PBH_HASH.hash_field_list` の UPDATE が非対応。
 
-| フィールド | GENERIC | MELLANOX |
-|-----------|---------|----------|
-| `gre_key`, `ether_type`, `ip_protocol`, `ipv6_next_header`, `l4_dst_port`, `inner_ether_type`, `packet_action`, `flow_counter` | ADD/UPDATE/REMOVE | ADD/UPDATE/REMOVE |
-| `priority` | UPDATE のみ | UPDATE のみ |
-| `hash` | UPDATE のみ | UPDATE のみ |
+## Mellanox W/A (pbhorch.cpp:839-863)
 
-### PBH_HASH_FIELD テーブル
+`updatePbhRule()` 内、`hash` フィールドまたは `packet_action` フィールドを UPDATE する場合に実行される。
 
-| フィールド | GENERIC | MELLANOX |
-|-----------|---------|----------|
-| `hash_field`, `ip_mask`, `sequence_id` | ※未設定（空集合） | ※未設定（空集合） |
-
-`PbhHashFieldCapabilities` の `hashField` は両 vendor とも `setPbhDefaults` 未呼び出しのため空集合。実際の検証は未使用と推測される。
-
-## Mellanox W/A (update PBH_RULE)
-
-`updatePbhRule()` において `hash` または `packet_action` フィールドが更新対象に含まれる場合、Mellanox ASIC では SAI 上で action を無効化してから更新する回避策が必要 (`pbhorch.cpp:839-880`):
-
-```
-if (pbhCap.getAsicVendor() == PbhAsicVendor::MELLANOX) {
-    if (hash or packet_action is in uFields) {
-        pbhRulePtr->disableAction()   // 一時的に action を SAI 上で無効化
-        aclOrch->updateAclRule(...)
-        pbhRulePtr->enableAction()    // action を再有効化
+```cpp
+// pbhorch.cpp:839-863
+if (this->pbhCap.getAsicVendor() == PbhAsicVendor::MELLANOX)
+{
+    if (cond1 || cond2)  // hash or packet_action in uFields
+    {
+        auto pbhRulePtr = dynamic_cast<AclRulePbh*>(...);
+        if (!pbhRulePtr->disableAction()) { return false; }
     }
 }
 ```
 
-Generic ASIC では SAI 上で action を無効化せずに直接 `updateAclRule()` を呼び出す。
+Mellanox では `hash` / `packet_action` フィールドの更新前に SAI レベルで rule の action を一時無効化する必要がある。この W/A がない場合、SAI が attribute update を拒否する可能性がある。
 
-## VM・Virtual Switch
+## STATE_DB への capabilities 書き出し
 
-`ASIC_VENDOR=vs` (または未設定) の場合は GENERIC 動作。PBH TABLE ACL は SAI 経由で ASIC_DB に書かれるが、syncd は VS で mock 実行されるため実際のハードウェアへの降りはない。VM 環境でも `PbhCapabilities` の初期化・STATE_DB 書き込みは正常に行われる。
+`PbhCapabilities::writePbhVendorCapabilitiesToDb()` (pbhcap.cpp:442-452) が orchagent 起動時に STATE_DB `PBH_CAPABILITIES` テーブル (`STATE_PBH_CAPABILITIES_TABLE_NAME`) に書き込む。
 
-## サマリ
+```
+STATE_DB:PBH_CAPABILITIES|table    → interface_list, description の capability 文字列
+STATE_DB:PBH_CAPABILITIES|rule     → priority, gre_key, ... の capability 文字列
+STATE_DB:PBH_CAPABILITIES|hash     → hash_field_list の capability 文字列
+STATE_DB:PBH_CAPABILITIES|hash-field → hash_field, ip_mask, sequence_id の capability 文字列
+```
 
-| プラットフォーム | `hash_field_list` UPDATE | PBH_RULE hash/packet_action UPDATE |
-|----------------|--------------------------|-------------------------------------|
-| GENERIC (broadcom 等) | 可 | 直接 updateAclRule |
-| MELLANOX | **不可** | disableAction → update → enableAction |
+capability 文字列は `"ADD,UPDATE,REMOVE"` / `"UPDATE"` / `""` (空) の組み合わせ。
+
+## まとめ
+
+`PBH_TABLE` 自体のフィールド (`interface_list` / `description`) は両プラットフォームとも UPDATE のみ対応（ADD は暗黙許可、REMOVE は DEL で対応）。実質的なプラットフォーム差異は `PBH_HASH.hash_field_list` の UPDATE 不可 (Mellanox) と `PBH_RULE.hash`/`packet_action` の UPDATE 時 W/A の 2 点。`PBH_TABLE` 固有としては両プラットフォームで同一動作。
