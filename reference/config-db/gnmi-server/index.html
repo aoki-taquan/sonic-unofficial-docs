@@ -26722,6 +26722,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch ZMQ 分岐の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35880,6 +35919,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch ZMQ 分岐の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36888,6 +36966,123 @@ flag デフォルト (<code>telemetry.go:193</code>): <code>false</code>.</p>
 </ul>
 <p>詳細根拠は <code>meta/_intermediate/cdb-flow/gnmi-server-pubsub.md</code> を参照。</p>
 <!-- /pubsub -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p>gNMI サブシステム (<code>telemetry</code> / <code>dialout_client_cli</code>) は GNMI / GNMI_CLIENT_CERT / TELEMETRY_CLIENT の消費に加え、セッション状態・証明書メタデータ・再起動通知を他 DB / 外部リソースへ副次的に書き込む。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB / リソース</th>
+<th>テーブル / キー</th>
+<th>書込内容</th>
+<th>トリガ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td><code>TELEMETRY_CONNECTIONS</code> (Hash)</td>
+<td>field = <code>&lt;peer_ip:port&gt;\|&lt;target&gt;\|...\|&lt;RFC3339&gt;</code>, value = <code>"active"</code> — Subscribe RPC 接続を追跡</td>
+<td>dial-in Subscribe RPC の開始 (<code>HSet</code>) / 終了 (<code>HDel</code>); 起動時に全エントリを削除 (<code>PrepareRedis</code>)</td>
+<td><code>connection_manager.go:52–60, 116, 127</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>CREDENTIALS\|&lt;tbl&gt;[|&lt;key&gt;]</code> (Hash)</td>
+<td>gNSI Certz RPC が証明書メタデータを <code>fld=val</code> 形式で記録</td>
+<td>gNSI Certz 証明書インストール RPC</td>
+<td><code>gnsi_certz.go:1046–1051</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>Reboot_Request_Channel</code> (Redis PUBLISH)</td>
+<td>gNOI System Reboot RPC がリブート要求メッセージを publish; 応答を同チャネルで受信</td>
+<td>gNOI <code>Reboot</code> RPC 呼び出し</td>
+<td><code>gnoi_system.go:27, 117</code> via <code>common_utils/notification_producer.go:91</code></td>
+</tr>
+<tr>
+<td>ファイルシステム</td>
+<td><code>/etc/sonic/config_db.json</code></td>
+<td><code>GNMI\|gnmi.save_on_set=true</code> のとき、Set RPC 完了後に <code>dbus ConfigSave</code> で startup-config を上書き</td>
+<td>gNMI Set RPC 実行後</td>
+<td><code>server.go:1051–1063</code> <code>SaveOnSetEnabled()</code></td>
+</tr>
+<tr>
+<td>SysV IPC 共有メモリ</td>
+<td>key=<code>7749</code>, size=1024 B</td>
+<td>gNMI サーバ起動時に <code>InitCounters()</code> で 32 カウンタスロットを初期化; <code>IncCounter()</code> で更新</td>
+<td><code>NewServer()</code> 初期化 (<code>server.go:528</code>)</td>
+<td><code>common_utils/context.go</code>, <code>common_utils/shareMem.go</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">APPL_DB / COUNTERS_DB / ASIC_DB への書込なし</p>
+<p><code>gnmi_server</code> パッケージには <code>swsscommon.ProducerStateTable</code> / <code>NotificationProducer</code> の APPL_DB 書込インスタンスは存在しない。カウンタは SysV IPC 共有メモリにのみ記録され、<code>gnmi_dump</code> ツール経由で参照できるが COUNTERS_DB には書き込まれない。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">TELEMETRY_CONNECTIONS の threshold 連動</p>
+<p><code>GNMI\|gnmi.threshold</code> (デフォルト <code>100</code>) が満たされると新規 Subscribe RPC を拒否し、STATE_DB への <code>HSet</code> も行われない (<code>connection_manager.go:65</code>)。<code>threshold=0</code> は無制限。</p>
+</div>
+<p>詳細な証跡は <code>meta/_intermediate/cdb-flow/gnmi-server-side-effects.md</code> を参照。</p>
+<!-- /side-effects -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p>GNMI / GNMI_CLIENT_CERT / TELEMETRY_CLIENT テーブルの定義・処理ロジックは <strong>ほぼ全プラットフォームで同一</strong>。差分は SmartSwitch の 1 点に局所化される。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等)</td>
+<td>影響なし</td>
+<td>gNMI サーバは SAI 非経由。<code>telemetry.go</code> / <code>gnmi-native.sh</code> を <code>platform\|asic\|vendor\|broadcom\|mellanox</code> で grep して 0 ヒット</td>
+</tr>
+<tr>
+<td>multi-asic (<code>GetDbAllNamespaces()</code>)</td>
+<td>CONFIG_DB テーブル自体に影響なし</td>
+<td><code>sonic_data_client/db_client.go:initRedisDbClients()</code> が全 namespace のデータ DB クライアントを初期化するのは gNMI パス解決 (Subscribe/Get) のためであり、GNMI / TELEMETRY_CLIENT テーブルのスキーマ・書込先には影響しない</td>
+</tr>
+<tr>
+<td>VOQ chassis (supervisor + line cards)</td>
+<td>各 host で独立適用</td>
+<td>GNMI テーブルは host CONFIG_DB スコープ。<code>gnmi-native.sh</code> の <code>sonic-cfggen -d</code> は host DB のみ参照し <code>asicN</code> namespace を iterate しない</td>
+</tr>
+<tr>
+<td>SmartSwitch (<code>DEVICE_METADATA\|localhost.subtype == "SmartSwitch"</code>)</td>
+<td><strong>ZMQ ポート付与あり</strong></td>
+<td><code>gnmi-native.sh:89-92</code> が <code>LOCALHOST_SUBTYPE</code> を評価し、<code>"SmartSwitch"</code> の場合のみ <code>-zmq_port=8100</code> を <code>telemetry</code> 起動引数に追加する。非 SmartSwitch 機では ZMQ ポートは付与されず Redis ベース通信のみ。GNMI テーブルに <code>zmq_port</code> フィールドは存在しない</td>
+</tr>
+<tr>
+<td>VRF (<code>MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled</code>)</td>
+<td>VRF 対応機種全般で共通</td>
+<td><code>gnmi-native.sh:95-98</code> で <code>--vrf mgmt</code> を付与。特定 ASIC への依存なし</td>
+</tr>
+<tr>
+<td>ビルドタグ (<code>gnmi_native_write</code> / <code>gnmi_translib_write</code>)</td>
+<td>ASIC 非依存</td>
+<td>管理フレームワーク統合の有無に依存するビルド時条件分岐。コミュニティ版標準 SONiC では常に <code>false</code> (<code>constants_native.go:5</code>, <code>constants_translib.go:5</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="smartswitch-zmq">SmartSwitch ZMQ 分岐の詳細<a class="headerlink" href="#smartswitch-zmq" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># gnmi-native.sh:89-92</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nv">LOCALHOST_SUBTYPE</span><span class="o">=</span><span class="sb">`</span>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span><span class="s2">&quot;subtype&quot;</span><span class="sb">`</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span>x<span class="s2">&quot;</span><span class="si">${</span><span class="nv">LOCALHOST_SUBTYPE</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span>x<span class="s2">&quot;SmartSwitch&quot;</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="nv">TELEMETRY_ARGS</span><span class="o">+=</span><span class="s2">&quot; -zmq_port=8100&quot;</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="k">fi</span>
+</span></code></pre></div>
+<p><code>-zmq_port=8100</code> が付与されると <code>telemetry.go</code> は Redis ベースの Pub/Sub 通信に加えて orchagent との ZMQ チャネルを開設する。SmartSwitch 以外の機種では ZMQ チャネルは開設されない。値 <code>8100</code> はハードコード定数であり CONFIG_DB で変更不可 (Phase E 参照)。</p>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/gnmi-server-platform.md</code> を参照。</p>
+<!-- /platform -->
 
 <!-- cdb-exceptions -->
 <h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>

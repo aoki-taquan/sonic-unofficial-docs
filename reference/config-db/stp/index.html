@@ -29071,7 +29071,317 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-ipc-ipcinitstpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. IPC ソケット初期化失敗 (ipcInitStpd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-ipc-sendmsgstpd-silent-discard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. IPC 送信失敗 (sendMsgStpd) — silent discard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-pvst-allocl2instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. PVST インスタンス枯渇 (allocL2Instance 失敗)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-calloc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. メモリ割り当て失敗 (calloc)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-ebtables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. ebtables 失敗 / 不正フィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f-defer-discard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F. 前提条件未達による defer / discard
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-pvst-configstppy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PVST タイマーデフォルト定数（config/stp.py）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mst-configstppy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. MST タイマーデフォルト定数（config/stp.py）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-stpmgrh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. stpmgr.h — デーモン内部固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-stpmgrdcpp-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. stpmgrd.cpp — Select ループタイムアウト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-getstpmaxinstances-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. getStpMaxInstances() — STATE_DB ポーリング上限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-pvst-bpdu-mac-ebtables-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. PVST BPDU マルチキャスト MAC — ebtables DROP ルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込・システム副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込・システム副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-stpd-ipc-stpmgrcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. stpd への IPC メッセージ (stpmgr.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-ebtables-stpmgrcpp47-113-161" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. ebtables ルール追加・削除 (stpmgr.cpp:47, 113, 161)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-state_db-stp_tableglobalmax_stp_inst-stporchcpp612" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. STATE_DB STP_TABLE|GLOBAL.max_stp_inst 書込 (stporch.cpp:612)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / APP_DB への直接書込みなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-stpmgrd-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → stpmgrd: SubscriberStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrd-stpd-unix-domain-socket-ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stpmgrd → stpd: Unix Domain Socket IPC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-stporch-consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB → StpOrch: ConsumerStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry セマンティクス
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35202,7 +35512,317 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-ipc-ipcinitstpd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. IPC ソケット初期化失敗 (ipcInitStpd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-ipc-sendmsgstpd-silent-discard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. IPC 送信失敗 (sendMsgStpd) — silent discard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-pvst-allocl2instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. PVST インスタンス枯渇 (allocL2Instance 失敗)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-calloc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. メモリ割り当て失敗 (calloc)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-ebtables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. ebtables 失敗 / 不正フィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f-defer-discard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F. 前提条件未達による defer / discard
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-pvst-configstppy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. PVST タイマーデフォルト定数（config/stp.py）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-mst-configstppy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. MST タイマーデフォルト定数（config/stp.py）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-stpmgrh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. stpmgr.h — デーモン内部固定値
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-stpmgrdcpp-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. stpmgrd.cpp — Select ループタイムアウト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-getstpmaxinstances-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. getStpMaxInstances() — STATE_DB ポーリング上限
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-pvst-bpdu-mac-ebtables-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. PVST BPDU マルチキャスト MAC — ebtables DROP ルール
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込・システム副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込・システム副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-stpd-ipc-stpmgrcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. stpd への IPC メッセージ (stpmgr.cpp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-ebtables-stpmgrcpp47-113-161" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. ebtables ルール追加・削除 (stpmgr.cpp:47, 113, 161)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-state_db-stp_tableglobalmax_stp_inst-stporchcpp612" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. STATE_DB STP_TABLE|GLOBAL.max_stp_inst 書込 (stporch.cpp:612)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-app_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / APP_DB への直接書込みなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        全体フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-stpmgrd-subscriberstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB → stpmgrd: SubscriberStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrd-stpd-unix-domain-socket-ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stpmgrd → stpd: Unix Domain Socket IPC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-stporch-consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB → StpOrch: ConsumerStateTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retry セマンティクス
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35908,7 +36528,728 @@ STP ポート状態は stpd の内部状態に基づき継続される。</p>
 </div>
 <!-- /cross-refs -->
 
-<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>stpmgrd</code> は CONFIG_DB を購読して stpd デーモンへ UDS (Unix Domain Socket) 経由で IPC メッセージを送信する設計であり、失敗は (A) IPC ソケット初期化失敗、(B) IPC 送信失敗 (silent discard)、(C) PVST インスタンス枯渇、(D) メモリ割り当て失敗、(E) ebtables / 不正フィールド、(F) 前提条件未達による defer の 6 系統に整理される。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-failure.md -->
+
+<h3 id="a-ipc-ipcinitstpd">A. IPC ソケット初期化失敗 (<code>ipcInitStpd</code>)<a class="headerlink" href="#a-ipc-ipcinitstpd" title="Permanent link">&para;</a></h3>
+<p><code>ipcInitStpd()</code> (<code>stpmgr.cpp:859-884</code>) は起動時に UDS ソケットを作成・bind する。</p>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>回復経路</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>socket()</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR</code> + <code>return</code>。<code>stpd_fd</code> が 0 のまま残り、以降の全 <code>sendMsgStpd()</code> は <code>sendto(0, ...)</code> となる</td>
+<td>stpmgrd プロセス再起動のみ</td>
+</tr>
+<tr>
+<td><code>bind()</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR</code> + <code>close(stpd_fd)</code> + <code>return</code>。ソケットはクローズされるが fd は更新されないため全 IPC 無効</td>
+<td>stpmgrd プロセス再起動のみ</td>
+</tr>
+</tbody>
+</table>
+<p>どちらの場合も <strong>stpmgrd プロセス自体は継続</strong>するが、CONFIG_DB の変更内容は stpd に一切届かない。systemd がプロセスを再起動するまで STP 設定が適用されない状態となる。</p>
+<hr />
+<h3 id="b-ipc-sendmsgstpd-silent-discard">B. IPC 送信失敗 (<code>sendMsgStpd</code>) — silent discard<a class="headerlink" href="#b-ipc-sendmsgstpd-silent-discard" title="Permanent link">&para;</a></h3>
+<p><code>sendMsgStpd()</code> (<code>stpmgr.cpp:1218-1255</code>) の失敗分岐:</p>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>calloc</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR("tx_msg mem alloc error")</code> + <code>return -1</code></td>
+</tr>
+<tr>
+<td><code>sendto</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR("tx_msg send error")</code> + <code>rc == -1</code> を返す</td>
+</tr>
+</tbody>
+</table>
+<p><strong>全呼出し元 (<code>doStpGlobalTask</code>, <code>doStpVlanTask</code>, <code>doStpPortTask</code>, <code>doStpVlanPortTask</code>, <code>doVlanMemUpdateTask</code>, <code>doLagMemUpdateTask</code>) は <code>sendMsgStpd</code> の戻り値を検査しない</strong>。
+IPC 送信失敗後もエントリは <code>consumer.m_toSync.erase(it)</code> で消費され、<strong>リトライなし・silent discard</strong> となる。</p>
+<div class="admonition warning">
+<p class="admonition-title">IPC 失敗は CONFIG_DB 書込み成功後に発生する</p>
+<p><code>config spanning-tree</code> CLI は CONFIG_DB 書込みで正常終了するが、stpmgrd → stpd の IPC 送信が失敗した場合はエラーがユーザーに通知されない。BPDU 挙動や STP ポート状態が CONFIG_DB と乖離したまま syslog にのみ ERROR が記録される。</p>
+</div>
+<hr />
+<h3 id="c-pvst-allocl2instance">C. PVST インスタンス枯渇 (<code>allocL2Instance</code> 失敗)<a class="headerlink" href="#c-pvst-allocl2instance" title="Permanent link">&para;</a></h3>
+<p><code>doStpVlanTask()</code> 内 (<code>stpmgr.cpp:263-269</code>) で PVST 新規 VLAN への STP 適用時に <code>allocL2Instance(vlan_id)</code> が <code>-1</code> を返した場合:</p>
+<ul>
+<li><code>SWSS_LOG_ERROR("Couldnt allocate instance to VLAN %d", vlan_id)</code></li>
+<li><code>it = consumer.m_toSync.erase(it)</code> + <code>continue</code> → <strong>恒久スキップ</strong></li>
+</ul>
+<p><code>PVST_MAX_INSTANCES = 255</code> を超えると新規 VLAN には STP インスタンスが割り当てられず、設定は永続的に無視される。回復はSTP 無効化 → 再有効化によるインスタンス解放が必要。</p>
+<hr />
+<h3 id="d-calloc">D. メモリ割り当て失敗 (<code>calloc</code>)<a class="headerlink" href="#d-calloc" title="Permanent link">&para;</a></h3>
+<p><code>STP_VLAN_CONFIG_MSG</code> の <code>calloc</code> 失敗 (<code>stpmgr.cpp:278-283, 319-324</code>):</p>
+<ul>
+<li><code>SWSS_LOG_ERROR("mem failed for vlan %d", vlan_id)</code> + <code>return</code></li>
+<li>タスク関数全体が中断され、未処理キューエントリは次回 SELECT ループに残る</li>
+</ul>
+<p><code>processStpPortAttr()</code> 内の <code>calloc</code> 失敗 (<code>stpmgr.cpp:534-538</code>):</p>
+<ul>
+<li><code>SWSS_LOG_ERROR("calloc failed for interface %s", intfName.c_str())</code> + <code>return</code></li>
+<li>呼出し元 <code>doStpPortTask</code> は戻り値を確認せず <code>erase(it)</code> するため <strong>silent discard</strong> になる点に注意</li>
+</ul>
+<hr />
+<h3 id="e-ebtables">E. ebtables 失敗 / 不正フィールド<a class="headerlink" href="#e-ebtables" title="Permanent link">&para;</a></h3>
+<p><code>doStpGlobalTask()</code> 内:</p>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PVST 有効化時 <code>ebtables -A</code> 失敗</td>
+<td><code>SWSS_LOG_ERROR("ebtables add failed for PVST %d", ret)</code> のみ。IPC は送信される (stpmgr.cpp:116-119)</td>
+</tr>
+<tr>
+<td>STP</td>
+<td>GLOBAL DEL 時 <code>ebtables -D</code> 失敗</td>
+</tr>
+<tr>
+<td><code>mode</code> フィールドが <code>pvst</code>/<code>mst</code> 以外</td>
+<td><code>SWSS_LOG_ERROR("Error: Invalid mode %s")</code> のみ。<code>msg.stp_mode = 0</code> のまま IPC 送信 (stpmgr.cpp:136)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="f-defer-discard">F. 前提条件未達による defer / discard<a class="headerlink" href="#f-defer-discard" title="Permanent link">&para;</a></h3>
+<p>各タスク関数の defer / discard 挙動の整理:</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>操作</th>
+<th>処理</th>
+<th>エラーログ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>l2ProtoEnabled == L2_NONE</code> + STP_VLAN SET</td>
+<td><code>it++</code> (defer)</td>
+<td>次回ループで再試行</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>!isVlanStateOk()</code> (STATE_VLAN 未登録) + STP_VLAN SET</td>
+<td><code>it++</code> (defer)</td>
+<td>次回ループで再試行</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>l2ProtoEnabled == L2_NONE</code> + STP_VLAN DEL</td>
+<td><code>erase(it)</code> (discard)</td>
+<td>回復なし</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>isLagEmpty(key)</code> (LAG にメンバーなし) + STP_PORT</td>
+<td><code>erase(it)</code> (discard)</td>
+<td><code>doLagMemUpdateTask</code> 経由で再実行</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>l2ProtoEnabled == L2_NONE</code> + STP_PORT SET</td>
+<td><code>it++</code> (defer)</td>
+<td>次回ループで再試行</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>l2ProtoEnabled == L2_NONE</code> + STP_PORT DEL</td>
+<td><code>erase(it)</code> (discard)</td>
+<td>回復なし</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>前提フラグ未達 + STP_VLAN_PORT</td>
+<td><code>return</code> (タスク全体 defer)</td>
+<td>フラグが揃った後に再処理</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>m_vlanInstMap[vlan_id] == INVALID_INSTANCE</code> + STP_VLAN_PORT SET</td>
+<td><code>it++</code> (defer)</td>
+<td>次回ループで再試行</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>isLagEmpty(intfName)</code> + STP_VLAN_PORT</td>
+<td><code>erase(it)</code> (discard)</td>
+<td><code>doLagMemUpdateTask</code> 経由で再実行</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>不正キー形式</td>
+<td><code>erase(it)</code> (discard)</td>
+<td>回復なし</td>
+<td>ERROR</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">defer と discard の非対称性</p>
+<p>SET 操作の多くは <code>it++</code> による defer（次回 SELECT で再試行）だが、DEL 操作の多くは <code>erase(it)</code> による silent discard となる。STP 無効化・削除操作は前提条件が揃っていない場合に黙って捨てられる設計であり、実際に stpd 側に削除が届かない可能性がある。</p>
+</div>
+<blockquote>
+<p><strong>証跡</strong>: <code>stpmgr.cpp:116-119, 136, 164-165, 210-214, 246-250, 263-283, 319-324, 448-449, 477-479, 486-498, 502-507, 534-539, 634-635, 648-670, 784-795, 824, 859-884, 1218-1255</code>。詳細 grep 証跡は <code>meta/_intermediate/cdb-flow/stp-failure.md</code> を参照。</p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p><code>stpmgrd</code> / <code>config/stp.py</code> が設定・運用で使う固定値の一覧。CONFIG_DB・DEVICE_METADATA 等の外部入力では変更不能。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-constants.md -->
+
+<h3 id="1-pvst-configstppy">1. PVST タイマーデフォルト定数（<code>config/stp.py</code>）<a class="headerlink" href="#1-pvst-configstppy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>DB フィールド</th>
+<th>出典</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_DEFAULT_ROOT_GUARD_TIMEOUT</code></td>
+<td><code>30</code> (秒)</td>
+<td><code>STP\|GLOBAL.rootguard_timeout</code></td>
+<td><code>stp.py:118</code></td>
+</tr>
+<tr>
+<td><code>STP_DEFAULT_FORWARD_DELAY</code></td>
+<td><code>15</code> (秒)</td>
+<td><code>STP\|GLOBAL.forward_delay</code></td>
+<td><code>stp.py:122</code></td>
+</tr>
+<tr>
+<td><code>STP_DEFAULT_HELLO_INTERVAL</code></td>
+<td><code>2</code> (秒)</td>
+<td><code>STP\|GLOBAL.hello_time</code></td>
+<td><code>stp.py:126</code></td>
+</tr>
+<tr>
+<td><code>STP_DEFAULT_MAX_AGE</code></td>
+<td><code>20</code> (秒)</td>
+<td><code>STP\|GLOBAL.max_age</code></td>
+<td><code>stp.py:130</code></td>
+</tr>
+<tr>
+<td><code>STP_DEFAULT_BRIDGE_PRIORITY</code></td>
+<td><code>32768</code></td>
+<td><code>STP\|GLOBAL.priority</code></td>
+<td><code>stp.py:134</code></td>
+</tr>
+<tr>
+<td><code>PVST_MAX_INSTANCES</code></td>
+<td><code>255</code></td>
+<td>PVST VLAN 数上限（silent truncation）</td>
+<td><code>stp.py:136</code></td>
+</tr>
+</tbody>
+</table>
+<p>PVST 有効化コマンド (<code>config spanning-tree enable pvst</code>) 実行時に <code>config/stp.py:520-528</code> でこれら定数がそのまま CONFIG_DB へ書き込まれる。</p>
+<hr />
+<h3 id="2-mst-configstppy">2. MST タイマーデフォルト定数（<code>config/stp.py</code>）<a class="headerlink" href="#2-mst-configstppy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>役割</th>
+<th>出典</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MST_DEFAULT_HOPS</code></td>
+<td><code>20</code></td>
+<td><code>STP_MST\|GLOBAL.max_hops</code></td>
+<td><code>stp.py:72</code></td>
+</tr>
+<tr>
+<td><code>MST_DEFAULT_HELLO_TIME</code></td>
+<td><code>2</code> (秒)</td>
+<td><code>STP_MST\|GLOBAL.hello_time</code></td>
+<td><code>stp.py:76</code></td>
+</tr>
+<tr>
+<td><code>MST_DEFAULT_MAX_AGE</code></td>
+<td><code>20</code> (秒)</td>
+<td><code>STP_MST\|GLOBAL.max_age</code></td>
+<td><code>stp.py:80</code></td>
+</tr>
+<tr>
+<td><code>MST_DEFAULT_REVISION</code></td>
+<td><code>0</code></td>
+<td><code>STP_MST\|GLOBAL.revision</code></td>
+<td><code>stp.py:84</code></td>
+</tr>
+<tr>
+<td><code>MST_DEFAULT_BRIDGE_PRIORITY</code></td>
+<td><code>32768</code></td>
+<td><code>STP_MST\|GLOBAL.bridge_priority</code></td>
+<td><code>stp.py:88</code></td>
+</tr>
+<tr>
+<td><code>MST_DEFAULT_PORT_PRIORITY</code></td>
+<td><code>128</code></td>
+<td><code>STP_PORT.&lt;intf&gt;.priority</code> (MST 有効化時)</td>
+<td><code>stp.py:92</code></td>
+</tr>
+<tr>
+<td><code>MST_DEFAULT_FORWARD_DELAY</code></td>
+<td><code>15</code> (秒)</td>
+<td><code>STP_MST\|GLOBAL.forward_delay</code></td>
+<td><code>stp.py:96</code></td>
+</tr>
+<tr>
+<td><code>MST_DEFAULT_ROOT_GUARD_TIMEOUT</code></td>
+<td><code>30</code> (秒)</td>
+<td><code>STP_MST\|GLOBAL.rootguard_timeout</code></td>
+<td><code>stp.py:100</code></td>
+</tr>
+<tr>
+<td><code>MST_DEFAULT_INSTANCE</code></td>
+<td><code>0</code></td>
+<td>デフォルト MST インスタンス番号</td>
+<td><code>stp.py:104</code></td>
+</tr>
+<tr>
+<td><code>MST_DEFAULT_PORT_PATH_COST</code></td>
+<td><code>1</code></td>
+<td><code>STP_PORT.&lt;intf&gt;.path_cost</code> (MST 有効化時)</td>
+<td><code>stp.py:108</code></td>
+</tr>
+</tbody>
+</table>
+<p>PVST と MST で <code>forward_delay</code> / <code>max_age</code> / <code>hello_time</code> のデフォルト値は同一だが、格納テーブルが異なる (<code>STP|GLOBAL</code> vs <code>STP_MST|GLOBAL</code>)。</p>
+<hr />
+<h3 id="3-stpmgrh">3. <code>stpmgr.h</code> — デーモン内部固定値<a class="headerlink" href="#3-stpmgrh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STPMGRD_SOCK_NAME</code></td>
+<td><code>"/var/run/stpmgrd.sock"</code></td>
+<td>stpmgrd が bind する Unix ドメインソケット</td>
+</tr>
+<tr>
+<td><code>STPD_SOCK_NAME</code></td>
+<td><code>"/var/run/stpipc.sock"</code></td>
+<td>stpd (STP デーモン) IPC ソケット</td>
+</tr>
+<tr>
+<td><code>MAX_VLANS</code></td>
+<td><code>4096</code></td>
+<td><code>m_vlanInstMap[]</code> 配列サイズ（VLAN ID 最大数）</td>
+</tr>
+<tr>
+<td><code>L2_INSTANCE_MAX</code></td>
+<td><code>4096</code> (<code>= MAX_VLANS</code>)</td>
+<td><code>l2InstPool</code> bitset サイズ（インスタンスプール論理上限）</td>
+</tr>
+<tr>
+<td><code>STP_DEFAULT_MAX_INSTANCES</code></td>
+<td><code>255</code></td>
+<td>STATE_DB 未取得時の PVST インスタンス数フォールバック</td>
+</tr>
+<tr>
+<td><code>INVALID_INSTANCE</code></td>
+<td><code>-1</code></td>
+<td><code>m_vlanInstMap[]</code> 未割当マーカー（sentinel）</td>
+</tr>
+<tr>
+<td><code>TAGGED_MODE</code></td>
+<td><code>1</code></td>
+<td>VLAN メンバのタグ付きモード値</td>
+</tr>
+<tr>
+<td><code>UNTAGGED_MODE</code></td>
+<td><code>0</code></td>
+<td>VLAN メンバのアンタグモード値</td>
+</tr>
+<tr>
+<td><code>INVALID_MODE</code></td>
+<td><code>-1</code></td>
+<td>タグモード取得失敗時のセンチネル</td>
+</tr>
+<tr>
+<td><code>STP_SET_COMMAND</code></td>
+<td><code>1</code></td>
+<td>stpd IPC メッセージの SET opcode</td>
+</tr>
+<tr>
+<td><code>STP_DEL_COMMAND</code></td>
+<td><code>0</code></td>
+<td>stpd IPC メッセージの DEL opcode</td>
+</tr>
+</tbody>
+</table>
+<p>証跡: <code>stpmgr.h:28, 34, 37-39, 49, 107-108</code></p>
+<hr />
+<h3 id="4-stpmgrdcpp-select">4. <code>stpmgrd.cpp</code> — Select ループタイムアウト<a class="headerlink" href="#4-stpmgrdcpp-select" title="Permanent link">&para;</a></h3>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// stpmgrd.cpp:17</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="cp">#define SELECT_TIMEOUT 1000  </span><span class="c1">// ms</span>
+</span></code></pre></div>
+<p><code>swsslib::Select::select()</code> に渡すタイムアウト値。未処理イベントのリトライ間隔でもある。</p>
+<hr />
+<h3 id="5-getstpmaxinstances-state_db">5. <code>getStpMaxInstances()</code> — STATE_DB ポーリング上限<a class="headerlink" href="#5-getstpmaxinstances-state_db" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// stpmgr.cpp:1384</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kt">uint16_t</span><span class="w"> </span><span class="n">max_delay</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">60</span><span class="p">;</span><span class="w">  </span><span class="c1">// 最大 60 回 × sleep(1) = 60 秒</span>
+</span></code></pre></div>
+<p>起動時に <code>STATE_STP_TABLE|GLOBAL</code> の <code>max_stp_inst</code> フィールドを最大 60 秒ポーリングする。
+タイムアウト時または値が <code>0</code> の場合は <code>STP_DEFAULT_MAX_INSTANCES = 255</code> を使用。
+<code>STATE_STP_TABLE_NAME</code> は <code>schema.h:445</code> で <code>"STP_TABLE"</code> に固定されている。</p>
+<hr />
+<h3 id="6-pvst-bpdu-mac-ebtables-drop">6. PVST BPDU マルチキャスト MAC — ebtables DROP ルール<a class="headerlink" href="#6-pvst-bpdu-mac-ebtables-drop" title="Permanent link">&para;</a></h3>
+<p>PVST 有効化時に stpmgrd は以下の ebtables ルールをハードコードで挿入する:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>ebtables -A FORWARD -d 01:00:0c:cc:cc:cd -j DROP
+</span></code></pre></div>
+<p><code>01:00:0c:cc:cc:cd</code> は Cisco PVST+ BPDU マルチキャストアドレス。このアドレスは定数化されておらず、<code>stpmgr.cpp:113</code> にリテラルで埋め込まれている。設定変更不可。</p>
+<p>証跡: <code>stpmgr.cpp:47, 113, 161</code></p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込・システム副作用 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-side-effects.md -->
+<!-- source: sonic-swss/cfgmgr/stpmgr.cpp, sonic-swss/orchagent/stporch.cpp -->
+
+<p>STP CONFIG_DB テーブルへの書き込みは、DB への副次書き込みよりも <strong>Unix ドメインソケット IPC</strong> と <strong>カーネル ebtables</strong> を主な副作用経路として使用する。</p>
+<h3 id="1-stpd-ipc-stpmgrcpp">1. <code>stpd</code> への IPC メッセージ (<code>stpmgr.cpp</code>)<a class="headerlink" href="#1-stpd-ipc-stpmgrcpp" title="Permanent link">&para;</a></h3>
+<p><code>StpMgr</code> は CONFIG_DB 変更を検知すると <code>sendMsgStpd()</code> 経由で <code>stpd</code> プロセスに Unix ドメインソケット (<code>/var/run/stpipc.sock</code>) 宛て <code>STP_IPC_MSG</code> を送信する。</p>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB テーブル</th>
+<th>送信メッセージ型</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP\|GLOBAL</code> (SET, PVST)</td>
+<td><code>STP_BRIDGE_CONFIG</code></td>
+<td><code>stpmgr.cpp:171</code></td>
+</tr>
+<tr>
+<td><code>STP\|GLOBAL</code> (SET, MST モード)</td>
+<td><code>STP_MST_GLOBAL_CONFIG</code></td>
+<td><code>stpmgr.cpp:402</code></td>
+</tr>
+<tr>
+<td><code>STP_VLAN</code> (SET)</td>
+<td><code>STP_VLAN_CONFIG</code></td>
+<td><code>stpmgr.cpp:332</code></td>
+</tr>
+<tr>
+<td><code>STP_VLAN_PORT</code> (SET)</td>
+<td><code>STP_VLAN_PORT_CONFIG</code></td>
+<td><code>stpmgr.cpp:441</code></td>
+</tr>
+<tr>
+<td><code>STP_PORT</code> (SET)</td>
+<td><code>STP_PORT_CONFIG</code></td>
+<td><code>stpmgr.cpp:624</code></td>
+</tr>
+<tr>
+<td><code>STP_MST_INST</code> (SET)</td>
+<td><code>STP_MST_INST_CONFIG</code></td>
+<td><code>stpmgr.cpp:1108</code></td>
+</tr>
+<tr>
+<td><code>STP_MST_PORT</code> (SET)</td>
+<td><code>STP_MST_INST_PORT_CONFIG</code></td>
+<td><code>stpmgr.cpp:1152</code></td>
+</tr>
+</tbody>
+</table>
+<p>これらは DB への書き込みではなく <code>stpd</code> への通知。<code>stpd</code> が BPDU 送受信と STP ステートマシンを管理し、port state 変更結果を APP_DB (<code>APP_STP_PORT_STATE_TABLE</code> 等) に書き戻す。</p>
+<h3 id="2-ebtables-stpmgrcpp47-113-161">2. <code>ebtables</code> ルール追加・削除 (<code>stpmgr.cpp:47, 113, 161</code>)<a class="headerlink" href="#2-ebtables-stpmgrcpp47-113-161" title="Permanent link">&para;</a></h3>
+<p>PVST モード切替時に <code>stpmgr</code> が <code>ebtables</code> をシステムコールで直接操作する。</p>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB 変化</th>
+<th>副作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP\|GLOBAL.mode = "pvst"</code> 設定時</td>
+<td><code>ebtables -A FORWARD -d 01:00:0c:cc:cc:cd -j DROP</code></td>
+</tr>
+<tr>
+<td><code>STP\|GLOBAL</code> DEL または STP 無効化時</td>
+<td><code>ebtables -D FORWARD -d 01:00:0c:cc:cc:cd -j DROP</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>01:00:0c:cc:cc:cd</code> は Cisco PVST+ BPDU マルチキャスト MAC。カーネルのブリッジレイヤーでドロップすることで PVST+ BPDU のリークを防ぐ。DB を介さないカーネル状態変更。</p>
+<h3 id="3-state_db-stp_tableglobalmax_stp_inst-stporchcpp612">3. STATE_DB <code>STP_TABLE|GLOBAL.max_stp_inst</code> 書込 (<code>stporch.cpp:612</code>)<a class="headerlink" href="#3-state_db-stp_tableglobalmax_stp_inst-stporchcpp612" title="Permanent link">&para;</a></h3>
+<p><code>StpOrch</code> は orchagent 起動時に SAI から <code>sai_switch_attr_max_stp_instance</code> を取得し、STATE_DB の <code>STP_TABLE|GLOBAL</code> に <code>max_stp_inst</code> フィールドを 1 回書き込む。</p>
+<table>
+<thead>
+<tr>
+<th>副次キー</th>
+<th>DB</th>
+<th>書込タイミング</th>
+<th>読み手</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_TABLE\|GLOBAL.max_stp_inst</code></td>
+<td>STATE_DB</td>
+<td>orchagent 起動時 1 回のみ</td>
+<td><code>stpmgr.cpp:1391</code> — PVST インスタンス数上限として使用</td>
+</tr>
+</tbody>
+</table>
+<p>CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。SAI 取得失敗時は <code>255</code> を書き込む。</p>
+<h3 id="config_db-app_db">CONFIG_DB / APP_DB への直接書込みなし<a class="headerlink" href="#config_db-app_db" title="Permanent link">&para;</a></h3>
+<p><code>stpmgr.cpp</code> は CONFIG_DB への書き込みを行わない（<code>setEntry</code> / <code>del</code> 呼び出しゼロ件）。APP_DB へも <code>APP_PORT_TABLE</code> の読み取りのみ。STP 変化が間接的に引き起こす APP_DB の port state 書き込みはすべて <code>stpd</code> → <code>StpOrch</code> → <code>sai_stp_api</code> 経路を介する。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>stpmgr.cpp</code> 全行走査で DB 書き込み呼び出しゼロ件を確認。<code>stporch.cpp:612</code> の <code>m_stpTable-&gt;set("GLOBAL", ...)</code> および <code>stpmgrd.cpp:36-37</code> のコネクション確認。</p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通知メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<p><code>STP</code> / <code>STP_VLAN</code> / <code>STP_PORT</code> / <code>STP_VLAN_PORT</code> (CONFIG_DB) への変更は、<strong>keyspace 通知</strong> ベースの <code>SubscriberStateTable</code> で <code>stpmgrd</code> に配送され、さらに Unix Domain Socket (UDS) 経由で STP デーモン (<code>stpd</code>) に転送される。その後 <code>stpd</code> が APPL_DB に書き込んだエントリを orchagent の <code>StpOrch</code> が <strong>ConsumerStateTable</strong> (channel PUBLISH/SUBSCRIBE) で消費する。</p>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/stp-pubsub.md</code></p>
+</blockquote>
+<h3 id="_4">全体フロー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>config stp ... (sonic-utilities/config/stp.py)
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>  ↓ CONFIG_DB: HSET STP|GLOBAL / STP_VLAN|Vlan&lt;vid&gt; / ...
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>  ↓ Redis keyspace通知 __keyspace@4__:&lt;TABLE&gt;|&lt;key&gt;
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>stpmgrd (cfgmgr/stpmgrd.cpp) ← SubscriberStateTable で CONFIG_DB 購読
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>  ↓ doTask() → sendMsgStpd(STP_BRIDGE_CONFIG / STP_VLAN_CONFIG / ...)
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>  ↓ AF_UNIX SOCK_DGRAM: sendto(/var/run/stpipc.sock)
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>stpd (sonic-stp, APPL_DB 書き込み)
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>  ↓ ProducerStateTable → APPL_DB STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE 等
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>  ↓ Redis PUBLISH STP_VLAN_INSTANCE_TABLE_CHANNEL@0 / ...
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>orchagent StpOrch (orchagent/stporch.cpp) ← ConsumerStateTable で APPL_DB 購読
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>  ↓ doStpTask() / doStpPortStateTask()
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>  ↓ SAI: sai_stp_api-&gt;set_stp_port_state()
+</span></code></pre></div>
+<h3 id="config_db-stpmgrd-subscriberstatetable">CONFIG_DB → stpmgrd: SubscriberStateTable<a class="headerlink" href="#config_db-stpmgrd-subscriberstatetable" title="Permanent link">&para;</a></h3>
+<p><code>stpmgrd</code> は <code>StpMgr(&amp;conf_db, &amp;app_db, &amp;state_db, tables)</code> で <code>Orch(tables)</code> を継承する。<code>Orch</code> コンストラクタが各 <code>TableConnector</code> に対して <code>addConsumer()</code> を呼ぶ (orch.cpp:127-133)。CONFIG_DB (dbId=4) は <code>addConsumer()</code> の分岐で <strong>SubscriberStateTable</strong> が選択され、内部で keyspace 通知 PSUBSCRIBE が設定される (orch.cpp:1188-1190):</p>
+<table>
+<thead>
+<tr>
+<th>DB</th>
+<th>テーブル</th>
+<th>PSUBSCRIBE パターン</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB (4)</td>
+<td><code>STP</code></td>
+<td><code>__keyspace@4__:STP\|*</code></td>
+</tr>
+<tr>
+<td>CONFIG_DB (4)</td>
+<td><code>STP_VLAN</code></td>
+<td><code>__keyspace@4__:STP_VLAN\|*</code></td>
+</tr>
+<tr>
+<td>CONFIG_DB (4)</td>
+<td><code>STP_PORT</code></td>
+<td><code>__keyspace@4__:STP_PORT\|*</code></td>
+</tr>
+<tr>
+<td>CONFIG_DB (4)</td>
+<td><code>STP_VLAN_PORT</code></td>
+<td><code>__keyspace@4__:STP_VLAN_PORT\|*</code></td>
+</tr>
+<tr>
+<td>CONFIG_DB (4)</td>
+<td><code>LAG_MEMBER</code></td>
+<td><code>__keyspace@4__:LAG_MEMBER_TABLE\|*</code></td>
+</tr>
+<tr>
+<td>STATE_DB (6)</td>
+<td><code>VLAN_MEMBER_TABLE</code></td>
+<td><code>__keyspace@6__:VLAN_MEMBER_TABLE\|*</code></td>
+</tr>
+<tr>
+<td>CONFIG_DB (4)</td>
+<td><code>STP_MST</code>, <code>STP_MST_INST</code>, <code>STP_MST_PORT</code></td>
+<td>(MSTP 拡張)</td>
+</tr>
+</tbody>
+</table>
+<p>実装: <code>stpmgrd.cpp:43-65</code> (TableConnector リスト)、<code>orch.cpp:1188-1190</code> (addConsumer 分岐)。</p>
+<p><strong>select ループ</strong> (stpmgrd.cpp:98-116):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">    </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">select</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sel</span><span class="p">,</span><span class="w"> </span><span class="n">SELECT_TIMEOUT</span><span class="p">);</span><span class="w">   </span><span class="c1">// SELECT_TIMEOUT = 1000 ms</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ret</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Select</span><span class="o">::</span><span class="n">TIMEOUT</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">stpmgr</span><span class="p">.</span><span class="n">doTask</span><span class="p">();</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="o">*</span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">Executor</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">sel</span><span class="p">;</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span><span class="n">c</span><span class="o">-&gt;</span><span class="n">execute</span><span class="p">();</span><span class="w">                           </span><span class="c1">// → StpMgr::doTask(Consumer&amp;)</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>タイムアウト時 (<code>1000 ms</code>) は <code>stpmgr.doTask()</code> (引数なし) で内部保留タスクをフラッシュする (stpmgrd.cpp:110-112)。</p>
+<h3 id="stpmgrd-stpd-unix-domain-socket-ipc">stpmgrd → stpd: Unix Domain Socket IPC<a class="headerlink" href="#stpmgrd-stpd-unix-domain-socket-ipc" title="Permanent link">&para;</a></h3>
+<p><code>StpMgr::doTask(Consumer&amp;)</code> はテーブル変化を受けて <code>sendMsgStpd()</code> を呼ぶ。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1">// stpmgr.h:28,49</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="cp">#define STPMGRD_SOCK_NAME  &quot;/var/run/stpmgrd.sock&quot;   </span><span class="c1">// 自分のソケット (bind)</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="cp">#define STPD_SOCK_NAME     &quot;/var/run/stpipc.sock&quot;    </span><span class="c1">// stpd の受信ソケット (sendto 先)</span>
+</span></code></pre></div>
+<p><code>sendMsgStpd()</code> は <code>AF_UNIX / SOCK_DGRAM</code> で <code>sendto(stpd_fd, ..., /var/run/stpipc.sock)</code> を実行する (stpmgr.cpp:1241-1243)。送信失敗 (rc=-1) はエラーログのみで再送処理はない (stpmgr.cpp:1244-1249)。</p>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB テーブル</th>
+<th>IPC メッセージ型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP</code></td>
+<td><code>STP_BRIDGE_CONFIG</code> (stpmgr.cpp:171)</td>
+</tr>
+<tr>
+<td><code>STP_VLAN</code></td>
+<td><code>STP_VLAN_CONFIG</code> (stpmgr.cpp:332)</td>
+</tr>
+<tr>
+<td><code>STP_PORT</code></td>
+<td><code>STP_PORT_CONFIG</code> (stpmgr.cpp:624)</td>
+</tr>
+<tr>
+<td><code>STP_VLAN_PORT</code></td>
+<td><code>STP_VLAN_PORT_CONFIG</code> (stpmgr.cpp:441)</td>
+</tr>
+<tr>
+<td><code>STP_MST</code></td>
+<td><code>STP_MST_GLOBAL_CONFIG</code> (stpmgr.cpp:402)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="appl_db-stporch-consumerstatetable">APPL_DB → StpOrch: ConsumerStateTable<a class="headerlink" href="#appl_db-stporch-consumerstatetable" title="Permanent link">&para;</a></h3>
+<p><code>StpOrch</code> は <code>Orch(db, tableNames)</code> (APPL_DB, dbId=0) として初期化される (stporch.cpp:17-18)。APPL_DB は <code>addConsumer()</code> の else 分岐 → <strong>ConsumerStateTable</strong> (channel PUBLISH/SUBSCRIBE) が使用される:</p>
+<table>
+<thead>
+<tr>
+<th>APPL_DB テーブル</th>
+<th>処理ハンドラ</th>
+<th>SAI 操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_VLAN_INSTANCE_TABLE</code></td>
+<td><code>doStpTask()</code> (stporch.cpp:380)</td>
+<td><code>sai_vlan_api</code> VLAN-STP インスタンス関連付け</td>
+</tr>
+<tr>
+<td><code>STP_PORT_STATE_TABLE</code></td>
+<td><code>doStpPortStateTask()</code> (stporch.cpp:429)</td>
+<td><code>sai_stp_api-&gt;set_stp_port_state()</code></td>
+</tr>
+<tr>
+<td><code>STP_FASTAGEING_FLUSH_TABLE</code></td>
+<td><code>doStpFastAgeFlushTask()</code></td>
+<td><code>gFdbOrch-&gt;flushFdbByVlan()</code></td>
+</tr>
+<tr>
+<td><code>STP_INST_PORT_FLUSH_TABLE</code></td>
+<td>(flush ハンドラ)</td>
+<td>FDB flush</td>
+</tr>
+</tbody>
+</table>
+<p>orchdaemon の select timeout: <code>SELECT_TIMEOUT = 1000</code> ms (orchdaemon.cpp:23,959)。</p>
+<h3 id="retry">retry セマンティクス<a class="headerlink" href="#retry" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>stpmgrd</strong>: <code>StpMgr::doStpTask()</code> 内で <code>addVlanToStpInstance()</code> が <code>!getPort()</code> (ポート未準備) で失敗した場合は <code>it++; continue</code> でエントリを <code>m_toSync</code> に残置し次 select サイクルで再評価 (stporch.cpp:411-413)。</li>
+<li><strong>sendMsgStpd の IPC 失敗</strong>: リトライなし。エラーログのみ。次に CONFIG_DB が変化したときに再試行される。</li>
+<li><strong>StpOrch</strong>: <code>doStpTask()</code> でポート/VLAN 未解決の場合は <code>it++; continue</code> で <code>m_toSync</code> 残置、正常完了時は <code>erase(it)</code> で破棄 (stporch.cpp:411-425)。</li>
+</ul>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>stpmgrd</code> は SAI / ASIC SDK を一切経由しない純粋なソフトウェア STP 実装。プラットフォーム依存の挙動は以下の 2 点に集約される。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-platform.md -->
+
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell 等)</td>
+<td>PVST インスタンス上限のみ影響</td>
+<td><code>getStpMaxInstances()</code> が <code>STATE_STP_TABLE\|GLOBAL.max_stp_inst</code> を読み取り、ASIC 能力 (<code>sai_switch_attr_max_stp_instance</code>) が実効上限になる。stpmgrd の処理ロジック自体は ASIC 非依存 (<code>stpmgr.cpp:1381-1413</code>)</td>
+</tr>
+<tr>
+<td>multi-asic (<code>is_multi_npu() == True</code>)</td>
+<td>非対応</td>
+<td><code>stpmgrd.cpp:35-37</code> は <code>DBConnector</code> をすべて <code>DEFAULT_UNIXSOCKET</code>（ホスト namespace）で生成。<code>is_multi_npu()</code> / CHASSIS_APP_DB 参照なし。asicN namespace の STP は管理されない</td>
+</tr>
+<tr>
+<td>VOQ chassis (supervisor + line cards)</td>
+<td>各 host で独立適用</td>
+<td>stpmgrd はホスト単体スコープ。他カードとの PVST 状態同期機構は存在しない</td>
+</tr>
+<tr>
+<td>VS（仮想スイッチ）</td>
+<td><code>max_stp_instances</code> がフォールバック 255</td>
+<td>VS では <code>StpOrch</code> が <code>STATE_STP_TABLE\|GLOBAL.max_stp_inst</code> を書き込まない場合が多く、<code>STP_DEFAULT_MAX_INSTANCES = 255</code> が使われる</td>
+</tr>
+<tr>
+<td>warm-reboot</td>
+<td>全プラットフォーム共通スタブ</td>
+<td><code>WarmStart::initialize/checkWarmStart</code> を呼ぶが <code>setWarmStartState()</code> および reconcile ロジックは未実装。cold reboot と同一フロー</td>
+</tr>
+<tr>
+<td>PVST BPDU ebtables ルール</td>
+<td>ASIC 非依存（カーネル依存のみ）</td>
+<td><code>ebtables -A FORWARD -d 01:00:0c:cc:cc:cd -j DROP</code> はカーネルの ebtables モジュール使用。ASIC ベンダー固有処理なし (<code>stpmgr.cpp:113</code>)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">max_stp_instances の実効上限</p>
+<p>CLI の <code>PVST_MAX_INSTANCES = 255</code> チェックより ASIC 能力値が小さい場合、ASIC 側の値が実効上限となる。たとえば ASIC が 64 インスタンスしかサポートしない場合、65 番目の VLAN への STP 適用は <code>allocL2Instance()</code> 内の <code>IS_INST_ID_AVAILABLE()</code> チェックで失敗し、<code>SWSS_LOG_ERROR</code> + 恒久スキップとなる。この値は <code>stporch.cpp:612</code> が SAI から取得して <code>STATE_STP_TABLE|GLOBAL.max_stp_inst</code> に書き込む。</p>
+</div>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/stp-platform.md</code> を参照。</p>
+<!-- /platform -->
+
+<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../vlan/">CONFIG_DB: VLAN</a></li>
 <li><a href="../port/">CONFIG_DB: PORT</a></li>

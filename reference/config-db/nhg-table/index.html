@@ -36574,7 +36574,7 @@
 <!-- /failure -->
 
 <hr />
-<!-- hardcoded-constants -->
+<!-- constants -->
 <h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
 <p><code>NhgOrch</code> (<code>orchagent/nhgorch.cpp</code>)・<code>CbfNhgOrch</code> (<code>orchagent/cbf/cbfnhgorch.cpp</code>)・<code>RouteOrch</code> (<code>orchagent/routeorch.cpp</code>) に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。</p>
 <h3 id="nhg">NHG 上限フォールバック値<a class="headerlink" href="#nhg" title="Permanent link">&para;</a></h3>
@@ -36719,7 +36719,7 @@
 <p class="admonition-title">Mellanox プラットフォームの除算ロジック</p>
 <p>Mellanox 向けの <code>/= DEFAULT_MAX_ECMP_GROUP_SIZE</code> は「SAI が ECMP グループサイズ=1 を前提に返す最大グループ数」を「サイズ=32 を前提にした ECMP グループ数」に変換するワークアラウンドである（<code>routeorch.cpp:74-87</code> のコメント）。他プラットフォームでは除算なしで SAI 返値をそのまま使用する。</p>
 </div>
-<!-- /hardcoded-constants -->
+<!-- /constants -->
 
 <hr />
 <!-- side-effects -->

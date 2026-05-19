@@ -29718,6 +29718,322 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-get_feature_status-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. get_feature_status() — CONFIG_DB 読み取り失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-get_zmq_port-namespace_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. get_zmq_port() — NAMESPACE_ID パース失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-zmqserverbind-swss_log_throw-abort" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. ZmqServer::bind() 失敗 → SWSS_LOG_THROW → プロセス abort
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-zmqserver-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. ZmqServer 受信スレッド失敗 → メッセージ DROP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-zmqclientsendmsg-retry-fpmsyncd-gnmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. ZmqClient::sendMsg() — 送信失敗と retry (fpmsyncd / gnmi 側)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ: 失敗ケース一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込先サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etcswssorch_zmq_tablesconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        /etc/swss/orch_zmq_tables.conf 生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB への間接的な経路変化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 読み取り方式 — 購読なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq-redis-pubsub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ が置き換える Redis Pub/Sub 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmqconsumerstatetable-consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZmqConsumerStateTable と ConsumerStateTable の比較
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        共通: ZMQ ロジック自体はプラットフォーム非依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-zmq-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch 専用: ZMQ アドレスと DPU ポート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpuorchdaemon-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DpuOrchDaemon と ZMQ サーバ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic のポート計算
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zmq_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ ポート・アドレス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        メッセージキュー・バッファ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        送信リトライ・バックオフ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tcp-keepalive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCP Keepalive 定数 (サーバ・クライアント共通)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#device_metadatalocalhost-zmq" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29796,7 +30112,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -29807,7 +30123,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -29818,7 +30134,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -29829,7 +30145,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29840,7 +30156,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29852,7 +30168,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#zmq" class="md-nav__link">
+  <a href="#zmq_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         ZMQ フィーチャーフラグの確認
@@ -34977,6 +35293,322 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-get_feature_status-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. get_feature_status() — CONFIG_DB 読み取り失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-get_zmq_port-namespace_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. get_zmq_port() — NAMESPACE_ID パース失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-zmqserverbind-swss_log_throw-abort" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. ZmqServer::bind() 失敗 → SWSS_LOG_THROW → プロセス abort
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-zmqserver-drop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. ZmqServer 受信スレッド失敗 → メッセージ DROP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-zmqclientsendmsg-retry-fpmsyncd-gnmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. ZmqClient::sendMsg() — 送信失敗と retry (fpmsyncd / gnmi 側)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        まとめ: 失敗ケース一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込先サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etcswssorch_zmq_tablesconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        /etc/swss/orch_zmq_tables.conf 生成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB への間接的な経路変化
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB 読み取り方式 — 購読なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmq-redis-pubsub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ が置き換える Redis Pub/Sub 経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zmqconsumerstatetable-consumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZmqConsumerStateTable と ConsumerStateTable の比較
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        共通: ZMQ ロジック自体はプラットフォーム非依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smartswitch-zmq-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SmartSwitch 専用: ZMQ アドレスと DPU ポート
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dpuorchdaemon-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DpuOrchDaemon と ZMQ サーバ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic のポート計算
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#zmq_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ZMQ ポート・アドレス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        メッセージキュー・バッファ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        送信リトライ・バックオフ定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tcp-keepalive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCP Keepalive 定数 (サーバ・クライアント共通)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#device_metadatalocalhost-zmq" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35055,7 +35687,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -35066,7 +35698,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35077,7 +35709,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35088,7 +35720,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35099,7 +35731,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -35111,7 +35743,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#zmq" class="md-nav__link">
+  <a href="#zmq_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         ZMQ フィーチャーフラグの確認
@@ -35358,6 +35990,649 @@ APPL_DB テーブルへの書き込みを直接受け取るための ZeroMQ ベ�
 </blockquote>
 <!-- /cross-refs -->
 
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-swss/lib/orch_zmq_config.cpp</code>, <code>sonic-swss-common/common/zmqserver.cpp</code>, <code>sonic-swss-common/common/zmqclient.cpp</code>, <code>sonic-swss/orchagent/main.cpp</code>
+調査日: 2026-05-19</p>
+</blockquote>
+<p>ZMQ 関連の失敗は大きく「CONFIG_DB 読み取り失敗」「ZmqServer 起動・受信失敗」「ZmqClient 送信失敗」の 3 系統に分かれる。</p>
+<h3 id="a-get_feature_status-config_db">A. <code>get_feature_status()</code> — CONFIG_DB 読み取り失敗<a class="headerlink" href="#a-get_feature_status-config_db" title="Permanent link">&para;</a></h3>
+<p><code>get_feature_status()</code> (<code>orch_zmq_config.cpp:83-110</code>) は <code>std::runtime_error</code> を捕捉し、
+エラーログを出力した後に <code>default_value</code> を返す。Redis 接続エラー等で <code>hget</code> が失敗しても
+orchagent は起動を継続し、ZMQ チャネルの有効/無効はデフォルト値に固定される。
+<strong>retry や再読み取りは行われない</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>読み取り失敗時の動作</th>
+<th>デフォルト値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>orch_northbond_dash_zmq_enabled</code></td>
+<td>ERROR ログ → デフォルトで DASH ZMQ 有効</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>orch_northbond_route_zmq_enabled</code></td>
+<td>ERROR ログ → デフォルトで ROUTE ZMQ 無効</td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-get_zmq_port-namespace_id">B. <code>get_zmq_port()</code> — NAMESPACE_ID パース失敗<a class="headerlink" href="#b-get_zmq_port-namespace_id" title="Permanent link">&para;</a></h3>
+<p><code>NAMESPACE_ID</code> 環境変数が整数でない場合、<code>stoi()</code> 例外を <code>catch(...)</code> で捕捉して
+ERROR ログを出力し、デフォルトポート <code>ORCH_ZMQ_PORT = 8100</code> にフォールバックする。
+orchagent は継続動作する（evidence: <code>orch_zmq_config.cpp:47-50</code>）。</p>
+<h3 id="c-zmqserverbind-swss_log_throw-abort">C. <code>ZmqServer::bind()</code> 失敗 → <code>SWSS_LOG_THROW</code> → プロセス abort<a class="headerlink" href="#c-zmqserverbind-swss_log_throw-abort" title="Permanent link">&para;</a></h3>
+<p><code>zmq_bind()</code> が失敗した場合（<code>EADDRINUSE</code> 等）<code>SWSS_LOG_THROW</code> が例外を投げる。
+<code>main.cpp</code> には <code>zmq_server-&gt;bind()</code> を包む try/catch がないため、例外は
+<code>main()</code> まで伝播して orchagent プロセスが終了し、systemd が再起動する。
+二重 bind も同様に THROW する（evidence: <code>zmqserver.cpp:67-125</code>, <code>main.cpp:1032-1037</code>）。</p>
+<h3 id="d-zmqserver-drop">D. ZmqServer 受信スレッド失敗 → メッセージ DROP<a class="headerlink" href="#d-zmqserver-drop" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>コード根拠</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>zmq_recv</code> 失敗</td>
+<td><code>zmqserver.cpp:233</code></td>
+<td><code>SWSS_LOG_THROW</code> → 受信スレッド終了 → ZMQ 受信不可</td>
+</tr>
+<tr>
+<td>受信バッファ超過</td>
+<td><code>zmqserver.cpp:239</code></td>
+<td><code>SWSS_LOG_THROW</code> + メッセージ DROP（再送なし）</td>
+</tr>
+<tr>
+<td>ハンドラ未登録テーブル</td>
+<td><code>zmqserver.cpp:173</code></td>
+<td><code>SWSS_LOG_WARN</code> + メッセージ DROP</td>
+</tr>
+</tbody>
+</table>
+<p>受信スレッドが終了した場合、orchagent は再起動するまで ZMQ メッセージを処理できない。
+Redis 経由の通常経路へのフォールバックは行われない。</p>
+<h3 id="e-zmqclientsendmsg-retry-fpmsyncd-gnmi">E. <code>ZmqClient::sendMsg()</code> — 送信失敗と retry (fpmsyncd / gnmi 側)<a class="headerlink" href="#e-zmqclientsendmsg-retry-fpmsyncd-gnmi" title="Permanent link">&para;</a></h3>
+<p>送信側（fpmsyncd / gnmi）で <code>ZmqClient::sendMsg()</code> が失敗した場合の挙動:</p>
+<table>
+<thead>
+<tr>
+<th>ZMQ エラー</th>
+<th>挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EAGAIN</code>（socket not ready）</td>
+<td>即時 retry（バックオフなし）</td>
+<td><code>zmqclient.cpp:209-211</code></td>
+</tr>
+<tr>
+<td>HWM 超過</td>
+<td>WARN + 指数バックオフ retry（10ms→20ms→…）</td>
+<td><code>zmqclient.cpp:216-217</code></td>
+</tr>
+<tr>
+<td>接続断（<code>m_connected=false</code>）</td>
+<td>ERROR + <code>system_error(connection_reset)</code> throw</td>
+<td><code>zmqclient.cpp:220-223</code></td>
+</tr>
+<tr>
+<td>その他送信エラー</td>
+<td>ERROR + <code>system_error(io_error)</code> throw</td>
+<td><code>zmqclient.cpp:227-230</code></td>
+</tr>
+<tr>
+<td>retry 上限超過</td>
+<td>ERROR + <code>system_error(io_error)</code> throw</td>
+<td><code>zmqclient.cpp:238-239</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>system_error</code> が fpmsyncd/gnmi まで伝播すると各プロセスが abort → systemd 再起動。
+orchagent 自体はクライアント側の送信失敗を直接検出しない。</p>
+<h3 id="_6">まとめ: 失敗ケース一覧<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗ケース</th>
+<th>コード根拠</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB <code>hget</code> 失敗（Redis 接続エラー）</td>
+<td><code>orch_zmq_config.cpp:93-97</code></td>
+<td>ERROR ログ → default_value 返却 → orchagent 継続</td>
+</tr>
+<tr>
+<td><code>NAMESPACE_ID</code> 非整数</td>
+<td><code>orch_zmq_config.cpp:47-50</code></td>
+<td>ERROR ログ → port=8100 フォールバック</td>
+</tr>
+<tr>
+<td><code>zmq_bind</code> 失敗（<code>EADDRINUSE</code> 等）</td>
+<td><code>zmqserver.cpp:115-120</code></td>
+<td>THROW → orchagent abort → systemd 再起動</td>
+</tr>
+<tr>
+<td>ZmqServer 二重 bind</td>
+<td><code>zmqserver.cpp:71-73</code></td>
+<td>THROW → orchagent abort</td>
+</tr>
+<tr>
+<td><code>zmq_recv</code> 失敗（受信スレッド）</td>
+<td><code>zmqserver.cpp:233</code></td>
+<td>THROW → 受信スレッド終了 → ZMQ 受信不可</td>
+</tr>
+<tr>
+<td>バッファ超過（受信）</td>
+<td><code>zmqserver.cpp:239</code></td>
+<td>THROW + メッセージ DROP</td>
+</tr>
+<tr>
+<td>ハンドラ未登録メッセージ</td>
+<td><code>zmqserver.cpp:173</code></td>
+<td>WARN + メッセージ DROP</td>
+</tr>
+<tr>
+<td><code>zmq_connect</code> 失敗（クライアント側）</td>
+<td><code>zmqclient.cpp:144-145</code></td>
+<td>THROW → fpmsyncd/gnmi abort → systemd 再起動</td>
+</tr>
+<tr>
+<td>接続断（送信中）</td>
+<td><code>zmqclient.cpp:220-223</code></td>
+<td>ERROR + <code>system_error</code> throw → プロセス abort</td>
+</tr>
+<tr>
+<td>送信 retry 上限超過</td>
+<td><code>zmqclient.cpp:238-239</code></td>
+<td>ERROR + <code>system_error</code> throw → プロセス abort</td>
+</tr>
+</tbody>
+</table>
+<!-- /failure -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/lib/orch_zmq_config.cpp; sonic-buildimage/dockers/docker-orchagent/docker-init.j2; sonic-buildimage/dockers/docker-orchagent/orch_zmq_tables.conf.j2 -->
+
+<p>ZMQ 関連フィールド (<code>orch_northbond_dash_zmq_enabled</code> / <code>orch_northbond_route_zmq_enabled</code> / <code>orchagent_zmq_port</code>) の CONFIG_DB 書き込みは <strong>orchagent コンテナの再起動時にのみ反映</strong> される。実行中の orchagent はこれらのフィールドを購読せず、DB への副次書き込みも発生しない。</p>
+<h3 id="_7">副次書込先サマリ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副次書込先</th>
+<th>テーブル / ファイル</th>
+<th>書込者</th>
+<th>発生タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ファイルシステム</td>
+<td><code>/etc/swss/orch_zmq_tables.conf</code></td>
+<td><code>sonic-cfggen</code> (<code>docker-init.j2</code>)</td>
+<td>orchagent コンテナ起動時</td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td>—</td>
+<td>購読なし・直接書込なし</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td>—</td>
+<td>購読なし・直接書込なし</td>
+</tr>
+<tr>
+<td>ASIC_DB</td>
+<td>なし</td>
+<td>—</td>
+<td>SAI 非経由</td>
+</tr>
+</tbody>
+</table>
+<h3 id="etcswssorch_zmq_tablesconf"><code>/etc/swss/orch_zmq_tables.conf</code> 生成<a class="headerlink" href="#etcswssorch_zmq_tablesconf" title="Permanent link">&para;</a></h3>
+<p><code>docker-init.j2</code> がコンテナ起動時に <code>sonic-cfggen -d -t orch_zmq_tables.conf.j2,/etc/swss/orch_zmq_tables.conf</code> を実行し、CONFIG_DB の現在値から設定ファイルを生成する。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>CONFIG_DB (DEVICE_METADATA|localhost)
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  orch_northbond_dash_zmq_enabled   ─┐
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  orch_northbond_route_zmq_enabled  ─┤→ sonic-cfggen (orch_zmq_tables.conf.j2)
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                                      └→ /etc/swss/orch_zmq_tables.conf
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                                              ↓
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>                                         orchagent 起動 (main.cpp:load_zmq_tables())
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>                                              ↓
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>                                     ZmqConsumerStateTable 登録テーブル決定
+</span></code></pre></div>
+<p><code>orch_zmq_tables.conf</code> に含まれるテーブル名の一覧:
+- <code>orch_northbond_dash_zmq_enabled != "false"</code> のとき: DASH_VNET_TABLE 等 24 種の DASH テーブルを追記
+- <code>orch_northbond_route_zmq_enabled == "true"</code> のとき: <code>ROUTE_TABLE</code> / <code>LABEL_ROUTE_TABLE</code> を追記</p>
+<p>orchagent の <code>load_zmq_tables()</code> (<code>orch_zmq_config.cpp:18-33</code>) がコンテナ起動直後にこのファイルを読み込み、ZMQ 受信対象テーブルを確定する。<strong>実行中の CONFIG_DB 変更はファイルに反映されない</strong>。</p>
+<h3 id="appl_db">APPL_DB への間接的な経路変化<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
+<p>フラグ有効時、上位コンポーネント (gNMI / fpmsyncd) は Redis <code>ProducerStateTable</code> の代わりに <code>ZmqProducerStateTable</code> を使って APPL_DB の同一テーブルに書き込む。APPL_DB テーブル自体のスキーマは変わらないが、書き込み経路が Redis Pub/Sub から ZMQ TCP ソケットに切り替わる。</p>
+<table>
+<thead>
+<tr>
+<th>フラグ</th>
+<th>APPL_DB 書込み経路</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>orch_northbond_dash_zmq_enabled=true</code> (デフォルト)</td>
+<td>gNMI → ZmqProducerStateTable → orchagent (ZMQ)</td>
+</tr>
+<tr>
+<td><code>orch_northbond_dash_zmq_enabled=false</code></td>
+<td>gNMI → ProducerStateTable → APPL_DB → orchagent (Redis Pub/Sub)</td>
+</tr>
+<tr>
+<td><code>orch_northbond_route_zmq_enabled=true</code></td>
+<td>fpmsyncd → ZmqProducerStateTable → orchagent (ZMQ)</td>
+</tr>
+<tr>
+<td><code>orch_northbond_route_zmq_enabled=false</code> (デフォルト)</td>
+<td>fpmsyncd → ProducerStateTable → APPL_DB → orchagent (Redis Pub/Sub)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: ZMQ 経路では APPL_DB Redis には書き込まれず、メッセージが orchagent に直接届く。<code>sonic-db-cli APPL_DB keys 'DASH_*'</code> で確認した場合、ZMQ 有効時は APPL_DB に対応するレコードが存在しないことがある。</p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<p>ZMQ 関連 CONFIG_DB フィールドは orchagent <strong>起動時の一回のみ</strong> <code>hget</code> で読まれる。<code>SubscriberStateTable</code> / <code>ConsumerStateTable</code> による購読は行われない。また、これらのフィールドが <code>true</code> に設定されると、対象 APPL_DB テーブルへの書き込み経路が Redis Pub/Sub から <strong>ZeroMQ TCP ソケット</strong>に切り替わるという特殊な構造を持つ。</p>
+<h3 id="config_db">CONFIG_DB 読み取り方式 — 購読なし<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// sonic-swss/lib/orch_zmq_config.cpp:88</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config_db</span><span class="p">.</span><span class="n">hget</span><span class="p">(</span><span class="s">&quot;DEVICE_METADATA|localhost&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">feature</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>orchdaemon.cpp:334</code> (route zmq) および <code>orchdaemon.cpp:1329</code> (dash zmq) が <code>get_feature_status()</code> 経由でこのパスを通る。orchagent は DEVICE_METADATA テーブルを ZMQ フラグのために購読しない。フィールド変更を orchagent に反映するにはコンテナ再起動が必要。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>購読クラス</td>
+<td><strong>なし</strong>（<code>hget</code> による起動時スナップショット読み取りのみ）</td>
+</tr>
+<tr>
+<td>変更の反映</td>
+<td>orchagent コンテナ再起動時のみ</td>
+</tr>
+<tr>
+<td>TTL</td>
+<td>CONFIG_DB 全エントリで未設定（永続前提）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="zmq-redis-pubsub">ZMQ が置き換える Redis Pub/Sub 経路<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h3>
+<p><code>orch_northbond_*_zmq_enabled</code> を <code>true</code> にすると、当該 APPL_DB テーブルへの書き込み経路が Redis Pub/Sub から ZeroMQ TCP ソケットに切り替わる。</p>
+<table>
+<thead>
+<tr>
+<th>フラグ</th>
+<th>Redis 経路（無効時）</th>
+<th>ZMQ 経路（有効時）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>orch_northbond_dash_zmq_enabled=true</code> (デフォルト有効)</td>
+<td>gNMI → ProducerStateTable → APPL_DB → ConsumerStateTable</td>
+<td>gNMI → ZmqProducerStateTable → ZmqServer (TCP:8100) → ZmqConsumerStateTable</td>
+</tr>
+<tr>
+<td><code>orch_northbond_route_zmq_enabled=true</code></td>
+<td>fpmsyncd → ProducerStateTable → APPL_DB → ConsumerStateTable</td>
+<td>fpmsyncd → ZmqProducerStateTable → ZmqServer (TCP:8100) → ZmqConsumerStateTable</td>
+</tr>
+</tbody>
+</table>
+<p>ZMQ 経路では Redis チャンネルへの <code>PUBLISH</code> は発生せず、APPL_DB に対応エントリが書き込まれない場合がある。</p>
+<h3 id="zmqconsumerstatetable-consumerstatetable">ZmqConsumerStateTable と ConsumerStateTable の比較<a class="headerlink" href="#zmqconsumerstatetable-consumerstatetable" title="Permanent link">&para;</a></h3>
+<p>orchagent 側は <code>ZmqConsumerStateTable</code> で ZMQ メッセージを受信する。<code>load_zmq_tables()</code> (<code>orch_zmq_config.cpp:18-33</code>) が起動時に <code>/etc/swss/orch_zmq_tables.conf</code> を読み込み、テーブルごとに <code>ZmqConsumerStateTable</code> を登録する。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>ConsumerStateTable (Redis)</th>
+<th>ZmqConsumerStateTable (ZMQ)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>トランスポート</td>
+<td>Redis keyspace 通知 / PUBLISH</td>
+<td>ZeroMQ TCP ソケット (lazy bind <code>zmqserver.h</code>)</td>
+</tr>
+<tr>
+<td>バッチサイズ</td>
+<td><code>gBatchSize</code> (既定 128)</td>
+<td><code>DEFAULT_POP_BATCH_SIZE = 128</code> (<code>zmqserver.h:31</code>)</td>
+</tr>
+<tr>
+<td>HWM</td>
+<td>なし (Redis)</td>
+<td><code>MQ_WATERMARK = 10000</code> (<code>zmqserver.h:13</code>)</td>
+</tr>
+<tr>
+<td>順序保証</td>
+<td>table 内 FIFO</td>
+<td><code>orderedQueue=true</code> のとき <code>m_queue</code> で FIFO 保証</td>
+</tr>
+<tr>
+<td>bind タイミング</td>
+<td>不要</td>
+<td>全ハンドラ登録後に <code>main.cpp:1036</code> で <code>zmqServer-&gt;bind()</code></td>
+</tr>
+</tbody>
+</table>
+<p>詳細解析: <code>meta/_intermediate/cdb-flow/zmq-pubsub.md</code></p>
+<!-- evidence: sonic-swss/lib/orch_zmq_config.cpp:88 (config_db.hget("DEVICE_METADATA|localhost", feature) — 購読なし) -->
+<!-- evidence: sonic-swss/orchagent/orchdaemon.cpp:334,1329 (get_feature_status() — 起動時一回読み) -->
+<!-- evidence: sonic-swss/lib/orch_zmq_config.cpp:64-79 (create_zmq_server() lazy bind) -->
+<!-- evidence: sonic-swss-common/common/zmqserver.h:13,31 (MQ_WATERMARK=10000, DEFAULT_POP_BATCH_SIZE=128) -->
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査日 2026-05-19。ソース: <code>sonic-swss/lib/orch_zmq_config.cpp</code>, <code>sonic-swss/orchagent/orchdaemon.cpp</code>, <code>sonic-buildimage/dockers/docker-orchagent/orchagent.sh</code></p>
+</blockquote>
+<h3 id="zmq">共通: ZMQ ロジック自体はプラットフォーム非依存<a class="headerlink" href="#zmq" title="Permanent link">&para;</a></h3>
+<p><code>orch_zmq_config.cpp</code> / <code>orchdaemon.cpp</code> に <code>getenv("platform")</code> / <code>MLNX_PLATFORM_SUBSTRING</code> 等の ASIC 種別判定はない。ZMQ チャネルのセットアップはすべての ASIC 種別で共通コードパスを使用する。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell 等)</td>
+<td>影響なし</td>
+<td><code>orch_zmq_config.cpp</code> にプラットフォーム分岐なし</td>
+</tr>
+<tr>
+<td>multi-asic (multi-NPU)</td>
+<td>ZMQ ポートに NAMESPACE_ID オフセットが付く</td>
+<td><code>get_zmq_port()</code> (<code>orch_zmq_config.cpp:37-51</code>) が <code>NAMESPACE_ID</code> 環境変数を読み取り <code>8100 + NAMESPACE_ID + 1</code> を計算。global namespace では <code>NAMESPACE_ID</code> 未設定 → ポート固定 8100</td>
+</tr>
+<tr>
+<td>VOQ chassis</td>
+<td>影響なし</td>
+<td><code>switch_type == "voq"</code> 向けの ZMQ 固有分岐はなし</td>
+</tr>
+</tbody>
+</table>
+<h3 id="smartswitch-zmq-dpu">SmartSwitch 専用: ZMQ アドレスと DPU ポート<a class="headerlink" href="#smartswitch-zmq-dpu" title="Permanent link">&para;</a></h3>
+<p>ZMQ の<strong>アドレス・ポート</strong>はプラットフォームで変化する:</p>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム</th>
+<th>ZMQ サーバアドレス</th>
+<th>ポート</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>一般 (<code>subtype</code> なし)</td>
+<td><code>tcp://127.0.0.1</code></td>
+<td><code>8100</code></td>
+<td><code>orchagent.sh:105-118</code> (デフォルト分岐)</td>
+</tr>
+<tr>
+<td>SmartSwitch NPU (<code>subtype=SmartSwitch</code>, <code>eth0-midplane</code> UP)</td>
+<td><code>tcp://eth0-midplane</code></td>
+<td><code>8100</code></td>
+<td><code>orchagent.sh:107-112</code></td>
+</tr>
+<tr>
+<td>SmartSwitch NPU (<code>subtype=SmartSwitch</code>, <code>eth0-midplane</code> DOWN)</td>
+<td><code>tcp://127.0.0.1</code></td>
+<td><code>8100</code></td>
+<td><code>orchagent.sh:113-117</code></td>
+</tr>
+<tr>
+<td>SmartSwitch DPU (<code>switch_type=dpu</code>)</td>
+<td>DPU 側 <code>orchagent.sh</code> で決定</td>
+<td><code>DPU|&lt;name&gt;.orchagent_zmq_port</code> または <code>8100 + NS_ID + 1</code></td>
+<td><code>orchagent.sh:38-39</code> + <code>orch_zmq_config.cpp:37-51</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>orchagent_zmq_port</code> (<code>DPU|&lt;name&gt;</code>) は SmartSwitch 環境<strong>のみ</strong>に存在する CONFIG_DB フィールドであり、一般プラットフォームでは不要。</p>
+<h3 id="dpuorchdaemon-zmq">DpuOrchDaemon と ZMQ サーバ<a class="headerlink" href="#dpuorchdaemon-zmq" title="Permanent link">&para;</a></h3>
+<p>SmartSwitch の DPU orchagent は <code>DpuOrchDaemon</code> として動作し、<code>ZMQ_SYNC</code> モード (<code>-z zmq_sync -k 65536</code>) で起動する。これは <code>orchagent.sh:38-39</code> で <code>switch_type == "dpu"</code> のときに強制付与される引数であり、一般プラットフォームでは付与されない。</p>
+<h3 id="multi-asic">multi-asic のポート計算<a class="headerlink" href="#multi-asic" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// orch_zmq_config.cpp:37-51</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kt">int</span><span class="w"> </span><span class="n">zmq_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ORCH_ZMQ_PORT</span><span class="p">;</span><span class="w">  </span><span class="c1">// 8100</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">namespace_id</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">{</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">zmq_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ORCH_ZMQ_PORT</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">stoi</span><span class="p">(</span><span class="n">namespace_id</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>asic0 → 8101、asic1 → 8102 のようにオフセットされる。global namespace (NAMESPACE_ID 未設定) → 8100 固定。</p>
+<!-- /platform -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>ZMQ チャネル実装に存在する、CONFIG_DB / YANG では管理されないハードコード定数の一覧。
+出典は <code>sonic-swss-common/common/zmqserver.h</code>、<code>sonic-swss/lib/orch_zmq_config.h</code>、
+<code>sonic-swss-common/common/zmqserver.cpp</code>、<code>sonic-swss-common/common/zmqclient.cpp</code>。</p>
+<h3 id="zmq_1">ZMQ ポート・アドレス定数<a class="headerlink" href="#zmq_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ORCH_ZMQ_PORT</code></td>
+<td><code>8100</code></td>
+<td>orchagent ZMQ サーバのベースポート番号。Namespace あり環境では <code>8100 + NAMESPACE_ID + 1</code> で計算される</td>
+<td><code>zmqserver.h:16</code></td>
+</tr>
+<tr>
+<td><code>ZMQ_LOCAL_ADDRESS</code></td>
+<td><code>"tcp://localhost"</code></td>
+<td>swssconfig / fpmsyncd がローカル orchagent に接続する際のベースアドレス</td>
+<td><code>orch_zmq_config.h:16</code></td>
+</tr>
+<tr>
+<td><code>ZMQ_TABLE_CONFIGFILE</code></td>
+<td><code>"/etc/swss/orch_zmq_tables.conf"</code></td>
+<td>ZMQ 経由で受け付けるテーブル名一覧を記述する実行時設定ファイルパス。<code>orch_zmq_tables.conf.j2</code> から生成される</td>
+<td><code>orch_zmq_config.cpp:10</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">メッセージキュー・バッファ定数<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MQ_RESPONSE_MAX_COUNT</code></td>
+<td><code>16 * 1024 * 1024</code> (16 MiB)</td>
+<td>1 メッセージの最大バイト数。送受信バッファのサイズ上限。超過すると THROW + DROP</td>
+<td><code>zmqserver.h:9</code></td>
+</tr>
+<tr>
+<td><code>MQ_SIZE</code></td>
+<td><code>100</code></td>
+<td>ZmqConsumerStateTable の内部キュー初期サイズ (要素数)</td>
+<td><code>zmqserver.h:10</code></td>
+</tr>
+<tr>
+<td><code>MQ_MAX_RETRY</code></td>
+<td><code>10</code></td>
+<td>送信失敗時の最大 retry 回数。超過で <code>system_error(io_error)</code> を throw</td>
+<td><code>zmqserver.h:11</code></td>
+</tr>
+<tr>
+<td><code>MQ_POLL_TIMEOUT</code></td>
+<td><code>1000</code> (ms)</td>
+<td><code>zmq_poll</code> のタイムアウト。受信待機の最大ブロック時間</td>
+<td><code>zmqserver.h:12</code></td>
+</tr>
+<tr>
+<td><code>MQ_WATERMARK</code></td>
+<td><code>10000</code></td>
+<td>ZMQ ソケットの High-Water Mark (HWM)。サーバは <code>ZMQ_RCVHWM</code>、クライアントは <code>ZMQ_SNDHWM</code> に設定。超過時は EAGAIN / メッセージ DROP</td>
+<td><code>zmqserver.h:13</code></td>
+</tr>
+<tr>
+<td><code>DEFAULT_POP_BATCH_SIZE</code></td>
+<td><code>128</code></td>
+<td><code>ZmqConsumerStateTable::pops()</code> が 1 回のポールで取り出す最大エントリ数</td>
+<td><code>zmqserver.h:31</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">送信リトライ・バックオフ定数<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>初期バックオフ遅延</td>
+<td><code>10</code> (ms)</td>
+<td><code>zmq_send</code> 失敗時の初期待機時間 (EAGAIN 等)</td>
+<td><code>zmqclient.cpp:182</code> — <code>retry_delay = 10</code></td>
+</tr>
+<tr>
+<td>バックオフ倍率</td>
+<td><code>×2</code> (指数)</td>
+<td>retry 毎に <code>retry_delay *= 2</code>（10ms → 20ms → 40ms → …）。EINTR / EFSM 時は遅延 0 にリセット</td>
+<td><code>zmqclient.cpp:199</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="tcp-keepalive">TCP Keepalive 定数 (サーバ・クライアント共通)<a class="headerlink" href="#tcp-keepalive" title="Permanent link">&para;</a></h3>
+<p>サーバ (<code>ZmqServer</code>) とクライアント (<code>ZmqClient</code>) の両方で同一値が設定される。</p>
+<table>
+<thead>
+<tr>
+<th>ソケットオプション</th>
+<th>値</th>
+<th>用途</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ZMQ_TCP_KEEPALIVE</code></td>
+<td><code>1</code> (有効)</td>
+<td>TCP keepalive を有効化</td>
+<td><code>zmqserver.cpp:97</code>, <code>zmqclient.cpp:121</code></td>
+</tr>
+<tr>
+<td><code>ZMQ_TCP_KEEPALIVE_IDLE</code></td>
+<td><code>5</code> 秒</td>
+<td>最初の keepalive probe を送信するまでのアイドル時間</td>
+<td><code>zmqserver.cpp:100</code>, <code>zmqclient.cpp:124</code></td>
+</tr>
+<tr>
+<td><code>ZMQ_TCP_KEEPALIVE_INTVL</code></td>
+<td><code>1</code> 秒</td>
+<td>keepalive probe の送信間隔</td>
+<td><code>zmqserver.cpp:103</code>, <code>zmqclient.cpp:127</code></td>
+</tr>
+<tr>
+<td><code>ZMQ_TCP_KEEPALIVE_CNT</code></td>
+<td><code>5</code> 回</td>
+<td>失敗 probe 回数の上限。超過で接続 dead 判定</td>
+<td><code>zmqserver.cpp:106</code>, <code>zmqclient.cpp:130</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>注意</strong>: Keepalive 設定はソケット生成時にハードコードで適用される。CONFIG_DB から変更する手段はない。DPU 環境でネットワーク切断を検出するために特に重要（<code>zmqclient.cpp:114-130</code> コメント参照）。</p>
+</blockquote>
+<!-- /constants -->
+
+<!-- platform -->
+<h2 id="phase-h_1">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h_1" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/zmq-platform.md</code></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox 等)</td>
+<td><strong>影響なし</strong></td>
+<td>ZMQ は orchagent northbound 通信層であり SAI 非経由。<code>get_feature_status()</code> / <code>get_zmq_port()</code> はベンダー依存コードを含まない (<code>orch_zmq_config.cpp:35-79</code>)</td>
+</tr>
+<tr>
+<td>multi-ASIC / namespace</td>
+<td><strong>ZMQ ポート番号が変化</strong></td>
+<td><code>get_zmq_port()</code> が <code>NAMESPACE_ID</code> 環境変数を参照し <code>8100 + NAMESPACE_ID + 1</code> で計算。global=8100、asic0=8101、asic1=8102 (<code>orch_zmq_config.cpp:38-51</code>)。<code>orch_northbond_*_zmq_enabled</code> はグローバル CONFIG_DB に一元管理され、各 namespace orchagent が共通参照する</td>
+</tr>
+<tr>
+<td>SmartSwitch / DPU</td>
+<td><strong>専用フィールドあり</strong></td>
+<td><code>DPU|&lt;name&gt;.orchagent_zmq_port</code> は SmartSwitch 専用。<code>orchagent.sh</code> が <code>subtype=="SmartSwitch"</code> で ZMQ アドレスを <code>tcp://eth0-midplane</code> に切替え、<code>switch_type=="dpu"</code> で zmq_sync モードを強制 (<code>orchagent.sh:38-39,105-118</code>)</td>
+</tr>
+<tr>
+<td>VOQ chassis</td>
+<td>影響なし (確認)</td>
+<td>各 line card orchagent が独立して ZMQ を管理。chassis-wide な ZMQ 集約機構なし</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: sonic-swss/lib/orch_zmq_config.cpp:35-52 (get_zmq_port — NAMESPACE_ID 分岐) -->
+<!-- evidence: sonic-buildimage/dockers/docker-orchagent/orchagent.sh:38-39,105-118 (SmartSwitch / DPU 専用分岐) -->
+<!-- evidence: sonic-swss-common/common/zmqserver.h:16 (ORCH_ZMQ_PORT = 8100) -->
+<!-- /platform -->
+
 <hr />
 <h2 id="device_metadatalocalhost-zmq">DEVICE_METADATA|localhost の ZMQ フィールド<a class="headerlink" href="#device_metadatalocalhost-zmq" title="Permanent link">&para;</a></h2>
 <h3 id="orch_northbond_dash_zmq_enabled"><code>orch_northbond_dash_zmq_enabled</code><a class="headerlink" href="#orch_northbond_dash_zmq_enabled" title="Permanent link">&para;</a></h3>
@@ -35385,22 +36660,22 @@ APPL_DB テーブルへの書き込みを直接受け取るための ZeroMQ ベ�
 </tbody>
 </table>
 <p><strong>判定ロジック (C++):</strong></p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// sonic-swss/orchagent/orchdaemon.cpp:1329</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">get_feature_status</span><span class="p">(</span><span class="n">ORCH_NORTHBOND_DASH_ZMQ_ENABLED</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">))</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">{</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="n">dash_zmq_server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_zmqServer</span><span class="p">;</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// sonic-swss/orchagent/orchdaemon.cpp:1329</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">get_feature_status</span><span class="p">(</span><span class="n">ORCH_NORTHBOND_DASH_ZMQ_ENABLED</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">))</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">{</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="n">dash_zmq_server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_zmqServer</span><span class="p">;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <p><code>get_feature_status()</code> は <code>DEVICE_METADATA|localhost</code> の当該フィールドを <code>hget</code> し、
 不在なら <code>default_value</code>（ここでは <code>true</code>）を返す<sup id="fnref:feature_status"><a class="footnote-ref" href="#fn:feature_status">5</a></sup>。</p>
 <p><strong>判定ロジック (Jinja2):</strong></p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>{# orch_zmq_tables.conf.j2:1 #}
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>{% if DEVICE_METADATA.localhost.orch_northbond_dash_zmq_enabled != &quot;false&quot; %}
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>DASH_VNET_TABLE
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>DASH_QOS_TABLE
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>DASH_ENI_TABLE
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>...（DASH テーブル群 22 種）
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>{% endif %}
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>{# orch_zmq_tables.conf.j2:1 #}
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>{% if DEVICE_METADATA.localhost.orch_northbond_dash_zmq_enabled != &quot;false&quot; %}
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>DASH_VNET_TABLE
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>DASH_QOS_TABLE
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>DASH_ENI_TABLE
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>...（DASH テーブル群 22 種）
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>{% endif %}
 </span></code></pre></div>
 <p>フィールド不在のとき Jinja2 の <code>!= "false"</code> が真 → <code>orch_zmq_tables.conf</code> に DASH テーブルを追記。</p>
 <div class="admonition warning">
@@ -35438,17 +36713,17 @@ APPL_DB テーブルへの書き込みを直接受け取るための ZeroMQ ベ�
 </tbody>
 </table>
 <p><strong>判定ロジック (C++):</strong></p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// sonic-swss/fpmsyncd/routesync.cpp:155</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">m_zmqClient</span><span class="p">(</span><span class="n">create_local_zmq_client</span><span class="p">(</span><span class="n">ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">)),</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// sonic-swss/fpmsyncd/routesync.cpp:155</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">m_zmqClient</span><span class="p">(</span><span class="n">create_local_zmq_client</span><span class="p">(</span><span class="n">ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">)),</span>
 </span></code></pre></div>
 <p><code>create_local_zmq_client()</code> は内部で <code>get_feature_status(feature, false)</code> を呼ぶ。
 フィールド不在 → <code>false</code> → <code>ZmqClient = nullptr</code> → Redis 経由の通常経路を使用<sup id="fnref:zmq_client"><a class="footnote-ref" href="#fn:zmq_client">6</a></sup>。</p>
 <p><strong>判定ロジック (Jinja2):</strong></p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>{# orch_zmq_tables.conf.j2:27 #}
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>{% if DEVICE_METADATA.localhost.orch_northbond_route_zmq_enabled == &quot;true&quot; %}
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>ROUTE_TABLE
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>LABEL_ROUTE_TABLE
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>{% endif %}
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>{# orch_zmq_tables.conf.j2:27 #}
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>{% if DEVICE_METADATA.localhost.orch_northbond_route_zmq_enabled == &quot;true&quot; %}
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>ROUTE_TABLE
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>LABEL_ROUTE_TABLE
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>{% endif %}
 </span></code></pre></div>
 <p>フィールド不在のとき <code>== "true"</code> が偽 → ROUTE テーブルを conf に追記しない。</p>
 <hr />
@@ -35456,8 +36731,8 @@ APPL_DB テーブルへの書き込みを直接受け取るための ZeroMQ ベ�
 <h3 id="orchagent_zmq_port-dpu"><code>orchagent_zmq_port</code> (DPU|<name>)<a class="headerlink" href="#orchagent_zmq_port-dpu" title="Permanent link">&para;</a></h3>
 <p>SmartSwitch の DPU orchagent が待ち受ける ZMQ ポート番号。
 NPU 上の gNMI / gnmi-native サービスがこのポートに接続して DASH イベントを送信する。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>DPU|&lt;dpu-name&gt;
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  orchagent_zmq_port: &lt;port&gt;   # 例: &quot;50&quot; (minigraph 由来)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>DPU|&lt;dpu-name&gt;
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  orchagent_zmq_port: &lt;port&gt;   # 例: &quot;50&quot; (minigraph 由来)
 </span></code></pre></div>
 <table>
 <thead>
@@ -35519,7 +36794,7 @@ CONFIG_DB の直接フィールドとしては存在しない。ただし <code>
 この値は CONFIG_DB から読まれず、スクリプト内にハードコードされている<sup id="fnref:gnmi_sh"><a class="footnote-ref" href="#fn:gnmi_sh">8</a></sup>。</p>
 <hr />
 <!-- value-behavior -->
-<h2 id="_6">値依存挙動マトリクス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_10">値依存挙動マトリクス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35573,7 +36848,7 @@ CONFIG_DB の直接フィールドとしては存在しない。ただし <code>
 </table>
 <!-- /value-behavior -->
 
-<h2 id="_7">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_11">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/lib/orch_zmq_config.cpp; sonic-swss/orchagent/orchdaemon.cpp; sonic-buildimage/dockers/docker-orchagent/orch_zmq_tables.conf.j2 -->
 
 <ul>
@@ -35583,7 +36858,7 @@ CONFIG_DB の直接フィールドとしては存在しない。ただし <code>
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../device-metadata/"><code>DEVICE_METADATA</code></a> — <code>orch_northbond_dash_zmq_enabled</code> / <code>orch_northbond_route_zmq_enabled</code> / <code>subtype</code> / <code>switch_type</code> フィールドの全体像</li>
 <li><a href="../../glossary/#term-yang">YANG</a>: <a href="../yang/sonic-smart-switch.md"><code>sonic-smart-switch</code></a> — <code>DPU_LIST.orchagent_zmq_port</code> 定義</li>
@@ -35591,20 +36866,20 @@ CONFIG_DB の直接フィールドとしては存在しない。ただし <code>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<h3 id="zmq">ZMQ フィーチャーフラグの確認<a class="headerlink" href="#zmq" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span>orch_northbond_dash_zmq_enabled
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span>orch_northbond_route_zmq_enabled
+<h2 id="_14">運用ヒント<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h3 id="zmq_2">ZMQ フィーチャーフラグの確認<a class="headerlink" href="#zmq_2" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span>orch_northbond_dash_zmq_enabled
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span>orch_northbond_route_zmq_enabled
 </span></code></pre></div>
 <p>出力が空の場合はデフォルト値が適用される (<code>dash_zmq=true</code>, <code>route_zmq=false</code>)。</p>
 <h3 id="zmq-orchagent">ZMQ サーバの起動確認 (orchagent)<a class="headerlink" href="#zmq-orchagent" title="Permanent link">&para;</a></h3>
 <p>orchagent が ZMQ サーバを起動している場合、ログに以下が記録される:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>NOTICE orchagent: ZMQ channel on the northbound side of Orchagent successfully bound: tcp://127.0.0.1:8100
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>NOTICE orchagent: ZMQ channel on the northbound side of Orchagent successfully bound: tcp://127.0.0.1:8100
 </span></code></pre></div>
 <h3 id="smartswitch-dpu-zmq">SmartSwitch での DPU ZMQ ポート確認<a class="headerlink" href="#smartswitch-dpu-zmq" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;DPU|dpu0&quot;</span><span class="w"> </span>orchagent_zmq_port
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hget<span class="w"> </span><span class="s2">&quot;DPU|dpu0&quot;</span><span class="w"> </span>orchagent_zmq_port
 </span></code></pre></div>
 <!-- /ops-hint -->
 

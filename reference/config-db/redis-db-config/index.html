@@ -27858,6 +27858,256 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-parsedatabaseconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. ファイル読み込み失敗 (parseDatabaseConfig)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-initialize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. 二重初期化 (initialize)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-initializeglobalconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. グローバル設定失敗 (initializeGlobalConfig)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-db-namespace-getdbinfo-getredisinfo-getseparator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. DB 名・namespace 解決失敗 (getDbInfo / getRedisInfo / getSeparator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. 自己回復経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON 構造キー定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db-id-schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB ID マクロ定数 (schema.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dbconnectorh-docker-database-initsh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パス・ポート定数 (dbconnector.h / docker-database-init.sh)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reset() 実行時の副次効果
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        変更通知が不要な理由
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        変更反映フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#database_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DATABASE_TYPE 環境変数による構成分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namespace_id-multi-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAMESPACE_ID による multi-ASIC 対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-chassisdbconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ Chassis: chassisdb.conf によるエントリ制御
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        構成別まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#separator" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27880,7 +28130,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         初期化フロー
@@ -27891,7 +28141,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -27902,7 +28152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35116,6 +35366,256 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-parsedatabaseconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. ファイル読み込み失敗 (parseDatabaseConfig)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-initialize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. 二重初期化 (initialize)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-initializeglobalconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. グローバル設定失敗 (initializeGlobalConfig)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-db-namespace-getdbinfo-getredisinfo-getseparator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. DB 名・namespace 解決失敗 (getDbInfo / getRedisInfo / getSeparator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. 自己回復経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON 構造キー定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db-id-schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB ID マクロ定数 (schema.h)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dbconnectorh-docker-database-initsh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        パス・ポート定数 (dbconnector.h / docker-database-init.sh)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reset() 実行時の副次効果
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        変更通知が不要な理由
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        変更反映フロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#database_type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DATABASE_TYPE 環境変数による構成分岐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namespace_id-multi-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAMESPACE_ID による multi-ASIC 対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voq-chassis-chassisdbconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VoQ Chassis: chassisdb.conf によるエントリ制御
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        構成別まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#separator" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35138,7 +35638,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         初期化フロー
@@ -35149,7 +35649,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35160,7 +35660,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35632,6 +36132,590 @@
 定義された DB ID / インスタンス情報は SONiC の全デーモン (<code>swss</code>, <code>syncd</code>, <code>mgmt</code>, <code>snmp</code> 等)
 が起動時に依存する基盤層であり、間接的にすべての CONFIG_DB テーブル操作の前提条件となる。</p>
 <!-- /cross-refs -->
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>database_config.json</code> は CONFIG_DB テーブルではなくインフラ層ファイルであり、<code>SonicDBConfig</code> クラスが起動時に一度だけ読み込む。読み込み・解析に失敗した場合は例外として呼び出し元に伝播し、キャッチされなければプロセス abort → systemd 再起動という自己回復経路を取る。</p>
+<h3 id="a-parsedatabaseconfig">A. ファイル読み込み失敗 (<code>parseDatabaseConfig</code>)<a class="headerlink" href="#a-parsedatabaseconfig" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>設定ファイルが存在しない / 開けない (<code>i.good() == false</code>)</td>
+<td><code>SWSS_LOG_ERROR</code> + <code>throw runtime_error("Sonic database config file doesn't exist at " + file)</code> で上位伝播</td>
+<td><code>dbconnector.cpp:83-85</code></td>
+</tr>
+<tr>
+<td><code>ignore_nonexistent=true</code> かつファイル不在 (<code>access() == -1</code>)</td>
+<td><code>SWSS_LOG_NOTICE</code> を出力して <code>return</code>（例外なし、エントリ空で続行）</td>
+<td><code>dbconnector.cpp:33-36</code></td>
+</tr>
+<tr>
+<td>JSON 必須キー欠落 (<code>domain_error</code>)</td>
+<td><code>SWSS_LOG_ERROR</code> + <code>throw runtime_error("key doesn't exist in json object ...")</code> で上位伝播</td>
+<td><code>dbconnector.cpp:71-74</code></td>
+</tr>
+<tr>
+<td>その他 JSON 解析例外</td>
+<td><code>SWSS_LOG_ERROR</code> + <code>throw runtime_error("Sonic database config file syntax error ...")</code> で上位伝播</td>
+<td><code>dbconnector.cpp:76-79</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-initialize">B. 二重初期化 (<code>initialize</code>)<a class="headerlink" href="#b-initialize" title="Permanent link">&para;</a></h3>
+<p><code>m_init == true</code> の状態で <code>initialize()</code> を呼ぶと <code>SWSS_LOG_ERROR</code> + <code>throw runtime_error("SonicDBConfig already initialized")</code> が発生する (<code>dbconnector.cpp:193-194</code>)。通常の起動フローでは自動初期化 (<code>m_init == false</code> のときのみ実行) により二重実行は回避される。</p>
+<h3 id="c-initializeglobalconfig">C. グローバル設定失敗 (<code>initializeGlobalConfig</code>)<a class="headerlink" href="#c-initializeglobalconfig" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>グローバル設定ファイルが存在しない</td>
+<td><code>SWSS_LOG_ERROR</code> 出力後、<strong>例外なし</strong>で <code>m_global_init = true</code> をセットして続行（名前空間情報なしで初期化完了扱い）</td>
+<td><code>dbconnector.cpp:173-179</code></td>
+</tr>
+<tr>
+<td><code>ignore_nonexistent=true</code> の include ファイルが不在</td>
+<td><code>SWSS_LOG_NOTICE</code> 出力後 <code>return</code>（当該エントリをスキップして続行）</td>
+<td><code>dbconnector.cpp:33-36</code></td>
+</tr>
+<tr>
+<td>二重初期化 (<code>m_global_init == true</code>)</td>
+<td><code>SWSS_LOG_ERROR</code> を出力して <strong>早期リターン</strong>（例外なし）</td>
+<td><code>dbconnector.cpp:96-99</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="d-db-namespace-getdbinfo-getredisinfo-getseparator">D. DB 名・namespace 解決失敗 (<code>getDbInfo</code> / <code>getRedisInfo</code> / <code>getSeparator</code>)<a class="headerlink" href="#d-db-namespace-getdbinfo-getredisinfo-getseparator" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>namespace 非空かつ <code>m_global_init == false</code></td>
+<td><code>SWSS_LOG_THROW</code> でプロセス即 abort（プログラミングエラー扱い）</td>
+<td><code>dbconnector.cpp:229-231</code>, <code>259-260</code></td>
+</tr>
+<tr>
+<td>namespace 名が設定ファイルに存在しない</td>
+<td><code>SWSS_LOG_THROW("Namespace %s is not a valid namespace ...")</code> でプロセス即 abort</td>
+<td><code>dbconnector.cpp:242</code></td>
+</tr>
+<tr>
+<td>DB 名または key が設定ファイルに存在しない</td>
+<td><code>SWSS_LOG_ERROR</code> + <code>throw out_of_range(msg)</code> で上位伝播</td>
+<td><code>dbconnector.cpp:263-275</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">SWSS_LOG_THROW vs throw</p>
+<p><code>SWSS_LOG_THROW</code> は SONiC 独自マクロで <code>abort()</code> 相当の即プロセス終了を引き起こす。namespace 解決失敗はこの経路を通り、systemd の <code>Restart=always</code> 設定でのみ回復する。</p>
+</div>
+<h3 id="e">E. 自己回復経路<a class="headerlink" href="#e" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>getDbInfo()</code> 等のアクセサ API は <code>m_init == false</code> のとき自動的に <code>initialize(DEFAULT_SONIC_DB_CONFIG_FILE)</code> を呼ぶため、明示的な初期化呼び出しなしでもデフォルトパスからの読み込みが行われる (<code>dbconnector.cpp:252-253</code>)。</li>
+<li><code>parseDatabaseConfig()</code> や <code>initialize()</code> から <code>runtime_error</code> が伝播した場合、各デーモン（<code>swss</code>/<code>syncd</code>/<code>mgmt</code> 等）がキャッチしなければプロセス abort → systemd 再起動 → 再 <code>initialize()</code> で自己回復する。</li>
+<li>Redis 接続層（<code>DBConnector</code> コンストラクタ）の TCP/UNIX ソケット接続失敗は <code>system_error</code> として伝播し、各アプリが個別に処理する (<code>dbconnector.cpp:589</code>, <code>605</code>)。</li>
+</ul>
+<blockquote>
+<p><strong>証跡</strong>: <code>parseDatabaseConfig()</code> L27-87、<code>initialize()</code> L182-204、<code>initializeGlobalConfig()</code> L89-180、<code>getDbInfo()</code> L246-278、<code>getRedisInfo()</code> L280-310。詳細は <code>meta/_intermediate/cdb-flow/redis-db-config-failure.md</code> を参照。</p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<p>実装コードに直接埋め込まれている文字列キー・数値定数・マクロ名を一覧化する。</p>
+<h3 id="json">JSON 構造キー定数<a class="headerlink" href="#json" title="Permanent link">&para;</a></h3>
+<p><code>parseDatabaseConfig()</code> が <code>database_config.json</code> を解析する際に参照するキー名はすべてハードコードされている (<code>dbconnector.cpp:45-64</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>JSON キー</th>
+<th>用途</th>
+<th>参照箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"INSTANCES"</code></td>
+<td>Redis インスタンス定義ブロック</td>
+<td><code>dbconnector.cpp:45</code></td>
+</tr>
+<tr>
+<td><code>"DATABASES"</code></td>
+<td>DB ID マッピングブロック</td>
+<td><code>dbconnector.cpp:59</code></td>
+</tr>
+<tr>
+<td><code>"hostname"</code></td>
+<td>インスタンスの接続先ホスト名</td>
+<td><code>dbconnector.cpp:54</code></td>
+</tr>
+<tr>
+<td><code>"port"</code></td>
+<td>インスタンスの TCP ポート番号</td>
+<td><code>dbconnector.cpp:55</code></td>
+</tr>
+<tr>
+<td><code>"unix_socket_path"</code></td>
+<td>UNIX ドメインソケットパス (省略可)</td>
+<td><code>dbconnector.cpp:49-53</code></td>
+</tr>
+<tr>
+<td><code>"instance"</code></td>
+<td>DB エントリが属するインスタンス名</td>
+<td><code>dbconnector.cpp:62</code></td>
+</tr>
+<tr>
+<td><code>"id"</code></td>
+<td>Redis DB 番号 (0-20)</td>
+<td><code>dbconnector.cpp:63</code></td>
+</tr>
+<tr>
+<td><code>"separator"</code></td>
+<td>テーブル名とキーを区切る文字</td>
+<td><code>dbconnector.cpp:64</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>unix_socket_path</code> は <code>it.value().find()</code> で探索されるため省略可能。それ以外の必須フィールドは <code>at()</code> で取得されるため、欠落時は <code>domain_error</code> が発生する。</p>
+<h3 id="db-id-schemah">DB ID マクロ定数 (<code>schema.h</code>)<a class="headerlink" href="#db-id-schemah" title="Permanent link">&para;</a></h3>
+<p><code>sonic-swss-common/common/schema.h</code> で定義される DB ID マクロと <code>database_config.json</code> の <code>id</code> フィールド値の対応。</p>
+<table>
+<thead>
+<tr>
+<th>マクロ名</th>
+<th>id 値</th>
+<th><code>schema.h</code> 行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APPL_DB</code></td>
+<td><code>0</code></td>
+<td><code>schema.h:12</code></td>
+</tr>
+<tr>
+<td><code>ASIC_DB</code></td>
+<td><code>1</code></td>
+<td><code>schema.h:13</code></td>
+</tr>
+<tr>
+<td><code>COUNTERS_DB</code></td>
+<td><code>2</code></td>
+<td><code>schema.h:14</code></td>
+</tr>
+<tr>
+<td><code>LOGLEVEL_DB</code></td>
+<td><code>3</code></td>
+<td><code>schema.h:15</code></td>
+</tr>
+<tr>
+<td><code>CONFIG_DB</code></td>
+<td><code>4</code></td>
+<td><code>schema.h:16</code></td>
+</tr>
+<tr>
+<td><code>PFC_WD_DB</code></td>
+<td><code>5</code></td>
+<td><code>schema.h:17</code></td>
+</tr>
+<tr>
+<td><code>FLEX_COUNTER_DB</code></td>
+<td><code>5</code></td>
+<td><code>schema.h:18</code> (PFC_WD_DB と同 id)</td>
+</tr>
+<tr>
+<td><code>STATE_DB</code></td>
+<td><code>6</code></td>
+<td><code>schema.h:19</code></td>
+</tr>
+<tr>
+<td><code>SNMP_OVERLAY_DB</code></td>
+<td><code>7</code></td>
+<td><code>schema.h:20</code></td>
+</tr>
+<tr>
+<td><code>RESTAPI_DB</code></td>
+<td><code>8</code></td>
+<td><code>schema.h:21</code></td>
+</tr>
+<tr>
+<td><code>GB_ASIC_DB</code></td>
+<td><code>9</code></td>
+<td><code>schema.h:22</code></td>
+</tr>
+<tr>
+<td><code>GB_COUNTERS_DB</code></td>
+<td><code>10</code></td>
+<td><code>schema.h:23</code></td>
+</tr>
+<tr>
+<td><code>GB_FLEX_COUNTER_DB</code></td>
+<td><code>11</code></td>
+<td><code>schema.h:24</code></td>
+</tr>
+<tr>
+<td><code>CHASSIS_APP_DB</code></td>
+<td><code>12</code></td>
+<td><code>schema.h:25</code></td>
+</tr>
+<tr>
+<td><code>CHASSIS_STATE_DB</code></td>
+<td><code>13</code></td>
+<td><code>schema.h:26</code></td>
+</tr>
+<tr>
+<td><code>APPL_STATE_DB</code></td>
+<td><code>14</code></td>
+<td><code>schema.h:27</code></td>
+</tr>
+<tr>
+<td><code>DPU_APPL_DB</code></td>
+<td><code>15</code></td>
+<td><code>schema.h:28</code></td>
+</tr>
+<tr>
+<td><code>DPU_APPL_STATE_DB</code></td>
+<td><code>16</code></td>
+<td><code>schema.h:29</code></td>
+</tr>
+<tr>
+<td><code>DPU_STATE_DB</code></td>
+<td><code>17</code></td>
+<td><code>schema.h:30</code></td>
+</tr>
+<tr>
+<td><code>DPU_COUNTERS_DB</code></td>
+<td><code>18</code></td>
+<td><code>schema.h:31</code></td>
+</tr>
+<tr>
+<td><code>EVENT_DB</code></td>
+<td><code>19</code></td>
+<td><code>schema.h:32</code></td>
+</tr>
+<tr>
+<td><code>BMP_STATE_DB</code></td>
+<td><code>20</code></td>
+<td><code>schema.h:33</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="dbconnectorh-docker-database-initsh">パス・ポート定数 (<code>dbconnector.h</code> / <code>docker-database-init.sh</code>)<a class="headerlink" href="#dbconnectorh-docker-database-initsh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名 / 変数名</th>
+<th>ハードコード値</th>
+<th>出典</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SonicDBConfig::DEFAULT_SONIC_DB_CONFIG_FILE</code></td>
+<td><code>/var/run/redis/sonic-db/database_config.json</code></td>
+<td><code>dbconnector.h:90</code></td>
+</tr>
+<tr>
+<td><code>SonicDBConfig::DEFAULT_SONIC_DB_GLOBAL_CONFIG_FILE</code></td>
+<td><code>/var/run/redis/sonic-db/database_global.json</code></td>
+<td><code>dbconnector.h:91</code></td>
+</tr>
+<tr>
+<td><code>RedisContext::DEFAULT_UNIXSOCKET</code></td>
+<td><code>/var/run/redis/redis.sock</code></td>
+<td><code>dbconnector.h:169,206</code></td>
+</tr>
+<tr>
+<td><code>redis_port</code> (デフォルト)</td>
+<td><code>6379</code></td>
+<td><code>docker-database-init.sh:20</code></td>
+</tr>
+<tr>
+<td><code>redis_port</code> (DPU インスタンス)</td>
+<td><code>6381 + DPU_ID</code></td>
+<td><code>docker-database-init.sh:28</code></td>
+</tr>
+<tr>
+<td><code>REMOTE_DB_PORT</code> (DPU リモート)</td>
+<td><code>6380 + d</code></td>
+<td><code>docker-database-init.sh:40</code></td>
+</tr>
+<tr>
+<td><code>BMP_DB_PORT</code></td>
+<td><code>6400</code></td>
+<td><code>docker-database-init.sh:49</code></td>
+</tr>
+<tr>
+<td><code>REDIS_DIR</code></td>
+<td><code>/var/run/redis${NAMESPACE_ID}</code></td>
+<td><code>docker-database-init.sh:51</code></td>
+</tr>
+<tr>
+<td><code>KEY_DEL_CHUNK_SIZE</code></td>
+<td><code>128</code></td>
+<td><code>dbconnector.cpp:23</code> (Redis キー一括削除サイズ)</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: sonic-net/sonic-swss-common/common/schema.h L12-33 (DB ID マクロ定義) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.h L90-91,169,206 (パス・ソケット定数) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L45-64 (parseDatabaseConfig JSON キー) -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L20,28,40,49,51 (ポート・パス定数) -->
+
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>database_config.json</code> は CONFIG_DB テーブルではなくインフラ層ファイルである。<code>SonicDBConfig</code> がこのファイルを読み込んだ結果は <strong>プロセス内のインメモリキャッシュ</strong> (<code>m_inst_info</code> / <code>m_db_info</code> / <code>m_db_separator</code>) に格納されるのみで、他のRedis DB への副次書込は発生しない。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>書込有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB</td>
+<td>なし</td>
+<td><code>database_config.json</code> 自体が CONFIG_DB に格納されず、<code>SonicDBConfig</code> は CONFIG_DB へ書き込まない (<code>dbconnector.cpp</code> 全体でDB書込呼出ゼロ)</td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td><code>SonicDBConfig</code> は参照専用クラス。<code>parseDatabaseConfig()</code> / <code>initialize()</code> 内に Producer・Table・hset・set 呼出なし (<code>dbconnector.cpp:27-204</code>)</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td><code>SonicDBConfig</code> は STATE_DB への接続を一切保持しない。起動完了通知を STATE_DB に書き込む仕組みも存在しない</td>
+</tr>
+<tr>
+<td>ASIC_DB / COUNTERS_DB / FLEX_COUNTER_DB</td>
+<td>なし</td>
+<td>SAI 非経由。<code>database_config.json</code> の変更は orchagent / syncd に伝播しない。SAI ドライバ側の DB ID も <code>schema.h</code> マクロで静的に固定</td>
+</tr>
+<tr>
+<td>LOGLEVEL_DB</td>
+<td>なし</td>
+<td><code>SonicDBConfig</code> の動作はログレベル DB を購読・書込しない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="reset"><code>reset()</code> 実行時の副次効果<a class="headerlink" href="#reset" title="Permanent link">&para;</a></h3>
+<p><code>SonicDBConfig::reset()</code> を呼んでインメモリキャッシュをクリアした場合、既存の <code>DBConnector</code> インスタンスは <strong>キャッシュ参照を失うが自動切断されない</strong>。以降の <code>getDbInfo()</code> 系 API 呼び出しは再初期化をトリガーするか <code>out_of_range</code> を発生させる。</p>
+<table>
+<thead>
+<tr>
+<th>状況</th>
+<th>挙動</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>reset()</code> 後に <code>initialize()</code> 再実行</td>
+<td>インメモリキャッシュを新設定で再構築。既存 <code>DBConnector</code> の TCP/UNIX 接続は継続されるが、接続先 DB ID が旧設定のまま残る場合は論理不整合が生じる</td>
+<td><code>dbconnector.cpp:209-218</code></td>
+</tr>
+<tr>
+<td><code>reset()</code> 後に <code>getDbInfo()</code> 等を呼ぶ</td>
+<td><code>m_init == false</code> のため自動的に <code>initialize(DEFAULT_SONIC_DB_CONFIG_FILE)</code> を実行 (デフォルトパスから再読み込み)</td>
+<td><code>dbconnector.cpp:252-253</code></td>
+</tr>
+<tr>
+<td><code>reset()</code> 後に namespace 指定 API を呼ぶ</td>
+<td><code>m_global_init == false</code> のため <code>SWSS_LOG_THROW</code> でプロセス即 abort</td>
+<td><code>dbconnector.cpp:229-231</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">実運用での reset() 使用</p>
+<p><code>reset()</code> はテストコードと一部の設定リロードシナリオ専用と位置付けられる。本番環境での使用は原則 <code>docker-database</code> コンテナ再起動で代替する (<code>docker-database-init.sh</code> 参照)。</p>
+</div>
+<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L209-218 (reset 実装) -->
+<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp L252-253 (自動再初期化) -->
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<p><code>database_config.json</code> は CONFIG_DB テーブルではなくインフラ層ファイルであるため、通常の CONFIG_DB テーブルが用いる Redis PUBLISH/SUBSCRIBE メカニズムは <strong>一切使用しない</strong>。<code>SonicDBConfig</code> クラスはファイルを起動時に一度読み込んでインメモリキャッシュに格納するのみで、keyspace notification の発行も受信も行わない。</p>
+<h3 id="_8">変更通知が不要な理由<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p><code>database_config.json</code> が定義するのは <strong>Redis インスタンスと DB ID のマッピング</strong> というインフラ基盤であり、実行時に動的に変化しない前提で設計されている。変更を反映するには Redis インスタンス自体を再起動する必要があるため、pub/sub による差分通知では対応できない。</p>
+<table>
+<thead>
+<tr>
+<th>経路</th>
+<th>採用有無</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Redis keyspace notification (PSUBSCRIBE)</td>
+<td><strong>不使用</strong></td>
+<td>CONFIG_DB テーブルでなく、変更を受信するサブスクライバーが存在しない</td>
+</tr>
+<tr>
+<td><code>SubscriberStateTable</code> / <code>ConsumerStateTable</code></td>
+<td><strong>不使用</strong></td>
+<td><code>SonicDBConfig</code> は DB 接続クライアントを保持しない (<code>dbconnector.cpp</code> 全体で Subscribe 呼出ゼロ)</td>
+</tr>
+<tr>
+<td><code>NotificationConsumer</code> / <code>NotificationProducer</code></td>
+<td><strong>不使用</strong></td>
+<td>同上</td>
+</tr>
+<tr>
+<td>コンテナ再起動による再読み込み</td>
+<td><strong>採用</strong></td>
+<td><code>docker-database-init.sh</code> が生成 → supervisord が Redis 再起動 → 各アプリが <code>SonicDBConfig::initialize()</code> で再読み込み</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">変更反映フロー<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>管理者が /etc/sonic/database_config.json を更新
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ↓
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>docker restart database  (または config reload 経由)
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  ↓
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>docker-database-init.sh が再実行 → /var/run/redis/sonic-db/database_config.json を再生成
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  ↓
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>supervisord が Redis インスタンスを再起動
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  ↓
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>各アプリが再起動 → SonicDBConfig::initialize() でファイルを再読み込み
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>（pub/sub チャンネルや keyspace notification は介在しない）
+</span></code></pre></div>
+<!-- evidence: sonic-net/sonic-swss-common/common/dbconnector.cpp (SonicDBConfig 全体: PUBLISH/SUBSCRIBE 呼出なし) -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh (生成・配置ロジック) -->
+
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/redis-db-config-platform.md</code></p>
+</blockquote>
+<p><code>SonicDBConfig</code> クラス自体はプラットフォーム識別文字列 (<code>broadcom</code> / <code>mellanox</code> 等) を一切参照しない。プラットフォーム差はすべて <code>docker-database-init.sh</code> が生成する <code>database_config.json</code> の <strong>内容</strong> の差として現れ、<code>SonicDBConfig</code> はそのファイルを単純に読み込む。</p>
+<h3 id="database_type"><code>DATABASE_TYPE</code> 環境変数による構成分岐<a class="headerlink" href="#database_type" title="Permanent link">&para;</a></h3>
+<p><code>docker-database-init.sh</code> は <code>DATABASE_TYPE</code> 環境変数に応じて生成するテンプレートと起動経路を分岐させる。</p>
+<table>
+<thead>
+<tr>
+<th><code>DATABASE_TYPE</code></th>
+<th>起動文脈</th>
+<th>生成内容</th>
+<th>特殊処理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>""</code> (未設定)</td>
+<td>通常ノード / multi-ASIC host namespace</td>
+<td><code>database_config.json.j2</code></td>
+<td>標準構成</td>
+</tr>
+<tr>
+<td><code>dpudb</code></td>
+<td>SmartSwitch NPU から見た DPU 用 DB</td>
+<td><code>database_config.json.j2</code> (DPU エントリ付き)</td>
+<td><code>host_ip=169.254.200.254</code>、<code>redis_port=6381+DPU_ID</code></td>
+</tr>
+<tr>
+<td><code>bmcdb</code></td>
+<td>BMC 搭載ノード</td>
+<td><code>database_config.json.j2</code></td>
+<td>BMP DB エントリ除外</td>
+</tr>
+<tr>
+<td><code>chassisdb</code></td>
+<td>VoQ Chassis Supervisor 専用 DB コンテナ</td>
+<td>supervisord config のみ生成して <code>exit 0</code></td>
+<td><code>update_chassisdb_config -k</code> で chassis 専用設定を保持</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L22-46 (DATABASE_TYPE 分岐) -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L84-100 (chassisdb 分岐) -->
+
+<h3 id="namespace_id-multi-asic"><code>NAMESPACE_ID</code> による multi-ASIC 対応<a class="headerlink" href="#namespace_id-multi-asic" title="Permanent link">&para;</a></h3>
+<p><code>NAMESPACE_ID</code> が空の場合は host namespace として <code>lo</code> (loopback) を使用し REDIS_DIR は <code>/var/run/redis/sonic-db/</code>。非空 (<code>asic0</code> 等) の場合は ASIC namespace 専用コンテナとして <code>eth0</code> を使用し REDIS_DIR は <code>/var/run/redisasic0/sonic-db/</code> 等になる。</p>
+<p><code>database_global.json</code> の生成は <code>NAMESPACE_ID == "" &amp;&amp; DATABASE_TYPE == "" &amp;&amp; (NAMESPACE_COUNT &gt; 1 || NUM_DPU &gt; 1)</code> の条件を満たす場合のみ行われる。</p>
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L5-9 (INTFC 分岐) -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L104-110 (database_global.json 生成条件) -->
+
+<h3 id="voq-chassis-chassisdbconf">VoQ Chassis: <code>chassisdb.conf</code> によるエントリ制御<a class="headerlink" href="#voq-chassis-chassisdbconf" title="Permanent link">&para;</a></h3>
+<p>プラットフォームが VoQ Chassis の場合、<code>/usr/share/sonic/platform/chassisdb.conf</code> が <code>start_chassis_db</code> / <code>chassis_db_address</code> / <code>chassis_db_port</code> を定義する。</p>
+<ul>
+<li><code>start_chassis_db=1</code>: <code>CHASSIS_APP_DB</code> / <code>CHASSIS_STATE_DB</code> エントリを最終 <code>database_config.json</code> に含める</li>
+<li><code>start_chassis_db=0</code> (デフォルト / 非 VoQ): <code>update_chassisdb_config -d</code> で chassis エントリを削除</li>
+</ul>
+<p>VoQ ラインカードでは Redis の <strong>protected mode が無効化</strong> される。ラインカード外部の midplane ネットワーク越しに supervisor の <code>redis_chassis</code> への接続を許可するためである。</p>
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L74-78 (chassisdb.conf 読み込み) -->
+<!-- evidence: sonic-net/sonic-buildimage/dockers/docker-database/docker-database-init.sh L117-120 (linecard protected mode 無効化) -->
+
+<h3 id="_10">構成別まとめ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>構成</th>
+<th><code>database_config.json</code> の差異</th>
+<th><code>database_global.json</code> 生成</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>single-ASIC (T0/T1)</td>
+<td>標準テンプレート</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>multi-ASIC (複数 NPU)</td>
+<td>host namespace: 標準 + global。asicN namespace: 標準のみ</td>
+<td>host namespace のみ生成</td>
+</tr>
+<tr>
+<td>VoQ Chassis (line card)</td>
+<td>chassis エントリ除外 / protected mode 無効</td>
+<td>なし (line card は NAMESPACE_COUNT 非対象)</td>
+</tr>
+<tr>
+<td>VoQ Chassis (supervisor)</td>
+<td><code>chassisdb</code> 専用経路 (<code>exit 0</code>)</td>
+<td>なし</td>
+</tr>
+<tr>
+<td>SmartSwitch (DPU)</td>
+<td><code>dpudb</code> エントリ付き / ポート <code>6381+DPU_ID</code></td>
+<td><code>NUM_DPU &gt; 1</code> 時に host 側で生成</td>
+</tr>
+<tr>
+<td>BMC 搭載ノード</td>
+<td>BMP DB エントリ除外</td>
+<td>なし</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
 
 <h2 id="separator">separator の役割<a class="headerlink" href="#separator" title="Permanent link">&para;</a></h2>
 <p><code>separator</code> はキー文字列でテーブル名と行キーを区切る文字:</p>
@@ -35642,31 +36726,31 @@
 <p><code>SonicDBConfig::getSeparator()</code> で DB 名または DB ID から取得できる<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="unix_socket_path">unix_socket_path の扱い<a class="headerlink" href="#unix_socket_path" title="Permanent link">&para;</a></h2>
 <p><code>parseDatabaseConfig()</code> では <code>unix_socket_path</code> は任意フィールドとして扱われる<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup>:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// dbconnector.cpp:49-53</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">it</span><span class="p">.</span><span class="n">value</span><span class="p">().</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;unix_socket_path&quot;</span><span class="p">);</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">path</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">it</span><span class="p">.</span><span class="n">value</span><span class="p">().</span><span class="n">end</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="n">socket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">path</span><span class="p">;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// dbconnector.cpp:49-53</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">auto</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">it</span><span class="p">.</span><span class="n">value</span><span class="p">().</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;unix_socket_path&quot;</span><span class="p">);</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">path</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">it</span><span class="p">.</span><span class="n">value</span><span class="p">().</span><span class="n">end</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">socket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">path</span><span class="p">;</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <p><code>unix_socket_path</code> が存在しない場合、socket は空文字列となり TCP 接続のみ有効になる。</p>
-<h2 id="_8">初期化フロー<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker-database-init.sh
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  │
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  ├─ /etc/sonic/database_config.json が存在?
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  │    はい → コピー
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  │    いいえ → /etc/sonic/enable_multidb が存在?
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  │                はい → multi_database_config.json.j2 でレンダリング
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  │                いいえ → database_config.json.j2 でレンダリング
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  │
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>  └─ 出力先: /var/run/redis/sonic-db/database_config.json
+<h2 id="_11">初期化フロー<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker-database-init.sh
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  │
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  ├─ /etc/sonic/database_config.json が存在?
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  │    はい → コピー
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  │    いいえ → /etc/sonic/enable_multidb が存在?
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  │                はい → multi_database_config.json.j2 でレンダリング
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  │                いいえ → database_config.json.j2 でレンダリング
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  │
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>  └─ 出力先: /var/run/redis/sonic-db/database_config.json
 </span></code></pre></div>
 <p>アプリ側では <code>SonicDBConfig::initialize()</code> がこのファイルを読み込む。マルチ ASIC / SmartSwitch 環境では <code>SonicDBConfig::initializeGlobalConfig()</code> が <code>database_global.json</code> も読み込み、namespace ごとの DB 情報をマッピングする<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
-<h2 id="_9">関連リファレンス<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li>C++ API: <code>swsscommon::SonicDBConfig</code> (<code>sonic-swss-common</code>)</li>
 <li>Python API: <code>from swsscommon import swsscommon; swsscommon.SonicDBConfig.load_sonic_db_config()</code></li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

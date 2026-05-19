@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SECURITY_PROFILES テーブル — gNSI Certz の SSL プロファイルと証明書ファイル名のマッピングを CONFIG_DB に保持するテーブル。sonic-pki.yang で定義されるが、コミュニティ master の主要 YANG モデルには未マージ (2026-05 時点)。">
+        <meta name="description" content="SECURITY_PROFILES テーブル — gNSI Certz の SSL プロファイルと証明書ファイル名のマッピングを CONFIG_DB に保持するテーブル。sonic-pki.yang で定義されるが、コミュニティ master の主要 YANG モデルには未マージ (2026-05 時点)。Phase A–H 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SECURITY_PROFILES / PKI テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SECURITY_PROFILES テーブル — gNSI Certz の SSL プロファイルと証明書ファイル名のマッピングを CONFIG_DB に保持するテーブル。sonic-pki.yang で定義されるが、コミュニティ master の主要 YANG モデルには未マージ (2026-05 時点)。" />
+<meta property="og:description" content="SECURITY_PROFILES テーブル — gNSI Certz の SSL プロファイルと証明書ファイル名のマッピングを CONFIG_DB に保持するテーブル。sonic-pki.yang で定義されるが、コミュニティ master の主要 YANG モデルには未マージ (2026-05 時点)。Phase A–H 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/pki-trusted-certs.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/pki-trusted-certs/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SECURITY_PROFILES / PKI テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SECURITY_PROFILES テーブル — gNSI Certz の SSL プロファイルと証明書ファイル名のマッピングを CONFIG_DB に保持するテーブル。sonic-pki.yang で定義されるが、コミュニティ master の主要 YANG モデルには未マージ (2026-05 時点)。" />
+<meta property="twitter:description" content="SECURITY_PROFILES テーブル — gNSI Certz の SSL プロファイルと証明書ファイル名のマッピングを CONFIG_DB に保持するテーブル。sonic-pki.yang で定義されるが、コミュニティ master の主要 YANG モデルには未マージ (2026-05 時点)。Phase A–H 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/pki-trusted-certs.png" />
 </head>
   
@@ -27860,6 +27860,128 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込・外部副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込・外部副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-credentialscertprofileid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — CREDENTIALS|CERT|&lt;profileID&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイルシステム副作用 — シンボリックリンク更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certzmetafile-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CertzMetaFile — プロファイルメタデータ JSON
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-appl_db-asic_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / APPL_DB / ASIC_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読状況
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnsi-certz-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNSI Certz — CONFIG_DB を購読しない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来の実装が想定される購読経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-yang-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27871,7 +27993,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35647,6 +35769,128 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込・外部副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込・外部副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db-credentialscertprofileid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB — CREDENTIALS|CERT|&lt;profileID&gt;
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ファイルシステム副作用 — シンボリックリンク更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certzmetafile-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CertzMetaFile — プロファイルメタデータ JSON
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-appl_db-asic_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / APPL_DB / ASIC_DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 購読状況
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gnsi-certz-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gNSI Certz — CONFIG_DB を購読しない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        将来の実装が想定される購読経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#config_db-yang-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35658,7 +35902,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -36378,6 +36622,206 @@
 -->
 <!-- /constants -->
 
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込・外部副作用 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>SECURITY_PROFILES</code> / <code>SECURITY_GLOBAL</code> を書き込む production ハンドラは community master に存在しないため、CONFIG_DB 操作に伴う orchagent / translib 由来の副次 DB 書込はない。ただし gNSI Certz が Rotate RPC・起動処理を通じて以下の副次作用を持つ。</p>
+<h3 id="state_db-credentialscertprofileid">STATE_DB — <code>CREDENTIALS|CERT|&lt;profileID&gt;</code><a class="headerlink" href="#state_db-credentialscertprofileid" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>トリガ</th>
+<th>操作</th>
+<th>キー</th>
+<th>フィールド</th>
+<th>値</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gNSI Certz 起動 (<code>bootstrapDefaultProfile</code>)</td>
+<td>HSET</td>
+<td><code>CREDENTIALS\|CERT\|&lt;profileID&gt;</code></td>
+<td><code>certificate_version</code> / <code>ca_trust_bundle_version</code> 等 6 フィールド</td>
+<td><code>"V1"</code> (起動初期値)</td>
+<td><code>gnsi_certz.go:134-138, 688-715</code></td>
+</tr>
+<tr>
+<td>Rotate RPC <code>activateEntity</code></td>
+<td>HSET</td>
+<td><code>CREDENTIALS\|CERT\|&lt;profileID&gt;</code></td>
+<td>対応エンティティの <code>*_version</code> / <code>*_created_on</code> フィールド</td>
+<td>クライアント指定値</td>
+<td><code>gnsi_certz.go:502</code></td>
+</tr>
+<tr>
+<td>Rotate RPC <code>finalizeProfile</code></td>
+<td>HSET</td>
+<td><code>CREDENTIALS\|CERT\|&lt;profileID&gt;</code></td>
+<td>確定済みエンティティ全フィールド</td>
+<td>確定値</td>
+<td><code>gnsi_certz.go:646-685</code></td>
+</tr>
+</tbody>
+</table>
+<p>DB クライアント: <code>common_utils.GetRedisDBClient()</code> — DB 番号 <strong>6</strong> (STATE_DB) に対して <code>HSET</code> (<code>gnsi_certz.go:1040-1052</code>, <code>common_utils/notification_producer.go:16</code>)。Redis 障害時は <code>"REDIS is not available"</code> をログ出力のみで継続（証明書ファイル自体には影響しない）。</p>
+<h3 id="_12">ファイルシステム副作用 — シンボリックリンク更新<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<p>Rotate RPC が証明書を差し替えると、以下のシンボリックリンクがアトミックに更新される:</p>
+<table>
+<thead>
+<tr>
+<th>シンボリックリンク</th>
+<th>対象エンティティ</th>
+<th>更新関数</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cfg.SrvCertLnk</code> (<code>/keys/server_cert.lnk</code>)</td>
+<td>サーバ証明書 (Cert)</td>
+<td><code>atomicSetSrvCertKeyPair</code></td>
+<td><code>gnsi_certz.go:924-963</code></td>
+</tr>
+<tr>
+<td><code>cfg.SrvKeyLnk</code> (<code>/keys/server_key.lnk</code>)</td>
+<td>サーバ秘密鍵 (Cert)</td>
+<td><code>atomicSetSrvCertKeyPair</code></td>
+<td><code>gnsi_certz.go:924-963</code></td>
+</tr>
+<tr>
+<td><code>cfg.CaCertLnk</code> (<code>/keys/ca_cert.lnk</code>)</td>
+<td>CA 証明書 (TrustBundle)</td>
+<td><code>atomicSetCACert</code></td>
+<td><code>gnsi_certz.go:966-989</code></td>
+</tr>
+</tbody>
+</table>
+<p>これらのリンクは gRPC サーバが <strong>新規接続ごとに</strong> <code>tls.LoadX509KeyPair(cfg.SrvCertLnk, cfg.SrvKeyLnk)</code> で読み直す (<code>server.go:429</code>)。すなわちリンク更新後に張られた新規 TLS セッションは自動的に新証明書を使用し、<strong>gRPC サーバ再起動は不要</strong>。既存セッションは旧証明書のまま継続する。</p>
+<p>読み取り時は <code>muPath.RLock()</code> を保持することで、シンボリックリンク差し替え中（<code>muPath.Lock()</code> 保持）との競合が防がれる (<code>server.go:426-427, 449-450</code>)。</p>
+<h3 id="certzmetafile-json">CertzMetaFile — プロファイルメタデータ JSON<a class="headerlink" href="#certzmetafile-json" title="Permanent link">&para;</a></h3>
+<p><code>saveCertzMetadata</code> が <code>/keys/grpc-version.json</code> (デフォルト <code>CertzMetaFile</code>) を上書き更新する。更新タイミング:</p>
+<ul>
+<li>gNSI Certz 起動直後 (<code>gnsi_certz.go:141</code>)</li>
+<li>Rotate RPC <code>finalizeProfile</code> 完了後 (<code>gnsi_certz.go:683-685</code>)</li>
+</ul>
+<p>このファイルはプロセス再起動時に <code>loadCertzMetadata</code> で読み込まれ、証明書バージョン情報の永続化に使われる。STATE_DB や CONFIG_DB への書き込みは伴わない。</p>
+<h3 id="config_db-appl_db-asic_db">CONFIG_DB / APPL_DB / ASIC_DB<a class="headerlink" href="#config_db-appl_db-asic_db" title="Permanent link">&para;</a></h3>
+<p>対象なし。<code>SECURITY_PROFILES</code> を消費する translib / orchagent ハンドラが community master に存在しないため、CONFIG_DB への書込みが APPL_DB / ASIC_DB へ伝播する経路は確認されない。</p>
+<!-- evidence:
+  sonic-gnmi/gnmi_server/gnsi_certz.go:134-138 — bootstrapDefaultProfile: writeEntityFreshness × 4
+  sonic-gnmi/gnmi_server/gnsi_certz.go:502 — activateEntity: writeEntityFreshness
+  sonic-gnmi/gnmi_server/gnsi_certz.go:646-685 — finalizeProfile: writeEntityFreshness × 4 + saveCertzMetadata
+  sonic-gnmi/gnmi_server/gnsi_certz.go:688-715 — writeEntityFreshness (STATE_DB HSET)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:717-735 — saveCertzMetadata (CertzMetaFile JSON 書込)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:924-963 — atomicSetSrvCertKeyPair (SrvCertLnk / SrvKeyLnk 更新)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:966-989 — atomicSetCACert (CaCertLnk 更新)
+  sonic-gnmi/gnmi_server/gnsi_certz.go:1036-1057 — writeCredentialsMetadataToDB (STATE_DB DB=6, REDIS unavailable 処理)
+  sonic-gnmi/gnmi_server/server.go:423-434 — GetIdentityCertificatesForServer: 新規接続ごと LoadX509KeyPair + muPath.RLock
+  sonic-gnmi/gnmi_server/server.go:448-460 — GetRootCertificates: 新規接続ごと ReadFile(CaCertLnk) + muPath.RLock
+  sonic-gnmi/common_utils/notification_producer.go:16 — dbName="STATE_DB" (DB=6)
+-->
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<p><code>SECURITY_PROFILES</code> / <code>SECURITY_GLOBAL</code> テーブルを購読するプロセスは community master では<strong>検出されなかった</strong>。</p>
+<h3 id="redis">Redis 購読状況<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>購読者</th>
+<th>購読方式</th>
+<th>ハンドラ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SECURITY_PROFILES</code></td>
+<td>なし（ハンドラ未実装）</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>SECURITY_GLOBAL</code></td>
+<td>なし（ハンドラ未実装）</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><code>sonic-pki.yang</code> は <code>sonic-buildimage</code> の本体 YANG には未マージであり、<code>SECURITY_PROFILES</code> を消費する orchagent / translib / certmgr ハンドラが community master に存在しない。CONFIG_DB への書込みは CVL バリデーションのみを通過し、runtime プロセスには伝播しない。</p>
+<h3 id="gnsi-certz-config_db">gNSI Certz — CONFIG_DB を購読しない<a class="headerlink" href="#gnsi-certz-config_db" title="Permanent link">&para;</a></h3>
+<p>gNSI Certz (<code>gnsi_certz.go</code>) はプロファイル管理に CONFIG_DB を使用しない。証明書バンドル情報は <code>/keys/grpc-version.json</code> (CertzMetaFile) とファイルシステムシンボリックリンクで管理される。STATE_DB (<code>CREDENTIALS|CERT|&lt;profileID&gt;</code>) への書込みは発生するが（Phase F 参照）、これは購読通知ではなく直接 HSET による<strong>書込み</strong>である。</p>
+<h3 id="_13">将来の実装が想定される購読経路<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<p><code>sonic-pki.yang</code> が <code>sonic-buildimage</code> にマージされ、対応ハンドラが実装された場合は以下の購読経路が想定される:</p>
+<table>
+<thead>
+<tr>
+<th>想定購読者</th>
+<th>購読テーブル</th>
+<th>期待される動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>certmgr または translib ハンドラ</td>
+<td><code>SECURITY_PROFILES</code> / <code>SECURITY_GLOBAL</code></td>
+<td>証明書ファイルのインストール・シンボリックリンク更新</td>
+</tr>
+</tbody>
+</table>
+<p>ただし実装は community master 2026-05-14 時点では未存在。</p>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-gnmi/gnmi_server/gnsi_certz.go</code> 全体スキャン — <code>ConfigDBConnector.subscribe()</code> / <code>SubscriberStateTable</code> / <code>ConsumerStateTable</code> の使用なし確認。<code>sonic-swss</code> / <code>sonic-swss-common</code> でも <code>SECURITY_PROFILES</code> / <code>SECURITY_GLOBAL</code> のキーワード一致なし。</p>
+</blockquote>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差分 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><strong>プラットフォーム差なし</strong>: <code>SECURITY_PROFILES</code> / <code>SECURITY_GLOBAL</code> テーブルおよび gNSI Certz は ASIC 種別・multi-asic / VOQ chassis 構成・SmartSwitch DPU 構成に依らず同一動作をする。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell 等)</td>
+<td>影響なし</td>
+<td><code>SECURITY_PROFILES</code> を消費する SAI 経由ハンドラが community master に存在しない。証明書管理はファイルシステム + gRPC のみで ASIC SAI API を呼ばない</td>
+</tr>
+<tr>
+<td>multi-asic (<code>is_multi_npu() == True</code>)</td>
+<td>影響なし</td>
+<td>gNSI Certz (<code>gnsi_certz.go</code>) は <code>ConfigDBConnector</code> 引数なし (host CONFIG_DB のみ) で起動し、<code>asicN</code> namespace を iterate しない。<code>sonic-pki.yang</code> も host scope で定義されている</td>
+</tr>
+<tr>
+<td>VOQ chassis (supervisor + line cards)</td>
+<td>各 host で独立適用</td>
+<td><code>SECURITY_PROFILES</code> / <code>SECURITY_GLOBAL</code> は host scope テーブル。chassis 全体集中管理機構はなく、各 line card host で独立して CVL バリデーションが適用される</td>
+</tr>
+<tr>
+<td>SmartSwitch (NPU + DPU)</td>
+<td>影響なし</td>
+<td><code>gnmi-native.sh</code> が SmartSwitch 時に ZMQ オプションを付与する (<code>gnmi-native.sh:88-91</code>) が、これは gNMI サーバ全体の通信チャネル切替であり gNSI Certz のプロファイル管理・証明書ファイル操作には影響しない。DPU 側での <code>SECURITY_PROFILES</code> ハンドラも未実装</td>
+</tr>
+<tr>
+<td>コンテナ分離</td>
+<td>影響なし</td>
+<td>gNSI Certz は <code>docker-sonic-gnmi</code> コンテナ内で動作し、ファイルシステムマウント (<code>/keys/</code>) の構成はプラットフォームによらず共通 (<code>gnmi-native.sh</code> 全体調査)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>根拠</strong>: <code>sonic-gnmi/gnmi_server/gnsi_certz.go</code> 全行調査 — <code>is_multi_npu</code> / <code>DEVICE_METADATA</code> / <code>SmartSwitch</code> / <code>chassis</code> の参照なし確認。<code>sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh</code> — SmartSwitch 分岐は ZMQ ポート付与のみ (<code>gnmi-native.sh:88-91</code>) で gNSI Certz 固有の設定変更なし。<code>sonic-mgmt-common/cvl/testdata/schema/sonic-pki.yang</code> — platform 条件分岐なし。</p>
+</blockquote>
+<!-- /platform -->
+
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 CONFIG_DB: <a href="../gnmi/"><code>GNMI</code></a> (<code>GNMI|certs</code> で証明書パスを設定), <a href="../telemetry/"><code>TELEMETRY</code></a></li>
@@ -36385,7 +36829,7 @@
 <li>関連 CLI: なし (gNSI Certz は RPC 経由で設定)</li>
 </ul>
 <!-- cdb-exceptions -->
-<h2 id="_12">例外条件・特殊挙動<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>コミュニティ master 未マージ</strong>: <code>sonic-pki.yang</code> は CVL testdata スキーマとしてのみ存在。<code>sonic-buildimage</code> YANG には含まれないため、<code>sonic-cfggen</code> / <code>config reload</code> 等は本テーブルを認識しない</li>
 <li><strong>gNSI Certz は CONFIG_DB を参照しない</strong>: プロファイル管理は <code>/keys/grpc-version.json</code> (CertzMetaFile) とファイルシステムシンボリックリンクで行われる。CONFIG_DB の <code>SECURITY_PROFILES</code> との連携は設計上の将来課題</li>

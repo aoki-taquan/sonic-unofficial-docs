@@ -21631,7 +21631,323 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kube_join_master-join_retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kube_join_master 失敗 → JOIN_RETRY による自動リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kube_reset_master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kube_reset_master 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kube_write_labels-label_retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kube_write_labels 失敗 → LABEL_RETRY による自動リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-ctrmgrd-abort" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select() エラー → ctrmgrd プロセス abort
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ctrmgrdpy112-118" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマー定数 (ctrmgrd.py:112-118)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ctrmgrdpy23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定ファイルパス定数 (ctrmgrd.py:23)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-state_db-ctrmgrdpy30-45" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / STATE_DB フィールド名定数 (ctrmgrd.py:30-45)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ctrmgrdpy59-62" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        所有者モード定数 (ctrmgrd.py:59-62)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kube_labels-ctrmgrdpy56-57" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        KUBE_LABELS テーブル名定数 (ctrmgrd.py:56-57)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select_timeout-ctrmgrdpy181" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SELECT_TIMEOUT 定数 (ctrmgrd.py:181)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_dbkubernetes_masterserver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB:KUBERNETES_MASTER|SERVER への書込詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_dbkube_labelsset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB:KUBE_LABELS|SET へのラベル書込詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読チャンネル一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_dbkubernetes_master-remoteserverhandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB:KUBERNETES_MASTER 経路（RemoteServerHandler）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-state_dbfeature-featuretransitionhandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB + STATE_DB:FEATURE 経路（FeatureTransitionHandler）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_dbkube_labels-labelspendinghandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB:KUBE_LABELS 経路（LabelsPendingHandler）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Select ループによるディスパッチ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#include_kubernetes_master-rulesconfig260" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ビルド時フラグ INCLUDE_KUBERNETES_MASTER (rules/config:260)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workersonicplatform-platform-ctrmgrdpy304-305" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        worker.sonic/platform ラベルへの platform 文字列設定 (ctrmgrd.py:304-305)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / VOQ chassis 非依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールドデフォルト
@@ -21643,7 +21959,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         データフロー (自動生成)
@@ -21670,7 +21986,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         主要フィールド
@@ -21681,7 +21997,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -21703,7 +22019,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -21714,7 +22030,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -21725,7 +22041,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -21737,7 +22053,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -21748,7 +22064,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -21759,7 +22075,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -21775,7 +22091,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -21825,7 +22141,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -21836,7 +22152,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         実コンテナ動作トレース
@@ -21964,7 +22280,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -21975,7 +22291,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -35231,7 +35547,323 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kube_join_master-join_retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kube_join_master 失敗 → JOIN_RETRY による自動リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kube_reset_master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kube_reset_master 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kube_write_labels-label_retry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        kube_write_labels 失敗 → LABEL_RETRY による自動リトライ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-ctrmgrd-abort" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select() エラー → ctrmgrd プロセス abort
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ctrmgrdpy112-118" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマー定数 (ctrmgrd.py:112-118)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ctrmgrdpy23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設定ファイルパス定数 (ctrmgrd.py:23)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-state_db-ctrmgrdpy30-45" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB / STATE_DB フィールド名定数 (ctrmgrd.py:30-45)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ctrmgrdpy59-62" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        所有者モード定数 (ctrmgrd.py:59-62)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kube_labels-ctrmgrdpy56-57" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        KUBE_LABELS テーブル名定数 (ctrmgrd.py:56-57)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select_timeout-ctrmgrdpy181" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SELECT_TIMEOUT 定数 (ctrmgrd.py:181)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_dbkubernetes_masterserver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB:KUBERNETES_MASTER|SERVER への書込詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_dbkube_labelsset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB:KUBE_LABELS|SET へのラベル書込詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読チャンネル一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_dbkubernetes_master-remoteserverhandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB:KUBERNETES_MASTER 経路（RemoteServerHandler）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-state_dbfeature-featuretransitionhandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB + STATE_DB:FEATURE 経路（FeatureTransitionHandler）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_dbkube_labels-labelspendinghandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB:KUBE_LABELS 経路（LabelsPendingHandler）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Select ループによるディスパッチ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#include_kubernetes_master-rulesconfig260" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ビルド時フラグ INCLUDE_KUBERNETES_MASTER (rules/config:260)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workersonicplatform-platform-ctrmgrdpy304-305" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        worker.sonic/platform ラベルへの platform 文字列設定 (ctrmgrd.py:304-305)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / VOQ chassis 非依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールドデフォルト
@@ -35243,7 +35875,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         データフロー (自動生成)
@@ -35270,7 +35902,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         主要フィールド
@@ -35281,7 +35913,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -35303,7 +35935,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35314,7 +35946,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35325,7 +35957,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -35337,7 +35969,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -35348,7 +35980,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -35359,7 +35991,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35375,7 +36007,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         値依存挙動マトリクス
@@ -35425,7 +36057,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35436,7 +36068,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         実コンテナ動作トレース
@@ -35564,7 +36196,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         ハードコードデフォルト
@@ -35575,7 +36207,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         ランタイム注入 (デーモン自動書き込み)
@@ -35822,8 +36454,579 @@
 <!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:157-158,292-307,333-342,413-414,440,471-474,488,505-506 -->
 <!-- /cross-refs -->
 
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:113-114,273-275,395-455,668-685 -->
+
+<p><code>ctrmgrd</code> は <code>KUBERNETES_MASTER</code> の変化を受けて <code>do_join()</code> / <code>do_reset()</code> を実行し、その成否に応じてタイマーリトライまたはプロセス abort で自己回復する。</p>
+<h3 id="kube_join_master-join_retry">kube_join_master 失敗 → JOIN_RETRY による自動リトライ<a class="headerlink" href="#kube_join_master-join_retry" title="Permanent link">&para;</a></h3>
+<p><code>RemoteServerHandler.do_join()</code> (<code>ctrmgrd.py:429-455</code>) が <code>kube_commands.kube_join_master(ip, port, insecure)</code> を呼び、戻り値が非ゼロの場合:</p>
+<table>
+<thead>
+<tr>
+<th>手順</th>
+<th>処理内容</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>st_server[ST_SER_CONNECTED] = "false"</code> → STATE_DB 即時更新</td>
+<td><code>ctrmgrd.py:444</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>remote_connected = False</code></td>
+<td><code>ctrmgrd.py:445</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>JOIN_RETRY</code> 秒後にタイマー登録 (<code>register_timer(self.start_time, self.handle_update)</code>)</td>
+<td><code>ctrmgrd.py:449-451</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>self.pending = True</code> — タイマー満了まで新規 join を抑制</td>
+<td><code>ctrmgrd.py:452</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>JOIN_RETRY</code> のデフォルト値は <strong>10 秒</strong> (<code>ctrmgrd.py:113</code>)。join が成功するまで 10 秒間隔で無制限にリトライが続く。STATE_DB の <code>connected</code> は join 成功時のみ <code>"true"</code> に変わる。</p>
+<blockquote>
+<p><strong>FQDN ip での DNS 解決失敗</strong>: <code>ip</code> フィールドに FQDN を設定した場合、起動早期 (DNS 未起動 / キャッシュ未熱) は <code>kube_join_master</code> が非ゼロを返し JOIN_RETRY ループに入る。静的 IP アドレスの使用を推奨する。</p>
+</blockquote>
+<h3 id="kube_reset_master">kube_reset_master 失敗<a class="headerlink" href="#kube_reset_master" title="Permanent link">&para;</a></h3>
+<p><code>do_reset()</code> (<code>ctrmgrd.py:418-426</code>) は <code>kube_commands.kube_reset_master(True)</code> の戻り値を無視する。</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>reset 成功・失敗いずれも</td>
+<td><code>st_server[ST_SER_CONNECTED] = "false"</code> に即時書き込み (<code>ctrmgrd.py:423</code>)</td>
+</tr>
+<tr>
+<td>reset コマンド失敗</td>
+<td><code>log_debug</code> のみ。エラーログ出力後に続行、リトライなし</td>
+</tr>
+</tbody>
+</table>
+<p>reset は「接続解除の意思表示」であり、コマンド失敗でも STATE_DB 側の <code>connected</code> フラグは <code>"false"</code> に確定するため、上位 Orch の接続状態に不整合は残らない。</p>
+<h3 id="kube_write_labels-label_retry">kube_write_labels 失敗 → LABEL_RETRY による自動リトライ<a class="headerlink" href="#kube_write_labels-label_retry" title="Permanent link">&para;</a></h3>
+<p>join 成功直後に <code>set_node_labels()</code> → <code>LabelsPendingHandler.update_node_labels()</code> (<code>ctrmgrd.py:668-685</code>) が <code>kube_commands.kube_write_labels(self.set_labels)</code> を実行し、非ゼロ返却の場合:</p>
+<table>
+<thead>
+<tr>
+<th>手順</th>
+<th>処理内容</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>self.pending = True</code></td>
+<td><code>ctrmgrd.py:678</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>LABEL_RETRY</code> 秒後にタイマー再登録 (<code>register_timer(ts, self.update_node_labels)</code>)</td>
+<td><code>ctrmgrd.py:679-681</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>LABEL_RETRY</code> のデフォルト値は <strong>2 秒</strong> (<code>ctrmgrd.py:114</code>)。ラベル書き込みが成功するまで 2 秒間隔で繰り返す。<code>STATE_DB:KUBE_LABELS|SET</code> への書き込みは <code>kube_write_labels</code> 内部で行われるため、失敗時は前回値が残留する。</p>
+<h3 id="select-ctrmgrd-abort">select() エラー → ctrmgrd プロセス abort<a class="headerlink" href="#select-ctrmgrd-abort" title="Permanent link">&para;</a></h3>
+<p><code>ctrmgrd.py:273-275</code>: メインループの <code>select()</code> が EINTR 以外のエラーを返すと <code>raise Exception("Received error from select")</code> が送出される。catch なしで ctrmgrd プロセスが abort し、systemd の <code>Restart=on-failure</code> 設定により自動再起動で自己回復する。</p>
+<h3 id="_4">失敗挙動まとめ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗箇所</th>
+<th>回復方式</th>
+<th>リトライ間隔 (デフォルト)</th>
+<th>STATE_DB への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kube_join_master</code> 失敗</td>
+<td>タイマー再試行 (無制限)</td>
+<td>JOIN_RETRY: <strong>10s</strong></td>
+<td><code>connected = "false"</code></td>
+</tr>
+<tr>
+<td><code>kube_reset_master</code> 失敗</td>
+<td>ログのみ・続行</td>
+<td>なし</td>
+<td><code>connected = "false"</code> (確定)</td>
+</tr>
+<tr>
+<td><code>kube_write_labels</code> 失敗</td>
+<td>タイマー再試行 (無制限)</td>
+<td>LABEL_RETRY: <strong>2s</strong></td>
+<td><code>KUBE_LABELS|SET</code> 前値残留</td>
+</tr>
+<tr>
+<td><code>select()</code> エラー</td>
+<td>ctrmgrd abort → systemd 再起動</td>
+<td>systemd restart delay</td>
+<td>再起動後に再構築</td>
+</tr>
+<tr>
+<td>DNS 解決失敗 (FQDN)</td>
+<td>JOIN_RETRY ループ</td>
+<td><strong>10s</strong></td>
+<td><code>connected = "false"</code></td>
+</tr>
+</tbody>
+</table>
+<p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/kubernetes-master-failure.md</code> 参照。</p>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/kubernetes-master-constants.md</code></p>
+</blockquote>
+<h3 id="ctrmgrdpy112-118">タイマー定数 (<code>ctrmgrd.py:112-118</code>)<a class="headerlink" href="#ctrmgrdpy112-118" title="Permanent link">&para;</a></h3>
+<p><code>ctrmgrd</code> が使用するリトライ・遅延タイマーはすべてコード内にデフォルト値を持ち、<code>/etc/sonic/remote_ctr.config.json</code> が存在する場合のみ上書きされる。ファイルが存在しない場合はコード埋め込み値がそのまま使われる。</p>
+<table>
+<thead>
+<tr>
+<th>変数名</th>
+<th>JSON キー</th>
+<th>デフォルト値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>JOIN_LATENCY</code></td>
+<td><code>"join_latency_on_boot_seconds"</code></td>
+<td><strong>10 秒</strong></td>
+<td>初回起動時の kubelet join 遅延</td>
+</tr>
+<tr>
+<td><code>JOIN_RETRY</code></td>
+<td><code>"retry_join_interval_seconds"</code></td>
+<td><strong>10 秒</strong></td>
+<td>join 失敗時のリトライ間隔</td>
+</tr>
+<tr>
+<td><code>LABEL_RETRY</code></td>
+<td><code>"retry_labels_update_seconds"</code></td>
+<td><strong>2 秒</strong></td>
+<td>ラベル書き込み失敗時のリトライ間隔</td>
+</tr>
+<tr>
+<td><code>TAG_IMAGE_LATEST</code></td>
+<td><code>"tag_latest_image_on_wait_seconds"</code></td>
+<td><strong>5 秒</strong></td>
+<td>latest イメージタグ付け待機時間</td>
+</tr>
+<tr>
+<td><code>TAG_RETRY</code></td>
+<td><code>"retry_tag_latest_seconds"</code></td>
+<td><strong>5 秒</strong></td>
+<td>タグ付け失敗時のリトライ間隔</td>
+</tr>
+<tr>
+<td><code>CLEAN_IMAGE_RETRY</code></td>
+<td><code>"retry_clean_image_seconds"</code></td>
+<td><strong>5 秒</strong></td>
+<td>旧イメージ削除失敗時のリトライ間隔</td>
+</tr>
+<tr>
+<td><code>USE_K8S_PROXY</code></td>
+<td><code>"use_k8s_as_http_proxy"</code></td>
+<td><code>""</code> (無効)</td>
+<td>K8s を HTTP プロキシとして使用するか</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ctrmgrdpy23">設定ファイルパス定数 (<code>ctrmgrd.py:23</code>)<a class="headerlink" href="#ctrmgrdpy23" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SONIC_CTR_CONFIG</span> <span class="o">=</span> <span class="s2">&quot;/etc/sonic/remote_ctr.config.json&quot;</span>
+</span></code></pre></div>
+<p>タイマー定数の外部上書き用 JSON ファイルのパスはハードコードされており、このパス以外にファイルを配置しても読み込まれない。</p>
+<h3 id="config_db-state_db-ctrmgrdpy30-45">CONFIG_DB / STATE_DB フィールド名定数 (<code>ctrmgrd.py:30-45</code>)<a class="headerlink" href="#config_db-state_db-ctrmgrdpy30-45" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>変数名</th>
+<th>値 (文字列)</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB</td>
+<td><code>SERVER_KEY</code></td>
+<td><code>"SERVER"</code></td>
+<td><code>KUBERNETES_MASTER</code> テーブルの単一 key 名</td>
+</tr>
+<tr>
+<td>CONFIG_DB</td>
+<td><code>CFG_SER_PORT</code></td>
+<td>デフォルト <code>"6443"</code></td>
+<td>API server デフォルトポート (YANG <code>default</code> 宣言とも一致)</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>ST_SER_CONNECTED</code></td>
+<td><code>"connected"</code></td>
+<td>join 成否フラグ (<code>"true"</code> / <code>"false"</code>)</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>ST_SER_UPDATE_TS</code></td>
+<td><code>"update_time"</code></td>
+<td>最終 join タイムスタンプ (初回起動判定に使用)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ctrmgrdpy59-62">所有者モード定数 (<code>ctrmgrd.py:59-62</code>)<a class="headerlink" href="#ctrmgrdpy59-62" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">MODE_KUBE</span> <span class="o">=</span> <span class="n">OWNER_KUBE</span> <span class="o">=</span> <span class="s2">&quot;kube&quot;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">MODE_LOCAL</span> <span class="o">=</span> <span class="n">OWNER_LOCAL</span> <span class="o">=</span> <span class="s2">&quot;local&quot;</span>
+</span></code></pre></div>
+<p><code>FEATURE.set_owner</code> の値と照合するための文字列定数。<code>"kube"</code> / <code>"local"</code> 以外の値は <code>handle_update()</code> 内で未定義動作になる。</p>
+<h3 id="kube_labels-ctrmgrdpy56-57">KUBE_LABELS テーブル名定数 (<code>ctrmgrd.py:56-57</code>)<a class="headerlink" href="#kube_labels-ctrmgrdpy56-57" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>変数名</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>KUBE_LABEL_TABLE</code></td>
+<td><code>"KUBE_LABELS"</code></td>
+<td>STATE_DB のラベルテーブル名</td>
+</tr>
+<tr>
+<td><code>KUBE_LABEL_SET_KEY</code></td>
+<td><code>"SET"</code></td>
+<td>ラベルテーブル内の単一 key</td>
+</tr>
+</tbody>
+</table>
+<h3 id="select_timeout-ctrmgrdpy181">SELECT_TIMEOUT 定数 (<code>ctrmgrd.py:181</code>)<a class="headerlink" href="#select_timeout-ctrmgrdpy181" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">SELECT_TIMEOUT</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># ms</span>
+</span></code></pre></div>
+<p>メインループの <code>swsscommon.Select.select()</code> タイムアウト値。1000 ms 間隔でイベントポーリングする。設定変更不可。</p>
+<!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:23,30-45,56-57,59-62,74,103-118,181 -->
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>ctrmgrd</code> は <code>KUBERNETES_MASTER|SERVER</code> 設定変化を受けて join / reset を実行し、その結果を STATE_DB に書き戻す。さらに join 成功時はノードラベルを STATE_DB に登録し、<code>FEATURE.set_owner</code> 変化時は feature ラベルと restart フラグを書き込む。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>書込フィールド</th>
+<th>書込元</th>
+<th>トリガー</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td><code>KUBERNETES_MASTER\|SERVER</code></td>
+<td><code>connected</code> (<code>"true"</code> / <code>"false"</code>), <code>update_time</code>, <code>ip</code>, <code>port</code></td>
+<td><code>RemoteServerHandler.do_join()</code> / <code>do_reset()</code> → <code>set_db_entry()</code></td>
+<td><code>KUBERNETES_MASTER</code> 設定変化 (join 成功・失敗・reset いずれの場合も)</td>
+<td><code>ctrmgrd.py:413-414, 423, 435-437</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>KUBE_LABELS\|SET</code></td>
+<td><code>sonic_version</code>, <code>hwsku</code>, <code>deployment_type</code>, <code>worker.sonic/platform</code></td>
+<td><code>set_node_labels()</code> → <code>mod_db_entry()</code></td>
+<td><code>do_join()</code> 成功直後 (<code>kube_join_master</code> 戻り値 0)</td>
+<td><code>ctrmgrd.py:306-307, 440</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>KUBE_LABELS\|SET</code></td>
+<td><code>&lt;feat&gt;_enabled</code> (<code>"true"</code> / <code>"false"</code>)</td>
+<td><code>FeatureTransitionHandler.handle_update()</code> → <code>mod_db_entry()</code></td>
+<td><code>CONFIG_DB:FEATURE.&lt;feat&gt;.set_owner</code> 変化時</td>
+<td><code>ctrmgrd.py:505-506</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>FEATURE\|&lt;feat&gt;</code></td>
+<td><code>restart</code> (<code>"true"</code>)</td>
+<td><code>restart_systemd_service()</code> → <code>mod_db_entry()</code></td>
+<td>サービス再起動が必要と判断された場合 (<code>set_owner</code> 変化 + 条件成立)</td>
+<td><code>ctrmgrd.py:157-158</code></td>
+</tr>
+<tr>
+<td>APPL_DB</td>
+<td>—</td>
+<td>なし</td>
+<td>—</td>
+<td>—</td>
+<td><code>ctrmgrd</code> は APPL_DB への <code>ProducerStateTable</code> 等を保有しない</td>
+</tr>
+<tr>
+<td>ASIC_DB / FLEX_COUNTER_DB</td>
+<td>—</td>
+<td>なし</td>
+<td>—</td>
+<td>—</td>
+<td>SAI 非経由。Kubernetes 制御は SAI を通らない</td>
+</tr>
+<tr>
+<td>COUNTERS_DB</td>
+<td>—</td>
+<td>なし</td>
+<td>—</td>
+<td>—</td>
+<td><code>ctrmgrd</code> に COUNTERS_DB 参照は存在しない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_dbkubernetes_masterserver">STATE_DB:KUBERNETES_MASTER|SERVER への書込詳細<a class="headerlink" href="#state_dbkubernetes_masterserver" title="Permanent link">&para;</a></h3>
+<p><code>RemoteServerHandler</code> は join / reset の完了後に <code>st_server</code> dict を更新し、前回状態と異なる場合のみ <code>set_db_entry()</code> で STATE_DB に全フィールドを一括書き込む（<code>ctrmgrd.py:411-414</code>）。フィールド一覧:</p>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>書込タイミング</th>
+<th>値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>connected</code></td>
+<td>join 成功時</td>
+<td><code>"true"</code></td>
+</tr>
+<tr>
+<td><code>connected</code></td>
+<td>join 失敗 / reset 時</td>
+<td><code>"false"</code></td>
+</tr>
+<tr>
+<td><code>ip</code></td>
+<td>join 成功時</td>
+<td>CONFIG_DB の <code>ip</code> 値</td>
+</tr>
+<tr>
+<td><code>port</code></td>
+<td>join 成功時</td>
+<td>CONFIG_DB の <code>port</code> 値</td>
+</tr>
+<tr>
+<td><code>update_time</code></td>
+<td>状態変化時 (join / reset)</td>
+<td><code>ts_now()</code> タイムスタンプ文字列</td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_dbkube_labelsset">STATE_DB:KUBE_LABELS|SET へのラベル書込詳細<a class="headerlink" href="#state_dbkube_labelsset" title="Permanent link">&para;</a></h3>
+<p><code>set_node_labels()</code> (<code>ctrmgrd.py:292-307</code>) は join 成功直後に呼ばれ、ノード識別用ラベルを <code>mod_db_entry()</code> で STATE_DB に書き込む。<code>LabelsPendingHandler</code> がこれを検知し <code>kube_commands.kube_write_labels()</code> で Kubernetes API Server へ反映する（<code>ctrmgrd.py:659-681</code>）。</p>
+<table>
+<thead>
+<tr>
+<th>ラベルキー</th>
+<th>値ソース</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sonic_version</code></td>
+<td><code>device_info.get_sonic_version_info()["build_version"]</code></td>
+<td><code>ctrmgrd.py:301</code></td>
+</tr>
+<tr>
+<td><code>hwsku</code></td>
+<td><code>device_info.get_hwsku()</code></td>
+<td><code>ctrmgrd.py:302</code></td>
+</tr>
+<tr>
+<td><code>deployment_type</code></td>
+<td><code>CONFIG_DB:DEVICE_METADATA\|localhost.type</code></td>
+<td><code>ctrmgrd.py:297-299, 303</code></td>
+</tr>
+<tr>
+<td><code>worker.sonic/platform</code></td>
+<td><code>device_info.get_platform()</code></td>
+<td><code>ctrmgrd.py:304-305</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:157-158, 292-307, 306-307, 411-414, 423, 435-437, 440, 505-506, 659-681</code>; 詳細スキャン結果は <code>meta/_intermediate/cdb-flow/kubernetes-master-side-effects.md</code> 参照。</p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py</code> L204-217, L249-288, L329-359, L466-475, L640-646
+調査日: 2026-05-19</p>
+</blockquote>
+<p><code>ctrmgrd</code> は <code>MainServer.register_handler()</code> を通じて全テーブルを <code>swsscommon.SubscriberStateTable</code> で購読する (ctrmgrd.py:204-217)。<code>KUBERNETES_MASTER</code> への書き込みは Redis keyspace 通知として配信される。APPL_DB 中継・ProducerStateTable・ConsumerStateTable は使用しない。</p>
+<h3 id="_5">購読チャンネル一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>チャンネル</th>
+<th>DB</th>
+<th>テーブル名</th>
+<th>購読クラス</th>
+<th>購読者</th>
+<th>発行元</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB → ctrmgrd</td>
+<td>CONFIG_DB</td>
+<td><code>KUBERNETES_MASTER</code></td>
+<td><code>SubscriberStateTable</code></td>
+<td><code>RemoteServerHandler.on_config_update()</code></td>
+<td><code>sonic-utilities/config/kube.py</code> (CLI)</td>
+</tr>
+<tr>
+<td>CONFIG_DB → ctrmgrd</td>
+<td>CONFIG_DB</td>
+<td><code>FEATURE</code></td>
+<td><code>SubscriberStateTable</code></td>
+<td><code>FeatureTransitionHandler.on_config_update()</code></td>
+<td><code>hostcfgd</code>、各管理 daemon</td>
+</tr>
+<tr>
+<td>STATE_DB → ctrmgrd</td>
+<td>STATE_DB</td>
+<td><code>FEATURE</code></td>
+<td><code>SubscriberStateTable</code></td>
+<td><code>FeatureTransitionHandler.on_state_update()</code></td>
+<td><code>containercfgd</code>、systemd service proxy</td>
+</tr>
+<tr>
+<td>STATE_DB → ctrmgrd</td>
+<td>STATE_DB</td>
+<td><code>KUBE_LABELS</code></td>
+<td><code>SubscriberStateTable</code></td>
+<td><code>LabelsPendingHandler.on_update()</code></td>
+<td><code>ctrmgrd</code> 自身（<code>set_node_labels()</code>、<code>FeatureTransitionHandler</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="config_dbkubernetes_master-remoteserverhandler">CONFIG_DB:KUBERNETES_MASTER 経路（<code>RemoteServerHandler</code>）<a class="headerlink" href="#config_dbkubernetes_master-remoteserverhandler" title="Permanent link">&para;</a></h3>
+<p><code>RemoteServerHandler.__init__()</code> (ctrmgrd.py:333-334) が <code>server.register_handler(CONFIG_DB_NAME, SERVER_TABLE, self.on_config_update)</code> を呼び出す。<code>MainServer.register_handler()</code> (ctrmgrd.py:204-217) は <code>SubscriberStateTable</code> を生成して <code>selector.addSelectable()</code> に登録する。</p>
+<ul>
+<li>Redis keyspace 通知: <code>PSUBSCRIBE __keyspace@4__:KUBERNETES_MASTER|*</code></li>
+<li>受信キー: <code>SERVER</code>（単一エントリ）</li>
+<li>ハンドラ: <code>on_config_update()</code> → <code>handle_update()</code> → <code>do_join()</code> / <code>do_reset()</code></li>
+<li><strong>起動時スナップショット</strong>: <code>SubscriberStateTable</code> は購読開始前の既存エントリを buffer に流し込む。加えて ctrmgrd.py:335-336 が <code>get_db_entry()</code> で初期値を明示読み出しするため、起動時の既存設定は必ず反映される。</li>
+</ul>
+<h3 id="config_db-state_dbfeature-featuretransitionhandler">CONFIG_DB + STATE_DB:FEATURE 経路（<code>FeatureTransitionHandler</code>）<a class="headerlink" href="#config_db-state_dbfeature-featuretransitionhandler" title="Permanent link">&para;</a></h3>
+<p><code>FeatureTransitionHandler.__init__()</code> (ctrmgrd.py:466-475) が CONFIG_DB と STATE_DB の両 <code>FEATURE</code> テーブルを購読する。</p>
+<ul>
+<li><code>on_config_update()</code>: <code>set_owner</code> 変化時のみ <code>handle_update()</code> を呼ぶ。STATE_DB 側のデータ（<code>ct_owner</code>、<code>remote_state</code>）がまだ届いていない場合は処理を保留する（ctrmgrd.py:533-543）</li>
+<li><code>on_state_update()</code>: <code>remote_state</code> 変化時に <code>handle_update()</code> を呼ぶ。CONFIG_DB 側のデータがある場合のみ実行</li>
+</ul>
+<p>両イベントが揃うまで <code>handle_update()</code> の実行を待機する設計であり、イベント到着の順序依存は排除されている。</p>
+<h3 id="state_dbkube_labels-labelspendinghandler">STATE_DB:KUBE_LABELS 経路（<code>LabelsPendingHandler</code>）<a class="headerlink" href="#state_dbkube_labels-labelspendinghandler" title="Permanent link">&para;</a></h3>
+<p><code>LabelsPendingHandler</code> (ctrmgrd.py:640-685) は <code>STATE_DB:KUBE_LABELS</code> テーブルを購読し、<code>SET</code> キーの更新を検知して Kubernetes API Server へラベルを反映する。</p>
+<ul>
+<li><code>remote_connected == True</code> かつ <code>pending == False</code> の場合のみ即時 <code>kube_write_labels()</code> を実行</li>
+<li><code>remote_connected == False</code>（join 未完了）の場合はラベルをバッファリングし、join 成功時に <code>do_join()</code> が直接 <code>update_node_labels()</code> を呼んで反映する（ctrmgrd.py:439-440）</li>
+</ul>
+<h3 id="select">Select ループによるディスパッチ<a class="headerlink" href="#select" title="Permanent link">&para;</a></h3>
+<p><code>MainServer.run()</code> (ctrmgrd.py:249-288) の select ループが全 <code>SubscriberStateTable</code> を共通の <code>swsscommon.Select</code> インスタンスで多重化する。タイムアウト値は <code>SELECT_TIMEOUT = 1000 ms</code>（ctrmgrd.py:181）。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>selector.select(1000ms)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  └─ for subscriber in self.subscribers:
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>       key, op, fvs = subscriber.pop()
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>       → callback(key, op, dict(fvs))
+</span></code></pre></div>
+<p>複数テーブルへの同時更新は Python <code>set</code> の反復順でディスパッチされるため処理順序は不定。ただし <code>KUBERNETES_MASTER</code> と <code>FEATURE</code> は別クラスのハンドラで独立処理されるため相互干渉はない。</p>
+<p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/kubernetes-master-pubsub.md</code> 参照。</p>
+<!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:181,204-217,249-288,329-334,340-342,363-390,439-440,466-475,515-543,546-580,640-685 -->
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>KUBERNETES_MASTER</code> テーブルの処理コア (<code>ctrmgrd</code>) は <strong>全プラットフォームで動作ロジックが同一</strong>。<code>ctrmgrd.py</code> を <code>namespace|asic|multi_asic|is_multi_npu|chassis|per_asic</code> で grep してもヒット 0 件で、機種依存分岐コードは存在しない。プラットフォーム依存性は (1) ビルド時フラグによるパッケージ有無、(2) join 成功後に Kubernetes ラベルへ設定される文字列、の 2 点に限定される。</p>
+<h3 id="include_kubernetes_master-rulesconfig260">ビルド時フラグ <code>INCLUDE_KUBERNETES_MASTER</code> (rules/config:260)<a class="headerlink" href="#include_kubernetes_master-rulesconfig260" title="Permanent link">&para;</a></h3>
+<div class="language-makefile highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nv">INCLUDE_KUBERNETES_MASTER</span><span class="w"> </span><span class="o">?=</span><span class="w"> </span>n
+</span></code></pre></div>
+<p>デフォルト <code>n</code>。<code>y</code> にセットした場合のみ kubelet / kubeadm パッケージがビルドイメージに組み込まれる (<code>build_debian.sh:271</code>、<code>sonic_debian_extension.j2:974</code>)。<code>n</code> のイメージでは <code>ctrmgrd</code> が <code>kube_join_master()</code> を呼んでも必ず失敗し、<code>connected = "false"</code> のまま JOIN_RETRY ループに入る。</p>
+<table>
+<thead>
+<tr>
+<th>ビルド設定</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>INCLUDE_KUBERNETES_MASTER=n</code>（デフォルト）</td>
+<td>kubelet / kubeadm 未インストール。join は常に失敗し JOIN_RETRY が継続する</td>
+</tr>
+<tr>
+<td><code>INCLUDE_KUBERNETES_MASTER=y</code></td>
+<td>kubelet / kubeadm インストール済み。<code>ip</code> / <code>disable</code> 設定後に join 可能</td>
+</tr>
+</tbody>
+</table>
+<p>CI ビルド (<code>azure-pipelines-build.yml:148</code>) では VS (Virtual Switch) イメージのみ <code>y</code> でビルドしており、<code>broadcom</code> / <code>mellanox</code> 等のプラットフォームでは一般に <code>n</code> が使われる（ベンダー判断依存）。</p>
+<h3 id="workersonicplatform-platform-ctrmgrdpy304-305"><code>worker.sonic/platform</code> ラベルへの platform 文字列設定 (ctrmgrd.py:304-305)<a class="headerlink" href="#workersonicplatform-platform-ctrmgrdpy304-305" title="Permanent link">&para;</a></h3>
+<p><code>set_node_labels()</code> は join 成功直後に <code>device_info.get_platform()</code> を呼び、その返り値を <code>STATE_DB:KUBE_LABELS|SET.worker.sonic/platform</code> に書き込む。</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">platform</span> <span class="o">=</span> <span class="n">device_info</span><span class="o">.</span><span class="n">get_platform</span><span class="p">()</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">labels</span><span class="p">[</span><span class="s2">&quot;worker.sonic/platform&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">platform</span> <span class="k">if</span> <span class="n">platform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>環境</th>
+<th><code>get_platform()</code> の返り値</th>
+<th><code>worker.sonic/platform</code> ラベル値</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>実機（例: <code>x86_64-grub</code>）</td>
+<td>プラットフォームディレクトリ名文字列</td>
+<td>そのまま送信</td>
+</tr>
+<tr>
+<td>VS (Virtual Switch) / UNIT_TESTING</td>
+<td><code>None</code> または <code>""</code> の場合あり</td>
+<td>空文字列 <code>""</code> に置換</td>
+</tr>
+</tbody>
+</table>
+<p>この値は Kubernetes API Server への K8s ラベルとして送信されるだけで、ctrmgrd のローカル動作（join / reset / retry タイマー）には影響しない。<code>hwsku</code> ラベル (<code>ctrmgrd.py:302</code>) も同様に機種依存文字列だが処理ロジックへの影響はない。</p>
+<h3 id="multi-asic-voq-chassis">multi-asic / VOQ chassis 非依存<a class="headerlink" href="#multi-asic-voq-chassis" title="Permanent link">&para;</a></h3>
+<p>ctrmgrd.service は host namespace 固定の単一インスタンスとして動作し (<code>ctrmgrd.service:10</code>)、<code>SubscriberStateTable</code> は host namespace の <code>CONFIG_DB</code> / <code>STATE_DB</code> のみを購読する。multi-asic 環境でも:</p>
+<ul>
+<li>ctrmgrd インスタンスは host に 1 個のみ</li>
+<li><code>asic0..N</code> の各 Redis には <code>KUBERNETES_MASTER</code> テーブルは存在しない</li>
+<li>VOQ chassis の line card / supervisor も host 個別の <code>CONFIG_DB</code> を持ち、chassis 全体の集中制御経路はない</li>
+</ul>
+<p>詳細解析: <code>meta/_intermediate/cdb-flow/kubernetes-master-platform.md</code></p>
+<!-- evidence: sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:290-307; sonic-buildimage/rules/config:258-260; sonic-buildimage/files/build_templates/sonic_debian_extension.j2:974-1011; sonic-buildimage/.azure-pipelines/azure-pipelines-build.yml:148; sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.service -->
+<!-- /platform -->
+
 <!-- defaults -->
-<h2 id="_4">フィールドデフォルト<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_6">フィールドデフォルト<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35861,7 +37064,7 @@
 <!-- /defaults -->
 
 <!-- cdb-mermaid -->
-<h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="_7">データフロー (自動生成)<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CDB[("CONFIG_DB&lt;br/&gt;KUBERNETES_MASTER")]
   DM["ctrmgrd"]
@@ -35873,10 +37076,10 @@
 <!-- /cdb-mermaid -->
 
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>KUBERNETES_MASTER|SERVER
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>KUBERNETES_MASTER|SERVER
 </span></code></pre></div>
 <p>(list ではなく単一 container)</p>
-<h2 id="_6">主要フィールド<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">主要フィールド<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35913,7 +37116,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="_7">購読者<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_9">購読者<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>ctrmgrd</code> (<code>docker-config-engine</code>): <a href="../../glossary/#term-config_db">CONFIG_DB</a> を購読し、対象 feature の K8s モード切替・kubelet 設定を実施</li>
 <li><code>FEATURE</code> テーブルの <code>set_owner = kube</code> を持つコンテナが K8s からデプロイされる</li>
@@ -35926,33 +37129,33 @@
 </ul>
 <!-- ref-triangle:start -->
 
-<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_10">関連リファレンス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-kubernetes_master</code></li>
 <li>CLI: <code>config kubernetes</code></li>
 </ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<h2 id="_12">運用ヒント<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="_13">典型値<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>KUBERNETES_MASTER|SERVER</code>。</li>
 <li><code>ip</code>: master VIP、<code>disable</code>: <code>false</code>、<code>insecure</code>: <code>false</code>。</li>
 </ul>
-<h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
+<h3 id="_14">よくある誤設定<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
 <li>ip を hostname にすると DNS 未解決時に kubelet が起動しない。</li>
 </ul>
-<h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;KUBERNETES_MASTER|SERVER&#39;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>kube<span class="w"> </span>server<span class="w"> </span>config
+<h3 id="_15">確認コマンド<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;KUBERNETES_MASTER|SERVER&#39;</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>show<span class="w"> </span>kube<span class="w"> </span>server<span class="w"> </span>config
 </span></code></pre></div>
 <!-- /ops-hint -->
 
 <!-- value-behavior -->
-<h2 id="_14">値依存挙動マトリクス<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_16">値依存挙動マトリクス<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <p>このテーブルに strict な enum フィールドはない。boolean の組み合わせと <code>ip</code> の型で動作が決まる。</p>
 <h3 id="disable"><code>disable</code><a class="headerlink" href="#disable" title="Permanent link">&para;</a></h3>
 <table>
@@ -36022,7 +37225,7 @@
 <!-- /value-behavior -->
 
 <!-- cdb-exceptions -->
-<h2 id="_15">例外条件・特殊挙動<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h2 id="_17">例外条件・特殊挙動<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-utilities/config/kube.py -->
 
 <table>
@@ -36054,7 +37257,7 @@
 <!-- /cdb-exceptions -->
 
 <!-- runtime-trace -->
-<h2 id="_16">実コンテナ動作トレース<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<h2 id="_18">実コンテナ動作トレース<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
 <p><code>kube_scheduler</code> / <code>hostcfgd</code> が CONFIG_DB の <code>KUBERNETES_MASTER</code> テーブルを購読する。</p>
 <p><code>KUBERNETES_MASTER</code> の key は <code>SERVER</code> (単一エントリ)。<code>ip</code> / <code>port</code> / <code>insecure</code> フィールド。</p>
@@ -36092,11 +37295,11 @@
 <ul>
 <li>なし</li>
 </ul>
-<h3 id="_17">ハードコードデフォルト<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_19">ハードコードデフォルト<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <ul>
 <li>なし</li>
 </ul>
-<h3 id="_18">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<h3 id="_20">ランタイム注入 (デーモン自動書き込み)<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>kubemgrd</code> が Kubernetes 接続状態を CONFIG_DB と同期</li>
 </ul>

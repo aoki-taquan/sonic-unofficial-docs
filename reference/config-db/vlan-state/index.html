@@ -29721,6 +29721,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-fabric-asic-vlanmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. fabric ASIC カード — vlanmgrd 不起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-pensando-arm64-elba" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Pensando arm64-elba — ヘルスチェック対象外
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-default_mtu_str-9100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. DEFAULT_MTU_STR — 全プラットフォーム共通 9100 バイト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-multi-asic-namespace-vlan_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. multi-asic 環境 — namespace ごとに独立した VLAN_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35538,6 +35599,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-fabric-asic-vlanmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. fabric ASIC カード — vlanmgrd 不起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-pensando-arm64-elba" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Pensando arm64-elba — ヘルスチェック対象外
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-default_mtu_str-9100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. DEFAULT_MTU_STR — 全プラットフォーム共通 9100 バイト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-multi-asic-namespace-vlan_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. multi-asic 環境 — namespace ごとに独立した VLAN_TABLE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35954,7 +36076,7 @@ evidence: <code>meta/_intermediate/cdb-flow/vlan-state-cross-refs.md</code></p>
 </div>
 <!-- /failure -->
 
-<!-- hardcoded-constants -->
+<!-- constants -->
 <h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
 <!-- evidence: meta/_intermediate/cdb-flow/vlan-state-constants.md -->
 <!-- source: sonic-swss/cfgmgr/vlanmgr.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
@@ -36008,7 +36130,7 @@ evidence: <code>meta/_intermediate/cdb-flow/vlan-state-cross-refs.md</code></p>
 <p><code>addHostVlan()</code> 内でブリッジ自体に MTU 9100 を設定するが、個々の <code>Vlan&lt;N&gt;</code> インタフェースの MTU は CONFIG_DB <code>PORT.mtu</code> → orchagent → SAI → カーネルの別経路で設定される。STATE_DB <code>VLAN_TABLE</code> の書き込み内容には影響しない。</p>
 <h3 id="vlan-id">VLAN ID 範囲の暗黙制約<a class="headerlink" href="#vlan-id" title="Permanent link">&para;</a></h3>
 <p><code>doVlanTask()</code> は <code>stoi(key.substr(4))</code> で VLAN ID を抽出するが、2–4094 の範囲検証はコードに存在しない。範囲外の VLAN ID（0, 1, 4095 等）は Linux カーネルの dot1q が拒否するため <code>addHostVlan()</code> が例外を throw し vlanmgrd が再起動する。結果として <strong>STATE_DB <code>VLAN_TABLE</code> には VLAN ID 2–4094 のキーのみ現れる</strong>。</p>
-<!-- /hardcoded-constants -->
+<!-- /constants -->
 
 <!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
@@ -36133,6 +36255,72 @@ evidence: <code>meta/_intermediate/cdb-flow/vlan-state-cross-refs.md</code></p>
 <p><code>NotificationConsumer</code> / TTL / keyspace expire 通知はいずれも使用しない。</p>
 <!-- /pubsub -->
 
+<hr />
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>STATE_DB VLAN_TABLE</code> の書込スキーマ・格納先・通信方式は<strong>全プラットフォームで共通</strong>。<code>vlanmgr.cpp</code> 全 1008 行を <code>platform</code>・<code>mellanox</code>・<code>broadcom</code>・<code>voq</code>・<code>getenv</code>・<code>SAI</code> で grep してもヒット 0 件。Linux kernel bridge 操作のみで SAI を呼ばない純 cfgmgr ロジックのため、ASIC ベンダー依存がない。</p>
+<p>詳細調査ログ: <code>meta/_intermediate/cdb-flow/vlan-state-platform.md</code></p>
+<h3 id="1-fabric-asic-vlanmgrd">1. fabric ASIC カード — vlanmgrd 不起動<a class="headerlink" href="#1-fabric-asic-vlanmgrd" title="Permanent link">&para;</a></h3>
+<p>VOQ chassis のファブリック ASIC カードでは <code>switch_type = "fabric"</code> となり、<code>supervisord.conf.j2</code> の Jinja2 テンプレートが vlanmgrd を起動しない:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>{# supervisord.conf.j2:33-38 #}
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>{% set is_fabric_asic = 0 %}
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>{% if DEVICE_METADATA.localhost.switch_type == &quot;fabric&quot; %}
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>{% set is_fabric_asic = 1 %}
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>{% endif %}
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>...
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>{% if is_fabric_asic == 0 %}
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>[program:vlanmgrd]   {# fabric ASIC では block ごと除外 #}
+</span></code></pre></div>
+<p><code>switch_type = "fabric"</code> の ASIC では <code>STATE_DB VLAN_TABLE</code> へのエントリが<strong>一切書かれない</strong>。<code>switch_type = "voq"</code>（line card）や <code>switch_type = "switch"</code>（fixed T0/T1）では <code>is_fabric_asic=0</code> となり vlanmgrd は通常起動する（<code>supervisord.conf.j2:164-177</code>）。</p>
+<table>
+<thead>
+<tr>
+<th>switch_type</th>
+<th>is_fabric_asic</th>
+<th>vlanmgrd 起動</th>
+<th>VLAN_TABLE 書込</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"switch"</code> (fixed)</td>
+<td>0</td>
+<td>あり</td>
+<td>通常通り</td>
+</tr>
+<tr>
+<td><code>"voq"</code> (line card)</td>
+<td>0</td>
+<td>あり</td>
+<td>通常通り</td>
+</tr>
+<tr>
+<td><code>"fabric"</code> (fabric card)</td>
+<td>1</td>
+<td><strong>なし</strong></td>
+<td><strong>なし</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-pensando-arm64-elba">2. Pensando arm64-elba — ヘルスチェック対象外<a class="headerlink" href="#2-pensando-arm64-elba" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// device/pensando/arm64-elba-asic-flash128-r0/system_health_monitoring_config.json</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nt">&quot;services_to_ignore&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;vlanmgrd&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;vxlanmgrd&quot;</span><span class="p">]</span>
+</span></code></pre></div>
+<p>Elba ASIC を搭載した Pensando DPU プラットフォームでは vlanmgrd は起動するが、<code>system_health_monitor</code> のプロセス死活監視から除外されている。vlanmgrd のクラッシュが health check アラームを発報しない点で他プラットフォームと異なる。</p>
+<h3 id="3-default_mtu_str-9100">3. DEFAULT_MTU_STR — 全プラットフォーム共通 9100 バイト<a class="headerlink" href="#3-default_mtu_str-9100" title="Permanent link">&para;</a></h3>
+<p><code>vlanmgr.cpp:18</code> の <code>#define DEFAULT_MTU_STR "9100"</code> はプラットフォーム env・hwsku に依存しない。VLAN インタフェースのデフォルト MTU は全 SKU で 9100 バイト固定である。</p>
+<h3 id="4-multi-asic-namespace-vlan_table">4. multi-asic 環境 — namespace ごとに独立した VLAN_TABLE<a class="headerlink" href="#4-multi-asic-namespace-vlan_table" title="Permanent link">&para;</a></h3>
+<p><code>vlanmgrd.cpp</code> は <code>DBConnector("CONFIG_DB", 0)</code> 固定で namespace を参照しない。multi-asic (NPU 複数) 環境では各 ASIC namespace で独立した swss コンテナが起動し、それぞれの vlanmgrd が各 namespace の <code>STATE_DB</code> に <code>VLAN_TABLE</code> エントリを書き込む。chassis 全体を集中管理する VLAN_TABLE は存在しない。</p>
+<div class="admonition note">
+<p class="admonition-title">fabric カードの readiness ガードへの影響</p>
+<p><code>intfmgrd</code>・<code>nbrmgrd</code>・<code>stpmgrd</code> は <code>isVlanStateOk()</code> で VLAN_TABLE の存在を確認してから処理を進める。fabric カードでは vlanmgrd が起動しないため VLAN_TABLE が書かれず、これらのデーモンも事実上 VLAN 依存の処理を行わない。fabric ASIC でそれらのデーモンが必要になるユースケースは想定されていない。</p>
+</div>
+<blockquote>
+<p><strong>スキャン証跡</strong>: <code>vlanmgr.cpp</code> 全 1008 行 grep（platform/SAI 分岐なし）、<code>supervisord.conf.j2:33-38,164-177</code>（is_fabric_asic 定義・vlanmgrd block）、<code>device/pensando/arm64-elba-asic-flash128-r0/system_health_monitoring_config.json</code>（services_to_ignore）。</p>
+</blockquote>
+<!-- /platform -->
+
+<hr />
 <h2 id="_10">読み取り主体<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36182,11 +36370,11 @@ evidence: <code>meta/_intermediate/cdb-flow/vlan-state-cross-refs.md</code></p>
 <li><strong>MAC 未確定時の全保留</strong>: <code>gMacAddress</code> が未初期化の間、vlanmgrd は全 VLAN タスクを保留するため STATE_DB への書き込みも遅延する (vlanmgr.cpp:318-321)。</li>
 </ul>
 <h2 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># 全 VLAN の state エントリ確認</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VLAN_TABLE|*&#39;</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># 特定 VLAN の確認</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VLAN_TABLE|Vlan100&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># 全 VLAN の state エントリ確認</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VLAN_TABLE|*&#39;</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># 特定 VLAN の確認</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VLAN_TABLE|Vlan100&#39;</span>
 </span></code></pre></div>
 <h2 id="_13">関連リファレンス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>

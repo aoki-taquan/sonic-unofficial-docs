@@ -36866,7 +36866,7 @@ NTP_KEY の SET 操作だけでは <code>trusted_str</code> は変わらず、NT
 <p>詳細調査メモ: <code>meta/_intermediate/cdb-flow/ntp-key-ordering.md</code>。</p>
 <!-- /ordering -->
 
-<!-- failure-behavior -->
+<!-- failure -->
 <h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-host-services/scripts/hostcfgd NtpCfg.ntp_srv_key_update() / sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ntp.yang -->
 
@@ -36932,7 +36932,7 @@ NTP_KEY の SET 操作だけでは <code>trusted_str</code> は変わらず、NT
 <h3 id="silent-skip">テンプレート生成の silent skip<a class="headerlink" href="#silent-skip" title="Permanent link">&para;</a></h3>
 <p><code>chrony.keys.j2</code> は <code>NTP_KEY[keyid].type</code> または <code>NTP_KEY[keyid].value</code> が falsy の場合、その鍵エントリを keyfile から<strong>無警告で除外</strong>する。エラーは発生せず、次回 DB 変更で再生成されるまで chrony は当該鍵 ID を未登録として扱う。</p>
 <p>詳細調査メモ: <code>meta/_intermediate/cdb-flow/ntp-key-failure.md</code>。</p>
-<!-- /failure-behavior -->
+<!-- /failure -->
 
 <!-- constants -->
 <h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>

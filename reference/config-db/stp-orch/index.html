@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数を詳解。Phase A+B+C+D+E 分析。">
+        <meta name="description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数・副作用・Redis 通知メカニズム・プラットフォーム差分を詳解。Phase A+B+C+D+E+F+G+H 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数を詳解。Phase A+B+C+D+E 分析。" />
+<meta property="og:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数・副作用・Redis 通知メカニズム・プラットフォーム差分を詳解。Phase A+B+C+D+E+F+G+H 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-orch.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/stp-orch/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数を詳解。Phase A+B+C+D+E 分析。" />
+<meta property="twitter:description" content="SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数・副作用・Redis 通知メカニズム・プラットフォーム差分を詳解。Phase A+B+C+D+E+F+G+H 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/stp-orch.png" />
 </head>
   
@@ -29048,6 +29048,346 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbstp_vlan_instance_table-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB:STP_VLAN_INSTANCE_TABLE SET の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_DB:STP_VLAN_INSTANCE_TABLE SET の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sai-stp-create_stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. SAI STP インスタンス作成 (create_stp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sai-vlan-sai_vlan_attr_stp_instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SAI VLAN 属性変更 (SAI_VLAN_ATTR_STP_INSTANCE)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-m_vlanaliastostpinstancemap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. m_vlanAliasToStpInstanceMap 内部マップ更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbstp_vlan_instance_table-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB:STP_VLAN_INSTANCE_TABLE DEL の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_DB:STP_VLAN_INSTANCE_TABLE DEL の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4-sai-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. SAI VLAN 属性をデフォルトに復元
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-sai-stp-remove_stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. SAI STP インスタンス削除 (remove_stp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbstp_port_state_table-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB:STP_PORT_STATE_TABLE SET の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_DB:STP_PORT_STATE_TABLE SET の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#6-sai-bridge-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. SAI Bridge Port 自動作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-sai-stp-create_stp_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. SAI STP ポート作成 (create_stp_port) / 状態更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbstp_port_state_table-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB:STP_PORT_STATE_TABLE DEL の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_DB:STP_PORT_STATE_TABLE DEL の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#8-sai-stp-remove_stp_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. SAI STP ポート削除 (remove_stp_port)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbstp_fastageing_flush_table-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB:STP_FASTAGEING_FLUSH_TABLE SET の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_DB:STP_FASTAGEING_FLUSH_TABLE SET の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#9-fdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. FDB エントリ一括フラッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbstp_inst_port_flush_table-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB:STP_INST_PORT_FLUSH_TABLE SET の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_DB:STP_INST_PORT_FLUSH_TABLE SET の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#10-mst-vlan-fdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. MST インスタンス配下の全 VLAN FDB フラッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時の副作用 (コンストラクタ)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="起動時の副作用 (コンストラクタ)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-state_db-stp_tableglobalmax_stp_inst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. STATE_DB STP_TABLE|GLOBAL.max_stp_inst 書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-stpd-stpmgrd-stporch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 書き手 (stpd / stpmgrd) → StpOrch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchdaemon-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchdaemon の select タイムアウト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-stp_table-pubsub-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB STP_TABLE — Pub/Sub なし (素の Table)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信経路まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -29059,7 +29399,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -29070,7 +29410,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35346,6 +35686,346 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbstp_vlan_instance_table-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB:STP_VLAN_INSTANCE_TABLE SET の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_DB:STP_VLAN_INSTANCE_TABLE SET の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sai-stp-create_stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. SAI STP インスタンス作成 (create_stp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sai-vlan-sai_vlan_attr_stp_instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SAI VLAN 属性変更 (SAI_VLAN_ATTR_STP_INSTANCE)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-m_vlanaliastostpinstancemap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. m_vlanAliasToStpInstanceMap 内部マップ更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbstp_vlan_instance_table-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB:STP_VLAN_INSTANCE_TABLE DEL の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_DB:STP_VLAN_INSTANCE_TABLE DEL の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4-sai-vlan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. SAI VLAN 属性をデフォルトに復元
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-sai-stp-remove_stp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. SAI STP インスタンス削除 (remove_stp)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbstp_port_state_table-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB:STP_PORT_STATE_TABLE SET の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_DB:STP_PORT_STATE_TABLE SET の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#6-sai-bridge-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. SAI Bridge Port 自動作成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-sai-stp-create_stp_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. SAI STP ポート作成 (create_stp_port) / 状態更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbstp_port_state_table-del" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB:STP_PORT_STATE_TABLE DEL の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_DB:STP_PORT_STATE_TABLE DEL の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#8-sai-stp-remove_stp_port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. SAI STP ポート削除 (remove_stp_port)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbstp_fastageing_flush_table-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB:STP_FASTAGEING_FLUSH_TABLE SET の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_DB:STP_FASTAGEING_FLUSH_TABLE SET の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#9-fdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. FDB エントリ一括フラッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_dbstp_inst_port_flush_table-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB:STP_INST_PORT_FLUSH_TABLE SET の副作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APPL_DB:STP_INST_PORT_FLUSH_TABLE SET の副作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#10-mst-vlan-fdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. MST インスタンス配下の全 VLAN FDB フラッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時の副作用 (コンストラクタ)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="起動時の副作用 (コンストラクタ)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-state_db-stp_tableglobalmax_stp_inst" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. STATE_DB STP_TABLE|GLOBAL.max_stp_inst 書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-stpd-stpmgrd-stporch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB 書き手 (stpd / stpmgrd) → StpOrch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orchdaemon-select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        orchdaemon の select タイムアウト
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-stp_table-pubsub-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB STP_TABLE — Pub/Sub なし (素の Table)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信経路まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差分 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#discrepancy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35357,7 +36037,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35368,7 +36048,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35406,7 +36086,7 @@
 <h1 id="appl_db-stp-orchagent">APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト<a class="headerlink" href="#appl_db-stp-orchagent" title="Permanent link">&para;</a></h1>
 <div class="admonition info">
 <p class="admonition-title">ページの位置付け</p>
-<p>このページは orchagent (<code>StpOrch</code>) が購読する <strong>APPL_DB の STP 関連 4 テーブル</strong> のフィールド定義・暗黙デフォルト・SAI マッピングを詳述する Phase A 分析ページ。
+<p>このページは orchagent (<code>StpOrch</code>) が購読する <strong>APPL_DB の STP 関連 4 テーブル</strong> のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・失敗挙動・ハードコード定数・副作用・Redis 通知メカニズムを詳述する Phase A-G 分析ページ。
 CONFIG_DB 側のデフォルト (STP/STP_VLAN/STP_PORT テーブル) は <a href="../stp/">STP/STP_VLAN/STP_PORT テーブル</a> を参照。</p>
 </div>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36126,6 +36806,292 @@ SAI 側の定数は <code>SAI_STP_PORT_STATE_BLOCKING</code> / <code>SAI_STP_POR
 <p>STATE_DB に書き込まれる <code>max_stp_inst</code> はインデックス最大値 (<code>max_stp_instances - 1</code>) であり、SAI の返す「インスタンス数」とは 1 差異がある (意図的 off-by-one)。</p>
 <!-- /constants -->
 
+<!-- side-effects -->
+<h2 id="phase-f">副作用 (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-side-effects.md -->
+
+<p><code>StpOrch</code> が処理するテーブルは、SAI オブジェクト生成・VLAN 属性変更・FDB フラッシュ・STATE_DB 書き込みという複数の副作用を伴う。副作用はテーブルごとに異なる。</p>
+<h3 id="appl_dbstp_vlan_instance_table-set">APPL_DB:STP_VLAN_INSTANCE_TABLE SET の副作用<a class="headerlink" href="#appl_dbstp_vlan_instance_table-set" title="Permanent link">&para;</a></h3>
+<h4 id="1-sai-stp-create_stp">1. SAI STP インスタンス作成 (<code>create_stp</code>)<a class="headerlink" href="#1-sai-stp-create_stp" title="Permanent link">&para;</a></h4>
+<p><code>addVlanToStpInstance()</code> (<code>stporch.cpp:115-163</code>) で STP インスタンスが未存在の場合、<code>sai_stp_api-&gt;create_stp()</code> を呼び SAI に新規 STP インスタンスオブジェクトを生成する。OID は <code>m_stpInstToOid</code> マップに保存される。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">sai_stp_api</span><span class="o">-&gt;</span><span class="n">create_stp</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stp_oid</span><span class="p">,</span><span class="w"> </span><span class="n">gSwitchId</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">attr</span><span class="p">);</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="n">m_stpInstToOid</span><span class="p">[</span><span class="n">instance</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stp_oid</span><span class="p">;</span>
+</span></code></pre></div>
+<h4 id="2-sai-vlan-sai_vlan_attr_stp_instance">2. SAI VLAN 属性変更 (<code>SAI_VLAN_ATTR_STP_INSTANCE</code>)<a class="headerlink" href="#2-sai-vlan-sai_vlan_attr_stp_instance" title="Permanent link">&para;</a></h4>
+<p>生成または既存の SAI STP インスタンス OID を VLAN オブジェクトに紐付ける:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_VLAN_ATTR_STP_INSTANCE</span><span class="p">;</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">oid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stp_oid</span><span class="p">;</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="n">sai_vlan_api</span><span class="o">-&gt;</span><span class="n">set_vlan_attribute</span><span class="p">(</span><span class="n">vlan_oid</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">attr</span><span class="p">);</span>
+</span></code></pre></div>
+<p>これにより ASIC 上の VLAN が指定 STP インスタンスの制御下に置かれ、L2 フォワーディング挙動が変化する。</p>
+<h4 id="3-m_vlanaliastostpinstancemap">3. <code>m_vlanAliasToStpInstanceMap</code> 内部マップ更新<a class="headerlink" href="#3-m_vlanaliastostpinstancemap" title="Permanent link">&para;</a></h4>
+<p><code>STP_INST_PORT_FLUSH_TABLE</code> の MSTP フラッシュ処理が依存する内部マップ <code>m_vlanAliasToStpInstanceMap</code> が更新される。この更新は <code>STP_INST_PORT_FLUSH_TABLE</code> の処理結果に間接的に影響する。</p>
+<h3 id="appl_dbstp_vlan_instance_table-del">APPL_DB:STP_VLAN_INSTANCE_TABLE DEL の副作用<a class="headerlink" href="#appl_dbstp_vlan_instance_table-del" title="Permanent link">&para;</a></h3>
+<h4 id="4-sai-vlan">4. SAI VLAN 属性をデフォルトに復元<a class="headerlink" href="#4-sai-vlan" title="Permanent link">&para;</a></h4>
+<p><code>removeVlanFromStpInstance()</code> (<code>stporch.cpp:165-200</code>) は <code>SAI_VLAN_ATTR_STP_INSTANCE</code> を <code>m_defaultStpId</code> (起動時に取得したデフォルト STP インスタンス) に戻す:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">attr</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SAI_VLAN_ATTR_STP_INSTANCE</span><span class="p">;</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">oid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_defaultStpId</span><span class="p">;</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="n">sai_vlan_api</span><span class="o">-&gt;</span><span class="n">set_vlan_attribute</span><span class="p">(</span><span class="n">vlan_oid</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">attr</span><span class="p">);</span>
+</span></code></pre></div>
+<h4 id="5-sai-stp-remove_stp">5. SAI STP インスタンス削除 (<code>remove_stp</code>)<a class="headerlink" href="#5-sai-stp-remove_stp" title="Permanent link">&para;</a></h4>
+<p>インスタンスに紐付く VLAN がゼロになった場合、<code>sai_stp_api-&gt;remove_stp()</code> でインスタンスを削除し <code>m_stpInstToOid</code> から除去する。</p>
+<h3 id="appl_dbstp_port_state_table-set">APPL_DB:STP_PORT_STATE_TABLE SET の副作用<a class="headerlink" href="#appl_dbstp_port_state_table-set" title="Permanent link">&para;</a></h3>
+<h4 id="6-sai-bridge-port">6. SAI Bridge Port 自動作成<a class="headerlink" href="#6-sai-bridge-port" title="Permanent link">&para;</a></h4>
+<p><code>addStpPort()</code> (<code>stporch.cpp:207-258</code>) でポートの bridge port (<code>m_bridge_port_id</code>) が未作成の場合、<code>gPortsOrch-&gt;addBridgePort(port)</code> を呼び bridge port を SAI に自動作成する。これは PortsOrch の管理する Port オブジェクトを変更するため、他の Orch (FdbOrch 等) からも参照されるオブジェクトが影響を受ける。</p>
+<h4 id="7-sai-stp-create_stp_port">7. SAI STP ポート作成 (<code>create_stp_port</code>) / 状態更新<a class="headerlink" href="#7-sai-stp-create_stp_port" title="Permanent link">&para;</a></h4>
+<p><code>create_stp_port</code> で SAI STP ポートオブジェクトを生成し (<code>SAI_STP_PORT_STATE_BLOCKING</code> 初期値)、続いて <code>set_stp_port_attribute(SAI_STP_PORT_ATTR_STATE)</code> で実際の状態に更新する。ASIC のポートフォワーディング挙動が変化する。</p>
+<h3 id="appl_dbstp_port_state_table-del">APPL_DB:STP_PORT_STATE_TABLE DEL の副作用<a class="headerlink" href="#appl_dbstp_port_state_table-del" title="Permanent link">&para;</a></h3>
+<h4 id="8-sai-stp-remove_stp_port">8. SAI STP ポート削除 (<code>remove_stp_port</code>)<a class="headerlink" href="#8-sai-stp-remove_stp_port" title="Permanent link">&para;</a></h4>
+<p><code>removeStpPort()</code> で <code>sai_stp_api-&gt;remove_stp_port()</code> を呼び SAI ポートオブジェクトを削除する。</p>
+<h3 id="appl_dbstp_fastageing_flush_table-set">APPL_DB:STP_FASTAGEING_FLUSH_TABLE SET の副作用<a class="headerlink" href="#appl_dbstp_fastageing_flush_table-set" title="Permanent link">&para;</a></h3>
+<h4 id="9-fdb">9. FDB エントリ一括フラッシュ<a class="headerlink" href="#9-fdb" title="Permanent link">&para;</a></h4>
+<p><code>state == "true"</code> のとき <code>gFdbOrch-&gt;flushFdbByVlan(vlan_alias)</code> を呼び、対象 VLAN の全 FDB エントリを削除する。ASIC の L2 学習テーブルがクリアされ、次のフレーム受信時に再学習が発生する。VLAN 未登録時は no-op (fail-silent)。</p>
+<h3 id="appl_dbstp_inst_port_flush_table-set">APPL_DB:STP_INST_PORT_FLUSH_TABLE SET の副作用<a class="headerlink" href="#appl_dbstp_inst_port_flush_table-set" title="Permanent link">&para;</a></h3>
+<h4 id="10-mst-vlan-fdb">10. MST インスタンス配下の全 VLAN FDB フラッシュ<a class="headerlink" href="#10-mst-vlan-fdb" title="Permanent link">&para;</a></h4>
+<p><code>state == "true"</code> のとき <code>m_vlanAliasToStpInstanceMap[instance].stp_inst_vlan_list</code> を走査し、各 VLAN に対して <code>stpVlanFdbFlush()</code> を呼ぶ。1 つの MST インスタンスに属する複数 VLAN の FDB が一括フラッシュされる。</p>
+<h3 id="_5">起動時の副作用 (コンストラクタ)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h4 id="11-state_db-stp_tableglobalmax_stp_inst">11. STATE_DB <code>STP_TABLE|GLOBAL.max_stp_inst</code> 書き込み<a class="headerlink" href="#11-state_db-stp_tableglobalmax_stp_inst" title="Permanent link">&para;</a></h4>
+<p><code>updateMaxStpInstance()</code> (<code>stporch.cpp:603-616</code>) が <code>STATE_DB</code> の <code>STP_TABLE</code> テーブルに <code>GLOBAL</code> キーで <code>max_stp_inst</code> フィールドを書き込む。値は <code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1</code> (インデックス最大値)。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>STATE_DB: STP_TABLE|GLOBAL
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>  max_stp_inst = &lt;SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1&gt;
+</span></code></pre></div>
+<p><strong>この値は <code>stpmgrd</code> (<code>cfgmgr/stpmgrd.cpp:1395</code>) が <code>getStpMaxInstances()</code> で読み取り、stpd への初期化メッセージ (<code>STP_BRIDGE_CONFIG_MSG.max_stp_instances</code>) に含める</strong>。SAI クエリ失敗時はこのフィールドが書き込まれず、stpmgrd はタイムアウト後 <code>STP_DEFAULT_MAX_INSTANCES = 255</code> にフォールバックする (<code>stpmgr.h:38</code>)。</p>
+<h3 id="_6">副作用サマリ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル</th>
+<th>操作</th>
+<th>直接副作用</th>
+<th>間接副作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_VLAN_INSTANCE_TABLE</code></td>
+<td>SET</td>
+<td>SAI STP インスタンス生成・<code>SAI_VLAN_ATTR_STP_INSTANCE</code> 変更</td>
+<td><code>m_vlanAliasToStpInstanceMap</code> 更新 → MSTP フラッシュの前提</td>
+</tr>
+<tr>
+<td><code>STP_VLAN_INSTANCE_TABLE</code></td>
+<td>DEL</td>
+<td><code>SAI_VLAN_ATTR_STP_INSTANCE</code> をデフォルト復元・SAI STP インスタンス削除</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>STP_PORT_STATE_TABLE</code></td>
+<td>SET</td>
+<td>Bridge Port 自動作成・SAI STP ポート生成・ASIC ポート状態変更</td>
+<td>PortsOrch の Port オブジェクト変更</td>
+</tr>
+<tr>
+<td><code>STP_PORT_STATE_TABLE</code></td>
+<td>DEL</td>
+<td>SAI STP ポート削除</td>
+<td>なし</td>
+</tr>
+<tr>
+<td><code>STP_FASTAGEING_FLUSH_TABLE</code></td>
+<td>SET</td>
+<td>VLAN FDB エントリ一括フラッシュ (ASIC L2 テーブルクリア)</td>
+<td>L2 再学習トリガ</td>
+</tr>
+<tr>
+<td><code>STP_INST_PORT_FLUSH_TABLE</code></td>
+<td>SET</td>
+<td>MST インスタンス配下 全 VLAN FDB フラッシュ</td>
+<td>L2 再学習トリガ (複数 VLAN)</td>
+</tr>
+<tr>
+<td>コンストラクタ</td>
+<td>—</td>
+<td><code>STATE_DB STP_TABLE\|GLOBAL.max_stp_inst</code> 書き込み</td>
+<td><code>stpmgrd</code> の最大インスタンス数取得に使用</td>
+</tr>
+</tbody>
+</table>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="redis-phase-g">Redis 通知メカニズム (Phase G)<a class="headerlink" href="#redis-phase-g" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-pubsub.md -->
+
+<p>StpOrch が扱う通信経路は「APPL_DB の 4 テーブルを <code>ConsumerStateTable</code> で購読」と「STATE_DB <code>STP_TABLE</code> を素の <code>swss::Table</code> で読み書き」の 2 系統に分かれる。</p>
+<h3 id="appl_db-stpd-stpmgrd-stporch">APPL_DB 書き手 (stpd / stpmgrd) → StpOrch<a class="headerlink" href="#appl_db-stpd-stpmgrd-stporch" title="Permanent link">&para;</a></h3>
+<p>STP デーモン (<code>stpd</code>) は Unix Domain Socket 経由で <code>stpmgrd</code> (<code>cfgmgr/stpmgrd.cpp</code>) と IPC し、<code>stpmgrd</code> が APPL_DB の 4 テーブルへ書き込む。SONiC の APPL_DB 書き込み標準は <code>ProducerStateTable</code> 経由で、書き込みごとに <code>&lt;TABLE&gt;_CHANNEL@0</code> チャネルへ PUBLISH が発行される。</p>
+<p><code>Orch::addConsumer()</code> (<code>orch.cpp:1186-1197</code>) は DB ID に応じて Consumer を選択する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">Orch::addConsumer</span><span class="p">(</span><span class="n">DBConnector</span><span class="w"> </span><span class="o">*</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pri</span><span class="p">)</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="p">{</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CONFIG_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">STATE_DB</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">db</span><span class="o">-&gt;</span><span class="n">getDbId</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">CHASSIS_APP_DB</span><span class="p">)</span>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">SubscriberStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="w">    </span><span class="k">else</span>
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="w">        </span><span class="n">addExecutor</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Consumer</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ConsumerStateTable</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">,</span><span class="w"> </span><span class="n">gBatchSize</span><span class="p">,</span><span class="w"> </span><span class="n">pri</span><span class="p">),</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">tableName</span><span class="p">));</span>
+</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>APPL_DB (db ID = 0) は <code>CONFIG_DB</code>/<code>STATE_DB</code> でないため、4 テーブルは <strong><code>ConsumerStateTable</code></strong> で購読される。<code>ConsumerStateTable</code> は <code>&lt;TABLE&gt;_CHANNEL@0</code> を SUBSCRIBE し、stpd/stpmgrd が発行した PUBLISH を受信して <code>m_toSync</code> に積む。</p>
+<table>
+<thead>
+<tr>
+<th>APPL_DB テーブル</th>
+<th>書き手</th>
+<th>消費 Orch</th>
+<th>消費方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_VLAN_INSTANCE_TABLE</code></td>
+<td>stpd → stpmgrd</td>
+<td><code>StpOrch</code></td>
+<td><code>ConsumerStateTable</code></td>
+</tr>
+<tr>
+<td><code>STP_PORT_STATE_TABLE</code></td>
+<td>stpd → stpmgrd</td>
+<td><code>StpOrch</code></td>
+<td><code>ConsumerStateTable</code></td>
+</tr>
+<tr>
+<td><code>STP_FASTAGEING_FLUSH_TABLE</code></td>
+<td>stpd → stpmgrd</td>
+<td><code>StpOrch</code></td>
+<td><code>ConsumerStateTable</code></td>
+</tr>
+<tr>
+<td><code>STP_INST_PORT_FLUSH_TABLE</code></td>
+<td>stpd → stpmgrd</td>
+<td><code>StpOrch</code></td>
+<td><code>ConsumerStateTable</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="orchdaemon-select">orchdaemon の select タイムアウト<a class="headerlink" href="#orchdaemon-select" title="Permanent link">&para;</a></h3>
+<p>orchdaemon のメインループは <code>SELECT_TIMEOUT = 1000</code> ms でブロック待機する (<code>orchdaemon.cpp:23,959</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="cp">#define SELECT_TIMEOUT 1000  </span><span class="c1">// ms</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_select</span><span class="o">-&gt;</span><span class="n">select</span><span class="p">(</span><span class="o">&amp;</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">SELECT_TIMEOUT</span><span class="p">);</span>
+</span></code></pre></div>
+<p>stpd/stpmgrd が APPL_DB に書き込んだエントリは、最大 <strong>1000 ms</strong> 以内に StpOrch の <code>doTask()</code> に到達する。</p>
+<h3 id="state_db-stp_table-pubsub-table">STATE_DB STP_TABLE — Pub/Sub なし (素の Table)<a class="headerlink" href="#state_db-stp_table-pubsub-table" title="Permanent link">&para;</a></h3>
+<p>StpOrch は STATE_DB <code>STP_TABLE</code> を <code>swss::Table</code> として保持する (<code>stporch.cpp:26</code>):</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">m_stpTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Table</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Table</span><span class="p">(</span><span class="n">stateDb</span><span class="p">,</span><span class="w"> </span><span class="n">STATE_STP_TABLE_NAME</span><span class="p">));</span>
+</span></code></pre></div>
+<p><code>swss::Table::set()</code> は HSET のみで PUBLISH を発行しない。STATE_DB <code>STP_TABLE</code> へのエントリ変化は keyspace 通知や <code>NotificationProducer</code> を経由しない。</p>
+<p><code>stpmgrd</code> (<code>cfgmgr/stpmgr.cpp:1381-1420</code>) は STATE_DB <code>STP_TABLE</code> を <code>swss::Table::get()</code> のポーリングで読み出す:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">while</span><span class="p">(</span><span class="n">max_delay</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// 最大 60 秒、1 秒間隔</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_stateStpTable</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;GLOBAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">vmEntry</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* max_stp_inst を取得 */</span><span class="w"> </span><span class="k">break</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="w">    </span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="w">    </span><span class="n">max_delay</span><span class="o">--</span><span class="p">;</span>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>ポーリング完了前にタイムアウトした場合は <code>STP_DEFAULT_MAX_INSTANCES = 255</code> (<code>stpmgr.h:38</code>) にフォールバックする。</p>
+<h3 id="_7">通信経路まとめ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>経路</th>
+<th>方式</th>
+<th>チャンネル / API</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>stpd → stpmgrd</td>
+<td>Unix Domain Socket IPC</td>
+<td>独自プロトコル</td>
+</tr>
+<tr>
+<td>stpmgrd → APPL_DB <code>STP_VLAN_INSTANCE_TABLE</code></td>
+<td><code>ProducerStateTable</code></td>
+<td><code>STP_VLAN_INSTANCE_TABLE_CHANNEL@0</code> へ PUBLISH</td>
+</tr>
+<tr>
+<td>stpmgrd → APPL_DB <code>STP_PORT_STATE_TABLE</code></td>
+<td><code>ProducerStateTable</code></td>
+<td><code>STP_PORT_STATE_TABLE_CHANNEL@0</code> へ PUBLISH</td>
+</tr>
+<tr>
+<td>stpmgrd → APPL_DB <code>STP_FASTAGEING_FLUSH_TABLE</code></td>
+<td><code>ProducerStateTable</code></td>
+<td><code>STP_FASTAGEING_FLUSH_TABLE_CHANNEL@0</code> へ PUBLISH</td>
+</tr>
+<tr>
+<td>stpmgrd → APPL_DB <code>STP_INST_PORT_FLUSH_TABLE</code></td>
+<td><code>ProducerStateTable</code></td>
+<td><code>STP_INST_PORT_FLUSH_TABLE_CHANNEL@0</code> へ PUBLISH</td>
+</tr>
+<tr>
+<td>orchagent <code>StpOrch</code> ← APPL_DB 4 テーブル</td>
+<td><code>ConsumerStateTable</code> SUBSCRIBE</td>
+<td>上記チャンネル (最大 1000 ms 遅延)</td>
+</tr>
+<tr>
+<td>StpOrch → STATE_DB <code>STP_TABLE</code></td>
+<td><code>swss::Table::set()</code> (HSET のみ)</td>
+<td>PUBLISH 非発行</td>
+</tr>
+<tr>
+<td>stpmgrd ← STATE_DB <code>STP_TABLE</code></td>
+<td><code>swss::Table::get()</code> ポーリング (最大 60 秒、1 秒間隔)</td>
+<td>PUBLISH 非購読</td>
+</tr>
+</tbody>
+</table>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差分 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>StpOrch</code> は ASIC から <code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE</code> を取得する 1 か所のみにプラットフォーム依存がある。orchdaemon はプラットフォーム条件なしで <code>gStpOrch</code> を常に登録し、multi-ASIC / VOQ chassis 分岐コードは存在しない。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-platform.md -->
+
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox 等)</td>
+<td>SAI 取得成否で <code>max_stp_instances</code> が変わるのみ。処理ロジックは同一</td>
+<td><code>stporch.cpp:34-42</code></td>
+</tr>
+<tr>
+<td>VS（仮想スイッチ）</td>
+<td>SAI 取得失敗時は <code>m_defaultStpId</code> / <code>m_maxStpInstance</code> 未初期化のまま動作継続</td>
+<td><code>stporch.cpp:42</code> (<code>ret = false</code> ログのみ)</td>
+</tr>
+<tr>
+<td>multi-asic (<code>is_multi_npu() == True</code>)</td>
+<td>非対応（分岐なし）</td>
+<td><code>stporch.cpp</code> 全体に <code>is_multi_npu</code> 出現なし</td>
+</tr>
+<tr>
+<td>VOQ chassis</td>
+<td>各 host で独立適用</td>
+<td>CHASSIS_APP_DB / asicN 参照なし</td>
+</tr>
+<tr>
+<td>warm-reboot</td>
+<td>対応コードなし（全プラットフォーム共通）</td>
+<td><code>stporch.cpp</code> に <code>WarmStart</code> 参照なし</td>
+</tr>
+<tr>
+<td>j2 テンプレート / platform_config.json</td>
+<td>なし</td>
+<td><code>sonic-buildimage/device/</code> に STP orch 設定注入なし</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">SAI 取得失敗時の動作</p>
+<p><code>StpOrch</code> コンストラクタ (<code>stporch.cpp:34-42</code>) は <code>SAI_SWITCH_ATTR_DEFAULT_STP_INST_ID</code> と <code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE</code> をまとめて取得する。VS などで取得が失敗した場合、<code>m_defaultStpId</code> と <code>m_maxStpInstance</code> は未初期化のまま残り、<code>SWSS_LOG_NOTICE("StpOrch initialization failure")</code> のみが出力される。STATE_DB への <code>max_stp_inst</code> 書き込みも行われないため、<code>stpmgrd</code> はフォールバック値 <code>STP_DEFAULT_MAX_INSTANCES = 255</code> を使用する。</p>
+</div>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/stp-orch-platform.md</code> を参照。</p>
+<!-- /platform -->
+
 <h2 id="discrepancy">発見された discrepancy / 暗黙デフォルト サマリー<a class="headerlink" href="#discrepancy" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -36187,8 +37153,8 @@ SAI 側の定数は <code>SAI_STP_PORT_STATE_BLOCKING</code> / <code>SAI_STP_POR
 </tr>
 </tbody>
 </table>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../stp/">CONFIG_DB: STP / STP_VLAN / STP_PORT テーブル</a></li>
 <li><a href="../stp-mst/">CONFIG_DB: STP_MST テーブル</a></li>

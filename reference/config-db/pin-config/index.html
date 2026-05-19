@@ -27981,6 +27981,95 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読み込みシーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB 購読チャンネル一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        変更反映タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pubsubconfig_db-p4rt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連コンポーネントの pubsub（CONFIG_DB P4RT とは独立）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証結果
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35924,6 +36013,95 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読み込みシーケンス
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DB 購読チャンネル一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        変更反映タイミング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pubsubconfig_db-p4rt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連コンポーネントの pubsub（CONFIG_DB P4RT とは独立）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        検証結果
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36750,6 +36928,106 @@ CONFIG_DB の <code>P4RT</code> テーブルを直接参照する経路は存在
 <h3 id="p4rt-appl_db">p4rt バイナリが管理する APPL_DB 書込（間接）<a class="headerlink" href="#p4rt-appl_db" title="Permanent link">&para;</a></h3>
 <p><code>p4rt</code> バイナリ自体は gRPC 経由で受信した P4Runtime リクエストを APPL_DB <code>P4RT_*</code> テーブルへ書き込む。ただしこれは CONFIG_DB <code>P4RT</code> テーブルの読込に伴う直接の副次書込ではなく、外部コントローラからの gRPC リクエストドリブンの書込であるため、<code>p4rt.sh</code> の副次 DB 書込とは区別する。</p>
 <!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-buildimage/dockers/docker-sonic-p4rt/p4rt.sh</code> L1–99、<code>p4rt_vars.j2</code> L1–5 を精読 (2026-05-19)</p>
+</blockquote>
+<!-- evidence: meta/_intermediate/cdb-flow/pin-config-pubsub.md -->
+
+<p><code>P4RT</code> テーブルは <strong>SubscriberStateTable・ConsumerStateTable・ProducerStateTable のいずれも使用しない</strong>。
+<code>p4rt.sh</code> がコンテナ起動時に <code>sonic-cfggen -d -t p4rt_vars.j2</code> を<strong>一回だけ</strong>呼び出して CONFIG_DB をスナップショット取得し、
+各フィールドを <code>p4rt</code> バイナリの起動引数に変換する。CONFIG_DB の変更イベントを watch する仕組みは存在しない。</p>
+<h3 id="_21">読み込みシーケンス<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>p4rt.sh
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  L13: P4RT_VARS=$(sonic-cfggen -d -t /usr/share/sonic/templates/p4rt_vars.j2)
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>         ↓ p4rt_vars.j2 を Jinja2 展開
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>         ↓ P4RT[&quot;certs&quot;] / P4RT[&quot;p4rt_app&quot;] / DEVICE_METADATA[&quot;x509&quot;] → JSON
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  L15–17: jq で各フィールドを変数に展開
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  L21–97: P4RT_ARGS を構築（TLS 条件分岐 + オプション引数）
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  L99:    exec /usr/local/bin/p4rt ${P4RT_ARGS}
+</span></code></pre></div>
+<h3 id="db_1">DB 購読チャンネル一覧<a class="headerlink" href="#db_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>区間</th>
+<th>方式</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB → p4rt.sh</td>
+<td><code>sonic-cfggen -d</code> 一括読み込み（シングルショット）</td>
+<td>イベント駆動なし</td>
+</tr>
+<tr>
+<td>p4rt バイナリ → APPL_DB <code>P4RT_*</code></td>
+<td>gRPC リクエスト起点の直接書き込み</td>
+<td>CONFIG_DB <code>P4RT</code> テーブルとは独立</td>
+</tr>
+</tbody>
+</table>
+<p><strong>SubscriberStateTable / ConsumerStateTable / ProducerStateTable の使用: なし</strong></p>
+<h3 id="_22">変更反映タイミング<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<p>CONFIG_DB <code>P4RT</code> テーブルへの変更は <code>p4rt</code> コンテナ稼働中には反映されない。
+<code>sonic-cfggen -d -t</code> はコンテナ起動時のシングルショットであるため、設定変更後は
+<code>systemctl restart p4rt</code> によるコンテナ再起動が必要（evidence: <code>p4rt.sh:L13</code>）。</p>
+<h3 id="pubsubconfig_db-p4rt">関連コンポーネントの pubsub（CONFIG_DB <code>P4RT</code> とは独立）<a class="headerlink" href="#pubsubconfig_db-p4rt" title="Permanent link">&para;</a></h3>
+<p><code>sonic-swss/orchagent/p4orch/</code> の P4 orch 群は APPL_DB の <code>P4RT_TABLE:*</code> 等を <code>ConsumerStateTable</code> で購読するが、
+これは外部 P4Runtime gRPC コントローラからの書き込み起点であり、CONFIG_DB <code>P4RT</code> テーブルの変更通知とは別経路。</p>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><strong>プラットフォーム差なし</strong>。<code>P4RT</code> テーブルは <code>p4rt.sh</code> がコンテナ起動時に一回だけスナップショット読み込みする host-only 設定処理であり、ASIC 種別・multi-asic / chassis 構成・ハードウェアベンダーに依存しない。</p>
+<h3 id="_23">検証結果<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>差異候補</th>
+<th>実態</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hwsku</code> / <code>type</code> / <code>platform</code> (DEVICE_METADATA) の参照</td>
+<td><code>p4rt.sh</code> は <code>DEVICE_METADATA["x509"]</code> のみ参照（TLS fallback 用）。<code>hwsku</code> / <code>type</code> / <code>platform</code> フィールドはゼロ参照</td>
+<td><code>p4rt_vars.j2:L4</code>; <code>p4rt.sh:L38–56</code></td>
+</tr>
+<tr>
+<td>multi-asic 構成</td>
+<td><code>SONIC_ASIC_ID</code> / <code>SONIC_ASIC_COUNT</code> 等の multi-asic 環境変数を <code>p4rt.sh</code> は参照しない。<code>docker-sonic-p4rt</code> は host namespace で 1 コンテナのみ起動</td>
+<td><code>p4rt.sh:L1–99</code>; <code>supervisord.conf:[program:p4rt]</code></td>
+</tr>
+<tr>
+<td>SAI / ASIC capability</td>
+<td>経路なし。CONFIG_DB <code>P4RT</code> テーブルの読み込みとバイナリ起動引数変換は host Linux プロセス管理レイヤで完結。SAI は P4 orch が APPL_DB 経由で間接利用するが、CONFIG_DB <code>P4RT</code> 読込処理とは独立</td>
+<td><code>p4rt.sh:L99</code> (<code>exec /usr/local/bin/p4rt</code>)</td>
+</tr>
+<tr>
+<td>VOQ chassis / line card 分散</td>
+<td>PINS は現行 HLD で単一 ASIC 向けを想定。<code>p4rt.sh</code> は単一コンテナ単一バイナリ起動のみ実装。chassis 集中適用機構なし</td>
+<td><code>p4rt_app_hld.md</code>; <code>supervisord.conf</code></td>
+</tr>
+<tr>
+<td>ベンダー固有分岐</td>
+<td><code>p4rt.sh</code> に <code>broadcom</code> / <code>mellanox</code> / <code>nvidia</code> 等のベンダー識別コードなし</td>
+<td><code>p4rt.sh:L1–99</code> 全行精読</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">プラットフォーム差なしの根拠</p>
+<p><code>p4rt.sh</code>（L1–99）全行に <code>hwsku</code>、<code>asic</code>、<code>platform</code>、<code>multi_npu</code>、<code>chassis</code>、<code>voq</code>、<code>vendor</code> 等のキーワードはゼロヒット。<code>p4rt_vars.j2</code> も同様。CONFIG_DB <code>P4RT</code> テーブルの処理は純粋な host OS レイヤの「設定スナップショット → バイナリ引数変換 → gRPC サーバ起動」に閉じており、T0 / T1 / T2 トポロジや ASIC ベンダーに関わらず同一動作をする。</p>
+</div>
+<blockquote>
+<p><strong>証跡</strong>: <code>sonic-buildimage/dockers/docker-sonic-p4rt/p4rt.sh:L1–99</code>（ベンダー/ASIC 分岐ゼロ）、<code>p4rt_vars.j2:L1–5</code>（<code>DEVICE_METADATA["type"]</code> 未参照）、<code>supervisord.conf:[program:p4rt]</code>（固定 command）; 詳細分析 <code>meta/_intermediate/cdb-flow/pin-config-platform.md</code></p>
+</blockquote>
+<!-- /platform -->
 
 <!-- glossary-links-injected -->
 

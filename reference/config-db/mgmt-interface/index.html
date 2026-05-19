@@ -37128,7 +37128,7 @@
 </blockquote>
 <!-- /pubsub -->
 
-<!-- failure-behavior -->
+<!-- failure -->
 <h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
 
@@ -37207,7 +37207,7 @@
 </tbody>
 </table>
 <p><strong>インターフェース未 ready の場合のみ自動リトライあり</strong>。その他の netlink 失敗（カーネルエラー・権限不足等）はエラーログを出してエントリを破棄する。</p>
-<!-- /failure-behavior -->
+<!-- /failure -->
 
 <!-- ordering -->
 <h2 id="phase-b_1">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
@@ -37305,7 +37305,7 @@
 <p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/mgmt-interface-ordering.md</code> 参照。</p>
 <!-- /ordering -->
 
-<!-- constants-phaseE -->
+<!-- constants -->
 <h2 id="phase-e-intfmgr">ハードコード定数 (Phase E / intfmgr)<a class="headerlink" href="#phase-e-intfmgr" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp L24-29, sonic-buildimage/src/sonic-config-engine/minigraph.py L2874,2880 -->
 
@@ -37353,7 +37353,7 @@
 <blockquote>
 <p><strong>注意</strong>: MGMT_INTERFACE テーブル自体には <code>mtu</code> フィールドが YANG で定義されていない。<code>DEFAULT_MTU_STR=9100</code> は <code>INTERFACE</code> / <code>VLAN_INTERFACE</code> / <code>PORTCHANNEL_INTERFACE</code> 等の通常 IF に適用されるものであり、管理 IF (<code>eth0</code>) の MTU は kernel / platform デフォルト（通常 <strong>1500</strong>）に依存する。管理 IF の MTU を変更するには <code>ip link set eth0 mtu &lt;value&gt;</code> を直接実行するか、プラットフォーム固有の設定が必要。</p>
 </blockquote>
-<!-- /constants-phaseE -->
+<!-- /constants -->
 
 <!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>

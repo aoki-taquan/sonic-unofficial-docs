@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。">
+        <meta name="description" content="PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。Phase A–H 分析。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="PORTCHANNEL_INTERFACE テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。" />
+<meta property="og:description" content="PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。Phase A–H 分析。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/portchannel-interface.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/portchannel-interface/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="PORTCHANNEL_INTERFACE テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。" />
+<meta property="twitter:description" content="PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。Phase A–H 分析。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/portchannel-interface.png" />
 </head>
   
@@ -22920,6 +22920,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-mpls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. MPLS — カーネルモジュール必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-accept_untracked_na-sysctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. accept_untracked_na sysctl — カーネルバージョン依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-sai-rif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. SAI RIF 生成 — 全プラットフォーム共通
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36778,6 +36839,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-h_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-mpls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. MPLS — カーネルモジュール必須
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-accept_untracked_na-sysctl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. accept_untracked_na sysctl — カーネルバージョン依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-sai-rif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. SAI RIF 生成 — 全プラットフォーム共通
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差異サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -37586,7 +37708,7 @@
 <p>SAI 操作の失敗のうち、<code>create_router_interface</code>・<code>remove_router_interface</code>・<code>create_route_entry</code> (IP2me) の失敗は <code>runtime_error</code> をスローして orchagent をクラッシュさせる。これらはハードウェア不整合・SAI 実装バグ・リソース枯渇が主因であり、supervisord が orchagent を再起動する。再起動後も同一 SAI エラーが継続する場合はハードウェア/SAI 実装の調査が必要。</p>
 <!-- /failure -->
 
-<!-- platform-diff -->
+<!-- platform -->
 <h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p><strong>調査対象</strong>: <code>sonic-swss/cfgmgr/intfmgr.cpp</code>, <code>sonic-swss/orchagent/intfsorch.cpp</code>
@@ -37639,7 +37761,7 @@
 <p><strong>PORTCHANNEL_INTERFACE への実質影響</strong>: <code>PORTCHANNEL_INTERFACE</code> に IPv6 プレフィクスを設定したとき、intfmgrd が発行する <code>ip -6 address add</code> コマンドに <code>metric 256</code> が自動付加される。ユーザ側で metric を意識する必要はないが、Linux カーネルの <code>ip addr show</code> でメトリックが <code>256</code> と表示される。</p>
 <h3 id="smartswitch-dpu-switch_type-smartswitch">SmartSwitch / DPU (<code>switch_type == "smartswitch"</code>)<a class="headerlink" href="#smartswitch-dpu-switch_type-smartswitch" title="Permanent link">&para;</a></h3>
 <p><code>intfmgr.cpp</code> および <code>intfsorch.cpp</code> に SmartSwitch / DPU に関する <code>PORTCHANNEL_INTERFACE</code> 固有の分岐コードは存在しない（2026-05-16 時点の master 調査結果）。SmartSwitch における Portchannel L3 IF の扱いは通常の <code>IntfMgr</code> フローと同一であり、midplane / DPU 側への追加同期処理はなし。</p>
-<!-- /platform-diff -->
+<!-- /platform -->
 
 <!-- constants -->
 <h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
@@ -38192,6 +38314,130 @@
 </table>
 <p>RIF 削除時は上記エントリを <code>hdel</code> / <code>stopFlexCounterPolling</code> でクリーンアップする (<code>intfsorch.cpp:1560-1566</code>)。</p>
 <!-- /side-effects -->
+
+<!-- platform -->
+<h2 id="phase-h_1">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h_1" title="Permanent link">&para;</a></h2>
+<p><code>PORTCHANNEL_INTERFACE</code> テーブルを処理する <code>intfmgrd</code> (<code>cfgmgr/intfmgr.cpp</code>) および <code>IntfsOrch</code> (<code>orchagent/intfsorch.cpp</code>) には <code>getenv("platform")</code> 呼び出しも <code>#ifdef</code> プラットフォーム分岐も存在しない。SAI RIF 生成ロジックはすべてのプラットフォームで同一パスを通る。</p>
+<p>プラットフォームに依存する差異は以下の 3 点に局所化される。</p>
+<h3 id="a-mpls">A. MPLS — カーネルモジュール必須<a class="headerlink" href="#a-mpls" title="Permanent link">&para;</a></h3>
+<p><code>intfmgrd</code> は <code>mpls=enable</code> 受信時に <code>sysctl -w net.mpls.conf.&lt;intf&gt;.input=1</code> を発行する (<code>intfmgr.cpp:169-190</code>)。このコマンドはカーネルの MPLS モジュール (<code>mpls_router</code>, <code>mpls_iptunnel</code>) がロードされていないと失敗する。</p>
+<table>
+<thead>
+<tr>
+<th>環境</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MPLS カーネルモジュールあり</td>
+<td><code>sysctl</code> 成功 → MPLS 入力が有効化される</td>
+</tr>
+<tr>
+<td>MPLS カーネルモジュールなし / VS 軽量カーネル</td>
+<td><code>sysctl</code> が <code>ENOENT</code> / <code>EINVAL</code> → <code>intfmgrd</code> がエラーログを出力するが処理は継続</td>
+</tr>
+</tbody>
+</table>
+<p><code>mpls</code> フィールドが空文字の場合は <code>sysctl input=0</code> を実行してもエラーを無視する (<code>intfmgr.cpp:188-190</code>)。明示的に <code>mpls=enable</code> を設定した場合のみエラーが問題になる。</p>
+<p>証跡: <code>intfmgr.cpp:169-190</code></p>
+<h3 id="b-accept_untracked_na-sysctl">B. <code>accept_untracked_na</code> sysctl — カーネルバージョン依存<a class="headerlink" href="#b-accept_untracked_na-sysctl" title="Permanent link">&para;</a></h3>
+<p><code>grat_arp</code> 設定時、<code>intfmgrd</code> は <code>/proc/sys/net/ipv6/conf/&lt;intf&gt;/accept_untracked_na</code> の存在を先に確認してから書き込む (<code>intfmgr.cpp:601-611</code>)。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1">// intfmgr.cpp:601-611</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">cmd</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;test -f /proc/sys/net/ipv6/conf/&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">alias</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;/accept_untracked_na&quot;</span><span class="p">;</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">swss</span><span class="o">::</span><span class="n">exec</span><span class="p">(</span><span class="n">cmd</span><span class="p">.</span><span class="n">str</span><span class="p">(),</span><span class="w"> </span><span class="n">res</span><span class="p">);</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rc</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="n">cmd</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">ECHO_CMD</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">garp_enabled</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; &gt; .../accept_untracked_na&quot;</span><span class="p">;</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span><span class="n">EXEC_WITH_ERROR_THROW</span><span class="p">(</span><span class="n">cmd</span><span class="p">.</span><span class="n">str</span><span class="p">(),</span><span class="w"> </span><span class="n">res</span><span class="p">);</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>カーネルバージョン</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5.11+ (<code>accept_untracked_na</code> 導入済み)</td>
+<td>sysctl ファイルが存在 → NDP untracked NA 受け入れが設定される</td>
+</tr>
+<tr>
+<td>5.10 以前 / VS 軽量カーネル</td>
+<td>sysctl ファイルが存在しないため書込みをスキップ (エラーなし)</td>
+</tr>
+</tbody>
+</table>
+<p>この差異は <code>PORTCHANNEL_INTERFACE</code> テーブルの書込みや RIF 生成には影響せず、NDP 近隣探索の細かい挙動差に留まる。</p>
+<p>証跡: <code>intfmgr.cpp:601-611</code></p>
+<h3 id="c-sai-rif">C. SAI RIF 生成 — 全プラットフォーム共通<a class="headerlink" href="#c-sai-rif" title="Permanent link">&para;</a></h3>
+<p><code>IntfsOrch::addRouterIntfs()</code> は <code>port.m_type == Port::LAG</code> の場合 <code>SAI_ROUTER_INTERFACE_TYPE_PORT</code> / <code>SAI_ROUTER_INTERFACE_ATTR_PORT_ID = m_lag_id</code> を設定し (<code>intfsorch.cpp:1214-1243</code>)、プラットフォームによる分岐はない。<code>loopback_action</code> の SAI 変換 (<code>getSaiLoopbackAction()</code>) も <code>"drop"</code> → <code>SAI_PACKET_ACTION_DROP</code>、<code>"forward"</code> → <code>SAI_PACKET_ACTION_FORWARD</code> の固定マップで、ASIC ベンダー差分はない (<code>intfsorch.cpp:1146-1164</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>全プラットフォーム共通動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RIF タイプ</td>
+<td><code>SAI_ROUTER_INTERFACE_TYPE_PORT</code>（LAG OID 使用）</td>
+</tr>
+<tr>
+<td>loopback_action 変換</td>
+<td><code>drop</code> / <code>forward</code> の固定マップ、未知値は WARN ログ + スキップ</td>
+</tr>
+<tr>
+<td>nat_zone / mac_addr</td>
+<td>設定時のみ <code>sai_router_intfs_api-&gt;set_router_interface_attribute()</code> を発行</td>
+</tr>
+<tr>
+<td>RIF FLEX_COUNTER</td>
+<td>全プラットフォームで <code>RIF_STAT_COUNTER_FLEX_COUNTER_GROUP</code> に登録</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_20">プラットフォーム差異サマリ<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>全プラットフォーム共通</th>
+<th>カーネル依存</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PORTCHANNEL_INTERFACE → APPL_DB 書込 (<code>intfmgrd</code>)</td>
+<td>共通</td>
+<td>—</td>
+</tr>
+<tr>
+<td>SAI RIF 生成 (<code>IntfsOrch</code>)</td>
+<td>共通</td>
+<td>—</td>
+</tr>
+<tr>
+<td>FLEX_COUNTER RIF 登録</td>
+<td>共通</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>mpls=enable</code> (<code>sysctl net.mpls.conf</code>)</td>
+<td>—</td>
+<td>MPLS カーネルモジュールが必要</td>
+</tr>
+<tr>
+<td><code>accept_untracked_na</code> sysctl</td>
+<td>—</td>
+<td>カーネル 5.11+ が必要 (旧カーネルはスキップ)</td>
+</tr>
+</tbody>
+</table>
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp:169-190,601-611 (platform/getenv grep = 0 hits); sonic-swss/orchagent/intfsorch.cpp:1146-1164,1180-1243 (platform/getenv grep = 0 hits) -->
+<!-- /platform -->
 
 <div class="footnote">
 <hr />

@@ -36232,7 +36232,7 @@
 </span></code></pre></div>
 <!-- /failure -->
 
-<!-- hardcoded-constants -->
+<!-- constants -->
 <h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
 <!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-constants.md -->
 <!-- source: sonic-swss/orchagent/pfcwdorch.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
@@ -36303,7 +36303,7 @@
 <p><strong><code>PFC_WD_TC_MAX = 8</code> による登録エントリ数制限</strong>: <code>registerInWdDb()</code> (<code>pfcwdorch.cpp:542-603</code>) は <code>for (uint8_t i = 0; i &lt; PFC_WD_TC_MAX; i++)</code> でポートの queue index 0–7 をスキャンする。<code>pfcMask</code> でビットが立っていない TC（PFC 未有効）はスキップされるため、COUNTERS_DB に書き込まれる <code>COUNTERS:&lt;queue_oid&gt;</code> エントリは実際に PFC が有効な TC 数に限定される。ポートの PFC 設定を変えずに <code>pfcwd start</code> を再実行しても、既存エントリに上書きするだけで数は変化しない。</p>
 <p><strong><code>detection_time</code> / <code>restoration_time</code> の範囲制約</strong>: <code>createEntry()</code> (<code>pfcwdorch.cpp:214-223</code>) で <code>to_uint&lt;uint32_t&gt;(value, MIN, MAX)</code> を呼び出す。範囲外の値は <code>std::out_of_range</code> / 検証失敗で <code>task_invalid_entry</code> を返し、<code>startWdOnPort()</code> は呼ばれない。COUNTERS_DB には一切書き込まれない。</p>
 <p><strong>フィールド名のリテラル固定</strong>: <code>PFC_WD_STATUS</code>、<code>PFC_WD_QUEUE_STATS_DEADLOCK_DETECTED</code> 等のフィールド名はすべて C++ マクロとして <code>pfcactionhandler.cpp</code> の先頭に定義されており、YANG モデルや CONFIG_DB スキーマによる検証外に置かれている。Lua プラグインおよび <code>show pfcwd stats</code> が同じ文字列リテラルを参照することで整合性が保たれている。</p>
-<!-- /hardcoded-constants -->
+<!-- /constants -->
 
 <!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>

@@ -29610,7 +29610,329 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-vrfmgrd-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. vrfmgrd が参照する CONFIG_DB 入力テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-vrforch-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. VRFOrch が参照する内部 Orch / グローバルリソース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-vrforch-vrfmgrd-state_db-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. VRFOrch / vrfmgrd が書込む STATE_DB / APPL_DB テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#addoperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        addOperation における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deloperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        delOperation における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd 側の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgr.cpp 数値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        schema.h テーブル名定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込み一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gflowcounterrouteorch-flowcounter-vr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gFlowCounterRouteOrch — FlowCounter への VR 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gportsorch-vlan-ve-updown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gPortsOrch — VLAN VE インターフェイス UP/DOWN 通知
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd-appl_dbproducerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd → APPL_DB（ProducerStateTable）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-vrforchconsumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB → VRFOrch（ConsumerStateTable）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読者サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知フロー（APPL_DB 中心）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-fabric-asic-vrfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. fabric ASIC — vrfmgrd 非起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sai-capability-query-vendor-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SAI 属性の capability query なし — vendor SAI 依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-l3mdev" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. カーネル l3mdev モジュール依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-warm-restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. warm restart — 初期化挙動差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -29621,7 +29943,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -29632,7 +29954,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35014,7 +35336,329 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-vrfmgrd-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. vrfmgrd が参照する CONFIG_DB 入力テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-vrforch-orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. VRFOrch が参照する内部 Orch / グローバルリソース
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-vrforch-vrfmgrd-state_db-appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. VRFOrch / vrfmgrd が書込む STATE_DB / APPL_DB テーブル
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動マトリクス (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動マトリクス (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#addoperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        addOperation における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deloperation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        delOperation における失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd 側の失敗経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrcpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgr.cpp 数値定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schemah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        schema.h テーブル名定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込み一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gflowcounterrouteorch-flowcounter-vr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gFlowCounterRouteOrch — FlowCounter への VR 登録
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gportsorch-vlan-ve-updown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gPortsOrch — VLAN VE インターフェイス UP/DOWN 通知
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrfmgrd-appl_dbproducerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        vrfmgrd → APPL_DB（ProducerStateTable）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-vrforchconsumerstatetable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB → VRFOrch（ConsumerStateTable）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読者サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通知フロー（APPL_DB 中心）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-fabric-asic-vrfmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. fabric ASIC — vrfmgrd 非起動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-sai-capability-query-vendor-sai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SAI 属性の capability query なし — vendor SAI 依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-l3mdev" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. カーネル l3mdev モジュール依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-warm-restart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. warm restart — 初期化挙動差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35025,7 +35669,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35036,7 +35680,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35358,13 +36002,641 @@
 </ul>
 <!-- /ordering -->
 
-<h2 id="_4">例外条件・特殊挙動<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>APPL_DB VRF_TABLE</code> はエントリの <strong>書き手が vrfmgrd 単独</strong> であり、YANG leafref も未定義のため、暗黙参照はすべて実装レベルの依存として現れる。以下は (A) vrfmgrd が CONFIG_DB から読む入力テーブル、(B) VRFOrch が orchagent の <code>gDirectory</code> 経由で参照する内部 Orch、(C) 書込み先となる STATE_DB / APPL_DB テーブルを整理したもの。</p>
+<h3 id="a-vrfmgrd-config_db">A. vrfmgrd が参照する CONFIG_DB 入力テーブル<a class="headerlink" href="#a-vrfmgrd-config_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONFIG_DB VRF\|&lt;vrf_name&gt;</code></td>
+<td>SET/DEL トリガ → Linux <code>ip link add/del</code> → APPL_DB VRF_TABLE に転写</td>
+<td>常時。通常の VRF 追加・削除の主経路</td>
+<td><code>vrfmgr.cpp:273-310</code> (<code>doTask</code> SET/DEL 分岐)</td>
+</tr>
+<tr>
+<td><code>CONFIG_DB MGMT_VRF_CONFIG\|vrf_global</code></td>
+<td><code>mgmtVrfEnabled</code> / <code>in_band_mgmt_enabled</code> 解釈 → vrf_name を <code>"mgmt"</code> 固定で SET/DEL</td>
+<td>mgmt VRF のみ。<code>mgmtVrfEnabled=false</code> または <code>in_band_mgmt_enabled=false</code> のとき DEL に強制変換される</td>
+<td><code>vrfmgr.cpp:229-270</code></td>
+</tr>
+<tr>
+<td><code>CONFIG_DB VXLAN_EVPN_NVO\|&lt;nvo_name&gt;</code> (<code>source_vtep</code> フィールド)</td>
+<td>EVPN VTEP tunnel 名を <code>m_evpnVxlanTunnel</code> にキャッシュ</td>
+<td>EVPN NVO 設定時のみ。VNI 付き VRF の <code>APPL_DB VXLAN_VRF_TABLE</code> 書込み (<code>doVrfVxlanTableUpdate</code>) の前提</td>
+<td><code>vrfmgr.cpp:373-396</code> (<code>doVrfEvpnNvoAddTask</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-vrforch-orch">B. VRFOrch が参照する内部 Orch / グローバルリソース<a class="headerlink" href="#b-vrforch-orch" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>依存先</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>参照元 evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EvpnNvoOrch::getEVPNVtep()</code> (<code>gDirectory.get&lt;EvpnNvoOrch*&gt;()</code>)</td>
+<td>EVPN VTEP オブジェクト取得 → null なら VRF 作成を中断・再キュー</td>
+<td><code>vni != 0</code> のとき <code>addOperation</code> / <code>updateVrfVNIMap</code> で参照。VTEP が null なら <code>false</code> 返却 → Consumer が <code>m_toSync</code> に残して再試行</td>
+<td><code>vrforch.cpp:205, 225-229</code> (<code>updateVrfVNIMap</code>)</td>
+</tr>
+<tr>
+<td><code>VxlanTunnelOrch::getVlanMappedToVni(vni)</code> (<code>gDirectory.get&lt;VxlanTunnelOrch*&gt;()</code>)</td>
+<td>VNI → VLAN ID 解決 → L3 VNI VLAN インターフェイス UP/DOWN 決定</td>
+<td><code>vni != 0</code> かつ EVPN VTEP 取得成功後。VLAN ID = 0 なら <code>updateL3VniStatus</code> は呼ばれない</td>
+<td><code>vrforch.cpp:207, 233-241</code></td>
+</tr>
+<tr>
+<td><code>gPortsOrch-&gt;updateL3VniStatus(vlan_id, true)</code> / <code>updateL3VniStatus(vlan_id, false)</code></td>
+<td>VE インターフェイス UP/DOWN 通知</td>
+<td>VLAN ID が非ゼロの VNI 付き VRF の add / del 時。直接 PortsOrch に作用するため VRF 削除で VLAN VE がダウンする</td>
+<td><code>vrforch.cpp:239</code> (add), <code>vrforch.cpp:267</code> (del), <code>vrforch.cpp:285</code> (<code>updateL3VniVlan</code>)</td>
+</tr>
+<tr>
+<td><code>gFlowCounterRouteOrch-&gt;onAddVR(router_id)</code></td>
+<td>SAI Virtual Router OID を FlowCounterRouteOrch に登録</td>
+<td>VRF create 成功直後（SAI <code>create_virtual_router</code> 戻り値の OID を引数）</td>
+<td><code>vrforch.cpp:110</code></td>
+</tr>
+<tr>
+<td><code>gFlowCounterRouteOrch-&gt;onRemoveVR(router_id)</code></td>
+<td>FlowCounterRouteOrch から VR 登録を削除</td>
+<td>SAI <code>remove_virtual_router</code> 成功後、<code>vrf_table_</code> / <code>vrf_id_table_</code> erase の直前</td>
+<td><code>vrforch.cpp:184</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="c-vrforch-vrfmgrd-state_db-appl_db">C. VRFOrch / vrfmgrd が書込む STATE_DB / APPL_DB テーブル<a class="headerlink" href="#c-vrforch-vrfmgrd-state_db-appl_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>テーブル / key</th>
+<th>書込元</th>
+<th>書込タイミング</th>
+<th>フィールド</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_DB VRF_TABLE\|&lt;vrf_name&gt;</code></td>
+<td>vrfmgrd</td>
+<td><code>CONFIG_DB VRF</code> SET 受信直後・APPL_DB 書込み前</td>
+<td><code>state=ok</code></td>
+<td><code>vrfmgr.cpp:289</code></td>
+</tr>
+<tr>
+<td><code>STATE_DB VRF_TABLE\|&lt;vrf_name&gt;</code> DEL</td>
+<td>vrfmgrd</td>
+<td><code>VRF_OBJECT_TABLE</code> が消えた後の <code>CONFIG_DB VRF</code> DEL 処理</td>
+<td>—</td>
+<td><code>vrfmgr.cpp:339</code></td>
+</tr>
+<tr>
+<td><code>STATE_DB VRF_OBJECT_TABLE\|&lt;vrf_name&gt;</code></td>
+<td>VRFOrch</td>
+<td>SAI <code>create_virtual_router</code> / <code>set_virtual_router_attribute</code> 成功後</td>
+<td><code>state=ok</code></td>
+<td><code>vrforch.cpp:120, 150</code></td>
+</tr>
+<tr>
+<td><code>STATE_DB VRF_OBJECT_TABLE\|&lt;vrf_name&gt;</code> DEL</td>
+<td>VRFOrch</td>
+<td>SAI <code>remove_virtual_router</code> 成功後</td>
+<td>—</td>
+<td><code>vrforch.cpp:193</code></td>
+</tr>
+<tr>
+<td><code>APPL_DB VXLAN_VRF_TABLE\|&lt;nvo&gt;:evpn_map_&lt;vni&gt;_&lt;vrf&gt;</code></td>
+<td>vrfmgrd <code>doVrfVxlanTableUpdate()</code></td>
+<td>VNI 付き VRF の SET（追加）/ DEL（削除）時、かつ <code>m_evpnVxlanTunnel</code> が設定済みの場合のみ</td>
+<td><code>vni</code>, <code>vrf</code></td>
+<td><code>vrfmgr.cpp:510-528</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">STATE_DB VRF_TABLE と VRF_OBJECT_TABLE の役割分担</p>
+<p><code>STATE_DB VRF_TABLE</code> は vrfmgrd が「Linux VRF デバイスを作成し APPL_DB に書いた」ことを示し、<code>STATE_DB VRF_OBJECT_TABLE</code> は VRFOrch が「SAI Virtual Router を作成した」ことを示す。vrfmgrd の DEL 処理は <code>VRF_OBJECT_TABLE</code> が存在する間は <code>m_toSync</code> に保留し続ける (<code>vrfmgr.cpp:331-346</code>)。この 2 段シグナルにより、「Linux デバイス削除」は必ず「SAI VR 削除」の後になることが保証される。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">APPL_DB VXLAN_VRF_TABLE は NVO 設定の有無に依存</p>
+<p><code>VXLAN_EVPN_NVO</code> が未設定（<code>m_evpnVxlanTunnel</code> が空）の場合、vrfmgrd は <code>doVrfVxlanTableUpdate()</code> で即座に <code>false</code> を返してスキップする (<code>vrfmgr.cpp:503-508</code>)。VNI が設定済みの VRF でも <code>VXLAN_VRF_TABLE</code> には何も書かれない。EVPN NVO が後から追加されると <code>VrfVxlanTableSync(true)</code> が呼ばれて既存の VNI マッピングが一括書込みされる (<code>vrfmgr.cpp:531-542</code>)。</p>
+</div>
+<p>詳細な参照経路・行番号は <code>meta/_intermediate/cdb-flow/vrf-orch-cross-refs.md</code> を参照。</p>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査日 2026-05-19。ソース: <code>sonic-swss/orchagent/vrforch.cpp</code>, <code>sonic-swss/cfgmgr/vrfmgr.cpp</code></p>
+</blockquote>
+<h3 id="addoperation">addOperation における失敗経路<a class="headerlink" href="#addoperation" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sai_virtual_router_api-&gt;create_virtual_router()</code> 失敗</td>
+<td><code>vrforch.cpp:97-104</code></td>
+<td><code>handleSaiCreateStatus</code> → <code>task_need_retry</code> なら <code>false</code> 返却・Consumer 再試行 / <code>task_failed</code> なら <code>true</code> 返却・Consumer drop</td>
+<td><code>SWSS_LOG_ERROR "Failed to create virtual router name: %s, rv: %d"</code></td>
+<td><code>vrforch.cpp:99-103</code></td>
+</tr>
+<tr>
+<td>VNI 付き VRF 追加時に EVPN VTEP 未設定 (<code>getEVPNVtep()</code> → null)</td>
+<td><code>vrforch.cpp:225-229</code></td>
+<td>SAI VR 作成は成功済みだが <code>STATE_VRF_OBJECT_TABLE</code> 未書込み → <code>addOperation</code> が <code>false</code> 返却 → Consumer 再試行。EVPN VTEP 到着後の次スケジュールで <code>updateVrfVNIMap</code> を再実行</td>
+<td><code>SWSS_LOG_NOTICE "updateVrfVNIMap unable to find EVPN VTEP"</code></td>
+<td><code>vrforch.cpp:228-229</code></td>
+</tr>
+<tr>
+<td>既存 VRF の <code>set_virtual_router_attribute()</code> 失敗</td>
+<td><code>vrforch.cpp:131-140</code></td>
+<td>失敗した属性のみ <code>handleSaiSetStatus</code> でエラー処理。後続の属性 set は<strong>継続</strong>（属性単位の中断なし）</td>
+<td><code>SWSS_LOG_ERROR "Failed to update virtual router attribute. vrf name: %s, rv: %d"</code></td>
+<td><code>vrforch.cpp:134-139</code></td>
+</tr>
+<tr>
+<td>未知フィールド名 (<code>fallback</code> 等) が attrs リストに届く</td>
+<td><code>vrforch.cpp:79-83</code></td>
+<td><code>attrs</code> に追加されず <strong>silent discard</strong>。SAI 処理なし</td>
+<td><code>SWSS_LOG_ERROR "Logic error: Unknown attribute: %s"</code></td>
+<td><code>vrforch.cpp:81</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">EVPN VTEP 中間状態</p>
+<p>VNI 付き VRF の EVPN VTEP 未設定失敗では SAI VR が作成済み (<code>vrf_table_</code> / <code>vrf_id_table_</code> 登録済み) だが <code>STATE_VRF_OBJECT_TABLE</code> にエントリがない。次の再試行は <code>vrf_table_.find(vrf_name) != end</code> に入るため、SAI VR 重複作成は発生せず <code>set_virtual_router_attribute</code> + <code>updateVrfVNIMap</code> のみ再実行される。</p>
+</div>
+<h3 id="deloperation">delOperation における失敗経路<a class="headerlink" href="#deloperation" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vrf_table_[vrf_name].ref_count != 0</code>（INTERFACE / ROUTE 参照中）</td>
+<td><code>vrforch.cpp:169-170</code></td>
+<td><code>false</code> 返却 → Consumer が <code>m_toSync</code> に保留。参照 Orch が <code>decreaseVrfRefCount()</code> を呼び <code>ref_count == 0</code> になるまで無限保留</td>
+<td>なし（ログなし）</td>
+<td><code>vrforch.cpp:169-170</code></td>
+</tr>
+<tr>
+<td>存在しない VRF 名への DEL</td>
+<td><code>vrforch.cpp:163-166</code></td>
+<td><code>true</code> 返却（Consumer はエントリを消費）・SAI / STATE_DB への変更なし</td>
+<td><code>SWSS_LOG_ERROR "VRF '%s' doesn't exist"</code></td>
+<td><code>vrforch.cpp:165-166</code></td>
+</tr>
+<tr>
+<td><code>sai_virtual_router_api-&gt;remove_virtual_router()</code> 失敗</td>
+<td><code>vrforch.cpp:174-181</code></td>
+<td><code>handleSaiRemoveStatus</code> → <code>task_need_retry</code> なら <code>false</code> 返却（<code>m_stateVrfObjectTable.del</code> 未呼出し → vrfmgrd の <code>ip link del</code> も保留継続）/ <code>task_failed</code> なら <code>true</code> 返却（SAI VR リーク）</td>
+<td><code>SWSS_LOG_ERROR "Failed to remove virtual router name: %s, rv:%d"</code></td>
+<td><code>vrforch.cpp:176-181</code></td>
+</tr>
+<tr>
+<td><code>delVrfVNIMap</code> 内 <code>updateL3VniStatus</code> 失敗</td>
+<td><code>vrforch.cpp:267</code></td>
+<td>戻り値無視・処理継続（VLAN VE が DOWN 通知されない可能性）</td>
+<td>なし</td>
+<td><code>vrforch.cpp:267-268</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="vrfmgrd">vrfmgrd 側の失敗経路<a class="headerlink" href="#vrfmgrd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>検出箇所</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VRF テーブルプール枯渇（4096 VRF 使用済み、<code>getFreeTable()</code> → <code>0</code>）</td>
+<td><code>vrfmgr.cpp:185-188</code></td>
+<td><code>setLink()</code> が <code>false</code> 返却。エラーログ後も STATE_VRF_TABLE.set / APPL_DB.set が<strong>実行継続</strong>。Linux VRF デバイスなしで SAI VR だけが作成される中間状態になりうる</td>
+<td><code>SWSS_LOG_ERROR "Failed to create vrf netdev %s"</code></td>
+<td><code>vrfmgr.cpp:282-284, 289, 303</code></td>
+</tr>
+<tr>
+<td><code>ip link add</code> / <code>ip link set up</code> 失敗（<code>EXEC_WITH_ERROR_THROW</code>）</td>
+<td><code>vrfmgr.cpp:192, 198</code></td>
+<td><code>std::runtime_error</code> 例外が未捕捉 → vrfmgrd プロセスクラッシュ → supervisord による再起動</td>
+<td>stderr + supervisord ログ</td>
+<td><code>vrfmgr.cpp:192, 198</code></td>
+</tr>
+<tr>
+<td><code>ip link del</code> 失敗（<code>EXEC_WITH_ERROR_THROW</code>）</td>
+<td><code>vrfmgr.cpp:156</code></td>
+<td><code>std::runtime_error</code> 例外が未捕捉 → vrfmgrd クラッシュ → supervisord 再起動。Linux VRF デバイスが残存したまま再起動する可能性</td>
+<td>stderr + supervisord ログ</td>
+<td><code>vrfmgr.cpp:156</code></td>
+</tr>
+<tr>
+<td>VNI 重複 (<code>vni</code> が既存 VRF にマップ済み)</td>
+<td><code>vrfmgr.cpp:436-444</code></td>
+<td><code>doVrfVxlanTableCreateTask</code> が <code>false</code> 返却 → Consumer がエントリを <strong>erase</strong>（再試行なし）。<code>setLink</code> + <code>STATE_VRF_TABLE.set</code> は実行済みで APPL_DB 書き込みのみ抑止</td>
+<td><code>SWSS_LOG_ERROR " vni %d is already mapped to vrf %s"</code></td>
+<td><code>vrfmgr.cpp:441-443</code></td>
+</tr>
+<tr>
+<td>VRF-VNI マッピング済みの VRF に対して異なる VNI を再 SET</td>
+<td><code>vrfmgr.cpp:459-462</code></td>
+<td><code>doVrfVxlanTableCreateTask</code> が <code>false</code> 返却 → Consumer erase（再試行なし）</td>
+<td><code>SWSS_LOG_ERROR " vrf %s is already mapped to vni %d"</code></td>
+<td><code>vrfmgr.cpp:461-462</code></td>
+</tr>
+</tbody>
+</table>
+<p>詳細解析: <code>meta/_intermediate/cdb-flow/vrf-orch-failure.md</code></p>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査日 2026-05-19。ソース: <code>sonic-swss/cfgmgr/vrfmgr.cpp:12-15</code>, <code>sonic-swss-common/common/schema.h:80,84,429-430</code></p>
+</blockquote>
+<h3 id="vrfmgrcpp">vrfmgr.cpp 数値定数<a class="headerlink" href="#vrfmgrcpp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VRF_TABLE_START</code></td>
+<td><code>1001</code></td>
+<td>通常 VRF へ割り当てるルーティングテーブル ID の開始値。<code>vrfmgr.cpp:12</code></td>
+</tr>
+<tr>
+<td><code>VRF_TABLE_END</code></td>
+<td><code>5097</code></td>
+<td>通常 VRF ルーティングテーブル ID の終端値 (exclusive)。最大同時 VRF 数 = <strong>4096</strong>。<code>vrfmgr.cpp:13</code></td>
+</tr>
+<tr>
+<td><code>TABLE_LOCAL_PREF</code></td>
+<td><code>1001</code></td>
+<td><code>ip rule add pref 1001 table local</code> で <code>pref 0</code> の local テーブルルールを置き換えるときに使う preference 値。<code>vrfmgr.cpp:14</code></td>
+</tr>
+<tr>
+<td><code>MGMT_VRF_TABLE_ID</code></td>
+<td><code>6000</code></td>
+<td><code>mgmt</code> VRF 専用の固定ルーティングテーブル ID。<code>vrfName == "mgmt"</code> 時は <code>getFreeTable()</code> を呼ばず直接使用。<code>vrfmgr.cpp:15</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong><code>TABLE_LOCAL_PREF</code> と <code>VRF_TABLE_START</code> が同値 (1001) である理由</strong>: <code>l3mdev-table</code> カーネルモジュールが <code>pref 0</code> の local テーブルルールを前提とする設計上の問題を回避するため、local テーブルを VRF テーブル ID 範囲の先頭 (<code>1001</code>) に移動させる。偶然の一致ではなく設計による。</p>
+</blockquote>
+<h3 id="schemah">schema.h テーブル名定数<a class="headerlink" href="#schemah" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>マクロ名</th>
+<th>文字列値</th>
+<th>DB</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APP_VRF_TABLE_NAME</code></td>
+<td><code>"VRF_TABLE"</code></td>
+<td>APPL_DB</td>
+<td><code>schema.h:80</code></td>
+</tr>
+<tr>
+<td><code>APP_VXLAN_VRF_TABLE_NAME</code></td>
+<td><code>"VXLAN_VRF_TABLE"</code></td>
+<td>APPL_DB</td>
+<td><code>schema.h:84</code></td>
+</tr>
+<tr>
+<td><code>STATE_VRF_TABLE_NAME</code></td>
+<td><code>"VRF_TABLE"</code></td>
+<td>STATE_DB</td>
+<td><code>schema.h:429</code></td>
+</tr>
+<tr>
+<td><code>STATE_VRF_OBJECT_TABLE_NAME</code></td>
+<td><code>"VRF_OBJECT_TABLE"</code></td>
+<td>STATE_DB</td>
+<td><code>schema.h:430</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">テーブル ID プール設計</p>
+<p>ルーティングテーブル ID <code>1001</code>〜<code>5096</code> は <code>vrfmgr.cpp:28</code> の for ループで <code>m_freeTables</code> キューに積まれる。プール枯渇時（4096 VRF 使用済み）は <code>getFreeTable()</code> が <code>0</code> を返し <code>setLink()</code> が失敗するが、STATE_DB.set / APPL_DB.set は継続実行されるため「Linux VRF デバイスなし + SAI VR あり」の中間状態が生じうる。</p>
+</div>
+<p>詳細調査ノートは <code>meta/_intermediate/cdb-flow/vrf-orch-constants.md</code> 参照。</p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査日 2026-05-19。ソース: <code>sonic-swss/orchagent/vrforch.cpp</code>, <code>sonic-swss/orchagent/vrforch.h</code>, <code>sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp</code>, <code>sonic-swss/orchagent/portsorch.cpp</code></p>
+</blockquote>
+<p><code>VRFOrch::addOperation</code> / <code>delOperation</code> は APPL_DB VRF_TABLE を消費した後、以下の副次 DB 書込みを生じさせる。ASIC_DB への SAI 呼出し（主作用）は除く。</p>
+<h3 id="db">副次 DB 書込み一覧<a class="headerlink" href="#db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>書込タイミング</th>
+<th>書込内容</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td><code>VRF_OBJECT_TABLE\|&lt;vrf_name&gt;</code></td>
+<td><code>create_virtual_router()</code> / <code>set_virtual_router_attribute()</code> 成功後</td>
+<td><code>state=ok</code> を set</td>
+<td><code>vrforch.cpp:120, 150</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>VRF_OBJECT_TABLE\|&lt;vrf_name&gt;</code> DEL</td>
+<td><code>remove_virtual_router()</code> 成功後</td>
+<td>エントリ削除</td>
+<td><code>vrforch.cpp:193</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="gflowcounterrouteorch-flowcounter-vr">gFlowCounterRouteOrch — FlowCounter への VR 登録<a class="headerlink" href="#gflowcounterrouteorch-flowcounter-vr" title="Permanent link">&para;</a></h3>
+<p>VRFOrch は SAI VR 作成成功直後に <code>gFlowCounterRouteOrch-&gt;onAddVR(router_id)</code> (<code>vrforch.cpp:110</code>)、VR 削除直後に <code>onRemoveVR(router_id)</code> (<code>vrforch.cpp:184</code>) を呼ぶ。これは <code>FlowCounterRouteOrch</code> がルートフローカウンタを VRF 単位で管理するための通知で、<code>mRouteFlowCounterSupported</code> が true の場合のみ実処理が走る。</p>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル / キー</th>
+<th>書込タイミング</th>
+<th>書込内容</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COUNTERS_DB / FLEX_COUNTER_DB</td>
+<td>ルートパターンに一致するカウンタエントリ</td>
+<td><code>onAddVR</code> / <code>onRemoveVR</code> 呼出し時（<code>mRouteFlowCounterSupported=true</code> の場合のみ）</td>
+<td>ルートフローカウンタの作成 / 削除</td>
+<td><code>flowcounterrouteorch.cpp:401-451</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>mRouteFlowCounterSupported=false</code> の環境（多くの VS / stub SAI）では <code>onAddVR</code> / <code>onRemoveVR</code> は即座に <code>return</code> し、COUNTERS_DB / FLEX_COUNTER_DB への書込みは発生しない (<code>flowcounterrouteorch.cpp:404-407</code>)。</p>
+<h3 id="gportsorch-vlan-ve-updown">gPortsOrch — VLAN VE インターフェイス UP/DOWN 通知<a class="headerlink" href="#gportsorch-vlan-ve-updown" title="Permanent link">&para;</a></h3>
+<p>VNI 付き VRF の追加時に <code>gPortsOrch-&gt;updateL3VniStatus(vlan_id, true)</code> が呼ばれ、VNI にマップされた VLAN の <code>m_up_member_count</code> をインクリメント（0→1 なら <code>m_oper_status=SAI_PORT_OPER_STATUS_UP</code>）する。VRF 削除時は <code>updateL3VniStatus(vlan_id, false)</code> でデクリメント（0 なら <code>m_oper_status=SAI_PORT_OPER_STATUS_DOWN</code>) する。この変更は <code>PortsOrch</code> の <strong>インメモリ構造体のみ</strong> の更新であり、追加の DB 書込みは生じない（<code>portsorch.cpp:10326-10359</code>）。ただし <code>vlan_id == 0</code> の場合は呼出し自体がスキップされる（<code>vrforch.cpp:237-241</code>）。</p>
+<div class="admonition note">
+<p class="admonition-title">副次書込みの条件</p>
+<p><code>STATE_VRF_OBJECT_TABLE</code> は SAI 成否に関わらず必ず 1 回書かれる（成功時に <code>state=ok</code>）。<code>FlowCounterRouteOrch</code> への通知は <code>mRouteFlowCounterSupported</code> フラグに依存するため、VS / SAI 未対応環境では一切の副次 DB 書込みが生じない。VLAN VE 状態変更は VNI 付き VRF かつ <code>VxlanTunnelOrch::getVlanMappedToVni()</code> が非ゼロを返す場合のみ発生する。</p>
+</div>
+<p>詳細: <code>meta/_intermediate/cdb-flow/vrf-orch-side-effects.md</code></p>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/vrf-orch-pubsub.md</code></p>
+</blockquote>
+<p><code>APPL_DB VRF_TABLE</code> を書くのは <code>vrfmgrd</code> の <code>ProducerStateTable</code> であり、消費するのは <code>VRFOrch</code> の <code>ConsumerStateTable</code>。CONFIG_DB → vrfmgrd の経路は <a href="../vrf/#通信メカニズム-phase-g">CONFIG_DB VRF テーブル</a> を参照。ここでは APPL_DB → VRFOrch の経路に絞る。</p>
+<h3 id="vrfmgrd-appl_dbproducerstatetable">vrfmgrd → APPL_DB（ProducerStateTable）<a class="headerlink" href="#vrfmgrd-appl_dbproducerstatetable" title="Permanent link">&para;</a></h3>
+<p><code>vrfmgrd</code> は <code>m_appVrfTableProducer</code>（<code>ProducerStateTable</code>）を通じて APPL_DB に書く (<code>vrfmgr.h:46</code>、<code>vrfmgr.cpp:303</code>)。</p>
+<p>書込みは Lua スクリプト（<code>EVALSHA</code>）でアトミックに実行:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>SADD VRF_TABLE_KEY_SET &lt;vrfName&gt;
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>HSET _VRF_TABLE:&lt;vrfName&gt; &lt;fields&gt;
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>PUBLISH VRF_TABLE_CHANNEL@0 G
+</span></code></pre></div>
+<p>DEL 操作:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>SREM VRF_TABLE_KEY_SET &lt;vrfName&gt;
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>DEL _VRF_TABLE:&lt;vrfName&gt;
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>PUBLISH VRF_TABLE_CHANNEL@0 G
+</span></code></pre></div>
+<h3 id="appl_db-vrforchconsumerstatetable">APPL_DB → VRFOrch（ConsumerStateTable）<a class="headerlink" href="#appl_db-vrforchconsumerstatetable" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp:283</code> で VRFOrch を生成:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">VRFOrch</span><span class="w"> </span><span class="o">*</span><span class="n">vrf_orch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">VRFOrch</span><span class="p">(</span><span class="n">m_applDb</span><span class="p">,</span><span class="w"> </span><span class="n">APP_VRF_TABLE_NAME</span><span class="p">,</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">                                 </span><span class="n">m_stateDb</span><span class="p">,</span><span class="w"> </span><span class="n">STATE_VRF_OBJECT_TABLE_NAME</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>VRFOrch</code> は <code>Orch2(appDb, APP_VRF_TABLE_NAME, request_)</code> を通じて <code>ConsumerStateTable</code> を使用 (<code>orch.cpp:1194</code>)。APPL_DB (<code>db_id=0</code>) のチャンネルを購読:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>SUBSCRIBE VRF_TABLE_CHANNEL@0
+</span></code></pre></div>
+<p>イベント受信時に <code>consumer_state_table_pops.lua</code> が実行され <code>SPOP VRF_TABLE_KEY_SET</code> + <code>HGETALL _VRF_TABLE:&lt;key&gt;</code> でエントリを取り出し、<code>VRFOrch::addOperation()</code> / <code>delOperation()</code> に渡す。</p>
+<h3 id="_4">購読者サマリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>購読者</th>
+<th>購読 API</th>
+<th>購読テーブル / チャンネル</th>
+<th>ハンドラ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VRFOrch</code> (orchagent)</td>
+<td><code>ConsumerStateTable</code> (<code>SUBSCRIBE VRF_TABLE_CHANNEL@0</code>)</td>
+<td><code>APPL_DB VRF_TABLE</code></td>
+<td><code>addOperation()</code> → <code>sai_virtual_router_api-&gt;create_virtual_router()</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>VRFOrch</code> 以外で <code>APPL_DB VRF_TABLE</code> を直接購読するプロセスは存在しない。</p>
+<h3 id="appl_db">通知フロー（APPL_DB 中心）<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>vrfmgrd::setLink() 成功
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  └─ ProducerStateTable::set(VRF_TABLE, vrfName, fields)
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>      EVALSHA: SADD VRF_TABLE_KEY_SET &lt;vrfName&gt;
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>               HSET _VRF_TABLE:&lt;vrfName&gt; ...
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>               PUBLISH VRF_TABLE_CHANNEL@0 G
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>orchagent Select::select()
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>  └─ wake-up (VRF_TABLE_CHANNEL@0)
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>      consumer_state_table_pops.lua
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>        SPOP VRF_TABLE_KEY_SET → key
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>        HGETALL _VRF_TABLE:&lt;key&gt; → fields
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>      Consumer::execute() → VRFOrch::addOperation()
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>        sai_virtual_router_api-&gt;create_virtual_router()
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>        STATE_DB VRF_OBJECT_TABLE|&lt;vrf_name&gt; state=ok
+</span></code></pre></div>
+<!-- evidence: sonic-swss/orchagent/vrforch.cpp L1-20 (コンストラクタ、Orch2 継承) -->
+<!-- evidence: sonic-swss/orchagent/orchdaemon.cpp L283 (VRFOrch 生成 + ConsumerStateTable) -->
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.cpp L303 (m_appVrfTableProducer.set) -->
+<!-- evidence: sonic-swss/cfgmgr/vrfmgr.h L46 (ProducerStateTable m_appVrfTableProducer) -->
+<!-- evidence: sonic-swss-common/common/schema.h L80 (APP_VRF_TABLE_NAME = "VRF_TABLE") -->
+
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査日 2026-05-19。ソース: <code>sonic-swss/orchagent/vrforch.cpp</code>, <code>sonic-swss/cfgmgr/vrfmgr.cpp</code>, <code>sonic-buildimage/dockers/docker-orchagent/supervisord.conf.j2</code>, <code>sonic-swss/orchagent/orchdaemon.cpp</code></p>
+</blockquote>
+<p><code>VRFOrch::addOperation</code> / <code>delOperation</code> および <code>vrfmgrd</code> の実装にはコード上のプラットフォーム固有分岐（<code>getenv("platform")</code> 等）は存在しない。SAI 属性は capability query なしに無条件で投入される。ただし以下の系統でプラットフォーム差が発生する。</p>
+<h3 id="1-fabric-asic-vrfmgrd">1. fabric ASIC — vrfmgrd 非起動<a class="headerlink" href="#1-fabric-asic-vrfmgrd" title="Permanent link">&para;</a></h3>
+<p><code>supervisord.conf.j2:247-263</code> の条件:</p>
+<div class="language-jinja highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="cp">{%</span> <span class="k">if</span> <span class="nv">is_fabric_asic</span> <span class="o">==</span> <span class="m">0</span> <span class="cp">%}</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="x">[program:vrfmgrd]</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="x">...</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="cp">{%</span>- <span class="k">endif</span> <span class="cp">%}</span>
+</span></code></pre></div>
+<p>fabric ASIC スロット（chassis linecard のファブリック面プロセス）では <code>vrfmgrd</code> が起動しない。</p>
+<ul>
+<li><code>APPL_DB VRF_TABLE</code> は書き込まれない → <code>VRFOrch::addOperation</code> がトリガされない</li>
+<li><code>STATE_DB VRF_OBJECT_TABLE</code> も書き込まれない</li>
+</ul>
+<p><code>VRFOrch</code> 自体は <code>orchdaemon.cpp:283</code> で無条件にインスタンス化されるが、APPL_DB に VRF_TABLE エントリが届かないため実質 no-op となる。</p>
+<h3 id="2-sai-capability-query-vendor-sai">2. SAI 属性の capability query なし — vendor SAI 依存<a class="headerlink" href="#2-sai-capability-query-vendor-sai" title="Permanent link">&para;</a></h3>
+<p><code>VRFOrch::addOperation()</code> は SAI capability を事前照会せず、以下の属性を直接 <code>create_virtual_router()</code> / <code>set_virtual_router_attribute()</code> に渡す:</p>
+<table>
+<thead>
+<tr>
+<th>SAI 属性</th>
+<th>フィールド</th>
+<th>vendor SAI 未サポート時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_VIRTUAL_ROUTER_ATTR_ADMIN_V4_STATE</code></td>
+<td><code>v4</code></td>
+<td><code>SAI_STATUS_NOT_SUPPORTED</code> 等 → <code>handleSaiCreateStatus</code> / <code>handleSaiSetStatus</code> がエラー処理</td>
+</tr>
+<tr>
+<td><code>SAI_VIRTUAL_ROUTER_ATTR_ADMIN_V6_STATE</code></td>
+<td><code>v6</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS</code></td>
+<td><code>src_mac</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_TTL1_PACKET_ACTION</code></td>
+<td><code>ttl_action</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_IP_OPTIONS_PACKET_ACTION</code></td>
+<td><code>ip_opt_action</code></td>
+<td>同上</td>
+</tr>
+<tr>
+<td><code>SAI_VIRTUAL_ROUTER_ATTR_UNKNOWN_L3_MULTICAST_PACKET_ACTION</code></td>
+<td><code>l3_mc_action</code></td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<p>フィールド省略時は attrs ベクタに追加されないため、<code>create_virtual_router()</code> 呼び出し時に SAI 実装側デフォルト値が適用される。VS（仮想スイッチ）SAI は <code>create_virtual_router</code> を正常終了させるが、attribute の実値は無視することが多い。</p>
+<h3 id="3-l3mdev">3. カーネル l3mdev モジュール依存<a class="headerlink" href="#3-l3mdev" title="Permanent link">&para;</a></h3>
+<p>vrfmgrd はコンストラクタで <code>ip rule add pref 1001 table local &amp;&amp; ip rule del pref 0</code> を実行する（<code>vrfmgr.cpp:103-105</code>）。これは <code>l3mdev-table</code> カーネルモジュール対応カーネル（4.15+ が目安）を前提とした設計。カーネルが l3mdev 未対応の場合:</p>
+<ul>
+<li><code>ip link add ... type vrf table &lt;id&gt;</code> が失敗 → <code>EXEC_WITH_ERROR_THROW</code> が例外を throw → vrfmgrd クラッシュ → supervisord による再起動ループ</li>
+</ul>
+<p>最大 VRF 数 4096 はカーネルルーティングテーブル ID プール（1001〜5096）に由来するハードリミット。プール枯渇時は <code>setLink()</code> が失敗するが Linux の l3mdev 制約ではなくソフトウェア側の定数（<code>VRF_TABLE_START</code>/<code>END</code>）による制限。</p>
+<h3 id="4-warm-restart">4. warm restart — 初期化挙動差異<a class="headerlink" href="#4-warm-restart" title="Permanent link">&para;</a></h3>
+<p>vrfmgrd コンストラクタは <code>WarmStart::isWarmStart()</code> で以下のように分岐する:</p>
+<table>
+<thead>
+<tr>
+<th>モード</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cold start</strong></td>
+<td>起動時に既存 Linux VRF デバイス（<code>mgmt</code> 以外）を <code>ip link del</code> で削除してプール再計算</td>
+</tr>
+<tr>
+<td><strong>Warm restart</strong></td>
+<td>既存デバイスのテーブル ID を <code>m_vrfTableMap</code> に再登録し <code>m_freeTables</code> から除外（削除しない）</td>
+</tr>
+</tbody>
+</table>
+<p>この差異はプラットフォームではなく warm restart 設定依存だが、warm restart 非対応ハードウェア・構成では cold start 動作のみが発生する。</p>
+<h3 id="_5">プラットフォーム差サマリ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>プラットフォーム差</th>
+<th>コード上の capability 分岐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fabric ASIC</td>
+<td>vrfmgrd 非起動 → APPL_DB VRF_TABLE / STATE_DB VRF_OBJECT_TABLE 未書込み</td>
+<td><code>supervisord.conf.j2:247-263</code> の Jinja 条件</td>
+</tr>
+<tr>
+<td>SAI 属性サポート</td>
+<td>vendor SAI が <code>violation_ttl1</code> / <code>ip_opt</code> / <code>l3_mc</code> / <code>src_mac</code> 未実装なら SAI エラー</td>
+<td><strong>なし</strong>（無条件 attr 投入）</td>
+</tr>
+<tr>
+<td>l3mdev カーネル</td>
+<td>l3mdev 未対応カーネルでは vrfmgrd クラッシュ</td>
+<td><strong>なし</strong>（例外発生）</td>
+</tr>
+<tr>
+<td>warm restart</td>
+<td>起動時 Linux VRF デバイスの削除 vs 保持</td>
+<td><code>WarmStart::isWarmStart()</code> 条件</td>
+</tr>
+</tbody>
+</table>
+<p>詳細: <code>meta/_intermediate/cdb-flow/vrf-orch-platform.md</code></p>
+<!-- /platform -->
+
+<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>VRF 削除タイミング</strong>: VRFOrch が STATE_VRF_OBJECT_TABLE のエントリを削除するまで vrfmgrd は <code>ip link del</code> を遅延する。INTERFACE / ROUTE テーブルが VRF を参照中の場合は <code>ref_count</code> が非ゼロで <code>delOperation</code> が <code>false</code> を返して再キュー。</li>
 <li><strong>VXLAN EVPN 未設定時の VNI</strong>: <code>evpn_orch-&gt;getEVPNVtep()</code> が null を返す場合 <code>updateVrfVNIMap()</code> は <code>false</code> を返して VRF 作成を中断する (vrforch.cpp:228-230)。VNI 付き VRF は EVPN VTEP が先に設定されている必要がある。</li>
 <li><strong>VNI の SAI 非直接性</strong>: VNI は <code>sai_virtual_router_api</code> には渡されない。VXLAN Tunnel Orch が VNI-VRF マッピングを別途管理する。</li>
 </ul>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../vrf/">CONFIG_DB VRF テーブル</a></li>
 <li><a href="../mgmt-vrf-config/">CONFIG_DB MGMT_VRF_CONFIG</a></li>
@@ -35372,7 +36644,7 @@
 <li><a href="../../yang/sonic-vrf/">YANG: sonic-vrf</a></li>
 <li><a href="../../cli/config-vrf/">CLI: config vrf</a></li>
 </ul>
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

@@ -28001,7 +28001,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type == "dpu" の影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fec-supported_fecs-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fec / supported_fecs の SAI capability 依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cmis-host_tx_ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMIS モジュール非同期対応プラットフォームの host_tx_ready
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gearboxexternal-phy-host_tx_ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gearbox（External PHY）対応プラットフォームの host_tx_ready
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差のないフィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -28012,7 +28084,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35649,7 +35721,79 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#switch_type-dpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        switch_type == "dpu" の影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fec-supported_fecs-sai-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fec / supported_fecs の SAI capability 依存
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cmis-host_tx_ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CMIS モジュール非同期対応プラットフォームの host_tx_ready
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gearboxexternal-phy-host_tx_ready" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gearbox（External PHY）対応プラットフォームの host_tx_ready
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差のないフィールド
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35660,7 +35804,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -36665,8 +36809,101 @@
 <p><code>sflowmgrd</code> は起動時に <code>readPortConfig()</code> を<strong>手動で呼び出す</strong> (<code>sflowmgrd.cpp:46</code>)。CONFIG_DB と STATE_DB の通知順序が保証されないため、起動直後の state_port_table 通知を取りこぼした場合でも初期設定が適用されるように設計されている。</p>
 <!-- /pubsub -->
 
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><code>STATE_DB PORT_TABLE</code> への書き込みは <code>portsyncd/linksync</code> と <code>PortsOrch</code> の 2 経路に分かれており、プラットフォーム差の大部分は PortsOrch 側の SAI capability クエリ結果と <code>gMySwitchType</code> 分岐に起因する。</p>
+<blockquote>
+<p>中間調査詳細: <code>meta/_intermediate/cdb-flow/ports-status-platform.md</code></p>
+</blockquote>
+<h3 id="switch_type-dpu">switch_type == "dpu" の影響<a class="headerlink" href="#switch_type-dpu" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>影響箇所</th>
+<th>差異内容</th>
+<th>証跡</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>linksync</code> 起動時の旧インタフェース比較ロジック</td>
+<td>DPU では <code>g_switchType == "dpu"</code> のとき <code>m_ifindexOldNameMap</code> 構築ループを skip して即 <code>return</code>。RTM_NEWLINK/DELLINK 自体は正常に処理されるため <code>state</code> / <code>admin_status</code> / <code>mtu</code> 書き込みに変化なし</td>
+<td><code>linksync.cpp:74-78</code></td>
+</tr>
+<tr>
+<td><code>initializePortBufferMaximumParameters()</code></td>
+<td>DPU ではスキップ (<code>gMySwitchType != "dpu"</code> ガード)。バッファ最大値の STATE_DB 書き込みは発生しない</td>
+<td><code>portsorch.cpp:6449</code></td>
+</tr>
+<tr>
+<td>PG / queue / scheduler 一括初期化</td>
+<td>DPU ではスキップ。<code>m_queue_ids</code> が初期化されないため <code>host_tx_queue</code> 関連 flex counter 設定も抑制される</td>
+<td><code>portsorch.cpp:6589</code></td>
+</tr>
+<tr>
+<td><code>fec_override_sup</code> / <code>oper_fec_sup</code> クエリ</td>
+<td><code>gMySwitchType != "dpu"</code> ガード内で実行されるため、DPU では両フラグが <code>false</code> のまま。<code>fec</code> フィールドは常に <code>"N/A"</code>、<code>supported_fecs</code> に <code>"auto"</code> が含まれない</td>
+<td><code>portsorch.cpp:987-1010</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="fec-supported_fecs-sai-capability">fec / supported_fecs の SAI capability 依存<a class="headerlink" href="#fec-supported_fecs-sai-capability" title="Permanent link">&para;</a></h3>
+<p><code>fec_override_sup</code> と <code>oper_fec_sup</code> はプラットフォームの SAI 実装によって決まる:</p>
+<table>
+<thead>
+<tr>
+<th>SAI capability</th>
+<th>フラグ</th>
+<th>STATE_DB への影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE</code> set/create 実装あり</td>
+<td><code>fec_override_sup = true</code></td>
+<td><code>supported_fecs</code> に <code>"auto"</code> エントリが追加される (<code>portsorch.cpp:3310</code>)</td>
+</tr>
+<tr>
+<td><code>SAI_PORT_ATTR_OPER_PORT_FEC_MODE</code> get 実装あり</td>
+<td><code>oper_fec_sup = true</code></td>
+<td>oper-status UP 時に実際の FEC モード文字列が <code>fec</code> フィールドに書き込まれる。非対応時は常に <code>"N/A"</code> (<code>portsorch.cpp:9682-9693</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cmis-host_tx_ready">CMIS モジュール非同期対応プラットフォームの host_tx_ready<a class="headerlink" href="#cmis-host_tx_ready" title="Permanent link">&para;</a></h3>
+<p>SAI が <code>SAI_PORT_ATTR_HOST_TX_SIGNAL_ENABLE</code>（create サポート）と <code>SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY</code>（create サポート）の両方を実装する場合、<code>m_cmisModuleAsicSyncSupported = true</code> となる (<code>portsorch.cpp:968-972</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>プラットフォーム種別</th>
+<th>host_tx_ready 更新方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CMIS 非同期対応（<code>m_cmisModuleAsicSyncSupported = true</code>）</td>
+<td>admin_status 変更時の明示書き込みをすべてスキップ。<code>on_port_host_tx_ready</code> SAI コールバックが CMIS シーケンス完了後に更新</td>
+</tr>
+<tr>
+<td>CMIS 非対応（<code>m_cmisModuleAsicSyncSupported = false</code>）</td>
+<td><code>initHostTxReadyState()</code> で <code>"false"</code> 初期化 + admin_status 変更のたびに <code>setHostTxReady()</code> を呼んで都度更新</td>
+</tr>
+</tbody>
+</table>
+<h3 id="gearboxexternal-phy-host_tx_ready">Gearbox（External PHY）対応プラットフォームの host_tx_ready<a class="headerlink" href="#gearboxexternal-phy-host_tx_ready" title="Permanent link">&para;</a></h3>
+<p>Gearbox 非対応プラットフォームでは <code>setGearboxPortsAttr()</code> が常に <code>false</code> を返すため、admin UP 設定時に <code>gbstatus == false</code> → <code>host_tx_ready = "false"</code> が書き込まれる。ただし <code>m_cmisModuleAsicSyncSupported = true</code> の環境では Gearbox 分岐が完全にスキップされるため影響なし (<code>portsorch.cpp:2245-2256</code>)。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin UP 設定時の host_tx_ready 確定ロジック:
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  SAI set_port_attribute 失敗           → &quot;false&quot;  (非 CMIS プラットフォームのみ)
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  gbstatus == false                     → &quot;false&quot;  (非 CMIS プラットフォームのみ)
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>  SAI 成功 かつ gbstatus == true        → &quot;true&quot;   (非 CMIS プラットフォームのみ)
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  m_cmisModuleAsicSyncSupported == true → 書き込みなし（CMIS コールバック待ち）
+</span></code></pre></div>
+<h3 id="_13">プラットフォーム差のないフィールド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
+<p><code>state</code>, <code>netdev_oper_status</code>, <code>admin_status</code>, <code>mtu</code> は linksync が netlink イベントから直接書き込むため、ASIC ベンダー・switch_type・Gearbox 有無を問わず同一のロジックで書かれる。<code>link_training_status</code>, <code>rmt_adv_speeds</code>, <code>phy_ctrl_unreliable_los</code>, <code>supported_speeds</code> の書き込み関数にも <code>platform</code> 環境変数参照・<code>gMySwitchType</code> 分岐は存在しない（SAI の capability 不備がフォールバック値 <code>"N/A"</code> や空文字列に現れる）。</p>
+<!-- /platform -->
+
 <!-- cdb-exceptions -->
-<h2 id="_13">例外条件・特殊挙動<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">例外条件・特殊挙動<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
 <li>PHY タイプ以外のポート（LAG / VLAN / TUNNEL）では <code>updatePortStateAutoNeg()</code> / <code>refreshPortStateLinkTraining()</code> / <code>updateDbPortOperSpeed()</code> などが即 <code>return</code> するため、対応フィールドの STATE_DB 書き込みが発生しない</li>
 <li><code>switch_type == "dpu"</code> 環境では linksync の初期化ロジックが差異あり（<code>g_switchType == "dpu"</code> の場合は ifindex 比較ループを skip、<code>portsyncd.cpp</code>参照）</li>
@@ -36674,7 +36911,7 @@
 </ul>
 <!-- /cdb-exceptions -->
 
-<h2 id="_14">関連リファレンス<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_15">関連リファレンス<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../port/"><code>PORT</code> テーブル</a> — ポートの設定フィールド</li>
 <li>STATE_DB FEC 詳細: <a href="../fec-state/"><code>fec-state.md</code></a> — <code>fec</code> / <code>supported_fecs</code> の詳細</li>

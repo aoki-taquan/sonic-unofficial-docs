@@ -28189,6 +28189,311 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_varsj2-exit_mgmt_vars_file_not_found-exit-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mgmt_vars.j2 テンプレートファイル未存在 → EXIT_MGMT_VARS_FILE_NOT_FOUND (exit 1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-cfggen-d-t-mgmt_varsj2-rest_server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-cfggen -d -t mgmt_vars.j2 失敗 → REST_SERVER 変数が空
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate_cert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        証明書自動生成 (generate_cert) 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        証明書ファイルパスの実在チェックなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#runtime-restapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        runtime 中の RESTAPI テーブル変更 → 反映されない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db_migrator_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        db_migrator 失敗 → アップグレード後も旧設定が残留
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rest-serversh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rest-server.sh 起動スクリプト定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervisordconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        supervisord.conf プロセス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-sonic-restapiyang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ定数 (sonic-restapi.yang)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一括読み取りモデル（subscribe なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込先サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FIPS 変更による間接的なサービス再起動（参考）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restapi-subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RESTAPI テーブルに subscribe するデーモンは存在しない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時一括読み取りのフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fips_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FIPS 変更による間接的な再起動（参考）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restapi_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RESTAPI テーブル変更を反映する方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35668,6 +35973,311 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照テーブル (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        依存関係の詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        範囲外
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retry-recovery-phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動・retry / recovery (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動・retry / recovery (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mgmt_varsj2-exit_mgmt_vars_file_not_found-exit-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mgmt_vars.j2 テンプレートファイル未存在 → EXIT_MGMT_VARS_FILE_NOT_FOUND (exit 1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sonic-cfggen-d-t-mgmt_varsj2-rest_server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sonic-cfggen -d -t mgmt_vars.j2 失敗 → REST_SERVER 変数が空
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generate_cert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        証明書自動生成 (generate_cert) 失敗
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        証明書ファイルパスの実在チェックなし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#runtime-restapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        runtime 中の RESTAPI テーブル変更 → 反映されない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#db_migrator_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        db_migrator 失敗 → アップグレード後も旧設定が残留
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗パス要約
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rest-serversh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rest-server.sh 起動スクリプト定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supervisordconf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        supervisord.conf プロセス定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yang-sonic-restapiyang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG スキーマ定数 (sonic-restapi.yang)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一括読み取りモデル（subscribe なし）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次書込先サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FIPS 変更による間接的なサービス再起動（参考）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restapi-subscribe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RESTAPI テーブルに subscribe するデーモンは存在しない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        起動時一括読み取りのフロー
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fips_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FIPS 変更による間接的な再起動（参考）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restapi_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RESTAPI テーブル変更を反映する方法
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36103,6 +36713,595 @@
 </ol>
 <p>本番環境では <code>RESTAPI|certs</code> を明示的に設定しないと自己署名証明書が使用される点に注意。</p>
 <!-- /ordering -->
+
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<p><code>sonic-restapi.yang</code> には leafref / must / when 文がゼロ件であり、YANG スキーマレベルでの明示的 cross-table 参照は存在しない。
+代わりに <code>rest-server.sh</code> / <code>mgmt_vars.j2</code> / <code>minigraph.py</code> / <code>db_migrator.py</code> から抽出した <strong>3 系統の暗黙依存</strong>が実装レベルの cross-table 参照となる。</p>
+<!-- evidence: meta/_intermediate/cdb-flow/restapi-cross-refs.md -->
+<!-- source: sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh -->
+<!-- source: sonic-buildimage/dockers/docker-sonic-mgmt-framework/mgmt_vars.j2 -->
+<!-- source: sonic-buildimage/src/sonic-config-engine/minigraph.py L2689-2702 -->
+<!-- source: sonic-utilities/scripts/db_migrator.py L608-619 -->
+
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>参照方向</th>
+<th>条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEVICE_METADATA\|localhost</code> (x509 サブオブジェクト)</td>
+<td>読み取り（cert フォールバック）</td>
+<td><code>RESTAPI\|certs</code> の <code>server_crt</code> / <code>server_key</code> / <code>ca_crt</code> が<strong>全て未設定</strong>の場合のみ参照。<code>server_crt</code> / <code>server_key</code> / <code>ca_crt</code> フィールドを取得する</td>
+<td><code>mgmt_vars.j2:3</code> <code>{% if "x509" in DEVICE_METADATA.keys() %}</code> → <code>rest-server.sh:34–41</code></td>
+</tr>
+<tr>
+<td><code>FEATURE\|restapi</code></td>
+<td>読み取り（サービス有効化制御）</td>
+<td>restapi コンテナ起動時に <code>state</code> / <code>auto_restart</code> / <code>has_global_scope</code> を参照。<code>state</code> が <code>disabled</code> の場合はコンテナ自体が起動せず RESTAPI テーブルが読まれない</td>
+<td><code>config_db.json</code>(mock): <code>FEATURE\|restapi</code> エントリ確認済み</td>
+</tr>
+<tr>
+<td><code>REST_SERVER</code> (CONFIG_DB <code>RESTAPI</code> テーブルの jinja2 展開名)</td>
+<td><code>sonic-cfggen -d -t mgmt_vars.j2</code> で同一トランザクション参照</td>
+<td><code>mgmt_vars.j2</code> L1: <code>REST_SERVER['default']</code> として <code>RESTAPI\|default</code>（= <code>RESTAPI\|config</code>）を展開</td>
+<td><code>mgmt_vars.j2:1–2</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_19">依存関係の詳細<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<p><strong><code>DEVICE_METADATA|localhost.x509</code> (cert フォールバック)</strong>: <code>rest-server.sh</code> は <code>MGMT_VARS=$(sonic-cfggen -d -t mgmt_vars.j2)</code> を一括取得した後、<code>REST_SERVER.server_crt</code> / <code>server_key</code> / <code>ca_crt</code> が全て空であれば <code>X509=$(echo $MGMT_VARS | jq -r '.x509')</code> から証明書パスを読み出す (<code>rest-server.sh:27–41</code>)。<code>DEVICE_METADATA|localhost</code> に <code>x509</code> キーが存在しない場合は空文字列となり、最終的に <code>/tmp/</code> 自己署名証明書を自動生成する。本番環境では <code>RESTAPI|certs</code> を明示設定しないと <code>DEVICE_METADATA.x509</code> に依存することになる点に注意。</p>
+<p><strong><code>FEATURE|restapi</code> (コンテナ起動制御)</strong>: <code>FEATURE</code> テーブルは SONiC <code>hostcfgd</code> が管理し、<code>restapi</code> コンテナの起動・停止を制御する。<code>RESTAPI</code> テーブルに正しい値が設定されていても <code>FEATURE|restapi.state=disabled</code> であれば <code>rest-server.sh</code> は実行されない。<code>minigraph.py</code> は <code>RESTAPI</code> と <code>FEATURE</code> を同一解析パスで生成するため、minigraph 由来の環境では両者は常に整合する (<code>minigraph.py:2689–2702</code>)。</p>
+<p><strong><code>db_migrator.py</code> の既存エントリ優先</strong>: <code>migrate_restapi()</code> (<code>db_migrator.py:609–619</code>) は <code>config_db.get_entry('RESTAPI', 'config')</code> が空の場合のみ書き込む。既存エントリが存在する場合は上書きしない（アップグレード時に手動設定が保持される）。</p>
+<h3 id="_20">範囲外<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
+<ul>
+<li>APPL_DB / STATE_DB / COUNTERS_DB への書き込みなし（RESTAPI は管理プレーン専用機能）</li>
+<li>orchagent / syncd への経路なし（SAI 経由の処理なし）</li>
+</ul>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="retry-recovery-phase-d">失敗挙動・retry / recovery (Phase D)<a class="headerlink" href="#retry-recovery-phase-d" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh,
+     sonic-buildimage/dockers/docker-sonic-mgmt-framework/supervisord.conf,
+     sonic-utilities/scripts/db_migrator.py L608-619 -->
+
+<p>RESTAPI テーブルの設定は <code>rest-server.sh</code> が起動時に一括読み込みするため、失敗は <strong>起動時点</strong> (静的) と <strong>証明書生成時点</strong> の 2 フェーズに集中する。orchagent/syncd のような実行時 retry ループは存在しない。</p>
+<h3 id="mgmt_varsj2-exit_mgmt_vars_file_not_found-exit-1"><code>mgmt_vars.j2</code> テンプレートファイル未存在 → EXIT_MGMT_VARS_FILE_NOT_FOUND (exit 1)<a class="headerlink" href="#mgmt_varsj2-exit_mgmt_vars_file_not_found-exit-1" title="Permanent link">&para;</a></h3>
+<p><code>rest-server.sh</code> の先頭で <code>/usr/share/sonic/templates/mgmt_vars.j2</code> の存在確認を行う (<code>rest-server.sh:6-9</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ファイルが存在しない</td>
+<td><code>echo "Mgmt vars template file not found"</code> → <code>exit 1</code></td>
+</tr>
+<tr>
+<td>supervisord の <code>autorestart=true</code></td>
+<td>即座に再起動 (無限ループ)。テンプレートが復元されるまで回復しない</td>
+</tr>
+</tbody>
+</table>
+<p>コンテナイメージが壊れているか、<code>/usr/share/sonic/templates/</code> ディレクトリがマウントに失敗した場合に発生する。RESTAPI テーブルの内容とは無関係にコンテナが起動不能になる。</p>
+<h3 id="sonic-cfggen-d-t-mgmt_varsj2-rest_server"><code>sonic-cfggen -d -t mgmt_vars.j2</code> 失敗 → REST_SERVER 変数が空<a class="headerlink" href="#sonic-cfggen-d-t-mgmt_varsj2-rest_server" title="Permanent link">&para;</a></h3>
+<p><code>MGMT_VARS=$(sonic-cfggen -d -t $MGMT_VARS_FILE)</code> が失敗または空を返した場合 (<code>rest-server.sh:12</code>)、<code>REST_SERVER</code> / <code>X509</code> 変数が全て未設定になる。</p>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONFIG_DB に <code>RESTAPI</code> テーブルなし</td>
+<td><code>CLIENT_AUTH="user"</code> のフォールバックが適用される。証明書も未設定 → <code>/tmp/</code> に自己署名証明書を自動生成して起動</td>
+</tr>
+<tr>
+<td><code>sonic-cfggen</code> プロセス自体が失敗 (非ゼロ exit)</td>
+<td>bash の <code>set -e</code> は使用されていないため、空変数のまま続行。自己署名証明書で起動</td>
+</tr>
+<tr>
+<td>Redis 未起動 / CONFIG_DB 接続失敗</td>
+<td><code>sonic-cfggen</code> が空出力を返す → 同上の自動生成パスへ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="generate_cert">証明書自動生成 (<code>generate_cert</code>) 失敗<a class="headerlink" href="#generate_cert" title="Permanent link">&para;</a></h3>
+<p><code>RESTAPI|certs</code> も <code>DEVICE_METADATA|localhost.x509</code> も未設定の場合、<code>/usr/sbin/generate_cert --host="localhost,127.0.0.1"</code> が実行される (<code>rest-server.sh:46-49</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>失敗原因</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>generate_cert</code> バイナリ不存在</td>
+<td>bash はエラーを出力して続行。<code>SERVER_CRT=/tmp/cert.pem</code> が設定されるが、ファイルは存在しない</td>
+</tr>
+<tr>
+<td><code>/tmp/</code> の書き込み権限なし</td>
+<td><code>generate_cert</code> が失敗。<code>SERVER_CRT</code> / <code>SERVER_KEY</code> 変数にパスが設定されたまま <code>rest_server</code> 起動 → TLS 設定失敗で <code>rest_server</code> が異常終了</td>
+</tr>
+<tr>
+<td><code>rest_server</code> の TLS init 失敗</td>
+<td><code>rest_server</code> 側で致命的エラー → プロセス終了 → supervisord が <code>autorestart=true</code> で再起動</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_21">証明書ファイルパスの実在チェックなし<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<p><code>rest-server.sh</code> は <code>RESTAPI|certs</code> で指定されたパスの <strong>実在を確認しない</strong>。存在しないパスをそのまま <code>-cert</code> / <code>-key</code> / <code>-cacert</code> 引数として <code>rest_server</code> に渡す。</p>
+<table>
+<thead>
+<tr>
+<th>状態</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>server_crt</code> / <code>server_key</code> が指すファイルが存在しない</td>
+<td><code>rest_server</code> が TLS 初期化に失敗して即終了</td>
+</tr>
+<tr>
+<td>supervisord <code>autorestart=true</code></td>
+<td>証明書ファイルが復元されるまで無限再起動</td>
+</tr>
+<tr>
+<td><code>ca_crt</code> が指すファイルのみ存在しない (クライアント認証なし)</td>
+<td><code>client_auth=user</code> であれば <code>ca_crt</code> は参照されず起動に影響しない場合がある</td>
+</tr>
+</tbody>
+</table>
+<h3 id="runtime-restapi">runtime 中の RESTAPI テーブル変更 → 反映されない<a class="headerlink" href="#runtime-restapi" title="Permanent link">&para;</a></h3>
+<p><code>rest-server.sh</code> は起動時に <strong>一度だけ</strong> CONFIG_DB を読み込む。実行中に <code>RESTAPI</code> テーブルを変更しても <code>rest_server</code> プロセスには通知されない。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sonic-db-cli CONFIG_DB hset 'RESTAPI|config' client_auth cert</code></td>
+<td>反映されない。既存の <code>rest_server</code> は変更前の設定で稼働継続</td>
+</tr>
+<tr>
+<td><code>docker restart mgmt-framework</code></td>
+<td>コンテナ再起動時に <code>rest-server.sh</code> が新しい値を読み直す</td>
+</tr>
+</tbody>
+</table>
+<h3 id="db_migrator_1">db_migrator 失敗 → アップグレード後も旧設定が残留<a class="headerlink" href="#db_migrator_1" title="Permanent link">&para;</a></h3>
+<p><code>db_migrator.py</code> の <code>migrate_restapi()</code> はアップグレード時に <code>config_src_data</code> が存在しないと早期リターンする (<code>db_migrator.py:610-611</code>)。</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>結果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config_src_data</code> が None / <code>RESTAPI</code> キーなし</td>
+<td><code>migrate_restapi()</code> が即 return。移行なし</td>
+</tr>
+<tr>
+<td><code>RESTAPI|config</code> が既存エントリとして存在</td>
+<td>上書きしない (<code>db_migrator.py:614-616</code>)。旧フォーマットが残留しても強制変換されない</td>
+</tr>
+</tbody>
+</table>
+<p>これは設計上の安全策（手動設定保護）であるが、アップグレード後に <code>config</code> / <code>certs</code> が古い形式のまま残るリスクがある。</p>
+<h3 id="_22">失敗パス要約<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ケース</th>
+<th>ログ</th>
+<th>retry/recovery</th>
+<th>サービス影響</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mgmt_vars.j2</code> 未存在</td>
+<td>stderr <code>"Mgmt vars template file not found"</code></td>
+<td>supervisord 無限再起動</td>
+<td>REST API 完全不能</td>
+</tr>
+<tr>
+<td><code>sonic-cfggen</code> 失敗</td>
+<td>出力なし (空変数)</td>
+<td>自己署名証明書で起動を試みる</td>
+<td>機能低下（非本番証明書）</td>
+</tr>
+<tr>
+<td>証明書ファイル不存在</td>
+<td><code>rest_server</code> stderr</td>
+<td>supervisord 無限再起動</td>
+<td>REST API 完全不能</td>
+</tr>
+<tr>
+<td><code>generate_cert</code> 失敗</td>
+<td>stderr</td>
+<td>supervisord 再起動</td>
+<td>REST API 起動失敗</td>
+</tr>
+<tr>
+<td>runtime 設定変更</td>
+<td>なし</td>
+<td>コンテナ再起動が必要</td>
+<td>変更反映なし</td>
+</tr>
+<tr>
+<td>db_migrator 早期 return</td>
+<td><code>log_notice</code> 出力なし</td>
+<td>手動再移行が必要</td>
+<td>旧設定残留</td>
+</tr>
+</tbody>
+</table>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>rest-server.sh</code>, <code>supervisord.conf</code>, <code>mgmt_vars.j2</code>, <code>sonic-restapi.yang</code> 精読 (2026-05-19)
+詳細証跡: <code>meta/_intermediate/cdb-flow/restapi-constants.md</code></p>
+</blockquote>
+<h3 id="rest-serversh">rest-server.sh 起動スクリプト定数<a class="headerlink" href="#rest-serversh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EXIT_MGMT_VARS_FILE_NOT_FOUND</code></td>
+<td><code>1</code></td>
+<td><code>mgmt_vars.j2</code> 未存在時の exit code</td>
+<td><code>rest-server.sh:4</code></td>
+</tr>
+<tr>
+<td><code>MGMT_VARS_FILE</code></td>
+<td><code>/usr/share/sonic/templates/mgmt_vars.j2</code></td>
+<td>sonic-cfggen が読み込む Jinja2 テンプレートの固定パス</td>
+<td><code>rest-server.sh:5</code></td>
+</tr>
+<tr>
+<td><code>CLIENT_AUTH</code> フォールバック</td>
+<td><code>"user"</code></td>
+<td><code>RESTAPI\|config.client_auth</code> 未設定時のデフォルト認証モード。YANG <code>default true</code> (boolean) と<strong>異なる文字列</strong>で実装上の乖離点</td>
+<td><code>rest-server.sh:20,30</code></td>
+</tr>
+<tr>
+<td><code>generate_cert --host</code></td>
+<td><code>"localhost,127.0.0.1"</code></td>
+<td>証明書自動生成時の固定ホスト名</td>
+<td><code>rest-server.sh:47</code></td>
+</tr>
+<tr>
+<td><code>SERVER_CRT</code> (自動生成時)</td>
+<td><code>/tmp/cert.pem</code></td>
+<td>証明書未設定時の自己署名証明書パス</td>
+<td><code>rest-server.sh:48</code></td>
+</tr>
+<tr>
+<td><code>SERVER_KEY</code> (自動生成時)</td>
+<td><code>/tmp/key.pem</code></td>
+<td>証明書未設定時の秘密鍵パス</td>
+<td><code>rest-server.sh:49</code></td>
+</tr>
+<tr>
+<td><code>REST_SERVER_ARGS</code> 固定引数</td>
+<td><code>-ui /rest_ui -logtostderr</code></td>
+<td><code>rest_server</code> に常時付与される起動引数。UI パスとログ出力先が固定</td>
+<td><code>rest-server.sh:53</code></td>
+</tr>
+<tr>
+<td><code>CVL_SCHEMA_PATH</code></td>
+<td><code>/usr/sbin/schema</code></td>
+<td>CVL (YANG バリデーション) が参照するスキーマディレクトリ</td>
+<td><code>rest-server.sh:64</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="supervisordconf">supervisord.conf プロセス定数<a class="headerlink" href="#supervisordconf" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>設定キー</th>
+<th>値</th>
+<th>用途</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[rest-server] priority</code></td>
+<td><code>3</code></td>
+<td>supervisord 起動優先度。<code>rsyslogd(1)</code> → <code>start(2)</code> → <code>rest-server(3)</code> の順序を保証</td>
+<td><code>supervisord.conf:39</code></td>
+</tr>
+<tr>
+<td><code>[rest-server] autorestart</code></td>
+<td><code>true</code></td>
+<td><code>rest_server</code> 終了時の自動再起動有効</td>
+<td><code>supervisord.conf:41</code></td>
+</tr>
+<tr>
+<td><code>dependent_startup_wait_for</code></td>
+<td><code>start:exited</code></td>
+<td><code>start.sh</code> 完了後に <code>rest-server.sh</code> を起動する依存順序設定</td>
+<td><code>supervisord.conf:47</code></td>
+</tr>
+<tr>
+<td><code>logfile_maxbytes</code></td>
+<td><code>1MB</code></td>
+<td>supervisord ログファイル最大サイズ</td>
+<td><code>supervisord.conf:2</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="yang-sonic-restapiyang">YANG スキーマ定数 (sonic-restapi.yang)<a class="headerlink" href="#yang-sonic-restapiyang" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>フィールド</th>
+<th>定数値</th>
+<th>種別</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config.client_auth</code></td>
+<td><code>true</code></td>
+<td>YANG <code>default</code> 文 (boolean)</td>
+<td><code>sonic-restapi.yang:64</code></td>
+</tr>
+<tr>
+<td><code>config.allow_insecure</code></td>
+<td><code>false</code></td>
+<td>YANG <code>default</code> 文 (boolean)</td>
+<td><code>sonic-restapi.yang:79</code></td>
+</tr>
+<tr>
+<td><code>config.log_level</code> pattern</td>
+<td><code>"trace\|info"</code></td>
+<td>YANG <code>pattern</code> 制約。違反値は sonic-yang バリデーション拒否</td>
+<td><code>sonic-restapi.yang:70</code></td>
+</tr>
+<tr>
+<td><code>certs.ca_crt</code> pattern</td>
+<td><code>(/[a-zA-Z0-9_-]+)*/([a-zA-Z0-9_-]+).([a-z]+)</code></td>
+<td>ファイルパス形式制約</td>
+<td><code>sonic-restapi.yang:31</code></td>
+</tr>
+<tr>
+<td><code>certs.server_crt</code> pattern</td>
+<td><code>(/[a-zA-Z0-9_-]+)*/([a-zA-Z0-9_-]+).crt</code></td>
+<td><code>.crt</code> 拡張子強制</td>
+<td><code>sonic-restapi.yang:37</code></td>
+</tr>
+<tr>
+<td><code>certs.server_key</code> pattern</td>
+<td><code>(/[a-zA-Z0-9_-]+)*/([a-zA-Z0-9_-]+).key</code></td>
+<td><code>.key</code> 拡張子強制</td>
+<td><code>sonic-restapi.yang:50</code></td>
+</tr>
+<tr>
+<td><code>certs.client_crt_cname</code> pattern</td>
+<td><code>((\*\.)?[a-zA-Z0-9_\-\.]+,)*((\*\.)?[a-zA-Z0-9_\-\.]+)</code></td>
+<td>CN 形式制約（ワイルドカード可、末尾カンマ不可）</td>
+<td><code>sonic-restapi.yang:44</code></td>
+</tr>
+</tbody>
+</table>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<p><code>RESTAPI</code> テーブルへの書込は CONFIG_DB 内で完結し、他の DB (APPL_DB / STATE_DB / ASIC_DB) への副次書込を<strong>引き起こさない</strong>。</p>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/restapi-side-effects.md</code></p>
+</blockquote>
+<!-- evidence:
+  sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh:13-66
+  sonic-host-services/scripts/hostcfgd:103
+  sonic-buildimage/dockers/docker-sonic-mgmt-framework/supervisord.conf:39-47
+-->
+
+<h3 id="subscribe">一括読み取りモデル（subscribe なし）<a class="headerlink" href="#subscribe" title="Permanent link">&para;</a></h3>
+<p><code>rest-server.sh</code> は起動時に <code>sonic-cfggen -d -t $MGMT_VARS_FILE</code> を <strong>一度だけ</strong> 実行し、<code>RESTAPI|config</code> と <code>DEVICE_METADATA|x509</code> の値を取得して <code>rest_server</code> プロセスの起動引数に組み込む (<code>rest-server.sh:13</code>)。</p>
+<p>起動後は CONFIG_DB を購読せず、<code>RESTAPI</code> テーブルの変更は実行中の <code>rest_server</code> には届かない。設定変更を反映するにはコンテナ再起動（<code>config reload</code> または <code>systemctl restart docker-sonic-mgmt-framework</code>）が必要。</p>
+<h3 id="_23">副次書込先サマリ<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副次書込先</th>
+<th>書込の有無</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td>なし</td>
+<td><code>rest-server.sh</code> は起動時一括読み取りのみ。Consumer / subscribe なし</td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td>なし</td>
+<td><code>RESTAPI</code> テーブルを購読するデーモンなし</td>
+</tr>
+<tr>
+<td>ASIC_DB</td>
+<td>なし</td>
+<td>SAI 非経由</td>
+</tr>
+<tr>
+<td>ファイルシステム</td>
+<td>なし</td>
+<td>設定値は起動引数として適用されるのみ</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fips">FIPS 変更による間接的なサービス再起動（参考）<a class="headerlink" href="#fips" title="Permanent link">&para;</a></h3>
+<p><code>hostcfgd</code> は FIPS 設定 (<code>FIPS_CFG</code> テーブル) 変更時に <code>DEFAULT_FIPS_RESTART_SERVICES</code> (<code>hostcfgd:103</code>) に列挙されたサービスを再起動する。このリストに <code>restapi</code> が含まれるため、FIPS 変更が <code>restapi</code> サービスの再起動を引き起こす。ただしこれは <strong><code>RESTAPI</code> テーブル変更が引き起こす副次処理ではなく</strong>、<code>FIPS_CFG</code> 変更を受けた <code>hostcfgd</code> が副次的に <code>restapi</code> サービスを再起動するフローである。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>FIPS_CFG (SET/DEL)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  └─ hostcfgd fips_handler()
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>       └─ systemctl restart restapi    ← RESTAPI テーブル変更とは無関係
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>            └─ rest-server.sh が CONFIG_DB を再読み取り (起動時一括)
+</span></code></pre></div>
+<p><code>RESTAPI</code> テーブル変更から <code>rest-server</code> に変更を反映させるには、このフローを経由せず手動でサービス再起動する必要がある。</p>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh:13</code>, <code>supervisord.conf:39-47</code>, <code>sonic-host-services/scripts/hostcfgd</code> 購読リスト精読 (2026-05-19)
+詳細証跡: <code>meta/_intermediate/cdb-flow/restapi-pubsub.md</code></p>
+</blockquote>
+<h3 id="restapi-subscribe">RESTAPI テーブルに subscribe するデーモンは存在しない<a class="headerlink" href="#restapi-subscribe" title="Permanent link">&para;</a></h3>
+<p><code>RESTAPI</code> テーブルは <strong>「起動時一括読み取り」</strong> モデルを採用しており、常駐デーモンによる <code>ConfigDBConnector.subscribe()</code> / <code>swsscommon.SubscriberStateTable</code> / <code>swsscommon.ConsumerStateTable</code> のいずれも<strong>使用しない</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>プロセス</th>
+<th>購読 API</th>
+<th>RESTAPI テーブルへの subscribe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rest-server.sh</code></td>
+<td><code>sonic-cfggen -d -t mgmt_vars.j2</code> (起動時 1 回)</td>
+<td><strong>なし</strong> (起動時一括読み取りのみ)</td>
+</tr>
+<tr>
+<td><code>hostcfgd</code></td>
+<td><code>ConfigDBConnector.subscribe()</code></td>
+<td><strong>なし</strong> (<code>RESTAPI</code> は購読リストに含まれない)</td>
+</tr>
+<tr>
+<td>orchagent / syncd</td>
+<td><code>swsscommon.ConsumerStateTable</code></td>
+<td><strong>なし</strong> (管理プレーン機能のため)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_24">起動時一括読み取りのフロー<a class="headerlink" href="#_24" title="Permanent link">&para;</a></h3>
+<p><code>rest-server.sh</code> は supervisord から起動されると <code>sonic-cfggen -d -t $MGMT_VARS_FILE</code> を <strong>1 回だけ</strong> 実行し、<code>RESTAPI|config</code> と <code>DEVICE_METADATA|localhost.x509</code> の値を変数に取り込んで <code>rest_server</code> の起動引数に組み込む。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>supervisord 起動
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  ├─ rsyslogd  (priority=1)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  ├─ start.sh  (priority=2, wait_for=rsyslogd:running)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  └─ rest-server.sh  (priority=3, wait_for=start:exited)
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>       │  sonic-cfggen -d -t /usr/share/sonic/templates/mgmt_vars.j2  ← CONFIG_DB 一括読み取り
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>       │    ├─ REST_SERVER ← RESTAPI|config (client_auth / log_level / port)
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>       │    └─ X509        ← DEVICE_METADATA|localhost.x509 (cert フォールバック)
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>       └─ rest_server -cert ... -key ... -cacert ... -client-auth ...  ← 1 回起動
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>            （起動後は CONFIG_DB への接続なし / subscribe なし）
+</span></code></pre></div>
+<p>起動後の <code>rest_server</code> プロセスは Redis に接続を維持しない。<code>RESTAPI</code> テーブルを変更しても実行中の <code>rest_server</code> には通知が届かない。</p>
+<h3 id="fips_1">FIPS 変更による間接的な再起動（参考）<a class="headerlink" href="#fips_1" title="Permanent link">&para;</a></h3>
+<p><code>hostcfgd</code> は <code>FIPS_CFG</code> テーブル変更時に <code>restapi</code> サービスを再起動することがある (<code>DEFAULT_FIPS_RESTART_SERVICES</code> リスト、<code>hostcfgd:103</code>)。これは <code>RESTAPI</code> テーブルの subscribe ではなく、<code>FIPS_CFG</code> テーブル変更に起因する副次処理である。この再起動の副作用として <code>rest-server.sh</code> が CONFIG_DB を再読み取りし、<code>RESTAPI</code> テーブルの最新値が反映される。</p>
+<h3 id="restapi_1">RESTAPI テーブル変更を反映する方法<a class="headerlink" href="#restapi_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>手段</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>docker restart mgmt-framework</code></td>
+<td>コンテナ再起動。<code>rest-server.sh</code> が CONFIG_DB を再読み取りする</td>
+</tr>
+<tr>
+<td><code>systemctl restart docker-sonic-mgmt-framework</code></td>
+<td>同上 (systemd 経由)</td>
+</tr>
+<tr>
+<td><code>config reload</code> (システム全体)</td>
+<td>全コンテナ再起動の副作用として反映される</td>
+</tr>
+<tr>
+<td><code>FIPS_CFG</code> 変更</td>
+<td>間接的に <code>restapi</code> サービスが再起動される (意図的な使い方ではない)</td>
+</tr>
+</tbody>
+</table>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<p><strong>プラットフォーム差なし</strong>: RESTAPI は管理プレーン専用機能であり、SAI を経由しないため ASIC 種別・ベンダー・multi-asic / VOQ chassis 構成による動作差は存在しない。</p>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>rest-server.sh</code>, <code>mgmt_vars.j2</code>, <code>supervisord.conf</code>, <code>minigraph.py:2689-2701</code> 精読 (2026-05-19)
+詳細証跡: <code>meta/_intermediate/cdb-flow/restapi-platform.md</code></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等)</td>
+<td>影響なし</td>
+<td><code>rest-server.sh</code> は <code>sonic-cfggen -d -t mgmt_vars.j2</code> で CONFIG_DB を読み取るのみ。SAI 非経由</td>
+</tr>
+<tr>
+<td>multi-asic (<code>is_multi_npu() == True</code>)</td>
+<td>影響なし</td>
+<td><code>mgmt_vars.j2</code> (4 行全体) に namespace / asic 分岐なし。<code>rest-server.sh</code> も <code>SONIC_ASIC_ID</code> / <code>SONIC_ASIC_COUNT</code> を参照しない</td>
+</tr>
+<tr>
+<td>VOQ chassis (supervisor + line cards)</td>
+<td>各 host で独立適用</td>
+<td>RESTAPI テーブルは host scope。chassis 全体での集中管理機構はなく、各 line card host で <code>rest-server.sh</code> が独立に CONFIG_DB を読み取る</td>
+</tr>
+<tr>
+<td>ベンダー固有 hook</td>
+<td>なし</td>
+<td><code>docker-sonic-mgmt-framework/</code> 配下にベンダー条件分岐なし。<code>rest-server.sh</code> / <code>mgmt_vars.j2</code> / <code>supervisord.conf</code> の全行を検索しても <code>vendor</code> / <code>broadcom</code> / <code>mellanox</code> / <code>marvell</code> は 0 ヒット</td>
+</tr>
+<tr>
+<td>minigraph プラットフォーム分岐</td>
+<td>なし</td>
+<td><code>minigraph.py:2689-2701</code> で RESTAPI テーブルへの書込は無条件。<code>hwsku</code> / <code>platform</code> / <code>asic_type</code> による条件分岐なし</td>
+</tr>
+<tr>
+<td>テンプレート内プラットフォーム分岐</td>
+<td>なし</td>
+<td><code>mgmt_vars.j2</code> は <code>rest_server</code> と <code>x509</code> の 2 キーのみを展開する 4 行テンプレート。<code>platform</code> / <code>asic</code> 参照なし</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
 
 <!-- glossary-links-injected: d5320e852f7a -->
 

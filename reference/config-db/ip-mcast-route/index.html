@@ -26496,7 +26496,362 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 参照カウント管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB への直接依存なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipmulticastmanager-fixed_ipv4ipv6_multicast_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IpMulticastManager (FIXED_IPV4/IPV6_MULTICAST_TABLE) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#l3multicastmanager-replication_ip_multicast_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L3MulticastManager (REPLICATION_IP_MULTICAST_TABLE) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        代表的な失敗コード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ip_multicast_managercpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ip_multicast_manager.cpp 内定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#l3_multicast_managercpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        l3_multicast_manager.cpp 内定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設計上の含意
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-asic_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI / ASIC_STATE 書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crm-fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM カウンタ更新 (FIXED テーブルのみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 参照カウント更新 (FIXED テーブルのみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app_p4rt_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APP_P4RT_TABLE へのステータス書き戻し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / FLEX_COUNTER_DB への書き込み — なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G) — ZMQ 経由の購読
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G) — ZMQ 経由の購読">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        転送経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル → マネージャ マッピング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#p4orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P4Orch コンストラクタ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis-keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        redis keyspace ベースとの差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        応答パブリッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#p4rt-include_p4rt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P4RT はビルドオプション — INCLUDE_P4RT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / VOQ chassis での挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fabricorchdaemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FabricOrchDaemon での非対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 実装要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -26507,7 +26862,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約事項
@@ -26518,7 +26873,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35114,7 +35469,362 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照 (Phase C)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="暗黙参照 (Phase C)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#vrf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 参照カウント管理
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB への直接依存なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipmulticastmanager-fixed_ipv4ipv6_multicast_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IpMulticastManager (FIXED_IPV4/IPV6_MULTICAST_TABLE) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#l3multicastmanager-replication_ip_multicast_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L3MulticastManager (REPLICATION_IP_MULTICAST_TABLE) の失敗パターン
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        代表的な失敗コード
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / ERROR_TABLE への影響
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ip_multicast_managercpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ip_multicast_manager.cpp 内定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#l3_multicast_managercpp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        l3_multicast_manager.cpp 内定数
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        設計上の含意
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#db-phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副次 DB 書込 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sai-asic_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI / ASIC_STATE 書込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crm-fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRM カウンタ更新 (FIXED テーブルのみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vrf-fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        VRF 参照カウント更新 (FIXED テーブルのみ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app_p4rt_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APP_P4RT_TABLE へのステータス書き戻し
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-flex_counter_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB / FLEX_COUNTER_DB への書き込み — なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g-zmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G) — ZMQ 経由の購読
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G) — ZMQ 経由の購読">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        転送経路
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        テーブル → マネージャ マッピング
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#p4orch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P4Orch コンストラクタ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis-keyspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        redis keyspace ベースとの差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        応答パブリッシュ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム差 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#p4rt-include_p4rt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        P4RT はビルドオプション — INCLUDE_P4RT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-asic-voq-chassis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        multi-asic / VOQ chassis での挙動
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fabricorchdaemon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FabricOrchDaemon での非対応
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sai_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SAI 実装要件
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者
@@ -35125,7 +35835,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         制約事項
@@ -35136,7 +35846,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35557,7 +36267,581 @@ P4OidMapper に OID を登録してから <code>FIXED_*_MULTICAST_TABLE</code> �
 IpMulticastManager 内で管理されており、参照が残っているグループを先に削除しようとすると SAI 削除が失敗する。</p>
 <!-- /ordering -->
 
-<h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>根拠: <code>ip_multicast_manager.cpp:L477-481,L509-514,L775,L886</code>、<code>l3_multicast_manager.cpp:L1002-1008,L2196</code>、<code>vrforch.h:L58-119</code>、<code>orchdaemon.cpp:L283</code>、<code>schema.h:L73-80</code>
+evidence: <code>meta/_intermediate/cdb-flow/ip-mcast-route-cross-refs.md</code></p>
+</blockquote>
+<p>これらテーブルは APP_DB 上の P4RT ネームスペースに存在するため <strong>YANG leafref は定義されていない</strong>。ただしコード上の実行時参照として以下の暗黙依存が存在する。</p>
+<table>
+<thead>
+<tr>
+<th>参照元</th>
+<th>参照先 (DB:テーブル:キー)</th>
+<th>参照方法</th>
+<th>未存在時の挙動</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FIXED_IPV4/IPV6_MULTICAST_TABLE</code></td>
+<td><code>APP_DB:VRF_TABLE:&lt;vrf_name&gt;</code></td>
+<td><code>VRFOrch::isVRFexists()</code> (非空 <code>vrf_id</code> のみ)</td>
+<td><code>SWSS_RC_NOT_FOUND</code> で即拒否</td>
+</tr>
+<tr>
+<td><code>REPLICATION_IP_MULTICAST_TABLE</code></td>
+<td><code>APP_DB:P4RT:FIXED_MULTICAST_ROUTER_INTERFACE_TABLE</code> (全 replica の <code>(port, instance)</code>)</td>
+<td><code>L3MulticastManager</code> 内部キャッシュ参照</td>
+<td><code>SWSS_RC_NOT_FOUND</code> で即拒否</td>
+</tr>
+<tr>
+<td><code>FIXED_IPV4/IPV6_MULTICAST_TABLE</code></td>
+<td>P4OidMapper 内 <code>SAI_OBJECT_TYPE_IPMC_GROUP:multicast_group_id</code></td>
+<td><code>P4OidMapper::existsOID()</code></td>
+<td><code>SWSS_RC_NOT_FOUND</code> で即拒否</td>
+</tr>
+</tbody>
+</table>
+<h3 id="vrf">VRF 参照カウント管理<a class="headerlink" href="#vrf" title="Permanent link">&para;</a></h3>
+<p><code>IpMulticastManager</code> は IPMC エントリ作成時に <code>m_vrfOrch-&gt;increaseVrfRefCount(vrf_id)</code> を呼び (<code>ip_multicast_manager.cpp:L775</code>)、削除時に <code>decreaseVrfRefCount</code> を呼ぶ (<code>L886</code>)。これにより VRF に対する参照カウントが正しく管理される。VRF を先に削除すると参照カウント不整合が発生するため、VRF 削除前に <code>FIXED_IPV4/IPV6_MULTICAST_TABLE</code> エントリをすべて削除する必要がある。</p>
+<h3 id="config_db">CONFIG_DB への直接依存なし<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
+<p><code>ip_multicast_manager.cpp</code> / <code>l3_multicast_manager.cpp</code> はいずれも CONFIG_DB を直接 subscribe / get しない。CONFIG_DB 依存は VRFOrch および P4Orch 上位レイヤが間接処理する。</p>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査証跡: <code>meta/_intermediate/cdb-flow/ip-mcast-route-failure.md</code></p>
+</blockquote>
+<!-- evidence: sonic-swss/orchagent/p4orch/ip_multicast_manager.cpp:120-195,612-697,741-831,862-876, sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp:430-478,525-596,978-1033 -->
+
+<p>P4RT フレームワークの失敗モデルは<strong>バッチ内一括適用</strong>で、失敗発生時は残りのエントリに <code>SWSS_RC_NOT_EXECUTED</code> を付与して中断する。個別エントリの自動 retry はなく、コントローラ (<code>p4rt-app</code>) が状態確認のうえ再送を担う。</p>
+<h3 id="ipmulticastmanager-fixed_ipv4ipv6_multicast_table">IpMulticastManager (FIXED_IPV4/IPV6_MULTICAST_TABLE) の失敗パターン<a class="headerlink" href="#ipmulticastmanager-fixed_ipv4ipv6_multicast_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>返却コード</th>
+<th>retry</th>
+<th>ログレベル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>APP_DB エントリのデシリアライズ失敗</td>
+<td><code>ip_multicast_manager.cpp:L127-135</code></td>
+<td>エラーコード (parse 失敗内容)</td>
+<td>なし</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td>2</td>
+<td>同一バッチ内での同一エントリ重複</td>
+<td><code>ip_multicast_manager.cpp:L142-150</code></td>
+<td><code>SWSS_RC_INVALID_PARAM</code></td>
+<td>なし</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td>3</td>
+<td>バリデーション失敗 (<code>validateIpMulticastEntry</code>)</td>
+<td><code>ip_multicast_manager.cpp:L154-163</code></td>
+<td><code>SWSS_RC_NOT_FOUND</code> / <code>SWSS_RC_INVALID_PARAM</code></td>
+<td>なし</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td>4</td>
+<td>multicast group OID が P4OidMapper 未登録 (CREATE)</td>
+<td><code>ip_multicast_manager.cpp:L748-755</code></td>
+<td><code>SWSS_RC_NOT_FOUND</code></td>
+<td>なし</td>
+<td>—</td>
+</tr>
+<tr>
+<td>5</td>
+<td>SAI <code>create_ipmc_entry</code> 失敗</td>
+<td><code>ip_multicast_manager.cpp:L761-764</code></td>
+<td>SAI ステータスコード</td>
+<td>なし</td>
+<td>—</td>
+</tr>
+<tr>
+<td>6</td>
+<td>SAI <code>create_rpf_group</code> / RIF 作成失敗 (初回エントリ追加時)</td>
+<td><code>ip_multicast_manager.cpp:L661-665</code></td>
+<td>SAI ステータスコード</td>
+<td>なし</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td>7</td>
+<td>内部キャッシュに存在しないエントリの UPDATE</td>
+<td><code>ip_multicast_manager.cpp:L794-798</code></td>
+<td><code>SWSS_RC_INTERNAL</code></td>
+<td>なし</td>
+<td>—</td>
+</tr>
+<tr>
+<td>8</td>
+<td>multicast group OID が P4OidMapper 未登録 (UPDATE)</td>
+<td><code>ip_multicast_manager.cpp:L817-820</code></td>
+<td><code>SWSS_RC_NOT_FOUND</code></td>
+<td>なし</td>
+<td>—</td>
+</tr>
+<tr>
+<td>9</td>
+<td>SAI <code>set_ipmc_entry_attribute</code> 失敗 (UPDATE)</td>
+<td><code>ip_multicast_manager.cpp:L827-830</code></td>
+<td>SAI ステータスコード</td>
+<td>なし</td>
+<td>—</td>
+</tr>
+<tr>
+<td>10</td>
+<td>内部キャッシュに存在しないエントリの DEL</td>
+<td><code>ip_multicast_manager.cpp:L866</code></td>
+<td><code>SWSS_RC_NOT_FOUND</code></td>
+<td>なし</td>
+<td>—</td>
+</tr>
+<tr>
+<td>11</td>
+<td>SAI <code>remove_rpf_group</code> 失敗 (全エントリ削除後)</td>
+<td><code>ip_multicast_manager.cpp:L691-693</code></td>
+<td>SAI ステータスコード</td>
+<td>なし</td>
+<td>ERROR</td>
+</tr>
+</tbody>
+</table>
+<h3 id="l3multicastmanager-replication_ip_multicast_table">L3MulticastManager (REPLICATION_IP_MULTICAST_TABLE) の失敗パターン<a class="headerlink" href="#l3multicastmanager-replication_ip_multicast_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>失敗ケース</th>
+<th>発生箇所</th>
+<th>返却コード</th>
+<th>retry</th>
+<th>ログレベル</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12</td>
+<td>APP_DB エントリのデシリアライズ失敗</td>
+<td><code>l3_multicast_manager.cpp:L430</code></td>
+<td>エラーコード</td>
+<td>なし</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td>13</td>
+<td><code>replicas</code> フィールドが空</td>
+<td><code>l3_multicast_manager.cpp:L991</code></td>
+<td><code>SWSS_RC_INVALID_PARAM</code></td>
+<td>なし</td>
+<td>—</td>
+</tr>
+<tr>
+<td>14</td>
+<td>replica の router interface が内部キャッシュ未登録</td>
+<td><code>l3_multicast_manager.cpp:L1003-1008</code></td>
+<td><code>SWSS_RC_NOT_FOUND</code></td>
+<td>なし</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">代表的な失敗コード<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p><strong>バッチ中断と <code>SWSS_RC_NOT_EXECUTED</code> 付与 (Pattern 1〜3)</strong>:
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// ip_multicast_manager.cpp:L183-189</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">status</span><span class="p">.</span><span class="n">ok</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="c1">// Return SWSS_RC_NOT_EXECUTED if failure has occured.</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="n">m_publisher</span><span class="o">-&gt;</span><span class="n">publish</span><span class="p">(</span><span class="n">APP_P4RT_TABLE_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">kfvKey</span><span class="p">(</span><span class="n">key_op_fvs_tuple</span><span class="p">),</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">                       </span><span class="n">kfvFieldsValues</span><span class="p">(</span><span class="n">key_op_fvs_tuple</span><span class="p">),</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">                       </span><span class="n">ReturnCode</span><span class="p">(</span><span class="n">StatusCode</span><span class="o">::</span><span class="n">SWSS_RC_NOT_EXECUTED</span><span class="p">),</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">                       </span><span class="cm">/*replace=*/</span><span class="nb">true</span><span class="p">);</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<p><strong>multicast group OID 未登録 (Pattern 4)</strong>:
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// ip_multicast_manager.cpp:L748-755</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">m_p4OidMapper</span><span class="o">-&gt;</span><span class="n">getOID</span><span class="p">(</span><span class="n">SAI_OBJECT_TYPE_IPMC_GROUP</span><span class="p">,</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">                           </span><span class="n">ip_multicast_entry</span><span class="p">.</span><span class="n">multicast_group_id</span><span class="p">,</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">                           </span><span class="o">&amp;</span><span class="n">group_oid</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="n">statuses</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ReturnCode</span><span class="p">(</span><span class="n">StatusCode</span><span class="o">::</span><span class="n">SWSS_RC_NOT_FOUND</span><span class="p">)</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">                </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Multicast group ID &quot;</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">                </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">QuotedVar</span><span class="p">(</span><span class="n">ip_multicast_entry</span><span class="p">.</span><span class="n">multicast_group_id</span><span class="p">)</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">                </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; has not been created yet.&quot;</span><span class="p">;</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">  </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<p><strong>RPF group 削除失敗 (Pattern 11)</strong>:
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// ip_multicast_manager.cpp:L688-694</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">ReturnCode</span><span class="w"> </span><span class="nf">IpMulticastManager::deleteDefaultRpfGroup</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="n">sai_status_t</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">      </span><span class="n">sai_rpf_group_api</span><span class="o">-&gt;</span><span class="n">remove_rpf_group</span><span class="p">(</span><span class="n">ipmc_rpf_group_oid_</span><span class="p">);</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SAI_STATUS_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="n">LOG_ERROR_AND_RETURN</span><span class="p">(</span><span class="n">ReturnCode</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">                         </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Failed to delete default RPF group&quot;</span><span class="p">);</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span><span class="p">}</span>
+</span></code></pre></div></p>
+<h3 id="state_db-error_table">STATE_DB / ERROR_TABLE への影響<a class="headerlink" href="#state_db-error_table" title="Permanent link">&para;</a></h3>
+<ul>
+<li>P4RT マネージャは STATE_DB を直接操作しない</li>
+<li>失敗は <code>m_publisher-&gt;publish()</code> で <code>APP_P4RT_TABLE_NAME</code> にステータスコードとして書き戻される（コントローラが確認可能）</li>
+<li>CONFIG_DB は本テーブルに対して無関係（直接 subscribe / get なし）</li>
+<li>Pattern 11（RPF group 削除失敗）では全 IPMC エントリが正常削除済みでも RPF group が残存する可能性があり、その場合は orchagent 再起動が必要</li>
+</ul>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>根拠: <code>ip_multicast_manager.cpp:L45,L61,L376,L596,L704,L712,L719</code>、<code>l3_multicast_manager.cpp:L53-56,L167,L189,L641,L1415-1416</code>
+evidence: <code>meta/_intermediate/cdb-flow/ip-mcast-route-constants.md</code></p>
+</blockquote>
+<p>以下の定数はいずれもコード中にハードコードされており、CONFIG_DB フィールド・YANG スキーマ・環境変数による上書きは不可能。</p>
+<h3 id="ip_multicast_managercpp">ip_multicast_manager.cpp 内定数<a class="headerlink" href="#ip_multicast_managercpp" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>変更可否</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kRifMemberMacAddress</code></td>
+<td><code>"00:00:00:00:00:01"</code></td>
+<td>RPF group 向けに自動生成される RIF の <code>SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS</code> に固定設定 (<code>ip_multicast_manager.cpp:L596</code>)</td>
+<td>不可</td>
+</tr>
+<tr>
+<td><code>SAI_PACKET_ACTION_FORWARD</code></td>
+<td>SAI enum (<code>0</code>)</td>
+<td>全 IPMC エントリのパケットアクション (<code>ip_multicast_manager.cpp:L61,L376</code>)</td>
+<td>不可</td>
+</tr>
+<tr>
+<td><code>SAI_IPMC_ENTRY_TYPE_XG</code></td>
+<td>SAI enum (<code>0</code>)</td>
+<td>全 IPMC エントリタイプを any-source (XG) 固定。SSM (Source-Specific Multicast) は本実装で非対応 (<code>ip_multicast_manager.cpp:L704</code>)</td>
+<td>不可</td>
+</tr>
+<tr>
+<td>Source IP <code>0</code></td>
+<td>IPv4 <code>0.0.0.0</code> / IPv6 <code>::</code></td>
+<td>IPMC エントリの送信元 IP フィールドをゼロ埋め (any-source を示す) (<code>ip_multicast_manager.cpp:L712,L719</code>)</td>
+<td>不可</td>
+</tr>
+</tbody>
+</table>
+<h3 id="l3_multicast_managercpp">l3_multicast_manager.cpp 内定数<a class="headerlink" href="#l3_multicast_managercpp" title="Permanent link">&para;</a></h3>
+<p>ソースコードコメント (<code>l3_multicast_manager.cpp:L48-52</code>) に「これらはプレースホルダ値。リンクローカル IP はどんな値でも構わない。デフォルト MAC は MAC 書き換えを行わない場合は無視される」と明記されている。</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>用途</th>
+<th>変更可否</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kLinkLocalIpv4Address</code></td>
+<td><code>"169.254.0.1"</code></td>
+<td>SAI neighbor entry および next hop オブジェクト作成時の IP アドレスフィールドに固定設定 (<code>l3_multicast_manager.cpp:L167,L189</code>)。実データプレーン転送には影響しない</td>
+<td>不可</td>
+</tr>
+<tr>
+<td><code>kNeighborMacAddress</code></td>
+<td><code>"00:00:00:00:00:01"</code></td>
+<td><code>MULTICAST_ROUTER_INTERFACE_TABLE</code> エントリの内部デフォルト <code>dst_mac</code> (<code>l3_multicast_manager.cpp:L641</code>)。アクションが明示的な MAC 書き換えを指定しない限り無視</td>
+<td>不可</td>
+</tr>
+<tr>
+<td><code>kDefaultMyMacAddress</code></td>
+<td><code>"00:00:00:00:00:01"</code></td>
+<td>SAI my-mac エントリの <code>SAI_MY_MAC_ATTR_MAC_ADDRESS</code> に固定設定 (<code>l3_multicast_manager.cpp:L1415</code>)</td>
+<td>不可</td>
+</tr>
+<tr>
+<td><code>kDefaultMyMacAddressMask</code></td>
+<td><code>"00:00:00:00:00:00"</code></td>
+<td>SAI my-mac エントリの <code>SAI_MY_MAC_ATTR_MAC_ADDRESS_MASK</code> に固定設定 (<code>l3_multicast_manager.cpp:L1416</code>)。オールゼロマスクにより任意 MAC にマッチするワイルドカードとして機能する</td>
+<td>不可</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_6">設計上の含意<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>kLinkLocalIpv4Address</code> / <code>kNeighborMacAddress</code> は SAI 構造体の「必須フィールドを埋めるプレースホルダ」であり、これらの値が実際のパケット転送ロジックに影響することはない</li>
+<li><code>kDefaultMyMacAddressMask</code> がオールゼロであるため、SAI my-mac ACL エントリは全 MAC に対してワイルドカードマッチを行う</li>
+<li><code>SAI_IPMC_ENTRY_TYPE_XG</code> 固定により、このテーブルは ASM (Any-Source Multicast) のみをサポートする。SSM を必要とする場合は別実装が必要</li>
+</ul>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>詳細証跡: <code>meta/_intermediate/cdb-flow/ip-mcast-route-side-effects.md</code>
+調査対象: <code>sonic-swss/orchagent/p4orch/ip_multicast_manager.cpp</code>, <code>sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp</code></p>
+</blockquote>
+<p><code>REPLICATION_IP_MULTICAST_TABLE</code> / <code>FIXED_IPV4_MULTICAST_TABLE</code> / <code>FIXED_IPV6_MULTICAST_TABLE</code> への SET/DEL が引き起こす CONFIG_DB 以外への書き込みを示す。STATE_DB / APPL_DB への直接書き込みは存在しない。</p>
+<h3 id="sai-asic_state">SAI / ASIC_STATE 書込み<a class="headerlink" href="#sai-asic_state" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>SAI オブジェクトタイプ</th>
+<th>SAI API</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REPLICATION SET 成功</td>
+<td><code>SAI_OBJECT_TYPE_IPMC_GROUP</code></td>
+<td><code>sai_ipmc_group_api-&gt;create_ipmc_group()</code></td>
+<td><code>l3_multicast_manager.cpp:L2196</code></td>
+</tr>
+<tr>
+<td>REPLICATION SET 成功 (replicas ごと)</td>
+<td><code>SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER</code></td>
+<td><code>sai_ipmc_group_api-&gt;create_ipmc_group_member()</code></td>
+<td><code>l3_multicast_manager.cpp:L2262</code></td>
+</tr>
+<tr>
+<td>REPLICATION DEL 成功 (replicas ごと)</td>
+<td><code>SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER</code></td>
+<td><code>sai_ipmc_group_api-&gt;remove_ipmc_group_member()</code></td>
+<td><code>l3_multicast_manager.cpp:L2552</code></td>
+</tr>
+<tr>
+<td>REPLICATION DEL 成功</td>
+<td><code>SAI_OBJECT_TYPE_IPMC_GROUP</code></td>
+<td><code>sai_ipmc_group_api-&gt;remove_ipmc_group()</code></td>
+<td><code>l3_multicast_manager.cpp:L2247</code></td>
+</tr>
+<tr>
+<td>FIXED SET 成功 (初回 IPMC エントリのみ)</td>
+<td><code>SAI_OBJECT_TYPE_RPF_GROUP</code> + <code>SAI_OBJECT_TYPE_RPF_GROUP_MEMBER</code></td>
+<td><code>sai_rpf_group_api-&gt;create_rpf_group()</code> / <code>create_rpf_group_member()</code></td>
+<td><code>ip_multicast_manager.cpp:L651-665</code></td>
+</tr>
+<tr>
+<td>FIXED SET 成功</td>
+<td><code>SAI_OBJECT_TYPE_IPMC_ENTRY</code></td>
+<td><code>sai_ipmc_api-&gt;create_ipmc_entry()</code></td>
+<td><code>ip_multicast_manager.cpp:L761</code></td>
+</tr>
+<tr>
+<td>FIXED DEL 成功</td>
+<td><code>SAI_OBJECT_TYPE_IPMC_ENTRY</code></td>
+<td><code>sai_ipmc_api-&gt;remove_ipmc_entry()</code></td>
+<td><code>ip_multicast_manager.cpp:L874</code></td>
+</tr>
+<tr>
+<td>FIXED DEL 成功 (全エントリ削除後)</td>
+<td><code>SAI_OBJECT_TYPE_RPF_GROUP_MEMBER</code> + <code>SAI_OBJECT_TYPE_RPF_GROUP</code></td>
+<td><code>sai_rpf_group_api-&gt;remove_rpf_group_member()</code> / <code>remove_rpf_group()</code></td>
+<td><code>ip_multicast_manager.cpp:L688-694</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="crm-fixed">CRM カウンタ更新 (FIXED テーブルのみ)<a class="headerlink" href="#crm-fixed" title="Permanent link">&para;</a></h3>
+<p><code>gCrmOrch</code> 経由で orchagent 内部の CRM (Critical Resource Monitor) カウンタを更新する。COUNTERS_DB への書き込みは CRM ポーリングタイマで非同期に反映される。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>CRM リソースタイプ</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FIXED_IPV4/IPV6_MULTICAST_TABLE</code> SET 成功</td>
+<td><code>CRM_IPMC_ENTRY</code> + 1</td>
+<td><code>ip_multicast_manager.cpp:L774</code> <code>gCrmOrch-&gt;incCrmResUsedCounter()</code></td>
+</tr>
+<tr>
+<td><code>FIXED_IPV4/IPV6_MULTICAST_TABLE</code> DEL 成功</td>
+<td><code>CRM_IPMC_ENTRY</code> - 1</td>
+<td><code>ip_multicast_manager.cpp:L885</code> <code>gCrmOrch-&gt;decCrmResUsedCounter()</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>REPLICATION_IP_MULTICAST_TABLE</code> による IPMC_GROUP / IPMC_GROUP_MEMBER には対応 CRM リソースタイプが存在しない (<code>l3_multicast_manager.cpp</code> に <code>incCrmResUsedCounter</code> 呼び出しなし)。</p>
+<h3 id="vrf-fixed">VRF 参照カウント更新 (FIXED テーブルのみ)<a class="headerlink" href="#vrf-fixed" title="Permanent link">&para;</a></h3>
+<p><code>vrf_id</code> が非空の場合、<code>VRFOrch</code> インプロセスカウンタを更新する。Redis への書き込みはなし。</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>VRF 操作</th>
+<th>コード根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FIXED_IPV4/IPV6_MULTICAST_TABLE</code> SET 成功 (非空 vrf_id)</td>
+<td><code>increaseVrfRefCount(vrf_id)</code></td>
+<td><code>ip_multicast_manager.cpp:L775</code></td>
+</tr>
+<tr>
+<td><code>FIXED_IPV4/IPV6_MULTICAST_TABLE</code> DEL 成功 (非空 vrf_id)</td>
+<td><code>decreaseVrfRefCount(vrf_id)</code></td>
+<td><code>ip_multicast_manager.cpp:L886</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="app_p4rt_table">APP_P4RT_TABLE へのステータス書き戻し<a class="headerlink" href="#app_p4rt_table" title="Permanent link">&para;</a></h3>
+<p>処理結果は <code>m_publisher-&gt;publish(APP_P4RT_TABLE_NAME, ...)</code> で APP_DB に書き戻され、コントローラ (<code>p4rt-app</code>) が確認できる。バッチ中断時は未処理エントリに <code>SWSS_RC_NOT_EXECUTED</code> が付与される (<code>ip_multicast_manager.cpp:L183-189</code>、<code>l3_multicast_manager.cpp:L375</code>)。</p>
+<h3 id="state_db-flex_counter_db">STATE_DB / FLEX_COUNTER_DB への書き込み — なし<a class="headerlink" href="#state_db-flex_counter_db" title="Permanent link">&para;</a></h3>
+<p><code>ip_multicast_manager.cpp</code> / <code>l3_multicast_manager.cpp</code> ともに STATE_DB・FLEX_COUNTER_DB への直接書き込みは存在しない。</p>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g-zmq">通信メカニズム (Phase G) — ZMQ 経由の購読<a class="headerlink" href="#phase-g-zmq" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/p4orch/p4orch.cpp:36-43,51-54,72-79 / orchdaemon.cpp:847-849 / orchdaemon.h:121 / ip_multicast_manager.cpp:84-93,132,147,159,185,230 / l3_multicast_manager.cpp:310-318,329-332,375,433,476,530 -->
+
+<p><code>FIXED_IPV4_MULTICAST_TABLE</code> / <code>FIXED_IPV6_MULTICAST_TABLE</code> / <code>FIXED_MULTICAST_ROUTER_INTERFACE_TABLE</code> / <code>REPLICATION_IP_MULTICAST_TABLE</code> はいずれも <strong>通常の redis ConsumerStateTable / keyspace 通知パスを使わず、専用 ZMQ チャネル経由で配送される</strong>。これは CONFIG_DB の <code>MIRROR_SESSION</code> 等を購読する通常の <code>Orch</code> + <code>ConsumerStateTable</code> 経路とは根本的に異なる通信モデルである。</p>
+<h3 id="_7">転送経路<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>層</th>
+<th>クラス / 実体</th>
+<th>役割</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>受信エンドポイント</td>
+<td><code>swss::ZmqServer</code> (<code>m_p4OrchZmqServer</code>、エンドポイント <code>"ipc:///zmq_swss/p4orch_zmq_swss_ep"</code>)</td>
+<td>P4RT クライアントからの ZMQ フレームを受信</td>
+</tr>
+<tr>
+<td>Orch 基底</td>
+<td><code>P4Orch : public ZmqOrch</code></td>
+<td>全 P4RT テーブルを 1 インスタンスで保有。<code>ZmqOrch(db, tableNames, zmqServer, orderedQueue=true, dbPersistence=false)</code> で初期化</td>
+</tr>
+<tr>
+<td>ディスパッチ</td>
+<td><code>P4Orch::doTask(ConsumerBase &amp;consumer)</code></td>
+<td>バッチ受信時に <code>APP_P4RT_TABLE_NAME</code> を検証し、<code>m_p4TableToManagerMap</code> でテーブル別マネージャに振り分け</td>
+</tr>
+<tr>
+<td>ハンドラ (FIXED テーブル)</td>
+<td><code>p4orch::IpMulticastManager</code></td>
+<td><code>FIXED_IPV4_MULTICAST_TABLE</code> / <code>FIXED_IPV6_MULTICAST_TABLE</code> を処理</td>
+</tr>
+<tr>
+<td>ハンドラ (REPLICATION / FIXED_MULTICAST_ROUTER_INTERFACE テーブル)</td>
+<td><code>p4orch::L3MulticastManager</code></td>
+<td><code>REPLICATION_IP_MULTICAST_TABLE</code> / <code>FIXED_MULTICAST_ROUTER_INTERFACE_TABLE</code> を処理</td>
+</tr>
+<tr>
+<td>応答パス</td>
+<td><code>ResponsePublisher m_publisher("APPL_DB", buffered=true, db_write_thread=true, zmqServer)</code></td>
+<td>処理結果ステータスを同じ <code>ZmqServer</code> 経由で P4RT クライアントに返す</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">テーブル → マネージャ マッピング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// p4orch.cpp:72-79</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">m_p4TableToManagerMap</span><span class="p">[</span><span class="n">APP_P4RT_IPV4_MULTICAST_TABLE_NAME</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w">      </span><span class="c1">// &quot;FIXED_IPV4_MULTICAST_TABLE&quot;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="n">m_ipMulticastManager</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">m_p4TableToManagerMap</span><span class="p">[</span><span class="n">APP_P4RT_IPV6_MULTICAST_TABLE_NAME</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w">      </span><span class="c1">// &quot;FIXED_IPV6_MULTICAST_TABLE&quot;</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="n">m_ipMulticastManager</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">m_p4TableToManagerMap</span><span class="p">[</span><span class="n">APP_P4RT_MULTICAST_ROUTER_INTERFACE_TABLE_NAME</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="c1">// &quot;FIXED_MULTICAST_ROUTER_INTERFACE_TABLE&quot;</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="n">m_l3MulticastManager</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">m_p4TableToManagerMap</span><span class="p">[</span><span class="n">APP_P4RT_REPLICATION_IP_MULTICAST_TABLE_NAME</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w">    </span><span class="c1">// &quot;REPLICATION_IP_MULTICAST_TABLE&quot;</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">    </span><span class="n">m_l3MulticastManager</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
+</span></code></pre></div>
+<h3 id="p4orch">P4Orch コンストラクタ<a class="headerlink" href="#p4orch" title="Permanent link">&para;</a></h3>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// orchagent/p4orch/p4orch.cpp:36-54</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">P4Orch</span><span class="o">::</span><span class="n">P4Orch</span><span class="p">(</span><span class="n">swss</span><span class="o">::</span><span class="n">DBConnector</span><span class="o">*</span><span class="w"> </span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tableNames</span><span class="p">,</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">               </span><span class="n">ZmqServer</span><span class="o">*</span><span class="w"> </span><span class="n">zmqServer</span><span class="p">,</span><span class="w"> </span><span class="n">VRFOrch</span><span class="o">*</span><span class="w"> </span><span class="n">vrfOrch</span><span class="p">,</span><span class="w"> </span><span class="n">CoppOrch</span><span class="o">*</span><span class="w"> </span><span class="n">coppOrch</span><span class="p">)</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">ZmqOrch</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">tableNames</span><span class="p">,</span><span class="w"> </span><span class="n">zmqServer</span><span class="p">,</span><span class="w"> </span><span class="cm">/*orderedQueue=*/</span><span class="nb">true</span><span class="p">,</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">              </span><span class="cm">/*dbPersistence=*/</span><span class="nb">false</span><span class="p">),</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">      </span><span class="n">m_zmqServer</span><span class="p">(</span><span class="n">zmqServer</span><span class="p">),</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">      </span><span class="n">m_publisher</span><span class="p">(</span><span class="s">&quot;APPL_DB&quot;</span><span class="p">,</span><span class="w"> </span><span class="cm">/*bool buffered=*/</span><span class="nb">true</span><span class="p">,</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">                  </span><span class="cm">/*db_write_thread=*/</span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">zmqServer</span><span class="p">)</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="p">{</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">    </span><span class="c1">// ...</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">    </span><span class="n">m_l3MulticastManager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">p4orch</span><span class="o">::</span><span class="n">L3MulticastManager</span><span class="o">&gt;</span><span class="p">(</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">        </span><span class="o">&amp;</span><span class="n">m_p4OidMapper</span><span class="p">,</span><span class="w"> </span><span class="n">vrfOrch</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">m_publisher</span><span class="p">);</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">    </span><span class="n">m_ipMulticastManager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">p4orch</span><span class="o">::</span><span class="n">IpMulticastManager</span><span class="o">&gt;</span><span class="p">(</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="w">        </span><span class="o">&amp;</span><span class="n">m_p4OidMapper</span><span class="p">,</span><span class="w"> </span><span class="n">vrfOrch</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">m_publisher</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>orchdaemon.cpp:847-849</code> で ZMQ サーバを生成し <code>P4Orch</code> に渡す:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p4rt_tables</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">APP_P4RT_TABLE_NAME</span><span class="p">};</span><span class="w">  </span><span class="c1">// orchdaemon.cpp:847</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">m_p4OrchZmqServer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">swss</span><span class="o">::</span><span class="n">ZmqServer</span><span class="p">(</span><span class="n">m_p4OrchZmqServerEp</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span><span class="w">  </span><span class="c1">// :848</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">gP4Orch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">P4Orch</span><span class="p">(</span><span class="n">m_applDb</span><span class="p">,</span><span class="w"> </span><span class="n">p4rt_tables</span><span class="p">,</span><span class="w"> </span><span class="n">m_p4OrchZmqServer</span><span class="p">,</span><span class="w"> </span><span class="n">vrf_orch</span><span class="p">,</span><span class="w"> </span><span class="n">gCoppOrch</span><span class="p">);</span><span class="w">  </span><span class="c1">// :849</span>
+</span></code></pre></div>
+<h3 id="redis-keyspace">redis keyspace ベースとの差異<a class="headerlink" href="#redis-keyspace" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>p4rt_tables</code> は <code>{APP_P4RT_TABLE_NAME}</code> のみ (<code>orchdaemon.cpp:847</code>)。<code>ConsumerStateTable</code> の redis SUBSCRIBE / keyspace 通知は<strong>使わない</strong>。</li>
+<li>そのため <code>redis-cli psubscribe '__keyspace@*__:FIXED_IPV4_MULTICAST_TABLE*'</code> 等での観測はできない。</li>
+<li>P4RT クライアントは ZMQ ソケットに対して書き込み、orchagent 側 <code>ZmqServer</code> がキューに積み、<code>P4Orch::doTask</code> が同期的にドレインする。</li>
+</ul>
+<h3 id="_9">応答パブリッシュ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p>各マネージャは <code>m_publisher-&gt;publish(APP_P4RT_TABLE_NAME, kfvKey(...), attrs, status, replace=true)</code> で処理結果を返す。バッチ中断時は未処理エントリに <code>SWSS_RC_NOT_EXECUTED</code> が付与される:</p>
+<ul>
+<li><code>IpMulticastManager::drain()</code>: <code>ip_multicast_manager.cpp:132, 147, 159, 185, 230</code></li>
+<li><code>L3MulticastManager::drain()</code>: <code>l3_multicast_manager.cpp:375, 433, 448, 476, 530, 547, 562, 594</code></li>
+</ul>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>根拠: <code>sonic-buildimage/rules/config:206</code>、<code>slave.mk:222-241</code>、<code>files/build_templates/init_cfg.json.j2:83</code>、<code>orchdaemon.cpp:847-849,1292-1310</code>
+evidence: <code>meta/_intermediate/cdb-flow/ip-mcast-route-platform.md</code></p>
+</blockquote>
+<p><code>IpMulticastManager</code> / <code>L3MulticastManager</code> の処理ロジックに <strong>platform 固有のコードパスは存在しない</strong>。<code>ip_multicast_manager.cpp</code> / <code>l3_multicast_manager.cpp</code> を <code>platform|vendor|chassis|multi_asic|is_multi_npu</code> で grep した結果はすべて 0 ヒット（C++ <code>namespace</code> キーワード除く）。SAI 呼び出しは汎用 SAI プリミティブのみ使用する。</p>
+<h3 id="p4rt-include_p4rt">P4RT はビルドオプション — <code>INCLUDE_P4RT</code><a class="headerlink" href="#p4rt-include_p4rt" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>ビルド変数</th>
+<th>デフォルト</th>
+<th>有効化条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>INCLUDE_P4RT</code></td>
+<td><code>n</code> (<code>rules/config:206</code>)</td>
+<td>環境変数 <code>SONIC_INCLUDE_P4RT=y</code> が設定された場合のみ</td>
+</tr>
+</tbody>
+</table>
+<p><code>slave.mk:226-241</code> により <strong><code>armhf</code> および <code>arm64</code> では Bazel が利用不可のため強制的に <code>INCLUDE_P4RT = n</code></strong> にリセットされる。community upstream の <code>device/</code> ディレクトリ内に <code>INCLUDE_P4RT = y</code> を指定している platform は確認されない。</p>
+<p><code>INCLUDE_P4RT = n</code> のビルドでは <code>docker-sonic-p4rt</code> コンテナが含まれず、<code>REPLICATION_IP_MULTICAST_TABLE</code> / <code>FIXED_IPV4_MULTICAST_TABLE</code> / <code>FIXED_IPV6_MULTICAST_TABLE</code> はシステム上に存在しない。</p>
+<h3 id="multi-asic-voq-chassis">multi-asic / VOQ chassis での挙動<a class="headerlink" href="#multi-asic-voq-chassis" title="Permanent link">&para;</a></h3>
+<p><code>init_cfg.json.j2:83</code> の feature タプル <code>("p4rt", "disabled", false, "enabled")</code> の第 3 要素 <code>false</code> が <code>has_per_asic_scope=False</code> を示す。multi-asic 環境でも <code>p4rt</code> コンテナは host namespace に <strong>1 個のみ</strong> 起動し、<code>asic0..N</code> の Redis には展開されない。ZMQ エンドポイント <code>"ipc:///zmq_swss/p4orch_zmq_swss_ep"</code> も host 固定 (<code>orchdaemon.h:121</code>)。</p>
+<h3 id="fabricorchdaemon">FabricOrchDaemon での非対応<a class="headerlink" href="#fabricorchdaemon" title="Permanent link">&para;</a></h3>
+<p><code>orchdaemon.cpp:1292-1310</code> の <code>FabricOrchDaemon::init()</code> には <code>gP4Orch</code> の初期化が存在しない。Fabric ノード（LC/SC のファブリックポートのみ管理するノード）では P4Orch が起動せず、IP マルチキャストテーブルは利用不可。<code>DpuOrchDaemon</code> は基底クラス <code>OrchDaemon::init()</code> を継承するため P4Orch が生成される。</p>
+<h3 id="sai_1">SAI 実装要件<a class="headerlink" href="#sai_1" title="Permanent link">&para;</a></h3>
+<p><code>SAI_OBJECT_TYPE_IPMC_GROUP</code> / <code>SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER</code> / <code>SAI_OBJECT_TYPE_IPMC_ENTRY</code> / <code>SAI_OBJECT_TYPE_RPF_GROUP</code> を実装した SAI アダプタが必要。Virtual Switch (VS) SAI はこれらをスタブ実装する。スキーマ・書込パス自体に platform 条件分岐はなく、SAI 実装の可否のみが差異となる。</p>
+<!-- /platform -->
+
+<h2 id="_10">購読者<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35579,7 +36863,7 @@ IpMulticastManager 内で管理されており、参照が残っているグル�
 </tr>
 </tbody>
 </table>
-<h2 id="_6">制約事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_11">制約事項<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>replicas</code> が空の場合はグループ作成が拒否される。</li>
 <li><code>backups</code> を指定する場合、primary replicas と配列長が一致しなければならない。</li>
@@ -35587,7 +36871,7 @@ IpMulticastManager 内で管理されており、参照が残っているグル�
 <li><code>FIXED_IPV4/IPV6_MULTICAST_TABLE</code> エントリを作成する前に、参照先の <code>REPLICATION_IP_MULTICAST_TABLE</code> エントリが存在しなければならない。</li>
 <li>全 IPMC エントリを削除すると、内部 RPF group も自動削除される。RPF group 削除に失敗した場合、削除済みエントリが自動復元される。</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="footnote">
 <hr />
 <ol>

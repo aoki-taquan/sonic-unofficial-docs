@@ -35931,7 +35931,7 @@
 <p><code>asic_type</code> は最も多くのコンポーネントが参照するフィールドであり、<code>db_migrator</code>・<code>gcu</code>・mirrororch (<code>gre_type</code> プラットフォーム分岐)・各 show プラグインが <code>asic_type</code> に基づいて動作を切り替える。ビルド時には必ず <code>sonic_asic_platform</code> 変数から設定される必須フィールドだが、テスト環境・VS 環境では <code>asic_type: vs</code> が入る。</p>
 <!-- /cross-refs -->
 
-<!-- failure-behavior -->
+<!-- failure -->
 <h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py:511-525, sonic-utilities/show/main.py:1718-1733, sonic-gnmi/sonic_data_client/non_db_client.go:302-336, sonic-utilities/generic_config_updater/field_operation_validators.py:33 -->
 
@@ -36019,7 +36019,7 @@
 <li><strong>Go 側</strong> (<code>non_db_client.go:305</code>): <code>sync.Once</code> で 1 回のみ読み込む。<code>InvalidateVersionFileStash()</code> API が存在するが、テストコードからのみ呼ばれるもので、本番 telemetry 稼働中は使用されない (<code>non_db_client.go:56-58</code>)。</li>
 </ul>
 <p>いずれも <code>/etc/sonic/sonic_version.yml</code> を書き換えた場合、<strong>当該プロセスを再起動するまで旧バージョン情報が使われ続ける</strong>。</p>
-<!-- /failure-behavior -->
+<!-- /failure -->
 
 <!-- constants -->
 <h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>

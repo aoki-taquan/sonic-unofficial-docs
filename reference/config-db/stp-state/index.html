@@ -23798,7 +23798,251 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-sai-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. SAI 取得失敗 → STATE_DB 書込みスキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-redis-state_db-orchagent-abort" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. Redis (STATE_DB) 書込み失敗 → orchagent abort
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-stpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. stpmgrd 側のタイムアウトフォールバック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-stpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. stpmgrd プロセスの例外終了
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗系統まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        定数の影響詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        波及副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="波及副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-stpd-stp_init_ready-ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. stpd への STP_INIT_READY IPC 送信
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. IPC 送信の位置づけ（起動シーケンス内）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 副作用は起動時 1 回のみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込みチャンネル（orchagent → STATE_DB）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrd-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読み取りチャンネル（stpmgrd → STATE_DB ポーリング）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrd-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stpmgrd の CONFIG_DB 購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読者まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -23809,7 +24053,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -23820,7 +24064,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -34993,7 +35237,251 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#phase-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        暗黙参照テーブル (Phase C)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-sai-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. SAI 取得失敗 → STATE_DB 書込みスキップ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-redis-state_db-orchagent-abort" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. Redis (STATE_DB) 書込み失敗 → orchagent abort
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-stpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. stpmgrd 側のタイムアウトフォールバック
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-stpmgrd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. stpmgrd プロセスの例外終了
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗系統まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        定数の影響詳細
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        波及副作用 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="波及副作用 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-stpd-stp_init_ready-ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. stpd への STP_INIT_READY IPC 送信
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-ipc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. IPC 送信の位置づけ（起動シーケンス内）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 副作用は起動時 1 回のみ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        通信メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="通信メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orchagent-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        書き込みチャンネル（orchagent → STATE_DB）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrd-state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        読み取りチャンネル（stpmgrd → STATE_DB ポーリング）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stpmgrd-config_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        stpmgrd の CONFIG_DB 購読
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読者まとめ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム差 (Phase H)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -35004,7 +35492,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         確認コマンド
@@ -35015,7 +35503,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連リファレンス
@@ -35261,19 +35749,449 @@
 <p>証跡: <code>stporch.cpp:17-43</code>, <code>stporch.cpp:603-617</code>, <code>stpmgr.cpp:1381-1413</code></p>
 <!-- /ordering -->
 
-<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<!-- cross-refs -->
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>sonic-swss/orchagent/stporch.cpp</code> L17–43, L603–617、<code>sonic-swss/cfgmgr/stpmgrd.cpp</code> L68–88、<code>sonic-swss/cfgmgr/stpmgr.cpp</code> L1257–1274, L1381–1413 精読 (2026-05-19)
+詳細証跡: <code>meta/_intermediate/cdb-flow/stp-state-cross-refs.md</code></p>
+</blockquote>
+<p><code>STP_TABLE|GLOBAL</code> は他の CONFIG_DB テーブルを leafref で参照しない独立した STATE_DB エントリである。
+書き込み側 (<code>StpOrch</code>) は SAI のみを入力とし、読み取り側 (<code>stpmgrd</code>) は <code>PORT_TABLE|PortInitDone</code> を先行確認してから <code>STP_TABLE</code> を参照する。</p>
+<table>
+<thead>
+<tr>
+<th>参照先テーブル / リソース</th>
+<th>DB</th>
+<th>参照タイミング</th>
+<th>依存方向</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI <code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE</code></td>
+<td>SAI</td>
+<td>orchagent 起動時 1 回</td>
+<td><strong>書き側の入力</strong>。この SAI 属性値 −1 が <code>max_stp_inst</code> として STATE_DB に書き込まれる</td>
+<td><code>stporch.cpp:30–41, 609</code></td>
+</tr>
+<tr>
+<td><code>PORT_TABLE\|PortInitDone</code></td>
+<td>APPL_DB</td>
+<td>stpmgrd 起動時、<code>STP_TABLE</code> 読み取りの<strong>前</strong></td>
+<td><strong>読み側ガード</strong>。<code>isPortInitDone()</code> が <code>PortInitDone</code> エントリの存在を確認するまでポーリングし、確認後に <code>getStpMaxInstances()</code> を呼ぶ</td>
+<td><code>stpmgr.cpp:1257–1273</code>, <code>stpmgrd.cpp:72</code></td>
+</tr>
+<tr>
+<td><code>DEVICE_METADATA\|localhost</code></td>
+<td>CONFIG_DB</td>
+<td>stpmgrd 起動時、<code>STP_TABLE</code> 読み取りの<strong>直後</strong></td>
+<td><strong>読み側の後続処理</strong>（MAC アドレス取得）。<code>STP_TABLE</code> の値には影響しない</td>
+<td><code>stpmgrd.cpp:81–88</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">STP_TABLE は純粋な「SAI → STATE_DB」ブリッジ</p>
+<p><code>StpOrch::updateMaxStpInstance()</code> (<code>stporch.cpp:603–617</code>) は SAI 属性値を計算して <code>m_stpTable-&gt;set("GLOBAL", ...)</code> を呼ぶだけで、他のテーブルを読み取らない。CONFIG_DB 上のどの STP 設定テーブル (<code>STP</code> / <code>STP_VLAN</code> / <code>STP_PORT</code>) の値も <code>max_stp_inst</code> の決定に関与しない。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">「ポート初期化完了ガード」が唯一の実質的な順序制約</p>
+<p><code>stpmgrd</code> が <code>STP_TABLE|GLOBAL</code> を読み取る前に <code>APPL_DB PORT_TABLE|PortInitDone</code> の存在を確認することで、<code>StpOrch</code> が orchagent として起動し SAI 初期化が完了するまでの間接的な待機が実現される。直接の leafref や YANG 制約ではなく、コード上の起動シーケンス設計による暗黙依存である。</p>
+</div>
+<!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>STP_TABLE|GLOBAL</code> の書込みパスは <code>SAI → StpOrch::updateMaxStpInstance() → swss::Table::set()</code> の 1 段構成であり、書込み失敗は (A) SAI 取得失敗による書込みスキップ、(B) Redis 接続失敗による例外、の 2 系統に集約される。読み取り側 <code>stpmgrd</code> は (C) 60 秒タイムアウト後のフォールバック、(D) 例外による stpmgrd プロセス終了、を持つ。</p>
+<h3 id="a-sai-state_db">A. SAI 取得失敗 → STATE_DB 書込みスキップ<a class="headerlink" href="#a-sai-state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sai_switch_api-&gt;get_switch_attribute()</code> が <code>SAI_STATUS_SUCCESS</code> 以外を返す</td>
+<td><code>updateMaxStpInstance()</code> 未呼び出し → <code>STP_TABLE\|GLOBAL</code> エントリ未作成</td>
+<td><code>SWSS_LOG_NOTICE</code> "StpOrch initialization failure" (ERROR ではない)</td>
+<td><code>stporch.cpp:34-43</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">ログレベルに注意</p>
+<p>SAI 取得失敗は <code>SWSS_LOG_NOTICE</code> レベルの "failure" 文字列で出力される。<code>SWSS_LOG_ERROR</code> は出力されないため、アラート監視のしきい値設定によっては見落とされる可能性がある。</p>
+</div>
+<h3 id="b-redis-state_db-orchagent-abort">B. Redis (STATE_DB) 書込み失敗 → orchagent abort<a class="headerlink" href="#b-redis-state_db-orchagent-abort" title="Permanent link">&para;</a></h3>
+<p><code>updateMaxStpInstance()</code> 内の <code>m_stpTable-&gt;set("GLOBAL", tuples)</code> は <code>swss::Table::set()</code> を呼ぶ (戻り値 void)。Redis I/O エラー時は <code>system_error</code> / <code>runtime_error</code> 例外が <code>swss::DBConnector</code> から送出され、<code>stporch.cpp</code> に try/catch がないため <code>orchdaemon</code> まで伝播し orchagent プロセスが abort する。systemd による再起動で自己回復する (<code>stporch.cpp:603-615</code>)。</p>
+<h3 id="c-stpmgrd">C. stpmgrd 側のタイムアウトフォールバック<a class="headerlink" href="#c-stpmgrd" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_TABLE\|GLOBAL</code> が 60 秒以内に読み取れない（orchagent 未起動 / SAI 失敗で未書込み）</td>
+<td><code>max_stp_instances = STP_DEFAULT_MAX_INSTANCES = 255</code> をフォールバック値として使用</td>
+<td><code>SWSS_LOG_NOTICE</code> "set default max stp instance 255" (ERROR なし)</td>
+<td><code>stpmgr.cpp:1381-1413</code>, <code>stpmgr.h:38</code></td>
+</tr>
+</tbody>
+</table>
+<p>フォールバック動作はサイレント (ERROR ログなし)。実 HW の SAI 上限が 255 を下回る場合はオーバープロビジョニングとなりうるが、STP インスタンス作成時の SAI エラーで顕在化する。</p>
+<h3 id="d-stpmgrd">D. stpmgrd プロセスの例外終了<a class="headerlink" href="#d-stpmgrd" title="Permanent link">&para;</a></h3>
+<p><code>stpmgrd.cpp:119-122</code> は <code>catch (const exception &amp;e)</code> でトップレベルの例外を捕捉し、<code>SWSS_LOG_ERROR("Runtime error: %s", e.what())</code> をログ出力した後 <code>-1</code> で終了する (自動再試行なし)。起動シーケンス中に <code>DEVICE_METADATA|localhost</code> の <code>mac</code> フィールドが見つからない場合 (<code>stpmgrd.cpp:86</code>) も <code>runtime_error</code> を throw してこの経路を通る。supervisord による再起動が回復経路となる。</p>
+<h3 id="_6">失敗系統まとめ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>書込み可否</th>
+<th>回復経路</th>
+<th>ログ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SAI 属性取得失敗</td>
+<td>未書込み</td>
+<td>orchagent 再起動 → 再 SAI クエリ</td>
+<td>NOTICE "initialization failure"</td>
+</tr>
+<tr>
+<td>Redis 接続失敗 (STATE_DB)</td>
+<td>途中 abort</td>
+<td>orchagent abort → systemd 再起動</td>
+<td><code>system_error</code> 例外メッセージ</td>
+</tr>
+<tr>
+<td>stpmgrd が 60 秒タイムアウト</td>
+<td>読取り失敗 → フォールバック 255</td>
+<td>なし (フォールバックで続行)</td>
+<td>NOTICE "set default max stp instance"</td>
+</tr>
+<tr>
+<td>stpmgrd 起動中例外</td>
+<td>読取り未到達</td>
+<td>supervisord 再起動</td>
+<td>ERROR "Runtime error"</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>証跡</strong>: <code>stporch.cpp:17-43, 603-615</code>、<code>stpmgr.cpp:1381-1413</code>、<code>stpmgrd.cpp:70-122</code>、<code>stpmgr.h:38</code>。詳細は <code>meta/_intermediate/cdb-flow/stp-state-failure.md</code> を参照。</p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: sonic-swss/orchagent/stporch.h (ref: master), sonic-swss/cfgmgr/stpmgr.h (ref: master), sonic-swss/cfgmgr/stpmgr.cpp (ref: master) -->
+
+<p><code>STP_TABLE|GLOBAL</code> の書き込みと読み取りに関与するハードコード定数の一覧。いずれも CONFIG_DB / YANG では設定不可。</p>
+<table>
+<thead>
+<tr>
+<th>定数</th>
+<th>値</th>
+<th>定義箇所</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STP_INVALID_INSTANCE</code></td>
+<td><code>0xFFFF</code> (65535)</td>
+<td><code>stporch.h:8</code></td>
+<td>未割り当て STP インスタンス ID のセンチネル値。<code>updateMaxStpInstance()</code> 前に <code>m_defaultStpId</code> が未解決の場合に使用される</td>
+</tr>
+<tr>
+<td><code>-1</code> 補正 (<code>max_stp_instance - 1</code>)</td>
+<td>SAI 値 − 1</td>
+<td><code>stporch.cpp:605</code></td>
+<td>SAI <code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE</code> の戻り値から 1 を減算した値を <code>max_stp_inst</code> として STATE_DB に書き込む。STP インスタンス ID が 0 始まりのため最大 ID = 上限数 − 1</td>
+</tr>
+<tr>
+<td><code>STP_DEFAULT_MAX_INSTANCES</code></td>
+<td><code>255</code></td>
+<td><code>stpmgr.h:38</code></td>
+<td><code>stpmgrd</code> が STATE_DB から 60 秒以内に <code>max_stp_inst</code> を読み取れなかった場合のフォールバック値。実 HW の SAI 上限に依存しない安全値として使われる</td>
+</tr>
+<tr>
+<td><code>max_delay</code> (タイムアウト上限)</td>
+<td><code>60</code> 秒</td>
+<td><code>stpmgr.cpp:1384</code></td>
+<td><code>getStpMaxInstances()</code> のポーリングループ上限。1 秒 × 60 回のビジーウェイトで <code>STP_TABLE|GLOBAL</code> の出現を待機する</td>
+</tr>
+<tr>
+<td><code>L2_INSTANCE_MAX</code></td>
+<td><code>MAX_VLANS</code> = <code>4096</code></td>
+<td><code>stpmgr.h:34,37</code></td>
+<td><code>stpmgrd</code> 内 <code>l2InstPool</code> (bitset) のサイズ上限。<code>max_stp_instances</code> が 4096 を超えることは想定されない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">定数の影響詳細<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p><strong><code>-1</code> 補正の意味</strong>: <code>updateMaxStpInstance(uint32_t max_stp_instances)</code> (<code>stporch.cpp:605</code>) は <code>m_maxStpInstance = (sai_uint16_t)max_stp_instances - 1</code> で補正した値を STATE_DB に書き込む。例えば SAI が <code>max_stp_instance = 256</code> を返すと、STATE_DB には <code>max_stp_inst = 255</code> が書き込まれる。<code>stpmgrd</code> はこの値を上限 ID（0 始まりインデックスの最大値）として扱う。</p>
+<p><strong>フォールバック <code>255</code> と SAI 値の関係</strong>: 実 HW の SAI 値が 255 以下の場合、SAI 値 − 1 = フォールバック値以下となるため問題は顕在化しない。SAI 値が 256 以上の HW では <code>orchagent</code> 起動に成功した場合のみ本来の最大インスタンス数が利用できる。<code>orchagent</code> が 60 秒以内に起動しない場合は HW 能力を下回る <code>255</code> がフォールバックとして使用される。</p>
+<p><strong>ポーリング間隔固定</strong>: <code>getStpMaxInstances()</code> (<code>stpmgr.cpp:1389-1407</code>) の <code>sleep(1)</code> は固定値でチューニング不可。CONFIG_DB 上のタイムアウト設定も存在しない。</p>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="phase-f">波及副作用 (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>
+<p><code>STP_TABLE|GLOBAL</code> の <code>max_stp_inst</code> は <code>stpmgrd</code> が読み取った直後に <code>stpd</code>（STP デーモン）へ IPC メッセージとして転送される。STATE_DB の 1 フィールドがダウンストリームの STP デーモン全体の動作を規定するという点で、このテーブルは読み取り専用ながら実質的な制御データとして機能する。</p>
+<h3 id="1-stpd-stp_init_ready-ipc">1. stpd への STP_INIT_READY IPC 送信<a class="headerlink" href="#1-stpd-stp_init_ready-ipc" title="Permanent link">&para;</a></h3>
+<p><code>stpmgrd.cpp:74-78</code> の起動シーケンス:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// Get max STP instances from state DB and send to stpd</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">STP_INIT_READY_MSG</span><span class="w"> </span><span class="n">msg</span><span class="p">;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">STP_INIT_READY_MSG</span><span class="p">));</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">msg</span><span class="p">.</span><span class="n">max_stp_instances</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stpmgr</span><span class="p">.</span><span class="n">getStpMaxInstances</span><span class="p">();</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">stpmgr</span><span class="p">.</span><span class="n">sendMsgStpd</span><span class="p">(</span><span class="n">STP_INIT_READY</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">msg</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>getStpMaxInstances()</code> が <code>STP_TABLE|GLOBAL.max_stp_inst</code> を読み取り、取得した値を <code>STP_INIT_READY_MSG.max_stp_instances</code> に設定して、Unix Domain Socket (<code>STPD_SOCK_NAME</code>) 経由で <code>stpd</code> に送信する。</p>
+<p>→ <code>STP_TABLE|GLOBAL</code> の値（または SAI 失敗時のフォールバック <code>255</code>）が <code>stpd</code> 内のインスタンスプール初期化上限となる。</p>
+<h3 id="2-ipc">2. IPC 送信の位置づけ（起動シーケンス内）<a class="headerlink" href="#2-ipc" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>stpmgr.ipcInitStpd()          // Unix socket bind (stpmgrd.cpp:71)
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>stpmgr.isPortInitDone(...)     // APPL_DB PORT_TABLE|PortInitDone ガード (stpmgrd.cpp:72)
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>getStpMaxInstances()           // STATE_DB STP_TABLE|GLOBAL 読み取り (stpmgrd.cpp:77)
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>sendMsgStpd(STP_INIT_READY)   // → stpd に max_stp_instances 送信 (stpmgrd.cpp:78)
+</span></code></pre></div>
+<p><code>STP_TABLE|GLOBAL</code> の読み取りは、IPC ソケット確立とポート初期化ガードの後に行われる。<code>stpd</code> はこの <code>STP_INIT_READY</code> メッセージを受け取ってインスタンスプールを初期化し、以降の <code>STP_BRIDGE_CONFIG</code> / <code>STP_VLAN_CONFIG</code> 等の設定処理を受け付ける状態に遷移する。</p>
+<h3 id="3-1_1">3. 副作用は起動時 1 回のみ<a class="headerlink" href="#3-1_1" title="Permanent link">&para;</a></h3>
+<p><code>STP_INIT_READY</code> の送信は <code>stpmgrd.cpp</code> のメインシーケンスに 1 回だけ存在し、実行中の再送信はない。<code>STP_TABLE|GLOBAL</code> が orchagent によって書き換えられることもないため（<code>stporch.cpp:603-617</code> はコンストラクタからのみ呼ばれる）、副作用の発生は起動時の 1 回に限定される。</p>
+<h3 id="_8">副作用まとめ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副作用先</th>
+<th>副作用の種別</th>
+<th>トリガー</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stpd</code> (STP デーモン)</td>
+<td>IPC 送信 (<code>STP_INIT_READY</code> メッセージ、<code>max_stp_instances</code> フィールドを含む)</td>
+<td><code>stpmgrd</code> 起動時、STATE_DB <code>STP_TABLE\|GLOBAL</code> 読み取り直後</td>
+<td><code>stpmgrd.cpp:74-78</code></td>
+</tr>
+<tr>
+<td><code>stpd</code> 内インスタンスプール</td>
+<td>STP インスタンス上限の初期化（HW 依存値 または フォールバック <code>255</code>）</td>
+<td><code>STP_INIT_READY</code> 受信</td>
+<td><code>stpmgrd.cpp:77</code>, <code>stpmgr.h:38</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>証跡</strong>: <code>stpmgrd.cpp:70-78</code>、<code>stpmgr.cpp:1218-1248, 1381-1413</code>。詳細は <code>meta/_intermediate/cdb-flow/stp-state-side-effects.md</code> を参照。</p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>調査対象: <code>sonic-swss/orchagent/stporch.cpp</code>、<code>sonic-swss/orchagent/orchdaemon.cpp</code>、<code>sonic-swss/cfgmgr/stpmgrd.cpp</code>、<code>sonic-swss/cfgmgr/stpmgr.cpp</code>、<code>sonic-swss/cfgmgr/stpmgr.h</code>
+調査日: 2026-05-19</p>
+</blockquote>
+<p><code>STP_TABLE</code> (STATE_DB) は <strong>pub/sub ではなくポーリング読み取り</strong> で消費される特殊なテーブルである。書き込み側 (<code>StpOrch</code>) は <code>swss::Table::set()</code> で直接書き込み、読み取り側 (<code>stpmgrd</code>) は <code>swss::Table::get()</code> を用いた <strong>60 秒ポーリングループ</strong> で値を取得する。</p>
+<h3 id="orchagent-state_db">書き込みチャンネル（orchagent → STATE_DB）<a class="headerlink" href="#orchagent-state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>書き込みプロセス</th>
+<th>API</th>
+<th>テーブル</th>
+<th>呼び出し箇所</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>orchagent</code> (<code>StpOrch</code>)</td>
+<td><code>swss::Table::set()</code></td>
+<td><code>STATE_DB STP_TABLE\|GLOBAL</code></td>
+<td><code>StpOrch::updateMaxStpInstance()</code> (<code>stporch.cpp:603-617</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><code>StpOrch</code> コンストラクタ (<code>stporch.cpp:17-43</code>) が起動時に SAI から <code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE</code> を取得して即時 <code>m_stpTable-&gt;set("GLOBAL", ...)</code> を呼ぶ。この書き込みは起動時 1 回のみで、実行中の再書き込みはない。</p>
+<p><code>StpOrch</code> 自体は <code>orchdaemon.cpp:256-262</code> で <code>Orch(m_applDb, stp_tables, ...)</code> として構築され、APPL_DB の以下テーブルを <code>ConsumerStateTable</code> 経由で購読する。</p>
+<table>
+<thead>
+<tr>
+<th>APPL_DB テーブル</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APP_STP_VLAN_INSTANCE_TABLE_NAME</code></td>
+<td>VLAN STP インスタンス状態</td>
+</tr>
+<tr>
+<td><code>APP_STP_PORT_STATE_TABLE_NAME</code></td>
+<td>ポート STP 状態</td>
+</tr>
+<tr>
+<td><code>APP_STP_FASTAGEING_FLUSH_TABLE_NAME</code></td>
+<td>Fast-aging フラッシュ</td>
+</tr>
+<tr>
+<td><code>APP_STP_INST_PORT_FLUSH_TABLE_NAME</code></td>
+<td>STP インスタンス・ポートフラッシュ</td>
+</tr>
+</tbody>
+</table>
+<p>これらは <code>stpd → APPL_DB → StpOrch</code> の経路であり、<code>STP_TABLE</code> (STATE_DB) の書き込みとは別系統。</p>
+<h3 id="stpmgrd-state_db">読み取りチャンネル（stpmgrd → STATE_DB ポーリング）<a class="headerlink" href="#stpmgrd-state_db" title="Permanent link">&para;</a></h3>
+<p><code>stpmgrd</code> は <code>STP_TABLE|GLOBAL</code> に対して <strong>pub/sub 購読を行わない</strong>。<code>StpMgr::getStpMaxInstances()</code> (<code>stpmgr.cpp:1381-1413</code>) が 1 秒間隔 × 60 回のポーリングループで <code>m_stateStpTable.get("GLOBAL", vmEntry)</code> を呼び出し、成功するとループを抜けて値を返す。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>stpmgrd 起動
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  │
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  ├─ ipcInitStpd()        // Unix socket セットアップ (stpmgrd.cpp:71)
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>  ├─ isPortInitDone()     // APPL_DB PORT_TABLE|PortInitDone ガード (stpmgrd.cpp:72)
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  └─ getStpMaxInstances() // STATE_DB STP_TABLE|GLOBAL ポーリング (stpmgrd.cpp:77)
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>       │  成功: SAI 由来の max_stp_inst を取得
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>       │  60 秒タイムアウト: フォールバック 255 を使用
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>       └─ sendMsgStpd(STP_INIT_READY, max_stp_instances)
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>            └─ stpd がインスタンスプールを初期化
+</span></code></pre></div>
+<h3 id="stpmgrd-config_db">stpmgrd の CONFIG_DB 購読<a class="headerlink" href="#stpmgrd-config_db" title="Permanent link">&para;</a></h3>
+<p>STP 設定変更の受信は <code>stpmgrd.cpp:43-65</code> の <code>TableConnector</code> 群 → <code>Orch</code> フレームワーク（<code>SubscriberStateTable</code>）で行われる。これは <code>STP_TABLE</code> (STATE_DB) の読み取りとは別の仕組みである。</p>
+<table>
+<thead>
+<tr>
+<th>CONFIG_DB テーブル</th>
+<th>購読クラス</th>
+<th>処理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CFG_STP_GLOBAL_TABLE_NAME</code></td>
+<td><code>SubscriberStateTable</code> (TableConnector 経由)</td>
+<td>グローバル STP 設定変更</td>
+</tr>
+<tr>
+<td><code>CFG_STP_VLAN_TABLE_NAME</code></td>
+<td><code>SubscriberStateTable</code></td>
+<td>VLAN STP 設定変更</td>
+</tr>
+<tr>
+<td><code>CFG_STP_VLAN_PORT_TABLE_NAME</code></td>
+<td><code>SubscriberStateTable</code></td>
+<td>VLAN-ポート STP 設定変更</td>
+</tr>
+<tr>
+<td><code>CFG_STP_PORT_TABLE_NAME</code></td>
+<td><code>SubscriberStateTable</code></td>
+<td>ポート STP 設定変更</td>
+</tr>
+<tr>
+<td><code>STATE_VLAN_MEMBER_TABLE_NAME</code></td>
+<td><code>SubscriberStateTable</code></td>
+<td>STATE_DB VLAN メンバー変化</td>
+</tr>
+<tr>
+<td><code>CFG_LAG_MEMBER_TABLE_NAME</code></td>
+<td><code>SubscriberStateTable</code></td>
+<td>LAG メンバー変化</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">購読者まとめ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>プロセス</th>
+<th>テーブル</th>
+<th>方式</th>
+<th>タイミング</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stpmgrd</code></td>
+<td><code>STATE_DB STP_TABLE\|GLOBAL</code></td>
+<td><code>swss::Table::get()</code> ポーリング</td>
+<td>起動時 1 回のみ（60 秒以内）</td>
+</tr>
+<tr>
+<td>その他プロセス</td>
+<td>—</td>
+<td>—</td>
+<td>購読なし（STATE_DB <code>STP_TABLE</code> を購読するプロセスは存在しない）</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title"><code>STP_TABLE</code> は pub/sub 外のデータパス</p>
+<p>Redis keyspace notification / <code>SubscriberStateTable</code> / <code>ConsumerStateTable</code> のいずれも使用されず、ワンショットのポーリング <code>get()</code> のみが消費経路である。<code>STP_TABLE|GLOBAL</code> の値が動的に変化しない（起動時 1 書き込みのみ）ため、ポーリングベースで十分な設計となっている。</p>
+</div>
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>調査根拠</strong>: <code>stporch.cpp</code> / <code>stpmgr.cpp</code> / <code>stpmgrd.cpp</code> を <code>platform</code> / <code>is_multi_npu</code> / <code>chassis</code> / <code>vendor</code> / <code>mellanox</code> / <code>broadcom</code> で grep → 全 0 ヒット (2026-05-19)
+詳細証跡: <code>meta/_intermediate/cdb-flow/stp-state-platform.md</code></p>
+</blockquote>
+<p><code>STP_TABLE|GLOBAL.max_stp_inst</code> の<strong>値</strong>は SAI <code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE</code> に依存するため ASIC ベンダーごとに異なるが、書き込み・読み取りの<strong>コードパスは全プラットフォーム共通</strong>。<code>stporch.cpp</code> に ASIC ベンダー分岐は存在しない。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell 等)</td>
+<td><code>max_stp_inst</code> の<strong>値</strong>は ASIC 依存、コードパスは共通</td>
+<td><code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE</code> は HW 能力値; <code>stporch.cpp:30-41</code> に vendor 分岐なし</td>
+</tr>
+<tr>
+<td>multi-asic (<code>is_multi_npu() == True</code>)</td>
+<td>各 asic の orchagent が独立して STATE_DB に書き込む。stpmgrd は host namespace のみ読み取り</td>
+<td><code>stporch.cpp</code> / <code>stpmgr.cpp</code> に <code>is_multi_npu</code> コールなし</td>
+</tr>
+<tr>
+<td>VOQ chassis (supervisor + line cards)</td>
+<td>各 line card stack が独立処理。cross-card 集約なし</td>
+<td><code>stporch.cpp</code> に chassis 分岐なし</td>
+</tr>
+<tr>
+<td>VS (Virtual Switch)</td>
+<td>SAI が <code>SAI_SWITCH_ATTR_MAX_STP_INSTANCE</code> を未サポートの場合 STATE_DB 未書き込み → stpmgrd フォールバック <code>255</code></td>
+<td><code>stpmgr.cpp:1407-1410</code>; VS SAI の実装依存</td>
+</tr>
+</tbody>
+</table>
+<!-- /platform -->
+
+<h2 id="_10">例外条件・特殊挙動<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>-1 補正</strong>: <code>max_stp_inst</code> は SAI の返す最大数から -1 した値。STP インスタンス ID が 0 始まりのため、使用可能な最大インスタンス ID が <code>max_stp_inst</code> と一致する。</li>
 <li><strong>起動レース</strong>: <code>stpmgrd</code> が <code>orchagent</code> より先に起動した場合、60 秒の待機ループが発動する。プロダクション環境では通常 orchagent が先に起動するためタイムアウトは稀。</li>
 <li><strong>フォールバック値 <code>255</code> との関係</strong>: CONFIG_DB <code>STP_VLAN</code> の上限 <code>PVST_MAX_INSTANCES = 255</code> (<code>config/stp.py:136</code>) および stpmgrd の <code>STP_DEFAULT_MAX_INSTANCES = 255</code> (<code>stpmgr.h:38</code>) と整合する設計。実 HW の SAI 値が 255 以下の場合は SAI 値が優先される。</li>
 <li><strong>フィールドは 1 本のみ</strong>: <code>STP_TABLE|GLOBAL</code> には <code>max_stp_inst</code> のみ存在し、他のフィールドは書かれない。</li>
 </ul>
-<h2 id="_7">確認コマンド<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># STP_TABLE のエントリ確認</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;STP_TABLE|GLOBAL&#39;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># 出典: https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp#L603-L617</span>
+<h2 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># STP_TABLE のエントリ確認</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;STP_TABLE|GLOBAL&#39;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># 出典: https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp#L603-L617</span>
 </span></code></pre></div>
-<h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../stp/"><code>STP</code></a> — グローバル STP 設定 (PVST/MST タイマー、コード由来デフォルト詳細)</li>
 <li>CONFIG_DB: <a href="../stp-vlan/"><code>STP_VLAN</code></a> — VLAN ごとの STP 設定</li>

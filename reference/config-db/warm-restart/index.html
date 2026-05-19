@@ -30054,6 +30054,289 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-checkwarmstart-warm_restartcpp86-147" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. checkWarmStart() 内のフォールバック (warm_restart.cpp:86-147)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-getwarmstarttimer-warm_restartcpp149-172" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. getWarmStartTimer() 内のフォールバック (warm_restart.cpp:149-172)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-orchagent-warm-start-orchdaemoncpp1092-1170" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. orchagent warm start 再収束失敗 (orchdaemon.cpp:1092-1170)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. 失敗パターンサマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#warm_restarth8-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマー上限・無効化定数（warm_restart.h:8-9）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp-fpmsyncdcpp4651" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgp タイマーデフォルト値（fpmsyncd.cpp:46,51）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neighsyncd-neighsynch10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        neighsyncd タイマーデフォルト値（neighsync.h:10）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teamsyncd-warmrestartassisth104" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        teamsyncd タイマーデフォルト値（warmRestartAssist.h:104）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        定数サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用・波及効果 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用・波及効果 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB への副次書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発生プロセス別の STATE_DB 書き込み一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-fast-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB への書き戻し（fast-reboot 限定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB / ERROR_TABLE への副次書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#warm_restart_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WARM_RESTART テーブルの読み取り方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベント駆動通知なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書き込みにも PUBLISH なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#finalize-warmbootsh-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        finalize-warmboot.sh の ASIC 別差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -35534,6 +35817,289 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#phase-d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        失敗挙動 (Phase D)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="失敗挙動 (Phase D)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-checkwarmstart-warm_restartcpp86-147" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. checkWarmStart() 内のフォールバック (warm_restart.cpp:86-147)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-getwarmstarttimer-warm_restartcpp149-172" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. getWarmStartTimer() 内のフォールバック (warm_restart.cpp:149-172)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-orchagent-warm-start-orchdaemoncpp1092-1170" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. orchagent warm start 再収束失敗 (orchdaemon.cpp:1092-1170)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. 失敗パターンサマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ハードコード定数 (Phase E)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ハードコード定数 (Phase E)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#warm_restarth8-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        タイマー上限・無効化定数（warm_restart.h:8-9）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bgp-fpmsyncdcpp4651" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        bgp タイマーデフォルト値（fpmsyncd.cpp:46,51）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#neighsyncd-neighsynch10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        neighsyncd タイマーデフォルト値（neighsync.h:10）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teamsyncd-warmrestartassisth104" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        teamsyncd タイマーデフォルト値（warmRestartAssist.h:104）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        定数サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-f" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        副作用・波及効果 (Phase F)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="副作用・波及効果 (Phase F)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state_db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB への副次書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        発生プロセス別の STATE_DB 書き込み一覧
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config_db-fast-reboot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CONFIG_DB への書き戻し（fast-reboot 限定）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appl_db-error_table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APPL_DB / ERROR_TABLE への副次書き込み
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-phase-g" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis 通知メカニズム (Phase G)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis 通知メカニズム (Phase G)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#warm_restart_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WARM_RESTART テーブルの読み取り方式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        イベント駆動通知なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state_db-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        STATE_DB 書き込みにも PUBLISH なし
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        購読方式サマリ
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sai-capability-phase-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プラットフォーム / SAI Capability 差異 (Phase H)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="プラットフォーム / SAI Capability 差異 (Phase H)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#finalize-warmbootsh-asic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        finalize-warmboot.sh の ASIC 別差異
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -36046,6 +36612,584 @@ fast-reboot 後に <code>teamsyncd_timer</code> エントリが削除される�
 </div>
 <!-- evidence: warm_restart.cpp L86-147 (checkWarmStart), L149-172 (getWarmStartTimer); bgp.sh L9-27 (check_warm_boot); finalize-warmboot.sh L175 (fast-reboot DEL); docker-fpm-frr supervisord.conf.j2 L239 (bgp_eoiu_marker) -->
 <!-- /cross-refs -->
+
+<!-- failure -->
+<h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<p><code>WARM_RESTART</code> テーブルは <code>task_process_status</code> ベースの retry ループとは異なる経路で参照される。
+<code>WarmStart::checkWarmStart()</code> と <code>WarmStart::getWarmStartTimer()</code> が
+起動時に一回だけ CONFIG_DB から同期的に読み取る設計のため、
+失敗は「コールドスタートへのフォールバック」または「ハードコードデフォルト使用」として現れる。</p>
+<h3 id="a-checkwarmstart-warm_restartcpp86-147">A. <code>checkWarmStart()</code> 内のフォールバック (warm_restart.cpp:86-147)<a class="headerlink" href="#a-checkwarmstart-warm_restartcpp86-147" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>STATE_DB WARM_RESTART_ENABLE_TABLE\|system.enable</code> も <code>\|&lt;docker&gt;.enable</code> も <code>"true"</code> 以外（未設定・disabled 含む）</td>
+<td><code>m_enabled = false</code> → <code>hset(app_name, "restore_count", "0")</code> → <code>return false</code>（コールドスタート）</td>
+<td>なし（設計上の正常経路）</td>
+<td><code>warm_restart.cpp:88-107</code></td>
+</tr>
+<tr>
+<td>warm start 有効だが <code>STATE_DB WARM_RESTART_TABLE\|&lt;app&gt;.restore_count</code> が空（DB フラッシュ済み等）</td>
+<td><code>m_enabled = false</code>, <code>m_systemWarmRebootEnabled = false</code> → <code>return false</code>（コールドスタートフォールバック）</td>
+<td><code>SWSS_LOG_WARN "%s doing warm start, but restore_count not found in stateDB %s table, fall back to cold start"</code></td>
+<td><code>warm_restart.cpp:111-121</code></td>
+</tr>
+<tr>
+<td>CONFIG_DB / STATE_DB 接続失敗（Redis 不到達）</td>
+<td><code>initialize()</code> の <code>DBConnector</code> コンストラクタで例外 → プロセス abort</td>
+<td>各アプリ側クラッシュハンドラ依存</td>
+<td><code>warm_restart.cpp:44-60</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-getwarmstarttimer-warm_restartcpp149-172">B. <code>getWarmStartTimer()</code> 内のフォールバック (warm_restart.cpp:149-172)<a class="headerlink" href="#b-getwarmstarttimer-warm_restartcpp149-172" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WARM_RESTART\|&lt;docker&gt;.&lt;app&gt;_timer</code> 未設定（空文字列）</td>
+<td><code>strtoul("", NULL, 0)</code> = 0 → <code>return 0</code> → 各プロセスのハードコードデフォルト使用</td>
+<td><code>SWSS_LOG_NOTICE "warmStartTimer is not configured or invalid for docker: %s, app: %s"</code></td>
+<td><code>warm_restart.cpp:163-171</code></td>
+</tr>
+<tr>
+<td>タイマー値が <code>MAXIMUM_WARMRESTART_TIMER_VALUE</code> (= 9999 秒) 超過</td>
+<td><code>return 0</code> → ハードコードデフォルト使用</td>
+<td>同上</td>
+<td><code>warm_restart.cpp:163-171</code></td>
+</tr>
+<tr>
+<td>数値変換不能文字列（<code>strtoul</code> が <code>ULONG_MAX</code> 返却）</td>
+<td><code>return 0</code> → ハードコードデフォルト使用</td>
+<td>同上</td>
+<td><code>warm_restart.cpp:163-171</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>getWarmStartTimer()</code> が <code>0</code> を返した場合のハードコードデフォルト:
+<code>bgp_timer</code> = 120 秒 (<code>DEFAULT_ROUTING_RESTART_INTERVAL</code>)、<code>neighsyncd_timer</code> = 5 秒 (<code>DEFAULT_NEIGHSYNC_WARMSTART_TIMER</code>)。</p>
+<h3 id="c-orchagent-warm-start-orchdaemoncpp1092-1170">C. <code>orchagent</code> warm start 再収束失敗 (orchdaemon.cpp:1092-1170)<a class="headerlink" href="#c-orchagent-warm-start-orchdaemoncpp1092-1170" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>失敗条件</th>
+<th>結果</th>
+<th>ログ</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>warmRestoreValidation()</code> で未処理タスクが残存</td>
+<td>NOTICE ログのみ、abort せず reconciliation 継続</td>
+<td><code>SWSS_LOG_NOTICE "Unfinished tasks..."</code></td>
+<td><code>orchdaemon.cpp:1150-1152</code></td>
+</tr>
+<tr>
+<td><code>syncd_apply_view()</code> 失敗</td>
+<td>orchagent プロセス abort → systemd 再起動</td>
+<td><code>SWSS_LOG_ERROR</code> + exit</td>
+<td><code>orchdaemon.cpp:1154-1157</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="d">D. 失敗パターンサマリ<a class="headerlink" href="#d" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>トリガー</th>
+<th>直接挙動</th>
+<th>自動回復</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>warm restart enable 未設定 / STATE_DB enable=false</td>
+<td><code>checkWarmStart()</code> が <code>false</code> → コールドスタート</td>
+<td>なし（設計上の正常経路）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>restore_count</code> 未存在（DB フラッシュ後等）</td>
+<td>WARN ログ → コールドスタートフォールバック</td>
+<td>コールドスタートで自己回復</td>
+</tr>
+<tr>
+<td>3</td>
+<td>タイマー未設定 / 無効値</td>
+<td><code>getWarmStartTimer()</code> が <code>0</code> → ハードコードデフォルト使用</td>
+<td>なし（デフォルト値で継続）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Redis DB 接続失敗</td>
+<td><code>initialize()</code> 例外 → プロセス abort</td>
+<td>systemd autorestart により自己回復</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>syncd_apply_view()</code> 失敗</td>
+<td>orchagent abort</td>
+<td>systemd autorestart により自己回復</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">設定変更の反映タイミング</p>
+<p><code>WARM_RESTART</code> テーブルの読み取りは各プロセスの<strong>起動時一回</strong>のみ。
+テーブル内容を変更しても実行中プロセスには反映されない。次回プロセス再起動時に有効になる。</p>
+</div>
+<blockquote>
+<p>詳細スキャンノートは <code>meta/_intermediate/cdb-flow/warm-restart-failure.md</code> を参照。</p>
+</blockquote>
+<!-- /failure -->
+
+<!-- constants -->
+<h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
+<!-- evidence: meta/_intermediate/cdb-flow/warm-restart-constants.md -->
+<!-- source: sonic-swss-common/common/warm_restart.h; sonic-swss/fpmsyncd/fpmsyncd.cpp; sonic-swss/neighsyncd/neighsync.h; sonic-swss/warmrestart/warmRestartAssist.h -->
+
+<p><code>WARM_RESTART</code> テーブルのタイマー処理に関わるハードコード定数を示す。CONFIG_DB に対応フィールドを設定することで実行時に上書きできる「デフォルト値定数」と、CONFIG_DB からは変更できない「固定定数」の 2 種類が存在する。</p>
+<h3 id="warm_restarth8-9">タイマー上限・無効化定数（<code>warm_restart.h:8-9</code>）<a class="headerlink" href="#warm_restarth8-9" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MAXIMUM_WARMRESTART_TIMER_VALUE</code></td>
+<td><code>9999</code></td>
+<td><code>getWarmStartTimer()</code> 内でタイマー有効範囲の上限として使用。値がこれを超えると 0 を返しハードコードデフォルトへフォールバック（<code>warm_restart.cpp:161</code>）</td>
+</tr>
+<tr>
+<td><code>DISABLE_WARMRESTART_TIMER_VALUE</code></td>
+<td><code>9999</code>（<code>MAXIMUM_WARMRESTART_TIMER_VALUE</code> と同値）</td>
+<td>タイマー無効化に使うセンチネル値。外部から変更不可</td>
+</tr>
+</tbody>
+</table>
+<p>これらの値は CONFIG_DB・DEVICE_METADATA いずれからも変更できない。</p>
+<h3 id="bgp-fpmsyncdcpp4651">bgp タイマーデフォルト値（<code>fpmsyncd.cpp:46,51</code>）<a class="headerlink" href="#bgp-fpmsyncdcpp4651" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>対応 CONFIG_DB フィールド</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT_ROUTING_RESTART_INTERVAL</code></td>
+<td><strong>120 秒</strong></td>
+<td><code>WARM_RESTART\|bgp.bgp_timer</code></td>
+<td><code>getWarmStartTimer()</code> が 0 を返した場合（未設定・無効値・上限超過）に使用されるフォールバック（<code>fpmsyncd.cpp:160</code>）</td>
+</tr>
+<tr>
+<td><code>DEFAULT_EOIU_HOLD_INTERVAL</code></td>
+<td><strong>3 秒</strong></td>
+<td><code>WARM_RESTART\|bgp.eoiu_hold_timer</code>（YANG・CLI 未公開フィールド）</td>
+<td>BGP EOIU シグナル受信後のホールドタイマーフォールバック（<code>fpmsyncd.cpp:229</code>）</td>
+</tr>
+</tbody>
+</table>
+<p><code>DEFAULT_ROUTING_RESTART_INTERVAL = 120 秒</code> が実装上のデフォルトである。運用上 300 秒が参照設定として使われることがあるが、それはコードのデフォルトではない。</p>
+<h3 id="neighsyncd-neighsynch10">neighsyncd タイマーデフォルト値（<code>neighsync.h:10</code>）<a class="headerlink" href="#neighsyncd-neighsynch10" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>対応 CONFIG_DB フィールド</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT_NEIGHSYNC_WARMSTART_TIMER</code></td>
+<td><strong>5 秒</strong></td>
+<td><code>WARM_RESTART\|swss.neighsyncd_timer</code></td>
+<td><code>neighsyncd</code> の <code>AppRestartAssist</code> コンストラクタに渡されるデフォルトタイマー。<code>getWarmStartTimer()</code> が 0 を返した場合に使用（<code>neighsync.cpp:30</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="teamsyncd-warmrestartassisth104">teamsyncd タイマーデフォルト値（<code>warmRestartAssist.h:104</code>）<a class="headerlink" href="#teamsyncd-warmrestartassisth104" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>対応 CONFIG_DB フィールド</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEFAULT_INTERNAL_TIMER_VALUE</code></td>
+<td><strong>5 秒</strong></td>
+<td><code>WARM_RESTART\|teamd.teamsyncd_timer</code></td>
+<td><code>teamsyncd</code> の warm-restart 猶予タイマーフォールバック</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_17">定数サマリ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>定数名</th>
+<th>値</th>
+<th>CONFIG_DB フィールドで上書き可否</th>
+<th>ソース</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MAXIMUM_WARMRESTART_TIMER_VALUE</code></td>
+<td>9999</td>
+<td><strong>不可</strong>（固定）</td>
+<td><code>warm_restart.h:8</code></td>
+</tr>
+<tr>
+<td><code>DISABLE_WARMRESTART_TIMER_VALUE</code></td>
+<td>9999</td>
+<td><strong>不可</strong>（固定）</td>
+<td><code>warm_restart.h:9</code></td>
+</tr>
+<tr>
+<td><code>DEFAULT_ROUTING_RESTART_INTERVAL</code></td>
+<td>120 秒</td>
+<td><strong>可</strong>（<code>bgp_timer</code>）</td>
+<td><code>fpmsyncd.cpp:46</code></td>
+</tr>
+<tr>
+<td><code>DEFAULT_EOIU_HOLD_INTERVAL</code></td>
+<td>3 秒</td>
+<td><strong>可</strong>（<code>eoiu_hold_timer</code>、YANG 未公開）</td>
+<td><code>fpmsyncd.cpp:51</code></td>
+</tr>
+<tr>
+<td><code>DEFAULT_NEIGHSYNC_WARMSTART_TIMER</code></td>
+<td>5 秒</td>
+<td><strong>可</strong>（<code>neighsyncd_timer</code>）</td>
+<td><code>neighsync.h:10</code></td>
+</tr>
+<tr>
+<td><code>DEFAULT_INTERNAL_TIMER_VALUE</code></td>
+<td>5 秒</td>
+<td><strong>可</strong>（<code>teamsyncd_timer</code>）</td>
+<td><code>warmRestartAssist.h:104</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss-common</code> <code>common/warm_restart.h:8-9</code>、<code>common/warm_restart.cpp:153-172</code>; <code>sonic-swss</code> <code>fpmsyncd/fpmsyncd.cpp:46,51,155-165,226-230</code>、<code>neighsyncd/neighsync.h:10</code>、<code>neighsyncd/neighsync.cpp:30</code>、<code>warmrestart/warmRestartAssist.h:104</code></p>
+</blockquote>
+<!-- /constants -->
+
+<!-- side-effects -->
+<h2 id="phase-f">副作用・波及効果 (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>
+<p><code>WARM_RESTART</code> テーブルは直接 ASIC に波及しない設定テーブルだが、プロセス起動時の読み取りを通じて <strong>STATE_DB への複数の書き込み</strong> を副次的に発生させる。APPL_DB、ERROR_TABLE への書き込みはない。</p>
+<h3 id="state_db">STATE_DB への副次書き込み<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>副次 DB</th>
+<th>テーブル</th>
+<th>フィールド</th>
+<th>操作</th>
+<th>発生条件</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>STATE_DB</td>
+<td><code>WARM_RESTART_TABLE</code></td>
+<td><code>restore_count</code></td>
+<td>HSET (0 にリセット)</td>
+<td>warm restart 無効時（<code>checkWarmStart()</code> が <code>false</code>）、または冷ブートフォールバック時</td>
+<td><code>warm_restart.cpp:113</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>WARM_RESTART_TABLE</code></td>
+<td><code>restore_count</code></td>
+<td>HSET (インクリメント)</td>
+<td>warm restart 有効 + 前回の <code>restore_count</code> が存在する場合</td>
+<td><code>warm_restart.cpp:133</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>WARM_RESTART_TABLE</code></td>
+<td><code>state</code></td>
+<td>HSET</td>
+<td><code>WarmStart::setWarmStartState()</code> 呼び出し時。値は <code>initialized</code> / <code>replayed</code> / <code>reconciled</code> / <code>wsdisabled</code> のいずれか</td>
+<td><code>warm_restart.cpp:227</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>WARM_RESTART_TABLE</code></td>
+<td><code>data_check_state</code></td>
+<td>HSET</td>
+<td><code>WarmStart::setDataCheckState()</code> 呼び出し時（<code>sonic-swss-common/common/warm_restart.cpp:247</code>）</td>
+<td><code>warm_restart.cpp:247</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>BGP_STATE_TABLE\|&lt;AF&gt;\|eoiu</code></td>
+<td><code>state</code> / <code>timestamp</code></td>
+<td>SET</td>
+<td><code>bgp_eoiu_marker.py</code> が BGP EOR 収集後に書き込む。<code>bgp_eoiu=true</code> の場合のみ supervisord で起動</td>
+<td><code>bgp_eoiu_marker.py:85-87</code></td>
+</tr>
+<tr>
+<td>STATE_DB</td>
+<td><code>BGP_STATE_TABLE\|&lt;AF&gt;\|eoiu</code></td>
+<td>—</td>
+<td>DEL</td>
+<td><code>bgp_eoiu_marker.py</code> の cleanup 処理（<code>clean_bgp_eoiu_marker()</code>）</td>
+<td><code>bgp_eoiu_marker.py:94-95</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="state_db_1">発生プロセス別の STATE_DB 書き込み一覧<a class="headerlink" href="#state_db_1" title="Permanent link">&para;</a></h3>
+<p>各サービスが <code>WarmStart::setWarmStartState()</code> を呼ぶタイミングを示す。これらはすべて <code>STATE_DB:WARM_RESTART_TABLE|&lt;app_name&gt;.state</code> への書き込みとなる。</p>
+<table>
+<thead>
+<tr>
+<th>プロセス</th>
+<th>書き込むステート値</th>
+<th>タイミング</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>orchagent</code></td>
+<td><code>initialized</code></td>
+<td>warm restore 開始直後</td>
+<td><code>orchdaemon.cpp:1099</code></td>
+</tr>
+<tr>
+<td><code>orchagent</code></td>
+<td><code>reconciled</code></td>
+<td><code>syncd_apply_view()</code> 完了後</td>
+<td><code>orchdaemon.cpp:1170</code></td>
+</tr>
+<tr>
+<td><code>orchagent</code></td>
+<td><code>restored</code></td>
+<td><code>warmRestoreValidation()</code> 後</td>
+<td><code>orchdaemon.cpp:1204</code></td>
+</tr>
+<tr>
+<td><code>intfmgrd</code></td>
+<td><code>replayed</code> → <code>reconciled</code></td>
+<td>warm restore 完了時</td>
+<td><code>intfmgr.cpp:289,292</code></td>
+</tr>
+<tr>
+<td><code>vlanmgrd</code></td>
+<td><code>replayed</code> → <code>reconciled</code></td>
+<td>warm restore 完了時</td>
+<td><code>vlanmgr.cpp:59,61</code></td>
+</tr>
+<tr>
+<td><code>vrfmgrd</code></td>
+<td><code>replayed</code> → <code>reconciled</code></td>
+<td>warm restore 完了時</td>
+<td><code>vrfmgrdyn.cpp:74,77</code></td>
+</tr>
+<tr>
+<td><code>tunnelmgrd</code></td>
+<td><code>replayed</code> → <code>reconciled</code></td>
+<td>warm restore 完了時</td>
+<td><code>tunnelmgr.cpp:423,425</code></td>
+</tr>
+<tr>
+<td><code>buffermgrd</code></td>
+<td><code>initialized</code></td>
+<td>起動時（warm start 時）</td>
+<td><code>buffermgrdyn.cpp:165</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="config_db-fast-reboot">CONFIG_DB への書き戻し（fast-reboot 限定）<a class="headerlink" href="#config_db-fast-reboot" title="Permanent link">&para;</a></h3>
+<p><code>finalize-warmboot.sh</code> の <code>finalize_fast_reboot()</code> は fast-reboot 完了後に <strong>CONFIG_DB の <code>WARM_RESTART|teamd</code> エントリを DEL</strong> する（<code>finalize-warmboot.sh:175</code>）。これは warm restart 設定テーブル自体への書き戻しを伴う唯一の副作用であり、fast-reboot 経路専用。通常の warm restart では発生しない。</p>
+<h3 id="appl_db-error_table">APPL_DB / ERROR_TABLE への副次書き込み<a class="headerlink" href="#appl_db-error_table" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>DB</th>
+<th>書き込み</th>
+<th>備考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APPL_DB</td>
+<td><strong>なし</strong></td>
+<td><code>WARM_RESTART</code> は CONFIG_DB → 各プロセス直接読み取り経路であり APPL_DB を経由しない</td>
+</tr>
+<tr>
+<td>ERROR_TABLE</td>
+<td><strong>なし</strong></td>
+<td>失敗はログのみ（syslog）または例外によるプロセス abort</td>
+</tr>
+<tr>
+<td>ASIC_DB</td>
+<td>間接のみ</td>
+<td>orchagent の warm restore 完了後に <code>syncd_apply_view()</code> 経由で間接的に ASIC_DB が更新されるが、<code>WARM_RESTART</code> テーブル自体が直接 SAI/ASIC に書き込むことはない</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Evidence</strong>: <code>sonic-swss-common/common/warm_restart.cpp:113,125,133,227,247</code>; <code>sonic-swss/orchagent/orchdaemon.cpp:1099,1170,1204</code>; <code>sonic-swss/cfgmgr/vlanmgr.cpp:59,61</code>; <code>sonic-swss/cfgmgr/intfmgr.cpp:289,292</code>; <code>sonic-swss/fpmsyncd/bgp_eoiu_marker.py:85-87,94-95</code>; <code>sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh:175</code></p>
+</blockquote>
+<!-- /side-effects -->
+
+<!-- pubsub -->
+<h2 id="redis-phase-g">Redis 通知メカニズム (Phase G)<a class="headerlink" href="#redis-phase-g" title="Permanent link">&para;</a></h2>
+<h3 id="warm_restart_1">WARM_RESTART テーブルの読み取り方式<a class="headerlink" href="#warm_restart_1" title="Permanent link">&para;</a></h3>
+<p><code>WARM_RESTART</code> テーブルは <strong><code>SubscriberStateTable</code>（keyspace 通知 / PSUBSCRIBE）を使用しない</strong>。
+各プロセスは起動時に <code>Table::hget()</code> による<strong>同期読み取り</strong>で値を取得する。</p>
+<p><code>WarmStart::initialize()</code> (<code>warm_restart.cpp:35-62</code>) が <code>Table</code> オブジェクトを生成し、
+<code>WarmStart::getWarmStartTimer()</code> (<code>warm_restart.cpp:149-172</code>) が以下のように直接 HGET を発行する:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// warm_restart.cpp:156</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">warmStart</span><span class="p">.</span><span class="n">m_cfgWarmRestartTable</span><span class="o">-&gt;</span><span class="n">hget</span><span class="p">(</span><span class="n">docker_name</span><span class="p">,</span><span class="w"> </span><span class="n">timer_name</span><span class="p">,</span><span class="w"> </span><span class="n">timer_value_str</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>hget()</code> は Redis の <code>HGET</code> コマンドを同期実行するポーリング型アクセスであり、
+<code>PSUBSCRIBE</code> や channel-based <code>PUBLISH/SUBSCRIBE</code> は一切使用しない。</p>
+<h3 id="_18">イベント駆動通知なし<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p><code>WARM_RESTART</code> テーブルが実行中に変更されても、実行中プロセスにはリアルタイム通知が届かない。
+変更は次回プロセス起動時（再起動後）にのみ有効となる。</p>
+<h3 id="state_db-publish">STATE_DB 書き込みにも PUBLISH なし<a class="headerlink" href="#state_db-publish" title="Permanent link">&para;</a></h3>
+<p><code>WarmStart::setWarmStartState()</code> / <code>WarmStart::setDataCheckState()</code> も <code>Table::hset()</code> を使用する。</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// warm_restart.cpp:227</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">warmStart</span><span class="p">.</span><span class="n">m_stateWarmRestartTable</span><span class="o">-&gt;</span><span class="n">hset</span><span class="p">(</span><span class="n">app_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;state&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">statestr</span><span class="p">);</span>
+</span></code></pre></div>
+<p><code>ProducerStateTable</code>（APPL_DB 等が使う channel ベース PUBLISH）とは異なり、<code>Table::hset()</code> は
+Redis チャネルへの明示的 <code>PUBLISH</code> を発行しない。</p>
+<h3 id="_19">購読方式サマリ<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>方向</th>
+<th>DB</th>
+<th>アクセス方式</th>
+<th>PUBLISH/SUBSCRIBE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>読み取り</td>
+<td>CONFIG_DB</td>
+<td><code>Table::hget()</code> (起動時一回)</td>
+<td><strong>なし</strong></td>
+</tr>
+<tr>
+<td>書き込み</td>
+<td>STATE_DB</td>
+<td><code>Table::hset()</code></td>
+<td><strong>なし</strong></td>
+</tr>
+<tr>
+<td>書き込み</td>
+<td>CONFIG_DB (fast-reboot のみ)</td>
+<td><code>Table::del()</code></td>
+<td><strong>なし</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>APPL_DB を使うサービス（<code>orchagent</code> 等）では <code>ProducerStateTable</code> / <code>ConsumerStateTable</code> による
+channel ベース通知が使われるが、<code>WARM_RESTART</code> テーブルはその経路の外にある。</p>
+</blockquote>
+<!-- evidence: sonic-swss-common/common/warm_restart.cpp L35-62 (initialize — Table 生成) -->
+<!-- evidence: sonic-swss-common/common/warm_restart.cpp L149-172 (getWarmStartTimer — hget) -->
+<!-- evidence: sonic-swss-common/common/warm_restart.cpp L227,247 (hset — STATE_DB 書き込み) -->
+<!-- /pubsub -->
+
+<!-- platform -->
+<h2 id="sai-capability-phase-h">プラットフォーム / SAI Capability 差異 (Phase H)<a class="headerlink" href="#sai-capability-phase-h" title="Permanent link">&para;</a></h2>
+<p><strong><code>WARM_RESTART</code> テーブルの読み書きロジック自体はプラットフォーム非依存</strong>。<code>warm_restart.cpp</code> には ASIC 種別・multi-asic・VOQ chassis に関する条件分岐が存在しない。</p>
+<table>
+<thead>
+<tr>
+<th>観点</th>
+<th>結果</th>
+<th>根拠</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASIC 種別 (Broadcom / Mellanox / Marvell / Cisco 等)</td>
+<td>影響なし</td>
+<td><code>WarmStart::initialize()</code> / <code>getWarmStartTimer()</code> / <code>setWarmStartState()</code> は SAI を呼ばず CONFIG_DB / STATE_DB への <code>hget()</code> / <code>hset()</code> のみ。<code>warm_restart.cpp</code> に <code>platform</code> / ASIC 型チェックなし</td>
+</tr>
+<tr>
+<td>multi-asic (<code>NUM_ASIC &gt; 1</code>)</td>
+<td>各 asic-namespace で独立動作</td>
+<td><code>WarmStart::initialize()</code> が <code>DBConnector("CONFIG_DB", ...)</code> を namespace 指定なしで接続 (<code>warm_restart.cpp:51</code>)。各 <code>swss@asicN</code> コンテナ内で実行されるため、そのコンテナの namespace CONFIG_DB を参照する。<code>WARM_RESTART</code> テーブルは asic-namespace ごとに独立し chassis-wide 同期なし</td>
+</tr>
+<tr>
+<td>VOQ chassis (supervisor + line cards)</td>
+<td>各 host で独立適用</td>
+<td><code>WARM_RESTART</code> は host / container scope。chassis 集中管理機構なし（<code>CHASSIS_APP_DB</code> に <code>WARM_RESTART</code> 系テーブルなし）</td>
+</tr>
+<tr>
+<td>VS / VPP プラットフォーム</td>
+<td>テーブル読み書きは正常</td>
+<td><code>hget()</code> / <code>hset()</code> は VS でも動作する。ただしデータプレーンが存在しないため warm restart による「再収束」に実動作上の意味はない</td>
+</tr>
+</tbody>
+</table>
+<h3 id="finalize-warmbootsh-asic">finalize-warmboot.sh の ASIC 別差異<a class="headerlink" href="#finalize-warmbootsh-asic" title="Permanent link">&para;</a></h3>
+<p><code>finalize-warmboot.sh</code> は multi-asic デバイスで <strong>asic namespace ごとに並列 subshell</strong> を起動し、各 namespace DB での warm boot フラグ処理を独立実行する (<code>finalize-warmboot.sh:270-291</code>)。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># finalize-warmboot.sh:270-291 (抜粋)</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">for</span><span class="w"> </span>dev<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="sb">`</span>seq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="k">$((</span><span class="nv">NUM_ASIC</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">1</span><span class="k">))</span><span class="sb">`</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="o">(</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span><span class="nv">$NUM_ASIC</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">            </span><span class="nb">export</span><span class="w"> </span><span class="nv">DEV</span><span class="o">=</span><span class="nv">$dev</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">            </span><span class="nb">export</span><span class="w"> </span><span class="nv">NETNS</span><span class="o">=</span>asic<span class="nv">$dev</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">        </span><span class="k">fi</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">        </span>wait_for_components_to_reconcile<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ASIC_SERVICE_LIST</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span>-n<span class="w"> </span><span class="nv">$NETNS</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">            </span>finalize_boot
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">        </span><span class="k">fi</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">    </span><span class="o">)</span><span class="w"> </span><span class="p">&amp;</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="k">done</span>
+</span></code></pre></div>
+<p>また <code>finalize_global()</code> は <code>asic_type == mellanox</code> の場合のみ CPU frequency governor を warm restart 前の値に復元する (<code>finalize-warmboot.sh:198-202</code>)。これは <code>WARM_RESTART</code> テーブルの設定値を参照する処理ではなく、Mellanox プラットフォーム固有の warm restart インフラ後処理である。</p>
+<p>これらはいずれも <code>WARM_RESTART</code> テーブルのスキーマ・値の意味・読み書き方式には影響しない。</p>
+<p>詳細根拠は <code>meta/_intermediate/cdb-flow/warm-restart-platform.md</code> を参照。</p>
+<!-- evidence: sonic-swss-common/common/warm_restart.cpp L35-62 (initialize — DBConnector 名前指定、namespace 引数なし) -->
+<!-- evidence: sonic-swss-common/common/warm_restart.cpp L149-172 (getWarmStartTimer — platform 分岐なし) -->
+<!-- evidence: sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh L270-291 (multi-asic parallel subshell) -->
+<!-- evidence: sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh L194-202 (finalize_global — mellanox CPU governor) -->
+<!-- /platform -->
 
 <!-- glossary-links-injected: ddc022697593 -->
 
