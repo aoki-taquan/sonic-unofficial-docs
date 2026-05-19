@@ -1,14 +1,20 @@
 ---
 title: PORTCHANNEL_INTERFACE テーブル
-description: "PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。"
+description: "PORTCHANNEL_INTERFACE テーブル — PORTCHANNEL を L3 IF として扱うときの設定（VRF binding、IP アサイン、MAC、loopback action 等）を保持する。Phase A–H 分析。"
 area: reference
 hard: 0
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-portchannel.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-swss
+    path: cfgmgr/intfmgr.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  - repo: sonic-net/sonic-swss
+    path: orchagent/intfsorch.cpp
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
     - PORTCHANNEL_INTERFACE
@@ -762,3 +768,70 @@ RIF 作成時に `addRifToFlexCounter()` が以下を書き込む:
 RIF 削除時は上記エントリを `hdel` / `stopFlexCounterPolling` でクリーンアップする (`intfsorch.cpp:1560-1566`)。
 
 <!-- /side-effects -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`PORTCHANNEL_INTERFACE` テーブルを処理する `intfmgrd` (`cfgmgr/intfmgr.cpp`) および `IntfsOrch` (`orchagent/intfsorch.cpp`) には `getenv("platform")` 呼び出しも `#ifdef` プラットフォーム分岐も存在しない。SAI RIF 生成ロジックはすべてのプラットフォームで同一パスを通る。
+
+プラットフォームに依存する差異は以下の 3 点に局所化される。
+
+### A. MPLS — カーネルモジュール必須
+
+`intfmgrd` は `mpls=enable` 受信時に `sysctl -w net.mpls.conf.<intf>.input=1` を発行する (`intfmgr.cpp:169-190`)。このコマンドはカーネルの MPLS モジュール (`mpls_router`, `mpls_iptunnel`) がロードされていないと失敗する。
+
+| 環境 | 挙動 |
+|------|------|
+| MPLS カーネルモジュールあり | `sysctl` 成功 → MPLS 入力が有効化される |
+| MPLS カーネルモジュールなし / VS 軽量カーネル | `sysctl` が `ENOENT` / `EINVAL` → `intfmgrd` がエラーログを出力するが処理は継続 |
+
+`mpls` フィールドが空文字の場合は `sysctl input=0` を実行してもエラーを無視する (`intfmgr.cpp:188-190`)。明示的に `mpls=enable` を設定した場合のみエラーが問題になる。
+
+証跡: `intfmgr.cpp:169-190`
+
+### B. `accept_untracked_na` sysctl — カーネルバージョン依存
+
+`grat_arp` 設定時、`intfmgrd` は `/proc/sys/net/ipv6/conf/<intf>/accept_untracked_na` の存在を先に確認してから書き込む (`intfmgr.cpp:601-611`)。
+
+```cpp
+// intfmgr.cpp:601-611
+cmd << "test -f /proc/sys/net/ipv6/conf/" << alias << "/accept_untracked_na";
+rc = swss::exec(cmd.str(), res);
+if (rc == 0) {
+    cmd << ECHO_CMD << " " << garp_enabled << " > .../accept_untracked_na";
+    EXEC_WITH_ERROR_THROW(cmd.str(), res);
+}
+```
+
+| カーネルバージョン | 挙動 |
+|------------------|------|
+| 5.11+ (`accept_untracked_na` 導入済み) | sysctl ファイルが存在 → NDP untracked NA 受け入れが設定される |
+| 5.10 以前 / VS 軽量カーネル | sysctl ファイルが存在しないため書込みをスキップ (エラーなし) |
+
+この差異は `PORTCHANNEL_INTERFACE` テーブルの書込みや RIF 生成には影響せず、NDP 近隣探索の細かい挙動差に留まる。
+
+証跡: `intfmgr.cpp:601-611`
+
+### C. SAI RIF 生成 — 全プラットフォーム共通
+
+`IntfsOrch::addRouterIntfs()` は `port.m_type == Port::LAG` の場合 `SAI_ROUTER_INTERFACE_TYPE_PORT` / `SAI_ROUTER_INTERFACE_ATTR_PORT_ID = m_lag_id` を設定し (`intfsorch.cpp:1214-1243`)、プラットフォームによる分岐はない。`loopback_action` の SAI 変換 (`getSaiLoopbackAction()`) も `"drop"` → `SAI_PACKET_ACTION_DROP`、`"forward"` → `SAI_PACKET_ACTION_FORWARD` の固定マップで、ASIC ベンダー差分はない (`intfsorch.cpp:1146-1164`)。
+
+| 観点 | 全プラットフォーム共通動作 |
+|------|--------------------------|
+| RIF タイプ | `SAI_ROUTER_INTERFACE_TYPE_PORT`（LAG OID 使用） |
+| loopback_action 変換 | `drop` / `forward` の固定マップ、未知値は WARN ログ + スキップ |
+| nat_zone / mac_addr | 設定時のみ `sai_router_intfs_api->set_router_interface_attribute()` を発行 |
+| RIF FLEX_COUNTER | 全プラットフォームで `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP` に登録 |
+
+### プラットフォーム差異サマリ
+
+| 観点 | 全プラットフォーム共通 | カーネル依存 |
+|------|----------------------|------------|
+| PORTCHANNEL_INTERFACE → APPL_DB 書込 (`intfmgrd`) | 共通 | — |
+| SAI RIF 生成 (`IntfsOrch`) | 共通 | — |
+| FLEX_COUNTER RIF 登録 | 共通 | — |
+| `mpls=enable` (`sysctl net.mpls.conf`) | — | MPLS カーネルモジュールが必要 |
+| `accept_untracked_na` sysctl | — | カーネル 5.11+ が必要 (旧カーネルはスキップ) |
+
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp:169-190,601-611 (platform/getenv grep = 0 hits); sonic-swss/orchagent/intfsorch.cpp:1146-1164,1180-1243 (platform/getenv grep = 0 hits) -->
+<!-- /platform -->
