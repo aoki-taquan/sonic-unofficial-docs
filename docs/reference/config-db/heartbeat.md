@@ -386,6 +386,22 @@ Redis keyspace notification は発火するが受信側が存在しないため�
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差はほぼなし**。`HEARTBEAT` テーブルの主消費者 `supervisor-proc-exit-listener` は ASIC 種別・multi-asic 構成・ベンダーに依存しない。ただし `HEARTBEAT|orchagent` エントリのみ、`orchagent.sh` を通じて orchagent プロセスへ伝達される点で構成依存がある。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `supervisor-proc-exit-listener` は SAI 非経由。`orchagent.sh` の HEARTBEAT 読み込みパス（L127-130）は ASIC 種別分岐の外にあり全 ASIC で共通 |
+| multi-asic (`is_multi_npu() == True`) | `HEARTBEAT\|orchagent` エントリが host CONFIG_DB のみに存在する場合、asic namespace の orchagent へは未反映 | `orchagent.sh` は起動時に対応する namespace の CONFIG_DB に接続するが、multi-asic 向けの HEARTBEAT 個別設定機構は community master にない |
+| Virtual Switch (vs) | 影響なし | `orchagent.sh:80-81` で `platform == "vs"` でも HEARTBEAT 読み込みパスは同一 |
+| VOQ chassis (supervisor + line cards) | 各 line card で独立適用 | `supervisor-proc-exit-listener` は各コンテナホストで独立起動。chassis 全体の集中設定機構なし |
+| SmartSwitch DPU | 影響なし | `orchagent.sh` の SmartSwitch 分岐（ZMQ アドレス L105-118）は HEARTBEAT 読み込みパスと独立 |
+
+詳細根拠は `meta/_intermediate/cdb-flow/heartbeat-platform.md` を参照。
+<!-- /platform -->
+
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
