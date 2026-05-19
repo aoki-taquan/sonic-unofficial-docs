@@ -379,6 +379,61 @@ DEL NAT_POOL|<name>        # pool を後に削除
 > **証跡**: `NatMgr::doNatPoolTask()` L6482–6866 (`sonic-swss/cfgmgr/natmgr.cpp`).
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`natmgrd` (`cfgmgr/natmgr.h` / `natmgr.cpp`) および `NatOrch` (`orchagent/natorch.h` / `natorch.cpp`) に存在する、CONFIG_DB / YANG で管理されない実装レベルの固定値一覧。
+
+### バリデーション境界値 (natmgr.h)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `L4_PORT_MIN` | `1` | `nat_port` 範囲の最小値チェック。`0` は YANG で許容されるが実装で拒否される | `natmgr.h:110` |
+| `L4_PORT_MAX` | `65535` | `nat_port` 範囲の最大値チェック | `natmgr.h:111` |
+| `POOL_TABLE_KEY_SIZE` | `1` | `NAT_POOL` key のセグメント数制約 (`|` 区切り禁止) | `natmgr.h:52` |
+| pool 名最大長 | `32` (リテラル) | `key.length() > 32` をチェックするが #define なし | `natmgr.cpp:6563` |
+
+### NAT セッションタイムアウトデフォルト (natmgr.h)
+
+これらは `NAT_GLOBAL` テーブルで上書き可能だが、`NAT_GLOBAL` 未設定時に `NAT_POOL` 経由で確立された dynamic NAT セッションに適用される実装デフォルト。
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `NAT_TIMEOUT_DEFAULT` | `600` 秒 | generic dynamic NAT セッションのデフォルトタイムアウト | `natmgr.h:64` |
+| `NAT_TIMEOUT_MIN` | `300` 秒 | `NAT_GLOBAL.nat_timeout` の下限 | `natmgr.h:62` |
+| `NAT_TIMEOUT_MAX` | `432000` 秒 (5 日) | `NAT_GLOBAL.nat_timeout` の上限。static conntrack エントリの擬似永続保存にも使用 | `natmgr.h:63` |
+| `NAT_TCP_TIMEOUT_DEFAULT` | `86400` 秒 (1 日) | TCP dynamic NAT セッションのデフォルトタイムアウト | `natmgr.h:69` |
+| `NAT_TCP_TIMEOUT_MIN` | `300` 秒 | TCP タイムアウト下限 | `natmgr.h:67` |
+| `NAT_TCP_TIMEOUT_MAX` | `432000` 秒 | TCP タイムアウト上限 | `natmgr.h:68` |
+| `NAT_UDP_TIMEOUT_DEFAULT` | `300` 秒 | UDP dynamic NAT セッションのデフォルトタイムアウト | `natmgr.h:73` |
+| `NAT_UDP_TIMEOUT_MIN` | `120` 秒 | UDP タイムアウト下限 | `natmgr.h:71` |
+| `NAT_UDP_TIMEOUT_MAX` | `600` 秒 | UDP タイムアウト上限 | `natmgr.h:72` |
+
+### 内部タイマー周期 (natmgr.h / natorch.h)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `NAT_ENTRY_REFRESH_PERIOD` | `86400` 秒 (1 日) | static conntrack エントリを kernel に再書き込みする周期 (`NAT_ENTRY_REFRESH_TIMER`) | `natmgr.h:125` |
+| `NAT_HITBIT_N_CNTRS_QUERY_PERIOD` | `5` 秒 | NatOrch が SAI hit-bit / カウンタを取得する周期 (`NAT_HITBIT_N_CNTRS_QUERY_TIMER`) | `natorch.h:37` |
+| `NAT_CONNTRACK_TIMEOUT_PERIOD` | `86400` 秒 (1 日) | NatOrch が `SETTIMEOUTNAT` 通知で natmgrd に conntrack タイムアウト更新を要求する周期 | `natorch.h:38` |
+| `NAT_HITBIT_QUERY_MULTIPLE` | `6` | hit-bit クエリ間隔 = `5 × 6 = 30` 秒。カウンタクエリの 6 回に 1 回のみ hit-bit を照会 | `natorch.h:39` |
+
+### SAI 依存の動的上限 (natorch.cpp)
+
+NatOrch 初期化時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を照会して `maxAllowedSNatEntries` を取得する。値はハードウェア実装依存であり、コードにリテラルはない。動的 NAT セッション数がこの上限に達すると新規 SNAT エントリは作成されず silent drop となる。`COUNTERS_DB NAT_COUNTER_TABLE|Values MAX_NAT_ENTRIES` に記録される。(`natorch.cpp:108-127`)
+
+### iptables 生成ルールの固定値
+
+| 項目 | 値 | 用途 |
+|------|----|------|
+| iptables target (`nat_port` 省略時) | `MASQUERADE` | port 制約なし full-cone SNAT (iptables が port を自動選択) |
+| iptables target (`nat_port` 指定時) | `SNAT --to-source ip:port_range` | 指定 pool IP・port 範囲に変換 |
+| 対応 L4 プロトコル | TCP / UDP / ICMP | dynamic NAT iptables ルールを生成する 3 プロトコル固定。その他プロトコルは変換対象外 |
+| iptables テーブル | `nat` (POSTROUTING SNAT) + `mangle` (PREROUTING/POSTROUTING zone-mark) | dynamic NAT の 2-table 構成 |
+
+詳細な定数一覧は `meta/_intermediate/cdb-flow/nat-pool-constants.md` を参照。
+<!-- /constants -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 
