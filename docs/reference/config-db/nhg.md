@@ -358,4 +358,46 @@ CRM カウンタの更新は `gCrmOrch->incCrmResUsedCounter()` / `decCrmResUsed
 
 <!-- /side-effects -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`NhgOrch::doTask()` 本体にはプラットフォーム分岐が存在しない。ただし、NHG 処理の上限値決定と orchdaemon 初期化の段階でプラットフォーム依存挙動が発生する。
+
+### Mellanox — ECMP グループ数の再計算
+
+`RouteOrch` 初期化時 (`routeorch.cpp:78-88`) に `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` を取得するが、Mellanox SAI は「ECMP グループサイズ = 1」前提の最大値を返す。環境変数 `platform` に `"mellanox"` が含まれる場合、取得値を `DEFAULT_MAX_ECMP_GROUP_SIZE (32)` で除算して実質的な上限値を算出する。
+
+```cpp
+// routeorch.cpp:83-87
+char *platform = getenv("platform");
+if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))  // "mellanox"
+{
+    m_maxNextHopGroupCount /= DEFAULT_MAX_ECMP_GROUP_SIZE;   // ÷ 32
+}
+```
+
+この値は `SWITCH_TABLE:switch:MAX_NEXTHOP_GROUP_COUNT` として STATE\_DB に書き込まれ、`NhgOrch::doTask()` の上限チェックに使用される (`nhgorch.cpp:252`)。他プラットフォームでは除算なしで SAI 返答値をそのまま使用する。
+
+### VoQ スイッチ — ECMP メンバー数上限を 128 に固定
+
+`switch_type == "voq"` かつ `SAI_SWITCH_ATTR_MAX_ECMP_MEMBER_COUNT >= 128` の場合、`SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT` を 128 に固定する (`routeorch.cpp:109-121`)。VoQ ASIC が大きな値を返す場合でも ECMP メンバー数が 128 に制限され、NHG の最大メンバー数が実質的に制約される。
+
+### ファブリックスイッチ — NhgOrch 未初期化
+
+`FabricOrchDaemon::init()` (`orchdaemon.cpp:1292-1313`) は `NhgOrch` を生成しない。ファブリックスイッチでは `NEXTHOP_GROUP_TABLE` の購読が行われず、`fpmsyncd` が書き込んでもエントリが処理されない。
+
+| スイッチタイプ | NhgOrch 初期化 | ECMP グループ数上限 |
+|---|---|---|
+| 標準 (`normal`) | あり | SAI 返答値そのまま（フォールバック: 128） |
+| Mellanox | あり | SAI 返答値 ÷ 32 |
+| VoQ | あり | SAI 返答値そのまま（メンバー数は 128 に制限） |
+| Fabric | **なし** | — |
+
+### nhgorch.cpp 本体 — プラットフォーム差なし
+
+`NhgOrch::doTask()`・`NextHopGroup::sync()`・`NextHopGroup::syncMembers()` の各コードパスには `gMySwitchType`・`platform` 参照・`MLNX_PLATFORM_SUBSTRING` チェックが存在しない（`nhgorch.cpp` 全体を走査して確認）。ECMP グループ作成（`create_next_hop_group`）・メンバー追加（`create_next_hop_group_member`）の SAI 呼び出し自体はすべてのプラットフォームで共通経路である。
+
+> **Evidence**: `routeorch.cpp:37-38,78-122` (Mellanox 上限再計算・VoQ ECMP メンバー数制限); `orchdaemon.cpp:338` (NhgOrch 初期化); `orchdaemon.cpp:1292-1313` (FabricOrchDaemon::init — NhgOrch なし); `orch.h:42` (MLNX\_PLATFORM\_SUBSTRING 定数); `nhgorch.cpp` (プラットフォーム分岐なし)
+<!-- /platform -->
+
 <!-- glossary-links-injected: nhg-2026-0515 -->
