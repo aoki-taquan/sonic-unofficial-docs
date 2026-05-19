@@ -275,3 +275,53 @@ orchagent が APP_DB から実際の MUX 状態を取得して上書きするま
     `STATE_DB.MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` はいずれも YANG スキーマ外のオペレーショナルテーブルであり、leafref による参照整合性検証は存在しない。上記の参照依存はすべて実装コードレベルの暗黙依存である。
 
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp:50-51,534,549-561,568-614,2573-2614,2648-2691; sonic-platform-daemons/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py:590-630 -->
+
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の書き込みに関与する失敗シナリオを一覧化する。
+
+### 失敗シナリオ一覧
+
+| # | 失敗トリガー | 影響テーブル / フィールド | 挙動 | ログ / evidence |
+|---|------------|----------------------|------|----------------|
+| 1 | `MuxCable::setState()` — SAI/nh 操作失敗 (`state_machine_handlers_` が false) | STATE_DB `MUX_CABLE_TABLE.<port>.state` | `st_chg_failed_ = true` → `rollbackStateChange()` 呼び出し → 前状態へ巻き戻し → `STATE_DB state = <prev_state>` | `SWSS_LOG_ERROR("Mux Error setting state %s for port %s …")` `muxorch.cpp:2595,2602` |
+| 2 | `rollbackStateChange()` — 巻き戻し先が `MUX_STATE_FAILED` / `MUX_STATE_PENDING` | STATE_DB `MUX_CABLE_TABLE.<port>.state` | 巻き戻し不可。`SWSS_LOG_ERROR` のみ出力し、`st_chg_in_progress_ = false` のまま。STATE_DB は変更されずに放置される | `SWSS_LOG_ERROR("[%s] Rollback to %s not supported")` `muxorch.cpp:570,596` |
+| 3 | `rollbackStateChange()` — 巻き戻し先 `stateActive()` / `stateStandby()` が失敗 | STATE_DB `MUX_CABLE_TABLE.<port>.state` | `st_chg_failed_ = true` のまま。`updateMuxState()` は呼ばれるが state は `prev_state` の文字列値 | `SWSS_LOG_ERROR("[%s] Rollback to %s failed")` `muxorch.cpp:608` |
+| 4 | `MuxStateOrch::addOperation()` — `isMuxExists()` が false (MuxCable 未生成) | STATE_DB `MUX_CABLE_TABLE.<port>.state` | `return false` → エントリをキューに残して次イテレーションで再処理。STATE_DB は更新されない | `SWSS_LOG_WARN("Mux entry for port '%s' doesn't exist")` `muxorch.cpp:2652` |
+| 5 | `MuxStateOrch::addOperation()` — `isStateChangeInProgress()` が true | STATE_DB `MUX_CABLE_TABLE.<port>.state` | `return false` → キューイングで自動リトライ。遷移完了まで HW 状態更新がブロックされる | `SWSS_LOG_INFO("Mux state change for port '%s' is in-progress")` `muxorch.cpp:2673` |
+| 6 | `MuxStateOrch::addOperation()` — `hw_state != mux_state` かつ `isStateChangeFailed() = true` | STATE_DB `MUX_CABLE_TABLE.<port>.state` | `state = "error"` を書き込む (HW・SW 不一致 + 失敗フラグ) | `MUX_HW_STATE_ERROR = "error"` `muxorch.cpp:50,2680` |
+| 7 | `MuxStateOrch::addOperation()` — `hw_state != mux_state` かつ `isStateChangeFailed() = false` | STATE_DB `MUX_CABLE_TABLE.<port>.state` | `state = "unknown"` を書き込む (HW・SW 不一致、失敗なし) | `MUX_HW_STATE_UNKNOWN = "unknown"` `muxorch.cpp:51,2684` |
+| 8 | `put_init_values_for_grpc_states()` — gRPC stub が None (ycabled 起動時) | STATE_DB `HW_MUX_CABLE_TABLE.<port>.state` | `state = "unknown"`, `active_side = "unknown"` を書き込む。gRPC SoC サーバが未起動または `soc_ipv4` 未設定のとき発生 | `helper_logger.log_notice("stub is None … writing unknown")` `y_cable_helper.py:603` |
+| 9 | `put_init_values_for_grpc_states()` — `QueryAdminForwardingPortState` の gRPC レスポンスが None | STATE_DB `HW_MUX_CABLE_TABLE.<port>.state` | `parse_grpc_response_forwarding_state()` が `"unknown"` を返す → `state = "unknown"` | `helper_logger.log_warning("response was none while doing init config state")` `y_cable_helper.py:628` |
+
+### 詳細
+
+#### 状態遷移失敗と自動巻き戻し (シナリオ 1–3)
+
+`MuxCable::setState()` は内部ステートマシン (`state_machine_handlers_`) の対応ハンドラ（`stateActive()` / `stateStandby()` 等）を呼ぶ。ハンドラが `false` を返すと (`muxorch.cpp:549-561`):
+
+1. `state_` を `prev_state_` に戻す (`muxorch.cpp:550`)
+2. `st_chg_failed_ = true` を設定 (`muxorch.cpp:552`)
+3. `std::runtime_error` を `throw` して呼び出し元 (`MuxCableOrch::addOperation()`) に伝播させる
+
+`MuxCableOrch::addOperation()` は `catch` ブロックで `rollbackStateChange()` を呼んで前状態への復旧を試みる (`muxorch.cpp:2595-2612`)。ただし前状態が `MUX_STATE_FAILED` または `MUX_STATE_PENDING` の場合は巻き戻し不可 (`muxorch.cpp:568-570`) であり、STATE_DB の `state` フィールドは不定値のまま残る。
+
+> **注意**: `MuxCableOrch::addOperation()` は例外補足後に `return true` を返す (`muxorch.cpp:2598,2604,2611`)。これによりエントリはキューから除去され、**自動リトライは行われない**。
+
+#### `"error"` と `"unknown"` の区別 (シナリオ 6–7)
+
+`MuxStateOrch::addOperation()` (APPL_DB `HW_MUX_CABLE_TABLE` の購読者) が `hw_state` と `mux_state` の不一致を検出したとき:
+
+- `isStateChangeFailed() = true` → `state = "error"` (HW/SW 不一致 かつ 遷移失敗済み)
+- `isStateChangeFailed() = false` → `state = "unknown"` (HW/SW 不一致 だが 遷移失敗フラグなし)
+
+どちらも `MuxStateOrch::updateMuxState()` 経由で `STATE_DB MUX_CABLE_TABLE.<port>.state` に書き込まれる。これらの状態は `show mux status` の STATUS 列に表示される。
+
+#### gRPC 失敗による `HW_MUX_CABLE_TABLE.state = "unknown"` (シナリオ 8–9)
+
+ycabled が起動時に `put_init_values_for_grpc_states()` を呼んで HW 状態を取得する。gRPC stub が `None`（`soc_ipv4` 未設定または SoC サーバ未起動）の場合、例外ハンドリングではなく条件分岐で即座に `state = "unknown"` を STATE_DB に書き込む (`y_cable_helper.py:603-608`)。その後の gRPC ポーリングが成功すれば上書きされるが、gRPC チャネルが確立されない間は `"unknown"` が維持される。
+
+<!-- /failure -->
