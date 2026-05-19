@@ -135,6 +135,10 @@ IFA 機能の全体的な有効/無効フラグ。singleton。key は固定値 `
 
 [^4]: High Frequency Telemetry TAM_COLLECTOR: `hftelorch.cpp:183-188`. <https://github.com/sonic-net/sonic-swss/blob/HEAD/orchagent/high_frequency_telemetry/hftelorch.cpp#L183>
 
+[^5]: CVL must テスト (TAM_COLLECTOR ipaddress-type 不一致): `cvl_must_test.go:443-467`. <https://github.com/sonic-net/sonic-mgmt-common/blob/HEAD/cvl/cvl_must_test.go#L443>
+
+[^6]: CVL leafref テスト (TAM_INT_IFA_FLOW leafref 失敗): `cvl_leafref_test.go:214-260`. <https://github.com/sonic-net/sonic-mgmt-common/blob/HEAD/cvl/cvl_leafref_test.go#L214>
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 
@@ -287,3 +291,58 @@ ADD と逆順で削除する。`TAM_INT_IFA_FLOW_TABLE` のエントリを削除
   任意の順序で書き込み可能。
 
 <!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tam-failure.md`
+
+TAM テーブル群の失敗経路は **2 つのレイヤ** に分かれる。(1) Management Framework
+経由での設定時に CVL が検出する YANG 制約違反、(2) orchagent（portsorch / HFTelOrch）
+が SAI 操作を行う際のランタイム失敗。コミュニティ版 orchagent には
+`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_*` を直接 CONFIG_DB から
+購読するハンドラが存在しないため、`sonic-db-cli` による直接書き込みは CVL をバイパスし
+SAI への反映も起こらない。
+
+### CVL バリデーション失敗（Management Framework 経由）
+
+| # | 操作 | 失敗条件 | エラー種別 | ErrAppTag | 結果 |
+|---|------|---------|-----------|-----------|------|
+| 1 | `TAM_COLLECTOR_TABLE` CREATE | `ipaddress-type=ipv6` かつ `ipaddress` が IPv4 形式（またはその逆） | `CVL_SEMANTIC_ERROR` | `ipaddres-type-mismatch` | GNMI/REST が `400 Bad Request`。DB への書き込みなし[^5] |
+| 2 | `TAM_INT_IFA_FLOW_TABLE` CREATE | `acl-table-name` が `ACL_TABLE` に存在しない、または `acl-rule-name` が対応する `ACL_RULE` に存在しない | `CVL_SEMANTIC_DEPENDENT_DATA_MISSING` | `instance-required` | 同上[^6] |
+| 3 | `TAM_INT_IFA_FLOW_TABLE` CREATE | `collector-name` が `TAM_COLLECTOR_TABLE` に存在しない | `CVL_SEMANTIC_ERROR`（must 制約） | — | 同上 |
+| 4 | `TAM_INT_IFA_FLOW_TABLE.sampling-rate` | 値が範囲外（0 または 10001+） | `CVL_SYNTAX_RANGE` | `"Invalid IFA flow sampling rate."` | 同上 |
+
+!!! note "CVL は GNMI/REST 専用"
+    `sonic-db-cli CONFIG_DB hmset` 等の直接書き込みは CVL を通らないため、上記制約は適用されない。orchagent はこれらのテーブルを購読しないため、不整合なエントリが SAI に伝播することもない（IFA 機能は orchagent 非実装）。
+
+### HFTelOrch 初期化失敗（SAI TAM 能力チェック）
+
+| # | 失敗条件 | 検出箇所 | 結果 | ログ |
+|---|---------|---------|------|------|
+| 5 | `sai_query_stats_st_capability` が `SUCCESS` / `BUFFER_OVERFLOW` 以外 | `isSupportedHFTel()` | `HFTel disabled`（TAM Collector SAI オブジェクト未作成） | `NOTICE "Streaming stats not supported, HFTel disabled"` |
+| 6 | `SAI_OBJECT_TYPE_TAM_COLLECTOR` 属性の capability クエリ失敗 / `create_implemented=false` | `isSupportedHFTel()` | 同上 | `NOTICE "HFTel: <attr> capability query failed, HFTel disabled"` |
+| 7 | `SAI_SWITCH_ATTR_TAM_TEL_TYPE_CONFIG_CHANGE_NOTIFY` set 失敗 | `HFTelOrch()` 初期化 | `runtime_error` → orchagent abort → systemd 再起動 | `ERROR "Failed to set SAI_SWITCH_ATTR_TAM_TEL_TYPE_CONFIG_CHANGE_NOTIFY"` |
+| 8 | `SAI_SWITCH_ATTR_TAM_OBJECT_ID` set 失敗 | `HFTelOrch()` 初期化 | 同上 | `ERROR "Failed to set SAI_SWITCH_ATTR_TAM_OBJECT_ID"` |
+
+### portsorch Path Tracing TAM 失敗
+
+`portsorch` は Path Tracing のために SAI TAM オブジェクトを作成する。`SAI_TAM_INT_ATTR_DEVICE_ID` は `TAM_DEVICE_TABLE.deviceid` を読まず固定値 `0` を使用する[^3]。
+
+| # | 失敗条件 | 検出箇所 | 結果 |
+|---|---------|---------|------|
+| 9 | `create_tam_report()` SAI 失敗 | `createPtTam()` | `createAndSetPortPtTam()` が `false` を返す。当該ポートへの Path Tracing TAM 設定未反映 |
+| 10 | `create_tam_int()` SAI 失敗 | `createPtTam()` | 同上 |
+| 11 | `create_tam()` SAI 失敗 | `createPtTam()` | 同上 |
+| 12 | `SAI_PORT_ATTR_TAM_OBJECT` set 失敗 | `setPortPtTam()` | 当該ポートの TAM オブジェクト未割り当て |
+
+### STATE_DB / ERROR_TABLE への記録
+
+TAM テーブル群に対応する STATE_DB への書き込みはなし。失敗情報は syslog のみに出力される。CVL エラーは GNMI/REST レスポンスのエラーボディとして呼び出し元に返される。
+
+```bash
+# orchagent ログ確認（swss コンテナ内）
+docker logs swss 2>&1 | grep -E "TAM|HFTel|Path Tracing"
+```
+
+<!-- /failure -->
