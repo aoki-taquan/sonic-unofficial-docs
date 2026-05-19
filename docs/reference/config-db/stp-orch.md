@@ -1,6 +1,6 @@
 ---
 title: APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
-description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数・副作用を詳解。Phase A+B+C+D+E+F 分析。"
+description: "SONiC orchagent が購読する APPL_DB の STP 関連 4 テーブル (STP_VLAN_INSTANCE_TABLE / STP_PORT_STATE_TABLE / STP_FASTAGEING_FLUSH_TABLE / STP_INST_PORT_FLUSH_TABLE) のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・暗黙参照テーブル・ハードコード定数・副作用・Redis 通知メカニズムを詳解。Phase A+B+C+D+E+F+G 分析。"
 area: reference
 hard: 0
 verification: code-verified
@@ -35,7 +35,7 @@ related:
 # APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト
 
 !!! info "ページの位置付け"
-    このページは orchagent (`StpOrch`) が購読する **APPL_DB の STP 関連 4 テーブル** のフィールド定義・暗黙デフォルト・SAI マッピングを詳述する Phase A 分析ページ。
+    このページは orchagent (`StpOrch`) が購読する **APPL_DB の STP 関連 4 テーブル** のフィールド定義・暗黙デフォルト・SAI マッピング・書込み順依存・失敗挙動・ハードコード定数・副作用・Redis 通知メカニズムを詳述する Phase A-G 分析ページ。
     CONFIG_DB 側のデフォルト (STP/STP_VLAN/STP_PORT テーブル) は [STP/STP_VLAN/STP_PORT テーブル](stp.md) を参照。
 
 ## 概要
@@ -638,6 +638,86 @@ STATE_DB: STP_TABLE|GLOBAL
 | コンストラクタ | — | `STATE_DB STP_TABLE\|GLOBAL.max_stp_inst` 書き込み | `stpmgrd` の最大インスタンス数取得に使用 |
 
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-orch-pubsub.md -->
+
+StpOrch が扱う通信経路は「APPL_DB の 4 テーブルを `ConsumerStateTable` で購読」と「STATE_DB `STP_TABLE` を素の `swss::Table` で読み書き」の 2 系統に分かれる。
+
+### APPL_DB 書き手 (stpd / stpmgrd) → StpOrch
+
+STP デーモン (`stpd`) は Unix Domain Socket 経由で `stpmgrd` (`cfgmgr/stpmgrd.cpp`) と IPC し、`stpmgrd` が APPL_DB の 4 テーブルへ書き込む。SONiC の APPL_DB 書き込み標準は `ProducerStateTable` 経由で、書き込みごとに `<TABLE>_CHANNEL@0` チャネルへ PUBLISH が発行される。
+
+`Orch::addConsumer()` (`orch.cpp:1186-1197`) は DB ID に応じて Consumer を選択する:
+
+```cpp
+void Orch::addConsumer(DBConnector *db, string tableName, int pri)
+{
+    if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == CHASSIS_APP_DB)
+        addExecutor(new Consumer(new SubscriberStateTable(db, tableName, ..., pri), this, tableName));
+    else
+        addExecutor(new Consumer(new ConsumerStateTable(db, tableName, gBatchSize, pri), this, tableName));
+}
+```
+
+APPL_DB (db ID = 0) は `CONFIG_DB`/`STATE_DB` でないため、4 テーブルは **`ConsumerStateTable`** で購読される。`ConsumerStateTable` は `<TABLE>_CHANNEL@0` を SUBSCRIBE し、stpd/stpmgrd が発行した PUBLISH を受信して `m_toSync` に積む。
+
+| APPL_DB テーブル | 書き手 | 消費 Orch | 消費方式 |
+|----------------|--------|----------|----------|
+| `STP_VLAN_INSTANCE_TABLE` | stpd → stpmgrd | `StpOrch` | `ConsumerStateTable` |
+| `STP_PORT_STATE_TABLE` | stpd → stpmgrd | `StpOrch` | `ConsumerStateTable` |
+| `STP_FASTAGEING_FLUSH_TABLE` | stpd → stpmgrd | `StpOrch` | `ConsumerStateTable` |
+| `STP_INST_PORT_FLUSH_TABLE` | stpd → stpmgrd | `StpOrch` | `ConsumerStateTable` |
+
+### orchdaemon の select タイムアウト
+
+orchdaemon のメインループは `SELECT_TIMEOUT = 1000` ms でブロック待機する (`orchdaemon.cpp:23,959`):
+
+```cpp
+#define SELECT_TIMEOUT 1000  // ms
+ret = m_select->select(&s, SELECT_TIMEOUT);
+```
+
+stpd/stpmgrd が APPL_DB に書き込んだエントリは、最大 **1000 ms** 以内に StpOrch の `doTask()` に到達する。
+
+### STATE_DB STP_TABLE — Pub/Sub なし (素の Table)
+
+StpOrch は STATE_DB `STP_TABLE` を `swss::Table` として保持する (`stporch.cpp:26`):
+
+```cpp
+m_stpTable = unique_ptr<Table>(new Table(stateDb, STATE_STP_TABLE_NAME));
+```
+
+`swss::Table::set()` は HSET のみで PUBLISH を発行しない。STATE_DB `STP_TABLE` へのエントリ変化は keyspace 通知や `NotificationProducer` を経由しない。
+
+`stpmgrd` (`cfgmgr/stpmgr.cpp:1381-1420`) は STATE_DB `STP_TABLE` を `swss::Table::get()` のポーリングで読み出す:
+
+```cpp
+while(max_delay) {  // 最大 60 秒、1 秒間隔
+    if (m_stateStpTable.get("GLOBAL", vmEntry)) { /* max_stp_inst を取得 */ break; }
+    sleep(1);
+    max_delay--;
+}
+```
+
+ポーリング完了前にタイムアウトした場合は `STP_DEFAULT_MAX_INSTANCES = 255` (`stpmgr.h:38`) にフォールバックする。
+
+### 通信経路まとめ
+
+| 経路 | 方式 | チャンネル / API |
+|------|------|----------------|
+| stpd → stpmgrd | Unix Domain Socket IPC | 独自プロトコル |
+| stpmgrd → APPL_DB `STP_VLAN_INSTANCE_TABLE` | `ProducerStateTable` | `STP_VLAN_INSTANCE_TABLE_CHANNEL@0` へ PUBLISH |
+| stpmgrd → APPL_DB `STP_PORT_STATE_TABLE` | `ProducerStateTable` | `STP_PORT_STATE_TABLE_CHANNEL@0` へ PUBLISH |
+| stpmgrd → APPL_DB `STP_FASTAGEING_FLUSH_TABLE` | `ProducerStateTable` | `STP_FASTAGEING_FLUSH_TABLE_CHANNEL@0` へ PUBLISH |
+| stpmgrd → APPL_DB `STP_INST_PORT_FLUSH_TABLE` | `ProducerStateTable` | `STP_INST_PORT_FLUSH_TABLE_CHANNEL@0` へ PUBLISH |
+| orchagent `StpOrch` ← APPL_DB 4 テーブル | `ConsumerStateTable` SUBSCRIBE | 上記チャンネル (最大 1000 ms 遅延) |
+| StpOrch → STATE_DB `STP_TABLE` | `swss::Table::set()` (HSET のみ) | PUBLISH 非発行 |
+| stpmgrd ← STATE_DB `STP_TABLE` | `swss::Table::get()` ポーリング (最大 60 秒、1 秒間隔) | PUBLISH 非購読 |
+
+<!-- /pubsub -->
 
 ## 発見された discrepancy / 暗黙デフォルト サマリー
 
