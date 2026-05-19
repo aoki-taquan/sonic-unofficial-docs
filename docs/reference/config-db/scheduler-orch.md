@@ -242,6 +242,72 @@ DEL が `m_pendingRemove` 状態のまま同一名の SET を発行すると、S
 
 <!-- /failure -->
 
+<!-- hardcoded-constants -->
+## ハードコード定数 (Phase E)
+
+`qosorch.h` および `qosorch.cpp` に直接定義されている文字列定数・enum 値・マップを一覧化する。CONFIG_DB フィールド名や許容値を正確に把握するための参照用。
+
+### フィールド名定数 (`qosorch.h` L44–53)
+
+| C++ 定数名 | CONFIG_DB フィールド名 | 備考 |
+|-----------|----------------------|------|
+| `scheduler_algo_type_field_name` | `"type"` | スケジューリングアルゴリズム種別 |
+| `scheduler_weight_field_name` | `"weight"` | WRR/DWRR の重み値 (`uint8`) |
+| `scheduler_meter_type_field_name` | `"meter_type"` | メータータイプ (`packets` or `bytes`) |
+| `scheduler_min_bandwidth_rate_field_name` | `"cir"` | Committed Information Rate |
+| `scheduler_min_bandwidth_burst_rate_field_name` | `"cbs"` | Committed Burst Size |
+| `scheduler_max_bandwidth_rate_field_name` | `"pir"` | Peak Information Rate |
+| `scheduler_max_bandwidth_burst_rate_field_name` | `"pbs"` | Peak Burst Size |
+
+### 参照フィールド名定数 (`qosorch.h` L22)
+
+| C++ 定数名 | 値 | 用途 |
+|-----------|----|------|
+| `scheduler_field_name` | `"scheduler"` | `QUEUE` テーブルの SCHEDULER 参照フィールド名 (`qos_to_ref_table_map` に登録) |
+
+### `type` フィールド許容値定数 (`qosorch.h` L45–47)
+
+| C++ 定数名 | 文字列値 | SAI マッピング |
+|-----------|---------|--------------|
+| `scheduler_algo_DWRR` | `"DWRR"` | `SAI_SCHEDULING_TYPE_DWRR` |
+| `scheduler_algo_WRR` | `"WRR"` | `SAI_SCHEDULING_TYPE_WRR` |
+| `scheduler_algo_STRICT` | `"STRICT"` | `SAI_SCHEDULING_TYPE_STRICT` |
+
+上記 3 値以外は `task_invalid_entry` を返しエントリ全体が破棄される（`qosorch.cpp:1393-1396`）。
+
+### `meter_type` フィールド許容値マップ (`qosorch.cpp` L75–78)
+
+```cpp
+map<string, sai_meter_type_t> scheduler_meter_map = {
+    {"packets", SAI_METER_TYPE_PACKETS},
+    {"bytes",   SAI_METER_TYPE_BYTES}
+};
+```
+
+`"packets"` / `"bytes"` 以外の値を渡すと `std::map::at()` が `std::out_of_range` 例外をスローし **orchagent がクラッシュ**する（`qosorch.cpp:1407`）。
+
+### SAI 属性 ID マッピング (`qosorch.cpp` L1380–1432)
+
+| フィールド | SAI 属性 ID |
+|-----------|-----------|
+| `type` | `SAI_SCHEDULER_ATTR_SCHEDULING_TYPE` |
+| `weight` | `SAI_SCHEDULER_ATTR_SCHEDULING_WEIGHT` |
+| `meter_type` | `SAI_SCHEDULER_ATTR_METER_TYPE` |
+| `cir` | `SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_RATE` |
+| `cbs` | `SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_BURST_RATE` |
+| `pir` | `SAI_SCHEDULER_ATTR_MAX_BANDWIDTH_RATE` |
+| `pbs` | `SAI_SCHEDULER_ATTR_MAX_BANDWIDTH_BURST_RATE` |
+
+### テーブル名定数
+
+| C++ マクロ | CONFIG_DB テーブル名 | ソース |
+|-----------|-------------------|-------|
+| `CFG_SCHEDULER_TABLE_NAME` | `"SCHEDULER"` | `sonic-swss-common/common/schema.h` (swsscommon) |
+
+`qos_to_ref_table_map` (`qosorch.cpp:99-116`) に `{scheduler_field_name, CFG_SCHEDULER_TABLE_NAME}` として登録され、`QUEUE` テーブルの `scheduler` フィールドの参照解決先テーブル名として使用される。
+
+<!-- /hardcoded-constants -->
+
 ## YANG-実装 Discrepancy まとめ
 
 | フィールド | YANG 定義 | qosorch 実装 | 分類 |
