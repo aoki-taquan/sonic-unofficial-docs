@@ -185,6 +185,35 @@ Dell 等のベンダー向け gNMI/translib スタック（`sonic-mgmt-common` t
 詳細探索証跡: `meta/_intermediate/cdb-flow/hardware-defaults.md`
 <!-- /defaults -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> 調査対象: `sonic-swss/orchagent/aclorch.cpp`、`sonic-gnmi/testdata/db_dump.json`、`sonic-mgmt-common/tools/test/dbinit.py`
+> 調査日: 2026-05-19
+
+`HARDWARE` テーブルは community sonic-swss/orchagent が**購読しない dead consumer**のため、orchagent コードパスにはフィールド値を参照するハードコード定数が存在しない（`COUNTER_MODE` / `LOOKUP_MODE` / `TCAM_SHARING` / `ACCESS_LIST` の参照 0 件）。
+
+### テストデータで観測された値文字列
+
+正式な有効値集合として定義するソースコードは community リポジトリ内に存在しないが、テストデータでは以下の文字列が観測されている。
+
+| フィールド | 観測値 | 出典 |
+|-----------|--------|------|
+| `COUNTER_MODE` | `"per-rule"` | `sonic-gnmi/testdata/db_dump.json`、`sonic-mgmt-common/tools/test/dbinit.py` |
+| `COUNTER_MODE` | `"PER-RULE"` | `sonic-gnmi/testdata/db_dump.json`（`HARDWARE_TABLE` 変種） |
+| `LOOKUP_MODE` | `"advanced"` | `sonic-gnmi/testdata/db_dump.json` |
+| `LOOKUP_MODE` | `"optimized"` | `sonic-mgmt-common/tools/test/dbinit.py` |
+| `LOOKUP_MODE` | `"LEGACY"` | `sonic-gnmi/testdata/db_dump.json`（`HARDWARE_TABLE` 変種） |
+| `TCAM_SHARING@` | `""` (空 leaf-list) | `sonic-gnmi/testdata/db_dump.json` |
+
+!!! warning "有効値セットは未定義"
+    上記はテストデータで観測された値であり、community SONiC コードが定義する公式の有効値ではない。
+    YANG モジュールが存在しないため enum 制約もなく、任意の文字列を書き込んでも CVL はエラーにならない。
+    consumer が存在しないため実際の ASIC 動作への影響もない。
+
+詳細探索証跡: `meta/_intermediate/cdb-flow/hardware-constants.md`
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: sonic-net/sonic-gnmi `testdata/db_dump.json` @ eb635b7679b260c3fd0786a6d0734fc8e82c9a22
