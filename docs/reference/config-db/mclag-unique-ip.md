@@ -170,3 +170,78 @@ show mclag unique-ip
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-ordering.md`
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang L132-152 / sonic-utilities/config/mclag.py L328-373 / sonic-swss/mclagsyncd/mclaglink.cpp L910-935 -->
+
+### MCLAG_UNIQUE_IP → 参照先
+
+| 参照元フィールド | 参照先テーブル | 参照種別 | evidence |
+|---|---|---|---|
+| `MCLAG_UNIQUE_IP_LIST`（テーブル全体） | CONFIG_DB `MCLAG_DOMAIN` | YANG `must` 制約（DOMAIN 0 件なら書込み拒否） | `sonic-mclag.yang:132-134` |
+| `MCLAG_UNIQUE_IP.if_name` | CONFIG_DB `VLAN` | YANG leafref 意図あり・libyang 制約でコメントアウト。現在は string パターンのみ | `sonic-mclag.yang:146-152` |
+| `MCLAG_UNIQUE_IP.if_name` | CONFIG_DB `VLAN_INTERFACE` | CLI が全テーブルスキャンし IP/VRF 存在を事前チェック。直接 DB 書込みでは回避可能 | `config/mclag.py:338-347`, `config/mclag.py:365-373` |
+
+### 参照先 → MCLAG_UNIQUE_IP（逆方向）
+
+MCLAG_UNIQUE_IP を逆参照するテーブルは YANG モデル上存在しない。
+
+### STATE_DB 暗黙接続
+
+`mclagsyncd` が MCLAG_DOMAIN 初回 SET 後に `MCLAG_UNIQUE_IP` の購読と同時に STATE_DB `VLAN_MEMBER_TABLE` も購読開始する。これはスキーマ制約ではなくデーモン内部の実装上の関連。
+
+| 参照先 | 種別 | 用途 | evidence |
+|---|---|---|---|
+| STATE_DB `VLAN_MEMBER_TABLE` | SubscriberStateTable（READ） | mclagsyncd が VLAN メンバーシップを監視し iccpd へ FDB 情報を提供 | `mclaglink.cpp:915-934` |
+
+> `if_name` の `VLAN` leafref はコメントアウト中（`sonic-mclag.yang:146-152`）。libyang back-links 問題が解消されれば `VLAN_LIST.name` への参照が有効化される見込み。
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-cross-refs.md`
+<!-- /cross-refs -->
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.cpp L1087-1180 / sonic-swss/mclagsyncd/mclaglink.h L94-99 / sonic-swss/mclagsyncd/mclag.h L62 / sonic-utilities/config/mclag.py L327-378 -->
+
+### mclagsyncdSendMclagUniqueIpCfg 失敗パス一覧
+
+`mclagsyncd` 内で `MCLAG_UNIQUE_IP` エントリを iccpd へ TCP IPC 送信する `mclagsyncdSendMclagUniqueIpCfg()` の失敗パターンを以下に示す。
+
+| # | トリガー | 箇所 | 動作 | retry |
+|---|---------|------|------|-------|
+| 1 | key 中の `\|` デリミタ以降が空文字（if_name 欠落） | `mclaglink.cpp:1119-1122` | `SWSS_LOG_ERROR("Invalid Key %s Format. No unique ip ifname specified")` + `continue` で当該エントリをスキップ | なし（次回 SELECT まで再通知なし） |
+| 2 | 送信バッファ残量不足（MCLAG_MAX_SEND_MSG_LEN=4096 を超過） | `mclaglink.cpp:1138-1155` | 既存バッファをフラッシュして `::write()` し、バッファをリセット。フラッシュ失敗（write<=0）時は `SWSS_LOG_ERROR("...buffer full; write to m_connection_socket failed")` のみ | なし（ロールバックなし・iccpd 側未受信分は消失） |
+| 3 | `::write()` 失敗（iccpd 切断 / ソケットエラー） | `mclaglink.cpp:1173-1177` | `SWSS_LOG_ERROR("mclagsycnd to ICCPD, mclag unique ip cfg send; write to m_connection_socket failed")` のみ | なし（メッセージ消失。iccpd 再接続後は `addDomainCfgDependentSelectables()` で再購読されるが既送メッセージの再送機能はない） |
+| 4 | `entries` が空 | `mclaglink.cpp:1100-1104` | 即リターン（正常系） | — |
+
+### CLI バリデーション失敗（CONFIG_DB 書込み前の拒否）
+
+CLI `config mclag unique-ip add/del` 段で以下のチェックに引っかかると、CONFIG_DB への書込み自体が行われない。
+
+| # | 条件 | CLI 側の動作 | evidence |
+|---|------|-------------|---------|
+| 1 | MCLAG_DOMAIN テーブルに 1 件もエントリがない | `ctx.fail("MCLAG not configured.")` で中断 | `config/mclag.py:328-330` |
+| 2 | `interface_name` が `"Vlan"` プレフィックスで始まらない | `ctx.fail("...interface %s is not a VLAN interface")` で中断 | `config/mclag.py:335-336` |
+| 3 | ADD 時: 対象 VLAN IF に IP アドレスが設定済み | `ctx.fail("...unique ip not supported when ip address is already configured")` で中断 | `config/mclag.py:338-344` |
+| 4 | ADD 時: 対象 VLAN IF に非デフォルト VRF バインドが存在する | `ctx.fail("...unique ip not supported when VRF is already configured")` で中断 | `config/mclag.py:346-347` |
+| 5 | DEL 時: `unique_ip` エントリが DB に存在しない | `ctx.fail("...unique ip is not configured")` で中断 | `config/mclag.py:365-373` |
+
+### STATE_DB / ERROR_TABLE への記録
+
+`mclagsyncd` は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。確認コマンド:
+
+```bash
+docker exec iccpd cat /var/log/syslog | grep -i "mclag unique ip"
+# または
+docker exec iccpd tail -f /var/log/syslog
+```
+
+### iccpd 接続断時の挙動
+
+`mclagsyncd` と iccpd 間の TCP ソケット (`m_connection_socket`) が切断された場合、`mclagsyncdSendMclagUniqueIpCfg()` の `::write()` がエラーを返すが **リトライ機構はなく、メッセージは消失する**。iccpd が再起動すると `accept()` で新規ソケットを受け入れ、`addDomainCfgDependentSelectables()` で `MCLAG_UNIQUE_IP` テーブルの購読を再登録する。ただしその時点での CONFIG_DB スナップショット読み取りは行われないため、iccpd 側の `unique_ip` 状態が CONFIG_DB と不一致になる可能性がある。
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-failure.md`
+<!-- /failure -->

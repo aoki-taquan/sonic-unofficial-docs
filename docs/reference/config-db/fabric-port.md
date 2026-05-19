@@ -180,6 +180,60 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/fabric-port-failure.md -->
+<!-- source: sonic-swss/orchagent/fabricportsorch.cpp -->
+
+### 失敗パス一覧
+
+| # | 失敗トリガー | 挙動 | 再試行 | SAI 影響 |
+|---|------------|------|--------|---------|
+| 1a | `SAI_SWITCH_ATTR_NUMBER_OF_FABRIC_PORTS` 取得失敗 | `FABRIC_PORT_ERROR (0)` を返す、`m_getFabricPortListDone=false` のまま | 30秒ポーリングで自動再試行 | STATE_DB 書き込みなし・全ポーリングスキップ |
+| 1b | `SAI_SWITCH_ATTR_FABRIC_PORT_LIST` 取得失敗 | `throw runtime_error("FabricPortsOrch get port list failure")` → orchagent 異常終了 | なし（プロセス再起動） | なし |
+| 1c | ポートレーン番号 (`SAI_PORT_ATTR_HW_LANE_LIST`) 取得失敗 | `throw runtime_error("FabricPortsOrch get port lane failure")` → orchagent 異常終了 | なし（プロセス再起動） | なし |
+| 2 | `SAI_PORT_ATTR_FABRIC_ISOLATE` の `set_port_attribute` 失敗 | `SWSS_LOG_ERROR` のみ出力、エラー吸収 | なし | SAI isolate 状態変更されず、STATE_DB は更新済みのまま乖離 |
+| 3 | `alias` / `lanes` / `isolateStatus` 欠如 (APPL_DB 補完も失敗) | `m_toSync.erase(it)` で silent drop | なし | SAI 変更なし |
+| 4 | `SAI_PORT_ATTR_FABRIC_ATTACHED` 取得失敗 | `updateFabricPortState()` が中断 (残ポートもスキップ) | 次ポーリング周期 (30秒) | STATE_DB 更新なし（古い状態が残存） |
+| 5 | 接続先スイッチ / ポートインデックス取得失敗 | `throw runtime_error(...)` → orchagent 異常終了 | なし（プロセス再起動） | なし |
+| 6 | キュー数 / キューリスト取得失敗 | `throw runtime_error(...)` → orchagent 異常終了 | なし（プロセス再起動） | なし |
+
+### 詳細
+
+#### 1a. `SAI_SWITCH_ATTR_NUMBER_OF_FABRIC_PORTS` 取得失敗（SAI capability 欠如）
+
+`getFabricPortList()` はコンストラクタ起動時と、`FABRIC_POLL` タイマー発火時に `m_getFabricPortListDone=false` の場合に呼ばれる（`fabricportsorch.cpp:1568-1570`）。
+
+`sai_switch_api->get_switch_attribute(SAI_SWITCH_ATTR_NUMBER_OF_FABRIC_PORTS)` が失敗した場合、`handleSaiGetStatus()` を呼び出す。`task_success` 以外が返れば `FABRIC_PORT_ERROR (0)` を返して関数を終了し、`m_getFabricPortListDone` は `false` のまま維持される（`fabricportsorch.cpp:172-180`）。
+
+この状態では `updateFabricPortState()` / `updateFabricDebugCounters()` が冒頭の `if (!m_getFabricPortListDone) return;` でスキップされ続けるため、STATE_DB へのファブリックポート状態書き込みと FlexCounter 登録が一切行われない。30 秒ポーリング (`FABRIC_POLL`) のたびに再試行されるが、SAI が capability を返せる状態になるまでこの状態が継続する。
+
+#### 1b / 1c. `FABRIC_PORT_LIST` / レーン番号取得失敗（orchagent 異常終了）
+
+ポート数取得後のリスト取得（`SAI_SWITCH_ATTR_FABRIC_PORT_LIST`）またはレーン番号取得（`SAI_PORT_ATTR_HW_LANE_LIST`）が失敗した場合は `throw runtime_error(...)` を送出し、orchagent プロセスが異常終了する（`fabricportsorch.cpp:196, 212`）。自動リトライ機能はなく、プロセスマネージャ（supervisord）による再起動に依存する。
+
+#### 2. `isolateFabricLink()` — SAI isolation 失敗（STATE_DB / SAI 乖離）
+
+`isolateFabricLink()` は `SAI_PORT_ATTR_FABRIC_ISOLATE` 属性を `set_port_attribute` で設定する。SAI が失敗した場合は `SWSS_LOG_ERROR("Failed to set admin status")` のみを出力して続行し、`task_need_retry` を返さない（`fabricportsorch.cpp:997-1000`）。
+
+一方、呼び出し元の `doFabricPortTask()` は isolate / unisolate 処理の前後で STATE_DB の `ISOLATED` / `CONFIG_ISOLATED` 等を更新する（`fabricportsorch.cpp:1528-1536`）。SAI 呼び出しが失敗しても STATE_DB 更新は実行されるため、**STATE_DB では unisolate 状態を示しているにも関わらず、SAI 側ではポートが isolate されたままとなる乖離**が発生する。この乖離は次回ポーリング (`FABRIC_DEBUG_POLL`) で上書きされるまで解消されない。
+
+!!! warning "SAI / STATE_DB 乖離"
+    `SAI_PORT_ATTR_FABRIC_ISOLATE` の設定失敗はエラーログのみで吸収され、リトライも例外送出もない。STATE_DB は期待値に更新されたまま SAI 側の実際の isolate 状態と乖離する。トラフィック影響が生じても上位レイヤへの通知手段がないため、`show fabric counters port` での定期確認が必要。
+
+#### 3. データ不完全による silent drop
+
+`doFabricPortTask()` の SET 処理において、CONFIG_DB からのフィールドが不完全で APPL_DB からの `hget` 補完も失敗した場合、`m_toSync.erase(it)` でエントリを消去し次のエントリに移る（`fabricportsorch.cpp:1480-1484`）。このとき出力されるログは `SWSS_LOG_INFO` レベルのみであり、デフォルトのログ設定では表示されない。SAI への反映が行われなかったことを知る手段がない。
+
+#### 4. `updateFabricPortState()` — ポート状態取得失敗
+
+`SAI_PORT_ATTR_FABRIC_ATTACHED` の取得失敗時、`handleSaiGetStatus()` が `task_success` 以外を返す場合は `updateFabricPortState()` 全体から即座に `return` する（`fabricportsorch.cpp:360-364`）。これにより失敗したポート以降のポートも含めて STATE_DB 更新が行われず、古い状態（前回ポーリング時の値）が残存する。次の `FABRIC_POLL` タイマー（30 秒）で再試行される。
+
+> **Evidence**: `sonic-swss` `orchagent/fabricportsorch.cpp:159-228,277-297,354-414,984-1003,1394-1547`
+
+<!-- /failure -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 

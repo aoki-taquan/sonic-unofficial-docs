@@ -293,4 +293,80 @@ show qos map dot1p-tc
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動マトリクス (Phase D)
+
+`Dot1pToTcMapHandler::processWorkItem()` / `QosMapHandler::processWorkItem()`（`sonic-swss/orchagent/qosorch.cpp`）における SET / DEL 失敗条件と結果を網羅する。
+
+<!-- evidence: meta/_intermediate/cdb-flow/dot1p-to-tc-map-failure.md -->
+
+### SET 失敗マトリクス
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| 既存オブジェクトが `m_pendingRemove == true` の状態で SET | `qosorch.cpp:136-139` | `task_need_retry` — m_toSync 残留、次 doTask() で再評価 | `"Entry %s %s is pending remove, need retry"` (NOTICE) | `qosorch.cpp:138` |
+| `dot1p` フィールドが非数値 (`std::invalid_argument`) | `qosorch.cpp:375-378` | 該当エントリのみサイレント脱落、残りエントリで SAI 生成継続 | `"Invalid dot1p to tc argument %s:%s to %s()"` (ERROR) | `qosorch.cpp:377` |
+| `dot1p` / `tc` フィールドが数値範囲超過 (`std::out_of_range`) | `qosorch.cpp:380-383` | 該当エントリのみサイレント脱落、残りエントリで SAI 生成継続 | `"Out of range dot1p to tc argument %s:%s to %s()"` (ERROR) | `qosorch.cpp:382` |
+| SAI `create_qos_map` 失敗（新規作成） | `qosorch.cpp:412-416`, `162-166` | `task_failed` — m_toSync からエントリ削除。retry なし | `"Failed to create dot1p_to_tc map. status: %s"` (ERROR) | `qosorch.cpp:415` |
+| SAI `set_qos_map_attribute` 失敗（既存更新） | `qosorch.cpp:206-213`, `151-155` | `task_failed` — m_toSync からエントリ削除。既存 SAI オブジェクトは変更前状態に留まる | `"Failed to set [%s:%s]"` (ERROR) | `qosorch.cpp:153` |
+
+### DEL 失敗マトリクス
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
+|---|---|---|---|---|
+| 存在しないオブジェクトへの DEL | `qosorch.cpp:176-179` | `task_invalid_entry` — ノーオペレーション | `"Object with name:%s not found."` (ERROR) | `qosorch.cpp:178` |
+| `PORT_QOS_MAP` から参照中の DEL | `qosorch.cpp:181-186` | `m_pendingRemove = true` + `task_need_retry` — 参照解除後に自動 DEL 再実行 | `"Can't remove object %s due to being referenced (%s)"` (NOTICE) | `qosorch.cpp:184` |
+| SAI `remove_qos_map` 失敗 | `qosorch.cpp:188-191`, `220-224` | `task_failed` — SAI オブジェクト残存、CONFIG_DB/SAI 乖離 | `"Failed to remove QoS map. db name:%s sai object:..."` (ERROR) | `qosorch.cpp:190` |
+
+### 補足
+
+- **フィールド変換失敗のサイレント脱落**: `convertFieldValuesToAttributes()` は変換失敗エントリを `continue` でスキップし `return true` を維持する。そのため `processWorkItem()` には成功として返り、呼び出し元にエラーが伝播しない。CONFIG_DB には全エントリが記録されるが SAI には有効エントリのみ反映される（書き込み vs 実行時の乖離）。
+- **`task_invalid_entry`** はエントリを m_toSync から破棄し再試行しない。YANG バリデーション通過後の不正データが入った場合のみ発生する。
+- **`task_need_retry`** はエントリを m_toSync に残留させ次の `doTask()` で再評価する。自動回復するが完了タイミングは不確定。
+- QosOrch は失敗時に STATE_DB / ERROR_TABLE への書き込みを行わない。ASIC_DB への反映確認は `sonic-db-cli ASIC_DB hgetall 'ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:*'` で行う。
+
+<!-- /failure -->
+
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/qosorch.h`
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-tc-map-constants.md`
+
+### フィールド名定数
+
+| 定数名 | 値 | 定義箇所 | 説明 |
+|--------|----|---------|------|
+| `dot1p_to_tc_field_name` | `"dot1p_to_tc_map"` | `qosorch.h:13` | PORT_QOS_MAP フィールド名。`qos_to_ref_table_map` / `qos_to_attr_map` のキーとして使用 |
+
+### SAI 定数
+
+| 定数 | 使用箇所 | 説明 |
+|------|---------|------|
+| `SAI_QOS_MAP_TYPE_DOT1P_TO_TC` | `qosorch.cpp:406` | SAI qos_map_type — create 時の type 固定値 |
+| `SAI_QOS_MAP_ATTR_TYPE` | `qosorch.cpp:405` | create 時の type 属性 ID |
+| `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | `qosorch.cpp:391` | マップエントリリスト属性 ID |
+| `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` | `qosorch.cpp:63` | ポートバインド属性 ID |
+
+> **注意**: DSCP_TO_TC_MAP が持つスイッチレベルバインド (`SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP`) に相当する `SAI_SWITCH_ATTR_QOS_DOT1P_TO_TC_MAP` の使用は `qosorch` に実装されていない。DOT1P_TO_TC_MAP はポートバインドのみ。
+
+### 型変換・キャスト定数
+
+| 処理 | 型 | コード箇所 | 説明 |
+|------|-----|---------|------|
+| dot1p key 変換 | `sai_uint8_t` | `qosorch.cpp:372` | `static_cast<sai_uint8_t>(stoi(fvField(fv)))` — YANG pattern `[0-7]?` の 0..7 を uint8 に変換 |
+| tc value 変換 | `sai_cos_t` (uint8) | `qosorch.cpp:373` | `static_cast<sai_cos_t>(stoi(fvValue(fv)))` — YANG tc_type (0..15) を uint8 に変換 |
+
+> **注意**: DSCP_TO_TC_MAP の `DSCP_MAX_VAL = 63` に相当する dot1p 最大値の明示的な範囲チェック定数は存在しない。上限は YANG pattern `[0-7]?` と SAI `sai_uint8_t` キャストの組み合わせで暗黙的に制約される。
+
+### デフォルトマップ名
+
+| マップ名 | 用途 | ソース |
+|---------|------|--------|
+| `"AZURE"` | ストレージバックエンドプラットフォームで `qos_config.j2` が注入するデフォルトマップ名 | `qos_config.j2:240-253` |
+
+> **Evidence**: `sonic-swss/orchagent/qosorch.h:13`; `sonic-swss/orchagent/qosorch.cpp:63,391,405-406,372-373`
+<!-- /constants -->
+
 <!-- glossary-links-injected: b1003b21c66f -->

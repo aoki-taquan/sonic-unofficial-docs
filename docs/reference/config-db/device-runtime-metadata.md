@@ -465,49 +465,59 @@ ASIC 番号の起点 `"0"` がハードコードされており、ASIC 1 以降�
 <!-- /pubsub -->
 
 <!-- platform -->
-## プラットフォーム差異 (Phase H)
+## プラットフォーム差 (Phase H)
 
-> **調査根拠**: `sonic_py_common/device_info.py` L617-668 (`is_chassis`, `is_voq_chassis`, `is_packet_chassis`, `is_virtual_chassis`, `is_disaggregated_chassis`, `is_multi_npu`) 精読 (2026-05-19)
-> 詳細証跡: `meta/_intermediate/cdb-flow/device-runtime-metadata-ordering.md`
+> **調査根拠**: `sonic_py_common/device_info.py` L511-747 全行精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/device-runtime-metadata-platform.md`
 
-`get_device_runtime_metadata()` の返すサブキー構成はプラットフォーム種別によって大きく異なる。`ETHERNET_PORTS_PRESENT` / `MACSEC_SUPPORTED` は全プラットフォームで必ず存在するが、`CHASSIS_METADATA` はシャーシ環境でのみ生成される。
+`DEVICE_RUNTIME_METADATA` のフィールド構造・値はすべてランタイム時の**ハードウェアプラットフォーム検出結果**に依存する。ASIC ベンダや YANG スキーマには依存せず、以下の 3 要素の組み合わせで決定する。
 
-### プラットフォーム別サブキー生成マトリクス
+1. `switch_type` / `chassisdb.conf` 存否 → `CHASSIS_METADATA` キーの有無と `chassis_type`
+2. `platform_env.conf` の内容 → `module_type` および `MACSEC_SUPPORTED`
+3. hwsku ディレクトリの `port_config.ini` 存否 → `ETHERNET_PORTS_PRESENT`
+
+### `CHASSIS_METADATA` — chassis 種別による有無とフィールド値
 
 | プラットフォーム種別 | 判定条件 | `CHASSIS_METADATA` | `chassis_type` | `module_type` |
 |---|---|---|---|---|
 | 標準 ToR / leaf (非シャーシ) | `is_chassis()=False` | **生成されない** | — | — |
-| VOQ シャーシ supervisor | `switch_type=voq` + `chassisdb.conf` 存在 + `supervisor=1` in `platform_env.conf` | あり | `'voq'` | `'supervisor'` |
-| VOQ シャーシ linecard | `switch_type=voq` + `chassisdb.conf` 存在 + `supervisor=1` なし | あり | `'voq'` | `'linecard'` |
-| パケットシャーシ | `switch_type=chassis-packet` | あり | `'packet'` | `supervisor=1` 有無で決定 |
-| 仮想シャーシ (VS) | `asic_type=vs` + `switch_type` in `[dummy-sup, voq, chassis-packet]` | あり | `'voq'` or `'packet'` | VS 内 `supervisor=1` 有無 |
-| Disaggregated シャーシ | `switch_type=voq` + `disaggregated_chassis=1` | **生成されない** (`is_voq_chassis()` が False になる) | — | — |
+| VOQ chassis (linecard) | `switch_type=voq` + `chassisdb.conf` 存在 + `supervisor=1` なし | あり | `'voq'` | `'linecard'` |
+| VOQ chassis (supervisor) | `switch_type=voq` + `chassisdb.conf` 存在 + `platform_env.conf` に `supervisor=1` | あり | `'voq'` | `'supervisor'` |
+| Packet chassis | `switch_type=chassis-packet` | あり | `'packet'` | `supervisor=1` 有無で決定 |
+| Virtual chassis (VS) | `asic_type=vs` (`sonic_version.yml`) + `switch_type` が `dummy-sup`/`voq`/`chassis-packet` のいずれか | あり | `'voq'` or `'packet'` | VS 内 `supervisor=1` 有無 |
+| Disaggregated chassis | `switch_type=voq` + `disaggregated_chassis=1` in `platform_env.conf` | **生成されない** | — | — |
 
 (evidence: `device_info.py:630-668`, `device_info.py:737-739`)
 
-### Multi-NPU プラットフォーム
+> `is_virtual_chassis()` は `get_platform_info().get('asic_type')` が `"vs"` であることを条件に含む。`asic_type` は `sonic_version.yml` から読み込まれる (`device_info.py:550-551, 660`)。
 
-Multi-NPU 環境（NPU 数 > 1）では `ETHERNET_PORTS_PRESENT` の判定に ASIC `"0"` のポート設定ファイルを使用する。
+### `ETHERNET_PORTS_PRESENT` — hwsku 種別による差
 
-```python
-get_path_to_port_config_file(hwsku=None, asic="0" if is_multi_npu() else None)
-```
+| プラットフォーム種別 | 値 | 理由 |
+|---|---|---|
+| 通常 ToR / Leaf / Spine | `True` | hwsku ディレクトリ配下に `port_config.ini` が存在する |
+| Supervisor カード (chassis) | `False` | supervisor の hwsku には `port_config.ini` が存在しない |
+| Fabric カード (VOQ chassis) | `False` | fabric カードはデータプレーンポートを持たず `port_config.ini` 不在 |
+| Multi-ASIC プラットフォーム | ASIC #0 の `port_config.ini` 存否に依存 | `asic="0"` をハードコードして検索 (`device_info.py:741`) |
+| VS (Virtual Switch) テスト | `True` (通常) | VS プラットフォームのテスト hwsku に `port_config.ini` が付属する |
 
-ASIC 0 の `port_config.ini` が存在すれば `True`、なければ `False`。ASIC 1 以降は確認しない (`device_info.py:741`)。
+Multi-NPU 環境では常に ASIC `"0"` のポート設定ファイルを確認する。ASIC 1 以降は確認しない (`device_info.py:741`)。
 
-### SmartSwitch / DPU プラットフォーム
+### `MACSEC_SUPPORTED` — `platform_env.conf` 依存
 
-`is_smartswitch()` および `is_dpu()` の判定は `platform.json` の `DPUS` / `DPU` キーを参照するが、`get_device_runtime_metadata()` の中では **これらの関数を呼び出さない**。SmartSwitch NPU 側も DPU カード側も、非シャーシ構成であれば `CHASSIS_METADATA` は生成されず `ETHERNET_PORTS_PRESENT` / `MACSEC_SUPPORTED` のみが返される (`device_info.py:735-747`)。
+| プラットフォーム種別 | 値 | 理由 |
+|---|---|---|
+| MACsec 非対応ハードウェア (大多数) | `False` | `platform_env.conf` 不在、または `macsec_enabled=0` |
+| MACsec 対応ハードウェア (一部 Broadcom 等) | `True` | `platform_env.conf` に `macsec_enabled=1` が記述されている |
+| VS / コンテナ / テスト環境 | `False` | `platform_env.conf` 不在のため `is_macsec_supported()=0` |
 
-### プラットフォーム差サマリー
+MACsec 対応の宣言は `platform_env.conf` の `macsec_enabled=1` 行のみで制御される。ASIC ベンダ別のハードコードや YANG スキーマ上の制約は存在しない (`device_info.py:720-721`, `700-702`)。
 
-| 観点 | 結果 | 根拠 |
-|------|------|------|
-| 非シャーシ (ToR / leaf / SmartSwitch NPU / DPU) | `CHASSIS_METADATA` キーなし。`ETHERNET_PORTS_PRESENT` / `MACSEC_SUPPORTED` のみ | `device_info.py:737` — `if is_chassis():` が False |
-| VOQ シャーシ | `CHASSIS_METADATA.chassis_type='voq'`。supervisor/linecard で `bgp` / `has_per_asic_scope` が分岐 | `device_info.py:739`, `is_voq_chassis():630-634` |
-| Disaggregated シャーシ (`disaggregated_chassis=1`) | `is_voq_chassis()=False` → `CHASSIS_METADATA` 生成なし | `device_info.py:642-668` |
-| Multi-NPU | ASIC 0 で `ETHERNET_PORTS_PRESENT` 確定。他 ASIC は不問 | `device_info.py:741` |
-| `platform_env.conf` 不在プラットフォーム | `MACSEC_SUPPORTED=False` 固定 / `module_type` は `linecard` デフォルト | `device_info.py:720-721`, `700-702` |
+### SmartSwitch / DPU — 影響なし
+
+`is_smartswitch()` / `is_dpu()` は `platform.json` の `DPUS` / `DPU` キーを参照するが (`device_info.py:679-694`)、`get_device_runtime_metadata()` はこれらの関数を呼び出さない。SmartSwitch NPU 側も DPU カード側も、非シャーシ構成であれば `CHASSIS_METADATA` は生成されず `ETHERNET_PORTS_PRESENT` / `MACSEC_SUPPORTED` のみが返される (`device_info.py:735-747`)。
+
+> **Evidence**: `device_info.py:630-668` (`is_voq_chassis` / `is_packet_chassis` / `is_virtual_chassis` / `is_chassis`)、`device_info.py:699-732` (`is_supervisor` / `is_macsec_supported`)、`device_info.py:735-747` (`get_device_runtime_metadata`)
 <!-- /platform -->
 
 <!-- glossary-links-injected: e33fec70e206 -->

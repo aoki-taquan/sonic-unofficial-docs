@@ -379,6 +379,112 @@ DEL NAT_POOL|<name>        # pool を後に削除
 > **証跡**: `NatMgr::doNatPoolTask()` L6482–6866 (`sonic-swss/cfgmgr/natmgr.cpp`).
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`natmgrd` (`cfgmgr/natmgr.h` / `natmgr.cpp`) および `NatOrch` (`orchagent/natorch.h` / `natorch.cpp`) に存在する、CONFIG_DB / YANG で管理されない実装レベルの固定値一覧。
+
+### バリデーション境界値 (natmgr.h)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `L4_PORT_MIN` | `1` | `nat_port` 範囲の最小値チェック。`0` は YANG で許容されるが実装で拒否される | `natmgr.h:110` |
+| `L4_PORT_MAX` | `65535` | `nat_port` 範囲の最大値チェック | `natmgr.h:111` |
+| `POOL_TABLE_KEY_SIZE` | `1` | `NAT_POOL` key のセグメント数制約 (`|` 区切り禁止) | `natmgr.h:52` |
+| pool 名最大長 | `32` (リテラル) | `key.length() > 32` をチェックするが #define なし | `natmgr.cpp:6563` |
+
+### NAT セッションタイムアウトデフォルト (natmgr.h)
+
+これらは `NAT_GLOBAL` テーブルで上書き可能だが、`NAT_GLOBAL` 未設定時に `NAT_POOL` 経由で確立された dynamic NAT セッションに適用される実装デフォルト。
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `NAT_TIMEOUT_DEFAULT` | `600` 秒 | generic dynamic NAT セッションのデフォルトタイムアウト | `natmgr.h:64` |
+| `NAT_TIMEOUT_MIN` | `300` 秒 | `NAT_GLOBAL.nat_timeout` の下限 | `natmgr.h:62` |
+| `NAT_TIMEOUT_MAX` | `432000` 秒 (5 日) | `NAT_GLOBAL.nat_timeout` の上限。static conntrack エントリの擬似永続保存にも使用 | `natmgr.h:63` |
+| `NAT_TCP_TIMEOUT_DEFAULT` | `86400` 秒 (1 日) | TCP dynamic NAT セッションのデフォルトタイムアウト | `natmgr.h:69` |
+| `NAT_TCP_TIMEOUT_MIN` | `300` 秒 | TCP タイムアウト下限 | `natmgr.h:67` |
+| `NAT_TCP_TIMEOUT_MAX` | `432000` 秒 | TCP タイムアウト上限 | `natmgr.h:68` |
+| `NAT_UDP_TIMEOUT_DEFAULT` | `300` 秒 | UDP dynamic NAT セッションのデフォルトタイムアウト | `natmgr.h:73` |
+| `NAT_UDP_TIMEOUT_MIN` | `120` 秒 | UDP タイムアウト下限 | `natmgr.h:71` |
+| `NAT_UDP_TIMEOUT_MAX` | `600` 秒 | UDP タイムアウト上限 | `natmgr.h:72` |
+
+### 内部タイマー周期 (natmgr.h / natorch.h)
+
+| 定数 | 値 | 用途 | ソース |
+|------|----|------|--------|
+| `NAT_ENTRY_REFRESH_PERIOD` | `86400` 秒 (1 日) | static conntrack エントリを kernel に再書き込みする周期 (`NAT_ENTRY_REFRESH_TIMER`) | `natmgr.h:125` |
+| `NAT_HITBIT_N_CNTRS_QUERY_PERIOD` | `5` 秒 | NatOrch が SAI hit-bit / カウンタを取得する周期 (`NAT_HITBIT_N_CNTRS_QUERY_TIMER`) | `natorch.h:37` |
+| `NAT_CONNTRACK_TIMEOUT_PERIOD` | `86400` 秒 (1 日) | NatOrch が `SETTIMEOUTNAT` 通知で natmgrd に conntrack タイムアウト更新を要求する周期 | `natorch.h:38` |
+| `NAT_HITBIT_QUERY_MULTIPLE` | `6` | hit-bit クエリ間隔 = `5 × 6 = 30` 秒。カウンタクエリの 6 回に 1 回のみ hit-bit を照会 | `natorch.h:39` |
+
+### SAI 依存の動的上限 (natorch.cpp)
+
+NatOrch 初期化時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を照会して `maxAllowedSNatEntries` を取得する。値はハードウェア実装依存であり、コードにリテラルはない。動的 NAT セッション数がこの上限に達すると新規 SNAT エントリは作成されず silent drop となる。`COUNTERS_DB NAT_COUNTER_TABLE|Values MAX_NAT_ENTRIES` に記録される。(`natorch.cpp:108-127`)
+
+### iptables 生成ルールの固定値
+
+| 項目 | 値 | 用途 |
+|------|----|------|
+| iptables target (`nat_port` 省略時) | `MASQUERADE` | port 制約なし full-cone SNAT (iptables が port を自動選択) |
+| iptables target (`nat_port` 指定時) | `SNAT --to-source ip:port_range` | 指定 pool IP・port 範囲に変換 |
+| 対応 L4 プロトコル | TCP / UDP / ICMP | dynamic NAT iptables ルールを生成する 3 プロトコル固定。その他プロトコルは変換対象外 |
+| iptables テーブル | `nat` (POSTROUTING SNAT) + `mangle` (PREROUTING/POSTROUTING zone-mark) | dynamic NAT の 2-table 構成 |
+
+詳細な定数一覧は `meta/_intermediate/cdb-flow/nat-pool-constants.md` を参照。
+<!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`NAT_POOL` エントリが処理されると、`natmgrd` → `orchagent / NatOrch` の経路で以下の副次書込が発生する。ソース: `sonic-swss/cfgmgr/natmgr.cpp`[^F1]、`sonic-swss/orchagent/natorch.cpp`[^F2]。
+
+**書込が発生する前提条件**: `isNatEnabled()` が true、かつ pool に紐づく `NAT_BINDINGS` エントリが存在し、L3 インタフェース readiness を満たしている場合のみ。いずれかを満たさない場合、以下の APPL_DB / ASIC_DB 書込はすべてスキップされる。
+
+### APPL_DB — NAT_DNAT_POOL_TABLE
+
+`NatMgr::addDynamicNatRule()` が `setDnatPoolfromNatPool(ADD, ip_range)` を呼び出し、pool 内の各 IP アドレスを 1 エントリずつ APPL_DB に書き込む。
+
+```
+NAT_DNAT_POOL_TABLE|<pool_ip>
+    NULL: NULL
+```
+
+| 操作 | 関数 | 挙動 | ソース |
+|------|------|------|--------|
+| pool SET + binding 存在 | `addDnatPoolEntry(destIp)` | 初回は ref-count=1 で `m_appNatDnatPoolProducer.set(destIp, {"NULL":"NULL"})` | `natmgr.cpp:1520` |
+| pool IP が複数 binding で共有 | `addDnatPoolEntry(destIp)` | ref-count を加算のみ。APPL_DB への重複書込なし | `natmgr.cpp:1508` |
+| pool DEL + binding 存在 | `removeDnatPoolEntry(destIp)` | ref-count を減算し 0 になった時点で `m_appNatDnatPoolProducer.del(destIp)` | `natmgr.cpp:1543` |
+
+ref-count は内部マップ `m_natDnatPoolInfo[destIp]` で管理される。複数の binding が同一 pool の IP アドレスを参照する場合、最後の binding が削除されるまで APPL_DB エントリは保持される。
+
+### ASIC_DB — SAI NAT エントリ (SAI_NAT_TYPE_DESTINATION_NAT_POOL)
+
+`NatOrch::doDnatPoolTableTask()` が `NAT_DNAT_POOL_TABLE` 変更を受けて `addHwDnatPoolEntry()` / `removeHwDnatPoolEntry()` を呼び出す。
+
+| 操作 | SAI API 呼び出し | SAI nat_type | ソース |
+|------|----------------|-------------|--------|
+| pool IP 追加 | `sai_nat_api->create_nat_entry()` | `SAI_NAT_TYPE_DESTINATION_NAT_POOL` | `natorch.cpp:1805` |
+| pool IP 削除 | `sai_nat_api->remove_nat_entry()` | `SAI_NAT_TYPE_DESTINATION_NAT_POOL` | `natorch.cpp:1837` |
+
+`addHwDnatPoolEntry()` は `isNatEnabled()` が false の場合に SAI 書込をスキップして success (`true`) を返す (`natorch.cpp:1789-1793`)。APPL_DB エントリは保持されるため、NAT が後から有効化されると `enableNatFeature()` → `addAllDnatPoolEntries()` で全 pool IP が遡及的に ASIC に投入される。
+
+### COUNTERS_DB — 初期化時の静的書込
+
+NatOrch の初期化時に SAI `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を照会し、取得値を `COUNTERS_GLOBAL_NAT|Values` の `MAX_NAT_ENTRIES` フィールドとして一度だけ書込む (`natorch.cpp:127`, `natorch.cpp:135`)。
+
+NAT pool エントリ追加・削除に直接連動した COUNTERS_DB 更新はない。DNAT エントリ数カウンタ (`DNAT_ENTRIES`) は `addHwDnatPoolEntry()` では更新されず、pool 経由で確立した SNAT/DNAT セッション数カウンタは NatOrch のヒットビットタイマー (5 秒周期) で更新される。
+
+### STATE_DB — 書込なし
+
+`NatMgr` および `NatOrch` は STATE_DB への書込を行わない。`STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_INTERFACE_TABLE` は L3 インタフェース readiness ガード用の**読み取り専用**アクセスのみ。
+
+[^F1]: natmgr APPL_DB 書込実装: `sonic-swss/cfgmgr/natmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/natmgr.cpp>
+[^F2]: NatOrch ASIC 書込実装: `sonic-swss/orchagent/natorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/natorch.cpp>
+
+> 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-side-effects.md`
+<!-- /side-effects -->
+
 <!-- topics-back-ref -->
 ## 関連 Topics
 

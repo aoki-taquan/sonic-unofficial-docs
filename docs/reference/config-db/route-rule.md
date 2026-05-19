@@ -438,4 +438,40 @@ flowchart LR
 > 中間調査詳細: `meta/_intermediate/cdb-flow/route-rule-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+調査ソース: `orchagent/dash/dashrouteorch.cpp`、`orchagent/orchdaemon.cpp`、`orchagent/main.cpp`。
+
+### DPU ノード専用テーブル
+
+`DASH_ROUTE_RULE_TABLE` は **`gMySwitchType == "dpu"` のノードでのみ有効** である。`DashRouteOrch` は `DpuOrchDaemon::init()` 内でのみインスタンス化されるため、通常の T0/T1/T2 スイッチや VOQ chassis では Consumer が存在せず、テーブルへの書き込みは無視される (`orchagent/main.cpp:990-994`; `orchagent/orchdaemon.cpp:1322-1370`)。
+
+```
+// main.cpp:990-994
+if (gMySwitchType == "dpu")
+{
+    orchDaemon = make_shared<DpuOrchDaemon>(...);
+}
+```
+
+### dashrouteorch.cpp 内のプラットフォーム分岐
+
+`dashrouteorch.cpp` 内に `getenv("platform")`、`gMySwitchType`、ベンダー固有の条件分岐は存在しない。SAI 呼び出し (`sai_dash_inbound_routing_api->create_inbound_routing_entry()`) はすべてのプラットフォームで同一コードパスを通る。プラットフォーム差はすべて SAI 実装層 (ASIC ドライバ) が吸収する。
+
+### プラットフォーム差サマリ
+
+| プラットフォーム | `DashRouteOrch` の有無 | 処理 |
+|---|---|---|
+| DPU ノード (`switch_type=dpu`) | あり | `sai_dash_inbound_routing_api` 経由で SAI に反映 |
+| 標準 T0/T1/T2 (`switch_type=switch`) | なし | テーブルを購読しない (Consumer 未生成) |
+| VOQ chassis (`switch_type=voq`) | なし | 同上 |
+| SmartSwitch NPU 側 | なし (DPU 側のみ) | NPU 側 orchagent は `DpuOrchDaemon` を使わない |
+| multi-asic | 各 DPU namespace | DPU namespace ごとに独立した `DpuOrchDaemon` が動作 |
+
+<!-- evidence: sonic-net/sonic-swss/orchagent/main.cpp:990-994 (gMySwitchType == "dpu" → DpuOrchDaemon) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/orchdaemon.cpp:1322-1370 (DpuOrchDaemon::init() で DashRouteOrch をインスタンス化) -->
+<!-- evidence: sonic-net/sonic-swss/orchagent/dash/dashrouteorch.cpp:421-477 (プラットフォーム分岐なし) -->
+<!-- /platform -->
+
 [^1]: sonic-net/SONiC `doc/dash/dash-sonic-hld.md` §3.2.10 "ROUTE RULE TABLE - INBOUND" (ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)

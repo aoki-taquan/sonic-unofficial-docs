@@ -146,6 +146,52 @@ FABRIC_MONITOR|FABRIC_MONITOR_DATA
 
 <!-- /ordering -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+### 失敗パス一覧
+
+| # | トリガー | 発生箇所 | 結果 | retry |
+|---|---------|---------|------|-------|
+| 1 | SAI ファブリックポートリスト取得失敗（恒久エラー） | `getFabricPortList()` L193-197 | `runtime_error` 例外 → orchagent クラッシュ | supervisord 自動再起動 |
+| 2 | SAI ファブリックポート数取得失敗（非恒久エラー） | `getFabricPortList()` L173-180 | `FABRIC_PORT_ERROR` を返し early return。`m_getFabricPortListDone=false` のまま監視未開始 | 次 `FABRIC_POLL`（30 秒）で自動 retry |
+| 3 | STATE_DB `FABRIC_PORT_TABLE\|PORT<lane>` エントリ欠如 | `updateFabricDebugCounters()` L619-624 / `updateFabricCapacity()` L1093-1098 | 関数全体が early return。当該ポーリング周期の監視更新が全スキップ | 次ポーリングで再試行 |
+| 4 | COUNTERS_DB ポート統計エントリ欠如 | `updateFabricDebugCounters()` L500-503 | `rxCells=0` / `crcErrors=0` のゼロ値で処理継続（エラー無しと判断、isolate 不発） | — |
+| 5 | SAI `set_port_attribute` (isolate) が失敗 | `isolateFabricLink()` L996-999 | エラーログのみ。STATE_DB の `ISOLATED` フラグは更新済みのため STATE_DB とハードウェアの isolation 状態が乖離 | なし |
+| 6 | `m_fabricLanePortMap` にレーン番号なし | `isolateFabricLink()` L990-993 | SAI 呼び出しをスキップ（silent skip）。実際の isolate 未実行 | なし |
+| 7 | `monState=disable` / APPL_DB 未設定 | `doFabricPortTask()` L1396-1399 | `checkFabricPortMonState()=false` → early return。APPL_DB イベント処理が全スキップ | — |
+| 8 | `alias` / `lanes` / `isolateStatus` フィールド欠如 | `doFabricPortTask()` L1479-1485 | エントリを erase して silent skip。ポート isolate 制御が実行されない | なし |
+| 9 | Redis 接続障害 (fabricmgrd 側) | `writeConfigToAppDb()` L108-124 | 例外キャッチなし → fabricmgrd クラッシュ | supervisord 自動再起動 |
+
+### orchagent クラッシュ経路
+
+`getFabricPortList()` でファブリックポートリスト (`SAI_SWITCH_ATTR_FABRIC_PORT_LIST`) の取得に失敗すると、`handleSaiGetStatus()` が `task_success` 以外を返した場合に `throw runtime_error` が発生する（`fabricportsorch.cpp:193-197`）。同様に HW レーン属性 (`SAI_PORT_ATTR_HW_LANE_LIST`) の取得失敗でも `throw runtime_error` が発生する（`fabricportsorch.cpp:210-213`）。orchagent は supervisord により自動再起動される。
+
+```
+throw runtime_error("FabricPortsOrch get port list failure");
+throw runtime_error("FabricPortsOrch get port lane failure");
+```
+
+### STATE_DB と SAI のアイソレート状態乖離
+
+`isolateFabricLink()` は SAI の `set_port_attribute` 呼び出し失敗時にエラーログを出力するだけで、処理を継続する（`fabricportsorch.cpp:996-999`）。この時点で STATE_DB の `ISOLATED` フィールドはすでに更新済みのため、STATE_DB では isolated=1 でもハードウェア上はアイソレートされないという不整合が発生する。次のポーリングで再び `origIsolated != isolated` の差分が生まれないため、この乖離は自動解消されない。復旧には orchagent 再起動が必要。
+
+### APPL_DB 未設定時のデフォルトフォールバック
+
+APPL_DB の `FABRIC_MONITOR_DATA` エントリが存在しない場合、`updateFabricDebugCounters()` はコンパイル時定数にフォールバックする:
+
+| 定数名 | フォールバック値 | evidence |
+|--------|----------------|---------|
+| `errorRateCrcCellsCfg` | `ERROR_RATE_CRC_CELLS_CFG = 1` | `fabricportsorch.cpp:46,438` |
+| `errorRateRxCellsCfg` | `ERROR_RATE_RX_CELLS_CFG = 61035156` | `fabricportsorch.cpp:47,439` |
+| `isolationPollsCfg` | `ISOLATION_POLLS_CFG = 1` | `fabricportsorch.cpp:44,436` |
+| `recoveryPollsCfg` | `RECOVERY_POLLS_CFG = 8` | `fabricportsorch.cpp:45,437` |
+
+`monCapacityThreshWarn` は `updateFabricCapacity()` 内で `threshold=100` にフォールバックする（`fabricportsorch.cpp:1052`）。YANG default の `10` とは異なる値のため `cdb-exceptions` ブロックに記載済みの乖離が生じる。
+
+> 中間調査ファイル: `meta/_intermediate/cdb-flow/fabric-monitor-failure.md`
+<!-- /failure -->
+
 <!-- cross-refs -->
 ## 暗黙参照 — Phase C (cross-table refs)
 

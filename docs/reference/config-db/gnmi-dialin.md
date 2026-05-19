@@ -3,7 +3,7 @@ title: GNMI テーブル (dial-in サーバ)
 description: "GNMI テーブル — gNMI dial-in サーバ (telemetry デーモン) の TLS・認証・ポート設定を CONFIG_DB に保持するテーブル。"
 area: reference
 verification: code-verified
-last_verified: 2026-05-14
+last_verified: 2026-05-19
 sources:
   - repo: sonic-net/sonic-gnmi
     path: telemetry/telemetry.go
@@ -14,6 +14,18 @@ sources:
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-gnmi.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-buildimage
+    path: dockers/docker-sonic-gnmi/telemetry_vars.j2
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
+  - repo: sonic-net/sonic-gnmi
+    path: gnmi_server/clientCertAuth.go
+    ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+  - repo: sonic-net/sonic-gnmi
+    path: sonic_data_client/mixed_db_client.go
+    ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
+  - repo: sonic-net/sonic-gnmi
+    path: pkg/bypass/bypass.go
+    ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22
 related:
   config_db:
     - GNMI
@@ -206,6 +218,31 @@ rsyslogd 起動 (priority=1)
 - **CONFIG_DB 存在前の起動**: `GNMI` テーブルが CONFIG_DB に存在しない場合、`gnmi-native.sh` はシェルスクリプト内のデフォルト値（port=8080, threshold=100 等）を使用して起動を継続する。
 
 <!-- /ordering -->
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`GNMI|gnmi` / `GNMI|certs` の設定読み取りは直接参照であるが、`gnmi-native.sh` 起動スクリプトおよび `telemetry` バイナリは以下のテーブルも**暗黙的に参照**する。参照タイミング（起動時スナップショット vs. runtime 都度読み取り）が異なる点に注意。
+
+| 参照先テーブル / キー | 参照方向 | 条件 | 参照元 evidence |
+|---------------------|---------|------|----------------|
+| `GNMI\|gnmi` / `GNMI\|certs` (CONFIG_DB) | 設定読み取り（起動時 sonic-cfggen） | 常時。存在しない場合はシェルデフォルト値を使用 | `telemetry_vars.j2:2-3`; `gnmi-native.sh:19-23` |
+| `DEVICE_METADATA\|localhost.x509` (CONFIG_DB) | TLS 証明書パスの旧フォールバック（起動時 sonic-cfggen） | `GNMI\|certs` が未設定の場合のみ有効。旧 `TELEMETRY` テーブル時代の設定経路 | `telemetry_vars.j2:4`; `gnmi-native.sh:21,46-58` |
+| `DEVICE_METADATA\|localhost.subtype` (CONFIG_DB) | SmartSwitch 判定（起動時 sonic-db-cli） | `subtype=SmartSwitch` の場合のみ `-zmq_port=8100` フラグを付与。起動時スナップショット | `gnmi-native.sh:89-92` |
+| `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` (CONFIG_DB) | 管理 VRF フラグ付与（起動時 sonic-db-cli） | `mgmtVrfEnabled=true` の場合のみ `--vrf mgmt` を付与。起動時スナップショット | `gnmi-native.sh:95-98` |
+| `GNMI_CLIENT_CERT\|<CommonName>` (CONFIG_DB) | クライアント証明書 CN → ロールマッピング（runtime 都度読み取り） | `user_auth=cert` 時のみ。各 gNMI RPC で `configDbConnector.Get_entry()` を呼び出す | `gnmi_server/clientCertAuth.go:254-277` |
+| `MID_PLANE_BRIDGE\|GLOBAL`, `DPUS\|<dpuId>`, `DHCP_SERVER_IPV4_PORT\|<key>` (CONFIG_DB) | SmartSwitch DPU ZMQ アドレス解決（runtime） | SmartSwitch ZMQ 構成 (`-zmq_port` 指定) 時のみ。`getDpuAddress()` が ZMQ クライアント接続確立時に参照 | `sonic_data_client/mixed_db_client.go:118-151` |
+| `DEVICE_METADATA\|localhost.hwsku` (CONFIG_DB) | bypass validation SKU 判定（runtime 都度読み取り） | SmartSwitch 向け gNMI Set RPC 時。`AllowedSKUPrefixes` と照合し CVL validation を bypass するかどうか決定 | `pkg/bypass/bypass.go:148-168` |
+
+!!! note "起動時スナップショット vs. runtime 参照"
+    `GNMI|gnmi` / `GNMI|certs` / `DEVICE_METADATA.x509` / `DEVICE_METADATA.subtype` / `MGMT_VRF_CONFIG.mgmtVrfEnabled` は**コンテナ起動時に 1 回だけ読み取られる**（hot reload なし）。
+    一方 `GNMI_CLIENT_CERT` および `DEVICE_METADATA.hwsku` は**各 gNMI RPC リクエスト毎に runtime で都度読み取られる**ため、コンテナ再起動なしに即時反映される。
+
+!!! note "`DEVICE_METADATA.x509` はレガシー参照"
+    `DEVICE_METADATA|localhost.x509` は旧 `TELEMETRY` テーブル時代の TLS 証明書設定経路。現行では `GNMI|certs` が推奨される。`GNMI|certs` が CONFIG_DB に存在する場合はそちらが優先され、`x509` は参照されない。
+
+<!-- evidence: sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/telemetry_vars.j2:1-5 (ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd); sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh:19-98 (ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd); sonic-net/sonic-gnmi:gnmi_server/clientCertAuth.go:254-277 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:sonic_data_client/mixed_db_client.go:118-151 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:pkg/bypass/bypass.go:148-168 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22) -->
+<!-- /cross-refs -->
 
 <!-- value-behavior -->
 ## 値依存挙動マトリクス

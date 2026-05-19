@@ -264,6 +264,33 @@ NTP_GLOBAL テーブルは YANG で定義されるが、CLI は NTP_SERVER/NTP_K
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`hostcfgd` の `NtpCfg` クラスおよび `chrony.conf.j2` テンプレートが `NTP_GLOBAL` 処理時に暗黙的に読み出す関連テーブルの一覧。「暗黙参照」とは CONFIG_DB `NTP|global` への SET/DEL とは別に、chrony 設定生成や YANG must 制約の解決に使われるテーブルを指す。
+
+| 参照先テーブル | 参照方向 | 条件 | 参照元 evidence |
+|--------------|---------|------|----------------|
+| `NTP_SERVER` (CONFIG_DB) | 全行読み出し（chrony server/pool 生成） | 常時。`ntp_srv_key_update()` が `get_table(CFG_NTP_SERVER_TABLE_NAME)` で全サーバを取得。`admin_state != 'disabled'` のエントリのみ `server` / `pool` ディレクティブを出力 | `hostcfgd:2389-2391`、`chrony.conf.j2:20-55` |
+| `NTP_KEY` (CONFIG_DB) | 全行読み出し（chrony keyfile 生成） | `authentication == 'enabled'` 時のみ `keyfile` / `key` ディレクティブが有効化。`ntp_srv_key_update()` が `get_table(CFG_NTP_KEY_TABLE_NAME)` で全鍵を取得 | `hostcfgd:2390-2391`、`chrony.conf.j2:124-128` |
+| `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` (CONFIG_DB) | YANG must 制約チェック | `NTP_GLOBAL.vrf = "mgmt"` を CLI で設定するとき YANG が `mgmtVrfEnabled = "true"` を検証。redis 直書きでは制約バイパス | `sonic-ntp.yang must`、`hostcfgd:2249` (init 時 `get()`) |
+| `LOOPBACK_INTERFACE` (CONFIG_DB) | 購読 + IP アドレス取得 | (a) `hostcfgd:2483` が subscribe → `handle_ntp_source_intf_chg()` で `src_intf` 一致時 chrony restart。(b) `chrony.conf.j2:103-104` が `src_intf.startswith('Loopback')` 時に IP アドレス取得 → `bindacqaddress` に使用 | `hostcfgd:1312-1329`、`chrony.conf.j2:102-105` |
+| `MGMT_INTERFACE` (CONFIG_DB) | IP アドレス取得 | `src_intf == "eth0"` 時に `get_ip_on_interface(eth0, MGMT_INTERFACE, ...)` で IPv4/IPv6 アドレスを取得し `bindacqaddress` へ。`vrf=mgmt` の場合は `bindacqaddress` 行を抑止 | `chrony.conf.j2:91-92, 109-116` |
+| `VLAN_INTERFACE` (CONFIG_DB) | IP アドレス取得 | `src_intf.startswith('Vlan')` 時に IP アドレス取得 → `bindacqaddress` | `chrony.conf.j2:94-95` |
+| `INTERFACE` (CONFIG_DB) | IP アドレス取得 | `src_intf.startswith('Ethernet')` 時に IP アドレス取得 → `bindacqaddress` | `chrony.conf.j2:97-98` |
+| `PORTCHANNEL_INTERFACE` (CONFIG_DB) | IP アドレス取得 | `src_intf.startswith('PortChannel')` 時に IP アドレス取得 → `bindacqaddress` | `chrony.conf.j2:100-101` |
+| `DEVICE_METADATA\|localhost` (CONFIG_DB) | `subtype` / `type` 読み出し | `subtype == 'SmartSwitch'` かつ `type != 'SmartSwitchDPU'` のとき `allow` / `binddevice bridge-midplane` を出力（NTP サーバ機能）。通常スイッチでは参照されない | `chrony.conf.j2:58-64` |
+
+!!! note "NTP_SERVER / NTP_KEY は間接的に NTP_GLOBAL ハンドラをトリガする"
+    `hostcfgd` は `NTP_SERVER` と `NTP_KEY` 変更イベントも `ntp_srv_key_handler` で購読しており、これらテーブルへの書込みが発生すると `ntp_srv_key_update()` が `NTP_SERVER` / `NTP_KEY` 全行を再読み込みして chrony を再起動する（`hostcfgd:2387-2391`）。`NTP_GLOBAL` の直接変更がなくても chrony 設定が再生成される点に注意。
+
+!!! note "vrf=mgmt 時は bindacqaddress を発行しない"
+    `chrony.conf.j2:109` の `{% if not ((NTP) and NTP['global']['vrf'] == 'mgmt') %}` により、管理 VRF 使用時は `src_intf` 設定にかかわらず `bindacqaddress` ディレクティブが抑止される。IP アドレス取得のためのテーブル参照（`MGMT_INTERFACE` 等）は行われるが、結果は出力されない。
+
+調査メモ詳細: `meta/_intermediate/cdb-flow/ntp-global-cross-refs.md`
+
+<!-- /cross-refs -->
+
 <!-- glossary-links-injected: 8b572e7ecef7 -->
 
 <!-- derivation -->

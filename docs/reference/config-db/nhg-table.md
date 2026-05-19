@@ -185,6 +185,125 @@ SAI グループ属性は固定:
 **参照カウントによる DEL ガード (依存 #8)**: `NhgEntry::ref_count > 0` の間は DEL を実行せず、`++it` でキューに残す（`nhgorch.cpp:414-416`）。`ROUTE_TABLE` エントリが当該 NHG を `nexthop_group` で参照している間は ref_count が非ゼロになるため、ROUTE_TABLE の DEL が先行しなければ NHG は削除されない。
 <!-- /ordering -->
 
+---
+
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`NhgOrch` (`nhgorch.cpp`) および `CbfNhgOrch` (`cbf/cbfnhgorch.cpp`) が `NEXTHOP_GROUP_TABLE` / `CLASS_BASED_NEXT_HOP_GROUP_TABLE` を処理する際、YANG leafref は定義されていないが、複数の Orch / DB に対する暗黙参照が発生する。
+
+### NEXTHOP_GROUP_TABLE の参照
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `NeighOrch`（NEIGH_TABLE 管理） | NH OID 解決（必須）。解決失敗時は `success=false` でメンバースキップ＋再試行 | 各 NH メンバーの IP が通常 nexthop の場合 | `nhgorch.cpp:544-546` (`hasNextHop` → `getNextHopId`)、`nhgorch.cpp:633,648` (ref_count +1/-1) |
+| `IntfsOrch`（INTF_TABLE 管理） | RIF OID 解決（`isIntfNextHop()` 時）。sync 成功後 RIF ref_count +1、remove 時 -1 | NH メンバーがインターフェース次ホップの場合 | `nhgorch.cpp:542` (`getRouterIntfsId`)、`nhgorch.cpp:757,885` (ref_count) |
+| `Srv6Orch`（SRv6 nexthop 管理） | SRv6 NH 作成 / 削除 | `isSrv6NextHop()` が真の NH メンバーが存在する場合 | `nhgorch.cpp:550-553` (`createSrv6NexthopWithoutVpn`)、`nhgorch.cpp:665` (`removeSrv6NexthopWithoutVpn`) |
+| `RouteOrch`（NHG 上限カウンタ） | NHG 総数チェック（ブロッキング）。上限到達時 temporary NHG を作成し本エントリをキューに残す | 常時（`doTask()` 内で NHG 作成前に評価） | `nhgorch.cpp:252,320` (`getNhgCount() + getSyncedCount() >= getMaxNhgCount()`) |
+| `RouteOrch`（ref_count 管理） | `ROUTE_TABLE` の nexthop_group 参照カウント増減。ref_count > 0 の NHG は DEL 保留 | ROUTE_TABLE エントリが当該 NHG を `nexthop_group` フィールドで参照する場合 | `routeorch.cpp:3147-3176` (`incNhgRefCount` / `decNhgRefCount`) |
+| `CrmOrch`（CRM カウンタ） | SAI create/delete に連動して `CRM_NEXTHOP_GROUP` カウンタ更新 | NHG の synced 状態変化時 | `nhgorch.cpp:795` (`incCrmResUsedCounter`) |
+
+### CLASS_BASED_NEXT_HOP_GROUP_TABLE の参照
+
+| 参照先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `NhgMapOrch`（FC_TO_NHG_INDEX_MAP_TABLE 管理） | MAP の SAI OID 取得（必須）。MAP 未存在時 `return false` → 再試行。FC 数超過 / インデックス超過でエラー+破棄 | `selection_map` フィールドが指定されている場合（必須フィールド） | `cbfnhgorch.cpp:311` (`getMaxNumFcs`)、`cbfnhgorch.cpp:319-324` (`getMapId`)、`cbfnhgorch.cpp:327` (`getLargestNhIndex`)、ref_count: `cbfnhgorch.cpp:354,396` |
+| `NhgOrch` / `CbfNhgOrch`（NEXTHOP_GROUP_TABLE / CLASS_BASED_NEXT_HOP_GROUP_TABLE 管理） | 子 NHG の SAI OID 解決（必須）。未 synced の場合 `return false` → 再試行。temporary / recursive は エラー＋ループ継続 | `members` フィールドに列挙された子 NHG キーが存在する場合 | `cbfnhgorch.cpp:247-265` (メンバー OID lookup) |
+| `RouteOrch`（NHG 上限カウンタ） | NhgOrch と同一の上限チェック。上限到達時 `success=false` でキューに残す | 常時（`doTask()` 内で NHG 作成前に評価） | `cbfnhgorch.cpp:100` (`getNhgCount() + getSyncedCount() >= getMaxNhgCount()`) |
+| `CrmOrch`（CRM カウンタ） | SAI create/delete に連動して `CRM_NEXTHOP_GROUP` カウンタ更新 | CBF NHG の synced 状態変化時 | `cbfnhgorch.cpp:358` (`incCrmResUsedCounter`) |
+
+!!! note "NeighOrch の NH 解決失敗は非致命的"
+    `NextHopGroupMember::getNhId()` が `SAI_NULL_OBJECT_ID` を返したメンバーは `syncMembers()` でスキップされ、残りのメンバーで NHG が部分同期される (`nhgorch.cpp:938-944`)。neighbor が後から登録されると `PortsOrch` / `NeighOrch` からの通知で再同期が走り、スキップされたメンバーが NHG に追加される。
+
+!!! note "NhgMapOrch 参照は CBF 専用"
+    `FC_TO_NHG_INDEX_MAP_TABLE` への参照は `CLASS_BASED_NEXT_HOP_GROUP_TABLE` の処理でのみ発生する。通常 `NEXTHOP_GROUP_TABLE` の処理パス (`NhgOrch`) は `NhgMapOrch` を参照しない。
+
+詳細分析: `meta/_intermediate/cdb-flow/nhg-table-cross-refs.md`
+<!-- /cross-refs -->
+
+---
+
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/nhg-table-failure.md`
+
+Consumer: `NhgOrch::doTask()` (`orchagent/nhgorch.cpp`) および `CbfNhgOrch::doTask()` (`orchagent/cbf/cbfnhgorch.cpp`)。
+
+### 起動ガード
+
+両 Orch の `doTask()` 冒頭で `gPortsOrch->allPortsReady()` を評価し、`false` の場合は即 `return` する（`nhgorch.cpp:41-43`、`cbfnhgorch.cpp:42-44`）。ログ出力なし。`Consumer::m_toSync` のエントリが滞留したまま次回イベントループで暗黙 retry される。
+
+### NEXTHOP_GROUP_TABLE — SET 時の失敗パターン
+
+| 失敗条件 | 検出箇所 | 挙動 | retry |
+|---|---|---|---|
+| `nexthop_group` と `nexthop`/`ifname` が共存 | `doTask()` L98-103 | `SWSS_LOG_ERROR` → `erase(it)` でエントリ破棄 | なし |
+| SRv6 NHG で `nexthop` 数と `seg_src` 数が不一致 | `doTask()` L209-214 | `SWSS_LOG_ERROR` → `erase(it)` でエントリ破棄 | なし |
+| 再帰 NHG の子 NHG が recursive または temporary | `doTask()` L139-157 | `SWSS_LOG_ERROR("Invalid member nexthop group %s in parent nhg %s")` → `erase(it)` | なし |
+| 再帰 NHG で型不一致（SRv6/overlay 混在） | `doTask()` L175-198 | `SWSS_LOG_ERROR("Inconsistent nexthop group type between %s and %s")` → `erase(it)` | なし |
+| 再帰 NHG の全子 NHG が未登録 | `doTask()` L160-164 | ログなし → `++it` でスキップ | 子 NHG 登録後に自動 retry |
+| NHG 数上限到達 + SRv6 NHG 新規作成 | `doTask()` L252-260 | `SWSS_LOG_DEBUG` → `++it`（temp NHG も作成しない） | リソース解放後に自動 retry |
+| NHG 数上限到達 + 非 SRv6 NHG の temp sync 失敗 | `doTask()` L271-275 | `SWSS_LOG_INFO("Failed to sync temporary NHG %s")` → temp NHG 未登録のまま `++it` | 自動 retry |
+| `createTempNhg()` で有効 NH が 1 つもない | `createTempNhg()` L844-849 | `std::logic_error` throw → 呼び出し元が catch して `SWSS_LOG_INFO` → `++it` | 自動 retry |
+| SAI `create_next_hop_group` 失敗 | `NextHopGroup::sync()` L782-791 | `SWSS_LOG_ERROR("Failed to create next hop group %s, rv:%d")` → `handleSaiCreateStatus()` → `false` | SAI 状態次第で retry |
+| `syncMembers()` でいずれかのメンバーの SAI ID が NULL | `NextHopGroup::syncMembers()` L937-944 | `SWSS_LOG_WARN("Failed to get next hop %s in group %s")` → `sync()` false → `++it` | ネイバー解決後に自動 retry |
+| `syncMembers()` 後のメンバー SAI ID が NULL（bulk create 失敗） | `NextHopGroup::syncMembers()` L973-977 | `SWSS_LOG_ERROR("Failed to create next hop group %s's member %s")` → 部分適用状態 | 自動 retry（部分適用残存に注意） |
+| 単一メンバー NHG で NH ID が SAI_NULL_OBJECT_ID | `NextHopGroup::sync()` L746-749 | `SWSS_LOG_WARN("Next hop %s is not synced")` → `return false` → `++it` | ネイバー解決後に自動 retry |
+| SRv6 nexthop 作成失敗 | `NextHopGroupMember::getNhId()` L551-553 | `SWSS_LOG_ERROR("Failed to create SRv6 nexthop %s")` → SAI_NULL_OBJECT_ID を返す | 上位 syncMembers 失敗として処理 |
+| NHG update でメンバー weight 更新失敗 | `NextHopGroup::update()` L1042-1045 | `SWSS_LOG_WARN("Failed to update member %s weight")` → `return false` → `++it` | 自動 retry |
+| NHG update で旧メンバー削除失敗 | `NextHopGroup::update()` L1057-1060 | `SWSS_LOG_WARN("Failed to remove members from group %s")` → `return false` → `++it` | 自動 retry（部分削除状態残存） |
+| NHG update で新メンバー sync 失敗 | `NextHopGroup::update()` L1080-1083 | `SWSS_LOG_WARN("Failed to sync new members for group %s")` → `return false` → `++it` | 自動 retry |
+
+### NEXTHOP_GROUP_TABLE — DEL 時の失敗パターン
+
+| 失敗条件 | 検出箇所 | 挙動 | retry |
+|---|---|---|---|
+| DEL 対象 NHG が参照中（ref_count > 0） | `doTask()` L413-417 | `SWSS_LOG_INFO("Unable to remove group %s which is referenced")` → `++it` で保留 | 参照解除（ROUTE_TABLE DEL）後に自動 retry |
+| DEL 対象 NHG が未登録 | `doTask()` L407-411 | `SWSS_LOG_INFO("Unable to find group with key %s to remove")` → `success = true` で消費（冪等） | なし |
+| SAI `remove_next_hop_group` 失敗 | `NhgCommon::remove()` 内部 | `success = false` → `++it`（`m_syncdNextHopGroups` から erase されない） | 自動 retry |
+| DEL と同一キーに pending SET が存在 | `doTask()` L401-405 | DEL をスキップして SET に委ねる（最終状態の整合のため） | — |
+
+### CLASS_BASED_NEXT_HOP_GROUP_TABLE — SET 時の失敗パターン
+
+| 失敗条件 | 検出箇所 | 挙動 | retry |
+|---|---|---|---|
+| `members` が空または重複 | `getMembers()` L225-238 | `SWSS_LOG_ERROR("...members list is empty/not unique")` → `erase(it)` | なし |
+| NHG 数上限到達 | `doTask()` L100-103 | `SWSS_LOG_WARN("Reached next hop group limit.")` → `success=false` → `++it` | リソース解放後に自動 retry |
+| `selection_map` の MAP が未登録 | `CbfNhg::sync()` L319-325 | `SWSS_LOG_ERROR("FC to NHG map index %s does not exist")` → `return false` | MAP 登録後に自動 retry |
+| MAP が参照する最大 NH index がメンバー数以上 | `CbfNhg::sync()` L327-331 | `SWSS_LOG_ERROR("FC to NHG map references more NHG members than exist")` → `return false` | 自動 retry |
+| SAI `create_next_hop_group` 失敗（CBF） | `CbfNhg::sync()` L341-345 | `SWSS_LOG_ERROR("Failed to create CBF next hop group %s")` → `return false` | 自動 retry |
+| `syncMembers()` 失敗（CBF） | `CbfNhg::sync()` L369-373 | `SWSS_LOG_ERROR("Failed to sync CBF next hop group %s")` → `return false` | 自動 retry |
+| sync 成功後に temp NHG メンバーが存在 | `doTask()` L116-119 | `success = false` → `++it`（NHG は登録済み） | temp NHG 昇格後に自動 retry |
+
+### CLASS_BASED_NEXT_HOP_GROUP_TABLE — DEL 時の失敗パターン
+
+| 失敗条件 | 検出箇所 | 挙動 | retry |
+|---|---|---|---|
+| DEL 対象 CBF NHG が参照中（ref_count > 0） | `doTask()` L165-170 | `SWSS_LOG_WARN("Skipping removal ... which is still referenced")` → `++it` | 参照解除後に自動 retry |
+| DEL 対象 CBF NHG が未登録 | `doTask()` L157-163 | `SWSS_LOG_WARN("Deleting inexistent CBF NHG %s")` → `success = true` で消費（冪等） | なし |
+| SAI remove 失敗（CBF） | `CbfNhg::remove()` / `removeMembers()` | `false` → `success = false` → `++it` | 自動 retry |
+| DEL と同一キーに pending SET が存在 | `doTask()` L152-155 | DEL をスキップして SET に委ねる | — |
+
+### retry 挙動まとめ
+
+| シナリオ | retry 上限 | 解消トリガー |
+|---|---|---|
+| 再帰 NHG メンバー未登録 | なし（無制限） | 子 NHG の SET 処理後 |
+| NHG 数上限到達（SRv6） | なし（無制限） | ASIC リソース解放時 |
+| NHG 数上限到達（temp NHG） | なし（temp 経由で継続） | リソース解放後に完全 NHG へ昇格 |
+| DEL が参照カウントにブロック | なし（無制限） | 参照元（ROUTE_TABLE 等）の DEL 処理後 |
+| フィールド不正（混在・不一致） | **0 回**（即 erase） | CONFIG 修正 + 再投入が必要 |
+
+### 部分適用に関する注意
+
+`syncMembers()` は `ObjectBulker` による bulk create を使用する。bulk flush 後に個別 SAI ID を検証するため、一部成功・一部失敗の部分適用が発生しうる。失敗したメンバーは NULL ID のまま残り、成功メンバーのみ SAI に登録済みになる。NHG update 時に旧メンバー削除後・新メンバー追加前の瞬間、NHG は縮退した状態で ASIC に存在する。
+
+SRv6 NHG はリソース枯渇時に temporary group を作成しないため、枯渇中はルート解決そのものが保留される。非 SRv6 NHG は temporary group (1 NH のみ) を経由して ECMP なしでルート解決を継続するが、リソース解放まで ECMP 動作は失われる。
+<!-- /failure -->
+
+---
+
 ## 購読者
 
 | テーブル | 購読者 | SAI API |
