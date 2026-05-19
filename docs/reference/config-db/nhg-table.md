@@ -313,7 +313,7 @@ SRv6 NHG はリソース枯渇時に temporary group を作成しないため、
 
 ---
 
-<!-- hardcoded-constants -->
+<!-- constants -->
 ## ハードコード定数 (Phase E)
 
 `NhgOrch` (`orchagent/nhgorch.cpp`)・`CbfNhgOrch` (`orchagent/cbf/cbfnhgorch.cpp`)・`RouteOrch` (`orchagent/routeorch.cpp`) に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
@@ -380,7 +380,7 @@ else
 
 !!! note "Mellanox プラットフォームの除算ロジック"
     Mellanox 向けの `/= DEFAULT_MAX_ECMP_GROUP_SIZE` は「SAI が ECMP グループサイズ=1 を前提に返す最大グループ数」を「サイズ=32 を前提にした ECMP グループ数」に変換するワークアラウンドである（`routeorch.cpp:74-87` のコメント）。他プラットフォームでは除算なしで SAI 返値をそのまま使用する。
-<!-- /hardcoded-constants -->
+<!-- /constants -->
 
 ---
 
