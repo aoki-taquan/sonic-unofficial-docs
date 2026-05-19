@@ -328,6 +328,57 @@ sshd_config バリデーション成功時に `systemctl restart ssh` が発行�
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-sftp-pubsub.md`
+
+`SSH_SFTP` テーブルは CONFIG_DB に存在しないため、SFTP サブシステム固有の Redis 購読経路はない。SFTP に影響する通知は `SSH_SERVER` テーブルへの購読を経由する副産物に限られる。
+
+### 購読登録サマリ
+
+| 購読テーブル | 購読者 | 購読 API | ハンドラ | SFTP への影響 |
+|------------|--------|---------|---------|-------------|
+| `SSH_SERVER` | `hostcfgd` | `ConfigDBConnector.subscribe()` | `ssh_handler` → `policies_update()` | sshd_config 再生成時に `Subsystem sftp` 行がコピーで引き継がれる（変更なし） |
+| `SSH_SFTP`（非存在） | — | — | — | テーブルが未定義のため購読経路なし |
+
+`hostcfgd` の subscribe 登録（L2478）:
+
+```python
+self.config_db.subscribe('SSH_SERVER', make_callback(self.ssh_handler))
+```
+
+`SSH_SFTP` に対応するエントリは存在しない。
+
+### keyspace 通知フロー（SSH_SERVER 経由の間接影響）
+
+```
+config ssh-server policies authentication-retries 5
+  ↓ HSET "SSH_SERVER|POLICIES" authentication_retries "5"
+Redis keyspace PUBLISH "__keyspace@4__:SSH_SERVER|POLICIES"  "hset"
+  ↓ ConfigDBConnector.listen() がパターンマッチ
+ssh_handler(key="POLICIES", op=SET, data={...})
+  ↓ SshServer.policies_update() → set_policies()
+      copy2(sshd_config → sshd_config.tmp)
+      ※ Subsystem sftp 行はコピー元に存在 → tmp にそのまま引き継ぎ
+      SSH_CONFIG_NAMES のフィールドのみ書き換え（Subsystem キーなし）
+      sshd -T → OK → rename tmp → 本番
+      ※ Subsystem sftp 行は変更されないまま本番ファイルに保持
+```
+
+### 購読 API の種別
+
+`ConfigDBConnector.subscribe()` は swsscommon の `SubscriberStateTable`（channel ベース PUBLISH/SUBSCRIBE）ではなく、**Redis keyspace 通知（PSUBSCRIBE `__keyspace@<dbId>__:<table>|*`）** を使用する。CONFIG_DB は永続前提のため TTL は設定されない。
+
+- SFTP に関して Redis `PUBLISH` チャネルへの書き込みは発生しない
+- APPL_DB / STATE_DB の channel ベース通知経路もない
+- FLEX_COUNTER_DB / COUNTERS_DB への通知もなし
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2478 (SSH_SERVER subscribe 登録) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L2297-2301 (ssh_handler — policies_update + pamLimitsCfg) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L67-75 (SSH_CONFIG_NAMES — Subsystem キーなし) -->
+<!-- /pubsub -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
