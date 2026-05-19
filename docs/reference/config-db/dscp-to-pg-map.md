@@ -406,6 +406,66 @@ YANG バリデーションで強制される値域はコードではなく YANG 
 > **Evidence**: `qosorch.cpp:61,67,181-186,207,265-276,913-925,1956-1993,2086,2100,2193,2208-2224`; `tunneldecaporch.cpp:832-843`
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/dscp-to-pg-map-pubsub.md`
+
+`DSCP_TO_PG_MAP` テーブルは存在しないため、DSCP → PG マッピング機能を構成する 3 テーブル (`DSCP_TO_TC_MAP` / `TC_TO_PRIORITY_GROUP_MAP` / `PORT_QOS_MAP`) の通信メカニズムを記述する。
+
+### Producer/Consumer ペア
+
+3 テーブルはすべて CONFIG_DB から `QosOrch` が **直接購読**する。APPL_DB への中継は行わない。
+
+| 区間 | 方式 | チャンネル/パターン |
+|------|------|--------------------|
+| CONFIG_DB → QosOrch (DSCP_TO_TC_MAP) | `SubscriberStateTable` | `PSUBSCRIBE __keyspace@{config_db_id}__:DSCP_TO_TC_MAP\|*` |
+| CONFIG_DB → QosOrch (TC_TO_PRIORITY_GROUP_MAP) | `SubscriberStateTable` | `PSUBSCRIBE __keyspace@{config_db_id}__:TC_TO_PRIORITY_GROUP_MAP\|*` |
+| CONFIG_DB → QosOrch (PORT_QOS_MAP) | `SubscriberStateTable` | `PSUBSCRIBE __keyspace@{config_db_id}__:PORT_QOS_MAP\|*` |
+| QosOrch → SAI (マップ操作) | SAI API 直接呼び出し | `sai_qos_map_api->create_qos_map()` / `set_qos_map_attribute()` / `remove_qos_map()` |
+| QosOrch → SAI (ポートバインド) | SAI API 直接呼び出し | `sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP / TC_TO_PRIORITY_GROUP_MAP)` |
+
+### SubscriberStateTable の登録
+
+`orchdaemon.cpp:367-384` で `gQosOrch = new QosOrch(m_configDb, qos_tables)` として生成される。`qos_tables` ベクタに `CFG_DSCP_TO_TC_MAP_TABLE_NAME` (L370)、`CFG_TC_TO_PRIORITY_GROUP_MAP_TABLE_NAME` (L376)、`CFG_PORT_QOS_MAP_TABLE_NAME` (L374) が含まれる。`Orch` 基底クラスが各テーブル名に対して `addConsumer()` を呼び、`SubscriberStateTable` を生成する。初回起動時は `getKeys()` で既存エントリを先読みする。
+
+### select() ループと doTask 実行順序
+
+orchdaemon は `Select::select()` を 1000 ms タイムアウトで実行する。イベント受信時は `Consumer::drain()` → `QosOrch::doTask()` が呼ばれる。
+
+`QosOrch::doTask()` (`qosorch.cpp:2231-2252`) は**カスタム drain 順序**を実装する:
+
+1. `PORT_QOS_MAP` と `QUEUE` 以外のすべての Consumer (`DSCP_TO_TC_MAP`、`TC_TO_PRIORITY_GROUP_MAP`、`SCHEDULER` 等) を先に drain
+2. `PORT_QOS_MAP` を drain（参照先マップが揃った後に実行）
+3. 最後に `QUEUE` を drain
+
+この順序により `DSCP_TO_TC_MAP` / `TC_TO_PRIORITY_GROUP_MAP` の SAI 反映が常に `PORT_QOS_MAP` の `resolveFieldRefValue()` より先に行われ、`task_need_retry` を最小化する。
+
+`doTask(Consumer&)` の冒頭では `gPortsOrch->allPortsReady()` チェック (`qosorch.cpp:2258-2261`) があり、全ポート初期化完了まで全 QosOrch 処理を保留する。
+
+### データフロー図
+
+```
+CONFIG_DB[DSCP_TO_TC_MAP|<name>]  CONFIG_DB[TC_TO_PRIORITY_GROUP_MAP|<name>]
+  ↓ SubscriberStateTable                    ↓ SubscriberStateTable
+  ↓ PSUBSCRIBE keyspace@config_db:DSCP_TO_TC_MAP|*
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::drain() → QosOrch::doTask()
+  ↓   [allPortsReady() チェック]
+  ↓   [実行順序: DSCP_TO_TC_MAP / TC_TO_PRIORITY_GROUP_MAP → PORT_QOS_MAP → QUEUE]
+  ↓ handleDscpToTcTable()  /  handleTcToPgTable()
+    ↓ sai_qos_map_api->create_qos_map(SAI_QOS_MAP_TYPE_DSCP_TO_TC / TC_TO_PRIORITY_GROUP)
+    ↓ (PORT_QOS_MAP SET 時) sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP / TC_TO_PRIORITY_GROUP_MAP)
+ASIC (sairedis → ASIC_DB 経由)
+
+APPL_DB 書き込み: なし
+STATE_DB 書き込み: なし
+NotificationConsumer: なし
+```
+
+> **Evidence**: `orchdaemon.cpp:367-384`; `qosorch.cpp:2231-2261` (doTask 実行順序・allPortsReady ガード); `qosorch.cpp:1326-1344` (initTableHandlers)
+<!-- /pubsub -->
+
 ## 制約
 
 - `DSCP_TO_PG_MAP` テーブルは存在しないため、このキー名で CONFIG_DB に書き込んでも `qosorch` は無視する
