@@ -472,3 +472,56 @@ TAM 4 テーブル（`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_F
 <!-- evidence: sonic-net/sonic-swss-common/common/schema.h:408L (CFG_HIGH_FREQUENCY_TELEMETRY_PROFILE_TABLE_NAME 定義) -->
 <!-- evidence: sonic-net/sonic-swss-common/common/table.h:164L (DEFAULT_POP_BATCH_SIZE = 128) -->
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tam-platform.md`
+
+TAM 4 テーブル（`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_FEATURE_TABLE` / `TAM_INT_IFA_FLOW_TABLE`）の処理コードには `getenv("platform")` や `ASIC_VENDOR` 環境変数によるプラットフォーム固有分岐が**存在しない**。ただし TAM に関わる 2 つの主要処理経路はともに **SAI capability query** の結果でランタイムに有効/無効が決まるため、ベンダー SAI 実装によって動作差が生じる。
+
+### 1. Path Tracing TAM — SAI capability による有効/無効判定
+
+`PortsOrch::isPathTracingSupported()`（portsorch.cpp:576-631）は以下の 4 条件をすべて SAI capability query で確認する。いずれかが不成立の場合は Path Tracing TAM 機能全体を無効化する。
+
+| 条件 | SAI クエリ |
+|------|-----------|
+| Switch が `SAI_OBJECT_TYPE_TAM` をサポートする | `SAI_SWITCH_ATTR_SUPPORTED_OBJECT_TYPE_LIST` |
+| Port が `SAI_PORT_ATTR_PATH_TRACING_INTF` をサポートする | `querySwitchCapability` |
+| Port が `SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE` をサポートする | `querySwitchCapability` |
+| Port が `SAI_PORT_ATTR_TAM_OBJECT` をサポートする | `querySwitchCapability` |
+
+判定結果は STATE_DB `SWITCH_CAPABILITY` テーブルの `PATH_TRACING_CAPABLE` フィールドに書き込まれる（`portsorch.cpp:641,648`）。
+
+```
+STATE_DB:SWITCH_CAPABILITY
+  PATH_TRACING_CAPABLE = "true"  # SAI がすべての条件を満たす場合
+  PATH_TRACING_CAPABLE = "false" # いずれかの SAI capability が不成立の場合
+```
+
+Path Tracing をサポートしないプラットフォーム（多くのソフトウェアスイッチ・仮想スイッチ等）では `createPtTam()` が呼ばれず、SAI TAM オブジェクトが作成されない。
+
+### 2. High Frequency Telemetry TAM — SAI capability による有効/無効判定
+
+`HFTelOrch::isSupportedHFTel()`（hftelorch.cpp:168-260）は以下の SAI capability query を実施する。いずれかが失敗した場合は `NOTICE "HFTel disabled"` ログを出して HFTel 機能全体を無効化する。
+
+| チェック内容 | API |
+|------------|-----|
+| `sai_query_stats_st_capability`（`SAI_OBJECT_TYPE_PORT`）が `SUCCESS` / `BUFFER_OVERFLOW` | `sai_query_stats_st_capability` |
+| `SAI_TAM_COLLECTOR_ATTR_SRC_IP` 等 6 属性の create 能力 | `sai_query_attribute_capability` |
+| `SAI_SWITCH_ATTR_TAM_TEL_TYPE_CONFIG_CHANGE_NOTIFY` / `SAI_SWITCH_ATTR_TAM_OBJECT_ID` の set 能力 | `sai_query_attribute_capability` |
+| `SAI_TAM_TRANSPORT_TYPE_NONE` / `SAI_TAM_BIND_POINT_TYPE_SWITCH` の enum 値サポート | SAI メタデータ確認 |
+
+### 3. CONFIG_DB TAM 4 テーブルとプラットフォームの無関係性
+
+CVL（sonic-mgmt-common / Management Framework）によるバリデーションはプラットフォーム非依存の YANG スキーマ処理であり、プラットフォーム差は生じない。orchagent が TAM 4 テーブルを購読しないため、CONFIG_DB の設定値が SAI 動作に直接影響するパスは存在しない。
+
+### プラットフォーム差サマリ
+
+| 処理経路 | プラットフォーム固有コード分岐 | 有効化条件 |
+|---------|--------------------------|---------|
+| Path Tracing TAM（portsorch） | なし | SAI capability query 4 条件すべて成立 |
+| HFTelOrch TAM | なし | SAI capability query（streaming stats + TAM Collector 属性）成立 |
+| CVL バリデーション（Management Framework） | なし | プラットフォーム非依存（常に有効） |
+
+<!-- /platform -->
