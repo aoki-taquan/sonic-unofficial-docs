@@ -349,6 +349,72 @@ static map<sai_port_link_training_rx_status_t, string> link_training_rx_status_m
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## SET/DEL 副次 DB 書込み (Phase F)
+
+`STATE_DB PORT_TABLE` エントリの SET / DEL が引き起こす他 DB・他テーブル・他デーモンへの副次動作一覧。このテーブルは **書き込まれる側**（linksync / PortsOrch が書き手）であるため、副次効果は「他デーモンがこのテーブルの変化を読み取って自身の処理を進める」という形で現れる。
+
+### portmgrd のアンロック（STATE_DB → portmgrd → カーネル操作）
+
+| トリガーフィールド | 受信デーモン | 動作 | 出力先 |
+|-----------------|------------|------|--------|
+| `state = "ok"` (SET) | `portmgrd` | `isPortStateOk()` が true を返し、CONFIG_DB `PORT.admin_status` / `mtu` の適用を開始する。`ip link set dev <port> up/down` / `ip link set dev <port> mtu <val>` をカーネルに発行する | カーネル netdev（DB 書込みなし）[^f1] |
+| `state` フィールド消滅 (RTM_DELLINK → DEL) | `portmgrd` | `isPortStateOk()` が false を返し、以降の netdev 設定操作をスキップ・延期する | なし |
+
+`portmgr.cpp:40-54, 73-82, 163` で確認。portmgrd はイベントループで CONFIG_DB `PORT` の変更と STATE_DB `PORT_TABLE` 購読を同時に待ち受け、`state = "ok"` が確認できた時点でのみ netdev コマンドを発行する。
+
+### teammgrd のアンロック（STATE_DB → teammgrd → teamd プロセス）
+
+| トリガーフィールド | 受信デーモン | 動作 | 出力先 |
+|-----------------|------------|------|--------|
+| `state = "ok"` (SET) | `teammgrd` | `isPortStateOk(member)` が true を返し、保留中の `PORTCHANNEL_MEMBER` SET に対して `addLagMember()` を実行（teamd プロセスにポートを追加する `teamdctl` 呼び出し）する | teamd プロセス（カーネル LAG メンバー追加）[^f2] |
+| `state` フィールド消滅 (DEL) | `teammgrd` | `isPortStateOk()` が false を返し、LAG メンバー追加を次周回まで延期する | なし |
+
+`teammgr.cpp:67-80, 357` で確認。STATE_DB `PORT_TABLE_NAME` は `teammgrd` の起動時に `TableConnector` 経由で `SubscriberStateTable` として購読登録されている（`teammgrd.cpp:57-63`）。
+
+### intfmgrd のアンロック（STATE_DB → intfmgrd → APPL_DB / カーネル）
+
+| トリガーフィールド | 受信デーモン | 動作 | 出力先 |
+|-----------------|------------|------|--------|
+| `state = "ok"` (SET) | `intfmgrd` | `doPortTableTask()` が保留中の `INTF_TABLE` SET (IP アドレス / VRF 設定) を適用し、`ip addr add` 等を実行する。また `APPL_DB INTF_TABLE` に設定を書き込む | `APPL_DB INTF_TABLE` (ProducerStateTable)、カーネル netdev[^f3] |
+| `state = "ok"` (SET) でかつ LAG | `intfmgrd` | `STATE_LAG_TABLE_NAME` の同様のチェックも行われ、LAG インタフェース設定を適用する | 同上 |
+
+`intfmgr.cpp:1183, 686-695` で確認。intfmgrd は `STATE_PORT_TABLE_NAME` と `STATE_LAG_TABLE_NAME` の両方を `Consumer` として購読しており（`intfmgr.cpp:46-47`）、どちらの `state = "ok"` 受信でも対応する設定を適用する。
+
+### sflowmgr の速度追従（STATE_DB → sflowmgr → APPL_DB）
+
+| トリガーフィールド | 受信デーモン | 動作 | 出力先 |
+|-----------------|------------|------|--------|
+| `speed` (SET) | `sflowmgrd` / `SflowMgr` | `sflowProcessOperSpeed()` が oper speed を読み取り、sFlow サンプリングレートを再計算する。rate が変化した場合は `m_appSflowSessionTable.set(alias, fvs)` で APPL_DB を更新する | `APPL_DB SFLOW_SESSION_TABLE`[^f4] |
+
+`sflowmgr.cpp:167-211, 414-418` で確認。`sflowmgrd` は `STATE_PORT_TABLE_NAME` を `TableConnector` で購読しており（`sflowmgrd.cpp:32-38`）、`speed` フィールドの変化を受けてサンプリングレートを oper speed ベースで更新する。
+
+### buffermgrdyn の PG ヘッドルーム再計算（STATE_DB → buffermgrdyn → APPL_DB）
+
+| トリガーフィールド | 受信デーモン | 動作 | 出力先 |
+|-----------------|------------|------|--------|
+| `supported_speeds` (SET) | `buffermgrdyn` | `handlePortStateTable()` が `supported_speeds` の変化を検出し、auto-neg 有効かつ実効速度変化あり・ケーブル長設定済みの場合は `refreshPgsForPort()` を呼んで PG ヘッドルームを再計算する | `APPL_DB BUFFER_PG_TABLE` (headroom 更新)[^f5] |
+
+`buffermgrdyn.cpp:2224-2255` で確認。`m_bufferTableHandlerMap` に `STATE_PORT_TABLE_NAME → handlePortStateTable` が登録されており（`buffermgrdyn.cpp:451`）、`supported_speeds` 変化時のみ headroom 更新をトリガーする。
+
+### 副次効果なし（読み取り専用利用デーモン）
+
+以下のデーモンは STATE_DB `PORT_TABLE` を**読み取り専用**で参照するが、このテーブルへの書き込みをトリガーとした出力（DB への書込み等）を持たない:
+
+| デーモン | 用途 |
+|----------|------|
+| `natmgr` | NAT 設定適用前のポート状態確認（`m_statePortTable.get()`） |
+| `macsecmgr` | MACsec 設定前のポート状態確認（`m_statePortTable.get()`） |
+| `nbrmgr` | 近隣テーブル設定前のポート状態確認 |
+| `vlanmgr` | VLAN メンバー追加前のポート状態確認（`m_statePortTable.get()`） |
+
+[^f1]: `sonic-swss/cfgmgr/portmgr.cpp` — `isPortStateOk()`, `setPortAdminStatus()`, `setPortMtu()`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/portmgr.cpp>
+[^f2]: `sonic-swss/cfgmgr/teammgr.cpp` — `isPortStateOk()`, `doLagMemberTask()`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/teammgr.cpp>
+[^f3]: `sonic-swss/cfgmgr/intfmgr.cpp` — `doPortTableTask()`, STATE_PORT_TABLE_NAME 購読: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/intfmgr.cpp>
+[^f4]: `sonic-swss/cfgmgr/sflowmgr.cpp` — `sflowProcessOperSpeed()`, STATE_PORT_TABLE_NAME ハンドラ: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/sflowmgr.cpp>
+[^f5]: `sonic-swss/cfgmgr/buffermgrdyn.cpp` — `handlePortStateTable()`, `refreshPgsForPort()`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/buffermgrdyn.cpp>
+<!-- /side-effects -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
