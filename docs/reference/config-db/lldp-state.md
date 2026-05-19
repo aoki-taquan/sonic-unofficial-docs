@@ -512,6 +512,29 @@ LLDP テーブルへの書き込み自体はサービス再起動を伴わない
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/lldp-state-platform.md`
+> ソース: `sonic-buildimage/dockers/docker-lldp/supervisord.conf.j2`, `sonic-buildimage/dockers/docker-lldp/lldpd.conf.j2`, `sonic-buildimage/dockers/docker-lldp/lldpmgrd`, `sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py`
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | **影響なし** | LLDP は SAI 非経由。`lldpd` が OS netdev を直接操作するため ASIC ベンダーに依存しない |
+| multi-asic (namespace_id あり) | **影響あり** | lldpd が `Ethernet[0-9]*` のみ監視（`eth0` 除外）。各 ASIC namespace で独立した lldp コンテナが起動し、それぞれ独自の `LLDP_ENTRY_TABLE` を書き込む (`supervisord.conf.j2:52-56`) |
+| multi-asic — eth0 LLDP 設定 | **生成されない** | `lldpd.conf.j2:15` の `{% if not namespace_id %}` ガードにより、namespace 環境では eth0 の `portidsubtype local` が設定されない |
+| multi-asic — SNMP OID 重複 | **ワークアラウンド適用** | 同一 ifIndex が複数 namespace の timeMark で重複しないよう `time_mark = 0` をハードコード固定 (`ieee802_1ab.py:449-455`) |
+| multi-asic — sonic-snmpagent | **Namespace API 対応済み** | `Namespace.init_namespace_dbs()` / `get_sync_d_from_all_namespace()` で全 namespace の APPL_DB を横断取得 (`ieee802_1ab.py:118, 157, 182`) |
+| multi-asic — inband / recirc / backplane ポート | **LLDP 対象外** | `lldpmgrd` がこれらプレフィックスのポートをスキップするため `LLDP_ENTRY_TABLE` のキーとして現れない (`lldpmgrd:143-145`) |
+| VOQ chassis (supervisor + line cards) | 各 host で独立動作 | LLDP テーブルは host/namespace スコープ。集中管理機構なし |
+| VS (virtual switch / KVM) | **動作制限あり** | VS 環境では NIC が LLDP PDU を pass-through しないことが多く、`LLDP_ENTRY_TABLE` が空になる場合がある。sonic-snmpagent テストでは mock_tables を使用 |
+
+### multi-asic 構成での LLDP_ENTRY_TABLE スコープ
+
+multi-asic 環境では各 ASIC namespace が独立した docker-lldp コンテナを起動し、それぞれ固有の APPL_DB インスタンスに `LLDP_ENTRY_TABLE` を書き込む。`sonic-snmpagent` はすべての namespace の APPL_DB を横断して SNMP MIB を構築するが、`sonic-mgmt-common` (`lldp_app.go`) は単一 DB 接続のため namespace 間の集約はトランスポート層 (gnmi-server / rest-server) に委ねられる。
+
+<!-- /platform -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルトと dead field
 
