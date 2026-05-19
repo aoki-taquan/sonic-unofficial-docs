@@ -343,6 +343,22 @@ vrrpd が VRRP Advertisement パケット送信 (priority フィールド更新)
 > **Evidence**: HLD L219-225 (macvlanmgrd の役割)、HLD L461-492 (Modules Design and Flows)、HLD L268 (Consumer: macvlanmgrd)
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+**プラットフォーム差なし**: `VRRP_TRACK` テーブルへの書き込み・読み込みは ASIC 種別・multi-asic 構成・VOQ chassis 構成に依らない。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | VRRP_TRACK は SAI 非経由。macvlanmgrd が CONFIG_DB を購読し FRR `vrrpd` に vtysh 経由で設定を投入するのみ。ASIC との接点なし (HLD L219-225) |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `config/main.py` の `add_track_interface()` / `remove_track_interface()` は `is_multi_npu()` / namespace iteration を呼び出さない。VRRP は host-scope FRR 機能であり、`asicN` namespace を持たない (スキャン: `config/main.py:6993-7077`) |
+| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | VRRP_TRACK は host CONFIG_DB のみ参照。chassis 全体での集中管理機構はなく、各 host の macvlanmgrd が独立して vrrpd に設定を投入する |
+| SAI `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL` 未サポート ASIC | 間接的のみ | 当該 SAI capability 差は `vrrporch` / ASIC_DB 層の話であり、VRRP_TRACK → FRR vrrpd 経路には影響しない。VRRP_TRACK エントリ自体の書き込み・読み込みに差は出ない (HLD L519-520) |
+| ベンダー固有 FRR パッチ | なし | community master の `sonic-frr` は platform 分岐を持たない。`sonic-vrrp.yang` にも platform 条件付きフィールドは存在しない |
+
+詳細根拠は `meta/_intermediate/cdb-flow/vrrp-track-platform.md` を参照。
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: `sonic-utilities/config/main.py` (`add_track_interface()` L6993-7040, `remove_track_interface()` L7045-7077); `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` (CONFIG_DB changes L308-315, Uplink interface tracking L481-492); `SONiC/doc/vrrp/sonic-vrrp.yang` (VRRP_TRACK container L136-177). <https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py>
