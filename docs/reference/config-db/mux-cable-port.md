@@ -462,6 +462,65 @@ CONFIG_DB `MUX_CABLE` の SET が orchagent で処理された後、APPL_DB を�
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-platform.md`
+
+<!-- evidence:
+  sonic-swss/orchagent/muxorch.cpp:625-628,2192-2193,2233-2246
+  sonic-swss/orchagent/neighorch.cpp:78-105
+  sonic-linkmgrd/src/DbInterface.cpp:858-888
+-->
+
+### cable_type × ACL プログラム差
+
+| `cable_type` | ACL drop rule 動作 |
+|---|---|
+| `active-standby`（デフォルト）| standby 遷移時に `MuxAclHandler` を生成し `INGRESS_TABLE_DROP\|mux_acl_rule` を ASIC に設定 |
+| `active-active` | `aclHandler()` 冒頭の `cable_type_ == ACTIVE_ACTIVE` 分岐で即 `return true`（ACL プログラムを完全スキップ）|
+
+`active-active` 構成では ACL によるトラフィック遮断を行わず、両 ToR が同時に active として転送する。ACL テーブル `INGRESS_TABLE_DROP` が存在しない ASIC でも `active-active` ポートへの影響はない（`muxorch.cpp:625-628`）。
+
+### neighbor_mode × SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE サポート
+
+`neighbor_mode=prefix-route` の効果は ASIC の SAI ケーパビリティに依存する。
+
+| ASIC 能力 | `prefix_nbrs_supported_` | `neighbor_mode=prefix-route` 設定時の動作 |
+|---|---|---|
+| `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` 対応 | `true` | `MuxPrefixBasedNbrHandler` を使用。prefix ベースルーティングで host route を抑制 |
+| 非対応（SAI クエリ失敗 または `create_implemented=false`）| `false` | `neighbor_mode` を無視し `MuxNbrHandler`（host-route）で動作（**silent 降格**） |
+
+`prefix_nbrs_supported_` は `MuxOrch` 初期化時に `NeighOrch::isNoHostRouteSupported()` を 1 度だけ呼び出して確定する（`muxorch.cpp:2192`）。起動ログ: `"MuxOrch: prefix_nbrs_supported_ = true/false"` (`muxorch.cpp:2193`)。
+
+### prober_type × ASIC ICMP ハードウェアオフロード能力
+
+`prober_type` フィールドの実効値は `linkmgrd` が起動時に `STATE_DB.SWITCH_CAPABILITY.ICMP_OFFLOAD_CAPABLE` を参照して決定する（`DbInterface.cpp:858-888`）。
+
+| `ICMP_OFFLOAD_CAPABLE` 値 | `prober_type` 設定値 | linkmgrd 実効値 |
+|---|---|---|
+| `"true"` | `"hardware"` | `"hardware"`（有効） |
+| `"true"` | `"software"` | `"software"` |
+| それ以外 / キー不在 | `"hardware"` | 強制 `"software"`（**silent 降格**、`MUXLOGWARNING` のみ） |
+| それ以外 / キー不在 | `"software"` | `"software"` |
+
+`hw_offload_capable` は `static` 変数で初回チェック後に固定される（`DbInterface.cpp:858`）。実行中の ASIC ケーパビリティ変化には linkmgrd の再起動が必要。
+
+### active-active × soc_ipv4/soc_ipv6 skip_neighbors
+
+`cable_type=active-active` かつ `soc_ipv4` / `soc_ipv6` が設定されると、`handleMuxCfg()` がこれらの IP を `addSkipNeighbors()` で `skip_neighbors` セットに登録する（`muxorch.cpp:2218-2228, 2281`）。`isSkipNeighbor()` が `true` の IP は `MuxNbrHandler::updateTunnelRoute()` と `MuxPrefixBasedNbrHandler::update()` で tunnel route 更新をスキップし、xcvrd/gRPC 制御経路を維持する（`muxorch.cpp:1096, 1877`）。`active-standby` 構成では `soc_ipv4` / `soc_ipv6` が存在しても `skip_neighbors` への登録は行われない。
+
+### プラットフォーム差分サマリ
+
+| フィールド / 機能 | 影響条件 | 効果 |
+|---|---|---|
+| `cable_type=active-active` | `MuxCableType::ACTIVE_ACTIVE` 判定 | ACL drop rule スキップ |
+| `neighbor_mode=prefix-route` | `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` 非対応 ASIC | silent に host-route 動作 |
+| `prober_type=hardware` | `ICMP_OFFLOAD_CAPABLE != "true"` の ASIC | silent に software prober 降格 |
+| `soc_ipv4` / `soc_ipv6` 設定 | `cable_type=active-active` 時のみ有効 | skip_neighbors 登録 → tunnel NH 切替除外 |
+
+<!-- /platform -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 上位ページ: [`MUX_CABLE`](mux-cable.md) — テーブル全体の概要・値依存挙動・Phase 6/7/8 分析
