@@ -303,6 +303,72 @@ FDB_ORIGIN_MCLAG_ADVERTIZED = 8
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-side-effects.md`
+
+`FdbOrch::addFdbEntry()` / `deleteFdbEntry()` において `origin == FDB_ORIGIN_VXLAN_ADVERTIZED`（`APP_VXLAN_FDB_TABLE` 由来）のエントリが引き起こす副次 DB 書込を整理する。
+
+### STATE_DB — 書込なし
+
+`FDB_TABLE` (`STATE_FDB_TABLE_NAME`) への書込・削除は**ローカル MAC 専用**で、VXLAN_ADVERTIZED エントリは明示的に除外されている。
+
+```cpp
+// fdborch.cpp:1569-1572
+if (((fdbData.origin != FDB_ORIGIN_MCLAG_ADVERTIZED) &&
+     (fdbData.origin != FDB_ORIGIN_VXLAN_ADVERTIZED)) || ...)
+{
+    m_fdbStateTable.set(key, fvs);  // VXLAN エントリはここに入らない
+}
+```
+
+削除時も同様 (`fdborch.cpp:1723-1726`):
+
+```cpp
+if ((fdbData.origin != FDB_ORIGIN_VXLAN_ADVERTIZED) && ...)
+    m_fdbStateTable.del(key);      // VXLAN エントリはここに入らない
+```
+
+| 副次 DB | 書込有無 | 根拠 |
+|---------|---------|------|
+| STATE_DB `FDB_TABLE` | **なし** | VXLAN_ADVERTIZED を条件から除外 (`fdborch.cpp:1569-1582, 1723-1726`) |
+| STATE_DB `MCLAG_REMOTE_FDB_TABLE` | なし | MCLAG 専用パス（`FDB_ORIGIN_MCLAG_ADVERTIZED` のみ） |
+| COUNTERS_DB | なし | `fdborch.cpp` に COUNTERS_DB 直接書込なし |
+| FLEX_COUNTER_DB | なし | `fdborch.cpp` に FLEX_COUNTER_DB 直接書込なし |
+
+### CRM カウンタ更新
+
+VXLAN FDB エントリの追加・削除は **CRM `CRM_FDB_ENTRY` カウンタを更新**する。これは SAI FDB テーブルのリソース使用量追跡のためで、すべての origin で共通に実行される。
+
+```cpp
+// addFdbEntry() — fdborch.cpp:1617
+gCrmOrch->incCrmResUsedCounter(CrmResourceType::CRM_FDB_ENTRY);
+
+// deleteFdbEntry() — fdborch.cpp:1728
+gCrmOrch->decCrmResUsedCounter(CrmResourceType::CRM_FDB_ENTRY);
+```
+
+### VxlanTunnelOrch への通知（削除時のみ）
+
+`deleteFdbEntry()` は完了後に `notifyTunnelOrch(port)` を呼ぶ (`fdborch.cpp:1738`)。
+
+```cpp
+void FdbOrch::notifyTunnelOrch(Port& port)
+{
+    // port が TUNNEL 型かつ m_fdb_count == 0 の場合のみ
+    tunnel_orch->deleteTunnelPort(port);  // fdborch.cpp:1800
+}
+```
+
+- 削除された MAC を持つポートが VXLAN TUNNEL 型かつ FDB カウントが 0 に達した場合、`VxlanTunnelOrch::deleteTunnelPort()` が呼ばれ、動的に確立されたトンネルポート（SAI tunnel port オブジェクト）が解体される。
+- この副次効果は「最後の VXLAN FDB エントリが削除されたとき」に限定される。
+
+!!! note "STATE_DB への VXLAN FDB エントリ非反映について"
+    `show vxlan remotemac` は STATE_DB ではなく APP_DB の `VXLAN_FDB_TABLE` を直接参照する（`sonic-utilities/show/vxlan.py:360`）。VXLAN 学習 MAC が STATE_DB に存在しないことは設計上の意図であり、ローカル学習 MAC のみが `STATE_DB FDB_TABLE` で管理される。
+
+<!-- /side-effects -->
+
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp; sonic-swss/orchagent/fdborch.cpp -->
