@@ -412,6 +412,38 @@ Table PbhCapabilities::capTable(&stateDb, STATE_PBH_CAPABILITIES_TABLE_NAME);
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/pbh-state-platform.md -->
+
+### プラットフォーム識別
+
+`PbhCapabilities` は起動時に `parsePbhAsicVendor()` (`pbhcap.cpp:310-332`) で環境変数 `ASIC_VENDOR` を読み取り、対応する `PbhVendorFieldCapabilities` サブクラスをインスタンス化する。`ASIC_VENDOR` が未設定または `"mellanox"` 以外の値の場合は `"generic"` platform へ fallback する。
+
+| `ASIC_VENDOR` 値 | ロードされるクラス | fallback ログ |
+|---|---|---|
+| `"mellanox"` | `PbhMellanoxFieldCapabilities` | なし |
+| それ以外 / 未設定 | `PbhGenericFieldCapabilities` | `SWSS_LOG_WARN("Failed to parse ASIC vendor: fallback to generic platform")` |
+
+### Generic vs Mellanox の STATE_DB 書き込み差異
+
+`PBH_CAPABILITIES` の 4 サブキーのうち、`|table` / `|rule` / `|hash-field` は Generic と Mellanox で内容が同一。差が出るのは `|hash` サブキーの `hash_field_list` フィールドのみ。
+
+#### PBH_CAPABILITIES|hash
+
+| フィールド | Generic | Mellanox | コード根拠 |
+|---|---|---|---|
+| `hash_field_list` | `"UPDATE"` | `""` (空) | Generic: `L123` に `hash.hash_field_list.insert(UPDATE)`。Mellanox: 対応行なし (`L126-141`) |
+
+> **Mellanox 固有制約**: `PBH_CAPABILITIES|hash` の `hash_field_list` が空文字列になるため、`config pbh hash update` が `pbh_capabilities_query()` の検証で拒否される。`config pbh hash` サブコマンドの UPDATE 操作は Mellanox 環境では実行不可。
+
+#### 他サブキーの差異なし
+
+`PBH_CAPABILITIES|table` / `|rule` / `|hash-field` は両 platform で同一の値が書き込まれる (`pbhcap.cpp:107-124` vs `pbhcap.cpp:126-141` を比較)。
+
+<!-- /platform -->
+
 ## 関連 CONFIG_DB / CLI
 
 - 設定元: [`PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD`](pbh.md) (CONFIG_DB)
