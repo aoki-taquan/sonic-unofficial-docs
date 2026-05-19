@@ -186,6 +186,67 @@ show mclag unique-ip
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-ordering.md`
 <!-- /ordering -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: sonic-swss/mclagsyncd/mclaglink.h L54-59 / sonic-swss/mclagsyncd/mclaglink.cpp L190-378,435-463,1088-1181 / sonic-buildimage/src/iccpd/src/mlacp_link_handler.c L3186-3293 / sonic-buildimage/src/iccpd/src/port.c L382-397 -->
+
+### mclagsyncdSendMclagUniqueIpCfg() のプラットフォーム差
+
+`mclagsyncdSendMclagUniqueIpCfg()` (`mclaglink.cpp:1088-1181`) には `getenv("platform")` や ASIC 識別コードが一切存在しない。SET/DEL を `MCLAG_CFG_OPER_ADD` / `MCLAG_CFG_OPER_DEL` に変換して `MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_UNIQUE_IP` メッセージを TCP IPC で iccpd へ送信するのみ。**全プラットフォーム共通**。
+
+### iccpd (iccp_mclagsyncd_mclag_unique_ip_cfg_handler) のプラットフォーム差
+
+`mlacp_link_handler.c:3186-3293` にプラットフォーム識別コードは存在しない。処理は以下の 2 種すべてが共通:
+
+1. `sys->unq_ip_if_list` への ADD/DEL (in-memory リスト管理)
+2. `local_if_is_l3_mode(lif)` 判定 → `update_vlan_if_mac_on_standby()` / `recover_vlan_if_mac_on_standby()` 呼び出し
+
+`local_if_is_l3_mode()` (`port.c:382-397`) は `ipv4_addr != 0 || ipv6_addr != null || master_ifindex != 0` という純粋なカーネルネットワークスタック状態判定であり、ASIC 依存性なし。
+
+### setIntfMac() のプラットフォーム差
+
+`setIntfMac()` (`mclaglink.cpp:435-463`) は `getenv("platform")` を持たない。STANDBY ロールかつ L3 モードの VLAN IF に対して iccpd が送信する `MCLAG_MSG_TYPE_SET_INTF_MAC` を受け、`APPL_DB INTF_TABLE|<vlan_if>` の `mac_addr` を書き換えるだけ。**全プラットフォーム共通**。
+
+### setPortIsolate() との関係（間接的影響）
+
+MCLAG_UNIQUE_IP 処理自体は `setPortIsolate()` を呼ばないが、UNIQUE_IP を使用する環境では MCLAG ポート isolation も設定されることが多い。`setPortIsolate()` (`mclaglink.cpp:190-378`) はプラットフォーム別に以下の分岐を持つ（MCLAG_UNIQUE_IP テーブル処理とは独立）:
+
+```cpp
+// mclaglink.h:54-59
+#define BRCM_PLATFORM_SUBSTRING   "broadcom"
+#define BFN_PLATFORM_SUBSTRING    "barefoot"
+#define CTC_PLATFORM_SUBSTRING    "centec"
+#define CLX_PLATFORM_SUBSTRING    "clounix"
+#define MRVL_PRST_PLATFORM_SUBSTRING "marvell-prestera"
+#define MRVL_TL_PLATFORM_SUBSTRING   "marvell-teralynx"
+```
+
+| `platform` 環境変数 | port isolation の書込先 | 除外ポート |
+|---|---|---|
+| `broadcom` / `barefoot` / `centec` / `clounix` / `marvell-prestera` / `marvell-teralynx` | `APPL_DB ISOLATION_GROUP_TABLE\|MCLAG_ISO_GRP` (TYPE=bridge-port) | MEMBERS から `Ethernet` 系を除外 |
+| `mellanox` / `vs` / その他未定義 | `APPL_DB ACL_TABLE_TABLE\|mclag` + `ACL_RULE_TABLE\|mclag:mclag` (type=L3, PACKET_ACTION=DROP) | OUT_PORTS から `PortChannel` 系を除外 |
+
+MCLAG_UNIQUE_IP の ConfigDB エントリ自体は全プラットフォームで同一スキーマだが、ピア間 isolation に ACL を使う `mellanox` 等ではその ACL リソースが 1 テーブル消費される点は付随的な差異として認識しておくこと。
+
+### multi-ASIC / VoQ chassis
+
+`mclagsyncd` の UNIQUE_IP 処理 (`MclagLink::mclagsyncdSendMclagUniqueIpCfg`) は single-ASIC 前提で実装されており、VoQ chassis / multi-ASIC 構成での動作保証は明示されていない。`MclagLink` コンストラクタ (`mclaglink.cpp:1795-1823`) は単一の `CONFIG_DB` / `APPL_DB` / `STATE_DB` を参照する設計。
+
+### まとめ
+
+| 観点 | プラットフォーム差 |
+|---|---|
+| `mclagsyncdSendMclagUniqueIpCfg()` (CONFIG_DB → TCP IPC) | **差なし** (platform 識別コード 0 件) |
+| `iccp_mclagsyncd_mclag_unique_ip_cfg_handler()` (iccpd 側) | **差なし** (platform 識別コード 0 件) |
+| `local_if_is_l3_mode()` (L3 モード判定) | **差なし** (カーネル状態判定のみ) |
+| `setIntfMac()` (APPL_DB INTF_TABLE 書込) | **差なし** (platform 分岐なし) |
+| `setPortIsolate()` (port isolation — UNIQUE_IP とは独立) | `broadcom`/`barefoot`/`centec`/`clounix`/`marvell-*` → `ISOLATION_GROUP_TABLE`、`mellanox`/その他 → ACL fallback |
+| multi-ASIC / VoQ | 動作保証なし (single-ASIC 前提設計) |
+
+> 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-platform.md`
+<!-- /platform -->
+
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
