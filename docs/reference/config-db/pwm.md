@@ -281,6 +281,90 @@ telemetry タイマーが満了するたびに `clearSingleWm()` が呼ばれ、
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `sonic-swss/orchagent/watermarkorch.cpp`、`sonic-swss/orchagent/orchdaemon.cpp`、`sonic-utilities/scripts/watermarkstat` を精読 (2026-05-19)
+
+### Producer/Consumer ペア
+
+`WATERMARK_TABLE` は CONFIG_DB → COUNTERS_DB への**直接経路**をとる。APPL_DB への中継は行わない（クリア要求通知チャネルを除く）。
+
+| 区間 | 方式 | チャンネル / パターン |
+|------|------|----------------------|
+| CONFIG_DB → WatermarkOrch | `SubscriberStateTable` | `__keyspace@4__:WATERMARK_TABLE\|*` |
+| CONFIG_DB → WatermarkOrch | `SubscriberStateTable` | `__keyspace@4__:FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` / `PG_WATERMARK` |
+| WatermarkOrch → COUNTERS_DB | `Table::set()` 直接書き込み | `PERIODIC_WATERMARKS` / `PERSISTENT_WATERMARKS` / `USER_WATERMARKS` |
+| watermarkstat → WatermarkOrch | `APPL_DB.publish()` (Redis Pub/Sub) | `WATERMARK_CLEAR_REQUEST` チャンネル |
+| CONFIG_DB 書き込み側 | `watermarkcfg` CLI | `ConfigDBConnector.mod_entry('WATERMARK_TABLE', 'TELEMETRY_INTERVAL', ...)` |
+
+### SubscriberStateTable の動作
+
+`WatermarkOrch` は `orchdaemon.cpp:432-437` で次の 2 テーブルを同一インスタンスに登録して起動する:
+
+```cpp
+vector<string> wm_tables = {
+    CFG_WATERMARK_TABLE_NAME,      // "WATERMARK_TABLE"
+    CFG_FLEX_COUNTER_TABLE_NAME    // "FLEX_COUNTER_TABLE"
+};
+WatermarkOrch *wm_orch = new WatermarkOrch(m_configDb, wm_tables);
+```
+
+`Orch` 基底クラスが各テーブルに対して `SubscriberStateTable` を生成し、CONFIG_DB（DB ID = 4）の keyspace notification (`PSUBSCRIBE __keyspace@4__:<table>|*`) でエントリ変化を検出する。`doTask(Consumer &consumer)` が呼ばれ、テーブル名で分岐して `handleWmConfigUpdate()` / `handleFcConfigUpdate()` に振り分ける (`watermarkorch.cpp:72-78`)。
+
+### NotificationConsumer — WATERMARK_CLEAR_REQUEST チャンネル
+
+`WatermarkOrch` コンストラクタ (`watermarkorch.cpp:35-39`) が APPL_DB 上に `NotificationConsumer` を登録する:
+
+```cpp
+m_clearNotificationConsumer = new swss::NotificationConsumer(
+    m_appDb.get(), "WATERMARK_CLEAR_REQUEST");
+auto clearNotifier = new Notifier(m_clearNotificationConsumer, this, "WM_CLEAR_NOTIFIER");
+Orch::addExecutor(clearNotifier);
+```
+
+`watermarkstat -c` コマンドが `APPL_DB.publish('WATERMARK_CLEAR_REQUEST', json.dumps((op, wm_type)))` でメッセージを送信し、`doTask(NotificationConsumer&)` が `op`(`"PERSISTENT"` / `"USER"`) と `data`（クリア対象 WM 種別）を受け取って対応 COUNTERS_DB テーブルをゼロクリアする。
+
+### SelectableTimer
+
+telemetry タイマー (`m_telemetryTimer`) はコンストラクタで `DEFAULT_TELEMETRY_INTERVAL = 120` 秒で初期化される。`doTask(SelectableTimer&)` がタイマー満了ごとに呼ばれ、`PERIODIC_WATERMARKS` テーブルの全 PG/Queue/BufferPool OID に `"0"` を書き込む。
+
+### select() ループと実行順序
+
+`orchdaemon` の主ループは `Select::select()` を `SELECT_TIMEOUT = 1000 ms` タイムアウトで実行する。`SubscriberStateTable` イベント、`NotificationConsumer` イベント、`SelectableTimer` タイムアウトが同じ `Select` ループで処理される。`doTask()` の冒頭で `!gPortsOrch->allPortsReady()` が true の間は即 return し、`m_toSync` キューにイベントが蓄積される。
+
+### データフロー図
+
+```
+watermarkcfg -c <秒>
+  ↓ ConfigDBConnector.mod_entry('WATERMARK_TABLE', 'TELEMETRY_INTERVAL', {'interval': <秒>})
+  ↓
+CONFIG_DB[WATERMARK_TABLE|TELEMETRY_INTERVAL]
+  ↓ SubscriberStateTable (keyspace notification)
+orchdaemon select() loop (SELECT_TIMEOUT=1000ms)
+  ↓ Consumer::drain() → WatermarkOrch::doTask(Consumer&)
+  ↓   handleWmConfigUpdate("TELEMETRY_INTERVAL", fvt)
+  ↓     m_telemetryTimer->setInterval(new_interval)
+  ↓     m_timerChanged = true
+  ↓
+SelectableTimer (周期: interval 秒) → doTask(SelectableTimer&)
+  ↓ clearSingleWm(m_periodicWatermarkTable, ..., m_pg_ids)
+  ↓ clearSingleWm(m_periodicWatermarkTable, ..., m_unicast_queue_ids)
+  ↓ ...
+    ↓ COUNTERS_DB[PERIODIC_WATERMARKS] に "0" を書き込む
+
+watermarkstat -c (クリア要求)
+  ↓ APPL_DB.publish('WATERMARK_CLEAR_REQUEST', '["PERSISTENT", "PG_HEADROOM"]')
+  ↓
+NotificationConsumer → WatermarkOrch::doTask(NotificationConsumer&)
+  ↓ clearSingleWm(m_persistentWatermarkTable, ...)
+    ↓ COUNTERS_DB[PERSISTENT_WATERMARKS] に "0" を書き込む
+
+APPL_DB 書き込み: なし（WATERMARK_CLEAR_REQUEST はキーなし通知チャンネルのみ）
+```
+
+<!-- /pubsub -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
