@@ -383,6 +383,44 @@ YANG の `sonic-types.yang` で定義された `hash-algorithm` typedef の列�
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/switch-hash-side-effects.md`
+> ソース: `sonic-swss/orchagent/switchorch.cpp` L750-942
+
+`SWITCH_HASH` の SET/DEL を受けた `SwitchOrch` が書き込む副次 DB を示す。cfgmgr 中間層はなく [CONFIG_DB](../../reference/glossary.md#term-config_db) → orchagent 直結。**[STATE_DB](../../reference/glossary.md#term-state_db) / APPL_DB への書き込みは一切ない**。CRM カウンタ・FlexCounter も使用しない。
+
+### SET — hash field list 適用
+
+| 操作 | 対象 DB / テーブル | 属性 | 条件 |
+|------|------------------|------|------|
+| `sai_hash_api->set_hash_attribute(SAI_HASH_ATTR_NATIVE_HASH_FIELD_LIST, ...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_HASH` | hash OID の field-list | `ecmp_hash` / `lag_hash` SET 成功時 (`switchorch.cpp:750-769`) |
+| `sai_switch_api->set_switch_attribute(SAI_SWITCH_ATTR_ECMP_DEFAULT_HASH_ALGORITHM, ...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_SWITCH` | ECMP hash algorithm | `ecmp_hash_algorithm` SET 成功時 (`switchorch.cpp:771-780`) |
+| `sai_switch_api->set_switch_attribute(SAI_SWITCH_ATTR_LAG_DEFAULT_HASH_ALGORITHM, ...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_SWITCH` | LAG hash algorithm | `lag_hash_algorithm` SET 成功時 (`switchorch.cpp:771-780`) |
+| `swHlpr.setSwHash(hash)` | **メモリ内キャッシュのみ** | — | SAI SET 全成功後 (`switchorch.cpp:940`) |
+
+### DEL — 常に拒否
+
+`DEL_COMMAND` を受けると `SWSS_LOG_ERROR` のみ。STATE_DB / APPL_DB への書き込みなし（既存「失敗挙動」節参照）。
+
+### STATE_DB / ERROR_TABLE への書き込み: なし
+
+`doCfgSwitchHashTableTask()` はいかなる結果でも STATE_DB / `ERROR_TABLE` にステータスを書き込まない。失敗検出は syslog (`SWSS_LOG_ERROR` / `SWSS_LOG_WARN`) のみ。
+
+### 副次書き込みサマリ
+
+| 副次書き込み先 | 内容 | 条件 |
+|--------------|------|------|
+| ASIC_DB (SAI_OBJECT_TYPE_HASH) | hash field-list 更新 | `ecmp_hash` / `lag_hash` SET 成功 |
+| ASIC_DB (SAI_OBJECT_TYPE_SWITCH) | hash algorithm 属性更新 | `ecmp_hash_algorithm` / `lag_hash_algorithm` SET 成功 |
+| メモリ内 `swHlpr` キャッシュ | 内部状態更新 | 全 SAI SET 成功後 |
+| STATE_DB | なし | — |
+| APPL_DB | なし | — |
+| COUNTERS_DB / CRM | なし | — |
+
+<!-- /side-effects -->
+
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
