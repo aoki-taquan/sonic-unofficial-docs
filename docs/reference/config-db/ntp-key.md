@@ -436,3 +436,49 @@ CLI / gNMI 経由の CONFIG_DB 書き込み時に YANG スキーマが検証さ�
 
 詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-constants.md`。
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次ファイル書込 (Phase F)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd NtpCfg.ntp_srv_key_update() / sonic-buildimage/files/image_config/chrony/chrony.keys.j2 -->
+
+`NTP_KEY` 変更時に発生する APPL_DB / STATE_DB への副次書込、および主作用であるファイル書込を整理する。
+
+### APPL_DB / STATE_DB への副次書込
+
+**0 件。** `NtpCfg` は `ProducerStateTable` / `NotificationProducer` 等の DB 書込メンバを保有せず、`NTP_KEY` 変更を APPL_DB・STATE_DB・COUNTERS_DB・FLEX_COUNTER_DB いずれにも伝播しない。
+
+### ファイル書込: `/etc/chrony/chrony.keys`
+
+`NTP_KEY` SET / DEL を検出した `ntp_srv_key_update()` (`hostcfgd:1396-1402`) が `systemctl restart chrony` を発行すると、chrony サービスの `ExecStartPre` に登録された `chrony-config.sh` が下記を実行する:
+
+```
+CONFIG_DB 変更 (NTP_KEY)
+  → hostcfgd ntp_srv_key_handler
+    → NtpCfg.ntp_srv_key_update()      # hostcfgd:1366
+      → systemctl restart chrony        # hostcfgd:1398 / CHRONY_RESTART
+        → ExecStartPre: chrony-config.sh
+          → sonic-cfggen -d -t chrony.keys.j2 > /etc/chrony/chrony.keys
+          → chmod o-r /etc/chrony/chrony.keys   # chrony-config.sh:11
+```
+
+| 書込先ファイル | 書込内容 | 権限変更 | evidence |
+|-------------|---------|---------|---------|
+| `/etc/chrony/chrony.keys` | `NTP_KEY` テーブル全件を `<id> <TYPE> <decoded_value>` 形式で出力。`type` が falsy または `value` が falsy のエントリはスキップ。`value` は `b64decode` フィルタでデコード、`type` は `upper` で大文字化 | `chmod o-r`（others からの読取不可）を即時適用 | `chrony.keys.j2:15-17`、`chrony-config.sh:10-11` |
+
+### 副次ファイル書込: `/etc/chrony/chrony.conf`
+
+`systemctl restart chrony` により `chrony-config.sh` は `chrony.keys.j2` と **同時に** `chrony.conf.j2` も展開し `/etc/chrony/chrony.conf` を上書きする (`chrony-config.sh:10`)。`NTP_KEY` 変更が `chrony.conf` に影響するケース:
+
+| chrony.conf 変化 | 条件 | evidence |
+|----------------|------|---------|
+| `keyfile /etc/chrony/chrony.keys` 行の有無 | `NTP|global.authentication == 'enabled'` のときのみ出力 | `chrony.conf.j2:124-127` |
+
+`NTP_KEY` の各フィールドは `chrony.conf` に直接影響せず、鍵ファイルパス行 (`keyfile`) の有無は `NTP.global.authentication` フィールドのみで決定される。
+
+### NTP_KEY.trusted の dead-field 挙動
+
+`NTP_KEY.trusted` フィールドは `chrony.keys.j2` で参照されない（dead field）。chrony の trustedkey 設定は `NTP_SERVER.trusted == 'yes'` を集約した `trusted_str` (`chrony.keys.j2:8-13`) で制御されており、`NTP_KEY.trusted` の値は生成ファイルに影響を与えない。
+
+詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-side-effects.md`。
+<!-- /side-effects -->
