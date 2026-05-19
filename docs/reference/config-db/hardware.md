@@ -236,6 +236,26 @@ community sonic-swss は `HARDWARE` テーブルを読み取らないため、**
 詳細探索証跡: `meta/_intermediate/cdb-flow/hardware-constants.md`
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`HARDWARE|ACCESS_LIST` は CONFIG_DB へ**書き込まれる側**のテーブルである。community sonic-swss/orchagent がこのテーブルを購読しない（dead consumer）ため、書込みに起因して他の DB（STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB / ASIC_DB 等）へ副次的なエントリが書き込まれることはない。
+
+| 副次 DB | 書込有無 | 根拠 |
+|---|---|---|
+| STATE_DB | なし | `orchagent/aclorch.cpp` 全体で `HARDWARE` / `COUNTER_MODE` / `LOOKUP_MODE` / `TCAM_SHARING` の参照 0 件。STATE_DB への書込パスは存在しない |
+| COUNTERS_DB | なし | `HARDWARE` テーブルは ACL カウンタ統計登録 (`registerFlexCounter`) に到達しない。dead consumer のため SAI OID 取得も行われない |
+| FLEX_COUNTER_DB | なし | FlexCounterManager への登録トリガは `AclOrch::doAclRuleTask()` 内にあるが、`HARDWARE` テーブルのエントリはこの処理に渡らない |
+| ASIC_DB | なし | SAI ACL API 呼出の前提となる `AclOrch` のルール作成パスへ到達しない |
+| APPL_DB | なし | `HARDWARE` テーブルを転送するプロデューサー実装は community リポジトリ内に存在しない |
+
+### ベンダー実装での副次書込（対象外）
+
+Dell 等のベンダー向け gNMI/translib スタック（`sonic-mgmt-common` transformer 層の vendored 拡張）では `HARDWARE|ACCESS_LIST` の読み書きに伴い何らかの STATE_DB / ASIC_DB 書込が発生しうる。ただし当該コードは community リポジトリ外であり、本ページの調査対象外とする。
+
+> **Evidence**: `sonic-swss/orchagent/aclorch.cpp` 全体を `HARDWARE`・`COUNTER_MODE`・`LOOKUP_MODE`・`TCAM_SHARING`・`ACCESS_LIST` で grep → 0 件。`sonic-utilities`・`sonic-gnmi`（本番コード）でも同様 0 件。詳細は `meta/_intermediate/cdb-flow/hardware-side-effects.md` を参照。
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: sonic-net/sonic-gnmi `testdata/db_dump.json` @ eb635b7679b260c3fd0786a6d0734fc8e82c9a22
