@@ -36,6 +36,20 @@ related:
 !!! warning "YANG 未定義"
     `HARDWARE` テーブルは `sonic-yang-models` に対応 YANG モジュールが存在しない。スキーマの正本となるソースコードは community SONiC リポジトリ内には未確認。
 
+## 実装との乖離
+
+`HARDWARE|ACCESS_LIST` テーブルの主要な乖離は **community sonic-swss/orchagent がこのテーブルを購読していない**点である。
+
+| 乖離 | 期待（設計意図） | 実装 (community master) | 根拠 |
+|------|----------------|------------------------|------|
+| `COUNTER_MODE` の反映 | ACL カウンタ粒度を ASIC に設定する | `orchagent/aclorch.cpp` に参照 0 件。SAI API は呼ばれない | `sonic-swss/` 全体を grep して COUNTER_MODE 参照なし |
+| `LOOKUP_MODE` の反映 | TCAM ルックアップ戦略を ASIC に設定する | `orchagent/aclorch.cpp` に参照 0 件。SAI API は呼ばれない | `sonic-swss/` 全体を grep して LOOKUP_MODE 参照なし |
+| `TCAM_SHARING` の反映 | TCAM 共有グループを ASIC に設定する | `orchagent/aclorch.cpp` に参照 0 件。SAI API は呼ばれない | `sonic-swss/` 全体を grep して TCAM_SHARING 参照なし |
+| YANG モジュール | CVL によるスキーマ検証が行われる | YANG モジュール未定義。任意の文字列を書き込んでも CVL はエラーにならない | `sonic-yang-models/` に HARDWARE テーブル対応モジュールなし |
+| テーブル名の統一 | `HARDWARE|ACCESS_LIST` として使用 | testdata に `HARDWARE_TABLE|ACCESS_LIST`（アンダースコア区切り）変種も出現。community では両者とも dead consumer | `sonic-gnmi/testdata/db_dump.json` |
+
+community SONiC において `HARDWARE|ACCESS_LIST` は CONFIG_DB に書き込み可能だが、**いかなる orchagent / cfgmgr / hostcfgd もこれを読み取らず、ASIC / SAI へは一切影響しない**（dead consumer）。
+
 <!-- cdb-mermaid -->
 ### データフロー
 
