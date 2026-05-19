@@ -386,6 +386,41 @@ ASIC_DB への SAI 書き込み
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 証跡: `meta/_intermediate/cdb-flow/scheduler-orch-platform.md`
+
+`QosOrch::handleSchedulerTable()` のコード自体に ASIC ベンダー・`platform` / `sub_platform` 文字列・`gMySwitchType` に依存する処理分岐は**存在しない**。プラットフォーム差は SAI 層での属性サポート有無という形で間接的に現れる。
+
+### 実装コードは ASIC 非依存
+
+| 観点 | 影響 | 根拠 |
+|------|------|------|
+| ASIC ベンダー (Broadcom / Mellanox / Marvell / Cisco / Barefoot) | コード分岐なし — 同一パスを通る | `handleSchedulerTable()` L1347–1509 に `platform` 条件式ゼロ (`qosorch.cpp` 全文 grep) |
+| `sub_platform` (broadcom-dnx 等) | 影響なし | `qosorch.h` に `BRCM_DNX_PLATFORM_SUBSTRING` 等の参照なし |
+| multi-asic / namespace | SCHEDULER テーブルはホスト CONFIG_DB で namespace 統一。各 ASIC の orchagent が独立して処理するため名前空間間で SAI オブジェクト ID は分離 | `orchdaemon.cpp:384` — namespace ごとに addConsumer |
+| SmartSwitch DPU | 影響なし — QosOrch は DPU 固有の capability を参照しない | `qosorch.cpp` に `DPU` / `dpuorch` 参照なし |
+
+### VoQ モードの唯一の分岐（SCHEDULER 自体ではなく QUEUE バインド時）
+
+`gMySwitchType == "voq"` の条件分岐は `applySchedulerToQueueSchedulerGroup()` と `handleQueueTable()` に存在する（`qosorch.cpp:1637, 1715, 1772`）。VoQ モードでリモートシステムポート宛のキューには SAI スケジューラグループへのバインドがスキップされるが、**SCHEDULER SAI オブジェクトの作成（`create_scheduler()`）はスキップされない**。つまり SCHEDULER エントリは VoQ モードでも通常通り SAI に反映される。
+
+### SAI 層で現れるプラットフォーム差
+
+`handleSchedulerTable()` は SAI 属性をそのまま投入するため、ASIC が特定属性をサポートしない場合は SAI エラーとして返る:
+
+| フィールド / SAI 属性 | 代表的なプラットフォーム差 |
+|----------------------|--------------------------|
+| `type=DWRR` → `SAI_SCHEDULING_TYPE_DWRR` | 一部 ASIC（Marvell-Prestera 等）では DWRR 未サポートで `SAI_STATUS_NOT_SUPPORTED` → `handleSaiCreateStatus()` / `handleSaiSetStatus()` 経由で `task_failed` / `task_need_retry` |
+| `type=STRICT` → `SAI_SCHEDULING_TYPE_STRICT` | 全段 Strict Priority を制限する ASIC で `SAI_STATUS_NOT_SUPPORTED` の可能性あり |
+| `cir/pir/cbs/pbs` → `SAI_SCHEDULER_ATTR_MIN/MAX_BANDWIDTH_RATE/BURST_RATE` | 帯域制御系属性を SAI レベルで未実装の ASIC では set_scheduler_attribute() が `SAI_STATUS_NOT_IMPLEMENTED` を返す場合がある |
+
+!!! note "orchagent ログで確認"
+    SAI 非サポートが原因で SCHEDULER 設定が反映されない場合、`/var/log/swss/orchagent.log` に `fail to set scheduler attribute, id:<attr_id>` または `Failed to create scheduler profile` が記録される。ASIC SDK リリースノートで各属性のサポート状況を確認すること。
+
+<!-- /platform -->
+
 ## YANG-実装 Discrepancy まとめ
 
 | フィールド | YANG 定義 | qosorch 実装 | 分類 |
