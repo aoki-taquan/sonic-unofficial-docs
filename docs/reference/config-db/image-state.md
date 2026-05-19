@@ -320,6 +320,42 @@ Kubernetes 環境 (`FEATURE` テーブルで `set_owner=kube` が設定されて
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+<!-- evidence: sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py:511-525, sonic-gnmi/sonic_data_client/non_db_client.go:302-336, sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:292-306 -->
+
+### 購読方式: なし (Redis pub/sub 不使用 — ファイル直読み)
+
+`/etc/sonic/sonic_version.yml` は **Redis テーブルではなくファイルシステム上の静的 YAML ファイル**であるため、Redis keyspace notification / ConsumerStateTable / SubscriberStateTable は一切関与しない。全コンシューマはファイルを直接読み込む。
+
+| コンポーネント | 読み方式 | タイミング | 変更通知 |
+|---|---|---|---|
+| `sonic-py-common` (`get_sonic_version_info()`) | `open()` + `yaml.safe_load()` / `yaml.full_load()` | 初回呼び出し時 1 回、以降はプロセスグローバルキャッシュ | なし — ファイル変更を検知する inotify / polling も不使用 |
+| `sonic-gnmi` (`non_db_client.go`) | Go `os.ReadFile()` + YAML デシリアライズ | `sync.Once` で起動時 1 回のみ | なし — `InvalidateVersionFileStash()` はテスト用 API のみ |
+| `ctrmgrd.py` (`set_node_labels`) | `device_info.get_sonic_version_info()` 経由 | Kubernetes master 接続確立時 1 回 | なし |
+| `db_migrator.py` | `device_info.get_sonic_version_info()` 経由 | マイグレーション実行時 1 回 | なし |
+| `syncd_init_common.sh` | `python3 -c "import sonic_py_common..."` シェル呼び出し | syncd 起動スクリプト実行時 1 回 | なし |
+
+### ファイル変更の反映経路
+
+Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書き換えた場合の反映はプロセス再起動のみ:
+
+```
+(ビルド時) build_debian.sh → j2 → /etc/sonic/sonic_version.yml ← inotify なし
+                                                    ↓
+              プロセス起動時に os.open() / os.ReadFile() で 1 回読み込み
+                                                    ↓
+              sonic_ver_info グローバル変数 / sync.Once にキャッシュ
+              ← 以降の参照はキャッシュから。ファイル更新を自動検知しない
+```
+
+### APPL_DB / STATE_DB / SAI 中継
+
+直接は存在しない。`ctrmgrd` のみが例外で、Kubernetes 環境においてのみ `build_version` の値を `STATE_DB:KUBE_LABEL_TABLE|kube_labels.sonic_version` に書き込む（Phase F 参照）。この書き込みも Redis pub/sub トリガではなく、ctrmgrd 起動後の一度限りの API 呼び出し経由である。
+
+<!-- /pubsub -->
+
 ## 引用元
 
 [^1]: `sonic-buildimage/build_debian.sh` L642-654 — sonic_version.yml 生成処理。<https://github.com/sonic-net/sonic-buildimage/blob/master/build_debian.sh>
