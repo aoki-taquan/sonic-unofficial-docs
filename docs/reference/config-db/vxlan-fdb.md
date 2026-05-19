@@ -368,6 +368,70 @@ VXLAN_FDB_TABLE エントリ削除によって当該トンネルポートの FDB
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-pubsub.md`
+
+### テーブルの位置づけ（APP_DB）
+
+`VXLAN_FDB_TABLE` は **CONFIG_DB ではなく APP_DB** のテーブルである。このため CONFIG_DB テーブルで使われる `ConfigDBConnector.subscribe()` や `SubscriberStateTable`（keyspace 通知）ではなく、APP_DB の **`ProducerStateTable` → channel PUBLISH → `ConsumerStateTable` SUBSCRIBE** というパイプライン方式で通信する。
+
+### 書き込み側 — fdbsyncd の ProducerStateTable
+
+`fdbsyncd` はコンストラクタで `RedisPipeline` ベースの `ProducerStateTable` を初期化し、Linux netlink イベントに応じて書き込む:
+
+```cpp
+// fdbsync.cpp:25-26
+m_fdbTable(pipelineAppDB, APP_VXLAN_FDB_TABLE_NAME),
+// MAC 学習: fdbsync.cpp:676
+m_fdbTable.set(key, fvVector);
+// MAC 削除: fdbsync.cpp:645
+m_fdbTable.del(key);
+```
+
+`ProducerStateTable` は APP_DB の `APP_VXLAN_FDB_TABLE_CHANNEL@0` チャネルに PUBLISH する。warm-restart 中は `AppRestartAssist` がバッファし (`DEFAULT_FDBSYNC_WARMSTART_TIMER = 120 秒`)、完了後に reconciliation フェーズで差分を反映する。
+
+### 読み取り側 — FdbOrch の ConsumerStateTable
+
+`orchdaemon` が `FdbOrch` を APP_DB の `ConsumerStateTable` で登録する:
+
+```cpp
+// orchdaemon.cpp:226-235
+vector<table_name_with_pri_t> app_fdb_tables = {
+    { APP_FDB_TABLE_NAME,       FdbOrch::fdborch_pri },
+    { APP_VXLAN_FDB_TABLE_NAME, FdbOrch::fdborch_pri },  // ← VXLAN FDB
+    { APP_MCLAG_FDB_TABLE_NAME, FdbOrch::fdborch_pri }
+};
+gFdbOrch = new FdbOrch(m_applDb, app_fdb_tables, ...);
+```
+
+`FdbOrch::doTask()` が `table_name == APP_VXLAN_FDB_TABLE_NAME` を確認して VXLAN FDB 処理パスに入る (`fdborch.cpp:719`)。
+
+### 通信フロー
+
+```
+Linux カーネル netlink  RTM_NEWNEIGH / RTM_DELNEIGH
+  ↓ fdbsyncd netlink ハンドラ
+  ↓ m_fdbTable.set() / del()    (ProducerStateTable → RedisPipeline)
+  ↓ PUBLISH APP_VXLAN_FDB_TABLE_CHANNEL@0
+    + HSET APPL_DB:VXLAN_FDB_TABLE|<Vlan>:<mac>
+orchagent ConsumerStateTable: APP_VXLAN_FDB_TABLE_CHANNEL を SUBSCRIBE
+  ↓ select() → Consumer::execute() → FdbOrch::doTask()
+  ↓ doVxlanFdbTask()  (fdborch.cpp:778-900)
+  ↓ SAI FDB エントリ作成 / VxlanTunnelOrch トンネルポート取得
+```
+
+| 購読者 | 購読方式 | 購読テーブル | ハンドラ |
+|--------|---------|------------|--------|
+| `orchagent` (`FdbOrch`) | `ConsumerStateTable` (channel SUBSCRIBE) | `VXLAN_FDB_TABLE` (APP_DB) | `doVxlanFdbTask()` |
+
+`FdbOrch` 以外で `VXLAN_FDB_TABLE` を購読するプロセスは存在しない。
+
+> **Evidence**: `sonic-swss/fdbsyncd/fdbsync.cpp:25-26,645,676` (ProducerStateTable 初期化・set/del)、`sonic-swss/orchagent/orchdaemon.cpp:226-235` (FdbOrch 登録)、`sonic-swss/orchagent/fdborch.cpp:719,778-900` (doTask ルーティング・doVxlanFdbTask); 詳細分析 `meta/_intermediate/cdb-flow/vxlan-fdb-pubsub.md`
+
+<!-- /pubsub -->
+
 ## 例外条件・特殊挙動
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp; sonic-swss/orchagent/fdborch.cpp -->
