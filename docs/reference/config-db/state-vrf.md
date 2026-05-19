@@ -456,6 +456,53 @@ consumer 側（on-demand polling、doTask() イテレーション内）
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`
+> 詳細証跡: `meta/_intermediate/cdb-flow/state-vrf-platform.md`
+
+`VRF_TABLE` / `VRF_OBJECT_TABLE` の書き込みロジック自体はスイッチタイプ非依存だが、**どのテーブルが存在するか**は VRF の種別（通常 VRF / mgmt VRF / VNET VRF）と起動モードによって異なる。
+
+### mgmt VRF — VRF_TABLE のみ存在、VRF_OBJECT_TABLE は不在
+
+mgmt VRF を有効にした構成では `vrfmgrd` が `VRF_TABLE|mgmt` を書き込む。一方 `VRFOrch` は mgmt VRF の APP_DB エントリを受信しても `sai_virtual_router_api->create_virtual_router()` を呼ばない（起動時に生成される Switch デフォルト VR を使用するため）。この結果:
+
+| テーブル | mgmt VRF | 通常 VRF |
+|---------|----------|---------|
+| `VRF_TABLE\|<name>` | 存在する | 存在する |
+| `VRF_OBJECT_TABLE\|<name>` | **存在しない** | 存在する |
+
+さらにルーティングテーブル ID の払い出し方法も mgmt VRF のみ異なる:
+
+```cpp
+// vrfmgr.cpp:176-181
+if (vrfName == MGMT_VRF)
+{
+    uint32_t table_id = MGMT_VRF_TABLE_ID;  // 固定値 6000
+    ...
+}
+// 通常 VRF: getFreeTable() で 1001-5097 の範囲から動的払い出し
+```
+
+### mgmt VRF の Linux デバイス削除スキップ（cold boot）
+
+`processExistingVrfs()` （vrfmgr.cpp:73-79）は、cold boot 時にカーネル上の既存 VRF デバイスを削除して再作成するが、`mgmt` という名前の VRF デバイスだけはスキップする。これはシステム管理インタフェースの継続性を保つための例外処理であり、他プラットフォームには存在しない。
+
+### VNET VRF — VRF_TABLE のみ存在、VRF_OBJECT_TABLE は不在
+
+VXLAN EVPN NVO 構成で作成される VNET VRF は `vrfmgrd` が `VRF_TABLE|<vnet_vrf>` を書き込むが、VRFOrch ではなく VNETOrch が管理するため `VRF_OBJECT_TABLE` が書き込まれない（vrfmgr.cpp:308, 319）。VNET VRF の削除では `isVrfObjExist()` チェックをスキップし、直接 `m_stateVrfTable.del()` を実行する（vrfmgr.cpp:350-351）。
+
+### warm-reboot — ルーティングテーブル ID の引き継ぎ
+
+`WarmStart::isWarmStart()` が true の場合、`processExistingVrfs()` でカーネルから読み取った既存 VRF のルーティングテーブル ID を引き継ぎ、`ip link del` を実行しない（vrfmgr.cpp:65-69）。`VRF_TABLE` / `VRF_OBJECT_TABLE` への書き込み自体は warm/cold 共通のパスで発生する。
+
+### gMySwitchType / platform 環境変数 / SmartSwitch との非依存性
+
+`vrforch.cpp` および `vrfmgrd.cpp` には `gMySwitchType`、`platform` 環境変数チェック、SmartSwitch / fabric ポート分岐が存在しない。VOQ シャーシや SmartSwitch 構成においても、VRF_TABLE / VRF_OBJECT_TABLE の書き込みロジックは変化しない。
+
+<!-- /platform -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
