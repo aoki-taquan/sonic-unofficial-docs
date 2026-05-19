@@ -217,6 +217,81 @@ Redis Hash 内の **フィールド名** が接続識別子 (connection key)、*
 -->
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+> **調査根拠**: `gnmi_server/connection_manager.go`, `telemetry/telemetry.go` 全行精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/gnmi-state-constants.md`
+
+`TELEMETRY_CONNECTIONS` テーブルの動作に関わる値のうち、CONFIG_DB / YANG から制御できずソースに固定されている定数をまとめる。
+
+### テーブル名定数 (`connection_manager.go:16`)
+
+```go
+const table = "TELEMETRY_CONNECTIONS"
+```
+
+STATE_DB 上の Redis Hash キー名。`HSet` / `HDel` / `HGetAll` のすべての呼び出しでこの定数が使用される。CONFIG_DB から変更する手段はない。
+
+### STATE_DB 参照先文字列 (`connection_manager.go:34-39`)
+
+| 定数文字列 | 使用箇所 | 説明 |
+|-----------|---------|------|
+| `"STATE_DB"` | `GetDbTcpAddr("STATE_DB", ns)` / `GetDbId("STATE_DB", ns)` | 接続先 DB の名前解決に使用。CONFIG_DB / YANG から変更不可 |
+
+### Hash value 固定値 (`connection_manager.go:116`)
+
+```go
+rclient.HSet(context.Background(), table, key, "active")
+```
+
+接続登録時の Redis Hash value は常に文字列 `"active"` 固定。接続状態 (`established` / `idle` 等) は存在せず、**エントリの存在自体**が接続中の証拠となる設計。この文字列は YANG にも CONFIG_DB フィールドにも定義されておらず、`connection_manager.go` のみに存在する。
+
+### threshold デフォルト値 (`telemetry.go:187`)
+
+```go
+Threshold: fs.Int("threshold", 100, "max number of client connections"),
+```
+
+| 値 | 意味 |
+|----|------|
+| `100` | CLI フラグのデフォルト同時接続上限 |
+| `0` | 上限なし（無制限モード） |
+
+CONFIG_DB の `GNMI\|gnmi.threshold` が設定されていない場合、この `100` が使用される。STATE_DB に書き込まれる値ではなく、エントリ数の上限として機能する。
+
+### connection key 生成の正規表現 (`connection_manager.go:95`)
+
+```go
+regexStr := "(?:target|element):\"([a-zA-Z0-9-_*]*)\""
+```
+
+Subscribe リクエストの gNMI query 文字列から `target` / `element` の値を抽出するための正規表現。抽出できる文字種は `[a-zA-Z0-9-_*]` に限定され、それ以外の文字を含む target 名はキーから除外される。この正規表現が connection key のフォーマットを規定しており、CONFIG_DB から変更不可。
+
+### connection key タイムスタンプ形式 (`connection_manager.go:107`)
+
+```go
+connectionKey += time.Now().UTC().Format(time.RFC3339)
+```
+
+| 項目 | 固定値 |
+|------|--------|
+| タイムスタンプ形式 | `time.RFC3339`（`"2006-01-02T15:04:05Z07:00"`、秒精度） |
+| タイムゾーン | UTC 固定 |
+
+同一 peer から同一 query の接続が秒内に繰り返された場合、connection key が重複して旧エントリを上書きする可能性があるが、コード上に重複ガードは存在しない。
+
+### ログ verbosity 固定値 (`connection_manager.go:66, 72, 85, 113-129`)
+
+| ログ関数 | verbosity | 出力タイミング |
+|---------|-----------|---------------|
+| `log.V(1).Infof()` | 1 | 接続追加・削除・Redis 操作失敗（通常は非表示） |
+| `log.Errorf()` | 0 (常時) | `GetDbTcpAddr` / `GetDbId` エラー時のみ |
+
+STATE_DB への書き込み失敗は `log.V(1)` でしか出力されないため、デフォルト verbosity では **サイレントに失敗する**。
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
