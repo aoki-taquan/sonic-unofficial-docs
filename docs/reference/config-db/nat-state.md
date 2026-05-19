@@ -377,56 +377,61 @@ natorch docker 停止シグナルで APPL_DB `FLUSHNATSTATISTICS` / `NAT_DB_CLEA
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-> 調査証跡: `meta/_intermediate/cdb-flow/nat-state-pubsub.md`
+> 調査対象: `sonic-swss/orchagent/natorch.cpp`, `sonic-swss/natsyncd/natsync.cpp`, `sonic-buildimage/dockers/docker-nat/restore_nat_entries.py`
 
-`STATE_DB:NAT_RESTORE_TABLE` および `COUNTERS_DB:COUNTERS_NAT*` はいずれも **Redis pub/sub を使用しない**特殊なテーブルである。前者はポーリング (busy-wait)、後者は `SelectableTimer` の fd ポーリングで更新される。
+`STATE_DB:NAT_RESTORE_TABLE` と `COUNTERS_DB:COUNTERS_NAT*` はどちらも通常の Redis pub/sub チャンネル経由では**更新されない**。前者はスクリプトによる直接 `hset`、後者は orchagent 内の `SelectableTimer` ポーリングによって書き込まれる。
 
-### NAT_RESTORE_TABLE の通信経路 (ポーリング)
-
-`natsyncd` は warm start 時に Redis keyspace 通知を使わず、`isNatRestoreDone()` を 1 秒間隔でポーリングして `STATE_DB:NAT_RESTORE_TABLE|Flags.restored` の値を確認する。
+### STATE_DB:NAT_RESTORE_TABLE の書き込み経路
 
 ```
-restore_nat_entries.py
-  → conntrack 復元完了後
-  → stateDb.Table("NAT_RESTORE_TABLE").set("Flags", [("restored","true")])
-    (restore_nat_entries.py:49-52)
+warm restart 起動時のみ
+  restore_nat_entries.py
+    → /var/warmboot/nat/nat_entries.dump 読み込み
+    → conntrack -I で kernel に復元 (非 Redis 操作)
+    → STATE_DB.hset('NAT_RESTORE_TABLE|Flags', 'restored', 'true')
+          ※ redis-py の直接 hset 呼び出し (pubsub なし)
 
-natsyncd main loop (natsyncd.cpp:43-62)
-  while (!sync.isNatRestoreDone()):   // 1 秒 sleep ループ
-    → m_stateNatRestoreTable.hget("Flags", "restored", value)  // 直接 hget
-    → value == "true" → ループ脱出 → reconciliation 開始
+natsyncd (NatSync::isNatRestoreDone)
+    → STATE_DB.hget('NAT_RESTORE_TABLE|Flags', 'restored')
+          ※ ポーリング (keyspace 通知でなく同期 hget)
+    → 'true' を確認してから APPL_DB reconciliation 開始
 ```
 
-フラグ書き込みから検出まで最大 1 秒の遅延がある。タイムアウト (`RESTORE_NAT_WAIT_TIME_OUT` 秒) を超過した場合は `natsyncd` が `exit(EXIT_FAILURE)` する (`natsyncd.cpp:58`)。
+`natsyncd` は `swss::Select` ループ内で定期的に `isNatRestoreDone()` を呼び出す。keyspace 通知ではなく同期 `hget` によるポーリングのため、`restored` フラグの検出に最大 1 ループ分の遅延（通常 1 秒未満）が生じる (`natsync.cpp:96-108`)。
 
-### COUNTERS_NAT* の通信経路 (SelectableTimer)
-
-`COUNTERS_DB:COUNTERS_NAT*` への書き込みは `swss::Select` の fd ポーリング機構で動作する `SelectableTimer` 経由であり、Redis pub/sub チャンネルは使用しない。
+### COUNTERS_DB:COUNTERS_NAT* の書き込み経路
 
 ```
-orchagent メインループ (Select::select)
+orchagent メインループ (swss::Select::select)
   → m_natQueryTimer の fd が ready (5 秒周期)
-  → NatOrch::doTask(SelectableTimer&)  (natorch.cpp:3095-3117)
-  → queryHitBits()   [30 秒ごと]
-  → queryCounters()  [5 秒ごと]
-    → SAI: get_nat_entry_attribute(BYTE_COUNT / PACKET_COUNT)
-    → m_countersNatTable.set(key, {NAT_TRANSLATIONS_PKTS, NAT_TRANSLATIONS_BYTES})
+  → NatOrch::doTask(SelectableTimer&)
+  → queryCounters()
+      → getNatCounters() / getNaptCounters() / getTwiceNatCounters()
+      → SAI: sai_nat_api->get_nat_entry_attribute(
+                SAI_NAT_ENTRY_ATTR_BYTE_COUNT,
+                SAI_NAT_ENTRY_ATTR_PACKET_COUNT)
+      → updateNatCounters(ip, pkts, bytes)
+      → m_countersNatTable.set(key, {NAT_TRANSLATIONS_PKTS, NAT_TRANSLATIONS_BYTES})
 ```
 
-読み取り側（`show nat statistics`）は `hgetall` で直接読む。
+これは Redis pub/sub ではなく **fd ベースのタイマー割り込み**である。`ConsumerStateTable` や `SubscriberStateTable` とは独立したパスであり、APPL_DB の変更なしに自律的に COUNTERS_DB を更新する。
 
-### COUNTERS_DB に影響する非同期通知チャンネル
+### APPL_DB 通知チャンネルと COUNTERS_DB への影響
 
-NAT には APPL_DB 経由の `NotificationConsumer / NotificationProducer` チャンネルが存在し、一部が COUNTERS_DB に間接影響を与える。
+NAT パスには APPL_DB 上の `NotificationConsumer / NotificationProducer` チャンネルが 2 本あり、間接的に COUNTERS_DB へ影響する:
 
-| チャンネル | DB | 送信者 | 受信者 | COUNTERS_DB への影響 |
+| チャンネル名 | DB | 送信者 | 受信者 | COUNTERS_DB への影響 |
 |---|---|---|---|---|
-| `FLUSHNATSTATISTICS` | APPL_DB | `sonic-clear nat statistics` | `NatOrch` (`natorch.cpp:84-86`) | `clearCounters()` → SAI reset → COUNTERS_NAT* フィールドを `"0"` にリセット |
-| `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | natmgrd 停止時 | `NatOrch` (`natorch.cpp:89-91`) | `cleanupAppDbEntries()` → 全 COUNTERS_NAT* キーを削除 |
-| `SETTIMEOUTNAT` | APPL_DB | NatOrch | natmgrd | COUNTERS_DB への直接影響なし (conntrack タイムアウト設定のみ) |
-| `FLUSHNATENTRIES` | APPL_DB | `sonic-clear nat translations` | natmgrd | APPL_DB エントリ削除 → NatOrch が COUNTERS_NAT* を間接削除 |
+| `FLUSHNATSTATISTICS` | APPL_DB | `sonic-clear nat statistics` (CLI) | `NatOrch` (`natorch.cpp:84-86`) | `clearCounters()` → SAI attribute reset → `COUNTERS_NAT*` フィールドを `"0"` に書き換え |
+| `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | `natmgrd` 停止シグナル時 | `NatOrch` (`natorch.cpp:89-91`) | `cleanupAppDbEntries()` → 全 `COUNTERS_NAT*` キーを `deleteNatCounters()` で削除 |
 
-> **Evidence**: `restore_nat_entries.py:49-52`, `natsyncd.cpp:43-62`, `natsync.cpp:96-108` (NAT_RESTORE_TABLE ポーリング), `natorch.cpp:84-91` (NotificationConsumer 登録), `natorch.cpp:3095-3117` (SelectableTimer doTask), `natorch.cpp:4049-4135` (updateNatCounters 系); 詳細は `meta/_intermediate/cdb-flow/nat-state-pubsub.md` を参照。
+`FLUSHNATENTRIES` チャンネルは `natmgrd` が受信し APPL_DB の NAT エントリを削除する。これにより `NatOrch` が `doNatTableTask()` 経由で `deleteNatCounters()` を呼び出し、COUNTERS_DB からも当該キーが消える（間接削除）。
+
+### COUNTERS_GLOBAL_NAT の書き込みタイミング
+
+`COUNTERS_GLOBAL_NAT|Values` は pub/sub によらず `NatOrch` コンストラクタで `m_countersGlobalNatTable.set()` を直接呼び出す（起動時 1 回のみ）。エントリ数カウンタ (`SNAT_ENTRIES` / `DNAT_ENTRIES`) は各 SAI 操作成功後に即時上書きされる。
+
+> **Evidence**: `natsync.cpp:96-108` (isNatRestoreDone ポーリング), `restore_nat_entries.py:49-52` (STATE_DB 直接 hset), `natorch.cpp:96-105` (SelectableTimer 登録), `natorch.cpp:3095-3117` (doTask タイマーハンドラ), `natorch.cpp:84-91` (NotificationConsumer 登録), `natorch.cpp:127-138` (COUNTERS_GLOBAL_NAT 初期書込み)
 
 <!-- /pubsub -->
 

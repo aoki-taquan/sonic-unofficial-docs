@@ -571,3 +571,34 @@ orchagent: CoppOrch::doTask()
 > **スキャン証跡**: `coppmgrd.cpp` 全行読了。`coppmgr.cpp` L298-310, L510-530 読了。`copporch.cpp` L191-215, L880-935 読了。`orchdaemon.cpp` L341 確認。`show/copp.py` `dump/plugins/copp.py` で genetlink 読み出し consumer 不在を確認。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-pubsub.md`
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`COPP_GROUP` の `genetlink_name` / `genetlink_mcgrp_name` フィールドは SAI の `SAI_HOSTIF_TYPE_GENETLINK` と Linux カーネルの `psample` genetlink モジュールに依存するため、プラットフォームによって動作に差が生じる。
+
+### SAI `SAI_HOSTIF_TYPE_GENETLINK` サポート
+
+`createGenetlinkHostIf()` 内の `sai_hostif_api->create_hostif()` に `SAI_HOSTIF_TYPE_GENETLINK` を渡す。SAI 実装がこの HostIf 型をサポートしない場合、`create_hostif()` は `SAI_STATUS_NOT_SUPPORTED` 等を返し `task_failed` になる（`copporch.cpp:664-675`）。`handleSaiCreateStatus()` の戻り値に依存してプロセスが終了に至る可能性もある。
+
+コード内に platform 条件分岐はなく、SAI 実装がサポートしているか否かのみで動作が決まる。psample ベースの sflow をサポートする ASIC（Broadcom、一部 Mellanox 等）では動作する実績があるが、すべてのベンダー SAI で保証されるわけではない。
+
+### カーネル psample モジュール
+
+genetlink HostIf が SAI 側で作成されても、カーネルに `psample` モジュール（`CONFIG_NET_TC_SKB_EXT` + `CONFIG_NET_SCH_INGRESS` 等を前提とする）がロードされていない場合、カーネル側の genetlink ソケットが存在せずパケットが転送されない。SONiC 標準イメージは `psample` を標準でロードするが、カスタムカーネルや一部プラットフォームでは手動でのモジュールロードが必要な場合がある。
+
+### sflow FEATURE 状態とプラットフォームの組み合わせ
+
+`queue2_group1` の genetlink HostIf は SAI 側で作成されても、`FEATURE|sflow` が無効の場合は `sample_packet` trap が `trap_ids` から除外されるため、`createGenetlinkHostIfTable()` が空リストで呼ばれ HOSTIF_TABLE_ENTRY が 0 件になる（`copp_cfg.j2:131-134`、`coppmgr.cpp:82-106`）。この状態では genetlink HostIf は存在するが trap は転送されない。sflow を有効化すると `doCoppGroupTask()` が再トリガーされ trap_ids が付与される。
+
+### プラットフォーム差サマリ
+
+| 条件 | 影響フィールド | 挙動 |
+|------|--------------|------|
+| SAI が `SAI_HOSTIF_TYPE_GENETLINK` 未サポート | `genetlink_name` / `genetlink_mcgrp_name` | `create_hostif()` 失敗 → `task_failed`（`copporch.cpp:669-675`） |
+| カーネル `psample` モジュール未ロード | — (SAI 操作は成功) | genetlink HostIf は作成されるが sflow パケット転送なし |
+| `FEATURE|sflow` 無効 | `sample_packet` trap_id の有無 | genetlink HostIfTable が空 → sflow 転送なし（自動復元は feature 有効化で実行） |
+| `FEATURE|sflow` 有効 + SAI サポートあり | `genetlink_name` / `genetlink_mcgrp_name` | 正常動作。`sample_packet` trap → genetlink (psample) 経由でカーネルに転送 |
+
+> **スキャン証跡**: `copporch.cpp` L657-714 (createGenetlinkHostIf/removeGenetlinkHostIf), L419-493 (createGenetlinkHostIfTable)。`coppmgr.cpp` L82-106 (setFeatureTrapIdsStatus)。`copp_cfg.j2` L131-134 (sflow COPP_TRAP)。platform 分岐コードは genetlink 処理に存在しないことを確認。
+<!-- /platform -->
+
