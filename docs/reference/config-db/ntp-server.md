@@ -295,6 +295,75 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+> **調査根拠**: `hostcfgd` L111–112、L1280、L1366–1406、L2387–2391、L2458–2466、L2511–2517、L2527–2528 精読 (2026-05-19)
+> 詳細証跡: `meta/_intermediate/cdb-flow/ntp-server-pubsub.md`
+
+### 購読チャンネル
+
+`hostcfgd` が `ConfigDBConnector.subscribe()` API を通じて CONFIG_DB を購読する。
+
+```python
+# hostcfgd:2514-2517
+self.config_db.subscribe(swsscommon.CFG_NTP_SERVER_TABLE_NAME,
+                         make_callback(self.ntp_srv_key_handler))
+self.config_db.subscribe(swsscommon.CFG_NTP_KEY_TABLE_NAME,
+                         make_callback(self.ntp_srv_key_handler))
+```
+
+| 購読元 DB | テーブル名 | 購読クラス | ハンドラ | 発行元 |
+|---|---|---|---|---|
+| CONFIG_DB (DB 4) | `NTP_SERVER` (`CFG_NTP_SERVER_TABLE_NAME`) | `SubscriberStateTable` (Redis keyspace 通知) | `ntp_srv_key_handler` → `ntp_srv_key_update()` | `config ntp add/del` CLI / `minigraph.py` |
+| CONFIG_DB (DB 4) | `NTP_KEY` (`CFG_NTP_KEY_TABLE_NAME`) | `SubscriberStateTable` | `ntp_srv_key_handler` → `ntp_srv_key_update()` | `config ntp authentication-key` CLI |
+
+`NTP_SERVER` と `NTP_KEY` は**共通ハンドラ** (`ntp_srv_key_handler`) に集約されており、どちらが変化しても同一の処理パスを辿る。`NTP` (global) は別ハンドラ (`ntp_global_handler`) が担当する。
+
+### フルリロード方式
+
+```python
+# hostcfgd:2387-2391
+def ntp_srv_key_handler(self, key, op, data):
+    syslog.syslog(syslog.LOG_NOTICE, 'Handling NTP server/key config')
+    self.ntpcfg.ntp_srv_key_update(
+        self.config_db.get_table(swsscommon.CFG_NTP_SERVER_TABLE_NAME),
+        self.config_db.get_table(swsscommon.CFG_NTP_KEY_TABLE_NAME))
+```
+
+ハンドラが受け取る `key`/`op`/`data` は無視され、`get_table()` で **NTP_SERVER と NTP_KEY の全件スナップショット**を再取得して `ntp_srv_key_update()` に渡す。SET/DEL どちらのイベントでも同一のフルリロードが走り、個別エントリの差分処理は行わない。
+
+### キャッシュガード
+
+```python
+# hostcfgd:1383-1386
+if self.cache['servers'] == ntp_servers and self.cache['keys'] == ntp_keys:
+    syslog.syslog(syslog.LOG_NOTICE, 'NtpCfg: Nothing to update')
+    return
+```
+
+前回キャッシュと全件が同一であれば `systemctl restart chrony` を抑制する。フィールドレベルの差分判定は行わない。
+
+### SIGHUP の扱い
+
+hostcfgd は `SIGHUP` を受け取っても何もしない (`hostcfgd:111-112`)。NTP 設定変更は必ず `systemctl restart chrony`（フルリスタート）であり、設定のホットリロード (SIGHUP) は採用されていない。
+
+### pub/sub ループ起動方式
+
+```python
+# hostcfgd:2527-2528
+def start(self):
+    self.config_db.listen(init_data_handler=self.load)
+```
+
+`ConfigDBConnector.listen()` が内部で Redis keyspace 通知の PSUBSCRIBE を開始する。keyspace パターン: `__keyspace@4__:NTP_SERVER|*`。`init_data_handler=self.load` により、ループ開始前に `NtpCfg.load()` がスナップショットをキャッシュに適用する（起動時の chrony 再起動はトリガーしない）。
+
+### 他購読者
+
+NTP_SERVER を購読するプロセスは `hostcfgd` のみ。orchagent・syncd・mgrd 等 `sonic-swss/` 配下のプロセスは NTP_SERVER を購読しない。APPL_DB / STATE_DB への書き込みもない。
+
+<!-- /pubsub -->
+
 ## 関連サブテーブル
 
 - `NTP|global` (container, single-instance):
