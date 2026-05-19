@@ -16,9 +16,9 @@ related:
 
 # low-impact 残課題スナップショット
 
-本プロジェクトは v1.0 GA（2026-05-11）到達済みで、以下に挙げる残課題はいずれも **品質ゲートを通過する範囲の low-impact 項目** である。本ページは現時点の数値スナップショットを記録し、次回 iteration（v1.1 サイクル）で取捨選択するための入力として使う。
+以下に挙げる残課題はいずれも **品質ゲートを通過する範囲の low-impact 項目** である。本ページは現時点の数値スナップショットを記録し、次回 iteration で取捨選択するための入力として使う。
 
-更新は **手動運用** とする（自動更新フックは v1.1 以降で検討）。再生成時は本ページの「数値の取得元コマンド」セクションのコマンドを順に実行すれば良い。
+更新は **手動運用** とする（自動更新フックは将来的に検討）。再生成時は本ページの「数値の取得元コマンド」セクションのコマンドを順に実行すれば良い。
 
 **最終更新**: 2026-05-12（round 48 stratified 5.00 飽和達成・lint 9 種運用・wave-2 30 件補完バッチ後）。
 
@@ -31,14 +31,14 @@ related:
 | architecture | 1 |
 | **合計** | **10** |
 
-**2026-05-12 round 48 update**: backlog 残数は round 38 から **完全 KEEP**（system 7 / platform 2 / architecture 1 = 計 10 件）。round 48 までの 10 round で新規 backlog 流入 0 件。`_archived` は **349 件** に増加（v1.0 GA 後の整理で +27 件、indexer v2 の除外フィルタ強化で stub 自動 archive）。
+**2026-05-12 round 48 update**: backlog 残数は round 38 から **完全 KEEP**（system 7 / platform 2 / architecture 1 = 計 10 件）。round 48 までの 10 round で新規 backlog 流入 0 件。`_archived` は **349 件** に増加（整理で +27 件、indexer v2 の除外フィルタ強化で stub 自動 archive）。
 
 | カテゴリ | 件数 | 処理方針 |
 |----------|------|----------|
-| low-priority（v1.1 検討） | 10 | 大型 HLD 4 件 + telemetry / openconfig 3 件 + [PINS](../../reference/glossary.md#term-pins) / chassis 2 件 + 第三者拡張 1 件 |
+| low-priority（将来検討） | 10 | 大型 HLD 4 件 + telemetry / openconfig 3 件 + [PINS](../../reference/glossary.md#term-pins) / chassis 2 件 + 第三者拡張 1 件 |
 | _archived（累計） | 349 | リリースノート + 章節断片 + ビルド系 + テンプレ + 重複 + defer + stub + indexer v2 除外（round 36 以前の 27 件 + 増分） |
 
-詳細は [`meta/backlog/README.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/backlog/README.md) を参照。`meta/_gen_backlog.py` への Indexer 除外フィルタ組込みは v1.1 サイクル開始時に対応する。
+詳細は [`meta/backlog/README.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/backlog/README.md) を参照。`meta/_gen_backlog.py` への Indexer 除外フィルタ組込みは次回 iteration 開始時に対応する。
 
 ## 2. discrepancy-found ページの monitor 別分布
 
@@ -75,11 +75,11 @@ related:
 | `check_verification_self_consistency.py` | **114** | info | code-verified ページ本文中の「未対応 / 未実装 / 未確認 / 要確認」記述。多くは仕様注記として意図的（round 46 比 +2 件）|
 | `check_sources_freshness.py` | - | info | pinned SHA は全リポ origin/master に追従（drift 0） |
 
-**注目 1 — `check_broken_links.py` 20 件**: 全件 `#term-syslog` anchor 不在の runbook 群。`docs/reference/glossary.md` に `syslog` 用語の anchor を追加すれば一括解消（v1.1 quick win 候補）。
+**注目 1 — `check_broken_links.py` 20 件**: 全件 `#term-syslog` anchor 不在の runbook 群。`docs/reference/glossary.md` に `syslog` 用語の anchor を追加すれば一括解消（quick win 候補）。
 
 **注目 2 — `check_troubleshoot_section.py` 190 件 → wave-2 補完で減**: round 46 で約 220 件、round 48 で 190 件に縮小。wave-2 30 件補完バッチが直接効果。残 190 件のうち深刻なものは limitations と重複する 34 件。
 
-**注目 3 — `check_verification_self_consistency.py` 114 件のみが残課題的ボリューム**: 個別に精査して discrepancy-found へ降格すべきものを洗い出すのは v1.1 タスク。round 49 改善 3 で triage スクリプト `triage_self_consistency.py` 試作予定。
+**注目 3 — `check_verification_self_consistency.py` 114 件のみが残課題的ボリューム**: 個別に精査して discrepancy-found へ降格すべきものを洗い出すのは次回 iteration タスク。round 49 改善 3 で triage スクリプト `triage_self_consistency.py` 試作予定。
 
 **注目 4 — `check_ni_workaround_depth.py` 0 件**: round 46 改善 1 で warning 階段運用開始、round 48 stratified で `not_implemented` 11 件全件 workaround 経路 ≥2 充足を確認。round 49 で blocking 化最終確定予定（`--thin` lint と同じ 2 iteration ルール）。
 
@@ -107,7 +107,7 @@ related:
 | 378 | `docs/internals/l3-scaling-and-performance-enhancements.md` | L3 性能強化 4 系統を split-child 派生（**round 47 で 1 件 split-child 派生済**、本体行数 +7 増分は反映遅延）|
 | 377 | `docs/overlay/active-standby-dual-tor.md` | DualToR の [linkmgrd](../../reference/glossary.md#term-linkmgrd) / mux / [orchagent](../../reference/glossary.md#term-orchagent) 章を分割 |
 
-**round 48 update**: round 38 時点の Top 5 (`fec-flr-support-in-sonic` 371 / `vxlan-sonic` 371) は **wave-2 補完で章追加** により 410 行付近まで増加して新 Top 5 圏内に再エントリ可能。本気で章単位分割するのは roadmap-v2 v1.2 多言語化前（2026-Q4）に再判定。
+**round 48 update**: round 38 時点の Top 5 (`fec-flr-support-in-sonic` 371 / `vxlan-sonic` 371) は **wave-2 補完で章追加** により 410 行付近まで増加して新 Top 5 圏内に再エントリ可能。本気で章単位分割するのは多言語化前（2026-Q4）に再判定。
 
 ## 数値の取得元コマンド
 
