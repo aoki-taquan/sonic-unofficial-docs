@@ -314,4 +314,56 @@ show fips status
 -->
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd:101-108,1762,1769,1773,1792,1796,1801,1803,1806,1809,1821 -->
+
+`FipsCfg` クラスおよび `hostcfgd` 起動スクリプトに埋め込まれたハードコード定数を一覧化する。これらは CONFIG_DB / YANG から変更できない。
+
+### ファイルパス定数（`hostcfgd:101-108`）
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `FIPS_CONFIG_FILE` | `'/etc/sonic/fips.json'` | `restart_services` リストを上書きするオプション設定ファイルのパス。存在しない場合は `DEFAULT_FIPS_RESTART_SERVICES` を使用 |
+| `OPENSSL_FIPS_CONFIG_FILE` | `'/etc/fips/fips_enable'` | OpenSSL FIPS モード有効化フラグファイル（`'0'` / `'1'` を格納）。`update_noneenforce_config()` が書き込み |
+| `PROC_CMDLINE` | `'/proc/cmdline'` | 現行カーネルの FIPS enforce 状態（`sonic_fips=1` / `fips=1`）を読み取るためのカーネルコマンドラインファイル |
+
+### デフォルトサービスリスト（`hostcfgd:103`）
+
+| 定数名 | 値 | 用途 |
+|--------|-----|------|
+| `DEFAULT_FIPS_RESTART_SERVICES` | `['ssh', 'telemetry.service', 'restapi']` | FIPS 切替時に `systemctl restart` で再起動するサービスのデフォルトリスト。`/etc/sonic/fips.json` の `restart_services` キーで上書き可能だが、CONFIG_DB からは変更できない |
+
+### カーネルパラメータ文字列（`hostcfgd:1773`）
+
+`cur_enforced` の判定に使われるカーネルコマンドライン文字列は以下 2 種のみ:
+
+| 文字列 | 意味 |
+|--------|------|
+| `'sonic_fips=1'` | SONiC 独自の FIPS enforce カーネルパラメータ |
+| `'fips=1'` | 標準 Linux FIPS パラメータ（RHEL 系など） |
+
+どちらか一方でも `/proc/cmdline` に含まれる場合、`cur_enforced=True` となり `restart()` がスキップされる。
+
+### `fips_enable` ファイルの値定数（`hostcfgd:1796,1801,1803`）
+
+| 値 | 意味 | 適用条件 |
+|----|------|---------|
+| `'0'` | FIPS 無効 | `self.enable=False` のとき `expected_fips_enabled='0'` |
+| `'1'` | FIPS 有効 | `self.enable=True` のとき `expected_fips_enabled='1'` |
+
+`cur_fips_enabled != expected_fips_enabled` の場合のみ `/etc/fips/fips_enable` を上書きする（`hostcfgd:1806-1809`）。
+
+### STATE_DB キー定数（`hostcfgd:1792,1821`）
+
+| テーブル / キー | フィールド | 用途 |
+|----------------|-----------|------|
+| `FIPS_STATS\|state` | `config_datetime` | FIPS 設定変更の UTC タイムスタンプ（ISO 形式）。二重再起動防止のため `restart()` がこの値と `/etc/fips/fips_enable` の mtime を比較する |
+
+!!! note "YANG default との整合性"
+    YANG `sonic-fips.yang` は `enable` / `enforce` の両フィールドに `default "false"` を宣言している。hostcfgd `FipsCfg.__init__` も `self.enable = False` / `self.enforce = False` で初期化するため（`hostcfgd:1760-1761`）、YANG デフォルトとコードデフォルトは一致する。
+
+<!-- /constants -->
+
 <!-- glossary-links-injected: b5626ca1f0f9 -->
