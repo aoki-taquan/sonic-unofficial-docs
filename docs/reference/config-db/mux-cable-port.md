@@ -388,6 +388,83 @@ CONFIG_DB MUX_CABLE|<ifname>  (SET)
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+`MUX_CABLE` テーブルは orchagent (`MuxOrch`)、`linkmgrd`、`ycabled` の 3 コンポーネントが参照するが、購読方式がそれぞれ異なる。
+
+> 詳細調査ノートは `meta/_intermediate/cdb-flow/mux-cable-port-pubsub.md` 参照。
+
+### orchagent (MuxOrch) — SubscriberStateTable 経由
+
+`MuxOrch` は `Orch2(db, tables, request_)` 基底コンストラクタを通じて購読を登録する (`muxorch.cpp:2184`)。`tables` は `{CFG_MUX_CABLE_TABLE_NAME, CFG_PEER_SWITCH_TABLE_NAME}` (`orchdaemon.cpp:467-471`)。
+
+`Orch::addConsumer()` (`orch.cpp:1186-1195`) は DB の `dbId` を確認し、CONFIG_DB (`dbId=4`) であれば `SubscriberStateTable` を選択する。Redis の keyspace 通知 (`__keyspace@4__:MUX_CABLE:*` の PSUBSCRIBE) でエントリ変化を検知し、`Consumer::execute()` → `MuxOrch::doTask()` → `handler_map_[CFG_MUX_CABLE_TABLE_NAME]` = `MuxOrch::handleMuxCfg()` へディスパッチされる。
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス | `SubscriberStateTable` (CONFIG_DB 分岐) |
+| keyspace パターン | `__keyspace@4__:MUX_CABLE:*` (CONFIG_DB dbId=4) |
+| key 区切り | `MUX_CABLE\|<ifname>` (TableNameSeparator `\|`) |
+| POP_BATCH_SIZE | `DEFAULT_POP_BATCH_SIZE` = **128** (`sonic-swss-common/common/table.h:164`) |
+| 優先度 (`pri`) | 0 (既定) |
+| 起動時スナップショット | `SubscriberStateTable` が既存エントリを SET イベントとして再配信 |
+| ディスパッチ先 | `MuxOrch::handleMuxCfg()` (`muxorch.cpp:2189` handler_map_ 登録) |
+
+### linkmgrd — swss::Select + SubscriberStateTable
+
+linkmgrd の `DbInterface::pollSwssNotification()` (`DbInterface.cpp:1820`) がメインループで複数の `SubscriberStateTable` を `swss::Select` に登録する。CONFIG_DB `MUX_CABLE` テーブルは以下のように購読される:
+
+```cpp
+// DbInterface.cpp:1823
+swss::SubscriberStateTable configDbMuxTable(configDbPtr.get(), CFG_MUX_CABLE_TABLE_NAME);
+swssSelect.addSelectable(&configDbMuxTable);
+```
+
+イベント発生時: `selectable == &configDbMuxTable` → `handleMuxPortConfigNotifiction(configDbMuxTable)` → `configMuxTable.pops(entries)` でバッチ取得 → `processMuxPortConfigNotifiction(entries)` (`DbInterface.cpp:1107-1116`)。
+
+| 項目 | 値 |
+|------|-----|
+| 購読クラス | `swss::SubscriberStateTable` |
+| DB | CONFIG_DB |
+| タイムアウト | `DEFAULT_TIMEOUT_MSEC` = **1000 ms** (`DbInterface.cpp:48`) |
+| バッチ取得 | `configMuxTable.pops(entries)` — 1 回の `select()` wake で全エントリを pop |
+| ディスパッチ先 | `DbInterface::processMuxPortConfigNotifiction()` |
+
+### ycabled — swss::Table (直読み・subscribe なし)
+
+ycabled は `MUX_CABLE` テーブルを `swss::Table` (`port_tbl`) として直読みする。`SubscriberStateTable` 経由の subscribe は**使わない** (`y_cable_table_helper.py:90`)。起動時に `port_tbl[asic_id].getKeys()` で全ポートリストを取得し、`check_mux_cable_port_type()` でポートごとの `cable_type` / `state` / `soc_ipv4` を読む。
+
+ランタイム更新のトリガーは `SubscriberStateTable(state_db, TRANSCEIVER_INFO_TABLE)` (`y_cable_table_helper.py:87`) — トランシーバー情報変化を契機として `MUX_CABLE` の再読みが発生する。つまり `MUX_CABLE` 変化を直接購読せず、トランシーバーイベント駆動で間接的に再読みする設計。
+
+### 通信フロー全体図
+
+```
+CONFIG_DB MUX_CABLE|<ifname>  (SET/DEL)
+  ├─ [orchagent] MuxOrch
+  │    SubscriberStateTable(__keyspace@4__:MUX_CABLE:*)
+  │    → Consumer::execute() → MuxOrch::doTask()
+  │    → handleMuxCfg()
+  │         → SAI nexthop 設定 / STATE_DB 書込
+  │
+  ├─ [linkmgrd] DbInterface::pollSwssNotification()
+  │    SubscriberStateTable(CONFIG_DB, CFG_MUX_CABLE_TABLE_NAME)
+  │    → swss::Select::select() (1000 ms タイムアウト)
+  │    → handleMuxPortConfigNotifiction()
+  │         → ステートマシン更新 / APPL_DB 書込
+  │
+  └─ [ycabled] 直接購読なし
+       swsscommon.Table(config_db, "MUX_CABLE") — 起動時 + TRANSCEIVER_INFO イベント駆動で再読み
+```
+
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp:2182-2200 (MuxOrch constructor) -->
+<!-- evidence: sonic-swss/orchagent/orchdaemon.cpp:467-471 (mux_tables) -->
+<!-- evidence: sonic-swss/orchagent/orch.cpp:1186-1195 (Orch::addConsumer DB 種別分岐) -->
+<!-- evidence: sonic-swss-common/common/table.h:164 (DEFAULT_POP_BATCH_SIZE = 128) -->
+<!-- evidence: sonic-linkmgrd/src/DbInterface.cpp:1820-1895 (pollSwssNotification, subscribe loop) -->
+<!-- evidence: sonic-platform-daemons/sonic-ycabled/ycable/ycable_utilities/y_cable_table_helper.py:87-90 -->
+<!-- /pubsub -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 上位ページ: [`MUX_CABLE`](mux-cable.md) — テーブル全体の概要・値依存挙動・Phase 6/7/8 分析
