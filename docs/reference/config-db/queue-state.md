@@ -292,6 +292,36 @@ else
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## SET/DEL 副次 DB 書込み (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/queue-state-side-effects.md`
+
+`initCounterCapabilities()` は `QUEUE_COUNTER_CAPABILITIES` への書込みと同一関数呼び出し内で、STATE_DB の別テーブル `PORT_COUNTER_CAPABILITIES` にも書込む。
+
+### STATE_DB `PORT_COUNTER_CAPABILITIES` への副次書込み (portsorch.cpp:1876-1963)
+
+`initCounterCapabilities()` は冒頭で `PORT_COUNTER_CAPABILITIES` の 4 キーを `isSupported=false` で初期化し、その後 `SAI_OBJECT_TYPE_PORT` の `sai_query_stats_capability()` 結果に応じて `true` に上書きする。
+
+| 操作 | 対象 DB / テーブル | キー | 条件 |
+|------|-----------------|------|------|
+| SET `isSupported=false`（初期化） | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER` | 常に（portsorch.cpp:1876） |
+| SET `isSupported=false`（初期化） | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER` | 常に（portsorch.cpp:1877） |
+| SET `isSupported=false`（初期化） | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_RED_DROP_COUNTER` | 常に（portsorch.cpp:1878） |
+| SET `isSupported=false`（初期化） | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_TOTAL_DROP_COUNTER` | 常に（portsorch.cpp:1879） |
+| SET `isSupported=true` | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER` | `SAI_OBJECT_TYPE_PORT` クエリ成功 + `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` 確認時（portsorch.cpp:1943） |
+| SET `isSupported=true` | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER` | `SAI_OBJECT_TYPE_PORT` クエリ成功 + `SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS` 確認時（portsorch.cpp:1948） |
+| SET `isSupported=true` | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_RED_DROP_COUNTER` | `SAI_OBJECT_TYPE_PORT` クエリ成功 + `SAI_PORT_STAT_RED_WRED_DROPPED_PACKETS` 確認時（portsorch.cpp:1953） |
+| SET `isSupported=true` | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_TOTAL_DROP_COUNTER` | `SAI_OBJECT_TYPE_PORT` クエリ成功 + `SAI_PORT_STAT_WRED_DROPPED_PACKETS` 確認時（portsorch.cpp:1958） |
+
+### 副次書込みの特性
+
+- **不可分 2 テーブル書込み**: `QUEUE_COUNTER_CAPABILITIES` と `PORT_COUNTER_CAPABILITIES` は同一 `initCounterCapabilities()` 呼び出し内で書き込まれる。2 テーブルの SAI クエリ（`SAI_OBJECT_TYPE_QUEUE` と `SAI_OBJECT_TYPE_PORT`）は独立して実行されるため、一方のクエリが失敗しても他方の書込み結果には影響しない。
+- **portstat.py の間接依存**: `sonic-utilities/utilities_common/portstat.py` は `PORT_COUNTER_CAPABILITIES|*` エントリの `isSupported` を参照して、COUNTERS_DB から取得するポートカウンタ列を絞り込む（portstat.py:297-312）。orchagent 停止中は `PORT_COUNTER_CAPABILITIES` も未書込みのため、portstat の WRED 列が N/A 表示となる。
+- **DEL 操作なし**: `initCounterCapabilities()` は SET 専用。orchagent 再起動時は上書き SET のみ行われ、既存エントリの DEL は実施されない。
+
+<!-- /side-effects -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`FLEX_COUNTER_TABLE`](flex-counter-table.md) — WRED_ECN_QUEUE グループの enable/disable 設定
