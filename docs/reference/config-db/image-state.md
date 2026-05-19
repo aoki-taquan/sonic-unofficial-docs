@@ -246,6 +246,47 @@ asic_type = device_info.get_sonic_version_info()['asic_type']
 
 <!-- /failure-behavior -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+<!-- evidence: sonic-buildimage/rules/config:291-296,358-359,378-379, sonic-buildimage/functions.sh:60, sonic-buildimage/build_debian.sh:651,653, sonic-buildimage/files/build_templates/sonic_version.yml.j2, sonic-py-common/sonic_py_common/device_info.py:19,60,520-523 -->
+
+`/etc/sonic/sonic_version.yml` の生成・読み込みに関与するハードコード定数を一覧化する。フィールド値の実装上の制約を把握するための参照用。
+
+### ファイルパス定数
+
+| 定数名 | 値 | ソース |
+|--------|-----|--------|
+| `SONIC_VERSION_YAML_PATH` | `"/etc/sonic/sonic_version.yml"` | `device_info.py:19` |
+
+### ビルドデフォルト値
+
+| 変数名 | ハードコードデフォルト | 適用条件 | ソース |
+|--------|----------------------|---------|--------|
+| `BUILD_NUMBER` | `0` | `BUILD_NUMBER` 環境変数が未設定の場合 | `build_debian.sh:651` (`${BUILD_NUMBER:-0}`)、`functions.sh:60` |
+| `SONIC_OS_VERSION` | `13` | `SONIC_OS_VERSION` 変数が未設定の場合 | `rules/config:379` (`SONIC_OS_VERSION ?= 13`) |
+| `SECURE_UPGRADE_MODE` | `"no_sign"` | デフォルトビルド設定 | `rules/config:296` (`SECURE_UPGRADE_MODE ?= "no_sign"`) |
+| `ENABLE_ASAN` | `n` | デフォルトビルド設定 | `rules/config:359` (`ENABLE_ASAN ?= n`) |
+
+### YAML フィールドデフォルト値（テンプレート埋め込み）
+
+| フィールド | デフォルト文字列値 | 適用条件 | ソース |
+|-----------|-----------------|---------|--------|
+| `release` | `'none'` | `/etc/sonic/sonic_release` が存在しない場合 | `sonic_version.yml.j2:16-19` |
+| `secure_boot_image` | `'no'` | `SECURE_UPGRADE_MODE` が `dev` でも `prod` でもない場合 | `sonic_version.yml.j2:35-37` |
+
+!!! note "SECURE_UPGRADE_MODE と secure_boot_image の関係"
+    `SECURE_UPGRADE_MODE` は `dev` / `prod` / `no_sign` の 3 値を取る。`no_sign`（デフォルト）の場合は `secure_boot_image: 'no'` が書き込まれる。`dev` または `prod` の場合のみ `secure_boot_image: 'yes'` となる。
+
+### YAML 読み込み API の定数
+
+| 定数名 | 値 | 役割 | ソース |
+|--------|-----|------|--------|
+| `sonic_ver_info` | `{}` (空 dict) | キャッシュ変数初期値。プロセスグローバルで結果を保持 | `device_info.py:60` |
+| yaml バージョン閾値 | `"5.1"` | `yaml.__version__ >= "5.1"` のとき `yaml.full_load()` を使用し、それ未満は `yaml.safe_load()` にフォールバック | `device_info.py:520-523` |
+
+<!-- /constants -->
+
 ## 引用元
 
 [^1]: `sonic-buildimage/build_debian.sh` L642-654 — sonic_version.yml 生成処理。<https://github.com/sonic-net/sonic-buildimage/blob/master/build_debian.sh>
