@@ -368,7 +368,7 @@ if (fc_status != prev_enabled)
 > **Evidence**: `sonic-swss/orchagent/flexcounterorch.cpp:156-187,395-398` (warm-reboot タイマー・allPortsReady ガード・無効キー・未サポートフィールド), `sonic-swss/orchagent/dash/dashcounter.h:23-70` (NULL OID ガード・冪等ガード)
 <!-- /failure -->
 
-<!-- hardcoded-constants -->
+<!-- constants -->
 ## ハードコード定数 (Phase E)
 
 > **調査根拠**: `dashorch.h:29-33`, `flexcounterorch.cpp:44`, `enable_counters.py:50-63`, `schema.h:293-295`, `flex_counter_manager.cpp:54-55` 全行精読 (2026-05-19)
@@ -446,7 +446,7 @@ else:
 
 `DashCounter<CounterType::ENI>` と `DashCounter<CounterType::DASH_METER>` がそれぞれ `flex_counter_manager.cpp:54-55` の `counter_id_field_lookup` マップを通じてこれらのフィールド名を解決する。
 
-<!-- /hardcoded-constants -->
+<!-- /constants -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
@@ -572,6 +572,96 @@ if (dash_orch && (key == DASH_METER_KEY))
     COUNTERS_DB へのカウンタ書き込みは plain HSET のため通知が発行されない。`counterpoll show` で STATUS が `enable` に見えても、ポーリング間隔 (デフォルト 10 秒) が経過するまで COUNTERS_DB の値は更新されない。`show dash counters eni` は実行時点の snapshot を表示する。
 
 <!-- /pubsub -->
+
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/dpu-counter-platform.md
+     sonic-swss/orchagent/main.cpp:990-994,
+     sonic-swss/orchagent/orchdaemon.cpp:1313-1419,
+     sonic-swss/orchagent/flexcounterorch.cpp:42,546,
+     sonic-swss/orchagent/dash/dashcounter.cpp:12-40,
+     sonic-swss/orchagent/saihelper.cpp:1099-1123,
+     sonic-buildimage/dockers/docker-orchagent/enable_counters.py:43-44 -->
+
+### switch_type による動作の全面的な差異
+
+`FLEX_COUNTER_TABLE|ENI` / `FLEX_COUNTER_TABLE|DASH_METER` の実効動作は `switch_type` 値に強く依存する。
+
+| switch_type | enable_counters.py | DashOrch の存在 | ENI/DASH_METER カウンタ |
+|-------------|-------------------|----------------|------------------------|
+| `dpu` | ENI/DASH_METER に `enable` 書き込み | `DpuOrchDaemon` が `DashOrch` を登録 | **機能する** |
+| `switch` (標準 NPU) | スキップ | なし (`OrchDaemon` は `DashOrch` を登録しない) | 無効 (手動 enable も no-op) |
+| `voq` (VOQ chassis) | スキップ | なし | 無効 |
+| `fabric` | スキップ | なし | 無効 |
+| `chassis-packet` | スキップ | なし | 無効 |
+
+手動で `FLEX_COUNTER_STATUS=enable` を書き込んでも、`DashOrch` が存在しない
+(`gDirectory.get<DashOrch*>()` が `nullptr`) 場合は `FlexCounterOrch` が
+`handleFCStatusUpdate` / `handleMeterFCStatusUpdate` を委譲せず実質 no-op となる
+(`flexcounterorch.cpp:299-305`)。
+
+### FlexCounterOrch / DashOrch の登録経路
+
+`main.cpp:990-994` で `gMySwitchType == "dpu"` の場合のみ `DpuOrchDaemon` が選択される。
+`DpuOrchDaemon::init()` は `OrchDaemon::init()` を先行呼び出し (`orchdaemon.cpp:1325`) して
+`FlexCounterOrch` を登録した後、`DashOrch` 等 DASH 系オーケストレータを追加する。
+他の `switch_type` では `OrchDaemon` (`switch`) / `FabricOrchDaemon` (`fabric`) が使われ、
+`DashOrch` は登録されない。
+
+### ASIC 種別 (vendor) による差 — SAI 統計 ID のみ
+
+`DashCounter::fetchStats()` (`dashcounter.cpp:12-16`) は `queryAvailableCounterStats()`
+を通じて SAI メタデータから ENI / DASH_METER の統計 ID リストを動的に取得する。
+orchagent 側にベンダー別のハードコード分岐はなく、**実際にポーリングされる統計 ID の種類は
+ベンダー SAI ライブラリが提供する `SAI_OBJECT_TYPE_ENI` / `SAI_OBJECT_TYPE_METER_BUCKET_ENTRY`
+のメタデータ定義に依存**する。
+
+```cpp
+// dashcounter.cpp:12-16
+auto stat_enum_list = queryAvailableCounterStats((sai_object_type_t)SAI_OBJECT_TYPE_ENI);
+// saihelper.cpp:1099-1123: sai_metadata_get_object_type_info から statenum を取得
+```
+
+| ASIC 観点 | 結果 |
+|-----------|------|
+| orchagent コード側の ASIC 種別分岐 | なし |
+| ENI 統計 ID の種類 | ベンダー SAI メタデータ定義に依存 |
+| Broadcom / Mellanox / Marvell 固有フラグ | ENI/DASH_METER 処理パスに影響しない |
+
+### VOQ chassis / multi-asic
+
+`flexcounterorch.cpp:546` の `gMySwitchType == "voq"` 分岐はキューカウンタ (VOQ キュー) の
+追加処理専用であり、ENI / DASH_METER カウンタグループには影響しない。
+ENI / DASH_METER は DPU の単一 ASIC DASH パイプライン専用であり、
+multi-asic / VOQ chassis 構成では運用されない。
+
+### SmartSwitch NPU 側 (subtype=SmartSwitch)
+
+SmartSwitch の NPU 側は `switch_type=switch`, `subtype=SmartSwitch` で動作する。
+`enable_counters.py` は `switch_type != 'dpu'` のため ENI / DASH_METER をスキップし、
+`OrchDaemon::init()` の SmartSwitch 分岐 (`orchdaemon.cpp:613`) も
+`DashEniFwdOrch` を追加するのみで `DashOrch` は登録しない。
+NPU 側で ENI カウンタポーリングは発生しない。
+
+### VS (Virtual Switch)
+
+`platform/vs/docker-sonic-vs/platform-dpu-2p.json` が提供されており、
+VS 上で `switch_type=dpu` を設定した場合も `DpuOrchDaemon` → `DashOrch` → `DashCounter` の
+経路が成立する。VS の SAI 実装 (`libsaivs`) が ENI SAI オブジェクトをサポートしている範囲で
+カウンタが動作し、CI テストに使用される。
+
+### プラットフォーム差まとめ
+
+| 観点 | 結果 |
+|------|------|
+| `switch_type=dpu` 以外での機能有無 | 無効 (enable_counters.py スキップ + DashOrch 非存在) |
+| ASIC ベンダー種別差 | orchagent コード側なし。SAI 統計 ID 種類のみベンダー依存 |
+| VOQ chassis / multi-asic | ENI/DASH_METER は非適用 |
+| SmartSwitch NPU 側 | ENI カウンタ非動作 |
+| VS (switch_type=dpu) | 動作確認環境として機能 |
+
+<!-- /platform -->
 
 ## 制約
 

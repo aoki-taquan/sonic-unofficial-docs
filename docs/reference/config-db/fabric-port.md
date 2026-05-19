@@ -327,6 +327,84 @@ FlexCounter グループ名（`FABRIC_PORT_STAT_COUNTER` / `FABRIC_QUEUE_STAT_CO
 
 <!-- /hardcoded-constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/fabric-port-ordering.md`
+
+`FABRIC_PORT` テーブルへの変更に起因して `FabricPortsOrch` が CONFIG_DB 以外の DB へ書き込む副次的書込みと SAI 呼び出しを示す。
+
+### SET / force unisolate 時 — STATE_DB 書込み
+
+`doFabricPortTask()` が `isolateStatus=False` かつ `forceUnisolateStatus` の差分を検出した場合、`STATE_DB FABRIC_PORT_TABLE|<PORT<lane>>` に以下を一括書き込む。
+
+| STATE_DB テーブル / フィールド | 書込内容 | 条件 |
+|------------------------------|---------|------|
+| `FABRIC_PORT_TABLE|PORT<lane>.FORCE_UN_ISOLATE` | 新 `forceUnisolateStatus` 値 | `forceUnisolateStatus` が STATE_DB 値と異なる場合 |
+| `FABRIC_PORT_TABLE|PORT<lane>.POLL_WITH_ERRORS` | `0`（ハードコード） | 同上 |
+| `FABRIC_PORT_TABLE|PORT<lane>.POLL_WITH_NO_ERRORS` | `8`（ハードコード） | 同上 |
+| `FABRIC_PORT_TABLE|PORT<lane>.POLL_WITH_FEC_ERRORS` | `0`（ハードコード） | 同上 |
+| `FABRIC_PORT_TABLE|PORT<lane>.POLL_WITH_NOFEC_ERRORS` | `8`（ハードコード） | 同上 |
+| `FABRIC_PORT_TABLE|PORT<lane>.CONFIG_ISOLATED` | `0`（ハードコード） | 同上 |
+| `FABRIC_PORT_TABLE|PORT<lane>.ISOLATED` | `0`（ハードコード） | 同上 |
+| `FABRIC_PORT_TABLE|PORT<lane>.AUTO_ISOLATED` | `0`（ハードコード） | 同上 |
+| `FABRIC_PORT_TABLE|PORT<lane>.PRM_ISOLATED` | `0`（ハードコード） | 同上 |
+
+書込み後、SAI `set_port_attribute(SAI_PORT_ATTR_FABRIC_ISOLATE, false)` を呼び出してファブリックポートの isolate 状態を解除する（`fabricportsorch.cpp:1537-1542`）。
+
+### タイマーポーリング時 — STATE_DB 書込み
+
+`FABRIC_POLL` タイマー（30 秒周期）が発火するたびに `updateFabricPortState()` が全ファブリックポートの接続状態を SAI から取得し、`STATE_DB FABRIC_PORT_TABLE|PORT<lane>` を更新する。
+
+| STATE_DB フィールド | 書込内容 | 書込条件 |
+|-------------------|---------|---------|
+| `STATUS` | `"up"` / `"down"` | 常に上書き |
+| `REMOTE_MOD` | リモートモジュール番号 | STATUS=up 時のみ |
+| `REMOTE_PORT` | リモートポート番号 | STATUS=up 時のみ |
+| `PORT_DOWN_COUNT` | リンクダウン累積回数 | > 0 の場合のみ |
+| `PORT_DOWN_SEEN_LAST_TIME` | 最終リンクダウン時刻 | > 0 の場合のみ |
+
+`FABRIC_CAPACITY_TABLE|FABRIC_CAPACITY_DATA` には `updateFabricCapacity()` が fabric 容量に関わる集計値を書き込む（`fabric_capacity`, `missing_capacity`, `operating_links`, `number_of_links`, `warning_threshold`, `last_event`, `last_event_time`）（`fabricportsorch.cpp:1225-1231`）。
+
+### タイマーポーリング時 — STATE_DB デバッグカウンタ書込み
+
+`FABRIC_DEBUG_POLL` タイマー（12 秒周期、`monState=enable` 時のみ動作）が発火すると `updateFabricDebugCounters()` が各ポートの CRC/FEC エラー率を計算し STATE_DB を更新する。
+
+| STATE_DB フィールド | 書込内容 |
+|-------------------|---------|
+| `POLL_WITH_ERRORS` | 連続エラー検出ポーリング数 |
+| `POLL_WITH_NO_ERRORS` | 連続エラーなしポーリング数 |
+| `POLL_WITH_FEC_ERRORS` | 連続 FEC エラー検出ポーリング数 |
+| `POLL_WITH_NOFEC_ERRORS` | 連続 FEC エラーなしポーリング数 |
+| `CONFIG_ISOLATED` | CONFIG_DB `isolateStatus` 由来の isolate フラグ |
+| `ISOLATED` | 実効 isolate 状態（cfgIsolated OR autoIsolated OR permIsolated） |
+| `AUTO_ISOLATED` | FABRIC_MONITOR 自動 isolate フラグ |
+| `PRM_ISOLATED` | 永続 isolate フラグ |
+| `RX_CELLS` | 直近ポーリング期間の受信セル数 |
+| `CRC_ERRORS` | 直近ポーリング期間の CRC エラー数 |
+| `CODE_ERRORS` | 直近ポーリング期間のコードエラー数 |
+| `OLD_RX_RATE_AVG` | 移動平均 RX レート（`updateFabricRate()` が書込み） |
+| `OLD_RX_DATA` | 前回 RX データ量スナップショット |
+| `OLD_TX_RATE_AVG` | 移動平均 TX レート |
+| `OLD_TX_DATA` | 前回 TX データ量スナップショット |
+| `LAST_TIME` | 最終レート計算タイムスタンプ |
+
+### 初期化時 — COUNTERS_DB 書込み（FlexCounter 名前マップ）
+
+`getFabricPortList()` 完了後、`generatePortStats()` / `generateQueueStats()` が以下を COUNTERS_DB に書き込む。これらは 1 回のみ書き込まれ、以降は更新されない。
+
+| COUNTERS_DB テーブル / キー | 書込内容 | トリガー |
+|--------------------------|---------|---------|
+| `COUNTERS_FABRIC_PORT_NAME_MAP|""` | `Fabric<lane>` → SAI port OID マッピング | `generatePortStats()` |
+| `COUNTERS_FABRIC_QUEUE_NAME_MAP|""` | `Fabric<lane>:0` → SAI queue OID マッピング | `generateQueueStats()`（`m_fabricQueueStatEnabled` が真の場合のみ） |
+| `COUNTERS_TABLE|<port_oid>` | FlexCounter グループ `FABRIC_PORT_STAT_COUNTER` 登録 | `generatePortStats()`（`m_fabricPortStatEnabled` が真の場合） |
+| `COUNTERS_TABLE|<queue_oid>` | FlexCounter グループ `FABRIC_QUEUE_STAT_COUNTER` 登録 | `generateQueueStats()` |
+| `COUNTERS_DEBUG_NAME_SWITCH_STAT_MAP|""` | `SWITCH_STANDARD_DROP_COUNTERS` → SAI switch OID | `createSwitchDropCounters()`（`gMySwitchType == "voq"` または `"fabric"` 時） |
+
+> **Evidence**: `sonic-swss` `orchagent/fabricportsorch.cpp:94-101,231-256,258-323,1225-1231,1374-1386,1528-1542,1620-1628`、`orchagent/fabricportsorch.h:14-15`
+
+<!-- /side-effects -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
