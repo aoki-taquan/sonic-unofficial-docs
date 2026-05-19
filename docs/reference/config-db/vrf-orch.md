@@ -220,6 +220,49 @@ DEL CONFIG_DB VRF|VrfRed
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照テーブル (Phase C)
+
+`APPL_DB VRF_TABLE` はエントリの **書き手が vrfmgrd 単独** であり、YANG leafref も未定義のため、暗黙参照はすべて実装レベルの依存として現れる。以下は (A) vrfmgrd が CONFIG_DB から読む入力テーブル、(B) VRFOrch が orchagent の `gDirectory` 経由で参照する内部 Orch、(C) 書込み先となる STATE_DB / APPL_DB テーブルを整理したもの。
+
+### A. vrfmgrd が参照する CONFIG_DB 入力テーブル
+
+| 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
+|--------------------------|---------|------|----------------|
+| `CONFIG_DB VRF\|<vrf_name>` | SET/DEL トリガ → Linux `ip link add/del` → APPL_DB VRF_TABLE に転写 | 常時。通常の VRF 追加・削除の主経路 | `vrfmgr.cpp:273-310` (`doTask` SET/DEL 分岐) |
+| `CONFIG_DB MGMT_VRF_CONFIG\|vrf_global` | `mgmtVrfEnabled` / `in_band_mgmt_enabled` 解釈 → vrf_name を `"mgmt"` 固定で SET/DEL | mgmt VRF のみ。`mgmtVrfEnabled=false` または `in_band_mgmt_enabled=false` のとき DEL に強制変換される | `vrfmgr.cpp:229-270` |
+| `CONFIG_DB VXLAN_EVPN_NVO\|<nvo_name>` (`source_vtep` フィールド) | EVPN VTEP tunnel 名を `m_evpnVxlanTunnel` にキャッシュ | EVPN NVO 設定時のみ。VNI 付き VRF の `APPL_DB VXLAN_VRF_TABLE` 書込み (`doVrfVxlanTableUpdate`) の前提 | `vrfmgr.cpp:373-396` (`doVrfEvpnNvoAddTask`) |
+
+### B. VRFOrch が参照する内部 Orch / グローバルリソース
+
+| 依存先 | 参照方向 | 条件 | 参照元 evidence |
+|--------|---------|------|----------------|
+| `EvpnNvoOrch::getEVPNVtep()` (`gDirectory.get<EvpnNvoOrch*>()`) | EVPN VTEP オブジェクト取得 → null なら VRF 作成を中断・再キュー | `vni != 0` のとき `addOperation` / `updateVrfVNIMap` で参照。VTEP が null なら `false` 返却 → Consumer が `m_toSync` に残して再試行 | `vrforch.cpp:205, 225-229` (`updateVrfVNIMap`) |
+| `VxlanTunnelOrch::getVlanMappedToVni(vni)` (`gDirectory.get<VxlanTunnelOrch*>()`) | VNI → VLAN ID 解決 → L3 VNI VLAN インターフェイス UP/DOWN 決定 | `vni != 0` かつ EVPN VTEP 取得成功後。VLAN ID = 0 なら `updateL3VniStatus` は呼ばれない | `vrforch.cpp:207, 233-241` |
+| `gPortsOrch->updateL3VniStatus(vlan_id, true)` / `updateL3VniStatus(vlan_id, false)` | VE インターフェイス UP/DOWN 通知 | VLAN ID が非ゼロの VNI 付き VRF の add / del 時。直接 PortsOrch に作用するため VRF 削除で VLAN VE がダウンする | `vrforch.cpp:239` (add), `vrforch.cpp:267` (del), `vrforch.cpp:285` (`updateL3VniVlan`) |
+| `gFlowCounterRouteOrch->onAddVR(router_id)` | SAI Virtual Router OID を FlowCounterRouteOrch に登録 | VRF create 成功直後（SAI `create_virtual_router` 戻り値の OID を引数） | `vrforch.cpp:110` |
+| `gFlowCounterRouteOrch->onRemoveVR(router_id)` | FlowCounterRouteOrch から VR 登録を削除 | SAI `remove_virtual_router` 成功後、`vrf_table_` / `vrf_id_table_` erase の直前 | `vrforch.cpp:184` |
+
+### C. VRFOrch / vrfmgrd が書込む STATE_DB / APPL_DB テーブル
+
+| テーブル / key | 書込元 | 書込タイミング | フィールド | evidence |
+|---|---|---|---|---|
+| `STATE_DB VRF_TABLE\|<vrf_name>` | vrfmgrd | `CONFIG_DB VRF` SET 受信直後・APPL_DB 書込み前 | `state=ok` | `vrfmgr.cpp:289` |
+| `STATE_DB VRF_TABLE\|<vrf_name>` DEL | vrfmgrd | `VRF_OBJECT_TABLE` が消えた後の `CONFIG_DB VRF` DEL 処理 | — | `vrfmgr.cpp:339` |
+| `STATE_DB VRF_OBJECT_TABLE\|<vrf_name>` | VRFOrch | SAI `create_virtual_router` / `set_virtual_router_attribute` 成功後 | `state=ok` | `vrforch.cpp:120, 150` |
+| `STATE_DB VRF_OBJECT_TABLE\|<vrf_name>` DEL | VRFOrch | SAI `remove_virtual_router` 成功後 | — | `vrforch.cpp:193` |
+| `APPL_DB VXLAN_VRF_TABLE\|<nvo>:evpn_map_<vni>_<vrf>` | vrfmgrd `doVrfVxlanTableUpdate()` | VNI 付き VRF の SET（追加）/ DEL（削除）時、かつ `m_evpnVxlanTunnel` が設定済みの場合のみ | `vni`, `vrf` | `vrfmgr.cpp:510-528` |
+
+!!! note "STATE_DB VRF_TABLE と VRF_OBJECT_TABLE の役割分担"
+    `STATE_DB VRF_TABLE` は vrfmgrd が「Linux VRF デバイスを作成し APPL_DB に書いた」ことを示し、`STATE_DB VRF_OBJECT_TABLE` は VRFOrch が「SAI Virtual Router を作成した」ことを示す。vrfmgrd の DEL 処理は `VRF_OBJECT_TABLE` が存在する間は `m_toSync` に保留し続ける (`vrfmgr.cpp:331-346`)。この 2 段シグナルにより、「Linux デバイス削除」は必ず「SAI VR 削除」の後になることが保証される。
+
+!!! note "APPL_DB VXLAN_VRF_TABLE は NVO 設定の有無に依存"
+    `VXLAN_EVPN_NVO` が未設定（`m_evpnVxlanTunnel` が空）の場合、vrfmgrd は `doVrfVxlanTableUpdate()` で即座に `false` を返してスキップする (`vrfmgr.cpp:503-508`)。VNI が設定済みの VRF でも `VXLAN_VRF_TABLE` には何も書かれない。EVPN NVO が後から追加されると `VrfVxlanTableSync(true)` が呼ばれて既存の VNI マッピングが一括書込みされる (`vrfmgr.cpp:531-542`)。
+
+詳細な参照経路・行番号は `meta/_intermediate/cdb-flow/vrf-orch-cross-refs.md` を参照。
+
+<!-- /cross-refs -->
+
 ## 例外条件・特殊挙動
 
 - **VRF 削除タイミング**: VRFOrch が STATE_VRF_OBJECT_TABLE のエントリを削除するまで vrfmgrd は `ip link del` を遅延する。INTERFACE / ROUTE テーブルが VRF を参照中の場合は `ref_count` が非ゼロで `delOperation` が `false` を返して再キュー。
