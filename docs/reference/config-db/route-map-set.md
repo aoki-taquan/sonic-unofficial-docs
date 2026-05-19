@@ -251,6 +251,29 @@ CONFIG_DB hset 'ROUTE_MAP_SET|ALLOW' ''
 <!-- evidence: frrcfgd.py:2293-2338 table_handler_list (ROUTE_MAP_SET 出現なし); frrcfgd.py:1527 sub_msg_handler キーマッチング -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/route-map-set-platform.md`
+
+### プラットフォーム非依存の設計
+
+`ROUTE_MAP_SET` は YANG leafref 整合性検証のための**純粋な名前レジストリ**であり、SAI API・ASIC Capability・プラットフォーム固有ビルドテンプレートのいずれにも依存しない。
+
+| 観点 | 状況 |
+|------|------|
+| j2 テンプレートによるビルド時注入 | **なし**（`qos_config.j2` 等の全 j2 を grep しても `ROUTE_MAP_SET` 出現なし） |
+| SAI 呼び出し | **なし**（`orchagent/` 全体 grep で出現なし。FRR 側で完結） |
+| ASIC Capability チェック | **なし** |
+| platform_config.json / device profile 注入 | **なし** |
+| multi-ASIC / VOQ chassis 分岐 | **なし** |
+
+### 結論
+
+どのプラットフォームでも `ROUTE_MAP_SET` の動作は同一である。ビルド時の自動生成も行われず、エントリの投入は `sonic-db-cli CONFIG_DB hset 'ROUTE_MAP_SET|<name>' ''` による手動操作、または YANG-aware 設定ツール (`config load` 等) 経由のみとなる。
+
+<!-- /platform -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
