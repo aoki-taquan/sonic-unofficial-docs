@@ -264,6 +264,35 @@ CLI と YANG で許容範囲が意図的に乖離している。
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`VRRP_TRACK` / `VRRP6_TRACK` テーブルへの SET/DEL は **CONFIG_DB 以外の DB への副次書込を発生させない**。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-side-effects.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-side-effects.md)。
+
+### 動作原理
+
+FRR `vrrpd` が CONFIG_DB.VRRP_TRACK を直接購読し、追跡設定をプロセスメモリ内に保持する。`zebra` 経由でカーネルのインタフェース Up/Down イベントを受信すると、メモリ内の VRRP_TRACK エントリを参照して priority を再計算し、VRRP Advertisement パケットの priority フィールドに反映するのみ（HLD L481-492）。
+
+この処理は swss コンテナの orchagent を経由せず、APPL_DB / ASIC_DB への伝搬も発生しない。
+
+### 副次書込なし（全 DB）
+
+| DB | 結論 | 理由 |
+|----|------|------|
+| APPL_DB | 書込なし | VRRP_TRACK は macvlanmgrd / vrrpsyncd のパイプラインに参加しない |
+| STATE_DB | 書込なし | VRRP インスタンスの Master/Backup 状態は APPL_DB.VRRP_TABLE と macvlan デバイス protodown 状態で管理 |
+| ASIC_DB | 書込なし | vrrporch が購読する APPL_DB.VRRP_TABLE に変化がないため ASIC 更新は発生しない |
+| COUNTERS_DB | 書込なし | VRRP_TRACK 専用カウンタマップは存在しない |
+| FLEX_COUNTER_DB | 書込なし | VRRP インスタンスに対する FlexCounter 登録はない |
+
+### 親テーブル (VRRP) との対比
+
+`VRRP` / `VRRP6` テーブルへの SET は 3 段チェーン（macvlanmgrd → vrrpsyncd → vrrporch）で CONFIG_DB 外のリソースに広く波及するが、`VRRP_TRACK` はこのチェーンのいずれにも参加しない。priority の変動は VRRP Advertisement パケットを通じてネットワーク上の Master 選出に影響を与えるが、DB への副次書込は伴わない。
+
+!!! note "間接的なフェイルオーバー"
+    追跡インタフェースのダウンにより priority が低下して Master → Backup に遷移した場合、vrrpsyncd が macvlan デバイスの状態変化を検出して APPL_DB.VRRP_TABLE を更新する。これは `VRRP` テーブルの副次書込経路であり、`VRRP_TRACK` テーブル自体の副次書込ではない。
+<!-- /side-effects -->
+
 ## 引用元
 
 [^1]: `sonic-utilities/config/main.py` (`add_track_interface()` L6993-7040, `remove_track_interface()` L7045-7077); `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` (CONFIG_DB changes L308-315, Uplink interface tracking L481-492); `SONiC/doc/vrrp/sonic-vrrp.yang` (VRRP_TRACK container L136-177). <https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py>
