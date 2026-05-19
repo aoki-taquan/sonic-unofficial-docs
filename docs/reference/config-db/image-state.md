@@ -356,6 +356,36 @@ Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書�
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`/etc/sonic/sonic_version.yml` のフィールド構造・YANG スキーマ・読込み API はプラットフォーム非依存である。ただし、`asic_type` / `asic_subtype` フィールドの**値**がプラットフォームごとに異なり、読み込み後の下流ロジックに分岐を生じさせる。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| テンプレート (`sonic_version.yml.j2`) | 実質差なし | VS プラットフォーム固有テンプレート (`platform/vs/sonic-version/sonic_version.yml.j2`) が存在するが、共通版 (`files/build_templates/sonic_version.yml.j2`) と**内容完全一致**。他プラットフォームに固有テンプレートはない |
+| フィールド定義・YANG | 差なし | YANG モジュール未定義。全プラットフォームで同一フィールド構造 |
+| `asic_type` の値 | プラットフォーム依存 | `broadcom` / `mellanox` / `marvell` / `vs` 等、ビルドターゲット (`sonic_asic_platform`) がそのまま入る |
+| `asic_subtype` の値 | HW SKU 依存 | `TARGET_MACHINE` 変数。空の場合はフィールド自体が省略される |
+| multi-asic / VOQ chassis | 影響なし | `sonic_version.yml` は 1 ファイル。multi-asic 環境でも ASIC ごとに複数のファイルは存在しない |
+
+### `asic_type` 依存の下流分岐
+
+`device_info.get_platform_mac_address()` は `asic_type` の値を読み取り、MAC アドレス取得戦略をプラットフォームごとに切り替える (`device_info.py:845-940`)。これは `sonic_version.yml` 自体の挙動ではなく、ファイルの読み込み後に生じる二次的なプラットフォーム差である。
+
+| `asic_type` | MAC 取得戦略 |
+|-------------|------------|
+| `mellanox`, `nvidia-bluefield` | ONIE `onie_base_mac` → `decode-syseeprom` の順 (`device_info.py:851-866`) |
+| `marvell-prestera`, `nokia-vs` | `decode-syseeprom` → `profile.ini:switchMacAddress` → `eth0` の順 (`device_info.py:867-887`) |
+| `cisco-8000` | `profile.ini` namespace 付き → `eth0` → `decode-syseeprom` の順 (`device_info.py:888-913`) |
+| `pensando` | `eth0-midplane` から取得 (`device_info.py:914-917`) |
+| `centec` | `eth0` 取得後、最終バイトを +1 してアライン (`device_info.py:936-940`) |
+| VS (`x86_64-kvm_x86_64-r0`) | `generate_mac_for_vs(hostname, namespace)` に委譲 (`device_info.py:848`) |
+| その他 (Broadcom 等) | `/sys/class/net/eth0/address` から読む (`device_info.py:918-921`) |
+
+詳細根拠は `meta/_intermediate/cdb-flow/image-state-platform.md` を参照。
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: `sonic-buildimage/build_debian.sh` L642-654 — sonic_version.yml 生成処理。<https://github.com/sonic-net/sonic-buildimage/blob/master/build_debian.sh>
