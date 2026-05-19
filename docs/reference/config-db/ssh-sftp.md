@@ -272,6 +272,62 @@ hostcfgd 起動
 
 <!-- /failure -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+`SSH_SERVER|POLICIES` を更新した際に `hostcfgd` が行う副次処理は、**すべてファイルシステム操作とプロセス再起動**であり、Redis DB への副次書込みは発生しない。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-sftp-side-effects.md`
+
+### 副次書込先サマリ
+
+| 副次書込先 | 書込みの有無 | 内容 |
+|-----------|------------|------|
+| APPL_DB | なし | — |
+| STATE_DB | なし | — |
+| ASIC_DB | なし | SSH は SAI 非経由 |
+| FLEX_COUNTER_DB | なし | — |
+| COUNTERS_DB | なし | — |
+| LOGLEVEL_DB | なし | hostcfgd は syslog 経由のみ |
+| CONFIG_DB | なし | `SSH_SERVER` テーブルへの書き戻しなし |
+| **ファイルシステム** | **あり** | `/etc/ssh/sshd_config`、`/etc/pam.d/pam-limits-conf`、`/etc/security/limits.conf` |
+
+### ファイルシステムへの副次書込み
+
+**① `/etc/ssh/sshd_config`**
+
+`SshServer.set_policies()` (hostcfgd:1110-1161) は次の手順で sshd_config を更新する:
+
+```
+copy2(SSH_CONFG → SSH_CONFG_TMP)      # /etc/ssh/sshd_config をワークファイルへコピー
+└─ SSH_CONFIG_NAMES の各フィールドを書き換え
+└─ sshd -T -f SSH_CONFG_TMP           # バリデーション
+    ├─ OK  → os.rename(tmp → 本番)、systemctl restart ssh
+    └─ NG  → os.remove(tmp) でロールバック。本番 sshd_config は変更されない
+```
+
+`Subsystem sftp` 行は `SSH_CONFIG_NAMES` (hostcfgd:67-75) に存在しないため、sshd_config 更新の前後で変化しない。
+
+**② `/etc/pam.d/pam-limits-conf` および `/etc/security/limits.conf`**
+
+`ssh_handler()` (hostcfgd:2297-2299) は `set_policies()` の後に `pamLimitsCfg.update_config_file()` を呼ぶ。この関数は `SSH_SERVER|POLICIES.max_sessions` の値を Jinja2 テンプレートに埋め込んで PAM 設定ファイルを再生成する (hostcfgd:1421-1479):
+
+| 生成ファイル | テンプレート | 設定対象 |
+|------------|------------|---------|
+| `/etc/pam.d/pam-limits-conf` | `pam_limits.j2` | PAM limits モジュール設定 |
+| `/etc/security/limits.conf` | `limits.conf.j2` | プロセスあたりのセッション上限 (`max_sessions`) |
+
+`max_sessions` は `SSH_CONFIG_NAMES` にないため `sshd_config` の `MaxSessions` ではなく、PAM `limits.conf` 経由でカーネルリソース制限として適用される。
+
+### プロセス再起動
+
+sshd_config バリデーション成功時に `systemctl restart ssh` が発行される (hostcfgd:1154-1155)。これは DB 操作ではなく、稼働中の SSH セッションを切断せずに sshd プロセスを再ロードする。
+
+!!! note "SFTP への影響"
+    `Subsystem sftp` 行は副次書込みの対象外であり、`SSH_SERVER|POLICIES` 変更前後で sshd_config の当該行は変化しない。SFTP セッション確立中の場合も、`systemctl restart ssh` 後に新セッションの接続から変更後の設定が適用される。
+
+<!-- /side-effects -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
