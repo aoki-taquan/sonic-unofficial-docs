@@ -512,6 +512,32 @@ systemctl restart eventd
 > **Evidence**: `eventd.cpp:172-225` (stats_collector::start); `eventd.cpp:656-704` (run_eventd_service 起動シーケンス); `eventd.cpp:244` (内部サブスクライバー); HLD section 3.1.2, 3.1.3, 3.1.8
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`eventd` デーモン本体・設定ファイルスキーマはプラットフォーム非依存である。唯一の例外は `pmon` によるシステム LED 制御であり、HLD が明示的にプラットフォーム依存性を記述している。
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `eventd.cpp` 全体に ASIC 分岐なし。ZMQ エンドポイントはハードコードの `tcp://127.0.0.1:5570〜5573` で固定 |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `docker-eventd` は host コンテナに 1 インスタンス。`asicN` namespace への接続・iterate なし。EVENT_DB は host Redis に 1 つ |
+| VOQ chassis (supervisor + line cards) | 各 host で独立起動 | 設定スキーマ・ファイルパスは同一。chassis 全体集中管理機構なし |
+| `/etc/evprofile/default.json` / `/etc/eventd.json` スキーマ | 差なし | プラットフォーム固有 evprofile ファイルなし。`docker-eventd/Dockerfile.j2` にプラットフォーム分岐なし |
+| `pmon` のシステム LED 制御 | **プラットフォーム依存** | BMC 管理型プラットフォームでは LED API が利用不可のため ALARM_STATS → LED 変換が無効化される (HLD section 3.1.4.1) |
+
+### `pmon` LED 制御のプラットフォーム依存 (HLD section 3.1.4.1)
+
+HLD は次のように明記する:
+
+> "on most of the platforms the system/power/fan LEDs are managed by the BMC."  
+> "There is an API that can be invoked to control LED, but not all platforms will support that API if they are fully controlled by the BMC."  
+> "So, on certain platforms, system LED could not represent events on the system."
+
+`pmon` が `ALARM_STATS` を購読してシステム LED を制御する仕組みは framework の設計上の提案であり、**BMC 完全管理型プラットフォーム（多くのエンタープライズ向け HW）では LED API が利用不可のため LED 反映が無効化される**。`eventd` 自体は `ALARM_STATS` への書き込みを常に実行するが、LED への反映可否は `pmon` の LED ドライバ層の実装に委ねられており、`eventd` の設定スキーマや動作に差は生じない。
+
+詳細根拠は `meta/_intermediate/cdb-flow/extended-monitor-platform.md` を参照。
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework HLD. section 3.1.5 (Event Profile), 3.1.7 (Event Table and Alarm Table). <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
