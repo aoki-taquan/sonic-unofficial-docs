@@ -217,6 +217,52 @@ Redis Hash 内の **フィールド名** が接続識別子 (connection key)、*
 -->
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`ConnectionManager` および `telemetry` デーモンは、テーブル名・接続値・閾値デフォルト・キー生成正規表現をソース内でハードコードしており、CONFIG_DB からは変更できない。
+
+### テーブル名・フィールド値（`connection_manager.go:16,116`）
+
+| 定数 / リテラル | 値 | 用途 |
+|----------------|----|------|
+| `table` 定数 | `"TELEMETRY_CONNECTIONS"` | STATE_DB の Redis Hash テーブル名。変更手段なし（`connection_manager.go:16`） |
+| `HSet` 第 3 引数 | `"active"` | 全接続エントリの固定値。接続状態をキーの有無で表現するため値は常に同一（`connection_manager.go:116`） |
+
+### 接続上限デフォルト（`telemetry.go:187`）
+
+| フラグ / 変数 | デフォルト値 | 意味 |
+|--------------|------------|------|
+| `--threshold` フラグ | `100` | 同時アクティブ Subscribe RPC 接続数の上限。起動オプションまたは CONFIG_DB `GNMI\|gnmi.threshold` で上書き可能（`telemetry.go:187`） |
+| threshold = `0` | 上限なし | `cm.threshold != 0` 条件で特別扱い。`0` のみ「上限なし」を意味する（`connection_manager.go:65`） |
+
+!!! note "上書き可能な例外"
+    `threshold` は `telemetry.go` の `--threshold` フラグで起動時に変更可能であり、厳密な意味でのハードコード定数ではない。ただし運用中の動的変更は CONFIG_DB `GNMI|gnmi.threshold` 経由で行われ、次の Subscribe RPC 到着時に `setConnectionManager()` が再初期化を実行する。
+
+### connection key 生成ロジック（`connection_manager.go:94-108`）
+
+`createKey()` はハードコードされた正規表現と `|` 区切り・UTC RFC3339 タイムスタンプで構成される。外部からカスタマイズする方法は存在しない。
+
+| コード内定数 | 値 | 役割 |
+|-------------|----|------|
+| `regexStr` | `"(?:target\|element):\"([a-zA-Z0-9-_*]*)\""` | gNMI query 文字列から `target` / `element` の値を抽出する正規表現（`connection_manager.go:95`） |
+| 区切り文字 | `"\|"` | `addr.String()` とクエリ要素間、およびタイムスタンプ前の区切り（`connection_manager.go:99,105,107`） |
+| タイムスタンプ形式 | `time.RFC3339` (例: `"2006-01-02T15:04:05Z07:00"`) | key 末尾に付加される接続開始時刻の形式（`connection_manager.go:107`） |
+
+`connection_manager.go:95` の正規表現は英数字・ハイフン・アンダースコア・ワイルドカード (`*`) のみを許可する。これより長い文字列やスラッシュを含む gNMI path は target / element 抽出がスキップされ、key は `addr.String()|<timestamp>` となる。
+
+### Redis クライアント初期化パラメータ（`connection_manager.go:44-50`）
+
+| フィールド | 固定値 | 変更可否 |
+|-----------|--------|---------|
+| `Network` | `"tcp"` | 固定（Unix ソケット非対応） |
+| `Password` | `""` (空文字) | 固定（認証なし） |
+| `DialTimeout` | `0` (デフォルトタイムアウト) | 固定 |
+
+> **Evidence**: `sonic-net/sonic-gnmi` `gnmi_server/connection_manager.go:16,44-50,65,94-108,116`、`telemetry/telemetry.go:187`
+
+<!-- /constants -->
+
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
