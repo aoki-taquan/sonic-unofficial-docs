@@ -266,6 +266,45 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 詳細は `meta/_intermediate/cdb-flow/ipv6-link-local-constants.md` を参照。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込み (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ipv6-link-local-side-effects.md`
+
+<!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp:712-740,923,1053-1054,1084, sonic-swss/neighsyncd/neighsync.cpp:96-100,188 -->
+
+`ipv6_use_link_local_only` フィールドへの書込みを起点として、`intfmgrd` と `neighsyncd` が複数の DB テーブルへ副次的に書き込む。
+
+| 副次 DB | テーブル / キー | フィールド | 書込み値 | トリガー | evidence |
+|---------|--------------|---------|---------|---------|---------|
+| APP_DB | `INTF_TABLE\|<alias>` | `ipv6_use_link_local_only` | `"enable"` または `"disable"` | CONFIG_DB SET（`"enable"` / `"disable"` 両値） | `intfmgr.cpp:926,1053` |
+| APP_DB | `NEIGH_TABLE\|<alias>:FE80::*` | `neigh`, `family` | MAC アドレス文字列, `"IPv6"` | `enable` 後に NDP が link-local 近傍を学習した時点（`neighsyncd` 経由） | `neighsync.cpp:96-100,188` |
+| APP_DB | `NEIGH_TABLE\|<alias>:FE80::*` | —（DEL） | — | `disable` イベントまたはインターフェース DEL 時に既存 link-local neigh を削除 | `intfmgr.cpp:712-740,923,1084` |
+| STATE_DB | `INTERFACE_TABLE\|<alias>` | `vrf` | VRF 名（空文字含む） | `doIntfGeneralTask()` SET 処理の末尾で常に更新（`ipv6_use_link_local_only` 専用ではなく属性ロウ処理全般） | `intfmgr.cpp:1054` |
+
+### 詳細
+
+#### APP_DB INTF_TABLE への転送
+
+`intfmgrd` は `ipv6_use_link_local_only` が空でない場合に限り `FieldValueTuple("ipv6_use_link_local_only", ipv6_link_local_mode)` を `data` に追加し、`m_appIntfTableProducer.set(alias, data)` で APP_DB `INTF_TABLE` に書き込む (`intfmgr.cpp:926,1053`)。`"enable"` / `"disable"` 両値が転送される。
+
+ただし orchagent IntfsOrch は `INTF_TABLE` の `ipv6_use_link_local_only` を受け取っても SAI に転送しない（dead consumer）。実質的な消費者は `neighsyncd` であり、しかも `neighsyncd` は CONFIG_DB を直接参照するため APP_DB の当該フィールドの観測者はほぼ存在しない（Phase C 参照）。
+
+#### APP_DB NEIGH_TABLE への link-local 近傍 SET/DEL
+
+**SET（`neighsyncd` 経由）**: `enable` 設定後、Linux カーネルの NDP が FE80::/10 の近傍を検出すると `neighsyncd` が netlink ADD イベントを受信する。`isLinkLocalEnabled()` で CONFIG_DB を確認し `"enable"` ならば `m_neighTable.set(key, fvVector)` を呼んで `NEIGH_TABLE|<alias>:<FE80::addr>` に `{neigh: <mac>, family: "IPv6"}` を書き込む (`neighsync.cpp:96-100,188`)。
+
+**DEL（`intfmgrd` 経由）**: `"disable"` イベントまたはインターフェース削除時に `delIpv6LinkLocalNeigh(alias)` が呼ばれ、`NEIGH_TABLE` から `<alias>` プレフィクスでマッチする link-local エントリ（`IpAddress::AddrScope::LINK_SCOPE` = FE80::/10）を検索して `ip neigh del dev <alias> <addr>` コマンドで削除する (`intfmgr.cpp:712-740`)。
+
+!!! warning "`ip neigh del` 失敗の無視"
+    `swss::exec()` の戻り値をチェックしていないため (`intfmgr.cpp:733`)、コマンド失敗時はカーネルの近傍キャッシュにエントリが残存する可能性がある。APP_DB の削除は試みるが、実際のカーネル近傍テーブルへの反映は保証されない（Phase D 参照）。
+
+#### STATE_DB INTERFACE_TABLE の vrf フィールド
+
+`doIntfGeneralTask()` は SET 処理の末尾で常に `m_stateIntfTable.hset(alias, "vrf", vrf_name)` を実行する (`intfmgr.cpp:1054`)。`ipv6_use_link_local_only` の変更が属性ロウ全体の再処理を引き起こすため、この書込みも副次的に発生する。ただし VRF 名が変わっていない場合も上書きされる。
+
+<!-- /side-effects -->
+
 ## 購読者
 
 | コンポーネント | 役割 | テーブル |
