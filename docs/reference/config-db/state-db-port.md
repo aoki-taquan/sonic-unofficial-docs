@@ -428,6 +428,54 @@ intfmgrd (swss::Select, SELECT_TIMEOUT=1000 ms)
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/state-db-port-platform.md`
+> 調査対象: `sonic-swss/orchagent/portsorch.cpp`, `sonic-swss/portsyncd/linksync.cpp`
+> 調査日: 2026-05-19
+
+### switchType 別の動作差異
+
+#### DPU (gMySwitchType == "dpu")
+
+DPU 環境では `postPortInit()` (portsorch.cpp:6449) 内で buffer 最大値パラメータ初期化をスキップし、
+`initializePorts()` (portsorch.cpp:6589) で Priority Group / Queue / Scheduler Group の
+一括初期化もスキップする。
+
+STATE_DB `PORT_TABLE` への書き込みフィールド自体は非 DPU と同一。
+`initPortSupportedSpeeds` / `initPortSupportedFecModes` は DPU でも実行されるが、
+SAI 実装次第で `supported_speeds` / `supported_fecs` が不在となる場合がある。
+
+#### VoQ シャーシ (gMySwitchType == "voq")
+
+ポート作成後に追加の VLAN メンバー / bridge port クリーンアップが入る (portsorch.cpp:1496)。
+STATE_DB `PORT_TABLE` に書き込まれるフィールドの内容・経路は非 VoQ と同一。
+VoQ 環境の PHY ポートは `updateSystemPort()` (portsorch.cpp:11033) で
+`SYSTEM_PORT` テーブルとの連携処理が発生するが、`PORT_TABLE` 自体は影響を受けない。
+
+### SAI Capability 依存フィールド
+
+| フィールド | SAI 未実装時の挙動 | コード根拠 |
+|------------|------------------|-----------|
+| `supported_speeds` | フィールド不在またはフィールドなし | portsorch.cpp:3144-3146 |
+| `supported_fecs` | フィールド不在（SET 呼び出しをスキップ） | portsorch.cpp:3279-3284 |
+| `fec` | 常時 `"N/A"` (`oper_fec_sup=false` 時) | portsorch.cpp:987-1011 |
+
+`SAI_PORT_ATTR_OPER_PORT_FEC_MODE` が DPU 以外でのみクエリされる点に注意
+(`portsorch.cpp:987`): DPU では `oper_fec_sup` は常時 `false` となり `fec` は `"N/A"` 固定。
+
+### host_tx_ready の CMIS 依存
+
+`m_cmisModuleAsicSyncSupported` の値でコントロールパスが分岐する:
+
+- `false`（CMIS 非対応）: orchagent が admin UP/DOWN 時に `"true"` / `"false"` を直接書き込む
+- `true`（100G ZR 等 CMIS 対応プラットフォーム）: SAI コールバック
+  `on_port_host_tx_ready` (portsorch.cpp:977) が STATE_DB 書き込みを担当し、
+  orchagent は直接書き込まない
+
+<!-- /platform -->
+
 ## 購読者（consumer）
 
 | プロセス | 参照フィールド | 用途 |
