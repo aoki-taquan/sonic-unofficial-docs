@@ -495,6 +495,27 @@ gNSI Certz (`gnsi_certz.go`) はプロファイル管理に CONFIG_DB を使用�
 > **Evidence**: `sonic-gnmi/gnmi_server/gnsi_certz.go` 全体スキャン — `ConfigDBConnector.subscribe()` / `SubscriberStateTable` / `ConsumerStateTable` の使用なし確認。`sonic-swss` / `sonic-swss-common` でも `SECURITY_PROFILES` / `SECURITY_GLOBAL` のキーワード一致なし。
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差分 (Phase H)
+
+**プラットフォーム差なし**: `SECURITY_PROFILES` / `SECURITY_GLOBAL` テーブルおよび gNSI Certz 実装は、ASIC 種別・multi-asic / VOQ chassis 構成・SmartSwitch の有無に依らず同一の挙動をする。
+
+> 詳細証跡: `meta/_intermediate/cdb-flow/pki-trusted-certs-platform.md`
+
+| 観点 | 結果 | 根拠 |
+|------|------|------|
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | gNSI Certz は SAI 非経由。証明書管理はファイルシステムシンボリックリンクと STATE_DB HSET のみで完結するため、ASIC 種別は無関係 |
+| multi-asic (`is_multi_npu() == True`) | 影響なし | `gnsi_certz.go` に `namespace` / `multi_asic` / `is_multi_npu` の参照なし (`grep` 0 ヒット)。`SECURITY_PROFILES` を消費する production ハンドラが community master に未実装のため namespace ごとの差異も生じない |
+| VOQ chassis (supervisor + line cards) | 影響なし | gNSI Certz は host スコープで動作し、スーパーバイザ / ラインカードの区別を行わない。各 host で独立動作 |
+| SmartSwitch (NPU + DPU) | 影響なし | `gnsi_certz.go` に `SmartSwitch` / `subtype` / `DEVICE_METADATA` の参照なし。SmartSwitch 向け特殊処理は検出されなかった |
+| ベンダー固有設定 | なし | `sonic-pki.yang` に platform 条件の YANG extension なし。ハンドラ未実装のため runtime での分岐も存在しない |
+
+<!-- evidence:
+  sonic-gnmi/gnmi_server/gnsi_certz.go — grep "multi_asic\|namespace\|chassis\|SmartSwitch\|DEVICE_METADATA\|subtype\|is_multi_npu" → 0 ヒット
+  sonic-mgmt-common/cvl/testdata/schema/sonic-pki.yang — platform 条件の YANG extension なし
+-->
+<!-- /platform -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: [`GNMI`](gnmi.md) (`GNMI|certs` で証明書パスを設定), [`TELEMETRY`](telemetry.md)
