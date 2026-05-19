@@ -561,6 +561,70 @@ consumer 側はすべて on-demand polling で読み出す必要がある。
 
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム / SAI Capability 差異 (Phase H)
+
+<!-- evidence: meta/_intermediate/cdb-flow/counters-flex-platform.md -->
+<!-- source: sonic-swss/orchagent/portsorch.cpp (ref: master),
+     sonic-swss-common/common/schema.h (ref: master) -->
+
+### プラットフォーム識別
+
+`portsorch.cpp:689-703` の `isMlnxPlatform()` 関数が環境変数 `platform` から `"mellanox"` 文字列を検索する（`MLNX_PLATFORM_SUBSTRING`、`orch.h:42`）。`flexcounterorch.cpp` にはプラットフォーム分岐は存在せず、カウンタ stat リストに影響する分岐はすべて `portsorch.cpp` 内に閉じている。
+
+### Mellanox (NVIDIA Spectrum) 固有 — trim 統計 Lua プラグイン
+
+```cpp
+// portsorch.cpp:857-863
+if (isMlnxPlatform() &&
+    isPortStatSupported(SAI_PORT_STAT_TRIM_PACKETS) &&
+    isPortStatSupported(SAI_PORT_STAT_TX_TRIM_PACKETS) &&
+    !isPortStatSupported(SAI_PORT_STAT_DROPPED_TRIM_PACKETS))
+{
+    portStatPlugins += "," + nvdaPortTrimSha;
+}
+```
+
+Mellanox Spectrum では `SAI_PORT_STAT_DROPPED_TRIM_PACKETS` をネイティブに返せない世代がある。条件が成立すると `nvda_port_trim_drop.lua` (`portsorch.cpp:802`) が `PORT_STAT` FlexCounter グループへ追加され、`TRIM_PACKETS` と `TX_TRIM_PACKETS` から `DROPPED_TRIM_PACKETS` 相当値を Lua 側で計算して `COUNTERS_DB` に書き込む。非 Mellanox プラットフォームでは Lua プラグインは追加されない。
+
+### SAI Capability クエリによる WRED stat — プラットフォーム依存
+
+`initCounterCapabilities()` (`portsorch.cpp:1850`) が orchagent 起動時に `sai_query_stats_capability` で ASIC がサポートする stat を問い合わせ、結果を `STATE_DB` へ書き込む。
+
+| STATE_DB テーブル | キー | 意味 |
+|---|---|---|
+| `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` | `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` 対応有無 |
+| `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER` | `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` 対応有無 |
+| `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_WRED_DROPPED_PKT_COUNTER` | `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` 対応有無 |
+| `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_WRED_DROPPED_BYTE_COUNTER` | `SAI_QUEUE_STAT_WRED_DROPPED_BYTES` 対応有無 |
+| `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER` | `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` 対応有無 |
+| `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER` | `SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS` 対応有無 |
+| `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_RED_DROP_COUNTER` | `SAI_PORT_STAT_RED_WRED_DROPPED_PACKETS` 対応有無 |
+| `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_TOTAL_DROP_COUNTER` | `SAI_PORT_STAT_WRED_DROPPED_PACKETS` 対応有無 |
+
+各フラグは起動時に `isSupported=false` で初期化され、SAI クエリ成功時に対応 stat のみ `isSupported=true` に更新される。WRED stat が未対応の ASIC では `WRED_ECN_PORT/QUEUE` グループを enable しても FLEX_COUNTER_DB へのエントリ登録は行われない。
+
+### Gearbox 環境 — 別 stat リストと別 COUNTERS_DB
+
+`m_gearboxEnabled = true` の環境（Marvell Gearbox 等を外付けするプラットフォーム）では:
+
+- `gbport_stat_ids[]` (`portsorch.cpp:344-383`) が gearbox system 側・line 側ポートにそれぞれ設定される
+- 書き込み先が通常の `COUNTERS_DB` ではなく専用の `m_gb_counter_db` (Gearbox COUNTERS_DB) になる
+- `port_rates.lua` が gearbox FlexCounter グループに追加登録される (`portsorch.cpp:822-834`)
+
+`gbport_stat_ids[]` は通常の `port_stat_ids[]` のサブセットであり FEC 統計を含む（gearbox ポートでの FEC 計測が主目的）。
+
+### プラットフォーム差異サマリ
+
+| 条件 | 差異 |
+|------|------|
+| Mellanox かつ trim stat 非ネイティブ | `nvda_port_trim_drop.lua` が PORT_STAT グループへ追加 |
+| WRED stat SAI 非対応 | `WRED_ECN_PORT/QUEUE` stat が FLEX_COUNTER_DB 未登録、`STATE_DB` に `isSupported=false` |
+| Gearbox 有効環境 | gearbox ポートは `gbport_stat_ids[]` で別 COUNTERS_DB に書き込まれる |
+| 上記以外 | WRED stat は SAI capability 次第、trim 統計は SAI ネイティブ対応があれば Lua プラグインなしで取得 |
+
+<!-- /platform -->
+
 ## 引用元
 
 [^1]: `sonic-swss/orchagent/portsorch.cpp` `port_stat_ids[]` (line 242), `queue_stat_ids[]` (line 389), `wred_port_stat_ids[]` (line 421), `wred_queue_stat_ids[]` (line 429). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
