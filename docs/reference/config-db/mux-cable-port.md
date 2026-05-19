@@ -222,6 +222,8 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 
 `MUX_CABLE|<ifname>` エントリは `MuxOrch::handleMuxCfg()` → `addOperation()` 経路で処理される。orchagent・ycabled・linkmgrd の 3 コンポーネントそれぞれに固有の失敗経路がある。
 
+<!-- evidence: sonic-swss/orchagent/muxorch.cpp:2202-2290,2394-2415; sonic-linkmgrd/src/DbInterface.cpp:990-1001; sonic-platform-daemons/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py:295-320,660-718 -->
+
 ### A. orchagent (MuxOrch) の失敗パターン
 
 | 失敗条件 | 検出箇所 | 結果 | retry | evidence |
@@ -241,8 +243,8 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 | 失敗条件 | 検出箇所 | 結果 | retry | evidence |
 |---|---|---|---|---|
 | `port_tbl.get(port)` → `status=False`（エントリ不在） | `check_mux_cable_port_type()` L297 | `(False, None)` を返しポートをスキップ | なし | `y_cable_helper.py:297-301` |
-| `"state"` キーが MUX_CABLE エントリに存在しない | `check_mux_cable_port_type()` L308 | `(False, None)` を返しポートをスキップ（DEBUG ログのみ） | なし | `y_cable_helper.py:317-320` |
-| `"soc_ipv4"` キーが欠落（active-active ポート） | `retry_setup_grpc_channel_for_port()` L363 条件不成立 | gRPC チャネルセットアップをスキップ、active-active 制御不能 | 自動（定期スレッドが再試行）| `y_cable_helper.py:363` |
+| `"state"` キーが MUX_CABLE エントリに存在しない | `check_mux_cable_port_type()` L308 | `(False, None)` を返しポートをスキップ（silent skip、DEBUG ログのみ） | なし | `y_cable_helper.py:317-320` |
+| `"soc_ipv4"` キーが欠落（active-active ポート） | `retry_setup_grpc_channel_for_port()` L363 条件不成立 | gRPC チャネルセットアップをスキップ、active-active 制御不能（silent skip） | 自動（定期スレッドが再試行）| `y_cable_helper.py:363` |
 | gRPC チャネル確立失敗（channel / stub が None） | `retry_setup_grpc_channel_for_port()` L371 | `NOTICE` ログ → `return False` | 自動（定期スレッド） | `y_cable_helper.py:373-375` |
 
 ### C. linkmgrd の失敗パターン
@@ -252,7 +254,13 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 | 起動時 `"state"` フィールド欠落 | `getPortMuxMode()` L996 | `MUXLOGERROR` → 当該ポートを `PortToMuxModeConfigMapping` に追加せず処理続行 | なし（起動時 1 回のみ）| `DbInterface.cpp:994-997` |
 | `cable_type` / `prober_type` / `server_ipv4` / `soc_ipv4` 欠落 | 各 getter のフィールド探索 | フォールバック値または no-op で続行。`state` 欠落のみ ERROR、他は DEBUG 以下 | なし | `DbInterface.cpp:827, 880-881, 910-946, 968-1001` |
 
-### D. 失敗ケース全体サマリー
+### D. ログ出力先
+
+- orchagent エラーは `SWSS_LOG_ERROR` / `SWSS_LOG_INFO` で `/var/log/swss/orchagent.log` にのみ出力される。STATE_DB / `ERROR_TABLE` への書き込みは行われない。
+- linkmgrd エラーは `/var/log/linkmgrd/linkmgrd.log` に `MUXLOGERROR` レベルで出力される。
+- ycabled の silent skip はログが出力されないため、`show mux status` で状態を確認する必要がある。
+
+### E. 失敗ケース全体サマリー
 
 | ケース | 最悪の結果 | 回復方法 |
 |---|---|---|

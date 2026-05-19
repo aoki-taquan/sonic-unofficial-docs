@@ -370,4 +370,53 @@ SET ハンドラが受け取ったフィールド群を `parseTrimConfig()` で�
 詳細調査ログ: `meta/_intermediate/cdb-flow/switch-trimming-cross-refs.md`
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+<!-- evidence: meta/_intermediate/cdb-flow/switch-trimming-failure.md -->
+<!-- source: sonic-swss/orchagent/switchorch.cpp L1066-1364 -->
+
+### 失敗パス一覧
+
+| # | 失敗トリガー | 挙動 | リトライ | SAI 影響 |
+|---|------------|------|--------|---------|
+| 1 | ASIC が packet trimming 非対応 (`isSwitchTrimmingSupported() = false`) | `SWSS_LOG_WARN` を出力して **成功扱いの no-op** (`return true`) | なし | SAI 属性設定なし；CONFIG_DB 値は残存 |
+| 2 | `size` フィールドの SAI `set_switch_attribute` 失敗 | `SWSS_LOG_ERROR("Failed to set switch trimming size in SAI")` → `setSwitchTrimming` が `false` を返す | なし（エントリ erase） | SAI 未反映；キャッシュ更新なし |
+| 3 | `dscp_value` モードが ASIC capability 非対応 | `SWSS_LOG_ERROR("...DSCP mode: capability is not supported")` → `false` | なし | SAI 未反映 |
+| 4 | `dscp_value` の SAI set 失敗 | `SWSS_LOG_ERROR("Failed to set switch trimming DSCP mode in SAI")` → `false` | なし | SAI 未反映；DSCP mode キャッシュ更新なし |
+| 5 | `tc_value` が ASIC capability 非対応 | `SWSS_LOG_ERROR("...TC value: capability is not supported")` → `false` | なし | SAI 未反映 |
+| 6 | `tc_value` の SAI set 失敗 | `SWSS_LOG_ERROR("Failed to set switch trimming TC value in SAI")` → `false` | なし | SAI 未反映；TC キャッシュ更新なし |
+| 7 | `queue_index` モードが ASIC capability 非対応 | `SWSS_LOG_ERROR("...queue mode: capability is not supported")` → `false` | なし | SAI 未反映 |
+| 8 | `queue_index` の SAI set 失敗 | `SWSS_LOG_ERROR("Failed to set switch trimming queue index in SAI")` → `false` | なし | SAI 未反映；queue キャッシュ更新なし |
+| 9 | `size`/`dscp`/`tc`/`queue` の削除試行 | `SWSS_LOG_ERROR("Failed to remove switch trimming * configuration: operation is not supported")` → `false` | なし | 削除不可；CONFIG_DB / SAI 乖離 |
+| 10 | `parseTrimConfig` バリデーション失敗（全フィールド無効） | `LOG_ERROR("Validation error: missing valid fields")` → エントリ消去 | なし（エントリ erase） | SAI 未反映 |
+| 11 | key が空文字列 | `SWSS_LOG_ERROR("Failed to parse switch trimming key: empty string")` → erase | なし | SAI 未反映 |
+| 12 | DEL オペレーション | `SWSS_LOG_ERROR("Failed to remove switch trimming: operation is not supported: ASIC and CONFIG DB are diverged")` | なし | 削除不可；STATE 乖離 |
+
+### 非対応 ASIC での no-op（重要）
+
+`setSwitchTrimming()` 冒頭 (`switchorch.cpp:1081–1085`) で `isSwitchTrimmingSupported()` を確認する。
+非対応のとき `SWSS_LOG_WARN` のみ出力して `return true`（成功扱い）のため、`doCfgSwitchTrimmingTableTask()` はエラーとみなさずエントリを erase する。
+CONFIG_DB に `SWITCH_TRIMMING|GLOBAL` の値が残っていても SAI には一切反映されない。
+
+!!! warning "サイレント no-op と STATE_DB での確認"
+    非対応 ASIC では SET が成功ステータスで返るため CONFIG_DB の値は残存するが SAI は未設定のまま。
+    `STATE_DB:SWITCH_CAPABILITY|switch.SWITCH_TRIMMING_CAPABLE` が `"false"` になっていないかを確認することで ASIC の対応有無を判断できる。
+
+### SAI set 失敗時のキャッシュ未更新問題
+
+`setSwitchTrimming()` は各属性 set 成功後にのみ `trimHlpr.setConfig(trim)` でローカルキャッシュを更新する (`switchorch.cpp:1298–1302`)。
+途中の属性 set が失敗すると `false` を返し**キャッシュ更新を行わないまま処理を中断**する。
+呼び出し元はこの戻り値を受けて `"ASIC and CONFIG DB are diverged"` を出力するが、**エントリを erase してリトライなし** (`switchorch.cpp:1347–1351, 1362`)。
+SAI 上には一部の属性のみが適用された中間状態が固定されうる。
+
+### 削除操作の完全非サポート
+
+`SWITCH_TRIMMING|GLOBAL` へのフィールド削除および DEL オペレーションはすべて `false` を返して拒否される。
+一度設定した trimming 設定をリセットする公式の方法は存在せず、orchagent 再起動後に CONFIG_DB を新値で書き直すことで間接的に再適用する必要がある。
+
+> **Evidence**: `sonic-swss` `orchagent/switchorch.cpp:1066–1364`、`orchagent/switch/trimming/capabilities.cpp:142–188,724`
+
+<!-- /failure -->
+
 <!-- glossary-links-injected: ff319d2bdac9 -->

@@ -189,6 +189,26 @@ DEL NVGRE_TUNNEL|<tunnel_name>                  # その後トンネルを削除
 
 <!-- /ordering -->
 
+<!-- cross-refs -->
+## 暗黙参照 — Phase C (cross-table refs)
+
+YANG leafref を超えた実装上の依存関係。ソース: `sonic-swss/orchagent/nvgreorch.cpp` および `sonic-swss/orchagent/orchdaemon.cpp`。
+
+| 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
+|--------|-----------|------|------|-----------|
+| `NVGRE_TUNNEL\|<tunnel_name>` | CONFIG_DB (orchagent 内部 map) | READ | `NvgreTunnelMapOrch::addOperation()` 冒頭で `isTunnelExists(tunnel_name)` を呼ぶ。親トンネルが未登録なら WARN + エントリ破棄（retry なし） | `nvgreorch.cpp:464-472` |
+| `VLAN\|Vlan<vlan_id>` | CONFIG_DB / PortsOrch 内部 map | READ | MAP 登録時に `gPortsOrch->getVlanByVlanId(vlan_id, port)` で VLAN の存在確認。VLAN 未登録なら `VLAN ID doesn't exist` WARN + エントリ破棄 | `nvgreorch.cpp:489-492` |
+| `gUnderlayIfId` | SAI グローバル（ルータ IF OID） | READ | `NvgreTunnel` 構築時に `sai_create_tunnel(..., gUnderlayIfId)` でアンダーレイ RIF として渡す。orchagent 起動時にグローバル初期化されたオブジェクト | `nvgreorch.cpp:312` |
+| `gVirtualRouterId` | SAI グローバル（デフォルト VR OID） | READ | `sai_create_tunnel_termination(..., gVirtualRouterId)` でトンネル終端のデフォルト VRF を指定 | `nvgreorch.cpp:313` |
+
+### 依存解決タイミング
+
+- **`NVGRE_TUNNEL` → `NVGRE_TUNNEL_MAP`**: `NvgreTunnelMapOrch` は親トンネルを `isTunnelExists()` でチェックするが、未登録時に retry キューへ戻さず即廃棄する。よって `NVGRE_TUNNEL` の SET が orchagent で処理完了してから `NVGRE_TUNNEL_MAP` を書き込む必要がある（ordering 参照）。
+- **`VLAN` 参照**: `gPortsOrch->getVlanByVlanId()` は PortsOrch 内部の VLAN マップを参照する。`VLAN` テーブルの SET が PortsOrch により処理完了していない場合、MAP エントリは永続的に失われる。
+- **`gUnderlayIfId` / `gVirtualRouterId`**: orchagent 起動時に `main.cpp` が SAI を初期化して設定するグローバル値。これらは orchagent が稼動していれば常に有効であり、ユーザーが CONFIG_DB に書き込む前提条件にはならない。
+
+<!-- /cross-refs -->
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
