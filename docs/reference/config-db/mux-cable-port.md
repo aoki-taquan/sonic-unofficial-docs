@@ -388,6 +388,80 @@ CONFIG_DB MUX_CABLE|<ifname>  (SET)
 
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-port-pubsub.md`
+
+<!-- evidence:
+  sonic-swss/orchagent/orchdaemon.cpp:23,467-471,477,959
+  sonic-swss/orchagent/muxorch.cpp:2189
+  sonic-linkmgrd/src/DbInterface.cpp:48,1055-1100,1824,1829,1833,1846-1849,1862,1889-1890
+  sonic-platform-daemons/sonic-ycabled/ycable/ycable_utilities/y_cable_table_helper.py:267-289
+  sonic-platform-daemons/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py:36,3656
+  sonic-swss-common/common/schema.h:140-143,457-465
+-->
+
+### orchagent (MuxOrch) — `Orch2` / `ConsumerStateTable`
+
+`orchdaemon.cpp:467-471` で `CFG_MUX_CABLE_TABLE_NAME`（`"MUX_CABLE"`）と `CFG_PEER_SWITCH_TABLE_NAME` を `Orch2` フレームワークに渡す。`Orch2` は内部で各テーブルを `ConsumerStateTable`（`SubscriberStateTable` ラッパ）として保持し、`__keyspace@4__:MUX_CABLE|*` を PSUBSCRIBE する。
+
+- `orchdaemon.cpp:959`: `m_select->select(&s, SELECT_TIMEOUT=1000ms)` の永続 select ループ
+- 通知受信 → `MuxOrch::handleMuxCfg()` にディスパッチ (`muxorch.cpp:2189`)
+- 処理失敗時は `m_toSync` に保留、次イベントループで自動再試行（`PEER_SWITCH` 未設定時など）
+
+### linkmgrd — 専用 `SubscriberStateTable` + `swss::Select`
+
+`DbInterface.cpp:1824` で専用の `SubscriberStateTable` を生成し、同イベントループに登録する (`DbInterface.cpp:1862`):
+
+```cpp
+// DbInterface.cpp:1824
+swss::SubscriberStateTable configDbMuxTable(configDbPtr.get(), CFG_MUX_CABLE_TABLE_NAME);
+// DbInterface.cpp:1862
+swssSelect.addSelectable(&configDbMuxTable);
+```
+
+- PSUBSCRIBE パターン: `__keyspace@4__:MUX_CABLE|*`
+- select タイムアウト: `DEFAULT_TIMEOUT_MSEC = 1000` ms (`DbInterface.cpp:48`)
+- ディスパッチ先: `handleMuxPortConfigNotifiction()` → `processMuxPortConfigNotifiction()`
+- **処理対象フィールドは `state` と `pck_loss_data_reset` のみ**（`DbInterface.cpp:1055-1100`）; `cable_type` / `prober_type` / `server_ipv4` / `soc_ipv4` の変更はランタイム通知では処理されない
+- 起動時は `swss::Table` 一括読み込み（`DbInterface.cpp:1846-1849`）で全ポートの設定を取得し、それ以降の変更のみ `SubscriberStateTable` で差分受信する二段構成
+
+### ycabled — `swss::Table` 直読み（CONFIG_DB は非購読）
+
+ycabled は CONFIG_DB `MUX_CABLE` を `SubscriberStateTable` で購読**しない**。`y_cable_table_helper.py:289` で各 ASIC ごとに素の `swss::Table` として保持し、起動時または gRPC イベント処理時に `port_tbl.get(port)` で polling 読み取りする:
+
+```python
+# y_cable_table_helper.py:289
+self.port_tbl[asic_id] = swsscommon.Table(self.config_db[asic_id], "MUX_CABLE")
+```
+
+ycabled が購読するのは APPL_DB 側のテーブルのみ（下記参照）。
+
+### APPL_DB / STATE_DB 側の pub/sub チェーン
+
+CONFIG_DB `MUX_CABLE` の SET が orchagent で処理された後、APPL_DB を介して ycabled / linkmgrd に通知が伝播する:
+
+| 購読コンポーネント | DB | 購読テーブル | 方式 | SELECT_TIMEOUT | evidence |
+|---|---|---|---|---|---|
+| ycabled | APPL_DB | `HW_MUX_CABLE_TABLE` | `SubscriberStateTable` | 1000 ms | `y_cable_table_helper.py:267-268` |
+| ycabled | APPL_DB | `MUX_CABLE_COMMAND_TABLE` | `SubscriberStateTable` | 1000 ms | `y_cable_table_helper.py:269-270` |
+| ycabled | APPL_DB | `HW_FORWARDING_STATE_PEER` | `SubscriberStateTable` | 1000 ms | `y_cable_table_helper.py:276-277` |
+| linkmgrd | APPL_DB | `MUX_CABLE_RESPONSE_TABLE` | `SubscriberStateTable` | 1000 ms | `DbInterface.cpp:1829` |
+| linkmgrd | STATE_DB | `MUX_CABLE_TABLE` | `SubscriberStateTable` | 1000 ms | `DbInterface.cpp:1833` |
+| orchagent MuxStateOrch | STATE_DB | `HW_MUX_CABLE_TABLE` | `Orch2` / ConsumerStateTable | 1000 ms | `orchdaemon.cpp:477` |
+
+### 通知方式サマリ
+
+| 観点 | orchagent (CONFIG_DB 購読) | linkmgrd (CONFIG_DB 購読) | ycabled (CONFIG_DB) |
+|---|---|---|---|
+| 購読方式 | `Orch2` / `ConsumerStateTable` | `SubscriberStateTable` + `swss::Select` | `swss::Table` 直読み |
+| keyspace PSUBSCRIBE | `__keyspace@4__:MUX_CABLE\|*` | `__keyspace@4__:MUX_CABLE\|*` | 使わない |
+| select タイムアウト | 1000 ms | 1000 ms | — |
+| retry interval | なし（`m_toSync` 保留・自動再試行） | なし（イベント駆動） | — |
+
+<!-- /pubsub -->
+
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 上位ページ: [`MUX_CABLE`](mux-cable.md) — テーブル全体の概要・値依存挙動・Phase 6/7/8 分析
