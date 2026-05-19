@@ -409,4 +409,44 @@ telemetry デーモン
 -->
 <!-- /pubsub -->
 
+<!-- platform -->
+## プラットフォーム差 (Phase H)
+
+`TELEMETRY_CONNECTIONS` テーブルの書込ロジックは **全プラットフォーム・全構成で同一**。`gnmi_server/connection_manager.go`, `gnmi_server/client_subscribe.go`, `telemetry/telemetry.go` を `multi_asic|is_multi_npu|chassis|asic[0-9]|namespace|platform|vendor` で grep しても **0 ヒット**であり、機種依存コードは存在しない。
+
+### TELEMETRY_CONNECTIONS は常に host STATE_DB に書き込まれる
+
+`connection_manager.go:33` は `sdcfg.GetDbDefaultNamespace()` を呼び出す。この関数は `sonic_db_config/db_config.go:15,29` で空文字列 (`SONIC_DEFAULT_NAMESPACE`) を返すよう固定されており、STATE_DB のアドレス・DB 番号は host namespace の `database_config.json` から解決される。
+
+| 構成 | TELEMETRY_CONNECTIONS の書込先 |
+|------|-------------------------------|
+| シングル ASIC | host STATE_DB のみ |
+| multi-asic (`asic0..N` namespace あり) | host STATE_DB のみ。各 asicN namespace の STATE_DB には書き込まない |
+| VOQ / disaggregated chassis | supervisor・line card 各ホストが独立した `telemetry` デーモンと独立した STATE_DB を持つ。chassis 全体の集中 TELEMETRY_CONNECTIONS ストアは存在しない |
+| SmartSwitch | host STATE_DB のみ（後述） |
+
+multi-asic 機でも `gNMI データ参照経路`（Subscribe / Get のターゲット解決）は `sonic_data_client/db_client.go` の `GetDbAllNamespaces()` が全 namespace クライアントを初期化するが、これは TELEMETRY_CONNECTIONS の書込には無関係である。
+
+### SmartSwitch 構成の分岐は TELEMETRY_CONNECTIONS に影響しない
+
+`gnmi-native.sh:89-92` の `LOCALHOST_SUBTYPE == "SmartSwitch"` 判定は `telemetry` デーモン起動時に `-zmq_port=8100` フラグを付与するのみ。ZMQ ポート設定は orchagent との通信経路に影響するが、`ConnectionManager` の HSet / HDel ロジックとは独立しており、TELEMETRY_CONNECTIONS テーブルの書込挙動に変化はない。
+
+### ASIC 種別・ビルドタグ依存なし
+
+`gNMI サーバは SAI 非経由`であり、Broadcom / Mellanox / Marvell 等の ASIC ドライバに依存するコードパスを持たない。ビルドタグ `gnmi_native_write` / `gnmi_translib_write` は管理フレームワーク統合（translib vs native Redis）の差異を制御するが、`connection_manager.go` にビルドタグは存在せず TELEMETRY_CONNECTIONS の書込処理は影響を受けない。
+
+### スキーマ固定要素（機種非依存）
+
+テーブル名定数 `"TELEMETRY_CONNECTIONS"` (`connection_manager.go:16`)、フィールド値 `"active"`、connection key 生成正規表現、`|` 区切り、RFC3339 タイムスタンプ形式はすべてソース内でハードコードされており、platform 差し替え機構を持たない。
+
+詳細解析: `meta/_intermediate/cdb-flow/gnmi-state-platform.md`
+
+<!-- evidence:
+  connection_manager.go:16,33,44-50,116 — SONIC_DEFAULT_NAMESPACE; host STATE_DB 直接接続; platform/multi_asic 分岐なし
+  db_config.go:15,29 — GetDbDefaultNamespace() が SONIC_DEFAULT_NAMESPACE="" を返す
+  gnmi-native.sh:89-92 — SmartSwitch 分岐は -zmq_port=8100 のみ; TELEMETRY_CONNECTIONS に影響なし
+  telemetry.go および connection_manager.go — platform|asic|chassis|vendor grep = 0 hits
+-->
+<!-- /platform -->
+
 [^1]: `sonic-gnmi` `gnmi_server/connection_manager.go:16` — `const table = "TELEMETRY_CONNECTIONS"`、`PrepareRedis()` / `Add()` / `Remove()` で STATE_DB を読み書き
