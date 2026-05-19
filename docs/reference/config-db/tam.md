@@ -411,3 +411,36 @@ TAM テーブル群に関わる定数は YANG スキーマ由来のバリデー�
 | `SAI_TAM_ATTR_TAM_BIND_POINT_TYPE_LIST` | `SAI_TAM_BIND_POINT_TYPE_SWITCH` | `hftelorch.cpp:802-807` |
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tam-side.md`
+
+TAM テーブル群（`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_FEATURE_TABLE` / `TAM_INT_IFA_FLOW_TABLE`）に対する主要購読者（`portsorch` および `HFTelOrch`）が副次的に書き込む DB エントリを以下に示す。
+
+| 副次 DB | テーブル/キー形式 | 書込内容 | 根拠 |
+|---|---|---|---|
+| STATE_DB | `HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE\|<profile_name>\|<group_type>` | プロファイルグループが SAI 側で ready になった時点で `stream_status` / `session_type=ipfix` / `session_config`（テンプレートバイト列）を SET。グループ DEL 時はキーを DEL | `hftelorch.cpp:308, 432, 557`; 定数: `schema.h:509` |
+| ASIC_DB | syncd 経由 SAI オブジェクト | `portsorch.cpp` の `createPtTam()` / `setPortPtTam()` が SAI TAM オブジェクトを作成し syncd 経由で ASIC_DB に反映（`portsorch.cpp:11554-11650`）。ただし `portsorch` は `TAM_DEVICE_TABLE` を CONFIG_DB から購読せず、Path Tracing TAM の設定変更は DEVICE_TABLE 操作と独立している | `portsorch.cpp:11401-11480` |
+| APPL_DB | なし | TAM テーブル購読者から APPL_DB への書込みなし（`ProducerStateTable` / `ResponsePublisher` 参照: 0 件） | — |
+| COUNTERS_DB | なし | `countersyncd`（Rust）は STATE_DB の `HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE` 変化を受けて COUNTERS_DB に書込むが、これは TAM テーブルへの直接書込みではなく STATE_DB 変化のリアクション | `countersyncd/src/actor/swss.rs:11, 42, 152` |
+| FLEX_COUNTER_DB / LOGLEVEL_DB | なし | 参照なし | — |
+
+### HFTelOrch STATE_DB 書込の詳細
+
+`HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE` は `sonic-swss-common/common/schema.h:509` に定数 `STATE_HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE_NAME` として定義される。
+
+```
+STATE_DB:HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE|<profile_name>|<group_type>
+  stream_status  = <稼働状態文字列>
+  session_type   = "ipfix"        # 固定値 (hftelorch.cpp:553)
+  session_config = <template bytes as string>
+```
+
+このエントリは `HFTelOrch::doTask(NotificationConsumer&)` が SAI TAM 通知を受け取り設定が ready になったときに書き込まれる（`hftelorch.cpp:485-560`）。`portsorch` の Path Tracing TAM は STATE_DB に直接書き込まない。
+
+!!! note "TAM テーブルは間接的にのみ STATE_DB に影響する"
+    `TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_*` への書込みは orchagent で直接購読されないため、これらの変更が STATE_DB の `HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE` に反映されることは**ない**。STATE_DB 書込は HFTel プロファイル/グループ系テーブルの操作を通じて発生する。
+
+<!-- /side-effects -->
