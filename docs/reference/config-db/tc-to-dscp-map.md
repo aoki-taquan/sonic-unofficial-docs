@@ -428,3 +428,58 @@ sudo grep -i "tc.*dscp\|Invalid DSCP\|qosorch" /var/log/syslog
     orchagent が SAI エラーを受けて `task_failed` を返す（Silent drop ではなく syslog にエラー出力あり）。
 
 <!-- /constants -->
+
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/tunneldecaporch.cpp`
+
+`TC_TO_DSCP_MAP` の SET/DEL を受けた `QosOrch` が書き込む副次 DB を示す。cfgmgr 中間層はなく [CONFIG_DB](../../reference/glossary.md#term-config_db) → orchagent 直結。[STATE_DB](../../reference/glossary.md#term-state_db) / APPL_DB への書き込みはない。CRM カウンタ・FlexCounter も使用しない。
+
+> 調査証跡: `meta/_intermediate/cdb-flow/tc-to-dscp-map-side-effects.md`
+
+### SET — TC_TO_DSCP_MAP 作成・更新
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `sai_qos_map_api->create_qos_map(SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP, ...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` | 新規マップ作成 (`qosorch.cpp:1271-1285`) |
+| `sai_qos_map_api->set_qos_map_attribute(SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST, ...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` field=`SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | 既存マップ更新時 (`qosorch.cpp:204-215`) |
+
+### SET — PORT_QOS_MAP によるポートバインド
+
+`PORT_QOS_MAP|<port>` の `tc_to_dscp_map` フィールドが本マップを参照した際の副次書き込み:
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP, oid)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `<port_oid>` field=`SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP` | 参照先マップが SAI 解決済みの各ポート (`qosorch.cpp:66, 2077-2133`) |
+
+`qos_to_attr_map`（`qosorch.cpp:66`）に `{tc_to_dscp_field_name, SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP}` が登録されており、`PORT_QOS_MAP` の SET 時に `resolveFieldRefValue()` が OID を解決してポートに適用する。
+
+### TUNNEL 経由の副次書き込み
+
+`TUNNEL.encap_tc_to_dscp_map` フィールドで本マップを参照した際の挙動:
+
+`tunneldecaporch` の `resolveTunnelQosMap()` が OID を解決し、`tunnelTable[key].encap_tc_to_dscp_map_id` に格納する（`tunneldecaporch.cpp:257`）。ただし、OID はメモリ上の struct にのみ保持され、`addDecapTunnel()` の SAI `create_tunnel()` 引数には渡されない（`tunneldecaporch.cpp:300-301`）。`setDecapTunnelStatus()` での STATE_DB 書き込みにも `encap_tc_to_dscp_map_id` は含まれない（`tunneldecaporch.cpp:1526-1531`）。
+
+### DEL — TC_TO_DSCP_MAP 削除
+
+| 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
+|------|------------------|-----------------|------|
+| `sai_qos_map_api->remove_qos_map(sai_object)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` 削除 | `<qos_map_oid>` | PORT_QOS_MAP / TUNNEL 非参照時 (`qosorch.cpp:188-201`) |
+| `pending_remove=true` → `task_need_retry`（削除スキップ） | — | — | PORT_QOS_MAP または TUNNEL から参照中 (`qosorch.cpp:181-186`) |
+
+### 副次書き込みサマリ
+
+| DB | テーブル / 属性 | SET 時 | DEL 時 |
+|----|----------------|--------|--------|
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | create / update (syncd 経由) | remove (syncd 経由, 非参照時のみ) |
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_PORT` field=`SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP` | set_port_attribute (PORT_QOS_MAP 経由, syncd 経由) | SAI_NULL_OBJECT_ID (PORT_QOS_MAP DEL 時) |
+| STATE_DB | — | なし | なし |
+| APPL_DB | — | なし | なし |
+| COUNTERS_DB | — | なし | なし |
+
+```bash
+# SAI QoS map の ASIC_DB エントリ確認
+sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:*'
+```
+<!-- /side-effects -->
