@@ -530,6 +530,105 @@ IPC 送信失敗後もエントリは `consumer.m_toSync.erase(it)` で消費さ
 
 <!-- /failure -->
 
+<!-- constants -->
+## ハードコード定数 (Phase E)
+
+`stpmgrd` / `config/stp.py` が設定・運用で使う固定値の一覧。CONFIG_DB・DEVICE_METADATA 等の外部入力では変更不能。
+
+<!-- evidence: meta/_intermediate/cdb-flow/stp-constants.md -->
+
+### 1. PVST タイマーデフォルト定数（`config/stp.py`）
+
+| 定数名 | 値 | DB フィールド | 出典 |
+|---|---|---|---|
+| `STP_DEFAULT_ROOT_GUARD_TIMEOUT` | `30` (秒) | `STP\|GLOBAL.rootguard_timeout` | `stp.py:118` |
+| `STP_DEFAULT_FORWARD_DELAY` | `15` (秒) | `STP\|GLOBAL.forward_delay` | `stp.py:122` |
+| `STP_DEFAULT_HELLO_INTERVAL` | `2` (秒) | `STP\|GLOBAL.hello_time` | `stp.py:126` |
+| `STP_DEFAULT_MAX_AGE` | `20` (秒) | `STP\|GLOBAL.max_age` | `stp.py:130` |
+| `STP_DEFAULT_BRIDGE_PRIORITY` | `32768` | `STP\|GLOBAL.priority` | `stp.py:134` |
+| `PVST_MAX_INSTANCES` | `255` | PVST VLAN 数上限（silent truncation） | `stp.py:136` |
+
+PVST 有効化コマンド (`config spanning-tree enable pvst`) 実行時に `config/stp.py:520-528` でこれら定数がそのまま CONFIG_DB へ書き込まれる。
+
+---
+
+### 2. MST タイマーデフォルト定数（`config/stp.py`）
+
+| 定数名 | 値 | 役割 | 出典 |
+|---|---|---|---|
+| `MST_DEFAULT_HOPS` | `20` | `STP_MST\|GLOBAL.max_hops` | `stp.py:72` |
+| `MST_DEFAULT_HELLO_TIME` | `2` (秒) | `STP_MST\|GLOBAL.hello_time` | `stp.py:76` |
+| `MST_DEFAULT_MAX_AGE` | `20` (秒) | `STP_MST\|GLOBAL.max_age` | `stp.py:80` |
+| `MST_DEFAULT_REVISION` | `0` | `STP_MST\|GLOBAL.revision` | `stp.py:84` |
+| `MST_DEFAULT_BRIDGE_PRIORITY` | `32768` | `STP_MST\|GLOBAL.bridge_priority` | `stp.py:88` |
+| `MST_DEFAULT_PORT_PRIORITY` | `128` | `STP_PORT.<intf>.priority` (MST 有効化時) | `stp.py:92` |
+| `MST_DEFAULT_FORWARD_DELAY` | `15` (秒) | `STP_MST\|GLOBAL.forward_delay` | `stp.py:96` |
+| `MST_DEFAULT_ROOT_GUARD_TIMEOUT` | `30` (秒) | `STP_MST\|GLOBAL.rootguard_timeout` | `stp.py:100` |
+| `MST_DEFAULT_INSTANCE` | `0` | デフォルト MST インスタンス番号 | `stp.py:104` |
+| `MST_DEFAULT_PORT_PATH_COST` | `1` | `STP_PORT.<intf>.path_cost` (MST 有効化時) | `stp.py:108` |
+
+PVST と MST で `forward_delay` / `max_age` / `hello_time` のデフォルト値は同一だが、格納テーブルが異なる (`STP|GLOBAL` vs `STP_MST|GLOBAL`)。
+
+---
+
+### 3. `stpmgr.h` — デーモン内部固定値
+
+| 定数 | 値 | 役割 |
+|---|---|---|
+| `STPMGRD_SOCK_NAME` | `"/var/run/stpmgrd.sock"` | stpmgrd が bind する Unix ドメインソケット |
+| `STPD_SOCK_NAME` | `"/var/run/stpipc.sock"` | stpd (STP デーモン) IPC ソケット |
+| `MAX_VLANS` | `4096` | `m_vlanInstMap[]` 配列サイズ（VLAN ID 最大数） |
+| `L2_INSTANCE_MAX` | `4096` (`= MAX_VLANS`) | `l2InstPool` bitset サイズ（インスタンスプール論理上限） |
+| `STP_DEFAULT_MAX_INSTANCES` | `255` | STATE_DB 未取得時の PVST インスタンス数フォールバック |
+| `INVALID_INSTANCE` | `-1` | `m_vlanInstMap[]` 未割当マーカー（sentinel） |
+| `TAGGED_MODE` | `1` | VLAN メンバのタグ付きモード値 |
+| `UNTAGGED_MODE` | `0` | VLAN メンバのアンタグモード値 |
+| `INVALID_MODE` | `-1` | タグモード取得失敗時のセンチネル |
+| `STP_SET_COMMAND` | `1` | stpd IPC メッセージの SET opcode |
+| `STP_DEL_COMMAND` | `0` | stpd IPC メッセージの DEL opcode |
+
+証跡: `stpmgr.h:28, 34, 37-39, 49, 107-108`
+
+---
+
+### 4. `stpmgrd.cpp` — Select ループタイムアウト
+
+```c
+// stpmgrd.cpp:17
+#define SELECT_TIMEOUT 1000  // ms
+```
+
+`swsslib::Select::select()` に渡すタイムアウト値。未処理イベントのリトライ間隔でもある。
+
+---
+
+### 5. `getStpMaxInstances()` — STATE_DB ポーリング上限
+
+```cpp
+// stpmgr.cpp:1384
+uint16_t max_delay = 60;  // 最大 60 回 × sleep(1) = 60 秒
+```
+
+起動時に `STATE_STP_TABLE|GLOBAL` の `max_stp_inst` フィールドを最大 60 秒ポーリングする。
+タイムアウト時または値が `0` の場合は `STP_DEFAULT_MAX_INSTANCES = 255` を使用。
+`STATE_STP_TABLE_NAME` は `schema.h:445` で `"STP_TABLE"` に固定されている。
+
+---
+
+### 6. PVST BPDU マルチキャスト MAC — ebtables DROP ルール
+
+PVST 有効化時に stpmgrd は以下の ebtables ルールをハードコードで挿入する:
+
+```
+ebtables -A FORWARD -d 01:00:0c:cc:cc:cd -j DROP
+```
+
+`01:00:0c:cc:cc:cd` は Cisco PVST+ BPDU マルチキャストアドレス。このアドレスは定数化されておらず、`stpmgr.cpp:113` にリテラルで埋め込まれている。設定変更不可。
+
+証跡: `stpmgr.cpp:47, 113, 161`
+
+<!-- /constants -->
+
 ## 関連ページ
 
 - [CONFIG_DB: VLAN](vlan.md)
