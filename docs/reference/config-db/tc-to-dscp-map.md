@@ -483,3 +483,52 @@ sudo grep -i "tc.*dscp\|Invalid DSCP\|qosorch" /var/log/syslog
 sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:*'
 ```
 <!-- /side-effects -->
+
+<!-- pubsub -->
+## 通信メカニズム (Phase G)
+
+### 購読 API
+
+CONFIG_DB の `TC_TO_DSCP_MAP` は `orchdaemon.cpp` の `qos_tables` ベクタ経由で `QosOrch` に登録される。`Orch::addConsumer()` が CONFIG_DB を検出し **`swss::SubscriberStateTable`** を選択する。
+
+- 購読方式: Redis **keyspace 通知** (`__keyspace@<dbId>__:TC_TO_DSCP_MAP|*` への `PSUBSCRIBE`)
+- 通知到着時に `HGETALL` で値を再取得し `(key, op, fvs)` タプルとして `pops()` で返す
+- バッチサイズ: `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`、ハードコード）
+- `orchagent -b` オプションの影響なし（APPL_DB 側 `ConsumerStateTable` のみに作用）
+
+### 書き込み側 (publisher)
+
+CLI `config qos reload`（`sonic-cfggen` + `qos_config.j2`）またはプラットフォーム `qos.json` 投入が `swss::Table::set()` / `HSET` を発行。明示的 `PUBLISH` は行われず Redis keyspace 通知で購読者に伝達。
+
+### ディスパッチ経路
+
+```
+SubscriberStateTable (PSUBSCRIBE keyspace)
+  → Consumer::execute() → pops() (HGETALL)
+  → QosOrch::doTask(Consumer&)
+  → m_qos_handler_map[CFG_TC_TO_DSCP_MAP_TABLE_NAME]
+  → QosOrch::handleTcToDscpTable()
+  → TcToDscpMapHandler::processWorkItem()
+  → addQosItem(): sai_qos_map_api->create_qos_map() [SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP]
+```
+
+`QosOrch::doTask()` は `TC_TO_DSCP_MAP` を PORT_QOS_MAP / QUEUE より先に drain する順序制御あり（`qosorch.cpp:2231-2252`）。
+
+### select タイムアウト・リトライ
+
+- select タイムアウト: **1000 ms** (`SELECT_TIMEOUT`, `orchdaemon.cpp:23`)
+- `task_need_retry` 時は `m_toSync` にエントリを残置して次サイクルで再処理
+- サービス再起動トリガーなし（SAI ライブ操作のみで完結）
+
+| 観点 | 値 |
+|---|---|
+| 購読方式 | `SubscriberStateTable` (keyspace `PSUBSCRIBE`) |
+| バッチサイズ | 128 (`DEFAULT_POP_BATCH_SIZE`) |
+| select タイムアウト | 1000 ms |
+| ハンドラ | `QosOrch::handleTcToDscpTable()` → `TcToDscpMapHandler` |
+| channel PUBLISH | 使わない |
+| TTL | 未使用 |
+
+> **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp`（`qos_tables` ベクタ定義）、`sonic-swss/orchagent/qosorch.cpp:2231-2252`（drain 順序制御）、`sonic-swss-common/common/table.h:164`（`DEFAULT_POP_BATCH_SIZE`）。詳細スキャンと grep 結果は `meta/_intermediate/cdb-flow/tc-to-dscp-map-pubsub.md` を参照。
+
+<!-- /pubsub -->
