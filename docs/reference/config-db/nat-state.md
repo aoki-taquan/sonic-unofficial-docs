@@ -335,6 +335,45 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+<!-- evidence: sonic-buildimage/dockers/docker-nat/restore_nat_entries.py L49-52 / sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch() L108-138 / enableNatFeature() L2534-2580 / disableNatFeature() L2583-2627 / cleanupAppDbEntries() L2457-2532 -->
+
+`NAT_RESTORE_TABLE` および `COUNTERS_NAT*` テーブルへの書込みは 2 つの独立した書き手（`restore_nat_entries.py` と `NatOrch`）から発生する。それぞれの書込み経路で発生する副次的な DB / システム操作を以下に示す。
+
+| # | 書込先 | テーブル / キー | 内容 | 発火条件 |
+|---|--------|----------------|------|---------|
+| 1 | STATE_DB | `NAT_RESTORE_TABLE\|Flags.restored` | `"true"` (文字列) | warm restart 時のみ: `restore_nat_entries.py` が conntrack 復元完了後に書込む (`restore_nat_entries.py:51`) |
+| 2 | COUNTERS_DB | `COUNTERS_GLOBAL_NAT\|Values` (4 フィールド) | `MAX_NAT_ENTRIES` / `TIMEOUT` / `UDP_TIMEOUT` / `TCP_TIMEOUT` 初期値 | orchagent 起動時 1 回のみ。CONFIG_DB 変更では再書込みされない (`natorch.cpp:127-138`) |
+| 3 | SAI / ASIC_DB | `SAI_SWITCH_ATTR_NAT_ENABLE` | `true` | `admin_mode=enabled` 受信時に `enableNatFeature()` が発行 (`natorch.cpp:2553-2560`) |
+| 4 | COUNTERS_DB | `COUNTERS_NAT*\|<key>` 各エントリ | `NAT_TRANSLATIONS_PKTS/BYTES="0"` (初期値) | `enableNatFeature()` → `addAllNatEntries()` で SAI 登録成功直後に書込む (`natorch.cpp:789, 873`) |
+| 5 | SAI / ASIC_DB | `SAI_SWITCH_ATTR_NAT_ENABLE` | `false` | `admin_mode=disabled` 受信時に `disableNatFeature()` が発行。COUNTERS_DB への削除は行わない (`natorch.cpp:2589-2596`) |
+| 6 | APPL_DB + COUNTERS_DB | `NAT_TABLE*` 全エントリ + `COUNTERS_NAT*` 全エントリ | 全削除 | natorch docker 停止時の `NAT_DB_CLEANUP_NOTIFICATION` 通知受信 → `cleanupAppDbEntries()` (`natorch.cpp:4474-4478`) |
+
+### warm restart 経路の副次書込み詳細 (書込み #1)
+
+`restore_nat_entries.py` は NAT warm restart が**有効な起動時のみ**実行される。処理シーケンス:
+
+1. `/var/warmboot/nat/nat_entries.dump` から NAT エントリ一覧を読み込む
+2. kernel conntrack テーブルへ各エントリを `/usr/sbin/conntrack -I` で復元（非 Redis 操作）
+3. 全エントリ復元完了後に `STATE_DB:NAT_RESTORE_TABLE|Flags.restored = "true"` を書込む
+4. `natsyncd` の `isNatRestoreDone()` ポーリングがフラグを検出し reconciliation フェーズへ移行
+
+通常起動では `restore_nat_entries.py` は実行されないため STATE_DB に `NAT_RESTORE_TABLE|Flags` は**書き込まれない**。`natsyncd` は `hget` が空文字列を返すケースを正常として扱い reconciliation なしで動作する (`natsync.cpp:96-108`)。
+
+### orchagent 停止時の全カウンタ削除 (書込み #6)
+
+natorch docker 停止シグナルで APPL_DB `FLUSHNATSTATISTICS` / `NAT_DB_CLEANUP_NOTIFICATION` 通知が届くと `cleanupAppDbEntries()` が全 NAT エントリを APPL_DB から削除し、対応する `COUNTERS_NAT*` エントリを `deleteNatCounters()` で COUNTERS_DB から削除する。docker 再起動後は `admin_mode=enabled` の受信 → `addAllNatEntries()` 呼び出しまで COUNTERS_NAT* エントリが**存在しない**状態になる点に注意。
+
+### 副次書込みが発生しないケース
+
+`disableNatFeature()` (`admin_mode=disabled`) では SAI への無効化のみ行われ、COUNTERS_DB の `COUNTERS_NAT*` エントリは**削除されない**。disabled 状態でも `show nat statistics` はキャッシュ値を表示し続ける。
+
+> **証跡**: `restore_nat_entries.py:49-52` (STATE_DB 書込み), `natorch.cpp:108-138` (コンストラクタ初期化), `natorch.cpp:2534-2580` (enableNatFeature), `natorch.cpp:2583-2627` (disableNatFeature), `natorch.cpp:2457-2532` (cleanupAppDbEntries), `natorch.cpp:4474-4478` (NAT_DB_CLEANUP_NOTIFICATION dispatch), `natorch.cpp:789,873` (updateNatCounters 初期値書込み), `natsyncd.cpp:48-62` (isNatRestoreDone ポーリングループ); 詳細スキャン結果は `meta/_intermediate/cdb-flow/nat-state-side-effects.md` を参照。
+
+<!-- /side-effects -->
+
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
