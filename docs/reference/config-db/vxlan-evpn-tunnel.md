@@ -367,6 +367,68 @@ DIP トンネル用 SAI OID が生成されると FlexCounter に登録され、
 <!-- evidence: vxlanorch.cpp:1155-1170 (createDynamicDIPTunnel SAI生成); vxlanorch.cpp:1161,1232 (addTunnel/delTunnel); vxlanorch.cpp:1226-1228 (deleteTunnelHw); vxlanorch.cpp:1342-1367 (FlexCounter); vxlanorch.cpp:1930-1953 (STATE_DB書込); vxlanorch.cpp:2526-2527 (addVlanMember); vxlanorch.cpp:2591 (removeVlanMember) -->
 <!-- /side-effects -->
 
+<!-- pubsub -->
+## Redis 通知メカニズム (Phase G)
+
+EVPN DIP トンネルは CONFIG_DB エントリを持たず、カーネル Netlink → `fdbsyncd` → APP_DB → `orchagent` という非同期パイプラインで動作する。
+
+### 1. fdbsyncd — Netlink (RTNLGRP_NEIGH) → IMET ルート検出
+
+`fdbsyncd` は `libnl` で RTNLGRP_NEIGH グループを購読し、FRR bgpd が EVPN Type-3 (IMET) ルートを学習するとカーネルネイバーテーブルの変化が `RTM_NEWNEIGH` / `RTM_DELNEIGH` イベントとして到達する (`fdbsyncd.cpp:26-28`、`fdbsync.cpp:692`)。
+
+判定条件: MAC アドレスが `00:00:00:00:00:00` かつ `vtep.s_addr != 0` → `imetAddRoute()` / `imetDelRoute()` を呼ぶ (`fdbsync.cpp:805-817`)。
+
+### 2. fdbsyncd → APP_DB (ProducerStateTable)
+
+`FdbSync::m_imetTable` が `RedisPipeline` 上の `ProducerStateTable` として `APP_VXLAN_REMOTE_VNI_TABLE_NAME` (`"VXLAN_REMOTE_VNI_TABLE"`) に書き込む。
+
+```text
+SET  VXLAN_REMOTE_VNI_TABLE|Vlan<id>:<vtep_ip>  vni=<vni>   # imetAddRoute
+DEL  VXLAN_REMOTE_VNI_TABLE|Vlan<id>:<vtep_ip>               # imetDelRoute
+```
+
+WarmStart 中は `AppRestartAssist::insertToMap()` でキャッシュし、reconciliation 完了後に一括適用する。
+
+### 3. fdbsyncd 主ループ — blocking select、タイムアウトなし
+
+`fdbsyncd.cpp:91` の `s.select(&temps)` はタイムアウトなし (UINT_MAX) の永続ブロック。netlink イベント、STATE_DB `FDB_TABLE`、CONFIG_DB `EVPN_NVO_TABLE` のいずれかが到達したときのみ処理が走る。明示的な retry interval や sleep は存在しない。
+
+| selectable | 購読先 | 処理関数 |
+|-----------|--------|---------|
+| `netlink` (RTNLGRP_NEIGH / RTNLGRP_LINK) | カーネル netlink | `FdbSync::onMsgNbr()` / `onMsgLink()` |
+| `getFdbStateTable()` | STATE_DB `FDB_TABLE` | `processStateFdb()` |
+| `getMclagRemoteFdbStateTable()` | STATE_DB `MCLAG_REMOTE_FDB_TABLE` | `processStateMclagRemoteFdb()` |
+| `getCfgEvpnNvoTable()` | CONFIG_DB `EVPN_NVO_TABLE` | `processEvpnNvo()` |
+
+### 4. orchagent — ConsumerStateTable + select ループ (SELECT_TIMEOUT = 1000 ms)
+
+`orchdaemon.cpp:579-586` で `isDipTunnelsSupported()` が `true` の場合は `EvpnRemoteVnip2pOrch`、`false` の場合は `EvpnRemoteVnip2mpOrch` を生成し APP_DB `VXLAN_REMOTE_VNI_TABLE` を購読する。
+
+orchagent 共通の `Select::select()` ループ (SELECT_TIMEOUT = 1000 ms、`orchdaemon.cpp:23,959`) が APP_DB への書き込みを検知し `addOperation()` / `delOperation()` を呼び出す。前提条件 (EVPN VTEP active / VLAN 存在 / VNI-VLAN マップ存在) が未満足の場合は `return false` でタスクキューに残留し次のループで自動再試行される。
+
+### 5. orchagent → SAI — 同期直接呼び出し (bulk なし)
+
+`addTunnelUser()` → `createDynamicDIPTunnel()` → `sai_tunnel_api->create_tunnel()` を同期で呼ぶ。bulk API は使用しない。
+
+### 6. STATE_DB への書き戻し
+
+DIP トンネル生成・oper status 変化・削除のたびに orchagent が STATE_DB `VXLAN_TUNNEL_TABLE` に直接書き込む (`vxlanorch.cpp:1930-1953`)。外部読み取りは `show vxlan tunnel` などのコマンド実行時の snapshot 読み取りのみ（イベント駆動ではない）。
+
+### 通信メカニズム サマリ
+
+| 区間 | 方式 | チャンネル / テーブル |
+|------|------|---------------------|
+| カーネル netlink → `FdbSync` | libnl RTNLGRP_NEIGH | RTM_NEWNEIGH / RTM_DELNEIGH |
+| `FdbSync` → APP_DB | `ProducerStateTable` (RedisPipeline) | `VXLAN_REMOTE_VNI_TABLE` |
+| APP_DB → `EvpnRemoteVnip2pOrch` | `ConsumerStateTable` (Orch2) | keyspace notification |
+| `EvpnRemoteVnip2pOrch` → SAI | 直接 API 呼び出し (同期) | `sai_tunnel_api`, `sai_vlan_api` |
+| orchagent → STATE_DB | `Table::set/del` | `VXLAN_TUNNEL_TABLE` |
+
+詳細解析: `meta/_intermediate/cdb-flow/vxlan-evpn-tunnel-pubsub.md`
+
+<!-- evidence: fdbsyncd/fdbsyncd.cpp:26-28,79,91 (netlink登録・selectループ); fdbsyncd/fdbsync.cpp:26,561-615,692,804-817 (imetAddRoute/delRoute・RTM判定); orchdaemon.cpp:23,579-586,959 (EvpnRemoteVniOrch生成・SELECT_TIMEOUT); vxlanorch.h:499-502 (EvpnRemoteVnip2pOrch Orch2基底); vxlanorch.cpp:1930-1953 (STATE_DB書き込み) -->
+<!-- /pubsub -->
+
 ## 例外条件・特殊挙動
 
 - **isDipTunnelsSupported() = false の場合**: DIP トンネルは作成されず、リモート VTEP の
