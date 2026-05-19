@@ -333,6 +333,40 @@ DEL CONFIG_DB VRF|VrfRed
 詳細調査ノートは `meta/_intermediate/cdb-flow/vrf-orch-constants.md` 参照。
 <!-- /constants -->
 
+<!-- side-effects -->
+## 副次 DB 書込 (Phase F)
+
+> 調査日 2026-05-19。ソース: `sonic-swss/orchagent/vrforch.cpp`, `sonic-swss/orchagent/vrforch.h`, `sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp`, `sonic-swss/orchagent/portsorch.cpp`
+
+`VRFOrch::addOperation` / `delOperation` は APPL_DB VRF_TABLE を消費した後、以下の副次 DB 書込みを生じさせる。ASIC_DB への SAI 呼出し（主作用）は除く。
+
+### 副次 DB 書込み一覧
+
+| 副次 DB | テーブル / キー | 書込タイミング | 書込内容 | evidence |
+|---|---|---|---|---|
+| STATE_DB | `VRF_OBJECT_TABLE\|<vrf_name>` | `create_virtual_router()` / `set_virtual_router_attribute()` 成功後 | `state=ok` を set | `vrforch.cpp:120, 150` |
+| STATE_DB | `VRF_OBJECT_TABLE\|<vrf_name>` DEL | `remove_virtual_router()` 成功後 | エントリ削除 | `vrforch.cpp:193` |
+
+### gFlowCounterRouteOrch — FlowCounter への VR 登録
+
+VRFOrch は SAI VR 作成成功直後に `gFlowCounterRouteOrch->onAddVR(router_id)` (`vrforch.cpp:110`)、VR 削除直後に `onRemoveVR(router_id)` (`vrforch.cpp:184`) を呼ぶ。これは `FlowCounterRouteOrch` がルートフローカウンタを VRF 単位で管理するための通知で、`mRouteFlowCounterSupported` が true の場合のみ実処理が走る。
+
+| 副次 DB | テーブル / キー | 書込タイミング | 書込内容 | evidence |
+|---|---|---|---|---|
+| COUNTERS_DB / FLEX_COUNTER_DB | ルートパターンに一致するカウンタエントリ | `onAddVR` / `onRemoveVR` 呼出し時（`mRouteFlowCounterSupported=true` の場合のみ） | ルートフローカウンタの作成 / 削除 | `flowcounterrouteorch.cpp:401-451` |
+
+`mRouteFlowCounterSupported=false` の環境（多くの VS / stub SAI）では `onAddVR` / `onRemoveVR` は即座に `return` し、COUNTERS_DB / FLEX_COUNTER_DB への書込みは発生しない (`flowcounterrouteorch.cpp:404-407`)。
+
+### gPortsOrch — VLAN VE インターフェイス UP/DOWN 通知
+
+VNI 付き VRF の追加時に `gPortsOrch->updateL3VniStatus(vlan_id, true)` が呼ばれ、VNI にマップされた VLAN の `m_up_member_count` をインクリメント（0→1 なら `m_oper_status=SAI_PORT_OPER_STATUS_UP`）する。VRF 削除時は `updateL3VniStatus(vlan_id, false)` でデクリメント（0 なら `m_oper_status=SAI_PORT_OPER_STATUS_DOWN`) する。この変更は `PortsOrch` の **インメモリ構造体のみ** の更新であり、追加の DB 書込みは生じない（`portsorch.cpp:10326-10359`）。ただし `vlan_id == 0` の場合は呼出し自体がスキップされる（`vrforch.cpp:237-241`）。
+
+!!! note "副次書込みの条件"
+    `STATE_VRF_OBJECT_TABLE` は SAI 成否に関わらず必ず 1 回書かれる（成功時に `state=ok`）。`FlowCounterRouteOrch` への通知は `mRouteFlowCounterSupported` フラグに依存するため、VS / SAI 未対応環境では一切の副次 DB 書込みが生じない。VLAN VE 状態変更は VNI 付き VRF かつ `VxlanTunnelOrch::getVlanMappedToVni()` が非ゼロを返す場合のみ発生する。
+
+詳細: `meta/_intermediate/cdb-flow/vrf-orch-side-effects.md`
+<!-- /side-effects -->
+
 ## 例外条件・特殊挙動
 
 - **VRF 削除タイミング**: VRFOrch が STATE_VRF_OBJECT_TABLE のエントリを削除するまで vrfmgrd は `ip link del` を遅延する。INTERFACE / ROUTE テーブルが VRF を参照中の場合は `ref_count` が非ゼロで `delOperation` が `false` を返して再キュー。
