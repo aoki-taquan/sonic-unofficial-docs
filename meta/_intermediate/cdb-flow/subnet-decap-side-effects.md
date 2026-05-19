@@ -1,59 +1,36 @@
-# SUBNET_DECAP — Phase F side-effects スキャン証跡
+# SUBNET_DECAP — Phase F 副次 DB 書込 (調査メモ)
 
-調査日: 2026-05-19  
-ソース: `sonic-swss/orchagent/tunneldecaporch.cpp`, `tunneldecaporch.h`, `routeorch.cpp`, `vnetorch.cpp`
+対象ページ: `docs/reference/config-db/subnet-decap.md`
+調査日: 2026-05-19
+調査者: batch-q67-f
 
-## STATE_DB への書込み
+## 調査ソース
 
-`TunnelDecapOrch` は `stateDb` コネクションを保持し、2 つの STATE_DB テーブルへ書き込む。
+- `sonic-swss/orchagent/tunneldecaporch.cpp`（`TunnelDecapOrch` クラス全体）
+- `sonic-swss/orchagent/tunneldecaporch.h` L34-35（STATE_DB テーブルフィールド宣言）
+- `sonic-swss/orchagent/routeorch.cpp` L2714-2718, L3220-3251（VIP ルート連動）
+- `sonic-swss/orchagent/vnetorch.cpp` L1563-1594（VNet ルート連動）
 
-### STATE_TUNNEL_DECAP_TABLE
+## 副次 DB 書込の調査結果
 
-- `setDecapTunnelStatus(tunnel_name)` → `stateTunnelDecapTable->set(tunnel_name, fv)` (L1531)
-  - フィールド: `tunnel_type`, `dscp_mode`, `ecn_mode`, `encap_ecn_mode`, `ttl_mode`
-  - トンネルオブジェクトが ASIC_DB へ正常追加後に呼ばれる
-- `removeDecapTunnelStatus(tunnel_name)` → `stateTunnelDecapTable->del(tunnel_name)` (L1536)
-  - トンネル削除時に呼ばれる
+### STATE_DB 書込（直接）
 
-SUBNET_DECAP の `status=enable` → `ipinip.json.j2` が `TUNNEL_DECAP_TABLE:IPINIP_SUBNET` を APP_DB へ書き込む → TunnelDecapOrch が SAI トンネルを作成 → この STATE_DB 書込が発生する。
+`TunnelDecapOrch` は STATE_DB に以下のテーブルを書き込む。
 
-### STATE_TUNNEL_DECAP_TERM_TABLE
+| キー | DB | 書込タイミング | evidence |
+|------|----|---------------|----------|
+| `STATE_TUNNEL_DECAP_TABLE:<tunnel_name>` | STATE_DB | トンネルオブジェクト追加 / 削除完了時 | tunneldecaporch.cpp:34, 287, 1531, 1536 |
+| `STATE_TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<term_key>` | STATE_DB | tunnel term 追加 / 削除完了時 | tunneldecaporch.cpp:35, 1560, 1566 |
 
-- `setDecapTunnelTermStatus(tunnel_name, dst_ip, src_ip, term_type, subnet_type)` → `stateTunnelDecapTermTable->set(key, fv)` (L1560)
-  - フィールド: `term_type` (P2P/P2MP/MP2MP), オプションで `src_ip`, `subnet_type`
-- `removeDecapTunnelTermStatus(tunnel_name, dst_ip)` → `stateTunnelDecapTermTable->del(key)` (L1566)
+### APP_DB 書込（間接：RouteOrch / VNetRouteOrch 経由）
 
-subnet decap term は `term_type=MP2MP` かつ `subnet_type=vlan` または `subnet_type=vip` で記録される。
+`SUBNET_DECAP.enable=true` の状態で VIP ルートが追加されると、`RouteOrch::addRoute()` および `VNetRouteOrch::set()` が以下を APP_DB に書き込む。これは `SUBNET_DECAP` テーブルが直接書き込むのではなく、他の orchagent ハンドラが `getSubnetDecapConfig()` を参照して副次的に生成する。
 
-## APPL_DB への書込み (間接)
+| キー | DB | 書込トリガー | evidence |
+|------|----|------------|----------|
+| `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:<vip_prefix>` | APP_DB | VIP ルート追加（`subnet_type: vip`、MP2MP） | routeorch.cpp:2714-2717, 3220-3251 |
+| `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET_V6:<vip_prefix>` | APP_DB | IPv6 VIP ルート追加 | vnetorch.cpp:1563-1594 |
 
-`SUBNET_DECAP` の処理自体は APPL_DB を直接書かない。しかし:
+### APPL_DB / COUNTERS_DB / ASIC_DB への直接書込
 
-- `RouteOrch::createVipRouteSubnetDecapTerm()` (routeorch.cpp:3220) が VIP ルート追加時に `APP_TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:<prefix>` を書き込む
-- `VNetRouteOrch::createSubnetDecapTerm()` (vnetorch.cpp:1563) も同様に `APP_TUNNEL_DECAP_TERM_TABLE` へ書き込む
-
-これらは `SUBNET_DECAP.status=enable` が前提条件となるが、SUBNET_DECAP の SET/DEL イベント自体がトリガーではなく、VIP ルート追加がトリガーである。
-
-## ASIC_DB への書込み (主作用のため除外)
-
-`sai_tunnel_api->create_tunnel()`, `create_tunnel_term_table_entry()` → これらは主作用として別途扱う。
-
-## 書込みが検出されなかった DB
-
-- FLEX_COUNTER_DB: なし
-- COUNTERS_DB: なし
-- LOGLEVEL_DB: なし
-- CONFIG_DB: なし (設定変更なし)
-- APPL_STATE_DB: なし
-
-## Evidence コード行
-
-| 操作 | ファイル | 行 |
-|------|----------|-----|
-| `stateTunnelDecapTable->set()` | `tunneldecaporch.cpp` | L1531 |
-| `stateTunnelDecapTable->del()` | `tunneldecaporch.cpp` | L1536 |
-| `stateTunnelDecapTermTable->set()` | `tunneldecaporch.cpp` | L1560 |
-| `stateTunnelDecapTermTable->del()` | `tunneldecaporch.cpp` | L1566 |
-| `setDecapTunnelStatus()` 呼出 | `tunneldecaporch.cpp` | L287 |
-| `createVipRouteSubnetDecapTerm()` | `routeorch.cpp` | L2717, L3220 |
-| `createSubnetDecapTerm()` (VNet) | `vnetorch.cpp` | L1563-1594 |
+`TunnelDecapOrch` 自身は APPL_DB・COUNTERS_DB への直接書込を行わない。ASIC_DB への反映は SAI (`sai_tunnel_api`) 経由で行われ、orchagent フレームワークが管理する。

@@ -191,6 +191,53 @@ if "localhost" not in device_metadata and "POLICIES" not in ssh_server_policies:
 
 <!-- /cross-refs -->
 
+<!-- failure -->
+## 失敗挙動 (Phase D)
+
+> 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-failure.md`
+
+### SET 処理における失敗経路（SshServer.set_policies）
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---------|---------|------|---------|
+| `ports` リストが空、またはポート番号が整数型 | `handle_ports_set()` L1091-1095 | `set_policies()` がその時点で `return`。**全フィールド**が破棄される（前回の `sshd_config` を維持） | `LOG_ERR`: "Failed to update sshd config files - wrong port configuration" / "port num value {} in wrong format" |
+| ポート番号が 1〜65535 の範囲外 | `handle_ports_set()` L1097-1100 | 同上 | `LOG_ERR`: "Ssh port {} out of range" |
+| 整数フィールド（`authentication_retries` 等）が min/max 範囲外 | `set_policies()` L1122-1124 | そのフィールドのみ `continue`（スキップ）。残フィールドは適用続行 | `LOG_ERR`: "Ssh {} {} out of range" |
+| 未知のキー（`SSH_CONFIG_NAMES` に無く `max_sessions` でもない） | `set_policies()` L1148 | そのフィールドのみスキップ（処理継続） | `LOG_ERR`: "Failed to update sshd config file - wrong key {}" |
+| `sshd -T -f sshd_config.tmp` が非ゼロ失敗 | `set_policies()` L1150-1160 | `sshd_config.tmp` を削除してロールバック。今回の**全変更**が破棄される | `LOG_ERR`: "Failed to update sshd config file - sshd -T returned {} with error {}" |
+| `systemctl restart ssh` が例外 | `set_policies()` L1152-1157 | 例外を catch して ERR ログのみ。`sshd_config` は書き換え済みだが ssh サービスが未再起動（不整合状態） | `LOG_ERR`: "Failed to update sshd config file" |
+| `copy2(SSH_CONFG, SSH_CONFG_TMP)` が `OSError` | `set_policies()` L1113 | 例外が未捕捉で伝播。`set_policies()` 全体が中断 | スタックトレースが syslog へ |
+
+### PAM limits 失敗経路（PamLimitsCfg.render_conf_file）
+
+| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
+|---------|---------|------|---------|
+| Jinja2 テンプレートレンダリング例外 | `render_conf_file()` L1459-1478 | `except Exception` で捕捉。PAM limits ファイル未更新 | `LOG_ERR`: "modify pam_limits config file failed with exception: {}" |
+| PAM limits ファイルへの `open(..., 'w')` が `OSError` | `render_conf_file()` L1469, L1476 | 同上 | 同上 |
+| `get_table('SSH_SERVER')` で `KeyError` | `update_config_file()` L1425-1427 | `except KeyError` で silent skip。`max_sessions` は前回値を維持 | なし |
+
+### ロールバック粒度
+
+```
+ports 失敗          → set_policies() 全体が return（全フィールド破棄）
+sshd -T 失敗        → sshd_config.tmp 削除（全変更ロールバック）
+個別フィールド範囲外 → そのフィールドのみ continue（他フィールドは適用）
+systemctl 失敗      → sshd_config 書き換え済み・ssh 未再起動（不整合）
+PAM limits 例外     → except で吸収・ログのみ・PAM ファイル未変更
+```
+
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1091-1100 (handle_ports_set 失敗条件) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1110-1160 (set_policies 全体) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1117-1119 (ports 失敗 return) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1122-1124 (INT_VALUES 範囲外 continue) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1148 (unknown key ERR + continue) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1150-1160 (sshd -T gate + rollback) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1152-1157 (systemctl restart 例外 catch) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1459-1478 (render_conf_file 例外 catch) -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd L1425-1427 (get_table KeyError catch) -->
+
+<!-- /failure -->
+
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
