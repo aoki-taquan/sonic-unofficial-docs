@@ -1,50 +1,37 @@
-# Phase B — DSCP_TO_PG_MAP 書き込み順調査
+# dscp-to-pg-map — ordering 調査メモ
 
-調査日: 2026-05-18
+## 対象ページ
+`docs/reference/config-db/dscp-to-pg-map.md`
 
-## 対象
+## 結論
+`DSCP_TO_PG_MAP` テーブル自体は存在しない。DSCP→PG マッピングは DSCP_TO_TC_MAP → TC_TO_PRIORITY_GROUP_MAP の 2 段構成で実現される。
+PORT_QOS_MAP がこれら 2 テーブルを参照するため、PORT_QOS_MAP 書き込みには両テーブルが先行している必要がある。
 
-`DSCP_TO_PG_MAP` テーブルは存在しないため、実際の 2 段マッピングチェーン
-（`DSCP_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`）の
-書き込み順依存を調査する。
+## ソース
 
-## 調査コード
+### qosorch.cpp — PORT_QOS_MAP の参照解決
+- `qosorch.cpp:2124`: `resolveFieldRefValue` で `dscp_to_tc_field_name` の OID を解決。未解決なら `task_need_retry`
+- `qosorch.cpp:2129`: `task_need_retry` を返す → orchtask は自動リトライ
+- `qosorch.cpp:2021`: グローバル (PORT_NAME_GLOBAL) でも同様の解決処理
+- `qosorch.cpp:2026`: グローバルでも `task_need_retry`
 
-- `sonic-swss/orchagent/qosorch.cpp`
-- `handlePortQosMapTable()`: L2046-2134
-- `doTask(Consumer&)`: L2254-2299
-- 汎用マップハンドラ: L130-196
+### qosorch.cpp — map テーブル自体の書き込み順序
+- `qosorch.cpp:80-96`: `m_qos_maps` 初期化リストに DSCP_TO_TC_MAP, TC_TO_PRIORITY_GROUP_MAP, PORT_QOS_MAP が登録される
+- DSCP_TO_TC_MAP, TC_TO_PRIORITY_GROUP_MAP は独立した SET 処理で PORT 依存なしに SAI オブジェクトを作成可能
+- PORT_QOS_MAP は PORT が PortInitDone 済みであること + 参照 QoS マップが SAI 登録済みであることの両方を要求
 
-## 調査結論
+### qosorch.cpp — PORT 依存
+- `qosorch.cpp:2180`: `gPortsOrch->getPort(port_name, port)` でポート存在確認。未存在時はスキップ（エラーログのみ、リトライなし）
 
-`DOT1P_TO_TC_MAP` ベースの 2 段チェーン（`dot1p-to-pg-map` ページ参照）と同一のメカニズム。
-`DSCP_TO_TC_MAP` を `DOT1P_TO_TC_MAP` に読み替えた同等の順序依存が存在する。
+## 書込み順の結論
 
-### SET 順序（必須）
+```
+DSCP_TO_TC_MAP エントリ作成 ←─┐
+TC_TO_PRIORITY_GROUP_MAP エントリ作成 ←─┤ 先行必須
+PORT (PortInitDone 済み) ←─────────────┘
+  ↓
+PORT_QOS_MAP エントリ書き込み → QosOrch が OID 解決 → SAI 適用
+```
 
-1. `DSCP_TO_TC_MAP|<name>` を先に SET する
-2. `TC_TO_PRIORITY_GROUP_MAP|<name>` を先に SET する
-3. 両マップ作成後に `PORT_QOS_MAP|<port>` で `dscp_to_tc_map=<name>` および `tc_to_pg_map=<name>` を SET する
-
-根拠: `handlePortQosMapTable()` L2124-2130 の `resolveFieldRefValue()` — 参照先マップが未作成の場合は `task_need_retry` を返す。orchagent のループで自動リトライされるが、マップが存在するまで PORT_QOS_MAP への SAI 反映はブロックされる。
-
-### DEL 順序（必須）
-
-1. `PORT_QOS_MAP|<port>` を先に DEL し参照を解除する
-2. その後 `DSCP_TO_TC_MAP|<name>` および `TC_TO_PRIORITY_GROUP_MAP|<name>` を DEL する
-
-根拠: 汎用ハンドラ L181-186 — `isObjectBeingReferenced()` が true の間は DEL が `m_pendingRemove=true` を立て `task_need_retry` を返す。参照が解除されるまで SAI 削除は実行されない。
-
-### allPortsReady() ブロック
-
-`doTask()` L2258-2261 — `gPortsOrch->allPortsReady()` が false の間は全 QosOrch タスクが即 return でスキップされる。
-
-## 依存関係サマリ
-
-| 依存関係 | 方向 | 緩和策 |
-|---------|------|-------|
-| allPortsReady() 完了 → 全 QosOrch 処理 | 強制先行 | orchdaemon が自動管理 |
-| DSCP_TO_TC_MAP SET → PORT_QOS_MAP SET (dscp_to_tc_map) | 必須先行 | task_need_retry で自動リトライ |
-| TC_TO_PRIORITY_GROUP_MAP SET → PORT_QOS_MAP SET (tc_to_pg_map) | 必須先行 | task_need_retry で自動リトライ |
-| PORT_QOS_MAP DEL → DSCP_TO_TC_MAP DEL | 必須先行 | m_pendingRemove + task_need_retry |
-| PORT_QOS_MAP DEL → TC_TO_PRIORITY_GROUP_MAP DEL | 必須先行 | m_pendingRemove + task_need_retry |
+参照マップが未存在の場合は `task_need_retry` で自動リトライされるため、
+順序違反があっても最終的には適用されるが、起動時のタイムアウトリスクがある。
