@@ -37231,11 +37231,11 @@ kbps は通常大きな値のため実用上の影響は限定的だが、低レ
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>orchagent / StormControlOrch</strong>: <code>PORT_STORM_CONTROL</code> テーブルを <code>SubscriberStateTable</code> で購読。</li>
+<li><strong>orchagent / PolicerOrch</strong>: <code>PORT_STORM_CONTROL</code> テーブルを <code>SubscriberStateTable</code> で購読。</li>
 </ul>
 <h3 id="2-cfg-appl">段階 2: CFG → APPL 翻訳<a class="headerlink" href="#2-cfg-appl" title="Permanent link">&para;</a></h3>
 <ul>
-<li>StormControlOrch がエントリを解析し、ストームコントロール種別 (<code>broadcast</code>, <code>unknown_unicast</code>, <code>unknown_multicast</code>) とレート (kbps/pps) を取得。</li>
+<li>PolicerOrch がエントリを解析し、ストームコントロール種別 (<code>broadcast</code>, <code>unknown-unicast</code>, <code>unknown-multicast</code>) とレート (kbps/pps) を取得。</li>
 <li>APP_DB への書き込みなし。</li>
 </ul>
 <h3 id="3-appl-sai">段階 3: APPL → SAI<a class="headerlink" href="#3-appl-sai" title="Permanent link">&para;</a></h3>

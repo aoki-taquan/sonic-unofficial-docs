@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="NTP_SERVER テーブル — 上流 NTP サーバまたは pool を保持する。hostcfgd の NtpHandler が /etc/chrony/chrony.conf（または ntp.conf）を再生成し、サービスを再起動する。">
+        <meta name="description" content="NTP_SERVER テーブル — 上流 NTP サーバまたは pool を保持する。hostcfgd の NtpCfg が /etc/chrony/chrony.conf（または ntp.conf）を再生成し、サービスを再起動する。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="NTP_SERVER テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="NTP_SERVER テーブル — 上流 NTP サーバまたは pool を保持する。hostcfgd の NtpHandler が /etc/chrony/chrony.conf（または ntp.conf）を再生成し、サービスを再起動する。" />
+<meta property="og:description" content="NTP_SERVER テーブル — 上流 NTP サーバまたは pool を保持する。hostcfgd の NtpCfg が /etc/chrony/chrony.conf（または ntp.conf）を再生成し、サービスを再起動する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/ntp-server.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/ntp-server/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="NTP_SERVER テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="NTP_SERVER テーブル — 上流 NTP サーバまたは pool を保持する。hostcfgd の NtpHandler が /etc/chrony/chrony.conf（または ntp.conf）を再生成し、サービスを再起動する。" />
+<meta property="twitter:description" content="NTP_SERVER テーブル — 上流 NTP サーバまたは pool を保持する。hostcfgd の NtpCfg が /etc/chrony/chrony.conf（または ntp.conf）を再生成し、サービスを再起動する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/ntp-server.png" />
 </head>
   
@@ -36779,7 +36779,7 @@
 
 <h1 id="ntp_server">NTP_SERVER テーブル<a class="headerlink" href="#ntp_server" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>上流 NTP サーバまたは pool を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> の <code>NtpHandler</code> が <code>/etc/chrony/chrony.conf</code>（または <code>ntp.conf</code>）を再生成し、サービスを再起動する。<code>max-elements 10</code> でサーバ数上限がある。<code>NTP_KEY</code> で対称鍵を、<code>NTP|global</code> で client 全体設定を保持する。</p>
+<p>上流 NTP サーバまたは pool を保持する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>hostcfgd</code> の <code>NtpCfg</code> が <code>/etc/chrony/chrony.conf</code>（または <code>ntp.conf</code>）を再生成し、サービスを再起動する。<code>max-elements 10</code> でサーバ数上限がある。<code>NTP_KEY</code> で対称鍵を、<code>NTP|global</code> で client 全体設定を保持する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -37544,7 +37544,7 @@
 </ul>
 <h2 id="_14">購読者<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>hostcfgd</code> <code>NtpHandler</code>: chrony / ntp 設定の更新</li>
+<li><code>hostcfgd</code> <code>NtpCfg</code>: chrony / ntp 設定の更新</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -37688,7 +37688,7 @@
 </ul>
 <h3 id="2-cfg-appl">段階 2: CFG → APPL 翻訳<a class="headerlink" href="#2-cfg-appl" title="Permanent link">&para;</a></h3>
 <ul>
-<li>hostcfgd の <code>ntpHandler</code> が <code>ntp.conf</code> の <code>server</code> ディレクティブを更新し ntpd 再起動。</li>
+<li>hostcfgd の <code>NtpCfg</code> が <code>ntp.conf</code> の <code>server</code> ディレクティブを更新し ntpd 再起動。</li>
 <li>APP_DB への書き込みなし。</li>
 </ul>
 <h3 id="3-appl-sai">段階 3: APPL → SAI<a class="headerlink" href="#3-appl-sai" title="Permanent link">&para;</a></h3>

@@ -37087,30 +37087,35 @@
 <tbody>
 <tr>
 <td><code>"disabled"</code></td>
-<td><a href="../../glossary/#term-macsec">MACsec</a> POST 非対応、または無効 (main.cpp:791)</td>
+<td><a href="../../glossary/#term-macsec">MACsec</a> POST 非対応、または無効 (main.cpp:791, 930)</td>
+</tr>
+<tr>
+<td><code>"switch-level-post-in-progress"</code></td>
+<td>switch レベル POST 実行中 (main.cpp:775)</td>
 </tr>
 <tr>
 <td><code>"macsec-level-post-in-progress"</code></td>
-<td>POST テスト実行中 (main.cpp:924)</td>
+<td><a href="../../glossary/#term-macsec">MACsec</a> レベル POST 実行中 (main.cpp:924)</td>
 </tr>
 <tr>
 <td><code>"pass"</code></td>
-<td>POST テスト成功 (macsecorch.cpp:705, 786)</td>
+<td>POST テスト成功 (macsecorch.cpp:705, 786, 840)</td>
 </tr>
 <tr>
 <td><code>"fail"</code></td>
-<td>POST テスト失敗 (macsecorch.cpp:710, 791)</td>
+<td>POST テスト失敗 (macsecorch.cpp:710, 791, 856)</td>
 </tr>
 </tbody>
 </table>
 <h3 id="post_state">post_state 遷移<a class="headerlink" href="#post_state" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>stateDiagram-v2
     [*] --&gt; disabled : MACsec POST 非対応 (main.cpp:930)
-    [*] --&gt; macsec_post_in_progress : POST 対応 SAI (main.cpp:924)
-    macsec_post_in_progress --&gt; pass : SAI_SWITCH_MACSEC_POST_STATUS_PASS (macsecorch.cpp:786)
-    macsec_post_in_progress --&gt; fail : SAI_SWITCH_MACSEC_POST_STATUS_FAIL (macsecorch.cpp:791)
-    pass --&gt; macsec_post_in_progress : orchagent 再起動
-    fail --&gt; macsec_post_in_progress : orchagent 再起動</code></pre>
+    [*] --&gt; switch_level_post_in_progress : POST 開始 (main.cpp:775)
+    switch_level_post_in_progress --&gt; macsec_level_post_in_progress : switch POST 完了 (main.cpp:924)
+    macsec_level_post_in_progress --&gt; pass : SAI_SWITCH_MACSEC_POST_STATUS_PASS (macsecorch.cpp:786)
+    macsec_level_post_in_progress --&gt; fail : SAI_SWITCH_MACSEC_POST_STATUS_FAIL (macsecorch.cpp:791)
+    pass --&gt; macsec_level_post_in_progress : orchagent 再起動
+    fail --&gt; macsec_level_post_in_progress : orchagent 再起動</code></pre>
 <!-- ordering -->
 <h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
 <p>orchagent が <a href="../../glossary/#term-state_db">STATE_DB</a> へ書き込む 5 テーブルはそれぞれ異なる初期化フェーズで出現する。下記は orchagent 起動シーケンスにおける書込み順と、テーブル間の強制先行関係をまとめたものである。</p>
@@ -37274,7 +37279,7 @@
 <td><code>main.cpp:791-793, 924</code></td>
 </tr>
 <tr>
-<td>SAI <a href="../../glossary/#term-macsec">MACsec</a> POST 完了コールバック</td>
+<td>SAI MACsec POST 完了コールバック</td>
 <td>SAI / <a href="../../glossary/#term-asic">ASIC</a></td>
 <td>非同期 NOTIFY</td>
 <td>FIPS_MACSEC_POST_TABLE</td>

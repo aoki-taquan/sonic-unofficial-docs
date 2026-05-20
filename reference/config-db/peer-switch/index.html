@@ -37383,8 +37383,8 @@
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>            └─ sai_tunnel_api-&gt;create_tunnel(...)    muxorch.cpp:325
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>                 SAI_TUNNEL_ATTR_TYPE          = SAI_TUNNEL_TYPE_IPINIP
 </span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>                 SAI_TUNNEL_ATTR_PEER_MODE     = SAI_TUNNEL_PEER_MODE_P2P
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>                 SAI_TUNNEL_ATTR_ENCAP_SRC_IP  = PEER_SWITCH.address_ipv4
-</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>                 SAI_TUNNEL_ATTR_ENCAP_DST_IP  = TUNNEL.src_ip
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>                 SAI_TUNNEL_ATTR_ENCAP_SRC_IP  = TUNNEL.src_ip（MuxTunnel0 の dst_ip）
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>                 SAI_TUNNEL_ATTR_ENCAP_DST_IP  = PEER_SWITCH.address_ipv4
 </span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>                 SAI_TUNNEL_ATTR_ENCAP/DECAP_TTL_MODE = PIPE_MODEL
 </span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>                 SAI_TUNNEL_ATTR_LOOPBACK_PACKET_ACTION = DROP
 </span></code></pre></div>

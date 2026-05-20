@@ -37421,7 +37421,7 @@
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
-<p>QosOrch が <code>QUEUE.wred_profile</code> / <code>QUEUE.scheduler</code> / <code>QUEUE.dscp_to_tc_map</code> フィールドを参照して各テーブルの OID を解決し、SAI キューオブジェクトに bind する。参照先テーブルが未作成の場合は設定がペンディング状態になる（待機派生）。</p>
+<p>QosOrch が <code>QUEUE.wred_profile</code> / <code>QUEUE.scheduler</code> フィールドを参照して各テーブルの OID を解決し、SAI キューオブジェクトに bind する。参照先テーブルが未作成の場合は設定がペンディング状態になる（待機派生）。</p>
 <h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
 <p>QosOrch は常時登録し <code>QUEUE</code> テーブルを無条件購読する。ただし <code>SCHEDULER</code> / <code>WRED_PROFILE</code> が未作成の場合は対応 OID が未解決でペンディングとなる。port が未初期化の場合はエラーログ + スキップ。</p>
 <!-- /derivation -->

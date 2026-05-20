@@ -38589,7 +38589,7 @@
 <tr>
 <th><code>ASIC_VENDOR</code> 値</th>
 <th>ロードされるクラス</th>
-<th><a href="../../glossary/#term-state_db">STATE_DB</a> <code>PBH_CAPABILITIES_TABLE</code> へ書込</th>
+<th><a href="../../glossary/#term-state_db">STATE_DB</a> <code>PBH_CAPABILITIES</code> へ書込</th>
 </tr>
 </thead>
 <tbody>
@@ -38723,9 +38723,9 @@
 <h3 id="voq-chassis">VOQ / chassis<a class="headerlink" href="#voq-chassis" title="Permanent link">&para;</a></h3>
 <p><code>sonic-swss/orchagent/pbh/</code> ディレクトリに <a href="../../glossary/#term-voq">VOQ</a> chassis 固有コードは存在しない。<code>PbhOrch</code> は <code>orchdaemon.cpp</code> で unconditionally 生成されており、<a href="../../glossary/#term-voq">VOQ</a> / non-<a href="../../glossary/#term-voq">VOQ</a> の分岐なし。</p>
 <h3 id="capability-state_db">capability の STATE_DB 書き込み<a class="headerlink" href="#capability-state_db" title="Permanent link">&para;</a></h3>
-<p><code>PbhCapabilities::writePbhVendorCapabilitiesToDb()</code> が起動時に <code>STATE_DB:PBH_CAPABILITIES_TABLE</code> へ各フィールドの capability 文字列 (<code>ADD</code>, <code>UPDATE</code>, <code>REMOVE</code> のカンマ区切り) を書き込む。確認コマンド:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES_TABLE|rule&#39;</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES_TABLE|hash&#39;</span>
+<p><code>PbhCapabilities::writePbhVendorCapabilitiesToDb()</code> が起動時に <code>STATE_DB:PBH_CAPABILITIES</code> へ各フィールドの capability 文字列 (<code>ADD</code>, <code>UPDATE</code>, <code>REMOVE</code> のカンマ区切り) を書き込む。確認コマンド:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|rule&#39;</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PBH_CAPABILITIES|hash&#39;</span>
 </span></code></pre></div>
 <!-- /platform -->
 

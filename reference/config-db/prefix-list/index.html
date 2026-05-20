@@ -36864,8 +36864,8 @@
 <h2 id="_9">運用ヒント<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li>key 形式: <code>PREFIX_LIST|&lt;name&gt;|&lt;seq&gt;</code>。</li>
-<li><code>action</code>: <code>permit</code> / <code>deny</code>、<code>prefix</code>: CIDR、<code>ge</code>/<code>le</code>: 長さレンジ。</li>
+<li>key 形式: <code>PREFIX_LIST|&lt;prefix_type&gt;|&lt;ip-prefix&gt;</code>（例: <code>PREFIX_LIST|ANCHOR_PREFIX|192.168.0.0/24</code>）。</li>
+<li><code>prefix_type</code>: <code>ANCHOR_PREFIX</code> / <code>SUPPRESS_PREFIX</code>、<code>family</code>: <code>IPv4</code> / <code>IPv6</code>。</li>
 </ul>
 <h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>

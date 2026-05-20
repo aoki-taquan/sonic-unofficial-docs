@@ -36313,13 +36313,13 @@
 <tr>
 <td>→ WATERMARK_TABLE</td>
 <td><a href="../../glossary/#term-appl_db">APPL_DB</a> <code>WATERMARK_CLEAR_REQUEST</code> 通知</td>
-<td><code>watermarkcfg clear</code> CLI</td>
+<td><code>watermarkstat -c</code> CLI</td>
 <td><code>"PERSISTENT"</code> / <code>"USER"</code> op でそれぞれの <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> テーブルをリセット。<code>PERIODIC_WATERMARKS</code> はタイマーのみがリセット対象</td>
 </tr>
 <tr>
 <td>CLI</td>
 <td><code>watermarkcfg -c &lt;秒&gt;</code> / <code>-s</code></td>
-<td><a href="../../cli/"><code>watermarkcfg</code></a></td>
+<td><a href="../cli/"><code>watermarkcfg</code></a></td>
 <td><code>interval</code> フィールドの書き込み（<a href="../../glossary/#term-config_db">CONFIG_DB</a> HSET）と読み出し</td>
 </tr>
 </tbody>
