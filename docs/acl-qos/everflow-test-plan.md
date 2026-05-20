@@ -69,7 +69,7 @@ flowchart LR
     PTF -->|verify mirrored packet| COL
 ```
 
-事前条件: BGP セッション、LAG、ACL table / rule、mirror session が configured な「running SONiC system」を用意する[^1]。テストは特定 SAI API ではなく **end-to-end 機能** の検証。
+事前条件: BGP セッション、LAG、ACL table / rule、mirror session が configured な「running [SONiC](../reference/glossary.md#term-sonic) system」を用意する[^1]。テストは特定 SAI API ではなく **end-to-end 機能** の検証。
 
 ### 事前準備（apply_config）
 
@@ -200,4 +200,4 @@ show acl counters
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-SONiC は ASIC こそ共通でも PSU / FAN / 温度センサ / sysled / トランシーバ等、**周辺ハードウェア** はベンダ・機種ごとに大きく異なる。従来は各 ODM が個別ドライバで `sysfs` を生やし、SONiC 側 platform API の中でその差分を吸収していた[^1]。
+[SONiC](../reference/glossary.md#term-sonic) は [ASIC](../reference/glossary.md#term-asic) こそ共通でも PSU / FAN / 温度センサ / sysled / トランシーバ等、**周辺ハードウェア** はベンダ・機種ごとに大きく異なる。従来は各 ODM が個別ドライバで `sysfs` を生やし、SONiC 側 platform API の中でその差分を吸収していた[^1]。
 
 S3IP（**Simplified Switch System Integration Program**, ODCC のサブプロジェクト）の sysfs 仕様は、これらの周辺 HW を `/sys_switch/...` という **統一されたディレクトリツリー** に揃えるための規約と、その生成を補助するカーネルモジュール / systemd サービスの組[^1]。
 
@@ -266,4 +266,4 @@ journalctl -u s3ip-sysfs.service
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c5a6ce567024 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

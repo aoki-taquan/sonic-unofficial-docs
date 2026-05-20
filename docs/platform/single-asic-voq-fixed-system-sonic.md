@@ -48,7 +48,7 @@ related:
 
 ## 概要
 
-VoQ（Virtual Output Queue）アーキテクチャはこれまで **マルチ ASIC のシャーシシステム** でのみ前提とされ、Chassis DB（`chassisdb.conf` の有無で識別される）を経由した system port 共有・iBGP メッシュ・midplane などの仕組みに強く依存していた[^1]。
+VoQ（Virtual Output Queue）アーキテクチャはこれまで **マルチ [ASIC](../reference/glossary.md#term-asic) のシャーシシステム** でのみ前提とされ、Chassis DB（`chassisdb.conf` の有無で識別される）を経由した system port 共有・iBGP メッシュ・midplane などの仕組みに強く依存していた[^1]。
 
 本 [HLD](../reference/glossary.md#term-hld) は VoQ 機能を **単一 ASIC の固定システム** にも持ち込む構成（single-ASIC VoQ）の差分を定義する。switch type `voq` をシャーシ／非シャーシで **共用** し、Chassis DB の存在で動作を分岐する設計思想を取る[^1]。
 
@@ -93,7 +93,7 @@ flowchart TD
 | Line card 拡張サポート | ✅ | ❌ |
 | internal/external [BGP](../reference/glossary.md#term-bgp) 区別 | ✅ | ❌（local のみ）|
 | Fabric port status を Chassis DB から取得 | ✅ | ❌（ローカル取得）|
-| Multi-ASIC チェック | True | **必ず False** |
+| [Multi-ASIC](../reference/glossary.md#term-multi-asic) チェック | True | **必ず False** |
 
 `is_voq_chassis()` を CLI 各コマンドで参照し、Chassis 専用ロジックをスキップする[^1]。
 
@@ -204,4 +204,4 @@ done
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 5388cf19e510 -->
+<!-- glossary-links-injected: a4e1093efab5 -->

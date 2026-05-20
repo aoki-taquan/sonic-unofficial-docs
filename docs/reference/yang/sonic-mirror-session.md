@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-port`, `sonic-policer`
 - top container: `sonic-mirror-session`
 
-SONiC Mirror session yang model[^1]
+[SONiC](../../reference/glossary.md#term-sonic) Mirror session yang model[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -160,4 +160,4 @@ show mirror_session
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 5a7793d3db87 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

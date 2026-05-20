@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-ASIC / SDK が発する health event のうち、重大度 (severity) ごとに**抑制ルールとカテゴリフィルタ**を定義するテーブル[^1]。
+[ASIC](../../reference/glossary.md#term-asic) / SDK が発する health event のうち、重大度 (severity) ごとに**抑制ルールとカテゴリフィルタ**を定義するテーブル[^1]。
 イベントの発火頻度が高いベンダーで、必要なものだけを `STATE_DB`/`SYSLOG` に通すために使う。
 
 <!-- cdb-mermaid -->
@@ -122,7 +122,7 @@ sonic-db-cli STATE_DB keys 'ASIC_SDK_HEALTH_EVENT_TABLE|*'
 | `software` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_SW` | ソフトウェア起因イベントを抑制。 |
 | `firmware` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_FW` | ファームウェア起因イベントを抑制。 |
 | `cpu_hw` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_CPU_HW` | CPU ハードウェア起因イベントを抑制。 |
-| `asic_hw` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_ASIC_HW` | ASIC ハードウェア起因イベントを抑制。 |
+| `asic_hw` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_ASIC_HW` | [ASIC](../../reference/glossary.md#term-asic) ハードウェア起因イベントを抑制。 |
 | 省略（未指定） | なし | 全カテゴリが抑制対象として登録される。DEL 操作時も同様に全カテゴリの抑制を解除。 |
 
 <!-- /value-behavior -->
@@ -147,7 +147,7 @@ const std::set<sai_switch_asic_sdk_health_category_t>
 };
 ```
 
-→ CONFIG_DB に該当 severity 行がない、または `categories` が空 / 未設定の場合、**抑制なし = 全イベントを購読** が暗黙デフォルト。
+→ [CONFIG_DB](../../reference/glossary.md#term-config_db) に該当 severity 行がない、または `categories` が空 / 未設定の場合、**抑制なし = 全イベントを購読** が暗黙デフォルト。
 
 証跡: `sonic-swss/orchagent/switchorch.cpp:101-107, 1366-1408`
 
@@ -202,7 +202,7 @@ end
 #define ASIC_SDK_HEALTH_EVENT_ELIMINATE_INTERVAL 3600
 ```
 
-`max_events` を超えても **即時削除されるわけではなく**、3600 秒周期の `SelectableTimer` (`switchorch.cpp:287-291`) が走るまで超過したまま `STATE_DB` に保持される。CONFIG_DB から変更不可。
+`max_events` を超えても **即時削除されるわけではなく**、3600 秒周期の `SelectableTimer` (`switchorch.cpp:287-291`) が走るまで超過したまま `STATE_DB` に保持される。[CONFIG_DB](../../reference/glossary.md#term-config_db) から変更不可。
 
 証跡: `sonic-swss/orchagent/switchorch.h:29`, `switchorch.cpp:287-291`
 
@@ -219,7 +219,6 @@ end
 
 [^2]: switchorch 実装: `sonic-swss/orchagent/switchorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/switchorch.cpp>
 
-
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
@@ -227,7 +226,7 @@ end
 
 ### 1. orchagent 起動時の初期化順序
 
-`orchdaemon.cpp:212` で `SwitchOrch` が生成されると、コンストラクタ内で即座に `initAsicSdkHealthEventNotification()` が呼ばれる。この関数が **CONFIG_DB を起動時スナップショット** として読み取り、SAI に初期登録する。
+`orchdaemon.cpp:212` で `SwitchOrch` が生成されると、コンストラクタ内で即座に `initAsicSdkHealthEventNotification()` が呼ばれる。この関数が **[CONFIG_DB](../../reference/glossary.md#term-config_db) を起動時スナップショット** として読み取り、SAI に初期登録する。
 
 ```
 orchdaemon
@@ -241,7 +240,7 @@ orchdaemon
             5. registerAsicSdkHealthEventCategories(attr, severity, categories, isInitializing=true)
 ```
 
-→ **orchagent 起動前** に CONFIG_DB へ書き込んでおくと起動時スナップショットに取り込まれる。**起動後** に初めて書き込んだ場合は次の Consumer イベントで適用される。
+→ **[orchagent](../../reference/glossary.md#term-orchagent) 起動前** に CONFIG_DB へ書き込んでおくと起動時スナップショットに取り込まれる。**起動後** に初めて書き込んだ場合は次の Consumer イベントで適用される。
 
 ### 2. 起動時 (isInitializing=true) と実行中 (false) の挙動差異
 
@@ -267,11 +266,11 @@ Consumer (SubscriberStateTable: CONFIG_DB SUPPRESS_ASIC_SDK_HEALTH_EVENT)
        5. DEL_COMMAND → registerAsicSdkHealthEventCategories(attr, key)  [全購読 = 抑制解除]
 ```
 
-SET / DEL ともに `registerAsicSdkHealthEventCategories` が唯一の SAI 書込み点であり、アトミックに `set_switch_attribute` を呼ぶ。APPL_DB 中継はなく CONFIG_DB → SAI の直接経路。
+SET / DEL ともに `registerAsicSdkHealthEventCategories` が唯一の SAI 書込み点であり、アトミックに `set_switch_attribute` を呼ぶ。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継はなく CONFIG_DB → SAI の直接経路。
 
 ### 4. warm reboot との関係
 
-orchagent が warm reboot で再起動すると `initAsicSdkHealthEventNotification()` が再度実行され、CONFIG_DB の最新値を読み取って SAI に再登録する。`RESTARTCHECK` 通知ハンドラ (`switchorch.cpp:1543-1564`) は SUPPRESS テーブルとは無関係で、suppression 状態の凍結・回復ロジックは存在しない。
+[orchagent](../../reference/glossary.md#term-orchagent) が warm reboot で再起動すると `initAsicSdkHealthEventNotification()` が再度実行され、CONFIG_DB の最新値を読み取って SAI に再登録する。`RESTARTCHECK` 通知ハンドラ (`switchorch.cpp:1543-1564`) は SUPPRESS テーブルとは無関係で、suppression 状態の凍結・回復ロジックは存在しない。
 
 ### 5. 起動順依存まとめ
 
@@ -279,7 +278,7 @@ orchagent が warm reboot で再起動すると `initAsicSdkHealthEventNotificat
 |---------|--------------|
 | SAI が health event notify をサポート (`querySwitchCapability` true) | CAPABILITY=false を記録し全 severity の初期登録をスキップ |
 | 各 severity が SAI でサポート (`m_supportedAsicSdkHealthEventAttributes`) | 非対応 severity への SET は silent skip (syslog NOTICE) |
-| orchagent 起動前に CONFIG_DB にエントリあり | 起動時スナップショットに取り込まれ初期 SAI 登録に反映 |
+| [orchagent](../../reference/glossary.md#term-orchagent) 起動前に CONFIG_DB にエントリあり | 起動時スナップショットに取り込まれ初期 SAI 登録に反映 |
 | orchagent 起動後に初めて CONFIG_DB に書き込む | Consumer イベント経由で反映。起動時点は抑制なし（全カテゴリ購読）のまま |
 
 <!-- /ordering -->
@@ -290,11 +289,11 @@ orchagent が warm reboot で再起動すると `initAsicSdkHealthEventNotificat
 > 調査証跡: `meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-cross-refs.md`
 
 `SUPPRESS_ASIC_SDK_HEALTH_EVENT` の処理において、SwitchOrch が参照・生成する他テーブル / リソースを網羅した。
-このテーブルは APPL_DB 中継なしで CONFIG_DB → SAI の直接経路を取る点が特徴である。
+このテーブルは [APPL_DB](../../reference/glossary.md#term-appl_db) 中継なしで CONFIG_DB → SAI の直接経路を取る点が特徴である。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
-| `STATE_DB SWITCH_CAPABILITY\|switch.ASIC_SDK_HEALTH_EVENT` | 書き (SwitchOrch → STATE_DB) | orchagent 起動時 1 回。health event 通知サポート可否を `true`/`false` で記録 | `switchorch.cpp:231, 246` |
+| `STATE_DB SWITCH_CAPABILITY\|switch.ASIC_SDK_HEALTH_EVENT` | 書き (SwitchOrch → [STATE_DB](../../reference/glossary.md#term-state_db)) | orchagent 起動時 1 回。health event 通知サポート可否を `true`/`false` で記録 | `switchorch.cpp:231, 246` |
 | `STATE_DB SWITCH_CAPABILITY\|switch.REG_{FATAL,WARNING,NOTICE}_ASIC_SDK_HEALTH_CATEGORY` | 書き | 各 severity の SAI capability 確認結果を記録 | `switchorch.cpp:265-269` |
 | `STATE_DB ASIC_SDK_HEALTH_EVENT_TABLE` | 書き (SAI コールバック経由) | `onSwitchAsicSdkHealthEvent()` が SAI から受け取ったイベントを書き込む。SUPPRESS 設定が SAI フィルタを決定し書き込み数を制御する | `switchorch.cpp:1661` |
 | SAI `SAI_SWITCH_ATTR_SWITCH_ASIC_SDK_HEALTH_EVENT_NOTIFY` capability | 読み (SAI クエリ) | 起動時。非対応なら全 severity の初期登録をスキップ | `switchorch.cpp:220` |
@@ -358,7 +357,7 @@ Consumer: `SwitchOrch::doCfgSuppressAsicSdkHealthEventTableTask()` (`orchagent/s
 | プラットフォーム非対応 severity | **0 回**（即 erase） | プラットフォーム変更以外に解消手段なし |
 | `categories` 内の不明な値 | なし（値をスキップして継続） | 影響: 不正値が参照するカテゴリは抑制されず全購読になる |
 | SAI `set_switch_attribute` 失敗 | **0 回**（ログのみ、正常消費） | なし。orchagent はエラーログのみで処理継続 |
-| SAI 非対応（起動時） | **0 回**（全件スキップ） | ASIC が当該 SAI 属性に対応するまで機能しない |
+| SAI 非対応（起動時） | **0 回**（全件スキップ） | [ASIC](../../reference/glossary.md#term-asic) が当該 SAI 属性に対応するまで機能しない |
 
 ### SAI エラーのサイレント消費に関する注意
 
@@ -368,7 +367,7 @@ Consumer: `SwitchOrch::doCfgSuppressAsicSdkHealthEventTableTask()` (`orchagent/s
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`SUPPRESS_ASIC_SDK_HEALTH_EVENT` テーブルの処理で使われる、CONFIG_DB / YANG では管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/switchorch.cpp` と `sonic-swss-common/common/schema.h`。
+`SUPPRESS_ASIC_SDK_HEALTH_EVENT` テーブルの処理で使われる、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) では管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/switchorch.cpp` と `sonic-swss-common/common/schema.h`。
 
 ### テーブル名マクロ
 
@@ -413,7 +412,7 @@ Consumer: `SwitchOrch::doCfgSuppressAsicSdkHealthEventTableTask()` (`orchagent/s
 
 | 属性 | 用途 | evidence |
 |------|------|----------|
-| `SAI_SWITCH_ATTR_SWITCH_ASIC_SDK_HEALTH_EVENT_NOTIFY` | ASIC SDK health event 機能の対応有無をクエリ | `switchorch.cpp:218` |
+| `SAI_SWITCH_ATTR_SWITCH_ASIC_SDK_HEALTH_EVENT_NOTIFY` | [ASIC SDK](../../reference/glossary.md#term-asic-sdk) health event 機能の対応有無をクエリ | `switchorch.cpp:218` |
 
 詳細根拠は `meta/_intermediate/cdb-flow/suppress-asic-sdk-health-event-constants.md` を参照。
 <!-- /constants -->
@@ -444,7 +443,7 @@ SET/DEL 操作では変化しない（起動時スナップショットのみ）
 ### 2. STATE_DB `ASIC_SDK_HEALTH_EVENT_TABLE|<timestamp>` — 間接副次効果
 
 SUPPRESS 設定が SAI に登録するカテゴリフィルタを決定するため、
-**SET/DEL の結果として STATE_DB に書き込まれるイベントの数・種別が変わる**（SAI コールバック `onSwitchAsicSdkHealthEvent()` 経由の間接書込）。
+**SET/DEL の結果として [STATE_DB](../../reference/glossary.md#term-state_db) に書き込まれるイベントの数・種別が変わる**（SAI コールバック `onSwitchAsicSdkHealthEvent()` 経由の間接書込）。
 
 書き込みフィールド: `severity` / `category` / `description` (`switchorch.cpp:1655-1657`)
 
@@ -461,14 +460,14 @@ SAI コールバックごとにパブリッシュされる。SUPPRESS 設定で 
 
 ### APPL_DB 書込なし
 
-SUPPRESS_ASIC_SDK_HEALTH_EVENT は CONFIG_DB → SAI の直接経路。APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き込みは発生しない。
+SUPPRESS_ASIC_SDK_HEALTH_EVENT は CONFIG_DB → SAI の直接経路。[APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書き込みは発生しない。
 
 <!-- /side-effects -->
 
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-`SUPPRESS_ASIC_SDK_HEALTH_EVENT` は `CONFIG_DB` への直接書き込み (HSET) を唯一の入口とし、`orchagent` 内の `SwitchOrch` が **`SubscriberStateTable`** 経由で Redis keyspace 通知を購読する。APPL_DB への中継 (`ProducerStateTable`) はなく、CONFIG_DB → SAI の直結経路を採る。
+`SUPPRESS_ASIC_SDK_HEALTH_EVENT` は `CONFIG_DB` への直接書き込み (HSET) を唯一の入口とし、`orchagent` 内の `SwitchOrch` が **`SubscriberStateTable`** 経由で [Redis](../../reference/glossary.md#term-redis) keyspace 通知を購読する。APPL_DB への中継 (`ProducerStateTable`) はなく、CONFIG_DB → SAI の直結経路を採る。
 
 <!-- evidence: sonic-swss/orchagent/switchorch.cpp:1410-1491 (doCfgSuppressAsicSdkHealthEventTableTask), orchdaemon.cpp (addConsumer/SwitchOrch 登録), orch.cpp (addConsumer DB 分岐), sonic-swss-common/common/schema.h:394 (CFG_SUPPRESS_ASIC_SDK_HEALTH_EVENT_NAME) -->
 
@@ -477,7 +476,7 @@ SUPPRESS_ASIC_SDK_HEALTH_EVENT は CONFIG_DB → SAI の直接経路。APPL_DB /
 | 区間 | 方式 | チャンネル / API |
 |------|------|----------------|
 | `config suppress-asic-sdk-health-event add/del` → `CONFIG_DB` | `swss::Table::set()` / `del()` → `HSET` / `DEL` | なし（PUBLISH 非発行） |
-| `CONFIG_DB SUPPRESS_ASIC_SDK_HEALTH_EVENT` → `SwitchOrch` | `SubscriberStateTable` (Redis keyspace 通知) | `__keyspace@4__:SUPPRESS_ASIC_SDK_HEALTH_EVENT:*` |
+| `CONFIG_DB SUPPRESS_ASIC_SDK_HEALTH_EVENT` → `SwitchOrch` | `SubscriberStateTable` ([Redis](../../reference/glossary.md#term-redis) keyspace 通知) | `__keyspace@4__:SUPPRESS_ASIC_SDK_HEALTH_EVENT:*` |
 | `SwitchOrch` → SAI | `sai_acl_api->set_switch_attribute()` (`SAI_SWITCH_ATTR_REG_*_SWITCH_ASIC_SDK_HEALTH_CATEGORY`) | SAI API 直呼び出し |
 
 ### SubscriberStateTable — CONFIG_DB keyspace 購読
@@ -583,7 +582,7 @@ sonic-db-cli STATE_DB hgetall 'SWITCH_CAPABILITY|switch' | grep -E 'ASIC_SDK|HEA
 ### multi-ASIC / SmartSwitch 環境
 
 - multi-ASIC 構成では `SwitchOrch` が namespace ごとに独立して起動し、SAI capability も namespace ごとに独立して照会・記録される。
-- SmartSwitch DPU SAI は SWITCH_ASIC_SDK_HEALTH_EVENT_NOTIFY を実装していない可能性が高く、DPU 側では `ASIC_SDK_HEALTH_EVENT=false` となるケースが想定される。NPU 側と DPU 側で `SWITCH_CAPABILITY` フィールドが異なる場合がある。
+- [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) SAI は SWITCH_ASIC_SDK_HEALTH_EVENT_NOTIFY を実装していない可能性が高く、[DPU](../../reference/glossary.md#term-dpu) 側では `ASIC_SDK_HEALTH_EVENT=false` となるケースが想定される。[NPU](../../reference/glossary.md#term-npu) 側と [DPU](../../reference/glossary.md#term-dpu) 側で `SWITCH_CAPABILITY` フィールドが異なる場合がある。
 - `sonic-utilities/show/main.py:2803, 2849` の `show event-driven-telemetry` / `show asic-sdk-health-event` は default namespace の STATE_DB を参照するため、multi-ASIC 構成では一部 namespace の情報しか反映されない点に注意。
 
 証跡: `sonic-swss/orchagent/switchorch.cpp:207-277, 2066-2091`, `sonic-swss/orchagent/switchorch.h:29-30`
@@ -634,7 +633,7 @@ SwitchOrch は常時登録し `SUPPRESS_ASIC_SDK_HEALTH_EVENT` テーブルを�
 
 ### 段階 4: タイミング + 副作用
 
-- 設定反映は即時。以降の ASIC SDK ヘルスイベントが抑制される。
+- 設定反映は即時。以降の [ASIC SDK](../../reference/glossary.md#term-asic-sdk) ヘルスイベントが抑制される。
 - 副作用: 重要なイベントを抑制すると障害検知が遅れる。最小限の抑制に留めることを推奨。
 
 <!-- /runtime-trace -->
@@ -645,7 +644,7 @@ SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブルへの書き込みが発生するコ�
 
 ### CLI
 
-  - `config suppress-asic-sdk-health-event add/del ...` — `config/main.py` が `set_entry()` を呼ぶ (sonic-utilities/config/main.py)
+  - `config suppress-asic-sdk-health-event add/del ...` — `config/main.py` が `set_entry()` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py)
 
 ### minigraph / sonic-cfggen
 
@@ -653,7 +652,7 @@ minigraph.py に SUPPRESS_ASIC_SDK_HEALTH_EVENT 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -672,4 +671,4 @@ db_migrator.py での SUPPRESS_ASIC_SDK_HEALTH_EVENT マイグレーションな
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: d2191ccfe0bd -->
+<!-- glossary-links-injected: b4f3d42f08a1 -->

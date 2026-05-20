@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-SONiC では `swssloglevel` コマンドで `orchagent` / `syncd` / 各種 `*mgrd` / `*syncd` / [SAI](../reference/glossary.md#term-sai) API ごとに動的にログ深さを変えられる。しかし設定先が **[LOGLEVEL_DB](../reference/glossary.md#term-loglevel_db) (#3)** に置かれていたため、cold / fast reboot で揮発してしまい、再起動後は既定値 `NOTICE` に戻ってしまっていた[^1]。デバッグ目的で `DEBUG` を出していても、再起動を挟むと忘れられる運用上の不便があった。
+[SONiC](../reference/glossary.md#term-sonic) では `swssloglevel` コマンドで `orchagent` / `syncd` / 各種 `*mgrd` / `*syncd` / [SAI](../reference/glossary.md#term-sai) API ごとに動的にログ深さを変えられる。しかし設定先が **[LOGLEVEL_DB](../reference/glossary.md#term-loglevel_db) (#3)** に置かれていたため、cold / fast reboot で揮発してしまい、再起動後は既定値 `NOTICE` に戻ってしまっていた[^1]。デバッグ目的で `DEBUG` を出していても、再起動を挟むと忘れられる運用上の不便があった。
 
 本機能はログレベルテーブルを **[CONFIG_DB](../reference/glossary.md#term-config_db) (#4) の `LOGGER` テーブル** に移し、`config save` の対象に含めることで永続化する。Phase は 2 段で、Phase 1 は移行のみ、Phase 2 で LOGLEVEL_DB と `JINJA2_CACHE` を完全削除する設計である[^1]。
 
@@ -250,7 +250,7 @@ grep -iE 'log[_ ]level' /var/log/syslog | tail
 
 - 設定は CONFIG_DB の `LOGGER` テーブルに保存されるが、`config save` を実行しないとリブート後に消える。
 - ベンダー追加デーモンが `sonic_py_common.logger` を使っていない場合、本機能で log level を変更できない。
-- multi-asic 環境では namespace ごとに別 `LOGGER` テーブルとなるため、全 ASIC 一括変更には個別投入が必要。
+- multi-asic 環境では namespace ごとに別 `LOGGER` テーブルとなるため、全 [ASIC](../reference/glossary.md#term-asic) 一括変更には個別投入が必要。
 
 ## 引用元
 
@@ -265,4 +265,4 @@ grep -iE 'log[_ ]level' /var/log/syslog | tail
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: d59e75d0b079 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

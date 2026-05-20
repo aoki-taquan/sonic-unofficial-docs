@@ -26,7 +26,7 @@ related:
 
 ## なぜ必要なのか
 
-ASIC 側の各種リソース（route 表、neighbor、[ACL](../reference/glossary.md#term-acl) counter、[FDB](../reference/glossary.md#term-fdb)、[NAT](../reference/glossary.md#term-nat) 等）は **ハードウェアサイズで上限がある**。上限到達で**運用中に突然パケットドロップやプログラム失敗**が起きるため、[CRM](../reference/glossary.md#term-crm) は使用量をポーリングして **しきい値超えで WARN / CRITICAL を syslog に出す** ことで障害前検知を狙う[^1]。
+[ASIC](../reference/glossary.md#term-asic) 側の各種リソース（route 表、neighbor、[ACL](../reference/glossary.md#term-acl) counter、[FDB](../reference/glossary.md#term-fdb)、[NAT](../reference/glossary.md#term-nat) 等）は **ハードウェアサイズで上限がある**。上限到達で**運用中に突然パケットドロップやプログラム失敗**が起きるため、[CRM](../reference/glossary.md#term-crm) は使用量をポーリングして **しきい値超えで WARN / CRITICAL を syslog に出す** ことで障害前検知を狙う[^1]。
 
 ねらい:
 
@@ -123,7 +123,7 @@ monit サービスが設定した閾値を超えるとプロセスを強制終�
 
 ### SNMP subagent の MIBUpdater が `loc_chassis_data not subscript（sonic-buildimage#4230）
 
-SNMP subagent の MIBUpdater が `loc_chassis_data not subscriptable` 例外でクラッシュする問題。LLDP データが未取得の状態で MIB アップデートが実行されると発生
+[SNMP](../reference/glossary.md#term-snmp) subagent の MIBUpdater が `loc_chassis_data not subscriptable` 例外でクラッシュする問題。[LLDP](../reference/glossary.md#term-lldp) データが未取得の状態で MIB アップデートが実行されると発生
 
 - 参照: [sonic-net/sonic-buildimage#4230](https://github.com/sonic-net/sonic-buildimage/issues/4230)
 
@@ -144,14 +144,14 @@ lldpmgrd が `test_iface_namingmode` テスト中にクラッシュする問題�
 
 ### monit が bgpcfgd/bgpmon/lldpmgrd のステータスエラーを報告する問題（sonic-buildimage#5864）
 
-monit が bgpcfgd/bgpmon/lldpmgrd のステータスエラーを報告する問題。サービスが動作していても monit の監視設定と実際の状態が一致しないことがある
+monit が [bgpcfgd](../reference/glossary.md#term-bgpcfgd)/bgpmon/lldpmgrd のステータスエラーを報告する問題。サービスが動作していても monit の監視設定と実際の状態が一致しないことがある
 
 - 参照: [sonic-net/sonic-buildimage#5864](https://github.com/sonic-net/sonic-buildimage/issues/5864)
 
 
 ### teamd 再起動後に orchagent がエラーログを大量出力する問題（sonic-buildimage#5971）
 
-teamd 再起動後に orchagent がエラーログを大量出力する問題。teamd が再起動されると PortChannel メンバーの状態が一時的に不定になる
+[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) 再起動後に orchagent がエラーログを大量出力する問題。teamd が再起動されると [PortChannel](../reference/glossary.md#term-portchannel) メンバーの状態が一時的に不定になる
 
 - 参照: [sonic-net/sonic-buildimage#5971](https://github.com/sonic-net/sonic-buildimage/issues/5971)
 
@@ -202,4 +202,4 @@ BRCM Th3 Z9332 で SER (Single Error Recovery) が注入されたメモリの修
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ad4074e0b684 -->
+<!-- glossary-links-injected: 989b6ea1d7a6 -->

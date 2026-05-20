@@ -187,7 +187,7 @@ Ethernet0           0  1092     0   380     0     0     0     0
 
 ## トラブルシューティング
 
-- 値がいつもゼロ: SAI / ASIC が `_WATERMARK_BYTES` 未対応か `STATS_MODE_READ_AND_CLEAR` 未開始。`syncd` ログと FC group 設定を確認
+- 値がいつもゼロ: SAI / [ASIC](../reference/glossary.md#term-asic) が `_WATERMARK_BYTES` 未対応か `STATS_MODE_READ_AND_CLEAR` 未開始。`syncd` ログと FC group 設定を確認
 - `clear` で 0 に戻らない: 仕様。トラフィック停止 → 即 read で確認
 - `TELEMETRY_INTERVAL` を短くしても効かない: 現行タイマー満了待ち
 - PG OID と物理 port の対応不明: `COUNTERS_PG_PORT_MAP` / `COUNTERS_PG_INDEX_MAP` を redis から
@@ -225,4 +225,4 @@ show priority-group persistent-watermark headroom
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: c006405759d8 -->

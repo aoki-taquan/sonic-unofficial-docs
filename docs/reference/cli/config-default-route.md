@@ -24,13 +24,13 @@ related:
 
 ## 概要
 
-SONiC には `config default-route` という独立した click コマンドは **存在しない**。デフォルトルート（`0.0.0.0/0` / `::/0`）を設定する場合は、用途に応じて以下のいずれかを使う:
+[SONiC](../../reference/glossary.md#term-sonic) には `config default-route` という独立した click コマンドは **存在しない**。デフォルトルート（`0.0.0.0/0` / `::/0`）を設定する場合は、用途に応じて以下のいずれかを使う:
 
 | 目的 | 使うコマンド | 書き込み先 |
 |---|---|---|
 | データプレーン側のスタティックルート | `config route add prefix 0.0.0.0/0 nexthop <ip>` | [CONFIG_DB](../../reference/glossary.md#term-config_db) `STATIC_ROUTE` |
 | 管理 NIC (`eth0`) の default gateway | `config mgmt-interface add` 系 + `MGMT_INTERFACE` の gwaddr | [CONFIG_DB](../../reference/glossary.md#term-config_db) `MGMT_INTERFACE` |
-| [BGP](../../reference/glossary.md#term-bgp) で受ける default route | [FRR](../../reference/glossary.md#term-frr) vtysh / `config bgp` 配下 | [CONFIG_DB](../../reference/glossary.md#term-config_db)（一部）+ [FRR](../../reference/glossary.md#term-frr) config |
+| [BGP](../../reference/glossary.md#term-bgp) で受ける default route | [FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) / `config bgp` 配下 | [CONFIG_DB](../../reference/glossary.md#term-config_db)（一部）+ [FRR](../../reference/glossary.md#term-frr) config |
 
 本ページは前 2 つの「CLI で書き込めるデフォルトルート」のパターンを整理する。`config route` 全体の仕様は [config route サブコマンド（static route）](config-route.md) を参照。
 
@@ -158,4 +158,4 @@ vtysh -c 'show ip route 0.0.0.0/0'
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: eb2ea0d223db -->
+<!-- glossary-links-injected: 7ac8e66e1af3 -->

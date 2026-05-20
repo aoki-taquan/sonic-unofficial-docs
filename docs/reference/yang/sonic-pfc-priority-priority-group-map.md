@@ -24,7 +24,7 @@ related:
 - import: なし
 - top container: `sonic-pfc-priority-priority-group-map`
 
-PFC_PRIORITY_TO_PRIORITY_GROUP_MAP yang Module for SONiC OS. [PFC](../../reference/glossary.md#term-pfc) 優先度 (0-7) を ingress priority group にマップしロスレス転送を制御する。[^1]
+PFC_PRIORITY_TO_PRIORITY_GROUP_MAP yang Module for [SONiC](../../reference/glossary.md#term-sonic) OS. [PFC](../../reference/glossary.md#term-pfc) 優先度 (0-7) を ingress priority group にマップしロスレス転送を制御する。[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -111,4 +111,4 @@ module: sonic-pfc-priority-priority-group-map
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-pfc-priority-priority-group-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

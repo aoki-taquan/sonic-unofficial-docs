@@ -66,7 +66,7 @@ related:
 
 ### 削除時 race（深刻）
 
-依存 buffer cfg を残したまま port を消すと、portsorch が [SAI](../reference/glossary.md#term-sai) port を消す前に buffer cfg が残っていて SAI エラーが連発する。[HLD](../reference/glossary.md#term-hld) の解決策[^1]:
+依存 buffer cfg を残したまま port を消すと、[portsorch](../reference/glossary.md#term-portsorch) が [SAI](../reference/glossary.md#term-sai) port を消す前に buffer cfg が残っていて SAI エラーが連発する。[HLD](../reference/glossary.md#term-hld) の解決策[^1]:
 
 - buffer cfg にも **per-port reference counter** を持たせる（既存の [ACL](../reference/glossary.md#term-acl)/[VLAN](../reference/glossary.md#term-vlan)/INTERFACE と同じ仕組み）
 - ref-count > 0 の port は portsorch が削除を拒否する
@@ -137,4 +137,4 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 53a15d491c92 -->
+<!-- glossary-links-injected: 889740d66e5f -->

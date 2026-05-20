@@ -39,7 +39,7 @@ related:
 
 # 設定変更の選び方
 
-SONiC には設定変更の入口が複数あります。選び方の軸は「変更範囲」「停止影響」「検証と rollback が必要か」「永続化するか」です。小さな手作業なら `config` CLI、全体構成ファイルの再投入なら `config reload`、低停止で構造化変更したいなら `config replace` / `config apply-patch` を優先して検討します。
+[SONiC](../../reference/glossary.md#term-sonic) には設定変更の入口が複数あります。選び方の軸は「変更範囲」「停止影響」「検証と rollback が必要か」「永続化するか」です。小さな手作業なら `config` CLI、全体構成ファイルの再投入なら `config reload`、低停止で構造化変更したいなら `config replace` / `config apply-patch` を優先して検討します。
 
 ## まず判断すること
 
@@ -92,4 +92,4 @@ JSON Patch はユーザが投入する操作列です。一方、内部の JsonC
 - [config save / load / reload / replace / qos reload](../../reference/cli/config-mgmt-trio.md)
 - [sonic-cfggen コマンド](../../reference/cli/sonic-cfggen.md)
 
-<!-- glossary-links-injected: c20582729222 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

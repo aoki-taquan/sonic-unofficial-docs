@@ -96,15 +96,15 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 |---|----------|------|--------|
 | 1 | `MGMT_VRF_CONFIG.mgmtVrfEnabled` → `MGMT_INTERFACE` 書込み | **推奨先行**（VRF 有効フラグが読まれるタイミングに影響） | `interfaces.j2` は再実行されるたびに最新値を参照する |
 | 2 | `SYSLOG_SERVER` → `MGMT_INTERFACE` 書込み | 推奨先行（`forced_mgmt_routes` 相当のログサーバ経路が正しく生成されるため） | `SYSLOG_SERVER` 未設定時は `10.20.6.16/32` がハードコードで注入される |
-| 3 | `MGMT_INTERFACE` 変更 → RADIUS `src_intf` 解決 | 先行推奨（`aaacfg.handle_radius_source_intf_ip_chg()` が呼ばれ RADIUS 送信元 IP が更新される） | `mgmt_intf_handler` が変更をトリガーするため後から更新すれば自動復旧 |
+| 3 | `MGMT_INTERFACE` 変更 → [RADIUS](../../reference/glossary.md#term-radius) `src_intf` 解決 | 先行推奨（`aaacfg.handle_radius_source_intf_ip_chg()` が呼ばれ [RADIUS](../../reference/glossary.md#term-radius) 送信元 IP が更新される） | `mgmt_intf_handler` が変更をトリガーするため後から更新すれば自動復旧 |
 
 ### 主要な制約詳細
 
-**`MGMT_VRF_CONFIG` 先行推奨 (依存 #1)**: `interfaces.j2` は `MGMT_VRF_CONFIG['vrf_global']['mgmtVrfEnabled']` を参照して forced routes のルーティングテーブルを `default` または `mgmt (6000)` に切り替える（`interfaces.j2:9,88`）。`MGMT_VRF_CONFIG` が CONFIG_DB に存在しない状態で `MGMT_INTERFACE` を書き込むと、`interfaces.j2` は VRF なしとして `/etc/network/interfaces` を生成する。後から `MGMT_VRF_CONFIG` を追加すると `mgmt_vrf_handler` → `systemctl restart interfaces-config` が呼ばれて再生成される（evidence: `hostcfgd:2352-2358`）。
+**`MGMT_VRF_CONFIG` 先行推奨 (依存 #1)**: `interfaces.j2` は `MGMT_VRF_CONFIG['vrf_global']['mgmtVrfEnabled']` を参照して forced routes のルーティングテーブルを `default` または `mgmt (6000)` に切り替える（`interfaces.j2:9,88`）。`MGMT_VRF_CONFIG` が [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在しない状態で `MGMT_INTERFACE` を書き込むと、`interfaces.j2` は VRF なしとして `/etc/network/interfaces` を生成する。後から `MGMT_VRF_CONFIG` を追加すると `mgmt_vrf_handler` → `systemctl restart interfaces-config` が呼ばれて再生成される（evidence: `hostcfgd:2352-2358`）。
 
 **`SYSLOG_SERVER` 暗黙依存 (依存 #2)**: `interfaces.j2:101-113` は `SYSLOG_SERVER` の有無でルート注入先を切り替える。`SYSLOG_SERVER` が CONFIG_DB にない場合に `10.20.6.16/32` がハードコードで注入されるため、`SYSLOG_SERVER` を後から追加しても `interfaces-config` が再起動されるまでハードコードルートが残留する（evidence: `interfaces.j2:101-130`）。
 
-**RADIUS 送信元 IP 解決 (依存 #3)**: `mgmt_intf_handler()` は `MGMT_INTERFACE` の変更を受け取ると `aaacfg.handle_radius_source_intf_ip_chg(mgmt_intf_name)` を呼び RADIUS の送信元 IP を再解決する（`hostcfgd:2348-2350`）。RADIUS 設定が先に存在し `src_intf=eth0` が設定されている場合、`MGMT_INTERFACE` の IP 変更後に RADIUS 送信元 IP が自動更新される。この依存は `RADIUS_SERVER.src_intf` を使用する構成でのみ顕在化する。
+**[RADIUS](../../reference/glossary.md#term-radius) 送信元 IP 解決 (依存 #3)**: `mgmt_intf_handler()` は `MGMT_INTERFACE` の変更を受け取ると `aaacfg.handle_radius_source_intf_ip_chg(mgmt_intf_name)` を呼び RADIUS の送信元 IP を再解決する（`hostcfgd:2348-2350`）。RADIUS 設定が先に存在し `src_intf=eth0` が設定されている場合、`MGMT_INTERFACE` の IP 変更後に RADIUS 送信元 IP が自動更新される。この依存は `RADIUS_SERVER.src_intf` を使用する構成でのみ顕在化する。
 
 <!-- /ordering -->
 
@@ -117,7 +117,7 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 
 `MGMT_INTERFACE` エントリが **存在しない** 場合、`interfaces.j2` は `iface eth0 inet dhcp metric 202` / `iface eth0 inet6 dhcp` を生成して DHCP にフォールバックする。エントリが存在しても `gwaddr` フィールドが欠落していると、L96 の `ip route add default via <空> dev eth0 metric 201` がカーネルエラーになりデフォルトルートが設定されない。
 
-> **注意**: SmartSwitch DPU (`DEVICE_METADATA.subtype=SmartSwitch` かつ `switch_type=dpu`) では DHCP フォールバック自体が生成されない。エントリ未設定の DPU は `eth0` に何も設定されない。
+> **注意**: [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) (`DEVICE_METADATA.subtype=SmartSwitch` かつ `switch_type=dpu`) では DHCP フォールバック自体が生成されない。エントリ未設定の [DPU](../../reference/glossary.md#term-dpu) は `eth0` に何も設定されない。
 
 ### ハードコードされたメトリック
 
@@ -214,7 +214,6 @@ ip -4 route show vrf mgmt
 enum なし。
 <!-- /value-behavior -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -226,11 +225,11 @@ enum なし。
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — Linux kernel netlink で管理インターフェースを設定)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — Linux kernel netlink で管理インターフェースを設定)
 
 ### 段階 4 — タイミングと副作用
 
@@ -252,7 +251,7 @@ enum なし。
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -278,7 +277,7 @@ YANG leafref を超えた他テーブル・他設定ファイルへの実装上�
 |--------|-----------|------|------|-----------|
 | `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` | CONFIG_DB | READ | `interfaces.j2` 生成時。`"true"` のとき `vrf-table 6000` / `vrf mgmt` を追記し、全ルートを mgmt VRF テーブル (6000) へ向ける。`"false"` 時は `default` テーブルを使用 | `interfaces.j2` L9,88,152 |
 | `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` | CONFIG_DB | READ | DHCP フォールバックパス (`MGMT_INTERFACE` 未設定) でも `mgmtVrfEnabled=true` なら `vrf mgmt` を付与 | `interfaces.j2` L152-153 |
-| `DEVICE_METADATA\|localhost.subtype` + `switch_type` | CONFIG_DB | READ | `interfaces.j2` で `subtype=SmartSwitch` かつ `switch_type=dpu` のとき DHCP フォールバックブロック自体を生成しない。DPU では `eth0` に何も設定されない | `interfaces.j2` L144-148 |
+| `DEVICE_METADATA\|localhost.subtype` + `switch_type` | CONFIG_DB | READ | `interfaces.j2` で `subtype=SmartSwitch` かつ `switch_type=dpu` のとき DHCP フォールバックブロック自体を生成しない。[DPU](../../reference/glossary.md#term-dpu) では `eth0` に何も設定されない | `interfaces.j2` L144-148 |
 | `DEVICE_METADATA\|localhost.switch_type` | CONFIG_DB | READ | `intfmgr` 起動時に 1 回読み取り。`switch_type=voq` のとき IPv6 アドレス追加に `metric 256` を付与 | `intfmgr.cpp` L71-75 |
 | `DEVICE_METADATA\|bmc.bmc_if_name` / `bmc_if_addr` / `bmc_net_mask` | CONFIG_DB | READ | BMC インタフェースが定義されているとき、`interfaces.j2` が `eth0` よりも先に BMC インタフェース設定ブロックを生成 | `interfaces.j2` L33-39 |
 | `SYSLOG_SERVER` | CONFIG_DB | READ | `SYSLOG_SERVER` が設定されていれば各サーバ IP への policy routing rule (pref 32764) を mgmt テーブルに追加。**未設定**の場合は `10.20.6.16/32` をハードコードで注入 | `interfaces.j2` L101-113 |
@@ -308,7 +307,7 @@ minigraph.py は `eth0` を管理インタフェース名として固定し、`s
 
 ### Phase 7: 条件付き登録
 
-`MGMT_INTERFACE` は orchagent では処理されない。`mgmtintfmgrd` (cfgmgr 系) が CONFIG_DB を購読しカーネル netns/vrf を設定する。条件付き platform 登録なし。
+`MGMT_INTERFACE` は [orchagent](../../reference/glossary.md#term-orchagent) では処理されない。`mgmtintfmgrd` (cfgmgr 系) が CONFIG_DB を購読しカーネル netns/vrf を設定する。条件付き platform 登録なし。
 
 ### グレップカバレッジ
 
@@ -330,7 +329,7 @@ minigraph.py は `eth0` を管理インタフェース名として固定し、`s
 | `IntfMgr` | `doTask()` | management VRF が有効 (`MGMT_VRF_CONFIG.mgmtVrfEnabled=true`) | `ip route add ... table mgmt` で管理 VRF ルートテーブルへ | `sonic-swss/cfgmgr/intfmgr.cpp` |
 | `IntfMgr` | `doTask()` | USB リセットパス検出 | USB controller リセット分岐で追加処理 | `sonic-swss/cfgmgr/intfmgr.cpp` |
 
-> **スキャン証跡**: minigraph.py:2281-2297,2869-2880 を確認、4 件分岐抽出。MGMT_INTERFACE は orchagent 非経由を確認 — 誤読なし。
+> **スキャン証跡**: minigraph.py:2281-2297,2869-2880 を確認、4 件分岐抽出。MGMT_INTERFACE は [orchagent](../../reference/glossary.md#term-orchagent) 非経由を確認 — 誤読なし。
 
 <!-- /handler-branching -->
 
@@ -488,17 +487,17 @@ CONFIG_DB MGMT_INTERFACE|eth0|<ip_prefix> (SET/DEL)
 | ステップ | netlink 相当コマンド | 補足 |
 |---------|-------------------|------|
 | IP アドレス付与 | `ip addr add <prefix> dev eth0` | IPv4/IPv6 共通。`setIntfIp` 内で実行 |
-| APPL_DB 転送 | `INTF_TABLE[eth0:<prefix>] ← {scope: global, family: IPv4/IPv6}` | SAI ではなく linux カーネルで完結するため orchagent 非経由 |
-| STATE_DB 更新 | `STATE_INTERFACE_TABLE[eth0|<prefix>].state = ok` | 完了シグナル |
-| デフォルトルート | `ip route add default via <gw> dev eth0 metric 201` | `interfaces.j2:L96` (hostcfgd 経由) |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) 転送 | `INTF_TABLE[eth0:<prefix>] ← {scope: global, family: IPv4/IPv6}` | [SAI](../../reference/glossary.md#term-sai) ではなく linux カーネルで完結するため [orchagent](../../reference/glossary.md#term-orchagent) 非経由 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) 更新 | `STATE_INTERFACE_TABLE[eth0|<prefix>].state = ok` | 完了シグナル |
+| デフォルトルート | `ip route add default via <gw> dev eth0 metric 201` | `interfaces.j2:L96` ([hostcfgd](../../reference/glossary.md#term-hostcfgd) 経由) |
 | mgmt VRF 有効時 | `ip route add ... table mgmt` | `isIntfStateOk` 内 `VRF_MGMT` 定数（`L26,677-684`）で判定 |
 
-IPv4 link-local アドレスは APPL_DB へ転送されない（`intfmgr.cpp:1131-1132`）。
+IPv4 link-local アドレスは [APPL_DB](../../reference/glossary.md#term-appl_db) へ転送されない（`intfmgr.cpp:1131-1132`）。
 
 ### 特記事項
 
 - `mgmt` という名の VRF 名は `intfmgr.cpp:26` で `VRF_MGMT` 定数として定義されており、`isIntfStateOk()` 内で `STATE_VRF_TABLE` を参照する（`intfmgr.cpp:677-684`）
-- `MGMT_INTERFACE` は orchagent を経由しない（SAI には届かない）。Linux カーネルの mgmt ネットワーク名前空間で完結する
+- `MGMT_INTERFACE` は orchagent を経由しない（[SAI](../../reference/glossary.md#term-sai) には届かない）。Linux カーネルの mgmt ネットワーク名前空間で完結する
 - orchagent の `allPortsReady()` チェックや `gPortsOrch->getPort()` は適用されない
 - VRF 変更時（`isIntfChangeVrf`、`L308`）は既存 IP を一度削除してから再追加するため、eth0 VRF 変更は一時的なアドレス喪失を伴う
 
@@ -544,7 +543,7 @@ XML `ManagementIPInterfaces` に記載されたインターフェース名に関
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd L495-525,1626-1643,2345-2350; sonic-buildimage/files/image_config/interfaces/interfaces-config.sh; sonic-swss/cfgmgr/intfmgrd.cpp:28-35 -->
 
-`MGMT_INTERFACE` エントリの SET/DEL が CONFIG_DB に書き込まれると、`hostcfgd` の `mgmt_intf_handler` が 3 系統の副次処理を連鎖させる。APPL_DB / STATE_DB / ASIC_DB への直接書き込みは一切発生しない（eth0 は `intfmgrd` 非対象）。
+`MGMT_INTERFACE` エントリの SET/DEL が CONFIG_DB に書き込まれると、`hostcfgd` の `mgmt_intf_handler` が 3 系統の副次処理を連鎖させる。APPL_DB / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への直接書き込みは一切発生しない（eth0 は `intfmgrd` 非対象）。
 
 ### 副次書込先サマリ
 
@@ -554,8 +553,8 @@ XML `ManagementIPInterfaces` に記載されたインターフェース名に関
 | カーネル netlink | routing table / addr table | `ifupdown2` | 常時 |
 | RADIUS PAM conf | `/etc/pam_radius_auth.d/` | `AaaCfg.modify_conf_file()` | RADIUS の `src_intf` または暗黙 NAS IP が eth0 を参照するとき |
 | APPL_DB | なし | — | eth0 は `intfmgrd` 非対象 |
-| STATE_DB | なし | — | eth0 は `intfmgrd` 非対象 |
-| ASIC_DB | なし | — | SAI 非経由 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | — | eth0 は `intfmgrd` 非対象 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | なし | — | SAI 非経由 |
 
 ### RADIUS PAM 設定ファイル再生成
 
@@ -623,8 +622,8 @@ CONFIG_DB MGMT_INTERFACE 変化
 |----------|---------|--------|------|
 | kernel routing table (netlink) | — | `ifupdown2` (via `interfaces-config.sh`) | 常時 |
 | `/etc/network/interfaces` | — | `sonic-cfggen` | 設定変化時 |
-| STATE_DB `INTERFACE_TABLE` | — | 書込なし (eth0 は intfmgrd 対象外) | — |
-| APPL_DB `INTF_TABLE` | — | 書込なし (eth0 は intfmgrd 対象外) | — |
+| STATE_DB `INTERFACE_TABLE` | — | 書込なし (eth0 は [intfmgrd](../../reference/glossary.md#term-intfmgrd) 対象外) | — |
+| APPL_DB `INTF_TABLE` | — | 書込なし (eth0 は [intfmgrd](../../reference/glossary.md#term-intfmgrd) 対象外) | — |
 
 ### MGMT_VRF_CONFIG 変化時の追加連鎖
 
@@ -672,7 +671,7 @@ DPU ノードで `MGMT_INTERFACE` エントリが存在しない場合、`eth0` 
 
 ### C. VoQ (`switch_type=voq`) — IPv6 アドレスメトリック付加
 
-`intfmgr.cpp:70-111`: 起動時に `DEVICE_METADATA.localhost.switch_type` を読み込み、`mySwitchType` に格納する。`mySwitchType == "voq"` の場合、`setIntfIp` の IPv6 `ip -6 address add` コマンドに `metric 256` を付加する。これは VoQ システムで eBGP/iBGP 経路の ECMP グループを揃えるためのハードコード値。通常スイッチ（`switch_type` 未設定）では metric は付加されない。
+`intfmgr.cpp:70-111`: 起動時に `DEVICE_METADATA.localhost.switch_type` を読み込み、`mySwitchType` に格納する。`mySwitchType == "voq"` の場合、`setIntfIp` の IPv6 `ip -6 address add` コマンドに `metric 256` を付加する。これは VoQ システムで eBGP/iBGP 経路の [ECMP](../../reference/glossary.md#term-ecmp) グループを揃えるためのハードコード値。通常スイッチ（`switch_type` 未設定）では metric は付加されない。
 
 | `switch_type` 値 | IPv6 addr add メトリック |
 |---|---|
@@ -688,3 +687,5 @@ DPU ノードで `MGMT_INTERFACE` エントリが存在しない場合、`eth0` 
 > **evidence**: `sonic-buildimage/files/image_config/interfaces/interfaces.j2:33-38`
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: 7e3467b30cfc -->

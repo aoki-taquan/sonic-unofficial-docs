@@ -34,14 +34,14 @@ related:
 
 ## なぜ必要か
 
-[DASH](../reference/glossary.md#term-dash) (Disaggregated APIs for SONiC Hosts) の [ACL](../reference/glossary.md#term-acl) では、**サービスタグ** が「あるサービスに属する IP プレフィックス群」を表す抽象として使われる。タグメンバが変わってもタグ自体の更新だけで済み、これを参照する ACL ルールは無変更でよい。プレフィックスを各ルールに複製する必要が無くなり、メモリ効率も上がる[^1]。
+[DASH](../reference/glossary.md#term-dash) (Disaggregated APIs for [SONiC](../reference/glossary.md#term-sonic) Hosts) の [ACL](../reference/glossary.md#term-acl) では、**サービスタグ** が「あるサービスに属する IP プレフィックス群」を表す抽象として使われる。タグメンバが変わってもタグ自体の更新だけで済み、これを参照する ACL ルールは無変更でよい。プレフィックスを各ルールに複製する必要が無くなり、メモリ効率も上がる[^1]。
 
 実装は **2 段階**[^1]:
 
 | Stage | 内容 |
 |-------|------|
 | Stage 1 | **SWSS 内のソフト展開のみ**。ルール作成時にタグをプレフィックス列に展開（[SAI](../reference/glossary.md#term-sai) 変更なし） |
-| Stage 2 | **SAI API 経由でタグを ASIC へ**（本 [HLD](../reference/glossary.md#term-hld) 対象外） |
+| Stage 2 | **SAI API 経由でタグを [ASIC](../reference/glossary.md#term-asic) へ**（本 [HLD](../reference/glossary.md#term-hld) 対象外） |
 
 本 HLD は **Stage 1** を定義する。
 
@@ -206,4 +206,4 @@ sonic-db-cli APPL_DB keys 'DASH_ACL_RULE_TABLE:*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e226b2d44a27 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

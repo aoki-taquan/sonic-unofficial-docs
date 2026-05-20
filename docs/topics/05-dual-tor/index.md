@@ -61,7 +61,7 @@ related:
 
 # Dual-ToR と Mux 制御
 
-この章は、SONiC の Dual-ToR 構成で「2 台の ToR と 1 台のサーバ NIC の間にある mux を、どの状態情報で、どのように切り替えるのか」を読み解くための入口です。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) の Dual-ToR 構成で「2 台の ToR と 1 台のサーバ NIC の間にある mux を、どの状態情報で、どのように切り替えるのか」を読み解くための入口です。
 
 既存ページは [HLD](../../reference/glossary.md#term-hld) 単位で分かれているため、ここでは運用者や設計者が実際に持つ質問の順に並べ直します。Active-Standby と Active-Active の選び方、`linkmgrd` / `MuxOrch` / `ycabled` / gRPC client の責務、`MUX_CABLE` の最小設定、障害時に見るべき CLI、そして [QoS](../../reference/glossary.md#term-qos) / DHCPv6 など周辺機能との境界を扱います。
 
@@ -150,4 +150,4 @@ related:
 - [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
 - [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

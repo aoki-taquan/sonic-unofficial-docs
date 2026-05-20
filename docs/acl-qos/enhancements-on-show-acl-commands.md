@@ -35,7 +35,7 @@ related:
 
 ## これは何か（一行で）
 
-[ACL](../reference/glossary.md#term-acl) 設定は投入時に成功扱いになるが、ASIC リソース不足等で実際は作られないことがある。それを `show acl table` / `show acl rule` の **`Status` 列**（Active / Inactive）で見えるようにする[^1]。
+[ACL](../reference/glossary.md#term-acl) 設定は投入時に成功扱いになるが、[ASIC](../reference/glossary.md#term-asic) リソース不足等で実際は作られないことがある。それを `show acl table` / `show acl rule` の **`Status` 列**（Active / Inactive）で見えるようにする[^1]。
 
 ## どんなときに使うか
 
@@ -196,4 +196,4 @@ redis-cli -n 6 hgetall 'ACL_RULE_TABLE|DATAACL|RULE_1'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 25f52bcfe718 -->
+<!-- glossary-links-injected: c006405759d8 -->

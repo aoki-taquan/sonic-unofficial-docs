@@ -199,7 +199,7 @@ reasoning: dialout_client_cli の起動方法と DestinationGroup フェイル�
 - HLD は `dialout_client_cli` 経由の **gRPC dial-out のみ** を扱う。NetConf / [SNMP](../reference/glossary.md#term-snmp) の dial-out は対象外
 - DestinationGroup のフェイルオーバは **list の先頭から順次試行**。重み付けや負荷分散はない[^1]
 - `PublishResponse` を返す処理は optional で省略可能。stateful にコレクタ側で ack するシナリオは規定されているが既定では無効
-- HLD は openconfig telemetry YANG を「参照する」と書くに留まり、SONiC 側 YANG モデルとの完全な mapping は別途確認
+- HLD は openconfig telemetry YANG を「参照する」と書くに留まり、[SONiC](../reference/glossary.md#term-sonic) 側 YANG モデルとの完全な mapping は別途確認
 
 ## 干渉する機能
 
@@ -227,4 +227,4 @@ redis-cli -n 4 HGETALL "TELEMETRY_CLIENT|Subscription_HS_RDMA"
 
 [^1]: `sonic-net/sonic-gnmi` `doc/dialout.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 5a5d755682b5 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

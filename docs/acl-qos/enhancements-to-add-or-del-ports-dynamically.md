@@ -63,7 +63,7 @@ related:
 
 ## 概要
 
-SONiC は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。本機能は次の 3 つの起動形態をサポートし、さらに **post-init で動的に [CONFIG_DB](../reference/glossary.md#term-config_db) の `PORT` テーブルに add/del** することでポート追加・削除を可能にする[^1]:
+[SONiC](../reference/glossary.md#term-sonic) は本来「init 時にすべてのポートを作る」前提で設計されており、線数固定システム以外で扱いにくかった。本機能は次の 3 つの起動形態をサポートし、さらに **post-init で動的に [CONFIG_DB](../reference/glossary.md#term-config_db) の `PORT` テーブルに add/del** することでポート追加・削除を可能にする[^1]:
 
 - 全ポートを `config_db` に持って起動
 - 一部ポートだけ持って起動
@@ -131,7 +131,7 @@ sequenceDiagram
 
 ### Post-init: ポート削除
 
-`portmgrd` 経由で APP_DB から削除し、portsorch が SAI port + host i/f を削除する。state-db のクリーンアップは host i/f の netlink 削除イベント受領後に portsyncd が行う[^1]。
+`portmgrd` 経由で APP_DB から削除し、[portsorch](../reference/glossary.md#term-portsorch) が SAI port + host i/f を削除する。state-db のクリーンアップは host i/f の netlink 削除イベント受領後に portsyncd が行う[^1]。
 
 ### 各 mgrd / orch の対応状況
 
@@ -253,7 +253,7 @@ redis-cli -n 4 HSET 'PORT|Ethernet0' admin_status up
 ## 干渉する機能
 
 - **ACL / VLAN / LAG / Buffer PG**: port 削除の事前条件。ref counter による orchagent の防御に依存。
-- **flex counter**: 各 counter group の動的 add/del で実装が広範に変わる。ASIC 側の counter リソース管理にも影響。
+- **flex counter**: 各 counter group の動的 add/del で実装が広範に変わる。[ASIC](../reference/glossary.md#term-asic) 側の counter リソース管理にも影響。
 - **line card manager (chassis 系)**: 本機能の主要利用者。プロビジョニング時に PORT エントリ + buffer cfg を一連で投入する。
 - **`lldpmgrd`**: 改修依存度が高い。pending_cmds 処理が変わる。
 
@@ -426,4 +426,4 @@ orchagent 側に上記前処理が無いため、**運用側で全部やりき�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1af9c6208afc -->
+<!-- glossary-links-injected: 45f78fb52e76 -->

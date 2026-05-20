@@ -82,7 +82,7 @@ related:
 
 # Telemetry / SNMP / Observability
 
-この章は、SONiC で「いまスイッチが何をしているか」「壊れたとき何が起きたか」を読むための機能群をまとめます。counters、[CRM](../../reference/glossary.md#term-crm)、[SNMP](../../reference/glossary.md#term-snmp)、[gNMI](../../reference/glossary.md#term-gnmi) telemetry、sFlow、DTel、syslog、techsupport、kdump など複数の経路があり、[HLD](../../reference/glossary.md#term-hld) は別ページに散らばっています。ここでは運用者と設計者の質問順に並べ直し、既存ページへの入口にします。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) で「いまスイッチが何をしているか」「壊れたとき何が起きたか」を読むための機能群をまとめます。counters、[CRM](../../reference/glossary.md#term-crm)、[SNMP](../../reference/glossary.md#term-snmp)、[gNMI](../../reference/glossary.md#term-gnmi) telemetry、sFlow、DTel、syslog、techsupport、kdump など複数の経路があり、[HLD](../../reference/glossary.md#term-hld) は別ページに散らばっています。ここでは運用者と設計者の質問順に並べ直し、既存ページへの入口にします。
 
 観測手段は「現在値を polling で読む」「変化点を push で受ける」「障害時に dump を取る」の 3 系統に整理できます。SNMP は古典的な polling、gNMI telemetry は push 型 streaming、syslog / event / techsupport は障害発生時の証跡です。この区分けが分かると、どこを設定し、どこを見れば良いかが定まります。
 
@@ -173,4 +173,4 @@ related:
 - [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
 - [Security / AAA / FIPS / Hardening](../15-security-aaa/index.md)
 
-<!-- glossary-links-injected: 9f060dca9b0d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -41,7 +41,7 @@ related:
 
 ## 概要
 
-SONiC の port mirroring 拡張。Port / Port-Channel 単位の **ingress / egress / both** SPAN、および ERSPAN（IP encapsulation）に対応する[^1]。複数ソース・単一宛先の動的セッション管理、Port-Channel に対するセッションは少なくとも 1 メンバが UP のとき有効、を要件とする。
+[SONiC](../reference/glossary.md#term-sonic) の port mirroring 拡張。Port / Port-Channel 単位の **ingress / egress / both** SPAN、および ERSPAN（IP encapsulation）に対応する[^1]。複数ソース・単一宛先の動的セッション管理、Port-Channel に対するセッションは少なくとも 1 メンバが UP のとき有効、を要件とする。
 
 v0.2 では **Mirror Capability Discovery and Validation** が追加された（プラットフォームが対応する mirror モード・属性を [STATE_DB](../reference/glossary.md#term-state_db) に公開して上位が事前検証できるようにする仕組み）[^1]。
 
@@ -55,7 +55,7 @@ v0.2 では **Mirror Capability Discovery and Validation** が追加された（
 - 複数ソース → 単一宛先（many-to-one）。
 - Port-Channel ソースは少なくとも 1 メンバ UP で有効化。
 - 動的更新（メンバ追加・削除、宛先変更）。
-- Capability Discovery: ASIC ごとに対応モード/属性を STATE_DB に公開し、未対応モードの設定試行を早期に弾く。
+- Capability Discovery: [ASIC](../reference/glossary.md#term-asic) ごとに対応モード/属性を STATE_DB に公開し、未対応モードの設定試行を早期に弾く。
 
 ### モジュール
 
@@ -158,4 +158,4 @@ redis-cli -n 6 hgetall 'MIRROR_SESSION_TABLE|everflow0'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

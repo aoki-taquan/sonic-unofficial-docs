@@ -25,14 +25,14 @@ related:
 ## 症状
 
 - syslog に `CRM_THRESHOLD_EXCEEDED` / `THRESHOLD_TYPE_USED` が出力される
-- 新しい route / nexthop / [FDB](../../reference/glossary.md#term-fdb) エントリが ASIC に書けず `SAI_STATUS_TABLE_FULL`
+- 新しい route / nexthop / [FDB](../../reference/glossary.md#term-fdb) エントリが [ASIC](../../reference/glossary.md#term-asic) に書けず `SAI_STATUS_TABLE_FULL`
 - `crm show resources all` の `Used` が `Available` に迫っている
 
 ## 想定原因（優先度順）
 
-1. **ASIC 容量に対する実需要超過**: route テーブル / [FDB](../../reference/glossary.md#term-fdb) の物理上限
+1. **[ASIC](../../reference/glossary.md#term-asic) 容量に対する実需要超過**: route テーブル / [FDB](../../reference/glossary.md#term-fdb) の物理上限
 2. **threshold 設定が低すぎる**: high=70% など過敏設定で誤検知
-3. **leak**: [orchagent](../../reference/glossary.md#term-orchagent) が delete を ASIC に流していない（programming bug / [syncd](../../reference/glossary.md#term-syncd) 詰まり）
+3. **leak**: [orchagent](../../reference/glossary.md#term-orchagent) が delete を [ASIC](../../reference/glossary.md#term-asic) に流していない（programming bug / [syncd](../../reference/glossary.md#term-syncd) 詰まり）
 4. **特定 resource 種別の偏り**: [ACL](../../reference/glossary.md#term-acl) counter / mirror / Nexthop group が過大
 5. **multi-asic で 1 ASIC に偏った programming**
 
@@ -129,4 +129,4 @@ docker logs swss 2>&1 | grep -iE "crm|table_full|sai_status" | tail -100
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — crmorch.cpp
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ master — crm/main.py
 
-<!-- glossary-links-injected: 5826eec340d7 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

@@ -40,7 +40,7 @@ related:
 
 ## 概要
 
-VoQ（Virtual Output Queue）アーキテクチャでは、複数 ASIC が **内部ファブリック** で繋がれた 1 つの論理ルータとして動く。本 [HLD](../reference/glossary.md#term-hld) は SONiC を「ラインカード × N」+「スーパバイザ × 1」の **分散 SONiC インスタンス** として動かすための骨格設計を定義する[^1]。
+VoQ（Virtual Output Queue）アーキテクチャでは、複数 [ASIC](../reference/glossary.md#term-asic) が **内部ファブリック** で繋がれた 1 つの論理ルータとして動く。本 [HLD](../reference/glossary.md#term-hld) は [SONiC](../reference/glossary.md#term-sonic) を「ラインカード × N」+「スーパバイザ × 1」の **分散 SONiC インスタンス** として動かすための骨格設計を定義する[^1]。
 
 主要登場人物[^1]:
 
@@ -227,7 +227,7 @@ chassis_db_address=127.100.0.1
 
 ## 干渉する機能
 
-- **`syncd` / `swss` の Multi-ASIC 動作**: 既存の multi-ASIC パターンの拡張。FSI 内の ASIC ごとに `syncd` / `swss` が立つ。
+- **`syncd` / `swss` の [Multi-ASIC](../reference/glossary.md#term-multi-asic) 動作**: 既存の multi-ASIC パターンの拡張。FSI 内の ASIC ごとに `syncd` / `swss` が立つ。
 - **iBGP メッシュ（[BGP for VoQ Chassis](../routing/bgp-setup-for-voq-chassis.md)）**: 内部 FSI 間の制御プレーンとして iBGP を張る前提。本 HLD はその物理基盤を提供する。
 - **Single-ASIC VoQ**: chassisdb.conf の有無を `is_voq_chassis()` の判定キーに流用する派生機能[^1]（[Single-ASIC VoQ](../platform/single-asic-voq-fixed-system-sonic.md) 参照）。
 - **dual-tor / [SmartSwitch](../reference/glossary.md#term-smartswitch)**: 似た概念だが本 HLD のスコープ外。Chassis DB は混同しないこと。
@@ -259,4 +259,4 @@ show chassis-module status
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f0d5c7142479 -->
+<!-- glossary-links-injected: 5c9b3765d470 -->
