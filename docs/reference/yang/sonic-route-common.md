@@ -13,7 +13,6 @@ related:
   cli: []
   yang:
   - sonic-route-map
-  - sonic-routing-policy-sets
   - sonic-vrf
   - sonic-static-route
 ---

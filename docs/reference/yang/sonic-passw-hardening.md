@@ -35,7 +35,7 @@ Password hardening policy [YANG](../../reference/glossary.md#term-yang) module f
 
 ```mermaid
 flowchart LR
-  Y["sonic-passw-hardening"]
+  Y["sonic-passwh"]
   C1[("CONFIG_DB<br/>PASSW_HARDENING")]
   Y --> C1
   D1["hostcfgd"]

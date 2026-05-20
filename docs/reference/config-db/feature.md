@@ -30,7 +30,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>FEATURE")]
-  DM["coppmgrd"]
+  DM["hostcfgd"]
   CDB --> DM
 ```
 
