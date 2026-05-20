@@ -22,8 +22,8 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
-    `sonic-swss-common/common/zmq{client,server,producerstatetable,consumerstatetable}.{h,cpp}` を確認。`ZmqProducerStateTable : public ProducerStateTable` と `ZmqClient&` メンバ、コンストラクタ既定 `dbPersistence = true` (Producer) / `false` (Consumer)、フラグに応じた DB 書き込み分岐を確認。Python は `pyext/swsscommon.i` L296-346 で `ZmqProducerStateTable` director 化と `zmqWait` ヘルパを確認 (verified at: 2026-05-09)。
+!!! warning "裏取りステータス: Discrepancy-found"
+    `sonic-swss-common/common/zmq{client,server,producerstatetable,consumerstatetable}.{h,cpp}` を確認。`ZmqProducerStateTable : public ProducerStateTable` と `ZmqClient&` メンバ、コンストラクタ既定 `dbPersistence = true` (Producer) / `false` (Consumer)、フラグに応じた DB 書き込み分岐を確認。Python は `pyext/swsscommon.i` L296-346 で `ZmqProducerStateTable` director 化と `zmqWait` ヘルパを確認。その後 2026-05-13 に discrepancy-found へ降格（詳細は本文末尾の「実装との乖離 / 補足」節を参照）。
 
 # ZMQ ProducerStateTable / ConsumerStateTable 設計
 
