@@ -1,6 +1,6 @@
 ---
 title: config save 後に予期しない diff が出る
-description: 'Runbook: config save 後に予期しない diff が出る — : sonic-net/sonic-utilities @ 39732bceb — config save : sonic-net/sonic-swss-common @ 4305596 — configdb get/set'
+description: 'Runbook: config save 後に予期しない diff が出る — : sonic-net/sonic-utilities @ 39732bceb — config save : sonic-net/sonic-swss-common @ 158de8d — configdb get/set'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
@@ -10,7 +10,7 @@ sources:
   ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 - repo: sonic-net/sonic-swss-common
   path: common/configdb.cpp
-  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
   config_db:
   - BUFFER_PG
@@ -101,6 +101,6 @@ sudo journalctl -u hostcfgd | grep -i "default" | tail
 本ページの根拠は引用元 [^1][^2] を参照。
 
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config save
-[^2]: sonic-net/[sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) @ 4305596 — configdb get/set
+[^2]: sonic-net/[sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) @ 158de8d — configdb get/set
 
 <!-- glossary-links-injected: 1af9c6208afc -->

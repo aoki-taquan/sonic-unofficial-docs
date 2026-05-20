@@ -25,7 +25,7 @@ related:
     - VNET_ROUTE_TUNNEL
     - VXLAN_TUNNEL
   cli:
-    - show vnet routes
+    - config vnet
     - config vxlan
   yang:
     - sonic-vnet
@@ -128,11 +128,13 @@ VNET スコープの VXLAN トンネル encapsulation 経路。
 
 - CONFIG_DB: [`VNET`](./vnet.md)
 - YANG: [`sonic-vnet`](../yang/sonic-vnet.md)
-- CLI: `show vnet routes`
+- CLI: [`config vnet`](../cli/config-vnet.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
+
+[^1]: YANG 定義: `sonic-vnet.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vnet.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント

@@ -40,7 +40,7 @@ related:
 
 ## 概要
 
-`StpOrch` (`orchagent/stporch.cpp`) は [APPL_DB](../../reference/glossary.md#term-appl_db) の 4 テーブルを購読し、STP デーモン (`stpd`) が書き込んだ状態・指示を [SAI](../../reference/glossary.md#term-sai) API に変換してデータプレーンへ反映する。
+`StpOrch` (`orchagent/stporch.cpp`) は [APPL_DB](../../reference/glossary.md#term-appl_db) の 4 テーブルを購読し、`stpd` → `stpmgrd` 経由で書き込まれた状態・指示を [SAI](../../reference/glossary.md#term-sai) API に変換してデータプレーンへ反映する（[APPL_DB](../../reference/glossary.md#term-appl_db) への書き込み主体は `cfgmgr/stpmgrd.cpp`）。
 
 ```
 stpd (STP デーモン)
@@ -272,7 +272,7 @@ STATE_DB: STP|GLOBAL.max_stp_inst = (SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1)
 <!-- ordering -->
 ## 書込み順依存・タイミング依存 (Phase B)
 
-`StpOrch::doTask()` は [APPL_DB](../../reference/glossary.md#term-appl_db) の 4 テーブルを購読するが、各テーブルの処理には明確な前提条件がある。前提未成立時の挙動はテーブルごとに異なる (残置 `it++` / コンシューマ全体ブロック `return` / fail-silent) ため、運用上のトラブルシューティングで重要になる。
+`StpOrch::doTask()` は APPL_DB の 4 テーブルを購読するが、各テーブルの処理には明確な前提条件がある。前提未成立時の挙動はテーブルごとに異なる (残置 `it++` / コンシューマ全体ブロック `return` / fail-silent) ため、運用上のトラブルシューティングで重要になる。
 
 ### 1. 全テーブル共通: PortsOrch readiness ガード
 
@@ -776,6 +776,11 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 | 8 | STATE_DB 書き込み | `STP\|GLOBAL.max_stp_inst` | `max_stp_instances - 1` を書き込む (off-by-one は意図的) |
 
 ## 引用元
+
+[^1]: StpOrch 実装: `orchagent/stporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp>
+[^2]: StpOrch ヘッダ: `orchagent/stporch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.h>
+[^3]: orchdaemon 登録: `orchagent/orchdaemon.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
+[^4]: テーブル名定数: `common/schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
 
 ## 関連ページ
 

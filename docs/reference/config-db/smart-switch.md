@@ -156,7 +156,7 @@ SmartSwitch では `ips` が使用され、各 DPU に `169.254.200.<dpu_id+1>` 
 
 **bridge + ip_prefix の同時書き込み必須 (依存 #2)**: `dhcp_cfggen.py:84` の条件 `"bridge" in mid_plane and "ip_prefix" in mid_plane` を両方満たすとき初めて SmartSwitch サブネットが Kea 設定に追加される。YANG `must "(current()/../ip_prefix)"` 制約も `bridge` と `ip_prefix` の同時存在を強制する（evidence: `dhcp_cfggen.py:84`, `sonic-smart-switch.yang:63-74`）。
 
-**DPUS 先行必須 (依存 #3)**: `DHCP_SERVER_IPV4_PORT.<port>` フィールドは `DPUS.<dpu_name>.midplane_interface` への YANG leafref であるため、`DPUS` エントリが存在しない状態で `DHCP_SERVER_IPV4_PORT` を書いても YANG バリデーションで reject される（evidence: `sonic-smart-switch.yang:94-103`）。
+**DPUS 先行必須 (依存 #3)**: `DHCP_SERVER_IPV4_PORT.<port>` フィールドは `DPUS.<dpu_name>.midplane_interface` への YANG leafref であるため、`DPUS` エントリが存在しない状態で `DHCP_SERVER_IPV4_PORT` を書いても YANG バリデーションで reject される（evidence: `sonic-dhcp-server-ipv4.yang:231-233`）。
 
 詳細スキャン手順と依存関係の根拠は `meta/_intermediate/cdb-flow/smart-switch-ordering.md` を参照。
 <!-- /ordering -->

@@ -1508,7 +1508,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [DSCP_TO_PG_MAP テーブル（非実在）](config-db/dscp-to-pg-map.md) (92)
 - [DSCP_TO_TC_MAP テーブル](config-db/dscp-to-tc-map.md) (86)
 - [DSCP_TO_FC_MAP テーブル](config-db/dscp-to-fc-map.md) (63)
-- [SWITCH_TRIMMING テーブル](config-db/switch-trimming.md) (57)
+- [SWITCH_TRIMMING テーブル](config-db/switch-trimming.md) (59)
 
 ### [DWRR](#term-dwrr)
 
@@ -2352,15 +2352,15 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [STP_VLAN / STP_VLAN_PORT テーブル](config-db/stp-vlan.md) (251)
 - [APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル](config-db/appl-vlan.md) (221)
 - [VLAN テーブル](config-db/vlan.md) (182)
-- [VLAN_MEMBER テーブル](config-db/vlan-member.md) (162)
+- [VLAN_MEMBER テーブル](config-db/vlan-member.md) (164)
 - [STATE_DB VLAN_TABLE（VLAN 状態テーブル）](config-db/vlan-state.md) (148)
 
 ### [vlanmgrd](#term-vlanmgrd)
 
 - [VLAN テーブル](config-db/vlan.md) (36)
 - [STATE_DB VLAN_TABLE（VLAN 状態テーブル）](config-db/vlan-state.md) (35)
+- [VLAN_MEMBER テーブル](config-db/vlan-member.md) (34)
 - [APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル](config-db/appl-vlan.md) (32)
-- [VLAN_MEMBER テーブル](config-db/vlan-member.md) (32)
 - [VRRP テーブル](config-db/vrrp.md) (27)
 
 ### [VNET](#term-vnet)

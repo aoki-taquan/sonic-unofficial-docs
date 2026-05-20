@@ -1,7 +1,7 @@
 ---
 title: CONFIG_DB の永続化が失敗する
 description: 'Runbook: CONFIG_DB の永続化が失敗する (config save 失敗) — : sonic-net/sonic-utilities
-  @ 39732bceb — config save 実装 : sonic-net/sonic-swss-common @ 4305596 — configdb.cpp'
+  @ 39732bceb — config save 実装 : sonic-net/sonic-swss-common @ 158de8d — configdb.cpp'
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
@@ -11,7 +11,7 @@ sources:
   ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 - repo: sonic-net/sonic-swss-common
   path: common/configdb.cpp
-  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+  ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
   config_db:
   - DEVICE_METADATA
@@ -128,6 +128,6 @@ sudo dmesg | tail -50
 本ページの根拠は引用元 [^1][^2] を参照。
 
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config save 実装
-[^2]: sonic-net/[sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) @ 4305596 — configdb.cpp
+[^2]: sonic-net/[sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) @ 158de8d — configdb.cpp
 
 <!-- glossary-links-injected: d5320e852f7a -->

@@ -85,7 +85,8 @@ docker logs swss 2>&1 | grep -iE "aclorch" | tail -50
 ### 5. CRM
 
 ```bash
-crm show resources acl-table acl-group
+crm show resources acl group
+crm show resources acl table
 ```
 
 ## 対処方法

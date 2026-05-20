@@ -14,6 +14,7 @@ related:
     - TC_TO_QUEUE_MAP
     - PORT_QOS_MAP
     - QUEUE
+    - DSCP_TO_TC_MAP
   cli: []
   yang:
     - sonic-tc-queue-map
