@@ -63,7 +63,7 @@ SmartSwitch の DPU per-instance redis は、multi-[ASIC](../../reference/glossa
 | DB 分割の動機 | namespace ごとに ASIC を抱える | DPU メモリ節約 / API 単純化 |
 | 該当章 | Multi-ASIC / VOQ Chassis 章（章 12） | 本章 |
 
-両者が同じ基盤を使うため、`has_per_dpu_scope` / `has_per_asic_scope` / `has_global_scope` の関係や `featured` の動作は [Multi-ASIC / VOQ 章](../../topics/01-overview/index.md) 寄りで扱われる想定です。混同を避けるため、本章では「DPU レイヤの話だけ」を扱います。
+両者が同じ基盤を使うため、`has_per_dpu_scope` / `has_per_asic_scope` / `has_global_scope` の関係や `featured` の動作は [Multi-ASIC / VOQ 章](../12-multi-asic-voq/index.md) 寄りで扱われる想定です。混同を避けるため、本章では「DPU レイヤの話だけ」を扱います。
 
 ## Platform 章との境界
 
@@ -125,7 +125,7 @@ DPU の PCIe / midplane / 電源 / リセットといった物理層は Platform
 
 ## ハンドオフ
 
-- **概念とアーキテクチャ**は本章の [concept](concept.md) / [internals](internals.md) と、関連 HLD の [SONiC DASH HLD](../../overlay/sonic-dash-hld.md), [SmartSwitch reboot HLD](../../system/smart-switch-reboot-high-level-design.md), [Independent DPU upgrade](../../system/independent-dpu-upgrade.md) で完結する。DPU / NPU の責務分担、`DASH_APPL_DB`, `SDN_APPL_DB`, `DPU_APPL_DB` の関係性は internals で詳細化済み。
+- **概念とアーキテクチャ**は本章の [concept](concept.md) / [internals](internals.md) と、関連 HLD の [SONiC DASH HLD](../../overlay/sonic-dash-hld.md), [SmartSwitch reboot HLD](../../system/smart-switch-reboot-high-level-design.md), [Independent DPU upgrade](../../system/independent-dpu-upgrade.md) で完結する。DPU / NPU の責務分担、`APPL_DB` / `DPU_APPL_DB` / `DPU_STATE_DB` / `DPU_COUNTERS_DB` の関係性は internals で詳細化済み。
 - **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `show dpu` / `show dash` 系、`DPU`, `DASH_ENI`, `DASH_VNET`, `DASH_ACL_GROUP`, `DASH_ROUTE` の [CONFIG_DB スキーマ](../../reference/config-db/index.md)、および `sonic-dash-api` の proto / gRPC interface に集約。
 - **本ページ** は DASH counter aggregation、独立 reboot 順序、VNET tunnel との優先度競合、SmartSwitch HA / flow sync など、章境界をまたぐ発展領域だけを扱う。
 

@@ -44,17 +44,17 @@ typedef switchport-mode-type {
   default routed;
 }
 
-leaf switchport_mode { type switchport-mode-type; }
+leaf mode { type stypes:switchport_mode; }   // typedef 名は switchport_mode、leaf 名は mode
 ```
 
 CONFIG_DB:
 
 ```text
 PORT|<name>
-  switchport_mode = "routed" | "access" | "trunk"
+  mode = "routed" | "access" | "trunk"
 
 PORTCHANNEL|<name>
-  switchport_mode = ...
+  mode = ...
 ```
 
 メンバ関係は既存 `VLAN_MEMBER` を流用（`tagging_mode`: `untagged` / `tagged`）。本機能は **モード概念を明示** することで CLI の意味付けを揃えるのが主目的で、データプレーン挙動は既存と互換[^1]。
@@ -75,10 +75,10 @@ PORTCHANNEL|<name>
 
 | Phase | 実装済 (master で動く) | 未実装 (HLD 提案のみ) |
 |-------|----------------------|---------------------|
-| YANG `switchport_mode` leaf 追加 (`sonic-port` / `sonic-portchannel`) | ✅ 取り込み済 | — |
-| CONFIG_DB `PORT` / `PORTCHANNEL` の `switchport_mode` カラム | ✅ 取り込み済 | — |
+| YANG `mode` leaf 追加 (`sonic-port` / `sonic-portchannel`、type は `switchport_mode` typedef) | ✅ 取り込み済 | — |
+| CONFIG_DB `PORT` / `PORTCHANNEL` の `mode` カラム | ✅ 取り込み済 | — |
 | `config switchport mode` CLI | ✅ 取り込み済 | — |
-| `db_migrator` による旧 `config_db.json` の自動補完 (`routed` / `access` / `trunk` 推定) | ✅ 取り込み済（VLAN_MEMBER の有無で推定） | — |
+| `db_migrator` による旧 `config_db.json` の自動補完 (`routed` / `access` / `trunk` 推定) | — | ❌ 未取り込み。既存 entry に `mode` フィールドが無ければ `routed` 相当として振る舞う暗黙挙動に依存 |
 | `tagging_mode` (`untagged` / `tagged`) の意味付け | ✅ 既存 `VLAN_MEMBER` を流用 | — |
 | orchagent / vlanmgr / SAI 側のモード対応 | ✅ 改修不要（既存 `VLAN_MEMBER` 経由で従来動作）| — |
 | `routed` モードでの `VLAN_MEMBER` 拒否バリデーション | 🟡 CLI 側のチェック | YANG must 制約や orchagent 側の強制バリデーションは未取り込み |

@@ -151,7 +151,7 @@ related:
 - [Reclaim Reserved Buffer（admin-down ポートの zero_profile）](../../acl-qos/reclaim-reserved-buffer.md)
 - [バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）](../../acl-qos/watermark-counters-in-sonic.md)
 - [設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）](../../acl-qos/configurable-drop-counters-in-sonic.md)
-- [show acl 強化（STATE_DB.ACL_TABLE_TABLE / ACL_RULE_TABLE の status）](../../acl-qos/enhancements-on-show-acl-commands.md)
+- [ポートの動的 add / del（zero-port 起動と post-init 操作）](../../acl-qos/enhancements-to-add-or-del-ports-dynamically.md)
 
 **関連トラブルシュート 5 件**
 

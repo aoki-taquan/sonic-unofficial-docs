@@ -11,8 +11,6 @@ sources:
 related:
   config_db:
   - AAA
-  - TACPLUS
-  - RADIUS
   cli:
   - config aaa
   yang:
@@ -44,12 +42,6 @@ flowchart LR
   Y --> C1
   D1["hostcfgd"]
   C1 --> D1
-  C2[("CONFIG_DB<br/>TACPLUS")]
-  Y --> C2
-  C2 --> D1
-  C3[("CONFIG_DB<br/>RADIUS")]
-  Y --> C3
-  C3 --> D1
 ```
 
 !!! note "凡例"
@@ -65,7 +57,6 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`AAA`](../config-db/aaa.md)
-- [`RADIUS`](../config-db/radius.md)
 
 ### 関連 CLI
 
@@ -121,9 +112,10 @@ module: sonic-system-aaa
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `AAA`
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): `TACPLUS`
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): `RADIUS`
 - CLI: `config aaa`
+
+!!! note "TACPLUS / RADIUS について"
+    `TACPLUS` / `TACPLUS_SERVER` テーブルは [`sonic-system-tacacs`](sonic-system-tacacs.md) が、`RADIUS` / `RADIUS_SERVER` テーブルは [`sonic-system-radius`](sonic-system-radius.md) が定義する。`sonic-system-aaa` 内の TACPLUS への参照は `must` 制約のクロスリファレンスであり、このモジュールはテーブル定義を持たない。
 
 <!-- yang-sibling -->
 ### 関連 YANG モジュール
@@ -141,7 +133,7 @@ module: sonic-system-aaa
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`AAA`](../config-db/aaa.md) / `TACPLUS` / [`RADIUS`](../config-db/radius.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`AAA`](../config-db/aaa.md)
 - CLI: [`config aaa`](../cli/config-aaa.md)
 
 <!-- ref-triangle:end -->
@@ -158,4 +150,4 @@ module: sonic-system-aaa
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 896d391185a9 -->

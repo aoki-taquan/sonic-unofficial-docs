@@ -17,7 +17,7 @@ related:
     - show radius
     - config aaa
   yang:
-    - sonic-aaa
+    - sonic-system-aaa
 ---
 
 # show aaa サブコマンド
@@ -94,7 +94,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): `sonic-aaa`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-system-aaa`
 - CONFIG_DB: [`AAA`](../config-db/aaa.md)
 
 <!-- ref-triangle:end -->

@@ -107,7 +107,8 @@ show arp
 ```bash
 show arp 10.0.0.1
 show arp -if Ethernet0
-show arp -vrf Vrf_Red
+# VRF 別の ARP は kernel コマンドで取得（show arp 自体には -vrf / -V オプションはない）
+ip neigh show vrf Vrf_Red
 ```
 
 ### 期待される出力 (抜粋)
@@ -131,7 +132,7 @@ Total number of entries 2
 
 ### よくある落とし穴
 
-- `show arp` は default [VRF](../../reference/glossary.md#term-vrf)。[VRF](../../reference/glossary.md#term-vrf) 内 ARP は `show arp -V <vrf>` または `ip neigh show vrf <vrf>`。
+- `show arp` は default [VRF](../../reference/glossary.md#term-vrf) のみ。[VRF](../../reference/glossary.md#term-vrf) 内 ARP を見るオプション (`-vrf` / `-V`) は arp コマンドには存在しないため、`ip neigh show vrf <vrf>` を使う。
 - [STATE_DB](../../reference/glossary.md#term-state_db) の NEIGH_TABLE と kernel ARP がズレる場合あり。両方で裏取り。
 
 ### 関連する show / debug

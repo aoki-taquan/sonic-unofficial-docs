@@ -13,7 +13,6 @@ related:
   config_db:
   - VRF
   - CRM
-  - BFD_SESSION_TABLE
   - MGMT_VRF_CONFIG
   - VXLAN_TUNNEL_MAP
   - SYSLOG_SERVER
@@ -75,7 +74,7 @@ flowchart LR
 セッションキーは [VRF](../reference/glossary.md#term-vrf)・インタフェース・宛先 IP の 3 つで一意化する[^1]。
 
 ```text
-BFD_SESSION:{vrf}:{ifname}:{ipaddr}
+BFD_SESSION_TABLE:{vrf}:{ifname}:{ipaddr}
     tx_interval   : interval ms (OPTIONAL)
     rx_interval   : interval ms (OPTIONAL)
     multiplier    : detect multiplier (OPTIONAL)
@@ -208,7 +207,7 @@ HSET "BFD_SESSION_TABLE:default:default:10.0.0.5" \
     type active
 ```
 
-実際のキー名（`BFD_SESSION_TABLE` か `BFD_SESSION` か）は HLD 表記揺れがあり、現行 swss 実装側で要確認。
+[APPL_DB](../reference/glossary.md#term-appl_db) のキー名は `sonic-swss-common/common/schema.h:120` の `APP_BFD_SESSION_TABLE_NAME = "BFD_SESSION_TABLE"` の通り `BFD_SESSION_TABLE` が正式。HLD では `BFD_SESSION` と略記されている箇所がある点に注意。
 
 ## 制限事項
 
@@ -263,4 +262,4 @@ docker exec bgp vtysh -c 'show bfd peers' | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9cc90e2e6da0 -->
