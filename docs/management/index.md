@@ -7,7 +7,7 @@ last_verified: 2026-05-13
 ---
 
 # マネジメント
-CLI 以外の設定・管理経路、[gNMI](../reference/glossary.md#term-gnmi) / REST / [YANG](../reference/glossary.md#term-yang) / [AAA](../reference/glossary.md#term-aaa) / P4RT など管理プレーンを扱う章。
+CLI 以外の設定・管理経路、[gNMI](../reference/glossary.md#term-gnmi) / REST / [YANG](../reference/glossary.md#term-yang) / [AAA](../reference/glossary.md#term-aaa) / [P4RT](../reference/glossary.md#term-p4rt) など管理プレーンを扱う章。
 ## この章の読み方
 目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
 ## 検証状況
@@ -79,4 +79,4 @@ CLI 以外の設定・管理経路、[gNMI](../reference/glossary.md#term-gnmi) 
 | [ポートベース IPv4 DHCP Server（kea-dhcp-server + dhcrelay Option 82 連携）](ipv4-port-based-dhcp-server-in-sonic.md) | Code-verified |
 | [既定パスワードの初回ログイン強制変更（California SB-327 準拠）](default-credential-management-for-california-sb-327-conformance.md) | Code-verified |
 
-<!-- glossary-links-injected: 5556cec53783 -->
+<!-- glossary-links-injected: c0ffc85a39eb -->

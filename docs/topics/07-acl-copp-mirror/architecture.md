@@ -52,7 +52,7 @@ table は bind 先と stage を決め、rule は priority と action を決め�
 
 古い ACL は `L3`、`L3V6`、`MIRROR` などを `AclOrch` 内部の組み込み type として持ちます。新しい要求が増えると [orchagent](../../reference/glossary.md#term-orchagent) 改修と [TCAM](../../reference/glossary.md#term-tcam) 消費が増えるため、ユーザ定義 table type では `ACL_TABLE_TYPE` に match、action、bind point を宣言します。
 
-一方、`MIRROR` / `MIRRORV6` のように特別な内部処理が必要な type は組み込みに残ります。`L3V4V6` も組み込み type で、IPv4 と IPv6 rule を 1 つの SAI ACL table に同居させ、ASIC が対応する場合に TCAM 消費を抑える狙いがあります。
+一方、`MIRROR` / `MIRRORV6` のように特別な内部処理が必要な type は組み込みに残ります。`L3V4V6` も組み込み type で、IPv4 と IPv6 rule を 1 つの SAI ACL table に同居させ、[ASIC](../../reference/glossary.md#term-asic) が対応する場合に TCAM 消費を抑える狙いがあります。
 
 ## Flex Counter 化
 
@@ -87,4 +87,4 @@ ACL counter が rule hit を見るのに対し、trap flow counter は CPU bound
 - [ACL カウンタの flex counter 化](../../acl-qos/acl-flex-counters-support.md)
 - [Trap Flow Counter](../../architecture/sonic-trap-flow-counter-design.md)
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: c006405759d8 -->

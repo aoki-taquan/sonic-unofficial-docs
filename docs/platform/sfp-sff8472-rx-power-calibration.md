@@ -5,7 +5,8 @@ tags: [sfp, eeprom, diagnostics, sff-8472, calibration, platform-common]
 description: 外部キャリブレーション方式の SFP モジュールで Rx 受信パワーの変換値が誤る問題と修正内容。
 source_issues:
   - https://github.com/sonic-net/sonic-platform-common/issues/449
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # SFF-8472 外部キャリブレーション SFP の Rx パワー変換誤り

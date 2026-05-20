@@ -49,7 +49,7 @@ related:
 
 ## 概要
 
-SONiC は伝統的に `Ethernet0` / `Ethernet4` / ... のような **`Ethernet` プレフィクス + ASIC レーン番号** をポート名に使ってきた。Microsoft からのプロポーザルとして本ドキュメントは以下の問題を指摘し、Linux Network Interface Naming に揃える命名規則を提案する[^1]:
+[SONiC](../reference/glossary.md#term-sonic) は伝統的に `Ethernet0` / `Ethernet4` / ... のような **`Ethernet` プレフィクス + [ASIC](../reference/glossary.md#term-asic) レーン番号** をポート名に使ってきた。Microsoft からのプロポーザルとして本ドキュメントは以下の問題を指摘し、Linux Network Interface Naming に揃える命名規則を提案する[^1]:
 
 - プレフィクス `Ethernet` が冗長（長い）
 - ポート番号（ASIC lane 起点）が **前面パネル番号と一致しない**
@@ -292,4 +292,4 @@ cat /usr/share/sonic/device/*/Force10-S6000/port_config.ini 2>/dev/null | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: fbe81f6f4471 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

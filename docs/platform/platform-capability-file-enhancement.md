@@ -34,7 +34,7 @@ related:
 
 スイッチ機器のプラットフォーム部品（fan, PSU, status LED, thermal 等）は、機種ごとに **制御可能性と取りうる値の範囲** が異なる。たとえば**ステータス LED の色**は機種により `off/amber/green` だったり `red/green` だったり、**fan speed** には推奨される `minimum/maximum` の範囲があったり、**PSU の LED は NOS から触れない**（BMC 専管）こともある[^1]。
 
-SONiC は従来 `platform.json` を **コンポーネント構造（fan / PSU / thermal の所在）と dynamic port breakout のためのインタフェース情報** に使ってきたが、各属性の **「能力情報（capability）」を上位アプリへ渡す手段が無かった**[^1]。本 [HLD](../reference/glossary.md#term-hld) は `platform.json` に **`capabilities` フィールド** を追加して、この情報を取り出せるようにする拡張を定義する。
+[SONiC](../reference/glossary.md#term-sonic) は従来 `platform.json` を **コンポーネント構造（fan / PSU / thermal の所在）と dynamic port breakout のためのインタフェース情報** に使ってきたが、各属性の **「能力情報（capability）」を上位アプリへ渡す手段が無かった**[^1]。本 [HLD](../reference/glossary.md#term-hld) は `platform.json` に **`capabilities` フィールド** を追加して、この情報を取り出せるようにする拡張を定義する。
 
 ## 動作仕様
 
@@ -244,4 +244,4 @@ redis-cli -n 6 keys 'CHASSIS_INFO|*'
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: efdb904808b0 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

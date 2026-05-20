@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-SONiC に **組み込み IPv4 DHCP Server** を持つ。MAC でも DHCP option でもなく **入ってきた物理 / [LAG](../reference/glossary.md#term-lag) ポート** で IP を割り当てる "port-based" モード[^1]。利点は[^1]:
+[SONiC](../reference/glossary.md#term-sonic) に **組み込み IPv4 DHCP Server** を持つ。MAC でも DHCP option でもなく **入ってきた物理 / [LAG](../reference/glossary.md#term-lag) ポート** で IP を割り当てる "port-based" モード[^1]。利点は[^1]:
 
 - 設定外のポートからの request には IP を払い出さないため安全
 - 外部ホスト情報を仕込まず、ポート単位で予約 IP / 範囲だけ書けば自走する小規模 NW 構築に向く
@@ -227,4 +227,4 @@ redis-cli -n 4 hgetall 'DHCP_SERVER_IPV4|Vlan1000'
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

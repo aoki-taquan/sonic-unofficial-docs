@@ -29,7 +29,7 @@ related:
 - import: `ietf-inet-types`, `sonic-mgmt_vrf`, `sonic-vrf`, `sonic-feature`
 - top container: `sonic-syslog`
 
-Remote syslog server and logging configuration [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
+Remote syslog server and logging configuration [YANG](../../reference/glossary.md#term-yang) module for [SONiC](../../reference/glossary.md#term-sonic) OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -187,4 +187,4 @@ show syslog
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8e75ff55dc28 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

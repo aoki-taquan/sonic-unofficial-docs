@@ -32,13 +32,13 @@ related:
 
 - リンクトレーニング（LT）とは何で、なぜ必要なのか
 - `media_settings.json` の静的 FIR とどう違うのか
-- どの port で使えるか（ASIC 制約）
+- どの port で使えるか（[ASIC](../reference/glossary.md#term-asic) 制約）
 - auto-negotiation と一緒に有効化していいのか
 - LT が trained にならない時の見方
 
 ## 結論
 
-LT は CR/KR 系で送受信が **動的に FIR の等化係数を擦り合わせる** IEEE 802.3 clause 72/93 のプロトコル[^1]。SONiC は既存 [SAI](../reference/glossary.md#term-sai) 属性 + `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE`（per-port 能力）を使って on/off と状態取得を [CONFIG_DB](../reference/glossary.md#term-config_db) / [STATE_DB](../reference/glossary.md#term-state_db) に揃える。auto-neg との同時利用可否は ASIC ごとに異なる。
+LT は CR/KR 系で送受信が **動的に FIR の等化係数を擦り合わせる** IEEE 802.3 clause 72/93 のプロトコル[^1]。[SONiC](../reference/glossary.md#term-sonic) は既存 [SAI](../reference/glossary.md#term-sai) 属性 + `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE`（per-port 能力）を使って on/off と状態取得を [CONFIG_DB](../reference/glossary.md#term-config_db) / [STATE_DB](../reference/glossary.md#term-state_db) に揃える。auto-neg との同時利用可否は ASIC ごとに異なる。
 
 ## 動作仕様
 
@@ -195,4 +195,4 @@ config interface autoneg Ethernet0 off    # AN を切って LT 単独で再評�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 03fb69fa3601 -->
+<!-- glossary-links-injected: ec18b66e3507 -->
