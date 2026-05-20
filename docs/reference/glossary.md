@@ -2409,7 +2409,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VRRP_TRACK テーブル](config-db/vrrp-track.md) (124)
 - [VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking）](../routing/virtual-router-redundancy-protocol-adaptation-hld.md) (36)
 - [サイトマップ](../_meta/sitemap.md) (13)
-- [config interface サブコマンド](cli/config-interface.md) (11)
+- [config interface サブコマンド](cli/config-interface.md) (12)
 
 ### [VTEP](#term-vtep)
 
