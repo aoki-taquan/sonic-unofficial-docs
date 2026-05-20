@@ -81,7 +81,7 @@ BGP_STATE_TABLE|<family>|eoiu
 |----|---------|----------|
 | `"unknown"` | `bgp_eoiu_marker.py` | Warm Restart 開始時（クリア後に再セット） |
 | `"reached"` | `bgp_eoiu_marker.py` | 全 BGP ピアの EOR 受信完了後 |
-| `"consumed"` | `fpmsyncd` | reconciliation 開始後に更新（スキーマ定義上の値; fpmsyncd は read のみ確認） |
+| `"consumed"` | スキーマ定義のみ（実装上書き込みなし） | `swss-schema.md` に予約値として定義されているが、`bgp_eoiu_marker.py` / `fpmsyncd.cpp` のいずれもこの値を書き込まない。fpmsyncd は本フィールドを read のみ |
 
 [^3]: `sonic-swss/fpmsyncd/bgp_eoiu_marker.py` L78-88, L200-208; `sonic-swss/fpmsyncd/fpmsyncd.cpp` L54-72; `sonic-swss/doc/swss-schema.md` L1155-1164
 

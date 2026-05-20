@@ -36,8 +36,10 @@ flowchart LR
   CDB --> DM
   APPDB[("APP_DB<br/>APP_VXLAN_TUNNEL_MAP_TABLE")]
   DM --> APPDB
+  ORCH["orchagent<br/>VxlanTunnelMapOrch"]
+  APPDB --> ORCH
   SYNCD["syncd"]
-  APPDB --> SYNCD
+  ORCH --> SYNCD
   SAI["SAI<br/>sai_tunnel_api"]
   SYNCD --> SAI
 ```

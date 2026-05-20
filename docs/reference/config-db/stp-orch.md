@@ -40,7 +40,7 @@ related:
 
 ## 概要
 
-`StpOrch` (`orchagent/stporch.cpp`) は APPL_DB の 4 テーブルを購読し、STP デーモン (`stpd`) が書き込んだ状態・指示を SAI API に変換してデータプレーンへ反映する。
+`StpOrch` (`orchagent/stporch.cpp`) は APPL_DB の 4 テーブルを購読し、`stpd` → `stpmgrd` 経由で書き込まれた状態・指示を SAI API に変換してデータプレーンへ反映する（APPL_DB への書き込み主体は `cfgmgr/stpmgrd.cpp`）。
 
 ```
 stpd (STP デーモン)

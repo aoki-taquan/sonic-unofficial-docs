@@ -120,7 +120,7 @@ VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>
 | `advertise_prefix` | `false` | 広告しない（デフォルト動作）|
 | `vni` | 任意 VNI | VXLAN overlay header に使用する VNI。同一デバイス内で重複すると orchagent が後勝ちで上書き |
 | `VNET_ROUTE_TUNNEL.metric` | uint8 | 経路選択に影響しない（YANG コメント: "not used for route selection, but for route classification"）|
-| `VNET_ROUTE_TUNNEL.consistent_hashing_buckets` | uint16 | 複数 endpoint 時の ECMP consistent hashing バケット数を制御 |
+| `VNET_ROUTE_TUNNEL.consistent_hashing_buckets` | uint16 | orchagent 未読取 (dead field)。設定しても ECMP バケット数に影響しない（`vnetorch.h` に登録なし） |
 | `VNET_ROUTE.nexthop` | カンマ区切り IP リスト | ECMP nexthop として複数 IP 指定可（`ipv4-address-list` 型）|
 
 <!-- /value-behavior -->

@@ -477,7 +477,7 @@ ICCP セッションが切断されると `scheduler_session_disconnect_handler(
 
 | # | 失敗原因 | 挙動 | 自動回復 |
 |---|----------|------|---------|
-| 1 | ハートビートタイムアウト (`session_timeout` デフォルト 15 秒) | セッション切断 → `role_type = STP_ROLE_NONE` → 再接続試行 | あり（`CONNECT_INTERVAL_SEC = 1` 秒ごとにリトライ） |
+| 1 | ハートビートタイムアウト (`session_timeout` YANG デフォルト 30 秒、C 初期値 15 秒は CONFIG_DB フェッチで上書き — §E 参照) | セッション切断 → `role_type = STP_ROLE_NONE` → 再接続試行 | あり（`CONNECT_INTERVAL_SEC = 1` 秒ごとにリトライ） |
 | 2 | TCP 接続ドロップ (`sock_fd <= 0`) | `ICCP_NONEXISTENT` 状態へ遷移・`role_type` リセット | あり（自動再接続） |
 | 3 | `source_ip == peer_ip` | セッション確立不可（WARN ログのみ、エラー通知なし） | なし（CONFIG_DB 設定変更が必要） |
 | 4 | `peer_link` 設定済みだが IF が未作成 | `scheduler_check_csm_config()` が即 `MCLAG_ERROR` 返却 → 接続拒否 | あり（IF 作成後に次のチェックで回復） |

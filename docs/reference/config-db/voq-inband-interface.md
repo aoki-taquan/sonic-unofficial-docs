@@ -15,8 +15,7 @@ related:
     - SYSTEM_PORT
   cli:
     - config interface
-  yang:
-    - sonic-voq-inband-interface
+  yang: []
 ---
 
 # VOQ_INBAND_INTERFACE テーブル

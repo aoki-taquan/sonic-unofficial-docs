@@ -33,9 +33,15 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>STATIC_ROUTE")]
+  BGPCFGD["bgpcfgd<br/>StaticRouteMgr"]
+  FRR["FRR staticd/zebra<br/>(vtysh)"]
+  KERNEL["kernel FIB<br/>(netlink)"]
   DM["fpmsyncd"]
-  CDB --> DM
-  APPDB[("APP_DB<br/>APP_ROUTE_TABLE")]
+  CDB --> BGPCFGD
+  BGPCFGD --> FRR
+  FRR --> KERNEL
+  KERNEL --> DM
+  APPDB[("APP_DB<br/>ROUTE_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

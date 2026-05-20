@@ -102,14 +102,15 @@ key 内の各長さフィールドはロケータのビット長を示し、`Srv
 |------|-----------|------|
 | `end`, `un`, `ua` | 不要 | SAI VRF 属性を設定しない |
 | `end.x`, `end.dx4`, `end.dx6`, `udx4`, `udx6` | 不要 | nexthop (adj) を使用 |
-| `end.dt4`, `end.dt6`, `end.dt46`, `udt4`, `udt6`, `udt46` | **必須** | VRF 未指定だとエラー |
+| `end.t`, `end.dt4`, `end.dt6`, `end.dt46`, `udt4`, `udt6`, `udt46` | **必須** | VRF 未指定だとエラー (`mySidVrfRequired()`) |
 
 **`adj` フィールドの行動別要否**:
 
 | 行動 | `adj` 必須 | 備考 |
 |------|-----------|------|
-| `end`, `un`, `end.dt*`, `udt*` | 不要 | nexthop 不使用 |
+| `end`, `un`, `end.t`, `end.dt*`, `udt*` | 不要 | nexthop 不使用 |
 | `end.x`, `end.dx4`, `end.dx6`, `ua`, `udx4`, `udx6` | **必須** | 隣接未解決の場合 pending エントリへ移動 |
+| `end.b6.encaps`, `end.b6.encaps.red`, `end.b6.insert`, `end.b6.insert.red` | **必須** | B6 系も nexthop (adj) を要求 (`mySidNextHopRequired()`) |
 <!-- /defaults -->
 
 <!-- ordering -->

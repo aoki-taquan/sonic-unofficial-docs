@@ -408,11 +408,11 @@ docker logs gnmi | grep -i dial-out
 
 ### Phase 6: 自動派生
 
-telemetry サービスが `tls_cert` / `tls_key` フィールドの有無から接続モードを自動決定する。両方あり → mTLS 接続、なし → 平文または server-only TLS。`enabled` フィールドにより dial-out クライアントの起動/停止が制御される。
+`dialout_client.go` が `DestinationGroup` の `dst_addr` を解決し、`Subscription` の `report_type` (`stream` / `once` / `poll`) と `report_interval` から送信モードを自動決定する。`unidirectional` (Global) が `true` の場合は片方向ストリーミング、`false` で双方向 RPC。`encoding` (デフォルト `JSON_IETF`) によって payload エンコーディングを切り替える。
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
-telemetry サービスが有効の場合のみ `TELEMETRY_CLIENT` テーブルを消費するプロセスが存在する。`TELEMETRY_CLIENT.enabled==false` の場合は dial-out クライアントを起動しない。
+dialout クライアントは `gnmi-native` プロセス (supervisord 管理) が稼働している場合にのみ起動する。`TELEMETRY_CLIENT` テーブルに `Subscription` エントリが存在し、対応する `DestinationGroup` が解決可能なときに dial-out セッションを開始する。エントリ未定義時はセッション未起動。
 
 <!-- /derivation -->
 
@@ -421,13 +421,14 @@ telemetry サービスが有効の場合のみ `TELEMETRY_CLIENT` テーブル�
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
-| `telemetry_client` | `enabled==true` | gRPC 接続を確立して subscription 開始 | `telemetry_client` |
-| `telemetry_client` | `enabled==false` | gRPC 接続を切断 | `telemetry_client` |
-| `telemetry_client` | `tls_cert` / `tls_key` あり | mTLS 証明書を使用して接続 | `telemetry_client` |
-| `telemetry_client` | TLS 設定なし | 平文または server-only TLS で接続 | `telemetry_client` |
-| `telemetry_client` | `retry_interval` 設定 | 接続失敗時の再試行インターバルを設定 | `telemetry_client` |
+| `dialout_client` | `Subscription` + `DestinationGroup` 解決済 | gRPC dial-out 接続を確立して subscription 開始 | `dialout_client.go` |
+| `dialout_client` | `DestinationGroup` の `dst_addr` 未解決 | 接続未確立、`retry_interval` ごとに再試行 | `dialout_client.go` |
+| `dialout_client` | `report_type=stream` + `report_interval` | 周期 streaming subscription | `dialout_client.go` |
+| `dialout_client` | `report_type=once` | 単発取得 | `dialout_client.go` |
+| `dialout_client` | `report_type=poll` | poll-based subscription | `dialout_client.go` |
+| `dialout_client` | `unidirectional=true` (Global) | 片方向ストリーミング (応答チャネルなし) | `dialout_client.go` |
 
-> **スキャン証跡**: `TELEMETRY_CLIENT` は gNMI dial-out のクライアント設定。`enabled` フィールドが主要分岐。TLS フィールドの有無が接続モードを決定（Phase 6 派生相当）。
+> **スキャン証跡**: `TELEMETRY_CLIENT` は gNMI dial-out のクライアント設定。スキーマには `tls_cert` / `tls_key` / `enabled` フィールドは存在せず、TLS 設定は `TELEMETRY` テーブル側で管理される。主要分岐は `report_type` と `DestinationGroup` 解決状態。
 
 <!-- /handler-branching -->
 
