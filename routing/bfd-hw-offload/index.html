@@ -35570,7 +35570,7 @@
 </ul>
 <h3 id="appl_db">APPL_DB スキーマ<a class="headerlink" href="#appl_db" title="Permanent link">&para;</a></h3>
 <p>セッションキーは <a href="../../reference/glossary/#term-vrf">VRF</a>・インタフェース・宛先 IP の 3 つで一意化する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BFD_SESSION:{vrf}:{ifname}:{ipaddr}
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BFD_SESSION_TABLE:{vrf}:{ifname}:{ipaddr}
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    tx_interval   : interval ms (OPTIONAL)
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    rx_interval   : interval ms (OPTIONAL)
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    multiplier    : detect multiplier (OPTIONAL)
@@ -35760,7 +35760,7 @@ reasoning: BfdOrch が APPL_DB → SAI → STATE_DB を貫く責務であるこ�
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    local_addr 10.1.0.32 \
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    type active
 </span></code></pre></div>
-<p>実際のキー名（<code>BFD_SESSION_TABLE</code> か <code>BFD_SESSION</code> か）は HLD 表記揺れがあり、現行 swss 実装側で要確認。</p>
+<p><a href="../../reference/glossary/#term-appl_db">APPL_DB</a> のキー名は <code>sonic-swss-common/common/schema.h:120</code> の <code>APP_BFD_SESSION_TABLE_NAME = "BFD_SESSION_TABLE"</code> の通り <code>BFD_SESSION_TABLE</code> が正式。HLD では <code>BFD_SESSION</code> と略記されている箇所がある点に注意。</p>
 <h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Phase 1 は HW オフロード専用。<code>CONFIG_DB</code> 直接編集および専用 <code>config</code> CLI は <strong>Phase 1 範囲外</strong><sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -35807,7 +35807,7 @@ reasoning: BfdOrch が APPL_DB → SAI → STATE_DB を貫く責務であるこ�
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9cc90e2e6da0 -->
 
 <div class="footnote">
 <hr />

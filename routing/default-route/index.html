@@ -35860,7 +35860,7 @@ reasoning: 通知元（orchagent）と STATE_DB 値、IPv4 のみ実使用とい
 <h2 id="_13">制限事項<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Dual-ToR 専用機能</strong>: 本 HLD のデフォルトルート連動 (linkmgrd の default-route feature) は Dual-ToR シナリオを前提に設計されており、シングル ToR でこのフラグを有効化しても意味のある効果は得られない。</li>
-<li><strong><code>enable_feature_default_route</code> はオプトイン</strong>: linkmgrd 起動引数 (<code>--enable_default_route_feature</code>) で有効化しないと、デフォルトルート喪失時の active 切替抑止は働かない。既定は無効。</li>
+<li><strong><code>enable_feature_default_route</code> はオプトイン</strong>: linkmgrd 起動引数 (<code>--default_route</code> / <code>-d</code>) で有効化しないと、デフォルトルート喪失時の active 切替抑止は働かない。既定は無効。なお C++ 内部では <code>MuxManager::initialize(..., bool enable_feature_default_route)</code> 引数として渡される。</li>
 <li><strong>IPv4 / IPv6 の両方をチェック</strong>: STATE_DB の <code>ROUTE_TABLE</code> で v4 / v6 両方のデフォルトルートが正しく書かれていることが前提。片方が欠けると <code>down</code> 判定になり、片肺運用では意図せず mux が動かない可能性がある。</li>
 <li><strong><code>STATE_DB ROUTE_TABLE</code> 更新タイミング</strong>: orchagent の更新タイミングに依存するため、<a href="../../reference/glossary/#term-bgp">BGP</a> convergence 中の短時間に linkmgrd が誤判定するレースは設計上存在する。</li>
 <li><strong><a href="../../reference/glossary/#term-vrf">VRF</a> 対応</strong>: HLD はデフォルト VRF (<code>global</code>) を想定している。management VRF や user VRF のデフォルトルートはこのロジックに含まれない。</li>

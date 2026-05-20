@@ -35016,17 +35016,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hld-only" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        HLD-only のページ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35069,7 +35058,7 @@
 <h2 id="_3">検証状況<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ページ数: 51</li>
-<li>分布: Code-verified: 40 / Discrepancy-found: 5 / HLD-only: 6</li>
+<li>分布: Code-verified: 43 / Discrepancy-found: 8 / HLD-only: 0</li>
 </ul>
 <h2 id="_4">実装差分があるページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35078,15 +35067,9 @@
 <li><a href="evpn-vxlan-multihoming/">EVPN VXLAN Multihoming（ESI / DF election / split-horizon）</a></li>
 <li><a href="evpn-vxlan-hld/">EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）</a></li>
 <li><a href="local-ars-hld/">Local ARS（Adaptive Routing &amp; Switching の local 完結版）</a></li>
-</ul>
-<h2 id="hld-only">HLD-only のページ<a class="headerlink" href="#hld-only" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="bgp-suppress-announcements-of-routes-not-installed-in-hw/">BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）</a></li>
-<li><a href="sonic-route-flow-counter-design/">Route Flow Counter（ROUTE_MATCH / Route Pattern Orch）</a></li>
-<li><a href="vrf-feature-ansible-test-plan-omit-in-toc/">VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）</a></li>
-<li><a href="vrf-vs-test-plan/">VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）</a></li>
+<li><a href="bgp-setup-for-voq-chassis/">VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）</a></li>
+<li><a href="bgpcfgd-dynamic-peer-modification-support/">bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）</a></li>
 <li><a href="fpmsyncd-nexthop-group-enhancement-high-level-design-document/">fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）</a></li>
-<li><a href="default-route/">linkmgrd のデフォルトルート連動（DualToR mux 制御）</a></li>
 </ul>
 <h2 id="_5">ページ一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <table>
@@ -35119,7 +35102,7 @@
 </tr>
 <tr>
 <td><a href="bgp-suppress-announcements-of-routes-not-installed-in-hw/">BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）</a></td>
-<td>HLD-only</td>
+<td>Code-verified</td>
 </tr>
 <tr>
 <td><a href="bgp-router-id-explicitly-configured/">BGP router-id を明示的に設定する（DEVICE_METADATA.bgp_router_id）</a></td>
@@ -35207,7 +35190,7 @@
 </tr>
 <tr>
 <td><a href="sonic-route-flow-counter-design/">Route Flow Counter（ROUTE_MATCH / Route Pattern Orch）</a></td>
-<td>HLD-only</td>
+<td>Code-verified</td>
 </tr>
 <tr>
 <td><a href="detailed-steps-to-upgrade-frr-in-sonic/">SONiC における FRR upgrade の手順とパッチ管理</a></td>
@@ -35243,11 +35226,11 @@
 </tr>
 <tr>
 <td><a href="vrf-feature-ansible-test-plan-omit-in-toc/">VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）</a></td>
-<td>HLD-only</td>
+<td>Code-verified</td>
 </tr>
 <tr>
 <td><a href="vrf-vs-test-plan/">VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）</a></td>
-<td>HLD-only</td>
+<td>Code-verified</td>
 </tr>
 <tr>
 <td><a href="sonic-vrf-support-design-spec-draft/">VRF サポート（vrfmgrd / vrforch / FRR vrf-aware）</a></td>
@@ -35259,7 +35242,7 @@
 </tr>
 <tr>
 <td><a href="bgp-setup-for-voq-chassis/">VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）</a></td>
-<td>Code-verified</td>
+<td>Discrepancy-found</td>
 </tr>
 <tr>
 <td><a href="sonic-weighted-ecmp/">Weighted ECMP（WCMP / BGP link-bandwidth ext community）</a></td>
@@ -35267,7 +35250,7 @@
 </tr>
 <tr>
 <td><a href="bgpcfgd-dynamic-peer-modification-support/">bgpcfgd の dynamic BGP peer 動的変更（update.conf.j2 / delete.conf.j2）</a></td>
-<td>Code-verified</td>
+<td>Discrepancy-found</td>
 </tr>
 <tr>
 <td><a href="multiple-nexthop-route-hld/">dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）</a></td>
@@ -35275,7 +35258,7 @@
 </tr>
 <tr>
 <td><a href="fpmsyncd-nexthop-group-enhancement-high-level-design-document/">fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）</a></td>
-<td>HLD-only</td>
+<td>Discrepancy-found</td>
 </tr>
 <tr>
 <td><a href="gnmi-subscription-for-yang-data/">gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED）</a></td>
@@ -35283,7 +35266,7 @@
 </tr>
 <tr>
 <td><a href="default-route/">linkmgrd のデフォルトルート連動（DualToR mux 制御）</a></td>
-<td>HLD-only</td>
+<td>Code-verified</td>
 </tr>
 <tr>
 <td><a href="class-based-forwarding-enhancement/">クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP</a></td>

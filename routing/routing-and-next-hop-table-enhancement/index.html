@@ -35520,9 +35520,9 @@ reasoning: 単一/複数メンバ分岐・暫定モード・参照カウント�
 <li><code>show ip route</code> が群参照のまま残る → CLI 解決バグ兆候</li>
 </ul>
 <h3 id="_9">コマンド例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<p>ROUTE_TABLE / NEXTHOP_GROUP_TABLE の登録状況を確認する。</p>
+<p>ROUTE_TABLE / NEXT_HOP_GROUP_TABLE の登録状況を確認する。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ROUTE_TABLE*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NEXTHOP_GROUP_TABLE*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NEXT_HOP_GROUP_TABLE*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>show<span class="w"> </span>ip<span class="w"> </span>route<span class="w"> </span>summary
 </span></code></pre></div>
 <h2 id="_10">関連トピック<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>

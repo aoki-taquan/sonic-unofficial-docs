@@ -35515,9 +35515,9 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>docker-fpm-frr/frr/bgpd/templates/voq_chassis/{instance,policies,peer-group}.conf.j2</code> の voq_chassis テンプレート、<code>instance.conf.j2:5</code> で <code>bgp bestpath peer-type multipath-relax</code>、<code>bgpd.main.conf.j2:61,63,141,159,170,176,198</code> で <code>voq_chassis</code> 変数分岐、<code>sonic-config-engine/minigraph.py:2277</code> で <code>BGP_VOQ_CHASSIS_NEIGHBOR</code> テーブル生成を確認 (verified at: 2026-05-09)。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: Discrepancy-found (partially_implemented)</p>
+<p><code>docker-fpm-frr/frr/bgpd/templates/voq_chassis/{instance,policies,peer-group}.conf.j2</code> の voq_chassis テンプレート、<code>instance.conf.j2:5</code> で <code>bgp bestpath peer-type multipath-relax</code>、<code>bgpd.main.conf.j2:61,63,141,159,170,176,198</code> で <code>voq_chassis</code> 変数分岐、<code>sonic-config-engine/minigraph.py:2277</code> で <code>BGP_VOQ_CHASSIS_NEIGHBOR</code> テーブル生成を確認 (verified at: 2026-05-09)。新規 FRR コマンド <code>bgp bestpath peer-type multipath-relax</code> の SONiC 同梱 FRR 取り込み状況は未確認のため、2026-05-13 に <code>discrepancy-found</code> (<code>monitor: partially_implemented</code>) へ降格。</p>
 </div>
 <h1 id="voq-bgp">VoQ シャーシでの BGP 構成<a class="headerlink" href="#voq-bgp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

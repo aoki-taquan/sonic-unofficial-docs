@@ -9023,17 +9023,6 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -35309,17 +35298,6 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -35485,6 +35463,9 @@
 <li>per-prefix table 更新は SLOW DOWNLOAD 側に残るので「N 非依存」は <strong>FAST 部のみ</strong></li>
 <li>nexthop tracking が過渡的に機能しないと PIC Edge が動かない可能性</li>
 <li>FRR (PIC Local) と PIC Edge は <strong>別タイミング</strong>で動くため、両者の干渉を設計上避ける必要</li>
+<li>BGP PIC は FRR の対応バージョン (8.x 以降) と該当 <a href="../../reference/glossary/#term-sai">SAI</a> capability の両方が必要で、未対応 platform では nexthop group 単位での速い切替にはならない</li>
+<li>IBGP PIC edge / core 双方を有効化するには <code>bgp bestpath multipath-relax</code> 等の設定組み合わせが前提で、HLD では明示されない場合がある</li>
+<li><a href="../../reference/glossary/#term-vrf">VRF</a> / EVPN との同時利用は VRF leaking パスで遅延が大きくなる事例があり、本機能の効果が打ち消されるケースがある</li>
 </ul>
 <h2 id="8">8. 干渉する機能<a class="headerlink" href="#8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35499,13 +35480,7 @@
 <li>Topics: <a href="../../topics/02-bgp/concept/">BGP 概念</a>, <a href="../../topics/02-bgp/architecture/">BGP アーキテクチャ</a>, <a href="../../topics/02-bgp/internals/">BGP 内部実装</a>, <a href="../../topics/04-vrf-ecmp/internals/">VRF / ECMP 内部実装</a></li>
 <li>関連 HLD: <a href="../sonic-weighted-ecmp/">SONiC Weighted ECMP</a>, <a href="../local-ars-hld/">Local ARS HLD</a>, <a href="../routing-and-next-hop-table-enhancement/">Routing and Nexthop Table Enhancement</a>, <a href="../fpmsyncd-nexthop-group-enhancement-high-level-design-document/">fpmsyncd Nexthop Group Enhancement</a></li>
 </ul>
-<h2 id="_2">制限事項<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<ul>
-<li>BGP PIC は FRR の対応バージョン (8.x 以降) と該当 <a href="../../reference/glossary/#term-sai">SAI</a> capability の両方が必要で、未対応 platform では nexthop group 単位での速い切替にはならない。</li>
-<li>IBGP PIC edge / core 双方を有効化するには <code>bgp bestpath multipath-relax</code> 等の設定組み合わせが前提で、HLD では明示されない場合がある。</li>
-<li><a href="../../reference/glossary/#term-vrf">VRF</a> / EVPN との同時利用は VRF leaking パスで遅延が大きくなる事例があり、本機能の効果が打ち消されるケースがある。</li>
-</ul>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>参考: IETF <code>draft-ietf-rtgwg-bgp-pic</code></p>
 <!-- evidence (verifier-batch-20):
 - sonic-swss/orchagent/nhgorch.h:50 class NextHopGroup; :86 isRecursive(); :88 setRecursive(); m_is_recursive メンバ

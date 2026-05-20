@@ -35549,8 +35549,8 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: Discrepancy-found (partially_implemented)</p>
 <p><code>bgpcfgd/managers_bgp.py</code> L87 <code>BGPPeerMgrBase</code>、L112-115 で <code>update.conf.j2</code> / <code>delete.conf.j2</code> の searchpath ロード、L287-297 で <code>STATE_BGP_PEER_CONFIGURED_TABLE_NAME</code> への CRUD。<code>sonic-swss-common/common/schema.h</code> L511 で <code>STATE_BGP_PEER_CONFIGURED_TABLE_NAME = "BGP_PEER_CONFIGURED_TABLE"</code>。<code>docker-fpm-frr/frr/bgpd/templates/dynamic/{update,delete}.conf.j2</code> の <code>add_ranges</code> / <code>delete_ranges</code> ロジック。<code>sonic-utilities/show/bgp_frr_v4.py</code> L103-168 で <code>show ip bgp vrf</code> 系、<code>utilities_common/bgp_util.py</code> L304-320 で vtysh 経由の vrf JSON 取得を確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="bgpcfgd-dynamic-bgp-peer">bgpcfgd の dynamic BGP peer 動的変更<a class="headerlink" href="#bgpcfgd-dynamic-bgp-peer" title="Permanent link">&para;</a></h1>
@@ -35752,7 +35752,7 @@
 </thead>
 <tbody>
 <tr>
-<td>Phase 1: STATE_DB BGP_PEER_STATE スキーマ</td>
+<td>Phase 1: STATE_DB BGP_PEER_CONFIGURED_TABLE スキーマ</td>
 <td>HLD 記載どおり実装済</td>
 <td>—</td>
 </tr>

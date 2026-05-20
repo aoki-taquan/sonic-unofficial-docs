@@ -35429,7 +35429,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>dplane_fpm_nl</code> 移行、<code>RTM_F_OFFLOAD</code> 通知、<code>fpmsyncd</code> の応答チャネル、consistency monitoring script の現行 master 取り込みは未裏取り。</p>
+<p><code>bgpd.main.conf.j2:107</code> で <code>bgp suppress-fib-pending</code> の無条件挿入 (FRR レベルでデフォルト有効)、<code>sonic-device_metadata.yang</code> での <code>suppress-fib-pending</code> leaf 定義、<code>fpmsyncd/routesync.{h,cpp}</code> で <code>RTM_F_OFFLOAD</code> 応答経路を確認 (verified 2026-05-11)。consistency monitoring script の現行 master 取り込みは未裏取りで継続課題。</p>
 </div>
 <h1 id="bgp-suppress-fib-pendingdplane_fpm_nl-rtm_f_offload">BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）<a class="headerlink" href="#bgp-suppress-fib-pendingdplane_fpm_nl-rtm_f_offload" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -35439,7 +35439,8 @@
 <li><a href="../../reference/glossary/#term-frr">FRR</a> の <strong>bgp suppress-fib-pending</strong> 機能を活用。FRR は <a href="../../reference/glossary/#term-zebra">zebra</a> から <code>RTM_NEWROUTE</code> に <code>RTM_F_OFFLOAD</code> フラグが立った応答を受けると当該 prefix を peer に advertise する</li>
 <li><a href="../../reference/glossary/#term-sonic">SONiC</a> 側は <a href="../../reference/glossary/#term-orchagent">orchagent</a> / <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 経由で「ASIC 書き込み完了」を zebra に返すループを実装</li>
 <li><strong>FRR の <code>dplane_fpm_nl</code> 新プラグインへの移行が前提</strong>（旧 <code>fpm</code> plugin は対応せず）<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>グローバル ON/OFF を <code>DEVICE_METADATA.localhost.suppress-fib-pending</code> で切替。default disabled、ランタイム切替可</li>
+<li>FRR レベルでは <code>bgpd.main.conf.j2:107</code> から <code>bgp suppress-fib-pending</code> が無条件挿入されるため <strong>常時有効</strong></li>
+<li>一方 SONiC 側のグローバル ON/OFF スイッチ <code>DEVICE_METADATA.localhost.suppress-fib-pending</code> (CONFIG_DB) は別次元のフラグであり、CONFIG_DB スキーマ上は <strong>default disabled</strong>、ランタイム切替可。両者の関係は本ページ末尾の裏取りメモ参照</li>
 </ul>
 <p>スコープ外: <a href="../../reference/glossary/#term-mpls">MPLS</a>、<a href="../../reference/glossary/#term-vnet">VNET</a> routes。directly connected / kernel routes は本機構の対象外で従来通り即時 advertise<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
