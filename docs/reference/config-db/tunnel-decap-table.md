@@ -36,15 +36,15 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>TUNNEL")]
-  TMGR["tunnelmgrd"]
-  CDB --> TMGR
-  APPDB[("APPL_DB<br/>TUNNEL_DECAP_TABLE")]
-  TMGR --> APPDB
-  ORCH["orchagent<br/>TunnelDecapOrch"]
-  APPDB --> ORCH
+  CDB[("CONFIG_DB<br/>TUNNEL_DECAP_TABLE")]
+  DM["tunneldecaporch"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_TUNNEL_DECAP_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
   SAI["SAI<br/>sai_tunnel_api"]
-  ORCH --> SAI
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
