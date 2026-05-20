@@ -35,10 +35,10 @@ flowchart LR
   CDB --> DM
   APPDB[("APP_DB<br/>APP_COPP_TABLE")]
   DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
+  OA["orchagent<br/>CoppOrch"]
+  APPDB --> OA
   SAI["SAI<br/>sai_hostif_api"]
-  SYNCD --> SAI
+  OA --> SAI
 ```
 
 !!! note "凡例"
@@ -71,7 +71,7 @@ COPP_TRAP|<name>
 - **SAI 非対応 trap_id → ignore**: `isTrapIdSupported()` が false の場合 `SWSS_LOG_NOTICE("Ignoring the trap_id: %s, since not supported by vendor SAI")` を出力してスキップ。ベンダー SAI が実装していない trap は適用されない。<!-- evidence: copporch.cpp L408-413 -->
 - **COPP_GROUP 未到着時の trap_group 参照 → 書き込み保留**: `trap_group` に指定したグループが pending の場合、`coppmgr` は APPL_DB への書き込みを保留し COPP_GROUP 到着後に再処理する。<!-- evidence: coppmgr.cpp L62-81 checkTrapGroupPending -->
 - **feature 無効な trap_id → COPP_TABLE から除外**: feature が off の trap_id は `isTrapIdDisabled()` で除外される。trap_group の trap_ids が空になった場合は APPL_DB エントリを削除。<!-- evidence: coppmgr.cpp L173-191 isTrapIdDisabled -->
-- **task_failed → プロセス終了**: `CoppOrch` は `task_failed` が返った場合プロセスを終了する。<!-- evidence: copporch.cpp L922 -->
+- **task_failed → doTask ループ中断**: `CoppOrch` は `task_failed` が返った場合 `doTask()` ループを即時 return して中断する（プロセス自体は継続）。<!-- evidence: copporch.cpp L920-923 -->
 
 <!-- value-behavior -->
 ## 値依存挙動マトリクス

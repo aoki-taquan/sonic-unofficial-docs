@@ -19,7 +19,6 @@ related:
     - SNMP_COMMUNITY
     - SNMP
     - SNMP_AGENT_ADDRESS_CONFIG
-    - SNMP_USER
   cli:
     - config snmp community
   yang:

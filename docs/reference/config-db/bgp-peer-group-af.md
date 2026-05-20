@@ -188,7 +188,7 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 ### 段階 1 — Consumer 登録
 
-`bgpcfgd` が CONFIG_DB の `BGP_PEER_GROUP_AF` テーブルを購読する。
+`frrcfgd` が CONFIG_DB の `BGP_PEER_GROUP_AF` テーブルを購読する。
 
 `BGP_PEER_GROUP_AF` は `<vrf>|<pg_name>|<af>` の key 構造。
 

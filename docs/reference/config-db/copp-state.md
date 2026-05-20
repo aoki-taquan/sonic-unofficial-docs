@@ -365,7 +365,7 @@ orchagent が APPL_DB を処理
 |------|----|------|--------|
 | `default_trap_group` | `"default"` | orchagent 起動時に `initDefaultTrapGroup()` で取得するデフォルトトラップグループ名 | `copporch.cpp` L184 |
 | `default_trap_ids` | `{SAI_HOSTIF_TRAP_TYPE_TTL_ERROR}` (1 種) | `initDefaultTrapIds()` で初期適用される固定トラップ ID。TTL エラーのみ | `copporch.cpp` L185-187 |
-| `default_supported_trap_ids` フォールバックリスト | 44 エントリ (`stp`～`bfdv6_micro`、`neighbor_miss` **除外**) | SAI capability クエリ失敗時に `COPP_TRAP_CAPABILITY_TABLE|traps.trap_ids` へ書き込まれるリスト。`neighbor_miss` は意図的に除外（コメント: "This list is intended to remain static and should not be updated with new traps."）| `copporch.cpp` L106-151 |
+| `default_supported_trap_ids` フォールバックリスト | 42 エントリ (`stp`～`bfdv6_micro`、`neighbor_miss` **除外**) | SAI capability クエリ失敗時に `COPP_TRAP_CAPABILITY_TABLE|traps.trap_ids` へ書き込まれるリスト。`neighbor_miss` は意図的に除外（コメント: "This list is intended to remain static and should not be updated with new traps."）| `copporch.cpp` L106-151 |
 
 ### プラットフォーム環境変数分岐
 

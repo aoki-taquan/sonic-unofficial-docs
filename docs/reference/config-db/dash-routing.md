@@ -385,7 +385,6 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskR
 |-----------|-----------|--------|-------|
 | routing_type 文字列を enum 変換失敗 | SWSS_LOG_ERROR | true | なし（廃棄） |
 | 重複登録（既存エントリあり） | SWSS_LOG_WARN | true | なし（既存維持） |
-| SAI `create_dash_routing_type` 失敗 | SWSS_LOG_ERROR | false | 自動リトライ |
 | DEL: 存在しない routing_type | SWSS_LOG_WARN | true | なし |
 
 ### DASH_ROUTE_GROUP_TABLE

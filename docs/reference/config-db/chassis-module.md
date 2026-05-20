@@ -224,7 +224,7 @@ if op == 'SET':
     admin_status = dict(fvp).get('admin_status')
     admin_state = MODULE_ADMIN_UP if admin_status == 'up' else MODULE_ADMIN_DOWN
 elif op == 'DEL':
-    admin_state = MODULE_ADMIN_UP
+    admin_state = MODULE_ADMIN_DOWN
 ```
 
 SmartSwitch では `fvp` の `admin_status` 値を直接参照して up/down を判定する。
@@ -286,7 +286,7 @@ chassisd が停止中でもタイムアウト後に強制実行される。
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-chassis-module`](../yang/sonic-chassis-module.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-chassis-module`（リファレンスページ未作成）
 - CLI: `config chassis_modules shutdown <name>` / `config chassis_modules startup <name>`
 - CLI: `show chassis modules status`
 

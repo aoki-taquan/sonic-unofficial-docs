@@ -407,7 +407,7 @@ show console
 
 ### 段階 1 — Consumer 登録
 
-`hostcfgd` (console port 管理) / `conserver` (コンソールサーバ) が CONFIG_DB の `CONSOLE_PORT` テーブルを購読する。
+CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`consutil` が CLI 呼び出しのたびに CONFIG_DB を直接読み取る（Subscribe なし）。`conserver` は SONiC デフォルト環境では存在しない。
 
 `CONSOLE_PORT` の key は `<port_num>` (例: `1`)。
 

@@ -15,8 +15,7 @@ sources:
     path: doc/cbf/cbf_hld.md
     ref: HEAD
 related:
-  config_db:
-    - CLASS_BASED_NEXT_HOP_GROUP
+  config_db: []
   cli: []
 ---
 

@@ -58,7 +58,7 @@ flowchart LR
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+    gNSI Certz が証明書 Rotate 時に STATE_DB へ直接書き込むフロー（CONFIG_DB・SAI 経路は存在しない）。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
