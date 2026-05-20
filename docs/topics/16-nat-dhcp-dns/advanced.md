@@ -22,13 +22,10 @@ related:
   - config vrf
   - config qos
   config_db:
-  - NAT
-  - VRF
-  - STATIC_NAT
-  - STATIC_NAPT
-  - NAT_POOL
-  - NAT_BINDINGS
-  - NAT_GLOBAL
+  - NTP
+  - NTP_SERVER
+  - DNS_NAMESERVER
+  - CFG_TWAMP_SESSION_TABLE
   yang:
   - sonic-ntp
   - sonic-dns
@@ -132,7 +129,7 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 
 ## トラブルシュート観点
 
-- NAT セッションが超過しているときは、`show nat translations count` で current/max を確認し、`config nat add timeout` で aging を短縮する。`SAI_STATUS_INSUFFICIENT_RESOURCES` が [syncd](../../reference/glossary.md#term-syncd) ログに出る場合は TCAM 物理上限到達。
+- NAT セッションが超過しているときは、`show nat translations count` で current/max を確認し、`config nat set timeout` で aging を短縮する。`SAI_STATUS_INSUFFICIENT_RESOURCES` が [syncd](../../reference/glossary.md#term-syncd) ログに出る場合は TCAM 物理上限到達。
 - DHCP relay で `discover` が forward されない場合、`show dhcp_relay ipv4 helper` で helper IP の到達性、[VLAN](../../reference/glossary.md#term-vlan) 上の broadcast bind、Option 82 の `link-selection` が relay/server で一致しているかを点検する。
 - chrony が NTP sync しないときは、`chronyc tracking` / `chronyc sources -v` で Stratum / reach、`chronyc activity` で source 数を確認。mgmt VRF 配下では `bindaddress` の固定が必須。
 
