@@ -170,7 +170,7 @@ ip vrf show
 
 ### 段階 4: タイミング + 副作用
 
-- カーネル VRF 作成 ([vrfmgrd](../../reference/glossary.md#term-vrfmgrd)) と SAI VRF 作成 (VrfOrch) はほぼ同時。
+- カーネル VRF 作成 ([vrfmgrd](../../reference/glossary.md#term-vrfmgrd)) と [SAI](../../reference/glossary.md#term-sai) VRF 作成 (VrfOrch) はほぼ同時。
 - 副作用: VRF 削除時は所属インタフェース・ルートを先に削除しないと `VRF is in use` エラー。
 
 <!-- /runtime-trace -->
@@ -216,7 +216,7 @@ db_migrator.py での VRF マイグレーションなし
 
 ### fallback — dead field (silent drop at orchagent)
 
-`fallback` は YANG で `default false` として定義されており、vrfmgrd は `kfvFieldsValues(t)` をそのまま APP_DB へ pass-through する (`vrfmgr.cpp:303`)。しかし `orchagent/vrforch.cpp` の `addOperation` には `"fallback"` のハンドラが存在せず、`SWSS_LOG_ERROR("Logic error: Unknown attribute")` が出てフィールドが silent drop される。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)/[FRR](../../reference/glossary.md#term-frr) テンプレートでも `fallback` を参照するコードは存在しない。**実質的に dead field であり、`true` に設定しても Linux カーネル・SAI・[FRR](../../reference/glossary.md#term-frr) のいずれにも影響しない。**
+`fallback` は YANG で `default false` として定義されており、vrfmgrd は `kfvFieldsValues(t)` をそのまま APP_DB へ pass-through する (`vrfmgr.cpp:303`)。しかし `orchagent/vrforch.cpp` の `addOperation` には `"fallback"` のハンドラが存在せず、`SWSS_LOG_ERROR("Logic error: Unknown attribute")` が出てフィールドが silent drop される。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)/[FRR](../../reference/glossary.md#term-frr) テンプレートでも `fallback` を参照するコードは存在しない。**実質的に dead field であり、`true` に設定しても Linux カーネル・[SAI](../../reference/glossary.md#term-sai)・[FRR](../../reference/glossary.md#term-frr) のいずれにも影響しない。**
 
 - `vrforch.h:34`: `{ "fallback", REQ_T_BOOL }` — 宣言のみ
 - `vrforch.cpp` addOperation: `"fallback"` の分岐なし → else branch で `SWSS_LOG_ERROR` → フィールド破棄
@@ -761,4 +761,4 @@ VPP（Vector Packet Processing）SAI バックエンドを使う VS プラット
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 20fb70e54aff -->
+<!-- glossary-links-injected: d2191ccfe0bd -->
