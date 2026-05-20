@@ -35,9 +35,9 @@ related:
 
 ## 概要
 
-P4RT アプリケーションは [PINS](../reference/glossary.md#term-pins)（P4 Integrated Network Stack）プロジェクトが SONiC に追加するコンポーネントで、**[P4Runtime v1.3.0](https://p4lang.github.io/p4runtime/spec/v1.3.0/P4Runtime-Spec.html) を実装する gRPC サービス**として TCP port **9559** で動く[^1]。SDN コントローラはこの gRPC を経由して P4 forwarding pipeline configuration（P4Info）と P4 テーブルエントリを SONiC に流し込み、[SAI](../reference/glossary.md#term-sai) パイプラインを操作する。
+[P4RT](../reference/glossary.md#term-p4rt) アプリケーションは [PINS](../reference/glossary.md#term-pins)（P4 Integrated Network Stack）プロジェクトが [SONiC](../reference/glossary.md#term-sonic) に追加するコンポーネントで、**[P4Runtime v1.3.0](https://p4lang.github.io/p4runtime/spec/v1.3.0/P4Runtime-Spec.html) を実装する gRPC サービス**として TCP port **9559** で動く[^1]。SDN コントローラはこの gRPC を経由して P4 forwarding pipeline configuration（P4Info）と P4 テーブルエントリを SONiC に流し込み、[SAI](../reference/glossary.md#term-sai) パイプラインを操作する。
 
-P4RT アプリケーションは独自 Docker コンテナで稼働し、受け取った Platform Independent (PI) 形式の P4RT メッセージを [APPL_DB](../reference/glossary.md#term-appl_db) の `P4RT_TABLE` 系エントリに翻訳する。下流の `P4Orch` が APPL_DB を購読して SAI 経由で ASIC に書き込む[^1]。
+P4RT アプリケーションは独自 Docker コンテナで稼働し、受け取った Platform Independent (PI) 形式の P4RT メッセージを [APPL_DB](../reference/glossary.md#term-appl_db) の `P4RT_TABLE` 系エントリに翻訳する。下流の `P4Orch` が APPL_DB を購読して SAI 経由で [ASIC](../reference/glossary.md#term-asic) に書き込む[^1]。
 
 ## 動作仕様
 
@@ -310,4 +310,4 @@ docker logs swss 2>&1 | grep -iE 'SwitchOrch|HashOrch' | tail -20
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: 4b7e3e133212 -->

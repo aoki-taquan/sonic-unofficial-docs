@@ -39,7 +39,7 @@ related:
 
 ## 概要
 
-SONiC 管理ユーザの SSH / console ログインを RADIUS で認証する仕組み[^1]。RFC 2865（RADIUS 基本）、RFC 5607（NAS 管理権限）、`pam_radius` を組み合わせ、Linux PAM / NSS 層で動かす。
+[SONiC](../reference/glossary.md#term-sonic) 管理ユーザの SSH / console ログインを [RADIUS](../reference/glossary.md#term-radius) で認証する仕組み[^1]。RFC 2865（RADIUS 基本）、RFC 5607（NAS 管理権限）、`pam_radius` を組み合わせ、Linux PAM / NSS 層で動かす。
 
 要件抜粋[^1]:
 
@@ -257,4 +257,4 @@ HLD が記述する `pam_radius` + nsswitch RADIUS NSS の二段構成（ssh log
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: db62d2100cef -->

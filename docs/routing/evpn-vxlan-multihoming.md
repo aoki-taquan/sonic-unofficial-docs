@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-[EVPN](../reference/glossary.md#term-evpn) multihoming（MH）は **MC-[LAG](../reference/glossary.md#term-lag) / vPC を使わず、[BGP](../reference/glossary.md#term-bgp)-EVPN だけで host を複数 leaf にマルチホーム接続する** RFC 7432 / RFC 8365 の仕組み[^1]。SONiC は [FRR](../reference/glossary.md#term-frr) の [EVPN-MH](../reference/glossary.md#term-evpn-mh) と [SAI](../reference/glossary.md#term-sai) レイヤを組合せる。
+[EVPN](../reference/glossary.md#term-evpn) multihoming（MH）は **MC-[LAG](../reference/glossary.md#term-lag) / vPC を使わず、[BGP](../reference/glossary.md#term-bgp)-EVPN だけで host を複数 leaf にマルチホーム接続する** RFC 7432 / RFC 8365 の仕組み[^1]。[SONiC](../reference/glossary.md#term-sonic) は [FRR](../reference/glossary.md#term-frr) の [EVPN-MH](../reference/glossary.md#term-evpn-mh) と [SAI](../reference/glossary.md#term-sai) レイヤを組合せる。
 
 主要な構成:
 
@@ -73,7 +73,7 @@ flowchart LR
 |-------|------|
 | `EVPN_ETHERNET_SEGMENT` | ESI、関連する LAG / interface、type (single-active / all-active)、DF preference |
 | `PORTCHANNEL` | ES に紐づく LAG |
-| `VXLAN_TUNNEL` | VTEP loopback（前提） |
+| `VXLAN_TUNNEL` | [VTEP](../reference/glossary.md#term-vtep) loopback（前提） |
 
 ### 関連 CLI
 
@@ -86,7 +86,7 @@ flowchart LR
 
 ## 制限事項
 
-- **対応 ASIC のみ**: ESI label / split-horizon を SAI で扱える [NPU](../reference/glossary.md#term-npu) が必要
+- **対応 [ASIC](../reference/glossary.md#term-asic) のみ**: ESI label / split-horizon を SAI で扱える [NPU](../reference/glossary.md#term-npu) が必要
 - **DF election timer**: 起動直後の不安定期に BUM が断する可能性。`hold timer` で対処
 - **VLAN ↔ ES の整合**: ES に紐づく VLAN は両 leaf で同一定義であること
 - **MAC mobility**: host が ES 内で移動した時の MAC mobility extended community 処理に依存
@@ -190,4 +190,4 @@ show bgp l2vpn evpn route type 4 2>/dev/null | head
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: d934452251c5 -->
+<!-- glossary-links-injected: 7b27b638c4f3 -->

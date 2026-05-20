@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-SONiC の [gNMI](../reference/glossary.md#term-gnmi) 実装は、`gNMI.Set()` で受け取った設定変更を **メモリ上の `CONFIG_DB`** にしか反映しない。リブートを跨いで設定を残すには別途 `config save` 等を実行する必要があり、自動化された外部コントローラ（NMS / SDN コントローラ）の運用では「Set したのにリブートで消えた」という事故が起きやすい。
+[SONiC](../reference/glossary.md#term-sonic) の [gNMI](../reference/glossary.md#term-gnmi) 実装は、`gNMI.Set()` で受け取った設定変更を **メモリ上の `CONFIG_DB`** にしか反映しない。リブートを跨いで設定を残すには別途 `config save` 等を実行する必要があり、自動化された外部コントローラ（NMS / SDN コントローラ）の運用では「Set したのにリブートで消えた」という事故が起きやすい。
 
 Save-On-Set は **`gNMI.Set()` の各呼び出しの末尾で ConfigDB をファイルに保存する** 機能を `sonic-gnmi` に追加するもの。後方互換のため **既定では無効** で、`telemetry` バイナリのコマンドラインフラグ `--with-save-on-set` で有効化する。永続化操作自体は telemetry コンテナ内では完結できないため、**ホスト側 (`sonic-host-services`) の DBUS 経由** で実行される設計になっている[^1]。
 
@@ -245,3 +245,5 @@ HLD の「Set ごとに ConfigDB を JSON に永続化、コンテナ内では�
 - [config-db-persistence-failure](../reference/runbooks/config-db-persistence-failure.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 8ba32e5aa69d -->

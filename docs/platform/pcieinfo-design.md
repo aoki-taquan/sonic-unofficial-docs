@@ -45,7 +45,7 @@ related:
 
 ## 概要
 
-SONiC スイッチ上の PCIe デバイス（NIC / Bridge / Root Port 等）が **本来あるべきトポロジ** から欠落していないかを検査するためのツール群を追加する [HLD](../reference/glossary.md#term-hld)。プラットフォーム標準の PCIe デバイス一覧を `pcie.yaml` に焼いておき、起動時や運用中に実際の lspci 相当出力と比較してハードウェア異常を検知する[^1]。
+[SONiC](../reference/glossary.md#term-sonic) スイッチ上の PCIe デバイス（NIC / Bridge / Root Port 等）が **本来あるべきトポロジ** から欠落していないかを検査するためのツール群を追加する [HLD](../reference/glossary.md#term-hld)。プラットフォーム標準の PCIe デバイス一覧を `pcie.yaml` に焼いておき、起動時や運用中に実際の lspci 相当出力と比較してハードウェア異常を検知する[^1]。
 
 提供される CLI は 3 コマンド[^1]:
 
@@ -245,4 +245,4 @@ redis-cli -n 6 keys 'PCIE_DEVICE|*'
 - [Glossary](../reference/glossary.md)
 - [Reference 索引](../reference/index.md)
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

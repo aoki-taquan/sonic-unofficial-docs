@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-SONiC の SSH サーバは Debian 標準 `sshd` をそのまま使う構成で、運用ポリシーを変えるたびに `/etc/ssh/sshd_config` を直接書き換える必要があった。本機能は [CONFIG_DB](../reference/glossary.md#term-config_db) の `SSH_SERVER` テーブルに 5 種のポリシーを集約し、**`hostcfgd` がテーブル変更を購読して `sshd_config` などを更新 → SSH サービスを再起動** することで、CONFIG_DB だけで一貫した SSH 運用ポリシー管理を可能にする[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の SSH サーバは Debian 標準 `sshd` をそのまま使う構成で、運用ポリシーを変えるたびに `/etc/ssh/sshd_config` を直接書き換える必要があった。本機能は [CONFIG_DB](../reference/glossary.md#term-config_db) の `SSH_SERVER` テーブルに 5 種のポリシーを集約し、**`hostcfgd` がテーブル変更を購読して `sshd_config` などを更新 → SSH サービスを再起動** することで、CONFIG_DB だけで一貫した SSH 運用ポリシー管理を可能にする[^1]。
 
 設定対象は次の 5 ポリシー[^1]。
 
@@ -246,3 +246,5 @@ redis-cli -n 4 hgetall 'SSH_SERVER|POLICIES'
 - [sonic-ssh-server](../reference/yang/sonic-ssh-server.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 8ba32e5aa69d -->

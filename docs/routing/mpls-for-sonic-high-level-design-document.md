@@ -36,9 +36,9 @@ related:
 
 ## 読み手が知りたいこと
 
-- SONiC で [MPLS](../reference/glossary.md#term-mpls) が動く範囲はどこまでか（静的 LSP か、LDP / RSVP-TE まで含むのか）
+- [SONiC](../reference/glossary.md#term-sonic) で [MPLS](../reference/glossary.md#term-mpls) が動く範囲はどこまでか（静的 LSP か、LDP / RSVP-TE まで含むのか）
 - per-[RIF](../reference/glossary.md#term-rif) で MPLS を on/off する設定はどこに入るか
-- ラベル経路は kernel → [APPL_DB](../reference/glossary.md#term-appl_db) → ASIC のどの経路で流れるか
+- ラベル経路は kernel → [APPL_DB](../reference/glossary.md#term-appl_db) → [ASIC](../reference/glossary.md#term-asic) のどの経路で流れるか
 - [CRM](../reference/glossary.md#term-crm) や CLI、ASIC リソース監視は何が増えるか
 
 ## スコープ（静的 LSP 中心）
@@ -199,4 +199,4 @@ crm show resources mpls
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 7255dd3dca3a -->
+<!-- glossary-links-injected: ec18b66e3507 -->

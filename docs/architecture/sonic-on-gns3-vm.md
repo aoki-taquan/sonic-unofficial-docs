@@ -41,7 +41,7 @@ related:
 
 ## 概要
 
-[GNS3](https://docs.gns3.com/) はネットワーク機器をエミュレートして簡易トポロジを Windows 上または Ubuntu サーバ上で実行できるツールである。SONiC は **`sonic-vs.img`**（Virtual Switch ビルド）として Qemu 上で動かせるため、GNS3 上に SONiC ノードを並べてトポロジ実験を行える[^1]。
+[GNS3](https://docs.gns3.com/) はネットワーク機器をエミュレートして簡易トポロジを Windows 上または Ubuntu サーバ上で実行できるツールである。[SONiC](../reference/glossary.md#term-sonic) は **`sonic-vs.img`**（Virtual Switch ビルド）として Qemu 上で動かせるため、GNS3 上に SONiC ノードを並べてトポロジ実験を行える[^1]。
 
 本ドキュメントは公式 [HLD](../reference/glossary.md#term-hld) 文書 `doc/sonic-gns3/GNS3 VM for SONiC.md` のうち、操作のキー手順だけを抜き出したガイドである。スクリーンショット原本（GNS3 GUI 画像）は本ページでは省略する。
 
@@ -139,7 +139,7 @@ GNS3 GUI 操作の代替として CLI で扱う場合、`gns3server` の REST AP
 ## 制限事項
 
 - **Azure Pipeline URL の有効性**: 番号 142 や URL は将来変わる可能性がある。HLD 中の URL を盲信せず、最新の sonic-build 配置を確認する。
-- **VS ビルドの位置づけ**: `sonic-vs.img` は機能テスト・トポロジ実験用。実 ASIC を持たないため、[SAI](../reference/glossary.md#term-sai) コールはソフト VS で受ける。性能ベンチマーク用途には不向き。
+- **VS ビルドの位置づけ**: `sonic-vs.img` は機能テスト・トポロジ実験用。実 [ASIC](../reference/glossary.md#term-asic) を持たないため、[SAI](../reference/glossary.md#term-sai) コールはソフト VS で受ける。性能ベンチマーク用途には不向き。
 - **GNS3 自体の制約**: GUI 中心。CI 用途には KVM 直接または別の自動化基盤（[`sonic-mgmt` のテストベッド](https://github.com/sonic-net/sonic-mgmt)）が一般的。
 - **ホスト OS 依存**: Windows ホスト、Linux ホスト（GNS3 サーバモード）で手順が分かれる。本ドキュメントは Windows 中心の手順を示している[^1]。
 
@@ -199,4 +199,4 @@ ip -br link | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: ec18b66e3507 -->

@@ -39,7 +39,7 @@ related:
 
 ## 概要
 
-シリアル（`tty`）経由のローカルログインは、ネットワークが切れた状況下での最終手段として残されているため、**自動ログアウトのタイマー** と **SysRq カパビリティ** を運用ポリシーに合わせて設定したいという要件がある。SONiC は当初これらをハードコードしていたが、本機能はそれらを [CONFIG_DB](../reference/glossary.md#term-config_db) から制御できるようにする[^1]。
+シリアル（`tty`）経由のローカルログインは、ネットワークが切れた状況下での最終手段として残されているため、**自動ログアウトのタイマー** と **SysRq カパビリティ** を運用ポリシーに合わせて設定したいという要件がある。[SONiC](../reference/glossary.md#term-sonic) は当初これらをハードコードしていたが、本機能はそれらを [CONFIG_DB](../reference/glossary.md#term-config_db) から制御できるようにする[^1]。
 
 Phase 1 では次の 2 ポリシーを対象とする[^1]。
 
@@ -267,4 +267,4 @@ ls -l /dev/ttyUSB* /dev/ttyS*
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

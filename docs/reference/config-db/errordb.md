@@ -22,6 +22,7 @@ related:
   cli:
     - show error-database
     - sonic-clear error-database
+  _no_related_yang: true
 ---
 
 # ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)
@@ -33,10 +34,10 @@ related:
 
 ## 概要
 
-**ERROR_DB** は SONiC Error Handling Framework が導入する専用 Redis データベースである[^1]。  
-SAI CREATE/SET 操作が失敗した場合、syncd が ASIC_DB の通知チャネル経由で OrchAgent に通知し、OrchAgent が SAI 型 → ERROR_DB 型へ翻訳してエントリを書き込む。
+**ERROR_DB** は [SONiC](../../reference/glossary.md#term-sonic) Error Handling Framework が導入する専用 [Redis](../../reference/glossary.md#term-redis) データベースである[^1]。  
+[SAI](../../reference/glossary.md#term-sai) CREATE/SET 操作が失敗した場合、[syncd](../../reference/glossary.md#term-syncd) が [ASIC_DB](../../reference/glossary.md#term-asic_db) の通知チャネル経由で OrchAgent に通知し、OrchAgent が [SAI](../../reference/glossary.md#term-sai) 型 → ERROR_DB 型へ翻訳してエントリを書き込む。
 
-> **注意**: ERROR_DB は **CONFIG_DB ではなく独立した Redis データベース** (database_config.json 未登録、実装時に新 DB ID が割り当てられる予定) である。  
+> **注意**: ERROR_DB は **[CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく独立した [Redis](../../reference/glossary.md#term-redis) データベース** (database_config.json 未登録、実装時に新 DB ID が割り当てられる予定) である。  
 > 本ページをこのセクション (config-db/) に置いているのは、関連テーブルの一元参照性のためである。
 
 主な特徴:
@@ -51,23 +52,13 @@ SAI CREATE/SET 操作が失敗した場合、syncd が ASIC_DB の通知チャ�
 
 ```mermaid
 flowchart LR
-  SYNCD["syncd<br/>(SAI 失敗通知)"]
-  OA["OrchAgent<br/>(唯一の producer)"]
-  EDB[("ERROR_DB<br/>ERROR_ROUTE_TABLE<br/>ERROR_NEIGH_TABLE")]
-  EL["ErrorListener<br/>(app 登録)"]
-  APP["アプリ<br/>(fpmsyncd/bgpcfgd)"]
-  CLI["show error-database<br/>sonic-clear error-database"]
-
-  SYNCD -- "ASIC_DB notif channel" --> OA
-  OA -- "SAI型→ERROR_DB型翻訳<br/>HSET / publish" --> EDB
-  EDB -- "pub/sub" --> EL
-  EL -- "callback" --> APP
-  CLI -- "hgetall / del" --> EDB
+  CDB[("CONFIG_DB<br/>BGP_GLOBALS")]
+  DM["bgpcfgd"]
+  CDB --> DM
 ```
 
 !!! note "凡例"
-    OrchAgent は SAI type を SWSS_RC_* 文字列に変換してから ERROR_DB に書き込む。  
-    成功時はエントリを書かず通知のみ送る（DB からエントリを削除して publish）。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ---
@@ -91,7 +82,7 @@ ERROR_ROUTE_TABLE|<prefix>
 | `intf` | string | `""` (空可) | カンマ区切りインタフェース名/ifindex (0 個以上) |
 | `rc` | string | — (必須) | SWSS_RC_* 文字列 (例: `SWSS_RC_TABLE_FULL`) |
 
-実際の redis 出力例 (HLD Section 4.1)[^1]:
+実際の redis 出力例 ([HLD](../../reference/glossary.md#term-hld) Section 4.1)[^1]:
 
 ```
 "ERROR_ROUTE_TABLE:20.20.20.0/24"
@@ -129,7 +120,7 @@ ERROR_NEIGH_TABLE|<intf>|<prefix>
 
 `sonic-swss-common/common/status_code_util.h` に定義された `StatusCode` enum[^2]:
 
-| SWSS_RC コード | 対応する SAI status (HLD 時点) | 説明 |
+| SWSS_RC コード | 対応する [SAI](../../reference/glossary.md#term-sai) status ([HLD](../../reference/glossary.md#term-hld) 時点) | 説明 |
 |--------------|------------------------------|------|
 | `SWSS_RC_SUCCESS` | `SAI_STATUS_SUCCESS` | 成功 |
 | `SWSS_RC_INVALID_PARAM` | `SAI_STATUS_INVALID_PARAMETER` | 無効パラメータ |
@@ -139,7 +130,7 @@ ERROR_NEIGH_TABLE|<intf>|<prefix>
 | `SWSS_RC_EXISTS` | `SAI_STATUS_ITEM_ALREADY_EXISTS` | 既存エントリあり |
 | `SWSS_RC_FULL` | `SAI_STATUS_TABLE_FULL` | テーブル満杯 |
 | `SWSS_RC_IN_USE` | `SAI_STATUS_OBJECT_IN_USE` | 使用中 |
-| `SWSS_RC_DEADLINE_EXCEEDED` | — (HLD 後追加) | タイムアウト |
+| `SWSS_RC_DEADLINE_EXCEEDED` | — ([HLD](../../reference/glossary.md#term-hld) 後追加) | タイムアウト |
 | `SWSS_RC_PERMISSION_DENIED` | — (HLD 後追加) | 権限エラー |
 | `SWSS_RC_INTERNAL` | — (HLD 後追加) | 内部エラー |
 | `SWSS_RC_UNIMPLEMENTED` | — (HLD 後追加) | 未実装 |
@@ -198,13 +189,13 @@ ERROR_DB のフィールドはすべて OrchAgent が SAI 通知から動的に�
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-ERROR_DB への書込みは **OrchAgent が唯一の producer** であり、syncd → OrchAgent → ERROR_DB → ErrorListener の単一経路で伝搬する。HLD Section 3.3.1 は「単一通知チャネルを使うことで通知の順序が保たれる」と明記している[^1]。
+ERROR_DB への書込みは **OrchAgent が唯一の producer** であり、[syncd](../../reference/glossary.md#term-syncd) → OrchAgent → ERROR_DB → ErrorListener の単一経路で伝搬する。HLD Section 3.3.1 は「単一通知チャネルを使うことで通知の順序が保たれる」と明記している[^1]。
 
 ### 検出された順序依存
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | syncd の ASIC_DB 通知チャネル → OrchAgent 受信 | **強制先行**（SAI 操作結果が先） | OrchAgent は通知を受信するまで ERROR_DB に何も書かない |
+| 1 | [syncd](../../reference/glossary.md#term-syncd) の [ASIC_DB](../../reference/glossary.md#term-asic_db) 通知チャネル → OrchAgent 受信 | **強制先行**（SAI 操作結果が先） | OrchAgent は通知を受信するまで ERROR_DB に何も書かない |
 | 2 | OrchAgent による SAI 型 → SWSS_RC_* 翻訳 → `HSET` → `publish` | 強制先行（翻訳 → HSET → publish の順） | pub/sub 購読者（ErrorListener）は `publish` の後にしか通知を受けない |
 | 3 | 失敗エントリの `HSET`（書込み） → `publish`（通知） | **強制先行** | ErrorListener のコールバックが呼ばれる時点でエントリは必ず DB に存在する |
 | 4 | 成功時の `DEL`（エントリ削除） → `publish`（通知） | **強制先行** | 成功通知受信時点でエントリは既に削除済み（コールバック内での `HGET` は空を返す） |
@@ -217,7 +208,7 @@ ERROR_DB への書込みは **OrchAgent が唯一の producer** であり、sync
 HLD Section 3.3.1 では syncd が単一通知チャネル（`ASIC_DB` の通知 keyspace）を使ってエラーを OrchAgent に報告することで、**SAI 操作の発生順と通知の到着順が一致する**ことが保証されると説明されている。複数チャネルだとマルチオブジェクトの失敗順序が逆転しうるが、単一チャネルによりこの問題を回避している（evidence: HLD Section 3.3.1, "Using a single notification channel ensures that order of the notifications is retained."）。
 
 **HSET → publish の不可分性 (依存 #2, #3)**:  
-OrchAgent の ErrorReporter は SAI 型を SWSS_RC_* に翻訳後、先に `HSET` で ERROR_DB エントリを書いてから `publish` で購読者に通知する設計である。このため ErrorListener のコールバックが呼び出される時点でエントリは必ず Redis に存在し、コールバック内で `HGETALL` を実行しても空応答にならない。逆順（publish 先行）の場合は競合状態が生じるが、HLD は HSET 先行を明示している。
+OrchAgent の ErrorReporter は SAI 型を SWSS_RC_* に翻訳後、先に `HSET` で ERROR_DB エントリを書いてから `publish` で購読者に通知する設計である。このため ErrorListener のコールバックが呼び出される時点でエントリは必ず [Redis](../../reference/glossary.md#term-redis) に存在し、コールバック内で `HGETALL` を実行しても空応答にならない。逆順（publish 先行）の場合は競合状態が生じるが、HLD は HSET 先行を明示している。
 
 **成功時の逆順: DEL → publish (依存 #4)**:  
 成功通知時は「エントリを DB から削除してから publish」の順になる（HLD Section 3.3.1 "Removes the entry from database. if present. Publishes the notifications"）。失敗時と逆の操作であり、通知受信側は成功通知を受けた時点でエントリが存在しないことを前提として動作する必要がある。
@@ -235,12 +226,12 @@ ERROR_DB は warm reboot をまたいで永続しない（HLD Section 6）。Orc
 
 ERROR_DB (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE) は独立した Redis データベースだが、以下のテーブルを実行時に暗黙参照する。
 
-| 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+| 参照先 | DB | 参照方向 | [YANG](../../reference/glossary.md#term-yang) leafref | 実装上の必須度 | 証拠 |
 |---|---|---|---|---|---|
-| `ASIC_DB` 通知チャネル (syncd → OrchAgent) | ASIC_DB | 読み取り（通知受信） | なし | **必須**（producer 経路） | HLD Section 3.3.1 |
-| `INTF_TABLE\|<name>` / `VLAN_INTF_TABLE\|<name>` / `LAG_INTF_TABLE\|<name>` | APPL_DB | key 参照（`ERROR_NEIGH_TABLE` の `intf` フィールド） | なし | 実質必須（intf 解決） | HLD Section 3.4.3.3 |
-| `BGP_NEIGHBOR\|<addr>` | CONFIG_DB | 読み取り（fpmsyncd が ERROR_ROUTE_TABLE を購読） | なし | 任意（bgp error-handling 有効時） | BGP HLD Section 3.7.1 |
-| `BGP_GLOBALS\|default` (`bgp_error_handling` フィールド) | CONFIG_DB | 有効化スイッチ（fpmsyncd の購読を制御） | なし | 条件必須 | BGP HLD Section 3.7.1 |
+| `ASIC_DB` 通知チャネル (syncd → OrchAgent) | [ASIC_DB](../../reference/glossary.md#term-asic_db) | 読み取り（通知受信） | なし | **必須**（producer 経路） | HLD Section 3.3.1 |
+| `INTF_TABLE\|<name>` / `VLAN_INTF_TABLE\|<name>` / `LAG_INTF_TABLE\|<name>` | [APPL_DB](../../reference/glossary.md#term-appl_db) | key 参照（`ERROR_NEIGH_TABLE` の `intf` フィールド） | なし | 実質必須（intf 解決） | HLD Section 3.4.3.3 |
+| `BGP_NEIGHBOR\|<addr>` | [CONFIG_DB](../../reference/glossary.md#term-config_db) | 読み取り（[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が ERROR_ROUTE_TABLE を購読） | なし | 任意（bgp error-handling 有効時） | [BGP](../../reference/glossary.md#term-bgp) HLD Section 3.7.1 |
+| `BGP_GLOBALS\|default` (`bgp_error_handling` フィールド) | [CONFIG_DB](../../reference/glossary.md#term-config_db) | 有効化スイッチ（[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) の購読を制御） | なし | 条件必須 | [BGP](../../reference/glossary.md#term-bgp) HLD Section 3.7.1 |
 
 ### ASIC_DB 通知チャネル — 唯一の producer 経路
 
@@ -248,11 +239,11 @@ ERROR_DB への書き込みは OrchAgent のみが行う。OrchAgent は syncd �
 
 ### INTF_TABLE / VLAN_INTF_TABLE / LAG_INTF_TABLE — ERROR_NEIGH_TABLE の intf key
 
-`ERROR_NEIGH_TABLE|<intf>|<prefix>` の `<intf>` は `INTF_TABLE.name` / `VLAN_INTF_TABLE.name` / `LAG_INTF_TABLE.name` のいずれかに対応する（HLD Section 3.4.3.3）。YANG leafref は定義されていないが、OrchAgent が隣接エントリを ERROR_DB に書き込む際には APPL_DB の対応インタフェーステーブルにエントリが存在している必要がある。インタフェースが削除された後も ERROR_NEIGH_TABLE に古いエントリが残留する場合がある（warm reboot で非永続化されるまで）。
+`ERROR_NEIGH_TABLE|<intf>|<prefix>` の `<intf>` は `INTF_TABLE.name` / `VLAN_INTF_TABLE.name` / `LAG_INTF_TABLE.name` のいずれかに対応する（HLD Section 3.4.3.3）。[YANG](../../reference/glossary.md#term-yang) leafref は定義されていないが、OrchAgent が隣接エントリを ERROR_DB に書き込む際には [APPL_DB](../../reference/glossary.md#term-appl_db) の対応インタフェーステーブルにエントリが存在している必要がある。インタフェースが削除された後も ERROR_NEIGH_TABLE に古いエントリが残留する場合がある（warm reboot で非永続化されるまで）。
 
 ### BGP_GLOBALS.bgp_error_handling — fpmsyncd の購読制御
 
-fpmsyncd は `BGP_GLOBALS|default` の `bgp_error_handling` フィールドを参照し、有効な場合のみ `ERROR_ROUTE_TABLE` を購読して BGP ルートインストール失敗の通知を受け取る（BGP HLD Section 3.7.1）。このフィールドが `false` または未設定の場合、fpmsyncd は `ErrorListener` を登録しないため `ERROR_ROUTE_TABLE` の更新は bgpcfgd / fpmsyncd に届かない。
+[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) は `BGP_GLOBALS|default` の `bgp_error_handling` フィールドを参照し、有効な場合のみ `ERROR_ROUTE_TABLE` を購読して [BGP](../../reference/glossary.md#term-bgp) ルートインストール失敗の通知を受け取る（BGP HLD Section 3.7.1）。このフィールドが `false` または未設定の場合、fpmsyncd は `ErrorListener` を登録しないため `ERROR_ROUTE_TABLE` の更新は [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) / fpmsyncd に届かない。
 
 ### SAI 参照
 
@@ -298,7 +289,7 @@ OrchAgent は SAI 操作失敗通知を受け取るたびに `HSET ERROR_ROUTE_T
 
 #### 5. OrchAgent 停止中の失敗
 
-syncd はエラーを ASIC_DB 通知チャネルに送るが、OrchAgent が受信できなければ ERROR_DB への書き込みも ErrorListener へのコールバックも発生しない。orchagent は唯一の producer であるため（HLD Section 3.1）、OrchAgent 停止中は全 SAI 失敗がサイレントに消失する。
+syncd はエラーを ASIC_DB 通知チャネルに送るが、OrchAgent が受信できなければ ERROR_DB への書き込みも ErrorListener へのコールバックも発生しない。[orchagent](../../reference/glossary.md#term-orchagent) は唯一の producer であるため（HLD Section 3.1）、OrchAgent 停止中は全 SAI 失敗がサイレントに消失する。
 
 #### 6. `sonic-clear error-database` — 通知なしの強制削除
 
@@ -358,7 +349,7 @@ ErrorListener fpmErrorListener(APP_ROUTE_TABLE_NAME,
 
 ### 実装不在によるハードコード定数の不存在
 
-以下の定数は ERROR_DB の実装が master 未マージのため、orchagent / sonic-swss-common 内に存在しない:
+以下の定数は ERROR_DB の実装が master 未マージのため、[orchagent](../../reference/glossary.md#term-orchagent) / [sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) 内に存在しない:
 
 - **ERROR_DB の Redis DB ID**: `database_config.json` 未登録。実装時に新しい DB ID が割り当てられる予定
 - **ErrorReporter / ErrorListener クラス定数**: master には存在しない
@@ -392,7 +383,7 @@ OrchAgent は `HSET`（失敗エントリ書込）または `DEL`（成功・cle
 `BGP_GLOBALS|default` の `bgp_error_handling` が有効な場合のみ、fpmsyncd は `ERROR_ROUTE_TABLE` を ErrorListener 経由で購読する。エントリ更新を受け取った fpmsyncd は以下を実行する（BGP HLD Section 3.4.1）:
 
 1. `ERROR_ROUTE_TABLE` エントリを Zebra common header フォーマットに変換
-2. FPM ソケット（TCP、`FPM_DEFAULT_PORT`）経由で Zebra にメッセージ送信
+2. [FPM](../../reference/glossary.md#term-fpm) ソケット（TCP、`FPM_DEFAULT_PORT`）経由で Zebra にメッセージ送信
 3. Zebra が当該ルートを kernel FIB から withdraw し、`"Not installed in hardware"` フラグを設定
 4. Zebra から BGP に通知 → BGP が当該プレフィックスを RIB-OUT から除外し、ピアへの広告を停止
 
@@ -405,7 +396,7 @@ ERROR_ROUTE_TABLE 更新
                       └→ BGP RIB-OUT から除外（ピア広告停止）
 ```
 
-この連鎖は **BGP docker (bgpd/zebra/fpmsyncd) が稼働中かつ `bgp_error_handling` が有効なときのみ** 発生する。`bgp_error_handling` が無効（デフォルト）の場合、fpmsyncd は ERROR_ROUTE_TABLE を購読しないため連鎖は起きない（BGP HLD Section 3.7.1）。
+この連鎖は **BGP docker (bgpd/[zebra](../../reference/glossary.md#term-zebra)/fpmsyncd) が稼働中かつ `bgp_error_handling` が有効なときのみ** 発生する。`bgp_error_handling` が無効（デフォルト）の場合、fpmsyncd は ERROR_ROUTE_TABLE を購読しないため連鎖は起きない（BGP HLD Section 3.7.1）。
 
 ### swssloglevel ログ出力
 
@@ -424,7 +415,7 @@ ERROR_DB フレームワークは以下のタイミングで `SWSS_LOG_*` を出
 
 ### STATE_DB・APPL_DB・COUNTERS_DB への書込なし
 
-HLD は STATE_DB / APPL_DB / COUNTERS_DB への直接書込を規定していない。CRM (Critical Resource Monitor) は SAI リソース使用量を独立して管理しており、ERROR_DB への書込によって CRM カウンタが変動することもない。フレームワークが記録する唯一の永続状態は ERROR_DB エントリ自体である（warm reboot 非永続）。
+HLD は [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への直接書込を規定していない。[CRM](../../reference/glossary.md#term-crm) (Critical Resource Monitor) は SAI リソース使用量を独立して管理しており、ERROR_DB への書込によって [CRM](../../reference/glossary.md#term-crm) カウンタが変動することもない。フレームワークが記録する唯一の永続状態は ERROR_DB エントリ自体である（warm reboot 非永続）。
 
 ### プラットフォーム依存なし
 
@@ -504,7 +495,7 @@ OrchAgent (clear 受信) → DEL ERROR_DB エントリ
 
 ### 複数アプリの同時購読
 
-HLD Section 1.1.1 に明示されているとおり、複数アプリが同一テーブルを購読可能である。`ERROR_ROUTE_TABLE` の場合、fpmsyncd と別のアプリ（例: bgpcfgd）が同時に購読し、それぞれ独立したコールバックを受け取ることができる。各 ErrorListener はフィルタ条件（テーブル名・通知フラグ）ごとに独立して評価される。
+HLD Section 1.1.1 に明示されているとおり、複数アプリが同一テーブルを購読可能である。`ERROR_ROUTE_TABLE` の場合、fpmsyncd と別のアプリ（例: [bgpcfgd](../../reference/glossary.md#term-bgpcfgd)）が同時に購読し、それぞれ独立したコールバックを受け取ることができる。各 ErrorListener はフィルタ条件（テーブル名・通知フラグ）ごとに独立して評価される。
 
 ### fpmsyncd の購読制御
 
@@ -545,17 +536,17 @@ HLD Section 3.2 に定義された SAI ステータス → `SWSS_RC_*` のマッ
 |------|-----------------|------|
 | `SWSS_RC_*` enum 定義 | **なし** | `status_code_util.h` — 静的マッピング、条件分岐なし |
 | SAI → `SWSS_RC_*` 変換 | **なし** | HLD Section 3.2 — 固定マッピング表 |
-| ERROR_DB スキーマ（フィールド名・型） | **なし** | HLD Section 3.4.3 — 全 ASIC 共通 |
+| ERROR_DB スキーマ（フィールド名・型） | **なし** | HLD Section 3.4.3 — 全 [ASIC](../../reference/glossary.md#term-asic) 共通 |
 | pub/sub 通知方式 | **なし** | Redis PUBLISH/SUBSCRIBE — 実装非依存 |
 | `bgp_error_handling` 有効化条件 | **なし** | CONFIG_DB グローバル設定、プラットフォーム非依存 |
 
 ### 間接的プラットフォーム影響: SAI エラー発生頻度
 
-プラットフォームごとに ASIC テーブルサイズや対応 SAI 機能が異なるため、特定の SAI エラーの発生しやすさは変わる。しかし ERROR_DB フレームワークの動作仕様自体（スキーマ・書込順序・通知方式）は変化しない。
+プラットフォームごとに [ASIC](../../reference/glossary.md#term-asic) テーブルサイズや対応 SAI 機能が異なるため、特定の SAI エラーの発生しやすさは変わる。しかし ERROR_DB フレームワークの動作仕様自体（スキーマ・書込順序・通知方式）は変化しない。
 
 | SAI エラー | 発生しやすいプラットフォーム条件 | ERROR_DB に現れる `rc` |
 |------------|-------------------------------|----------------------|
-| `SAI_STATUS_TABLE_FULL` | テーブルサイズが小さい ASIC（一部 OF-DPA 等） | `SWSS_RC_FULL` |
+| `SAI_STATUS_TABLE_FULL` | テーブルサイズが小さい [ASIC](../../reference/glossary.md#term-asic)（一部 OF-DPA 等） | `SWSS_RC_FULL` |
 | `SAI_STATUS_NO_MEMORY` | メモリ制限の厳しい環境 | `SWSS_RC_NO_MEMORY` |
 | `SAI_STATUS_NOT_SUPPORTED` | 機能非対応 ASIC (例: L3V4V6 非対応) | `SWSS_RC_UNAVAIL` |
 | ベンダー固有 SAI 拡張エラーコード | 任意 | `SWSS_RC_UNKNOWN`（フォールバック） |
@@ -610,7 +601,7 @@ HLD Section 3.2 に定義された SAI ステータス → `SWSS_RC_*` のマッ
 
 ### 注意事項
 
-ERROR_DB / ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE は **2026-05 時点で未実装** のため、実際の SONiC 環境では以下の代替手段を使う:
+ERROR_DB / ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE は **2026-05 時点で未実装** のため、実際の [SONiC](../../reference/glossary.md#term-sonic) 環境では以下の代替手段を使う:
 
 ```bash
 # 現行: ASIC リソース枯渇は CRM で監視
@@ -635,3 +626,9 @@ grep -r "SWSS_RC_" /usr/include/swss/
 sonic-db-cli ERROR_DB keys '*'
 ```
 <!-- /ops-hint -->
+
+## 実装との乖離
+
+本テーブルは HLD では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。
+
+<!-- glossary-links-injected: 9056bc6d1d26 -->

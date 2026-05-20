@@ -46,7 +46,7 @@ Build / Packaging 章での「設定」は、機能 docker の有効化と exten
 
 ## FEATURE テーブルで docker を on/off する
 
-SONiC では、機能の多くが独立 docker として動く。実行時の有効化は CLI から行う。
+[SONiC](../../reference/glossary.md#term-sonic) では、機能の多くが独立 docker として動く。実行時の有効化は CLI から行う。
 
 ```bash
 # 現状確認
@@ -71,7 +71,7 @@ FEATURE|<docker-name>
   has_per_asic_scope: True | False
 ```
 
-`always_enabled` は image build 時に固定された機能 (swss / [syncd](../../reference/glossary.md#term-syncd) など) を示し、CLI から変更しても無視される。`has_per_asic_scope` が True の機能は multi-ASIC 構成で ASIC 数ぶん docker が起動する。詳細は [FEATURE table](../../reference/config-db/feature.md)。
+`always_enabled` は image build 時に固定された機能 (swss / [syncd](../../reference/glossary.md#term-syncd) など) を示し、CLI から変更しても無視される。`has_per_asic_scope` が True の機能は multi-[ASIC](../../reference/glossary.md#term-asic) 構成で ASIC 数ぶん docker が起動する。詳細は [FEATURE table](../../reference/config-db/feature.md)。
 
 ## extension を SPM で入れる (運用パス)
 
@@ -169,4 +169,4 @@ SONIC_BUILD_JOBS=8 make target/sonic-broadcom.bin
 - 後付け配布の運用 → [運用](operations.md)。
 - ARM や container hardening、再現可能ビルド → [発展トピック](advanced.md)。
 
-<!-- glossary-links-injected: ef250042e9c0 -->
+<!-- glossary-links-injected: ec18b66e3507 -->
