@@ -124,7 +124,7 @@ docker exec -it bgp vtysh -c 'show running-config bgpd' | grep -E 'aggregate-add
 
 ### よくある落とし穴
 
-- `status` は string enum (`enabled`/`disabled`)。typedef ではなく直書きされているため、CLI から不正値を渡してもバリデーション漏れする例がある。
+- `status` は `stypes:admin_mode` typedef (`enabled`/`disabled`)。CLI/REST 経由で不正値を渡した場合は YANG 側で弾かれるが、`sonic-db-cli` で CONFIG_DB に直接書き込むと型バリデーションが効かないため任意の文字列が入りうる点に注意。
 
 ### 関連する config / show コマンド
 

@@ -137,7 +137,7 @@ module: sonic-bgp-aggregate-address
 
 ### 典型的なデプロイ位置
 
-- BGP の aggregate-address (経路集約) 設定。`BGP_GLOBALS_AF_AGGREGATE_ADDR` テーブル経由で [FRR](../../reference/glossary.md#term-frr) の `aggregate-address` コマンドへ展開。
+- BGP の aggregate-address (経路集約) 設定。`BGP_AGGREGATE_ADDRESS` テーブル経由で [FRR](../../reference/glossary.md#term-frr) の `aggregate-address` コマンドへ展開（bgpcfgd 経路）。`BGP_GLOBALS_AF_AGGREGATE_ADDR` は frr-mgmt-framework が扱う別テーブルで本モジュールの対象外。
 
 ### よくある落とし穴
 
@@ -146,7 +146,7 @@ module: sonic-bgp-aggregate-address
 ### 関連する config / show コマンド
 
 ```bash
-sonic-db-cli CONFIG_DB keys 'BGP_GLOBALS_AF_AGGREGATE_ADDR|*'
+sonic-db-cli CONFIG_DB keys 'BGP_AGGREGATE_ADDRESS|*'
 vtysh -c 'show ip bgp summary'
 ```
 <!-- /ops-hint -->

@@ -48,9 +48,6 @@ related:
 
 # Runbook: 経路は RIB にあるが FIB / ASIC に降りない
 
-!!! warning "HLD-only"
-    FRR zebra → FPM → fpmsyncd → APPL_DB → routeorch → ASIC_DB の標準パスに基づく運用ノート。
-
 ## 症状
 
 - `vtysh -c "show ip route <prefix>"` に該当経路が出るが `*` (FIB selected) が付かない

@@ -47,9 +47,6 @@ related:
 
 # Runbook: orchagent が CPU 100% で詰まる
 
-!!! warning "HLD-only"
-    orchagent の event loop と Orch::doTask のリトライメカニズムからの一般運用ノート。
-
 !!! danger "実行前提"
     `docker restart swss` は ASIC 構成を再 sync するため数十秒〜数分の中断が発生し、warm-restart 未設定時は転送断となる。本番では計画 maintenance window で行う。
 

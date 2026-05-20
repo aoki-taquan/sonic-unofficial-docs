@@ -11,7 +11,7 @@ sources:
 related:
   config_db: [BGP_PEER_RANGE]
   cli: []
-  yang: [sonic-bgp-global, sonic-vrf, sonic-vnet]
+  yang: [sonic-vrf, sonic-vnet]
 ---
 
 # sonic-bgp-peerrange YANG
@@ -109,7 +109,6 @@ module: sonic-bgp-peerrange
 
 意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter `related.yang` から自動抽出):
 
-- [`sonic-bgp-global`](sonic-bgp-global.md)
 - [`sonic-vrf`](sonic-vrf.md)
 - [`sonic-vnet`](sonic-vnet.md)
 - [`sonic-bgp-aggregate-address`](sonic-bgp-aggregate-address.md)

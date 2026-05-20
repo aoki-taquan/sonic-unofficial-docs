@@ -9,7 +9,7 @@ sources:
     path: src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [BGP_PEER_GROUP, BGP_PEER_GROUP_AF]
+  config_db: [BGP_PEER_GROUP, BGP_PEER_GROUP_AF, BGP_GLOBALS_LISTEN_PREFIX]
   cli: ["config bgp"]
   yang: [sonic-bgp-global, sonic-bgp-common]
 ---
@@ -33,9 +33,15 @@ SONIC [BGP](../../reference/glossary.md#term-bgp) Peer Group [YANG](../../refere
 flowchart LR
   Y["sonic-bgp-peergroup"]
   C1[("CONFIG_DB<br/>BGP_PEER_GROUP")]
+  C2[("CONFIG_DB<br/>BGP_PEER_GROUP_AF")]
+  C3[("CONFIG_DB<br/>BGP_GLOBALS_LISTEN_PREFIX")]
   Y --> C1
+  Y --> C2
+  Y --> C3
   D1["bgpcfgd"]
   C1 --> D1
+  C2 --> D1
+  C3 --> D1
 ```
 
 !!! note "凡例"

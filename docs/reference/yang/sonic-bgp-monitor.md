@@ -128,7 +128,7 @@ module: sonic-bgp-monitor
 
 ### よくある落とし穴
 
-- `name` (neighbor address) は IPv4/IPv6 union。文字列でホスト名を入れると leafref 解決が失敗する。
+- `addr` (monitor peer address) は IPv4/IPv6 union。`name` leaf は FRR 内部で `'BGPMonitor'` 固定文字列が期待されるため、任意の値を設定すると `must` 制約違反となり commit が失敗する。
 
 ### 関連する config / show コマンド
 

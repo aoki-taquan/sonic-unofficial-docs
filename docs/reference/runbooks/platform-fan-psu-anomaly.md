@@ -13,12 +13,13 @@ sources:
   ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
-  - PSU_INFO
-  - FAN_INFO
-  - THERMAL_INFO
   - CHASSIS_MODULE
   - MID_PLANE_BRIDGE
   - DPU
+  state_db:
+  - PSU_INFO
+  - FAN_INFO
+  - THERMAL_INFO
   cli:
   - show platform fan
   - show platform psustatus

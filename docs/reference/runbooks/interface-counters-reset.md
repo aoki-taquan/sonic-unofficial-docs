@@ -99,7 +99,7 @@ sudo grep -r "sonic-clear\|portstat -c" /etc/cron* 2>/dev/null
 
 - 監視は `COUNTERS_DB` の raw 値を直接 poll（portstat 差分 cache に依存しない）
 - [gNMI](../../reference/glossary.md#term-gnmi) / telemetry で counters subscribe する方式に切り替え
-- portstat 用 cache を別場所へ: 環境変数 `PORTSTAT_CACHE_FILE` を設定（実装次第）
+- portstat 用 cache を別ディレクトリへ: 環境変数 `SONIC_CLI_CACHE_DIR` を設定（`utilities_common.cli.UserCache` がこの変数を参照）
 
 ## 確認
 
