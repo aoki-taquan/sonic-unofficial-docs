@@ -186,8 +186,7 @@ ls -l /dev/Mytty*
 
 ### コマンド例: Terminal server udev 確認
 
-下記コマンドを順に実行することで、関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) のエントリと、
-CLI 表示・syslog の整合を一通り突き合わせ確認できる。
+下記コマンドを順に実行することで、udev rules の適用状態とハードウェア symlink、関連 syslog の整合を一通り突き合わせ確認できる（本 HLD は SONiC 内部 DB と対話しない）。
 
 ```bash
 # udev rule の適用状態と /dev/console-* シンボリックリンクを確認
@@ -224,8 +223,7 @@ sudo grep -Ei 'udev|console' /var/log/syslog | tail -30
 <!-- topics-back-ref -->
 ## 関連 Topics
 
-- [Topics: NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md)
-- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+- [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
 

@@ -60,8 +60,8 @@ related:
 | Global Config | `ha-global/config` | `DASH_HA_GLOBAL_CONFIG_TABLE` | `DASH_HA_GLOBAL_CONFIG_STATE` |
 | DPU | `dpu/<dpu-id>` | `DPU:<dpu-id>` | `DASH_HA_DPU_STATE:<dpu-id>` |
 | vDPU | `vdpu/<vdpu-id>` | `VDPU:<vdpu-id>` | `DASH_HA_VDPU_STATE:<vdpu-id>` |
-| HA Set | `ha-set/<id>` | `DASH_HA_SET_CONFIG_TABLE:<id>` | `DASH_HA_SET_STATE:<id>` |
-| HA Scope | `ha-scope/<id>` | `DASH_HA_SCOPE_CONFIG_TABLE:<id>` | `DASH_HA_SCOPE_STATE:<id>` |
+| HA Set | `ha-set/<id>` | `DASH_HA_SET_CONFIG_TABLE:<id>` | `DASH_HA_SET_STATE_TABLE:<id>` |
+| HA Scope | `ha-scope/<id>` | `DASH_HA_SCOPE_CONFIG_TABLE:<id>` | `DASH_HA_SCOPE_STATE_TABLE:<id>` |
 
 `vDPU` は将来的に複数 DPU で 1 仮想 DPU を構成する拡張余地のため導入された抽象[^1]。現在は通常 1:1 だが状態管理を vDPU 単位に統一する。
 
@@ -226,7 +226,7 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
     ### 4. 回避策 / 対応方法
 
     - **community master を使う場合**: DASH HA は使えない。Smart Switch を組まないか、`sonic-dash` 系の別 component が hamgrd を提供しているか確認する。
-    - **検証だけ進めたい場合**: schema 層は揃っているので、`redis-cli -n 0 hset "DASH_HA_SET_CONFIG_TABLE:hs1" ...` で手動でテーブルに値を入れ、consumer が居ない状態の確認まではできる。BFD responder の program は別途自前で組む必要がある。
+    - **検証だけ進めたい場合**: schema 層は揃っているので、`redis-cli -n 4 hset "DASH_HA_SET_CONFIG_TABLE|hs1" ...` で手動でテーブルに値を入れ、consumer が居ない状態の確認まではできる。BFD responder の program は別途自前で組む必要がある。
     - **ベンダー版 SmartSwitch を採用**: NVIDIA Spectrum-X / 等の vendor SmartSwitch では hamgrd 相当が動く可能性。ただし community SONiC のスコープ外（本サイトの対象外）。
     - 上流取り込み推進: hamgrd 実装本体（C++/Rust 何れか）+ swbus + `DASH_HA_DPU_STATE` / `VDPU_TABLE` の schema 追加 + CLI の 4 点セットが必要。
 
@@ -238,7 +238,7 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
     - schema は `sonic-swss-common/common/schema.h` L180-454 周辺に `DASH_HA_SET_CONFIG_TABLE` / `DASH_HA_SCOPE_CONFIG_TABLE` / `DASH_HA_GLOBAL_CONFIG` / `STATE_DASH_HA_SCOPE_STATE_TABLE` が定義され先行採用。一方 `DASH_HA_DPU_STATE` / `VDPU_TABLE` は未定義。
     - swbus（actor 間メッセージバス）の文字列は community master 全リポで 0 件。`sonic-dash-api` / vendor 側に切出される計画と推測。
     - 関連 Issue/PR: `sonic-net/DASH` リポに HA HLD ドラフトと一部 reference 実装が存在するが、community SONiC への merge は段階的。Switch-Driven mode は HLD で TBD のまま。
-    - **追加検証コマンド**: schema 層のみ確認 — `redis-cli -n 0 hset 'DASH_HA_SET_CONFIG_TABLE:hs1' ha_owner 'switch'` で書込は通るが、consumer 不在のため STATE_DB に反映されないことを `redis-cli -n 6 keys 'DASH_HA_SCOPE_STATE_TABLE*'` で確認。
+    - **追加検証コマンド**: schema 層のみ確認 — `redis-cli -n 4 hset 'DASH_HA_SET_CONFIG_TABLE|hs1' ha_owner 'switch'` で書込は通るが、consumer 不在のため STATE_DB に反映されないことを `redis-cli -n 6 keys 'DASH_HA_SCOPE_STATE_TABLE*'` で確認。
 
     > 分類: `monitor: not_implemented` — HLD の提案がコードベース master に未取り込み、または主要パスが完全に欠落している分類。本ページの仕様記述は将来仕様参考。
 
@@ -299,7 +299,7 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
     - **代替手段 / 関連 reference**: 本ページの frontmatter `related` が空のため、[Reference 索引](../reference/index.md) から関連テーブル / CLI / YANG を辿る
 
 !!! note "本ドキュメントの追跡"
-    - monitor: `not_implemented` / last_verified: `2026-05-11`
+    - monitor: `partially_implemented` / last_verified: `2026-05-11`
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->

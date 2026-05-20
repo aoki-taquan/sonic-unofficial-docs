@@ -13,24 +13,7 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/error-handling/error_handling_design_spec.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
-related:
-  config_db:
-  - CRM
-  - PORT
-  - AUTONEG_PORT
-  - ACL_RULE
-  - ACL_TABLE
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  cli:
-  - show techsupport
-  - show platform
-  - show version
-  - show acl
-  - config acl
-  yang:
-  - sonic-crm
-  - sonic-port
+_no_related_cdb: true
 ---
 
 # Error Handling Framework 内部実装

@@ -12,7 +12,7 @@ last_verified: 2026-05-13
 まず全体像や実装単位のページを読み、必要に応じて関連する機能別章またはリファレンス章に移動する。
 ## 検証状況
 - ページ数: 41
-- 分布: Code-verified: 27 / Discrepancy-found: 8 / [HLD](../reference/glossary.md#term-hld)-only: 6
+- 分布: Code-verified: 27 / Discrepancy-found: 9 / [HLD](../reference/glossary.md#term-hld)-only: 5
 
 ## 実装差分があるページ
 - [DIP=SIP PTF 検証テスト](dip-sip-ptf-validation-high-level-design.md)
@@ -23,6 +23,7 @@ last_verified: 2026-05-13
 - [SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）](smartswitch-high-availability-manager-daemon-hamgrd-design.md)
 - [sFlow（hsflowd / sflowmgrd / SAI sample-packet）](sflow-high-level-design.md)
 - [ビルドプロファイル（rules/profiles/*.mk）](build-profiles.md)
+- [ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）](port-illegal-packets-drop-design.md)
 
 ## HLD-only のページ
 - [Bulk Counter（sai_bulk_object_get_stats / chunk size）](sonic-bulk-counter-design.md)
@@ -30,7 +31,6 @@ last_verified: 2026-05-13
 - [Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）](sonic-policy-based-hashing.md)
 - [Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）](sonic-port-auto-fec-design.md)
 - [Sub-port Interface（dot1q encap / VRF RIF / 命名規則）](sonic-sub-port-interface-high-level-design.md)
-- [ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）](port-illegal-packets-drop-design.md)
 
 ## ページ一覧
 
@@ -76,6 +76,6 @@ last_verified: 2026-05-13
 | [ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）](build-system-improvements.md) | Code-verified |
 | [ポート Auto-Negotiation（advertised-speeds / interface-type）](sonic-port-auto-negotiation-design.md) | Code-verified |
 | [ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR）](sonic-port-link-training-design.md) | Code-verified |
-| [ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）](port-illegal-packets-drop-design.md) | HLD-only |
+| [ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）](port-illegal-packets-drop-design.md) | Discrepancy-found |
 
 <!-- glossary-links-injected: 8ba32e5aa69d -->

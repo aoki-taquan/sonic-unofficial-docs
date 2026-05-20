@@ -12,27 +12,7 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/error-handling/error_handling_design_spec.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
-related:
-  config_db:
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_PEER_GROUP
-  cli:
-  - clear
-  - config bgp
-  - show bgp
-  yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-bgp-bbr
-  - sonic-bgp-peerrange
-  - sonic-bgp-device-global
-  - sonic-bgp-sentinel
-  - sonic-bgp-monitor
+_no_related_cdb: true
 ---
 
 # Error Handling Framework 概念
@@ -73,7 +53,7 @@ flowchart LR
 
 ## 5. Error code の抽象化
 
-app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで **SWSS error code を定義し SAI error code にマップ** する[^1]:
+app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで **SWSS error code を定義し SAI error code にマップ** する[^1]。下表は HLD で定義された基本セット 8 種だが、実装の `sonic-swss-common/common/status_code_util.h L11-L25` enum には追加 7 種（`SWSS_RC_DEADLINE_EXCEEDED` / `SWSS_RC_PERMISSION_DENIED` / `SWSS_RC_INTERNAL` / `SWSS_RC_UNIMPLEMENTED` / `SWSS_RC_NOT_EXECUTED` / `SWSS_RC_FAILED_PRECONDITION` / `SWSS_RC_UNKNOWN`）も追加されており、合計 15 種が定義されている。詳細は limitations ページの「3. 行番号付きエビデンス」を参照。
 
 | SWSS code | SAI status |
 |-----------|-----------|

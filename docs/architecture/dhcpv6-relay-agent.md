@@ -73,12 +73,12 @@ hop-count > `HOP_COUNT_LIMIT` のメッセージは破棄。`link-address` に�
 ### CONFIG_DB / YANG
 
 ```text
-DHCP|<intf>
+DHCP_RELAY|<intf>
   dhcpv6_servers                 = ["<server-ipv6>", ...]
   dhcpv6_option|rfc6939_support  = "true" | "false"   ; default true
 ```
 
-[YANG](../reference/glossary.md#term-yang) は `sonic-dhcpv6-relay.yang`。`DHCP` コンテナ下の `VLAN_LIST` に `dhcpv6_servers`（`inet6:ip-address` list）と `rfc6939_support`（bool）を持つ[^1]。
+[YANG](../reference/glossary.md#term-yang) は `sonic-dhcpv6-relay.yang`。`DHCP_RELAY` コンテナ下の `VLAN_LIST` に `dhcpv6_servers`（`inet6:ip-address` list）と `rfc6939_support`（bool）を持つ[^1]。
 
 ### Option 79 の役割
 
