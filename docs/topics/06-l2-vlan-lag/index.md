@@ -71,6 +71,9 @@ related:
   - sonic-vlan-sub-interface
   - sonic-portchannel
   - sonic-mclag
+  - sonic-bgp-aggregate-address
+  - sonic-bgp-bbr
+  - sonic-bgp-global
 ---
 
 # L2 / VLAN / LAG / MC-LAG

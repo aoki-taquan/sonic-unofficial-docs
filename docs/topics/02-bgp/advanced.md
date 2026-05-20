@@ -39,7 +39,7 @@ related:
 
 - **概念とアーキテクチャ**は本章の [concept](concept.md) / [architecture](architecture.md) と、area HLD の [BGP / FRR 系 routing/ 配下のページ群](../../routing/index.md) で完結する。FRR 統合の基本フロー (zebra ↔ [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) ↔ [APPL_DB](../../reference/glossary.md#term-appl_db) ↔ orchagent) はそこで詳細化されている。
 - **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config bgp` / `show bgp` 系、[reference/config_db/BGP_*](../../reference/config-db/index.md), `BGP_NEIGHBOR`, `BGP_PEER_GROUP` に集約されている。
-- **本ページ** は VoQ シャーシ・BFD・EVPN という章境界のクロスオーバー、および BGP suppress-fib-pending / BGP PIC / BMP / Dynamic neighbor といった「FRR の発展機能を SONiC schema に取り込む」運用領域だけを扱う。
+- **本ページ** は VoQ シャーシ・BFD・EVPN という章境界のクロスオーバー、および BGP suppress-fib-pending / BGP PIC / BMP / Dynamic neighbor といった「FRR の発展機能を [SONiC](../../reference/glossary.md#term-sonic) schema に取り込む」運用領域だけを扱う。
 
 ## VoQ シャーシの BGP
 
@@ -51,7 +51,7 @@ BFD は BGP の keepalive より速く failure を検出するための補助で
 
 ## EVPN/VXLAN への接続
 
-EVPN/[VXLAN](../../reference/glossary.md#term-vxlan) では [FRR](../../reference/glossary.md#term-frr) BGP-EVPN が Type-2/Type-5 route を扱い、VTEP、[VRF](../../reference/glossary.md#term-vrf)、VXLAN tunnel、symmetric IRB とつながる。underlay の BGP と overlay の BGP-EVPN を混同しないことが重要である。この章で扱った FRR、route-map、VRF、経路反映の考え方は EVPN 章の前提になる。詳細は [EVPN VXLAN](../../routing/evpn-vxlan-hld.md) を参照する。
+EVPN/[VXLAN](../../reference/glossary.md#term-vxlan) では [FRR](../../reference/glossary.md#term-frr) BGP-EVPN が Type-2/Type-5 route を扱い、[VTEP](../../reference/glossary.md#term-vtep)、[VRF](../../reference/glossary.md#term-vrf)、VXLAN tunnel、symmetric IRB とつながる。underlay の BGP と overlay の BGP-EVPN を混同しないことが重要である。この章で扱った FRR、route-map、VRF、経路反映の考え方は EVPN 章の前提になる。詳細は [EVPN VXLAN](../../routing/evpn-vxlan-hld.md) を参照する。
 
 ## 関連ページ
 
@@ -63,7 +63,7 @@ EVPN/[VXLAN](../../reference/glossary.md#term-vxlan) では [FRR](../../referenc
 
 基本の peer/policy 設定を超えた領域では、SONiC は FRR の機能を [Redis](../../reference/glossary.md#term-redis) スキーマ経由で順次取り込んでいる。代表的なものを挙げる。
 
-- **BGP Suppress FIB Pending**: FIB 未投入の prefix を peer に広告しないことで、ASIC が経路を持っていない状態で advertise してトラフィックブラックホールになるのを防ぐ。SONiC では `bgpcfgd` テンプレートと FRR の `bgp suppress-fib-pending` を組み合わせる。
+- **BGP Suppress FIB Pending**: FIB 未投入の prefix を peer に広告しないことで、[ASIC](../../reference/glossary.md#term-asic) が経路を持っていない状態で advertise してトラフィックブラックホールになるのを防ぐ。SONiC では `bgpcfgd` テンプレートと FRR の `bgp suppress-fib-pending` を組み合わせる。
 - **BGP PIC (Prefix Independent Convergence) Core/Edge**: edge link 障害時の収束を nexthop group レベルで行い、prefix 数に依存しない切替を実現する。SONiC では nexthop group 構造 (`NEXTHOP_GROUP_TABLE`) と [orchagent](../../reference/glossary.md#term-orchagent) の対応で表現される。
 - **BMP (BGP Monitoring Protocol, RFC 7854)**: FRR の `bmpd` を Redis 経由で利用し、Adj-RIB-In / Adj-RIB-Out を外部 collector に流す。複数 station への並走 export を SONiC schema が `BGP_BMP` で表現する。
 - **Dynamic Neighbor / Listen Range**: 大規模 ToR で peer 数を事前列挙したくない場合に有効。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) で `BGP_PEER_RANGE` を組み立てる流れがある。
@@ -130,4 +130,4 @@ EVPN/[VXLAN](../../reference/glossary.md#term-vxlan) では [FRR](../../referenc
 - [12 Multi-ASIC / VOQ: chassis 内 iBGP full mesh](../12-multi-asic-voq/index.md)
 - [17 SRv6 / MPLS: BGP SR signaling](../17-srv6-mpls/index.md)
 
-<!-- glossary-links-injected: 247f1deb5a6e -->
+<!-- glossary-links-injected: 7b27b638c4f3 -->

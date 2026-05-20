@@ -69,7 +69,7 @@ Wake-on-LAN は L2 frame または UDP payload で Magic Packet を送る機能�
 |---|---|---|
 | gNMI / REST | OpenConfig がどの L2 テーブルに写るか | 管理 API |
 | Distributed VOQ LAG | 通常 LAG との違いと制約 | VOQ / Chassis |
-| Dual-ToR | mux state machine / linkmgrd / MuxOrch による ToR 間切替 | Dual-ToR |
+| Dual-ToR | mux state machine / [linkmgrd](../../reference/glossary.md#term-linkmgrd) / MuxOrch による ToR 間切替 | Dual-ToR |
 | WoL | L2 到達性と Magic Packet の概要 | 運用 / 管理 |
 
 ## 関連ページ
@@ -142,4 +142,4 @@ Wake-on-LAN は L2 frame または UDP payload で Magic Packet を送る機能�
 - [10 gNMI / OpenConfig: 変換層の責務](../10-gnmi-openconfig/index.md)
 - [12 Multi-ASIC / VOQ: chassis 内 LAG とリモート LAG](../12-multi-asic-voq/index.md)
 
-<!-- glossary-links-injected: 45f78fb52e76 -->
+<!-- glossary-links-injected: 68cc248286f2 -->

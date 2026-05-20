@@ -89,9 +89,7 @@ related:
 | ページ | 状態 | verification |
 |---|---|---|
 | concept | ✅ 完成 (153 行) | meta |
-| architecture | ✅ 完成 | meta |
 | setup | ✅ 完成 (121 行) | meta |
-| configuration | ✅ 完成 | meta |
 | operations | ✅ 完成 (181 行) | meta |
 | internals | ✅ 完成 (137 行) | meta |
 | advanced | ✅ 完成 (104 行) | meta |

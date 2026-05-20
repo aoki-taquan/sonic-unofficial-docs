@@ -82,9 +82,7 @@ related:
 | ページ | 状態 | verification |
 |---|---|---|
 | concept | ✅ 完成 (180 行) | meta |
-| architecture | ✅ 完成 | meta |
 | setup | ✅ 完成 (264 行) | meta |
-| ecmp | ✅ 完成 | meta |
 | operations | ✅ 完成 (188 行) | meta |
 | internals | ✅ 完成 (128 行) | meta |
 | advanced | ✅ 完成 (100 行) | meta |
