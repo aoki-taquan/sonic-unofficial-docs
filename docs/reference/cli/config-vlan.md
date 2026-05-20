@@ -213,8 +213,8 @@ sudo config vlan member add 100 Ethernet0
 # untagged member として追加（-u）
 sudo config vlan member add -u 100 Ethernet4
 
-# DHCP relay を VLAN 100 に追加
-sudo config vlan dhcp_relay add 100 10.0.0.1
+# DHCP relay を VLAN 100 に追加（`config vlan` 直下ではなく専用コマンド）
+sudo config dhcp_relay ipv4 add 100 10.0.0.1
 
 # proxy-arp を有効化
 sudo config vlan proxy_arp 100 enabled

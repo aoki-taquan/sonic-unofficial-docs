@@ -46,7 +46,7 @@ related:
 1. `HealthCheckerManager` を生成し、`config.config_file_exists()` で構成ファイル（system_health_monitoring_config.json）の有無を確認。なければ exit 1。
 2. `chassis = sonic_platform.chassis.Chassis()` で chassis オブジェクトを取得。
 3. `manager.check(chassis)` を呼び、サービス／ハードウェア／FS のチェック結果 dict (`stat`) を取得。
-4. `chassis.initizalize_system_led()` を呼んで status LED の現在色を取得。
+4. `chassis.get_status_led()` で status LED の現在色を取得。
 5. 整形ロジック (`display_system_health_summary`) で `Services` / `Hardware` を OK / Not OK 判定して表示。`Services` の Not OK 内訳は「Not Running（プロセス未起動）」と「Not Accessible（FS アクセス不可）」に分けて表示する[^2]。
 
 <!-- evidence:
@@ -160,15 +160,20 @@ excerpt: |
 
 ```mermaid
 flowchart LR
-  CLI["show system-health"]
-  SH["system-health daemon<br/>(HealthCheckerManager)"]
-  ST[("STATE_DB<br/>SYSTEM_HEALTH_INFO / DPU_STATE")]
-  CLI --> SH
-  ST --> CLI
+  CLI["show system-health<br/>(summary / monitor-list / detail)"]
+  HCM["HealthCheckerManager<br/>(CLI プロセス内で生成)"]
+  PAPI["platform API<br/>chassis.get_status_led()"]
+  CFG["system_health_monitoring_config.json"]
+  DPU_CLI["show system-health dpu"]
+  CDB[("CHASSIS_STATE_DB<br/>DPU_STATE")]
+  CLI --> HCM
+  HCM --> PAPI
+  HCM --> CFG
+  CDB --> DPU_CLI
 ```
 
 !!! note "凡例"
-    show 系 (CLI ← STATE_DB ← system-health daemon) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+    `show system-health` (summary/monitor-list/detail) は CLI プロセス内で `HealthCheckerManager.check(chassis)` を直接実行する (STATE_DB 経由ではない)。`dpu` サブコマンドのみ `CHASSIS_STATE_DB.DPU_STATE` を読む。設計意図としては `system-health daemon` が `STATE_DB.SYSTEM_HEALTH_INFO` に結果を書くフローも存在するが、CLI 側ではこれを読まない。
 <!-- /cli-mermaid -->
 
 <!-- topics-back-ref -->
