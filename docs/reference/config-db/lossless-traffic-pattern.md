@@ -194,7 +194,7 @@ show buffer profile
 - なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
-- なし
+- あり: 静的→動的バッファ移行時（Mellanox 系）に `LOSSLESS_TRAFFIC_PATTERN|AZURE` エントリを `mtu=1024, small_packet_percentage=100` でハードコード挿入 (`db_migrator.py:414`)
 
 ### ビルド時デフォルト (init_cfg / j2 テンプレート)
 - `buffers_config.j2` からデフォルト MTU / small_packet_percentage が生成される場合あり

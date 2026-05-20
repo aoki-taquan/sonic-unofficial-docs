@@ -10,19 +10,10 @@ sources:
   path: doc/pmon/pmon-sensormon.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - SNMP
-  - SNMP_AGENT_ADDRESS_CONFIG
-  - SNMP_COMMUNITY
-  - SNMP_USER
-  - SNMP_TRAP_CONFIG
-  - MGMT_VRF_CONFIG
+  config_db: []
   cli:
   - show platform
-  - config snmp
-  - show snmpagentaddress
-  yang:
-  - sonic-snmp
+  yang: []
 ---
 
 !!! info "裏取りステータス: code-verified"

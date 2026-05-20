@@ -160,7 +160,7 @@ bgp.service: Scheduled restart job, restart counter is at 5.
 | 設定再適用 | `config reload -y` |
 | 差分適用 | `config apply-patch <patch.json>` |
 | target で置換 | `config replace <target.json>` |
-| 工場初期化 | `sonic-installer set-default <image>` ／ `config reset-factory` |
+| 工場初期化 | `sonic-installer set-default <image>` ／ `sudo reset-factory` |
 
 ## 関連 CONFIG_DB / STATE_DB
 
@@ -204,7 +204,7 @@ Mon 2026-05-11 12:08:00 UTC   4min     n/a   n/a     dhcp_relay-delayed.timer  d
 2. **設定差分の慎重な適用** — `config apply-patch` で patch を適用する前に `config checkpoint <name>` を取り、失敗時に `config rollback <name>` で戻せる状態を作ります。GCU は YANG 検証を通すため、`config replace` よりも安全側です。
 3. **kube 管理への移行** — `SetOwner` を `kube` に切り替えた直後は `CurrentOwner` が `local` のまま残るのが正常で、kube join 後に一致します。長時間一致しない場合は kube image pull と `acms` connectivity を疑います。
 4. **緊急時の reload と reboot 判断** — service 個別 restart で復旧する見込みがあるなら `systemctl restart <feature>` で局所化します。CONFIG_DB の不整合が広範な場合のみ `config reload -y`、kernel / image 自体の問題なら `fast-reboot` または `reboot` を選びます。
-5. **factory reset の決断** — `config reload` でも復旧しない設定 corruption、または機材払い出し前のサニタイズ用途でのみ `config reset-factory` を選びます。本番投入機ではログとユーザを残すモードを選び、データ消失を最小化します。
+5. **factory reset の決断** — `config reload` でも復旧しない設定 corruption、または機材払い出し前のサニタイズ用途でのみ `reset-factory` を選びます。本番投入機ではログとユーザを残すモードを選び、データ消失を最小化します。
 
 ## 関連ページ
 

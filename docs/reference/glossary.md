@@ -1598,7 +1598,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [FDB テーブル](config-db/fdb.md) (147)
 - [VXLAN_FDB_TABLE テーブル](config-db/vxlan-fdb.md) (110)
 - [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (54)
-- [内部実装](../topics/06-l2-vlan-lag/internals.md) (37)
+- [内部実装](../topics/06-l2-vlan-lag/internals.md) (38)
 
 ### [fdbsyncd](#term-fdbsyncd)
 
@@ -1696,7 +1696,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (248)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (250)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (42)
 - [VRRP テーブル](config-db/vrrp.md) (41)
@@ -1739,7 +1739,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VLAN_SUB_INTERFACE テーブル](config-db/vlan-sub-interface.md) (164)
 - [VLAN_INTERFACE テーブル](config-db/vlan-interface.md) (146)
 - [PORTCHANNEL_INTERFACE テーブル](config-db/portchannel-interface.md) (138)
-- [INTERFACE テーブル](config-db/interface.md) (100)
+- [INTERFACE テーブル](config-db/interface.md) (101)
 - [MCLAG_INTERFACE テーブル](config-db/mclag-interface.md) (88)
 
 ### [intfmgrd](#term-intfmgrd)
@@ -1854,7 +1854,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [MAC](#term-mac)
 
-- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (202)
+- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (203)
 - [PORT (macsec フィールド)](config-db/macsec-port.md) (186)
 - [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (83)
 - [SAG テーブル](config-db/sag.md) (76)
@@ -1863,7 +1863,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [MACsec](#term-macsec)
 
 - [PORT (macsec フィールド)](config-db/macsec-port.md) (126)
-- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (118)
+- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (119)
 - [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (35)
 - [Gearbox PHY ごとの MACsec backend 決定（macsec_supported）](../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md) (27)
 - [MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）](../switching/macsec-sonic-high-level-design-document.md) (25)
@@ -1874,7 +1874,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [概念](../topics/12-multi-asic-voq/concept.md) (19)
 - [Multi-ASIC / VOQ chassis 関連](../categories/multi-asic.md) (16)
 - [設定](../topics/20-swss-sai-redis/setup.md) (10)
-- [Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md) (8)
+- [Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md) (9)
 
 ### [muxorch](#term-muxorch)
 
@@ -1996,7 +1996,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [設定](../topics/18-p4-pins/setup.md) (17)
 - [発展トピック](../topics/18-p4-pins/advanced.md) (16)
 - [概念](../topics/18-p4-pins/concept.md) (15)
-- [P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md) (8)
+- [P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md) (9)
 
 ### [ProducerStateTable](#term-producerstatetable)
 
@@ -2034,7 +2034,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)](config-db/appl-mirror.md) (84)
 - [P4RT テーブル (PINS p4rt 設定)](config-db/pin-config.md) (66)
-- [P4RT アプリケーション（PINS の gRPC サービス、port 9559）](../management/p4rt-application-hld.md) (53)
+- [P4RT アプリケーション（PINS の gRPC サービス、port 9559）](../management/p4rt-application-hld.md) (54)
 - [IP マルチキャストルート (P4RT)](config-db/ip-mcast-route.md) (40)
 - [TUNNEL_ENCAP_TABLE (P4RT FIXED_TUNNEL_TABLE)](config-db/tunnel-encap-table.md) (33)
 

@@ -503,14 +503,18 @@ SAI API が呼び出されるのは、この routing type を参照する `DashV
 
 ## 関連リファレンス
 
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): `DASH_ROUTE_TABLE`（routing_type を leafref 参照）
-- CONFIG_DB: `DASH_VNET_MAPPING_TABLE`（routing_type フィールドで本テーブルを参照）
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DASH_ROUTE_TABLE`](dash-routing-table.md)（routing_type を leafref 参照）
+- CONFIG_DB: [`DASH_VNET_MAPPING_TABLE`](dash-vnet.md)（routing_type フィールドで本テーブルを参照）
 
 <!-- ref-triangle:end -->
 
 ## 引用元
 
 [^1]: `sonic-swss/orchagent/dash/dashorch.cpp` — `doTaskRoutingTypeTable()` (L473-537), `addRoutingTypeEntry()` (L441-455), `getRouteTypeActions()` (L82-94). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashorch.cpp>
+
+[^2]: `sonic-swss/orchagent/dash/dashvnetorch.cpp` — `addOutboundCaToPa()` (L300-410), encap_type/vni 変換 (L322-344). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashvnetorch.cpp>
+
+[^3]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dash.yang` — `DASH_ROUTING_TYPE` container (L356-398). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-dash.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント
