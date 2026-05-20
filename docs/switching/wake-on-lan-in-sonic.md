@@ -256,13 +256,11 @@ wol Vlan1000 00:11:22:33:44:55 -u -a 192.168.255.255 -t 7
 
 ### コマンド例
 
-Wake-on-LAN の magic packet 送信と CONFIG_DB を確認する。
+Wake-on-LAN の magic packet 送信を確認する（本機能は send-only で CONFIG_DB エントリを持たない）。
 
 ```bash
-show wol
-config wol Ethernet0 00:11:22:33:44:55
-redis-cli -n 4 keys 'WAKE_ON_LAN|*'
-tcpdump -i Ethernet0 ether proto 0x0842
+wol Ethernet10 00:11:22:33:44:55
+tcpdump -i Ethernet10 ether proto 0x0842
 ```
 
 ## 制限事項

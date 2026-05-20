@@ -13,9 +13,6 @@ sources:
 related:
   config_db:
   - VRF
-  - MGMT_VRF_CONFIG
-  - VXLAN_TUNNEL_MAP
-  - SYSLOG_SERVER
   cli:
   - config vrf
   yang:

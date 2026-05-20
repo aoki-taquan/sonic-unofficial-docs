@@ -22,7 +22,7 @@ CMIS（Common Management Interface Specification）対応光モジュールを�
 
 ## 原因
 
-`sonic-platform-common` PR #457 において、アプリケーション広告リスト（Application Advertisement List）データへのアクセス方法が変更された。この変更により、`MediaInterfaceIDApp` が `Undefined` または未定義の場合に、`xcvrd` がその値を処理しようとして例外を発生させクラッシュする。
+CMIS のアプリケーション広告リスト（Application Advertisement List）データへのアクセスにおいて、`MediaInterfaceIDApp` が `Undefined` または未定義のエントリを含むモジュールでも辞書を直接参照していたため、`xcvrd` がその値を処理しようとして例外を発生させクラッシュする（詳細は [Issue #489](https://github.com/sonic-net/sonic-platform-common/issues/489)）。
 
 具体的には、アプリケーション広告エントリの `MediaInterfaceIDApp` フィールドが存在しないモジュールでは、辞書アクセスが `KeyError` を引き起こす。
 
