@@ -93,7 +93,6 @@ related:
 
 - [SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動）](../../system/sonic-feature-quality-definition.md)
 - [Alpine 仮想 SONiC（ALViS / KNE デプロイ）](../../architecture/alpine-high-level-design.md)
-- [GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）](../../architecture/sonic-on-gns3-vm.md)
 - [SONiC Debian アップグレード方針（base / container / 廃止 cadence）](../../system/sonic-debian-upgrade-cadence.md)
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../../system/sonic-libsairedis-api-idempotence-support.md)
 - [Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB notification）](../../architecture/error-handling-framework-in-sonic-internals.md)
