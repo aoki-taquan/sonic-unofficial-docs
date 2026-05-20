@@ -268,7 +268,7 @@ evidence: `rsyslog-container.conf.j2:63` / `meta/_intermediate/cdb-flow/syslog-c
 | 経路 | 操作 | 対象 DB / テーブル | トリガ条件 | evidence |
 |------|------|--------------------|-----------|---------|
 | — | なし | CONFIG_DB | — | `containercfgd.py` に `set`/`hset`/`publish` 呼び出しなし |
-| — | なし | APPL_DB / STATE_DB / その他 | — | DB 接続自体が存在しない |
+| — | なし | [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / その他 | — | DB 接続自体が存在しない |
 
 ### ファイルシステム・プロセスへの副次作用
 
@@ -297,7 +297,7 @@ evidence: `rsyslog-container.conf.j2:63` / `meta/_intermediate/cdb-flow/syslog-c
 
 `SYSLOG_CONFIG_FEATURE` テーブルは **`containercfgd` (`SyslogHandler`) が `ConfigDBConnector.subscribe()` + `listen()` で常駐購読** する。`hostcfgd` は本テーブルを購読しない (`sonic-host-services/` 全体で `SYSLOG_CONFIG_FEATURE` の grep 0 hit)。
 
-| 消費者 | 起動方式 | DB アクセス API | Redis primitive |
+| 消費者 | 起動方式 | DB アクセス API | [Redis](../../reference/glossary.md#term-redis) primitive |
 |--------|---------|----------------|-----------------|
 | `containercfgd` (`SyslogHandler`) | 常駐 daemon（各コンテナ内で `supervisord` 経由起動） | `ConfigDBConnector.subscribe()` + `listen()` | `psubscribe __keyevent@<dbId>__:*` → `HGETALL` |
 | `hostcfgd` | 常駐 daemon | — | **購読しない** |
@@ -338,8 +338,8 @@ containercfgd 起動
 ### 重要な特性
 
 - **常駐 daemon による即時反映**: CLI 書き込み後、コンテナ内 `containercfgd` が keyspace 通知を受信して数百ミリ秒以内に rsyslog を再設定する（ポーリング不要）。
-- **per-container 分離**: 各コンテナが独立した `containercfgd` インスタンスを保持し、`key != service_name` で他コンテナ向けエントリを無視。同一 Redis の変更通知を全コンテナが受信しても、自コンテナ分のみ処理する。
-- **APPL_DB / STATE_DB 非使用**: CONFIG_DB のみ。pub/sub チャンネル (`PUBLISH`/`SUBSCRIBE`) や `NotificationProducer`/`NotificationConsumer` は不使用。
+- **per-container 分離**: 各コンテナが独立した `containercfgd` インスタンスを保持し、`key != service_name` で他コンテナ向けエントリを無視。同一 [Redis](../../reference/glossary.md#term-redis) の変更通知を全コンテナが受信しても、自コンテナ分のみ処理する。
+- **[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) 非使用**: CONFIG_DB のみ。pub/sub チャンネル (`PUBLISH`/`SUBSCRIBE`) や `NotificationProducer`/`NotificationConsumer` は不使用。
 - **冪等性の欠如**: `current_interval` / `current_burst` キャッシュが成功時のみ更新されるため、失敗後の再適用には意図的に値を変えてから戻す操作が必要（Phase D 参照）。
 
 <!-- evidence: sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py L44-61,112-135 -->
@@ -348,15 +348,15 @@ containercfgd 起動
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`SYSLOG_CONFIG_FEATURE` は `containercfgd` が CONFIG_DB のみを参照し SAI を経由しないため、ASIC ベンダー差異は存在しない。multi-asic 環境では CLI と `containercfgd` の連携に固有の挙動がある。
+`SYSLOG_CONFIG_FEATURE` は `containercfgd` が CONFIG_DB のみを参照し [SAI](../../reference/glossary.md#term-sai) を経由しないため、[ASIC](../../reference/glossary.md#term-asic) ベンダー差異は存在しない。multi-asic 環境では CLI と `containercfgd` の連携に固有の挙動がある。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco) | 差異なし | SAI 非経由。`containercfgd.py` を `platform\|vendor\|broadcom` でスキャンして 0 ヒット |
+| [ASIC](../../reference/glossary.md#term-asic) ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco) | 差異なし | [SAI](../../reference/glossary.md#term-sai) 非経由。`containercfgd.py` を `platform\|vendor\|broadcom` でスキャンして 0 ヒット |
 | multi-asic (`is_multi_asic() == True`) | CLI が namespace 分散書込み、`containercfgd` が `NAMESPACE_ID` で service_name を正規化 | `containercfgd.py:190-195`、`syslog_util/common.py:92-104`、`config/syslog.py:469-501` |
-| VOQ chassis (supervisor + line card) | 各 host で独立動作 | `containercfgd.py` に `chassisdb` / `REDIS_CHASSIS_SERVER` 参照なし |
-| namespace (asic0..asicN) | 各 asic namespace の `containercfgd` インスタンスが独立して CONFIG_DB を購読 | `ConfigDBConnector` は host ローカル Redis のみ接続 |
-| SmartSwitch DPU | 差異なし | `containercfgd.py` に `DPU` / `smartswitch` 分岐なし |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line card) | 各 host で独立動作 | `containercfgd.py` に `chassisdb` / `REDIS_CHASSIS_SERVER` 参照なし |
+| namespace (asic0..asicN) | 各 asic namespace の `containercfgd` インスタンスが独立して CONFIG_DB を購読 | `ConfigDBConnector` は host ローカル [Redis](../../reference/glossary.md#term-redis) のみ接続 |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | 差異なし | `containercfgd.py` に `DPU` / `smartswitch` 分岐なし |
 
 ### multi-asic 環境の挙動詳細
 
@@ -429,7 +429,6 @@ docker exec swss cat /etc/rsyslog.d/*.conf
 ```
 <!-- /ops-hint -->
 
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -471,7 +470,7 @@ docker exec swss cat /etc/rsyslog.d/*.conf
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。syslog はコントロールプレーンのロギング機能。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。syslog はコントロールプレーンのロギング機能。
 
 ### 段階 4: タイミング + 副作用
 
@@ -485,7 +484,7 @@ SYSLOG_CONFIG_FEATURE テーブルへの書き込みが発生するコード経�
 
 ### CLI
 
-  - `config syslog rate-limit-feature ...` — `config/syslog.py` が SYSLOG_CONFIG_FEATURE を書き込む (sonic-utilities/config/syslog.py)
+  - `config syslog rate-limit-feature ...` — `config/syslog.py` が SYSLOG_CONFIG_FEATURE を書き込む ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/syslog.py)
 
 ### minigraph / sonic-cfggen
 
@@ -493,7 +492,7 @@ minigraph.py に SYSLOG_CONFIG_FEATURE 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -517,7 +516,7 @@ db_migrator.py での SYSLOG_CONFIG_FEATURE マイグレーションなし
 
 `SYSLOG_CONFIG_FEATURE` は per-container の syslog rate-limit 設定テーブルで、
 `containercfgd` (`sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py`) が購読する。
-APPL_DB / SAI は経由しないため、書込み順依存はコントロールプレーン内の CONFIG_DB 購読チェーンに限定される。
+[APPL_DB](../../reference/glossary.md#term-appl_db) / SAI は経由しないため、書込み順依存はコントロールプレーン内の CONFIG_DB 購読チェーンに限定される。
 
 ### 検出された順序依存
 
@@ -526,7 +525,7 @@ APPL_DB / SAI は経由しないため、書込み順依存はコントロール
 | 1 | `FEATURE\|<service>` → `SYSLOG_CONFIG_FEATURE\|<service>` | YANG leafref 強制先行 | **強**（書込み拒否） | `sonic-syslog.yang` `leaf service` leafref |
 | 2 | containercfgd 起動 → `init_data_handler` で初期スナップショット適用 | 起動前存在が推奨 | **弱**（後書きでも `handle_config` で反映） | `containercfgd.py` L52-61 |
 | 3 | 削除時: `SYSLOG_CONFIG_FEATURE\|<service>` DEL → `FEATURE\|<service>` DEL | 先行推奨 | **弱**（強制なし） | YANG leafref は DEL 後に解消 |
-| 4 | `SYSLOG_CONFIG` と `SYSLOG_CONFIG_FEATURE` は独立購読チェーン | 直接依存なし | N/A | hostcfgd vs containercfgd |
+| 4 | `SYSLOG_CONFIG` と `SYSLOG_CONFIG_FEATURE` は独立購読チェーン | 直接依存なし | N/A | [hostcfgd](../../reference/glossary.md#term-hostcfgd) vs containercfgd |
 
 ### 主要な制約詳細
 
@@ -551,4 +550,4 @@ CONFIG_DB に接続し、`listen(init_data_handler=self.init_data_handler)` を�
 
 <!-- /ordering -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 3d010c83e5f1 -->

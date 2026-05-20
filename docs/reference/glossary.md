@@ -1645,7 +1645,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (88)
 - [ROUTE_TABLE handler 分岐 (fpmsyncd / RouteSync)](config-db/route-handler.md) (78)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (57)
-- [RouteOrch event / notification (ResponsePublisher + NextHopObserver)](config-db/route-orch-event.md) (43)
+- [RouteOrch event / notification (ResponsePublisher + NextHopObserver)](config-db/route-orch-event.md) (42)
 - [STATE_DB BGP 関連テーブル](config-db/state-bgp.md) (42)
 
 ### [FRR](#term-frr)
@@ -2089,7 +2089,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ROUTE_TABLE](#term-route_table)
 
 - [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (73)
-- [ROUTE_TABLE (STATE_DB / APPL_STATE_DB)](config-db/route-state.md) (66)
+- [ROUTE_TABLE (STATE_DB / APPL_STATE_DB)](config-db/route-state.md) (64)
 - [RouteOrch event / notification (ResponsePublisher + NextHopObserver)](config-db/route-orch-event.md) (56)
 - [ROUTE_TABLE handler 分岐 (fpmsyncd / RouteSync)](config-db/route-handler.md) (53)
 - [DASH_ROUTE_* テーブル](config-db/dash-routing-table.md) (50)
@@ -2112,11 +2112,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SNMP](#term-snmp)
 
-- [SNMP テーブル](config-db/snmp.md) (152)
+- [SNMP テーブル](config-db/snmp.md) (153)
 - [SNMP_AGENT_ADDRESS_CONFIG / SNMP_USER テーブル (デフォルト詳細)](config-db/snmp-agent.md) (139)
 - [SNMP_COMMUNITY テーブル](config-db/community-list.md) (86)
-- [SNMP_AGENT_ADDRESS_CONFIG テーブル](config-db/snmp-agent-address-config.md) (73)
 - [sonic-snmp YANG](yang/sonic-snmp.md) (73)
+- [SNMP_AGENT_ADDRESS_CONFIG テーブル](config-db/snmp-agent-address-config.md) (72)
 
 ### [SRv6](#term-srv6)
 
@@ -2208,7 +2208,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [Scheduler](#term-scheduler)
 
-- [SCHEDULER テーブル](config-db/scheduler.md) (36)
+- [SCHEDULER テーブル](config-db/scheduler.md) (37)
 - [SCHEDULER — QosOrch SchedulerOrch コード由来デフォルト詳解](config-db/scheduler-orch.md) (25)
 - [QUEUE テーブル](config-db/queue.md) (16)
 - [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](../acl-qos/sonic-qos-scheduler-and-shaping.md) (5)
@@ -2249,7 +2249,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [STATE_DB](#term-state_db)
 
 - [BFD_SESSION_TABLE (STATE_DB)](config-db/bfd-state.md) (110)
-- [ROUTE_TABLE (STATE_DB / APPL_STATE_DB)](config-db/route-state.md) (103)
+- [ROUTE_TABLE (STATE_DB / APPL_STATE_DB)](config-db/route-state.md) (101)
 - [FEATURE (STATE_DB)](config-db/feature-state.md) (91)
 - [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (86)
 - [サイトマップ](../_meta/sitemap.md) (78)
@@ -2274,7 +2274,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [SYSLOG_CONFIG テーブル](config-db/syslog-config.md) (20)
 - [SYSLOG_SERVER テーブル](config-db/syslog-server.md) (20)
-- [SYSLOG_CONFIG_FEATURE テーブル](config-db/syslog-config-feature.md) (12)
+- [SYSLOG_CONFIG_FEATURE テーブル](config-db/syslog-config-feature.md) (19)
 - [sonic-syslog YANG](yang/sonic-syslog.md) (5)
 - [サイトマップ](../_meta/sitemap.md) (3)
 
