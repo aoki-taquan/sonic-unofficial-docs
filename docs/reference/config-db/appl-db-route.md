@@ -68,7 +68,7 @@ ROUTE_TABLE|Vrf<name>:<prefix>
 | 書き込み元 | 経路種別 |
 |-----------|---------|
 | `fpmsyncd` (RouteSync) | unicast / blackhole / [MPLS](../../reference/glossary.md#term-mpls) / EVPN IP Prefix / SRv6 VPN |
-| `bgpcfgd` StaticRouteMgr | `STATIC_ROUTE` [CONFIG_DB](../../reference/glossary.md#term-config_db) から変換した静的経路（VRF-aware） |
+| `bgpcfgd` StaticRouteMgr または `staticrouteorch` | `STATIC_ROUTE` [CONFIG_DB](../../reference/glossary.md#term-config_db) から変換した静的経路（VRF-aware）。詳細は `static-route.md` を参照 |
 
 ## 購読者
 
