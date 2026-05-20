@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-sFlow は ASIC が一定 sampling-rate でパケットをサンプリングし、収集サーバ（collector）に UDP でフォワードする統計プロトコル。SONiC の sFlow は次の 3 ピースで構成される[^1]:
+sFlow は [ASIC](../reference/glossary.md#term-asic) が一定 sampling-rate でパケットをサンプリングし、収集サーバ（collector）に UDP でフォワードする統計プロトコル。[SONiC](../reference/glossary.md#term-sonic) の sFlow は次の 3 ピースで構成される[^1]:
 
 - **`hsflowd`**: Host sFlow daemon（OSS）。実際に collector へ datagram を送る user-space プロセス
 - **`sflowmgrd`**: SONiC 側の管理 daemon。`CONFIG_DB` の `SFLOW` / `SFLOW_SESSION` / `SFLOW_COLLECTOR` を読んで `hsflowd` の設定ファイル / `STATE_DB` を更新
@@ -267,4 +267,4 @@ docker exec sflow hsflowd -d -F 2>&1 | head -40
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 717245b7d27e -->
+<!-- glossary-links-injected: ec18b66e3507 -->

@@ -37,7 +37,7 @@ related:
 スコープ:
 
 - 物理 port または PortChannel 上の sub-port を **VRF RIF** として使う（一般的な L3 用途）
-- L3 forwarding / [BGP](../reference/glossary.md#term-bgp) / VRRP / static / [ACL](../reference/glossary.md#term-acl) redirect / counter 等の通常 L3 機能をサポート
+- L3 forwarding / [BGP](../reference/glossary.md#term-bgp) / [VRRP](../reference/glossary.md#term-vrrp) / static / [ACL](../reference/glossary.md#term-acl) redirect / counter 等の通常 L3 機能をサポート
 
 スコープ外:
 
@@ -219,4 +219,4 @@ ip -d link show Ethernet0.10
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 10394a5e95a8 -->
+<!-- glossary-links-injected: 183909f005dc -->

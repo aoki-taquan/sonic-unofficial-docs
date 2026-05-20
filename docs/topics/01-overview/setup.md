@@ -30,7 +30,7 @@ related:
 
 # 設定
 
-全体像章での「設定」は個別機能の手順ではなく、SONiC で設定を入れるときに最低限押さえる **入口の選び方と [CONFIG_DB](../../reference/glossary.md#term-config_db) の触り方** を整理する。個別機能の設定は各章 (`02-bgp` 以降) の `setup.md` を読む。
+全体像章での「設定」は個別機能の手順ではなく、[SONiC](../../reference/glossary.md#term-sonic) で設定を入れるときに最低限押さえる **入口の選び方と [CONFIG_DB](../../reference/glossary.md#term-config_db) の触り方** を整理する。個別機能の設定は各章 (`02-bgp` 以降) の `setup.md` を読む。
 
 ## 設定入口の地図
 
@@ -147,4 +147,4 @@ gNMI set / get の例は [gNMI / OpenConfig 章](../10-gnmi-openconfig/index.md)
 - 運用観点 (rollback / 監視 / failure) → [運用入口](operations.md)。
 - 個別機能の設定 → 各章 (`02-bgp/setup.md` ほか)。
 
-<!-- glossary-links-injected: 09e201c74bd0 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

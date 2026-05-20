@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-`gnoi.system.System` のうち SONiC が初期サポートする RPC は **Reboot / RebootStatus / CancelReboot** の 3 つ[^1]。OpenConfig の [system.proto](https://github.com/openconfig/gnoi/blob/main/system/system.proto) 定義をそのまま利用する。
+`gnoi.system.System` のうち [SONiC](../reference/glossary.md#term-sonic) が初期サポートする RPC は **Reboot / RebootStatus / CancelReboot** の 3 つ[^1]。OpenConfig の [system.proto](https://github.com/openconfig/gnoi/blob/main/system/system.proto) 定義をそのまま利用する。
 
 reboot method は仕様上以下の 6 種類[^1]（COLD のみ全 target で必須）:
 
@@ -279,4 +279,4 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

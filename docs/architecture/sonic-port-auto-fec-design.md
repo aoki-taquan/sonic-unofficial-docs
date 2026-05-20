@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-ポートの **autoneg と FEC モードの組み合わせの挙動を決定論的にする** ための設計[^1]。従来は autoneg=on のとき FEC（none / RS / FC）を user 設定したらどう動くか vendor [SAI](../reference/glossary.md#term-sai) 任せだった。SAI に新属性 `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` を入れ、**FEC mode = `auto`** という新値を SONiC に追加することで、user 意図を明示する。
+ポートの **autoneg と FEC モードの組み合わせの挙動を決定論的にする** ための設計[^1]。従来は autoneg=on のとき FEC（none / RS / FC）を user 設定したらどう動くか vendor [SAI](../reference/glossary.md#term-sai) 任せだった。SAI に新属性 `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` を入れ、**FEC mode = `auto`** という新値を [SONiC](../reference/glossary.md#term-sonic) に追加することで、user 意図を明示する。
 
 | FEC | autoneg | 期待 |
 |-----|---------|------|
@@ -146,7 +146,7 @@ PORT|<if>:
 
 ## トラブルシューティング
 
-- `auto` にしても変わらない → `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` 対応 SAI か portsorch ログで確認
+- `auto` にしても変わらない → `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` 対応 SAI か [portsorch](../reference/glossary.md#term-portsorch) ログで確認
 - show 表示と実態が違う → `OPER_PORT_FEC_MODE` 未対応の可能性
 
 ### コマンド例: Auto FEC ネゴ確認
@@ -196,4 +196,4 @@ show interfaces transceiver eeprom Ethernet0 | grep -i fec
 - [YANG](../reference/glossary.md#term-yang): [sonic-port](../reference/yang/sonic-port.md)
 - 関連 [HLD](../reference/glossary.md#term-hld): [CMIS module management](../management/enhancement-of-cmis-module-management.md) / [pcieinfo design](../platform/pcieinfo-design.md)
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 4e8b9837844c -->

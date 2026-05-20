@@ -2,7 +2,7 @@
 title: 変更履歴
 description: "変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。"
 verification: meta
-last_verified: 2026-05-13
+last_verified: 2026-05-20
 tags:
   - changelog
   - meta
@@ -23,504 +23,504 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
-- 2026-05-13 #1201 feat(cdb-v2): add value-behavior matrix to CONFIG_DB batch 6 (12 pages)
-- 2026-05-13 #1200 feat(cdb): value-behavior matrices for cdb batch-1 (12 pages)
-- 2026-05-13 #1199 feat: sonic-buildimage batch 1 (255件) issue analysis
-- 2026-05-13 #1198 chore(q59-a): sonic-buildimage b0 issue triage → 16ページ既知の問題追記
-- 2026-05-13 #1197 chore: sonic-buildimage batch 3 AI judgments (255 issues)
-- 2026-05-13 #1196 chore(issues): AI decision log for sonic-buildimage batch 2 (255 issues)
-- 2026-05-13 #1195 feat(config-db): add exception/behavior sections to 12 CDB pages (batch 0)
-- 2026-05-13 #1192 docs(config-db): add 例外条件・特殊挙動 section to CDB batch-2 (11 pages)
-- 2026-05-13 #1190 chore(q58-b): add cdb-exceptions sections for CONFIG_DB batch 1 (12 pages)
-- 2026-05-13 #1194 feat(cdb-batch-7): add exception conditions for 13 CONFIG_DB pages
-- 2026-05-13 #1193 chore(q57-a): apply sonic-utilities issue findings to docs (26 issues)
-- 2026-05-13 #1188 feat(cdb-batch-5): add exception conditions for 12 CONFIG_DB pages
-- 2026-05-13 #1191 feat(config-db): add cdb-exceptions sections to batch 4 (13 pages)
-- 2026-05-13 #1189 docs(cdb-batch-6): add consumer exception-condition sections for 12 CONFIG_DB pages
-- 2026-05-13 #1187 feat(config-db): add cdb-exceptions sections for batch 8 (12 pages)
-- 2026-05-13 #1186 docs: apply sonic-buildimage open issues triage (q57-a)
-- 2026-05-13 #1185 docs(config-db): CDB batch 3 — exception conditions (12 pages)
-- 2026-05-13 #1184 docs(config-db): add exception-condition sections to cdb_batch_9 (12 pages)
-- 2026-05-13 #1183 chore(q57-a): apply sonic-swss issue findings to 10 docs pages
-- 2026-05-13 #1180 chore(q57-a): apply sonic-net/SONiC issue insights to 18 doc pages (24 issues)
-- 2026-05-13 #1182 chore(q57-a): apply sonic-sairedis issues to swss-sai-redis topic docs
-- 2026-05-13 #1181 chore(q57-a): 小規模6リポ26件 issue 判定・10ページ新規追加
-- 2026-05-13 #1179 chore(q56-bd): formalize maintenance phase transition
-- 2026-05-13 #1178 chore: add quality-audit round 52 (stratified, A+ / maintenance ready)
-- 2026-05-13 #1177 chore(q56-bd): regen generators + roadmap-v2 iteration BA-BD
-- 2026-05-13 #1176 Add quality audit round 51 (weighted random, guide §6 initial trial)
-- 2026-05-13 #1175 chore: resolve all partial-boundary phase-table violations (15 -> 0)
-- 2026-05-13 #1174 chore(q55-bc): add MKDOCS_SOCIAL_ENABLED toggle for local --strict builds
-- 2026-05-13 #1170 docs: add getting-started essentials curation (top 10 pages for new readers)
-- 2026-05-13 #1173 chore(q54-bb): add RSS feed via mkdocs-rss-plugin
-- 2026-05-13 #1172 chore: refresh sources[].ref SHA for 19 pages (q54-bb)
-- 2026-05-13 #1171 chore: phase-tables + regen drift after q53-ba discrepancy-index polish
-- 2026-05-13 #1169 chore: regen coverage / sitemap / snapshot drift after #1168
-- 2026-05-13 #1168 chore: area landing cleanup + README polish + social plugin
-- 2026-05-13 #1167 chore: polish discrepancy-index with subtype sections and usage guide (q53-ba)
-- 2026-05-13 #1165 chore(lint): code-block language linter + auto-tag 624 fences
-- 2026-05-13 #1166 chore: update meta/prompts to reflect quality-iteration ops
-- 2026-05-13 #1164 chore: polish 404 page and add print/reading CSS (q53-ba)
-- 2026-05-13 #1163 chore: add built HTML quality check (q53-ba)
-- 2026-05-13 #1162 chore: eliminate all broken links and orphan footnotes
-- 2026-05-13 #1161 Fix evolved_6c lint: add diff/verify sections to split-children
-- 2026-05-13 #1158 chore(a11y): heading hierarchy + image alt lints
-- 2026-05-13 #1159 docs(index): refresh landing as hero with 3 reader-paths
-- 2026-05-13 #1157 chore: optimize search plugin for ja/en multi-lang
-- 2026-05-13 #1156 Fix _no_yang placement: move into related block
-- 2026-05-13 #1155 Fix mermaid 11.x syntax errors across docs (129 blocks, 125 files)
-- 2026-05-13 #1154 Round 50 stratified milestone audit + guide §6 weighted random sampling
-- 2026-05-13 #1153 Demote 20 B-class pages to discrepancy-found (q52-az)
-- 2026-05-13 #1152 chore(troubleshoot): clear remaining thin troubleshoot sections (21 -> 0)
-- 2026-05-13 #1151 Backfill 40 more thin troubleshoot sections (wave-5)
-- 2026-05-13 #1150 Add quality audit round 49 (random, 12th odd cycle, avg 4.974)
-- 2026-05-13 #1149 Add triage script for verification self-consistency suspects
-- 2026-05-13 #1147 Fix discrepancy yang strict lint (split-children opt-out)
-- 2026-05-12 #1146 chore: add evolved_beyond_hld 6C lint and backfill 5 pages
-- 2026-05-12 #1148 chore(audit): round 48 stratified (5.00 saturation) + residual-tasks refresh
-- 2026-05-12 #1145 Backfill 40 more thin troubleshoot sections (q50 wave-4)
-- 2026-05-12 #1144 Add quality audit round 47 (random) + 47-discrepancy-mini
-- 2026-05-12 #1143 Split 2 large HLDs (ssdhealth-design + dip-sip-ptf-validation) into 8 child pages
-- 2026-05-12 #1142 Backfill 40 thin troubleshoot sections (wave-3)
-- 2026-05-12 #1139 Extend troubleshoot H2 lint + backfill 30 thin sections (q48 wave-2)
-- 2026-05-12 #1141 chore(audit): guide §4.6 snapshot eval spec + audit round 46
-- 2026-05-12 #1140 Add not_implemented workaround depth linter and enrich 5 pages
-- 2026-05-12 #1136 Expand thin troubleshoot sections with command examples (30 pages)
-- 2026-05-12 #1138 chore: enforce strict partial-boundary phase table + snapshot xref
-- 2026-05-12 #1137 Add quality audit round 45 (random sampling, 10th cycle)
-- 2026-05-12 #1135 Add quality audit round 44 (stratified, 9th cycle even, avg 4.993)
-- 2026-05-12 #1134 chore: strengthen troubleshoot lint and backfill 10 thin sections
-- 2026-05-12 #1133 Finalize audit guide §5.4 not_implemented + snapshot ref
-- 2026-05-12 #1132 chore: integrate inject/aggregate scripts into run_all wrappers
-- 2026-05-12 #1131 Add quality audit round 43 (random sampling, 9th cycle)
-- 2026-05-12 #1130 chore: strengthen partial-boundary lint with phase tables and link guide §5
-- 2026-05-12 #1129 chore: enrich snapshot.md with audit history, lint counts, freshness buckets
-- 2026-05-12 #1128 Add troubleshoot-section lint + 確認コマンド for 12 HLD pages
-- 2026-05-12 #1127 Add quality-audit round 42 (stratified, df subtype 3rd cycle)
-- 2026-05-12 #1126 chore: add check_partial_boundary lint and clarify 5 partial pages
-- 2026-05-12 #1125 Add 確認コマンド/トラブルシュート to 13 evolved pages + 制限事項 to 20 pages
-- 2026-05-12 #1124 Add quality audit round 41 + regenerate changelog (q43-aq)
-- 2026-05-12 #1123 Add discrepancy-found subtype evaluation criteria to audit guide
-- 2026-05-12 #1122 Add limitations lint + backfill 8 HLD pages
-- 2026-05-12 #1121 Add quality audit round 40 (stratified 7th, milestone retrospective)
-- 2026-05-12 #1119 chore(chapter-index): add --check drift mode + CI strict gate (q42-ap)
-- 2026-05-12 #1120 chore(related): backfill 14 + opt-out 11 for empty related.config_db
-- 2026-05-12 #1118 chore: add snapshot.md generator and optimize CI workflow
-- 2026-05-12 #1117 Add 制限事項 / 確認コマンド sections to 8 evolved_beyond_hld pages
-- 2026-05-12 #1116 Add quality audit round 39 (random 7th, sub-axis 4th cycle)
-- 2026-05-12 #1115 chore: add low-quality HLD filter to indexer (q41-ao)
-- 2026-05-12 #1113 chore(link-density): add 2-layer split-child nav rule + CI strict gate
-- 2026-05-12 #1114 Add audit round 38 + reclassify backlog 15 → 10 active
-- 2026-05-12 #1112 chore: backfill related.cli and opt out 11 pages with no CLI
-- 2026-05-12 #1111 Add lint and gen-script reference page
-- 2026-05-12 #1110 Split 2 large HLDs (dynamic port add/del + gNSI) into 8 child pages
-- 2026-05-12 #1108 Add CLI sibling cross-links and drop 27 stale backlog entries
-- 2026-05-12 #1109 Add quality audit round 37 (random sampling, sub-axis 2nd cycle, 4.972)
-- 2026-05-12 #1107 chore(cdb-mermaid): fallback dict で 27 件補完 → 121/121 (100%)
-- 2026-05-12 #1104 Add YANG sibling cross-link block to 84 YANG ref pages
-- 2026-05-12 #1106 chore: replace fallback sonic-crm yang refs with proper modules in 33 HLD pages
-- 2026-05-12 #1105 Add quality audit round 36 and classify residual backlog (42 items)
-- 2026-05-12 #1103 chore: make runbook structure check strict (40 runbooks completed)
-- 2026-05-12 #1102 chore: warm-reboot 系 3 ページに sonic-warm-restart YANG 補完
-- 2026-05-12 #1100 chore: runbook 5節構造補完 20 件 + quality-audit-35 random
-- 2026-05-12 #1101 chore(glossary): add 21 QoS/Buffer/Queue/Scheduler terms
-- 2026-05-12 #1099 Formalize quality audit sub-axes 5a-c / 6a-c (round 35+)
-- 2026-05-12 #1098 chore: add runbook structure lint + split switchport HLD
-- 2026-05-12 #1097 chore: backfill related.yang for 46 more pages + strict CI check
-- 2026-05-12 #1096 Add inject_yang_xref.py to enrich YANG cross-links
-- 2026-05-12 #1095 Add quality audit round 34 (stratified, sub-axis trial)
-- 2026-05-12 #1094 Add quality audit round 33 (random sampling, 4.972 series-high tie)
-- 2026-05-12 #1093 Add low-impact residual tasks snapshot page
-- 2026-05-12 #1092 chore: improve docs/index.md and docs/about.md for readers
-- 2026-05-12 #1091 Add sub-axes (5a/5b/5c, 6a/6b/6c) to quality-audit-guide
-- 2026-05-12 #1090 Complete topics residue (01-overview / 19-build-packaging / 22-reference-index)
-- 2026-05-12 #1089 chore(reference): expand narrow _no_related_* opt-outs to 17 ref pages
-- 2026-05-12 #1088 chore: backfill related.yang for 32 HLD pages via curated map
-- 2026-05-12 #1087 Add quality audit round 32 (stratified, audit iteration AH)
-- 2026-05-12 #1086 chore: resolve all link-density warnings (15 -> 0)
-- 2026-05-12 #1085 Expand advanced topics for build / lab / reference-index chapters
-- 2026-05-12 #1084 chore: formalize related opt-out markers and seed reference/meta pages
-- 2026-05-12 #1083 Add quality audit round 31 (random sampling, 3rd cycle start)
-- 2026-05-12 #1082 Expand 8 more advanced.md pages from placeholder to complete
-- 2026-05-11 #1080 chore(q32-af): add split-child hub/sibling link check
-- 2026-05-11 #1081 chore: boost link density on 20 low-density pages (round 3)
-- 2026-05-11 #1079 Add quality audit round 30 and update roadmap-v2 progress section
-- 2026-05-11 #1078 Expand 8 chapter advanced.md pages to complete status
-- 2026-05-11 #1077 chore(quality): boost link density on 30 low-density pages
-- 2026-05-11 #1076 chore(q31-ae): resolve discrepancy-found pages with empty related.yang
-- 2026-05-11 #1075 Add quality audit round 29 (stratified 2nd cycle, avg 4.944)
-- 2026-05-11 #1074 chore(docs): boost link density on 30 thin pages
-- 2026-05-11 #1072 Add discrepancy related.yang lint and quality audit round 28
-- 2026-05-11 #1071 Add chapter progress checklist to 22 Topics chapter indexes
-- 2026-05-11 #1070 chore: add CLI-YANG mapping dict, back-fill related.yang on 67 CLI ref pages
-- 2026-05-11 #1069 Add quality audit round 27 (stratified sampling)
-- 2026-05-11 #1068 chore(q29-ac): backfill cli/yang on topics pages with both empty
-- 2026-05-11 #1067 Add docs style guide reference page
-- 2026-05-11 #1066 Add link-density linter (informational)
-- 2026-05-11 #1065 Add 24 ASIC/hardware/platform glossary terms
-- 2026-05-11 #1064 Add next-reads section generator for 22 topic chapters
-- 2026-05-11 #1063 chore: site cleanup in generator scripts + quality audit round 26
-- 2026-05-11 #1062 chore: sweep remaining hld-only pages to code-verified (8 pages)
-- 2026-05-11 #1061 chore(glossary): regenerate xref after PR #1060
-- 2026-05-11 #1060 Fix monitor frontmatter for 11 discrepancy pages
-- 2026-05-11 #1059 chore(management): add 運用入口 section to 38 HLD pages
-- 2026-05-11 #1058 chore(related): backfill partial-empty related.{cli,config_db,yang} (216 pages)
-- 2026-05-11 #1057 chore: enrich chapter-index related from child pages
-- 2026-05-11 #1056 Add quality audit round 25 (random sampling)
-- 2026-05-11 #1055 chore: add gen_sitemap.py for docs/_meta/sitemap.md
-- 2026-05-11 #1054 Add discrepancy-found monitor tag audit (batch q26-z)
-- 2026-05-11 #1053 chore(audit): sweep empty related frontmatter to zero
-- 2026-05-11 #1052 Add quality-audit-24.md sampling audit round 24 (avg 4.88/5)
-- 2026-05-11 #1051 Require description frontmatter for regular pages
-- 2026-05-11 #1047 chore(scripts): add --min-occurrences threshold to glossary injector
-- 2026-05-11 #1050 chore(related): extend backfill heuristics for STATE_DB / chassis / discrepancy
-- 2026-05-11 #1048 chore(lint): require PyYAML in frontmatter_lint (eliminates 675 false positives)
-- 2026-05-11 #1049 Add broken intra-doc link lint (informational)
-- 2026-05-11 #1046 Add quality audit round 23 (random sampling, avg 4.82/5)
-- 2026-05-11 #1045 chore: boost glossary link density in Reference pages
-- 2026-05-11 #1044 chore(runbooks): add triage mermaid flowcharts to 44 runbooks
-- 2026-05-11 #1043 chore: fix monitor-consistency lint false positives (14 -> 0)
-- 2026-05-11 #1042 Add quality audit round 22 (axis 4 saturation reproducibility check)
-- 2026-05-11 #1041 Refresh glossary xref counts
-- 2026-05-11 #1040 chore: wrap discrepancy-found 実装との乖離 sections with diff admonition
-- 2026-05-11 #1039 Inject next-action template into discrepancy-found pages
-- 2026-05-11 #1037 Add awesome-pages .pages integrity lint
-- 2026-05-11 #1035 chore: add monitor-consistency lint (informational)
-- 2026-05-11 #1036 Add quality audit round 21 (random sampling, 4.94/5)
-- 2026-05-11 #1034 Split 3 more large HLDs (fec-flr / l3-scaling / error-handling) into hub + 4 children
-- 2026-05-11 #1033 Add citation-quality lint for verified pages
-- 2026-05-11 #1032 Expand backfill_related.py with aggressive mode; back-fill 130 pages
-- 2026-05-11 #1031 Add quality audit round 20 (discrepancy-found designated sampling)
-- 2026-05-11 #1030 chore: verifier batch q22 - refresh 25 discrepancy entries
-- 2026-05-11 #1029 Split large HLDs into hub + concepts/operations/internals/limitations
-- 2026-05-11 #1028 chore(queue): enqueue 10 verifier recheck candidates (audit18)
-- 2026-05-11 #1027 Add quality audit round 19 (v1.0 GA post 8th observation)
-- 2026-05-11 #1026 chore(cli): cli-mermaid 100% coverage (add 20 manual blocks)
-- 2026-05-11 #1025 Add verification self-consistency checker and demote 8 suspects
-- 2026-05-11 #1024 chore: auto-inject glossary links into docs (5502 links)
-- 2026-05-11 #1023 chore(reference): expand YANG mermaid coverage to 84/84
-- 2026-05-11 #1022 chore: add refresh_sources_sha.py for bulk frontmatter SHA refresh
-- 2026-05-11 #1021 Formalize axis-6 reinterpretation for discrepancy-found pages
-- 2026-05-11 #1020 Add quality audit round 18 (post-GA observation #7, avg 4.88/5)
-- 2026-05-11 #1019 chore: expand CDB/CLI mermaid coverage (CDB 119/122, CLI 52/73)
-- 2026-05-11 #1015 chore: add run_all_{generators,checks}.sh and docs-drift-check pre-commit hook
-- 2026-05-11 #1018 docs(yang): add ops-hint sections to 50 YANG reference pages
-- 2026-05-11 #1017 Add quality audit round 17 (4.86/5)
-- 2026-05-11 #1016 chore(lint): add runbook verification status guard
-- 2026-05-11 #1014 docs(cli-ref): add ops-hint section to 45 major CLI reference pages
-- 2026-05-11 #1013 chore(ref/config-db): 100% ops-hint coverage (final 22 pages)
-- 2026-05-11 #1012 Add runbook-verified verification state for Runbook pages
-- 2026-05-11 #1011 Add quality audit round 16 (avg 4.89 / 5)
-- 2026-05-11 #1010 chore(queue): Add recheck entries for 8 discrepancy-index pages
-- 2026-05-11 #1005 Render verifier evidence comments as collapsible details
-- 2026-05-11 #1009 chore(reference): add 31 new SONiC glossary terms
-- 2026-05-11 #1008 Add CLI data-flow mini mermaid generator + insert into 40 CLI pages
-- 2026-05-11 #1007 Add ops-hint blocks to 49 CONFIG_DB reference pages (batch 2)
-- 2026-05-11 #1006 Add quality audit round 15 (4.83/5, plateau)
-- 2026-05-11 #1004 Add usage-example sections to 37 CLI reference pages
-- 2026-05-11 #1003 chore: introduce page_kind: chapter-index for 22 章扉
-- 2026-05-11 #1002 Add quality audit round 14 sampling report
-- 2026-05-11 #1001 Add YANG mini mermaid generator (50 pages)
-- 2026-05-11 #1000 Add ops hints to 50 CONFIG_DB reference pages
-- 2026-05-11 #999 Add backfill_related.py for empty frontmatter related fields
-- 2026-05-11 #998 Add data-flow mermaid mini-diagrams to 64 CONFIG_DB reference pages
-- 2026-05-11 #997 Add quality audit round 13
-- 2026-05-11 #996 [reference] glossary に用語別逆引きインデックスを追加
-- 2026-05-11 #992 [meta] area Topics back-link fixup (excl. autogen + reference/index)
-- 2026-05-11 #993 Add 7 runbooks for common operational symptoms
-- 2026-05-11 #994 Add sources-freshness checker for pinned SONiC SHAs
-- 2026-05-11 #995 [meta] changelog 自動生成スクリプト追加 (gen_changelog.py)
-- 2026-05-11 #991 Add stale-verified checker for last_verified freshness
-- 2026-05-11 #990 Add quality audit round 12 (post-v1.0 GA random sampling)
-- 2026-05-11 #987 [reference] 横断索引強化 [lgtm]
-- 2026-05-11 #988 [reference] 頻出 SAI 属性早見表 [lgtm]
-- 2026-05-11 #989 [quality] area HLD ページに Topics 誘導 admonition 追加 [lgtm]
-- 2026-05-11 #986 [reference] 用語集 (glossary) 新設 [lgtm]
-- 2026-05-11 #985 [meta] 品質改善 サンプリング監査 (round 11) [lgtm]
-- 2026-05-11 #983 [meta] area Topics back-link 強化 + CI drift check [lgtm]
-- 2026-05-11 #982 [meta] 全ページ frontmatter description 追加 [lgtm]
-- 2026-05-11 #984 [reference] CONFIG_DB ↔ orchagent クラス対応表 [lgtm]
-- 2026-05-11 #981 [quality] HLD 中規模残 8 件 再構成 [lgtm]
-- 2026-05-11 #979 [meta] 品質改善 サンプリング監査 (round 10)
-- 2026-05-11 #976 [meta] discrepancy 運用ドキュメント整備
-- 2026-05-11 #978 [quality] round 9 残伸びしろ fix
-- 2026-05-11 #977 [quality] Topics 章間 + 個別 mermaid 品質向上
-- 2026-05-11 #974 [meta] v1.0 後ロードマップ v2
-- 2026-05-11 #975 [meta] backlog ノイズ slug 整理
-- 2026-05-11 #973 [meta] 最終整合性レビュー + 修正
-- 2026-05-11 #972 [meta] 品質改善 サンプリング監査 (round 9、v1.0 最終) [lgtm]
-- 2026-05-11 #971 [meta] v1.0 リリース準備: README + CHANGELOG [lgtm]
-- 2026-05-11 #968 [meta] frontmatter keywords 追加 (検索品質) [lgtm]
-- 2026-05-11 #969 [quality] 薄い Topics internals.md 補強 [lgtm]
-- 2026-05-11 #970 [ci] discrepancy/coverage 自動生成チェック追加 [lgtm]
-- 2026-05-11 #967 [quality] 薄い Topics operations.md 補強
-- 2026-05-11 #966 [meta] sitemap/robots/SEO 整備
-- 2026-05-11 #965 [quality] HLD 追加 5 件 + Topics concept 補強
-- 2026-05-11 #964 [quality] Runbook +15 件 (運用シナリオ、合計 45)
-- 2026-05-11 #963 [meta] 品質改善 サンプリング監査 (round 8)
-- 2026-05-11 #962 [meta] 横断リンク双方向化 (Topics ↔ area)
-- 2026-05-11 #961 [quality] discrepancy ページ GitHub Issue/PR 紐づけ
-- 2026-05-11 #960 [quality] HLD 最終残 8 件 再構成
-- 2026-05-11 #959 [meta] Reference 三角リンク (YANG ↔ CDB ↔ CLI)
-- 2026-05-11 #958 [meta] 品質バナー自動更新スクリプト + CI 統合
-- 2026-05-11 #957 [reference/cli] batch D (10 件)
-- 2026-05-11 #955 [quality] HLD 横断 高優先残 8 件 再構成
-- 2026-05-11 #956 [quality] categories 10 ページ充実
-- 2026-05-11 #954 [quality] HLD routing 中規模 残 5 件 再構成
-- 2026-05-11 #953 [quality] HLD acl-qos 残 5 件 再構成
-- 2026-05-11 #952 [meta] LICENSE ファイル追加 + about ページ整備
-- 2026-05-11 #951 [meta] 品質改善 サンプリング監査 (round 7、10 段階)
-- 2026-05-11 #950 [quality] Topics 章間クロスリファレンス強化
-- 2026-05-11 #949 [reference/yang] batch C (15 件)
-- 2026-05-11 #948 [meta] 正式版公開準備チェック + 整備
-- 2026-05-11 #947 [reference/config-db] batch D (12 件)
-- 2026-05-11 #946 [quality] HLD overlay 残 5 件 再構成
-- 2026-05-11 #944 [quality] HLD management 残 5 件 再構成
-- 2026-05-11 #945 [quality] HLD platform 残 5 件 再構成
-- 2026-05-11 #943 [quality] HLD system 残 5 件 再構成
-- 2026-05-11 #942 [quality] 購読者欄 daemon 名 grep 裏取り
-- 2026-05-11 #941 [quality] Topics advanced 強化 (全章)
-- 2026-05-11 #940 [meta] linter v2 (mojibake + path 死活) [lgtm]
-- 2026-05-11 #937 [quality] HLD internals/architecture 4 件 再構成 [lgtm]
-- 2026-05-11 #939 [meta] 品質改善 サンプリング監査 (round 6)
-- 2026-05-11 #938 [quality] HLD architecture 5 件 再構成
-- 2026-05-11 #936 [quality] HLD routing 残 5 件 再構成
-- 2026-05-11 #935 [quality] HLD acl-qos 5 件 再構成
-- 2026-05-11 #934 [quality] HLD management/platform 5 件 再構成
-- 2026-05-11 #929 [meta] discrepancy-index.md 自動生成
-- 2026-05-11 #933 [quality] Runbook 既存 15 件 ロールバック手順追記
-- 2026-05-11 #932 [meta] 品質改善 サンプリング監査 (round 5)
-- 2026-05-11 #931 [meta] SCHEMA.md monitor enum 確定 + linter 拡張
-- 2026-05-11 #930 [quality] HLD system 5 件 再構成
-- 2026-05-11 #927 [ci] frontmatter linter を CI に追加
-- 2026-05-11 #928 [meta] docs/index.md 動線改善
-- 2026-05-11 #926 [quality] Runbook +15 件 (合計 30 件)
-- 2026-05-11 #924 [reference/yang] batch A (15 件) [lgtm]
-- 2026-05-11 #925 [reference/config-db] batch C (12 件)
-- 2026-05-11 #923 [quality] Topics internals 行数均し [lgtm]
-- 2026-05-11 #922 [reference/yang] batch B (15 件)
-- 2026-05-11 #921 [meta] 品質改善 サンプリング監査 (round 4)
-- 2026-05-11 #920 [quality] frontmatter linter 実装 + 違反修正
-- 2026-05-11 #919 [quality] setup 三段テンプレ分岐 (controller-driven 系)
-- 2026-05-11 #917 [quality] Topics concept 強化 (batch 1)
-- 2026-05-11 #918 [quality] Topics concept 強化 (batch 0)
-- 2026-05-11 #915 [quality] Topics concept 強化 (batch 3) [lgtm]
-- 2026-05-11 #916 [quality] HLD switching/overlay 5 件 再構成 [lgtm]
-- 2026-05-11 #914 [quality] HLD routing 5 件 再構成
-- 2026-05-11 #913 [quality] discrepancy 残 20 件深掘り
-- 2026-05-11 #912 [quality] Topics concept 強化 (batch 2)
-- 2026-05-11 #911 [meta] 品質改善 サンプリング監査 (round 3)
-- 2026-05-11 #910 [quality] Topics internals 強化 (全 22 章)
-- 2026-05-11 #909 [quality] reference/runbooks/ 新設 (症状逆引き)
-- 2026-05-11 #908 [quality] discrepancy 個別ページ 10 件深掘り
-- 2026-05-11 #906 [quality] Topics setup 強化 (batch 0) [lgtm]
-- 2026-05-11 #907 [quality] Topics setup 強化 (batch 3)
-- 2026-05-11 #905 [quality] Topics setup 強化 (batch 2)
-- 2026-05-11 #904 [quality] Topics setup 強化 (batch 1)
-- 2026-05-11 #903 [meta] 品質改善 サンプリング監査 (round 2)
-- 2026-05-11 #901 [reference/cli] batch A (buffer/pfc/qos/warm)
-- 2026-05-11 #902 [reference/config-db] batch A (BGP monitor/range, MCLAG, LLDP, NVGRE, VOQ chassis 等)
-- 2026-05-11 #900 [verify] batch 28 (architecture/acl-qos) [lgtm]
-- 2026-05-11 #898 [reference/config-db] batch B (QoS/BGP/DHCP 等)
-- 2026-05-11 #897 [verify] batch 30 (sw/plat/int/rt/ov)
-- 2026-05-11 #896 [verify] batch 29 (system/management)
-- 2026-05-11 #895 [reference/cli] batch B (vnet/queue/lldp 等)
-- 2026-05-11 #894 [meta] coverage.md 自動生成 + フィードバック導線
-- 2026-05-11 #893 [meta] 構造 vs コンテンツ 効果比較
-- 2026-05-11 #891 [meta] 品質改善 60 ページの徹底批判
-- 2026-05-11 #890 [meta] 品質改善ロードマップ
-- 2026-05-11 #892 [meta] 品質改善 サンプリング監査 (round 1)
-- 2026-05-11 #889 [quality] Topics operations 拡充 (batch 2) [lgtm]
-- 2026-05-11 #886 [quality] Topics operations 拡充 (batch 1) [lgtm]
-- 2026-05-11 #888 [quality] discrepancy 補強 (batch 2)
-- 2026-05-11 #887 [quality] Topics operations 拡充 (batch 3) [lgtm]
-- 2026-05-11 #885 [quality] Topics operations 拡充 (batch 0)
-- 2026-05-11 #884 [quality] discrepancy 補強 (batch 0) [lgtm]
-- 2026-05-11 #883 [quality] discrepancy 補強 (batch 1)
-- 2026-05-11 #882 [quality] discrepancy 補強 (batch 3)
-- 2026-05-11 #880 Add v4 structure review (devil's advocate, round 4)
-- 2026-05-11 #881 [codex] Add v4 structure third-party review
-- 2026-05-11 #878 [meta] v4 評価 (ペルソナ)
-- 2026-05-11 #879 [codex] Add v4 Diataxis structure review
-- 2026-05-11 #876 Add v4 structure review (IA perspective, evaluator B)
-- 2026-05-11 #877 Add v4 radical-simplification review report
-- 2026-05-11 #874 Add v3 Diataxis review report
-- 2026-05-11 #873 [meta] v3 評価 (Codex 第三者) [lgtm]
-- 2026-05-11 #875 Add v3 structure review (devil's advocate)
-- 2026-05-11 #872 [meta] v3 評価 (ペルソナ)
-- 2026-05-11 #871 Add v3 IA re-review (4 tabs + Verification hub)
-- 2026-05-11 #870 Add v3 structure re-review from radical simplification view
-- 2026-05-11 #868 [meta] 再評価 (反論役) [lgtm]
-- 2026-05-11 #869 [meta] 再評価 (Codex 第三者視点) [lgtm]
-- 2026-05-11 #867 [meta] 再評価 (Diátaxis 専門家) [lgtm]
-- 2026-05-11 #866 [meta] 再評価 (ペルソナ動線)
-- 2026-05-11 #865 [meta] 再評価 (IA)
-- 2026-05-11 #864 [meta] 再評価 (ラディカル簡素化)
-- 2026-05-11 #863 [meta] 構成評価 (反論役) [lgtm]
-- 2026-05-11 #861 [meta] 構成評価 (他 OSS docs ベンチマーク) [lgtm]
-- 2026-05-11 #860 [meta] 構成評価 (IA 専門家視点) [lgtm]
-- 2026-05-11 #862 [meta] 構成評価 (読み手ペルソナ動線視点)
-- 2026-05-11 #859 [topics/08-qos-buffer] QoS / Buffer / PFC / Watermark [lgtm]
-- 2026-05-11 #858 [topics/16-nat-dhcp-dns] NAT / DHCP Relay / Time-DNS Services [lgtm]
-- 2026-05-11 #857 [topics/14-platform-port-optics] Platform / Port / Optics / PHY [lgtm]
-- 2026-05-11 #854 [topics/21-lab-vs-developer] Lab / Virtual SONiC / Developer Entry
-- 2026-05-11 #855 [topics/09-telemetry-snmp] Telemetry / SNMP / Observability [lgtm]
-- 2026-05-11 #856 [topics/20-swss-sai-redis] SWSS / SAI / Redis 内部実装
-- 2026-05-11 #852 [topics/22-reference-index] リファレンス横断索引
-- 2026-05-11 #853 [topics/17-srv6-mpls] SRv6 / MPLS / Path Tracing
-- 2026-05-11 #851 [topics/18-p4-pins] P4 / PINS / Programmable Pipeline
-- 2026-05-11 #850 [topics/15-security-aaa] Security / AAA / FIPS / Hardening
-- 2026-05-11 #849 [topics/19-build-packaging] Build / Packaging / Application Extension
-- 2026-05-11 #847 [topics/12-multi-asic-voq] Multi-ASIC / VOQ Chassis [lgtm]
-- 2026-05-11 #846 [topics/13-dash-smartswitch] DASH / SmartSwitch [lgtm]
-- 2026-05-11 #848 [topics/10-gnmi-openconfig] gNMI / gNOI / OpenConfig / YANG [lgtm]
-- 2026-05-10 #845 [topics/03-vxlan-evpn] VXLAN / EVPN / VNET オーバーレイ [lgtm]
-- 2026-05-10 #844 [topics/04-vrf-ecmp] VRF / ECMP / RIB-FIB パイプライン [lgtm]
-- 2026-05-10 #843 [topics/07-acl-copp-mirror] ACL / CoPP / Mirror / Packet Action [lgtm]
-- 2026-05-10 #842 [topics/06-l2-vlan-lag] L2 / VLAN / LAG / MC-LAG [lgtm]
-- 2026-05-10 #841 [topics/02-bgp] BGP と FRR 制御プレーン [lgtm]
-- 2026-05-10 #840 [topics/05-dual-tor] Dual-ToR と Mux 制御 [lgtm]
-- 2026-05-10 #839 [topics/01-overview] SONiC 全体像と設定基盤 [lgtm]
-- 2026-05-10 #838 [topics/11-reboot] Reboot / Upgrade / Lifecycle [lgtm]
-- 2026-05-10 #837 [meta] 読み物章立て案（機能軸視点） [lgtm]
-- 2026-05-10 #836 [meta] 読み物章立て案（階層軸視点） [lgtm]
-- 2026-05-10 #835 [meta] 読み物章立て案（ユースケース軸視点） [lgtm]
-- 2026-05-10 #834 Add sonic-lldp YANG reference
-- 2026-05-10 #833 Add BGP_GLOBALS_AF CONFIG_DB reference
-- 2026-05-10 #832 Add sonic-dns YANG reference
-- 2026-05-10 #831 Add sonic-dhcp-server YANG reference
-- 2026-05-10 #830 Add PFC_PRIORITY_TO_PRIORITY_GROUP_MAP CONFIG_DB reference
-- 2026-05-10 #829 Add sonic-bgp-aggregate-address YANG reference
-- 2026-05-10 #828 Add PORT_QOS_MAP CONFIG_DB reference
-- 2026-05-10 #827 Add sonic-port-qos-map YANG reference
-- 2026-05-10 #826 [reference] show queue サブコマンド [lgtm]
-- 2026-05-10 #825 [reference] show priority-group サブコマンド [lgtm]
-- 2026-05-10 #823 Add PBH CONFIG_DB reference
-- 2026-05-10 #824 Add sonic-pbh YANG reference
-- 2026-05-10 #822 [reference] show pfc サブコマンド [lgtm]
-- 2026-05-10 #821 Add sonic-nat YANG reference
-- 2026-05-10 #820 [reference] show buffer サブコマンド [lgtm]
-- 2026-05-10 #818 Add NAT_GLOBAL and NAT_POOL CONFIG_DB reference
-- 2026-05-10 #819 [reference] config warm_restart サブコマンド [lgtm]
-- 2026-05-10 #817 Add sonic-static-route YANG reference
-- 2026-05-10 #816 [reference] config vnet サブコマンド [lgtm]
-- 2026-05-10 #815 [reference] config qos サブコマンド [lgtm]
-- 2026-05-10 #812 Add STATIC_ROUTE CONFIG_DB reference
-- 2026-05-10 #814 Add sonic-vlan-sub-interface YANG reference
-- 2026-05-10 #813 [reference] config platform firmware サブコマンド [lgtm]
-- 2026-05-10 #811 [reference] config pfcwd サブコマンド [lgtm]
-- 2026-05-10 #810 Add sonic-vnet YANG reference
-- 2026-05-10 #809 Add VLAN_SUB_INTERFACE CONFIG_DB reference
-- 2026-05-10 #808 [reference] config buffer サブコマンド [lgtm]
-- 2026-05-10 #807 Add cross-category documentation pages
-- 2026-05-10 #806 Add persona reading guides
-- 2026-05-10 #805 Add VNET CONFIG_DB reference
-- 2026-05-10 #804 [meta] 横断カテゴリの提案レポート [lgtm]
-- 2026-05-10 #803 [meta] Reference 未カバー洗い出しレポート [lgtm]
-- 2026-05-10 #802 [meta] 実装との乖離ページ一覧を追加 [lgtm]
-- 2026-05-10 #801 [meta] 読み手ペルソナ別ガイド提案 [lgtm]
-- 2026-05-10 #800 構成見直し: 高頻度ページに関連リンクを追加 [lgtm]
-- 2026-05-10 #799 構成見直し: .pages の並び順を意味順に整理 [lgtm]
-- 2026-05-10 #798 構成見直し: area index と分析計画を追加 [lgtm]
-- 2026-05-10 #797 [verify] batch hld-only #12: 13 件 code-verified / 4 件 discrepancy-found [lgtm]
-- 2026-05-10 #796 chore(queue): aggregate verification-queue after batch #11
-- 2026-05-10 #795 [system] Event-Driven TechSupport / Coredump 管理（auto-techsupport / rate-limit / quota）
-- 2026-05-10 #793 [system] 動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成）
-- 2026-05-10 #791 [system] Critical Resource Monitoring（CRM・SAI 表枯渇のしきい値監視）
-- 2026-05-10 #789 [system] PCIe Monitoring Services（pcied / pcieinfo / lnkSta / AER）
-- 2026-05-10 #787 [system] SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）
-- 2026-05-10 #785 [system] storagemond（SSD / eMMC の health 監視）
-- 2026-05-10 #783 [system] SONiC Warm Reboot（要件・順序・docker 別 warm restart）
-- 2026-05-10 #781 [system] Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）
-- 2026-05-10 #779 [system] SONiC Container Hardening（capability / read-only / privileged 削減）
-- 2026-05-10 #777 [system] Multi-ASIC warm reboot（namespace 横断の協調 shutdown / boot）
-- 2026-05-10 #775 [system] SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携）
-- 2026-05-10 #773 [routing] EVPN VXLAN Multihoming（ESI / DF election / split-horizon）
-- 2026-05-10 #771 [routing] gNMI Subscription for YANG Data（ON_CHANGE / SAMPLE / TARGET_DEFINED）
-- 2026-05-10 #769 verify(batch-25): promote final 10 hld-only pages to code-verified [lgtm]
-- 2026-05-10 #768 [routing] EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）
-- 2026-05-10 #766 [routing] SONiC における FRR upgrade の手順とパッチ管理
-- 2026-05-10 #764 [routing] Local ARS（Adaptive Routing & Switching の local 完結版）
-- 2026-05-10 #762 [platform] ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics）
-- 2026-05-10 #760 [platform] SmartSwitch PMON（NPU 側 pmon と DPU 連携の境界）
-- 2026-05-10 #758 verify(batch-24): promote 18 hld-only pages, mark sflow as discrepancy-found [lgtm]
-- 2026-05-10 #757 [platform] SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）
-- 2026-05-10 #755 [platform] ASIC / SDK Health Event ハンドリング（SAI notification → STATE_DB → action）
-- 2026-05-10 #753 [platform] fwutil（platform component firmware の install / update / show）
-- 2026-05-10 #751 [platform] VoQ SONiC（distributed VoQ chassis / system-port / fabric）
-- 2026-05-10 #749 [management] SONiC User Manual の位置づけと CLI / 運用フローの全体像
-- 2026-05-10 #747 [management] SONiC Management Framework（REST / gNMI / Translib / Transformer）
-- 2026-05-10 #745 [architecture] Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）
-- 2026-05-10 #743 [architecture] SONiC Application Extension Infrastructure（sonic-package-manager / SPM）
-- 2026-05-10 #741 [architecture] パスワード強化（password hardening / aging / complexity / history）
-- 2026-05-10 #739 verify(batch-23): promote 11 hld-only pages to code-verified, mark 1 as discrepancy-found [lgtm]
-- 2026-05-10 #738 [architecture] NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
-- 2026-05-10 #736 [architecture] DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id）
-- 2026-05-10 #734 [architecture] sFlow（hsflowd / sflowmgrd / SAI sample-packet）
-- 2026-05-10 #732 chore(queue): aggregate verification-queue after batch #10 [lgtm]
-- 2026-05-10 #731 [management] Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE [lgtm]
-- 2026-05-10 #729 [management] gRPC client（active-active DualToR / ycabled ↔ SoC 連携） [lgtm]
-- 2026-05-10 #727 [switching] MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC） [lgtm]
-- 2026-05-10 #725 [routing] SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP） [lgtm]
-- 2026-05-10 #723 [routing] VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking） [lgtm]
-- 2026-05-10 #721 [routing] Path Tracing Midpoint（IPv6 HbH-PT に MCD を追記） [lgtm]
-- 2026-05-10 #719 [acl-qos] ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン） [lgtm]
-- 2026-05-10 #717 [acl-qos] ingress discards テスト計画（21 ケースで drop counter を検証） [lgtm]
-- 2026-05-10 #715 [system] System Ready（sysmonitor + per-app closest UP status の event 集約） [lgtm]
-- 2026-05-10 #713 [system] SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust） [lgtm]
-- 2026-05-10 #711 [system] Entity MIB / Entity Sensor MIB 拡張（chassis 階層化と sensor / fan / PSU 追加） [lgtm]
-- 2026-05-10 #709 [system] Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式） [lgtm]
-- 2026-05-10 #707 [system] SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot） [lgtm]
-- 2026-05-10 #705 [system] syslog rate limit のコンテナ単位設定（SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE） [lgtm]
-- 2026-05-10 #703 [system] config-setup サービス（first-boot config 生成 / 版間 migration） [lgtm]
-- 2026-05-10 #701 [system] PMON の Multi-ASIC 対応（global DB と per-ASIC namespace の役割分担） [lgtm]
-- 2026-05-10 #699 [system] SensorMon（PMON 内の voltage / current センサ監視） [lgtm]
-- 2026-05-10 #697 [system] telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT） [lgtm]
-- 2026-05-10 #695 [system] SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB） [lgtm]
-- 2026-05-10 #693 [platform] Thermal Control（thermalctld + ポリシー駆動 fan / cooling 制御） [lgtm]
-- 2026-05-10 #691 [platform] VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring） [lgtm]
-- 2026-05-10 #688 [platform] Gearbox 動的チューニング（gb_line_* / gb_system_* in media_settings.json） [lgtm]
-- 2026-05-10 #686 [platform] ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8） [lgtm]
-- 2026-05-10 #689 verify(batch-23): final 14+1 hld-only pages — 12 promoted, 3 discrepancy-found [lgtm]
-- 2026-05-10 #684 [platform] sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き） [lgtm]
-- 2026-05-10 #682 [architecture] ポート Auto-Negotiation（advertised-speeds / interface-type） [lgtm]
-- 2026-05-09 #680 [architecture] Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計） [lgtm]
-- 2026-05-09 #678 [architecture] SmartSwitch HA - DPU-Scope-DPU-Driven 構成 [lgtm]
-- 2026-05-09 #676 [architecture] S3IP sysfs（/sys_switch 統一 HW アクセス層） [lgtm]
-- 2026-05-09 #674 [architecture] Smart Switch Database Design（NPU 上の DPU overlay DB） [lgtm]
-- 2026-05-09 #672 verify(batch-22): promote 12 hld-only pages to code-verified [lgtm]
-- 2026-05-09 #671 [architecture] ポートリンクトレーニング（IEEE 802.3 clause 72/93） [lgtm]
-- 2026-05-09 #669 [system] OpenSSL FIPS 140-3（SymCrypt engine + sonic_fips=1）
-- 2026-05-09 #667 verify(batch-21): promote 10 hld-only pages, mark 2 as discrepancy-found [lgtm]
-- 2026-05-09 #666 [system] ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）
-- 2026-05-09 #664 [system] SONiC Debian アップグレード方針（base / container / 廃止 cadence）
-- 2026-05-09 #662 [system] Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）
-- 2026-05-09 #660 [system] Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE）
-- 2026-05-09 #658 [system] pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）
-- 2026-05-09 #656 verify(batch-20): promote 9 hld-only pages to code-verified, mark 3 as discrepancy-found [lgtm]
-- 2026-05-09 #655 [system] kdump（kexec ベース kernel crash dump / makedumpfile）
-- 2026-05-09 #653 [system] Smart Switch: DPU 独立アップグレード（gNOI 経路）
-- 2026-05-09 #651 [system] Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）
-- 2026-05-09 #649 [system] SONiC Disk I/O 削減（writer 分析と tmpfs 化）
-- 2026-05-09 #647 [routing] Weighted ECMP（WCMP / BGP link-bandwidth ext community）
-- 2026-05-09 #645 [routing] SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）
-- 2026-05-09 #643 [routing] BMP（BGP Monitoring Protocol / BMP_STATE_DB）
-- 2026-05-09 #641 verify(batch-19): promote 10 hld-only pages to code-verified, mark 2 as discrepancy-found [lgtm]
-- 2026-05-09 #640 [routing] BGP PIC（Prefix Independent Convergence / NHG 階層）
-- 2026-05-09 #638 [platform] S3IP sysfs 仕様（platform 情報を /sys_switch/ で公開）
-- 2026-05-09 #636 [platform] Thermal Control テストプラン
-- 2026-05-09 #634 [platform] SFP リファクタ（XcvrApi / XcvrEeprom / spec 自動判別）
-- 2026-05-09 #632 [platform] psud（PSU 監視デーモン / power threshold ヒステリシス）
-- 2026-05-09 #630 [platform] NPU MDIO アクセスと gbsyncd 単一 docker 化
-- 2026-05-09 #628 [platform] Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）
-- 2026-05-09 #625 [platform] Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）
-- 2026-05-09 #626 verify(batch-18): 9 pages → code-verified, 3 → discrepancy-found
-- 2026-05-09 #623 [platform] Media-based Port Settings（media_settings.json による SerDes プロファイル）
-- 2026-05-09 #621 [management] PINS（P4 Integrated Network Stack / SDN 制御 SONiC）
-- 2026-05-09 #619 [architecture] SmartSwitch HA: HAMgrD（NPU 側 actor 分割と DPU 連携）
-- 2026-05-09 #617 [architecture] Port Profile Init（SAI bulk port API による fast-boot 高速化）
-- 2026-05-09 #615 [architecture] JSON Change Application（apply-change / table 単位 alphabetical 適用）
-- 2026-05-09 #612 [architecture] Error Handling Framework（ERROR_DB / SAI 失敗の app 通知）
-- 2026-05-09 #613 verify(batch-17): promote 11 hld-only pages, mark fpmsyncd NHG as discrepancy-found
-- 2026-05-09 #610 [architecture] DHCPv6 Relay Agent
+- 2026-05-20 #4730 docs: doc-review fixes (batch 001)
+- 2026-05-20 #4729 docs: doc-review fixes (batch 003)
+- 2026-05-20 #4776 chore: minimal CI green fixes
+- 2026-05-19 #4125 docs: remove project self-version notation (v1.0/v1.1/v2.0)
+- 2026-05-19 #4122 docs(config-db): add Phase H platform block to stp-orch
+- 2026-05-19 #4124 docs(config-db): add Phase H platform block to pki-trusted-certs
+- 2026-05-19 #4121 docs(config-db): add Phase H platform block to pki-trusted-certs
+- 2026-05-19 #4120 docs(config-db): add Phase H platform block to tam
+- 2026-05-19 #4118 docs(config-db): fix Phase H platform marker in stp-iccp
+- 2026-05-19 #4116 docs(config-db): add Phase H platform block to PBH_TABLE page
+- 2026-05-19 #4114 docs(config-db): add Phase H platform block to ipv6-link-local
+- 2026-05-19 #4115 docs(config-db): add Phase H platform block to stp-orch
+- 2026-05-19 #4113 docs(config-db): add Phase H platform block to vrf-orch
+- 2026-05-19 #4112 docs(config-db): add Phase H platform block to zmq
+- 2026-05-19 #4110 docs(config-db): add Phase H platform block to vnet-route
+- 2026-05-19 #4109 docs(config-db): add Phase H platform block to zmq
+- 2026-05-19 #4108 docs(config-db): add Phase H platform block to pbh-table
+- 2026-05-19 #4107 docs(config-db): fix platform marker in extended-monitor to use standard tag
+- 2026-05-19 #4105 docs(config-db): add Phase H platform block to ipv6-link-local
+- 2026-05-19 #4102 docs(config-db): add Phase H platform block to route-map-set
+- 2026-05-19 #4101 docs(config-db): add Phase H platform block to redis-db-config
+- 2026-05-19 #4097 docs(config-db): add Phase H platform block to tc-to-dscp-map
+- 2026-05-19 #4099 docs(config-db): add Phase H platform block to RADIUS page
+- 2026-05-19 #4100 docs(config-db): add Phase H platform block to ip-mcast-route
+- 2026-05-19 #4098 docs(config-db): add Phase H platform block to stp page
+- 2026-05-19 #4089 docs(config-db): add Phase H platform block to vxlan-fdb
+- 2026-05-19 #4095 docs(config-db): fix Phase H platform marker in counters-rif
+- 2026-05-19 #4094 docs(config-db): add Phase H platform block to SWITCH_TRIMMING
+- 2026-05-19 #4093 docs(config-db): add Phase H platform block to tc-to-dscp-map
+- 2026-05-19 #4090 docs(config-db): add Phase H platform block to ssh-config-base
+- 2026-05-19 #4088 docs(config-db): add Phase G pubsub block to vxlan-fdb
+- 2026-05-19 #4085 docs(config-db): add Phase G pubsub block to tam
+- 2026-05-19 #4086 docs(config-db): add Phase H platform block to warm-restart
+- 2026-05-19 #4082 docs(config-db): add Phase H platform block to ssh-sftp
+- 2026-05-19 #4081 docs(config-db): add Phase G pubsub block to zmq
+- 2026-05-19 #4080 docs(config-db): add Phase G pubsub block to TAM tables
+- 2026-05-19 #4076 docs(config-db): add Phase H platform block to restapi
+- 2026-05-19 #4075 docs(config-db): add Phase G pubsub block to switch-trimming
+- 2026-05-19 #4074 docs(config-db): add Phase H platform block to stp-state
+- 2026-05-19 #4071 docs(config-db): add Phase G pubsub block to ssh-sftp
+- 2026-05-19 #4070 docs(config-db): add Phase G pubsub block to vrf-orch
+- 2026-05-19 #4069 docs(config-db): add Phase G pubsub block to stp
+- 2026-05-19 #4067 docs(config-db): add Phase G pubsub block to tc-to-dscp-map
+- 2026-05-19 #4061 docs(config-db): add Phase G pubsub block to stp-state
+- 2026-05-19 #4065 docs(config-db): add Phase G pubsub block to ssh-config-base
+- 2026-05-19 #4064 docs(config-db): add Phase H platform block to STP_PORT
+- 2026-05-19 #4060 docs(config-db): add Phase G pubsub block to stp-state
+- 2026-05-19 #4059 docs(config-db): add Phase F side-effects block to vrf-orch
+- 2026-05-19 #4056 docs(config-db): add Phase F side-effects block to VXLAN_FDB_TABLE
+- 2026-05-19 #4055 docs(config-db): add Phase H platform block to nvgre-tunnel
+- 2026-05-19 #4054 docs(config-db): add Phase H platform block to mux-cable-state
+- 2026-05-19 #4053 docs(config-db): fix Phase E constants marker in mgmt-interface page
+- 2026-05-19 #4051 docs(config-db): add Phase E constants marker to mgmt-interface
+- 2026-05-19 #4050 docs(config-db): add Phase F side-effects block to ssh-sftp
+- 2026-05-19 #4049 docs(config-db): add Phase G pubsub block to restapi
+- 2026-05-19 #4047 docs(config-db): add Phase F side-effects block to SWITCH_TRIMMING
+- 2026-05-19 #4044 docs(config-db): add Phase F side-effects block to TAM tables
+- 2026-05-19 #4045 docs(config-db): add Phase H platform block to mux-cable-port
+- 2026-05-19 #4043 docs(config-db): add Phase G pubsub block to stp-orch
+- 2026-05-19 #4042 docs(config-db): add Phase E hardcoded-constants block to vrf-orch
+- 2026-05-19 #4035 docs(config-db): add Phase H platform block to suppress-asic-sdk-health-event
+- 2026-05-19 #4041 docs(config-db): add Phase G pubsub block to PBH_TABLE page
+- 2026-05-19 #4040 docs(config-db): add Phase G pubsub block to mux-cable-state
+- 2026-05-19 #4037 docs(config-db): add Phase F side-effects block to stp-state
+- 2026-05-19 #4033 docs(config-db): add Phase F side-effects block to SSH_SERVER base page
+- 2026-05-19 #4036 docs(config-db): add Phase F side-effects block to RESTAPI
+- 2026-05-19 #4034 docs(config-db): add Phase H platform block to gnmi-counter
+- 2026-05-19 #4032 docs(config-db): add Phase H platform block to vxlan-evpn-tunnel
+- 2026-05-19 #4029 docs(config-db): add Phase G pubsub block to nvgre-tunnel
+- 2026-05-19 #4028 docs(config-db): add Phase H platform block to KUBERNETES_MASTER
+- 2026-05-19 #4027 docs(config-db): add Phase F side-effects block to TAM page
+- 2026-05-19 #4026 docs(config-db): add Phase G pubsub block to redis-db-config
+- 2026-05-19 #4025 docs(config-db): add Phase G pubsub block to RADIUS table
+- 2026-05-19 #4024 docs(config-db): add Phase F side-effects block to mux-cable-state
+- 2026-05-19 #4023 docs(config-db): add Phase H platform block to switch-hash
+- 2026-05-19 #4022 docs(config-db): add Phase F side-effects block to ssh-config-base
+- 2026-05-19 #4011 docs(config-db): add Phase F side-effects block to PBH_TABLE page
+- 2026-05-19 #4021 docs(config-db): add Phase E hardcoded-constants block to VXLAN_FDB_TABLE
+- 2026-05-19 #4020 docs(config-db): add Phase G pubsub block to pki-trusted-certs
+- 2026-05-19 #4017 docs(config-db): add Phase D failure marker to MGMT_INTERFACE
+- 2026-05-19 #4016 docs(config-db): add Phase H platform marker to PORTCHANNEL_INTERFACE
+- 2026-05-19 #4007 docs(config-db): add Phase E hardcoded-constants block to TAM
+- 2026-05-19 #4015 docs(config-db): add Phase H platform block to portchannel-interface
+- 2026-05-19 #4014 docs(config-db): add Phase G pubsub block to kubernetes-master
+- 2026-05-19 #4013 docs(config-db): add Phase G pubsub block to mux-cable-port
+- 2026-05-19 #4012 docs(config-db): add Phase E constants marker to pfcwd-state
+- 2026-05-19 #4010 docs(config-db): add Phase F side-effects block to NVGRE_TUNNEL page
+- 2026-05-19 #4009 docs(config-db): add Phase E hardcoded-constants block to SWITCH_TRIMMING
+- 2026-05-19 #4006 docs(config-db): add Phase D failure marker to VXLAN_FDB_TABLE
+- 2026-05-19 #4005 docs(config-db): add Phase G pubsub block to switch-hash
+- 2026-05-19 #4004 docs(config-db): add Phase E hardcoded-constants block to TAM page
+- 2026-05-19 #4002 docs(config-db): add Phase G pubsub block to warm-restart
+- 2026-05-19 #4001 docs(config-db): add Phase G pubsub block to ip-mcast-route
+- 2026-05-19 #4000 docs(config-db): add Phase G pubsub block to ipv6-link-local
+- 2026-05-19 #3998 docs(config-db): add Phase F side-effects block to zmq
+- 2026-05-19 #3997 docs(config-db): add Phase E hardcoded-constants block to stp-state
+- 2026-05-19 #3985 docs(config-db): add Phase G pubsub block to vxlan-evpn-tunnel
+- 2026-05-19 #3995 docs(config-db): add Phase F side-effects block to STP page
+- 2026-05-19 #3994 docs(config-db): add Phase H platform block to fips
+- 2026-05-19 #3991 docs(config-db): add Phase H platform block to pbh-rule
+- 2026-05-19 #3992 docs(config-db): add Phase F side-effects block to STP page
+- 2026-05-19 #3989 docs(config-db): add Phase H platform block to log-config
+- 2026-05-19 #3978 docs(config-db): add Phase F side-effects block to ip-mcast-route
+- 2026-05-19 #3988 docs(config-db): fix Phase E constants marker in stp-iccp
+- 2026-05-19 #3987 docs(config-db): add Phase H platform block to lossless-traffic-pattern
+- 2026-05-19 #3986 docs(config-db): add Phase E hardcoded-constants block to ssh-sftp
+- 2026-05-19 #3975 docs(config-db): add Phase F side-effects block to ip-mcast-route
+- 2026-05-19 #3981 docs(config-db): add Phase H platform block to gnmi-dialin
+- 2026-05-19 #3984 docs(config-db): add Phase G pubsub block to suppress-asic-sdk-health-event
+- 2026-05-19 #3983 docs(config-db): add Phase F side-effects block to RADIUS
+- 2026-05-19 #3980 docs(config-db): add Phase F side-effects block to kubernetes-master
+- 2026-05-19 #3982 docs(config-db): add Phase E hardcoded-constants block to zmq
+- 2026-05-19 #3979 docs(config-db): add Phase G pubsub block to suppress-asic-sdk-health-event
+- 2026-05-19 #3977 docs(config-db): add Phase F side-effects block to pki-trusted-certs
+- 2026-05-19 #3973 docs(config-db): add Phase D failure-behavior block to ssh-sftp
+- 2026-05-19 #3972 docs(config-db): add Phase G pubsub block to vnet-route
+- 2026-05-19 #3960 docs(config-db): add Phase G pubsub block to PBH_RULE page
+- 2026-05-19 #3971 docs(config-db): add Phase G pubsub block to lossless-traffic-pattern page
+- 2026-05-19 #3969 docs(config-db): fix Phase H platform marker in tc-to-priority-group-map
+- 2026-05-19 #3956 docs(config-db): add Phase D failure-behavior block to TAM tables
+- 2026-05-19 #3966 docs(config-db): add Phase F side-effects block to ip-mcast-route
+- 2026-05-19 #3965 docs(config-db): add Phase H platform block to fabric-port
+- 2026-05-19 #3954 docs(config-db): add Phase F side-effects block to SWITCH_HASH
+- 2026-05-19 #3963 docs(config-db): add Phase E hardcoded-constants block to NVGRE_TUNNEL
+- 2026-05-19 #3962 docs(config-db): add Phase H platform block to subnet-decap
+- 2026-05-19 #3961 docs(config-db): add Phase H platform block to gnmi-state
+- 2026-05-19 #3959 docs(config-db): add Phase E hardcoded-constants block to KUBERNETES_MASTER
+- 2026-05-19 #3958 docs(config-db): add Phase E constants marker to GNMI page
+- 2026-05-19 #3957 docs(config-db): normalize Phase D failure marker in image-state
+- 2026-05-19 #3955 docs(config-db): fix Phase E constants tag in gnmi page
+- 2026-05-19 #3953 docs(config-db): add Phase F side-effects block to tc-to-dscp-map
+- 2026-05-19 #3952 docs(config-db): add Phase E hardcoded-constants block to mux-cable-state
+- 2026-05-19 #3951 docs(config-db): add Phase H platform block to pbh-state
+- 2026-05-19 #3944 docs(config-db): add Phase G pubsub block to gnmi-dialin
+- 2026-05-19 #3948 docs(config-db): add Phase G pubsub block to LOGGER table page
+- 2026-05-19 #3943 docs(config-db): add Phase D failure-behavior block to vxlan-fdb
+- 2026-05-19 #3949 docs(config-db): add Phase F side-effects block to lossless-traffic-pattern
+- 2026-05-19 #3947 docs(config-db): add Phase H platform block to pin-config
+- 2026-05-19 #3934 docs(config-db): add Phase H platform block to gnmi-server
+- 2026-05-19 #3946 docs(config-db): add Phase D failure-behavior block to TAM page
+- 2026-05-19 #3945 docs(config-db): add Phase H platform marker to stp-vlan
+- 2026-05-19 #3941 docs(config-db): add Phase F side-effects block to redis-db-config
+- 2026-05-19 #3942 docs(config-db): add Phase H platform block to vxlan-tunnel-map
+- 2026-05-19 #3939 docs(config-db): add Phase F side-effects block to warm-restart
+- 2026-05-19 #3938 docs(config-db): add Phase G pubsub block to gnmi-dialin
+- 2026-05-19 #3936 docs(config-db): add Phase F side-effects block to mux-cable-port
+- 2026-05-19 #3929 docs(config-db): add Phase F side-effects block to LOGGER table page
+- 2026-05-19 #3935 docs(config-db): add Phase G pubsub block to gnmi-counter
+- 2026-05-19 #3933 docs(config-db): add Phase E hardcoded-constants block to RESTAPI page
+- 2026-05-19 #3932 docs(config-db): add Phase H platform block to NTP_SERVER page
+- 2026-05-19 #3931 docs(config-db): add Phase F side-effects block to vnet-route
+- 2026-05-19 #3930 docs(config-db): add Phase G pubsub block to SUBNET_DECAP page
+- 2026-05-19 #3928 docs(config-db): add Phase E constants marker to nhg-table page
+- 2026-05-19 #3917 docs(config-db): add Phase E hardcoded-constants block to ssh-config-base
+- 2026-05-19 #3926 docs(config-db): add Phase H platform block to vrrp-track
+- 2026-05-19 #3925 docs(config-db): add Phase F side-effects block to log-config
+- 2026-05-19 #3924 docs(config-db): add Phase F side-effects block to IPv6 link-local page
+- 2026-05-19 #3923 docs(config-db): add Phase F side-effects block to stp-orch
+- 2026-05-19 #3922 docs(config-db): add Phase D failure-behavior block to nvgre-tunnel
+- 2026-05-19 #3919 docs(config-db): add Phase G pubsub block to STP_PORT page
+- 2026-05-19 #3918 docs(config-db): add Phase E hardcoded-constants block to TC_TO_DSCP_MAP
+- 2026-05-19 #3916 docs(config-db): add Phase E hardcoded-constants block to ip-mcast-route
+- 2026-05-19 #3912 docs(config-db): add Phase E hardcoded-constants block to MUX_CABLE port page
+- 2026-05-19 #3915 docs(config-db): add Phase H platform block to ports-status
+- 2026-05-19 #3914 docs(config-db): add Phase G pubsub block to gnmi-state
+- 2026-05-19 #3913 docs(config-db): add Phase D failure-behavior block to RESTAPI page
+- 2026-05-19 #3903 docs(config-db): add Phase F side-effects block to gnmi-counter
+- 2026-05-19 #3910 docs(config-db): add Phase E hardcoded-constants block to ipv6-link-local
+- 2026-05-19 #3908 docs(config-db): add Phase E hardcoded-constants block to PBH_TABLE page
+- 2026-05-19 #3904 docs(config-db): add Phase G pubsub block to VRRP_TRACK
+- 2026-05-19 #3907 docs(config-db): add Phase G pubsub block to NTP_SERVER page
+- 2026-05-19 #3905 docs(config-db): add Phase E hardcoded-constants block to redis-db-config
+- 2026-05-19 #3900 docs(config-db): add Phase D failure-behavior block to mux-cable-port
+- 2026-05-19 #3901 docs(config-db): add Phase F side-effects block to gnmi-counter
+- 2026-05-19 #3899 docs(config-db): add Phase D failure block to SWITCH_TRIMMING
+- 2026-05-19 #3898 docs(config-db): add Phase F side-effects block to suppress-asic-sdk-health-event
+- 2026-05-19 #3896 docs(config-db): add Phase D failure-behavior block to mux-cable-state
+- 2026-05-19 #3895 docs(config-db): add Phase D failure-behavior block to stp-state
+- 2026-05-19 #3893 docs(config-db): add Phase E constants block to fabric-port
+- 2026-05-19 #3892 docs(config-db): add Phase E hardcoded-constants block to SWITCH_HASH page
+- 2026-05-19 #3891 docs(config-db): add Phase C cross-refs block to NVGRE_TUNNEL
+- 2026-05-19 #3890 docs(config-db): add Phase D failure-behavior block to TC_TO_DSCP_MAP
+- 2026-05-19 #3889 docs(config-db): add Phase D failure block to mux-cable-port page
+- 2026-05-19 #3888 docs(config-db): add Phase E hardcoded-constants block to STP page
+- 2026-05-19 #3885 docs(config-db): add Phase D failure-behavior block to zmq page
+- 2026-05-19 #3886 docs(config-db): add Phase F side-effects block to gnmi-state page
+- 2026-05-19 #3879 docs(config-db): add Phase E hardcoded-constants block to WARM_RESTART page
+- 2026-05-19 #3882 docs(config-db): add Phase E hardcoded-constants block to LOGGER page
+- 2026-05-19 #3880 docs(config-db): add Phase G pubsub block to FIPS page
+- 2026-05-19 #3878 docs(config-db): add Phase F side-effects block to vrrp-track page
+- 2026-05-19 #3877 docs(config-db): add Phase H platform block to vlan-state
+- 2026-05-19 #3876 docs(config-db): add Phase E constants tag to vlan-state
+- 2026-05-19 #3875 docs(config-db): add Phase D failure-behavior block to PBH_TABLE
+- 2026-05-19 #3874 docs(config-db): add Phase C cross-refs block to mux-cable-state
+- 2026-05-19 #3873 docs(config-db): add Phase E hardcoded-constants block to VNET_ROUTE
+- 2026-05-19 #3872 docs(config-db): add Phase F side-effects block to pbh-rule
+- 2026-05-19 #3858 docs(config-db): add Phase F side-effects block to gnmi-server
+- 2026-05-19 #3871 docs(config-db): add Phase F side-effects block to vxlan-evpn-tunnel
+- 2026-05-19 #3870 docs(config-db): add Phase C cross-refs block to TAM page
+- 2026-05-19 #3868 docs(config-db): add Phase E hardcoded-constants block to gnmi-state
+- 2026-05-19 #3867 docs(config-db): add Phase G pubsub block to ROUTE_MAP_SET page
+- 2026-05-19 #3864 docs(config-db): add Phase C cross-refs block to VXLAN_FDB_TABLE
+- 2026-05-19 #3863 docs(config-db): add Phase E hardcoded-constants block to lossless-traffic-pattern
+- 2026-05-19 #3862 docs(config-db): add Phase D failure-behavior block to WARM_RESTART
+- 2026-05-19 #3861 docs(config-db): add Phase C cross-refs block to switch-trimming
+- 2026-05-19 #3860 docs(config-db): add Phase G pubsub block to pbh-state
+- 2026-05-19 #3854 docs(config-db): add Phase F side-effects block to SUBNET_DECAP
+- 2026-05-19 #3859 docs(config-db): add Phase G pubsub block to pin-config
+- 2026-05-19 #3857 docs(config-db): add Phase D failure-behavior block to KUBERNETES_MASTER
+- 2026-05-19 #3856 docs(config-db): add Phase E hardcoded-constants block to vxlan-evpn-tunnel
+- 2026-05-19 #3855 docs(config-db): add Phase C cross-refs block to stp-state
+- 2026-05-19 #3853 docs(config-db): add Phase H platform block to vlan-sub-interface
+- 2026-05-19 #3851 docs(config-db): add Phase F side-effects block to stp-port
+- 2026-05-19 #3850 docs(config-db): add Phase F side-effects block to NTP_SERVER page
+- 2026-05-19 #3849 docs(config-db): add Phase D failure-behavior block to ssh-config-base
+- 2026-05-19 #3848 docs(config-db): add Phase F side-effects block to subnet-decap
+- 2026-05-19 #3845 docs(config-db): add Phase G pubsub block to vxlan-tunnel-map
+- 2026-05-19 #3844 docs(config-db): add Phase E hardcoded-constants block to pbh-rule
+- 2026-05-19 #3827 docs(config-db): add Phase G pubsub block to fabric-port page
+- 2026-05-19 #3843 docs(config-db): add Phase D failure-behavior block to vxlan-evpn-tunnel
+- 2026-05-19 #3832 docs(config-db): add Phase E hardcoded-constants block to suppress-asic-sdk-health-event
+- 2026-05-19 #3841 docs(config-db): add Phase E hardcoded-constants block to SUBNET_DECAP
+- 2026-05-19 #3838 docs(config-db): add Phase F side-effects block to FIPS page
+- 2026-05-19 #3839 docs(config-db): add Phase C cross-refs block to PBH_TABLE page
+- 2026-05-19 #3837 docs(config-db): add Phase C cross-refs block to RESTAPI page
+- 2026-05-19 #3835 docs(config-db): add Phase F side-effects block to FIPS table page
+- 2026-05-19 #3834 docs(config-db): add Phase D failure-behavior block to lossless-traffic-pattern
+- 2026-05-19 #3828 docs(config-db): add Phase D failure-behavior block to vrf-orch
+- 2026-05-19 #3833 docs(config-db): add Phase G pubsub block to FABRIC_PORT
+- 2026-05-19 #3831 docs(config-db): add Phase C cross-refs block to mux-cable-port page
+- 2026-05-19 #3821 docs(config-db): add Phase D failure block tag to NTP_KEY page
+- 2026-05-19 #3830 docs(config-db): add Phase F side-effects block to pbh-state
+- 2026-05-19 #3829 docs(config-db): add Phase D failure-behavior block to STP page
+- 2026-05-19 #3826 docs(config-db): add Phase D failure-behavior block to subnet-decap
+- 2026-05-19 #3825 docs(config-db): add Phase F side-effects block to gnmi-dialin
+- 2026-05-19 #3824 docs(config-db): add Phase F side-effects block to route-map-set
+- 2026-05-19 #3823 docs(config-db): add Phase D failure-behavior block to ip-mcast-route
+- 2026-05-19 #3822 docs(config-db): add Phase E hardcoded-constants block to gnmi-counter
+- 2026-05-19 #3820 docs(config-db): add Phase C cross-refs block to vxlan-evpn-tunnel
+- 2026-05-19 #3819 docs(config-db): add Phase E hardcoded-constants block to STP_PORT page
+- 2026-05-19 #3818 docs(config-db): add Phase E hardcoded-constants block to VRRP_TRACK
+- 2026-05-19 #3817 docs(config-db): add Phase D failure-behavior block to log-config
+- 2026-05-19 #3814 docs(config-db): add Phase D failure-behavior block to ipv6-link-local
+- 2026-05-19 #3813 docs(config-db): add Phase E hardcoded-constants block to NTP_SERVER
+- 2026-05-19 #3812 docs(config-db): add Phase D failure-behavior block to redis-db-config
+- 2026-05-19 #3811 docs(config-db): add Phase C cross-refs block to ip-mcast-route
+- 2026-05-19 #3810 docs(config-db): add Phase D failure-behavior block to vnet-route
+- 2026-05-19 #3809 docs(config-db): add Phase C cross-refs block to LOGGER table
+- 2026-05-19 #3808 docs(config-db): add Phase C cross-refs block to lossless-traffic-pattern
+- 2026-05-19 #3807 docs(config-db): add Phase E/F/G blocks to NTP_GLOBAL page
+- 2026-05-19 #3806 docs(config-db): add Phase E hardcoded-constants block to pbh-state
+- 2026-05-19 #3805 docs(config-db): add Phase H platform block to stp-mst
+- 2026-05-19 #3804 docs(config-db): add Phase C cross-refs block to vrf-orch
+- 2026-05-19 #3803 docs(config-db): add Phase H platform block to SAG page
+- 2026-05-19 #3802 docs(config-db): add Phase C cross-refs block to ipv6-link-local
+- 2026-05-19 #3801 docs(config-db): add Phase E hardcoded-constants to pki-trusted-certs
+- 2026-05-19 #3800 docs(config-db): add Phase E hardcoded-constants block to RADIUS page
+- 2026-05-19 #3797 docs(config-db): add Phase E hardcoded-constants block to fips
+- 2026-05-19 #3795 docs(config-db): add Phase D failure-behavior block to suppress-asic-sdk-health-event
+- 2026-05-19 #3788 docs(config-db): add Phase E hardcoded-constants block to gnmi-dialin
+- 2026-05-19 #3793 docs(config-db): add Phase C cross-refs block to vnet-route
+- 2026-05-19 #3791 docs(config-db): add Phase D failure-behavior block to pki-trusted-certs
+- 2026-05-19 #3786 docs(config-db): add Phase B ordering block to mux-cable-state
+- 2026-05-19 #3790 docs(config-db): add Phase G pubsub block to ports-status
+- 2026-05-19 #3789 docs(config-db): add Phase D failure-behavior block to gnmi-counter
+- 2026-05-19 #3787 docs(config-db): add Phase E hardcoded-constants block to stp-orch
+- 2026-05-19 #3776 docs(config-db): add Phase B ordering block to ipv6-link-local
+- 2026-05-19 #3785 docs(config-db): add Phase D failure-behavior block to fips
+- 2026-05-19 #3784 docs(config-db): add Phase G pubsub block to gnmi-server
+- 2026-05-19 #3775 docs(config-db): add Phase B ordering block to log-config (LOGGER)
+- 2026-05-19 #3783 docs(config-db): add Phase B ordering block to lossless-traffic-pattern
+- 2026-05-19 #3782 docs(config-db): add Phase C cross-refs block to kubernetes-master
+- 2026-05-19 #3781 docs(config-db): add Phase D failure-behavior block to stp-port
+- 2026-05-19 #3779 docs(config-db): add Phase D failure-behavior block to switch-hash
+- 2026-05-19 #3778 docs(config-db): add Phase G pubsub block to fdb-aging
+- 2026-05-19 #3777 docs(config-db): add Phase B ordering block to mux-cable-port
+- 2026-05-19 #3774 docs(config-db): add Phase C cross-refs block to zmq
+- 2026-05-19 #3773 docs(config-db): add Phase D failure-behavior block to gnmi-dialin
+- 2026-05-19 #3762 docs(config-db): add Phase H platform block to ntp-global
+- 2026-05-19 #3772 docs(config-db): add Phase B ordering block to kubernetes-master
+- 2026-05-19 #3771 docs(config-db): add Phase G pubsub block to stp-mst
+- 2026-05-19 #3770 docs(config-db): fix platform marker in erspan (Phase H)
+- 2026-05-19 #3768 docs(config-db): add Phase H platform block to default-lossless-buffer-parameter
+- 2026-05-19 #3769 docs(config-db): add Phase E hardcoded-constants block to gnmi-server
+- 2026-05-19 #3763 docs(config-db): add Phase H platform block to vrrp
+- 2026-05-19 #3752 docs(config-db): add Phase H platform block to gnmi
+- 2026-05-19 #3764 docs(config-db): add Phase G pubsub block to fabric-monitor
+- 2026-05-19 #3767 docs(config-db): add Phase D failure-behavior block to gnmi-state
+- 2026-05-19 #3765 docs(config-db): add Phase D failure-behavior block to RADIUS
+- 2026-05-19 #3757 docs(config-db): add Phase E constants marker to dpu-counter
+- 2026-05-19 #3754 docs(config-db): add Phase F side-effects block to fabric-monitor
+- 2026-05-19 #3761 docs(config-db): add Phase F side-writes block to fabric-port
+- 2026-05-19 #3760 docs(config-db): add Phase B ordering block to ip-mcast-route
+- 2026-05-19 #3756 docs(config-db): add Phase G pubsub block to fabric-monitor
+- 2026-05-19 #3755 docs(config-db): add Phase H platform-diff block to fec-state
+- 2026-05-19 #3753 docs(config-db): add Phase G pubsub block to default-lossless-buffer-parameter
+- 2026-05-19 #3751 docs(config-db): add Phase H platform-diff block to dpu-counter
+- 2026-05-19 #3741 docs(config-db): add Phase D failure-behavior block to gnmi-server
+- 2026-05-19 #3750 docs(config-db): add Phase G pubsub block to dpu-orch
+- 2026-05-19 #3744 docs(config-db): add Phase F side-effects block to fabric-monitor
+- 2026-05-19 #3747 docs(config-db): add Phase D failure-behavior block to ntp-global
+- 2026-05-19 #3746 docs(config-db): add Phase F side-effects block to dot1p-to-tc-map
+- 2026-05-19 #3743 docs(config-db): add Phase G pubsub block to fec-state
+- 2026-05-19 #3740 docs(config-db): add Phase H platform block to mclag-interface
+- 2026-05-19 #3723 docs(config-db): add Phase F side-effects block to default-lossless-buffer-parameter
+- 2026-05-19 #3739 docs(config-db): add Phase H platform-diff block to nhg-table
+- 2026-05-19 #3738 docs(config-db): add Phase H platform block to fabric-monitor
+- 2026-05-19 #3692 docs(config-db): add Phase H platform-diff block to HARDWARE table
+- 2026-05-19 #3737 docs(config-db): add Phase H platform-diff block to mclag-unique-ip
+- 2026-05-19 #3735 docs(config-db): add Phase G pubsub block to dpu-counter
+- 2026-05-19 #3736 docs(config-db): add Phase G pubsub block to DOT1P_TO_TC_MAP
+- 2026-05-19 #3734 docs(config-db): add Phase G pubsub block to gnmi
+- 2026-05-19 #3732 docs(config-db): add Phase H platform-diff block to dpu-orch
+- 2026-05-19 #3726 docs(config-db): add Phase H platform block to fdb-aging
+- 2026-05-19 #3731 docs(config-db): add Phase E hardcoded-constants block to fabric-port
+- 2026-05-19 #3730 docs(config-db): add Phase G pubsub block to mclag-interface
+- 2026-05-19 #3729 docs(config-db): add Phase F side-effects block to fec-state
+- 2026-05-19 #3728 docs(config-db): add Phase E hardcoded-constants block to fabric-monitor
+- 2026-05-19 #3725 docs(config-db): add Phase G pubsub block to mclag-unique-ip
+- 2026-05-19 #3721 docs(config-db): add Phase H platform-diff block to fdb-aging
+- 2026-05-19 #3724 docs(config-db): add Phase F side-effects block to gnmi
+- 2026-05-19 #3722 docs(config-db): add Phase G pubsub block to nhg-table
+- 2026-05-19 #3719 docs(config-db): add Phase F side-effects block to dpu-orch
+- 2026-05-19 #3718 docs(config-db): add Phase F side-effects block to dpu-counter
+- 2026-05-19 #3717 docs(config-db): add Phase F side-effects block to mclag-interface
+- 2026-05-19 #3716 docs(config-db): add Phase E hardcoded-constants block to fec-state
+- 2026-05-19 #3715 docs(config-db): add Phase F side-effects block to mclag-unique-ip
+- 2026-05-19 #3714 docs(config-db): add Phase F side-effects block to fdb-aging
+- 2026-05-19 #3696 docs(config-db): add Phase H platform block to dot1p-to-tc-map
+- 2026-05-19 #3713 docs(config-db): add Phase H platform block to nat-pool
+- 2026-05-19 #3712 docs(config-db): add Phase E hardcoded-constants block to gnmi
+- 2026-05-19 #3711 docs(config-db): add Phase E hardcoded-constants block to default-lossless-buffer-parameter
+- 2026-05-19 #3710 docs(config-db): add Phase H platform-diff block to ntp-key
+- 2026-05-19 #3709 docs(config-db): add Phase F side-effects block to nhg-table
+- 2026-05-19 #3708 docs(config-db): add Phase E hardcoded-constants block to fdb-aging
+- 2026-05-19 #3707 docs(config-db): add Phase E hardcoded-constants block to mclag-interface
+- 2026-05-19 #3706 docs(config-db): add Phase E hardcoded-constants block to dpu-orch
+- 2026-05-19 #3705 docs(config-db): add Phase E hardcoded-constants block to dpu-counter
+- 2026-05-19 #3704 docs(config-db): add Phase H platform-diff block to errordb
+- 2026-05-19 #3703 docs(config-db): add Phase D failure-behavior block to fdb-aging
+- 2026-05-19 #3702 docs(config-db): add Phase E hardcoded-constants block to MCLAG_UNIQUE_IP
+- 2026-05-19 #3701 docs(config-db): add Phase G pubsub block to nat-pool
+- 2026-05-19 #3700 docs(config-db): add Phase D failure-behavior block to default-lossless-buffer-parameter
+- 2026-05-19 #3698 docs(config-db): add Phase G pubsub block to NTP_KEY
+- 2026-05-19 #3693 docs(config-db): add Phase D failure-behavior block to mclag-interface
+- 2026-05-19 #3662 docs(config-db): add Phase F/G/H to hardware (side-effects/pubsub/platform)
+- 2026-05-19 #3695 docs(config-db): add Phase E hardcoded-constants block to nhg-table
+- 2026-05-19 #3694 docs(config-db): add Phase D failure-behavior block to dpu-orch
+- 2026-05-19 #3683 docs(config-db): add Phase D failure-behavior block to GNMI page
+- 2026-05-19 #3689 docs(config-db): add Phase D failure-behavior block to dpu-counter
+- 2026-05-19 #3682 docs(config-db): add Phase C cross-refs block to default-lossless-buffer-parameter
+- 2026-05-19 #3680 docs(config-db): add Phase H platform block to deviceop-state
+- 2026-05-19 #3691 docs(config-db): add Phase F secondary DB writes block to nat-pool
+- 2026-05-19 #3690 docs(config-db): add Phase D failure-behavior block to MCLAG_UNIQUE_IP
+- 2026-05-19 #3688 docs(config-db): add Phase D failure-behavior block to MCLAG_INTERFACE
+- 2026-05-19 #3685 docs(config-db): add Phase F side-effects block to ntp-key
+- 2026-05-19 #3687 docs(config-db): add Phase C implicit cross-refs block to dpu-counter
+- 2026-05-19 #3686 docs(config-db): add Phase D failure-behavior block to nhg-table
+- 2026-05-19 #3684 docs(config-db): add Phase E hardcoded-constants block to dot1p-to-tc-map
+- 2026-05-19 #3681 docs(config-db): add Phase C implicit cross-refs block to dpu-orch
+- 2026-05-19 #3678 docs(config-db): add Phase C cross-refs block to gnmi-state
+- 2026-05-19 #3679 docs(config-db): add Phase G pubsub block to errordb
+- 2026-05-19 #3677 docs(config-db): add Phase F side-effects block to ntp-key
+- 2026-05-19 #3676 docs(config-db): add Phase C cross-refs block to gnmi-dialin
+- 2026-05-19 #3675 docs(config-db): add Phase F side-effects block to hardware
+- 2026-05-19 #3674 docs(config-db): add Phase C implicit cross-refs block to fips
+- 2026-05-19 #3673 docs(config-db): add Phase C cross-refs block to gnmi-server
+- 2026-05-19 #3672 docs(config-db): add Phase C implicit-reference map to gnmi-counter
+- 2026-05-19 #3671 docs(config-db): add Phase D failure-behavior block to fabric-port
+- 2026-05-19 #3670 docs(config-db): add Phase E constants/platform blocks to deviceop-state
+- 2026-05-19 #3669 docs(config-db): add Phase D failure-behavior block to fabric-monitor
+- 2026-05-19 #3668 docs(config-db): add Phase H platform block to neigh
+- 2026-05-19 #3667 docs(config-db): add Phase C implicit cross-table refs block to nhg-table
+- 2026-05-19 #3659 docs(config-db): add Phase H platform block to DASH_ROUTE_RULE_TABLE
+- 2026-05-19 #3665 docs(config-db): add Phase C cross-refs block to mclag-unique-ip
+- 2026-05-19 #3663 docs(config-db): add Phase H platform block to device-runtime-metadata
+- 2026-05-19 #3666 docs(config-db): add Phase C implicit-reference map to MCLAG_INTERFACE
+- 2026-05-19 #3664 docs(config-db): add Phase D failure-behavior block to fec-state
+- 2026-05-19 #3657 docs(config-db): add Phase C cross-refs block to fdb-aging
+- 2026-05-19 #3654 docs(config-db): add Phase H platform block to extended-monitor
+- 2026-05-19 #3661 docs(config-db): add Phase H platform block to device-neighbor
+- 2026-05-19 #3660 docs(config-db): add Phase C implicit cross-table refs block to ntp-global
+- 2026-05-19 #3658 docs(config-db): add Phase E hardcoded-constants block to nat-pool
+- 2026-05-19 #3656 docs(config-db): add Phase F side-effects block to errordb
+- 2026-05-19 #3655 docs(config-db): add Phase D failure-behavior block to dot1p-to-tc-map
+- 2026-05-19 #3652 docs(config-db): add Phase H platform block to device-runtime-metadata
+- 2026-05-19 #3651 docs(config-db): add Phase H platform block to extended-monitor
+- 2026-05-19 #3650 docs(config-db): add Phase H platform block to heartbeat
+- 2026-05-19 #3649 docs(config-db): add Phase H platform block to image-state
+- 2026-05-19 #3643 docs(config-db): add Phase G pubsub block to neigh
+- 2026-05-19 #3647 docs(config-db): add Phase H platform block to route-cache
+- 2026-05-19 #3648 docs(config-db): add Phase H platform block to device-neighbor-metadata
+- 2026-05-19 #3646 docs(config-db): add Phase H platform block to vnet
+- 2026-05-19 #3644 docs(config-db): add Phase H platform block to erspan
+- 2026-05-19 #3642 docs(config-db): add Phase D failure block to map-pfc-priority-to-queue
+- 2026-05-19 #3641 docs(config-db): add Phase G pubsub block to device-neighbor
+- 2026-05-19 #3640 docs(config-db): add Phase H platform block to prefix-set
+- 2026-05-19 #3639 docs(config-db): add Phase H platform block to erspan
+- 2026-05-19 #3637 docs(config-db): add Phase H platform block to route-orch-event
+- 2026-05-19 #3638 docs(config-db): add Phase H platform block to tunnel-port
+- 2026-05-19 #3636 docs(config-db): add Phase H platform-diff block to event-publisher
+- 2026-05-19 #3627 docs(config-db): add Phase H platform block to queue-state
+- 2026-05-19 #3635 docs(config-db): add Phase H platform block to pfc-wd
+- 2026-05-19 #3633 docs(config-db): add Phase G pubsub block to image-state
+- 2026-05-19 #3630 docs(config-db): add Phase G pubsub block to route-orch-event
+- 2026-05-19 #3631 docs(config-db): add Phase B ordering block to mgmt-interface
+- 2026-05-19 #3629 docs(config-db): add Phase H platform-diff block to counters-flex
+- 2026-05-19 #3628 docs(config-db): add Phase H platform-diff block to pwm
+- 2026-05-19 #3626 docs(config-db): add Phase H platform-diff block to tc-to-priority-group-map
+- 2026-05-19 #3625 docs(config-db): add Phase G pubsub block to route-rule
+- 2026-05-19 #3623 docs(config-db): add Phase F side-effects block to image-state
+- 2026-05-19 #3622 docs(config-db): add Phase H platform block to pg-watermark
+- 2026-05-19 #3621 docs(config-db): add Phase G pubsub block to deviceop-state
+- 2026-05-19 #3620 docs(config-db): add Phase H platform-diff block to queue-state
+- 2026-05-19 #3618 docs(config-db): add Phase E hardcoded-constants block to errordb
+- 2026-05-19 #3603 docs(config-db): add Phase G pubsub block to device-neighbor-metadata
+- 2026-05-19 #3617 docs(config-db): add Phase G pubsub block to erspan
+- 2026-05-19 #3615 docs(config-db): add Phase H platform block to queue-counter
+- 2026-05-19 #3612 docs(config-db): add Phase H platform-diff block to route-common
+- 2026-05-19 #3610 docs(config-db): add Phase F side-effects block to deviceop-state
+- 2026-05-19 #3609 docs(config-db): add Phase G pubsub block to pg-watermark
+- 2026-05-19 #3608 docs(config-db): add Phase E hardcoded-constants block to image-state
+- 2026-05-19 #3607 docs(config-db): add Phase H platform-diff block to state-db-port
+- 2026-05-19 #3606 docs(config-db): add Phase G pubsub block to queue-state
+- 2026-05-19 #3605 docs(config-db): add Phase G pubsub block to extended-monitor
+- 2026-05-19 #3602 docs(config-db): add Phase B ordering label to nhg-orch
+- 2026-05-19 #3599 docs(config-db): add Phase G pubsub block to route-common
+- 2026-05-19 #3597 docs(config-db): add Phase E hardcoded-constants block to deviceop-state
+- 2026-05-19 #3596 docs(config-db): add Phase H platform-diff block to state-vrf
+- 2026-05-19 #3595 docs(config-db): add Phase F side-effects block to pg-watermark
+- 2026-05-19 #3594 docs(config-db): add Phase H platform-diff block to dhcpv4-relay
+- 2026-05-19 #3592 docs(config-db): add Phase D failure-behavior block to image-state
+- 2026-05-19 #3591 docs(config-db): add Phase G pubsub block to queue-counter
+- 2026-05-19 #3590 docs(config-db): add Phase H platform-diff block to dot1p-to-pg-map
+- 2026-05-19 #3589 docs(config-db): add Phase G pubsub block to state-db-port
+- 2026-05-19 #3588 docs(config-db): add Phase F side-effects block to device-neighbor-metadata
+- 2026-05-19 #3587 docs(config-db): add Phase F side-effects block to route-common (ROUTE_REDISTRIBUTE)
+- 2026-05-19 #3586 docs(config-db): add Phase G pubsub block to heartbeat
+- 2026-05-19 #3585 docs(config-db): add Phase H platform block to state-bgp
+- 2026-05-19 #3584 docs(config-db): add Phase G pubsub block to device-runtime-metadata
+- 2026-05-19 #3582 docs(config-db): add Phase E hardcoded-constants block to pg-watermark
+- 2026-05-19 #3581 docs(config-db): add Phase H platform-diff block to nat-state
+- 2026-05-19 #3580 docs(config-db): add Phase G pubsub block to dhcpv4-relay
+- 2026-05-19 #3579 docs(config-db): add Phase H platform-diff block to nhg
+- 2026-05-19 #3578 docs(config-db): add Phase H platform block to scheduler-orch
+- 2026-05-19 #3576 docs(config-db): add Phase H platform block to nat-zone
+- 2026-05-19 #3575 docs(config-db): add Phase F side-effects block to heartbeat
+- 2026-05-19 #3574 docs(config-db): add Phase G pubsub block to state-vrf
+- 2026-05-19 #3573 docs(config-db): add Phase D failure-behavior block to pg-watermark
+- 2026-05-19 #3563 docs(config-db): add Phase E hardcoded-constants block to DEVICE_NEIGHBOR_METADATA
+- 2026-05-19 #3572 docs(config-db): add Phase F side-effects block to state-db-port
+- 2026-05-19 #3571 docs(config-db): add Phase H platform-diff block to portchannel-status
+- 2026-05-19 #3570 docs(config-db): add Phase E hardcoded-constants block to heartbeat
+- 2026-05-19 #3569 docs(config-db): add Phase H platform block to voq-inband-interface
+- 2026-05-19 #3568 docs(config-db): add Phase H platform block to nat-counters
+- 2026-05-19 #3567 docs(config-db): add Phase H platform block to dpu-state-detail
+- 2026-05-19 #3558 docs(config-db): add Phase H platform block to copp-port
+- 2026-05-19 #3566 docs(config-db): add Phase F side-effects block to dhcpv4-relay
+- 2026-05-19 #3559 docs(config-db): add Phase G pubsub block to nat-state
+- 2026-05-19 #3565 docs(config-db): add Phase D failure-behavior block to HARDWARE page
+- 2026-05-19 #3564 docs(config-db): add Phase F side-effects block to nhg (NEXTHOP_GROUP_TABLE)
+- 2026-05-19 #3562 docs(config-db): add Phase G pubsub block to scheduler-orch
+- 2026-05-19 #3561 docs(config-db): add Phase H platform block to passw-hardening
+- 2026-05-19 #3560 docs(config-db): add Phase F side-effects block to queue-state
+- 2026-05-19 #3557 docs(config-db): add Phase E hardcoded-constants block to hardware
+- 2026-05-19 #3547 docs(config-db): add Phase G pubsub block to nat-state
+- 2026-05-19 #3556 docs(config-db): add Phase G pubsub block to dot1p-to-pg-map
+- 2026-05-19 #3555 docs(config-db): add Phase H platform block to state-flex-counter
+- 2026-05-19 #3554 docs(config-db): add Phase H platform block to route-handler
+- 2026-05-19 #3553 docs(config-db): add Phase H platform block to copp-port
+- 2026-05-19 #3552 docs(config-db): add Phase E hardcoded-constants block to state-db-port
+- 2026-05-19 #3551 docs(config-db): add Phase F side-effects block to scheduler-orch
+- 2026-05-19 #3543 docs(config-db): add Phase E hardcoded-constants block to scheduler-orch
+- 2026-05-19 #3546 docs(config-db): add Phase G pubsub block to passw-hardening
+- 2026-05-19 #3550 docs(config-db): add Phase E hardcoded-constants block to state-db-port
+- 2026-05-19 #3549 docs(config-db): add Phase D failure-behavior block to heartbeat
+- 2026-05-19 #3548 docs(config-db): add Phase F side-effects block to device-runtime-metadata
+- 2026-05-19 #3545 docs(config-db): add Phase G pubsub block to nat-zone
+- 2026-05-19 #3544 docs(config-db): add Phase F side-effects block to queue-counter
+- 2026-05-19 #3542 docs(config-db): add Phase F side-effects block to extended-monitor
+- 2026-05-19 #3535 docs(config-db): add Phase E hardcoded-constants block to pin-config
+- 2026-05-19 #3541 docs(config-db): add Phase C cross-refs block to hardware
+- 2026-05-19 #3540 docs(config-db): add Phase G pubsub block to route-cache
+- 2026-05-19 #3539 docs(config-db): add Phase E hardcoded-constants block to scheduler-orch
+- 2026-05-19 #3538 docs(config-db): add Phase H platform block to dpu-eni
+- 2026-05-19 #3537 docs(config-db): add Phase G pubsub block to event-publisher
+- 2026-05-19 #3528 docs(config-db): add Phase D failure-behavior block to deviceop-state
+- 2026-05-19 #3536 docs(config-db): add Phase H platform block to nat-static
+- 2026-05-19 #3534 docs(config-db): add Phase F side-effects block to device-neighbor
+- 2026-05-19 #3533 docs(config-db): add Phase H platform block to dscp-to-pg-map
+- 2026-05-19 #3532 docs(config-db): add Phase G pubsub block to state-flex-counter
+- 2026-05-19 #3531 docs(config-db): add Phase E hardcoded-constants block to queue-state
+- 2026-05-19 #3530 docs(config-db): add Phase F side-effects block to route-rule
+- 2026-05-19 #3529 docs(config-db): add Phase H platform block to copp-state
+- 2026-05-19 #3527 docs(config-db): add Phase E hardcoded-constants block to pin-config
+- 2026-05-19 #3526 docs(config-db): add Phase G pubsub block to state-bgp
+- 2026-05-19 #3525 docs(config-db): add Phase H platform block to pfcwd-state
+- 2026-05-19 #3524 docs(config-db): add Phase E hardcoded-constants block to extended-monitor
+- 2026-05-19 #3523 docs(config-db): add Phase F side-effects block to erspan
+- 2026-05-19 #3522 docs(config-db): add Phase H platform block to cbf-nhg
 

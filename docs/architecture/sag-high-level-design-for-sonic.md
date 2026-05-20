@@ -32,7 +32,7 @@ related:
 
 [EVPN](../reference/glossary.md#term-evpn)/VxLAN ファブリックで全 leaf が **同一 IP / MAC をデフォルトゲートウェイ** として応答するための仕組み。各 leaf 上の [VLAN](../reference/glossary.md#term-vlan) 仮想インタフェースに共通の仮想 MAC を割り当て、ホスト側ポートに対してのみ応答（ファブリック側には広告しない）させる[^1]。
 
-EVPN を使わずに単独でも使える設計。SONiC では **新規 daemon 不要** で、既存の `IntfMgr` / `IntfsOrch` に処理を追加する形で実現される[^1]。
+EVPN を使わずに単独でも使える設計。[SONiC](../reference/glossary.md#term-sonic) では **新規 daemon 不要** で、既存の `IntfMgr` / `IntfsOrch` に処理を追加する形で実現される[^1]。
 
 ## 動作仕様
 
@@ -56,7 +56,7 @@ flowchart LR
     IO --> RT[RouteOrch\n IPv6 LL me-route 更新]
 ```
 
-VLAN_INTERFACE の `static_anycast_gateway` が `true` でグローバル `SAG|GLOBAL.gateway_mac` が設定されているとき、`IntfsOrch` は ASIC [RIF](../reference/glossary.md#term-rif) の MAC を **CPU MAC ではなく SAG MAC** に書き換える。`false` または SAG MAC 未設定なら従来どおり CPU MAC を使う。
+VLAN_INTERFACE の `static_anycast_gateway` が `true` でグローバル `SAG|GLOBAL.gateway_mac` が設定されているとき、`IntfsOrch` は [ASIC](../reference/glossary.md#term-asic) [RIF](../reference/glossary.md#term-rif) の MAC を **CPU MAC ではなく SAG MAC** に書き換える。`false` または SAG MAC 未設定なら従来どおり CPU MAC を使う。
 
 IPv6 link-local アドレスは MAC から派生するため、SAG ↔ CPU MAC の切替時は `RouteOrch` の API を呼んで **古い link-local の me-route を削除し、新しい MAC ベースの link-local を入れ直す** 必要がある[^1]。
 
@@ -114,7 +114,7 @@ show static-anycast-gateway
 
 ## 干渉する機能
 
-- **VxLAN / EVPN**: 主たる組み合わせ。SAG はホスト面の默認ゲートウェイ集約として機能し、ファブリックでは個別 VTEP IP が使われる。
+- **VxLAN / EVPN**: 主たる組み合わせ。SAG はホスト面の默認ゲートウェイ集約として機能し、ファブリックでは個別 [VTEP](../reference/glossary.md#term-vtep) IP が使われる。
 - **IPv6 Link-Local**: MAC ベースの link-local アドレス変更があるため、`NeighOrch` / `RouteOrch` の link-local me-route 更新が必要。
 - **[ARP](../reference/glossary.md#term-arp) / ND**: 各 leaf が同一 SAG MAC でゲートウェイ ARP/ND 応答するため、ホスト側で MAC 矛盾は発生しない（[FRR](../reference/glossary.md#term-frr)/EVPN による自然な広告は別の話）。
 
@@ -260,4 +260,4 @@ arping -I Vlan100 10.0.100.1   # 自身に対する ARP 応答が安定するか
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 7b27b638c4f3 -->

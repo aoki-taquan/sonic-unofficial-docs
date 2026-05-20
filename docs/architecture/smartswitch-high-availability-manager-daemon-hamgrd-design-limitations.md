@@ -64,7 +64,7 @@ HLD は「hamgrd という単独 daemon が actor framework を内包し、NPU �
 
 ### 2.4 読者への影響
 
-- [DASH](../reference/glossary.md#term-dash) HA を community SONiC で「動かす」ことは現状不可能。`hamgrd` というプロセスが起動しない
+- [DASH](../reference/glossary.md#term-dash) HA を community [SONiC](../reference/glossary.md#term-sonic) で「動かす」ことは現状不可能。`hamgrd` というプロセスが起動しない
 - HLD の運用例（`config dash ha ...` 系コマンド、`show dash ha-set` 等）は community CLI に未追加
 - vendor [SmartSwitch](../reference/glossary.md#term-smartswitch) 製品（NVIDIA など）には独自実装の hamgrd 相当が入っている可能性があり、ベンダー版と community 版で挙動が大きく違う
 - 本ページの仕様記述は将来仕様参考であり、現行 community master で動く設定ではない
@@ -134,4 +134,4 @@ HLD は「hamgrd という単独 daemon が actor framework を内包し、NPU �
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 5a327f7b9445 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

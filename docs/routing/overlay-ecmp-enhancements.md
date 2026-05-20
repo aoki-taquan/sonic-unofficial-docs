@@ -50,7 +50,7 @@ related:
 「Overlay [ECMP](../reference/glossary.md#term-ecmp) with [BFD](../reference/glossary.md#term-bfd) monitoring」[HLD](../reference/glossary.md#term-hld)（`SONiC/doc/vxlan/Overlay ECMP with BFD.md`）の **後付け拡張** で、VxLAN [VNET](../reference/glossary.md#term-vnet) ルートに 4 種の機能を追加する[^1]:
 
 1. **Primary / Secondary エンドポイント** の自動切替（プライマリ全滅時のみセカンダリ使用）
-2. **カスタム監視** 委譲（BFD 非対応 VTEP 向け、外部プロセスで生存確認）
+2. **カスタム監視** 委譲（BFD 非対応 [VTEP](../reference/glossary.md#term-vtep) 向け、外部プロセスで生存確認）
 3. **per-route BFD Tx/Rx 間隔** と **directly-connected** ネクストホップサポート
 4. **`pinned_state`**: コントローラからの BFD 状態オーバーライド（[SmartSwitch](../reference/glossary.md#term-smartswitch) HA 連携）
 
@@ -137,7 +137,7 @@ sonic-db-cli APPL_DB HSET 'VNET_ROUTE_TUNNEL_TABLE:Vnet_3000:100.100.2.1/32' \
   endpoint '1.1.1.2' monitoring 'custom'
 ```
 
-新規 SONiC CLI は無く、コントローラから APPL_DB 直書きが前提（`show vnet routes` は引き続き利用可能）。
+新規 [SONiC](../reference/glossary.md#term-sonic) CLI は無く、コントローラから APPL_DB 直書きが前提（`show vnet routes` は引き続き利用可能）。
 
 ## 制限事項
 
@@ -178,4 +178,4 @@ sonic-db-cli APPL_DB hgetall 'VNET_ROUTE_TUNNEL_TABLE:Vnet_3000:100.100.2.1/32'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6c853f6b2538 -->
+<!-- glossary-links-injected: c5c8b661ae7e -->

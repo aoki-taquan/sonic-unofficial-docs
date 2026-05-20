@@ -143,7 +143,7 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 ### `send_community` (`bgp_community_type`)
 
-| 値 | FRR コマンド |
+| 値 | [FRR](../../reference/glossary.md#term-frr) コマンド |
 |----|-------------|
 | `standard` | `neighbor <pg> send-community standard` |
 | `extended` | `neighbor <pg> send-community extended` |
@@ -154,7 +154,7 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 ### `tx_add_paths`
 
-| 値 | FRR コマンド |
+| 値 | [FRR](../../reference/glossary.md#term-frr) コマンド |
 |----|-------------|
 | `tx_all_paths` | `neighbor <pg> addpath-tx-all-paths` |
 | `tx_best_path_per_as` | `neighbor <pg> addpath-tx-bestpath-per-AS` |
@@ -177,8 +177,8 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 | 条件 | 挙動 | ソース |
 |------|------|--------|
 | key パース時 `\|` が不正 (ValueError) | catch → continue (skip) | `frrcfgd.py` L2665 |
-| `local_asn` が未設定の VRF | LOG_DEBUG して skip | `frrcfgd.py` L2660 |
-| 対象 peer-group が FRR に未存在のまま AF 設定 | vtysh コマンド失敗 → `failed running BGP neighbor config command` を LOG_ERR → continue | `frrcfgd.py` L2791 |
+| `local_asn` が未設定の [VRF](../../reference/glossary.md#term-vrf) | LOG_DEBUG して skip | `frrcfgd.py` L2660 |
+| 対象 peer-group が FRR に未存在のまま AF 設定 | [vtysh](../../reference/glossary.md#term-vtysh) コマンド失敗 → `failed running BGP neighbor config command` を LOG_ERR → continue | `frrcfgd.py` L2791 |
 | `BGP_PEER_GROUP_AF` と `BGP_NEIGHBOR_AF` の key_map 共用 | 両テーブルは同一 `nbr_af_key_map` を使用。max_prefix / send_default_route の複合条件は BGP_NEIGHBOR_AF と同様 | `frrcfgd.py` L2112 |
 <!-- /cdb-exceptions -->
 
@@ -188,23 +188,23 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 ### 段階 1 — Consumer 登録
 
-`bgpcfgd` が CONFIG_DB の `BGP_PEER_GROUP_AF` テーブルを購読する。
+`bgpcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_PEER_GROUP_AF` テーブルを購読する。
 
 `BGP_PEER_GROUP_AF` は `<vrf>|<pg_name>|<af>` の key 構造。
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由)
+なし (FRR [vtysh](../../reference/glossary.md#term-vtysh) 経由)
 
 ### 段階 3 — APPL→SAI
 
-なし (FRR BGP peer-group AF 設定)
+なし (FRR [BGP](../../reference/glossary.md#term-bgp) peer-group AF 設定)
 
 ### 段階 4 — タイミングと副作用
 
 **適用タイミング**: 変化検知後 FRR に peer-group の AF コマンドを発行。peer-group メンバー全員に影響。
 
-**副作用**: peer-group の AF policy 変更はメンバー全 BGP session に波及。soft-clear が必要な場合がある。
+**副作用**: peer-group の AF policy 変更はメンバー全 [BGP](../../reference/glossary.md#term-bgp) session に波及。soft-clear が必要な場合がある。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -213,14 +213,14 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 対象テーブル: `BGP_PEER_GROUP_AF`
 
 ### CLI
-- `vtysh` 経由 peer-group address-family コマンド群 (bgpcfgd が CONFIG_DB へ書き戻し)
+- `vtysh` 経由 peer-group address-family コマンド群 ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が [CONFIG_DB](../../reference/glossary.md#term-config_db) へ書き戻し)
   - ソース: `sonic-frr bgpcfgd`
 
 ### minigraph / sonic-cfggen
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- sonic-mgmt-common OpenConfig BGP peer-group 経由
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common OpenConfig BGP peer-group 経由
 
 ### db_migrator
 - なし
@@ -282,7 +282,7 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 ### 設計上の理由
 
-`frrcfgd` は FRR (bgpd) と vtysh 経由で通信するコントロールプレーンデーモンであり、ASIC / ハードウェアアクセラレーションと無関係。BGP peer-group の AF 設定は FRR 内部で処理されるため、プラットフォーム種別によるコードパスの差異は生じない。
+`frrcfgd` は FRR (bgpd) と [vtysh](../../reference/glossary.md#term-vtysh) 経由で通信するコントロールプレーンデーモンであり、[ASIC](../../reference/glossary.md#term-asic) / ハードウェアアクセラレーションと無関係。BGP peer-group の AF 設定は FRR 内部で処理されるため、プラットフォーム種別によるコードパスの差異は生じない。
 
 詳細スキャン手順・grep 証跡は `meta/_intermediate/cdb-flow/bgp-peer-group-af-platform.md` を参照。
 <!-- /platform -->
@@ -293,17 +293,17 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 | # | 失敗トリガー | 検出箇所 | 結果 | retry | ソース |
 |---|------------|---------|------|------|--------|
-| 1 | `BGP_GLOBALS.local_asn` が対象 VRF に未設定（VRF guard） | `__update_bgp` L2656–2662 | LOG_DEBUG `ignore table ... local_asn not configured` → `continue`、FRR 未投入、CONFIG_DB エントリ残存 | なし | `frrcfgd.py:2659–2662` |
+| 1 | `BGP_GLOBALS.local_asn` が対象 [VRF](../../reference/glossary.md#term-vrf) に未設定（VRF guard） | `__update_bgp` L2656–2662 | LOG_DEBUG `ignore table ... local_asn not configured` → `continue`、FRR 未投入、CONFIG_DB エントリ残存 | なし | `frrcfgd.py:2659–2662` |
 | 2 | 対応 `BGP_PEER_GROUP` が bgpd に未登録のまま AF 設定 | `__update_bgp` L2872 | `key_map.run_command` 失敗 → LOG_ERR `failed running BGP neighbor AF config command` → `continue` | なし | `frrcfgd.py:2872–2874` |
 | 3 | vtysh / bgpd コマンドエラー（構文エラー・接続断等） | `g_run_command` L47–63 | LOG_ERR `command execution failure` → `False` 返却 → 上位で `continue` | なし | `frrcfgd.py:52–54` |
-| 4 | `route_map_in` / `route_map_out` 等に指定した ROUTE_MAP が bgpd に未定義 | bgpd 投入時に検出 | bgpd が `rc != 0` → LOG_ERR、`BGP_PEER_GROUP_AF` 再投入なし | なし | `frrcfgd.py:47–63`、`nbr_af_key_map` L1903–1906 |
+| 4 | `route_map_in` / `route_map_out` 等に指定した [ROUTE_MAP](../../reference/glossary.md#term-route_map) が bgpd に未定義 | bgpd 投入時に検出 | bgpd が `rc != 0` → LOG_ERR、`BGP_PEER_GROUP_AF` 再投入なし | なし | `frrcfgd.py:47–63`、`nbr_af_key_map` L1903–1906 |
 | 5 | key フォーマット不正（`\|` 不足など）による `ValueError` | `__update_bgp` L2865–2867 | 例外伝播、subscriber loop へ到達の可能性 | なし | `frrcfgd.py:2866–2867` |
 | 6 | bgpd UNIX socket 接続失敗（起動時） | `BgpdClientMgr.__create_frr_client` L181–200 | 最大 100 回 / 2秒間隔 retry。超過で `RuntimeError` → frrcfgd 起動失敗、全 BGP テーブル未処理 | 100 回（起動時のみ） | `frrcfgd.py:187–200` |
 
 ### 設計上の注意点
 
 - **`BGP_PEER_GROUP` の事前確認なし**: `BGP_PEER_GROUP_AF` 処理は peer-group の自動作成を行わない。`BGP_PEER_GROUP` が bgpd に先行登録されていない場合、AF コマンドは bgpd に拒否される（ #2 ）。
-- **ROUTE_MAP の依存関係チェックなし**: frrcfgd は `route_map_in` / `route_map_out` 等の参照先 ROUTE_MAP を事前検証しない。bgpd 投入後に初めてエラーが判明し、ROUTE_MAP が後から定義されても再投入されない（ #4 ）。
+- **[ROUTE_MAP](../../reference/glossary.md#term-route_map) の依存関係チェックなし**: frrcfgd は `route_map_in` / `route_map_out` 等の参照先 [ROUTE_MAP](../../reference/glossary.md#term-route_map) を事前検証しない。bgpd 投入後に初めてエラーが判明し、ROUTE_MAP が後から定義されても再投入されない（ #4 ）。
 - **運用中 retry ゼロ**: 全失敗パスで `continue` のみ。CONFIG_DB エントリを残したまま次イベントへ進む。整合性回復はユーザーによる再 SET が必要。
 - **推奨書き込み順**: `BGP_GLOBALS` → `BGP_GLOBALS_AF` → `ROUTE_MAP` → `BGP_PEER_GROUP` → `BGP_PEER_GROUP_AF`
 <!-- /failure -->
@@ -479,7 +479,7 @@ YANG では `afi_safi` が独立した leaf として定義されているが、
 
 ### 検出結果: 副次 DB 書込なし
 
-`frrcfgd.py` の `BGP_PEER_GROUP_AF` ハンドラ (`bgp_table_handler_common`) は **STATE_DB・COUNTERS_DB・APPL_DB への書込を一切行わない**。
+`frrcfgd.py` の `BGP_PEER_GROUP_AF` ハンドラ (`bgp_table_handler_common`) は **[STATE_DB](../../reference/glossary.md#term-state_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[APPL_DB](../../reference/glossary.md#term-appl_db) への書込を一切行わない**。
 
 #### 根拠
 
@@ -502,7 +502,7 @@ CONFIG_DB BGP_PEER_GROUP_AF (SET/DEL)
               └─→ bgpd が内部状態を更新（メモリ内のみ）
 ```
 
-BGP セッション状態（Established / Idle 等）や prefix カウンタは bgpd が自律的に STATE_DB へ書き込むが、それは **bgpd → sonic-bgpcfgd の独立した経路**であり `frrcfgd` の BGP_PEER_GROUP_AF ハンドラには含まれない。
+BGP セッション状態（Established / Idle 等）や prefix カウンタは bgpd が自律的に [STATE_DB](../../reference/glossary.md#term-state_db) へ書き込むが、それは **bgpd → sonic-[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) の独立した経路**であり `frrcfgd` の BGP_PEER_GROUP_AF ハンドラには含まれない。
 
 > **結論**: Phase F 対象の副次書込は存在しない。FRR vtysh 経由でのみ影響が波及する。
 <!-- /side-effects -->
@@ -510,7 +510,7 @@ BGP セッション状態（Established / Idle 等）や prefix カウンタは 
 <!-- pubsub -->
 ## 購読メカニズム — ExtConfigDBConnector / Redis keyspace (Phase G)
 
-`BGP_PEER_GROUP_AF` の変更通知は **`ExtConfigDBConnector` + Redis keyspace PSUBSCRIBE** で実装される。`bgpcfgd` 系の `SubscriberStateTable` とは異なる frrcfgd 独自方式。
+`BGP_PEER_GROUP_AF` の変更通知は **`ExtConfigDBConnector` + [Redis](../../reference/glossary.md#term-redis) keyspace PSUBSCRIBE** で実装される。`bgpcfgd` 系の `SubscriberStateTable` とは異なる frrcfgd 独自方式。
 
 ### 購読チャンネルパターン
 
@@ -550,4 +550,5 @@ Redis keyspace pmessage ("__keyspace@4__:BGP_PEER_GROUP_AF|<vrf>|<pg>|<af>")
 
 詳細は `meta/_intermediate/cdb-flow/bgp-peer-group-af-pubsub.md` を参照。
 <!-- /pubsub -->
-<!-- glossary-links-injected: b5626ca1f0f9 -->
+
+<!-- glossary-links-injected: 0239bda450f9 -->

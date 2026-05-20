@@ -45,7 +45,7 @@ related:
 
 ## 概要
 
-IETF RFC 8754 / 8986 で定義される **Segment Routing over IPv6** を SONiC に実装する [HLD](../reference/glossary.md#term-hld)[^1]。[SRv6](../reference/glossary.md#term-srv6) は SDN 向け IPv6 ベースのプログラマブル forwarding で、SID list を SRH に積み込むことで TE / VPN / [EVPN](../reference/glossary.md#term-evpn) 等を実現する。Phase 1 では SONiC を **headend / endpoint** 双方として動作させ、Phase 2 以降で uSID / G-SID / HMAC / sBFD / anycast SID 等に拡張する設計。[FRR](../reference/glossary.md#term-frr) 側 SRv6 が成熟するまでは **静的 SID と policy を [CONFIG_DB](../reference/glossary.md#term-config_db) に直接書く**運用。
+IETF RFC 8754 / 8986 で定義される **Segment Routing over IPv6** を [SONiC](../reference/glossary.md#term-sonic) に実装する [HLD](../reference/glossary.md#term-hld)[^1]。[SRv6](../reference/glossary.md#term-srv6) は SDN 向け IPv6 ベースのプログラマブル forwarding で、SID list を SRH に積み込むことで TE / VPN / [EVPN](../reference/glossary.md#term-evpn) 等を実現する。Phase 1 では SONiC を **headend / endpoint** 双方として動作させ、Phase 2 以降で uSID / G-SID / HMAC / sBFD / anycast SID 等に拡張する設計。[FRR](../reference/glossary.md#term-frr) 側 SRv6 が成熟するまでは **静的 SID と policy を [CONFIG_DB](../reference/glossary.md#term-config_db) に直接書く**運用。
 
 ## 動作仕様
 
@@ -195,4 +195,4 @@ reasoning: Phase 1 のサポート機能の根拠。
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ed6625c06753 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

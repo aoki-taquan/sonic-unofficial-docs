@@ -32,9 +32,9 @@ related:
 
 ## 概要
 
-ホストインタフェース trap（[CoPP](../reference/glossary.md#term-copp) で ASIC から CPU へ punt されるパケット種別。[BGP](../reference/glossary.md#term-bgp) / [LLDP](../reference/glossary.md#term-lldp) / [ARP](../reference/glossary.md#term-arp) / DHCP 等）について、**trap ID ごとの packet / byte / PPS** を計測する仕組み[^1]。デバッグ・トラブルシュート・性能解析が目的で、CoPP の policer 監視や予期しない CPU bound traffic の発見に使う。
+ホストインタフェース trap（[CoPP](../reference/glossary.md#term-copp) で [ASIC](../reference/glossary.md#term-asic) から CPU へ punt されるパケット種別。[BGP](../reference/glossary.md#term-bgp) / [LLDP](../reference/glossary.md#term-lldp) / [ARP](../reference/glossary.md#term-arp) / DHCP 等）について、**trap ID ごとの packet / byte / PPS** を計測する仕組み[^1]。デバッグ・トラブルシュート・性能解析が目的で、CoPP の policer 監視や予期しない CPU bound traffic の発見に使う。
 
-実装は [SAI](../reference/glossary.md#term-sai) **Generic Counter**（[SAI-Proposal-Generic-Counters.md](https://github.com/opencomputeproject/SAI/blob/master/doc/SAI-Proposal-Generic-Counters.md)）を流用し、SONiC 既存の **Flex Counter** infrastructure に新グループを足す形で乗せる[^1]。
+実装は [SAI](../reference/glossary.md#term-sai) **Generic Counter**（[SAI-Proposal-Generic-Counters.md](https://github.com/opencomputeproject/SAI/blob/master/doc/SAI-Proposal-Generic-Counters.md)）を流用し、[SONiC](../reference/glossary.md#term-sonic) 既存の **Flex Counter** infrastructure に新グループを足す形で乗せる[^1]。
 
 ## 動作仕様
 
@@ -203,4 +203,4 @@ redis-cli -n 2 HGETALL "COUNTERS:<counter_oid>"
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 0d3c1956e387 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

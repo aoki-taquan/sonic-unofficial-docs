@@ -16,7 +16,7 @@ related:
 
 ## 想定シナリオ
 
-ラボで SONiC を試用する読者を想定しています。仮想環境または評価機で起動し、管理 IP、ポート、[VLAN](../reference/glossary.md#term-vlan)、[BGP](../reference/glossary.md#term-bgp) などの基本設定を入れ、状態確認まで一連の流れを辿るための導線です。
+ラボで [SONiC](../reference/glossary.md#term-sonic) を試用する読者を想定しています。仮想環境または評価機で起動し、管理 IP、ポート、[VLAN](../reference/glossary.md#term-vlan)、[BGP](../reference/glossary.md#term-bgp) などの基本設定を入れ、状態確認まで一連の流れを辿るための導線です。
 
 ## 推奨 reading path
 
@@ -53,4 +53,4 @@ related:
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ebb49e55a7a2 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

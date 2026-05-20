@@ -45,7 +45,7 @@ related:
 
 # Overlay 設定
 
-Overlay の設定は、最初に「L2 [VLAN](../../reference/glossary.md#term-vlan)-VNI を作るのか」「[VNET](../../reference/glossary.md#term-vnet) route を作るのか」「[EVPN](../../reference/glossary.md#term-evpn) の NVO を作るのか」を決めると整理できます。どの場合も、VTEP となる [VXLAN](../../reference/glossary.md#term-vxlan) tunnel が先に必要です。
+Overlay の設定は、最初に「L2 [VLAN](../../reference/glossary.md#term-vlan)-VNI を作るのか」「[VNET](../../reference/glossary.md#term-vnet) route を作るのか」「[EVPN](../../reference/glossary.md#term-evpn) の NVO を作るのか」を決めると整理できます。どの場合も、[VTEP](../../reference/glossary.md#term-vtep) となる [VXLAN](../../reference/glossary.md#term-vxlan) tunnel が先に必要です。
 
 ## 最小構成の順番
 
@@ -242,7 +242,7 @@ Reference の `config-db` ページは、CLI で触る table と orchagent が�
 
 ## EVPN NVO と FRR の境界
 
-`VXLAN_EVPN_NVO` は EVPN NVO インスタンスと source VTEP を結びます。ただし、BGP neighbor、address-family l2vpn evpn、route-target、[VRF](../../reference/glossary.md#term-vrf) などの control plane 設定は FRR 側の領域です。SONiC 側で VXLAN tunnel と map が存在していても、FRR EVPN が Type-2 / Type-5 を交換していなければ remote MAC / prefix は学習されません。
+`VXLAN_EVPN_NVO` は EVPN NVO インスタンスと source VTEP を結びます。ただし、BGP neighbor、address-family l2vpn evpn、route-target、[VRF](../../reference/glossary.md#term-vrf) などの control plane 設定は FRR 側の領域です。[SONiC](../../reference/glossary.md#term-sonic) 側で VXLAN tunnel と map が存在していても、FRR EVPN が Type-2 / Type-5 を交換していなければ remote MAC / prefix は学習されません。
 
 ## PBH inner hash
 
@@ -281,4 +281,4 @@ VXLAN / NVGRE の外側 header だけで [ECMP](../../reference/glossary.md#term
 - [sonic-vnet YANG](../../reference/yang/sonic-vnet.md)
 - [Policy Based Hashing](../../architecture/sonic-policy-based-hashing.md)
 
-<!-- glossary-links-injected: b8635cf7f580 -->
+<!-- glossary-links-injected: c5c8b661ae7e -->

@@ -42,7 +42,7 @@ related:
 
 ## 概要
 
-[SAI](../reference/glossary.md#term-sai) に追加された **bulk stats API**（`sai_bulk_object_get_stats` / `sai_bulk_object_clear_stats`、SAI PR #1352）を SONiC の Flex Counter framework が活用するための設計[^1]。port / queue / pg / [RIF](../reference/glossary.md#term-rif) 等の counter 取得が 1 オブジェクト 1 SAI call から **bulk 1 call** になり、polling 性能が改善する。Phase 1 は **[syncd](../reference/glossary.md#term-syncd) 内部の改造のみ**で、CLI / swss 側の変更なし。
+[SAI](../reference/glossary.md#term-sai) に追加された **bulk stats API**（`sai_bulk_object_get_stats` / `sai_bulk_object_clear_stats`、SAI PR #1352）を [SONiC](../reference/glossary.md#term-sonic) の Flex Counter framework が活用するための設計[^1]。port / queue / pg / [RIF](../reference/glossary.md#term-rif) 等の counter 取得が 1 オブジェクト 1 SAI call から **bulk 1 call** になり、polling 性能が改善する。Phase 1 は **[syncd](../reference/glossary.md#term-syncd) 内部の改造のみ**で、CLI / swss 側の変更なし。
 
 v0.2（2024-12, Stephen Sun）で **bulk chunk size の指定**（ports を細分化して polling 周期を分散）と **正確な polling 時刻の COUNTER_DB 添付** が追加[^1]。
 
@@ -195,4 +195,4 @@ redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|QUEUE'
 - fallback 経路の単体テスト存在確認
 -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

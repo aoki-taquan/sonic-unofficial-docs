@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-SONiC には telemetry agent 等、デバイスによっては不要な **オプショナルなコンテナ/サービス** がある。本 [HLD](../reference/glossary.md#term-hld)（2019 年の初期提案）はこれらを `CONFIG_DB.FEATURE` テーブルで一括制御する仕組みを定義した[^1]。後続の各種拡張（auto_restart, delayed, mgmt-framework 連携など）の **基盤となる初版設計** である。
+[SONiC](../reference/glossary.md#term-sonic) には telemetry agent 等、デバイスによっては不要な **オプショナルなコンテナ/サービス** がある。本 [HLD](../reference/glossary.md#term-hld)（2019 年の初期提案）はこれらを `CONFIG_DB.FEATURE` テーブルで一括制御する仕組みを定義した[^1]。後続の各種拡張（auto_restart, delayed, mgmt-framework 連携など）の **基盤となる初版設計** である。
 
 本提案の要点は次の 3 つ:
 
@@ -185,4 +185,4 @@ docker ps -a --format '{{.Names}}\t{{.Status}}'
 - 後発 HLD (event-driven config reload, delayed services) との重なり
 -->
 
-<!-- glossary-links-injected: 5491cc477cce -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

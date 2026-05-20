@@ -128,7 +128,7 @@ session フラップ間で counter 値が保たれる。
 | Command | 用途 |
 |---------|------|
 | `counterpoll acl enable` | ACL counter polling を有効化 |
-| `counterpoll acl disable` | polling 無効化（ASIC の counter 自体は残る） |
+| `counterpoll acl disable` | polling 無効化（[ASIC](../reference/glossary.md#term-asic) の counter 自体は残る） |
 | `counterpoll acl interval <ms>` | polling 間隔（1〜1000 秒）を変更 |
 | `aclshow [-a]` | rule ごとの packet / byte 表示 |
 | `sonic-clear acl` | counter クリア（ユーザごとの dump 差分方式） |
@@ -251,4 +251,4 @@ redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|ACL'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: d36474e99740 -->
+<!-- glossary-links-injected: c006405759d8 -->
