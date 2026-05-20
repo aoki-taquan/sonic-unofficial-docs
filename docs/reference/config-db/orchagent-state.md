@@ -44,7 +44,7 @@ related:
 
 `orchagent` (`sonic-swss`) は動作中に複数の [STATE_DB](../../reference/glossary.md#term-state_db) テーブルへ書き込みを行う。本ページはその共通テーブル群——`WARM_RESTART_TABLE`・`PORT_TABLE`・`FDB_TABLE`・`VRF_OBJECT_TABLE`・`FIPS_MACSEC_POST_TABLE`——のキー構造・フィールド・コード由来デフォルトを一覧する。
 
-[BFD](../../reference/glossary.md#term-bfd) セッション状態 (`BFD_SESSION_TABLE`) やデュアルTOR [MUX](../../reference/glossary.md#term-mux) 状態 (`HW_MUX_CABLE_TABLE`) など個別機能の STATE_DB テーブルは、それぞれの機能ページを参照のこと。
+[BFD](../../reference/glossary.md#term-bfd) セッション状態 (`BFD_SESSION_TABLE`) やデュアルTOR [MUX](../../reference/glossary.md#term-mux) 状態 (`HW_MUX_CABLE_TABLE`) など個別機能の [STATE_DB](../../reference/glossary.md#term-state_db) テーブルは、それぞれの機能ページを参照のこと。
 
 ---
 
@@ -117,8 +117,8 @@ PORT_TABLE|<port_alias>
 
 | フィールド | 型 | 初期値 | 説明 |
 |-----------|----|-------|------|
-| `supported_speeds` | カンマ区切り uint string | SAI 取得値 | SAI_PORT_ATTR_SUPPORTED_SPEED_LIST から取得 ([portsorch](../../reference/glossary.md#term-portsorch).cpp:3171) |
-| `supported_fecs` | カンマ区切り string | SAI 取得値 [+`"auto"`] | SAI_PORT_ATTR_SUPPORTED_FEC_MODE から取得。FEC auto override サポート時は末尾に `"auto"` を付加 ([portsorch](../../reference/glossary.md#term-portsorch).cpp:3310-3318) |
+| `supported_speeds` | カンマ区切り uint string | [SAI](../../reference/glossary.md#term-sai) 取得値 | SAI_PORT_ATTR_SUPPORTED_SPEED_LIST から取得 ([portsorch](../../reference/glossary.md#term-portsorch).cpp:3171) |
+| `supported_fecs` | カンマ区切り string | [SAI](../../reference/glossary.md#term-sai) 取得値 [+`"auto"`] | SAI_PORT_ATTR_SUPPORTED_FEC_MODE から取得。FEC auto override サポート時は末尾に `"auto"` を付加 ([portsorch](../../reference/glossary.md#term-portsorch).cpp:3310-3318) |
 | `host_tx_ready` | boolean string | `"false"` | ホスト TX 準備状態。SAI/gearbox の admin up 成功時 `"true"`、失敗/ダウン時 `"false"` ([portsorch](../../reference/glossary.md#term-portsorch).cpp:2201-2203) |
 | `speed` | uint string / `"N/A"` | SAI 取得値 | 実動作速度 (Mbps)。0 の場合は `"N/A"` (portsorch.cpp:9855) |
 | `fec` | string | SAI 取得値 | 実動作 FEC モード (portsorch.cpp:9869) |
@@ -155,8 +155,8 @@ FDB_TABLE|<bridge_name>:<mac_address>
 ### 書き込み条件
 
 - **書き込む**: `FDB_ORIGIN_LEARN` (ローカル学習) および `FDB_ORIGIN_LOCAL` (静的)
-- **書き込まない**: `FDB_ORIGIN_VXLAN_ADVERTIZED` (VXLAN 経由) — ただし `FDB_ORIGIN_MCLAG_ADVERTIZED` かつ `type == "dynamic_local"` の場合は書き込む
-- **MAC 移動時**: 旧エントリ削除 → 新エントリ書き込み。MCLAG remote → local 移動の場合は `MCLAG_REMOTE_FDB_TABLE` からも削除
+- **書き込まない**: `FDB_ORIGIN_VXLAN_ADVERTIZED` ([VXLAN](../../reference/glossary.md#term-vxlan) 経由) — ただし `FDB_ORIGIN_MCLAG_ADVERTIZED` かつ `type == "dynamic_local"` の場合は書き込む
+- **MAC 移動時**: 旧エントリ削除 → 新エントリ書き込み。[MCLAG](../../reference/glossary.md#term-mclag) remote → local 移動の場合は `MCLAG_REMOTE_FDB_TABLE` からも削除
 
 ---
 
@@ -164,7 +164,7 @@ FDB_TABLE|<bridge_name>:<mac_address>
 
 **テーブル名**: `VRF_OBJECT_TABLE` (`schema.h:430`)
 
-`vrforch` が [VRF](../../reference/glossary.md#term-vrf) の SAI オブジェクト作成/更新完了を通知するためのテーブル[^4]。`vrfmgrd` が VRF 削除時の同期制御に使用する。
+`vrforch` が [VRF](../../reference/glossary.md#term-vrf) の SAI オブジェクト作成/更新完了を通知するためのテーブル[^4]。`vrfmgrd` が [VRF](../../reference/glossary.md#term-vrf) 削除時の同期制御に使用する。
 
 ### キー構造
 
@@ -178,7 +178,7 @@ VRF_OBJECT_TABLE|<vrf_name>
 
 | フィールド | 型 | 値 | 説明 |
 |-----------|----|----|------|
-| `state` | string | `"ok"` | VRF 作成/更新成功後に書き込み (vrforch.cpp:120, 150) |
+| `state` | string | `"ok"` | [VRF](../../reference/glossary.md#term-vrf) 作成/更新成功後に書き込み (vrforch.cpp:120, 150) |
 
 エントリは VRF 削除時に `m_stateVrfObjectTable.del(vrf_name)` で削除される (vrforch.cpp:193)。
 
@@ -209,9 +209,9 @@ FIPS_MACSEC_POST_TABLE|sai
 
 | 値 | 意味 |
 |----|------|
-| `"disabled"` | MACsec POST 非対応、または無効 (main.cpp:791, 930) |
+| `"disabled"` | [MACsec](../../reference/glossary.md#term-macsec) POST 非対応、または無効 (main.cpp:791, 930) |
 | `"switch-level-post-in-progress"` | switch レベル POST 実行中 (main.cpp:775) |
-| `"macsec-level-post-in-progress"` | MACsec レベル POST 実行中 (main.cpp:924) |
+| `"macsec-level-post-in-progress"` | [MACsec](../../reference/glossary.md#term-macsec) レベル POST 実行中 (main.cpp:924) |
 | `"pass"` | POST テスト成功 (macsecorch.cpp:705, 786, 840) |
 | `"fail"` | POST テスト失敗 (macsecorch.cpp:710, 791, 856) |
 
@@ -231,7 +231,7 @@ stateDiagram-v2
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-orchagent が STATE_DB へ書き込む 5 テーブルはそれぞれ異なる初期化フェーズで出現する。下記は orchagent 起動シーケンスにおける書込み順と、テーブル間の強制先行関係をまとめたものである。
+orchagent が [STATE_DB](../../reference/glossary.md#term-state_db) へ書き込む 5 テーブルはそれぞれ異なる初期化フェーズで出現する。下記は orchagent 起動シーケンスにおける書込み順と、テーブル間の強制先行関係をまとめたものである。
 
 ### 起動シーケンス上の書込み順序
 
@@ -298,13 +298,13 @@ orchagent が STATE_DB へ書き込む各テーブルは、以下の上流 DB・
 | 参照先 | DB | 方向 | STATE_DB テーブル | 実装上の必須度 | 根拠コード |
 |--------|----|----|------------------|--------------|-----------|
 | `PORT_TABLE\|PortInitDone` | [APPL_DB](../../reference/glossary.md#term-appl_db) | READ | PORT_TABLE, FDB_TABLE | **必須** (PortInitDone がない限り初期化不完） | `portsorch.cpp:4350-4357, 4613` |
-| `PORT_TABLE\|PortConfigDone` | APPL_DB | READ | PORT_TABLE | **必須** (PortConfigDone と PortInitDone 両方で設定完了判定） | `portsorch.cpp:4357` |
-| `FDB_TABLE\|*` | APPL_DB | READ | FDB_TABLE | 必須 (APPL_DB FDB エントリを購読して STATE_DB に反映) | `fdborch.cpp:31-32`, `orchdaemon.cpp:227` |
+| `PORT_TABLE\|PortConfigDone` | [APPL_DB](../../reference/glossary.md#term-appl_db) | READ | PORT_TABLE | **必須** (PortConfigDone と PortInitDone 両方で設定完了判定） | `portsorch.cpp:4357` |
+| `FDB_TABLE\|*` | [APPL_DB](../../reference/glossary.md#term-appl_db) | READ | FDB_TABLE | 必須 (APPL_DB [FDB](../../reference/glossary.md#term-fdb) エントリを購読して STATE_DB に反映) | `fdborch.cpp:31-32`, `orchdaemon.cpp:227` |
 | `VRF_TABLE\|*` | APPL_DB | READ | VRF_OBJECT_TABLE | 必須 (VRF エントリを受けて SAI create → 成功時に `state="ok"` 書込) | `vrforch.h:52`, `orchdaemon.cpp:283` |
 | `WARM_RESTART_TABLE\|orchagent` | STATE_DB (自己) | READ | WARM_RESTART_TABLE | warm start 時のみ必須 (restore_count インクリメントに現在値を読取) | `warm_restart.cpp:113-125` |
 | SAI `create_virtual_router` レスポンス | SAI / [ASIC](../../reference/glossary.md#term-asic) | READ (SAI resp) | VRF_OBJECT_TABLE | **必須** (SAI 失敗時はエントリ書込なし) | `vrforch.cpp:93, 120, 150` |
-| SAI `SAI_SWITCH_ATTR_MACSEC_SUPPORTED` 取得 | SAI / ASIC | READ (SAI resp) | FIPS_MACSEC_POST_TABLE | 必須 (非対応時は `post_state="disabled"` で固定) | `main.cpp:791-793, 924` |
-| SAI MACsec POST 完了コールバック | SAI / ASIC | 非同期 NOTIFY | FIPS_MACSEC_POST_TABLE | MACsec POST 対応 SAI のみ | `macsecorch.cpp:705, 710, 786, 791` |
+| SAI `SAI_SWITCH_ATTR_MACSEC_SUPPORTED` 取得 | SAI / [ASIC](../../reference/glossary.md#term-asic) | READ (SAI resp) | FIPS_MACSEC_POST_TABLE | 必須 (非対応時は `post_state="disabled"` で固定) | `main.cpp:791-793, 924` |
+| SAI MACsec POST 完了コールバック | SAI / [ASIC](../../reference/glossary.md#term-asic) | 非同期 NOTIFY | FIPS_MACSEC_POST_TABLE | MACsec POST 対応 SAI のみ | `macsecorch.cpp:705, 710, 786, 791` |
 
 ### APPL_DB PORT_TABLE — PortInitDone / PortConfigDone
 
@@ -344,7 +344,7 @@ orchagent が STATE_DB へ書き込む各テーブルは、SAI 失敗・初期�
 |---|---|---|---|
 | `allPortsReady() == false` | `FdbOrch::doTask(Consumer&)` L711 / `doTask(NotificationConsumer&)` L927 | 即 `return` | `FDB_TABLE` への書き込みなし、`m_toSync` に滞留して暗黙 retry |
 | SAI `create_fdb_entry` 失敗 | `fdborch.cpp:479, 524` | `SWSS_LOG_ERROR` + `it++`（retry 保留） | `FDB_TABLE` に当該エントリなし、次回 iteration で再試行 |
-| 不明 [VLAN](../../reference/glossary.md#term-vlan) (bridge ID → VLAN 変換失敗) | `fdborch.cpp:680` | `return false` → consumer にエントリ残留 | `FDB_TABLE` に書き込まれない |
+| 不明 [VLAN](../../reference/glossary.md#term-vlan) (bridge ID → [VLAN](../../reference/glossary.md#term-vlan) 変換失敗) | `fdborch.cpp:680` | `return false` → consumer にエントリ残留 | `FDB_TABLE` に書き込まれない |
 | 不明ポート (bridge port ID 変換失敗) | `fdborch.cpp:700` | `return false` → consumer にエントリ残留 | `FDB_TABLE` に書き込まれない |
 
 ### VRF_OBJECT_TABLE 失敗パターン
@@ -396,13 +396,13 @@ sonic-db-cli STATE_DB hget 'FIPS_MACSEC_POST_TABLE|sai' post_state
 
 エラーは `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` で syslog に出力される。`ERROR_TABLE` への書き込みはいずれのテーブルでも行われない。
 
-> **証跡**: `portsorch.cpp:3127-3172`（supported_speeds/fecs 取得失敗）、`portsorch.cpp:2181-2205`（initHostTxReadyState）、`fdborch.cpp:711, 927`（allPortsReady ガード）、`fdborch.cpp:479, 524`（SAI FDB 失敗）、`vrforch.cpp:93-120`（create_virtual_router 失敗パス）、`vrforch.cpp:134-150`（set_virtual_router_attribute 失敗）、`vrfmgr.cpp:204-214, 326-333`（VRF_OBJECT_TABLE 消失監視）、`orchdaemon.cpp:1193-1205`（warmRestoreValidation）、`main.cpp:789-793, 924-932`（FIPS_MACSEC_POST_TABLE disabled/fail パス）、`macsecorch.cpp:705-791`（POST コールバック）。
+> **証跡**: `portsorch.cpp:3127-3172`（supported_speeds/fecs 取得失敗）、`portsorch.cpp:2181-2205`（initHostTxReadyState）、`fdborch.cpp:711, 927`（allPortsReady ガード）、`fdborch.cpp:479, 524`（SAI [FDB](../../reference/glossary.md#term-fdb) 失敗）、`vrforch.cpp:93-120`（create_virtual_router 失敗パス）、`vrforch.cpp:134-150`（set_virtual_router_attribute 失敗）、`vrfmgr.cpp:204-214, 326-333`（VRF_OBJECT_TABLE 消失監視）、`orchdaemon.cpp:1193-1205`（warmRestoreValidation）、`main.cpp:789-793, 924-932`（FIPS_MACSEC_POST_TABLE disabled/fail パス）、`macsecorch.cpp:705-791`（POST コールバック）。
 <!-- /failure -->
 
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-orchagent が STATE_DB へ書き込む各テーブルのコード由来デフォルト一覧。YANG schema はいずれも存在しない。
+orchagent が STATE_DB へ書き込む各テーブルのコード由来デフォルト一覧。[YANG](../../reference/glossary.md#term-yang) schema はいずれも存在しない。
 
 ### WARM_RESTART_TABLE
 
@@ -450,7 +450,7 @@ orchagent が STATE_DB へ書き込む各テーブルのコード由来デフォ
 
 - `WARM_RESTART_TABLE.restore_count` は warm start 実行のたびにインクリメントされ、0 リセットはしない。コールドスタート後（DB フラッシュ後）のみ `"0"` から始まる。
 - `PORT_TABLE.host_tx_ready` は `initHostTxReadyState()` が「既存値がない場合のみ」 `"false"` を書き込む。warm restart 時は既存値を保持する。
-- `FDB_TABLE` には VXLAN/MCLAG advertized の MAC は原則書かれない（`MCLAG_REMOTE_FDB_TABLE` が別途存在）。
+- `FDB_TABLE` には [VXLAN](../../reference/glossary.md#term-vxlan)/[MCLAG](../../reference/glossary.md#term-mclag) advertized の MAC は原則書かれない（`MCLAG_REMOTE_FDB_TABLE` が別途存在）。
 - `VRF_OBJECT_TABLE.state` は常に `"ok"` のみ。失敗時はエントリ自体が書かれない。
 - `FIPS_MACSEC_POST_TABLE` は FIPS モード有効かつ SAI が MACsec POST に対応している場合のみ実質的に利用される。
 <!-- /defaults -->
@@ -586,7 +586,7 @@ orchagent が STATE_DB へ書き込む 5 テーブルのテーブル名・フィ
 | `COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` | `serdes_id → port_id` 登録 | ポート追加時 (L4140-4143) |
 | `COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_QUEUE_PORT_MAP` / `COUNTERS_QUEUE_INDEX_MAP` / `COUNTERS_QUEUE_TYPE_MAP` | Queue OID マップ | Queue 初期化時 |
 | `COUNTERS_PG_NAME_MAP` / `COUNTERS_PG_PORT_MAP` / `COUNTERS_PG_INDEX_MAP` | PG OID マップ | PG 初期化時 |
-| `COUNTERS_LAG_NAME_MAP` | LAG OID マップ | LAG 追加 / 削除時 |
+| `COUNTERS_LAG_NAME_MAP` | [LAG](../../reference/glossary.md#term-lag) OID マップ | [LAG](../../reference/glossary.md#term-lag) 追加 / 削除時 |
 
 ### FLEX_COUNTER_DB
 
@@ -657,7 +657,7 @@ orchagent が STATE_DB へ書き込む 5 テーブルのテーブル名・フィ
 |------|------|
 | `<TABLE>_CHANNEL` への PUBLISH | **発行されない** ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 非使用) |
 | `NotificationProducer` (ad-hoc PUBLISH) | **なし** |
-| `__keyspace@<dbId>__:...` keyspace 通知 | Redis `notify-keyspace-events` 設定次第で発火しうるが、正規 consumer はいずれも購読しない |
+| `__keyspace@<dbId>__:...` keyspace 通知 | [Redis](../../reference/glossary.md#term-redis) `notify-keyspace-events` 設定次第で発火しうるが、正規 consumer はいずれも購読しない |
 
 ### 購読側はすべて polling
 
@@ -670,7 +670,7 @@ orchagent が STATE_DB へ書き込む 5 テーブルのテーブル名・フィ
 
 ### event_publish (sonic-events フレームワーク)
 
-`portsorch` はポート UP/DOWN 変化時に `event_publish(g_events_handle, "if-state", &params)` を呼ぶ (`portsorch.cpp:3798, 7101`)。これは Redis DB への直接書込みではなく `sonic-events` フレームワーク経由のイベント送出であり、STATE_DB `PORT_TABLE` の更新とは独立した経路。consumer が `if-state` イベントを受信する場合は `sonic-events` のサブスクライバとして別途登録が必要。
+`portsorch` はポート UP/DOWN 変化時に `event_publish(g_events_handle, "if-state", &params)` を呼ぶ (`portsorch.cpp:3798, 7101`)。これは [Redis](../../reference/glossary.md#term-redis) DB への直接書込みではなく `sonic-events` フレームワーク経由のイベント送出であり、STATE_DB `PORT_TABLE` の更新とは独立した経路。consumer が `if-state` イベントを受信する場合は `sonic-events` のサブスクライバとして別途登録が必要。
 
 ### データフロー図
 
@@ -773,4 +773,4 @@ sonic-db-cli STATE_DB hgetall 'FIPS_MACSEC_POST_TABLE|sai'
 show warm_restart
 ```
 
-<!-- glossary-links-injected: a564c8944e6a -->
+<!-- glossary-links-injected: 87cc706f2f3c -->

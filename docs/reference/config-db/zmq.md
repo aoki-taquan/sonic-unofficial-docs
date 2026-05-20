@@ -70,13 +70,13 @@ flowchart LR
 <!-- defaults -->
 ## コード由来デフォルト
 
-ZMQ 関連フィールドはいずれも YANG `default` 文を持たず、コード内のフォールバック値が実効デフォルトとなる。
+ZMQ 関連フィールドはいずれも [YANG](../../reference/glossary.md#term-yang) `default` 文を持たず、コード内のフォールバック値が実効デフォルトとなる。
 
 | フィールド | CONFIG_DB キー | コード由来デフォルト | 根拠コード |
 |-----------|--------------|-------------------|-----------|
 | `orch_northbond_dash_zmq_enabled` | `DEVICE_METADATA\|localhost` | `true` (不在 = [DASH](../../reference/glossary.md#term-dash) ZMQ 有効) | `orchdaemon.cpp:1329` — `get_feature_status(..., true)` |
 | `orch_northbond_route_zmq_enabled` | `DEVICE_METADATA\|localhost` | `false` (不在 = ROUTE ZMQ 無効) | `routesync.cpp:155` — `create_local_zmq_client(..., false)` |
-| `orchagent_zmq_port` | `DPU\|<name>` | なし (YANG optional) | `sonic-smart-switch.yang:176` — `type inet:port-number` のみ |
+| `orchagent_zmq_port` | `DPU\|<name>` | なし ([YANG](../../reference/glossary.md#term-yang) optional) | `sonic-smart-switch.yang:176` — `type inet:port-number` のみ |
 
 システムレベルのポート定数 `ORCH_ZMQ_PORT = 8100` は CONFIG_DB フィールドではなく
 `sonic-swss-common/common/zmqserver.h:16` にハードコードされている[^zmq_port]。
@@ -93,9 +93,9 @@ ZMQ 関連フィールドは [orchagent](../../reference/glossary.md#term-orchag
 |---|----------|------|------|
 | 1 | `orch_northbond_*_zmq_enabled` の CONFIG_DB 書き込み → [orchagent](../../reference/glossary.md#term-orchagent) 再起動 | **起動前必須** | runtime 変更は無効。orchdaemon コンストラクタ内で一度だけ読まれる |
 | 2 | 全 ZmqConsumerStateTable ハンドラ登録 → `ZmqServer::bind()` | 強制先行（lazy bind で自動保証） | bind 前に送信側が接続しても `ECONNREFUSED` |
-| 3 | orchagent の `bind()` 完了 → fpmsyncd / gnmi の ZmqClient 接続 | orchagent 先行 | fpmsyncd は `routesync.cpp:155` で ZmqClient を起動時に固定 |
+| 3 | orchagent の `bind()` 完了 → [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) / gnmi の ZmqClient 接続 | orchagent 先行 | [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) は `routesync.cpp:155` で ZmqClient を起動時に固定 |
 | 4 | `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` 読み取り → `RouteOrch` 生成 | 1 回限り（init 内） | 変更には orchagent 再起動が必要。以後の runtime 書き換えは無視 |
-| 5 | DASH ZMQ 有効 → DashXxxOrch 群を同一 `zmq_server` 共有で直列生成 | `DpuOrchDaemon::init()` 内で直列 | 全 DASH orch は同一 ZmqServer インスタンスを参照 |
+| 5 | [DASH](../../reference/glossary.md#term-dash) ZMQ 有効 → DashXxxOrch 群を同一 `zmq_server` 共有で直列生成 | `DpuOrchDaemon::init()` 内で直列 | 全 [DASH](../../reference/glossary.md#term-dash) orch は同一 ZmqServer インスタンスを参照 |
 
 ### 主要な制約詳細
 
@@ -121,8 +121,8 @@ ZMQ 関連フィールドは独立テーブルを持たず `DEVICE_METADATA|loca
 | → [DPU](../../reference/glossary.md#term-dpu) 読み取り | `orchagent_zmq_port` | [`dpu`](dpu.md) | `gnmi-native.sh` / `orchagent.sh` が `DPU\|<name>` の `orchagent_zmq_port` を読み取り ZMQ 接続ポートを決定。YANG 定義: `sonic-smart-switch.yang:176-179` |
 | [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) → | `subtype == "SmartSwitch"` | [`smart-switch`](smart-switch.md) | `orchagent.sh` が `subtype` を参照して ZMQ アドレスを `tcp://eth0-midplane` または `tcp://127.0.0.1` に切り替える (`orchagent.sh:105-118`) |
 | DEVICE_METADATA → | `switch_type == "dpu"` | [`smart-switch`](smart-switch.md) | `orchagent.sh:38-39` が `switch_type` を参照して `-z zmq_sync -k 65536` を orchagent 起動引数に付与。ZMQ 同期モードが強制される |
-| フラグ有効 → APPL_DB 書き込み先 | `orch_northbond_dash_zmq_enabled=true` | APPL_DB `DASH_*` テーブル群 (22 種) | `orch_zmq_tables.conf.j2` で conf に追記された DASH テーブル群が ZMQ 経由でオーケストレータに直接届く。無効時は gNMI が [Redis](../../reference/glossary.md#term-redis) [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) を使用 |
-| フラグ有効 → APPL_DB 書き込み先 | `orch_northbond_route_zmq_enabled=true` | APPL_DB `ROUTE_TABLE` / `LABEL_ROUTE_TABLE` | `fpmsyncd` が `ZmqProducerStateTable` 経由で直接 orchagent に送信。無効時は Redis 経由 (`orch_zmq_config.cpp:117-140`) |
+| フラグ有効 → [APPL_DB](../../reference/glossary.md#term-appl_db) 書き込み先 | `orch_northbond_dash_zmq_enabled=true` | [APPL_DB](../../reference/glossary.md#term-appl_db) `DASH_*` テーブル群 (22 種) | `orch_zmq_tables.conf.j2` で conf に追記された DASH テーブル群が ZMQ 経由でオーケストレータに直接届く。無効時は [gNMI](../../reference/glossary.md#term-gnmi) が [Redis](../../reference/glossary.md#term-redis) [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) を使用 |
+| フラグ有効 → APPL_DB 書き込み先 | `orch_northbond_route_zmq_enabled=true` | APPL_DB `ROUTE_TABLE` / `LABEL_ROUTE_TABLE` | `fpmsyncd` が `ZmqProducerStateTable` 経由で直接 orchagent に送信。無効時は [Redis](../../reference/glossary.md#term-redis) 経由 (`orch_zmq_config.cpp:117-140`) |
 | 設定ファイル生成 | `orch_northbond_dash_zmq_enabled` / `orch_northbond_route_zmq_enabled` | `/etc/swss/orch_zmq_tables.conf` | `orch_zmq_tables.conf.j2` の Jinja2 テンプレートが CONFIG_DB のフラグを参照して実行時設定ファイルを生成。orchagent の `load_zmq_tables()` がこのファイルを読む (`orch_zmq_config.cpp:18-33`) |
 
 > **ポイント**: `orch_northbond_*_zmq_enabled` フラグは orchagent **起動時** のみ評価され、その後 `DEVICE_METADATA` の変更をサブスクライブしない。フラグを変更した場合は orchagent の再起動が必要。`orchagent.sh` は起動シェルスクリプトであるため、フラグ変更後のコンテナ再起動で新しい設定ファイルが生成され、新しい orchagent プロセスが新設定で起動する。
@@ -140,7 +140,7 @@ ZMQ 関連の失敗は大きく「CONFIG_DB 読み取り失敗」「ZmqServer �
 ### A. `get_feature_status()` — CONFIG_DB 読み取り失敗
 
 `get_feature_status()` (`orch_zmq_config.cpp:83-110`) は `std::runtime_error` を捕捉し、
-エラーログを出力した後に `default_value` を返す。Redis 接続エラー等で `hget` が失敗しても
+エラーログを出力した後に `default_value` を返す。[Redis](../../reference/glossary.md#term-redis) 接続エラー等で `hget` が失敗しても
 orchagent は起動を継続し、ZMQ チャネルの有効/無効はデフォルト値に固定される。
 **retry や再読み取りは行われない**。
 
@@ -244,7 +244,7 @@ orchagent の `load_zmq_tables()` (`orch_zmq_config.cpp:18-33`) がコンテナ�
 
 ### APPL_DB への間接的な経路変化
 
-フラグ有効時、上位コンポーネント (gNMI / fpmsyncd) は Redis `ProducerStateTable` の代わりに `ZmqProducerStateTable` を使って APPL_DB の同一テーブルに書き込む。APPL_DB テーブル自体のスキーマは変わらないが、書き込み経路が Redis Pub/Sub から ZMQ TCP ソケットに切り替わる。
+フラグ有効時、上位コンポーネント ([gNMI](../../reference/glossary.md#term-gnmi) / fpmsyncd) は Redis `ProducerStateTable` の代わりに `ZmqProducerStateTable` を使って APPL_DB の同一テーブルに書き込む。APPL_DB テーブル自体のスキーマは変わらないが、書き込み経路が Redis Pub/Sub から ZMQ TCP ソケットに切り替わる。
 
 | フラグ | APPL_DB 書込み経路 |
 |---|---|
@@ -315,11 +315,11 @@ orchagent 側は `ZmqConsumerStateTable` で ZMQ メッセージを受信する�
 
 ### 共通: ZMQ ロジック自体はプラットフォーム非依存
 
-`orch_zmq_config.cpp` / `orchdaemon.cpp` に `getenv("platform")` / `MLNX_PLATFORM_SUBSTRING` 等の [ASIC](../../reference/glossary.md#term-asic) 種別判定はない。ZMQ チャネルのセットアップはすべての ASIC 種別で共通コードパスを使用する。
+`orch_zmq_config.cpp` / `orchdaemon.cpp` に `getenv("platform")` / `MLNX_PLATFORM_SUBSTRING` 等の [ASIC](../../reference/glossary.md#term-asic) 種別判定はない。ZMQ チャネルのセットアップはすべての [ASIC](../../reference/glossary.md#term-asic) 種別で共通コードパスを使用する。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `orch_zmq_config.cpp` にプラットフォーム分岐なし |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `orch_zmq_config.cpp` にプラットフォーム分岐なし |
 | multi-asic (multi-[NPU](../../reference/glossary.md#term-npu)) | ZMQ ポートに NAMESPACE_ID オフセットが付く | `get_zmq_port()` (`orch_zmq_config.cpp:37-51`) が `NAMESPACE_ID` 環境変数を読み取り `8100 + NAMESPACE_ID + 1` を計算。global namespace では `NAMESPACE_ID` 未設定 → ポート固定 8100 |
 | [VOQ](../../reference/glossary.md#term-voq) chassis | 影響なし | `switch_type == "voq"` 向けの ZMQ 固有分岐はなし |
 
@@ -330,9 +330,9 @@ ZMQ の**アドレス・ポート**はプラットフォームで変化する:
 | プラットフォーム | ZMQ サーバアドレス | ポート | 根拠 |
 |----------------|-------------------|--------|------|
 | 一般 (`subtype` なし) | `tcp://127.0.0.1` | `8100` | `orchagent.sh:105-118` (デフォルト分岐) |
-| [SmartSwitch](../../reference/glossary.md#term-smartswitch) NPU (`subtype=SmartSwitch`, `eth0-midplane` UP) | `tcp://eth0-midplane` | `8100` | `orchagent.sh:107-112` |
-| [SmartSwitch](../../reference/glossary.md#term-smartswitch) NPU (`subtype=SmartSwitch`, `eth0-midplane` DOWN) | `tcp://127.0.0.1` | `8100` | `orchagent.sh:113-117` |
-| SmartSwitch DPU (`switch_type=dpu`) | DPU 側 `orchagent.sh` で決定 | `DPU|<name>.orchagent_zmq_port` または `8100 + NS_ID + 1` | `orchagent.sh:38-39` + `orch_zmq_config.cpp:37-51` |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) (`subtype=SmartSwitch`, `eth0-midplane` UP) | `tcp://eth0-midplane` | `8100` | `orchagent.sh:107-112` |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) (`subtype=SmartSwitch`, `eth0-midplane` DOWN) | `tcp://127.0.0.1` | `8100` | `orchagent.sh:113-117` |
+| SmartSwitch [DPU](../../reference/glossary.md#term-dpu) (`switch_type=dpu`) | [DPU](../../reference/glossary.md#term-dpu) 側 `orchagent.sh` で決定 | `DPU|<name>.orchagent_zmq_port` または `8100 + NS_ID + 1` | `orchagent.sh:38-39` + `orch_zmq_config.cpp:37-51` |
 
 `orchagent_zmq_port` (`DPU|<name>`) は SmartSwitch 環境**のみ**に存在する CONFIG_DB フィールドであり、一般プラットフォームでは不要。
 
@@ -604,4 +604,4 @@ sonic-db-cli CONFIG_DB hget "DPU|dpu0" orchagent_zmq_port
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: f8d25adf2b47 -->
+<!-- glossary-links-injected: f90fa509d676 -->

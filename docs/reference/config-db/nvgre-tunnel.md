@@ -86,14 +86,14 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 
 | フィールド | 値 / 範囲 | [orchagent](../../reference/glossary.md#term-orchagent) 挙動 |
 |-----------|----------|---------------|
-| `src_ip` | 任意の有効 IP アドレス | SAI `sai_tunnel_api` でトンネル端点として設定 |
+| `src_ip` | 任意の有効 IP アドレス | [SAI](../../reference/glossary.md#term-sai) `sai_tunnel_api` でトンネル端点として設定 |
 | `src_ip` | フォーマット不正 / 未設定 | YANG validate 段階で reject |
 
 ### NVGRE_TUNNEL_MAP フィールド
 
 | フィールド | 値 / 範囲 | [orchagent](../../reference/glossary.md#term-orchagent) 挙動 |
 |-----------|----------|---------------|
-| `vlan_id` | 1..4094 | VLAN ID として SAI トンネルマップに登録 |
+| `vlan_id` | 1..4094 | [VLAN](../../reference/glossary.md#term-vlan) ID として SAI トンネルマップに登録 |
 | `vlan_id` | 範囲外 | WARN ログ後スキップ: `VLAN ID doesn't exist: %d` |
 | `vsid` | 0..16777214 | NVGRE VSID として SAI に反映 |
 | `vsid` | 範囲外 | WARN ログ後スキップ: `VSID is invalid: %d` |
@@ -198,8 +198,8 @@ YANG leafref を超えた実装上の依存関係。ソース: `sonic-swss/orcha
 |--------|-----------|------|------|-----------|
 | `NVGRE_TUNNEL\|<tunnel_name>` | [CONFIG_DB](../../reference/glossary.md#term-config_db) (orchagent 内部 map) | READ | `NvgreTunnelMapOrch::addOperation()` 冒頭で `isTunnelExists(tunnel_name)` を呼ぶ。親トンネルが未登録なら WARN + エントリ破棄（retry なし） | `nvgreorch.cpp:464-472` |
 | `VLAN\|Vlan<vlan_id>` | CONFIG_DB / PortsOrch 内部 map | READ | MAP 登録時に `gPortsOrch->getVlanByVlanId(vlan_id, port)` で VLAN の存在確認。VLAN 未登録なら `VLAN ID doesn't exist` WARN + エントリ破棄 | `nvgreorch.cpp:489-492` |
-| `gUnderlayIfId` | SAI グローバル（ルータ IF OID） | READ | `NvgreTunnel` 構築時に `sai_create_tunnel(..., gUnderlayIfId)` でアンダーレイ RIF として渡す。orchagent 起動時にグローバル初期化されたオブジェクト | `nvgreorch.cpp:312` |
-| `gVirtualRouterId` | SAI グローバル（デフォルト VR OID） | READ | `sai_create_tunnel_termination(..., gVirtualRouterId)` でトンネル終端のデフォルト VRF を指定 | `nvgreorch.cpp:313` |
+| `gUnderlayIfId` | SAI グローバル（ルータ IF OID） | READ | `NvgreTunnel` 構築時に `sai_create_tunnel(..., gUnderlayIfId)` でアンダーレイ [RIF](../../reference/glossary.md#term-rif) として渡す。orchagent 起動時にグローバル初期化されたオブジェクト | `nvgreorch.cpp:312` |
+| `gVirtualRouterId` | SAI グローバル（デフォルト VR OID） | READ | `sai_create_tunnel_termination(..., gVirtualRouterId)` でトンネル終端のデフォルト [VRF](../../reference/glossary.md#term-vrf) を指定 | `nvgreorch.cpp:313` |
 
 ### 依存解決タイミング
 
@@ -252,7 +252,7 @@ YANG leafref を超えた実装上の依存関係。ソース: `sonic-swss/orcha
 ### 典型値
 
 - key 形式: `NVGRE_TUNNEL|<name>` / `NVGRE_TUNNEL_MAP|<tunnel>|<map_entry>`。
-- `src_ip`: ローカル VTEP の loopback アドレス。
+- `src_ip`: ローカル [VTEP](../../reference/glossary.md#term-vtep) の loopback アドレス。
 - `vsid`: 24bit (0..16777214)、`vlan_id`: 1..4094。
 
 ### よくある誤設定
@@ -278,7 +278,7 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 ### 段階 2: CFG → APPL 翻訳
 
 - NvgreTunnelOrch がエントリを解析し APP_DB `TUNNEL_DECAP_TABLE` に書き込む (一部実装)。
-- 実装は VS/仮想 [ASIC](../../reference/glossary.md#term-asic) 向けが主体で、物理 ASIC サポートはベンダー依存。
+- 実装は VS/仮想 [ASIC](../../reference/glossary.md#term-asic) 向けが主体で、物理 [ASIC](../../reference/glossary.md#term-asic) サポートはベンダー依存。
 
 ### 段階 3: APPL → SAI
 
@@ -288,7 +288,7 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 ### 段階 4: タイミング + 副作用
 
 - トンネル作成は orchagent が処理を受け取った数 ms 以内。
-- 副作用: 対応する SAI サポートが必要。非サポート ASIC では task_failed となる。
+- 副作用: 対応する SAI サポートが必要。非サポート [ASIC](../../reference/glossary.md#term-asic) では task_failed となる。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -403,7 +403,7 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 | MAP タイプセット | `{ MAP_T_VLAN, MAP_T_BRIDGE }` (固定 2 種) | `NvgreTunnel` 構築時に Encap + Decap 計 4 個のマッパーオブジェクトを常時作成。ユーザー設定で変更不可 | `nvgreorch.cpp:16-19` |
 | SAI トンネルタイプ | `SAI_TUNNEL_TYPE_NVGRE` | `sai_create_tunnel()` の type 引数として固定 | `nvgreorch.cpp:177` |
 | SAI termination タイプ | `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP` | `sai_create_tunnel_termination()` の type 引数として固定 (NVGRE は常に P2MP) | `nvgreorch.cpp:241` |
-| `gUnderlayIfId` | orchagent 起動時に `main.cpp` が SAI 初期化で確定するグローバル RIF OID | `sai_create_tunnel()` の underlay RIF 引数として渡す | `nvgreorch.cpp:312` |
+| `gUnderlayIfId` | orchagent 起動時に `main.cpp` が SAI 初期化で確定するグローバル [RIF](../../reference/glossary.md#term-rif) OID | `sai_create_tunnel()` の underlay RIF 引数として渡す | `nvgreorch.cpp:312` |
 | `gVirtualRouterId` | orchagent 起動時に `main.cpp` が SAI 初期化で確定するデフォルト VR OID | `sai_create_tunnel_termination()` の VR OID 引数として渡す | `nvgreorch.cpp:313` |
 
 ### 補足
@@ -466,7 +466,7 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 |---|---|---|---|---|
 | CLI/CONFIG_DB → NvgreTunnelOrch | CONFIG_DB (dbId=4) | `NVGRE_TUNNEL` (`CFG_NVGRE_TUNNEL_TABLE_NAME`) | `SubscriberStateTable` | `config nvgre-tunnel add/del ...` (`sonic-utilities/config/plugins/nvgre_tunnel.py`) |
 | CLI/CONFIG_DB → NvgreTunnelMapOrch | CONFIG_DB (dbId=4) | `NVGRE_TUNNEL_MAP` (`CFG_NVGRE_TUNNEL_MAP_TABLE_NAME`) | `SubscriberStateTable` | 同上 |
-| NvgreTunnelOrch/MapOrch → syncd | ASIC_DB (syncd 経由) | — | SAI API 直接呼び出し | `sai_tunnel_api->create_tunnel()` / `create_tunnel_map_entry()` 等 |
+| NvgreTunnelOrch/MapOrch → [syncd](../../reference/glossary.md#term-syncd) | ASIC_DB ([syncd](../../reference/glossary.md#term-syncd) 経由) | — | SAI API 直接呼び出し | `sai_tunnel_api->create_tunnel()` / `create_tunnel_map_entry()` 等 |
 
 ### 登録経路
 
@@ -482,7 +482,7 @@ keyspace 通知のペイロードは [Redis](../../reference/glossary.md#term-re
 
 ### ProducerStateTable は不使用
 
-CONFIG_DB 経路では `ProducerStateTable` を使用しない。CLI (`sonic-utilities/config/plugins/nvgre_tunnel.py`) は `ConfigDBConnector.set_entry()` → 直接 Redis `HSET` で書き込む。APPL_DB への中継テーブルは存在せず、`NVGRE_TUNNEL` / `NVGRE_TUNNEL_MAP` の変更は常に CONFIG_DB → `SubscriberStateTable` → NvgreTunnelOrch → SAI の経路を通る。
+CONFIG_DB 経路では `ProducerStateTable` を使用しない。CLI (`sonic-utilities/config/plugins/nvgre_tunnel.py`) は `ConfigDBConnector.set_entry()` → 直接 [Redis](../../reference/glossary.md#term-redis) `HSET` で書き込む。APPL_DB への中継テーブルは存在せず、`NVGRE_TUNNEL` / `NVGRE_TUNNEL_MAP` の変更は常に CONFIG_DB → `SubscriberStateTable` → NvgreTunnelOrch → SAI の経路を通る。
 
 ### orchList 内の位置
 
@@ -534,4 +534,4 @@ multi-asic 構成では orchagent が `asic0`/`asic1`/... ごとに独立起動�
 
 <!-- /handler-branching -->
 
-<!-- glossary-links-injected: 2e4dccc08b10 -->
+<!-- glossary-links-injected: ff34a209121d -->
