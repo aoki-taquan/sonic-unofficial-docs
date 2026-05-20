@@ -24,9 +24,9 @@ related:
 
 ## 概要
 
-`STATE_DB` の `BFD_SESSION_TABLE` は、`sonic-swss` の `bfdorch` が [SAI](../../reference/glossary.md#term-sai) [BFD](../../reference/glossary.md#term-bfd) セッションを作成した後に書き込む読み取り専用のセッション状態テーブル[^1]。設定値（`tx_interval` 等）とランタイム状態（`state`）の両方を保持し、SAI からの状態変化通知（`bfd_session_state_change`）を受信するたびに `state` フィールドのみ更新される。
+`STATE_DB` の `BFD_SESSION_TABLE` は、`sonic-swss` の `bfdorch` が [SAI](../../reference/glossary.md#term-sai) [BFD](../../reference/glossary.md#term-bfd) セッションを作成した後に書き込む読み取り専用のセッション状態テーブル[^1]。設定値（`tx_interval` 等）とランタイム状態（`state`）の両方を保持し、[SAI](../../reference/glossary.md#term-sai) からの状態変化通知（`bfd_session_state_change`）を受信するたびに `state` フィールドのみ更新される。
 
-`use_software_bfd = true`（`BGP_DEVICE_GLOBAL.STATE.use_software_bfd`）のソフトウェア BFD モードでは、SAI を経由しないため `BFD_SESSION_TABLE` は書き込まれず、代わりに `SOFTWARE_BFD_SESSION_TABLE` に [APPL_DB](../../reference/glossary.md#term-appl_db) データが転記される。
+`use_software_bfd = true`（`BGP_DEVICE_GLOBAL.STATE.use_software_bfd`）のソフトウェア [BFD](../../reference/glossary.md#term-bfd) モードでは、[SAI](../../reference/glossary.md#term-sai) を経由しないため `BFD_SESSION_TABLE` は書き込まれず、代わりに `SOFTWARE_BFD_SESSION_TABLE` に [APPL_DB](../../reference/glossary.md#term-appl_db) データが転記される。
 
 !!! note "CONFIG_DB との関係"
     BFD の **設定** は `CONFIG_DB` の [`BFD_SESSION`](bfd-session.md) テーブルで行う。`bfdorch` が APPL_DB `BFD_SESSION_TABLE` を経由して SAI セッションを作成した後、その結果と構成情報を本テーブルに書き戻す。
@@ -59,18 +59,18 @@ flowchart LR
 BFD_SESSION_TABLE|<vrf>|<interface>|<peer_ip>
 ```
 
-- `<vrf>`: [VRF](../../reference/glossary.md#term-vrf) 名。デフォルト VRF は `"default"`
+- `<vrf>`: [VRF](../../reference/glossary.md#term-vrf) 名。デフォルト [VRF](../../reference/glossary.md#term-vrf) は `"default"`
 - `<interface>`: 出力インタフェース名。hardware lookup 時は `"default"`
-- `<peer_ip>`: BFD ピアの IP アドレス (IPv4 / IPv6)
+- `<peer_ip>`: [BFD](../../reference/glossary.md#term-bfd) ピアの IP アドレス (IPv4 / IPv6)
 
-key は `bfdorch.cpp` の `get_state_db_key()` が APPL_DB キーの `|` 区切りから生成する。
+key は `bfdorch.cpp` の `get_state_db_key()` が [APPL_DB](../../reference/glossary.md#term-appl_db) キーの `|` 区切りから生成する。
 
 ## フィールド一覧
 
 | フィールド | 型 | 書込み主体 | デフォルト | 説明 |
 |-----------|----|-----------|-----------|------|
 | `state` | enum string | `bfdorch` (SAI 通知) | `"Down"` | BFD セッション状態。`"Admin_Down"` / `"Down"` / `"Init"` / `"Up"` のいずれか |
-| `type` | enum string | `bfdorch` (セッション作成) | `"async_active"` | BFD セッション種別。APPL_DB 入力値をそのまま転記 |
+| `type` | enum string | `bfdorch` (セッション作成) | `"async_active"` | BFD セッション種別。[APPL_DB](../../reference/glossary.md#term-appl_db) 入力値をそのまま転記 |
 | `local_discriminator` | uint32 string | `bfdorch` (セッション作成) | 連番 (1–) | bfd_gen_id() で生成した内部識別子 |
 | `local_addr` | IP アドレス string | `bfdorch` (セッション作成) | 必須 | SAI セッションの送信元 IP アドレス |
 | `tx_interval` | uint32 string (ms) | `bfdorch` (セッション作成) | `"1000"` | 送信間隔 (ミリ秒)。[STATE_DB](../../reference/glossary.md#term-state_db) には ms 値、SAI 投入は ×1000 μs |
@@ -82,7 +82,7 @@ key は `bfdorch.cpp` の `get_state_db_key()` が APPL_DB キーの `|` 区切�
 
 ### 書き込みトリガーと状態遷移
 
-`bfdorch` は以下の 2 タイミングで `state` を STATE_DB に書き込む:
+`bfdorch` は以下の 2 タイミングで `state` を [STATE_DB](../../reference/glossary.md#term-state_db) に書き込む:
 
 1. **セッション作成直後** (`create_bfd_session()` 完了後) — `state = "Down"` で固定書き込み (`bfdorch.cpp:544,565`)
 2. **SAI 通知受信時** (`doTask(NotificationConsumer)`) — SAI からの `bfd_session_state_change` 通知が届くたびに `hset(key, "state", ...)` で更新 (`bfdorch.cpp:252`)
@@ -110,7 +110,7 @@ return (session_id++);
 
 ## STATE_DB に書き込まれないフィールド
 
-以下の APPL_DB / [CONFIG_DB](../../reference/glossary.md#term-config_db) フィールドは STATE_DB `BFD_SESSION_TABLE` に**書き込まれない**:
+以下の APPL_DB / [CONFIG_DB](../../reference/glossary.md#term-config_db) フィールドは [STATE_DB](../../reference/glossary.md#term-state_db) `BFD_SESSION_TABLE` に**書き込まれない**:
 
 | フィールド | 理由 |
 |-----------|------|
@@ -130,7 +130,7 @@ void BfdOrch::createSoftwareBfdSession(const string &key, const vector<swss::Fie
 }
 ```
 
-この場合は `state` フィールドが含まれず、`bgpcfgd` の `BfdMgr` が [FRR](../../reference/glossary.md#term-frr) に [vtysh](../../reference/glossary.md#term-vtysh) 経由で設定を注入し、FRR 側で状態管理する。
+この場合は `state` フィールドが含まれず、`bgpcfgd` の `BfdMgr` が [FRR](../../reference/glossary.md#term-frr) に [vtysh](../../reference/glossary.md#term-vtysh) 経由で設定を注入し、[FRR](../../reference/glossary.md#term-frr) 側で状態管理する。
 
 ## 購読者 (consumer)
 
@@ -193,14 +193,14 @@ m_stateBfdSessionTable.hset(key, "state", session_state_lookup.at(state));
 | `bfdorch.cpp:252` | `hset(key, "state", ...)` | SAI 通知受信時 |
 | `bfdorch.cpp:629` | `del(peer)` | `remove_bfd_session()` 内 |
 
-`swss::Table::set/hset/del` は **Redis `HSET`/`HDEL` を直接発行** するのみで、`ProducerStateTable` のような LUA + channel PUBLISH は走らない。よって `BFD_SESSION_TABLE_CHANNEL` のような専用 channel は存在しない。
+`swss::Table::set/hset/del` は **[Redis](../../reference/glossary.md#term-redis) `HSET`/`HDEL` を直接発行** するのみで、`ProducerStateTable` のような LUA + channel PUBLISH は走らない。よって `BFD_SESSION_TABLE_CHANNEL` のような専用 channel は存在しない。
 
 ### 購読パス: keyspace 通知 / HGETALL polling / in-process Observer
 
 | 役割 | 経路 | 根拠 |
 |---|---|---|
 | 同 orchagent 内 (`VNetRouteOrch` 等) | `Orch::notify(SUBJECT_TYPE_BFD_SESSION_STATE_CHANGE)` Observer | `bfdorch.cpp:257-260` |
-| 別プロセス subscriber | `swss::SubscriberStateTable(STATE_DB, STATE_BFD_SESSION_TABLE_NAME)` (Redis keyspace 通知) | swss-common keyspace 通知ベース |
+| 別プロセス subscriber | `swss::SubscriberStateTable(STATE_DB, STATE_BFD_SESSION_TABLE_NAME)` ([Redis](../../reference/glossary.md#term-redis) keyspace 通知) | swss-common keyspace 通知ベース |
 | CLI / snapshot 読者 | `sonic-db-cli STATE_DB hgetall 'BFD_SESSION_TABLE\|*'` (polling) | `show bfd peers` |
 | [gNMI](../../reference/glossary.md#term-gnmi) / translib | STATE_DB HGETALL マッピング | [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common bfd モジュール |
 
@@ -208,13 +208,13 @@ m_stateBfdSessionTable.hset(key, "state", session_state_lookup.at(state));
 
 ### ソフトウェア BFD 経路 (`SOFTWARE_BFD_SESSION_TABLE`)
 
-`use_software_bfd == true` の場合 (`bfdorch.cpp:133-139, 706-710`) は `m_stateSoftBfdSessionTable->set(createStateDBKey(key), data)` で APPL_DB 入力を転記。こちらも `swss::Table` 直書きで `state` フィールドなし。状態管理は FRR (`bgpcfgd::BfdMgr` 経由) に委譲される。
+`use_software_bfd == true` の場合 (`bfdorch.cpp:133-139, 706-710`) は `m_stateSoftBfdSessionTable->set(createStateDBKey(key), data)` で APPL_DB 入力を転記。こちらも `swss::Table` 直書きで `state` フィールドなし。状態管理は [FRR](../../reference/glossary.md#term-frr) (`bgpcfgd::BfdMgr` 経由) に委譲される。
 
 ### 通信パスまとめ
 
 | 役割 | クラス | 経路 | 根拠 |
 |---|---|---|---|
-| SAI → orchagent | `swss::NotificationConsumer` (ASIC_DB `NOTIFICATIONS`) | LPOP + PUBSUB | `bfdorch.cpp:63-65, 220-268` |
+| SAI → orchagent | `swss::NotificationConsumer` ([ASIC_DB](../../reference/glossary.md#term-asic_db) `NOTIFICATIONS`) | LPOP + PUBSUB | `bfdorch.cpp:63-65, 220-268` |
 | 書込 (state 初期) | `swss::Table::set` | `HSET STATE_DB BFD_SESSION_TABLE\|<k>` (全フィールド) | `bfdorch.cpp:565` |
 | 書込 (state 変化) | `swss::Table::hset` | `HSET ... state <enum>` | `bfdorch.cpp:252` |
 | 削除 | `swss::Table::del` | `DEL ...` | `bfdorch.cpp:78, 629` |
@@ -280,14 +280,14 @@ m_stateBfdSessionTable.hset(key, "state", session_state_lookup.at(state));
 - `state` は **セッション作成直後は常に `"Down"`**。SAI からの Up 通知を受け取って初めて `"Up"` になる。
 - `local_discriminator` は orchagent 再起動でリセットされる。分散環境では同一セッションキーに対して再起動のたびに異なる値が入る。
 - `tos` は APPL_DB → SAI への変換専用で STATE_DB には書かれない。STATE_DB から TOS 値を読み出すことはできない。
-- BFD_SESSION_TABLE に対応する YANG schema は現時点 (2026-05) で存在しない。すべての制約はコードレベルで実施される。
+- BFD_SESSION_TABLE に対応する [YANG](../../reference/glossary.md#term-yang) schema は現時点 (2026-05) で存在しない。すべての制約はコードレベルで実施される。
 
 <!-- /defaults -->
 
 <!-- constants -->
 ## ハードコード定数 (Phase E — コード由来)
 
-`bfdorch.cpp` および `orch.h` に直接埋め込まれた定数で、[CONFIG_DB](../../reference/glossary.md#term-config_db) / STATE_DB / YANG では設定不能なもの。詳細は [meta/_intermediate/cdb-flow/bfd-state-constants.md](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-state-constants.md) を参照。
+`bfdorch.cpp` および `orch.h` に直接埋め込まれた定数で、[CONFIG_DB](../../reference/glossary.md#term-config_db) / STATE_DB / [YANG](../../reference/glossary.md#term-yang) では設定不能なもの。詳細は [meta/_intermediate/cdb-flow/bfd-state-constants.md](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-state-constants.md) を参照。
 
 ### `#define` マクロ (デフォルト値)
 
@@ -326,7 +326,7 @@ CONFIG_DB → SAI: `session_type_map` (`bfdorch.cpp:33-39`)。SAI → STATE_DB: 
 |----|------|--------|
 | `"state"` | STATE_DB フィールド名 (状態) | `bfdorch.cpp:252,544` |
 | `"type"` | STATE_DB フィールド名 (セッション種別) | `bfdorch.cpp:418` |
-| `"default"` | VRF / interface のデフォルト値 (hardware lookup 時の interface) | `bfdorch.cpp:482,498,531` |
+| `"default"` | [VRF](../../reference/glossary.md#term-vrf) / interface のデフォルト値 (hardware lookup 時の interface) | `bfdorch.cpp:482,498,531` |
 | `state_db_key_delimiter = '|'` | STATE_DB キー区切り文字 (全 orch 共通) | `orch.h:38`, `bfdorch.cpp:638` |
 
 ### 補足
@@ -354,7 +354,7 @@ CONFIG_DB → SAI: `session_type_map` (`bfdorch.cpp:33-39`)。SAI → STATE_DB: 
 <!-- cross-refs -->
 ## 暗黙参照 — `bfdorch` が STATE_DB `BFD_SESSION_TABLE` 書込みに伴い連動する DB / 消費者 (Phase C)
 
-`bfdorch` は STATE_DB `BFD_SESSION_TABLE` を**単体では書かない**。APPL_DB 入力、`BgpGlobalStateOrch` 経由で取得する CONFIG_DB `BGP_DEVICE_GLOBAL` の 2 フラグ、および SAI が返す ASIC_DB のセッション OID と連動し、書込み有無・書込み先テーブル・state 更新タイミングが分岐する。書き込まれた値は複数の orchagent / daemon が observer または SubscriberStateTable で消費する。
+`bfdorch` は STATE_DB `BFD_SESSION_TABLE` を**単体では書かない**。APPL_DB 入力、`BgpGlobalStateOrch` 経由で取得する CONFIG_DB `BGP_DEVICE_GLOBAL` の 2 フラグ、および SAI が返す [ASIC_DB](../../reference/glossary.md#term-asic_db) のセッション OID と連動し、書込み有無・書込み先テーブル・state 更新タイミングが分岐する。書き込まれた値は複数の orchagent / daemon が observer または SubscriberStateTable で消費する。
 
 ### Direction A — `bfdorch` が読み出す関連 DB / Orch
 
@@ -456,14 +456,14 @@ STATE_DB `BFD_SESSION_TABLE` の書き手は `bfdorch` のみで、`swss::Table:
 <!-- platform -->
 ## プラットフォーム差 (SAI capability / HW vs SW BFD / ASIC vendor)
 
-`bfdorch` は `platform` / `sub_platform` 環境変数の static 比較を**行わず**、**SAI 動的 capability 照会**のみで ASIC 対応を判定する (他の orch とは設計が異なる)[^h1]。STATE_DB `BFD_SESSION_TABLE` への書込みが発生するか否かは、以下の組合せで決まる。
+`bfdorch` は `platform` / `sub_platform` 環境変数の static 比較を**行わず**、**SAI 動的 capability 照会**のみで [ASIC](../../reference/glossary.md#term-asic) 対応を判定する (他の orch とは設計が異なる)[^h1]。STATE_DB `BFD_SESSION_TABLE` への書込みが発生するか否かは、以下の組合せで決まる。
 
 ### HW BFD 経路 vs SW BFD 経路
 
 | 条件 | `BFD_SESSION_TABLE` (STATE_DB) | `SOFTWARE_BFD_SESSION_TABLE` |
 |------|-------------------------------|------------------------------|
 | `BGP_DEVICE_GLOBAL.STATE.use_software_bfd == "true"` | **書込みなし** | `bfdorch::createSoftwareBfdSession()` 経由で書込み |
-| `use_software_bfd == "false"` (デフォルト) + ASIC が SAI BFD 対応 | 書込みあり | なし |
+| `use_software_bfd == "false"` (デフォルト) + [ASIC](../../reference/glossary.md#term-asic) が SAI BFD 対応 | 書込みあり | なし |
 | `use_software_bfd == "false"` + ASIC が SAI BFD 未対応 | **書込みなし** (create 失敗) | なし |
 
 ### 動的照会される SAI capability
@@ -544,7 +544,7 @@ HW BFD 経路では SAI 通知が ASIC 内のタイマ精度に依存する。br
 | 観点 | 含意 |
 |------|------|
 | 故障診断 | BFD セッション統計を取得したい場合、COUNTERS_DB ではなく SAI API (`sai_bfd_api->get_bfd_session_stats`) を直接叩く必要がある (sonic-utilities `show bfd peers details` は STATE_DB しか読まないため統計は出ない) |
-| flex counter 拡張 | 将来 BFD 統計を flex counter 化するには、別途 `BfdCounterOrch` 等を新設し COUNTERS_DB / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書込を実装する必要がある (現状は SONiC master に存在しない) |
+| flex counter 拡張 | 将来 BFD 統計を flex counter 化するには、別途 `BfdCounterOrch` 等を新設し COUNTERS_DB / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書込を実装する必要がある (現状は [SONiC](../../reference/glossary.md#term-sonic) master に存在しない) |
 | ACK パターン | APPL_STATE_DB 経由の two-phase delete (例: [portsorch](../../reference/glossary.md#term-portsorch) の `_REMOVE` ack) は BFD には適用されない。BFD の削除は同期的に `remove_bfd_session()` → SAI → STATE_DB `del()` で完結 |
 
 [^se1]: `sonic-swss/orchagent/bfdorch.cpp` (L57-88 BfdOrch::BfdOrch — `DBConnector("ASIC_DB")` / `DBConnector("STATE_DB")` 各 1 件のみ、COUNTERS_DB/APPL_STATE_DB の生成 0 件)、`bfdorch.h` (L18-53 メンバ定義 — `m_stateBfdSessionTable` / `m_stateSoftBfdSessionTable` / `m_bfdStateNotificationConsumer` 以外の DB ハンドル無し)。全行 grep で `COUNTERS_DB` / `APPL_STATE_DB` / `FLEX_COUNTER` hit 0 件。<https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp>
@@ -598,4 +598,4 @@ show bfd peers details
 
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 56e42f1d192f -->
+<!-- glossary-links-injected: 1d0b0a37183f -->

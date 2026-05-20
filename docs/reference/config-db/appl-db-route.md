@@ -54,26 +54,26 @@ VRF-aware 経路では VRF 名が key に埋め込まれる（コロン区切り
 | `protocol` | string | 省略（空文字列） | 経路学習プロトコル。`"static"` / `"bgp"` / `"ospf"` / `"isis"` 等。空の場合はフィールドなし |
 | `blackhole` | string | 省略（= `"false"`） | `"true"` の場合は blackhole 経路（パケット破棄）。`"false"` 相当のときフィールド省略 |
 | `nexthop` | string | 省略（空文字列） | nexthop IP アドレス。[ECMP](../../reference/glossary.md#term-ecmp) はカンマ区切り。`nexthop_group` と排他 |
-| `ifname` | string | 省略（空文字列） | 出力 interface 名。ECMP はカンマ区切り |
-| `weight` | string | 省略（空文字列） | ECMP 重み。カンマ区切り整数 |
+| `ifname` | string | 省略（空文字列） | 出力 interface 名。[ECMP](../../reference/glossary.md#term-ecmp) はカンマ区切り |
+| `weight` | string | 省略（空文字列） | [ECMP](../../reference/glossary.md#term-ecmp) 重み。カンマ区切り整数 |
 | `nexthop_group` | string | 省略（空文字列） | NHG（NextHop Group）テーブルのキー文字列。`nexthop` と排他 |
 | `mpls_nh` | string | 省略（空文字列） | [MPLS](../../reference/glossary.md#term-mpls) ラベルスタック（カンマ区切り） |
-| `vni_label` | string | 省略（空文字列） | EVPN VNI 値 |
-| `router_mac` | string | 省略（空文字列） | EVPN 宛先ルータ MAC |
+| `vni_label` | string | 省略（空文字列） | [EVPN](../../reference/glossary.md#term-evpn) VNI 値 |
+| `router_mac` | string | 省略（空文字列） | [EVPN](../../reference/glossary.md#term-evpn) 宛先ルータ MAC |
 | `segment` | string | 省略（空文字列） | [SRv6](../../reference/glossary.md#term-srv6) SID-list テーブルキー |
-| `seg_src` | string | 省略（空文字列） | SRv6 source address |
+| `seg_src` | string | 省略（空文字列） | [SRv6](../../reference/glossary.md#term-srv6) source address |
 
 ## 書き込み主体
 
 | 書き込み元 | 経路種別 |
 |-----------|---------|
-| `fpmsyncd` (RouteSync) | unicast / blackhole / MPLS / EVPN IP Prefix / SRv6 VPN |
+| `fpmsyncd` (RouteSync) | unicast / blackhole / [MPLS](../../reference/glossary.md#term-mpls) / EVPN IP Prefix / SRv6 VPN |
 | `bgpcfgd` StaticRouteMgr または `staticrouteorch` | `STATIC_ROUTE` [CONFIG_DB](../../reference/glossary.md#term-config_db) から変換した静的経路（VRF-aware）。詳細は `static-route.md` を参照 |
 
 ## 購読者
 
 - `orchagent` / `RouteOrch`: `ROUTE_TABLE` を `ConsumerStateTable` で購読。`sai_route_api->create_route_entry()` でハードウェアに経路を書き込む。ECMP の場合は `sai_next_hop_group_api` と連携。
-- `warmRestartHelper`: ウォームリブート時に APPL_DB エントリを一時保持し、FRR 再接続後に再生する。
+- `warmRestartHelper`: ウォームリブート時に [APPL_DB](../../reference/glossary.md#term-appl_db) エントリを一時保持し、[FRR](../../reference/glossary.md#term-frr) 再接続後に再生する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -111,7 +111,7 @@ flowchart LR
 <!-- defaults -->
 ## フィールドの暗黙デフォルト (Phase A)
 
-以下はコード精読により判明した APPL_DB `ROUTE_TABLE` フィールドのコード由来デフォルト。`fpmsyncd` が非 ZMQ パスで書き込む際の省略ロジックと、`orchagent` (consumer) 側の初期値を対比する[^rsync][^rorch]。
+以下はコード精読により判明した [APPL_DB](../../reference/glossary.md#term-appl_db) `ROUTE_TABLE` フィールドのコード由来デフォルト。`fpmsyncd` が非 ZMQ パスで書き込む際の省略ロジックと、`orchagent` (consumer) 側の初期値を対比する[^rsync][^rorch]。
 
 ### フィールド省略ロジック（fpmsyncd 非 ZMQ パス）
 
@@ -136,7 +136,7 @@ ZMQ 有効時（Northbound ZMQ パス）は全フィールドを空文字列含�
 ### `blackhole` の重要な挙動
 
 - **フィールド不在 = false**: `routeorch.cpp` L765-L766 で `blackhole` フィールドが absent の場合、`bool blackhole = false` として扱われる。
-- **RTN_BLACKHOLE タイプの場合**: fpmsyncd は `fvw.blackhole = "true"` を明示的にセットし、`nexthop` / `ifname` は省略する（L2176-L2178）。
+- **RTN_BLACKHOLE タイプの場合**: [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) は `fvw.blackhole = "true"` を明示的にセットし、`nexthop` / `ifname` は省略する（L2176-L2178）。
 
 ### `protocol` フィールドの変換
 
@@ -152,7 +152,7 @@ ZMQ 有効時（Northbound ZMQ パス）は全フィールドを空文字列含�
 
 ### `nexthop` のデフォルト nexthop アドレス
 
-NHG（NextHop Group）が単一 nexthop でかつ nexthop アドレスが空の場合、fpmsyncd は:
+NHG（NextHop Group）が単一 nexthop でかつ nexthop アドレスが空の場合、[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) は:
 
 ```cpp
 // routesync.cpp L2214
@@ -165,7 +165,7 @@ IPv4 connected 経路 → `"0.0.0.0"`、IPv6 connected 経路 → `"::"` が nex
 
 ### `weight` — 等コスト時は省略
 
-weight が全 nexthop で等しい（ECMP 均等）場合、`getNextHopWt()` が空文字列を返し weight フィールドは省略される。orchagent は weight なし = 均等 ECMP と解釈する。
+weight が全 nexthop で等しい（ECMP 均等）場合、`getNextHopWt()` が空文字列を返し weight フィールドは省略される。[orchagent](../../reference/glossary.md#term-orchagent) は weight なし = 均等 ECMP と解釈する。
 
 <!-- /defaults -->
 
@@ -212,11 +212,11 @@ if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
 
 ### CRM 集計: SAI 任意属性
 
-`crmorch.cpp` L76-L77 で `CRM_IPV4_ROUTE` / `CRM_IPV6_ROUTE` を `SAI_SWITCH_ATTR_AVAILABLE_IPV4_ROUTE_ENTRY` / `_IPV6_ROUTE_ENTRY` に紐付ける。SAI が当該属性を未実装の ASIC（古い SDK / VS / VPP の一部）では `crm_stats_ipv4_route_available` / `ipv6_route_available` が STATE_DB `CRM` に出ない。
+`crmorch.cpp` L76-L77 で `CRM_IPV4_ROUTE` / `CRM_IPV6_ROUTE` を `SAI_SWITCH_ATTR_AVAILABLE_IPV4_ROUTE_ENTRY` / `_IPV6_ROUTE_ENTRY` に紐付ける。SAI が当該属性を未実装の [ASIC](../../reference/glossary.md#term-asic)（古い SDK / VS / VPP の一部）では `crm_stats_ipv4_route_available` / `ipv6_route_available` が [STATE_DB](../../reference/glossary.md#term-state_db) `CRM` に出ない。
 
 ### multi-asic / VOQ chassis での namespace 分離
 
-`routeorch` は `DBConnector` の namespace に従って `swss@asicN` Docker ごとに 1 インスタンス起動し、それぞれ独立した APPL_DB `ROUTE_TABLE` を購読する。fpmsyncd も `asicN` namespace 単位で動作し、ASIC 間で `route_entry` / `next_hop_group` の名前空間は交わらない。chassis 全体の [VOQ](../../reference/glossary.md#term-voq) ルーティングは `CHASSIS_APP_DB`（redis index 12、`chassisdb.sock`）+ `voqorch` 経由で同期されるため、`APPL_DB:ROUTE_TABLE` 自体に chassis-wide 同期機構はない。
+`routeorch` は `DBConnector` の namespace に従って `swss@asicN` Docker ごとに 1 インスタンス起動し、それぞれ独立した APPL_DB `ROUTE_TABLE` を購読する。fpmsyncd も `asicN` namespace 単位で動作し、[ASIC](../../reference/glossary.md#term-asic) 間で `route_entry` / `next_hop_group` の名前空間は交わらない。chassis 全体の [VOQ](../../reference/glossary.md#term-voq) ルーティングは `CHASSIS_APP_DB`（redis index 12、`chassisdb.sock`）+ `voqorch` 経由で同期されるため、`APPL_DB:ROUTE_TABLE` 自体に chassis-wide 同期機構はない。
 
 ### VS / VPP プラットフォーム
 
@@ -310,7 +310,7 @@ if (status != SAI_STATUS_SUCCESS)
 
 特殊ケース:
 
-- **`SAI_STATUS_ITEM_NOT_FOUND` on set** (L2575-L2581): orchagent の `m_syncdRoutes` には経路があるが SAI 側では既に消えているケース (dualtor の tunnel route 衝突など) → `m_syncdRoutes` から該当エントリを削除して `return false`。次回 doTask は「新規 create」として再処理する自動修復。
+- **`SAI_STATUS_ITEM_NOT_FOUND` on set** (L2575-L2581): [orchagent](../../reference/glossary.md#term-orchagent) の `m_syncdRoutes` には経路があるが SAI 側では既に消えているケース (dualtor の tunnel route 衝突など) → `m_syncdRoutes` から該当エントリを削除して `return false`。次回 doTask は「新規 create」として再処理する自動修復。
 - **bulker の `SAI_STATUS_ITEM_ALREADY_EXISTS`** (L2302-L2306): `gRouteBulker.create_entry()` が即時に同一エントリ二重投入を検出した場合は `ERROR` + `return false` で打ち切り (retry なし)。
 - **FG NHG create 失敗時のロールバック** (L2470-L2477): SAI が個別 status を返した場合、`m_fgNhgOrch->removeFgNhg(vrf_id, ipPrefix)` で先に作った fine-grained NHG を即座に解体してから `return false`。
 
@@ -319,7 +319,7 @@ if (status != SAI_STATUS_SUCCESS)
 `crmorch.cpp` の `CRM_IPV4_ROUTE` / `CRM_IPV6_ROUTE` / `CRM_NEXTHOP_GROUP` / `CRM_NEXTHOP_GROUP_MEMBER` リソースは、`routeorch` が経路 / NHG / member を作成・削除する度に `incCrmResUsedCounter` / `decCrmResUsedCounter` で更新される[^crmorch]。
 
 - `CrmOrch::checkCrmThresholds()` (L1116-L1190) が周期実行され、`utilization >= res.highThreshold` を満たした時点で `SWSS_LOG_WARN("... THRESHOLD_EXCEEDED ...")` と `event_publish("chk_crm_threshold", ...)` を発火（`exceededLogCounter < CRM_EXCEEDED_MSG_MAX` の間のみ。ログスパム抑止）。`utilization <= res.lowThreshold` で `THRESHOLD_CLEAR` を出してカウンタを 0 に戻す。
-- **CRM は経路投入を直接ブロックしない**。閾値超過は観測通知のみ。実際にハードウェアリソースが枯渇すると、SAI の `create_route_entry` 等が `SAI_STATUS_INSUFFICIENT_RESOURCES` 系を返し、上述の `handleSaiCreateStatus` 経路で `task_failed` または `task_need_retry` に分岐する。
+- **[CRM](../../reference/glossary.md#term-crm) は経路投入を直接ブロックしない**。閾値超過は観測通知のみ。実際にハードウェアリソースが枯渇すると、SAI の `create_route_entry` 等が `SAI_STATUS_INSUFFICIENT_RESOURCES` 系を返し、上述の `handleSaiCreateStatus` 経路で `task_failed` または `task_need_retry` に分岐する。
 - 観測手順: `crm show resources ipv4_route` / `... ipv6_route` / `... nexthop_group` で used/available を照会し、syslog の `THRESHOLD_EXCEEDED` を併用して逼迫予兆を捉える。
 
 ### APPL_STATE_DB への失敗反映
@@ -339,8 +339,8 @@ if (status != SAI_STATUS_SUCCESS)
 | NHG ref 不在 | `Next hop group %s does not exist` | `redis-cli -n 0 keys 'NEXTHOP_GROUP_TABLE:*'` |
 | neighbor 未解決 | `Failed to get next hop ..., resolving neighbor` | `ip neigh` / NEIGH_TABLE 監視 |
 | IFDOWN | `Interface down for NH ..., skip this Route` | `show interfaces status` |
-| NHG 上限到達 | `Reaching maximum number of next hop groups` (DEBUG) | STATE_DB `SWITCH_CAPABILITY:switch:MAX_NEXTHOP_GROUP_COUNT` と現在数の比較 |
-| SAI route create/set 失敗 | `Failed to create/set route ...` | syslog grep、CRM 残量 |
+| NHG 上限到達 | `Reaching maximum number of next hop groups` (DEBUG) | [STATE_DB](../../reference/glossary.md#term-state_db) `SWITCH_CAPABILITY:switch:MAX_NEXTHOP_GROUP_COUNT` と現在数の比較 |
+| SAI route create/set 失敗 | `Failed to create/set route ...` | syslog grep、[CRM](../../reference/glossary.md#term-crm) 残量 |
 | SAI ITEM_NOT_FOUND on set | （自動修復: 内部ログのみ） | APPL_STATE_DB との整合 |
 | CRM 閾値超過 | `THRESHOLD_EXCEEDED for IPV4_ROUTE/IPV6_ROUTE/NEXTHOP_GROUP` | `crm show resources <resource>` |
 
@@ -356,7 +356,7 @@ if (status != SAI_STATUS_SUCCESS)
 
 APPL_DB `ROUTE_TABLE` は `fpmsyncd` / `bgpcfgd` が書き、`RouteOrch::doTask()`
 (`routeorch.cpp:605-1103`) と `NhgOrch::doTask()` (`nhgorch.cpp`) が購読する。
-両 Orch には ASIC 反映の前提となる依存テーブル（VRF / RIF / NEIGH / NHG / PIC_CONTEXT）
+両 Orch には ASIC 反映の前提となる依存テーブル（VRF / [RIF](../../reference/glossary.md#term-rif) / NEIGH / NHG / PIC_CONTEXT）
 が複数あり、未成立時は `m_toSync` 残置ポーリングか明示 RetryCache で吸収される。
 bulker による SET の遅延適用と、warm reboot 時の reconcile も加味して整理する[^rorch][^nhgorch][^orderingmem].
 
@@ -376,7 +376,7 @@ if (!gPortsOrch->allPortsReady())
 （`routeorch.cpp:2086-2090`）になるため、結果として PortsOrch / IntfsOrch 初期化完了が
 [ROUTE_TABLE](../../reference/glossary.md#term-route_table) 確定の前提となる。
 
-→ 順序依存: `PORT` 初期化 → `INTERFACE`/`VLAN_INTERFACE` の RIF → `ROUTE_TABLE`。
+→ 順序依存: `PORT` 初期化 → `INTERFACE`/`VLAN_INTERFACE` の [RIF](../../reference/glossary.md#term-rif) → `ROUTE_TABLE`。
 
 ### 2. VRF 先行ガード（VRF-aware key）
 
@@ -438,7 +438,7 @@ else
 }
 ```
 
-`hasNextHop(nexthop)` が false なら ARP/ND をキックして `return false` → `m_toSync` 残置。
+`hasNextHop(nexthop)` が false なら [ARP](../../reference/glossary.md#term-arp)/ND をキックして `return false` → `m_toSync` 残置。
 NEIGH_TABLE 反映後の次サイクルで成立。
 
 → 順序依存: 各 nexthop IP の `NEIGH_TABLE` 解決が先行必須。
@@ -592,7 +592,7 @@ if (warmStartEnabled)
 
 - 起動時 fpmsyncd は `WarmStartHelper::checkAndStart()` で warm-restart モードに入り、
   既存 APPL_DB `ROUTE_TABLE` を退避（restoration）する。
-- FRR (zebra) 再接続による経路再 push を `warmStartTimer` 満了 / `eoiuHoldTimer` 満了
+- [FRR](../../reference/glossary.md#term-frr) ([zebra](../../reference/glossary.md#term-zebra)) 再接続による経路再 push を `warmStartTimer` 満了 / `eoiuHoldTimer` 満了
   （`fpmsyncd.cpp:196-238`）まで集約し、`onWarmStartEnd(applStateDb)` で「旧エントリ − 新エントリ」
   の差分のみを `DEL` として routeorch に流す。
 - routeorch から見ると warm reboot は通常の SET/DEL イベント列でしかなく、特別なフックは無い。
@@ -636,7 +636,7 @@ reconcile DEL flush」を順序づける。routeorch / nhgorch は通常時と�
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_ROUTE_NAME_MAP`, `COUNTERS_ROUTE_TO_PATTERN_MAP` | route flow-counter 有効パターン下で「prefix↔counter OID」「prefix↔pattern」の HSET / HDEL を行う。bind/unbind は flex counter timer 経過時 (`doTask(SelectableTimer)`) に反映 | `flex_counter/flowcounterrouteorch.cpp:33-34,123-157,916-923` `mPrefixToCounterTable->set/hdel`, `mPrefixToPatternTable->set/hdel`; `routeorch.cpp:259,282,2708,2996` 連動呼出 (`gFlowCounterRouteOrch->onAdd/onRemoveMiscRouteEntry` / `handleRouteAdd/Remove`) |
 | STATE_DB | `FLOW_COUNTER_CAPABILITY_TABLE\|route` | 起動時 1 回。`support="true"/"false"` を SAI ケーパビリティ問合せ結果として広告 | `flex_counter/flowcounterrouteorch.cpp:166-178` `capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs)` |
 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `FLEX_COUNTER_GROUP_TABLE\|ROUTE_FLOW_COUNTER`, `FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER:<counter_oid>` | route flow-counter bind 時に `mRouteFlowCounterMgr.setCounterIdList()` でポーリング対象を登録、unbind 時に `clearCounterIdList()` で削除 | `flex_counter/flowcounterrouteorch.cpp:35,123,923` `FlexCounterManager(ROUTE_FLOW_COUNTER_FLEX_COUNTER_GROUP, ...)` |
-| ASIC_DB (参考) | SAI `route_entry`, `next_hop`, `next_hop_group`, `next_hop_group_member` | SAI Route / NextHop / NHG API 経由のハードウェア反映。**副次ではなく主作用** | `routeorch.cpp` 全般。本ページ「データフロー」参照 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) (参考) | SAI `route_entry`, `next_hop`, `next_hop_group`, `next_hop_group_member` | SAI Route / NextHop / NHG API 経由のハードウェア反映。**副次ではなく主作用** | `routeorch.cpp` 全般。本ページ「データフロー」参照 |
 
 それ以外 ([LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) / [CONFIG_DB](../../reference/glossary.md#term-config_db) / CHASSIS_APP_DB / SNMP_OVERLAY_DB) への直接書込みは `routeorch.cpp` / `crmorch.cpp` / `flowcounterrouteorch.cpp` の grep で 0 件 (`routeorch` は CONFIG_DB を購読のみ)。
 
@@ -711,20 +711,20 @@ ROUTE_TABLE に関係する 4 リソースの紐付け:
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-APPL_DB `ROUTE_TABLE` は [YANG](../../reference/glossary.md#term-yang) 未定義（APPL_DB は YANG 管理対象外）のため leafref は存在しない。`RouteOrch::doTask()` / `addRoute()` / `addNextHopGroup()` (`routeorch.cpp`) と `NhgOrch` (`nhgorch.cpp`) のコード精読により、以下の Orch / テーブルへの暗黙参照（存在確認 + OID 解決 + refcount + retry トリガ）が発生する[^rorch][^nhgorch]。
+APPL_DB `ROUTE_TABLE` は [YANG](../../reference/glossary.md#term-yang) 未定義（APPL_DB は [YANG](../../reference/glossary.md#term-yang) 管理対象外）のため leafref は存在しない。`RouteOrch::doTask()` / `addRoute()` / `addNextHopGroup()` (`routeorch.cpp`) と `NhgOrch` (`nhgorch.cpp`) のコード精読により、以下の Orch / テーブルへの暗黙参照（存在確認 + OID 解決 + refcount + retry トリガ）が発生する[^rorch][^nhgorch]。
 
 ### key / フィールド由来の参照
 
 | 参照先 | 参照方向 | 条件 | 参照元 evidence |
 |--------|---------|------|----------------|
 | `VRF_TABLE` (VRFOrch) | 存在確認 + virtual_router OID + refcount | key が `Vrf<name>:<prefix>` 形式（非デフォルト VRF） | `routeorch.cpp` L706–717 (`isVRFexists` / `getVRFid`)、L2013 (`increaseVrfRefCount`)、L2773 / L2993 (`decreaseVrfRefCount`) |
-| `NEIGH_TABLE` (NeighOrch) | next-hop OID + refcount + ARP/ND resolve トリガ | `nexthop` 非空かつ各 NH が IP NH（intf-only でない） | `routeorch.cpp` L1499–1510 (`hasNextHop` / `getNextHopId` / `addNextHop`)、L2094–2119（single NH）、L2151–2155 (`resolveNeighbor`)、L2197–2219（ECMP メンバ） |
+| `NEIGH_TABLE` (NeighOrch) | next-hop OID + refcount + [ARP](../../reference/glossary.md#term-arp)/ND resolve トリガ | `nexthop` 非空かつ各 NH が IP NH（intf-only でない） | `routeorch.cpp` L1499–1510 (`hasNextHop` / `getNextHopId` / `addNextHop`)、L2094–2119（single NH）、L2151–2155 (`resolveNeighbor`)、L2197–2219（ECMP メンバ） |
 | `INTF_TABLE` (IntfsOrch) | RIF OID + refcount + サブネット判定 | `ifname` 指定 / intf-only NH / コネクテッドルート判定 | `routeorch.cpp` L968 (`getRouterIntfsAlias`)、L1045 (`isPrefixSubnet`)、L2083 / L2086–2090 (`getRouterIntfsId` — `SAI_NULL_OBJECT_ID` なら retry)、L2429 |
 | `PORT_TABLE` (PortsOrch) | allPortsReady ブロック + inband skip + CPU port | 常時 + intf-only NH が inband port | `routeorch.cpp` L609 (`allPortsReady` — false で全 ROUTE 処理保留)、L243 (`getCpuPort`)、L2074 (`isInbandPort`)、L915–926（`eth0`/`docker0`/`Loopback*` 宛は ASIC から撤去） |
 | `NEXTHOP_GROUP_TABLE` / `CLASS_BASED_NEXT_HOP_GROUP_TABLE` (NhgOrch / CbfNhgOrch) | index 解決 + 共有 NHG OID + refcount + 上限 | `nexthop_group` 非空（`nexthop`/`ifname` と排他） | `routeorch.cpp` L807–812（排他）、L838–839 / L996–1012 (`getNhg` — `out_of_range` で retry)、L1096 / L1424 / L1478（NHG 上限）、L2411 (`hasNhg` OR)、L2546 (`incNhgRefCount`)、`nhgorch.cpp` L319–362（temp NHG 保持と promotion） |
 | `FG_NHG` / `FG_NHG_PREFIX` (FgNhgOrch) | 適用判定 + 専用 SAI NHG + ロールバック | `isRouteFineGrained(vrf_id, prefix, NHs)` が true | `routeorch.cpp` L529 / L597、L1424–1431（上限ガード）、L2028–2037 (`setFgNhg`)、L2403 / L2470–2477 (`removeFgNhg`) |
 | `SRV6_SID_LIST_TABLE` / `SRV6_MY_SID_TABLE` (Srv6Orch) | SRv6 NH OID + Agg ID + バルク削除 | `segment` または `seg_src` 非空（`srv6_nh = true`） | `routeorch.cpp` L736–795（フラグ立て）、L1250 (`removeSrv6Nexthops`)、L2055 (`contextIdExists`)、L2100 / L2143 / L2169 (`srv6Nexthops`)、L2295 / L2352 (`getAggId`)、L2188–2200（temp route 非生成） |
-| `VXLAN_TUNNEL` / remote [VTEP](../../reference/glossary.md#term-vtep) (VxlanTunnelOrch + NeighOrch) | L3 VNI 検証 + remote VTEP 作成 + tunnel NH | `vni_label` 非空（`overlay_nh = true`）かつ非 SRv6 | `routeorch.cpp` L872 / L893–897 (`isL3VniVlan`)、L2127 (`createRemoteVtep`)、L2133 / L2208 (`addTunnelNextHop`)、L2128–2141（失敗時 retry）、L1781–1789（remove） |
+| `VXLAN_TUNNEL` / remote [VTEP](../../reference/glossary.md#term-vtep) (VxlanTunnelOrch + NeighOrch) | L3 VNI 検証 + remote [VTEP](../../reference/glossary.md#term-vtep) 作成 + tunnel NH | `vni_label` 非空（`overlay_nh = true`）かつ非 SRv6 | `routeorch.cpp` L872 / L893–897 (`isL3VniVlan`)、L2127 (`createRemoteVtep`)、L2133 / L2208 (`addTunnelNextHop`)、L2128–2141（失敗時 retry）、L1781–1789（remove） |
 
 ### 通知 / side ref
 
@@ -808,7 +808,7 @@ void ZmqOrch::addConsumer(DBConnector *db, string tableName, int pri,
 | ZMQ フラグ | Executor | Selectable | データ経路 |
 |------------|----------|-----------|-----------|
 | 有効 (`route_zmq_sever != nullptr`) | `ZmqConsumer` | `ZmqConsumerStateTable` | fpmsyncd が ZMQ ソケットに送信 → orchagent が受信 |
-| 無効 (`nullptr`、デフォルト) | `Consumer` | `ConsumerStateTable` | fpmsyncd が APPL_DB に Lua スクリプトで書込 → Redis keyspace 通知で orchagent が pop |
+| 無効 (`nullptr`、デフォルト) | `Consumer` | `ConsumerStateTable` | fpmsyncd が APPL_DB に Lua スクリプトで書込 → [Redis](../../reference/glossary.md#term-redis) keyspace 通知で orchagent が pop |
 
 どちらのパスでも pop バッチサイズは `gBatchSize`（`orch.cpp:17` の
 グローバル変数。orchagent 起動引数で上書き可能。`ZmqConsumerStateTable`
@@ -866,7 +866,7 @@ m_publisher.publish(APP_ROUTE_TABLE_NAME, ctx.key, fvs, status, replace);
 
 | 設定 | 効果 |
 |------|------|
-| `setBuffered(true)` | 個々の publish をリングバッファに溜め、`flush()` でまとめて Redis に書き出す |
+| `setBuffered(true)` | 個々の publish をリングバッファに溜め、`flush()` でまとめて [Redis](../../reference/glossary.md#term-redis) に書き出す |
 | `m_directDbWrite = true` | notification チャネル経由ではなく **APPL_STATE_DB へ直接 HSET / DEL** を発行する |
 
 呼び出し箇所は `routeorch.cpp:923` (loopback/管理 IF 経路の擬似応答)
@@ -922,4 +922,4 @@ Orch 層のリトライ機構で、依存リソース（NHG / NEIGH / VRF / RIF�
 
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 8409ae779135 -->
+<!-- glossary-links-injected: 2a926555fc03 -->
