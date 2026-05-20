@@ -48,7 +48,7 @@ related:
 - **PIC Core / PIC Edge / PIC Local** の 3 形態は **何で起動し** 何を切替えるか
 - **NHG 階層**（service / underlay）の絵
 - **FAST DOWNLOAD / SLOW DOWNLOAD** とは具体的に何の経路か
-- SONiC の **どのファイル** に hierarchical NHG が入っているか
+- [SONiC](../reference/glossary.md#term-sonic) の **どのファイル** に hierarchical NHG が入っているか
 - 何ができないか（hitless 要件、HW resource、[HLD](../reference/glossary.md#term-hld) と実装の差）
 
 ## 1. なぜ PIC が必要か
@@ -182,4 +182,4 @@ HLD 用語「FAST DOWNLOAD」「SLOW DOWNLOAD」は **コードに literal で�
 - single ↔ NHG hitless transition のテスト存在確認
 -->
 
-<!-- glossary-links-injected: 8e8594481100 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

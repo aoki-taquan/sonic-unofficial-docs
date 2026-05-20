@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-`STATE_DB` の `FEATURE` テーブルは、SONiC 機能 docker コンテナのランタイム状態を保持する読み取り専用テーブル[^1]。Config_DB の [`FEATURE`](feature.md) テーブルが設定を管理するのに対し、STATE_DB の `FEATURE` テーブルは実際の動作状態を反映する。
+`STATE_DB` の `FEATURE` テーブルは、[SONiC](../../reference/glossary.md#term-sonic) 機能 docker コンテナのランタイム状態を保持する読み取り専用テーブル[^1]。Config_DB の [`FEATURE`](feature.md) テーブルが設定を管理するのに対し、[STATE_DB](../../reference/glossary.md#term-state_db) の `FEATURE` テーブルは実際の動作状態を反映する。
 
 書き込み元は主に 2 つのデーモン:
 
@@ -61,7 +61,7 @@ flowchart LR
 FEATURE|<name>
 ```
 
-`<name>` は CONFIG_DB `FEATURE` テーブルと同じ feature 名（`bgp`、`teamd`、`snmp` 等）。
+`<name>` は [CONFIG_DB](../../reference/glossary.md#term-config_db) `FEATURE` テーブルと同じ feature 名（`bgp`、`teamd`、`snmp` 等）。
 
 ## フィールド一覧
 
@@ -81,12 +81,12 @@ FEATURE|<name>
 
 ### 書き込みトリガーと状態遷移
 
-`featured` は以下のタイミングで `state` を STATE_DB に書き込む:
+`featured` は以下のタイミングで `state` を [STATE_DB](../../reference/glossary.md#term-state_db) に書き込む:
 
 1. **`enable_feature()` 成功後** — `systemctl start` + `enable` 成功 → `"enabled"`
 2. **`disable_feature()` 成功後** — `systemctl stop` + `disable` 成功 → `"disabled"`
 3. **systemctl コマンド失敗時** — `subprocess.call()` が非ゼロ終了 → `"failed"`
-4. **feature 削除時** — `FeatureHandler.handler()` で `feature_cfg` が空の場合 → STATE_DB エントリを `_del()` で削除
+4. **feature 削除時** — `FeatureHandler.handler()` で `feature_cfg` が空の場合 → [STATE_DB](../../reference/glossary.md#term-state_db) エントリを `_del()` で削除
 
 ### 取り得る値
 
@@ -155,7 +155,7 @@ Kubernetes (`set_owner = kube`) 使用時の状態遷移:
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG schema が存在しないため、すべてのデフォルトはコードの変数初期化から由来する。
+[YANG](../../reference/glossary.md#term-yang) schema が存在しないため、すべてのデフォルトはコードの変数初期化から由来する。
 
 | フィールド | コード由来デフォルト | fallback 源 |
 |-----------|-------------------|------------|
@@ -177,9 +177,9 @@ YANG schema が存在しないため、すべてのデフォルトはコード�
 
 3. **ローカル管理時は `container_stable_version` / `container_last_version` / `remote_state` が書き込まれない**: これらのフィールドは `ctrmgrd.py` の Kubernetes 連携処理のみが書き込む。`set_owner = local` の機能では `dflt_st_feat` の空文字列 / `"none"` のままである。
 
-4. **`state` フィールドは `featured` のみが管理**: `container_startup.py` も `ctrmgrd.py` も `state` フィールドを STATE_DB に書き込まない。CONFIG_DB `FEATURE.state` の変化に応じた systemd 操作結果のみが反映される。
+4. **`state` フィールドは `featured` のみが管理**: `container_startup.py` も `ctrmgrd.py` も `state` フィールドを STATE_DB に書き込まない。[CONFIG_DB](../../reference/glossary.md#term-config_db) `FEATURE.state` の変化に応じた systemd 操作結果のみが反映される。
 
-5. **feature 削除時は STATE_DB エントリごと削除**: CONFIG_DB から feature エントリが消えると `featured` の `handler()` が `_feature_state_table._del(feature_name)` を呼び出してエントリ全体を削除する（`featured:190`）。
+5. **feature 削除時は STATE_DB エントリごと削除**: [CONFIG_DB](../../reference/glossary.md#term-config_db) から feature エントリが消えると `featured` の `handler()` が `_feature_state_table._del(feature_name)` を呼び出してエントリ全体を削除する（`featured:190`）。
 
 > **Evidence**: `sonic-host-services/scripts/featured:132-134,190,344,510,513,544,547,585-590`; `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/container_startup.py:16-51,164-186,201-268`; `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py:47-54,92-101,593-612`; `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/container.py:23-28,99-111`; `sonic-utilities/show/feature.py:44-53`
 
@@ -207,7 +207,7 @@ YANG schema が存在しないため、すべてのデフォルトはコード�
 
 **advanced boot 待機 (依存 #3)**: warm boot / fast boot 時は `RestartWaiter.isAdvancedBootInProgress()` が真を返し、`waitAdvancedBootDone()` が STATE_DB の ready 状態を待機する。この待機中は `FEATURE` テーブルの subscribe ループが開始されないため、STATE_DB への `state` 書込みが数秒〜数分遅延しうる（evidence: `featured:607-609`）。
 
-**`state` と `current_owner` の独立書込み (依存 #5)**: `state` は `featured` のみが書き込み、`current_owner` / `container_id` / `container_version` / `remote_state` は `container_startup.py` が書き込む。両者は別プロセスであり Redis の atomic HSET でフィールドを個別更新するため、consumer は「`state=enabled` かつ `current_owner=none`」という中間状態を観測しうる。`show feature status` は STATE_DB を直接読むため、この中間状態がそのまま表示される（evidence: `featured:585-590`; `container_startup.py:164-186`）。
+**`state` と `current_owner` の独立書込み (依存 #5)**: `state` は `featured` のみが書き込み、`current_owner` / `container_id` / `container_version` / `remote_state` は `container_startup.py` が書き込む。両者は別プロセスであり [Redis](../../reference/glossary.md#term-redis) の atomic HSET でフィールドを個別更新するため、consumer は「`state=enabled` かつ `current_owner=none`」という中間状態を観測しうる。`show feature status` は STATE_DB を直接読むため、この中間状態がそのまま表示される（evidence: `featured:585-590`; `container_startup.py:164-186`）。
 
 > **Evidence**: `sonic-host-services/scripts/featured:23-24,143,163-177,273-274,510-513,544-547,585-590,607-609,644-660,190`
 
@@ -221,8 +221,8 @@ STATE_DB `FEATURE` テーブルは `featured` と `sonic-ctrmgrd` が書き手�
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
 | `FEATURE\|<name>` (CONFIG_DB) | 購読トリガ + フィールド読込 | 常時。`featured` が SubscriberStateTable で購読し、SET/DEL イベントを受け取ると `state` フィールドを STATE_DB に書き込む | `featured:601,617-623,644-648`; `container_startup.py:57-62` |
-| `DEVICE_METADATA\|localhost` (CONFIG_DB) | 読込のみ | 起動時 1 回。`type` フィールドから device_type（SpineRouter 等）を判定し、syncd/gbsyncd の `auto_restart` 上書き可否を決定する | `featured:617`; `featured:374` |
-| `PORT_TABLE\|PortInitDone` (APPL_DB) | 購読トリガ | `delayed=True` な feature のみ。`PortInitDone` SET イベントを受け取ると `enable_delayed_services()` が実行され、STATE_DB への `state=enabled` 書込みが初めて発生する | `featured:647-649`; `featured:182-184` |
+| `DEVICE_METADATA\|localhost` (CONFIG_DB) | 読込のみ | 起動時 1 回。`type` フィールドから device_type（SpineRouter 等）を判定し、[syncd](../../reference/glossary.md#term-syncd)/gbsyncd の `auto_restart` 上書き可否を決定する | `featured:617`; `featured:374` |
+| `PORT_TABLE\|PortInitDone` ([APPL_DB](../../reference/glossary.md#term-appl_db)) | 購読トリガ | `delayed=True` な feature のみ。`PortInitDone` SET イベントを受け取ると `enable_delayed_services()` が実行され、STATE_DB への `state=enabled` 書込みが初めて発生する | `featured:647-649`; `featured:182-184` |
 | `FEATURE\|<name>` (STATE_DB — 自己参照) | 読込のみ | `container_startup.py` が `read_data()` で同じ STATE_DB エントリを読み込み、`current_owner` / `container_version` / `remote_state` の現在値を確認してから書き込む | `container_startup.py:64-68`; `container_startup.py:164-186` |
 | `KUBE_LABELS\|SET` (STATE_DB) | 読込 + 書込 | `set_owner=kube` 時のみ。`container_startup.py` が `check_version_blocked()` でバージョンブロックを確認し、`drop_label()` でバージョンラベルを書き込む。`ctrmgrd.py` が kube API から取得したラベルを同テーブルに反映する | `container_startup.py:90-106`; `ctrmgrd.py:305-307` |
 | `KUBERNETES_MASTER\|SERVER` (CONFIG_DB / STATE_DB) | 読込 (CONFIG_DB) + 書込 (STATE_DB) | Kubernetes 連携時のみ。`ctrmgrd.py` が CONFIG_DB の接続先情報を読み込み、接続状態を STATE_DB `KUBERNETES_MASTER` に書き込む。STATE_DB `FEATURE` の `remote_state` 書込みは k8s 連携成立後に行われる | `ctrmgrd.py:29,334-342` |
@@ -244,7 +244,7 @@ STATE_DB `FEATURE` テーブルは `featured` と `sonic-ctrmgrd` が書き手�
 | consumer | 条件 | 挙動 |
 |---|---|---|
 | `featured` | `FEATURE_EXCLUSION_LIST` に含まれる feature (`telemetry`, `frr_bmp`) | `enable_feature()` / `disable_feature()` をスキップ。STATE_DB の `state` フィールドは変化しない (`featured:135,517-519`) |
-| `featured` | `set_owner = kube` での SpineRouter + syncd/gbsyncd | CONFIG_DB の `auto_restart` を無視して `Restart=no` を強制。STATE_DB の `state` は通常通り書き込まれる |
+| `featured` | `set_owner = kube` での SpineRouter + [syncd](../../reference/glossary.md#term-syncd)/gbsyncd | CONFIG_DB の `auto_restart` を無視して `Restart=no` を強制。STATE_DB の `state` は通常通り書き込まれる |
 | `container_startup.py` | `system_state == ""` (ctrmgrd 未稼働または Kubernetes 管理なし) | `container_up()` が即座に return。STATE_DB の書き込みなし (`container_startup.py:223-224`) |
 | `container_startup.py` | kube コンテナで `set_owner == "local"` に変更されていた場合 | `do_freeze()` で無限 sleep。コンテナは main application を起動しない |
 | `container_startup.py` | 同一 feature に旧バージョンが `drop_label` でブロックされている場合 | `do_freeze()` で無限 sleep |
@@ -296,14 +296,14 @@ STATE_DB `FEATURE` テーブルは `featured` と `sonic-ctrmgrd` が書き手�
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`featured` / `container_startup.py` / `ctrmgrd.py` に埋め込まれた CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+`featured` / `container_startup.py` / `ctrmgrd.py` に埋め込まれた CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 
 ### featured — タイムアウト・状態定数
 
 | 定数 | 値 | 用途 | ソース |
 |------|----|------|--------|
-| `PORT_INIT_TIMEOUT_SEC` | `180` 秒 | `delayed=True` feature の強制 enable タイムアウト。APPL_DB `PORT_TABLE` の `PortInitDone` イベントが届かない場合、180 秒経過後に `enable_delayed_services()` を強制実行 | `featured:24` |
-| `DEFAULT_SELECT_TIMEOUT` | `1000` ms | メインループの Redis select タイムアウト (1 秒) | `featured:23` |
+| `PORT_INIT_TIMEOUT_SEC` | `180` 秒 | `delayed=True` feature の強制 enable タイムアウト。[APPL_DB](../../reference/glossary.md#term-appl_db) `PORT_TABLE` の `PortInitDone` イベントが届かない場合、180 秒経過後に `enable_delayed_services()` を強制実行 | `featured:24` |
+| `DEFAULT_SELECT_TIMEOUT` | `1000` ms | メインループの [Redis](../../reference/glossary.md#term-redis) select タイムアウト (1 秒) | `featured:23` |
 | `FEATURE_STATE_ENABLED` | `"enabled"` | STATE_DB `state` フィールドへの書き込み値 (systemctl 成功時) | `featured:132` |
 | `FEATURE_STATE_DISABLED` | `"disabled"` | STATE_DB `state` フィールドへの書き込み値 (停止成功時) | `featured:133` |
 | `FEATURE_STATE_FAILED` | `"failed"` | STATE_DB `state` フィールドへの書き込み値 (systemctl 失敗時) | `featured:134` |
@@ -329,7 +329,7 @@ STATE_DB エントリが存在しない場合に `read_data()` が使用する�
 
 ### CONFIG_DB/YANG 外の暗黙ルール
 
-- **`FEATURE_EXCLUSION_LIST` はコード専有**: `telemetry` / `frr_bmp` の除外は CONFIG_DB にも YANG にも設定パスがなく、ソースコード変更なしに追加・削除できない。
+- **`FEATURE_EXCLUSION_LIST` はコード専有**: `telemetry` / `frr_bmp` の除外は CONFIG_DB にも [YANG](../../reference/glossary.md#term-yang) にも設定パスがなく、ソースコード変更なしに追加・削除できない。
 - **delayed feature の 180 秒タイムアウト**: PORT 初期化が 180 秒を超えた場合、タイムアウトで強制 enable されるため、コンテナが不完全な状態で起動しうる。
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/feature-state-constants.md`
@@ -344,7 +344,7 @@ STATE_DB `FEATURE` テーブルを書き込む 3 デーモン (`featured` / `con
 
 | 副次書込み先 | 書込み元 | 条件 | evidence |
 |---|---|---|---|
-| `CONFIG_DB FEATURE\|<name>` の `has_global_scope` / `has_per_asic_scope` | `featured` | `sync_feature_scope()` により、scope フィールドが実際に変化した場合のみ上書き。Multi-ASIC では名前空間ごとの CONFIG_DB にも伝播 | `featured:290-355` |
+| `CONFIG_DB FEATURE\|<name>` の `has_global_scope` / `has_per_asic_scope` | `featured` | `sync_feature_scope()` により、scope フィールドが実際に変化した場合のみ上書き。[Multi-ASIC](../../reference/glossary.md#term-multi-asic) では名前空間ごとの CONFIG_DB にも伝播 | `featured:290-355` |
 | `CONFIG_DB FEATURE\|<name>` の `state` | `featured` | `resync_feature_state()` — feature の state が immutable (`always_enabled` / `always_disabled`) またはテンプレート文字列の場合のみ CONFIG_DB を書き戻す。通常の `enabled` / `disabled` 変更では書き戻さない | `featured:550-572` |
 | `STATE_DB KUBE_LABELS\|SET` (`<feat>_local_version`) | `container_startup.py` | `owner == "local"` のコンテナ起動時に `drop_label()` が書き込む。Kubernetes が同バージョンの再デプロイを抑止するためのラベル | `container_startup.py:99-106,179-181` |
 | `STATE_DB KUBE_LABELS\|SET` (`<feat>_enabled`) | `ctrmgrd.py` | CONFIG_DB `set_owner` の変化を検知した `handle_update()` が `"true"` / `"false"` を書き込む。`KubeLabelStats` がこのテーブルを監視して kube API Server へ同期する | `ctrmgrd.py:505-506,638-654` |
@@ -362,9 +362,9 @@ STATE_DB `FEATURE` テーブルを書き込む 3 デーモン (`featured` / `con
 
 | DB | 結果 | 根拠 |
 |---|---|---|
-| APPL_DB | 書込なし | `featured` は `APPL_DB PORT_TABLE` を Subscribe 専用で開く (`featured:603,647`)。書き込み呼び出しなし |
-| ASIC_DB | 書込なし | `featured` / `container_startup.py` / `ctrmgrd.py` はすべて SAI 非経由。`ASIC_DB` 参照なし |
-| COUNTERS_DB / FLEX_COUNTER_DB | 書込なし | `featured` 全行の grep で `COUNTERS_DB` / `FLEX_COUNTER_DB` への参照・書き込み 0 件 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | 書込なし | `featured` は `APPL_DB PORT_TABLE` を Subscribe 専用で開く (`featured:603,647`)。書き込み呼び出しなし |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | 書込なし | `featured` / `container_startup.py` / `ctrmgrd.py` はすべて [SAI](../../reference/glossary.md#term-sai) 非経由。`ASIC_DB` 参照なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | 書込なし | `featured` 全行の grep で `COUNTERS_DB` / `FLEX_COUNTER_DB` への参照・書き込み 0 件 |
 <!-- /side-effects -->
 
 <!-- pubsub -->
@@ -374,7 +374,7 @@ STATE_DB `FEATURE` テーブルを書き込む 3 デーモン (`featured` / `con
 
 ### 書き込み側 — swsscommon.Table による直接 set
 
-`STATE_DB FEATURE` への書き込みは **ProducerStateTable ではなく** `swsscommon.Table.set()` を使用する。`featured` はオペレーション状態をデーモン直書きで STATE_DB に反映するため。
+`STATE_DB FEATURE` への書き込みは **[ProducerStateTable](../../reference/glossary.md#term-producerstatetable) ではなく** `swsscommon.Table.set()` を使用する。`featured` はオペレーション状態をデーモン直書きで STATE_DB に反映するため。
 
 ```python
 # featured:620
@@ -388,7 +388,7 @@ def set_feature_state(self, feature, state):
         tbl.set(feature.name, [('state', state)])
 ```
 
-`swsscommon.Table.set()` は内部で Redis `HSET` + keyspace notification (`__keyspace@6__:FEATURE|<name>`) を発行する。
+`swsscommon.Table.set()` は内部で [Redis](../../reference/glossary.md#term-redis) `HSET` + keyspace notification (`__keyspace@6__:FEATURE|<name>`) を発行する。
 
 ### 読み取り側 — SubscriberStateTable による subscribe ループ
 
@@ -449,7 +449,7 @@ APPL_DB PORT_TABLE|* 変更 (port ready)
 
 | consumer | 読み取り方法 | 用途 |
 |----------|------------|------|
-| `show feature status` (sonic-utilities) | `swsscommon.Table.get()` (on-demand) | feature の現在状態表示 |
+| `show feature status` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)) | `swsscommon.Table.get()` (on-demand) | feature の現在状態表示 |
 | `ctrmgrd.py` | CONFIG_DB FEATURE を SubscriberStateTable で監視（STATE_DB は直接購読せず） | Kubernetes との feature 状態同期 |
 | `container_startup.py` | 起動時に `Table.get()` で確認 | コンテナ起動前の状態チェック |
 <!-- /pubsub -->
@@ -473,7 +473,7 @@ APPL_DB PORT_TABLE|* 変更 (port ready)
 
 ### Multi-ASIC — 各 namespace の STATE_DB に同一内容を書込み
 
-multi-ASIC 構成 (`is_multi_npu == True`) では、`FeatureHandler.__init__()` が `device_info.get_namespaces()` で各 namespace を取得し、それぞれの STATE_DB に独立した `Table` オブジェクトを生成する (`featured:151-161`)。`set_feature_state()` は主 STATE_DB への書込みの直後に、各 namespace の `ns_feature_state_tbl` に対しても同一の `('state', state)` を書き込む (`featured:588-590`)。フィールド・値の内容は全 namespace で同一。
+multi-[ASIC](../../reference/glossary.md#term-asic) 構成 (`is_multi_npu == True`) では、`FeatureHandler.__init__()` が `device_info.get_namespaces()` で各 namespace を取得し、それぞれの STATE_DB に独立した `Table` オブジェクトを生成する (`featured:151-161`)。`set_feature_state()` は主 STATE_DB への書込みの直後に、各 namespace の `ns_feature_state_tbl` に対しても同一の `('state', state)` を書き込む (`featured:588-590`)。フィールド・値の内容は全 namespace で同一。
 
 ### Kubernetes 管理 — `ctrmgrd.py` / `container_startup.py` が追加フィールドを書込み
 
@@ -484,7 +484,7 @@ multi-ASIC 構成 (`is_multi_npu == True`) では、`FeatureHandler.__init__()` 
 | `set_owner = local` | `featured` が書込み | `"local"` (container_startup.py) | `"none"` (初期値のみ) | `""` (書込なし) |
 | `set_owner = kube` | `featured` が書込み | `"kube"` (container_startup.py) | `"pending"` → `"running"` → `"ready"` | `ctrmgrd.py` が書込み |
 
-> **Evidence**: `sonic-host-services/scripts/featured:135` (`FEATURE_EXCLUSION_LIST`)、`featured:466` (`is_feature_in_exclusion_list`)、`featured:376-379` (SpineRouter `Restart=no`)、`featured:142,151-161` (multi-ASIC namespace 初期化)、`featured:585-590` (`set_feature_state` + namespace 書込み)。`sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/container_startup.py:164-186` (`update_state`)、`ctrmgrd.py:593-612` (`do_tag_latest`)
+> **Evidence**: `sonic-host-services/scripts/featured:135` (`FEATURE_EXCLUSION_LIST`)、`featured:466` (`is_feature_in_exclusion_list`)、`featured:376-379` (SpineRouter `Restart=no`)、`featured:142,151-161` (multi-[ASIC](../../reference/glossary.md#term-asic) namespace 初期化)、`featured:585-590` (`set_feature_state` + namespace 書込み)。`sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/container_startup.py:164-186` (`update_state`)、`ctrmgrd.py:593-612` (`do_tag_latest`)
 <!-- /platform -->
 
 <!-- ops-hint -->
@@ -534,3 +534,5 @@ show feature status bgp
 ## 引用元
 
 [^1]: `sonic-host-services/scripts/featured` (L132-134 定数, L190 _del, L344,510,513,544,547 state 遷移, L585-590 set_feature_state); `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/container_startup.py` (L16-51 定数・デフォルト, L164-186 update_state, L201-268 container_up); `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py` (L47-54 定数, L92-101 dflt_st_feat, L593-612 do_tag_latest). <https://github.com/sonic-net/sonic-host-services/blob/master/scripts/featured>
+
+<!-- glossary-links-injected: 52eb42e1bb80 -->

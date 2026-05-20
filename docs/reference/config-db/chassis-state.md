@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-`CHASSIS_STATE_DB` は Redis DB ID=13 に割り当てられた **状態専用データベース**。[CONFIG_DB](../../reference/glossary.md#term-config_db) の `CHASSIS_MODULE` テーブルとは別に存在し、`chassisd` デーモンがモジュラーチャシスや SmartSwitch の運用状態を **push 型** で書き込む。CONFIG_DB が「設定意図」を保持するのに対し、CHASSIS_STATE_DB は「実行時状態」を保持する[^1]。
+`CHASSIS_STATE_DB` は [Redis](../../reference/glossary.md#term-redis) DB ID=13 に割り当てられた **状態専用データベース**。[CONFIG_DB](../../reference/glossary.md#term-config_db) の `CHASSIS_MODULE` テーブルとは別に存在し、`chassisd` デーモンがモジュラーチャシスや [SmartSwitch](../../reference/glossary.md#term-smartswitch) の運用状態を **push 型** で書き込む。[CONFIG_DB](../../reference/glossary.md#term-config_db) が「設定意図」を保持するのに対し、CHASSIS_STATE_DB は「実行時状態」を保持する[^1]。
 
 `chassisd` は `CHASSIS_INFO_UPDATE_PERIOD_SECS = 10` 秒間隔のポーリングと、midplane 状態変化のイベント駆動で CHASSIS_STATE_DB を更新する。
 
@@ -53,11 +53,11 @@ flowchart LR
 | テーブル名 | キー形式 | 書き込み元 | 用途 |
 |-----------|---------|----------|------|
 | `CHASSIS_MODULE_TABLE` | `LINE-CARD<N>` | `ModuleUpdater` (line card 側) | hostname / slot / num_asics をスーパーバイザーへ通知 |
-| `CHASSIS_ASIC_TABLE` | `LINE-CARD<N>\|asic<id>` | `ModuleUpdater` (非 supervisor) | ラインカード上の ASIC 情報 |
-| `CHASSIS_FABRIC_ASIC_TABLE` | `asic<id>` | `ModuleUpdater` (supervisor) | ファブリックカード上の ASIC 情報 |
+| `CHASSIS_ASIC_TABLE` | `LINE-CARD<N>\|asic<id>` | `ModuleUpdater` (非 supervisor) | ラインカード上の [ASIC](../../reference/glossary.md#term-asic) 情報 |
+| `CHASSIS_FABRIC_ASIC_TABLE` | `asic<id>` | `ModuleUpdater` (supervisor) | ファブリックカード上の [ASIC](../../reference/glossary.md#term-asic) 情報 |
 | `CHASSIS_MODULE_REBOOT_INFO_TABLE` | `<module_name>` | `ModuleUpdater` | midplane 喪失時のタイムスタンプ記録 |
-| `DPU_STATE` | `DPU<N>` | `SmartSwitchModuleUpdater`, `DpuStateUpdater` | SmartSwitch DPU の midplane / データプレーン / コントロールプレーン状態 |
-| `REBOOT_CAUSE` | `DPU<N>\|<timestamp>` | `SmartSwitchModuleUpdater` | DPU 再起動原因の履歴 |
+| `DPU_STATE` | `DPU<N>` | `SmartSwitchModuleUpdater`, `DpuStateUpdater` | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) の midplane / データプレーン / コントロールプレーン状態 |
+| `REBOOT_CAUSE` | `DPU<N>\|<timestamp>` | `SmartSwitchModuleUpdater` | [DPU](../../reference/glossary.md#term-dpu) 再起動原因の履歴 |
 | `LINECARD_PORT_STAT_TABLE` | `<port_alias>` | `portstat` (utilities) | ライン間ポート統計 |
 | `LINECARD_PORT_STAT_MARK_TABLE` | `<hostname>` | `portstat` (utilities) | portstat -c 実行時刻マーク |
 
@@ -77,7 +77,7 @@ CHASSIS_MODULE_TABLE|LINE-CARD<N>
 |-----------|----|----------------------|------|
 | `slot` | string | `str(my_slot)` ; platform API 失敗時 `"-1"` | ラインカードのスロット番号 |
 | `hostname` | string | `device_info.get_hostname()` ; 失敗時 `"None"` (文字列) | ラインカードのホスト名 |
-| `num_asics` | string | `str(len(asics))` ; asics リスト取得失敗時 `"0"` | ラインカード上の ASIC 数 |
+| `num_asics` | string | `str(len(asics))` ; asics リスト取得失敗時 `"0"` | ラインカード上の [ASIC](../../reference/glossary.md#term-asic) 数 |
 
 !!! warning "`hostname` fallback は文字列 `\"None\"`"
     platform API 失敗時の fallback は Python の `None` 型ではなく文字列 `"None"`。比較時に注意。
@@ -124,7 +124,7 @@ DPU_STATE|DPU<N>
 
 | フィールド | 型 | デフォルト / fallback | 説明 |
 |-----------|----|----------------------|------|
-| `dpu_midplane_link_state` | `up`/`down` | 起動時: oper_status ONLINE → `'up'`、それ以外 → `'down'` | DPU の midplane リンク状態 |
+| `dpu_midplane_link_state` | `up`/`down` | 起動時: oper_status ONLINE → `'up'`、それ以外 → `'down'` | [DPU](../../reference/glossary.md#term-dpu) の midplane リンク状態 |
 | `dpu_midplane_link_reason` | string | `''` (down 設定時) ; up 設定時は未書き込み | midplane down の理由 (通常は空文字列) |
 | `dpu_midplane_link_time` | string | `get_formatted_time()` — `"%a %b %d %I:%M:%S %p UTC %Y"` | midplane 状態変化時刻 |
 | `dpu_data_plane_state` | `up`/`down` | midplane `'down'` 設定時に同時に `'down'` ; `DpuStateUpdater` が状態変化時に更新 | DPU データプレーン状態 |
@@ -243,8 +243,8 @@ self.module_updater.update_dpu_state(dpu_state_key, op_state)
 
 ## 制約
 
-- CHASSIS_STATE_DB は CONFIG_DB ではないため、`sonic-db-cli CONFIG_DB` ではなく `sonic-db-cli CHASSIS_STATE_DB` (またはポート 6380 の Redis) でアクセスする
-- `DPU_STATE` テーブルは SmartSwitch 機のみ使用。モジュラーチャシス（VOQ）構成では存在しない
+- CHASSIS_STATE_DB は CONFIG_DB ではないため、`sonic-db-cli CONFIG_DB` ではなく `sonic-db-cli CHASSIS_STATE_DB` (またはポート 6380 の [Redis](../../reference/glossary.md#term-redis)) でアクセスする
+- `DPU_STATE` テーブルは [SmartSwitch](../../reference/glossary.md#term-smartswitch) 機のみ使用。モジュラーチャシス（[VOQ](../../reference/glossary.md#term-voq)）構成では存在しない
 - `REBOOT_CAUSE` のキーは timestamp 部分が `"%Y_%m_%d_%H_%M_%S"` 形式のファイル名由来。同一秒内の複数再起動はキーが衝突する可能性がある
 
 ## 購読者
@@ -334,7 +334,7 @@ sonic-db-cli CHASSIS_STATE_DB hgetall 'REBOOT_CAUSE|DPU0|2026_05_14_10_30_45'
 
 ### ModuleUpdater.__init__() の初期化順
 
-1. STATE_DB に接続 → CHASSIS_INFO_TABLE / CHASSIS_MODULE_INFO_TABLE / CHASSIS_MIDPLANE_INFO_TABLE テーブルを準備
+1. [STATE_DB](../../reference/glossary.md#term-state_db) に接続 → CHASSIS_INFO_TABLE / CHASSIS_MODULE_INFO_TABLE / CHASSIS_MIDPLANE_INFO_TABLE テーブルを準備
 2. CHASSIS_STATE_DB に接続
    - supervisor: `CHASSIS_FABRIC_ASIC_INFO_TABLE`
    - 非 supervisor: `CHASSIS_ASIC_INFO_TABLE`
@@ -347,7 +347,7 @@ sonic-db-cli CHASSIS_STATE_DB hgetall 'REBOOT_CAUSE|DPU0|2026_05_14_10_30_45'
 全モジュールを `0 〜 num_modules` でループし、以下を実行する（chassisd:364-478）:
 
 1. `_get_module_info(index)` で platform API から name / desc / slot / oper_status / asics / serial / presence / replaceable / model を取得
-2. STATE_DB `CHASSIS_MODULE_INFO_TABLE` に `fvs` を set
+2. [STATE_DB](../../reference/glossary.md#term-state_db) `CHASSIS_MODULE_INFO_TABLE` に `fvs` を set
 3. `presence=True` の場合 `PHYSICAL_ENTITY_INFO_TABLE` を更新
 4. `oper_status != ONLINE` の場合:
    - 直前状態が ONLINE だった場合のみ `notOnlineModules` に追加し `down_modules` にタイムスタンプ記録
@@ -373,14 +373,14 @@ sonic-db-cli CHASSIS_STATE_DB hgetall 'REBOOT_CAUSE|DPU0|2026_05_14_10_30_45'
 
 ### asic_status.py が CHASSIS_FABRIC_ASIC_TABLE を読む順序
 
-supervisor が CHASSIS_FABRIC_ASIC_TABLE を `SubscriberStateTable` で購読し、ファブリック ASIC エントリの到着を 1000 ms ポーリングで待機する。ASIC が ONLINE になると対応する syncd / orchagent 等サービスの起動判定に使用される（asic_status.py:40-50）。
+supervisor が CHASSIS_FABRIC_ASIC_TABLE を `SubscriberStateTable` で購読し、ファブリック ASIC エントリの到着を 1000 ms ポーリングで待機する。ASIC が ONLINE になると対応する [syncd](../../reference/glossary.md#term-syncd) / [orchagent](../../reference/glossary.md#term-orchagent) 等サービスの起動判定に使用される（asic_status.py:40-50）。
 
 ### warm-reboot 挙動
 
 `chassisd` は warm-reboot を明示的に検出しない（WarmStart API を使用しない）。
 
 - **SIGTERM 受信**: メインループを終了する。CHASSIS_STATE_DB の内容はそのまま残る
-- **ModuleUpdater.deinit()**: STATE_DB の `CHASSIS_MODULE_INFO_TABLE` / `CHASSIS_MIDPLANE_INFO_TABLE` / `PHYSICAL_ENTITY_INFO_TABLE` を削除するが、CHASSIS_STATE_DB（ASIC テーブル・hostname テーブル）は削除しない
+- **ModuleUpdater.deinit()**: [STATE_DB](../../reference/glossary.md#term-state_db) の `CHASSIS_MODULE_INFO_TABLE` / `CHASSIS_MIDPLANE_INFO_TABLE` / `PHYSICAL_ENTITY_INFO_TABLE` を削除するが、CHASSIS_STATE_DB（ASIC テーブル・hostname テーブル）は削除しない
 - **DpuStateUpdater.deinit()**: `dpu_data_plane_state` / `dpu_control_plane_state` を `'down'` に設定して終了（chassisd:1318-1320）
 - **再起動後**: `set_initial_dpu_admin_state()` が DPU_STATE を `get_oper_status()` の現在値で上書き。ONLINE なら `midplane_link_state='up'`、それ以外なら `'down'`（CP/DP も同時に 'down'）
 
@@ -390,7 +390,7 @@ supervisor が CHASSIS_FABRIC_ASIC_TABLE を `SubscriberStateTable` で購読し
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`CHASSIS_STATE_DB` テーブル群は以下の DB テーブルをコードレベルで参照・操作する（YANG leafref 非対象、CONFIG_DB ではないため）。
+`CHASSIS_STATE_DB` テーブル群は以下の DB テーブルをコードレベルで参照・操作する（[YANG](../../reference/glossary.md#term-yang) leafref 非対象、CONFIG_DB ではないため）。
 
 | 参照先 | 方向 | 機構 | 条件 |
 |--------|------|------|------|
@@ -398,7 +398,7 @@ supervisor が CHASSIS_FABRIC_ASIC_TABLE を `SubscriberStateTable` で購読し
 | `APPL_DB.PORT_TABLE.oper_status` | 読み取り | `DpuStateUpdater._get_data_plane_state_common()` が全ポートの oper_status を走査し、1 つでも `'up'` でなければ DP state = `'down'` | platform API `get_dataplane_state()` が `NotImplementedError` の SmartSwitch DPU のみ (chassisd:1267-1275) |
 | `STATE_DB.SYSTEM_READY\|SYSTEM_STATE.Status` | 読み取り | `DpuStateUpdater._get_control_plane_state_common()` が `'up'` 確認。不在・非 up で CP state = `'down'` | platform API `get_controlplane_state()` が `NotImplementedError` の SmartSwitch DPU のみ (chassisd:1277-1284) |
 | `CHASSIS_APP_DB`（SYSTEM_NEIGH / SYSTEM_INTERFACE / SYSTEM_LAG） | 書き込み削除 | `_cleanup_chassis_app_db()` が Lua スクリプトで該当ラインカードの全エントリを一括削除 | supervisor のみ、モジュール down が 30 分経過後 (chassisd:593-682) |
-| `CHASSIS_STATE_DB.DPU_STATE`（自己購読） | 読み取り | `DpuStateManagerTask` が `swsscommon.Select` で APPL_DB.PORT_TABLE / STATE_DB.SYSTEM_READY / CHASSIS_STATE_DB.DPU_STATE を同時購読し、midplane 変化時に DP/CP state を再評価 | SmartSwitch DPU 上のみ (chassisd:1477-1533) |
+| `CHASSIS_STATE_DB.DPU_STATE`（自己購読） | 読み取り | `DpuStateManagerTask` が `swsscommon.Select` で [APPL_DB](../../reference/glossary.md#term-appl_db).PORT_TABLE / STATE_DB.SYSTEM_READY / CHASSIS_STATE_DB.DPU_STATE を同時購読し、midplane 変化時に DP/CP state を再評価 | SmartSwitch DPU 上のみ (chassisd:1477-1533) |
 
 !!! note "CONFIG_DB.PORT の空テーブル挙動"
     `_get_data_plane_state_common()` は `CONFIG_DB.PORT` テーブルのキー一覧をループする。PORT テーブルが空（エントリなし）の場合はループが 0 回実行され `True`（DP up）を返す。意図せず DP state が `'up'` になる可能性がある (chassisd:1270)。
@@ -525,7 +525,7 @@ DP/CP 側フィールド名（`DP_STATE`、`CP_STATE`、`DP_UPDATE_TIME`、`CP_U
 
 ### CHASSIS_FABRIC_ASIC_TABLE → asic_status.py によるサービス起動制御
 
-supervisor 上の `asic_status.py` が `SubscriberStateTable` で `CHASSIS_FABRIC_ASIC_TABLE` を購読する。chassisd がファブリック ASIC エントリを書き込むと supervisor のデータプレーンサービス（syncd / orchagent）の起動が許可される。エントリが存在しない限り、`asic_status.py` は起動待機ループを継続する。
+supervisor 上の `asic_status.py` が `SubscriberStateTable` で `CHASSIS_FABRIC_ASIC_TABLE` を購読する。chassisd がファブリック ASIC エントリを書き込むと supervisor のデータプレーンサービス（[syncd](../../reference/glossary.md#term-syncd) / [orchagent](../../reference/glossary.md#term-orchagent)）の起動が許可される。エントリが存在しない限り、`asic_status.py` は起動待機ループを継続する。
 
 | CHASSIS_STATE_DB の状態 | asic_status.py の動作 |
 |------------------------|----------------------|
@@ -555,7 +555,7 @@ supervisor 上の `asic_status.py` が `SubscriberStateTable` で `CHASSIS_FABRI
 supervisor の `module_down_chassis_db_cleanup()` (chassisd:667-680) がモジュール offline から 30 分後に `CHASSIS_MODULE_TABLE` のホスト名と ASIC 数を読み取り、CHASSIS_APP_DB (DB ID=12, redis_chassis.server:6380) の下記テーブルエントリを Lua スクリプトで一括削除する:
 
 - `SYSTEM_NEIGH*`、`SYSTEM_INTERFACE*`、`SYSTEM_LAG_MEMBER_TABLE*`
-- `SYSTEM_LAG_TABLE*` + `SYSTEM_LAG_ID_TABLE` + `SYSTEM_LAG_ID_SET` (LAG ID 返却)
+- `SYSTEM_LAG_TABLE*` + `SYSTEM_LAG_ID_TABLE` + `SYSTEM_LAG_ID_SET` ([LAG](../../reference/glossary.md#term-lag) ID 返却)
 
 ホスト名が空文字列の場合はクリーンアップをスキップ (chassisd:641-643)。
 
@@ -563,10 +563,10 @@ supervisor の `module_down_chassis_db_cleanup()` (chassisd:667-680) がモジ�
 
 | 影響先 | トリガー | 内容 |
 |--------|---------|------|
-| supervisor サービス起動 (asic_status.py) | `CHASSIS_FABRIC_ASIC_TABLE` エントリ SET | syncd / orchagent 等の起動許可 |
+| supervisor サービス起動 (asic_status.py) | `CHASSIS_FABRIC_ASIC_TABLE` エントリ SET | [syncd](../../reference/glossary.md#term-syncd) / [orchagent](../../reference/glossary.md#term-orchagent) 等の起動許可 |
 | systemd `swss@<asic>` | `config chassis_modules shutdown/startup FABRIC-CARD*` | サービス stop / start / reset-failed |
 | `DPU_STATE` CP/DP (自己更新) | midplane state 変化 → `DpuStateManagerTask` 検知 | CP/DP state 更新書き込み |
-| CHASSIS_APP_DB (DB#12) | モジュール offline 30 分後 | SYSTEM_NEIGH / INTERFACE / LAG エントリ削除 |
+| CHASSIS_APP_DB (DB#12) | モジュール offline 30 分後 | SYSTEM_NEIGH / INTERFACE / [LAG](../../reference/glossary.md#term-lag) エントリ削除 |
 | syslog | midplane 喪失検知 | `REBOOT_INFO_TABLE.reboot == "expected"` に応じて WARNING 内容が変化 |
 
 > **Evidence**: `chassisd:541-591,593-680,1289-1320,1477-1529`; `asic_status.py:40-44`; `chassis_modules.py:83-131`
@@ -583,7 +583,7 @@ chassisd が `swsscommon.Select` + `SubscriberStateTable` で構築するイベ�
 |---|---|---|---|---|
 | CONFIG_DB | `CHASSIS_MODULE` | `ConfigManagerTask` | 1000 ms | `SET` → admin down、`DEL` → admin up (chassisd:1154) |
 | CONFIG_DB | `CHASSIS_MODULE` | `SmartSwitchConfigManagerTask` | 1000 ms | `SET` → `admin_status` フィールドで up/down 判定、`DEL` → down (chassisd:1205) |
-| APPL_DB | `PORT_TABLE` | `DpuStateManagerTask` | 1000 ms | ポート oper_status 変化 → DP state 再評価 (chassisd:1480,1490) |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | `PORT_TABLE` | `DpuStateManagerTask` | 1000 ms | ポート oper_status 変化 → DP state 再評価 (chassisd:1480,1490) |
 | STATE_DB | `SYSTEM_READY` | `DpuStateManagerTask` | 1000 ms | SYSTEM_STATE.Status 変化 → CP state 再評価 (chassisd:1481,1490) |
 | CHASSIS_STATE_DB | `DPU_STATE` | `DpuStateManagerTask` | 1000 ms | 自 DPU の midplane 変化のみ処理; 他 DPU はスキップ (chassisd:1482,1509-1510) |
 | CHASSIS_STATE_DB | `CHASSIS_FABRIC_ASIC_TABLE` | `asic_status.py` (外部プロセス) | 5000 ms | ファブリック ASIC の SET/DEL → syncd 起動許可 / 停止 (asic_status.py:43-74) |
@@ -719,3 +719,5 @@ while True:
 
 > **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:125-141,288-297,420,462-468,471-478,864-891,1289-1320,1364-1405`; `sonic-buildimage` `files/scripts/asic_status.py:40-44`
 <!-- /cdb-exceptions -->
+
+<!-- glossary-links-injected: 6e258166e049 -->

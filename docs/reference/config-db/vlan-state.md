@@ -26,15 +26,15 @@ related:
 
 ## 概要
 
-`STATE_DB` の `VLAN_TABLE` は、[VLAN](../../reference/glossary.md#term-vlan) の作成完了を示す **読み取り専用シグナルテーブル**。[vlanmgrd](../../reference/glossary.md#term-vlanmgrd) が Linux bridge + APP_DB への書き込みを完了した後に 1 エントリを書き込む。複数の cfgmgr デーモンが VLAN インタフェース・ネイバー・NAT・STP・VXLAN 設定を行う前に、このテーブルの存在を readiness ガードとして参照する。
+`STATE_DB` の `VLAN_TABLE` は、[VLAN](../../reference/glossary.md#term-vlan) の作成完了を示す **読み取り専用シグナルテーブル**。[vlanmgrd](../../reference/glossary.md#term-vlanmgrd) が Linux bridge + APP_DB への書き込みを完了した後に 1 エントリを書き込む。複数の cfgmgr デーモンが [VLAN](../../reference/glossary.md#term-vlan) インタフェース・ネイバー・[NAT](../../reference/glossary.md#term-nat)・STP・[VXLAN](../../reference/glossary.md#term-vxlan) 設定を行う前に、このテーブルの存在を readiness ガードとして参照する。
 
-CONFIG_DB の [`VLAN`](vlan.md) テーブル（設定フィールド）とは **別 DB・別テーブル** であることに注意。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の [`VLAN`](vlan.md) テーブル（設定フィールド）とは **別 DB・別テーブル** であることに注意。
 
 書き込み主体:
 
 | プロセス | 書き込みトリガー | ファイル |
 |---------|----------------|---------|
-| `vlanmgrd` | CONFIG_DB `VLAN` テーブルへの SET 操作が処理完了したとき | `cfgmgr/vlanmgr.cpp` |
+| `vlanmgrd` | [CONFIG_DB](../../reference/glossary.md#term-config_db) `VLAN` テーブルへの SET 操作が処理完了したとき | `cfgmgr/vlanmgr.cpp` |
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -62,7 +62,7 @@ flowchart LR
 VLAN_TABLE|<VlanName>
 ```
 
-`<VlanName>` は `Vlan<N>` (N は VLAN ID、2..4094)。CONFIG_DB `VLAN|VlanN` のキーと同一形式。
+`<VlanName>` は `Vlan<N>` (N は [VLAN](../../reference/glossary.md#term-vlan) ID、2..4094)。[CONFIG_DB](../../reference/glossary.md#term-config_db) `VLAN|VlanN` のキーと同一形式。
 
 ## フィールド一覧
 
@@ -73,15 +73,15 @@ VLAN_TABLE|<VlanName>
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
-| フィールド | YANG default | コード実装デフォルト | 出典 |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード実装デフォルト | 出典 |
 |-----------|-------------|---------------------|------|
-| `state` | なし（STATE_DB にはYANG 定義なし） | `"ok"` — VLAN SET 処理完了時に vlanmgr.cpp:441 で固定リテラルとして書き込まれる | `vlanmgr.cpp:441` |
+| `state` | なし（[STATE_DB](../../reference/glossary.md#term-state_db) にはYANG 定義なし） | `"ok"` — VLAN SET 処理完了時に vlanmgr.cpp:441 で固定リテラルとして書き込まれる | `vlanmgr.cpp:441` |
 
 ### 注記
 
 - **フィールドは `state` の 1 本のみ**: 他のフィールドは存在しない。テーブルにエントリが存在すること自体が VLAN 作成完了を意味する（値を読まず存在チェックのみで判定）。
 - **`state` の値は常に `"ok"`**: `"ok"` 以外のステータス（`"error"` 等）は書かれない。失敗時はエントリ自体が存在しない。
-- **書き込み順序**: `addHostVlan()` → `m_appVlanTableProducer.set()` → `m_stateVlanTable.set()` の順。STATE_DB への書き込みは Linux bridge 作成と APP_DB 通知の後に行われる (vlanmgr.cpp:383-443)。
+- **書き込み順序**: `addHostVlan()` → `m_appVlanTableProducer.set()` → `m_stateVlanTable.set()` の順。[STATE_DB](../../reference/glossary.md#term-state_db) への書き込みは Linux bridge 作成と APP_DB 通知の後に行われる (vlanmgr.cpp:383-443)。
 - **DEL 時の削除**: CONFIG_DB `VLAN` に DEL 操作が来ると `m_stateVlanTable.del(key)` が呼ばれ、エントリが削除される (vlanmgr.cpp:463)。
 <!-- /defaults -->
 
@@ -90,7 +90,7 @@ VLAN_TABLE|<VlanName>
 
 ### SET 時の書込み順序
 
-`doVlanTask()` 内での書込み順序は固定であり、STATE_DB `VLAN_TABLE` への書込みは必ず以下の後に行われる:
+`doVlanTask()` 内での書込み順序は固定であり、[STATE_DB](../../reference/glossary.md#term-state_db) `VLAN_TABLE` への書込みは必ず以下の後に行われる:
 
 1. `addHostVlan(vlan_id)` — Linux bridge (`Vlan<N>`) をカーネルに作成
 2. `m_appVlanTableProducer.set()` — APP_DB `VLAN_TABLE` にエントリ書込み
@@ -100,7 +100,7 @@ STATE_DB を読んで ready を確認した時点で、Linux bridge と APP_DB �
 
 ### 上流依存: gMacAddress 確定待ち
 
-`gMacAddress` が未確定（syncd/SAI がスイッチ MAC を確定する前）の間、`doVlanTask()` は全タスクを即 return してキューに留める。STATE_DB 書込みは MAC 確定後まで発生しない。
+`gMacAddress` が未確定（[syncd](../../reference/glossary.md#term-syncd)/[SAI](../../reference/glossary.md#term-sai) がスイッチ MAC を確定する前）の間、`doVlanTask()` は全タスクを即 return してキューに留める。STATE_DB 書込みは MAC 確定後まで発生しない。
 
 ```cpp
 // vlanmgr.cpp:318-322
@@ -111,7 +111,7 @@ if (!isVlanMacOk())
 }
 ```
 
-**影響**: 起動直後（syncd 未完了）に CONFIG_DB へ `VLAN` SET を書いても、STATE_DB `VLAN_TABLE` は MAC 確定まで空のまま。downstream consumers は ready を検出できず全て自動リトライ待機に入る。
+**影響**: 起動直後（[syncd](../../reference/glossary.md#term-syncd) 未完了）に CONFIG_DB へ `VLAN` SET を書いても、STATE_DB `VLAN_TABLE` は MAC 確定まで空のまま。downstream consumers は ready を検出できず全て自動リトライ待機に入る。
 
 ### 下流依存: downstream consumers の処理開始条件
 
@@ -123,8 +123,8 @@ if (!isVlanMacOk())
 | `intfmgrd` | `intfmgr.cpp:655` | VLAN インタフェース（IP アドレス等）の設定 |
 | `nbrmgrd` | `nbrmgr.cpp` | ネイバーエントリの登録 |
 | `stpmgrd` | `stpmgr.cpp:1282` | STP ポート/VLAN 設定 |
-| `natmgrd` | `natmgr.cpp:102` | NAT エントリの設定 |
-| `vxlanmgrd` | `vxlanmgr.cpp:774` | VXLAN tunnel member の設定 |
+| `natmgrd` | `natmgr.cpp:102` | [NAT](../../reference/glossary.md#term-nat) エントリの設定 |
+| `vxlanmgrd` | `vxlanmgr.cpp:774` | [VXLAN](../../reference/glossary.md#term-vxlan) tunnel member の設定 |
 
 **影響**: VLAN が STATE_DB に未登録の間、上記の全設定操作は Consumer キュー内に保留される。VLAN の STATE_DB 書込み後、次回 `doTask()` ループで自動的に処理が再開される。
 
@@ -158,11 +158,11 @@ warm-restart 時、STATE_DB `VLAN_TABLE` に既存エントリがあり in-memor
 |--------|--------|------|----------|
 | `VLAN_TABLE\|VlanN` キー | `CONFIG_DB VLAN\|VlanN` のキー | キー転写（1:1） | CONFIG_DB に VLAN SET が存在すること |
 | `vlanmgrd` の書込みトリガー | `CONFIG_DB VLAN\|VlanN` の SET/DEL | イベントトリガー | 常時 |
-| `vlanmgrd` の書込み前提 | `gMacAddress`（グローバル変数） | 起動前提チェック | syncd が Switch MAC を確定済みであること。未確定時は全書込みを保留 |
+| `vlanmgrd` の書込み前提 | `gMacAddress`（グローバル変数） | 起動前提チェック | [syncd](../../reference/glossary.md#term-syncd) が Switch MAC を確定済みであること。未確定時は全書込みを保留 |
 | `intfmgrd` (`isIntfStateOk`) | `STATE_DB VLAN_TABLE\|VlanN` の存在 | readiness ガード（GET） | VLAN インタフェース (SVI) 設定前 |
 | `stpmgrd` (`isVlanStateOk`) | `STATE_DB VLAN_TABLE\|VlanN` の存在 | readiness ガード（GET） | STP VLAN/ポート設定前 |
-| `natmgrd` (`isPortStateOk`) | `STATE_DB VLAN_TABLE\|VlanN` の存在 | readiness ガード（GET） | NAT エントリ設定前 |
-| `vxlanmgrd` (`isVlanStateOk`) | `STATE_DB VLAN_TABLE\|VlanN` の存在 | readiness ガード（GET） | VXLAN tunnel member 設定前 |
+| `natmgrd` (`isPortStateOk`) | `STATE_DB VLAN_TABLE\|VlanN` の存在 | readiness ガード（GET） | [NAT](../../reference/glossary.md#term-nat) エントリ設定前 |
+| `vxlanmgrd` (`isVlanStateOk`) | `STATE_DB VLAN_TABLE\|VlanN` の存在 | readiness ガード（GET） | [VXLAN](../../reference/glossary.md#term-vxlan) tunnel member 設定前 |
 | `nbrmgrd` | `STATE_DB VLAN_TABLE\|VlanN` の存在 | readiness ガード（GET） | ネイバーエントリ設定前 |
 
 ### キー転写パターン
@@ -175,7 +175,7 @@ CONFIG_DB VLAN|VlanN  →  vlanmgrd doVlanTask()  →  STATE_DB VLAN_TABLE|VlanN
 
 ### gMacAddress 依存の影響範囲
 
-`isVlanMacOk()` が false を返す間（起動直後、syncd が Switch MAC を応答するまで）、`doVlanTask()` は全 VLAN タスクを **キューに残したまま即リターン**する。この間は `VLAN_TABLE` への書き込みが完全に停止するため、下流の全 consumers（intfmgrd / stpmgrd / natmgrd / vxlanmgrd / nbrmgrd）は VLAN readiness を得られず、それぞれの処理も保留状態となる。
+`isVlanMacOk()` が false を返す間（起動直後、syncd が Switch MAC を応答するまで）、`doVlanTask()` は全 VLAN タスクを **キューに残したまま即リターン**する。この間は `VLAN_TABLE` への書き込みが完全に停止するため、下流の全 consumers（[intfmgrd](../../reference/glossary.md#term-intfmgrd) / stpmgrd / [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) / [vxlanmgrd](../../reference/glossary.md#term-vxlanmgrd) / nbrmgrd）は VLAN readiness を得られず、それぞれの処理も保留状態となる。
 
 ### consumers の依存パターン（共通）
 
@@ -205,7 +205,7 @@ CONFIG_DB VLAN|VlanN  →  vlanmgrd doVlanTask()  →  STATE_DB VLAN_TABLE|VlanN
 |---|------------|----------------|---------|------------|
 | 1 | キー形式不正（`Vlan` プレフィックス欠如） | なし | なし（即廃棄） | なし |
 | 2 | VLAN ID が数値でない | なし | なし（即廃棄） | なし |
-| 3 | `addHostVlan()` で Linux bridge 作成コマンドが例外 | なし | なし（vlanmgrd 再起動後に再処理） | vlanmgrd 再起動 |
+| 3 | `addHostVlan()` で Linux bridge 作成コマンドが例外 | なし | なし（[vlanmgrd](../../reference/glossary.md#term-vlanmgrd) 再起動後に再処理） | [vlanmgrd](../../reference/glossary.md#term-vlanmgrd) 再起動 |
 | 4 | `gMacAddress` 未確定（syncd 未完了） | なし | 自動（次回 doTask() ループ） | なし |
 | 5 | DEL: VLAN が内部セット `m_vlans` に未登録 | 削除なし（既存なし） | なし | なし |
 | 6 | VLAN DEL 後に VLAN_MEMBER タスクが残留 | なし（読み取り側が永久 false） | なし（永久滞留） | VLAN_MEMBER 設定停止 |
@@ -231,7 +231,7 @@ if (!isVlanMacOk())
 }
 ```
 
-syncd が Switch MAC を確定するまで `doVlanTask()` は全タスクを保留する。STATE_DB 書き込みが発生しないため、下流の consumers（intfmgrd / stpmgrd / natmgrd / vxlanmgrd）は VLAN readiness を得られず、それぞれの処理も保留状態となる。
+syncd が Switch MAC を確定するまで `doVlanTask()` は全タスクを保留する。STATE_DB 書き込みが発生しないため、下流の consumers（[intfmgrd](../../reference/glossary.md#term-intfmgrd) / stpmgrd / [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) / [vxlanmgrd](../../reference/glossary.md#term-vxlanmgrd)）は VLAN readiness を得られず、それぞれの処理も保留状態となる。
 
 #### 5 & 6. DEL 関連の注意点
 
@@ -249,7 +249,7 @@ syncd が Switch MAC を確定するまで `doVlanTask()` は全タスクを保�
 <!-- evidence: meta/_intermediate/cdb-flow/vlan-state-constants.md -->
 <!-- source: sonic-swss/cfgmgr/vlanmgr.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
 
-`vlanmgrd` が VLAN_TABLE を書き込む際に利用するハードコード定数。いずれも CONFIG_DB / YANG では設定不可。
+`vlanmgrd` が VLAN_TABLE を書き込む際に利用するハードコード定数。いずれも CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) では設定不可。
 
 | 定数 | 値 | 定義箇所 | 用途 |
 |------|----|---------|------|
@@ -261,11 +261,11 @@ syncd が Switch MAC を確定するまで `doVlanTask()` は全タスクを保�
 
 ### STATE_DB 書き込みリテラル
 
-`m_stateVlanTable.set(key, {{"state","ok"}})` (vlanmgr.cpp:443) — フィールド名 `"state"` と値 `"ok"` の両方が C++ コードのリテラル。YANG 定義は存在せず、フィールド名・値ともに YANG スキーマによる検証外。
+`m_stateVlanTable.set(key, {{"state","ok"}})` (vlanmgr.cpp:443) — フィールド名 `"state"` と値 `"ok"` の両方が C++ コードのリテラル。[YANG](../../reference/glossary.md#term-yang) 定義は存在せず、フィールド名・値ともに YANG スキーマによる検証外。
 
 ### DEFAULT_MTU_STR = 9100 の影響範囲
 
-`addHostVlan()` 内でブリッジ自体に MTU 9100 を設定するが、個々の `Vlan<N>` インタフェースの MTU は CONFIG_DB `PORT.mtu` → orchagent → SAI → カーネルの別経路で設定される。STATE_DB `VLAN_TABLE` の書き込み内容には影響しない。
+`addHostVlan()` 内でブリッジ自体に MTU 9100 を設定するが、個々の `Vlan<N>` インタフェースの MTU は CONFIG_DB `PORT.mtu` → [orchagent](../../reference/glossary.md#term-orchagent) → [SAI](../../reference/glossary.md#term-sai) → カーネルの別経路で設定される。STATE_DB `VLAN_TABLE` の書き込み内容には影響しない。
 
 ### VLAN ID 範囲の暗黙制約
 
@@ -279,18 +279,18 @@ syncd が Switch MAC を確定するまで `doVlanTask()` は全タスクを保�
 <!-- evidence: meta/_intermediate/cdb-flow/vlan-state-side-effects.md -->
 <!-- source: sonic-swss/cfgmgr/vlanmgr.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
 
-`VLAN_TABLE` への SET/DEL 処理に伴い `vlanmgrd` が書き込む副次 DB エントリ。`vlanmgrd` は cfgmgr 層のデーモンであり SAI を直接呼ばないため、ASIC_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き込みは発生しない。
+`VLAN_TABLE` への SET/DEL 処理に伴い `vlanmgrd` が書き込む副次 DB エントリ。`vlanmgrd` は cfgmgr 層のデーモンであり [SAI](../../reference/glossary.md#term-sai) を直接呼ばないため、[ASIC_DB](../../reference/glossary.md#term-asic_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書き込みは発生しない。
 
 | 副次 DB | テーブル/キー | 書込内容 | 根拠 |
 |---|---|---|---|
-| APPL_DB | `VLAN_TABLE\|<VlanN>` | SET 時: `admin_status`, `mtu`, `mac`, `host_ifname` を書き込む。DEL 時: エントリ削除 | `vlanmgr.cpp:437` `m_appVlanTableProducer.set(key, fvVector)` — STATE_DB 書込みの直前に同一タスク内で実行される |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | `VLAN_TABLE\|<VlanN>` | SET 時: `admin_status`, `mtu`, `mac`, `host_ifname` を書き込む。DEL 時: エントリ削除 | `vlanmgr.cpp:437` `m_appVlanTableProducer.set(key, fvVector)` — STATE_DB 書込みの直前に同一タスク内で実行される |
 | STATE_DB | `VLAN_TABLE\|<VlanN>` | 主作用（本ページ対象） | `vlanmgr.cpp:443` |
 
-その他 (STATE_DB VLAN_MEMBER_TABLE, APPL_DB VLAN_MEMBER_TABLE) は VLAN_MEMBER 処理の主作用であり、VLAN_TABLE の副次 DB 書込みではない。
+その他 (STATE_DB VLAN_MEMBER_TABLE, [APPL_DB](../../reference/glossary.md#term-appl_db) VLAN_MEMBER_TABLE) は VLAN_MEMBER 処理の主作用であり、VLAN_TABLE の副次 DB 書込みではない。
 
 ### APP_DB VLAN_TABLE の書込み順序と意味
 
-`m_appVlanTableProducer.set()` は `m_stateVlanTable.set()` の直前に実行される (vlanmgr.cpp:437-443)。orchagent の `portsorch` が APP_DB `VLAN_TABLE` を購読しており、SAI VLAN オブジェクトの作成・更新を担う。STATE_DB `VLAN_TABLE` (本ページ) は APP_DB 通知後に書かれ、orchagent の SAI 処理とは**非同期**に進む。したがって STATE_DB にエントリが現れた時点では orchagent が SAI VLAN を作成済みとは限らない点に注意。
+`m_appVlanTableProducer.set()` は `m_stateVlanTable.set()` の直前に実行される (vlanmgr.cpp:437-443)。[orchagent](../../reference/glossary.md#term-orchagent) の `portsorch` が APP_DB `VLAN_TABLE` を購読しており、SAI VLAN オブジェクトの作成・更新を担う。STATE_DB `VLAN_TABLE` (本ページ) は APP_DB 通知後に書かれ、[orchagent](../../reference/glossary.md#term-orchagent) の SAI 処理とは**非同期**に進む。したがって STATE_DB にエントリが現れた時点では orchagent が SAI VLAN を作成済みとは限らない点に注意。
 
 ```
 vlanmgrd doVlanTask()
@@ -316,19 +316,19 @@ vlanmgrd doVlanTask()
 
 ### 書き込みメカニズム: swss::Table（直接書き込み）
 
-`STATE_DB VLAN_TABLE` への書き込みは `swss::Table` を通じた直接 Redis HSET であり、`ProducerStateTable` は使用しない (vlanmgr.h:26)。
+`STATE_DB VLAN_TABLE` への書き込みは `swss::Table` を通じた直接 [Redis](../../reference/glossary.md#term-redis) HSET であり、`ProducerStateTable` は使用しない (vlanmgr.h:26)。
 
 ```cpp
 // vlanmgr.h:26
 Table m_stateVlanTable, m_stateVlanMemberTable;
 ```
 
-| 操作 | Redis コマンド | チャンネル通知 |
+| 操作 | [Redis](../../reference/glossary.md#term-redis) コマンド | チャンネル通知 |
 |------|-------------|--------------|
 | SET (VLAN 作成完了) | `HSET STATE_DB VLAN_TABLE\|VlanN state ok` | なし（PUBLISH 発生しない） |
 | DEL (VLAN 削除) | `DEL STATE_DB VLAN_TABLE\|VlanN` | なし |
 
-`ProducerStateTable` 方式（EVALSHA + PUBLISH）を使わないため、`VLAN_TABLE_CHANNEL@6` のような swss チャンネルは存在しない。Redis の keyspace notification (`__keyspace@6__:VLAN_TABLE|*`) は生成されうるが、swss の標準デーモンはこれを購読していない。
+`ProducerStateTable` 方式（EVALSHA + PUBLISH）を使わないため、`VLAN_TABLE_CHANNEL@6` のような swss チャンネルは存在しない。[Redis](../../reference/glossary.md#term-redis) の keyspace notification (`__keyspace@6__:VLAN_TABLE|*`) は生成されうるが、swss の標準デーモンはこれを購読していない。
 
 ### 読み取りメカニズム: Table::get() によるポーリング
 
@@ -359,13 +359,13 @@ poll のタイミングは、各 consumer が自身の（CONFIG_DB 等の）イ�
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`STATE_DB VLAN_TABLE` の書込スキーマ・格納先・通信方式は**全プラットフォームで共通**。`vlanmgr.cpp` 全 1008 行を `platform`・`mellanox`・`broadcom`・`voq`・`getenv`・`SAI` で grep してもヒット 0 件。Linux kernel bridge 操作のみで SAI を呼ばない純 cfgmgr ロジックのため、ASIC ベンダー依存がない。
+`STATE_DB VLAN_TABLE` の書込スキーマ・格納先・通信方式は**全プラットフォームで共通**。`vlanmgr.cpp` 全 1008 行を `platform`・`mellanox`・`broadcom`・`voq`・`getenv`・`SAI` で grep してもヒット 0 件。Linux kernel bridge 操作のみで SAI を呼ばない純 cfgmgr ロジックのため、[ASIC](../../reference/glossary.md#term-asic) ベンダー依存がない。
 
 詳細調査ログ: `meta/_intermediate/cdb-flow/vlan-state-platform.md`
 
 ### 1. fabric ASIC カード — vlanmgrd 不起動
 
-VOQ chassis のファブリック ASIC カードでは `switch_type = "fabric"` となり、`supervisord.conf.j2` の Jinja2 テンプレートが vlanmgrd を起動しない:
+[VOQ](../../reference/glossary.md#term-voq) chassis のファブリック [ASIC](../../reference/glossary.md#term-asic) カードでは `switch_type = "fabric"` となり、`supervisord.conf.j2` の Jinja2 テンプレートが vlanmgrd を起動しない:
 
 ```jinja2
 {# supervisord.conf.j2:33-38 #}
@@ -378,7 +378,7 @@ VOQ chassis のファブリック ASIC カードでは `switch_type = "fabric"` 
 [program:vlanmgrd]   {# fabric ASIC では block ごと除外 #}
 ```
 
-`switch_type = "fabric"` の ASIC では `STATE_DB VLAN_TABLE` へのエントリが**一切書かれない**。`switch_type = "voq"`（line card）や `switch_type = "switch"`（fixed T0/T1）では `is_fabric_asic=0` となり vlanmgrd は通常起動する（`supervisord.conf.j2:164-177`）。
+`switch_type = "fabric"` の [ASIC](../../reference/glossary.md#term-asic) では `STATE_DB VLAN_TABLE` へのエントリが**一切書かれない**。`switch_type = "voq"`（line card）や `switch_type = "switch"`（fixed T0/T1）では `is_fabric_asic=0` となり vlanmgrd は通常起動する（`supervisord.conf.j2:164-177`）。
 
 | switch_type | is_fabric_asic | vlanmgrd 起動 | VLAN_TABLE 書込 |
 |------------|--------------|-------------|---------------|
@@ -393,7 +393,7 @@ VOQ chassis のファブリック ASIC カードでは `switch_type = "fabric"` 
 "services_to_ignore": ["vlanmgrd", "vxlanmgrd"]
 ```
 
-Elba ASIC を搭載した Pensando DPU プラットフォームでは vlanmgrd は起動するが、`system_health_monitor` のプロセス死活監視から除外されている。vlanmgrd のクラッシュが health check アラームを発報しない点で他プラットフォームと異なる。
+Elba ASIC を搭載した Pensando [DPU](../../reference/glossary.md#term-dpu) プラットフォームでは vlanmgrd は起動するが、`system_health_monitor` のプロセス死活監視から除外されている。vlanmgrd のクラッシュが health check アラームを発報しない点で他プラットフォームと異なる。
 
 ### 3. DEFAULT_MTU_STR — 全プラットフォーム共通 9100 バイト
 
@@ -401,7 +401,7 @@ Elba ASIC を搭載した Pensando DPU プラットフォームでは vlanmgrd �
 
 ### 4. multi-asic 環境 — namespace ごとに独立した VLAN_TABLE
 
-`vlanmgrd.cpp` は `DBConnector("CONFIG_DB", 0)` 固定で namespace を参照しない。multi-asic (NPU 複数) 環境では各 ASIC namespace で独立した swss コンテナが起動し、それぞれの vlanmgrd が各 namespace の `STATE_DB` に `VLAN_TABLE` エントリを書き込む。chassis 全体を集中管理する VLAN_TABLE は存在しない。
+`vlanmgrd.cpp` は `DBConnector("CONFIG_DB", 0)` 固定で namespace を参照しない。multi-asic ([NPU](../../reference/glossary.md#term-npu) 複数) 環境では各 ASIC namespace で独立した swss コンテナが起動し、それぞれの vlanmgrd が各 namespace の `STATE_DB` に `VLAN_TABLE` エントリを書き込む。chassis 全体を集中管理する VLAN_TABLE は存在しない。
 
 !!! note "fabric カードの readiness ガードへの影響"
     `intfmgrd`・`nbrmgrd`・`stpmgrd` は `isVlanStateOk()` で VLAN_TABLE の存在を確認してから処理を進める。fabric カードでは vlanmgrd が起動しないため VLAN_TABLE が書かれず、これらのデーモンも事実上 VLAN 依存の処理を行わない。fabric ASIC でそれらのデーモンが必要になるユースケースは想定されていない。
@@ -453,3 +453,5 @@ sonic-db-cli STATE_DB hgetall 'VLAN_TABLE|Vlan100'
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 0454ffbc673e -->

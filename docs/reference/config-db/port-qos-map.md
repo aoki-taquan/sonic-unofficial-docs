@@ -84,15 +84,15 @@ PORT_QOS_MAP|<PORT.name>
 
 CONFIG_DB の `PORT_QOS_MAP` は `orchdaemon.cpp` の `qos_tables` ベクタ（`orchdaemon.cpp:367-383`）経由で `QosOrch` に登録される。`Orch::addConsumer()` が CONFIG_DB を検出し **`swss::SubscriberStateTable`** を選択する。
 
-- 購読方式: Redis **keyspace 通知** (`__keyspace@<dbId>__:PORT_QOS_MAP|*` への `PSUBSCRIBE`)
+- 購読方式: [Redis](../../reference/glossary.md#term-redis) **keyspace 通知** (`__keyspace@<dbId>__:PORT_QOS_MAP|*` への `PSUBSCRIBE`)
 - 通知到着時に `HGETALL` で値を再取得し `(key, op, fvs)` タプルとして `pops()` で返す
 - バッチサイズ: `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`sonic-swss-common/common/table.h:164`、ハードコード）
-- `orchagent -b` オプションの影響なし（APPL_DB 側 `ConsumerStateTable` のみに作用）
-- APPL_DB 経由の中間段なし — CONFIG_DB → SAI の直結経路
+- `orchagent -b` オプションの影響なし（[APPL_DB](../../reference/glossary.md#term-appl_db) 側 `ConsumerStateTable` のみに作用）
+- APPL_DB 経由の中間段なし — CONFIG_DB → [SAI](../../reference/glossary.md#term-sai) の直結経路
 
 ### 書き込み側 (publisher)
 
-CLI `config qos reload`（`sonic-cfggen` + `qos_config.j2`）またはプラットフォーム `qos.json` 投入が `swss::Table::set()` / `HSET` を発行。明示的 `PUBLISH` は行われず Redis keyspace 通知で購読者に伝達。`db_migrator.py` が `PORT_QOS_MAP|global` を自動挿入する経路でも `HSET` のみ。
+CLI `config qos reload`（`sonic-cfggen` + `qos_config.j2`）またはプラットフォーム `qos.json` 投入が `swss::Table::set()` / `HSET` を発行。明示的 `PUBLISH` は行われず [Redis](../../reference/glossary.md#term-redis) keyspace 通知で購読者に伝達。`db_migrator.py` が `PORT_QOS_MAP|global` を自動挿入する経路でも `HSET` のみ。
 
 ### ディスパッチ経路
 
@@ -114,7 +114,7 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 
 - select タイムアウト: **1000 ms** (`SELECT_TIMEOUT`, `orchdaemon.cpp:23`)
 - `task_need_retry` 時は `m_toSync` にエントリを残置して次サイクルで再処理
-- サービス再起動トリガーなし（SAI ライブ操作のみで完結）
+- サービス再起動トリガーなし（[SAI](../../reference/glossary.md#term-sai) ライブ操作のみで完結）
 
 ### 起動時スナップショット
 
@@ -250,7 +250,7 @@ YANG は全フィールドを optional とし `default` 文なし。エントリ
 | YANG | (なし — optional leafref) | `sonic-port-qos-map.yang` 全行 |
 | ランタイム (未設定時) | SAI_NULL_OBJECT_ID (map 未バインド) | `qosorch.cpp:2119-2133` |
 | ランタイム (DEL 時) | SAI_NULL_OBJECT_ID を明示 set | `qosorch.cpp:2082-2097` |
-| ビルド時 `qos_config.j2` | `dscp_to_tc_map: "AZURE"`, `tc_to_queue_map: "AZURE"`, `tc_to_pg_map: "AZURE"`, `pfc_to_queue_map: "AZURE"`, `pfc_to_pg_map: "AZURE"` (ASIC 対応時) | `qos_config.j2:444-479` |
+| ビルド時 `qos_config.j2` | `dscp_to_tc_map: "AZURE"`, `tc_to_queue_map: "AZURE"`, `tc_to_pg_map: "AZURE"`, `pfc_to_queue_map: "AZURE"`, `pfc_to_pg_map: "AZURE"` ([ASIC](../../reference/glossary.md#term-asic) 対応時) | `qos_config.j2:444-479` |
 
 backend/storage device の場合は `dscp_to_tc_map` の代わりに `dot1p_to_tc_map: "AZURE"` が付与される (`qos_config.j2:435`)。
 
@@ -275,7 +275,7 @@ backend/storage device の場合は `dscp_to_tc_map` の代わりに `dot1p_to_t
 
 ### global エントリの dscp_to_tc_map (db_migrator 自動挿入)
 
-`migrate_port_qos_map_global()` が Broadcom ASIC 限定で `PORT_QOS_MAP|global` に `dscp_to_tc_map` を自動挿入する。値は `DSCP_TO_TC_MAP` テーブルの先頭キー (典型: `"AZURE"`)。既に `global` エントリが存在する場合はスキップ。
+`migrate_port_qos_map_global()` が Broadcom [ASIC](../../reference/glossary.md#term-asic) 限定で `PORT_QOS_MAP|global` に `dscp_to_tc_map` を自動挿入する。値は `DSCP_TO_TC_MAP` テーブルの先頭キー (典型: `"AZURE"`)。既に `global` エントリが存在する場合はスキップ。
 
 ソース: `db_migrator.py:700-715`
 
@@ -323,13 +323,12 @@ show qos map
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / QosOrch** (`sonic-swss/orchagent/qosorch.cpp`): `PORT_QOS_MAP` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / QosOrch** (`sonic-swss/orchagent/qosorch.cpp`): `PORT_QOS_MAP` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -354,8 +353,8 @@ PORT_QOS_MAP テーブルへの書き込みが発生するコード経路を網�
 
 ### CLI
 
-  - `config qos reload` — sonic-cfggen が `files/build_templates/qos_config.j2` を展開し PORT_QOS_MAP エントリを生成 (sonic-buildimage/files/build_templates/qos_config.j2)
-  - `pfc ...` / `pfcwd ...` コマンドが間接的に PORT_QOS_MAP を参照 (sonic-utilities/pfc/main.py, pfcwd/main.py)
+  - `config qos reload` — [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) が `files/build_templates/qos_config.j2` を展開し PORT_QOS_MAP エントリを生成 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/files/build_templates/qos_config.j2)
+  - `pfc ...` / `pfcwd ...` コマンドが間接的に PORT_QOS_MAP を参照 ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/pfc/main.py, pfcwd/main.py)
 
 ### minigraph / sonic-cfggen
 
@@ -363,11 +362,11 @@ minigraph.py に直接生成なし — `qos_config.j2` テンプレート経由
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
-**db_migrator.py** が PORT_QOS_MAP に対してマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+**db_migrator.py** が PORT_QOS_MAP に対してマイグレーション処理を実装 ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/scripts/db_migrator.py)
 
 ### ビルド時デフォルト (build-time default)
 
@@ -392,7 +391,7 @@ REST/gNMI 書き込み経路なし
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
 | `PORT_QOS_MAP` エントリ (ポートへのマップバインド) | `qos_config.j2` から platform 別 QoS ポリシーが読み込まれたとき | 各ポートへの dscp_to_tc_map / pfc_to_queue_map 等の参照名 | `sonic-buildimage/files/build_templates/qos_config.j2:414-423` |
-| `dscp_to_tc_map` のグローバルバインド | db_migrator.py が PORT_QOS_MAP テーブルを更新したとき | 既存 DSCP→TC マップ名から `global` エントリを生成 | `sonic-utilities/scripts/db_migrator.py:711-714` |
+| `dscp_to_tc_map` のグローバルバインド | db_migrator.py が PORT_QOS_MAP テーブルを更新したとき | 既存 [DSCP](../../reference/glossary.md#term-dscp)→TC マップ名から `global` エントリを生成 | `sonic-utilities/scripts/db_migrator.py:711-714` |
 
 ### Phase 7: 条件付き登録
 
@@ -507,7 +506,7 @@ SET パス内でまず全 map 属性を `sai_port_api->set_port_attribute()` で
 
 ### Broadcom global vs Mellanox / その他 per-port
 
-`db_migrator.py` の `migrate_port_qos_map_global()` が `PORT_QOS_MAP|global` エントリを **Broadcom ASIC 限定** で自動挿入する。
+`db_migrator.py` の `migrate_port_qos_map_global()` が `PORT_QOS_MAP|global` エントリを **Broadcom [ASIC](../../reference/glossary.md#term-asic) 限定** で自動挿入する。
 
 ```python
 asics_require_global_dscp_to_tc_map = ["broadcom"]
@@ -526,10 +525,10 @@ if self.asic_type not in asics_require_global_dscp_to_tc_map:
 
 `gMySwitchType == "voq"` の場合、PortQosMapHandler から呼ばれる下位関数が以下のように分岐する。
 
-| 関数 | 非 VOQ | VOQ chassis |
+| 関数 | 非 [VOQ](../../reference/glossary.md#term-voq) | [VOQ](../../reference/glossary.md#term-voq) chassis |
 |------|--------|-------------|
 | `applySchedulerToQueueSchedulerGroup` | `port.m_queue_ids[queue_ind]` から queue_id 取得 | remote system port はスキップ。local port を `getPort()` で取得し直して適用 |
-| `applyWredProfileToQueue` | `port.m_queue_ids[queue_ind]` から queue_id 取得 | `getPortVoQIds(port)` で VOQ ID リストを取得して WRED 適用 |
+| `applyWredProfileToQueue` | `port.m_queue_ids[queue_ind]` から queue_id 取得 | `getPortVoQIds(port)` で [VOQ](../../reference/glossary.md#term-voq) ID リストを取得して [WRED](../../reference/glossary.md#term-wred) 適用 |
 | `handleQueueTable` key 形式 | `Ethernet4\|0-1`（2 トークン） | `Host\|ASIC0\|Ethernet4\|0-1`（4 トークン）。`gMyHostName` + `gMyAsicName` と照合して local/remote を判別 |
 
 ソース: `qosorch.cpp:1637,1715,1772-1792`
@@ -613,7 +612,7 @@ if self.asic_type not in asics_require_global_dscp_to_tc_map:
 
 #### SAI ポート属性 bind (ASIC_DB 経由)
 
-`sai_port_api->set_port_attribute(port.m_port_id, &attr)` を全マップフィールドに対して呼び出す。syncd が `ASIC_STATE:SAI_OBJECT_TYPE_PORT:<oid>` を ASIC_DB に書き込む（syncd による間接書込）。
+`sai_port_api->set_port_attribute(port.m_port_id, &attr)` を全マップフィールドに対して呼び出す。[syncd](../../reference/glossary.md#term-syncd) が `ASIC_STATE:SAI_OBJECT_TYPE_PORT:<oid>` を [ASIC_DB](../../reference/glossary.md#term-asic_db) に書き込む（[syncd](../../reference/glossary.md#term-syncd) による間接書込）。
 
 | フィールド | SAI 属性 | evidence |
 |---|---|---|
@@ -626,13 +625,13 @@ if self.asic_type not in asics_require_global_dscp_to_tc_map:
 
 #### PFC bitmask の SAI 書込
 
-`gPortsOrch->setPortPfc(port.m_port_id, pfc_enable)` — `pfc_enable || old_pfc_enable` が true の場合のみ呼び出される。内部で `sai_port_api->set_port_attribute()` を `SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL` に発行 → ASIC_DB に間接書込。
+`gPortsOrch->setPortPfc(port.m_port_id, pfc_enable)` — `pfc_enable || old_pfc_enable` が true の場合のみ呼び出される。内部で `sai_port_api->set_port_attribute()` を `SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL` に発行 → [ASIC_DB](../../reference/glossary.md#term-asic_db) に間接書込。
 
 evidence: `qosorch.cpp:2213-2221`
 
 #### PFC Watchdog bitmask の内部状態更新
 
-`gPortsOrch->setPortPfcWatchdogStatus(port.m_port_id, pfcwd_sw_enable)` — **無条件**に呼び出される。PortsOrch 内部の `m_port_list[].m_pfc_bitmask` を更新する（CONFIG_DB / APPL_DB / ASIC_DB への直接書込なし）。PfcWdOrch がポーリングして参照する。
+`gPortsOrch->setPortPfcWatchdogStatus(port.m_port_id, pfcwd_sw_enable)` — **無条件**に呼び出される。PortsOrch 内部の `m_port_list[].m_pfc_bitmask` を更新する（CONFIG_DB / APPL_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) への直接書込なし）。PfcWdOrch がポーリングして参照する。
 
 evidence: `qosorch.cpp:2224`
 
@@ -648,9 +647,9 @@ evidence: `qosorch.cpp:1951-1976, 2030`
 
 | 書込先 | 操作 | トリガ条件 |
 |---|---|---|
-| ASIC_DB (`SAI_OBJECT_TYPE_PORT`) | SAI ポート属性 set/clear (syncd 経由) | per-port SET / DEL |
+| ASIC_DB (`SAI_OBJECT_TYPE_PORT`) | SAI ポート属性 set/clear ([syncd](../../reference/glossary.md#term-syncd) 経由) | per-port SET / DEL |
 | ASIC_DB (`SAI_OBJECT_TYPE_SWITCH`) | SAI switch 属性 set/clear (syncd 経由) | global SET / DEL |
-| PortsOrch 内部状態 (`m_pfc_bitmask`) | PFC Watchdog bitmask 更新 | `pfcwd_sw_enable` 省略時も含む無条件 |
+| PortsOrch 内部状態 (`m_pfc_bitmask`) | [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) bitmask 更新 | `pfcwd_sw_enable` 省略時も含む無条件 |
 | QosOrch in-process (`m_qos_maps`) | 参照カウント更新 | SET / DEL 両方 |
 | APPL_DB | なし (QosOrch は直接 APPL_DB を書かない) | — |
 | CONFIG_DB | なし | — |
@@ -659,3 +658,5 @@ evidence: `qosorch.cpp:1951-1976, 2030`
     `pfcwd_sw_enable` は **省略時も 0 として無条件に** PortsOrch 内部状態へ書込まれる（`pfc_enable` の条件付きスキップと非対称）。global キーは `dscp_to_tc_map` 以外のフィールドを無視する。
 
 <!-- /side-effects -->
+
+<!-- glossary-links-injected: 7a1c4da4bc40 -->

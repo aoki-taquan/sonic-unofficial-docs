@@ -34,12 +34,12 @@ related:
 
 ## 概要
 
-[STATE_DB](../../reference/glossary.md#term-state_db) には [TUNNEL](./tunnel.md) の処理結果を反映する複数のテーブルが存在する。書き込み元はオーケストレーター（[orchagent](../../reference/glossary.md#term-orchagent)）と cfgmgr（vxlanmgrd）の両方。
+[STATE_DB](../../reference/glossary.md#term-state_db) には [TUNNEL](./tunnel.md) の処理結果を反映する複数のテーブルが存在する。書き込み元はオーケストレーター（[orchagent](../../reference/glossary.md#term-orchagent)）と cfgmgr（[vxlanmgrd](../../reference/glossary.md#term-vxlanmgrd)）の両方。
 
-| STATE_DB テーブル名 | 書き込み元 | 役割 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) テーブル名 | 書き込み元 | 役割 |
 |--------------------|-----------|------|
-| `TUNNEL_DECAP_TABLE` | `tunneldecaporch` | APPL_DB `TUNNEL_DECAP_TABLE` の SAI 反映状態ミラー |
-| `TUNNEL_DECAP_TERM_TABLE` | `tunneldecaporch` | Decap term エントリの SAI 反映状態ミラー |
+| `TUNNEL_DECAP_TABLE` | `tunneldecaporch` | [APPL_DB](../../reference/glossary.md#term-appl_db) `TUNNEL_DECAP_TABLE` の [SAI](../../reference/glossary.md#term-sai) 反映状態ミラー |
+| `TUNNEL_DECAP_TERM_TABLE` | `tunneldecaporch` | Decap term エントリの [SAI](../../reference/glossary.md#term-sai) 反映状態ミラー |
 | `VXLAN_TUNNEL_TABLE` | `VxlanTunnelOrch` | VxLAN トンネルの作成状態 + operstatus |
 | `VXLAN_TABLE` | `VxlanMgr` | VxLAN netdevice 作成成功フラグ |
 
@@ -81,12 +81,12 @@ TUNNEL_DECAP_TABLE|<tunnel_name>
 | `encap_ecn_mode` | string | `standard` のみ有効 |
 | `ttl_mode` | string | `uniform` または `pipe` |
 
-書き込みは `setDecapTunnelStatus()` が `APPEND_IF_NOT_EMPTY` マクロを使用するため、**内部キャッシュで空のフィールドは STATE_DB に書かれない**。
+書き込みは `setDecapTunnelStatus()` が `APPEND_IF_NOT_EMPTY` マクロを使用するため、**内部キャッシュで空のフィールドは [STATE_DB](../../reference/glossary.md#term-state_db) に書かれない**。
 
 ### 書き込みタイミング
 
 1. 新規トンネル作成: `addDecapTunnel()` 完了後
-2. 既存トンネル更新（`dscp_mode` / `ttl_mode` / QoS マップ変更）: SET_COMMAND 処理後
+2. 既存トンネル更新（`dscp_mode` / `ttl_mode` / [QoS](../../reference/glossary.md#term-qos) マップ変更）: SET_COMMAND 処理後
 3. 削除: `removeDecapTunnel()` で `del()` — ただし ref count > 0 の間は消去されない
 
 ## TUNNEL_DECAP_TERM_TABLE
@@ -126,7 +126,7 @@ VXLAN_TUNNEL_TABLE|<tunnel_name>
 |-----------|----|--------|------|
 | `src_ip` | string | — | VxLAN トンネル送信元 IP |
 | `dst_ip` | string | — | VxLAN トンネル宛先 IP (P2P の場合) |
-| `tnl_src` | string | — | `CLI` (config経由) または `EVPN` (BGP EVPN経由) |
+| `tnl_src` | string | — | `CLI` (config経由) または `EVPN` ([BGP](../../reference/glossary.md#term-bgp) EVPN経由) |
 | `operstatus` | string | `down` | 作成直後は常に `down`。ポート UP で `up` に遷移 |
 
 `operstatus` の初期値 `"down"` は `addRemoveStateTableEntry()` でハードコードされている（vxlanorch.cpp L1942）。
@@ -157,7 +157,7 @@ VXLAN_TABLE|<vxlan_name>
 ## 関連 CONFIG_DB / CLI
 
 - 元データ: [CONFIG_DB TUNNEL](./tunnel.md)、[VXLAN_TUNNEL](./vxlan-tunnel.md)
-- 関連 APPL_DB: `TUNNEL_DECAP_TABLE`、`TUNNEL_DECAP_TERM_TABLE`、`VXLAN_TUNNEL_TABLE`
+- 関連 [APPL_DB](../../reference/glossary.md#term-appl_db): `TUNNEL_DECAP_TABLE`、`TUNNEL_DECAP_TERM_TABLE`、`VXLAN_TUNNEL_TABLE`
 
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来挙動 (Phase A)
@@ -187,7 +187,7 @@ VXLAN_TABLE|<vxlan_name>
 | フィールド | ハードコード値 | 説明 |
 |-----------|--------------|------|
 | `operstatus` | `"down"` | トンネル作成直後の初期値。ポート link-up イベントまで `down` のまま |
-| `tnl_src` | `"EVPN"` | BGP EVPN 経由で作成された場合の固定ラベル |
+| `tnl_src` | `"EVPN"` | [BGP](../../reference/glossary.md#term-bgp) [EVPN](../../reference/glossary.md#term-evpn) 経由で作成された場合の固定ラベル |
 
 ### VXLAN_TABLE — ハードコードデフォルト
 
@@ -197,7 +197,7 @@ VXLAN_TABLE|<vxlan_name>
 
 ### 削除・ref count 依存の残存
 
-- `TUNNEL_DECAP_TABLE` は `tunneldecaporch` が参照カウント (`ref_count`) を管理しており、MUX や他エンティティからの参照が残る間は `del()` されない。削除要求後も STATE_DB エントリが残存する場合がある。
+- `TUNNEL_DECAP_TABLE` は `tunneldecaporch` が参照カウント (`ref_count`) を管理しており、[MUX](../../reference/glossary.md#term-mux) や他エンティティからの参照が残る間は `del()` されない。削除要求後も STATE_DB エントリが残存する場合がある。
 
 ### Warm Reboot 時のスキップ
 
@@ -205,15 +205,15 @@ VXLAN_TABLE|<vxlan_name>
 
 ### YANG-実装 discrepancy
 
-- `TUNNEL_DECAP_TABLE` / `TUNNEL_DECAP_TERM_TABLE` / `VXLAN_TUNNEL_TABLE` は STATE_DB テーブルであり、`sonic-yang-models` に対応する YANG モジュールは存在しない。フィールド定義はすべてコード (`tunneldecaporch.cpp` / `vxlanorch.cpp`) から導出。
-- `TUNNEL_DECAP_TERM_TABLE` の `term_type` デフォルト `P2MP` は YANG にも明示されておらず、コードの変数初期値のみが規定している。
+- `TUNNEL_DECAP_TABLE` / `TUNNEL_DECAP_TERM_TABLE` / `VXLAN_TUNNEL_TABLE` は STATE_DB テーブルであり、`sonic-yang-models` に対応する [YANG](../../reference/glossary.md#term-yang) モジュールは存在しない。フィールド定義はすべてコード (`tunneldecaporch.cpp` / `vxlanorch.cpp`) から導出。
+- `TUNNEL_DECAP_TERM_TABLE` の `term_type` デフォルト `P2MP` は [YANG](../../reference/glossary.md#term-yang) にも明示されておらず、コードの変数初期値のみが規定している。
 
 <!-- /defaults -->
 
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-STATE_DB への書き込みは CONFIG_DB → APPL_DB → SAI の処理完了を受けて行われる。以下は各テーブルの書き込みが確定するために必要な前提条件と、DEL 操作の安全順序。
+STATE_DB への書き込みは [CONFIG_DB](../../reference/glossary.md#term-config_db) → [APPL_DB](../../reference/glossary.md#term-appl_db) → [SAI](../../reference/glossary.md#term-sai) の処理完了を受けて行われる。以下は各テーブルの書き込みが確定するために必要な前提条件と、DEL 操作の安全順序。
 
 ### TUNNEL_DECAP_TABLE / TUNNEL_DECAP_TERM_TABLE
 
@@ -223,17 +223,17 @@ STATE_DB への書き込みは CONFIG_DB → APPL_DB → SAI の処理完了を�
 | 2 | SAI `create_tunnel()` 成功 | `addDecapTunnel()` 完了後に `setDecapTunnelStatus()` が STATE_DB へ書き込む |
 | 3 | SAI `create_tunnel_term_table_entry()` 成功 | `addDecapTunnelTermEntry()` 完了後に `setDecapTunnelTermStatus()` が STATE_DB へ書き込む |
 
-- **TERM エントリの先行到着**: APPL_DB の TUNNEL_DECAP_TERM_TABLE がトンネル本体より先に届いた場合、orchagent は `unhandledDecapTerms` に蓄積する。STATE_DB への TERM 書き込みは必ずトンネル本体 SAI 作成の後になる[^2][^3]。
+- **TERM エントリの先行到着**: APPL_DB の TUNNEL_DECAP_TERM_TABLE がトンネル本体より先に届いた場合、[orchagent](../../reference/glossary.md#term-orchagent) は `unhandledDecapTerms` に蓄積する。STATE_DB への TERM 書き込みは必ずトンネル本体 SAI 作成の後になる[^2][^3]。
 - **ref_count による DEL 抑止**: `removeDecapTunnel()` を呼んでも参照カウントが残る間は `stateTunnelDecapTable->del()` が呼ばれない。MUX_CABLE 等の参照元を先に DEL すること。
 
 ### VXLAN_TUNNEL_TABLE
 
-- **書き込みタイミング**: `addRemoveStateTableEntry(add=true)` は `addTunnelUser()` / `createDynamicDIPTunnel()` から呼ばれる。`VXLAN_TUNNEL` エントリの SET 直後ではなく、`VXLAN_TUNNEL_MAP` / EVPN 処理が完了して SAI tunnel が作成されてから書き込まれる[^4]。
+- **書き込みタイミング**: `addRemoveStateTableEntry(add=true)` は `addTunnelUser()` / `createDynamicDIPTunnel()` から呼ばれる。`VXLAN_TUNNEL` エントリの SET 直後ではなく、`VXLAN_TUNNEL_MAP` / [EVPN](../../reference/glossary.md#term-evpn) 処理が完了して SAI tunnel が作成されてから書き込まれる[^4]。
 - **Warm boot スキップ**: `WarmStart::INITIALIZED` かつ既存エントリが STATE_DB に存在する場合は書き込みをスキップする（重複防止）。
 
 ### VXLAN_TABLE
 
-- **書き込み条件**: `createVxlan()` (vxlanmgr.cpp) の Linux VXLAN netdevice 作成が成功した場合のみ `state=ok` を書き込む。失敗時は STATE_DB エントリが存在しない[^5]。
+- **書き込み条件**: `createVxlan()` (vxlanmgr.cpp) の Linux [VXLAN](../../reference/glossary.md#term-vxlan) netdevice 作成が成功した場合のみ `state=ok` を書き込む。失敗時は STATE_DB エントリが存在しない[^5]。
 
 ### DEL 操作の安全順序
 
@@ -261,9 +261,9 @@ STATE_DB の TUNNEL 系テーブルは他 Orch からの**直接読み取り対�
 
 | 参照元 | 呼び出し箇所 | 参照内容 |
 |-------|------------|---------|
-| `MuxOrch` (muxorch.cpp:2348-2374) | `MuxCable::updateTunnelRoute()` | `getDstIpAddresses()` / `getDscpMode()` / `getQosMapId()` で MUX_TUNNEL の設定値を取得 |
+| `MuxOrch` ([muxorch](../../reference/glossary.md#term-muxorch).cpp:2348-2374) | `MuxCable::updateTunnelRoute()` | `getDstIpAddresses()` / `getDscpMode()` / `getQosMapId()` で MUX_TUNNEL の設定値を取得 |
 | `RouteOrch` (routeorch.cpp:2714, 3222, 3245) | SubnetDecap ルート処理 | `getSubnetDecapConfig()` で decap src_ip・有効フラグを取得 |
-| `VnetOrch` (vnetorch.cpp:1565, 1583) | VNET ルートフィルタ | `getSubnetDecapConfig()` で decap 有効フラグを取得 |
+| `VnetOrch` (vnetorch.cpp:1565, 1583) | [VNET](../../reference/glossary.md#term-vnet) ルートフィルタ | `getSubnetDecapConfig()` で decap 有効フラグを取得 |
 
 MuxOrch は `TunnelDecapOrch*` を直接保持しており、`TUNNEL_DECAP_TABLE` の STATE_DB エントリが存在しない（トンネル SAI 未作成）状態での `MUX_CABLE` SET は不整合を引き起こす[^6]。
 
@@ -273,14 +273,14 @@ MuxOrch は `TunnelDecapOrch*` を直接保持しており、`TUNNEL_DECAP_TABLE
 
 | 経路 | 書き込み種別 |
 |-----|------------|
-| `EvpnNvoOrch` → `addTunnelUser()` (vxlanorch.cpp:1678) | EVPN IMR/IP 経由の DIP トンネル作成 |
+| `EvpnNvoOrch` → `addTunnelUser()` (vxlanorch.cpp:1678) | [EVPN](../../reference/glossary.md#term-evpn) IMR/IP 経由の DIP トンネル作成 |
 | `EvpnNvoOrch` → `createDynamicDIPTunnel()` (vxlanorch.cpp:1733) | 動的 DIP トンネル作成 |
 | `PortsOrch::addTunnel()` 完了直後 (vxlanorch.cpp:1719-1720) | `gPortsOrch` へのトンネル登録後に STATE_DB 書き込み |
 | `PortsOrch::removeTunnel()` 完了直後 (vxlanorch.cpp:1761, 1843) | `gPortsOrch` からのトンネル削除後に STATE_DB 削除 |
 
 ### VXLAN_TABLE — 独立した書き込みフロー
 
-`VxlanMgr` (cfgmgr) が Linux VXLAN netdevice を作成した際に独立して書き込む。`VxlanTunnelOrch` や他 Orch との直接的な依存はない。
+`VxlanMgr` (cfgmgr) が Linux [VXLAN](../../reference/glossary.md#term-vxlan) netdevice を作成した際に独立して書き込む。`VxlanTunnelOrch` や他 Orch との直接的な依存はない。
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-crossrefs.md`
 
@@ -300,7 +300,7 @@ MuxOrch は `TunnelDecapOrch*` を直接保持しており、`TUNNEL_DECAP_TABLE
 | `src_ip` を既存トンネルに変更しようとした場合 | `doDecapTunnelTask()` | エラーログのみ・既存 STATE_DB は変化なし | SWSS_LOG_ERROR | `tunneldecaporch.cpp:148-150` |
 | `dscp_mode` / `ecn_mode` / `ttl_mode` が無効値 | `doDecapTunnelTask()` | `valid=false` → 書き込みなし | SWSS_LOG_ERROR | `tunneldecaporch.cpp:155-207` |
 | `ecn_mode` を既存トンネルに SET（create-only SAI 属性） | `doDecapTunnelTask()` | WARN ログのみ・SAI 変更なし・STATE_DB は更新される（SAI と不一致） | SWSS_LOG_WARN | `tunneldecaporch.cpp:178-182` |
-| QoS マップ (`decap_dscp_to_tc_map` 等) が未解決 | `doDecapTunnelTask()` | `task_need_retry` → m_toSync 保留・書き込みなし（後で再試行） | SWSS_LOG_NOTICE | `tunneldecaporch.cpp:218-266` |
+| [QoS](../../reference/glossary.md#term-qos) マップ (`decap_dscp_to_tc_map` 等) が未解決 | `doDecapTunnelTask()` | `task_need_retry` → m_toSync 保留・書き込みなし（後で再試行） | SWSS_LOG_NOTICE | `tunneldecaporch.cpp:218-266` |
 | 不明フィールドを SET に含む | `doDecapTunnelTask()` | `valid=false` → 書き込みなし | SWSS_LOG_ERROR | `tunneldecaporch.cpp:275-279` |
 | SAI `create_router_interface` 失敗 | `addDecapTunnel()` | トンネル作成中断 → STATE_DB に書かれない | SWSS_LOG_ERROR | `tunneldecaporch.cpp:754-761` |
 | SAI `create_tunnel` 失敗 | `addDecapTunnel()` | トンネル作成中断 → STATE_DB に書かれない | SWSS_LOG_ERROR | `tunneldecaporch.cpp:850-857` |
@@ -328,7 +328,7 @@ MuxOrch は `TunnelDecapOrch*` を直接保持しており、`TUNNEL_DECAP_TABLE
 |---|---|---|---|---|
 | `gPortsOrch->allPortsReady()` が false（全ポート未 ready） | `TunnelDecapOrch::doTask()` | 全タスクスキップ → STATE_DB 書き込みなし（次サイクルで再試行） | （ログなし） | `tunneldecaporch.cpp:55-58` |
 | SAI `create_tunnel` 失敗（vxlanorch） | `VxlanTunnel::createTunnel()` | 例外キャッチ → `addRemoveStateTableEntry()` 未呼び出し → STATE_DB 書き込みなし | SWSS_LOG_ERROR | `vxlanorch.cpp:848` |
-| P2P トンネルで `dst_ip` が 0 (VTEP 用) の場合 | `VxlanTunnel` コンストラクタ | `addRemoveStateTableEntry()` 未呼び出し → `VXLAN_TUNNEL_TABLE` に書き込まれない | （ログなし） | `vxlanorch.cpp:529-532` |
+| P2P トンネルで `dst_ip` が 0 ([VTEP](../../reference/glossary.md#term-vtep) 用) の場合 | `VxlanTunnel` コンストラクタ | `addRemoveStateTableEntry()` 未呼び出し → `VXLAN_TUNNEL_TABLE` に書き込まれない | （ログなし） | `vxlanorch.cpp:529-532` |
 | SAI `remove_tunnel` 失敗（vxlanorch） | `VxlanTunnel::deleteTunnel()` | `~VxlanTunnel()` が途中で例外キャッチ → `del()` が呼ばれずエントリ残存 | SWSS_LOG_ERROR | `vxlanorch.cpp:874` |
 
 ### VXLAN_TABLE — 失敗経路
@@ -336,7 +336,7 @@ MuxOrch は `TunnelDecapOrch*` を直接保持しており、`TUNNEL_DECAP_TABLE
 | 失敗条件 | 検出箇所 | STATE_DB への影響 | ログ | evidence |
 |---|---|---|---|---|
 | `vxlanTunnelCache` にトンネル未登録 | `doVxlanCreateTask()` | m_toSync 保留・`state=ok` 書き込みなし（トンネル作成後に自動再試行） | SWSS_LOG_DEBUG | `vxlanmgr.cpp:319-325` |
-| VRF が未 ready (`isVrfStateOk()` false) | `doVxlanCreateTask()` | 保留・STATE_DB 書き込みなし | SWSS_LOG_DEBUG | `vxlanmgr.cpp:328-333` |
+| [VRF](../../reference/glossary.md#term-vrf) が未 ready (`isVrfStateOk()` false) | `doVxlanCreateTask()` | 保留・STATE_DB 書き込みなし | SWSS_LOG_DEBUG | `vxlanmgr.cpp:328-333` |
 | MAC アドレス未設定 | `doVxlanCreateTask()` | 保留・STATE_DB 書き込みなし | SWSS_LOG_DEBUG | `vxlanmgr.cpp:336-342` |
 | `createVxlan()` 失敗（Linux netdevice 作成エラー） | `doVxlanCreateTask()` | `m_stateVxlanTable.set()` 未呼び出し → `state=ok` が書き込まれない | SWSS_LOG_ERROR | `vxlanmgr.cpp:366-370` |
 
@@ -391,8 +391,8 @@ enum 定義: `tunneldecaporch.h:15-17`
 | `operstatus` | `"down"` | トンネル初回作成時（`addRemoveStateTableEntry`） | `vxlanorch.cpp:1942` |
 | `operstatus` | `"up"` | ポート link-up イベント発生時（`updateDbTunnelOperStatus`） | `vxlanorch.cpp:1901` |
 | `operstatus` | `"down"` | ポート link-down イベント発生時 | `vxlanorch.cpp:1905` |
-| `tnl_src` | `"CLI"` | CONFIG_DB `VXLAN_TUNNEL` から手動設定されたトンネル | `vxlanorch.cpp:1935` |
-| `tnl_src` | `"EVPN"` | BGP EVPN 経由で動的に作成されたトンネル | `vxlanorch.cpp:1939` |
+| `tnl_src` | `"CLI"` | [CONFIG_DB](../../reference/glossary.md#term-config_db) `VXLAN_TUNNEL` から手動設定されたトンネル | `vxlanorch.cpp:1935` |
+| `tnl_src` | `"EVPN"` | [BGP](../../reference/glossary.md#term-bgp) EVPN 経由で動的に作成されたトンネル | `vxlanorch.cpp:1939` |
 
 `TNL_CREATION_SRC_CLI` / `TNL_CREATION_SRC_EVPN` enum 定義: `vxlanorch.h:53-55`
 
@@ -458,7 +458,7 @@ removeDecapTunnelTermEntry()
 
 #### FlexCounter 登録との非同期関係
 
-SAI トンネル作成成功時に `addTunnelToFlexCounter()` が呼ばれ、`m_pendingAddToFlexCntr` に追加される。1 秒インターバルのタイマー (`FLEX_COUNTER_UPD_INTERVAL`) が発火すると `COUNTERS_DB COUNTERS_TUNNEL_NAME_MAP` / `COUNTERS_TUNNEL_TYPE_MAP` に書き込まれてトンネル統計収集が開始される。**STATE_DB への書き込みと FlexCounter 登録の完了順序は保証されない**[^10]。
+SAI トンネル作成成功時に `addTunnelToFlexCounter()` が呼ばれ、`m_pendingAddToFlexCntr` に追加される。1 秒インターバルのタイマー (`FLEX_COUNTER_UPD_INTERVAL`) が発火すると `COUNTERS_DB COUNTERS_TUNNEL_NAME_MAP` / `COUNTERS_TUNNEL_TYPE_MAP` に書き込まれてトンネル統計収集が開始される。**STATE_DB への書き込みと [FlexCounter](../../reference/glossary.md#term-flexcounter) 登録の完了順序は保証されない**[^10]。
 
 #### PortsOrch への登録順序
 
@@ -472,7 +472,7 @@ link-up / link-down イベントが発生すると `PortsOrch::updateDbPortOperS
 
 #### Linux netdevice 作成完了の唯一の公開シグナル
 
-`VXLAN_TABLE|<name>` の `state=ok` は `createVxlan()` が以下 6 ステップの Linux コマンドを全て成功させた場合にのみ書かれる。外部監視ツールはこのエントリを polling して VXLAN netdevice 作成完了を検出できる。途中で失敗した場合は `state=ok` が書かれず、先行コマンドのロールバックが試みられる[^13]。
+`VXLAN_TABLE|<name>` の `state=ok` は `createVxlan()` が以下 6 ステップの Linux コマンドを全て成功させた場合にのみ書かれる。外部監視ツールはこのエントリを polling して [VXLAN](../../reference/glossary.md#term-vxlan) netdevice 作成完了を検出できる。途中で失敗した場合は `state=ok` が書かれず、先行コマンドのロールバックが試みられる[^13]。
 
 | ステップ | コマンド相当 |
 |---------|------------|
@@ -480,7 +480,7 @@ link-up / link-down イベントが発生すると `PortsOrch::updateDbPortOperS
 | 2 | `ip link set ... up` (VXLAN) |
 | 3 | VxLAN インターフェース作成 |
 | 4 | `ip link set ... master` (VXLAN → IF) |
-| 5 | VxLAN IF を VNET にアタッチ |
+| 5 | VxLAN IF を [VNET](../../reference/glossary.md#term-vnet) にアタッチ |
 | 6 | `ip link set ... up` (VxLAN IF) |
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-side-effects.md`
@@ -504,7 +504,7 @@ STATE_DB のトンネル関連テーブルへの書き込みはすべて `swssco
 
 ### 購読者 — sonic-utilities CLI
 
-`show vxlan remotevtep` コマンド (sonic-utilities/show/vxlan.py L253-268) が STATE_DB の `VXLAN_TUNNEL_TABLE|*` を **polling** で読む唯一の CLI 購読者。keyspace 通知ではなく `SonicV2Connector.keys()` + `get_all()` を使用する[^14]。
+`show vxlan remotevtep` コマンド ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/show/vxlan.py L253-268) が STATE_DB の `VXLAN_TUNNEL_TABLE|*` を **polling** で読む唯一の CLI 購読者。keyspace 通知ではなく `SonicV2Connector.keys()` + `get_all()` を使用する[^14]。
 
 `TUNNEL_DECAP_TABLE` / `TUNNEL_DECAP_TERM_TABLE` / `VXLAN_TABLE` に特化した show コマンドは存在しない（テスト用アサーションは除く）。
 
@@ -524,7 +524,7 @@ SAI ポートリンク変化通知
 
 ### NotificationProducer / SubscriberStateTable 非使用の確認
 
-- `tunneldecaporch.cpp` L39 の `SubscriberStateTable` は CONFIG_DB の `CFG_SUBNET_DECAP_TABLE_NAME` 購読専用であり、STATE_DB 書き込み通知とは無関係
+- `tunneldecaporch.cpp` L39 の `SubscriberStateTable` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `CFG_SUBNET_DECAP_TABLE_NAME` 購読専用であり、STATE_DB 書き込み通知とは無関係
 - STATE_DB のいずれのトンネルテーブルも、`NotificationProducer` / `NotificationConsumer` による channel 通知パスを持たない
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-state-pubsub.md`
@@ -551,7 +551,7 @@ if (status != SAI_STATUS_SUCCESS) {
 }
 ```
 
-| ASIC 対応状況 | `is_dip_tunnel_supported` | VXLAN_TUNNEL_TABLE への影響 |
+| [ASIC](../../reference/glossary.md#term-asic) 対応状況 | `is_dip_tunnel_supported` | VXLAN_TUNNEL_TABLE への影響 |
 |-------------|--------------------------|--------------------------|
 | `SAI_TUNNEL_PEER_MODE_P2P` 対応 | `true` | EVPN 由来 DIP トンネルが STATE_DB に書かれる |
 | `SAI_TUNNEL_PEER_MODE_P2P` 非対応 | `false` | `createDynamicDIPTunnel()` が呼ばれず、DIP エントリが STATE_DB に書かれない |
@@ -559,7 +559,7 @@ if (status != SAI_STATUS_SUCCESS) {
 
 ### TUNNEL_DECAP_TABLE — overlay RIF MTU ハードコード (9100 バイト)
 
-decap トンネル作成時に overlay Router Interface の MTU を `9100` にハードコードして SAI に渡す[^17]。ASIC の MTU 上限がこれより低い環境では `sai_router_intfs_api->create_router_interface()` が失敗し、STATE_DB `TUNNEL_DECAP_TABLE` への書き込みが行われない。
+decap トンネル作成時に overlay Router Interface の MTU を `9100` にハードコードして SAI に渡す[^17]。[ASIC](../../reference/glossary.md#term-asic) の MTU 上限がこれより低い環境では `sai_router_intfs_api->create_router_interface()` が失敗し、STATE_DB `TUNNEL_DECAP_TABLE` への書き込みが行われない。
 
 ```cpp
 // tunneldecaporch.cpp:14 + L749-750
@@ -578,11 +578,11 @@ overlay_intf_attr.value.u32 = OVERLAY_RIF_DEFAULT_MTU;
 | `ecn_mode` | `SAI_TUNNEL_ATTR_DECAP_ECN_MODE` | SWSS_LOG_WARN でスキップ。STATE_DB の値はそのまま残るが SAI は変更されない (`tunneldecaporch.cpp:179`) |
 | `encap_ecn_mode` | `SAI_TUNNEL_ATTR_ENCAP_ECN_MODE` | SWSS_LOG_NOTICE でスキップ。同様 (`tunneldecaporch.cpp:195`) |
 
-SAI 仕様上の create-only 属性であるため ASIC ベンダーによらず共通の制約。
+SAI 仕様上の create-only 属性であるため [ASIC](../../reference/glossary.md#term-asic) ベンダーによらず共通の制約。
 
 ### VXLAN_TUNNEL_TABLE — FlexCounter 登録方式の差 (Traditional vs Non-Traditional)
 
-`gTraditionalFlexCounter` フラグが `true` の場合、COUNTERS_DB への書き込みは ASIC_DB `VIDTORID` に RID が登録された後に行われる。`false` の場合は SAI 作成完了後すぐに書き込まれる[^18]。**STATE_DB `VXLAN_TUNNEL_TABLE` への書き込みタイミング自体は本フラグの影響を受けない**（FlexCounter は COUNTERS_DB 専用）。
+`gTraditionalFlexCounter` フラグが `true` の場合、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書き込みは [ASIC_DB](../../reference/glossary.md#term-asic_db) `VIDTORID` に RID が登録された後に行われる。`false` の場合は SAI 作成完了後すぐに書き込まれる[^18]。**STATE_DB `VXLAN_TUNNEL_TABLE` への書き込みタイミング自体は本フラグの影響を受けない**（[FlexCounter](../../reference/glossary.md#term-flexcounter) は [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 専用）。
 
 ### VXLAN_TABLE — Linux カーネル VXLAN モジュール依存
 
@@ -628,3 +628,5 @@ SAI 仕様上の create-only 属性であるため ASIC ベンダーによらず
 [^17]: `OVERLAY_RIF_DEFAULT_MTU` ハードコード定数: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L14>
 
 [^18]: `gTraditionalFlexCounter` による VIDTORID 使用分岐: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1297-L1318>
+
+<!-- glossary-links-injected: c26ee589106a -->

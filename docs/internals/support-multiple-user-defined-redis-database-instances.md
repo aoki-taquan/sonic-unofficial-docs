@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-従来の SONiC は **単一の [Redis](../reference/glossary.md#term-redis) インスタンス** に [APPL_DB](../reference/glossary.md#term-appl_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) / [CONFIG_DB](../reference/glossary.md#term-config_db) / [STATE_DB](../reference/glossary.md#term-state_db) 等をすべて載せていた。短時間に大量の書き込み（数百万ルート学習等）が発生すると **この 1 インスタンスがホットスポット** になる。[HLD](../reference/glossary.md#term-hld) の実測では Redis を 2 インスタンスに分割して負荷を分散するだけで **20〜30% の性能改善** が得られた[^1]。
+従来の [SONiC](../reference/glossary.md#term-sonic) は **単一の [Redis](../reference/glossary.md#term-redis) インスタンス** に [APPL_DB](../reference/glossary.md#term-appl_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) / [CONFIG_DB](../reference/glossary.md#term-config_db) / [STATE_DB](../reference/glossary.md#term-state_db) 等をすべて載せていた。短時間に大量の書き込み（数百万ルート学習等）が発生すると **この 1 インスタンスがホットスポット** になる。[HLD](../reference/glossary.md#term-hld) の実測では Redis を 2 インスタンスに分割して負荷を分散するだけで **20〜30% の性能改善** が得られた[^1]。
 
 本機能は[^1]:
 
@@ -36,7 +36,7 @@ related:
 2. 起動経路を `docker-database-init.sh` に切り替え、`supervisord.conf` を **j2 テンプレ生成** に変更
 3. 既定設定（1 インスタンス）は `/etc/default/sonic-db/database_config.json`、ユーザ設定は `/etc/sonic/database_config.json` に置き、起動時に `/var/run/redis/sonic-db/` にコピーされる
 
-> このページは [Multi-namespace Redis HLD](support-redis-databases-in-multiple-namespaces.md) の **基礎となる先行 HLD**。Multi-ASIC 拡張は別ページを参照。
+> このページは [Multi-namespace Redis HLD](support-redis-databases-in-multiple-namespaces.md) の **基礎となる先行 HLD**。[Multi-ASIC](../reference/glossary.md#term-multi-asic) 拡張は別ページを参照。
 
 ## 動作仕様
 
@@ -188,20 +188,18 @@ sudo systemctl restart database
 
 ### SAI_STATUS_TABLE_FULL エラーで orchagent がシャットダウンする問題（sonic-buildimage#2125）
 
-SAI_STATUS_TABLE_FULL エラーで orchagent がシャットダウンする問題。SAI テーブルの容量制限に達した場合、orchagent は自動シャットダウンする設計。HW ごとのテーブル容量を事前確認すること
+SAI_STATUS_TABLE_FULL エラーで [orchagent](../reference/glossary.md#term-orchagent) がシャットダウンする問題。SAI テーブルの容量制限に達した場合、orchagent は自動シャットダウンする設計。HW ごとのテーブル容量を事前確認すること
 
 - 参照: [sonic-net/sonic-buildimage#2125](https://github.com/sonic-net/sonic-buildimage/issues/2125)
 
-
 ### ARP テーブルが上限に近い状態だと `show interfaces` の一部インターフェースが表示されない問題（sonic-buildimage#5031）
 
-ARP テーブルが上限に近い状態だと `show interfaces` の一部インターフェースが表示されない問題。`net.ipv4.neigh.default.gc_thresh3` を確認し必要に応じて拡張すること
+[ARP](../reference/glossary.md#term-arp) テーブルが上限に近い状態だと `show interfaces` の一部インターフェースが表示されない問題。`net.ipv4.neigh.default.gc_thresh3` を確認し必要に応じて拡張すること
 
 - 参照: [sonic-net/sonic-buildimage#5031](https://github.com/sonic-net/sonic-buildimage/issues/5031)
-
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/database/multi_database_instances.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 97b2a564f840 -->
+<!-- glossary-links-injected: 6c10aba0a4c8 -->

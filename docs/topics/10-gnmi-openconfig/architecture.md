@@ -53,7 +53,7 @@ graph TD
   APPL[(APPL_DB / STATE_DB / COUNTERS_DB)] -.telemetry.-> G
 ```
 
-REST と gNMI server は同じ telemetry container で動き、Translib 経由で OpenConfig / SONiC YANG をどちらも扱う。Subscribe (gNMI streaming) は CONFIG_DB だけでなく [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) も対象になる。
+REST と gNMI server は同じ telemetry container で動き、Translib 経由で OpenConfig / [SONiC](../../reference/glossary.md#term-sonic) YANG をどちらも扱う。Subscribe (gNMI streaming) は CONFIG_DB だけでなく [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) も対象になる。
 
 詳細な server 内部設計は [gNMI server interface design](../../management/sonic-gnmi-server-interface-design.md) と [Management Framework 全体像](../../management/sonic-management-framework.md) を参照する。
 
@@ -93,4 +93,4 @@ KLISH を入口にする SONiC CLI は YANG モデルから生成される。こ
 - [SONiC CLI auto-generation tool](../../management/sonic-cli-auto-generation-tool.md)
 - [gNMI subscription for YANG data](../../routing/gnmi-subscription-for-yang-data.md)
 
-<!-- glossary-links-injected: 443d203c59c1 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

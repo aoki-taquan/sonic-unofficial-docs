@@ -99,17 +99,17 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 
 | フィールド | 省略・空時の実挙動 | 導出元 |
 |-----------|-----------------|--------|
-| `nat_zone` | YANG `default "0"`。orchagent 変数も `0` 初期化。NAT 非対応プラットフォームでは SAI に送信されず `SWSS_LOG_NOTICE` のみ | YANG L111; intfsorch.cpp:713,984 |
-| `mpls` | `empty()` を `"disable"` と等価に扱う (`sysctl input=0`)。sysctl 失敗は省略時 silent。SAI `ADMIN_MPLS_STATE` はデフォルト disabled のため RIF create attrs に含まれない | intfmgr.cpp:178-189; intfsorch.cpp:1276-1284 |
-| `proxy_arp` | カーネル/SAI 操作なし。orchagent 内部フラグ `proxy_arp=false` 固定 | intfsorch.cpp:501,845 |
+| `nat_zone` | YANG `default "0"`。[orchagent](../../reference/glossary.md#term-orchagent) 変数も `0` 初期化。NAT 非対応プラットフォームでは [SAI](../../reference/glossary.md#term-sai) に送信されず `SWSS_LOG_NOTICE` のみ | YANG L111; [intfsorch](../../reference/glossary.md#term-intfsorch).cpp:713,984 |
+| `mpls` | `empty()` を `"disable"` と等価に扱う (`sysctl input=0`)。sysctl 失敗は省略時 silent。[SAI](../../reference/glossary.md#term-sai) `ADMIN_MPLS_STATE` はデフォルト disabled のため [RIF](../../reference/glossary.md#term-rif) create attrs に含まれない | intfmgr.cpp:178-189; [intfsorch](../../reference/glossary.md#term-intfsorch).cpp:1276-1284 |
+| `proxy_arp` | カーネル/SAI 操作なし。[orchagent](../../reference/glossary.md#term-orchagent) 内部フラグ `proxy_arp=false` 固定 | [intfsorch](../../reference/glossary.md#term-intfsorch).cpp:501,845 |
 | `grat_arp` | カーネル操作なし | intfmgr.cpp:1038-1051 |
 | `ipv6_use_link_local_only` | YANG `default disable`。省略時は `m_ipv6LinkLocalModeList` への追加なし（通常 IPv6 割当） | YANG L138; intfmgr.cpp:913 |
-| `mac_addr` | intfmgr が `00:00:00:00:00:00` を APP_DB へ書く。orchagent はゼロ MAC を受け取ると `gMacAddress`（スイッチ全体 MAC）を SAI に適用 | intfmgr.cpp:1019; intfsorch.cpp:1199-1207 |
+| `mac_addr` | intfmgr が `00:00:00:00:00:00` を APP_DB へ書く。[orchagent](../../reference/glossary.md#term-orchagent) はゼロ MAC を受け取ると `gMacAddress`（スイッチ全体 MAC）を SAI に適用 | intfmgr.cpp:1019; intfsorch.cpp:1199-1207 |
 | `loopback_action` | intfmgr も orchagent も省略時は SAI attrs に含めない。SAI 実装依存デフォルト（多くは `forward`） | intfsorch.cpp:1187-1195,999 |
 | `vrf_name` | orchagent が `gVirtualRouterId`（デフォルト VRF）を使用 | intfsorch.cpp:823 |
 | `vnet_name` | 省略時は通常 VRF 経路。`vnet_name` と `vrf_name` を同時指定した場合 `vnet_name` が優先される | intfsorch.cpp:933-957 |
-| `scope` (IP prefix) | **dead field**: CONFIG_DB 値は読まれず、intfmgr が常に `"global"` を APP_DB へ書く | intfmgr.cpp:1134 |
-| `family` (IP prefix) | **dead field**: CONFIG_DB 値は読まれず、intfmgr が ip-prefix の型から自動判定して APP_DB へ書く | intfmgr.cpp:1129 |
+| `scope` (IP prefix) | **dead field**: [CONFIG_DB](../../reference/glossary.md#term-config_db) 値は読まれず、intfmgr が常に `"global"` を APP_DB へ書く | intfmgr.cpp:1134 |
+| `family` (IP prefix) | **dead field**: [CONFIG_DB](../../reference/glossary.md#term-config_db) 値は読まれず、intfmgr が ip-prefix の型から自動判定して APP_DB へ書く | intfmgr.cpp:1129 |
 | `secondary` (IP prefix) | **dead consumer**: intfmgr・orchagent のどちらもこのフィールドを参照しない | intfmgr.cpp:784-829; intfsorch.cpp:720-814 |
 
 [^d1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
@@ -140,7 +140,7 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 | `nat_zone_id` 初期値 | `0` (uint32) | `intfsorch.cpp:713` | `nat_zone` 省略時の orchagent 内部変数。NAT 非対応プラットフォームでは SAI へ送信しない |
 | `loopback_action` 変換テーブル | `"drop"` → `SAI_PACKET_ACTION_DROP` | `intfsorch.cpp:1150` | `getSaiLoopbackAction()` による文字列→SAI 定数マッピング |
 | `loopback_action` 変換テーブル | `"forward"` → `SAI_PACKET_ACTION_FORWARD` | `intfsorch.cpp:1151` | 同上。省略時は attrs に含めず SAI 実装依存デフォルト（多くは `forward`） |
-| `SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` | 省略（SAI 側デフォルト disabled） | `intfsorch.cpp:1278` | `mpls` 省略 / `disable` 時は RIF create attrs に含めない |
+| `SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` | 省略（SAI 側デフォルト disabled） | `intfsorch.cpp:1278` | `mpls` 省略 / `disable` 時は [RIF](../../reference/glossary.md#term-rif) create attrs に含めない |
 | `VLAN_PREFIX` | `"Vlan"` | `intfmgr.cpp:19` | VLAN インタフェース名判定用プレフィックス。`alias.compare(0, strlen(VLAN_PREFIX), VLAN_PREFIX)` で VLAN IF か否かを識別する |
 
 [^c1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
@@ -194,14 +194,14 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 
 | 前提テーブル | 確認場所 | 理由 |
 |------------|---------|------|
-| `VLAN|Vlan<N>` + vlanmgrd STATE_VLAN_TABLE ready | `intfmgr.cpp:653-660` | `isIntfStateOk()` が STATE_VLAN_TABLE を参照。未登録なら retry |
-| `VRF|<name>` + vrfmgrd STATE_VRF_TABLE ready | `intfmgr.cpp:839-842` | `vrf_name` 指定時のみ。未登録なら `return false` で retry |
+| `VLAN|Vlan<N>` + [vlanmgrd](../../reference/glossary.md#term-vlanmgrd) STATE_VLAN_TABLE ready | `intfmgr.cpp:653-660` | `isIntfStateOk()` が STATE_VLAN_TABLE を参照。未登録なら retry |
+| `VRF|<name>` + [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) STATE_VRF_TABLE ready | `intfmgr.cpp:839-842` | `vrf_name` 指定時のみ。未登録なら `return false` で retry |
 | VNetOrch が `VNET|<name>` 処理済み | `intfsorch.cpp:933-939` | `vnet_name` 指定時のみ。orchagent 側チェック |
 | PortsOrch が VLAN ポートオブジェクト生成済み | `intfsorch.cpp:905` | APP_DB → SAI 経路のチェック。CONFIG_DB 書込みとは独立 |
 
 ### 属性ロウ → IP プレフィクスロウ の順序
 
-1. `VLAN_INTERFACE|Vlan<N>` を SET → intfmgrd が STATE_INTERFACE_TABLE に `vrf` を書く
+1. `VLAN_INTERFACE|Vlan<N>` を SET → [intfmgrd](../../reference/glossary.md#term-intfmgrd) が STATE_INTERFACE_TABLE に `vrf` を書く
 2. STATE_INTERFACE_TABLE に alias エントリが存在する状態で `VLAN_INTERFACE|Vlan<N>|<ip_prefix>` を SET
 
 ```
@@ -232,7 +232,7 @@ CONFIG_DB: VLAN_INTERFACE|Vlan100|10.0.0.1/24  → (intfmgrd doIntfAddrTask, isI
 
 #### `buildIntfReplayList()` に VLAN_INTERFACE が含まれる
 
-warm-start 時、intfmgrd は `buildIntfReplayList()` で `m_cfgVlanIntfTable.getKeys()` の結果を `m_pendingReplayIntfList` に追加する（`intfmgr.cpp:277-278`）。
+warm-start 時、[intfmgrd](../../reference/glossary.md#term-intfmgrd) は `buildIntfReplayList()` で `m_cfgVlanIntfTable.getKeys()` の結果を `m_pendingReplayIntfList` に追加する（`intfmgr.cpp:277-278`）。
 
 ```cpp
 // intfmgr.cpp:277-278
@@ -240,7 +240,7 @@ m_cfgVlanIntfTable.getKeys(intfList);
 std::copy(intfList.begin(), intfList.end(), std::inserter(m_pendingReplayIntfList, ...));
 ```
 
-リストが空になった時点で `setWarmReplayDoneState()` を呼び `REPLAYED` → `RECONCILED` と遷移する。reconciliation ロジックはなく、カーネルへの再 replay で完了とみなされる。**VLAN が STATE_DB で ready になってから VLAN_INTERFACE が replay 収束する** 順序は通常時と同じ。
+リストが空になった時点で `setWarmReplayDoneState()` を呼び `REPLAYED` → `RECONCILED` と遷移する。reconciliation ロジックはなく、カーネルへの再 replay で完了とみなされる。**VLAN が [STATE_DB](../../reference/glossary.md#term-state_db) で ready になってから VLAN_INTERFACE が replay 収束する** 順序は通常時と同じ。
 
 #### `ipv6_use_link_local_only` は in-memory 状態がリセットされる
 
@@ -250,13 +250,13 @@ std::copy(intfList.begin(), intfList.end(), std::inserter(m_pendingReplayIntfLis
 
 | 依存カテゴリ | 必須順序 | ソース |
 |------------|---------|-------|
-| VLAN → VLAN_INTERFACE | `VLAN` エントリ + vlanmgrd の STATE_VLAN_TABLE ready が先 | `intfmgr.cpp:653-660` |
-| VRF → VLAN_INTERFACE | `VRF` エントリ + vrfmgrd の STATE_VRF_TABLE ready が先 | `intfmgr.cpp:839-842` |
-| VNET → VLAN_INTERFACE | VNetOrch が VNET 処理済みであること | `intfsorch.cpp:933-939` |
+| VLAN → VLAN_INTERFACE | `VLAN` エントリ + [vlanmgrd](../../reference/glossary.md#term-vlanmgrd) の STATE_VLAN_TABLE ready が先 | `intfmgr.cpp:653-660` |
+| VRF → VLAN_INTERFACE | `VRF` エントリ + [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) の STATE_VRF_TABLE ready が先 | `intfmgr.cpp:839-842` |
+| [VNET](../../reference/glossary.md#term-vnet) → VLAN_INTERFACE | VNetOrch が VNET 処理済みであること | `intfsorch.cpp:933-939` |
 | 属性ロウ → IP prefix | `VLAN_INTERFACE\|Vlan<N>` SET → STATE_INTF 反映後に `VLAN_INTERFACE\|Vlan<N>\|<ip>` SET | `intfmgr.cpp:1115` |
 | IP prefix DEL → 属性ロウ DEL | すべての IP prefix を DEL してから属性ロウを DEL | `intfmgr.cpp:1060-1063` |
 | VRF 変更 2 ステップ | unbind (`vrf_name=""`) → rebind (`vrf_name=<新VRF>`) | `intfmgr.cpp:846-849` |
-| warm-reboot replay | VLAN STATE_DB ready 後に VLAN_INTERFACE replay 収束 | `intfmgr.cpp:277-278, 286-292` |
+| warm-reboot replay | VLAN [STATE_DB](../../reference/glossary.md#term-state_db) ready 後に VLAN_INTERFACE replay 収束 | `intfmgr.cpp:277-278, 286-292` |
 
 <!-- /ordering -->
 
@@ -285,11 +285,11 @@ std::copy(intfList.begin(), intfList.end(), std::inserter(m_pendingReplayIntfLis
 | `create_router_interface()` が `SAI_STATUS_SUCCESS` 以外を返却 | `SWSS_LOG_ERROR("Failed to create router interface %s, rv:%d")` → `handleSaiCreateStatus()` を呼び出し | `intfsorch.cpp:1297-1301` |
 | `handleSaiCreateStatus()` が `task_success` 以外 | `throw runtime_error("Failed to create router interface.")` が発行され orchagent プロセスが例外捕捉可能な上位ハンドラへ伝播 | `intfsorch.cpp:1301-1304` |
 | `remove_router_interface()` 失敗 | `SWSS_LOG_ERROR("Failed to remove router interface for port %s, rv:%d")` → `handleSaiRemoveStatus()` | `intfsorch.cpp:1350-1353` |
-| RIF に IP アドレスが残っている状態で RIF 削除を試みる | `m_syncdIntfses[port.m_alias].ref_count > 0` を検出し `SWSS_LOG_NOTICE("Router interface %s is still referenced with ref count %d")` → `return false` で削除を中断 | `intfsorch.cpp:1327-1331` |
+| [RIF](../../reference/glossary.md#term-rif) に IP アドレスが残っている状態で RIF 削除を試みる | `m_syncdIntfses[port.m_alias].ref_count > 0` を検出し `SWSS_LOG_NOTICE("Router interface %s is still referenced with ref count %d")` → `return false` で削除を中断 | `intfsorch.cpp:1327-1331` |
 | MAC set / MTU set / NAT zone set 等の属性更新失敗 | 各 `sai_router_intfs_api->set_router_interface_attribute()` の戻り値を `handleSaiSetStatus()` で処理。`task_need_retry` 相当の場合は呼び出し元がリトライ | `intfsorch.cpp:205-295` |
 | IP2me ルート作成失敗（IP prefix 付与時） | `SWSS_LOG_ERROR("Failed to create IP2me route ip:%s, rv:%d")` → `handleSaiCreateStatus()` | `intfsorch.cpp:1398-1401` |
 
-**SAI 例外時の注意**: `runtime_error` は orchagent の例外ハンドラが捕捉し `SWSS_LOG_ERROR` を記録したうえでプロセス継続またはクラッシュ再起動を行う。SAI 実装（ASIC SDK）の返す具体的なエラーコードは `rv` フィールドに整数で記録される。
+**SAI 例外時の注意**: `runtime_error` は orchagent の例外ハンドラが捕捉し `SWSS_LOG_ERROR` を記録したうえでプロセス継続またはクラッシュ再起動を行う。SAI 実装（[ASIC SDK](../../reference/glossary.md#term-asic-sdk)）の返す具体的なエラーコードは `rv` フィールドに整数で記録される。
 
 ### intfmgr 側のカーネル操作失敗
 
@@ -348,7 +348,6 @@ show ip interfaces
 ```
 <!-- /ops-hint -->
 
-
 <!-- pubsub -->
 ## 通信メカニズム (Redis Pub/Sub)
 
@@ -362,7 +361,7 @@ VLAN_INTERFACE テーブルは **2 系統の異なる購読方式** で伝搬す
 PSUBSCRIBE __keyspace@4__:VLAN_INTERFACE|*
 ```
 
-- CONFIG_DB の `notify-keyspace-events = "KEA"` が有効なため、CLI / minigraph 等が `HSET VLAN_INTERFACE|Vlan100 …` を書き込むと Redis が自動で `PUBLISH __keyspace@4__:VLAN_INTERFACE|Vlan100 hset` を発行する
+- CONFIG_DB の `notify-keyspace-events = "KEA"` が有効なため、CLI / minigraph 等が `HSET VLAN_INTERFACE|Vlan100 …` を書き込むと [Redis](../../reference/glossary.md#term-redis) が自動で `PUBLISH __keyspace@4__:VLAN_INTERFACE|Vlan100 hset` を発行する
 - `SubscriberStateTable::pops()` がイベントチャンネルからキーを取り出し、`HGETALL VLAN_INTERFACE|Vlan100` で現在値を取得して `KeyOpFieldsValuesTuple` に変換する
 - `op = "hset"` → `SET_COMMAND`、`op = "del"` → `DEL_COMMAND`
 
@@ -381,7 +380,7 @@ PUBLISH ペイロードは固定文字列 `"G"`。
 
 ### APPL_DB → orchagent (ConsumerStateTable / channel SUBSCRIBE)
 
-`orchagent` の `IntfsOrch` は APPL_DB (db_id=0) に対して `ConsumerStateTable` を使用し `INTF_TABLE_CHANNEL@0` を `SUBSCRIBE` する[^ps2][^ps3]。`consumer_state_table_pops.lua` が `SPOP INTF_TABLE_KEY_SET` → `HGETALL _INTF_TABLE|key` → 本体ハッシュへコピーをアトミック実行する。
+`orchagent` の `IntfsOrch` は [APPL_DB](../../reference/glossary.md#term-appl_db) (db_id=0) に対して `ConsumerStateTable` を使用し `INTF_TABLE_CHANNEL@0` を `SUBSCRIBE` する[^ps2][^ps3]。`consumer_state_table_pops.lua` が `SPOP INTF_TABLE_KEY_SET` → `HGETALL _INTF_TABLE|key` → 本体ハッシュへコピーをアトミック実行する。
 
 ### STATE_DB への書き戻し
 
@@ -399,16 +398,16 @@ PUBLISH ペイロードは固定文字列 `"G"`。
 
 | 特性 | 内容 |
 |------|------|
-| CONFIG_DB → intfmgrd | Redis PSUBSCRIBE (keyspace notification) |
+| CONFIG_DB → [intfmgrd](../../reference/glossary.md#term-intfmgrd) | [Redis](../../reference/glossary.md#term-redis) PSUBSCRIBE (keyspace notification) |
 | keyspace pattern | `__keyspace@4__:VLAN_INTERFACE\|*` |
-| intfmgrd → APPL_DB | Redis PUBLISH/SUBSCRIBE (channel ベース) |
+| intfmgrd → [APPL_DB](../../reference/glossary.md#term-appl_db) | [Redis](../../reference/glossary.md#term-redis) PUBLISH/SUBSCRIBE (channel ベース) |
 | Publish チャンネル | `INTF_TABLE_CHANNEL@0`、ペイロード固定 `"G"` |
-| APPL_DB → orchagent | ConsumerStateTable + `SUBSCRIBE` |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) → orchagent | [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) + `SUBSCRIBE` |
 | NotificationConsumer | **不使用** |
 | TTL / keyevent expire | **不使用** |
 | Select タイムアウト | 1000ms → `intfmgr.doTask()` で未処理タスクを再試行 |
 | warm-restart | `buildIntfReplayList()` で起動時に既存 STATE_DB をスキャン |
-| chassis (VOQ) | `SubscriberStateTable(chassisAppDb, CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME)` で追加購読 |
+| chassis ([VOQ](../../reference/glossary.md#term-voq)) | `SubscriberStateTable(chassisAppDb, CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME)` で追加購読 |
 
 [^ps1]: `sonic-swss/cfgmgr/intfmgr.cpp` / `intfmgr.h` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
 [^ps2]: `sonic-swss/orchagent/orch.cpp` L1186-1195 (`Orch::addConsumer`) <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orch.cpp>
@@ -455,7 +454,7 @@ PSUBSCRIBE __keyspace@4__:VLAN_INTERFACE|*
 | `SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` | `true`（`mpls=enable` 時のみ。省略時は attrs に含めない） | intfsorch.cpp:1276–1285 |
 | `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` | `port.m_nat_zone_id`（`gIsNatSupported` 時のみ） | intfsorch.cpp:1287–1294 |
 
-PHY/LAG と異なり `SAI_ROUTER_INTERFACE_ATTR_PORT_ID` は使用せず、`SAI_ROUTER_INTERFACE_ATTR_VLAN_ID` に VLAN OID を直接設定する点が VLAN SVI の特徴。
+PHY/[LAG](../../reference/glossary.md#term-lag) と異なり `SAI_ROUTER_INTERFACE_ATTR_PORT_ID` は使用せず、`SAI_ROUTER_INTERFACE_ATTR_VLAN_ID` に VLAN OID を直接設定する点が VLAN SVI の特徴。
 
 ### CONFIG_DB → SAI 完全経路サマリ
 
@@ -511,15 +510,15 @@ VLAN_INTERFACE テーブルへの書き込みが発生するコード経路を�
 
 ### CLI
 
-  - `config interface ip add/remove <Vlan...> ...` — `config/main.py` が `set_entry('VLAN_INTERFACE', ...)` を呼ぶ (sonic-utilities/config/main.py)
+  - `config interface ip add/remove <Vlan...> ...` — `config/main.py` が `set_entry('VLAN_INTERFACE', ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py)
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** が VLAN_INTERFACE に IP アドレスを投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+**minigraph.py** が VLAN_INTERFACE に IP アドレスを投入 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py)
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -574,9 +573,9 @@ VRF が未登録のままだと `m_toSync` に積まれ VRF 登録後にリト�
 | `DHCP_RELAY` (dhcp6relay) | `VLAN_INTERFACE\|<vlan>\|*` パターン検索 | なし | IPv6 プレフィックスが未登録なら `LOG_WARNING` でスキップ | `config_interface.cpp:130,135` |
 | NAT (`natconfig`) | VLAN_INTERFACE の `nat_zone` フィールドを走査 | なし | `nat_zone≥1` のとき natmgr がゾーンバインドを生成 | `natconfig:205`; `show/main.py:1609` |
 | `neighbor_advertiser` | `get_table('VLAN_INTERFACE')` で IP リスト取得 | なし | gratuitous ARP / ND 送出対象 IP を VLAN_INTERFACE から収集 | `neighbor_advertiser:101,172,212,289` |
-| FDB フィルタ (fdbutil) | `config_db_entries["VLAN_INTERFACE"]` 存在チェック | なし | VLAN が L3 有効化済みかを判定し FDB フィルタ動作を変える | `filter_fdb_entries.py:30-31` |
-| GCU サービス検証 | 変更差分を `old/upd_vlan_intf` として比較 | なし | VLAN_INTERFACE 変更時のサービス再起動要否判定 | `services_validator.py:163-164` |
-| OpenConfig REST/gNMI | `intfTN: "VLAN_INTERFACE"` にマッピング | なし | OpenConfig `interfaces/interface[type=vlan]` が VLAN_INTERFACE に対応 | `xfmr_intf.go:152,416-418` |
+| [FDB](../../reference/glossary.md#term-fdb) フィルタ (fdbutil) | `config_db_entries["VLAN_INTERFACE"]` 存在チェック | なし | VLAN が L3 有効化済みかを判定し [FDB](../../reference/glossary.md#term-fdb) フィルタ動作を変える | `filter_fdb_entries.py:30-31` |
+| [GCU](../../reference/glossary.md#term-gcu) サービス検証 | 変更差分を `old/upd_vlan_intf` として比較 | なし | VLAN_INTERFACE 変更時のサービス再起動要否判定 | `services_validator.py:163-164` |
+| OpenConfig REST/[gNMI](../../reference/glossary.md#term-gnmi) | `intfTN: "VLAN_INTERFACE"` にマッピング | なし | OpenConfig `interfaces/interface[type=vlan]` が VLAN_INTERFACE に対応 | `xfmr_intf.go:152,416-418` |
 
 ### 解決タイミングまとめ
 
@@ -681,11 +680,11 @@ if (status != SAI_STATUS_SUCCESS)
 |------|------------------|-----------------|------|
 | `INTF_TABLE.set(Vlan<N>, data)` | APPL_DB / `INTF_TABLE` | `Vlan<N>` | 常時 (`intfmgrd`, `intfmgr.cpp:1053`) |
 | `STATE_INTERFACE_TABLE.hset(Vlan<N>, "vrf", vrf_name)` | STATE_DB / `STATE_INTERFACE_TABLE` | `Vlan<N>` | 常時 (`intfmgrd`, `intfmgr.cpp:1054`) |
-| `sai_router_intfs_api->create_router_interface(...)` | ASIC_DB (SAI) | RIF OID | 常時 (`IntfsOrch`, `intfsorch.cpp:1296`) |
-| `COUNTERS_RIF_NAME_MAP.hset("", {alias: oid})` | COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | `""` | RIF 作成後タイマーで (`addRifToFlexCounter()`) |
-| `COUNTERS_RIF_TYPE_MAP.hset("", {oid: type})` | COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | `""` | 同上 (type=`SAI_ROUTER_INTERFACE_TYPE_VLAN`) |
-| FlexCounter エントリ登録 | FLEX_COUNTER_DB / `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | RIF 作成時 (`startFlexCounterPolling()`) |
-| `SYSTEM_INTERFACE_TABLE.set(<sys_alias>, {oper_status})` | CHASSIS_APP_DB / `SYSTEM_INTERFACE_TABLE` | `<alias>` | VOQ chassis かつ Local IF (`intfsorch.cpp:1314-1317`) |
+| `sai_router_intfs_api->create_router_interface(...)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) (SAI) | RIF OID | 常時 (`IntfsOrch`, `intfsorch.cpp:1296`) |
+| `COUNTERS_RIF_NAME_MAP.hset("", {alias: oid})` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_RIF_NAME_MAP` | `""` | RIF 作成後タイマーで (`addRifToFlexCounter()`) |
+| `COUNTERS_RIF_TYPE_MAP.hset("", {oid: type})` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_RIF_TYPE_MAP` | `""` | 同上 (type=`SAI_ROUTER_INTERFACE_TYPE_VLAN`) |
+| [FlexCounter](../../reference/glossary.md#term-flexcounter) エントリ登録 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | RIF 作成時 (`startFlexCounterPolling()`) |
+| `SYSTEM_INTERFACE_TABLE.set(<sys_alias>, {oper_status})` | CHASSIS_APP_DB / `SYSTEM_INTERFACE_TABLE` | `<alias>` | [VOQ](../../reference/glossary.md#term-voq) chassis かつ Local IF (`intfsorch.cpp:1314-1317`) |
 
 ### SET — IP プレフィクスロウ (`VLAN_INTERFACE|Vlan<N>|<ip_prefix>`)
 
@@ -693,10 +692,10 @@ if (status != SAI_STATUS_SUCCESS)
 |------|------------------|-----------------|------|
 | `INTF_TABLE.set(Vlan<N>:<ip_prefix>, {scope,family})` | APPL_DB / `INTF_TABLE` | `Vlan<N>:<ip_prefix>` | IPv4 link-local 以外 (`intfmgr.cpp:1137`) |
 | `STATE_INTERFACE_TABLE.hset("Vlan<N>\|<ip_prefix>", "state", "ok")` | STATE_DB / `STATE_INTERFACE_TABLE` | `Vlan<N>\|<ip_prefix>` | IPv4 link-local 以外 (`intfmgr.cpp:1138`) |
-| `sai_route_api->create_route_entry(...)` (IP2me) | ASIC_DB (SAI) | — | 常時 (`addIp2MeRoute()`) |
-| `sai_neighbor_api->create_neighbor_entry(broadcast)` | ASIC_DB (SAI) | — | VLAN IF への IPv4 prefix 付与時 (`addDirectedBroadcast()`, `intfsorch.cpp:595-597`) |
-| CRM カウンタ increment | COUNTERS_DB / CRM | — | 常時 |
-| `gNeighOrch->addInbandNeighbor(alias, ip)` | 他 ASIC へのネイバー伝播 | — | VOQ chassis かつ inband port (`intfsorch.cpp:586-592`) |
+| `sai_route_api->create_route_entry(...)` (IP2me) | [ASIC_DB](../../reference/glossary.md#term-asic_db) (SAI) | — | 常時 (`addIp2MeRoute()`) |
+| `sai_neighbor_api->create_neighbor_entry(broadcast)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) (SAI) | — | VLAN IF への IPv4 prefix 付与時 (`addDirectedBroadcast()`, `intfsorch.cpp:595-597`) |
+| [CRM](../../reference/glossary.md#term-crm) カウンタ increment | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [CRM](../../reference/glossary.md#term-crm) | — | 常時 |
+| `gNeighOrch->addInbandNeighbor(alias, ip)` | 他 [ASIC](../../reference/glossary.md#term-asic) へのネイバー伝播 | — | [VOQ](../../reference/glossary.md#term-voq) chassis かつ inband port (`intfsorch.cpp:586-592`) |
 
 ### DEL — 属性ロウ (`VLAN_INTERFACE|Vlan<N>`)
 
@@ -707,7 +706,7 @@ if (status != SAI_STATUS_SUCCESS)
 | `sai_router_intfs_api->remove_router_interface(...)` | ASIC_DB (SAI) | RIF OID | `ref_count == 0` 時 (`IntfsOrch`) |
 | `COUNTERS_RIF_NAME_MAP.hdel("", alias)` | COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | — | RIF 削除時 (`removeRifFromFlexCounter()`) |
 | `COUNTERS_RIF_TYPE_MAP.hdel("", oid)` | COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | — | 同上 |
-| FlexCounter エントリ削除 | FLEX_COUNTER_DB | `<oid>` | RIF 削除時 (`stopFlexCounterPolling()`, `intfsorch.cpp:1346`) |
+| [FlexCounter](../../reference/glossary.md#term-flexcounter) エントリ削除 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `<oid>` | RIF 削除時 (`stopFlexCounterPolling()`, `intfsorch.cpp:1346`) |
 | `SYSTEM_INTERFACE_TABLE.del(<sys_alias>)` | CHASSIS_APP_DB / `SYSTEM_INTERFACE_TABLE` | `<alias>` | VOQ chassis かつ Local IF (`intfsorch.cpp:1367-1370`) |
 
 ### DEL — IP プレフィクスロウ (`VLAN_INTERFACE|Vlan<N>|<ip_prefix>`)
@@ -718,7 +717,7 @@ if (status != SAI_STATUS_SUCCESS)
 | `STATE_INTERFACE_TABLE.del("Vlan<N>\|<ip_prefix>")` | STATE_DB / `STATE_INTERFACE_TABLE` | `Vlan<N>\|<ip_prefix>` | 同上 (`intfmgr.cpp:1162`) |
 | `sai_route_api->remove_route_entry(...)` (IP2me) | ASIC_DB (SAI) | — | 常時 (`removeIp2MeRoute()`) |
 | `sai_neighbor_api->remove_neighbor_entry(broadcast)` | ASIC_DB (SAI) | — | VLAN IF の IPv4 Directed Broadcast エントリ削除 (`intfsorch.cpp:626-628`) |
-| CRM カウンタ decrement | COUNTERS_DB / CRM | — | 常時 |
+| [CRM](../../reference/glossary.md#term-crm) カウンタ decrement | COUNTERS_DB / CRM | — | 常時 |
 
 <!-- /side-effects -->
 
@@ -797,7 +796,6 @@ CONFIG_DB: VLAN_INTERFACE|Vlan100|10.0.0.1/24
            └─ STATE_DB: STATE_INTERFACE_TABLE|Vlan100|10.0.0.1/24  {state: "ok"}
 ```
 
-
 <!-- /secondary-db-writes -->
 
 <!-- platform -->
@@ -824,12 +822,12 @@ if(isChassisDbInUse())
 
 `voqSyncAddIntf` はローカルポート（`SAI_SYSTEM_PORT_TYPE_REMOTE` でないもの）のみを同期する。リモートポートの IF は `CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE` を購読して受信し、`gNeighOrch->ifChangeInformRemoteNextHop` でネクストホップ状態を更新する。
 
-VLAN IF へ IPv6 アドレスを付与する場合、VOQ 構成では `ip -6 address add ... metric 256` を付与する（通常構成は metric 指定なし）。VOQ システムでは eBGP / iBGP 経路の ECMP グループ一致のために metric=256 を明示する必要があるためである（`intfmgr.cpp:98-106`）。
+VLAN IF へ IPv6 アドレスを付与する場合、VOQ 構成では `ip -6 address add ... metric 256` を付与する（通常構成は metric 指定なし）。VOQ システムでは eBGP / iBGP 経路の [ECMP](../../reference/glossary.md#term-ecmp) グループ一致のために metric=256 を明示する必要があるためである（`intfmgr.cpp:98-106`）。
 
 | 構成 | 追加動作 |
 |------|---------|
-| VOQ chassis (local port/LAG) | RIF 作成・削除時に `CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE` へ `oper_status` を SET / DEL |
-| VOQ chassis (inband port) | IP 追加/削除時に `addInbandNeighbor` / `delInbandNeighbor` を呼び出しリモート ASIC にネイバー伝播（`intfsorch.cpp:586-593`） |
+| VOQ chassis (local port/[LAG](../../reference/glossary.md#term-lag)) | RIF 作成・削除時に `CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE` へ `oper_status` を SET / DEL |
+| VOQ chassis (inband port) | IP 追加/削除時に `addInbandNeighbor` / `delInbandNeighbor` を呼び出しリモート [ASIC](../../reference/glossary.md#term-asic) にネイバー伝播（`intfsorch.cpp:586-593`） |
 | VOQ chassis (remote port) | `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME` からの通知でリモートネクストホップを更新（`intfsorch.cpp:881-892`） |
 | VOQ chassis (IPv6 アドレス追加) | `ip -6 address add ... metric 256` を付与。通常構成は metric 指定なし（`intfmgr.cpp:103-106`） |
 | 通常シングルスイッチ | CHASSIS_APP_DB 操作は一切なし |
@@ -838,11 +836,11 @@ VLAN IF へ IPv6 アドレスを付与する場合、VOQ 構成では `ip -6 add
 
 ### SmartSwitch DPU — 現時点でのコード差なし
 
-`sonic-swss/orchagent/intfsorch.cpp` および `cfgmgr/intfmgr.cpp` には SmartSwitch / DPU 固有の条件分岐は存在しない（2026-05-16 時点）。DPU 上の `VLAN_INTERFACE` テーブル処理は通常の物理スイッチと同一経路をたどる。SmartSwitch 固有のインタフェース管理は `dpuorch` / `midplaneorch` に委譲されており、本テーブルには影響しない。
+`sonic-swss/orchagent/intfsorch.cpp` および `cfgmgr/intfmgr.cpp` には [SmartSwitch](../../reference/glossary.md#term-smartswitch) / [DPU](../../reference/glossary.md#term-dpu) 固有の条件分岐は存在しない（2026-05-16 時点）。[DPU](../../reference/glossary.md#term-dpu) 上の `VLAN_INTERFACE` テーブル処理は通常の物理スイッチと同一経路をたどる。[SmartSwitch](../../reference/glossary.md#term-smartswitch) 固有のインタフェース管理は `dpuorch` / `midplaneorch` に委譲されており、本テーブルには影響しない。
 
 [^ph1]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
 [^ph2]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: b8bde3f9637a -->
+<!-- glossary-links-injected: 9d36d7b4722f -->

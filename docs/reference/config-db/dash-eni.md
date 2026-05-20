@@ -24,9 +24,9 @@ related:
 
 ## 概要
 
-DASH (Disaggregated APIs for SONiC Hosts) の Elastic Network Interface (ENI) エントリを保持するテーブル[^1]。ENI は DASH ソフトウェアスイッチにおける仮想 NIC の論理単位であり、VNET への所属・アンダーレイ IP・ACL バインド・ルーティング・メータリングなどの起点となる。
+[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for [SONiC](../../reference/glossary.md#term-sonic) Hosts) の Elastic Network Interface ([ENI](../../reference/glossary.md#term-eni)) エントリを保持するテーブル[^1]。[ENI](../../reference/glossary.md#term-eni) は [DASH](../../reference/glossary.md#term-dash) ソフトウェアスイッチにおける仮想 NIC の論理単位であり、[VNET](../../reference/glossary.md#term-vnet) への所属・アンダーレイ IP・[ACL](../../reference/glossary.md#term-acl) バインド・ルーティング・メータリングなどの起点となる。
 
-`DashOrch` (`sonic-swss/orchagent/dash/dashorch.cpp`) が ZMQ 経由で受信した Protobuf メッセージを解釈し、SAI の `sai_dash_eni_api` を通じてデータプレーンに ENI を作成する。MAC アドレスは ENI ether address map entry のキーとして使用され、受信パケットの内部 src-MAC (Outbound) または内部 dst-MAC (Inbound) で ENI を特定するための LUT を構成する。
+`DashOrch` (`sonic-swss/orchagent/dash/dashorch.cpp`) が ZMQ 経由で受信した Protobuf メッセージを解釈し、[SAI](../../reference/glossary.md#term-sai) の `sai_dash_eni_api` を通じてデータプレーンに [ENI](../../reference/glossary.md#term-eni) を作成する。MAC アドレスは ENI ether address map entry のキーとして使用され、受信パケットの内部 src-MAC (Outbound) または内部 dst-MAC (Inbound) で ENI を特定するための LUT を構成する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -56,10 +56,10 @@ DASH_ENI_TABLE:<eni_mac>
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|----|-----------|------|
 | `mac_address` | bytes (6 バイト MAC) | 必須 | — | ENI の MAC アドレス。ether address map entry の lookup key |
-| `vnet` | string | 必須 | — | ENI が所属する VNET 名。`DASH_VNET_TABLE` に登録済みである必要あり |
+| `vnet` | string | 必須 | — | ENI が所属する [VNET](../../reference/glossary.md#term-vnet) 名。`DASH_VNET_TABLE` に登録済みである必要あり |
 | `underlay_ip` | IpAddress (protobuf) | 必須 | — | Inbound カプセル化で使用する VM の PA (Physical Address) |
 | `admin_state` | enum `STATE_ENABLED` / `STATE_DISABLED` | 任意 | `STATE_DISABLED` | 管理状態。明示的に `STATE_ENABLED` を設定するまで disabled |
-| `qos` | string | 任意 | なし | QoS プロファイル名 (`DASH_QOS_TABLE` の key)。PPS / CPS / Flows を ENI に適用 |
+| `qos` | string | 任意 | なし | [QoS](../../reference/glossary.md#term-qos) プロファイル名 (`DASH_QOS_TABLE` の key)。PPS / CPS / Flows を ENI に適用 |
 | `pl_underlay_sip` | IpAddress | 任意 | なし | Private Link / Service Tunnel の ST GW VIP。Outbound SIP として使用 |
 | `pl_sip_encoding` | IpPrefix (ip + mask) | 任意 | なし | Private Link IPv6 SIP 変換エンコーディング (field_value/full_mask 形式) |
 | `v4_meter_policy_id` | string | 任意 | なし | IPv4 用メータポリシー ID (`DASH_METER_POLICY_TABLE` の key) |
@@ -79,15 +79,15 @@ DASH_ENI_TABLE:<eni_mac>
 
 ## 購読者
 
-- `DashOrch` (`sonic-swss/orchagent/dash/dashorch.cpp`): ENI エントリを受信し、`sai_dash_eni_api->create_eni()` でデータプレーンに ENI を作成する。同時に `EniCounter` / `MeterCounter` の FlexCounter グループへの登録と CRM リソースカウンタのインクリメントを行う
+- `DashOrch` (`sonic-swss/orchagent/dash/dashorch.cpp`): ENI エントリを受信し、`sai_dash_eni_api->create_eni()` でデータプレーンに ENI を作成する。同時に `EniCounter` / `MeterCounter` の [FlexCounter](../../reference/glossary.md#term-flexcounter) グループへの登録と [CRM](../../reference/glossary.md#term-crm) リソースカウンタのインクリメントを行う
 - `DashMeterOrch`: `v4_meter_policy_id` / `v6_meter_policy_id` のバインドカウント管理
 
 ## 関連 CONFIG_DB
 
-- [`DASH_VNET_TABLE`](dash-vnet.md): ENI が所属する VNET
-- `DASH_QOS_TABLE`: ENI に適用する QoS プロファイル (PPS / CPS / Flows)
+- [`DASH_VNET_TABLE`](dash-vnet.md): ENI が所属する [VNET](../../reference/glossary.md#term-vnet)
+- `DASH_QOS_TABLE`: ENI に適用する [QoS](../../reference/glossary.md#term-qos) プロファイル (PPS / CPS / Flows)
 - `DASH_APPLIANCE_TABLE`: Appliance グローバル設定 (VM VNI など)
-- [`DASH_ACL_IN_TABLE`](dash-acl.md) / [`DASH_ACL_OUT_TABLE`](dash-acl.md): ENI への ACL バインド
+- [`DASH_ACL_IN_TABLE`](dash-acl.md) / [`DASH_ACL_OUT_TABLE`](dash-acl.md): ENI への [ACL](../../reference/glossary.md#term-acl) バインド
 - `DASH_ENI_ROUTE_TABLE`: ENI のルートグループバインド
 
 <!-- cdb-exceptions -->
@@ -95,37 +95,37 @@ DASH_ENI_TABLE:<eni_mac>
 
 | 条件 | 挙動 |
 |------|------|
-| `vnet` が `DASH_VNET_TABLE` に未登録 | `addEniObject` が `false` を返し、orchagent がリトライキューに戻す |
+| `vnet` が `DASH_VNET_TABLE` に未登録 | `addEniObject` が `false` を返し、[orchagent](../../reference/glossary.md#term-orchagent) がリトライキューに戻す |
 | `underlay_ip` が不正な protobuf IpAddress | `to_sai()` が `false` → `addEniObject` 失敗でリトライ |
 | `DASH_APPLIANCE_TABLE` エントリが空 | ENI 作成をリトライ |
 | `mode` に未知の enum 値 | `eniModeMap` lookup miss → `SAI_DASH_ENI_MODE_VM` にフォールバックし `SWSS_LOG_ERROR` を出力 |
-| `admin_state` が未設定 | proto3 enum デフォルト (`0 = STATE_DISABLED`) → SAI に `false` (disabled) を渡す |
+| `admin_state` が未設定 | proto3 enum デフォルト (`0 = STATE_DISABLED`) → [SAI](../../reference/glossary.md#term-sai) に `false` (disabled) を渡す |
 | ENI が既存で `admin_state` のみ変更 | `setEniAdminState()` のみ呼び出し (再作成なし) |
 | ENI が既存で他フィールドが変更 | `addEni` は `SWSS_LOG_WARN("ENI already exists")` のみ。フィールド更新は未サポート |
-| `disable_fast_path_icmp_flow_redirection` を設定 | orchagent (`dashorch.cpp`) に対応コードなし — HLD 記載あるが未実装の可能性 |
+| `disable_fast_path_icmp_flow_redirection` を設定 | [orchagent](../../reference/glossary.md#term-orchagent) (`dashorch.cpp`) に対応コードなし — [HLD](../../reference/glossary.md#term-hld) 記載あるが未実装の可能性 |
 <!-- /cdb-exceptions -->
 
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::addEniObject()` (dashorch.cpp:566-768) の SAI 属性組み立てロジックから導出。
+[YANG](../../reference/glossary.md#term-yang) / proto3 デフォルト以外の実装由来 fallback。`DashOrch::addEniObject()` (dashorch.cpp:566-768) の [SAI](../../reference/glossary.md#term-sai) 属性組み立てロジックから導出。
 
 | フィールド | コード由来デフォルト | fallback 源 |
 |-----------|-------------------|------------|
 | `admin_state` | `STATE_DISABLED` (proto3 enum 0 = false) | `STATE_ENABLED` との明示比較 — dashorch.cpp:634; コントローラが `STATE_ENABLED` を送るまで disabled が意図的デフォルト |
-| `mode` | `SAI_DASH_ENI_MODE_VM` (vm_mode) | `has_eni_mode()` false 時は SAI 属性を push しない (SAI デフォルト適用); 不正 mode 値のエラー時 fallback も `VM` — dashorch.cpp:724-734; HLD:406 "Default is 'vm_mode'" |
-| `qos` | SAI 未設定 (PPS/CPS/FLOWS を push しない) | `qos_entries_` lookup miss → `has_qos = false` → QoS 属性ブロックをスキップ — dashorch.cpp:617-631 |
+| `mode` | `SAI_DASH_ENI_MODE_VM` (vm_mode) | `has_eni_mode()` false 時は SAI 属性を push しない (SAI デフォルト適用); 不正 mode 値のエラー時 fallback も `VM` — dashorch.cpp:724-734; [HLD](../../reference/glossary.md#term-hld):406 "Default is 'vm_mode'" |
+| `qos` | SAI 未設定 (PPS/CPS/FLOWS を push しない) | `qos_entries_` lookup miss → `has_qos = false` → [QoS](../../reference/glossary.md#term-qos) 属性ブロックをスキップ — dashorch.cpp:617-631 |
 | `pl_underlay_sip` | SAI 未設定 | `has_pl_underlay_sip()` false → push しない — dashorch.cpp:649 |
 | `pl_sip_encoding` | SAI 未設定 | `has_pl_sip_encoding()` false → push しない — dashorch.cpp:656 |
 | `v4_meter_policy_id` | SAI 未設定 | `has_v4_meter_policy_id()` false → 空文字列 → push しない — dashorch.cpp:585 |
 | `v6_meter_policy_id` | SAI 未設定 | `has_v6_meter_policy_id()` false → 空文字列 → push しない — dashorch.cpp:587 |
 | `trusted_vnis_list` | 空リスト (trusted VNI エントリなし) | リスト空時 `addEniTrustedVnis()` 呼ばず — dashorch.cpp:868 |
-| `disable_fast_path_icmp_flow_redirection` | 不明 | dashorch.cpp に処理コード未確認 (HLD に記載あり) |
+| `disable_fast_path_icmp_flow_redirection` | 不明 | dashorch.cpp に処理コード未確認 ([HLD](../../reference/glossary.md#term-hld) に記載あり) |
 
 ### 補足
 
 - `admin_state` は proto3 のデフォルト値 (enum 0) が `STATE_DISABLED` になるため、フィールドを省略した場合でも disabled として扱われる。HLD は「すべての設定適用後にコントローラが `enabled` に設定する」というワークフローを前提とする[^1]。
-- `mode` フィールドは `has_eni_mode()` が false の場合 (未設定) に SAI 属性を push しない設計のため、実際のデフォルトは SAI 実装依存になる。HLD の "Default is 'vm_mode'" はコントローラ側の推奨値であり、orchagent は省略時に SAI に何も渡さない。
+- `mode` フィールドは `has_eni_mode()` が false の場合 (未設定) に SAI 属性を push しない設計のため、実際のデフォルトは SAI 実装依存になる。HLD の "Default is 'vm_mode'" はコントローラ側の推奨値であり、[orchagent](../../reference/glossary.md#term-orchagent) は省略時に SAI に何も渡さない。
 - `disable_fast_path_icmp_flow_redirection` は HLD スキーマ (dash-sonic-hld.md:389) に OPTIONAL フィールドとして記載されているが、現行の `dashorch.cpp` に対応する SAI 属性設定コードが見当たらない。HLD と実装の乖離 (discrepancy) として記録する。
 
 <!-- /defaults -->
@@ -137,7 +137,7 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::addEniO
 
 ### ZMQ / Protobuf (コントローラ経由)
 
-- DASH コントローラ (external) が ZMQ 経由で `dash::eni::Eni` protobuf を送信
+- [DASH](../../reference/glossary.md#term-dash) コントローラ (external) が ZMQ 経由で `dash::eni::Eni` protobuf を送信
 - `DashOrch` が ZMQ Consumer として受信し、`doTask()` で処理
 
 ### CLI
@@ -146,7 +146,7 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::addEniO
 
 ### REST / gNMI
 
-- sonic-mgmt-common 経由の gNMI SetRequest で書き込み可能 (sonic-gnmi)
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common 経由の [gNMI](../../reference/glossary.md#term-gnmi) SetRequest で書き込み可能 (sonic-gnmi)
 
 <!-- /entry-points -->
 
@@ -197,7 +197,7 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::addEniO
 
 ### 8. ENI 削除順: ether address map entry → ENI SAI オブジェクト（逆順）
 
-`removeEni()` は ① `removeEniAddrMapEntry()` → ② `removeEniObject()` の順で削除する（作成の逆順）。ENI SAI オブジェクトが `SAI_STATUS_OBJECT_IN_USE` を返した場合は削除をリトライし、参照元 (ACL / Route 等) の解放を待つ[^1]。
+`removeEni()` は ① `removeEniAddrMapEntry()` → ② `removeEniObject()` の順で削除する（作成の逆順）。ENI SAI オブジェクトが `SAI_STATUS_OBJECT_IN_USE` を返した場合は削除をリトライし、参照元 ([ACL](../../reference/glossary.md#term-acl) / Route 等) の解放を待つ[^1]。
 
 > コード根拠: `dashorch.cpp:1015–1043`
 
@@ -225,7 +225,7 @@ Warm start 時 `warmRestoreAndSyncUp()` は全 Orch の `bake()` で APP_DB の�
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-YANG 未定義テーブルのため leafref は存在しない。以下はすべて実装レベルの暗黙参照。
+[YANG](../../reference/glossary.md#term-yang) 未定義テーブルのため leafref は存在しない。以下はすべて実装レベルの暗黙参照。
 
 ### DASH_ENI_TABLE が参照するテーブル
 
@@ -298,7 +298,7 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 
 確認コマンド: `sonic-db-cli APPL_STATE_DB hgetall 'DASH_ENI_TABLE:<eni_mac>'`
 
-エラーはすべて `SWSS_LOG_ERROR` または `SWSS_LOG_WARN` でサイログ出力される。CONFIG_DB (APP_DB) のエントリは失敗後も残存する（orchagent は書き戻さない）。
+エラーはすべて `SWSS_LOG_ERROR` または `SWSS_LOG_WARN` でサイログ出力される。[CONFIG_DB](../../reference/glossary.md#term-config_db) (APP_DB) のエントリは失敗後も残存する（orchagent は書き戻さない）。
 
 > **証跡**: `doTaskEniTable()` L1045-1097, `addEni()` L841-881, `addEniObject()` L566-768, `addEniAddrMapEntry()` L770-800, `addEniTrustedVnis()` L802-839, `removeEni()` L1015-1043, `removeEniObject()` L896-941, `removeEniAddrMapEntry()` L944-974, `removeEniTrustedVnis()` L976-1013
 <!-- /failure -->
@@ -312,8 +312,8 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 
 | 定数 | 値 | 用途 |
 |------|----|------|
-| `ENI_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"ENI_STAT_COUNTER"` | ENI 統計 FlexCounter グループ名。COUNTERS_DB テーブル名としても使用 (`dashorch.h:29`) |
-| `ENI_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms (10 秒) | ENI 統計 FlexCounter のポーリング間隔 (`dashorch.h:30`) |
+| `ENI_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"ENI_STAT_COUNTER"` | ENI 統計 [FlexCounter](../../reference/glossary.md#term-flexcounter) グループ名。[COUNTERS_DB](../../reference/glossary.md#term-counters_db) テーブル名としても使用 (`dashorch.h:29`) |
+| `ENI_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms (10 秒) | ENI 統計 [FlexCounter](../../reference/glossary.md#term-flexcounter) のポーリング間隔 (`dashorch.h:30`) |
 | `METER_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"METER_STAT_COUNTER"` | Meter カウンタ FlexCounter グループ名 (`dashorch.h:32`) |
 | `METER_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms (10 秒) | Meter 統計 FlexCounter のポーリング間隔 (`dashorch.h:33`) |
 
@@ -346,19 +346,19 @@ static const std::unordered_map<dash::eni::EniMode, sai_dash_eni_mode_t> eniMode
 
 ENI 1 件の作成・削除ごとに以下の **2 つのカウンタが独立して** 変動する。
 
-| CRM リソース型 | +1 タイミング | -1 タイミング | evidence |
+| [CRM](../../reference/glossary.md#term-crm) リソース型 | +1 タイミング | -1 タイミング | evidence |
 |---------------|-------------|-------------|---------|
 | `CRM_DASH_ENI` | `create_eni()` 成功後 | `remove_eni()` 成功後 | `dashorch.cpp:754`, `dashorch.cpp:937` |
 | `CRM_DASH_ENI_ETHER_ADDRESS_MAP` | `create_eni_ether_address_map_entry()` 成功後 | `remove_eni_ether_address_map_entry()` 成功後 | `dashorch.cpp:795`, `dashorch.cpp:969` |
 
-CRM しきい値は `CRM_TABLE` で設定可能。しきい値超過アラートは各リソース型で独立して発火する (`crmorch.h:38-40`)。
+[CRM](../../reference/glossary.md#term-crm) しきい値は `CRM_TABLE` で設定可能。しきい値超過アラートは各リソース型で独立して発火する (`crmorch.h:38-40`)。
 
 <!-- /constants -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`DashOrch` は SAI (ASIC_DB) への書き込みに加えて、以下の DB 副次書込を行う[^orch]。
+`DashOrch` は SAI ([ASIC_DB](../../reference/glossary.md#term-asic_db)) への書き込みに加えて、以下の DB 副次書込を行う[^orch]。
 
 ### DASH_ENI_TABLE SET
 
@@ -368,9 +368,9 @@ CRM しきい値は `CRM_TABLE` で設定可能。しきい値超過アラート
 | `writeResultToDB(..., DASH_RESULT_FAILURE)` | APPL_STATE_DB / `DASH_ENI_TABLE` | `<eni_mac>` | `addEni()` が `false` を返した時点（失敗時）|
 | `gCrmOrch->incCrmResUsedCounter(CRM_DASH_ENI)` | CRM 内部カウンタ | — | `create_eni()` SAI 成功後 |
 | `gCrmOrch->incCrmResUsedCounter(CRM_DASH_ENI_ETHER_ADDRESS_MAP)` | CRM 内部カウンタ | — | `create_eni_ether_address_map_entry()` SAI 成功後 |
-| `EniCounter.addToFC(eni_id, eni)` | FLEX_COUNTER_DB / `ENI_STAT_COUNTER` | ENI OID | `addEniObject()` 完了後、FlexCounter 有効時 |
-| `MeterCounter.addToFC(eni_id, eni)` | FLEX_COUNTER_DB / `METER_STAT_COUNTER` | ENI OID | `addEniObject()` 完了後、FlexCounter 有効時 |
-| `m_eni_name_table->set("", ...)` | COUNTERS_DB / `COUNTERS_ENI_NAME_MAP` | `""` | ENI OID 確定後、`addEniMapEntry()` 内 |
+| `EniCounter.addToFC(eni_id, eni)` | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `ENI_STAT_COUNTER` | ENI OID | `addEniObject()` 完了後、FlexCounter 有効時 |
+| `MeterCounter.addToFC(eni_id, eni)` | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `METER_STAT_COUNTER` | ENI OID | `addEniObject()` 完了後、FlexCounter 有効時 |
+| `m_eni_name_table->set("", ...)` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_ENI_NAME_MAP` | `""` | ENI OID 確定後、`addEniMapEntry()` 内 |
 | `dash_meter_orch->incrMeterPolicyEniBindCount(v4_meter_policy)` | DashMeterOrch 内部 | — | `v4_meter_policy_id` 指定時 |
 | `dash_meter_orch->incrMeterPolicyEniBindCount(v6_meter_policy)` | DashMeterOrch 内部 | — | `v6_meter_policy_id` 指定時 |
 
@@ -381,9 +381,9 @@ CRM しきい値は `CRM_TABLE` で設定可能。しきい値超過アラート
 | `removeResultFromDB(...)` | APPL_STATE_DB / `DASH_ENI_TABLE` | `<eni_mac>` | `removeEni()` が `true` を返した時点（成功時）|
 | `gCrmOrch->decCrmResUsedCounter(CRM_DASH_ENI)` | CRM 内部カウンタ | — | `remove_eni()` SAI 成功後 |
 | `gCrmOrch->decCrmResUsedCounter(CRM_DASH_ENI_ETHER_ADDRESS_MAP)` | CRM 内部カウンタ | — | `remove_eni_ether_address_map_entry()` SAI 成功後 |
-| `EniCounter.removeFromFC(eni_id, eni)` | FLEX_COUNTER_DB / `ENI_STAT_COUNTER` | ENI OID | `removeEniObject()` 冒頭 |
+| `EniCounter.removeFromFC(eni_id, eni)` | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `ENI_STAT_COUNTER` | ENI OID | `removeEniObject()` 冒頭 |
 | `MeterCounter.removeFromFC(eni_id, eni)` | FLEX_COUNTER_DB / `METER_STAT_COUNTER` | ENI OID | `removeEniObject()` 冒頭 |
-| `m_eni_name_table->hdel("", name)` | COUNTERS_DB / `COUNTERS_ENI_NAME_MAP` | `""` | `removeEniMapEntry()` 内 |
+| `m_eni_name_table->hdel("", name)` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_ENI_NAME_MAP` | `""` | `removeEniMapEntry()` 内 |
 | `dash_meter_orch->decrMeterPolicyEniBindCount(v4_meter_policy)` | DashMeterOrch 内部 | — | `v4_meter_policy_id` 指定時 |
 | `dash_meter_orch->decrMeterPolicyEniBindCount(v6_meter_policy)` | DashMeterOrch 内部 | — | `v6_meter_policy_id` 指定時 |
 
@@ -399,7 +399,7 @@ CRM しきい値は `CRM_TABLE` で設定可能。しきい値超過アラート
 
 ### 副次書込が行われない DB
 
-STATE_DB・CONFIG_DB への書き込みは一切行われない[^orch]。
+[STATE_DB](../../reference/glossary.md#term-state_db)・[CONFIG_DB](../../reference/glossary.md#term-config_db) への書き込みは一切行われない[^orch]。
 
 <!-- /side-effects -->
 
@@ -411,7 +411,7 @@ STATE_DB・CONFIG_DB への書き込みは一切行われない[^orch]。
 
 ### 購読方式
 
-`DASH_ENI_TABLE` の変更通知は **Redis keyspace notification ではなく ZeroMQ (ZMQ) メッセージ** で実装されている。`DashOrch` は `ZmqOrch` を継承し、`ZmqConsumerStateTable` を通じて ZMQ PUSH/PULL パターンで受信する。`SubscriberStateTable` / `NotificationConsumer` / Redis PSUBSCRIBE は一切使用しない。
+`DASH_ENI_TABLE` の変更通知は **[Redis](../../reference/glossary.md#term-redis) keyspace notification ではなく ZeroMQ (ZMQ) メッセージ** で実装されている。`DashOrch` は `ZmqOrch` を継承し、`ZmqConsumerStateTable` を通じて ZMQ PUSH/PULL パターンで受信する。`SubscriberStateTable` / `NotificationConsumer` / [Redis](../../reference/glossary.md#term-redis) PSUBSCRIBE は一切使用しない。
 
 | 定数 | 値 | 出典 |
 |------|-----|------|
@@ -454,7 +454,7 @@ STATE_DB・CONFIG_DB への書き込みは一切行われない[^orch]。
 
 ### ZMQ 無効時のフォールバック
 
-`ORCH_NORTHBOND_DASH_ZMQ_ENABLED=false`（`-q` オプションなし）時は `ConsumerStateTable`（Redis SUBSCRIBE）にフォールバックする。DPU 環境ではフラグがデフォルト `true` のため通常このパスは使われない (`zmqorch.cpp:63-72`)。
+`ORCH_NORTHBOND_DASH_ZMQ_ENABLED=false`（`-q` オプションなし）時は `ConsumerStateTable`（[Redis](../../reference/glossary.md#term-redis) SUBSCRIBE）にフォールバックする。[DPU](../../reference/glossary.md#term-dpu) 環境ではフラグがデフォルト `true` のため通常このパスは使われない (`zmqorch.cpp:63-72`)。
 
 ### DB・チャンネル使用一覧
 
@@ -483,23 +483,23 @@ STATE_DB・CONFIG_DB への書き込みは一切行われない[^orch]。
 
 | switch_type | DashOrch 起動 | 備考 |
 |-------------|--------------|------|
-| `"dpu"` | **起動** | SmartSwitch の DPU ロール。`DPU_APPL_DB` を購読 |
-| `""` / `"switch"` / `"voq"` / `"fabric"` / `"chassis-packet"` | **不起動** | 通常 T0/T1 / VOQ chassis / fabric blade |
-| SmartSwitch NPU 側 (`switch_sub_type=SmartSwitch`, `switch_type=switch`) | **不起動** | NPU 側では `DashEniFwdOrch` のみ登録 (`orchdaemon.cpp:613`) |
+| `"dpu"` | **起動** | [SmartSwitch](../../reference/glossary.md#term-smartswitch) の [DPU](../../reference/glossary.md#term-dpu) ロール。`DPU_APPL_DB` を購読 |
+| `""` / `"switch"` / `"voq"` / `"fabric"` / `"chassis-packet"` | **不起動** | 通常 T0/T1 / [VOQ](../../reference/glossary.md#term-voq) chassis / fabric blade |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) 側 (`switch_sub_type=SmartSwitch`, `switch_type=switch`) | **不起動** | [NPU](../../reference/glossary.md#term-npu) 側では `DashEniFwdOrch` のみ登録 (`orchdaemon.cpp:613`) |
 
 `DashOrch` は `DPU_APPL_DB`（`m_dpu_appDb`）・`DPU_APPL_STATE_DB`（`m_dpu_appstateDb`）を使用し、通常の `APPL_DB` とは独立したデータベース接続で動作する。
 
 ### SmartSwitch NPU 側: DashEniFwdOrch（ENI 転送専用）
 
-SmartSwitch の NPU 側では `DashEniFwdOrch` が `APP_DASH_ENI_FORWARD_TABLE` を処理し、ENI を DPU に転送するための ACL ルールをインストールする。`DASH_ENI_TABLE` への直接関与はなく、`DashOrch` は NPU 側では起動しない (`orchdaemon.cpp:613-615`)。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) の [NPU](../../reference/glossary.md#term-npu) 側では `DashEniFwdOrch` が `APP_DASH_ENI_FORWARD_TABLE` を処理し、ENI を [DPU](../../reference/glossary.md#term-dpu) に転送するための ACL ルールをインストールする。`DASH_ENI_TABLE` への直接関与はなく、`DashOrch` は NPU 側では起動しない (`orchdaemon.cpp:613-615`)。
 
 ### SAI DASH ENI API — ベンダー分岐なし
 
-`dashorch.cpp` は `sai_dash_eni_api->create_eni()` / `remove_eni()` 等の SAI DASH Extension API を一律呼び出す。ベンダー固有の環境変数（`platform` / `sub_platform` 等）への参照は一切存在せず、ASIC ベンダー差は SAI 実装側が抽象化する。
+`dashorch.cpp` は `sai_dash_eni_api->create_eni()` / `remove_eni()` 等の SAI DASH Extension API を一律呼び出す。ベンダー固有の環境変数（`platform` / `sub_platform` 等）への参照は一切存在せず、[ASIC](../../reference/glossary.md#term-asic) ベンダー差は SAI 実装側が抽象化する。
 
 ### SAI capability クエリ: HA Flow Owner 属性（唯一のプラットフォーム差）
 
-`isHaFlowOwnerAttrSupported()` (`dashorch.cpp:102-125`) が起動時に一度だけ `sai_query_attribute_capability()` を呼び出し、SAI ASIC が `SAI_ENI_ATTR_IS_HA_FLOW_OWNER` の `set_implemented` または `create_implemented` をサポートするかを検出する。
+`isHaFlowOwnerAttrSupported()` (`dashorch.cpp:102-125`) が起動時に一度だけ `sai_query_attribute_capability()` を呼び出し、SAI [ASIC](../../reference/glossary.md#term-asic) が `SAI_ENI_ATTR_IS_HA_FLOW_OWNER` の `set_implemented` または `create_implemented` をサポートするかを検出する。
 
 | capability 検出結果 | ENI 作成時の挙動 |
 |--------------------|----------------|
@@ -517,7 +517,7 @@ SmartSwitch の NPU 側では `DashEniFwdOrch` が `APP_DASH_ENI_FORWARD_TABLE` 
 
 ### FlexCounter ポーリング間隔（全ベンダー共通）
 
-ENI 統計 (`ENI_STAT_COUNTER_FLEX_COUNTER_GROUP`) および Meter 統計 (`METER_STAT_COUNTER_FLEX_COUNTER_GROUP`) のポーリング間隔は `10,000 ms` にハードコードされており (`dashorch.h:30, 33`)、ASIC ベンダーによる差異はない。
+ENI 統計 (`ENI_STAT_COUNTER_FLEX_COUNTER_GROUP`) および Meter 統計 (`METER_STAT_COUNTER_FLEX_COUNTER_GROUP`) のポーリング間隔は `10,000 ms` にハードコードされており (`dashorch.h:30, 33`)、[ASIC](../../reference/glossary.md#term-asic) ベンダーによる差異はない。
 
 > **Evidence**: `main.cpp:242-268, 990-994`（switch_type 判定・DpuOrchDaemon 起動）、`orchdaemon.cpp:613-615, 1322-1418`（DashEniFwdOrch 登録・DpuOrchDaemon::init）、`dashorch.cpp:39, 102-125, 692-715, 738`（SAI API 参照・capability 検出・ENI 作成）、`dashorch.h:29-33`（FlexCounter 定数）
 
@@ -530,3 +530,5 @@ ENI 統計 (`ENI_STAT_COUNTER_FLEX_COUNTER_GROUP`) および Meter 統計 (`METE
 [^orch]: `sonic-net/sonic-swss/orchagent/dash/dashorch.cpp` — `doTaskEniTable()` (L1045–1097), `addEniObject()` (L566–768), `removeEniObject()` (L896–942), `addEniAddrMapEntry()` (L770–800), `removeEniAddrMapEntry()` (L944–974), `addEniMapEntry()` (L1368–1383), `removeEniMapEntry()` (L1385–1397), `setEniRoute()` (L1181–1241), `removeEniRoute()` (L1243–1279).
 
 <!-- glossary-links-injected: dash-eni-2026-0514 -->
+
+<!-- glossary-links-injected: f9445b5b4106 -->

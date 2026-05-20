@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`go-server-server` ベースの SONiC REST API (`docker-sonic-restapi`) の TLS 設定とランタイム挙動を保持するテーブル[^1]。`certs` (証明書パス群) と `config` (動作モード) の 2 つのシングルトン container から構成される。
+`go-server-server` ベースの [SONiC](../../reference/glossary.md#term-sonic) REST API (`docker-sonic-restapi`) の TLS 設定とランタイム挙動を保持するテーブル[^1]。`certs` (証明書パス群) と `config` (動作モード) の 2 つのシングルトン container から構成される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -151,7 +151,6 @@ systemctl status restapi
 
 [^2]: YANG 定義: `sonic-restapi.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-restapi.yang>
 
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -161,7 +160,7 @@ REST_API テーブルの各フィールドはサービス起動引数に直接�
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
-restapi サービス (sonic-mgmt-framework / sonic-gnmi) がインストールされている場合のみ `REST_API` テーブルを消費するプロセスが存在する。サービスが有効化されていない場合はテーブルを読んでも REST API サービスは起動しない。
+restapi サービス ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework / sonic-gnmi) がインストールされている場合のみ `REST_API` テーブルを消費するプロセスが存在する。サービスが有効化されていない場合はテーブルを読んでも REST API サービスは起動しない。
 
 <!-- /derivation -->
 
@@ -184,20 +183,20 @@ restapi サービス (sonic-mgmt-framework / sonic-gnmi) がインストール�
 
 ### 段階 1: Consumer 登録
 
-- **hostcfgd**: `RESTAPI` テーブルを `ConfigDBConnector` で購読。
+- **[hostcfgd](../../reference/glossary.md#term-hostcfgd)**: `RESTAPI` テーブルを `ConfigDBConnector` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- hostcfgd が REST API サービス (sonic-restapi / sonic-gnmi) の有効・無効設定を `/etc/sonic/` に書き込む。
+- [hostcfgd](../../reference/glossary.md#term-hostcfgd) が REST API サービス (sonic-restapi / sonic-gnmi) の有効・無効設定を `/etc/sonic/` に書き込む。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。REST API は管理プレーン機能。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。REST API は管理プレーン機能。
 
 ### 段階 4: タイミング + 副作用
 
-- hostcfgd が設定を反映後、対象サービスが再起動されるまで数秒。
+- [hostcfgd](../../reference/glossary.md#term-hostcfgd) が設定を反映後、対象サービスが再起動されるまで数秒。
 - 副作用: REST API 無効化中に自動化スクリプトが接続しようとするとタイムアウトが発生。
 
 <!-- /runtime-trace -->
@@ -212,15 +211,15 @@ RESTAPI テーブルへの書き込みが発生するコード経路を網羅的
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** が `results['RESTAPI']` に REST API 設定を投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py:2689)
+**minigraph.py** が `results['RESTAPI']` に REST API 設定を投入 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py:2689)
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
-**db_migrator.py** が RESTAPI のマイグレーション処理 (`config` / `certs` サブキー) を実装 (sonic-utilities/scripts/db_migrator.py:609–619)
+**db_migrator.py** が RESTAPI のマイグレーション処理 (`config` / `certs` サブキー) を実装 ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/scripts/db_migrator.py:609–619)
 
 ### ビルド時デフォルト (build-time default)
 
@@ -249,7 +248,6 @@ REST/gNMI 書き込み経路なし
 | `port` | rest_server バイナリデフォルト（8443） | `SERVER_PORT=$(... jq -r '.port // empty')` — 空の場合は `-port` 引数なし、rest_server の組み込みデフォルトが有効 |
 
 > **スキャン証跡**: `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh` の起動スクリプトより抽出。YANG `sonic-restapi.yang` には `default` 文なし。コード由来デフォルトのみ。
-
 
 <!-- /defaults -->
 
@@ -320,14 +318,14 @@ REST/gNMI 書き込み経路なし
 
 **`DEVICE_METADATA|localhost.x509` (cert フォールバック)**: `rest-server.sh` は `MGMT_VARS=$(sonic-cfggen -d -t mgmt_vars.j2)` を一括取得した後、`REST_SERVER.server_crt` / `server_key` / `ca_crt` が全て空であれば `X509=$(echo $MGMT_VARS | jq -r '.x509')` から証明書パスを読み出す (`rest-server.sh:27–41`)。`DEVICE_METADATA|localhost` に `x509` キーが存在しない場合は空文字列となり、最終的に `/tmp/` 自己署名証明書を自動生成する。本番環境では `RESTAPI|certs` を明示設定しないと `DEVICE_METADATA.x509` に依存することになる点に注意。
 
-**`FEATURE|restapi` (コンテナ起動制御)**: `FEATURE` テーブルは SONiC `hostcfgd` が管理し、`restapi` コンテナの起動・停止を制御する。`RESTAPI` テーブルに正しい値が設定されていても `FEATURE|restapi.state=disabled` であれば `rest-server.sh` は実行されない。`minigraph.py` は `RESTAPI` と `FEATURE` を同一解析パスで生成するため、minigraph 由来の環境では両者は常に整合する (`minigraph.py:2689–2702`)。
+**`FEATURE|restapi` (コンテナ起動制御)**: `FEATURE` テーブルは [SONiC](../../reference/glossary.md#term-sonic) `hostcfgd` が管理し、`restapi` コンテナの起動・停止を制御する。`RESTAPI` テーブルに正しい値が設定されていても `FEATURE|restapi.state=disabled` であれば `rest-server.sh` は実行されない。`minigraph.py` は `RESTAPI` と `FEATURE` を同一解析パスで生成するため、minigraph 由来の環境では両者は常に整合する (`minigraph.py:2689–2702`)。
 
 **`db_migrator.py` の既存エントリ優先**: `migrate_restapi()` (`db_migrator.py:609–619`) は `config_db.get_entry('RESTAPI', 'config')` が空の場合のみ書き込む。既存エントリが存在する場合は上書きしない（アップグレード時に手動設定が保持される）。
 
 ### 範囲外
 
-- APPL_DB / STATE_DB / COUNTERS_DB への書き込みなし（RESTAPI は管理プレーン専用機能）
-- orchagent / syncd への経路なし（SAI 経由の処理なし）
+- [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書き込みなし（RESTAPI は管理プレーン専用機能）
+- [orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) への経路なし（[SAI](../../reference/glossary.md#term-sai) 経由の処理なし）
 
 <!-- /cross-refs -->
 
@@ -338,7 +336,7 @@ REST/gNMI 書き込み経路なし
      sonic-buildimage/dockers/docker-sonic-mgmt-framework/supervisord.conf,
      sonic-utilities/scripts/db_migrator.py L608-619 -->
 
-RESTAPI テーブルの設定は `rest-server.sh` が起動時に一括読み込みするため、失敗は **起動時点** (静的) と **証明書生成時点** の 2 フェーズに集中する。orchagent/syncd のような実行時 retry ループは存在しない。
+RESTAPI テーブルの設定は `rest-server.sh` が起動時に一括読み込みするため、失敗は **起動時点** (静的) と **証明書生成時点** の 2 フェーズに集中する。[orchagent](../../reference/glossary.md#term-orchagent)/[syncd](../../reference/glossary.md#term-syncd) のような実行時 retry ループは存在しない。
 
 ### `mgmt_vars.j2` テンプレートファイル未存在 → EXIT_MGMT_VARS_FILE_NOT_FOUND (exit 1)
 
@@ -359,7 +357,7 @@ RESTAPI テーブルの設定は `rest-server.sh` が起動時に一括読み込
 |--------|------|
 | CONFIG_DB に `RESTAPI` テーブルなし | `CLIENT_AUTH="user"` のフォールバックが適用される。証明書も未設定 → `/tmp/` に自己署名証明書を自動生成して起動 |
 | `sonic-cfggen` プロセス自体が失敗 (非ゼロ exit) | bash の `set -e` は使用されていないため、空変数のまま続行。自己署名証明書で起動 |
-| Redis 未起動 / CONFIG_DB 接続失敗 | `sonic-cfggen` が空出力を返す → 同上の自動生成パスへ |
+| [Redis](../../reference/glossary.md#term-redis) 未起動 / CONFIG_DB 接続失敗 | `sonic-cfggen` が空出力を返す → 同上の自動生成パスへ |
 
 ### 証明書自動生成 (`generate_cert`) 失敗
 
@@ -425,7 +423,7 @@ RESTAPI テーブルの設定は `rest-server.sh` が起動時に一括読み込
 | 定数名 | 値 | 用途 | evidence |
 |-------|----|------|---------|
 | `EXIT_MGMT_VARS_FILE_NOT_FOUND` | `1` | `mgmt_vars.j2` 未存在時の exit code | `rest-server.sh:4` |
-| `MGMT_VARS_FILE` | `/usr/share/sonic/templates/mgmt_vars.j2` | sonic-cfggen が読み込む Jinja2 テンプレートの固定パス | `rest-server.sh:5` |
+| `MGMT_VARS_FILE` | `/usr/share/sonic/templates/mgmt_vars.j2` | [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) が読み込む Jinja2 テンプレートの固定パス | `rest-server.sh:5` |
 | `CLIENT_AUTH` フォールバック | `"user"` | `RESTAPI\|config.client_auth` 未設定時のデフォルト認証モード。YANG `default true` (boolean) と**異なる文字列**で実装上の乖離点 | `rest-server.sh:20,30` |
 | `generate_cert --host` | `"localhost,127.0.0.1"` | 証明書自動生成時の固定ホスト名 | `rest-server.sh:47` |
 | `SERVER_CRT` (自動生成時) | `/tmp/cert.pem` | 証明書未設定時の自己署名証明書パス | `rest-server.sh:48` |
@@ -459,7 +457,7 @@ RESTAPI テーブルの設定は `rest-server.sh` が起動時に一括読み込
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`RESTAPI` テーブルへの書込は CONFIG_DB 内で完結し、他の DB (APPL_DB / STATE_DB / ASIC_DB) への副次書込を**引き起こさない**。
+`RESTAPI` テーブルへの書込は CONFIG_DB 内で完結し、他の DB ([APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db)) への副次書込を**引き起こさない**。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/restapi-side-effects.md`
 
@@ -479,9 +477,9 @@ RESTAPI テーブルの設定は `rest-server.sh` が起動時に一括読み込
 
 | 副次書込先 | 書込の有無 | 理由 |
 |-----------|-----------|------|
-| APPL_DB | なし | `rest-server.sh` は起動時一括読み取りのみ。Consumer / subscribe なし |
-| STATE_DB | なし | `RESTAPI` テーブルを購読するデーモンなし |
-| ASIC_DB | なし | SAI 非経由 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `rest-server.sh` は起動時一括読み取りのみ。Consumer / subscribe なし |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `RESTAPI` テーブルを購読するデーモンなし |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由 |
 | ファイルシステム | なし | 設定値は起動引数として適用されるのみ |
 
 ### FIPS 変更による間接的なサービス再起動（参考）
@@ -513,7 +511,7 @@ FIPS_CFG (SET/DEL)
 |---------|---------|-------------------------------|
 | `rest-server.sh` | `sonic-cfggen -d -t mgmt_vars.j2` (起動時 1 回) | **なし** (起動時一括読み取りのみ) |
 | `hostcfgd` | `ConfigDBConnector.subscribe()` | **なし** (`RESTAPI` は購読リストに含まれない) |
-| orchagent / syncd | `swsscommon.ConsumerStateTable` | **なし** (管理プレーン機能のため) |
+| [orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) | `swsscommon.ConsumerStateTable` | **なし** (管理プレーン機能のため) |
 
 ### 起動時一括読み取りのフロー
 
@@ -531,7 +529,7 @@ supervisord 起動
             （起動後は CONFIG_DB への接続なし / subscribe なし）
 ```
 
-起動後の `rest_server` プロセスは Redis に接続を維持しない。`RESTAPI` テーブルを変更しても実行中の `rest_server` には通知が届かない。
+起動後の `rest_server` プロセスは [Redis](../../reference/glossary.md#term-redis) に接続を維持しない。`RESTAPI` テーブルを変更しても実行中の `rest_server` には通知が届かない。
 
 ### FIPS 変更による間接的な再起動（参考）
 
@@ -551,20 +549,20 @@ supervisord 起動
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: RESTAPI は管理プレーン専用機能であり、SAI を経由しないため ASIC 種別・ベンダー・multi-asic / VOQ chassis 構成による動作差は存在しない。
+**プラットフォーム差なし**: RESTAPI は管理プレーン専用機能であり、SAI を経由しないため [ASIC](../../reference/glossary.md#term-asic) 種別・ベンダー・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成による動作差は存在しない。
 
 > **調査根拠**: `rest-server.sh`, `mgmt_vars.j2`, `supervisord.conf`, `minigraph.py:2689-2701` 精読 (2026-05-19)
 > 詳細証跡: `meta/_intermediate/cdb-flow/restapi-platform.md`
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `rest-server.sh` は `sonic-cfggen -d -t mgmt_vars.j2` で CONFIG_DB を読み取るのみ。SAI 非経由 |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `rest-server.sh` は `sonic-cfggen -d -t mgmt_vars.j2` で CONFIG_DB を読み取るのみ。SAI 非経由 |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `mgmt_vars.j2` (4 行全体) に namespace / asic 分岐なし。`rest-server.sh` も `SONIC_ASIC_ID` / `SONIC_ASIC_COUNT` を参照しない |
-| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | RESTAPI テーブルは host scope。chassis 全体での集中管理機構はなく、各 line card host で `rest-server.sh` が独立に CONFIG_DB を読み取る |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | RESTAPI テーブルは host scope。chassis 全体での集中管理機構はなく、各 line card host で `rest-server.sh` が独立に CONFIG_DB を読み取る |
 | ベンダー固有 hook | なし | `docker-sonic-mgmt-framework/` 配下にベンダー条件分岐なし。`rest-server.sh` / `mgmt_vars.j2` / `supervisord.conf` の全行を検索しても `vendor` / `broadcom` / `mellanox` / `marvell` は 0 ヒット |
 | minigraph プラットフォーム分岐 | なし | `minigraph.py:2689-2701` で RESTAPI テーブルへの書込は無条件。`hwsku` / `platform` / `asic_type` による条件分岐なし |
 | テンプレート内プラットフォーム分岐 | なし | `mgmt_vars.j2` は `rest_server` と `x509` の 2 キーのみを展開する 4 行テンプレート。`platform` / `asic` 参照なし |
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: 1bf9170a4ada -->

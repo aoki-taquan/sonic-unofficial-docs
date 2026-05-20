@@ -31,12 +31,12 @@ related:
 
 ## 概要
 
-`STATE_DB` の `PORT_TABLE` に `PortsOrch` が書き込む FEC 関連フィールド。Config フィールドではなく、**SAI から取得した oper 値**を反映する読み取り専用の状態情報。
+`STATE_DB` の `PORT_TABLE` に `PortsOrch` が書き込む FEC 関連フィールド。Config フィールドではなく、**[SAI](../../reference/glossary.md#term-sai) から取得した oper 値**を反映する読み取り専用の状態情報。
 
 | フィールド | DB | テーブル | 説明 |
 |-----------|-----|---------|------|
-| `fec` | STATE_DB | `PORT_TABLE\|<port>` | 現在の動作 FEC モード（SAI `SAI_PORT_ATTR_OPER_PORT_FEC_MODE` 由来） |
-| `supported_fecs` | STATE_DB | `PORT_TABLE\|<port>` | プラットフォームがサポートする FEC モード一覧（SAI `SAI_PORT_ATTR_SUPPORTED_FEC_MODE` 由来） |
+| `fec` | [STATE_DB](../../reference/glossary.md#term-state_db) | `PORT_TABLE\|<port>` | 現在の動作 FEC モード（[SAI](../../reference/glossary.md#term-sai) `SAI_PORT_ATTR_OPER_PORT_FEC_MODE` 由来） |
+| `supported_fecs` | [STATE_DB](../../reference/glossary.md#term-state_db) | `PORT_TABLE\|<port>` | プラットフォームがサポートする FEC モード一覧（[SAI](../../reference/glossary.md#term-sai) `SAI_PORT_ATTR_SUPPORTED_FEC_MODE` 由来） |
 
 !!! note "CONFIG_DB との関係"
     FEC の **設定** は `CONFIG_DB` の `PORT` テーブル (`fec` フィールド) で行う。このページで説明するフィールドはその設定が ASIC に適用された結果として STATE_DB に書き戻される oper 状態値。
@@ -67,7 +67,7 @@ flowchart LR
 PORT_TABLE|<name>
 ```
 
-`<name>` は `Ethernet<N>` 形式の物理ポート名。CONFIG_DB `PORT` テーブルのキーと同一。
+`<name>` は `Ethernet<N>` 形式の物理ポート名。[CONFIG_DB](../../reference/glossary.md#term-config_db) `PORT` テーブルのキーと同一。
 
 ## フィールド一覧
 
@@ -80,10 +80,10 @@ PORT_TABLE|<name>
 
 ### 書き込みトリガー
 
-`updateDbPortOperFec(port, fec_str)` (portsorch.cpp:9864) は以下の 2 箇所から呼ばれる:
+`updateDbPortOperFec(port, fec_str)` ([portsorch](../../reference/glossary.md#term-portsorch).cpp:9864) は以下の 2 箇所から呼ばれる:
 
-1. **ポート oper-status が UP に変化したとき** — PortsOrch がポートアップ通知を受信 (portsorch.cpp:9682)
-2. **`refreshPortStatus()` 実行時** — orchagent 起動時の同期処理 (portsorch.cpp:9920)
+1. **ポート oper-status が UP に変化したとき** — PortsOrch がポートアップ通知を受信 ([portsorch](../../reference/glossary.md#term-portsorch).cpp:9682)
+2. **`refreshPortStatus()` 実行時** — [orchagent](../../reference/glossary.md#term-orchagent) 起動時の同期処理 ([portsorch](../../reference/glossary.md#term-portsorch).cpp:9920)
 
 ### 値決定ロジック
 
@@ -98,7 +98,7 @@ updateDbPortOperFec(port, fec_str)
 
 `portFecRevMap` (porthlpr.cpp:85–90):
 
-| SAI 値 | STATE_DB 文字列 |
+| SAI 値 | [STATE_DB](../../reference/glossary.md#term-state_db) 文字列 |
 |--------|----------------|
 | `SAI_PORT_FEC_MODE_NONE` | `"none"` |
 | `SAI_PORT_FEC_MODE_RS` | `"rs"` |
@@ -151,7 +151,7 @@ SAI_PORT_ATTR_SUPPORTED_FEC_MODE を取得:
 | プロセス | 参照フィールド | 用途 |
 |---------|--------------|------|
 | `intfutil` (`show interfaces fec status`) | `STATE_DB PORT_TABLE\|<port>` → `fec` | FEC Oper 列の表示。`oper_status != "up"` の場合は `"N/A"` を上書き表示 |
-| `intfutil` (`show interfaces status`) | `APPL_DB PORT_TABLE:<port>` → `fec` | FEC Admin 列（CONFIG_DB 設定値; STATE_DB ではない） |
+| `intfutil` (`show interfaces status`) | `APPL_DB PORT_TABLE:<port>` → `fec` | FEC Admin 列（[CONFIG_DB](../../reference/glossary.md#term-config_db) 設定値; STATE_DB ではない） |
 
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
@@ -175,7 +175,7 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドは `PortsOrch
 
 **`fec` — UP 時のみ書込み (依存 #3)**: `updateDbPortOperFec()` は `status == SAI_PORT_OPER_STATUS_UP` ブロック内でのみ呼ばれる (portsorch.cpp:9668–9694, 9910–9929)。DOWN 遷移では書き込みが発生しないため、`fec` フィールドにはポートが DOWN であっても最後に UP だった時の値が残留する。`intfutil` は表示時に `oper_status != "up"` を確認して `"N/A"` に変換するが、STATE_DB の値自体は変化しない。
 
-**`supported_fecs` — lazy init かつ 1 回限り (依存 #1, #2)**: cold boot では `postPortInit()` 内で `initPortSupportedFecModes()` を呼ぶため、`PortInitDone` 受信後にポートが存在する時点で値が確定する。ただし `m_portSupportedFecModes` に一度格納されると orchagent 再起動まで SAI を再問い合わせしない。トランシーバ換装後も `supported_fecs` が更新されないため、stale な値を consumer が読む可能性がある。
+**`supported_fecs` — lazy init かつ 1 回限り (依存 #1, #2)**: cold boot では `postPortInit()` 内で `initPortSupportedFecModes()` を呼ぶため、`PortInitDone` 受信後にポートが存在する時点で値が確定する。ただし `m_portSupportedFecModes` に一度格納されると [orchagent](../../reference/glossary.md#term-orchagent) 再起動まで SAI を再問い合わせしない。トランシーバ換装後も `supported_fecs` が更新されないため、stale な値を consumer が読む可能性がある。
 
 **`oper_fec_sup` / `fec_override_sup` の静的確定 (依存 #4, #5)**: 両フラグは PortsOrch コンストラクタ (portsorch.cpp:987–1010) で SAI capability クエリを 1 回だけ実行して確定する。これ以降は変更されない。この静的評価により、プラットフォームが FEC oper 取得を未実装 (`get_implemented=false`) であれば `fec` は起動から終了まで常に `"N/A"` となる。
 
@@ -196,7 +196,7 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドは `PortsOrch
 | 書き手依存 (fec) | `PortsOrch::updateDbPortOperFec` | `STATE_DB PORT_TABLE\|<port>` | `fec` | SAI port_state_change UP 通知受信後に STATE_DB へ書き込む。書き込み前に `oper_fec_sup` フラグ（PortsOrch コンストラクタで確定）を参照し、false なら無条件 `"N/A"` | `portsorch.cpp:9864-9872` |
 | 書き手依存 (supported_fecs) | `PortsOrch::initPortSupportedFecModes` | `STATE_DB PORT_TABLE\|<port>` | `supported_fecs` | `postPortInit()` 時に SAI から取得した FEC モード一覧を書き込む。`fec_override_sup` フラグが true の場合のみ末尾に `"auto"` を追加 | `portsorch.cpp:3265-3327` |
 | 読み手 (FEC Oper) | `intfutil generate_fec_status()` | `STATE_DB PORT_TABLE\|<port>` | `fec`, `oper_status` | `show interfaces fec status` の FEC Oper 列を生成。`oper_status != "up"` のとき `fec` を `"N/A"` に変換して表示（STATE_DB の値は変更しない） | `intfutil:911-914` |
-| 読み手 (FEC Admin) | `intfutil generate_fec_status()` | `APPL_DB PORT_TABLE:<port>` | `fec` | `show interfaces fec status` の FEC Admin 列は **STATE_DB ではなく APPL_DB** から読む。CONFIG_DB `PORT.fec` が portmgrd 経由で APPL_DB に書き込まれた値 | `intfutil:910` |
+| 読み手 (FEC Admin) | `intfutil generate_fec_status()` | `APPL_DB PORT_TABLE:<port>` | `fec` | `show interfaces fec status` の FEC Admin 列は **STATE_DB ではなく [APPL_DB](../../reference/glossary.md#term-appl_db)** から読む。[CONFIG_DB](../../reference/glossary.md#term-config_db) `PORT.fec` が [portmgrd](../../reference/glossary.md#term-portmgrd) 経由で [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込まれた値 | `intfutil:910` |
 | 間接参照 (FEC 設定検証) | `PortsOrch::isFecModeSupported` | `m_portSupportedFecModes` (in-memory) | — | CONFIG_DB `PORT.fec` 変更時の妥当性確認に使用。`initPortSupportedFecModes()` の lazy init 結果をキャッシュ参照するため STATE_DB を再読しない | `portsorch.cpp:3205-3222` |
 | 間接参照 (トランシーバ) | `PortsOrch` (SubscriberStateTable) | `STATE_DB TRANSCEIVER_INFO_TABLE` | — | トランシーバ存在確認に購読。ただし `supported_fecs` の lazy init はトランシーバ変化では再トリガーされない（`postPortInit()` 時 1 回限り） | `portsorch.cpp:984` |
 
@@ -207,9 +207,9 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドは `PortsOrch
 | 列 | 参照 DB | テーブル | フィールド |
 |----|--------|---------|-----------|
 | FEC Oper | STATE_DB | `PORT_TABLE\|<port>` | `fec` |
-| FEC Admin | APPL_DB | `PORT_TABLE:<port>` | `fec` |
+| FEC Admin | [APPL_DB](../../reference/glossary.md#term-appl_db) | `PORT_TABLE:<port>` | `fec` |
 
-FEC Admin 列は CONFIG_DB `PORT.<port>.fec` が portmgrd によって APPL_DB に反映された値を読む。
+FEC Admin 列は CONFIG_DB `PORT.<port>.fec` が [portmgrd](../../reference/glossary.md#term-portmgrd) によって APPL_DB に反映された値を読む。
 STATE_DB の `fec` (oper) と APPL_DB の `fec` (admin) は別フィールドであり、
 ポートが DOWN 中は Oper 側に stale 値が残留する（`intfutil` は表示時に `"N/A"` に変換する）。
 
@@ -220,7 +220,7 @@ STATE_DB の `fec` (oper) と APPL_DB の `fec` (admin) は別フィールドで
 
 ### oper_fec_sup フラグ
 
-`oper_fec_sup` (portsorch.cpp:1001–1010) は orchagent 初期化時に 1 回だけ評価される:
+`oper_fec_sup` (portsorch.cpp:1001–1010) は [orchagent](../../reference/glossary.md#term-orchagent) 初期化時に 1 回だけ評価される:
 
 | 条件 | `oper_fec_sup` | `fec` フィールドの結果 |
 |------|---------------|----------------------|
@@ -242,7 +242,7 @@ STATE_DB の `fec` (oper) と APPL_DB の `fec` (admin) は別フィールドで
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG default 外の fallback。`PortsOrch::updateDbPortOperFec` と `initPortSupportedFecModes` の実装から導出。
+[YANG](../../reference/glossary.md#term-yang) default 外の fallback。`PortsOrch::updateDbPortOperFec` と `initPortSupportedFecModes` の実装から導出。
 
 | フィールド | コード由来デフォルト | fallback 源 |
 |-----------|-------------------|------------|
@@ -269,7 +269,7 @@ YANG default 外の fallback。`PortsOrch::updateDbPortOperFec` と `initPortSup
 
 <!-- evidence: meta/_intermediate/cdb-flow/fec-state-defaults.md -->
 
-- `getPortOperFec()` (portsorch.cpp:9994) は `port.m_type != Port::PHY` のとき即 `return false` → LAG / VLAN ポートでは `fec` は常に `"N/A"`
+- `getPortOperFec()` (portsorch.cpp:9994) は `port.m_type != Port::PHY` のとき即 `return false` → [LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) ポートでは `fec` は常に `"N/A"`
 - `fecToStr` の失敗は SWSS_LOG_ERROR + `"N/A"` フォールバック。未知の SAI fec mode が返った場合は `"N/A"` と表示されるだけでエラー停止しない
 - `supported_fecs` の `"auto"` 追加は `fecModeList.empty()` でなく かつ `fec_override_sup=true` の両方が必要 (portsorch.cpp:3310–3313)。空集合 (`"N/A"`) の場合は `"auto"` が追加されない
 
@@ -278,7 +278,7 @@ YANG default 外の fallback。`PortsOrch::updateDbPortOperFec` と `initPortSup
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
-`PortsOrch` による FEC モード適用 (`doPortTask` → `setPortFec`) と FEC oper 値取得 (`getPortOperFec`) の失敗経路を整理する。STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドへの書込みは `swss::Table::set()` (void 返却) を使うため、**Redis 書込み自体の失敗はアプリ層では検出不可**。Redis 例外は orchagent プロセス abort → systemd 再起動という経路で回収される。
+`PortsOrch` による FEC モード適用 (`doPortTask` → `setPortFec`) と FEC oper 値取得 (`getPortOperFec`) の失敗経路を整理する。STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドへの書込みは `swss::Table::set()` (void 返却) を使うため、**[Redis](../../reference/glossary.md#term-redis) 書込み自体の失敗はアプリ層では検出不可**。[Redis](../../reference/glossary.md#term-redis) 例外は orchagent プロセス abort → systemd 再起動という経路で回収される。
 
 <!-- evidence: meta/_intermediate/cdb-flow/fec-state-failure.md -->
 
@@ -300,7 +300,7 @@ YANG default 外の fallback。`PortsOrch::updateDbPortOperFec` と `initPortSup
 
 | 失敗条件 | 発生箇所 | 結果 | STATE_DB の `fec` |
 |---------|---------|------|-----------------|
-| `port.m_type != Port::PHY`（LAG / VLAN ポート等） | portsorch.cpp:9998-10000 | `return false` → `fec_str = "N/A"` | `"N/A"` 書込み |
+| `port.m_type != Port::PHY`（[LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) ポート等） | portsorch.cpp:9998-10000 | `return false` → `fec_str = "N/A"` | `"N/A"` 書込み |
 | SAI `get_port_attribute(OPER_PORT_FEC_MODE)` 失敗 | portsorch.cpp:10007-10010 | SWSS_LOG_NOTICE → `return false` → `fec_str = "N/A"` | `"N/A"` 書込み |
 | `fecToStr()` 変換失敗（未知 SAI fec_mode） | portsorch.cpp:9684-9688 | SWSS_LOG_ERROR → `fec_str = "N/A"` | `"N/A"` 書込み |
 
@@ -374,10 +374,10 @@ FEC SET 成功時のみ `p.m_fec_cfg = true` をセットして `m_portList` を
 
 | 値 | 定義箇所 | 用途 |
 |----|---------|------|
-| `"N/A"` | portsorch.cpp 各所（リテラル） | `fec` フィールドのフォールバック。YANG 定義外の値だが orchagent が書き込む |
+| `"N/A"` | portsorch.cpp 各所（リテラル） | `fec` フィールドのフォールバック。[YANG](../../reference/glossary.md#term-yang) 定義外の値だが orchagent が書き込む |
 | `"N/A"` | portsorch.cpp:3292（`supported_fec_modes.empty()` 時） | `supported_fecs` 空集合時のフォールバック |
 
-`"N/A"` は YANG スキーマに含まれない orchagent 独自のセンチネル値。YANG が想定する有効値セット（`none`/`rs`/`fc`/`auto`）とは別系統の値として扱う必要がある。
+`"N/A"` は [YANG](../../reference/glossary.md#term-yang) スキーマに含まれない orchagent 独自のセンチネル値。YANG が想定する有効値セット（`none`/`rs`/`fc`/`auto`）とは別系統の値として扱う必要がある。
 
 ### 拡張性の制約
 
@@ -402,7 +402,7 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドへの書込�
 | 2 | `updateDbPortOperSpeed()` | STATE_DB | `PORT_TABLE\|<port>` | `speed` = oper speed (Mbps) / `"N/A"` | `portsorch.cpp:9671-9678, 9850-9857` |
 | 3 | **`updateDbPortOperFec()`** | STATE_DB | `PORT_TABLE\|<port>` | **`fec`**（本ページの主作用） | `portsorch.cpp:9690, 9694, 9864-9870` |
 
-3 回の書込みは Redis `set` コマンドとして独立して発行される。APPL_DB と STATE_DB は別接続のため、`oper_status` が APPL_DB に書かれた時点で `fec` がまだ STATE_DB に届いていない中間状態が生じうる。
+3 回の書込みは [Redis](../../reference/glossary.md#term-redis) `set` コマンドとして独立して発行される。APPL_DB と STATE_DB は別接続のため、`oper_status` が APPL_DB に書かれた時点で `fec` がまだ STATE_DB に届いていない中間状態が生じうる。
 
 ### トリガー B: `postPortInit()` 呼出し（`supported_fecs` と同時に発生する副次書込）
 
@@ -417,11 +417,11 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドへの書込�
 
 ### トリガー C: `addPort()` でのポート登録（`supported_fecs` より先に発生）
 
-`addPort()` (portsorch.cpp:4118) は `m_counterNameMapUpdater->setCounterNameMap()` を呼び COUNTERS_DB を更新する。この時点では `initPortSupportedFecModes()` はまだ呼ばれていない（`postPortInit()` が後で呼ばれる）。
+`addPort()` (portsorch.cpp:4118) は `m_counterNameMapUpdater->setCounterNameMap()` を呼び [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を更新する。この時点では `initPortSupportedFecModes()` はまだ呼ばれていない（`postPortInit()` が後で呼ばれる）。
 
 | 副次書込 | DB | テーブル / キー | 書込内容 | 証跡 |
 |---------|-----|--------------|---------|------|
-| `setCounterNameMap()` | COUNTERS_DB | `COUNTERS_PORT_NAME_MAP` | `<port_alias>` → SAI port OID 文字列 | `portsorch.cpp:4114-4118` |
+| `setCounterNameMap()` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_PORT_NAME_MAP` | `<port_alias>` → SAI port OID 文字列 | `portsorch.cpp:4114-4118` |
 
 !!! note "FEC 設定変更では COUNTERS_PORT_NAME_MAP は更新されない"
     `COUNTERS_PORT_NAME_MAP` は `addPort()` 時の 1 回限りの書込みで確定する。ポート削除時は `delCounterNameMap()` (portsorch.cpp:4312) で削除される。FEC モード変更 (`doPortTask` → `setPortFec`) では `COUNTERS_PORT_NAME_MAP` は再書込みされない。
@@ -529,7 +529,7 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドの書込み�
 | Broadcom (Trident4 / Tomahawk4 以降) | `true` | `true` | SAI oper 値 (`none`/`rs`/`fc`) | SAI 対応モード CSV | ◎ |
 | Broadcom 旧世代 (Trident2 等) | `false`（get 未実装） | プラットフォーム次第 | `"N/A"` 固定 | フィールド不在 (NOT_IMPLEMENTED 多) | ✗ |
 | Mellanox/NVIDIA Spectrum | `true` | `true` | SAI oper 値 | SAI 対応モード CSV | ◎ |
-| DPU | `false`（クエリスキップ） | `false`（クエリスキップ） | `"N/A"` 固定 | SAI 次第（多くは不在） | ✗ |
+| [DPU](../../reference/glossary.md#term-dpu) | `false`（クエリスキップ） | `false`（クエリスキップ） | `"N/A"` 固定 | SAI 次第（多くは不在） | ✗ |
 | VS (仮想スイッチ) | `false`（SAI stub が unimplemented） | `false` | `"N/A"` 固定 | フィールド不在 | ✗ |
 
 ### `fec=auto` 設定とプラットフォーム制約
@@ -545,7 +545,7 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドの書込み�
 | `isMlnxPlatform()` 使用箇所 | 用途 |
 |---------------------------|------|
 | portsorch.cpp:858 | Trim 統計プラグイン (`nvdaPortTrimSha`) の追加判定 |
-| portsorch.cpp:6362, 6379 | LAG distribution/collection 順序制御 |
+| portsorch.cpp:6362, 6379 | [LAG](../../reference/glossary.md#term-lag) distribution/collection 順序制御 |
 
 STATE_DB `fec` / `supported_fecs` への書込みはプラットフォーム文字列検査ではなく
 SAI capability クエリ結果（`oper_fec_sup` / `fec_override_sup`）のみで制御される。
@@ -557,3 +557,5 @@ SAI capability クエリ結果（`oper_fec_sup` / `fec_override_sup`）のみで
 - CONFIG_DB: [`PORT` テーブル](port.md) — FEC の設定フィールド (`fec`)
 - アーキテクチャ: [`Port Auto FEC 設計`](../../architecture/sonic-port-auto-fec-design.md) — `fec=auto` モードと `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` の詳細
 - CLI: `show interfaces fec status` — oper / admin FEC をまとめて表示
+
+<!-- glossary-links-injected: 07d24e4e47ef -->

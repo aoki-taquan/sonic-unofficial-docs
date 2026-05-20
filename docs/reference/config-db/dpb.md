@@ -39,7 +39,7 @@ related:
 起動時は `sonic-cfggen` が `hwsku.json` の `default_brkout_mode` フィールドをもとに全親ポートのエントリを書き込む。
 `config interface breakout <port> <mode>` コマンドが breakout を変更するたびに当該エントリの `brkout_mode` を上書きする。
 
-orchagent は `BREAKOUT_CFG` を直接購読しない。CLI（`portconfig` ライブラリ）が `PORT` テーブルを再構成し、orchagent は `PORT` テーブルの変更を受け取る間接フロー。`BREAKOUT_CFG` はモード履歴の管理テーブルとして機能する。
+[orchagent](../../reference/glossary.md#term-orchagent) は `BREAKOUT_CFG` を直接購読しない。CLI（`portconfig` ライブラリ）が `PORT` テーブルを再構成し、[orchagent](../../reference/glossary.md#term-orchagent) は `PORT` テーブルの変更を受け取る間接フロー。`BREAKOUT_CFG` はモード履歴の管理テーブルとして機能する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -63,7 +63,7 @@ flowchart LR
 BREAKOUT_CFG|<port-name>
 ```
 
-`<port-name>` は親ポート名（例: `Ethernet0`）。YANG では `PORT` テーブルへの leafref でなく自由文字列として定義されており、DPB 操作中に `PORT` テーブルに存在しない場合でも有効なエントリとなる[^2]。
+`<port-name>` は親ポート名（例: `Ethernet0`）。[YANG](../../reference/glossary.md#term-yang) では `PORT` テーブルへの leafref でなく自由文字列として定義されており、[DPB](../../reference/glossary.md#term-dpb) 操作中に `PORT` テーブルに存在しない場合でも有効なエントリとなる[^2]。
 
 ## フィールド
 
@@ -102,14 +102,14 @@ BREAKOUT_CFG|<port-name>
 - `BREAKOUT_CFG` テーブルが存在しない場合、CLI は `[ERROR] BREAKOUT_CFG table is NOT present in CONFIG DB` を返す（`main.py:5481`）
 - 指定ポートが `BREAKOUT_CFG` に存在しない場合、CLI はエラーを返す（`main.py:5485`）
 - 指定 mode が `platform.json` の `breakout_modes` に存在しない場合、CLI はエラーを返す（`main.py:5208-5209`）
-- `.json` 形式の port config（`platform.json` + `hwsku.json`）が必要。`port_config.ini` 形式の場合、DPB は無効（`portconfig.py:464`: `return None`）
+- `.json` 形式の port config（`platform.json` + `hwsku.json`）が必要。`port_config.ini` 形式の場合、[DPB](../../reference/glossary.md#term-dpb) は無効（`portconfig.py:464`: `return None`）
 
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
 <!-- evidence: meta/_intermediate/cdb-flow/dpb-defaults.md -->
 
-YANG (`sonic-breakout_cfg.yang`) は `brkout_mode` に `default` 文を持たない。
+[YANG](../../reference/glossary.md#term-yang) (`sonic-breakout_cfg.yang`) は `brkout_mode` に `default` 文を持たない。
 
 ### `brkout_mode` — 起動時初期値は `hwsku.json` の `default_brkout_mode`
 
@@ -133,11 +133,11 @@ if brkout_table:
     deep_update(data, {'BREAKOUT_CFG': brkout_table})
 ```
 
-| フィールド | YANG default | コード由来デフォルト | fallback 源 |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード由来デフォルト | fallback 源 |
 |-----------|-------------|-------------------|------------|
 | `brkout_mode` | なし | `hwsku.json` の `default_brkout_mode`（プラットフォーム定義） | `portconfig.py:parse_breakout_mode()` — 起動時に `sonic-cfggen` が書き込み |
 
-YANG レイヤーは補完しない。CONFIG_DB に一度も書かれていない（`platform.json` / `hwsku.json` なし環境）場合、CLI は `BREAKOUT_CFG table is NOT present in CONFIG DB` エラーを返す。
+YANG レイヤーは補完しない。[CONFIG_DB](../../reference/glossary.md#term-config_db) に一度も書かれていない（`platform.json` / `hwsku.json` なし環境）場合、CLI は `BREAKOUT_CFG table is NOT present in CONFIG DB` エラーを返す。
 
 <!-- /defaults -->
 
@@ -153,10 +153,10 @@ YANG レイヤーは補完しない。CONFIG_DB に一度も書かれていな�
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
 | 1 | `BREAKOUT_CFG` エントリ存在 → breakout コマンド実行 | **先行必須** | 起動時 `sonic-cfggen` が自動生成。手動投入時は `BREAKOUT_CFG` を先に書く |
-| 2 | 依存テーブル（VLAN_MEMBER / ACL / BUFFER 等）DEL → ポート shutdown → CONFIG_DB 削除 | **強制順序** (`ConfigMgmtDPB`) | `--force-remove-dependencies` で自動処理。手動時は依存テーブルを先に DEL |
-| 3 | ASIC_DB ポート削除確認 → 新ポート CONFIG_DB 追加 | **強制先行**（最大 60 秒待機） | タイムアウト時は処理中断。syncd / orchagent の応答性に依存 |
+| 2 | 依存テーブル（VLAN_MEMBER / [ACL](../../reference/glossary.md#term-acl) / BUFFER 等）DEL → ポート shutdown → [CONFIG_DB](../../reference/glossary.md#term-config_db) 削除 | **強制順序** (`ConfigMgmtDPB`) | `--force-remove-dependencies` で自動処理。手動時は依存テーブルを先に DEL |
+| 3 | [ASIC_DB](../../reference/glossary.md#term-asic_db) ポート削除確認 → 新ポート CONFIG_DB 追加 | **強制先行**（最大 60 秒待機） | タイムアウト時は処理中断。[syncd](../../reference/glossary.md#term-syncd) / [orchagent](../../reference/glossary.md#term-orchagent) の応答性に依存 |
 | 4 | `CABLE_LENGTH` / `BUFFER_PG` / `BUFFER_QUEUE` DEL → `PORT` DEL | 推奨先行（YANG 依存チェック） | `--force` で自動削除。なければ YANG バリデーションエラー |
-| 5 | PORT 再構成 + ASIC_DB 確認 → `BREAKOUT_CFG.brkout_mode` 更新 | **強制後続**（成功時のみ更新） | 失敗時は旧モード保持のまま。再実行可能 |
+| 5 | PORT 再構成 + [ASIC_DB](../../reference/glossary.md#term-asic_db) 確認 → `BREAKOUT_CFG.brkout_mode` 更新 | **強制後続**（成功時のみ更新） | 失敗時は旧モード保持のまま。再実行可能 |
 
 ### 主要制約詳細
 
@@ -172,7 +172,7 @@ YANG レイヤーは補完しない。CONFIG_DB に一度も書かれていな�
 5. writeConfigDB()   — 新ポートを CONFIG_DB に追加
 ```
 
-ステップ 4 は syncd/orchagent が SAI 経由でポートを ASIC から削除し ASIC_DB を更新するまでブロックする。タイムアウト（60 秒）すると例外を投げて新ポート追加は行われない（evidence: `config_mgmt.py:377-412,450-460`）。
+ステップ 4 は [syncd](../../reference/glossary.md#term-syncd)/orchagent が [SAI](../../reference/glossary.md#term-sai) 経由でポートを [ASIC](../../reference/glossary.md#term-asic) から削除し [ASIC_DB](../../reference/glossary.md#term-asic_db) を更新するまでブロックする。タイムアウト（60 秒）すると例外を投げて新ポート追加は行われない（evidence: `config_mgmt.py:377-412,450-460`）。
 
 **BREAKOUT_CFG 更新は最後（依存 #5）**: `breakout()` (main.py:5548-5554) は `breakout_Ports()` が成功した後にのみ `BREAKOUT_CFG.brkout_mode` を新モードに更新する。途中失敗時は旧モードが残り、次回コマンド実行の起点となる。
 
@@ -251,7 +251,7 @@ YANG レイヤーは補完しない。CONFIG_DB に一度も書かれていな�
 |------|----|------|--------|
 | `MAX_WAIT` | `60` 秒 | `_verifyAsicDB()` のポーリングタイムアウト。1 秒 sleep × 60 回でポート消滅を確認し、超過時は `Exception` を raise して新ポート追加をブロック | `config_mgmt.py:429` |
 
-`MAX_WAIT` は `breakOutPort()` のローカル定数であり、CLI オプションや設定ファイルで変更する手段は存在しない。syncd / orchagent の応答が遅延する環境（高負荷・デバッグビルド等）ではタイムアウトに達しやすい。
+`MAX_WAIT` は `breakOutPort()` のローカル定数であり、CLI オプションや設定ファイルで変更する手段は存在しない。[syncd](../../reference/glossary.md#term-syncd) / orchagent の応答が遅延する環境（高負荷・デバッグビルド等）ではタイムアウトに達しやすい。
 
 ### portconfig.py 文字列定数
 
@@ -278,7 +278,7 @@ YANG レイヤーは補完しない。CONFIG_DB に一度も書かれていな�
 
 <!-- evidence: meta/_intermediate/cdb-flow/dpb-side-effects.md -->
 
-`config interface breakout` コマンドが `BREAKOUT_CFG` を更新する際、CONFIG_DB の複数テーブルおよび APPL_DB / ASIC_DB に以下の副次書込みが発生する。
+`config interface breakout` コマンドが `BREAKOUT_CFG` を更新する際、CONFIG_DB の複数テーブルおよび [APPL_DB](../../reference/glossary.md#term-appl_db) / ASIC_DB に以下の副次書込みが発生する。
 
 ### CONFIG_DB 副次書込みシーケンス
 
@@ -298,7 +298,7 @@ YANG レイヤーは補完しない。CONFIG_DB に一度も書かれていな�
 
 `PORT` テーブルへの CONFIG_DB 変更を `portmgrd` が購読し、`APPL_DB PORT_TABLE` に伝播する:
 
-| CONFIG_DB 操作 | portmgrd の動作 | APPL_DB 結果 |
+| CONFIG_DB 操作 | [portmgrd](../../reference/glossary.md#term-portmgrd) の動作 | [APPL_DB](../../reference/glossary.md#term-appl_db) 結果 |
 |--------------|----------------|-------------|
 | `PORT\|<port>` DEL | `m_appPortTable.del(alias)` | `PORT_TABLE\|<port>` 削除 |
 | `PORT\|<port>` SET | `writeConfigToAppDb(alias, field_values)` → `m_appPortTable.set(alias, fvs)` | `PORT_TABLE\|<port>` 更新 |
@@ -307,7 +307,7 @@ YANG レイヤーは補完しない。CONFIG_DB に一度も書かれていな�
 
 ### ASIC_DB ポーリング
 
-`_verifyAsicDB()` (`config_mgmt.py:377`) は削除ポートの SAI OID (`ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x<oid>`) が ASIC_DB から消えるまで 1 秒間隔で最大 `MAX_WAIT=60` 秒ポーリングする。タイムアウト時は `Exception` を raise して新ポート追加をブロックする。
+`_verifyAsicDB()` (`config_mgmt.py:377`) は削除ポートの [SAI](../../reference/glossary.md#term-sai) OID (`ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x<oid>`) が ASIC_DB から消えるまで 1 秒間隔で最大 `MAX_WAIT=60` 秒ポーリングする。タイムアウト時は `Exception` を raise して新ポート追加をブロックする。
 
 ### 確認コマンド
 
@@ -330,13 +330,13 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_PORT:*'
 
 <!-- evidence: meta/_intermediate/cdb-flow/dpb-pubsub.md -->
 
-`BREAKOUT_CFG` テーブル自体を Redis keyspace notification で購読するデーモンは **存在しない**。DPB フローにおける通知の核心は `PORT` テーブルへの書込みであり、`portmgrd` がそれを受け取って `APPL_DB` へ伝播する。
+`BREAKOUT_CFG` テーブル自体を [Redis](../../reference/glossary.md#term-redis) keyspace notification で購読するデーモンは **存在しない**。DPB フローにおける通知の核心は `PORT` テーブルへの書込みであり、`portmgrd` がそれを受け取って `APPL_DB` へ伝播する。
 
 ### BREAKOUT_CFG の購読状況
 
-`BREAKOUT_CFG` を `SubscriberStateTable` / PSUBSCRIBE で購読するサービスは sonic-swss・sonic-buildimage・sonic-utilities 全域で確認されなかった。
+`BREAKOUT_CFG` を `SubscriberStateTable` / PSUBSCRIBE で購読するサービスは [sonic-swss](../../reference/glossary.md#term-sonic-swss)・[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)・[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) 全域で確認されなかった。
 
-CLI（`config/main.py`・`show/interfaces/__init__.py`）は `ConfigDBConnector.get_table('BREAKOUT_CFG')` による **点時間ポーリング** のみを使用する。これは Redis `HGETALL` の一括取得であり、継続的な pub/sub ではない。
+CLI（`config/main.py`・`show/interfaces/__init__.py`）は `ConfigDBConnector.get_table('BREAKOUT_CFG')` による **点時間ポーリング** のみを使用する。これは [Redis](../../reference/glossary.md#term-redis) `HGETALL` の一括取得であり、継続的な pub/sub ではない。
 
 ### CONFIG_DB → portmgrd の通知フロー
 
@@ -353,14 +353,14 @@ CLI（`config/main.py`・`show/interfaces/__init__.py`）は `ConfigDBConnector.
 
 DPB シーケンスで `PORT` テーブルが変更されると、`portmgrd` が受け取って `APPL_DB PORT_TABLE` に伝播する:
 
-| CONFIG_DB 操作 | portmgrd の処理 | APPL_DB 結果 | ソース |
+| CONFIG_DB 操作 | [portmgrd](../../reference/glossary.md#term-portmgrd) の処理 | [APPL_DB](../../reference/glossary.md#term-appl_db) 結果 | ソース |
 |---------------|----------------|-------------|--------|
 | `PORT\|<port>` SET | `writeConfigToAppDb()` → `m_appPortTable.set()` | `PORT_TABLE\|<port>` 更新 | `portmgr.cpp:213` |
 | `PORT\|<port>` DEL | `m_appPortTable.del(alias)` | `PORT_TABLE\|<port>` 削除 | `portmgr.cpp:244` |
 
 ### BREAKOUT_CFG 更新後の通知不在
 
-`main.py:5554` の `config_db.set_entry("BREAKOUT_CFG", ...)` は Redis `HSET` を発行し keyspace notification を生成するが、**これを購読するデーモンは存在しない**。`BREAKOUT_CFG.brkout_mode` の変更は他サービスに自動通知されず、次回 CLI 実行時に `get_table('BREAKOUT_CFG')` で読み直されることで参照される。
+`main.py:5554` の `config_db.set_entry("BREAKOUT_CFG", ...)` は [Redis](../../reference/glossary.md#term-redis) `HSET` を発行し keyspace notification を生成するが、**これを購読するデーモンは存在しない**。`BREAKOUT_CFG.brkout_mode` の変更は他サービスに自動通知されず、次回 CLI 実行時に `get_table('BREAKOUT_CFG')` で読み直されることで参照される。
 
 <!-- /pubsub -->
 
@@ -374,14 +374,14 @@ DPB シーケンスで `PORT` テーブルが変更されると、`portmgrd` が
 | 観点 | 結果 | 根拠 |
 |------|------|------|
 | `platform.json` 非対応環境（`port_config.ini` 形式） | **DPB 完全無効** — CLI が冒頭で即 Abort。`BREAKOUT_CFG` テーブル自体が `sonic-cfggen` によって生成されない | `portconfig.py:464` (`return None`), `main.py:5468–5471` |
-| Broadcom ハードウェアプロファイル | SAI `create_port` / `remove_port` が動作するために `portmap_N=<lane>:<speed>[:<speed>:i]` 形式のハードウェアプロファイル事前設定が必要。未設定の場合 `_verifyAsicDB()` がタイムアウトする | HLD L1090 |
-| multi-asic / VOQ chassis 環境 | `breakout` コマンドは **namespace iteration を行わない**。`ctx.obj['config_db']`（デフォルト namespace 単一 CONFIG_DB）のみを対象とする。他の CLI コマンド（`config mirror`・`config cbf reload` 等）が全 namespace を iterate するのと対照的 | `main.py:5460–5560`（`namespace` / `multi_asic` ヒット 0） |
-| 非対称 breakout モードの ASIC 制限 | 利用可能モードは `platform.json` の `breakout_modes` に列挙されたもののみ。ASIC 固有の制限は `platform.json` で表現され、未定義モードは `_validate_interface_mode()` が即拒否 | HLD L206, `main.py:5208–5209` |
+| Broadcom ハードウェアプロファイル | [SAI](../../reference/glossary.md#term-sai) `create_port` / `remove_port` が動作するために `portmap_N=<lane>:<speed>[:<speed>:i]` 形式のハードウェアプロファイル事前設定が必要。未設定の場合 `_verifyAsicDB()` がタイムアウトする | [HLD](../../reference/glossary.md#term-hld) L1090 |
+| multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 環境 | `breakout` コマンドは **namespace iteration を行わない**。`ctx.obj['config_db']`（デフォルト namespace 単一 CONFIG_DB）のみを対象とする。他の CLI コマンド（`config mirror`・`config cbf reload` 等）が全 namespace を iterate するのと対照的 | `main.py:5460–5560`（`namespace` / `multi_asic` ヒット 0） |
+| 非対称 breakout モードの [ASIC](../../reference/glossary.md#term-asic) 制限 | 利用可能モードは `platform.json` の `breakout_modes` に列挙されたもののみ。[ASIC](../../reference/glossary.md#term-asic) 固有の制限は `platform.json` で表現され、未定義モードは `_validate_interface_mode()` が即拒否 | [HLD](../../reference/glossary.md#term-hld) L206, `main.py:5208–5209` |
 | YANG モデルのプラットフォーム分岐 | **なし** — `sonic-breakout_cfg.yang` はプラットフォーム条件を含まない | `sonic-breakout_cfg.yang` |
 
 ### `platform.json` 非対応プラットフォームの詳細
 
-`port_config.ini` 形式しか提供しないプラットフォームでは DPB 機能が利用できない。これは `sonic-cfggen` が起動時に `BREAKOUT_CFG` テーブルを生成しないことに加え、CLI 実行時にも `[ERROR] Breakout feature is not available without platform.json file` を返して即終了するためである。HLD は *"To support the breakout feature, the json files will be required"* と明記している[^2]。
+`port_config.ini` 形式しか提供しないプラットフォームでは DPB 機能が利用できない。これは `sonic-cfggen` が起動時に `BREAKOUT_CFG` テーブルを生成しないことに加え、CLI 実行時にも `[ERROR] Breakout feature is not available without platform.json file` を返して即終了するためである。[HLD](../../reference/glossary.md#term-hld) は *"To support the breakout feature, the json files will be required"* と明記している[^2]。
 
 ### multi-asic 環境での運用注意
 
@@ -394,3 +394,5 @@ multi-asic 構成では、対象ポートが属する ASIC の namespace に対�
 [^1]: YANG 定義: `sonic-breakout_cfg.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang>
 
 [^2]: HLD 記載: `port` を `PORT` テーブルへの leafref でなく string とした理由 — DPB 操作中は親ポートが `PORT` テーブルに存在しない場合があるため。 <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dynamic-port-breakout/sonic-dynamic-port-breakout-HLD.md>
+
+<!-- glossary-links-injected: 8717000675a8 -->

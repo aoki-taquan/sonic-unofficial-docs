@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-SONiC の installer ビルドの最終ステップ（`SONIC_INSTALLERS` ターゲット）は **`build_debian.sh` を一気に走らせる単一ルール** で構成され、debootstrap から ONIE installer payload 生成までを直列に行う。これは依存関係上 **並列化できない** ため、ビルド全体のクリティカルパスとなる[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の installer ビルドの最終ステップ（`SONIC_INSTALLERS` ターゲット）は **`build_debian.sh` を一気に走らせる単一ルール** で構成され、debootstrap から ONIE installer payload 生成までを直列に行う。これは依存関係上 **並列化できない** ため、ビルド全体のクリティカルパスとなる[^1]。
 
 本機能はこのフローを 2 段に分割する。前半（base image / external packages / initramfs / linux-image）は **他のターゲットと並列に走らせる** ことができ、後半（artifact installation / ONIE payload 生成）はその squashfs を読み込んで継続する。これによりビルド時間を短縮する[^1]。
 
@@ -193,4 +193,4 @@ make -n target/sonic-generic.bin 2>&1 | head -30
 - ENABLE_RFS_SPLIT_BUILD という単一フラグは grep ヒットなし -> HLD の文中表現と現行命名が異なる
 -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

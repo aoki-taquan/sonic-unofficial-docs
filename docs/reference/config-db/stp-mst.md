@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-`STP_MST_INST` は MSTP (Multiple Spanning Tree Protocol) のインスタンスごとのブリッジプライオリティおよび VLAN マッピングを保持する。
+`STP_MST_INST` は MSTP (Multiple Spanning Tree Protocol) のインスタンスごとのブリッジプライオリティおよび [VLAN](../../reference/glossary.md#term-vlan) マッピングを保持する。
 `STP_MST_PORT` は MST インスタンス per-port の `path_cost` / `priority` を保持する。
 
 CLI は `config/stp.py` の `config spanning-tree` コマンド群が担当する。
@@ -34,7 +34,7 @@ MST 有効化 (`config spanning-tree enable mst`) により、インスタンス
 | テーブル | キー形式 | 役割 |
 |---|---|---|
 | `STP_MST` | `GLOBAL` | MST グローバルタイマー・リージョン設定 |
-| `STP_MST_INST` | `MST_INSTANCE\|<id>` または `MST_INSTANCE:INSTANCE<id>` | インスタンスごとのブリッジプライオリティ・VLAN リスト |
+| `STP_MST_INST` | `MST_INSTANCE\|<id>` または `MST_INSTANCE:INSTANCE<id>` | インスタンスごとのブリッジプライオリティ・[VLAN](../../reference/glossary.md#term-vlan) リスト |
 | `STP_MST_PORT` | `MST_INSTANCE\|<id>\|<intf>` | インスタンス per-port の path_cost / priority |
 
 <!-- defaults -->
@@ -108,7 +108,7 @@ db.set_entry('STP_MST_INST', f"MST_INSTANCE:INSTANCE{instance_id}", mst_inst_fvs
 | フィールド | デフォルト値 | 有効範囲 | 備考 |
 |---|---|---|---|
 | `bridge_priority` | `32768` | 0–61440 (4096 倍数) | MST 有効化時にインスタンス 0 へ自動書き込み |
-| `vlan_list` | 未設定 | カンマ区切り VLAN ID 文字列 | CLI `mst instance <id> vlan add` でのみ追加 |
+| `vlan_list` | 未設定 | カンマ区切り [VLAN](../../reference/glossary.md#term-vlan) ID 文字列 | CLI `mst instance <id> vlan add` でのみ追加 |
 
 インスタンス 1–62 は `config spanning-tree mst instance <id> priority <value>` を実行した際、
 インスタンスが存在していることを確認後に `mod_entry` で `bridge_priority` を書き込む。
@@ -126,7 +126,7 @@ if instance_id == 0:
 ### 4. STP_MST_PORT — MST 有効化時の一括書き込み
 
 `enable_mst_for_interfaces()` (`config/stp.py:441-470`) が MST 有効化時に呼ばれ、
-`VLAN_MEMBER` テーブルに属する全ポート (Ethernet + PortChannel) のインスタンス 0 エントリを作成する:
+`VLAN_MEMBER` テーブルに属する全ポート (Ethernet + [PortChannel](../../reference/glossary.md#term-portchannel)) のインスタンス 0 エントリを作成する:
 
 ```python
 fvs_mst_port = {
@@ -190,7 +190,7 @@ db.set_entry('STP_PORT', port_key, fvs_port)
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-mst-ordering.md -->
 
-`stpmgrd` は CONFIG_DB イベントを以下の順序で処理する。各テーブルには起動ガードが設けられており、前提テーブルが受信済みになるまでイベントを保留する。
+`stpmgrd` は [CONFIG_DB](../../reference/glossary.md#term-config_db) イベントを以下の順序で処理する。各テーブルには起動ガードが設けられており、前提テーブルが受信済みになるまでイベントを保留する。
 
 ### テーブル購読登録順
 
@@ -232,7 +232,7 @@ if (stpMstInstTask == false)
 | 条件 | 意味 |
 |---|---|
 | `stpGlobalTask == true` | `STP\|GLOBAL` 受信完了 |
-| `stpPortTask == true` または `isStpPortEmpty()` | `STP_PORT` 受信済み、または CONFIG_DB の `STP_PORT` テーブルが空 |
+| `stpPortTask == true` または `isStpPortEmpty()` | `STP_PORT` 受信済み、または [CONFIG_DB](../../reference/glossary.md#term-config_db) の `STP_PORT` テーブルが空 |
 
 両条件を満たした最初のイベント処理時に `stpMstInstTask = true` がセットされる。
 
@@ -283,7 +283,7 @@ PVST 系との差異: `STP_MST_INST` は `stpVlanTask` を必要としない。M
 
 | 参照テーブル | DB | 参照方法 | 目的 | evidence |
 |---|---|---|---|---|
-| `STP\|GLOBAL` | CONFIG_DB | `stpGlobalTask` フラグ | 起動ガード — GLOBAL 受信前は全イベントを保留 | `stpmgr.cpp:1027-1028` |
+| `STP\|GLOBAL` | [CONFIG_DB](../../reference/glossary.md#term-config_db) | `stpGlobalTask` フラグ | 起動ガード — GLOBAL 受信前は全イベントを保留 | `stpmgr.cpp:1027-1028` |
 | `STP_PORT` | CONFIG_DB | `stpPortTask` フラグ / `isStpPortEmpty()` | STP_PORT が存在する場合はその受信完了を待機 | `stpmgr.cpp:1027-1028, 1326-1339` |
 
 `isStpPortEmpty()` は `m_cfgStpPortTable.getKeys()` で CONFIG_DB の `STP_PORT` キー一覧を取得し、
@@ -346,7 +346,7 @@ DB テーブルへの直接読み出しは発生しない。
 <!-- evidence: meta/_intermediate/cdb-flow/stp-mst-failure.md -->
 <!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 
-`stpmgrd` は orchagent と異なり `task_need_retry` / `task_failed` の明示的な戻り値を持たない。
+`stpmgrd` は [orchagent](../../reference/glossary.md#term-orchagent) と異なり `task_need_retry` / `task_failed` の明示的な戻り値を持たない。
 代わりに「エントリを `m_toSync` に残す（保留）」か「`m_toSync.erase()` する（消費）」かで
 リトライ有無が決まる。
 
@@ -473,7 +473,7 @@ CONFIG_DB に蓄積され再起動後に一括再処理される。
 <!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 <!-- source: sonic-swss/cfgmgr/stpmgrd.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 
-`stpmgrd` デーモンの内部実装に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+`stpmgrd` デーモンの内部実装に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 
 ### デーモン内部定数 (stpmgr.h)
 
@@ -481,7 +481,7 @@ CONFIG_DB に蓄積され再起動後に一括再処理される。
 |---|---|---|
 | `MAX_VLANS` | `4096` | `m_vlanInstMap[]` 配列サイズ。VLAN ID の最大数上限 |
 | `L2_INSTANCE_MAX` | `4096` (`= MAX_VLANS`) | `l2InstPool` bitset のサイズ。PVST での最大インスタンスプール |
-| `STP_DEFAULT_MAX_INSTANCES` | `255` | STATE_DB 取得失敗時のフォールバック最大インスタンス数 |
+| `STP_DEFAULT_MAX_INSTANCES` | `255` | [STATE_DB](../../reference/glossary.md#term-state_db) 取得失敗時のフォールバック最大インスタンス数 |
 | `INVALID_INSTANCE` | `-1` | `m_vlanInstMap[]` の未割り当てセンチネル値 |
 | `STPMGRD_SOCK_NAME` | `"/var/run/stpmgrd.sock"` | stpmgrd が bind する Unix ドメインソケットパス |
 | `STPD_SOCK_NAME` | `"/var/run/stpipc.sock"` | STP デーモン (stpd) との IPC 通信ソケットパス |
@@ -514,8 +514,8 @@ if (max_stp_instances == 0)
     max_stp_instances = STP_DEFAULT_MAX_INSTANCES;  // = 255
 ```
 
-取得成功時は STATE_DB 値を使用し、タイムアウトまたは値が `0` の場合は `255` にフォールバックする。
-フォールバック値 `255` はコードにハードコードされており、YANG / CONFIG_DB では設定不可。
+取得成功時は [STATE_DB](../../reference/glossary.md#term-state_db) 値を使用し、タイムアウトまたは値が `0` の場合は `255` にフォールバックする。
+フォールバック値 `255` はコードにハードコードされており、[YANG](../../reference/glossary.md#term-yang) / CONFIG_DB では設定不可。
 
 証跡: `stpmgr.cpp:1381-1414`
 
@@ -549,7 +549,7 @@ CLI (`config/stp.py:763`) も最大 31 文字でバリデーションしてお�
 <!-- evidence: meta/_intermediate/cdb-flow/stp-mst-side-effects.md -->
 <!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 
-`stpmgrd` は `STP_MST_INST` / `STP_MST_PORT` のイベントを処理する際、STATE_DB / APPL_DB / ASIC_DB への直接書き込みを行わない。副次効果は Unix ドメインソケット経由の stpd IPC 送信と、プロセスメモリ上の `m_vlanInstMap[]` 更新のみである。
+`stpmgrd` は `STP_MST_INST` / `STP_MST_PORT` のイベントを処理する際、[STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への直接書き込みを行わない。副次効果は Unix ドメインソケット経由の stpd IPC 送信と、プロセスメモリ上の `m_vlanInstMap[]` 更新のみである。
 
 ### STP_MST_INST SET/DEL の副次効果
 
@@ -610,7 +610,7 @@ sendMsgStpd(STP_MST_INST_PORT_CONFIG, sizeof(msg), (void *)&msg);
 | STATE_DB テーブル | 参照目的 | ソース |
 |---|---|---|
 | `STATE_VLAN_TABLE` | `isVlanStateOk()` — VLAN ready 判定 | `stpmgr.cpp:1282` |
-| `STATE_LAG_TABLE` | `isLagStateOk()` — LAG ready 判定 | `stpmgr.cpp:1296` |
+| `STATE_LAG_TABLE` | `isLagStateOk()` — [LAG](../../reference/glossary.md#term-lag) ready 判定 | `stpmgr.cpp:1296` |
 | `STATE_STP_TABLE` | `getStpMaxInstances()` — MST 最大インスタンス数取得 (60秒ポーリング) | `stpmgr.cpp:1391` |
 | `STATE_VLAN_MEMBER_TABLE` | `isLagEmpty()` / `doVlanMemUpdateTask()` — メンバ情報参照 | `stpmgr.cpp:938, 984` |
 
@@ -625,14 +625,14 @@ sendMsgStpd(STP_MST_INST_PORT_CONFIG, sizeof(msg), (void *)&msg);
 | `m_vlanInstMap[]` 更新 | インメモリ（揮発） | stpmgrd 再起動で失われる |
 | `STP_VLAN_MEM_CONFIG` 連鎖送信 | Unix ドメインソケット送信（間接） | 以降の STATE_VLAN_MEMBER イベントに影響 |
 
-CONFIG_DB 以外の永続ストレージ（STATE_DB / APPL_DB / ASIC_DB）への書き込みは発生しない。
+CONFIG_DB 以外の永続ストレージ（STATE_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db)）への書き込みは発生しない。
 
 <!-- /side-effects -->
 
 <!-- pubsub -->
 ## Redis 通知メカニズム (Phase G)
 
-`stpmgrd` は `StpMgr`（`Orch` 基底クラス継承）を起動し、`Orch::addConsumer()` 経由で CONFIG_DB の 3 テーブルを購読する。CONFIG_DB (dbId=4) のため `Orch::addConsumer()` 内部分岐で **`SubscriberStateTable`** が選ばれ、Redis の **keyspace notification** (`__keyspace@<dbId>__:<TABLE>:*` の PSUBSCRIBE) を使用する。`PUBLISH` チャネルは使用しない。
+`stpmgrd` は `StpMgr`（`Orch` 基底クラス継承）を起動し、`Orch::addConsumer()` 経由で CONFIG_DB の 3 テーブルを購読する。CONFIG_DB (dbId=4) のため `Orch::addConsumer()` 内部分岐で **`SubscriberStateTable`** が選ばれ、[Redis](../../reference/glossary.md#term-redis) の **keyspace notification** (`__keyspace@<dbId>__:<TABLE>:*` の PSUBSCRIBE) を使用する。`PUBLISH` チャネルは使用しない。
 
 | 項目 | 値 |
 |------|-----|
@@ -663,15 +663,15 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / APPL_DB / ASIC_DB）への
 > 調査証跡: `meta/_intermediate/cdb-flow/stp-mst-platform.md`
 > 調査対象: `sonic-swss/cfgmgr/stpmgrd.cpp`, `sonic-swss/cfgmgr/stpmgr.cpp`, `sonic-swss/cfgmgr/stpmgr.h`
 
-`stpmgrd` は SAI / ASIC SDK を一切経由しない純粋なソフトウェア STP デーモンであり、ASIC ベンダー固有の処理は存在しない。プラットフォーム差は `max_stp_instances` の上限値と multi-asic / VoQ chassis への非対応に集約される。
+`stpmgrd` は [SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を一切経由しない純粋なソフトウェア STP デーモンであり、[ASIC](../../reference/glossary.md#term-asic) ベンダー固有の処理は存在しない。プラットフォーム差は `max_stp_instances` の上限値と multi-asic / VoQ chassis への非対応に集約される。
 
 ### max_stp_instances — ASIC 能力依存の上限値
 
-`stpmgrd` 起動時 (`stpmgrd.cpp:77-78`) に `getStpMaxInstances()` が `STATE_STP_TABLE|GLOBAL.max_stp_inst` を最大 60 秒ポーリングして取得し、stpd へ `STP_INIT_READY` メッセージで通知する。この値はプラットフォームドライバが書き込む ASIC 能力に由来する[^ph1]。
+`stpmgrd` 起動時 (`stpmgrd.cpp:77-78`) に `getStpMaxInstances()` が `STATE_STP_TABLE|GLOBAL.max_stp_inst` を最大 60 秒ポーリングして取得し、stpd へ `STP_INIT_READY` メッセージで通知する。この値はプラットフォームドライバが書き込む [ASIC](../../reference/glossary.md#term-asic) 能力に由来する[^ph1]。
 
 | 状態 | `max_stp_instances` の値 | 備考 |
 |---|---|---|
-| STATE_STP_TABLE 書込み済み | プラットフォームドライバが書いた値 | ASIC 依存（例: Broadcom は一般的に最大 64） |
+| STATE_STP_TABLE 書込み済み | プラットフォームドライバが書いた値 | [ASIC](../../reference/glossary.md#term-asic) 依存（例: Broadcom は一般的に最大 64） |
 | 60 秒タイムアウト or 値 0 | `STP_DEFAULT_MAX_INSTANCES = 255` | ハードコードフォールバック (`stpmgr.h:38`) |
 | VS (virtual switch) | 多くの場合 255（STATE_DB 未書込のため） | テスト用フォールバック動作 |
 
@@ -689,11 +689,11 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / APPL_DB / ASIC_DB）への
 
 ### PortInitDone 待機 — ポート初期化タイミング依存
 
-`stpmgrd.cpp:72` の `stpmgr.isPortInitDone(&app_db)` が `APPL_DB:APP_PORT_TABLE|PortInitDone` を無限ループで待機する。PortsOrch が全ポートの SAI OID 取得完了を宣言するまで stpmgrd の処理は開始されない。プラットフォームによって起動所要時間は異なるが、stpmgrd 自体の動作ロジックに差はない[^ph3]。
+`stpmgrd.cpp:72` の `stpmgr.isPortInitDone(&app_db)` が `APPL_DB:APP_PORT_TABLE|PortInitDone` を無限ループで待機する。PortsOrch が全ポートの [SAI](../../reference/glossary.md#term-sai) OID 取得完了を宣言するまで stpmgrd の処理は開始されない。プラットフォームによって起動所要時間は異なるが、stpmgrd 自体の動作ロジックに差はない[^ph3]。
 
 ### PortChannel (LAG) の ready 判定
 
-`STP_MST_PORT` の SET 処理で PortChannel インタフェースが対象の場合、`isLagStateOk()` (`stpmgr.cpp:1292`) が `STATE_LAG_TABLE` エントリの存在を確認してから stpd に通知する。ASIC によって LAG 初期化タイミングが異なるが、stpmgrd の動作（STATE_LAG_TABLE が現れるまで保留）は同一。
+`STP_MST_PORT` の SET 処理で [PortChannel](../../reference/glossary.md#term-portchannel) インタフェースが対象の場合、`isLagStateOk()` (`stpmgr.cpp:1292`) が `STATE_LAG_TABLE` エントリの存在を確認してから stpd に通知する。ASIC によって [LAG](../../reference/glossary.md#term-lag) 初期化タイミングが異なるが、stpmgrd の動作（STATE_LAG_TABLE が現れるまで保留）は同一。
 
 ### warm-reboot (宣言のみ)
 
@@ -727,9 +727,10 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / APPL_DB / ASIC_DB）への
 
 ## 引用元
 
-
 ## 関連ページ
 
 - [CONFIG_DB: STP](stp.md)
 - [CONFIG_DB: STP_VLAN / STP_VLAN_PORT](stp-vlan.md)
 - [CONFIG_DB: PORT](port.md)
+
+<!-- glossary-links-injected: e06ab6d23239 -->

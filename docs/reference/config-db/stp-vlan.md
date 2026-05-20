@@ -31,10 +31,10 @@ related:
 
 ## 概要
 
-`STP_VLAN` は PVST (Per-VLAN Spanning Tree) における VLAN ごとのブリッジパラメータ (タイマー・優先度・有効化フラグ) を保持する。
-`STP_VLAN_PORT` は per-VLAN per-port の path_cost / priority を保持し、CLI で明示設定した場合のみエントリが作成される。
+`STP_VLAN` は PVST (Per-[VLAN](../../reference/glossary.md#term-vlan) Spanning Tree) における [VLAN](../../reference/glossary.md#term-vlan) ごとのブリッジパラメータ (タイマー・優先度・有効化フラグ) を保持する。
+`STP_VLAN_PORT` は per-[VLAN](../../reference/glossary.md#term-vlan) per-port の path_cost / priority を保持し、CLI で明示設定した場合のみエントリが作成される。
 
-`stpmgrd` (`sonic-swss/cfgmgr/stpmgrd.cpp`) が CONFIG_DB を購読し、Unix Domain Socket 経由で STP デーモンに IPC メッセージを送信する。
+`stpmgrd` (`sonic-swss/cfgmgr/stpmgrd.cpp`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、Unix Domain Socket 経由で STP デーモンに IPC メッセージを送信する。
 CLI は `config/stp.py` の `config spanning-tree` コマンド群が担当する。
 
 | テーブル | キー形式 | 役割 |
@@ -155,7 +155,7 @@ for vlan in db.get_table('STP_VLAN'):
 デフォルト値での検証: `2*(15-1)=28 >= 20 >= 2*(2+1)=6` → 満足
 
 この制約は `STP|GLOBAL` と `STP_VLAN` の両方で個別にチェックされる。
-stpmgrd 側での検証はなく、CONFIG_DB に不正値が書き込まれた場合の動作は未定義。
+stpmgrd 側での検証はなく、[CONFIG_DB](../../reference/glossary.md#term-config_db) に不正値が書き込まれた場合の動作は未定義。
 
 証跡: `config/stp.py:183-207`
 
@@ -302,7 +302,7 @@ if (l2ProtoEnabled == L2_NONE || !isVlanStateOk(key))
 ### 3. isVlanStateOk — STATE_VLAN 存在確認が先行必須
 
 `isVlanStateOk(key)` は `STATE_DB:STATE_VLAN_TABLE` に対象 VLAN のエントリが存在するか確認する (`stpmgr.cpp:1276-1290`)。
-`vlanmgrd` が VLAN を ASIC に適用してから `STATE_VLAN_TABLE|Vlan<vid>` を書き込む。
+`vlanmgrd` が VLAN を [ASIC](../../reference/glossary.md#term-asic) に適用してから `STATE_VLAN_TABLE|Vlan<vid>` を書き込む。
 
 !!! warning "VLAN が STATE_VLAN_TABLE に登録される前に STP_VLAN を書くと設定が適用されない"
     `config spanning-tree enable pvst` を実行した直後など、`vlanmgrd` が STATE_VLAN を未書込の
@@ -372,11 +372,11 @@ if ((l2ProtoEnabled == L2_NONE) || (m_vlanInstMap[vlan_id] == INVALID_INSTANCE))
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-cross-refs.md -->
 
-`STP_VLAN` / `STP_VLAN_PORT` テーブルを処理する `StpMgr::doStpVlanTask()` / `doStpVlanPortTask()` が実行時に参照する他テーブル・Orch 内状態。YANG の leafref 定義は VLAN への参照のみで、それ以外は実装レベルの暗黙依存である。コード調査の詳細は `meta/_intermediate/cdb-flow/stp-vlan-cross-refs.md` に記録した。
+`STP_VLAN` / `STP_VLAN_PORT` テーブルを処理する `StpMgr::doStpVlanTask()` / `doStpVlanPortTask()` が実行時に参照する他テーブル・Orch 内状態。[YANG](../../reference/glossary.md#term-yang) の leafref 定義は VLAN への参照のみで、それ以外は実装レベルの暗黙依存である。コード調査の詳細は `meta/_intermediate/cdb-flow/stp-vlan-cross-refs.md` に記録した。
 
 ### 1. `STP|GLOBAL` — l2ProtoEnabled フラグ源（必須依存）
 
-- **参照先**: CONFIG_DB `STP|GLOBAL` → stpmgrd 内部変数 `l2ProtoEnabled`
+- **参照先**: [CONFIG_DB](../../reference/glossary.md#term-config_db) `STP|GLOBAL` → stpmgrd 内部変数 `l2ProtoEnabled`
 - **方向**: 読み取り（`stpmgr.cpp:210`）
 - **意味**: `doStpGlobalTask()` が `STP|GLOBAL.mode` (`pvst` / `mst`) を受信し `l2ProtoEnabled` を `L2_PVSTP` / `L2_MSTP` に設定する。`l2ProtoEnabled == L2_NONE` のまま `STP_VLAN` SET が届いた場合はイテレータを進めて silent skip される。
 - **非対称性**: `STP|GLOBAL` 受信前に書き込んだ `STP_VLAN` エントリはキューに残りモードが確定後のループで自動処理される。
@@ -395,16 +395,16 @@ if ((l2ProtoEnabled == L2_NONE) || (m_vlanInstMap[vlan_id] == INVALID_INSTANCE))
 
 ### 3. `STATE_DB:STATE_VLAN_TABLE` — VLAN 準備確認（必須依存）
 
-- **参照先**: STATE_DB `STATE_VLAN_TABLE|Vlan<vid>` (vlanmgrd が書き込む)
+- **参照先**: [STATE_DB](../../reference/glossary.md#term-state_db) `STATE_VLAN_TABLE|Vlan<vid>` ([vlanmgrd](../../reference/glossary.md#term-vlanmgrd) が書き込む)
 - **方向**: 読み取り（`stpmgr.cpp:1276-1290`、`isVlanStateOk()`）
-- **意味**: `doStpVlanTask()` SET ハンドラ内 (`stpmgr.cpp:210`) で `isVlanStateOk(key)` を確認する。対象 VLAN が STATE_VLAN_TABLE に存在しない場合 SET はイテレータを進めて持ち越し（silent skip）。`vlanmgrd` が ASIC 適用後に STATE_VLAN_TABLE を書き込むまで繰り返される。
+- **意味**: `doStpVlanTask()` SET ハンドラ内 (`stpmgr.cpp:210`) で `isVlanStateOk(key)` を確認する。対象 VLAN が STATE_VLAN_TABLE に存在しない場合 SET はイテレータを進めて持ち越し（silent skip）。`vlanmgrd` が [ASIC](../../reference/glossary.md#term-asic) 適用後に STATE_VLAN_TABLE を書き込むまで繰り返される。
 
 !!! warning "vlanmgrd との順序依存"
     `config spanning-tree enable pvst` 直後など、対象 VLAN の `STATE_VLAN_TABLE` エントリが未書込の状態で `STP_VLAN` SET が到達しても処理されない。エラーログは出力されず、次の SELECT ループで自動リトライされる。
 
 ### 4. `STATE_DB:STATE_VLAN_MEMBER_TABLE` — PVST インスタンス割当時のポートメンバー参照
 
-- **参照先**: STATE_DB `STATE_VLAN_MEMBER_TABLE` (vlanmgrd が管理)
+- **参照先**: [STATE_DB](../../reference/glossary.md#term-state_db) `STATE_VLAN_MEMBER_TABLE` ([vlanmgrd](../../reference/glossary.md#term-vlanmgrd) が管理)
 - **方向**: 読み取り（`stpmgr.cpp:938`、`getAllVlanMem()`）
 - **意味**: PVST 新規 VLAN インスタンス割当時 (`newInstance = 1`、`m_vlanInstMap[vlan_id] == INVALID_INSTANCE`)、`getAllVlanMem()` が `STATE_VLAN_MEMBER_TABLE` から当該 VLAN の全メンバーポートを取得し `STP_VLAN_CONFIG` IPC メッセージに付加する。MST モードでは参照されない。
 
@@ -432,7 +432,7 @@ if ((l2ProtoEnabled == L2_NONE) || (m_vlanInstMap[vlan_id] == INVALID_INSTANCE))
 
 - **参照先**: Unix Domain Socket `/var/run/stpipc.sock` (stpd が待ち受け)
 - **方向**: 書き込み（`stpmgr.cpp:332`、`sendMsgStpd(STP_VLAN_CONFIG, ...)`）
-- **意味**: `STP_VLAN` SET 処理後に `STP_VLAN_CONFIG` IPC メッセージを stpd に送信する。`STP_VLAN_PORT` は `STP_VLAN_PORT_CONFIG` として送信される。CONFIG_DB から APPL_DB / ASIC_DB への書き込みは行わず、IPC 経由で stpd が直接 ASIC を制御する構成になっている。
+- **意味**: `STP_VLAN` SET 処理後に `STP_VLAN_CONFIG` IPC メッセージを stpd に送信する。`STP_VLAN_PORT` は `STP_VLAN_PORT_CONFIG` として送信される。CONFIG_DB から [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への書き込みは行わず、IPC 経由で stpd が直接 [ASIC](../../reference/glossary.md#term-asic) を制御する構成になっている。
 
 ### 参照関係サマリ
 
@@ -457,7 +457,7 @@ STP_VLAN / STP_VLAN_PORT
 <!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-failure.md -->
 <!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 
-`stpmgrd` は orchagent の `task_need_retry` / `task_failed` 戻り値機構を持たない。
+`stpmgrd` は [orchagent](../../reference/glossary.md#term-orchagent) の `task_need_retry` / `task_failed` 戻り値機構を持たない。
 代わりに「エントリを `m_toSync` に残す（保留）」か「`m_toSync.erase()` する（消費）」かで
 リトライ有無が決まる。`SELECT_TIMEOUT = 1000ms` で次のループ実行まで最大 1 秒待機する。
 
@@ -477,7 +477,7 @@ STP_VLAN / STP_VLAN_PORT
 | 10 | 無効キー形式（`Vlan<vid>\|<intf>` セパレータなし） | `doStpVlanPortTask` | `SWSS_LOG_ERROR` + `erase` | なし |
 | 11 | SET: `l2ProtoEnabled == L2_NONE` または `m_vlanInstMap[vid] == INVALID_INSTANCE` | `doStpVlanPortTask` | `it++`（保留） | あり |
 | 12 | DEL: `l2ProtoEnabled == L2_NONE` または `m_vlanInstMap[vid] == INVALID_INSTANCE` | `doStpVlanPortTask` | `erase`（ログなし） | なし |
-| 13 | `isLagEmpty()` = true（LAG メンバーなし） | `doStpVlanPortTask` | `erase`（ログなし） | なし |
+| 13 | `isLagEmpty()` = true（[LAG](../../reference/glossary.md#term-lag) メンバーなし） | `doStpVlanPortTask` | `erase`（ログなし） | なし |
 | 14 | `stoi` 例外（不正 vlan_id 文字列） | `doStpVlanTask` | 未キャッチ → `stpmgrd` プロセス終了 | なし（プロセス再起動要） |
 
 ### 詳細
@@ -573,9 +573,9 @@ else
 
 #### 13. LAG メンバーなし → サイレントドロップ
 
-`isLagEmpty(intfName)` が `true` の場合（PortChannel に物理ポートが参加していない）、
+`isLagEmpty(intfName)` が `true` の場合（[PortChannel](../../reference/glossary.md#term-portchannel) に物理ポートが参加していない）、
 `STP_VLAN_PORT` SET/DEL のエントリはログなしで `erase` される。
-LAG にメンバーが追加された時点で `doVlanMemUpdateTask()` が stpd への再送を担当する設計。
+[LAG](../../reference/glossary.md#term-lag) にメンバーが追加された時点で `doVlanMemUpdateTask()` が stpd への再送を担当する設計。
 
 #### 14. stoi 例外 → stpmgrd プロセス終了
 
@@ -599,7 +599,7 @@ stpmgr.cpp 内では例外がキャッチされないため、`stpmgrd.cpp:119` 
 <!-- source: sonic-swss/cfgmgr/stpmgr.h ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 <!-- source: sonic-swss/cfgmgr/stpmgrd.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 
-`stpmgr.h` と `stpmgrd.cpp` にハードコードされた定数の一覧。YANG 定義や CONFIG_DB スキーマには現れないが、挙動境界値として実装に埋め込まれている。
+`stpmgr.h` と `stpmgrd.cpp` にハードコードされた定数の一覧。[YANG](../../reference/glossary.md#term-yang) 定義や CONFIG_DB スキーマには現れないが、挙動境界値として実装に埋め込まれている。
 
 ### 1. VLAN・インスタンス上限定数
 
@@ -708,7 +708,7 @@ stpmgrd のメインループが `s.select(&sel, SELECT_TIMEOUT)` で最大 1000
 <!-- source: sonic-swss/cfgmgr/stpmgr.cpp ref:4305596156d70e9797e8a881b3d19b46de0bce0d -->
 
 `stpmgrd` は CONFIG_DB への書き込みをトリガーとして、stpmgrd 内部状態（`m_vlanInstMap[]`）の更新と
-stpd プロセスへの IPC 送信を行う。APPL_DB / ASIC_DB への直接書き込みはなく、ASIC 反映は stpd 経由となる。
+stpd プロセスへの IPC 送信を行う。[APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への直接書き込みはなく、ASIC 反映は stpd 経由となる。
 
 ### 1. STP_VLAN SET (PVST 初回有効化) — m_vlanInstMap へのインスタンス割当
 
@@ -746,7 +746,7 @@ sendMsgStpd(STP_VLAN_CONFIG, len, (void *)msg);
 | `forward_delay`, `hello_time`, `max_age`, `priority` | CONFIG_DB フィールドの値 |
 | `count`, `port_list[]` | PVST 初回時のみ: VLAN メンバーポート一覧 |
 
-CONFIG_DB → stpd → ASIC という経路で ASIC_DB には直接書き込まれない。
+CONFIG_DB → stpd → ASIC という経路で [ASIC_DB](../../reference/glossary.md#term-asic_db) には直接書き込まれない。
 
 証跡: `stpmgr.cpp:278-336`
 
@@ -816,7 +816,7 @@ DEL と同時に stpd へ `STP_DEL_COMMAND` の `STP_VLAN_CONFIG` IPC が送信�
 |---|---------|-------|------|
 | 1 | `STP_VLAN` SET (enabled=true, PVST 初回) | `m_vlanInstMap[vlan_id]` にインスタンス割当 → `STP_VLAN_PORT` SET ブロック解除 | stpmgrd 内部状態 |
 | 2 | `STP_VLAN` SET | `STP_VLAN_CONFIG` IPC を stpd に送信 | stpd (ASIC へ波及) |
-| 3 | `STP_VLAN` SET (PVST 初回) | `STATE_VLAN_MEMBER_TABLE` を参照し全メンバーポート一覧を IPC に付加 | STATE_DB 読み取り |
+| 3 | `STP_VLAN` SET (PVST 初回) | `STATE_VLAN_MEMBER_TABLE` を参照し全メンバーポート一覧を IPC に付加 | [STATE_DB](../../reference/glossary.md#term-state_db) 読み取り |
 | 4 | `STP_VLAN` DEL | `m_vlanInstMap[vlan_id]` を INVALID_INSTANCE に解放 → `STP_VLAN_PORT` SET が再ブロック | stpmgrd 内部状態 |
 | 5 | `STP_VLAN` DEL | `STP_VLAN_CONFIG` DEL IPC を stpd に送信 → ASIC ポート状態初期化 | stpd (ASIC へ波及) |
 | 6 | `STATE_VLAN_MEMBER_TABLE` 変化 | `STP_VLAN_PORT` 設定値を stpd に再送 (`STP_VLAN_MEM_CONFIG`) | stpd (VLAN_PORT 未変更でも発生) |
@@ -875,7 +875,7 @@ silent defer されたエントリが最大 1 秒以内に再試行される。
 |-----------------|------------|------|
 | `VLAN_TABLE` | `STATE_VLAN_TABLE_NAME` | `isVlanStateOk()` — VLAN の ASIC 適用確認 |
 | `VLAN_MEMBER_TABLE` | `STATE_VLAN_MEMBER_TABLE_NAME` | ポート VLAN 参加/離脱イベント受信 |
-| `LAG_TABLE` | `STATE_LAG_TABLE_NAME` | LAG 状態確認 |
+| `LAG_TABLE` | `STATE_LAG_TABLE_NAME` | [LAG](../../reference/glossary.md#term-lag) 状態確認 |
 | `STP_TABLE` | `STATE_STP_TABLE_NAME` | 起動時の `max_stp_instances` 取得 |
 
 !!! note "stpmgrd は STATE_DB に書き込まない"
@@ -909,7 +909,7 @@ TTL は設定されない（CONFIG_DB は永続ストレージ前提）。
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-vlan-platform.md -->
 
-`STP_VLAN` / `STP_VLAN_PORT` テーブルの処理に ASIC ベンダー固有の条件分岐は存在しない。`stpmgrd` は SAI を直接呼ばず Unix Domain Socket 経由で `stpd` に IPC を送信する設計で、ASIC 差異は `stpd` 内部で吸収される。ただし以下 3 点でプラットフォームに依存した挙動が観測される。
+`STP_VLAN` / `STP_VLAN_PORT` テーブルの処理に ASIC ベンダー固有の条件分岐は存在しない。`stpmgrd` は [SAI](../../reference/glossary.md#term-sai) を直接呼ばず Unix Domain Socket 経由で `stpd` に IPC を送信する設計で、ASIC 差異は `stpd` 内部で吸収される。ただし以下 3 点でプラットフォームに依存した挙動が観測される。
 
 ### A. STP プロトコルモード (PVST vs MSTP)
 
@@ -934,7 +934,7 @@ if (l2ProtoEnabled == L2_PVSTP)
 
 ### B. ASIC ごとの最大 STP インスタンス数
 
-`stporch` 起動時に SAI 属性 `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を照会して `STATE_STP|GLOBAL.max_stp_inst` に書き込む[^4]。`stpmgrd` はこの値を読み取って `max_stp_instances` に設定し、超過 VLAN は silent truncation する (Phase E 参照)。
+`stporch` 起動時に [SAI](../../reference/glossary.md#term-sai) 属性 `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を照会して `STATE_STP|GLOBAL.max_stp_inst` に書き込む[^4]。`stpmgrd` はこの値を読み取って `max_stp_instances` に設定し、超過 VLAN は silent truncation する (Phase E 参照)。
 
 ```cpp
 // stporch.cpp:32-38
@@ -945,7 +945,7 @@ if (status == SAI_STATUS_SUCCESS)
     m_stpTable->set("GLOBAL", {{"max_stp_inst", to_string(m_maxStpInstance)}});
 ```
 
-| プラットフォーム | SAI 照会結果 | `max_stp_instances` 実効値 |
+| プラットフォーム | [SAI](../../reference/glossary.md#term-sai) 照会結果 | `max_stp_instances` 実効値 |
 |-----------------|-------------|--------------------------|
 | Broadcom 等物理 ASIC | 成功 (255 以上が多い) | `SAI 値 - 1` (デフォルト STP インスタンスを除く) |
 | 一部 Marvell / 低グレード ASIC | 成功 (値が少ない) | `SAI 値 - 1`。STP_VLAN 有効化数が制限される |
@@ -964,11 +964,11 @@ PVST モード有効化時に `stpmgr` は Cisco PVST+ マルチキャストア�
 
 - **物理 ASIC (Broadcom / Mellanox 等)**: ebtables が有効なため PVST マルチキャストが適切に遮断される。
 - **VS (仮想スイッチ)**: `ebtables` バイナリが存在しない場合は `system()` が失敗し `SWSS_LOG_DEBUG` のみ出力される。PVST マルチキャストの遮断は機能しないが、VS 環境ではハードウェアフラッディングがないため実害なし。
-- **SmartSwitch DPU**: DPU 側では `stpmgrd` は通常起動しないため非適用。
+- **[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)**: [DPU](../../reference/glossary.md#term-dpu) 側では `stpmgrd` は通常起動しないため非適用。
 
 ### プラットフォーム差異要約
 
-| 観点 | 物理 ASIC (PVST モード) | 物理 ASIC (MSTP モード) | VS / コンテナ | SmartSwitch DPU |
+| 観点 | 物理 ASIC (PVST モード) | 物理 ASIC (MSTP モード) | VS / コンテナ | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) |
 |------|------------------------|------------------------|--------------|-----------------|
 | `STP_VLAN` per-VLAN 割当 | `allocL2Instance` 実行 | スキップ (`newInstance=0`) | 実行 | N/A (非起動) |
 | `max_stp_instances` 上限 | SAI 照会値 − 1 | N/A | 255 (フォールバック) | N/A |
@@ -1004,3 +1004,5 @@ PVST モード有効化時に `stpmgr` は Cisco PVST+ マルチキャストア�
 - [CONFIG_DB: STP](stp.md)
 - [CONFIG_DB: VLAN](vlan.md)
 - [CONFIG_DB: PORT](port.md)
+
+<!-- glossary-links-injected: 07d24e4e47ef -->

@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-SONiC は DHCPv6 **リレー**機能（`DHCP_RELAY` テーブル）を持つが、DHCPv6 **サーバ**機能は未実装である。IPv4 側の対応テーブルである `DHCP_SERVER_IPV4` が `dhcpservd` + kea-dhcp4 によって実装されているのに対し、kea-dhcp6 を管理するデーモンおよび対応 CONFIG_DB テーブルは存在しない。
+[SONiC](../../reference/glossary.md#term-sonic) は DHCPv6 **リレー**機能（`DHCP_RELAY` テーブル）を持つが、DHCPv6 **サーバ**機能は未実装である。IPv4 側の対応テーブルである `DHCP_SERVER_IPV4` が `dhcpservd` + kea-dhcp4 によって実装されているのに対し、kea-dhcp6 を管理するデーモンおよび対応 [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルは存在しない。
 
 <!-- defaults -->
 <!-- cdb-mermaid -->
@@ -56,29 +56,29 @@ flowchart LR
 
 **調査結果: フィールドなし（テーブル未実装）**
 
-SONiC master における `DHCP_SERVER_IPV6` テーブルの YANG モデル、Python デーモン、CLI プラグインは確認されなかった。コード由来のデフォルト値を抽出できるフィールドが存在しない。
+[SONiC](../../reference/glossary.md#term-sonic) master における `DHCP_SERVER_IPV6` テーブルの [YANG](../../reference/glossary.md#term-yang) モデル、Python デーモン、CLI プラグインは確認されなかった。コード由来のデフォルト値を抽出できるフィールドが存在しない。
 
 実装済み IPv4 版との対比:
 
 | 確認対象 | IPv4 (`DHCP_SERVER_IPV4`) | IPv6 (`DHCP_SERVER_IPV6`) |
 |---------|--------------------------|--------------------------|
-| YANG モデル | `sonic-dhcp-server-ipv4.yang` | なし |
+| [YANG](../../reference/glossary.md#term-yang) モデル | `sonic-dhcp-server-ipv4.yang` | なし |
 | デーモン | `dhcpservd` (kea-dhcp4) | なし |
 | CLI | `config dhcp_server ipv4` | なし |
 | 主要フィールド | `state`, `lease_time`, `mode`, `gateway`, `netmask` | 未定義 |
 
-> Evidence: sonic-buildimage@9ea932ec — `src/sonic-yang-models/yang-models/` にて `sonic-dhcp-server-ipv6.yang` 不在を確認。`doc/dhcp_server/port_based_dhcp_server_high_level_design.md` に「IPv4 Port Based DHCP_SERVER」と明記。
+> Evidence: [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)@9ea932ec — `src/sonic-yang-models/yang-models/` にて `sonic-dhcp-server-ipv6.yang` 不在を確認。`doc/dhcp_server/port_based_dhcp_server_high_level_design.md` に「IPv4 Port Based DHCP_SERVER」と明記。
 
 <!-- /defaults -->
 
 <!-- ordering -->
 ## 書込み順依存 (Phase B 調査)
 
-`DHCP_SERVER_IPV6` は未実装だが、SONiC の DHCPv6 リレー機能（`DHCP_RELAY` テーブル / `dhcp6relay` プロセス）には以下の順序依存が確認されている。将来 `DHCP_SERVER_IPV6` が実装された場合も同等の VLAN 前提条件が継承される見込み。
+`DHCP_SERVER_IPV6` は未実装だが、[SONiC](../../reference/glossary.md#term-sonic) の DHCPv6 リレー機能（`DHCP_RELAY` テーブル / `dhcp6relay` プロセス）には以下の順序依存が確認されている。将来 `DHCP_SERVER_IPV6` が実装された場合も同等の [VLAN](../../reference/glossary.md#term-vlan) 前提条件が継承される見込み。
 
 ### VLAN_INTERFACE 先行が必須
 
-`dhcp6relay` の起動時 (`initialize_swss()` → `processRelayNotification()`) は `DHCP_RELAY|<vlan>` エントリを処理する際に CONFIG_DB の `VLAN_INTERFACE|<vlan>|*` キーを検索し、**IPv6 アドレス（コロン含む）が 1 件も存在しない VLAN は無条件でスキップ**する。
+`dhcp6relay` の起動時 (`initialize_swss()` → `processRelayNotification()`) は `DHCP_RELAY|<vlan>` エントリを処理する際に [CONFIG_DB](../../reference/glossary.md#term-config_db) の `VLAN_INTERFACE|<vlan>|*` キーを検索し、**IPv6 アドレス（コロン含む）が 1 件も存在しない [VLAN](../../reference/glossary.md#term-vlan) は無条件でスキップ**する。
 
 ```
 // dhcp6relay/src/config_interface.cpp:130-148
@@ -106,7 +106,7 @@ runtime 中の動的更新は「コンテナ再起動が必要」ログを出す
 `dhcpv6-relay.agents.j2` / `dhcp-relay.programs.j2` は supervisord エントリを Jinja2 で動的生成する。`dhcp6relay` プログラムは次の条件がすべて真のときのみ登録・起動される:
 
 1. `VLAN_INTERFACE` にエントリが存在する
-2. 当該 VLAN が `DHCP_RELAY` に存在し `dhcpv6_servers` が空でない
+2. 当該 [VLAN](../../reference/glossary.md#term-vlan) が `DHCP_RELAY` に存在し `dhcpv6_servers` が空でない
 3. `dhcpv6_servers` に有効な IPv6 アドレスが 1 件以上含まれる
 
 条件を満たさない状態でコンテナが起動すると `dhcp6relay` はそもそも supervisord に登録されない。
@@ -119,7 +119,7 @@ runtime 中の動的更新は「コンテナ再起動が必要」ログを出す
 After=config-setup.service swss.service syncd.service teamd.service
 ```
 
-`teamd.service` が完了して VLAN インターフェースが UP し LLA が生成された後に `dhcp-relay` コンテナが起動するため、**LLA 未生成によるソケット開設失敗は通常発生しない**。ただし `After=` は完了順序のみ保証し、CONFIG_DB への全データ書込みは `config-setup.service` の完了に依存する。
+`teamd.service` が完了して VLAN インターフェースが UP し LLA が生成された後に `dhcp-relay` コンテナが起動するため、**LLA 未生成によるソケット開設失敗は通常発生しない**。ただし `After=` は完了順序のみ保証し、[CONFIG_DB](../../reference/glossary.md#term-config_db) への全データ書込みは `config-setup.service` の完了に依存する。
 
 > Evidence: `sonic-net/sonic-dhcp-relay@dhcp6relay/src/config_interface.cpp:130-148`、`sonic-net/sonic-buildimage@dockers/docker-dhcp-relay/dhcpv6-relay.agents.j2:2-10`、`sonic-net/sonic-buildimage@files/build_templates/dhcp_relay.service.j2:4`
 
@@ -131,7 +131,7 @@ After=config-setup.service swss.service syncd.service teamd.service
 > ソース: `sonic-net/sonic-dhcp-relay dhcp6relay/src/relay.cpp`
 
 `DHCP_SERVER_IPV6` テーブルは未実装だが、DHCPv6 リレー機能を担う `dhcp6relay` プロセスは
-`DHCP_RELAY` テーブルを読み込み、STATE_DB へカウンタを書き込む。将来の `DHCP_SERVER_IPV6`
+`DHCP_RELAY` テーブルを読み込み、[STATE_DB](../../reference/glossary.md#term-state_db) へカウンタを書き込む。将来の `DHCP_SERVER_IPV6`
 実装時も同等のカウンタ機構が継承される見込みのため、現在の動作を記録する。
 
 ### STATE_DB
@@ -169,7 +169,7 @@ VLAN インターフェースの LLA が確認できたタイミングで呼び�
 
 ### 設定ファイル書込
 
-`dhcp6relay` は設定ファイルへの書込みを行わない。すべての状態情報は STATE_DB のみに保持される。
+`dhcp6relay` は設定ファイルへの書込みを行わない。すべての状態情報は [STATE_DB](../../reference/glossary.md#term-state_db) のみに保持される。
 
 > Evidence: `sonic-net/sonic-dhcp-relay@dhcp6relay/src/relay.cpp:18,52-68,273-306,1342-1348,1401`
 
@@ -265,7 +265,7 @@ CONFIG_DB の `dhcpv6_servers` を変更しても dhcp6relay は無視する。*
 
 > `DHCP_SERVER_IPV6` は未実装のため、DHCPv6 エコシステム（`DHCP_RELAY` / `dhcp6relay`）の暗黙参照を代理調査した結果を示す。
 
-`dhcp6relay` デーモン（`sonic-dhcp-relay/dhcp6relay/src/`）は `DHCP_RELAY` テーブルを処理する際に、YANG leafref 定義なしで以下の CONFIG_DB テーブルを参照する:
+`dhcp6relay` デーモン（`sonic-dhcp-relay/dhcp6relay/src/`）は `DHCP_RELAY` テーブルを処理する際に、[YANG](../../reference/glossary.md#term-yang) leafref 定義なしで以下の CONFIG_DB テーブルを参照する:
 
 | 参照先テーブル | 参照方向 | 条件 | 証拠 |
 |---|---|---|---|
@@ -353,7 +353,7 @@ dhcp6relay 起動
 | SWSS abstraction | `swss::SubscriberStateTable` + `swss::Select` |
 | PSUBSCRIBE パターン | `__keyspace@4__:DHCP_RELAY\|*` |
 | Select timeout | 1000 ms |
-| ConsumerStateTable | **不使用** |
+| [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) | **不使用** |
 | NotificationConsumer | **不使用** |
 | TTL / keyspace expire | **不使用** |
 
@@ -388,11 +388,11 @@ popen(cmd.c_str(), "r")  // netlink ソケット直接使用なし
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| DualToR | **差異あり** — MUX 状態に応じてパケット転送を制御 | `DEVICE_METADATA.localhost.subtype == "DualToR"` の場合のみ `-u Loopback0` オプションで起動。`dual_tor_sock = true` がセットされ、`HW_MUX_CABLE_TABLE` の `state` が `standby` なら転送スキップ (`relay.cpp:913-921`) |
-| SmartSwitch DPU | **dhcp6relay 非対応** — DPU 経路実装なし | `dhcp4relay` は `is_SmartSwitch` フラグ・`DPUS` テーブル監視・`bridge-midplane` MAC 取得を実装するが、`dhcp6relay/src/` には SmartSwitch/DPU 関連コードが存在しない |
+| DualToR | **差異あり** — [MUX](../../reference/glossary.md#term-mux) 状態に応じてパケット転送を制御 | `DEVICE_METADATA.localhost.subtype == "DualToR"` の場合のみ `-u Loopback0` オプションで起動。`dual_tor_sock = true` がセットされ、`HW_MUX_CABLE_TABLE` の `state` が `standby` なら転送スキップ (`relay.cpp:913-921`) |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | **dhcp6relay 非対応** — [DPU](../../reference/glossary.md#term-dpu) 経路実装なし | `dhcp4relay` は `is_SmartSwitch` フラグ・`DPUS` テーブル監視・`bridge-midplane` MAC 取得を実装するが、`dhcp6relay/src/` には [SmartSwitch](../../reference/glossary.md#term-smartswitch)/[DPU](../../reference/glossary.md#term-dpu) 関連コードが存在しない |
 | IPv6 link-local アドレス (LLA) | **DHCPv6 固有の生成待機ロジック** | `check_is_lla_ready()` が `ip -6 addr show <vlan> scope link` で LLA 存在を確認。60 秒タイマー (`lla_check_callback`) でポーリングし、LLA 生成後にソケットを動的追加 (`relay.cpp:1288-1310`) |
 | multi-asic | 影響なし | `initialize_swss()` は `CONFIG_DB` を namespace 引数なしで接続。`asicN` namespace を iterate しない |
-| ASIC ベンダー | 影響なし | `dhcp6relay` は純粋 L3 UDP リレー処理。SAI / ASIC SDK 非経由 |
+| [ASIC](../../reference/glossary.md#term-asic) ベンダー | 影響なし | `dhcp6relay` は純粋 L3 UDP リレー処理。[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) 非経由 |
 
 ### DualToR 構成の詳細
 
@@ -410,7 +410,7 @@ DualToR 環境では `dhcpv6-relay.agents.j2:16` の Jinja2 条件により `dhc
 
 ### SmartSwitch DPU — DHCPv6 非対応
 
-DHCPv4 側 (`dhcp4relay`) が SmartSwitch の `DPUS` テーブルを監視し DPU インターフェース (`dpu0..N`) 向けに `GIADDR` を書き換えるのに対し、**`dhcp6relay` には同等の実装がない**。SmartSwitch 環境での DPU への DHCPv6 アドレス配布は community master では未サポートである。
+DHCPv4 側 (`dhcp4relay`) が [SmartSwitch](../../reference/glossary.md#term-smartswitch) の `DPUS` テーブルを監視し DPU インターフェース (`dpu0..N`) 向けに `GIADDR` を書き換えるのに対し、**`dhcp6relay` には同等の実装がない**。SmartSwitch 環境での DPU への DHCPv6 アドレス配布は community master では未サポートである。
 
 ### IPv6 LLA 生成待機の仕組み
 
@@ -441,3 +441,5 @@ DHCPv6 サーバ機能（kea-dhcp6 管理、ステートフル/ステートレ�
 - CONFIG_DB: [`DHCP_SERVER_IPV4`](dhcp-server-ipv4.md)、[`DHCP_RELAY`](dhcp-relay.md)
 
 <!-- ref-triangle:end -->
+
+<!-- glossary-links-injected: 4ad78d92b6ed -->

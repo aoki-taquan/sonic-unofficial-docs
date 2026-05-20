@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-[PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) の runtime 状態・カウンタは **COUNTERS_DB** の `COUNTERS:<queue_oid>` ハッシュに書き込まれる（STATE_DB ではない）。`pfcwdorch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) `PFC_WD|<port>` を読み込んで PFC WD を有効化した際に初期フィールドが書き込まれ、以降は storm 検知・復旧のたびに更新される。[^1]
+[PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) の runtime 状態・カウンタは **[COUNTERS_DB](../../reference/glossary.md#term-counters_db)** の `COUNTERS:<queue_oid>` ハッシュに書き込まれる（[STATE_DB](../../reference/glossary.md#term-state_db) ではない）。`pfcwdorch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) `PFC_WD|<port>` を読み込んで [PFC](../../reference/glossary.md#term-pfc) WD を有効化した際に初期フィールドが書き込まれ、以降は storm 検知・復旧のたびに更新される。[^1]
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -51,7 +51,7 @@ flowchart LR
 COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 ```
 
-`<queue_oid>` は `COUNTERS_QUEUE_NAME_MAP` で `<port>:<queue_index>` に対応する SAI オブジェクト ID。
+`<queue_oid>` は `COUNTERS_QUEUE_NAME_MAP` で `<port>:<queue_index>` に対応する [SAI](../../reference/glossary.md#term-sai) オブジェクト ID。
 
 ## 主要フィールド
 
@@ -59,9 +59,9 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 
 | フィールド | 値 | 説明 |
 |---|---|---|
-| `PFC_WD_STATUS` | `operational` / `stormed` | queue の現在状態。PFC WD 有効化直後は `operational` |
-| `PFC_WD_DETECTION_TIME` | uint (μs) | CONFIG_DB `detection_time` (ms) × 1000 変換値。Lua プラグインが storm 検知判定に使用 |
-| `PFC_WD_RESTORATION_TIME` | uint (μs) / `""` | CONFIG_DB `restoration_time` (ms) × 1000 変換値。未設定時は `""` (無限待機) |
+| `PFC_WD_STATUS` | `operational` / `stormed` | queue の現在状態。[PFC](../../reference/glossary.md#term-pfc) WD 有効化直後は `operational` |
+| `PFC_WD_DETECTION_TIME` | uint (μs) | [CONFIG_DB](../../reference/glossary.md#term-config_db) `detection_time` (ms) × 1000 変換値。Lua プラグインが storm 検知判定に使用 |
+| `PFC_WD_RESTORATION_TIME` | uint (μs) / `""` | [CONFIG_DB](../../reference/glossary.md#term-config_db) `restoration_time` (ms) × 1000 変換値。未設定時は `""` (無限待機) |
 | `PFC_WD_ACTION` | `drop` / `forward` / `alert` | CONFIG_DB `action` の複写。未設定時は `drop` |
 | `PFC_STAT_HISTORY` | `enable` / `disable` | CONFIG_DB `pfc_stat_history` の複写。未設定時は `disable` |
 
@@ -95,11 +95,11 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 
 ### `PFC_WD_STATUS` — 初期値 `"operational"`
 
-`initWdCounters()` (`pfcactionhandler.cpp:192`) が PFC WD 有効化直後に `PFC_WD_QUEUE_STATUS_OPERATIONAL = "operational"` を書き込む。storm 検知時に `"stormed"` へ、storm 復旧時に `"operational"` へ遷移する。
+`initWdCounters()` (`pfcactionhandler.cpp:192`) が [PFC](../../reference/glossary.md#term-pfc) WD 有効化直後に `PFC_WD_QUEUE_STATUS_OPERATIONAL = "operational"` を書き込む。storm 検知時に `"stormed"` へ、storm 復旧時に `"operational"` へ遷移する。
 
 ### `PFC_WD_QUEUE_STATS_DEADLOCK_DETECTED` / `_RESTORED` — 初期値 `0`
 
-`getQueueStats()` (`pfcactionhandler.cpp:119`) で `memset(&stats, 0, ...)` によりゼロ初期化。既存エントリが COUNTERS_DB にある場合はその値を読み出して継続（再起動後もカウンタ保持）。warm-reboot 後に storm が再通知されたとき `detectCount > restoreCount` なら `detectCount` を増やさない（`pfcactionhandler.cpp:66-69`）。
+`getQueueStats()` (`pfcactionhandler.cpp:119`) で `memset(&stats, 0, ...)` によりゼロ初期化。既存エントリが [COUNTERS_DB](../../reference/glossary.md#term-counters_db) にある場合はその値を読み出して継続（再起動後もカウンタ保持）。warm-reboot 後に storm が再通知されたとき `detectCount > restoreCount` なら `detectCount` を増やさない（`pfcactionhandler.cpp:66-69`）。
 
 ### `PFC_WD_DETECTION_TIME` — `detection_time × 1000` μs
 
@@ -107,11 +107,11 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 
 ### `PFC_WD_RESTORATION_TIME` — 未設定時は空文字列
 
-`pfcwdorch.cpp:572-575`: `restorationTime == 0` なら `""` を書き込む（無限待機相当）。CONFIG_DB に `restoration_time` が存在しない場合、orchagent の初期値 `restorationTime=0` がそのまま使われる。
+`pfcwdorch.cpp:572-575`: `restorationTime == 0` なら `""` を書き込む（無限待機相当）。CONFIG_DB に `restoration_time` が存在しない場合、[orchagent](../../reference/glossary.md#term-orchagent) の初期値 `restorationTime=0` がそのまま使われる。
 
 ### `PFC_WD_ACTION` — デフォルト `"drop"`
 
-`createEntry()` (`pfcwdorch.cpp:190`) で `PfcWdAction::PFC_WD_ACTION_DROP` に初期化。CONFIG_DB に `action` フィールドが存在しない場合も `"drop"` が COUNTERS_DB に書かれる。
+`createEntry()` (`pfcwdorch.cpp:190`) で `PfcWdAction::PFC_WD_ACTION_DROP` に初期化。CONFIG_DB に `action` フィールドが存在しない場合も `"drop"` が [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に書かれる。
 
 ### `PFC_STAT_HISTORY` — デフォルト `"disable"`
 
@@ -152,7 +152,7 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 <!-- cross-refs -->
 ## 暗黙参照 — `pfcwdorch` が依存する関連テーブル (Phase C)
 
-`COUNTERS:<queue_oid>` ハッシュは YANG 定義を持たないため leafref による明示的 cross-table 参照はゼロ件。
+`COUNTERS:<queue_oid>` ハッシュは [YANG](../../reference/glossary.md#term-yang) 定義を持たないため leafref による明示的 cross-table 参照はゼロ件。
 代わりに `pfcwdorch.cpp` / `pfcactionhandler.cpp` / Lua プラグイン群から抽出した **4 系統の暗黙依存** が実装レベルの cross-table 参照となる。
 
 <!-- evidence: meta/_intermediate/cdb-flow/pfcwd-state-cross-refs.md -->
@@ -163,7 +163,7 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 |---|---|---|---|
 | `CONFIG_DB:PFC_WD\|<port>` | `detection_time`, `restoration_time`, `action`, `pfc_stat_history` | 読み取り（設定値を COUNTERS_DB へ変換・書込み） | `pfcwdorch.cpp:212-233` `createEntry()` |
 | `APPL_DB:PFC_WD_INSTORM` | `<port>: { <queue_index>: "storm" }` | 書き込み（storm 検知時） / 削除（storm 復旧時） / 再読み込み（warm-reboot） | `pfcwdorch.cpp:999,1016,1033,1057,1108` |
-| `pfc_detect_*.lua` (全プラットフォーム Lua プラグイン) | `PFC_WD_STATUS`, `PFC_WD_ACTION`, `PFC_WD_DETECTION_TIME`, `PFC_WD_DETECTION_TIME_LEFT`, `PFC_STAT_HISTORY` | 読み取り（FlexCounter 経由で storm 検知判定に使用） | `pfc_detect_broadcom.lua:75-82`, 他各 lua |
+| `pfc_detect_*.lua` (全プラットフォーム Lua プラグイン) | `PFC_WD_STATUS`, `PFC_WD_ACTION`, `PFC_WD_DETECTION_TIME`, `PFC_WD_DETECTION_TIME_LEFT`, `PFC_STAT_HISTORY` | 読み取り（[FlexCounter](../../reference/glossary.md#term-flexcounter) 経由で storm 検知判定に使用） | `pfc_detect_broadcom.lua:75-82`, 他各 lua |
 | `pfc_restore*.lua` (restore Lua プラグイン) | `PFC_WD_STATUS` | 読み取り（storm 復旧判定） | `pfc_restore.lua:20` |
 | `sonic-utilities/pfcwd/main.py` | `PFC_WD_STATUS`, `PFC_WD_QUEUE_STATS_DEADLOCK_*`, `PFC_WD_QUEUE_STATS_TX/RX_*` | 読み取り（`show pfcwd stats` 表示） | `pfcwd/main.py:45-49,147-162` |
 
@@ -171,8 +171,8 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 
 1. `gPortsOrch->getPortPfcWatchdogStatus()` で PFC マスク取得 → lossless TC 集合が空なら COUNTERS_DB への書き込み全スキップ（`pfcwdorch.cpp:535-553`）。
 2. `registerInWdDb()` 内 per-queue ループで config フィールドを先行書き込み → `initWdCounters()` がステータス・カウンタを後続書き込み（`pfcwdorch.cpp:579-601`）。
-3. storm 検知時に COUNTERS_DB (`PFC_WD_STATUS=stormed`) と APPL_DB (`PFC_WD_INSTORM`) の両方へ同時書き込み。
-4. warm-reboot 時は `refillToSync()` が APPL_DB `PFC_WD_INSTORM` を再読み込みして storm 状態を COUNTERS_DB に反映（`pfcwdorch.cpp:1108`）。
+3. storm 検知時に COUNTERS_DB (`PFC_WD_STATUS=stormed`) と [APPL_DB](../../reference/glossary.md#term-appl_db) (`PFC_WD_INSTORM`) の両方へ同時書き込み。
+4. warm-reboot 時は `refillToSync()` が [APPL_DB](../../reference/glossary.md#term-appl_db) `PFC_WD_INSTORM` を再読み込みして storm 状態を COUNTERS_DB に反映（`pfcwdorch.cpp:1108`）。
 
 ### 範囲外
 
@@ -194,7 +194,7 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 | ステータス | 発生条件 | doTask の動作 | retry |
 |-----------|---------|--------------|-------|
 | `task_success` | `startWdOnPort()` / `stopWdOnPort()` 成功 | `consumer.m_toSync.erase(it++)` でキューから除去 | なし |
-| `task_need_retry` | `startWdOnPort()` が `false` を返した（FlexCounter グループ未初期化等） | `++it` でキューに残留（次回 `doTask()` で再試行） | あり（自動） |
+| `task_need_retry` | `startWdOnPort()` が `false` を返した（[FlexCounter](../../reference/glossary.md#term-flexcounter) グループ未初期化等） | `++it` でキューに残留（次回 `doTask()` で再試行） | あり（自動） |
 | `task_invalid_entry` | 下記バリデーション失敗 | `consumer.m_toSync.erase(it++)` でキューから除去 | なし（永久破棄） |
 | `task_failed` | `stopWdOnPort()` が `false` を返した（DEL 操作のみ） | `consumer.m_toSync.erase(it++)` でキューから除去 | なし |
 
@@ -203,11 +203,11 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 | # | 条件 | ログ | 行番号 |
 |---|------|------|--------|
 | 1 | `gPortsOrch->getPort()` が失敗（存在しないポート名） | `SWSS_LOG_ERROR("Invalid port interface %s")` | `pfcwdorch.cpp:195-196` |
-| 2 | ポートが物理ポートでない（LAG / VLAN 等） | `SWSS_LOG_ERROR("Interface %s is not physical port")` | `pfcwdorch.cpp:201-202` |
+| 2 | ポートが物理ポートでない（[LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) 等） | `SWSS_LOG_ERROR("Interface %s is not physical port")` | `pfcwdorch.cpp:201-202` |
 | 3 | `action` フィールドが `drop` / `forward` / `alert` 以外 | `SWSS_LOG_ERROR("Invalid PFC Watchdog action %s")` | `pfcwdorch.cpp:230-231` |
 | 4 | Cisco 8000 プラットフォームで `forward` アクションを指定 | `SWSS_LOG_ERROR("Unsupported action %s for platform %s")` | `pfcwdorch.cpp:234-235` |
 | 5 | Broadcom プラットフォームで DLR INIT 有効かつ既存ポートと `action` が不一致 | `SWSS_LOG_ERROR("Invalid PFC Watchdog action %s as switch level action %s is set")` | `pfcwdorch.cpp:260-262` |
-| 6 | Broadcom + DLR + `set_switch_attribute` が SAI エラーを返した | `SWSS_LOG_ERROR("Failed to set switch level PFC DLR packet action rv : %d")` | `pfcwdorch.cpp:250-251` |
+| 6 | Broadcom + DLR + `set_switch_attribute` が [SAI](../../reference/glossary.md#term-sai) エラーを返した | `SWSS_LOG_ERROR("Failed to set switch level PFC DLR packet action rv : %d")` | `pfcwdorch.cpp:250-251` |
 | 7 | 不明なフィールド名が CONFIG_DB に含まれる | `SWSS_LOG_ERROR("Failed to parse PFC Watchdog %s configuration. Unknown attribute %s.")` | `pfcwdorch.cpp:273-277` |
 | 8 | フィールド値パース時に例外発生（範囲外整数等） | `SWSS_LOG_ERROR("Failed to parse PFC Watchdog %s attribute %s error: %s.")` | `pfcwdorch.cpp:282-287` |
 | 9 | `detection_time` フィールドが存在しない（`detectionTime == 0`） | `SWSS_LOG_ERROR("%s missing")` | `pfcwdorch.cpp:302-303` |
@@ -225,13 +225,13 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 
 `stopWdOnPort()` が `false` を返した場合（`pfcwdorch.cpp:332-333`）:
 
-- `stopWdOnPort()` が SAI 操作でエラーを返した場合に発生する。
+- `stopWdOnPort()` が [SAI](../../reference/glossary.md#term-sai) 操作でエラーを返した場合に発生する。
 - `task_failed` はキューから除去されるため再試行は行われない。
 - COUNTERS_DB の残留フィールドはそのままになる（クリーンアップ不完全の可能性あり）。
 
 ### STATE_DB / ERROR_TABLE へのフィードバックなし
 
-`pfcwdorch` は失敗を `syslog` に記録するのみで、STATE_DB / ERROR_TABLE への書き込みを行わない。失敗確認は以下のログで行う:
+`pfcwdorch` は失敗を `syslog` に記録するのみで、[STATE_DB](../../reference/glossary.md#term-state_db) / ERROR_TABLE への書き込みを行わない。失敗確認は以下のログで行う:
 
 ```bash
 journalctl -u swss | grep -i "pfc watchdog\|pfcwd"
@@ -248,7 +248,7 @@ sudo grep -i "pfc watchdog\|pfcwd" /var/log/syslog
 <!-- source: sonic-swss/orchagent/pfcwdorch.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
 <!-- source: sonic-swss/orchagent/pfcactionhandler.cpp (ref: 4305596156d70e9797e8a881b3d19b46de0bce0d) -->
 
-`pfcwdorch` / `pfcactionhandler` が COUNTERS_DB を書き込む際に利用するハードコード定数。いずれも CONFIG_DB / YANG では設定不可。
+`pfcwdorch` / `pfcactionhandler` が COUNTERS_DB を書き込む際に利用するハードコード定数。いずれも CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) では設定不可。
 
 | 定数 | 値 | 定義箇所 | 用途 |
 |------|----|---------|------|
@@ -257,7 +257,7 @@ sudo grep -i "pfc watchdog\|pfcwd" /var/log/syslog
 | `PFC_WD_DETECTION_TIME_MAX` | `5000` ms | `pfcwdorch.cpp:22` | `detection_time` の上限（5 秒） |
 | `PFC_WD_RESTORATION_TIME_MIN` | `100` ms | `pfcwdorch.cpp:25` | `restoration_time` の下限。同様に範囲外は書き込み不実行 |
 | `PFC_WD_RESTORATION_TIME_MAX` | `60000` ms | `pfcwdorch.cpp:24` | `restoration_time` の上限（60 秒） |
-| `PFC_WD_QUEUE_STATUS` | `"PFC_WD_STATUS"` | `pfcactionhandler.cpp:9` | COUNTERS_DB フィールド名リテラル。YANG 定義外 |
+| `PFC_WD_QUEUE_STATUS` | `"PFC_WD_STATUS"` | `pfcactionhandler.cpp:9` | COUNTERS_DB フィールド名リテラル。[YANG](../../reference/glossary.md#term-yang) 定義外 |
 | `PFC_WD_QUEUE_STATUS_OPERATIONAL` | `"operational"` | `pfcactionhandler.cpp:10` | `PFC_WD_STATUS` の stable 状態値 |
 | `PFC_WD_QUEUE_STATUS_STORMED` | `"stormed"` | `pfcactionhandler.cpp:11` | `PFC_WD_STATUS` の storm 検知状態値 |
 
@@ -333,20 +333,20 @@ sai_switch_api->set_switch_attribute(gSwitchId, SAI_SWITCH_ATTR_PFC_DLR_PACKET_A
 
 ### SONiC events framework — `pfc-storm` イベント発行
 
-storm 検知時に `report_pfc_storm()` (`pfcwdorch.cpp:965`) が SONiC events framework 経由でイベントを発行する:
+storm 検知時に `report_pfc_storm()` (`pfcwdorch.cpp:965`) が [SONiC](../../reference/glossary.md#term-sonic) events framework 経由でイベントを発行する:
 
 ```cpp
 event_publish(g_events_handle, "pfc-storm", &params);
 // params: port-id, queue-index, additional_info
 ```
 
-gNMI / event-driven telemetry 向けのサイドチャンネルであり、COUNTERS_DB / APPL_DB へは書き込まない。
+[gNMI](../../reference/glossary.md#term-gnmi) / event-driven telemetry 向けのサイドチャンネルであり、COUNTERS_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) へは書き込まない。
 
 ### 副次書込なし
 
-- **STATE_DB**: `pfcwdorch` / `pfcactionhandler` は STATE_DB に書き込まない。
+- **[STATE_DB](../../reference/glossary.md#term-state_db)**: `pfcwdorch` / `pfcactionhandler` は STATE_DB に書き込まない。
 - **ERROR_TABLE**: 失敗時もエラーフィードバックテーブルへの書込なし。syslog のみ。
-- **ASIC_DB**: SAI 経由で `syncd` が書き込む（orchagent の直接書込なし）。
+- **[ASIC_DB](../../reference/glossary.md#term-asic_db)**: SAI 経由で `syncd` が書き込む（[orchagent](../../reference/glossary.md#term-orchagent) の直接書込なし）。
 
 <!-- /side-effects -->
 
@@ -359,13 +359,13 @@ gNMI / event-driven telemetry 向けのサイドチャンネルであり、COUNT
 
 | 購読者 | 購読方式 | チャンネル / テーブル | 発行元 | 目的 |
 |--------|---------|----------------------|--------|------|
-| `pfcwdorch` (`PfcWdSwOrch`) | `NotificationConsumer` (Redis SUBSCRIBE) | `PFC_WD_ACTION` (COUNTERS_DB) | Lua プラグイン (`pfc_detect_<platform>.lua`) | storm 検知 / restore 通知を受信して COUNTERS_DB フィールドを更新 |
+| `pfcwdorch` (`PfcWdSwOrch`) | `NotificationConsumer` ([Redis](../../reference/glossary.md#term-redis) SUBSCRIBE) | `PFC_WD_ACTION` (COUNTERS_DB) | Lua プラグイン (`pfc_detect_<platform>.lua`) | storm 検知 / restore 通知を受信して COUNTERS_DB フィールドを更新 |
 | `pfcwdorch` (`PfcWdSwOrch`) | `SubscriberStateTable` (swsscommon) | `APPL_DB:PFC_WD` | 外部コントローラ / warm-reboot refill | APPL_DB 経由の storm 状態変化を受信 |
 | `pfcwdorch` (`PfcWdOrch`) | `ConsumerStateTable` (swsscommon) | `CONFIG_DB:PFC_WD` | `pfcwd` CLI / config load | CONFIG_DB の SET/DEL 変化を受信し COUNTERS_DB 初期書き込みを実行 |
 
 ### Lua プラグイン → `PFC_WD_ACTION` チャンネル → orchagent の流れ
 
-FlexCounter グループ `PFC_WD` の poll サイクル（デフォルト `m_pollInterval` ms）ごとに `syncd` が Lua スクリプト (`pfc_detect_<platform>.lua` / `pfc_restore.lua`) を COUNTERS_DB 上で実行する。
+[FlexCounter](../../reference/glossary.md#term-flexcounter) グループ `PFC_WD` の poll サイクル（デフォルト `m_pollInterval` ms）ごとに `syncd` が Lua スクリプト (`pfc_detect_<platform>.lua` / `pfc_restore.lua`) を COUNTERS_DB 上で実行する。
 
 ```
 syncd FlexCounter poll (PFC_WD グループ)
@@ -378,7 +378,7 @@ orchagent NotificationConsumer::pop() で受信
   ↓ PfcWdActionHandler::initCounters() / commitCounters() が COUNTERS_DB フィールドを更新
 ```
 
-- `PFC_WD_ACTION` は COUNTERS_DB (`dbId=2`) 上の Redis Pub/Sub チャンネル名（テーブルではない）。
+- `PFC_WD_ACTION` は COUNTERS_DB (`dbId=2`) 上の [Redis](../../reference/glossary.md#term-redis) Pub/Sub チャンネル名（テーブルではない）。
 - ペイロードは JSON 配列 `["<queueOid>","storm"]` / `["<queueOid>","restore"]` の 2 種類（`pfcwdorch.cpp:724-728`、`pfc_detect_broadcom.lua:130,138`）。
 - `NotificationConsumer::pop()` は `event` 文字列と `values` ベクターを返す。`event` が `"storm"` か `"restore"` かで `startWdActionOnQueue()` 内の分岐が決まる。
 
@@ -480,3 +480,5 @@ show pfcwd stats
 ## 引用元
 
 [^1]: `pfcactionhandler.cpp` および `pfcwdorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/pfcactionhandler.cpp>
+
+<!-- glossary-links-injected: d2191ccfe0bd -->

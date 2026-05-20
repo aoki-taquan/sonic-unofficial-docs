@@ -52,7 +52,7 @@ related:
 
 ## 概要
 
-[intfsorch](../../reference/glossary.md#term-intfsorch)（[orchagent](../../reference/glossary.md#term-orchagent) 内）が [SAI](../../reference/glossary.md#term-sai) の flex counter 機構を通じて L3 Router Interface (RIF) ごとに取得する統計カウンタ群[^1]。値は `COUNTERS_DB` の `COUNTERS:<oid>` に格納され、`intfstat` コマンドが読み出す。rate 統計は `RATES:<oid>` に別途格納される。
+[intfsorch](../../reference/glossary.md#term-intfsorch)（[orchagent](../../reference/glossary.md#term-orchagent) 内）が [SAI](../../reference/glossary.md#term-sai) の flex counter 機構を通じて L3 Router Interface ([RIF](../../reference/glossary.md#term-rif)) ごとに取得する統計カウンタ群[^1]。値は `COUNTERS_DB` の `COUNTERS:<oid>` に格納され、`intfstat` コマンドが読み出す。rate 統計は `RATES:<oid>` に別途格納される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -106,11 +106,11 @@ COUNTERS_DB / RATES:<oid>              (Hash)
 
 ## フィールド一覧
 
-以下は `intfsorch.cpp` の `rifStatIds[]` に定義されている全 SAI カウンタ ID[^2]。
+以下は `intfsorch.cpp` の `rifStatIds[]` に定義されている全 [SAI](../../reference/glossary.md#term-sai) カウンタ ID[^2]。
 
 ### RIF カウンタ
 
-| SAI フィールド | 意味 |
+| [SAI](../../reference/glossary.md#term-sai) フィールド | 意味 |
 |---------------|------|
 | `SAI_ROUTER_INTERFACE_STAT_IN_PACKETS` | 受信パケット数 |
 | `SAI_ROUTER_INTERFACE_STAT_IN_OCTETS` | 受信バイト数 |
@@ -123,7 +123,7 @@ COUNTERS_DB / RATES:<oid>              (Hash)
 
 ## RATES テーブル
 
-syncd が `rif_rates.lua` を定期実行して計算した派生レートを `RATES:<oid>` に書く[^3]。
+[syncd](../../reference/glossary.md#term-syncd) が `rif_rates.lua` を定期実行して計算した派生レートを `RATES:<oid>` に書く[^3]。
 
 | フィールド | 意味 |
 |-----------|------|
@@ -134,17 +134,17 @@ syncd が `rif_rates.lua` を定期実行して計算した派生レートを `R
 
 ## 書き込み経路
 
-`COUNTERS_DB` は直接 CONFIG_DB から書かれず、すべて orchagent / syncd 経由で書かれる。
+`COUNTERS_DB` は直接 [CONFIG_DB](../../reference/glossary.md#term-config_db) から書かれず、すべて [orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) 経由で書かれる。
 
 | 経路 | 詳細 |
 |------|------|
-| intfsorch 初期化 | `COUNTERS_RIF_NAME_MAP` に RIF 名→OID、`COUNTERS_RIF_TYPE_MAP` に OID→タイプを書き込み |
-| syncd FlexCounter | `FLEX_COUNTER_TABLE|RIF` が `enable` になった後、1 秒ごとに SAI カウンタをポーリングして `COUNTERS:<oid>` を更新 |
+| [intfsorch](../../reference/glossary.md#term-intfsorch) 初期化 | `COUNTERS_RIF_NAME_MAP` に [RIF](../../reference/glossary.md#term-rif) 名→OID、`COUNTERS_RIF_TYPE_MAP` に OID→タイプを書き込み |
+| [syncd](../../reference/glossary.md#term-syncd) [FlexCounter](../../reference/glossary.md#term-flexcounter) | `FLEX_COUNTER_TABLE|RIF` が `enable` になった後、1 秒ごとに SAI カウンタをポーリングして `COUNTERS:<oid>` を更新 |
 | syncd Lua プラグイン | `rif_rates.lua` が `RATES:<oid>` の RX_BPS / RX_PPS / TX_BPS / TX_PPS を書き込み |
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `FLEX_COUNTER_TABLE` — ポーリング有効化と間隔設定
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `FLEX_COUNTER_TABLE` — ポーリング有効化と間隔設定
 - CLI: `intfstat`（L3 インタフェース統計表示）、`counterpoll rif enable/disable/interval`
 
 <!-- defaults -->
@@ -157,7 +157,7 @@ syncd が `rif_rates.lua` を定期実行して計算した派生レートを `R
 
 ### ポーリング間隔のコード由来デフォルト
 
-`FLEX_COUNTER_TABLE|RIF` に `POLL_INTERVAL` が設定されていない場合、intfsorch が **ハードコードした初期値**で syncd に投入する[^4]。
+`FLEX_COUNTER_TABLE|RIF` に `POLL_INTERVAL` が設定されていない場合、[intfsorch](../../reference/glossary.md#term-intfsorch) が **ハードコードした初期値**で syncd に投入する[^4]。
 
 | カウンタグループ | ハードコード定数 | 値 |
 |----------------|---------------|-----|
@@ -176,7 +176,7 @@ syncd が `rif_rates.lua` を定期実行して計算した派生レートを `R
 
 ### レートスムージングのデフォルト
 
-`rif_rates.lua` は COUNTERS_DB の `RATES:RIF` エントリから `RIF_SMOOTH_INTERVAL` と `RIF_ALPHA` を読み取り、指数移動平均 (EMA) でレートを平滑化する[^5]。これらの値は `enable_counters.py` によって起動時に書き込まれる。
+`rif_rates.lua` は [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の `RATES:RIF` エントリから `RIF_SMOOTH_INTERVAL` と `RIF_ALPHA` を読み取り、指数移動平均 (EMA) でレートを平滑化する[^5]。これらの値は `enable_counters.py` によって起動時に書き込まれる。
 
 | パラメータ | デフォルト値 | 定義箇所 |
 |-----------|------------|---------|
@@ -199,15 +199,15 @@ syncd が `rif_rates.lua` を定期実行して計算した派生レートを `R
 | < 5 分（uptime < 300 s） | **180 秒**（3 分待機後に設定書き込み） |
 | 5 分以上 | **60 秒**（1 分待機後に設定書き込み） |
 
-これにより orchagent / syncd が完全に初期化される前に `RATES:RIF` が書かれることを防いでいる。
+これにより [orchagent](../../reference/glossary.md#term-orchagent) / syncd が完全に初期化される前に `RATES:RIF` が書かれることを防いでいる。
 
 ### RIF タイプ別登録
 
-intfsorch は RIF ごとに `COUNTERS_RIF_TYPE_MAP` に OID→タイプ（`port`, `lag`, `vlan`, `subport` 等）を書く。`COUNTERS_RIF_NAME_MAP` には RIF 名（インタフェース名）→OID のマッピングが格納され、`intfstat` がこのマップを元にカウンタを引く。
+intfsorch は [RIF](../../reference/glossary.md#term-rif) ごとに `COUNTERS_RIF_TYPE_MAP` に OID→タイプ（`port`, `lag`, `vlan`, `subport` 等）を書く。`COUNTERS_RIF_NAME_MAP` には RIF 名（インタフェース名）→OID のマッピングが格納され、`intfstat` がこのマップを元にカウンタを引く。
 
 ### SAI フィールド未サポート時の挙動
 
-ASIC が対応していない SAI カウンタは `intfstat` の `get_counters()` で `STATUS_NA` ('N/A') として扱われ、表示に `N/A` が出る（scripts/intfstat:93-98）。
+[ASIC](../../reference/glossary.md#term-asic) が対応していない SAI カウンタは `intfstat` の `get_counters()` で `STATUS_NA` ('N/A') として扱われ、表示に `N/A` が出る（scripts/intfstat:93-98）。
 
 <!-- /defaults -->
 
@@ -239,7 +239,7 @@ if (!gPortsOrch->allPortsReady()) return;
 
 ### RIF 作成 → タイマー駆動の非同期 FlexCounter 登録
 
-`addRouterIntfs()` で SAI RIF 作成後、`port` を `m_rifsToAdd` リストにキューイングするのみで FlexCounter には即時登録しない。実際の登録は `UPDATE_MAPS_SEC = 1 秒` 間隔のタイマーが発火して `doTask(SelectableTimer)` が呼ばれた後になる（`intfsorch.cpp:45, 78`）[^8]。
+`addRouterIntfs()` で SAI RIF 作成後、`port` を `m_rifsToAdd` リストにキューイングするのみで [FlexCounter](../../reference/glossary.md#term-flexcounter) には即時登録しない。実際の登録は `UPDATE_MAPS_SEC = 1 秒` 間隔のタイマーが発火して `doTask(SelectableTimer)` が呼ばれた後になる（`intfsorch.cpp:45, 78`）[^8]。
 
 ```
 APP_INTF_TABLE SET
@@ -258,9 +258,9 @@ APP_INTF_TABLE SET
 
 ### gTraditionalFlexCounter モードでの ASIC_DB 待機
 
-`gTraditionalFlexCounter = true`（`--use-sairedis` オプション）の場合、タイマーが発火しても ASIC_DB の `VIDTORID` テーブルに該当 OID が存在するまで `addRifToFlexCounter()` を呼ばない（`intfsorch.cpp:1629-1636`）。
+`gTraditionalFlexCounter = true`（`--use-sairedis` オプション）の場合、タイマーが発火しても [ASIC_DB](../../reference/glossary.md#term-asic_db) の `VIDTORID` テーブルに該当 OID が存在するまで `addRifToFlexCounter()` を呼ばない（`intfsorch.cpp:1629-1636`）。
 
-`syncd` が SAI `create_router_interface` の応答を受けて `VIDTORID` を書いた後に初めて登録が完了する。新規 FlexCounter モード (`gTraditionalFlexCounter = false`) では即座に登録する。
+`syncd` が SAI `create_router_interface` の応答を受けて `VIDTORID` を書いた後に初めて登録が完了する。新規 [FlexCounter](../../reference/glossary.md#term-flexcounter) モード (`gTraditionalFlexCounter = false`) では即座に登録する。
 
 ### FLEX_COUNTER_TABLE|RIF enable → generateInterfaceMap() 連鎖
 
@@ -300,7 +300,7 @@ FlexCounterOrch::doTask()
      sonic-swss/orchagent/flexcounterorch.cpp (doTask, generateInterfaceMap 呼出し),
      sonic-swss/orchagent/orchdaemon.cpp (初期化順序) -->
 
-`IntfsOrch` が INTERFACE テーブルを処理して RIF を生成し、COUNTERS_DB に RIF カウンタを登録する際に暗黙的に参照する他テーブルを示す。YANG の leafref として定義されたものはなく、コードのみで表現された依存関係である。
+`IntfsOrch` が INTERFACE テーブルを処理して RIF を生成し、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) に RIF カウンタを登録する際に暗黙的に参照する他テーブルを示す。[YANG](../../reference/glossary.md#term-yang) の leafref として定義されたものはなく、コードのみで表現された依存関係である。
 
 | 参照元処理 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
 |---|---|---|---|---|
@@ -314,7 +314,7 @@ FlexCounterOrch::doTask()
 - **PORT**: `allPortsReady()` による自動待機。PortsOrch が初期化完了後に IntfsOrch の INTERFACE 処理がアンブロックされる。
 - **VRF_TABLE**: `doTask` ループの `continue` でリトライ。VRF が後から追加されると次の Consumer イベント処理時に解決する。
 - **FLEX_COUNTER_TABLE**: `FlexCounterOrch::doTask()` が即時評価。`enable` 書込み時点でタイマーがキックされ、最大 1 秒後に登録が完了する。
-- **ASIC_DB VIDTORID**: `doTask(SelectableTimer)` の 1 秒タイマーでリトライ。通常は RIF 作成後 1 秒以内に syncd が書き込む。
+- **[ASIC_DB](../../reference/glossary.md#term-asic_db) VIDTORID**: `doTask(SelectableTimer)` の 1 秒タイマーでリトライ。通常は RIF 作成後 1 秒以内に syncd が書き込む。
 
 <!-- /cross-refs -->
 
@@ -335,7 +335,7 @@ FlexCounterOrch::doTask()
 | `task_success` | ログ (`SWSS_LOG_ERROR`) のみで続行（`m_rifsToAdd` への追加は継続） |
 | それ以外 | `throw runtime_error` → orchdaemon クラッシュ → systemd が再起動 |
 
-COUNTERS_DB への書き込みは発生しない（`addRifToFlexCounter()` は `doTask(SelectableTimer)` で後続実行されるため）。
+[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書き込みは発生しない（`addRifToFlexCounter()` は `doTask(SelectableTimer)` で後続実行されるため）。
 
 ### SAI `remove_router_interface` 失敗 → COUNTERS_DB と SAI の乖離
 
@@ -415,7 +415,7 @@ warm-reboot 完了前に `FLEX_COUNTER_TABLE|RIF = enable` が届いても、`Fl
      sonic-swss-common/common/schema.h (L302, L330),
      sonic-buildimage/dockers/docker-orchagent/enable_counters.py (L10-11) -->
 
-`IntfsOrch` と `FlexCounterOrch` に含まれる、CONFIG_DB / YANG では管理されないハードコード定数の一覧。
+`IntfsOrch` と `FlexCounterOrch` に含まれる、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) では管理されないハードコード定数の一覧。
 
 ### FlexCounter グループ識別子
 
@@ -424,7 +424,7 @@ warm-reboot 完了前に `FLEX_COUNTER_TABLE|RIF = enable` が届いても、`Fl
 | `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"RIF_STAT_COUNTER"` | `intfsorch.h:19` | syncd の FlexCounter グループ名（通常カウンタ） |
 | `RIF_RATE_COUNTER_FLEX_COUNTER_GROUP` | `"RIF_RATE_COUNTER"` | `intfsorch.h:20` | syncd の FlexCounter グループ名（レートカウンタ） |
 
-これらの文字列は FLEX_COUNTER_DB のキープレフィックスとして使われる（例: `RIF_STAT_COUNTER:<oid>`）。
+これらの文字列は [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) のキープレフィックスとして使われる（例: `RIF_STAT_COUNTER:<oid>`）。
 
 ### ポーリング間隔
 
@@ -446,7 +446,7 @@ warm-reboot 完了前に `FLEX_COUNTER_TABLE|RIF = enable` が届いても、`Fl
 
 | 定数名 | 値 | 定義箇所 | 用途 |
 |--------|-----|---------|------|
-| `RIF_COUNTER_ID_LIST` | `"RIF_COUNTER_ID_LIST"` | `schema.h:302` | FLEX_COUNTER_DB に書き込む SAI カウンタ ID リストのフィールド名 |
+| `RIF_COUNTER_ID_LIST` | `"RIF_COUNTER_ID_LIST"` | `schema.h:302` | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に書き込む SAI カウンタ ID リストのフィールド名 |
 | `RIF_PLUGIN_FIELD` | `"RIF_PLUGIN_LIST"` | `schema.h:330` | FlexCounter グループに Lua プラグイン (`rif_rates.lua`) を登録するフィールド名 |
 
 ### レートスムージング定数
@@ -460,7 +460,7 @@ warm-reboot 完了前に `FLEX_COUNTER_TABLE|RIF = enable` が届いても、`Fl
 
 ### SAI カウンタ ID 静的配列
 
-`intfsorch.cpp:49-59` に `rifStatIds[]` として次の 8 カウンタが列挙されており、`addRifToFlexCounter()` の実行時に全てが `RIF_COUNTER_ID_LIST` として FLEX_COUNTER_DB に登録される。
+`intfsorch.cpp:49-59` に `rifStatIds[]` として次の 8 カウンタが列挙されており、`addRifToFlexCounter()` の実行時に全てが `RIF_COUNTER_ID_LIST` として [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に登録される。
 
 ```text
 SAI_ROUTER_INTERFACE_STAT_IN_PACKETS
@@ -473,7 +473,7 @@ SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_PACKETS
 SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_OCTETS
 ```
 
-この配列は定数であり、実行時や CONFIG_DB 設定で変更できない。ASIC が対応しないカウンタは syncd が SAI エラーを返し、`intfstat` では `N/A` として表示される。
+この配列は定数であり、実行時や CONFIG_DB 設定で変更できない。[ASIC](../../reference/glossary.md#term-asic) が対応しないカウンタは syncd が SAI エラーを返し、`intfstat` では `N/A` として表示される。
 
 <!-- /constants -->
 
@@ -519,7 +519,7 @@ RIF 作成時 (intfsorch.cpp:1309) と削除時 (intfsorch.cpp:1363) に `gPorts
 | RIF 作成後 | `port.m_rif_id`, `port.m_vr_id` | SAI OID |
 | RIF 削除後 | `port.m_rif_id`, `port.m_vr_id`, `port.m_nat_zone_id`, `port.m_mpls` | 0 / false |
 
-この更新は PortsOrch インメモリ状態のみ。APP_DB / STATE_DB への書き込みは発生しない。
+この更新は PortsOrch インメモリ状態のみ。APP_DB / [STATE_DB](../../reference/glossary.md#term-state_db) への書き込みは発生しない。
 
 ### ref_count による他 Orch への波及ブロック
 
@@ -530,7 +530,7 @@ RIF 作成時 (intfsorch.cpp:1309) と削除時 (intfsorch.cpp:1363) に `gPorts
 | NeighOrch | neighbor 追加 | neighbor 削除 |
 | RouteOrch | nexthop alias を持つルート追加 | ルート削除 |
 | NhgOrch | nexthop group メンバ追加 | メンバ削除 |
-| VnetOrch | VNET nexthop 追加 | VNET nexthop 削除 |
+| VnetOrch | [VNET](../../reference/glossary.md#term-vnet) nexthop 追加 | [VNET](../../reference/glossary.md#term-vnet) nexthop 削除 |
 
 `ref_count > 0` のとき `removeRouterIntfs()` は即 `false` を返す（intfsorch.cpp:1327-1330）。SAI RIF 削除も COUNTERS_DB クリーンアップも行われず、FlexCounter 登録は残ったままになる[^15]。
 
@@ -544,13 +544,13 @@ RIF 作成時 (intfsorch.cpp:1309) と削除時 (intfsorch.cpp:1363) に `gPorts
 | RIF 削除 | CHASSIS_APP_DB | `SYSTEM_INTERFACE_TABLE|<system_alias>` | エントリ削除 |
 | ポート状態変化 | CHASSIS_APP_DB | `SYSTEM_INTERFACE_TABLE|<system_alias>` | `oper_status` 更新 |
 
-リモートシステムポート（`SAI_SYSTEM_PORT_TYPE_REMOTE`）および他スイッチの LAG は sync 対象外（intfsorch.cpp:1689-1692）[^16]。
+リモートシステムポート（`SAI_SYSTEM_PORT_TYPE_REMOTE`）および他スイッチの [LAG](../../reference/glossary.md#term-lag) は sync 対象外（intfsorch.cpp:1689-1692）[^16]。
 
 ### IntfsOrch 初期化時の副作用
 
 `IntfsOrch::IntfsOrch()` コンストラクタ (intfsorch.cpp:86-100) の実行時に以下の副作用が一度だけ発生する:
 
-1. `rif_rates.lua` を Redis にロード → COUNTERS_DB に Lua スクリプト SHA が登録される
+1. `rif_rates.lua` を [Redis](../../reference/glossary.md#term-redis) にロード → COUNTERS_DB に Lua スクリプト SHA が登録される
 2. `setFlexCounterGroupParameter()` → FLEX_COUNTER_DB の `RIF_STAT_COUNTER` グループにポーリング間隔・stats モード・Lua プラグイン SHA が書き込まれる
 
 これらは CONFIG_DB 変化と無関係に、orchagent 起動時に自動実行される。
@@ -566,7 +566,7 @@ RIF 作成時 (intfsorch.cpp:1309) と削除時 (intfsorch.cpp:1363) に `gPorts
 
 ### Producer/Consumer ペア
 
-RIF カウンタの制御経路は **CONFIG_DB → FlexCounterOrch → IntfsOrch → syncd** という 4 段構成をとる。APPL_DB 中継なし。
+RIF カウンタの制御経路は **CONFIG_DB → FlexCounterOrch → IntfsOrch → syncd** という 4 段構成をとる。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし。
 
 | 区間 | 方式 | 詳細 |
 |------|------|------|
@@ -575,7 +575,7 @@ RIF カウンタの制御経路は **CONFIG_DB → FlexCounterOrch → IntfsOrch
 | IntfsOrch タイマー起動後 | `SelectableTimer` 駆動 | `doTask(SelectableTimer&)` で `m_rifsToAdd` リストを処理 |
 | IntfsOrch → COUNTERS_DB | 直接書き込み | `m_rifNameTable->set()` / `m_rifTypeTable->set()` |
 | IntfsOrch → FLEX_COUNTER_DB | `startFlexCounterPolling()` | `RIF_STAT_COUNTER:<oid>:COUNTER_ID_LIST` を書き込む |
-| syncd → ASIC | SAI flex counter ポーリング | 1000 ms 間隔で SAI stat API をポーリング |
+| syncd → [ASIC](../../reference/glossary.md#term-asic) | SAI flex counter ポーリング | 1000 ms 間隔で SAI stat API をポーリング |
 | syncd → COUNTERS_DB | 直接書き込み | `COUNTERS:<oid>` Hash に各 SAI フィールドをアトミック更新 |
 | syncd + rif_rates.lua | Lua プラグイン実行 | ポーリング毎に `RATES:<oid>` の RX_BPS/TX_BPS/RX_PPS/TX_PPS を指数平滑化計算 |
 | COUNTERS_DB → intfstat | `SonicV2Connector.get()` 直接読み出し | `COUNTERS_RIF_NAME_MAP` で名前→OID 解決後、`COUNTERS:<oid>` を読む（pull 型） |
@@ -600,11 +600,11 @@ warm-start: SelectableTimer(60s) 起動 → 60s 間 doTask ブロック
 
 ### gTraditionalFlexCounter モードの非同期待機
 
-`gTraditionalFlexCounter == true` の場合、IntfsOrch は `m_rifsToAdd` に RIF を一旦キューイングし、`doTask(SelectableTimer&)` のたびに ASIC_DB `VIDTORID` テーブルに OID が現れるまで待機する (intfsorch.cpp:1627-1636)。`gTraditionalFlexCounter == false`（新モード）では VIDTORID 未到達でも即時 `addRifToFlexCounter()` が呼ばれる。
+`gTraditionalFlexCounter == true` の場合、IntfsOrch は `m_rifsToAdd` に RIF を一旦キューイングし、`doTask(SelectableTimer&)` のたびに [ASIC_DB](../../reference/glossary.md#term-asic_db) `VIDTORID` テーブルに OID が現れるまで待機する (intfsorch.cpp:1627-1636)。`gTraditionalFlexCounter == false`（新モード）では VIDTORID 未到達でも即時 `addRifToFlexCounter()` が呼ばれる。
 
 ### intfstat の読み出しパス（pull 型）
 
-`intfstat` は COUNTERS_DB を **直接読み取る**（pull 型）。`SubscriberStateTable` / `ConsumerStateTable` / Redis `PSUBSCRIBE` は使用しない。コマンド実行時点の最新スナップショットを取得する。
+`intfstat` は COUNTERS_DB を **直接読み取る**（pull 型）。`SubscriberStateTable` / `ConsumerStateTable` / [Redis](../../reference/glossary.md#term-redis) `PSUBSCRIBE` は使用しない。コマンド実行時点の最新スナップショットを取得する。
 
 ```python
 # intfstat:81-82
@@ -669,12 +669,12 @@ VoQ シャーシ環境 (`gMySwitchType == "voq"` かつ `isChassisDbInUse()`) �
 
 | `Port::m_type` | COUNTERS_RIF_TYPE_MAP の値 |
 |----------------|---------------------------|
-| PHY / LAG / SYSTEM | `"SAI_ROUTER_INTERFACE_TYPE_PORT"` |
-| VLAN | `"SAI_ROUTER_INTERFACE_TYPE_VLAN"` |
+| PHY / [LAG](../../reference/glossary.md#term-lag) / SYSTEM | `"SAI_ROUTER_INTERFACE_TYPE_PORT"` |
+| [VLAN](../../reference/glossary.md#term-vlan) | `"SAI_ROUTER_INTERFACE_TYPE_VLAN"` |
 | SUBPORT | `"SAI_ROUTER_INTERFACE_TYPE_SUB_PORT"` |
 | それ以外 | `""` (エラーログ) |
 
-`SUBPORT`（VLAN サブインタフェース）への統計サポートは ASIC 依存。SAI が `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` 統計を未実装の場合 `COUNTERS:<oid>` フィールドは 0 のまま更新されない。
+`SUBPORT`（[VLAN](../../reference/glossary.md#term-vlan) サブインタフェース）への統計サポートは ASIC 依存。SAI が `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` 統計を未実装の場合 `COUNTERS:<oid>` フィールドは 0 のまま更新されない。
 
 ### SAI_ROUTER_INTERFACE_STAT_* の部分サポート
 
@@ -694,14 +694,14 @@ VoQ シャーシ環境 (`gMySwitchType == "voq"` かつ `isChassisDbInUse()`) �
 ### LoopBack / NAT / MPLS の特記事項
 
 - **LoopBack インタフェース**: `is_lo` 判定で `addRouterIntfs()` が呼ばれず `m_rifsToAdd` に積まれない。`COUNTERS_RIF_NAME_MAP` エントリなし・`intfstat` 非表示はアーキテクチャ設計による（全プラットフォーム共通）。
-- **NAT ゾーン ID**: `gIsNatSupported = false` のプラットフォームでは `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` が SAI 属性に渡されない。カウンタ収集への直接影響はない。
-- **MPLS 属性**: MPLS 非対応 ASIC では `SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` を含む `create_router_interface()` がエラーを返す場合があり、RIF 作成失敗 → COUNTERS_DB エントリなしとなる[^24]。
+- **[NAT](../../reference/glossary.md#term-nat) ゾーン ID**: `gIsNatSupported = false` のプラットフォームでは `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` が SAI 属性に渡されない。カウンタ収集への直接影響はない。
+- **[MPLS](../../reference/glossary.md#term-mpls) 属性**: [MPLS](../../reference/glossary.md#term-mpls) 非対応 ASIC では `SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` を含む `create_router_interface()` がエラーを返す場合があり、RIF 作成失敗 → COUNTERS_DB エントリなしとなる[^24]。
 
 [^20]: VoQ IntfsOrch コンストラクタ subscriber 追加: `sonic-swss/orchagent/intfsorch.cpp:102-108`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L102>
 [^21]: リモートシステムポート判定 + skip: `sonic-swss/orchagent/intfsorch.cpp:881-893,1640-1666`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L881>
 [^22]: RIF タイプ文字列決定ロジック: `sonic-swss/orchagent/intfsorch.cpp:1608-1626`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1608>
 [^23]: rifStatIds 全列挙: `sonic-swss/orchagent/intfsorch.cpp:49-59`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49>
-[^24]: MPLS / NAT SAI 属性追加条件: `sonic-swss/orchagent/intfsorch.cpp:1278-1294`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1278>
+[^24]: [MPLS](../../reference/glossary.md#term-mpls) / [NAT](../../reference/glossary.md#term-nat) SAI 属性追加条件: `sonic-swss/orchagent/intfsorch.cpp:1278-1294`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1278>
 
 <!-- /platform -->
 
@@ -734,3 +734,5 @@ VoQ シャーシ環境 (`gMySwitchType == "voq"` かつ `isChassisDbInUse()`) �
 [^16]: voqSyncAddIntf / voqSyncDelIntf: `sonic-swss/orchagent/intfsorch.cpp:1672-1748`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1672>
 [^13]: FLEX_COUNTER_DELAY_SEC 定数: `sonic-swss/orchagent/flexcounterorch.cpp:44`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44>
 [^14]: RIF_COUNTER_ID_LIST / RIF_PLUGIN_FIELD 定数: `sonic-swss-common/common/schema.h:302,330`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d/common/schema.h#L302>
+
+<!-- glossary-links-injected: cd1a8c562425 -->

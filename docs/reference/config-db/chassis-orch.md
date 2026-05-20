@@ -70,7 +70,7 @@ PASS_THROUGH_ROUTE_TABLE|<IP_prefix>
 
 このテーブルは**フィールドを持たない key-only テーブル**である。
 
-CONFIG_DB に書き込まれる情報は key（IP プレフィックス）のみで、フィールド値は使用しない。ChassisOrch の `doTask()` は key を読み取り、`SET` 操作時は `VNetRouteOrch::attach()`、`DEL` 操作時は `VNetRouteOrch::detach()` を呼び出すだけである[^2]。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込まれる情報は key（IP プレフィックス）のみで、フィールド値は使用しない。ChassisOrch の `doTask()` は key を読み取り、`SET` 操作時は `VNetRouteOrch::attach()`、`DEL` 操作時は `VNetRouteOrch::detach()` を呼び出すだけである[^2]。
 
 !!! info "YANG スキーマ"
     本テーブルの YANG モデルは存在しない。YANG バリデーションの対象外。
@@ -92,7 +92,7 @@ CONFIG_DB に書き込まれる情報は key（IP プレフィックス）のみ
 
 ### `redistribute = "true"` の固定値
 
-APP_DB に書き込まれる `redistribute` は常に `"true"` のハードコード固定値である。ユーザー設定不可・YANG 未定義。
+APP_DB に書き込まれる `redistribute` は常に `"true"` のハードコード固定値である。ユーザー設定不可・[YANG](../../reference/glossary.md#term-yang) 未定義。
 
 ```cpp
 // orchagent/chassisorch.cpp:34
@@ -112,7 +112,7 @@ fvVector.emplace_back("source", "CHASSIS_ORCH");
 
 ### エントリ削除の連鎖
 
-CONFIG_DB から `PASS_THROUGH_ROUTE_TABLE|<prefix>` が削除（`DEL`）された場合:
+[CONFIG_DB](../../reference/glossary.md#term-config_db) から `PASS_THROUGH_ROUTE_TABLE|<prefix>` が削除（`DEL`）された場合:
 1. `ChassisOrch::doTask()` が `VNetRouteOrch::detach(this, ip)` を呼び出す
 2. その後 VNetNextHopUpdate 通知経由で `deleteRoutePassThroughRouteTable()` が呼び出される
 3. APP_DB から対応エントリが削除される
@@ -128,7 +128,7 @@ void ChassisOrch::deleteRoutePassThroughRouteTable(const VNetNextHopUpdate& upda
 
 ### ChassisOrch の初期化依存
 
-ChassisOrch は orchdaemon の VNET 系orch 初期化後に登録される:
+ChassisOrch は orchdaemon の [VNET](../../reference/glossary.md#term-vnet) 系orch 初期化後に登録される:
 
 ```cpp
 // orchagent/orchdaemon.cpp:290-293
@@ -181,7 +181,7 @@ gFdbOrch → gMirrorOrch → gAclOrch → gPbhOrch → chassis_frontend_orch →
 ```
 
 `m_orchList` における処理順では `chassis_frontend_orch` は `vnet_rt_orch` より**前**に配置される。  
-ただし `ChassisOrch::doTask()` は CONFIG_DB テーブルの key を読み `VNetRouteOrch::attach()/detach()` を呼ぶだけで、SAI API を直接呼び出さない。そのため m_orchList 上の前後関係が機能的な問題を起こすことはない。
+ただし `ChassisOrch::doTask()` は CONFIG_DB テーブルの key を読み `VNetRouteOrch::attach()/detach()` を呼ぶだけで、[SAI](../../reference/glossary.md#term-sai) API を直接呼び出さない。そのため m_orchList 上の前後関係が機能的な問題を起こすことはない。
 
 ### 3. allPortsReady ガードなし
 
@@ -323,7 +323,7 @@ fvVector.emplace_back("source", "CHASSIS_ORCH");
 
 | フィールド | 固定値 | 行 | 備考 |
 |-----------|-------|----|------|
-| `redistribute` | `"true"` | `chassisorch.cpp:34` | ユーザー設定不可・YANG 未定義 |
+| `redistribute` | `"true"` | `chassisorch.cpp:34` | ユーザー設定不可・[YANG](../../reference/glossary.md#term-yang) 未定義 |
 | `source` | `"CHASSIS_ORCH"` | `chassisorch.cpp:38` | 書き込み主体の識別子 |
 
 `chassisorch.h` にフィールド名文字列定数は定義されておらず、すべてリテラルとしてソースに直書きされている。
@@ -506,7 +506,7 @@ orchdaemon select ループ (epoll)
           (Table::set() / Table::del())
 ```
 
-全段階が**同プロセス内の同期呼び出し**であり、Redis Pub/Sub やメッセージキューは介在しない。CONFIG_DB 変化から APP_DB 書き込み完了まで同一イベントループイテレーション内で完結する。
+全段階が**同プロセス内の同期呼び出し**であり、[Redis](../../reference/glossary.md#term-redis) Pub/Sub やメッセージキューは介在しない。CONFIG_DB 変化から APP_DB 書き込み完了まで同一イベントループイテレーション内で完結する。
 
 ### 5. タイミング特性
 
@@ -549,7 +549,7 @@ else
 | `"voq"` | ○ | 設計用途。VNet パススルールート転送が機能する |
 | `"switch"` | ○ | Silent standby。`PASS_THROUGH_ROUTE_TABLE` 書き込みなし |
 | `"chassis-packet"` | ○ | VoQ 準拠構成。VNet 設定次第で機能する |
-| `"dpu"` | ○ | `DpuOrchDaemon` が `OrchDaemon::init()` を super 呼び出しするため生成される。DPU では VNet パススルー未使用のため silent standby |
+| `"dpu"` | ○ | `DpuOrchDaemon` が `OrchDaemon::init()` を super 呼び出しするため生成される。[DPU](../../reference/glossary.md#term-dpu) では VNet パススルー未使用のため silent standby |
 | `"fabric"` | **✗** | `FabricOrchDaemon::init()` が `OrchDaemon::init()` を呼び出さないため生成されない |
 
 ### `"fabric"` での非生成
@@ -568,7 +568,7 @@ bool DpuOrchDaemon::init()
     // DPU 固有の DASH Orch を追加 ...
 ```
 
-DPU 環境では ChassisOrch が生成されるが、`PASS_THROUGH_ROUTE_TABLE` へのエントリ書き込みは想定されない。
+[DPU](../../reference/glossary.md#term-dpu) 環境では ChassisOrch が生成されるが、`PASS_THROUGH_ROUTE_TABLE` へのエントリ書き込みは想定されない。
 
 ### ハードウェアプラットフォーム変数
 
@@ -582,13 +582,13 @@ ChassisOrch の生成にこの値は使用されない。ハードウェアベ�
 
 - `<IP_prefix>` は `IpPrefix` クラスで正規化される（ホストビットが切り捨てられる）
 - CONFIG_DB エントリはフィールドを持たないため、値の書き込みは不要
-- YANG モデルが存在しないため、`config load` / `config reload` 時の YANG バリデーション対象外
+- [YANG](../../reference/glossary.md#term-yang) モデルが存在しないため、`config load` / `config reload` 時の YANG バリデーション対象外
 
 ## 書き込み入り口
 
 対象テーブル: CONFIG_DB `PASS_THROUGH_ROUTE_TABLE`
 
-- 通常は**BGP / sonic-cfggen / 手動設定**経由で CONFIG_DB に書き込まれる想定
+- 通常は**[BGP](../../reference/glossary.md#term-bgp) / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / 手動設定**経由で CONFIG_DB に書き込まれる想定
 - CLI コマンドは現時点で存在しない（`config` / `show` サブコマンドなし）
 - `sonic-db-cli CONFIG_DB hset 'PASS_THROUGH_ROUTE_TABLE|10.1.0.0/16' dummy 1` で直接設定可能
 
@@ -620,3 +620,5 @@ ChassisOrch の生成にこの値は使用されない。ハードウェアベ�
 [^1]: ChassisOrch 実装: `chassisorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/chassisorch.cpp>
 [^2]: ChassisOrch の `doTask()`: `chassisorch.cpp:50-67`. observer attach/detach のみを行い、CONFIG_DB フィールドは参照しない。
 [^3]: `VNetRouteOrch::attach()` の即時通知: `vnetorch.cpp:1891-1905`. `syncd_routes_` に一致プレフィックスがある場合は `attach()` 内部で `observer->update()` を呼ぶ。
+
+<!-- glossary-links-injected: 25ff2a036993 -->

@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-vrf`
 - top container: `sonic-srv6`
 
-Segment Routing over IPv6 ([SRv6](../../reference/glossary.md#term-srv6)) configuration for SONiC.[^1]
+Segment Routing over IPv6 ([SRv6](../../reference/glossary.md#term-srv6)) configuration for [SONiC](../../reference/glossary.md#term-sonic).[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -140,4 +140,4 @@ module: sonic-srv6
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-srv6.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

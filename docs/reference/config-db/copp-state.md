@@ -51,8 +51,8 @@ flowchart LR
 | テーブル名 | キー | 書き手 | 役割 |
 |---|---|---|---|
 | `COPP_GROUP_TABLE` | グループ名 | `coppmgr` | グループの適用状態 (`state`) |
-| `COPP_TRAP_TABLE` | トラップ名 | `coppmgr` + `CoppOrch` | トラップの適用状態 (`state`) と SAI 状態 (`hw_status`) |
-| `COPP_TRAP_CAPABILITY_TABLE` | `traps` (固定) | `CoppOrch` | SAI capability — プラットフォームがサポートするトラップ ID 一覧 |
+| `COPP_TRAP_TABLE` | トラップ名 | `coppmgr` + `CoppOrch` | トラップの適用状態 (`state`) と [SAI](../../reference/glossary.md#term-sai) 状態 (`hw_status`) |
+| `COPP_TRAP_CAPABILITY_TABLE` | `traps` (固定) | `CoppOrch` | [SAI](../../reference/glossary.md#term-sai) capability — プラットフォームがサポートするトラップ ID 一覧 |
 
 ---
 
@@ -77,7 +77,7 @@ COPP_GROUP_TABLE|<group-name>
 `coppmgr` の `setCoppGroupStateOk()` が以下のタイミングで呼ばれる:
 
 1. 起動時 (`CoppMgr` コンストラクタ) — マージ後の `group_cfg` を [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込んだ直後
-2. `doCoppGroupTask()` — CONFIG_DB の `COPP_GROUP` 変更受信後
+2. `doCoppGroupTask()` — [CONFIG_DB](../../reference/glossary.md#term-config_db) の `COPP_GROUP` 変更受信後
 3. `doCoppTrapTask()` / `setFeatureTrapIdsStatus()` — トラップ追加・削除により trap_ids が変化した後
 
 ### 削除タイミング
@@ -90,7 +90,7 @@ COPP_GROUP_TABLE|<group-name>
 ### エントリ不在の意味
 
 - グループが **pending** 状態 — そのグループに関連する feature がすべて無効
-- または CoPP の初期処理未完了
+- または [CoPP](../../reference/glossary.md#term-copp) の初期処理未完了
 
 ---
 
@@ -163,7 +163,7 @@ key は常に `traps` 固定。
 
 ### 書き込みタイミング
 
-`CoppOrch` コンストラクタの `publishTrapIdsCapability()` が orchagent 起動時に 1 回だけ書き込む。
+`CoppOrch` コンストラクタの `publishTrapIdsCapability()` が [orchagent](../../reference/glossary.md#term-orchagent) 起動時に 1 回だけ書き込む。
 
 ### 値の決定ロジック
 
@@ -192,7 +192,7 @@ sai_query_attribute_enum_values_capability() 失敗
 
 ### `COPP_TRAP_TABLE` の二重書き込み — `state` と `hw_status` の非同期
 
-`state` (coppmgr) と `hw_status` (copporch) は同一 Redis key に別プロセスが独立して書き込む。`state=ok` であっても `hw_status` がまだ存在しない（SAI 登録前）、あるいは逆に `hw_status=installed` であっても `state` が存在しない（coppmgr での DEL 後に orchagent がまだ操作を受け取っていない）状態が短時間発生しうる。
+`state` (coppmgr) と `hw_status` (copporch) は同一 [Redis](../../reference/glossary.md#term-redis) key に別プロセスが独立して書き込む。`state=ok` であっても `hw_status` がまだ存在しない（SAI 登録前）、あるいは逆に `hw_status=installed` であっても `state` が存在しない（coppmgr での DEL 後に [orchagent](../../reference/glossary.md#term-orchagent) がまだ操作を受け取っていない）状態が短時間発生しうる。
 
 ### `COPP_TRAP_CAPABILITY_TABLE` — フォールバック時の `neighbor_miss` silent drop
 
@@ -210,7 +210,7 @@ SAI capability query が失敗した場合、`neighbor_miss` は `default_suppor
 
 ### 通常起動シーケンス
 
-STATE_DB への書き込みは 3 段階に分かれ、2 プロセスが非同期に関与する。
+[STATE_DB](../../reference/glossary.md#term-state_db) への書き込みは 3 段階に分かれ、2 プロセスが非同期に関与する。
 
 #### ステップ 1: `CoppOrch` コンストラクタ（orchagent 起動直後）
 
@@ -276,24 +276,24 @@ orchagent が APPL_DB を処理
   → COPP_TRAP_TABLE|<trap> hw_status=installed
 ```
 
-`state` (coppmgr) と `hw_status` (copporch) は同一 Redis キーに非同期で書き込まれるため、両フィールドが揃うタイミングは保証されない。短時間の不整合（`state=ok` だが `hw_status` 未設定、またはその逆）は正常動作である。
+`state` (coppmgr) と `hw_status` (copporch) は同一 [Redis](../../reference/glossary.md#term-redis) キーに非同期で書き込まれるため、両フィールドが揃うタイミングは保証されない。短時間の不整合（`state=ok` だが `hw_status` 未設定、またはその逆）は正常動作である。
 <!-- /ordering -->
 
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-本ページの STATE_DB 3 テーブル（`COPP_GROUP_TABLE` / `COPP_TRAP_TABLE` / `COPP_TRAP_CAPABILITY_TABLE`）はいずれも YANG 未モデル化のオペレーショナルテーブルで、`coppmgrd` および `CoppOrch` が**書き手 (producer only)** として書き込む。以下では各 STATE_DB エントリの**生成トリガ・キー値・フィールド値**が依存する入力側テーブルと前提リソースを整理する。
+本ページの [STATE_DB](../../reference/glossary.md#term-state_db) 3 テーブル（`COPP_GROUP_TABLE` / `COPP_TRAP_TABLE` / `COPP_TRAP_CAPABILITY_TABLE`）はいずれも [YANG](../../reference/glossary.md#term-yang) 未モデル化のオペレーショナルテーブルで、`coppmgrd` および `CoppOrch` が**書き手 (producer only)** として書き込む。以下では各 STATE_DB エントリの**生成トリガ・キー値・フィールド値**が依存する入力側テーブルと前提リソースを整理する。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
-| `COPP_TRAP\|<trap-name>` (CONFIG_DB) | キー転写 + SET/DEL トリガ | 常時。`<trap-name>` は `COPP_TRAP_TABLE` キーに転写される。`trap_group` / `trap_ids` / `always_enabled` フィールドを参照 | `coppmgr.cpp` L298-303 (テーブル参照), L531-815 (`doCoppTrapTask`) |
+| `COPP_TRAP\|<trap-name>` ([CONFIG_DB](../../reference/glossary.md#term-config_db)) | キー転写 + SET/DEL トリガ | 常時。`<trap-name>` は `COPP_TRAP_TABLE` キーに転写される。`trap_group` / `trap_ids` / `always_enabled` フィールドを参照 | `coppmgr.cpp` L298-303 (テーブル参照), L531-815 (`doCoppTrapTask`) |
 | `COPP_GROUP\|<group-name>` (CONFIG_DB) | キー転写 + SET/DEL トリガ | 常時。`<group-name>` は `COPP_GROUP_TABLE` キーに転写 | `coppmgr.cpp` L299, L840-927 (`doCoppGroupTask`) |
 | `FEATURE\|<feature-name>` (CONFIG_DB) | feature 有効フラグ参照 | 常時。`state` フィールドが `enabled` かどうかで `COPP_TRAP_TABLE` / `COPP_GROUP_TABLE` のエントリ追加・削除が決まる | `coppmgr.cpp` L300, L323-330, L928-967 (`doFeatureTask`), L157-172 (`isFeatureEnabled`) |
-| `APP_COPP_TABLE\|<group-name>` (APPL_DB) | 中継テーブル — coppmgr が書き込み、CoppOrch が読み出す | 常時。`coppmgrd` が `APPL_DB` に書いた後、`CoppOrch` が SAI に反映し `hw_status` を STATE_DB に返す | `coppmgr.cpp` L301 (`m_appCoppTable`), `copporch.cpp` L191 (Consumer) |
+| `APP_COPP_TABLE\|<group-name>` ([APPL_DB](../../reference/glossary.md#term-appl_db)) | 中継テーブル — coppmgr が書き込み、CoppOrch が読み出す | 常時。`coppmgrd` が `APPL_DB` に書いた後、`CoppOrch` が SAI に反映し `hw_status` を STATE_DB に返す | `coppmgr.cpp` L301 (`m_appCoppTable`), `copporch.cpp` L191 (Consumer) |
 | `PortsOrch::allPortsReady()` | 起動順序ガード | 常時。全ポートが Ready でない間は `CoppOrch::doTask()` が即 return し、`COPP_TRAP_TABLE.hw_status` が書き込まれない | `copporch.cpp` L885-888 |
 | SAI `sai_query_attribute_enum_values_capability()` | SAI クエリ → `COPP_TRAP_CAPABILITY_TABLE` 書込み | 起動時 1 回。成功時は SAI 返値、失敗時は `default_supported_trap_ids`（42 種、`neighbor_miss` 除く）にフォールバック | `copporch.cpp` L240-300 (`publishTrapIdsCapability`) |
 | SAI `sai_hostif_api->create_hostif_trap()` / `remove_hostif_trap()` | SAI 戻り値 → `hw_status` 値 | 常時。成功時のみ `"installed"` / `"not-installed"` を書込む。失敗時は書込みをスキップしエラーログのみ | `copporch.cpp` L526, L1413 (`updateTrapOperStatus`) |
-| `COUNTERS_DB COUNTERS_TRAP_NAME_MAP` | トラップカウンタ名マップ書込み | `bindTrapCounter()` 成功時。FlexCounter 経由の統計収集に必要。STATE_DB への書込みには直接影響しない | `copporch.cpp` L1455-1456 (`m_counter_table->set`) |
+| `COUNTERS_DB COUNTERS_TRAP_NAME_MAP` | トラップカウンタ名マップ書込み | `bindTrapCounter()` 成功時。[FlexCounter](../../reference/glossary.md#term-flexcounter) 経由の統計収集に必要。STATE_DB への書込みには直接影響しない | `copporch.cpp` L1455-1456 (`m_counter_table->set`) |
 | `platform` 環境変数 (`getenv("platform")`) | プラットフォーム分岐 | Mellanox / Marvell プラットフォームでは SAI への trap priority 設定をスキップ。`COPP_TRAP_TABLE.hw_status` の書込み自体には影響しないが SAI 操作の成否に間接影響 | `copporch.cpp` L353-354, L1188-1189 (`initDefaultTrapIds`, `getAttribsFromTrapGroup`) |
 
 !!! note "STATE_DB エントリは「書き出し専用」のステータスレジスタ"
@@ -309,7 +309,7 @@ orchagent が APPL_DB を処理
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
-`COPP_GROUP_TABLE` / `COPP_TRAP_TABLE` / `COPP_TRAP_CAPABILITY_TABLE` への書き手は `coppmgrd` と `CoppOrch`（orchagent）の 2 プロセス。両プロセスとも STATE_DB への書き込みは `swss::Table::set/del`（void 戻り値）で行うため、**Redis 書き込み失敗はアプリ層では検出できず**、例外伝播によるプロセス abort → systemd 再起動が唯一の回復経路となる。以下では各プロセスの失敗分岐と STATE_DB への影響を整理する。
+`COPP_GROUP_TABLE` / `COPP_TRAP_TABLE` / `COPP_TRAP_CAPABILITY_TABLE` への書き手は `coppmgrd` と `CoppOrch`（[orchagent](../../reference/glossary.md#term-orchagent)）の 2 プロセス。両プロセスとも STATE_DB への書き込みは `swss::Table::set/del`（void 戻り値）で行うため、**[Redis](../../reference/glossary.md#term-redis) 書き込み失敗はアプリ層では検出できず**、例外伝播によるプロセス abort → systemd 再起動が唯一の回復経路となる。以下では各プロセスの失敗分岐と STATE_DB への影響を整理する。
 
 ### A. `CoppOrch` 初期化失敗（orchagent 起動時）
 
@@ -360,15 +360,15 @@ orchagent が APPL_DB を処理
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`CoppOrch` (`copporch.cpp` / `copporch.h`) および `CoppMgr` (`coppmgr.cpp`) 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。これらの値は STATE_DB テーブルの書き込みタイミング・フィールド値・capability 公開内容に直接影響する。
+`CoppOrch` (`copporch.cpp` / `copporch.h`) および `CoppMgr` (`coppmgr.cpp`) 内に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。これらの値は STATE_DB テーブルの書き込みタイミング・フィールド値・capability 公開内容に直接影響する。
 
 ### FlexCounter / タイマー定数
 
 | 定数 | 値 | 用途 | ソース |
 |------|----|------|--------|
-| `FLEX_COUNTER_UPD_INTERVAL` | `1` 秒 | `SelectableTimer` の更新周期。FlexCounter グループパラメータ設定タイミングに影響 | `copporch.cpp` L37 |
-| `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | ホストインタフェーストラップカウンタの FlexCounter ポーリング間隔 | `copporch.cpp` L189 |
-| `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` | `"HOSTIF_TRAP_FLOW_COUNTER"` | COUNTERS_DB FlexCounter グループ名。`bindTrapCounter()` / `unbindTrapCounter()` 経由で `COUNTERS_TRAP_NAME_MAP` への書き込みを制御 | `copporch.h` L23 |
+| `FLEX_COUNTER_UPD_INTERVAL` | `1` 秒 | `SelectableTimer` の更新周期。[FlexCounter](../../reference/glossary.md#term-flexcounter) グループパラメータ設定タイミングに影響 | `copporch.cpp` L37 |
+| `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | ホストインタフェーストラップカウンタの [FlexCounter](../../reference/glossary.md#term-flexcounter) ポーリング間隔 | `copporch.cpp` L189 |
+| `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` | `"HOSTIF_TRAP_FLOW_COUNTER"` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) FlexCounter グループ名。`bindTrapCounter()` / `unbindTrapCounter()` 経由で `COUNTERS_TRAP_NAME_MAP` への書き込みを制御 | `copporch.h` L23 |
 
 ### STATE_DB フィールド値定数
 
@@ -399,7 +399,7 @@ orchagent が APPL_DB を処理
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`CoppOrch` (`copporch.cpp`) が STATE_DB 3 テーブルへの書き込みと並行して行う、COUNTERS_DB および FLEX_COUNTER_DB への副次書き込みを整理する。`coppmgrd` が書く APPL_DB は本ページのテーブルの直接の生成トリガ（Phase B 参照）であるため除外する。
+`CoppOrch` (`copporch.cpp`) が STATE_DB 3 テーブルへの書き込みと並行して行う、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) および [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への副次書き込みを整理する。`coppmgrd` が書く [APPL_DB](../../reference/glossary.md#term-appl_db) は本ページのテーブルの直接の生成トリガ（Phase B 参照）であるため除外する。
 
 ### SAI トラップ作成成功時 — COUNTERS_DB 書き込み
 
@@ -407,17 +407,17 @@ orchagent が APPL_DB を処理
 
 | 副次 DB | テーブル / キー | フィールド | 書込内容 | 根拠 |
 |---------|---------------|---------|---------|------|
-| COUNTERS_DB | `COUNTERS_TRAP_NAME_MAP` | `<trap-name>` | SAI generic counter OID 文字列 | `copporch.cpp` L1452-1456 (`bindTrapCounter`) |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_TRAP_NAME_MAP` | `<trap-name>` | SAI generic counter OID 文字列 | `copporch.cpp` L1452-1456 (`bindTrapCounter`) |
 
 書き込みは `FlexCounterOrch::getHostIfTrapCounterState()` が `true` を返す場合のみ実行される。FlexCounter 機能が無効な場合は `bindTrapCounter()` が即 `return false` し COUNTERS_DB への書き込みは発生しない。<!-- evidence: copporch.cpp L1420-1425 -->
 
 ### SAI トラップ作成成功後 — FLEX_COUNTER_DB 書き込み（タイマー非同期）
 
-`bindTrapCounter()` は counter_id を `m_pendingAddToFlexCntr` に積み、`SelectableTimer`（1 秒周期）を起動する。タイマー発火時の `doTask(SelectableTimer&)` が FLEX_COUNTER_DB へ書き込む。
+`bindTrapCounter()` は counter_id を `m_pendingAddToFlexCntr` に積み、`SelectableTimer`（1 秒周期）を起動する。タイマー発火時の `doTask(SelectableTimer&)` が [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) へ書き込む。
 
 | 副次 DB | テーブル / キー | 書込内容 | 書込タイミング | 根拠 |
 |---------|---------------|---------|--------------|------|
-| FLEX_COUNTER_DB | `HOSTIF_TRAP_FLOW_COUNTER\|<counter_oid>` | `HOSTIF_TRAP_STAT_PACKETS` カウンタ ID リスト | タイマー発火時（≤1 秒後）。`gTraditionalFlexCounter` が true の場合は VID→RID マップ確認後に書き込み | `copporch.cpp` L944-951 (`doTask` timer), `L1463` (timer start) |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `HOSTIF_TRAP_FLOW_COUNTER\|<counter_oid>` | `HOSTIF_TRAP_STAT_PACKETS` カウンタ ID リスト | タイマー発火時（≤1 秒後）。`gTraditionalFlexCounter` が true の場合は VID→RID マップ確認後に書き込み | `copporch.cpp` L944-951 (`doTask` timer), `L1463` (timer start) |
 
 `gTraditionalFlexCounter` が false（デフォルト: SONiC 4.x 以降）の場合は VID 確認なしで即書き込み。true の場合は `VIDTORID` テーブルで対応 RID が確認できるまでペンディングされ続ける。<!-- evidence: copporch.cpp L944-951 -->
 
@@ -576,5 +576,4 @@ sonic-db-cli STATE_DB keys 'COPP_*TABLE|*'
 
 ## 引用元
 
-
-<!-- glossary-links-injected: a827b4343c01 -->
+<!-- glossary-links-injected: 4a79e2a68815 -->

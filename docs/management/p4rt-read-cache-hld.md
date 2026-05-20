@@ -37,7 +37,7 @@ related:
 
 ## 概要
 
-P4 Runtime (P4RT) サーバはコントローラから 3 種の操作（Stream / Write / Read）を受ける。SONiC の P4RT App は **1 リクエスト同時実行** モデルで動くため、Read が遅いと Write を含む他リクエストが詰まる[^1]。
+P4 Runtime ([P4RT](../reference/glossary.md#term-p4rt)) サーバはコントローラから 3 種の操作（Stream / Write / Read）を受ける。[SONiC](../reference/glossary.md#term-sonic) の P4RT App は **1 リクエスト同時実行** モデルで動くため、Read が遅いと Write を含む他リクエストが詰まる[^1]。
 
 実測では 16,000 フローの Read で **約 1.30s** を要し、その大半（1.28s）が AppDb ([Redis](../reference/glossary.md#term-redis)) の `HGETALL` を 16,000 回叩く時間で消える。さらに Redis の生データを Platform Independent (PI) 形式へ変換する処理にも一定時間がかかる[^1]。
 
@@ -208,3 +208,5 @@ redis-cli -n 4 hgetall 'P4RT_TABLE|*'
 - [pins-grpc-unresponsive](../reference/runbooks/pins-grpc-unresponsive.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 4702d64416ec -->

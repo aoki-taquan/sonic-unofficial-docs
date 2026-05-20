@@ -65,8 +65,8 @@ flowchart TB
 
 | Phase | 内容 |
 |-------|------|
-| 1 Sanity Checks | リソース不足・互換性・ASIC ヘルス・hotplug 状態 |
-| 2 Freeze + Quiescence | Applications（[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / [BGP](../reference/glossary.md#term-bgp) / P4RT 等）と Infrastructure（[orchagent](../reference/glossary.md#term-orchagent) / [syncd](../reference/glossary.md#term-syncd) / xcvrd）の **freeze** を統一通知（[Redis](../reference/glossary.md#term-redis) 経由）。失敗時は **unfreeze** で巻き戻す。`Quiescence Timer` で完了を保証 |
+| 1 Sanity Checks | リソース不足・互換性・[ASIC](../reference/glossary.md#term-asic) ヘルス・hotplug 状態 |
+| 2 Freeze + Quiescence | Applications（[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / [BGP](../reference/glossary.md#term-bgp) / [P4RT](../reference/glossary.md#term-p4rt) 等）と Infrastructure（[orchagent](../reference/glossary.md#term-orchagent) / [syncd](../reference/glossary.md#term-syncd) / xcvrd）の **freeze** を統一通知（[Redis](../reference/glossary.md#term-redis) 経由）。失敗時は **unfreeze** で巻き戻す。`Quiescence Timer` で完了を保証 |
 | 3 Checkpointing | 各コンポーネントが state を save。orchagent は [SAI](../reference/glossary.md#term-sai)、syncd は ASIC view 等 |
 | 4 Reboot 実行 | `kexec`。container を **個別に止める必要が無い**ため shutdown ordering 依存が消える |
 
@@ -260,4 +260,4 @@ docker logs swss 2>&1 | grep -iE "Phase|freeze|checkpoint" | tail -50
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 34c2dd9af927 -->
+<!-- glossary-links-injected: 9e38921d19fd -->

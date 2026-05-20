@@ -33,7 +33,7 @@ hard: 0
 
 これらのフィールドが設定されたグループに属する trap は、`SAI_HOSTIF_TABLE_ENTRY_CHANNEL_TYPE_GENETLINK` 経由でカーネルの genetlink ソケットへ転送される。sflow のパケットサンプリング（`sample_packet` trap）に使用され、`queue2_group1` がその典型例。
 
-[YANG](../../reference/glossary.md#term-yang) モデル (`sonic-copp.yang`) にはこれらフィールドの定義がなく、APPL_DB 経由の拡張フィールドとして実装されている。
+[YANG](../../reference/glossary.md#term-yang) モデル (`sonic-copp.yang`) にはこれらフィールドの定義がなく、[APPL_DB](../../reference/glossary.md#term-appl_db) 経由の拡張フィールドとして実装されている。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -67,8 +67,8 @@ COPP_GROUP|<name>
 
 | フィールド | 型 | 必須 | 既定 | 説明 |
 |-----------|----|------|------|------|
-| `genetlink_name` | string | no | (フィールドなし) | 紐付ける SAI genetlink HostIf 名。例: `psample`。存在しない場合 genetlink HostIf は未作成 |
-| `genetlink_mcgrp_name` | string | no | SAI 実装依存 | genetlink multicast group 名。例: `packets`。`genetlink_name` と併用 |
+| `genetlink_name` | string | no | (フィールドなし) | 紐付ける [SAI](../../reference/glossary.md#term-sai) genetlink HostIf 名。例: `psample`。存在しない場合 genetlink HostIf は未作成 |
+| `genetlink_mcgrp_name` | string | no | [SAI](../../reference/glossary.md#term-sai) 実装依存 | genetlink multicast group 名。例: `packets`。`genetlink_name` と併用 |
 
 ## 動作フロー
 
@@ -100,7 +100,7 @@ COPP_GROUP|<name>
 
 ## 制約
 
-- `genetlink_name` のみ設定し `genetlink_mcgrp_name` を省略した場合、SAI HostIf は作成されるが `SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME` が未設定となり、SAI 実装依存の挙動となる
+- `genetlink_name` のみ設定し `genetlink_mcgrp_name` を省略した場合、[SAI](../../reference/glossary.md#term-sai) HostIf は作成されるが `SAI_HOSTIF_ATTR_GENETLINK_MCGRP_NAME` が未設定となり、SAI 実装依存の挙動となる
 - `genetlink_name` なしで `genetlink_mcgrp_name` のみ設定すると `SAI_HOSTIF_ATTR_TYPE` が未設定のまま `create_hostif()` が呼ばれ、SAI 実装によっては失敗する
 - `genetlink_name` の値は `sizeof(chardata)-1` バイトに切り詰められる（末尾 NUL 保証）
 
@@ -399,7 +399,7 @@ if (m_trap_group_hostif_map.find(m_trap_group_map[trap_group_name]) !=
 }
 ```
 
-同一 trap_group に genetlink フィールドを持つエントリが重複 SET された場合（orchagent 再起動なしに CONFIG_DB を再書き込みした場合など）、`processCoppRule()` が `task_failed` を返す。`doTask()` は当該エントリを erase して `return` し、**後続の全 pending エントリの処理も停止する**（`copporch.cpp:920-923`）。
+同一 trap_group に genetlink フィールドを持つエントリが重複 SET された場合（[orchagent](../../reference/glossary.md#term-orchagent) 再起動なしに CONFIG_DB を再書き込みした場合など）、`processCoppRule()` が `task_failed` を返す。`doTask()` は当該エントリを erase して `return` し、**後続の全 pending エントリの処理も停止する**（`copporch.cpp:920-923`）。
 
 ### C. `create_hostif()` SAI 失敗 → `task_failed`
 
@@ -419,7 +419,7 @@ genetlink HostIf / HostIfTable を SAI に作成済みの後に呼ばれる `tra
 
 ### G. 例外 → `task_invalid_entry` → erase & continue
 
-`processCoppRule()` が `out_of_range` / `std::exception` を送出した場合、`doTask()` が `task_invalid_entry` として当該エントリを erase して後続処理を継続する（`copporch.cpp:900-909`）。当該エントリは永久スキップとなり、orchagent 再起動後に再処理される。
+`processCoppRule()` が `out_of_range` / `std::exception` を送出した場合、`doTask()` が `task_invalid_entry` として当該エントリを erase して後続処理を継続する（`copporch.cpp:900-909`）。当該エントリは永久スキップとなり、[orchagent](../../reference/glossary.md#term-orchagent) 再起動後に再処理される。
 
 ### `task_status` 処理まとめ
 
@@ -430,7 +430,7 @@ genetlink HostIf / HostIfTable を SAI に作成済みの後に呼ばれる `tra
 | `task_failed` | SAI 失敗、二重作成、`trapGroupProcessTrapIdChange` 失敗 | erase → **return**（後続処理停止） |
 | `task_need_retry` | SAI 一時失敗（transient error） | `it++` → 次サイクルで再試行 |
 
-`task_failed` 時は SWSS_LOG_ERROR が記録される。orchagent はプロセス終了せず生存するが、次回 `doTask()` 呼び出しまで他 COPP グループの処理も停止する点に注意。
+`task_failed` 時は SWSS_LOG_ERROR が記録される。[orchagent](../../reference/glossary.md#term-orchagent) はプロセス終了せず生存するが、次回 `doTask()` 呼び出しまで他 COPP グループの処理も停止する点に注意。
 
 > **スキャン証跡**: `copporch.cpp` L419-471 (createGenetlinkHostIfTable)、L657-680 (createGenetlinkHostIf)、L833-856 (processCoppRule genetlink 分岐)、L880-933 (doTask)。失敗分岐 6 系統確認。詳細は `meta/_intermediate/cdb-flow/copp-port-failure.md` 参照。
 <!-- /failure -->
@@ -463,9 +463,9 @@ attr.value.chardata[size - 1] = '\0';
 
 | 定数名 | 値 | 用途 | evidence |
 |-------|-----|------|---------|
-| `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` | `"HOSTIF_TRAP_FLOW_COUNTER"` | FlexCounter グループ名 (COUNTERS_DB キー) | `copporch.h:23` |
-| `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | HostIF trap FlexCounter ポーリング間隔 (10 秒) | `copporch.cpp:189` |
-| `FLEX_COUNTER_UPD_INTERVAL` | `1` 秒 | FlexCounter 更新タイマー間隔 | `copporch.cpp:37` |
+| `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` | `"HOSTIF_TRAP_FLOW_COUNTER"` | [FlexCounter](../../reference/glossary.md#term-flexcounter) グループ名 ([COUNTERS_DB](../../reference/glossary.md#term-counters_db) キー) | `copporch.h:23` |
+| `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | HostIF trap [FlexCounter](../../reference/glossary.md#term-flexcounter) ポーリング間隔 (10 秒) | `copporch.cpp:189` |
+| `FLEX_COUNTER_UPD_INTERVAL` | `1` 秒 | [FlexCounter](../../reference/glossary.md#term-flexcounter) 更新タイマー間隔 | `copporch.cpp:37` |
 
 > **スキャン証跡**: `copporch.h` 全行、`copporch.cpp` L37,189,1265-1286 精読。定数 7 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-constants.md`
 <!-- /constants -->
@@ -484,7 +484,7 @@ attr.value.chardata[size - 1] = '\0';
 
 ### STATE_DB 書込
 
-`genetlink_name` フィールド自体は STATE_DB への書込を追加しない。ただし同一 `COPP_GROUP` エントリに `trap_ids` が含まれる場合、`applyAttributesToTrapIds()` 内で `updateTrapOperStatus()` が呼ばれ、STATE_DB に副次書込が発生する。
+`genetlink_name` フィールド自体は [STATE_DB](../../reference/glossary.md#term-state_db) への書込を追加しない。ただし同一 `COPP_GROUP` エントリに `trap_ids` が含まれる場合、`applyAttributesToTrapIds()` 内で `updateTrapOperStatus()` が呼ばれ、[STATE_DB](../../reference/glossary.md#term-state_db) に副次書込が発生する。
 
 | 操作 | テーブル | キー | フィールド | タイミング | evidence |
 |---|---|---|---|---|---|
@@ -497,16 +497,16 @@ trap_ids 追加に伴い `bindTrapCounter()` が呼ばれ、カウンタ登録�
 
 | 操作 | DB | テーブル | キー | フィールド | evidence |
 |---|---|---|---|---|---|
-| `set` | COUNTERS_DB | `COUNTERS_TRAP_NAME_MAP` | `""` (hash) | `<trap_name>=<counter_oid>` | `copporch.cpp:1452-1456` |
-| `hdel` | COUNTERS_DB | `COUNTERS_TRAP_NAME_MAP` | `""` (hash) | `<trap_name>` | `copporch.cpp:1494-1495` |
-| `setCounterIdList` | FLEX_COUNTER_DB | `HOSTIF_TRAP_FLOW_COUNTER` | `<counter_oid>` | 統計 ID リスト | `copporch.cpp:950` |
-| `clearCounterIdList` | FLEX_COUNTER_DB | `HOSTIF_TRAP_FLOW_COUNTER` | `<counter_oid>` | (クリア) | `copporch.cpp:1487` |
+| `set` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_TRAP_NAME_MAP` | `""` (hash) | `<trap_name>=<counter_oid>` | `copporch.cpp:1452-1456` |
+| `hdel` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_TRAP_NAME_MAP` | `""` (hash) | `<trap_name>` | `copporch.cpp:1494-1495` |
+| `setCounterIdList` | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `HOSTIF_TRAP_FLOW_COUNTER` | `<counter_oid>` | 統計 ID リスト | `copporch.cpp:950` |
+| `clearCounterIdList` | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `HOSTIF_TRAP_FLOW_COUNTER` | `<counter_oid>` | (クリア) | `copporch.cpp:1487` |
 
-FLEX_COUNTER_DB 登録は `FLEX_COUNTER_UPD_TIMER`（1 秒間隔）経由で非同期に実行される。
+[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) 登録は `FLEX_COUNTER_UPD_TIMER`（1 秒間隔）経由で非同期に実行される。
 
 ### ASIC_DB 副次書込 (syncd 経由)
 
-`CoppOrch` は ASIC_DB に直接書き込まない。SAI API 呼び出しを受けた `syncd` が ASIC_DB `VIDTORID` に OID を記録する。`genetlink_name` が設定されると以下の SAI 呼び出しが追加で発生する:
+`CoppOrch` は [ASIC_DB](../../reference/glossary.md#term-asic_db) に直接書き込まない。SAI API 呼び出しを受けた `syncd` が [ASIC_DB](../../reference/glossary.md#term-asic_db) `VIDTORID` に OID を記録する。`genetlink_name` が設定されると以下の SAI 呼び出しが追加で発生する:
 
 | SAI API | 条件 | evidence |
 |---|---|---|
@@ -528,7 +528,7 @@ FLEX_COUNTER_DB 登録は `FLEX_COUNTER_UPD_TIMER`（1 秒間隔）経由で非�
 | 区間 | 方式 | チャンネル/テーブル |
 |------|------|-------------------|
 | CONFIG_DB `COPP_GROUP\|*` → `CoppMgr` | `SubscriberStateTable` | keyspace notification (`CFG_COPP_GROUP_TABLE_NAME` 等) |
-| `CoppMgr` → APPL_DB `COPP_TABLE\|*` | `ProducerStateTable` | Redis Streams (`APP_COPP_TABLE_NAME`) |
+| `CoppMgr` → APPL_DB `COPP_TABLE\|*` | `ProducerStateTable` | [Redis](../../reference/glossary.md#term-redis) Streams (`APP_COPP_TABLE_NAME`) |
 | APPL_DB `COPP_TABLE\|*` → `CoppOrch` | `Consumer`（`Orch` 基底） | keyspace notification (`APP_COPP_TABLE_NAME`) |
 | `CoppOrch` → SAI | 直接 API 呼び出し | `sai_hostif_api->create_hostif()` / `create_hostif_table_entry()` |
 
@@ -579,11 +579,11 @@ orchagent: CoppOrch::doTask()
 
 `createGenetlinkHostIf()` 内の `sai_hostif_api->create_hostif()` に `SAI_HOSTIF_TYPE_GENETLINK` を渡す。SAI 実装がこの HostIf 型をサポートしない場合、`create_hostif()` は `SAI_STATUS_NOT_SUPPORTED` 等を返し `task_failed` になる（`copporch.cpp:664-675`）。`handleSaiCreateStatus()` の戻り値に依存してプロセスが終了に至る可能性もある。<!-- evidence: copporch.cpp L657-679 -->
 
-**genetlink フィールド自体に `platform` 環境変数チェックは存在しない。** コード内に platform 条件分岐はなく、SAI 実装がサポートしているか否かのみで動作が決まる。psample ベースの sflow をサポートする ASIC（Broadcom、一部 Mellanox 等）では動作する実績があるが、すべてのベンダー SAI で保証されるわけではない。
+**genetlink フィールド自体に `platform` 環境変数チェックは存在しない。** コード内に platform 条件分岐はなく、SAI 実装がサポートしているか否かのみで動作が決まる。psample ベースの sflow をサポートする [ASIC](../../reference/glossary.md#term-asic)（Broadcom、一部 Mellanox 等）では動作する実績があるが、すべてのベンダー SAI で保証されるわけではない。
 
 ### カーネル psample モジュール
 
-genetlink HostIf が SAI 側で作成されても、カーネルに `psample` モジュールがロードされていない場合、カーネル側の genetlink ソケットが存在せずパケットが転送されない。SONiC 標準イメージは `psample` を標準でロードするが、カスタムカーネルや一部プラットフォームでは手動でのモジュールロードが必要な場合がある。
+genetlink HostIf が SAI 側で作成されても、カーネルに `psample` モジュールがロードされていない場合、カーネル側の genetlink ソケットが存在せずパケットが転送されない。[SONiC](../../reference/glossary.md#term-sonic) 標準イメージは `psample` を標準でロードするが、カスタムカーネルや一部プラットフォームでは手動でのモジュールロードが必要な場合がある。
 
 ### sflow FEATURE 状態とプラットフォームの組み合わせ
 
@@ -606,3 +606,4 @@ genetlink フィールド自体の処理は `platform` 環境変数でゲート�
 > **スキャン証跡**: `copporch.cpp` L657-714 (createGenetlinkHostIf/removeGenetlinkHostIf), L419-493 (createGenetlinkHostIfTable), L1265-1286 (getAttribsFromTrapGroup — platform チェックなし確認), L1184-1194 (trap_priority platform チェック)。`coppmgr.cpp` L82-106 (setFeatureTrapIdsStatus)。`copp_cfg.j2` L131-134 (sflow COPP_TRAP)。`orch.h` L41-42 定義確認。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-platform.md`
 <!-- /platform -->
 
+<!-- glossary-links-injected: ef90bea7fa5c -->

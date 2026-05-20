@@ -79,7 +79,7 @@ HOSTAPD_GLOBAL_CONFIG_TABLE|global
 | `port_pae_role` | enum `authenticator`/`none` | `none` | `authenticator` で当該ポートに PAC を有効化 |
 | `reauth_enable` | boolean | `false` | 定期再認証の有効化 |
 | `reauth_period` | uint32 (1..65535 秒) | サーバ値 (≈60) | 再認証間隔。`reauth_period_from_server=false` 時に有効 |
-| `reauth_period_from_server` | boolean | `true` | `true` で RADIUS Session-Timeout から再認証周期を取得 |
+| `reauth_period_from_server` | boolean | `true` | `true` で [RADIUS](../../reference/glossary.md#term-radius) Session-Timeout から再認証周期を取得 |
 | `max_users_per_port` | uint8 (1..16) | `16` | `multi-auth` モード時の最大同時認証クライアント数 |
 | `max_reauth_attempts` | uint8 | `3` | 認証失敗時の最大再試行回数 |
 | `method_list` | list (`dot1x`,`mab`) | `dot1x,mab` | 認証実行順序 |
@@ -107,7 +107,7 @@ HOSTAPD_GLOBAL_CONFIG_TABLE|global
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `MAB_PORT_CONFIG` (MAB 有効化・認証タイプ)、`RADIUS`、`RADIUS_SERVER`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `MAB_PORT_CONFIG` (MAB 有効化・認証タイプ)、`RADIUS`、`RADIUS_SERVER`
 - 関連 CLI:
   - `config interface authentication port-control <intf> <auto|force-authorized|force-unauthorized>`
   - `config interface dot1x pae <intf> <authenticator|none>`
@@ -121,7 +121,7 @@ HOSTAPD_GLOBAL_CONFIG_TABLE|global
 
 ## 引用元
 
-[^1]: PAC HLD: `SONiC/doc/pac/Port Access Control.md`, PAC manager: `sonic-pac/pacmgr/pacmgr.cpp` / `pacmgr.h`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-pac/>
+[^1]: PAC [HLD](../../reference/glossary.md#term-hld): `SONiC/doc/pac/Port Access Control.md`, PAC manager: `sonic-pac/pacmgr/pacmgr.cpp` / `pacmgr.h`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-pac/>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -129,7 +129,7 @@ HOSTAPD_GLOBAL_CONFIG_TABLE|global
 ### 典型的な設定フロー
 
 1. `config dot1x system-auth-control enable` で 802.1x をグローバル有効化
-2. VLAN と RADIUS サーバを設定
+2. [VLAN](../../reference/glossary.md#term-vlan) と [RADIUS](../../reference/glossary.md#term-radius) サーバを設定
 3. 各ポートに `config interface dot1x pae <intf> authenticator` で PAC を有効化
 4. `config interface authentication port-control <intf> auto` で認証強制モードに
 
@@ -196,7 +196,7 @@ sonic-db-cli CONFIG_DB hgetall 'HOSTAPD_GLOBAL_CONFIG_TABLE|global'
 
 ### CLI
 
-- `config interface authentication *` — sonic-utilities の PAC CLI 群
+- `config interface authentication *` — [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) の PAC CLI 群
 - `config dot1x system-auth-control` — `HOSTAPD_GLOBAL_CONFIG_TABLE|global` の `dot1x_system_auth_control` を書き込む
 
 ### minigraph / sonic-cfggen
@@ -205,7 +205,7 @@ sonic-db-cli CONFIG_DB hgetall 'HOSTAPD_GLOBAL_CONFIG_TABLE|global'
 
 ### REST / gNMI
 
-なし（SONiC YANG モデルが未定義のため）
+なし（[SONiC](../../reference/glossary.md#term-sonic) [YANG](../../reference/glossary.md#term-yang) モデルが未定義のため）
 
 ### db_migrator
 
@@ -213,7 +213,7 @@ sonic-db-cli CONFIG_DB hgetall 'HOSTAPD_GLOBAL_CONFIG_TABLE|global'
 
 ### ビルド時デフォルト
 
-なし（PAC テーブルはデフォルトでは CONFIG_DB に存在しない; CLI 設定時に初めて生成される）
+なし（PAC テーブルはデフォルトでは [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在しない; CLI 設定時に初めて生成される）
 
 ### ランタイム注入
 
@@ -238,7 +238,7 @@ sonic-db-cli CONFIG_DB hgetall 'HOSTAPD_GLOBAL_CONFIG_TABLE|global'
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`pacmgrd` / `hostapdmgrd` は CONFIG_DB を購読するが、内部の初期化完了と外部依存 (RADIUS・VLAN) の到着順が反映タイミングに影響する。
+`pacmgrd` / `hostapdmgrd` は [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読するが、内部の初期化完了と外部依存 (RADIUS・[VLAN](../../reference/glossary.md#term-vlan)) の到着順が反映タイミングに影響する。
 
 ### pacmgrd 起動シーケンス
 
@@ -247,7 +247,7 @@ sonic-db-cli CONFIG_DB hgetall 'HOSTAPD_GLOBAL_CONFIG_TABLE|global'
 1. `fpinfraInit()` — プラットフォームインタフェース基盤の初期化
 2. `authmgrInit()` — 認証マネージャの初期化。失敗時は即 `return -1`
 3. `osapiWaitForTaskInit(AUTHMGR_DB_TASK_SYNC, WAIT_FOREVER)` — authmgr 内部 DB タスクの完了を**無限待機**
-4. `s.addSelectables(pacmgr.getSelectables())` — CONFIG_DB / STATE_DB 購読登録
+4. `s.addSelectables(pacmgr.getSelectables())` — CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) 購読登録
 5. メインループ開始 → `pacmgr.processDbEvent()` でイベント処理
 
 CONFIG_DB の購読は step 4 以降にのみ有効となるため、`PAC_PORT_CONFIG_TABLE` や `HOSTAPD_GLOBAL_CONFIG_TABLE` の変更は authmgr 初期化完了後に初めて処理される。
@@ -259,11 +259,11 @@ CONFIG_DB の購読は step 4 以降にのみ有効となるため、`PAC_PORT_C
 | 1 | `authmgrInit()` 完了 → CONFIG_DB 購読開始 | **強制先行** | authmgr 初期化失敗時は pacmgrd 自体が終了する |
 | 2 | `port_pae_role=authenticator` + `control_mode=auto` 設定 → `dot1x_system_auth_control=true` 設定 | 推奨先行 | 逆順も動作するが、global enable 時に既存ポートを走査して conf 生成するためポート設定先行が安全 |
 | 3 | `RADIUS_SERVER` 設定 → hostapd 起動 | **強制先行** | RADIUS 未設定の場合 `m_radiusServerInUse == ""` チェックで `createConfFile()` が呼ばれず hostapd が起動しない |
-| 4 | STATE_DB `VLAN_TABLE` エントリ存在 → authmgr へ `VLAN_ADD_NOTIFY` | 到着順依存 | VLAN が STATE_DB に登録される前に PAC ポートが `authenticator` になると、VLAN 通知が遅延する |
+| 4 | [STATE_DB](../../reference/glossary.md#term-state_db) `VLAN_TABLE` エントリ存在 → authmgr へ `VLAN_ADD_NOTIFY` | 到着順依存 | [VLAN](../../reference/glossary.md#term-vlan) が [STATE_DB](../../reference/glossary.md#term-state_db) に登録される前に PAC ポートが `authenticator` になると、VLAN 通知が遅延する |
 
 ### 主要な制約詳細
 
-**authmgr 初期化待機 (依存 #1)**: `osapiWaitForTaskInit(AUTHMGR_DB_TASK_SYNC, WAIT_FOREVER)` は authmgr 内部タスクの DB 同期完了まで無限待機する（`pacmgr_main.cpp:52-56`）。この待機が終わらない限り CONFIG_DB の購読が開始されないため、SONiC 起動直後に `PAC_PORT_CONFIG_TABLE` を書き込んでも pacmgrd が受け取るのは authmgr 準備完了後となる。
+**authmgr 初期化待機 (依存 #1)**: `osapiWaitForTaskInit(AUTHMGR_DB_TASK_SYNC, WAIT_FOREVER)` は authmgr 内部タスクの DB 同期完了まで無限待機する（`pacmgr_main.cpp:52-56`）。この待機が終わらない限り CONFIG_DB の購読が開始されないため、[SONiC](../../reference/glossary.md#term-sonic) 起動直後に `PAC_PORT_CONFIG_TABLE` を書き込んでも pacmgrd が受け取るのは authmgr 準備完了後となる。
 
 **RADIUS サーバ必須条件 (依存 #3)**: `hostapdmgr.cpp` の `dot1x_system_auth_control=true` 受信時、`m_radiusServerInUse` が空文字列の場合は `createConfFile()` が呼ばれず `active_intf_cnt` が増加しないため hostapd が起動しない（`hostapdmgr.cpp:288-300`）。
 
@@ -288,7 +288,7 @@ CONFIG_DB の購読は step 4 以降にのみ有効となるため、`PAC_PORT_C
 | hostapdmgrd → | `PAC_PORT_CONFIG_TABLE` | (自テーブル) | global enable 時に全ポートの `capabilities`/`control_mode`/`link_status` を参照して conf 生成可否を判断 (`hostapdmgr.cpp:169,199,293`) |
 | mabmgrd → | — | `MAB_PORT_CONFIG_TABLE` | MAB 有効化・認証タイプは mabmgrd が独立管理。PAC_PORT_CONFIG_TABLE とは別プロセス (`mabmgr.cpp:35`) |
 | fpinfra 依存 | `PAC_PORT_CONFIG_TABLE` | (プラットフォームインタフェース) | `fpGetIntIfNumFromHostIfName()` が失敗すると設定エントリがスキップされる。インタフェース存在がハードな前提条件 (`pacmgr.cpp:172`) |
-| YANG | — | — | SONiC YANG モデル未定義のため REST/gNMI 経路なし |
+| [YANG](../../reference/glossary.md#term-yang) | — | — | [SONiC](../../reference/glossary.md#term-sonic) [YANG](../../reference/glossary.md#term-yang) モデル未定義のため REST/[gNMI](../../reference/glossary.md#term-gnmi) 経路なし |
 
 > **Evidence**: `sonic-pac/pacmgr/pacmgr.cpp:63-89,103-127,172,684-754`; `sonic-pac/hostapdmgr/hostapdmgr.cpp:43-70,145-170,285-300`; `sonic-pac/mabmgr/mabmgr.cpp:35`; 詳細分析 `meta/_intermediate/cdb-flow/dot1x-cross-refs.md`
 <!-- /cross-refs -->
@@ -401,14 +401,14 @@ hostapd 起動後の PID ファイル (`/etc/hostapd/hostapdPid`) 存在確認�
 
 > 調査証跡: `meta/_intermediate/cdb-flow/dot1x-side-effects.md`
 
-`pacmgrd` および `hostapdmgrd` は CONFIG_DB `PAC_PORT_CONFIG_TABLE` / `HOSTAPD_GLOBAL_CONFIG_TABLE` の変更を受け取り、**APPL_DB / STATE_DB / COUNTERS_DB への書き込みは行わない**。副作用は authmgr ライブラリ API 呼び出しおよびファイルシステム操作（hostapd conf 生成/削除）に閉じる。
+`pacmgrd` および `hostapdmgrd` は CONFIG_DB `PAC_PORT_CONFIG_TABLE` / `HOSTAPD_GLOBAL_CONFIG_TABLE` の変更を受け取り、**[APPL_DB](../../reference/glossary.md#term-appl_db) / STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書き込みは行わない**。副作用は authmgr ライブラリ API 呼び出しおよびファイルシステム操作（hostapd conf 生成/削除）に閉じる。
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `pacmgr.cpp` に `ProducerStateTable`/`ProducerTable` のインスタンス化なし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `pacmgr.cpp` に `ProducerStateTable`/`ProducerTable` のインスタンス化なし |
 | STATE_DB | なし | `m_stateDb` は constructor で受け取るが `processPacPortConfTblEvent` 内では read-only 参照なし |
-| COUNTERS_DB | なし | `pacmgr.cpp` / `hostapdmgr.cpp` に COUNTERS_DB 接続コードなし |
-| ASIC_DB | なし | SAI 非経由。authmgr ライブラリが FDB / VLAN 操作を別経路で行う |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `pacmgr.cpp` / `hostapdmgr.cpp` に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 接続コードなし |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由。authmgr ライブラリが [FDB](../../reference/glossary.md#term-fdb) / VLAN 操作を別経路で行う |
 
 ### 設定変更時の実行時副作用（非 DB）
 
@@ -483,13 +483,13 @@ processHostapdConfigGlobalTblEvent()
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: PAC / DOT1X は SAI 非経由のホスト内認証フレームワークであり、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+**プラットフォーム差なし**: PAC / DOT1X は [SAI](../../reference/glossary.md#term-sai) 非経由のホスト内認証フレームワークであり、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `pacmgrd` / `hostapdmgrd` は SAI 非経由。`authmgr*()` ライブラリ関数および `wpa_ctrl` ソケット経由でホスト上の `hostapd` を制御するのみ (`pacmgr.cpp:62-68`; `hostapdmgr.cpp` を `sai_` でgrep → 0 ヒット) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `pacmgrd` / `hostapdmgrd` は [SAI](../../reference/glossary.md#term-sai) 非経由。`authmgr*()` ライブラリ関数および `wpa_ctrl` ソケット経由でホスト上の `hostapd` を制御するのみ (`pacmgr.cpp:62-68`; `hostapdmgr.cpp` を `sai_` でgrep → 0 ヒット) |
 | multi-asic (`is_multi_npu()`) | 影響なし | `pacmgr.cpp:62-68` の DB 接続は `configDb` / `stateDb` / `appDb` の 3 本のみ。namespace 引数なし。`asicN` namespace への接続・iterate をしない |
-| VOQ chassis (supervisor + line cards) | 各 host で独立動作 | PAC テーブルは host scope。chassis 全体での集中適用機構はなく、各 line card ホストで `pacmgrd` が独立に処理する |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立動作 | PAC テーブルは host scope。chassis 全体での集中適用機構はなく、各 line card ホストで `pacmgrd` が独立に処理する |
 | ベンダー固有 PAC モジュール | なし | community master の `sonic-pac` に hook ポイント存在せず。`device/` 配下に PAC 固有設定ファイルなし (`device/` を `dot1x|PAC_PORT|hostapd` でgrep → 0 ヒット) |
 | プラットフォーム別 j2 テンプレート | なし | `files/build_templates/` / `files/image_config/` に PAC 関連テンプレートなし |
 
@@ -510,7 +510,7 @@ processHostapdConfigGlobalTblEvent()
 | C++ マクロデフォルト | `AUTHMGR_PORT_FORCE_AUTHORIZED` = `"force-authorized"` | `pacmgr.h:41` |
 | 初期化コード | `pacPortConfigCache.port_control_mode = AUTHMGR_PORT_CONTROL_MODE_DEF` | `pacmgr.cpp:200` |
 | DEL 後リセット | `iter->second.port_control_mode = AUTHMGR_PORT_CONTROL_MODE_DEF` | `pacmgr.cpp:623` |
-| HLD CLI 記述 | "Default is force-authorized." | `Port Access Control.md:712` |
+| [HLD](../../reference/glossary.md#term-hld) CLI 記述 | "Default is force-authorized." | `Port Access Control.md:712` |
 
 **乖離**: なし。CLI 記述とコードが一致。
 
@@ -523,7 +523,7 @@ processHostapdConfigGlobalTblEvent()
 | C++ マクロデフォルト | `AUTHMGR_MULTI_HOST_MODE` = `"multi-host"` | `pacmgr.h:42` |
 | 初期化コード | `pacPortConfigCache.host_control_mode = AUTHMGR_HOST_CONTROL_MODE_DEF` | `pacmgr.cpp:201` |
 | DEL 後リセット | `iter->second.host_control_mode = AUTHMGR_HOST_CONTROL_MODE_DEF` | `pacmgr.cpp:624` |
-| HLD CLI 記述 | "Default is multi-host." | `Port Access Control.md:714` |
+| [HLD](../../reference/glossary.md#term-hld) CLI 記述 | "Default is multi-host." | `Port Access Control.md:714` |
 
 **乖離**: なし。
 
@@ -640,3 +640,5 @@ processHostapdConfigGlobalTblEvent()
 <!-- /defaults -->
 
 <!-- glossary-links-injected: dot1x-pac -->
+
+<!-- glossary-links-injected: 2b3063bcea94 -->

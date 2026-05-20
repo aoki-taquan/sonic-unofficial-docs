@@ -13,7 +13,7 @@ related:
 
 # 読み手別ガイド
 
-SONiC ドキュメントを読む目的に応じて、既存ページを読む順番をまとめた入口です。area 別の章構成はそのままに、初回に見るべきページや次に深掘りするページを読み手別に整理しています。
+[SONiC](../reference/glossary.md#term-sonic) ドキュメントを読む目的に応じて、既存ページを読む順番をまとめた入口です。area 別の章構成はそのままに、初回に見るべきページや次に深掘りするページを読み手別に整理しています。
 
 ## ガイド一覧
 
@@ -22,4 +22,4 @@ SONiC ドキュメントを読む目的に応じて、既存ページを読む�
 - [開発者向け](developer.md): [HLD](../reference/glossary.md#term-hld)、[YANG](../reference/glossary.md#term-yang)、CONFIG_DB、CLI、daemon / orch、テスト計画の対応関係を追いたい読者向け。
 - [評価者向け](evaluator.md): ラボで SONiC を起動し、基本設定と状態確認まで一連の流れを辿りたい読者向け。
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

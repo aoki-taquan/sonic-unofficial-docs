@@ -38,11 +38,11 @@ related:
 
 ## 概要
 
-スタティック隣接（Permanent neighbor）エントリを CONFIG_DB に保持するテーブル[^1]。
-`nbrmgrd` (`NbrMgr::doSetNeighTask`) が購読し、Netlink `RTM_NEWNEIGH` でカーネルの neighbor テーブルへ書き込む。
-動的に学習した neighbor は `neighsyncd` → APPL_DB `NEIGH_TABLE` 経路で処理されるため、本テーブルはあくまで**手動投入のスタティック neighbor**が対象となる。
+スタティック隣接（Permanent neighbor）エントリを [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。
+`nbrmgrd` (`NbrMgr::doSetNeighTask`) が購読し、[Netlink](../../reference/glossary.md#term-netlink) `RTM_NEWNEIGH` でカーネルの neighbor テーブルへ書き込む。
+動的に学習した neighbor は `neighsyncd` → [APPL_DB](../../reference/glossary.md#term-appl_db) `NEIGH_TABLE` 経路で処理されるため、本テーブルはあくまで**手動投入のスタティック neighbor**が対象となる。
 
-FG-NHG (Fine-Grained ECMP) 構成では `minigraph.py` が本テーブルを自動生成する（MAC フィールドなし、family フィールドのみ）[^2]。
+FG-NHG (Fine-Grained [ECMP](../../reference/glossary.md#term-ecmp)) 構成では `minigraph.py` が本テーブルを自動生成する（MAC フィールドなし、family フィールドのみ）[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -83,13 +83,13 @@ NEIGH|<port>|<ip_address>
 <!-- ordering -->
 ## 書込み順依存（orchagent / SAI プログラミング経路）
 
-> 本セクションは APPL_DB `NEIGH_TABLE` → orchagent (`neighorch`) → SAI → ASIC の経路を対象とする。
-> CONFIG_DB `NEIGH` → `nbrmgrd` → カーネル Netlink 経路は SAI を経由しない独立経路（詳細は「実コンテナ動作トレース」段階 4 参照）。
+> 本セクションは [APPL_DB](../../reference/glossary.md#term-appl_db) `NEIGH_TABLE` → [orchagent](../../reference/glossary.md#term-orchagent) (`neighorch`) → [SAI](../../reference/glossary.md#term-sai) → [ASIC](../../reference/glossary.md#term-asic) の経路を対象とする。
+> [CONFIG_DB](../../reference/glossary.md#term-config_db) `NEIGH` → `nbrmgrd` → カーネル [Netlink](../../reference/glossary.md#term-netlink) 経路は [SAI](../../reference/glossary.md#term-sai) を経由しない独立経路（詳細は「実コンテナ動作トレース」段階 4 参照）。
 
 ### 前提：`allPortsReady()` ガード（最上位）
 
 `NeighOrch::doTask` (neighorch.cpp:881-884) は先頭で `gPortsOrch->allPortsReady()` を確認する。
-PORT / VLAN / LAG などの物理ポート初期化が完了するまで、`NEIGH_TABLE` のいかなるエントリも処理されない。
+PORT / [VLAN](../../reference/glossary.md#term-vlan) / [LAG](../../reference/glossary.md#term-lag) などの物理ポート初期化が完了するまで、`NEIGH_TABLE` のいかなるエントリも処理されない。
 
 ```cpp
 if (!gPortsOrch->allPortsReady())
@@ -102,18 +102,18 @@ if (!gPortsOrch->allPortsReady())
 
 | 順序 | 先行必須条件 | ガード箇所 | 違反時の挙動 |
 |------|------------|-----------|------------|
-| 1 | PORT/VLAN 初期化完了（`allPortsReady`） | `doTask`:881 | `doTask` 全体が即 `return`（次サイクル再試行） |
+| 1 | PORT/[VLAN](../../reference/glossary.md#term-vlan) 初期化完了（`allPortsReady`） | `doTask`:881 | `doTask` 全体が即 `return`（次サイクル再試行） |
 | 2 | 対象インターフェイス PORT 存在（`getPort`） | `doTask`:942 | `it++; continue`（再試行待ち） |
-| 3 | Router Interface (RIF) 存在（`p.m_rif_id`） | `doTask`:949 | `it++; continue`（再試行待ち） |
-| 4 | RIF ID 再確認（`getRouterIntfsId`） | `addNeighbor`:1204 | `return false`（再試行待ち） |
-| 5 | ARP/ND 解決完了（MAC 確定） | `addNeighbor`:1219 | NEIGH_RESOLVE_TABLE 経由で再解決を要求、MAC 確定後に再 SET |
-| 6 | `create_neighbor_entry` → `create_next_hop` | SAI 発行順:1333→1370 | NH 作成失敗時は `neighbor_entry` をロールバック削除 |
-| 7 | 旧 VLAN DEL → 新 VLAN SET（同 VRF 内のみ自動処理） | `addNeighbor`:1263 | 旧エントリ削除失敗時は `return false`（再試行） |
+| 3 | Router Interface ([RIF](../../reference/glossary.md#term-rif)) 存在（`p.m_rif_id`） | `doTask`:949 | `it++; continue`（再試行待ち） |
+| 4 | [RIF](../../reference/glossary.md#term-rif) ID 再確認（`getRouterIntfsId`） | `addNeighbor`:1204 | `return false`（再試行待ち） |
+| 5 | [ARP](../../reference/glossary.md#term-arp)/ND 解決完了（MAC 確定） | `addNeighbor`:1219 | NEIGH_RESOLVE_TABLE 経由で再解決を要求、MAC 確定後に再 SET |
+| 6 | `create_neighbor_entry` → `create_next_hop` | [SAI](../../reference/glossary.md#term-sai) 発行順:1333→1370 | NH 作成失敗時は `neighbor_entry` をロールバック削除 |
+| 7 | 旧 [VLAN](../../reference/glossary.md#term-vlan) DEL → 新 VLAN SET（同 [VRF](../../reference/glossary.md#term-vrf) 内のみ自動処理） | `addNeighbor`:1263 | 旧エントリ削除失敗時は `return false`（再試行） |
 
 ### ARP/ND 解決と SAI neighbor_entry 作成の関係
 
-APPL_DB `NEIGH_TABLE` に MAC なし（ゼロ MAC）エントリが届いた場合、`NeighOrch` は `NEIGH_RESOLVE_TABLE` へ解決要求を投げ (`resolveNeighborEntry`)、エントリを `m_neighborToResolve` に保持する。
-`neighsyncd` が Netlink から ARP/ND 応答を受信して MAC 付きエントリを `NEIGH_TABLE` へ再書き込みすると、orchagent が `addNeighbor` → `sai_neighbor_api->create_neighbor_entry` を実行する。
+[APPL_DB](../../reference/glossary.md#term-appl_db) `NEIGH_TABLE` に MAC なし（ゼロ MAC）エントリが届いた場合、`NeighOrch` は `NEIGH_RESOLVE_TABLE` へ解決要求を投げ (`resolveNeighborEntry`)、エントリを `m_neighborToResolve` に保持する。
+`neighsyncd` が [Netlink](../../reference/glossary.md#term-netlink) から [ARP](../../reference/glossary.md#term-arp)/ND 応答を受信して MAC 付きエントリを `NEIGH_TABLE` へ再書き込みすると、[orchagent](../../reference/glossary.md#term-orchagent) が `addNeighbor` → `sai_neighbor_api->create_neighbor_entry` を実行する。
 
 ```
 NEIGH_TABLE (MAC なし) → resolveNeighborEntry → NEIGH_RESOLVE_TABLE
@@ -136,7 +136,7 @@ NEIGH_TABLE (MAC なし) → resolveNeighborEntry → NEIGH_RESOLVE_TABLE
 
 | 条件 | 実装挙動 | 根拠 |
 |------|---------|------|
-| `neigh` フィールド省略 | `MacAddress` デフォルトコンストラクタ（ゼロ MAC `00:00:00:00:00:00`）→ `setNeighbor()` 内で `!mac` が真 → `NUD_DELAY + NTF_USE` でカーネルに ARP/NDP 解決を要求 | `nbrmgr.cpp:175–183` |
+| `neigh` フィールド省略 | `MacAddress` デフォルトコンストラクタ（ゼロ MAC `00:00:00:00:00:00`）→ `setNeighbor()` 内で `!mac` が真 → `NUD_DELAY + NTF_USE` でカーネルに [ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) 解決を要求 | `nbrmgr.cpp:175–183` |
 | 有効な MAC 文字列 | `ndm_state = NUD_PERMANENT` でカーネルに永続 neighbor として設定 | `nbrmgr.cpp:189` |
 | 無効な MAC 文字列 | `std::invalid_argument` を catch → エラーログ → エントリをサイレント drop（再試行なし） | `nbrmgr.cpp:342–353` |
 
@@ -148,7 +148,7 @@ NEIGH_TABLE (MAC なし) → resolveNeighborEntry → NEIGH_RESOLVE_TABLE
 
 IP ファミリ判定は key の `<ip_address>` 部分から `IpAddress::isV4()` で自動判定する（`nbrmgr.cpp:147/164`）。
 
-> YANG に `family` フィールドが定義されているにもかかわらず、実装上は無視される YANG-実装 discrepancy。APPL_DB `NEIGH_TABLE` の `family` フィールド（neighsyncd が書き込み、restore_neighbors.py が必須チェック）とは別文脈。
+> [YANG](../../reference/glossary.md#term-yang) に `family` フィールドが定義されているにもかかわらず、実装上は無視される YANG-実装 discrepancy。APPL_DB `NEIGH_TABLE` の `family` フィールド（[neighsyncd](../../reference/glossary.md#term-neighsyncd) が書き込み、restore_neighbors.py が必須チェック）とは別文脈。
 
 ### DEL_COMMAND — 未実装（既知の設計不足）
 
@@ -182,13 +182,13 @@ CONFIG_DB から `NEIGH` エントリを削除しても、`doSetNeighTask` の `
 | next hop の ref_count > 0（参照中の neighbor を削除しようとした） | `removeNeighbor()` L1483-1488 | `return false` → Consumer が `it++` で保留・再試行（タイムアウトなし） | あり（無限） | `neighorch.cpp:1483-1488` |
 | `sai_next_hop_api->remove_next_hop` が `SAI_STATUS_ITEM_NOT_FOUND` | `removeNeighbor()` L1520-1524 | NOTICE ログのみ → neighbor entry 削除処理を継続（next hop 欠如は許容） | なし（継続） | `neighorch.cpp:1520-1524` |
 | `sai_next_hop_api->remove_next_hop` がその他 SAI エラー | `removeNeighbor()` L1527-1533 | `handleSaiRemoveStatus(SAI_API_NEXT_HOP, status)` → 失敗時 `return false` | SAI ポリシー依存 | `neighorch.cpp:1527-1533` |
-| `sai_neighbor_api->remove_neighbor_entry` が `SAI_STATUS_ITEM_NOT_FOUND` | `removeNeighbor()` L1555-1559 | NOTICE ログのみ（既に削除済み扱い）→ CRM デクリメントなし | なし（継続） | `neighorch.cpp:1555-1559` |
+| `sai_neighbor_api->remove_neighbor_entry` が `SAI_STATUS_ITEM_NOT_FOUND` | `removeNeighbor()` L1555-1559 | NOTICE ログのみ（既に削除済み扱い）→ [CRM](../../reference/glossary.md#term-crm) デクリメントなし | なし（継続） | `neighorch.cpp:1555-1559` |
 | `sai_neighbor_api->remove_neighbor_entry` がその他 SAI エラー | `removeNeighbor()` L1562-1568 | `handleSaiRemoveStatus(SAI_API_NEIGHBOR, status)` → 失敗時 `return false` | SAI ポリシー依存 | `neighorch.cpp:1562-1568` |
 | DEL 操作で `m_syncdNeighbors` に対象エントリが存在しない | `doTask()` L1034-1036 | `m_toSync` から erase（silent drop、既に削除済みと判断） | なし | `neighorch.cpp:1034-1036` |
 
 ### 特殊挙動補足
 
-- **INTERFACE 未解決 → retry**: `rif_id == SAI_NULL_OBJECT_ID` は orchagent 初期化中の一時状態。Consumer ループが `it++` で保留し次の SELECT_TIMEOUT サイクルで再処理。
+- **INTERFACE 未解決 → retry**: `rif_id == SAI_NULL_OBJECT_ID` は [orchagent](../../reference/glossary.md#term-orchagent) 初期化中の一時状態。Consumer ループが `it++` で保留し次の SELECT_TIMEOUT サイクルで再処理。
 - **MAC 不正（ゼロ MAC + 既存 neighbor）**: 既存エントリにゼロ MAC の SET が来た場合、削除なしで即 erase。「DEL が先に来ることを期待」という設計上の制約（`neighorch.cpp:986-988` コメント参照）。
 - **参照中 DEL の無限 retry**: `removeNeighbor` が ref_count > 0 で `false` を返すと Consumer は `it++` でエントリを m_toSync に残し無限に再試行する。Route / NHG 側の参照が解放されて初めて DEL が成功する。
 - **SET 後の pending DEL 消去**: SET 操作成功後、`doTask` は同 key の pending DEL 操作を `m_toSync` から逆順に除去する（`neighorch.cpp:1010-1019`）。過去に失敗した DEL が誤って再実行されるのを防ぐ設計。
@@ -202,7 +202,7 @@ CONFIG_DB から `NEIGH` エントリを削除しても、`doSetNeighTask` の `
 > **ソース**: `sonic-swss/orchagent/neighorch.cpp` (SHA: `4305596156d70e9797e8a881b3d19b46de0bce0d`)
 >
 > CONFIG_DB `NEIGH` は `nbrmgrd` → Netlink 経路であり SAI を通らない。以下の定数は
-> APPL_DB `NEIGH_TABLE` → `NeighOrch` → SAI / ASIC 経路に関するもの（同一 neighbor エントリの下流 ASIC プログラミング段階）。
+> APPL_DB `NEIGH_TABLE` → `NeighOrch` → SAI / [ASIC](../../reference/glossary.md#term-asic) 経路に関するもの（同一 neighbor エントリの下流 [ASIC](../../reference/glossary.md#term-asic) プログラミング段階）。
 
 ### orch 優先度
 
@@ -215,7 +215,7 @@ CONFIG_DB から `NEIGH` エントリを削除しても、`doSetNeighTask` の `
 | SAI 属性 | 値 / 型 | 設定条件 | コード箇所 |
 |---|---|---|---|
 | `SAI_NEIGHBOR_ENTRY_ATTR_DST_MAC_ADDRESS` | MAC 6 バイト | 常時（neighbor 追加時） | `neighorch.cpp:1219` |
-| `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` | `booldata = 1`（true）| MUX prefix-neighbor または link-local 条件成立時 | `neighorch.cpp:1258, 2315, 2463` |
+| `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` | `booldata = 1`（true）| [MUX](../../reference/glossary.md#term-mux) prefix-neighbor または link-local 条件成立時 | `neighorch.cpp:1258, 2315, 2463` |
 | `SAI_NEIGHBOR_ENTRY_ATTR_ENCAP_INDEX` | `uint32`（動的）| VoQ 環境のみ | `neighorch.cpp:2568, 2595, 2712` |
 | `SAI_NEIGHBOR_ENTRY_ATTR_IS_LOCAL` | `booldata`（動的）| VoQ 環境のみ | `neighorch.cpp:2572` |
 
@@ -232,8 +232,8 @@ CONFIG_DB から `NEIGH` エントリを削除しても、`doSetNeighTask` の `
 
 | SAI 定数 | 値 | 条件 | コード箇所 |
 |---|---|---|---|
-| `SAI_PACKET_ACTION_FORWARD` | FORWARD（デフォルト）| MUX active 状態 / prefix route 生成時デフォルト | `neighorch.cpp:1104, 2494` |
-| `SAI_PACKET_ACTION_DROP` | DROP | MUX standby 状態（`is_active == false`）| `neighorch.cpp:1108` |
+| `SAI_PACKET_ACTION_FORWARD` | FORWARD（デフォルト）| [MUX](../../reference/glossary.md#term-mux) active 状態 / prefix route 生成時デフォルト | `neighorch.cpp:1104, 2494` |
+| `SAI_PACKET_ACTION_DROP` | DROP | [MUX](../../reference/glossary.md#term-mux) standby 状態（`is_active == false`）| `neighorch.cpp:1108` |
 
 > aging time のハードコード定数は `neighorch.cpp` に存在しない。neighbor のエージング管理は Linux カーネルと SAI プラットフォーム実装に委任されている。
 
@@ -251,12 +251,12 @@ CONFIG_DB `NEIGH` テーブルの変更に伴う副次的 DB 書込みは、処�
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
 | APPL_DB | なし | `reconcileNeighResolveTable()` は `NEIGH_RESOLVE_TABLE` を読み取るのみ（`getKeys`/`hget`）。`nbrmgrd` 内に Producer/Table の書込み呼出なし |
-| STATE_DB | なし | `isIntfStateOk()` / `isNeighRestoreDone()` は読取のみ。`m_stateIntfTable` / `m_stateNeighRestoreTable` への SET/DEL 呼出なし |
-| COUNTERS_DB / ASIC_DB / FLEX_COUNTER_DB | なし | `nbrmgr.cpp` 全体に COUNTERS_DB / ASIC_DB 参照なし |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `isIntfStateOk()` / `isNeighRestoreDone()` は読取のみ。`m_stateIntfTable` / `m_stateNeighRestoreTable` への SET/DEL 呼出なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | `nbrmgr.cpp` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) 参照なし |
 
 カーネルへの副作用:
 - `RTM_NEWNEIGH` (`NUD_PERMANENT`): スタティック neighbor をカーネル neighbor テーブルへ直接書込み
-- `RTM_NEWNEIGH` (`NUD_DELAY + NTF_USE`): `neigh` MAC 省略時にカーネルへ ARP/NDP 解決を要求。ネットワーク上に ARP Request / ICMPv6 Neighbor Solicitation が送出される
+- `RTM_NEWNEIGH` (`NUD_DELAY + NTF_USE`): `neigh` MAC 省略時にカーネルへ ARP/[NDP](../../reference/glossary.md#term-ndp) 解決を要求。ネットワーク上に ARP Request / ICMPv6 Neighbor Solicitation が送出される
 
 ### 経路 2: APPL_DB NEIGH_TABLE → NeighOrch（orchagent 経由・SAI プログラミング）
 
@@ -266,9 +266,9 @@ CONFIG_DB `NEIGH` → `nbrmgrd` → カーネル → `neighsyncd` → APPL_DB `N
 |---|---|---|---|---|
 | APPL_DB | `NEIGH_RESOLVE_TABLE` | SET（解決要求発行） | MAC がゼロ（未解決）の neighbor が SET で来たとき。`resolveNeighborEntry()` が書込み | `neighorch.cpp:121` |
 | APPL_DB | `NEIGH_RESOLVE_TABLE` | DEL（解決完了後削除） | MAC 確定後の `addNeighbor` 成功時。`clearResolvedNeighborEntry()` が削除 | `neighorch.cpp:140` |
-| STATE_DB | `STATE_SYSTEM_NEIGH_TABLE` | SET / DEL | **VoQ 環境のみ** (`switch_type == "voq"`)。リモートシステム neighbor のステータスを反映 | `neighorch.cpp:2223, 2173, 2260` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `STATE_SYSTEM_NEIGH_TABLE` | SET / DEL | **VoQ 環境のみ** (`switch_type == "voq"`)。リモートシステム neighbor のステータスを反映 | `neighorch.cpp:2223, 2173, 2260` |
 | CHASSIS_APP_DB | `CHASSIS_APP_SYSTEM_NEIGH_TABLE` | SET / DEL | **VoQ 環境のみ**。シャーシ共有 system neighbor テーブルへ書込み | `neighorch.cpp:2654, 2688` |
-| COUNTERS_DB | CRM カウンタ（`CRM_IPV4/IPV6_NEIGHBOR` / `CRM_IPV4/IPV6_NEXTHOP` / `CRM_IPV4/IPV6_ROUTE`）| inc / dec | `gCrmOrch->incCrmResUsedCounter` / `decCrmResUsedCounter` 経由。SAI 作成・削除成否に連動 | `neighorch.cpp:1361, 1365, 1387, 1391, 359, 363, 1148, 1152` |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | [CRM](../../reference/glossary.md#term-crm) カウンタ（`CRM_IPV4/IPV6_NEIGHBOR` / `CRM_IPV4/IPV6_NEXTHOP` / `CRM_IPV4/IPV6_ROUTE`）| inc / dec | `gCrmOrch->incCrmResUsedCounter` / `decCrmResUsedCounter` 経由。SAI 作成・削除成否に連動 | `neighorch.cpp:1361, 1365, 1387, 1391, 359, 363, 1148, 1152` |
 
 !!! note "CONFIG_DB NEIGH の直接副作用"
     CONFIG_DB `NEIGH` エントリの SET は `nbrmgrd` → カーネル Netlink のみ。APPL_DB `NEIGH_RESOLVE_TABLE` への書込みは `NeighOrch` が行うものであり、CONFIG_DB `NEIGH` 書込みから直接発生するわけではない。  
@@ -284,7 +284,7 @@ CONFIG_DB `NEIGH` → `nbrmgrd` → カーネル → `neighsyncd` → APPL_DB `N
 
 ### INTERFACE（IntfsOrch 経由）
 
-最も重要な依存関係。`addNeighbor()` の先頭で `m_intfsOrch->getRouterIntfsId(alias)` を呼び出し、INTERFACE テーブルが確立した RIF (Router Interface) SAI オブジェクト ID を取得する。
+最も重要な依存関係。`addNeighbor()` の先頭で `m_intfsOrch->getRouterIntfsId(alias)` を呼び出し、INTERFACE テーブルが確立した [RIF](../../reference/glossary.md#term-rif) (Router Interface) SAI オブジェクト ID を取得する。
 
 | 参照タイミング | 用途 | evidence |
 |---|---|---|
@@ -292,7 +292,7 @@ CONFIG_DB `NEIGH` → `nbrmgrd` → カーネル → `neighsyncd` → APPL_DB `N
 | `addNextHop()` | `rif_id` → `SAI_NEXT_HOP_ATTR_ROUTER_INTERFACE_ID` に設定 | neighorch.cpp:271,304–305 |
 | `removeNeighbor()` | `rif_id` 取得 → 削除対象 `neighbor_entry` の特定 | neighorch.cpp:1492,1501,1633 |
 | `doSetNeighTask()` 早期スキップ | `p.m_rif_id == 0` なら `it++`（キュー留め） | neighorch.cpp:949–954 |
-| 管理 VRF フィルタ | `isInbandIntfInMgmtVrf(alias)` で管理 VRF 上の neigh をスキップ | neighorch.cpp:912 |
+| 管理 [VRF](../../reference/glossary.md#term-vrf) フィルタ | `isInbandIntfInMgmtVrf(alias)` で管理 [VRF](../../reference/glossary.md#term-vrf) 上の neigh をスキップ | neighorch.cpp:912 |
 | リモートシステムポート判定 | `isRemoteSystemPortIntf(alias)` でリモートポートの neighbor を inband 経由に切替 | neighorch.cpp:260,654,685,833 |
 | サブネット判定 | `isPrefixSubnet(ipll_prefix, alias)` で link-local scope の `no_host_route` 判定 | neighorch.cpp:1232 |
 
@@ -313,11 +313,11 @@ VRF は `Port.m_vr_id` フィールドを通じて間接参照される。明示
 
 ### FDB（FdbOrch 経由）
 
-`NeighOrch` はコンストラクタで `m_fdbOrch->attach(this)` を呼び出し、FDB flush イベントの Observer として登録される。VLAN からポートが削除されると FDB がフラッシュされ、該当 MAC を持つ neighbor エントリが自動的に再解決キューへ入る。
+`NeighOrch` はコンストラクタで `m_fdbOrch->attach(this)` を呼び出し、[FDB](../../reference/glossary.md#term-fdb) flush イベントの Observer として登録される。VLAN からポートが削除されると [FDB](../../reference/glossary.md#term-fdb) がフラッシュされ、該当 MAC を持つ neighbor エントリが自動的に再解決キューへ入る。
 
 | 参照タイミング | 用途 | evidence |
 |---|---|---|
-| `processFDBFlushUpdate()` | FDB エントリの MAC と VLAN を neighbor テーブルと照合し、一致する neighbor を再解決 | neighorch.cpp:155–185 |
+| `processFDBFlushUpdate()` | [FDB](../../reference/glossary.md#term-fdb) エントリの MAC と VLAN を neighbor テーブルと照合し、一致する neighbor を再解決 | neighorch.cpp:155–185 |
 | `update(SUBJECT_TYPE_FDB_FLUSH_CHANGE)` | FdbOrch からの通知を受けて `processFDBFlushUpdate()` を dispatch | neighorch.cpp:195–198 |
 | コンストラクタ | `m_fdbOrch->attach(this)` で Observer 登録 | neighorch.cpp:43 |
 | デストラクタ | `m_fdbOrch->detach(this)` で Observer 解除 | neighorch.cpp:67–70 |
@@ -346,13 +346,13 @@ APPL_DB NEIGH_TABLE ─(NeighOrch)─→ IntfsOrch [INTERFACE RIF]
 
 ### CONFIG_DB NEIGH の購読方式
 
-`nbrmgrd` が **ConsumerStateTable** を通じて CONFIG_DB `NEIGH` テーブルをリアルタイム購読する。SET/DEL イベントが発生すると即座に `doSetNeighTask()` / `doDeleteNeighTask()` が呼ばれる。
+`nbrmgrd` が **[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** を通じて CONFIG_DB `NEIGH` テーブルをリアルタイム購読する。SET/DEL イベントが発生すると即座に `doSetNeighTask()` / `doDeleteNeighTask()` が呼ばれる。
 
 | 購読者 | 購読方式 | チャンネル / テーブル | トリガー処理 | evidence |
 |--------|---------|----------------------|------------|----------|
 | `nbrmgrd` | `ConsumerStateTable` (CONFIG_DB) | `CFG_NEIGH_TABLE_NAME` (`"NEIGH"`) | SET → `doSetNeighTask()` → Netlink `RTM_NEWNEIGH` | `nbrmgrd.cpp:32-34`, `nbrmgr.cpp:390` |
 | `nbrmgrd` | `ConsumerStateTable` (APPL_DB) | `APP_NEIGH_RESOLVE_TABLE_NAME` (`"NEIGH_RESOLVE_TABLE"`) | SET → 隣接解決トリガー | `nbrmgr.cpp:64-67` |
-| `nbrmgrd` (VoQ のみ) | `SubscriberStateTable` (STATE_DB) | `STATE_SYSTEM_NEIGH_TABLE_NAME` | VoQ リモート neighbor → カーネル静的 neighbor 挿入 | `nbrmgr.cpp:78-83` |
+| `nbrmgrd` (VoQ のみ) | `SubscriberStateTable` ([STATE_DB](../../reference/glossary.md#term-state_db)) | `STATE_SYSTEM_NEIGH_TABLE_NAME` | VoQ リモート neighbor → カーネル静的 neighbor 挿入 | `nbrmgr.cpp:78-83` |
 
 ### nbrmgrd の Select ループ
 
@@ -374,7 +374,7 @@ CONFIG_DB NEIGH|<port>|<ip> SET
 
 ### APPL_DB NEIGH_RESOLVE_TABLE
 
-外部コントローラ（gNMI、SDN コントローラ等）が `APPL_DB:NEIGH_RESOLVE_TABLE` へ書き込むことで ARP/NDP 解決をトリガーできる。nbrmgrd はこのテーブルを起動時から購読し (`nbrmgr.cpp:64-67`)、warm-reboot 後は `reconcileNeighResolveTable()` で保留エントリを再読み込みする (`nbrmgr.cpp:70`)。
+外部コントローラ（[gNMI](../../reference/glossary.md#term-gnmi)、SDN コントローラ等）が `APPL_DB:NEIGH_RESOLVE_TABLE` へ書き込むことで ARP/[NDP](../../reference/glossary.md#term-ndp) 解決をトリガーできる。nbrmgrd はこのテーブルを起動時から購読し (`nbrmgr.cpp:64-67`)、warm-reboot 後は `reconcileNeighResolveTable()` で保留エントリを再読み込みする (`nbrmgr.cpp:70`)。
 
 ### CONFIG_DB → kernel の直接パス（SAI 非経由）
 
@@ -415,7 +415,7 @@ VoQ 構成で `STATE_DB:STATE_SYSTEM_NEIGH_TABLE` に変化があると `doState
 | 3 | `addKernelNeigh(inband_if, ip, mac)` でカーネル neighbor 追加 | 失敗 → 既存 neighbor を削除してから `it++` 再試行 |
 | 4 | `addKernelRoute(inband_if, ip)` でスタティックルート追加 | 失敗 → neighbor も削除してから `it++` 再試行 |
 
-**IPv6 ルートの metric 256** — VoQ リモート neighbor の IPv6 スタティックルートには `metric 256` を明示付与する（`nbrmgr.cpp:572`）。これは eBGP / iBGP 経路（metric 256）と同一メトリックにして ECMP グループに混入させるための VoQ 専用挙動。IPv4 はデフォルト metric 0 なので付与なし。
+**IPv6 ルートの metric 256** — VoQ リモート neighbor の IPv6 スタティックルートには `metric 256` を明示付与する（`nbrmgr.cpp:572`）。これは eBGP / iBGP 経路（metric 256）と同一メトリックにして [ECMP](../../reference/glossary.md#term-ecmp) グループに混入させるための VoQ 専用挙動。IPv4 はデフォルト metric 0 なので付与なし。
 
 | inband_type | oper UP チェック | Evidence |
 |-------------|----------------|---------|
@@ -528,7 +528,7 @@ Consumer が `CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME` のとき `doVoqSystemNeighTa
 | 有効な MAC（例: `00:11:22:33:44:55`）| `NUD_PERMANENT` で永続 neighbor を設定 |
 | 省略 / ゼロ MAC | `NUD_DELAY + NTF_USE` で ARP/NDP 解決を要求 |
 | 不正な MAC 文字列 | サイレント drop（エラーログのみ） |
-| ブロードキャスト MAC（`ff:ff:ff:ff:ff:ff`）| YANG では許可（mac-address 型）。ただし neighsyncd 側では拒否（APPL_DB 文脈）; CONFIG_DB nbrmgr 経路では制御なし |
+| ブロードキャスト MAC（`ff:ff:ff:ff:ff:ff`）| YANG では許可（mac-address 型）。ただし [neighsyncd](../../reference/glossary.md#term-neighsyncd) 側では拒否（APPL_DB 文脈）; CONFIG_DB nbrmgr 経路では制御なし |
 
 ### `family` (string)
 
@@ -557,9 +557,9 @@ Consumer が `CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME` のとき `doVoqSystemNeighTa
 
 | 経路 | 詳細 |
 |------|------|
-| sonic-cfggen (minigraph) | FG-NHG 構成時に `formulate_fine_grained_ecmp()` が生成。`family` のみ設定、`neigh` なし |
+| [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) (minigraph) | FG-NHG 構成時に `formulate_fine_grained_ecmp()` が生成。`family` のみ設定、`neigh` なし |
 | 手動 sonic-db-cli | `sonic-db-cli CONFIG_DB hset 'NEIGH|<port>|<ip>' neigh <mac>` |
-| config_db.json | システム起動時の DB 初期化で取り込み |
+| [config_db.json](../../reference/glossary.md#term-config_db.json) | システム起動時の DB 初期化で取り込み |
 
 ## タイミングと副作用
 
@@ -578,7 +578,7 @@ Consumer が `CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME` のとき `doVoqSystemNeighTa
 ## 関連リファレンス
 
 - [YANG](../../reference/glossary.md#term-yang): `sonic-neigh`
-- [`DEVICE_NEIGHBOR`](./device-neighbor.md) テーブル（L2 Topology / LLDP 用。本テーブルとは異なる）
+- [`DEVICE_NEIGHBOR`](./device-neighbor.md) テーブル（L2 Topology / [LLDP](../../reference/glossary.md#term-lldp) 用。本テーブルとは異なる）
 
 <!-- ref-triangle:end -->
 
@@ -666,3 +666,5 @@ NbrMgr nbrmgr(&cfgDb, &appDb, &stateDb, cfg_nbr_tables);
 本テーブルはカーネルの neighbor テーブルを直接操作する（Netlink 経由）。SAI / orchagent 経路は通らない。  
 ASIC への neighbor プログラムは `neighsyncd` が APPL_DB `NEIGH_TABLE` を経由して `neighorch` へ伝達する別経路で行われる。
 <!-- /runtime-trace -->
+
+<!-- glossary-links-injected: e24cef6e1a5e -->

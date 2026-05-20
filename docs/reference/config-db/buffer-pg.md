@@ -23,7 +23,7 @@ hard: 0
 
 ## 概要
 
-ポートの ingress バッファ Priority Group (PG) ごとにどの BUFFER_PROFILE を割り当てるかを保持する[^1]。lossless トラフィックの xon/xoff 閾値、[PFC](../../reference/glossary.md#term-pfc) 動作の根本となる設定。`buffermgrd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に転送、`orchagent` `BufferOrch` が [SAI](../../reference/glossary.md#term-sai) ingress PG buffer profile を設定する。
+ポートの ingress バッファ [Priority Group](../../reference/glossary.md#term-priority-group) (PG) ごとにどの BUFFER_PROFILE を割り当てるかを保持する[^1]。lossless トラフィックの xon/xoff 閾値、[PFC](../../reference/glossary.md#term-pfc) 動作の根本となる設定。`buffermgrd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に転送、`orchagent` `BufferOrch` が [SAI](../../reference/glossary.md#term-sai) ingress PG buffer profile を設定する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -95,8 +95,8 @@ BUFFER_PG|<port>|<pg_num>
 | **dead field** | YANG `profile default 0` は実装で一切参照されない | `sonic-buffer-pg.yang:59` |
 | **書き込み経路依存乖離** | Jinja2 静的: PG 0 → `ingress_lossy_profile`; Jinja2 動的: PG 3-4 → `NULL`; buffermgr 静的: `pg_lossless_*_profile` | 各経路 |
 | **silent fallback** (動的 threshold) | profile 未指定の lossless PG は `default_dynamic_th` を threshold に使用 | `buffermgrdyn.cpp:1521` |
-| **silent drop** (cable=0m) | ケーブル長 `0m` の lossless PG は APPL_DB から削除。WARN なし | `buffermgrdyn.cpp:1492-1509` |
-| **silent skip** (PFC 未設定) | `PORT_QOS_MAP.pfc_enable` が未設定のポートは BUFFER_PG を書かずに `task_success` 返却 | `buffermgr.cpp:173-179` |
+| **silent drop** (cable=0m) | ケーブル長 `0m` の lossless PG は [APPL_DB](../../reference/glossary.md#term-appl_db) から削除。WARN なし | `buffermgrdyn.cpp:1492-1509` |
+| **silent skip** (PFC 未設定) | `PORT_QOS_MAP.pfc_enable` が未設定のポートは [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) を書かずに `task_success` 返却 | `buffermgr.cpp:173-179` |
 | **consumer 乖離** (egress reject) | egress profile を PG に設定すると `task_failed` drop — YANG 無制約、実装のみで enforcement | `buffermgrdyn.cpp:3156-3163` |
 | **db_migrator silent overwrite** | 動的モード移行時に `profile` を `NULL` に強制書き換え | `db_migrator.py:398` |
 | **admin down 書き込み抑制** | PORT admin down 時は APPL_DB 書き込みをスキップし内部状態のみ保持 | `buffermgrdyn.cpp:3198-3202` |
@@ -154,7 +154,7 @@ show buffer pg
 | 値 | 挙動 |
 |----|------|
 | `[BUFFER_PROFILE\|<name>]` | `buffermgrd` が対応プロファイルの xon/xoff/dynamic_th で PG を設定し APPL_DB に書く |
-| `NULL` | PG の削除扱い。APPL_DB から該当エントリを削除し SAI が PG バッファを解放 |
+| `NULL` | PG の削除扱い。APPL_DB から該当エントリを削除し [SAI](../../reference/glossary.md#term-sai) が PG バッファを解放 |
 
 ### `pg_num` (key、範囲対応)
 
@@ -175,7 +175,7 @@ show buffer pg
 | `profile` 以外の不正フィールドが SET で到達 | `BUFFER_PG: Invalid field %s` → `task_invalid_entry` (drop) | `buffermgrdyn.cpp` L3180 |
 | PG ID が `uint8_t` に変換不可 (std::invalid_argument) | その PG ID を silently skip | `buffermgr.cpp` L197 |
 | speed / cable_length 組み合わせが lookup table に未定義 | `Unable to create/update PG profile` → `task_invalid_entry` | `buffermgr.cpp` L238 |
-| admin down ポートでデフォルト以外のプロファイル設定時 | BUFFER_PG エントリを削除しない (`won't reclaim buffer`) | `buffermgr.cpp` L228 |
+| admin down ポートでデフォルト以外のプロファイル設定時 | [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) エントリを削除しない (`won't reclaim buffer`) | `buffermgr.cpp` L228 |
 | ポートの `admin_status` が取得不可 | `assuming default down` として扱う | `buffermgr.cpp` L565 |
 | zero buffer profile が pool に未設定でバッファ回収不可 | `Zero profile is not provided for pool %s` を LOG_ERROR | `buffermgrdyn.cpp` L381 |
 | admin down ポートへの SET | APPL_DB 書き込みをスキップし内部状態のみ保持。ポート up 時に APPL_DB に反映 | `buffermgrdyn.cpp` L3202 |
@@ -187,7 +187,7 @@ show buffer pg
 
 ### 段階 1 — Consumer 登録
 
-`buffermgrd` / `buffermgrdyn` → `BufferOrch` (APPL_DB 経由) が CONFIG_DB の `BUFFER_PG` テーブルを購読する。
+`buffermgrd` / `buffermgrdyn` → `BufferOrch` (APPL_DB 経由) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BUFFER_PG` テーブルを購読する。
 
 `BUFFER_PG` の key は `<port>|<pg_range>` (例: `Ethernet0|3-4`)。
 
@@ -197,11 +197,11 @@ show buffer pg
 
 ### 段階 3 — APPL→SAI
 
-`sai_buffer_api` — `sai_create_ingress_priority_group_attr` でポート毎の PG (Priority Group) バッファプロファイルを設定
+`sai_buffer_api` — `sai_create_ingress_priority_group_attr` でポート毎の [PG (Priority Group)](../../reference/glossary.md#term-pg) バッファプロファイルを設定
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB 変化を `buffermgrd(yn)` が検知後 APPL_DB に書き込み。`BufferOrch` が APPL_DB を購読して SAI call を発行。動的モードでは cable length / speed から自動計算。
+**適用タイミング**: [CONFIG_DB](../../reference/glossary.md#term-config_db) 変化を `buffermgrd(yn)` が検知後 APPL_DB に書き込み。`BufferOrch` が APPL_DB を購読して SAI call を発行。動的モードでは cable length / speed から自動計算。
 
 **副作用**: PG バッファ変更は ingress traffic の一時的な pause/drop に影響する可能性がある。warm-reboot では既存バッファ設定が保持される。
 <!-- /runtime-trace -->
@@ -209,11 +209,11 @@ show buffer pg
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`BUFFER_PG` テーブルの SET/DEL が CONFIG_DB に届くと、`buffermgrdyn` (cfgmgr) と `BufferOrch` (orchagent) は APPL_DB 以外に計 3 DB へ副次書き込みを行う。
+`BUFFER_PG` テーブルの SET/DEL が CONFIG_DB に届くと、`buffermgrdyn` (cfgmgr) と `BufferOrch` ([orchagent](../../reference/glossary.md#term-orchagent)) は APPL_DB 以外に計 3 DB へ副次書き込みを行う。
 
 ### APPL_DB / `BUFFER_PROFILE_TABLE`
 
-動的算出プロファイルが BUFFER_PG 参照により新規生成される場合に書き込む。
+動的算出プロファイルが [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) 参照により新規生成される場合に書き込む。
 
 | トリガ | 操作 | evidence |
 |--------|------|---------|
@@ -234,7 +234,7 @@ APPL_DB への書き込みと常に同時に発生する。
 
 ### COUNTERS_DB / `COUNTERS_PG_NAME_MAP` · `COUNTERS_PG_PORT_MAP` · `COUNTERS_PG_INDEX_MAP`
 
-`BufferOrch::processPriorityGroupPost()` が SAI 適用成功後に `createPortBufferPgCounters()` を呼び出し、PG の OID マッピングを COUNTERS_DB に書き込む。
+`BufferOrch::processPriorityGroupPost()` が SAI 適用成功後に `createPortBufferPgCounters()` を呼び出し、PG の OID マッピングを [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に書き込む。
 
 | トリガ | テーブル | 操作 | 条件 | evidence |
 |--------|---------|------|------|---------|
@@ -245,7 +245,7 @@ APPL_DB への書き込みと常に同時に発生する。
 
 ### FLEX_COUNTER_DB / PG drop・watermark stat グループ
 
-`addPortBufferPgCounters()` からさらに flex counter ポーリング設定が FLEX_COUNTER_DB に書き込まれる。
+`addPortBufferPgCounters()` からさらに flex counter ポーリング設定が [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に書き込まれる。
 
 | トリガ | グループキー | 操作 | 条件 | evidence |
 |--------|------------|------|------|---------|
@@ -271,7 +271,7 @@ APPL_DB への書き込みと常に同時に発生する。
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -327,7 +327,7 @@ APPL_DB への書き込みと常に同時に発生する。
 
 | 定数 | 値 | 根拠 |
 |------|----|------|
-| 最大 PG 数 (per port) | **8**（インデックス `0`–`7`）| `buffermgrdyn.cpp` L1336: `(1 << maximum_buffer_objects[BUFFER_PG]) - 1`; STATE_DB `BUFFER_MAX_PARAM` が 8 を報告 |
+| 最大 PG 数 (per port) | **8**（インデックス `0`–`7`）| `buffermgrdyn.cpp` L1336: `(1 << maximum_buffer_objects[BUFFER_PG]) - 1`; [STATE_DB](../../reference/glossary.md#term-state_db) `BUFFER_MAX_PARAM` が 8 を報告 |
 | key の `pg_num` 許容パターン | `[0-7]((-)[0-7])?` | `sonic-buffer-pg.yang` pg_num leaf |
 | `pg_num` 内部型 | `uint8_t` にキャスト | `buffermgr.cpp` L197 |
 
@@ -428,16 +428,16 @@ CONFIG_DB `FLEX_COUNTER_TABLE` キー: `PG_WATERMARK` / `PG_DROP` (`flexcountero
 
 `DEVICE_METADATA.localhost.switch_type == "voq"` の場合、`BufferOrch` の BUFFER_PG 処理は通常スイッチと異なる。
 
-| 項目 | 通常スイッチ | VOQ Chassis |
+| 項目 | 通常スイッチ | [VOQ](../../reference/glossary.md#term-voq) Chassis |
 |------|-------------|-------------|
 | BUFFER_PG key 形式 | `<port>\|<pg_range>` (2 トークン) | `<hostname>\|<asic>\|<port>\|<pg_range>` (4 トークン) |
-| バッファ適用対象 | フロントパネルポートの PG | VOQ (Virtual Output Queue、システムポートに紐づく) |
+| バッファ適用対象 | フロントパネルポートの PG | [VOQ](../../reference/glossary.md#term-voq) (Virtual Output Queue、システムポートに紐づく) |
 | 初期化ゲート | `isConfigDone()` | `isInitDone()` |
 | ポート参照カウント | `increasePortRefCount()` で増減 | スキップ（システムポートは動的生成されない） |
 | Warm reboot ready list | `initBufferReadyList(pg_table)` | `initBufferReadyList(pg_table)` (PG は通常通り) + `initVoqBufferReadyList(queue_table)` |
 
 - ソース: `sonic-swss/orchagent/bufferorch.cpp:116-136, 916-938, 1166-1168, 2079-2086`
-- VOQ モードでは BUFFER_PG は引き続き CONFIG_DB に存在するが、orchagent 側で key を 4 トークンとしてパースしローカル/リモートポートを判別する
+- [VOQ](../../reference/glossary.md#term-voq) モードでは BUFFER_PG は引き続き CONFIG_DB に存在するが、[orchagent](../../reference/glossary.md#term-orchagent) 側で key を 4 トークンとしてパースしローカル/リモートポートを判別する
 
 ### 5. プラットフォーム別 PG 範囲割り当て
 
@@ -466,7 +466,7 @@ BUFFER_PG エントリが正常に SAI まで到達するには、以下の順�
 | # | 先行必須リソース | 依存先処理 | 違反時の挙動 | evidence |
 |---|----------------|-----------|-------------|---------|
 | 1 | **BUFFER_POOL** が APPL_DB に存在すること | `buffermgrdyn` が PG を APPL_DB に書き込む | `m_bufferObjectsPending = true` に設定、書き込みデファー | `buffermgrdyn.cpp:935` |
-| 2 | **BUFFER_PROFILE** が APPL_DB に存在すること | `BufferOrch::processPriorityGroup()` がプロファイル参照を解決する | `task_need_retry`（orchagent が再試行） | `bufferorch.cpp:1345-1348` |
+| 2 | **BUFFER_PROFILE** が APPL_DB に存在すること | `BufferOrch::processPriorityGroup()` がプロファイル参照を解決する | `task_need_retry`（[orchagent](../../reference/glossary.md#term-orchagent) が再試行） | `bufferorch.cpp:1345-1348` |
 | 3 | **PORT** speed + cable_length が設定済みであること（動的モード） | `buffermgrdyn` が headroom を計算して PG を書き込む | `"Nothing to be done for %s since port is not ready"` → スキップ | `buffermgrdyn.cpp:1485-1487` |
 | 4 | **PORT** admin_status + PORT_QOS_MAP.pfc_enable が設定済みであること（静的モード） | `buffermgr.doSpeedUpdateTask()` が PG を作成する | `task_need_retry` または silent skip | `buffermgr.cpp:155,167,175-179` |
 | 5 | **BUFFER_PG** は PORT admin up **前**に設定すること | `BufferOrch` が SAI に PG プロファイルを適用する | PORT up 後の設定は `SWSS_LOG_WARN` を発行（SAI 適用自体は行われるが運用上 unsafe） | `bufferorch.cpp:1576-1589` |
@@ -548,7 +548,7 @@ BUFFER_PG エントリが正常に SAI まで到達するには、以下の順�
 | `BufferMgrDynamic` (動的モード) | `Orch` コンストラクタ経由 `TableConnector` subscribe | `CONFIG_DB / BUFFER_PG` (`CFG_BUFFER_PG_TABLE_NAME`) | `handleBufferPgTable()` → `handleBufferObjectTables()` | `buffermgrd.cpp:179`, `buffermgrdyn.cpp:446` |
 | `BufferMgr` (静的モード) | `Orch(cfgDb, tableNames)` コンストラクタ経由 subscribe | `CONFIG_DB / BUFFER_PG` (`CFG_BUFFER_PG_TABLE_NAME`) | `doTask()` 内 `table_name == CFG_BUFFER_PG_TABLE_NAME` 分岐 | `buffermgrd.cpp:196`, `buffermgr.cpp:22,493` |
 
-`Orch` 基底クラスは各 `TableConnector` に対して内部的に `SubscriberStateTable` を生成し、Redis Keyspace Notification を SELECT loop で受信する。`buffermgrd.cpp` の `main()` が `cfgOrchList` を構築し、動的/静的モードを `-a`/`-l` フラグで切り替える。
+`Orch` 基底クラスは各 `TableConnector` に対して内部的に `SubscriberStateTable` を生成し、[Redis](../../reference/glossary.md#term-redis) Keyspace Notification を SELECT loop で受信する。`buffermgrd.cpp` の `main()` が `cfgOrchList` を構築し、動的/静的モードを `-a`/`-l` フラグで切り替える。
 
 ### APPL_DB → BufferOrch（ConsumerStateTable）
 
@@ -592,7 +592,7 @@ YANG leafref は `profile → BUFFER_PROFILE.name` の 1 件のみ定義。以�
 | `PORT` (speed / mtu / admin_status / lanes) | ✗ | 読み取り（内部キャッシュ `m_portInfoLookup`） | 常時。speed + mtu が揃わない限り headroom 計算をスキップ | `buffermgrdyn.cpp` L1485–1487 / `buffermgr.cpp` L155–179 / `bufferorch.cpp` L1431 |
 | `CABLE_LENGTH` (ポートごとのケーブル長) | ✗ | 読み取り（`handleCableLenTable` 購読） | dynamic モードの lossless PG headroom 計算時。`0m` → lossless PG を APPL_DB から silent delete | `buffermgrdyn.cpp` L2142–2148, L1492–1523 / `buffermgr.cpp` L101–106 |
 | `DEFAULT_LOSSLESS_BUFFER_PARAMETER` (`default_dynamic_th`) | ✗ | 読み取り（起動時 + 動的更新） | dynamic モードで lossless PG の threshold を決定。未設定なら BUFFER_POOL ready 後もデファー | `buffermgrdyn.cpp` L150–153, L1460, L1521 |
-| `LOSSLESS_TRAFFIC_PATTERN` (Lua 経由) | ✗ | 間接読み取り（`buffer_headroom_<platform>.lua` 内 Redis KEYS） | Mellanox / Barefoot プラットフォームでの headroom 計算時のみ有効 | `cfgmgr/buffer_headroom_mellanox.lua` L91 / `buffermgrdyn.cpp` L76–78 |
+| `LOSSLESS_TRAFFIC_PATTERN` (Lua 経由) | ✗ | 間接読み取り（`buffer_headroom_<platform>.lua` 内 [Redis](../../reference/glossary.md#term-redis) KEYS） | Mellanox / Barefoot プラットフォームでの headroom 計算時のみ有効 | `cfgmgr/buffer_headroom_mellanox.lua` L91 / `buffermgrdyn.cpp` L76–78 |
 
 !!! note "BUFFER_POOL と DEFAULT_LOSSLESS_BUFFER_PARAMETER の二重ゲート"
     dynamic モードでは `m_bufferPoolReady == true` かつ `m_defaultThreshold.empty() == false` の両条件が揃わない限り、lossless BUFFER_PG の APPL_DB 書き込みは開始されない（`buffermgrdyn.cpp` L1460, L3645）。CONFIG_DB への BUFFER_PG 設定だけでは不十分で、BUFFER_POOL と DEFAULT_LOSSLESS_BUFFER_PARAMETER の先行設定が必須。
@@ -603,4 +603,5 @@ YANG leafref は `profile → BUFFER_PROFILE.name` の 1 件のみ定義。以�
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/buffer-pg-cross-refs.md`
 
 <!-- /cross-refs -->
-<!-- glossary-links-injected: 566f959873ea -->
+
+<!-- glossary-links-injected: 19092d470ffc -->

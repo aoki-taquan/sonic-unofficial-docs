@@ -73,7 +73,7 @@ related:
 1. [概要](concept.md): reference を辞書として残す設計と、章 / 辞書 / カテゴリの 3 層の関係。
 2. [CLI 横断索引](cli-index.md): `config-*` / `show-*` / `debug-*` / ツール系を機能章ごとに並べた表。
 3. [CONFIG_DB 横断索引](config-db-index.md): table family を機能章ごとに並べ、逆引きを提供する。
-4. [YANG 横断索引](yang-index.md): native SONiC YANG と OpenConfig / management framework との関係。
+4. [YANG 横断索引](yang-index.md): native [SONiC](../../reference/glossary.md#term-sonic) YANG と OpenConfig / management framework との関係。
 5. [品質と gap](quality-gaps.md): discrepancy ページと reference gap の追跡方法。
 6. [内部実装](internals.md): reference ページの生成パイプライン (Indexer / gen_coverage / gen_cross_ref) と、frontmatter / verification status の運用を実装側から見る。
 
@@ -142,4 +142,4 @@ related:
 - [gNMI / gNOI / OpenConfig / YANG](../10-gnmi-openconfig/index.md)
 - [Lab / Virtual SONiC / Developer Entry](../21-lab-vs-developer/index.md)
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

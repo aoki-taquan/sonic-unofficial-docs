@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-`NAT_TABLE`、`NAPT_TABLE`、`NAT_TWICE_TABLE`、`NAPT_TWICE_TABLE`、`NAT_GLOBAL_TABLE`、`NAT_DNAT_POOL_TABLE` は [APPL_DB](../../reference/glossary.md#term-appl_db) 上の NAT 関連テーブル群[^1]。`natmgrd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の static NAT/NAPT 設定を変換してこれらへ書き込み、`natsyncd` が kernel conntrack から dynamic エントリを書き込む。`orchagent / NatOrch` が消費して [SAI](../../reference/glossary.md#term-sai) `sai_nat_api` 経由でハードウェアへ降ろす[^2]。
+`NAT_TABLE`、`NAPT_TABLE`、`NAT_TWICE_TABLE`、`NAPT_TWICE_TABLE`、`NAT_GLOBAL_TABLE`、`NAT_DNAT_POOL_TABLE` は [APPL_DB](../../reference/glossary.md#term-appl_db) 上の [NAT](../../reference/glossary.md#term-nat) 関連テーブル群[^1]。`natmgrd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の static [NAT](../../reference/glossary.md#term-nat)/NAPT 設定を変換してこれらへ書き込み、`natsyncd` が kernel conntrack から dynamic エントリを書き込む。`orchagent / NatOrch` が消費して [SAI](../../reference/glossary.md#term-sai) `sai_nat_api` 経由でハードウェアへ降ろす[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -78,8 +78,8 @@ key セグメント数が規定値以外の場合は `NatOrch` が `SWSS_LOG_ERR
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
 | `translated_ip` | IPv4 address | yes | 変換後 IP アドレス |
-| `nat_type` | enum `snat` / `dnat` | yes | NAT 種別 |
-| `entry_type` | enum `static` / `dynamic` | yes | static (natmgrd 由来) / dynamic (natsyncd 由来) |
+| `nat_type` | enum `snat` / `dnat` | yes | [NAT](../../reference/glossary.md#term-nat) 種別 |
+| `entry_type` | enum `static` / `dynamic` | yes | static ([natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) 由来) / dynamic (natsyncd 由来) |
 
 key は `<global_ip>` の単一セグメント。`entry_type` / `nat_type` は省略不可 — 欠落時 `assert` abort (`natorch.cpp:2659`)。
 
@@ -134,7 +134,7 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`NatOrch` は `NAT_GLOBAL_TABLE.admin_mode` が `"enabled"` になるまで NAT/NAPT エントリを SAI に降ろさず内部キャッシュに保持する。APPL_DB への書き込み順序によって SAI 操作のタイミングが変わる。
+`NatOrch` は `NAT_GLOBAL_TABLE.admin_mode` が `"enabled"` になるまで NAT/NAPT エントリを [SAI](../../reference/glossary.md#term-sai) に降ろさず内部キャッシュに保持する。[APPL_DB](../../reference/glossary.md#term-appl_db) への書き込み順序によって [SAI](../../reference/glossary.md#term-sai) 操作のタイミングが変わる。
 
 ### 検出された順序依存
 
@@ -143,7 +143,7 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 | 1 | `NAT_GLOBAL_TABLE.admin_mode = "enabled"` → NAT_TABLE / NAPT_TABLE エントリ SAI 反映 | **強制先行**（enable 前エントリはキャッシュ保持のみ） | `enableNatFeature()` 内 `addAllNatEntries()` が既存キャッシュを一括 SAI 投入 |
 | 2 | `NAT_DNAT_POOL_TABLE` → DNAT SAI エントリ登録 | enable 後に先行推奨 | `enableNatFeature()` 内 `addAllDnatPoolEntries()` が既存 pool を一括投入 |
 | 3 | `NAT_DNAT_POOL_TABLE` 書込み → `NAT_TABLE (nat_type=dnat)` / `NAPT_TABLE (nat_type=dnat)` 書込み | 順序任意（NatOrch が独立管理） | pool と NAT エントリは別テーブル・別 `doTask` で処理され依存なし |
-| 4 | `natmgrd` CONFIG_DB → APPL_DB 変換 → `NatOrch` 消費 | 非同期パイプライン | `natmgrd` は `isNatEnabled() == false` 時タイムアウト変更を APPL_DB に書かない |
+| 4 | `natmgrd` [CONFIG_DB](../../reference/glossary.md#term-config_db) → [APPL_DB](../../reference/glossary.md#term-appl_db) 変換 → `NatOrch` 消費 | 非同期パイプライン | `natmgrd` は `isNatEnabled() == false` 時タイムアウト変更を APPL_DB に書かない |
 | 5 | `NAT_GLOBAL_TABLE.admin_mode = "disabled"` → 全 NAT エントリ SAI 削除 | 即時（`disableNatFeature()` で全削除） | re-enable 時は `enableNatFeature()` でキャッシュから再投入 |
 | 6 | 動的エントリ (natsyncd) 書込み → `NAT_GLOBAL_TABLE.admin_mode = "enabled"` 後 | 任意（キャッシュに積まれ enable 時一括投入） | disabled 状態で書かれたエントリは `m_natEntries` に保持、enable で SAI へ |
 | 7 | NH 解決 (NeighOrch / RouteOrch) → DNAT エントリ SAI 反映 | 非同期（NH 解決待ち） | `gNhTrackingSupported == true` 時は `addDnatToNhCache()` 経由で NH 解決後に SAI 投入 |
@@ -161,7 +161,7 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`NatOrch` が APPL_DB NAT テーブル群を消費する際、YANG leafref 定義を超えて実装上で参照するテーブル・リソース・Orch を示す。
+`NatOrch` が APPL_DB NAT テーブル群を消費する際、[YANG](../../reference/glossary.md#term-yang) leafref 定義を超えて実装上で参照するテーブル・リソース・Orch を示す。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
@@ -190,7 +190,7 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 | 失敗条件 | 検出箇所 | 結果 | evidence |
 |---|---|---|---|
 | key セグメント数不正 (NAT_TABLE: 1 以外、NAPT_TABLE: 3 以外、TWICE_TABLE: 2 以外、TWICE_NAPT: 5 以外) | 各 `doTask()` 冒頭 | ERROR ログ → `erase(it)` → **恒久スキップ** | `natorch.cpp:2636-2640`, `natorch.cpp:2697-2701`, `natorch.cpp:2730-2734`, `natorch.cpp:2770-2774` |
-| `entry_type` が `"dynamic"` / `"static"` 以外 | `doNatTableTask()` / 他 | `assert` abort — orchagent プロセス停止 | `natorch.cpp:2659` |
+| `entry_type` が `"dynamic"` / `"static"` 以外 | `doNatTableTask()` / 他 | `assert` abort — [orchagent](../../reference/glossary.md#term-orchagent) プロセス停止 | `natorch.cpp:2659` |
 | dynamic SNAT エントリ数が `maxAllowedSNatEntries` に到達 | `addNatEntry()` | INFO ログ → `setTimeoutNotifier->send("AGEOUT-SINGLE-NAT")` → `return true`（エージアウト通知、エントリ破棄） | `natorch.cpp:1882-1893` |
 | `isNatEnabled() == false` (`admin_mode != "enabled"`) | `addNatEntry()` / `addNaptEntry()` 等 | WARN ログ → エントリを `m_natEntries` / `m_naptEntries` に保持 → `return true`（SAI は呼ばない） | `natorch.cpp:1907-1913`, `natorch.cpp:2009-2015`, `natorch.cpp:2137-2143`, `natorch.cpp:2294-2300` |
 | SAI `create_nat_entry` 失敗 (一般エラー) | `addHwDnatEntry()` / `addHwSnatEntry()` 等 | ERROR ログ → `handleSaiCreateStatus(SAI_API_NAT)` → `parseHandleSaiStatusFailure()` → 失敗時 `return false` → `doTask` で `it++`（次サイクルで再試行） | `natorch.cpp:774-782`, `natorch.cpp:1307-1315` |
@@ -209,7 +209,7 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 | 失敗条件 | 検出箇所 | 結果 | evidence |
 |---|---|---|---|
 | key が `"Values"` 以外 | `doNatGlobalTableTask()` 冒頭 | ERROR ログ → `erase(it)` → **恒久スキップ** | `natorch.cpp:2924-2928` |
-| `admin_mode` が `"enabled"` / `"disabled"` 以外 | `doNatGlobalTableTask()` | `assert` abort — orchagent プロセス停止 | `natorch.cpp:2938` |
+| `admin_mode` が `"enabled"` / `"disabled"` 以外 | `doNatGlobalTableTask()` | `assert` abort — [orchagent](../../reference/glossary.md#term-orchagent) プロセス停止 | `natorch.cpp:2938` |
 | SAI `set_switch_attribute(SAI_SWITCH_ATTR_NAT_ENABLE)` 失敗 | `enableNatFeature()` / `disableNatFeature()` | ERROR ログ → `handleSaiSetStatus()` → ログのみ（処理は続行） | `natorch.cpp:2567-2572` |
 | `gIsNatSupported == false` でかつ `admin_mode = "enabled"` | `enableNatFeature()` 冒頭 | NOTICE ログ → `return`（SAI 操作・タイマ開始・キャッシュ投入すべてスキップ） | `natorch.cpp:2541-2544` |
 
@@ -225,7 +225,7 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 
 ### 補足
 
-- **assert abort**: `entry_type` / `admin_mode` の値不正は `assert` で即時 abort する。CLI / natmgrd / natsyncd 経由の書き込みは必ず合法値を使用するため、直接 APPL_DB に不正値を書いた場合にのみ発生する。
+- **assert abort**: `entry_type` / `admin_mode` の値不正は `assert` で即時 abort する。CLI / [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) / natsyncd 経由の書き込みは必ず合法値を使用するため、直接 APPL_DB に不正値を書いた場合にのみ発生する。
 - **恒久スキップと再試行の違い**: key セグメント数不正 / key 不正は `erase(it)` で恒久スキップ（再投入なし）。SAI 失敗は `it++` で次サイクルに再試行される。
 - **`maxAllowedSNatEntries == 0`** の場合（SAI クエリ失敗時のデフォルト）、dynamic SNAT 上限チェックは行われない（`0 == 0` は false 扱いとならないよう初期化時に明示: `natorch.cpp:112-121`）。実際には `totalSnatEntries == 0` かつ `maxAllowedSNatEntries == 0` でも上限に達したとみなされエージアウト通知が発生するリスクがある。
 
@@ -265,7 +265,7 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 
 | 定数 | 値 | 用途 | evidence |
 |-----|-----|------|---------|
-| `TWICE_NAT_ID_MIN` | `1` | `twice_nat_id` 最小値 (YANG `range "1..9999"` と一致) | `natmgr.h:40` |
+| `TWICE_NAT_ID_MIN` | `1` | `twice_nat_id` 最小値 ([YANG](../../reference/glossary.md#term-yang) `range "1..9999"` と一致) | `natmgr.h:40` |
 | `TWICE_NAT_ID_MAX` | `9999` | `twice_nat_id` 最大値 | `natmgr.h:41` |
 | `L4_PORT_MIN` | `1` | L4 ポート番号最小値。NAPT_TABLE / NAPT_TWICE_TABLE の port フィールドに適用 | `natmgr.h:110` |
 | `L4_PORT_MAX` | `65535` | L4 ポート番号最大値 | `natmgr.h:111` |
@@ -287,7 +287,7 @@ key は固定文字列 `"Values"`。他のキーは `NatOrch` が ERROR + erase 
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-APPL_DB NAT テーブル群は YANG の管轄外 (YANG は CONFIG_DB 側を定義) のため、デフォルト値はコード実装のみから確認する。
+APPL_DB NAT テーブル群は [YANG](../../reference/glossary.md#term-yang) の管轄外 (YANG は [CONFIG_DB](../../reference/glossary.md#term-config_db) 側を定義) のため、デフォルト値はコード実装のみから確認する。
 
 ### NAT_GLOBAL_TABLE — コード由来デフォルト
 
@@ -350,18 +350,18 @@ CONFIG_DB の `STATIC_NAT|<global_ip>` 1 件 → APPL_DB `NAT_TABLE|<global_ip>`
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`APPL_DB` NAT テーブル群の SET/DEL に伴い、主購読者 `NatOrch` が以下の副次 DB エントリを書き込む。SAI `sai_nat_api` への直接 ASIC_DB 操作は主作用のため除外する。
+`APPL_DB` NAT テーブル群の SET/DEL に伴い、主購読者 `NatOrch` が以下の副次 DB エントリを書き込む。SAI `sai_nat_api` への直接 [ASIC_DB](../../reference/glossary.md#term-asic_db) 操作は主作用のため除外する。
 
 | 副次 DB | テーブル / キー | 書込フィールド | 根拠 |
 |---|---|---|---|
-| COUNTERS_DB | `COUNTERS_NAT\|<global_ip>` | `NAT_TRANSLATIONS_PKTS`, `NAT_TRANSLATIONS_BYTES` (per-entry polling) | `natorch.cpp:4049-4061` `updateNatCounters()` |
-| COUNTERS_DB | `COUNTERS_NAPT\|<proto>:<ip>:<port>` | 同上 | `natorch.cpp:4079-4097` `updateNaptCounters()` |
-| COUNTERS_DB | `COUNTERS_TWICE_NAT\|<src>:<dst>` | 同上 | `natorch.cpp:4109-4134` `updateTwiceNat/NaptCounters()` |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_NAT\|<global_ip>` | `NAT_TRANSLATIONS_PKTS`, `NAT_TRANSLATIONS_BYTES` (per-entry polling) | `natorch.cpp:4049-4061` `updateNatCounters()` |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_NAPT\|<proto>:<ip>:<port>` | 同上 | `natorch.cpp:4079-4097` `updateNaptCounters()` |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_TWICE_NAT\|<src>:<dst>` | 同上 | `natorch.cpp:4109-4134` `updateTwiceNat/NaptCounters()` |
 | COUNTERS_DB | `COUNTERS_GLOBAL_NAT\|Values` | `STATIC_NAT_ENTRIES`, `STATIC_NAPT_ENTRIES`, `STATIC_TWICE_NAT_ENTRIES`, `STATIC_TWICE_NAPT_ENTRIES`, `DYNAMIC_NAT_ENTRIES`, `DYNAMIC_NAPT_ENTRIES`, `DYNAMIC_TWICE_NAT_ENTRIES`, `DYNAMIC_TWICE_NAPT_ENTRIES`, `SNAT_ENTRIES`, `DNAT_ENTRIES` (int) | `natorch.cpp:4481-4588` `updateStaticNatCounters()` … `updateDnatCounters()` |
 
 ### admin_mode → SAI_SWITCH_ATTR_NAT_ENABLE (直接 SAI)
 
-`NAT_GLOBAL_TABLE.admin_mode` が `enabled` に変化すると `enableNatFeature()` (natorch.cpp:2534) が `sai_switch_api->set_switch_attribute(gSwitchId, SAI_SWITCH_ATTR_NAT_ENABLE=true)` を呼ぶ。`disabled` 時は逆。ASIC_DB 経由ではなく直接 SAI call のため ASIC_DB には経由エントリが残らない。
+`NAT_GLOBAL_TABLE.admin_mode` が `enabled` に変化すると `enableNatFeature()` (natorch.cpp:2534) が `sai_switch_api->set_switch_attribute(gSwitchId, SAI_SWITCH_ATTR_NAT_ENABLE=true)` を呼ぶ。`disabled` 時は逆。[ASIC_DB](../../reference/glossary.md#term-asic_db) 経由ではなく直接 SAI call のため [ASIC_DB](../../reference/glossary.md#term-asic_db) には経由エントリが残らない。
 
 ### SETTIMEOUTNAT notification (aging loop)
 
@@ -373,7 +373,7 @@ CONFIG_DB の `STATIC_NAT|<global_ip>` 1 件 → APPL_DB `NAT_TABLE|<global_ip>`
 
 ### 検出されなかった書込み
 
-STATE_DB, FLEX_COUNTER_DB, CONFIG_DB, LOGLEVEL_DB への書込みは確認されなかった。
+[STATE_DB](../../reference/glossary.md#term-state_db), [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db), CONFIG_DB, [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) への書込みは確認されなかった。
 
 > **Evidence**: `sonic-swss/orchagent/natorch.cpp` (COUNTERS_DB 初期化 L51-56, per-entry counters L4049-4134, global counters L4481-4588, enableNatFeature L2534-2562, SETTIMEOUTNAT L137/1888/2002/2118/2287/3336-3501, routeOrch attach L408-560); `sonic-swss-common/common/schema.h:260-264` (COUNTERS_NAT* table defines); 詳細スキャン結果は `meta/_intermediate/cdb-flow/nat-app-side.md` を参照。
 <!-- /side-effects -->
@@ -383,7 +383,7 @@ STATE_DB, FLEX_COUNTER_DB, CONFIG_DB, LOGLEVEL_DB への書込みは確認され
 
 ### Redis 購読方式
 
-`orchagent / NatOrch` は APPL_DB の 6 つの NAT テーブル（`NAT_TABLE`、`NAPT_TABLE`、`NAT_TWICE_TABLE`、`NAPT_TWICE_TABLE`、`NAT_GLOBAL_TABLE`、`NAT_DNAT_POOL_TABLE`）を **`swss::ConsumerStateTable`** (channel ベース PUBLISH/SUBSCRIBE) で購読する。`Orch::addConsumer()` が DB ID で分岐し、APPL_DB (DB ID ≠ CONFIG_DB / STATE_DB / CHASSIS_APP_DB) には `ConsumerStateTable` を割り当てる (`orch.cpp:1186-1196`)。
+`orchagent / NatOrch` は APPL_DB の 6 つの NAT テーブル（`NAT_TABLE`、`NAPT_TABLE`、`NAT_TWICE_TABLE`、`NAPT_TWICE_TABLE`、`NAT_GLOBAL_TABLE`、`NAT_DNAT_POOL_TABLE`）を **`swss::ConsumerStateTable`** (channel ベース PUBLISH/SUBSCRIBE) で購読する。`Orch::addConsumer()` が DB ID で分岐し、APPL_DB (DB ID ≠ CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) / CHASSIS_APP_DB) には `ConsumerStateTable` を割り当てる (`orch.cpp:1186-1196`)。
 
 ```cpp
 // orch.cpp:1186-1196
@@ -432,7 +432,7 @@ doTwiceNaptTableTask() / doNatGlobalTableTask() / doDnatPoolTableTask()
 
 ### サービス再起動トリガー
 
-なし。`NatOrch` は orchagent 内のハンドラであり、APPL_DB への SET/DEL は SAI `sai_nat_api` へのライブ操作のみで反映され、プロセス再起動を伴わない。`admin_mode` の `enabled` → `disabled` 変化は `disableNatFeature()` によるタイマー停止・SAI_SWITCH_ATTR_NAT_ENABLE=false で完結する。
+なし。`NatOrch` は [orchagent](../../reference/glossary.md#term-orchagent) 内のハンドラであり、APPL_DB への SET/DEL は SAI `sai_nat_api` へのライブ操作のみで反映され、プロセス再起動を伴わない。`admin_mode` の `enabled` → `disabled` 変化は `disableNatFeature()` によるタイマー停止・SAI_SWITCH_ATTR_NAT_ENABLE=false で完結する。
 
 > **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:454-465` (NatOrch 生成・テーブル優先度); `sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐); `sonic-swss/orchagent/natorch.cpp:137` (SETTIMEOUTNAT NotificationProducer), `natorch.cpp:3041-3084` (`doTask` ディスパッチ); `sonic-swss/cfgmgr/natmgrd.cpp:149-150` (SETTIMEOUTNAT NotificationConsumer); `sonic-swss/orchagent/main.cpp:459,478` (`DEFAULT_BATCH_SIZE = 128`); `sonic-swss/orchagent/orchdaemon.cpp:22-23` (SELECT_TIMEOUT)
 <!-- /pubsub -->
@@ -553,7 +553,7 @@ show nat config
 
 ### よくある落とし穴
 
-- `NAT_GLOBAL_TABLE.admin_mode` の assert 条件: `"enabled"` / `"disabled"` 以外の値を直接 APPL_DB に書くと orchagent が abort する。CLI / natmgrd を通じた書き込みは安全。
+- `NAT_GLOBAL_TABLE.admin_mode` の assert 条件: `"enabled"` / `"disabled"` 以外の値を直接 APPL_DB に書くと orchagent が abort する。CLI / [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) を通じた書き込みは安全。
 - static エントリは DNAT + SNAT の **2 件** が同時に書かれる。`show nat translations` で "両方向" として見える。
 - dynamic エントリ (`entry_type: dynamic`) は conntrack エージングで自動削除される。手動 DEL は不要。
 - DNAT pool に IP が登録されないと dynamic DNAT が動作しない (`NAT_DNAT_POOL_TABLE` が先に書かれる)。
@@ -565,3 +565,5 @@ show nat config
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 984cade7acb2 -->

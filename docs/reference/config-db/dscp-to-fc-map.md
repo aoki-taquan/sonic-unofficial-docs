@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-[DSCP](../../reference/glossary.md#term-dscp) 値 (0..63) を Forwarding Class (FC) へマップする [Class-Based Forwarding (CBF)](../../reference/glossary.md#term-cbf) 用の分類定義[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) QoS map (`SAI_QOS_MAP_TYPE_DSCP_TO_FORWARDING_CLASS`) を生成し、ポートにバインドする (`PORT_QOS_MAP.dscp_to_fc_map`)。通常マップは `config cbf reload` で `cbf.json.j2` テンプレートから注入される。
+[DSCP](../../reference/glossary.md#term-dscp) 値 (0..63) を Forwarding Class (FC) へマップする [Class-Based Forwarding (CBF)](../../reference/glossary.md#term-cbf) 用の分類定義[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map (`SAI_QOS_MAP_TYPE_DSCP_TO_FORWARDING_CLASS`) を生成し、ポートにバインドする (`PORT_QOS_MAP.dscp_to_fc_map`)。通常マップは `config cbf reload` で `cbf.json.j2` テンプレートから注入される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -50,7 +50,7 @@ flowchart LR
 DSCP_TO_FC_MAP|<name>|<dscp>
 ```
 
-`<name>` はマップ名（1..32 文字、`[a-zA-Z0-9][-a-zA-Z0-9_]*`）。`<dscp>` は 0..63。Redis には `DSCP_TO_FC_MAP|<name>` の hash field として `<dscp>: <fc>` ペアが格納される。
+`<name>` はマップ名（1..32 文字、`[a-zA-Z0-9][-a-zA-Z0-9_]*`）。`<dscp>` は 0..63。[Redis](../../reference/glossary.md#term-redis) には `DSCP_TO_FC_MAP|<name>` の hash field として `<dscp>: <fc>` ペアが格納される。
 
 ## フィールド一覧
 
@@ -78,7 +78,7 @@ DSCP_TO_FC_MAP|<name>|<dscp>
 
 | 値 | 挙動 |
 |----|------|
-| `0`..`max_num_fcs - 1` | 有効。SAI QoS map エントリに設定 |
+| `0`..`max_num_fcs - 1` | 有効。[SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map エントリに設定 |
 | `max_num_fcs` 以上 | reject → `task_invalid_entry` (SWSS_LOG_ERROR) |
 | 負値 | reject → `task_invalid_entry` |
 | 非整数文字列 | `std::invalid_argument` catch → `task_invalid_entry` |
@@ -90,7 +90,7 @@ DSCP_TO_FC_MAP|<name>|<dscp>
 
 ## 購読者
 
-- `qosorch` (`DscpToFcMapHandler`): [SAI](../../reference/glossary.md#term-sai) QoS map 生成・更新・削除
+- `qosorch` (`DscpToFcMapHandler`): [SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map 生成・更新・削除
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -123,7 +123,7 @@ DSCP_TO_FC_MAP|<name>|<dscp>
 ### 典型値
 
 - `config cbf reload` で生成される AZURE マップ (`cbf_config.j2`):
-  - DSCP 8 → FC 0 (best-effort)
+  - [DSCP](../../reference/glossary.md#term-dscp) 8 → FC 0 (best-effort)
   - DSCP 3,4 → FC 3,4 (lossless)
   - DSCP 5 → FC 2
   - DSCP 46 → FC 5 (EF)
@@ -157,17 +157,16 @@ config cbf clear
 > **Evidence**: `sonic-swss` `orchagent/qosorch.cpp:1039-1130`; `orchagent/cbf/nhgmaporch.cpp:299-325`
 <!-- /cdb-exceptions -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`QosOrch` が CONFIG_DB の `DSCP_TO_FC_MAP` テーブルを購読（`initTableHandlers` で `handleDscpToFcTable` ハンドラ登録、qosorch.cpp:1337）。
+`QosOrch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `DSCP_TO_FC_MAP` テーブルを購読（`initTableHandlers` で `handleDscpToFcTable` ハンドラ登録、qosorch.cpp:1337）。
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし（`qosorch` が直接 CONFIG_DB を購読）。
+なし（`qosorch` が直接 [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読）。
 
 ### 段階 3 — APPL→SAI
 
@@ -188,7 +187,7 @@ config cbf clear
 対象テーブル: `DSCP_TO_FC_MAP`
 
 ### CLI
-- `config cbf reload`: HWSKU 配下の `cbf.json.j2` テンプレートから sonic-cfggen で生成し CONFIG_DB に書き込む
+- `config cbf reload`: HWSKU 配下の `cbf.json.j2` テンプレートから [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) で生成し CONFIG_DB に書き込む
 - `config cbf clear`: `DSCP_TO_FC_MAP` テーブルを全削除
 
 ### minigraph / sonic-cfggen
@@ -250,7 +249,7 @@ config cbf clear
 - **参照方向**: SAI query（実行時依存）
 - **条件**: `DscpToFcMapHandler::convertFieldValuesToAttributes()` が呼ばれるたびに `NhgMapOrch::getMaxNumFcs()` を呼び出し（内部は static キャッシュ — 初回のみ実際の SAI query を発行）
 - **参照元**: `qosorch.cpp:1043`; `nhgmaporch.cpp:299-325`
-- **意味**: FC 上限値をランタイムで SAI から取得。FC 非対応 ASIC では `max_num_fcs=0` → 全 FC 値が reject され SAI map 未作成となる。初回クエリ後は orchagent 再起動まで固定
+- **意味**: FC 上限値をランタイムで SAI から取得。FC 非対応 [ASIC](../../reference/glossary.md#term-asic) では `max_num_fcs=0` → 全 FC 値が reject され SAI map 未作成となる。初回クエリ後は orchagent 再起動まで固定
 
 ### 3. EXP_TO_FC_MAP (CONFIG_DB)
 
@@ -277,7 +276,7 @@ DSCP_TO_FC_MAP
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
-`DscpToFcMapHandler::processWorkItem()` は SET / DEL 失敗を以下のパターンに分類し、失敗ログをすべて `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` で出力する。STATE_DB へのステータス記録はなく（CONFIG_DB → SAI 直行経路）、`ERROR_TABLE` への書き込みも発生しない。
+`DscpToFcMapHandler::processWorkItem()` は SET / DEL 失敗を以下のパターンに分類し、失敗ログをすべて `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` で出力する。[STATE_DB](../../reference/glossary.md#term-state_db) へのステータス記録はなく（CONFIG_DB → SAI 直行経路）、`ERROR_TABLE` への書き込みも発生しない。
 
 <!-- evidence: meta/_intermediate/cdb-flow/dscp-to-fc-map-failure.md -->
 
@@ -287,7 +286,7 @@ DSCP_TO_FC_MAP
 |---|---|---|---|---|
 | 1 | DSCP 値 < 0 または > 63 | `convertFieldValuesToAttributes()` L1057-1069 | `task_invalid_entry` | なし（erase） |
 | 2 | FC 値が範囲外 (`< 0` または `>= max_num_fcs`) | `convertFieldValuesToAttributes()` L1072-1082 | `task_invalid_entry` | なし（erase） |
-| 3 | FC 非対応 ASIC (`max_num_fcs=0`) で全 FC reject | `convertFieldValuesToAttributes()` L1072-1082 | `task_invalid_entry` | なし（erase） |
+| 3 | FC 非対応 [ASIC](../../reference/glossary.md#term-asic) (`max_num_fcs=0`) で全 FC reject | `convertFieldValuesToAttributes()` L1072-1082 | `task_invalid_entry` | なし（erase） |
 | 4 | 非整数文字列 (`stoi` 例外) | `convertFieldValuesToAttributes()` L1083-1089 | `task_invalid_entry` | なし（erase） |
 | 5 | SAI `create_qos_map` 失敗 | `addQosItem()` L1115-1120 → `processWorkItem()` L157-164 | `task_failed` | なし（erase） |
 | 6 | SAI `modifyQosItem()` 失敗 | `processWorkItem()` L151-158 | `task_failed` | なし（erase） |
@@ -305,7 +304,7 @@ DSCP_TO_FC_MAP
 
 **DSCP / FC バリデーション失敗 (# 1-4)**: `convertFieldValuesToAttributes()` が `false` を返し、`processWorkItem()` は即座に `task_invalid_entry` を返してエントリを `m_toSync` から erase する。SAI への呼び出しは行われない。エラーは `SWSS_LOG_ERROR` でのみ通知される。
 
-**FC 非対応 ASIC の silent reject (# 3)**: `NhgMapOrch::getMaxNumFcs()` が 0 を返すとき（`SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` 非対応 ASIC）、条件 `value >= max_num_fcs` が `value >= 0` と等価になり**全 FC 値が reject**される。FC 非対応スイッチで CBF 設定を試みても SAI map は作成されない（evidence: `nhgmaporch.cpp:299-325`）。
+**FC 非対応 [ASIC](../../reference/glossary.md#term-asic) の silent reject (# 3)**: `NhgMapOrch::getMaxNumFcs()` が 0 を返すとき（`SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` 非対応 ASIC）、条件 `value >= max_num_fcs` が `value >= 0` と等価になり**全 FC 値が reject**される。FC 非対応スイッチで CBF 設定を試みても SAI map は作成されない（evidence: `nhgmaporch.cpp:299-325`）。
 
 **SAI create / modify 失敗 (# 5-6)**: `task_failed` を返すためエントリは erase され自動 retry されない。ASIC 側の一時的エラーでも再投入が必要。ログに `SWSS_LOG_ERROR` が出力される。
 
@@ -426,8 +425,8 @@ orchagent 再起動なしにはキャッシュが更新されない。FC 非対�
 | 同上エントリの erase | DEL 成功 | `qosorch.cpp:194` |
 | `m_pendingRemove = true` — 後続 SET を `task_need_retry` に | DEL 時に参照が残っている | `qosorch.cpp:185` |
 
-- **STATE_DB への書き込みなし** — `QosOrch` は `DSCP_TO_FC_MAP` 処理で STATE_DB / APPL_DB に書き込まない。CONFIG_DB → SAI 直結。
-- **APPL_DB への書き込みなし** — master の `orchagent` は `DSCP_TO_FC_MAP` 処理で APPL_DB を操作しない。
+- **[STATE_DB](../../reference/glossary.md#term-state_db) への書き込みなし** — `QosOrch` は `DSCP_TO_FC_MAP` 処理で [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込まない。CONFIG_DB → SAI 直結。
+- **[APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みなし** — master の `orchagent` は `DSCP_TO_FC_MAP` 処理で [APPL_DB](../../reference/glossary.md#term-appl_db) を操作しない。
 
 ### PORT_QOS_MAP 経由の間接副作用
 
@@ -540,3 +539,5 @@ FC 非対応 ASIC では DSCP_TO_FC_MAP の全エントリが SAI map を作成�
 <!-- /platform -->
 
 <!-- glossary-links-injected: dscp-to-fc-map-2026-05-14 -->
+
+<!-- glossary-links-injected: 268e81f518dc -->

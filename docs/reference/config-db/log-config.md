@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-`LOGGER` テーブルは、SONiC の各デーモン（`orchagent`、`syncd` 等）および SAI API コンポーネント（`SAI_API_*`）のログ verbosity と出力先を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持する[^1]。各プロセスは起動時に `Logger::linkToDbNative()` / `linkToDb()` で自分のエントリを DB に登録し、以降 `settingThread` がテーブル変更を購読してリアルタイムに loglevel を変更する。
+`LOGGER` テーブルは、[SONiC](../../reference/glossary.md#term-sonic) の各デーモン（`orchagent`、`syncd` 等）および [SAI](../../reference/glossary.md#term-sai) API コンポーネント（`SAI_API_*`）のログ verbosity と出力先を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持する[^1]。各プロセスは起動時に `Logger::linkToDbNative()` / `linkToDb()` で自分のエントリを DB に登録し、以降 `settingThread` がテーブル変更を購読してリアルタイムに loglevel を変更する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -50,14 +50,14 @@ flowchart LR
 LOGGER|<component>
 ```
 
-`<component>` はコンポーネント名（例: `orchagent`、`syncd`、`SAI_API_LAG`）。SAI コンポーネントは `SAI_API_` プレフィクスを持つ。
+`<component>` はコンポーネント名（例: `orchagent`、`syncd`、`SAI_API_LAG`）。[SAI](../../reference/glossary.md#term-sai) コンポーネントは `SAI_API_` プレフィクスを持つ。
 
 ## フィールド
 
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
-| `LOGLEVEL` | enum (swss または SAI) | `NOTICE` / `SAI_LOG_LEVEL_NOTICE` | ログ verbosity。swss コンポーネント: `EMERG`/`ALERT`/`CRIT`/`ERROR`/`WARN`/`NOTICE`/`INFO`/`DEBUG`。SAI コンポーネント: `SAI_LOG_LEVEL_CRITICAL`/`ERROR`/`WARN`/`NOTICE`/`INFO`/`DEBUG` |
-| `LOGOUTPUT` | enum `SYSLOG`/`STDOUT`/`STDERR` | `SYSLOG` | ログ出力先。YANG `default SYSLOG` |
+| `LOGLEVEL` | enum (swss または [SAI](../../reference/glossary.md#term-sai)) | `NOTICE` / `SAI_LOG_LEVEL_NOTICE` | ログ verbosity。swss コンポーネント: `EMERG`/`ALERT`/`CRIT`/`ERROR`/`WARN`/`NOTICE`/`INFO`/`DEBUG`。SAI コンポーネント: `SAI_LOG_LEVEL_CRITICAL`/`ERROR`/`WARN`/`NOTICE`/`INFO`/`DEBUG` |
+| `LOGOUTPUT` | enum `SYSLOG`/`STDOUT`/`STDERR` | `SYSLOG` | ログ出力先。[YANG](../../reference/glossary.md#term-yang) `default SYSLOG` |
 | `require_manual_refresh` | boolean | なし（省略可） | `true` の場合、loglevel 変更に SIGHUP が必要。未設定時は false 相当 |
 
 <!-- defaults -->
@@ -78,13 +78,13 @@ LOGGER|<component>
 
 - デフォルト: `"SYSLOG"`
 - 根拠 (コード): `logger.cpp:161` — `linkToDb()` は `linkToDbWithOutput(...)` に固定値 `"SYSLOG"` を渡す
-- 根拠 (YANG): `sonic-logger.yang:69` — `default SYSLOG;`
+- 根拠 ([YANG](../../reference/glossary.md#term-yang)): `sonic-logger.yang:69` — `default SYSLOG;`
 - 内部初期値: `logger.h:162` — `std::atomic<Output> m_output = { SWSS_SYSLOG };`
 - **invalid 値フォールバック**: 未知の文字列が書き込まれた場合、`swssOutputNotify()` は `SWSS_SYSLOG` にフォールバック（`logger.cpp:105-106`）
 
 ### `require_manual_refresh`
 
-- YANG に `default` 節なし
+- [YANG](../../reference/glossary.md#term-yang) に `default` 節なし
 - `settingThread` は `LOGLEVEL`/`LOGOUTPUT` のみ購読し、`require_manual_refresh` を直接読むコードは `sonic-swss-common` 内に確認できない
 - 未設定時は false 相当（SIGHUP 不要）として動作する
 <!-- /defaults -->
@@ -102,7 +102,7 @@ LOGGER テーブルは `VLAN`・`PORT`・`DEVICE_METADATA` 等の他テーブル
 
 | タイミング | 挙動 | 根拠 |
 |---|---|---|
-| **デーモン起動前** に CONFIG_DB に `LOGLEVEL` を SET | `linkToDbWithOutput()` が `table.hget()` で既存値を読み出し、デフォルト上書きをスキップして即座に適用 | `logger.cpp:132-148` |
+| **デーモン起動前** に [CONFIG_DB](../../reference/glossary.md#term-config_db) に `LOGLEVEL` を SET | `linkToDbWithOutput()` が `table.hget()` で既存値を読み出し、デフォルト上書きをスキップして即座に適用 | `logger.cpp:132-148` |
 | **デーモン起動後** に `LOGLEVEL` を SET | `settingThread` が `SubscriberStateTable` でリアルタイム変更を受け取り反映。SELECT タイムアウトにより最大 **1000 ms** の適用遅延あり | `logger.cpp:192-263` |
 
 どちらのタイミングでも機能するが、起動前設定の方がデフォルト上書きコストがなく確実。
@@ -138,7 +138,7 @@ SET CONFIG_DB LOGGER|orchagent  LOGLEVEL=NOTICE
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`LOGGER` テーブルの処理コード (`sonic-swss-common/common/logger.cpp`) は CONFIG_DB の `LOGGER` テーブル**のみ**を読み書きし、他の CONFIG_DB テーブルへのアクセスは一切発生しない。
+`LOGGER` テーブルの処理コード (`sonic-swss-common/common/logger.cpp`) は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `LOGGER` テーブル**のみ**を読み書きし、他の CONFIG_DB テーブルへのアクセスは一切発生しない。
 
 YANG `sonic-logger.yang` にも `leafref` が存在せず、他モジュールへの参照依存はない。
 
@@ -270,11 +270,11 @@ CONFIG_DB の `LOGGER` テーブルにエントリが存在しない場合は、
 | DB | 書込有無 | 根拠 |
 |---|---|---|
 | CONFIG_DB (`LOGGER` 自身) | **あり（自己書込）** | `linkToDbWithOutput()` が既存エントリ未作成時にデフォルト値 `{LOGLEVEL, LOGOUTPUT}` を `table.set()` で書き戻す | `logger.cpp:132-149` |
-| APPL_DB | なし | `ProducerStateTable` 使用なし |
-| STATE_DB | なし | `StateTable` / `StateDBConnector` 参照なし |
-| COUNTERS_DB | なし | ログ verbosity に統計カウンタなし |
-| ASIC_DB | なし | SAI 非経由 |
-| FLEX_COUNTER_DB | なし | FlexCounter 機能と無関係 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `ProducerStateTable` 使用なし |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `StateTable` / `StateDBConnector` 参照なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | ログ verbosity に統計カウンタなし |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | なし | SAI 非経由 |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | [FlexCounter](../../reference/glossary.md#term-flexcounter) 機能と無関係 |
 
 ### CONFIG_DB 自己書込の詳細
 
@@ -327,9 +327,9 @@ CONFIG_DB の dbId は `schema.h:16` で `4` と定義される。`HSET "LOGGER|
 
 ### 書き込み側 — `swss::Table::hset()` (Redis 直接書き込み)
 
-`swssloglevel` ツール (`loglevel.cpp:42-44`) および `linkToDbWithOutput()` (`logger.cpp:127`) は `swss::Table` を使い Redis `HSET` を直接発行する。`ProducerStateTable` / `NotificationProducer` は使用しない。
+`swssloglevel` ツール (`loglevel.cpp:42-44`) および `linkToDbWithOutput()` (`logger.cpp:127`) は `swss::Table` を使い [Redis](../../reference/glossary.md#term-redis) `HSET` を直接発行する。`ProducerStateTable` / `NotificationProducer` は使用しない。
 
-| 書き込み元 | 使用 API | Redis コマンド |
+| 書き込み元 | 使用 API | [Redis](../../reference/glossary.md#term-redis) コマンド |
 |---|---|---|
 | `swssloglevel -l <level> -c <component>` | `swss::Table::hset()` | `HSET LOGGER\|<component> LOGLEVEL <value>` |
 | デーモン起動時 (`linkToDbWithOutput()`) | `swss::Table::set()` | `HSET LOGGER\|<component> LOGLEVEL <value> LOGOUTPUT <value>` |
@@ -362,11 +362,11 @@ CONFIG_DB への `HSET` から `settingThread` が反映するまでの最大遅
 
 ### ASIC/ベンダー依存性
 
-`logger.cpp` の `linkToDbWithOutput()` および `settingThread()` は `DBConnector db("CONFIG_DB", 0)` でデフォルト namespace の CONFIG_DB に直接接続する。`platform` / `asic` / `hwsku` / `vendor` / `chassis` に基づく条件分岐は一切存在しない。ASIC ベンダーによる差異はない。
+`logger.cpp` の `linkToDbWithOutput()` および `settingThread()` は `DBConnector db("CONFIG_DB", 0)` でデフォルト namespace の CONFIG_DB に直接接続する。`platform` / `asic` / `hwsku` / `vendor` / `chassis` に基づく条件分岐は一切存在しない。[ASIC](../../reference/glossary.md#term-asic) ベンダーによる差異はない。
 
 ### multi-asic 構成
 
-`swssloglevel` (C++ バイナリ) は namespace オプションを持たず、常にそのコンテナ内のデフォルト CONFIG_DB に接続する (`loglevel.cpp:129`)。multi-asic 構成では各 ASIC コンテナ (`asic0`, `asic1`, ...) で `swssloglevel` を個別実行する必要がある。
+`swssloglevel` (C++ バイナリ) は namespace オプションを持たず、常にそのコンテナ内のデフォルト CONFIG_DB に接続する (`loglevel.cpp:129`)。multi-asic 構成では各 [ASIC](../../reference/glossary.md#term-asic) コンテナ (`asic0`, `asic1`, ...) で `swssloglevel` を個別実行する必要がある。
 
 ホストから namespace を横断して設定できるのは `config syslog level` CLI のみ:
 
@@ -384,11 +384,11 @@ cfg_db = db.cfgdb_clients[namespace]
 
 ### SAI コンポーネント (`SAI_API_*`)
 
-`syncd` は各 ASIC コンテナ内に 1 インスタンスとして存在する。`SAI_API_*` の LOGGER エントリは各コンテナの CONFIG_DB に独立して存在し、ASIC ベンダーによって登録される `SAI_API_*` コンポーネント名の一覧が異なる可能性がある。ただし logger.cpp/loglevel.cpp の処理ロジックはベンダー非依存で共通。
+`syncd` は各 [ASIC](../../reference/glossary.md#term-asic) コンテナ内に 1 インスタンスとして存在する。`SAI_API_*` の LOGGER エントリは各コンテナの CONFIG_DB に独立して存在し、ASIC ベンダーによって登録される `SAI_API_*` コンポーネント名の一覧が異なる可能性がある。ただし logger.cpp/loglevel.cpp の処理ロジックはベンダー非依存で共通。
 
 ### SmartSwitch / VOQ Chassis
 
-`logger.cpp` / `loglevel.cpp` に SmartSwitch / VOQ Chassis 固有の分岐はない。DPU コンテナでも同一の `Logger` ライブラリが使用されるが、CONFIG_DB 接続先はそれぞれのコンテナ内のデフォルト namespace に固定される。
+`logger.cpp` / `loglevel.cpp` に [SmartSwitch](../../reference/glossary.md#term-smartswitch) / [VOQ](../../reference/glossary.md#term-voq) Chassis 固有の分岐はない。[DPU](../../reference/glossary.md#term-dpu) コンテナでも同一の `Logger` ライブラリが使用されるが、CONFIG_DB 接続先はそれぞれのコンテナ内のデフォルト namespace に固定される。
 
 <!-- /platform -->
 
@@ -422,3 +422,5 @@ cfg_db = db.cfgdb_clients[namespace]
 [^2]: `sonic-swss-common/common/logger.h` および `logger.cpp`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/logger.h>
 
 <!-- glossary-links-injected: placeholder -->
+
+<!-- glossary-links-injected: b21a24d96e62 -->

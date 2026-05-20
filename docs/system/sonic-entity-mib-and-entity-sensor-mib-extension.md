@@ -38,7 +38,7 @@ related:
 
 ## 概要
 
-SONiC の [SNMP](../reference/glossary.md#term-snmp) Entity MIB（RFC 2737）実装は当初、`entityPhysical` グループの **transceiver と DOM sensor** だけが対象で、`entPhysicalContainedIn` も埋まっておらず物理階層を取れなかった[^1]。本 [HLD](../reference/glossary.md#term-hld) はこれを拡張して:
+[SONiC](../reference/glossary.md#term-sonic) の [SNMP](../reference/glossary.md#term-snmp) Entity MIB（RFC 2737）実装は当初、`entityPhysical` グループの **transceiver と DOM sensor** だけが対象で、`entPhysicalContainedIn` も埋まっておらず物理階層を取れなかった[^1]。本 [HLD](../reference/glossary.md#term-hld) はこれを拡張して:
 
 1. **`entityPhysical` の MIB object を全部** 実装する
 2. **thermal sensor / fan / fan tachometer / PSU / PSU fan / PSU 内 sensor** を物理エンティティとして追加
@@ -215,4 +215,4 @@ redis-cli -n 6 KEYS "FAN_INFO|*"
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 3ef536773086 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

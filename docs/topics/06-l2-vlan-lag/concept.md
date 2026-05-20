@@ -52,7 +52,7 @@ related:
 
 # L2 機能の考え方
 
-SONiC で L2 を読むときは、最初に「どの interface がどの forwarding domain に属するか」と「その interface を L2 として使うのか、L3 として使うのか」を分けて整理すると、その後の設定や運用が追いやすくなります。同じ `Ethernet0` でも、VLAN_MEMBER に入れれば L2、`INTERFACE` テーブルに入れれば L3、`VLAN_SUB_INTERFACE` で `Ethernet0.100` を作れば dot1q L3 になります。
+[SONiC](../../reference/glossary.md#term-sonic) で L2 を読むときは、最初に「どの interface がどの forwarding domain に属するか」と「その interface を L2 として使うのか、L3 として使うのか」を分けて整理すると、その後の設定や運用が追いやすくなります。同じ `Ethernet0` でも、VLAN_MEMBER に入れれば L2、`INTERFACE` テーブルに入れれば L3、`VLAN_SUB_INTERFACE` で `Ethernet0.100` を作れば dot1q L3 になります。
 
 ## SONiC の L2 は何の問題を解決するか
 
@@ -152,7 +152,7 @@ STP / MSTP は L2 ループを避ける制御面です。Storm control はルー
 | VLAN_INTERFACE vs sub-port | 前者は VLAN bridge 全体の SVI。後者は親 interface + dot1q tag を直接 L3 化 |
 | LAG vs MC-LAG | 前者は 1 台内、後者は 2 台の協調。ICCP / peer-link が必要 |
 | L2 bridge VXLAN vs sub-port | VXLAN は VLAN-VNI map で bridge、sub-port は L3 のみ |
-| Linux bridge vs SAI bridge-port | SONiC は kernel bridge をデータパスに使わない。SAI bridge-port が ASIC で forwarding |
+| Linux bridge vs SAI bridge-port | SONiC は kernel bridge をデータパスに使わない。SAI bridge-port が [ASIC](../../reference/glossary.md#term-asic) で forwarding |
 | STP vs storm control | 前者はループ回避のためのトポロジ計算、後者は BUM のレート制限 |
 
 ## 読み終わったあとにできるようになること
@@ -177,4 +177,4 @@ STP / MSTP は L2 ループを避ける制御面です。Storm control はルー
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
 
-<!-- glossary-links-injected: e619cbc46960 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

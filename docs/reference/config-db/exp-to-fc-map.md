@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-MPLS [EXP](../../reference/glossary.md#term-exp) ビット (0..7) を Forwarding Class (FC) へマップする ingress [QoS](../../reference/glossary.md#term-qos) 分類定義[^1]。Class-Based Forwarding (CBF) 機能で使用される。`QosOrch` が [SAI](../../reference/glossary.md#term-sai) QoS map (`SAI_QOS_MAP_TYPE_MPLS_EXP_TO_FORWARDING_CLASS`) を生成し、ポートにバインドする (`PORT_QOS_MAP.exp_to_fc_map`)。
+[MPLS](../../reference/glossary.md#term-mpls) [EXP](../../reference/glossary.md#term-exp) ビット (0..7) を Forwarding Class (FC) へマップする ingress [QoS](../../reference/glossary.md#term-qos) 分類定義[^1]。Class-Based Forwarding (CBF) 機能で使用される。`QosOrch` が [SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map (`SAI_QOS_MAP_TYPE_MPLS_EXP_TO_FORWARDING_CLASS`) を生成し、ポートにバインドする (`PORT_QOS_MAP.exp_to_fc_map`)。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -51,7 +51,7 @@ EXP_TO_FC_MAP|<name>|<exp>
 
 `<name>` はマップ名（1..32 文字、`[a-zA-Z0-9][-a-zA-Z0-9_]*`）。`<exp>` は 0..7。
 
-Redis 上の実際の格納形式:
+[Redis](../../reference/glossary.md#term-redis) 上の実際の格納形式:
 
 ```
 HSET "EXP_TO_FC_MAP|AZURE" "0" "0" "1" "1" "2" "2" "3" "3" "4" "4" "5" "5" "6" "6" "7" "7"
@@ -62,10 +62,10 @@ HSET "EXP_TO_FC_MAP|AZURE" "0" "0" "1" "1" "2" "2" "3" "3" "4" "4" "5" "5" "6" "
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
 | `name` (key: outer) | string (1..32) | ✅ | マップ名 |
-| `exp` (key: inner) | string `"[0-7]"` | ✅ | MPLS EXP ビット値 (0..7) |
+| `exp` (key: inner) | string `"[0-7]"` | ✅ | [MPLS](../../reference/glossary.md#term-mpls) EXP ビット値 (0..7) |
 | `fc` | string `"[0-7]"` | ✅ | 対応 Forwarding Class (0..max_num_fcs-1) |
 
-YANG 上は親子 list 構造 (`EXP_TO_FC_MAP_LIST` / `EXP_TO_FC_MAP`)。Redis に展開すると `EXP_TO_FC_MAP|<name>` の hash field として `<exp>: <fc>` ペアが格納される。
+[YANG](../../reference/glossary.md#term-yang) 上は親子 list 構造 (`EXP_TO_FC_MAP_LIST` / `EXP_TO_FC_MAP`)。[Redis](../../reference/glossary.md#term-redis) に展開すると `EXP_TO_FC_MAP|<name>` の hash field として `<exp>: <fc>` ペアが格納される。
 
 <!-- defaults -->
 ## フィールド別コード由来デフォルト / 暗黙挙動
@@ -76,16 +76,16 @@ YANG 上は親子 list 構造 (`EXP_TO_FC_MAP_LIST` / `EXP_TO_FC_MAP`)。Redis �
 |---------|------|
 | ハードコード上限 | `#define EXP_MAX_VAL 7` (`qosorch.cpp:120`)。value < 0 または value > 7 は `SWSS_LOG_ERROR` を出して `task_invalid_entry` を返す（エントリ全体が silent drop） |
 | YANG 制約との乖離 | YANG では `pattern "[0-7]?"` — `?` により**空文字列も YANG 上は valid** だが、`qosorch` は `stoi()` に渡し例外 → `task_invalid_entry` で reject。実質空文字列は不可 |
-| 書込み順依存なし | key は Redis hash field として atomic に格納される |
+| 書込み順依存なし | key は [Redis](../../reference/glossary.md#term-redis) hash field として atomic に格納される |
 
 ### `fc` (value フィールド)
 
 | 発見種別 | 詳細 |
 |---------|------|
-| 実行時上限（プラットフォーム依存） | `NhgMapOrch::getMaxNumFcs()` が `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` を初回 SAI 問い合わせで取得しキャッシュ。FC 値は `[0, max_num_fcs)` の範囲外なら reject |
+| 実行時上限（プラットフォーム依存） | `NhgMapOrch::getMaxNumFcs()` が `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` を初回 [SAI](../../reference/glossary.md#term-sai) 問い合わせで取得しキャッシュ。FC 値は `[0, max_num_fcs)` の範囲外なら reject |
 | 静的初期値 | `static int max_num_fcs = -1` — 初回呼び出しまで未初期化。スイッチが FC 未サポートなら `max_num_fcs = 0` となり **全 FC 値が invalid** になる (`nhgmaporch.cpp:319: SWSS_LOG_WARN("Switch does not support FCs")`) |
 | YANG 制約との乖離 | YANG では `fc` を `pattern "[0-7]?"` と定義（最大 7）。しかし実装は `SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` の返値次第で上限が異なる（テストでは 63 を使用 `test_qos_map.py:314`）。**YANG は実装より保守的** |
-| silent drop | `convertFieldValuesToAttributes` が false を返すと `processWorkItem` は `task_invalid_entry` を返す。orchagent はエラーログを出力するが CONFIG_DB からエントリは削除しない（次回再試行なし） |
+| silent drop | `convertFieldValuesToAttributes` が false を返すと `processWorkItem` は `task_invalid_entry` を返す。orchagent はエラーログを出力するが [CONFIG_DB](../../reference/glossary.md#term-config_db) からエントリは削除しない（次回再試行なし） |
 
 ### マップ名 (`name` key)
 
@@ -98,8 +98,8 @@ YANG 上は親子 list 構造 (`EXP_TO_FC_MAP_LIST` / `EXP_TO_FC_MAP`)。Redis �
 
 | 発見種別 | 詳細 |
 |---------|------|
-| 未定義 EXP の fallback | EXP_TO_FC_MAP に EXP 値を記述しない場合、その EXP ビットに対する FC は未定義。ASIC 実装依存（多くは FC=0 にフォールバック） |
-| 空マップ | kfvFieldsValues が空でも YANG は reject しないが、SAI map count=0 で `sai_create_qos_map` を呼ぶ。SAI の動作は ASIC 依存 |
+| 未定義 EXP の fallback | EXP_TO_FC_MAP に EXP 値を記述しない場合、その EXP ビットに対する FC は未定義。[ASIC](../../reference/glossary.md#term-asic) 実装依存（多くは FC=0 にフォールバック） |
+| 空マップ | kfvFieldsValues が空でも YANG は reject しないが、SAI map count=0 で `sai_create_qos_map` を呼ぶ。SAI の動作は [ASIC](../../reference/glossary.md#term-asic) 依存 |
 
 <!-- /defaults -->
 
@@ -130,7 +130,7 @@ YANG 上は親子 list 構造 (`EXP_TO_FC_MAP_LIST` / `EXP_TO_FC_MAP`)。Redis �
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`QosOrch` (`ExpToFcMapHandler`) は CONFIG_DB の `EXP_TO_FC_MAP` を直接購読し、SAI QoS map を生成する。生成された SAI oid は内部キャッシュ `m_qos_maps[CFG_EXP_TO_FC_MAP_TABLE_NAME]` に保持され、`PORT_QOS_MAP` ハンドラからの参照解決に使われる。
+`QosOrch` (`ExpToFcMapHandler`) は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `EXP_TO_FC_MAP` を直接購読し、SAI [QoS](../../reference/glossary.md#term-qos) map を生成する。生成された SAI oid は内部キャッシュ `m_qos_maps[CFG_EXP_TO_FC_MAP_TABLE_NAME]` に保持され、`PORT_QOS_MAP` ハンドラからの参照解決に使われる。
 
 ### 検出された順序依存
 
@@ -168,8 +168,8 @@ SET コマンド処理の冒頭で `m_pendingRemove` フラグを確認し、真
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): `sonic-exp-fc-map` (sonic-buildimage)
-- 関連: `DSCP_TO_FC_MAP` — DSCP 版の同等テーブル
+- [YANG](../../reference/glossary.md#term-yang): `sonic-exp-fc-map` ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage))
+- 関連: `DSCP_TO_FC_MAP` — [DSCP](../../reference/glossary.md#term-dscp) 版の同等テーブル
 
 <!-- ref-triangle:end -->
 
@@ -252,7 +252,7 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 
 **適用タイミング**: orchagent が CONFIG_DB 変化を検知後即座に SAI QoS map を作成/更新。ポートへの割り当ては `PORT_QOS_MAP.exp_to_fc_map` 設定後。
 
-**副作用**: EXP→FC マップ変更はそのマップを使用するすべてのポートの CBF 分類に即座に影響。MPLS パケットの Forwarding Class 判定が変化する。
+**副作用**: EXP→FC マップ変更はそのマップを使用するすべてのポートの CBF 分類に即座に影響。[MPLS](../../reference/glossary.md#term-mpls) パケットの Forwarding Class 判定が変化する。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -271,7 +271,7 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 
 ### REST / gNMI (sonic-mgmt-common)
 
-- なし（対応 OpenConfig/SONiC YANG transformer なし）
+- なし（対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし）
 
 ### db_migrator
 
@@ -383,7 +383,7 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 
 - `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` → syslog のみ
 - `ERROR_TABLE` への書き込みなし
-- STATE_DB への反映なし（`EXP_TO_FC_MAP` 自体は STATE_DB を持たない）
+- [STATE_DB](../../reference/glossary.md#term-state_db) への反映なし（`EXP_TO_FC_MAP` 自体は [STATE_DB](../../reference/glossary.md#term-state_db) を持たない）
 - CONFIG_DB のエントリは失敗後も残存（`task_invalid_entry` の erase はメモリ上の `m_toSync` のみ）
 
 > **Evidence**: `qosorch.cpp:2253-2300` (`QosOrch::doTask()`); `qosorch.cpp:124-201` (`QosMapHandler::processWorkItem()`); `qosorch.cpp:1132-1213` (`ExpToFcMapHandler::convertFieldValuesToAttributes()`, `addQosItem()`); `nhgmaporch.cpp:299-325` (`NhgMapOrch::getMaxNumFcs()`)
@@ -447,14 +447,14 @@ EXP 値は 0..7 の範囲のみ有効。`convertFieldValuesToAttributes()` L1150
 |--------|---------|--------|
 | SAI QoS map オブジェクト生成 (`SAI_QOS_MAP_TYPE_MPLS_EXP_TO_FORWARDING_CLASS`) | SET (新規) | `qosorch.cpp:1189-1213` |
 | SAI QoS map 属性更新 (`set_qos_map_attribute`) | SET (既存) | `qosorch.cpp:204-214` |
-| 参照ポートの MPLS EXP→FC 分類を即時変更 | SET (既存 in-place 更新) | ASIC に伝播 (`qosorch.cpp:151-157`) |
+| 参照ポートの MPLS EXP→FC 分類を即時変更 | SET (既存 in-place 更新) | [ASIC](../../reference/glossary.md#term-asic) に伝播 (`qosorch.cpp:151-157`) |
 | SAI QoS map 削除 (`remove_qos_map`) | DEL かつ参照なし | `qosorch.cpp:188-194` |
 | `getTypeMap()` への OID 登録 | SET 新規成功 | `qosorch.cpp:168` |
 | 同上エントリの erase | DEL 成功 | `qosorch.cpp:194` |
 | `m_pendingRemove = true` — 後続 SET を `task_need_retry` に | DEL 時に参照が残っている | `qosorch.cpp:185` |
 
-- **STATE_DB への書き込みなし** — `QosOrch` は `EXP_TO_FC_MAP` の処理で STATE_DB / APPL_DB へ書き込まない。CONFIG_DB → SAI 直結。
-- **APPL_DB への書き込みなし** — CONFIG_DB を直接購読。APPL_DB 中継なし。
+- **[STATE_DB](../../reference/glossary.md#term-state_db) への書き込みなし** — `QosOrch` は `EXP_TO_FC_MAP` の処理で STATE_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) へ書き込まない。CONFIG_DB → SAI 直結。
+- **[APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みなし** — CONFIG_DB を直接購読。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし。
 - **in-place 更新の即時伝播** — マップを `modifyQosItem()` で上書きすると、参照しているポート全体の MPLS EXP→FC 分類がポート側の操作なしで即座に変更される。
 
 ### PORT_QOS_MAP 経由の間接副作用
@@ -558,3 +558,5 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 
 > **Evidence**: `nhgmaporch.cpp:299-325` (`NhgMapOrch::getMaxNumFcs()`); `qosorch.cpp:1189-1213` (`addQosItem()`); `cbf_config.j2:70-80` (AZURE デフォルト); `test_qos_map.py:314` (max_num_fcs=63 テスト実績); `qosorch.cpp:2258-2261` (allPortsReady ガード)
 <!-- /platform -->
+
+<!-- glossary-links-injected: a34822cd525d -->

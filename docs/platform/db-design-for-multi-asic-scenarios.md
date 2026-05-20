@@ -41,7 +41,7 @@ related:
 
 ## 概要
 
-SONiC は従来 minigraph を設定の真実の相としており、multi-ASIC 機でも **1 ファイルの minigraph** を解釈してホスト + 各 ASIC の `CONFIG_DB` を生成していた。将来的に minigraph は廃止され、Network Device Management (NDM) チームが生成する **Golden Config** が新しい真実の相となる予定[^1]。
+[SONiC](../reference/glossary.md#term-sonic) は従来 minigraph を設定の真実の相としており、multi-[ASIC](../reference/glossary.md#term-asic) 機でも **1 ファイルの minigraph** を解釈してホスト + 各 ASIC の `CONFIG_DB` を生成していた。将来的に minigraph は廃止され、Network Device Management (NDM) チームが生成する **Golden Config** が新しい真実の相となる予定[^1]。
 
 問題: 単一 ASIC 機の Golden Config 流通 workflow は確立しているが、multi-ASIC 用の **「1 ファイルでホスト + 全 ASIC を表現するフォーマット」** が未定義であった。本 [HLD](../reference/glossary.md#term-hld) は **既存 minigraph と同じ「1 ファイル投入」運用を Golden Config でも踏襲** するため、JSON スキーマと関連 CLI の挙動を定義する[^1]。
 
@@ -265,4 +265,4 @@ done
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 8104c301a725 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

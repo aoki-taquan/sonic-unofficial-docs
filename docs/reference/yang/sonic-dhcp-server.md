@@ -28,7 +28,7 @@ related:
 - import: `ietf-inet-types`
 - top container: `sonic-dhcp-server`
 
-DHCP SERVER [YANG](../../reference/glossary.md#term-yang) module for SONiC OS[^1]
+DHCP SERVER [YANG](../../reference/glossary.md#term-yang) module for [SONiC](../../reference/glossary.md#term-sonic) OS[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -132,4 +132,4 @@ show dhcp_server ipv4 lease
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 92ee934a4cab -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

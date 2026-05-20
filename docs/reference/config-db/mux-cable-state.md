@@ -31,17 +31,17 @@ related:
 
 ## 概要
 
-Dual-ToR 構成における mux cable の実行時状態は STATE_DB の 2 つのテーブルに分散して保存される。
+Dual-ToR 構成における mux cable の実行時状態は [STATE_DB](../../reference/glossary.md#term-state_db) の 2 つのテーブルに分散して保存される。
 
 | テーブル | 書き込み元 | 内容 |
 |---------|----------|------|
-| `MUX_CABLE_TABLE` | orchagent `MuxStateOrch` / `MuxOrch` | ソフトウェア視点の MUX 状態・neighbor_mode |
+| `MUX_CABLE_TABLE` | [orchagent](../../reference/glossary.md#term-orchagent) `MuxStateOrch` / `MuxOrch` | ソフトウェア視点の [MUX](../../reference/glossary.md#term-mux) 状態・neighbor_mode |
 | `HW_MUX_CABLE_TABLE` | ycabled (`sonic-ycabled`) | ハードウェア (Y-Cable / gRPC) 視点の forwarding state |
 | `HW_MUX_CABLE_TABLE_PEER` | ycabled | ピア ToR の hardware forwarding state |
 
 `CONFIG_DB.MUX_CABLE` が設定テーブルであるのに対し、これらは実行時状態テーブルであり、直接 CLI から書き込むものではない。
 
-本ページは **STATE_DB テーブルのフィールド**・**コード由来デフォルト**・**書き込みタイミング**に焦点を当てる。CONFIG_DB の設定については [`MUX_CABLE`](mux-cable.md) / [`MUX_CABLE (per-port 詳細)`](mux-cable-port.md) を参照。
+本ページは **[STATE_DB](../../reference/glossary.md#term-state_db) テーブルのフィールド**・**コード由来デフォルト**・**書き込みタイミング**に焦点を当てる。[CONFIG_DB](../../reference/glossary.md#term-config_db) の設定については [`MUX_CABLE`](mux-cable.md) / [`MUX_CABLE (per-port 詳細)`](mux-cable-port.md) を参照。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -73,8 +73,8 @@ HW_MUX_CABLE_TABLE_PEER|<ifname>
 
 | フィールド | 型 | 書き込み元 | 説明 |
 |-----------|----|---------|------|
-| `state` | string | `MuxStateOrch::updateMuxState` (muxorch.cpp:2640) | MUX ソフトウェア状態 |
-| `neighbor_mode` | string | `MuxOrch::handleMuxCfg` (muxorch.cpp:2285) | neighbor 経路モード |
+| `state` | string | `MuxStateOrch::updateMuxState` ([muxorch](../../reference/glossary.md#term-muxorch).cpp:2640) | [MUX](../../reference/glossary.md#term-mux) ソフトウェア状態 |
+| `neighbor_mode` | string | `MuxOrch::handleMuxCfg` ([muxorch](../../reference/glossary.md#term-muxorch).cpp:2285) | neighbor 経路モード |
 
 ### state の取りうる値
 
@@ -115,8 +115,8 @@ ycabled が gRPC 経由でハードウェア (Y-Cable / SoC) から取得した 
 
 ## 購読者
 
-- **linkmgrd**: `handleGetMuxState()` (DbInterface.cpp:393-401) で `MUX_CABLE_TABLE.state` を読み取り、内部ステートマシン (`processGetMuxState`) を更新する。`handleSwssNotification()` (DbInterface.cpp:1833) で購読。
-- **MuxStateOrch** (orchagent): `HW_MUX_CABLE_TABLE` (APP_DB 側) を購読し、hw_state と mux_state を比較して `MUX_CABLE_TABLE.state` を更新する。
+- **[linkmgrd](../../reference/glossary.md#term-linkmgrd)**: `handleGetMuxState()` (DbInterface.cpp:393-401) で `MUX_CABLE_TABLE.state` を読み取り、内部ステートマシン (`processGetMuxState`) を更新する。`handleSwssNotification()` (DbInterface.cpp:1833) で購読。
+- **MuxStateOrch** ([orchagent](../../reference/glossary.md#term-orchagent)): `HW_MUX_CABLE_TABLE` (APP_DB 側) を購読し、hw_state と mux_state を比較して `MUX_CABLE_TABLE.state` を更新する。
 - **show mux status** (CLI): `STATE_DB MUX_CABLE_TABLE|*` と `STATE_DB HW_MUX_CABLE_TABLE|*` を参照して表示 (show/muxcable.py:724,747)。
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -135,7 +135,6 @@ ycabled が gRPC 経由でハードウェア (Y-Cable / SoC) から取得した 
 <!-- ref-triangle:end -->
 
 ## 引用元
-
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -163,9 +162,9 @@ show mux hwmode muxdirection Ethernet0
 
 ### よくある問題
 
-- **`state: unknown`**: hw_state と mux_state が一致していない状態。リンクプローバや gRPC セッションに問題がある可能性がある。`show mux status` で STATUS (STATE_DB) と SERVER_STATUS (HW_MUX_CABLE_TABLE) を比較する。
-- **HW_MUX_CABLE_TABLE が `unknown` のまま**: ycabled の gRPC チャネルが確立されていない。`soc_ipv4` が CONFIG_DB に設定されているか確認する。
-- **`state: init`**: warm restart 後の初期化完了前。orchagent が APP_DB から状態を取得して更新するまで待機する。
+- **`state: unknown`**: hw_state と mux_state が一致していない状態。リンクプローバや gRPC セッションに問題がある可能性がある。`show mux status` で STATUS ([STATE_DB](../../reference/glossary.md#term-state_db)) と SERVER_STATUS (HW_MUX_CABLE_TABLE) を比較する。
+- **HW_MUX_CABLE_TABLE が `unknown` のまま**: ycabled の gRPC チャネルが確立されていない。`soc_ipv4` が [CONFIG_DB](../../reference/glossary.md#term-config_db) に設定されているか確認する。
+- **`state: init`**: warm restart 後の初期化完了前。[orchagent](../../reference/glossary.md#term-orchagent) が APP_DB から状態を取得して更新するまで待機する。
 
 <!-- /ops-hint -->
 
@@ -182,10 +181,10 @@ show mux hwmode muxdirection Ethernet0
 
 | フィールド | YANG定義 | コード実装の初期値 / fallback | 乖離種別 |
 |-----------|---------|--------------------------|---------|
-| `state` | — (state-db, YANG外) | cold boot: `"standby"` (muxorch.cpp:445-447); warm restart: `"init"` (muxorch.cpp:441) | 書込み元依存の初期値 |
+| `state` | — (state-db, YANG外) | cold boot: `"standby"` ([muxorch](../../reference/glossary.md#term-muxorch).cpp:445-447); warm restart: `"init"` (muxorch.cpp:441) | 書込み元依存の初期値 |
 | `state` | — | hw_state と mux_state が不一致かつ非 failed → `"unknown"` (muxorch.cpp:2684) | mismatch 検出値 |
 | `state` | — | hw_state と mux_state が不一致かつ failed → `"error"` (muxorch.cpp:2680) | mismatch + failed 検出値 |
-| `neighbor_mode` | — | CONFIG_DB の `neighbor_mode` に基づき初回設定時のみ書き込み。動的変更は orchagent が拒否 (muxorch.cpp:2256) | 初回設定時のみ書込み |
+| `neighbor_mode` | — | [CONFIG_DB](../../reference/glossary.md#term-config_db) の `neighbor_mode` に基づき初回設定時のみ書き込み。動的変更は orchagent が拒否 (muxorch.cpp:2256) | 初回設定時のみ書込み |
 
 ### HW_MUX_CABLE_TABLE (STATE_DB)
 
@@ -243,7 +242,7 @@ STATE_DB 専用テーブルだが、orchagent 内部でのポート生成フロ�
 `MuxCableOrch::updateMuxState(port_name, "standby")` 経由で `MUX_CABLE_TABLE.state` に
 `"standby"` を書き込む（`muxorch.cpp:444-447`, `muxorch.cpp:2508-2514`）。
 消費者はこの初期書き込みを「確定値」と誤解しないよう注意が必要で、
-orchagent が APP_DB から実際の MUX 状態を取得して上書きするまでは中間状態である。
+orchagent が APP_DB から実際の [MUX](../../reference/glossary.md#term-mux) 状態を取得して上書きするまでは中間状態である。
 
 **状態遷移中のブロック (依存 #5)**:
 `MuxStateOrch::addOperation()` は `mux_obj->isStateChangeInProgress()` が true の場合に
@@ -256,7 +255,7 @@ orchagent が APP_DB から実際の MUX 状態を取得して上書きするま
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の内容は、複数の CONFIG_DB テーブル・APPL_DB テーブル・外部コンポーネントが連携して決定される。YANG 定義に leafref は存在しないが、実装レベルで以下の暗黙依存がある。
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の内容は、複数の CONFIG_DB テーブル・[APPL_DB](../../reference/glossary.md#term-appl_db) テーブル・外部コンポーネントが連携して決定される。[YANG](../../reference/glossary.md#term-yang) 定義に leafref は存在しないが、実装レベルで以下の暗黙依存がある。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-cross-refs.md`
 
@@ -266,10 +265,10 @@ orchagent が APP_DB から実際の MUX 状態を取得して上書きするま
 |-------------------------------|--------------|---------|---------|
 | `CONFIG_DB.MUX_CABLE\|<ifname>` | `server_ipv4`, `server_ipv6`, `cable_type`, `neighbor_mode` | `MuxOrch::handleMuxCfg()` が `MuxCable` オブジェクト生成に使用。`neighbor_mode` の値がそのまま `STATE_DB MUX_CABLE_TABLE.<ifname>.neighbor_mode` に転写される | `muxorch.cpp:2189,2206-2285` |
 | `CONFIG_DB.PEER_SWITCH\|<switch_name>` | `address_ipv4` | `handlePeerSwitch()` で `mux_peer_switch_` を設定。この値が設定されるまで全ポートの `MuxCable` 生成（および STATE_DB 書き込み）がブロックされる | `muxorch.cpp:2190,2271-2281,2340-2388` |
-| `APPL_DB.HW_MUX_CABLE_TABLE\|<ifname>` | `state` | `MuxStateOrch::addOperation()` が APPL_DB の `HW_MUX_CABLE_TABLE` を購読し、hw_state と mux_state を比較して STATE_DB `MUX_CABLE_TABLE.state` を更新する。`isMuxExists(port_name)` が false の場合は更新スキップ | `muxorch.cpp:2505,2633,2651-2655,2676-2691` |
+| `APPL_DB.HW_MUX_CABLE_TABLE\|<ifname>` | `state` | `MuxStateOrch::addOperation()` が [APPL_DB](../../reference/glossary.md#term-appl_db) の `HW_MUX_CABLE_TABLE` を購読し、hw_state と mux_state を比較して STATE_DB `MUX_CABLE_TABLE.state` を更新する。`isMuxExists(port_name)` が false の場合は更新スキップ | `muxorch.cpp:2505,2633,2651-2655,2676-2691` |
 | `TunnelDecapOrch` (MuxTunnel0) | `dscp_mode`, `tc_to_dscp_map_id`, `tc_to_queue_map_id` | `handlePeerSwitch()` で peer switch への P2P トンネルを作成する際に参照。トンネルが未作成の場合はスタンバイ側への転送 nexthop が確立されず、STATE_DB の state 遷移に間接影響 | `muxorch.cpp:2348-2381` |
 | `NeighOrch` (gNeighOrch) | neighbor 状態 | `MuxCable::nbrHandler()` が `enableNeighbor()` / `disableNeighbor()` を呼び、MUX の active/standby 切り替えに伴う neighbor の有効化・無効化を行う。neighbor 状態が `MuxCable` の内部ステートマシンと連動する | `muxorch.cpp:32,766-774,813-935` |
-| `FdbOrch` | FDB エントリの port_name, mac | `MuxOrch` が FdbOrch の observer として登録され、FDB 変化 (`SUBJECT_TYPE_FDB_CHANGE`) を受信。FDB update を契機に既存 neighbor → MUX neighbor 変換が起こる場合があり、`MuxCable` の state 遷移のトリガになる | `muxorch.cpp:2161,2183-2196,1856-1894` |
+| `FdbOrch` | [FDB](../../reference/glossary.md#term-fdb) エントリの port_name, mac | `MuxOrch` が FdbOrch の observer として登録され、[FDB](../../reference/glossary.md#term-fdb) 変化 (`SUBJECT_TYPE_FDB_CHANGE`) を受信。[FDB](../../reference/glossary.md#term-fdb) update を契機に既存 neighbor → MUX neighbor 変換が起こる場合があり、`MuxCable` の state 遷移のトリガになる | `muxorch.cpp:2161,2183-2196,1856-1894` |
 
 ### HW_MUX_CABLE_TABLE (STATE_DB) への暗黙参照
 
@@ -277,7 +276,7 @@ orchagent が APP_DB から実際の MUX 状態を取得して上書きするま
 |-------------------------------|--------------|---------|---------|
 | `CONFIG_DB.MUX_CABLE\|<ifname>` | `soc_ipv4`, `cable_type` | ycabled が `soc_ipv4` を gRPC エンドポイントとして使用。`soc_ipv4` が未設定の場合は gRPC チャネルが未確立のまま `HW_MUX_CABLE_TABLE.state = "unknown"` が書き込まれる | `y_cable_helper.py:597-631,672` |
 | gRPC (soc_ipv4 エンドポイント) | forwarding state 応答 | `QueryAdminForwardingPortState` の gRPC 応答から `state` / `read_side` / `active_side` を決定する。gRPC stub が None の場合は `"unknown"` | `y_cable_helper.py:604-626` |
-| `CONFIG_DB.LOOPBACK_INTERFACE\|Loopback3` | IP prefix | linkmgrd と ycabled が Loopback3 の IPv4 アドレスから `read_side`（自 ToR が side 0 か side 1 か）を判定する。Loopback3 IPv4 が未設定の場合は `read_side` が書き込まれない | `DbInterface.cpp:667-730`, `y_cable_helper.py:633-651` |
+| `CONFIG_DB.LOOPBACK_INTERFACE\|Loopback3` | IP prefix | [linkmgrd](../../reference/glossary.md#term-linkmgrd) と ycabled が Loopback3 の IPv4 アドレスから `read_side`（自 ToR が side 0 か side 1 か）を判定する。Loopback3 IPv4 が未設定の場合は `read_side` が書き込まれない | `DbInterface.cpp:667-730`, `y_cable_helper.py:633-651` |
 
 ### 解決タイミングと注意点
 
@@ -293,7 +292,7 @@ orchagent が APP_DB から実際の MUX 状態を取得して上書きするま
 <!-- failure -->
 ## 失敗挙動マトリクス (Phase D)
 
-`MUX_CABLE_TABLE` (STATE_DB) への書き込みは `MuxStateOrch::updateMuxState()` → `mux_state_table_.hset()` を経由する。`HW_MUX_CABLE_TABLE` は ycabled が直接 `swsscommon` Table API で書き込む。どちらも `swss::Table` の set 系 API は戻り値なし (void) で、Redis I/O エラーは例外として伝播する。
+`MUX_CABLE_TABLE` (STATE_DB) への書き込みは `MuxStateOrch::updateMuxState()` → `mux_state_table_.hset()` を経由する。`HW_MUX_CABLE_TABLE` は ycabled が直接 `swsscommon` Table API で書き込む。どちらも `swss::Table` の set 系 API は戻り値なし (void) で、[Redis](../../reference/glossary.md#term-redis) I/O エラーは例外として伝播する。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-failure.md`
 
@@ -302,8 +301,8 @@ orchagent が APP_DB から実際の MUX 状態を取得して上書きするま
 | 失敗条件 | 検出箇所 | 結果 | STATE_DB 反映 |
 |---|---|---|---|
 | `stateActive()` / `stateStandby()` ハンドラが false を返す | `MuxCable::setState()` `muxorch.cpp:547-553` | `state_` を `prev_state_` に戻し `st_chg_failed_ = true` セット、`std::runtime_error` スロー → catch 後 `rollbackStateChange()` 呼び出し | rollback 先 state が STATE_DB に書込まれる (`updateMuxState(prev_state)`) |
-| `stateActive()` 失敗（`getPort()` 未解決 / ACL drop rule 削除失敗 / `nbrHandler` 失敗） | `muxorch.cpp:463-486` | false 返却 → rollback フロー | STATE_DB は rollback 先 state に書き換え |
-| `stateStandby()` 失敗（`getPort()` 未解決 / nbrHandler 失敗 / ACL drop rule 追加失敗） | `muxorch.cpp:488-511` | false 返却 → rollback フロー | 同上 |
+| `stateActive()` 失敗（`getPort()` 未解決 / [ACL](../../reference/glossary.md#term-acl) drop rule 削除失敗 / `nbrHandler` 失敗） | `muxorch.cpp:463-486` | false 返却 → rollback フロー | STATE_DB は rollback 先 state に書き換え |
+| `stateStandby()` 失敗（`getPort()` 未解決 / nbrHandler 失敗 / [ACL](../../reference/glossary.md#term-acl) drop rule 追加失敗） | `muxorch.cpp:488-511` | false 返却 → rollback フロー | 同上 |
 | rollback 先が `FAILED` または `PENDING` | `rollbackStateChange()` `muxorch.cpp:568-572` | `SWSS_LOG_ERROR` → rollback スキップ | STATE_DB 更新なし、`st_chg_failed_` true のまま |
 | rollback 自体も失敗 | `muxorch.cpp:607-611` | `st_chg_failed_ = true`、`SWSS_LOG_ERROR("[%s] Rollback to %s failed")` | rollback 試行後の state を STATE_DB に書込 |
 
@@ -331,7 +330,7 @@ orchagent が APP_DB から実際の MUX 状態を取得して上書きするま
 
 ### STATE_DB 書き込み API 自体の失敗
 
-`swss::Table::hset()` は Redis 接続断や AUTH エラーを例外として送出する。`MuxStateOrch` 内に catch ブロックはないため、例外はスタックを伝播して orchagent プロセスを abort させ、systemd により再起動される。再起動後に orchagent は CONFIG_DB を再読み込みし STATE_DB を再構築するため、書き込み失敗が永続的な不整合を残すことはない（自己回復系）。
+`swss::Table::hset()` は [Redis](../../reference/glossary.md#term-redis) 接続断や AUTH エラーを例外として送出する。`MuxStateOrch` 内に catch ブロックはないため、例外はスタックを伝播して orchagent プロセスを abort させ、systemd により再起動される。再起動後に orchagent は CONFIG_DB を再読み込みし STATE_DB を再構築するため、書き込み失敗が永続的な不整合を残すことはない（自己回復系）。
 
 <!-- /failure -->
 
@@ -357,7 +356,7 @@ orchagent が APP_DB から実際の MUX 状態を取得して上書きするま
 |------|----|----|------|
 | `MUX_HW_STATE_UNKNOWN` | `"unknown"` | HW/mux state 不一致 (非 failed) 時に `MUX_CABLE_TABLE.state` へ書き込む固定値 | `muxorch.cpp:50,2683` |
 | `MUX_HW_STATE_ERROR` | `"error"` | HW/mux state 不一致 かつ `isStateChangeFailed()` 時の固定値 | `muxorch.cpp:51,2680` |
-| `MUX_ACL_RULE_NAME` | `"mux_acl_rule"` | standby 側の ingress drop ACL ルール名 (変更不可) | `muxorch.cpp:49` |
+| `MUX_ACL_RULE_NAME` | `"mux_acl_rule"` | standby 側の ingress drop [ACL](../../reference/glossary.md#term-acl) ルール名 (変更不可) | `muxorch.cpp:49` |
 | `MUX_ACL_TABLE_NAME` | `"IngressTableDrop"` | ACL テーブル名 (`INGRESS_TABLE_DROP` 経由) | `muxorch.cpp:48`, `aclorch.h:111` |
 
 ### state 文字列マッピング (muxorch.cpp:68-84)
@@ -411,14 +410,14 @@ Dual-ToR の P2P トンネルは `MuxTunnel0` という名称がコード固定�
 const std::string loopback3 = "Loopback3|";
 ```
 
-linkmgrd は `Loopback3|<IP>` のパターンで CONFIG_DB の `LOOPBACK_INTERFACE` テーブルを探索し、IPv4 アドレスから `read_side` (0 = T0, 1 = LT0) を決定する。`"Loopback3"` という名称はコード固定であり、他のループバックインタフェース名には対応しない。Loopback3 IPv4 が見つからない場合は `MUXLOGFATAL` を出力し、コード内デフォルト値 (`10.212.64.1/32` / `10.212.64.2/32` 等) を使用するが、この状態は設定誤りを示すため正常運用時には発生しない (y_cable_helper.py:63-66, DbInterface.cpp:729-730)。
+[linkmgrd](../../reference/glossary.md#term-linkmgrd) は `Loopback3|<IP>` のパターンで CONFIG_DB の `LOOPBACK_INTERFACE` テーブルを探索し、IPv4 アドレスから `read_side` (0 = T0, 1 = LT0) を決定する。`"Loopback3"` という名称はコード固定であり、他のループバックインタフェース名には対応しない。Loopback3 IPv4 が見つからない場合は `MUXLOGFATAL` を出力し、コード内デフォルト値 (`10.212.64.1/32` / `10.212.64.2/32` 等) を使用するが、この状態は設定誤りを示すため正常運用時には発生しない (y_cable_helper.py:63-66, DbInterface.cpp:729-730)。
 
 <!-- /constants -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の状態遷移は STATE_DB 本体への書き込み以外に、APPL_DB の複数テーブル・STATE_DB 内のメトリクステーブル・SAI (ASIC) への副次操作を引き起こす。
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の状態遷移は STATE_DB 本体への書き込み以外に、[APPL_DB](../../reference/glossary.md#term-appl_db) の複数テーブル・STATE_DB 内のメトリクステーブル・[SAI](../../reference/glossary.md#term-sai) ([ASIC](../../reference/glossary.md#term-asic)) への副次操作を引き起こす。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-side-effects.md`
 
@@ -445,16 +444,16 @@ MUX 状態遷移の開始・終了タイムスタンプが `MUX_METRICS_TABLE` (
 
 ### SAI (ASIC / データプレーン) への副次操作
 
-状態遷移は SAI API 経由でデータプレーンを直接変更する。以下は遷移方向ごとの操作概要。
+状態遷移は [SAI](../../reference/glossary.md#term-sai) API 経由でデータプレーンを直接変更する。以下は遷移方向ごとの操作概要。
 
-| 遷移方向 | SAI 操作 | 概要 |
+| 遷移方向 | [SAI](../../reference/glossary.md#term-sai) 操作 | 概要 |
 |---------|---------|------|
 | `standby` → `active` | ACL drop rule 削除 | standby 側の `IngressTableDrop / mux_acl_rule` を削除 (`stateActive()` muxorch.cpp:475-479) |
 | `standby` → `active` | neighbor 有効化 | `gNeighOrch->enableNeighbors()` でサーバ neighbor を SAI に再作成 |
-| `standby` → `active` | nexthop / ECMP route 更新 | tunnel nexthop → local neighbor nexthop へ切り替え (`updateNextHopRoutes`, `invalidnexthopinNextHopGroup`, `validnexthopinNextHopGroup`) |
+| `standby` → `active` | nexthop / [ECMP](../../reference/glossary.md#term-ecmp) route 更新 | tunnel nexthop → local neighbor nexthop へ切り替え (`updateNextHopRoutes`, `invalidnexthopinNextHopGroup`, `validnexthopinNextHopGroup`) |
 | `standby` → `active` | tunnel route 削除 | `remove_route(pfx)` で server IP /32 → MuxTunnel0 の static route を SAI から削除 |
 | `active` → `standby` | neighbor 無効化 | `gNeighOrch->disableNeighbors()` でサーバ neighbor を SAI から削除 |
-| `active` → `standby` | nexthop / ECMP route 更新 | local neighbor nexthop → tunnel nexthop へ切り替え |
+| `active` → `standby` | nexthop / [ECMP](../../reference/glossary.md#term-ecmp) route 更新 | local neighbor nexthop → tunnel nexthop へ切り替え |
 | `active` → `standby` | tunnel route 追加 | `create_route(pfx, tunnelId)` で server IP /32 → MuxTunnel0 nexthop を SAI に追加 |
 | `active` → `standby` | ACL drop rule 追加 | `IngressTableDrop / mux_acl_rule` を SAI に追加 (`stateStandby()` muxorch.cpp:498-508) |
 
@@ -465,7 +464,7 @@ SAI 操作が途中で失敗すると rollback が実行され、`MUX_CABLE_TABL
 <!-- pubsub -->
 ## Pub/Sub・イベント駆動フロー (Phase G)
 
-`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) は Redis keyspace notification ではなく `swsscommon.SubscriberStateTable` / `swss::SubscriberStateTable` による **table-level pub/sub** で変更を配送する。本セクションでは各コンポーネントの購読登録・通知受信・処理フローを整理する。
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) は [Redis](../../reference/glossary.md#term-redis) keyspace notification ではなく `swsscommon.SubscriberStateTable` / `swss::SubscriberStateTable` による **table-level pub/sub** で変更を配送する。本セクションでは各コンポーネントの購読登録・通知受信・処理フローを整理する。
 
 > 証跡: `sonic-linkmgrd/src/DbInterface.cpp`, `sonic-swss/orchagent/muxorch.cpp`, `sonic-utilities/show/muxcable.py`
 
@@ -499,7 +498,7 @@ DbInterface::handleSwssNotification() (DbInterface.cpp:1813)
 
 ### MuxStateOrch の購読セットアップ
 
-`MuxStateOrch` は `Orch2` フレームワークで `STATE_DB HW_MUX_CABLE_TABLE` を購読する。`orchdaemon.cpp:477` で `new MuxStateOrch(m_stateDb, STATE_HW_MUX_CABLE_TABLE_NAME)` としてインスタンス化され、SONiC の OrchAgent 主ループがテーブル変更イベントを `addOperation()` に配送する。
+`MuxStateOrch` は `Orch2` フレームワークで `STATE_DB HW_MUX_CABLE_TABLE` を購読する。`orchdaemon.cpp:477` で `new MuxStateOrch(m_stateDb, STATE_HW_MUX_CABLE_TABLE_NAME)` としてインスタンス化され、[SONiC](../../reference/glossary.md#term-sonic) の OrchAgent 主ループがテーブル変更イベントを `addOperation()` に配送する。
 
 `addOperation()` は届いた `hw_state` と `MuxCable` 内部の `mux_state` を比較し:
 
@@ -540,7 +539,7 @@ ycabled は `HW_MUX_CABLE_TABLE` の **書き込み側** であり、このテ�
 
 ### MuxOrch / MuxStateOrch のプラットフォーム非依存性
 
-`orchagent/muxorch.cpp` には `getenv("platform")` / `getenv("ASIC_VENDOR")` の呼び出しが **一切存在しない**。STATE_DB への書き込み文字列定数・ステートマシン遷移ロジック・SAI 呼び出し順序はすべてプラットフォーム共通で動作する。mellanox / broadcom / barefoot 等の ASIC 差分はここでは吸収されない。
+`orchagent/muxorch.cpp` には `getenv("platform")` / `getenv("ASIC_VENDOR")` の呼び出しが **一切存在しない**。STATE_DB への書き込み文字列定数・ステートマシン遷移ロジック・SAI 呼び出し順序はすべてプラットフォーム共通で動作する。mellanox / broadcom / barefoot 等の [ASIC](../../reference/glossary.md#term-asic) 差分はここでは吸収されない。
 
 ### neighbor_mode = "prefix-route" の SAI capability ゲート
 
@@ -582,3 +581,5 @@ ycabled は `/etc/sonic/mux_simulator.json` ファイルの存在を検出し、
 このメカニズムは物理 Y-Cable を持たない CI / インテグレーションテスト環境向けであり、実機では使用しない。`/etc/sonic/mux_simulator.json` が存在する状態で pmon を再起動すると、物理ポートの MUX 挙動が simulated driver で上書きされる危険性がある。
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: c72fa8275590 -->

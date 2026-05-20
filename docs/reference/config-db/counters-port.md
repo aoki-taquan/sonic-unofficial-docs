@@ -69,11 +69,11 @@ COUNTERS_DB / COUNTERS:<oid>           (Hash)
 
 ## フィールド一覧
 
-以下は `portsorch.cpp` の `port_stat_ids[]`（物理ポート）に定義されている全 SAI カウンタ ID[^2]。
+以下は `portsorch.cpp` の `port_stat_ids[]`（物理ポート）に定義されている全 [SAI](../../reference/glossary.md#term-sai) カウンタ ID[^2]。
 
 ### 基本 IF カウンタ (RFC 2863)
 
-| SAI フィールド | 意味 |
+| [SAI](../../reference/glossary.md#term-sai) フィールド | 意味 |
 |---------------|------|
 | `SAI_PORT_STAT_IF_IN_OCTETS` | 受信バイト数 |
 | `SAI_PORT_STAT_IF_IN_UCAST_PKTS` | 受信ユニキャストパケット数 |
@@ -123,8 +123,8 @@ COUNTERS_DB / COUNTERS:<oid>           (Hash)
 
 | SAI フィールド | 意味 |
 |---------------|------|
-| `SAI_PORT_STAT_PFC_0_TX_PKTS` 〜 `SAI_PORT_STAT_PFC_7_TX_PKTS` | PFC 優先度 0〜7 送信 PAUSE フレーム数 |
-| `SAI_PORT_STAT_PFC_0_RX_PKTS` 〜 `SAI_PORT_STAT_PFC_7_RX_PKTS` | PFC 優先度 0〜7 受信 PAUSE フレーム数 |
+| `SAI_PORT_STAT_PFC_0_TX_PKTS` 〜 `SAI_PORT_STAT_PFC_7_TX_PKTS` | [PFC](../../reference/glossary.md#term-pfc) 優先度 0〜7 送信 PAUSE フレーム数 |
+| `SAI_PORT_STAT_PFC_0_RX_PKTS` 〜 `SAI_PORT_STAT_PFC_7_RX_PKTS` | [PFC](../../reference/glossary.md#term-pfc) 優先度 0〜7 受信 PAUSE フレーム数 |
 | `SAI_PORT_STAT_PAUSE_RX_PKTS` | 受信 PAUSE フレーム総数 |
 | `SAI_PORT_STAT_PAUSE_TX_PKTS` | 送信 PAUSE フレーム総数 |
 
@@ -190,14 +190,14 @@ COUNTERS_DB / COUNTERS:<oid>           (Hash)
 
 | SAI フィールド | 意味 |
 |---------------|------|
-| `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` | WRED Green ドロップパケット数 |
-| `SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS` | WRED Yellow ドロップパケット数 |
-| `SAI_PORT_STAT_RED_WRED_DROPPED_PACKETS` | WRED Red ドロップパケット数 |
+| `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` | [WRED](../../reference/glossary.md#term-wred) Green ドロップパケット数 |
+| `SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS` | [WRED](../../reference/glossary.md#term-wred) Yellow ドロップパケット数 |
+| `SAI_PORT_STAT_RED_WRED_DROPPED_PACKETS` | [WRED](../../reference/glossary.md#term-wred) Red ドロップパケット数 |
 | `SAI_PORT_STAT_WRED_DROPPED_PACKETS` | WRED 合計ドロップパケット数 |
 
 ## RATES テーブル
 
-syncd が `port_rates.lua` を定期実行して計算した派生レートを `RATES:<oid>` に書く。
+[syncd](../../reference/glossary.md#term-syncd) が `port_rates.lua` を定期実行して計算した派生レートを `RATES:<oid>` に書く。
 
 | フィールド | 意味 |
 |-----------|------|
@@ -217,17 +217,17 @@ syncd が `port_rates.lua` を定期実行して計算した派生レートを `
 
 ## 書き込み経路
 
-`COUNTERS_DB` は直接 CONFIG_DB から書かれず、すべて orchagent / syncd 経由で書かれる。
+`COUNTERS_DB` は直接 [CONFIG_DB](../../reference/glossary.md#term-config_db) から書かれず、すべて [orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) 経由で書かれる。
 
 | 経路 | 詳細 |
 |------|------|
-| portsorch 初期化 | `COUNTERS_PORT_NAME_MAP` にポート名→OID マッピングを書き込み |
-| syncd FlexCounter | `FLEX_COUNTER_TABLE|PORT` が `enable` になった後、1 秒ごとに SAI カウンタをポーリングして `COUNTERS:<oid>` を更新 |
+| [portsorch](../../reference/glossary.md#term-portsorch) 初期化 | `COUNTERS_PORT_NAME_MAP` にポート名→OID マッピングを書き込み |
+| [syncd](../../reference/glossary.md#term-syncd) [FlexCounter](../../reference/glossary.md#term-flexcounter) | `FLEX_COUNTER_TABLE|PORT` が `enable` になった後、1 秒ごとに SAI カウンタをポーリングして `COUNTERS:<oid>` を更新 |
 | syncd Lua プラグイン | `port_rates.lua` / `port_flr.lua` が `RATES:<oid>` および FLR 関連フィールドを書き込み |
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `FLEX_COUNTER_TABLE` — ポーリング有効化と間隔設定
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `FLEX_COUNTER_TABLE` — ポーリング有効化と間隔設定
 - CLI: `show interface counters` (`portstat`)、`counterpoll port enable/disable/interval`
 
 <!-- defaults -->
@@ -239,7 +239,7 @@ syncd が `port_rates.lua` を定期実行して計算した派生レートを `
 
 ### ポーリング間隔のコード由来デフォルト
 
-`FLEX_COUNTER_TABLE|PORT` に `POLL_INTERVAL` が設定されていない場合、portsorch が **ハードコードした初期値**で syncd に投入する[^3]。
+`FLEX_COUNTER_TABLE|PORT` に `POLL_INTERVAL` が設定されていない場合、[portsorch](../../reference/glossary.md#term-portsorch) が **ハードコードした初期値**で syncd に投入する[^3]。
 
 | カウンタグループ | ハードコード定数 | 値 |
 |----------------|---------------|-----|
@@ -271,11 +271,11 @@ if (it.second.m_type != Port::Type::PHY) continue;
 ```
 (portsorch.cpp:9113-9117)
 
-LAG / VLAN / CPU ポートは `COUNTERS_PORT_NAME_MAP` に登録されず、`COUNTERS:<oid>` も書かれない。
+[LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) / CPU ポートは `COUNTERS_PORT_NAME_MAP` に登録されず、`COUNTERS:<oid>` も書かれない。
 
 ### SAI フィールド未サポート時の挙動
 
-ASIC が対応していない SAI カウンタは `portstat.py` の `get_counters()` で `STATUS_NA` ('N/A') として扱われ、表示に `N/A` が出る。WRED カウンタは `STATE_DB` の `PORT_COUNTER_CAPABILITIES` で対応確認後、未サポートなら `counter_bucket_dict` から除外される (portstat.py:297-329)。
+[ASIC](../../reference/glossary.md#term-asic) が対応していない SAI カウンタは `portstat.py` の `get_counters()` で `STATUS_NA` ('N/A') として扱われ、表示に `N/A` が出る。WRED カウンタは `STATE_DB` の `PORT_COUNTER_CAPABILITIES` で対応確認後、未サポートなら `counter_bucket_dict` から除外される (portstat.py:297-329)。
 
 ### gearbox (gb) ポートの別テーブル
 
@@ -360,7 +360,7 @@ COUNTERS_DB:COUNTERS:<oid> フィールドが更新される
 
 > 調査証跡: `meta/_intermediate/cdb-flow/counters-port-cross-refs.md`
 
-以下はすべて実装レベルの暗黙参照（YANG leafref なし）。
+以下はすべて実装レベルの暗黙参照（[YANG](../../reference/glossary.md#term-yang) leafref なし）。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
@@ -391,7 +391,7 @@ COUNTERS_DB:COUNTERS:<oid> フィールドが更新される
 | **保留 (m_toSync 残留)** | `allPortsReady() = false` / Warm Start 60 秒タイマー中 | エントリを `m_toSync` に保持し次 `doTask()` 呼び出しで自動再試行。上限なし |
 | **即削除** | 不正 flex counter グループキー（`flexCounterGroupMap` 未登録） | `SWSS_LOG_NOTICE "Invalid flex counter group input, <key>"` 出力後エントリ削除。retry なし |
 | **silent skip** | 未サポートフィールド (`POLL_INTERVAL`/`FLEX_COUNTER_STATUS` 以外) | `SWSS_LOG_NOTICE "Unsupported field <field>"` 出力のみ。エントリは削除されず他フィールドの処理は継続 |
-| **プロセスクラッシュ** | Redis 接続断（`setCounterIdList` 内部の `RedisReply` 例外） | 未 catch のため orchagent クラッシュ。supervisor が再起動するまで全カウンタ収集停止 |
+| **プロセスクラッシュ** | [Redis](../../reference/glossary.md#term-redis) 接続断（`setCounterIdList` 内部の `RedisReply` 例外） | 未 catch のため [orchagent](../../reference/glossary.md#term-orchagent) クラッシュ。supervisor が再起動するまで全カウンタ収集停止 |
 
 ### 不正グループキーの即削除
 
@@ -421,15 +421,15 @@ Warm Start の場合、`FlexCounterOrch` ctor が `FLEX_COUNTER_DELAY_SEC = 60` 
 
 ### SAI カウンタ非サポート時の N/A 表示
 
-SAI が特定の counter stat を返せない場合（ASIC 実装なし等）、syncd は当該フィールドを
+SAI が特定の counter stat を返せない場合（[ASIC](../../reference/glossary.md#term-asic) 実装なし等）、syncd は当該フィールドを
 `COUNTERS:<oid>` に書き込まない。`portstat.py` はフィールドが取得できない場合 `STATUS_NA`
 ('N/A') を返す (portstat.py:297-329)。WRED drop counter は起動時に
 `STATE_DB:PORT_COUNTER_CAPABILITIES` を確認し、未サポートなら `counter_bucket_dict` から
 事前に除外される。
 
-| ケース | portstat 表示 | COUNTERS_DB 状態 |
+| ケース | portstat 表示 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 状態 |
 |--------|-------------|-----------------|
-| ASIC サポートあり | 数値 | 値あり |
+| [ASIC](../../reference/glossary.md#term-asic) サポートあり | 数値 | 値あり |
 | ASIC 非サポート (WRED 等) | N/A | フィールド不在 or 0 |
 | counterpoll disable 後 | 前回値 (stale) | 最後の値が残留 |
 
@@ -444,7 +444,7 @@ SAI が特定の counter stat を返せない場合（ASIC 実装なし等）、
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`portsorch` / `flexcounterorch` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+`portsorch` / `flexcounterorch` 内に存在する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 
 ### ポーリング間隔定数
 
@@ -460,7 +460,7 @@ SAI が特定の counter stat を返せない場合（ASIC 実装なし等）、
 
 ### flex counter グループ名定数
 
-FLEX_COUNTER_DB でのグループキーとして使われる文字列定数。
+[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) でのグループキーとして使われる文字列定数。
 
 | 定数名 | 値 | ソース |
 |--------|----|--------|
@@ -486,13 +486,13 @@ FLEX_COUNTER_DB でのグループキーとして使われる文字列定数。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/counters-port-side-effects.md`
 
-`FLEX_COUNTER_TABLE|PORT` の enable/disable は COUNTERS_DB の更新だけでなく、以下の DB・テーブルにも波及する。
+`FLEX_COUNTER_TABLE|PORT` の enable/disable は [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の更新だけでなく、以下の DB・テーブルにも波及する。
 
 ### FLEX_COUNTER_DB への COUNTER_ID_LIST 書き込み
 
 `FLEX_COUNTER_TABLE|PORT FLEX_COUNTER_STATUS=enable` を受信すると `flexcounterorch.cpp:239` が
 `generatePortCounterMap()` を呼び、各 PHY ポートに対して `port_stat_manager.setCounterIdList()` を実行する。
-書き込み先は COUNTERS_DB ではなく **FLEX_COUNTER_DB**（Redis DB index 5）:
+書き込み先は [COUNTERS_DB](../../reference/glossary.md#term-counters_db) ではなく **[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)**（[Redis](../../reference/glossary.md#term-redis) DB index 5）:
 
 ```text
 FLEX_COUNTER_DB:PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>:COUNTER_ID_LIST
@@ -510,9 +510,9 @@ syncd がこのエントリを監視し、リストを受け取って SAI ポー
 ### STATE_DB:PORT_COUNTER_CAPABILITIES の書き込み（起動時一回）
 
 orchagent 起動時の `initCounterCapabilities()` が ASIC の SAI ケイパビリティを問い合わせ、
-`PORT カウンタ enable/disable とは独立して` 以下を **STATE_DB** に書き込む:
+`PORT カウンタ enable/disable とは独立して` 以下を **[STATE_DB](../../reference/glossary.md#term-state_db)** に書き込む:
 
-| STATE_DB キー | 値 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) キー | 値 |
 |---|---|
 | `PORT_COUNTER_CAPABILITIES\|WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER` | `{isSupported: "true"\|"false"}` |
 | `PORT_COUNTER_CAPABILITIES\|WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER` | 同上 |
@@ -525,7 +525,7 @@ evidence: `portsorch.cpp:1842-1980`
 
 ### COUNTERS_DB:RATES:<oid> への Lua プラグイン書き込み
 
-orsorch コンストラクタで `port_rates.lua` と `port_flr.lua` を Redis にロードし、
+orsorch コンストラクタで `port_rates.lua` と `port_flr.lua` を [Redis](../../reference/glossary.md#term-redis) にロードし、
 `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` に Lua プラグインとして登録する
 （`portsorch.cpp:879-882`）。syncd が 1 s ごとのポーリングサイクルで Lua を実行し、
 SAI 生カウンタからレートを計算して **COUNTERS_DB:RATES:<oid>** に書き込む:
@@ -556,13 +556,13 @@ SAI 生カウンタからレートを計算して **COUNTERS_DB:RATES:<oid>** �
 
 ### Producer/Consumer ペア
 
-PORT カウンタの制御経路は **CONFIG_DB → FlexCounterOrch → syncd** という 3 段構成をとる。APPL_DB 中継なし。
+PORT カウンタの制御経路は **CONFIG_DB → FlexCounterOrch → syncd** という 3 段構成をとる。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし。
 
 | 区間 | 方式 | 詳細 |
 |------|------|------|
 | CONFIG_DB → FlexCounterOrch | `SubscriberStateTable` | `FLEX_COUNTER_TABLE|PORT` 等を購読。keyspace notification で変化を検出 |
 | FlexCounterOrch → portsorch | 直接関数呼び出し | `gPortsOrch->generatePortCounterMap()` / `setCounterIdList()` |
-| portsorch → syncd | `FlexCounterTaggedCachedManager` (FLEX_COUNTER_DB) | `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` グループに `COUNTER_ID_LIST` を書き込む |
+| portsorch → syncd | `FlexCounterTaggedCachedManager` ([FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)) | `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` グループに `COUNTER_ID_LIST` を書き込む |
 | syncd → ASIC | SAI flex counter ポーリング | 1000 ms 間隔で SAI stat API をポーリング |
 | syncd → COUNTERS_DB | 直接書き込み | `COUNTERS:<oid>` Hash に各 SAI フィールドの値をアトミック更新 |
 | COUNTERS_DB → portstat | `Table::get()` 直接読み出し | `COUNTERS_PORT_NAME_MAP` で名前→OID 解決後、`COUNTERS:<oid>` を読む |
@@ -632,7 +632,7 @@ NotificationConsumer: なし（カウンタ配信に使用せず）
 
 初期値はすべて `{isSupported: "false"}` で書き込まれ、SAI capability list に含まれた場合のみ `true` に更新される:
 
-| SAI stat | STATE_DB キー |
+| SAI stat | [STATE_DB](../../reference/glossary.md#term-state_db) キー |
 |----------|--------------|
 | `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` | `WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER` |
 | `SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS` | `WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER` |
@@ -659,11 +659,11 @@ Gearbox 有効時は `port_rates.lua` も `GB_COUNTERS_DB` に別途ロードさ
 
 ### DPU (`gMySwitchType == "dpu"`) での制限
 
-DPU モードでは System Port の初期化 (`portsorch.cpp:1043-1056`) や Auto-neg FEC capability query (`portsorch.cpp:987`) が `if (gMySwitchType != "dpu")` でスキップされる。PORT カウンタの `generatePortCounterMap()` 自体は DPU でも実行されるが、収集対象は DPU ローカルの PHY ポートのみとなる（System Port は DPU に存在しない）。
+[DPU](../../reference/glossary.md#term-dpu) モードでは System Port の初期化 (`portsorch.cpp:1043-1056`) や Auto-neg FEC capability query (`portsorch.cpp:987`) が `if (gMySwitchType != "dpu")` でスキップされる。PORT カウンタの `generatePortCounterMap()` 自体は [DPU](../../reference/glossary.md#term-dpu) でも実行されるが、収集対象は [DPU](../../reference/glossary.md#term-dpu) ローカルの PHY ポートのみとなる（System Port は DPU に存在しない）。
 
 ### VoQ chassis での PORT カウンタ
 
-通常 PHY ポートの PORT カウンタ収集は VoQ でも同一。ただし VOQ カウンタ（`SAI_QUEUE_STAT_*` の VOQ 用）は `FLEX_COUNTER_TABLE|QUEUE` の enable/disable に関わらず常時登録される (`portsorch.cpp:8483-8512`)。この常時有効仕様は `FLEX_COUNTER_TABLE|PORT` で制御される PORT カウンタには影響しない。
+通常 PHY ポートの PORT カウンタ収集は VoQ でも同一。ただし [VOQ](../../reference/glossary.md#term-voq) カウンタ（`SAI_QUEUE_STAT_*` の [VOQ](../../reference/glossary.md#term-voq) 用）は `FLEX_COUNTER_TABLE|QUEUE` の enable/disable に関わらず常時登録される (`portsorch.cpp:8483-8512`)。この常時有効仕様は `FLEX_COUNTER_TABLE|PORT` で制御される PORT カウンタには影響しない。
 
 ### VS (virtual switch) での挙動
 
@@ -674,7 +674,7 @@ DPU モードでは System Port の初期化 (`portsorch.cpp:1043-1056`) や Aut
 | WRED drop counter | ASIC 依存 | 典型的に true | false | ASIC 依存 | ASIC 依存 |
 | nvda_port_trim_drop.lua | 無効 | 条件次第で有効 | 無効 | 無効 | 無効 |
 | GB_COUNTERS_DB 書き込み | 環境依存 | 環境依存 | 無効 | 無効 | 環境依存 |
-| VOQ カウンタ常時有効 | N/A | N/A | N/A | N/A | Yes |
+| [VOQ](../../reference/glossary.md#term-voq) カウンタ常時有効 | N/A | N/A | N/A | N/A | Yes |
 
 <!-- /platform -->
 
@@ -695,3 +695,5 @@ DPU モードでは System Port の初期化 (`portsorch.cpp:1043-1056`) や Aut
 [^3]: ポーリング間隔ハードコード: `sonic-swss/orchagent/portsorch.cpp:87`, `portsorch.h:40-41`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L87>
 [^4]: warm-start 遅延タイマー: `sonic-swss/orchagent/flexcounterorch.cpp:127-137`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L127>
 [^5]: プラットフォーム統計 capability 初期化: `sonic-swss/orchagent/portsorch.cpp:1842-1969`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L1842>
+
+<!-- glossary-links-injected: a2da8a248001 -->

@@ -45,9 +45,9 @@ related:
 
 ## 概要
 
-MC-[LAG](../../reference/glossary.md#term-lag) (Multi-Chassis Link Aggregation) のドメインに紐づくメンバー [PortChannel](../../reference/glossary.md#term-portchannel) を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。`iccpd` (`docker-iccpd`) と `MlagOrch` (orchagent) がこのテーブルを購読し、ICCP セッション経由でメンバー [LAG](../../reference/glossary.md#term-lag) の同期を制御する。
+MC-[LAG](../../reference/glossary.md#term-lag) (Multi-Chassis Link Aggregation) のドメインに紐づくメンバー [PortChannel](../../reference/glossary.md#term-portchannel) を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。`iccpd` (`docker-iccpd`) と `MlagOrch` ([orchagent](../../reference/glossary.md#term-orchagent)) がこのテーブルを購読し、ICCP セッション経由でメンバー [LAG](../../reference/glossary.md#term-lag) の同期を制御する。
 
-`MCLAG_INTERFACE` は複合 key (`domain_id|if_name`) を使用し、1 ドメインに複数の MC-LAG メンバー PortChannel を登録できる。
+`MCLAG_INTERFACE` は複合 key (`domain_id|if_name`) を使用し、1 ドメインに複数の MC-[LAG](../../reference/glossary.md#term-lag) メンバー [PortChannel](../../reference/glossary.md#term-portchannel) を登録できる。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -72,7 +72,7 @@ MCLAG_INTERFACE|<domain_id>|<if_name>
 ```
 
 - `domain_id`: MC-LAG ドメイン ID（`MCLAG_DOMAIN` への leafref）
-- `if_name`: MC-LAG メンバー PortChannel 名（`PORTCHANNEL` への leafref）
+- `if_name`: MC-LAG メンバー [PortChannel](../../reference/glossary.md#term-portchannel) 名（`PORTCHANNEL` への leafref）
 
 ## フィールド
 
@@ -86,7 +86,7 @@ CLI `config mclag member add` は `if_type` に `"PortChannel"` を固定値で�
 
 ## 購読者
 
-- `MlagOrch` (orchagent) — `doMlagInterfaceTask()` でメンバー登録を処理し、`SUBJECT_TYPE_MLAG_INTF_CHANGE` を broadcast
+- `MlagOrch` ([orchagent](../../reference/glossary.md#term-orchagent)) — `doMlagInterfaceTask()` でメンバー登録を処理し、`SUBJECT_TYPE_MLAG_INTF_CHANGE` を broadcast
 - `mclagsyncd` — `addDomainCfgDependentSelectables()` により MCLAG_DOMAIN 初回 SET 後に購読開始。iccpd へメンバー情報を転送
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -107,7 +107,7 @@ CLI `config mclag member add` は `if_type` に `"PortChannel"` を固定値で�
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-mclag.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mclag.yang>
+[^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-mclag.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mclag.yang>
 
 ## 関連ページ
 
@@ -125,7 +125,7 @@ CLI `config mclag member add` は `if_type` に `"PortChannel"` を固定値で�
 ### よくある誤設定
 
 - MCLAG_DOMAIN が存在しない状態で MCLAG_INTERFACE を書くと YANG バリデーション違反となる。
-- 対象 PORTCHANNEL が CONFIG_DB に存在しない状態で書くと leafref 違反となる。
+- 対象 PORTCHANNEL が [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在しない状態で書くと leafref 違反となる。
 - mclagsyncd は MCLAG_DOMAIN の初回 SET 後にのみ MCLAG_INTERFACE を購読するため、MCLAG_DOMAIN より先に書いた場合は iccpd に通知が届かない。
 
 ### 確認コマンド
@@ -224,6 +224,28 @@ excerpt: |
 reasoning: mclag_iface[] の配列長が MAX_L_PORT_NAME=20 で固定されているため、MCLAG_INTERFACE の if_name (PortChannel 名) は 19 バイトを超えると iccpd 転送時に無言切り捨てされる。通常の命名規則 (CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX=15) では問題ないが、カスタムポート名を使う場合は要注意。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-swss/mclagsyncd/mclaglink.h#L52 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-swss/mclagsyncd/mclaglink.h#L52 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    #define MAX_L_PORT_NAME 20
+    struct mclag_iface_cfg_info {
+        int op_type;
+        int domain_id;
+        char mclag_iface[MAX_L_PORT_NAME];
+    };
+    ```
+
+    **判断根拠**: mclag_iface[] の配列長が MAX_L_PORT_NAME=20 で固定されているため、MCLAG_INTERFACE の if_name (PortChannel 名) は 19 バイトを超えると iccpd 転送時に無言切り捨てされる。通常の命名規則 (CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX=15) では問題ないが、カスタムポート名を使う場合は要注意。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-utilities/config/mclag.py#L10-L14 (sha: a3e5b4c9fb7a95e213d08f8761e6c94f02a18b41)
 excerpt: |
@@ -234,6 +256,27 @@ excerpt: |
   CFG_PORTCHANNEL_NO="<0-9999>"
 reasoning: CLI レベルで MCLAG_INTERFACE の if_name に設定できる PortChannel 名を上記定数で厳格に制限している。YANG leafref は名前の形式を検証しないが、CLI はこれらの定数で事前フィルタする。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-utilities/config/mclag.py#L10-L14 (sha: a3e5b4c9fb7a95e213d08f8761e6c94f02a18b41)"
+
+    **出典**:
+
+    `sonic-utilities/config/mclag.py#L10-L14 (sha: a3e5b4c9fb7a95e213d08f8761e6c94f02a18b41)`
+
+    **抜粋**:
+
+    ```text
+    CFG_PORTCHANNEL_PREFIX = "PortChannel"
+    CFG_PORTCHANNEL_PREFIX_LEN = 11
+    CFG_PORTCHANNEL_MAX_VAL = 9999
+    CFG_PORTCHANNEL_NAME_TOTAL_LEN_MAX = 15
+    CFG_PORTCHANNEL_NO="<0-9999>"
+    ```
+
+    **判断根拠**: CLI レベルで MCLAG_INTERFACE の if_name に設定できる PortChannel 名を上記定数で厳格に制限している。YANG leafref は名前の形式を検証しないが、CLI はこれらの定数で事前フィルタする。
+
+<!-- evidence-rendered:end -->
 
 <!-- /constants -->
 
@@ -255,8 +298,8 @@ reasoning: CLI レベルで MCLAG_INTERFACE の if_name に設定できる PortC
 
 | 参照元 | 参照方法 | 用途 | evidence |
 |---|---|---|---|
-| `FdbOrch` (orchagent) | `gMlagOrch->isMlagInterface(port.m_alias)` 直接呼び出し | MCLAG メンバーポートの oper-down 時に FDB フラッシュをスキップ | `fdborch.cpp:1209-1212` |
-| `FdbOrch` (orchagent) | `gMlagOrch->isMlagInterface(port.m_alias)` 直接呼び出し | MCLAG 広告 FDB 削除 + ポート down 時に MAC 削除 origin を `FDB_ORIGIN_LEARN` に書き換え | `fdborch.cpp:1665-1670` |
+| `FdbOrch` ([orchagent](../../reference/glossary.md#term-orchagent)) | `gMlagOrch->isMlagInterface(port.m_alias)` 直接呼び出し | [MCLAG](../../reference/glossary.md#term-mclag) メンバーポートの oper-down 時に [FDB](../../reference/glossary.md#term-fdb) フラッシュをスキップ | `fdborch.cpp:1209-1212` |
+| `FdbOrch` (orchagent) | `gMlagOrch->isMlagInterface(port.m_alias)` 直接呼び出し | [MCLAG](../../reference/glossary.md#term-mclag) 広告 [FDB](../../reference/glossary.md#term-fdb) 削除 + ポート down 時に MAC 削除 origin を `FDB_ORIGIN_LEARN` に書き換え | `fdborch.cpp:1665-1670` |
 | `mclagsyncd` | `SubscriberStateTable` (`CFG_MCLAG_INTF_TABLE_NAME`) | MCLAG_DOMAIN 初回 SET 後に購読開始し、iccpd へメンバー名を IPC 転送 | `mclaglink.cpp:918,938-941` |
 | `config mclag member add/del` (CLI) | `config/mclag.py:283-293` | SET 前に MCLAG_DOMAIN 存在をアドホックチェック。`if_type="PortChannel"` を固定書込み | `mclag.py:283-293` |
 
@@ -266,9 +309,9 @@ MCLAG_INTERFACE の SET/DEL を受けた mclagsyncd → iccpd → mclagsyncd IPC
 
 | 書込み先テーブル | DB | キー形式 | 書込みタイミング |
 |---|---|---|---|
-| `MCLAG_LOCAL_INTF_TABLE` | STATE_DB | `<if_name>` | iccpd からポート分離設定受信時。`port_isolate_peer_link` を true/false で更新 (`mclaglink.cpp:1512-1533`) |
-| `MCLAG_REMOTE_INTF_TABLE` | STATE_DB | `<domain_id>\|<if_name>` | iccpd からリモートインターフェース状態受信時。`oper_status` 等を更新 (`mclaglink.cpp:1538-1633`) |
-| `ISOLATION_GROUP_TABLE` | APPL_DB | `MCLAG_ISO_GRP` | iccpd からポート分離グループ指示受信時。`TYPE`, `PORTS`, `MEMBERS` を更新 (`mclaglink.cpp:1811`) |
+| `MCLAG_LOCAL_INTF_TABLE` | [STATE_DB](../../reference/glossary.md#term-state_db) | `<if_name>` | iccpd からポート分離設定受信時。`port_isolate_peer_link` を true/false で更新 (`mclaglink.cpp:1512-1533`) |
+| `MCLAG_REMOTE_INTF_TABLE` | [STATE_DB](../../reference/glossary.md#term-state_db) | `<domain_id>\|<if_name>` | iccpd からリモートインターフェース状態受信時。`oper_status` 等を更新 (`mclaglink.cpp:1538-1633`) |
+| `ISOLATION_GROUP_TABLE` | [APPL_DB](../../reference/glossary.md#term-appl_db) | `MCLAG_ISO_GRP` | iccpd からポート分離グループ指示受信時。`TYPE`, `PORTS`, `MEMBERS` を更新 (`mclaglink.cpp:1811`) |
 
 !!! note "副次書込みのタイミング"
     `MCLAG_LOCAL_INTF_TABLE` / `MCLAG_REMOTE_INTF_TABLE` / `ISOLATION_GROUP_TABLE` への書込みは MCLAG_INTERFACE SET 直後ではなく、ICCP セッション確立後の iccpd ネゴシエーション完了を待って行われる。CONFIG_DB 書込み後すぐに STATE_DB を確認しても空の場合がある。
@@ -322,7 +365,7 @@ MCLAG_INTERFACE の SET/DEL を受けた mclagsyncd → iccpd → mclagsyncd IPC
 
 ### STATE_DB / ERROR_TABLE への記録
 
-`MlagOrch` は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。`mclagsyncd` も MCLAG_INTERFACE 処理失敗時は STATE_DB を更新しない（STATE_DB への書き込みは iccpd からの応答受信後に行われるため、iccpd への送信に失敗した場合は STATE_DB も更新されない）。
+`MlagOrch` は [STATE_DB](../../reference/glossary.md#term-state_db) / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。`mclagsyncd` も MCLAG_INTERFACE 処理失敗時は STATE_DB を更新しない（STATE_DB への書き込みは iccpd からの応答受信後に行われるため、iccpd への送信に失敗した場合は STATE_DB も更新されない）。
 
 ```bash
 # orchagent ログで MCLAG_INTERFACE 失敗確認
@@ -344,7 +387,7 @@ CONFIG_DB `MCLAG_INTERFACE` の SET/DEL を受けた `MlagOrch` および `mclag
 
 ### MlagOrch (orchagent) の副次書込
 
-`MlagOrch::addMlagInterface()` / `delMlagInterface()` は内部マップ (`m_mlagIntfs`) の更新と `SUBJECT_TYPE_MLAG_INTF_CHANGE` Observer 通知のみを行う。STATE_DB / APPL_DB / COUNTERS_DB への直接書込は **0 件**（`mlagorch.cpp` に `state_db` / `appl_db` / `counters_db` への書込呼出なし）。
+`MlagOrch::addMlagInterface()` / `delMlagInterface()` は内部マップ (`m_mlagIntfs`) の更新と `SUBJECT_TYPE_MLAG_INTF_CHANGE` Observer 通知のみを行う。STATE_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への直接書込は **0 件**（`mlagorch.cpp` に `state_db` / `appl_db` / `counters_db` への書込呼出なし）。
 
 ### mclagsyncd の副次書込
 
@@ -356,15 +399,15 @@ CONFIG_DB `MCLAG_INTERFACE` の SET/DEL を受けた `MlagOrch` および `mclag
 | STATE_DB | `MCLAG_LOCAL_INTF_TABLE` | `<if_name>` | — (del) | iccpd からローカル IF 削除通知受信時 (`deleteLocalIfPortIsolate()`) | `mclaglink.cpp:L1533` |
 | STATE_DB | `MCLAG_REMOTE_INTF_TABLE` | `<mlag_id>\|<if_name>` | `oper_status = up\|down` | iccpd からリモート IF 状態通知受信時 (`mclagsyncdSetRemoteIfState()`) | `mclaglink.cpp:L1584` |
 | STATE_DB | `MCLAG_REMOTE_INTF_TABLE` | `<mlag_id>\|<if_name>` | — (del) | iccpd からリモート IF 削除通知受信時 (`mclagsyncdDelRemoteIfInfo()`) | `mclaglink.cpp:L1633` |
-| APPL_DB | `FLUSHFDBREQUEST` (通知チャネル) | — | `ALL` | ICCP セッション確立直後の FDB フラッシュ要求 | `mclaglink.cpp:L423,L429` |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | `FLUSHFDBREQUEST` (通知チャネル) | — | `ALL` | ICCP セッション確立直後の [FDB](../../reference/glossary.md#term-fdb) フラッシュ要求 | `mclaglink.cpp:L423,L429` |
 
 ### 副次書込なし
 
 | DB | 根拠 |
 |---|---|
-| COUNTERS_DB | `p_counters_db->hgetall("COUNTERS_PORT_NAME_MAP")` (`mclaglink.cpp:L66`) は **読取専用**。書込呼出なし |
-| ASIC_DB | `MlagOrch` から SAI 直接呼出なし。FDB 削除などは `FdbOrch` Observer 経由（間接） |
-| FLEX_COUNTER_DB | MCLAG_INTERFACE には FlexCounter 登録なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `p_counters_db->hgetall("COUNTERS_PORT_NAME_MAP")` (`mclaglink.cpp:L66`) は **読取専用**。書込呼出なし |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | `MlagOrch` から [SAI](../../reference/glossary.md#term-sai) 直接呼出なし。FDB 削除などは `FdbOrch` Observer 経由（間接） |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | MCLAG_INTERFACE には [FlexCounter](../../reference/glossary.md#term-flexcounter) 登録なし |
 
 !!! note "副次書込のタイミング"
     STATE_DB (`MCLAG_LOCAL_INTF_TABLE` / `MCLAG_REMOTE_INTF_TABLE`) への書込は CONFIG_DB `MCLAG_INTERFACE` SET 直後ではなく、ICCP セッション確立後の iccpd ネゴシエーション完了を待って行われる。`sonic-db-cli CONFIG_DB hset 'MCLAG_INTERFACE|...'` 実行直後に `sonic-db-cli STATE_DB hgetall 'MCLAG_LOCAL_INTF_TABLE|...'` を確認しても空の場合がある。`show mclag interface` コマンドで ICCP ネゴシエーション完了後の状態を確認すること。
@@ -385,6 +428,32 @@ excerpt: |
 reasoning: MCLAG_INTERFACE の SET/DEL に応じて iccpd が port-isolation 設定を mclagsyncd に返送し、STATE_DB MCLAG_LOCAL_INTF_TABLE を更新する。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-swss/mclagsyncd/mclaglink.cpp#L1509-1533 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-swss/mclagsyncd/mclaglink.cpp#L1509-1533 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    /* Set local interface portisolate field enable/disable in the
+     * STATE_MCLAG_LOCAL_INTF_TABLE. */
+    void MclagLink::setLocalIfPortIsolate(std::string mclag_if, bool is_enable) {
+        ...
+        fvVector.push_back(make_pair("port_isolate_peer_link", is_enable ? "true" : "false"));
+        p_mclag_local_intf_tbl->set(key, fvVector);
+    }
+    void MclagLink::deleteLocalIfPortIsolate(std::string mclag_if) {
+        p_mclag_local_intf_tbl->del(mclag_if);
+    }
+    ```
+
+    **判断根拠**: MCLAG_INTERFACE の SET/DEL に応じて iccpd が port-isolation 設定を mclagsyncd に返送し、STATE_DB MCLAG_LOCAL_INTF_TABLE を更新する。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-swss/mclagsyncd/mclaglink.cpp#L1538-1633 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
 excerpt: |
@@ -398,6 +467,29 @@ excerpt: |
 reasoning: ICCP ピアからのリモートインターフェース oper 状態変化が iccpd 経由で mclagsyncd に届き、STATE_DB MCLAG_REMOTE_INTF_TABLE が更新される。
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-swss/mclagsyncd/mclaglink.cpp#L1538-1633 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-swss/mclagsyncd/mclaglink.cpp#L1538-1633 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    /* Set remote interface state field oper_status in the STATE_MCLAG_REMOTE_INTF_TABLE.
+     * Key = "Mclag<id>|interface" */
+    void MclagLink::mclagsyncdSetRemoteIfState(char *msg, size_t msg_len) {
+        ...
+        key = to_string(mlag_id) + "|" + lag_name;
+        p_mclag_remote_intf_tbl->set(key, fvVector);
+    }
+    ```
+
+    **判断根拠**: ICCP ピアからのリモートインターフェース oper 状態変化が iccpd 経由で mclagsyncd に届き、STATE_DB MCLAG_REMOTE_INTF_TABLE が更新される。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-swss/mclagsyncd/mclaglink.cpp#L423,429 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
 excerpt: |
@@ -406,6 +498,25 @@ excerpt: |
   flushFdb.send("ALL", "ALL", values);
 reasoning: ICCP セッション確立直後に APPL_DB の FLUSHFDBREQUEST チャネルへ通知を送信して全 FDB フラッシュを要求する。MCLAG_INTERFACE の直接 SET への応答ではなく ICCP セッション状態変化に連動。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-swss/mclagsyncd/mclaglink.cpp#L423,429 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-swss/mclagsyncd/mclaglink.cpp#L423,429 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    swss::NotificationProducer flushFdb(p_appl_db.get(), "FLUSHFDBREQUEST");
+    ...
+    flushFdb.send("ALL", "ALL", values);
+    ```
+
+    **判断根拠**: ICCP セッション確立直後に APPL_DB の FLUSHFDBREQUEST チャネルへ通知を送信して全 FDB フラッシュを要求する。MCLAG_INTERFACE の直接 SET への応答ではなく ICCP セッション状態変化に連動。
+
+<!-- evidence-rendered:end -->
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-side.md`
 <!-- /side-effects -->
@@ -450,14 +561,14 @@ else if (temps == (Selectable *)mclag.getMclagIntfCfgTable()) {
 
 ### MlagOrch (orchagent) — Consumer 登録
 
-`MlagOrch` は `Orch` 継承により orchagent 起動時から CONFIG_DB の `MCLAG_INTERFACE` を Consumer として購読する（`orchdaemon.cpp:536-540`）。イベントは `doTask()` → `doMlagInterfaceTask()` → `addMlagInterface()` / `delMlagInterface()` でディスパッチされる。SAI 直接呼出はなく、`SUBJECT_TYPE_MLAG_INTF_CHANGE` Observer 通知で `FdbOrch` に伝達する。
+`MlagOrch` は `Orch` 継承により orchagent 起動時から CONFIG_DB の `MCLAG_INTERFACE` を Consumer として購読する（`orchdaemon.cpp:536-540`）。イベントは `doTask()` → `doMlagInterfaceTask()` → `addMlagInterface()` / `delMlagInterface()` でディスパッチされる。[SAI](../../reference/glossary.md#term-sai) 直接呼出はなく、`SUBJECT_TYPE_MLAG_INTF_CHANGE` Observer 通知で `FdbOrch` に伝達する。
 
 ### 通信経路サマリ
 
 | 経路 | Consumer | プロトコル | 行き先 |
 |------|---------|-----------|--------|
-| CONFIG_DB → MlagOrch | orchagent Consumer (keyspace) | Redis keyspace notification | FdbOrch (Observer 通知) |
-| CONFIG_DB → mclagsyncd | SubscriberStateTable (動的登録) | Redis keyspace notification | iccpd (TCP IPC 127.0.6.1:2626) |
+| CONFIG_DB → MlagOrch | orchagent Consumer (keyspace) | [Redis](../../reference/glossary.md#term-redis) keyspace notification | FdbOrch (Observer 通知) |
+| CONFIG_DB → mclagsyncd | SubscriberStateTable (動的登録) | [Redis](../../reference/glossary.md#term-redis) keyspace notification | iccpd (TCP IPC 127.0.6.1:2626) |
 | iccpd → mclagsyncd → STATE_DB | — | TCP IPC → swss Table::set | `MCLAG_LOCAL_INTF_TABLE` / `MCLAG_REMOTE_INTF_TABLE` |
 
 ### タイムアウト / リトライ
@@ -479,7 +590,7 @@ else if (temps == (Selectable *)mclag.getMclagIntfCfgTable()) {
 
 `mclagsyncd` が iccpd から受け取ったポート隔離指示を APPL_DB に変換する `MclagLink::setPortIsolate()`（`mclaglink.cpp:190`）は、`getenv("platform")` でプラットフォーム文字列を取得し、ホワイトリストと照合して 2 つのパスに分岐する（`mclaglink.cpp:192-202`）。
 
-| プラットフォーム（`getenv("platform")` の値） | 代表 ASIC / ベンダー | 隔離メカニズム |
+| プラットフォーム（`getenv("platform")` の値） | 代表 [ASIC](../../reference/glossary.md#term-asic) / ベンダー | 隔離メカニズム |
 |---|---|---|
 | `"broadcom"` | Broadcom XGS / DNX | APPL_DB `ISOLATION_GROUP_TABLE` |
 | `"barefoot"` | Intel Tofino / Tofino2 | APPL_DB `ISOLATION_GROUP_TABLE` |
@@ -487,7 +598,7 @@ else if (temps == (Selectable *)mclag.getMclagIntfCfgTable()) {
 | `"clounix"` | Clounix | APPL_DB `ISOLATION_GROUP_TABLE` |
 | `"marvell-prestera"` | Marvell Prestera (98DX 等) | APPL_DB `ISOLATION_GROUP_TABLE` |
 | `"marvell-teralynx"` | Marvell Teralynx | APPL_DB `ISOLATION_GROUP_TABLE` |
-| それ以外（`"mellanox"` / `nullptr` 等） | Mellanox/NVIDIA, VS 等 | APPL_DB ACL (`mclag` テーブル) |
+| それ以外（`"mellanox"` / `nullptr` 等） | Mellanox/NVIDIA, VS 等 | APPL_DB [ACL](../../reference/glossary.md#term-acl) (`mclag` テーブル) |
 
 プラットフォーム文字列定数は `mclaglink.h:54-59` に直接定義される（`orchagent/orch.h` のコピー）。
 
@@ -523,15 +634,17 @@ APPL_DB:ACL_RULE_TABLE:mclag:mclag
   PACKET_ACTION = "DROP"
 ```
 
-`Ethernet` プレフィックスのポートは `OUT_PORTS` から除外される（`mclaglink.cpp:354-362`）。`op_hdr->op_len == 0` の場合は `ACL_TABLE_TABLE:mclag` を DEL する。`platform` が `nullptr`（未設定）の場合も ACL パスに落ちる。
+`Ethernet` プレフィックスのポートは `OUT_PORTS` から除外される（`mclaglink.cpp:354-362`）。`op_hdr->op_len == 0` の場合は `ACL_TABLE_TABLE:mclag` を DEL する。`platform` が `nullptr`（未設定）の場合も [ACL](../../reference/glossary.md#term-acl) パスに落ちる。
 
 ### MlagOrch は SAI 非依存・プラットフォーム差なし
 
-`orchagent/mlagorch.cpp` は SAI API を一切呼び出さない。`addMlagInterface()` / `delMlagInterface()` は内部 set (`m_mlagIntfs`) の更新と `SUBJECT_TYPE_MLAG_INTF_CHANGE` Observer 通知のみであり、プラットフォーム文字列参照も存在しない（`mlagorch.cpp:193-234`）。`FdbOrch` 側の MCLAG_INTERFACE 処理にもプラットフォーム分岐はない。
+`orchagent/mlagorch.cpp` は [SAI](../../reference/glossary.md#term-sai) API を一切呼び出さない。`addMlagInterface()` / `delMlagInterface()` は内部 set (`m_mlagIntfs`) の更新と `SUBJECT_TYPE_MLAG_INTF_CHANGE` Observer 通知のみであり、プラットフォーム文字列参照も存在しない（`mlagorch.cpp:193-234`）。`FdbOrch` 側の MCLAG_INTERFACE 処理にもプラットフォーム分岐はない。
 
 ### multi-ASIC / VoQ chassis 非対応
 
-`mlagorch.cpp` に `gMySwitchType == "voq"` 等の分岐はなく、`mclaglink.cpp` / `mclagsyncd.cpp` に `CHASSIS_APP_DB` 参照もない。MCLAG 機能は single-ASIC single-box 構成を前提とし、multi-ASIC / VoQ chassis 環境では動作保証なし。`docker-iccpd` は名前空間引数を取らず、単一の CONFIG_DB / STATE_DB / APPL_DB のみを参照する。
+`mlagorch.cpp` に `gMySwitchType == "voq"` 等の分岐はなく、`mclaglink.cpp` / `mclagsyncd.cpp` に `CHASSIS_APP_DB` 参照もない。[MCLAG](../../reference/glossary.md#term-mclag) 機能は single-[ASIC](../../reference/glossary.md#term-asic) single-box 構成を前提とし、multi-[ASIC](../../reference/glossary.md#term-asic) / VoQ chassis 環境では動作保証なし。`docker-iccpd` は名前空間引数を取らず、単一の CONFIG_DB / STATE_DB / APPL_DB のみを参照する。
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-platform.md`
 <!-- /platform -->
+
+<!-- glossary-links-injected: 21deefad295c -->

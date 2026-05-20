@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-types`, `sonic-port`, `sonic-portchannel`
 - top container: `sonic-pbh`
 
-PBH [YANG](../../reference/glossary.md#term-yang) Module for SONiC OS: hashing for NVGRE & VxLAN with IPv4/IPv6 inner 5-tuple[^1]
+PBH [YANG](../../reference/glossary.md#term-yang) Module for [SONiC](../../reference/glossary.md#term-sonic) OS: hashing for NVGRE & VxLAN with IPv4/IPv6 inner 5-tuple[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -201,4 +201,4 @@ show pbh statistics
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-pbh.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: a26ef253c175 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -40,7 +40,7 @@ related:
 
 ## 概要
 
-`StpOrch` (`orchagent/stporch.cpp`) は APPL_DB の 4 テーブルを購読し、STP デーモン (`stpd`) が書き込んだ状態・指示を SAI API に変換してデータプレーンへ反映する。
+`StpOrch` (`orchagent/stporch.cpp`) は [APPL_DB](../../reference/glossary.md#term-appl_db) の 4 テーブルを購読し、STP デーモン (`stpd`) が書き込んだ状態・指示を [SAI](../../reference/glossary.md#term-sai) API に変換してデータプレーンへ反映する。
 
 ```
 stpd (STP デーモン)
@@ -102,7 +102,7 @@ void StpOrch::doTask(Consumer &consumer)
 }
 ```
 
-起動直後はすべての STP APPL_DB エントリが保留される。PortsOrch が `PortInitDone` を受信するまで処理されない (エラーログなし)。
+起動直後はすべての STP [APPL_DB](../../reference/glossary.md#term-appl_db) エントリが保留される。PortsOrch が `PortInitDone` を受信するまで処理されない (エラーログなし)。
 
 証跡: `stporch.cpp:574-601`
 
@@ -131,7 +131,7 @@ void StpOrch::doTask(Consumer &consumer)
     `doStpTask()` の DEL 分岐 (`stporch.cpp:417-424`) では `removeVlanFromStpInstance(vlan_alias, 0)` と instance を 0 固定で呼ぶ。
     実際の削除対象インスタンスは `Port.m_stp_id` から取得されるため、引数の 0 は使用されない (関数内で無視される)。
 
-**内部 SAI 操作** (`addVlanToStpInstance()`):
+**内部 [SAI](../../reference/glossary.md#term-sai) 操作** (`addVlanToStpInstance()`):
 
 ```cpp
 // STP インスタンス作成 (未存在時)
@@ -162,7 +162,7 @@ STP インスタンス削除時 (`removeVlanFromStpInstance()`) は `SAI_VLAN_AT
 |---|---|---|---|
 | `state` | uint8_t (文字列) | 0–4 | 欠落時は `STP_STATE_INVALID(5)` として処理スキップ |
 
-**`state` フィールドの値と SAI マッピング** (`getStpSaiState()`):
+**`state` フィールドの値と [SAI](../../reference/glossary.md#term-sai) マッピング** (`getStpSaiState()`):
 
 | 値 | 定数 | SAI ポート状態 | 備考 |
 |---|---|---|---|
@@ -198,11 +198,11 @@ sai_stp_api->create_stp_port(&stp_port_id, gSwitchId, 3, attr);
 
 | フィールド | 型 | 値 | 備考 |
 |---|---|---|---|
-| `state` | string | `"true"` のみ有効 | `"true"` 以外は FDB フラッシュをトリガしない |
+| `state` | string | `"true"` のみ有効 | `"true"` 以外は [FDB](../../reference/glossary.md#term-fdb) フラッシュをトリガしない |
 
 **SET 処理** (`doStpFastageTask()`):
 
-- `state == "true"` のとき `stpVlanFdbFlush(vlan_alias)` を呼び、VLAN の FDB エントリを全フラッシュ
+- `state == "true"` のとき `stpVlanFdbFlush(vlan_alias)` を呼び、[VLAN](../../reference/glossary.md#term-vlan) の [FDB](../../reference/glossary.md#term-fdb) エントリを全フラッシュ
 - `"true"` 以外の場合はフラッシュなし (silent skip)
 
 **DEL 処理**: **no-op** (コードコメント明記):
@@ -230,11 +230,11 @@ else if (op == DEL_COMMAND)
 
 | フィールド | 型 | 値 | 備考 |
 |---|---|---|---|
-| `state` | string | `"true"` のみ有効 | `"true"` のとき対象インスタンスの全 VLAN の FDB をフラッシュ |
+| `state` | string | `"true"` のみ有効 | `"true"` のとき対象インスタンスの全 [VLAN](../../reference/glossary.md#term-vlan) の [FDB](../../reference/glossary.md#term-fdb) をフラッシュ |
 
 **SET 処理** (`doMstInstPortFlushTask()`):
 
-- `state == "true"` のとき `m_vlanAliasToStpInstanceMap[instance]` から VLAN エイリアスリストを取得
+- `state == "true"` のとき `m_vlanAliasToStpInstanceMap[instance]` から [VLAN](../../reference/glossary.md#term-vlan) エイリアスリストを取得
 - リスト内の全 VLAN に対して `stpVlanFdbFlush()` を呼ぶ (MSTP 用一括フラッシュ)
 - 対象インスタンスが `m_vlanAliasToStpInstanceMap` に存在しない場合は no-op
 
@@ -259,7 +259,7 @@ else if (op == DEL_COMMAND)
 
 取得失敗時 (`SAI_STATUS_SUCCESS` 以外) は `m_defaultStpId` と `m_maxStpInstance` が未初期化のまま警告ログのみで継続する。
 
-STATE_DB への書き込み:
+[STATE_DB](../../reference/glossary.md#term-state_db) への書き込み:
 
 ```
 STATE_DB: STP|GLOBAL.max_stp_inst = (SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1)
@@ -272,7 +272,7 @@ STATE_DB: STP|GLOBAL.max_stp_inst = (SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1)
 <!-- ordering -->
 ## 書込み順依存・タイミング依存 (Phase B)
 
-`StpOrch::doTask()` は APPL_DB の 4 テーブルを購読するが、各テーブルの処理には明確な前提条件がある。前提未成立時の挙動はテーブルごとに異なる (残置 `it++` / コンシューマ全体ブロック `return` / fail-silent) ため、運用上のトラブルシューティングで重要になる。
+`StpOrch::doTask()` は [APPL_DB](../../reference/glossary.md#term-appl_db) の 4 テーブルを購読するが、各テーブルの処理には明確な前提条件がある。前提未成立時の挙動はテーブルごとに異なる (残置 `it++` / コンシューマ全体ブロック `return` / fail-silent) ため、運用上のトラブルシューティングで重要になる。
 
 ### 1. 全テーブル共通: PortsOrch readiness ガード
 
@@ -338,7 +338,7 @@ if (found == string::npos)
 }
 ```
 
-→ 順序依存: 物理ポート / LAG の PortsOrch 登録が `STP_PORT_STATE_TABLE` の SET より先行必須。
+→ 順序依存: 物理ポート / [LAG](../../reference/glossary.md#term-lag) の PortsOrch 登録が `STP_PORT_STATE_TABLE` の SET より先行必須。
 
 ### 4. STP_PORT_STATE_TABLE — Bridge Port 自動作成
 
@@ -418,7 +418,7 @@ if (it_map != m_vlanAliasToStpInstanceMap.end())
 
 | 参照方向 | このテーブル / Orch | 相手テーブル / リソース | 条件 |
 |---------|-------------------|----------------------|------|
-| 入力 (書き手) | APPL_DB 4 テーブル | stpd → stpmgrd | 常時。stpmgrd が CONFIG_DB `STP` / `STP_VLAN` 等を購読し stpd IPC を仲介して APPL_DB を書く |
+| 入力 (書き手) | APPL_DB 4 テーブル | stpd → stpmgrd | 常時。stpmgrd が [CONFIG_DB](../../reference/glossary.md#term-config_db) `STP` / `STP_VLAN` 等を購読し stpd IPC を仲介して APPL_DB を書く |
 | 起動順序ガード | 全テーブル | `PORT` (PortsOrch::allPortsReady) | 常時。false の間は `doTask()` が即 `return` し全処理を保留 |
 | VLAN 解決 | `STP_VLAN_INSTANCE_TABLE` SET/DEL | `VLAN` (PortsOrch::getPort) | 常時。未登録 VLAN は `addVlanToStpInstance()` / `removeVlanFromStpInstance()` が false → `it++` 残置 |
 | ポート解決 | `STP_PORT_STATE_TABLE` SET/DEL | `PORT` / `LAG` (PortsOrch::getPort) | 常時。未登録ポートは `doStpPortStateTask()` が **`return`** → コンシューマ全体ブロック |
@@ -427,7 +427,7 @@ if (it_map != m_vlanAliasToStpInstanceMap.end())
 | SAI 書き込み先 | `STP_VLAN_INSTANCE_TABLE` | SAI `sai_stp_api->create_stp` / `set_vlan_attribute(SAI_VLAN_ATTR_STP_INSTANCE)` | 常時 |
 | SAI 書き込み先 | `STP_PORT_STATE_TABLE` | SAI `sai_stp_api->create_stp_port` / `set_stp_port_attribute` | 常時 |
 | SAI クエリ (起動時) | StpOrch コンストラクタ | `SAI_SWITCH_ATTR_DEFAULT_STP_INST_ID` / `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` | 起動時 1 回。失敗時は未初期化のまま動作継続 (silent failure) |
-| STATE_DB 書き込み | StpOrch (書き手) | `STATE_DB STP_TABLE\|GLOBAL.max_stp_inst` | SAI クエリ成功時 (`updateMaxStpInstance()`)。`max_stp_instances - 1` を書き込む |
+| [STATE_DB](../../reference/glossary.md#term-state_db) 書き込み | StpOrch (書き手) | `STATE_DB STP_TABLE\|GLOBAL.max_stp_inst` | SAI クエリ成功時 (`updateMaxStpInstance()`)。`max_stp_instances - 1` を書き込む |
 
 !!! note "APPL_DB 4 テーブルは StpOrch の入力のみ"
     `STP_VLAN_INSTANCE_TABLE` / `STP_PORT_STATE_TABLE` / `STP_FASTAGEING_FLUSH_TABLE` / `STP_INST_PORT_FLUSH_TABLE` への書き込みは stpd / stpmgrd が行う。StpOrch はこれらを**読み取り専用**（Consumer 経由の購読）で処理し、SAI とオプションで STATE_DB `STP_TABLE` へのみ書き込む。
@@ -479,7 +479,7 @@ if (!gPortsOrch->getPort(port_alias, port))
 
 ### コンストラクタ SAI クエリ失敗 (silent failure)
 
-`StpOrch::StpOrch()` (stporch.cpp:17-43) で `SAI_SWITCH_ATTR_DEFAULT_STP_INST_ID` / `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` の取得に失敗した場合、`SWSS_LOG_WARN` のみで `m_defaultStpId` と `m_maxStpInstance` が未初期化のまま動作を継続する。この状態では VLAN 削除時に `SAI_VLAN_ATTR_STP_INSTANCE` を誤った OID に戻す可能性がある。STATE_DB への `max_stp_inst` 書き込みも行われない。
+`StpOrch::StpOrch()` (stporch.cpp:17-43) で `SAI_SWITCH_ATTR_DEFAULT_STP_INST_ID` / `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` の取得に失敗した場合、`SWSS_LOG_WARN` のみで `m_defaultStpId` と `m_maxStpInstance` が未初期化のまま動作を継続する。この状態では VLAN 削除時に `SAI_VLAN_ATTR_STP_INSTANCE` を誤った OID に戻す可能性がある。[STATE_DB](../../reference/glossary.md#term-state_db) への `max_stp_inst` 書き込みも行われない。
 
 ### Warm Restart
 
@@ -495,7 +495,7 @@ StpOrch には専用の Warm Restart reconciliation 機構が実装されてい�
 | VLAN 未登録 (`STP_VLAN_INSTANCE_TABLE`) | PortsOrch への VLAN 登録後に自動再試行 | 自動 |
 | Bridge port 作成失敗 | 次ポーリングサイクルで自動再試行 | 自動 |
 | FASTAGEING_FLUSH / INST_PORT_FLUSH の fail-silent | フラッシュ機会を消失。stpd が再送する場合のみ回復 | stpd 依存 |
-| コンストラクタ SAI クエリ失敗 | orchagent 再起動のみ | 手動 |
+| コンストラクタ SAI クエリ失敗 | [orchagent](../../reference/glossary.md#term-orchagent) 再起動のみ | 手動 |
 
 <!-- /failure -->
 
@@ -582,7 +582,7 @@ attr.value.oid = stp_oid;
 sai_vlan_api->set_vlan_attribute(vlan_oid, &attr);
 ```
 
-これにより ASIC 上の VLAN が指定 STP インスタンスの制御下に置かれ、L2 フォワーディング挙動が変化する。
+これにより [ASIC](../../reference/glossary.md#term-asic) 上の VLAN が指定 STP インスタンスの制御下に置かれ、L2 フォワーディング挙動が変化する。
 
 #### 3. `m_vlanAliasToStpInstanceMap` 内部マップ更新
 
@@ -612,7 +612,7 @@ sai_vlan_api->set_vlan_attribute(vlan_oid, &attr);
 
 #### 7. SAI STP ポート作成 (`create_stp_port`) / 状態更新
 
-`create_stp_port` で SAI STP ポートオブジェクトを生成し (`SAI_STP_PORT_STATE_BLOCKING` 初期値)、続いて `set_stp_port_attribute(SAI_STP_PORT_ATTR_STATE)` で実際の状態に更新する。ASIC のポートフォワーディング挙動が変化する。
+`create_stp_port` で SAI STP ポートオブジェクトを生成し (`SAI_STP_PORT_STATE_BLOCKING` 初期値)、続いて `set_stp_port_attribute(SAI_STP_PORT_ATTR_STATE)` で実際の状態に更新する。[ASIC](../../reference/glossary.md#term-asic) のポートフォワーディング挙動が変化する。
 
 ### APPL_DB:STP_PORT_STATE_TABLE DEL の副作用
 
@@ -624,7 +624,7 @@ sai_vlan_api->set_vlan_attribute(vlan_oid, &attr);
 
 #### 9. FDB エントリ一括フラッシュ
 
-`state == "true"` のとき `gFdbOrch->flushFdbByVlan(vlan_alias)` を呼び、対象 VLAN の全 FDB エントリを削除する。ASIC の L2 学習テーブルがクリアされ、次のフレーム受信時に再学習が発生する。VLAN 未登録時は no-op (fail-silent)。
+`state == "true"` のとき `gFdbOrch->flushFdbByVlan(vlan_alias)` を呼び、対象 VLAN の全 FDB エントリを削除する。[ASIC](../../reference/glossary.md#term-asic) の L2 学習テーブルがクリアされ、次のフレーム受信時に再学習が発生する。VLAN 未登録時は no-op (fail-silent)。
 
 ### APPL_DB:STP_INST_PORT_FLUSH_TABLE SET の副作用
 
@@ -668,7 +668,7 @@ StpOrch が扱う通信経路は「APPL_DB の 4 テーブルを `ConsumerStateT
 
 ### APPL_DB 書き手 (stpd / stpmgrd) → StpOrch
 
-STP デーモン (`stpd`) は Unix Domain Socket 経由で `stpmgrd` (`cfgmgr/stpmgrd.cpp`) と IPC し、`stpmgrd` が APPL_DB の 4 テーブルへ書き込む。SONiC の APPL_DB 書き込み標準は `ProducerStateTable` 経由で、書き込みごとに `<TABLE>_CHANNEL@0` チャネルへ PUBLISH が発行される。
+STP デーモン (`stpd`) は Unix Domain Socket 経由で `stpmgrd` (`cfgmgr/stpmgrd.cpp`) と IPC し、`stpmgrd` が APPL_DB の 4 テーブルへ書き込む。[SONiC](../../reference/glossary.md#term-sonic) の APPL_DB 書き込み標準は `ProducerStateTable` 経由で、書き込みごとに `<TABLE>_CHANNEL@0` チャネルへ PUBLISH が発行される。
 
 `Orch::addConsumer()` (`orch.cpp:1186-1197`) は DB ID に応じて Consumer を選択する:
 
@@ -733,7 +733,7 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 | stpmgrd → APPL_DB `STP_PORT_STATE_TABLE` | `ProducerStateTable` | `STP_PORT_STATE_TABLE_CHANNEL@0` へ PUBLISH |
 | stpmgrd → APPL_DB `STP_FASTAGEING_FLUSH_TABLE` | `ProducerStateTable` | `STP_FASTAGEING_FLUSH_TABLE_CHANNEL@0` へ PUBLISH |
 | stpmgrd → APPL_DB `STP_INST_PORT_FLUSH_TABLE` | `ProducerStateTable` | `STP_INST_PORT_FLUSH_TABLE_CHANNEL@0` へ PUBLISH |
-| orchagent `StpOrch` ← APPL_DB 4 テーブル | `ConsumerStateTable` SUBSCRIBE | 上記チャンネル (最大 1000 ms 遅延) |
+| [orchagent](../../reference/glossary.md#term-orchagent) `StpOrch` ← APPL_DB 4 テーブル | `ConsumerStateTable` SUBSCRIBE | 上記チャンネル (最大 1000 ms 遅延) |
 | StpOrch → STATE_DB `STP_TABLE` | `swss::Table::set()` (HSET のみ) | PUBLISH 非発行 |
 | stpmgrd ← STATE_DB `STP_TABLE` | `swss::Table::get()` ポーリング (最大 60 秒、1 秒間隔) | PUBLISH 非購読 |
 
@@ -742,7 +742,7 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 <!-- platform -->
 ## プラットフォーム差分 (Phase H)
 
-`StpOrch` は ASIC から `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を取得する 1 か所のみにプラットフォーム依存がある。orchdaemon はプラットフォーム条件なしで `gStpOrch` を常に登録し、multi-ASIC / VOQ chassis 分岐コードは存在しない。
+`StpOrch` は ASIC から `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を取得する 1 か所のみにプラットフォーム依存がある。orchdaemon はプラットフォーム条件なしで `gStpOrch` を常に登録し、multi-ASIC / [VOQ](../../reference/glossary.md#term-voq) chassis 分岐コードは存在しない。
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-orch-platform.md -->
 
@@ -751,7 +751,7 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 | ASIC 種別 (Broadcom / Mellanox 等) | SAI 取得成否で `max_stp_instances` が変わるのみ。処理ロジックは同一 | `stporch.cpp:34-42` |
 | VS（仮想スイッチ） | SAI 取得失敗時は `m_defaultStpId` / `m_maxStpInstance` 未初期化のまま動作継続 | `stporch.cpp:42` (`ret = false` ログのみ) |
 | multi-asic (`is_multi_npu() == True`) | 非対応（分岐なし） | `stporch.cpp` 全体に `is_multi_npu` 出現なし |
-| VOQ chassis | 各 host で独立適用 | CHASSIS_APP_DB / asicN 参照なし |
+| [VOQ](../../reference/glossary.md#term-voq) chassis | 各 host で独立適用 | CHASSIS_APP_DB / asicN 参照なし |
 | warm-reboot | 対応コードなし（全プラットフォーム共通） | `stporch.cpp` に `WarmStart` 参照なし |
 | j2 テンプレート / platform_config.json | なし | `sonic-buildimage/device/` に STP orch 設定注入なし |
 
@@ -777,7 +777,6 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 
 ## 引用元
 
-
 ## 関連ページ
 
 - [CONFIG_DB: STP / STP_VLAN / STP_PORT テーブル](stp.md)
@@ -785,3 +784,5 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 - [CONFIG_DB: STP_VLAN テーブル](stp-vlan.md)
 - [CONFIG_DB: STP_PORT テーブル](stp-port.md)
 - [CONFIG_DB: VLAN](vlan.md)
+
+<!-- glossary-links-injected: 5035a8ce363b -->

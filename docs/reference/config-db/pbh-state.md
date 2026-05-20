@@ -39,7 +39,7 @@ related:
 
 ## 概要
 
-`PBH_CAPABILITIES` は STATE_DB 上に書かれる PBH (Policy Based Hashing) の**フィールド更新可否能力テーブル**[^1]。`orchagent` の `PbhCapabilities` クラスが起動時に `ASIC_VENDOR` 環境変数を参照してプラットフォームを判別し、各 PBH フィールドに対して `ADD` / `UPDATE` / `REMOVE` の組み合わせをカンマ区切り文字列で書き込む。CONFIG_DB の [`PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD`](pbh.md) テーブルとは別に、運用上のフィールド操作制約をランタイムに公開するための機構。
+`PBH_CAPABILITIES` は [STATE_DB](../../reference/glossary.md#term-state_db) 上に書かれる PBH (Policy Based Hashing) の**フィールド更新可否能力テーブル**[^1]。`orchagent` の `PbhCapabilities` クラスが起動時に `ASIC_VENDOR` 環境変数を参照してプラットフォームを判別し、各 PBH フィールドに対して `ADD` / `UPDATE` / `REMOVE` の組み合わせをカンマ区切り文字列で書き込む。[CONFIG_DB](../../reference/glossary.md#term-config_db) の [`PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD`](pbh.md) テーブルとは別に、運用上のフィールド操作制約をランタイムに公開するための機構。
 
 `sonic-utilities` の `config pbh` コマンドがこのテーブルを参照し、操作可否を事前検証する (`pbhcap.cpp:288-289`)。
 
@@ -145,11 +145,11 @@ PBH_CAPABILITIES|hash-field
 
 <!-- evidence: meta/_intermediate/cdb-flow/pbh-state-defaults.md -->
 
-STATE_DB `PBH_CAPABILITIES` に対応する YANG schema は存在しない。フィールドとその値はすべて `pbhcap.cpp` のコードレベルで定義される。
+[STATE_DB](../../reference/glossary.md#term-state_db) `PBH_CAPABILITIES` に対応する [YANG](../../reference/glossary.md#term-yang) schema は存在しない。フィールドとその値はすべて `pbhcap.cpp` のコードレベルで定義される。
 
 ### PBH_CAPABILITIES|table フィールド別デフォルト
 
-| フィールド | STATE_DB 書き込み値 | コード由来 | 備考 |
+| フィールド | [STATE_DB](../../reference/glossary.md#term-state_db) 書き込み値 | コード由来 | 備考 |
 |-----------|-------------------|----------|------|
 | `interface_list` | `"UPDATE"` | `this->table.interface_list.insert(PbhFieldCapability::UPDATE)` — `pbhcap.cpp:94` | ADD/REMOVE なし: table 自体は CREATE/DELETE できるが interface_list は後から UPDATE のみ可 |
 | `description` | `"UPDATE"` | `this->table.description.insert(PbhFieldCapability::UPDATE)` — `pbhcap.cpp:95` | 同上 |
@@ -230,10 +230,10 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 
 | 依存対象 | 種別 | 必須か | 備考 |
 |---------|------|--------|------|
-| `STATE_DB` | Redis 接続 (static member) | 必須 | `PbhCapabilities::stateDb` — `pbhcap.cpp:288` |
+| `STATE_DB` | [Redis](../../reference/glossary.md#term-redis) 接続 (static member) | 必須 | `PbhCapabilities::stateDb` — `pbhcap.cpp:288` |
 | `ASIC_VENDOR` 環境変数 | OS 環境変数 | 任意 | 未設定時 Generic へ fallback (`pbhcap.cpp:297`) |
 | `gAclOrch` / `gPortsOrch` | PbhOrch コンストラクタ引数 | PbhOrch の動作に必要 | `PbhCapabilities` 自体はこれらを参照しない |
-| CONFIG_DB PBH エントリ | CONFIG_DB | 不要 | capabilities 書き込みは CONFIG_DB 読み取りに依存しない |
+| [CONFIG_DB](../../reference/glossary.md#term-config_db) PBH エントリ | [CONFIG_DB](../../reference/glossary.md#term-config_db) | 不要 | capabilities 書き込みは CONFIG_DB 読み取りに依存しない |
 
 `PbhCapabilities` の静的メンバは orchdaemon プロセス起動の最初期に初期化されるため、他の Orch オブジェクトが生成される前から STATE_DB 接続が確立されている。
 
@@ -243,7 +243,7 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 
 ### 消費者 (sonic-utilities) の前提条件
 
-`config pbh` コマンドが `pbh_capabilities_query()` を呼ぶ時点で orchestrator が起動済みで STATE_DB に `PBH_CAPABILITIES` が存在しなければ validation が失敗する。orchagent の起動完了を待つ明示的な仕組みは CLI 側にない。
+`config pbh` コマンドが `pbh_capabilities_query()` を呼ぶ時点で orchestrator が起動済みで STATE_DB に `PBH_CAPABILITIES` が存在しなければ validation が失敗する。[orchagent](../../reference/glossary.md#term-orchagent) の起動完了を待つ明示的な仕組みは CLI 側にない。
 
 <!-- /ordering -->
 
@@ -252,7 +252,7 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 
 <!-- evidence: meta/_intermediate/cdb-flow/pbh-state-cross-refs.md -->
 
-`PBH_CAPABILITIES` は `PbhCapabilities::writePbhVendorCapabilitiesToDb()` が起動時 1 回のみ書き込む STATE_DB テーブルである。書き込まれるフィールド値はすべてコンストラクタ内でハードコードされており、CONFIG_DB / APPL_DB / SAI への実行時参照はない。
+`PBH_CAPABILITIES` は `PbhCapabilities::writePbhVendorCapabilitiesToDb()` が起動時 1 回のみ書き込む STATE_DB テーブルである。書き込まれるフィールド値はすべてコンストラクタ内でハードコードされており、CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [SAI](../../reference/glossary.md#term-sai) への実行時参照はない。
 
 ### 書き込み側の参照先
 
@@ -261,7 +261,7 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 | `STATE_DB` 接続 (`PbhCapabilities::stateDb`) | 書き込み先 DB | 必須。static メンバとして orchdaemon 起動の最初期に確立される | `pbhcap.cpp:288` |
 | `ASIC_VENDOR` 環境変数 | env var 読み取り → ベンダー分岐 | 任意。未設定時は `GENERIC` platform へ fallback。値は `"mellanox"` のみ分岐 | `pbhcap.cpp:314–329` |
 | CONFIG_DB `PBH_TABLE` / `PBH_RULE` / `PBH_HASH` / `PBH_HASH_FIELD` | **参照なし** | フィールド値はコンストラクタ内のハードコード定数のみ。CONFIG_DB エントリは読まない | `pbhcap.cpp:107–124` |
-| APPL_DB / SAI | **参照なし** | SAI クエリなし。ベンダー判別は env var のみ | `pbhcap.cpp:310–334` |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) / [SAI](../../reference/glossary.md#term-sai) | **参照なし** | [SAI](../../reference/glossary.md#term-sai) クエリなし。ベンダー判別は env var のみ | `pbhcap.cpp:310–334` |
 
 ### 読み取り側 (sonic-utilities) の参照先
 
@@ -294,14 +294,14 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 | `ASIC_VENDOR` 環境変数が未設定 | `parsePbhAsicVendor()` L314–317 | `WARN` 出力後 `asicVendor = GENERIC` に silent fallback。STATE_DB には Generic 向け値が書かれる | `SWSS_LOG_WARN("Failed to parse ASIC vendor: fallback to %s platform")` | `pbhcap.cpp:295–298` |
 | `ASIC_VENDOR` が `"mellanox"` 以外の未知ベンダー文字列 | `parsePbhAsicVendor()` L323–329 | `"mellanox"` の else ブランチで `GENERIC` 扱い。unknown ベンダーは Generic として動作 | なし（分岐なし） | `pbhcap.cpp:323–329` |
 | `initPbhVendorCapabilities()` で `fieldCap` が `nullptr`（将来 unknown vendor 追加時） | `initPbhVendorCapabilities()` L356–359 | `SWSS_LOG_ERROR` 出力後 `return`。`this->table` 等が `nullptr` のまま → `writePbhVendorCapabilitiesToDb()` 内で `nullptr` deref = `PBH_CAPABILITIES` が STATE_DB に**書かれない** | `SWSS_LOG_ERROR("Failed to initialize PBH capabilities: unknown ASIC vendor")` | `pbhcap.cpp:356–359` |
-| `Table::set()` (Redis `HSET`) が失敗（Redis ACL 等） | `writePbhEntityCapabilitiesToDb()` L381 / L405 / L420 / L437 | 戻り値 void のため silent drop。`SWSS_LOG_NOTICE` はエントリ書き込み後に出力されるが、失敗は未検出 | なし | `pbhcap.cpp:381,405,420,437` |
-| `STATE_DB` (static `DBConnector`, timeout=0) 接続失敗 | static member 初期化時 | `swsscommon` 内部で例外発生 → orchagent プロセスが起動失敗 (crash)。systemd により自動再起動 | スタックトレース (未捕捉) | `pbhcap.cpp:288–289` |
+| `Table::set()` ([Redis](../../reference/glossary.md#term-redis) `HSET`) が失敗（[Redis](../../reference/glossary.md#term-redis) [ACL](../../reference/glossary.md#term-acl) 等） | `writePbhEntityCapabilitiesToDb()` L381 / L405 / L420 / L437 | 戻り値 void のため silent drop。`SWSS_LOG_NOTICE` はエントリ書き込み後に出力されるが、失敗は未検出 | なし | `pbhcap.cpp:381,405,420,437` |
+| `STATE_DB` (static `DBConnector`, timeout=0) 接続失敗 | static member 初期化時 | `swsscommon` 内部で例外発生 → [orchagent](../../reference/glossary.md#term-orchagent) プロセスが起動失敗 (crash)。systemd により自動再起動 | スタックトレース (未捕捉) | `pbhcap.cpp:288–289` |
 
 ### 消費側 (`config pbh`) の失敗経路
 
 | 失敗条件 | 検出箇所 | 結果 | evidence |
 |---|---|---|---|
-| orchagent 未起動 / `PBH_CAPABILITIES` キー欠如 | `pbh_capabilities_query()` | 空 dict を返す → 各 `config pbh` サブコマンドが「操作拒否」エラーを出力 | `pbh.py:670–679, 781, 1090, 1351` |
+| [orchagent](../../reference/glossary.md#term-orchagent) 未起動 / `PBH_CAPABILITIES` キー欠如 | `pbh_capabilities_query()` | 空 dict を返す → 各 `config pbh` サブコマンドが「操作拒否」エラーを出力 | `pbh.py:670–679, 781, 1090, 1351` |
 | `PBH_CAPABILITIES\|<subkey>` に対象フィールドが存在しない | `pbh_capabilities_query()` | `hgetall` 結果に該当フィールドなし → 空文字列として扱われ「capability 不明 = 操作拒否」と判定 | `pbh.py:670–679` |
 
 ### 補足
@@ -314,7 +314,7 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`PBH_CAPABILITIES` テーブルに関係するハードコード定数の一覧。YANG スキーマは存在せず、テーブル名・フィールド名・値の文字列はすべて C++ `#define` および Python 変数としてコードに埋め込まれている。詳細スキャンノート: [`meta/_intermediate/cdb-flow/pbh-state-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/pbh-state-constants.md)。
+`PBH_CAPABILITIES` テーブルに関係するハードコード定数の一覧。[YANG](../../reference/glossary.md#term-yang) スキーマは存在せず、テーブル名・フィールド名・値の文字列はすべて C++ `#define` および Python 変数としてコードに埋め込まれている。詳細スキャンノート: [`meta/_intermediate/cdb-flow/pbh-state-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/pbh-state-constants.md)。
 
 ### STATE_DB 接続パラメータ
 
@@ -386,9 +386,9 @@ orchdaemon.cpp:565  gPbhOrch   = new PbhOrch(connectorList, gAclOrch, gPortsOrch
 ### スコープ外（書き込まない DB）
 
 - **CONFIG_DB**: `PbhCapabilities` は設定変更を行わない。設定の正本は CONFIG_DB `PBH_TABLE` / `PBH_RULE` 等であり、capability テーブルはそれらを読まない。
-- **APPL_DB**: PBH エントリの APPL_DB 書き込みは `PbhOrch` が管理する別経路。`PbhCapabilities` は APPL_DB に触れない。
-- **COUNTERS_DB / FLEX_COUNTER_DB**: flow_counter 関連書込は `PbhOrch → AclOrch` 経路 (`pbhcap.cpp:499` — `createCounter=false` がデフォルト)。`PbhCapabilities` は counter 管理に関与しない。
-- **ASIC_DB**: SAI API 呼び出しなし。syncd 経由の間接書込も発生しない (`pbhcap.cpp:371–451` 全域)。
+- **[APPL_DB](../../reference/glossary.md#term-appl_db)**: PBH エントリの APPL_DB 書き込みは `PbhOrch` が管理する別経路。`PbhCapabilities` は APPL_DB に触れない。
+- **[COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)**: flow_counter 関連書込は `PbhOrch → AclOrch` 経路 (`pbhcap.cpp:499` — `createCounter=false` がデフォルト)。`PbhCapabilities` は counter 管理に関与しない。
+- **[ASIC_DB](../../reference/glossary.md#term-asic_db)**: SAI API 呼び出しなし。[syncd](../../reference/glossary.md#term-syncd) 経由の間接書込も発生しない (`pbhcap.cpp:371–451` 全域)。
 
 !!! note "読み取り副作用"
     `sonic-utilities` の `config pbh` コマンドが STATE_DB `PBH_CAPABILITIES` を `hgetall` で読み取るが、
@@ -422,9 +422,9 @@ Table PbhCapabilities::capTable(&stateDb, STATE_PBH_CAPABILITIES_TABLE_NAME);
 | コンポーネント | 方式 | API | タイミング |
 |--------------|------|-----|---------|
 | `PbhCapabilities` (orchagent) | STATE_DB 書き込み専用 | `Table::set()` — チャネル PUBLISH なし | orchagent 起動時 1 回のみ |
-| `config pbh *` (sonic-utilities) | スナップショット読み取り | `db.get_all()` → Redis `HGETALL` | `config pbh` サブコマンド実行時のみ |
+| `config pbh *` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)) | スナップショット読み取り | `db.get_all()` → Redis `HGETALL` | `config pbh` サブコマンド実行時のみ |
 
-`PBH_CAPABILITIES` を `SubscriberStateTable` / `ConsumerStateTable` / `ConfigDBConnector.subscribe()` で継続購読するプロセスは sonic-swss / sonic-utilities のいずれにも存在しない。継続的な pub/sub 経路はない。
+`PBH_CAPABILITIES` を `SubscriberStateTable` / `ConsumerStateTable` / `ConfigDBConnector.subscribe()` で継続購読するプロセスは [sonic-swss](../../reference/glossary.md#term-sonic-swss) / [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) のいずれにも存在しない。継続的な pub/sub 経路はない。
 
 <!-- /pubsub -->
 
@@ -476,3 +476,5 @@ sonic-db-cli STATE_DB hgetall 'PBH_CAPABILITIES|hash-field'
 ## 引用元
 
 [^1]: `sonic-swss/orchagent/pbh/pbhcap.cpp` — `PbhCapabilities` コンストラクタ・`writePbhVendorCapabilitiesToDb()` (L288-321). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/pbh/pbhcap.cpp>
+
+<!-- glossary-links-injected: 32f949792f33 -->

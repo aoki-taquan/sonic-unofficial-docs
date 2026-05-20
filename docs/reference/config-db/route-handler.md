@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-`fpmsyncd` の `RouteSync` クラスは FRR (zebra) から [FPM](../../reference/glossary.md#term-fpm) プロトコル経由で受け取った netlink メッセージを解析し、[APPL_DB](../../reference/glossary.md#term-appl_db) の `ROUTE_TABLE` へ書き込む[^1]。
+`fpmsyncd` の `RouteSync` クラスは [FRR](../../reference/glossary.md#term-frr) ([zebra](../../reference/glossary.md#term-zebra)) から [FPM](../../reference/glossary.md#term-fpm) プロトコル経由で受け取った netlink メッセージを解析し、[APPL_DB](../../reference/glossary.md#term-appl_db) の `ROUTE_TABLE` へ書き込む[^1]。
 
 メッセージの種類（アドレスファミリ、netlink メッセージタイプ、encap タイプ）に応じて複数のハンドラに分岐し、各ハンドラがフィールドを構築する。本ページはその分岐ロジックとフィールドの**コード由来デフォルト**を詳解する。
 
@@ -130,7 +130,7 @@ if (blackhole != string("false")) {
 }
 ```
 
-`RTN_UNICAST` ではフィールド自体が APPL_DB に**存在しない**。`RTN_BLACKHOLE` の netlink を受け取った場合のみ `"true"` が書き込まれる (`routesync.cpp` L2173-2178):
+`RTN_UNICAST` ではフィールド自体が [APPL_DB](../../reference/glossary.md#term-appl_db) に**存在しない**。`RTN_BLACKHOLE` の netlink を受け取った場合のみ `"true"` が書き込まれる (`routesync.cpp` L2173-2178):
 
 ```cpp
 case RTN_BLACKHOLE:
@@ -140,14 +140,14 @@ case RTN_BLACKHOLE:
     return;
 ```
 
-**orchagent 消費** (`routeorch.cpp` L765-766)[^3]:
+**[orchagent](../../reference/glossary.md#term-orchagent) 消費** (`routeorch.cpp` L765-766)[^3]:
 
 ```cpp
 if (fvField(i) == "blackhole")
     blackhole = fvValue(i) == "true";
 ```
 
-フィールド不在 → `blackhole = false` として処理。最終的に `NextHopGroupKey::getSize() == 0` のとき blackhole として SAI へ渡される (`routeorch.cpp` L2063-2067)。
+フィールド不在 → `blackhole = false` として処理。最終的に `NextHopGroupKey::getSize() == 0` のとき blackhole として [SAI](../../reference/glossary.md#term-sai) へ渡される (`routeorch.cpp` L2063-2067)。
 
 ---
 
@@ -169,7 +169,7 @@ static string getProtocolString(int proto)
 
 **non-ZMQ emit 条件** (`routesync.cpp` L1019-1021): `protocol != ""` のとき emit。空文字列になる経路は存在しないため、常に emit される。
 
-**orchagent 消費**: フィールド不在または空文字列のとき `ctx.protocol = ""` のまま。
+**[orchagent](../../reference/glossary.md#term-orchagent) 消費**: フィールド不在または空文字列のとき `ctx.protocol = ""` のまま。
 
 ---
 
@@ -186,7 +186,7 @@ if (weight == 0)
 }
 ```
 
-kernel は ECMP weight を **0-based** で格納する（iproute2 v5.19.0 参照）。FRR が weight を指定しない場合は kernel weight=0 → fpmsyncd が 1 に変換して APPL_DB に書き込む。
+kernel は [ECMP](../../reference/glossary.md#term-ecmp) weight を **0-based** で格納する（iproute2 v5.19.0 参照）。[FRR](../../reference/glossary.md#term-frr) が weight を指定しない場合は kernel weight=0 → [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が 1 に変換して [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込む。
 
 kernel NHG (nexthop group) path でも同様に +1 補正 (`routesync.cpp` L2361, L2523-2524):
 
@@ -217,7 +217,7 @@ string nexthops = nhg.nexthop.empty()
 
 ### `nexthop_group` と `nexthop`/`ifname` の相互排他
 
-orchagent が両フィールドを同時に検出した場合はエラー棄却 (`routeorch.cpp` L810-814)[^3]:
+[orchagent](../../reference/glossary.md#term-orchagent) が両フィールドを同時に検出した場合はエラー棄却 (`routeorch.cpp` L810-814)[^3]:
 
 ```cpp
 if (!nhg_index.empty() && (!ips.empty() || !aliases.empty()))
@@ -228,7 +228,7 @@ if (!nhg_index.empty() && (!ips.empty() || !aliases.empty()))
 }
 ```
 
-fpmsyncd 側ではこの競合は発生しない（kernel NHG が存在するか否かで排他的に設定）が、外部ツールが直接 APPL_DB を書く場合に注意が必要。
+[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) 側ではこの競合は発生しない（kernel NHG が存在するか否かで排他的に設定）が、外部ツールが直接 APPL_DB を書く場合に注意が必要。
 
 ---
 
@@ -243,7 +243,7 @@ if (fvField(i) == "vni_label" && fvValue(i) != "") {
 }
 ```
 
-`vni_label` フィールドが存在するだけで EVPN overlay nexthop パスに切り替わる。EVPN Type-5 経路 (`onEvpnRouteMsg()`) 専用。
+`vni_label` フィールドが存在するだけで [EVPN](../../reference/glossary.md#term-evpn) overlay nexthop パスに切り替わる。[EVPN](../../reference/glossary.md#term-evpn) Type-5 経路 (`onEvpnRouteMsg()`) 専用。
 
 ---
 
@@ -268,7 +268,7 @@ if(nbZmqEnabled) {
 
 | 条件 | 動作 | 箇所 |
 |------|------|------|
-| VRF 名が `mgmt` で始まる | SWSS_LOG_INFO してスキップ (return) | `onRouteMsg()` L2125-2136 |
+| [VRF](../../reference/glossary.md#term-vrf) 名が `mgmt` で始まる | SWSS_LOG_INFO してスキップ (return) | `onRouteMsg()` L2125-2136 |
 | nexthop インターフェースが `eth0` 単体 | DEL 送信後 return | `onRouteMsg()` L2250-2257 |
 | nexthop インターフェースが `docker0` 単体 | DEL 送信後 return | `onRouteMsg()` L2250-2257 |
 | nexthop インターフェースが `eth1-midplane` 単体 | DEL 送信後 return | `onRouteMsg()` L2250-2257 |
@@ -283,16 +283,16 @@ if(nbZmqEnabled) {
 
 | 先行コンポーネント | 理由 | 違反時の挙動 |
 |---|---|---|
-| FRR (`zebra`) FPM クライアント接続 | `fpmsyncd` は `FpmLink.accept()` でブロックし、FPM 接続が確立するまでメッセージを受信しない | 接続待機のまま APPL_DB への書き込みなし (`fpmsyncd.cpp:139-143`) |
-| netlink RTNLGRP_LINK イベント (インタフェース作成) | `onMsg()` が `RTM_NEWLINK` 受信時に `nl_cache_refill()` を実行して link cache を更新する。link cache が空だと `rtnl_link_get()` が NULL を返し、VRF/VNET 経路の master デバイス名判定が機能しない | master=NULL → `onRouteMsg()` にフォールバック (VRF/VNET 分岐が発動しない) (`routesync.cpp:2076-2103`) |
-| VNET インタフェース (名前 `Vnet*`) の作成 | `onMsg()` の master デバイス名が `Vnet` で始まる場合のみ `onVnetRouteMsg()` → `VNET_ROUTE_TABLE` へ書き込まれる | master 未確立の場合は通常の ROUTE_TABLE に書き込まれる恐れ |
+| [FRR](../../reference/glossary.md#term-frr) (`zebra`) [FPM](../../reference/glossary.md#term-fpm) クライアント接続 | `fpmsyncd` は `FpmLink.accept()` でブロックし、[FPM](../../reference/glossary.md#term-fpm) 接続が確立するまでメッセージを受信しない | 接続待機のまま APPL_DB への書き込みなし (`fpmsyncd.cpp:139-143`) |
+| netlink RTNLGRP_LINK イベント (インタフェース作成) | `onMsg()` が `RTM_NEWLINK` 受信時に `nl_cache_refill()` を実行して link cache を更新する。link cache が空だと `rtnl_link_get()` が NULL を返し、[VRF](../../reference/glossary.md#term-vrf)/[VNET](../../reference/glossary.md#term-vnet) 経路の master デバイス名判定が機能しない | master=NULL → `onRouteMsg()` にフォールバック ([VRF](../../reference/glossary.md#term-vrf)/[VNET](../../reference/glossary.md#term-vnet) 分岐が発動しない) (`routesync.cpp:2076-2103`) |
+| [VNET](../../reference/glossary.md#term-vnet) インタフェース (名前 `Vnet*`) の作成 | `onMsg()` の master デバイス名が `Vnet` で始まる場合のみ `onVnetRouteMsg()` → `VNET_ROUTE_TABLE` へ書き込まれる | master 未確立の場合は通常の [ROUTE_TABLE](../../reference/glossary.md#term-route_table) に書き込まれる恐れ |
 | VRF インタフェース (名前 `Vrf*`) の作成 | VRF スコープ経路 (`<vrf_name>:<prefix>`) は VRF インタフェースが存在してはじめて FRR から通知される | VRF 未作成時は FRR からも経路が来ない |
 
 ### CONFIG_DB 設定の先行必須
 
-| CONFIG_DB エントリ | 読取タイミング | 反映タイミング |
+| [CONFIG_DB](../../reference/glossary.md#term-config_db) エントリ | 読取タイミング | 反映タイミング |
 |---|---|---|
-| `DEVICE_METADATA\|localhost suppress-fib-pending` | fpmsyncd **起動時に 1 回のみ** 読む | 変更後は fpmsyncd を再起動しないと有効にならない (`fpmsyncd.cpp:112-121`) |
+| `DEVICE_METADATA\|localhost suppress-fib-pending` | [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) **起動時に 1 回のみ** 読む | 変更後は fpmsyncd を再起動しないと有効にならない (`fpmsyncd.cpp:112-121`) |
 
 ### warm-restart 時の書込み順
 
@@ -344,16 +344,16 @@ evidence: `fpmsyncd/routesync.cpp:172-200`; `fpmsyncd/fpmsyncd.cpp:148-220`
 
 | テーブル / チャネル | DB | 参照タイミング | フィールド | evidence |
 |---|---|---|---|---|
-| `DEVICE_METADATA\|localhost` | CONFIG_DB | **起動時 1 回のみ** | `suppress-fib-pending` | `fpmsyncd.cpp:113` |
-| `BGP_STATE_TABLE\|IPv4\|eoiu` | STATE_DB | warm-restart 中のポーリング | `state` | `fpmsyncd.cpp:58` |
-| `BGP_STATE_TABLE\|IPv6\|eoiu` | STATE_DB | warm-restart 中のポーリング | `state` | `fpmsyncd.cpp:64` |
+| `DEVICE_METADATA\|localhost` | [CONFIG_DB](../../reference/glossary.md#term-config_db) | **起動時 1 回のみ** | `suppress-fib-pending` | `fpmsyncd.cpp:113` |
+| `BGP_STATE_TABLE\|IPv4\|eoiu` | [STATE_DB](../../reference/glossary.md#term-state_db) | warm-restart 中のポーリング | `state` | `fpmsyncd.cpp:58` |
+| `BGP_STATE_TABLE\|IPv6\|eoiu` | [STATE_DB](../../reference/glossary.md#term-state_db) | warm-restart 中のポーリング | `state` | `fpmsyncd.cpp:64` |
 | `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` | APPL_STATE_DB | suppress-fib-pending 有効時のみ | `err_str`, `protocol` | `fpmsyncd.cpp:307-317` |
 
-**`suppress-fib-pending` の注意点**: 起動後に CONFIG_DB の値を変更しても fpmsyncd を再起動するまで有効にならない。`SubscriberStateTable` が変更イベントを受信するパスは `fpmsyncd.cpp:278` にあるが、suppress モードの動的切り替えは実装上サポートされていない[^1]。
+**`suppress-fib-pending` の注意点**: 起動後に [CONFIG_DB](../../reference/glossary.md#term-config_db) の値を変更しても fpmsyncd を再起動するまで有効にならない。`SubscriberStateTable` が変更イベントを受信するパスは `fpmsyncd.cpp:278` にあるが、suppress モードの動的切り替えは実装上サポートされていない[^1]。
 
 **EOIU ポーリングは warm-restart 時のみ**: 通常起動では `bgpStateTable` は参照されない。warm-restart が有効な場合、`eoiuCheckTimer`（デフォルト 1 秒周期）で `eoiuFlagsSet()` を呼び出し、IPv4/IPv6 両方の state が `"reached"` になるまで reconciliation を遅延する[^1]。
 
-**RESPONSE_CHANNEL**: orchagent が SAI プログラミング結果を `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 経由で通知し、RouteSync が `err_str=SWSS_RC_SUCCESS` を確認して FRR へ `RTM_F_OFFLOAD` フラグ付き netlink 応答を送信する。suppress-fib-pending が無効（デフォルト）の場合、このチャネルは使用されない[^1]。
+**RESPONSE_CHANNEL**: orchagent が [SAI](../../reference/glossary.md#term-sai) プログラミング結果を `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 経由で通知し、RouteSync が `err_str=SWSS_RC_SUCCESS` を確認して FRR へ `RTM_F_OFFLOAD` フラグ付き netlink 応答を送信する。suppress-fib-pending が無効（デフォルト）の場合、このチャネルは使用されない[^1]。
 
 ### 出力テーブル（RouteSync が書き込む APPL_DB テーブル）
 
@@ -363,14 +363,14 @@ evidence: `fpmsyncd/routesync.cpp:172-200`; `fpmsyncd/fpmsyncd.cpp:148-220`
 | `NEXTHOP_GROUP_TABLE` | `APP_NEXTHOP_GROUP_TABLE_NAME` | `onNextHopMsg()` |
 | `LABEL_ROUTE_TABLE` | `APP_LABEL_ROUTE_TABLE_NAME` | `onLabelRouteMsg()` |
 | `VNET_ROUTE_TABLE` | `APP_VNET_RT_TABLE_NAME` | `onVnetRouteMsg()` (通常 VNET 経路) |
-| `VNET_ROUTE_TUNNEL_TABLE` | `APP_VNET_RT_TUNNEL_TABLE_NAME` | `onVnetRouteMsg()` (VXLAN tunnel 経路) |
+| `VNET_ROUTE_TUNNEL_TABLE` | `APP_VNET_RT_TUNNEL_TABLE_NAME` | `onVnetRouteMsg()` ([VXLAN](../../reference/glossary.md#term-vxlan) tunnel 経路) |
 | `SRV6_MY_SID_TABLE` | `APP_SRV6_MY_SID_TABLE_NAME` | `onSrv6MySidMsg()` |
 | `SRV6_SID_LIST_TABLE` | `APP_SRV6_SID_LIST_TABLE_NAME` | `onSrv6RouteMsg()` 内 SID list 登録 |
 | `PIC_CONTEXT_TABLE` | `APP_PIC_CONTEXT_TABLE_NAME` | `onPicContextMsg()` |
 
 `ROUTE_TABLE` が主要出力であり、8 つのハンドラのうち 4 つがこのテーブルに書き込む。残りの 7 テーブルは専用ハンドラが 1 対 1 で担当する。
 
-Evidence: `routesync.cpp:156-164` (ProducerStateTable 初期化); `fpmsyncd.cpp:78-118` (suppress-fib-pending 読取・チャネル設定); 詳細スキャン手順は `meta/_intermediate/cdb-flow/route-handler-cross-refs.md` を参照。
+Evidence: `routesync.cpp:156-164` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 初期化); `fpmsyncd.cpp:78-118` (suppress-fib-pending 読取・チャネル設定); 詳細スキャン手順は `meta/_intermediate/cdb-flow/route-handler-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
 <!-- failure -->
@@ -435,7 +435,7 @@ case RTN_PROHIBIT:
 }
 ```
 
-`onLabelRouteMsg()` 内でのみ発生 (`routesync.cpp:878`)。MPLS 経路での blackhole は未サポート。通常の IPv4/IPv6 経路 (`onRouteMsg()`) では RTN_BLACKHOLE は正常処理 (`blackhole="true"` を書き込む) される点に注意。
+`onLabelRouteMsg()` 内でのみ発生 (`routesync.cpp:878`)。[MPLS](../../reference/glossary.md#term-mpls) 経路での blackhole は未サポート。通常の IPv4/IPv6 経路 (`onRouteMsg()`) では RTN_BLACKHOLE は正常処理 (`blackhole="true"` を書き込む) される点に注意。
 
 ### suppress-fib-pending — offload 応答送信失敗
 
@@ -443,7 +443,7 @@ suppress-fib-pending 有効時、RouteSync は orchagent から RESPONSE_CHANNEL
 
 | 条件 | ログ | 挙動 |
 |---|---|---|
-| FPM インタフェース未接続 (`!m_fpmInterface`) | `SWSS_LOG_ERROR "Cannot send offload reply to zebra: FPM is disconnected"` | `false` 返却。FRR は offload 確認不可のまま経路を保持。BGP 広告は継続するためデータプレーン未書込みの経路が広告される恐れ (`routesync.cpp:3119`) |
+| FPM インタフェース未接続 (`!m_fpmInterface`) | `SWSS_LOG_ERROR "Cannot send offload reply to zebra: FPM is disconnected"` | `false` 返却。FRR は offload 確認不可のまま経路を保持。[BGP](../../reference/glossary.md#term-bgp) 広告は継続するためデータプレーン未書込みの経路が広告される恐れ (`routesync.cpp:3119`) |
 | `m_fpmInterface->send()` 失敗 | `SWSS_LOG_ERROR "Failed to send reply to zebra"` | 同上。FPM 再接続・warm-restart で解消 (`routesync.cpp:3126`) |
 
 ### 失敗挙動サマリ
@@ -455,7 +455,7 @@ suppress-fib-pending 有効時、RouteSync は orchagent から RESPONSE_CHANNEL
 | VRF 名形式不正 | ERROR | 書込みなし | なし |
 | 管理 VRF 経路 | INFO | 書込みなし (意図的) | N/A |
 | kernel NHG 未登録 | ERROR | 書込みなし | FRR 再送 or FPM 再接続 |
-| MPLS RTN_BLACKHOLE | ERROR | 書込みなし | なし (未サポート) |
+| [MPLS](../../reference/glossary.md#term-mpls) RTN_BLACKHOLE | ERROR | 書込みなし | なし (未サポート) |
 | NHG count 超過 | ERROR | 超過分を切り捨てて書込み | 超過分は永続的に欠落 |
 | offload 応答送信失敗 | ERROR | APPL_DB には影響なし | FPM 再接続・warm-restart |
 <!-- /failure -->
@@ -463,7 +463,7 @@ suppress-fib-pending 有効時、RouteSync は orchagent から RESPONSE_CHANNEL
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`fpmsyncd/routesync.cpp` および `fpmsyncd/fpmsyncd.cpp` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+`fpmsyncd/routesync.cpp` および `fpmsyncd/fpmsyncd.cpp` に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 
 ### 経路処理上限
 
@@ -478,8 +478,8 @@ suppress-fib-pending 有効時、RouteSync は orchagent から RESPONSE_CHANNEL
 
 | 定数 | 値 | 用途 | ソース |
 |------|----|------|--------|
-| `NH_ENCAP_VXLAN` | `100` | VXLAN encap タイプ番号。`getEncapType()` で使用 | `routesync.cpp` L48 |
-| `NH_ENCAP_SRV6_ROUTE` | `101` | SRv6 ステアリングルート encap タイプ番号。`onMsgRaw()` のスイッチ分岐に使用 | `routesync.cpp` L50 |
+| `NH_ENCAP_VXLAN` | `100` | [VXLAN](../../reference/glossary.md#term-vxlan) encap タイプ番号。`getEncapType()` で使用 | `routesync.cpp` L48 |
+| `NH_ENCAP_SRV6_ROUTE` | `101` | [SRv6](../../reference/glossary.md#term-srv6) ステアリングルート encap タイプ番号。`onMsgRaw()` のスイッチ分岐に使用 | `routesync.cpp` L50 |
 | `VXLAN_VNI` | `0` | `tb_encap` 配列内 VNI 属性のインデックス | `routesync.cpp` L46 |
 
 ### インタフェース名プレフィクス
@@ -489,14 +489,14 @@ suppress-fib-pending 有効時、RouteSync は orchagent から RESPONSE_CHANNEL
 | `VNET_PREFIX` | `"Vnet"` | master デバイス名がこのプレフィクスで始まる場合 `onVnetRouteMsg()` に分岐 | `routesync.cpp` L25 |
 | `VRF_PREFIX` | `"Vrf"` | master デバイス名がこのプレフィクスで始まる場合 VRF スコープ経路として `onRouteMsg()` に渡す | `routesync.cpp` L26 |
 | `MGMT_VRF_PREFIX` | `"mgmt"` | VRF 名がこのプレフィクスで始まる場合 `onRouteMsg()` 内でスキップ（管理 VRF 除外） | `routesync.cpp` L27 |
-| `VXLAN_IF_NAME_PREFIX` | `"Brvxlan"` | VXLAN ブリッジインタフェース名プレフィクス | `routesync.cpp` L24 |
+| `VXLAN_IF_NAME_PREFIX` | `"Brvxlan"` | [VXLAN](../../reference/glossary.md#term-vxlan) ブリッジインタフェース名プレフィクス | `routesync.cpp` L24 |
 
 ### SRv6 My SID デフォルト長
 
 | 定数 | 値 | 用途 | ソース |
 |------|----|------|--------|
-| `DEFAULT_SRV6_MY_SID_BLOCK_LEN` | `"32"` | SRv6 SID のブロック長デフォルト（ビット） | `routesync.cpp` L59 |
-| `DEFAULT_SRV6_MY_SID_NODE_LEN` | `"16"` | SRv6 SID のノード長デフォルト（ビット） | `routesync.cpp` L60 |
+| `DEFAULT_SRV6_MY_SID_BLOCK_LEN` | `"32"` | [SRv6](../../reference/glossary.md#term-srv6) SID のブロック長デフォルト（ビット） | `routesync.cpp` L59 |
+| `DEFAULT_SRV6_MY_SID_NODE_LEN` | `"16"` | [SRv6](../../reference/glossary.md#term-srv6) SID のノード長デフォルト（ビット） | `routesync.cpp` L60 |
 | `DEFAULT_SRV6_MY_SID_FUNC_LEN` | `"16"` | SRv6 SID のファンクション長デフォルト（ビット） | `routesync.cpp` L61 |
 | `DEFAULT_SRV6_MY_SID_ARG_LEN` | `"0"` | SRv6 SID のアーギュメント長デフォルト（ビット） | `routesync.cpp` L62 |
 
@@ -504,7 +504,7 @@ suppress-fib-pending 有効時、RouteSync は orchagent から RESPONSE_CHANNEL
 
 | 定数 | 値 | 用途 | ソース |
 |------|----|------|--------|
-| `FLUSH_TIMEOUT` | `500` ms | Redis パイプラインのフラッシュ間隔の上限。アイドル時間がこの値を超えたら即時フラッシュ | `fpmsyncd.cpp` L25 |
+| `FLUSH_TIMEOUT` | `500` ms | [Redis](../../reference/glossary.md#term-redis) パイプラインのフラッシュ間隔の上限。アイドル時間がこの値を超えたら即時フラッシュ | `fpmsyncd.cpp` L25 |
 | `SMALL_TRAFFIC` | `500`（エントリ数目安） | フラッシュ判定における "低トラフィック" 閾値。remaining < SMALL_TRAFFIC の場合は即時フラッシュ | `fpmsyncd.cpp` L28 |
 | `DEFAULT_ROUTING_RESTART_INTERVAL` | `120` 秒 | warm-restart タイマーのデフォルト値。`DEVICE_METADATA.restart_timer` 未設定時に使用 | `fpmsyncd.cpp` L46 |
 
@@ -518,7 +518,7 @@ suppress-fib-pending 有効時、RouteSync は orchagent から RESPONSE_CHANNEL
 > **調査根拠**: `sonic-swss/fpmsyncd/routesync.cpp:156,172-189,198-206,3100-3131,3165-3269,3291-3295`; `sonic-swss/orchagent/routeorch.cpp:126-127,287-295,3185-3201` (2026-05-18)
 > 詳細証跡: `meta/_intermediate/cdb-flow/route-handler-side-effects.md`
 
-`RouteSync` がハンドラ分岐を経て `APPL_DB:ROUTE_TABLE` へ書き込む動作は、orchagent 側で複数の連鎖変更を引き起こす。また fpmsyncd 自身も zebra へのオフロード応答という外向き副作用を持つ。
+`RouteSync` がハンドラ分岐を経て `APPL_DB:ROUTE_TABLE` へ書き込む動作は、orchagent 側で複数の連鎖変更を引き起こす。また fpmsyncd 自身も [zebra](../../reference/glossary.md#term-zebra) へのオフロード応答という外向き副作用を持つ。
 
 ### 連鎖変更マップ
 
@@ -563,7 +563,7 @@ void RouteOrch::updateDefRouteState(string ip, bool add)
 
 ### 4. fpmsyncd → FPM (オフロード確認応答)
 
-`RouteSync::sendOffloadReply()` (`routesync.cpp:3100-3131`) は `RTM_NEWROUTE` に `RTM_F_OFFLOAD` フラグを付加して zebra へ FPM メッセージを送り返す。これにより zebra は経路が ASIC にオフロードされたことを認識する。
+`RouteSync::sendOffloadReply()` (`routesync.cpp:3100-3131`) は `RTM_NEWROUTE` に `RTM_F_OFFLOAD` フラグを付加して [zebra](../../reference/glossary.md#term-zebra) へ FPM メッセージを送り返す。これにより zebra は経路が [ASIC](../../reference/glossary.md#term-asic) にオフロードされたことを認識する。
 
 route suppression (`isSuppressionEnabled()`) が有効な場合のみ `onRouteResponse()` がオフロード応答を生成する。無効時は `onRouteResponse()` が即 return し、オフロード応答は送出されない (`routesync.cpp:3174-3177`)。
 
@@ -597,7 +597,7 @@ warm-restart 終了時 (`onWarmStartEnd()`) には `markRoutesOffloaded()` が `
 
 | パス | Producer (fpmsyncd 側) | Consumer (orchagent 側) | 条件 |
 |-----|----------------------|------------------------|------|
-| 通常 Redis パス | `ProducerStateTable` | `ConsumerStateTable` | ZMQ 無効（デフォルト） |
+| 通常 [Redis](../../reference/glossary.md#term-redis) パス | `ProducerStateTable` | `ConsumerStateTable` | ZMQ 無効（デフォルト） |
 | ZMQ パス | `ZmqProducerStateTable` | `ZmqConsumerStateTable` | ZMQ 有効 |
 
 #### 通常 Redis パス
@@ -632,7 +632,7 @@ gRouteOrch = new RouteOrch(m_applDb, route_tables, ..., route_zmq_sever);
 
 ### 入力イベント — FPM ソケット
 
-`fpmsyncd` は FRR (`zebra`) と **FPM (Forwarding Plane Manager) プロトコル** で接続する。FPM は TCP ソケット上の netlink メッセージストリームであり、Redis の keyspace 通知や PUBLISH/SUBSCRIBE は使用しない。
+`fpmsyncd` は FRR (`zebra`) と **FPM (Forwarding Plane Manager) プロトコル** で接続する。FPM は TCP ソケット上の netlink メッセージストリームであり、[Redis](../../reference/glossary.md#term-redis) の keyspace 通知や PUBLISH/SUBSCRIBE は使用しない。
 
 ```
 FRR zebra --[FPM/netlink socket (TCP)]--> fpmsyncd FpmLink::accept()
@@ -670,7 +670,7 @@ if (suppressionEnabledStr == "enabled")
 |---------|------|--------|--------|------|
 | `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` | orchagent → fpmsyncd | `fpmsyncd` (`NotificationConsumer`) | `orchagent` (`ResponsePublisher`) | route suppression 有効時のみ |
 
-orchagent は SAI 操作完了後に `ResponsePublisher::publish()` でチャネルに通知を発行し、fpmsyncd は `onRouteResponse()` で受信して FRR zebra に RTM_F_OFFLOAD を送り返す。
+orchagent は [SAI](../../reference/glossary.md#term-sai) 操作完了後に `ResponsePublisher::publish()` でチャネルに通知を発行し、fpmsyncd は `onRouteResponse()` で受信して FRR zebra に RTM_F_OFFLOAD を送り返す。
 
 ### フィールド送信の ZMQ/Redis 差異
 
@@ -725,7 +725,7 @@ ASIC / APPL_STATE_DB ROUTE_TABLE
 
 #### Mellanox: ECMP グループ数上限の補正
 
-`RouteOrch` コンストラクタが `platform` 環境変数を参照し、`"mellanox"` が含まれる場合は SAI から取得した `m_maxNextHopGroupCount` を `DEFAULT_MAX_ECMP_GROUP_SIZE`（=32）で除算する (`routeorch.cpp` L83-87)。Mellanox ASIC は `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` として「ECMP サイズ=1 のときの最大グループ数」を返すため、実際の最大 ECMP グループ数はその 1/32 に補正される。この処理は RouteOrch の初期化時のみ実行され、経路書き込みロジック自体には影響しない。
+`RouteOrch` コンストラクタが `platform` 環境変数を参照し、`"mellanox"` が含まれる場合は SAI から取得した `m_maxNextHopGroupCount` を `DEFAULT_MAX_ECMP_GROUP_SIZE`（=32）で除算する (`routeorch.cpp` L83-87)。Mellanox [ASIC](../../reference/glossary.md#term-asic) は `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` として「[ECMP](../../reference/glossary.md#term-ecmp) サイズ=1 のときの最大グループ数」を返すため、実際の最大 [ECMP](../../reference/glossary.md#term-ecmp) グループ数はその 1/32 に補正される。この処理は RouteOrch の初期化時のみ実行され、経路書き込みロジック自体には影響しない。
 
 ```
 MLNX_PLATFORM_SUBSTRING = "mellanox"  (orchagent/orch.h L42)
@@ -734,7 +734,7 @@ DEFAULT_MAX_ECMP_GROUP_SIZE = 32       (routeorch.cpp L38)
 
 #### VOQ chassis: ECMP メンバー数を 128 に制限
 
-`gMySwitchType == "voq"` かつ SAI から取得した最大 ECMP メンバー数が 128 以上の場合、RouteOrch が `SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT` を 128 に強制設定する (`routeorch.cpp` L109-123)。fpmsyncd 側の `MAX_MULTIPATH_NUM=514` より小さいため、VOQ chassis 環境では orchagent 側の SAI 制限が実質的な ECMP メンバー数の上限になる。fpmsyncd 自体は VOQ 向けの特別処理を持たない。
+`gMySwitchType == "voq"` かつ SAI から取得した最大 ECMP メンバー数が 128 以上の場合、RouteOrch が `SAI_SWITCH_ATTR_ECMP_MEMBER_COUNT` を 128 に強制設定する (`routeorch.cpp` L109-123)。fpmsyncd 側の `MAX_MULTIPATH_NUM=514` より小さいため、[VOQ](../../reference/glossary.md#term-voq) chassis 環境では orchagent 側の SAI 制限が実質的な ECMP メンバー数の上限になる。fpmsyncd 自体は [VOQ](../../reference/glossary.md#term-voq) 向けの特別処理を持たない。
 
 ### プラットフォーム差サマリ
 
@@ -742,9 +742,9 @@ DEFAULT_MAX_ECMP_GROUP_SIZE = 32       (routeorch.cpp L38)
 |-----------------|----------|-----------------------|
 | 標準 T0/T1/T2 | 変更なし | 変更なし |
 | Mellanox | 変更なし | ECMP グループ数上限を /32 補正 (初期化時のみ) |
-| VOQ chassis | 変更なし | ECMP メンバー数を 128 に制限 (SAI 設定) |
-| SmartSwitch (NPU 側) | 変更なし | 変更なし |
-| multi-asic | 変更なし | 変更なし (各 ASIC namespace 独立) |
+| [VOQ](../../reference/glossary.md#term-voq) chassis | 変更なし | ECMP メンバー数を 128 に制限 (SAI 設定) |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([NPU](../../reference/glossary.md#term-npu) 側) | 変更なし | 変更なし |
+| multi-asic | 変更なし | 変更なし (各 [ASIC](../../reference/glossary.md#term-asic) namespace 独立) |
 
 <!-- evidence: sonic-net/sonic-swss/orchagent/routeorch.cpp:83-87L (Mellanox ECMP グループ数補正) -->
 <!-- evidence: sonic-net/sonic-swss/orchagent/routeorch.cpp:109-123L (VOQ ECMP メンバー数制限) -->
@@ -756,7 +756,7 @@ DEFAULT_MAX_ECMP_GROUP_SIZE = 32       (routeorch.cpp L38)
 
 - `nexthop_group` と `nexthop`/`ifname` を同時に持つ経路は orchagent がエラー棄却（`m_toSync` から削除）。
 - 管理 VRF (`mgmt`) 向け経路は fpmsyncd がスキップするため APPL_DB に存在しない。
-- EVPN Multipath SRv6 経路は未対応でサイレントスキップ（`onSrv6VpnRouteMsg()` 内コメント）。
+- [EVPN](../../reference/glossary.md#term-evpn) Multipath SRv6 経路は未対応でサイレントスキップ（`onSrv6VpnRouteMsg()` 内コメント）。
 - ZMQ path と non-ZMQ path でフィールドの存在パターンが異なる。orchagent は両方を正しく消費できる。
 
 ## 関連リファレンス
@@ -768,3 +768,5 @@ DEFAULT_MAX_ECMP_GROUP_SIZE = 32       (routeorch.cpp L38)
 
 [^1]: RouteSync 実装: `fpmsyncd/routesync.h` / `routesync.cpp` @ `4305596156d70e9797e8a881b3d19b46de0bce0d`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp>
 [^3]: orchagent フィールド消費: `orchagent/routeorch.cpp` @ `4305596156d70e9797e8a881b3d19b46de0bce0d`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp>
+
+<!-- glossary-links-injected: 8d379c737b84 -->

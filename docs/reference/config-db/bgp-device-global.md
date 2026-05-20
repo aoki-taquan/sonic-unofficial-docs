@@ -66,7 +66,7 @@ BGP_DEVICE_GLOBAL|CONFED
 
 ## 購読者
 
-- `bgpcfgd`: STATE / CONFED を読み出し vtysh コマンドに変換
+- `bgpcfgd`: STATE / CONFED を読み出し [vtysh](../../reference/glossary.md#term-vtysh) コマンドに変換
 - `frr-mgmt-framework` (`frr_mgmt_framework_config = true` 時)
 - TSA / W-ECMP は `bgpcfgd` の `TsaHandler` / `WcmpHandler` が直接担当
 
@@ -82,10 +82,10 @@ BGP_DEVICE_GLOBAL|CONFED
 | 条件 | 挙動 |
 |------|------|
 | `data` が None | log_err 後 return False |
-| `tsa_enabled` が `"true"`/`"false"` 以外 | log_err 後 FRR push しない（return False） |
-| `wcmp_enabled` が `"true"`/`"false"` 以外 | log_err 後 FRR push しない（return False） |
+| `tsa_enabled` が `"true"`/`"false"` 以外 | log_err 後 [FRR](../../reference/glossary.md#term-frr) push しない（return False） |
+| `wcmp_enabled` が `"true"`/`"false"` 以外 | log_err 後 [FRR](../../reference/glossary.md#term-frr) push しない（return False） |
 | chassis_tsa が `"true"` | 個別デバイスの TSA 操作をスキップ（シャーシ全体 TSA が優先） |
-| キャッシュと同一値 | `is_update_required()` が False → FRR push スキップ |
+| キャッシュと同一値 | `is_update_required()` が False → [FRR](../../reference/glossary.md#term-frr) push スキップ |
 | Jinja2 テンプレートレンダリング失敗 | log_err 後 return False、FRR 未反映 |
 | `DEVICE_METADATA.localhost.type` 未設定 | switch_role が空文字列のまま処理継続（テンプレート条件分岐依存） |
 | `idf_isolation_state` の不正値 | idf handler 側での検証に委ねる（DeviceGlobalCfgMgr では未検証） |
@@ -138,7 +138,7 @@ BGP_DEVICE_GLOBAL|CONFED
 | `tsa_enabled` が `"true"`/`"false"` 以外 | `isolate_unisolate_device()` 冒頭で `log_err` → `return False`。FRR push なし |
 | `chassis_tsa == "true"` | ローカル TSA 操作をスキップ（chassis 優先）。`log_notice` のみ |
 
-いずれも retry なし。次回 CONFIG_DB イベント到着まで状態は更新されない。
+いずれも retry なし。次回 [CONFIG_DB](../../reference/glossary.md#term-config_db) イベント到着まで状態は更新されない。
 
 ### W-ECMP — Jinja2 レンダリング失敗
 
@@ -159,11 +159,11 @@ BGP_DEVICE_GLOBAL|CONFED
 
 ### BFD capability 不在
 
-`BGP_DEVICE_GLOBAL` テーブルに BFD フィールドは存在しない。BFD capability 不在による失敗パスは本テーブルのスコープ外。
+`BGP_DEVICE_GLOBAL` テーブルに [BFD](../../reference/glossary.md#term-bfd) フィールドは存在しない。[BFD](../../reference/glossary.md#term-bfd) capability 不在による失敗パスは本テーブルのスコープ外。
 
 ### retry 機構の総括
 
-`DeviceGlobalCfgMgr` には **retry 機構が存在しない**。失敗は `log_err` 記録後に即 `return False`。再試行は CONFIG_DB の次回変更イベント到着時に自然発生する。
+`DeviceGlobalCfgMgr` には **retry 機構が存在しない**。失敗は `log_err` 記録後に即 `return False`。再試行は [CONFIG_DB](../../reference/glossary.md#term-config_db) の次回変更イベント到着時に自然発生する。
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py:61-63,146-162,186-188,244-250,256-263 -->
 <!-- /failure -->
@@ -204,19 +204,18 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`BgpGlobalStateOrch` (orchagent 直接 CFG 購読) が CONFIG_DB の `BGP_DEVICE_GLOBAL` テーブルを購読する。
+`BgpGlobalStateOrch` ([orchagent](../../reference/glossary.md#term-orchagent) 直接 CFG 購読) が CONFIG_DB の `BGP_DEVICE_GLOBAL` テーブルを購読する。
 
 `BGP_DEVICE_GLOBAL` は `BgpGlobalStateOrch` が `TableConsumer` で購読。
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (orchagent が直接 SAI を呼び出す)
+なし ([orchagent](../../reference/glossary.md#term-orchagent) が直接 [SAI](../../reference/glossary.md#term-sai) を呼び出す)
 
 ### 段階 3 — APPL→SAI
 
@@ -224,7 +223,7 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: orchagent 起動時および CONFIG_DB 変化時に即時反映。SAI call は同期的。
+**適用タイミング**: [orchagent](../../reference/glossary.md#term-orchagent) 起動時および CONFIG_DB 変化時に即時反映。[SAI](../../reference/glossary.md#term-sai) call は同期的。
 
 **副作用**: Switch-global な BGP 関連パラメータ (ECMP) の変更は全 BGP ネクストホップに影響する。
 <!-- /runtime-trace -->
@@ -243,7 +242,7 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -261,7 +260,7 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`BGP_DEVICE_GLOBAL` は **bgpcfgd 側 (`DeviceGlobalCfgMgr`)** と **orchagent 側 (`BgpGlobalStateOrch`)** の 2 つの consumer が同じ CONFIG_DB テーブルを購読する。bgpcfgd は FRR への vtysh 反映、`BgpGlobalStateOrch` は SAI / `BfdOrch` への TSA 連動を担当する。両者は独立に動作するため、書込み順により中間状態が異なる結果になる。
+`BGP_DEVICE_GLOBAL` は **[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 側 (`DeviceGlobalCfgMgr`)** と **orchagent 側 (`BgpGlobalStateOrch`)** の 2 つの consumer が同じ CONFIG_DB テーブルを購読する。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は FRR への [vtysh](../../reference/glossary.md#term-vtysh) 反映、`BgpGlobalStateOrch` は SAI / `BfdOrch` への TSA 連動を担当する。両者は独立に動作するため、書込み順により中間状態が異なる結果になる。
 
 ### 検出された順序依存
 
@@ -271,13 +270,13 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 | 2 | `BgpGlobalStateOrch` インスタンス化 → `BfdOrch` インスタンス化 | **先行必須**（`gDirectory.set(bgp_global_state_orch)` を `BfdOrch` 構築前に実行） | orchdaemon 静的順序で保証（`orchdaemon.cpp:239-244`） |
 | 3 | `BgpGlobalStateOrch::doTask` での TSA 変更 → `BfdOrch::handleTsaStateChange` | 即時連鎖（同一 doTask 内で `gDirectory.get<BfdOrch*>()` 経由 dispatch） | `bfd_orch` が `nullptr` の場合スキップ（緩い fallback） |
 | 4 | `CHASSIS_APP_DB\|BGP_DEVICE_GLOBAL\|STATE.tsa_enabled` → 個別デバイス `tsa_enabled` の TSA 適用 | **先行優先**（chassis_tsa=true 時は個別 TSA 操作スキップ） | `configure_tsa` 内で `get_chassis_tsa_status()` が毎回再評価 |
-| 5 | `BGP_DEVICE_GLOBAL\|STATE` 書き込み → `cfg_mgr.commit()` / `cfg_mgr.update()` → `isolate_unisolate_device` | TSA のみ強制 `commit + update` 先行（W-ECMP / IDF は commit せず直接 push） | TSA 適用前に bgpcfgd 内未 commit 設定が FRR へ反映される副作用あり |
+| 5 | `BGP_DEVICE_GLOBAL\|STATE` 書き込み → `cfg_mgr.commit()` / `cfg_mgr.update()` → `isolate_unisolate_device` | TSA のみ強制 `commit + update` 先行（W-ECMP / IDF は commit せず直接 push） | TSA 適用前に [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 内未 commit 設定が FRR へ反映される副作用あり |
 | 6 | `BGP_DEVICE_GLOBAL` 内フィールド処理順 (TSA → W-ECMP → IDF) | bgpcfgd `set_handler` 内で固定（`configure_tsa` → `configure_wcmp` → `configure_idf`） | 同一 set イベントでは TSA の `commit+update` が他フィールドより先に走る |
 | 7 | `BGP_DEVICE_GLOBAL` キャッシュ更新 → 次回 `is_update_required` 判定 | 同期（`directory.put` 後即反映） | キャッシュと同一値なら FRR push スキップ（冪等保証） |
 
 ### 主要な制約詳細
 
-**DEVICE_METADATA 先行必須 (依存 #1)**: `DeviceGlobalCfgMgr.__init__` は `directory.subscribe([("CONFIG_DB", DEVICE_METADATA, "localhost/type")], self.handle_type_update)` を登録するが、初期値は `self.switch_role = ""`。`downstream_isolate_unisolate()` は `switch_role and switch_role not in ["SpineRouter", "LowerSpineRouter", "UpperSpineRouter"]` の条件で IDF 適用をスキップする。`DEVICE_METADATA` 未設定時は `switch_role == ""` のため**条件 falsy → IDF 適用が進む**（スキップされない）。`DEVICE_METADATA` が後から書き込まれて `switch_role = "ToRRouter"` 等になった場合、それまで適用されていた IDF 設定は更新トリガがない限り残置される（evidence: `managers_device_global.py:23,33,51-55,260-262`）。
+**[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 先行必須 (依存 #1)**: `DeviceGlobalCfgMgr.__init__` は `directory.subscribe([("CONFIG_DB", DEVICE_METADATA, "localhost/type")], self.handle_type_update)` を登録するが、初期値は `self.switch_role = ""`。`downstream_isolate_unisolate()` は `switch_role and switch_role not in ["SpineRouter", "LowerSpineRouter", "UpperSpineRouter"]` の条件で IDF 適用をスキップする。`DEVICE_METADATA` 未設定時は `switch_role == ""` のため**条件 falsy → IDF 適用が進む**（スキップされない）。`DEVICE_METADATA` が後から書き込まれて `switch_role = "ToRRouter"` 等になった場合、それまで適用されていた IDF 設定は更新トリガがない限り残置される（evidence: `managers_device_global.py:23,33,51-55,260-262`）。
 
 **BgpGlobalStateOrch 起動順 (依存 #2, #3)**: `orchdaemon.cpp` は明示的に `BgpGlobalStateOrch` を `BfdOrch` よりも先に構築・`gDirectory.set()` する（行 239-244）。これは `BgpGlobalStateOrch::doTask` 内で `gDirectory.get<BfdOrch*>()` が成功するためにも必須だが、初期化時には逆向きの順序（`BgpGlobalStateOrch` が先）が必要。`BgpGlobalStateOrch` 自身は SAI capability query (`offload_supported`) を constructor 内で実行するため、`gSwitchId` が有効になっている必要がある（`gSwitchOrch` 構築後に走る前提）。
 
@@ -359,16 +358,16 @@ vtysh -c "show running-config bgpd" | grep -i ecmp
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco) ごとの直接分岐は無いが、`device_info.is_chassis()` / `switch_role` (`DEVICE_METADATA.localhost.type`) / `switch_type` / SAI BFD offload capability の 4 系統でテーブル処理が間接分岐する**。BGP_DEVICE_GLOBAL 自体は [SAI](../../reference/glossary.md#term-sai) を直接駆動しないが、CONFIG_DB を購読する `BgpGlobalStateOrch` がコンストラクタで SAI capability を問い合わせ、結果が `BfdOrch` の software/hw 経路選択に伝播する。
+**[ASIC](../../reference/glossary.md#term-asic) ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco) ごとの直接分岐は無いが、`device_info.is_chassis()` / `switch_role` (`DEVICE_METADATA.localhost.type`) / `switch_type` / SAI [BFD](../../reference/glossary.md#term-bfd) offload capability の 4 系統でテーブル処理が間接分岐する**。BGP_DEVICE_GLOBAL 自体は [SAI](../../reference/glossary.md#term-sai) を直接駆動しないが、CONFIG_DB を購読する `BgpGlobalStateOrch` がコンストラクタで SAI capability を問い合わせ、結果が `BfdOrch` の software/hw 経路選択に伝播する。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium / Cisco / Nephos / Centec) | 直接の if/elif は無い | `managers_device_global.py` を vendor 名で grep して 0 ヒット |
-| HwSku | 影響なし | `managers_device_global.py` / `bfdorch.cpp` に HwSku 参照 0 ヒット |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium / Cisco / Nephos / Centec) | 直接の if/elif は無い | `managers_device_global.py` を vendor 名で grep して 0 ヒット |
+| [HwSku](../../reference/glossary.md#term-hwsku) | 影響なし | `managers_device_global.py` / `bfdorch.cpp` に [HwSku](../../reference/glossary.md#term-hwsku) 参照 0 ヒット |
 | multi-asic (`is_multi_npu`) | 実質影響なし | bgpcfgd は per-namespace に独立起動。テーブル処理に namespace 別フィールドは無い |
-| `device_info.is_chassis()` 真 (VOQ / packet-based chassis) | **分岐あり** | `managers_device_global.py:241-251` で CHASSIS_APP_DB の `BGP_DEVICE_GLOBAL|STATE.tsa_enabled` を読み、シャーシ全体 TSA が個別 LC TSA を抑止 (`configure_tsa` 内 `chassis_tsa=="false"` ガード) |
+| `device_info.is_chassis()` 真 ([VOQ](../../reference/glossary.md#term-voq) / packet-based chassis) | **分岐あり** | `managers_device_global.py:241-251` で CHASSIS_APP_DB の `BGP_DEVICE_GLOBAL|STATE.tsa_enabled` を読み、シャーシ全体 TSA が個別 LC TSA を抑止 (`configure_tsa` 内 `chassis_tsa=="false"` ガード) |
 | `switch_role == 'SpineRouter' / 'LowerSpineRouter' / 'UpperSpineRouter'` | **分岐あり** | `idf_isolation_state` の FRR push が Spine 系ロールのみで実行。それ以外 (ToRRouter / LeafRouter / 空) は `downstream_isolate_unisolate()` が早期 return しテンプレート未送出 (`managers_device_global.py:260-262`) |
-| `switch_type == 'chassis-packet'` (VOQ system) | **分岐あり** | TSA route-map 整形で `_INTERNAL_` / `VOQ_` を含む name を LC 間 iBGP として `internal_route_map=1` で render し、シャーシ内セッションをスキップしない処理に切替 (`managers_device_global.py:213-225`) |
+| `switch_type == 'chassis-packet'` ([VOQ](../../reference/glossary.md#term-voq) system) | **分岐あり** | TSA route-map 整形で `_INTERNAL_` / `VOQ_` を含む name を LC 間 iBGP として `internal_route_map=1` で render し、シャーシ内セッションをスキップしない処理に切替 (`managers_device_global.py:213-225`) |
 | SAI BFD offload capability (`SAI_SWITCH_ATTR_SUPPORTED_IPV4/IPV6_BFD_SESSION_OFFLOAD_TYPE`) | **分岐あり (間接)** | `BgpGlobalStateOrch` コンストラクタ (`bfdorch.cpp:729-791`) が v4/v6 両方の offload capability を SAI に問合せ。両対応なら `bfd_offload=true` → `getSoftwareBfd()=false`、欠ければ `BfdOrch::doTask` が `m_stateSoftBfdSessionTable` 経路へ切替 (`bfdorch.cpp:116-188`) |
 | `software_bfd` feature gate (`constants.yml`) | build-time | bgpcfgd 起動時に `sys_defaults['software_bfd']['status']=='enabled'` でのみ bfd manager を起動 (`main.py:118-119`)。image build 単位で固定。`files/device/<platform>/` 別の上書き機構なし |
 | `use_software_bfd` という BGP_DEVICE_GLOBAL フィールド | **存在しない** | `bfdorch.cpp:116` の local 変数名であり CONFIG_DB のフィールドではない。YANG (`sonic-bgp-device-global.yang`) にも未定義 |
@@ -437,7 +436,7 @@ orchagent 側では `BgpGlobalStateOrch` (`bfdorch.h:58-72`) が `BGP_DEVICE_GLO
 
 ### `BGP_GLOBALS` (CONFIG_DB) — 隣接だが直接参照なし
 
-`managers_device_global.py` で `BGP_GLOBALS` を grep して 0 ヒット。`BGP_DEVICE_GLOBAL` (装置全体スコープ) と `BGP_GLOBALS` (VRF 単位) は同 `bgpcfgd` プロセス内で別マネージャが処理する設計分離。TSA route-map は `cfg_mgr.get_text()` (FRR running-config) から `neighbor <X> route-map <name> out` を逆引きするため、`BGP_GLOBALS` 由来の neighbor 設定が FRR に反映済みであることが**実行時の前提** (CONFIG_DB レベルの読み合いではない)。
+`managers_device_global.py` で `BGP_GLOBALS` を grep して 0 ヒット。`BGP_DEVICE_GLOBAL` (装置全体スコープ) と `BGP_GLOBALS` ([VRF](../../reference/glossary.md#term-vrf) 単位) は同 `bgpcfgd` プロセス内で別マネージャが処理する設計分離。TSA route-map は `cfg_mgr.get_text()` (FRR running-config) から `neighbor <X> route-map <name> out` を逆引きするため、`BGP_GLOBALS` 由来の neighbor 設定が FRR に反映済みであることが**実行時の前提** (CONFIG_DB レベルの読み合いではない)。
 
 <!-- /cross-refs -->
 
@@ -472,7 +471,7 @@ orchagent 側では `BgpGlobalStateOrch` (`bfdorch.h:58-72`) が `BGP_DEVICE_GLO
 
 | 文字列 | 用途 |
 |--------|------|
-| `"_INTERNAL_"` / `"VOQ_"` | route-map 名にこの substring を含むものは VOQ chassis 内 LC 間 iBGP として扱い、TSA isolate 時も isolate 対象に含める (`internal_route_map="1"`) |
+| `"_INTERNAL_"` / `"VOQ_"` | route-map 名にこの substring を含むものは [VOQ](../../reference/glossary.md#term-voq) chassis 内 LC 間 iBGP として扱い、TSA isolate 時も isolate 対象に含める (`internal_route_map="1"`) |
 | `"V4"` / `"V6"` | route-map 名に含めば `ip_version` / `ip_protocol` 変数として j2 に渡す |
 
 ### CHASSIS_APP_DB 参照キー (L247)
@@ -521,17 +520,17 @@ orchagent 側では `BgpGlobalStateOrch` (`bfdorch.h:58-72`) が `BGP_DEVICE_GLO
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`BGP_DEVICE_GLOBAL|STATE` / `BGP_DEVICE_GLOBAL|CONFED` への SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと SAI 呼び出しを示す。bgpcfgd 経路 (`DeviceGlobalCfgMgr` / `ChassisAppDbMgr`) は **副次 DB への直接書込みを行わず**、すべて FRR への vtysh コマンド送出 (`cfg_mgr.push`) と in-process `directory` キャッシュ更新に閉じる。副次 DB 書込みは orchagent 側 `BgpGlobalStateOrch` から `BfdOrch::handleTsaStateChange` への dispatch、および CLI スクリプト (`TSA`/`TSB`) からの直接書込みでのみ発生する。
+`BGP_DEVICE_GLOBAL|STATE` / `BGP_DEVICE_GLOBAL|CONFED` への SET/DEL が引き起こす、CONFIG_DB 以外の DB への書込みと SAI 呼び出しを示す。bgpcfgd 経路 (`DeviceGlobalCfgMgr` / `ChassisAppDbMgr`) は **副次 DB への直接書込みを行わず**、すべて FRR への [vtysh](../../reference/glossary.md#term-vtysh) コマンド送出 (`cfg_mgr.push`) と in-process `directory` キャッシュ更新に閉じる。副次 DB 書込みは orchagent 側 `BgpGlobalStateOrch` から `BfdOrch::handleTsaStateChange` への dispatch、および CLI スクリプト (`TSA`/`TSB`) からの直接書込みでのみ発生する。
 
 ### SET — `BGP_DEVICE_GLOBAL|STATE`
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|------------------|-----------------|------|
-| `m_stateBfdSessionTable.del(<peer>)` | STATE_DB / `BFD_SESSION_TABLE` | `<peer key>` | `tsa_enabled=true` への変化 かつ `bfd_session_cache` にエントリ有 (`BgpGlobalStateOrch::doTask` → `BfdOrch::handleTsaStateChange`) |
-| `m_stateBfdSessionTable.set(<peer>, fv)` | STATE_DB / `BFD_SESSION_TABLE` | `<peer key>` | `tsa_enabled=false` への変化 かつ退避セッション存在 (同上) |
+| `m_stateBfdSessionTable.del(<peer>)` | [STATE_DB](../../reference/glossary.md#term-state_db) / `BFD_SESSION_TABLE` | `<peer key>` | `tsa_enabled=true` への変化 かつ `bfd_session_cache` にエントリ有 (`BgpGlobalStateOrch::doTask` → `BfdOrch::handleTsaStateChange`) |
+| `m_stateBfdSessionTable.set(<peer>, fv)` | [STATE_DB](../../reference/glossary.md#term-state_db) / `BFD_SESSION_TABLE` | `<peer key>` | `tsa_enabled=false` への変化 かつ退避セッション存在 (同上) |
 | (`sonic-cfggen -a` 経由) CONFIG_DB `BGP_DEVICE_GLOBAL|STATE.tsa_enabled` set | CONFIG_DB / `BGP_DEVICE_GLOBAL` | `STATE` field=`tsa_enabled` | CLI `TSA` / `TSB` 実行時のみ (本テーブル自身への波及書込) |
 | `HMSET BGP_DEVICE_GLOBAL|STATE tsa_enabled <bool>` | CHASSIS_APP_DB / `BGP_DEVICE_GLOBAL` | `STATE` field=`tsa_enabled` | シャーシ supervisor 上で `TSA` / `TSB` 実行時 (各 LC の `ChassisAppDbMgr` が再購読し FRR へ伝播) |
-| `HDEL ALL_SERVICE_STATUS|tsa_tsb_service running` | STATE_DB / `ALL_SERVICE_STATUS` | `tsa_tsb_service` field=`running` | `TSA` / `TSB` スクリプト完了時 (`tsa_tsb_service` サービス管理) |
+| `HDEL ALL_SERVICE_STATUS|tsa_tsb_service running` | [STATE_DB](../../reference/glossary.md#term-state_db) / `ALL_SERVICE_STATUS` | `tsa_tsb_service` field=`running` | `TSA` / `TSB` スクリプト完了時 (`tsa_tsb_service` サービス管理) |
 
 SAI 呼び出し (`ASIC_DB` に反映):
 
@@ -559,7 +558,7 @@ SAI 呼び出し: なし (`BgpGlobalStateOrch` 側で DEL を処理しないた�
 ### 補足
 
 - `BgpGlobalStateOrch` は `tsa_enabled` フィールドのみを `doTask` で処理する。`wcmp_enabled` / `idf_isolation_state` は同 orch 内で参照されない (FRR 側完結)。
-- `BfdOrch::handleTsaStateChange` の波及は **アクティブな BFD セッションが存在する場合のみ** 観察される。`BFD_SESSION` テーブル空状態では STATE_DB / ASIC_DB への書込みは発生しない (`bfdorch.cpp:683-704` の `for (auto it : bfd_session_cache)` ループが空回り)。
+- `BfdOrch::handleTsaStateChange` の波及は **アクティブな BFD セッションが存在する場合のみ** 観察される。`BFD_SESSION` テーブル空状態では STATE_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) への書込みは発生しない (`bfdorch.cpp:683-704` の `for (auto it : bfd_session_cache)` ループが空回り)。
 - シャーシ環境では CLI `TSA`/`TSB` の CHASSIS_APP_DB 書込みが各 LC に伝播し、LC 側 `ChassisAppDbMgr.set_handler` 経由で `isolate_unisolate_device` が起動する。この LC 側経路でも副次 DB 書込みは 0 件 (FRR push のみ)。
 
 <!-- 証跡: sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py, managers_chassis_app_db.py; sonic-swss/orchagent/bfdorch.cpp:683-840,565,629; sonic-buildimage/dockers/docker-fpm-frr/base_image_files/{TSA,TSB,TS} -->
@@ -568,7 +567,7 @@ SAI 呼び出し: なし (`BgpGlobalStateOrch` 側で DEL を処理しないた�
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-`BGP_DEVICE_GLOBAL` テーブルは **`SubscriberStateTable`** を用いた Redis keyspace notification ベースの push 型購読で 2 プロセスに配信される。
+`BGP_DEVICE_GLOBAL` テーブルは **`SubscriberStateTable`** を用いた [Redis](../../reference/glossary.md#term-redis) keyspace notification ベースの push 型購読で 2 プロセスに配信される。
 
 ### bgpcfgd — Runner の SubscriberStateTable
 
@@ -578,13 +577,13 @@ subscriber = swsscommon.SubscriberStateTable(conn, table_name)
 self.selector.addSelectable(subscriber)
 ```
 
-`Runner` が `DeviceGlobalCfgMgr("CONFIG_DB", CFG_BGP_DEVICE_GLOBAL_TABLE_NAME)` の登録に基づき `SubscriberStateTable` を生成。Redis keyspace 通知をエポールで受信後 `subscriber.pop()` → `set_handler` / `del_handler` へ dispatch し、FRR vtysh push を実行する。タイムアウト間隔 10 s（`runner.py:57`）。
+`Runner` が `DeviceGlobalCfgMgr("CONFIG_DB", CFG_BGP_DEVICE_GLOBAL_TABLE_NAME)` の登録に基づき `SubscriberStateTable` を生成。[Redis](../../reference/glossary.md#term-redis) keyspace 通知をエポールで受信後 `subscriber.pop()` → `set_handler` / `del_handler` へ dispatch し、FRR vtysh push を実行する。タイムアウト間隔 10 s（`runner.py:57`）。
 
 シャーシ環境では `ChassisAppDbMgr` が同じ仕組みで **CHASSIS_APP_DB の `BGP_DEVICE_GLOBAL`** も購読する（`main.py:113`）。
 
 ### bgpcfgd — directory.subscribe (in-process)
 
-`DeviceGlobalCfgMgr.__init__` は bgpcfgd プロセス内のインメモリ directory に対して `directory.subscribe` を呼び出し、`DEVICE_METADATA.localhost.type` 変化時に `handle_type_update` でロールを更新する（`managers_device_global.py:33`）。Redis への接続は不要で Python オブジェクト内コールバックとして動作する。
+`DeviceGlobalCfgMgr.__init__` は bgpcfgd プロセス内のインメモリ directory に対して `directory.subscribe` を呼び出し、`DEVICE_METADATA.localhost.type` 変化時に `handle_type_update` でロールを更新する（`managers_device_global.py:33`）。[Redis](../../reference/glossary.md#term-redis) への接続は不要で Python オブジェクト内コールバックとして動作する。
 
 `ChassisAppDbMgr` は同様に `CONFIG_DB.BGP_DEVICE_GLOBAL.tsa_enabled` の変化を `directory.subscribe` で受信し、LC ローカル TSA とシャーシ全体 TSA の調整を行う（`managers_chassis_app_db.py:20`）。
 
@@ -612,4 +611,4 @@ addExecutor(new Consumer(
 bgpcfgd と orchagent は独立プロセスのため、同一 SET イベントに対して並列に処理が走り、完了の相対順序は保証されない。詳細根拠は `meta/_intermediate/cdb-flow/bgp-device-global-pubsub.md` を参照。
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 029bff240b1b -->
+<!-- glossary-links-injected: 8c9bb48d191c -->

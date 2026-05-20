@@ -28,7 +28,7 @@ related:
 - import: なし
 - top container: `sonic-passwh`
 
-Password hardening policy [YANG](../../reference/glossary.md#term-yang) module for SONiC OS. ローカルユーザーパスワードの複雑さ・有効期限・履歴ポリシーを定義する。[^1]
+Password hardening policy [YANG](../../reference/glossary.md#term-yang) module for [SONiC](../../reference/glossary.md#term-sonic) OS. ローカルユーザーパスワードの複雑さ・有効期限・履歴ポリシーを定義する。[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -149,4 +149,4 @@ show passw-hardening policies
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-passwh.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

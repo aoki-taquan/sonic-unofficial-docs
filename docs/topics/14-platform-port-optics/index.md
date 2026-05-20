@@ -87,7 +87,7 @@ related:
 
 # Platform / Port / Optics / PHY
 
-この章は、SONiC の「物理層に近い面」を 1 つの読み口に束ねる入口です。port、optics、FEC、auto-neg、Gearbox、MDIO、thermal、PSU、BMC、PCIe、SSD は別 [HLD](../../reference/glossary.md#term-hld) に分かれていますが、運用者から見ると「ポートが上がる／光モジュールが認識される／装置全体が健全である」という 1 本のシナリオに連なります。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) の「物理層に近い面」を 1 つの読み口に束ねる入口です。port、optics、FEC、auto-neg、Gearbox、MDIO、thermal、PSU、BMC、PCIe、SSD は別 [HLD](../../reference/glossary.md#term-hld) に分かれていますが、運用者から見ると「ポートが上がる／光モジュールが認識される／装置全体が健全である」という 1 本のシナリオに連なります。
 
 既存ページは platform / architecture / system / management の各 area に散らばっています。ここでは HLD の境界ではなく、port lifecycle と platform health monitoring の 2 軸に並べ直し、詳細は元ページへ誘導します。
 
@@ -183,4 +183,4 @@ related:
 - [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: cacbed1e1322 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

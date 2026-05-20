@@ -33,12 +33,12 @@ related:
 ## 概要
 
 [COUNTERS_DB](../../reference/glossary.md#term-counters_db) は [SAI](../../reference/glossary.md#term-sai) から定期的に収集するカウンタ値を格納する揮発性 DB（DB index 2）。
-PortChannel/[LAG](../../reference/glossary.md#term-lag) に関係するカウンタは 2 種類の名前マップで管理される。
+[PortChannel](../../reference/glossary.md#term-portchannel)/[LAG](../../reference/glossary.md#term-lag) に関係するカウンタは 2 種類の名前マップで管理される。
 
-- **`COUNTERS_LAG_NAME_MAP`**: LAG 名 → SAI OID のルックアップ。`portsorch` が LAG 作成/削除時に書き込む。
-- **`COUNTERS_RIF_NAME_MAP`**: RIF 名 → SAI RIF OID のルックアップ。`intfsorch` が PORTCHANNEL_INTERFACE エントリが追加されたとき（L3 RIF 作成時）に書き込む。
+- **`COUNTERS_LAG_NAME_MAP`**: [LAG](../../reference/glossary.md#term-lag) 名 → [SAI](../../reference/glossary.md#term-sai) OID のルックアップ。`portsorch` が [LAG](../../reference/glossary.md#term-lag) 作成/削除時に書き込む。
+- **`COUNTERS_RIF_NAME_MAP`**: [RIF](../../reference/glossary.md#term-rif) 名 → [SAI](../../reference/glossary.md#term-sai) [RIF](../../reference/glossary.md#term-rif) OID のルックアップ。`intfsorch` が PORTCHANNEL_INTERFACE エントリが追加されたとき（L3 [RIF](../../reference/glossary.md#term-rif) 作成時）に書き込む。
 
-実際のカウンタ値は `COUNTERS:<oid>` テーブルに格納され、FlexCounter が定期 polling する。
+実際のカウンタ値は `COUNTERS:<oid>` テーブルに格納され、[FlexCounter](../../reference/glossary.md#term-flexcounter) が定期 polling する。
 レート値（BPS/PPS）は `rif_rates.lua` Lua プラグインが `RATES:<oid>` テーブルに書き込む。
 
 <!-- cdb-mermaid -->
@@ -85,7 +85,7 @@ COUNTERS_RIF_NAME_MAP  (hash、key = "")
 
 ### COUNTERS:\<rif\_oid\>
 
-FlexCounter が `rifStatIds` 配列（`intfsorch.cpp:49-58`）に定義された SAI 統計を収集して格納。
+[FlexCounter](../../reference/glossary.md#term-flexcounter) が `rifStatIds` 配列（`intfsorch.cpp:49-58`）に定義された SAI 統計を収集して格納。
 
 ## フィールド一覧 (COUNTERS:\<rif\_oid\>)
 
@@ -117,16 +117,16 @@ FlexCounter が `rifStatIds` 配列（`intfsorch.cpp:49-58`）に定義された
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `PORTCHANNEL`、`PORTCHANNEL_INTERFACE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORTCHANNEL`、`PORTCHANNEL_INTERFACE`
 - CLI: `show interfaces counters rif`（`intfstat` コマンドが `COUNTERS_RIF_NAME_MAP` を参照）
-- YANG: `sonic-portchannel`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-portchannel`
 
 <!-- defaults -->
 ## コード由来暗黙デフォルト (Phase A)
 
 > 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-defaults.md`
 
-COUNTERS_DB は書き込み元がコードのみであり、ユーザが直接フィールドを設定することはない。以下は orchagent / FlexCounter がどのような初期値・条件でフィールドを登録するかを示す。
+[COUNTERS_DB](../../reference/glossary.md#term-counters_db) は書き込み元がコードのみであり、ユーザが直接フィールドを設定することはない。以下は [orchagent](../../reference/glossary.md#term-orchagent) / [FlexCounter](../../reference/glossary.md#term-flexcounter) がどのような初期値・条件でフィールドを登録するかを示す。
 
 ### フィールド別ハードコードデフォルト・初期挙動
 
@@ -142,24 +142,24 @@ COUNTERS_DB は書き込み元がコードのみであり、ユーザが直接�
 
 | 条件 | 挙動 |
 |---|---|
-| L2 PortChannel (PORTCHANNEL_INTERFACE なし) | `COUNTERS_RIF_NAME_MAP` に登録されない。`intfstat` / `show interfaces counters rif` で参照不可 |
-| L3 PortChannel (PORTCHANNEL_INTERFACE あり) | `COUNTERS_RIF_NAME_MAP` に登録され、FlexCounter が RIF カウンタを収集 |
+| L2 [PortChannel](../../reference/glossary.md#term-portchannel) (PORTCHANNEL_INTERFACE なし) | `COUNTERS_RIF_NAME_MAP` に登録されない。`intfstat` / `show interfaces counters rif` で参照不可 |
+| L3 [PortChannel](../../reference/glossary.md#term-portchannel) (PORTCHANNEL_INTERFACE あり) | `COUNTERS_RIF_NAME_MAP` に登録され、FlexCounter が RIF カウンタを収集 |
 | PortChannel 削除 | `COUNTERS_LAG_NAME_MAP` から `hdel` で即時削除 |
 
 ### SNMP 経路との差異
 
-SNMP ifMIB (`sonic-snmpagent/mibs/ietf/rfc2863.py`) はPortChannel の統計を**各メンバポートの `SAI_PORT_STAT_*` を合算**して返す。これは `intfstat` が使う RIF ベース (`SAI_ROUTER_INTERFACE_STAT_*`) と異なる経路であり、値が一致しないことがある。
+[SNMP](../../reference/glossary.md#term-snmp) ifMIB (`sonic-snmpagent/mibs/ietf/rfc2863.py`) はPortChannel の統計を**各メンバポートの `SAI_PORT_STAT_*` を合算**して返す。これは `intfstat` が使う RIF ベース (`SAI_ROUTER_INTERFACE_STAT_*`) と異なる経路であり、値が一致しないことがある。
 
 | 経路 | カウンタ種別 | 対象 LAG |
 |---|---|---|
 | `intfstat` / `show interfaces counters rif` | `SAI_ROUTER_INTERFACE_STAT_*` (RIF) | L3 PortChannel のみ |
-| SNMP ifMIB | `SAI_PORT_STAT_*` の member ポート合算 | L2/L3 PortChannel |
+| [SNMP](../../reference/glossary.md#term-snmp) ifMIB | `SAI_PORT_STAT_*` の member ポート合算 | L2/L3 PortChannel |
 
 ### YANG-実装 Discrepancy
 
-COUNTERS_DB にスキーマを定義する YANG は存在しない（orchagent が動的に書き込む）。以下は実装レベルの discrepancy。
+[COUNTERS_DB](../../reference/glossary.md#term-counters_db) にスキーマを定義する [YANG](../../reference/glossary.md#term-yang) は存在しない（[orchagent](../../reference/glossary.md#term-orchagent) が動的に書き込む）。以下は実装レベルの discrepancy。
 
-- **L2 PortChannel のカウンタ空白**: `intfstat` は L2 LAG に対して "Interface missing from COUNTERS_RIF_NAME_MAP" エラーを返す。カウンタを得るには `show interfaces portchannel` または SNMP を使う必要がある。
+- **L2 PortChannel のカウンタ空白**: `intfstat` は L2 LAG に対して "Interface missing from COUNTERS_RIF_NAME_MAP" エラーを返す。カウンタを得るには `show interfaces portchannel` または [SNMP](../../reference/glossary.md#term-snmp) を使う必要がある。
 - **RATES 初期欠損**: FlexCounter 起動直後は `RX_BPS` 等が欠損しており `N/A` になる。alpha 未設定時は再起動しても `N/A` のまま。
 
 <!-- /defaults -->
@@ -245,7 +245,7 @@ FlexCounter (RIF_STAT_COUNTER_FLEX_COUNTER_GROUP)  → COUNTERS:<rif_oid>
 |---|---|
 | `PORTCHANNEL_INTERFACE` が `PORTCHANNEL` より先に設定された場合 | `intfsorch` が `getPort()` 失敗 → `it++` で retry。`PORTCHANNEL` 処理完了後の次サイクルで自動回復 |
 | PortInitDone 前に LAG 設定が届いた場合 | `allPortsReady()` = false → `doLagTask()` スキップ。PortInitDone 受信後に自動処理 |
-| ASIC_DB VID→RID 未確定時 | `m_rifsToAdd` にキューイング、タイマー周期（約 1 s）ごとに再試行 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) VID→RID 未確定時 | `m_rifsToAdd` にキューイング、タイマー周期（約 1 s）ごとに再試行 |
 
 <!-- /ordering -->
 
@@ -255,21 +255,21 @@ FlexCounter (RIF_STAT_COUNTER_FLEX_COUNTER_GROUP)  → COUNTERS:<rif_oid>
 > 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-cross-refs.md`
 
 `portsorch` / `intfsorch` が `COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` を書き込む際に
-YANG leafref として宣言されていない以下の DB / テーブルを暗黙的に参照する。
+[YANG](../../reference/glossary.md#term-yang) leafref として宣言されていない以下の DB / テーブルを暗黙的に参照する。
 
 | 参照先 | DB | 参照タイミング | YANG leafref | 実装上の必須度 | 証拠 |
 |---|---|---|---|---|---|
 | `gPortsOrch` (`m_portList` / `allPortsReady()`) | APP_DB (LAG/PORT テーブル) | `intfsorch::doTask()` 冒頭・`PORTCHANNEL_INTERFACE` SET 処理時 | なし | `allPortsReady() = false` → doTask 早期 return。LAG が `m_portList` 未登録 → `getPort()` 失敗 → retry | `intfsorch.cpp:665`, `intfsorch.cpp:905` |
-| `ASIC_DB VIDTORID` | ASIC_DB | タイマーループ内（gTraditionalFlexCounter 時のみ） | なし | VID→RID 確定前は `addRifToFlexCounter()` を呼ばない。約 1 s 周期で再試行 | `intfsorch.cpp:68,75,1627` |
+| `ASIC_DB VIDTORID` | [ASIC_DB](../../reference/glossary.md#term-asic_db) | タイマーループ内（gTraditionalFlexCounter 時のみ） | なし | VID→RID 確定前は `addRifToFlexCounter()` を呼ばない。約 1 s 周期で再試行 | `intfsorch.cpp:68,75,1627` |
 | `COUNTERS_DB COUNTERS_RIF_TYPE_MAP` | COUNTERS_DB | `addRifToFlexCounter()` 内 | なし | `COUNTERS_RIF_NAME_MAP` と同時書き込み。削除も同時 (`removeRifFromFlexCounter`) | `intfsorch.cpp:71,1535-1538,1561` |
-| `FLEX_COUNTER_DB RIF_STAT グループ` | FLEX_COUNTER_DB | `addRifToFlexCounter()` の末尾 | なし | `startFlexCounterPolling()` で `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<rif_oid>` に `RIF_COUNTER_ID_LIST` を書き込む。FlexCounter が実際の SAI 収集を担う | `intfsorch.cpp:1540-1551` |
+| `FLEX_COUNTER_DB RIF_STAT グループ` | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `addRifToFlexCounter()` の末尾 | なし | `startFlexCounterPolling()` で `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<rif_oid>` に `RIF_COUNTER_ID_LIST` を書き込む。FlexCounter が実際の SAI 収集を担う | `intfsorch.cpp:1540-1551` |
 
 ### 参照関係の解決タイミング
 
 - **gPortsOrch 依存**: `intfsorch::doTask()` 冒頭の `allPortsReady()` チェックおよび `getPort()` で即座に解決。失敗時は当該イテレーションをスキップし、次のサイクルで自動再試行。
-- **ASIC_DB VIDTORID 依存**: `gTraditionalFlexCounter = true` 環境でのみ有効。タイマー（約 1 s 間隔）ループで `hget` 成功後に `addRifToFlexCounter()` を呼び出す。VIDTORID エントリが存在しない間は `COUNTERS_RIF_NAME_MAP` に登録されない。
+- **[ASIC_DB](../../reference/glossary.md#term-asic_db) VIDTORID 依存**: `gTraditionalFlexCounter = true` 環境でのみ有効。タイマー（約 1 s 間隔）ループで `hget` 成功後に `addRifToFlexCounter()` を呼び出す。VIDTORID エントリが存在しない間は `COUNTERS_RIF_NAME_MAP` に登録されない。
 - **COUNTERS_RIF_TYPE_MAP**: `COUNTERS_RIF_NAME_MAP` と常にアトミックに同期。どちらか一方のみが残存する状態は発生しない（同一関数内で連続書き込み）。
-- **FLEX_COUNTER_DB**: COUNTERS_RIF_NAME_MAP への書き込み直後に `startFlexCounterPolling()` を呼ぶ。FLEX_COUNTER_DB エントリがない場合、FlexCounter は RIF カウンタを収集せず `COUNTERS:<rif_oid>` フィールドが存在しない。
+- **[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)**: COUNTERS_RIF_NAME_MAP への書き込み直後に `startFlexCounterPolling()` を呼ぶ。[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) エントリがない場合、FlexCounter は RIF カウンタを収集せず `COUNTERS:<rif_oid>` フィールドが存在しない。
 
 !!! note "YANG 非定義の暗黙制約"
     上記いずれの参照も `sonic-portchannel.yang` / `sonic-flex_counter.yang` に leafref として記述されていない。
@@ -301,7 +301,7 @@ YANG leafref として宣言されていない以下の DB / テーブルを暗�
 - **COUNTERS_LAG_NAME_MAP に stale OID が残存する**。
 - HW 上の LAG は存在しないが COUNTERS_DB 上のマップエントリは残り、`intfstat` / FlexCounter が無効 OID を参照し続ける。
 
-`m_port_ref_count > 0` / `m_members.size() > 0` / VLAN 残存でのガード失敗は SAI を呼ばず `return false` するため、COUNTERS_LAG_NAME_MAP は変化しない（consumer.m_toSync で retry）。
+`m_port_ref_count > 0` / `m_members.size() > 0` / [VLAN](../../reference/glossary.md#term-vlan) 残存でのガード失敗は SAI を呼ばず `return false` するため、COUNTERS_LAG_NAME_MAP は変化しない（consumer.m_toSync で retry）。
 
 ### RIF 作成失敗（`setIntf` / `intfsorch`）
 
@@ -318,7 +318,7 @@ RIF が `m_rifsToAdd` にキューイング後、タイマーループ（`intfso
 | SAI create_lag 失敗（need_retry） | 書き込まれない | — | 次サイクル自動 retry |
 | SAI create_lag 失敗（task_failed） | 書き込まれない | — | LAG 再設定（DEL→SET）が必要 |
 | SAI remove_lag 失敗（task_failed） | **stale OID 残存** | 変化なし | SAI リセット / LAG 再設定が必要 |
-| LAG メンバ/VLAN 残存での remove 試行 | 変化なし | 変化なし | 依存解消後に自動 retry |
+| LAG メンバ/[VLAN](../../reference/glossary.md#term-vlan) 残存での remove 試行 | 変化なし | 変化なし | 依存解消後に自動 retry |
 | create_router_interface 失敗 | 変化なし | 書き込まれない | INTF エントリ再設定が必要 |
 | VID→RID 未確定（gTraditionalFlexCounter） | 変化なし | 遅延（自動回復） | タイマーループが約 1 s 周期で再試行 |
 
@@ -329,14 +329,14 @@ RIF が `m_rifsToAdd` にキューイング後、タイマーループ（`intfso
 
 > 調査証跡: `meta/_intermediate/cdb-flow/counters-portchannel-ordering.md`
 
-`portsorch` / `intfsorch` が COUNTERS_DB に書き込む際に使用する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+`portsorch` / `intfsorch` が COUNTERS_DB に書き込む際に使用する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG で管理されないハードコード定数の一覧。
 
 ### FlexCounter グループパラメータ (RIF カウンタ)
 
 | 定数名 | 値 | 用途 | ソース |
 |---|---|---|---|
 | `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"RIF_STAT_COUNTER"` | FlexCounter グループ名。`FLEX_COUNTER_DB` のキーに使用 | `intfsorch.h:19` |
-| `RIF_FLEX_STAT_COUNTER_POLL_MSECS` | `"1000"` ms | RIF カウンタのポーリング間隔デフォルト値（1 秒）。CONFIG_DB `FLEX_COUNTER_TABLE|RIF` の `POLL_INTERVAL` で上書き可能 | `intfsorch.h:21` |
+| `RIF_FLEX_STAT_COUNTER_POLL_MSECS` | `"1000"` ms | RIF カウンタのポーリング間隔デフォルト値（1 秒）。[CONFIG_DB](../../reference/glossary.md#term-config_db) `FLEX_COUNTER_TABLE|RIF` の `POLL_INTERVAL` で上書き可能 | `intfsorch.h:21` |
 | `STATS_MODE_READ` | `"STATS_MODE_READ"` | カウンタ収集モード。RIF はリードオンリー（クリアなし）で固定 | `intfsorch.cpp:98`, `swss-common/schema.h:323` |
 | `RIF_COUNTER_ID_LIST` | `"RIF_COUNTER_ID_LIST"` | FlexCounter に登録する際のフィールドキー名 | `swss-common/schema.h:302` |
 
@@ -415,7 +415,7 @@ sonic-db-cli COUNTERS_DB hgetall COUNTERS_RIF_TYPE_MAP
 
 ### COUNTERS_DB RATES:\<rif_oid\>（rif_rates.lua 経由）
 
-`intfsorch` コンストラクタが `rif_rates.lua` を Redis に登録し、FlexCounter プラグインとして定期実行する。プラグインは `COUNTERS:<rif_oid>` の差分から BPS/PPS を計算して `RATES:<rif_oid>` に書き込む。
+`intfsorch` コンストラクタが `rif_rates.lua` を [Redis](../../reference/glossary.md#term-redis) に登録し、FlexCounter プラグインとして定期実行する。プラグインは `COUNTERS:<rif_oid>` の差分から BPS/PPS を計算して `RATES:<rif_oid>` に書き込む。
 
 | 前提条件 | テーブル | フィールド | 値 |
 |---|---|---|---|
@@ -444,7 +444,7 @@ sonic-db-cli COUNTERS_DB hgetall COUNTERS_RIF_TYPE_MAP
 
 `portsorch` の `m_counterLagTable` および `intfsorch` の `m_rifNameTable` / `m_rifTypeTable` はいずれも **`swsscommon::Table`** インスタンスであり、`ProducerStateTable` ではない (`portsorch.cpp:762`, `intfsorch.cpp:70-71`)。
 
-このため `COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` / `COUNTERS_RIF_TYPE_MAP` への書き込みは Redis HSET コマンドで直接実行され、**`<TABLE>_CHANNEL@2` への PUBLISH は発生しない**。
+このため `COUNTERS_LAG_NAME_MAP` / `COUNTERS_RIF_NAME_MAP` / `COUNTERS_RIF_TYPE_MAP` への書き込みは [Redis](../../reference/glossary.md#term-redis) HSET コマンドで直接実行され、**`<TABLE>_CHANNEL@2` への PUBLISH は発生しない**。
 
 ### 消費側のポーリングアクセス
 
@@ -452,9 +452,9 @@ sonic-db-cli COUNTERS_DB hgetall COUNTERS_RIF_TYPE_MAP
 
 | 消費プロセス / CLI | アクセス方式 | 参照テーブル | 用途 |
 |---|---|---|---|
-| `intfstat` (sonic-utilities) | 起動時 1 回の `HGETALL` | `COUNTERS_RIF_NAME_MAP` | RIF 名 → OID 解決 |
+| `intfstat` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)) | 起動時 1 回の `HGETALL` | `COUNTERS_RIF_NAME_MAP` | RIF 名 → OID 解決 |
 | `vnet_route_check.py` | 起動時 1 回の `swsscommon::Table` 参照 | `COUNTERS_RIF_NAME_MAP` | VNet ルート確認用 RIF OID 解決 |
-| `FlexCounter` (syncd) | `FLEX_COUNTER_DB` エントリを直接読み取り | `FLEX_COUNTER_DB RIF_STAT_COUNTER:<rif_oid>` | SAI 統計ポーリング（`COUNTERS_RIF_NAME_MAP` は参照しない） |
+| `FlexCounter` ([syncd](../../reference/glossary.md#term-syncd)) | `FLEX_COUNTER_DB` エントリを直接読み取り | `FLEX_COUNTER_DB RIF_STAT_COUNTER:<rif_oid>` | SAI 統計ポーリング（`COUNTERS_RIF_NAME_MAP` は参照しない） |
 | `snmpagent` | SNMP ポーリングごとに `COUNTERS_DB` HGET | `COUNTERS_LAG_NAME_MAP` / `COUNTERS:<oid>` | LAG OID 経由のポート統計集計 |
 
 ### FlexCounter が `COUNTERS_DB COUNTERS:<rif_oid>` を更新する仕組み
@@ -548,3 +548,5 @@ sonic-db-cli COUNTERS_DB hgetall COUNTERS_LAG_NAME_MAP
 - CONFIG_DB: [`PORTCHANNEL_INTERFACE`](./portchannel-interface.md)
 
 <!-- ref-triangle:end -->
+
+<!-- glossary-links-injected: 5f7f63b2853e -->

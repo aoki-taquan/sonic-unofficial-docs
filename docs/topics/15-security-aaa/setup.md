@@ -42,7 +42,7 @@ related:
 
 ## 認証バックエンドの選び方
 
-SONiC は local user に加えて TACACS+、RADIUS、LDAP の三つの外部バックエンドを持ちます。組み合わせは `config aaa` 系コマンドで設定し、最終的に `CONFIG_DB` の `AAA` テーブルと、各バックエンドのサーバー一覧テーブルに格納されます。
+[SONiC](../../reference/glossary.md#term-sonic) は local user に加えて TACACS+、[RADIUS](../../reference/glossary.md#term-radius)、LDAP の三つの外部バックエンドを持ちます。組み合わせは `config aaa` 系コマンドで設定し、最終的に `CONFIG_DB` の `AAA` テーブルと、各バックエンドのサーバー一覧テーブルに格納されます。
 
 | バックエンド | 用途 | 設定の入口 | サーバーリスト |
 | --- | --- | --- | --- |
@@ -245,4 +245,4 @@ CONFIG_DB:
 - YANG: [`sonic-system-aaa`](../../reference/yang/sonic-system-aaa.md)、`sonic-system-tacacs`、`sonic-system-ldap`、`sonic-ssh-server`、`sonic-system-banner`
 - 関連 HLD: [TACACS+ HLD](../../management/tacacs-authentication.md)、[RADIUS HLD](../../management/radius-management-user-authentication.md)、[LDAP HLD](../../management/hld-ldap.md)、[SSH server global config HLD](../../management/ssh-server-global-config-hld.md)、[serial console HLD](../../management/serial-console-global-config-hld.md)、[banner messages HLD](../../system/banner-messages-hld.md)
 
-<!-- glossary-links-injected: 04127c73f090 -->
+<!-- glossary-links-injected: db62d2100cef -->

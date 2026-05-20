@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-`STATE_DB` の `STP_TABLE` は、スイッチ ASIC のハードウェア STP インスタンス上限を格納する **読み取り専用** の状態テーブル。`orchagent` の `StpOrch` が SAI 属性 `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` から取得した値を書き込み、`stpmgrd` がこの値を読み取って STP インスタンス数を管理する。
+`STATE_DB` の `STP_TABLE` は、スイッチ [ASIC](../../reference/glossary.md#term-asic) のハードウェア STP インスタンス上限を格納する **読み取り専用** の状態テーブル。`orchagent` の `StpOrch` が [SAI](../../reference/glossary.md#term-sai) 属性 `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` から取得した値を書き込み、`stpmgrd` がこの値を読み取って STP インスタンス数を管理する。
 
 テーブルには `GLOBAL` キーの 1 エントリのみが存在し、フィールドは `max_stp_inst` の 1 本のみ。
 
@@ -40,7 +40,7 @@ related:
 
 | プロセス | 書き込みトリガー | ファイル |
 |---------|----------------|---------|
-| `orchagent` (`StpOrch`) | 起動時に SAI から `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` 取得成功時 | `orchagent/stporch.cpp` |
+| `orchagent` (`StpOrch`) | 起動時に [SAI](../../reference/glossary.md#term-sai) から `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` 取得成功時 | `orchagent/stporch.cpp` |
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -74,7 +74,7 @@ STP_TABLE|GLOBAL
 
 | フィールド | 書込み主体 | 型 | コード由来デフォルト | 説明 |
 |-----------|---------|-----|---------------------|------|
-| `max_stp_inst` | `orchagent/StpOrch` | uint16 (文字列) | **HW 依存** (`SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1`) | スイッチ ASIC がサポートする最大 STP インスタンス数 |
+| `max_stp_inst` | `orchagent/StpOrch` | uint16 (文字列) | **HW 依存** (`SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1`) | スイッチ [ASIC](../../reference/glossary.md#term-asic) がサポートする最大 STP インスタンス数 |
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
@@ -83,7 +83,7 @@ STP_TABLE|GLOBAL
 
 ### 1. max_stp_inst — SAI 由来 HW 能力値
 
-`StpOrch::updateMaxStpInstance()` (`stporch.cpp:603-617`) が SAI から取得した最大インスタンス数から **-1** した値を書き込む:
+`StpOrch::updateMaxStpInstance()` (`stporch.cpp:603-617`) が [SAI](../../reference/glossary.md#term-sai) から取得した最大インスタンス数から **-1** した値を書き込む:
 
 ```cpp
 bool StpOrch::updateMaxStpInstance(uint32_t max_stp_instances)
@@ -99,9 +99,9 @@ bool StpOrch::updateMaxStpInstance(uint32_t max_stp_instances)
 }
 ```
 
-| フィールド | YANG default | コード実装デフォルト | 出典 |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード実装デフォルト | 出典 |
 |-----------|-------------|---------------------|------|
-| `max_stp_inst` | なし (STATE_DB に YANG 定義なし) | HW 依存: `SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1` | `stporch.cpp:603-617` |
+| `max_stp_inst` | なし ([STATE_DB](../../reference/glossary.md#term-state_db) に [YANG](../../reference/glossary.md#term-yang) 定義なし) | HW 依存: `SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1` | `stporch.cpp:603-617` |
 
 証跡: `stporch.cpp:28-40, 603-617`
 
@@ -175,20 +175,20 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 
 `stpmgrd` は 60 秒のポーリングでエントリが見つからないまま最終的にフォールバック値 `255` を使用する。この場合エラーログは `stporch.cpp` 側にのみ出力される（`stpmgrd` 側はフォールバックへの切替のみ通知）。
 
-→ **タイミング依存**: SAI 属性取得の成否が STATE_DB への書き込み有無を決定し、stpmgrd のインスタンス上限値に影響する。
+→ **タイミング依存**: SAI 属性取得の成否が [STATE_DB](../../reference/glossary.md#term-state_db) への書き込み有無を決定し、stpmgrd のインスタンス上限値に影響する。
 
 ### 3. 書き込みは起動時の 1 回のみ
 
 `updateMaxStpInstance()` は `StpOrch` コンストラクタからのみ呼ばれ、実行中の再書き込みは行われない。`doTask()` による動的更新の仕組みは存在しない (`stporch.cpp` 全体に他の呼び出し箇所なし)。
 
-→ `STP_TABLE|GLOBAL` は orchagent 起動後に固定され、その後 CONFIG_DB の変更によって更新されることはない。
+→ `STP_TABLE|GLOBAL` は [orchagent](../../reference/glossary.md#term-orchagent) 起動後に固定され、その後 [CONFIG_DB](../../reference/glossary.md#term-config_db) の変更によって更新されることはない。
 
 ### 書込み順依存のまとめ
 
 | 依存関係 | 条件 | 不成立時の挙動 |
 |---------|------|--------------|
-| orchagent (StpOrch) 起動 → STATE_DB 書き込み | SAI 取得成功 | `STP_TABLE|GLOBAL` に `max_stp_inst` を書き込み |
-| orchagent 起動失敗 / SAI エラー | SAI 取得失敗 | STATE_DB 未書き込み、stpmgrd は 60 秒待機後フォールバック `255` を使用 |
+| [orchagent](../../reference/glossary.md#term-orchagent) (StpOrch) 起動 → [STATE_DB](../../reference/glossary.md#term-state_db) 書き込み | SAI 取得成功 | `STP_TABLE|GLOBAL` に `max_stp_inst` を書き込み |
+| [orchagent](../../reference/glossary.md#term-orchagent) 起動失敗 / SAI エラー | SAI 取得失敗 | STATE_DB 未書き込み、stpmgrd は 60 秒待機後フォールバック `255` を使用 |
 | stpmgrd の読み取りタイミング | orchagent が 60 秒以内に起動完了 | 成功: SAI 由来の実 HW 値を使用 |
 | stpmgrd の読み取りタイムアウト | orchagent が 60 秒以内に未起動 | フォールバック `255` を使用 (エラーログなし、no-op) |
 
@@ -201,14 +201,14 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 > **調査根拠**: `sonic-swss/orchagent/stporch.cpp` L17–43, L603–617、`sonic-swss/cfgmgr/stpmgrd.cpp` L68–88、`sonic-swss/cfgmgr/stpmgr.cpp` L1257–1274, L1381–1413 精読 (2026-05-19)
 > 詳細証跡: `meta/_intermediate/cdb-flow/stp-state-cross-refs.md`
 
-`STP_TABLE|GLOBAL` は他の CONFIG_DB テーブルを leafref で参照しない独立した STATE_DB エントリである。
+`STP_TABLE|GLOBAL` は他の [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルを leafref で参照しない独立した STATE_DB エントリである。
 書き込み側 (`StpOrch`) は SAI のみを入力とし、読み取り側 (`stpmgrd`) は `PORT_TABLE|PortInitDone` を先行確認してから `STP_TABLE` を参照する。
 
 | 参照先テーブル / リソース | DB | 参照タイミング | 依存方向 | evidence |
 |---|---|---|---|---|
 | SAI `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` | SAI | orchagent 起動時 1 回 | **書き側の入力**。この SAI 属性値 −1 が `max_stp_inst` として STATE_DB に書き込まれる | `stporch.cpp:30–41, 609` |
-| `PORT_TABLE\|PortInitDone` | APPL_DB | stpmgrd 起動時、`STP_TABLE` 読み取りの**前** | **読み側ガード**。`isPortInitDone()` が `PortInitDone` エントリの存在を確認するまでポーリングし、確認後に `getStpMaxInstances()` を呼ぶ | `stpmgr.cpp:1257–1273`, `stpmgrd.cpp:72` |
-| `DEVICE_METADATA\|localhost` | CONFIG_DB | stpmgrd 起動時、`STP_TABLE` 読み取りの**直後** | **読み側の後続処理**（MAC アドレス取得）。`STP_TABLE` の値には影響しない | `stpmgrd.cpp:81–88` |
+| `PORT_TABLE\|PortInitDone` | [APPL_DB](../../reference/glossary.md#term-appl_db) | stpmgrd 起動時、`STP_TABLE` 読み取りの**前** | **読み側ガード**。`isPortInitDone()` が `PortInitDone` エントリの存在を確認するまでポーリングし、確認後に `getStpMaxInstances()` を呼ぶ | `stpmgr.cpp:1257–1273`, `stpmgrd.cpp:72` |
+| `DEVICE_METADATA\|localhost` | [CONFIG_DB](../../reference/glossary.md#term-config_db) | stpmgrd 起動時、`STP_TABLE` 読み取りの**直後** | **読み側の後続処理**（MAC アドレス取得）。`STP_TABLE` の値には影響しない | `stpmgrd.cpp:81–88` |
 
 !!! note "STP_TABLE は純粋な「SAI → STATE_DB」ブリッジ"
     `StpOrch::updateMaxStpInstance()` (`stporch.cpp:603–617`) は SAI 属性値を計算して `m_stpTable->set("GLOBAL", ...)` を呼ぶだけで、他のテーブルを読み取らない。CONFIG_DB 上のどの STP 設定テーブル (`STP` / `STP_VLAN` / `STP_PORT`) の値も `max_stp_inst` の決定に関与しない。
@@ -221,7 +221,7 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
-`STP_TABLE|GLOBAL` の書込みパスは `SAI → StpOrch::updateMaxStpInstance() → swss::Table::set()` の 1 段構成であり、書込み失敗は (A) SAI 取得失敗による書込みスキップ、(B) Redis 接続失敗による例外、の 2 系統に集約される。読み取り側 `stpmgrd` は (C) 60 秒タイムアウト後のフォールバック、(D) 例外による stpmgrd プロセス終了、を持つ。
+`STP_TABLE|GLOBAL` の書込みパスは `SAI → StpOrch::updateMaxStpInstance() → swss::Table::set()` の 1 段構成であり、書込み失敗は (A) SAI 取得失敗による書込みスキップ、(B) [Redis](../../reference/glossary.md#term-redis) 接続失敗による例外、の 2 系統に集約される。読み取り側 `stpmgrd` は (C) 60 秒タイムアウト後のフォールバック、(D) 例外による stpmgrd プロセス終了、を持つ。
 
 ### A. SAI 取得失敗 → STATE_DB 書込みスキップ
 
@@ -234,7 +234,7 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 
 ### B. Redis (STATE_DB) 書込み失敗 → orchagent abort
 
-`updateMaxStpInstance()` 内の `m_stpTable->set("GLOBAL", tuples)` は `swss::Table::set()` を呼ぶ (戻り値 void)。Redis I/O エラー時は `system_error` / `runtime_error` 例外が `swss::DBConnector` から送出され、`stporch.cpp` に try/catch がないため `orchdaemon` まで伝播し orchagent プロセスが abort する。systemd による再起動で自己回復する (`stporch.cpp:603-615`)。
+`updateMaxStpInstance()` 内の `m_stpTable->set("GLOBAL", tuples)` は `swss::Table::set()` を呼ぶ (戻り値 void)。[Redis](../../reference/glossary.md#term-redis) I/O エラー時は `system_error` / `runtime_error` 例外が `swss::DBConnector` から送出され、`stporch.cpp` に try/catch がないため `orchdaemon` まで伝播し orchagent プロセスが abort する。systemd による再起動で自己回復する (`stporch.cpp:603-615`)。
 
 ### C. stpmgrd 側のタイムアウトフォールバック
 
@@ -253,7 +253,7 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 | 失敗条件 | 書込み可否 | 回復経路 | ログ |
 |---|---|---|---|
 | SAI 属性取得失敗 | 未書込み | orchagent 再起動 → 再 SAI クエリ | NOTICE "initialization failure" |
-| Redis 接続失敗 (STATE_DB) | 途中 abort | orchagent abort → systemd 再起動 | `system_error` 例外メッセージ |
+| [Redis](../../reference/glossary.md#term-redis) 接続失敗 (STATE_DB) | 途中 abort | orchagent abort → systemd 再起動 | `system_error` 例外メッセージ |
 | stpmgrd が 60 秒タイムアウト | 読取り失敗 → フォールバック 255 | なし (フォールバックで続行) | NOTICE "set default max stp instance" |
 | stpmgrd 起動中例外 | 読取り未到達 | supervisord 再起動 | ERROR "Runtime error" |
 
@@ -266,7 +266,7 @@ SAI の `get_switch_attribute()` が `SAI_STATUS_SUCCESS` 以外を返した場�
 
 <!-- evidence: sonic-swss/orchagent/stporch.h (ref: master), sonic-swss/cfgmgr/stpmgr.h (ref: master), sonic-swss/cfgmgr/stpmgr.cpp (ref: master) -->
 
-`STP_TABLE|GLOBAL` の書き込みと読み取りに関与するハードコード定数の一覧。いずれも CONFIG_DB / YANG では設定不可。
+`STP_TABLE|GLOBAL` の書き込みと読み取りに関与するハードコード定数の一覧。いずれも CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) では設定不可。
 
 | 定数 | 値 | 定義箇所 | 用途 |
 |-----|----|---------|------|
@@ -349,11 +349,11 @@ sendMsgStpd(STP_INIT_READY)   // → stpd に max_stp_instances 送信 (stpmgrd.
 
 `StpOrch` コンストラクタ (`stporch.cpp:17-43`) が起動時に SAI から `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を取得して即時 `m_stpTable->set("GLOBAL", ...)` を呼ぶ。この書き込みは起動時 1 回のみで、実行中の再書き込みはない。
 
-`StpOrch` 自体は `orchdaemon.cpp:256-262` で `Orch(m_applDb, stp_tables, ...)` として構築され、APPL_DB の以下テーブルを `ConsumerStateTable` 経由で購読する。
+`StpOrch` 自体は `orchdaemon.cpp:256-262` で `Orch(m_applDb, stp_tables, ...)` として構築され、[APPL_DB](../../reference/glossary.md#term-appl_db) の以下テーブルを `ConsumerStateTable` 経由で購読する。
 
-| APPL_DB テーブル | 用途 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) テーブル | 用途 |
 |---|---|
-| `APP_STP_VLAN_INSTANCE_TABLE_NAME` | VLAN STP インスタンス状態 |
+| `APP_STP_VLAN_INSTANCE_TABLE_NAME` | [VLAN](../../reference/glossary.md#term-vlan) STP インスタンス状態 |
 | `APP_STP_PORT_STATE_TABLE_NAME` | ポート STP 状態 |
 | `APP_STP_FASTAGEING_FLUSH_TABLE_NAME` | Fast-aging フラッシュ |
 | `APP_STP_INST_PORT_FLUSH_TABLE_NAME` | STP インスタンス・ポートフラッシュ |
@@ -383,11 +383,11 @@ STP 設定変更の受信は `stpmgrd.cpp:43-65` の `TableConnector` 群 → `O
 | CONFIG_DB テーブル | 購読クラス | 処理 |
 |---|---|---|
 | `CFG_STP_GLOBAL_TABLE_NAME` | `SubscriberStateTable` (TableConnector 経由) | グローバル STP 設定変更 |
-| `CFG_STP_VLAN_TABLE_NAME` | `SubscriberStateTable` | VLAN STP 設定変更 |
-| `CFG_STP_VLAN_PORT_TABLE_NAME` | `SubscriberStateTable` | VLAN-ポート STP 設定変更 |
+| `CFG_STP_VLAN_TABLE_NAME` | `SubscriberStateTable` | [VLAN](../../reference/glossary.md#term-vlan) STP 設定変更 |
+| `CFG_STP_VLAN_PORT_TABLE_NAME` | `SubscriberStateTable` | [VLAN](../../reference/glossary.md#term-vlan)-ポート STP 設定変更 |
 | `CFG_STP_PORT_TABLE_NAME` | `SubscriberStateTable` | ポート STP 設定変更 |
 | `STATE_VLAN_MEMBER_TABLE_NAME` | `SubscriberStateTable` | STATE_DB VLAN メンバー変化 |
-| `CFG_LAG_MEMBER_TABLE_NAME` | `SubscriberStateTable` | LAG メンバー変化 |
+| `CFG_LAG_MEMBER_TABLE_NAME` | `SubscriberStateTable` | [LAG](../../reference/glossary.md#term-lag) メンバー変化 |
 
 ### 購読者まとめ
 
@@ -407,13 +407,13 @@ STP 設定変更の受信は `stpmgrd.cpp:43-65` の `TableConnector` 群 → `O
 > **調査根拠**: `stporch.cpp` / `stpmgr.cpp` / `stpmgrd.cpp` を `platform` / `is_multi_npu` / `chassis` / `vendor` / `mellanox` / `broadcom` で grep → 全 0 ヒット (2026-05-19)
 > 詳細証跡: `meta/_intermediate/cdb-flow/stp-state-platform.md`
 
-`STP_TABLE|GLOBAL.max_stp_inst` の**値**は SAI `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` に依存するため ASIC ベンダーごとに異なるが、書き込み・読み取りの**コードパスは全プラットフォーム共通**。`stporch.cpp` に ASIC ベンダー分岐は存在しない。
+`STP_TABLE|GLOBAL.max_stp_inst` の**値**は SAI `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` に依存するため [ASIC](../../reference/glossary.md#term-asic) ベンダーごとに異なるが、書き込み・読み取りの**コードパスは全プラットフォーム共通**。`stporch.cpp` に ASIC ベンダー分岐は存在しない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
 | ASIC 種別 (Broadcom / Mellanox / Marvell 等) | `max_stp_inst` の**値**は ASIC 依存、コードパスは共通 | `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` は HW 能力値; `stporch.cpp:30-41` に vendor 分岐なし |
 | multi-asic (`is_multi_npu() == True`) | 各 asic の orchagent が独立して STATE_DB に書き込む。stpmgrd は host namespace のみ読み取り | `stporch.cpp` / `stpmgr.cpp` に `is_multi_npu` コールなし |
-| VOQ chassis (supervisor + line cards) | 各 line card stack が独立処理。cross-card 集約なし | `stporch.cpp` に chassis 分岐なし |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 line card stack が独立処理。cross-card 集約なし | `stporch.cpp` に chassis 分岐なし |
 | VS (Virtual Switch) | SAI が `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を未サポートの場合 STATE_DB 未書き込み → stpmgrd フォールバック `255` | `stpmgr.cpp:1407-1410`; VS SAI の実装依存 |
 
 <!-- /platform -->
@@ -446,3 +446,5 @@ sonic-db-cli STATE_DB hgetall 'STP_TABLE|GLOBAL'
 - [Topics: L2 / VLAN / LAG / MC-LAG](../../topics/06-l2-vlan-lag/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 8508f6316dc4 -->

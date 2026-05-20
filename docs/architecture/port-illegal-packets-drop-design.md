@@ -45,7 +45,7 @@ related:
 
 ## 概要
 
-[SNMP](../reference/glossary.md#term-snmp) の Interface MIB（RFC1213）が返すインタフェースカウンタは、もともと L2 ポート単位のカウンタのみを対象としていた。一方 SONiC は Router Interface（以下 [RIF](../reference/glossary.md#term-rif)）や [VLAN](../reference/glossary.md#term-vlan) インタフェース、[LAG](../reference/glossary.md#term-lag) などの L3 オブジェクトに対しても [SAI](../reference/glossary.md#term-sai) 経由で独立したカウンタを保持している。本 [HLD](../reference/glossary.md#term-hld) は、SNMP から見える `ifInOctets` などの値に **L3 で観測される drop / error / 通過パケットを取り込み**、運用ツールが L3 ドロップを SNMP 越しに観測できるようにするための設計を定義している。
+[SNMP](../reference/glossary.md#term-snmp) の Interface MIB（RFC1213）が返すインタフェースカウンタは、もともと L2 ポート単位のカウンタのみを対象としていた。一方 [SONiC](../reference/glossary.md#term-sonic) は Router Interface（以下 [RIF](../reference/glossary.md#term-rif)）や [VLAN](../reference/glossary.md#term-vlan) インタフェース、[LAG](../reference/glossary.md#term-lag) などの L3 オブジェクトに対しても [SAI](../reference/glossary.md#term-sai) 経由で独立したカウンタを保持している。本 [HLD](../reference/glossary.md#term-hld) は、SNMP から見える `ifInOctets` などの値に **L3 で観測される drop / error / 通過パケットを取り込み**、運用ツールが L3 ドロップを SNMP 越しに観測できるようにするための設計を定義している。
 
 主眼は次の 2 点に置かれている。
 
@@ -271,4 +271,4 @@ sudo grep -Ei 'drop|illegal' /var/log/syslog | tail -50
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->
