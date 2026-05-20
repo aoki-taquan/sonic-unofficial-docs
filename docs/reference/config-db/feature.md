@@ -374,7 +374,7 @@ disable 処理は `stop → disable → mask` の順で逐次実行され、最�
 
 ### FEATURE_EXCLUSION_LIST によるサイレントスキップ
 
-`telemetry` / `frr_bmp` は `enable_feature()` / `disable_feature()` の冒頭で即 return する（`featured:469-471, 517-519`）。CONFIG_DB の state 変更が systemd に適用されない。STATE_DB は更新される（"enabled"/"disabled" が記録されるが systemd 操作はゼロ）。
+`telemetry` / `frr_bmp` は `enable_feature()` / `disable_feature()` の冒頭で即 return する（`featured:469-471, 517-519`）。CONFIG_DB の state 変更が systemd に適用されず、STATE_DB も更新されない（`set_feature_state()` 以前に return するため `FEATURE|<name>.state` フィールドは変化しない）。
 
 ### multi-asic scope 失敗 → DB 乖離
 

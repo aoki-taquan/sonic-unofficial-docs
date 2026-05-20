@@ -137,7 +137,7 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<prefix/tag>:<priority>
 | `routing_type=direct` で `tunnel` が存在しない | retry (`task_need_retry`) — トンネル作成後に自動再試行 |
 | ルートグループが未作成の状態でルート追加 | `task_need_retry` — グループ作成後に自動再試行 |
 | ルートグループがバインド中にルート追加 / 削除 | `task_failed` + WARN ログ（バインド解除後に再試行が必要）|
-| バインド中のルートグループ削除 | `task_failed` (`SAI_STATUS_OBJECT_IN_USE` → `false` 返却） |
+| バインド中のルートグループ削除 | `task_need_retry`（`SAI_STATUS_OBJECT_IN_USE` → `false` 返却 → ENI バインド解除まで永続再試行） |
 | `priority` フィールドがキーに含まれない旧形式 | `priority=0` にフォールバック（コード内コメント明示） |
 | `pa_validation` 省略 | proto3 ゼロ値 = `false` → `SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP` |
 
