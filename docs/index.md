@@ -1,6 +1,6 @@
 ---
 title: SONiC 非公式ドキュメント
-description: "SONiC NOS (community master) を AI が日本語で再構成した非公式ドキュメント。学ぶ / 設定する / 修理する の 3 つの入り口から、894 ページの全文検索可能なリファレンスへ。"
+description: "SONiC NOS (community master) を AI が日本語で再構成した非公式ドキュメント。学ぶ / 設定する / 修理する の 3 つの入り口から、1089 ページの全文検索可能なリファレンスへ。"
 verification: meta
 hide:
   - navigation
@@ -59,7 +59,7 @@ related:
 
     ---
 
-    現場で「動かない」を解く Runbook 27 件 + 実装と HLD の乖離 74 件の一覧。
+    現場で「動かない」を解く Runbook 27 件 + 実装と HLD の乖離 115 件の一覧。
 
     [Runbook 一覧](reference/runbooks/index.md)
 
@@ -67,7 +67,7 @@ related:
 
 ## 品質指標 (round 50 時点)
 
-- 全 **894** ページ (code-verified 586 + runbook-verified 27 + discrepancy-found 74 + reference/meta)
+- 全 **1089** ページ (code-verified 737 + runbook-verified 27 + discrepancy-found 115 + reference/meta)
 - mermaid 構文エラー 0、broken link 0、frontmatter 違反 0
 - サンプリング監査 round 50: **4.972 / 5**
 - 本文 `hld-only` ページ 0 件
