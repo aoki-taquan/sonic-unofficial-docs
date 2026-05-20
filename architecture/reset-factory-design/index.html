@@ -35611,8 +35611,8 @@
 </tr>
 </tbody>
 </table>
-<p>「basic 設定」とは <code>MGMT_PORT</code>, <code>MGMT_INTERFACE</code>, <code>PASSW_HARDENING</code> 等。<code>config-setup.conf</code> の <code>KEEP_BASIC_TABLES</code> で定義する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>KEEP_BASIC_TABLES=MGMT_PORT,MGMT_INTERFACE,PASSW_HARDENING
+<p>「basic 設定」とは <code>MGMT_PORT</code>, <code>MGMT_INTERFACE</code>, <code>MGMT_VRF_CONFIG</code>, <code>PASSW_HARDENING</code> 等。<code>config-setup.conf</code> の <code>KEEP_BASIC_TABLES</code> で JSON 配列形式で定義する（実装確認値）<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>KEEP_BASIC_TABLES=&#39;[&quot;MGMT_PORT&quot;,&quot;MGMT_INTERFACE&quot;,&quot;MGMT_VRF_CONFIG&quot;,&quot;PASSW_HARDENING&quot;]&#39;
 </span></code></pre></div>
 <p>機能 PR がマージされ次第 <code>SSH_SERVER, USER_TABLE, ROLE_TABLE</code> を追加する計画<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_3">実行フロー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>

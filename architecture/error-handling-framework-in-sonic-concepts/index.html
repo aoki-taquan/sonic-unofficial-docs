@@ -35300,7 +35300,7 @@
 <h2 id="4-table">4. 対象 table<a class="headerlink" href="#4-table" title="Permanent link">&para;</a></h2>
 <p>初版で対応するのは <code>ROUTE_TABLE</code> と <code>NEIGH_TABLE</code>（BGP ユースケース駆動）<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。他 table は後付け拡張可能な設計。</p>
 <h2 id="5-error-code">5. Error code の抽象化<a class="headerlink" href="#5-error-code" title="Permanent link">&para;</a></h2>
-<p>app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで <strong>SWSS error code を定義し SAI error code にマップ</strong> する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで <strong>SWSS error code を定義し SAI error code にマップ</strong> する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。下表は <a href="../../reference/glossary/#term-hld">HLD</a> で定義された基本セット 8 種だが、実装の <code>sonic-swss-common/common/status_code_util.h L11-L25</code> enum には追加 7 種（<code>SWSS_RC_DEADLINE_EXCEEDED</code> / <code>SWSS_RC_PERMISSION_DENIED</code> / <code>SWSS_RC_INTERNAL</code> / <code>SWSS_RC_UNIMPLEMENTED</code> / <code>SWSS_RC_NOT_EXECUTED</code> / <code>SWSS_RC_FAILED_PRECONDITION</code> / <code>SWSS_RC_UNKNOWN</code>）も追加されており、合計 15 種が定義されている。詳細は limitations ページの「3. 行番号付きエビデンス」を参照。</p>
 <table>
 <thead>
 <tr>
@@ -35415,7 +35415,7 @@
 </div>
 <!-- /next-action -->
 
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 167700005048 -->
 
 <div class="footnote">
 <hr />

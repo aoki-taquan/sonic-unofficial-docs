@@ -35480,17 +35480,13 @@
   S2 --&gt; INST[SONIC_INSTALLERS]</code></pre>
 <p>Stage 1 は build artifacts に依存しないため、他のターゲットと <strong>同時に走らせられる</strong>。Stage 1 完了時の rootfs を <strong>squashfs ファイル</strong> として保存し、Stage 2 でそれを load して継続する<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="_4">実装<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>ビルドフラグ追加（<code>rules/config</code>）<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># ENABLE_RFS_SPLIT - enable 2-stage installer build</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>ENABLE_RFS_SPLIT_BUILD<span class="w"> </span>?<span class="o">=</span><span class="w"> </span>n
-</span></code></pre></div>
-<p>既定では無効。実装は 2 部に分かれる<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p>HLD では単一フラグ <code>ENABLE_RFS_SPLIT_BUILD</code> が提案されていたが、現行実装では <code>slave.mk</code> が <code>build_debian.sh</code> に <strong><code>RFS_SPLIT_FIRST_STAGE</code> / <code>RFS_SPLIT_LAST_STAGE</code></strong> の 2 フラグを <code>export</code> して Stage 分岐を制御する形に変わっている（<code>slave.mk:1439-1440, 1701-1702</code>、<code>build_debian.sh:63, 605, 622</code>）。</p>
+<p>実装は 2 部に分かれる<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ol>
-<li><strong><code>slave.mk</code></strong>: RFS squashfs 用の新ターゲット生成と依存関係処理</li>
+<li><strong><code>slave.mk</code></strong>: RFS squashfs 用の新ターゲット生成と依存関係処理。各 Stage 起動時に <code>RFS_SPLIT_FIRST_STAGE=y</code> または <code>RFS_SPLIT_LAST_STAGE=y</code> を <code>export</code> する</li>
 <li><strong><code>build_debian.sh</code></strong>: 2 段実行サポート</li>
-<li><code>ENABLE_RFS_SPLIT_BUILD</code> が有効か判定</li>
-<li>Stage 1 では完了時点で rootfs を squashfs に保存して exit</li>
-<li>Stage 2 では squashfs を load してから後半ステップを実行</li>
+<li><code>RFS_SPLIT_FIRST_STAGE</code> が <code>y</code> のとき完了時点で rootfs を squashfs に保存して exit</li>
+<li><code>RFS_SPLIT_LAST_STAGE</code> が <code>y</code> のとき squashfs を load してから後半ステップを実行</li>
 </ol>
 <!-- evidence:
 source: sonic-net/SONiC/doc/sonic-build-system/rfs-split-build-improvement.md#L67-L84 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -35508,10 +35504,10 @@ reasoning: フラグ名と実装ファイル分担の根拠。
 <p><strong>出典</strong>:</p>
 <p><code>sonic-net/SONiC/doc/sonic-build-system/rfs-split-build-improvement.md#L67-L84 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)</code></p>
 <p><strong>抜粋</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ENABLE_RFS_SPLIT_BUILD ?= n
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>The implementation consists of 2 parts:
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>1) Generating and processing new targets for RFS squashfs files (slave.mk)
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>2) Adding support of a 2-stage run for build_debian.sh
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ENABLE_RFS_SPLIT_BUILD ?= n
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>The implementation consists of 2 parts:
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>1) Generating and processing new targets for RFS squashfs files (slave.mk)
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>2) Adding support of a 2-stage run for build_debian.sh
 </span></code></pre></div>
 <p><strong>判断根拠</strong>: フラグ名と実装ファイル分担の根拠。</p>
 </details>
@@ -35531,22 +35527,31 @@ reasoning: フラグ名と実装ファイル分担の根拠。
 </thead>
 <tbody>
 <tr>
-<td><code>ENABLE_RFS_SPLIT_BUILD</code></td>
-<td><code>n</code></td>
-<td><code>y</code> で 2 段ビルドを有効化</td>
+<td><code>RFS_SPLIT_FIRST_STAGE</code></td>
+<td>未設定</td>
+<td><code>y</code> で Stage 1（base image / packages / kernel）を実行し squashfs を保存して exit</td>
+</tr>
+<tr>
+<td><code>RFS_SPLIT_LAST_STAGE</code></td>
+<td>未設定</td>
+<td><code>y</code> で squashfs を load し Stage 2（artifact install / ONIE payload 生成）を実行</td>
 </tr>
 </tbody>
 </table>
+<p>注: HLD 記載の <code>ENABLE_RFS_SPLIT_BUILD</code> 単一フラグは現行 <code>rules/config</code> には存在しない。実装では <code>slave.mk</code> 側でターゲット依存に応じて上記 2 フラグが <code>export</code> される（呼び出し側は通常意識しない）。</p>
 <h3 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># .platform_env や make 引数で設定</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>make<span class="w"> </span><span class="nv">ENABLE_RFS_SPLIT_BUILD</span><span class="o">=</span>y<span class="w"> </span>target/sonic-mellanox.bin
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># 通常は slave.mk が分岐するので make の通常 target で十分:</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>make<span class="w"> </span>target/sonic-mellanox.bin
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># 手動で個別 Stage を再現したい場合のみ環境変数として渡す:</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nv">RFS_SPLIT_FIRST_STAGE</span><span class="o">=</span>y<span class="w"> </span>build_debian.sh<span class="w"> </span>...
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nv">RFS_SPLIT_LAST_STAGE</span><span class="o">=</span>y<span class="w">  </span>build_debian.sh<span class="w"> </span>...
 </span></code></pre></div>
 <h2 id="_8">制限事項<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>既定無効</strong>: 全プラットフォームで自動で速くなるわけではない。明示的に有効化する必要がある<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong>既定無効</strong>: 全プラットフォームで自動で速くなるわけではない。明示的に有効化する必要がある<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>ストレージコスト</strong>: Stage 1 出力の squashfs を保持するため、ビルドサーバの一時領域が増える。</li>
 <li><strong>互換性確認の責務</strong>: 既存ビルドフローで動いていた hook（<code>sonic_debian_extension.sh</code> の前後で何かを差し込んでいる組織）は、Stage の境界をまたぐと動作が変わる可能性がある。</li>
-<li><strong><a href="../../reference/glossary/#term-hld">HLD</a> は Rev 0.1</strong>: 改訂が進んでいない可能性。実装の細部（squashfs パス、命名規則等）は実装側で決定<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
+<li><strong><a href="../../reference/glossary/#term-hld">HLD</a> は Rev 0.1</strong>: 改訂が進んでいない可能性。実装の細部（squashfs パス、命名規則等）は実装側で決定<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 </ul>
 <h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35563,18 +35568,18 @@ reasoning: フラグ名と実装ファイル分担の根拠。
 <h3 id="rfs-split-build">コマンド例: RFS split build 確認<a class="headerlink" href="#rfs-split-build" title="Permanent link">&para;</a></h3>
 <p>下記コマンドで関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># slave / docker レイヤサイズと split build ターゲットを確認</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>ls<span class="w"> </span>-la<span class="w"> </span>target/sonic-broadcom.bin<span class="w"> </span>target/sonic-mellanox.bin<span class="w"> </span><span class="m">2</span>&gt;/dev/null
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>make<span class="w"> </span>-n<span class="w"> </span>target/sonic-generic.bin<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-30
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># slave / docker レイヤサイズと split build ターゲットを確認</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ls<span class="w"> </span>-la<span class="w"> </span>target/sonic-broadcom.bin<span class="w"> </span>target/sonic-mellanox.bin<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>make<span class="w"> </span>-n<span class="w"> </span>target/sonic-generic.bin<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-30
 </span></code></pre></div>
 <h3 id="rfs-split-build_1">コマンド例: RFS split build 確認<a class="headerlink" href="#rfs-split-build_1" title="Permanent link">&para;</a></h3>
 <p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># slave / docker レイヤサイズと split build ターゲットを確認</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>ls<span class="w"> </span>-la<span class="w"> </span>target/sonic-broadcom.bin<span class="w"> </span>target/sonic-mellanox.bin<span class="w"> </span><span class="m">2</span>&gt;/dev/null
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>make<span class="w"> </span>-n<span class="w"> </span>target/sonic-generic.bin<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-30
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># slave / docker レイヤサイズと split build ターゲットを確認</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>ls<span class="w"> </span>-la<span class="w"> </span>target/sonic-broadcom.bin<span class="w"> </span>target/sonic-mellanox.bin<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>make<span class="w"> </span>-n<span class="w"> </span>target/sonic-generic.bin<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-30
 </span></code></pre></div>
 <h2 id="reference">関連 reference<a class="headerlink" href="#reference" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35601,7 +35606,7 @@ reasoning: フラグ名と実装ファイル分担の根拠。
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>sonic-net/SONiC</code> <code>doc/sonic-build-system/rfs-split-build-improvement.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>sonic-net/SONiC</code> <code>doc/sonic-build-system/rfs-split-build-improvement.md</code> @ <code>49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06</code>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

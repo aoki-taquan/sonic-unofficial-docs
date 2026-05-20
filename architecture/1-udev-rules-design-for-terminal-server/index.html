@@ -35619,8 +35619,7 @@
 <li>別ハードで rules を流用したら全滅 → <code>KERNELS</code> の bus 位置がハードに依存。新ハードで <code>udevadm info -a</code> で属性を改めて確認</li>
 </ul>
 <h3 id="terminal-server-udev">コマンド例: Terminal server udev 確認<a class="headerlink" href="#terminal-server-udev" title="Permanent link">&para;</a></h3>
-<p>下記コマンドを順に実行することで、関連する <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> のエントリと、
-CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
+<p>下記コマンドを順に実行することで、udev rules の適用状態とハードウェア symlink、関連 syslog の整合を一通り突き合わせ確認できる（本 HLD は SONiC 内部 DB と対話しない）。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># udev rule の適用状態と /dev/console-* シンボリックリンクを確認</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>ls<span class="w"> </span>-l<span class="w"> </span>/dev/console-*
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>udevadm<span class="w"> </span>info<span class="w"> </span>--query<span class="o">=</span>all<span class="w"> </span>--name<span class="o">=</span>/dev/ttyUSB0<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-30
@@ -35650,8 +35649,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../topics/16-nat-dhcp-dns/">Topics: NAT / DHCP Relay / Time-DNS Services</a></li>
-<li><a href="../../topics/21-lab-vs-developer/">Topics: Lab / Virtual SONiC / Developer Entry</a></li>
+<li><a href="../../topics/14-platform-port-optics/">Topics: Platform / Port / Optics</a></li>
 </ul>
 <!-- /topics-back-ref -->
 

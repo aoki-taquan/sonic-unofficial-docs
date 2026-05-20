@@ -7510,17 +7510,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#build-profile_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: Build profile 適用状態の確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -35645,17 +35634,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#build-profile_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: Build profile 適用状態の確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -35972,14 +35950,6 @@ reasoning: 取り込み順位と後方互換性の根拠。
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>make<span class="w"> </span>-n<span class="w"> </span>configure<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;SONIC_(BUILD|PROFILE)&#39;</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># slave コンテナのキャッシュ状態</span>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
-</span></code></pre></div>
-<h3 id="build-profile_1">コマンド例: Build profile 適用状態の確認<a class="headerlink" href="#build-profile_1" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># ビルドツリーで現在有効な PROFILE 変数を確認</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>make<span class="w"> </span>-n<span class="w"> </span>configure<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;SONIC_(BUILD|PROFILE)&#39;</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># slave コンテナのキャッシュ状態</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>docker<span class="w"> </span>images<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>sonic-slave
 </span></code></pre></div>
 <h2 id="_11">参考リンク<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>

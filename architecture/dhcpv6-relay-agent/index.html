@@ -35522,11 +35522,11 @@
 </tbody>
 </table>
 <h3 id="config_db-yang">CONFIG_DB / YANG<a class="headerlink" href="#config_db-yang" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DHCP|&lt;intf&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DHCP_RELAY|&lt;intf&gt;
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  dhcpv6_servers                 = [&quot;&lt;server-ipv6&gt;&quot;, ...]
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  dhcpv6_option|rfc6939_support  = &quot;true&quot; | &quot;false&quot;   ; default true
 </span></code></pre></div>
-<p><a href="../../reference/glossary/#term-yang">YANG</a> は <code>sonic-dhcpv6-relay.yang</code>。<code>DHCP</code> コンテナ下の <code>VLAN_LIST</code> に <code>dhcpv6_servers</code>（<code>inet6:ip-address</code> list）と <code>rfc6939_support</code>（bool）を持つ<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-yang">YANG</a> は <code>sonic-dhcpv6-relay.yang</code>。<code>DHCP_RELAY</code> コンテナ下の <code>VLAN_LIST</code> に <code>dhcpv6_servers</code>（<code>inet6:ip-address</code> list）と <code>rfc6939_support</code>（bool）を持つ<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="option-79">Option 79 の役割<a class="headerlink" href="#option-79" title="Permanent link">&para;</a></h3>
 <p>relay agent が SOLICIT/REQUEST を受けた際の <strong>L2 source MAC を Relay-Forward Option 79 に埋める</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これで server は DUID と独立に MAC を取れ、DUID-LL/LLT に依存しない MAC ベース予約が成立する。デフォルト on、CLI で無効化可。</p>
 <h3 id="dual-tor-ip">Dual ToR の送信元 IP<a class="headerlink" href="#dual-tor-ip" title="Permanent link">&para;</a></h3>

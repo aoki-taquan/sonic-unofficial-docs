@@ -35537,8 +35537,8 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: discrepancy-found (2026-05-11)</p>
 <p><code>sonic-snmpagent</code> で RIF カウンタを L2 カウンタへ集約する経路を実装で確認した。<code>sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py</code> L34-L38 に <code>RIF_DROPS_AGGR_MAP</code> が定義され、<code>SAI_PORT_STAT_IF_IN_OCTETS</code> 等を <code>SAI_ROUTER_INTERFACE_STAT_IN_OCTETS</code> 系へマップ。<code>rfc1213.py</code> L341-L346 で <code>rif_port_map</code> / <code>port_rif_map</code> を構築し、L427-L440 で <code>sai_lag_rif_id</code> を参照して <code>self.rif_counters[...]</code> から <code>counter_value</code> に加算する集約処理を確認。</p>
 </div>
 <h1 id="interface-mib-l3">ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）<a class="headerlink" href="#interface-mib-l3" title="Permanent link">&para;</a></h1>
