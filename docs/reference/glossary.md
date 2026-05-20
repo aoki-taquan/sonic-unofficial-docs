@@ -1508,7 +1508,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [DSCP_TO_PG_MAP テーブル（非実在）](config-db/dscp-to-pg-map.md) (92)
 - [DSCP_TO_TC_MAP テーブル](config-db/dscp-to-tc-map.md) (87)
 - [DSCP_TO_FC_MAP テーブル](config-db/dscp-to-fc-map.md) (63)
-- [SWITCH_TRIMMING テーブル](config-db/switch-trimming.md) (57)
+- [SWITCH_TRIMMING テーブル](config-db/switch-trimming.md) (59)
 
 ### [DWRR](#term-dwrr)
 
@@ -1646,7 +1646,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ROUTE_TABLE handler 分岐 (fpmsyncd / RouteSync)](config-db/route-handler.md) (78)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (57)
 - [RouteOrch event / notification (ResponsePublisher + NextHopObserver)](config-db/route-orch-event.md) (43)
-- [STATE_DB BGP 関連テーブル](config-db/state-bgp.md) (42)
+- [STATE_DB BGP 関連テーブル](config-db/state-bgp.md) (39)
 
 ### [FRR](#term-frr)
 
@@ -2352,15 +2352,15 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [STP_VLAN / STP_VLAN_PORT テーブル](config-db/stp-vlan.md) (251)
 - [APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル](config-db/appl-vlan.md) (221)
 - [VLAN テーブル](config-db/vlan.md) (182)
-- [VLAN_MEMBER テーブル](config-db/vlan-member.md) (162)
+- [VLAN_MEMBER テーブル](config-db/vlan-member.md) (164)
 - [STATE_DB VLAN_TABLE（VLAN 状態テーブル）](config-db/vlan-state.md) (148)
 
 ### [vlanmgrd](#term-vlanmgrd)
 
 - [VLAN テーブル](config-db/vlan.md) (36)
 - [STATE_DB VLAN_TABLE（VLAN 状態テーブル）](config-db/vlan-state.md) (35)
+- [VLAN_MEMBER テーブル](config-db/vlan-member.md) (34)
 - [APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル](config-db/appl-vlan.md) (32)
-- [VLAN_MEMBER テーブル](config-db/vlan-member.md) (32)
 - [VRRP テーブル](config-db/vrrp.md) (27)
 
 ### [VNET](#term-vnet)
@@ -2382,7 +2382,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [vrfmgrd](#term-vrfmgrd)
 
 - [VRF テーブル](config-db/vrf.md) (54)
-- [VRF ステートテーブル（STATE_DB）](config-db/state-vrf.md) (52)
+- [VRF ステートテーブル（STATE_DB）](config-db/state-vrf.md) (49)
 - [APPL_DB VRF_TABLE (VRFOrch)](config-db/vrf-orch.md) (47)
 - [APPL_DB VRF_TABLE テーブル](config-db/appl-vrf.md) (31)
 - [MGMT_VRF_CONFIG テーブル](config-db/mgmt-vrf-config.md) (17)
@@ -2397,8 +2397,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [vxlanmgrd](#term-vxlanmgrd)
 
-- [VNET / VNET_ROUTE テーブル](config-db/vnet.md) (19)
 - [VXLAN_TUNNEL テーブル](config-db/vxlan-tunnel.md) (17)
+- [VNET / VNET_ROUTE テーブル](config-db/vnet.md) (16)
 - [VXLAN_EVPN_NVO テーブル](config-db/vxlan-evpn-nvo.md) (10)
 - [STATE_DB VLAN_TABLE（VLAN 状態テーブル）](config-db/vlan-state.md) (9)
 - [VXLAN_TUNNEL_MAP テーブル](config-db/vxlan-tunnel-map.md) (9)
