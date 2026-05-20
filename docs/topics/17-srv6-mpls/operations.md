@@ -56,8 +56,8 @@ admin@sonic:~$ redis-cli -n 4 HGETALL "SRV6_MY_LOCATORS|loc1"
 7) "func_len"
 8) "16"
 admin@sonic:~$ redis-cli -n 4 KEYS "SRV6_MY_SIDS|*"
-1) "SRV6_MY_SIDS|loc1|fc00:0:1:e000::|uN"
-2) "SRV6_MY_SIDS|loc1|fc00:0:1:e001::|uA"
+1) "SRV6_MY_SIDS|loc1|fc00:0:1:e000::"
+2) "SRV6_MY_SIDS|loc1|fc00:0:1:e001::"
 ```
 
 `uA` / `End.X` の SID は `nexthop` フィールドに紐づく nexthop IP が **既知の neighbor** でないと FRR / `srv6orch` は pending 扱いになります。

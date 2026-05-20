@@ -120,8 +120,6 @@ sequenceDiagram
 
 ## persona と lab の対応
 
-## persona と lab の対応
-
 SONiC のガイドは目的別に 4 つに分かれており、章本文への入口もそこで決まります。
 
 | persona | 入口 | 主な関心 |

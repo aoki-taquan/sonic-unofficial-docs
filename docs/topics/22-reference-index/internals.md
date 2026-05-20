@@ -92,7 +92,8 @@ flowchart LR
 | `sonic-bgp-neighbor` | `BGP_NEIGHBOR`、`BGP_PEER_RANGE` | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) |
 | `sonic-acl` | `ACL_TABLE`、`ACL_RULE` | AclOrch |
 | `sonic-vrf` | `VRF` | VRFOrch |
-| `sonic-vxlan` | `VXLAN_TUNNEL`、`VNET` | VxlanOrch / VNetOrch |
+| `sonic-vxlan` | `VXLAN_TUNNEL`、`VXLAN_TUNNEL_MAP`、`VXLAN_EVPN_NVO` | VxlanOrch |
+| `sonic-vnet` | `VNET` | VNetOrch |
 | `sonic-nat` | `NAT_*` | NatMgr / NatOrch |
 
 OpenConfig YANG は translib transformer が間に入って [SONiC](../../reference/glossary.md#term-sonic) YANG / Redis テーブルに射影されます（→ 10 章）。

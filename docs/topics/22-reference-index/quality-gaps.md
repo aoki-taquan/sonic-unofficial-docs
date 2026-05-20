@@ -44,9 +44,9 @@ discrepancy が新規に追加される導線は次の通り。
 
 `meta/reference-gaps.md` には、Indexer が `sonic-net/sonic-utilities` の CLI / `sonic-yang-models` の YANG モジュール / CONFIG_DB の table を棚卸ししたうちで、まだ辞書化が追いついていないものを並べてある。2026-05-10 時点の傾向は次の通り。
 
-- **CLI**: 全 110 グループのうち 44 カバー (約 40 %)。未カバー 66 はサブグループ単位で重要度評価済み。
-- **CONFIG_DB**: YANG 由来の table 候補のうち 76 が辞書化済。残りは派生 / 内部 / [DPU](../../reference/glossary.md#term-dpu) 専用などを中心に未カバー。
-- **YANG**: 39 / 136 モジュール (約 29 %) を辞書化。
+- **CLI**: 72 ページが辞書化済 (`docs/reference/cli/`)。残りはサブグループ単位で重要度評価済み。
+- **CONFIG_DB**: 293 ページが辞書化済 (`docs/reference/config-db/`)。残りは派生 / 内部 / [DPU](../../reference/glossary.md#term-dpu) 専用などを中心に未カバー。
+- **YANG**: 84 / 136 モジュール (約 62 %) を辞書化 (`docs/reference/yang/`)。
 
 機能章を書く際の運用は次の通り。
 

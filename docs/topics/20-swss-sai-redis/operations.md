@@ -46,8 +46,11 @@ related:
 | 2 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | flex counter |
 | 4 | [CONFIG_DB](../../reference/glossary.md#term-config_db) | ユーザ設定の真実 |
 | 6 | [STATE_DB](../../reference/glossary.md#term-state_db) | 各 daemon の状態（PORT_TABLE、INTERFACE_TABLE 等） |
-| 13 | ERROR_DB | SAI 失敗の app 通知 |
+| 13 | CHASSIS_STATE_DB | VOQ chassis 用の chassis state |
 | 14 | APPL_STATE_DB | APPL_DB に書いた結果（成功 / 失敗） |
+
+!!! warning "ERROR_DB は未実装"
+    `ERROR_DB` は HLD 上の提案で `database_config.json` には登録されておらず、`sonic-swss-common/common/schema.h` にもテーブル define は存在しません。詳細は [error-handling-framework-in-sonic-limitations](../../architecture/error-handling-framework-in-sonic-limitations.md) を参照してください。以下の `redis-cli -n 13` ベースの ERROR_DB 確認手順はあくまで HLD ベースの参考例で、現状の master では機能しません。
 
 ```bash
 admin@sonic:~$ redis-cli -n 4 KEYS "*" | wc -l

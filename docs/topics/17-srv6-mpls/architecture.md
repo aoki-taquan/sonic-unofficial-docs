@@ -21,12 +21,13 @@ related:
   - show acl
   - config acl
   config_db:
+  - SRV6_MY_LOCATORS
+  - SRV6_MY_SIDS
+  - SRV6_MY_SID_TABLE
+  - SRV6_SID_LIST
+  - SRV6_POLICY
+  - SRV6_STEER
   - CRM
-  - ACL_RULE
-  - ACL_TABLE
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DPU
   yang:
   - sonic-srv6
   - sonic-interface
@@ -41,14 +42,14 @@ related:
 
 ## SRv6 の object flow
 
-SRv6 の中核は `srv6orch` で、CONFIG_DB の `SRV6_MY_SID_TABLE` / `SRV6_SID_LIST` / `SRV6_POLICY` / `SRV6_STEER` を読み、SAI の `SAI_MY_SID_ENTRY_*` や `SAI_OBJECT_TYPE_SRV6_SIDLIST` を組み立てます。Static SID 経路では `bgpcfgd` の `SRv6Mgr` が CONFIG_DB の `SRV6_MY_LOCATORS` / `SRV6_MY_SIDS` を受け、`vtysh` で FRR に `segment-routing srv6 static-sids` を書き込みます。
+SRv6 の中核は `srv6orch` で、APP_DB の `SRV6_MY_SID_TABLE` / `SRV6_SID_LIST` / `SRV6_POLICY` / `SRV6_STEER` を読み、SAI の `SAI_MY_SID_ENTRY_*` や `SAI_OBJECT_TYPE_SRV6_SIDLIST` を組み立てます。Static SID 経路では `bgpcfgd` の `SRv6Mgr` が CONFIG_DB の `SRV6_MY_LOCATORS` / `SRV6_MY_SIDS` を受け、`vtysh` で FRR に `segment-routing srv6 static-sids` を書き込みます。
 
 ```mermaid
 flowchart LR
   CFG[CONFIG_DB<br/>SRV6_MY_LOCATORS / SRV6_MY_SIDS] --> SMGR[bgpcfgd<br/>SRv6Mgr]
   SMGR -->|vtysh| FRR[FRR zebra / mgmtd]
   FRR -->|netlink| FPM[fpmsyncd]
-  CFG2[CONFIG_DB<br/>SRV6_MY_SID_TABLE / SRV6_SID_LIST / SRV6_POLICY / SRV6_STEER] --> SRC[srv6orch]
+  CFG2[APP_DB<br/>SRV6_MY_SID_TABLE / SRV6_SID_LIST / SRV6_POLICY / SRV6_STEER] --> SRC[srv6orch]
   FPM --> APP[APP_DB<br/>SRV6_MY_SID / route]
   APP --> SRC
   SRC -->|MY_SID_ENTRY<br/>SRV6_SIDLIST<br/>NEXT_HOP| SAI[SAI / syncd]

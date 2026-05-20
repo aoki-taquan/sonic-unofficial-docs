@@ -48,7 +48,7 @@ related:
 `docs/reference/` 配下の現状は以下の通り (2026-05-11 時点)。最新の機械集計は [reference/index.md のカバー率表](../../reference/index.md#coverage) を参照する (本ページの数字は読み物中の参考値)。
 
 - CLI ページ: 72 件 (`config-*` / `show-*` / `debug-*` / `clear` / `reboot-fast-warm` / `sonic-*` ツール)
-- CONFIG_DB ページ: 121 件 (table family ごと)
+- CONFIG_DB ページ: 293 件 (table family ごと)
 - YANG ページ: 84 件 (`sonic-*` モジュールごと)
 - Runbooks: 45 件 (症状逆引き)
 - Verification: 1 件 (`discrepancy-index`)
@@ -95,6 +95,10 @@ related:
 | operations | ✅ 完成 (113 行) | meta |
 | internals | ✅ 完成 (133 行) | meta |
 | advanced | ✅ 完成 (101 行) | meta |
+| cli-index | ✅ 完成 | meta |
+| config-db-index | ✅ 完成 | meta |
+| yang-index | ✅ 完成 | meta |
+| quality-gaps | ✅ 完成 | meta |
 
 <!-- /chapter-progress -->
 
