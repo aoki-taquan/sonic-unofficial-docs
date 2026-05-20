@@ -377,7 +377,6 @@ show bgp device-global
 
 ## 関連ページ
 - [HLD: FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
-- [CONFIG_DB: BGP_GLOBALS](../config-db/bgp-globals.md)
 - [CONFIG_DB: BGP_NEIGHBOR](../config-db/bgp-neighbor.md)
 - [YANG: sonic-bgp-neighbor](../yang/sonic-bgp-neighbor.md)
 

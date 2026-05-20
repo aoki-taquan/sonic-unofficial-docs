@@ -12,12 +12,7 @@ sources:
 related:
   config_db:
   - PFC_WD
-  - CRM
-  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
-  - BUFFER_POOL
-  - BUFFER_PROFILE
-  - BUFFER_PG
-  - BUFFER_QUEUE
+  - FLEX_COUNTER_TABLE
   cli:
   - config pfcwd pfc_stat_history
   - config pfcwd start
@@ -28,11 +23,6 @@ related:
   - clear
   yang:
   - sonic-pfcwd
-  - sonic-crm
-  - sonic-pfc-priority-priority-group-map
-  - sonic-pfc-priority-queue-map
-  - sonic-buffer-pool
-  - sonic-buffer-profile
 ---
 
 <!-- topics-tip -->
