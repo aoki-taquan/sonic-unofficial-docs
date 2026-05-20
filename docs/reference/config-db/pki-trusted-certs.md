@@ -37,7 +37,7 @@ related:
 
 `SECURITY_PROFILES` テーブルは gNSI Certz の **SSL プロファイル** (証明書バンドル) と証明書ファイル名を対応付けるための [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルとして設計されている[^1]。
 
-gNSI Certz (`sonic-gnmi/gnmi_server/gnsi_certz.go`) はデフォルトプロファイル `"gnxi"` を内部で管理し、証明書フレッシュネスメタデータを **STATE_DB** の `CREDENTIALS|CERT|<profileID>` に書き込む[^2]。CONFIG_DB の `SECURITY_PROFILES` を直接参照するコードは community master では未確認。
+gNSI Certz (`sonic-gnmi/gnmi_server/gnsi_certz.go`) はデフォルトプロファイル `"gnxi"` を内部で管理し、証明書フレッシュネスメタデータを **[STATE_DB](../../reference/glossary.md#term-state_db)** の `CREDENTIALS|CERT|<profileID>` に書き込む[^2]。[CONFIG_DB](../../reference/glossary.md#term-config_db) の `SECURITY_PROFILES` を直接参照するコードは community master では未確認。
 
 `SECURITY_GLOBAL|global.security_profile` は `SECURITY_PROFILES` への leafref を持ち、CVL バリデーションで参照整合性を強制する設計[^1]。
 
@@ -84,22 +84,22 @@ SECURITY_GLOBAL|global
 ## 制約
 
 - `SECURITY_GLOBAL|global.security_profile` が参照するプロファイルが存在する間は `SECURITY_PROFILES|<profile-name>` の削除が CVL バリデーションでブロックされる (`instance-in-use` エラー)[^1]
-- `certificate-name` フィールドは YANG で `optional` のため省略可能だが、参照元ハンドラの実装は未確認
+- `certificate-name` フィールドは [YANG](../../reference/glossary.md#term-yang) で `optional` のため省略可能だが、参照元ハンドラの実装は未確認
 
 ## 実装状況 (community master 2026-05-14)
 
 | 項目 | 状態 |
 |-----|------|
-| `sonic-pki.yang` の sonic-buildimage YANG マージ | **未実装** — CVL testdata のみ |
+| `sonic-pki.yang` の [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) [YANG](../../reference/glossary.md#term-yang) マージ | **未実装** — CVL testdata のみ |
 | `SECURITY_PROFILES` を読む handler/daemon | **未確認** |
-| gNSI Certz のプロファイル管理 | **実装済み** (内部 JSON ファイル、STATE_DB 経由) |
-| gNSI Certz の CONFIG_DB `SECURITY_PROFILES` 参照 | **未実装** |
+| gNSI Certz のプロファイル管理 | **実装済み** (内部 JSON ファイル、[STATE_DB](../../reference/glossary.md#term-state_db) 経由) |
+| gNSI Certz の [CONFIG_DB](../../reference/glossary.md#term-config_db) `SECURITY_PROFILES` 参照 | **未実装** |
 
 gNSI Certz 実装 (`gnsi_certz.go`) は CONFIG_DB を参照せず、独自の JSON メタデータファイル (`/keys/grpc-version.json`) とファイルシステムのシンボリックリンクでプロファイルを管理する[^2]。
 
 ## gNSI Certz が書き込む STATE_DB フィールド
 
-CONFIG_DB への書き込みはないが、証明書バンドルのフレッシュネス情報が STATE_DB に記録される:
+CONFIG_DB への書き込みはないが、証明書バンドルのフレッシュネス情報が [STATE_DB](../../reference/glossary.md#term-state_db) に記録される:
 
 ```text
 CREDENTIALS|CERT|<profileID>
@@ -116,7 +116,7 @@ CREDENTIALS|CERT|<profileID>
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
-> SECURITY_PROFILES YANG フィールドおよび gNSI Certz 内部デフォルトを整理する。
+> SECURITY_PROFILES [YANG](../../reference/glossary.md#term-yang) フィールドおよび gNSI Certz 内部デフォルトを整理する。
 
 ### `profile-name` (SECURITY_PROFILES key)
 
@@ -194,7 +194,7 @@ bootstrap 時に生成されるすべてのエンティティ (Cert / TrustBundl
 
 **gNSI Certz STATE_DB 書込み順序 (依存 #3)**: `NewGNSICertzServer()` は起動時に `s.profiles` を構築した後、各プロファイルの `ActiveEntities` を Cert → TrustBundle → CrlBundle → AuthPolicy の順で `writeEntityFreshness` で STATE_DB (`CREDENTIALS|CERT|<profileID>`) に書込む。これは `gnsi_certz.go:134-138` の固定 for-loop 内で行われ、並列化はされない[^2]。
 
-**CONFIG_DB ハンドラ未実装による非影響 (注記)**: community master では `SECURITY_PROFILES` を消費するハンドラが存在しないため、CONFIG_DB への書込み順序が runtime の動作に影響を与える経路は現時点で確認されていない。上記 #1/#2 の制約は CVL バリデーション層のみで有効であり、orchagent / translib 等との協調順序は将来のハンドラ実装時に改めて評価が必要である。
+**CONFIG_DB ハンドラ未実装による非影響 (注記)**: community master では `SECURITY_PROFILES` を消費するハンドラが存在しないため、CONFIG_DB への書込み順序が runtime の動作に影響を与える経路は現時点で確認されていない。上記 #1/#2 の制約は CVL バリデーション層のみで有効であり、[orchagent](../../reference/glossary.md#term-orchagent) / translib 等との協調順序は将来のハンドラ実装時に改めて評価が必要である。
 
 <!-- evidence:
   sonic-mgmt-common/cvl/testdata/schema/sonic-security-global.yang:29-35 — security_profile leafref 定義
@@ -226,11 +226,11 @@ bootstrap 時に生成されるすべてのエンティティ (Cert / TrustBundl
 
 ### GNMI_CLIENT_CERT (CONFIG_DB) — 独立した関連テーブル
 
-`GNMI_CLIENT_CERT` テーブルはクライアント証明書の CN ↔ gNMI ロールマッピングを格納する独立テーブルであり、`SECURITY_PROFILES` との直接的な依存関係はない。`clientCertAuth.go:259-263` が `ConfigDBConnector.Get_entry("GNMI_CLIENT_CERT", certCommonName)` を呼び出してロール解決を行う。
+`GNMI_CLIENT_CERT` テーブルはクライアント証明書の CN ↔ [gNMI](../../reference/glossary.md#term-gnmi) ロールマッピングを格納する独立テーブルであり、`SECURITY_PROFILES` との直接的な依存関係はない。`clientCertAuth.go:259-263` が `ConfigDBConnector.Get_entry("GNMI_CLIENT_CERT", certCommonName)` を呼び出してロール解決を行う。
 
 ### community master での非連携
 
-`SECURITY_PROFILES` を直接参照する production ハンドラ (orchagent / translib / certmgr) は community master では確認されていない。gNSI Certz のプロファイル管理は `/keys/grpc-version.json` (CertzMetaFile) とファイルシステムシンボリックリンクで独立して行われる。
+`SECURITY_PROFILES` を直接参照する production ハンドラ ([orchagent](../../reference/glossary.md#term-orchagent) / translib / certmgr) は community master では確認されていない。gNSI Certz のプロファイル管理は `/keys/grpc-version.json` (CertzMetaFile) とファイルシステムシンボリックリンクで独立して行われる。
 
 <!-- evidence:
   sonic-mgmt-common/cvl/testdata/schema/sonic-security-global.yang:29-35 — security_profile leafref → SECURITY_PROFILES
@@ -290,7 +290,7 @@ bootstrap 時に生成されるすべてのエンティティ (Cert / TrustBundl
 
 ### STATE_DB 書込み失敗
 
-Redis が利用不可の場合、`writeCredentialsMetadataToDB` が `"REDIS is not available: ..."` エラーを返す。`writeEntityFreshness` はこのエラーをログ (`log.V(0).Infof`) するが処理を継続する。証明書ファイル自体は有効であり gRPC 動作に直接の影響はない (`gnsi_certz.go:1038-1042`, `688-730`)。
+[Redis](../../reference/glossary.md#term-redis) が利用不可の場合、`writeCredentialsMetadataToDB` が `"REDIS is not available: ..."` エラーを返す。`writeEntityFreshness` はこのエラーをログ (`log.V(0).Infof`) するが処理を継続する。証明書ファイル自体は有効であり gRPC 動作に直接の影響はない (`gnsi_certz.go:1038-1042`, `688-730`)。
 
 ### 未実装 RPC
 
@@ -298,7 +298,7 @@ Redis が利用不可の場合、`writeCredentialsMetadataToDB` が `"REDIS is n
 
 ### ハンドラ未実装による非影響
 
-`SECURITY_PROFILES` を CONFIG_DB から読み込む production ハンドラ (orchagent / translib / certmgr) が community master に存在しないため、DB 書込みエラー (CVL バリデーション以外) が runtime 動作に影響を与える経路は現時点で確認されない。
+`SECURITY_PROFILES` を CONFIG_DB から読み込む production ハンドラ ([orchagent](../../reference/glossary.md#term-orchagent) / translib / certmgr) が community master に存在しないため、DB 書込みエラー (CVL バリデーション以外) が runtime 動作に影響を与える経路は現時点で確認されない。
 
 <!-- evidence:
   sonic-mgmt-common/cvl/testdata/schema/sonic-security-global.yang:29-35 — security_profile leafref (invalid-value / instance-in-use の根拠)
@@ -420,7 +420,7 @@ const (
 | Rotate RPC `activateEntity` | HSET | `CREDENTIALS\|CERT\|<profileID>` | 対応エンティティの `*_version` / `*_created_on` フィールド | クライアント指定値 | `gnsi_certz.go:502` |
 | Rotate RPC `finalizeProfile` | HSET | `CREDENTIALS\|CERT\|<profileID>` | 確定済みエンティティ全フィールド | 確定値 | `gnsi_certz.go:646-685` |
 
-DB クライアント: `common_utils.GetRedisDBClient()` — DB 番号 **6** (STATE_DB) に対して `HSET` (`gnsi_certz.go:1040-1052`, `common_utils/notification_producer.go:16`)。Redis 障害時は `"REDIS is not available"` をログ出力のみで継続（証明書ファイル自体には影響しない）。
+DB クライアント: `common_utils.GetRedisDBClient()` — DB 番号 **6** (STATE_DB) に対して `HSET` (`gnsi_certz.go:1040-1052`, `common_utils/notification_producer.go:16`)。[Redis](../../reference/glossary.md#term-redis) 障害時は `"REDIS is not available"` をログ出力のみで継続（証明書ファイル自体には影響しない）。
 
 ### ファイルシステム副作用 — シンボリックリンク更新
 
@@ -447,7 +447,7 @@ Rotate RPC が証明書を差し替えると、以下のシンボリックリン
 
 ### CONFIG_DB / APPL_DB / ASIC_DB
 
-対象なし。`SECURITY_PROFILES` を消費する translib / orchagent ハンドラが community master に存在しないため、CONFIG_DB への書込みが APPL_DB / ASIC_DB へ伝播する経路は確認されない。
+対象なし。`SECURITY_PROFILES` を消費する translib / orchagent ハンドラが community master に存在しないため、CONFIG_DB への書込みが [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) へ伝播する経路は確認されない。
 
 <!-- evidence:
   sonic-gnmi/gnmi_server/gnsi_certz.go:134-138 — bootstrapDefaultProfile: writeEntityFreshness × 4
@@ -498,14 +498,14 @@ gNSI Certz (`gnsi_certz.go`) はプロファイル管理に CONFIG_DB を使用�
 <!-- platform -->
 ## プラットフォーム差分 (Phase H)
 
-**プラットフォーム差なし**: `SECURITY_PROFILES` / `SECURITY_GLOBAL` テーブルおよび gNSI Certz は ASIC 種別・multi-asic / VOQ chassis 構成・SmartSwitch DPU 構成に依らず同一動作をする。
+**プラットフォーム差なし**: `SECURITY_PROFILES` / `SECURITY_GLOBAL` テーブルおよび gNSI Certz は [ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 構成に依らず同一動作をする。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `SECURITY_PROFILES` を消費する SAI 経由ハンドラが community master に存在しない。証明書管理はファイルシステム + gRPC のみで ASIC SAI API を呼ばない |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `SECURITY_PROFILES` を消費する [SAI](../../reference/glossary.md#term-sai) 経由ハンドラが community master に存在しない。証明書管理はファイルシステム + gRPC のみで [ASIC](../../reference/glossary.md#term-asic) [SAI](../../reference/glossary.md#term-sai) API を呼ばない |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | gNSI Certz (`gnsi_certz.go`) は `ConfigDBConnector` 引数なし (host CONFIG_DB のみ) で起動し、`asicN` namespace を iterate しない。`sonic-pki.yang` も host scope で定義されている |
-| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | `SECURITY_PROFILES` / `SECURITY_GLOBAL` は host scope テーブル。chassis 全体集中管理機構はなく、各 line card host で独立して CVL バリデーションが適用される |
-| SmartSwitch (NPU + DPU) | 影響なし | `gnmi-native.sh` が SmartSwitch 時に ZMQ オプションを付与する (`gnmi-native.sh:88-91`) が、これは gNMI サーバ全体の通信チャネル切替であり gNSI Certz のプロファイル管理・証明書ファイル操作には影響しない。DPU 側での `SECURITY_PROFILES` ハンドラも未実装 |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | `SECURITY_PROFILES` / `SECURITY_GLOBAL` は host scope テーブル。chassis 全体集中管理機構はなく、各 line card host で独立して CVL バリデーションが適用される |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([NPU](../../reference/glossary.md#term-npu) + [DPU](../../reference/glossary.md#term-dpu)) | 影響なし | `gnmi-native.sh` が [SmartSwitch](../../reference/glossary.md#term-smartswitch) 時に ZMQ オプションを付与する (`gnmi-native.sh:88-91`) が、これは [gNMI](../../reference/glossary.md#term-gnmi) サーバ全体の通信チャネル切替であり gNSI Certz のプロファイル管理・証明書ファイル操作には影響しない。[DPU](../../reference/glossary.md#term-dpu) 側での `SECURITY_PROFILES` ハンドラも未実装 |
 | コンテナ分離 | 影響なし | gNSI Certz は `docker-sonic-gnmi` コンテナ内で動作し、ファイルシステムマウント (`/keys/`) の構成はプラットフォームによらず共通 (`gnmi-native.sh` 全体調査) |
 
 > **根拠**: `sonic-gnmi/gnmi_server/gnsi_certz.go` 全行調査 — `is_multi_npu` / `DEVICE_METADATA` / `SmartSwitch` / `chassis` の参照なし確認。`sonic-buildimage/dockers/docker-sonic-gnmi/gnmi-native.sh` — SmartSwitch 分岐は ZMQ ポート付与のみ (`gnmi-native.sh:88-91`) で gNSI Certz 固有の設定変更なし。`sonic-mgmt-common/cvl/testdata/schema/sonic-pki.yang` — platform 条件分岐なし。
@@ -514,7 +514,7 @@ gNSI Certz (`gnsi_certz.go`) はプロファイル管理に CONFIG_DB を使用�
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: [`GNMI`](gnmi.md) (`GNMI|certs` で証明書パスを設定), [`TELEMETRY`](telemetry.md)
-- 関連 YANG: `sonic-pki` (sonic-mgmt-common CVL testdata), `sonic-gnmi` (GNMI_CLIENT_CERT)
+- 関連 YANG: `sonic-pki` ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common CVL testdata), `sonic-gnmi` (GNMI_CLIENT_CERT)
 - 関連 CLI: なし (gNSI Certz は RPC 経由で設定)
 
 <!-- cdb-exceptions -->
@@ -528,3 +528,9 @@ gNSI Certz (`gnsi_certz.go`) はプロファイル管理に CONFIG_DB を使用�
 
 [^1]: `sonic-mgmt-common` `cvl/testdata/schema/sonic-pki.yang` + `sonic-security-global.yang` — YANG スキーマ定義と CVL leafref テスト
 [^2]: `sonic-gnmi` `gnmi_server/gnsi_certz.go` — gNSI Certz 実装。defaultProfile, bootstrapDefaultProfile, writeEntityFreshness
+
+## 実装との乖離
+
+本テーブルは [HLD](../../reference/glossary.md#term-hld) では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。
+
+<!-- glossary-links-injected: 6c74417cab50 -->

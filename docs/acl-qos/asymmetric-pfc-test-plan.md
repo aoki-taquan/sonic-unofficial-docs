@@ -44,7 +44,7 @@ related:
 
 ## 概要
 
-Asymmetric [PFC](../reference/glossary.md#term-pfc) は SONiC 機能だが、本ドキュメントはその **機能テスト計画** を扱う。既存の PTF テスト（`sonic-mgmt/ansible/roles/test/files/saitests/pfc_asym.py`）を再構成し、`sonic-mgmt` の pytest fixtures から呼び出して、SONiC DUT と Fanout 上の PFC パケットジェネレータ (`pfc_gen.py`) を組み合わせて検証する[^1]。
+Asymmetric [PFC](../reference/glossary.md#term-pfc) は [SONiC](../reference/glossary.md#term-sonic) 機能だが、本ドキュメントはその **機能テスト計画** を扱う。既存の PTF テスト（`sonic-mgmt/ansible/roles/test/files/saitests/pfc_asym.py`）を再構成し、`sonic-mgmt` の pytest fixtures から呼び出して、SONiC DUT と Fanout 上の PFC パケットジェネレータ (`pfc_gen.py`) を組み合わせて検証する[^1]。
 
 対象テストベッド: **T0-x** 系列（全 T0 構成）。SONiC DUT は **RPC image** が必須[^1]。
 
@@ -208,4 +208,4 @@ docker exec swss supervisorctl status | grep orchagent
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e2888922ac14 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

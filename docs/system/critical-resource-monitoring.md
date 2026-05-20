@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / [ACL](../reference/glossary.md#term-acl) [TCAM](../reference/glossary.md#term-tcam) / [FDB](../reference/glossary.md#term-fdb) といった **テーブル容量が有限なリソース** を抱えている。これらが満杯に近づくと新規エントリのプログラミングが失敗し、結果としてフォワーディングやポリシー適用に穴が開く。Critical Resource Monitoring ([CRM](../reference/glossary.md#term-crm)) は、こうしたリソースの **使用量と空き容量を [SAI](../reference/glossary.md#term-sai) 経由で定期的にポーリングし、しきい値超過を syslog に WARNING で通知** するための機能要件である。
+[SONiC](../reference/glossary.md#term-sonic) が稼働するスイッチ [ASIC](../reference/glossary.md#term-asic) は、ルート / Nexthop / Neighbor / [ACL](../reference/glossary.md#term-acl) [TCAM](../reference/glossary.md#term-tcam) / [FDB](../reference/glossary.md#term-fdb) といった **テーブル容量が有限なリソース** を抱えている。これらが満杯に近づくと新規エントリのプログラミングが失敗し、結果としてフォワーディングやポリシー適用に穴が開く。Critical Resource Monitoring ([CRM](../reference/glossary.md#term-crm)) は、こうしたリソースの **使用量と空き容量を [SAI](../reference/glossary.md#term-sai) 経由で定期的にポーリングし、しきい値超過を syslog に WARNING で通知** するための機能要件である。
 
 本ページの一次情報は **要件定義 (`CRM_requirements.md`)** であり、実装方針（COUNTER_DB を介する FLEX Counter 流の構成）は [HLD](../reference/glossary.md#term-hld) 内で「設計会議で詰める」と注記されている段階のものである点に注意する[^1]。
 
@@ -235,4 +235,4 @@ HLD の主要要件（SAI 経由のポーリング・しきい値超過時の sy
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 20f8b00eaafa -->
+<!-- glossary-links-injected: ec18b66e3507 -->

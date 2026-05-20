@@ -25,7 +25,7 @@ related:
 - revision: `2021-04-01`
 - top container: `sonic-scheduler`
 
-SCHEDULER yang Module for SONiC OS[^1]
+SCHEDULER yang Module for [SONiC](../../reference/glossary.md#term-sonic) OS[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -135,4 +135,4 @@ module: sonic-scheduler
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6375a93c7f4a -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

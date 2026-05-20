@@ -16,7 +16,7 @@ related:
 
 ## 想定シナリオ
 
-SONiC に機能追加・拡張を入れたい読者を想定しています。[HLD](../reference/glossary.md#term-hld)、[YANG](../reference/glossary.md#term-yang)、[CONFIG_DB](../reference/glossary.md#term-config_db)、CLI、daemon / orch、テスト計画の対応関係を追い、実装前に関連設計を把握するための導線です。
+[SONiC](../reference/glossary.md#term-sonic) に機能追加・拡張を入れたい読者を想定しています。[HLD](../reference/glossary.md#term-hld)、[YANG](../reference/glossary.md#term-yang)、[CONFIG_DB](../reference/glossary.md#term-config_db)、CLI、daemon / orch、テスト計画の対応関係を追い、実装前に関連設計を把握するための導線です。
 
 ## 推奨 reading path
 
@@ -49,4 +49,4 @@ SONiC に機能追加・拡張を入れたい読者を想定しています。[H
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -37,7 +37,7 @@ related:
 
 ## 読み手が知りたいこと
 
-- SONiC で TACACS+ を有効化するとどこに何が書き込まれるか
+- [SONiC](../reference/glossary.md#term-sonic) で TACACS+ を有効化するとどこに何が書き込まれるか
 - ローカル認証と TACACS+ の優先順位、フェイルオーバはどう決まるか
 - なぜ `common-auth-sonic` が分離されているか
 - 何を設定すれば動くか / 動かないときどこを見るか
@@ -236,4 +236,4 @@ journalctl -u hostcfgd | grep -i tacacs | tail
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

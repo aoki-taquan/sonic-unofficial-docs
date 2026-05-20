@@ -25,11 +25,11 @@ related:
 
 # 概要
 
-SONiC の build / packaging は、開発者向けの「ソースから ONIE installer を作る話」と、運用者向けの「機能 docker を後から足す話」が一本の鎖でつながっている。混同を避けるために、層を先に分けると読みやすい。
+[SONiC](../../reference/glossary.md#term-sonic) の build / packaging は、開発者向けの「ソースから ONIE installer を作る話」と、運用者向けの「機能 docker を後から足す話」が一本の鎖でつながっている。混同を避けるために、層を先に分けると読みやすい。
 
 ## この章は何のためにあるか
 
-SONiC は「機能を動かす」「ASIC に書く」だけでなく、**そもそも image をどう組み立てるか／後から拡張するか** が独立した話題になる NOS である。`docs/architecture/` と `docs/system/` の中には build や packaging の [HLD](../../reference/glossary.md#term-hld) が点在しているが、それらは「開発者視点」「運用者視点」「リリース管理者視点」の混在で読みづらい。本章はそれを次の 4 つの軸で読み解く。
+SONiC は「機能を動かす」「[ASIC](../../reference/glossary.md#term-asic) に書く」だけでなく、**そもそも image をどう組み立てるか／後から拡張するか** が独立した話題になる NOS である。`docs/architecture/` と `docs/system/` の中には build や packaging の [HLD](../../reference/glossary.md#term-hld) が点在しているが、それらは「開発者視点」「運用者視点」「リリース管理者視点」の混在で読みづらい。本章はそれを次の 4 つの軸で読み解く。
 
 1. ソースから ONIE installer を作るまでの「build」
 2. 出来上がった image / docker に **意味のあるバージョンを振る** ための「versioning」
@@ -163,4 +163,4 @@ build profile は「フラグ一式の再現性」、RFS split は「直列ル�
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [Lab / Virtual SONiC / Developer Entry](../21-lab-vs-developer/index.md)
 
-<!-- glossary-links-injected: 735025d3a79c -->
+<!-- glossary-links-injected: ec18b66e3507 -->

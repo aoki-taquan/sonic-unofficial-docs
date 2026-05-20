@@ -32,7 +32,7 @@ related:
 
 1. **両端 MTU 不一致**: ローカル 9100、対向 1500 等
 2. **[VLAN](../../reference/glossary.md#term-vlan) / [PortChannel](../../reference/glossary.md#term-portchannel) の MTU が member より小さい**: 上位論理 IF が L1 を絞る
-3. **[MPLS](../../reference/glossary.md#term-mpls) / [VXLAN](../../reference/glossary.md#term-vxlan) encapsulation オーバーヘッド未考慮**: VTEP で +50B 越え
+3. **[MPLS](../../reference/glossary.md#term-mpls) / [VXLAN](../../reference/glossary.md#term-vxlan) encapsulation オーバーヘッド未考慮**: [VTEP](../../reference/glossary.md#term-vtep) で +50B 越え
 4. **PMTUD ブラックホール**: 中間 [ACL](../../reference/glossary.md#term-acl) が ICMP `frag-needed` を破棄
 
 ## 切り分け手順
@@ -59,7 +59,7 @@ ip -d link show Ethernet0
 ```
 
 - 期待: 両端で同値
-- SONiC default: 9100
+- [SONiC](../../reference/glossary.md#term-sonic) default: 9100
 
 ### 2. PMTUD テスト
 
@@ -110,7 +110,7 @@ portstat -c
 
 本ページの根拠は引用元 [^1][^2] を参照。
 
-[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — portsorch.cpp の MTU 反映
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [portsorch](../../reference/glossary.md#term-portsorch).cpp の MTU 反映
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — config interface mtu
 
-<!-- glossary-links-injected: 828d4abcffb6 -->
+<!-- glossary-links-injected: 03248b925777 -->

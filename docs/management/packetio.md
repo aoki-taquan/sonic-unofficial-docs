@@ -46,7 +46,7 @@ related:
 - 通常の netdev PacketIO で何が足りなくて、なぜ別経路が必要なのか
 - 受信側で **input port + 期待 egress port** メタデータをどう運ぶか
 - `send_to_ingress` とは何で、どこで設定するか
-- ベンダ ASIC ドライバに何を実装してもらう必要があるか
+- ベンダ [ASIC](../reference/glossary.md#term-asic) ドライバに何を実装してもらう必要があるか
 
 ## なぜ PacketIO に拡張が要るか
 
@@ -226,4 +226,4 @@ docker logs swss 2>&1 | grep -i 'hostif' | tail
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 80e52dad0ad6 -->
+<!-- glossary-links-injected: c006405759d8 -->
