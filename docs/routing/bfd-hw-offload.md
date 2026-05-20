@@ -207,7 +207,7 @@ HSET "BFD_SESSION_TABLE:default:default:10.0.0.5" \
     type active
 ```
 
-APPL_DB のキー名は `sonic-swss-common/common/schema.h:120` の `APP_BFD_SESSION_TABLE_NAME = "BFD_SESSION_TABLE"` の通り `BFD_SESSION_TABLE` が正式。HLD では `BFD_SESSION` と略記されている箇所がある点に注意。
+[APPL_DB](../reference/glossary.md#term-appl_db) のキー名は `sonic-swss-common/common/schema.h:120` の `APP_BFD_SESSION_TABLE_NAME = "BFD_SESSION_TABLE"` の通り `BFD_SESSION_TABLE` が正式。HLD では `BFD_SESSION` と略記されている箇所がある点に注意。
 
 ## 制限事項
 
@@ -262,4 +262,4 @@ docker exec bgp vtysh -c 'show bfd peers' | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9cc90e2e6da0 -->

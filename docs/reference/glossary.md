@@ -1357,7 +1357,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [BFD_SESSION_TABLE (STATE_DB)](config-db/bfd-state.md) (168)
 - [BFD_SESSION テーブル](config-db/bfd-session.md) (159)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (77)
-- [BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）](../routing/bfd-hw-offload.md) (73)
+- [BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）](../routing/bfd-hw-offload.md) (75)
 
 ### [BGP](#term-bgp)
 
