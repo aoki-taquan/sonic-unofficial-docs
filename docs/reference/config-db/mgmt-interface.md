@@ -585,57 +585,6 @@ eth0 の IP アドレスが変更される場合、`interfaces-config` サービ
 
 <!-- /side-effects -->
 
-<!-- phase-f -->
-## 副次 DB 書込 (Phase F)
-
-`MGMT_INTERFACE` テーブルへの書込が発生すると、以下の副次処理が連鎖して行われる。
-
-### hostcfgd → systemd interfaces-config 経路
-
-`hostcfgd` の `MgmtIfaceCfg.update_mgmt_iface()` が CONFIG_DB `MGMT_INTERFACE` の変化を検知し、`systemctl restart interfaces-config` を発行する[^F1]。
-
-```
-CONFIG_DB MGMT_INTERFACE 変化
-  → hostcfgd (MgmtIfaceCfg.update_mgmt_iface)
-    → systemctl restart interfaces-config
-      → sonic-cfggen -d -t interfaces.j2,/etc/network/interfaces  # /etc/network/interfaces 再生成
-        → systemctl restart networking                              # ifupdown2 が eth0 を再設定
-```
-
-`interfaces-config.sh` は `sonic-cfggen` を呼んで `interfaces.j2` から `/etc/network/interfaces` を再生成し、その後 `systemctl restart networking` で `ifupdown2` が eth0 の IP アドレスと経路を反映する。
-
-### kernel netlink 経路
-
-`ifupdown2` / `systemd networking` が `/etc/network/interfaces` を解釈し、カーネルへ以下の netlink メッセージを発行する。DB への書き戻しは行われない。
-
-| 操作 | netlink コマンド | 条件 |
-|------|----------------|------|
-| IP アドレス追加 | `RTM_NEWADDR` (`ip addr add <ip_prefix> dev eth0`) | `gwaddr` あり・なし問わず |
-| デフォルトルート追加 | `RTM_NEWROUTE` (`ip route add default via <gw> dev eth0 metric 201`) | `gwaddr` が有効 IPv4/IPv6 |
-| mgmt VRF テーブルへのルート追加 | `RTM_NEWROUTE table mgmt` | `MGMT_VRF_CONFIG.mgmtVrfEnabled=true` |
-| forced_mgmt_routes 各エントリ | `RTM_NEWROUTE` (mgmt または default テーブル) | `forced_mgmt_routes` が 1 件以上 |
-
-### APPL_DB / STATE_DB 書込
-
-`IntfMgr` (`sonic-swss/cfgmgr/intfmgr.cpp`) は通常インタフェースの IP prefix 処理時に APPL_DB `INTF_TABLE` および STATE_DB `INTERFACE_TABLE` を更新するが、`MGMT_INTERFACE` は `intfmgrd` の購読テーブルに含まれない。eth0 の管理インタフェース処理は `hostcfgd` + `interfaces-config` 経路で完結し、`intfmgrd` は介在しない。
-
-| 副次書込先 | キー形式 | 書込者 | 条件 |
-|----------|---------|--------|------|
-| kernel routing table (netlink) | — | `ifupdown2` (via `interfaces-config.sh`) | 常時 |
-| `/etc/network/interfaces` | — | `sonic-cfggen` | 設定変化時 |
-| STATE_DB `INTERFACE_TABLE` | — | 書込なし (eth0 は intfmgrd 対象外) | — |
-| APPL_DB `INTF_TABLE` | — | 書込なし (eth0 は intfmgrd 対象外) | — |
-
-### MGMT_VRF_CONFIG 変化時の追加連鎖
-
-`MGMT_VRF_CONFIG.mgmtVrfEnabled` が変化した場合も `MgmtIfaceCfg.update_mgmt_vrf()` が `systemctl restart interfaces-config` を発行し、上記と同じ経路でカーネル設定が更新される[^F1]。
-
-> **スキャン証跡**: `sonic-host-services/scripts/hostcfgd:1626-1661, 2345-2350, 2485` および `sonic-buildimage/files/image_config/interfaces/interfaces-config.sh` を確認。`intfmgrd` 非経由を確認 — 誤読なし。
-
-[^F1]: `sonic-host-services/scripts/hostcfgd` L1637, L1661. <https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd>
-
-<!-- /phase-f -->
-
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 

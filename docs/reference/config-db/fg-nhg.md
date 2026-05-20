@@ -320,11 +320,11 @@ if (!link.empty()) {
 ```
 FG_NHG|<name>          ← 最初に投入（必須）
   ↓
-FG_NHG_PREFIX|<prefix> ← FG_NHG 処理完了後（逆順は破棄・再試行なし）
+FG_NHG_PREFIX|<prefix> ← FG_NHG 処理完了後（逆順時は自動 retry あり）
 FG_NHG_MEMBER|<nh_ip>  ← FG_NHG 処理完了後（逆順は自動 retry あり）
 ```
 
-- `FG_NHG_PREFIX` は親 FG_NHG が未存在の場合 `SWSS_LOG_ERROR` + `return true`（破棄・再試行なし）。**FG_NHG より後に投入しないと消える**。
+- `FG_NHG_PREFIX` は親 FG_NHG が未存在の場合 `SWSS_LOG_INFO "FG_NHG entry not received yet, continue"` + `return false`（Consumer キューに残り自動 retry）。FG_NHG の処理完了後に自動投入される (`doTaskFgNhgPrefix()` L1821)。
 - `FG_NHG_MEMBER` は親 FG_NHG が未存在の場合 `return false`（Consumer キューに残り自動 retry）。FG_NHG の処理完了後に自動投入される。
 
 ### NEXTHOP 解決順序

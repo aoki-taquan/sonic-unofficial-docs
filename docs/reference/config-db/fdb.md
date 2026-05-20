@@ -162,7 +162,7 @@ Orch::addExecutor(fdbNotifier);
 | APPL_DB → FdbOrch | `APP_FDB_TABLE_NAME` | Subscribe (Consumer) | `doTask(Consumer&)` |
 | FdbOrch → SAI | `sai_fdb_api` | 同期 API 呼び出し | `addFdbEntry()` / `removeFdbEntry()` |
 | syncd → FdbOrch | `ASIC_DB:NOTIFICATIONS` `fdb_event` | Pub/Sub (Notifier) | `doTask(NotificationConsumer&)` → `update()` |
-| FdbOrch → APPL_DB (応答) | `FDB_TABLE` (STATE_DB) | 書き戻し | `storeFdbEntryState()` |
+| FdbOrch → STATE_DB (書き戻し) | `FDB_TABLE` (STATE_DB) | 書き戻し | `storeFdbEntryState()` |
 | CLI → FdbOrch | `APPL_DB:FLUSHFDBREQUEST` | Pub/Sub (Notifier) | `doTask(NotificationConsumer&)` `op=ALL` |
 
 <!-- /pubsub -->

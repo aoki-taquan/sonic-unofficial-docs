@@ -45,6 +45,7 @@ related:
     - DPU
     - REMOTE_DPU
     - VDPU
+    - ENI
   yang:
     - sonic-device_metadata
 ---
@@ -180,7 +181,7 @@ YANG default は `"false"`。DPU 上では RouteOrch が `OrchDaemon::init()` �
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`DEVICE_METADATA`](device-metadata.md), [`DPU`/`REMOTE_DPU`/`VDPU`/`ENI`](dpu-eni.md)
+- 関連 CONFIG_DB: [`DEVICE_METADATA`](device-metadata.md), [`DPU`](dpu.md), [`DPU`/`REMOTE_DPU`/`VDPU`/`ENI`](dpu-eni.md)
 - 関連 YANG: `sonic-device_metadata`
 
 <!-- defaults -->

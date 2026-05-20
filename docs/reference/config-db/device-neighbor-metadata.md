@@ -30,7 +30,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>DEVICE_NEIGHBOR_METADATA")]
-  DM["lldpmgrd"]
+  DM["bgpcfgd / pfcwd"]
   CDB --> DM
 ```
 
@@ -157,7 +157,7 @@ DEVICE_NEIGHBOR_METADATA|<name>
 | # | 失敗トリガー | consumer | 処置 | リトライ |
 |---|---|---|---|---|
 | 1 | `DEVICE_NEIGHBOR_METADATA` テーブル未到達（directory 未登録） | bgpcfgd `BGPPeerMgrBase.set_handler` | directory メカニズムがテーブル到着まで全 BGP ピア SET をブロック（`return False`） | あり（テーブル到着後に自動再処理） |
-| 2 | 個別エントリ `data['name']` が neigmeta に不在 | bgpcfgd `BGPPeerMgrBase.add_peer` | `log_info("DEVICE_NEIGHBOR_METADATA is not ready for neighbor ...")`, `return False` | あり（エントリ到着後に directory が再通知） |
+| 2 | 個別エントリ `data['name']` が neigmeta に不在 | bgpcfgd `BGPPeerMgrBase.set_handler` | `log_info("DEVICE_NEIGHBOR_METADATA is not ready for neighbor ...")`, `return False` | あり（エントリ到着後に directory が再通知） |
 | 3 | `candidates[port]['name']` キー欠落（DEVICE_NEIGHBOR エントリに `name` フィールドなし） | pfcwd `get_server_facing_ports` | `KeyError` 例外発生 → pfcwd の起動シーケンスが中断 | なし（pfcwd プロセス再起動まで） |
 | 4 | `neighbor['type']` キー欠落（DEVICE_NEIGHBOR_METADATA エントリに `type` なし） | pfcwd `get_server_facing_ports` | `KeyError` 例外発生 → pfcwd の起動シーケンスが中断 | なし（pfcwd プロセス再起動まで） |
 | 5 | サーバー向けポートが 0 件（`type == 'server'` エントリなし） | pfcwd `get_server_facing_ports` | `VLAN_MEMBER` をフォールバックとして使用（サイレント） | N/A（フォールバックで継続） |
@@ -414,7 +414,7 @@ show lldp table
 
 ### 段階 1 — Consumer 登録
 
-`lldpmgrd` / `intfmgrd` / neighbor discovery が CONFIG_DB の `DEVICE_NEIGHBOR_METADATA` テーブルを購読する。
+`bgpcfgd` / `pfcwd` / `show` / `db_migrator` が CONFIG_DB の `DEVICE_NEIGHBOR_METADATA` テーブルを購読する（lldpmgrd は購読しない — pubsub セクション参照）。
 
 `DEVICE_NEIGHBOR_METADATA` は `<device_name>` の key で hwsku / type 情報を保持。
 
@@ -428,7 +428,7 @@ show lldp table
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB に書き込まれると即時に参照可能。lldpmgrd が LLDP neighbor との照合に使用。
+**適用タイミング**: CONFIG_DB に書き込まれると即時に参照可能。bgpcfgd が BGP ピア設定の照合に使用。
 
 **副作用**: neighbor metadata の変更は LLDP 情報の表示 / 解釈に影響。ネットワーク動作への直接影響なし。
 <!-- /runtime-trace -->

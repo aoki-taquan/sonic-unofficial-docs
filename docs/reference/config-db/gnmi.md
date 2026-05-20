@@ -51,7 +51,7 @@ flowchart LR
   CDB --> SH
   SH --> SRV
   CDB2[("CONFIG_DB<br/>GNMI_CLIENT_CERT")]
-  SRV --> CDB2
+  CDB2 -. reads .-> SRV
 ```
 
 !!! note "凡例"

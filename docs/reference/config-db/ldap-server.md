@@ -365,38 +365,6 @@ hostcfgd は起動時から `LDAP` / `LDAP_SERVER` テーブルを常時購読�
 
 <!-- /derivation -->
 
-<!-- cross-refs -->
-## 暗黙参照テーブル (Phase C)
-
-> **調査根拠**: `sonic-host-services/scripts/hostcfgd` 全行精読 (2026-05-16)  
-> 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-cross-refs.md`
-
-`LDAP_SERVER` テーブルは YANG leafref を持たないが、`hostcfgd` の `AaaCfg` クラスが以下のテーブルを暗黙参照する。**3 テーブルが揃って初めて nslcd が起動し LDAP 認証が有効になる**。
-
-| 参照先テーブル | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
-|---|---|---|---|---|---|
-| `AAA\|authentication` (`login` フィールド) | CONFIG_DB | 読み取り (`is_ldap_config_complete()` 判定) | なし | **必須** (未設定または `login` に `ldap` なしで nslcd 停止) | `hostcfgd:437-442`, `hostcfgd:241-251` |
-| `LDAP\|global` (`bind_dn`, `base_dn`, `bind_password`) | CONFIG_DB | 読み取り (nslcd.conf 生成・completeness チェック) | なし (同一 YANG モジュール内の別コンテナ) | **必須** (未設定で nslcd 停止・`LdapCfg` fallback 値使用) | `hostcfgd:437-442`, `hostcfgd:650-651`, `hostcfgd:706-713` |
-| `DEVICE_METADATA\|localhost` (`hostname`) | CONFIG_DB | 読み取り (hostcfgd 初期化時) | なし | 任意 (LDAP 動作への直接影響なし; RADIUS `nas_id` で使用) | `hostcfgd:1422-1496`, `hostcfgd:675-678` |
-
-### AAA|authentication — LDAP 有効化ゲート
-
-`is_ldap_config_complete()` は `'ldap' in self.authentication.get('login', "")` を条件の一つとして評価する (`hostcfgd:441`)。`AAA|authentication.login` に `ldap` が含まれない場合、`LDAP_SERVER` と `LDAP|global` が完全に設定済みであっても `handle_nslcd_service(False)` が呼ばれ nslcd を stop & mask する。**`config aaa authentication login ldap` を実行して AAA テーブルを更新するまで LDAP 認証は機能しない**。
-
-### LDAP|global — nslcd.conf 生成の前提
-
-`modify_conf_file()` は `server = ldap_global.copy(); server.update(self.ldap_servers[addr])` で各サーバのパラメータを合成し `nslcd.conf.j2` / `ldap.conf.j2` テンプレートに渡す (`hostcfgd:706-713`, `hostcfgd:854-863`)。`LDAP|global` が未設定の場合は `ldap_global == {}` → `is_ldap_config_complete()` が即 `False` を返す。推奨設定順序: `LDAP|global` → `LDAP_SERVER` → `AAA|authentication.login=ldap`。
-
-### DEVICE_METADATA|localhost — hostname 取得
-
-hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得し `self.hostname` に保持する (`hostcfgd:1422-1496`)。この値は RADIUS の `nas_id` に使われるが LDAP の nslcd.conf 生成には直接関与しない。`DEVICE_METADATA|localhost` が未設定でも LDAP 認証は動作する。
-
-### SAI 参照
-
-なし。LDAP 認証は nslcd / PAM のユーザー空間で完結し、APPL_DB 中継も SAI への書き込みも一切ない。
-
-<!-- /cross-refs -->
-
 <!-- failure -->
 ## 失敗挙動マトリクス (Phase D)
 

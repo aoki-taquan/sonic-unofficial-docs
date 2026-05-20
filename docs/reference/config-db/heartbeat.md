@@ -93,19 +93,19 @@ YANG default は libyang/sonic-mgmt-common の validation pass を通したと�
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`HEARTBEAT` テーブルは他の CONFIG_DB テーブルとの明示的な外部キー参照を持たない。エントリは `name` (プロセス名) 単位で独立しており、相互依存はない。ただし、eventd / process-monitor がこのテーブルを**起動時の初回読み込み**と**subscribe 通知**の 2 経路で参照する構造上、以下の順序制約が存在する。
+`HEARTBEAT` テーブルは他の CONFIG_DB テーブルとの明示的な外部キー参照を持たない。エントリは `name` (プロセス名) 単位で独立しており、相互依存はない。ただし、eventd / process-monitor がこのテーブルを**起動時の初回読み込みのみ**で参照する構造上 (subscribe 通知は使用しない — Phase G 参照)、以下の順序制約が存在する。
 
 ### 検出された順序依存
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | `HEARTBEAT` エントリ書込み → eventd / process-monitor 起動 | **推奨先行**（起動後の初回読み込みで反映される） | 起動後追加時は subscribe 通知で自動反映 |
+| 1 | `HEARTBEAT` エントリ書込み → eventd / process-monitor 起動 | **必須先行**（起動後の初回読み込みで反映される） | 起動後の変更は daemon 再起動まで反映されない |
 | 2 | 各 `HEARTBEAT|<name>` エントリは相互独立 | 独立 | 書込み順序不問 |
 | 3 | `heartbeat_interval` と `alert_interval` の同一エントリ内同時書込み | **アトミック推奨**（HSET で複数フィールドを一括書込み） | 片方だけ書くと中間状態で `alert_interval < heartbeat_interval` になりえる |
 
 ### 主要な制約詳細
 
-**起動前書込み推奨 (依存 #1)**: eventd は `set_heartbeat_interval(HEARTBEAT_INTERVAL_SECS)` でデフォルト値 (2 秒) を内部に持ち起動する (`eventd.cpp:130`)。CONFIG_DB の `HEARTBEAT` エントリは `GLOBAL_OPTION_HEARTBEAT` option API 経由で eventd に通知されるが、eventd が既に起動済みの場合でも subscribe 通知によりランタイム更新が可能。ただし起動直後の短い窓ではデフォルト値で動作する点に注意。
+**起動前書込み必須 (依存 #1)**: eventd は `set_heartbeat_interval(HEARTBEAT_INTERVAL_SECS)` でデフォルト値 (2 秒) を内部に持ち起動する (`eventd.cpp:130`)。CONFIG_DB の `HEARTBEAT` エントリは起動時の初回読み込みでのみ反映される。eventd / process-monitor は SubscriberStateTable / ConsumerStateTable を使用しないため、起動後に追加・変更しても daemon 再起動まで反映されない (Phase G 参照)。
 
 **フィールド同時書込み (依存 #3)**: `sonic-db-cli CONFIG_DB HSET "HEARTBEAT|<name>" heartbeat_interval 5000 alert_interval 30000` のように 1 コマンドで複数フィールドを書くことで中間状態を回避できる。CLI 書き込みパスが存在しないため、通常は `config_db.json` の load (一括) または 1 エントリ単位の HSET で書き込む。
 

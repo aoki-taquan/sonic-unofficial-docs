@@ -98,7 +98,7 @@ LLDP_PORT|<ifname>
 ### 典型値
 
 - key 形式: `LLDP_PORT|<Ethernet>`。
-- `admin_status`: `rx_and_tx`。`description` を物理配線管理用に活用する。
+- `enabled`: `true`（デフォルト、双方向）。`description` を物理配線管理用に活用する。
 
 ### よくある誤設定
 
@@ -215,8 +215,8 @@ inband / recirc / backplane prefix を持つポートは `LLDP_PORT` エント�
 
 | 条件 | 挙動 |
 |------|------|
-| `admin_status` に不正値 | `lldpcli configure ports ... lldp status <value>` が失敗。CONFIG_DB にはバリデーションなしで書けるが lldpd には反映されない |
-| `admin_status=disabled` | LLDP フレームの送受信停止。`DEVICE_NEIGHBOR` テーブルへの自動学習が発生せず minigraph との乖離が生じる |
+| `enabled` に不正値 (boolean 以外) | `lldpcli configure ports ... lldp status <value>` が失敗。CONFIG_DB にはバリデーションなしで書けるが lldpd には反映されない |
+| `enabled=false` | LLDP フレームの送受信停止。`DEVICE_NEIGHBOR` テーブルへの自動学習が発生せず minigraph との乖離が生じる |
 | 実在しないポート名でエントリ投入 | lldpd に対応ポートが存在しないため設定無視。エントリは CONFIG_DB に残存 |
 | `description` の反映タイミング | lldpmgrd のポーリング周期（数秒）に依存する非同期反映 |
 

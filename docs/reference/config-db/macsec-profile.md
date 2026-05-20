@@ -194,7 +194,7 @@ MACSEC_PROFILE|<name>
 CONFIG_DB:PORT.macsec  ──名前参照──▶  CONFIG_DB:MACSEC_PROFILE
 ```
 
-プロファイル削除時、当該プロファイルを参照中のポートが存在する場合は削除が拒否される (`task_failed`)。
+プロファイル削除時、当該プロファイルを参照中のポートが存在する場合は削除が拒否される (`task_need_retry` — 全ポート MACsec 無効化まで待機、`macsecmgr.cpp:452-466`)。
 
 ### MACSEC_SC への間接参照
 

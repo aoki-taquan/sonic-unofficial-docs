@@ -207,9 +207,9 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 
 ### 段階 1 — Consumer 登録
 
-`sonic-cfggen` / 各種設定生成スクリプト が CONFIG_DB の `DEVICE_RUNTIME_METADATA` テーブルを購読する。
+`DEVICE_RUNTIME_METADATA` は CONFIG_DB に永続化されない仮想テーブル。`sonic-cfggen` 実行時にのみ存在するメモリ上の名前空間として、各種 Jinja テンプレートから参照される。永続テーブルではないため、Redis 上の「購読者」は存在しない。
 
-`DEVICE_RUNTIME_METADATA` は動的に生成されるデバイス情報 (mac address 等) を保持。
+保持内容は `ETHERNET_PORTS_PRESENT` / `MACSEC_SUPPORTED` / `CHASSIS_METADATA`（chassis 構成時のみ）の 3 サブキーのみ。mac address は `DEVICE_METADATA.localhost.mac` が管理する。
 
 ### 段階 2 — CFG→APPL 翻訳
 
@@ -221,7 +221,7 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: デバイス起動時に `sonic-cfggen` が生成して CONFIG_DB に書き込む。実行時に参照されるが基本的に読み取り専用。
+**適用タイミング**: `sonic-cfggen` 実行時に動的に組み立てられる仮想テーブルであり、CONFIG_DB への永続書き込みは行われない。テンプレート展開時にのみ参照される。
 
 **副作用**: 直接的なネットワーク動作への影響なし。`DEVICE_METADATA` と組み合わせてシステム設定生成に使用。
 <!-- /runtime-trace -->

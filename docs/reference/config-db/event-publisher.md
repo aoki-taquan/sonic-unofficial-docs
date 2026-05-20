@@ -71,7 +71,7 @@ flowchart LR
 | `xpub_path` | string (ZMQ URI) | `tcp://127.0.0.1:5571` | サブスクライバーが接続する ZMQ XPUB エンドポイント |
 | `req_rep_path` | string (ZMQ URI) | `tcp://127.0.0.1:5572` | eventd 制御サービスの REQ/REP エンドポイント |
 | `capture_path` | string (ZMQ URI) | `tcp://127.0.0.1:5573` | キャッシュ収集用内部 PUB エンドポイント |
-| `stats_upd_secs` | string (数値) | `"5"` | COUNTERS_DB への統計書き込み間隔 (秒) |
+| `stats_upd_secs` | string (数値) | `"5"` | ハートビート間隔計算 (`STATS_HEARTBEAT_MIN`) に使用されるパラメータ。COUNTERS_DB への実際の書き込み間隔はこの値ではなく `run_writer` の 10 ms ポーリング周期 (`eventd.cpp:215-221`) による |
 | `cache_max_cnt` | string (数値) | `""` → 699050 件 | イベントキャッシュの最大件数。空文字列の場合は MAX_CACHE_SIZE (≈ 100 MB / 150 B) が使用される |
 
 ## ハートビート設定
