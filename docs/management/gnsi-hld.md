@@ -6,7 +6,7 @@ area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
 page_kind: split-hub
-monitor: partially_implemented
+monitor: evolved_beyond_hld
 sources:
 - repo: sonic-net/SONiC
   path: doc/mgmt/gnmi/gnsi.md
@@ -321,7 +321,7 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 ## 実装フェーズ境界
 
 !!! info "Phase 別の実装済 / 未実装 サマリ"
-    本ページは `monitor: partially_implemented` で、HLD で示された一連の機能
+    本ページは `monitor: evolved_beyond_hld` で、HLD で示された一連の機能
     が **段階的に取り込まれている** 状態を扱う。フェーズ毎の実装境界を
     1 枚の表に集約する (詳細は本ページ上部の `diff` admonition および
     [discrepancy-index](../reference/verification/discrepancy-index.md) を参照)。

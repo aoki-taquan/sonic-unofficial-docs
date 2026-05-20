@@ -16,16 +16,11 @@ related:
   - PORT
   - ACL_RULE
   - ACL_TABLE
-  - PORT_STORM_CONTROL
-  - PORT_QOS_MAP
-  - P4RT_TABLE
   cli:
   - show acl
   - config acl
   yang:
   - sonic-port
-  - sonic-port-qos-map
-  - sonic-crm
 ---
 
 <!-- topics-tip -->
@@ -186,7 +181,7 @@ HLD には P4RT 用の SONiC CLI 追加は記載されていない。設定は [
 
 ## 干渉する機能
 
-- **P4Orch / HashOrch**: 本 App が APPL_DB に書く先。P4Orch は `P4RT_TABLE` を購読、HashOrch は P4Info 由来のハッシュ設定を SAI に流す。
+- **P4Orch / SwitchOrch（ハッシュ責務）**: 本 App が APPL_DB に書く先。P4Orch は `P4RT_TABLE` を購読。HLD は P4Info 由来のハッシュ設定を専任で扱う `HashOrch` の新設を示唆していたが、現行 master では独立した `HashOrch` クラスは存在せず、既存の `SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を消費して SAI ハッシュ属性を設定する（詳細は本ページ末尾「HLD と実装の差分」を参照）。
 - **APPL_STATE_DB**: 本 HLD で導入される新しいレスポンスチャネル。他 SONiC コンポーネントと用途が違うため認識のズレに注意。
 - **gRPC 認証**: `cert_crl_dir` / `authz_policy` 等の鍵・権限ポリシーが PINS デプロイ前提。SONiC 標準の SSH/console 認証経路とは別系統。
 
@@ -223,7 +218,7 @@ docker logs p4rt 2>&1 | tail -100
     **読者への影響**:
 
     - アーキ図に `HashOrch` を書き起こすと **存在しない box** になる。レビュー時に「HashOrch のソースはどこか」と質問された場合、`SwitchOrch` を案内する必要がある。
-    - P4RT App から hash 設定を反映させる経路は HLD と論理的には同じ（P4RT App → CONFIG_DB → orchagent → SAI hash 属性）だが、debug 時に attach するクラス名が違う。
+    - P4RT App から hash 設定を反映させる経路は HLD と論理的には同じだが、debug 時に attach するクラス名が違う。実体経路は P4RT App → APPL_DB → P4Orch（テーブル系）、ハッシュ設定そのものは `SwitchOrch` が CONFIG_DB の `CFG_SWITCH_HASH_TABLE_NAME` を購読して SAI 属性へ変換する形になっており、P4RT App が直接 CONFIG_DB を書くわけではない。
     - P4Info 由来の hash 設定が反映されない場合のトラブルシュート先は `SwitchOrch::doTask` 系（`switchorch.cpp:1507` 付近）。
 
     **回避策 / 対応方法**:

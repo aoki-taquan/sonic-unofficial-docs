@@ -29,8 +29,8 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は Rev 0.1 のみで日付未記載。`gnmi-server` の SmartSwitch 拡張、DPU APPL_STATE_DB スキーマ、ZMQ 経由の swss 連携実装は要裏取り。
+!!! warning "裏取りステータス: discrepancy-found"
+    HLD は Rev 0.1（日付未記載）で、現行 master の `sonic-gnmi` に `version_id` フィールド・batch gNMI 操作・DPU APPL_STATE_DB 専用インスタンス・ZMQ handler は確認できず。本ページの内容は提案段階であり実装と乖離している。詳細は「HLD と実装の差分」セクションを参照。
 
 # SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）
 
