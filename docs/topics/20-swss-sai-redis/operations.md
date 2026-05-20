@@ -46,7 +46,7 @@ related:
 | 2 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | flex counter |
 | 4 | [CONFIG_DB](../../reference/glossary.md#term-config_db) | ユーザ設定の真実 |
 | 6 | [STATE_DB](../../reference/glossary.md#term-state_db) | 各 daemon の状態（PORT_TABLE、INTERFACE_TABLE 等） |
-| 13 | CHASSIS_STATE_DB | VOQ chassis 用の chassis state |
+| 13 | CHASSIS_STATE_DB | [VOQ](../../reference/glossary.md#term-voq) chassis 用の chassis state |
 | 14 | APPL_STATE_DB | APPL_DB に書いた結果（成功 / 失敗） |
 
 !!! warning "ERROR_DB は未実装"
@@ -259,4 +259,4 @@ ERR syncd#saidump: :- dumpFromRedisRdbJson: JSON parsing error: unexpected end o
 - [Build / Packaging 章](../19-build-packaging/index.md)（FEATURE / [hostcfgd](../../reference/glossary.md#term-hostcfgd) との関係）
 - [SRv6 / MPLS 章](../17-srv6-mpls/operations.md)（SAI 失敗の実例）
 
-<!-- glossary-links-injected: 818483293d52 -->
+<!-- glossary-links-injected: 841e6cdca746 -->

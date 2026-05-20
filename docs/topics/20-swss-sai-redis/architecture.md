@@ -93,7 +93,7 @@ ASIC_DB 側は sairedis が非同期に消費し、SAI 呼び出しに変換す�
 
 ## syncd と SAI の境界
 
-syncd は ASIC_DB を消費し、SAI API を呼ぶ唯一の場所である。ベンダごとの SAI 実装は libsai に隠れ、syncd と orchagent はベンダ非依存に保たれる。SAI 失敗は syncd で観測されると、ASIC_DB の notification channel 経由で orchagent に通知され、orchagent 側の `Orch` クラスの virtual メソッド `handleSaiSetStatus` / `handleSaiCreateStatus` 系で分類される（`handleSai*Status` は syncd ではなく orchagent 側に定義されている）。fatal なものは crash、recoverable なものは ERROR_DB / [STATE_DB](../../reference/glossary.md#term-state_db) 経由で上位に通知する設計だが、`ERROR_DB` 自体は HLD 提案であり実装は未完である ([error-handling-framework-in-sonic-limitations](../../architecture/error-handling-framework-in-sonic-limitations.md))。詳細は [SAI 失敗ハンドリング](../../platform/hld-for-handling-sai-failures.md) と [Error Handling Framework](../../architecture/error-handling-framework-in-sonic.md) を読む。
+syncd は ASIC_DB を消費し、SAI API を呼ぶ唯一の場所である。ベンダごとの SAI 実装は libsai に隠れ、syncd と orchagent はベンダ非依存に保たれる。SAI 失敗は syncd で観測されると、ASIC_DB の notification channel 経由で orchagent に通知され、orchagent 側の `Orch` クラスの virtual メソッド `handleSaiSetStatus` / `handleSaiCreateStatus` 系で分類される（`handleSai*Status` は syncd ではなく orchagent 側に定義されている）。fatal なものは crash、recoverable なものは ERROR_DB / [STATE_DB](../../reference/glossary.md#term-state_db) 経由で上位に通知する設計だが、`ERROR_DB` 自体は [HLD](../../reference/glossary.md#term-hld) 提案であり実装は未完である ([error-handling-framework-in-sonic-limitations](../../architecture/error-handling-framework-in-sonic-limitations.md))。詳細は [SAI 失敗ハンドリング](../../platform/hld-for-handling-sai-failures.md) と [Error Handling Framework](../../architecture/error-handling-framework-in-sonic.md) を読む。
 
 ## 機能章はこの絵のどこを使うか
 
@@ -114,4 +114,4 @@ syncd は ASIC_DB を消費し、SAI API を呼ぶ唯一の場所である。ベ
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../../platform/hld-for-handling-sai-failures.md)
 - [Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）](../../architecture/error-handling-framework-in-sonic.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 167700005048 -->
