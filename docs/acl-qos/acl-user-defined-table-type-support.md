@@ -156,7 +156,7 @@ private:
 };
 ```
 
-create/update/remove は protected で、外部からは AclOrch の public API（`addAclRule` 等）経由でしか呼べない。これにより [CRM](../reference/glossary.md#term-crm) / Flex Counter 管理が AclOrch に集約される[^1]。
+`create` / `update` / `remove` は `public virtual` で宣言されており、派生クラスでオーバーライド可能。ただし直接呼び出しではなく AclOrch の public API（`addAclRule` 等）経由での利用が想定されており、[CRM](../reference/glossary.md#term-crm) / Flex Counter 管理が AclOrch に集約される設計となっている[^1]。
 
 ### AclOrch 公開 API
 

@@ -13,12 +13,6 @@ sources:
 related:
   config_db:
   - VNET
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - DPU
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - BGP_PEER_GROUP_AF
   cli:
   - show arp
   - show bfd

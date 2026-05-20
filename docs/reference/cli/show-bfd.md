@@ -10,7 +10,8 @@ sources:
   path: show/main.py
   ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
-  config_db:
+  config_db: []
+  state_db:
   - BFD_SESSION_TABLE
   cli:
   - show bfd
@@ -129,19 +130,19 @@ show bfd peer <peer_ip> [-n|--namespace <ns>]
 ```mermaid
 flowchart LR
   CLI["show bfd"]
-  CDB0[("CONFIG_DB<br/>BFD_SESSION_TABLE")]
-  CDB0 --> CLI
+  SDB0[("STATE_DB<br/>BFD_SESSION_TABLE")]
+  SDB0 --> CLI
 ```
 
 !!! note "凡例"
-    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+    show 系 (STATE_DB → CLI) のミニ図。`show bfd` は CONFIG_DB ではなく STATE_DB を参照する。
 <!-- /cli-mermaid -->
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BFD_SESSION_TABLE`
+- [STATE_DB](../../reference/glossary.md#term-state_db): `BFD_SESSION_TABLE`
 
 <!-- ref-triangle:end -->
 

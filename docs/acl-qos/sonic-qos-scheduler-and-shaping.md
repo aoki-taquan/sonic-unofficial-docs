@@ -14,23 +14,14 @@ related:
   - SCHEDULER
   - QUEUE
   - PORT_QOS_MAP
-  - VLAN
-  - VLAN_MEMBER
-  - PORTCHANNEL_MEMBER
-  - PORTCHANNEL
   cli:
   - config load
   - show queue counters
   - config qos clear
   - show queue
   - config qos
-  - config vlan
-  - show vlan
   yang:
-  - sonic-vlan
-  - sonic-portchannel
   - sonic-scheduler
-  - sonic-vlan-sub-interface
   - sonic-port
   - sonic-crm
 ---
