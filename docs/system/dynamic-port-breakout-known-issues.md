@@ -36,7 +36,7 @@ hard: 0
 
 動的ポートブレイクアウト（[DPB](../reference/glossary.md#term-dpb)）は
 reload 不要でポート分割モードを変更する機能だが、
-YANG モデルの不整合・orchagent との競合・LLDP や ACL との非整合など
+[YANG](../reference/glossary.md#term-yang) モデルの不整合・[orchagent](../reference/glossary.md#term-orchagent) との競合・[LLDP](../reference/glossary.md#term-lldp) や [ACL](../reference/glossary.md#term-acl) との非整合など
 実装上のエッジケースが多い。本ページは issue tracker の報告を整理する。
 
 ---
@@ -72,7 +72,7 @@ Error: asn key is not matched (uses/grouping keywords not working)
 libyang の特定バージョンで期待通りに動作しない。
 `BGP_NEIGHBOR` テーブルの ASN フィールドが検証エラーになる。
 
-**影響**: BGP neighbor が設定されている port を breakout しようとすると失敗する。
+**影響**: [BGP](../reference/glossary.md#term-bgp) neighbor が設定されている port を breakout しようとすると失敗する。
 
 **回避策**: Breakout 前に BGP neighbor 設定を一時削除する。
 
@@ -156,7 +156,7 @@ VS（Virtual Switch）環境での DPB 中に `sai_remove_hostif` が失敗す�
 swss#orchagent: Failed to remove host interface for port
 ```
 
-**原因**: VS SAI が HIF 削除シーケンスの順序を正しく処理しない。
+**原因**: VS [SAI](../reference/glossary.md#term-sai) が HIF 削除シーケンスの順序を正しく処理しない。
 
 ---
 
@@ -183,7 +183,7 @@ show techsupport
 Orchagent missing DELETE update from CONFIG_DB during DPB
 ```
 
-**現象**: DPB 時に一部の CONFIG_DB エントリが orchagent に伝達されず、
+**現象**: DPB 時に一部の [CONFIG_DB](../reference/glossary.md#term-config_db) エントリが orchagent に伝達されず、
 ポートが部分的な状態のまま残る。
 
 **対処**: `swss` サービスを再起動して状態を再同期する。
@@ -256,7 +256,7 @@ redis-cli -n 4 HGETALL "BREAKOUT_CFG|Ethernet0"
 
 ## 7. Redis I/O エラー (#6935)
 
-**現象**: DPB 操作中に Redis の I/O エラーが発生する。
+**現象**: DPB 操作中に [Redis](../reference/glossary.md#term-redis) の I/O エラーが発生する。
 
 ```
 [DPB] redis (database) input/output errors
@@ -295,3 +295,5 @@ flowchart TD
 
 - [動的ポートブレイクアウト HLD](sonic-dynamic-port-breakout-feature-high-level-design.md)
 - [YANG モデルリファレンス](../reference/yang/index.md)
+
+<!-- glossary-links-injected: 1a4fdb39de53 -->

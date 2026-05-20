@@ -53,9 +53,9 @@ related:
 
 ## なぜ拡張が必要か
 
-`sonic-restapi` は case-by-case な API で汎用性が無く、`sonic-telemetry` は **読み取り (gRPC) 専用** だった。本 [HLD](../reference/glossary.md#term-hld) は `sonic-telemetry` 同コンテナに gNMI **Set / Get / Capabilities** を実装し、[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) / [COUNTERS_DB](../reference/glossary.md#term-counters_db) を **DB schema または SONiC YANG schema** で読み書き可能にする。将来 `sonic-restapi` を gNMI に置き換える計画[^1]。
+`sonic-restapi` は case-by-case な API で汎用性が無く、`sonic-telemetry` は **読み取り (gRPC) 専用** だった。本 [HLD](../reference/glossary.md#term-hld) は `sonic-telemetry` 同コンテナに gNMI **Set / Get / Capabilities** を実装し、[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) / [COUNTERS_DB](../reference/glossary.md#term-counters_db) を **DB schema または [SONiC](../reference/glossary.md#term-sonic) YANG schema** で読み書き可能にする。将来 `sonic-restapi` を gNMI に置き換える計画[^1]。
 
-Phase 1: Set/Get/Capabilities、増分・全更新、CONFIG_DB schema 入力でも **YANG 検証必須**、[VNET](../reference/glossary.md#term-vnet) route の大量投入、multi-ASIC、bulk、TLS 相互認証。Phase 2 で TACACS+ 認可と [gNOI](../reference/glossary.md#term-gnoi) 経由アップグレード[^1]。
+Phase 1: Set/Get/Capabilities、増分・全更新、CONFIG_DB schema 入力でも **YANG 検証必須**、[VNET](../reference/glossary.md#term-vnet) route の大量投入、multi-[ASIC](../reference/glossary.md#term-asic)、bulk、TLS 相互認証。Phase 2 で TACACS+ 認可と [gNOI](../reference/glossary.md#term-gnoi) 経由アップグレード[^1]。
 
 ## path の origin と target でスキーマを切替
 
@@ -164,3 +164,5 @@ CONFIG_DB の Set 成功は `/etc/sonic/config_db.json` に永続化、APPL_DB �
 - [gnmi-subscribe-disconnect](../reference/runbooks/gnmi-subscribe-disconnect.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: ec18b66e3507 -->

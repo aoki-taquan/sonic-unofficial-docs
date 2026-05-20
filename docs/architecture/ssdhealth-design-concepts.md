@@ -24,7 +24,7 @@ related:
 
 ## 1. 機能の目的
 
-SONiC が動く NOS は組み込み SSD / mSATA に書き込みを行うため、**ストレージの寿命と健全性を運用者が把握できる** 必要がある[^1]。本機能は基本機能として **`show platform ssdhealth`** という CLI を新設し、ディスクの health 値・温度・モデル・FW 等を表示する仕組みを定義する。
+[SONiC](../reference/glossary.md#term-sonic) が動く NOS は組み込み SSD / mSATA に書き込みを行うため、**ストレージの寿命と健全性を運用者が把握できる** 必要がある[^1]。本機能は基本機能として **`show platform ssdhealth`** という CLI を新設し、ディスクの health 値・温度・モデル・FW 等を表示する仕組みを定義する。
 
 実装は `sonic-utilities` 側のスクリプト + `sonic-platform-common` 側の **抽象クラス `SsdBase`** + 各ベンダ実装の **`SsdUtil` プラグイン** の三層構成。汎用情報は `smartctl`（smartmontools）から、詳細はベンダ別ユーティリティ（InnoDisk の `iSmart`、StorFly/Virtium の `SmartCmd` 等）から拾う[^1]。
 
@@ -98,3 +98,4 @@ show version
 docker logs --tail 200 $(docker ps --format "{{.Names}}" | head -1)
 ```
 
+<!-- glossary-links-injected: 8ba32e5aa69d -->

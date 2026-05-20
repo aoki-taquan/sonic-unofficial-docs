@@ -17,7 +17,7 @@ related:
 
 ## 概要
 
-SONiC の [SNMP](../reference/glossary.md#term-snmp) エージェントは **Net-SNMP + sonic_ax_impl (AgentX subagent)** で構成され、`snmpd` が標準 MIB を提供し、Python ベースの subagent が SONiC 固有 MIB（ポート / インタフェース / 物理エンティティ / センサー / トランシーバ / [VRF](../reference/glossary.md#term-vrf) / Dot1agtm 等）を実装しています。設定は歴史的に `snmp.yml` で行っていましたが、現行マスターは [CONFIG_DB](../reference/glossary.md#term-config_db) の `SNMP` / `SNMP_COMMUNITY` / `SNMP_USER` / `SNMP_AGENT_ADDRESS_CONFIG` テーブルに移行済みです。
+[SONiC](../reference/glossary.md#term-sonic) の [SNMP](../reference/glossary.md#term-snmp) エージェントは **Net-SNMP + sonic_ax_impl (AgentX subagent)** で構成され、`snmpd` が標準 MIB を提供し、Python ベースの subagent が SONiC 固有 MIB（ポート / インタフェース / 物理エンティティ / センサー / トランシーバ / [VRF](../reference/glossary.md#term-vrf) / Dot1agtm 等）を実装しています。設定は歴史的に `snmp.yml` で行っていましたが、現行マスターは [CONFIG_DB](../reference/glossary.md#term-config_db) の `SNMP` / `SNMP_COMMUNITY` / `SNMP_USER` / `SNMP_AGENT_ADDRESS_CONFIG` テーブルに移行済みです。
 
 このカテゴリは MIB / SNMP に関わるページを area 横断でまとめます。**system**（snmp.yml → CONFIG_DB 移行、SNMP IPv6 対応、Entity / Sensor MIB 拡張、Transceiver Monitoring、SNMP TABLE スキーマ提案）・**switching**（L2 モードでの SNMP 検証）・**architecture**（ポート不正パケット用 MIB 拡張）・**reference**（`config snmp` / `snmpagentaddress` / `snmptrap` CLI）に分散しています。
 
@@ -68,4 +68,4 @@ SNMP IPv6 では応答 SRC IP が listening address と一致しない問題が�
 - [Multi-ASIC / VOQ chassis 関連](multi-asic.md)
 - [gNMI / gNOI / OpenConfig 関連](gnmi-openconfig.md)
 
-<!-- glossary-links-injected: ad6993c42691 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

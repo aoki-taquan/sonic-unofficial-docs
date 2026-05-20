@@ -38,7 +38,7 @@ related:
 | 機能 | 改善する問題 | 主な層 | 設定面 |
 | --- | --- | --- | --- |
 | BGP Loading Optimization | 2M routes 級投入時の [fpmsyncd](../../reference/glossary.md#term-fpmsyncd)/[orchagent](../../reference/glossary.md#term-orchagent)/sairedis 処理遅延 | fpmsyncd、orchagent、sairedis | 新規 CLI/[CONFIG_DB](../../reference/glossary.md#term-config_db) なし |
-| BGP PIC | 障害時に prefix 数 N に比例して再プログラムする遅さ | [FRR](../../reference/glossary.md#term-frr)、NhgOrch、ASIC NHG | [HLD](../../reference/glossary.md#term-hld) は architecture 中心 |
+| BGP PIC | 障害時に prefix 数 N に比例して再プログラムする遅さ | [FRR](../../reference/glossary.md#term-frr)、NhgOrch、[ASIC](../../reference/glossary.md#term-asic) NHG | [HLD](../../reference/glossary.md#term-hld) は architecture 中心 |
 | Suppress FIB Pending | ASIC 未導入 route を先に advertise して traffic loop を起こす問題 | bgpd、[zebra](../../reference/glossary.md#term-zebra)、fpmsyncd、orchagent | `DEVICE_METADATA` |
 | BGP aggregate with BBR awareness | 集約 route と BBR/prefix-list の連動 | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd)、FRR | `BGP_AGGREGATE_ADDRESS` |
 | dynamic peer modification | dynamic peer range の追加/削除を再起動なしで扱う | bgpcfgd、FRR templates、[STATE_DB](../../reference/glossary.md#term-state_db) | `BGP_PEER_RANGE` など |
@@ -118,7 +118,7 @@ ASIC_DB:
   ROUTE_ENTRY, NEXT_HOP, NEXT_HOP_GROUP, NEXT_HOP_GROUP_MEMBER
 ```
 
-`bgpcfgd` は CONFIG_DB の更新を subscribe するときに `BGP_PEER_RANGE` 単位で diff を取り、FRR vtysh に**追加/削除コマンド単位**で投入するため、frr.conf 全体を再書き出しせずに済みます。
+`bgpcfgd` は CONFIG_DB の更新を subscribe するときに `BGP_PEER_RANGE` 単位で diff を取り、FRR [vtysh](../../reference/glossary.md#term-vtysh) に**追加/削除コマンド単位**で投入するため、frr.conf 全体を再書き出しせずに済みます。
 
 ## ZMQ / Redis pub/sub
 
@@ -128,7 +128,7 @@ ASIC_DB:
 
 ## 大量 route loading
 
-BGP Loading Optimization は、BGP 自体の best path 計算ではなく、SONiC に route が流れ込んだ後の処理量を減らす。fpmsyncd の Redis pipeline flush、orchagent の ring buffer/assistant thread、sairedis async 化が主な論点である。小規模経路の即時性と大量経路の throughput のバランスが設計上の注意点になる。詳細は [BGP Loading Optimization](../../routing/bgp-loading-optimization-for-sonic.md) を参照する。
+BGP Loading Optimization は、BGP 自体の best path 計算ではなく、[SONiC](../../reference/glossary.md#term-sonic) に route が流れ込んだ後の処理量を減らす。fpmsyncd の Redis pipeline flush、orchagent の ring buffer/assistant thread、sairedis async 化が主な論点である。小規模経路の即時性と大量経路の throughput のバランスが設計上の注意点になる。詳細は [BGP Loading Optimization](../../routing/bgp-loading-optimization-for-sonic.md) を参照する。
 
 ## 障害収束と PIC
 
@@ -175,4 +175,4 @@ bgpcfgd は単一プロセス内で複数 manager を並べ、CONFIG_DB の各�
 - [BBR 連動の BGP ルート集約](../../routing/bgp-route-aggregation-with-bbr-awareness.md)
 - [bgpcfgd の dynamic BGP peer 動的変更](../../routing/bgpcfgd-dynamic-peer-modification-support.md)
 
-<!-- glossary-links-injected: 7f118797c352 -->
+<!-- glossary-links-injected: d62d2c91ba87 -->

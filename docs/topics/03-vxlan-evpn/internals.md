@@ -74,10 +74,10 @@ EVPN 学習経路と VNET API 経路は orchagent の中で同じ tunnel / encap
 | `VxlanTunnelMapOrch` | `VxlanTunnelMapOrch::doTask` | VNI ↔ [VLAN](../../reference/glossary.md#term-vlan) / [VRF](../../reference/glossary.md#term-vrf) の tunnel-map entry を管理 |
 | `VNetOrch` (`orchagent/vnetorch.cpp`) | `VNetOrch::doTask`、`VNetBitmapObject` / `VNetVrfObject` | `VNET` テーブルから vrf 実体（または bitmap 方式）を作成 |
 | `VNetRouteOrch` | `addRoute`、`addTunnelRoute` | `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を SAI nexthop / nexthop group へ |
-| `EvpnRemoteVnipOrch` / `EvpnNvoOrch` | `orchagent/vxlanorch.cpp` | type-2 で学んだ remote VTEP を tunnel decap 側に登録 |
+| `EvpnRemoteVnipOrch` / `EvpnNvoOrch` | `orchagent/vxlanorch.cpp` | type-2 で学んだ remote [VTEP](../../reference/glossary.md#term-vtep) を tunnel decap 側に登録 |
 | `VRFOrch` | `orchagent/vrforch.cpp` | EVPN type-5 受信 vrf の作成・参照管理 |
 | `IntfsOrch` | `orchagent/intfsorch.cpp` | overlay SVI / router interface の作成 |
-| `bgpcfgd` (`dockers/docker-fpm-frr/bgpcfgd/`) | jinja2 + [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) | [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_*` / `DEVICE_METADATA` から FRR の vtysh config を生成 |
+| `bgpcfgd` (`dockers/docker-fpm-frr/bgpcfgd/`) | jinja2 + [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) | [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_*` / `DEVICE_METADATA` から FRR の [vtysh](../../reference/glossary.md#term-vtysh) config を生成 |
 | `fpmsyncd` (`fpmsyncd/fpmlink.cpp`) | `FpmLink::processFpmMessage` | zebra の [FPM](../../reference/glossary.md#term-fpm) netlink を `ROUTE_TABLE` / `LABEL_ROUTE_TABLE` に書き込み |
 
 ## SAI 属性の使用一覧
@@ -124,7 +124,7 @@ VNET monitoring / [BFD](../../reference/glossary.md#term-bfd) は `BFD_SESSION_T
 ## 既知の実装上の制約
 
 - VxLAN encap source IP は **loopback IP** をひとつ選ぶ設計で、複数 source を SAI 側で同時に持つことは tunnel object 単位では未対応です（HLD で明記）。
-- ベンダ ASIC によっては `SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID`（type-5 用）が未実装で、EVPN type-5 を MAC-VRF + IRB で代替する実装に倒れることがあります。これは discrepancy として記録する典型例です。
+- ベンダ [ASIC](../../reference/glossary.md#term-asic) によっては `SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID`（type-5 用）が未実装で、EVPN type-5 を MAC-VRF + IRB で代替する実装に倒れることがあります。これは discrepancy として記録する典型例です。
 - VNET [BGP](../../reference/glossary.md#term-bgp)（VNET 内 BGP セッション）は BGP route の VNET 帰属を nexthop で識別する設計で、同一 nexthop が複数 VNET から指される構成は HLD では除外されています。
 - type-2 で学んだ [ARP](../../reference/glossary.md#term-arp)/ND の老化は kernel ではなく orchagent の `NeighOrch` が tunnel route と一緒に管理するため、tcpdump で aging を観測しても挙動が一致しないことがあります。
 
@@ -132,7 +132,7 @@ VNET monitoring / [BFD](../../reference/glossary.md#term-bfd) は `BFD_SESSION_T
 
 EVPN は VNI を L2（type-2）と L3（type-5）の両方で使うため、VNI の意味を文脈で分ける必要があります。
 
-| 種別 | 用途 | SONiC 実装 |
+| 種別 | 用途 | [SONiC](../../reference/glossary.md#term-sonic) 実装 |
 | --- | --- | --- |
 | L2 VNI | type-2（MAC / MAC+IP）broadcast domain | `VLAN` ↔ `VXLAN_TUNNEL_MAP` で VLAN にバインド |
 | L3 VNI | type-5（IP prefix）受信側で route lookup | `VRF` ↔ `VXLAN_EVPN_NVO` で VRF にバインド |
@@ -161,4 +161,4 @@ EVPN の障害収束は FRR の `bgp graceful-restart` と SONiC の `EVPN_REMOT
 - [VXLAN SONiC HLD](../../overlay/vxlan-sonic.md)
 - [VNET local endpoint forwarding](../../overlay/vnet-local-endpoint-forwarding.md)
 
-<!-- glossary-links-injected: fc9afb9971f0 -->
+<!-- glossary-links-injected: 7fa5799c96ec -->

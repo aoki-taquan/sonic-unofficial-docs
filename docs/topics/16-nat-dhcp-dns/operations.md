@@ -37,7 +37,7 @@ related:
 
 # 運用
 
-[NAT](../../reference/glossary.md#term-nat) / DHCP relay / DHCP server / DoS 緩和は、CPU 経由のパスと ASIC ハードウェアパスの両方を含むため、調査時はまず「どの daemon が動いているか」「どの counter が増えているか」を切り分けるのが近道です。
+[NAT](../../reference/glossary.md#term-nat) / DHCP relay / DHCP server / DoS 緩和は、CPU 経由のパスと [ASIC](../../reference/glossary.md#term-asic) ハードウェアパスの両方を含むため、調査時はまず「どの daemon が動いているか」「どの counter が増えているか」を切り分けるのが近道です。
 
 ## サービス全体の入口
 
@@ -248,4 +248,4 @@ dhcpv6              queue1_group3    trap                       3       3      6
 - [DHCPv4 Relay Agent](../../architecture/dhcpv4-relay-agent.md)
 - [DHCPv6 Relay Agent](../../architecture/dhcpv6-relay-agent.md)
 
-<!-- glossary-links-injected: 6c3f4b3a3498 -->
+<!-- glossary-links-injected: c006405759d8 -->

@@ -36,7 +36,7 @@ related:
 
 # ECMP Family
 
-[ECMP](../../reference/glossary.md#term-ecmp) は「複数 next hop に分散する」だけなら単純ですが、SONiC には用途に応じて複数の拡張があります。まず通常 ECMP を基準にし、重み、bucket 安定性、順序、hash 入力、traffic class による path 選択を別々の問題として分けます。
+[ECMP](../../reference/glossary.md#term-ecmp) は「複数 next hop に分散する」だけなら単純ですが、[SONiC](../../reference/glossary.md#term-sonic) には用途に応じて複数の拡張があります。まず通常 ECMP を基準にし、重み、bucket 安定性、順序、hash 入力、traffic class による path 選択を別々の問題として分けます。
 
 ## 方式比較
 
@@ -51,7 +51,7 @@ related:
 
 ## 通常 ECMP を基準にする
 
-通常 ECMP は route の next-hop set から [SAI](../../reference/glossary.md#term-sai) next hop group を作り、ASIC の hash によって flow を member に割り振ります。運用上は、route の nexthop set、neighbor 解決、hash field、member の up/down を確認します。
+通常 ECMP は route の next-hop set から [SAI](../../reference/glossary.md#term-sai) next hop group を作り、[ASIC](../../reference/glossary.md#term-asic) の hash によって flow を member に割り振ります。運用上は、route の nexthop set、neighbor 解決、hash field、member の up/down を確認します。
 
 この基準を理解してから、重み付けや bucket 固定のような拡張を読むと混乱しにくくなります。
 
@@ -91,4 +91,4 @@ Class Based Forwarding は、DSCP / [MPLS](../../reference/glossary.md#term-mpls
 - [Generic Hash](../../architecture/sonic-generic-hash.md)
 - [クラスベース転送](../../routing/class-based-forwarding-enhancement.md)
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

@@ -29,7 +29,7 @@ related:
 
 # アーキテクチャ
 
-仮想 SONiC には用途別に複数の系統があります。「どれが本物の SONiC か」ではなく、「どこを再現したいか」で選びます。
+仮想 [SONiC](../../reference/glossary.md#term-sonic) には用途別に複数の系統があります。「どれが本物の SONiC か」ではなく、「どこを再現したいか」で選びます。
 
 ## 仮想環境の比較
 
@@ -44,7 +44,7 @@ related:
 
 ## SONiC-VS の構造
 
-SONiC-VS は実機イメージから ASIC・platform 部品を VS 化したもので、内部は実機と同じ docker 群（swss、[syncd](../../reference/glossary.md#term-syncd)、bgp、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd)、snmp、telemetry など）が動きます。違いは syncd の SAI backend が SAI VS で、SAI 操作が Linux netdev / bridge に変換される点です。
+SONiC-VS は実機イメージから [ASIC](../../reference/glossary.md#term-asic)・platform 部品を VS 化したもので、内部は実機と同じ docker 群（swss、[syncd](../../reference/glossary.md#term-syncd)、bgp、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd)、snmp、telemetry など）が動きます。違いは syncd の SAI backend が SAI VS で、SAI 操作が Linux netdev / bridge に変換される点です。
 
 bring-up 手順、libvirt 定義、image の作成方法は [SONiC-VS のビルドと libvirt 起動手順](../../architecture/steps-to-bring-up-sonic-vs.md) を読みます。CONFIG_DB の投入、minigraph、CLI 操作は実機と同じ流れになります。
 
@@ -64,4 +64,4 @@ bring-up 手順、libvirt 定義、image の作成方法は [SONiC-VS のビル�
 
 これらは仮想 lab では出てこないため、実機投入や DC への持ち込みフェーズでだけ読み返します。
 
-<!-- glossary-links-injected: 5e6ce4a3e9c1 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

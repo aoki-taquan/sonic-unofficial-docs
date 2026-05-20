@@ -51,7 +51,7 @@ related:
 
 # SONiC 全体像と設定基盤
 
-この章は、SONiC を読むときに最初に混乱しやすい「設定はどこから入るのか」「[Redis](../../reference/glossary.md#term-redis) DB は何を分担するのか」「変更はどこまで安全に戻せるのか」を、[HLD](../../reference/glossary.md#term-hld) 単位ではなく読者の質問順に並べ直した入口です。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) を読むときに最初に混乱しやすい「設定はどこから入るのか」「[Redis](../../reference/glossary.md#term-redis) DB は何を分担するのか」「変更はどこまで安全に戻せるのか」を、[HLD](../../reference/glossary.md#term-hld) 単位ではなく読者の質問順に並べ直した入口です。
 
 対象読者は、SONiC の全体像を先に掴みたい初学者、設定変更の影響範囲を確認したい運用者、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) / daemon の責務境界を把握したい開発者です。個別コマンドやテーブルの完全な仕様は既存の reference / area ページへ譲り、この章では「どこを読めば判断できるか」を明確にします。
 
@@ -68,7 +68,7 @@ related:
 - [設定データフロー](architecture.md): `CONFIG_DB` から daemon、`APPL_DB`、[orchagent](../../reference/glossary.md#term-orchagent)、[SAI](../../reference/glossary.md#term-sai) へ流れる全体像。
 - [設定変更の選び方](configuration.md): `config save/load/reload/replace`、GCU、JSON Patch、`sonic-cfggen` の使い分け。
 - [運用入口](operations.md): feature enable、system defaults、config reload、factory reset、基本的な切り戻し判断。
-- [内部実装](internals.md): first boot / migration、複数 Redis、Multi-ASIC namespace、管理 API 側 Redis client の見方。
+- [内部実装](internals.md): first boot / migration、複数 Redis、[Multi-ASIC](../../reference/glossary.md#term-multi-asic) namespace、管理 API 側 Redis client の見方。
 
 ## 読み順
 
@@ -145,4 +145,4 @@ related:
 - [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
 - [Lab / Virtual SONiC / Developer Entry](../21-lab-vs-developer/index.md)
 
-<!-- glossary-links-injected: 99ff3d378f44 -->
+<!-- glossary-links-injected: 3abb11a5818e -->

@@ -46,7 +46,7 @@ related:
 
 ## 概要
 
-gNSI（gRPC Network Security Interface）は、ネットワーク機器の **セキュリティクレデンシャルを gRPC 経由で安全にローテーションする** ためのマイクロサービス群である[^1]。SONiC では [gNMI](../reference/glossary.md#term-gnmi)/UMF サーバ（`sonic-gnmi`）と `sonic-mgmt-common` に組み込み、対応する OpenConfig [YANG](../reference/glossary.md#term-yang) モデルを公開する設計[^1]。
+gNSI（gRPC Network Security Interface）は、ネットワーク機器の **セキュリティクレデンシャルを gRPC 経由で安全にローテーションする** ためのマイクロサービス群である[^1]。[SONiC](../reference/glossary.md#term-sonic) では [gNMI](../reference/glossary.md#term-gnmi)/UMF サーバ（`sonic-gnmi`）と `sonic-mgmt-common` に組み込み、対応する OpenConfig [YANG](../reference/glossary.md#term-yang) モデルを公開する設計[^1]。
 
 主要 4 サービス[^1]:
 
@@ -249,7 +249,7 @@ gnsi_client credentialz rotate-account \
 
 - **gNMI Master Arbitration**: gNSI の `Rotate` は `Set` ではないので Master Arbitration の対象外
 - **gNOI FactoryReset**: `retain_certs=true` で Credentialz / Certz が積んだ証明書を残せるかは gNOI 側のオプション扱い
-- **TACACS / Linux PAM**: Credentialz が `/etc/passwd` / `/etc/shadow` を置換するため、TACACS や RADIUS 連携の有無で挙動が変わる
+- **TACACS / Linux PAM**: Credentialz が `/etc/passwd` / `/etc/shadow` を置換するため、TACACS や [RADIUS](../reference/glossary.md#term-radius) 連携の有無で挙動が変わる
 - **既存 sshd 設定**: `ssh_mgmt.set` は既存 `authorized_keys` を **置換** する（追記ではない）。warm boot 時の rollback ファイル管理に注意
 
 ## トラブルシューティング
@@ -387,3 +387,5 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 - `openconfig-gnsi-credentialz`
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: db62d2100cef -->

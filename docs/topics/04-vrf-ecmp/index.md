@@ -50,7 +50,7 @@ related:
 
 # VRF / ECMP / RIB-FIB パイプライン
 
-この章は、SONiC の L3 転送を「[VRF](../../reference/glossary.md#term-vrf) と interface を作る」「route が [FRR](../../reference/glossary.md#term-frr) から APP_DB に来る」「[orchagent](../../reference/glossary.md#term-orchagent) が [RIF](../../reference/glossary.md#term-rif) / next hop / route object を ASIC に作る」「[ECMP](../../reference/glossary.md#term-ecmp) の種類を選ぶ」という順番で読み直す入口です。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) の L3 転送を「[VRF](../../reference/glossary.md#term-vrf) と interface を作る」「route が [FRR](../../reference/glossary.md#term-frr) から APP_DB に来る」「[orchagent](../../reference/glossary.md#term-orchagent) が [RIF](../../reference/glossary.md#term-rif) / next hop / route object を [ASIC](../../reference/glossary.md#term-asic) に作る」「[ECMP](../../reference/glossary.md#term-ecmp) の種類を選ぶ」という順番で読み直す入口です。
 
 既存ページは VRF、static route、RIF counter、ECMP 拡張などの [HLD](../../reference/glossary.md#term-hld) 単位で分かれています。この章では、運用者や実装を追う読者が実際に持つ質問の順に並べ替え、詳細なスキーマやコード裏取りは各ページの関連リンクへ譲ります。
 
@@ -60,7 +60,7 @@ related:
 - `CONFIG_DB` / FRR / `APPL_DB` / orchagent / `ASIC_DB` のどこで route の形が変わるか。
 - ECMP、WCMP、Fine Grained ECMP、Ordered ECMP、Class Based Forwarding は何が違うか。
 - route counter、RIF counter、flow counter、loopback action は運用中にどこを見るか。
-- VRRP、SAG、TSA、path tracing のような周辺機能はこの章のどこまでを前提にしているか。
+- [VRRP](../../reference/glossary.md#term-vrrp)、SAG、TSA、path tracing のような周辺機能はこの章のどこまでを前提にしているか。
 
 ## 読む順番
 
@@ -142,4 +142,4 @@ related:
 - [Multi-ASIC / VOQ Chassis](../12-multi-asic-voq/index.md)
 - [NAT / DHCP Relay / Time-DNS Services](../16-nat-dhcp-dns/index.md)
 
-<!-- glossary-links-injected: 17a32ea74970 -->
+<!-- glossary-links-injected: f08c435ee15d -->

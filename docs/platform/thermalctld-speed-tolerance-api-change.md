@@ -5,14 +5,15 @@ tags: [thermalctld, platform-daemons, fan, thermal, api-change]
 description: thermalctld が speed_tolerance を Redis DB に書き込まなくなった変更と、is_under_speed / is_over_speed API への移行方法。
 source_issues:
   - https://github.com/sonic-net/sonic-platform-daemons/issues/395
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # thermalctld の speed_tolerance API 廃止と移行
 
 ## 概要
 
-`thermalctld`（温度・ファン制御デーモン）において、`speed_tolerance` フィールドが Redis データベースへの書き込み対象から除外された。これはプラットフォーム API の変更を反映したものであり、既存のカスタムプラットフォームプラグインや `health_checker.py` に影響する。
+`thermalctld`（温度・ファン制御デーモン）において、`speed_tolerance` フィールドが [Redis](../reference/glossary.md#term-redis) データベースへの書き込み対象から除外された。これはプラットフォーム API の変更を反映したものであり、既存のカスタムプラットフォームプラグインや `health_checker.py` に影響する。
 
 ## 変更内容
 
@@ -100,3 +101,5 @@ class MyFan(Fan):
 ## 関連
 
 - GitHub Issue: [sonic-net/sonic-platform-daemons#395](https://github.com/sonic-net/sonic-platform-daemons/issues/395)
+
+<!-- glossary-links-injected: 0f594312e2b7 -->

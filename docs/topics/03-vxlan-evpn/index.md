@@ -53,14 +53,14 @@ related:
 
 # VXLAN / EVPN / VNET オーバーレイ
 
-この章は、SONiC の overlay を「[VXLAN](../../reference/glossary.md#term-vxlan) tunnel を作る」「[VNET](../../reference/glossary.md#term-vnet) と [VRF](../../reference/glossary.md#term-vrf)/VNI を対応させる」「[EVPN](../../reference/glossary.md#term-evpn) やコントローラから経路を入れる」「運用中に [ECMP](../../reference/glossary.md#term-ecmp)、[BFD](../../reference/glossary.md#term-bfd)、[QoS](../../reference/glossary.md#term-qos) を確認する」という読者の順番で読み直す入口です。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) の overlay を「[VXLAN](../../reference/glossary.md#term-vxlan) tunnel を作る」「[VNET](../../reference/glossary.md#term-vnet) と [VRF](../../reference/glossary.md#term-vrf)/VNI を対応させる」「[EVPN](../../reference/glossary.md#term-evpn) やコントローラから経路を入れる」「運用中に [ECMP](../../reference/glossary.md#term-ecmp)、[BFD](../../reference/glossary.md#term-bfd)、[QoS](../../reference/glossary.md#term-qos) を確認する」という読者の順番で読み直す入口です。
 
 既存ページは VXLAN、EVPN、VNET、NVGRE、[IPinIP](../../reference/glossary.md#term-ipinip) decap、Overlay ECMP などの [HLD](../../reference/glossary.md#term-hld) 単位に分かれています。この章では、それらを 1 つの overlay データプレーンとして見たときの責務境界を先に整理し、詳細なフィールドや実装裏取りは area / reference ページへ誘導します。
 
 ## この章で答える質問
 
 - VXLAN、VNET、EVPN は同じ機能なのか、どこで役割が分かれるのか。
-- EVPN Type-2 / Type-5、VTEP、VRF、VNI、VNetOrch はどうつながるのか。
+- EVPN Type-2 / Type-5、[VTEP](../../reference/glossary.md#term-vtep)、VRF、VNI、VNetOrch はどうつながるのか。
 - `VXLAN_TUNNEL`、`VXLAN_TUNNEL_MAP`、`VNET`、`VNET_ROUTE_TUNNEL` はどの順に設定するのか。
 - Overlay ECMP、BFD monitoring、[DSCP](../../reference/glossary.md#term-dscp) remap、inner packet hashing は運用上どこを見るのか。
 - NVGRE や subnet decap は VXLAN と同じ章でどう扱えばよいのか。
@@ -143,4 +143,4 @@ related:
 - [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: c5c8b661ae7e -->

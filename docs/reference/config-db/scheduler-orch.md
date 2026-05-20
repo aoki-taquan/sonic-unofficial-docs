@@ -29,26 +29,24 @@ related:
 
 ## 概要
 
-`orchagent` の `QosOrch::handleSchedulerTable()` が CONFIG_DB `SCHEDULER` テーブルを処理する。各フィールドは**存在する場合のみ** SAI 属性リストに追加され、省略時は SAI 実装のベンダーデフォルトに委ねられる。YANG で宣言された `default` 値は qosorch が参照しない点が重要である[^1]。
+`orchagent` の `QosOrch::handleSchedulerTable()` が [CONFIG_DB](../../reference/glossary.md#term-config_db) `SCHEDULER` テーブルを処理する。各フィールドは**存在する場合のみ** [SAI](../../reference/glossary.md#term-sai) 属性リストに追加され、省略時は [SAI](../../reference/glossary.md#term-sai) 実装のベンダーデフォルトに委ねられる。[YANG](../../reference/glossary.md#term-yang) で宣言された `default` 値は qosorch が参照しない点が重要である[^1]。
 
-本ページは [`SCHEDULER テーブル`](scheduler.md) の orchagent 処理詳解ページである。テーブル全体の概要・key 構造・フィールド一覧は [`SCHEDULER テーブル`](scheduler.md) を参照。
+本ページは [`SCHEDULER テーブル`](scheduler.md) の [orchagent](../../reference/glossary.md#term-orchagent) 処理詳解ページである。テーブル全体の概要・key 構造・フィールド一覧は [`SCHEDULER テーブル`](scheduler.md) を参照。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SCHEDULER")]
-  QO["orchagent<br/>QosOrch::handleSchedulerTable()"]
+  DM["QosOrch"]
+  CDB --> DM
   SAI["SAI<br/>sai_scheduler_api"]
-  ASIC["ASIC"]
-  CDB --> QO
-  QO -->|create_scheduler / set_scheduler_attribute| SAI
-  SAI --> ASIC
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    各フィールドは存在する場合のみ SAI 属性として送信される。省略フィールドは SAI ベンダーデフォルトになる。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 <!-- defaults -->
@@ -58,10 +56,10 @@ flowchart LR
 
 | フィールド | YANG default | qosorch 実装の実効デフォルト | 備考 |
 |-----------|-------------|--------------------------|------|
-| `type` | `WRR` | **SAI ベンダー依存**（省略時 SAI 属性送信なし） | YANG default は qosorch 未参照 |
+| `type` | `WRR` | **[SAI](../../reference/glossary.md#term-sai) ベンダー依存**（省略時 SAI 属性送信なし） | YANG default は qosorch 未参照 |
 | `weight` | `1` | **SAI ベンダー依存**（省略時 SAI 属性送信なし） | `(uint8_t)stoi()` キャスト、YANG `range "1..100"` 未検証 |
 | `priority` | なし | **dead field — エントリ全破棄** | 処理分岐が存在しない。SET すると `Unknown field:priority` → `task_invalid_entry` で**全フィールドが SAI 未反映** |
-| `meter_type` | `bytes` | **SAI ベンダー依存**（省略時）; 不正値で **orchagent クラッシュ** | `scheduler_meter_map.at()` が `std::out_of_range` 未キャッチ |
+| `meter_type` | `bytes` | **SAI ベンダー依存**（省略時）; 不正値で **[orchagent](../../reference/glossary.md#term-orchagent) クラッシュ** | `scheduler_meter_map.at()` が `std::out_of_range` 未キャッチ |
 | `cir` / `cbs` / `pir` / `pbs` | なし | 省略時 SAI デフォルト相当（0 = 無制限） | 存在時のみ設定。YANG `must` 制約はコード未検証 |
 
 ### `type` フィールドの詳細
@@ -123,7 +121,7 @@ else {
 sai_meter_type_t meter_value = scheduler_meter_map.at(fvValue(*i));
 ```
 
-`scheduler_meter_map` は `{"packets": SAI_METER_TYPE_PACKETS, "bytes": SAI_METER_TYPE_BYTES}` のみ。`"packets"` / `"bytes"` 以外の値を渡すと `std::map::at()` が `std::out_of_range` 例外をスロー。**例外はキャッチされておらず orchagent プロセスがクラッシュする**。
+`scheduler_meter_map` は `{"packets": SAI_METER_TYPE_PACKETS, "bytes": SAI_METER_TYPE_BYTES}` のみ。`"packets"` / `"bytes"` 以外の値を渡すと `std::map::at()` が `std::out_of_range` 例外をスロー。**例外はキャッチされておらず [orchagent](../../reference/glossary.md#term-orchagent) プロセスがクラッシュする**。
 
 `type` フィールドが graceful エラー処理 (`task_invalid_entry` を返す) をしているのと対照的な危険な挙動。YANG enum で 2 値のみが許可されているため通常経路では発生しないが、`sonic-db-cli` 等で直接 CONFIG_DB に書き込む際は要注意。
 
@@ -193,14 +191,14 @@ DEL が `m_pendingRemove` 状態のまま同一名の SET を発行すると、S
 |---------|------------------------|--------------|--------------|---------|------|
 | 逆参照（被参照） | `QUEUE.<port>\|<idx>.scheduler` | `SCHEDULER`（本テーブル） | `SCHEDULER\|<name>` | `handleQueueTable()` が `resolveFieldRefValue()` で SCHEDULER SAI オブジェクトを解決。SCHEDULER 未登録の場合は `task_need_retry` を返し QUEUE の SAI バインドを保留。YANG `sonic-queue.yang` でも `leafref path "...SCHEDULER_LIST/name"` として宣言 | `qosorch.cpp:1822-1852`, `sonic-queue.yang:84-87`, `sonic-queue.yang:132-135` |
 | 逆参照（削除ガード） | `QUEUE.*` が参照中 | `SCHEDULER`（本テーブル） | `SCHEDULER\|<name>` | SCHEDULER DEL 時に `isObjectBeingReferenced()` で確認。QUEUE から参照中の場合は `m_pendingRemove = true` をセットして `task_need_retry`。参照解除後に自動 DEL が実行される | `qosorch.cpp:1483-1491` |
-| 起動ガード | `PortsOrch::allPortsReady()` | PORT テーブル（PortsOrch 管理） | `PORT\|<port_name>` | `QosOrch::doTask(Consumer&)` 冒頭で `gPortsOrch->allPortsReady()` が偽の間は全 QoS タスク（SCHEDULER 含む）が処理されない。PortsOrch による全ポート初期化完了まで SAI オブジェクトは生成されない | `qosorch.cpp:2258-2261` |
+| 起動ガード | `PortsOrch::allPortsReady()` | PORT テーブル（PortsOrch 管理） | `PORT\|<port_name>` | `QosOrch::doTask(Consumer&)` 冒頭で `gPortsOrch->allPortsReady()` が偽の間は全 [QoS](../../reference/glossary.md#term-qos) タスク（SCHEDULER 含む）が処理されない。PortsOrch による全ポート初期化完了まで SAI オブジェクトは生成されない | `qosorch.cpp:2258-2261` |
 | 実行時依存（QUEUE 経由） | `handleQueueTable()` → `applySchedulerToQueueSchedulerGroup()` | SCHEDULER_GROUP（SAI 管理） | SAI OID（DB なし） | QUEUE に SCHEDULER が紐付く際、`getSchedulerGroup()` でキュー→スケジューラグループ ID を検索し `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` をセット。SAI 内部のスケジューラグループツリーに依存（DB テーブルなし） | `qosorch.cpp:1630-1710` |
 
 ### 解決タイミング
 
 - **QUEUE → SCHEDULER 参照**: `handleQueueTable()` の SET 処理時に `resolveFieldRefValue()` で即座に確認。未解決（`not_resolved`）は `task_need_retry` で `m_toSync` に残留し、SCHEDULER の SAI 登録後の次回 `doTask()` で再評価される（`qosorch.cpp:1828-1833`）。
 - **SCHEDULER DEL ガード**: DEL 処理時に `isObjectBeingReferenced()` でリアルタイム確認。参照カウンタがゼロになった次の `task_need_retry` サイクルで自動 DEL が実行される（`qosorch.cpp:1483-1491`）。
-- **PortsOrch ガード**: PortsOrch の `allPortsReady()` フラグが立つまで全 QoS 処理は doorbell 待ち。この間は SCHEDULER エントリが CONFIG_DB に存在しても SAI には送信されない（`qosorch.cpp:2258-2261`）。
+- **PortsOrch ガード**: PortsOrch の `allPortsReady()` フラグが立つまで全 [QoS](../../reference/glossary.md#term-qos) 処理は doorbell 待ち。この間は SCHEDULER エントリが CONFIG_DB に存在しても SAI には送信されない（`qosorch.cpp:2258-2261`）。
 
 !!! note "SCHEDULER は「被参照専用」テーブル"
     SCHEDULER エントリ自体は他の CONFIG_DB テーブルを参照しない（leafref なし）。依存の方向は常に外部テーブル → SCHEDULER であり、SCHEDULER を先に投入してから参照側テーブルを投入するのが正しい順序である。
@@ -254,7 +252,7 @@ DEL が `m_pendingRemove` 状態のまま同一名の SET を発行すると、S
 | 定数名 | 値 | 定義 | 用途 |
 |--------|----|------|------|
 | `scheduler_algo_type_field_name` | `"type"` | `qosorch.h:44` | スケジューリングアルゴリズム種別フィールド識別子 |
-| `scheduler_algo_DWRR` | `"DWRR"` | `qosorch.h:45` | `type` フィールドの DWRR 値文字列 |
+| `scheduler_algo_DWRR` | `"DWRR"` | `qosorch.h:45` | `type` フィールドの [DWRR](../../reference/glossary.md#term-dwrr) 値文字列 |
 | `scheduler_algo_WRR` | `"WRR"` | `qosorch.h:46` | `type` フィールドの WRR 値文字列 |
 | `scheduler_algo_STRICT` | `"STRICT"` | `qosorch.h:47` | `type` フィールドの STRICT 値文字列 |
 | `scheduler_weight_field_name` | `"weight"` | `qosorch.h:48` | スケジューリング重みフィールド識別子 |
@@ -295,9 +293,9 @@ YANG `sonic-scheduler.yang` の enum も同じ 2 値（`bytes` / `packets`）を
 
 > 詳細証跡: `meta/_intermediate/cdb-flow/scheduler-orch-side-effects.md`
 
-`QosOrch::handleSchedulerTable()` の SET/DEL は APPL_DB・STATE_DB・COUNTERS_DB・FLEX_COUNTER_DB への直接書き込みを行わない。副次書き込みは SAI API 経由の **ASIC_DB のみ** である。
+`QosOrch::handleSchedulerTable()` の SET/DEL は [APPL_DB](../../reference/glossary.md#term-appl_db)・[STATE_DB](../../reference/glossary.md#term-state_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への直接書き込みを行わない。副次書き込みは SAI API 経由の **[ASIC_DB](../../reference/glossary.md#term-asic_db) のみ** である。
 
-| 操作 | SAI API / 属性 | ASIC_DB 書込先 | 証跡 |
+| 操作 | SAI API / 属性 | [ASIC_DB](../../reference/glossary.md#term-asic_db) 書込先 | 証跡 |
 |------|--------------|--------------|------|
 | SET（新規） | `sai_scheduler_api->create_scheduler()` | `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<new_oid>` 新規作成 | `qosorch.cpp:1460` |
 | SET（更新） | `sai_scheduler_api->set_scheduler_attribute()` | `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<oid>` 属性更新 | `qosorch.cpp:1446` |
@@ -330,13 +328,13 @@ sai_status = sai_scheduler_group_api->set_scheduler_group_attribute(group_id, &a
 
 `QosOrch` は `Orch::addConsumer()` 経由で CONFIG_DB（DB 4）の `SCHEDULER` テーブルを **`SubscriberStateTable`** で購読する（`orchdaemon.cpp:384`, `orch.cpp:1186-1190`）。
 
-`SubscriberStateTable` はコンストラクタ内で Redis の **Keyspace Notification** チャネルを `PSUBSCRIBE` する:
+`SubscriberStateTable` はコンストラクタ内で [Redis](../../reference/glossary.md#term-redis) の **Keyspace Notification** チャネルを `PSUBSCRIBE` する:
 
 ```
 PSUBSCRIBE __keyspace@4__:SCHEDULER|*
 ```
 
-CONFIG_DB の `SCHEDULER|<name>` エントリに対して `SET` / `DEL` / `HSET` / `HDEL` 等の書き込みが発生すると、Redis が当該チャネルへ通知を発行する（`subscriberstatetable.cpp:20-24`）。
+CONFIG_DB の `SCHEDULER|<name>` エントリに対して `SET` / `DEL` / `HSET` / `HDEL` 等の書き込みが発生すると、[Redis](../../reference/glossary.md#term-redis) が当該チャネルへ通知を発行する（`subscriberstatetable.cpp:20-24`）。
 
 | 項目 | 内容 |
 |------|------|
@@ -354,7 +352,7 @@ CONFIG_DB の `SCHEDULER|<name>` エントリに対して `SET` / `DEL` / `HSET`
 ret = m_select->select(&s, SELECT_TIMEOUT);
 ```
 
-Redis Keyspace Notification が到着すると epoll が wakeup し、対応する `SubscriberStateTable` がセレクタ `s` として返る。`OrchDaemon` は `s->execute()` → `Consumer::execute()` → `QosOrch::doTask(Consumer&)` → `handleSchedulerTable()` の呼び出しチェーンで処理する。
+[Redis](../../reference/glossary.md#term-redis) Keyspace Notification が到着すると epoll が wakeup し、対応する `SubscriberStateTable` がセレクタ `s` として返る。`OrchDaemon` は `s->execute()` → `Consumer::execute()` → `QosOrch::doTask(Consumer&)` → `handleSchedulerTable()` の呼び出しチェーンで処理する。
 
 ### イベント到達タイムライン（SCHEDULER SET 時）
 
@@ -391,16 +389,16 @@ ASIC_DB への SAI 書き込み
 
 > 証跡: `meta/_intermediate/cdb-flow/scheduler-orch-platform.md`
 
-`QosOrch::handleSchedulerTable()` のコード自体に ASIC ベンダー・`platform` / `sub_platform` 文字列・`gMySwitchType` に依存する処理分岐は**存在しない**。プラットフォーム差は SAI 層での属性サポート有無という形で間接的に現れる。
+`QosOrch::handleSchedulerTable()` のコード自体に [ASIC](../../reference/glossary.md#term-asic) ベンダー・`platform` / `sub_platform` 文字列・`gMySwitchType` に依存する処理分岐は**存在しない**。プラットフォーム差は SAI 層での属性サポート有無という形で間接的に現れる。
 
 ### 実装コードは ASIC 非依存
 
 | 観点 | 影響 | 根拠 |
 |------|------|------|
-| ASIC ベンダー (Broadcom / Mellanox / Marvell / Cisco / Barefoot) | コード分岐なし — 同一パスを通る | `handleSchedulerTable()` L1347–1509 に `platform` 条件式ゼロ (`qosorch.cpp` 全文 grep) |
+| [ASIC](../../reference/glossary.md#term-asic) ベンダー (Broadcom / Mellanox / Marvell / Cisco / Barefoot) | コード分岐なし — 同一パスを通る | `handleSchedulerTable()` L1347–1509 に `platform` 条件式ゼロ (`qosorch.cpp` 全文 grep) |
 | `sub_platform` (broadcom-dnx 等) | 影響なし | `qosorch.h` に `BRCM_DNX_PLATFORM_SUBSTRING` 等の参照なし |
-| multi-asic / namespace | SCHEDULER テーブルはホスト CONFIG_DB で namespace 統一。各 ASIC の orchagent が独立して処理するため名前空間間で SAI オブジェクト ID は分離 | `orchdaemon.cpp:384` — namespace ごとに addConsumer |
-| SmartSwitch DPU | 影響なし — QosOrch は DPU 固有の capability を参照しない | `qosorch.cpp` に `DPU` / `dpuorch` 参照なし |
+| multi-asic / namespace | SCHEDULER テーブルはホスト CONFIG_DB で namespace 統一。各 [ASIC](../../reference/glossary.md#term-asic) の orchagent が独立して処理するため名前空間間で SAI オブジェクト ID は分離 | `orchdaemon.cpp:384` — namespace ごとに addConsumer |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | 影響なし — QosOrch は [DPU](../../reference/glossary.md#term-dpu) 固有の capability を参照しない | `qosorch.cpp` に `DPU` / `dpuorch` 参照なし |
 
 ### VoQ モードの唯一の分岐（SCHEDULER 自体ではなく QUEUE バインド時）
 
@@ -412,8 +410,8 @@ ASIC_DB への SAI 書き込み
 
 | フィールド / SAI 属性 | 代表的なプラットフォーム差 |
 |----------------------|--------------------------|
-| `type=DWRR` → `SAI_SCHEDULING_TYPE_DWRR` | 一部 ASIC（Marvell-Prestera 等）では DWRR 未サポートで `SAI_STATUS_NOT_SUPPORTED` → `handleSaiCreateStatus()` / `handleSaiSetStatus()` 経由で `task_failed` / `task_need_retry` |
-| `type=STRICT` → `SAI_SCHEDULING_TYPE_STRICT` | 全段 Strict Priority を制限する ASIC で `SAI_STATUS_NOT_SUPPORTED` の可能性あり |
+| `type=DWRR` → `SAI_SCHEDULING_TYPE_DWRR` | 一部 ASIC（Marvell-Prestera 等）では [DWRR](../../reference/glossary.md#term-dwrr) 未サポートで `SAI_STATUS_NOT_SUPPORTED` → `handleSaiCreateStatus()` / `handleSaiSetStatus()` 経由で `task_failed` / `task_need_retry` |
+| `type=STRICT` → `SAI_SCHEDULING_TYPE_STRICT` | 全段 [Strict Priority](../../reference/glossary.md#term-strict-priority) を制限する ASIC で `SAI_STATUS_NOT_SUPPORTED` の可能性あり |
 | `cir/pir/cbs/pbs` → `SAI_SCHEDULER_ATTR_MIN/MAX_BANDWIDTH_RATE/BURST_RATE` | 帯域制御系属性を SAI レベルで未実装の ASIC では set_scheduler_attribute() が `SAI_STATUS_NOT_IMPLEMENTED` を返す場合がある |
 
 !!! note "orchagent ログで確認"
@@ -475,3 +473,5 @@ sonic-db-cli CONFIG_DB hgetall 'SCHEDULER|scheduler.0'
 sudo grep -i "Unknown field\|scheduler" /var/log/swss/orchagent.log | tail -20
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 77b2922d0a9d -->

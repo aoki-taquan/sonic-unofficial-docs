@@ -75,7 +75,7 @@ related:
 
 # L2 / VLAN / LAG / MC-LAG
 
-この章は、SONiC を L2 switch として読むときに最初に迷う「[VLAN](../../reference/glossary.md#term-vlan)、VLAN interface、switchport、sub-port、[LAG](../../reference/glossary.md#term-lag)、MC-LAG はどの順番で理解すればよいか」を整理する入口です。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) を L2 switch として読むときに最初に迷う「[VLAN](../../reference/glossary.md#term-vlan)、VLAN interface、switchport、sub-port、[LAG](../../reference/glossary.md#term-lag)、MC-LAG はどの順番で理解すればよいか」を整理する入口です。
 
 既存ページは [HLD](../../reference/glossary.md#term-hld)、CLI、[CONFIG_DB](../../reference/glossary.md#term-config_db)、[YANG](../../reference/glossary.md#term-yang) 参照が別々に並んでいます。ここでは、設計者や運用者が実際に持つ質問の順に、L2 forwarding の基本単位、VLAN と L3 SVI の境界、[PortChannel](../../reference/glossary.md#term-portchannel) と MC-LAG の責務、[FDB](../../reference/glossary.md#term-fdb) / STP / storm control の運用確認、OpenConfig や [VOQ](../../reference/glossary.md#term-voq) との接点を読み直します。
 
@@ -169,4 +169,4 @@ related:
 - [QoS / Buffer / PFC / Watermark](../08-qos-buffer/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: c0a5c230acb4 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

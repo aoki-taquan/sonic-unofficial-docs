@@ -70,7 +70,7 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORTCHANNEL`、`PORT`、`VLAN_MEMBER` (PORTCHANNEL_MEMBER に登録された port は VLAN_MEMBER に登録不可、`must` 制約は VLAN 側)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `PORTCHANNEL`、`PORT`、`VLAN_MEMBER` (PORTCHANNEL_MEMBER に登録された port は VLAN_MEMBER に登録不可、`must` 制約は [VLAN](../../reference/glossary.md#term-vlan) 側)
 - 関連 CLI: `config portchannel member add/del`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-portchannel`
 
@@ -81,12 +81,12 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 
 | フィールド | 値 | 挙動 |
 |-----------|---|------|
-| `name` | 存在する PORTCHANNEL 名 | teammgrd が teamd に enslave 要求、LagOrch が SAI LAG member 追加 |
+| `name` | 存在する PORTCHANNEL 名 | teammgrd が [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) に enslave 要求、LagOrch が [SAI](../../reference/glossary.md#term-sai) LAG member 追加 |
 | `name` | 存在しない PORTCHANNEL 名 | YANG leafref 違反 reject |
 | `port` | 存在する PORT 名 | 物理ポートを LAG に bind |
 | `port` | 存在しない PORT 名 | YANG leafref 違反 reject |
 | `port` | PHY / SYSTEM 型以外 | `LAG member port has to be of type PHY or SYSTEM` SWSS_LOG_ERROR |
-| `port` | 異なる ASIC の switch_id (chassis) | `System lag switch id mismatch` SWSS_LOG_ERROR |
+| `port` | 異なる [ASIC](../../reference/glossary.md#term-asic) の switch_id (chassis) | `System lag switch id mismatch` SWSS_LOG_ERROR |
 
 *このテーブルはキー (name, port) のみで付加フィールドを持たない。enum なし。*
 
@@ -118,7 +118,7 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 - メンバーポートが PHY/SYSTEM 型以外: `LAG member port has to be of type PHY or SYSTEM` → SWSS_LOG_ERROR。
 - chassis 環境で switch id ミスマッチ: `System lag switch id mismatch. Lag %s switch id: %d, Member %s switch id: %d` → SWSS_LOG_ERROR。
 - DEL で存在しないメンバー: `Member %s not found in LAG %s` → SWSS_LOG_WARN。
-- SAI LAG member add 失敗: `Failed to add member %s to LAG %s` → SWSS_LOG_ERROR。
+- [SAI](../../reference/glossary.md#term-sai) LAG member add 失敗: `Failed to add member %s to LAG %s` → SWSS_LOG_ERROR。
 - SAI LAG member remove 失敗: `Failed to remove member %s from LAG %s` → SWSS_LOG_ERROR。
 - teamd でポート未発見: `Unable to find port %s` → SWSS_LOG_WARN。
 
@@ -134,12 +134,12 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 | 失敗シナリオ | 挙動 | ログレベル | リカバリ |
 |---|---|---|---|
 | YANG leafref 違反 (`name`/`port` 参照先なし) | config-load で reject（DB 書き込みなし） | — | エントリ作成前に拒否 |
-| `STATE_PORT_TABLE` 未準備（ポート `state != ok`） | 暗黙 continue（リトライ待機） | なし | portmgrd が STATE_DB を更新後に自動解消 |
+| `STATE_PORT_TABLE` 未準備（ポート `state != ok`） | 暗黙 continue（リトライ待機） | なし | [portmgrd](../../reference/glossary.md#term-portmgrd) が [STATE_DB](../../reference/glossary.md#term-state_db) を更新後に自動解消 |
 | `STATE_LAG_TABLE` 未準備（teamd 未起動） | 暗黙 continue（リトライ待機） | なし | teamd 起動後に自動解消 |
-| MACsec Ingress SA 未確立（MACsec 有効時のみ） | 暗黙 continue（リトライ待機） | `SWSS_LOG_INFO` | SA 確立後に自動解消 |
+| [MACsec](../../reference/glossary.md#term-macsec) Ingress SA 未確立（[MACsec](../../reference/glossary.md#term-macsec) 有効時のみ） | 暗黙 continue（リトライ待機） | `SWSS_LOG_INFO` | SA 確立後に自動解消 |
 | `ip link show <member>` 失敗（kernel netdev 不在） | `task_ignore`（エントリ破棄） | `SWSS_LOG_WARN`: `Unable to find port %s` | エントリ破棄。ポート復旧後に再投入必要 |
 | ポートが既に別 LAG にスレーブ済み | `task_ignore`（ログなし） | なし | べき等処理 |
-| `teamdctl port add` 失敗 + ポート admin-up | `task_need_retry`（自動再試行） | `SWSS_LOG_INFO`: `Failed to add %s to port channel %s, retry...` | portmgrd 競合とみなし自動再試行 (`teammgr.cpp:779`) |
+| `teamdctl port add` 失敗 + ポート admin-up | `task_need_retry`（自動再試行） | `SWSS_LOG_INFO`: `Failed to add %s to port channel %s, retry...` | [portmgrd](../../reference/glossary.md#term-portmgrd) 競合とみなし自動再試行 (`teammgr.cpp:779`) |
 | `teamdctl port add` 失敗 + ポート admin-down | `task_failed`（エントリ破棄） | `SWSS_LOG_ERROR`: `Failed to add %s to port channel %s` | 手動介入必要 (`teammgr.cpp:785`) |
 | ポート型が PHY / SYSTEM 以外 | エントリ消去（リトライなし） | `SWSS_LOG_ERROR`: `LAG member port has to be of type PHY or SYSTEM` | ポート型修正後に再投入 (`portsorch.cpp:6292`) |
 | chassis 環境で switch_id ミスマッチ | エントリ消去（リトライなし） | `SWSS_LOG_ERROR`: `System lag switch id mismatch...` | 設計見直し必要 (`portsorch.cpp:6311`) |
@@ -153,11 +153,11 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 
 `teammgrd` の select ループには `task_need_retry` のリトライ上限カウンタが存在しない。
 `m_toSync` はエントリを保持し続け、次の select イテレーションで再試行する設計（無限リトライ）。
-依存状態（`STATE_LAG_TABLE`・`STATE_PORT_TABLE`・MACsec SA）が解消されれば自然に成功する。
+依存状態（`STATE_LAG_TABLE`・`STATE_PORT_TABLE`・[MACsec](../../reference/glossary.md#term-macsec) SA）が解消されれば自然に成功する。
 
 ### VLAN_MEMBER 競合の詳細
 
-- orchagent は `m_portVlanMember[port].size() > 0` の場合に LAG member 追加を **skip**（エラーではなく継続ループ）。
+- [orchagent](../../reference/glossary.md#term-orchagent) は `m_portVlanMember[port].size() > 0` の場合に LAG member 追加を **skip**（エラーではなく継続ループ）。
 - YANG `must` 制約 (`sonic-vlan.yang:302`) と CLI ガード (`config/vlan.py:379`) で二重に防御されているため、
   通常は YANG validate / CLI 拒否で config-load 前に排除される。
   しかし `sonic-db-cli` 直接書き込みなど YANG バリデーションをバイパスした場合は orchagent ループに到達しうる。
@@ -205,7 +205,6 @@ show interfaces portchannel
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -222,11 +221,11 @@ show interfaces portchannel
 ### 段階 3: APPL → SAI
 
 - PortsOrch が APP_DB を読み `sai_lag_api->create_lag_member()` / `remove_lag_member()` を呼び出し。
-- LACP が有効な場合は teamd がネゴシエーションを担う。
+- [LACP](../../reference/glossary.md#term-lacp) が有効な場合は teamd がネゴシエーションを担う。
 
 ### 段階 4: タイミング + 副作用
 
-- メンバ追加後 LACP ネゴシエーションが完了するまで数秒 (設定依存)。
+- メンバ追加後 [LACP](../../reference/glossary.md#term-lacp) ネゴシエーションが完了するまで数秒 (設定依存)。
 - 副作用: メンバ削除時にそのポートのトラフィックは他メンバにハッシュ再分散される。
 
 <!-- /runtime-trace -->
@@ -237,15 +236,15 @@ PORTCHANNEL_MEMBER テーブルへの書き込みが発生するコード経路�
 
 ### CLI
 
-  - `config portchannel member add/del ...` — `config/main.py` が `set_entry('PORTCHANNEL_MEMBER', ...)` を呼ぶ (sonic-utilities/config/main.py)
+  - `config portchannel member add/del ...` — `config/main.py` が `set_entry('PORTCHANNEL_MEMBER', ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py)
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** が PORTCHANNEL_MEMBER を生成し投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+**minigraph.py** が PORTCHANNEL_MEMBER を生成し投入 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py)
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -272,7 +271,7 @@ db_migrator.py での PORTCHANNEL_MEMBER マイグレーションなし
 ### SET 順序（必須）
 
 1. **`PORTCHANNEL` → `PORTCHANNEL_MEMBER`**: `TeamMgr::doLagMemberTask()` は `isLagStateOk(lag)` で `STATE_LAG_TABLE` に対象 LAG のエントリが存在するかを確認し、存在しなければ当該タスクをキューに残してリトライ待機する (`teammgr.cpp:89-102, 357`)。`PORTCHANNEL` エントリを先に SET し、teamd が起動して `STATE_LAG_TABLE` に登録されるまで `PORTCHANNEL_MEMBER` の適用は自動的に保留される。
-2. **STATE_PORT_TABLE ready → `PORTCHANNEL_MEMBER`**: メンバーとなる物理ポートが `STATE_PORT_TABLE` に `state=ok` で登録されていることも同じチェックで確認される (`teammgr.cpp:67-87, 357`)。portmgrd が STATE_DB に書くまで自動リトライ待機する。
+2. **STATE_PORT_TABLE ready → `PORTCHANNEL_MEMBER`**: メンバーとなる物理ポートが `STATE_PORT_TABLE` に `state=ok` で登録されていることも同じチェックで確認される (`teammgr.cpp:67-87, 357`)。[portmgrd](../../reference/glossary.md#term-portmgrd) が [STATE_DB](../../reference/glossary.md#term-state_db) に書くまで自動リトライ待機する。
 3. **`VLAN_MEMBER` DEL → `PORTCHANNEL_MEMBER` SET（同一ポート）**: orchagent は `m_portVlanMember[port].size() > 0` の場合（VLAN_MEMBER に登録済みのポート）は LAG メンバー追加をスキップする (`portsorch.cpp:6337-6343`)。先に対象ポートを `VLAN_MEMBER` から削除してから `PORTCHANNEL_MEMBER` を SET すること。
 4. **MACsec Ingress SA ready → `PORTCHANNEL_MEMBER` SET（MACsec 有効時のみ）**: MACsec が設定されたポートの場合、`isMACsecIngressSAOk()` が true になるまで SET が保留される (`teammgr.cpp:362-366`)。
 
@@ -314,11 +313,11 @@ DEL PORTCHANNEL|PortChannel0001
 |---|---|---|---|
 | `PORTCHANNEL_MEMBER` エントリ全体 | minigraph.py が XML `PortChannelInterfaces` → `PortChannel` → メンバポートを解析したとき | `{(PortChannel名, ポート名): {}}` | `sonic-buildimage/src/sonic-config-engine/minigraph.py:2547` |
 
-`PORTCHANNEL_MEMBER` は key-only テーブル (フィールドなし)。minigraph.py が自動生成し、port_config.ini に存在しないポートは除外される (`minigraph.py:2531-2545`)。
+`PORTCHANNEL_MEMBER` は key-only テーブル (フィールドなし)。minigraph.py が自動生成し、[port_config.ini](../../reference/glossary.md#term-port-config-ini) に存在しないポートは除外される (`minigraph.py:2531-2545`)。
 
 ### Phase 7: 条件付き登録
 
-`PORTCHANNEL_MEMBER` は `TeamMgr` (`cfgmgr/teammgr.cpp`) が CONFIG_DB を購読し `teamd` にメンバ追加/削除を通知する。`orchdaemon.cpp` の条件付き登録なし。
+`PORTCHANNEL_MEMBER` は `TeamMgr` (`cfgmgr/teammgr.cpp`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し `teamd` にメンバ追加/削除を通知する。`orchdaemon.cpp` の条件付き登録なし。
 
 ### グレップカバレッジ
 
@@ -347,12 +346,12 @@ DEL PORTCHANNEL|PortChannel0001
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-`PORTCHANNEL_MEMBER` の CONFIG_DB Consumer 経路は **CONFIG_DB → TeamMgr → teamd (UNIX ソケット) → APP_DB → PortsOrch → SAI** の 3 段構成である。
+`PORTCHANNEL_MEMBER` の [CONFIG_DB](../../reference/glossary.md#term-config_db) Consumer 経路は **CONFIG_DB → TeamMgr → teamd (UNIX ソケット) → APP_DB → PortsOrch → SAI** の 3 段構成である。
 
 ### 1. CONFIG_DB → TeamMgr: SubscriberStateTable (keyspace PSUBSCRIBE)
 
 `teammgrd.cpp:55-65` で `CFG_LAG_MEMBER_TABLE_NAME` (`"PORTCHANNEL_MEMBER"`) を `TableConnector` として登録。
-`Orch(tables)` 内部で `SubscriberStateTable` が生成され、Redis CONFIG_DB (db_id=4) に対して
+`Orch(tables)` 内部で `SubscriberStateTable` が生成され、[Redis](../../reference/glossary.md#term-redis) CONFIG_DB (db_id=4) に対して
 `__keyspace@4__:PORTCHANNEL_MEMBER|*` を PSUBSCRIBE する。
 
 | 項目 | 値 |
@@ -368,9 +367,9 @@ DEL PORTCHANNEL|PortChannel0001
 ### 2. TeamMgr → teamd: UNIX ソケット (teamdctl)
 
 `doLagMemberTask()` は APP_DB を経由せず `teamdctl` コマンド (UNIX ソケット `/var/run/teamd/<lag>.ctl`) で
-teamd プロセスに直接ポートの追加/削除を指示する。この経路は Redis PUBLISH を使用しない。
+teamd プロセスに直接ポートの追加/削除を指示する。この経路は [Redis](../../reference/glossary.md#term-redis) PUBLISH を使用しない。
 
-- **SET**: `teamdctl <lag> port add <member>` — LACP ネゴシエーション開始
+- **SET**: `teamdctl <lag> port add <member>` — [LACP](../../reference/glossary.md#term-lacp) ネゴシエーション開始
 - **DEL**: `teamdctl <lag> port remove <member>` — LACP 切断
 
 ### 3. TeamMgr → APP_DB: ProducerStateTable (PUBLISH)
@@ -385,12 +384,12 @@ teamd 操作完了後、TeamMgr が APP_DB `LAG_MEMBER_TABLE` (= `APP_LAG_MEMBER
 `portsorch.cpp:6531` で `doLagMemberTask(consumer)` にディスパッチ。
 `sai_lag_api->create_lag_member()` / `remove_lag_member()` (`portsorch.cpp:8172, 8221`) を呼び出す。
 
-| DB | Redis チャネル / パターン | 用途 |
+| DB | [Redis](../../reference/glossary.md#term-redis) チャネル / パターン | 用途 |
 |---|---|---|
 | CONFIG_DB (db=4) | `__keyspace@4__:PORTCHANNEL_MEMBER\|*` | TeamMgr が PSUBSCRIBE |
 | teamd (UNIX ソケット) | `/var/run/teamd/<lag>.ctl` | teamdctl port add/remove |
-| APPL_DB (db=0) | `LAG_MEMBER_TABLE_CHANNEL@0` | PortsOrch の ConsumerStateTable が SUBSCRIBE |
-| STATE_DB (db=6) | `__keyspace@6__:LAG_TABLE\|*` | TeamMgr が isLagStateOk() で LAG 状態監視 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) (db=0) | `LAG_MEMBER_TABLE_CHANNEL@0` | PortsOrch の [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) が SUBSCRIBE |
+| [STATE_DB](../../reference/glossary.md#term-state_db) (db=6) | `__keyspace@6__:LAG_TABLE\|*` | TeamMgr が isLagStateOk() で LAG 状態監視 |
 
 <!-- evidence: meta/_intermediate/cdb-flow/portchannel-member-pubsub.md -->
 <!-- /pubsub -->
@@ -410,7 +409,7 @@ teamd 操作完了後、TeamMgr が APP_DB `LAG_MEMBER_TABLE` (= `APP_LAG_MEMBER
 | `STATE_LAG_TABLE` | runtime ゲート (`TeamMgr::isLagStateOk`) | teamd が LAG を STATE_LAG_TABLE に登録するまで SET を保留 (`teammgr.cpp:89-102`) |
 | `STATE_PORT_TABLE` | runtime ゲート (`TeamMgr::doPortUpdateTask`) | ポートが `state=ok` になるまで enslave を保留 (`teammgr.cpp:67-87`) |
 | `STATE_MACSEC_INGRESS_SA_TABLE` | runtime ゲート (`isMACsecIngressSAOk`, MACsec 有効時のみ) | MACsec Ingress SA が ready になるまで enslave を保留 (`teammgr.cpp:362-366`) |
-| `DEVICE_METADATA|localhost|mac` | 起動時読み取り (teammgrd) | PortChannel の switch MAC 設定に使用; 欠如で teammgrd 起動失敗 (`teammgr.cpp:54-57`) |
+| `DEVICE_METADATA|localhost|mac` | 起動時読み取り (teammgrd) | [PortChannel](../../reference/glossary.md#term-portchannel) の switch MAC 設定に使用; 欠如で teammgrd 起動失敗 (`teammgr.cpp:54-57`) |
 
 ### PORTCHANNEL_MEMBER を参照する上流コンポーネント
 
@@ -420,8 +419,8 @@ teamd 操作完了後、TeamMgr が APP_DB `LAG_MEMBER_TABLE` (= `APP_LAG_MEMBER
 | `config vlan member add` (CLI) | `config/vlan.py:379` `get_table('PORTCHANNEL_MEMBER')` | ポートが PORTCHANNEL_MEMBER 在籍中は `ctx.fail()` で拒否 |
 | `config switchport mode` (CLI) | `config/switchport.py:44-47` `get_table('PORTCHANNEL_MEMBER')` | ポートが PORTCHANNEL_MEMBER 在籍中は `ctx.fail()` で拒否 |
 | `config stp` (CLI) | `config/stp.py:331` `get_table('PORTCHANNEL_MEMBER')` | LAG メンバーポートの判定に使用 |
-| `PORT` DEL guard | `m_port_ref_count` (portsorch.cpp:8205, 8253, 5649) | PORTCHANNEL_MEMBER 在籍中は対応 PORT の DEL を拒否 |
-| `multi_asic` (sonic-py-common) | `multi_asic.py:410,435` `get_keys('PORTCHANNEL_MEMBER')` | LAG メンバーの internal/backend 属性を伝播; マルチ ASIC 環境の backend LAG 判定に使用 |
+| `PORT` DEL guard | `m_port_ref_count` ([portsorch](../../reference/glossary.md#term-portsorch).cpp:8205, 8253, 5649) | PORTCHANNEL_MEMBER 在籍中は対応 PORT の DEL を拒否 |
+| `multi_asic` (sonic-py-common) | `multi_asic.py:410,435` `get_keys('PORTCHANNEL_MEMBER')` | LAG メンバーの internal/backend 属性を伝播; マルチ [ASIC](../../reference/glossary.md#term-asic) 環境の backend LAG 判定に使用 |
 | `show interfaces portchannel` (CLI) | `show/interfaces/__init__.py:1141,1173` | メンバーポート一覧を表示 |
 
 ### VLAN_MEMBER との相互排他 (詳細)
@@ -432,7 +431,7 @@ teamd 操作完了後、TeamMgr が APP_DB `LAG_MEMBER_TABLE` (= `APP_LAG_MEMBER
 1. **YANG `must` 制約** (`sonic-vlan.yang:302`): config-load / `sonic-cfggen` 時に自動 reject
 2. **CLI ガード** (`config/vlan.py:379`): `config vlan member add` 実行時に即時 `ctx.fail()`
 
-LAG を VLAN に trunk させる場合は PORTCHANNEL_MEMBER として物理ポートを追加した後、LAG インタフェース名 (`PortChannel0001`) を `VLAN_MEMBER` に追加する。物理ポートを直接 VLAN_MEMBER に追加するのではない点に注意。
+LAG を [VLAN](../../reference/glossary.md#term-vlan) に trunk させる場合は PORTCHANNEL_MEMBER として物理ポートを追加した後、LAG インタフェース名 (`PortChannel0001`) を `VLAN_MEMBER` に追加する。物理ポートを直接 VLAN_MEMBER に追加するのではない点に注意。
 
 <!-- /cross-refs -->
 
@@ -479,9 +478,9 @@ LAG を VLAN に trunk させる場合は PORTCHANNEL_MEMBER として物理ポ�
 
 | 条件 | 挙動 |
 |------|------|
-| 非 VOQ (通常) | CONFIG_DB → APP_DB `APP_LAG_MEMBER_TABLE` のみ処理 |
-| VOQ chassis — 自 switch の LAG | CHASSIS_APP_DB `CHASSIS_APP_LAG_MEMBER_TABLE` へも `status` フィールド付きで同期 (`portsorch.cpp:L11179-11195`) |
-| VOQ chassis — switch_id が自 switch と一致 | CHASSIS_APP_DB 由来の自 switch LAG メンバ追加はスキップ（二重処理防止）|
+| 非 [VOQ](../../reference/glossary.md#term-voq) (通常) | CONFIG_DB → APP_DB `APP_LAG_MEMBER_TABLE` のみ処理 |
+| [VOQ](../../reference/glossary.md#term-voq) chassis — 自 switch の LAG | CHASSIS_APP_DB `CHASSIS_APP_LAG_MEMBER_TABLE` へも `status` フィールド付きで同期 (`portsorch.cpp:L11179-11195`) |
+| [VOQ](../../reference/glossary.md#term-voq) chassis — switch_id が自 switch と一致 | CHASSIS_APP_DB 由来の自 switch LAG メンバ追加はスキップ（二重処理防止）|
 | VOQ chassis — `port_switch_id != lag_switch_id` | `SWSS_LOG_ERROR: "System lag switch id mismatch..."` → エントリ消去 (`portsorch.cpp:L6309-6315`) |
 
 VOQ chassis 環境での LAG system alias は `<hostname>|<asic_name>|PortChannel0001` 形式になる（CHASSIS_APP_DB キー用）。CONFIG_DB 側の `PORTCHANNEL_MEMBER` key 形式は変わらない。
@@ -499,7 +498,7 @@ LAG メンバの有効化・無効化シーケンスは Mellanox の SAI 制約�
 
 ### Multi-ASIC — バックエンド LAG 判定
 
-マルチ ASIC 環境では `sonic_py_common.multi_asic.is_port_channel_internal()` が PORTCHANNEL_MEMBER を参照して LAG の内部 (backend) / 外部 (frontend) を判定する (`multi_asic.py:L401-415`)。
+マルチ [ASIC](../../reference/glossary.md#term-asic) 環境では `sonic_py_common.multi_asic.is_port_channel_internal()` が PORTCHANNEL_MEMBER を参照して LAG の内部 (backend) / 外部 (frontend) を判定する (`multi_asic.py:L401-415`)。
 
 | 条件 | 結果 |
 |------|------|
@@ -523,10 +522,10 @@ PORTCHANNEL_MEMBER の SET/DEL は CONFIG_DB への書き込みに留まらず�
 
 | 副次書き込み先 | テーブル / リソース | フィールド / 値 | 担当 | ソース |
 |---|---|---|---|---|
-| APPL_DB | `PORT_TABLE` | `<member>` field=`mtu` (LAG の MTU を継承) | `teammgrd` | `teammgr.cpp:830` |
-| APPL_DB | `LAG_MEMBER_TABLE` | `<lag>:<member>` field=`status` (`disabled` → LACP 後 `enabled`) | `teamsyncd` | `teamsync.cpp:420` |
-| ASIC_DB | `SAI_OBJECT_TYPE_LAG_MEMBER` | `create_lag_member` — lag_member OID 生成 | `portsorch` (syncd 経由) | `portsorch.cpp:8172` |
-| ASIC_DB | LAG_MEMBER 属性 | `SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE=true` / `INGRESS_DISABLE=true` (LACP 未完時) | `portsorch` | `portsorch.cpp:8162-8167` |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | `PORT_TABLE` | `<member>` field=`mtu` (LAG の MTU を継承) | `teammgrd` | `teammgr.cpp:830` |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | `LAG_MEMBER_TABLE` | `<lag>:<member>` field=`status` (`disabled` → LACP 後 `enabled`) | `teamsyncd` | `teamsync.cpp:420` |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | `SAI_OBJECT_TYPE_LAG_MEMBER` | `create_lag_member` — lag_member OID 生成 | `portsorch` ([syncd](../../reference/glossary.md#term-syncd) 経由) | `portsorch.cpp:8172` |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | LAG_MEMBER 属性 | `SAI_LAG_MEMBER_ATTR_EGRESS_DISABLE=true` / `INGRESS_DISABLE=true` (LACP 未完時) | `portsorch` | `portsorch.cpp:8162-8167` |
 | CHASSIS_APP_DB | `SYSTEM_LAG_MEMBER_TABLE` | `<system_lag>:<system_port>` field=`status` | `portsorch` | `portsorch.cpp:8213` (VoQ Local LAG のみ) |
 | カーネル netdev | `ip link` | メンバを admin-down → enslave → admin_status 復元 | `teammgrd` | `teammgr.cpp:761-828` |
 | teamd (UNIX ソケット) | `teamdctl port config update` + `port add` | lacp_key / link_watch 設定後に enslave | `teammgrd` | `teammgr.cpp:762-769` |
@@ -537,7 +536,7 @@ PORTCHANNEL_MEMBER の SET/DEL は CONFIG_DB への書き込みに留まらず�
 |---|---|---|---|---|
 | APPL_DB | `PORT_TABLE` | `<member>` field=`mtu` (元の MTU に復元) | `teammgrd` | `teammgr.cpp:862` |
 | APPL_DB | `LAG_MEMBER_TABLE` | `<lag>:<member>` DEL | `teamsyncd` | `teamsync.cpp:432` |
-| ASIC_DB | `SAI_OBJECT_TYPE_LAG_MEMBER` | `remove_lag_member` — lag_member OID 削除 | `portsorch` (syncd 経由) | `portsorch.cpp:8221` |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | `SAI_OBJECT_TYPE_LAG_MEMBER` | `remove_lag_member` — lag_member OID 削除 | `portsorch` ([syncd](../../reference/glossary.md#term-syncd) 経由) | `portsorch.cpp:8221` |
 | CHASSIS_APP_DB | `SYSTEM_LAG_MEMBER_TABLE` | `<system_lag>:<system_port>` DEL | `portsorch` | `portsorch.cpp:8261` (VoQ Local LAG のみ) |
 | カーネル netdev | `ip link` | MTU / admin_status を元値に復元 | `teammgrd` | `teammgr.cpp:858-860` |
 | teamd (UNIX ソケット) | `teamdctl port remove` | メンバを LAG から削除 | `teammgrd` | `teammgr.cpp:836` |
@@ -548,6 +547,8 @@ STATE_DB に `LAG_MEMBER_TABLE` は書き込まれない。LAG メンバの状�
 
 ### LACP ネゴシエーションと ASIC_DB 更新タイミング
 
-メンバ追加直後は `LAG_MEMBER_TABLE.status = disabled` であり、ASIC_DB の lag_member に `EGRESS_DISABLE=true` / `INGRESS_DISABLE=true` が設定される。LACP ネゴシエーション完了後、teamd が `TEAM_PORT_CHANGE` で `status=enabled` を通知 → teamsyncd が `LAG_MEMBER_TABLE` を更新 → portsorch が SAI attribute を解除する (`portsorch.cpp:8295-8340`)。
+メンバ追加直後は `LAG_MEMBER_TABLE.status = disabled` であり、ASIC_DB の lag_member に `EGRESS_DISABLE=true` / `INGRESS_DISABLE=true` が設定される。LACP ネゴシエーション完了後、teamd が `TEAM_PORT_CHANGE` で `status=enabled` を通知 → teamsyncd が `LAG_MEMBER_TABLE` を更新 → [portsorch](../../reference/glossary.md#term-portsorch) が SAI attribute を解除する (`portsorch.cpp:8295-8340`)。
 
 <!-- /side-effects -->
+
+<!-- glossary-links-injected: beb53a235508 -->

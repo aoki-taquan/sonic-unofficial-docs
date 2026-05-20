@@ -89,7 +89,7 @@ sonic-clear dhcprelay_counters
 
 ## 発展トピック
 
-- **ICMP / link prober の hardware offload**: link prober は通常ソフトウェアで ICMP echo を送るが、ASIC offload を使うと sub-second の障害検出が可能になる。`linkmgrd` と SAI の検出加速機能の組合せを利用する。
+- **ICMP / link prober の hardware offload**: link prober は通常ソフトウェアで ICMP echo を送るが、[ASIC](../../reference/glossary.md#term-asic) offload を使うと sub-second の障害検出が可能になる。`linkmgrd` と SAI の検出加速機能の組合せを利用する。
 - **Soft Dual-ToR / Active-Active mux**: Active-Standby から、両 ToR が同時に転送する Active-Active モデルへの拡張提案が継続している。[ARP](../../reference/glossary.md#term-arp) / ND の処理、[ECMP](../../reference/glossary.md#term-ecmp) の対称性、ECMP hash の双方向一致が論点。
 - **per-VLAN mux state**: 単一 server に複数 VLAN がある場合、VLAN ごとに異なる active ToR を選ぶ拡張。トラフィックを業務単位で振り分ける運用シナリオで役立つ。
 - **gRPC ベース peer state 同期**: 旧来の `app_db` 直書きから、明示的な peer 通信プロトコルへの移行が進む。`linkmgrd` のロジック分離と integration test が改善される方向。
@@ -148,4 +148,4 @@ sonic-clear dhcprelay_counters
 - [13 DASH / SmartSwitch: DPU と mux state の同期](../13-dash-smartswitch/index.md)
 - [14 Platform / Port / Optics: link prober の hardware offload](../14-platform-port-optics/index.md)
 
-<!-- glossary-links-injected: 3e049dc787aa -->
+<!-- glossary-links-injected: c006405759d8 -->

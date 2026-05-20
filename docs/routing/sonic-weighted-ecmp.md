@@ -47,7 +47,7 @@ related:
 
 - 通常 [ECMP](../reference/glossary.md#term-ecmp) では何が問題で、なぜリンク帯域に応じた重み付けが要るのか
 - WCMP の重みは何で運ばれ、どこで NHG member weight に変換されるか
-- SONiC 側で増えるのは [CONFIG_DB](../reference/glossary.md#term-config_db) のどのキーか、SWSS/[SAI](../reference/glossary.md#term-sai) に変更があるか
+- [SONiC](../reference/glossary.md#term-sonic) 側で増えるのは [CONFIG_DB](../reference/glossary.md#term-config_db) のどのキーか、SWSS/[SAI](../reference/glossary.md#term-sai) に変更があるか
 - [EVPN](../reference/glossary.md#term-evpn) Type-5 や warm-boot の扱い
 
 ## なぜ通常 ECMP では足りないか
@@ -149,7 +149,7 @@ Disabled   Enabled
 - **EVPN Type-5 は scope 外**（将来）
 - 一部 multipath が link-bandwidth コミュニティを持たないと ECMP fallback
 - 正規化精度は 8bit (1-255) なので極端な比は表現不能
-- ASIC によっては NHG member weight に resource 制約あり（HLD 未明記、SWSS HLD #738 参照）
+- [ASIC](../reference/glossary.md#term-asic) によっては NHG member weight に resource 制約あり（HLD 未明記、SWSS HLD #738 参照）
 
 ## 干渉する機能
 
@@ -196,4 +196,4 @@ redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER*' | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 29ef3e805678 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

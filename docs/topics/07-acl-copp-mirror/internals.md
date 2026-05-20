@@ -28,11 +28,11 @@ related:
 
 # 内部実装
 
-[ACL](../../reference/glossary.md#term-acl) action はスキーマに書けるだけでは十分ではありません。ASIC がその stage でその action を受理できるか、[SAI](../../reference/glossary.md#term-sai) capability と [orchagent](../../reference/glossary.md#term-orchagent) の実装が揃っているかを確認する必要があります。egress mirror、outer [DSCP](../../reference/glossary.md#term-dscp) 書換、packet trimming はこの性質が強い機能です。
+[ACL](../../reference/glossary.md#term-acl) action はスキーマに書けるだけでは十分ではありません。[ASIC](../../reference/glossary.md#term-asic) がその stage でその action を受理できるか、[SAI](../../reference/glossary.md#term-sai) capability と [orchagent](../../reference/glossary.md#term-orchagent) の実装が揃っているかを確認する必要があります。egress mirror、outer [DSCP](../../reference/glossary.md#term-dscp) 書換、packet trimming はこの性質が強い機能です。
 
 ## ACL Action Capability
 
-SAI は ingress / egress stage ごとに使える ACL action が異なります。SONiC は `AclOrch` 起動時に SAI へ action capability を問い合わせ、[STATE_DB](../../reference/glossary.md#term-state_db) の `SWITCH_CAPABILITY` に `ACL_ACTIONS|<stage>` として公開します。`acl-loader` などの producer は投入前に capability を見て、未対応 action を早く弾けます。
+SAI は ingress / egress stage ごとに使える ACL action が異なります。[SONiC](../../reference/glossary.md#term-sonic) は `AclOrch` 起動時に SAI へ action capability を問い合わせ、[STATE_DB](../../reference/glossary.md#term-state_db) の `SWITCH_CAPABILITY` に `ACL_ACTIONS|<stage>` として公開します。`acl-loader` などの producer は投入前に capability を見て、未対応 action を早く弾けます。
 
 この仕組みは「設定は accepted だが hardware には入らない」という問題を減らします。ただし capability が公開されていても、個別 table type や bind point、ASIC resource の都合で失敗する可能性は残るため、STATE_DB の ACL status と counter も併せて見ます。
 
@@ -152,4 +152,4 @@ ASIC_DB:
 - [Egress Outer DSCP 書換 ACL](../../acl-qos/egress-outer-dscp-change-table.md)
 - [Packet Trimming](../../architecture/sonic-packet-trimming.md)
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: ec18b66e3507 -->
