@@ -96,7 +96,7 @@ NAT_BINDINGS|<name>
 ## 購読者
 
 - `natmgrd`: [CONFIG_DB](../../reference/glossary.md#term-config_db) の NAT 設定を読み、[APPL_DB](../../reference/glossary.md#term-appl_db) NAT table 群へ反映する。
-- `orchagent` / `NatOrch`: [APPL_DB](../../reference/glossary.md#term-appl_db) の NAT global / pool / binding / static entry を消費し、[SAI](../../reference/glossary.md#term-sai) NAT object や kernel / ASIC 設定へ反映する。
+- `orchagent` / `NatOrch`: [APPL_DB](../../reference/glossary.md#term-appl_db) の NAT global / pool / binding / static entry を消費し、[SAI](../../reference/glossary.md#term-sai) NAT object や kernel / [ASIC](../../reference/glossary.md#term-asic) 設定へ反映する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -169,7 +169,7 @@ show nat translations
 | フィールド | 値 | 挙動 |
 |-----------|-----|------|
 | `admin_mode` | `disabled` (default) | NAT 無効。pool/binding/static エントリを受け付けるがハードウェアに降ろさない (キュー保持) |
-| `admin_mode` | `enabled` | NAT 有効化。キュー内の全エントリを ASIC に反映。conntrack エントリの aging 開始 |
+| `admin_mode` | `enabled` | NAT 有効化。キュー内の全エントリを [ASIC](../../reference/glossary.md#term-asic) に反映。conntrack エントリの aging 開始 |
 | `nat_timeout` | 600 (default) | 非 TCP/UDP NAT セッションを 600秒でタイムアウト |
 | `nat_tcp_timeout` | 86400 (default) | TCP セッションを 24時間でタイムアウト |
 | `nat_udp_timeout` | 300 (default) | UDP セッションを 5分でタイムアウト |
@@ -181,19 +181,18 @@ show nat translations
 enum: `admin_mode`=enabled/disabled、`nat_type`=snat/dnat。
 <!-- /value-behavior -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / NatOrch** (`sonic-swss/orchagent/natorch.cpp`): `NAT_GLOBAL`, `STATIC_NAT`, `STATIC_NAPT`, `NAT_POOL`, `NAT_BINDINGS` を `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / NatOrch** (`sonic-swss/orchagent/natorch.cpp`): `NAT_GLOBAL`, `STATIC_NAT`, `STATIC_NAPT`, `NAT_POOL`, `NAT_BINDINGS` を `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
 - NatOrch が `NAT_GLOBAL.admin_mode=enabled` を確認してから各テーブルの処理を開始。
-- STATIC_NAT/STATIC_NAPT エントリは APP_DB 経由ではなく orchagent から直接 SAI へ。
-- `admin_mode=disabled` の場合はエントリをキューに保持して SAI 操作を行わない。
+- STATIC_NAT/STATIC_NAPT エントリは APP_DB 経由ではなく [orchagent](../../reference/glossary.md#term-orchagent) から直接 [SAI](../../reference/glossary.md#term-sai) へ。
+- `admin_mode=disabled` の場合はエントリをキューに保持して [SAI](../../reference/glossary.md#term-sai) 操作を行わない。
 
 ### 段階 3: APPL → SAI
 
@@ -204,7 +203,7 @@ enum: `admin_mode`=enabled/disabled、`nat_type`=snat/dnat。
 
 - `admin_mode` 有効化時にキュー内の全エントリを一括処理 (数十〜数百エントリの場合に数百 ms 要する場合あり)。
 - 副作用: conntrack timeout 変更は既存セッションには影響しない (新規セッションから適用)。
-- 副作用: NAT pool の枯渇時は新規 NAT セッションが確立できず DROP。STATE_DB でカウンタ確認可能。
+- 副作用: NAT pool の枯渇時は新規 NAT セッションが確立できず DROP。[STATE_DB](../../reference/glossary.md#term-state_db) でカウンタ確認可能。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -214,7 +213,7 @@ NAT_GLOBAL / NAT_POOL / NAT_BINDINGS / NAT_STATIC テーブルへの書き込み
 
 ### CLI
 
-  - `config nat add/del ...` — `config/nat.py` が `set_entry()` で各 NAT サブテーブルを書き込む (sonic-utilities/config/nat.py)
+  - `config nat add/del ...` — `config/nat.py` が `set_entry()` で各 NAT サブテーブルを書き込む ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/nat.py)
 
 ### minigraph / sonic-cfggen
 
@@ -222,7 +221,7 @@ minigraph.py に NAT テーブル生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -284,7 +283,7 @@ YANG default 以外の実装 hardcode fallback。`NatOrch` コンストラクタ
 
 ### orchagent の assert クラッシュ (admin_mode 異常値)
 
-- `natorch.cpp:2938`: `assert(mode == "enabled" || mode == "disabled")` — APPL_DB に enabled/disabled 以外の値が入ると orchagent が abort する。natmgr 経由ではガード済みだが、直接 APPL_DB 操作や YANG 迂回でバイパスすると問題が発生する。
+- `natorch.cpp:2938`: `assert(mode == "enabled" || mode == "disabled")` — APPL_DB に enabled/disabled 以外の値が入ると [orchagent](../../reference/glossary.md#term-orchagent) が abort する。natmgr 経由ではガード済みだが、直接 APPL_DB 操作や YANG 迂回でバイパスすると問題が発生する。
 
 ### NAT_POOL テーブル — silent drop / 暗黙デフォルト / YANG-実装 discrepancy
 
@@ -354,18 +353,18 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 | 参照先テーブル | DB | 方向 | 契機 | 備考 |
 |--------------|-----|------|------|------|
 | `INTERFACE` (`nat_zone`) | CONFIG_DB | READ | 購読 | Ethernet ポートの NAT ゾーン番号を iptables mangle に変換 (`natmgr.cpp:7384-7586`) |
-| `PORTCHANNEL_INTERFACE` (`nat_zone`) | CONFIG_DB | READ | 購読 | LAG ポートの NAT ゾーン番号を iptables mangle に変換 (`natmgrd.cpp:116`) |
-| `VLAN_INTERFACE` (`nat_zone`) | CONFIG_DB | READ | 購読 | VLAN インタフェースの NAT ゾーン番号 (`natmgrd.cpp:117`) |
+| `PORTCHANNEL_INTERFACE` (`nat_zone`) | CONFIG_DB | READ | 購読 | [LAG](../../reference/glossary.md#term-lag) ポートの NAT ゾーン番号を iptables mangle に変換 (`natmgrd.cpp:116`) |
+| `VLAN_INTERFACE` (`nat_zone`) | CONFIG_DB | READ | 購読 | [VLAN](../../reference/glossary.md#term-vlan) インタフェースの NAT ゾーン番号 (`natmgrd.cpp:117`) |
 | `LOOPBACK_INTERFACE` (`nat_zone`) | CONFIG_DB | READ | 購読 | Loopback の NAT ゾーン番号 (`natmgrd.cpp:118`) |
 | `STATIC_NAT` | CONFIG_DB | READ | 購読 | `admin_mode=enabled` かつ L3 intf ready のとき処理。`NAT_POOL.nat_ip` と重複する場合は silent drop |
 | `STATIC_NAPT` | CONFIG_DB | READ | 購読 | STATIC_NAT と同じ制御。キーは 5 パーツ必須 |
-| `ACL_TABLE` (`type=L3`, `stage=INGRESS`) | CONFIG_DB | READ | 購読 | Dynamic NAT の ACL バインディング用インタフェースをキャッシュ (`natmgr.cpp:7750-7900`) |
+| `ACL_TABLE` (`type=L3`, `stage=INGRESS`) | CONFIG_DB | READ | 購読 | Dynamic NAT の [ACL](../../reference/glossary.md#term-acl) バインディング用インタフェースをキャッシュ (`natmgr.cpp:7750-7900`) |
 | `ACL_RULE` | CONFIG_DB | READ | 購読 | Dynamic NAT iptables ルールの再評価 |
-| `STATE_PORT_TABLE` | STATE_DB | READ | NAT エントリ追加前 | Ethernet readiness ガード (`natmgr.cpp:119`) |
-| `STATE_LAG_TABLE` | STATE_DB | READ | NAT エントリ追加前 | PortChannel readiness ガード (`natmgr.cpp:108`) |
+| `STATE_PORT_TABLE` | [STATE_DB](../../reference/glossary.md#term-state_db) | READ | NAT エントリ追加前 | Ethernet readiness ガード (`natmgr.cpp:119`) |
+| `STATE_LAG_TABLE` | [STATE_DB](../../reference/glossary.md#term-state_db) | READ | NAT エントリ追加前 | [PortChannel](../../reference/glossary.md#term-portchannel) readiness ガード (`natmgr.cpp:108`) |
 | `STATE_VLAN_TABLE` | STATE_DB | READ | NAT エントリ追加前 | Vlan readiness ガード (`natmgr.cpp:100`) |
 | `STATE_INTERFACE_TABLE` | STATE_DB | READ | NAT エントリ追加前 | L3 インタフェース readiness ガード (`natmgr.cpp:139`) |
-| `APP_PORT_TABLE` (`PortInitDone`) | APPL_DB | READ | natmgrd 起動時 | ポート初期化完了まで全 NAT 処理をブロッキング待機 (`natmgr.cpp:76-92`) |
+| `APP_PORT_TABLE` (`PortInitDone`) | APPL_DB | READ | [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) 起動時 | ポート初期化完了まで全 NAT 処理をブロッキング待機 (`natmgr.cpp:76-92`) |
 | `NAT_POOL` (YANG leafref) | CONFIG_DB | READ | YANG バリデーション | `NAT_BINDINGS.nat_pool` → `NAT_POOL.name` の参照整合性 |
 | RouteOrch (next-hop observer) | — | READ | DNAT エントリ追加/削除時 | `NatOrch` が `m_routeOrch->attach(this, translatedIp)` で DNAT translated IP のルート変化を subscribe。**BRCM 専用** (`gNhTrackingSupported=true` 時のみ) (`natorch.cpp:414,458,504,591`) |
 | NeighOrch (neighbor observer) | — | READ | `enableNatFeature` / `disableNatFeature` 時 | `NatOrch` が `m_neighOrch->attach(this)` で全 neighbor 解決/喪失を subscribe。neighbor 変化時に DNAT エントリを追加/削除。**BRCM 専用** (`natorch.cpp:2573,2610`) |
@@ -417,7 +416,7 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 
 ### ASIC_DB (SAI nat_entry) への副次書込
 
-`NatOrch` (`orchagent` コンテナ) が `sai_nat_api` 経由で ASIC_DB に SAI NAT エントリを書込む。syncd が Redis ASIC_DB に記録し、ASIC へ転送する。
+`NatOrch` (`orchagent` コンテナ) が `sai_nat_api` 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) に SAI NAT エントリを書込む。[syncd](../../reference/glossary.md#term-syncd) が [Redis](../../reference/glossary.md#term-redis) [ASIC_DB](../../reference/glossary.md#term-asic_db) に記録し、[ASIC](../../reference/glossary.md#term-asic) へ転送する。
 
 | SAI オブジェクト種別 | SAI nat_type | 書込条件 | ソース |
 |---|---|---|---|
@@ -427,7 +426,7 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 | `sai_nat_entry_t` (Twice NAT) | `SAI_NAT_TYPE_DOUBLE_NAT` | Twice NAT エントリ追加時 | `natorch.cpp:980-1020` |
 | `SAI_SWITCH_ATTR_NAT_ENABLE` | switch 属性 | `admin_mode` が `disabled→enabled` / `enabled→disabled` の遷移時 | `natorch.cpp:2555-2560`, `natorch.cpp:2590-2594` |
 
-> ASIC_DB への直接書込は syncd → ASIC ドライバ経由で行われる。NAT エントリは `sai_nat_api->create_nat_entry()` / `remove_nat_entry()` で管理され、`gSwitchId` / `gVirtualRouterId` をキーに含む。
+> [ASIC_DB](../../reference/glossary.md#term-asic_db) への直接書込は [syncd](../../reference/glossary.md#term-syncd) → ASIC ドライバ経由で行われる。NAT エントリは `sai_nat_api->create_nat_entry()` / `remove_nat_entry()` で管理され、`gSwitchId` / `gVirtualRouterId` をキーに含む。
 
 ### kernel conntrack への副次書込
 
@@ -446,7 +445,7 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 
 ### COUNTERS_DB への副次書込
 
-`NatOrch` (`orchagent` コンテナ) が以下の COUNTERS_DB テーブルへ書込を行う。
+`NatOrch` (`orchagent` コンテナ) が以下の [COUNTERS_DB](../../reference/glossary.md#term-counters_db) テーブルへ書込を行う。
 
 | テーブル名 | キー形式 | 書込フィールド | 書込タイミング |
 |-----------|---------|--------------|--------------|
@@ -469,7 +468,7 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 
 ### 購読方式: 2 層構造 (SubscriberStateTable + ConsumerStateTable)
 
-NAT テーブルの変更通知には **層 1 (natmgrd)** と **層 2 (NatOrch)** の 2 段階メカニズムがある。
+NAT テーブルの変更通知には **層 1 ([natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd))** と **層 2 (NatOrch)** の 2 段階メカニズムがある。
 
 #### 層 1: natmgrd — CONFIG_DB を SubscriberStateTable で購読
 
@@ -492,7 +491,7 @@ PSUBSCRIBE __keyspace@4__:INTERFACE|*  (nat_zone 変更)
 
 #### 層 2: NatOrch — APPL_DB を ConsumerStateTable で購読
 
-`orchdaemon.cpp:457-465` で `APP_NAT_GLOBAL_TABLE_NAME` 等を優先度付きで登録。APPL_DB は `ConsumerStateTable` (ProducerStateTable チャンネル SUBSCRIBE) を使用する。チャンネル名は `table.h:94-96` の `getChannelName(db_id)` で `APP_NAT_GLOBAL_TABLE_CHANNEL@0` 形式になる。
+`orchdaemon.cpp:457-465` で `APP_NAT_GLOBAL_TABLE_NAME` 等を優先度付きで登録。APPL_DB は `ConsumerStateTable` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) チャンネル SUBSCRIBE) を使用する。チャンネル名は `table.h:94-96` の `getChannelName(db_id)` で `APP_NAT_GLOBAL_TABLE_CHANNEL@0` 形式になる。
 
 ### イベント発火から SAI 適用までの流れ
 
@@ -526,10 +525,10 @@ CLI / REST が CONFIG_DB に HSET / HDEL / DEL
 
 | チャンネル | DB | 送信者 | 受信者 | 用途 |
 |---|---|---|---|---|
-| `SETTIMEOUTNAT` | APPL_DB | `NatOrch::setTimeoutNotifier` (`natorch.cpp:137`) | `natmgrd` の `timeoutNotificationsConsumer` (`natmgrd.cpp:149`) | NatOrch が conntrack timeout 変更を natmgrd へ通知 |
+| `SETTIMEOUTNAT` | APPL_DB | `NatOrch::setTimeoutNotifier` (`natorch.cpp:137`) | `natmgrd` の `timeoutNotificationsConsumer` (`natmgrd.cpp:149`) | NatOrch が conntrack timeout 変更を [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) へ通知 |
 | `FLUSHNATENTRIES` | APPL_DB | 外部 CLI (`show nat translate flush`) | `natmgrd` の `flushNotificationsConsumer` (`natmgrd.cpp:152`) | conntrack エントリ全フラッシュ要求 |
 | `FLUSHNATSTATISTICS` | APPL_DB | 外部プロセス | `NatOrch` の `m_flushNotificationsConsumer` (`natorch.cpp:84`) | NAT カウンタ全クリア要求 |
-| `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | `natmgrd` の `cleanupNotifier` (`natmgrd.cpp:86`) | `NatOrch` の `m_cleanupNotificationConsumer` (`natorch.cpp:89`) | natmgrd 終了時に Redis/ASIC の NAT エントリ全削除を依頼 |
+| `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | `natmgrd` の `cleanupNotifier` (`natmgrd.cpp:86`) | `NatOrch` の `m_cleanupNotificationConsumer` (`natorch.cpp:89`) | natmgrd 終了時に [Redis](../../reference/glossary.md#term-redis)/ASIC の NAT エントリ全削除を依頼 |
 
 これらはすべて `swss::Select` の `Selectable` として登録され、通常の Consumer 処理と同じ select ループ内で処理される。
 
@@ -751,3 +750,5 @@ SWSS_LOG_NOTICE("DNAT nexthop tracking is %s",
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/nat-platform.md`
 <!-- /platform -->
+
+<!-- glossary-links-injected: 2b20cf8cec64 -->

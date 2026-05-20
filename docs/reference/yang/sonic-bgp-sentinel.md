@@ -28,7 +28,7 @@ related:
 - import: `ietf-inet-types`, `sonic-types`
 - top container: `sonic-bgp-sentinel`
 
-SONiC [BGP](../../reference/glossary.md#term-bgp) Sentinel 機能の [YANG](../../reference/glossary.md#term-yang) モデル。ToR 配下の特定 IP 範囲に対する Sentinel [BGP](../../reference/glossary.md#term-bgp) セッション設定[^1]。
+[SONiC](../../reference/glossary.md#term-sonic) [BGP](../../reference/glossary.md#term-bgp) Sentinel 機能の [YANG](../../reference/glossary.md#term-yang) モデル。ToR 配下の特定 IP 範囲に対する Sentinel [BGP](../../reference/glossary.md#term-bgp) セッション設定[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -124,4 +124,4 @@ show runningconfiguration bgp
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-sentinel.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: ed0e3d8580f8 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

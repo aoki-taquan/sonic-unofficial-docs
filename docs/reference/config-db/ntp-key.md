@@ -203,22 +203,21 @@ show ntp
 enum: `type`=md5/sha1/sha256/sha384/sha512、`trusted`=yes/no。変更は `systemctl restart chrony` をトリガー。
 <!-- /value-behavior -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **hostcfgd**: `NTP_KEY` テーブルを `ConfigDBConnector` で購読。
+- **[hostcfgd](../../reference/glossary.md#term-hostcfgd)**: `NTP_KEY` テーブルを `ConfigDBConnector` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- hostcfgd が `/etc/chrony/chrony.keys` を更新し、`systemctl restart chrony` でフルリスタートを発行 (`hostcfgd:1280` `CHRONY_RESTART = ['systemctl', 'restart', 'chrony']`)。
+- [hostcfgd](../../reference/glossary.md#term-hostcfgd) が `/etc/chrony/chrony.keys` を更新し、`systemctl restart chrony` でフルリスタートを発行 (`hostcfgd:1280` `CHRONY_RESTART = ['systemctl', 'restart', 'chrony']`)。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。chrony が認証付き NTP パケット処理に鍵を使用。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。chrony が認証付き NTP パケット処理に鍵を使用。
 
 ### 段階 4: タイミング + 副作用
 
@@ -232,7 +231,7 @@ NTP_KEY テーブルへの書き込みが発生するコード経路を網羅的
 
 ### CLI
 
-  - `config ntp authentication-key add/del ...` — `config/main.py` が NTP_KEY を書き込む (sonic-utilities/config/main.py)
+  - `config ntp authentication-key add/del ...` — `config/main.py` が NTP_KEY を書き込む ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py)
 
 ### minigraph / sonic-cfggen
 
@@ -240,7 +239,7 @@ minigraph.py に NTP_KEY 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -270,13 +269,13 @@ minigraph.py および init_cfg.json.j2 からの `NTP_KEY` 自動派生はな�
 
 ### Phase 7: 条件付き登録
 
-`NTP_KEY` は orchagent では処理されない。`hostcfgd` が `NTP`, `NTP_SERVER`, `NTP_KEY` を一括購読し `ntp.conf` テンプレートを再生成する (`hostcfgd:1285-1309`)。条件付き platform 登録なし。
+`NTP_KEY` は [orchagent](../../reference/glossary.md#term-orchagent) では処理されない。`hostcfgd` が `NTP`, `NTP_SERVER`, `NTP_KEY` を一括購読し `ntp.conf` テンプレートを再生成する (`hostcfgd:1285-1309`)。条件付き platform 登録なし。
 
 ### グレップカバレッジ
 
 | 項目 | hit 数 | 証跡 |
 |---|---|---|
-| hostcfgd ntp_key_conf 購読 | 1 | `hostcfgd:1286,1295` |
+| [hostcfgd](../../reference/glossary.md#term-hostcfgd) ntp_key_conf 購読 | 1 | `hostcfgd:1286,1295` |
 
 <!-- /derivation -->
 
@@ -329,7 +328,7 @@ YANG default `md5` により、CONFIG_DB に正規化された値は常に non-e
 
 ### hostcfgd 側の default 補完
 
-`NtpCfg` クラス (`hostcfgd:1278-1406`) は AAA 系のような `*_default` dict を持たず、DB の dict をそのまま Jinja2 context に渡す。`ntp_srv_key_update()` (`hostcfgd:1366-1406`) はキャッシュ比較で同一エントリの再生成をスキップするのみで、フィールド単位の補完は行わない。暗黙デフォルトは YANG (`md5` / `no`) とテンプレートの falsy フィルタが二重に担保している。
+`NtpCfg` クラス (`hostcfgd:1278-1406`) は [AAA](../../reference/glossary.md#term-aaa) 系のような `*_default` dict を持たず、DB の dict をそのまま Jinja2 context に渡す。`ntp_srv_key_update()` (`hostcfgd:1366-1406`) はキャッシュ比較で同一エントリの再生成をスキップするのみで、フィールド単位の補完は行わない。暗黙デフォルトは YANG (`md5` / `no`) とテンプレートの falsy フィルタが二重に担保している。
 
 詳細調査メモ: `meta/_intermediate/cdb-flow/ntp-key-defaults.md`。
 
@@ -377,7 +376,7 @@ YANG default `md5` により、CONFIG_DB に正規化された値は常に non-e
 
 ### YANG バリデーション失敗（書き込み拒否）
 
-CLI / gNMI 経由の CONFIG_DB 書き込み時に YANG スキーマが検証される。失敗した場合は DB に変更が届かず hostcfgd は通知を受けない。
+CLI / [gNMI](../../reference/glossary.md#term-gnmi) 経由の CONFIG_DB 書き込み時に YANG スキーマが検証される。失敗した場合は DB に変更が届かず hostcfgd は通知を受けない。
 
 | 制約 | 違反値 | 挙動 |
 |------|--------|------|
@@ -444,10 +443,10 @@ CONFIG_DB `NTP_KEY` テーブルの変更に伴って `hostcfgd` の `NtpCfg` �
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `NtpCfg.ntp_srv_key_update()` 内に `set(`/`hset(`/`Producer`/`Notification` の呼出 0 件 (`hostcfgd:1366-1406` を grep して 0 ヒット) |
-| STATE_DB | なし | `NtpCfg` は `state_db_conn` を保持しない。STATE_DB 書込は `FipsCfg` (`hostcfgd:1759-1821`) のみ |
-| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 書込参照なし。NTP は SAI カウンタを持たない |
-| ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB | なし | SAI 非経由。`NTP_KEY` を購読する orchagent は `sonic-swss/` に存在しない |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `NtpCfg.ntp_srv_key_update()` 内に `set(`/`hset(`/`Producer`/`Notification` の呼出 0 件 (`hostcfgd:1366-1406` を grep して 0 ヒット) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `NtpCfg` は `state_db_conn` を保持しない。[STATE_DB](../../reference/glossary.md#term-state_db) 書込は `FipsCfg` (`hostcfgd:1759-1821`) のみ |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `hostcfgd` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書込参照なし。NTP は [SAI](../../reference/glossary.md#term-sai) カウンタを持たない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由。`NTP_KEY` を購読する [orchagent](../../reference/glossary.md#term-orchagent) は `sonic-swss/` に存在しない |
 
 ### ファイルシステムへの副次書込（DB 外）
 
@@ -471,11 +470,11 @@ CONFIG_DB `NTP_KEY` テーブルの変更に伴って `hostcfgd` の `NtpCfg` �
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd NtpCfg.ntp_srv_key_update() / sonic-buildimage/files/image_config/chrony/chrony.keys.j2 -->
 
-`NTP_KEY` 変更時に発生する APPL_DB / STATE_DB への副次書込、および主作用であるファイル書込を整理する。
+`NTP_KEY` 変更時に発生する [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) への副次書込、および主作用であるファイル書込を整理する。
 
 ### APPL_DB / STATE_DB への副次書込
 
-**0 件。** `NtpCfg` は `ProducerStateTable` / `NotificationProducer` 等の DB 書込メンバを保有せず、`NTP_KEY` 変更を APPL_DB・STATE_DB・COUNTERS_DB・FLEX_COUNTER_DB いずれにも伝播しない。
+**0 件。** `NtpCfg` は `ProducerStateTable` / `NotificationProducer` 等の DB 書込メンバを保有せず、`NTP_KEY` 変更を [APPL_DB](../../reference/glossary.md#term-appl_db)・STATE_DB・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) いずれにも伝播しない。
 
 ### ファイル書込: `/etc/chrony/chrony.keys`
 
@@ -517,7 +516,7 @@ CONFIG_DB 変更 (NTP_KEY)
 
 ### Redis 購読方式
 
-`NTP_KEY` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@4__:NTP_KEY|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+`NTP_KEY` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **[Redis](../../reference/glossary.md#term-redis) keyspace 通知 (PSUBSCRIBE `__keyspace@4__:NTP_KEY|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
 
 | 購読者 | 購読 API | 購読テーブル | ハンドラ |
 |--------|---------|--------------|---------|
@@ -525,7 +524,7 @@ CONFIG_DB 変更 (NTP_KEY)
 | `hostcfgd` | 同上 | `NTP_SERVER` | `ntp_srv_key_handler` → `NtpCfg.ntp_srv_key_update()` |
 | `hostcfgd` | 同上 | `NTP` (global) | `ntp_global_handler` → `NtpCfg.ntp_global_update()` |
 
-`hostcfgd` 以外で `NTP_KEY` テーブルを購読するプロセスは `sonic-swss/` に存在しない（orchagent / syncd / mgrd はいずれも NTP_KEY を購読しない）。
+`hostcfgd` 以外で `NTP_KEY` テーブルを購読するプロセスは `sonic-swss/` に存在しない（[orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) / mgrd はいずれも NTP_KEY を購読しない）。
 
 ### keyspace 通知 → ハンドラ呼び出しの流れ
 
@@ -548,7 +547,7 @@ ntp_srv_key_handler(key="1", op="SET", data={...})
 
 - keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は `get_table()` で**全件スナップショット**として取得する。
 - `NTP_KEY` と `NTP_SERVER` はどちらが変更されても同一ハンドラ (`ntp_srv_key_handler`) が両テーブルを全件取得して `ntp_srv_key_update()` に渡す。個別フィールドの差分処理は行わない。
-- `op` は `data is None ? "DEL" : "SET"` の 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない (`hostcfgd:2458-2465`)。
+- `op` は `data is None ? "DEL" : "SET"` の 2 値判定。`HDEL` / `HSET` の [Redis](../../reference/glossary.md#term-redis) 操作種別自体は区別しない (`hostcfgd:2458-2465`)。
 - 起動時は `config_db.listen(init_data_handler=self.load)` (`hostcfgd:2528`) により、Subscribe ループ開始前に `NtpCfg.load()` が `NTP_GLOBAL` / `NTP_SERVER` / `NTP_KEY` を一括スナップショットでキャッシュに適用する。chrony の起動時設定は `ntp-config.service` テンプレートが担うため、`load()` は chrony 再起動をトリガーしない。
 
 ### サービス再起動トリガー
@@ -575,11 +574,13 @@ ntp_srv_key_handler(key="1", op="SET", data={...})
 |------|----------------|------|
 | `NtpCfg.ntp_srv_key_update()` 分岐 | **なし** | `hostcfgd:1366-1406` — `hwsku` / `subtype` 参照なし |
 | `chrony.keys.j2` 条件分岐 | **なし** | `chrony.keys.j2:1-18` — `device_metadata` 参照なし |
-| SmartSwitch NPU NTP サーバ機能 | **NTP_SERVER 側に限定** | `chrony.conf.j2:57-63` の `allow` / `binddevice bridge-midplane` ブロックは NTP_KEY テーブルの内容と独立 |
-| SmartSwitch DPU NTP ソース | **NTP_SERVER テーブル側** | DPU が使用する midplane IP `169.254.200.254` は `NTP_SERVER` に登録される。`chrony.keys.j2` の NTP_KEY 処理は同一 |
-| VRF バインド (mgmt-vrf) | **NTP global / chronyd 起動時** | `chronyd-starter.sh` が `NTP|global.vrf` を参照して `ip vrf exec mgmt` で chrony を起動するが、`chrony.keys` 生成内容には影響しない |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) NTP サーバ機能 | **NTP_SERVER 側に限定** | `chrony.conf.j2:57-63` の `allow` / `binddevice bridge-midplane` ブロックは NTP_KEY テーブルの内容と独立 |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) NTP ソース | **NTP_SERVER テーブル側** | [DPU](../../reference/glossary.md#term-dpu) が使用する midplane IP `169.254.200.254` は `NTP_SERVER` に登録される。`chrony.keys.j2` の NTP_KEY 処理は同一 |
+| [VRF](../../reference/glossary.md#term-vrf) バインド (mgmt-vrf) | **NTP global / chronyd 起動時** | `chronyd-starter.sh` が `NTP|global.vrf` を参照して `ip vrf exec mgmt` で chrony を起動するが、`chrony.keys` 生成内容には影響しない |
 
 ### SmartSwitch DPU: NTP_KEY は設定可能だが通常は不使用
 
-SmartSwitch DPU (`type=SmartSwitchDPU`) は `169.254.200.254`（midplane ブリッジ）を NTP ソースとして使用し、midplane 経由で NPU 側の chrony と時刻同期する。midplane NTP サーバは通常 NTP 認証を要求しないため、`NTP_KEY` は設定されないのが一般的である（テストデータ: `ntp_smartswitch_dpu_interfaces.json` — `authentication=disabled`）。`NTP_KEY` を設定した場合も `chrony.keys.j2` は標準処理で鍵ファイルを生成し、DPU 固有の特別処理は発生しない。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) (`type=SmartSwitchDPU`) は `169.254.200.254`（midplane ブリッジ）を NTP ソースとして使用し、midplane 経由で [NPU](../../reference/glossary.md#term-npu) 側の chrony と時刻同期する。midplane NTP サーバは通常 NTP 認証を要求しないため、`NTP_KEY` は設定されないのが一般的である（テストデータ: `ntp_smartswitch_dpu_interfaces.json` — `authentication=disabled`）。`NTP_KEY` を設定した場合も `chrony.keys.j2` は標準処理で鍵ファイルを生成し、DPU 固有の特別処理は発生しない。
 <!-- /platform -->
+
+<!-- glossary-links-injected: e09d41125b61 -->

@@ -43,8 +43,8 @@ related:
 
 - 仮想 lab を 1 つ立て、[評価者向けガイド](../../guides/evaluator.md) を起点に章をめくる。
 - 必要なら GNS3 で 2〜3 台つなぎ、[BGP](../../reference/glossary.md#term-bgp) / [VLAN](../../reference/glossary.md#term-vlan) / L3 / [VRF](../../reference/glossary.md#term-vrf) の章を試す。
-- ASIC 依存の挙動（buffer、[PFC](../../reference/glossary.md#term-pfc)、watermark、optics）は VS では再現しないため、評価対象から外すか、対応 HW での検証に切り替える。
-- 毎回 image を作り直すのが手間なら、`docker save` で SONiC-VS image を tar で保存して再 import すると 1 分以内で復旧できる。
+- [ASIC](../../reference/glossary.md#term-asic) 依存の挙動（buffer、[PFC](../../reference/glossary.md#term-pfc)、watermark、optics）は VS では再現しないため、評価対象から外すか、対応 HW での検証に切り替える。
+- 毎回 image を作り直すのが手間なら、`docker save` で [SONiC](../../reference/glossary.md#term-sonic)-VS image を tar で保存して再 import すると 1 分以内で復旧できる。
 
 ```bash
 host$ docker save docker-sonic-vs:latest | gzip > sonic-vs.tar.gz
@@ -207,4 +207,4 @@ host$ docker exec ptf_vms-kvm-t0 ip link show | grep eth
 - [BGP 章](../02-bgp/index.md) / [VLAN・LAG 章](../06-l2-vlan-lag/index.md)（VS で最初に試すと感覚が掴める）
 - 本章 [設定](setup.md)（lab の物理 / 仮想セットアップ）
 
-<!-- glossary-links-injected: 83449633a7b6 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

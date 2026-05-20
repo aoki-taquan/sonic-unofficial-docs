@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-SONiC fast-reboot を「**dataplane downtime < 30s, control plane < 90s**」に収めるための既存フロー改善 [HLD](../reference/glossary.md#term-hld)[^1]。中身は次の 2 軸:
+[SONiC](../reference/glossary.md#term-sonic) fast-reboot を「**dataplane downtime < 30s, control plane < 90s**」に収めるための既存フロー改善 [HLD](../reference/glossary.md#term-hld)[^1]。中身は次の 2 軸:
 
 1. **fast-reboot の終了を示す flag を導入**（warmboot-finalizer を流用）。これにより flex counter 有効化など「init 完了後に走らせたい処理」を遅延起動できる
 2. **異 NOS（vendor 製 → SONiC）からの ISSU でも fast-reboot を完遂**。dump file（default gateway / neighbor / [FDB](../reference/glossary.md#term-fdb)）が SONiC スキーマで提供されれば SONiC→SONiC と同等。提供なしでも slow path で復旧可（ただし downtime 増）[^1]
@@ -63,7 +63,7 @@ flowchart TB
 
 ### syncd: INIT view → APPLY view
 
-[syncd](../reference/glossary.md#term-syncd) は再起動時に **INIT view**（再構成しようとする ASIC 状態）と APPLY view（現状）を比較し、差分のみ ASIC に適用する[^1]。これにより不要な up-down が発生しない。
+[syncd](../reference/glossary.md#term-syncd) は再起動時に **INIT view**（再構成しようとする [ASIC](../reference/glossary.md#term-asic) 状態）と APPLY view（現状）を比較し、差分のみ ASIC に適用する[^1]。これにより不要な up-down が発生しない。
 
 ### neighsyncd: restore_neighbors.py
 
@@ -127,13 +127,11 @@ fast reboot 完了後、以前学習していた ARP エントリが Linux カ�
 
 - 参照: [sonic-net/sonic-buildimage#389](https://github.com/sonic-net/sonic-buildimage/issues/389)
 
-
 ### supervisord の AssertionError: start.sh が RUNNING 状態でないと判断される（sonic-buildimage#762）
 
 supervisord の AssertionError: start.sh が RUNNING 状態でないと判断される問題。サービスの起動タイムアウト設定を確認し、supervisord.conf の startretries と startsecs を適切に設定すること
 
 - 参照: [sonic-net/sonic-buildimage#762](https://github.com/sonic-net/sonic-buildimage/issues/762)
-
 
 ### dhcp_relay サービスが `systemctl stop swss` で停止するが、swss 再起動時に dhc（sonic-buildimage#2752）
 
@@ -141,13 +139,11 @@ dhcp_relay サービスが `systemctl stop swss` で停止するが、swss 再�
 
 - 参照: [sonic-net/sonic-buildimage#2752](https://github.com/sonic-net/sonic-buildimage/issues/2752)
 
-
 ### warm-reboot 中に Redis が Lua スクリプト実行でビジー状態となりアプリがクラッシュする問題（sonic-buildimage#3008）
 
 warm-reboot 中に Redis が Lua スクリプト実行でビジー状態となりアプリがクラッシュする問題。warm-reboot 前に Redis のビジー状態を確認すること
 
 - 参照: [sonic-net/sonic-buildimage#3008](https://github.com/sonic-net/sonic-buildimage/issues/3008)
-
 
 ### config load 中に swss を複数回再起動するとサービス起動に失敗する問題（sonic-buildimage#3244）
 
@@ -155,20 +151,17 @@ config load 中に swss を複数回再起動するとサービス起動に失�
 
 - 参照: [sonic-net/sonic-buildimage#3244](https://github.com/sonic-net/sonic-buildimage/issues/3244)
 
-
 ### fast-reboot 高速化のため SNMP サービスの起動を遅延させる変更がある（sonic-buildimage#3453）
 
-fast-reboot 高速化のため SNMP サービスの起動を遅延させる変更がある。fast-reboot 直後の SNMP ポーリングが失敗する場合があるため、モニタリングシステムで再試行を実装すること
+fast-reboot 高速化のため [SNMP](../reference/glossary.md#term-snmp) サービスの起動を遅延させる変更がある。fast-reboot 直後の SNMP ポーリングが失敗する場合があるため、モニタリングシステムで再試行を実装すること
 
 - 参照: [sonic-net/sonic-buildimage#3453](https://github.com/sonic-net/sonic-buildimage/issues/3453)
 
-
 ### config reload 時に teamd が 2 回再起動される問題（sonic-buildimage#3822）
 
-config reload 時に teamd が 2 回再起動される問題。PortChannel が一時的に Down 状態になる。config reload 実行中はトラフィックが中断されることを考慮すること
+config reload 時に [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) が 2 回再起動される問題。[PortChannel](../reference/glossary.md#term-portchannel) が一時的に Down 状態になる。config reload 実行中はトラフィックが中断されることを考慮すること
 
 - 参照: [sonic-net/sonic-buildimage#3822](https://github.com/sonic-net/sonic-buildimage/issues/3822)
-
 
 ### warm-reboot と fast-reboot で syncd がクラッシュまたはハングする問題（sonic-buildimage#3934）
 
@@ -176,13 +169,11 @@ warm-reboot と fast-reboot で syncd がクラッシュまたはハングする
 
 - 参照: [sonic-net/sonic-buildimage#3934](https://github.com/sonic-net/sonic-buildimage/issues/3934)
 
-
 ### mgmt-framework サービスが 201911 ブランチで起動失敗する問題（sonic-buildimage#4291）
 
 mgmt-framework サービスが 201911 ブランチで起動失敗する問題。Python 3 移行後の依存パッケージ不足が原因の場合がある
 
 - 参照: [sonic-net/sonic-buildimage#4291](https://github.com/sonic-net/sonic-buildimage/issues/4291)
-
 
 ### 201811 から 201911 への warm reboot が失敗する問題（sonic-buildimage#4399）
 
@@ -190,20 +181,17 @@ mgmt-framework サービスが 201911 ブランチで起動失敗する問題。
 
 - 参照: [sonic-net/sonic-buildimage#4399](https://github.com/sonic-net/sonic-buildimage/issues/4399)
 
-
 ### S6100 の T0/T1 トポロジで継続的 cold reboot 中に zebra がクラッシュする問題（sonic-buildimage#4429）
 
-S6100 の T0/T1 トポロジで継続的 cold reboot 中に zebra がクラッシュする問題。FRR の warm-restart との組み合わせで発生することが多い
+S6100 の T0/T1 トポロジで継続的 cold reboot 中に zebra がクラッシュする問題。[FRR](../reference/glossary.md#term-frr) の warm-restart との組み合わせで発生することが多い
 
 - 参照: [sonic-net/sonic-buildimage#4429](https://github.com/sonic-net/sonic-buildimage/issues/4429)
 
-
 ### swss の warm-restart 後に CRM カウンターが異常値を示す問題（sonic-buildimage#4736）
 
-swss の warm-restart 後に CRM カウンターが異常値を示す問題。次の定期更新サイクルまで不正確な値を返すことがある
+swss の warm-restart 後に [CRM](../reference/glossary.md#term-crm) カウンターが異常値を示す問題。次の定期更新サイクルまで不正確な値を返すことがある
 
 - 参照: [sonic-net/sonic-buildimage#4736](https://github.com/sonic-net/sonic-buildimage/issues/4736)
-
 
 ### fast-reboot 後に FDB エントリが復元されない問題（sonic-buildimage#5216）
 
@@ -211,20 +199,17 @@ fast-reboot 後に FDB エントリが復元されない問題。FDB の再学�
 
 - 参照: [sonic-net/sonic-buildimage#5216](https://github.com/sonic-net/sonic-buildimage/issues/5216)
 
-
 ### fast-reboot 後に ARP エントリが復元されない問題（sonic-buildimage#5217）
 
 fast-reboot 後に ARP エントリが復元されない問題。ARP エントリの再学習はデフォルト ARP タイムアウトに依存する
 
 - 参照: [sonic-net/sonic-buildimage#5217](https://github.com/sonic-net/sonic-buildimage/issues/5217)
 
-
 ### iccpd サービスが最新 SONiC mainline ビルドのイメージで実行されていない問題（sonic-buildimage#5310）
 
-iccpd サービスが最新 SONiC mainline ビルドのイメージで実行されていない問題。iccpd は MC-LAG 機能に必要なサービスで、docker-teamd コンテナ内で動作する
+iccpd サービスが最新 SONiC mainline ビルドのイメージで実行されていない問題。iccpd は MC-[LAG](../reference/glossary.md#term-lag) 機能に必要なサービスで、docker-teamd コンテナ内で動作する
 
 - 参照: [sonic-net/sonic-buildimage#5310](https://github.com/sonic-net/sonic-buildimage/issues/5310)
-
 
 ### warm-boot 実行中に断続的なエラーが発生する問題（sonic-buildimage#5439）
 
@@ -232,13 +217,11 @@ warm-boot 実行中に断続的なエラーが発生する問題。`/var/log/war
 
 - 参照: [sonic-net/sonic-buildimage#5439](https://github.com/sonic-net/sonic-buildimage/issues/5439)
 
-
 ### warm-reboot がコード 1 で中断される問題（sonic-buildimage#5487）
 
 warm-reboot がコード 1 で中断される問題。warm-reboot スクリプトの各ステージで `set -e` が有効なため、いずれかのサービス確認に失敗すると全体が中断する
 
 - 参照: [sonic-net/sonic-buildimage#5487](https://github.com/sonic-net/sonic-buildimage/issues/5487)
-
 
 ### config reload が断続的に失敗する問題: `Job for swss.service canceled`（sonic-buildimage#5663）
 
@@ -246,13 +229,11 @@ config reload が断続的に失敗する問題: `Job for swss.service canceled`
 
 - 参照: [sonic-net/sonic-buildimage#5663](https://github.com/sonic-net/sonic-buildimage/issues/5663)
 
-
 ### In-band ポートに DHCP アドレスを割り当てられない問題（sonic-buildimage#5732）
 
 In-band ポートに DHCP アドレスを割り当てられない問題。dhcp_relay が In-band インターフェースをサポートしていない制約
 
 - 参照: [sonic-net/sonic-buildimage#5732](https://github.com/sonic-net/sonic-buildimage/issues/5732)
-
 
 ### config reload -y でカーネル Oops が発生する問題（sonic-buildimage#5857）
 
@@ -260,13 +241,11 @@ config reload -y でカーネル Oops が発生する問題。特定のカーネ
 
 - 参照: [sonic-net/sonic-buildimage#5857](https://github.com/sonic-net/sonic-buildimage/issues/5857)
 
-
 ### ブート時に `determine-reboot-cause` スクリプトが TypeError で失敗する問題（sonic-buildimage#6009）
 
 ブート時に `determine-reboot-cause` スクリプトが TypeError で失敗する問題。reboot-cause ファイルのフォーマットが新バージョンで変更された場合に発生
 
 - 参照: [sonic-net/sonic-buildimage#6009](https://github.com/sonic-net/sonic-buildimage/issues/6009)
-
 
 ### DHCP relay が不正な DHCP クライアントパケットを DHCP サーバーに転送する問題（sonic-buildimage#6052）
 
@@ -274,13 +253,11 @@ DHCP relay が不正な DHCP クライアントパケットを DHCP サーバー
 
 - 参照: [sonic-net/sonic-buildimage#6052](https://github.com/sonic-net/sonic-buildimage/issues/6052)
 
-
 ### warm reboot 後の syncd APPLY_VIEW 失敗が orchagent クラッシュを引き起こす問題（sonic-buildimage#6069）
 
-warm reboot 後の syncd APPLY_VIEW 失敗が orchagent クラッシュを引き起こす問題。syncd の warm-reboot ビュー適用に失敗すると orchagent が接続できなくなる
+warm reboot 後の syncd APPLY_VIEW 失敗が [orchagent](../reference/glossary.md#term-orchagent) クラッシュを引き起こす問題。syncd の warm-reboot ビュー適用に失敗すると orchagent が接続できなくなる
 
 - 参照: [sonic-net/sonic-buildimage#6069](https://github.com/sonic-net/sonic-buildimage/issues/6069)
-
 
 ### reboot 時に Arista の早期プラットフォーム初期化スクリプト起動が失敗する問題（sonic-buildimage#6138）
 
@@ -288,13 +265,11 @@ reboot 時に Arista の早期プラットフォーム初期化スクリプト�
 
 - 参照: [sonic-net/sonic-buildimage#6138](https://github.com/sonic-net/sonic-buildimage/issues/6138)
 
-
 ### 継続的な warm reboot 後に gearsyncd がクラッシュしコアが生成される問題（sonic-buildimage#6172）
 
 継続的な warm reboot 後に gearsyncd がクラッシュしコアが生成される問題
 
 - 参照: [sonic-net/sonic-buildimage#6172](https://github.com/sonic-net/sonic-buildimage/issues/6172)
-
 
 ### warm reboot 中に IO エラーが発生しサーバーからのトラフィックドロップが発生する問題（sonic-buildimage#6240）
 
@@ -302,20 +277,17 @@ warm reboot 中に IO エラーが発生しサーバーからのトラフィッ�
 
 - 参照: [sonic-net/sonic-buildimage#6240](https://github.com/sonic-net/sonic-buildimage/issues/6240)
 
-
 ### KVM での warm reboot 中に syncd が double-free-corruption でクラッシュす（sonic-buildimage#6466）
 
 KVM での warm reboot 中に syncd が double-free-corruption でクラッシュする問題。仮想環境では warm-reboot の動作が物理環境と異なる場合がある
 
 - 参照: [sonic-net/sonic-buildimage#6466](https://github.com/sonic-net/sonic-buildimage/issues/6466)
 
-
 ### KVM での warm reboot 中に syncd が仮想ルーター ID 取得時にクラッシュする問題（sonic-buildimage#6509）
 
 KVM での warm reboot 中に syncd が仮想ルーター ID 取得時にクラッシュする問題
 
 - 参照: [sonic-net/sonic-buildimage#6509](https://github.com/sonic-net/sonic-buildimage/issues/6509)
-
 
 ### master→master warm reboot が pending tasks キューのため失敗する問題（sonic-buildimage#6569）
 
@@ -384,4 +356,4 @@ HLD が掲げる「fast-reboot / warm-reboot で finalizer を共通化し、各
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 2d5a5a93f3a3 -->
+<!-- glossary-links-injected: e9f44d5dcb42 -->

@@ -25,7 +25,7 @@ related:
 - import: なし
 - top container: `sonic-breakout_cfg`
 
-BREAKOUT_CFG [YANG](../../reference/glossary.md#term-yang) Module for SONiC OS。動的ポート分割 (port breakout) 設定を親ポート単位で保持する[^1]。
+BREAKOUT_CFG [YANG](../../reference/glossary.md#term-yang) Module for [SONiC](../../reference/glossary.md#term-sonic) OS。動的ポート分割 (port breakout) 設定を親ポート単位で保持する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -134,4 +134,4 @@ show interfaces breakout current-mode
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

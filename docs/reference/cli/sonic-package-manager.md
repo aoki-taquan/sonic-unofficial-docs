@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-`sonic-package-manager`（短縮 `spm`）は SONiC が拡張機能を **コンテナ化された 'package'** として動的に追加・削除・アップグレードするための CLI。click ベースで、`sonic_package_manager/main.py` の `cli` group がエントリ。
+`sonic-package-manager`（短縮 `spm`）は [SONiC](../../reference/glossary.md#term-sonic) が拡張機能を **コンテナ化された 'package'** として動的に追加・削除・アップグレードするための CLI。click ベースで、`sonic_package_manager/main.py` の `cli` group がエントリ。
 
 中核は `PackageManager`（`PackageManager.get_manager()`）で、ローカル DB（`/var/lib/sonic-package-manager/database.json`）にレポジトリと package 状態を保存する。各 package は OCI 互換 docker image としてレジストリから pull され、`docker.dockerfile` ベースで feature として組み込まれる。manifest（`debian/manifest.json` 相当）が package のメタ情報を持つ。
 
@@ -86,7 +86,7 @@ DB 上の全 `PackageEntry` を natsort して `(Name, Repository, Description, 
 1. manifest 取得 → 依存 package の解決
 2. docker image の pull
 3. `service_creator/` で systemd unit / `/etc/sonic/<feature>.j2` template 等を host に展開
-4. `FEATURE` テーブルを書き換えて SONiC 側の feature として登録（`--enable` 指定時は ON 状態）
+4. `FEATURE` テーブルを書き換えて [SONiC](../../reference/glossary.md#term-sonic) 側の feature として登録（`--enable` 指定時は ON 状態）
 5. install 後、最終 manifest を `/var/lib/sonic-package-manager/manifests/<name>` に保存
 
 ### `sonic-package-manager update <name> [opts]`
@@ -172,7 +172,7 @@ flowchart LR
 
 ### よくある落とし穴
 
-- 依存する SONiC core バージョンを満たさないパッケージは install 時に拒否される。
+- 依存する [SONiC](../../reference/glossary.md#term-sonic) core バージョンを満たさないパッケージは install 時に拒否される。
 - package を remove する前に feature を disable しないと container が残骸として残る。
 
 ### 関連する show / debug
@@ -184,4 +184,4 @@ docker ps
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 97063dcb81c4 -->

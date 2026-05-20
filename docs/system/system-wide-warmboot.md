@@ -49,7 +49,7 @@ related:
 
 ## 1. 何の HLD か
 
-全 SONiC コンテナを協調 shutdown → kexec で kernel 入れ替え → 再起動後に control plane state を復元、データプレーンを乱さない **warmboot の枠組み**[^1]。fast-reboot スクリプト基盤を再利用し、`SONIC_BOOT_TYPE` カーネル引数で挙動を分岐する。
+全 [SONiC](../reference/glossary.md#term-sonic) コンテナを協調 shutdown → kexec で kernel 入れ替え → 再起動後に control plane state を復元、データプレーンを乱さない **warmboot の枠組み**[^1]。fast-reboot スクリプト基盤を再利用し、`SONIC_BOOT_TYPE` カーネル引数で挙動を分岐する。
 
 - **kernel argument**: `SONIC_BOOT_TYPE=[fast-reboot|warm|cold]`。fast / warm 二重指定不可。`fast-reboot` 表記を互換のため許容、将来 `fast` 簡素化を計画[^1]
 - **永続化先**: `/host/warmboot/dump.rdb`（[Redis](../reference/glossary.md#term-redis) 全体）+ `/host/warmboot/sai-warmboot.bin`（SAI state）
@@ -177,4 +177,4 @@ docker logs syncd 2>&1 | grep -iE "warm|init view" | tail -50
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: fc2c782c004a -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

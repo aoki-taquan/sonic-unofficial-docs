@@ -113,7 +113,7 @@ flowchart LR
 
 ## buffer manager と動的バッファモード
 
-`BUFFER_POOL:mode` が `dynamic` のとき、SONiC は buffermgrd / buffer template によって、port speed / cable length / MTU から `BUFFER_PROFILE` を実行時に再計算します。`config interface speed` で speed を変えれば profile が差し替わる、というのがこのモードの肝です。
+`BUFFER_POOL:mode` が `dynamic` のとき、[SONiC](../../reference/glossary.md#term-sonic) は buffermgrd / buffer template によって、port speed / cable length / MTU から `BUFFER_PROFILE` を実行時に再計算します。`config interface speed` で speed を変えれば profile が差し替わる、というのがこのモードの肝です。
 
 - ヘッドルームの計算式と再計算の境界条件は [dynamic headroom calculation](../../acl-qos/dynamically-headroom-calculation.md) にあります。
 - 未使用 PG / queue 用の reserved buffer を pool に返す仕組みが [reclaim reserved buffer](../../acl-qos/reclaim-reserved-buffer.md) と [reclaim reserved buffer sequence flow](../../acl-qos/reclaim-reserved-buffer-sequence-flow.md) です。
@@ -127,4 +127,4 @@ Watermark は SAI から「直近の peak」を読み取る属性で、ConfigDB 
 
 Watermark の対象を「設定上有効なオブジェクトだけ」に揃える変更が [align watermark flow with port configuration](../../acl-qos/align-watermark-flow-with-port-configuration-hld.md) で、port が remove されたあと幽霊 watermark が残らないようにする仕組みです（テストは [test plan](../../acl-qos/test-plan-for-align-watermark-flow-with-port-configuration.md)）。
 
-<!-- glossary-links-injected: 3bb9215c364d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

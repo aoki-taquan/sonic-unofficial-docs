@@ -34,6 +34,22 @@ related:
 
 本ページは **コード由来のデフォルト・fallback 動作** に焦点を当てる。テーブル全体の概要は [`MUX_CABLE`](mux-cable.md) を参照。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>MUX_CABLE")]
+  DM["MuxOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_neighbor_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```text
@@ -44,23 +60,23 @@ MUX_CABLE|<ifname>
 
 ## フィールド
 
-| フィールド | 型 | YANG default | 説明 |
+| フィールド | 型 | [YANG](../../reference/glossary.md#term-yang) default | 説明 |
 |-----------|----|-------------|------|
-| `cable_type` | enum `active-active`/`active-standby` | `active-standby` | ケーブル種別。ycabled と linkmgrd のステートマシン分岐を決定 |
-| `state` | enum `auto`/`manual`/`detach`/`active`/`standby` | `auto` | MUX 動作モード。`auto` が自動 failover |
-| `server_ipv4` | ipv4-prefix | — | サーバ IPv4 アドレス (orchagent が無条件参照するため実質 mandatory) |
+| `cable_type` | enum `active-active`/`active-standby` | `active-standby` | ケーブル種別。ycabled と [linkmgrd](../../reference/glossary.md#term-linkmgrd) のステートマシン分岐を決定 |
+| `state` | enum `auto`/`manual`/`detach`/`active`/`standby` | `auto` | [MUX](../../reference/glossary.md#term-mux) 動作モード。`auto` が自動 failover |
+| `server_ipv4` | ipv4-prefix | — | サーバ IPv4 アドレス ([orchagent](../../reference/glossary.md#term-orchagent) が無条件参照するため実質 mandatory) |
 | `server_ipv6` | ipv6-prefix | — | サーバ IPv6 アドレス (同上) |
 | `soc_ipv4` | ipv4-prefix | — | SoC IPv4 (active-active 専用。ycabled の gRPC セットアップに必須) |
-| `soc_ipv6` | ipv6-prefix | — | SoC IPv6 (active-active 専用。ycabled 未参照、linkmgrd は no-op) |
-| `prober_type` | enum `hardware`/`software` | `software` | ICMP prober モード。ASIC 非対応時は silent に `software` 降格 |
-| `neighbor_mode` | enum `prefix-route`/`host-route` | `host-route` | neighbor 経路モード。SAI 非対応 ASIC では silent に `host-route` 動作 |
+| `soc_ipv6` | ipv6-prefix | — | SoC IPv6 (active-active 専用。ycabled 未参照、[linkmgrd](../../reference/glossary.md#term-linkmgrd) は no-op) |
+| `prober_type` | enum `hardware`/`software` | `software` | ICMP prober モード。[ASIC](../../reference/glossary.md#term-asic) 非対応時は silent に `software` 降格 |
+| `neighbor_mode` | enum `prefix-route`/`host-route` | `host-route` | neighbor 経路モード。[SAI](../../reference/glossary.md#term-sai) 非対応 [ASIC](../../reference/glossary.md#term-asic) では silent に `host-route` 動作 |
 
 ## 購読者
 
-- **ycabled** (`sonic-ycabled`): `y_cable_table_helper.py` が `swsscommon.Table(config_db, "MUX_CABLE")` で各 ASIC ごとに `port_tbl` を保持。
+- **ycabled** (`sonic-ycabled`): `y_cable_table_helper.py` が `swsscommon.Table(config_db, "MUX_CABLE")` で各 [ASIC](../../reference/glossary.md#term-asic) ごとに `port_tbl` を保持。
   `check_mux_cable_port_type()` が `cable_type` と `state` を参照してポートを active-active / active-standby に分類する。
-- **linkmgrd**: `ConfigDBConnector` で `MUX_CABLE` を購読。`processPortCableType()` / `processProberType()` / `processSoCIpAddress()` で per-port 設定を反映。
-- **orchagent** (`MuxOrch`): `CFG_MUX_CABLE_TABLE_NAME` を購読し SAI nexthop を操作。
+- **[linkmgrd](../../reference/glossary.md#term-linkmgrd)**: `ConfigDBConnector` で `MUX_CABLE` を購読。`processPortCableType()` / `processProberType()` / `processSoCIpAddress()` で per-port 設定を反映。
+- **[orchagent](../../reference/glossary.md#term-orchagent)** (`MuxOrch`): `CFG_MUX_CABLE_TABLE_NAME` を購読し [SAI](../../reference/glossary.md#term-sai) nexthop を操作。
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
@@ -79,9 +95,9 @@ MUX_CABLE|<ifname>
 | `soc_ipv4` | — (optional) | ycabled: `"state" in dict and "soc_ipv4" in dict` の二重条件 (y_cable_helper.py:672) — 欠落で gRPC セットアップ未実施; linkmgrd: 欠落 → no-op (DbInterface.cpp:922) | **active-active 時に実質 mandatory** |
 | `soc_ipv6` | — (optional) | ycabled: 参照なし; linkmgrd: 欠落 → no-op | 乖離なし |
 | `prober_type` | `software` | `hw_offload_capable=false` または欠落 → 強制 `"software"` (DbInterface.cpp:880-881) | プラットフォーム依存 silent 降格 |
-| `server_ipv4` | — (optional) | orchagent: `getAttrIpPrefix("server_ipv4")` を無条件呼出し (muxorch.cpp:2206) — 欠落で `std::out_of_range` 例外 | **YANG optional vs 実装 mandatory** |
-| `server_ipv6` | — (optional) | orchagent: 同上 (muxorch.cpp:2207) | **YANG optional vs 実装 mandatory** |
-| `neighbor_mode` | `host-route` | SAI が `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` 非対応 → silent に `host-route` 動作 (muxorch.cpp:2240) | プラットフォーム依存 silent 無視 |
+| `server_ipv4` | — (optional) | [orchagent](../../reference/glossary.md#term-orchagent): `getAttrIpPrefix("server_ipv4")` を無条件呼出し ([muxorch](../../reference/glossary.md#term-muxorch).cpp:2206) — 欠落で `std::out_of_range` 例外 | **YANG optional vs 実装 mandatory** |
+| `server_ipv6` | — (optional) | orchagent: 同上 ([muxorch](../../reference/glossary.md#term-muxorch).cpp:2207) | **YANG optional vs 実装 mandatory** |
+| `neighbor_mode` | `host-route` | [SAI](../../reference/glossary.md#term-sai) が `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` 非対応 → silent に `host-route` 動作 ([muxorch](../../reference/glossary.md#term-muxorch).cpp:2240) | プラットフォーム依存 silent 無視 |
 
 ### 注記
 
@@ -162,7 +178,7 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 
 | leafref フィールド | 参照先テーブル | 条件 | evidence |
 |------------------|--------------|------|---------|
-| `ifname` | `PORT.PORT_LIST.name` (CONFIG_DB) | `MUX_CABLE` エントリのキーは必ず PORT に存在するインタフェース名 | `sonic-mux-cable.yang:37-40` |
+| `ifname` | `PORT.PORT_LIST.name` ([CONFIG_DB](../../reference/glossary.md#term-config_db)) | `MUX_CABLE` エントリのキーは必ず PORT に存在するインタフェース名 | `sonic-mux-cable.yang:37-40` |
 
 ### orchagent が依存する入力テーブル
 
@@ -171,21 +187,21 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 | `PEER_SWITCH\|<name>` (CONFIG_DB) | 処理前提 (先行必須) | `address_ipv4` が未確定の間は `handleMuxCfg()` が `return false` で保留。自動回復あり | `muxorch.cpp:2271` |
 | `TUNNEL\|MuxTunnel0` (CONFIG_DB) | `TunnelDecapOrch` キャッシュ経由 | `handlePeerSwitch()` が `getDstIpAddresses("MuxTunnel0")` 等でトンネル情報を取得。未存在なら `return false` でリトライ | `muxorch.cpp:2348, 2359, 2367, 2374` |
 | `PORT\|<ifname>` (CONFIG_DB / PortsOrch キャッシュ) | `gPortsOrch->getPort()` 経由 | `MuxCable` 状態遷移時にポート SAI oid を取得。未登録なら即リターン | `muxorch.cpp:468, 493` |
-| `NEIGHBOR_TABLE` (APPL_DB / NeighOrch キャッシュ) | `gNeighOrch->getMuxNeighborsForPort()` 経由 | `addOperation()` 末尾で既存ネイバーを MUX ネイバーに変換 | `muxorch.cpp:2290` |
+| `NEIGHBOR_TABLE` ([APPL_DB](../../reference/glossary.md#term-appl_db) / NeighOrch キャッシュ) | `gNeighOrch->getMuxNeighborsForPort()` 経由 | `addOperation()` 末尾で既存ネイバーを [MUX](../../reference/glossary.md#term-mux) ネイバーに変換 | `muxorch.cpp:2290` |
 
 ### orchagent が書き出す STATE/APP テーブル
 
 | DB | テーブル名 | キー | 書込みフィールド | タイミング | evidence |
 |-----|---------|-----|-----------------|---------|---------|
-| STATE_DB | `MUX_CABLE_TABLE` | `<ifname>` | `neighbor_mode` (`"host-route"` / `"prefix-route"`) | `handleMuxCfg()` 処理時 1 回、`neighbor_mode` フィールド確定後 | `muxorch.cpp:2283-2285` |
-| APPL_DB | `HW_MUX_CABLE_TABLE` | `<ifname>` | `state` (mux の HW 状態) | mux state 切替時 (`MuxCable::setState()`) | `muxorch.cpp:2510-2513` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `MUX_CABLE_TABLE` | `<ifname>` | `neighbor_mode` (`"host-route"` / `"prefix-route"`) | `handleMuxCfg()` 処理時 1 回、`neighbor_mode` フィールド確定後 | `muxorch.cpp:2283-2285` |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | `HW_MUX_CABLE_TABLE` | `<ifname>` | `state` (mux の HW 状態) | mux state 切替時 (`MuxCable::setState()`) | `muxorch.cpp:2510-2513` |
 
 ### linkmgrd が依存する入力テーブル
 
 | 参照先テーブル | 参照方向 | タイミング | evidence |
 |--------------|---------|---------|---------|
 | `MUX_CABLE` (CONFIG_DB) | `Table` 直読み (起動時一括) + `SubscriberStateTable` (ランタイム) | 起動時に全ポートの `cable_type`/`prober_type`/`server_ipv4`/`soc_ipv4` を取得。以降は変更通知 | `DbInterface.cpp:801, 843, 898, 956, 1824` |
-| `PORT_TABLE` (APPL_DB) | `SubscriberStateTable` 購読 | リンク状態変化を検知して mux ステートマシンをトリガ | `DbInterface.cpp:1827` |
+| `PORT_TABLE` ([APPL_DB](../../reference/glossary.md#term-appl_db)) | `SubscriberStateTable` 購読 | リンク状態変化を検知して mux ステートマシンをトリガ | `DbInterface.cpp:1827` |
 
 ### linkmgrd が書き出す STATE/APP テーブル
 
@@ -194,8 +210,8 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 | APPL_DB | `MUX_CABLE_TABLE` | mux 状態コマンド | `DbInterface.cpp:317` |
 | APPL_DB | `MUX_CABLE_COMMAND_TABLE` | active/standby 切替コマンド | `DbInterface.cpp:323` |
 | APPL_DB | `FORWARDING_STATE_COMMAND` | フォワーディング状態コマンド | `DbInterface.cpp:326` |
-| STATE_DB | `MUX_LINKMGR_TABLE` | linkmgrd 内部状態 | `DbInterface.cpp:332` |
-| STATE_DB | `MUX_METRICS_TABLE` | 切替メトリクス | `DbInterface.cpp:335` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `MUX_LINKMGR_TABLE` | linkmgrd 内部状態 | `DbInterface.cpp:332` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `MUX_METRICS_TABLE` | 切替メトリクス | `DbInterface.cpp:335` |
 | STATE_DB | `MUX_SWITCH_CAUSE` | 切替理由 | `DbInterface.cpp:341`, `DbInterface.h:63` |
 | STATE_DB | `MUX_CABLE_TABLE` | mux 現在状態 | `DbInterface.cpp:346` |
 
@@ -279,14 +295,14 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 
 <!-- evidence: sonic-swss/orchagent/muxorch.cpp:48-51, sonic-swss/orchagent/tunneldecaporch.h:21, sonic-linkmgrd/src/DbInterface.cpp:48,827,880-881 -->
 
-`MuxOrch` と `linkmgrd` はフィールドのデフォルト値・ACL 名・トンネル名をソースコード上にハードコードしており、CONFIG_DB 経由での変更はできない。
+`MuxOrch` と `linkmgrd` はフィールドのデフォルト値・[ACL](../../reference/glossary.md#term-acl) 名・トンネル名をソースコード上にハードコードしており、CONFIG_DB 経由での変更はできない。
 
 ### orchagent ハードコード定数（`muxorch.cpp:48-51`）
 
 | 定数マクロ | 値 | 用途 |
 |-----------|-----|------|
-| `MUX_ACL_TABLE_NAME` | `"IngressTableDrop"` | ポートアイソレーション時に使用する ACL テーブル名（マクロ `INGRESS_TABLE_DROP` 経由で展開、`aclorch.h:111`） |
-| `MUX_ACL_RULE_NAME` | `"mux_acl_rule"` | ポートアイソレーション時に使用する ACL ルール名 |
+| `MUX_ACL_TABLE_NAME` | `"IngressTableDrop"` | ポートアイソレーション時に使用する [ACL](../../reference/glossary.md#term-acl) テーブル名（マクロ `INGRESS_TABLE_DROP` 経由で展開、`aclorch.h:111`） |
+| `MUX_ACL_RULE_NAME` | `"mux_acl_rule"` | ポートアイソレーション時に使用する [ACL](../../reference/glossary.md#term-acl) ルール名 |
 | `MUX_HW_STATE_UNKNOWN` | `"unknown"` | HW mux 状態が不明の際に `STATE_DB:HW_MUX_CABLE_TABLE` に書き込む値 |
 | `MUX_HW_STATE_ERROR` | `"error"` | HW mux 操作失敗時に `STATE_DB:HW_MUX_CABLE_TABLE` に書き込む値 |
 
@@ -309,7 +325,7 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 
 | 定数 | 値 | 用途 |
 |------|----|------|
-| `DEFAULT_TIMEOUT_MSEC` | `1000` ms | Redis `select()` 呼び出しのブロックタイムアウト。CONFIG_DB からの変更通知ポーリング間隔に相当 |
+| `DEFAULT_TIMEOUT_MSEC` | `1000` ms | [Redis](../../reference/glossary.md#term-redis) `select()` 呼び出しのブロックタイムアウト。CONFIG_DB からの変更通知ポーリング間隔に相当 |
 
 <!-- /constants -->
 
@@ -356,7 +372,7 @@ linkmgrd は CONFIG_DB の `MUX_CABLE` テーブルを読み込んだ結果を�
 
 ### ycabled による副次書込
 
-ycabled (`sonic-ycabled`) は gRPC 経由で MUX ケーブルハードウェアと通信し、HW 状態を STATE_DB へ書き出す:
+ycabled (`sonic-ycabled`) は gRPC 経由で [MUX](../../reference/glossary.md#term-mux) ケーブルハードウェアと通信し、HW 状態を STATE_DB へ書き出す:
 
 | 書込先 DB | テーブル名 | キー形式 | 書込内容 | トリガー | evidence |
 |-----------|-----------|---------|---------|---------|---------|
@@ -449,7 +465,7 @@ CONFIG_DB `MUX_CABLE` の SET が orchagent で処理された後、APPL_DB を�
 | ycabled | APPL_DB | `HW_FORWARDING_STATE_PEER` | `SubscriberStateTable` | 1000 ms | `y_cable_table_helper.py:276-277` |
 | linkmgrd | APPL_DB | `MUX_CABLE_RESPONSE_TABLE` | `SubscriberStateTable` | 1000 ms | `DbInterface.cpp:1829` |
 | linkmgrd | STATE_DB | `MUX_CABLE_TABLE` | `SubscriberStateTable` | 1000 ms | `DbInterface.cpp:1833` |
-| orchagent MuxStateOrch | STATE_DB | `HW_MUX_CABLE_TABLE` | `Orch2` / ConsumerStateTable | 1000 ms | `orchdaemon.cpp:477` |
+| orchagent MuxStateOrch | STATE_DB | `HW_MUX_CABLE_TABLE` | `Orch2` / [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) | 1000 ms | `orchdaemon.cpp:477` |
 
 ### 通知方式サマリ
 
@@ -564,3 +580,5 @@ show mux status
 show mux config
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: f9445b5b4106 -->

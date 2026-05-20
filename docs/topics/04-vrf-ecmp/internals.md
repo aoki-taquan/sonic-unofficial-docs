@@ -34,7 +34,7 @@ related:
 
 # 内部実装
 
-[VRF](../../reference/glossary.md#term-vrf) / [ECMP](../../reference/glossary.md#term-ecmp) / RIB-FIB パイプラインの内部実装は、「route が [FRR](../../reference/glossary.md#term-frr) で best になった瞬間」から「ASIC に program され、peer に advertise される瞬間」までの長いパイプラインに、どこに非対称性や遅延が入るかを意識すると整理しやすいです。
+[VRF](../../reference/glossary.md#term-vrf) / [ECMP](../../reference/glossary.md#term-ecmp) / RIB-FIB パイプラインの内部実装は、「route が [FRR](../../reference/glossary.md#term-frr) で best になった瞬間」から「[ASIC](../../reference/glossary.md#term-asic) に program され、peer に advertise される瞬間」までの長いパイプラインに、どこに非対称性や遅延が入るかを意識すると整理しやすいです。
 
 ## データフロー
 
@@ -108,7 +108,7 @@ ASIC_DB:
 ## 既知の実装上の制約
 
 - VRF を跨ぐ leak route は `VRFOrch` の view では暗黙の依存が増えるため、[orchagent](../../reference/glossary.md#term-orchagent) 内では VRF 単位の lock が太く、極端な VRF 数（数千）では route convergence の serialization が問題になります。
-- ECMP の hash field 設定は `SwitchOrch` が `SAI_SWITCH_ATTR_ECMP_HASH_*` をまとめて投入する仕組みで、per-VRF / per-route の hash 切替は SONiC master では未対応です。
+- ECMP の hash field 設定は `SwitchOrch` が `SAI_SWITCH_ATTR_ECMP_HASH_*` をまとめて投入する仕組みで、per-VRF / per-route の hash 切替は [SONiC](../../reference/glossary.md#term-sonic) master では未対応です。
 - `Suppress FIB Pending` の offload-feedback path は、ASIC reject（capacity over や属性 unsupported）の通知を `STATE_DB.ROUTE_TABLE` の `offloaded` field 経由で FRR に返しますが、ベンダ [syncd](../../reference/glossary.md#term-syncd) が `offloaded` を更新しない場合に suppress が解除されない discrepancy がよく観測されます。
 - FgNhgOrch は `FG_NHG_PREFIX` テーブルに登録された prefix のみ fine-grained 扱いになり、その範囲外の ECMP は通常の `NhgOrch` 経路を通ります。
 
@@ -158,4 +158,4 @@ PIC では member の `weight=0` 化のみで NHG 自体は維持するため、
 - [Routing / Next Hop table enhancement](../../routing/routing-and-next-hop-table-enhancement.md)
 - [VRF design spec (draft)](../../routing/sonic-vrf-support-design-spec-draft.md)
 
-<!-- glossary-links-injected: 988efd6b37a0 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

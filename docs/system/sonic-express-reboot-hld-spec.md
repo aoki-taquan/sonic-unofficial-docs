@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-Express Reboot は SONiC の再起動シーケンスを拡張し、**サブ秒のデータプレーン断** で SW アップグレードを行うためのモード。[Warm Reboot](../reference/glossary.md#term-warm-reboot) と異なり、外部 PHY を再初期化せず、[NPU](../reference/glossary.md#term-npu) は **設定再投入が完了してから** 初期化する点が要点[^1]。実装は [SAI](../reference/glossary.md#term-sai) 側の既存 fastfast boot 用属性 `SAI_SWITCH_ATTR_FAST_API_ENABLE` を拡張流用する。
+Express Reboot は [SONiC](../reference/glossary.md#term-sonic) の再起動シーケンスを拡張し、**サブ秒のデータプレーン断** で SW アップグレードを行うためのモード。[Warm Reboot](../reference/glossary.md#term-warm-reboot) と異なり、外部 PHY を再初期化せず、[NPU](../reference/glossary.md#term-npu) は **設定再投入が完了してから** 初期化する点が要点[^1]。実装は [SAI](../reference/glossary.md#term-sai) 側の既存 fastfast boot 用属性 `SAI_SWITCH_ATTR_FAST_API_ENABLE` を拡張流用する。
 
 ## 動作仕様
 
@@ -181,4 +181,4 @@ grep -iE 'express[_-]reboot' /var/log/syslog | tail
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1704188b56f9 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -127,27 +127,26 @@ show fips status
 
 <!-- /cdb-exceptions -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`hostcfgd` の `FIPSHandler` が CONFIG_DB の `FIPS` テーブルを購読する。
+`hostcfgd` の `FIPSHandler` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `FIPS` テーブルを購読する。
 
 `FIPS` の key は `global` (単一エントリ)。`enable` フラグのみ。
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — OpenSSL FIPS モードの有効化/無効化)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — OpenSSL FIPS モードの有効化/無効化)
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB 変化を検知後、OpenSSL FIPS 設定を更新。FIPS モードの有効化はシステム再起動後に完全に反映される場合がある。
+**適用タイミング**: [CONFIG_DB](../../reference/glossary.md#term-config_db) 変化を検知後、OpenSSL FIPS 設定を更新。FIPS モードの有効化はシステム再起動後に完全に反映される場合がある。
 
 **副作用**: FIPS 有効化は FIPS 非準拠の暗号アルゴリズムを使用するすべてのアプリケーションに影響。SSH / TLS の設定も変更される可能性がある。
 <!-- /runtime-trace -->
@@ -166,7 +165,7 @@ show fips status
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -184,16 +183,16 @@ show fips status
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`hostcfgd` の `FipsCfg` クラスは、CONFIG_DB の `FIPS|global` エントリを **シングルトン** として購読する。`load()` は `FIPS` テーブルを一括取得してから `update()` を実行するため、フィールドが中途半端に書かれた中間状態は観測されにくい。ただし以下の順序依存が存在する。
+`hostcfgd` の `FipsCfg` クラスは、[CONFIG_DB](../../reference/glossary.md#term-config_db) の `FIPS|global` エントリを **シングルトン** として購読する。`load()` は `FIPS` テーブルを一括取得してから `update()` を実行するため、フィールドが中途半端に書かれた中間状態は観測されにくい。ただし以下の順序依存が存在する。
 
 ### 検出された順序依存
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | hostcfgd 起動時の `load()` フェーズ内処理順序 | `load_independent_config()` → `fipscfg.load()` の順で実行される（hostcfgd:2271） | FIPS 設定は起動シーケンス後半に適用されるため、SSH など先行 unit が FIPS なしで一瞬起動する場合がある |
-| 2 | `enforce=true` 設定 → 次回起動時 bootloader パラメータ反映 | **遅延必須**（現セッションには影響しない） | `update_enforce_config()` は次回 boot image の grub パラメータのみ変更。現行 kernel は影響を受けない（hostcfgd:1838-1846） |
+| 1 | [hostcfgd](../../reference/glossary.md#term-hostcfgd) 起動時の `load()` フェーズ内処理順序 | `load_independent_config()` → `fipscfg.load()` の順で実行される（[hostcfgd](../../reference/glossary.md#term-hostcfgd):2271） | FIPS 設定は起動シーケンス後半に適用されるため、SSH など先行 unit が FIPS なしで一瞬起動する場合がある |
+| 2 | `enforce=true` 設定 → 次回起動時 bootloader パラメータ反映 | **遅延必須**（現セッションには影響しない） | `update_enforce_config()` は次回 boot image の grub パラメータのみ変更。現行 kernel は影響を受けない（[hostcfgd](../../reference/glossary.md#term-hostcfgd):1838-1846） |
 | 3 | `enable` SET → `/etc/fips/fips_enable` 書込み → サービス再起動 | 順次実行（同一コールチェーン内） | `cur_enforced=true`（現行 kernel が FIPS enforce 済み）のとき `restart()` はスキップされる（hostcfgd:1813-1816） |
-| 4 | `FIPS_STATS\|state.config_datetime` 書込み → サービス再起動判定 | STATE_DB 参照で二重再起動を防止 | `restart()` が既に再起動済みかを `config_datetime` vs ファイル mtime で比較し、不要な再起動を skip（hostcfgd:1821-1824） |
+| 4 | `FIPS_STATS\|state.config_datetime` 書込み → サービス再起動判定 | [STATE_DB](../../reference/glossary.md#term-state_db) 参照で二重再起動を防止 | `restart()` が既に再起動済みかを `config_datetime` vs ファイル mtime で比較し、不要な再起動を skip（hostcfgd:1821-1824） |
 | 5 | `/etc/sonic/fips.json` の `restart_services` リスト → 再起動対象決定 | `read_config()` が先行して読み込む（hostcfgd:1765-1769） | ファイルが存在しない場合は `DEFAULT_FIPS_RESTART_SERVICES = ['ssh', 'telemetry.service', 'restapi']` が使われる |
 
 ### 主要な制約詳細
@@ -207,7 +206,7 @@ show fips status
 <!-- cross-refs -->
 ## 暗黙参照 — `FipsCfg` が読み出す外部リソースと STATE_DB (Phase C)
 
-`hostcfgd` の `FipsCfg` クラスは **他の CONFIG_DB テーブルを一切参照しない**（`__init__` 引数は `state_db_conn` のみ — hostcfgd:1759）。FIPS ハンドラは `FIPS` テーブル単体を購読・処理するが、以下の外部リソース（STATE_DB / ファイルシステム / bootloader）への暗黙依存を持つ。
+`hostcfgd` の `FipsCfg` クラスは **他の CONFIG_DB テーブルを一切参照しない**（`__init__` 引数は `state_db_conn` のみ — hostcfgd:1759）。FIPS ハンドラは `FIPS` テーブル単体を購読・処理するが、以下の外部リソース（[STATE_DB](../../reference/glossary.md#term-state_db) / ファイルシステム / bootloader）への暗黙依存を持つ。
 
 ### STATE_DB 書き込み / 読み取り
 
@@ -237,7 +236,7 @@ show fips status
 ### 範囲外（同プロセス内の他テーブルとの分離）
 
 - `AAA` / `TACPLUS` / `SSH_SERVER` など同 `hostcfgd` プロセス内の他ハンドラが管理するテーブルは、`FipsCfg` から直接読み出されない。
-- ただし FIPS 設定変更時に再起動する `ssh` / `telemetry.service` / `restapi` は SSH_SERVER や AAA テーブルの設定を引き継ぐため、**間接的に影響を受ける**（再起動によって最新 CONFIG_DB 設定を再ロードする）。
+- ただし FIPS 設定変更時に再起動する `ssh` / `telemetry.service` / `restapi` は SSH_SERVER や [AAA](../../reference/glossary.md#term-aaa) テーブルの設定を引き継ぐため、**間接的に影響を受ける**（再起動によって最新 CONFIG_DB 設定を再ロードする）。
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/fips-cross-refs.md` を参照。
 <!-- /cross-refs -->
@@ -277,7 +276,7 @@ show fips status
 
 | 失敗条件 | 検出箇所 | 結果 |
 |---|---|---|
-| `/etc/fips/` ディレクトリ作成失敗 (`PermissionError` など) | `hostcfgd:1807` — `os.makedirs(...)` | 例外が `update()` へ伝播。STATE_DB への `config_datetime` 書込みが行われず、次の変更イベントでも再実行される |
+| `/etc/fips/` ディレクトリ作成失敗 (`PermissionError` など) | `hostcfgd:1807` — `os.makedirs(...)` | 例外が `update()` へ伝播。[STATE_DB](../../reference/glossary.md#term-state_db) への `config_datetime` 書込みが行われず、次の変更イベントでも再実行される |
 | `/etc/fips/fips_enable` 書き込み失敗 | `hostcfgd:1808-1809` — `open(..., 'w')` | 同上。ファイルが変更されないため、OpenSSL FIPS モードが切り替わらない |
 
 ### `restart()` — サービス再起動
@@ -346,7 +345,7 @@ show fips status
 
 | リテラル | 用途 | ソース |
 |----------|------|--------|
-| `'sonic_fips=1'` | SONiC 独自の FIPS enforce カーネルパラメータ。`/proc/cmdline` 中に存在する場合 `cur_enforced=True` と判定 | hostcfgd L1773 |
+| `'sonic_fips=1'` | [SONiC](../../reference/glossary.md#term-sonic) 独自の FIPS enforce カーネルパラメータ。`/proc/cmdline` 中に存在する場合 `cur_enforced=True` と判定 | hostcfgd L1773 |
 | `'fips=1'` | 汎用 Linux FIPS カーネルパラメータ（RHEL 系互換）。上記と OR で判定 | hostcfgd L1773 |
 
 ### STATE_DB キー / フィールドリテラル
@@ -462,7 +461,7 @@ for service in self.restart_services:  # デフォルト: ['ssh', 'telemetry.ser
 > 調査対象: `sonic-host-services/scripts/hostcfgd` L2456-2509 (`register_callbacks`)、L2433-2436 (`fips_config_handler`)、L2527-2528 (`start`/`listen`)
 > 調査日: 2026-05-19
 
-`FIPS` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@4__:FIPS|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は使用しない。
+`FIPS` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **[Redis](../../reference/glossary.md#term-redis) keyspace 通知 (PSUBSCRIBE `__keyspace@4__:FIPS|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は使用しない。
 
 ### 購読チャンネル一覧
 
@@ -470,7 +469,7 @@ for service in self.restart_services:  # デフォルト: ['ssh', 'telemetry.ser
 |--------|---------|----|---------|---------| 
 | `hostcfgd` (`HostConfigDaemon`) | `ConfigDBConnector.subscribe()` | CONFIG_DB (dbId=4) | `FIPS` | `fips_config_handler` → `FipsCfg.fips_handler()` → `load()` + `update()` |
 
-`FIPS` テーブルを購読する他プロセスは存在しない（`pam_*` / `ssh` / `telemetry` は Redis を直接購読せず、再起動後にファイルシステムから設定を読む）。
+`FIPS` テーブルを購読する他プロセスは存在しない（`pam_*` / `ssh` / `telemetry` は [Redis](../../reference/glossary.md#term-redis) を直接購読せず、再起動後にファイルシステムから設定を読む）。
 
 ### keyspace 通知 → ハンドラ呼び出しの流れ
 
@@ -523,17 +522,17 @@ def make_callback(func):
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: FIPS は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+**プラットフォーム差なし**: FIPS は host 単位で適用され、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | FIPS は SAI 非経由。`hostcfgd` が `/etc/fips/fips_enable` 書換えと bootloader grub 操作を行うのみ (`FipsCfg.update` hostcfgd:1788–1846) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | FIPS は [SAI](../../reference/glossary.md#term-sai) 非経由。`hostcfgd` が `/etc/fips/fips_enable` 書換えと bootloader grub 操作を行うのみ (`FipsCfg.update` hostcfgd:1788–1846) |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `FipsCfg` は host CONFIG_DB (`ConfigDBConnector()` 引数なし相当) のみを購読。`asicN` namespace を iterate しない。`is_multi_npu` 値は FIPS 経路に渡されない |
-| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | FIPS テーブルは host scope。chassis 全体での集中適用機構はなく、各 line card host で `hostcfgd` が独立に `/etc/fips/fips_enable` を書き換える |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | FIPS テーブルは host scope。chassis 全体での集中適用機構はなく、各 line card host で `hostcfgd` が独立に `/etc/fips/fips_enable` を書き換える |
 | ベンダー固有モジュール | なし | community master の FIPS 経路は OpenSSL FIPS provider + `sonic_installer.bootloader` の標準実装。`files/image_config/` にも `files/build_templates/` にもベンダー hook 注入箇所なし |
 | YANG 条件分岐 | プラットフォーム条件なし | `sonic-fips.yang` を `platform\|asic\|chassis\|namespace\|vendor` で grep しても 0 ヒット。フィールド制約はなし |
 
 詳細根拠は `meta/_intermediate/cdb-flow/fips-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: b5626ca1f0f9 -->
+<!-- glossary-links-injected: 6655c92ce87b -->

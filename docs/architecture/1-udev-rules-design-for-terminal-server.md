@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-ターミナルサーバ機能を持つ SONiC 装置はフロントパネルに複数のシリアルポートを持ち、内部で **USB hub + USB-to-UART (例: cp210x) チップ** を介して `/dev/ttyUSB<N>` に枚挙される。標準では `ttyUSB0`〜`ttyUSB(n-1)` という順序付けだが、**1 つのポートが故障すると枚挙が詰まり** `ttyUSB0` 以降の number と front-panel 番号の対応が崩れる[^1]。
+ターミナルサーバ機能を持つ [SONiC](../reference/glossary.md#term-sonic) 装置はフロントパネルに複数のシリアルポートを持ち、内部で **USB hub + USB-to-UART (例: cp210x) チップ** を介して `/dev/ttyUSB<N>` に枚挙される。標準では `ttyUSB0`〜`ttyUSB(n-1)` という順序付けだが、**1 つのポートが故障すると枚挙が詰まり** `ttyUSB0` 以降の number と front-panel 番号の対応が崩れる[^1]。
 
 本 [HLD](../reference/glossary.md#term-hld) は **udev rules で安定した symlink** を生成し、front-panel 番号と `/dev/Mytty-<N>` 名の **物理的な対応を固定** する設計を示す。
 
@@ -229,4 +229,4 @@ sudo grep -Ei 'udev|console' /var/log/syslog | tail -30
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

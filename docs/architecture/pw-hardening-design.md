@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-ローカルユーザのパスワードに対して **エイジング**（強制更新）、**複雑度要件**、**履歴禁止**、**ロックアウト** を Linux 標準の PAM スタックを通じて適用する仕組み[^1]。SONiC 側は [CONFIG_DB](../reference/glossary.md#term-config_db) の `PASSW_HARDENING` テーブルを単一の真実源として、`hostcfgd` が `/etc/login.defs`・`/etc/pam.d/common-password`・`/etc/security/pwquality.conf` 等を rendering する。
+ローカルユーザのパスワードに対して **エイジング**（強制更新）、**複雑度要件**、**履歴禁止**、**ロックアウト** を Linux 標準の PAM スタックを通じて適用する仕組み[^1]。[SONiC](../reference/glossary.md#term-sonic) 側は [CONFIG_DB](../reference/glossary.md#term-config_db) の `PASSW_HARDENING` テーブルを単一の真実源として、`hostcfgd` が `/etc/login.defs`・`/etc/pam.d/common-password`・`/etc/security/pwquality.conf` 等を rendering する。
 
 ## 動作仕様
 
@@ -91,7 +91,7 @@ PASSW_HARDENING|POLICIES
 
 ## 制限事項
 
-- **ローカルユーザのみ**: TACACS+ / LDAP / RADIUS でリモート認証する場合、サーバ側のポリシーが優先されローカル hardening は無関係になる
+- **ローカルユーザのみ**: TACACS+ / LDAP / [RADIUS](../reference/glossary.md#term-radius) でリモート認証する場合、サーバ側のポリシーが優先されローカル hardening は無関係になる
 - **既存ハッシュには遡及しない**: complexity を強化しても既存パスワードハッシュの強度を改めるわけではない。再設定で初めて適用
 - **PAM スタックが上書きされる前提**: 他機能（[AAA](../reference/glossary.md#term-aaa) 改善、SSH global config 等）が `/etc/pam.d/` を編集する場合、`hostcfgd` の rendering 順序に依存
 
@@ -153,4 +153,4 @@ redis-cli -n 4 hgetall 'PASSW_HARDENING|POLICIES'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: db62d2100cef -->

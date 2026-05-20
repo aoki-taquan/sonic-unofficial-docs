@@ -44,7 +44,7 @@ related:
 
 ## 概要
 
-[SRv6](../reference/glossary.md#term-srv6) SDN を [BGP](../reference/glossary.md#term-bgp) に頼らず構築するシナリオ向けに、SONiC の [CONFIG_DB](../reference/glossary.md#term-config_db) から SRv6 ロケータと local SID を **静的に** 投入する仕組みを定義する。BGP signaling を使わない SDN コントローラ運用を想定している。
+[SRv6](../reference/glossary.md#term-srv6) SDN を [BGP](../reference/glossary.md#term-bgp) に頼らず構築するシナリオ向けに、[SONiC](../reference/glossary.md#term-sonic) の [CONFIG_DB](../reference/glossary.md#term-config_db) から SRv6 ロケータと local SID を **静的に** 投入する仕組みを定義する。BGP signaling を使わない SDN コントローラ運用を想定している。
 
 既存の SONiC では [FRR](../reference/glossary.md#term-frr) が SRv6 関連テーブルを [APPL_DB](../reference/glossary.md#term-appl_db) に書く経路（`fpmsyncd` 経由）はあるが、CONFIG_DB から SRv6 そのものを構成する経路がなかった。本機能は `bgpcfgd` に **SRv6 Manager** モジュールを追加し、2 つの新規 CONFIG_DB テーブル `SRV6_MY_LOCATORS` / `SRV6_MY_SIDS` を購読して FRR の `segment-routing srv6` config に変換する[^1]。
 
@@ -252,4 +252,4 @@ sonic-cfggen -d -v 'SRV6_MY_SIDS'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8e0e202b14c9 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

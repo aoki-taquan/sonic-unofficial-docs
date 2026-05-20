@@ -105,11 +105,11 @@ FLEX_COUNTER_TABLE|<group>
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-`FlexCounterOrch` は `Orch` 基底クラス経由で `FLEX_COUNTER_TABLE` を購読する。CONFIG_DB 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、Redis の **keyspace 通知** (`__keyspace@4__:FLEX_COUNTER_TABLE:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
+`FlexCounterOrch` は `Orch` 基底クラス経由で `FLEX_COUNTER_TABLE` を購読する。[CONFIG_DB](../../reference/glossary.md#term-config_db) 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、[Redis](../../reference/glossary.md#term-redis) の **keyspace 通知** (`__keyspace@4__:FLEX_COUNTER_TABLE:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
 
 | 項目 | 値 |
 |------|-----|
-| 購読クラス | `SubscriberStateTable` (CONFIG_DB / STATE_DB / CHASSIS_APP_DB 分岐) |
+| 購読クラス | `SubscriberStateTable` ([CONFIG_DB](../../reference/glossary.md#term-config_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / CHASSIS_APP_DB 分岐) |
 | keyspace パターン | `__keyspace@4__:FLEX_COUNTER_TABLE:*` (CONFIG_DB dbId=4) |
 | key 区切り | `FLEX_COUNTER_TABLE\|<group>` (TableNameSeparator 既定 `\|`) |
 | POP_BATCH_SIZE | `TableConsumable::DEFAULT_POP_BATCH_SIZE` = **128** (`sonic-swss-common/common/table.h:164`) |
@@ -120,10 +120,10 @@ FLEX_COUNTER_TABLE|<group>
 
 `FlexCounterOrch` が変更を受信後、SAI 呼び出しパスは **2 系統**ある:
 
-1. **新方式 (gTraditionalFlexCounter=false)**: `setFlexCounterGroupOperation()` / `setFlexCounterGroupPollInterval()` が `sai_redis_flex_counter_group_parameter_t` を構築し、`SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER_GROUP` 属性で `notifySyncdCounterOperation()` を呼ぶ。SAI/syncd 側で flex counter polling が制御される。
-2. **旧方式 (gTraditionalFlexCounter=true)**: `operateFlexCounterGroupDatabase()` が `FLEX_COUNTER_DB` の `FLEX_COUNTER_GROUP_TABLE` (`ProducerTable: gFlexCounterGroupTable`) に直接書き込み、syncd が `ConsumerStateTable` 経由で読む。
+1. **新方式 (gTraditionalFlexCounter=false)**: `setFlexCounterGroupOperation()` / `setFlexCounterGroupPollInterval()` が `sai_redis_flex_counter_group_parameter_t` を構築し、`SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER_GROUP` 属性で `notifySyncdCounterOperation()` を呼ぶ。SAI/[syncd](../../reference/glossary.md#term-syncd) 側で flex counter polling が制御される。
+2. **旧方式 (gTraditionalFlexCounter=true)**: `operateFlexCounterGroupDatabase()` が `FLEX_COUNTER_DB` の `FLEX_COUNTER_GROUP_TABLE` (`ProducerTable: gFlexCounterGroupTable`) に直接書き込み、[syncd](../../reference/glossary.md#term-syncd) が `ConsumerStateTable` 経由で読む。
 
-FLEX_COUNTER_DB は `saihelper.cpp:323` で `DBConnector("FLEX_COUNTER_DB", 0)` として初期化。CONFIG_DB Consumer → orchagent 内処理 → FLEX_COUNTER_DB writer / SAI counter API の一方向フローとなる。
+[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) は `saihelper.cpp:323` で `DBConnector("FLEX_COUNTER_DB", 0)` として初期化。CONFIG_DB Consumer → [orchagent](../../reference/glossary.md#term-orchagent) 内処理 → [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) writer / SAI counter API の一方向フローとなる。
 
 <!-- evidence: sonic-net/sonic-swss/orchagent/flexcounterorch.cpp:102L (FlexCounterOrch::FlexCounterOrch via Orch(db, tableNames)) -->
 <!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp:1188L (Orch::addConsumer DB 種別分岐 CONFIG_DB→SubscriberStateTable) -->
@@ -218,7 +218,6 @@ counterpoll show
 
 <!-- /cdb-exceptions -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -258,7 +257,7 @@ counterpoll show
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -307,14 +306,14 @@ YANG に `default` 宣言なし。orchagent コメント「counters are disabled
 **minigraph 経由 (`BmcMgmtToRRouter` / `MgmtToRRouter` / `MgmtTsToR`) で `disable` に上書き**:
 `BUFFER_POOL_WATERMARK`, `PFCWD`, `PG_DROP`, `PG_WATERMARK`, `PORT_BUFFER_DROP`, `QUEUE`, `QUEUE_WATERMARK`
 
-**DPU (`switch_type == dpu`) でのみ** enable_counters.py が起動後に注入（エントリが空の場合のみ）:
+**[DPU](../../reference/glossary.md#term-dpu) (`switch_type == dpu`) でのみ** enable_counters.py が起動後に注入（エントリが空の場合のみ）:
 `ENI`, `DASH_METER`
 
 #### 特殊挙動・罠
 
 | 種類 | 内容 |
 |------|------|
-| dead consumer (プラットフォーム依存) | `FLOW_CNT_ROUTE` は `getRouteFlowCounterSupported()` が false（SAI 未対応 ASIC）の場合、`enable` を書いても SAI 設定ゼロ・エラー通知なし |
+| dead consumer (プラットフォーム依存) | `FLOW_CNT_ROUTE` は `getRouteFlowCounterSupported()` が false（SAI 未対応 [ASIC](../../reference/glossary.md#term-asic)）の場合、`enable` を書いても SAI 設定ゼロ・エラー通知なし |
 | 経路依存連動 | `PORT_PHY_ATTR` を enable にすると `PORT_PHY_SERDES_ATTR` も **自動で連動** enable/disable される。CONFIG_DB に `PORT_PHY_SERDES_ATTR` キーを直接書く必要はなく、書いても orchagent は `PORT_PHY_ATTR` の値で上書く |
 | 書込み順依存 | `allPortsReady()` が false の間は `doTask` が早期 return → `enable` エントリが m_toSync に蓄積され、全ポート ready 後に一括適用 |
 | warm-reboot 遅延 | warm-reboot 時のみ: delay timer 60 秒間は全 SET が無視される (`m_delayTimerExpired = false`)。通常起動では即時適用 |
@@ -369,7 +368,7 @@ YANG に `default` なし。counterpoll CLI の表示上のソフトデフォル
 |------|------------|------|
 | 1 | `gPortsOrch` | 物理ポート管理 |
 | 2 | `gFlowCounterRouteOrch` | ルートフローカウンタ |
-| 3 | `gIntfsOrch` | インタフェース/RIF 管理 |
+| 3 | `gIntfsOrch` | インタフェース/[RIF](../../reference/glossary.md#term-rif) 管理 |
 | 4 | `gCoppOrch` | COPP/Trap 管理 |
 | 5 | `gBufferOrch` | バッファプール/キュー管理 |
 | 6 | `FlexCounterOrch` (本 Orch) | flex counter グループ制御 |
@@ -391,7 +390,7 @@ YANG に `default` なし。counterpoll CLI の表示上のソフトデフォル
 | グループ | 前提条件 |
 |---------|---------|
 | `PORT` / `PORT_BUFFER_DROP` / `QUEUE` / `QUEUE_WATERMARK` / `PG_DROP` / `PG_WATERMARK` / `WRED_ECN_PORT` / `WRED_ECN_QUEUE` / `PORT_PHY_ATTR` | `gPortsOrch` 非 NULL かつ `allPortsReady()` |
-| `QUEUE` / `QUEUE_WATERMARK` / `PG_DROP` / `PG_WATERMARK` (`create_only_config_db_buffers=true` のみ) | `gBufferOrch` に BUFFER_QUEUE/BUFFER_PG の非ゼロ profile エントリが存在 |
+| `QUEUE` / `QUEUE_WATERMARK` / `PG_DROP` / `PG_WATERMARK` (`create_only_config_db_buffers=true` のみ) | `gBufferOrch` に BUFFER_QUEUE/[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) の非ゼロ profile エントリが存在 |
 | `RIF` | `gIntfsOrch` 非 NULL |
 | `BUFFER_POOL_WATERMARK` | `gBufferOrch` 非 NULL |
 | `TUNNEL` | `VxlanTunnelOrch` が `gDirectory` 登録済み |
@@ -416,7 +415,7 @@ FLEX_COUNTER_STATUS → enable/disable アクション + setFlexCounterGroupOper
 
 ### disable 時の非対称性
 
-多くのグループは `disable` 時に FLEX_COUNTER_DB の per-OID エントリを削除しない（syncd がポーリングを止めるだけ）。例外として以下は明示削除を行う:
+多くのグループは `disable` 時に [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) の per-OID エントリを削除しない（syncd がポーリングを止めるだけ）。例外として以下は明示削除を行う:
 
 | グループ | disable 時のアクション |
 |---------|---------------------|
@@ -442,11 +441,11 @@ FLEX_COUNTER_STATUS → enable/disable アクション + setFlexCounterGroupOper
 | 参照先テーブル | DB | 方向 | 条件 | evidence |
 |--------------|-----|------|------|---------|
 | `DEVICE_METADATA\|localhost` (`create_only_config_db_buffers`) | CONFIG_DB | 読み（起動時 + 購読） | 常時。`create_only_config_db_buffers` フラグを取得し QUEUE/PG カウンタ対象を決定 | `flexcounterorch.cpp:107-124,488-537`; `orchdaemon.cpp:622` |
-| `BUFFER_QUEUE` | APPL_DB | 読み（QUEUE/PG enable 時） | `create_only_config_db_buffers=true` かつ非 VOQ シャーシ。非ゼロ profile のエントリのみをカウンタ対象に登録 | `flexcounterorch.cpp:544-620` |
-| `BUFFER_PG` | APPL_DB | 読み（PG enable 時） | `create_only_config_db_buffers=true`。非ゼロ profile の PG エントリのみを対象に | `flexcounterorch.cpp:623-670` |
-| `FLEX_COUNTER_GROUP_TABLE\|<group>` | FLEX_COUNTER_DB | 書き | STATUS/INTERVAL/BULK_CHUNK_SIZE 変化のたびに更新。`gTraditionalFlexCounter=true` 時は ProducerTable 直接書込、`false` 時は SAI Redis 属性経由 | `saihelper.cpp:884` |
+| `BUFFER_QUEUE` | [APPL_DB](../../reference/glossary.md#term-appl_db) | 読み（QUEUE/PG enable 時） | `create_only_config_db_buffers=true` かつ非 VOQ シャーシ。非ゼロ profile のエントリのみをカウンタ対象に登録 | `flexcounterorch.cpp:544-620` |
+| `BUFFER_PG` | [APPL_DB](../../reference/glossary.md#term-appl_db) | 読み（PG enable 時） | `create_only_config_db_buffers=true`。非ゼロ profile の PG エントリのみを対象に | `flexcounterorch.cpp:623-670` |
+| `FLEX_COUNTER_GROUP_TABLE\|<group>` | FLEX_COUNTER_DB | 書き | STATUS/INTERVAL/BULK_CHUNK_SIZE 変化のたびに更新。`gTraditionalFlexCounter=true` 時は ProducerTable 直接書込、`false` 時は SAI [Redis](../../reference/glossary.md#term-redis) 属性経由 | `saihelper.cpp:884` |
 | `FLEX_COUNTER_TABLE\|<group>:<oid>` | FLEX_COUNTER_DB | 書き (enable) / 削除 (disable) | 初回 enable 後の `generateXxxMap()` が per-OID エントリ (`PORT_COUNTER_ID_LIST` 等) を書込。disable / オブジェクト削除時に DEL | `saihelper.cpp:1047,1075` |
-| `COUNTERS_PORT_NAME_MAP` 等 | COUNTERS_DB | 書き | `generatePortCounterMap()` / `generateQueueMap()` / `generatePriorityGroupMap()` が初回 enable 時に名前→SAI OID マッピングを書込。counterpoll / テレメトリが参照する | `portsorch.cpp:9102` |
+| `COUNTERS_PORT_NAME_MAP` 等 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | 書き | `generatePortCounterMap()` / `generateQueueMap()` / `generatePriorityGroupMap()` が初回 enable 時に名前→SAI OID マッピングを書込。counterpoll / テレメトリが参照する | `portsorch.cpp:9102` |
 
 !!! note "BUFFER_QUEUE / BUFFER_PG 参照の VOQ 例外"
     `gMySwitchType == "voq"` の VOQ シャーシでは `getQueueConfigurations()` が BUFFER_QUEUE を参照せず全ポート・全キューを一括登録する (`flexcounterorch.cpp:549`)。非 VOQ かつ `create_only_config_db_buffers=false` の場合も同様に全キュー対象となり BUFFER_QUEUE 参照は行われない。
@@ -468,7 +467,7 @@ FLEX_COUNTER_STATUS → enable/disable アクション + setFlexCounterGroupOper
 | `key` が未定義グループ名 | `doTask()` L183-188 | エントリをスキップ（設定未適用） | `SWSS_LOG_NOTICE("Invalid flex counter group input, %s")` |
 | `FLEX_COUNTER_STATUS` に `enable`/`disable` 以外の値 | `doTask()` L235-393 | 各 orch ブロックすべてが silent skip。`setFlexCounterGroupOperation()` には不正値が渡る | なし（ログ未出力） |
 | `POLL_INTERVAL` に非数値・YANG 範囲外の値を直接書き込み | `setFlexCounterGroupPollInterval()` | orchagent 側バリデーションなし。値をそのまま syncd に渡す。拒否はプラットフォーム依存 | なし |
-| `gPortsOrch == nullptr` で PORT / QUEUE / PG / WRED 系を `enable` | `doTask()` L235 | `gPortsOrch` null チェックで全ブロックをスキップ → SAI カウンタ設定ゼロ | なし（silent drop） |
+| `gPortsOrch == nullptr` で PORT / QUEUE / PG / [WRED](../../reference/glossary.md#term-wred) 系を `enable` | `doTask()` L235 | `gPortsOrch` null チェックで全ブロックをスキップ → SAI カウンタ設定ゼロ | なし（silent drop） |
 | `gCoppOrch == nullptr` で `FLOW_CNT_TRAP` を `enable` | `doTask()` L311 | `generateHostIfTrapCounterIdList()` 呼び出しスキップ → trap flow counter 未設定 | なし（silent drop） |
 | `gFlowCounterRouteOrch` null または `getRouteFlowCounterSupported() == false` で `FLOW_CNT_ROUTE` を `enable` | `doTask()` L324 | ルートフローカウンタ設定ゼロ・`m_route_flow_counter_enabled` 更新なし | なし（silent drop） |
 | `allPortsReady() == false` の間に SET | `doTask()` 早期 return | エントリが `m_toSync` に蓄積。全ポート ready 後に一括処理 | なし |
@@ -532,7 +531,7 @@ YANG に `default` 宣言なし。orchagent / syncd にもハードコードな�
 
 ### FLEX_COUNTER_DB への書込
 
-`setFlexCounterGroupOperation()` → `operateFlexCounterGroupDatabase()` が `FLEX_COUNTER_GROUP_TABLE` に書込む（`gTraditionalFlexCounter=true` モード）。`gTraditionalFlexCounter=false` 時は SAI Redis 属性 `SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER_GROUP` 経由で syncd に通知する。
+`setFlexCounterGroupOperation()` → `operateFlexCounterGroupDatabase()` が `FLEX_COUNTER_GROUP_TABLE` に書込む（`gTraditionalFlexCounter=true` モード）。`gTraditionalFlexCounter=false` 時は SAI [Redis](../../reference/glossary.md#term-redis) 属性 `SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER_GROUP` 経由で syncd に通知する。
 
 | テーブル | キーパターン | フィールド | トリガ |
 |---------|------------|---------|-------|
@@ -558,7 +557,7 @@ Gearbox 有効時は `PORT` / `MACSEC*` グループに対して `GB_FLEX_COUNTE
 | `COUNTERS_QUEUE_TYPE_MAP` | `""` (hash: queue_OID → ucast/mcast) | キューのタイプ | キュー追加時 |
 | `COUNTERS_PG_PORT_MAP` | `""` (hash: pg_OID → port_OID) | PG→ポート逆引き | PG 追加時 |
 | `COUNTERS_PG_INDEX_MAP` | `""` (hash: pg_OID → index) | PG→インデックス | PG 追加時 |
-| `COUNTERS_LAG_NAME_MAP` | `""` (hash: lag_name → OID) | LAG 名→OID | LAG ポート追加時 |
+| `COUNTERS_LAG_NAME_MAP` | `""` (hash: lag_name → OID) | [LAG](../../reference/glossary.md#term-lag) 名→OID | [LAG](../../reference/glossary.md#term-lag) ポート追加時 |
 
 これらのマッピングテーブルが存在することで、syncd が SAI bulk counter API で取得したカウンタ値を `COUNTERS_DB` の `COUNTERS:<oid>` キーに書込み、`counterpoll show` / テレメトリ系サービスから名前ベースで参照できる。
 
@@ -591,7 +590,7 @@ flexcounterorch.cpp:getQueueConfigurations()
 
 ### SAI Capability — FLOW_CNT_ROUTE の有効化条件
 
-`FLOW_CNT_ROUTE` グループへの `FLEX_COUNTER_STATUS=enable` 設定は、[SAI](../../reference/glossary.md#term-sai) が `SAI_ROUTE_ENTRY_ATTR_COUNTER_ID` の set 操作をサポートしている場合のみ有効となる。起動時に `sai_query_attribute_capability()` を呼び出し、`capability.set_implemented` が `false` またはクエリ失敗の ASIC では `FLOW_CNT_ROUTE` の enable は無操作になる。
+`FLOW_CNT_ROUTE` グループへの `FLEX_COUNTER_STATUS=enable` 設定は、[SAI](../../reference/glossary.md#term-sai) が `SAI_ROUTE_ENTRY_ATTR_COUNTER_ID` の set 操作をサポートしている場合のみ有効となる。起動時に `sai_query_attribute_capability()` を呼び出し、`capability.set_implemented` が `false` またはクエリ失敗の [ASIC](../../reference/glossary.md#term-asic) では `FLOW_CNT_ROUTE` の enable は無操作になる。
 
 ```
 flow_counter_handler.cpp:queryRouteFlowCounterCapability()
@@ -604,12 +603,12 @@ flow_counter_handler.cpp:queryRouteFlowCounterCapability()
 
 ### DASH / SmartSwitch (DPU) — ENI / DASH_METER / HA_SET グループ
 
-`ENI`・`DASH_METER`・`HA_SET` グループの `FLEX_COUNTER_STATUS` 変更は、[DASH](../../reference/glossary.md#term-dash) 対応 DPU OrchDaemon でのみ有効となる。通常 NPU 環境では `gDirectory.get<DashOrch*>()` が `nullptr` を返すため、これらグループへの enable/disable は無操作となる。
+`ENI`・`DASH_METER`・`HA_SET` グループの `FLEX_COUNTER_STATUS` 変更は、[DASH](../../reference/glossary.md#term-dash) 対応 [DPU](../../reference/glossary.md#term-dpu) OrchDaemon でのみ有効となる。通常 [NPU](../../reference/glossary.md#term-npu) 環境では `gDirectory.get<DashOrch*>()` が `nullptr` を返すため、これらグループへの enable/disable は無操作となる。
 
-| プラットフォーム | ENI / DASH_METER / HA_SET 動作 |
+| プラットフォーム | [ENI](../../reference/glossary.md#term-eni) / DASH_METER / HA_SET 動作 |
 |-----------------|-------------------------------|
-| DPU (SmartSwitch の DPU サイド) | `DashOrch` / `DashHaOrch` が有効。enable/disable が Dash ハンドラに通知される |
-| 通常 NPU / 非 SmartSwitch | `dash_orch == nullptr` のため無操作 |
+| [DPU](../../reference/glossary.md#term-dpu) ([SmartSwitch](../../reference/glossary.md#term-smartswitch) の DPU サイド) | `DashOrch` / `DashHaOrch` が有効。enable/disable が Dash ハンドラに通知される |
+| 通常 [NPU](../../reference/glossary.md#term-npu) / 非 [SmartSwitch](../../reference/glossary.md#term-smartswitch) | `dash_orch == nullptr` のため無操作 |
 
 ---
 
@@ -619,4 +618,4 @@ flow_counter_handler.cpp:queryRouteFlowCounterCapability()
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 6ca28e02d7fb -->
+<!-- glossary-links-injected: d8d75455adfd -->

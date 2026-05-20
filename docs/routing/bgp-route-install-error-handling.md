@@ -50,7 +50,7 @@ related:
 
 ## 概要
 
-ASIC への route install が（[CRM](../reference/glossary.md#term-crm) 制限などで）失敗した場合に、その情報を `ERROR_DB.ERROR_ROUTE_TABLE` 経由で [fpmsyncd](../reference/glossary.md#term-fpmsyncd) → [zebra](../reference/glossary.md#term-zebra) → bgpd まで伝搬し、**bgpd 側で当該 prefix を "FIB-install pending" と marking して peer への advertise を抑止する** 仕組み[^1]。
+[ASIC](../reference/glossary.md#term-asic) への route install が（[CRM](../reference/glossary.md#term-crm) 制限などで）失敗した場合に、その情報を `ERROR_DB.ERROR_ROUTE_TABLE` 経由で [fpmsyncd](../reference/glossary.md#term-fpmsyncd) → [zebra](../reference/glossary.md#term-zebra) → bgpd まで伝搬し、**bgpd 側で当該 prefix を "FIB-install pending" と marking して peer への advertise を抑止する** 仕組み[^1]。
 
 要点:
 
@@ -256,4 +256,4 @@ docker exec bgp vtysh -c 'show bgp summary' | head
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 514a896aa279 -->
+<!-- glossary-links-injected: c006405759d8 -->

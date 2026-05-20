@@ -39,26 +39,26 @@ related:
 
 `nat_zone` は `INTERFACE`・`VLAN_INTERFACE`・`PORTCHANNEL_INTERFACE`・`LOOPBACK_INTERFACE` テーブルに共通して存在するフィールドで、L3 インタフェースごとに [NAT](../../reference/glossary.md#term-nat) ゾーン ID (0〜3) を割り当てる[^1]。
 
-[NAT](../../reference/glossary.md#term-nat) 変換はゾーンをまたぐパケットにのみ行われる。デフォルト値 `0` は「内側 (inside)」インタフェースを意味し、値を `1` などに変えると「外側 (outside)」インタフェースとして扱われる。`natmgrd` が iptables mangle テーブルに MARK ルールを設定し、`orchagent / IntfsOrch` が SAI の `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` を設定する[^2][^3]。
+[NAT](../../reference/glossary.md#term-nat) 変換はゾーンをまたぐパケットにのみ行われる。デフォルト値 `0` は「内側 (inside)」インタフェースを意味し、値を `1` などに変えると「外側 (outside)」インタフェースとして扱われる。`natmgrd` が iptables mangle テーブルに MARK ルールを設定し、`orchagent / IntfsOrch` が [SAI](../../reference/glossary.md#term-sai) の `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` を設定する[^2][^3]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>INTERFACE|&lt;port&gt;<br/>nat_zone=N")]
-  NM["natmgrd<br/>(NatMgr)"]
-  IA["orchagent<br/>(IntfsOrch)"]
-  IPT["kernel<br/>iptables mangle"]
-  SAI["SAI<br/>SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID"]
-  CDB --> NM
-  CDB --> IA
-  NM --> IPT
-  IA --> SAI
+  CDB[("CONFIG_DB<br/>INTERFACE")]
+  DM["intfmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_INTF_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_router_intf_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路。`natmgrd` は iptables mangle MARK ルールを管理し、`orchagent` は SAI RIF 属性を設定する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -76,7 +76,7 @@ LOOPBACK_INTERFACE|<loopback_name>
 
 | フィールド | 型 | 既定値 | 説明 |
 |-----------|----|--------|------|
-| `nat_zone` | uint8 (0..3) | `0` | インタフェースの NAT ゾーン ID。`0` = inside、`1` = outside (典型) |
+| `nat_zone` | uint8 (0..3) | `0` | インタフェースの [NAT](../../reference/glossary.md#term-nat) ゾーン ID。`0` = inside、`1` = outside (典型) |
 
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
@@ -87,15 +87,15 @@ LOOPBACK_INTERFACE|<loopback_name>
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | Port / LAG / VLAN の状態確立 → iptables mangle MARK 適用 | **強制先行**（Loopback 除く） | `isPortStateOk()` 失敗時は `it++` で自動再試行 |
-| 2 | SAI RIF 作成完了 → SAI `NAT_ZONE_ID` 属性設定 | **強制先行** | `doIntfTask()` 内で `m_toSync` 再周回 |
-| 3 | 旧 NAT ルール全削除 → ゾーン更新 → 新 NAT ルール追加 | **強制内部順序**（ゾーン変更時） | natmgrd 単一スレッドで順次実行 |
+| 1 | Port / [LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) の状態確立 → iptables mangle MARK 適用 | **強制先行**（Loopback 除く） | `isPortStateOk()` 失敗時は `it++` で自動再試行 |
+| 2 | [SAI](../../reference/glossary.md#term-sai) [RIF](../../reference/glossary.md#term-rif) 作成完了 → [SAI](../../reference/glossary.md#term-sai) `NAT_ZONE_ID` 属性設定 | **強制先行** | `doIntfTask()` 内で `m_toSync` 再周回 |
+| 3 | 旧 NAT ルール全削除 → ゾーン更新 → 新 NAT ルール追加 | **強制内部順序**（ゾーン変更時） | [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) 単一スレッドで順次実行 |
 | 4 | NatMgr (iptables 側) と IntfsOrch (SAI 側) の処理 | 独立（並行） | 互いを待たない |
 
 ### 主要な制約詳細
 
-**ポート状態先行必須 — natmgrd 側 (依存 #1)**:
-`NatMgr::doNatZoneIntfTask()` は key サイズ 1 のエントリ（`nat_zone` フィールドが付くパス）を処理するとき、Loopback 以外では `isPortStateOk(port)` が true になるまで `it++; continue;` でリトライする (`natmgr.cpp:7484–7490`)。確認先は `STATE_PORT_TABLE` (Ethernet) / `STATE_VLAN_TABLE` (Vlan) / `STATE_LAG_TABLE` (PortChannel) である。ポートが未確立の場合 iptables mangle MARK ルールは設定されず、`m_natZoneInterfaceInfo` にも登録されない。
+**ポート状態先行必須 — [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) 側 (依存 #1)**:
+`NatMgr::doNatZoneIntfTask()` は key サイズ 1 のエントリ（`nat_zone` フィールドが付くパス）を処理するとき、Loopback 以外では `isPortStateOk(port)` が true になるまで `it++; continue;` でリトライする (`natmgr.cpp:7484–7490`)。確認先は `STATE_PORT_TABLE` (Ethernet) / `STATE_VLAN_TABLE` (Vlan) / `STATE_LAG_TABLE` ([PortChannel](../../reference/glossary.md#term-portchannel)) である。ポートが未確立の場合 iptables mangle MARK ルールは設定されず、`m_natZoneInterfaceInfo` にも登録されない。
 
 ```cpp
 // natmgr.cpp:7484-7490
@@ -108,11 +108,11 @@ if ((strncmp(keys[0].c_str(), LOOPBACK_PREFIX, strlen(LOOPBACK_PREFIX))) and
 }
 ```
 
-**SAI RIF 先行必須 — IntfsOrch 側 (依存 #2)**:
-`IntfsOrch::doIntfTask()` は SAI RIF の作成 (`setIntf()`) が完了するまで `nat_zone` の SAI 属性設定 (`setRouterIntfsNatZoneId()`) に到達しない (`intfsorch.cpp:974–986`)。RIF 未作成の場合、`doIntfTask()` 自体が `m_toSync` に残したまま `it++; continue;` で再周回する。
+**SAI [RIF](../../reference/glossary.md#term-rif) 先行必須 — IntfsOrch 側 (依存 #2)**:
+`IntfsOrch::doIntfTask()` は SAI [RIF](../../reference/glossary.md#term-rif) の作成 (`setIntf()`) が完了するまで `nat_zone` の SAI 属性設定 (`setRouterIntfsNatZoneId()`) に到達しない (`intfsorch.cpp:974–986`)。RIF 未作成の場合、`doIntfTask()` 自体が `m_toSync` に残したまま `it++; continue;` で再周回する。
 
 **ゾーン変更時の強制内部順序 (依存 #3)**:
-`nat_zone` 値が変化した場合、natmgrd は以下の順序で操作を実行する (`natmgr.cpp:7525–7566`)。
+`nat_zone` 値が変化した場合、[natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) は以下の順序で操作を実行する (`natmgr.cpp:7525–7566`)。
 
 1. 旧ゾーンの iptables mangle ルールを削除 (`DELETE`)
 2. Static NAT / NAPT iptables ルールを削除
@@ -129,9 +129,9 @@ if ((strncmp(keys[0].c_str(), LOOPBACK_PREFIX, strlen(LOOPBACK_PREFIX))) and
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG default 以外の実装 hardcode fallback。
+[YANG](../../reference/glossary.md#term-yang) default 以外の実装 hardcode fallback。
 
-| フィールド | YANG default | コード hardcode | fallback 源 |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード hardcode | fallback 源 |
 |-----------|-------------|----------------|------------|
 | `nat_zone` | `"0"` | `m_nat_zone_id = 0` | `intfsorch.cpp:1361` (インタフェース削除時リセット) |
 | iptables mark | — | `nat_zone_value + 1` | `natmgr.cpp:7512-7514` (0 mark 回避オフセット) |
@@ -177,7 +177,7 @@ if ((!nat_zone.empty()) and (port.m_nat_zone_id != nat_zone_id))
 
 ### NAT 未サポートプラットフォームでの silent skip
 
-`gIsNatSupported == false` のプラットフォーム（`SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY == 0`）では、`nat_zone` を設定しても `setRouterIntfsNatZoneId()` が呼ばれず `SWSS_LOG_NOTICE` のみ出力される。CONFIG_DB / iptables には書き込まれるが SAI へは降りない。
+`gIsNatSupported == false` のプラットフォーム（`SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY == 0`）では、`nat_zone` を設定しても `setRouterIntfsNatZoneId()` が呼ばれず `SWSS_LOG_NOTICE` のみ出力される。[CONFIG_DB](../../reference/glossary.md#term-config_db) / iptables には書き込まれるが SAI へは降りない。
 
 ### ローカル変数の初期値 vs DB 値
 
@@ -194,17 +194,17 @@ if ((!nat_zone.empty()) and (port.m_nat_zone_id != nat_zone_id))
 
 | # | 先行必須条件 | 処理系 | 方向 | 緩和策 |
 |---|------------|--------|------|--------|
-| 1 | `PortsOrch::allPortsReady()` が true | orchagent (IntfsOrch) | **強制先行** | 全ポート初期化完了まで SAI 書き込みを全スキップ。完了後 `doTask()` が自動再実行 |
-| 2 | `isPortStateOk(port)` が true（非 Loopback ゾーンエントリ） | natmgrd | **強制先行** | STATE_PORT / LAG / VLAN テーブルにエントリが現れるまで再キュー |
+| 1 | `PortsOrch::allPortsReady()` が true | [orchagent](../../reference/glossary.md#term-orchagent) (IntfsOrch) | **強制先行** | 全ポート初期化完了まで SAI 書き込みを全スキップ。完了後 `doTask()` が自動再実行 |
+| 2 | `isPortStateOk(port)` が true（非 Loopback ゾーンエントリ） | natmgrd | **強制先行** | STATE_PORT / [LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) テーブルにエントリが現れるまで再キュー |
 | 3 | `isIntfStateOk(key)` が true（IP プレフィックス付きエントリ） | natmgrd | **強制先行** | STATE_INTERFACE_TABLE にエントリが現れるまで再キュー |
 | 4 | 旧 Static / Dynamic NAT ルール削除が先行（ゾーン変更時） | natmgrd | **内部順序（副作用）** | 削除 → 更新 → 再追加の順が固定。この間 NAT ルールが一時消失する |
-| 5 | `gIsNatSupported == true`（SAI capability クエリ） | orchagent (IntfsOrch) | **強制先行** | false の場合は SAI 書き込みを silent skip（`SWSS_LOG_NOTICE` のみ） |
+| 5 | `gIsNatSupported == true`（SAI capability クエリ） | [orchagent](../../reference/glossary.md#term-orchagent) (IntfsOrch) | **強制先行** | false の場合は SAI 書き込みを silent skip（`SWSS_LOG_NOTICE` のみ） |
 
 ### 主要な制約詳細
 
-**PortsOrch 初期化完了ガード（依存 #1）**: `IntfsOrch::doTask()` の冒頭（`intfsorch.cpp:665-668`）で `gPortsOrch->allPortsReady()` が false なら即 return する。これは全 PORT_TABLE エントリが orchagent 内部で処理完了するまで、すべての INTERFACE テーブルイベント（`nat_zone` 含む）の SAI 反映をブロックする。ブロック中は `m_toSync` にイベントが蓄積され、`allPortsReady()` が true になった後の次回 `doTask()` で一括処理される。
+**PortsOrch 初期化完了ガード（依存 #1）**: `IntfsOrch::doTask()` の冒頭（`intfsorch.cpp:665-668`）で `gPortsOrch->allPortsReady()` が false なら即 return する。これは全 PORT_TABLE エントリが [orchagent](../../reference/glossary.md#term-orchagent) 内部で処理完了するまで、すべての INTERFACE テーブルイベント（`nat_zone` 含む）の SAI 反映をブロックする。ブロック中は `m_toSync` にイベントが蓄積され、`allPortsReady()` が true になった後の次回 `doTask()` で一括処理される。
 
-**ポート STATE_DB ガード（依存 #2）**: `doNatZoneIntfTask` のゾーン単位エントリ（key サイズ 1）SET 処理時、Loopback 以外のインタフェースは `isPortStateOk(port)` が false なら `it++; continue` でキューに残す（`natmgr.cpp:7483-7487`）。`isPortStateOk()` は STATE_PORT_TABLE / STATE_LAG_TABLE / STATE_VLAN_TABLE を順番に参照し、対応エントリの存在を確認する。Loopback はこのガードを経由しない（iptables mangle も設定しない）。
+**ポート [STATE_DB](../../reference/glossary.md#term-state_db) ガード（依存 #2）**: `doNatZoneIntfTask` のゾーン単位エントリ（key サイズ 1）SET 処理時、Loopback 以外のインタフェースは `isPortStateOk(port)` が false なら `it++; continue` でキューに残す（`natmgr.cpp:7483-7487`）。`isPortStateOk()` は STATE_PORT_TABLE / STATE_LAG_TABLE / STATE_VLAN_TABLE を順番に参照し、対応エントリの存在を確認する。Loopback はこのガードを経由しない（iptables mangle も設定しない）。
 
 **ゾーン変更時の NAT ルール再構築順序（依存 #4）**: 既存の `nat_zone` と異なる値を受信した場合、natmgrd は内部で次の順序で処理する（`natmgr.cpp:7534-7566`）。①旧 mangle iptables ルールを DELETE → ②`removeStaticNatIptables()` / `removeStaticNaptIptables()` / `removeDynamicNatRules()` で旧 NAT ルールを削除 → ③`m_natZoneInterfaceInfo[port]` を新値に更新 → ④新 mangle iptables ルールを ADD → ⑤新 NAT ルールを追加。②〜④の間は NAT 変換が一時停止する。
 
@@ -214,7 +214,7 @@ if ((!nat_zone.empty()) and (port.m_nat_zone_id != nat_zone_id))
 
 - 有効範囲: **0〜3**（`sonic-interface.yang` の `range "0..3"`）。範囲外は YANG バリデーションで拒否。
 - key サイズが 1 (ポート単位エントリ) の場合のみ処理。key サイズ 2 (IP プレフィックス付き) のエントリに付与しても natmgr は読み取らない (`natmgr.cpp:7492`)。
-- 対応インタフェース種別: Ethernet / Vlan / PortChannel / Loopback。それ以外のプレフィックスで始まるキーは natmgr がスキップする (`natmgr.cpp:7412-7420`)。
+- 対応インタフェース種別: Ethernet / Vlan / [PortChannel](../../reference/glossary.md#term-portchannel) / Loopback。それ以外のプレフィックスで始まるキーは natmgr がスキップする (`natmgr.cpp:7412-7420`)。
 
 ## 購読者
 
@@ -364,7 +364,7 @@ Loopback インタフェースは `isPortStateOk()` チェック対象外であ�
 
 | 依存方向 | 参照元 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
 |---------|--------|--------------|--------------|---------|------|
-| natmgrd → STATE_DB | `isPortStateOk()` | `STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_VLAN_TABLE` | `<port_name>` | Ethernet / PortChannel / Vlan の `nat_zone` 設定前にポートが STATE_DB に登録されている必要あり。未登録の場合 `it++; continue` で再キューされ自動再試行 | `natmgr.cpp:96-131`, `natmgr.cpp:7493-7499` |
+| natmgrd → [STATE_DB](../../reference/glossary.md#term-state_db) | `isPortStateOk()` | `STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_VLAN_TABLE` | `<port_name>` | Ethernet / [PortChannel](../../reference/glossary.md#term-portchannel) / Vlan の `nat_zone` 設定前にポートが [STATE_DB](../../reference/glossary.md#term-state_db) に登録されている必要あり。未登録の場合 `it++; continue` で再キューされ自動再試行 | `natmgr.cpp:96-131`, `natmgr.cpp:7493-7499` |
 | natmgrd → STATE_DB | `isIntfStateOk()` | `STATE_INTERFACE_TABLE` | `<intf>\|<ip>/<prefix>` | IP プレフィックス付きエントリ（key サイズ 2）処理前にインタフェースが STATE_DB に登録されている必要あり。未登録の場合再キューして自動再試行 | `natmgr.cpp:135-145`, `natmgr.cpp:7595-7601` |
 | natmgrd 内部 | `doNatZoneIntfTask` | `m_natIpInterfaceInfo` 内部キャッシュ | `port → set<ip_prefix>` | ゾーン変更時に IP インタフェースキャッシュの有無で Static / Dynamic NAT iptables ルール再構築の要否を判定。IP プレフィックスエントリ（key サイズ 2）が先に処理され `m_natIpInterfaceInfo` に登録されている場合のみ NAT ルールが再構築される | `natmgr.cpp:7532-7568` |
 | orchagent → PortsOrch | `allPortsReady()` | PortsOrch 内部フラグ (PORT_TABLE 処理完了) | — | 全ポート初期化完了前は `nat_zone` を含む全 INTERFACE テーブルイベントの SAI 反映がスキップされ、`m_toSync` に蓄積。`allPortsReady()` が true になった後の次回 `doTask()` で一括処理される | `intfsorch.cpp:665-668` |
@@ -372,8 +372,8 @@ Loopback インタフェースは `isPortStateOk()` チェック対象外であ�
 
 ### 解決タイミング
 
-- **STATE_PORT / LAG / VLAN 依存**: portsyncd / teamd / vlanmgrd が各ポートを STATE_DB に登録した後、natmgrd の次回 `doTask()` ループで自動再処理される。
-- **STATE_INTERFACE 依存**: intfmgrd が IP プレフィックスエントリを STATE_INTERFACE_TABLE に書き込んだ後、natmgrd が自動再処理。
+- **STATE_PORT / [LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) 依存**: [portsyncd](../../reference/glossary.md#term-portsyncd) / [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / [vlanmgrd](../../reference/glossary.md#term-vlanmgrd) が各ポートを STATE_DB に登録した後、natmgrd の次回 `doTask()` ループで自動再処理される。
+- **STATE_INTERFACE 依存**: [intfmgrd](../../reference/glossary.md#term-intfmgrd) が IP プレフィックスエントリを STATE_INTERFACE_TABLE に書き込んだ後、natmgrd が自動再処理。
 - **`m_natIpInterfaceInfo` 依存**: 同一 `doNatZoneIntfTask` 内で IP プレフィックスエントリ（key サイズ 2）が先に処理されていれば NAT ルール再構築が即時実行される。ゾーン単位エントリ（key サイズ 1）が先に処理された場合、IP プレフィックスエントリ登録時（IP インタフェース追加時）に `addStaticNatIptables()` 等が呼ばれる。
 - **`allPortsReady()` 依存**: `orchdaemon` の起動シーケンスで PortsOrch 初期化完了後に自動解消。通常はシステム起動後数秒以内。
 
@@ -516,13 +516,13 @@ if (status != SAI_STATUS_SUCCESS)
 | kernel iptables mangle テーブル | 非 DB（カーネルルール） | `PREROUTING -i <port> -j MARK --set-mark <zone+1>` / `POSTROUTING -o <port> -j MARK --set-mark <zone+1>` を ADD / DEL | Loopback 以外の Ethernet / PortChannel / Vlan インタフェース、かつ `isPortStateOk()` が true | `natmgr.cpp:910-921` `setMangleIptablesRules()` |
 | kernel iptables nat テーブル (Static NAT) | 非 DB（カーネルルール） | ゾーン変更時のみ: 既存の Static NAT / NAPT iptables ルールを DELETE してから新ゾーン値で再 INSERT | `m_natIpInterfaceInfo` にポートが登録されている場合かつゾーン値が変化した場合 | `natmgr.cpp:7534-7568` `removeStaticNatIptables()` → `addStaticNatIptables()` |
 | kernel iptables nat テーブル (Dynamic NAT) | 非 DB（カーネルルール） | ゾーン変更時のみ: Dynamic NAT iptables ルールを DELETE してから新ゾーン値で再構築 | 同上（ゾーン変更 + IP インタフェース登録済み） | `natmgr.cpp:7543-7568` `removeDynamicNatRules()` → `addDynamicNatRules()` |
-| ASIC_DB (SAI RIF 属性) | 非 Redis 書込（SAI 経由） | `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID = <zone_id>` を `set_router_interface_attribute()` で設定 | `gIsNatSupported == true` かつ `nat_zone` フィールドが空でなく現在値と異なる場合 | `intfsorch.cpp:974-985` `setRouterIntfsNatZoneId()` |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) (SAI RIF 属性) | 非 [Redis](../../reference/glossary.md#term-redis) 書込（SAI 経由） | `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID = <zone_id>` を `set_router_interface_attribute()` で設定 | `gIsNatSupported == true` かつ `nat_zone` フィールドが空でなく現在値と異なる場合 | `intfsorch.cpp:974-985` `setRouterIntfsNatZoneId()` |
 
 ### 副次書込みに関する注意事項
 
-- **APPL_DB / STATE_DB / FLEX_COUNTER_DB への書込みなし**: `doNatZoneIntfTask` の処理パスでは Redis 系 DB への副次書込みは行われない。kernel iptables と SAI（ASIC_DB 経由）のみが影響を受ける。
+- **[APPL_DB](../../reference/glossary.md#term-appl_db) / STATE_DB / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書込みなし**: `doNatZoneIntfTask` の処理パスでは [Redis](../../reference/glossary.md#term-redis) 系 DB への副次書込みは行われない。kernel iptables と SAI（[ASIC_DB](../../reference/glossary.md#term-asic_db) 経由）のみが影響を受ける。
 - **ゾーン変更中の一時的 NAT 停止**: iptables 再構築の DELETE→ADD シーケンス中（数 ms〜数百 ms）は、当該インタフェースの Static / Dynamic NAT ルールが消失する。既存の conntrack セッションは削除されないが、新規接続の NAT 変換は一時的にスキップされる。
-- **iptables 副次書込みと ASIC_DB 書込みは独立**: `natmgrd` と `orchagent` は独立したプロセスとして並列に CONFIG_DB を購読する。iptables mangle ルール（natmgrd 担当）と SAI RIF zone_id（orchagent 担当）は同一の `nat_zone` 変更イベントに対して独立して更新される。両者の適用タイミングにずれが生じる可能性があるが、SAI は通常 iptables より先に完了する。
+- **iptables 副次書込みと [ASIC_DB](../../reference/glossary.md#term-asic_db) 書込みは独立**: `natmgrd` と `orchagent` は独立したプロセスとして並列に CONFIG_DB を購読する。iptables mangle ルール（natmgrd 担当）と SAI RIF zone_id（orchagent 担当）は同一の `nat_zone` 変更イベントに対して独立して更新される。両者の適用タイミングにずれが生じる可能性があるが、SAI は通常 iptables より先に完了する。
 
 <!-- /side-effects -->
 
@@ -566,7 +566,7 @@ CONFIG_DB  INTERFACE|<port>  {nat_zone=N}
 
 ### 経路 B-1: CONFIG_DB → intfmgrd
 
-`intfmgrd` (`intfmgrd.cpp:29-44`) は `CFG_INTF_TABLE_NAME`・`CFG_VLAN_INTF_TABLE_NAME`・`CFG_LAG_INTF_TABLE_NAME`・`CFG_LOOPBACK_INTERFACE_TABLE_NAME` を購読し、`IntfMgr::setIntf()` でフィールドを解析する。`nat_zone` フィールドを検出した場合 (`intfmgr.cpp:813-815`)、`m_appIntfTableProducer.set(alias, data)` により APPL_DB の `APP_INTF_TABLE_NAME` (`INTF_TABLE`) にフォワードする (`intfmgr.cpp:1053`)。`ProducerStateTable` は Lua スクリプト経由で APPL_DB にアトミック書き込みし、`APP_INTF_TABLE_CHANNEL@0` を PUBLISH する。
+`intfmgrd` (`intfmgrd.cpp:29-44`) は `CFG_INTF_TABLE_NAME`・`CFG_VLAN_INTF_TABLE_NAME`・`CFG_LAG_INTF_TABLE_NAME`・`CFG_LOOPBACK_INTERFACE_TABLE_NAME` を購読し、`IntfMgr::setIntf()` でフィールドを解析する。`nat_zone` フィールドを検出した場合 (`intfmgr.cpp:813-815`)、`m_appIntfTableProducer.set(alias, data)` により [APPL_DB](../../reference/glossary.md#term-appl_db) の `APP_INTF_TABLE_NAME` (`INTF_TABLE`) にフォワードする (`intfmgr.cpp:1053`)。`ProducerStateTable` は Lua スクリプト経由で [APPL_DB](../../reference/glossary.md#term-appl_db) にアトミック書き込みし、`APP_INTF_TABLE_CHANNEL@0` を PUBLISH する。
 
 ### 経路 B-2: APPL_DB → orchagent (IntfsOrch)
 
@@ -594,7 +594,7 @@ CONFIG_DB  INTERFACE|<port>  {nat_zone=N}
 
 ### CLI
 
-- `config interface nat-zone <interface_name> <zone_value>` — `config/interface.py` が `CONFIG_DB.INTERFACE[interface_name]['nat_zone'] = zone_value` を書き込む (sonic-utilities)。
+- `config interface nat-zone <interface_name> <zone_value>` — `config/interface.py` が `CONFIG_DB.INTERFACE[interface_name]['nat_zone'] = zone_value` を書き込む ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities))。
 
 ### minigraph / sonic-cfggen
 
@@ -602,7 +602,7 @@ CONFIG_DB  INTERFACE|<port>  {nat_zone=N}
 
 ### REST / gNMI
 
-- REST/gNMI 書き込み経路なし（YANG を通じた設定は可能だが現状 CLI 経由が主）。
+- REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（YANG を通じた設定は可能だが現状 CLI 経由が主）。
 
 ### db_migrator
 
@@ -655,3 +655,5 @@ Loopback (`Loopback*`) インタフェースは iptables MARK ルールの設定
 > **Evidence**: `intfsorch.cpp:978-986` (gIsNatSupported ガード / doIntfTask), `intfsorch.cpp:1287-1294` (gIsNatSupported ガード / RIF 作成), `natmgr.cpp:7526-7549` (Loopback スキップ), `main.cpp:936-948` (gIsNatSupported 決定); 詳細分析 `meta/_intermediate/cdb-flow/nat-zone-platform.md`
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: e89d811d1f2b -->

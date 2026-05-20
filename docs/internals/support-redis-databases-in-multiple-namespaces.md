@@ -38,7 +38,7 @@ related:
 
 ## 概要
 
-Multi-ASIC SONiC（複数 [NPU](../reference/glossary.md#term-npu) を持つデバイス）では、各 NPU を **Linux network namespace** で隔離し、その中で `swss` / `syncd` / `database` 等のコンテナを別個に動かす。これにより 1 デバイス内に複数の [Redis](../reference/glossary.md#term-redis) インスタンスが並走することになる[^1]。
+[Multi-ASIC](../reference/glossary.md#term-multi-asic) [SONiC](../reference/glossary.md#term-sonic)（複数 [NPU](../reference/glossary.md#term-npu) を持つデバイス）では、各 NPU を **Linux network namespace** で隔離し、その中で `swss` / `syncd` / `database` 等のコンテナを別個に動かす。これにより 1 デバイス内に複数の [Redis](../reference/glossary.md#term-redis) インスタンスが並走することになる[^1]。
 
 本 [HLD](../reference/glossary.md#term-hld) は次を定義する:
 
@@ -67,7 +67,7 @@ flowchart LR
   GDB -.-> DB1
 ```
 
-- **Global namespace**: [AAA](../reference/glossary.md#term-aaa) / syslog / ASIC↔interface マッピングのような **システム共通属性** を持つ
+- **Global namespace**: [AAA](../reference/glossary.md#term-aaa) / syslog / [ASIC](../reference/glossary.md#term-asic)↔interface マッピングのような **システム共通属性** を持つ
 - **NPU namespace**: その NPU 配下のインタフェース・カウンタ・state 等を持つ
 
 Single-ASIC の SONiC は「Global = host = 唯一の Redis」として後方互換が取れる[^1]。
@@ -279,4 +279,4 @@ db.connect('CONFIG_DB')
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9bb22471f747 -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

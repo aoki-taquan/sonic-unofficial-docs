@@ -109,7 +109,7 @@ show mgmt-vrf
 
 ### カーネル VRF netdev 作成失敗 → SWSS_LOG_ERROR (処理継続)
 
-`VrfMgr::doTask()` で `setLink(vrfName)` が false を返した場合、`SWSS_LOG_ERROR("Failed to create vrf netdev %s")` をログ出力するが、後続の STATE_DB への `state=ok` 書き込みは **継続される**（vrfmgr.cpp:281-289）。netdev が実際には存在しないまま STATE_VRF_TABLE に `state=ok` が登録される不整合が生じる。
+`VrfMgr::doTask()` で `setLink(vrfName)` が false を返した場合、`SWSS_LOG_ERROR("Failed to create vrf netdev %s")` をログ出力するが、後続の [STATE_DB](../../reference/glossary.md#term-state_db) への `state=ok` 書き込みは **継続される**（vrfmgr.cpp:281-289）。netdev が実際には存在しないまま STATE_VRF_TABLE に `state=ok` が登録される不整合が生じる。
 
 > mgmt VRF の場合は `setLink()` が `ip link add` を実行せず table_id 6000 を内部 map に登録するのみのため、この経路では通常エラーが発生しない。
 
@@ -127,7 +127,7 @@ SET でも DEL でもない op コードを受信した場合、`SWSS_LOG_ERROR(
 
 ### hostcfgd: systemd サービス再起動失敗 → LOG_ERR + 即 return
 
-`MgmtIfaceCfg::update_mgmt_vrf()` (hostcfgd:1659-1666) で `systemctl stop chrony` / `restart interfaces-config` / `start chrony` のいずれかが `CalledProcessError` を送出した場合:
+`MgmtIfaceCfg::update_mgmt_vrf()` ([hostcfgd](../../reference/glossary.md#term-hostcfgd):1659-1666) で `systemctl stop chrony` / `restart interfaces-config` / `start chrony` のいずれかが `CalledProcessError` を送出した場合:
 
 | 失敗箇所 | エラーログ | 挙動 |
 |---------|-----------|------|
@@ -139,7 +139,7 @@ SET でも DEL でもない op コードを受信した場合、`SWSS_LOG_ERROR(
 
 ### hostcfgd: eth0 IP ルート削除失敗 → LOG_WARNING + return
 
-`mgmtVrfEnabled = 'true'` 時の eth0 デフォルトルート確認失敗は `syslog.LOG_WARNING`: `"MgmtIfaceCfg: Could not delete eth0 route"` をログして即 `return`（hostcfgd:1688-1691）。`ip route del` コマンド自体の失敗は `run_cmd(..., False)` により silent failure（例外なし）となる（hostcfgd:1693）。
+`mgmtVrfEnabled = 'true'` 時の eth0 デフォルトルート確認失敗は `syslog.LOG_WARNING`: `"MgmtIfaceCfg: Could not delete eth0 route"` をログして即 `return`（[hostcfgd](../../reference/glossary.md#term-hostcfgd):1688-1691）。`ip route del` コマンド自体の失敗は `run_cmd(..., False)` により silent failure（例外なし）となる（[hostcfgd](../../reference/glossary.md#term-hostcfgd):1693）。
 
 ### hostcfgd: mgmtVrfEnabled が空文字列 → silent drop
 
@@ -174,7 +174,6 @@ SET でも DEL でもない op コードを受信した場合、`SWSS_LOG_ERROR(
 enum なし (boolean)。`NTP.vrf=mgmt` は本フィールドが `true` の場合のみ YANG バリデーション通過。
 <!-- /value-behavior -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -189,7 +188,7 @@ enum なし (boolean)。`NTP.vrf=mgmt` は本フィールドが `true` の場合
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。`ip vrf add mgmt` / `ip vrf del mgmt` をシステムコールで実行。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。`ip vrf add mgmt` / `ip vrf del mgmt` をシステムコールで実行。
 - `/etc/iproute2/rt_tables` に mgmt VRF エントリを追加。
 
 ### 段階 4: タイミング + 副作用
@@ -205,7 +204,7 @@ MGMT_VRF_CONFIG テーブルへの書き込みが発生するコード経路を�
 
 ### CLI
 
-  - `config vrf add mgmt` / `config vrf del mgmt` — `config/main.py` が `mod_entry('MGMT_VRF_CONFIG', 'vrf_global', {'mgmtVrfEnabled': 'true/false'})` を呼ぶ (sonic-utilities/config/main.py:4107, 4121)
+  - `config vrf add mgmt` / `config vrf del mgmt` — `config/main.py` が `mod_entry('MGMT_VRF_CONFIG', 'vrf_global', {'mgmtVrfEnabled': 'true/false'})` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py:4107, 4121)
 
 ### minigraph / sonic-cfggen
 
@@ -213,7 +212,7 @@ minigraph.py で `MGMT_VRF_CONFIG` は生成されない
 
 ### REST / gNMI
 
-sonic-mgmt-common トランスフォーマーなし — REST/gNMI 書き込み経路なし
+[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common トランスフォーマーなし — REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -247,7 +246,7 @@ db_migrator.py での MGMT_VRF_CONFIG マイグレーションなし
 
 ### Phase 7: 条件付き登録
 
-`MGMT_VRF_CONFIG` は orchagent では処理されない。`vrfmgrd` (`cfgmgr/vrfmgr.cpp`) が CONFIG_DB を購読しカーネル VRF を設定する。条件付き platform 登録なし。
+`MGMT_VRF_CONFIG` は [orchagent](../../reference/glossary.md#term-orchagent) では処理されない。`vrfmgrd` (`cfgmgr/vrfmgr.cpp`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読しカーネル VRF を設定する。条件付き platform 登録なし。
 
 ### グレップカバレッジ
 
@@ -284,7 +283,7 @@ db_migrator.py での MGMT_VRF_CONFIG マイグレーションなし
 | コンポーネント | API 種別 | 実装 |
 |---|---|---|
 | `vrfmgrd` (swss コンテナ) | `Orch` + `ConsumerStateTable` / Select ループ (C++, SELECT_TIMEOUT=1000ms) | `vrfmgrd.cpp:43` で `VrfMgr` に `CFG_MGMT_VRF_CONFIG_TABLE_NAME` を渡す |
-| `hostcfgd` (host-services) | `ConfigDBConnector.subscribe()` → Redis keyspace 通知 PSUBSCRIBE (Python) | `hostcfgd:2496` で `mgmt_vrf_handler` を登録 |
+| `hostcfgd` (host-services) | `ConfigDBConnector.subscribe()` → [Redis](../../reference/glossary.md#term-redis) keyspace 通知 PSUBSCRIBE (Python) | `hostcfgd:2496` で `mgmt_vrf_handler` を登録 |
 
 ### vrfmgrd — `Orch` フレームワーク
 
@@ -310,7 +309,7 @@ self.config_db.subscribe(swsscommon.CFG_MGMT_VRF_CONFIG_TABLE_NAME,
 self.config_db.listen(init_data_handler=self.load)
 ```
 
-- `ConfigDBConnector.listen()` が内部で Redis keyspace 通知 (`PSUBSCRIBE __keyspace@<dbId>__:MGMT_VRF_CONFIG|*`) を購読。
+- `ConfigDBConnector.listen()` が内部で [Redis](../../reference/glossary.md#term-redis) keyspace 通知 (`PSUBSCRIBE __keyspace@<dbId>__:MGMT_VRF_CONFIG|*`) を購読。
 - 変化時に `mgmt_vrf_handler(key, op, data)` → `mgmtifacecfg.update_mgmt_vrf(data)` を呼び出す。
 - `op` は `data is None` のとき `"DEL"`、それ以外 `"SET"`（HGETALL 結果有無で判定）。
 
@@ -377,13 +376,13 @@ self.mgmtifacecfg.load(mgmt_ifc, mgmt_vrf)
 
 6. **初期化時 mgmt netdev 保護**: コンストラクタの既存 VRF 削除ループで `vrfName == "mgmt"` はスキップ（non-warm-restart 時も保護）。`vrfmgr.cpp` L74-79。
 
-7. **DEL 遅延（書き込み順依存）**: DEL 受信後、`isVrfObjExist(vrfName)` が true のうちは `it++; continue` でループ待機。orchagent が STATE_VRF_OBJECT_TABLE を削除するまで netdev 削除が遅延する。`vrfmgr.cpp` L331-335。
+7. **DEL 遅延（書き込み順依存）**: DEL 受信後、`isVrfObjExist(vrfName)` が true のうちは `it++; continue` でループ待機。[orchagent](../../reference/glossary.md#term-orchagent) が STATE_VRF_OBJECT_TABLE を削除するまで netdev 削除が遅延する。`vrfmgr.cpp` L331-335。
 
 8. **minigraph 由来 fallback**: XML `<MgmtVrfGlobal>` ノード不在時 `mvrf = {}` → `results['MGMT_VRF_CONFIG'] = {}` となりテーブルエントリ自体が存在しない。`minigraph.py` L847, L928-934, L2308。
 
 ### `in_band_mgmt_enabled` フィールド補足
 
-YANG (`sonic-mgmt_vrf.yang`) に定義がないが `vrfmgr.cpp` と `vrforch.h` が読み取るフィールド。HLD (`SONiC_in_band_mgmt_via_mgmt_Vrf_HLD.md`) ではデフォルト `"false"`、`mgmtVrfEnabled=true` のときのみ有効と規定。YANG バリデーションの対象外のため、不正値を書き込んでもバリデーションエラーにならない。
+YANG (`sonic-mgmt_vrf.yang`) に定義がないが `vrfmgr.cpp` と `vrforch.h` が読み取るフィールド。[HLD](../../reference/glossary.md#term-hld) (`SONiC_in_band_mgmt_via_mgmt_Vrf_HLD.md`) ではデフォルト `"false"`、`mgmtVrfEnabled=true` のときのみ有効と規定。YANG バリデーションの対象外のため、不正値を書き込んでもバリデーションエラーにならない。
 
 <!-- /defaults -->
 
@@ -404,7 +403,7 @@ YANG (`sonic-mgmt_vrf.yang`) に定義がないが `vrfmgr.cpp` と `vrforch.h` 
 ### 補足
 
 - `MGMT_VRF_TABLE_ID = 6000` は通常 VRF の動的割当範囲（1001–5097）の外にあり、mgmt VRF 専用に予約されている。
-- `MGMT_VRF = "mgmt"` はコンパイル時に埋め込まれた名前であり、CONFIG_DB に書かれた VRF 名ではない。設定で変更することはできない。
+- `MGMT_VRF = "mgmt"` はコンパイル時に埋め込まれた名前であり、[CONFIG_DB](../../reference/glossary.md#term-config_db) に書かれた VRF 名ではない。設定で変更することはできない。
 - Linux カーネルの network namespace（netns）は vrfmgr が直接操作するのではなく、hostcfgd が `interfaces-config` restart を通じて管理する（責務分離）。mgmt VRF 無効時のデフォルト netns は Linux のグローバル netns（名前なし）。
 
 <!-- /constants -->
@@ -422,15 +421,15 @@ YANG (`sonic-mgmt_vrf.yang`) に定義がないが `vrfmgr.cpp` と `vrforch.h` 
 
 | 操作 | 対象 DB | テーブル | キー / フィールド |
 |------|--------|--------|-----------------|
-| `m_stateVrfTable.set("mgmt", [{state:"ok"}])` | STATE_DB | `VRF_TABLE` | `mgmt` / `state=ok` |
-| `m_appVrfTableProducer.set("mgmt", fields)` | APPL_DB | `VRF_TABLE` | `mgmt` |
+| `m_stateVrfTable.set("mgmt", [{state:"ok"}])` | [STATE_DB](../../reference/glossary.md#term-state_db) | `VRF_TABLE` | `mgmt` / `state=ok` |
+| `m_appVrfTableProducer.set("mgmt", fields)` | [APPL_DB](../../reference/glossary.md#term-appl_db) | `VRF_TABLE` | `mgmt` |
 
 **DEL 時（または mgmtVrfEnabled=false で SET が DEL に強制変換された場合）:**
 
 | 操作 | 対象 DB | テーブル | キー |
 |------|--------|--------|------|
-| `m_appVrfTableProducer.del("mgmt")` | APPL_DB | `VRF_TABLE` | `mgmt` |
-| `m_stateVrfTable.del("mgmt")` | STATE_DB | `VRF_TABLE` | `mgmt` |
+| `m_appVrfTableProducer.del("mgmt")` | [APPL_DB](../../reference/glossary.md#term-appl_db) | `VRF_TABLE` | `mgmt` |
+| `m_stateVrfTable.del("mgmt")` | [STATE_DB](../../reference/glossary.md#term-state_db) | `VRF_TABLE` | `mgmt` |
 
 > **mgmt VRF 特殊挙動**: `setLink("mgmt")` / `delLink("mgmt")` は `ip link add/del` を実行せず内部 map の更新のみ。実際のカーネル VRF netdev 作成は `hostcfgd` → `interfaces-config` が担う（責務分離）。
 
@@ -483,7 +482,7 @@ orchestrator が `STATE_DB.VRF_OBJECT_TABLE|mgmt` を保持する間、`isVrfObj
 
 #### MGMT_INTERFACE
 
-`hostcfgd` の `get_interface_ip("eth0")` (hostcfgd:599-600) は NTP / RADIUS の送信元 IP 解決のために `MGMT_INTERFACE` キー一覧を取得する。`mgmtVrfEnabled=true` 時に eth0 が mgmt VRF 名前空間に移動するため、**MGMT_INTERFACE に IP が設定されていないと VRF 有効化後の src_ip 解決が失敗する**。CLI (`config vrf add mgmt`) はこの順序を強制しないため、手動設定時は MGMT_INTERFACE → MGMT_VRF_CONFIG の順で設定することが推奨される。
+`hostcfgd` の `get_interface_ip("eth0")` (hostcfgd:599-600) は NTP / [RADIUS](../../reference/glossary.md#term-radius) の送信元 IP 解決のために `MGMT_INTERFACE` キー一覧を取得する。`mgmtVrfEnabled=true` 時に eth0 が mgmt VRF 名前空間に移動するため、**MGMT_INTERFACE に IP が設定されていないと VRF 有効化後の src_ip 解決が失敗する**。CLI (`config vrf add mgmt`) はこの順序を強制しないため、手動設定時は MGMT_INTERFACE → MGMT_VRF_CONFIG の順で設定することが推奨される。
 
 #### DEVICE_METADATA
 
@@ -500,7 +499,7 @@ vrfmgr も MgmtIfaceCfg も `DEVICE_METADATA` を直接 subscribe して MGMT_VR
 
 `MGMT_VRF_CONFIG|vrf_global` に `mgmtVrfEnabled=true` を書き込んだ場合、`vrfmgr` の `setLink("mgmt")` は通常 VRF と異なり `ip link add` を実行せず、テーブル ID 6000 を内部 map に登録するのみ（`vrfmgr.cpp:176-183`）。実際の kernel VRF netdev 作成は後続の hostcfgd が `interfaces-config` restart 経由で実施する（責務分離）。
 
-DEL 処理は `STATE_VRF_OBJECT_TABLE` に orchagent が "mgmt" オブジェクトを削除するまでループ待機する（`vrfmgr.cpp:331-335`）。orchagent の処理完了前は `delLink()` が実行されず kernel netdev が残存し続ける。
+DEL 処理は `STATE_VRF_OBJECT_TABLE` に [orchagent](../../reference/glossary.md#term-orchagent) が "mgmt" オブジェクトを削除するまでループ待機する（`vrfmgr.cpp:331-335`）。orchagent の処理完了前は `delLink()` が実行されず kernel netdev が残存し続ける。
 
 ### kernel netns 順序（hostcfgd）
 
@@ -538,7 +537,7 @@ DEL 処理は `STATE_VRF_OBJECT_TABLE` に orchagent が "mgmt" オブジェク�
 
 ### A. SmartSwitch DPU — eth0 DHCP ブロックがスキップされ mgmt VRF アサインが行われない
 
-`interfaces.j2` L144–158 では、`MGMT_INTERFACE` が空のフォールバック処理（`auto eth0 / iface eth0 inet dhcp metric 202`）を生成する条件として、**SmartSwitch DPU ノードを明示的に除外**している。
+`interfaces.j2` L144–158 では、`MGMT_INTERFACE` が空のフォールバック処理（`auto eth0 / iface eth0 inet dhcp metric 202`）を生成する条件として、**[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) ノードを明示的に除外**している。
 
 ```jinja
 {% if (DEVICE_METADATA is not defined)
@@ -558,15 +557,15 @@ iface eth0 inet dhcp
 | 条件 | eth0 DHCP ブロック生成 | mgmt VRF アサイン |
 |---|---|---|
 | 通常スイッチ（T0 / T1 等）で `MGMT_INTERFACE` なし | `auto eth0` + `iface eth0 inet dhcp metric 202` | `mgmtVrfEnabled=true` のとき `vrf mgmt` を付加 |
-| SmartSwitch DPU（`subtype=SmartSwitch` + `switch_type=dpu`） | **生成されない** | **アサインされない** |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)（`subtype=SmartSwitch` + `switch_type=dpu`） | **生成されない** | **アサインされない** |
 
-DPU は管理インターフェースを持たない前提のため、`mgmtVrfEnabled=true` が CONFIG_DB に書かれても、DPU ノード上では `/etc/network/interfaces` に `vrf mgmt` 行が挿入されず、eth0 の mgmt VRF 所属は起きない。
+[DPU](../../reference/glossary.md#term-dpu) は管理インターフェースを持たない前提のため、`mgmtVrfEnabled=true` が CONFIG_DB に書かれても、DPU ノード上では `/etc/network/interfaces` に `vrf mgmt` 行が挿入されず、eth0 の mgmt VRF 所属は起きない。
 
 > **evidence**: `sonic-buildimage/files/image_config/interfaces/interfaces.j2:143-158`
 
 ### B. Fabric ASIC — vrfmgrd が supervisord に生成されず MGMT_VRF_CONFIG が無視される
 
-`docker-orchagent/supervisord.conf.j2` は ASIC 種別を `is_fabric_asic` フラグで判定し、Fabric ASIC では `vrfmgrd` プログラムブロックを生成しない。
+`docker-orchagent/supervisord.conf.j2` は [ASIC](../../reference/glossary.md#term-asic) 種別を `is_fabric_asic` フラグで判定し、Fabric [ASIC](../../reference/glossary.md#term-asic) では `vrfmgrd` プログラムブロックを生成しない。
 
 ```jinja
 {% if is_fabric_asic == 0 %}
@@ -576,9 +575,9 @@ command=/usr/bin/vrfmgrd
 {% endif %}
 ```
 
-| ASIC 種別 | vrfmgrd 起動 | MGMT_VRF_CONFIG 反映 |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 | [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) 起動 | MGMT_VRF_CONFIG 反映 |
 |---|---|---|
-| 通常 ASIC (`is_fabric_asic == 0`) | あり | `vrfmgr` が VRF テーブルマップと APPL_DB を管理する |
+| 通常 ASIC (`is_fabric_asic == 0`) | あり | `vrfmgr` が VRF テーブルマップと [APPL_DB](../../reference/glossary.md#term-appl_db) を管理する |
 | Fabric ASIC (`is_fabric_asic == 1`) | **なし** | CONFIG_DB への書き込みは無視される（購読者不在） |
 
 `hostcfgd` は host 側サービスのため Fabric ASIC ノードにも存在しうるが、Fabric ASIC ノードは通常 management port を持たないため eth0 の mgmt VRF 処理は実質無効。
@@ -593,9 +592,9 @@ command=/usr/bin/vrfmgrd
 |---|---|---|
 | single-asic | host CONFIG_DB のみ | host CONFIG_DB |
 | multi-asic | host CONFIG_DB のみ | host CONFIG_DB（`asicN` namespace は参照しない） |
-| VOQ chassis | 各 linecard host で独立したシングルトン | 各 host の CONFIG_DB（linecard 間で共有されない） |
+| [VOQ](../../reference/glossary.md#term-voq) chassis | 各 linecard host で独立したシングルトン | 各 host の CONFIG_DB（linecard 間で共有されない） |
 
-VOQ chassis ではスーパーバイザーおよび各 linecard がそれぞれ独立した CONFIG_DB を持つ。`MGMT_VRF_CONFIG` は各 host 単体の管理 VRF を制御するものであり、VOQ chassis 向けの cross-linecard 管理 VRF 集約機能は実装されていない。
+[VOQ](../../reference/glossary.md#term-voq) chassis ではスーパーバイザーおよび各 linecard がそれぞれ独立した CONFIG_DB を持つ。`MGMT_VRF_CONFIG` は各 host 単体の管理 VRF を制御するものであり、[VOQ](../../reference/glossary.md#term-voq) chassis 向けの cross-linecard 管理 VRF 集約機能は実装されていない。
 
 > **evidence**: `sonic-host-services/scripts/hostcfgd:2249,2268`（`ConfigDBConnector()` 引数なし）
 
@@ -611,3 +610,5 @@ mgmt VRF の Linux ルーティングテーブル ID は **コンパイル時定
 > **evidence**: `sonic-swss/cfgmgr/vrfmgr.cpp:12-16`
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: c1e8ab826600 -->

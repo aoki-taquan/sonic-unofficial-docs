@@ -38,7 +38,7 @@ related:
 
 Local ARS は [ECMP](../reference/glossary.md#term-ecmp) の next-hop 選択を **静的ハッシュではなく、出力キューの瞬時負荷や link 利用率に応じて動的に変える** 機能[^1]。AI / HPC 向けに RDMA 通信の hot-spot を抑え、tail latency を低減することを狙う。
 
-「Local」とは、**自スイッチ内の ASIC 観測値だけで判断** することを示す。複数ホップ協調の Global ARS は別テーマ。
+「Local」とは、**自スイッチ内の [ASIC](../reference/glossary.md#term-asic) 観測値だけで判断** することを示す。複数ホップ協調の Global ARS は別テーマ。
 
 ## 動作仕様
 
@@ -181,4 +181,4 @@ redis-cli -n 4 keys 'ARS*'
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: abf52c3eb945 -->
+<!-- glossary-links-injected: c006405759d8 -->

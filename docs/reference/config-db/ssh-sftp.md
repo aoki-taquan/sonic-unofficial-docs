@@ -23,9 +23,9 @@ related:
 
 ## 概要
 
-SONiC は OpenSSH パッケージが提供する sshd_config テンプレートに `Subsystem sftp /usr/lib/openssh/sftp-server` を含めており、SFTP サブシステムは **常時有効** となっている[^1]。
+[SONiC](../../reference/glossary.md#term-sonic) は OpenSSH パッケージが提供する sshd_config テンプレートに `Subsystem sftp /usr/lib/openssh/sftp-server` を含めており、SFTP サブシステムは **常時有効** となっている[^1]。
 
-`SSH_SERVER` テーブルを処理する `hostcfgd` の `SshServer.set_policies()` が更新するフィールドセット (`SSH_CONFIG_NAMES`) に `Subsystem` キーは含まれていないため、CONFIG_DB からは SFTP サブシステムを制御できない。
+`SSH_SERVER` テーブルを処理する `hostcfgd` の `SshServer.set_policies()` が更新するフィールドセット (`SSH_CONFIG_NAMES`) に `Subsystem` キーは含まれていないため、[CONFIG_DB](../../reference/glossary.md#term-config_db) からは SFTP サブシステムを制御できない。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -33,21 +33,17 @@ SONiC は OpenSSH パッケージが提供する sshd_config テンプレート�
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SSH_SERVER")]
-  DM["hostcfgd<br/>(SshServer)"]
-  SSHD["/etc/ssh/sshd_config"]
-  SFTP["Subsystem sftp<br/>/usr/lib/openssh/sftp-server<br/>(hostcfgd 非管理)"]
+  DM["hostcfgd"]
   CDB --> DM
-  DM --> SSHD
-  SSHD -.->|OS デフォルト固定| SFTP
 ```
 
 !!! note "凡例"
-    実線は CONFIG_DB 由来の書き込み経路。点線は OS テンプレートとして静的に存在する部分（CONFIG_DB からは書き換わらない）。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## CONFIG_DB との関係
 
-SONiC に `SSH_SFTP` という独立したテーブルは存在しない。SFTP サブシステムは `SSH_SERVER` テーブルの管理スコープ外にある。
+[SONiC](../../reference/glossary.md#term-sonic) に `SSH_SFTP` という独立したテーブルは存在しない。SFTP サブシステムは `SSH_SERVER` テーブルの管理スコープ外にある。
 
 ### SSH_CONFIG_NAMES（hostcfgd L67-75）
 
@@ -67,7 +63,7 @@ SSH_CONFIG_NAMES = {
 }
 ```
 
-`Subsystem` キーが存在しないため、SFTP サブシステムの有効・無効は CONFIG_DB では制御されない。
+`Subsystem` キーが存在しないため、SFTP サブシステムの有効・無効は [CONFIG_DB](../../reference/glossary.md#term-config_db) では制御されない。
 
 ### sshd_config テンプレート（sample_output L112）
 
@@ -75,11 +71,11 @@ SSH_CONFIG_NAMES = {
 Subsystem	sftp	/usr/lib/openssh/sftp-server
 ```
 
-全 sample_output（デフォルト設定・全フィールド変更後）に共通して存在する行であり、hostcfgd の更新サイクルを経ても変更されない。
+全 sample_output（デフォルト設定・全フィールド変更後）に共通して存在する行であり、[hostcfgd](../../reference/glossary.md#term-hostcfgd) の更新サイクルを経ても変更されない。
 
 ## SFTP クライアント機能（file_service.py）
 
-`sonic-host-services/host_modules/file_service.py` の `FileService.download()` は、SFTP **クライアント**として動作するホスト D-Bus モジュールである。これは SFTP サーバ設定とは別物であり CONFIG_DB と無関係:
+`sonic-host-services/host_modules/file_service.py` の `FileService.download()` は、SFTP **クライアント**として動作するホスト D-Bus モジュールである。これは SFTP サーバ設定とは別物であり [CONFIG_DB](../../reference/glossary.md#term-config_db) と無関係:
 
 ```python
 # file_service.py L82-94
@@ -98,15 +94,15 @@ if protocol == "SFTP":
 
 SFTP サブシステムに関して CONFIG_DB フィールドは存在しないため、すべてのデフォルトは OS (Debian/OpenSSH パッケージ) が提供する。
 
-| 項目 | デフォルト値 | YANG default | コード由来デフォルト | 根拠 |
+| 項目 | デフォルト値 | [YANG](../../reference/glossary.md#term-yang) default | コード由来デフォルト | 根拠 |
 |------|------------|-------------|-------------------|------|
-| SFTP サブシステム有効化 | **常時有効** | なし（YANG 非モデル化） | なし | `sshd_config` テンプレート `Subsystem sftp /usr/lib/openssh/sftp-server`（sample_output L112） |
-| SFTP バイナリパス | `/usr/lib/openssh/sftp-server` | なし | なし | OpenSSH パッケージ提供（Debian）; hostcfgd は書き換えない |
-| CONFIG_DB 制御フィールド | **なし** | — | — | `SSH_CONFIG_NAMES`（hostcfgd L67-75）に `Subsystem` キーなし |
+| SFTP サブシステム有効化 | **常時有効** | なし（[YANG](../../reference/glossary.md#term-yang) 非モデル化） | なし | `sshd_config` テンプレート `Subsystem sftp /usr/lib/openssh/sftp-server`（sample_output L112） |
+| SFTP バイナリパス | `/usr/lib/openssh/sftp-server` | なし | なし | OpenSSH パッケージ提供（Debian）; [hostcfgd](../../reference/glossary.md#term-hostcfgd) は書き換えない |
+| CONFIG_DB 制御フィールド | **なし** | — | — | `SSH_CONFIG_NAMES`（[hostcfgd](../../reference/glossary.md#term-hostcfgd) L67-75）に `Subsystem` キーなし |
 
 ### 補足
 
-- `sonic-ssh-server.yang` に SFTP 関連の `leaf` は一切定義されていない。YANG レベルでもモデル化されていない。
+- `sonic-ssh-server.yang` に SFTP 関連の `leaf` は一切定義されていない。[YANG](../../reference/glossary.md#term-yang) レベルでもモデル化されていない。
 - `SSH_SERVER|POLICIES` に `sftp_enabled` 等のフィールドは存在しない。
 - SFTP を無効化するには `/etc/ssh/sshd_config` を直接編集するか、OpenSSH パッケージの差し替えが必要。CONFIG_DB 経由の手段はない。
 
@@ -275,7 +271,7 @@ hostcfgd 起動
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`SSH_SERVER|POLICIES` を更新した際に `hostcfgd` が行う副次処理は、**すべてファイルシステム操作とプロセス再起動**であり、Redis DB への副次書込みは発生しない。
+`SSH_SERVER|POLICIES` を更新した際に `hostcfgd` が行う副次処理は、**すべてファイルシステム操作とプロセス再起動**であり、[Redis](../../reference/glossary.md#term-redis) DB への副次書込みは発生しない。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/ssh-sftp-side-effects.md`
 
@@ -283,12 +279,12 @@ hostcfgd 起動
 
 | 副次書込先 | 書込みの有無 | 内容 |
 |-----------|------------|------|
-| APPL_DB | なし | — |
-| STATE_DB | なし | — |
-| ASIC_DB | なし | SSH は SAI 非経由 |
-| FLEX_COUNTER_DB | なし | — |
-| COUNTERS_DB | なし | — |
-| LOGLEVEL_DB | なし | hostcfgd は syslog 経由のみ |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | — |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | — |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | なし | SSH は [SAI](../../reference/glossary.md#term-sai) 非経由 |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | — |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | — |
+| [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) | なし | hostcfgd は syslog 経由のみ |
 | CONFIG_DB | なし | `SSH_SERVER` テーブルへの書き戻しなし |
 | **ファイルシステム** | **あり** | `/etc/ssh/sshd_config`、`/etc/pam.d/pam-limits-conf`、`/etc/security/limits.conf` |
 
@@ -335,7 +331,7 @@ sshd_config バリデーション成功時に `systemctl restart ssh` が発行�
 
 ### Redis 購読方式
 
-`SSH_SFTP` テーブルは CONFIG_DB に存在しないため、**SFTP サブシステム専用の Redis 購読経路は存在しない**。`Subsystem sftp` 行は OS テンプレート (OpenSSH パッケージ) が `/etc/ssh/sshd_config` に静的に配置するものであり、`hostcfgd` の購読ループとは独立している。
+`SSH_SFTP` テーブルは CONFIG_DB に存在しないため、**SFTP サブシステム専用の [Redis](../../reference/glossary.md#term-redis) 購読経路は存在しない**。`Subsystem sftp` 行は OS テンプレート (OpenSSH パッケージ) が `/etc/ssh/sshd_config` に静的に配置するものであり、`hostcfgd` の購読ループとは独立している。
 
 SFTP に間接的に影響する購読経路は `SSH_SERVER` テーブル経由のみ:
 
@@ -386,11 +382,11 @@ ssh_handler(key="POLICIES", op=SET, data={ciphers:"aes128-ctr,aes256-ctr"})
 
 | 構成 | SSH_SERVER テーブルの所在 | SFTP 有効化 | 備考 |
 |------|--------------------------|-------------|------|
-| single-ASIC (T0/T1) | host CONFIG_DB のみ | OS テンプレート固定 | 標準構成 |
-| multi-ASIC (複数 NPU) | host CONFIG_DB のみ（asicN namespace には非存在） | 同上 | `is_multi_npu` は SSH 経路で未参照 |
-| VOQ chassis (line card) | 各 line card host の CONFIG_DB | 同上 | line card 独立管理 |
-| VOQ chassis (supervisor) | supervisor host の CONFIG_DB | 同上 | chassis 全体集中管理なし |
-| SmartSwitch (NPU 側) | host CONFIG_DB | 同上 | DPU 側に hostcfgd は別インスタンス |
+| single-[ASIC](../../reference/glossary.md#term-asic) (T0/T1) | host CONFIG_DB のみ | OS テンプレート固定 | 標準構成 |
+| multi-[ASIC](../../reference/glossary.md#term-asic) (複数 [NPU](../../reference/glossary.md#term-npu)) | host CONFIG_DB のみ（asicN namespace には非存在） | 同上 | `is_multi_npu` は SSH 経路で未参照 |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (line card) | 各 line card host の CONFIG_DB | 同上 | line card 独立管理 |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor) | supervisor host の CONFIG_DB | 同上 | chassis 全体集中管理なし |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([NPU](../../reference/glossary.md#term-npu) 側) | host CONFIG_DB | 同上 | [DPU](../../reference/glossary.md#term-dpu) 側に hostcfgd は別インスタンス |
 
 ### YANG スキーマに機種分岐なし
 
@@ -398,7 +394,7 @@ ssh_handler(key="POLICIES", op=SET, data={ciphers:"aes128-ctr,aes256-ctr"})
 
 ### SFTP バイナリはパッケージ提供（ベンダー非依存）
 
-`/usr/lib/openssh/sftp-server` は `openssh-server` Debian パッケージが提供する標準バイナリ。`sonic-buildimage/files/image_config/` に SSH 固有のプラットフォーム別オーバーレイは存在せず、community SONiC master 全機種で同一パスが使用される。
+`/usr/lib/openssh/sftp-server` は `openssh-server` Debian パッケージが提供する標準バイナリ。`sonic-buildimage/files/image_config/` に SSH 固有のプラットフォーム別オーバーレイは存在せず、community [SONiC](../../reference/glossary.md#term-sonic) master 全機種で同一パスが使用される。
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1161 (SshServer — platform 分岐なし) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L2166-2201 (hostcfgd.__init__ — is_multi_npu は SshServer に渡されない) -->
@@ -460,3 +456,5 @@ sudo systemctl restart ssh
 ## 引用元
 
 [^1]: `sonic-host-services` テスト sample_output `SSH_SERVER_default_values/sshd_config` L112: `Subsystem sftp /usr/lib/openssh/sftp-server`。hostcfgd の `SSH_CONFIG_NAMES`（L67-75）に `Subsystem` キーが存在しないことで、CONFIG_DB 非管理であることを確認。<https://github.com/sonic-net/sonic-host-services/blob/c5bbbe8b07b96f078fa4b761316627404b01bd04/scripts/hostcfgd>
+
+<!-- glossary-links-injected: 9c476627faa7 -->
