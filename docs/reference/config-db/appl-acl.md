@@ -408,7 +408,7 @@ APPL_DB DEL 受信
   └─ removeAclTable() 成功                       → STATE_DB エントリ削除
 ```
 
-確認: `sonic-db-cli STATE_DB hgetall 'ACL_TABLE|<table_name>'`
+確認: `sonic-db-cli STATE_DB hgetall 'ACL_TABLE_TABLE|<table_name>'`
 
 エラーは `SWSS_LOG_ERROR` で syslog 出力。`ERROR_TABLE` への書き込みはなし。APPL_DB のエントリは失敗後も残り、書き込んだプロセス（vnetorch / mclagsyncd / dashenifwdorch）側が再 SET / DEL するまで orchagent からは復旧手段がない。
 

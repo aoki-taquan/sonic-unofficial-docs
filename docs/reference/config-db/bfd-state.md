@@ -26,7 +26,7 @@ related:
 
 `STATE_DB` の `BFD_SESSION_TABLE` は、`sonic-swss` の `bfdorch` が SAI BFD セッションを作成した後に書き込む読み取り専用のセッション状態テーブル[^1]。設定値（`tx_interval` 等）とランタイム状態（`state`）の両方を保持し、SAI からの状態変化通知（`bfd_session_state_change`）を受信するたびに `state` フィールドのみ更新される。
 
-`use_software_bfd = true`（`BGP_DEVICE_GLOBAL.STATE.use_software_bfd`）のソフトウェア BFD モードでは、SAI を経由しないため `BFD_SESSION_TABLE` は書き込まれず、代わりに `BFD_SOFTWARE_SESSION_TABLE` に APPL_DB データが転記される。
+`use_software_bfd = true`（`BGP_DEVICE_GLOBAL.STATE.use_software_bfd`）のソフトウェア BFD モードでは、SAI を経由しないため `BFD_SESSION_TABLE` は書き込まれず、代わりに `SOFTWARE_BFD_SESSION_TABLE` に APPL_DB データが転記される。
 
 !!! note "CONFIG_DB との関係"
     BFD の **設定** は `CONFIG_DB` の [`BFD_SESSION`](bfd-session.md) テーブルで行う。`bfdorch` が APPL_DB `BFD_SESSION_TABLE` を経由して SAI セッションを作成した後、その結果と構成情報を本テーブルに書き戻す。
@@ -118,9 +118,9 @@ orchagent プロセス内でのセッション作成順序に依存する連番�
 | `dst_mac` | SAI 属性としてのみ使用 |
 | `shutdown_bfd_during_tsa` | `create_bfd_session()` 内で `continue` (無視)。doTask() の呼び出し元で処理済み |
 
-## ソフトウェア BFD モード (`BFD_SOFTWARE_SESSION_TABLE`)
+## ソフトウェア BFD モード (`SOFTWARE_BFD_SESSION_TABLE`)
 
-`use_software_bfd = true` の場合、`bfdorch` は SAI を呼ばず `BFD_SOFTWARE_SESSION_TABLE` に APPL_DB データを転記する:
+`use_software_bfd = true` の場合、`bfdorch` は SAI を呼ばず `SOFTWARE_BFD_SESSION_TABLE` に APPL_DB データを転記する:
 
 ```cpp
 // bfdorch.cpp:706-710
@@ -206,7 +206,7 @@ m_stateBfdSessionTable.hset(key, "state", session_state_lookup.at(state));
 
 `BFD_SESSION_TABLE` 用の `NotificationProducer` / `ResponsePublisher` / `ZmqProducerStateTable` は SONiC ソース内に存在しない (`bfdorch.cpp` 範囲で確認、`BfdOrch` は `Orch` 直系で `ZmqOrch` 非継承)。
 
-### ソフトウェア BFD 経路 (`BFD_SOFTWARE_SESSION_TABLE`)
+### ソフトウェア BFD 経路 (`SOFTWARE_BFD_SESSION_TABLE`)
 
 `use_software_bfd == true` の場合 (`bfdorch.cpp:133-139, 706-710`) は `m_stateSoftBfdSessionTable->set(createStateDBKey(key), data)` で APPL_DB 入力を転記。こちらも `swss::Table` 直書きで `state` フィールドなし。状態管理は FRR (`bgpcfgd::BfdMgr` 経由) に委譲される。
 
@@ -241,7 +241,7 @@ m_stateBfdSessionTable.hset(key, "state", session_state_lookup.at(state));
 | 6 | 同一 state 通知 → STATE_DB 書込みスキップ | 冪等 | `state != bfd_session_lookup[id].state` のときのみ更新 (`bfdorch.cpp:249-263`) |
 | 7 | TSA 有効化: `notify_session_state_down()` → `remove_bfd_session()` (STATE_DB del) | 強制（notify が先） | consumer は Down 通知の後にエントリ消滅を観測 (`bfdorch.cpp:683-704`) |
 | 8 | TSA 解除の replay: `bfd_session_cache` iteration 順で `create_bfd_session()` | 非決定 | `local_discriminator` は新規連番に置換 (`bfdorch.cpp:696-702`, `641-645`) |
-| 9 | `use_software_bfd` フラグで `BFD_SESSION_TABLE` / `BFD_SOFTWARE_SESSION_TABLE` 経路を排他選択 | 排他 | 同 key 二重書込みなし (`bfdorch.cpp:114-122`, `706-710`) |
+| 9 | `use_software_bfd` フラグで `BFD_SESSION_TABLE` / `SOFTWARE_BFD_SESSION_TABLE` 経路を排他選択 | 排他 | 同 key 二重書込みなし (`bfdorch.cpp:114-122`, `706-710`) |
 
 ### 主要な順序保証の詳細
 
@@ -344,7 +344,7 @@ CONFIG_DB → SAI: `session_type_map` (`bfdorch.cpp:33-39`)。SAI → STATE_DB: 
 |------|------|
 | `local_addr` 未指定 | STATE_DB に書き込まれない。`"Failed to create BFD session ... because source IP is not provided"` を SWSS_LOG_ERROR 出力 |
 | `interface != "default"` かつ `dst_mac` 未指定 | セッション作成失敗。STATE_DB に書き込まれない |
-| `use_software_bfd == true` | `BFD_SESSION_TABLE` ではなく `BFD_SOFTWARE_SESSION_TABLE` に書き込む。`state` フィールドなし |
+| `use_software_bfd == true` | `BFD_SESSION_TABLE` ではなく `SOFTWARE_BFD_SESSION_TABLE` に書き込む。`state` フィールドなし |
 | orchagent 起動時 | 既存の `BFD_SESSION_TABLE` エントリをすべて削除（クリーンアップ）してから再作成 (`bfdorch.cpp:74-79`) |
 | TSA 有効 + `shutdown_bfd_during_tsa == "true"` | `notify_session_state_down()` 後に STATE_DB エントリ削除 |
 | SAI セッション作成失敗 | `sai_bfd_api->create_bfd_session()` 失敗時は STATE_DB に書き込まれない |
@@ -362,7 +362,7 @@ CONFIG_DB → SAI: `session_type_map` (`bfdorch.cpp:33-39`)。SAI → STATE_DB: 
 |---|---|---|---|
 | [`BFD_SESSION`](bfd-session.md) (APPL_DB `BFD_SESSION_TABLE`) | APPL_DB | Direction A の入り口。SET/DEL が STATE_DB `BFD_SESSION_TABLE` の create/del を駆動 | `bfdorch.cpp` `BfdOrch::doTask(Consumer&)` |
 | [`BGP_DEVICE_GLOBAL`](bgp-device-global.md) `.tsa_enabled` | CONFIG_DB → `BgpGlobalStateOrch::getTsaState()` | TSA 有効時に `shutdown_bfd_during_tsa=true` のセッションを `notify_session_state_down()` + STATE_DB から削除する分岐。`BgpGlobalStateOrch::doTask()` で SET を受けると `BfdOrch::handleTsaStateChange()` 経由で既存 STATE_DB エントリを一斉に再評価 | `bfdorch.cpp:114-120,158,193,683-704,743-748,793-840` |
-| [`BGP_DEVICE_GLOBAL`](bgp-device-global.md) `.use_software_bfd` | CONFIG_DB → `BgpGlobalStateOrch::getSoftwareBfd()` | `true` のとき STATE_DB `BFD_SESSION_TABLE` を書かず、代わりに `BFD_SOFTWARE_SESSION_TABLE` に APPL_DB データを転記。Phase 6 handler-branching の主分岐 | `bfdorch.cpp:116,120,133-136,182-185,749-753` |
+| [`BGP_DEVICE_GLOBAL`](bgp-device-global.md) `.use_software_bfd` | CONFIG_DB → `BgpGlobalStateOrch::getSoftwareBfd()` | `true` のとき STATE_DB `BFD_SESSION_TABLE` を書かず、代わりに `SOFTWARE_BFD_SESSION_TABLE` に APPL_DB データを転記。Phase 6 handler-branching の主分岐 | `bfdorch.cpp:116,120,133-136,182-185,749-753` |
 | ASIC_DB `SAI_OBJECT_TYPE_BFD_SESSION` OID | ASIC_DB (via SAI) | `sai_bfd_api->create_bfd_session()` の返却 OID を `bfd_session_lookup` に格納し、SAI 通知 (`bfd_session_state_change`) を STATE_DB key に逆引きして `hset(key, "state", ...)` を発火 | `bfdorch.cpp:249-263,567-572,629-631` |
 | switch `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` | SAI switch attr | SAI 通知ハンドラ登録。**`state` フィールドを動かす唯一のトリガ** | `bfdorch.cpp:277,292` |
 
@@ -381,7 +381,7 @@ CONFIG_DB → SAI: `session_type_map` (`bfdorch.cpp:33-39`)。SAI → STATE_DB: 
 ### 範囲外 (誤解されやすい隣接)
 
 - `STATIC_ROUTE_BFD` という CONFIG_DB テーブル名は**存在しない**。`STATIC_ROUTE.bfd=true` フラグを `staticroutebfd` daemon が読み、本 STATE_DB テーブルを Subscriber で参照して APPL_DB `STATIC_ROUTE_TABLE` を再構築する経路で「STATIC_ROUTE × BFD」連携が成立する。
-- `BFD_SOFTWARE_SESSION_TABLE` (STATE_DB) は `use_software_bfd=true` の代替テーブルで、本ページの分岐先として上で扱う。フィールド詳細は派生ページの対象 (本ページ範囲外)。
+- `SOFTWARE_BFD_SESSION_TABLE` (STATE_DB) は `use_software_bfd=true` の代替テーブルで、本ページの分岐先として上で扱う。フィールド詳細は派生ページの対象 (本ページ範囲外)。
 - `bfd_session_lookup` は orchagent プロセス内メモリ (DB ではない) のため暗黙参照には含めない。
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bfd-state-cross-refs.md` を参照。
@@ -444,7 +444,7 @@ STATE_DB `BFD_SESSION_TABLE` の書き手は `bfdorch` のみで、`swss::Table:
 
 ### 検出ロジック補足
 
-- **`m_stateBfdSessionTable.set/hset/del` の戻り値なし**: `swss::Table` API は void。Redis 接続失敗時は `DBConnector` 系から `system_error` 例外が伝播し orchagent abort → systemd 再起動 → コンストラクタ内 cleanup ループ (`bfdorch.cpp:74-86`) で全 `BFD_SESSION_TABLE` / `BFD_SOFTWARE_SESSION_TABLE` エントリ削除 → CONFIG_DB / APPL_DB 経由で再投入される自己回復経路。STATE_DB 不整合が永続することは設計上ない。
+- **`m_stateBfdSessionTable.set/hset/del` の戻り値なし**: `swss::Table` API は void。Redis 接続失敗時は `DBConnector` 系から `system_error` 例外が伝播し orchagent abort → systemd 再起動 → コンストラクタ内 cleanup ループ (`bfdorch.cpp:74-86`) で全 `BFD_SESSION_TABLE` / `SOFTWARE_BFD_SESSION_TABLE` エントリ削除 → CONFIG_DB / APPL_DB 経由で再投入される自己回復経路。STATE_DB 不整合が永続することは設計上ない。
 - **SAI 通知欠落の最大リスク**: C 系統（register 失敗）は `state="Down"` 固着、D 系統（lookup ミス）は空キー行生成・整合性破壊で、いずれもプロセス自走中は回復しない。
 - **B 系統 SAI 削除失敗時の `bfd_session_map` 残留**: `parseHandleSaiStatusFailure` が `task_need_retry` を返した場合でも `bfd_session_map` は残ったままで、次サイクル DEL は同じ key の再 DEL になる。新規 SET 判定にはならない。
 - **D 系統 `operator[]` 副作用**: `std::map::operator[]` は要素を**挿入する**ため、未知の SAI session id が来ると `bfd_session_lookup` の汚染が永続化する。`.find()` ガードがないのは設計上の盲点。Phase E（観測手順）で `BFD_SESSION_TABLE` キーに空 peer (`||` 連続) が混入していないか確認推奨。
@@ -460,7 +460,7 @@ STATE_DB `BFD_SESSION_TABLE` の書き手は `bfdorch` のみで、`swss::Table:
 
 ### HW BFD 経路 vs SW BFD 経路
 
-| 条件 | `BFD_SESSION_TABLE` (STATE_DB) | `BFD_SOFTWARE_SESSION_TABLE` |
+| 条件 | `BFD_SESSION_TABLE` (STATE_DB) | `SOFTWARE_BFD_SESSION_TABLE` |
 |------|-------------------------------|------------------------------|
 | `BGP_DEVICE_GLOBAL.STATE.use_software_bfd == "true"` | **書込みなし** | `bfdorch::createSoftwareBfdSession()` 経由で書込み |
 | `use_software_bfd == "false"` (デフォルト) + ASIC が SAI BFD 対応 | 書込みあり | なし |
@@ -521,7 +521,7 @@ HW BFD 経路では SAI 通知が ASIC 内のタイマ精度に依存する。br
 |---------|----|------|----------|
 | `Orch::db` (基底) | `APPL_DB` (`BFD_SESSION_TABLE`) | コンシューマー入力 (購読のみ) | **読込専用** (consumer subscribe) |
 | `m_stateBfdSessionTable` | `STATE_DB` (`BFD_SESSION_TABLE`) | セッション state/構成書込 | 書込 (`set` / `hset` / `del`) |
-| `m_stateSoftBfdSessionTable` | `STATE_DB` (`BFD_SOFTWARE_SESSION_TABLE`) | ソフトウェア BFD 経路の転記 | 書込 (`set` / `del`) |
+| `m_stateSoftBfdSessionTable` | `STATE_DB` (`SOFTWARE_BFD_SESSION_TABLE`) | ソフトウェア BFD 経路の転記 | 書込 (`set` / `del`) |
 | `notificationsDb` | `ASIC_DB` (`NOTIFICATIONS` channel) | SAI BFD 状態通知の **subscribe** | **読込専用** (NotificationConsumer) |
 
 ### COUNTERS_DB への波及 (該当なし)

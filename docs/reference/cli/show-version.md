@@ -110,7 +110,7 @@ show version
 ### よくある引数の組み合わせ
 
 ```bash
-show version --verbose
+show version --brief
 ```
 
 ### 期待される出力 (抜粋)

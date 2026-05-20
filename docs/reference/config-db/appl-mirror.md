@@ -24,8 +24,6 @@ sources:
 related:
   config_db:
     - MIRROR_SESSION
-  appl_db:
-    - FIXED_MIRROR_SESSION_TABLE
 ---
 
 # APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)

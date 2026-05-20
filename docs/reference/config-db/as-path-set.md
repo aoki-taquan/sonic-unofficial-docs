@@ -470,9 +470,7 @@ vtysh -c "show ip as-path-access-list"
 
 ### 段階 1 — Consumer 登録
 
-`bgpcfgd` (`sonic-bgpcfgd`) が CONFIG_DB の `AS_PATH_SET` テーブルを購読する。
-
-`bgpcfgd` は `ConfigDBConnector.listen()` で `BGP_PEER_RANGE`/`BGP_GLOBALS` 等と合わせて購読。
+`frrcfgd` (`sonic-frr-mgmt-framework`) が `ConfigDBConnector` の keyspace 通知で CONFIG_DB の `AS_PATH_SET` テーブルを購読する。`bgpcfgd` は `AS_PATH_SET` を購読しない（`DEVICE_METADATA` を別経路で購読し `localhost.t2_group_asns` から固定名 `T2_GROUP_ASNS` の access-list を生成する）。
 
 ### 段階 2 — CFG→APPL 翻訳
 

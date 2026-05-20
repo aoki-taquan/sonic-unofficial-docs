@@ -1,6 +1,6 @@
 ---
 title: APPL_DB MCLAG/ICCP 関連テーブル
-description: "APPL_DB MCLAG/ICCP 関連テーブル — mclagsyncd が iccpd からの IPC メッセージを受けて APPL_DB に書き込む MCLAG_FDB_TABLE・ISOLATION_GROUP_TABLE・LAG_TABLE・PORT_TABLE・INTF_TABLE の各フィールドとコード由来デフォルト。"
+description: "APPL_DB MCLAG/ICCP 関連テーブル — mclagsyncd が iccpd からの IPC メッセージを受けて APPL_DB に書き込む MCLAG_FDB_TABLE・ISOLATION_GROUP_TABLE・ACL_TABLE_TABLE・ACL_RULE_TABLE・LAG_TABLE・PORT_TABLE・INTF_TABLE の各フィールドとコード由来デフォルト。"
 area: reference
 hard: 0
 verification: code-verified
@@ -56,7 +56,7 @@ related:
 
 MC-[LAG](../../reference/glossary.md#term-lag) (Multi-Chassis Link Aggregation) の実行時状態は `mclagsyncd` が管理する[^link]。`mclagsyncd` は `iccpd`（ICCP デーモン）から Unix ソケット経由で IPC メッセージを受信し、`ProducerStateTable` 経由で [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込む。
 
-書き込まれるテーブルは 5 種類[^schema]:
+書き込まれるテーブルは 6 テーブル（非対応プラットフォームでは ACL フォールバックを含む）[^schema]:
 
 | APPL_DB テーブル | 目的 |
 |----------------|------|

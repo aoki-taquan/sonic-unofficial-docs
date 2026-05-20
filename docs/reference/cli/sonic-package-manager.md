@@ -13,7 +13,8 @@ sources:
   path: sonic_package_manager/manager.py
   ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
-  config_db: []
+  config_db:
+  - FEATURE
   cli:
   - sonic-package-manager
   - spm

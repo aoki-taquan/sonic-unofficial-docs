@@ -460,7 +460,7 @@ show banner
 
 `hostcfgd` の `BannerMessageHandler` が CONFIG_DB の `BANNER_MESSAGE` テーブルを購読する。
 
-`BANNER_MESSAGE` テーブルの key は `login` / `logout` / `motd`。
+`BANNER_MESSAGE` テーブルはシングルトン（key `global`）で、フィールド `state` / `login` / `motd` / `logout` を持つ。
 
 ### 段階 2 — CFG→APPL 翻訳
 

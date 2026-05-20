@@ -13,6 +13,8 @@ related:
     - AAA
     - TACPLUS_SERVER
     - RADIUS
+    - RADIUS_SERVER
+    - LDAP
     - LDAP_SERVER
   cli:
     - config aaa

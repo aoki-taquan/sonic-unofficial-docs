@@ -185,7 +185,6 @@ show vlan brief
 
 ```bash
 show vlan config
-show vlan dhcp-relay
 ```
 
 ### 期待される出力 (抜粋)

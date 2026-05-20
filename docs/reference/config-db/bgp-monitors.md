@@ -159,7 +159,7 @@ vtysh -c 'show bgp summary'
 
 `bgpcfgd` が CONFIG_DB の `BGP_MONITORS` テーブルを購読する。
 
-`BGP_MONITORS` は BMP target server を定義。`bmpcfgd` との連携もある。
+`BGP_MONITORS` は BMP (BGP Monitoring Protocol) target server ではなく、BGP モニター用の特殊隣接（route-monitor）を定義するテーブル。BMP target server とは無関係。
 
 ### 段階 2 — CFG→APPL 翻訳
 
@@ -167,13 +167,13 @@ vtysh -c 'show bgp summary'
 
 ### 段階 3 — APPL→SAI
 
-なし (BMP / FRR モニタリング設定)
+なし (FRR neighbor 設定のみ)
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: 変化検知後 FRR に BGP モニタリング設定を注入。BMP セッションは設定適用後に確立を試みる。
+**適用タイミング**: 変化検知後、`bgpcfgd` が monitors テンプレートを展開して FRR `bgpd` に route-monitor neighbor 設定を投入する。
 
-**副作用**: BMP サーバへの接続が開始/停止される。既存 BGP セッションには影響なし。
+**副作用**: route-monitor BGP セッションが開始/停止される。BMP（BGP Monitoring Protocol）とは無関係。
 <!-- /runtime-trace -->
 
 <!-- side-effects -->

@@ -14,9 +14,8 @@ sources:
   path: sonic_installer/bootloader/__init__.py
   ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
-  config_db:
-  - WARM_RESTART_ENABLE_TABLE
-  - WARM_RESTART_TABLE
+  config_db: []
+  _no_related_config_db: true
   cli:
   - sonic-installer
   yang:
@@ -157,7 +156,7 @@ stp, snmp, swss, syncd, teamd, telemetry, mgmt-framework
 
 ## 関連リファレンス
 
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`WARM_RESTART_ENABLE_TABLE`](../config-db/warm-restart.md) / [`WARM_RESTART_TABLE`](../config-db/warm-restart.md)
+- [STATE_DB](../../reference/glossary.md#term-state_db): [`WARM_RESTART_ENABLE_TABLE`](../config-db/warm-restart.md) / [`WARM_RESTART_TABLE`](../config-db/warm-restart.md)
 
 <!-- ref-triangle:end -->
 
@@ -216,7 +215,7 @@ flowchart LR
   CLI["sonic-installer"]
   BL["bootloader<br/>(Aboot / GRUB / UBoot)"]
   IMG["新 SONiC イメージ / next-boot"]
-  CDB[("CONFIG_DB<br/>WARM_RESTART_ENABLE_TABLE<br/>WARM_RESTART_TABLE")]
+  CDB[("STATE_DB<br/>WARM_RESTART_ENABLE_TABLE<br/>WARM_RESTART_TABLE")]
   DK["docker upgrade-docker"]
   CLI --> BL
   BL --> IMG

@@ -185,7 +185,7 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 ### 範囲外
 
 - **ASIC_DB BGP セッション state**: bgpcfgd / bgpmon は ASIC_DB を参照しない。ASIC_DB への BGP 関連書き込みは `routeorch` (SWSS) が担当し、本テーブル群とは独立した経路。
-- **`BGP_PEER_GROUP`** (CONFIG_DB): 独立テーブルとして存在しない。peer-group 設定は `BGP_NEIGHBOR` 等の内容から Jinja2 テンプレートで生成され、FRR に直接投入される。
+- **`BGP_PEER_GROUP`** (CONFIG_DB): `BGP_PEER_GROUP|<vrf>|<pg_name>` キーで CONFIG_DB に存在する独立テーブル。frrcfgd が直接購読する。詳細は [BGP_PEER_GROUP ページ](bgp-peer-group.md) を参照。なお bgpcfgd 経路では peer-group **設定コマンド**を Jinja2 テンプレートで生成し FRR に投入するが、これはテーブル自体の不在を意味しない。
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-state-cross-refs.md` を参照。
 <!-- /cross-refs -->

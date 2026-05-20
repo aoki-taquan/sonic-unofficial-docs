@@ -596,57 +596,6 @@ STATE_DB 書込み時の `state` 文字列 (`session_state_lookup`):
 > **スキャン証跡**: `bfdorch.cpp` L1-60, L33-54, L340-475, L505-530, L580-655, L780-800 を読了。マクロ 8 件、SAI 列挙文字列マップ 4+4=8 件、初期値リテラル 5 件を抽出。中間ファイル: `meta/_intermediate/cdb-flow/bfd-orch-constants.md`
 <!-- /constants -->
 
-<!-- failure -->
-## 失敗挙動マトリクス (Phase D)
-
-ソース: `sonic-net/sonic-swss/orchagent/bfdorch.cpp`
-
-### capability 照会・初期化の失敗経路
-
-| 失敗条件 | 検出箇所 | 結果 | ログ | evidence |
-|---|---|---|---|---|
-| `sai_query_attribute_capability(BFD_SESSION_STATE_CHANGE_NOTIFY)` が SUCCESS 以外 | `register_bfd_state_change_notification()` | `false` 返却 → 以後 `create_bfd_session()` が即 reject | `LOG_ERROR` ("Unable to query the BFD change notification capability") | `bfdorch.cpp:276-283` |
-| `capability.set_implemented == false` (BFD 通知未実装 ASIC) | 同上 | `false` 返却 → セッション作成不能 | `LOG_ERROR` ("BFD register change notification not supported") | `bfdorch.cpp:286-289` |
-| 通知ハンドラ登録 (`set_switch_attribute`) 失敗 | 同上 | `false` 返却 → セッション作成不能 | `LOG_ERROR` ("Failed to register BFD notification handler") | `bfdorch.cpp:297-300` |
-| `sai_query_attribute_capability(SUPPORTED_IPV4/IPV6_BFD_SESSION_OFFLOAD_TYPE)` 失敗 | `BgpGlobalStateOrch::offload_supported()` | `false` 返却 → `use_software_bfd=true` 経路へ縮退 | `LOG_ERROR` ("Unable to query BFD offload capability") | `bfdorch.cpp:769-772` |
-| `capability.get_implemented == false` | 同上 | `false` 返却 → software BFD 経路へ縮退 | なし (silent) | `bfdorch.cpp:774-777` |
-| offload type 取得失敗 / `u32list.count == 0` | 同上 | `false` 返却 → software BFD 経路 | `LOG_ERROR` ("Could not get supported BFD offload type, rv: %d") | `bfdorch.cpp:784-790` |
-
-### SET 処理 (`create_bfd_session()`) の失敗経路
-
-| 失敗条件 | 戻り値 | 結果 | ログ | evidence |
-|---|---|---|---|---|
-| capability 不在で初期化未完 | `false` | セッション作成 reject、SAI 未呼出 | `LOG_ERROR` ("BFD session for %s cannot be created") | `bfdorch.cpp:307-313` |
-| 同一キーのセッションが既に存在 | `true` (no-op) | 重複作成スキップ。SAI 未呼出 | `LOG_ERROR` ("BFD session for %s already exists") | `bfdorch.cpp:316-319` |
-| key 分割で vrf が取れない | `false` | task 再試行 | `LOG_ERROR` ("Failed to parse key %s, no vrf is given") | `bfdorch.cpp:323-326` |
-| key 分割で interface (alias) が取れない | `false` | task 再試行 | `LOG_ERROR` ("Failed to parse key %s, no ifname is given") | `bfdorch.cpp:330-333` |
-| `type` フィールドが enum 範囲外 | (継続) | enum 更新せず以前の値で進行 | `LOG_ERROR` ("Invalid BFD session type %s") | `bfdorch.cpp:385` |
-| 未知の属性フィールド | (継続) | 該当 fv を無視 | `LOG_ERROR` ("Unsupported BFD attribute %s") | `bfdorch.cpp:402-406` |
-| `local_addr` (src_ip) 未指定 | `true` (drop) | セッション作成スキップ。再試行されない | `LOG_ERROR` ("Failed to create BFD session %s because source IP is not provided") | `bfdorch.cpp:409-413` |
-| `alias != "default"` だが `gPortsOrch->getPort()` 失敗 (PORT 未準備) | `false` | task 再試行 → PORT 準備後に再評価 | `LOG_ERROR` ("Failed to locate port %s") | `bfdorch.cpp:485-488` |
-| `alias != "default"` かつ `dst_mac` 未指定 | `true` (drop) | セッション作成スキップ | `LOG_ERROR` ("destination MAC address required when hardware lookup not valid") | `bfdorch.cpp:491-495` |
-| `alias != "default"` かつ `vrf_name != "default"` | `true` (drop) | セッション作成スキップ。HW lookup 無効に VRF 非対応 | `LOG_ERROR` ("vrf is not supported when hardware lookup not valid") | `bfdorch.cpp:498-502` |
-| `alias == "default"` かつ `dst_mac` 指定 | `true` (drop) | セッション作成スキップ | `LOG_ERROR` ("destination MAC address not supported when hardware lookup valid") | `bfdorch.cpp:523-527` |
-| `sai_bfd_api->create_bfd_session()` 1 回目失敗 | (retry へ) | `retry_create_bfd_session()` で UDP src port を変えながら **最大 `NUM_BFD_SRCPORT_RETRIES = 3` 回**再試行 | `LOG_WARN` ("BFD create using port number %d failed. Retrying with port number %d") | `bfdorch.cpp:547-552, 585-606` |
-| retry 3 回後も SUCCESS 以外 | `handleSaiCreateStatus()` 次第 | recover 不能なら task fail (orchagent abort の可能性)、recover 可能なら次 iteration へ繰越 | `LOG_ERROR` ("Failed to create bfd session %s, rv:%d") | `bfdorch.cpp:554-562` |
-
-### DEL 処理 (`remove_bfd_session()`) の失敗経路
-
-| 失敗条件 | 戻り値 | 結果 | ログ | evidence |
-|---|---|---|---|---|
-| `bfd_session_map` にキーなし (未作成セッションへの DEL) | `true` (no-op) | STATE_DB / map 操作なし | `LOG_ERROR` ("BFD session for %s does not exist") | `bfdorch.cpp:611-614` |
-| `sai_bfd_api->remove_bfd_session()` 失敗 | `handleSaiRemoveStatus()` 次第 | recover 不能なら task fail → 次 iteration へ繰越 | `LOG_ERROR` ("Failed to remove bfd session %s, rv:%d") | `bfdorch.cpp:619-626` |
-| 不明な op (SET/DEL 以外) | (continue) | task consume してスキップ | `LOG_ERROR` ("Unknown operation type %s") | `bfdorch.cpp:213, 836` |
-
-### 補足
-
-- **`return true` vs `return false`**: `true` は task を **consume** (再試行なし)、`false` は **retry 対象**。`local_addr` 未指定 / `dst_mac` 制約違反など「ユーザー設定上の誤り」は `true` (drop)、PORT/VRF 未準備など「依存リソースの一時的未到達」は `false` (retry) という設計。
-- **UDP src port retry**: `NUM_BFD_SRCPORT_RETRIES = 3`、ポート範囲 49152–65535。`update_port_number()` が `bfd_src_port()` で port を再生成して attrs を上書き (`bfdorch.cpp:577-606`)。
-- **capability 不在は再起動が必要**: `register_bfd_state_change_notification()` の評価は `BfdOrch` コンストラクタで 1 回のみ。capability 不在のまま swss 起動した場合、SAI 実装が後で更新されても **swss コンテナ再起動なしには hardware BFD は動かない**。
-- **`use_software_bfd` 経路では SAI 失敗は発生しない**: SAI API を呼ばず STATE_DB `SOFTWARE_BFD_SESSION_TABLE` に転記するのみ (`bfdorch.cpp:133-139, 182-188`)。失敗経路は事前検証 (`local_addr` 未指定など) のみに縮小される。
-
-詳細根拠は `meta/_intermediate/cdb-flow/bfd-orch-failure.md` を参照。
-<!-- /failure -->
 
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)

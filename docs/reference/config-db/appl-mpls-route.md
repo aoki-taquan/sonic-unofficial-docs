@@ -7,16 +7,16 @@ last_verified: 2026-05-15
 sources:
   - repo: sonic-net/sonic-swss
     path: fpmsyncd/routesync.h
-    ref: HEAD
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: fpmsyncd/routesync.cpp
-    ref: HEAD
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: orchagent/mplsrouteorch.cpp
-    ref: HEAD
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: orchagent/nhgorch.cpp
-    ref: HEAD
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db: []
   cli:
