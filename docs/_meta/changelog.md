@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-20 #4771 docs: doc-review fixes (batch 032)
 - 2026-05-20 #4756 docs: doc-review fixes (batch 038)
 - 2026-05-20 #4748 docs: doc-review fixes (batch 022)
 - 2026-05-20 #4773 docs: doc-review fixes (batch 024 real)
@@ -515,7 +516,6 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3569 docs(config-db): add Phase H platform block to voq-inband-interface
 - 2026-05-19 #3568 docs(config-db): add Phase H platform block to nat-counters
 - 2026-05-19 #3567 docs(config-db): add Phase H platform block to dpu-state-detail
-- 2026-05-19 #3558 docs(config-db): add Phase H platform block to copp-port
 - 2026-05-19 #3566 docs(config-db): add Phase F side-effects block to dhcpv4-relay
 - 2026-05-19 #3559 docs(config-db): add Phase G pubsub block to nat-state
 - 2026-05-19 #3565 docs(config-db): add Phase D failure-behavior block to HARDWARE page
