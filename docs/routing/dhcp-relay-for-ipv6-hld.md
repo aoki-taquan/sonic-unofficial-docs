@@ -46,7 +46,7 @@ related:
 
 ## 概要
 
-SONiC の DHCPv4 リレーは `dhcp-relay` docker 内の `isc-dhcp` ベースの `dhcrelay` プロセスで実装されている。本 [HLD](../reference/glossary.md#term-hld) は **同じ `dhcp-relay` docker に IPv6 用の `dhcrelay -6` を並走させる** 形で DHCPv6 リレー機能を追加する設計を定義する[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の DHCPv4 リレーは `dhcp-relay` docker 内の `isc-dhcp` ベースの `dhcrelay` プロセスで実装されている。本 [HLD](../reference/glossary.md#term-hld) は **同じ `dhcp-relay` docker に IPv6 用の `dhcrelay -6` を並走させる** 形で DHCPv6 リレー機能を追加する設計を定義する[^1]。
 
 主な機能要件[^1]:
 
@@ -258,4 +258,4 @@ show ipv6 dhcp-relay counters
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 8edad9eaadfa -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

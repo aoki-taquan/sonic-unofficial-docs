@@ -39,8 +39,8 @@ hard: 0
 
 ## 概要
 
-SONiC の YANG モデルは `sonic-buildimage/src/sonic-yang-models/yang-models/` 以下に格納され、
-CONFIG_DB の検証・管理フレームワーク（mgmt-framework）・DPB の依存解決に使用される。
+[SONiC](../reference/glossary.md#term-sonic) の [YANG](../reference/glossary.md#term-yang) モデルは `sonic-buildimage/src/sonic-yang-models/yang-models/` 以下に格納され、
+[CONFIG_DB](../reference/glossary.md#term-config_db) の検証・管理フレームワーク（mgmt-framework）・[DPB](../reference/glossary.md#term-dpb) の依存解決に使用される。
 本ページは issue tracker で報告された YANG モデルの既知問題を整理する。
 
 ---
@@ -104,7 +104,7 @@ python3 -c "import libyang; print(libyang.__version__)"
 [yang-models] missing ACCEPT in sonic-types.yang which used in ACL
 ```
 
-`sonic-types.yang` の ACL アクション定義に `ACCEPT` が含まれておらず、
+`sonic-types.yang` の [ACL](../reference/glossary.md#term-acl) アクション定義に `ACCEPT` が含まれておらず、
 `ACCEPT` を指定した ACL ルールが YANG 検証で拒否される。
 
 **対処**: `sonic-acl.yang` と `sonic-types.yang` の最新版を確認。
@@ -132,7 +132,7 @@ YANG モデルに定義されていないため、mgmt-framework 経由での設
 Need YANG for BGP_PEER_RANGE table
 ```
 
-BGP 動的ピア（peer-range）のテーブルに YANG モデルがない。
+[BGP](../reference/glossary.md#term-bgp) 動的ピア（peer-range）のテーブルに YANG モデルがない。
 DPB の依存チェックや CONFIG_DB 検証で「未検証テーブル」として警告になる。
 
 ---
@@ -168,7 +168,7 @@ Need Yang for SNMP_AGENT_ADDRESS_CONFIG, SNMP_USER, SNMP_TRAP_CONFIG tables
 ```
 
 これらのテーブルに YANG モデルが存在しないため、
-mgmt-framework 経由での SNMP 設定に制限がある。
+mgmt-framework 経由での [SNMP](../reference/glossary.md#term-snmp) 設定に制限がある。
 
 ---
 
@@ -208,7 +208,7 @@ sonic-yang extension で BGP ピア範囲の重複チェックが実装されて
 [yang-models] Missing constraints in VLAN, VLAN_INTERFACE yang models
 ```
 
-VLAN ID の範囲制約（1-4094）や
+[VLAN](../reference/glossary.md#term-vlan) ID の範囲制約（1-4094）や
 VLAN インターフェースの必須フィールドチェックが
 YANG モデルに反映されていないケースがある。
 
@@ -287,3 +287,5 @@ docker logs mgmt-framework | grep -E 'xDbSpecMap|xpath' | tail -20
 
 - [動的ポートブレイクアウト DPB 既知問題](dynamic-port-breakout-known-issues.md)
 - [CONFIG_DB リファレンス](../reference/config-db/index.md)
+
+<!-- glossary-links-injected: 7c25258ad0ca -->

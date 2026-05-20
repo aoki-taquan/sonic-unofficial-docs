@@ -81,7 +81,7 @@ module: sonic-mux-cable
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `ifname` | `sonic-mux-cable/MUX_CABLE/MUX_CABLE_LIST/ifname` | `leafref` | yes |  | /prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name | Port on which [MUX](../../reference/glossary.md#term-mux) cable is configured |
-| `cable_type` | `sonic-mux-cable/MUX_CABLE/MUX_CABLE_LIST/cable_type` | `enumeration` |  |  | active-active, active-standby | SONiC DualToR interface cable type |
+| `cable_type` | `sonic-mux-cable/MUX_CABLE/MUX_CABLE_LIST/cable_type` | `enumeration` |  |  | active-active, active-standby | [SONiC](../../reference/glossary.md#term-sonic) DualToR interface cable type |
 | `prober_type` | `sonic-mux-cable/MUX_CABLE/MUX_CABLE_LIST/prober_type` | `enumeration` |  |  | active, passive | DualToR LinkMgrd ICMP prober mode |
 | `neighbor_mode` | `sonic-mux-cable/MUX_CABLE/MUX_CABLE_LIST/neighbor_mode` | `enumeration` |  |  |  | DualToR MUX neighbor mode |
 | `server_ipv4` | `sonic-mux-cable/MUX_CABLE/MUX_CABLE_LIST/server_ipv4` | `inet:ipv4-prefix` |  |  |  | Server IPv4 address |
@@ -128,4 +128,4 @@ module: sonic-mux-cable
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mux-cable.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

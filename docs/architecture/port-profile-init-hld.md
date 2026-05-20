@@ -94,7 +94,7 @@ sequenceDiagram
 
 ### Legacy flow（fallback）
 
-bulk 非対応 vendor では従来通り、個別 `create_port` / `remove_port` / `set_port_attribute` を port ごとに発行する[^1]。Multi-ASIC は ASIC ごとに swss / [Redis](../reference/glossary.md#term-redis) が独立しているため bulk 判定も ASIC 単位で行われる。
+bulk 非対応 vendor では従来通り、個別 `create_port` / `remove_port` / `set_port_attribute` を port ごとに発行する[^1]。[Multi-ASIC](../reference/glossary.md#term-multi-asic) は [ASIC](../reference/glossary.md#term-asic) ごとに swss / [Redis](../reference/glossary.md#term-redis) が独立しているため bulk 判定も ASIC 単位で行われる。
 
 ### SAI API（参考）
 
@@ -184,4 +184,4 @@ reasoning: 本機能の主要 goal が fast-boot 30s 達成にある根拠。
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: bb6970f11536 -->
+<!-- glossary-links-injected: a4e1093efab5 -->

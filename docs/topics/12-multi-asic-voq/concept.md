@@ -48,7 +48,7 @@ related:
 
 # 概念
 
-Multi-ASIC と [VOQ](../../reference/glossary.md#term-voq) chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 ASIC を基準に、どこから「Multi-ASIC」になり、どこから「VOQ chassis」になるのかを言葉のレベルで整理します。
+[Multi-ASIC](../../reference/glossary.md#term-multi-asic) と [VOQ](../../reference/glossary.md#term-voq) chassis は別の話に見えて段階的につながっています。ここでは pizza-box 1 [ASIC](../../reference/glossary.md#term-asic) を基準に、どこから「Multi-ASIC」になり、どこから「VOQ chassis」になるのかを言葉のレベルで整理します。
 
 ## Multi-ASIC / VOQ は何を解決するか
 
@@ -60,7 +60,7 @@ Multi-ASIC と [VOQ](../../reference/glossary.md#term-voq) chassis は別の話�
 - counter / show: `show interfaces counters` は ASIC を跨ぐのか、まとめるのか
 - fabric / chassis: line card を跨いだ system port は単一 switch に見えるのか
 
-Multi-ASIC SONiC と VOQ SONiC が解決しているのは、**「複数 ASIC があるのに 1 つのスイッチとして運用できる」UX を NOS 側で組み上げる**ことです。具体的な手段が、namespace 分離、[Redis](../../reference/glossary.md#term-redis) インスタンス多重化、Chassis DB、system port、distributed VOQ の組み合わせです。
+Multi-ASIC [SONiC](../../reference/glossary.md#term-sonic) と VOQ SONiC が解決しているのは、**「複数 ASIC があるのに 1 つのスイッチとして運用できる」UX を NOS 側で組み上げる**ことです。具体的な手段が、namespace 分離、[Redis](../../reference/glossary.md#term-redis) インスタンス多重化、Chassis DB、system port、distributed VOQ の組み合わせです。
 
 ## SONiC 内での位置
 
@@ -195,4 +195,4 @@ sequenceDiagram
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 - [BGP と FRR 制御プレーン](../02-bgp/index.md)
 
-<!-- glossary-links-injected: b6a1be57dc45 -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

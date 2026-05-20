@@ -33,7 +33,7 @@ related:
 
 # アーキテクチャ
 
-[PINS](../../reference/glossary.md#term-pins) の data path は「コントローラ → P4RT App → [APPL_DB](../../reference/glossary.md#term-appl_db) → P4Orch → [SAI](../../reference/glossary.md#term-sai) → ASIC」と、その逆方向の応答 / PacketIO の 2 系統で構成されます。ここでは controller から [orchagent](../../reference/glossary.md#term-orchagent) までの流れを通しで掴むための地図を作ります。各コンポーネントの細部は既存 [HLD](../../reference/glossary.md#term-hld) ページに移譲します。
+[PINS](../../reference/glossary.md#term-pins) の data path は「コントローラ → [P4RT](../../reference/glossary.md#term-p4rt) App → [APPL_DB](../../reference/glossary.md#term-appl_db) → P4Orch → [SAI](../../reference/glossary.md#term-sai) → [ASIC](../../reference/glossary.md#term-asic)」と、その逆方向の応答 / PacketIO の 2 系統で構成されます。ここでは controller から [orchagent](../../reference/glossary.md#term-orchagent) までの流れを通しで掴むための地図を作ります。各コンポーネントの細部は既存 [HLD](../../reference/glossary.md#term-hld) ページに移譲します。
 
 ## controller から ASIC までの流れ
 
@@ -74,8 +74,8 @@ PacketIO は CPU と controller の間にもう一系統のチャネルを足し
 |----|------|------|
 | `APPL_DB` (0) | `P4RT_TABLE` 系の購読対象 | P4RT App が書く |
 | `APPL_STATE_DB` (14) | P4Orch の同期応答（成否、属性反映） | P4RT App が読む |
-| `ASIC_DB` (1) | sairedis 経由の SAI オブジェクト | 通常 SONiC と同じ |
+| `ASIC_DB` (1) | sairedis 経由の SAI オブジェクト | 通常 [SONiC](../../reference/glossary.md#term-sonic) と同じ |
 
 `P4RT_TABLE` の具体 schema や DB layout の追加点は [PINS HLD](../../management/pins-hld.md) を参照してください。
 
-<!-- glossary-links-injected: 96695e77e194 -->
+<!-- glossary-links-injected: 4b7e3e133212 -->

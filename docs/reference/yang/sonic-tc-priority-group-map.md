@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-tc-priority-group-map`
 
-TC_TO_PRIORITY_GROUP_MAP yang Module for SONiC OS. Traffic Class を ingress priority group へマップしバッファ受入制御に使う。[^1]
+TC_TO_PRIORITY_GROUP_MAP yang Module for [SONiC](../../reference/glossary.md#term-sonic) OS. Traffic Class を ingress priority group へマップしバッファ受入制御に使う。[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -41,6 +41,18 @@ flowchart LR
 !!! note "凡例"
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
+
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 対応 CONFIG_DB
+
+- [`TC_TO_PRIORITY_GROUP_MAP`](../config-db/tc-to-priority-group-map.md)
+
+<!-- /yang-xref -->
 
 ## ツリー
 
@@ -99,4 +111,4 @@ module: sonic-tc-priority-group-map
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-tc-priority-group-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

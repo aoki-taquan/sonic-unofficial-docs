@@ -41,7 +41,7 @@ related:
 
 # 運用
 
-[ACL](../../reference/glossary.md#term-acl) / [CoPP](../../reference/glossary.md#term-copp) / mirror の調査では、設定が存在するか、ASIC に反映されたか、counter が増えるかを分けて確認します。[CONFIG_DB](../../reference/glossary.md#term-config_db) に見えていることと、実際に hardware に作られていることは同じではありません。
+[ACL](../../reference/glossary.md#term-acl) / [CoPP](../../reference/glossary.md#term-copp) / mirror の調査では、設定が存在するか、[ASIC](../../reference/glossary.md#term-asic) に反映されたか、counter が増えるかを分けて確認します。[CONFIG_DB](../../reference/glossary.md#term-config_db) に見えていることと、実際に hardware に作られていることは同じではありません。
 
 ## ACL の状態確認
 
@@ -223,4 +223,4 @@ ip2me                   50        4000     0       default
 - [CoPP neighbor-miss trap と強化](../../acl-qos/copp-neighbor-miss-trap-and-enhancements.md) — CoPP の trap group 設計
 - [CoPP manager リデザイン テストプラン](../../acl-qos/copp-manager-redesign-test-plan.md) — trap 別の挙動確認の観点
 
-<!-- glossary-links-injected: 7346a8b8c6b2 -->
+<!-- glossary-links-injected: c006405759d8 -->

@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-SRv6 の MySID エントリに対するパケット・バイトカウンタは `STATE_DB` ではなく **`COUNTERS_DB`** に格納される[^1]。`Srv6Orch` が SAI の `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` をプラットフォームがサポートしている場合に限りカウンタを作成し、`SRV6_STAT_COUNTER` FlexCounter グループ経由で 10 秒ごとにポーリングする[^2]。
+[SRv6](../../reference/glossary.md#term-srv6) の MySID エントリに対するパケット・バイトカウンタは `STATE_DB` ではなく **`COUNTERS_DB`** に格納される[^1]。`Srv6Orch` が [SAI](../../reference/glossary.md#term-sai) の `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` をプラットフォームがサポートしている場合に限りカウンタを作成し、`SRV6_STAT_COUNTER` [FlexCounter](../../reference/glossary.md#term-flexcounter) グループ経由で 10 秒ごとにポーリングする[^2]。
 
 !!! note "STATE_DB について"
     SONiC の SRv6 機能には専用の STATE_DB テーブルが存在しない。MySID の動作状態は COUNTERS_DB（カウンタ）と APP_DB（`SRV6_SID_LIST_TABLE` / `SRV6_MY_SID_TABLE`）の組み合わせで追跡する。
@@ -42,23 +42,19 @@ SRv6 の MySID エントリに対するパケット・バイトカウンタは `
 
 ```mermaid
 flowchart LR
-  CFG[("CONFIG_DB<br/>SRV6_MY_SIDS")]
-  ORCH["Srv6Orch<br/>addMySidCounter()"]
-  SAI["SAI<br/>SAI_MY_SID_ENTRY_ATTR_COUNTER_ID"]
-  FC["FlexCounter<br/>SRV6_STAT_COUNTER<br/>(10 秒ポーリング)"]
-  MAP[("COUNTERS_DB<br/>COUNTERS_SRV6_NAME_MAP")]
-  CNT[("COUNTERS_DB<br/>COUNTERS:<oid>")]
-  CLI["show srv6 stats<br/>(srv6stat.py)"]
-
-  CFG --> ORCH --> SAI
-  ORCH --> MAP
-  FC --> CNT
-  MAP --> CLI
-  CNT --> CLI
+  CDB[("CONFIG_DB<br/>SRV6_MY_SIDS")]
+  DM["Srv6Orch"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_SRV6_MY_SID_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_srv6_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から COUNTERS_DB までの典型経路。SAI がカウンタ未対応の場合 MAP/CNT は生成されない。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## テーブル: `COUNTERS_SRV6_NAME_MAP`
@@ -67,13 +63,13 @@ flowchart LR
 COUNTERS_SRV6_NAME_MAP
 ```
 
-MySID プレフィックス文字列から SAI カウンタ OID へのマッピング。
+MySID プレフィックス文字列から [SAI](../../reference/glossary.md#term-sai) カウンタ OID へのマッピング。
 
 | フィールド | 型 | 説明 |
 |-----------|-----|------|
-| `<mysid_prefix>` | string (OID) | MySID IPv6 プレフィックス（例: `fcbb:bbbb:20:f1::/64`）→ SAI カウンタ OID（例: `oid:0x17000000001000`）のマッピング |
+| `<mysid_prefix>` | string (OID) | MySID IPv6 プレフィックス（例: `fcbb:bbbb:20:f1::/64`）→ [SAI](../../reference/glossary.md#term-sai) カウンタ OID（例: `oid:0x17000000001000`）のマッピング |
 
-- **書き込み**: `Srv6Orch::addMySidCounter()` — MySID エントリを ASIC に追加した直後
+- **書き込み**: `Srv6Orch::addMySidCounter()` — MySID エントリを [ASIC](../../reference/glossary.md#term-asic) に追加した直後
 - **削除**: `Srv6Orch::removeMySidCounter()` — MySID エントリ削除時
 
 ## テーブル: `COUNTERS:<oid>`
@@ -87,12 +83,12 @@ COUNTERS|<counter_oid>
 | `SAI_COUNTER_STAT_PACKETS` | integer (文字列) | `"0"` | 該当 MySID エントリで処理したパケット数（累積） |
 | `SAI_COUNTER_STAT_BYTES` | integer (文字列) | `"0"` | 該当 MySID エントリで処理したバイト数（累積） |
 
-- **書き込み**: syncd の FlexCounter — `SRV6_STAT_COUNTER` グループが `SRV6_STAT_COUNTER_POLLING_INTERVAL_MS = 10000` ms 周期で SAI からポーリング
+- **書き込み**: [syncd](../../reference/glossary.md#term-syncd) の [FlexCounter](../../reference/glossary.md#term-flexcounter) — `SRV6_STAT_COUNTER` グループが `SRV6_STAT_COUNTER_POLLING_INTERVAL_MS = 10000` ms 周期で SAI からポーリング
 - `<counter_oid>` は `COUNTERS_SRV6_NAME_MAP` の値部分
 
 ## カウンタキー生成ロジック
 
-`Srv6Orch::getMySidCounterKey()` (srv6orch.cpp:177-182) が COUNTERS_DB のマップキーを生成する:
+`Srv6Orch::getMySidCounterKey()` (srv6orch.cpp:177-182) が [COUNTERS_DB](../../reference/glossary.md#term-counters_db) のマップキーを生成する:
 
 ```
 mysid_addr (IPv6 文字列) + "/" + (block_len + node_len + func_len)
@@ -153,7 +149,7 @@ SAI 非対応プラットフォームでは `COUNTERS_SRV6_NAME_MAP` が作成�
 #define SRV6_FLEX_COUNTER_UPDATE_TIMER 1             // srv6orch.cpp:26 (OID 登録遅延タイマー, 秒)
 ```
 
-MySID エントリを追加してから OID が FlexCounter に登録されるまで最大 1 秒の遅延がある。
+MySID エントリを追加してから OID が [FlexCounter](../../reference/glossary.md#term-flexcounter) に登録されるまで最大 1 秒の遅延がある。
 その後 10 秒ごとにカウンタが更新される。
 
 ### ビット長デフォルト (カウンタキー影響)
@@ -178,14 +174,14 @@ MySID エントリを追加してから OID が FlexCounter に登録される�
 > 根拠: `srv6orch.cpp` L120-132, L184-210, L251-284, L1591-1601, L1660-1680, L286-313。
 > evidence: `meta/_intermediate/cdb-flow/srv6-state-ordering.md`
 
-COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が内部的に管理するため、
+[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が内部的に管理するため、
 ユーザーが直接書き込む必要はない。ただし以下の順序依存・タイミング依存が存在する。
 
 ### 検出された順序依存
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | SAI 能力チェックは orchagent 起動時一回限り (`initializeCounters`) | **強制先行**（後変更不可） | SAI 非対応なら orchagent 再起動しか解消手段なし |
+| 1 | SAI 能力チェックは [orchagent](../../reference/glossary.md#term-orchagent) 起動時一回限り (`initializeCounters`) | **強制先行**（後変更不可） | SAI 非対応なら [orchagent](../../reference/glossary.md#term-orchagent) 再起動しか解消手段なし |
 | 2 | `FLEX_COUNTER_TABLE\|SRV6 enable` と `SRV6_MY_SID_TABLE` エントリの書き込み順序 | どちらが先でも可 | 後から書いた側が既存エントリへカウンタを自動付与 |
 | 3 | `COUNTERS_SRV6_NAME_MAP` 書き込みは即時だが `COUNTERS:<oid>` 初回値は最大 11 秒遅延 | タイミング依存 | 設定直後に空でも正常（最大 1 秒 + 10 秒ポーリング待ち） |
 | 4 | MySID DEL → `COUNTERS_SRV6_NAME_MAP` 自動クリーンアップ | 自動（ユーザー操作不要） | `COUNTERS:<oid>` 残留値は `sonic-clear srv6stats` でリセット |
@@ -193,7 +189,7 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が�
 ### 主要な制約詳細
 
 **SAI 能力チェックは起動時一回限り (依存 #1)**:
-`initializeCounters()` は orchagent 起動時に `queryMySidCountersCapability()` を一度だけ呼び出し、
+`initializeCounters()` は [orchagent](../../reference/glossary.md#term-orchagent) 起動時に `queryMySidCountersCapability()` を一度だけ呼び出し、
 `m_mysid_counters_supported` フラグを確定する。
 その後 `setCountersState()` 冒頭で `getMySidCountersSupported()` が false の場合に即 return するため、
 **実行中に SAI 対応プラットフォームへ切り替えることはできない**（evidence: `srv6orch.cpp:120-132`, `srv6orch.cpp:251-260`）。
@@ -206,7 +202,7 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が�
 **`COUNTERS:<oid>` 反映の最大 11 秒遅延 (依存 #3)**:
 `addMySidCounter()` は `COUNTERS_SRV6_NAME_MAP` に OID を即時書き込むが、
 `FLEX_COUNTER_DB` への `SRV6_COUNTER_ID_LIST` 登録は `SRV6_FLEX_COUNTER_UPDATE_TIMER = 1` 秒のタイマー後。
-syncd がポーリングを開始してから最初の `COUNTERS:<oid>` 値が書き込まれるまでさらに
+[syncd](../../reference/glossary.md#term-syncd) がポーリングを開始してから最初の `COUNTERS:<oid>` 値が書き込まれるまでさらに
 `SRV6_STAT_COUNTER_POLLING_INTERVAL_MS = 10000` ms 待つ必要がある
 （evidence: `srv6orch.cpp:184-210`, `srv6orch.cpp:26-27`）。
 
@@ -220,20 +216,20 @@ syncd がポーリングを開始してから最初の `COUNTERS:<oid>` 値が�
 
 | 参照元 | 参照先 | 種別 | 必須条件 |
 |--------|--------|------|----------|
-| `COUNTERS_SRV6_NAME_MAP` キー | `CONFIG_DB SRV6_MY_LOCATORS` の `block_len`/`node_len`/`func_len` | ビット長計算 (直接 GET) | ロケータが CONFIG_DB に存在すること（欠落でキー計算失敗） |
+| `COUNTERS_SRV6_NAME_MAP` キー | `CONFIG_DB SRV6_MY_LOCATORS` の `block_len`/`node_len`/`func_len` | ビット長計算 (直接 GET) | ロケータが [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在すること（欠落でキー計算失敗） |
 | `COUNTERS:<oid>` | `FLEX_COUNTER_DB SRV6_COUNTER_ID_LIST` | FlexCounter 間接トリガー | SAI 対応プラットフォームかつ enable 状態であること |
 | `COUNTERS_SRV6_NAME_MAP` (一括) | `FLEX_COUNTER_TABLE\|SRV6` enable/disable | orch 内部連動 | `setCountersState()` 呼び出し |
 | `show srv6 stats` CLI | `COUNTERS_DB COUNTERS_SRV6_NAME_MAP` + `COUNTERS:<oid>` | 直接読取 | カウンタ初期化後、最大 11 秒待ちで初回値が出現 |
 
 ### COUNTERS_SRV6_NAME_MAP キーと SRV6_MY_LOCATORS の関係
 
-`getMySidCounterKey()` (`srv6orch.cpp:177-182`) は COUNTERS_DB に書き込むキーを以下で生成する:
+`getMySidCounterKey()` (`srv6orch.cpp:177-182`) は [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に書き込むキーを以下で生成する:
 
 ```cpp
 return mysid_addr + "/" + to_string(block_len + node_len + func_len)
 ```
 
-`block_len` / `node_len` / `func_len` は `getLocatorCfgFromDb()` が CONFIG_DB `SRV6_MY_LOCATORS` から取得する。ロケータを後から変更した場合、既存の `COUNTERS_SRV6_NAME_MAP` エントリのキーが旧プレフィックス長のまま残存し、`show srv6 stats` に孤立エントリが出現する可能性がある。`sonic-clear srv6stats` でキャッシュをクリアして `Srv6Orch` が MySID を再作成するまで解消されない。
+`block_len` / `node_len` / `func_len` は `getLocatorCfgFromDb()` が [CONFIG_DB](../../reference/glossary.md#term-config_db) `SRV6_MY_LOCATORS` から取得する。ロケータを後から変更した場合、既存の `COUNTERS_SRV6_NAME_MAP` エントリのキーが旧プレフィックス長のまま残存し、`show srv6 stats` に孤立エントリが出現する可能性がある。`sonic-clear srv6stats` でキャッシュをクリアして `Srv6Orch` が MySID を再作成するまで解消されない。
 
 ### FLEX_COUNTER_TABLE|SRV6 と カウンタの一括制御
 
@@ -255,7 +251,7 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が�
 |----------|----------|------|----------|----------|
 | SAI が `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` 未対応 | `queryMySidCountersCapability()` `srv6orch.cpp:144-155` | カウンタ機能全体が無効化（起動時一回限り確定） | orchagent 再起動のみ | `SWSS_LOG_INFO("SRv6 counters are not supported on this platform")` |
 | `sai_query_attribute_capability()` 呼び出し自体が非 SUCCESS | `queryMySidCountersCapability()` `srv6orch.cpp:147-151` | 同上 | orchagent 再起動のみ | `SWSS_LOG_WARN("Could not query SRv6 MySID entry attribute SAI_MY_SID_ENTRY_ATTR_COUNTER_ID %d")` |
-| SAI generic counter 作成失敗 | `addMySidCounter()` `srv6orch.cpp:188-192` | `addMySidCounter` が false → **MySID エントリ自体が ASIC 未作成** | なし | `SWSS_LOG_ERROR("Failed to create SAI counter for SRv6 MySID entry")` |
+| SAI generic counter 作成失敗 | `addMySidCounter()` `srv6orch.cpp:188-192` | `addMySidCounter` が false → **MySID エントリ自体が [ASIC](../../reference/glossary.md#term-asic) 未作成** | なし | `SWSS_LOG_ERROR("Failed to create SAI counter for SRv6 MySID entry")` |
 | `setMySidEntryCounter()` での SAI セット失敗 | `setMySidEntryCounter()` `srv6orch.cpp:244-248` | `COUNTERS_SRV6_NAME_MAP` 書き込み済みだが SAI エントリへのカウンタ紐付けが失敗状態 | なし（ロールバックなし） | `SWSS_LOG_ERROR("Failed to set my_sid entry counter oid to %s, rc: %s")` |
 | SAI platform が disable 時の `set_my_sid_entry_attribute` 失敗 | `setCountersState(false)` `srv6orch.cpp:278-280` | エラーログのみ。`removeMySidCounter()` は続行され `COUNTERS_SRV6_NAME_MAP` から削除される | なし | `SWSS_LOG_ERROR` (setMySidEntryCounter 経由) |
 
@@ -291,10 +287,10 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が�
 #define SRV6_STAT_COUNTER_POLLING_INTERVAL_MS 10000 // FlexCounter ポーリング間隔（ミリ秒）
 ```
 
-MySID エントリが ASIC に追加されると `addMySidCounter()` が `m_pending_counters` にカウンタ OID を積む
+MySID エントリが [ASIC](../../reference/glossary.md#term-asic) に追加されると `addMySidCounter()` が `m_pending_counters` にカウンタ OID を積む
 （`srv6orch.cpp:201-202`）。その後 `SRV6_FLEX_COUNTER_UPDATE_TIMER = 1` 秒のタイマーで
 `FLEX_COUNTER_DB SRV6_COUNTER_ID_LIST` に OID が書き込まれ、
-syncd FlexCounter が `SRV6_STAT_COUNTER_POLLING_INTERVAL_MS = 10000` ms 周期で SAI をポーリングして
+[syncd](../../reference/glossary.md#term-syncd) FlexCounter が `SRV6_STAT_COUNTER_POLLING_INTERVAL_MS = 10000` ms 周期で SAI をポーリングして
 `COUNTERS:<oid>` を書き込む。
 MySID 追加から `COUNTERS:<oid>` 初回値が出現するまでの最大待機時間は **1 + 10 = 11 秒**（`srv6orch.cpp:108,138`）。
 
@@ -320,7 +316,7 @@ MySID 追加から `COUNTERS:<oid>` 初回値が出現するまでの最大待�
 > 根拠: `srv6orch.cpp` `addMySidCounter()` L184-210、`removeMySidCounter()` L212-234、`setMySidEntryCounter()` L236-248、`setCountersState()` L251-283、`doTask(SelectableTimer)` L286-313、`createUpdateMysidEntry()` L1589-1614 全行精読。
 > evidence: `meta/_intermediate/cdb-flow/srv6-state-side-effects.md`
 
-COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザーが直接書き込むテーブルではない。`Srv6Orch` が `SRV6_MY_SIDS` (CONFIG_DB) および `FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER` の変化を受けて、以下の副次書込みを実行する。
+COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザーが直接書き込むテーブルではない。`Srv6Orch` が `SRV6_MY_SIDS` ([CONFIG_DB](../../reference/glossary.md#term-config_db)) および `FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER` の変化を受けて、以下の副次書込みを実行する。
 
 ### SRV6_MY_SIDS SET → COUNTERS_DB 書込み
 
@@ -329,10 +325,10 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザーが�
 | 副次 DB / API | キー / 操作 | タイミング | ソース |
 |-------------|-----------|-----------|--------|
 | COUNTERS_DB / `COUNTERS_SRV6_NAME_MAP` | `hset("", sid_prefix, counter_oid)` — MySID ごとのカウンタ OID を登録 | 即時 | `srv6orch.cpp:196-199` |
-| FLEX_COUNTER_DB / `SRV6_STAT_COUNTER:<oid>` | `setCounterIdList` — 1 秒タイマー後に FLEX_COUNTER_DB 登録 | 最大 1 秒遅延 | `srv6orch.cpp:300` |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `SRV6_STAT_COUNTER:<oid>` | `setCounterIdList` — 1 秒タイマー後に [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) 登録 | 最大 1 秒遅延 | `srv6orch.cpp:300` |
 | SAI / `sai_srv6_api` | `set_my_sid_entry_attribute(SAI_MY_SID_ENTRY_ATTR_COUNTER_ID, counter_oid)` — ASIC カウンタ紐付け | SAI 呼び出し直後 | `srv6orch.cpp:244` |
 
-`gTraditionalFlexCounter=true` の場合、FLEX_COUNTER_DB への登録は ASIC_DB `VIDTORID` の VID→RID 解決確認後に行われる（`srv6orch.cpp:293-295`）。
+`gTraditionalFlexCounter=true` の場合、[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への登録は [ASIC_DB](../../reference/glossary.md#term-asic_db) `VIDTORID` の VID→RID 解決確認後に行われる（`srv6orch.cpp:293-295`）。
 
 ### SRV6_MY_SIDS DEL → COUNTERS_DB クリーンアップ
 
@@ -363,14 +359,14 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザーが�
 > evidence: `meta/_intermediate/cdb-flow/srv6-state-pubsub.md`
 
 `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` (COUNTERS_DB) は `Srv6Orch` と syncd が書き手となる。
-それぞれの書き込みがどの Redis 通信メカニズムで駆動されるかを以下に示す。
+それぞれの書き込みがどの [Redis](../../reference/glossary.md#term-redis) 通信メカニズムで駆動されるかを以下に示す。
 
 ### Producer/Consumer ペア
 
 | 区間 | 方式 | チャンネル / パターン |
 |------|------|--------------------|
-| `fpmsyncd` → APPL_DB `SRV6_MY_SID_TABLE` | `ProducerStateTable`（SET/DEL） | `SRV6_MY_SID_TABLE_CHANNEL@0` |
-| APPL_DB `SRV6_MY_SID_TABLE` → `Srv6Orch` | **`ConsumerStateTable`** (LPOP) | `SRV6_MY_SID_TABLE_CHANNEL@0` |
+| `fpmsyncd` → [APPL_DB](../../reference/glossary.md#term-appl_db) `SRV6_MY_SID_TABLE` | `ProducerStateTable`（SET/DEL） | `SRV6_MY_SID_TABLE_CHANNEL@0` |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) `SRV6_MY_SID_TABLE` → `Srv6Orch` | **`ConsumerStateTable`** (LPOP) | `SRV6_MY_SID_TABLE_CHANNEL@0` |
 | CONFIG_DB `SRV6_MY_SIDS` → `Srv6Orch` | **`SubscriberStateTable`** (PSUBSCRIBE) | `__keyspace@4__:SRV6_MY_SIDS\|*` |
 | `FLEX_COUNTER_TABLE\|SRV6` → `Srv6Orch` | `FlexCounterOrch` コールバック (`setCountersState`) | — |
 | `Srv6Orch` → FLEX_COUNTER_DB | `FlexCounterManager::setCounterIdList`（1 秒タイマー後） | `SRV6_STAT_COUNTER:<oid>` |
@@ -379,11 +375,11 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザーが�
 
 ### APPL_DB 消費方式: ConsumerStateTable
 
-`Orch::addConsumer()` (`orch.cpp:1186-1195`) は DB 番号で通信方式を切り替える。APPL_DB (db_id=0) は `ConsumerStateTable` ブランチを選択し、fpmsyncd が書き込んだ `ProducerStateTable` イベントを LPOP で取得する。`SRV6_SID_LIST_TABLE` / `SRV6_MY_SID_TABLE` / `PIC_CONTEXT_TABLE` の 3 テーブルがこの経路を使用する（evidence: `orchdaemon.cpp:312-324`）。
+`Orch::addConsumer()` (`orch.cpp:1186-1195`) は DB 番号で通信方式を切り替える。[APPL_DB](../../reference/glossary.md#term-appl_db) (db_id=0) は `ConsumerStateTable` ブランチを選択し、[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が書き込んだ `ProducerStateTable` イベントを LPOP で取得する。`SRV6_SID_LIST_TABLE` / `SRV6_MY_SID_TABLE` / `PIC_CONTEXT_TABLE` の 3 テーブルがこの経路を使用する（evidence: `orchdaemon.cpp:312-324`）。
 
 ### CONFIG_DB 消費方式: SubscriberStateTable
 
-`SRV6_MY_SIDS` (CONFIG_DB, db_id=4) は `SubscriberStateTable` ブランチが選択される。`SubscriberStateTable` は Redis keyspace notification を `PSUBSCRIBE __keyspace@4__:SRV6_MY_SIDS|*` で購読し、`hset` / `del` 操作を検出する。フィールド値は通知後に `HGETALL` で取得する。起動時には既存全エントリが `SET_COMMAND` として buffer に積まれ、`doTask` が初回コールされる（evidence: `orch.cpp:1186-1190`）。
+`SRV6_MY_SIDS` (CONFIG_DB, db_id=4) は `SubscriberStateTable` ブランチが選択される。`SubscriberStateTable` は [Redis](../../reference/glossary.md#term-redis) keyspace notification を `PSUBSCRIBE __keyspace@4__:SRV6_MY_SIDS|*` で購読し、`hset` / `del` 操作を検出する。フィールド値は通知後に `HGETALL` で取得する。起動時には既存全エントリが `SET_COMMAND` として buffer に積まれ、`doTask` が初回コールされる（evidence: `orch.cpp:1186-1190`）。
 
 ### FLEX_COUNTER_TABLE enable/disable: コールバック方式
 
@@ -395,7 +391,7 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザーが�
 
 ### COUNTERS_DB への書き込みは ProducerStateTable 非経由
 
-`Srv6Orch` は `COUNTERS_SRV6_NAME_MAP` を `Table::set()` / `Table::hdel()` で直接書き込む（`m_mysid_counters_table` は `Table` 型）。syncd も `COUNTERS|<oid>` を SAI ポーリング後 `HSET` で直接書き込む。どちらも `ProducerStateTable` / チャンネル PUBLISH を使用しないため、COUNTERS_DB の変更は Redis keyspace notification のみで追跡可能（pub/sub チャンネルは存在しない）。
+`Srv6Orch` は `COUNTERS_SRV6_NAME_MAP` を `Table::set()` / `Table::hdel()` で直接書き込む（`m_mysid_counters_table` は `Table` 型）。syncd も `COUNTERS|<oid>` を SAI ポーリング後 `HSET` で直接書き込む。どちらも `ProducerStateTable` / チャンネル PUBLISH を使用しないため、COUNTERS_DB の変更は [Redis](../../reference/glossary.md#term-redis) keyspace notification のみで追跡可能（pub/sub チャンネルは存在しない）。
 
 <!-- /pubsub -->
 
@@ -425,7 +421,7 @@ orchagent 起動引数 `-c traditional` (`main.cpp:529-531`) で `gTraditionalFl
 | モード | FLEX_COUNTER_DB 登録タイミング |
 |--------|-------------------------------|
 | デフォルト (`false`) | MySID 追加から 1 秒後（タイマー発火で即登録） |
-| traditional (`true`) | タイマー発火時に ASIC_DB `VIDTORID` で VID→RID 変換が確認できるまで待機。RID 未確定の場合はポーリングが繰り返されるため `COUNTERS:<oid>` 初回値の出現がさらに遅延する（evidence: `srv6orch.cpp:293-295`） |
+| traditional (`true`) | タイマー発火時に [ASIC_DB](../../reference/glossary.md#term-asic_db) `VIDTORID` で VID→RID 変換が確認できるまで待機。RID 未確定の場合はポーリングが繰り返されるため `COUNTERS:<oid>` 初回値の出現がさらに遅延する（evidence: `srv6orch.cpp:293-295`） |
 
 traditional モードは古い Broadcom SDK 系 ASIC などで使用されることがある。
 
@@ -455,5 +451,7 @@ VS (Virtual Switch) など `sai_query_attribute_capability()` 自体が `SAI_STA
 
 ## 引用元
 
-[^1]: SRv6 カウンタ管理: `srv6orch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/srv6orch.cpp>
+[^1]: [SRv6](../../reference/glossary.md#term-srv6) カウンタ管理: `srv6orch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/srv6orch.cpp>
 [^2]: FlexCounter スキーマ定義: `schema.h` L257, L313. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
+
+<!-- glossary-links-injected: fdd18c72e6f4 -->

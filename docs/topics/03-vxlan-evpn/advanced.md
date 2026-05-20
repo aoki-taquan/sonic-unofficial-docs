@@ -52,7 +52,7 @@ related:
 
 EVPN multihoming は、host を複数 leaf に接続し、[BGP](../../reference/glossary.md#term-bgp)-EVPN の Type-1 / Type-4、ESI、DF election、split-horizon で重複転送とループを避ける機能です。通常の EVPN VXLAN が Type-2 / Type-5 で MAC/IP/prefix を配るのに対し、multihoming は Ethernet Segment の制御を追加します。
 
-既存ページでは、`EVPN_ETHERNET_SEGMENT` や [EVPN-MH](../../reference/glossary.md#term-evpn-mh) 用 CLI / [YANG](../../reference/glossary.md#term-yang) が現行 master で確認できない可能性も示されています。利用判断では [FRR](../../reference/glossary.md#term-frr)、[SAI](../../reference/glossary.md#term-sai)、ASIC、SONiC schema の対応状況を個別に確認してください。
+既存ページでは、`EVPN_ETHERNET_SEGMENT` や [EVPN-MH](../../reference/glossary.md#term-evpn-mh) 用 CLI / [YANG](../../reference/glossary.md#term-yang) が現行 master で確認できない可能性も示されています。利用判断では [FRR](../../reference/glossary.md#term-frr)、[SAI](../../reference/glossary.md#term-sai)、[ASIC](../../reference/glossary.md#term-asic)、[SONiC](../../reference/glossary.md#term-sonic) schema の対応状況を個別に確認してください。
 
 ## DASH / SmartSwitch 連携
 
@@ -119,7 +119,7 @@ Subnet decap は VXLAN overlay ではなく、[VLAN](../../reference/glossary.md
 
 ## トラブルシュート観点
 
-- VTEP の `show vxlan tunnel` で remote VTEP が学習されない場合は、BGP-EVPN のセッションと Type-3 (Inclusive Multicast Ethernet Tag) の advertise 状況を `vtysh -c "show bgp l2vpn evpn"` で確認する。
+- [VTEP](../../reference/glossary.md#term-vtep) の `show vxlan tunnel` で remote VTEP が学習されない場合は、BGP-EVPN のセッションと Type-3 (Inclusive Multicast Ethernet Tag) の advertise 状況を `vtysh -c "show bgp l2vpn evpn"` で確認する。
 - MAC 学習が片寄っている場合、Type-2 経路の VNI と local VLAN-VNI mapping の整合を `VXLAN_TUNNEL_MAP` で点検。FRR 側 `evpn vni <id>` も必須。
 - inner hash の偏りは `show interfaces counters` の per-port 分布で見える。ASIC SAI の `SAI_SWITCH_ATTR_LAG_HASH_IPV4` に inner 5-tuple が含まれていない場合、SAI vendor docs と platform `hash.json` の見直しが必要。
 
@@ -136,4 +136,4 @@ Subnet decap は VXLAN overlay ではなく、[VLAN](../../reference/glossary.md
 - [SONiC DASH HLD](../../overlay/sonic-dash-hld.md)
 - [VXLAN SONiC concepts/internals/operations](../../overlay/vxlan-sonic.md)
 
-<!-- glossary-links-injected: 3656a3709ce7 -->
+<!-- glossary-links-injected: 7b27b638c4f3 -->

@@ -61,7 +61,6 @@ flowchart LR
 
 - [`VNET`](../config-db/vnet.md)
 - [`VNET_ROUTE`](../config-db/vnet-route.md)
-- [`VNET_ROUTE_TUNNEL`](../config-db/vnet-route.md)
 
 ### 関連 CLI
 

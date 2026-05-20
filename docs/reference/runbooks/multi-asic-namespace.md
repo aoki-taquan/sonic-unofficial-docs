@@ -39,7 +39,7 @@ related:
 
 ## 症状
 
-- VoQ Chassis / multi-ASIC platform で内部 fabric link は UP しているが iBGP が立たない
+- VoQ Chassis / multi-[ASIC](../../reference/glossary.md#term-asic) platform で内部 fabric link は UP しているが iBGP が立たない
 - ホスト namespace と `asic0` / `asic1` の間で ping が通らない
 - `show ip bgp summary -n asic0` で internal neighbor が Idle
 
@@ -138,4 +138,4 @@ sudo ip netns exec asic0 sonic-db-cli APPL_DB keys "ROUTE_TABLE:*" | head
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `multi_asic.py`
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — orchdaemon の namespace 認識
 
-<!-- glossary-links-injected: 5c57366500bc -->
+<!-- glossary-links-injected: c006405759d8 -->

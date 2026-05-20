@@ -27,7 +27,7 @@ related:
 - import: `ietf-yang-types`, `ietf-inet-types`, `sonic-types`
 - top container: `sonic-device_metadata`
 
-DEVICE_METADATA [YANG](../../reference/glossary.md#term-yang) Module for SONiC OS[^1]
+[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) [YANG](../../reference/glossary.md#term-yang) Module for [SONiC](../../reference/glossary.md#term-sonic) OS[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -143,11 +143,11 @@ module: sonic-device_metadata
 | `type` | `sonic-device_metadata/DEVICE_METADATA/localhost/type` | `string` |  |  | pattern `ToRRouter|LeafRouter|SpineChassisFrontendRouter|ChassisBa...` | Device role type (e.g., ToRRouter, LeafRouter, SpineRouter). |
 | `buffer_model` | `sonic-device_metadata/DEVICE_METADATA/localhost/buffer_model` | `string` |  |  | pattern `dynamic|traditional` | This leaf is added for dynamic buffer calculation. The dynamic model represents the model in which the buffer configurations, like the headroom sizes and buffer pool sizes, are dynamically calculat... |
 | `frr_mgmt_framework_config` | `sonic-device_metadata/DEVICE_METADATA/localhost/frr_mgmt_framework_config` | `boolean` |  | false |  | FRR configurations are handled by sonic-frr-mgmt-framework module when set to true, otherwise, sonic-[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) handles the FRR configurations based on the predefined templates. |
-| `synchronous_mode` | `sonic-device_metadata/DEVICE_METADATA/localhost/synchronous_mode` | `enumeration` |  | enable | enable, disable | Enable or disable ASIC synchronous mode for [orchagent](../../reference/glossary.md#term-orchagent). |
+| `synchronous_mode` | `sonic-device_metadata/DEVICE_METADATA/localhost/synchronous_mode` | `enumeration` |  | enable | enable, disable | Enable or disable [ASIC](../../reference/glossary.md#term-asic) synchronous mode for [orchagent](../../reference/glossary.md#term-orchagent). |
 | `yang_config_validation` | `sonic-device_metadata/DEVICE_METADATA/localhost/yang_config_validation` | `stypes:mode-status` |  | disable |  | Enable or disable [YANG](../../reference/glossary.md#term-yang) model validation for configuration changes. |
 | `cloudtype` | `sonic-device_metadata/DEVICE_METADATA/localhost/cloudtype` | `string` |  |  |  | Cloud environment type where the device is deployed. |
 | `region` | `sonic-device_metadata/DEVICE_METADATA/localhost/region` | `string` |  |  |  | Geographic region where the device is deployed. |
-| `sub_role` | `sonic-device_metadata/DEVICE_METADATA/localhost/sub_role` | `string` |  |  |  | sub_role indicates if ASIC is FrontEnd or BackEnd. |
+| `sub_role` | `sonic-device_metadata/DEVICE_METADATA/localhost/sub_role` | `string` |  |  |  | sub_role indicates if [ASIC](../../reference/glossary.md#term-asic) is FrontEnd or BackEnd. |
 | `downstream_subrole` | `sonic-device_metadata/DEVICE_METADATA/localhost/downstream_subrole` | `string` |  |  |  | Sub-role of the downstream device connected to this device. |
 | `resource_type` | `sonic-device_metadata/DEVICE_METADATA/localhost/resource_type` | `string` |  |  |  | Resource type classification for the device. |
 | `mgmt_type` | `sonic-device_metadata/DEVICE_METADATA/localhost/mgmt_type` | `string` |  |  |  | Indicates the management type of this device. |
@@ -155,12 +155,12 @@ module: sonic-device_metadata
 | `subtype` | `sonic-device_metadata/DEVICE_METADATA/localhost/subtype` | `string` |  |  | pattern `DualToR|SmartSwitch|Supervisor|UpstreamLC|DownstreamLC` | Device subtype for specialized topology roles (e.g., DualToR, [SmartSwitch](../../reference/glossary.md#term-smartswitch)). |
 | `peer_switch` | `sonic-device_metadata/DEVICE_METADATA/localhost/peer_switch` | `stypes:hostname` |  |  |  | Hostname of the peer switch in a dual ToR configuration. |
 | `storage_device` | `sonic-device_metadata/DEVICE_METADATA/localhost/storage_device` | `boolean` |  |  |  | Indicates whether the device is connected to a storage backend. |
-| `asic_name` | `sonic-device_metadata/DEVICE_METADATA/localhost/asic_name` | `string` |  |  |  | On a VoQ switch, the ASIC Name is used as a qualifier in global database keys to create a system wide unique key. |
+| `asic_name` | `sonic-device_metadata/DEVICE_METADATA/localhost/asic_name` | `string` |  |  |  | On a VoQ switch, the [ASIC](../../reference/glossary.md#term-asic) Name is used as a qualifier in global database keys to create a system wide unique key. |
 | `switch_id` | `sonic-device_metadata/DEVICE_METADATA/localhost/switch_id` | `uint16` |  |  |  | Vendor specific switch ID. Identifies switch chip. |
 | `switch_type` | `sonic-device_metadata/DEVICE_METADATA/localhost/switch_type` | `string` |  |  | pattern `chassis-packet|fabric|npu|voq|dpu|dummy-sup` | Type of switch. Default is [NPU](../../reference/glossary.md#term-npu), on a [VOQ](../../reference/glossary.md#term-voq) switch voq is used for a regular switching device while fabric is used for a fabric device. chassis-packet is used for chassis in packet mode. |
 | `max_cores` | `sonic-device_metadata/DEVICE_METADATA/localhost/max_cores` | `uint8` |  |  |  | Maximum number of cores in a VoQ Switch (chassis). |
 | `dhcp_server` | `sonic-device_metadata/DEVICE_METADATA/localhost/dhcp_server` | `stypes:admin_mode` |  |  |  | Indicate whether enable the embedded DHCP server. |
-| `bgp_adv_lo_prefix_as_128` | `sonic-device_metadata/DEVICE_METADATA/localhost/bgp_adv_lo_prefix_as_128` | `boolean` |  |  |  | Advertise Loopback0 interface IPv6 /128 subnet address as it is with set to true. By default SONiC advertises /128 subnet prefix in Loopback0 as /64 subnet route |
+| `bgp_adv_lo_prefix_as_128` | `sonic-device_metadata/DEVICE_METADATA/localhost/bgp_adv_lo_prefix_as_128` | `boolean` |  |  |  | Advertise Loopback0 interface IPv6 /128 subnet address as it is with set to true. By default [SONiC](../../reference/glossary.md#term-sonic) advertises /128 subnet prefix in Loopback0 as /64 subnet route |
 | `suppress-fib-pending` | `sonic-device_metadata/DEVICE_METADATA/localhost/suppress-fib-pending` | `enumeration` |  | disabled | enabled, disabled | Enable [BGP](../../reference/glossary.md#term-bgp) suppress FIB pending feature. BGP will wait for route FIB installation before announcing routes |
 | `async_swss_rec` | `sonic-device_metadata/DEVICE_METADATA/localhost/async_swss_rec` | `enumeration` |  | disabled | enabled, disabled | Enable asynchronous swss.rec recording in [orchagent](../../reference/glossary.md#term-orchagent). |
 | `rack_mgmt_map` | `sonic-device_metadata/DEVICE_METADATA/localhost/rack_mgmt_map` | `string` |  |  | length 0..128 | Information of rack mgmt map. |
@@ -241,4 +241,4 @@ show version
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-device_metadata.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: bcd3ab0b11e4 -->

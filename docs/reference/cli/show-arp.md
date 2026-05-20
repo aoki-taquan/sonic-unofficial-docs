@@ -38,7 +38,7 @@ show arp [<ipaddress>] [-if <iface>] [-n <namespace>] [-d <display>] [--verbose]
 |---|---|
 | `<ipaddress>` (positional, optional) | 1 エントリのみ絞り込む IPv4 アドレス |
 | `-if`, `--iface` | インタフェース名でフィルタ。`alias` モード時は `iface_alias_converter.alias_to_name()` で内部名へ変換 |
-| `-n`, `--namespace` | multi-ASIC 時の namespace 指定（`multi_asic_click_options` 由来） |
+| `-n`, `--namespace` | multi-[ASIC](../../reference/glossary.md#term-asic) 時の namespace 指定（`multi_asic_click_options` 由来） |
 | `-d`, `--display` | `all` / `frontend` 等の display スコープ |
 | `--verbose` | 起動する `nbrshow` コマンド文字列を echo |
 
@@ -127,7 +127,7 @@ Total number of entries 2
 ### 典型的な利用シーン
 
 - L3 隣接の MAC 解決状況、aging 状態の確認。
-- MC-[LAG](../../reference/glossary.md#term-lag) / VRRP 構成での [ARP](../../reference/glossary.md#term-arp) 同期検証。
+- MC-[LAG](../../reference/glossary.md#term-lag) / [VRRP](../../reference/glossary.md#term-vrrp) 構成での [ARP](../../reference/glossary.md#term-arp) 同期検証。
 
 ### よくある落とし穴
 
@@ -154,4 +154,4 @@ sonic-db-cli APPL_DB keys 'NEIGH_TABLE:*'
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 2a3b0952d27c -->
+<!-- glossary-links-injected: 868a37d1f17d -->

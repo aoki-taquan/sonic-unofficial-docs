@@ -48,12 +48,12 @@ related:
 
 ## 概要
 
-T1 リブート直後に「FIB に乗っていない prefix を [BGP](../reference/glossary.md#term-bgp) がアドバタイズ → T2 が転送 → T1 で default route 経由で送り返し → credit loop / [PFC](../reference/glossary.md#term-pfc) storm」というシナリオを防ぐため、**ASIC 書き込み完了まで BGP advertise を抑止する** end-to-end フィードバック機構[^1]。
+T1 リブート直後に「FIB に乗っていない prefix を [BGP](../reference/glossary.md#term-bgp) がアドバタイズ → T2 が転送 → T1 で default route 経由で送り返し → credit loop / [PFC](../reference/glossary.md#term-pfc) storm」というシナリオを防ぐため、**[ASIC](../reference/glossary.md#term-asic) 書き込み完了まで BGP advertise を抑止する** end-to-end フィードバック機構[^1]。
 
 要点:
 
 - [FRR](../reference/glossary.md#term-frr) の **bgp suppress-fib-pending** 機能を活用。FRR は [zebra](../reference/glossary.md#term-zebra) から `RTM_NEWROUTE` に `RTM_F_OFFLOAD` フラグが立った応答を受けると当該 prefix を peer に advertise する
-- SONiC 側は [orchagent](../reference/glossary.md#term-orchagent) / [fpmsyncd](../reference/glossary.md#term-fpmsyncd) 経由で「ASIC 書き込み完了」を zebra に返すループを実装
+- [SONiC](../reference/glossary.md#term-sonic) 側は [orchagent](../reference/glossary.md#term-orchagent) / [fpmsyncd](../reference/glossary.md#term-fpmsyncd) 経由で「ASIC 書き込み完了」を zebra に返すループを実装
 - **FRR の `dplane_fpm_nl` 新プラグインへの移行が前提**（旧 `fpm` plugin は対応せず）[^1]
 - グローバル ON/OFF を `DEVICE_METADATA.localhost.suppress-fib-pending` で切替。default disabled、ランタイム切替可
 
@@ -199,4 +199,4 @@ show bgp ipv4 unicast statistics 2>/dev/null | head
 
 HLD と実装は一致。`code-verified` に昇格。
 
-<!-- glossary-links-injected: 7ebdde32cc55 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

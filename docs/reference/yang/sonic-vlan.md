@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `ietf-yang-types`, `sonic-types`, `sonic-port`, `sonic-portchannel`, `sonic-vrf`, `sonic-mirror-session`, `sonic-interface`, `sonic-vnet`
 - top container: `sonic-vlan`
 
-[VLAN](../../reference/glossary.md#term-vlan) yang Module for SONiC OS[^1]
+[VLAN](../../reference/glossary.md#term-vlan) yang Module for [SONiC](../../reference/glossary.md#term-sonic) OS[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -196,4 +196,4 @@ module: sonic-vlan
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->
