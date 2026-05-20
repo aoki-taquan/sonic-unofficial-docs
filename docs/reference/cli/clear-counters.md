@@ -108,13 +108,15 @@ def queuecounters():
 flowchart LR
   CLI["sonic-clear counters / *counters"]
   UT["portstat / queuestat / pfcstat<br/>dropstat / tunnelstat / etc. (-c)"]
-  CNT[("COUNTERS_DB<br/>カウンタ値・LAST_CLEAR")]
+  CNT[("COUNTERS_DB<br/>カウンタ値 (読み取りのみ)")]
+  SNAP[("/tmp/portstat-&lt;uid&gt; 等<br/>スナップショット")]
   CLI --> UT
-  UT --> CNT
+  CNT --> UT
+  UT --> SNAP
 ```
 
 !!! note "凡例"
-    clear 系 (CLI → ユーティリティ → COUNTERS_DB) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。
+    clear 系 (CLI → ユーティリティ → /tmp スナップショット) のミニ図。ユーティリティは COUNTERS_DB を読み取って /tmp 配下のスナップショットファイルに書き出すのみ。COUNTERS_DB 自体は書き換えない。
 <!-- /cli-mermaid -->
 
 <!-- ref-triangle:start -->

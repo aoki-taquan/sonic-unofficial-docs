@@ -206,7 +206,7 @@ docker logs gnmi 2>&1 | tail -30
 <!-- topics-back-ref -->
 ## 関連 Topics
 
-- [Topics: P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md)
+- [Topics: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md)
 
 <!-- /topics-back-ref -->
 

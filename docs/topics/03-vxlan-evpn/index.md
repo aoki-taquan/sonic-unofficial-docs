@@ -108,9 +108,9 @@ related:
 - [VXLAN / VNet 概念（VTEP + VNet + L2/L3 トンネル）](../../overlay/vxlan-sonic-concepts.md)
 - [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](../../overlay/vxlan-sonic.md)
 - [VXLAN / VNet 内部実装（VxlanTunnelOrch / VnetOrch / SAI 属性）](../../overlay/vxlan-sonic-internals.md)
+- [VXLAN / VNet 制限事項と既知の課題](../../overlay/vxlan-sonic-limitations.md)
 - [VXLAN / VNet 設定と運用（CONFIG_DB / APP_DB / CLI）](../../overlay/vxlan-sonic-operations.md)
 - [Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）](../../overlay/active-active-dual-tor.md)
-- [VXLAN / VNet 制限事項と既知の課題](../../overlay/vxlan-sonic-limitations.md)
 - [Active-Standby Dual ToR 制限事項と既知の課題](../../overlay/active-standby-dual-tor-limitations.md)
 
 **関連トラブルシュート 5 件**
