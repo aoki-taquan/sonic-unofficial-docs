@@ -11,7 +11,7 @@ last_verified: 2026-05-13
 
     SONiC コミュニティ master の HLD は **設計提案リポジトリ** であり、現行コードと一致しているとは限りません。本ページは「HLD だけ読んで誤解しがちな機能」を一望できる USP ページです。読み手は、まず後述の **monitor subtype 別セクション** で該当機能の乖離タイプ（未実装 / 部分実装 / 進化置換 / 廃止）を把握し、そこから個別ページへ降りて `last_verified` と「実装との乖離」セクションの裏取り根拠を確認してください。area 横断で探す場合は末尾の **area 別索引** から辿れます。
 
-`verification: discrepancy-found` が付いた全 **107** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
+`verification: discrepancy-found` が付いた全 **106** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
 
 ## サマリ
 
@@ -20,8 +20,8 @@ last_verified: 2026-05-13
 | monitor | 件数 | 意味 |
 |---------|-----:|------|
 | [`not_implemented`](#monitor-not-implemented) | 13 | 未実装 |
-| [`partially_implemented`](#monitor-partially-implemented) | 61 | 部分実装 |
-| [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 30 | HLD と乖離した形で実装/進化 |
+| [`partially_implemented`](#monitor-partially-implemented) | 59 | 部分実装 |
+| [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 31 | HLD と乖離した形で実装/進化 |
 | [`deprecated`](#monitor-deprecated) | 3 | deprecated（廃止予定 / 撤去済み） |
 
 ### area 別件数
@@ -31,7 +31,7 @@ last_verified: 2026-05-13
 | [`acl-qos`](#area-acl-qos) | 6 |
 | [`architecture`](#area-architecture) | 25 |
 | [`internals`](#area-internals) | 6 |
-| [`management`](#area-management) | 16 |
+| [`management`](#area-management) | 15 |
 | [`overlay`](#area-overlay) | 1 |
 | [`platform`](#area-platform) | 12 |
 | [`reference`](#area-reference) | 6 |
@@ -114,7 +114,7 @@ last_verified: 2026-05-13
   
   per-page queue で既出の通り提案 HLD は未採用。再走査でも:
 
-### `partially_implemented` — 部分実装 (61 件) { #monitor-partially-implemented }
+### `partially_implemented` — 部分実装 (59 件) { #monitor-partially-implemented }
 
 !!! warning "部分実装"
 
@@ -195,7 +195,7 @@ last_verified: 2026-05-13
 - [L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）](../../internals/l3-scaling-and-performance-enhancements-limitations.md)  
   area: `internals` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
 
-- [L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）](../../internals/l3-scaling-and-performance-enhancements-concepts.md)  
+- [L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）](../../internals/l3-scaling-and-performance-enhancements-concepts.md)  
   area: `internals` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
 
 - [L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）](../../internals/l3-scaling-and-performance-enhancements-operations.md)  
@@ -221,11 +221,6 @@ last_verified: 2026-05-13
   
   per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:
 
-- [Redis Client Manager（RCM: connection pool / transactional client）](../../management/redis-client-manager-rcm-hld.md)  
-  area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
-  
-  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。RCM 4 関数の現行 master 取り込み、counter 統合状況を本文で「未確認」と明示している。実装側の裏取りは継続課題。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
-
 - [SONiC Application Extension 開発・移植ガイド](../../management/sonic-application-extension-guide.md)  
   area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
@@ -235,11 +230,6 @@ last_verified: 2026-05-13
   area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
   本ページの monitor は `partially_implemented`。HLD は SONiC NOS の設定手段を 10 種類に整理する設計提案で、現行 master では中核となる `sonic-cfggen` / `config_db.json` / `redis-cli` / `vtysh` / RESTCONF / gNMI は実装されているが、`apply-patch` の checkpoint / rollback や ZTP boot failure リカバリ、入口横断の validation などは段階的取り込みで一部のみ。HLD の表は分類軸として有用だが、各入口の最新挙動は個別の `sonic-utilities` / `sonic-mgmt-framework` 実装で裏取りすること。
-
-- [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../../management/sonic-yang-model-guidelines.md)  
-  area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
-  
-  2026-05-09 時点の現行 master を裏取り。本ガイドラインで前提とされる SONiC YANG 拡張のうち、**`sonic-buildimage` 側の yang-models と `sonic-mgmt-common` 側で取り込み状況が分裂している**点が最大の罠。
 
 - [TACACS+ passkey 暗号化（key_encrypt + master key /etc/cipher_pass）](../../management/tacacs-passkey-encryption.md)  
   area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
@@ -387,7 +377,7 @@ last_verified: 2026-05-13
   
   per-page queue で既出の通り、[HLD](../../reference/glossary.md#term-hld) が定義する専用機構は未取り込み。`.cache/sonic-sources/` 全体を再走査した結果:
 
-### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (30 件) { #monitor-evolved-beyond-hld }
+### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (31 件) { #monitor-evolved-beyond-hld }
 
 !!! info "HLD と乖離した形で実装/進化"
 
@@ -452,6 +442,11 @@ last_verified: 2026-05-13
   area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   実コード裏取りで判明した HLD との差分（verified at: 2026-05-09）:
+
+- [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../../management/sonic-yang-model-guidelines.md)  
+  area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
+  
+  2026-05-09 時点の現行 master を裏取り。本ガイドラインで前提とされる SONiC YANG 拡張のうち、**`sonic-buildimage` 側の yang-models と `sonic-mgmt-common` 側で取り込み状況が分裂している**点が最大の罠。
 
 - [gNMI Master Arbitration（election ID と SetRequest 拡張）](../../management/gnmi-master-arbitration-hld.md)  
   area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -709,7 +704,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
 - [L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）](../../internals/l3-scaling-and-performance-enhancements-limitations.md)  
   area: `internals` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
 
-- [L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）](../../internals/l3-scaling-and-performance-enhancements-concepts.md)  
+- [L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）](../../internals/l3-scaling-and-performance-enhancements-concepts.md)  
   area: `internals` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
 
 - [L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）](../../internals/l3-scaling-and-performance-enhancements-operations.md)  
@@ -747,11 +742,6 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   
   2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / [CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマのいずれにも入っていない。
 
-- [Redis Client Manager（RCM: connection pool / transactional client）](../../management/redis-client-manager-rcm-hld.md)  
-  area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
-  
-  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。RCM 4 関数の現行 master 取り込み、counter 統合状況を本文で「未確認」と明示している。実装側の裏取りは継続課題。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
-
 - [SONiC Application Extension 開発・移植ガイド](../../management/sonic-application-extension-guide.md)  
   area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
@@ -763,7 +753,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   本ページの monitor は `partially_implemented`。HLD は SONiC NOS の設定手段を 10 種類に整理する設計提案で、現行 master では中核となる `sonic-cfggen` / `config_db.json` / `redis-cli` / `vtysh` / RESTCONF / gNMI は実装されているが、`apply-patch` の checkpoint / rollback や ZTP boot failure リカバリ、入口横断の validation などは段階的取り込みで一部のみ。HLD の表は分類軸として有用だが、各入口の最新挙動は個別の `sonic-utilities` / `sonic-mgmt-framework` 実装で裏取りすること。
 
 - [SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-*.yang）](../../management/sonic-yang-model-guidelines.md)  
-  area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
+  area: `management` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   2026-05-09 時点の現行 master を裏取り。本ガイドラインで前提とされる SONiC YANG 拡張のうち、**`sonic-buildimage` 側の yang-models と `sonic-mgmt-common` 側で取り込み状況が分裂している**点が最大の罠。
 
