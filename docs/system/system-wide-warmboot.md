@@ -150,7 +150,7 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 ```bash
 # system-wide warmboot 状態確認
 warm-reboot
-show warm_restart status
+show warm_restart state
 ls -la /host/warmboot/ | grep -E "sai-warmboot|warmboot"
 docker logs syncd 2>&1 | grep -iE "warm|init view" | tail -50
 ```

@@ -65,7 +65,7 @@ related:
 
 </div>
 
-## 品質指標 (round 50 時点)
+## 品質指標 (最新スナップショット)
 
 - 全 **1089** ページ (code-verified 737 + runbook-verified 27 + discrepancy-found 115 + reference/meta)
 - mermaid 構文エラー 0、broken link 0、frontmatter 違反 0

@@ -76,19 +76,22 @@ flowchart TB
 `swssloglevel` は `swsscommon.Logger` のスレッドに依存し、**他コンテナの daemon にはシグナルを送れない**[^1]。本 HLD では新しい CLI を追加:
 
 ```bash
-config syslog level -c <component> -l <log_level>
-                    [--service <service_name>]
+config syslog level -i <identifier> -l <log_level>
+                    [--container <container_name>]
                     [--program <program_name>]
                     [--pid <pid>]
 ```
 
 | オプション | 意味 |
 |----------|------|
-| `-c` | component / log identifier。`LOGGER` テーブルのキー |
+| `-i`（HLD では `-c`） | component / log identifier。`LOGGER` テーブルのキー |
 | `-l` | log level（`DEBUG` / `INFO` / `NOTICE` / `WARN` / `ERROR`） |
-| `--service` | コンテナ名。SIGHUP を送る対象コンテナ |
-| `--program` | コンテナ内のプログラム名。`--service` 必須 |
-| `--pid` | プロセス ID。`--service` 指定時はそのコンテナ内 PID、未指定時はホスト側 PID |
+| `--container`（HLD では `--service`） | コンテナ名。SIGHUP を送る対象コンテナ |
+| `--program` | コンテナ内のプログラム名。`--container` 必須 |
+| `--pid` | プロセス ID。`--container` 指定時はそのコンテナ内 PID、未指定時はホスト側 PID |
+
+!!! warning "実装オプション名の差分"
+    HLD 原文では `-c` / `--service` だが、現行実装（`docs/reference/cli/config-syslog.md` L42, L74）では **`-i`** / **`--container`** が正。本ページのコマンド例は実装オプション名に統一して記載している。
 
 検証ルール（HLD 例より）[^1]:
 

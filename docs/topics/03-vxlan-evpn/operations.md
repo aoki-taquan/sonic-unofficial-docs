@@ -24,7 +24,6 @@ related:
   config_db:
   - VNET
   - VXLAN_TUNNEL
-  - TUNNEL_DECAP_TABLE
   - VLAN
   - VRF
   - VXLAN_TUNNEL_MAP
