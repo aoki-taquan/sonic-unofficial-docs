@@ -15,9 +15,8 @@ related:
   - DASH_ENI
   - DASH_ROUTE
   - DASH_ACL_GROUP
+  - DASH_ACL_RULE
   - VNET
-  - ACL_RULE
-  - ACL_TABLE
   cli:
   - show acl
   - config acl

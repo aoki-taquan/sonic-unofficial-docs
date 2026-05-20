@@ -57,7 +57,6 @@ last_verified: 2026-05-13
 - [Dynamic Headroom Calculation（buffer_model = dynamic）](dynamically-headroom-calculation.md)
 - [Egress Outer DSCP 書換 ACL（UNDERLAY_SET_DSCP / METADATA + EGR_SET_DSCP）](egress-outer-dscp-change-table.md)
 - [Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）](everflow-test-plan.md)
-- [Port Access Control（PAC: 802.1x / MAB / RADIUS）](port-access-control-in-sonic.md)
 - [Reclaim Reserved Buffer（admin-down ポートの zero_profile）](reclaim-reserved-buffer.md)
 
 ## ページ一覧
@@ -80,7 +79,7 @@ last_verified: 2026-05-13
 | [Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）](everflow-test-plan.md) | HLD-only |
 | [L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）](support-a-new-acl-table-type-that-combines-l3-acl-and-l3v6-acl-tables.md) | Code-verified |
 | [PFC 履歴統計（PFCWD lua スクリプトによる estimate と --history CLI）](pfc-historical-statistics.md) | Code-verified |
-| [Port Access Control（PAC: 802.1x / MAB / RADIUS）](port-access-control-in-sonic.md) | HLD-only |
+| [Port Access Control（PAC: 802.1x / MAB / RADIUS）](port-access-control-in-sonic.md) | Code-verified |
 | [QoS Scheduler / Shaper（SP / WRR / DWRR + min/max bandwidth）](sonic-qos-scheduler-and-shaping.md) | Code-verified |
 | [Reclaim Reserved Buffer（admin-down ポートの zero_profile）](reclaim-reserved-buffer.md) | HLD-only |
 | [SONiC Port Mirroring（SPAN / ERSPAN）](sonic-port-mirroring-hld.md) | Code-verified |

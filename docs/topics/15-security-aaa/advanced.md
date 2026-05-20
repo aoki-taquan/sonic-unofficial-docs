@@ -11,22 +11,9 @@ sources:
 - docs/system/secure-upgrade.md
 - docs/system/sonic-container-hardening.md
 related:
-  cli:
-  - config aaa
-  - show aaa
-  config_db:
-  - AAA
-  - MACSEC_PROFILE
-  - TACPLUS
-  - TACPLUS_SERVER
-  - RADIUS
-  - RADIUS_SERVER
-  - TELEMETRY
-  yang:
-  - sonic-system-aaa
-  - sonic-system-radius
-  - sonic-system-tacacs
-  - sonic-system-ldap
+  cli: []
+  config_db: []
+  yang: []
 ---
 
 # 発展トピック

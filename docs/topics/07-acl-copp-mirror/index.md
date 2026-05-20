@@ -132,11 +132,11 @@ ACL は data plane の分類器、CoPP は control plane へ punt されるパ�
 
 - [Everflow テストプラン（ingress + egress mirror、LAG / ECMP / IPv6）](../../acl-qos/everflow-test-plan.md)
 - [CoPP Manager 再設計テストプラン（feature テーブル整合性 + always_enabled）](../../acl-qos/copp-manager-redesign-test-plan.md)
-- [ingress discards テスト計画（21 ケースで drop counter を検証）](../../acl-qos/sonic-test-ingress-discards-hld.md)
 - [ACL の egress mirror 対応と SAI ベース action capability 問い合わせ](../../acl-qos/egress-mirroring-support-and-acl-action-capability-check.md)
-- [SONiC Port Mirroring（SPAN / ERSPAN）](../../acl-qos/sonic-port-mirroring-hld.md)
 - [ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）](../../acl-qos/acl-support-in-sonic.md)
 - [Port Access Control（PAC: 802.1x / MAB / RADIUS）](../../acl-qos/port-access-control-in-sonic.md)
+- [SONiC Port Mirroring（SPAN / ERSPAN）](../../acl-qos/sonic-port-mirroring-hld.md)
+- [ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）](../../acl-qos/acl-user-defined-table-type-support.md)
 
 **関連トラブルシュート 5 件**
 

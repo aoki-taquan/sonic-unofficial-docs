@@ -66,7 +66,7 @@ flowchart LR
 ```
 
 1. `config interface storm-control ...` が `PORT_STORM_CONTROL` に書く
-2. `PolicerOrch` が購読し、内部名 `<intf>_<storm_type>` で policer を管理
+2. `PolicerOrch` が購読し、内部名 `_<intf>_<storm_type>` で policer を管理（先頭 `_` は通常 POLICER テーブルとの衝突回避用、`policerorch.cpp:146`）
 3. `create_policer` で meter 作成
 4. `set_port_attribute` で対応ポート属性に policer ID をセット
 
@@ -82,7 +82,7 @@ flowchart LR
 |----------|----|
 | `SAI_POLICER_ATTR_METER_TYPE` | `bytes` |
 | `SAI_POLICER_ATTR_MODE` | `storm`（`sr_TCM` / `tr_TCM` ではない）|
-| `SAI_POLICER_ATTR_CIR` | bps 値（kbps × 1000）|
+| `SAI_POLICER_ATTR_CIR` | bytes/s 値（kbps × 1000 / 8）|
 
 `storm` モードのため CBS / EBS / PBS は使わない[^1]。
 
@@ -120,7 +120,7 @@ show storm-control interface Ethernet0
 ## 干渉する機能
 
 - VLAN / PortChannel: メンバ物理ポートで設定。[LAG](../reference/glossary.md#term-lag) ハッシュ前の入力段で計測されるため独立に効く
-- PolicerOrch: [ACL](../reference/glossary.md#term-acl) ポリサーと同じ Orch だが、ストーム制御は内部命名規則 `<intf>_<storm_type>` で別管理
+- PolicerOrch: [ACL](../reference/glossary.md#term-acl) ポリサーと同じ Orch だが、ストーム制御は内部命名規則 `_<intf>_<storm_type>`（先頭アンダースコア付き）で別管理
 - Warm boot: PolicerOrch が CONFIG_DB 再読み込みで SAI 再投入
 
 ## トラブルシューティング

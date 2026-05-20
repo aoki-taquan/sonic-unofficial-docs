@@ -11,14 +11,10 @@ sources:
 related:
   config_db:
   - PORT
-  - CRM
-  - PORTCHANNEL
-  - BREAKOUT_CFG
   cli:
   - show interfaces
   yang:
   - sonic-port
-  - sonic-cable-length
 ---
 
 <!-- topics-tip -->

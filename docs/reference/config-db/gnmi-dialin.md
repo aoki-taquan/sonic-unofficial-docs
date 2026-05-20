@@ -110,7 +110,7 @@ GNMI|certs      # TLS 証明書パス
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `GNMI_CLIENT_CERT`, [`DEVICE_METADATA`](device-metadata.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`GNMI_CLIENT_CERT`](gnmi-server.md) (gnmi-server.md に収録), [`DEVICE_METADATA`](device-metadata.md)
 - 関連 CLI: `config gnmi`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-gnmi`
 
@@ -147,7 +147,7 @@ GNMI|certs      # TLS 証明書パス
 | `client_auth` | 未宣言 | `false` → `--allow_no_client_auth` 付与 | `false` | `true` の場合のみ TLS クライアント証明書を強制 |
 | `threshold` | 未宣言 | `100`（`null` または `GNMI` 欠如時）| `100` | 負値は Go 起動エラー |
 | `idle_conn_duration` | 未宣言 | `5`（秒）（`null` または `GNMI` 欠如時）| `5` | `0` = 無限。負値は Go 起動エラー |
-| `save_on_set` | 未宣言 | — (フラグなし = 無効) | `false` | CONFIG_DB から直接読まれず。YANG フィールドは存在するが `gnmi-native.sh` は参照しない ※ |
+| `save_on_set` | 未宣言 | 起動スクリプトが `--with-save-on-set=<値>` フラグを付与（未設定時はフラグ非付与 → flag デフォルト `false`） | `false` | 詳細は [`gnmi-server.md`](gnmi-server.md) の defaults セクション参照 |
 | `enable_crl` | 未宣言 | `false`（`"true"` 以外は無効）| `false` | `user_auth=cert` 時のみ評価 |
 | `crl_expire_duration` | 未宣言 | `null` → Go フラグデフォルト | `86400` (秒 = 24 時間) | フィールド欠如時 Go 実装デフォルトが適用 |
 | `user_auth` | 未宣言 | `cert`（`null` 時補完）| AuthTypes 全 false | `none` 設定時は `--client_auth` フラグを省略 |
@@ -174,7 +174,7 @@ GNMI|certs      # TLS 証明書パス
 
 ### `save_on_set` の注記
 
-YANG モデル (`sonic-gnmi.yang`) は `save_on_set` フィールドを `boolean` として定義するが、`gnmi-native.sh` 起動スクリプトはこのフィールドを読み取らない。`with-save-on-set` Go フラグは CONFIG_DB から自動設定されず、カスタム起動スクリプトや手動フラグ指定が必要。YANG とシェルスクリプトの間に **dead field** 状態が生じている。
+YANG モデル (`sonic-gnmi.yang`) は `save_on_set` フィールドを `boolean` として定義し、起動スクリプト (`gnmi-server.md` defaults セクション記載のロジック) が `CONFIG_DB:GNMI|gnmi.save_on_set` を読み取って `--with-save-on-set=<値>` フラグを付与する。未設定時はフラグ非付与 → Go flag デフォルトの `false` が適用される。
 
 ### `user_auth` と translib-write の相関
 
@@ -551,8 +551,8 @@ GNMI テーブルは host namespace の CONFIG_DB にのみ存在する。`gnmi-
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): `sonic-gnmi`
-- CONFIG_DB: `GNMI_CLIENT_CERT`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-gnmi` (YANG リファレンスページ未作成)
+- CONFIG_DB: [`GNMI_CLIENT_CERT`](gnmi-server.md) (gnmi-server.md に収録)
 - 関連ページ: [gNMI 利用ガイド](../../management/gnmi-usage.md)
 
 <!-- ref-triangle:end -->
