@@ -19,9 +19,9 @@ last_verified: 2026-05-13
 
 | monitor | 件数 | 意味 |
 |---------|-----:|------|
-| [`not_implemented`](#monitor-not-implemented) | 13 | 未実装 |
+| [`not_implemented`](#monitor-not-implemented) | 14 | 未実装 |
 | [`partially_implemented`](#monitor-partially-implemented) | 59 | 部分実装 |
-| [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 31 | HLD と乖離した形で実装/進化 |
+| [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 30 | HLD と乖離した形で実装/進化 |
 | [`deprecated`](#monitor-deprecated) | 3 | deprecated（廃止予定 / 撤去済み） |
 
 ### area 別件数
@@ -43,7 +43,7 @@ last_verified: 2026-05-13
 
 各 subtype を material 組み込みの色付き admonition でラップしています。色は重要度ではなく **読み手が誤読する危険度** の目安です（赤=実装ゼロ、黄=一部のみ、青=設計と別物、灰=廃止）。
 
-### `not_implemented` — 未実装 (13 件) { #monitor-not-implemented }
+### `not_implemented` — 未実装 (14 件) { #monitor-not-implemented }
 
 !!! danger "未実装"
 
@@ -78,6 +78,11 @@ last_verified: 2026-05-13
   area: `platform` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   2026-05-09 時点の現行 master を裏取り。HLD の提案 4 stage は **いずれも採用されていない**。
+
+- [Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）](../../platform/smartswitch-dpu-graceful-shutdown.md)  
+  area: `platform` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
+  
+  2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
 - [拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）](../../platform/enhanced-lpo-debug-registers-hld.md)  
   area: `platform` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
@@ -377,7 +382,7 @@ last_verified: 2026-05-13
   
   per-page queue で既出の通り、[HLD](../../reference/glossary.md#term-hld) が定義する専用機構は未取り込み。`.cache/sonic-sources/` 全体を再走査した結果:
 
-### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (31 件) { #monitor-evolved-beyond-hld }
+### `evolved_beyond_hld` — HLD と乖離した形で実装/進化 (30 件) { #monitor-evolved-beyond-hld }
 
 !!! info "HLD と乖離した形で実装/進化"
 
@@ -489,11 +494,6 @@ last_verified: 2026-05-13
   area: `platform` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   **読者への影響**:
-
-- [Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）](../../platform/smartswitch-dpu-graceful-shutdown.md)  
-  area: `platform` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
-  
-  2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
 - [液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）](../../platform/liquid-cooling-leakage-detection-in-sonic.md)  
   area: `platform` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -833,7 +833,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   2026-05-09 時点の現行 master を裏取り。HLD の提案 4 stage は **いずれも採用されていない**。
 
 - [Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）](../../platform/smartswitch-dpu-graceful-shutdown.md)  
-  area: `platform` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
+  area: `platform` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 

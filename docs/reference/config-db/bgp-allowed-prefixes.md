@@ -370,8 +370,8 @@ ALLOW_LIST 更新後に soft-clear すべき peer-group は、`__find_peer_group
 
 ### 典型値
 
-- key 形式: `BGP_ALLOWED_PREFIXES|<vrf>|<peer>|<af>`。
-- ToR 配下の特定 prefix 集合のみを許可する利用が多い。`prefixes` は CSV または list。
+- key 形式: `BGP_ALLOWED_PREFIXES|<deployment>|<id>[|<neighbor>|<neighbor_type>][|<community>]`（`<deployment>` は固定文字列 `DEPLOYMENT_ID`、`<neighbor>` は固定文字列 `NEIGHBOR_TYPE`）。最小構成例: `BGP_ALLOWED_PREFIXES|DEPLOYMENT_ID|0`。
+- ToR 配下の特定 prefix 集合のみを許可する利用が多い。許可 prefix は `prefixes_v4` / `prefixes_v6` フィールドに CSV または list で指定する。
 
 ### よくある誤設定
 

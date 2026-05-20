@@ -214,7 +214,7 @@ vtysh -c "show running-config bgpd" | grep aggregate-address
 
 ### 段階 1 — Consumer 登録
 
-`bgpcfgd` が CONFIG_DB の `BGP_GLOBALS_AF_AGGREGATE_ADDR` テーブルを購読する。
+`frrcfgd` (`sonic-frr-mgmt-framework`) が CONFIG_DB の `BGP_GLOBALS_AF_AGGREGATE_ADDR` テーブルを購読する。`bgpcfgd` は本テーブルを購読せず、別テーブル `BGP_AGGREGATE_ADDRESS` を使う。
 
 `BGP_GLOBALS_AF_AGGREGATE_ADDR` は `<vrf>|<af>|<prefix>` の key 構造。
 
