@@ -27,7 +27,7 @@ related:
 
 | コマンド | 用途 |
 |---------|------|
-| `show platform summary [--json]` | Platform / HwSKU / ASIC / Serial / Model 等を表示 |
+| `show platform summary [--json]` | Platform / HwSKU / [ASIC](../../reference/glossary.md#term-asic) / Serial / Model 等を表示 |
 | `show platform syseeprom [--verbose]` | TLVinfo 系 syseeprom を `decode-syseeprom -d` で表示 |
 | `show platform psustatus [-i N] [--json]` | PSU の状態（`psushow -s`） |
 | `show platform ssdhealth [<device>] [--verbose] [--vendor]` | SSD ヘルス（`ssdutil`） |
@@ -47,7 +47,7 @@ related:
 
 **動作**:
 
-- `device_info.get_platform_info()` で Platform / HwSKU / ASIC / ASIC Count / Switch Type を取得
+- `device_info.get_platform_info()` で Platform / HwSKU / [ASIC](../../reference/glossary.md#term-asic) / [ASIC](../../reference/glossary.md#term-asic) Count / Switch Type を取得
 - `get_chassis_info()` で Serial / Model / Hardware Revision を取得
 - `--json` 指定時は両者をマージして JSON 出力
 
@@ -181,4 +181,4 @@ flowchart LR
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: a13f05370620 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

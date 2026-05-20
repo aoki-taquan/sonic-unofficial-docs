@@ -126,7 +126,7 @@ long-name 形式 (`Ethernet0.100` / `PortChannel10.100`) では `subIntf::subInt
 <!-- constants -->
 ## ハードコード定数（Phase E）
 
-`intfmgr.cpp` および `intfsorch.cpp` に直接埋め込まれた定数・SAI 属性をまとめる。
+`intfmgr.cpp` および `intfsorch.cpp` に直接埋め込まれた定数・[SAI](../../reference/glossary.md#term-sai) 属性をまとめる。
 
 ### VLAN tag 範囲
 
@@ -148,12 +148,12 @@ if (vlanId == "0" || vlanId.empty())
 
 ### SAI sub_port_attr（`SAI_ROUTER_INTERFACE_TYPE_SUB_PORT`）
 
-sub-port RIF 作成時に `intfsorch.cpp:1224` で `Port::SUBPORT` ブランチが実行し、以下の SAI 属性を順番に push する。
+sub-port [RIF](../../reference/glossary.md#term-rif) 作成時に `intfsorch.cpp:1224` で `Port::SUBPORT` ブランチが実行し、以下の [SAI](../../reference/glossary.md#term-sai) 属性を順番に push する。
 
 | SAI 属性 | 値の型 | 内容 |
 |----------|--------|------|
-| `SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID` | `sai_object_id_t` | VRF OID（全 RIF タイプ共通、先頭に push） |
-| `SAI_ROUTER_INTERFACE_ATTR_TYPE` | `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` | RIF タイプを sub-port に指定 |
+| `SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID` | `sai_object_id_t` | VRF OID（全 [RIF](../../reference/glossary.md#term-rif) タイプ共通、先頭に push） |
+| `SAI_ROUTER_INTERFACE_ATTR_TYPE` | `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` | [RIF](../../reference/glossary.md#term-rif) タイプを sub-port に指定 |
 | `SAI_ROUTER_INTERFACE_ATTR_PORT_ID` | `sai_object_id_t` | 親ポート OID（`port.m_parent_port_id`） |
 | `SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID` | `uint16_t` | encapsulation VLAN ID（`port.m_vlan_info.vlan_id`） |
 | `SAI_ROUTER_INTERFACE_ATTR_ADMIN_V4_STATE` | `bool` | IPv4 転送の有効/無効 |
@@ -305,13 +305,12 @@ show subinterface status
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / IntfsOrch**: `VLAN_SUB_INTERFACE` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / IntfsOrch**: `VLAN_SUB_INTERFACE` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -335,15 +334,15 @@ VLAN_SUB_INTERFACE テーブルへの書き込みが発生するコード経路�
 
 ### CLI
 
-  - `config interface ip add/remove <Eth....<vlan>> ...` — `config/main.py` が `set_entry('VLAN_SUB_INTERFACE', ...)` を呼ぶ (sonic-utilities/config/main.py)
+  - `config interface ip add/remove <Eth....<vlan>> ...` — `config/main.py` が `set_entry('VLAN_SUB_INTERFACE', ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py)
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** が VLAN_SUB_INTERFACE を生成し投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+**minigraph.py** が VLAN_SUB_INTERFACE を生成し投入 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py)
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -373,13 +372,13 @@ db_migrator.py での VLAN_SUB_INTERFACE マイグレーションなし
 |---|----------|------|--------|
 | 1 | 親 PORT / PORTCHANNEL が `STATE_DB` に登録済みであること | **先行必須** | 未充足時は `isIntfStateOk()` が `false` → リトライ待ち |
 | 2 | short-name 形式では `vlan` フィールドが設定済みであること | **先行必須** | `vlanId == "0"` または空の場合 `return false` → リトライ待ち |
-| 3 | `vrf_name` 指定時は `VRF` テーブル + vrfmgrd/VRFOrch 処理完了 | **先行必須** | intfmgrd・intfsorch どちらもリトライ待ち |
+| 3 | `vrf_name` 指定時は `VRF` テーブル + [vrfmgrd](../../reference/glossary.md#term-vrfmgrd)/VRFOrch 処理完了 | **先行必須** | [intfmgrd](../../reference/glossary.md#term-intfmgrd)・[intfsorch](../../reference/glossary.md#term-intfsorch) どちらもリトライ待ち |
 | 4 | SAI sub-port RIF 生成: PORT_ID (親 OID) → OUTER_VLAN_ID の順に push | 固定順序 | どちらか欠如でも RIF 生成関数に渡らない（addSubPort 内で保証） |
 | 5 | 親 `admin_status` との合成（親 down → sub-IF も down） | 親優先 | 親状態変化時は `STATE_PORT_TABLE` 変更で再トリガー |
 
 ### 主要な制約詳細
 
-**PORT 先行必須 (依存 #1)**: `intfmgr.cpp:833` で `isIntfStateOk(parentAlias)` を呼び、`STATE_PORT_TABLE` (Ethernet 系) または `STATE_LAG_TABLE` (PortChannel 系) に親エントリが存在しない場合は `return false` でリトライ待ちとなる。`portmgrd` / `teammgrd` による親ポート状態書き込みが完了している必要がある。
+**PORT 先行必須 (依存 #1)**: `intfmgr.cpp:833` で `isIntfStateOk(parentAlias)` を呼び、`STATE_PORT_TABLE` (Ethernet 系) または `STATE_LAG_TABLE` ([PortChannel](../../reference/glossary.md#term-portchannel) 系) に親エントリが存在しない場合は `return false` でリトライ待ちとなる。`portmgrd` / `teammgrd` による親ポート状態書き込みが完了している必要がある。
 
 **VLAN tag 順序 (依存 #2)**: short-name 形式で `vlan` フィールドが省略または `"0"` のまま VLAN_SUB_INTERFACE が書き込まれると、`ip link add ... type vlan id` コマンドが実行されずリトライ待ちになる。long-name 形式（`Ethernet0.100` 等）ではキー名からドット後 ID を自動採用するため `vlan` フィールド省略可能。
 
@@ -394,7 +393,7 @@ db_migrator.py での VLAN_SUB_INTERFACE マイグレーションなし
 
 ### PORT / PORTCHANNEL への暗黙依存
 
-`intfmgr.cpp:833` — `isIntfStateOk(parentAlias)` で STATE_DB の `STATE_PORT_TABLE` または `STATE_LAG_TABLE` を参照し、親 IF が Ready でない場合は `return false` でリトライ待ち。
+`intfmgr.cpp:833` — `isIntfStateOk(parentAlias)` で [STATE_DB](../../reference/glossary.md#term-state_db) の `STATE_PORT_TABLE` または `STATE_LAG_TABLE` を参照し、親 IF が Ready でない場合は `return false` でリトライ待ち。
 
 ```cpp
 // sonic-swss/cfgmgr/intfmgr.cpp:833
@@ -405,11 +404,11 @@ if (!isIntfStateOk(parentAlias.empty() ? alias : parentAlias))
 }
 ```
 
-orchagent 側 (`intfsorch.cpp:905-914`) でも `gPortsOrch->getPort(alias, port)` が失敗した場合に `gPortsOrch->addSubPort(port, alias, vlan, adminUp, mtu)` を呼び、これが PORT / PORTCHANNEL オブジェクトの存在を前提とする。
+[orchagent](../../reference/glossary.md#term-orchagent) 側 (`intfsorch.cpp:905-914`) でも `gPortsOrch->getPort(alias, port)` が失敗した場合に `gPortsOrch->addSubPort(port, alias, vlan, adminUp, mtu)` を呼び、これが PORT / PORTCHANNEL オブジェクトの存在を前提とする。
 
 ### VRF への暗黙依存
 
-`intfmgr.cpp:839` — `vrf_name` が設定されている場合、STATE_DB の `STATE_VRF_TABLE` を `isIntfStateOk(vrf_name)` で確認。VRF が Ready でない場合はリトライ待ち。
+`intfmgr.cpp:839` — `vrf_name` が設定されている場合、[STATE_DB](../../reference/glossary.md#term-state_db) の `STATE_VRF_TABLE` を `isIntfStateOk(vrf_name)` で確認。VRF が Ready でない場合はリトライ待ち。
 
 `intfsorch.cpp:826` — `m_vrfOrch->isVRFexists(vrf_name)` で VRF オブジェクトの存在を確認し、存在しない場合は `task_need_retry`。VRF バインドには `m_vrfOrch->getVRFid()` で SAI VRF OID を取得し、`SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID` に設定する。
 
@@ -440,12 +439,12 @@ if (isIntfChangeVrf(alias, vrf_name))
 
 ### `isIntfStateOk` の PREFIX 分岐（PORT / PORTCHANNEL / VRF 補完）
 
-`intfmgr.cpp:649-686` の `isIntfStateOk()` は alias プレフィックスを見て参照する STATE_DB テーブルを切り替える:
+`intfmgr.cpp:649-686` の `isIntfStateOk()` は alias プレフィックスを見て参照する [STATE_DB](../../reference/glossary.md#term-state_db) テーブルを切り替える:
 
 | プレフィックス | 参照テーブル | 備考 |
 |--------------|-------------|------|
 | `Vlan` | `STATE_VLAN_TABLE` | bridge VLAN インタフェース |
-| `PortChannel` | `STATE_LAG_TABLE` | LAG/LACP バンドル |
+| `PortChannel` | `STATE_LAG_TABLE` | [LAG](../../reference/glossary.md#term-lag)/[LACP](../../reference/glossary.md#term-lacp) バンドル |
 | `Vnet` / `Vrf` / `mgmt` | `STATE_VRF_TABLE` | VRF・VNET・管理 VRF |
 | その他 (Ethernet 等) | `STATE_PORT_TABLE` | 物理ポート (`state` フィールドで可否判定) |
 
@@ -462,7 +461,7 @@ VLAN_SUB_INTERFACE は `ip link add <alias> link <parent> type vlan id <vid>` �
 1. `addHostSubIntf(alias, parentAlias, vlanId)` — `ip link add <alias> link <parent> type vlan id <vid>` (intfmgr.cpp:344-378)
 2. `setHostSubIntfMtu(alias, mtu, parentMtu)` — `ip link set <alias> mtu <val>`、親 MTU を上限にクランプ (intfmgr.cpp:430-465)
 3. `setHostSubIntfAdminStatus(alias, adminStatus)` — `ip link set <alias> up/down`、親 admin_status との合成 (intfmgr.cpp:468-505)
-4. SAI 側: `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` タイプで RIF 作成、`SAI_ROUTER_INTERFACE_ATTR_PORT_ID` に親ポートの OID、`SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID` に VLAN ID を設定 (intfsorch.cpp:1223-1259)
+4. SAI 側: `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` タイプで RIF 作成、`SAI_ROUTER_INTERFACE_ATTR_PORT_ID` に親ポートの OID、`SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID` に VLAN ID を設定 ([intfsorch](../../reference/glossary.md#term-intfsorch).cpp:1223-1259)
 
 **出典**:
 - `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
@@ -500,7 +499,7 @@ if (vlanId == "0" || vlanId.empty())
 | `ip link set mtu` 失敗 | `"Sub interface ip link set mtu failure. Runtime error: %s"` | intfmgr.cpp:968 |
 | `ip link set admin_status` 失敗 | `"Sub interface ip link set admin status %s failure. Runtime error: %s"` | intfmgr.cpp:998 |
 
-なお `setHostSubIntfMtu` 内で `isIntfStateOk(alias)` が `false`（netdev が既に削除済み）のときは `SWSS_LOG_WARN` を記録して `runtime_error` を throw しない（intfmgr.cpp:451-455）。これは portmgrd による親 IF 削除との競合で起こるケース。
+なお `setHostSubIntfMtu` 内で `isIntfStateOk(alias)` が `false`（netdev が既に削除済み）のときは `SWSS_LOG_WARN` を記録して `runtime_error` を throw しない（intfmgr.cpp:451-455）。これは [portmgrd](../../reference/glossary.md#term-portmgrd) による親 IF 削除との競合で起こるケース。
 
 ### 3. SAI sub-port RIF 生成失敗
 
@@ -521,7 +520,7 @@ if (status != SAI_STATUS_SUCCESS)
 }
 ```
 
-SAI sub-port の属性として `SAI_ROUTER_INTERFACE_ATTR_PORT_ID`（親ポート OID）と `SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID`（VLAN tag）が必須。どちらかが欠如した状態では `addSubPort` 内の前段チェックにより `create_router_interface` 呼び出し自体に到達しない（intfsorch.cpp:1223-1260）。また `ref_count > 0`（IP アドレスや VRF binding が残存）の状態で削除しようとすると `removeRouterIntfs` が `return false` を返し RIF 削除はスキップされる（intfsorch.cpp:1327-1331）。
+SAI sub-port の属性として `SAI_ROUTER_INTERFACE_ATTR_PORT_ID`（親ポート OID）と `SAI_ROUTER_INTERFACE_ATTR_OUTER_VLAN_ID`（VLAN tag）が必須。どちらかが欠如した状態では `addSubPort` 内の前段チェックにより `create_router_interface` 呼び出し自体に到達しない（[intfsorch](../../reference/glossary.md#term-intfsorch).cpp:1223-1260）。また `ref_count > 0`（IP アドレスや VRF binding が残存）の状態で削除しようとすると `removeRouterIntfs` が `return false` を返し RIF 削除はスキップされる（intfsorch.cpp:1327-1331）。
 
 ### 失敗パターン要約
 
@@ -543,13 +542,13 @@ SAI sub-port の属性として `SAI_ROUTER_INTERFACE_ATTR_PORT_ID`（親ポー�
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|------------------|-----------------|------|
-| `INTF_TABLE.set(<alias>, {mtu, admin_status, mac_addr, ...})` | APPL_DB / `INTF_TABLE` | `<alias>` | 常時 (`intfmgrd`) |
+| `INTF_TABLE.set(<alias>, {mtu, admin_status, mac_addr, ...})` | [APPL_DB](../../reference/glossary.md#term-appl_db) / `INTF_TABLE` | `<alias>` | 常時 (`intfmgrd`) |
 | `STATE_INTERFACE_TABLE.hset(<alias>, "vrf", vrf_name)` | STATE_DB / `STATE_INTERFACE_TABLE` | `<alias>` field=`vrf` | 常時 (`intfmgrd`) |
 | `STATE_PORT_TABLE.set(<alias>, {state:ok})` | STATE_DB / `STATE_PORT_TABLE` | `<alias>` | Ethernet 系 sub-IF (`intfmgrd:553`) |
-| `STATE_LAG_TABLE.set(<alias>, {state:ok})` | STATE_DB / `STATE_LAG_TABLE` | `<alias>` | PortChannel 系 sub-IF (`intfmgrd:548`) |
-| `COUNTERS_RIF_NAME_MAP.set("", {<alias>:<oid>})` | COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | `""` field=`<alias>` | RIF 作成後タイマーで (`IntfsOrch:1537`) |
-| `COUNTERS_RIF_TYPE_MAP.set("", {<oid>:SUB_PORT})` | COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | `""` field=`<oid>` | RIF 作成後タイマーで (`IntfsOrch:1538`) |
-| FlexCounter エントリ登録 | FLEX_COUNTER_DB / `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | RIF 作成後 (`IntfsOrch`) |
+| `STATE_LAG_TABLE.set(<alias>, {state:ok})` | STATE_DB / `STATE_LAG_TABLE` | `<alias>` | [PortChannel](../../reference/glossary.md#term-portchannel) 系 sub-IF (`intfmgrd:548`) |
+| `COUNTERS_RIF_NAME_MAP.set("", {<alias>:<oid>})` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_RIF_NAME_MAP` | `""` field=`<alias>` | RIF 作成後タイマーで (`IntfsOrch:1537`) |
+| `COUNTERS_RIF_TYPE_MAP.set("", {<oid>:SUB_PORT})` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_RIF_TYPE_MAP` | `""` field=`<oid>` | RIF 作成後タイマーで (`IntfsOrch:1538`) |
+| [FlexCounter](../../reference/glossary.md#term-flexcounter) エントリ登録 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | RIF 作成後 (`IntfsOrch`) |
 
 SAI 呼び出し (`ASIC_DB` に反映):
 
@@ -576,9 +575,9 @@ SAI 呼び出し:
 | `STATE_INTERFACE_TABLE.del(<alias>)` | STATE_DB / `STATE_INTERFACE_TABLE` | `<alias>` | 常時 (`intfmgr.cpp:1089`) |
 | `STATE_PORT_TABLE.del(<alias>)` | STATE_DB / `STATE_PORT_TABLE` | `<alias>` | Ethernet 系 sub-IF (`intfmgr.cpp:566`) |
 | `STATE_LAG_TABLE.del(<alias>)` | STATE_DB / `STATE_LAG_TABLE` | `<alias>` | PortChannel 系 sub-IF (`intfmgr.cpp:561`) |
-| `COUNTERS_RIF_NAME_MAP.hdel("", <alias>)` | COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | — | RIF 削除時 (`intfsorch.cpp:1560`) |
+| `COUNTERS_RIF_NAME_MAP.hdel("", <alias>)` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_RIF_NAME_MAP` | — | RIF 削除時 (`intfsorch.cpp:1560`) |
 | `COUNTERS_RIF_TYPE_MAP.hdel("", <oid>)` | COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | — | RIF 削除時 (`intfsorch.cpp:1561`) |
-| FlexCounter エントリ削除 | FLEX_COUNTER_DB / `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | RIF 削除時 (`intfsorch.cpp:1563`) |
+| [FlexCounter](../../reference/glossary.md#term-flexcounter) エントリ削除 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | RIF 削除時 (`intfsorch.cpp:1563`) |
 
 SAI 呼び出し:
 
@@ -586,7 +585,7 @@ SAI 呼び出し:
 
 ### VOQ 専用副次効果
 
-VOQ システム (`gIsVoqSystemEnabled` = true) かつローカル IF の場合、`voqSyncAddIntf()` / `voqSyncDelIntf()` (intfsorch.cpp:1672-1749) が `CHASSIS_APP_DB` の `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME` に同期する。ただし VLAN_SUB_INTERFACE (`Port::SUBPORT`) を VOQ system_port 上に直接重ねることはサポートされないため、通常の VLAN_SUB_INTERFACE 設定では VOQ 同期パスに到達しない。
+[VOQ](../../reference/glossary.md#term-voq) システム (`gIsVoqSystemEnabled` = true) かつローカル IF の場合、`voqSyncAddIntf()` / `voqSyncDelIntf()` (intfsorch.cpp:1672-1749) が `CHASSIS_APP_DB` の `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME` に同期する。ただし VLAN_SUB_INTERFACE (`Port::SUBPORT`) を [VOQ](../../reference/glossary.md#term-voq) system_port 上に直接重ねることはサポートされないため、通常の VLAN_SUB_INTERFACE 設定では [VOQ](../../reference/glossary.md#term-voq) 同期パスに到達しない。
 
 <!-- 証跡: sonic-swss/cfgmgr/intfmgr.cpp, sonic-swss/orchagent/intfsorch.cpp -->
 <!-- /side-effects -->
@@ -607,7 +606,7 @@ VLAN_SUB_INTERFACE テーブルは **3 段の異なる購読方式** で CONFIG_
 PSUBSCRIBE __keyspace@4__:VLAN_SUB_INTERFACE|*
 ```
 
-- `notify-keyspace-events = "KEA"` が有効なため、CLI / minigraph 等が `HSET VLAN_SUB_INTERFACE|Ethernet0.100 …` を書き込むと Redis が自動で `PUBLISH __keyspace@4__:VLAN_SUB_INTERFACE|Ethernet0.100 hset` を発行する
+- `notify-keyspace-events = "KEA"` が有効なため、CLI / minigraph 等が `HSET VLAN_SUB_INTERFACE|Ethernet0.100 …` を書き込むと [Redis](../../reference/glossary.md#term-redis) が自動で `PUBLISH __keyspace@4__:VLAN_SUB_INTERFACE|Ethernet0.100 hset` を発行する
 - `SubscriberStateTable::pops()` がイベントチャンネルからキーを取り出し、`HGETALL VLAN_SUB_INTERFACE|Ethernet0.100` で現在値を取得して `KeyOpFieldsValuesTuple` に変換する
 - `op = "hset"` → `SET_COMMAND`、`op = "del"` → `DEL_COMMAND`
 
@@ -646,12 +645,12 @@ PUBLISH ペイロードは固定文字列 `"G"`。IP prefix 行（`doIntfAddrTas
 
 | 特性 | 内容 |
 |------|------|
-| CONFIG_DB → intfmgrd | Redis PSUBSCRIBE (keyspace notification) |
+| CONFIG_DB → [intfmgrd](../../reference/glossary.md#term-intfmgrd) | [Redis](../../reference/glossary.md#term-redis) PSUBSCRIBE (keyspace notification) |
 | keyspace pattern | `__keyspace@4__:VLAN_SUB_INTERFACE\|*` |
 | 追加購読 | `STATE_PORT_TABLE`、`STATE_LAG_TABLE`（親ポート状態変化検知） |
-| intfmgrd → APPL_DB | ProducerStateTable / channel PUBLISH |
+| [intfmgrd](../../reference/glossary.md#term-intfmgrd) → APPL_DB | [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) / channel PUBLISH |
 | Publish チャンネル | `APP_INTF_TABLE_CHANNEL@0`、ペイロード固定 `"G"` |
-| APPL_DB → orchagent | ConsumerStateTable + `SUBSCRIBE` |
+| APPL_DB → [orchagent](../../reference/glossary.md#term-orchagent) | [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) + `SUBSCRIBE` |
 | NotificationConsumer | **不使用** |
 | TTL / keyevent expire | **不使用** |
 | Select タイムアウト | 1000ms → `intfmgr.doTask()` で未処理タスクを再試行 |
@@ -680,7 +679,7 @@ if(mySwitchType == "voq")
 }
 ```
 
-**理由**: VOQ system では eBGP/iBGP 経由で学習されるルートと直接接続ルートの metric を同一にすることで ECMP グループを正しく形成する必要がある。IPv4 は connected/static どちらも metric 0 のため変更不要。IPv6 の connected route は kernel がデフォルト 256 を付与するため明示的に揃える。
+**理由**: VOQ system では eBGP/iBGP 経由で学習されるルートと直接接続ルートの metric を同一にすることで [ECMP](../../reference/glossary.md#term-ecmp) グループを正しく形成する必要がある。IPv4 は connected/static どちらも metric 0 のため変更不要。IPv6 の connected route は kernel がデフォルト 256 を付与するため明示的に揃える。
 
 `orchagent` 側では、VOQ system_port は `Port::SYSTEM` タイプとして扱われ、RIF タイプは通常の物理ポートと同じ `SAI_ROUTER_INTERFACE_TYPE_PORT` が選択される[^ph2]。VLAN_SUB_INTERFACE（`Port::SUBPORT`）を VOQ system_port 上に直接重ねることはサポートされない。
 
@@ -700,7 +699,7 @@ voqSyncAddIntf / voqSyncDelIntf (`intfsorch.cpp:1672-1748`) は `CHASSIS_APP_DB`
 
 ### SmartSwitch DPU
 
-SmartSwitch アーキテクチャでは NPU 側と DPU 側でそれぞれ独立した `orchagent` インスタンスが動作する。VLAN_SUB_INTERFACE は NPU 側の物理ポートまたは PortChannel に対して定義し、DPU 側には直接適用しない。DPU 側は独自のインタフェース管理を持ち、`intfmgr.cpp` に DPU 固有分岐は存在しない。DPU 対向の `switch_type` は `"dpu"` となり、VOQ 分岐（`mySwitchType == "voq"`）には入らないため、IPv6 metric 補正も適用されない。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) アーキテクチャでは [NPU](../../reference/glossary.md#term-npu) 側と [DPU](../../reference/glossary.md#term-dpu) 側でそれぞれ独立した `orchagent` インスタンスが動作する。VLAN_SUB_INTERFACE は [NPU](../../reference/glossary.md#term-npu) 側の物理ポートまたは PortChannel に対して定義し、[DPU](../../reference/glossary.md#term-dpu) 側には直接適用しない。[DPU](../../reference/glossary.md#term-dpu) 側は独自のインタフェース管理を持ち、`intfmgr.cpp` に DPU 固有分岐は存在しない。DPU 対向の `switch_type` は `"dpu"` となり、VOQ 分岐（`mySwitchType == "voq"`）には入らないため、IPv6 metric 補正も適用されない。
 
 ### Mellanox (Spectrum ASIC)
 
@@ -712,10 +711,10 @@ Broadcom SAI も `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` をサポートする。�
 
 ### プラットフォーム差異要約
 
-| 観点 | 標準 (非VOQ) | VOQ Chassis | SmartSwitch DPU |
+| 観点 | 標準 (非VOQ) | VOQ Chassis | [SmartSwitch](../../reference/glossary.md#term-smartswitch) DPU |
 |------|-------------|-------------|-----------------|
 | IPv6 metric 付与 | なし | `metric 256` 追加 | なし |
-| system_port 上の VLAN_SUB_INTERFACE | サポート (物理/LAG) | 非サポート (SYSTEM タイプは SUB_PORT 不可) | N/A (DPU 側は別管理) |
+| system_port 上の VLAN_SUB_INTERFACE | サポート (物理/[LAG](../../reference/glossary.md#term-lag)) | 非サポート (SYSTEM タイプは SUB_PORT 不可) | N/A (DPU 側は別管理) |
 | CHASSIS_APP_DB 同期 | なし | voqSyncAddIntf で同期 | なし |
 | inband interface 処理 | 通常 doIntfGeneralTask | APP_DB 直リレー (スキップ) | なし |
 | SAI RIF タイプ | SUB_PORT | PORT (system_port) | SUB_PORT |
@@ -785,14 +784,14 @@ void IntfMgr::setSubIntfStateOk(const string &alias)
 
 | sub-IF 種別 | 書込先 STATE_DB テーブル | フィールド | ソース行 |
 |------------|----------------------|----------|---------|
-| `PortChannel<n>.<vid>` (LAG 系) | `STATE_LAG_TABLE` | `state = ok` | `intfmgr.cpp:548` |
+| `PortChannel<n>.<vid>` ([LAG](../../reference/glossary.md#term-lag) 系) | `STATE_LAG_TABLE` | `state = ok` | `intfmgr.cpp:548` |
 | `Ethernet<n>.<vid>` (PHY 系) | `STATE_PORT_TABLE` | `state = ok` | `intfmgr.cpp:553` |
 | DEL 時 (LAG 系) | `STATE_LAG_TABLE` | — (del) | `intfmgr.cpp:561` |
 | DEL 時 (PHY 系) | `STATE_PORT_TABLE` | — (del) | `intfmgr.cpp:566` |
 
 ### 3. SAI — `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` RIF 作成
 
-`orchagent` の `IntfsOrch` が APPL_DB `INTF_TABLE` を消費し、syncd 経由で ASIC_DB へ SAI RIF オブジェクトを書き込む。
+`orchagent` の `IntfsOrch` が APPL_DB `INTF_TABLE` を消費し、[syncd](../../reference/glossary.md#term-syncd) 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) へ SAI RIF オブジェクトを書き込む。
 
 #### sub-port RIF の SAI 属性
 
@@ -869,7 +868,7 @@ APPL_DB INTF_TABLE[<alias>] 消費
 | STATE_DB | `STATE_INTERFACE_TABLE[<alias>\|<prefix>]` | HSET state=ok | intfmgrd | `intfmgr.cpp:1138` |
 | STATE_DB | `STATE_PORT_TABLE[<Eth-sub-alias>]` | SET state=ok | intfmgrd | `intfmgr.cpp:553` |
 | STATE_DB | `STATE_LAG_TABLE[<Po-sub-alias>]` | SET state=ok | intfmgrd | `intfmgr.cpp:548` |
-| ASIC_DB (SAI) | `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` | CREATE | orchagent/IntfsOrch | `intfsorch.cpp:1224, 1296` |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) (SAI) | `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` | CREATE | orchagent/IntfsOrch | `intfsorch.cpp:1224, 1296` |
 
 <!-- /secondary-db-writes -->
 
@@ -878,7 +877,7 @@ APPL_DB INTF_TABLE[<alias>] 消費
 
 ### Producer/Consumer ペア
 
-CONFIG_DB から SAI までの全通信は Redis の **keyspace notification** と **ProducerStateTable/ConsumerStateTable** パターンで構成される。
+CONFIG_DB から SAI までの全通信は [Redis](../../reference/glossary.md#term-redis) の **keyspace notification** と **[ProducerStateTable](../../reference/glossary.md#term-producerstatetable)/[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** パターンで構成される。
 
 #### CONFIG_DB → intfmgrd (SubscriberStateTable)
 
@@ -954,7 +953,7 @@ case Port::SUBPORT:
     attrs.push_back(attr);
 ```
 
-`sai_router_intf_api->create_router_interface()` に `attrs` を渡して ASIC に sub_port RIF を生成する。`SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID`（VRF OID）は全 RIF タイプで先頭に push される固定順序 (`intfsorch.cpp:1183`)。
+`sai_router_intf_api->create_router_interface()` に `attrs` を渡して [ASIC](../../reference/glossary.md#term-asic) に sub_port RIF を生成する。`SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID`（VRF OID）は全 RIF タイプで先頭に push される固定順序 (`intfsorch.cpp:1183`)。
 
 ### STATE_DB への書き込み
 
@@ -987,4 +986,4 @@ if (TIMEOUT) { intfmgr.doTask(); }  // 未処理タスクを全 consumer で再�
 
 <!-- /comm-mechanism -->
 
-<!-- glossary-links-injected: 8acafc795b83 -->
+<!-- glossary-links-injected: 15c6991e878f -->

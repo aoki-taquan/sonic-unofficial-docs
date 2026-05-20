@@ -44,7 +44,7 @@ related:
 
 ## 概要
 
-SONiC の [QoS](../reference/glossary.md#term-qos) は [DSCP](../reference/glossary.md#term-dscp) / DOT1P / TC の各値間でマップを定義し、[CONFIG_DB](../reference/glossary.md#term-config_db) の `*_TO_*_MAP` テーブルとポート毎の `PORT_QOS_MAP` を介して [SAI](../reference/glossary.md#term-sai) に降ろす設計を取っている。本 [HLD](../reference/glossary.md#term-hld) は **[MPLS](../reference/glossary.md#term-mpls) パケットの TC（Traffic Class、旧称 EXP、RFC 5462）** から内部 TC へのマップを既存 QoS フローに追加する[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の [QoS](../reference/glossary.md#term-qos) は [DSCP](../reference/glossary.md#term-dscp) / DOT1P / TC の各値間でマップを定義し、[CONFIG_DB](../reference/glossary.md#term-config_db) の `*_TO_*_MAP` テーブルとポート毎の `PORT_QOS_MAP` を介して [SAI](../reference/glossary.md#term-sai) に降ろす設計を取っている。本 [HLD](../reference/glossary.md#term-hld) は **[MPLS](../reference/glossary.md#term-mpls) パケットの TC（Traffic Class、旧称 EXP、RFC 5462）** から内部 TC へのマップを既存 QoS フローに追加する[^1]。
 
 これにより、**MPLS でトンネル化されたトラフィックに対しても通常の QoS 機構が適用** できるようになる。SAI 自体は既に `SAI_QOS_MAP_MPLS_EXP_TO_TC` をサポートしており、本 HLD の作業は **SONiC スタック側の対応（CONFIG_DB スキーマ → [orchagent](../reference/glossary.md#term-orchagent) → CLI）** が中心[^1]。
 
@@ -248,4 +248,4 @@ show interfaces qos
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

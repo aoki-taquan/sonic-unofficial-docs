@@ -110,7 +110,7 @@ BGP_GLOBALS|<vrf_name>
 
 ## 購読者
 
-- `bgpcfgd` / `frr-mgmt-framework`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → vtysh / [FRR](../../reference/glossary.md#term-frr) config に変換
+- `bgpcfgd` / `frr-mgmt-framework`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → [vtysh](../../reference/glossary.md#term-vtysh) / [FRR](../../reference/glossary.md#term-frr) config に変換
 - `bgpd` ([FRR](../../reference/glossary.md#term-frr))
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -171,7 +171,7 @@ vtysh -c 'show running-config bgpd'
 | 値 | FRR コマンド形式 |
 |----|----------------|
 | `default` | `router bgp <local_asn>` |
-| 任意の VRF 名 | `router bgp <local_asn> vrf <vrf_name>` |
+| 任意の [VRF](../../reference/glossary.md#term-vrf) 名 | `router bgp <local_asn> vrf <vrf_name>` |
 
 ### 代表的 boolean フィールドの FRR マッピング
 
@@ -193,9 +193,9 @@ vtysh -c 'show running-config bgpd'
 
 | 条件 | 挙動 | ソース |
 |------|------|--------|
-| `local_asn` が未設定の VRF で BGP_GLOBALS 以外のテーブル更新が到達 | frrcfgd が LOG_DEBUG して skip。BGP_GLOBALS 自体に `local_asn` が含まれる場合のみ続行 | `frrcfgd.py` L2660 |
+| `local_asn` が未設定の [VRF](../../reference/glossary.md#term-vrf) で BGP_GLOBALS 以外のテーブル更新が到達 | frrcfgd が LOG_DEBUG して skip。BGP_GLOBALS 自体に `local_asn` が含まれる場合のみ続行 | `frrcfgd.py` L2660 |
 | 非 default VRF が未設定のまま参照 | `non-default VRF {} was not configured` を LOG_ERR → skip | `frrcfgd.py` L2451 |
-| Jinja2 テンプレートレンダリング失敗 (bgpcfgd) | `log_err` して `return True` (処理済み扱い = 再試行なし) | `managers_bgp.py` |
+| Jinja2 テンプレートレンダリング失敗 ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd)) | `log_err` して `return True` (処理済み扱い = 再試行なし) | `managers_bgp.py` |
 | `frr-mgmt-framework` と `bgpcfgd` の並存 | 両方が同テーブルを購読する環境では二重処理に注意 (通常はどちらか一方のみ稼働) | `main.py` L87 |
 <!-- /cdb-exceptions -->
 
@@ -205,17 +205,17 @@ vtysh -c 'show running-config bgpd'
 
 ### 段階 1 — Consumer 登録
 
-`bgpcfgd` が CONFIG_DB の `BGP_GLOBALS` テーブルを購読する。
+`bgpcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_GLOBALS` テーブルを購読する。
 
 `BGP_GLOBALS` は `<vrf>` の key 構造。
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由)
+なし (FRR [vtysh](../../reference/glossary.md#term-vtysh) 経由)
 
 ### 段階 3 — APPL→SAI
 
-なし (FRR BGP グローバル設定)
+なし (FRR [BGP](../../reference/glossary.md#term-bgp) グローバル設定)
 
 ### 段階 4 — タイミングと副作用
 
@@ -231,14 +231,14 @@ vtysh -c 'show running-config bgpd'
 
 ### CLI
 - `config bgp graceful-restart enable/disable`
-- `vtysh` 経由 bgpcfgd が多くのグローバル設定を書き戻し
+- `vtysh` 経由 [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が多くのグローバル設定を書き戻し
   - ソース: `sonic-utilities/config/main.py, sonic-frr bgpcfgd`
 
 ### minigraph / sonic-cfggen
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- sonic-mgmt-common OpenConfig BGP global 経由
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common OpenConfig BGP global 経由
 
 ### db_migrator
 - なし
@@ -300,7 +300,7 @@ YANG `sonic-bgp-global.yang` の `BGP_GLOBALS_LIST` 本体には `default` 文�
 
 ### 書き込み時デフォルト vs 実行時 fallback の乖離
 
-| フィールド | J2 テンプレート (bgpcfgd) の動作 | frrcfgd key_map の動作 | 乖離 |
+| フィールド | J2 テンプレート ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd)) の動作 | frrcfgd key_map の動作 | 乖離 |
 |-----------|-------------------------------|----------------------|------|
 | `default_ipv4_unicast` | 未設定時も `else` 節で `no bgp default ipv4-unicast` を発行 → **実質 false** | `['true','false']` — 未設定なら何も送出しない | **あり**: bgpcfgd 経由では未設定 = 無効扱いになる (`bgpd.conf.db.j2:46-50`) |
 
@@ -325,7 +325,7 @@ YANG `sonic-bgp-global.yang` の `BGP_GLOBALS_LIST` 本体には `default` 文�
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-BGP_GLOBALS は `frrcfgd`（`BGPConfigDaemon`）が CONFIG_DB を購読して FRR vtysh に反映する。以下の書き込み順序・制約を守ること。
+BGP_GLOBALS は `frrcfgd`（`BGPConfigDaemon`）が CONFIG_DB を購読して FRR [vtysh](../../reference/glossary.md#term-vtysh) に反映する。以下の書き込み順序・制約を守ること。
 
 ### 依存関係サマリ
 
@@ -390,7 +390,7 @@ BGP_GLOBALS ハンドラが実装上参照する、YANG leafref 以外の暗黙�
 |---------------------------|--------|------|
 | `DEVICE_METADATA\|localhost\|bgp_asn` | `frrcfgd.py:2162-2166, 2445-2446` | `default` VRF で `BGP_GLOBALS.local_asn` 未設定時のフォールバック。`metadata_handler` が変更を購読する |
 | `DEVICE_METADATA\|localhost\|docker_routing_config_mode` | `frrcfgd.py:2167-2170` | `"unified"` モードのみ BGP_GLOBALS を vtysh でプログラムする。`separated` では挙動が異なる |
-| `VRF`（`vni` フィールド） | `frrcfgd.py:2271-2273, 2413-2440` | BGP_GLOBALS の vrf_name に対応する VRF の VNI マッピングを zebra に連携する |
+| `VRF`（`vni` フィールド） | `frrcfgd.py:2271-2273, 2413-2440` | BGP_GLOBALS の vrf_name に対応する VRF の VNI マッピングを [zebra](../../reference/glossary.md#term-zebra) に連携する |
 | `ROUTE_REDISTRIBUTE`（同 VRF） | `frrcfgd.py:2704` | `local_asn` 新規設定時に同 VRF の redistribution を強制再適用する |
 | `BGP_NEIGHBOR` / `BGP_NEIGHBOR_AF`（同 VRF） | `frrcfgd.py:2849-2853` | `local_asn` 確定後に pending の neighbor / neighbor-AF を再適用する |
 | `BGP_GLOBALS_EVPN_VNI` / `BGP_GLOBALS_EVPN_RT` / `BGP_GLOBALS_EVPN_VNI_RT` | `frrcfgd.py:2100-2103, 2659` | VRF-based テーブルとして `local_asn` の存在確認を共有する。未設定なら skip |
@@ -420,11 +420,11 @@ TSA は `BGP_DEVICE_GLOBAL` テーブルを経由して BGP peer-group の route
 
 ### multi-asic 構成
 
-multi-asic 環境では各 ASIC コンテナ（`bgp0`, `bgp1` ...）が独立して `bgpcfgd` を起動し、対応 ASIC namespace の CONFIG_DB に接続する。`bgpcfgd` 内に `is_multi_asic()` / `is_multi_npu()` の呼び出しは存在しない（全ディレクトリ grep 0 ヒット）。multi-asic 対応はコンテナ多重起動で実現され、BGP_GLOBALS 処理ロジック自体は単一 CONFIG_DB 前提のまま変わらない。
+multi-asic 環境では各 [ASIC](../../reference/glossary.md#term-asic) コンテナ（`bgp0`, `bgp1` ...）が独立して `bgpcfgd` を起動し、対応 [ASIC](../../reference/glossary.md#term-asic) namespace の CONFIG_DB に接続する。`bgpcfgd` 内に `is_multi_asic()` / `is_multi_npu()` の呼び出しは存在しない（全ディレクトリ grep 0 ヒット）。multi-asic 対応はコンテナ多重起動で実現され、BGP_GLOBALS 処理ロジック自体は単一 CONFIG_DB 前提のまま変わらない。
 
 ### VOQ chassis: BGP_VOQ_CHASSIS_NEIGHBOR
 
-`BGPPeerMgrBase` は `BGP_VOQ_CHASSIS_NEIGHBOR` を常時登録する（条件なし）。VOQ chassis 以外ではこのテーブルにデータが入らないため実質 no-op。BGP_GLOBALS 本体処理への影響はない。
+`BGPPeerMgrBase` は `BGP_VOQ_CHASSIS_NEIGHBOR` を常時登録する（条件なし）。[VOQ](../../reference/glossary.md#term-voq) chassis 以外ではこのテーブルにデータが入らないため実質 no-op。BGP_GLOBALS 本体処理への影響はない。
 
 > **スキャン証跡**: `frrcfgd.py` / `bgpd.conf.db.j2` に `chassis|tsa|switch_role|switch_type|multi_asic|voq` で grep 0 ヒット。`bgpcfgd/` 全体で `is_multi_asic` 0 ヒット（テストファイル除く）。`managers_device_global.py` に `is_chassis` 1 ヒット（TSA status 取得のみ）、`switch_role` 3 ヒット（IDF/AsPath 制御のみ）を確認。
 <!-- /platform -->
@@ -464,7 +464,7 @@ multi-asic 環境では各 ASIC コンテナ（`bgp0`, `bgp1` ...）が独立し
 
 ### FRR 組み込み既定値 (CONFIG_DB 未設定時に FRR が使用する値)
 
-SONiC は `BGP_GLOBALS` フィールドが未設定の場合、FRR 自身のハードコード値をそのまま使用する。
+[SONiC](../../reference/glossary.md#term-sonic) は `BGP_GLOBALS` フィールドが未設定の場合、FRR 自身のハードコード値をそのまま使用する。
 
 | タイマー/パラメータ | FRR 定数名 | standard モード値 | datacenter モード値 | evidence |
 |-------------------|-----------|-----------------|-------------------|---------|
@@ -478,7 +478,7 @@ SONiC は `BGP_GLOBALS` フィールドが未設定の場合、FRR 自身のハ�
 | subgroup pkt queue max | `BGP_DEFAULT_SUBGROUP_PKT_QUEUE_MAX` | **40** | **40** | `sonic-frr/bgpd/bgpd.h:1414` |
 | dynamic neighbors limit | `BGP_DYNAMIC_NEIGHBORS_LIMIT_DEFAULT` | **100** | **100** | `sonic-frr/bgpd/bgpd.h:1431` |
 
-> **注記**: standard / datacenter モードの切り替えは FRR ビルド時の `--enable-datacenter` フラグで決定される（`sonic-frr/defaults.h`）。SONiC の debian build rules に明示記載なし。keepalive/holdtime を明示設定しない場合、実際の動作値はビルド設定に依存する。
+> **注記**: standard / datacenter モードの切り替えは FRR ビルド時の `--enable-datacenter` フラグで決定される（`sonic-frr/defaults.h`）。[SONiC](../../reference/glossary.md#term-sonic) の debian build rules に明示記載なし。keepalive/holdtime を明示設定しない場合、実際の動作値はビルド設定に依存する。
 
 ### router-id 自動選択
 
@@ -503,9 +503,9 @@ vtysh -c "configure terminal" -c "router bgp <asn> vrf <vrf>" -c "no bgp default
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-**STATE_DB / COUNTERS_DB への副次書込: なし**
+**[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への副次書込: なし**
 
-`BGP_GLOBALS` の変更を処理する `frrcfgd.BGPConfigDaemon.bgp_global_handler()`（`frrcfgd.py:3935`）および `bgpcfgd` の全 manager は、**STATE_DB / COUNTERS_DB / APPL_DB への書込を行わない**。出力先は FRR vtysh（プロセス内設定）のみ。
+`BGP_GLOBALS` の変更を処理する `frrcfgd.BGPConfigDaemon.bgp_global_handler()`（`frrcfgd.py:3935`）および `bgpcfgd` の全 manager は、**[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) への書込を行わない**。出力先は FRR vtysh（プロセス内設定）のみ。
 
 ### 根拠
 
@@ -517,7 +517,7 @@ vtysh -c "configure terminal" -c "router bgp <asn> vrf <vrf>" -c "no bgp default
 
 ### 隣接テーブルの副次書込（BGP_GLOBALS とは無関係）
 
-BGP_GLOBALS 以外のテーブルが起因する STATE_DB 書込が同一プロセス内に存在するが、BGP_GLOBALS の SET/DEL では起動されない。
+BGP_GLOBALS 以外のテーブルが起因する [STATE_DB](../../reference/glossary.md#term-state_db) 書込が同一プロセス内に存在するが、BGP_GLOBALS の SET/DEL では起動されない。
 
 | トリガー CONFIG_DB テーブル | STATE_DB 書込先 | 担当 Manager |
 |---------------------------|----------------|--------------|
@@ -537,14 +537,14 @@ BGP_GLOBALS 以外のテーブルが起因する STATE_DB 書込が同一プロ�
 
 | 購読者 | 購読 API | 通信方式 | ハンドラ |
 |--------|---------|---------|---------|
-| `frrcfgd` (`sonic-frr-mgmt-framework`) | `ExtConfigDBConnector.subscribe(table, hdlr)` + `listen()` | Redis keyspace 通知 (`psubscribe`) | `bgp_global_handler` |
+| `frrcfgd` (`sonic-frr-mgmt-framework`) | `ExtConfigDBConnector.subscribe(table, hdlr)` + `listen()` | [Redis](../../reference/glossary.md#term-redis) keyspace 通知 (`psubscribe`) | `bgp_global_handler` |
 | `bgpcfgd` | **購読しない** | — | — |
 
 `bgpcfgd` は `BGP_GLOBALS` を `bgpcfgd/main.py` に登録しない（BGP_NEIGHBOR / BGP_MONITORS 等のみ担当）。BGP_GLOBALS の実質的な購読者は `frrcfgd` のみ。
 
 ### frrcfgd の購読方式: Redis keyspace 通知
 
-`frrcfgd` は `swsscommon.ConfigDBConnector` を継承した `ExtConfigDBConnector` を使い、CONFIG_DB 全体に対して Redis **keyspace 通知** (`PSUBSCRIBE __keyspace@<dbId>__:*`) を張る。`SubscriberStateTable`（channel ベース `PUBLISH/SUBSCRIBE`）は使用しない。
+`frrcfgd` は `swsscommon.ConfigDBConnector` を継承した `ExtConfigDBConnector` を使い、CONFIG_DB 全体に対して [Redis](../../reference/glossary.md#term-redis) **keyspace 通知** (`PSUBSCRIBE __keyspace@<dbId>__:*`) を張る。`SubscriberStateTable`（channel ベース `PUBLISH/SUBSCRIBE`）は使用しない。
 
 ```python
 # frrcfgd.py:1536-1552 (ExtConfigDBConnector.listen_thread / listen)
@@ -619,4 +619,4 @@ DEL (`data is None`) では `del_table=True` が設定され `no router bgp <asn
 
 <!-- /failure -->
 
-<!-- glossary-links-injected: 3c93d6c0b6a4 -->
+<!-- glossary-links-injected: 257cfdedbe7d -->

@@ -42,7 +42,7 @@ related:
 
 # 概要
 
-SONiC のモデル駆動管理は、CLI、[gNMI](../../reference/glossary.md#term-gnmi)、REST という 3 つの入口が、Translib / Transformer という共通の中間層を通って ConfigDB へ到達するように作られている。どの入口を使うかで操作対象が変わるわけではなく、同じ [YANG](../../reference/glossary.md#term-yang) モデルで定義された操作が、別の transport で表現されているにすぎない。この理解がないと「gNMI Set で OpenConfig をいじったら CLI が反映していない」ように見えてしまう。
+[SONiC](../../reference/glossary.md#term-sonic) のモデル駆動管理は、CLI、[gNMI](../../reference/glossary.md#term-gnmi)、REST という 3 つの入口が、Translib / Transformer という共通の中間層を通って ConfigDB へ到達するように作られている。どの入口を使うかで操作対象が変わるわけではなく、同じ [YANG](../../reference/glossary.md#term-yang) モデルで定義された操作が、別の transport で表現されているにすぎない。この理解がないと「gNMI Set で OpenConfig をいじったら CLI が反映していない」ように見えてしまう。
 
 ## gNMI / OpenConfig 機能は何を解決するか
 
@@ -54,7 +54,7 @@ SONiC のモデル駆動管理は、CLI、[gNMI](../../reference/glossary.md#ter
 - 「いまの設定」と「いまの状態」を片方ずつ取りに行く（candidate / running / operational がバラバラ）問題
 - 設定変更を pull する手段しかなく、変更通知を push できない問題
 
-逆に、低レイヤの ASIC 設定や SONiC 固有 feature flag の中には OpenConfig がまだカバーしていない領域もあり、その隙間を SONiC native YANG が埋める、という二段構えになっている。
+逆に、低レイヤの [ASIC](../../reference/glossary.md#term-asic) 設定や SONiC 固有 feature flag の中には OpenConfig がまだカバーしていない領域もあり、その隙間を SONiC native YANG が埋める、という二段構えになっている。
 
 ## SONiC 内での位置
 
@@ -178,4 +178,4 @@ SONiC の CLI は YANG モデルから自動生成される仕組みを持つ。
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
 
-<!-- glossary-links-injected: 73c1da851dd5 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

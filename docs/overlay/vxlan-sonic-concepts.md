@@ -43,7 +43,7 @@ related:
 
 ## 1. VTEP と VNet の関係
 
-SONiC の [VXLAN](../reference/glossary.md#term-vxlan) は **VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ** で実装される[^1]。VTEP は VXLAN encap/decap を行う物理エンドポイント、VNet は **同一 VTEP 内に複数並立する仮想ネットワーク** を識別する論理境界である。1 つの VTEP が複数 VNet を保持し、各 VNet が独自の [VRF](../reference/glossary.md#term-vrf) または BRIDGE として動作する。
+[SONiC](../reference/glossary.md#term-sonic) の [VXLAN](../reference/glossary.md#term-vxlan) は **[VTEP](../reference/glossary.md#term-vtep)（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ** で実装される[^1]。VTEP は VXLAN encap/decap を行う物理エンドポイント、VNet は **同一 VTEP 内に複数並立する仮想ネットワーク** を識別する論理境界である。1 つの VTEP が複数 VNet を保持し、各 VNet が独自の [VRF](../reference/glossary.md#term-vrf) または BRIDGE として動作する。
 
 [HLD](../reference/glossary.md#term-hld) のスコープ[^1]:
 
@@ -77,7 +77,7 @@ L3 VXLAN は **`VIRTUAL_ROUTER_ID ↔ VNI` mapper が中核**。VTEP は P2MP �
 | VRF 数 | 128 |
 | ルート数 | 512K |
 
-設計目標であり実 ASIC のスケールに依存する[^1]。
+設計目標であり実 [ASIC](../reference/glossary.md#term-asic) のスケールに依存する[^1]。
 
 ## 関連ページ
 
@@ -90,4 +90,4 @@ L3 VXLAN は **`VIRTUAL_ROUTER_ID ↔ VNI` mapper が中核**。VTEP は P2MP �
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: a0525547b964 -->
+<!-- glossary-links-injected: 7b27b638c4f3 -->

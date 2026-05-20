@@ -15,7 +15,7 @@ related:
 
 # スタイルガイド
 
-本ページは、SONiC 非公式日本語ドキュメント (`docs/`) を執筆する際の文体・構造・タグ・引用ルールをまとめた執筆者向けリファレンスである。Writer / Reviewer / Verifier いずれのロールでも、本ガイドに沿って差分を作る。例外を設ける場合は本文または PR 説明にその理由を明示する。
+本ページは、[SONiC](../reference/glossary.md#term-sonic) 非公式日本語ドキュメント (`docs/`) を執筆する際の文体・構造・タグ・引用ルールをまとめた執筆者向けリファレンスである。Writer / Reviewer / Verifier いずれのロールでも、本ガイドに沿って差分を作る。例外を設ける場合は本文または PR 説明にその理由を明示する。
 
 ## 概要
 
@@ -153,4 +153,4 @@ MkDocs Material の admonition は次の用途に絞って使う。
 - [Glossary](glossary.md)
 - [Topics: Reference index](../topics/22-reference-index/index.md)
 
-<!-- glossary-links-injected: 779e8be0b8c1 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

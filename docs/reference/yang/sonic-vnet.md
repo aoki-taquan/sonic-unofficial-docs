@@ -58,6 +58,7 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`VNET`](../config-db/vnet.md)
+- [`VNET_ROUTE`](../config-db/vnet-route.md)
 
 ### 関連 CLI
 

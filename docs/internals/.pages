@@ -17,3 +17,5 @@ nav:
   - l3-scaling-and-performance-enhancements-internals.md
   - l3-scaling-and-performance-enhancements-limitations.md
   - why-need-health-check.md
+  - swss-common-database-config.md
+  - swss-common-db-link-ordering.md

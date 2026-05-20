@@ -39,14 +39,14 @@ related:
 
 ## SAI VS が何を代替するか
 
-SONiC-VS の中核は SAI VS で、[syncd](../../reference/glossary.md#term-syncd) の SAI backend を Linux netdev / bridge へ写すレイヤです。
+[SONiC](../../reference/glossary.md#term-sonic)-VS の中核は SAI VS で、[syncd](../../reference/glossary.md#term-syncd) の SAI backend を Linux netdev / bridge へ写すレイヤです。
 
 - L2 forwarding は Linux bridge
 - L3 forwarding は Linux route table
 - [VLAN](../../reference/glossary.md#term-vlan) は Linux VLAN device
 - [ACL](../../reference/glossary.md#term-acl) / counter は SAI 側で限定的にサポート
 
-このため「[CONFIG_DB](../../reference/glossary.md#term-config_db) と [orchagent](../../reference/glossary.md#term-orchagent) の整合性」「sairedis の object 生成」までは VS で完全に検証できますが、ASIC capability に依存する path は VS の境界を越えます。具体的なソースとビルド手順は [SONiC-VS のビルドと libvirt 起動手順](../../architecture/steps-to-bring-up-sonic-vs.md) を参照します。
+このため「[CONFIG_DB](../../reference/glossary.md#term-config_db) と [orchagent](../../reference/glossary.md#term-orchagent) の整合性」「sairedis の object 生成」までは VS で完全に検証できますが、[ASIC](../../reference/glossary.md#term-asic) capability に依存する path は VS の境界を越えます。具体的なソースとビルド手順は [SONiC-VS のビルドと libvirt 起動手順](../../architecture/steps-to-bring-up-sonic-vs.md) を参照します。
 
 ## DIP=SIP PTF validation
 
@@ -161,4 +161,4 @@ VS test plan に書かれているテストでも、CI 側で実行対象にな�
 
 このページが `verification: meta` なのは、lab / 開発者ワークフローは「実装の状態」ではなく「複数 HLD への横断ガイド」だからです。SAI VS / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt) / PTF / KNE / Alpine それぞれに別途 `code-verified` ページがあり、ここで重複して裏取りする必要はありません。サブ章で言及するコンポーネント別の挙動裏取りは、リンク先の章を参照してください。
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

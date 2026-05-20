@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-**[VRF](../../reference/glossary.md#term-vrf) × アドレスファミリ単位** で [BGP](../../reference/glossary.md#term-bgp) に **静的に注入するネットワーク** (`network <prefix>` ステートメント) を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。[FRR](../../reference/glossary.md#term-frr) `bgpd` の `address-family <afi> <safi>` 配下の `network <ip_prefix>` に対応する。`frr-mgmt-framework` 経路 (DEVICE_METADATA `frr_mgmt_framework_config = true`) で使用される。
+**[VRF](../../reference/glossary.md#term-vrf) × アドレスファミリ単位** で [BGP](../../reference/glossary.md#term-bgp) に **静的に注入するネットワーク** (`network <prefix>` ステートメント) を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。[FRR](../../reference/glossary.md#term-frr) `bgpd` の `address-family <afi> <safi>` 配下の `network <ip_prefix>` に対応する。`frr-mgmt-framework` 経路 ([DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) `frr_mgmt_framework_config = true`) で使用される。
 
 `BGP_GLOBALS_AF_AGGREGATE_ADDR` が複数の動的ルートを **集約** するのに対し、こちらは管理者が **明示的に広告したいプレフィックス** を列挙する用途。
 
@@ -70,13 +70,13 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 
 ## 購読者
 
-- `frr-mgmt-framework`: vtysh の `network <prefix> [route-map <name>] [backdoor]` コマンドに変換
+- `frr-mgmt-framework`: [vtysh](../../reference/glossary.md#term-vtysh) の `network <prefix> [route-map <name>] [backdoor]` コマンドに変換
 - `bgpd` ([FRR](../../reference/glossary.md#term-frr)): network 経由で BGP UPDATE に該当プレフィックスを注入
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_GLOBALS`, `BGP_GLOBALS_AF`, `BGP_GLOBALS_AF_AGGREGATE_ADDR`, `ROUTE_MAP_SET`, `STATIC_ROUTE`
-- 関連 CLI: vtysh の `network <prefix>` (`frr-mgmt-framework` 経路では [CONFIG_DB](../../reference/glossary.md#term-config_db) 投入)
+- 関連 CLI: [vtysh](../../reference/glossary.md#term-vtysh) の `network <prefix>` (`frr-mgmt-framework` 経路では [CONFIG_DB](../../reference/glossary.md#term-config_db) 投入)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
 <!-- cdb-exceptions -->
@@ -251,7 +251,6 @@ vtysh -c "show ip bgp"
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -282,14 +281,14 @@ vtysh -c "show ip bgp"
 対象テーブル: `BGP_GLOBALS_AF_NETWORK`
 
 ### CLI
-- `vtysh` 経由 network コマンド (bgpcfgd が CONFIG_DB へ書き戻し)
+- `vtysh` 経由 network コマンド ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が CONFIG_DB へ書き戻し)
   - ソース: `sonic-frr bgpcfgd`
 
 ### minigraph / sonic-cfggen
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -359,7 +358,7 @@ vtysh -c "show ip bgp"
 | `DEVICE_METADATA` 参照 | `frr_mgmt_framework_config` フラグ読み取りのみ（プラットフォーム選択ではない） |
 
 `BGP_GLOBALS_AF_NETWORK` は FRR (`bgpd`) へ直接 vtysh コマンドを発行し、
-orchagent / syncd / SAI を経由しない。ASIC ケイパビリティ差による分岐が
+[orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) / [SAI](../../reference/glossary.md#term-sai) を経由しない。[ASIC](../../reference/glossary.md#term-asic) ケイパビリティ差による分岐が
 発生する設計上の余地がない。
 
 <!-- evidence: sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py (grep: platform/hwsku/asic = 0 hits) -->
@@ -403,7 +402,7 @@ while self.__listen_thread_running:
 
 ### 通知パターン例
 
-| Redis keyspace 通知 | frrcfgd が受け取る呼び出し |
+| [Redis](../../reference/glossary.md#term-redis) keyspace 通知 | frrcfgd が受け取る呼び出し |
 |---------------------|--------------------------|
 | `__keyspace@4__:BGP_GLOBALS_AF_NETWORK\|default\|ipv4_unicast\|10.0.0.0/8` `hset` | `bgp_table_handler_common(table, "default\|ipv4_unicast\|10.0.0.0/8", {data})` |
 | 同 key `del` | `bgp_table_handler_common(table, key, None)` → `no network <prefix>` を bgpd へ |
@@ -413,13 +412,13 @@ while self.__listen_thread_running:
 | 項目 | 内容 |
 |------|------|
 | 購読 API | `ExtConfigDBConnector.subscribe()` + `listen()` |
-| 通知方式 | Redis keyspace 通知 (`PSUBSCRIBE __keyspace@4__:*`) |
+| 通知方式 | [Redis](../../reference/glossary.md#term-redis) keyspace 通知 (`PSUBSCRIBE __keyspace@4__:*`) |
 | 受信スレッド | `listen_thread` (バックグラウンド, timeout=10 s) |
 | 変更検知後 | HGETALL で再取得 → `bgp_table_handler_common` 呼び出し |
 | 配送先デーモン | `bgpd` のみ (`TABLE_DAEMON` マッピング `frrcfgd.py:99`) |
-| ConsumerStateTable | 不使用 |
+| [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) | 不使用 |
 | NotificationProducer | 不使用 |
-| APPL_DB/STATE_DB 中継 | なし（CONFIG_DB → frrcfgd → FRR vtysh の一方向） |
+| [APPL_DB](../../reference/glossary.md#term-appl_db)/[STATE_DB](../../reference/glossary.md#term-state_db) 中継 | なし（CONFIG_DB → frrcfgd → FRR vtysh の一方向） |
 
 <!-- evidence: frrcfgd.py:1506-1560,2318,2359-2361,3954-3955 -->
 <!-- /pubsub -->
@@ -513,10 +512,10 @@ CONFIG_DB `BGP_GLOBALS_AF_NETWORK` テーブルの変更に伴って `frrcfgd` �
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `frrcfgd.py` 全体に `AppDBConnector` / APPL_DB 接続インスタンスが存在しない |
-| STATE_DB | なし | `frrcfgd.py` 全体に `STATE_DB` / `state_db` 参照が 0 件 |
-| COUNTERS_DB | なし | `frrcfgd.py` 全体に `COUNTERS_DB` / `counters_db` 参照が 0 件 |
-| ASIC_DB / FLEX_COUNTER_DB | なし | SAI 非経由。`TABLE_DAEMON` マッピングは `bgpd` のみ (`frrcfgd.py:99`) |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `frrcfgd.py` 全体に `AppDBConnector` / [APPL_DB](../../reference/glossary.md#term-appl_db) 接続インスタンスが存在しない |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `frrcfgd.py` 全体に `STATE_DB` / `state_db` 参照が 0 件 |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `frrcfgd.py` 全体に `COUNTERS_DB` / `counters_db` 参照が 0 件 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由。`TABLE_DAEMON` マッピングは `bgpd` のみ (`frrcfgd.py:99`) |
 
 `bgp_table_handler_common` の `BGP_GLOBALS_AF_NETWORK` 分岐 (`frrcfgd.py:3169-3186`) は `key_map.run_command()` → `vtysh -c "router bgp <asn> vrf <vrf>" -c "address-family <af> <safi>" -c "network <prefix> [route-map <name>] [backdoor]"` のみを実行する。`af_aggr_list` 更新ブロック (`frrcfgd.py:3187-3196`) は `BGP_GLOBALS_AF_AGGREGATE_ADDR` 専用であり本テーブルには適用されない。
 
@@ -525,4 +524,4 @@ CONFIG_DB `BGP_GLOBALS_AF_NETWORK` テーブルの変更に伴って `frrcfgd` �
 <!-- evidence: frrcfgd.py:99,3169-3196 -->
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: fcbe746ecf8b -->
+<!-- glossary-links-injected: acf5ec8118a8 -->

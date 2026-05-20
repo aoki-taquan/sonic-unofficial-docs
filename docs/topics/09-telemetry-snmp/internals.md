@@ -33,7 +33,7 @@ related:
 
 # 内部実装
 
-このページは、observability のうち SONiC 内部で「いつ何のスレッドが値を書いているか」を整理します。設定や運用の入口は前後のページで十分なので、ここは挙動の理由を読みたい人向けです。
+このページは、observability のうち [SONiC](../../reference/glossary.md#term-sonic) 内部で「いつ何のスレッドが値を書いているか」を整理します。設定や運用の入口は前後のページで十分なので、ここは挙動の理由を読みたい人向けです。
 
 ## FlexCounter Group の仕事分担
 
@@ -139,7 +139,7 @@ STATE_DB:
 
 ## ZMQ / Redis pub/sub
 
-- FlexCounter は ASIC からの notification ではなく **polling**。Redis pub/sub も使わず、ASIC_DB ↔ syncd 内通信で完結。
+- FlexCounter は [ASIC](../../reference/glossary.md#term-asic) からの notification ではなく **polling**。Redis pub/sub も使わず、ASIC_DB ↔ syncd 内通信で完結。
 - gNMI Subscribe は **Redis keyspace notifications** を購読（→ 10 章）。
 - SNMP AgentX は `sonic_ax_impl` が Redis を polling し、AgentX subagent → snmpd（master） → NMS。
 
@@ -158,4 +158,4 @@ STATE_DB:
 - [Byte / packet rate と port utilization](../../internals/byte-packet-rates-port-utilization-in-sonic.md)
 - [Logging と system dump 仕様](../../system/sonic-logging-system-dumps-arch-spec.md)
 
-<!-- glossary-links-injected: c7066d08df4e -->
+<!-- glossary-links-injected: ec18b66e3507 -->

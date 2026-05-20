@@ -47,14 +47,14 @@ related:
 
 # L3 基盤と VRF
 
-SONiC で L3 を読み始めるとき、最初に route テーブルから入ると挫折しやすい構成になっています。route の振る舞いは [VRF](../../reference/glossary.md#term-vrf) と interface に強く依存し、next hop の解決もリンク状態と隣接探索に依存するためです。この章は **VRF と interface を最初に押さえる** ための入口です。
+[SONiC](../../reference/glossary.md#term-sonic) で L3 を読み始めるとき、最初に route テーブルから入ると挫折しやすい構成になっています。route の振る舞いは [VRF](../../reference/glossary.md#term-vrf) と interface に強く依存し、next hop の解決もリンク状態と隣接探索に依存するためです。この章は **VRF と interface を最初に押さえる** ための入口です。
 
 ## SONiC の L3 は何の問題を解決するか
 
 データセンタースイッチ単位で見ると、SONiC の L3 は以下を引き受けます。
 
 - 物理 / [VLAN](../../reference/glossary.md#term-vlan) / [PortChannel](../../reference/glossary.md#term-portchannel) / Loopback / sub-port を **L3 interface** として束ね、VRF に所属させる。
-- [BGP](../../reference/glossary.md#term-bgp) / static で得た経路を **VRF 単位** で持ち、Linux kernel と ASIC 両方に反映する。
+- [BGP](../../reference/glossary.md#term-bgp) / static で得た経路を **VRF 単位** で持ち、Linux kernel と [ASIC](../../reference/glossary.md#term-asic) 両方に反映する。
 - IPv4 / IPv6、link-local、[ECMP](../../reference/glossary.md#term-ecmp)、management traffic 分離など、運用上必要な L3 機能を Linux + ASIC で 1 つの NOS として扱う。
 
 特に **management traffic 用の VRF (mgmt VRF) と forwarding 用の VRF を別に持つ** こと、**Linux と ASIC の両方に VRF を作る** ことが SONiC 特有の押さえどころです。
@@ -199,7 +199,7 @@ flowchart LR
   FRR -.->|kernel zebra| Kernel[Linux FIB]
 ```
 
-`show ip route` を見ても、それが FRR RIB（vtysh）か Linux FIB（`ip route`）か SONiC FIB（`sonic-db-cli APPL_DB`）か ASIC FIB（[ASIC_DB](../../reference/glossary.md#term-asic_db)）かで意味が違います。VRF 付きの問題切り分けでは「どの VRF の table を見ているか」を都度確認します。
+`show ip route` を見ても、それが FRR RIB（[vtysh](../../reference/glossary.md#term-vtysh)）か Linux FIB（`ip route`）か SONiC FIB（`sonic-db-cli APPL_DB`）か ASIC FIB（[ASIC_DB](../../reference/glossary.md#term-asic_db)）かで意味が違います。VRF 付きの問題切り分けでは「どの VRF の table を見ているか」を都度確認します。
 
 ## management VRF の特殊性
 
@@ -223,4 +223,4 @@ management VRF（既定 `mgmt`）は **front panel 経路ではなく `eth0` の
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: 1eba53f4f29c -->
+<!-- glossary-links-injected: d62d2c91ba87 -->

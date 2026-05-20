@@ -39,31 +39,25 @@ related:
 | DB | 番号 | 役割 |
 |----|------|------|
 | `CONFIG_DB` | 4 | ユーザー設定（`FLEX_COUNTER_TABLE`）|
-| `FLEX_COUNTER_DB` | 5 | orchagent → syncd 制御信号（group 設定 + per-OID ID リスト）|
-| `COUNTERS_DB` | 2 | syncd → 外部 読み取り専用の実カウンタ値 |
+| `FLEX_COUNTER_DB` | 5 | [orchagent](../../reference/glossary.md#term-orchagent) → [syncd](../../reference/glossary.md#term-syncd) 制御信号（group 設定 + per-OID ID リスト）|
+| `COUNTERS_DB` | 2 | [syncd](../../reference/glossary.md#term-syncd) → 外部 読み取り専用の実カウンタ値 |
 
-本ページは **FLEX_COUNTER_DB**（DB 5）のランタイム状態フィールドと、syncd 内 `FlexCounter` モジュールが持つコード由来デフォルト値を記述する。
+本ページは **[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)**（DB 5）のランタイム状態フィールドと、[syncd](../../reference/glossary.md#term-syncd) 内 `FlexCounter` モジュールが持つコード由来デフォルト値を記述する。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB\nFLEX_COUNTER_TABLE")]
-  OA["orchagent\nFlexCounterOrch"]
-  FCDB[("FLEX_COUNTER_DB\nFLEX_COUNTER_TABLE\nFLEX_COUNTER_GROUP_TABLE")]
-  SYNCD["syncd\nFlexCounter"]
-  SAI["SAI\nsai_*_stats"]
-  CNTDB[("COUNTERS_DB\nCOUNTERS:<oid>")]
-
-  CDB --> OA
-  OA --> FCDB
-  FCDB --> SYNCD
-  SYNCD --> SAI
-  SAI --> SYNCD
-  SYNCD --> CNTDB
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## FLEX_COUNTER_DB のテーブル構造
@@ -74,14 +68,14 @@ flowchart LR
 FLEX_COUNTER_GROUP_TABLE|<group>
 ```
 
-orchagent が書き込む group-level 制御フィールド:
+[orchagent](../../reference/glossary.md#term-orchagent) が書き込む group-level 制御フィールド:
 
 | フィールド | 型 | 説明 |
 |----------|----|------|
 | `POLL_INTERVAL` | uint32 (ms) | ポーリング間隔 |
 | `FLEX_COUNTER_STATUS` | `enable` / `disable` | ポーリング有効化 |
 | `STATS_MODE` | `STATS_MODE_READ` / `STATS_MODE_READ_AND_CLEAR` | カウンタ読み取りモード |
-| `BULK_CHUNK_SIZE` | uint32 | 1 回の SAI bulk API で処理するエントリ数 |
+| `BULK_CHUNK_SIZE` | uint32 | 1 回の [SAI](../../reference/glossary.md#term-sai) bulk API で処理するエントリ数 |
 | `BULK_CHUNK_SIZE_PER_PREFIX` | string | プレフィクス別チャンクサイズ |
 
 ### FLEX_COUNTER_TABLE — per-OID カウンタ ID リスト
@@ -91,7 +85,7 @@ FLEX_COUNTER_TABLE|<group>|<oid>
   <COUNTER_ID_LIST_FIELD> = <comma-separated SAI stat enum>
 ```
 
-orchagent の各 Orch（PortsOrch / IntfsOrch / BufferOrch 等）が、`FLEX_COUNTER_STATUS = enable` を受信すると、ハードウェアオブジェクトごとにエントリを書き込む。詳細は [`counters-flex`](counters-flex.md) を参照。
+[orchagent](../../reference/glossary.md#term-orchagent) の各 Orch（PortsOrch / IntfsOrch / BufferOrch 等）が、`FLEX_COUNTER_STATUS = enable` を受信すると、ハードウェアオブジェクトごとにエントリを書き込む。詳細は [`counters-flex`](counters-flex.md) を参照。
 
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来挙動 (Phase A)
@@ -107,7 +101,7 @@ orchagent の各 Orch（PortsOrch / IntfsOrch / BufferOrch 等）が、`FLEX_COU
 
 ### FlexCounter インスタンス初期状態
 
-`FlexCounter::FlexCounter(...)` コンストラクタ（FlexCounter.cpp:3031-3051）の初期値:
+`FlexCounter::FlexCounter(...)` コンストラクタ（[FlexCounter](../../reference/glossary.md#term-flexcounter).cpp:3031-3051）の初期値:
 
 | フィールド | 初期値 | 意味 |
 |-----------|--------|------|
@@ -116,7 +110,7 @@ orchagent の各 Orch（PortsOrch / IntfsOrch / BufferOrch 等）が、`FLEX_COU
 | `m_readyToPoll` | `false` | ID リスト未登録状態 |
 | `m_isDiscarded` | `false` | インスタンス有効状態 |
 
-**ポーリング実行条件**（FlexCounter.cpp:3538）:
+**ポーリング実行条件**（[FlexCounter](../../reference/glossary.md#term-flexcounter).cpp:3538）:
 
 ```cpp
 if (m_enable && !allIdsEmpty() && (m_pollInterval > 0))
@@ -126,7 +120,7 @@ if (m_enable && !allIdsEmpty() && (m_pollInterval > 0))
 
 ### `FLEX_COUNTER_STATUS` の暗黙デフォルト
 
-`setStatus()` は `enable` / `disable` のみ受け付ける。その他の値は `SWSS_LOG_WARN` でスキップされ `m_enable` は変更されない（FlexCounter.cpp:3079-3083）:
+`setStatus()` は `enable` / `disable` のみ受け付ける。その他の値は `SWSS_LOG_WARN` でスキップされ `m_enable` は変更されない（[FlexCounter](../../reference/glossary.md#term-flexcounter).cpp:3079-3083）:
 
 ```cpp
 if (cit == statusMap.cend())
@@ -151,7 +145,7 @@ if (cit == statusMap.cend())
 
 ### portsorch.cpp ハードコード初期ポーリング間隔
 
-FlexCounter グループ作成時、portsorch.cpp:87-93 で定義された定数が初期 `POLL_INTERVAL` として FLEX_COUNTER_DB に書き込まれる。CONFIG_DB の `POLL_INTERVAL` 値で後から上書き可能。
+FlexCounter グループ作成時、[portsorch](../../reference/glossary.md#term-portsorch).cpp:87-93 で定義された定数が初期 `POLL_INTERVAL` として [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に書き込まれる。[CONFIG_DB](../../reference/glossary.md#term-config_db) の `POLL_INTERVAL` 値で後から上書き可能。
 
 | グループ | ハードコード初期値 | 定数名 |
 |---------|-------------------|--------|
@@ -165,7 +159,7 @@ FlexCounter グループ作成時、portsorch.cpp:87-93 で定義された定数
 | `WRED_ECN_PORT` | 1000 ms | `PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` と共用 |
 | `WRED_ECN_QUEUE` | 10000 ms | `QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` と共用 |
 
-**YANG との乖離**: YANG（sonic-flex_counter.yang）の `poll_interval` typedef は `range 100..4294967295` で統一。portsorch のハードコード値は YANG バリデーション対象外。CONFIG_DB `POLL_INTERVAL` が未設定でも portsorch 初期化時に FLEX_COUNTER_DB へ書き込まれるため、`counterpoll show` 表示とは異なる実値になる場合がある。
+**[YANG](../../reference/glossary.md#term-yang) との乖離**: [YANG](../../reference/glossary.md#term-yang)（sonic-flex_counter.yang）の `poll_interval` typedef は `range 100..4294967295` で統一。[portsorch](../../reference/glossary.md#term-portsorch) のハードコード値は YANG バリデーション対象外。[CONFIG_DB](../../reference/glossary.md#term-config_db) `POLL_INTERVAL` が未設定でも [portsorch](../../reference/glossary.md#term-portsorch) 初期化時に [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) へ書き込まれるため、`counterpoll show` 表示とは異なる実値になる場合がある。
 
 ### FlexCounterOrch m_* フラグ初期値
 
@@ -183,7 +177,7 @@ FlexCounter グループ作成時、portsorch.cpp:87-93 で定義された定数
 | `m_wred_queue_counter_enabled` | `WRED_ECN_QUEUE` | `false` |
 | `m_route_flow_counter_enabled` | `FLOW_CNT_ROUTE` | `false` |
 
-これらのフラグは portsorch / intfsOrch 等が新しいポート・RIF を追加したときに、カウンタ ID リストを FLEX_COUNTER_DB に書き込むかどうかを制御する。フラグが `false` のままでは `FLEX_COUNTER_STATUS = enable` が書き込まれていても ID リスト登録が行われずポーリングは起動しない（3 条件のうち `allIdsEmpty()` が `true` のため）。
+これらのフラグは portsorch / intfsOrch 等が新しいポート・[RIF](../../reference/glossary.md#term-rif) を追加したときに、カウンタ ID リストを FLEX_COUNTER_DB に書き込むかどうかを制御する。フラグが `false` のままでは `FLEX_COUNTER_STATUS = enable` が書き込まれていても ID リスト登録が行われずポーリングは起動しない（3 条件のうち `allIdsEmpty()` が `true` のため）。
 
 ### `BULK_CHUNK_SIZE` / `BULK_CHUNK_SIZE_PER_PREFIX` の挙動
 
@@ -203,29 +197,29 @@ FLEX_COUNTER_DB は warm-reboot 後に全クリアされ、orchagent 起動時�
 
 | migration | 条件 | 動作 |
 |-----------|------|------|
-| `migrate_config_db_flex_counter_delay_status` | fast-reboot 前 | CONFIG_DB `FLEX_COUNTER_TABLE` 全エントリの `FLEX_COUNTER_DELAY_STATUS` を `true` に強制上書き |
+| `migrate_config_db_flex_counter_delay_status` | fast-reboot 前 | [CONFIG_DB](../../reference/glossary.md#term-config_db) `FLEX_COUNTER_TABLE` 全エントリの `FLEX_COUNTER_DELAY_STATUS` を `true` に強制上書き |
 | `migrate_flex_counter_delay_status_removal` | cross-branch upgrade 時 | `FLEX_COUNTER_DELAY_STATUS` フィールドを全エントリから削除 |
 
 **FLEX_COUNTER_DELAY_STATUS の通常起動時挙動**: orchagent コンストラクタで `m_delayTimerExpired = true` が即セットされるため、通常起動では遅延なし。フィールドは fast-reboot 専用。
 
 ### STATE_DB との関係
 
-STATE_DB（DB 6）に FLEX_COUNTER 専用の独立テーブルはない。FLEX_COUNTER システムが STATE_DB を参照するのは syncd の warm-reboot 状態（`STATE_DB:WARM_RESTART_TABLE`）のみ（Syncd.cpp:5824）。ポーリング状態・カウンタ値は FLEX_COUNTER_DB と COUNTERS_DB で完結する。
+[STATE_DB](../../reference/glossary.md#term-state_db)（DB 6）に FLEX_COUNTER 専用の独立テーブルはない。FLEX_COUNTER システムが [STATE_DB](../../reference/glossary.md#term-state_db) を参照するのは syncd の warm-reboot 状態（`STATE_DB:WARM_RESTART_TABLE`）のみ（Syncd.cpp:5824）。ポーリング状態・カウンタ値は FLEX_COUNTER_DB と [COUNTERS_DB](../../reference/glossary.md#term-counters_db) で完結する。
 
 <!-- /defaults -->
 
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`FlexCounterOrch` → `FLEX_COUNTER_DB` → `syncd FlexCounter` の 3 段パイプラインでは、`FLEX_COUNTER_GROUP_TABLE`（グループ制御）と `FLEX_COUNTER_TABLE`（per-OID カウンタ ID リスト）が **別の Redis キー空間**に書き込まれるため、syncd が受信するイベントの順序は保証されない。ポーリング起動条件（`m_enable && !allIdsEmpty() && m_pollInterval > 0`）が揃うまでの間は中間状態が観測しうる。
+`FlexCounterOrch` → `FLEX_COUNTER_DB` → `syncd FlexCounter` の 3 段パイプラインでは、`FLEX_COUNTER_GROUP_TABLE`（グループ制御）と `FLEX_COUNTER_TABLE`（per-OID カウンタ ID リスト）が **別の [Redis](../../reference/glossary.md#term-redis) キー空間**に書き込まれるため、syncd が受信するイベントの順序は保証されない。ポーリング起動条件（`m_enable && !allIdsEmpty() && m_pollInterval > 0`）が揃うまでの間は中間状態が観測しうる。
 
 ### 検出された順序依存
 
 | # | 依存関係 | 方向 | 中間状態 | 緩和策 |
 |---|----------|------|---------|--------|
-| 1 | `FLEX_COUNTER_GROUP_TABLE` STATUS=enable と `FLEX_COUNTER_TABLE` OID リストの syncd 到着順不定 | Redis イベントキュー | `m_enable=true` + OID 空、または OID あり + `m_enable=false` — どちらも 3 条件が揃った時点でポーリング自動起動 | `FlexCounter::addCounter()` / `setStatus()` は独立更新、3 条件チェックは毎ポーリングループで再評価 |
+| 1 | `FLEX_COUNTER_GROUP_TABLE` STATUS=enable と `FLEX_COUNTER_TABLE` OID リストの syncd 到着順不定 | [Redis](../../reference/glossary.md#term-redis) イベントキュー | `m_enable=true` + OID 空、または OID あり + `m_enable=false` — どちらも 3 条件が揃った時点でポーリング自動起動 | `FlexCounter::addCounter()` / `setStatus()` は独立更新、3 条件チェックは毎ポーリングループで再評価 |
 | 2 | portsorch ハードコード `POLL_INTERVAL` 書込み → CONFIG_DB 値による上書き | 起動順序（init → doTask） | orchagent 起動直後〜`FlexCounterOrch::doTask()` が CONFIG_DB 値を処理するまで FLEX_COUNTER_DB には portsorch 初期値が入っている | `counterpoll interval <group> <ms>` で再設定すると即上書き可能 |
-| 3 | `FLEX_COUNTER_STATUS=enable` 受信 → `generatePortCounterMap()` → `setFlexCounterGroupOperation()` の 2 ステップ | 単一 doTask イテレーション内 | COUNTER_TABLE SET と GROUP_TABLE SET は別 Redis write — syncd では依存 #1 と同様に別イベントとして到達 | 最終的に収束（依存 #1 の自動解消と同様） |
+| 3 | `FLEX_COUNTER_STATUS=enable` 受信 → `generatePortCounterMap()` → `setFlexCounterGroupOperation()` の 2 ステップ | 単一 doTask イテレーション内 | COUNTER_TABLE SET と GROUP_TABLE SET は別 [Redis](../../reference/glossary.md#term-redis) write — syncd では依存 #1 と同様に別イベントとして到達 | 最終的に収束（依存 #1 の自動解消と同様） |
 | 4 | PortsOrch ポート初期化完了 → OID 逐次追加 | 起動シーケンス（initPort() ループ） | orchagent 起動直後は `FLEX_COUNTER_TABLE` が空 → `allIdsEmpty()=true` でポーリング無効 | `initPort()` が各 Ethernet<N> を追加するたびに OID リストが追記され、最終的にすべてのポートがカバーされる |
 
 ### 主要な制約詳細
@@ -250,8 +244,8 @@ STATE_DB（DB 6）に FLEX_COUNTER 専用の独立テーブルはない。FLEX_C
 | FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `CONFIG_DB:DEVICE_METADATA` `.create_only_config_db_buffers` | コンストラクタで hget; `"true"` のとき Queue/PG 設定で非ゼロプロファイルのポートのみ対象に絞る (`flexcounterorch.cpp:106-120`) |
 | FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gPortsOrch->allPortsReady()` | doTask 先頭ガード; PortsOrch が未初期化なら全イベントを silent defer (`flexcounterorch.cpp:164-167`) |
 | FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gFabricPortsOrch->allPortsReady()` | 同上; Fabric 版PortsOrch ガード (`flexcounterorch.cpp:169-172`) |
-| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gPortsOrch->generate*Map()` 各メソッド | `FLEX_COUNTER_STATUS=enable` 時に PORT/QUEUE/PG/WRED 系グループのOIDリストを FLEX_COUNTER_DB へ書き込む起点 (`flexcounterorch.cpp:235-295`) |
-| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gIntfsOrch->generateInterfaceMap()` | `RIF` グループ enable 時。RIF OIDリストを FLEX_COUNTER_DB へ登録 (`flexcounterorch.cpp:283-286`) |
+| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gPortsOrch->generate*Map()` 各メソッド | `FLEX_COUNTER_STATUS=enable` 時に PORT/QUEUE/PG/[WRED](../../reference/glossary.md#term-wred) 系グループのOIDリストを FLEX_COUNTER_DB へ書き込む起点 (`flexcounterorch.cpp:235-295`) |
+| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gIntfsOrch->generateInterfaceMap()` | `RIF` グループ enable 時。[RIF](../../reference/glossary.md#term-rif) OIDリストを FLEX_COUNTER_DB へ登録 (`flexcounterorch.cpp:283-286`) |
 | FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gBufferOrch->generateBufferPoolWatermarkCounterIdList()` | `BUFFER_POOL_WATERMARK` グループ enable 時 (`flexcounterorch.cpp:287-290`) |
 | FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `APP_DB:BUFFER_QUEUE` / `APP_DB:BUFFER_PG` | `create_only_config_db_buffers=true` 時に `gBufferOrch->getBufferObjectsWithNonZeroProfile()` 経由で参照; 非ゼロプロファイルキュー/PGのみ対象 (`flexcounterorch.cpp:554,623`) |
 | FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `VxlanTunnelOrch->generateTunnelCounterMap()` | `TUNNEL` グループ enable 時。VxlanTunnelOrch を `gDirectory.get<>()` で動的取得 (`flexcounterorch.cpp:295-299`) |
@@ -284,7 +278,7 @@ CONFIG_DB:FLEX_COUNTER_TABLE
 
 <!-- evidence: meta/_intermediate/cdb-flow/state-flex-counter-failure.md -->
 
-FLEX_COUNTER_DB への書き込みと syncd 内 `FlexCounter` ポーリングの各障害経路を示す。**COUNTERS_DB への影響**に着目することが重要で、失敗時には「書き込まれない」か「stale 値が残留する」かのどちらかになる。
+FLEX_COUNTER_DB への書き込みと syncd 内 `FlexCounter` ポーリングの各障害経路を示す。**[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への影響**に着目することが重要で、失敗時には「書き込まれない」か「stale 値が残留する」かのどちらかになる。
 
 ### FlexCounterOrch 側の失敗パターン
 
@@ -298,13 +292,13 @@ FLEX_COUNTER_DB への書き込みと syncd 内 `FlexCounter` ポーリングの
 
 ### FlexCounter（syncd 側）の失敗パターン
 
-| 失敗ケース | 発生箇所 | 挙動 | COUNTERS_DB への影響 |
+| 失敗ケース | 発生箇所 | 挙動 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への影響 |
 |---|---|---|---|
 | `FLEX_COUNTER_STATUS` に `"enable"` / `"disable"` 以外の値 | `FlexCounter.cpp:3074-3084` | `SWSS_LOG_WARN`、`m_enable` 変更なし | ポーリング状態は変化しない。不正値は FLEX_COUNTER_DB に残留 |
 | `BULK_CHUNK_SIZE` に数値変換不能な値 | `FlexCounter.cpp:3176-3183` | `catch(...)` で捕捉、`SWSS_LOG_ERROR`、`bulkChunkSize` は変更しない | 既存の chunk size 設定が継続、ポーリングは継続 |
 | 未知フィールドが FLEX_COUNTER_GROUP_TABLE に到着 | `FlexCounter.cpp:3230-3236` | `SWSS_LOG_ERROR("Field is not supported %s")`、無視 | FLEX_COUNTER_DB・COUNTERS_DB への影響なし |
-| SAI 単体 `getStats()` 失敗（非 `SAI_STATUS_SUCCESS`） | `FlexCounter.cpp:1249-1258` | `return false`、当該 OID をスキップ | COUNTERS_DB の当該 OID エントリは更新されず **stale 値が残留** |
-| SAI `clearStats()` 失敗（`STATS_MODE_READ_AND_CLEAR` 時） | `FlexCounter.cpp:1261-1282` | `return false`、`SWSS_LOG_ERROR` | COUNTERS_DB は getStats 成功分を書いた後でクリアされない（値は更新済みだがカウンタは非リセット） |
+| [SAI](../../reference/glossary.md#term-sai) 単体 `getStats()` 失敗（非 `SAI_STATUS_SUCCESS`） | `FlexCounter.cpp:1249-1258` | `return false`、当該 OID をスキップ | COUNTERS_DB の当該 OID エントリは更新されず **stale 値が残留** |
+| [SAI](../../reference/glossary.md#term-sai) `clearStats()` 失敗（`STATS_MODE_READ_AND_CLEAR` 時） | `FlexCounter.cpp:1261-1282` | `return false`、`SWSS_LOG_ERROR` | COUNTERS_DB は getStats 成功分を書いた後でクリアされない（値は更新済みだがカウンタは非リセット） |
 | SAI `bulkGetStats()` 呼び出し失敗（ステータス非 SUCCESS） | `FlexCounter.cpp:1339-1344` | `SWSS_LOG_WARN`、`current += bulk_chunk_size` で処理継続 | 失敗チャンク内の OID は `object_statuses[i]` が非 SUCCESS → COUNTERS_DB 書き込みをスキップ（`continue`、`FlexCounter.cpp:1363`）。stale 値残留 |
 | `removeCounterContext()` で存在しないコンテキスト名 | `FlexCounter.cpp:3484` | `SWSS_LOG_ERROR`、処理継続 | COUNTERS_DB・FLEX_COUNTER_DB は変化しない |
 
@@ -431,7 +425,7 @@ PortsOrch コンストラクタが `FlexCounterManager` 初期化時に直接渡
 | 対象 DB / テーブル | キー / フィールド | 書込内容 | トリガー |
 |------------------|-----------------|---------|---------|
 | `COUNTERS_DB` / `COUNTERS:<oid>` | `SAI_*_STAT_*` | SAI から取得した統計カウンタ値（uint64 文字列） | ポーリング条件 3 つが揃って `collectCounters()` が実行されたとき（`FlexCounter.cpp:3543`） |
-| `COUNTERS_DB` / `PORT_PHY_ATTR:<oid>` | 各 PHY 属性フィールド | ポート PHY 属性（SerDes パラメータ等） | `PORT_PHY_ATTR` グループのポーリング（`FlexCounter.cpp:1984-2005`） |
+| `COUNTERS_DB` / `PORT_PHY_ATTR:<oid>` | 各 PHY 属性フィールド | ポート PHY 属性（[SerDes](../../reference/glossary.md#term-serdes) パラメータ等） | `PORT_PHY_ATTR` グループのポーリング（`FlexCounter.cpp:1984-2005`） |
 | `COUNTERS_DB` / `COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` | `<serdes_oid>` → `<port_oid>` | Serdes OID → Port OID マッピング | `PORT_PHY_SERDES_ATTR` グループの初期登録（`FlexCounter.cpp:2251-2260`） |
 
 **ポーリング書込みタイミング**: `FlexCounter::flexCounterThreadRunFunction()`（`FlexCounter.cpp:3526`）が `m_pollInterval` ms ごとに `collectCounters()` を呼び出し、`COUNTERS_TABLE`（= `COUNTERS:`）への書込みを Redis パイプライン経由でフラッシュする。書込みは各ポーリング周期の終わりにまとめて行われ（`pipeline.flush()`）、周期中の中間状態は COUNTERS_DB に現れない。
@@ -442,7 +436,7 @@ PortsOrch コンストラクタが `FlexCounterManager` 初期化時に直接渡
 
 | 操作 | 対象テーブル | 削除キー |
 |------|------------|---------|
-| ポート / RIF / Queue 等の OID 削除 | `COUNTERS_DB:COUNTERS` | `<vid>` のエントリ全体 |
+| ポート / [RIF](../../reference/glossary.md#term-rif) / Queue 等の OID 削除 | `COUNTERS_DB:COUNTERS` | `<vid>` のエントリ全体 |
 | RIF OID 削除 | `COUNTERS_DB:RATES` | `<vid>` / `<vid>:RIF` |
 | Trap OID 削除 | `COUNTERS_DB:RATES` | `<vid>` / `<vid>:TRAP` |
 
@@ -564,11 +558,11 @@ Gearbox なし構成ではこのコードパスは実行されず、Gearbox 用 
 
 ### MACsec ハードウェアオフロード — MACSEC_SA / MACSEC_FLOW グループ
 
-`MACSEC_SA`・`MACSEC_SA_ATTR`・`MACSEC_FLOW` の 3 グループは `flexCounterGroupMap` に定義されており（`flexcounterorch.cpp:89-91`）、MACsec オフロード有効プラットフォーム (`macsecorch` が初期化される構成) でのみ `FLEX_COUNTER_GROUP_TABLE|MACSEC_*` エントリが FLEX_COUNTER_DB に書き込まれる。MACsec 非搭載構成では `macsecorch` が存在せず、これらのグループは生成されない。
+`MACSEC_SA`・`MACSEC_SA_ATTR`・`MACSEC_FLOW` の 3 グループは `flexCounterGroupMap` に定義されており（`flexcounterorch.cpp:89-91`）、[MACsec](../../reference/glossary.md#term-macsec) オフロード有効プラットフォーム (`macsecorch` が初期化される構成) でのみ `FLEX_COUNTER_GROUP_TABLE|MACSEC_*` エントリが FLEX_COUNTER_DB に書き込まれる。[MACsec](../../reference/glossary.md#term-macsec) 非搭載構成では `macsecorch` が存在せず、これらのグループは生成されない。
 
 ### VOQ chassis — QUEUE グループの一括展開
 
-VOQ シャーシ（`gMySwitchType == "voq"`）では、BUFFER_QUEUE CONFIG_DB 設定の有無に関わらず**全フロントパネルポートおよびシステムポートの全 egress queue と VoQ** に対して `FLEX_COUNTER_TABLE|QUEUE|<oid>` が FLEX_COUNTER_DB に一括書き込まれる（`flexcounterorch.cpp:544-558`）。非 VOQ 環境では `BUFFER_QUEUE` にプロファイル設定を持つキューのみが対象になる。
+[VOQ](../../reference/glossary.md#term-voq) シャーシ（`gMySwitchType == "voq"`）では、BUFFER_QUEUE CONFIG_DB 設定の有無に関わらず**全フロントパネルポートおよびシステムポートの全 egress queue と VoQ** に対して `FLEX_COUNTER_TABLE|QUEUE|<oid>` が FLEX_COUNTER_DB に一括書き込まれる（`flexcounterorch.cpp:544-558`）。非 [VOQ](../../reference/glossary.md#term-voq) 環境では `BUFFER_QUEUE` にプロファイル設定を持つキューのみが対象になる。
 
 ### FabricPortsOrch — ファブリックポート Queue カウンタ
 
@@ -576,11 +570,11 @@ VOQ シャーシ（`gMySwitchType == "voq"`）では、BUFFER_QUEUE CONFIG_DB �
 
 ### DASH / ENI / SmartSwitch — ENI / DASH_METER / HA_SET グループ
 
-`DashOrch` / `DashHaOrch` が初期化される SmartSwitch 構成では `ENI`・`DASH_METER`・`HA_SET` グループへのポーリング制御が連動する（`flexcounterorch.cpp:299-314`）。標準 BOX スイッチでは `dash_orch == nullptr` であり、これらのコードパスは到達されない。
+`DashOrch` / `DashHaOrch` が初期化される [SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成では `ENI`・`DASH_METER`・`HA_SET` グループへのポーリング制御が連動する（`flexcounterorch.cpp:299-314`）。標準 BOX スイッチでは `dash_orch == nullptr` であり、これらのコードパスは到達されない。
 
 ### FLEX_COUNTER_DB 制御フィールド自体はプラットフォーム共通
 
-`FLEX_COUNTER_GROUP_TABLE` のフィールド（`POLL_INTERVAL`・`FLEX_COUNTER_STATUS`・`STATS_MODE`・`BULK_CHUNK_SIZE`）、`FlexCounter::setStatus` / `setStatsMode` / `setPollInterval` の処理ロジック、DB 番号（5）・テーブル名・チャネル名（`schema.h` 定義）はすべてプラットフォーム非依存。各カウンタの SAI 統計値取得（`sai_*_stats` API）は ASIC SDK に依存するが、FLEX_COUNTER_DB のフィールド設計には影響しない。
+`FLEX_COUNTER_GROUP_TABLE` のフィールド（`POLL_INTERVAL`・`FLEX_COUNTER_STATUS`・`STATS_MODE`・`BULK_CHUNK_SIZE`）、`FlexCounter::setStatus` / `setStatsMode` / `setPollInterval` の処理ロジック、DB 番号（5）・テーブル名・チャネル名（`schema.h` 定義）はすべてプラットフォーム非依存。各カウンタの SAI 統計値取得（`sai_*_stats` API）は [ASIC SDK](../../reference/glossary.md#term-asic-sdk) に依存するが、FLEX_COUNTER_DB のフィールド設計には影響しない。
 
 <!-- /platform -->
 
@@ -622,3 +616,5 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS:*' | head -5
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 1c64d648249a -->

@@ -42,7 +42,7 @@ related:
 
 ## 概要
 
-SONiC の [YANG](../reference/glossary.md#term-yang) モデルは **ABNF.json** で表現された [Redis](../reference/glossary.md#term-redis) スキーマを RFC 7950 準拠の YANG に写像したもの。Configuration Validation Library (CVL) と SONiC Mgmt Framework が NB API・設定検証で利用する[^1]。本ドキュメントはそのモデルを書く際のガイドライン 21 項[^1] を構造化したもの。
+[SONiC](../reference/glossary.md#term-sonic) の [YANG](../reference/glossary.md#term-yang) モデルは **ABNF.json** で表現された [Redis](../reference/glossary.md#term-redis) スキーマを RFC 7950 準拠の YANG に写像したもの。Configuration Validation Library (CVL) と SONiC Mgmt Framework が NB API・設定検証で利用する[^1]。本ドキュメントはそのモデルを書く際のガイドライン 21 項[^1] を構造化したもの。
 
 ## ガイドライン要約
 
@@ -347,3 +347,5 @@ docker exec mgmt-framework sonic-cfggen -d --print-data | \
 - [config-save-diff-unexpected](../reference/runbooks/config-save-diff-unexpected.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -46,13 +46,13 @@ bgp、telemetry、snmp、lldp などの feature service は [FEATURE テーブ�
 運用では次の順に見ます。
 
 1. [show feature](../../reference/cli/show-feature.md) で状態、設定、自動再起動を確認する。
-2. `config feature` で変更する場合、対象 feature が必須 service か、遅延起動対象か、Multi-ASIC / [DPU](../../reference/glossary.md#term-dpu) scope を持つか確認する。
+2. `config feature` で変更する場合、対象 feature が必須 service か、遅延起動対象か、[Multi-ASIC](../../reference/glossary.md#term-multi-asic) / [DPU](../../reference/glossary.md#term-dpu) scope を持つか確認する。
 3. 永続化が必要なら `config save` の要否を運用ルールに従って確認する。
 4. service 起動に失敗した場合は `hostcfgd`、systemd unit、feature container のログを見る。
 
 ## system defaults を変更する
 
-[SYSTEM_DEFAULTS](../../reference/config-db/system-defaults.md) は、従来 `DEVICE_METADATA` に溜まりがちだった「SONiC の既定挙動フラグ」を切り出すためのテーブルです。[System Defaults HLD](../../switching/control-sonic-behaviors-with-system-defaults-table.md) では、ビルド時既定値、minigraph、ランタイム書き込みの優先関係と、consumer が起動時または購読で取り込む考え方が示されています。
+[SYSTEM_DEFAULTS](../../reference/config-db/system-defaults.md) は、従来 `DEVICE_METADATA` に溜まりがちだった「[SONiC](../../reference/glossary.md#term-sonic) の既定挙動フラグ」を切り出すためのテーブルです。[System Defaults HLD](../../switching/control-sonic-behaviors-with-system-defaults-table.md) では、ビルド時既定値、minigraph、ランタイム書き込みの優先関係と、consumer が起動時または購読で取り込む考え方が示されています。
 
 `SYSTEM_DEFAULTS` は名前の通り「既定値」です。ある機能の現在状態を直接操作するテーブルではなく、起動時や reload 時の振る舞いを変える入口として扱います。変更前には、そのフラグが即時反映されるのか、service restart / reload / reboot が必要なのかを個別ページで確認してください。
 
@@ -214,4 +214,4 @@ Mon 2026-05-11 12:08:00 UTC   4min     n/a   n/a     dhcp_relay-delayed.timer  d
 - [SYSTEM_DEFAULTS HLD](../../switching/control-sonic-behaviors-with-system-defaults-table.md)
 - [reset-factory](../../architecture/reset-factory-design.md)
 
-<!-- glossary-links-injected: c7663e102d50 -->
+<!-- glossary-links-injected: 3abb11a5818e -->

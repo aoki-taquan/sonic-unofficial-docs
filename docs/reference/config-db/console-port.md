@@ -22,7 +22,7 @@ hard: 0
 
 ## 概要
 
-SONiC を **console switch** として動かすときの、シリアル/コンソールポートの設定テーブル群[^1]。
+[SONiC](../../reference/glossary.md#term-sonic) を **console switch** として動かすときの、シリアル/コンソールポートの設定テーブル群[^1]。
 `CONSOLE_PORT` は各シリアルライン (1 行 = 1 物理ポート) のボーレート・接続先・エスケープ文字、
 `CONSOLE_SWITCH` は機能のオンオフとデフォルトエスケープ文字を保持する。
 
@@ -72,7 +72,7 @@ CONSOLE_SWITCH|console_mgmt
 
 ### CONSOLE_PORT フィールド
 
-| フィールド | YANG default | CLI 省略時挙動 | 実行時 fallback |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | CLI 省略時挙動 | 実行時 fallback |
 |---|---|---|---|
 | `baud_rate` | なし | `--baud` required — 必ず書き込まれる | フィールド欠如で接続時 `InvalidConfigurationError`（consutil/lib.py L198） |
 | `flow_control` | `"0"` (YANG L62) | `--flowcontrol` は is_flag — 省略で `"0"` を明示書き込み | フィールド欠如は `False` 扱い（`== "1"` 比較、consutil/lib.py L153） |
@@ -163,14 +163,14 @@ CONSOLE_SWITCH|console_mgmt
 | 参照方向 | 起点 | 相手テーブル | 条件 |
 |---------|------|-------------|------|
 | CONSOLE_PORT → | `consutil connect` 実行時 | `CONSOLE_SWITCH\|console_mgmt` | `enabled` フラグと `default_escape_char` を参照。disabled の場合は接続を拒否 (consutil/lib.py:91-98) |
-| CONSOLE_PORT → STATE_DB | 接続確立時 (write) | `STATE_DB\|CONSOLE_PORT\|<line>` | `ConsolePortState` が `state` / `pid` / `start_time` を STATE_DB へ書き込む (consutil/lib.py:374-380) |
-| CONSOLE_PORT ← STATE_DB | `show console` 実行時 (read) | `STATE_DB\|CONSOLE_PORT\|<line>` | `LinksDb._get_all_ports()` が STATE_DB から接続状態を読み取り、表示に利用 (consutil/lib.py:120) |
+| CONSOLE_PORT → [STATE_DB](../../reference/glossary.md#term-state_db) | 接続確立時 (write) | `STATE_DB\|CONSOLE_PORT\|<line>` | `ConsolePortState` が `state` / `pid` / `start_time` を [STATE_DB](../../reference/glossary.md#term-state_db) へ書き込む (consutil/lib.py:374-380) |
+| CONSOLE_PORT ← [STATE_DB](../../reference/glossary.md#term-state_db) | `show console` 実行時 (read) | `STATE_DB\|CONSOLE_PORT\|<line>` | `LinksDb._get_all_ports()` が STATE_DB から接続状態を読み取り、表示に利用 (consutil/lib.py:120) |
 
 ### 詳細
 
 **`CONSOLE_SWITCH|console_mgmt` (先行必須)**: `consutil connect` は内部で `LinksDb._get_all_ports()` を呼び出し、最初に `CONSOLE_SWITCH|console_mgmt.enabled` の値を確認する。`enabled = "no"` またはエントリ不在の場合、`CONSOLE_PORT` の設定が存在しても接続を拒否し `default_escape_char` も `None` に固定される (consutil/lib.py:91-98)。`CONSOLE_PORT` は実質的に `CONSOLE_SWITCH` の有効化を前提とした従属テーブルである。
 
-**`STATE_DB.CONSOLE_PORT` (双方向)**: `consutil connect` が接続を確立すると `ConsolePortState.__init__()` (lib.py:374) が `STATE_DB|CONSOLE_PORT|<line_num>` に `state`・`pid`・`start_time` の 3 フィールドを書き込む。接続終了時には同 key を削除する。一方、`show console` 実行時は `_get_all_ports()` (lib.py:120) が同 key を読み取り、現在接続中のライン・PID・開始時刻を表示する。CONFIG_DB と STATE_DB の同名テーブルが対になって機能する構成である。
+**`STATE_DB.CONSOLE_PORT` (双方向)**: `consutil connect` が接続を確立すると `ConsolePortState.__init__()` (lib.py:374) が `STATE_DB|CONSOLE_PORT|<line_num>` に `state`・`pid`・`start_time` の 3 フィールドを書き込む。接続終了時には同 key を削除する。一方、`show console` 実行時は `_get_all_ports()` (lib.py:120) が同 key を読み取り、現在接続中のライン・PID・開始時刻を表示する。[CONFIG_DB](../../reference/glossary.md#term-config_db) と STATE_DB の同名テーブルが対になって機能する構成である。
 <!-- /cross-refs -->
 
 <!-- failure -->
@@ -196,7 +196,7 @@ CONSOLE_SWITCH|console_mgmt
 | 失敗条件 | エラーコード | 出力メッセージ | evidence |
 |---|---|---|---|
 | `CONSOLE_SWITCH.enabled` が `"no"` または未設定 | `ERR_DISABLE (1)` | `"Console switch feature is disabled"` | `consutil/main.py:26-29` |
-| 指定ライン / デバイスが CONFIG_DB に存在しない (`LineNotFoundError`) | `ERR_DEV (3)` | `"Cannot connect: target [X] does not exist"` | `consutil/main.py:131-134` |
+| 指定ライン / デバイスが [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在しない (`LineNotFoundError`) | `ERR_DEV (3)` | `"Cannot connect: target [X] does not exist"` | `consutil/main.py:131-134` |
 | 対象ラインが接続中 (`LineBusyError`) | `ERR_BUSY (5)` | `"Cannot connect: line [X] is busy"` | `consutil/main.py:141-143` |
 | `baud_rate` フィールドが DB に存在しない (`InvalidConfigurationError`) | `ERR_CFG (4)` | `"Cannot connect: line [X] has no baud rate"` | `consutil/lib.py:197-199` |
 | `CONSOLE_SWITCH.default_escape_char` が大文字 (`[A-Z]`) | 例外伝播 (初期化失敗) | `"default console escape character is not valid"` | `consutil/lib.py:99-103` |
@@ -213,7 +213,7 @@ CONSOLE_SWITCH|console_mgmt
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`consutil/lib.py` および `config/console.py` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+`consutil/lib.py` および `config/console.py` 内に存在する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG で管理されないハードコード定数の一覧。
 
 > 詳細証跡: `meta/_intermediate/cdb-flow/console-port-constants.md`
 
@@ -272,7 +272,7 @@ CONSOLE_SWITCH|console_mgmt
 2. `ConsolePortInfo.refresh()` (consutil/lib.py:245-267): 個別ポートのセッション状態変化時に STATE_DB を更新する。接続中 picocom プロセスの存否に応じて busy / idle を書き分ける。
 3. `ConsolePortInfo.connect()` (consutil/lib.py:189-224): 接続確立前後で `refresh()` を呼び STATE_DB を更新する。
 
-**APPL_DB / その他 DB への書込**: なし。`config/console.py` は CONFIG_DB にのみ書き込み、APPL_DB / ASIC_DB / COUNTERS_DB への書込は発生しない（SAI 非経由）。
+**[APPL_DB](../../reference/glossary.md#term-appl_db) / その他 DB への書込**: なし。`config/console.py` は CONFIG_DB にのみ書き込み、[APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込は発生しない（[SAI](../../reference/glossary.md#term-sai) 非経由）。
 
 > 詳細スキャン結果は `meta/_intermediate/cdb-flow/console-port-side.md` を参照。
 <!-- /side-effects -->
@@ -282,7 +282,7 @@ CONSOLE_SWITCH|console_mgmt
 
 ### Redis 購読方式
 
-`CONSOLE_PORT` および `CONSOLE_SWITCH` テーブルを **Redis Subscribe / keyspace 通知 (PSUBSCRIBE) で購読する常駐デーモンは存在しない**。
+`CONSOLE_PORT` および `CONSOLE_SWITCH` テーブルを **[Redis](../../reference/glossary.md#term-redis) Subscribe / keyspace 通知 (PSUBSCRIBE) で購読する常駐デーモンは存在しない**。
 
 | 購読者 | 購読 API | 購読テーブル | 備考 |
 |--------|---------|------------|------|
@@ -357,8 +357,8 @@ def init_device_prefix():
 
 ### ASIC ベンダー固有差異なし
 
-- SAI 非経由（consutil は Linux シリアルデバイスと直接通信）。Broadcom / Mellanox / Marvell 等の ASIC ベンダーによる差異はなし。
-- Multi-ASIC プラットフォームへの対応は `consutil` 現実装には含まれていない（シングルホスト前提）。
+- [SAI](../../reference/glossary.md#term-sai) 非経由（consutil は Linux シリアルデバイスと直接通信）。Broadcom / Mellanox / Marvell 等の [ASIC](../../reference/glossary.md#term-asic) ベンダーによる差異はなし。
+- [Multi-ASIC](../../reference/glossary.md#term-multi-asic) プラットフォームへの対応は `consutil` 現実装には含まれていない（シングルホスト前提）。
 
 <!-- evidence: sonic-utilities/consutil/lib.py:297-307 -->
 <!-- evidence: sonic-buildimage/device/nexthop/arm64-nexthop_b27-r0/udevprefix.conf -->
@@ -401,7 +401,6 @@ show console
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -413,11 +412,11 @@ CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — Linux tty / conserver の設定を更新)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — Linux tty / conserver の設定を更新)
 
 ### 段階 4 — タイミングと副作用
 
@@ -440,7 +439,7 @@ CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -454,7 +453,6 @@ CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
-
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
@@ -506,4 +504,5 @@ CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`
 
 **db_migrator の前提条件 (依存 #4)**: `migrate_console_switch()` は `self.configDB.get_entry('CONSOLE_SWITCH', 'console_mgmt')` で現在の DB 値を取得し、空の場合（`if not console_mgmt`）のみ `set_entry` を実行する。このため、マイグレーション前に `config console enable` / `disable` コマンドを手動実行してキーが存在する場合、移行元 `config_src_data` の値は書き込まれない（evidence: `db_migrator.py:659–666`）。
 <!-- /ordering -->
-<!-- glossary-links-injected: d5320e852f7a -->
+
+<!-- glossary-links-injected: f80e1683d058 -->

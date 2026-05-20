@@ -39,7 +39,7 @@ related:
 
 ## 概要
 
-SONiC の TACACS+ 認証（Authentication）を ssh login 経由で検証するテストプラン[^1]。Authorization は CLI shell 整備後、Accounting は計画外[^1]。基盤は `pam_tacplus` (PAM モジュール) + `tac_plus` daemon (TACACS+ サーバ側)。
+[SONiC](../reference/glossary.md#term-sonic) の TACACS+ 認証（Authentication）を ssh login 経由で検証するテストプラン[^1]。Authorization は CLI shell 整備後、Accounting は計画外[^1]。基盤は `pam_tacplus` (PAM モジュール) + `tac_plus` daemon (TACACS+ サーバ側)。
 
 ## 動作仕様
 
@@ -204,4 +204,4 @@ journalctl -u hostcfgd | grep -i tacacs | tail
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

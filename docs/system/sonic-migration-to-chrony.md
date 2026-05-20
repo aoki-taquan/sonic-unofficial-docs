@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-SONiC 既存の `ntpd`（202405 以降は **NTPsec**、ntpd の security-hardened fork）には次の問題があった[^1]:
+[SONiC](../reference/glossary.md#term-sonic) 既存の `ntpd`（202405 以降は **NTPsec**、ntpd の security-hardened fork）には次の問題があった[^1]:
 
 1. `ntpd` は **long jump を完全には抑止できず**、1 時間ずれていれば 12 分以内に step する（`test_ntp_long_jump_disabled` が逆説的に通る）。データプレーン副作用の懸念から step は完全に避けたい
 2. slew 中は **kernel time discipline を disable** するため、kernel が "synced" を認識できず **HW RTC の自動更新が走らない**。reboot で巻き戻る
@@ -136,7 +136,7 @@ chronyc sources       # 同期確認
 
 恒久的な修正は `chrony-config.sh` に DHCP 取得後に再設定するフックを追加するか、`networkd`/`dhclient` の post-up hook で `chronyc online` を呼ぶこと。
 
-**参照**: sonic-net/sonic-buildimage#25863（Triaged、202511 で再現確認）
+**参照**: sonic-net/[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)#25863（Triaged、202511 で再現確認）
 
 ---
 
@@ -198,4 +198,4 @@ systemctl status chrony
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f960e6599a3c -->
+<!-- glossary-links-injected: 0e972d0bdf59 -->

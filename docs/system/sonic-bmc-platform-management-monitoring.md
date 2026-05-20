@@ -45,7 +45,7 @@ related:
 
 ## 概要
 
-「BMC 付き SONiC platform」では、PSU・fan・温度センサ・電圧などの **physical inventory が BMC（OpenBMC 等）配下** にあり、CPU 直結ではない[^1]。[HLD](../reference/glossary.md#term-hld) は **[NPU](../reference/glossary.md#term-npu) 上の SONiC pmon と BMC の通信レイヤを抽象化** して、`Chassis` / `Psu` / `Fan` / `Thermal` プラットフォーム API がどの BMC コールに展開されるかを決める設計を扱う。
+「BMC 付き [SONiC](../reference/glossary.md#term-sonic) platform」では、PSU・fan・温度センサ・電圧などの **physical inventory が BMC（OpenBMC 等）配下** にあり、CPU 直結ではない[^1]。[HLD](../reference/glossary.md#term-hld) は **[NPU](../reference/glossary.md#term-npu) 上の SONiC pmon と BMC の通信レイヤを抽象化** して、`Chassis` / `Psu` / `Fan` / `Thermal` プラットフォーム API がどの BMC コールに展開されるかを決める設計を扱う。
 
 ## 動作仕様
 
@@ -156,4 +156,4 @@ redis-cli -n 6 keys 'BMC*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 48ebde1d0ff1 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -46,23 +46,16 @@ flowchart LR
   CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
   DM["natmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>NAT_TABLE")]
+  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
   DM --> APPDB
-  ORCH["orchagent / NatOrch"]
-  APPDB --> ORCH
-  SAI["SAI<br/>sai_nat_api"]
-  ORCH --> SAI
-  STATEDB[("STATE_DB<br/>NAT_RESTORE_TABLE")]
-  RESTORE["restore_nat_entries.py"] --> STATEDB
-  NATSYNC["natsyncd"] -- "hget Flags.restored" --> STATEDB
-  COUNTERS[("COUNTERS_DB<br/>COUNTERS_NAT*")]
-  ORCH -- "5s poll" --> SAI
-  SAI -- "hit/bytes" --> ORCH
-  ORCH --> COUNTERS
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_switch_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    STATE_DB/COUNTERS_DB の書き込み経路を追加した図。通常の CONFIG → SAI パスは左側を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -91,8 +84,8 @@ warm reboot なし (通常起動) では `NAT_RESTORE_TABLE|Flags` は**書き�
 
 | キー形式 | フィールド | 型 | 初期値 | 説明 |
 |---------|-----------|-----|--------|------|
-| `<external_ip>` | `NAT_TRANSLATIONS_PKTS` | uint64 (文字列) | `"0"` | SAI から取得したパケット数 |
-| `<external_ip>` | `NAT_TRANSLATIONS_BYTES` | uint64 (文字列) | `"0"` | SAI から取得したバイト数 |
+| `<external_ip>` | `NAT_TRANSLATIONS_PKTS` | uint64 (文字列) | `"0"` | [SAI](../../reference/glossary.md#term-sai) から取得したパケット数 |
+| `<external_ip>` | `NAT_TRANSLATIONS_BYTES` | uint64 (文字列) | `"0"` | [SAI](../../reference/glossary.md#term-sai) から取得したバイト数 |
 
 初期値 `"0"` は SNAT/DNAT エントリが SAI に登録された直後に `updateNatCounters(ipAddr, 0, 0)` で書き込まれる (`natorch.cpp:789`)。
 
@@ -107,7 +100,7 @@ warm reboot なし (通常起動) では `NAT_RESTORE_TABLE|Flags` は**書き�
 
 | キー形式 | フィールド | 型 | 説明 |
 |---------|-----------|-----|------|
-| `<src_ip>:<dst_ip>` | `NAT_TRANSLATIONS_PKTS` | uint64 (文字列) | Twice NAT ペアのパケット数 |
+| `<src_ip>:<dst_ip>` | `NAT_TRANSLATIONS_PKTS` | uint64 (文字列) | Twice [NAT](../../reference/glossary.md#term-nat) ペアのパケット数 |
 | 同上 | `NAT_TRANSLATIONS_BYTES` | uint64 (文字列) | Twice NAT ペアのバイト数 |
 
 ### COUNTERS_DB:COUNTERS_TWICE_NAPT
@@ -151,8 +144,8 @@ warm reboot なし (通常起動) では `NAT_RESTORE_TABLE|Flags` は**書き�
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`NAT_GLOBAL / NAT_POOL`](nat.md)
-- CONFIG_DB: [`NAT_BINDINGS`](nat-bindings.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`NAT_GLOBAL / NAT_POOL`](nat.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`NAT_BINDINGS`](nat-bindings.md)
 - CLI: [`config nat`](../cli/config-nat.md)
 
 <!-- ref-triangle:end -->
@@ -190,7 +183,7 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 
 1. `restore_nat_entries.py` が `/var/warmboot/nat/nat_entries.dump` を読み込み kernel conntrack に復元
 2. 復元完了後、`STATE_DB:NAT_RESTORE_TABLE|Flags.restored = "true"` をセット
-3. `natsyncd` がフラグを確認し、APPL_DB と conntrack の差分 reconciliation を実行
+3. `natsyncd` がフラグを確認し、[APPL_DB](../../reference/glossary.md#term-appl_db) と conntrack の差分 reconciliation を実行
 
 ### よくある誤操作
 
@@ -217,7 +210,7 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 | フィールド | 値 | 挙動 |
 |-----------|-----|------|
 | `STATE_DB:NAT_RESTORE_TABLE\|Flags.restored` | (存在しない) | natsyncd が reconciliation なしで通常動作 |
-| `STATE_DB:NAT_RESTORE_TABLE\|Flags.restored` | `"true"` | natsyncd が APPL_DB ↔ conntrack の差分 reconciliation を実行 |
+| `STATE_DB:NAT_RESTORE_TABLE\|Flags.restored` | `"true"` | natsyncd が [APPL_DB](../../reference/glossary.md#term-appl_db) ↔ conntrack の差分 reconciliation を実行 |
 | `COUNTERS_GLOBAL_NAT\|Values.MAX_NAT_ENTRIES` | `"0"` | NAT 機能が gIsNatSupported=false により無効化される |
 | `COUNTERS_GLOBAL_NAT\|Values.MAX_NAT_ENTRIES` | `"N"` (N>0) | NAT エントリが最大 N 件まで SAI に登録可能 |
 | `COUNTERS_GLOBAL_NAT\|Values.SNAT_ENTRIES` | `"N"` | 現在アクティブな SNAT エントリ数 (SAI 登録済み) |
@@ -261,10 +254,10 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 | `NAT_GLOBAL_TABLE` (APPL_DB) `.admin_mode` | SET トリガ → `enableNatFeature()` / `disableNatFeature()` 呼び出し | 常時。`admin_mode=enabled` のとき `m_natQueryTimer` が開始され `COUNTERS_NAT*` の 5 秒周期更新が開始される | `natorch.cpp` L3061–3064, L2534–2567 (`enableNatFeature`), L2590–2602 (`disableNatFeature`) |
 | `NAT_TABLE` / `NAPT_TABLE` / `NAT_TWICE_TABLE` / `NAPT_TWICE_TABLE` (APPL_DB) | キー転写 + SAI 登録トリガ | SAI 登録成功直後。APPL_DB エントリのキー (IP / プロトコル:IP:ポート) が `COUNTERS_NAT\|<ip>` / `COUNTERS_NAPT\|<proto:ip:port>` キーに転写され、初期値 `"0"` が書かれる | `natorch.cpp` L789 (`updateNatCounters(ipAddr, 0, 0)`), L1322 |
 | SAI Switch attribute `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` | SAI クエリ → `COUNTERS_GLOBAL_NAT\|Values.MAX_NAT_ENTRIES` 書込み | 起動時 1 回。クエリ失敗 / 0 返却時は `gIsNatSupported=false` → NAT 機能完全無効化 | `natorch.cpp` L108–130 (NatOrch コンストラクタ) |
-| `restore_nat_entries.py` (sonic-buildimage) | 書き手 → `STATE_DB:NAT_RESTORE_TABLE\|Flags.restored = "true"` | warm reboot 時のみ。`/var/warmboot/nat/nat_entries.dump` からの conntrack 復元完了後にフラグ書込み | `restore_nat_entries.py` L49–52 |
+| `restore_nat_entries.py` ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)) | 書き手 → `STATE_DB:NAT_RESTORE_TABLE\|Flags.restored = "true"` | warm reboot 時のみ。`/var/warmboot/nat/nat_entries.dump` からの conntrack 復元完了後にフラグ書込み | `restore_nat_entries.py` L49–52 |
 | `natsyncd` (`isNatRestoreDone()`) | 読み手 → `STATE_DB:NAT_RESTORE_TABLE\|Flags.restored` | warm start 進行中のみ。`"true"` を確認してから APPL_DB reconciliation 開始 | `natsync.cpp` L96–108, `natsyncd.cpp` L48 |
-| `scripts/natshow` (sonic-utilities) | 読み手 → `COUNTERS_GLOBAL_NAT:Values` / `COUNTERS_NAT:<ip>` | `show nat statistics` / `show nat translations` コマンド実行時 | `natshow` L93–95, L217–234 |
-| `config/nat.py` (sonic-utilities) | 読み手 → `COUNTERS_GLOBAL_NAT:Values.SNAT_ENTRIES` / `MAX_NAT_ENTRIES` | `config nat add static` 等の CLI でエントリ数上限チェックと統計表示に使用 | `nat.py` L290–295, L382–387, L475–480 |
+| `scripts/natshow` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)) | 読み手 → `COUNTERS_GLOBAL_NAT:Values` / `COUNTERS_NAT:<ip>` | `show nat statistics` / `show nat translations` コマンド実行時 | `natshow` L93–95, L217–234 |
+| `config/nat.py` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)) | 読み手 → `COUNTERS_GLOBAL_NAT:Values.SNAT_ENTRIES` / `MAX_NAT_ENTRIES` | `config nat add static` 等の CLI でエントリ数上限チェックと統計表示に使用 | `nat.py` L290–295, L382–387, L475–480 |
 
 !!! note "STATE_DB / COUNTERS_DB の書き手は単一プロセス"
     `STATE_DB:NAT_RESTORE_TABLE` の書き手は `restore_nat_entries.py` のみ。`COUNTERS_DB:COUNTERS_NAT*` の書き手は `NatOrch` のみ。他プロセスから書き込まれることはなく、`show nat` 系 CLI はすべて読み取り専用。
@@ -303,7 +296,7 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`NAT_RESTORE_TABLE` / `COUNTERS_DB:COUNTERS_NAT*` の動作を支配する、CONFIG_DB・YANG の外側に存在するコードレベルのハードコード定数一覧。出典は `sonic-swss/orchagent/natorch.h` および `sonic-swss/cfgmgr/natmgr.h`。
+`NAT_RESTORE_TABLE` / `COUNTERS_DB:COUNTERS_NAT*` の動作を支配する、CONFIG_DB・[YANG](../../reference/glossary.md#term-yang) の外側に存在するコードレベルのハードコード定数一覧。出典は `sonic-swss/orchagent/natorch.h` および `sonic-swss/cfgmgr/natmgr.h`。
 
 ### カウンタポーリング周期
 
@@ -344,11 +337,11 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 
 | # | 書込先 | テーブル / キー | 内容 | 発火条件 |
 |---|--------|----------------|------|---------|
-| 1 | STATE_DB | `NAT_RESTORE_TABLE\|Flags.restored` | `"true"` (文字列) | warm restart 時のみ: `restore_nat_entries.py` が conntrack 復元完了後に書込む (`restore_nat_entries.py:51`) |
-| 2 | COUNTERS_DB | `COUNTERS_GLOBAL_NAT\|Values` (4 フィールド) | `MAX_NAT_ENTRIES` / `TIMEOUT` / `UDP_TIMEOUT` / `TCP_TIMEOUT` 初期値 | orchagent 起動時 1 回のみ。CONFIG_DB 変更では再書込みされない (`natorch.cpp:127-138`) |
-| 3 | SAI / ASIC_DB | `SAI_SWITCH_ATTR_NAT_ENABLE` | `true` | `admin_mode=enabled` 受信時に `enableNatFeature()` が発行 (`natorch.cpp:2553-2560`) |
-| 4 | COUNTERS_DB | `COUNTERS_NAT*\|<key>` 各エントリ | `NAT_TRANSLATIONS_PKTS/BYTES="0"` (初期値) | `enableNatFeature()` → `addAllNatEntries()` で SAI 登録成功直後に書込む (`natorch.cpp:789, 873`) |
-| 5 | SAI / ASIC_DB | `SAI_SWITCH_ATTR_NAT_ENABLE` | `false` | `admin_mode=disabled` 受信時に `disableNatFeature()` が発行。COUNTERS_DB への削除は行わない (`natorch.cpp:2589-2596`) |
+| 1 | [STATE_DB](../../reference/glossary.md#term-state_db) | `NAT_RESTORE_TABLE\|Flags.restored` | `"true"` (文字列) | warm restart 時のみ: `restore_nat_entries.py` が conntrack 復元完了後に書込む (`restore_nat_entries.py:51`) |
+| 2 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_GLOBAL_NAT\|Values` (4 フィールド) | `MAX_NAT_ENTRIES` / `TIMEOUT` / `UDP_TIMEOUT` / `TCP_TIMEOUT` 初期値 | [orchagent](../../reference/glossary.md#term-orchagent) 起動時 1 回のみ。CONFIG_DB 変更では再書込みされない (`natorch.cpp:127-138`) |
+| 3 | SAI / [ASIC_DB](../../reference/glossary.md#term-asic_db) | `SAI_SWITCH_ATTR_NAT_ENABLE` | `true` | `admin_mode=enabled` 受信時に `enableNatFeature()` が発行 (`natorch.cpp:2553-2560`) |
+| 4 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_NAT*\|<key>` 各エントリ | `NAT_TRANSLATIONS_PKTS/BYTES="0"` (初期値) | `enableNatFeature()` → `addAllNatEntries()` で SAI 登録成功直後に書込む (`natorch.cpp:789, 873`) |
+| 5 | SAI / [ASIC_DB](../../reference/glossary.md#term-asic_db) | `SAI_SWITCH_ATTR_NAT_ENABLE` | `false` | `admin_mode=disabled` 受信時に `disableNatFeature()` が発行。[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への削除は行わない (`natorch.cpp:2589-2596`) |
 | 6 | APPL_DB + COUNTERS_DB | `NAT_TABLE*` 全エントリ + `COUNTERS_NAT*` 全エントリ | 全削除 | natorch docker 停止時の `NAT_DB_CLEANUP_NOTIFICATION` 通知受信 → `cleanupAppDbEntries()` (`natorch.cpp:4474-4478`) |
 
 ### warm restart 経路の副次書込み詳細 (書込み #1)
@@ -356,11 +349,11 @@ sonic-db-cli STATE_DB hgetall 'NAT_RESTORE_TABLE|Flags'
 `restore_nat_entries.py` は NAT warm restart が**有効な起動時のみ**実行される。処理シーケンス:
 
 1. `/var/warmboot/nat/nat_entries.dump` から NAT エントリ一覧を読み込む
-2. kernel conntrack テーブルへ各エントリを `/usr/sbin/conntrack -I` で復元（非 Redis 操作）
+2. kernel conntrack テーブルへ各エントリを `/usr/sbin/conntrack -I` で復元（非 [Redis](../../reference/glossary.md#term-redis) 操作）
 3. 全エントリ復元完了後に `STATE_DB:NAT_RESTORE_TABLE|Flags.restored = "true"` を書込む
 4. `natsyncd` の `isNatRestoreDone()` ポーリングがフラグを検出し reconciliation フェーズへ移行
 
-通常起動では `restore_nat_entries.py` は実行されないため STATE_DB に `NAT_RESTORE_TABLE|Flags` は**書き込まれない**。`natsyncd` は `hget` が空文字列を返すケースを正常として扱い reconciliation なしで動作する (`natsync.cpp:96-108`)。
+通常起動では `restore_nat_entries.py` は実行されないため [STATE_DB](../../reference/glossary.md#term-state_db) に `NAT_RESTORE_TABLE|Flags` は**書き込まれない**。`natsyncd` は `hget` が空文字列を返すケースを正常として扱い reconciliation なしで動作する (`natsync.cpp:96-108`)。
 
 ### orchagent 停止時の全カウンタ削除 (書込み #6)
 
@@ -370,7 +363,7 @@ natorch docker 停止シグナルで APPL_DB `FLUSHNATSTATISTICS` / `NAT_DB_CLEA
 
 `disableNatFeature()` (`admin_mode=disabled`) では SAI への無効化のみ行われ、COUNTERS_DB の `COUNTERS_NAT*` エントリは**削除されない**。disabled 状態でも `show nat statistics` はキャッシュ値を表示し続ける。
 
-> **証跡**: `restore_nat_entries.py:49-52` (STATE_DB 書込み), `natorch.cpp:108-138` (コンストラクタ初期化), `natorch.cpp:2534-2580` (enableNatFeature), `natorch.cpp:2583-2627` (disableNatFeature), `natorch.cpp:2457-2532` (cleanupAppDbEntries), `natorch.cpp:4474-4478` (NAT_DB_CLEANUP_NOTIFICATION dispatch), `natorch.cpp:789,873` (updateNatCounters 初期値書込み), `natsyncd.cpp:48-62` (isNatRestoreDone ポーリングループ); 詳細スキャン結果は `meta/_intermediate/cdb-flow/nat-state-side-effects.md` を参照。
+> **証跡**: `restore_nat_entries.py:49-52` ([STATE_DB](../../reference/glossary.md#term-state_db) 書込み), `natorch.cpp:108-138` (コンストラクタ初期化), `natorch.cpp:2534-2580` (enableNatFeature), `natorch.cpp:2583-2627` (disableNatFeature), `natorch.cpp:2457-2532` (cleanupAppDbEntries), `natorch.cpp:4474-4478` (NAT_DB_CLEANUP_NOTIFICATION dispatch), `natorch.cpp:789,873` (updateNatCounters 初期値書込み), `natsyncd.cpp:48-62` (isNatRestoreDone ポーリングループ); 詳細スキャン結果は `meta/_intermediate/cdb-flow/nat-state-side-effects.md` を参照。
 
 <!-- /side-effects -->
 
@@ -379,7 +372,7 @@ natorch docker 停止シグナルで APPL_DB `FLUSHNATSTATISTICS` / `NAT_DB_CLEA
 
 > 調査対象: `sonic-swss/orchagent/natorch.cpp`, `sonic-swss/natsyncd/natsync.cpp`, `sonic-buildimage/dockers/docker-nat/restore_nat_entries.py`
 
-`STATE_DB:NAT_RESTORE_TABLE` と `COUNTERS_DB:COUNTERS_NAT*` はどちらも通常の Redis pub/sub チャンネル経由では**更新されない**。前者はスクリプトによる直接 `hset`、後者は orchagent 内の `SelectableTimer` ポーリングによって書き込まれる。
+`STATE_DB:NAT_RESTORE_TABLE` と `COUNTERS_DB:COUNTERS_NAT*` はどちらも通常の [Redis](../../reference/glossary.md#term-redis) pub/sub チャンネル経由では**更新されない**。前者はスクリプトによる直接 `hset`、後者は [orchagent](../../reference/glossary.md#term-orchagent) 内の `SelectableTimer` ポーリングによって書き込まれる。
 
 ### STATE_DB:NAT_RESTORE_TABLE の書き込み経路
 
@@ -414,7 +407,7 @@ orchagent メインループ (swss::Select::select)
       → m_countersNatTable.set(key, {NAT_TRANSLATIONS_PKTS, NAT_TRANSLATIONS_BYTES})
 ```
 
-これは Redis pub/sub ではなく **fd ベースのタイマー割り込み**である。`ConsumerStateTable` や `SubscriberStateTable` とは独立したパスであり、APPL_DB の変更なしに自律的に COUNTERS_DB を更新する。
+これは [Redis](../../reference/glossary.md#term-redis) pub/sub ではなく **fd ベースのタイマー割り込み**である。`ConsumerStateTable` や `SubscriberStateTable` とは独立したパスであり、APPL_DB の変更なしに自律的に COUNTERS_DB を更新する。
 
 ### APPL_DB 通知チャンネルと COUNTERS_DB への影響
 
@@ -438,7 +431,7 @@ NAT パスには APPL_DB 上の `NotificationConsumer / NotificationProducer` �
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG 定義外の実行時テーブルのためコード hardcode 値のみ。
+[YANG](../../reference/glossary.md#term-yang) 定義外の実行時テーブルのためコード hardcode 値のみ。
 
 | フィールド | テーブル | 初期値 | ソース |
 |-----------|---------|--------|--------|
@@ -514,3 +507,5 @@ if (platform && strstr(platform, BRCM_PLATFORM_SUBSTRING))
 > **スキャン証跡**: `natorch.cpp` L44 (`gNhTrackingSupported` 定義), L107-148 (コンストラクタ — platform チェックと SAI 問い合わせ), L1921-1932 (addNatEntry DNAT パス), L1957-1968 (removeNatEntry DNAT パス), `orch.h:43` (`BRCM_PLATFORM_SUBSTRING` 定義), `natsync.cpp:96-108` (isNatRestoreDone), `restore_nat_entries.py:49-52` (STATE_DB hset)。中間ファイル: `meta/_intermediate/cdb-flow/nat-state-platform.md`
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: 779d1ccec0ea -->

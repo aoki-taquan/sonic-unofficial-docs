@@ -36,14 +36,14 @@ related:
 
 # 概念
 
-SONiC のセキュリティ機能は、ひとつの巨大なサブシステムではなく、Linux の標準スタック（PAM、NSS、OpenSSL、systemd）と SONiC 固有のデーモン（`hostcfgd`、`macsecmgr`、[SAI](../../reference/glossary.md#term-sai)）に薄く重なって実装されています。最初に「どの層のどの問題を解いているか」を分類しておくと、個別 [HLD](../../reference/glossary.md#term-hld) を読む順番が決まります。
+[SONiC](../../reference/glossary.md#term-sonic) のセキュリティ機能は、ひとつの巨大なサブシステムではなく、Linux の標準スタック（PAM、NSS、OpenSSL、systemd）と SONiC 固有のデーモン（`hostcfgd`、`macsecmgr`、[SAI](../../reference/glossary.md#term-sai)）に薄く重なって実装されています。最初に「どの層のどの問題を解いているか」を分類しておくと、個別 [HLD](../../reference/glossary.md#term-hld) を読む順番が決まります。
 
 ## 三層のセキュリティ境界
 
 | 層 | 守るもの | 主な機能 | 主な実装 |
 | --- | --- | --- | --- |
-| Control plane | 誰がスイッチを操作できるか | [AAA](../../reference/glossary.md#term-aaa)、TACACS+、RADIUS、LDAP、local user、SSH、serial console、banner、password policy | PAM / NSS、`hostcfgd`、`config-db` |
-| Data plane | リンク上の暗号と完全性 | MACsec、MKA、Gearbox 経由の MACsec | `macsecmgr`、`wpa_supplicant`、SAI、PHY |
+| Control plane | 誰がスイッチを操作できるか | [AAA](../../reference/glossary.md#term-aaa)、TACACS+、[RADIUS](../../reference/glossary.md#term-radius)、LDAP、local user、SSH、serial console、banner、password policy | PAM / NSS、`hostcfgd`、`config-db` |
+| Data plane | リンク上の暗号と完全性 | [MACsec](../../reference/glossary.md#term-macsec)、MKA、Gearbox 経由の MACsec | `macsecmgr`、`wpa_supplicant`、SAI、PHY |
 | Platform | 起動・実行・更新の真正性 | OpenSSL FIPS、secure boot、secure upgrade、container hardening、SAI POST | GRUB、shim、OpenSSL FIPS provider、Docker、SAI |
 
 このマトリクスは [概要](index.md) で示した三層と対応しています。以降のページは概ねこの順で並べます。
@@ -186,4 +186,4 @@ sequenceDiagram
 
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 
-<!-- glossary-links-injected: 87fa713c3c5e -->
+<!-- glossary-links-injected: 7cebab29cbce -->

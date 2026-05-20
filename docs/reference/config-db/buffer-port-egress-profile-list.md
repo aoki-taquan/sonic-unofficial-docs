@@ -143,13 +143,12 @@ show buffer pool
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`buffermgrd` → `BufferOrch` (APPL_DB 経由) が CONFIG_DB の `BUFFER_PORT_EGRESS_PROFILE_LIST` テーブルを購読する。
+`buffermgrd` → `BufferOrch` ([APPL_DB](../../reference/glossary.md#term-appl_db) 経由) が CONFIG_DB の `BUFFER_PORT_EGRESS_PROFILE_LIST` テーブルを購読する。
 
 `BUFFER_PORT_EGRESS_PROFILE_LIST` の key は `<port>` (例: `Ethernet0`)。
 
@@ -163,7 +162,7 @@ show buffer pool
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB 変化を `buffermgrd` が検知後 APPL_DB に書き込み。`BufferOrch` が SAI port attribute を更新。
+**適用タイミング**: CONFIG_DB 変化を `buffermgrd` が検知後 [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込み。`BufferOrch` が SAI port attribute を更新。
 
 **副作用**: 対象ポートの egress バッファ割り当てが変更される。traffic に影響する可能性がある。
 <!-- /runtime-trace -->
@@ -181,7 +180,7 @@ show buffer pool
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -195,7 +194,6 @@ show buffer pool
 ### ランタイム注入 (デーモン自動書き込み)
 - Dynamic buffer model: `buffermgrd` がポートごとに書き込み
 <!-- /entry-points -->
-
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
@@ -246,7 +244,7 @@ show buffer pool
 | 項目 | Static model (`buffermgr.cpp`) | Dynamic model (`buffermgrdyn.cpp`) |
 |------|-------------------------------|-------------------------------------|
 | direction 検証 | なし (CONFIG_DB 値をそのまま APPL_DB にコピー) | あり: ingress profile を egress list に指定 → `task_failed` (`checkBufferProfileDirection`) |
-| profile 存在検証 | なし (orchagent 段で retry) | あり: `m_bufferProfileLookup` 未登録 → `task_need_retry` |
+| profile 存在検証 | なし ([orchagent](../../reference/glossary.md#term-orchagent) 段で retry) | あり: `m_bufferProfileLookup` 未登録 → `task_need_retry` |
 | admin-down 置換 | なし | あり: ゼロプロファイルリストに差し替え |
 | buffer pool guard | なし | あり: pool 未準備時 pending |
 
@@ -273,7 +271,7 @@ Static model は `DEVICE_METADATA.buffer_model == "dynamic"` の環境では一�
 | 項目 | YANG | 実装 |
 |------|------|------|
 | direction 制約 | 記述なし | dynamic model: ingress profile → egress list は `task_failed` |
-| trimming 制約 | 記述なし | orchagent: trimming-eligible profile は `task_failed` |
+| trimming 制約 | 記述なし | [orchagent](../../reference/glossary.md#term-orchagent): trimming-eligible profile は `task_failed` |
 | 複数ポートキー | 記述なし | カンマ区切りポートリストをキーとして設定可能 (内部で展開) |
 <!-- /defaults -->
 
@@ -360,7 +358,7 @@ evidence: `bufferorch.cpp:1990`
 |---------|-----------|
 | BUFFER_PROFILE 未登録（`task_need_retry`） | 当該 BUFFER_PROFILE の SET イベント到着後、次の doTask サイクルで再処理 |
 | buffer pool 未準備（pending） | `m_bufferPoolReady` が true になった時点で `handlePendingBufferObjects()` が再適用 |
-| orchagent での profile 参照未解決 | APPL_DB に profile が書き込まれた後の次サイクルで `resolveFieldRefArray()` 成功 |
+| [orchagent](../../reference/glossary.md#term-orchagent) での profile 参照未解決 | APPL_DB に profile が書き込まれた後の次サイクルで `resolveFieldRefArray()` 成功 |
 | SAI 失敗（retry） | Bulk flush の次サイクルで `consumer.m_toSync` から再処理 |
 
 <!-- /failure -->
@@ -371,10 +369,10 @@ evidence: `bufferorch.cpp:1990`
 
 | DB | 書込 | 根拠 |
 |----|------|------|
-| STATE_DB | **なし** | egress handler 経路に書込コードなし。STATE_DB は MMU サイズ・最大 PG/Queue 数の **読み取り** にのみ使用（`buffermgrdyn.cpp:133,261,1277`） |
-| COUNTERS_DB | **なし** | `bufferorch.cpp:56` で接続を保持するが、egress profile list handler では未使用。buffer pool watermark 用 Lua スクリプト（`bufferorch.cpp:240`）専用 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | **なし** | egress handler 経路に書込コードなし。[STATE_DB](../../reference/glossary.md#term-state_db) は MMU サイズ・最大 PG/Queue 数の **読み取り** にのみ使用（`buffermgrdyn.cpp:133,261,1277`） |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | **なし** | `bufferorch.cpp:56` で接続を保持するが、egress profile list handler では未使用。buffer pool watermark 用 Lua スクリプト（`bufferorch.cpp:240`）専用 |
 | APPL_STATE_DB | **なし** | 両ファイルの egress profile list 処理経路に該当コードなし |
-| FLEX_COUNTER_DB | **なし** | `bufferorch.cpp:1135` は VOQ スイッチの Port Queue counter 更新用であり、本テーブルの処理とは無関係 |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | **なし** | `bufferorch.cpp:1135` は [VOQ](../../reference/glossary.md#term-voq) スイッチの Port Queue counter 更新用であり、本テーブルの処理とは無関係 |
 
 このテーブルの書込先は **APPL_DB の `BUFFER_PORT_EGRESS_PROFILE_LIST_TABLE`** のみ（`buffermgrdyn.cpp:3383`）であり、SAI への最終適用は `sai_port_api->set_ports_attribute`（`bufferorch.cpp:2009`）を通じて行われる。
 
@@ -444,9 +442,9 @@ Broadcom・その他ベンダーでは vendor 固有の条件分岐なし。テ�
 
 ### VOQ Chassis
 
-`bufferorch.cpp` の `processEgressBufferProfileList` / `processEgressBufferProfileListBulk` 内に `gMySwitchType == "voq"` 分岐は **存在しない**。VOQ 固有のキー拡張（4 トークン形式）は BUFFER_QUEUE ハンドラにのみ適用される。
+`bufferorch.cpp` の `processEgressBufferProfileList` / `processEgressBufferProfileListBulk` 内に `gMySwitchType == "voq"` 分岐は **存在しない**。[VOQ](../../reference/glossary.md#term-voq) 固有のキー拡張（4 トークン形式）は BUFFER_QUEUE ハンドラにのみ適用される。
 
-| 項目 | 標準スイッチ | VOQ Chassis |
+| 項目 | 標準スイッチ | [VOQ](../../reference/glossary.md#term-voq) Chassis |
 |------|------------|------------|
 | `processEgressBufferProfileList` 実行 | 通常通り | 同一コードパス（分岐なし） |
 | 処理開始条件 | `isConfigDone()` | `isInitDone()`（より早い段階） |
@@ -510,7 +508,7 @@ YANG leafref が静的 validation を提供するのに対し、以下の参照�
 
 ### SubscriberStateTable (CONFIG_DB 側)
 
-`buffermgrdyn` は `Orch::addConsumer()` (`orch.cpp:1188-1190`) を通じて CONFIG_DB に `SubscriberStateTable` を生成する。Redis keyspace notification:
+`buffermgrdyn` は `Orch::addConsumer()` (`orch.cpp:1188-1190`) を通じて CONFIG_DB に `SubscriberStateTable` を生成する。[Redis](../../reference/glossary.md#term-redis) keyspace notification:
 
 ```
 PSUBSCRIBE __keyspace@{config_db_id}__:BUFFER_PORT_EGRESS_PROFILE_LIST|*
@@ -554,4 +552,4 @@ ASIC (sairedis → ASIC_DB)
 ```
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 5ad0ecc20ddb -->
+<!-- glossary-links-injected: 7653adf60fe0 -->

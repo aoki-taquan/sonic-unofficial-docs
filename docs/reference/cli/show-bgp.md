@@ -106,7 +106,7 @@ excerpt: |
 
 ### `show ip bgp summary [-n] [--display]`
 
-`bgp_util.get_bgp_summary_from_all_bgp_instances(IPV4, namespace, display, vrf=default)` で各 namespace の `bgpd` から取得した summary を集約。multi-ASIC では `--display` が `frontend`（external 隣接）/ `all`（internal 隣接含む）を切り替える[^3]。
+`bgp_util.get_bgp_summary_from_all_bgp_instances(IPV4, namespace, display, vrf=default)` で各 namespace の `bgpd` から取得した summary を集約。multi-[ASIC](../../reference/glossary.md#term-asic) では `--display` が `frontend`（external 隣接）/ `all`（internal 隣接含む）を切り替える[^3]。
 
 ### `show ip bgp neighbors [<ipaddress>] [<info_type>]`
 
@@ -225,7 +225,7 @@ Neighbor        V     AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down State/P
 ### よくある落とし穴
 
 - `show ip bgp summary` は default VRF のみで、VRF 設定がある場合は `show ip bgp vrf <name> summary` を使う。
-- multi-ASIC 機種では `-n asic0` などで namespace を明示しないと一部 ASIC の状態が見えない。
+- multi-[ASIC](../../reference/glossary.md#term-asic) 機種では `-n asic0` などで namespace を明示しないと一部 [ASIC](../../reference/glossary.md#term-asic) の状態が見えない。
 
 ### 関連する show / debug
 
@@ -252,4 +252,4 @@ show ip bgp network 10.0.0.0/24
 - [CLI: config bgp](config-bgp.md)
 - [CONFIG_DB: BGP_NEIGHBOR](../config-db/bgp-neighbor.md)
 
-<!-- glossary-links-injected: 8ae95ab15728 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

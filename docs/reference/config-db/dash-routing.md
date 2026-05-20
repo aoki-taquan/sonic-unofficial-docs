@@ -40,14 +40,14 @@ related:
 
 ## 概要
 
-DASH (Disaggregated APIs for SONiC Hosts) データプレーンのルーティングポリシーを定義する 4 テーブル群[^1]。
+[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for [SONiC](../../reference/glossary.md#term-sonic) Hosts) データプレーンのルーティングポリシーを定義する 4 テーブル群[^1]。
 
 - **`DASH_ROUTING_TYPE_TABLE`**: ルーティングタイプ名 (`vnet`, `vnet_direct`, `direct`, `drop` 等) と転送アクション・カプセル化設定のマッピングを定義する。他テーブルから参照される。
-- **`DASH_ROUTE_GROUP_TABLE`**: Outbound ルートのグループコンテナ。ENI は `DASH_ENI_ROUTE_TABLE` 経由でグループにバインドする。
-- **`DASH_ROUTE_TABLE`**: ENI 単位の Outbound LPM ルートテーブル。プレフィックスに対するルーティングタイプ・VNET・オーバーレイ IP 等を定義する。
-- **`DASH_ROUTE_RULE_TABLE`**: ENI 単位の Inbound ルートルールテーブル。VNI と送信元 PA プレフィックスを照合して PA validation・VNET マッピングを行う。
+- **`DASH_ROUTE_GROUP_TABLE`**: Outbound ルートのグループコンテナ。[ENI](../../reference/glossary.md#term-eni) は `DASH_ENI_ROUTE_TABLE` 経由でグループにバインドする。
+- **`DASH_ROUTE_TABLE`**: [ENI](../../reference/glossary.md#term-eni) 単位の Outbound LPM ルートテーブル。プレフィックスに対するルーティングタイプ・[VNET](../../reference/glossary.md#term-vnet)・オーバーレイ IP 等を定義する。
+- **`DASH_ROUTE_RULE_TABLE`**: [ENI](../../reference/glossary.md#term-eni) 単位の Inbound ルートルールテーブル。VNI と送信元 PA プレフィックスを照合して PA validation・[VNET](../../reference/glossary.md#term-vnet) マッピングを行う。
 
-`DashOrch` (`dashorch.cpp`) が `DASH_ROUTING_TYPE_TABLE` を、`DashRouteOrch` (`dashrouteorch.cpp`) が残り 3 テーブルを APP_DB / ZMQ 経由で受信し、SAI DASH Outbound/Inbound Routing API を通じてデータプレーンに書き込む。
+`DashOrch` (`dashorch.cpp`) が `DASH_ROUTING_TYPE_TABLE` を、`DashRouteOrch` (`dashrouteorch.cpp`) が残り 3 テーブルを APP_DB / ZMQ 経由で受信し、[SAI](../../reference/glossary.md#term-sai) [DASH](../../reference/glossary.md#term-dash) Outbound/Inbound Routing API を通じてデータプレーンに書き込む。
 
 !!! note "APP_DB テーブル"
     これらは CONFIG_DB ではなく **APP_DB** に書かれる。SDN コントローラまたは gNMI 経由で直接 APP_DB へ投入される点に注意。
@@ -92,7 +92,7 @@ DASH_ROUTING_TYPE_TABLE:<routing_type>
 
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|----|-----------|------|
-| `action_name` | string | 任意 | 空文字列 | 転送アクションの名前。SAI API への直接マッピングなし (VNET Mapping Orch が参照) |
+| `action_name` | string | 任意 | 空文字列 | 転送アクションの名前。[SAI](../../reference/glossary.md#term-sai) API への直接マッピングなし ([VNET](../../reference/glossary.md#term-vnet) Mapping Orch が参照) |
 | `action_type` | enum | 任意 | `ACTION_TYPE_UNSPECIFIED` | 転送アクション種別。`maprouting`, `direct`, `staticencap`, `appliance`, `4to6`, `mapdecap`, `decap`, `drop` |
 | `encap_type` | enum | 条件付き | `ENCAP_TYPE_INVALID` | カプセル化種別 (`vxlan` / `nvgre`)。`action_type=staticencap` 時のみ有効 |
 | `vni` | uint32 | 任意 | 0 | カプセル化 VNI。0 の場合は SAI `TUNNEL_KEY` を設定しない |
@@ -118,7 +118,7 @@ DASH_ROUTE_GROUP_TABLE:<group_id>
 
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|----|-----------|------|
-| `guid` | string | 任意 | — | グループの GUID (HLD 記載)。orchagent は SAI に設定しない |
+| `guid` | string | 任意 | — | グループの GUID ([HLD](../../reference/glossary.md#term-hld) 記載)。[orchagent](../../reference/glossary.md#term-orchagent) は SAI に設定しない |
 | `version` | string | 任意 | — | バージョン文字列。結果 DB (`APP_STATE_DB`) への書き込みのみに使用 |
 
 !!! warning "属性なし作成"
@@ -205,7 +205,7 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<ip_prefix>:<priority>
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`DashRouteOrch` (`dashrouteorch.cpp`) / `DashOrch` (`dashorch.cpp`) は各テーブル間に複数の先行必須依存を持つ。ZMQ / gNMI でテーブルを投入する際は以下の順序を守ること。
+`DashRouteOrch` (`dashrouteorch.cpp`) / `DashOrch` (`dashorch.cpp`) は各テーブル間に複数の先行必須依存を持つ。ZMQ / [gNMI](../../reference/glossary.md#term-gnmi) でテーブルを投入する際は以下の順序を守ること。
 
 ### 検出された順序依存
 
@@ -263,13 +263,13 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<ip_prefix>:<priority>
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskRoutingTypeTable()` (dashorch.cpp:473-537) および `DashRouteOrch::addOutboundRouting()` / `addInboundRouting()` / `addRouteGroup()` (dashrouteorch.cpp:61-748) から導出。
+[YANG](../../reference/glossary.md#term-yang) / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskRoutingTypeTable()` (dashorch.cpp:473-537) および `DashRouteOrch::addOutboundRouting()` / `addInboundRouting()` / `addRouteGroup()` (dashrouteorch.cpp:61-748) から導出。
 
 ### DASH_ROUTING_TYPE_TABLE
 
 | フィールド | コード由来デフォルト | fallback 源 |
 |-----------|-------------------|------------|
-| `action_name` | 空文字列 | proto3 string デフォルト; orchagent は存在確認せず格納 — dashorch.cpp:451 |
+| `action_name` | 空文字列 | proto3 string デフォルト; [orchagent](../../reference/glossary.md#term-orchagent) は存在確認せず格納 — dashorch.cpp:451 |
 | `action_type` | `ACTION_TYPE_UNSPECIFIED` (proto3 enum 0) | STATICENCAP 以外では encap_type を参照しない — dashvnetorch.cpp |
 | `encap_type` | `ENCAP_TYPE_INVALID` (proto3 enum 0) | `action_type=STATICENCAP` 時のみ参照; 不正値は SWSS_LOG_ERROR — dashvnetorch.cpp |
 | `vni` | 0 | vni==0 時は `SAI_OUTBOUND_CA_TO_PA_ENTRY_ATTR_TUNNEL_KEY` を push しない — dashvnetorch.cpp |
@@ -290,7 +290,7 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskR
 
 | フィールド | コード由来デフォルト | fallback 源 |
 |-----------|-------------------|------------|
-| `pa_validation` | `false` (proto3 bool 0) → SAI action = `TUNNEL_DECAP` | `pa_validation()` false → TUNNEL_DECAP_PA_VALIDATE ではなく TUNNEL_DECAP — dashrouteorch.cpp:450; HLD 記載「デフォルト true」と乖離 |
+| `pa_validation` | `false` (proto3 bool 0) → SAI action = `TUNNEL_DECAP` | `pa_validation()` false → TUNNEL_DECAP_PA_VALIDATE ではなく TUNNEL_DECAP — dashrouteorch.cpp:450; [HLD](../../reference/glossary.md#term-hld) 記載「デフォルト true」と乖離 |
 | `vnet` | SAI 未設定 | has_vnet() false → SRC_VNET_ID をスキップ — dashrouteorch.cpp:453 |
 | `metering_class_or` | SAI 未設定 | has_metering_class_or() false → スキップ — dashrouteorch.cpp:460 |
 | `metering_class_and` | SAI 未設定 | has_metering_class_and() false → スキップ — dashrouteorch.cpp:465 |
@@ -306,8 +306,8 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskR
 ### 補足
 
 - `routing_type` の deprecated → 新形式コピー処理: proto3 で旧クライアントが `action_type` のみ送る場合の backward-compat。新実装では `routing_type` フィールドを使用する。
-- `underlay_sip` の IPv6 非対応: `has_underlay_sip() && underlay_sip().has_ipv4()` の条件で IPv6 の underlay SIP は現状処理されない (dashrouteorch.cpp:149)。HLD には IPv6 support の記述なし。
-- `pa_validation` デフォルトの HLD/実装乖離: HLD §3.2.10 は「Default is set to true」と記述するが、orchagent は proto3 bool の 0 (false) をそのまま使用する。コントローラが明示的に `pa_validation=true` を送らない限り PA validation は無効になる。
+- `underlay_sip` の IPv6 非対応: `has_underlay_sip() && underlay_sip().has_ipv4()` の条件で IPv6 の underlay SIP は現状処理されない (dashrouteorch.cpp:149)。[HLD](../../reference/glossary.md#term-hld) には IPv6 support の記述なし。
+- `pa_validation` デフォルトの HLD/実装乖離: HLD §3.2.10 は「Default is set to true」と記述するが、[orchagent](../../reference/glossary.md#term-orchagent) は proto3 bool の 0 (false) をそのまま使用する。コントローラが明示的に `pa_validation=true` を送らない限り PA validation は無効になる。
 
 <!-- /defaults -->
 
@@ -339,11 +339,11 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskR
 
 ### gNMI
 
-- sonic-mgmt-common / sonic-gnmi 経由の gNMI SetRequest で書き込み可能
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common / sonic-gnmi 経由の [gNMI](../../reference/glossary.md#term-gnmi) SetRequest で書き込み可能
 
 ### CLI
 
-- なし (DASH ルーティングは CLI 経由での設定を想定しない)
+- なし ([DASH](../../reference/glossary.md#term-dash) ルーティングは CLI 経由での設定を想定しない)
 
 <!-- /entry-points -->
 
@@ -352,7 +352,7 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskR
 
 <!-- evidence: dashrouteorch.cpp:70-74 / 78-92 / 171-183 / 425-428 / 430-433 / 803-841 / 220 / 262 / 507 / 546 -->
 
-各テーブルが SAI 書き込み時に参照する外部テーブル・リソース。YANG leafref は存在しないため、すべて実装レベルの暗黙参照。
+各テーブルが SAI 書き込み時に参照する外部テーブル・リソース。[YANG](../../reference/glossary.md#term-yang) leafref は存在しないため、すべて実装レベルの暗黙参照。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
@@ -362,7 +362,7 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskR
 | `DASH_VNET_TABLE` | OID 解決（条件付き） | `DASH_ROUTE_RULE_TABLE` で `vnet` フィールド指定時。`gVnetNameToId` 未登録 → `return false` | `dashrouteorch.cpp:430-433` |
 | `DASH_TUNNEL_TABLE` | OID 解決（条件付き） | `DASH_ROUTE_TABLE` で `tunnel` フィールド指定時。`DashTunnelOrch::getTunnelOid()` が `SAI_NULL_OBJECT_ID` → `return false` | `dashrouteorch.cpp:171-183` |
 | `DASH_ENI_ROUTE_TABLE` (被参照) | バインドカウント管理 | `DashEniFwdOrch` が `bindRouteGroup()` / `unbindRouteGroup()` を呼ぶ。バインド中はルート追加・削除・グループ削除を拒否 | `dashrouteorch.cpp:803-841` |
-| CrmOrch (`gCrmOrch`) | リソースカウンタ | Outbound/Inbound ルートの SAI 追加・削除成功時に CRM カウンタを増減 | `dashrouteorch.cpp:220, 262, 507, 546` |
+| CrmOrch (`gCrmOrch`) | リソースカウンタ | Outbound/Inbound ルートの SAI 追加・削除成功時に [CRM](../../reference/glossary.md#term-crm) カウンタを増減 | `dashrouteorch.cpp:220, 262, 507, 546` |
 
 !!! note "gVnetNameToId グローバルマップ"
     `gVnetNameToId` は `DashVnetOrch` (`dashvnetorch.cpp`) が `DASH_VNET_TABLE` 処理時に登録・削除するプロセス内グローバルマップ。`DASH_ROUTE_TABLE` と `DASH_ROUTE_RULE_TABLE` はどちらもこのマップを直接参照し、VNET OID を取得する。YANG 定義の leafref ではなくコード上の直接参照である点に注意。
@@ -377,7 +377,7 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskR
 
 <!-- evidence: meta/_intermediate/cdb-flow/dash-routing-failure.md -->
 
-`DashRouteOrch` / `DashOrch` はハンドラが `bool` を返し、`false` でリトライ、`true` で消費（廃棄）となる。STATE_DB / ERROR_TABLE への失敗記録は行わない。
+`DashRouteOrch` / `DashOrch` はハンドラが `bool` を返し、`false` でリトライ、`true` で消費（廃棄）となる。[STATE_DB](../../reference/glossary.md#term-state_db) / ERROR_TABLE への失敗記録は行わない。
 
 ### DASH_ROUTING_TYPE_TABLE
 
@@ -567,8 +567,8 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashOrch::doTaskR
 
 | 条件 | 副作用なし理由 |
 |---|---|
-| ENI バインド中グループへの SET | `addOutboundRouting()` が `return true` 早期終了 — SAI・CRM 呼び出しなし。結果テーブルには `DASH_RESULT_SUCCESS(0)` が書かれる点に注意 |
-| protobuf パース失敗 | consumer から消費するが SAI / CRM / 結果テーブルへの書き込みなし |
+| ENI バインド中グループへの SET | `addOutboundRouting()` が `return true` 早期終了 — SAI・[CRM](../../reference/glossary.md#term-crm) 呼び出しなし。結果テーブルには `DASH_RESULT_SUCCESS(0)` が書かれる点に注意 |
+| protobuf パース失敗 | consumer から消費するが SAI / [CRM](../../reference/glossary.md#term-crm) / 結果テーブルへの書き込みなし |
 | リトライ中 (`return false`) | SAI 未呼び出し、CRM 未更新。SET post-op 失敗時のみ結果テーブルに `DASH_RESULT_FAILURE(1)` が書かれる |
 
 <!-- /side-effects -->
@@ -620,7 +620,7 @@ DashRouteOrch *dash_route_orch = new DashRouteOrch(
 
 ### ZmqOrch 経由の通知経路
 
-`DashOrch` / `DashRouteOrch` はともに `Orch` ではなく `ZmqOrch` を継承するため、通常の Redis keyspace notification ではなく **ZeroMQ (ZMQ)** 経由でメッセージを受信する。SDN コントローラや gNMI が ZMQ ソケット経由でイベントを直接 push し、`ZmqOrch::doTask()` → 各 Orch の `doTask()` の呼び出しチェーンで処理される。
+`DashOrch` / `DashRouteOrch` はともに `Orch` ではなく `ZmqOrch` を継承するため、通常の [Redis](../../reference/glossary.md#term-redis) keyspace notification ではなく **ZeroMQ (ZMQ)** 経由でメッセージを受信する。SDN コントローラや [gNMI](../../reference/glossary.md#term-gnmi) が ZMQ ソケット経由でイベントを直接 push し、`ZmqOrch::doTask()` → 各 Orch の `doTask()` の呼び出しチェーンで処理される。
 
 ### 購読テーブルと処理関数のマッピング
 
@@ -633,7 +633,7 @@ DashRouteOrch *dash_route_orch = new DashRouteOrch(
 
 ### 結果通知の書き戻し先 (APP_STATE_DB)
 
-処理結果は `m_dpu_appstateDb` (DPU APP_STATE_DB) の対応テーブルへ書き戻される。SDN コントローラはこれを watch することで SAI プログラム完了を検知できる。
+処理結果は `m_dpu_appstateDb` ([DPU](../../reference/glossary.md#term-dpu) APP_STATE_DB) の対応テーブルへ書き戻される。SDN コントローラはこれを watch することで SAI プログラム完了を検知できる。
 
 **DashOrch が管理する結果テーブル** (dashorch.cpp:73):
 
@@ -673,15 +673,15 @@ dash_route_orch->unbindRouteGroup(old_group_id);
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
-**DPU (SmartSwitch) 専用**: `DashRouteOrch` / `DashOrch` は `gMySwitchType == "dpu"` のときのみ `DpuOrchDaemon` 内で生成される。通常スイッチ・VoQ シャーシ・Fabric モードでは本テーブル群は存在しない。[SAI](../../reference/glossary.md#term-sai) DASH Outbound/Inbound Routing API を経由するため [ASIC](../../reference/glossary.md#term-asic) が当該 API をサポートすることが前提。コード内に ASIC 種別の条件分岐はなく SAI 実装（syncd 経由のベンダー SAI ライブラリ）に委ねられる。
+**[DPU](../../reference/glossary.md#term-dpu) ([SmartSwitch](../../reference/glossary.md#term-smartswitch)) 専用**: `DashRouteOrch` / `DashOrch` は `gMySwitchType == "dpu"` のときのみ `DpuOrchDaemon` 内で生成される。通常スイッチ・VoQ シャーシ・Fabric モードでは本テーブル群は存在しない。[SAI](../../reference/glossary.md#term-sai) DASH Outbound/Inbound Routing API を経由するため [ASIC](../../reference/glossary.md#term-asic) が当該 API をサポートすることが前提。コード内に [ASIC](../../reference/glossary.md#term-asic) 種別の条件分岐はなく SAI 実装（[syncd](../../reference/glossary.md#term-syncd) 経由のベンダー SAI ライブラリ）に委ねられる。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
 | [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | SAI 実装依存・コード差分なし | SAI DASH API 経由の抽象化。`dashrouteorch.cpp` 内に ASIC 条件分岐なし |
-| DPU (SmartSwitch) 専用 | 通常スイッチでは無効 | `main.cpp:990`: `gMySwitchType == "dpu"` のみ `DPU_APPL_DB` 接続 → `DpuOrchDaemon` → `DashRouteOrch` を生成 |
+| [DPU](../../reference/glossary.md#term-dpu) ([SmartSwitch](../../reference/glossary.md#term-smartswitch)) 専用 | 通常スイッチでは無効 | `main.cpp:990`: `gMySwitchType == "dpu"` のみ `DPU_APPL_DB` 接続 → `DpuOrchDaemon` → `DashRouteOrch` を生成 |
 | multi-asic (`is_multi_npu` 環境) | 非対応 | DPU 専用構成のため namespace iterate コードなし |
-| VOQ chassis / Fabric | 無効 | `DashRouteOrch` は DPU モード限定。`orchdaemon.cpp:1313` にて明示的に分離 |
-| ZMQ トランスポート | feature flag `ORCH_NORTHBOND_DASH_ZMQ_ENABLED` で制御 | デフォルト `true`（ZMQ 有効）。`false` で Redis subscribe フォールバック (`orchdaemon.cpp:1329`) |
+| [VOQ](../../reference/glossary.md#term-voq) chassis / Fabric | 無効 | `DashRouteOrch` は DPU モード限定。`orchdaemon.cpp:1313` にて明示的に分離 |
+| ZMQ トランスポート | feature flag `ORCH_NORTHBOND_DASH_ZMQ_ENABLED` で制御 | デフォルト `true`（ZMQ 有効）。`false` で [Redis](../../reference/glossary.md#term-redis) subscribe フォールバック (`orchdaemon.cpp:1329`) |
 | バルクサイズ上限 | デフォルト 1000、`orchagent -k` で変更可 | `DEFAULT_MAX_BULK_SIZE = 1000` (`orchdaemon.cpp:81`)。`outbound_routing_bulker_` / `inbound_routing_bulker_` 両方に適用 |
 | IPv6 `underlay_sip` | 未サポート（無言スキップ） | `has_ipv4()` ガードのみ (`dashrouteorch.cpp:149`)。IPv6 underlay SIP は ASIC 非依存のコード上の制約 |
 
@@ -698,3 +698,5 @@ dash_route_orch->unbindRouteGroup(old_group_id);
 ## 引用元
 
 [^1]: `SONiC/doc/dash/dash-sonic-hld.md` §3.2.6〜§3.2.10 (DASH_ROUTING_TYPE_TABLE, DASH_ROUTE_GROUP_TABLE, DASH_ROUTE_TABLE, DASH_ROUTE_RULE_TABLE スキーマ定義). <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dash/dash-sonic-hld.md>
+
+<!-- glossary-links-injected: 2af63bc572d1 -->
