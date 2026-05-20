@@ -35689,9 +35689,9 @@ reasoning: HLD は二段構成（user-space 設定変換 + SAI sample-packet 設
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>collector に届かない → <code>show sflow</code> で admin / collector reachability、<code>hsflowd</code> ログを確認。DUT 側で <code>tcpdump -i eth0 udp port 6343</code> でパケット送出を確認する</li>
-<li>sample_rate が想定と違う → port speed 変更直後の追従、<code>sample-rate</code> 明示設定の有無を確認。サンプルが増えない場合は ASIC 側のサンプリング機能が <a href="../../reference/glossary/#term-npu">NPU</a> 制限（per-port / per-switch の最大 rate）で頭打ちになっている可能性があり、<code>saidump | grep SAMPLEPACKET</code> を確認</li>
-<li>agent_id が更新されない → <code>Loopback0</code> 等の interface 状態と <code>config sflow agent-id</code> を確認。sFlow agent IP は management interface ではなく Loopback を使うのが一般的で、<code>config sflow agent-id</code> で固定推奨</li>
+<li>collector に届かない → <code>show sflow</code> で admin / collector reachability、<code>hsflowd</code> ログを確認。詳しくは DUT 側で <code>tcpdump -i eth0 udp port 6343</code> でパケット送出を確認する。</li>
+<li>sample_rate が想定と違う → port speed 変更直後の追従、<code>sample-rate</code> 明示設定の有無を確認。サンプル件数が増えない場合、ASIC 側でサンプリング機能が <a href="../../reference/glossary/#term-npu">NPU</a> 制限で頭打ち (per-port や per-switch の最大 rate) になっている可能性があるため、<code>saidump | grep SAMPLEPACKET</code> を確認。</li>
+<li>agent_id が更新されない → <code>Loopback0</code> 等の interface 状態と <code>config sflow agent-id</code> を確認。sFlow agent IP は management interface ではなく Loopback を使うべき設計が一般的（<code>config sflow agent-id</code> で固定推奨）。</li>
 </ul>
 <!-- diff-admonition -->
 <div class="admonition diff">

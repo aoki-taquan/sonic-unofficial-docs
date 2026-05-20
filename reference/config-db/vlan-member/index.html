@@ -37428,11 +37428,12 @@ YANG leafref による宣言的参照（CVL 検証時）と実装上の暗黙参
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>orchagent / VlanOrch</strong> (<code>sonic-swss/orchagent/vlanorch.cpp</code>): <code>VLAN_MEMBER</code> テーブルを <code>SubscriberStateTable</code> で購読。</li>
+<li><strong>vlanmgrd</strong> (<code>sonic-swss/cfgmgr/vlanmgr.cpp</code>): CONFIG_DB <code>VLAN_MEMBER</code> テーブルを <code>ConsumerStateTable</code> で購読。</li>
+<li><strong>orchagent / VlanOrch</strong> (<code>sonic-swss/orchagent/vlanorch.cpp</code>): APPL_DB <code>APP_VLAN_MEMBER_TABLE</code> を <code>ConsumerStateTable</code> で購読。</li>
 </ul>
 <h3 id="2-cfg-appl">段階 2: CFG → APPL 翻訳<a class="headerlink" href="#2-cfg-appl" title="Permanent link">&para;</a></h3>
 <ul>
-<li>VlanOrch がポートの VLAN 帰属 (<code>tagging_mode</code>) を解析。APP_DB への書き込みなし。</li>
+<li>vlanmgrd が <code>addHostVlanMember()</code> で Linux bridge 操作を行った後、APPL_DB <code>VLAN_MEMBER_TABLE</code> (<code>APP_VLAN_MEMBER_TABLE_NAME</code>) に書き込む。orchagent は APPL_DB を経由して SAI に反映する（pubsub セクション参照）。</li>
 </ul>
 <h3 id="3-appl-sai">段階 3: APPL → SAI<a class="headerlink" href="#3-appl-sai" title="Permanent link">&para;</a></h3>
 <ul>

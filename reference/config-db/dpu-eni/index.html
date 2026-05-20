@@ -26330,12 +26330,12 @@
   <a href="#phase-b_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        書込み順依存 (Phase B)
+        書込み順依存 (Phase B) — 詳細版
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B) — 詳細版">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -26351,45 +26351,6 @@
         
           <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        主要な制約詳細
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#phase-b_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        書込み順依存 (Phase B)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        検出された順序依存
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         主要な制約詳細
@@ -26699,7 +26660,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         通知経路まとめ
@@ -26760,7 +26721,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差サマリー
@@ -36231,12 +36192,12 @@
   <a href="#phase-b_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        書込み順依存 (Phase B)
+        書込み順依存 (Phase B) — 詳細版
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
+    <nav class="md-nav" aria-label="書込み順依存 (Phase B) — 詳細版">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -36252,45 +36213,6 @@
         
           <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        主要な制約詳細
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#phase-b_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        書込み順依存 (Phase B)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        検出された順序依存
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         主要な制約詳細
@@ -36600,7 +36522,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         通知経路まとめ
@@ -36661,7 +36583,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差サマリー
@@ -37281,68 +37203,9 @@
 <!-- /defaults -->
 
 <!-- ordering -->
-<h2 id="phase-b_1">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
-<p><code>DashEniFwdOrch</code> は <code>APPL_DB:DASH_ENI_FORWARD_TABLE</code> の最初のエントリ受信時に <code>lazyInit()</code> を呼び出し、CONFIG_DB の <code>DPU</code> / <code>REMOTE_DPU</code> / <code>VDPU</code> テーブルをまとめて読み込む。この <strong>遅延初期化 (lazy init)</strong> 設計により、テーブル群は ENI エントリ到着前にすべて確定している必要がある。</p>
-<h3 id="_14">検出された順序依存<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>#</th>
-<th>依存関係</th>
-<th>方向</th>
-<th>緩和策</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td><code>CONFIG_DB:DPU</code> / <code>REMOTE_DPU</code> 投入 → <code>APPL_DB:DASH_ENI_FORWARD_TABLE</code> 到着</td>
-<td><strong>強制先行</strong></td>
-<td>ENI 到着前に DPU 系テーブルが確定していないと <code>DpuRegistry</code> に登録されず、ACL ルールが生成されない</td>
-</tr>
-<tr>
-<td>2</td>
-<td><code>CONFIG_DB:DPU</code> / <code>REMOTE_DPU</code> 処理完了 → <code>CONFIG_DB:VDPU</code> 投入</td>
-<td><strong>強制先行</strong></td>
-<td><code>processVdpuTable()</code> は <code>dpus_name_map_</code> を参照するため、DPU/REMOTE_DPU が先に処理されていなければ <code>SWSS_LOG_WARN("Invalid DPU ID")</code> でスキップ</td>
-</tr>
-<tr>
-<td>3</td>
-<td><code>NeighOrch</code> が LOCAL DPU の Neighbor を解決 → ENI ACL ルールのインストール</td>
-<td><strong>強制先行</strong> (LOCAL の場合)</td>
-<td>Neighbor 未解決時は ACL ルール未生成のまま保留。<code>NeighborUpdate</code> を受信後に再試行</td>
-</tr>
-<tr>
-<td>4</td>
-<td><code>CONFIG_DB:VIP_TABLE</code> 投入 → ENI ACL テーブル生成</td>
-<td><strong>強制先行</strong></td>
-<td><code>EniFwdCtxBase::getVip()</code> は <code>keys()</code> が空の場合 <code>SWSS_LOG_THROW</code> → <a href="../../glossary/#term-orchagent">orchagent</a> クラッシュ</td>
-</tr>
-<tr>
-<td>5</td>
-<td><code>VNetOrch</code> への <a href="../../glossary/#term-vnet">VNET</a> 登録 → CLUSTER ENI ACL ルール生成</td>
-<td><strong>強制先行</strong> (CLUSTER の場合)</td>
-<td><code>findVnetVni()</code> / <code>findVnetTunnel()</code> が失敗すると CLUSTER ENI の redirect 先 (tunnel+VNI) が決定できない</td>
-</tr>
-<tr>
-<td>6</td>
-<td><code>gMySwitchSubType == "SmartSwitch"</code> 設定 → <code>DashEniFwdOrch</code> 生成</td>
-<td><strong>前提条件</strong></td>
-<td><code>orchdaemon.cpp:613</code> の条件分岐。SmartSwitch サブタイプでなければ Orch 自体が起動しない</td>
-</tr>
-</tbody>
-</table>
-<h3 id="_15">主要な制約詳細<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
-<p><strong>DPU → VDPU の強制先行順序 (依存 #2)</strong>: <code>DpuRegistry::populate()</code> は内部で <code>processDpuTable()</code> → <code>processRemoteDpuTable()</code> → <code>processVdpuTable()</code> の固定順で実行される (<code>dashenifwdorch.cpp:218-221</code>)。<code>processVdpuTable()</code> が <code>dpus_name_map_</code> (DPU/REMOTE_DPU 処理時に構築) を参照するため、<code>populate()</code> 呼び出し時点で DPU/REMOTE_DPU が CONFIG_DB に存在しなければ VDPU は空の状態で確定する。<code>populate()</code> は <code>lazyInit()</code> 内で 1 回のみ呼ばれ再読み込みは行われない (<code>dashenifwdorch.cpp:131-146</code>)。</p>
-<p><strong>VIP_TABLE の先行必須 (依存 #4)</strong>: <code>EniFwdCtxBase::addAclTable()</code> は <code>getVip()</code> を呼び出し、<code>VIP_TABLE</code> のキーを先頭要素として <code>IpPrefix</code> へ変換する。<code>VIP_TABLE</code> が空の場合 <code>SWSS_LOG_THROW("Invalid Config: VIP info not populated")</code> が発生し <a href="../../glossary/#term-orchagent">orchagent</a> プロセスが終了する (<code>dashenifwdorch.cpp:502-505</code>)。</p>
-<p><strong>Neighbor 解決待ちの保留 (依存 #3)</strong>: LOCAL DPU の場合、<code>initLocalEndpoints()</code> が <code>NeighOrch::resolveNeighbor()</code> を呼んで Neighbor 解決をトリガーする。Neighbor が未解決のまま ENI が到着した場合は ACL ルールが生成されず、<code>NeighborUpdate</code> (Neighbor Up 通知) を受信後に <code>handleNeighUpdate()</code> → ENI の再評価で ACL ルールがインストールされる (<code>dashenifwdorch.cpp:48-76</code>, <code>dashenifwdorch.h:227-237</code>)。</p>
-<p><strong>lazyInit の一回性 (依存 #1)</strong>: <code>ctx_initialized_</code> フラグにより <code>lazyInit()</code> は初回 ENI 到着時にのみ実行される。それ以降に CONFIG_DB の DPU/REMOTE_DPU/VDPU を変更しても <code>DpuRegistry</code> には反映されない。SmartSwitch の DPU 構成変更は orchagent の再起動が必要。</p>
-<!-- /ordering -->
-
-<!-- ordering -->
-<h2 id="phase-b_2">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b_2" title="Permanent link">&para;</a></h2>
+<h2 id="phase-b_1">書込み順依存 (Phase B) — 詳細版<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
 <p><code>DashEniFwdOrch</code> は CONFIG_DB の <code>DPU</code> / <code>REMOTE_DPU</code> / <code>VDPU</code> と APPL_DB の <code>DASH_ENI_FORWARD_TABLE</code> を組み合わせて ACL ルールを生成する。テーブル間の処理順序と Neighbor 解決状態が ACL 生成タイミングを支配する。</p>
-<h3 id="_16">検出された順序依存<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h3 id="_14">検出された順序依存<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -37391,16 +37254,16 @@
 </tr>
 </tbody>
 </table>
-<h3 id="_17">主要な制約詳細<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_15">主要な制約詳細<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
 <p><strong>DPU/REMOTE_DPU → VDPU 親子順序 (依存 #1)</strong>: <code>DpuRegistry::populate()</code> は <code>processDpuTable()</code> → <code>processRemoteDpuTable()</code> → <code>processVdpuTable()</code> の固定順で呼ばれる (<code>dashenifwdorch.cpp:218-221</code>)。<code>processVdpuTable()</code> 内で <code>dpus_name_map_.find(dpu_id) == dpus_name_map_.end()</code> であれば <code>SWSS_LOG_WARN("Invalid DPU ID")</code> を出力してその DPU をスキップする。CONFIG_DB にデータを投入する際は DPU/REMOTE_DPU が VDPU より先に存在していなければ、VDPU の参照が欠落する (<code>dashenifwdorch.cpp:330-339</code>)。</p>
 <p><strong>Neighbor 未解決による ACL 生成保留 (依存 #3)</strong>: <code>LocalEniNH::resolve()</code> (<code>dashenifwdinfo.cpp:18-38</code>) は <code>ctx-&gt;isNeighborResolved(nh)</code> が偽の場合、<code>EniAclRule</code> の state を <code>PENDING</code> のまま維持し <code>ctx-&gt;createAclRule()</code> を呼ばない。その後 <code>NeighOrch</code> から Neighbor Up 通知 (<code>SUBJECT_TYPE_NEIGH_CHANGE</code>) が届くと <code>DashEniFwdOrch::handleNeighUpdate()</code> → <code>EniInfo::update(NeighborUpdate)</code> → <code>fireAllRules()</code> の経路で再評価される。このため、DPU の PA への Neighbor が解決されるまで LOCAL ENI の ACL ルールは APPL_DB に書き込まれない。</p>
-<p><strong>VIP_TABLE の先行要件 (依存 #4)</strong>: <code>RemoteEniNH::resolve()</code> (<code>dashenifwdinfo.cpp:40-62</code>) は ENI の vnet_name から VNI とトンネル名を取得した後、<code>ctx-&gt;getVip()</code> を呼び出す。<code>getVip()</code> は <code>VIP_TABLE</code> が空なら <code>SWSS_LOG_THROW</code> で orchagent プロセスを abort させる。SmartSwitch 起動シーケンスでは <code>VIP_TABLE</code> が ENI forwarding テーブルより先に CONFIG_DB に設定されていなければならない。</p>
+<p><strong>VIP_TABLE の先行要件 (依存 #4)</strong>: <code>RemoteEniNH::resolve()</code> (<code>dashenifwdinfo.cpp:40-62</code>) は ENI の vnet_name から VNI とトンネル名を取得した後、<code>ctx-&gt;getVip()</code> を呼び出す。<code>getVip()</code> は <code>VIP_TABLE</code> が空なら <code>SWSS_LOG_THROW</code> で <a href="../../glossary/#term-orchagent">orchagent</a> プロセスを abort させる。SmartSwitch 起動シーケンスでは <code>VIP_TABLE</code> が ENI forwarding テーブルより先に CONFIG_DB に設定されていなければならない。</p>
 <p><strong>acl_rule_count_ による ACL table 参照カウント (依存 #5, #6)</strong>: <code>EniFwdCtxBase</code> は <code>acl_rule_count_</code> で ACL table の存在を管理する。最初の <code>createAclRule()</code> で table と table_type を APPL_DB に書き込み (<code>addAclTable()</code>)、最後の <code>deleteAclRule()</code> で両方を削除する (<code>deleteAclTable()</code>)。rule より table が先に書かれ、table より rule が先に消えることが内部カウンタで保証される (<code>dashenifwdorch.cpp:576-601</code>, <code>dashenifwdorch.cpp:603-650</code>)。</p>
 <!-- /ordering -->
 
 <!-- cross-refs -->
 <h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
-<p><code>DashEniFwdOrch</code> は CONFIG_DB の複数テーブルと他 orchagent を横断して参照する。以下はコード (<code>dashenifwdorch.h</code> / <code>dashenifwdorch.cpp</code> / <code>dashenifwdinfo.cpp</code>) から抽出した暗黙参照の一覧。</p>
+<p><code>DashEniFwdOrch</code> は CONFIG_DB の複数テーブルと他 <a href="../../glossary/#term-orchagent">orchagent</a> を横断して参照する。以下はコード (<code>dashenifwdorch.h</code> / <code>dashenifwdorch.cpp</code> / <code>dashenifwdinfo.cpp</code>) から抽出した暗黙参照の一覧。</p>
 <table>
 <thead>
 <tr>
@@ -37565,7 +37428,7 @@
 <td><code>NeighOrch</code> の Neighbor Up 通知受信で自動再評価 (<code>handleNeighUpdate()</code>)</td>
 </tr>
 <tr>
-<td>CLUSTER DPU の VNET トンネル名が未登録</td>
+<td>CLUSTER DPU の <a href="../../glossary/#term-vnet">VNET</a> トンネル名が未登録</td>
 <td><code>RemoteEniNH::resolve()</code> L45-49 (<code>dashenifwdinfo.cpp</code>)</td>
 <td><code>SWSS_LOG_ERROR("Couldn't find tunnel name for Vnet")</code> → <code>endpoint_status_t::UNRESOLVED</code> → <code>rule_state_t::PENDING</code></td>
 <td>VNetOrch に VNET エントリ登録後、ENI の再 SET で再評価</td>
@@ -38084,7 +37947,7 @@ APPL_DB の <code>ACL_RULE_TABLE</code> に未インストール状態のルー�
 </span></code></pre></div>
 <h3 id="config_db">CONFIG_DB テーブルの読み取り方式 (サブスクリプションなし)<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <p><code>DPU</code> / <code>REMOTE_DPU</code> / <code>VDPU</code> は <code>DpuRegistry::populate()</code> が <code>Table::getKeys()</code> / <code>Table::get()</code> によるスナップショット読み取りで一括取得する (<code>dashenifwdorch.cpp:212-221</code>)。これらのテーブルに対する <code>SubscriberStateTable</code> / <code>ConsumerStateTable</code> サブスクリプションは存在せず、起動時 <code>lazyInit()</code> → <code>populateDpuRegistry()</code> で一度だけ読み込まれる。</p>
-<h3 id="_18">通知経路まとめ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<h3 id="_16">通知経路まとめ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -38143,7 +38006,7 @@ APPL_DB の <code>ACL_RULE_TABLE</code> に未インストール状態のルー�
 <p><code>DEVICE_METADATA.switch_type == "dpu"</code> のプラットフォーム（DPU カード側）では <code>DpuOrchDaemon</code> が起動し (<code>main.cpp:994</code>)、<code>DashAclOrch</code> / <code>DashVnetOrch</code> 等の <a href="../../glossary/#term-dash">DASH</a> オーケストレータが動く。NPU 側 SmartSwitch の <code>DashEniFwdOrch</code> とは完全に別の Daemon であり、<code>DPU</code> / <code>REMOTE_DPU</code> / <code>VDPU</code> テーブルは <strong>NPU 側のみが消費</strong>する。</p>
 <h3 id="asic">ASIC 種別依存<a class="headerlink" href="#asic" title="Permanent link">&para;</a></h3>
 <p><code>DashEniFwdOrch</code> はエンドポイント到達確認に <code>NeighOrch</code> を使い、ACL ルール書き込みに <code>AclOrch</code> を経由する。ACL 実装は <a href="../../glossary/#term-asic">ASIC</a> ベンダー依存だが、ENI 転送 ACL は専用テーブルタイプ (<code>ACL_TABLE_TYPE_TABLE</code>) を自前定義して使用するため (<code>dashenifwdorch.cpp:403-450</code>)、standard ACL type の platform 差（MIRRORV6 可否・L3V4V6 可否等）は ENI 転送ルールには直接影響しない。</p>
-<h3 id="_19">プラットフォーム差サマリー<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<h3 id="_17">プラットフォーム差サマリー<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -38183,6 +38046,21 @@ APPL_DB の <code>ACL_RULE_TABLE</code> に未インストール状態のルー�
 <!-- /platform -->
 
 <!-- glossary-links-injected: d1159e193828 -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><code>sonic-swss/orchagent/dash/dashenifwdorch.h</code> (L62-89 テーブル名・フィールド名定数、L129-156 request_description). <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.h">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.h</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><code>sonic-swss/orchagent/dash/dashenifwdorch.cpp</code> (L212-347 <code>DpuRegistry::populate()</code>, <code>processDpuTable()</code>, <code>processRemoteDpuTable()</code>, <code>processVdpuTable()</code>). <a href="https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.cpp">https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p><code>sonic-net/SONiC/doc/smart-switch/high-availability/eni-based-forwarding.md</code>. <a href="https://github.com/sonic-net/SONiC/blob/master/doc/smart-switch/high-availability/eni-based-forwarding.md">https://github.com/sonic-net/SONiC/blob/master/doc/smart-switch/high-availability/eni-based-forwarding.md</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

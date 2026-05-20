@@ -36495,10 +36495,11 @@ evidence: <code>meta/_intermediate/cdb-flow/srv6-state-constants.md</code></p>
 <code>COUNTERS:&lt;oid&gt;</code> を書き込む。
 MySID 追加から <code>COUNTERS:&lt;oid&gt;</code> 初回値が出現するまでの最大待機時間は <strong>1 + 10 = 11 秒</strong>（<code>srv6orch.cpp:108,138</code>）。</p>
 <h3 id="flex_counter_table">FLEX_COUNTER_TABLE キー固定<a class="headerlink" href="#flex_counter_table" title="Permanent link">&para;</a></h3>
-<p><code>SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP = "SRV6_STAT_COUNTER"</code> (<code>srv6orch.h:30</code>) は
-<code>FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER</code> の enable/disable で FlexCounter を一括制御するキーである。
-<code>flexcounterorch.cpp:64</code> の <code>SRV6_KEY = "SRV6"</code> が <code>CounterCheckOrch</code> に渡す識別子であり、
-これを変更することはできない。</p>
+<p>ユーザーが操作する CONFIG_DB キーは <code>FLEX_COUNTER_TABLE|SRV6</code> (<code>flexcounterorch.cpp:64</code> の <code>SRV6_KEY = "SRV6"</code>) で、
+<code>FlexCounterOrch::doTask()</code> がこのキーを処理して <code>gSrv6Orch-&gt;setCountersState(enable)</code> を呼び出す。
+内部の FlexCounter group 名は <code>SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP = "SRV6_STAT_COUNTER"</code> (<code>srv6orch.h:30</code>) で、
+これは <code>CounterCheckOrch</code> に渡される識別子（FLEX_COUNTER_DB 上の group 名）であり、
+ユーザーが直接 CONFIG_DB で操作する対象ではない。</p>
 <h3 id="_10">ロケータビット長デフォルトとカウンタキー<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <p><code>getMySidCounterKey()</code> (<code>srv6orch.cpp:177-182</code>) は <code>block_len + node_len + func_len</code> の合計を
 カウンタキーの <code>/N</code> プレフィックス長として使用する。

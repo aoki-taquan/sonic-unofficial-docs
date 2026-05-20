@@ -36710,7 +36710,7 @@
 <h3 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>action_type=staticencap</code> かつ <code>encap_type</code> が省略または不正値の場合は <code>SWSS_LOG_ERROR</code> が出力され、SAI 属性が不正になる</li>
-<li>ルーティングタイプエントリが既存の場合は <code>SWSS_LOG_WARN</code> を出力して成功扱い (更新は上書き可能)</li>
+<li>ルーティングタイプエントリが既存の場合は <code>SWSS_LOG_WARN</code> を出力して成功扱いとなるが、既存エントリは更新されない（更新は上書き不可。変更には DEL → SET が必要）</li>
 </ul>
 <hr />
 <h2 id="2-dash_route_group_table">2. DASH_ROUTE_GROUP_TABLE<a class="headerlink" href="#2-dash_route_group_table" title="Permanent link">&para;</a></h2>

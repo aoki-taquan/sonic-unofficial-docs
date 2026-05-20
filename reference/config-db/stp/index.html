@@ -37503,7 +37503,7 @@ IPC 送信失敗後もエントリは <code>consumer.m_toSync.erase(it)</code> �
 </tr>
 </tbody>
 </table>
-<p>CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。<a href="../../glossary/#term-sai">SAI</a> 取得失敗時は <code>255</code> を書き込む。</p>
+<p>CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。<a href="../../glossary/#term-sai">SAI</a> 取得失敗時は <code>StpOrch::updateMaxStpInstance()</code> が呼ばれず <code>STP_TABLE|GLOBAL</code> エントリは作成されない。<code>stpmgrd</code> 側は 60 秒タイムアウト後にフォールバック値 <code>STP_DEFAULT_MAX_INSTANCES = 255</code> を内部的に使用する（<code>stpmgr.cpp:1381-1413</code> の <code>getStpMaxInstances()</code>）。</p>
 <h3 id="config_db-app_db">CONFIG_DB / APP_DB への直接書込みなし<a class="headerlink" href="#config_db-app_db" title="Permanent link">&para;</a></h3>
 <p><code>stpmgr.cpp</code> は CONFIG_DB への書き込みを行わない（<code>setEntry</code> / <code>del</code> 呼び出しゼロ件）。APP_DB へも <code>APP_PORT_TABLE</code> の読み取りのみ。STP 変化が間接的に引き起こす APP_DB の port state 書き込みはすべて <code>stpd</code> → <code>StpOrch</code> → <code>sai_stp_api</code> 経路を介する。</p>
 <blockquote>
@@ -37728,6 +37728,21 @@ IPC 送信失敗後もエントリは <code>consumer.m_toSync.erase(it)</code> �
 <li><a href="../portchannel/">CONFIG_DB: PORTCHANNEL</a></li>
 </ul>
 <!-- glossary-links-injected: 07d24e4e47ef -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>STP CLI 実装: <code>config/stp.py</code>. <a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>STP Manager 実装: <code>stpmgr.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>STP Manager ヘッダ: <code>stpmgr.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

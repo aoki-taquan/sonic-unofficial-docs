@@ -37471,9 +37471,9 @@
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
-<p>telemetry サービスが <code>tls_cert</code> / <code>tls_key</code> フィールドの有無から接続モードを自動決定する。両方あり → mTLS 接続、なし → 平文または server-only TLS。<code>enabled</code> フィールドにより dial-out クライアントの起動/停止が制御される。</p>
+<p><code>dialout_client.go</code> が <code>DestinationGroup</code> の <code>dst_addr</code> を解決し、<code>Subscription</code> の <code>report_type</code> (<code>stream</code> / <code>once</code> / <code>poll</code>) と <code>report_interval</code> から送信モードを自動決定する。<code>unidirectional</code> (Global) が <code>true</code> の場合は片方向ストリーミング、<code>false</code> で双方向 RPC。<code>encoding</code> (デフォルト <code>JSON_IETF</code>) によって payload エンコーディングを切り替える。</p>
 <h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
-<p>telemetry サービスが有効の場合のみ <code>TELEMETRY_CLIENT</code> テーブルを消費するプロセスが存在する。<code>TELEMETRY_CLIENT.enabled==false</code> の場合は dial-out クライアントを起動しない。</p>
+<p>dialout クライアントは <code>gnmi-native</code> プロセス (supervisord 管理) が稼働している場合にのみ起動する。<code>TELEMETRY_CLIENT</code> テーブルに <code>Subscription</code> エントリが存在し、対応する <code>DestinationGroup</code> が解決可能なときに dial-out セッションを開始する。エントリ未定義時はセッション未起動。</p>
 <!-- /derivation -->
 
 <!-- handler-branching -->
@@ -37489,39 +37489,45 @@
 </thead>
 <tbody>
 <tr>
-<td><code>telemetry_client</code></td>
-<td><code>enabled==true</code></td>
-<td>gRPC 接続を確立して subscription 開始</td>
-<td><code>telemetry_client</code></td>
+<td><code>dialout_client</code></td>
+<td><code>Subscription</code> + <code>DestinationGroup</code> 解決済</td>
+<td>gRPC dial-out 接続を確立して subscription 開始</td>
+<td><code>dialout_client.go</code></td>
 </tr>
 <tr>
-<td><code>telemetry_client</code></td>
-<td><code>enabled==false</code></td>
-<td>gRPC 接続を切断</td>
-<td><code>telemetry_client</code></td>
+<td><code>dialout_client</code></td>
+<td><code>DestinationGroup</code> の <code>dst_addr</code> 未解決</td>
+<td>接続未確立、<code>retry_interval</code> ごとに再試行</td>
+<td><code>dialout_client.go</code></td>
 </tr>
 <tr>
-<td><code>telemetry_client</code></td>
-<td><code>tls_cert</code> / <code>tls_key</code> あり</td>
-<td>mTLS 証明書を使用して接続</td>
-<td><code>telemetry_client</code></td>
+<td><code>dialout_client</code></td>
+<td><code>report_type=stream</code> + <code>report_interval</code></td>
+<td>周期 streaming subscription</td>
+<td><code>dialout_client.go</code></td>
 </tr>
 <tr>
-<td><code>telemetry_client</code></td>
-<td>TLS 設定なし</td>
-<td>平文または server-only TLS で接続</td>
-<td><code>telemetry_client</code></td>
+<td><code>dialout_client</code></td>
+<td><code>report_type=once</code></td>
+<td>単発取得</td>
+<td><code>dialout_client.go</code></td>
 </tr>
 <tr>
-<td><code>telemetry_client</code></td>
-<td><code>retry_interval</code> 設定</td>
-<td>接続失敗時の再試行インターバルを設定</td>
-<td><code>telemetry_client</code></td>
+<td><code>dialout_client</code></td>
+<td><code>report_type=poll</code></td>
+<td>poll-based subscription</td>
+<td><code>dialout_client.go</code></td>
+</tr>
+<tr>
+<td><code>dialout_client</code></td>
+<td><code>unidirectional=true</code> (Global)</td>
+<td>片方向ストリーミング (応答チャネルなし)</td>
+<td><code>dialout_client.go</code></td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p><strong>スキャン証跡</strong>: <code>TELEMETRY_CLIENT</code> は <a href="../../glossary/#term-gnmi">gNMI</a> dial-out のクライアント設定。<code>enabled</code> フィールドが主要分岐。TLS フィールドの有無が接続モードを決定（Phase 6 派生相当）。</p>
+<p><strong>スキャン証跡</strong>: <code>TELEMETRY_CLIENT</code> は <a href="../../glossary/#term-gnmi">gNMI</a> dial-out のクライアント設定。スキーマには <code>tls_cert</code> / <code>tls_key</code> / <code>enabled</code> フィールドは存在せず、TLS 設定は <code>TELEMETRY</code> テーブル側で管理される。主要分岐は <code>report_type</code> と <code>DestinationGroup</code> 解決状態。</p>
 </blockquote>
 <!-- /handler-branching -->
 

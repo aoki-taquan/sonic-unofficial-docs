@@ -37580,7 +37580,7 @@ CONFIG_DB 変更後は <code>sudo systemctl restart snmp</code> (または <code
 <tbody>
 <tr>
 <td><code>/etc/sonic/snmp.yml</code> に <code>snmp_location</code> なし</td>
-<td><code>sys.exit(1)</code> → <code>start.sh</code> 失敗 → <code>snmpd</code> 未起動</td>
+<td><code>snmp_yml_to_configdb.py</code> が <code>sys.exit(1)</code> で終了するが、<code>start.sh</code> は終了コードを無視して処理を継続。<code>SNMP|LOCATION</code> は CONFIG_DB に登録されず <code>sysLocation public</code> (ハードコード) が <code>snmpd.conf</code> に出力される (Phase D 参照)</td>
 </tr>
 <tr>
 <td>CONFIG_DB に <code>SNMP|LOCATION</code> が既に存在する</td>

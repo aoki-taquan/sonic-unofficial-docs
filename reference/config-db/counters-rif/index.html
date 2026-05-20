@@ -36635,7 +36635,7 @@
 
 <h1 id="counters_db-rif">COUNTERS_DB RIF カウンタ<a class="headerlink" href="#counters_db-rif" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-intfsorch">intfsorch</a>（<a href="../../glossary/#term-orchagent">orchagent</a> 内）が <a href="../../glossary/#term-sai">SAI</a> の flex counter 機構を通じて L3 Router Interface (<a href="../../glossary/#term-rif">RIF</a>) ごとに取得する統計カウンタ群<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">6</a></sup>。値は <code>COUNTERS_DB</code> の <code>COUNTERS:&lt;oid&gt;</code> に格納され、<code>intfstat</code> コマンドが読み出す。rate 統計は <code>RATES:&lt;oid&gt;</code> に別途格納される。</p>
+<p><a href="../../glossary/#term-intfsorch">intfsorch</a>（<a href="../../glossary/#term-orchagent">orchagent</a> 内）が <a href="../../glossary/#term-sai">SAI</a> の flex counter 機構を通じて L3 Router Interface (<a href="../../glossary/#term-rif">RIF</a>) ごとに取得する統計カウンタ群<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">9</a></sup>。値は <code>COUNTERS_DB</code> の <code>COUNTERS:&lt;oid&gt;</code> に格納され、<code>intfstat</code> コマンドが読み出す。rate 統計は <code>RATES:&lt;oid&gt;</code> に別途格納される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -36672,7 +36672,7 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  value: &lt;float 文字列&gt;
 </span></code></pre></div>
 <h2 id="_5">フィールド一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>以下は <code>intfsorch.cpp</code> の <code>rifStatIds[]</code> に定義されている全 <a href="../../glossary/#term-sai">SAI</a> カウンタ ID<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">7</a></sup>。</p>
+<p>以下は <code>intfsorch.cpp</code> の <code>rifStatIds[]</code> に定義されている全 <a href="../../glossary/#term-sai">SAI</a> カウンタ ID<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">10</a></sup>。</p>
 <h3 id="rif">RIF カウンタ<a class="headerlink" href="#rif" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -36717,7 +36717,7 @@
 </tbody>
 </table>
 <h2 id="rates">RATES テーブル<a class="headerlink" href="#rates" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-syncd">syncd</a> が <code>rif_rates.lua</code> を定期実行して計算した派生レートを <code>RATES:&lt;oid&gt;</code> に書く<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">8</a></sup>。</p>
+<p><a href="../../glossary/#term-syncd">syncd</a> が <code>rif_rates.lua</code> を定期実行して計算した派生レートを <code>RATES:&lt;oid&gt;</code> に書く<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">11</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -36781,7 +36781,7 @@
      sonic-buildimage/dockers/docker-orchagent/enable_counters.py -->
 
 <h3 id="_7">ポーリング間隔のコード由来デフォルト<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<p><code>FLEX_COUNTER_TABLE|RIF</code> に <code>POLL_INTERVAL</code> が設定されていない場合、<a href="../../glossary/#term-intfsorch">intfsorch</a> が <strong>ハードコードした初期値</strong>で syncd に投入する<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">9</a></sup>。</p>
+<p><code>FLEX_COUNTER_TABLE|RIF</code> に <code>POLL_INTERVAL</code> が設定されていない場合、<a href="../../glossary/#term-intfsorch">intfsorch</a> が <strong>ハードコードした初期値</strong>で syncd に投入する<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">12</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -36820,7 +36820,7 @@
 </tbody>
 </table>
 <h3 id="_8">レートスムージングのデフォルト<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<p><code>rif_rates.lua</code> は <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> の <code>RATES:RIF</code> エントリから <code>RIF_SMOOTH_INTERVAL</code> と <code>RIF_ALPHA</code> を読み取り、指数移動平均 (EMA) でレートを平滑化する<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">10</a></sup>。これらの値は <code>enable_counters.py</code> によって起動時に書き込まれる。</p>
+<p><code>rif_rates.lua</code> は <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> の <code>RATES:RIF</code> エントリから <code>RIF_SMOOTH_INTERVAL</code> と <code>RIF_ALPHA</code> を読み取り、指数移動平均 (EMA) でレートを平滑化する<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">13</a></sup>。これらの値は <code>enable_counters.py</code> によって起動時に書き込まれる。</p>
 <table>
 <thead>
 <tr>
@@ -36849,7 +36849,7 @@
 <p><code>rif_rates.lua</code> は <code>RIF_ALPHA</code> が未定義の場合 <code>"Alpha is not defined"</code> をログに残して即 return する（rif_rates.lua:21-23）。<code>enable_counters.py</code> が実行されていない場合はレート計算が一切行われず <code>RATES:&lt;oid&gt;</code> が空のままになる。</p>
 </div>
 <h3 id="enable_counterspy">起動遅延（enable_counters.py）<a class="headerlink" href="#enable_counterspy" title="Permanent link">&para;</a></h3>
-<p><code>enable_counters.py</code> はシステム起動後にデフォルト率設定を書き込む前に意図的に sleep する<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">11</a></sup>。</p>
+<p><code>enable_counters.py</code> はシステム起動後にデフォルト率設定を書き込む前に意図的に sleep する<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">14</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -36878,7 +36878,7 @@
 <!-- ordering -->
 <h2 id="phase-b">処理順序と順序依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
 <h3 id="orchdaemon">orchdaemon 初期化順序<a class="headerlink" href="#orchdaemon" title="Permanent link">&para;</a></h3>
-<p><code>orchdaemon.cpp</code> における Orch 生成順序は次のとおりで、<code>gIntfsOrch</code> は <code>FlexCounterOrch</code> より前に生成される<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">12</a></sup>。</p>
+<p><code>orchdaemon.cpp</code> における Orch 生成順序は次のとおりで、<code>gIntfsOrch</code> は <code>FlexCounterOrch</code> より前に生成される<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">15</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -36917,7 +36917,7 @@
 </span></code></pre></div>
 <p><code>APP_INTF_TABLE</code> の SET メッセージは Consumer キューに積まれたまま保持され、<code>PortsOrch::allPortsReady()</code> が <code>true</code> を返した後に初めて処理される。したがって <code>INTERFACE</code> エントリに対応する物理ポート（<code>Ethernet0</code>、<code>PortChannel0001</code>、<code>Vlan1000</code> 等）が PortsOrch に登録済みであることが前提になる。</p>
 <h3 id="rif-flexcounter">RIF 作成 → タイマー駆動の非同期 FlexCounter 登録<a class="headerlink" href="#rif-flexcounter" title="Permanent link">&para;</a></h3>
-<p><code>addRouterIntfs()</code> で SAI RIF 作成後、<code>port</code> を <code>m_rifsToAdd</code> リストにキューイングするのみで <a href="../../glossary/#term-flexcounter">FlexCounter</a> には即時登録しない。実際の登録は <code>UPDATE_MAPS_SEC = 1 秒</code> 間隔のタイマーが発火して <code>doTask(SelectableTimer)</code> が呼ばれた後になる（<code>intfsorch.cpp:45, 78</code>）<sup id="fnref:8"><a class="footnote-ref" href="#fn:8">13</a></sup>。</p>
+<p><code>addRouterIntfs()</code> で SAI RIF 作成後、<code>port</code> を <code>m_rifsToAdd</code> リストにキューイングするのみで <a href="../../glossary/#term-flexcounter">FlexCounter</a> には即時登録しない。実際の登録は <code>UPDATE_MAPS_SEC = 1 秒</code> 間隔のタイマーが発火して <code>doTask(SelectableTimer)</code> が呼ばれた後になる（<code>intfsorch.cpp:45, 78</code>）<sup id="fnref:8"><a class="footnote-ref" href="#fn:8">16</a></sup>。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>APP_INTF_TABLE SET
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  → doTask(Consumer) → addRouterIntfs() → SAI RIF 作成 → m_rifsToAdd 追加
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  最大 1 秒後
@@ -37023,7 +37023,7 @@
      sonic-swss/orchagent/flexcounterorch.cpp (doTask L156-160) -->
 
 <h3 id="sai-create_router_interface-throw-runtime_error">SAI <code>create_router_interface</code> 失敗 → <code>throw runtime_error</code><a class="headerlink" href="#sai-create_router_interface-throw-runtime_error" title="Permanent link">&para;</a></h3>
-<p><code>addRouterIntfs()</code> が SAI API を呼ぶ際、<code>SAI_STATUS_SUCCESS</code> 以外が返ると <code>handleSaiCreateStatus()</code> の結果に応じて動作が分岐する<sup id="fnref:9"><a class="footnote-ref" href="#fn:9">14</a></sup>。</p>
+<p><code>addRouterIntfs()</code> が SAI API を呼ぶ際、<code>SAI_STATUS_SUCCESS</code> 以外が返ると <code>handleSaiCreateStatus()</code> の結果に応じて動作が分岐する<sup id="fnref:9"><a class="footnote-ref" href="#fn:9">17</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -37060,7 +37060,7 @@
 <h3 id="allportsready-false-interface">allPortsReady() false → INTERFACE 処理全停止<a class="headerlink" href="#allportsready-false-interface" title="Permanent link">&para;</a></h3>
 <p>PortsOrch が初期化完了（全ポートの SAI OID 取得）を宣言するまで、<code>APP_INTF_TABLE</code> の全 SET/DEL が Consumer キューで保留される（<code>intfsorch.cpp:665-668</code>）。この間 COUNTERS_DB に変化はなく、ポート初期化完了後に自動的に処理が再開される。</p>
 <h3 id="rif_rateslua-rates"><code>rif_rates.lua</code> ロード失敗 → RATES テーブルが永続的に更新されない<a class="headerlink" href="#rif_rateslua-rates" title="Permanent link">&para;</a></h3>
-<p>コンストラクタでの Lua スクリプトロードが <code>runtime_error</code> をスローした場合、<code>catch</code> ブロックで <code>SWSS_LOG_WARN</code> を出力して続行する（<code>intfsorch.cpp:86-94</code>）<sup id="fnref:10"><a class="footnote-ref" href="#fn:10">15</a></sup>。</p>
+<p>コンストラクタでの Lua スクリプトロードが <code>runtime_error</code> をスローした場合、<code>catch</code> ブロックで <code>SWSS_LOG_WARN</code> を出力して続行する（<code>intfsorch.cpp:86-94</code>）<sup id="fnref:10"><a class="footnote-ref" href="#fn:10">18</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -37088,7 +37088,7 @@
 </tbody>
 </table>
 <h3 id="gtraditionalflexcounter-asic_db-vidtorid"><code>gTraditionalFlexCounter</code> モードで ASIC_DB VIDTORID 未到達<a class="headerlink" href="#gtraditionalflexcounter-asic_db-vidtorid" title="Permanent link">&para;</a></h3>
-<p><code>gTraditionalFlexCounter=true</code> の環境で syncd が <code>VIDTORID</code> を書き込まない場合、<code>m_rifsToAdd</code> に RIF が残り続け、1 秒タイマーの毎発火でリトライするが COUNTERS_DB への登録は完了しない（<code>intfsorch.cpp:1627-1636</code>）。<code>SWSS_LOG_INFO</code> のみで <code>SWSS_LOG_ERROR</code> / <code>SWSS_LOG_WARN</code> は出ないため、監視が困難<sup id="fnref:11"><a class="footnote-ref" href="#fn:11">16</a></sup>。</p>
+<p><code>gTraditionalFlexCounter=true</code> の環境で syncd が <code>VIDTORID</code> を書き込まない場合、<code>m_rifsToAdd</code> に RIF が残り続け、1 秒タイマーの毎発火でリトライするが COUNTERS_DB への登録は完了しない（<code>intfsorch.cpp:1627-1636</code>）。<code>SWSS_LOG_INFO</code> のみで <code>SWSS_LOG_ERROR</code> / <code>SWSS_LOG_WARN</code> は出ないため、監視が困難<sup id="fnref:11"><a class="footnote-ref" href="#fn:11">19</a></sup>。</p>
 <h3 id="warm-reboot-60">warm-reboot 時の 60 秒遅延<a class="headerlink" href="#warm-reboot-60" title="Permanent link">&para;</a></h3>
 <p>warm-reboot 完了前に <code>FLEX_COUNTER_TABLE|RIF = enable</code> が届いても、<code>FlexCounterOrch::doTask()</code> は <code>m_delayTimerExpired = false</code> の間 early return する（<code>flexcounterorch.cpp:156-160</code>）。</p>
 <table>
@@ -37331,7 +37331,7 @@
 
 <p><code>IntfsOrch</code> が RIF を作成・削除するとき、<code>COUNTERS_DB</code> だけでなく複数の DB・オブジェクトに副作用書き込みを行う。</p>
 <h3 id="rif-addriftoflexcounter">RIF 作成時の副作用（addRifToFlexCounter）<a class="headerlink" href="#rif-addriftoflexcounter" title="Permanent link">&para;</a></h3>
-<p><code>addRifToFlexCounter()</code> (intfsorch.cpp:1527-1552) は以下の 3 DB に順次書き込む<sup id="fnref:13"><a class="footnote-ref" href="#fn:13">17</a></sup>:</p>
+<p><code>addRifToFlexCounter()</code> (intfsorch.cpp:1527-1552) は以下の 3 DB に順次書き込む<sup id="fnref:13"><a class="footnote-ref" href="#fn:13">21</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -37360,7 +37360,7 @@
 </table>
 <p>3 件の書き込みはトランザクションなしで直列実行される。FLEX_COUNTER_DB への書き込みが完了した時点で syncd が SAI ポーリングを開始し、<code>COUNTERS:&lt;oid&gt;</code> の更新が始まる。</p>
 <h3 id="rif-removeriffromflexcounter">RIF 削除時の副作用（removeRifFromFlexCounter）<a class="headerlink" href="#rif-removeriffromflexcounter" title="Permanent link">&para;</a></h3>
-<p><code>removeRifFromFlexCounter()</code> (intfsorch.cpp:1556-1568) は作成時の逆順で削除する<sup id="fnref:14"><a class="footnote-ref" href="#fn:14">18</a></sup>:</p>
+<p><code>removeRifFromFlexCounter()</code> (intfsorch.cpp:1556-1568) は作成時の逆順で削除する<sup id="fnref:14"><a class="footnote-ref" href="#fn:14">22</a></sup>:</p>
 <ol>
 <li><code>COUNTERS_RIF_NAME_MAP</code> から <code>hdel "" &lt;name&gt;</code></li>
 <li><code>COUNTERS_RIF_TYPE_MAP</code> から <code>hdel "" &lt;oid&gt;</code></li>
@@ -37424,7 +37424,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>ref_count &gt; 0</code> のとき <code>removeRouterIntfs()</code> は即 <code>false</code> を返す（intfsorch.cpp:1327-1330）。SAI RIF 削除も COUNTERS_DB クリーンアップも行われず、FlexCounter 登録は残ったままになる<sup id="fnref:15"><a class="footnote-ref" href="#fn:15">19</a></sup>。</p>
+<p><code>ref_count &gt; 0</code> のとき <code>removeRouterIntfs()</code> は即 <code>false</code> を返す（intfsorch.cpp:1327-1330）。SAI RIF 削除も COUNTERS_DB クリーンアップも行われず、FlexCounter 登録は残ったままになる<sup id="fnref:15"><a class="footnote-ref" href="#fn:15">23</a></sup>。</p>
 <h3 id="voq-chassis_app_db-voq">VoQ 環境: CHASSIS_APP_DB への副作用（VOQ モード限定）<a class="headerlink" href="#voq-chassis_app_db-voq" title="Permanent link">&para;</a></h3>
 <p><code>isChassisDbInUse() == true</code> の場合のみ、以下の副作用書き込みが発生する:</p>
 <table>
@@ -37457,7 +37457,7 @@
 </tr>
 </tbody>
 </table>
-<p>リモートシステムポート（<code>SAI_SYSTEM_PORT_TYPE_REMOTE</code>）および他スイッチの <a href="../../glossary/#term-lag">LAG</a> は sync 対象外（intfsorch.cpp:1689-1692）<sup id="fnref:16"><a class="footnote-ref" href="#fn:16">20</a></sup>。</p>
+<p>リモートシステムポート（<code>SAI_SYSTEM_PORT_TYPE_REMOTE</code>）および他スイッチの <a href="../../glossary/#term-lag">LAG</a> は sync 対象外（intfsorch.cpp:1689-1692）<sup id="fnref:16"><a class="footnote-ref" href="#fn:16">24</a></sup>。</p>
 <h3 id="intfsorch">IntfsOrch 初期化時の副作用<a class="headerlink" href="#intfsorch" title="Permanent link">&para;</a></h3>
 <p><code>IntfsOrch::IntfsOrch()</code> コンストラクタ (intfsorch.cpp:86-100) の実行時に以下の副作用が一度だけ発生する:</p>
 <ol>
@@ -37589,7 +37589,7 @@
 <!-- evidence: meta/_intermediate/cdb-flow/counters-rif-platform.md -->
 
 <h3 id="voq-vs-voq">VoQ シャーシ vs 非 VoQ — リモートシステムポートの扱い<a class="headerlink" href="#voq-vs-voq" title="Permanent link">&para;</a></h3>
-<p>VoQ シャーシ環境 (<code>gMySwitchType == "voq"</code> かつ <code>isChassisDbInUse()</code>) では <code>IntfsOrch</code> コンストラクタ起動時に <code>CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME</code> の追加 subscriber が登録される<sup id="fnref:20"><a class="footnote-ref" href="#fn:20">1</a></sup>。</p>
+<p>VoQ シャーシ環境 (<code>gMySwitchType == "voq"</code> かつ <code>isChassisDbInUse()</code>) では <code>IntfsOrch</code> コンストラクタ起動時に <code>CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME</code> の追加 subscriber が登録される<sup id="fnref:20"><a class="footnote-ref" href="#fn:20">4</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -37616,9 +37616,9 @@
 </tr>
 </tbody>
 </table>
-<p>リモートシステムポートは <code>isRemoteSystemPortIntf()</code> (<code>intfsorch.cpp:1640-1650</code>) で判定され、通常の <code>addRouterIntfs()</code> パスに入らない。このため <code>COUNTERS_RIF_NAME_MAP</code> にエントリが存在せず <code>intfstat</code> でカウンタが表示されない<sup id="fnref:21"><a class="footnote-ref" href="#fn:21">2</a></sup>。</p>
+<p>リモートシステムポートは <code>isRemoteSystemPortIntf()</code> (<code>intfsorch.cpp:1640-1650</code>) で判定され、通常の <code>addRouterIntfs()</code> パスに入らない。このため <code>COUNTERS_RIF_NAME_MAP</code> にエントリが存在せず <code>intfstat</code> でカウンタが表示されない<sup id="fnref:21"><a class="footnote-ref" href="#fn:21">5</a></sup>。</p>
 <h3 id="rif-flexcounter_1">RIF タイプ別の FlexCounter 登録<a class="headerlink" href="#rif-flexcounter_1" title="Permanent link">&para;</a></h3>
-<p><code>doTask(SelectableTimer&amp;)</code> 内でポートタイプから RIF タイプ文字列を決定してから <code>addRifToFlexCounter()</code> を呼ぶ<sup id="fnref:22"><a class="footnote-ref" href="#fn:22">3</a></sup>:</p>
+<p><code>doTask(SelectableTimer&amp;)</code> 内でポートタイプから RIF タイプ文字列を決定してから <code>addRifToFlexCounter()</code> を呼ぶ<sup id="fnref:22"><a class="footnote-ref" href="#fn:22">6</a></sup>:</p>
 <table>
 <thead>
 <tr>
@@ -37647,7 +37647,7 @@
 </table>
 <p><code>SUBPORT</code>（<a href="../../glossary/#term-vlan">VLAN</a> サブインタフェース）への統計サポートは ASIC 依存。SAI が <code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code> 統計を未実装の場合 <code>COUNTERS:&lt;oid&gt;</code> フィールドは 0 のまま更新されない。</p>
 <h3 id="sai_router_interface_stat_">SAI_ROUTER_INTERFACE_STAT_* の部分サポート<a class="headerlink" href="#sai_router_interface_stat_" title="Permanent link">&para;</a></h3>
-<p><code>rifStatIds[]</code> に列挙された全フィールドが FLEX_COUNTER_DB に登録されるが (<code>intfsorch.cpp:49-59</code>)<sup id="fnref:23"><a class="footnote-ref" href="#fn:23">4</a></sup>、プラットフォームによっては一部が未サポートとなる:</p>
+<p><code>rifStatIds[]</code> に列挙された全フィールドが FLEX_COUNTER_DB に登録されるが (<code>intfsorch.cpp:49-59</code>)<sup id="fnref:23"><a class="footnote-ref" href="#fn:23">7</a></sup>、プラットフォームによっては一部が未サポートとなる:</p>
 <ul>
 <li><code>SAI_ROUTER_INTERFACE_STAT_IN_ERROR_OCTETS</code> / <code>SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_OCTETS</code> — 一部 ASIC で非実装</li>
 <li>未サポートフィールドは syncd がポーリング結果を COUNTERS_DB に書かない（または常 0）</li>
@@ -37679,7 +37679,7 @@
 <ul>
 <li><strong>LoopBack インタフェース</strong>: <code>is_lo</code> 判定で <code>addRouterIntfs()</code> が呼ばれず <code>m_rifsToAdd</code> に積まれない。<code>COUNTERS_RIF_NAME_MAP</code> エントリなし・<code>intfstat</code> 非表示はアーキテクチャ設計による（全プラットフォーム共通）。</li>
 <li><strong><a href="../../glossary/#term-nat">NAT</a> ゾーン ID</strong>: <code>gIsNatSupported = false</code> のプラットフォームでは <code>SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID</code> が SAI 属性に渡されない。カウンタ収集への直接影響はない。</li>
-<li><strong><a href="../../glossary/#term-mpls">MPLS</a> 属性</strong>: <a href="../../glossary/#term-mpls">MPLS</a> 非対応 ASIC では <code>SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE</code> を含む <code>create_router_interface()</code> がエラーを返す場合があり、RIF 作成失敗 → COUNTERS_DB エントリなしとなる<sup id="fnref:24"><a class="footnote-ref" href="#fn:24">5</a></sup>。</li>
+<li><strong><a href="../../glossary/#term-mpls">MPLS</a> 属性</strong>: <a href="../../glossary/#term-mpls">MPLS</a> 非対応 ASIC では <code>SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE</code> を含む <code>create_router_interface()</code> がエラーを返す場合があり、RIF 作成失敗 → COUNTERS_DB エントリなしとなる<sup id="fnref:24"><a class="footnote-ref" href="#fn:24">8</a></sup>。</li>
 </ul>
 <!-- /platform -->
 
@@ -37699,65 +37699,83 @@
 <div class="footnote">
 <hr />
 <ol>
+<li id="fn:17">
+<p>FlexCounterOrch RIF enable ブランチ: <code>sonic-swss/orchagent/flexcounterorch.cpp:283-286</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L283">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L283</a>&#160;<a class="footnote-backref" href="#fnref:17" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:18">
+<p>IntfsOrch doTask(SelectableTimer) / addRifToFlexCounter: <code>sonic-swss/orchagent/intfsorch.cpp:1598-1637</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1598">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1598</a>&#160;<a class="footnote-backref" href="#fnref:18" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:19">
+<p>intfstat COUNTERS_DB 直接読み出し: <code>sonic-utilities/scripts/intfstat:81-82,96,109,123</code>. <a href="https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bd/scripts/intfstat#L81">https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bd/scripts/intfstat#L81</a>&#160;<a class="footnote-backref" href="#fnref:19" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
 <li id="fn:20">
-<p>VoQ IntfsOrch コンストラクタ subscriber 追加: <code>sonic-swss/orchagent/intfsorch.cpp:102-108</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L102">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L102</a>&#160;<a class="footnote-backref" href="#fnref:20" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>VoQ IntfsOrch コンストラクタ subscriber 追加: <code>sonic-swss/orchagent/intfsorch.cpp:102-108</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L102">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L102</a>&#160;<a class="footnote-backref" href="#fnref:20" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:21">
-<p>リモートシステムポート判定 + skip: <code>sonic-swss/orchagent/intfsorch.cpp:881-893,1640-1666</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L881">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L881</a>&#160;<a class="footnote-backref" href="#fnref:21" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p>リモートシステムポート判定 + skip: <code>sonic-swss/orchagent/intfsorch.cpp:881-893,1640-1666</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L881">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L881</a>&#160;<a class="footnote-backref" href="#fnref:21" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 <li id="fn:22">
-<p>RIF タイプ文字列決定ロジック: <code>sonic-swss/orchagent/intfsorch.cpp:1608-1626</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1608">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1608</a>&#160;<a class="footnote-backref" href="#fnref:22" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p>RIF タイプ文字列決定ロジック: <code>sonic-swss/orchagent/intfsorch.cpp:1608-1626</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1608">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1608</a>&#160;<a class="footnote-backref" href="#fnref:22" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
 <li id="fn:23">
-<p>rifStatIds 全列挙: <code>sonic-swss/orchagent/intfsorch.cpp:49-59</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49</a>&#160;<a class="footnote-backref" href="#fnref:23" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p>rifStatIds 全列挙: <code>sonic-swss/orchagent/intfsorch.cpp:49-59</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49</a>&#160;<a class="footnote-backref" href="#fnref:23" title="Jump back to footnote 7 in the text">&#8617;</a></p>
 </li>
 <li id="fn:24">
-<p><a href="../../glossary/#term-mpls">MPLS</a> / <a href="../../glossary/#term-nat">NAT</a> SAI 属性追加条件: <code>sonic-swss/orchagent/intfsorch.cpp:1278-1294</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1278">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1278</a>&#160;<a class="footnote-backref" href="#fnref:24" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<p><a href="../../glossary/#term-mpls">MPLS</a> / <a href="../../glossary/#term-nat">NAT</a> SAI 属性追加条件: <code>sonic-swss/orchagent/intfsorch.cpp:1278-1294</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1278">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1278</a>&#160;<a class="footnote-backref" href="#fnref:24" title="Jump back to footnote 8 in the text">&#8617;</a></p>
 </li>
 <li id="fn:1">
-<p>intfsorch RIF カウンタ登録: <code>sonic-swss/orchagent/intfsorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+<p>intfsorch RIF カウンタ登録: <code>sonic-swss/orchagent/intfsorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 9 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><code>rifStatIds[]</code> 全定義: <code>sonic-swss/orchagent/intfsorch.cpp:49-59</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+<p><code>rifStatIds[]</code> 全定義: <code>sonic-swss/orchagent/intfsorch.cpp:49-59</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L49</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 10 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p><code>rif_rates.lua</code> レート計算ロジック: <code>sonic-swss/orchagent/rif_rates.lua</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/rif_rates.lua">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/rif_rates.lua</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+<p><code>rif_rates.lua</code> レート計算ロジック: <code>sonic-swss/orchagent/rif_rates.lua</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/rif_rates.lua">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/rif_rates.lua</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 11 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
-<p>ポーリング間隔ハードコード: <code>sonic-swss/orchagent/intfsorch.h:21</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L21">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L21</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+<p>ポーリング間隔ハードコード: <code>sonic-swss/orchagent/intfsorch.h:21</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L21">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L21</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 12 in the text">&#8617;</a></p>
 </li>
 <li id="fn:5">
-<p>RIF_ALPHA/SMOOTH_INTERVAL デフォルト: <code>sonic-buildimage/dockers/docker-orchagent/enable_counters.py:10-11</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L10">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L10</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+<p>RIF_ALPHA/SMOOTH_INTERVAL デフォルト: <code>sonic-buildimage/dockers/docker-orchagent/enable_counters.py:10-11</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L10">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L10</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 13 in the text">&#8617;</a></p>
 </li>
 <li id="fn:6">
-<p>起動遅延ロジック: <code>sonic-buildimage/dockers/docker-orchagent/enable_counters.py:57-64</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L57">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L57</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+<p>起動遅延ロジック: <code>sonic-buildimage/dockers/docker-orchagent/enable_counters.py:57-64</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L57">https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/enable_counters.py#L57</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 14 in the text">&#8617;</a></p>
 </li>
 <li id="fn:7">
-<p>orchdaemon 初期化順序: <code>sonic-swss/orchagent/orchdaemon.cpp:232,283,296,625</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/orchdaemon.cpp#L232">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/orchdaemon.cpp#L232</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+<p>orchdaemon 初期化順序: <code>sonic-swss/orchagent/orchdaemon.cpp:232,283,296,625</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/orchdaemon.cpp#L232">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/orchdaemon.cpp#L232</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 15 in the text">&#8617;</a></p>
 </li>
 <li id="fn:8">
-<p>UPDATE_MAPS_SEC タイマー: <code>sonic-swss/orchagent/intfsorch.cpp:45</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L45">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L45</a>&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 13 in the text">&#8617;</a></p>
+<p>UPDATE_MAPS_SEC タイマー: <code>sonic-swss/orchagent/intfsorch.cpp:45</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L45">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L45</a>&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 16 in the text">&#8617;</a></p>
 </li>
 <li id="fn:9">
-<p>SAI create_router_interface エラーハンドリング: <code>sonic-swss/orchagent/intfsorch.cpp:1297-1305</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1297">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1297</a>&#160;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 14 in the text">&#8617;</a></p>
+<p>SAI create_router_interface エラーハンドリング: <code>sonic-swss/orchagent/intfsorch.cpp:1297-1305</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1297">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1297</a>&#160;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 17 in the text">&#8617;</a></p>
 </li>
 <li id="fn:10">
-<p>rif_rates.lua ロード失敗の catch: <code>sonic-swss/orchagent/intfsorch.cpp:86-94</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L86">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L86</a>&#160;<a class="footnote-backref" href="#fnref:10" title="Jump back to footnote 15 in the text">&#8617;</a></p>
+<p>rif_rates.lua ロード失敗の catch: <code>sonic-swss/orchagent/intfsorch.cpp:86-94</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L86">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L86</a>&#160;<a class="footnote-backref" href="#fnref:10" title="Jump back to footnote 18 in the text">&#8617;</a></p>
 </li>
 <li id="fn:11">
-<p>gTraditionalFlexCounter モードでの VIDTORID 待機ループ: <code>sonic-swss/orchagent/intfsorch.cpp:1627-1636</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1627">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1627</a>&#160;<a class="footnote-backref" href="#fnref:11" title="Jump back to footnote 16 in the text">&#8617;</a></p>
+<p>gTraditionalFlexCounter モードでの VIDTORID 待機ループ: <code>sonic-swss/orchagent/intfsorch.cpp:1627-1636</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1627">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1627</a>&#160;<a class="footnote-backref" href="#fnref:11" title="Jump back to footnote 19 in the text">&#8617;</a></p>
+</li>
+<li id="fn:12">
+<p>FlexCounter グループ識別子定数: <code>sonic-swss/orchagent/intfsorch.h:19-21</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L19">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L19</a>&#160;<a class="footnote-backref" href="#fnref:12" title="Jump back to footnote 20 in the text">&#8617;</a></p>
 </li>
 <li id="fn:13">
-<p>FLEX_COUNTER_DELAY_SEC 定数: <code>sonic-swss/orchagent/flexcounterorch.cpp:44</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44</a>&#160;<a class="footnote-backref" href="#fnref:13" title="Jump back to footnote 17 in the text">&#8617;</a></p>
+<p>addRifToFlexCounter 3 DB 書き込み: <code>sonic-swss/orchagent/intfsorch.cpp:1537-1551</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1537">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1537</a>&#160;<a class="footnote-backref" href="#fnref:13" title="Jump back to footnote 21 in the text">&#8617;</a></p>
 </li>
 <li id="fn:14">
-<p>RIF_COUNTER_ID_LIST / RIF_PLUGIN_FIELD 定数: <code>sonic-swss-common/common/schema.h:302,330</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d/common/schema.h#L302">https://github.com/sonic-net/sonic-swss-common/blob/158de8d/common/schema.h#L302</a>&#160;<a class="footnote-backref" href="#fnref:14" title="Jump back to footnote 18 in the text">&#8617;</a></p>
+<p>removeRifFromFlexCounter 削除シーケンス: <code>sonic-swss/orchagent/intfsorch.cpp:1559-1566</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1559">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1559</a>&#160;<a class="footnote-backref" href="#fnref:14" title="Jump back to footnote 22 in the text">&#8617;</a></p>
 </li>
 <li id="fn:15">
-<p>ref_count ブロック: <code>sonic-swss/orchagent/intfsorch.cpp:1327-1330</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1327">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1327</a>&#160;<a class="footnote-backref" href="#fnref:15" title="Jump back to footnote 19 in the text">&#8617;</a></p>
+<p>ref_count ブロック: <code>sonic-swss/orchagent/intfsorch.cpp:1327-1330</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1327">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1327</a>&#160;<a class="footnote-backref" href="#fnref:15" title="Jump back to footnote 23 in the text">&#8617;</a></p>
 </li>
 <li id="fn:16">
-<p>voqSyncAddIntf / voqSyncDelIntf: <code>sonic-swss/orchagent/intfsorch.cpp:1672-1748</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1672">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1672</a>&#160;<a class="footnote-backref" href="#fnref:16" title="Jump back to footnote 20 in the text">&#8617;</a></p>
+<p>voqSyncAddIntf / voqSyncDelIntf: <code>sonic-swss/orchagent/intfsorch.cpp:1672-1748</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1672">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1672</a>&#160;<a class="footnote-backref" href="#fnref:16" title="Jump back to footnote 24 in the text">&#8617;</a></p>
+</li>
+<li id="fn:DELAY_SEC">
+<p>FLEX_COUNTER_DELAY_SEC 定数: <code>sonic-swss/orchagent/flexcounterorch.cpp:44</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44">https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44</a>&#160;<a class="footnote-backref" href="#fnref:DELAY_SEC" title="Jump back to footnote 25 in the text">&#8617;</a></p>
+</li>
+<li id="fn:SCHEMA_CONST">
+<p>RIF_COUNTER_ID_LIST / RIF_PLUGIN_FIELD 定数: <code>sonic-swss-common/common/schema.h:302,330</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/158de8d/common/schema.h#L302">https://github.com/sonic-net/sonic-swss-common/blob/158de8d/common/schema.h#L302</a>&#160;<a class="footnote-backref" href="#fnref:SCHEMA_CONST" title="Jump back to footnote 26 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

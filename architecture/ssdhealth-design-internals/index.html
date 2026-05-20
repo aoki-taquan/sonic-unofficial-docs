@@ -35290,9 +35290,9 @@
     TIMER[周期 timer] --&gt; SSDMOND[ssdmond]
     SSDMOND --&gt; SB[SsdBase.get_disk_health]
     SB --&gt;|health &lt; threshold| ALERT[syslog / SNMP trap]
-    SB --&gt;|health OK| OK[正常継続（HLD 外・実装依存）]</code></pre>
+    SB --&gt;|health OK| OK[STATE_DB 更新&lt;br/&gt;※ HLD 外・実装依存]</code></pre>
 <blockquote>
-<p>現行 master では <code>ssdmond</code> は取り込まれていない。HLD 原文では <a href="../../reference/glossary/#term-state_db">STATE_DB</a> 書き込みは定義されておらず、上記フローの「正常時の永続化先」は HLD 外・実装依存である。詳細は <a href="../ssdhealth-design-limitations/">ssdhealth-design-limitations.md</a> を参照。</p>
+<p>現行 master では <code>ssdmond</code> は取り込まれていない。詳細は <a href="../ssdhealth-design-limitations/">ssdhealth-design-limitations.md</a> を参照。</p>
 </blockquote>
 <h2 id="4">4. 関連ページへの導線<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35319,8 +35319,6 @@
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>show<span class="w"> </span>version
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>docker<span class="w"> </span>logs<span class="w"> </span>--tail<span class="w"> </span><span class="m">200</span><span class="w"> </span><span class="k">$(</span>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s2">&quot;{{.Names}}&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1<span class="k">)</span>
 </span></code></pre></div>
-<!-- glossary-links-injected: 6981be1a469d -->
-
 <div class="footnote">
 <hr />
 <ol>

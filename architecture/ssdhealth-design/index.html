@@ -36093,8 +36093,8 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 <tr>
 <td><code>SsdBase</code> 基底クラス</td>
 <td>必須</td>
-<td><code>sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py</code> に基底定義</td>
-<td>✓</td>
+<td>master では <code>sonic-platform-common/sonic_platform_base/sonic_storage/storage_base.py</code> 等に再構成（旧パス <code>sonic_ssd/ssd_base.py</code> は存在せず）</td>
+<td>△ パス変更</td>
 </tr>
 <tr>
 <td><code>SsdUtil</code> ベンダー派生</td>
@@ -36234,9 +36234,6 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 <ul>
 <li><a href="../../reference/cli/show-platform/"><code>show platform ssdhealth</code> CLI リファレンス</a></li>
 <li><a href="../../reference/cli/show-platform/"><code>show platform</code> CLI リファレンス</a></li>
-<li><a href="../../reference/cli/config-snmp/"><code>config snmp</code> CLI リファレンス</a></li>
-<li><a href="../../reference/cli/show-snmpagentaddress/"><code>show snmpagentaddress</code> CLI リファレンス</a></li>
-<li><a href="../../reference/config-db/snmp/"><code>SNMP</code> CONFIG_DB スキーマ</a></li>
 </ul>
 <!-- augmented-links: v1 -->
 

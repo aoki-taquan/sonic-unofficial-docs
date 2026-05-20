@@ -37006,7 +37006,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>DEVICE_NEIGHBOR|&lt;peer_name&gt;
 </span></code></pre></div>
 <ul>
-<li><code>&lt;peer_name&gt;</code>: 自由文字列（length 1..255）。通常は隣接機器のホスト名と同値だが、key 重複回避のための識別子として独立して使われる。</li>
+<li><code>&lt;peer_name&gt;</code>: 実態は<strong>自スイッチのローカルポート名</strong>（例: <code>Ethernet0</code>）。minigraph 経由の生成では <code>neighbors[port]</code> 形式で <code>port</code> がローカルポート名としてキーになる。隣接機器のホスト名は YANG の <code>name</code> フィールドに格納される。フィールド型は自由文字列（length 1..255）。</li>
 </ul>
 <h2 id="_3">フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <table>

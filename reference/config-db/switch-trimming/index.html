@@ -37006,7 +37006,7 @@
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
-<p>SwitchOrch が <code>dscp_value</code> フィールドの有無から SAI DSCP resolution mode を自動決定する。<code>dscp_value</code> あり → <code>SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_ASSIGN</code>、なし → <code>SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_PRESERVE</code>。<code>queue</code> フィールドの有無も同様に SAI queue resolution mode を自動決定する。</p>
+<p>SwitchOrch が <code>dscp_value</code> フィールドの<strong>値の種類</strong>から SAI DSCP resolution mode を自動決定する。<code>dscp_value</code> が数値 → <code>SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_DSCP_VALUE</code>、<code>dscp_value</code> が <code>"from-tc"</code> → <code>SAI_PACKET_TRIM_DSCP_RESOLUTION_MODE_FROM_TC</code>、未指定 → SAI 属性送信なし (ベンダー依存デフォルト)。<code>queue</code> フィールドの値の種類も同様に SAI queue resolution mode を自動決定する。</p>
 <h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
 <p>SwitchOrch は常時登録し <code>SWITCH_TRIMMING</code> テーブルを無条件購読する。<code>SWITCH_TRIMMING|GLOBAL</code> エントリのみ有効（シングルトン制約）。SAI trim capability 未サポートの場合はログのみで継続。</p>
 <!-- /derivation -->
@@ -37031,14 +37031,20 @@
 </tr>
 <tr>
 <td><code>SwitchOrch</code></td>
-<td><code>dscp_value</code> フィールドあり</td>
-<td>ASSIGN モード + 指定 DSCP 値を SAI に設定</td>
-<td><code>switchorch.cpp</code></td>
+<td><code>dscp_value</code> が数値</td>
+<td><code>DSCP_VALUE</code> モード + 指定 DSCP 値を SAI に設定</td>
+<td><code>switchorch.cpp</code>, <code>helper.cpp:96-124</code></td>
 </tr>
 <tr>
 <td><code>SwitchOrch</code></td>
-<td><code>dscp_value</code> フィールドなし</td>
-<td>PRESERVE モード (元パケットの DSCP を保持)</td>
+<td><code>dscp_value</code> == <code>"from-tc"</code></td>
+<td><code>FROM_TC</code> モード (TC→DSCP マッピングから解決)</td>
+<td><code>switchorch.cpp</code>, <code>helper.cpp:96-124</code></td>
+</tr>
+<tr>
+<td><code>SwitchOrch</code></td>
+<td><code>dscp_value</code> 未指定</td>
+<td>SAI 属性送信なし (ベンダーデフォルト保持)</td>
 <td><code>switchorch.cpp</code></td>
 </tr>
 <tr>

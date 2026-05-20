@@ -36930,19 +36930,18 @@
 </thead>
 <tbody>
 <tr>
-<td><code>NeighOrch</code></td>
-<td><a href="../../glossary/#term-arp">ARP</a>/ND エントリの nexthop 変化追跡</td>
-</tr>
-<tr>
 <td><code>MirrorOrch</code></td>
 <td>ミラーセッションの宛先 IP 解決</td>
 </tr>
 <tr>
-<td><code>TunnelDecapOrch</code></td>
-<td>トンネル decap 処理の nexthop 解決</td>
+<td><code>NatOrch</code></td>
+<td><a href="../../glossary/#term-nat">NAT</a> エントリの nexthop 解決</td>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p>注: ソース精読の結果、<code>RouteOrch::attach()</code> を呼ぶ Orch は <code>MirrorOrch</code> と <code>NatOrch</code> のみ。<code>NeighOrch</code> は <code>routeorch.h</code> の <code>Subject</code> 継承を通じて別経路で通知を受け取るが、<code>attach(IpAddress)</code> 経由の NextHopObserver 登録は行わない。<code>TunnelDecapOrch</code> も <code>attach()</code> は呼ばない（後述の暗黙参照テーブル注記を参照）。</p>
+</blockquote>
 <hr />
 <!-- ordering -->
 <h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
@@ -37209,7 +37208,7 @@ RouteOrch が <code>addRoute()</code> 内で <code>hasNhg()</code> / <code>hasNe
 <tr>
 <td><code>CONFIG_DB NAT_ENTRY</code> / <code>NAT_TWICE_ENTRY</code></td>
 <td>間接参照（NatOrch が <code>attach()</code>/<code>detach()</code> のトリガ）</td>
-<td>NatOrch が DNAT / 双方向 NAT エントリを処理するとき</td>
+<td>NatOrch が DNAT / 双方向 <a href="../../glossary/#term-nat">NAT</a> エントリを処理するとき</td>
 <td><code>natorch.cpp</code> L414, L458, L504, L591 (<code>attach</code>); L558, L646, L688, L732 (<code>detach</code>)</td>
 </tr>
 <tr>
@@ -37716,7 +37715,7 @@ NeighOrch は <code>routeorch.h</code> の <code>Subject</code> 継承を通じ�
 <tr>
 <td><code>NatOrch</code></td>
 <td><code>natorch.cpp</code> L414, L458, L504, L591</td>
-<td>DNAT / 双方向 NAT の変換先 IP</td>
+<td>DNAT / 双方向 <a href="../../glossary/#term-nat">NAT</a> の変換先 IP</td>
 </tr>
 <tr>
 <td><code>NeighOrch</code></td>
@@ -37821,12 +37820,12 @@ NeighOrch は <code>routeorch.h</code> の <code>Subject</code> 継承を通じ�
 </thead>
 <tbody>
 <tr>
-<td><code>NeighOrch</code></td>
-<td>ネイバー解決時</td>
-</tr>
-<tr>
 <td><code>MirrorOrch</code></td>
 <td>ミラーセッション設定時</td>
+</tr>
+<tr>
+<td><code>NatOrch</code></td>
+<td>NAT エントリ登録時 (<code>natorch.cpp</code> L414, L458, L504, L591)</td>
 </tr>
 </tbody>
 </table>
@@ -37872,7 +37871,7 @@ NeighOrch は <code>routeorch.h</code> の <code>Subject</code> 継承を通じ�
 </ul>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: e3c15dc9fa9a -->
+<!-- glossary-links-injected: d6cf63fda5d8 -->
 
 <div class="footnote">
 <hr />
@@ -37891,6 +37890,15 @@ NeighOrch は <code>routeorch.h</code> の <code>Subject</code> 継承を通じ�
 </li>
 <li id="fn:5">
 <p>orchdaemon 初期化: <code>orchagent/orchdaemon.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p>routesync 実装: <code>fpmsyncd/routesync.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
+<p>MirrorOrch 実装: <code>orchagent/mirrororch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/mirrororch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/mirrororch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:8">
+<p>NatOrch 実装: <code>orchagent/natorch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/natorch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/natorch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

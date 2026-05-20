@@ -36544,7 +36544,7 @@
 CONFIG_DB 側のデフォルト (STP/STP_VLAN/STP_PORT テーブル) は <a href="../stp/">STP/STP_VLAN/STP_PORT テーブル</a> を参照。</p>
 </div>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>StpOrch</code> (<code>orchagent/stporch.cpp</code>) は <a href="../../glossary/#term-appl_db">APPL_DB</a> の 4 テーブルを購読し、STP デーモン (<code>stpd</code>) が書き込んだ状態・指示を <a href="../../glossary/#term-sai">SAI</a> API に変換してデータプレーンへ反映する。</p>
+<p><code>StpOrch</code> (<code>orchagent/stporch.cpp</code>) は <a href="../../glossary/#term-appl_db">APPL_DB</a> の 4 テーブルを購読し、<code>stpd</code> → <code>stpmgrd</code> 経由で書き込まれた状態・指示を <a href="../../glossary/#term-sai">SAI</a> API に変換してデータプレーンへ反映する（<a href="../../glossary/#term-appl_db">APPL_DB</a> への書き込み主体は <code>cfgmgr/stpmgrd.cpp</code>）。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>stpd (STP デーモン)
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  ↓ IPC (Unix Domain Socket)
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>stpmgrd (cfgmgr/stpmgrd.cpp)
@@ -36831,7 +36831,7 @@ DISABLED・LISTENING はいずれも <code>SAI_STP_PORT_STATE_BLOCKING</code> �
 
 <!-- ordering -->
 <h2 id="phase-b">書込み順依存・タイミング依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
-<p><code>StpOrch::doTask()</code> は <a href="../../glossary/#term-appl_db">APPL_DB</a> の 4 テーブルを購読するが、各テーブルの処理には明確な前提条件がある。前提未成立時の挙動はテーブルごとに異なる (残置 <code>it++</code> / コンシューマ全体ブロック <code>return</code> / fail-silent) ため、運用上のトラブルシューティングで重要になる。</p>
+<p><code>StpOrch::doTask()</code> は APPL_DB の 4 テーブルを購読するが、各テーブルの処理には明確な前提条件がある。前提未成立時の挙動はテーブルごとに異なる (残置 <code>it++</code> / コンシューマ全体ブロック <code>return</code> / fail-silent) ため、運用上のトラブルシューティングで重要になる。</p>
 <h3 id="1-portsorch-readiness">1. 全テーブル共通: PortsOrch readiness ガード<a class="headerlink" href="#1-portsorch-readiness" title="Permanent link">&para;</a></h3>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// stporch.cpp:578-581</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kt">void</span><span class="w"> </span><span class="nf">StpOrch::doTask</span><span class="p">(</span><span class="n">Consumer</span><span class="w"> </span><span class="o">&amp;</span><span class="n">consumer</span><span class="p">)</span>
@@ -37635,6 +37635,24 @@ SAI 側の定数は <code>SAI_STP_PORT_STATE_BLOCKING</code> / <code>SAI_STP_POR
 <li><a href="../vlan/">CONFIG_DB: VLAN</a></li>
 </ul>
 <!-- glossary-links-injected: 5035a8ce363b -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>StpOrch 実装: <code>orchagent/stporch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>StpOrch ヘッダ: <code>orchagent/stporch.h</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.h">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.h</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>orchdaemon 登録: <code>orchagent/orchdaemon.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p>テーブル名定数: <code>common/schema.h</code>. <a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

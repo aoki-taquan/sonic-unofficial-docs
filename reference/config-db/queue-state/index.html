@@ -28463,17 +28463,6 @@
   <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -28482,7 +28471,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -28505,7 +28494,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある確認ポイント
@@ -36077,17 +36066,6 @@
   <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -36096,7 +36074,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -36119,7 +36097,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある確認ポイント
@@ -36859,6 +36837,8 @@
 </ul>
 <!-- /platform -->
 
+<!-- ref-triangle:start -->
+
 <h2 id="_17">関連リファレンス<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <ul>
 <li>CONFIG_DB: <a href="../flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a> — WRED_ECN_QUEUE グループの enable/disable 設定</li>
@@ -36866,18 +36846,11 @@
 <li>CONFIG_DB: <a href="../buffer-queue/"><code>BUFFER_QUEUE</code></a> — バッファキュー割り当て</li>
 <li>COUNTERS_DB: <a href="../counters-queue/"><code>counters-queue</code></a> — Queue/PG カウンタテーブル群の詳細</li>
 </ul>
-<!-- ref-triangle:start -->
-
-<h2 id="_18">関連リファレンス<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
-<ul>
-<li>CONFIG_DB: <a href="../flex-counter-table/"><code>FLEX_COUNTER_TABLE</code></a></li>
-<li>CONFIG_DB: <a href="../queue/"><code>QUEUE</code></a></li>
-</ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_19">引用元<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h2>
+<h2 id="_18">引用元<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_20">運用ヒント<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
+<h2 id="_19">運用ヒント<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h2>
 <h3 id="state_db">STATE_DB 確認コマンド<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># WRED/ECN キューカウンタのサポート状況を確認</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;QUEUE_COUNTER_CAPABILITIES|*&#39;</span>
@@ -36894,7 +36867,7 @@
 </span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="c1"># WRED 統計を表示（isSupported が true の場合のみ実値が表示される）</span>
 </span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>wredstat
 </span></code></pre></div>
-<h3 id="_21">よくある確認ポイント<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<h3 id="_20">よくある確認ポイント<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>isSupported</code> が <code>"false"</code> のまま <code>wredstat</code> を実行しても N/A 表示になる。これは正常動作（ASIC が WRED を SAI でサポートしていない）</li>
 <li><code>counterpoll wred-queue enable</code> 後も wredstat が N/A の場合、この <code>QUEUE_COUNTER_CAPABILITIES</code> テーブルのフラグを確認する</li>

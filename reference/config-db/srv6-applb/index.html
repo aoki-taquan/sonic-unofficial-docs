@@ -36289,9 +36289,9 @@
 <td>nexthop (adj) を使用</td>
 </tr>
 <tr>
-<td><code>end.dt4</code>, <code>end.dt6</code>, <code>end.dt46</code>, <code>udt4</code>, <code>udt6</code>, <code>udt46</code></td>
+<td><code>end.t</code>, <code>end.dt4</code>, <code>end.dt6</code>, <code>end.dt46</code>, <code>udt4</code>, <code>udt6</code>, <code>udt46</code></td>
 <td><strong>必須</strong></td>
-<td>VRF 未指定だとエラー</td>
+<td>VRF 未指定だとエラー (<code>mySidVrfRequired()</code>)</td>
 </tr>
 </tbody>
 </table>
@@ -36306,7 +36306,7 @@
 </thead>
 <tbody>
 <tr>
-<td><code>end</code>, <code>un</code>, <code>end.dt*</code>, <code>udt*</code></td>
+<td><code>end</code>, <code>un</code>, <code>end.t</code>, <code>end.dt*</code>, <code>udt*</code></td>
 <td>不要</td>
 <td>nexthop 不使用</td>
 </tr>
@@ -36314,6 +36314,11 @@
 <td><code>end.x</code>, <code>end.dx4</code>, <code>end.dx6</code>, <code>ua</code>, <code>udx4</code>, <code>udx6</code></td>
 <td><strong>必須</strong></td>
 <td>隣接未解決の場合 pending エントリへ移動</td>
+</tr>
+<tr>
+<td><code>end.b6.encaps</code>, <code>end.b6.encaps.red</code>, <code>end.b6.insert</code>, <code>end.b6.insert.red</code></td>
+<td><strong>必須</strong></td>
+<td>B6 系も nexthop (adj) を要求 (<code>mySidNextHopRequired()</code>)</td>
 </tr>
 </tbody>
 </table>

@@ -37272,7 +37272,7 @@ MST 有効化時に CLI が書き込む実際の値は <code>1</code> であり�
 <tbody>
 <tr>
 <td>1</td>
-<td>ハートビートタイムアウト (<code>session_timeout</code> デフォルト 15 秒)</td>
+<td>ハートビートタイムアウト (<code>session_timeout</code> YANG デフォルト 30 秒、C 初期値 15 秒は CONFIG_DB フェッチで上書き — §E 参照)</td>
 <td>セッション切断 → <code>role_type = STP_ROLE_NONE</code> → 再接続試行</td>
 <td>あり（<code>CONNECT_INTERVAL_SEC = 1</code> 秒ごとにリトライ）</td>
 </tr>

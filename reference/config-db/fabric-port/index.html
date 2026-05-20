@@ -37731,8 +37731,8 @@
 </tr>
 <tr>
 <td><code>CHECK_TIME</code></td>
-<td>120 秒</td>
-<td><code>dnLkQueues</code> リンクダウン履歴の保持ウィンドウ幅</td>
+<td>120 分</td>
+<td><code>dnLkQueues</code> リンクダウン履歴の保持ウィンドウ幅（<code>std::chrono::minutes(CHECK_TIME)</code>）</td>
 </tr>
 </tbody>
 </table>
@@ -37810,16 +37810,6 @@
 </thead>
 <tbody>
 <tr>
-<td><code>FEC_ISOLATE_POLLS</code></td>
-<td>2</td>
-<td><code>monPollThreshIsolation</code></td>
-</tr>
-<tr>
-<td><code>FEC_UNISOLATE_POLLS</code></td>
-<td>8</td>
-<td><code>monPollThreshRecovery</code></td>
-</tr>
-<tr>
 <td><code>ISOLATION_POLLS_CFG</code></td>
 <td>1</td>
 <td><code>monPollThreshIsolation</code>（CRC 系）</td>
@@ -37841,6 +37831,10 @@
 </tr>
 </tbody>
 </table>
+<div class="admonition warning">
+<p class="admonition-title">FEC 経路の上書き不可定数</p>
+<p><code>FEC_ISOLATE_POLLS</code> (= 2) / <code>FEC_UNISOLATE_POLLS</code> (= 8) は <code>fabricportsorch.cpp:42-43</code> で独立変数 <code>fecIsolationPollsCfg</code> / <code>fecUnisolationPollsCfg</code> に代入される完全ハードコード値であり、CONFIG_DB の <code>FABRIC_MONITOR</code> フィールドからは上書きできない。CRC 経路の <code>monPollThreshIsolation</code> / <code>monPollThreshRecovery</code> とは別カウンタで動作するため、<code>monPollThresh*</code> を調整しても FEC 経路の isolate/unisolate 動作は変わらない。</p>
+</div>
 <h3 id="state_db-fabricportsorchh62-68">STATE_DB リセットデフォルト値（<code>fabricportsorch.h:62-68</code>）<a class="headerlink" href="#state_db-fabricportsorchh62-68" title="Permanent link">&para;</a></h3>
 <p><code>forceUnisolateStatus</code> を適用した際に STATE_DB に書き込まれる初期値。クラスメンバ初期化子で固定されており、FABRIC_MONITOR の <code>monPollThreshRecovery</code> とは連動しない。</p>
 <table>

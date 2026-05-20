@@ -37425,13 +37425,13 @@
 <td><code>DSCP_MAX_VAL</code></td>
 <td><code>63</code></td>
 <td><code>qosorch.cpp:119</code></td>
-<td>DSCP 値の最大値。超過時 <code>task_failed</code></td>
+<td><code>DscpToFcMapHandler</code> のみで参照される定数。<code>DscpToTcMapHandler</code> では使用されない</td>
 </tr>
 <tr>
 <td>DSCP key 範囲</td>
 <td><code>0</code>..<code>63</code></td>
-<td>上記定数に基づく</td>
-<td>超過は <code>task_failed</code>（<code>stoi</code> 変換後に範囲チェック）</td>
+<td>YANG / 仕様上の有効範囲</td>
+<td><code>DscpToTcMapHandler</code> では範囲チェックなし。64..255 も <code>stoi</code> 成功すれば SAI に渡され ASIC が reject する</td>
 </tr>
 <tr>
 <td>TC value 範囲 (YANG)</td>

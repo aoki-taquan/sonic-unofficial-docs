@@ -36603,16 +36603,16 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>CONFIG_DB VRF|&lt;name&gt; DEL
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  ↓
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>vrfmgrd: isVrfObjExist() → STATE_DB VRF_OBJECT_TABLE|&lt;name&gt; の存在確認
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  → false (orchagent 未完了): m_toSync キューに残して次の doTask() で再確認
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  → true  (orchagent 完了済み): 削除処理へ進む (vrfmgr.cpp:331)
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  → true  (orchagent 未完了 = エントリ残存): m_toSync キューに残して次の doTask() で再確認
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  → false (orchagent 完了済み = エントリ消滅): 削除処理へ進む (vrfmgr.cpp:331)
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>  ↓
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>vrfmgrd: APP_DB APP_VRF_TABLE|&lt;name&gt; DEL
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>vrfmgrd: STATE_DB VRF_TABLE|&lt;name&gt; DEL
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>VRFOrch: SAI remove_virtual_router()
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>VRFOrch: STATE_DB VRF_OBJECT_TABLE|&lt;name&gt; DEL
 </span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>  ↓
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>VRFOrch: SAI remove_virtual_router()
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>VRFOrch: STATE_DB VRF_OBJECT_TABLE|&lt;name&gt; DEL
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>vrfmgrd: APP_DB APP_VRF_TABLE|&lt;name&gt; DEL
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>vrfmgrd: STATE_DB VRF_TABLE|&lt;name&gt; DEL
 </span></code></pre></div>
-<p><code>VRF_TABLE</code> の DEL は必ず <code>VRF_OBJECT_TABLE</code> の DEL より <strong>先</strong> になる。
+<p><code>VRF_OBJECT_TABLE</code> の DEL は必ず <code>VRF_TABLE</code> の DEL より <strong>先</strong> になる。
 これにより <a href="../../glossary/#term-fpmsyncd">fpmsyncd</a> が VRF インタフェース名を参照できる期間を保証する (vrfmgr.cpp:316 コメント)。</p>
 <h3 id="_9">後続プロセスの待機依存<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <table>

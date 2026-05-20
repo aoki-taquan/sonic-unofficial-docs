@@ -37416,7 +37416,7 @@
 <p><code>handler()</code> は try/except なしで <code>Feature()</code> を呼ぶため、例外がイベントループに伝播してデーモン全体がクラッシュする可能性がある。<a href="../../glossary/#term-state_db">STATE_DB</a> への書き込みはなし。</p>
 <p>復旧手順: 不正フィールドを DB から削除後、<code>systemctl restart featured</code>。</p>
 <h3 id="feature_exclusion_list">FEATURE_EXCLUSION_LIST によるサイレントスキップ<a class="headerlink" href="#feature_exclusion_list" title="Permanent link">&para;</a></h3>
-<p><code>telemetry</code> / <code>frr_bmp</code> は <code>enable_feature()</code> / <code>disable_feature()</code> の冒頭で即 return する（<code>featured:469-471, 517-519</code>）。CONFIG_DB の state 変更が systemd に適用されない。<a href="../../glossary/#term-state_db">STATE_DB</a> は更新される（"enabled"/"disabled" が記録されるが systemd 操作はゼロ）。</p>
+<p><code>telemetry</code> / <code>frr_bmp</code> は <code>enable_feature()</code> / <code>disable_feature()</code> の冒頭で即 return する（<code>featured:469-471, 517-519</code>）。CONFIG_DB の state 変更が systemd に適用されず、<a href="../../glossary/#term-state_db">STATE_DB</a> も更新されない（<code>set_feature_state()</code> 以前に return するため <code>FEATURE|&lt;name&gt;.state</code> フィールドは変化しない）。</p>
 <h3 id="multi-asic-scope-db">multi-asic scope 失敗 → DB 乖離<a class="headerlink" href="#multi-asic-scope-db" title="Permanent link">&para;</a></h3>
 <p><code>sync_feature_scope()</code> 内で <code>has_per_asic_scope</code> / <code>has_global_scope</code> が False に変化した際の stop/disable/mask が失敗すると、<code>set_feature_state("failed")</code> 後に即 <code>return</code>（<code>featured:342-345</code>）。後続の <code>_conditional_update_scope()</code> による CONFIG_DB 更新がスキップされ、scope フィールドが古い値のまま残る（DB とシステム実態の乖離）。</p>
 <blockquote>

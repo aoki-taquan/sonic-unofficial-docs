@@ -36948,14 +36948,14 @@
 <tbody>
 <tr>
 <td><code>restapi</code> 起動処理</td>
-<td><code>client_auth==user_auth</code></td>
-<td>ユーザー認証モードで TLS 設定</td>
+<td><code>client_auth==false</code></td>
+<td>ユーザー認証モード (<code>rest-server.sh</code> 内で boolean <code>false</code> を文字列 <code>"user"</code> に変換して TLS 設定)</td>
 <td>restapi 設定処理</td>
 </tr>
 <tr>
 <td><code>restapi</code> 起動処理</td>
-<td><code>client_auth==cert</code></td>
-<td>クライアント証明書認証モード</td>
+<td><code>client_auth==true</code></td>
+<td>クライアント証明書認証モード (<code>rest-server.sh</code> 内で boolean <code>true</code> を文字列 <code>"cert"</code> に変換)</td>
 <td>restapi 設定処理</td>
 </tr>
 <tr>

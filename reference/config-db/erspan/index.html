@@ -36782,7 +36782,7 @@
 </tr>
 <tr>
 <td><code>policer</code> 名が PolicerOrch に未登録</td>
-<td><code>task_need_retry</code>（POLICER 追加後に自動再試行）</td>
+<td><code>task_need_retry</code>（ただし POLICER の SET は MirrorOrch をウェイクアップしないため事実上は MIRROR_SESSION を手動で再 SET する必要あり）</td>
 <td>ERROR "Failed to get policer %s"</td>
 <td><code>mirrororch.cpp:436-438</code></td>
 </tr>

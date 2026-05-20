@@ -36699,7 +36699,7 @@
 </tr>
 <tr>
 <td>バインド中のルートグループ削除</td>
-<td><code>task_failed</code> (<code>SAI_STATUS_OBJECT_IN_USE</code> → <code>false</code> 返却）</td>
+<td><code>task_need_retry</code>（<code>SAI_STATUS_OBJECT_IN_USE</code> → <code>false</code> 返却 → ENI バインド解除まで永続再試行）</td>
 </tr>
 <tr>
 <td><code>priority</code> フィールドがキーに含まれない旧形式</td>

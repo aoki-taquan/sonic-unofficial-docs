@@ -36932,7 +36932,7 @@
 </tr>
 <tr>
 <td><code>SAI_PORT_STAT_DOT3_STATS_LATE_COLLISIONS</code></td>
-<td>レートコリジョン</td>
+<td>レイトコリジョン（遅延衝突）</td>
 </tr>
 <tr>
 <td><code>SAI_PORT_STAT_DOT3_STATS_EXCESSIVE_COLLISIONS</code></td>
@@ -37135,8 +37135,8 @@
 </tr>
 <tr>
 <td><code>PORT_BUFFER_DROP</code></td>
-<td><code>PORT_BUFFER_DROP_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS</code></td>
-<td><code>counterpoll</code> CLI 許容下限 <strong>30000 ms</strong></td>
+<td><code>PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS</code> (portsorch.cpp:88)</td>
+<td><strong>60000 ms</strong>（<code>counterpoll</code> CLI 許容下限は 30000 ms）</td>
 </tr>
 <tr>
 <td><code>PG_DROP</code></td>

@@ -36465,8 +36465,8 @@
 </tr>
 <tr>
 <td><code>"consumed"</code></td>
-<td><code>fpmsyncd</code></td>
-<td>reconciliation 開始後に更新（スキーマ定義上の値; <a href="../../glossary/#term-fpmsyncd">fpmsyncd</a> は read のみ確認）</td>
+<td>スキーマ定義のみ（実装上書き込みなし）</td>
+<td><code>swss-schema.md</code> に予約値として定義されているが、<code>bgp_eoiu_marker.py</code> / <code>fpmsyncd.cpp</code> のいずれもこの値を書き込まない。<a href="../../glossary/#term-fpmsyncd">fpmsyncd</a> は本フィールドを read のみ</td>
 </tr>
 </tbody>
 </table>
