@@ -20,9 +20,9 @@ sources: []
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 734 |
+| code-verified | 735 |
 | runbook-verified | 27 |
-| discrepancy-found | 107 |
+| discrepancy-found | 106 |
 | issue-confirmed | 10 |
 | hld-only | 2 |
 | meta | 208 |
