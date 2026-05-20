@@ -53,7 +53,7 @@ related:
 | `show queue counters` | キュー単位の packets / bytes / drops | [show-queue](../../reference/cli/show-queue.md) |
 | `show priority-group counters` | ingress PG 単位の drop / xoff time | [show-priority-group](../../reference/cli/show-priority-group.md) |
 | `show pfc counters` | ポート単位の PFC Rx/Tx | [show-pfc](../../reference/cli/show-pfc.md) |
-| `show buffer pool persistent-watermark` | プール peak | [show-buffer](../../reference/cli/show-buffer.md) |
+| `show buffer_pool persistent-watermark` | プール peak | [show-buffer](../../reference/cli/show-buffer.md) |
 
 この 4 つで「どの queue / PG / ポートで何が起きているか」がだいたい分かります。
 
@@ -131,7 +131,7 @@ Ethernet24      drop               200                 200
 `show buffer pool persistent-watermark` で、ingress / egress / lossless / lossy pool の peak バイトを見ます。
 
 ```text
-admin@sonic:~$ show buffer_pool persistent_watermark
+admin@sonic:~$ show buffer_pool persistent-watermark
        Pool                   Bytes
 -----------  ----------------------
 ingress_lossless_pool        12345600

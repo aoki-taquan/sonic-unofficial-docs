@@ -1598,7 +1598,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [FDB テーブル](config-db/fdb.md) (147)
 - [VXLAN_FDB_TABLE テーブル](config-db/vxlan-fdb.md) (110)
 - [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (54)
-- [内部実装](../topics/06-l2-vlan-lag/internals.md) (37)
+- [内部実装](../topics/06-l2-vlan-lag/internals.md) (38)
 
 ### [fdbsyncd](#term-fdbsyncd)
 

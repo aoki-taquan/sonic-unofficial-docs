@@ -65,13 +65,13 @@ related:
   - BGP_GLOBALS_AF_NETWORK
   - BGP_PEER_GROUP_AF
   yang:
+  - sonic-copp
+  - sonic-mirror-session
   - sonic-bgp-bbr
   - sonic-bgp-global
   - sonic-bgp-monitor
   - sonic-bgp-peergroup
   - sonic-bgp-peerrange
-  - sonic-copp
-  - sonic-bgp-aggregate-address
 ---
 
 # ACL / CoPP / Mirror / Packet Action

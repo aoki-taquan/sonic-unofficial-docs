@@ -62,7 +62,7 @@ flowchart LR
 
   CFG[("<b>CONFIG_DB</b><br/>BGP_NEIGHBOR<br/>BGP_PEER_RANGE<br/>BGP_AGGREGATE_ADDRESS")]:::db
   APPL[("<b>APPL_DB</b><br/>ROUTE_TABLE")]:::db
-  STATE[("<b>STATE_DB</b><br/>ROUTE_TABLE.offloaded<br/>BGP_PEER_CONFIGURED")]:::db
+  STATE[("<b>STATE_DB</b><br/>ROUTE_TABLE.offloaded<br/>BGP_PEER_CONFIGURED_TABLE")]:::db
   ASIC[("<b>ASIC_DB</b><br/>ROUTE_ENTRY / NHG")]:::db
 
   CFG ==> BGPCFGD

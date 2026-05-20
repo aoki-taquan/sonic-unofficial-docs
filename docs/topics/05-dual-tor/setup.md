@@ -216,7 +216,7 @@ show muxcable grpc muxdirection Ethernet0
 | `STATUS` と `HWSTATUS` が永続的にズレる | ycabled crash / cable firmware 異常 | `docker exec pmon supervisorctl status ycabled` |
 | MuxTunnel decap が動かない | `PEER_SWITCH.address_ipv4` 不一致 / TUNNEL src_ip 誤り | `show ip route <peer_loopback>` で reachability 確認 |
 | Active-Active で grpc `NOT_READY` | SoC NIC IP 未到達 / cert 不整合 | `show muxcable grpc connection-info` でエラー詳細 |
-| `prefix-route` モードで neighbor が消える | neighbor learning が standby で抑止される設計 | 仕様。`host-route` モードの方が観測上は残る |
+| `prefix-route` モードで standby 時に /32 route の nexthop が tunnel に切り替わる | neighbor entry 自体は削除されず、サーバ IP の `/32` または `/128` route の nexthop だけが直接 neighbor と tunnel の間で切り替わる設計 | 仕様。詳細は internals.md と [MUX_CABLE テーブル](../../reference/config-db/mux-cable.md) を参照 |
 
 `cable_type: active-active` と `cable_type: active-standby` を box 内で混在させる構成は基本的に想定外です。port 単位の混在は controller / linkmgrd の前提を崩します。
 
