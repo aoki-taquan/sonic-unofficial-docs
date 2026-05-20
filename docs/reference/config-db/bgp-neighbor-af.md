@@ -168,7 +168,7 @@ vtysh -c 'show bgp neighbor <ip>'
 | 条件 | 挙動 | ソース |
 |------|------|--------|
 | key の `\|` パース失敗 (不正フォーマット) | `ValueError` を catch → continue (skip) | `frrcfgd.py` L2665, L2246 |
-| `local_asn` が未設定の VRF | `ignore table {} update because local_asn for VRF {} was not configured` を LOG_DEBUG → skip | `frrcfgd.py` L2660 |
+| `local_asn` が未設定の [VRF](../../reference/glossary.md#term-vrf) | `ignore table {} update because local_asn for VRF {} was not configured` を LOG_DEBUG → skip | `frrcfgd.py` L2660 |
 | `peer_group_name` が未存在の peer-group を参照 | `invalid peer-group %s was referenced` を LOG_ERR → continue | `frrcfgd.py` L2828 |
 | `send_default_route=true` だが `default_rmap` が同時に未設定 | `default-originate` のみ発行、route-map は付与されない (key_map の複合条件) | `frrcfgd.py` `nbr_af_key_map` |
 | `max_prefix_limit` 欠如で他の max_prefix フィールドのみ設定 | `++` / `+` プレフィックスルールにより `max_prefix_limit` 依存フィールドは無視 | `frrcfgd.py` `nbr_af_key_map` |
@@ -276,7 +276,7 @@ vtysh -c 'show bgp neighbor <ip>'
 | multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis | 各 namespace の `frrcfgd` インスタンスが同一コードで処理。chassis 専用の AF マネージャなし |
 | ビルド時 platform オーバライド | `device/<vendor>/<platform>/` 配下に BGP_NEIGHBOR_AF を上書きするファイルなし |
 
-FRR `address-family` ブロック内の AF コマンド群（`activate` / `route-map` / `maximum-prefix` 等）は FRR ユーザ空間で完結するため、[ASIC](../../reference/glossary.md#term-asic) ベンダー（Broadcom / Mellanox / Marvell / Innovium / Barefoot）・物理形態（T0 / T1 / T2 / VOQ chassis）・single / multi-asic 構成のいずれでも挙動は同一。
+FRR `address-family` ブロック内の AF コマンド群（`activate` / `route-map` / `maximum-prefix` 等）は FRR ユーザ空間で完結するため、[ASIC](../../reference/glossary.md#term-asic) ベンダー（Broadcom / Mellanox / Marvell / Innovium / Barefoot）・物理形態（T0 / T1 / T2 / [VOQ](../../reference/glossary.md#term-voq) chassis）・single / multi-asic 構成のいずれでも挙動は同一。
 
 <!-- /platform -->
 
@@ -331,7 +331,7 @@ configure terminal
 
 | 対象 | 参照機構 | 効果 |
 |---|---|---|
-| `BGP_NEIGHBOR` (`vrf_name`, `neighbor`) | YANG leafref (`sonic-bgp-neighbor.yang:124-126`) | 同一 VRF の `BGP_NEIGHBOR_LIST.neighbor` に存在しないキーは YANG バリデーションで reject |
+| `BGP_NEIGHBOR` (`vrf_name`, `neighbor`) | YANG leafref (`sonic-bgp-neighbor.yang:124-126`) | 同一 [VRF](../../reference/glossary.md#term-vrf) の `BGP_NEIGHBOR_LIST.neighbor` に存在しないキーは YANG バリデーションで reject |
 | `BGP_GLOBALS` (`vrf_name`) | YANG leafref (`sonic-bgp-neighbor.yang:117-119`) | 存在しない VRF は reject。さらに `frrcfgd.py:2658-2663` で `local_asn` 未設定 VRF への更新は LOG_DEBUG で silent skip |
 | `BGP_PEER_GROUP_AF` | 設定階層上の対 (`frrcfgd.py:2111-2112`) | 同一の `nbr_af_key_map` で処理される姉妹テーブル。peer-group 由来の AF 設定が neighbor AF の既定として継承される |
 | `ROUTE_MAP` (FRR 名前空間) | `route_map_in` / `route_map_out` / `default_rmap` / `unsuppress_map_name` 文字列値 (`frrcfgd.py:1899-1906`) | FRR で未定義の route-map 名を指すと `bgpd` 側で参照解決失敗。CONFIG_DB `ROUTE_MAP` テーブル経由で定義する |
@@ -551,4 +551,4 @@ bgp_table_handler_common(table, key, data)  (frrcfgd.py:3895)
 書き込み側 (CLI / `sonic-cfggen` / [gNMI](../../reference/glossary.md#term-gnmi)) は `swss::Table::set()` 経由で `HSET` のみ行い、明示的な `PUBLISH` は発行しない。CONFIG_DB のため TTL は使用されない。起動時は `config_mode == "unified"` の場合に `get_table('BGP_NEIGHBOR_AF')` で既存エントリを全件再生する（再起動耐性）。
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 8c9e626ce0bd -->
+<!-- glossary-links-injected: 9b165b0546d2 -->
