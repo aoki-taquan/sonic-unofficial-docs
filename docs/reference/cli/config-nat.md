@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-`config nat` は SONiC の NAT44 ([NAT](../../reference/glossary.md#term-nat) / NAPT) 機能の [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接操作する CLI で、`config/nat.py` の `@click.group('nat')` がエントリポイントとなる[^1]。`add` / `remove` / `set` / `reset` の 4 つのサブグループに分かれ、static エントリ・dynamic pool / binding・interface zone・タイムアウト・feature on/off を扱う。[NAT](../../reference/glossary.md#term-nat) データプレーン本体は [orchagent](../../reference/glossary.md#term-orchagent) 配下の `natorch` が [SAI](../../reference/glossary.md#term-sai) 経由でハードに書き込むが、CLI 層は [CONFIG_DB](../../reference/glossary.md#term-config_db) を更新するだけで、NAT 機能が無効ならそもそも変更がデータプレーンに伝わらない点に注意。
+`config nat` は [SONiC](../../reference/glossary.md#term-sonic) の NAT44 ([NAT](../../reference/glossary.md#term-nat) / NAPT) 機能の [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接操作する CLI で、`config/nat.py` の `@click.group('nat')` がエントリポイントとなる[^1]。`add` / `remove` / `set` / `reset` の 4 つのサブグループに分かれ、static エントリ・dynamic pool / binding・interface zone・タイムアウト・feature on/off を扱う。[NAT](../../reference/glossary.md#term-nat) データプレーン本体は [orchagent](../../reference/glossary.md#term-orchagent) 配下の `natorch` が [SAI](../../reference/glossary.md#term-sai) 経由でハードに書き込むが、CLI 層は [CONFIG_DB](../../reference/glossary.md#term-config_db) を更新するだけで、NAT 機能が無効ならそもそも変更がデータプレーンに伝わらない点に注意。
 
 ## コマンド一覧
 
@@ -224,7 +224,7 @@ flowchart LR
 
 ### よくある落とし穴
 
-- ASIC の NAT capability を超えると追加 entry がドロップされる。`show nat statistics` で hardware 反映を確認。
+- [ASIC](../../reference/glossary.md#term-asic) の NAT capability を超えると追加 entry がドロップされる。`show nat statistics` で hardware 反映を確認。
 - `nat zone` を変更すると flow がリセットされ既存 connection が切断される。
 
 ### 関連する show / debug
@@ -236,4 +236,4 @@ show nat statistics
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 0a2da183a336 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

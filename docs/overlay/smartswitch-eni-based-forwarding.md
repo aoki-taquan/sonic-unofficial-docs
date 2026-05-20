@@ -211,7 +211,7 @@ reasoning: HA failover 過渡期のループ防止と、Tunnel Termination ル�
 ## トラブルシューティング
 
 - 着信が正しい DPU に行かない: `redis-cli -n 4 hgetall "DASH_ENI_FORWARD_TABLE|<eni>"` で endpoint 確認。
-- ACL が ASIC に下りない: `AclOrch` ログと SAI ACL カウンタ。
+- ACL が [ASIC](../reference/glossary.md#term-asic) に下りない: `AclOrch` ログと SAI ACL カウンタ。
 - failover 直後の輻輳: TUNN_TERM ルール (PRIORITY 9997) が SET されているか。
 - Remote 経路で drop: `VxLanTunnOrch` の tunnel NH OID と `ACL_RULE.REDIRECT` の `<PA>@<tunnel>,<vni>` 表記の整合。
 
@@ -245,4 +245,4 @@ docker exec database redis-cli -n 6 keys 'CHASSIS_MODULE_TABLE|*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 2fed06be3cf8 -->
+<!-- glossary-links-injected: c006405759d8 -->

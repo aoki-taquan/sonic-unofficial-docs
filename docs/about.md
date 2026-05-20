@@ -16,7 +16,7 @@ related:
 
 ## ワンライナー
 
-> SONiC NOS（コミュニティ版・`master` ブランチ）の高水準設計（HLD）・実コード・YANG・CLI・GitHub Issue を AI が横断的に**再構成**して書く、**日本語の非公式ドキュメント**です。
+> [SONiC](./reference/glossary.md#term-sonic) NOS（コミュニティ版・`master` ブランチ）の高水準設計（HLD）・実コード・YANG・CLI・GitHub Issue を AI が横断的に**再構成**して書く、**日本語の非公式ドキュメント**です。
 
 ## プロジェクトの目的
 
@@ -141,4 +141,4 @@ AI 駆動の運用パイプライン（Indexer → Backlog Generator → Writer 
 - [カバレッジ状況 (_meta/coverage)](_meta/coverage.md)
 - [HLD と実装の乖離一覧 (_meta/discrepancies)](_meta/discrepancies.md)
 
-<!-- glossary-links-injected: ac66cb8fa7e1 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

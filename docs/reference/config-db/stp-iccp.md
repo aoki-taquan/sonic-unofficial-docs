@@ -59,7 +59,7 @@ related:
 
 ## 概要
 
-SONiC の MCLAG (Multi-Chassis Link Aggregation) 環境では、2 台のノードが ICCP セッションを確立して制御プレーン情報を同期する。
+[SONiC](../../reference/glossary.md#term-sonic) の [MCLAG](../../reference/glossary.md#term-mclag) (Multi-Chassis Link Aggregation) 環境では、2 台のノードが ICCP セッションを確立して制御プレーン情報を同期する。
 STP との連携は主に以下の 2 つの側面で存在する:
 
 1. **STP ロール決定** — iccpd が `MCLAG_DOMAIN.source_ip` と `peer_ip` を比較してノードの Active/Standby を決定し、STP デーモンへ通知する
@@ -70,6 +70,26 @@ STP との連携は主に以下の 2 つの側面で存在する:
     連携は `MCLAG_DOMAIN` テーブルの `source_ip` / `peer_ip` フィールドを入力として iccpd 内部で処理される。
 
 <!-- ordering -->
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>STP")]
+  DM["stpmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_DB")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_stp_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## 書込み順序依存 (Phase B)
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-ordering.md -->
@@ -81,13 +101,13 @@ STP ロール (`STP_ROLE_ACTIVE` / `STP_ROLE_STANDBY`) は ICCP セッション�
 
 #### 設定前提条件（ICCP 接続拒否を防ぐ）
 
-1. **`MCLAG_DOMAIN.source_ip` と `peer_ip` が CONFIG_DB に書かれていること**
+1. **`MCLAG_DOMAIN.source_ip` と `peer_ip` が [CONFIG_DB](../../reference/glossary.md#term-config_db) に書かれていること**
    - `scheduler_check_csm_config()` (`scheduler.c:780-784`) が両フィールドの空文字をチェックし、いずれかが空なら `MCLAG_ERROR` を返して ICCP 接続を拒否する。
    - iccpd は接続拒否中は STP ロール決定処理に到達しない。
 
 2. **`MCLAG_DOMAIN.peer_link` に指定したインターフェースが Linux カーネルに存在すること**
    - `peer_itf_name` が設定されているのにインターフェースが未存在 (`local_if_find_by_name()` = NULL) の場合も接続拒否 (`scheduler.c:791-798`)。
-   - PortChannel を peer_link とする場合は PortChannel の作成が先行必須。
+   - [PortChannel](../../reference/glossary.md#term-portchannel) を peer_link とする場合は [PortChannel](../../reference/glossary.md#term-portchannel) の作成が先行必須。
 
 3. **mclagsyncd が iccpd と接続済みであること (`sync_fd > 0`)**
    - `mlacp_link_set_iccp_role()` は `sys->sync_fd <= 0` のときロール通知をサイレントスキップする (`mlacp_link_handler.c:654-660`)。
@@ -99,7 +119,7 @@ STP ロール (`STP_ROLE_ACTIVE` / `STP_ROLE_STANDBY`) は ICCP セッション�
 |---------|------|------|
 | 1 | iccpd 起動・サーバーソケット listen | なし |
 | 2 | mclagsyncd 起動 → iccpd ソケット接続 (`sync_fd` 確立) | iccpd が先に起動していること |
-| 3 | mclagsyncd が CONFIG_DB から `MCLAG_DOMAIN` をフェッチして iccpd へ送信 | `sync_fd` 確立済み |
+| 3 | mclagsyncd が [CONFIG_DB](../../reference/glossary.md#term-config_db) から `MCLAG_DOMAIN` をフェッチして iccpd へ送信 | `sync_fd` 確立済み |
 | 4 | iccpd が `source_ip` / `peer_ip` を CSM に格納 | ステップ 3 完了 |
 | 5 | ICCP セッション確立 (TCP connect / accept) | `source_ip`, `peer_ip`, `peer_link` IF が揃っていること |
 | 6 | `scheduler_check_csm_config()` → `iccp_csm_stp_role_count()` でロール決定 (1 回のみ) | ステップ 5 完了 |
@@ -128,7 +148,7 @@ ICCP セッションの TCP 接続方向は `source_ip` と `peer_ip` の数値�
 | # | 依存関係 | 強制度 | 備考 |
 |---|----------|--------|------|
 | 1 | `MCLAG_DOMAIN.source_ip` / `peer_ip` が存在 → ICCP 接続許可 | 必須 | 空だと接続拒否 |
-| 2 | `peer_link` IF が Linux に存在 → ICCP 接続許可 | 必須 | PortChannel 作成が先行必要 |
+| 2 | `peer_link` IF が Linux に存在 → ICCP 接続許可 | 必須 | [PortChannel](../../reference/glossary.md#term-portchannel) 作成が先行必要 |
 | 3 | iccpd 起動 → mclagsyncd 起動 | 実質必須 | mclagsyncd の accept() 先行順序 |
 | 4 | `sync_fd` 確立 → STP ロール通知到達 | 必須 | sync_fd=0 ではロール通知スキップ |
 | 5 | ICCP セッション確立 → STP ロール決定 | 必須 | セッション確立時に 1 回のみ |
@@ -146,7 +166,7 @@ ICCP セッションの TCP 接続方向は `source_ip` と `peer_ip` の数値�
 #### MCLAG_DOMAIN → STP ロール決定
 
 `MCLAG_DOMAIN.source_ip` / `peer_ip` フィールドが iccpd 内部の STP ロール決定アルゴリズムの
-直接入力となる。CONFIG_DB から直接的な leafref はないが、機能上の依存関係が存在する:
+直接入力となる。[CONFIG_DB](../../reference/glossary.md#term-config_db) から直接的な leafref はないが、機能上の依存関係が存在する:
 
 | 参照元 | 参照先 | 依存の性質 |
 |--------|--------|----------|
@@ -160,7 +180,7 @@ ICCP セッションの TCP 接続方向は `source_ip` と `peer_ip` の数値�
 
 `sonic-spanning-tree.yang` で定義される CONFIG_DB テーブル間の leafref:
 
-| 参照元テーブル | フィールド | 参照先テーブル | YANG 行 |
+| 参照元テーブル | フィールド | 参照先テーブル | [YANG](../../reference/glossary.md#term-yang) 行 |
 |---|---|---|---|
 | `STP_VLAN_PORT` | `vlan-name` | `STP_VLAN.name` | L216 |
 | `STP_VLAN_PORT` | `ifname` | `STP_PORT.ifname` | L224 |
@@ -183,10 +203,10 @@ ICCP セッションの TCP 接続方向は `source_ip` と `peer_ip` の数値�
 
 ### APPL_DB 参照
 
-`stpmgrd` (STP マネージャ) が CONFIG_DB の STP テーブルを読んで以下の APPL_DB テーブルに書き込み、
-`stporch` が消費して SAI へ設定する:
+`stpmgrd` (STP マネージャ) が CONFIG_DB の STP テーブルを読んで以下の [APPL_DB](../../reference/glossary.md#term-appl_db) テーブルに書き込み、
+`stporch` が消費して [SAI](../../reference/glossary.md#term-sai) へ設定する:
 
-| APPL_DB テーブル | 書き込み元 | 消費者 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) テーブル | 書き込み元 | 消費者 |
 |---|---|---|
 | `STP_VLAN_INSTANCE_TABLE` | `stpmgrd` | `StpOrch::updateVlanToStpInstance()` |
 | `STP_PORT_STATE_TABLE` | `stpmgrd` | `StpOrch::updateStpPortState()` |
@@ -197,7 +217,7 @@ ICCP セッションの TCP 接続方向は `source_ip` と `peer_ip` の数値�
 
 ### STATE_DB 参照
 
-| 書き込み元 | STATE_DB テーブル | 参照者 |
+| 書き込み元 | [STATE_DB](../../reference/glossary.md#term-state_db) テーブル | 参照者 |
 |---|---|---|
 | `stporch` | `STATE_STP_TABLE` | `show spanning_tree` CLI |
 | `mclagsyncd` | `STATE_MCLAG_TABLE` (role / system_mac) | `show mclag brief` CLI |
@@ -295,7 +315,7 @@ Standby ロールが決定した直後に `mlacp_fix_bridge_mac(csm)` が呼ば�
 - `iccp_netlink_if_hwaddr_set()` で Linux カーネルの hw_addr を設定
 - 書き換え後に `iccp_netlink_if_shutdown_set()` → `iccp_netlink_if_startup_set()` でリンクを再起動して link-local アドレスを更新
 
-**目的**: LACP system-id を両ノードで統一し、接続先スイッチが 2 台を 1 台として認識するため。これにより STP の Bridge ID も Active ノードの MAC で統一される。
+**目的**: [LACP](../../reference/glossary.md#term-lacp) system-id を両ノードで統一し、接続先スイッチが 2 台を 1 台として認識するため。これにより STP の Bridge ID も Active ノードの MAC で統一される。
 
 証跡: `iccp_netlink.c:640-677`
 
@@ -359,7 +379,7 @@ static void mlacp_sync_recv_stpInfo(struct CSM* csm, struct Msg* msg)
 | `ICCP_DBG_CNTR_MSG_STP_SYNC_DATA` | 25 | STP 同期データ |
 | `ICCP_DBG_CNTR_MSG_STP_PO_PORT_MAP` | 26 | PortChannel ポートマップ |
 
-これらは将来の STP ピア間情報同期機能のプレースホルダであり、現在 MCLAG 環境での STP 設定の一貫性はユーザーが手動で維持する必要がある。
+これらは将来の STP ピア間情報同期機能のプレースホルダであり、現在 [MCLAG](../../reference/glossary.md#term-mclag) 環境での STP 設定の一貫性はユーザーが手動で維持する必要がある。
 
 証跡: `msg_format.h:103, 185-186`, `mlacp_fsm.c:729-733`, `mlacp_fsm.h:109-123`
 
@@ -369,7 +389,7 @@ static void mlacp_sync_recv_stpInfo(struct CSM* csm, struct Msg* msg)
 
 STP ロール決定に直接使用される CONFIG_DB フィールド:
 
-| テーブル | フィールド | YANG デフォルト | STP ロールへの影響 |
+| テーブル | フィールド | [YANG](../../reference/glossary.md#term-yang) デフォルト | STP ロールへの影響 |
 |---|---|---|---|
 | `MCLAG_DOMAIN` | `source_ip` | (必須・省略不可) | `csm->sender_ip` へ展開、ロール比較の左辺 |
 | `MCLAG_DOMAIN` | `peer_ip` | (必須・省略不可) | `csm->peer_ip` へ展開、ロール比較の右辺 |
@@ -384,7 +404,7 @@ STP ロール決定に直接使用される CONFIG_DB フィールド:
 
 ### 7. STP YANG デフォルト値一覧 (`sonic-spanning-tree.yang`)
 
-STP 設定テーブルの YANG 定義デフォルト値:
+STP 設定テーブルの [YANG](../../reference/glossary.md#term-yang) 定義デフォルト値:
 
 | フィールド | YANG デフォルト | テーブル | PVST/MST |
 |---|---|---|---|
@@ -540,11 +560,11 @@ iccpd の STP/ICCP 連携に関係するハードコード定数を列挙する�
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/stp-iccp-side-effects.md`
 
-STP/ICCP 連携では CONFIG_DB への書き戻しは行われない。`iccpd` がロール決定・セッション状態を `mclagsyncd` へ通知し、`mclagsyncd` が **STATE_DB** へ書き込む。
+STP/ICCP 連携では CONFIG_DB への書き戻しは行われない。`iccpd` がロール決定・セッション状態を `mclagsyncd` へ通知し、`mclagsyncd` が **[STATE_DB](../../reference/glossary.md#term-state_db)** へ書き込む。
 
 ### STATE_DB 書込の対応表
 
-| 書込み契機 | iccpd メッセージ型 | mclagsyncd 関数 | STATE_DB テーブル / フィールド |
+| 書込み契機 | iccpd メッセージ型 | mclagsyncd 関数 | [STATE_DB](../../reference/glossary.md#term-state_db) テーブル / フィールド |
 |---|---|---|---|
 | ICCP セッション確立/切断 | `MCLAG_MSG_TYPE_SET_ICCP_STATE` | `mclagsyncdSetIccpState()` | `STATE_MCLAG_TABLE\|{mlag_id}`.`oper_status`: `"up"` / `"down"` |
 | STP ロール確定 | `MCLAG_MSG_TYPE_SET_ICCP_ROLE` | `mclagsyncdSetIccpRole()` | `STATE_MCLAG_TABLE\|{mlag_id}`.`role`: `"active"` / `"standby"` + `system_mac`（Active のみ） |
@@ -569,7 +589,7 @@ STP/ICCP 連携における CONFIG_DB → iccpd → STATE_DB の通知経路を�
 
 ### iccpd は Redis を直接 subscribe しない
 
-`iccpd` は Redis keyspace notification を直接購読しない。CONFIG_DB の変更は **`mclagsyncd` 経由**で IPC として届く。
+`iccpd` は [Redis](../../reference/glossary.md#term-redis) keyspace notification を直接購読しない。CONFIG_DB の変更は **`mclagsyncd` 経由**で IPC として届く。
 
 ```
 CONFIG_DB (keyspace @4) ──PSUBSCRIBE──► mclagsyncd
@@ -601,7 +621,7 @@ CONFIG_DB (keyspace @4) ──PSUBSCRIBE──► mclagsyncd
 ### STP ロール確定後の通知 (iccpd → mclagsyncd → STATE_DB)
 
 ロール決定後に `mlacp_link_set_iccp_role()` が **iccpd → mclagsyncd IPC** でロールを通知し、
-`mclagsyncd` が `ProducerStateTable` 経由で `STATE_DB` に書き込む（Redis 直接書き込みなし）:
+`mclagsyncd` が `ProducerStateTable` 経由で `STATE_DB` に書き込む（[Redis](../../reference/glossary.md#term-redis) 直接書き込みなし）:
 
 | iccpd メッセージ型 | mclagsyncd 関数 | STATE_DB テーブル / フィールド |
 |---|---|---|
@@ -648,14 +668,14 @@ static const unordered_set<string> supported {
 | プラットフォーム | 経路 | DB 書き込み先 | 方式 |
 |----------------|------|-------------|------|
 | Broadcom / Barefoot / Centec / Clounix / Marvell-Prestera / Marvell-Teralynx | 経路 A | `APPL_DB ISOLATION_GROUP_TABLE\|MCLAG_ISO_GRP` | Isolation Group |
-| Mellanox / VS / その他（ホワイトリスト外） | 経路 B | `APPL_DB ACL_TABLE_TABLE\|mclag` + `ACL_RULE_TABLE\|mclag:mclag` | ACL ベース |
+| Mellanox / VS / その他（ホワイトリスト外） | 経路 B | `APPL_DB ACL_TABLE_TABLE\|mclag` + `ACL_RULE_TABLE\|mclag:mclag` | [ACL](../../reference/glossary.md#term-acl) ベース |
 
 **経路 A（Isolation Group）の特徴**:
 - `MEMBERS` に `Ethernet` プレフィックスのインターフェースは除外し PortChannel のみ含める（`mclaglink.cpp:258-261`）
 - dst が空（リモートリンク全断）時は `del("MCLAG_ISO_GRP")` でエントリ削除
 
-**経路 B（ACL）の特徴**:
-- `acl_table_is_added` フラグで ACL テーブルは初回のみ作成（2 回目以降はルールのみ更新）
+**経路 B（[ACL](../../reference/glossary.md#term-acl)）の特徴**:
+- `acl_table_is_added` フラグで [ACL](../../reference/glossary.md#term-acl) テーブルは初回のみ作成（2 回目以降はルールのみ更新）
 - dst が空の場合は `del(acl_name)` で ACL テーブルごと削除
 
 ### B. iccpd コアロジックはプラットフォーム非依存
@@ -673,12 +693,12 @@ static const unordered_set<string> supported {
 
 | 環境 | 挙動 |
 |------|------|
-| VS（仮想スイッチ）| platform がホワイトリスト外のため **ACL 方式** にフォールバック。STP ロール決定ロジック自体は物理 ASIC と同一 |
-| SmartSwitch DPU | `docker-iccpd` は DPU 上では起動しないため STP/ICCP 連携は非適用。SmartSwitch NPU 側では通常動作 |
+| VS（仮想スイッチ）| platform がホワイトリスト外のため **ACL 方式** にフォールバック。STP ロール決定ロジック自体は物理 [ASIC](../../reference/glossary.md#term-asic) と同一 |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | `docker-iccpd` は [DPU](../../reference/glossary.md#term-dpu) 上では起動しないため STP/ICCP 連携は非適用。[SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) 側では通常動作 |
 
 ### プラットフォーム差異要約
 
-| 観点 | Broadcom / Barefoot / Centec / Clounix / Marvell | Mellanox / VS / その他 | SmartSwitch DPU |
+| 観点 | Broadcom / Barefoot / Centec / Clounix / Marvell | Mellanox / VS / その他 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) |
 |------|--------------------------------------------------|----------------------|-----------------|
 | ポート隔離方式 | Isolation Group (`APPL_DB`) | ACL テーブル/ルール (`APPL_DB`) | N/A（非起動） |
 | STP ロール決定 | IP 数値比較（共通） | IP 数値比較（共通） | N/A |
@@ -701,19 +721,11 @@ static const unordered_set<string> supported {
 
 ## 引用元
 
-[^1]: ICCP CSM 実装: `iccp_csm.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c>
-[^2]: MCLAG リンクハンドラ: `mlacp_link_handler.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mlacp_link_handler.c>
-[^3]: MCLAG FSM: `mlacp_fsm.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mlacp_fsm.c>
-[^4]: ICCP CSM ヘッダ: `iccp_csm.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_csm.h>
-[^5]: ICCP メッセージフォーマット: `msg_format.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/msg_format.h>
-[^6]: STP YANG モデル: `sonic-spanning-tree.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-spanning-tree.yang>
-[^7]: MCLAG YANG モデル: `sonic-mclag.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mclag.yang>
-[^8]: mclagsyncd メインループ: `mclagsyncd.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclagsyncd.cpp>
-[^9]: mclagsyncd リンク実装: `mclaglink.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp>
-
 ## 関連ページ
 
 - [CONFIG_DB: STP](stp.md)
 - [CONFIG_DB: STP_MST](stp-mst.md)
 - [CONFIG_DB: MCLAG_DOMAIN](mclag-domain.md)
 - [CONFIG_DB: PORTCHANNEL](portchannel.md)
+
+<!-- glossary-links-injected: f4b4be230bca -->

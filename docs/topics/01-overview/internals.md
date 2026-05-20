@@ -22,7 +22,7 @@ related:
 
 # 内部実装
 
-設定基盤の内部実装は、起動時に設定をどう作るか、[Redis](../../reference/glossary.md#term-redis) をどう配置するか、Multi-ASIC で namespace をどう分けるか、という順に読むと全体像がつかめます。通常運用では意識しない層ですが、first boot、upgrade、Multi-ASIC、性能問題ではここが原因になります。
+設定基盤の内部実装は、起動時に設定をどう作るか、[Redis](../../reference/glossary.md#term-redis) をどう配置するか、[Multi-ASIC](../../reference/glossary.md#term-multi-asic) で namespace をどう分けるか、という順に読むと全体像がつかめます。通常運用では意識しない層ですが、first boot、upgrade、Multi-[ASIC](../../reference/glossary.md#term-asic)、性能問題ではここが原因になります。
 
 ## first boot と migration
 
@@ -83,7 +83,7 @@ Single-ASIC では「global が唯一の Redis」と考えれば十分です。M
 
 ## SONiC 全体のデータフロー
 
-01 章の overview として、SONiC の典型的な「設定 → SAI → ASIC」の流れを一枚で示します。
+01 章の overview として、[SONiC](../../reference/glossary.md#term-sonic) の典型的な「設定 → SAI → ASIC」の流れを一枚で示します。
 
 ```mermaid
 flowchart LR
@@ -155,4 +155,4 @@ ZMQ は SONiC master でも増えつつある経路で、章ごとに使用有�
 - [Multi-ASIC 名前空間の Redis](../../internals/support-redis-databases-in-multiple-namespaces.md)
 - [20 章 SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/internals.md)
 
-<!-- glossary-links-injected: ad4074e0b684 -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

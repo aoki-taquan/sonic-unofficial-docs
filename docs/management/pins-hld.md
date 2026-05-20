@@ -37,9 +37,9 @@ related:
 
 ## 読み手が知りたいこと
 
-- [PINS](../reference/glossary.md#term-pins) とは何で、既存 SONiC に何を足すのか
+- [PINS](../reference/glossary.md#term-pins) とは何で、既存 [SONiC](../reference/glossary.md#term-sonic) に何を足すのか
 - なぜ [SAI](../reference/glossary.md#term-sai) pipeline を **P4 で表現** するアプローチを取るのか
-- 既存 RouteOrch / NeighOrch との **同 ASIC table 共有** をどう成立させるのか
+- 既存 RouteOrch / NeighOrch との **同 [ASIC](../reference/glossary.md#term-asic) table 共有** をどう成立させるのか
 - 応答経路（response path）と新規 `APPL_STATE_DB` の役割
 - Packet IO の **3 種類**（packet in / port 直送 / send_to_ingress）
 
@@ -73,7 +73,7 @@ flowchart LR
 
 | Component | 役割 |
 |-----------|------|
-| **P4RT Application** | 独立 container、複数 gRPC client を受ける。[APPL_DB](../reference/glossary.md#term-appl_db) の P4RT table へ書込、結果を controller に通知。read も対応[^1] |
+| **[P4RT](../reference/glossary.md#term-p4rt) Application** | 独立 container、複数 gRPC client を受ける。[APPL_DB](../reference/glossary.md#term-appl_db) の P4RT table へ書込、結果を controller に通知。read も対応[^1] |
 | **P4 Programs / P4Info** | SAI pipeline を P4 で記述、p4c コンパイル後の P4Info を controller が初回接続時に push |
 | **P4 APPL_DB Tables** | `P4RT:<TableType><TableName>` 命名。`TableType ∈ {FIXED, ACL}`、TableName は SAI object（router_interface / neighbor / next_hop / IPV4 / IPV6 等）|
 | **P4Orch** | APPL_DB → [ASIC_DB](../reference/glossary.md#term-asic_db) の翻訳。他 orch の SAI object を **参照しつつ refcount を上げる** |
@@ -150,4 +150,4 @@ P4Orch は **同一 ASIC table への複数 writer（RouteOrch 等）** を扱�
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: 4b7e3e133212 -->

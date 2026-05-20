@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-SONiC の起動時設定は `/etc/sonic/config_db.json` に保存され、boot で Config DB に流し込まれる。新規イメージは startup-config を持たないため、**first boot 時に何らかの方法で生成** が必要[^1]。さらに version A → B にアップグレードした際は **古い設定を新版に migrate** する必要がある。これらに加えて Config DB に乗らない設定（`frr.conf` など）の取扱も含めて一元管理するために導入されたのが **`config-setup`** サービスである[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の起動時設定は `/etc/sonic/config_db.json` に保存され、boot で Config DB に流し込まれる。新規イメージは startup-config を持たないため、**first boot 時に何らかの方法で生成** が必要[^1]。さらに version A → B にアップグレードした際は **古い設定を新版に migrate** する必要がある。これらに加えて Config DB に乗らない設定（`frr.conf` など）の取扱も含めて一元管理するために導入されたのが **`config-setup`** サービスである[^1]。
 
 将来的には **`updategraph`** の機能を `config-setup` に集約し、`updategraph` を廃止する方針[^1]。
 
@@ -199,4 +199,4 @@ systemctl is-enabled updategraph
 
 [^1]: `sonic-net/SONiC` `doc/ztp/SONiC-config-setup.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 9bd150521228 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

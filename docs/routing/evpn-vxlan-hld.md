@@ -48,7 +48,7 @@ related:
 
 ## 1. 役割分担と全体像
 
-EVPN は **MAC / IP の到達情報を [BGP](../reference/glossary.md#term-bgp) で広告** し、VXLAN は **L2 over L3 のデータプレーン** として traffic を運ぶ。SONiC は [FRR](../reference/glossary.md#term-frr) の BGP-EVPN を control plane、[SAI](../reference/glossary.md#term-sai) VXLAN を data plane に使う[^1]。
+EVPN は **MAC / IP の到達情報を [BGP](../reference/glossary.md#term-bgp) で広告** し、VXLAN は **L2 over L3 のデータプレーン** として traffic を運ぶ。[SONiC](../reference/glossary.md#term-sonic) は [FRR](../reference/glossary.md#term-frr) の BGP-EVPN を control plane、[SAI](../reference/glossary.md#term-sai) VXLAN を data plane に使う[^1]。
 
 ```mermaid
 flowchart LR
@@ -64,7 +64,7 @@ flowchart LR
 
 | | Type-2 | Type-3 | Type-5 |
 |---|--------|--------|--------|
-| 広告対象 | host MAC（任意で IP） | VTEP の所属 VNI | IP prefix（subnet） |
+| 広告対象 | host MAC（任意で IP） | [VTEP](../reference/glossary.md#term-vtep) の所属 VNI | IP prefix（subnet） |
 | 主用途 | L2 stretch、host-route 流通 | BUM ingress replication 用 VTEP 通知 | L3 ルーティング、外部接続 |
 | L2/L3 VNI | 両方 | L2 VNI | L3 VNI |
 
@@ -138,7 +138,7 @@ EVPN VXLAN 中核は実装されているが、HLD と実装の **名称・配�
 
 ## 5. 制限事項
 
-- **下位 ASIC 依存**: VXLAN encap/decap、Tunnel Termination の SAI サポート要
+- **下位 [ASIC](../reference/glossary.md#term-asic) 依存**: VXLAN encap/decap、Tunnel Termination の SAI サポート要
 - **MTU**: VXLAN ヘッダ 50 byte 増。不足は黙ってドロップ傾向
 - **multihoming**: 別 HLD（同 area `evpn-vxlan-multihoming.md`）
 - **BUM**: ingress replication 前提。multicast underlay は範囲外
@@ -242,4 +242,4 @@ docker exec bgp vtysh -c 'show evpn vni'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: 7b27b638c4f3 -->

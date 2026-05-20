@@ -85,7 +85,7 @@ drift をゼロにすることは目的ではありません。「drift が出�
 
 ## 発展トピック
 
-- **OpenConfig vs SONiC YANG の対応表自動生成**: `sonic-mgmt-common` の transformer 定義から OC ↔ sonic-* YANG のペアを抽出し、`yang-index.md` に差し込む取り組み。10 章 ([gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig) と直接連動する。
+- **OpenConfig vs [SONiC](../../reference/glossary.md#term-sonic) YANG の対応表自動生成**: `sonic-mgmt-common` の transformer 定義から OC ↔ sonic-* YANG のペアを抽出し、`yang-index.md` に差し込む取り組み。10 章 ([gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig) と直接連動する。
 - **discrepancy-found ページの一覧ビュー**: `verification: discrepancy-found` のページを横断的に集める dashboard。`gen_discrepancy_index.py` が起点。
 - **runbook ↔ reference の双方向リンク**: 症状逆引き (`docs/reference/runbooks/`) と CLI / CONFIG_DB 索引を相互に張る。`gen_cross_ref.py --runbook` で部分自動化。
 - **Indexer v3 構想**: HLD メタを SHA 単位で再収集し、reference 側 frontmatter にも `last_synced_sha` を持たせて drift 検出を粒度細かく行う。
@@ -116,4 +116,4 @@ drift をゼロにすることは目的ではありません。「drift が出�
 - `sonic-yang-models` の `must` / `when` 制約強化 PR は CONFIG_DB スキーマ表に直接影響するため、22 章 `config-db-index.md` の追従が必須。
 - discrepancy-found ページ群は Verifier フェーズ完走後も継続的に発生 (master 追従) するため、本章の運用フローは長期前提で組む。
 
-<!-- glossary-links-injected: fb8223262e3a -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

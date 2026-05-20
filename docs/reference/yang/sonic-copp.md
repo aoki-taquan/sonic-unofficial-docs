@@ -27,7 +27,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-copp`
 
-[CoPP](../../reference/glossary.md#term-copp) [YANG](../../reference/glossary.md#term-yang) Module for SONiC OS[^1]
+[CoPP](../../reference/glossary.md#term-copp) [YANG](../../reference/glossary.md#term-yang) Module for [SONiC](../../reference/glossary.md#term-sonic) OS[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -186,4 +186,4 @@ show copp config
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ce1b785cf1da -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

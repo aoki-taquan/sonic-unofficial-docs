@@ -37,7 +37,7 @@ related:
 
 # アーキテクチャ
 
-[SRv6](../../reference/glossary.md#term-srv6) / [MPLS](../../reference/glossary.md#term-mpls) / Path Tracing は別機能ですが、SONiC 内部では「[CONFIG_DB](../../reference/glossary.md#term-config_db) → [orchagent](../../reference/glossary.md#term-orchagent) → [SAI](../../reference/glossary.md#term-sai) → ASIC」「[FRR](../../reference/glossary.md#term-frr)/netlink → [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) → APP_DB → orchagent → SAI」という同じ 2 系統のデータ経路に乗ります。ここでは feature ごとの object flow を、その共通図に当てはめて読みます。
+[SRv6](../../reference/glossary.md#term-srv6) / [MPLS](../../reference/glossary.md#term-mpls) / Path Tracing は別機能ですが、[SONiC](../../reference/glossary.md#term-sonic) 内部では「[CONFIG_DB](../../reference/glossary.md#term-config_db) → [orchagent](../../reference/glossary.md#term-orchagent) → [SAI](../../reference/glossary.md#term-sai) → [ASIC](../../reference/glossary.md#term-asic)」「[FRR](../../reference/glossary.md#term-frr)/netlink → [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) → APP_DB → orchagent → SAI」という同じ 2 系統のデータ経路に乗ります。ここでは feature ごとの object flow を、その共通図に当てはめて読みます。
 
 ## SRv6 の object flow
 
@@ -103,4 +103,4 @@ SRv6 endpoint 処理は HbH-PT の有無に関わらず動くため、Path Traci
 - [SONiC の MPLS 基盤](../../routing/mpls-for-sonic-high-level-design-document.md)
 - [Path Tracing Midpoint](../../routing/path-tracing-midpoint.md)
 
-<!-- glossary-links-injected: 825df0651edd -->
+<!-- glossary-links-injected: ec18b66e3507 -->

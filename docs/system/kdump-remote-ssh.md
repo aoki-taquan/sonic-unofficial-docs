@@ -30,7 +30,7 @@ related:
 
 ## なぜリモート転送が必要なのか
 
-SONiC のカーネルクラッシュダンプは従来 **ローカル `/var/crash/` にしか保存できなかった**。スイッチ側ストレージが小さい / 圧迫されると core を取り逃す。本機能は **SSH 経由でリモートサーバへ core dump を転送** し、専用サーバへ集約するためのもの[^1]。
+[SONiC](../reference/glossary.md#term-sonic) のカーネルクラッシュダンプは従来 **ローカル `/var/crash/` にしか保存できなかった**。スイッチ側ストレージが小さい / 圧迫されると core を取り逃す。本機能は **SSH 経由でリモートサーバへ core dump を転送** し、専用サーバへ集約するためのもの[^1]。
 
 ## どう動くのか
 
@@ -136,4 +136,4 @@ cat /etc/default/kdump-tools
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 96667c52d98d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

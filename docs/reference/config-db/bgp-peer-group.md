@@ -124,7 +124,7 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 
 ### `admin_status`
 
-| 値 | FRR コマンド |
+| 値 | [FRR](../../reference/glossary.md#term-frr) コマンド |
 |----|-------------|
 | `up` | `no neighbor <pg> shutdown` |
 | `down` | `neighbor <pg> shutdown` |
@@ -136,8 +136,8 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 
 | 条件 | 挙動 | ソース |
 |------|------|--------|
-| peer-group が FRR に未存在のまま SET が到達 | frrcfgd が `neighbor {} peer-group` を vtysh 実行。失敗時 `failed to create peer-group %s for VRF %s` を LOG_ERR → continue | `frrcfgd.py` L2799 |
-| `local_asn` 未設定 VRF | LOG_DEBUG して skip | `frrcfgd.py` L2660 |
+| peer-group が FRR に未存在のまま SET が到達 | frrcfgd が `neighbor {} peer-group` を [vtysh](../../reference/glossary.md#term-vtysh) 実行。失敗時 `failed to create peer-group %s for VRF %s` を LOG_ERR → continue | `frrcfgd.py` L2799 |
+| `local_asn` 未設定 [VRF](../../reference/glossary.md#term-vrf) | LOG_DEBUG して skip | `frrcfgd.py` L2660 |
 | `BGPPeerGroupMgr.update_policy()` の Jinja2 エラー | `log_err` して `return False` | `managers_bgp.py` `update_policy()` |
 | `BGPPeerGroupMgr.update_pg()` の Jinja2 エラー | `log_err` して `return False` | `managers_bgp.py` `update_pg()` |
 | TSA 有効時の peer-group 設定 | `check_state_and_get_tsa_routemaps()` が TSA route-map を自動付与。エラー時は peer-group 全体が skip | `managers_device_global.py` |
@@ -156,17 +156,17 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由)
+なし (FRR [vtysh](../../reference/glossary.md#term-vtysh) 経由)
 
 ### 段階 3 — APPL→SAI
 
-なし (FRR BGP peer-group 設定)
+なし (FRR [BGP](../../reference/glossary.md#term-bgp) peer-group 設定)
 
 ### 段階 4 — タイミングと副作用
 
 **適用タイミング**: 変化検知後 FRR に `neighbor <pg_name> peer-group` 等のコマンドを発行。peer-group 削除はメンバーネイバー全体への影響あり。
 
-**副作用**: peer-group 削除はメンバーの BGP session を切断。AS/password 変更はメンバー全 session リセット。
+**副作用**: peer-group 削除はメンバーの [BGP](../../reference/glossary.md#term-bgp) session を切断。AS/password 変更はメンバー全 session リセット。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -175,14 +175,14 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 対象テーブル: `BGP_PEER_GROUP`
 
 ### CLI
-- `vtysh` 経由 peer-group コマンド群 (bgpcfgd が CONFIG_DB へ書き戻し)
+- `vtysh` 経由 peer-group コマンド群 ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が CONFIG_DB へ書き戻し)
   - ソース: `sonic-frr bgpcfgd`
 
 ### minigraph / sonic-cfggen
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- sonic-mgmt-common OpenConfig BGP peer-group 経由
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common OpenConfig BGP peer-group 経由
 
 ### db_migrator
 - なし
@@ -235,7 +235,7 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 
 | 参照先テーブル | 参照フィールド | 方向 | 条件 | 依存強度 | ソース |
 |--------------|--------------|------|------|---------|--------|
-| `BGP_GLOBALS` | `local_asn` | 読み取り | 常時（SET/DEL 両方） | **必須・ブロッキング** — 未設定 VRF は silently drop | `frrcfgd.py` L2175, L2659 |
+| `BGP_GLOBALS` | `local_asn` | 読み取り | 常時（SET/DEL 両方） | **必須・ブロッキング** — 未設定 [VRF](../../reference/glossary.md#term-vrf) は silently drop | `frrcfgd.py` L2175, L2659 |
 | `BGP_PEER_GROUP_AF` | `route_map_in` / `route_map_out` / afi_safi 設定 | 逆参照（cascade 再適用） | peer-group の `asn` OP_ADD または OP_DELETE 時 | 条件付き — `asn` 変更で AF 設定を再投入 | `frrcfgd.py` L2551–2563, L2865 |
 | `ROUTE_MAP` | `route_operation` | 内部キャッシュ参照 | `BGP_PEER_GROUP_AF` に `route_map_in`/`out` が設定されたとき | 条件付き — 未投入でも frrcfgd エラーなし（FRR 側 no-op） | `frrcfgd.py` L86, L2206, L2669 |
 
@@ -243,7 +243,7 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 
 frrcfgd は `BGP_PEER_GROUP` の処理ループ先頭で `__get_vrf_asn(vrf)` を呼び出し、
 当該 VRF の `BGP_GLOBALS.local_asn` を取得する。`None` の場合は LOG_DEBUG を出力して
-当該エントリの処理を **スキップ**（エラーなし）。FRR vtysh コマンド
+当該エントリの処理を **スキップ**（エラーなし）。FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンド
 `router bgp <local_asn> vrf <vrf>` の生成に必須のため、`BGP_GLOBALS` 投入前に
 `BGP_PEER_GROUP` が到達してもすべて破棄される（`frrcfgd.py` L2658–2662）。
 
@@ -266,7 +266,7 @@ FRR `neighbor <pg> route-map <name> in/out` コマンドの `<name>` として�
 <!-- platform -->
 ## プラットフォーム / SAI 差分
 
-`BGP_PEER_GROUP` は FRR (`bgpd`) 止まりで SAI に直接到達しないが、`DEVICE_METADATA` の `type`・`sub_role`・`switch_type`・`subtype` に基づいて Jinja2 テンプレートが切り替わり、FRR へ発行されるコマンドが大きく異なる。frrcfgd 動的更新経路 (`frr_mgmt_framework_config=true`) は Jinja2 を経由しないため platform 差なし。
+`BGP_PEER_GROUP` は FRR (`bgpd`) 止まりで [SAI](../../reference/glossary.md#term-sai) に直接到達しないが、`DEVICE_METADATA` の `type`・`sub_role`・`switch_type`・`subtype` に基づいて Jinja2 テンプレートが切り替わり、FRR へ発行されるコマンドが大きく異なる。frrcfgd 動的更新経路 (`frr_mgmt_framework_config=true`) は Jinja2 を経由しないため platform 差なし。
 
 ### general peer-group (`peer_type=external` / ToR・Spine など)
 
@@ -288,7 +288,7 @@ FRR `neighbor <pg> route-map <name> in/out` コマンドの `<name>` として�
 | `switch_type=chassis-packet` | `neighbor INTERNAL_PEER_V4/V6 update-source Loopback4096` + `ttl-security hops 1` |
 | `sub_role=BackEnd` | AF 内に `neighbor INTERNAL_PEER_V4/V6 route-reflector-client`；route-map に `set originator-id <Loopback4096>` |
 | `switch_type=chassis-packet && subtype != DownstreamLC` | FALLBACK_COMMUNITY を `set tag route_eligible_for_fallback_to_default_tag` |
-| その他 (single-ASIC) | `route-reflector-client` なし、`update-source` なし |
+| その他 (single-[ASIC](../../reference/glossary.md#term-asic)) | `route-reflector-client` なし、`update-source` なし |
 
 ### VoQ シャーシ peer-group (`peer_type=voq_chassis`)
 
@@ -424,14 +424,14 @@ SET 受信時、frrcfgd は FRR に peer-group が存在しなければ属性コ
 
 ### frrcfgd.py BGP_PEER_GROUP ハンドラ直接書込
 
-`frrcfgd.py` は STATE_DB / APPL_DB / COUNTERS_DB への書込クラスをインポートしておらず、
+`frrcfgd.py` は [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込クラスをインポートしておらず、
 BGP_PEER_GROUP ハンドラの唯一の外部副作用は **FRR vtysh への設定投入** のみ。
 
 | DB | 書込 |
 |---|---|
-| STATE_DB | なし |
-| APPL_DB | なし |
-| COUNTERS_DB | なし |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし |
 
 ### bgpcfgd BGPPeerMgrBase 経由 — 間接書込
 
@@ -441,7 +441,7 @@ BGP_PEER_GROUP の `asn` フィールド変更時、`frrcfgd.py` の
 
 | DB | テーブル | 操作 | キー形式 | 条件 |
 |---|---|---|---|---|
-| STATE_DB | `BGP_PEER_CONFIGURED_TABLE` | SET | `<nbr_ip>` (default VRF) または `<vrf>\|<nbr_ip>` | peer-group `asn` 変更で BGP_NEIGHBOR re-apply が発火した場合 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `BGP_PEER_CONFIGURED_TABLE` | SET | `<nbr_ip>` (default VRF) または `<vrf>\|<nbr_ip>` | peer-group `asn` 変更で BGP_NEIGHBOR re-apply が発火した場合 |
 | STATE_DB | `BGP_PEER_CONFIGURED_TABLE` | DEL | 同上 | peer-group 削除でメンバー neighbor が削除された場合 |
 
 書込経路:
@@ -467,14 +467,14 @@ BGP_PEER_GROUP (asn 変更)
 
 | 購読者 | 購読 API | 通信方式 | ハンドラ |
 |--------|---------|---------|---------|
-| `frrcfgd` (sonic-frr-mgmt-framework) | `ExtConfigDBConnector.subscribe()` + `listen()` | Redis keyspace `PSUBSCRIBE __keyspace@<dbId>__:*` | `bgp_neighbor_handler` → `bgp_table_handler_common` → `__update_bgp` |
-| `bgpcfgd` (sonic-bgpcfgd) の `BGPPeerMgrBase` | `swsscommon.SubscriberStateTable` + `swsscommon.Select` | Redis PUBLISH/SUBSCRIBE チャネルベース | `Runner.run()` → `BGPPeerMgrBase.handler()` → `set_handler()` / `del_handler()` |
+| `frrcfgd` (sonic-frr-mgmt-framework) | `ExtConfigDBConnector.subscribe()` + `listen()` | [Redis](../../reference/glossary.md#term-redis) keyspace `PSUBSCRIBE __keyspace@<dbId>__:*` | `bgp_neighbor_handler` → `bgp_table_handler_common` → `__update_bgp` |
+| `bgpcfgd` (sonic-[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)) の `BGPPeerMgrBase` | `swsscommon.SubscriberStateTable` + `swsscommon.Select` | [Redis](../../reference/glossary.md#term-redis) PUBLISH/SUBSCRIBE チャネルベース | `Runner.run()` → `BGPPeerMgrBase.handler()` → `set_handler()` / `del_handler()` |
 
-`orchagent` / `syncd` 等の APPL_DB / ASIC_DB レイヤは本テーブルを購読しない（FRR `bgpd` のソフトウェア処理で完結、SAI 非経由）。
+`orchagent` / `syncd` 等の [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) レイヤは本テーブルを購読しない（FRR `bgpd` のソフトウェア処理で完結、[SAI](../../reference/glossary.md#term-sai) 非経由）。
 
 ### frrcfgd 経路: keyspace 通知 → ハンドラ呼び出し
 
-`frrcfgd` は `ConfigDBConnector` を継承した `ExtConfigDBConnector` を使用する。`subscribe_all()` で `BGP_PEER_GROUP` に `bgp_neighbor_handler` を登録し (`frrcfgd.py` L2303, L2359-2361)、`listen()` でバックグラウンドスレッドを起動して Redis keyspace を監視する (`frrcfgd.py` L1547-1552)。
+`frrcfgd` は `ConfigDBConnector` を継承した `ExtConfigDBConnector` を使用する。`subscribe_all()` で `BGP_PEER_GROUP` に `bgp_neighbor_handler` を登録し (`frrcfgd.py` L2303, L2359-2361)、`listen()` でバックグラウンドスレッドを起動して [Redis](../../reference/glossary.md#term-redis) keyspace を監視する (`frrcfgd.py` L1547-1552)。
 
 ```
 sonic-db-cli CONFIG_DB hset 'BGP_PEER_GROUP|default|PEER_GROUP_1' local_asn 65001
@@ -499,7 +499,7 @@ bgp_neighbor_handler(table, key, data)
 
 ### bgpcfgd 経路: SubscriberStateTable + Runner
 
-`bgpcfgd` は `swsscommon.SubscriberStateTable` を使ったチャネルベース購読を採用する。`Runner.add_manager()` が `BGPPeerMgrBase` を登録すると、対応する CONFIG_DB テーブル (`CFG_BGP_NEIGHBOR_TABLE_NAME` 等) の `SubscriberStateTable` を生成して `swsscommon.Select` に追加する (`runner.py` L49-51)。**bgpcfgd は `BGP_PEER_GROUP` テーブルを直接購読しない**。`BGPPeerGroupMgr` (`managers_bgp.py` L15-84) は `BGPPeerMgrBase.add_peer()` から呼ばれる内部ヘルパーであり、peer-group の Jinja2 テンプレートをレンダリングして `cfg_mgr.push()` 経由で FRR に送出する。
+`bgpcfgd` は `swsscommon.SubscriberStateTable` を使ったチャネルベース購読を採用する。`Runner.add_manager()` が `BGPPeerMgrBase` を登録すると、対応する CONFIG_DB テーブル (`CFG_BGP_NEIGHBOR_TABLE_NAME` 等) の `SubscriberStateTable` を生成して `swsscommon.Select` に追加する (`runner.py` L49-51)。**[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は `BGP_PEER_GROUP` テーブルを直接購読しない**。`BGPPeerGroupMgr` (`managers_bgp.py` L15-84) は `BGPPeerMgrBase.add_peer()` から呼ばれる内部ヘルパーであり、peer-group の Jinja2 テンプレートをレンダリングして `cfg_mgr.push()` 経由で FRR に送出する。
 
 ```
 CONFIG_DB BGP_NEIGHBOR / BGP_PEER_RANGE などの変更
@@ -634,4 +634,4 @@ bgpcfgd テンプレートが参照する runtime 定数。値はデプロイ時
 | local-preference (NO_EXPORT 一致時) | `80` | `FROM_VOQ_CHASSIS V4 permit 2` / `V6 permit 3` の `set local-preference` | `voq_chassis/policies.conf.j2:16,50` |
 <!-- /constants -->
 
-<!-- glossary-links-injected: d4d0b1f9b453 -->
+<!-- glossary-links-injected: 4a352249be82 -->
