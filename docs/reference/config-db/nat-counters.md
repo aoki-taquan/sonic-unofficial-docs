@@ -42,26 +42,19 @@ related:
 
 ```mermaid
 flowchart LR
-  SAI["SAI<br/>sai_nat_api"]
-  ORCH["orchagent / NatOrch<br/>(5s タイマ)"]
-  SAI -- "hit bits + counters" --> ORCH
-  COUNTERS_NAT[("COUNTERS_DB<br/>COUNTERS_NAT")]
-  COUNTERS_NAPT[("COUNTERS_DB<br/>COUNTERS_NAPT")]
-  COUNTERS_TWICE_NAT[("COUNTERS_DB<br/>COUNTERS_TWICE_NAT")]
-  COUNTERS_GLOBAL[("COUNTERS_DB<br/>COUNTERS_GLOBAL_NAT")]
-  ORCH --> COUNTERS_NAT
-  ORCH --> COUNTERS_NAPT
-  ORCH --> COUNTERS_TWICE_NAT
-  ORCH --> COUNTERS_GLOBAL
-  CLI["show nat statistics"]
-  COUNTERS_NAT --> CLI
-  COUNTERS_NAPT --> CLI
-  COUNTERS_TWICE_NAT --> CLI
-  COUNTERS_GLOBAL --> CLI
+  CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
+  DM["natmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_switch_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    COUNTERS_TWICE_NAPT は COUNTERS_TWICE_NAT と同構造。図では省略。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

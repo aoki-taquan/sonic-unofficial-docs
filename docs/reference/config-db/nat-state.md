@@ -46,23 +46,16 @@ flowchart LR
   CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
   DM["natmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>NAT_TABLE")]
+  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
   DM --> APPDB
-  ORCH["orchagent / NatOrch"]
-  APPDB --> ORCH
-  SAI["SAI<br/>sai_nat_api"]
-  ORCH --> SAI
-  STATEDB[("STATE_DB<br/>NAT_RESTORE_TABLE")]
-  RESTORE["restore_nat_entries.py"] --> STATEDB
-  NATSYNC["natsyncd"] -- "hget Flags.restored" --> STATEDB
-  COUNTERS[("COUNTERS_DB<br/>COUNTERS_NAT*")]
-  ORCH -- "5s poll" --> SAI
-  SAI -- "hit/bytes" --> ORCH
-  ORCH --> COUNTERS
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_switch_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    STATE_DB/COUNTERS_DB の書き込み経路を追加した図。通常の CONFIG → SAI パスは左側を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

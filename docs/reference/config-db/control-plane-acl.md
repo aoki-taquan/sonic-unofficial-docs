@@ -46,21 +46,19 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>ACL_TABLE (CTRLPLANE)")]
+  CDB[("CONFIG_DB<br/>ACL_TABLE")]
   DM["AclOrch"]
   CDB --> DM
-  DM -->|"m_ctrlAclTables<br/>(SAI 投入なし)"| MEM["orchagent 内部"]
-  COPP_CDB[("CONFIG_DB<br/>COPP_GROUP / COPP_TRAP")]
-  COPPMGR["coppmgrd"]
-  COPP_CDB --> COPPMGR
-  APPDB[("APP_DB<br/>COPP_TABLE")]
-  COPPMGR --> APPDB
-  SAI["SAI<br/>sai_hostif_api"]
-  APPDB --> SAI
+  APPDB[("APP_DB<br/>APP_ACL_TABLE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_acl_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CTRLPLANE ACL テーブルは orchagent が SAI に渡さない。実際の CPU 宛パケット制御は COPP_GROUP/COPP_TRAP 経路が担う。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

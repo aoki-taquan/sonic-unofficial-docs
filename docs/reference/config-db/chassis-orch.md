@@ -42,25 +42,19 @@ related:
 `PASS_THROUGH_ROUTE_TABLE` は [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持され、VoQ (Virtual Output Queue) チャシスの**フロントエンドルータ**が VNet パススルールートを管理するテーブルである[^1]。`orchagent` 内の `ChassisOrch` がこのテーブルを購読し、VNet nextHop 変化通知を受けて APP_DB の同名テーブルへルートエントリを転送する。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB\nPASS_THROUGH_ROUTE_TABLE")]
-  ChOrch["ChassisOrch\n(orchagent)"]
-  VNetOrch["VNetRouteOrch\n(observer)"]
-  ADB[("APP_DB\nPASS_THROUGH_ROUTE_TABLE")]
-  RouteOrch["routeorch"]
-
-  CDB -->|doTask: attach/detach| ChOrch
-  ChOrch -->|attach(observer)| VNetOrch
-  VNetOrch -->|VNetNextHopUpdate| ChOrch
-  ChOrch -->|set/del| ADB
-  ADB --> RouteOrch
+  CDB[("CONFIG_DB<br/>PASS_THROUGH_ROUTE_TABLE")]
+  DM["ChassisOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_route_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB エントリが「パススルールートを有効にする」シグナルとして機能する。実際のルート情報は VNetRouteOrch から通知された `VNetNextHopUpdate` をもとに APP_DB に書き込まれる。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

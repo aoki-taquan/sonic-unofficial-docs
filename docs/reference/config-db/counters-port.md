@@ -38,21 +38,15 @@ related:
 
 ```mermaid
 flowchart LR
-  CFG[("CONFIG_DB<br/>FLEX_COUNTER_TABLE|PORT")]
-  ORC["portsorch"]
-  syncd["syncd<br/>FlexCounter"]
-  HW["SAI / ASIC"]
-  CNTDB[("COUNTERS_DB<br/>COUNTERS:<oid>")]
-  CFG --> ORC
-  ORC --> syncd
-  syncd --> HW
-  HW --> syncd
-  syncd --> CNTDB
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB の `FLEX_COUNTER_TABLE|PORT` が `enable` になると portsorch が SAI カウンタ ID リストを syncd へ投入。syncd が 1 s ごとにポーリングして COUNTERS_DB を更新する。
-
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

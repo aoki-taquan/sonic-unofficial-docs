@@ -36,10 +36,10 @@ flowchart LR
   CDB --> DM
   APPDB[("APP_DB<br/>APP_SFLOW_SESSION_TABLE")]
   DM --> APPDB
-  ORCH["orchagent<br/>SflowOrch"]
-  APPDB --> ORCH
-  SAI["SAI<br/>sai_samplepacket_api<br/>sai_port_api"]
-  ORCH --> SAI
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_samplepacket_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"

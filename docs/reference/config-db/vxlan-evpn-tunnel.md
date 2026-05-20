@@ -46,18 +46,19 @@ CLI 生成エントリ (`TNL_CREATION_SRC_CLI`) とは別物であり、オペ�
 
 ```mermaid
 flowchart LR
-  BGP["bgpd / FRR<br/>(EVPN type-2/3)"]
-  FPMSYNCD["fpmsyncd"]
-  APPDB[("APP_DB<br/>EVPN_REMOTE_VNI_TABLE")]
-  BGP --> FPMSYNCD
-  FPMSYNCD --> APPDB
-  APPDB --> ORCH["orchagent<br/>EvpnRemoteVniOrch"]
-  ORCH --> SAI["SAI<br/>sai_tunnel_api (P2P)"]
+  CDB[("CONFIG_DB<br/>VXLAN_TUNNEL")]
+  DM["vxlanmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VXLAN_TUNNEL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_tunnel_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB 由来ではなく APP_DB 経由の動的生成フロー。`VXLAN_TUNNEL` (CONFIG_DB) で定義した
-    VTEP が先に有効化されている前提で動作する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## トンネル識別

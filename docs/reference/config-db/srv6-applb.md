@@ -44,18 +44,19 @@ SONiC の SRv6 制御面は 3 層構造をとる。
 
 ```mermaid
 flowchart LR
-  FRR["FRR (zebra/bgpd)"]
-  FPM["fpmsyncd\n(routesync.cpp)"]
-  APSID[("APPL_DB\nSRV6_MY_SID_TABLE")]
-  APLIST[("APPL_DB\nSRV6_SID_LIST_TABLE")]
-  ORCH["Srv6Orch"]
-  SAI["SAI / ASIC\nMY_SID_ENTRY\nSRV6_SIDLIST"]
-  FRR --> FPM --> APSID --> ORCH --> SAI
-  FPM --> APLIST --> ORCH
+  CDB[("CONFIG_DB<br/>SRV6_MY_SIDS")]
+  DM["Srv6Orch"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_SRV6_MY_SID_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_srv6_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    APPL_DB は FRR と ASIC の橋渡しテーブルであり、直接ユーザー設定するテーブルではない。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ---

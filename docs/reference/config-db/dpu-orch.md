@@ -64,23 +64,15 @@ SmartSwitch の DPU (Data Processing Unit) 上で動作する orchagent は `Dpu
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>DEVICE_METADATA|localhost")]
-  Main["orchagent<br/>main.cpp<br/>getCfgSwitchType()"]
-  Daemon["DpuOrchDaemon"]
-  DASH_DB[("DPU_APPL_DB<br/>DASH テーブル群")]
-  ZMQ["ZMQ チャネル<br/>(gNMI → orchagent)"]
-  SAI["SAI / ASIC<br/>(DPU 側)"]
-
-  CDB -->|switch_type=dpu| Main
-  Main --> Daemon
-  CDB -->|orch_northbond_dash_zmq_enabled| Daemon
-  ZMQ -->|DASH イベント| Daemon
-  DASH_DB --> Daemon
-  Daemon --> SAI
+  CDB[("CONFIG_DB<br/>DEVICE_METADATA")]
+  DM["SwitchOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_switch_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    `switch_type` の読み取りは orchagent 起動時に一度のみ。`orch_northbond_dash_zmq_enabled` は DpuOrchDaemon::init() でも一度読み取られ、ZMQ サーバの有無が決定する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## フィールド

@@ -45,15 +45,14 @@ flowchart LR
   CDB --> DM
   APPDB[("APP_DB<br/>APP_DB")]
   DM --> APPDB
-  OA["orchagent<br/>CoppOrch"]
-  APPDB --> OA
-  SAI["SAI<br/>sai_hostif_api<br/>(GENETLINK)"]
-  OA --> SAI
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_hostif_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路。`genetlink_name` が存在する場合は `SAI_HOSTIF_TYPE_GENETLINK` 型の HostIf が作成され、trap ごとに HOSTIF_TABLE_ENTRY (CHANNEL_TYPE_GENETLINK) が紐付けられる。
-
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

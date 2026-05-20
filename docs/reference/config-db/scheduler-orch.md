@@ -34,21 +34,19 @@ related:
 本ページは [`SCHEDULER テーブル`](scheduler.md) の orchagent 処理詳解ページである。テーブル全体の概要・key 構造・フィールド一覧は [`SCHEDULER テーブル`](scheduler.md) を参照。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SCHEDULER")]
-  QO["orchagent<br/>QosOrch::handleSchedulerTable()"]
+  DM["QosOrch"]
+  CDB --> DM
   SAI["SAI<br/>sai_scheduler_api"]
-  ASIC["ASIC"]
-  CDB --> QO
-  QO -->|create_scheduler / set_scheduler_attribute| SAI
-  SAI --> ASIC
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    各フィールドは存在する場合のみ SAI 属性として送信される。省略フィールドは SAI ベンダーデフォルトになる。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 <!-- defaults -->

@@ -43,6 +43,22 @@ Dual-ToR 構成における mux cable の実行時状態は STATE_DB の 2 つ�
 
 本ページは **STATE_DB テーブルのフィールド**・**コード由来デフォルト**・**書き込みタイミング**に焦点を当てる。CONFIG_DB の設定については [`MUX_CABLE`](mux-cable.md) / [`MUX_CABLE (per-port 詳細)`](mux-cable-port.md) を参照。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>MUX_CABLE")]
+  DM["MuxOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_neighbor_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```text

@@ -37,6 +37,22 @@ BUM (Broadcast / Unknown-unicast / Unknown-multicast) storm control は `PORT_ST
 YANG と実装の間には複数の乖離 (discrepancy) とハードコード挙動が存在する。以下に詳細を示す。
 
 <!-- defaults -->
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>PORT_STORM_CONTROL")]
+  DM["PolicerOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_policer_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## 暗黙デフォルトとハードコード挙動
 
 <!-- evidence: meta/_intermediate/cdb-flow/storm-control-defaults.md -->

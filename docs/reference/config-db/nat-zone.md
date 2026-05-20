@@ -45,19 +45,19 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>INTERFACE|&lt;port&gt;<br/>nat_zone=N")]
-  NM["natmgrd<br/>(NatMgr)"]
-  IA["orchagent<br/>(IntfsOrch)"]
-  IPT["kernel<br/>iptables mangle"]
-  SAI["SAI<br/>SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID"]
-  CDB --> NM
-  CDB --> IA
-  NM --> IPT
-  IA --> SAI
+  CDB[("CONFIG_DB<br/>INTERFACE")]
+  DM["intfmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_INTF_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_router_intf_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路。`natmgrd` は iptables mangle MARK ルールを管理し、`orchagent` は SAI RIF 属性を設定する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

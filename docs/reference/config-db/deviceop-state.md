@@ -44,7 +44,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>DEVICE_NEIGHBOR")]
-  DM["pfcwd / ecnconfig<br/>show interfaces / bgpcfgd"]
+  DM["lldpmgrd"]
   CDB --> DM
 ```
 

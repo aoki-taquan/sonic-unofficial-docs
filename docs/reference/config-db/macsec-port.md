@@ -34,16 +34,14 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>PORT (macsec)")]
-  DM["macsecmgrd"]
+  CDB[("CONFIG_DB<br/>PORT")]
+  DM["portmgrd"]
   CDB --> DM
-  WPA["wpa_supplicant<br/>(MKA)"]
-  DM --> WPA
-  APPDB[("APP_DB<br/>MACSEC_PORT_TABLE")]
+  APPDB[("APP_DB<br/>APP_PORT_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD
-  SAI["SAI<br/>sai_macsec_api"]
+  SAI["SAI<br/>sai_port_api"]
   SYNCD --> SAI
 ```
 

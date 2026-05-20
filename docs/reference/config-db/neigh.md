@@ -50,10 +50,14 @@ FG-NHG (Fine-Grained ECMP) 構成では `minigraph.py` が本テーブルを自�
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>NEIGH")]
-  NM["nbrmgrd<br/>(NbrMgr)"]
-  KNB["Linux kernel<br/>neighbor table"]
-  CDB --> NM
-  NM -->|RTM_NEWNEIGH| KNB
+  DM["nbrmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_NEIGH_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_neighbor_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"

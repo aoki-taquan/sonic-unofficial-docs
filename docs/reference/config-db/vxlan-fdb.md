@@ -45,20 +45,19 @@ related:
 
 ```mermaid
 flowchart LR
-  KNL["Linux Kernel\n(netlink RTM_NEWNEIGH)"]
-  FDBSYNCD["fdbsyncd"]
-  KNL --> FDBSYNCD
-  APPDB[("APP_DB\nVXLAN_FDB_TABLE")]
-  FDBSYNCD --> APPDB
-  ORCH["orchagent\nFdbOrch"]
-  APPDB --> ORCH
-  SAI["SAI\nsai_fdb_api"]
-  ORCH --> SAI
+  CDB[("CONFIG_DB<br/>VXLAN_TUNNEL")]
+  DM["vxlanmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VXLAN_TUNNEL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_tunnel_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    VXLAN_FDB_TABLE は CONFIG_DB ではなく APP_DB に書かれる。fdbsyncd (fdbsyncd コンテナ) が netlink から直接書き込む。
-
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

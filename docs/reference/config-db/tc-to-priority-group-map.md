@@ -35,17 +35,14 @@ Traffic Class (TC) を ingress Priority Group (PG) へマップする[^1]。PG �
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>TC_TO_PRIORITY_GROUP_MAP")]
-  QO["QosOrch"]
-  CDB --> QO
+  DM["QosOrch"]
+  CDB --> DM
   SAI["SAI<br/>sai_qos_map_api"]
-  QO --> SAI
-  TDO["TunnelDecapOrch"]
-  CDB -->|decap_tc_to_pg_map| TDO
-  TDO --> SAI
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を示すミニ図。`TunnelDecapOrch` は `TUNNEL_DECAP_TABLE` 経由で同マップを参照する。詳細は本ページ本文と対応表を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

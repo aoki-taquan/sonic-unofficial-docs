@@ -34,16 +34,12 @@ SSH デーモン (sshd) のセキュリティ・セッションポリシーを�
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SSH_SERVER")]
-  DM["hostcfgd<br/>(SshServer)"]
-  SSHD["/etc/ssh/sshd_config"]
-  PAM["/etc/security/limits.d/"]
+  DM["hostcfgd"]
   CDB --> DM
-  DM --> SSHD
-  DM --> PAM
 ```
 
 !!! note "凡例"
-    CONFIG_DB から実コンポーネントまでの経路を示すミニ図。詳細・例外は本ページ本文を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

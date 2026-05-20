@@ -56,21 +56,15 @@ ZMQ に関連する [CONFIG_DB](../../reference/glossary.md#term-config_db) フ�
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB\nDEVICE_METADATA | DPU")]
-  SH["orchagent.sh\ngnmi-native.sh"]
-  ORCH["orchagent\n(ZmqServer)"]
-  GNMI["gnmi\n(ZmqClient)"]
-  FPM["fpmsyncd\n(ZmqClient)"]
-  CDB -->|orch_northbond_dash_zmq_enabled| SH
-  CDB -->|orch_northbond_route_zmq_enabled| FPM
-  CDB -->|subtype=SmartSwitch| SH
-  SH -->|"-q tcp://..."| ORCH
-  GNMI -->|"DASH tables"| ORCH
-  FPM -->|"ROUTE_TABLE"| ORCH
+  CDB[("CONFIG_DB<br/>DEVICE_METADATA")]
+  DM["SwitchOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_switch_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から orchagent ZMQ サーバへの典型経路。詳細・例外は本文と関連ページを参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 <!-- defaults -->

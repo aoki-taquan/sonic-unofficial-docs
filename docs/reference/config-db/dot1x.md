@@ -41,18 +41,13 @@ Port Access Control (PAC) は [802.1x](../../reference/glossary.md#term-dot1x) �
 
 ```mermaid
 flowchart LR
-  CDB1[("CONFIG_DB<br/>PAC_PORT_CONFIG_TABLE")]
-  CDB2[("CONFIG_DB<br/>HOSTAPD_GLOBAL_CONFIG_TABLE")]
-  PACMGR["pacmgrd<br/>(sonic-pac docker)"]
-  HOSTAPD["hostapdmgrd"]
-  AUTHMGR["Authentication Manager<br/>(authmgr)"]
-  CDB1 --> PACMGR --> AUTHMGR
-  CDB2 --> PACMGR
-  CDB2 --> HOSTAPD --> AUTHMGR
+  CDB[("CONFIG_DB<br/>PAC_PORT_CONFIG_TABLE")]
+  DM["pacd"]
+  CDB --> DM
 ```
 
 !!! note "凡例"
-    CONFIG_DB から authmgr までの典型経路。SAI 呼び出しは FDB / VLAN Manager 経由で行われる。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

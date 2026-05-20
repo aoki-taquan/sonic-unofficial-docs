@@ -32,18 +32,15 @@ related:
 
 ```mermaid
 flowchart LR
-  J2["switch.json.j2<br/>(build-time template)"]
-  APPDB[("APPL_DB<br/>SWITCH_TABLE:switch")]
-  SO["SwitchOrch<br/>doAppSwitchTableTask()"]
-  SAI["SAI<br/>SAI_SWITCH_ATTR_FDB_AGING_TIME"]
-
-  J2 -->|swssconfig| APPDB
-  APPDB --> SO
-  SO --> SAI
+  CDB[("CONFIG_DB<br/>DEVICE_METADATA")]
+  DM["SwitchOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_switch_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    APPL_DB から SAI までの典型経路。CONFIG_DB を経由しないフィールドのため、APPL_DB が起点となる。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

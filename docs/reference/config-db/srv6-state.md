@@ -42,23 +42,19 @@ SRv6 の MySID エントリに対するパケット・バイトカウンタは `
 
 ```mermaid
 flowchart LR
-  CFG[("CONFIG_DB<br/>SRV6_MY_SIDS")]
-  ORCH["Srv6Orch<br/>addMySidCounter()"]
-  SAI["SAI<br/>SAI_MY_SID_ENTRY_ATTR_COUNTER_ID"]
-  FC["FlexCounter<br/>SRV6_STAT_COUNTER<br/>(10 秒ポーリング)"]
-  MAP[("COUNTERS_DB<br/>COUNTERS_SRV6_NAME_MAP")]
-  CNT[("COUNTERS_DB<br/>COUNTERS:<oid>")]
-  CLI["show srv6 stats<br/>(srv6stat.py)"]
-
-  CFG --> ORCH --> SAI
-  ORCH --> MAP
-  FC --> CNT
-  MAP --> CLI
-  CNT --> CLI
+  CDB[("CONFIG_DB<br/>SRV6_MY_SIDS")]
+  DM["Srv6Orch"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_SRV6_MY_SID_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_srv6_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から COUNTERS_DB までの典型経路。SAI がカウンタ未対応の場合 MAP/CNT は生成されない。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## テーブル: `COUNTERS_SRV6_NAME_MAP`

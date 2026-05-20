@@ -70,6 +70,26 @@ flowchart LR
 
 ---
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>ACL_TABLE")]
+  DM["AclOrch"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_ACL_TABLE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_acl_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## ACL_TABLE_TABLE
 
 ### key 構造

@@ -54,15 +54,15 @@ MC-[LAG](../../reference/glossary.md#term-lag) (Multi-Chassis Link Aggregation) 
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>MCLAG_INTERFACE")]
+  CDB[("CONFIG_DB<br/>MCLAG_DOMAIN")]
   DM["MlagOrch"]
   CDB --> DM
-  OB["FdbOrch (Observer)"]
-  DM --> OB
+  SAI["SAI<br/>sai_fdb_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から MlagOrch までの典型経路。MlagOrch は SAI を直接呼ばず、Observer 通知 (`SUBJECT_TYPE_MLAG_INTF_CHANGE`) を broadcast し FdbOrch が FDB フラッシュ制御に利用する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

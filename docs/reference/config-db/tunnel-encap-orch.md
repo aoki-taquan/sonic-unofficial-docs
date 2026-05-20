@@ -38,17 +38,23 @@ related:
 本ページは `VXLAN_TUNNEL` テーブルのフィールド仕様ではなく、**orchagent 側が付与する encap 関連のコード由来デフォルト**にフォーカスする[^1]。テーブル仕様は [`VXLAN_TUNNEL`](vxlan-tunnel.md) を参照。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB\nVXLAN_TUNNEL\nVXLAN_TUNNEL_MAP\nVXLAN_EVPN_NVO")]
-  VTO["VxlanTunnelOrch\n(orchagent)"]
-  SAI["SAI\nsai_tunnel_api\ncreate_tunnel()"]
-  CDB --> VTO
-  VTO --> SAI
+  CDB[("CONFIG_DB<br/>VXLAN_TUNNEL")]
+  DM["vxlanmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VXLAN_TUNNEL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_tunnel_api"]
+  SYNCD --> SAI
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## encap トンネル生成タイミング

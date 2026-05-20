@@ -46,24 +46,19 @@ related:
 `ROUTE_TABLE` の `nexthop_group` フィールドが本テーブルのキーを参照することで、経路とグループが結び付けられる。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  FRR["FRR (Zebra)"]
-  FPM["fpmsyncd"]
-  NHG[("APPL_DB<br/>NEXTHOP_GROUP_TABLE")]
-  CBF[("APPL_DB<br/>CLASS_BASED_NEXT_HOP_GROUP_TABLE")]
-  OA1["NhgOrch"]
-  OA2["CbfNhgOrch"]
+  CDB[("CONFIG_DB<br/>FG_NHG")]
+  DM["FgNhgOrch"]
+  CDB --> DM
   SAI["SAI<br/>sai_next_hop_group_api"]
-  HW["ASIC"]
-  FRR --> FPM --> NHG --> OA1 --> SAI --> HW
-  CBF --> OA2 --> SAI
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    APPL_DB から SAI までの典型経路。CBF テーブルは fpmsyncd 非経由（直接書き込み）。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

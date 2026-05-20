@@ -39,7 +39,7 @@ hard: 0
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SNMP_COMMUNITY")]
-  DM["snmp-config / snmpd.conf.j2"]
+  DM["snmp-config"]
   CDB --> DM
 ```
 

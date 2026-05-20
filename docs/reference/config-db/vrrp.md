@@ -50,16 +50,13 @@ Consumer: `macvlanmgrd` (CONFIG_DB を subscribe → Linux macvlan デバイス�
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>VRRP / VRRP6")]
-  DM["macvlanmgrd"]
-  APPL[("APPL_DB<br/>VRRP_TABLE")]
-  FRR["vrrpd (FRR)"]
-  CDB --> DM --> APPL
-  DM --> FRR
+  CDB[("CONFIG_DB<br/>VRRP")]
+  DM["vrrpcfgd"]
+  CDB --> DM
 ```
 
 !!! note "凡例"
-    CONFIG_DB から FRR/APPL_DB までの典型経路。macvlanmgrd が macvlan デバイスを Linux カーネルに作成し、APPL_DB に VMAC 情報を書き込む。vrrpd (FRR) が VRRP 状態機械を実行する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

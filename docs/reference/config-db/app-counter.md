@@ -62,21 +62,15 @@ SONiC には 2 種類のアプリケーションレベルフローカウンタ�
 
 ```mermaid
 flowchart LR
-  FCT[("CONFIG_DB<br/>FLEX_COUNTER_TABLE<br/>FLOW_CNT_TRAP / FLOW_CNT_ROUTE")]
-  PAT[("CONFIG_DB<br/>FLOW_COUNTER_ROUTE_PATTERN")]
-  ORC["copporch / FlowCounterRouteOrch"]
-  FCB[("FLEX_COUNTER_DB<br/>FLOW_COUNTER_ID_LIST")]
-  SD["syncd<br/>(FlexCounter)"]
-  CNT[("COUNTERS_DB<br/>COUNTERS:&lt;oid&gt;")]
-  FCT --> ORC
-  PAT --> ORC
-  ORC --> FCB
-  FCB --> SD
-  SD --> CNT
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB の 2 テーブルが orchagent を通じて FLEX_COUNTER_DB に per-OID エントリを書き込み、syncd が SAI generic counter API で周期収集した結果が COUNTERS_DB に格納される。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## FLEX_COUNTER_TABLE|FLOW_CNT_TRAP

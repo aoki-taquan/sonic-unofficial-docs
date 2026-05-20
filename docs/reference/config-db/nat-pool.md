@@ -45,14 +45,14 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>NAT_POOL")]
+  CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
   DM["natmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>NAT_DNAT_POOL_TABLE")]
+  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
   DM --> APPDB
-  SYNCD["orchagent / NatOrch"]
+  SYNCD["syncd"]
   APPDB --> SYNCD
-  SAI["SAI<br/>sai_nat_api"]
+  SAI["SAI<br/>sai_switch_api"]
   SYNCD --> SAI
 ```
 

@@ -80,19 +80,19 @@ VRF-aware 経路では VRF 名が key に埋め込まれる（コロン区切り
 
 ```mermaid
 flowchart LR
-  FRR["FRR bgpd / zebra"]
-  FPMSYNCD["fpmsyncd"]
-  FRR -->|FPM socket| FPMSYNCD
-  APPDB[("APPL_DB<br/>ROUTE_TABLE")]
-  FPMSYNCD --> APPDB
-  ORCHAGENT["orchagent<br/>RouteOrch"]
-  APPDB --> ORCHAGENT
+  CDB[("CONFIG_DB<br/>STATIC_ROUTE")]
+  DM["fpmsyncd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_ROUTE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
   SAI["SAI<br/>sai_route_api"]
-  ORCHAGENT --> SAI
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    FRR から SAI までの転送経路。fpmsyncd が APPL_DB の書き込み主体となる。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## 制約

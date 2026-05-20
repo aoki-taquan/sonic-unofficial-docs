@@ -43,22 +43,23 @@ related:
 | `orchagent` (`StpOrch`) | 起動時に SAI から `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` 取得成功時 | `orchagent/stporch.cpp` |
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  SAI["ASIC SAI\nSAI_SWITCH_ATTR_MAX_STP_INSTANCE"]
-  STPORCH["StpOrch\n(orchagent)"]
-  STATEDB[("STATE_DB\nSTP_TABLE|GLOBAL")]
-  STPMGR["StpMgr\n(stpmgrd)\ngetStpMaxInstances()"]
-  STPD["stpd\n(STP daemon)"]
-
-  SAI -->|"get_switch_attribute()"| STPORCH
-  STPORCH -->|"max_stp_inst = N-1"| STATEDB
-  STATEDB -->|"60秒ポーリング\n読み取り"| STPMGR
-  STPMGR -->|"IPC メッセージ"| STPD
+  CDB[("CONFIG_DB<br/>STP")]
+  DM["stpmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_DB")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_stp_api"]
+  SYNCD --> SAI
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

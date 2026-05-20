@@ -41,24 +41,23 @@ related:
 CONFIG_DB の `PORT` テーブル（設定フィールド）とは **別テーブル、別 DB** であることに注意。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  KNL["カーネル netlink\nRTM_NEWLINK / RTM_DELLINK"]
-  PSYNC["portsyncd\nLinksync::onMsg()"]
-  SAI["SAI\nsai_port_api"]
-  ORCH["PortsOrch\northagent"]
-  STATE[("STATE_DB\nPORT_TABLE|Ethernet*")]
-  CLI["show interfaces status\nshow interfaces fec status"]
-
-  KNL -->|"IFF_UP / IFF_RUNNING / MTU"| PSYNC
-  PSYNC --> STATE
-  SAI -->|"oper speed / FEC / AN / LT"| ORCH
-  ORCH --> STATE
-  STATE --> CLI
+  CDB[("CONFIG_DB<br/>PORT")]
+  DM["portmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_PORT_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_port_api"]
+  SYNCD --> SAI
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

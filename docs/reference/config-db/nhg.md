@@ -32,23 +32,19 @@ related:
 `fpmsyncd` (`routesync.cpp`) が FRR/Zebra から kernel netlink 経由で受信した ECMP ルートを変換して書き込む。`NhgOrch` が APPL\_DB を購読し、[SAI](../../reference/glossary.md#term-sai) の `sai_next_hop_group_api` を使って next hop group を作成・更新する。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  FRR["FRR / Zebra"]
-  FS["fpmsyncd\n(routesync)"]
-  ADB[("APPL_DB\nNEXTHOP_GROUP_TABLE")]
-  NH["NhgOrch\n(orchagent)"]
-  SAI["SAI\nsai_next_hop_group_api"]
-  FRR -->|netlink| FS
-  FS --> ADB
-  ADB --> NH
-  NH --> SAI
+  CDB[("CONFIG_DB<br/>FG_NHG")]
+  DM["FgNhgOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_next_hop_group_api"]
+  DM --> SAI
 ```
 
-!!! note "注意"
-    `NEXTHOP_GROUP_TABLE` は CONFIG\_DB ではなく **APPL\_DB** に存在する。本ページは参照の便宜上 `docs/reference/config-db/` 以下に配置しているが、書き込み元は CLI・minigraph ではなく `fpmsyncd` (ルーティングデーモン連携) である。
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

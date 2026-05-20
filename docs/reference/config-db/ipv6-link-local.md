@@ -42,24 +42,23 @@ related:
 有効化すると、手動でグローバル IPv6 アドレスを設定しない場合でも `FE80::/64` の link-local アドレスが自動生成される。BGP unnumbered ピアリング (RFC 5549) や ICMPv6 近隣探索 (NDP) を利用する IPv6 データセンターネットワークで使われる。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB\nINTERFACE|EthernetX\nipv6_use_link_local_only")]
-  intfmgr["intfmgrd\n(swss)"]
-  APPDB[("APP_DB\nINTF_TABLE")]
-  neighsyncd["neighsyncd\n(swss)"]
-  NEIGH[("APP_DB\nNEIGH_TABLE")]
-
-  CDB --> intfmgr
-  intfmgr --> APPDB
-  neighsyncd -->|"isLinkLocalEnabled()\ncheck"| CDB
-  APPDB -->|link-local neigh 追加| NEIGH
+  CDB[("CONFIG_DB<br/>INTERFACE")]
+  DM["intfmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_INTF_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_router_intf_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から APP_DB までの経路。SAI への転送は `ipv6_use_link_local_only` フィールド自体では発生しない (orchagent は本フィールドを SAI に転送しない)。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

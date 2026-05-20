@@ -43,23 +43,19 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>STATIC_NAT / NAT_GLOBAL")]
-  NatMgr["natmgrd"]
-  CDB --> NatMgr
-  CONN["kernel conntrack"]
-  NatSync["natsyncd"]
-  CONN --> NatSync
-  APPDB[("APPL_DB<br/>NAT_TABLE / NAPT_TABLE<br/>NAT_TWICE_TABLE / NAT_GLOBAL_TABLE")]
-  NatMgr --> APPDB
-  NatSync --> APPDB
-  Orch["orchagent / NatOrch"]
-  APPDB --> Orch
-  SAI["SAI<br/>sai_nat_api"]
-  Orch --> SAI
+  CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
+  DM["natmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_switch_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路。詳細は本ページ本文を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

@@ -37,6 +37,26 @@ APP_VLAN_TABLE_NAME        = "VLAN_TABLE"
 APP_VLAN_MEMBER_TABLE_NAME = "VLAN_MEMBER_TABLE"
 ```
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>VLAN")]
+  DM["vlanmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VLAN_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_vlan_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## データフロー
 
 ```mermaid

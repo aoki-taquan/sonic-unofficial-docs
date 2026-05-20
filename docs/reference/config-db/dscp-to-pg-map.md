@@ -51,24 +51,19 @@ DSCP (0-63)
 ## 実際のアーキテクチャ
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  PKT["受信パケット<br/>DSCP 0-63"]
-  D2T[("CONFIG_DB<br/>DSCP_TO_TC_MAP")]
-  T2P[("CONFIG_DB<br/>TC_TO_PRIORITY_GROUP_MAP")]
-  PORT[("CONFIG_DB<br/>PORT_QOS_MAP")]
-  ORC["QosOrch"]
+  CDB[("CONFIG_DB<br/>DSCP_TO_TC_MAP")]
+  DM["QosOrch"]
+  CDB --> DM
   SAI["SAI<br/>sai_qos_map_api"]
-
-  PORT -->|dscp_to_tc_map| D2T
-  PORT -->|tc_to_pg_map| T2P
-  D2T --> ORC
-  T2P --> ORC
-  ORC --> SAI
-  PKT -->|ingress| SAI
+  DM --> SAI
 ```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ### 段階 1 — DSCP → Traffic Class

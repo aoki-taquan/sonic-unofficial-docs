@@ -70,6 +70,26 @@ STP との連携は主に以下の 2 つの側面で存在する:
     連携は `MCLAG_DOMAIN` テーブルの `source_ip` / `peer_ip` フィールドを入力として iccpd 内部で処理される。
 
 <!-- ordering -->
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>STP")]
+  DM["stpmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_DB")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_stp_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## 書込み順序依存 (Phase B)
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-ordering.md -->

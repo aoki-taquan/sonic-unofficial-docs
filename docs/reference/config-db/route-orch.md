@@ -47,25 +47,23 @@ CONFIG_DB を購読するのは同じ orchagent プロセス内の `FlowCounterR
     - 静的経路の CONFIG_DB 設定: [`STATIC_ROUTE`](static-route.md)
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CLI["sonic-utilities<br/>config flow_counters route add"]
-  CFGDB[("CONFIG_DB<br/>FLOW_COUNTER_ROUTE_PATTERN")]
-  FC["orchagent<br/>FlowCounterRouteOrch"]
-  RO["orchagent<br/>RouteOrch"]
+  CDB[("CONFIG_DB<br/>STATIC_ROUTE")]
+  DM["fpmsyncd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_ROUTE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
   SAI["SAI<br/>sai_route_api"]
-  ASIC["ASIC"]
-  CLI --> CFGDB
-  CFGDB --> FC
-  FC -->|bindFlowCounter| SAI
-  RO -->|addRoute/removeRoute| SAI
-  SAI --> ASIC
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    FlowCounterRouteOrch は RouteOrch が管理する SAI route エントリに flex counter を付与する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

@@ -38,6 +38,22 @@ SONiC の [CONFIG_DB](../../reference/glossary.md#term-config_db) には独立�
 
 クラスタ名は **minigraph XML の `<ClusterName>` 要素**から派生し、`sonic-cfggen` / `minigraph.py` がデバイス起動時に CONFIG_DB へ書き込む。典型値は `"AAA00PrdStr00"` のようなデータセンター内の論理グループ識別子。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>DEVICE_METADATA")]
+  DM["SwitchOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_switch_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```text

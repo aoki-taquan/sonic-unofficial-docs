@@ -63,22 +63,15 @@ related:
 
 ```mermaid
 flowchart LR
-  CFG[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  ORC["portsorch<br/>bufferorch<br/>watermarkorch"]
-  syncd["syncd<br/>FlexCounter"]
-  HW["SAI / ASIC"]
-  CNTDB[("COUNTERS_DB<br/>COUNTERS/WATERMARKS")]
-  CFG --> ORC
-  ORC --> syncd
-  syncd --> HW
-  HW --> syncd
-  syncd --> CNTDB
-  syncd -- "Lua plugin" --> CNTDB
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    `FLEX_COUNTER_TABLE|QUEUE_WATERMARK` / `PG_WATERMARK` / `PORT_BUFFER_DROP` 等が `enable` になると、portsorch / bufferorch が SAI カウンタ ID リストを syncd へ投入し、syncd が定周期でポーリングして COUNTERS_DB を更新する。ウォーターマークは Lua plugin が max 集計して PERIODIC/PERSISTENT/USER_WATERMARKS テーブルへ書き込む。
-
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

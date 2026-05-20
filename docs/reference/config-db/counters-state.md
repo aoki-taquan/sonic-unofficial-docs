@@ -50,18 +50,15 @@ related:
 
 ```mermaid
 flowchart LR
-  SAI["SAI / ASIC<br/>sai_query_stats_capability<br/>sai_query_attribute_enum_values_capability"]
-  ORC["orchagent<br/>portsorch / debugcounterorch"]
-  STATEDB[("STATE_DB<br/>PORT_COUNTER_CAPABILITIES<br/>QUEUE_COUNTER_CAPABILITIES<br/>DEBUG_COUNTER_CAPABILITIES")]
-  CLI["portstat / show debug-counter<br/>(sonic-utilities)"]
-  SAI --> ORC
-  ORC --> STATEDB
-  STATEDB --> CLI
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    これらのテーブルは CONFIG_DB を経由しない。orchagent が SAI から直接能力を読み取り STATE_DB に書き込む。portstat などのツールが COUNTERS_DB ポーリング前にここを参照し、プラットフォームがサポートしないカウンタを事前に除外する。
-
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ---

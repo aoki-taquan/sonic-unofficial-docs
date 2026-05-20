@@ -47,27 +47,15 @@ related:
 
 ```mermaid
 flowchart LR
-  CFG[("CONFIG_DB\nFLEX_COUNTER_TABLE|PG_WATERMARK")]
-  FCO["flexcounterorch\n(orchagent)"]
-  PO["portsorch\n(orchagent)"]
-  WO["watermarkorch\n(orchagent)"]
-  FC["syncd\nFlexCounter\nPG_WATERMARK_STAT_COUNTER"]
-  SAI["SAI\nsai_get_ingress_priority_group_stats"]
-  CDB[("COUNTERS_DB\nPERIODIC/PERSISTENT/USER_WATERMARKS")]
-  CLI["watermarkstat\ncounterpoll show"]
-
-  CFG -- FLEX_COUNTER_STATUS=enable --> FCO
-  FCO -- m_pg_watermark_enabled=true --> PO
-  CFG -- FLEX_COUNTER_STATUS --> WO
-  PO -- setCounterIdList\n(PG OID) --> FC
-  FC -- sai_get_ingress_priority_group_stats\nREAD_AND_CLEAR --> SAI
-  SAI -- ウォーターマーク値 --> FC
-  FC --> CDB
-  CDB --> CLI
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    `FLEX_COUNTER_STATUS=enable` を受けた flexcounterorch が `m_pg_watermark_enabled` フラグを立て、portsorch が PG OID を FlexCounter に登録する。syncd は `READ_AND_CLEAR` モードで SAI カウンタを読み取り後リセットする。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ---

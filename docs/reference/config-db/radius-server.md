@@ -37,10 +37,9 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>RADIUS_SERVER")]
+  CDB[("CONFIG_DB<br/>RADIUS")]
   DM["hostcfgd"]
-  PAM["/etc/pam_radius_auth.d/<br/><ip>_<port>.conf"]
-  CDB --> DM --> PAM
+  CDB --> DM
 ```
 
 !!! note "凡例"

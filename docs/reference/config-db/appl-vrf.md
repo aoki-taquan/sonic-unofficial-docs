@@ -72,20 +72,18 @@ VRF_TABLE|<vrfName>
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>VRF")]
-  VRFMGRD["vrfmgrd"]
-  CDB --> VRFMGRD
-  APPDB[("APPL_DB<br/>VRF_TABLE")]
-  VRFMGRD --> APPDB
-  VRFORCH["orchagent<br/>VRFOrch"]
-  APPDB --> VRFORCH
+  DM["vrfmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VRF_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
   SAI["SAI<br/>sai_virtual_router_api"]
-  VRFORCH --> SAI
-  STATEDB[("STATE_DB<br/>VRF_OBJECT_TABLE")]
-  VRFORCH --> STATEDB
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB → APPL_DB → SAI の典型経路。vrfmgrd が APPL_DB 書き込み主体。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 <!-- pubsub -->

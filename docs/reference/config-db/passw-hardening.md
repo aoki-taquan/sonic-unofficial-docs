@@ -33,12 +33,8 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>PASSW_HARDENING")]
-  DM["hostcfgd<br/>PasswHardening"]
-  PAM["/etc/pam.d/common-password"]
-  LOGIN["/etc/login.defs"]
+  DM["hostcfgd"]
   CDB --> DM
-  DM --> PAM
-  DM --> LOGIN
 ```
 
 !!! note "凡例"

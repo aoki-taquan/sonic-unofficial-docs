@@ -35,12 +35,12 @@ flowchart LR
   CDB[("CONFIG_DB<br/>WATERMARK_TABLE")]
   DM["WatermarkOrch"]
   CDB --> DM
-  WM["COUNTERS_DB<br/>PERIODIC_WATERMARKS"]
-  DM --> WM
+  SAI["SAI<br/>sai_buffer_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から COUNTERS_DB までの典型経路を示す。詳細・例外は本ページ本文を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

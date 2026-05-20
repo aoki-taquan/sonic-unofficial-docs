@@ -34,16 +34,14 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>DSCP_TO_FC_MAP")]
-  DM["QosOrch<br/>(DscpToFcMapHandler)"]
+  DM["QosOrch"]
   CDB --> DM
-  SAI["SAI<br/>sai_qos_map_api<br/>SAI_QOS_MAP_TYPE_DSCP_TO_FORWARDING_CLASS"]
+  SAI["SAI<br/>sai_qos_map_api"]
   DM --> SAI
-  PORT["PORT_QOS_MAP<br/>dscp_to_fc_map"]
-  PORT --> DM
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路。`PORT_QOS_MAP.dscp_to_fc_map` で参照されない限り SAI へのポートバインドは発生しない。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

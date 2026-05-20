@@ -44,19 +44,19 @@ CONFIG_DB エントリは `VNetCfgRouteOrch` によって APPL_DB (`VNET_ROUTE_T
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>VNET_ROUTE / VNET_ROUTE_TUNNEL")]
-  CFGORCH["VNetCfgRouteOrch<br/>(passthrough)"]
-  CDB --> CFGORCH
-  APPDB[("APP_DB<br/>VNET_ROUTE_TABLE / VNET_ROUTE_TUNNEL_TABLE")]
-  CFGORCH --> APPDB
-  ROUTEORCH["VNetRouteOrch<br/>(handleRoutes / handleTunnel)"]
-  APPDB --> ROUTEORCH
-  SAI["SAI<br/>sai_route_api / sai_next_hop_api"]
-  ROUTEORCH --> SAI
+  CDB[("CONFIG_DB<br/>VNET")]
+  DM["vrfmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VNET_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_virtual_router_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路。`VNetCfgRouteOrch` はフィールドを解釈せず passthrough するため、フィールドのデフォルト適用は APPL_DB 購読側の `VNetRouteOrch` で行われる。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

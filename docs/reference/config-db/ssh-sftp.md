@@ -33,16 +33,12 @@ SONiC は OpenSSH パッケージが提供する sshd_config テンプレート�
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SSH_SERVER")]
-  DM["hostcfgd<br/>(SshServer)"]
-  SSHD["/etc/ssh/sshd_config"]
-  SFTP["Subsystem sftp<br/>/usr/lib/openssh/sftp-server<br/>(hostcfgd 非管理)"]
+  DM["hostcfgd"]
   CDB --> DM
-  DM --> SSHD
-  SSHD -.->|OS デフォルト固定| SFTP
 ```
 
 !!! note "凡例"
-    実線は CONFIG_DB 由来の書き込み経路。点線は OS テンプレートとして静的に存在する部分（CONFIG_DB からは書き換わらない）。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## CONFIG_DB との関係

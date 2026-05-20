@@ -38,18 +38,14 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  OA["orchagent<br/>(FlexCounterOrch / PortsOrch)"]
-  FCB[("FLEX_COUNTER_DB<br/>FLEX_COUNTER_TABLE:<group>:<oid>")]
-  SD["syncd<br/>(FlexCounter)"]
+  DM["syncd"]
+  CDB --> DM
   SAI["SAI<br/>sai_*_stats"]
-  CDB --> OA
-  OA --> FCB
-  FCB --> SD
-  SD --> SAI
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB からの設定が orchagent を経て FLEX_COUNTER_DB に書き込まれ、syncd が SAI bulk counter API で収集する流れ。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## FLEX_COUNTER_DB エントリ構造

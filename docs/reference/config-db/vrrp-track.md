@@ -39,22 +39,17 @@ FRR の `vrrpd` は `zebra` 経由でカーネルのインタフェース状態�
     VRRP IPv6 インスタンスの追跡設定は別テーブル `VRRP6_TRACK` で管理される。`VRRP6_TRACK` はキー構造・フィールドともに本テーブルと同一だが、親インスタンスが `VRRP6` テーブルを参照する点が異なる。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>VRRP_TRACK")]
-  FRR["FRR vrrpd"]
-  ZEBRA["zebra<br/>(インタフェース状態監視)"]
-  KERNEL["Linux カーネル<br/>インタフェース Up/Down"]
-  VRRP_PKT["VRRP Advertisement<br/>(priority 更新)"]
-
-  CDB -->|"track 設定読み込み"| FRR
-  KERNEL -->|"netlink 通知"| ZEBRA
-  ZEBRA -->|"インタフェース状態変化通知"| FRR
-  FRR -->|"priority 再計算 → パケット送信"| VRRP_PKT
+  CDB[("CONFIG_DB<br/>VRRP")]
+  DM["vrrpcfgd"]
+  CDB --> DM
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

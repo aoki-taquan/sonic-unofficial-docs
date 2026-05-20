@@ -50,6 +50,20 @@ related:
 - **`SNMP_USER`**: SNMPv3 ユーザ設定。auth / encrypt フィールドが `SNMP_USER_TYPE` 値に連動する暗黙デフォルト（空文字フォールバック）を持つ。
 
 <!-- defaults -->
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>SNMP_AGENT_ADDRESS_CONFIG")]
+  DM["snmp-config"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## フィールド暗黙デフォルト
 
 ### SNMP_AGENT_ADDRESS_CONFIG

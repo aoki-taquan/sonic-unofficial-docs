@@ -42,26 +42,19 @@ related:
 orchagent は `BREAKOUT_CFG` を直接購読しない。CLI（`portconfig` ライブラリ）が `PORT` テーブルを再構成し、orchagent は `PORT` テーブルの変更を受け取る間接フロー。`BREAKOUT_CFG` はモード履歴の管理テーブルとして機能する。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  HW[("hwsku.json<br/>default_brkout_mode")]
-  CFGGEN["sonic-cfggen<br/>portconfig.py"]
   CDB[("CONFIG_DB<br/>BREAKOUT_CFG")]
-  CLI["config interface breakout<br/>(sonic-utilities)"]
-  PORT[("CONFIG_DB<br/>PORT")]
-  ORCH["orchagent<br/>PortsOrch"]
-
-  HW --> CFGGEN
-  CFGGEN -->|起動時書き込み| CDB
-  CLI -->|モード変更時上書き| CDB
-  CLI -->|PORT テーブル再構成| PORT
-  PORT --> ORCH
+  DM["xcvrd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_port_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    `BREAKOUT_CFG` は orchagent への間接経路。orchagent は `PORT` テーブルの変更を受け取る。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

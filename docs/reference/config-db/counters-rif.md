@@ -59,23 +59,15 @@ related:
 
 ```mermaid
 flowchart LR
-  CFG[("CONFIG_DB<br/>FLEX_COUNTER_TABLE|RIF")]
-  ORC["intfsorch"]
-  syncd["syncd<br/>FlexCounter"]
-  HW["SAI / ASIC"]
-  CNTDB[("COUNTERS_DB<br/>COUNTERS:<oid>")]
-  RATES[("COUNTERS_DB<br/>RATES:<oid>")]
-  CFG --> ORC
-  ORC --> syncd
-  syncd --> HW
-  HW --> syncd
-  syncd --> CNTDB
-  syncd -->|"rif_rates.lua"| RATES
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB の `FLEX_COUNTER_TABLE|RIF` が `enable` になると intfsorch が SAI カウンタ ID リストを syncd へ投入。syncd が 1 s ごとにポーリングして COUNTERS_DB を更新し、`rif_rates.lua` Lua プラグインがレート計算結果を RATES テーブルへ書き込む。
-
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

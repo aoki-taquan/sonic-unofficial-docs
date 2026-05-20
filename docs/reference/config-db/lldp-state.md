@@ -43,20 +43,13 @@ related:
 
 ```mermaid
 flowchart LR
-  LLD["lldpd (open-lldp)"]
-  SYN["lldp-syncd"]
-  ADB[("APPL_DB<br/>LLDP_ENTRY_TABLE<br/>LLDP_LOC_CHASSIS")]
-  SNMP["sonic-snmpagent<br/>(LLDP-MIB)"]
-  REST["sonic-mgmt-common<br/>(OpenConfig LLDP)"]
-
-  LLD -->|"LLDP PDU 受信"| SYN
-  SYN -->|"hset"| ADB
-  ADB -->|"hgetall"| SNMP
-  ADB -->|"GetTable"| REST
+  CDB[("CONFIG_DB<br/>LLDP")]
+  DM["lldpmgrd"]
+  CDB --> DM
 ```
 
 !!! note "凡例"
-    APPL_DB への書き込みは lldp-syncd のみ。CONFIG_DB 経路なし。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

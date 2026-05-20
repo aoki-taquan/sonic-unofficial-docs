@@ -39,20 +39,13 @@ related:
 
 ```mermaid
 flowchart LR
-  PAL["Platform API\nget_oper_status()"]
-  CHASSISD["chassisd\n(ModuleUpdater)"]
-  CSDB[("CHASSIS_STATE_DB\n各テーブル")]
-  SUPERVISOR["Supervisor\nasic_status.py"]
-  LINECARD["Line Card\nDpuStateUpdater"]
-
-  PAL --> CHASSISD
-  CHASSISD --> CSDB
-  SUPERVISOR --> CSDB
-  LINECARD --> CSDB
+  CDB[("CONFIG_DB<br/>CHASSIS_MODULE")]
+  DM["chassisd"]
+  CDB --> DM
 ```
 
 !!! note "凡例"
-    Supervisor と Line Card 双方が CHASSIS_STATE_DB に書き込む。読み取り側は `show chassis modules`, `show dpu` CLI、および `asic_status.py`。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## テーブル一覧

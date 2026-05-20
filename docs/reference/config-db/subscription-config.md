@@ -30,6 +30,20 @@ hard: 0
 概要・key 構造の全体像は [`TELEMETRY_CLIENT テーブル`](telemetry-client.md) を参照。本ページは **コード由来デフォルト・実装乖離 (discrepancy)** に焦点を当てる。
 
 <!-- defaults -->
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>TELEMETRY_CLIENT")]
+  DM["telemetry"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## 暗黙デフォルトとコード由来挙動
 
 <!-- evidence: meta/_intermediate/cdb-flow/subscription-config-defaults.md -->

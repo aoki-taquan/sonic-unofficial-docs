@@ -56,21 +56,15 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE|SRV6")]
-  OA["orchagent<br/>(Srv6Orch / FlexCounterOrch)"]
-  FCB[("FLEX_COUNTER_DB<br/>FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER|oid")]
-  SD["syncd<br/>(FlexCounter)"]
-  SAI["SAI<br/>sai_counter_api"]
-  CNTDB[("COUNTERS_DB<br/>COUNTERS_SRV6_NAME_MAP")]
-  CDB --> OA
-  OA --> FCB
-  FCB --> SD
-  SD --> SAI
-  SD --> CNTDB
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB の `FLEX_COUNTER_TABLE|SRV6` が orchagent → FLEX_COUNTER_DB → syncd → SAI の経路でカウンタポーリングを制御する。収集値は `COUNTERS_DB` の `COUNTERS_SRV6_NAME_MAP` と `COUNTERS:<oid>` に格納される。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

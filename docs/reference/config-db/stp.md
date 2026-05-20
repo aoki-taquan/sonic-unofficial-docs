@@ -49,6 +49,26 @@ CLI の `config spanning-tree` コマンド (sonic-utilities/config/stp.py) が 
 | `STP_VLAN_PORT` | `Vlan<vid>\|<intf>` | per-VLAN per-port の path_cost / priority |
 
 <!-- defaults -->
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>STP")]
+  DM["stpmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_DB")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_stp_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## 暗黙デフォルトとハードコード挙動
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-defaults.md -->

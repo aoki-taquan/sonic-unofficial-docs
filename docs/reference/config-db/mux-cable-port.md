@@ -34,6 +34,22 @@ related:
 
 本ページは **コード由来のデフォルト・fallback 動作** に焦点を当てる。テーブル全体の概要は [`MUX_CABLE`](mux-cable.md) を参照。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>MUX_CABLE")]
+  DM["MuxOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_neighbor_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```text

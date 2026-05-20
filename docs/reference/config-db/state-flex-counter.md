@@ -45,25 +45,19 @@ related:
 本ページは **FLEX_COUNTER_DB**（DB 5）のランタイム状態フィールドと、syncd 内 `FlexCounter` モジュールが持つコード由来デフォルト値を記述する。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB\nFLEX_COUNTER_TABLE")]
-  OA["orchagent\nFlexCounterOrch"]
-  FCDB[("FLEX_COUNTER_DB\nFLEX_COUNTER_TABLE\nFLEX_COUNTER_GROUP_TABLE")]
-  SYNCD["syncd\nFlexCounter"]
-  SAI["SAI\nsai_*_stats"]
-  CNTDB[("COUNTERS_DB\nCOUNTERS:<oid>")]
-
-  CDB --> OA
-  OA --> FCDB
-  FCDB --> SYNCD
-  SYNCD --> SAI
-  SAI --> SYNCD
-  SYNCD --> CNTDB
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## FLEX_COUNTER_DB のテーブル構造

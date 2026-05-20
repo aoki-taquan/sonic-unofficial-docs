@@ -39,19 +39,15 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE|ENI<br/>FLEX_COUNTER_TABLE|DASH_METER")]
-  ORCH["orchagent<br/>(FlexCounterOrch<br/>/ DashOrch)"]
-  CDB --> ORCH
-  FCDB[("FLEX_COUNTER_DB<br/>ENI_STAT_COUNTER<br/>METER_STAT_COUNTER")]
-  ORCH --> FCDB
-  SYNCD["syncd"]
-  FCDB --> SYNCD
-  SAI["SAI<br/>sai_eni_stats<br/>sai_meter_stats"]
-  SYNCD --> SAI
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路。詳細・例外は本ページ本文と対応表を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

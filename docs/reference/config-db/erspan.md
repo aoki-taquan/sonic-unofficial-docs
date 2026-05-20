@@ -44,14 +44,10 @@ flowchart LR
   CDB --> DM
   SAI["SAI<br/>sai_mirror_api"]
   DM --> SAI
-  RO["RouteOrch<br/>(nexthop 解決)"]
-  DM -- "dst_ip attach" --> RO
-  RO -- "callback" --> DM
 ```
 
 !!! note "凡例"
-    ERSPAN の場合、RouteOrch に `dst_ip` を登録して nexthop 解決を待つ非同期フローになる。
-
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## ERSPAN 専用フィールド

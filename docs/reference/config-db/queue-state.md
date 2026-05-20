@@ -43,21 +43,19 @@ related:
     `QUEUE_COUNTER_CAPABILITIES` は STATE_DB の**読み取り専用**テーブルであり、CONFIG_DB には対応する設定テーブルが存在しない。WRED/ECN カウンタの有効化は `FLEX_COUNTER_TABLE|WRED_ECN_QUEUE` の `FLEX_COUNTER_STATUS` で行うが、ASIC が対応していない場合はフラグが `"false"` のまま残る。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  SAI["SAI<br/>sai_query_stats_capability()"]
-  OA["portsorch<br/>(orchagent)"]
-  STATE[("STATE_DB<br/>QUEUE_COUNTER_CAPABILITIES")]
-  UTIL["wredstat / portstat"]
-
-  OA -->|"起動時 initCounterCapabilities()"| SAI
-  SAI -->|"SAI_OBJECT_TYPE_QUEUE ケイパビリティ結果"| OA
-  OA -->|"isSupported = true/false"| STATE
-  STATE -->|"フラグ参照（不要カウンタを除外）"| UTIL
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

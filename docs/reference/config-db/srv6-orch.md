@@ -45,28 +45,19 @@ APP_DB 経由または FRR 経由で Srv6Orch へ伝達される。
 
 ```mermaid
 flowchart LR
-  CDB1[("CONFIG_DB<br/>SRV6_MY_SIDS")]
-  CDB2[("CONFIG_DB<br/>SRV6_MY_LOCATORS")]
-  BGP["bgpcfgd<br/>(SRv6Mgr)"]
-  FRR["FRR (zebra/bgpd)"]
-  APP1[("APP_DB<br/>SRV6_SID_LIST_TABLE")]
-  APP2[("APP_DB<br/>SRV6_MY_SID_TABLE")]
-  APP3[("APP_DB<br/>PIC_CONTEXT_TABLE")]
-  ORCH["Srv6Orch"]
-  SAI["SAI / ASIC"]
-  CDB1 --> BGP --> FRR
-  CDB2 --> BGP
-  FRR --> APP1
-  FRR --> APP2
-  APP1 --> ORCH
-  APP2 --> ORCH
-  APP3 --> ORCH
-  ORCH --> SAI
+  CDB[("CONFIG_DB<br/>SRV6_MY_SIDS")]
+  DM["Srv6Orch"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_SRV6_MY_SID_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_srv6_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    APP_DB テーブルへの書き込みは主に `fpmsyncd` 経由の FRR から行われる。
-    `PIC_CONTEXT_TABLE` は ECMP 経路制御コンポーネントが直接書き込む。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 <!-- pubsub -->

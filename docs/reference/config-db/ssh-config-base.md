@@ -29,6 +29,20 @@ related:
 
 テーブル未設定時の挙動: `SshServer.load()` が `self.policies = {}` をセットし `set_policies()` を呼ばないため、`/etc/ssh/sshd_config` は変更されない。実効デフォルトは OS（Debian）の sshd 初期値となる。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>SSH_SERVER")]
+  DM["hostcfgd"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```text

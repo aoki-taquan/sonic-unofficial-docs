@@ -55,15 +55,15 @@ MC-[LAG](../../reference/glossary.md#term-lag) (Multi-Chassis Link Aggregation) 
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>MCLAG_UNIQUE_IP")]
-  SY["mclagsyncd"]
-  CDB --> SY
-  IC["iccpd (TCP IPC)"]
-  SY --> IC
+  CDB[("CONFIG_DB<br/>MCLAG_DOMAIN")]
+  DM["MlagOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_fdb_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から mclagsyncd への購読経路。mclagsyncd は MCLAG_DOMAIN の初回 SET 後に MCLAG_UNIQUE_IP の購読を開始し、iccpd へ TCP IPC で通知する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

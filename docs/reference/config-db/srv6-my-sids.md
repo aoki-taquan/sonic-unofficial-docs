@@ -42,17 +42,18 @@ SAI レイヤでは `sonic-swss` の `Srv6Orch` が `SRV6_MY_SID_TABLE`（APP_DB
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SRV6_MY_SIDS")]
-  BGP["bgpcfgd<br/>(SRv6Mgr)"]
-  FRR["FRR (zebra/bgpd)"]
-  APP[("APP_DB<br/>SRV6_MY_SID_TABLE")]
-  ORCH["Srv6Orch"]
-  SAI["SAI / ASIC<br/>MY_SID_ENTRY"]
-  CDB --> BGP --> FRR
-  CDB --> APP --> ORCH --> SAI
+  DM["Srv6Orch"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_SRV6_MY_SID_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_srv6_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を示すミニ図。詳細・例外は本ページ本文を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

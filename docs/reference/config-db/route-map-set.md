@@ -33,9 +33,9 @@ route-map 名を登録する YANG レジストリテーブル[^1]。`sonic-route
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>ROUTE_MAP_SET")]
-  NOTE["(購読者なし)"]
-  CDB --> NOTE
+  CDB[("CONFIG_DB<br/>ROUTE_MAP")]
+  DM["bgpcfgd"]
+  CDB --> DM
 ```
 
 !!! note "凡例"

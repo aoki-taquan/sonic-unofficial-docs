@@ -46,19 +46,23 @@ related:
 | EVPN DIP トンネルポート | `Port_EVPN_<remote_vtep_ip>` | `addTunnelUser()` (EVPN リモート VTEP 学習時) |
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB\nVXLAN_TUNNEL\nVXLAN_TUNNEL_MAP")]
-  ORCH["VxlanTunnelOrch\n(orchagent)"]
-  PORTS["PortsOrch\nm_portList\n[Port::TUNNEL]"]
-  SAI["SAI\nsai_bridge_api\ncreate_bridge_port()"]
-  CDB --> ORCH
-  ORCH --> PORTS
-  PORTS --> SAI
+  CDB[("CONFIG_DB<br/>VXLAN_TUNNEL")]
+  DM["vxlanmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VXLAN_TUNNEL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_tunnel_api"]
+  SYNCD --> SAI
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## 命名規則

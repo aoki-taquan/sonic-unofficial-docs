@@ -30,25 +30,17 @@ related:
 Static Anycast Gateway (SAG) のグローバル仮想 MAC アドレスを保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。EVPN/VXLAN ファブリックにおける anycast gateway 機能で使用し、全 leaf スイッチが同一の仮想 MAC を共有することでホスト移動時の ARP 再解決を不要にする。`intfmgrd` / `intfsorch` が購読し、対応 VLAN インターフェースの RIF の `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` を仮想 MAC に差し替える[^1]。
 
 <!-- cdb-mermaid -->
-### データフロー (概要)
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SAG")]
-  VI[("CONFIG_DB<br/>VLAN_INTERFACE")]
-  DM["intfmgrd"]
-  CDB --> DM
-  VI --> DM
-  APPDB[("APPL_DB<br/>SAG_TABLE")]
-  DM --> APPDB
-  OA["orchagent<br/>IntfsOrch"]
-  APPDB --> OA
   SAI["SAI<br/>sai_router_intf_api"]
-  OA --> SAI
+  CDB --> SAI
 ```
 
 !!! note "凡例"
-    HLD 記載のデータフローを図示。`SAG|GLOBAL.gateway_mac` が `VLAN_INTERFACE.static_anycast_gateway=true` の VLAN インターフェースに適用される。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

@@ -59,23 +59,15 @@ related:
 
 ```mermaid
 flowchart LR
-  CFG[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  OA["portsorch<br/>(orchagent)"]
-  SYNCD["syncd<br/>FlexCounter"]
-  SAI["SAI<br/>sai_queue_api"]
-  CDB[("COUNTERS_DB<br/>COUNTERS:&lt;OID&gt;")]
-  CLI["queuestat / pg-drop<br/>watermarkstat"]
-
-  CFG -- FLEX_COUNTER_STATUS=enable --> OA
-  OA -- COUNTER_ID_LIST --> SYNCD
-  SYNCD -- sai_get_queue_stats --> SAI
-  SAI -- 実カウンタ値 --> SYNCD
-  SYNCD --> CDB
-  CDB --> CLI
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB の `FLEX_COUNTER_TABLE` でポーリングを有効化し、orchagent が `COUNTER_ID_LIST` を syncd に投入することでカウンタ収集が開始する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ---

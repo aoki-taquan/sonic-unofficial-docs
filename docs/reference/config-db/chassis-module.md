@@ -38,20 +38,13 @@ related:
 
 ```mermaid
 flowchart LR
-  CLI["CLI\nconfig chassis_modules"]
-  CDB[("CONFIG_DB\nCHASSIS_MODULE")]
-  CHASSISD["chassisd\n(ModuleConfigUpdater)"]
-  PAL["Platform API\nset_admin_state()"]
-  STDB[("STATE_DB\nCHASSIS_MODULE_TABLE")]
-
-  CLI --> CDB
-  CDB --> CHASSISD
-  CHASSISD --> PAL
-  CHASSISD --> STDB
+  CDB[("CONFIG_DB<br/>CHASSIS_MODULE")]
+  DM["chassisd"]
+  CDB --> DM
 ```
 
 !!! note "凡例"
-    CONFIG_DB から Platform API までの経路を示す。STATE_DB への書き込みは chassisd が poll ベース (10 秒間隔) で実施。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
