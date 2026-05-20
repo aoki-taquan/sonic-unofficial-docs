@@ -128,7 +128,7 @@ module: sonic-bgp-monitor
 
 ### よくある落とし穴
 
-- `addr` (monitor peer address) は IPv4/IPv6 union。`name` leaf は FRR 内部で `'BGPMonitor'` 固定文字列が期待されるため、任意の値を設定すると `must` 制約違反となり commit が失敗する。
+- `addr` (monitor peer address) は IPv4/IPv6 union。`name` leaf は [FRR](../../reference/glossary.md#term-frr) 内部で `'BGPMonitor'` 固定文字列が期待されるため、任意の値を設定すると `must` 制約違反となり commit が失敗する。
 
 ### 関連する config / show コマンド
 
@@ -142,4 +142,4 @@ show bgp summary
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-monitor.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 203de1c951ab -->

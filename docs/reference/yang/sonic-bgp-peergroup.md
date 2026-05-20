@@ -33,15 +33,9 @@ SONIC [BGP](../../reference/glossary.md#term-bgp) Peer Group [YANG](../../refere
 flowchart LR
   Y["sonic-bgp-peergroup"]
   C1[("CONFIG_DB<br/>BGP_PEER_GROUP")]
-  C2[("CONFIG_DB<br/>BGP_PEER_GROUP_AF")]
-  C3[("CONFIG_DB<br/>BGP_GLOBALS_LISTEN_PREFIX")]
   Y --> C1
-  Y --> C2
-  Y --> C3
   D1["bgpcfgd"]
   C1 --> D1
-  C2 --> D1
-  C3 --> D1
 ```
 
 !!! note "凡例"

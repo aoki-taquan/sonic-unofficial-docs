@@ -113,6 +113,7 @@ module: sonic-bgp-peerrange
 - [`sonic-vnet`](sonic-vnet.md)
 - [`sonic-bgp-aggregate-address`](sonic-bgp-aggregate-address.md)
 - [`sonic-bgp-bbr`](sonic-bgp-bbr.md)
+- [`sonic-bgp-device-global`](sonic-bgp-device-global.md)
 <!-- /yang-sibling -->
 
 <!-- ref-triangle:start -->
