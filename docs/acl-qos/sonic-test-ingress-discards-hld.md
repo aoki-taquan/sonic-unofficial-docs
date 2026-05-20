@@ -12,12 +12,9 @@ sources:
 related:
   config_db:
   - VLAN
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
   - VLAN_MEMBER
   - ACL_RULE
   - ACL_TABLE
-  - BGP_PEER_GROUP_AF
   cli:
   - portstat
   - intfstat
@@ -27,13 +24,7 @@ related:
   - sonic-clear rifcounters
   - clear counters
   yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
   - sonic-vlan
-  - sonic-bgp-peergroup
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
-  - sonic-bgp-peerrange
 ---
 
 <!-- topics-tip -->
