@@ -2424,8 +2424,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル](config-db/bgp-globals-af-aggregate-addr.md) (34)
 - [PIM_GLOBALS / PIM_INTERFACE テーブル](config-db/pim.md) (31)
 - [AS_PATH_SET テーブル](config-db/as-path-set.md) (27)
+- [BGP_NEIGHBOR_AF テーブル](config-db/bgp-neighbor-af.md) (27)
 - [ROUTE_REDISTRIBUTE テーブル](config-db/route-redistribute.md) (26)
-- [ROUTE_MAP テーブル](config-db/route-map.md) (25)
 
 ### [Warm Reboot](#term-warm-reboot)
 
