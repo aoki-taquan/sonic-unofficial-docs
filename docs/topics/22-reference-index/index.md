@@ -93,12 +93,8 @@ related:
 | concept | ✅ 完成 (107 行) | meta |
 | setup | ✅ 完成 (125 行) | meta |
 | operations | ✅ 完成 (113 行) | meta |
-| internals | ✅ 完成 (133 行) | meta |
+| internals | ✅ 完成 (134 行) | meta |
 | advanced | ✅ 完成 (101 行) | meta |
-| cli-index | ✅ 完成 | meta |
-| config-db-index | ✅ 完成 | meta |
-| yang-index | ✅ 完成 | meta |
-| quality-gaps | ✅ 完成 | meta |
 
 <!-- /chapter-progress -->
 

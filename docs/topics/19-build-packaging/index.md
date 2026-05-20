@@ -70,7 +70,7 @@ related:
 
 | ページ | 状態 | verification |
 |---|---|---|
-| concept | ✅ 完成 (142 行) | meta |
+| concept | ✅ 完成 (140 行) | meta |
 | setup | ✅ 完成 (143 行) | meta |
 | operations | ✅ 完成 (180 行) | meta |
 | internals | ✅ 完成 (126 行) | meta |
