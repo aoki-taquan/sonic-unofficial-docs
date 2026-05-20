@@ -307,8 +307,8 @@ HLD `Warmboot and Fastboot Design Impact` セクション (L622-628) の記述:
 | インスタンスあたり VIP 上限 (IPv4 / IPv6) | `4` | `VRRP` / `VRRP6` | `config/main.py:6908, 7327` |
 | インスタンスあたりトラックインタフェース上限 | `8` | `VRRP_TRACK` | `config/main.py:7038` |
 
-!!! note "YANG `max-elements` との乖離"
-    `sonic-vrrp.yang` の `VRRP_LIST` / `VRRP6_LIST` には `max-elements 128` が宣言されているが、CLI 側の上限は `254`。CLI 検査が先に発火するため YANG の `128` 上限は実効的に到達しない。
+!!! note "YANG `max-elements` と CLI 上限の経路非対称性"
+    `sonic-vrrp.yang` の `VRRP_LIST` / `VRRP6_LIST` には `max-elements 128` が宣言されているが、CLI 側の上限は `254`。CLI 経路 (`config` コマンド) は YANG バリデーションを経由しないため CLI 上限 254 が適用される。一方、gNMI / sonic-yang-mgmt 経路では YANG max-elements 128 が先に到達して reject される (128 < 254)。すなわち実効的な上限は経路により異なる。
 
 ### フィールドデフォルト (YANG スキーマ由来)
 

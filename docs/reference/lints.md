@@ -35,7 +35,8 @@ PR ごとに GitHub Actions (`.github/workflows/ci.yml`) で実行される。
 | `check_verification_self_consistency.py` | `code-verified` / `runbook-verified` を名乗りながら本文に「未確認」「TBD」「未実装」等を残しているページの検出 | informational |
 | `check_citation_quality.py` | 裏取り済み (`code-verified` / `runbook-verified` / `discrepancy-found`) なのに脚注も `<!-- evidence: -->` も無いページの検出 | informational |
 | `check_broken_links.py` | `docs/**/*.md` の intra-doc Markdown リンク (相対パス + `#anchor`) の解決可否を検証 | informational |
-| `check_link_density.py` | 本文字数あたりリンク数 (density) が極端に低い / 高いページ、および `split-child` のナビゲーション健全性を report | informational |
+| `check_link_density.py` (`--strict-split-child`) | `split-child` のナビゲーション整合性検証 (CI で strict 実行) | **strict** |
+| `check_link_density.py` (density report) | 本文字数あたりリンク数 (density) が極端に低い / 高いページの report | informational |
 | `check_stale_verified.py` | `last_verified` が閾値日数 (デフォルト 90 日) 以上古いページの検出 | informational |
 | `check_sources_freshness.py` | `meta/index/repos.json` の pinned SHA と `.cache/sonic-sources/<repo>/` の HEAD / upstream を突合し behind 件数を表示 | local-only |
 

@@ -323,7 +323,7 @@ TUNNEL_DECAP_TERM_TABLE に関わる全 Publisher/Subscriber ペアを実装か�
 
 | Producer | 型 | 書き込みタイミング | evidence |
 |----------|----|--------------------|----------|
-| `tunnelmgrd` (`m_appIpInIpTunnelDecapTermTable`) | `ProducerStateTable` | CONFIG_DB `TUNNEL` SET/DEL イベント受信後、APPL_DB `APP_TUNNEL_DECAP_TABLE` と同時に書き込む | `tunnelmgr.cpp` L111, L276-309 |
+| `tunnelmgrd` (`m_appIpInIpTunnelDecapTermTable`) | `ProducerStateTable` | CONFIG_DB `TUNNEL` SET/DEL イベント受信後、APPL_DB `APP_TUNNEL_DECAP_TERM_TABLE` (および `APP_TUNNEL_DECAP_TABLE`) と同時に書き込む | `tunnelmgr.cpp` L111, L276-309 |
 | `RouteOrch` (`m_appTunnelDecapTermProducer`) | `ProducerStateTable` | VIP subnet decap ルート追加時に `subnet_type=vip` の `MP2MP` term を書き込む | `routeorch.cpp` L53, L3220-3251 |
 | `VNetRouteOrch` (`app_tunnel_decap_term_producer_`) | `ProducerStateTable` | VNet VIP ルート追加時に同様の `MP2MP` term を書き込む | `vnetorch.cpp` L734, L1563-1594 |
 | `swssconfig` + `ipinip.json.j2` | Redis MULTI/EXEC | 起動時にテンプレート展開済み JSON から一括書き込み | `sonic-buildimage: dockers/docker-orchagent/ipinip.json.j2` |

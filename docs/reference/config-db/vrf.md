@@ -84,7 +84,7 @@ VRF|<name>
 | フィールド | 値 | 実挙動 |
 |-----------|-----|--------|
 | `fallback` | `false` | デフォルト。当該 VRF の経路テーブルのみ参照 |
-| `fallback` | `true` | VRF に経路がない場合にデフォルト VRF（main routing table）へフォールバック |
+| `fallback` | `true` | (dead field) `orchagent/vrforch.cpp` の `addOperation` に `"fallback"` のハンドラが存在せず silent drop されるため、実際の挙動変化なし。詳細は下記「暗黙デフォルト・コード由来挙動」セクション参照 |
 | `vni` | `0` | L3 VNI マッピングなし（デフォルト、YANG default 0）|
 | `vni` | `1`〜`16777215` | EVPN L3 VNI マッピングを設定。`vrfmgrd` が VXLAN_TUNNEL_MAP に `evpn_map_<vni>_<vrf>` エントリを作成 (vrfmgr.cpp:510) |
 | `vni` | 重複 VNI | `vrfmgrd` が `"vni %d is already mapped to vrf %s"` でエラーして破棄 (vrfmgr.cpp:441) |
@@ -157,7 +157,7 @@ ip vrf show
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / VrfOrch** (`sonic-swss/orchagent/vrforch.cpp`): `VRF` テーブルを `SubscriberStateTable` で購読。
+- **orchagent / VrfOrch** (`sonic-swss/orchagent/vrforch.cpp`): APPL_DB の `VRF_TABLE` を `ConsumerStateTable` で購読 (`Orch2(appDb, APP_VRF_TABLE_NAME)`)。CONFIG_DB の `VRF` テーブルは直接購読しない。
 - **vrfmgrd** (`sonic-swss/cfgmgr/vrfmgr.cpp`): `VRF` テーブルを購読して Linux VRF デバイスを管理。
 
 ### 段階 2: CFG → APPL 翻訳

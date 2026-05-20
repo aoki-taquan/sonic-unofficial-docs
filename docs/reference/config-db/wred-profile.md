@@ -71,7 +71,7 @@ WRED_PROFILE|<name>
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `QUEUE`、`SCHEDULER`
-- 関連 CLI: `config qos clear`、テンプレート起点の生成 (`buffers.json.j2`)
+- 関連 CLI: `config qos clear`、テンプレート起点の生成 (`qos_config.j2`)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-wred-profile`
 
 <!-- value-behavior -->

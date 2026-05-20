@@ -112,7 +112,7 @@ if (!isVlanMacOk())
 
 ### 下流依存: downstream consumers の処理開始条件
 
-以下の consumers は `isVlanStateOk()` で STATE_DB にエントリが存在するかを確認し、存在しない場合は処理をスキップして自動リトライ待機する:
+以下の consumers は `isVlanStateOk()` または同等の関数（`intfmgrd` は `isIntfStateOk()`）で STATE_DB にエントリが存在するかを確認し、存在しない場合は処理をスキップして自動リトライ待機する:
 
 | consumer | 確認箇所 | 待機対象 |
 |---------|---------|---------|

@@ -123,6 +123,6 @@ docker logs syncd 2>&1 | grep -i "port_state_change" | tail -20
 本ページの根拠は引用元 [^1][^2] を参照。
 
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — portsorch.cpp port_state notification
-[^2]: sonic-net/sonic-platform-common @ 4305596 — sfp_base DOM
+[^2]: sonic-net/sonic-platform-common @ 64beade8 — sfp_base DOM
 
 <!-- glossary-links-injected: b1725b0a9c6a -->

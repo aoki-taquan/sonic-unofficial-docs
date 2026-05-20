@@ -70,8 +70,8 @@ crm show thresholds all
 crm show resources ipv4 route
 crm show resources ipv4 nexthop
 crm show resources fdb
-crm show resources acl-group
-crm show resources acl-table
+crm show resources acl group
+crm show resources acl table
 ```
 
 ### 3. COUNTERS_DB / ASIC_DB 突合

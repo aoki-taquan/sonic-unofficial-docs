@@ -36,18 +36,18 @@ related:
 
 これらの placeholder は backlog (`meta/backlog/reference/`) で追跡する。
 
-## カバー率 (機械集計, 2026-05-11) {#coverage}
+## カバー率 (手動集計, 2026-05-20) {#coverage}
 
-`docs/reference/<sub>/*.md` を直接数えた件数。`verification` 内訳は frontmatter の `verification:` キーから抽出した。
+`docs/reference/<sub>/*.md` を直接数えた件数。`verification` 内訳は frontmatter の `verification:` キーから抽出した。本表は `gen_coverage.py` の自動更新スコープ外であり、手動メンテで更新している。
 
-| カテゴリ | 総ページ | code-verified | hld-only | discrepancy-found | meta |
-|---|---:|---:|---:|---:|---:|
-| CLI | 72 | 72 | 0 | 0 | 1 (index) |
-| CONFIG_DB | 121 | 121 | 0 | 0 | 1 (index) |
-| YANG | 84 | 84 | 0 | 0 | 1 (index) |
-| Runbooks | 45 | 45 | 0 | 0 | 1 (index) |
-| Verification | 1 | 0 | 0 | 0 | 2 (index + discrepancy-index) |
-| **合計** | **323** | **322** | **0** | **0** | **6** |
+| カテゴリ | 総ページ | code-verified | runbook-verified | stub | hld-only | discrepancy-found | meta |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| CLI | 72 | 71 | 0 | 0 | 0 | 1 | 1 (index) |
+| CONFIG_DB | 293 | 285 | 0 | 1 | 2 | 5 | 1 (index) |
+| YANG | 84 | 84 | 0 | 0 | 0 | 0 | 1 (index) |
+| Runbooks | 52 | 25 | 27 | 0 | 0 | 0 | 1 (index) |
+| Verification | 1 | 0 | 0 | 0 | 0 | 0 | 2 (index + discrepancy-index) |
+| **合計** | **502** | **465** | **27** | **1** | **2** | **6** | **6** |
 
 discrepancy-found 自体は reference 内ではなく `docs/topics/` 配下に分布する。全 **46** ページ。[discrepancy-index](verification/discrepancy-index.md) から area 別 / monitor 別に逆引きできる。
 

@@ -23,6 +23,7 @@ related:
     - VXLAN_TUNNEL
     - VXLAN_TUNNEL_MAP
     - VXLAN_EVPN_NVO
+    - VXLAN_VRF_MAP
   cli:
     - config vxlan
   yang:

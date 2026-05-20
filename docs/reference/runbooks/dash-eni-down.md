@@ -38,7 +38,7 @@ related:
 ## 症状
 
 - `show dash eni <eni>` で `oper_status=down` または `admin_state=down`
-- `DASH_ENI_TABLE:STATE_DB` の counter が更新されない
+- STATE_DB の `DASH_ENI_TABLE` の counter が更新されない
 - VM → [DPU](../../reference/glossary.md#term-dpu) → outside の [VNET](../../reference/glossary.md#term-vnet) 通信が無応答
 
 ## 想定原因（優先度順）
@@ -68,7 +68,7 @@ flowchart TD
 ### 1. CONFIG_DB / APPL_DB
 
 ```bash
-sonic-db-cli CONFIG_DB hgetall "DASH_ENI_TABLE|<eni>"
+sonic-db-cli APPL_DB hgetall "DASH_ENI_TABLE|<eni>"
 sonic-db-cli APPL_DB keys "DASH_ENI_TABLE:*"
 sonic-db-cli STATE_DB hgetall "DASH_ENI_TABLE|<eni>"
 ```

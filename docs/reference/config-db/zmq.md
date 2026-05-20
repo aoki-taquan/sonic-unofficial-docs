@@ -36,7 +36,6 @@ related:
     - DPU
   cli: []
   yang:
-    - sonic-smart-switch
     - sonic-device_metadata
   _no_related_cli: true
 ---
@@ -570,8 +569,7 @@ gnmi の ZMQ ポート (`-zmq_port=8100`) も `gnmi-native.sh` で `subtype == "
 ## 関連リファレンス
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DEVICE_METADATA`](device-metadata.md) — `orch_northbond_dash_zmq_enabled` / `orch_northbond_route_zmq_enabled` / `subtype` / `switch_type` フィールドの全体像
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-smart-switch`](../yang/sonic-smart-switch.md) — `DPU_LIST.orchagent_zmq_port` 定義
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`smart-switch`](smart-switch.md) — SmartSwitch 関連テーブル群
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`smart-switch`](smart-switch.md) — SmartSwitch 関連テーブル群 (`sonic-smart-switch.yang:176-179` の `DPU_LIST.orchagent_zmq_port` 定義も参照)
 
 <!-- ref-triangle:end -->
 
