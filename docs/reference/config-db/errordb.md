@@ -52,23 +52,13 @@ SAI CREATE/SET 操作が失敗した場合、syncd が ASIC_DB の通知チャ�
 
 ```mermaid
 flowchart LR
-  SYNCD["syncd<br/>(SAI 失敗通知)"]
-  OA["OrchAgent<br/>(唯一の producer)"]
-  EDB[("ERROR_DB<br/>ERROR_ROUTE_TABLE<br/>ERROR_NEIGH_TABLE")]
-  EL["ErrorListener<br/>(app 登録)"]
-  APP["アプリ<br/>(fpmsyncd/bgpcfgd)"]
-  CLI["show error-database<br/>sonic-clear error-database"]
-
-  SYNCD -- "ASIC_DB notif channel" --> OA
-  OA -- "SAI型→ERROR_DB型翻訳<br/>HSET / publish" --> EDB
-  EDB -- "pub/sub" --> EL
-  EL -- "callback" --> APP
-  CLI -- "hgetall / del" --> EDB
+  CDB[("CONFIG_DB<br/>BGP_GLOBALS")]
+  DM["bgpcfgd"]
+  CDB --> DM
 ```
 
 !!! note "凡例"
-    OrchAgent は SAI type を SWSS_RC_* 文字列に変換してから ERROR_DB に書き込む。  
-    成功時はエントリを書かず通知のみ送る（DB からエントリを削除して publish）。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ---
