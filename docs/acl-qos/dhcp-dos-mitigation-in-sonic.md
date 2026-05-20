@@ -163,7 +163,7 @@ CLI ルール[^1]:
     - **CoPP 維持で運用する場合**: 既定の CoPP 300 pps が依然有効。CLI 上の値は飾りである旨を運用ドキュメントに明記
     - 上流取り込み待ち: `sonic-swss` の portmgrd TC 投入 PR と `copp_cfg.j2` からの `dhcp_relay` trap 削除の双方が必要
 
-    > 分類: `monitor: not_implemented`
+    > 分類: `monitor: partially_implemented`
 
     #### 関連 GitHub Issue / PR
 
@@ -237,7 +237,7 @@ docker exec swss supervisorctl status | grep portmgrd
         - [YANG: `sonic-port`](../reference/yang/sonic-port.md)
 
 !!! note "本ドキュメントの追跡"
-    - monitor: `not_implemented` / last_verified: `2026-05-11`
+    - monitor: `partially_implemented` / last_verified: `2026-05-11`
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->

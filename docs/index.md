@@ -29,9 +29,9 @@ related:
 
 <!-- quality-banner-start -->
 !!! success "最新の品質状態"
-    - **code-verified ページ**: 734 件（HLD と実コードを照合済み）
+    - **code-verified ページ**: 735 件（HLD と実コードを照合済み）
     - **runbook-verified ページ**: 27 件（Runbook 専用。実運用で症状再現性が確認済み）
-    - **discrepancy-found ページ**: 107 件（HLD と実装の乖離を明示）
+    - **discrepancy-found ページ**: 106 件（HLD と実装の乖離を明示）
     - **監査平均評価**: 4.99 / 5.0（quality-audit round 52）
     - **hld-only ページ**: 2 件（裏取り待ち）
     - **保守フェーズ運用中** (2026-05-13〜): 月次 master 追従 / 偶数 round stratified audit / feedback 反映で 4.97+ プラトーを維持 (`meta/maintenance-mode.md`)
@@ -59,7 +59,11 @@ related:
 
     ---
 
+<<<<<<< HEAD
     現場で「動かない」を解く Runbook 27 件 + 実装と HLD の乖離 107 件の一覧。
+=======
+    現場で「動かない」を解く Runbook 27 件 + 実装と HLD の乖離 115 件の一覧。
+>>>>>>> origin/main
 
     [Runbook 一覧](reference/runbooks/index.md)
 
@@ -67,7 +71,11 @@ related:
 
 ## 品質指標 (最新スナップショット)
 
+<<<<<<< HEAD
 - 全 **1089** ページ (code-verified 734 + runbook-verified 27 + discrepancy-found 107 + reference/meta)
+=======
+- 全 **1089** ページ (code-verified 737 + runbook-verified 27 + discrepancy-found 115 + reference/meta)
+>>>>>>> origin/main
 - mermaid 構文エラー 0、broken link 0、frontmatter 違反 0
 - サンプリング監査 round 50: **4.972 / 5**
 - 本文 `hld-only` ページ 0 件

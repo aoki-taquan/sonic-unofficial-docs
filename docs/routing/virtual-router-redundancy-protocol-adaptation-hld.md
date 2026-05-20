@@ -59,7 +59,7 @@ VRRP advertisement は multicast 224.0.0.18 (IPv4) / ff02::12 (IPv6)。これを
 VRRP|<interface>|<vrid>
   vip          = "<v4 prefix>,..."
   priority     = 1..254               # 既定 100
-  adv_interval = ms
+  adv_interval = sec               # 秒単位。既定 1 sec
   preempt      = "enabled" | "disabled"
   version      = "2" | "3"
 

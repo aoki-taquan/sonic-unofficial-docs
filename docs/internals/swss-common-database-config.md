@@ -83,7 +83,7 @@ export SONIC_DB_CONFIG_FILE=/path/to/database_config.json
         "CONFIG_DB": { "id": 4, "separator": "|", "instance": "redis" },
         "PFC_WD_DB": { "id": 5, "separator": ":", "instance": "redis" },
         "STATE_DB": { "id": 6, "separator": "|", "instance": "redis" },
-        "ERROR_DB": { "id": 7, "separator": ":", "instance": "redis" }
+        "SNMP_OVERLAY_DB": { "id": 7, "separator": "|", "instance": "redis" }
     },
     "VERSION": "1.0"
 }
