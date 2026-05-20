@@ -21,17 +21,17 @@ last_verified: 2026-05-11
 
 ## 全体合計
 
-全 **917** ページ。
+全 **1089** ページ。
 
 | 状態 | 件数 |
 |------|-----:|
-| code-verified | 570 |
+| code-verified | 734 |
 | runbook-verified | 27 |
-| discrepancy-found | 102 |
-| issue-confirmed | 0 |
-| hld-only | 0 |
+| discrepancy-found | 107 |
+| issue-confirmed | 10 |
+| hld-only | 2 |
 | meta | 208 |
-| stub | 10 |
+| stub | 1 |
 
 ## area 別マトリクス
 
@@ -43,14 +43,14 @@ last_verified: 2026-05-11
 | `architecture` | 32 | 0 | 25 | 0 | 0 | 1 | 0 | 58 |
 | `categories` | 0 | 0 | 0 | 0 | 0 | 11 | 0 | 11 |
 | `guides` | 0 | 0 | 0 | 0 | 0 | 5 | 0 | 5 |
-| `internals` | 10 | 0 | 6 | 0 | 0 | 1 | 2 | 19 |
-| `management` | 31 | 0 | 16 | 0 | 0 | 1 | 3 | 51 |
+| `internals` | 10 | 0 | 6 | 2 | 0 | 1 | 0 | 19 |
+| `management` | 31 | 0 | 16 | 3 | 0 | 1 | 0 | 51 |
 | `overlay` | 16 | 0 | 1 | 0 | 0 | 1 | 0 | 18 |
-| `platform` | 35 | 0 | 12 | 0 | 0 | 1 | 4 | 52 |
-| `reference` | 304 | 27 | 1 | 0 | 0 | 12 | 0 | 344 |
+| `platform` | 35 | 0 | 12 | 4 | 0 | 1 | 0 | 52 |
+| `reference` | 468 | 27 | 6 | 0 | 2 | 12 | 1 | 516 |
 | `routing` | 43 | 0 | 8 | 0 | 0 | 1 | 0 | 52 |
 | `switching` | 15 | 0 | 8 | 0 | 0 | 1 | 0 | 24 |
-| `system` | 55 | 0 | 19 | 0 | 0 | 2 | 1 | 77 |
+| `system` | 55 | 0 | 19 | 1 | 0 | 2 | 0 | 77 |
 | `topics` | 0 | 0 | 0 | 0 | 0 | 161 | 0 | 161 |
 
 推移情報（時系列）は本ページでは扱いません。スナップショットのみ。

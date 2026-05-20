@@ -140,6 +140,6 @@ show muxcable cableinfo
 本ページの根拠は引用元 [^1][^2] を参照。
 
 [^1]: sonic-net/sonic-linkmgrd @ 65f5633 — LinkManagerStateMachine
-[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — muxorch
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [muxorch](../../reference/glossary.md#term-muxorch)
 
-<!-- glossary-links-injected: 269bb3f69ef2 -->
+<!-- glossary-links-injected: fa77d98b9e28 -->

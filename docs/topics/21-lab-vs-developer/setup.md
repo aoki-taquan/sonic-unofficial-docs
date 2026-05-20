@@ -35,7 +35,7 @@ related:
 
 # 設定
 
-仮想 lab / 開発環境の bring-up は、SONiC NOS そのものの設定ではなく「環境を組む → image を取る → topology を配線する → [CONFIG_DB](../../reference/glossary.md#term-config_db) を流し込む」の前段に集中します。本ページでは代表的な 3 シナリオ (単一 SONiC-VS、containerlab マルチノード、[DASH](../../reference/glossary.md#term-dash)/[DPU](../../reference/glossary.md#term-dpu) 評価) で、ファイル例 + コマンド列 + 確認手順を示し、よくある詰まりどころと対処をまとめます。
+仮想 lab / 開発環境の bring-up は、[SONiC](../../reference/glossary.md#term-sonic) NOS そのものの設定ではなく「環境を組む → image を取る → topology を配線する → [CONFIG_DB](../../reference/glossary.md#term-config_db) を流し込む」の前段に集中します。本ページでは代表的な 3 シナリオ (単一 SONiC-VS、containerlab マルチノード、[DASH](../../reference/glossary.md#term-dash)/[DPU](../../reference/glossary.md#term-dpu) 評価) で、ファイル例 + コマンド列 + 確認手順を示し、よくある詰まりどころと対処をまとめます。
 
 実機運用時の CLI / CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) の使い方は本章の他のページや機能章本文 ([BGP の運用](../02-bgp/operations.md) など) と同一なので、bring-up 後はそちらに合流してください。
 
@@ -264,7 +264,7 @@ VS では [SAI](../../reference/glossary.md#term-sai) が仮想実装のため�
 
 | 項目 | 実機 | VS |
 | --- | --- | --- |
-| ASIC counter | 実 ASIC の値 | SAI shim の擬似値 / 一部 NULL |
+| [ASIC](../../reference/glossary.md#term-asic) counter | 実 ASIC の値 | SAI shim の擬似値 / 一部 NULL |
 | port speed / FEC | optic の capability から決定 | 強制 1G/10G、FEC は no-op |
 | thermal / PSU / fan | platform daemon が SDK から取得 | dummy 値 (show platform で固定) |
 | [QoS](../../reference/glossary.md#term-qos) / scheduling | ASIC scheduler 実動作 | 機能 enabled として通るが drop pattern は再現しない |
@@ -283,7 +283,7 @@ VS では [SAI](../../reference/glossary.md#term-sai) が仮想実装のため�
 | `config load_minigraph` が失敗 | [minigraph.xml](../../reference/glossary.md#term-minigraph.xml) と [HwSku](../../reference/glossary.md#term-hwsku) 不整合 | `/usr/share/sonic/device/x86_64-kvm_x86_64-r0/Force10-S6000/` 配下の HwSku を確認、`sonic-cfggen -m -d` で minigraph パース確認 |
 | docker ps に container が出ない | image build 失敗 / `INCLUDE_*` flag 不足 | `make -j$(nproc) target/sonic-vs.img.gz 2>&1 \| tee build.log`、`rules/config` の include flag を確認 |
 | DASH の [ENI](../../reference/glossary.md#term-eni) を投入したが [ASIC_DB](../../reference/glossary.md#term-asic_db) に object が出ない | DASH SAI 未実装 image、ENI key の MAC 表記揺れ | DASH 対応 image (`docker-sonic-vs-dash`) を使う、MAC を大文字無区切り 12 桁に統一 |
-| Multi-ASIC VS で asic0 / asic1 が起動しない | namespace netns 未作成 / `database_global.json` 構文エラー | `ip netns list`、`jq . /etc/sonic/database_global.json`、`systemctl restart database` |
+| [Multi-ASIC](../../reference/glossary.md#term-multi-asic) VS で asic0 / asic1 が起動しない | namespace netns 未作成 / `database_global.json` 構文エラー | `ip netns list`、`jq . /etc/sonic/database_global.json`、`systemctl restart database` |
 | port が UP しないが ping は通る | `show interfaces status` の表示遅延 | `redis-cli -n 6 HGETALL "PORT_TABLE|EthernetX"` で `oper_status` 直確認 |
 
 ## test plan に出てくる configuration
@@ -308,4 +308,4 @@ CI / test plan に出てくる configuration ([VRF](../../reference/glossary.md#
 - [Lab vs Developer の概要](concept.md)
 - [Lab vs Developer の運用](operations.md)
 
-<!-- glossary-links-injected: 428094596659 -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

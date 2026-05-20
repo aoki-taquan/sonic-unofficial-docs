@@ -33,7 +33,7 @@ related:
 
 ## 何のための機能か
 
-NVGRE (Network Virtualization using Generic Routing Encapsulation) は L3 上に多数の仮想 L2 セグメントを張る方式。VxLAN と同じ「L2 over L3」だが GRE を使い 24 bit VSID でテナントを識別する。本機能は SONiC に **NVGRE の decap 受信側** を追加し、外部から来た NVGRE フレームを内側の [VLAN](../reference/glossary.md#term-vlan) または Bridge にマップして転送できるようにする。**Phase 1 は decap のみ、encap mapper はスコープ外**[^1]。
+NVGRE (Network Virtualization using Generic Routing Encapsulation) は L3 上に多数の仮想 L2 セグメントを張る方式。VxLAN と同じ「L2 over L3」だが GRE を使い 24 bit VSID でテナントを識別する。本機能は [SONiC](../reference/glossary.md#term-sonic) に **NVGRE の decap 受信側** を追加し、外部から来た NVGRE フレームを内側の [VLAN](../reference/glossary.md#term-vlan) または Bridge にマップして転送できるようにする。**Phase 1 は decap のみ、encap mapper はスコープ外**[^1]。
 
 カウンタは非対応。[SAI](../reference/glossary.md#term-sai) 1.9 以上が必須[^1]。
 
@@ -186,7 +186,7 @@ show nvgre-tunnel-map
 
 - **decap のみ**（encap は範囲外）
 - カウンタ非対応
-- トンネル数の上限は SAI / ASIC リソース依存。超過時は SAI エラーで `nvgreorch` が abort
+- トンネル数の上限は SAI / [ASIC](../reference/glossary.md#term-asic) リソース依存。超過時は SAI エラーで `nvgreorch` が abort
 
 ## 干渉する機能
 
@@ -229,4 +229,4 @@ redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*' | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

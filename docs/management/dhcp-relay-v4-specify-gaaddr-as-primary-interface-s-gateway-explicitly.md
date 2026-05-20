@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-[VLAN](../reference/glossary.md#term-vlan) に **複数のサブネット** を載せたい運用は珍しくない。例えばベアメタルサーバ上の VM 用に追加 IP プレフィックスを生やすケースや、セキュリティドメインで分離したいケースがそれにあたる。一方、SONiC の DHCPv4 リレーエージェント（ISC `dhcrelay`）は VLAN 配下の複数 IP インタフェースを単純に列挙するだけで、リレー時に **`giaddr` 欄をどのサブネットの IP にするかが事実上ランダム** になる問題があった。サーバ側 DHCP は `giaddr` をもとにスコープを選ぶため、毎回違う `giaddr` が来るとプール選択がブレてしまう[^1]。
+[VLAN](../reference/glossary.md#term-vlan) に **複数のサブネット** を載せたい運用は珍しくない。例えばベアメタルサーバ上の VM 用に追加 IP プレフィックスを生やすケースや、セキュリティドメインで分離したいケースがそれにあたる。一方、[SONiC](../reference/glossary.md#term-sonic) の DHCPv4 リレーエージェント（ISC `dhcrelay`）は VLAN 配下の複数 IP インタフェースを単純に列挙するだけで、リレー時に **`giaddr` 欄をどのサブネットの IP にするかが事実上ランダム** になる問題があった。サーバ側 DHCP は `giaddr` をもとにスコープを選ぶため、毎回違う `giaddr` が来るとプール選択がブレてしまう[^1]。
 
 本機能は `VLAN_INTERFACE` テーブルに **`secondary` フラグ** を追加し、`dhcrelay` の起動引数に **`-pg <primary-gateway>`** を渡すことで、リレーが常に primary サブネットの IP を `giaddr` に書き込むよう固定する。複数サブネットを持ちつつ DHCP は primary の 1 系統に集約する設計である。**IPv4 限定**[^1]。
 
@@ -246,4 +246,4 @@ docker logs dhcp_relay 2>&1 | tail -30
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

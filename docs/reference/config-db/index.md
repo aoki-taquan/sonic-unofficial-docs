@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`CONFIG_DB` は SONiC における **中央設定 DB**。[Redis](../../reference/glossary.md#term-redis) instance の `DB 4` 上に置かれ、CLI (`config ...`) や [gNMI](../../reference/glossary.md#term-gnmi) / REST API、`config_db.json` のロードによって書き込まれる。各 Orch / daemon ([orchagent](../../reference/glossary.md#term-orchagent), [bgpcfgd](../../reference/glossary.md#term-bgpcfgd), [intfmgrd](../../reference/glossary.md#term-intfmgrd), [vlanmgrd](../../reference/glossary.md#term-vlanmgrd), [portmgrd](../../reference/glossary.md#term-portmgrd), teammgrd, ...) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の対象テーブルを **subscribe** し、[APPL_DB](../../reference/glossary.md#term-appl_db) やシステム設定（[FRR](../../reference/glossary.md#term-frr)・kernel・docker）に反映する。
+`CONFIG_DB` は [SONiC](../../reference/glossary.md#term-sonic) における **中央設定 DB**。[Redis](../../reference/glossary.md#term-redis) instance の `DB 4` 上に置かれ、CLI (`config ...`) や [gNMI](../../reference/glossary.md#term-gnmi) / REST API、`config_db.json` のロードによって書き込まれる。各 Orch / daemon ([orchagent](../../reference/glossary.md#term-orchagent), [bgpcfgd](../../reference/glossary.md#term-bgpcfgd), [intfmgrd](../../reference/glossary.md#term-intfmgrd), [vlanmgrd](../../reference/glossary.md#term-vlanmgrd), [portmgrd](../../reference/glossary.md#term-portmgrd), teammgrd, ...) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の対象テーブルを **subscribe** し、[APPL_DB](../../reference/glossary.md#term-appl_db) やシステム設定（[FRR](../../reference/glossary.md#term-frr)・kernel・docker）に反映する。
 
 ユーザの設定は **[YANG](../../reference/glossary.md#term-yang) モデル** (`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-*.yang`) で記述された制約に従う必要がある。CLI / REST 経由の入力は `sonic-mgmt-common` の translib / transformer を通って [YANG](../../reference/glossary.md#term-yang) 検証されるが、`config_db.json` の直接ロード経路では `DEVICE_METADATA.localhost.yang_config_validation = enable` のときだけ検証が走る。
 
@@ -85,4 +85,4 @@ CONFIG_DB の正本は YANG モデル群 (`sonic-buildimage/src/sonic-yang-model
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 72c4e83be12c -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

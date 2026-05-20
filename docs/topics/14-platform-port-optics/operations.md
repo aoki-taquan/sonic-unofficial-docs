@@ -194,7 +194,7 @@ admin@sonic:~$ redis-cli -n 6 hgetall 'PSU_INFO|PSU 2'
 
 ## Storage / SSD
 
-SONiC は装置の SSD 寿命を継続監視します。
+[SONiC](../../reference/glossary.md#term-sonic) は装置の SSD 寿命を継続監視します。
 
 - [ssdhealth design](../../architecture/ssdhealth-design.md): 旧来の SSD 健全性デザイン。
 - [storage monitoring daemon design](../../system/sonic-storage-monitoring-daemon-design.md): 新しい storage monitor の方針。
@@ -220,7 +220,7 @@ Reallocated Sectors: 0
 - [pcieinfo design](../../platform/pcieinfo-design.md): `pcieutil` / `pcied` の旧設計。
 - [SONiC PCIe monitoring services HLD](../../system/sonic-pcie-monitoring-services-hld.md): PCIe 経路の健全性監視。
 
-PCIe error は ASIC との通信不能や [syncd](../../reference/glossary.md#term-syncd) 落ちにつながるため、syslog と STATE_DB を併せて確認します。
+PCIe error は [ASIC](../../reference/glossary.md#term-asic) との通信不能や [syncd](../../reference/glossary.md#term-syncd) 落ちにつながるため、syslog と STATE_DB を併せて確認します。
 
 ```bash
 admin@sonic:~$ show platform pcieinfo -c
@@ -295,4 +295,4 @@ AER (Advanced Error Reporting) の `severity=fatal` は次に syncd が落ちる
 - [storage monitoring daemon design](../../system/sonic-storage-monitoring-daemon-design.md)
 - [SONiC PCIe monitoring services HLD](../../system/sonic-pcie-monitoring-services-hld.md)
 
-<!-- glossary-links-injected: a1e3b64175ec -->
+<!-- glossary-links-injected: ec18b66e3507 -->

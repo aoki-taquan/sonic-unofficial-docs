@@ -52,7 +52,7 @@ related:
 
 # 概念と読み始め方
 
-この章は「SONiC をこれから読む人が、最初の数時間でつまずきやすい所」を整理しておく入口です。SONiC は、Linux distribution、複数の daemon、複数の [Redis](../../reference/glossary.md#term-redis) DB、ASIC vendor 固有の [syncd](../../reference/glossary.md#term-syncd)、[FRR](../../reference/glossary.md#term-frr) のような外部 OSS、そして CLI / [gNMI](../../reference/glossary.md#term-gnmi) / RESTCONF / [config_db.json](../../reference/glossary.md#term-config_db.json) といった複数の入口を組み合わせた NOS です。それぞれが独立した [HLD](../../reference/glossary.md#term-hld) を持つため、最初から HLD を順に読むと「設定 1 つを変えるためのコンテキスト」を組み立てるのに時間がかかります。
+この章は「[SONiC](../../reference/glossary.md#term-sonic) をこれから読む人が、最初の数時間でつまずきやすい所」を整理しておく入口です。SONiC は、Linux distribution、複数の daemon、複数の [Redis](../../reference/glossary.md#term-redis) DB、[ASIC](../../reference/glossary.md#term-asic) vendor 固有の [syncd](../../reference/glossary.md#term-syncd)、[FRR](../../reference/glossary.md#term-frr) のような外部 OSS、そして CLI / [gNMI](../../reference/glossary.md#term-gnmi) / RESTCONF / [config_db.json](../../reference/glossary.md#term-config_db.json) といった複数の入口を組み合わせた NOS です。それぞれが独立した [HLD](../../reference/glossary.md#term-hld) を持つため、最初から HLD を順に読むと「設定 1 つを変えるためのコンテキスト」を組み立てるのに時間がかかります。
 
 このページでは、まず読み手が抱きやすい疑問を順に解いていきます。
 
@@ -169,7 +169,7 @@ flowchart LR
   SYNC --> SDB
 ```
 
-この図は概念図です。BGP、platform、telemetry、Multi-ASIC では例外や追加 DB がありますが、多くの章はこの流れを前提に読めます。
+この図は概念図です。BGP、platform、telemetry、[Multi-ASIC](../../reference/glossary.md#term-multi-asic) では例外や追加 DB がありますが、多くの章はこの流れを前提に読めます。
 
 ## 似た仕組みとの違い
 
@@ -201,4 +201,4 @@ flowchart LR
 
 この章は SONiC ドキュメント全体の入口に位置するため、特段の前提章はない。`docs/topics/index.md` の読み進め方マップを参照すること。
 
-<!-- glossary-links-injected: 9dc8d00bbbb1 -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

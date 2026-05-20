@@ -35,7 +35,7 @@ related:
 
 # YANG リファレンス
 
-このページは、機能章 (本書の章 01〜21) から [YANG](../../reference/glossary.md#term-yang) モジュールを逆引きするための索引である。SONiC native YANG のページは `docs/reference/yang/*.md` に並んでおり、[CONFIG_DB](../../reference/glossary.md#term-config_db) のテーブルスキーマと 1:1 対応する。OpenConfig 側のマップ範囲は、機能ごとに [概要](concept.md) の表と、各機能 [HLD](../../reference/glossary.md#term-hld) を参照する。
+このページは、機能章 (本書の章 01〜21) から [YANG](../../reference/glossary.md#term-yang) モジュールを逆引きするための索引である。[SONiC](../../reference/glossary.md#term-sonic) native YANG のページは `docs/reference/yang/*.md` に並んでおり、[CONFIG_DB](../../reference/glossary.md#term-config_db) のテーブルスキーマと 1:1 対応する。OpenConfig 側のマップ範囲は、機能ごとに [概要](concept.md) の表と、各機能 [HLD](../../reference/glossary.md#term-hld) を参照する。
 
 ## 機能章別 YANG モジュール
 
@@ -65,4 +65,4 @@ related:
 - [SONiC YANG model guidelines](../../management/sonic-yang-model-guidelines.md)
 - [SONiC config update validation via YANG](../../management/sonic-config-update-validation-via-yang.md)
 
-<!-- glossary-links-injected: 31d4e5a93358 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

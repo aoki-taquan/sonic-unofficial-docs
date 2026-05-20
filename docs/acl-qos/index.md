@@ -16,8 +16,8 @@ last_verified: 2026-05-13
 - **ACL**: テーブル型、ingress / egress、ユーザ定義テーブル型、L3V4V6 統合、flex counter 化
 - **CoPP**: Manager 再設計、neighbor miss trap、enum capability query
 - **Mirror / Everflow**: SPAN / ERSPAN、egress mirror + action capability
-- **Buffer / PFC**: dynamic headroom、reclaim reserved buffer、PFC 履歴統計、WRED / ECN
-- **QoS scheduler**: SP / WRR / DWRR、min/max bandwidth、shaper
+- **Buffer / PFC**: dynamic headroom、reclaim reserved buffer、PFC 履歴統計、[WRED](../reference/glossary.md#term-wred) / ECN
+- **QoS scheduler**: SP / WRR / [DWRR](../reference/glossary.md#term-dwrr)、min/max bandwidth、shaper
 - **Watermark / Drop counter**: PG / queue 占有量、buffer drop、configurable drop counter
 
 ## この章の読み方
@@ -40,10 +40,10 @@ last_verified: 2026-05-13
 
 ## 扱わない範囲
 
-- 経路選択そのもの（ECMP / nexthop policy）は [routing](../routing/index.md) 章
-- L2 forwarding テーブル設計（FDB / VLAN 内 flooding）は [switching](../switching/index.md) 章
-- 個別ベンダーの SAI 拡張 ACL（コミュニティ `master` の SAI 標準範囲のみ扱う）
-- ACL / QoS の **CLI コマンド一覧** / **CONFIG_DB テーブル定義** は [reference](../reference/index.md) 章
+- 経路選択そのもの（[ECMP](../reference/glossary.md#term-ecmp) / nexthop policy）は [routing](../routing/index.md) 章
+- L2 forwarding テーブル設計（[FDB](../reference/glossary.md#term-fdb) / [VLAN](../reference/glossary.md#term-vlan) 内 flooding）は [switching](../switching/index.md) 章
+- 個別ベンダーの [SAI](../reference/glossary.md#term-sai) 拡張 ACL（コミュニティ `master` の SAI 標準範囲のみ扱う）
+- ACL / QoS の **CLI コマンド一覧** / **[CONFIG_DB](../reference/glossary.md#term-config_db) テーブル定義** は [reference](../reference/index.md) 章
 ## 検証状況
 - ページ数: 31
 - 分布: Code-verified: 23 / Discrepancy-found: 2 / HLD-only: 6
@@ -96,4 +96,4 @@ last_verified: 2026-05-13
 | [未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス](reclaim-reserved-buffer-sequence-flow.md) | Code-verified |
 | [設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）](configurable-drop-counters-in-sonic.md) | Code-verified |
 
-<!-- glossary-links-injected: f16175ea2d57 -->
+<!-- glossary-links-injected: 58337c3c8df8 -->

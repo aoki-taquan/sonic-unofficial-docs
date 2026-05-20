@@ -49,7 +49,7 @@ related:
 
 ## なぜこの構成なのか
 
-SONiC の [VRF](../reference/glossary.md#term-vrf) サポートは、Linux kernel の **VRF master device** を基盤に、[FRR](../reference/glossary.md#term-frr) ([zebra](../reference/glossary.md#term-zebra) / bgpd) を vrf-aware 化し、SONiC 側に **[vrfmgrd](../reference/glossary.md#term-vrfmgrd) / vrforch** を新設して L3 interface・static route・[BGP](../reference/glossary.md#term-bgp) セッション・[ACL](../reference/glossary.md#term-acl) redirect の VRF binding を一気通貫で扱えるようにしている[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の [VRF](../reference/glossary.md#term-vrf) サポートは、Linux kernel の **VRF master device** を基盤に、[FRR](../reference/glossary.md#term-frr) ([zebra](../reference/glossary.md#term-zebra) / bgpd) を vrf-aware 化し、SONiC 側に **[vrfmgrd](../reference/glossary.md#term-vrfmgrd) / vrforch** を新設して L3 interface・static route・[BGP](../reference/glossary.md#term-bgp) セッション・[ACL](../reference/glossary.md#term-acl) redirect の VRF binding を一気通貫で扱えるようにしている[^1]。
 
 スコープ:
 
@@ -177,4 +177,4 @@ show vrf
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 67a4f3bdb972 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

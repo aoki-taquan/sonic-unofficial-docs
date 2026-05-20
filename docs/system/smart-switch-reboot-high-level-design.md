@@ -51,7 +51,7 @@ related:
 
 - NPU 上で **[gNOI](../reference/glossary.md#term-gnoi) client**、各 DPU 上で **gNOI server**[^1]
 - NPU と DPU 間は内部管理 IP（midplane bridge）で通信
-- NPU / DPU の SONiC host service は graceful shutdown を行う
+- NPU / DPU の [SONiC](../reference/glossary.md#term-sonic) host service は graceful shutdown を行う
 
 ### DPU 単独 reboot のシーケンス
 
@@ -236,4 +236,4 @@ python3 -c "from sonic_platform.module import Module; m = Module(0); print(m.pci
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 70472401098e -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -33,7 +33,7 @@ related:
 
 # アーキテクチャ
 
-ここでは、ポート 1 本がリンクアップに至るまでに通る要素を、SONiC 内部のコンポーネント単位で並べ直します。[HLD](../../reference/glossary.md#term-hld) 個別では「FEC」「auto-neg」「link training」「fast link up」が独立した提案として書かれていますが、実装上は同じ port bring-up シーケンスに乗っています。
+ここでは、ポート 1 本がリンクアップに至るまでに通る要素を、[SONiC](../../reference/glossary.md#term-sonic) 内部のコンポーネント単位で並べ直します。[HLD](../../reference/glossary.md#term-hld) 個別では「FEC」「auto-neg」「link training」「fast link up」が独立した提案として書かれていますが、実装上は同じ port bring-up シーケンスに乗っています。
 
 ## Port bring-up の全体像
 
@@ -51,7 +51,7 @@ flowchart TD
   OA -->|oper_status| APP[APP_DB]
 ```
 
-`port_config.ini` と `hwsku.json` で決まる初期プロファイルは [port profile init HLD](../../architecture/port-profile-init-hld.md) で詳細化されています。設定が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `PORT` に入ると、`PortMgr` と `portsyncd` を経由して [orchagent](../../reference/glossary.md#term-orchagent) の `PortsOrch` に到達し、[SAI](../../reference/glossary.md#term-sai) 経由で ASIC に書かれます。
+`port_config.ini` と `hwsku.json` で決まる初期プロファイルは [port profile init HLD](../../architecture/port-profile-init-hld.md) で詳細化されています。設定が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `PORT` に入ると、`PortMgr` と `portsyncd` を経由して [orchagent](../../reference/glossary.md#term-orchagent) の `PortsOrch` に到達し、[SAI](../../reference/glossary.md#term-sai) 経由で [ASIC](../../reference/glossary.md#term-asic) に書かれます。
 
 ## Dynamic breakout
 
@@ -91,4 +91,4 @@ FEC (Forward Error Correction) は速度ごとに既定値があり、SONiC で�
 - [auto FEC design](../../architecture/sonic-port-auto-fec-design.md)
 - [port configuration refactor design](../../architecture/sonic-port-configuration-refactor-design.md)
 
-<!-- glossary-links-injected: 05fd5dae2a90 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

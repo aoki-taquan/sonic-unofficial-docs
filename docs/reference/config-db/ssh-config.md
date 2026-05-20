@@ -32,16 +32,12 @@ SSH サーバのグローバル設定を [CONFIG_DB](../../reference/glossary.md
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SSH_SERVER")]
-  DM["hostcfgd<br/>(SshServer)"]
-  SSHD["/etc/ssh/sshd_config"]
-  PAM["/etc/security/limits.conf<br/>(max_sessions のみ)"]
+  DM["hostcfgd"]
   CDB --> DM
-  DM --> SSHD
-  DM --> PAM
 ```
 
 !!! note "凡例"
-    CONFIG_DB から各設定ファイルまでの典型経路を示すミニ図。詳細・例外は本文と対応表を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -69,8 +65,8 @@ key は `POLICIES` 固定のシングルトンテーブル。
 
 ## 制約
 
-- `authentication_retries`: YANG range `1..100`, hostcfgd 実効最小値 `3` (1–2 は YANG 通過後 hostcfgd が ERR ログ出力してスキップ)
-- `login_timeout`: YANG/hostcfgd ともに `1..600`
+- `authentication_retries`: [YANG](../../reference/glossary.md#term-yang) range `1..100`, [hostcfgd](../../reference/glossary.md#term-hostcfgd) 実効最小値 `3` (1–2 は YANG 通過後 [hostcfgd](../../reference/glossary.md#term-hostcfgd) が ERR ログ出力してスキップ)
+- `login_timeout`: YANG/[hostcfgd](../../reference/glossary.md#term-hostcfgd) ともに `1..600`
 - `inactivity_timeout`: `0..35000` 分 (0 で無効化)
 - `max_sessions`: `0..100` (0 で無制限)
 - `ports`: カンマ区切り; 各値 `1..65535`
@@ -85,7 +81,7 @@ key は `POLICIES` 固定のシングルトンテーブル。
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-ssh-server`
-- 関連 CLI: `config ssh-server` (sonic-utilities)
+- 関連 CLI: `config ssh-server` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities))
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
@@ -210,7 +206,7 @@ self.sshscfg.load(ssh_server)
 
 ### 段階 4 — タイミングと副作用
 
-- CONFIG_DB の `SSH_SERVER` エントリ変化を `ConfigDBConnector` で検知次第即時反映
+- [CONFIG_DB](../../reference/glossary.md#term-config_db) の `SSH_SERVER` エントリ変化を `ConfigDBConnector` で検知次第即時反映
 - `systemctl restart ssh` によって既存セッションは維持されるが、新規接続から新設定が有効
 - `max_sessions` 変更は `PamLimitsCfg` ルートで処理されるため `ssh` サービス再起動なし (PAM limits.conf 再読み込みのみ)
 <!-- /runtime-trace -->
@@ -276,9 +272,9 @@ YANG default と hostcfgd コード由来の fallback をまとめる。`SshServ
 ### 補足
 
 - `SshServer.load()` (hostcfgd:1049-1055): `POLICIES` キーが存在しない場合、`self.policies = {}` をセットして `modify_conf_file()` は呼ぶが、空 dict のため `set_policies()` は実行されない (`len(ssh_policies) > 0` 判定で skip)。
-- `inactivity_timeout` の単位変換: CONFIG_DB 値 (分) を `int(value) * 60` で秒変換し `ClientAliveInterval` に書く (hostcfgd:1129-1131)。
+- `inactivity_timeout` の単位変換: [CONFIG_DB](../../reference/glossary.md#term-config_db) 値 (分) を `int(value) * 60` で秒変換し `ClientAliveInterval` に書く (hostcfgd:1129-1131)。
 - `max_sessions = 0` の場合: `PamLimitsCfg.read_max_sessions_config()` が `self.max_sessions = None` とし、`limits.conf.j2` に `maxsyslogins` 行を出力しない。これにより PAM はシステムデフォルト (無制限) で動作する (hostcfgd:1440-1441)。
-- `permit_root_login` は YANG に `default` 文が存在しないが、HLD (ssh_config.md) では「Default OS value: Debian の `prohibit-password`」と記載されている。
+- `permit_root_login` は YANG に `default` 文が存在しないが、[HLD](../../reference/glossary.md#term-hld) (ssh_config.md) では「Default OS value: Debian の `prohibit-password`」と記載されている。
 
 <!-- /defaults -->
 
@@ -323,7 +319,7 @@ self.pamLimitsCfg.update_config_file()
 - **起動直後の PAM limits 未確定ウィンドウ**: `load()` フェーズで `sshscfg.load()` 完了前は `max_sessions` 制限が PAM に反映されていない可能性がある（`__init__` 時点での `PamLimitsCfg` 実行は SSH_SERVER 不在の場合スキップされる）。
 - **原子性欠如**: `ssh_handler` は `sshd_config` 更新と PAM limits 更新をトランザクションなしで逐次実行する。ディスクフル等で PAM limits 更新のみ失敗した場合、両設定が不整合になる。
 - **sshd 検証ゲート**: `sshd -T -f <tmp>` が非ゼロを返した場合、全フィールドの変更をロールバック（`tmp` ファイル削除）。フィールド単位の部分適用はなく、すべて適用 or すべて棄却。
-- **`DEVICE_METADATA|localhost` 連動**: `PamLimitsCfg.update_config_file()` は `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` の両エントリ不在時に早期 return（L1430）。通常の SONiC デプロイでは影響なし。
+- **`DEVICE_METADATA|localhost` 連動**: `PamLimitsCfg.update_config_file()` は `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` の両エントリ不在時に早期 return（L1430）。通常の [SONiC](../../reference/glossary.md#term-sonic) デプロイでは影響なし。
 
 <!-- /ordering -->
 
@@ -336,15 +332,15 @@ self.pamLimitsCfg.update_config_file()
 |---------|-------------|-------------|------|
 | SSH_SERVER → | `max_sessions` (PamLimitsCfg) | `DEVICE_METADATA` | `update_config_file()` が `DEVICE_METADATA\|localhost` キー存在確認。不在かつ `SSH_SERVER\|POLICIES` も不在なら early return (hostcfgd:L1430) |
 | ← SSH_SERVER (間接) | `PasswordAuthentication` (sshd_config) | `AAA` | `AaaCfg.modify_conf_file()` が `/etc/pam.d/sshd` を書き換える。パスワード認証と PAM 認証スタックが実質連動 (hostcfgd:L748-751) |
-| ← SSH_SERVER (間接) | SSH 認証経路 | `MGMT_INTERFACE` | TACACS+/RADIUS の `src_intf=eth0` 時に `AaaCfg.get_interface_ip()` が `MGMT_INTERFACE` の IP を解決 (hostcfgd:L596-606) |
+| ← SSH_SERVER (間接) | SSH 認証経路 | `MGMT_INTERFACE` | TACACS+/[RADIUS](../../reference/glossary.md#term-radius) の `src_intf=eth0` 時に `AaaCfg.get_interface_ip()` が `MGMT_INTERFACE` の IP を解決 (hostcfgd:L596-606) |
 
 ### 詳細
 
-**`DEVICE_METADATA|localhost` (暗黙先行必須)**: `PamLimitsCfg.update_config_file()` は `get_table('DEVICE_METADATA')` で `localhost` キーの存在確認を行い、`localhost["hwsku"]` / `localhost["type"]` を PAM limits テンプレートに渡す（hostcfgd:L1422-1430）。`SSH_SERVER|POLICIES.max_sessions` の PAM への反映は `DEVICE_METADATA|localhost` の存在が前提。通常の SONiC デプロイでは常に存在するため実害なし。
+**`DEVICE_METADATA|localhost` (暗黙先行必須)**: `PamLimitsCfg.update_config_file()` は `get_table('DEVICE_METADATA')` で `localhost` キーの存在確認を行い、`localhost["hwsku"]` / `localhost["type"]` を PAM limits テンプレートに渡す（hostcfgd:L1422-1430）。`SSH_SERVER|POLICIES.max_sessions` の PAM への反映は `DEVICE_METADATA|localhost` の存在が前提。通常の [SONiC](../../reference/glossary.md#term-sonic) デプロイでは常に存在するため実害なし。
 
 **`AAA` テーブル (/etc/pam.d/sshd 共有)**: `AaaCfg.modify_conf_file()` が `/etc/pam.d/sshd` を直接書き換える（hostcfgd:L748-751）。SSH_SERVER の `password_authentication` フィールドと PAM の認証スタックは独立した設定ファイル管理だが、sshd が両方を参照するため実質的に連動する。`PasswordAuthentication yes` + PAM `common-auth-sonic`（TACACS+）の組み合わせで TACACS+ パスワード認証が有効になる。
 
-**`MGMT_INTERFACE` (間接参照)**: SSH_SERVER テーブルは `MGMT_INTERFACE` を直接参照しないが、SSH 認証バックエンドとして TACACS+/RADIUS を使用する場合、AAA の `src_intf` → `MGMT_INTERFACE` の IP 解決が SSH 認証経路に影響する（hostcfgd:L596-606）。
+**`MGMT_INTERFACE` (間接参照)**: SSH_SERVER テーブルは `MGMT_INTERFACE` を直接参照しないが、SSH 認証バックエンドとして TACACS+/[RADIUS](../../reference/glossary.md#term-radius) を使用する場合、[AAA](../../reference/glossary.md#term-aaa) の `src_intf` → `MGMT_INTERFACE` の IP 解決が SSH 認証経路に影響する（hostcfgd:L596-606）。
 <!-- /cross-refs -->
 
 <!-- failure -->
@@ -447,10 +443,10 @@ CONFIG_DB `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の `SshServ
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `SshServer.set_policies()` / `PamLimitsCfg.render_conf_file()` 内に `set(`/`hset`/`Producer`/`Notification` の呼出 0 件 (`hostcfgd:L1110-1479`) |
-| STATE_DB | なし | `SshServer` / `PamLimitsCfg` は `state_db_conn` を保持しない。STATE_DB 書込は `FipsCfg` のみ (`hostcfgd:L1759-1821`) |
-| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし |
-| ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB | なし | SAI 非経由。`SSH_SERVER` を購読する orchagent は存在しない |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `SshServer.set_policies()` / `PamLimitsCfg.render_conf_file()` 内に `set(`/`hset`/`Producer`/`Notification` の呼出 0 件 (`hostcfgd:L1110-1479`) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `SshServer` / `PamLimitsCfg` は `state_db_conn` を保持しない。[STATE_DB](../../reference/glossary.md#term-state_db) 書込は `FipsCfg` のみ (`hostcfgd:L1759-1821`) |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `hostcfgd` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 参照なし |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由。`SSH_SERVER` を購読する [orchagent](../../reference/glossary.md#term-orchagent) は存在しない |
 
 ### ファイルシステムへの副次書込（DB 外）
 
@@ -471,13 +467,13 @@ CONFIG_DB `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の `SshServ
 
 ### Redis 購読方式
 
-`SSH_SERVER` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:SSH_SERVER|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+`SSH_SERVER` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **[Redis](../../reference/glossary.md#term-redis) keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:SSH_SERVER|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
 
 | 購読者 | 購読 API | 購読テーブル | ハンドラ |
 |--------|---------|--------------|---------|
 | `hostcfgd` (`SshServer` + `PamLimitsCfg` 経由) | `ConfigDBConnector.subscribe()` | `SSH_SERVER` | `ssh_handler` → `policies_update` + `update_config_file` |
 
-`hostcfgd` 以外で `SSH_SERVER` テーブルを購読するプロセスは存在しない。`show ssh-server policies` (sonic-utilities) は CONFIG_DB を `HGETALL` で直接読むのみで Redis keyspace 通知を購読しない。
+`hostcfgd` 以外で `SSH_SERVER` テーブルを購読するプロセスは存在しない。`show ssh-server policies` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)) は CONFIG_DB を `HGETALL` で直接読むのみで [Redis](../../reference/glossary.md#term-redis) keyspace 通知を購読しない。
 
 ### keyspace 通知 → ハンドラ呼び出しの流れ
 
@@ -495,7 +491,7 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5", ...})
 ```
 
 - keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は `HGETALL` で取得する。
-- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない。
+- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の [Redis](../../reference/glossary.md#term-redis) 操作種別自体は区別しない。
 - 起動時は `config_db.listen(init_data_handler=self.load)` (hostcfgd:2528) により、Subscribe ループ開始前に `sshscfg.load()` が `init_data['SSH_SERVER']` を一括スナップショットで適用する。
 
 ### サービス再起動トリガー
@@ -512,17 +508,17 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5", ...})
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**。`SSH_SERVER` は `hostcfgd` が host namespace の CONFIG_DB のみを購読し、SAI / ASIC SDK を経由しない純粋な host-only 設定処理のため、ASIC ベンダー・multi-asic / chassis 構成に依存しない。
+**プラットフォーム差なし**。`SSH_SERVER` は `hostcfgd` が host namespace の CONFIG_DB のみを購読し、[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を経由しない純粋な host-only 設定処理のため、[ASIC](../../reference/glossary.md#term-asic) ベンダー・multi-asic / chassis 構成に依存しない。
 
 ### 検証結果
 
 | 差異候補 | 実態 | evidence |
 |---------|------|----------|
-| `hwsku` / `type` (DEVICE_METADATA) の参照 | `PamLimitsCfg.render_conf_file()` がテンプレートに渡すが `limits.conf.j2` / `pam_limits.j2` は未参照 (`max_sessions` のみ条件使用) | `hostcfgd:1460-1476`; `data/templates/limits.conf.j2` |
+| `hwsku` / `type` ([DEVICE_METADATA](../../reference/glossary.md#term-device_metadata)) の参照 | `PamLimitsCfg.render_conf_file()` がテンプレートに渡すが `limits.conf.j2` / `pam_limits.j2` は未参照 (`max_sessions` のみ条件使用) | `hostcfgd:1460-1476`; `data/templates/limits.conf.j2` |
 | multi-asic 構成 | `is_multi_npu()` は `HostconfigDaemon` で取得するが `SshServer` / `PamLimitsCfg` には渡されない。`SSH_SERVER` は host CONFIG_DB のみに存在し `asicN` namespace には置かれない | `hostcfgd:2182,2201,2191` |
-| SAI / ASIC capability | 経路なし。`SshServer.set_policies()` は `sshd_config` 直接書換え + `systemctl restart ssh` のみ | `hostcfgd:1045-1186` |
-| 暗号スイート (`ciphers` / `kex_algorithms` / `macs`) | YANG enumeration で許容値が固定されており ASIC 非依存 | `sonic-ssh-server.yang` |
-| VOQ chassis / line card 分散 | 各 host の `hostcfgd` が独立に同一処理を実行。chassis 集中適用機構なし | 設計上の派生 |
+| [SAI](../../reference/glossary.md#term-sai) / [ASIC](../../reference/glossary.md#term-asic) capability | 経路なし。`SshServer.set_policies()` は `sshd_config` 直接書換え + `systemctl restart ssh` のみ | `hostcfgd:1045-1186` |
+| 暗号スイート (`ciphers` / `kex_algorithms` / `macs`) | YANG enumeration で許容値が固定されており [ASIC](../../reference/glossary.md#term-asic) 非依存 | `sonic-ssh-server.yang` |
+| [VOQ](../../reference/glossary.md#term-voq) chassis / line card 分散 | 各 host の `hostcfgd` が独立に同一処理を実行。chassis 集中適用機構なし | 設計上の派生 |
 
 !!! note "プラットフォーム差なしの根拠"
     SSH 設定はカーネル・OpenSSH・PAM の host OS レイヤで完結し、データプレーン ASIC との接点がない。`hostcfgd` が `is_multi_npu()` を取得しても SSH 処理経路では参照されない点がコードで確認されている (`hostcfgd:2182` 取得 → SSH ハンドラへの伝播なし)。
@@ -531,3 +527,5 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5", ...})
 <!-- /platform -->
 
 <!-- glossary-links-injected: ssh-config-2026-05-14 -->
+
+<!-- glossary-links-injected: adbc248f73ea -->

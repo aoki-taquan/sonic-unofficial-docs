@@ -41,7 +41,7 @@ related:
 
 uSID（micro-SID）は IETF [Compressed SRv6 Segment List Encoding](https://datatracker.ietf.org/doc/draft-ietf-spring-srv6-srh-compression/) と [SRv6 uSID instructions](https://datatracker.ietf.org/doc/draft-filsfils-spring-net-pgm-extension-srv6-usid/) で定義される、[SRv6](../reference/glossary.md#term-srv6) SID を **16 bit などに圧縮** する仕組みである。完全な 128bit IPv6 を SID として使う通常の SRv6 と異なり、1 つの 128bit IPv6 アドレス（uSID carrier）に **最大 6 個の uSID** を詰められる[^1]。MTU オーバヘッドを抑えつつ、長いセグメントリストを表現できる。
 
-本 [HLD](../reference/glossary.md#term-hld) は SONiC の既存 `srv6orch`（[SRv6 HLD](https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md) 系）に対し、**uSID 用の新しい end behavior（uN / uA / uDT / uDX）を追加** する拡張のみを定義する。[SAI](../reference/glossary.md#term-sai) API は既存の `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*` ですべて表現できるため、SAI の変更は不要である[^1]。SONiC の [FRR](../reference/glossary.md#term-frr) 系は本 HLD 時点で SRv6 ルーティングプロトコル機能を持たないため、ルーティング層への対応は本 HLD のスコープ外。
+本 [HLD](../reference/glossary.md#term-hld) は [SONiC](../reference/glossary.md#term-sonic) の既存 `srv6orch`（[SRv6 HLD](https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md) 系）に対し、**uSID 用の新しい end behavior（uN / uA / uDT / uDX）を追加** する拡張のみを定義する。[SAI](../reference/glossary.md#term-sai) API は既存の `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_*` ですべて表現できるため、SAI の変更は不要である[^1]。SONiC の [FRR](../reference/glossary.md#term-frr) 系は本 HLD 時点で SRv6 ルーティングプロトコル機能を持たないため、ルーティング層への対応は本 HLD のスコープ外。
 
 ## 動作仕様
 
@@ -188,7 +188,7 @@ uDT46（[VRF](../reference/glossary.md#term-vrf) にデキャプ）:
 
 - **既存 SRv6 機能（End / End.X / End.DT* / End.DX* / End.B6.*）**: 同じ `SRV6_MY_SID_TABLE` を共有する。`action` 文字列で区別する
 - **VRF**: `udt4` / `udt6` / `udt46` は `vrf` フィールドで宛先 VRF を指定する
-- **SAI 実装**: SAI 側に `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN` / `UA` を実装していない ASIC では `un` / `ua` が拒否される
+- **SAI 実装**: SAI 側に `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN` / `UA` を実装していない [ASIC](../reference/glossary.md#term-asic) では `un` / `ua` が拒否される
 
 ## トラブルシューティング
 
@@ -223,4 +223,4 @@ docker exec bgp vtysh -c 'show segment-routing srv6 locator' 2>/dev/null | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 462a4dbe73d7 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

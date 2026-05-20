@@ -45,7 +45,7 @@ related:
 
 ## 概要
 
-TPID（Tag Protocol Identifier）は [VLAN](../reference/glossary.md#term-vlan) tag を識別する Ethernet frame 内の 16-bit 値。デフォルトは IEEE 802.1Q の `0x8100`、Q-in-Q 外側で使われる `0x88A8` や歴史的な `0x9100` / `0x9200` がある。SONiC 既定では port の TPID は `0x8100` 固定だったが、ASIC 側に「**指定 TPID と一致しない VLAN tag は customer payload として扱う**」モードを設定できるようにする[^1]。
+TPID（Tag Protocol Identifier）は [VLAN](../reference/glossary.md#term-vlan) tag を識別する Ethernet frame 内の 16-bit 値。デフォルトは IEEE 802.1Q の `0x8100`、Q-in-Q 外側で使われる `0x88A8` や歴史的な `0x9100` / `0x9200` がある。[SONiC](../reference/glossary.md#term-sonic) 既定では port の TPID は `0x8100` 固定だったが、[ASIC](../reference/glossary.md#term-asic) 側に「**指定 TPID と一致しない VLAN tag は customer payload として扱う**」モードを設定できるようにする[^1]。
 
 主用途は **fanout switch** の置換[^1]: PTF テストで tagged packet を流すために fanout 側で 802.1Q tunnel を張りたい場合、TPID を別値に振ることで tunnel 動作を再現できる。
 
@@ -246,4 +246,4 @@ redis-cli -n 1 HGETALL "ASIC_STATE:SAI_OBJECT_TYPE_PORT:<oid>" | grep TPID
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 33e8880c866a -->
+<!-- glossary-links-injected: ec18b66e3507 -->
