@@ -135,9 +135,6 @@ reasoning: kernel cmdline 切替と debian 同梱パッケージの根拠。
 
     **判断根拠**: kernel cmdline 切替と debian 同梱パッケージの根拠。
 
-    !!! note "パラメタ名の注意"
-        上記引用の `fips=1` は HLD 原文の表記。現行 SONiC 実装では SONiC 固有パラメタとして **`sonic_fips=1`** を用いる（本文 L49 参照）。`fips=1` は Linux kernel FIPS モードのフラグであり、本 HLD のスコープ外。
-
 <!-- evidence-rendered:end -->
 
 ## 制限事項
