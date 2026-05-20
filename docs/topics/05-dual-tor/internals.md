@@ -33,7 +33,7 @@ related:
 
 # Mux 制御の内部構造
 
-Dual-ToR の制御は 1 つの daemon だけでは完結しません。`linkmgrd` が「どちらへ倒すべきか」を判断し、`ycabled` または gRPC client がケーブル / NIC 側へ指示し、`MuxOrch` が ASIC の neighbor / route / tunnel を転送状態に合わせます。
+Dual-ToR の制御は 1 つの daemon だけでは完結しません。`linkmgrd` が「どちらへ倒すべきか」を判断し、`ycabled` または gRPC client がケーブル / NIC 側へ指示し、`MuxOrch` が [ASIC](../../reference/glossary.md#term-asic) の neighbor / route / tunnel を転送状態に合わせます。
 
 ## 状態はどこで作られるか
 
@@ -120,7 +120,7 @@ ASIC_DB:
 
 - Dual-ToR は **[Redis](../../reference/glossary.md#term-redis) pub/sub のみ**で ZMQ は使われていません。
 - [linkmgrd](../../reference/glossary.md#term-linkmgrd) は `STATE_DB:MUX_CABLE_TABLE` を SubscriberStateTable で監視。
-- Active-Active gRPC は SoC NIC と TLS 上で双方向 stream。 SONiC コンテナ内の `linkmgrd` プロセス自体が gRPC client。
+- Active-Active gRPC は SoC NIC と TLS 上で双方向 stream。 [SONiC](../../reference/glossary.md#term-sonic) コンテナ内の `linkmgrd` プロセス自体が gRPC client。
 
 ## 既知の実装上の制約
 
@@ -151,4 +151,4 @@ ASIC_DB:
 - [Active-Standby Dual ToR](../../overlay/active-standby-dual-tor.md)
 - [Active-Active Dual ToR](../../overlay/active-active-dual-tor.md)
 
-<!-- glossary-links-injected: cf9db24b8f55 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

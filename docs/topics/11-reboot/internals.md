@@ -60,7 +60,7 @@ flowchart TB
 | `config-setup` | systemd service | 起動時の `factory` / `migrate` / `boot` を mode 切替で処理（→ 01 章） |
 | `db_migrator` (`fast-reboot-dump.py` ではなく `db_migrator.py`) | python | [CONFIG_DB](../../reference/glossary.md#term-config_db) の schema migration（古い key を新形式へ） |
 | `swss` warm-restart | `orchagent::warm-start` framework | `WarmStart::isWarmStart()`、`WarmStart::setWarmStartState()` で状態管理 |
-| `syncd` warm-restart | `syncd/syncd.cpp` の WARM モード | ASIC 状態は触らず、`ASIC_DB` の view と [SAI](../../reference/glossary.md#term-sai) obj を再同期 |
+| `syncd` warm-restart | `syncd/syncd.cpp` の WARM モード | [ASIC](../../reference/glossary.md#term-asic) 状態は触らず、`ASIC_DB` の view と [SAI](../../reference/glossary.md#term-sai) obj を再同期 |
 | `bgp` warm-restart | [FRR](../../reference/glossary.md#term-frr) (`bgpd` の graceful restart) | helper / restarter で advertise を維持 |
 | `teamd` warm-restart | [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) graceful | [LACP](../../reference/glossary.md#term-lacp) セッションを切らずに保持 |
 
@@ -93,7 +93,7 @@ STATE_DB:WARM_RESTART_TABLE|<comp>
 
 - warm-restart の進捗通知は **[STATE_DB](../../reference/glossary.md#term-state_db) の通常 key + [Redis](../../reference/glossary.md#term-redis) pub/sub** で実装され、ZMQ は使いません。
 - `warmboot-finalizer` は `STATE_DB:WARM_RESTART_TABLE|*` を subscribe して全件 reconciled を検知します。
-- [BGP](../../reference/glossary.md#term-bgp) は FRR 内で graceful restart の制御を行い、SONiC 側は `WARM_RESTART_TABLE|bgp` の状態だけを更新します。
+- [BGP](../../reference/glossary.md#term-bgp) は FRR 内で graceful restart の制御を行い、[SONiC](../../reference/glossary.md#term-sonic) 側は `WARM_RESTART_TABLE|bgp` の状態だけを更新します。
 
 ## 既知の実装上の制約
 
@@ -147,4 +147,4 @@ sequenceDiagram
 - [Config setup](../../system/sonic-configuration-setup-service.md)
 - [SONiC upgrade](./upgrade.md)
 
-<!-- glossary-links-injected: f2120391923d -->
+<!-- glossary-links-injected: ec18b66e3507 -->

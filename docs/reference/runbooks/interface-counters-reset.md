@@ -49,7 +49,7 @@ related:
 
 1. **`sonic-clear counters` の意図しない実行**: cron / Ansible / 監視スクリプト
 2. **portstat の clear ファイル (`/tmp/portstat-*.cnt`) が削除された**: `/tmp` cleanup
-3. **[syncd](../../reference/glossary.md#term-syncd) 再起動で ASIC counter 自体リセット**
+3. **[syncd](../../reference/glossary.md#term-syncd) 再起動で [ASIC](../../reference/glossary.md#term-asic) counter 自体リセット**
 4. **container 再起動で [COUNTERS_DB](../../reference/glossary.md#term-counters_db) が初期化**: redis ephemeral
 
 ## 切り分け手順
@@ -81,7 +81,7 @@ sudo ls -la /tmp/portstat-* /tmp/.portstat-* 2>/dev/null
 sonic-db-cli COUNTERS_DB hget "COUNTERS:oid:0x1000000000001" SAI_PORT_STAT_IF_IN_OCTETS
 ```
 
-- 期待: ASIC 起動以来の累計（再起動以降で増え続ける）
+- 期待: [ASIC](../../reference/glossary.md#term-asic) 起動以来の累計（再起動以降で増え続ける）
 
 ### 3. syncd / database container restart 履歴
 
@@ -125,4 +125,4 @@ sudo grep -r "sonic-clear\|portstat -c" /etc/cron* 2>/dev/null
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — scripts/portstat
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)/flexcounterorch.cpp
 
-<!-- glossary-links-injected: 17e7bf57ecf3 -->
+<!-- glossary-links-injected: e82be350a384 -->

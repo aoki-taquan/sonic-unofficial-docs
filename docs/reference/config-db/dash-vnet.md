@@ -32,10 +32,10 @@ related:
 
 ## 概要
 
-`DASH_VNET` は DPU (Data Processing Unit) 上で動作する [DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for SONiC Hosts) 仮想ネットワークを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義するテーブル。
-各エントリは VNI (VXLAN Network Identifier) で識別される論理ネットワークを表す[^yang]。
+`DASH_VNET` は [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) 上で動作する [DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for [SONiC](../../reference/glossary.md#term-sonic) Hosts) 仮想ネットワークを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義するテーブル。
+各エントリは VNI ([VXLAN](../../reference/glossary.md#term-vxlan) Network Identifier) で識別される論理ネットワークを表す[^yang]。
 
-DASH は SmartSwitch の DPU 上で動作する高性能パケット処理レイヤーで、クラウドネットワーキングのアクセラレーションを提供する。
+[DASH](../../reference/glossary.md#term-dash) は [SmartSwitch](../../reference/glossary.md#term-smartswitch) の [DPU](../../reference/glossary.md#term-dpu) 上で動作する高性能パケット処理レイヤーで、クラウドネットワーキングのアクセラレーションを提供する。
 `DASH_VNET` はその最上位のネットワーク境界を定義し、`DASH_ENI` (Elastic Network Interface) のグルーピング単位となる。
 
 <!-- cdb-mermaid -->
@@ -62,21 +62,21 @@ flowchart LR
 DASH_VNET|<name>
 ```
 
-`<name>` は `Vnet[a-zA-Z0-9_-]+` パターン必須（YANG バリデーション。例: `Vnet1`, `Vnet-prod`）[^yang]。
+`<name>` は `Vnet[a-zA-Z0-9_-]+` パターン必須（[YANG](../../reference/glossary.md#term-yang) バリデーション。例: `Vnet1`, `Vnet-prod`）[^yang]。
 
 ## 主要フィールド
 
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
-| `vni` | uint32 (1..16777215) | 実質 yes | VXLAN Network Identifier。SAI に直接渡される唯一のフィールド |
-| `guid` | string (1..255) | no | VNET 識別用 GUID。orchagent は参照しない (dead field) |
-| `address_spaces` | IP prefix リスト | no | この VNET に属する IP プレフィックス群。orchagent は参照しない (dead field) |
+| `vni` | uint32 (1..16777215) | 実質 yes | [VXLAN](../../reference/glossary.md#term-vxlan) Network Identifier。[SAI](../../reference/glossary.md#term-sai) に直接渡される唯一のフィールド |
+| `guid` | string (1..255) | no | [VNET](../../reference/glossary.md#term-vnet) 識別用 GUID。[orchagent](../../reference/glossary.md#term-orchagent) は参照しない (dead field) |
+| `address_spaces` | IP prefix リスト | no | この [VNET](../../reference/glossary.md#term-vnet) に属する IP プレフィックス群。[orchagent](../../reference/glossary.md#term-orchagent) は参照しない (dead field) |
 
 ## 制約
 
 - `name` は `Vnet[a-zA-Z0-9_-]+` パターン必須[^yang]
-- `vni` は `1..16777215` の範囲必須（YANG range constraint）
-- `DASH_APPLIANCE` エントリが先に存在しないと VNET エントリは SAI に反映されない（orchagent がリトライ待ちになる）[^orch]
+- `vni` は `1..16777215` の範囲必須（[YANG](../../reference/glossary.md#term-yang) range constraint）
+- `DASH_APPLIANCE` エントリが先に存在しないと [VNET](../../reference/glossary.md#term-vnet) エントリは [SAI](../../reference/glossary.md#term-sai) に反映されない（[orchagent](../../reference/glossary.md#term-orchagent) がリトライ待ちになる）[^orch]
 
 ## 購読者
 
@@ -86,17 +86,17 @@ DASH_VNET|<name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `DASH_APPLIANCE`、`DASH_ENI`、`DASH_QOS`、`DASH_VNET_MAPPING_TABLE`
-- 関連 YANG: `sonic-dash`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `DASH_APPLIANCE`、`DASH_ENI`、`DASH_QOS`、`DASH_VNET_MAPPING_TABLE`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-dash`
 
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
 
 | フィールド | 値 | 実挙動 |
 |-----------|-----|--------|
-| `vni` | 1..16777215 | `SAI_VNET_ATTR_VNI` として SAI に渡される。VNET の L3 オーバーレイ識別子 |
+| `vni` | 1..16777215 | `SAI_VNET_ATTR_VNI` として [SAI](../../reference/glossary.md#term-sai) に渡される。VNET の L3 オーバーレイ識別子 |
 | `vni` | 0 または範囲外 | YANG バリデーションで拒否 (`range 1..16777215`) |
-| `guid` | 任意文字列 | orchagent は読まない。CONFIG_DB に保存されるのみ |
+| `guid` | 任意文字列 | orchagent は読まない。[CONFIG_DB](../../reference/glossary.md#term-config_db) に保存されるのみ |
 | `address_spaces` | IP prefix リスト | orchagent は読まない。CONFIG_DB に保存されるのみ |
 | DASH_APPLIANCE 未設定時 | — | `addVnet()` が `"Retry as no appliance table entry found"` を記録してリトライ待ち |
 
@@ -153,7 +153,7 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 
 | 参照元テーブル | leafref フィールド | 参照条件 | YANG evidence |
 |--------------|-------------------|---------|----------------|
-| `DASH_ENI` | `vnet` | 常時（ENI が所属する VNET） | `sonic-dash.yang:153-155` |
+| `DASH_ENI` | `vnet` | 常時（[ENI](../../reference/glossary.md#term-eni) が所属する VNET） | `sonic-dash.yang:153-155` |
 | `DASH_VNET_MAPPING_TABLE` | `vnet` (key) | 常時（マッピング対象 VNET） | `sonic-dash.yang:482-484` |
 | `DASH_ROUTE_TABLE` | `vnet` | `action_type = 'vnet'` or `'vnet_direct'` のとき | `sonic-dash.yang:428-430` |
 
@@ -189,7 +189,7 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 | protobuf フィールド `pb` が欠如または不正 | `parsePbMessage()` (SET前) | エントリを consumer から即除去・SAI 反映なし | SWSS_LOG_WARN ("Requires protobuff at Vnet :%s") | `dashvnetorch.cpp:204-209` |
 | `DASH_APPLIANCE` エントリが未設定 | `addVnet()` L63-68 | `return false` でリトライ待ち。`vnet_table_` / `gVnetNameToId` 未更新。SAI 未反映 | SWSS_LOG_INFO ("Retry as no appliance table entry found") | `dashvnetorch.cpp:63-68` |
 | 同名 VNET が既に存在する (`vnet_table_` に同 key) | `addVnet()` L57-62 | 重複として `return true`・bulker には渡さない。既存エントリを上書きせず consumer から除去 | SWSS_LOG_WARN ("Vnet already exists for %s") | `dashvnetorch.cpp:57-62` |
-| SAI `create_entry` がバルク処理後に `SAI_NULL_OBJECT_ID` を返す | `addVnetPost()` L93-97 | `return false`・`vnet_table_` / `gVnetNameToId` 未更新・CRM カウンタ増加なし | SWSS_LOG_ERROR ("Failed to create vnet entry for %s") | `dashvnetorch.cpp:93-97` |
+| SAI `create_entry` がバルク処理後に `SAI_NULL_OBJECT_ID` を返す | `addVnetPost()` L93-97 | `return false`・`vnet_table_` / `gVnetNameToId` 未更新・[CRM](../../reference/glossary.md#term-crm) カウンタ増加なし | SWSS_LOG_ERROR ("Failed to create vnet entry for %s") | `dashvnetorch.cpp:93-97` |
 | 不明コマンド (`op` が SET でも DEL でもない) | `doTaskVnetTable()` L238-239 | エントリを即除去。処理なし | SWSS_LOG_ERROR ("Invalid command %s") | `dashvnetorch.cpp:238-239` |
 
 ### DASH_VNET DEL 処理における失敗経路
@@ -207,10 +207,10 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 |---|---|---|---|---|
 | `gVnetNameToId` に対象 VNET 名が未登録 | `addVnetMap()` L489-494 | `return false` でリトライ待ち | SWSS_LOG_INFO ("Not creating VNET map for %s since VNET %s doesn't exist") | `dashvnetorch.cpp:489-494` |
 | `routing_type` が `DASH_ROUTE_TYPE` に未登録 | `addOutboundCaToPa()` L315-319 | `return false` でリトライ待ち | SWSS_LOG_INFO ("Failed to get route type actions for %s") | `dashvnetorch.cpp:315-319` |
-| `encap_type` が VXLAN / NVGRE 以外の STATICENCAP アクション | `addOutboundCaToPa()` L335-339 | `return true` で consumer から即除去 (破棄)。SAI 未反映 | SWSS_LOG_ERROR ("Invalid encap type %d for %s") | `dashvnetorch.cpp:335-339` |
+| `encap_type` が [VXLAN](../../reference/glossary.md#term-vxlan) / NVGRE 以外の STATICENCAP アクション | `addOutboundCaToPa()` L335-339 | `return true` で consumer から即除去 (破棄)。SAI 未反映 | SWSS_LOG_ERROR ("Invalid encap type %d for %s") | `dashvnetorch.cpp:335-339` |
 | `has_tunnel()` = true だが `getTunnelOid()` が `SAI_NULL_OBJECT_ID` | `addOutboundCaToPa()` L356-361 | `return false` でリトライ待ち | SWSS_LOG_INFO ("Tunnel %s for VnetMap %s does not exist yet") | `dashvnetorch.cpp:356-361` |
 | PRIVATELINK + `has_port_map()` = true だが `getPortMapOid()` が `SAI_NULL_OBJECT_ID` | `addOutboundCaToPa()` L411-418 | `return false` でリトライ待ち | SWSS_LOG_ERROR ("Portmap %s for VnetMap %s does not exist yet") | `dashvnetorch.cpp:411-418` |
-| SAI `create_entry` (outbound_ca_to_pa) が `SAI_STATUS_ITEM_ALREADY_EXISTS` | `addOutboundCaToPaPost()` L512-515 | `return true` (冪等成功扱い)。CRM カウンタ増加なし | なし | `dashvnetorch.cpp:512-515` |
+| SAI `create_entry` (outbound_ca_to_pa) が `SAI_STATUS_ITEM_ALREADY_EXISTS` | `addOutboundCaToPaPost()` L512-515 | `return true` (冪等成功扱い)。[CRM](../../reference/glossary.md#term-crm) カウンタ増加なし | なし | `dashvnetorch.cpp:512-515` |
 | SAI `create_entry` (outbound_ca_to_pa) がその他エラー | `addOutboundCaToPaPost()` L517-522 | SWSS_LOG_ERROR + handleSaiCreateStatus + parseHandleSaiStatusFailure | SWSS_LOG_ERROR ("Failed to create CA to PA entry for %s") | `dashvnetorch.cpp:517-522` |
 | SAI `create_entry` (pa_validation) が `SAI_STATUS_ITEM_ALREADY_EXISTS` | `addPaValidationPost()` L548-551 | `return true` (冪等成功扱い) | なし | `dashvnetorch.cpp:548-551` |
 | SAI `create_entry` (pa_validation) がその他エラー | `addPaValidationPost()` L553-558 | SWSS_LOG_ERROR + handleSaiCreateStatus + parseHandleSaiStatusFailure | SWSS_LOG_ERROR ("Failed to create PA validation entry for %s") | `dashvnetorch.cpp:553-558` |
@@ -298,7 +298,7 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`DashVnetOrch` は SAI (ASIC_DB) へのバルク書き込みに加えて、以下の DB 副次書込を行う[^orch]。
+`DashVnetOrch` は SAI ([ASIC_DB](../../reference/glossary.md#term-asic_db)) へのバルク書き込みに加えて、以下の DB 副次書込を行う[^orch]。
 
 ### DASH_VNET SET
 
@@ -306,7 +306,7 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 |------|-----------------|------|------|
 | `writeResultToDB(..., DASH_RESULT_SUCCESS)` | APPL_STATE_DB / `DASH_VNET_TABLE` | `<vnet_name>` | SET が consumer から除去される時点（成功時） |
 | `writeResultToDB(..., DASH_RESULT_FAILURE)` | APPL_STATE_DB / `DASH_VNET_TABLE` | `<vnet_name>` | `addVnetPost()` が `false` を返した時点 |
-| `gCrmOrch->incCrmResUsedCounter(CRM_DASH_VNET)` | CRM 内部カウンタ | — | SAI `create_entry` が `SAI_NULL_OBJECT_ID` 以外を返した場合 |
+| `gCrmOrch->incCrmResUsedCounter(CRM_DASH_VNET)` | [CRM](../../reference/glossary.md#term-crm) 内部カウンタ | — | SAI `create_entry` が `SAI_NULL_OBJECT_ID` 以外を返した場合 |
 
 ### DASH_VNET DEL
 
@@ -336,7 +336,7 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 
 ### 副次書込が行われない DB
 
-STATE_DB・CONFIG_DB・FLEX_COUNTER_DB・COUNTERS_DB への書き込みは一切行われない[^orch]。
+[STATE_DB](../../reference/glossary.md#term-state_db)・CONFIG_DB・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書き込みは一切行われない[^orch]。
 
 <!-- /side-effects -->
 
@@ -345,8 +345,8 @@ STATE_DB・CONFIG_DB・FLEX_COUNTER_DB・COUNTERS_DB への書き込みは一切
 
 ### ZMQ チャネル経由の購読 — `ZmqConsumerStateTable`
 
-`DashVnetOrch` は `ZmqOrch` を継承し、通常の Redis `ConsumerStateTable` ではなく
-**ZeroMQ (`ZmqConsumerStateTable`) チャネル**で APPL_DB (DPU_APPL_DB) を購読する。
+`DashVnetOrch` は `ZmqOrch` を継承し、通常の [Redis](../../reference/glossary.md#term-redis) `ConsumerStateTable` ではなく
+**ZeroMQ (`ZmqConsumerStateTable`) チャネル**で [APPL_DB](../../reference/glossary.md#term-appl_db) (DPU_APPL_DB) を購読する。
 
 ```cpp
 // orchdaemon.cpp:1333-1340
@@ -399,13 +399,13 @@ gnmi-server (gNMI 北行インターフェース)
 ### CONFIG_DB との関係
 
 `DashVnetOrch` は CONFIG_DB `DASH_VNET` を**直接購読しない**。
-CONFIG_DB への書き込み（CLI / sonic-cfggen）は gnmi-server が検知し APPL_DB へ転送する経路を取る。
+CONFIG_DB への書き込み（CLI / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)）は gnmi-server が検知し [APPL_DB](../../reference/glossary.md#term-appl_db) へ転送する経路を取る。
 keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
 
 ### フィーチャフラグ
 
 `ORCH_NORTHBOND_DASH_ZMQ_ENABLED`（デフォルト `true`）が ZMQ モードを制御する。
-無効時は `ConsumerStateTable`（Redis Pub/Sub）にフォールバックし、テスト環境・後方互換で使用される。
+無効時は `ConsumerStateTable`（[Redis](../../reference/glossary.md#term-redis) Pub/Sub）にフォールバックし、テスト環境・後方互換で使用される。
 
 > **Evidence**: `orchdaemon.cpp:1325-1345`（DashVnetOrch 登録・ZMQ フィーチャフラグ）、`zmqorch.cpp` 全行（ZmqConsumer / ZmqOrch 実装）、`dashvnetorch.cpp:42-51`（コンストラクタ）、`dashvnetorch.cpp:869-884`（doTask ディスパッチ）; 詳細分析 `meta/_intermediate/cdb-flow/dash-vnet-pubsub.md`
 
@@ -432,7 +432,7 @@ keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`DASH_VNET` / `DASH_VNET_MAPPING_TABLE` の処理は **`switch_type=dpu` のノード専用**であり、伝統的な ASIC ベンダー別分岐（mellanox / broadcom / barefoot 等）は存在しない。
+`DASH_VNET` / `DASH_VNET_MAPPING_TABLE` の処理は **`switch_type=dpu` のノード専用**であり、伝統的な [ASIC](../../reference/glossary.md#term-asic) ベンダー別分岐（mellanox / broadcom / barefoot 等）は存在しない。
 
 ### 動作条件: switch_type=dpu のみ
 
@@ -440,9 +440,9 @@ keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
 
 | switch_type | DashVnetOrch 起動 | 備考 |
 |-------------|-------------------|------|
-| `"dpu"` | **起動** | SmartSwitch の DPU ロール。DPU_APPL_DB に接続 |
-| `""` / `"voq"` / `"fabric"` / `"chassis-packet"` | **不起動** | 通常 T0/T1 / VOQ chassis / fabric blade |
-| SmartSwitch NPU 側 (`switch_sub_type=SmartSwitch` かつ `switch_type != "dpu"`) | **不起動** | NPU 側では DASH orchagent は登録されない (`orchdaemon.cpp:613`) |
+| `"dpu"` | **起動** | [SmartSwitch](../../reference/glossary.md#term-smartswitch) の [DPU](../../reference/glossary.md#term-dpu) ロール。DPU_APPL_DB に接続 |
+| `""` / `"voq"` / `"fabric"` / `"chassis-packet"` | **不起動** | 通常 T0/T1 / [VOQ](../../reference/glossary.md#term-voq) chassis / fabric blade |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) 側 (`switch_sub_type=SmartSwitch` かつ `switch_type != "dpu"`) | **不起動** | [NPU](../../reference/glossary.md#term-npu) 側では [DASH](../../reference/glossary.md#term-dash) orchagent は登録されない (`orchdaemon.cpp:613`) |
 
 `DashVnetOrch` は `DPU_APPL_DB` (`m_dpu_appDb`) を購読し、結果を `DPU_APPL_STATE_DB` に書き戻す。通常の `APPL_DB` とは独立したデータベース接続である (`orchdaemon.cpp:1335-1339`)[^orch]。
 
@@ -460,7 +460,7 @@ keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
 | Outbound CA-to-PA 作成/削除 | `CRM_DASH_IPV4_OUTBOUND_CA_TO_PA` / `CRM_DASH_IPV6_OUTBOUND_CA_TO_PA` (`ctxt.dip.isV4()` で分岐) |
 | PA Validation 作成/削除 | `CRM_DASH_IPV4_PA_VALIDATION` / `CRM_DASH_IPV6_PA_VALIDATION` (`underlay_ip.has_ipv4()` で分岐) |
 
-ただしこれはネットワークアドレスのアドレスファミリによる区別であり、動作するハードウェア ASIC ベンダーには依存しない (`dashvnetorch.cpp:525, 561, 706`)[^orch]。
+ただしこれはネットワークアドレスのアドレスファミリによる区別であり、動作するハードウェア [ASIC](../../reference/glossary.md#term-asic) ベンダーには依存しない (`dashvnetorch.cpp:525, 561, 706`)[^orch]。
 
 !!! note "T0/T1/VOQ chassis 環境"
     `DASH_VNET` テーブルは `DPU_APPL_DB` にのみ存在する。T0/T1/VOQ chassis の `APPL_DB` には `DASH_VNET_TABLE` エントリが存在せず、`DashVnetOrch` も起動しない。
@@ -493,3 +493,5 @@ keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
 <!-- /defaults -->
 
 <!-- glossary-links-injected: dash-vnet-001 -->
+
+<!-- glossary-links-injected: f54c766199cc -->

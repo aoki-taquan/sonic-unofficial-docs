@@ -42,7 +42,7 @@ related:
 
 ## 1. kernel ARP/ND の cache 拡大
 
-旧 SONiC は ~2400 entry が上限だった。kernel [ARP](../reference/glossary.md#term-arp) cache の garbage collector 閾値を [HLD](../reference/glossary.md#term-hld) は次のように引き上げる提案[^1]:
+旧 [SONiC](../reference/glossary.md#term-sonic) は ~2400 entry が上限だった。kernel [ARP](../reference/glossary.md#term-arp) cache の garbage collector 閾値を [HLD](../reference/glossary.md#term-hld) は次のように引き上げる提案[^1]:
 
 | パラメータ | 既定 | 提案 (IPv4) | 提案 (IPv6) |
 |-----------|------|------------|------------|
@@ -71,7 +71,7 @@ burst 時の add/remove ループで entry が満杯にならない問題の解�
 
 - `RouteOrch` は 64 件まとめて bulk API に渡す
 - meta_sai layer は内部で個別オブジェクトを作るが、**Redis に流れる message は 1 件** に集約
-- ASIC 側は bulk route create を実装していないため `syncd` は 1 件ずつ処理する → 純粋な節約は **Redis message 数の削減**
+- [ASIC](../reference/glossary.md#term-asic) 側は bulk route create を実装していないため `syncd` は 1 件ずつ処理する → 純粋な節約は **Redis message 数の削減**
 
 `RouteOrch` に **新 timer** を追加し、未送信のバッチを **1 秒ごとに flush**[^1]。
 
@@ -174,4 +174,4 @@ flowchart LR
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 992dc79d863a -->
+<!-- glossary-links-injected: ec18b66e3507 -->

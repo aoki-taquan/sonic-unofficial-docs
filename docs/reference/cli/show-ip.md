@@ -54,7 +54,7 @@ if routing_stack == "frr":
 |---------|------|
 | `show ip interfaces` | インタフェイスの IPv4 状態（`ipintutil -a ipv4`） |
 | `show ip interfaces loopback-action` | INTERFACE 系テーブルの `loopback_action` 値表示 |
-| `show ip route [<args>]` | IPv4 RIB（[FRR](../../reference/glossary.md#term-frr) vtysh `show ip route`） |
+| `show ip route [<args>]` | IPv4 RIB（[FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) `show ip route`） |
 | `show ip prefix-list [<name>]` | [FRR](../../reference/glossary.md#term-frr) の prefix-list 表示 |
 | `show ip protocol` | FRR の routing protocol summary |
 | `show ip fib [<ipaddress>]` | FIB テーブル（`fibshow -4`） |
@@ -118,7 +118,7 @@ show ip route [<IPADDRESS>] [vrf <vrf_name>] [...] [-d|--display all|frontend] [
 ```
 
 **動作**:
-`bgp_common.show_routes` が `vtysh -c 'show ip route ...'` を組み立てて実行する。`<args>` は **そのまま vtysh コマンドラインに連結**されるため、`show ip route 10.0.0.0/24 longer-prefixes` のような FRR ネイティブ書式を直接渡せる。multi-ASIC 時は対象 namespace のコンテナ内で vtysh を起動する。
+`bgp_common.show_routes` が `vtysh -c 'show ip route ...'` を組み立てて実行する。`<args>` は **そのまま [vtysh](../../reference/glossary.md#term-vtysh) コマンドラインに連結**されるため、`show ip route 10.0.0.0/24 longer-prefixes` のような FRR ネイティブ書式を直接渡せる。multi-[ASIC](../../reference/glossary.md#term-asic) 時は対象 namespace のコンテナ内で [vtysh](../../reference/glossary.md#term-vtysh) を起動する。
 
 ### `show ip prefix-list [<name>]`
 
@@ -130,12 +130,12 @@ show ip route [<IPADDRESS>] [vrf <vrf_name>] [...] [-d|--display all|frontend] [
 
 ### `show ip fib [<ipaddress>]`
 
-`fibshow -4 [-ip <ipaddress>]` を起動。実 FIB（kernel + ASIC sync 済みエントリ）を表示する。
+`fibshow -4 [-ip <ipaddress>]` を起動。実 FIB（kernel + [ASIC](../../reference/glossary.md#term-asic) sync 済みエントリ）を表示する。
 
 ### `show ip bgp summary`
 
 **動作**:
-FRR `vtysh -c 'show bgp ipv4 summary'` 風のコマンドを `summary_helper` 経由で実行。multi-ASIC 時は frontend (front_ns) のみ集約。
+FRR `vtysh -c 'show bgp ipv4 summary'` 風のコマンドを `summary_helper` 経由で実行。multi-[ASIC](../../reference/glossary.md#term-asic) 時は frontend (front_ns) のみ集約。
 
 ### `show ip bgp neighbors [<ipaddress>] [<info_type>]`
 
@@ -270,4 +270,4 @@ vtysh -c 'show ip route'
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 1d7d649e3359 -->
+<!-- glossary-links-injected: 68c9522f108f -->

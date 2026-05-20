@@ -54,7 +54,7 @@ Base OS のリリース cadence と、その上に乗る docker image / package 
 
 ## Application Extension の入る位置
 
-`sonic-package-manager`（SPM）は ONIE installer に焼かれた SONiC image の上で動く CLI である。すなわち本章の前半（build flow）は終わった後の世界で、SPM は docker registry から pull した manifest 付き image を `FEATURE` テーブルに登録し、`docker_image_ctl` や systemd unit と統合する。manifest schema・依存解決・install 経路は [Application Extension Infrastructure](../../architecture/sonic-application-extension-infrastructure.md) に集約されている。
+`sonic-package-manager`（SPM）は ONIE installer に焼かれた [SONiC](../../reference/glossary.md#term-sonic) image の上で動く CLI である。すなわち本章の前半（build flow）は終わった後の世界で、SPM は docker registry から pull した manifest 付き image を `FEATURE` テーブルに登録し、`docker_image_ctl` や systemd unit と統合する。manifest schema・依存解決・install 経路は [Application Extension Infrastructure](../../architecture/sonic-application-extension-infrastructure.md) に集約されている。
 
 ## 関連ページ
 
@@ -67,4 +67,4 @@ Base OS のリリース cadence と、その上に乗る docker image / package 
 - [Application Extension Infrastructure](../../architecture/sonic-application-extension-infrastructure.md)
 - [ARM architecture support](../../architecture/sonic-arm-architecture-support.md)
 
-<!-- glossary-links-injected: da7e5aaf4d2c -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

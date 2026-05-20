@@ -40,7 +40,7 @@ related:
 
 # 概要
 
-SONiC の物理層は、大きく「port そのもの」「optics / PHY」「装置側 health」の 3 系統に分けると整理しやすくなります。[HLD](../../reference/glossary.md#term-hld) 単位では別物に見えても、[CONFIG_DB](../../reference/glossary.md#term-config_db) の `PORT` や `DEVICE_METADATA`、pmon コンテナ内の各 daemon といった共通点があります。
+[SONiC](../../reference/glossary.md#term-sonic) の物理層は、大きく「port そのもの」「optics / PHY」「装置側 health」の 3 系統に分けると整理しやすくなります。[HLD](../../reference/glossary.md#term-hld) 単位では別物に見えても、[CONFIG_DB](../../reference/glossary.md#term-config_db) の `PORT` や `DEVICE_METADATA`、pmon コンテナ内の各 daemon といった共通点があります。
 
 ## Platform abstraction の層
 
@@ -70,7 +70,7 @@ SONiC で「ポート」と言ったとき、対象は文脈で変わります�
 
 - `PORT` テーブルの行: 名前 (`Ethernet0` など)、speed、lanes、auto-neg、FEC、admin/oper status を持つ論理単位。
 - 物理ケージ / モジュール: SFP / QSFP / OSFP のスロット。breakout で 1 ケージから複数 `PORT` が生える。
-- SAI port object: ASIC 側の port object ID。
+- SAI port object: [ASIC](../../reference/glossary.md#term-asic) 側の port object ID。
 - PHY / Gearbox port: [NPU](../../reference/glossary.md#term-npu) と optics の間に挟まる PHY デバイスのチャネル。
 
 スキーマ詳細は [PORT テーブル](../../reference/config-db/port.md) と [sonic-port YANG](../../reference/yang/sonic-port.md) が一次資料です。
@@ -206,4 +206,4 @@ sequenceDiagram
 
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 
-<!-- glossary-links-injected: d1d326fff20e -->
+<!-- glossary-links-injected: ec18b66e3507 -->

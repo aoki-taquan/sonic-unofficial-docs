@@ -35,7 +35,7 @@ related:
 
 `storagemond` は **SSD / eMMC など内部ストレージの health / wear-out** を定期監視し、[STATE_DB](../reference/glossary.md#term-state_db) に publish する pmon 系 daemon[^1]。狙いは:
 
-- vendor 別ツール（`smartctl`、`mmc-utils` 等）の出力を SONiC 共通スキーマに正規化
+- vendor 別ツール（`smartctl`、`mmc-utils` 等）の出力を [SONiC](../reference/glossary.md#term-sonic) 共通スキーマに正規化
 - write amplification、reserved blocks、temperature、life-remaining を読みやすい形にする
 - critical 閾値超えを system health monitor に通知
 
@@ -142,4 +142,4 @@ docker exec pmon which smartctl
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 10394a5e95a8 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

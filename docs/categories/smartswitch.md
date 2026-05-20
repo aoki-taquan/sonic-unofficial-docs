@@ -16,7 +16,7 @@ related:
 
 ## 概要
 
-**[SmartSwitch](../reference/glossary.md#term-smartswitch)** は、従来の単一 [NPU](../reference/glossary.md#term-npu) 型 SONiC スイッチに **複数の [DPU](../reference/glossary.md#term-dpu)**（[SmartNIC](../reference/glossary.md#term-smartnic) / IPU）を内蔵し、L2/L3 スイッチング機能を NPU 側、ステートフルな [NAT](../reference/glossary.md#term-nat) / [ACL](../reference/glossary.md#term-acl) / フロー処理を DPU 側に分担させるアーキテクチャです。Microsoft が提案した [DASH](../reference/glossary.md#term-dash) の上位プラットフォームとして整備され、`HAMgrD` を中心とした HA、DPU ごとの [gNOI](../reference/glossary.md#term-gnoi) 経路、`midplane` ブリッジによる DPU IP 管理など、独自のサブシステムが多数あります。
+**[SmartSwitch](../reference/glossary.md#term-smartswitch)** は、従来の単一 [NPU](../reference/glossary.md#term-npu) 型 [SONiC](../reference/glossary.md#term-sonic) スイッチに **複数の [DPU](../reference/glossary.md#term-dpu)**（[SmartNIC](../reference/glossary.md#term-smartnic) / IPU）を内蔵し、L2/L3 スイッチング機能を NPU 側、ステートフルな [NAT](../reference/glossary.md#term-nat) / [ACL](../reference/glossary.md#term-acl) / フロー処理を DPU 側に分担させるアーキテクチャです。Microsoft が提案した [DASH](../reference/glossary.md#term-dash) の上位プラットフォームとして整備され、`HAMgrD` を中心とした HA、DPU ごとの [gNOI](../reference/glossary.md#term-gnoi) 経路、`midplane` ブリッジによる DPU IP 管理など、独自のサブシステムが多数あります。
 
 このカテゴリでは、SmartSwitch を横断するページを **NPU 側設計**（[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) の DPU overlay と HA actor）・**DPU 管理**（IP 割当・[gNMI](../reference/glossary.md#term-gnmi) フィードバック・独立アップグレード・graceful shutdown）・**[ENI](../reference/glossary.md#term-eni) Forwarding**（DASH ベースの DPU 振り分け）・**reboot 順序**（NPU と DPU の協調 reboot）に分類しています。[HLD](../reference/glossary.md#term-hld) は数多くあるものの、DPU 側ソフトウェアは別リポ管理が多く、SmartSwitch ページだけで完結する設計ではありません。
 
@@ -84,4 +84,4 @@ SmartSwitch を学ぶ際は、まず NPU と DPU の境界（どこが [Redis](.
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: b8635cf7f580 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -45,7 +45,7 @@ related:
 
 ## 概要
 
-`openconfig-interfaces` / `openconfig-if-ethernet` / `openconfig-if-ip` を **REST (RESTCONF) と [gNMI](../reference/glossary.md#term-gnmi)** で配信する仕組みを SONiC の Management Framework に追加する設計[^1]。
+`openconfig-interfaces` / `openconfig-if-ethernet` / `openconfig-if-ip` を **REST (RESTCONF) と [gNMI](../reference/glossary.md#term-gnmi)** で配信する仕組みを [SONiC](../reference/glossary.md#term-sonic) の Management Framework に追加する設計[^1]。
 
 ポイント[^1]:
 
@@ -290,3 +290,5 @@ show runningconfiguration all | jq .INTERFACE
 - [sonic-interface](../reference/yang/sonic-interface.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 8ba32e5aa69d -->

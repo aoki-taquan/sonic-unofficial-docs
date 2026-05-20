@@ -22,6 +22,10 @@ related:
     - PORT_QOS_MAP
   cli:
     - config qos
+  yang:
+    - sonic-dot1p-tc-map
+    - sonic-tc-priority-group-map
+monitor: partially_implemented
 ---
 
 # DOT1P_TO_PG_MAP テーブル
@@ -31,7 +35,7 @@ related:
 
 ## 概要
 
-SONiC の QoS アーキテクチャでは dot1p 値を PG に直接マッピングするテーブルを持たない。実際の経路は以下のとおり:
+[SONiC](../../reference/glossary.md#term-sonic) の [QoS](../../reference/glossary.md#term-qos) アーキテクチャでは dot1p 値を PG に直接マッピングするテーブルを持たない。実際の経路は以下のとおり:
 
 ```
 dot1p (0-7)
@@ -44,24 +48,19 @@ dot1p (0-7)
 ## 実際のアーキテクチャ
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  PKT["受信パケット<br/>dot1p 0-7"]
-  D2T[("CONFIG_DB<br/>DOT1P_TO_TC_MAP")]
-  T2P[("CONFIG_DB<br/>TC_TO_PRIORITY_GROUP_MAP")]
-  PORT[("CONFIG_DB<br/>PORT_QOS_MAP")]
-  ORC["QosOrch"]
+  CDB[("CONFIG_DB<br/>DOT1P_TO_TC_MAP")]
+  DM["QosOrch"]
+  CDB --> DM
   SAI["SAI<br/>sai_qos_map_api"]
-
-  PORT -->|dot1p_to_tc_map| D2T
-  PORT -->|tc_to_pg_map| T2P
-  D2T --> ORC
-  T2P --> ORC
-  ORC --> SAI
-  PKT -->|ingress| SAI
+  DM --> SAI
 ```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ### 段階 1 — dot1p → Traffic Class
@@ -143,26 +142,26 @@ type_map QosOrch::m_qos_maps = {
 |---|----------|------|--------|
 | 1 | `DOT1P_TO_TC_MAP\|<name>` 先行作成 → `PORT_QOS_MAP.<port>.dot1p_to_tc_map` 参照 | **先行必須** (`task_need_retry`) | `resolveFieldRefValue` が未解決の場合 `task_need_retry` を返し Consumer が自動再キュー |
 | 2 | `TC_TO_PRIORITY_GROUP_MAP\|<name>` 先行作成 → `PORT_QOS_MAP.<port>.tc_to_pg_map` 参照 | **先行必須** (`task_need_retry`) | 同上 — マップオブジェクトが未生成の間 `PORT_QOS_MAP` は保留される |
-| 3 | `PORT_QOS_MAP` 適用 → SAI `set_port_attribute` | マップ全フィールド解決後に一括適用 | `update_list` に積んでから `sai_port_api->set_port_attribute` をまとめて呼ぶ |
+| 3 | `PORT_QOS_MAP` 適用 → [SAI](../../reference/glossary.md#term-sai) `set_port_attribute` | マップ全フィールド解決後に一括適用 | `update_list` に積んでから `sai_port_api->set_port_attribute` をまとめて呼ぶ |
 | 4 | `DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` 相互依存 | 独立（順序自由） | 両マップは独立して生成可能。`PORT_QOS_MAP` が両方を参照する時点で揃えばよい |
 
 ### 主要な制約詳細
 
 **`PORT_QOS_MAP` は参照先マップ不在時に `task_need_retry` を返す (依存 #1, #2)**: `handlePortQosMapTable()` は `qos_to_attr_map` 内の各フィールドに対して `resolveFieldRefValue(m_qos_maps, map_type_name, ...)` を呼ぶ。`DOT1P_TO_TC_MAP` または `TC_TO_PRIORITY_GROUP_MAP` のいずれかが `m_qos_maps` に未登録の状態では `ref_resolve_status::success` にならず `task_need_retry` が返る。Consumer はこのエントリを再キューし、参照先マップが作成された後に再実行する（evidence: `qosorch.cpp:2077-2083`, `qosorch.cpp:2122-2126`）。
 
-**2 段マッピングの SAI 適用はまとめて実行 (依存 #3)**: `handlePortQosMapTable()` は全フィールドの参照解決が揃った後、`update_list` に `<sai_port_attr_t, sai_object_id_t>` ペアを積み、`sai_port_api->set_port_attribute()` を順番に呼ぶ。`DOT1P_TO_TC_MAP` 由来の `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` 由来の `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` は同一 `PORT_QOS_MAP` エントリの処理内でそれぞれ独立して `set_port_attribute` される（evidence: `qosorch.cpp:2132-2156`）。
+**2 段マッピングの [SAI](../../reference/glossary.md#term-sai) 適用はまとめて実行 (依存 #3)**: `handlePortQosMapTable()` は全フィールドの参照解決が揃った後、`update_list` に `<sai_port_attr_t, sai_object_id_t>` ペアを積み、`sai_port_api->set_port_attribute()` を順番に呼ぶ。`DOT1P_TO_TC_MAP` 由来の `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` 由来の `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` は同一 `PORT_QOS_MAP` エントリの処理内でそれぞれ独立して `set_port_attribute` される（evidence: `qosorch.cpp:2132-2156`）。
 <!-- /ordering -->
 
 <!-- cross-refs -->
 ## 暗黙参照 — `qosorch` / `handlePortQosMapTable` が読み出す関連テーブル (Phase C)
 
-`DOT1P_TO_PG_MAP` テーブルは存在しないが、等価な 2 段マッピング経路 (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を処理する `qosorch` が参照する CONFIG_DB テーブルおよび外部リソースは以下のとおり。
+`DOT1P_TO_PG_MAP` テーブルは存在しないが、等価な 2 段マッピング経路 (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を処理する `qosorch` が参照する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルおよび外部リソースは以下のとおり。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | evidence |
 |--------------------------|---------|------|---------|
-| `DOT1P_TO_TC_MAP\|<name>` (CONFIG_DB) | 被参照 (`resolveFieldRefValue`) | `PORT_QOS_MAP` エントリ SET 時に `dot1p_to_tc_map` フィールドが存在する場合。未解決なら `task_need_retry` | `qosorch.cpp:102`, `qosorch.cpp:2124` |
+| `DOT1P_TO_TC_MAP\|<name>` ([CONFIG_DB](../../reference/glossary.md#term-config_db)) | 被参照 (`resolveFieldRefValue`) | `PORT_QOS_MAP` エントリ SET 時に `dot1p_to_tc_map` フィールドが存在する場合。未解決なら `task_need_retry` | `qosorch.cpp:102`, `qosorch.cpp:2124` |
 | `TC_TO_PRIORITY_GROUP_MAP\|<name>` (CONFIG_DB) | 被参照 (`resolveFieldRefValue`) | `PORT_QOS_MAP` エントリ SET 時に `tc_to_pg_map` フィールドが存在する場合。未解決なら `task_need_retry` | `qosorch.cpp:106`, `qosorch.cpp:2124` |
-| `PORT_QOS_MAP\|<port_name>` (CONFIG_DB) | 参照元（2 段マップの最終適用対象） | 常時。`dot1p_to_tc_map` / `tc_to_pg_map` フィールドを通じて 2 つのマップを取り込み、SAI に適用 | `qosorch.cpp:2046-2156` |
+| `PORT_QOS_MAP\|<port_name>` (CONFIG_DB) | 参照元（2 段マップの最終適用対象） | 常時。`dot1p_to_tc_map` / `tc_to_pg_map` フィールドを通じて 2 つのマップを取り込み、[SAI](../../reference/glossary.md#term-sai) に適用 | `qosorch.cpp:2046-2156` |
 | `PORT` (PortsOrch `gPortsOrch->getPort()`) | ポート存在チェック | `PORT_QOS_MAP` の key が `global` でない場合。未登録ポートはエラーログ + `continue` でスキップ | `qosorch.cpp:28`, `qosorch.cpp:2068` |
 
 !!! note "SWITCH レベル direct 適用は DSCP_TO_TC のみ"
@@ -214,7 +213,7 @@ type_map QosOrch::m_qos_maps = {
 
 #### SAI `set_port_attribute` 失敗
 
-`SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` / `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` の `set_port_attribute` 失敗は `handleSaiSetStatus()` を経由して retry / 永続失敗に分岐する。複数属性を順番に適用するため途中での失敗は**部分適用**が残る。rollback なし。QosOrch は STATE_DB / ERROR_TABLE への失敗記録を行わないため、反映状況の確認は `sonic-db-cli ASIC_DB hgetall` が必要。
+`SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` / `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` の `set_port_attribute` 失敗は `handleSaiSetStatus()` を経由して retry / 永続失敗に分岐する。複数属性を順番に適用するため途中での失敗は**部分適用**が残る。rollback なし。QosOrch は [STATE_DB](../../reference/glossary.md#term-state_db) / ERROR_TABLE への失敗記録を行わないため、反映状況の確認は `sonic-db-cli ASIC_DB hgetall` が必要。
 <!-- /failure -->
 
 <!-- constants -->
@@ -222,7 +221,7 @@ type_map QosOrch::m_qos_maps = {
 
 > 調査証跡: `meta/_intermediate/cdb-flow/dot1p-to-pg-map-ordering.md`
 
-`DOT1P_TO_PG_MAP` テーブルは存在しないため、2 段マッピングパイプライン (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を構成するハードコード定数を記述する。出典は `qosorch.h`、`qosorch.cpp`、および各 YANG モジュール。
+`DOT1P_TO_PG_MAP` テーブルは存在しないため、2 段マッピングパイプライン (`DOT1P_TO_TC_MAP` → `TC_TO_PRIORITY_GROUP_MAP` → `PORT_QOS_MAP`) を構成するハードコード定数を記述する。出典は `qosorch.h`、`qosorch.cpp`、および各 [YANG](../../reference/glossary.md#term-yang) モジュール。
 
 ### CONFIG_DB フィールド名定数 (qosorch.h)
 
@@ -240,9 +239,9 @@ type_map QosOrch::m_qos_maps = {
 | SAI 定数 | 使用箇所 | 意味 |
 |----------|---------|------|
 | `SAI_QOS_MAP_TYPE_DOT1P_TO_TC` | `qosorch.cpp:406` | dot1p → Traffic Class マップの SAI タイプ |
-| `SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP` | `qosorch.cpp:913` | TC → Priority Group マップの SAI タイプ |
+| `SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP` | `qosorch.cpp:913` | TC → [Priority Group](../../reference/glossary.md#term-priority-group) マップの SAI タイプ |
 
-> **重要**: `SAI_QOS_MAP_TYPE_DOT1P_TO_PRIORITY_GROUP` は SAI 仕様に存在しない。これが `DOT1P_TO_PG_MAP` テーブルが SONiC に存在しない根本理由の一つである。
+> **重要**: `SAI_QOS_MAP_TYPE_DOT1P_TO_PRIORITY_GROUP` は SAI 仕様に存在しない。これが `DOT1P_TO_PG_MAP` テーブルが [SONiC](../../reference/glossary.md#term-sonic) に存在しない根本理由の一つである。
 
 ### SAI ポート属性定数
 
@@ -255,7 +254,7 @@ type_map QosOrch::m_qos_maps = {
 
 ### YANG 値域制約（ハードコードパターン）
 
-YANG バリデーションで強制される値域はコードではなく YANG ファイルにハードコードされている。
+[YANG](../../reference/glossary.md#term-yang) バリデーションで強制される値域はコードではなく [YANG](../../reference/glossary.md#term-yang) ファイルにハードコードされている。
 
 #### DOT1P_TO_TC_MAP の値域制約
 
@@ -296,7 +295,7 @@ YANG バリデーションで強制される値域はコードではなく YANG 
 
 ### DEL 時 — PFC ビットマスク クリア
 
-`PORT_QOS_MAP` DEL 時に `gPortsOrch->setPortPfc(port.m_port_id, 0)` が呼ばれ、ポートの PFC ビットマスクが 0 にリセットされる (`qosorch.cpp:2100`)。これは QoS マップ削除に連動した暗黙的な副次効果である。
+`PORT_QOS_MAP` DEL 時に `gPortsOrch->setPortPfc(port.m_port_id, 0)` が呼ばれ、ポートの [PFC](../../reference/glossary.md#term-pfc) ビットマスクが 0 にリセットされる (`qosorch.cpp:2100`)。これは [QoS](../../reference/glossary.md#term-qos) マップ削除に連動した暗黙的な副次効果である。
 
 ### TUNNEL_DECAP_TABLE への波及
 
@@ -304,7 +303,7 @@ YANG バリデーションで強制される値域はコードではなく YANG 
 
 ### STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB
 
-`QosOrch` は `DOT1P_TO_TC_MAP` / `TC_TO_PRIORITY_GROUP_MAP` の SET/DEL において STATE_DB・COUNTERS_DB・FLEX_COUNTER_DB への直接書き込みを行わない。
+`QosOrch` は `DOT1P_TO_TC_MAP` / `TC_TO_PRIORITY_GROUP_MAP` の SET/DEL において [STATE_DB](../../reference/glossary.md#term-state_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への直接書き込みを行わない。
 
 <!-- evidence:
 source: sonic-swss/orchagent/qosorch.cpp#L399-L420 (sha: master)
@@ -312,6 +311,24 @@ excerpt: |
   sai_status_t sai_status = sai_qos_map_api->create_qos_map(&object_id, gSwitchId, (uint32_t)attrs.size(), attrs.data());
 reasoning: Dot1pToTcMapHandler::addQosItem が SAI create_qos_map を呼び出す。ASIC_DB に SAI OID が書き込まれる。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-swss/orchagent/qosorch.cpp#L399-L420 (sha: master)"
+
+    **出典**:
+
+    `sonic-swss/orchagent/qosorch.cpp#L399-L420 (sha: master)`
+
+    **抜粋**:
+
+    ```text
+    sai_status_t sai_status = sai_qos_map_api->create_qos_map(&object_id, gSwitchId, (uint32_t)attrs.size(), attrs.data());
+    ```
+
+    **判断根拠**: Dot1pToTcMapHandler::addQosItem が SAI create_qos_map を呼び出す。ASIC_DB に SAI OID が書き込まれる。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-swss/orchagent/qosorch.cpp#L2086-L2106 (sha: master)
 excerpt: |
@@ -320,12 +337,32 @@ excerpt: |
   if (!gPortsOrch->setPortPfc(port.m_port_id, 0))
 reasoning: PORT_QOS_MAP DEL 時に set_port_attribute で各 SAI 属性を NULL OID にセットし、さらに setPortPfc(0) でPFCビットを無効化する。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-swss/orchagent/qosorch.cpp#L2086-L2106 (sha: master)"
+
+    **出典**:
+
+    `sonic-swss/orchagent/qosorch.cpp#L2086-L2106 (sha: master)`
+
+    **抜粋**:
+
+    ```text
+    sai_status_t status = sai_port_api->set_port_attribute(port.m_port_id, &attr);
+    ...
+    if (!gPortsOrch->setPortPfc(port.m_port_id, 0))
+    ```
+
+    **判断根拠**: PORT_QOS_MAP DEL 時に set_port_attribute で各 SAI 属性を NULL OID にセットし、さらに setPortPfc(0) でPFCビットを無効化する。
+
+<!-- evidence-rendered:end -->
+
 <!-- /side-effects -->
 
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-`DOT1P_TO_PG_MAP` テーブルは存在しないが、等価な 2 段マッピング経路を処理する `QosOrch` の Redis 通信メカニズムを示す。
+`DOT1P_TO_PG_MAP` テーブルは存在しないが、等価な 2 段マッピング経路を処理する `QosOrch` の [Redis](../../reference/glossary.md#term-redis) 通信メカニズムを示す。
 
 ### Producer/Consumer ペア
 
@@ -338,7 +375,7 @@ reasoning: PORT_QOS_MAP DEL 時に set_port_attribute で各 SAI 属性を NULL 
 
 ### SubscriberStateTable の動作
 
-`QosOrch` は `Orch(db, tableNames)` 基底クラスを介して `CFG_DOT1P_TO_TC_MAP_TABLE_NAME` / `CFG_TC_TO_PRIORITY_GROUP_MAP_TABLE_NAME` / `CFG_PORT_QOS_MAP_TABLE_NAME` など計 15 テーブルに対する `SubscriberStateTable` を登録する (`orchdaemon.cpp:365-384`)。keyspace notification (`PSUBSCRIBE __keyspace@db__:<table>|*`) でエントリ変化を検出し、`pops()` で現在値を読み出す。APPL_DB への中継は行わない。
+`QosOrch` は `Orch(db, tableNames)` 基底クラスを介して `CFG_DOT1P_TO_TC_MAP_TABLE_NAME` / `CFG_TC_TO_PRIORITY_GROUP_MAP_TABLE_NAME` / `CFG_PORT_QOS_MAP_TABLE_NAME` など計 15 テーブルに対する `SubscriberStateTable` を登録する (`orchdaemon.cpp:365-384`)。keyspace notification (`PSUBSCRIBE __keyspace@db__:<table>|*`) でエントリ変化を検出し、`pops()` で現在値を読み出す。[APPL_DB](../../reference/glossary.md#term-appl_db) への中継は行わない。
 
 ### select() ループと doTask 実行順序
 
@@ -437,3 +474,9 @@ NotificationConsumer: なし
 - [CONFIG_DB: DOT1P_TO_TC_MAP](dot1p-to-tc-map.md)
 - [CONFIG_DB: TC_TO_PRIORITY_GROUP_MAP](tc-to-priority-group-map.md)
 - [CONFIG_DB: PORT_QOS_MAP](port-qos-map.md)
+
+## 実装との乖離
+
+本テーブルは [HLD](../../reference/glossary.md#term-hld) では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。
+
+<!-- glossary-links-injected: 819934e0af64 -->

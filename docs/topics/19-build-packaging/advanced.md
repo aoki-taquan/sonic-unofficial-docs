@@ -21,7 +21,7 @@ related:
 
 ## ARM (armhf / arm64) サポート
 
-SONiC の build system は元々 AMD64 中心だったため、ARM 系プラットフォームへ広げるには `sonic-slave`、`dockers/`、`rules/`、`Makefile`、`apt` repo、kernel ビルド、`onie-image-*.conf`、`installer/install.sh` などを横断的に修正する必要があった。
+[SONiC](../../reference/glossary.md#term-sonic) の build system は元々 AMD64 中心だったため、ARM 系プラットフォームへ広げるには `sonic-slave`、`dockers/`、`rules/`、`Makefile`、`apt` repo、kernel ビルド、`onie-image-*.conf`、`installer/install.sh` などを横断的に修正する必要があった。
 
 実装では `Makefile.work` の `CONFIGURED_ARCH` / `PLATFORM_ARCH`（default `amd64`）と、`sonic-slave-<dist>` を `-march-<arch>` サフィックス付きで切り替える仕組みに収束している。HLD で示された `sonic-slave-armhf` / `sonic-slave-arm64` という固定ディレクトリ命名は廃止されている。詳細と裏取りは [ARM architecture support](../../architecture/sonic-arm-architecture-support.md) を読む。
 
@@ -128,4 +128,4 @@ base が debian なので CVE 通知は `debian-security` announce と SBOM の�
 - SPM (`sonic-package-manager`) で manifest schema 拡張と署名検証関連の議論が継続。
 - SBOM 出力と CVE スキャン自動化の PR が CI 周りで議題化。
 
-<!-- glossary-links-injected: 6ee6deac630a -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

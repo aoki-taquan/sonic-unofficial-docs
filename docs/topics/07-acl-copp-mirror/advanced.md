@@ -57,11 +57,11 @@ CoPP のトラブルシュートでは、`show copp configuration` で trap が 
 
 [DASH](../../reference/glossary.md#term-dash) ACL tags は、DASH の ACL rule でサービスを IP prefix 群として扱うための仕組みです。通常 ACL の `ACL_TABLE` / `ACL_RULE` ではなく、`DASH_PREFIX_TAG_TABLE` と `DASH_ACL_RULE_TABLE` の拡張として読みます。
 
-通常 ACL との共通点は、match 対象を抽象化し、rule 生成時に展開することです。違いは、DASH pipeline と APP_DB schema が別系統であり、SONiC の data plane ACL 設定と同じ運用コマンドでは扱わないことです。
+通常 ACL との共通点は、match 対象を抽象化し、rule 生成時に展開することです。違いは、DASH pipeline と APP_DB schema が別系統であり、[SONiC](../../reference/glossary.md#term-sonic) の data plane ACL 設定と同じ運用コマンドでは扱わないことです。
 
 ## Port Access Control
 
-PAC は 802.1x / MAB / RADIUS によるポート単位の認証です。認証結果に応じて MAC、[VLAN](../../reference/glossary.md#term-vlan)、learning mode、host trap を制御するため、ACL に似た「許可 / 不許可」の話に見えますが、主体は authentication manager、hostapd、mabd、RADIUS です。
+PAC は 802.1x / MAB / [RADIUS](../../reference/glossary.md#term-radius) によるポート単位の認証です。認証結果に応じて MAC、[VLAN](../../reference/glossary.md#term-vlan)、learning mode、host trap を制御するため、ACL に似た「許可 / 不許可」の話に見えますが、主体は authentication manager、hostapd、mabd、RADIUS です。
 
 ACL 章では、物理ポート単位の access 制御であり、[LAG](../../reference/glossary.md#term-lag) / VLAN への ACL bind とは別の設計として位置付けます。
 
@@ -83,7 +83,7 @@ DHCP DoS 緩和は、従来 CoPP のシステム全体 DHCP rate limit では単
 
 - **ERSPAN Type-II / Type-III**: 通常 SPAN/Everflow に加え、GRE 経由で remote collector に届ける ERSPAN は SAI mirror session の `SAI_MIRROR_SESSION_ATTR_TYPE` で表現する。Type-III は timestamp と probabilistic sampling をサポートする。
 - **ACL counters の telemetry export**: `COUNTERS_DB` から ACL rule 単位のヒット数を [gNMI](../../reference/glossary.md#term-gnmi) / streaming telemetry で出す構成。Top talker / DoS 検出に直結する。
-- **[TCAM](../../reference/glossary.md#term-tcam) 共有 (ACL group sharing)**: 同じ ACL を複数 port に bind するとき、ASIC TCAM を group 共有でケチる。SAI side で `SAI_ACL_TABLE_GROUP` の MULTIPLE binding が要件。
+- **[TCAM](../../reference/glossary.md#term-tcam) 共有 (ACL group sharing)**: 同じ ACL を複数 port に bind するとき、[ASIC](../../reference/glossary.md#term-asic) TCAM を group 共有でケチる。SAI side で `SAI_ACL_TABLE_GROUP` の MULTIPLE binding が要件。
 - **Egress ACL の counter visibility**: ingress ACL counter は読みやすいが egress ACL counter は ASIC によって粒度が異なる。`show acl rule` で counter が更新されない場合は SAI 側 attribute サポートを確認する。
 - **CoPP trap 別 policer の動的調整**: 障害対応中に特定 trap (例えば LACPDU storm) の policer を一時的に上げる運用がある。`COPP_GROUP` / `COPP_TRAP` で per-feature に切り替える。
 
@@ -124,7 +124,7 @@ DHCP DoS 緩和は、従来 CoPP のシステム全体 DHCP rate limit では単
 
 - ACL rule が ASIC に降りないときは、まず `aclshow -a` で counter の有無、`redis-cli -n 1 keys 'ACL_*'` で [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) の rule 数を確認する。TCAM 不足の場合は `swss` の `syncd` ログに `SAI_STATUS_INSUFFICIENT_RESOURCES` が出る。
 - CoPP で control plane を drop しているときは、`docker exec swss coppmgr` の状態と `show copp` の rate/burst を確認する。BGP / LACP / ARP のような protocol trap が `MATCH_DROP` に分類されていると、コンソール経由でも疎通しない事象が起きる。
-- mirror session が動作しないときは、`show mirror_session` で session の active/inactive、`MIRROR_SESSION` テーブルの GRE/ERSPAN 設定、宛先 next-hop の到達性を点検する。[VXLAN](../../reference/glossary.md#term-vxlan) 経由 mirror は dst VTEP の MAC 解決失敗で停止しやすい。
+- mirror session が動作しないときは、`show mirror_session` で session の active/inactive、`MIRROR_SESSION` テーブルの GRE/ERSPAN 設定、宛先 next-hop の到達性を点検する。[VXLAN](../../reference/glossary.md#term-vxlan) 経由 mirror は dst [VTEP](../../reference/glossary.md#term-vtep) の MAC 解決失敗で停止しやすい。
 
 ## 検証パスとラボ要件
 
@@ -145,4 +145,4 @@ DHCP DoS 緩和は、従来 CoPP のシステム全体 DHCP rate limit では単
 - [15 Security / AAA: 802.1X / MAB / RADIUS の境界](../15-security-aaa/index.md)
 - [18 P4 / PINS: P4 表現での ACL](../18-p4-pins/index.md)
 
-<!-- glossary-links-injected: 5e36326edf13 -->
+<!-- glossary-links-injected: be22a36d6598 -->

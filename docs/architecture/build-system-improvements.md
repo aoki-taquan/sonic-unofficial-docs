@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-SONiC ビルドは大別すると 2 段階で構成される[^1]:
+[SONiC](../reference/glossary.md#term-sonic) ビルドは大別すると 2 段階で構成される[^1]:
 
 1. Debian / Python パッケージ コンパイル — 比較的速い
 2. **Docker イメージビルド** — 遅い（特に複数ユーザ並列時）
@@ -250,20 +250,17 @@ sonic-slave コンテナ内で debootstrap が proc マウントに失敗する�
 
 - 参照: [sonic-net/sonic-buildimage#27](https://github.com/sonic-net/sonic-buildimage/issues/27)
 
-
 ### /host/machine.conf の内容が不正な場合、プラットフォーム固有の設定が失敗する（sonic-buildimage#1519）
 
 /host/machine.conf の内容が不正な場合、プラットフォーム固有の設定が失敗する。platform フィールドに正しい hwsku 名を設定すること
 
 - 参照: [sonic-net/sonic-buildimage#1519](https://github.com/sonic-net/sonic-buildimage/issues/1519)
 
-
 ### interfaces-config.service が `sonic-cfggen -d` で応答待ちになりハングする問（sonic-buildimage#1873）
 
-interfaces-config.service が `sonic-cfggen -d` で応答待ちになりハングする問題。Redis が起動していない状態で sonic-cfggen がブロックするため、サービス依存関係の順序に注意
+interfaces-config.service が `sonic-cfggen -d` で応答待ちになりハングする問題。[Redis](../reference/glossary.md#term-redis) が起動していない状態で [sonic-cfggen](../reference/glossary.md#term-sonic-cfggen) がブロックするため、サービス依存関係の順序に注意
 
 - 参照: [sonic-net/sonic-buildimage#1873](https://github.com/sonic-net/sonic-buildimage/issues/1873)
-
 
 ### sonic-slave コンテナに入る方法: `docker run -v /var/run/docker.sock:/（sonic-buildimage#2029）
 
@@ -271,13 +268,11 @@ sonic-slave コンテナに入る方法: `docker run -v /var/run/docker.sock:/va
 
 - 参照: [sonic-net/sonic-buildimage#2029](https://github.com/sonic-net/sonic-buildimage/issues/2029)
 
-
 ### 初期化スクリプトで `depmod -a` が実行されていない場合、`libkmod: ERROR` ログが出力される（sonic-buildimage#2030）
 
 初期化スクリプトで `depmod -a` が実行されていない場合、`libkmod: ERROR` ログが出力される。カーネルモジュールの依存関係データベース更新が必要
 
 - 参照: [sonic-net/sonic-buildimage#2030](https://github.com/sonic-net/sonic-buildimage/issues/2030)
-
 
 ### config reload 後にカーネルの loopback IP アドレスが残る既知のバグ（sonic-buildimage#2102）
 
@@ -285,13 +280,11 @@ config reload 後にカーネルの loopback IP アドレスが残る既知の�
 
 - 参照: [sonic-net/sonic-buildimage#2102](https://github.com/sonic-net/sonic-buildimage/issues/2102)
 
-
 ### Linux カーネルビルド中に `failed to load plugin io.containerd.snapsho（sonic-buildimage#2614）
 
 Linux カーネルビルド中に `failed to load plugin io.containerd.snapshotter` エラーが発生する問題。containerd のバージョンと Linux カーネルの互換性確認が必要
 
 - 参照: [sonic-net/sonic-buildimage#2614](https://github.com/sonic-net/sonic-buildimage/issues/2614)
-
 
 ### SONiC HEAD 187-dirty ビルドでのバージョン管理問題（sonic-buildimage#4096）
 
@@ -299,13 +292,11 @@ SONiC HEAD 187-dirty ビルドでのバージョン管理問題。`--dirty` サ�
 
 - 参照: [sonic-net/sonic-buildimage#4096](https://github.com/sonic-net/sonic-buildimage/issues/4096)
 
-
 ### ベース docker イメージのビルド時に `apt-get update` が常に失敗する問題（sonic-buildimage#4366）
 
 ベース docker イメージのビルド時に `apt-get update` が常に失敗する問題。Debian リポジトリの APT キーが期限切れの場合に発生。`apt-key update` でキーを更新すること
 
 - 参照: [sonic-net/sonic-buildimage#4366](https://github.com/sonic-net/sonic-buildimage/issues/4366)
-
 
 ### master mainline でのビルドエラー（sonic-buildimage#4404）
 
@@ -313,13 +304,11 @@ master mainline でのビルドエラー。`git submodule update --init --recurs
 
 - 参照: [sonic-net/sonic-buildimage#4404](https://github.com/sonic-net/sonic-buildimage/issues/4404)
 
-
 ### スイッチ起動時に sonic-cfggen が大量の CPU を消費する問題（sonic-buildimage#4553）
 
 スイッチ起動時に sonic-cfggen が大量の CPU を消費する問題。起動時に複数のサービスが同時に sonic-cfggen を呼び出すため。`systemd-analyze blame` でボトルネックを特定すること
 
 - 参照: [sonic-net/sonic-buildimage#4553](https://github.com/sonic-net/sonic-buildimage/issues/4553)
-
 
 ### sonic-cfggen が `/var/run/redis/redis.sock` への接続に失敗する問題（sonic-buildimage#5277）
 
@@ -327,13 +316,11 @@ sonic-cfggen が `/var/run/redis/redis.sock` への接続に失敗する問題�
 
 - 参照: [sonic-net/sonic-buildimage#5277](https://github.com/sonic-net/sonic-buildimage/issues/5277)
 
-
 ### Dynamic Port Breakout (DPB) 機能が最新 master では動作しない問題（sonic-buildimage#5417）
 
-Dynamic Port Breakout (DPB) 機能が最新 master では動作しない問題。DPB は特定のプラットフォームとカーネルバージョンの組み合わせに依存する
+Dynamic Port Breakout ([DPB](../reference/glossary.md#term-dpb)) 機能が最新 master では動作しない問題。DPB は特定のプラットフォームとカーネルバージョンの組み合わせに依存する
 
 - 参照: [sonic-net/sonic-buildimage#5417](https://github.com/sonic-net/sonic-buildimage/issues/5417)
-
 
 ### 物理スイッチへの SONiC インストールに失敗する問題（sonic-buildimage#5596）
 
@@ -341,13 +328,11 @@ Dynamic Port Breakout (DPB) 機能が最新 master では動作しない問題�
 
 - 参照: [sonic-net/sonic-buildimage#5596](https://github.com/sonic-net/sonic-buildimage/issues/5596)
 
-
 ### VS (Virtual Switch) イメージで config reload が失敗する問題（sonic-buildimage#5959）
 
 VS (Virtual Switch) イメージで config reload が失敗する問題。VS 環境では一部のプラットフォーム固有サービスが利用できないため、VS 用の設定を使用すること
 
 - 参照: [sonic-net/sonic-buildimage#5959](https://github.com/sonic-net/sonic-buildimage/issues/5959)
-
 
 ### 201911 で `SONIC_DEBUGGING_ON=y` を設定するとコンパイルが失敗する問題（sonic-buildimage#5982）
 
@@ -355,13 +340,11 @@ VS (Virtual Switch) イメージで config reload が失敗する問題。VS 環
 
 - 参照: [sonic-net/sonic-buildimage#5982](https://github.com/sonic-net/sonic-buildimage/issues/5982)
 
-
 ### DPB 後のインターフェースの alias が誤って設定される問題（sonic-buildimage#6024）
 
 DPB 後のインターフェースの alias が誤って設定される問題。Dynamic Port Breakout 実行後は `show interfaces alias` で alias が正しく更新されているか確認すること
 
 - 参照: [sonic-net/sonic-buildimage#6024](https://github.com/sonic-net/sonic-buildimage/issues/6024)
-
 
 ### Dynamic Port Breakout (DPB) 機能が不安定な問題（sonic-buildimage#6027）
 
@@ -369,13 +352,11 @@ Dynamic Port Breakout (DPB) 機能が不安定な問題。DPB は実行中に複
 
 - 参照: [sonic-net/sonic-buildimage#6027](https://github.com/sonic-net/sonic-buildimage/issues/6027)
 
-
 ### config_db.json ファイルのインターフェースがソートされていない問題（sonic-buildimage#6328）
 
-config_db.json ファイルのインターフェースがソートされていない問題。設定ファイルの可読性のため、sort_keys=True で JSON を整形すること
+[config_db.json](../reference/glossary.md#term-config_db.json) ファイルのインターフェースがソートされていない問題。設定ファイルの可読性のため、sort_keys=True で JSON を整形すること
 
 - 参照: [sonic-net/sonic-buildimage#6328](https://github.com/sonic-net/sonic-buildimage/issues/6328)
-
 
 ### ARM アーキテクチャの VS docker イメージでのパフォーマンステスト（sonic-buildimage#6399）
 
@@ -383,13 +364,11 @@ ARM アーキテクチャの VS docker イメージでのパフォーマンス�
 
 - 参照: [sonic-net/sonic-buildimage#6399](https://github.com/sonic-net/sonic-buildimage/issues/6399)
 
-
 ### make コマンドラインからコードの最適化を無効化できない問題（sonic-buildimage#6413）
 
 make コマンドラインからコードの最適化を無効化できない問題。`SONIC_DEBUGGING_ON=y` オプションでデバッグビルドを有効化できるが、最適化レベルの個別制御はサポートされていない
 
 - 参照: [sonic-net/sonic-buildimage#6413](https://github.com/sonic-net/sonic-buildimage/issues/6413)
-
 
 ### config load_minigraph が "Redis BGSAVE already in progress" で（sonic-buildimage#6498）
 
@@ -397,13 +376,11 @@ config load_minigraph が "Redis BGSAVE already in progress" で失敗する問�
 
 - 参照: [sonic-net/sonic-buildimage#6498](https://github.com/sonic-net/sonic-buildimage/issues/6498)
 
-
 ### DPB でインターフェースの設定セクションが適用済みと未適用で異なる問題（sonic-buildimage#6645）
 
 DPB でインターフェースの設定セクションが適用済みと未適用で異なる問題。DPB 後の設定反映状態は `show interfaces breakout` で確認すること
 
 - 参照: [sonic-net/sonic-buildimage#6645](https://github.com/sonic-net/sonic-buildimage/issues/6645)
-
 
 ### DB migrator が新しい init_cfg.json/FEATURE テーブルの必須エントリを考慮しない問題（sonic-buildimage#6659）
 
@@ -478,4 +455,4 @@ docker images | grep sonic
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: c79120f885b8 -->

@@ -7,7 +7,7 @@ last_verified: 2026-05-13
 ---
 
 # アーキテクチャ
-SONiC 全体構成、ビルド、管理基盤、共通設計を横断的に扱う章。
+[SONiC](../reference/glossary.md#term-sonic) 全体構成、ビルド、管理基盤、共通設計を横断的に扱う章。
 ## この章の読み方
 まず全体像や実装単位のページを読み、必要に応じて関連する機能別章またはリファレンス章に移動する。
 ## 検証状況
@@ -78,4 +78,4 @@ SONiC 全体構成、ビルド、管理基盤、共通設計を横断的に扱�
 | [ポートリンクトレーニング（IEEE 802.3 clause 72/93 / SAI 動的 FIR）](sonic-port-link-training-design.md) | Code-verified |
 | [ポート不正パケットドロップ設計（Interface MIB / L3 カウンタ拡張）](port-illegal-packets-drop-design.md) | HLD-only |
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->
