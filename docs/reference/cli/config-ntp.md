@@ -176,7 +176,8 @@ sudo config ntp add 10.0.0.10 --association-type pool
 ### 期待される出力 (抜粋)
 
 ```bash
-Restarting ntp-config service...
+# 実装は `systemctl restart chrony` を `display_cmd=False` で実行するため
+# CLI への出力は通常空。chrony サービスが再起動される。
 ```
 <!-- /usage-example -->
 

@@ -17,7 +17,7 @@ related:
     - SSH_SERVER
     - DEVICE_METADATA
   cli:
-    - config ssh-server
+    - config ssh
   yang:
     - sonic-ssh-server
 ---
@@ -88,7 +88,7 @@ YANG `default` 宣言なし。DB に設定しない場合は sshd の組み込�
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `DEVICE_METADATA`（hostname 参照）
-- 関連 CLI: `config ssh-server`
+- 関連 CLI: `config ssh`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-ssh-server`
 
 <!-- ref-triangle:start -->
@@ -190,7 +190,7 @@ SSH_SERVER テーブルへの書き込みが発生するコード経路を調査
 
 ### CLI
 
-- `config ssh-server` — `sonic-utilities/config/main.py` L9987-10000 が `config_db.mod_entry("SSH_SERVER", "POLICIES", {...})` を呼ぶ
+- `config ssh` — `sonic-utilities/config/main.py` L9987-10000 が `config_db.mod_entry("SSH_SERVER", "POLICIES", {...})` を呼ぶ
 
 ### minigraph / sonic-cfggen
 
@@ -317,7 +317,7 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 | SSH_SERVER → | `max_sessions`（PamLimitsCfg） | [`DEVICE_METADATA`](./device-metadata.md) | `update_config_file()` が `DEVICE_METADATA\|localhost` キーの存在を確認。不在時は early return し PAM limits を更新しない |
 | SSH_SERVER ← | `PasswordAuthentication`（sshd_config） | [`AAA`](./aaa.md) | `AaaCfg.modify_conf_file()` が `/etc/pam.d/sshd` を書き換え、TACACS+/RADIUS/LDAP 有効時に `common-auth-sonic` に切り替える。SSH のパスワード認証と PAM 認証スタックが実質的に連動する |
 | SSH_SERVER ← (間接) | SSH 認証経路 | [`MGMT_INTERFACE`](./mgmt-interface.md) | TACACS+/RADIUS の `src_intf = eth0` 設定時、`AaaCfg.get_interface_ip()` が `MGMT_INTERFACE` テーブルの IP を解決。SSH 認証バックエンドとして TACACS+/RADIUS を使用する場合に影響 |
-| CLI | `config ssh-server` / `show ssh-server` | [`config ssh-server`](../cli/config-ssh-server.md) | SSH_SERVER テーブルの読み書き CLI |
+| CLI | `config ssh` / `show ssh-server` | [`config ssh`](../cli/config-ssh.md) | SSH_SERVER テーブルの読み書き CLI |
 | YANG | `SSH_SERVER\|POLICIES` | [`sonic-ssh-server`](../yang/sonic-ssh-server.md) | 全フィールドのスキーマ定義 |
 
 > **Evidence**: `sonic-host-services/scripts/hostcfgd` L1422-1430 (PamLimitsCfg → DEVICE_METADATA); L744-751 (AaaCfg → /etc/pam.d/sshd); L596-606 (get_interface_ip → MGMT_INTERFACE); 詳細分析 `meta/_intermediate/cdb-flow/ssh-server-cross-refs.md`
@@ -466,7 +466,7 @@ CONFIG_DB `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の `SshServ
 ### keyspace 通知 → ハンドラ呼び出しの流れ
 
 ```
-config ssh-server policies inactivity-timeout 10
+config ssh policies inactivity-timeout 10
   ↓ HSET "SSH_SERVER|POLICIES" inactivity_timeout "10"
 Redis keyspace PUBLISH "__keyspace@4__:SSH_SERVER|POLICIES"  "hset"
   ↓ ConfigDBConnector.listen() がパターンマッチ

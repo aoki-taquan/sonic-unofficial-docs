@@ -20,8 +20,7 @@ related:
   cli:
   - debug
   - undebug
-  yang:
-  - sonic-debug-counter
+  yang: []
 ---
 
 # debug / undebug コマンド群

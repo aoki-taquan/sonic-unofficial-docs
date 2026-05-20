@@ -142,9 +142,9 @@ excerpt: |
 **引数**:
 
 - `<ip>` ... IP もしくはホスト名
-- `-r/--retransmit` 1-10
+- `-r/--retransmit` 1-10（注: `config radius retransmit` グローバル側は 0-10、`-r` オプション側は 1-10 と range が異なる。ソース `config/aaa.py` L356/L510 で個別定義）
 - `-t/--timeout` 1-60
-- `-k/--key` ... 64 文字以下、空白 / `#` / `,` を含まないこと（`is_secret` でバリデート）
+- `-k/--key` ... 65 文字以下、空白 / `#` / `,` を含まないこと（`is_secret` でバリデート、`RADIUS_PASSKEY_MAX_LEN = 65`）
 - `-a/--auth_type` ... `chap` / `pap` / `mschapv2`
 - `-o/--auth-port` 1-65535、default 1812
 - `-p/--pri` 1-64、default 1

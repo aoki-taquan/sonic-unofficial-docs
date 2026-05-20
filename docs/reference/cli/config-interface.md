@@ -23,6 +23,13 @@ related:
   - BUFFER_QUEUE
   - PORT_STORM_CONTROL
   - VRF
+  - CABLE_LENGTH
+  - BREAKOUT_CFG
+  - SFLOW_SESSION
+  - VRRP
+  - VRRP6
+  - VRRP_TRACK
+  - VRRP6_TRACK
   cli:
   - config interface
   yang:
@@ -269,7 +276,7 @@ if clicommon.get_interface_naming_mode() == "alias":
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`PORT`](../config-db/port.md) / [`PORTCHANNEL`](../config-db/portchannel.md) / [`VLAN_SUB_INTERFACE`](../config-db/vlan-sub-interface.md) / [`LOOPBACK_INTERFACE`](../config-db/loopback-interface.md) / [`INTERFACE`](../config-db/interface.md) / [`PORTCHANNEL_INTERFACE`](../config-db/portchannel-interface.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`MGMT_INTERFACE`](../config-db/mgmt-interface.md) / [`BUFFER_PG`](../config-db/buffer-pg.md) / [`BUFFER_QUEUE`](../config-db/buffer-queue.md) / [`PORT_STORM_CONTROL`](../config-db/port-storm-control.md) / [`VRF`](../config-db/vrf.md)
+- CONFIG_DB: [`PORT`](../config-db/port.md) / [`PORTCHANNEL`](../config-db/portchannel.md) / [`VLAN_SUB_INTERFACE`](../config-db/vlan-sub-interface.md) / [`LOOPBACK_INTERFACE`](../config-db/loopback-interface.md) / [`INTERFACE`](../config-db/interface.md) / [`PORTCHANNEL_INTERFACE`](../config-db/portchannel-interface.md) / [`VLAN_INTERFACE`](../config-db/vlan-interface.md) / [`MGMT_INTERFACE`](../config-db/mgmt-interface.md) / [`BUFFER_PG`](../config-db/buffer-pg.md) / [`BUFFER_QUEUE`](../config-db/buffer-queue.md) / [`PORT_STORM_CONTROL`](../config-db/port-storm-control.md) / [`VRF`](../config-db/vrf.md) / [`CABLE_LENGTH`](../config-db/cable-length.md) / [`BREAKOUT_CFG`](../config-db/breakout-cfg.md) / [`SFLOW_SESSION`](../config-db/sflow-session.md) / [`VRRP_TRACK`](../config-db/vrrp-track.md)
 
 <!-- ref-triangle:end -->
 

@@ -19,7 +19,10 @@ related:
   - NAT_POOL
   - NAT_BINDINGS
   - NAT_GLOBAL
-  - NAT_ZONE
+  - INTERFACE
+  - PORTCHANNEL_INTERFACE
+  - VLAN_INTERFACE
+  - LOOPBACK_INTERFACE
   cli:
   - config nat
   yang:
@@ -136,7 +139,7 @@ excerpt: |
 
 ## 関連リファレンス
 
-- CONFIG_DB: `STATIC_NAT` / `STATIC_NAPT` / [`NAT_POOL`](../config-db/nat.md) / [`NAT_BINDINGS`](../config-db/nat.md) / [`NAT_GLOBAL`](../config-db/nat.md) / [`NAT_ZONE`](../config-db/nat.md)
+- CONFIG_DB: `STATIC_NAT` / `STATIC_NAPT` / [`NAT_POOL`](../config-db/nat.md) / [`NAT_BINDINGS`](../config-db/nat.md) / [`NAT_GLOBAL`](../config-db/nat.md) / [`NAT_ZONE` (interface ごと PORT/PORTCHANNEL/VLAN/LOOPBACK_INTERFACE の `nat_zone` フィールド)](../config-db/nat-zone.md)
 
 <!-- ref-triangle:end -->
 
