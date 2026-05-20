@@ -15,22 +15,12 @@ related:
   config_db:
   - TELEMETRY
   - GNMI
-  - SYSLOG_SERVER
-  - SYSLOG_CONFIG
-  - SYSLOG_CONFIG_FEATURE
-  - PORT
-  - PORTCHANNEL
-  cli:
-  - show interfaces
-  - show ip
-  - config syslog
   yang:
   - openconfig-gnsi-certz
   - openconfig-gnsi-authz
   - openconfig-gnsi-pathz
   - openconfig-gnsi-credentialz
   - sonic-system-defaults
-  - sonic-syslog
 ---
 
 # gNSI 設定と運用

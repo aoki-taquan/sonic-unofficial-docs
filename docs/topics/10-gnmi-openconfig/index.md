@@ -97,20 +97,20 @@ related:
 **関連する HLD 7 件**
 
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）](../../management/sonic-nos-configuration-methods.md)
-- [gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ）](../../management/gnsi-hld-operations.md)
 - [YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）](../../management/sonic-config-update-validation-via-yang.md)
 - [OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）](../../management/openconfig-support-for-ethernet-interfaces.md)
 - [Redis Client Manager（RCM: connection pool / transactional client）](../../management/redis-client-manager-rcm-hld.md)
-- [シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）](../../management/serial-console-global-config-hld.md)
 - [SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）](../../management/sonic-gnmi-server-interface-design.md)
+- [gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）](../../management/gnmi-usage.md)
+- [gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）](../../management/gnoi-hld-for-healthz-api.md)
 
 **関連トラブルシュート 5 件**
 
-- [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
 - [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
 - [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
 - [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
 - [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+- [show interfaces counters が突然リセットされる](../../reference/runbooks/interface-counters-reset.md)
 
 <!-- /next-reads -->
 

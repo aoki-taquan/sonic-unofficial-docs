@@ -32,7 +32,7 @@ related:
 
 <!-- topics-tip -->
 !!! tip "Topics で読み物として読む"
-    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 21 章: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md) を参照。
 <!-- /topics-tip -->
 
 !!! danger "裏取りステータス: discrepancy-found（HLD のクラス階層は未実装）"

@@ -28,7 +28,7 @@ related:
 ---
 
 !!! success "裏取りステータス: code-verified"
-    containercfgd: `sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py:18,21,22,98,133-135`（`SYSLOG_CONFIG_FEATURE_TABLE`, `SYSLOG_RATE_LIMIT_INTERVAL`, `SYSLOG_RATE_LIMIT_BURST`, `@config_handler`）/ `config syslog rate-limit-feature`: `sonic-utilities/config/syslog.py:514-515` で確認。
+    containercfgd: `sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py:18,21,22,98,133-135`（`SYSLOG_CONFIG_FEATURE_TABLE`, `SYSLOG_RATE_LIMIT_INTERVAL`, `SYSLOG_RATE_LIMIT_BURST`, `@config_handler`）/ `config syslog rate-limit-container`: `sonic-utilities/config/syslog.py` で確認（CLI リファレンス `docs/reference/cli/config-syslog.md` L39, L66 も同コマンドを記載）。
 
 # syslog rate limit のコンテナ単位設定
 

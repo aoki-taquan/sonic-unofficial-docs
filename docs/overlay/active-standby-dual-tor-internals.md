@@ -122,7 +122,7 @@ IPv6 は `accept_untracked_na=1` を kernel に backport して unsolicited NA �
 
 ## 5. y-cable I2C 障害（ycabled）
 
-旧 `xcvrd` を `ycabled` に改名[^1]。`APP_DB.HW_MUX_CABLE` を購読し I2C 経由で [MUX](../reference/glossary.md#term-mux) を toggle する。`i2c_retry_count` 回失敗で `MUX_FAIL` を `STATE_DB.HW_MUX_CABLE_TABLE` に書く。報告状態: `MUX_XCVRD_ACTIVE` / `MUX_XCVRD_STANDBY` / `MUX_XCVRD_FAIL`。
+旧 `xcvrd` を `ycabled` に改名[^1]。`APP_DB.HW_MUX_CABLE` を購読し I2C 経由で [MUX](../reference/glossary.md#term-mux) を toggle する。`i2c_retry_count` 回失敗で `MUX_FAIL` を `STATE_DB.HW_MUX_CABLE_TABLE` に書く。報告状態（コード上の定数名 → 実 DB 文字列値）: `MUX_XCVRD_ACTIVE` → `active` / `MUX_XCVRD_STANDBY` → `standby` / `MUX_XCVRD_UNKNOWN` → `unknown`。`STATE_DB.HW_MUX_CABLE_TABLE` の `state` フィールドには小文字の文字列値 (`active` / `standby` / `unknown`) が書き込まれる。
 
 ### switchover シーケンス（standby → active）
 
@@ -135,7 +135,7 @@ sequenceDiagram
     participant SDB as STATE_DB
     participant OR as orchagent (MuxOrch)
     LM->>LM: LinkProber Standby → Unknown
-    LM->>LM: LINKMANAGER_SWITCH → MuxLinkWait
+    LM->>LM: LINKMANAGER_SWITCH → LinkWait
     LM->>ADB: HW_MUX_CABLE.state = active
     ADB->>YC: notify
     YC->>I2C: toggle MUX direction

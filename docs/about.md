@@ -136,3 +136,4 @@ AI 駆動の運用パイプライン（Indexer → Backlog Generator → Writer 
 - [HLD と実装の乖離一覧 (_meta/discrepancies)](_meta/discrepancies.md)
 
 <!-- glossary-links-injected: 8ba32e5aa69d -->
+

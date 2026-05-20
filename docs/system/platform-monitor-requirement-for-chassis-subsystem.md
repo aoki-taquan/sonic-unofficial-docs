@@ -13,10 +13,6 @@ related:
   - CHASSIS_MODULE
   - MID_PLANE_BRIDGE
   - DPU
-  - VOQ_INBAND_INTERFACE
-  - PORT_QOS_MAP
-  - BUFFER_PORT_INGRESS_PROFILE_LIST
-  - BUFFER_PORT_EGRESS_PROFILE_LIST
   cli:
   - show chassis module status
   - show system-health

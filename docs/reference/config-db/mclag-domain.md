@@ -389,10 +389,10 @@ SAI 操作は FdbOrch 経由: MCLAG メンバーが oper-down の場合に `sai_
 ### mclagsyncd → iccpd TCP IPC
 
 ```
-CONFIG_DB ──SubscriberStateTable──▶ mclagsyncd ──TCP 127.0.6.1:2626──▶ iccpd
+CONFIG_DB ──SubscriberStateTable──▶ mclagsyncd ──TCP 127.0.0.6:2626──▶ iccpd
 ```
 
-定数: `MCLAG_DEFAULT_IP = 0x7f000006`（127.0.6.1）、`MCLAG_DEFAULT_PORT = 2626`（`mclag.h:23,56`）。  
+定数: `MCLAG_DEFAULT_IP = 0x7f000006`（127.0.0.6）、`MCLAG_DEFAULT_PORT = 2626`（`mclag.h:23,56`）。  
 mclagsyncd が TCP サーバとして `listen / accept` し、iccpd が接続する。テーブル変化ごとに差分のみを `write(m_connection_socket, ...)` で送信する。
 
 ### mclagsyncd → APPL_DB (ProducerStateTable)

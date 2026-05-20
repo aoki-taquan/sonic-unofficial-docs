@@ -110,7 +110,8 @@ flowchart LR
 
 - 主要実装: [`syncd/syncd_applyview.cpp`](https://github.com/sonic-net/sonic-sairedis/blob/d54977f297301f972e2839d526d8130a5f66e893/syncd/syncd_applyview.cpp)
 - 設計ドキュメント: 未公開
-- 状況: コードは sairedis に入っているが SONiC 通常パスでは使われていない。production 検証なし。syncd docker 内 unit test のみ
+- 状況（[HLD](../reference/glossary.md#term-hld) 時点）: コードは sairedis に入っているが SONiC 通常パスでは使われていない。production 検証なし。syncd docker 内 unit test のみ
+- 現状（最新コード裏取り）: verification block も参照。`syncd_applyview.cpp` の view-comparison ロジックは master に取り込み済み。HLD 起草時点の「通常パス未使用」記述は時点依存で、現行 master では OID 復元戦略として採用されている
 
 ### Planned vs Unplanned warm restart[^1]
 
@@ -125,7 +126,7 @@ warm restart は 2 段階:
 
 ## 制限事項
 
-- syncd view comparison は production 検証無し
+- syncd view comparison は HLD 起草時点では production 検証無し（現行 master では採用済み。verification block 参照）
 - idempotent 案も完全 review 未実施
 - SAI 互換切れは個別対応
 - unplanned warm restart は libsai 要件外
@@ -141,4 +142,4 @@ warm restart は 2 段階:
 
 [^1]: [sonic-net/SONiC doc/warm-reboot/open_issues.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/warm-reboot/open_issues.md)
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 167700005048 -->

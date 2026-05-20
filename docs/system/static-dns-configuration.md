@@ -221,7 +221,6 @@ docker exec bgp cat /etc/resolv.conf
 
 - [YANG: sonic-dns](../reference/yang/sonic-dns.md)
 - [Topics: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md)
-- [CLI: config aaa](../reference/cli/config-aaa.md)
 
 ## 制限事項
 
