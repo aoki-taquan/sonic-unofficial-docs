@@ -141,10 +141,10 @@ SONiC のセキュリティは大きく三つの層に分かれます。第一�
 **関連トラブルシュート 5 件**
 
 - [SAI failure / syncd リスタート多発](../../reference/runbooks/sai-failure.md)
-- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [APPL_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
 - [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
 - [ACL ルールが効かない / counter が増えない](../../reference/runbooks/acl-rule-no-hit.md)
-- [CONFIG_DB の永続化が失敗する](../../reference/runbooks/config-db-persistence-failure.md)
+- [DHCP Relay で IP が払い出されない](../../reference/runbooks/dhcp-relay.md)
 
 <!-- /next-reads -->
 
