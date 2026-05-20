@@ -123,7 +123,7 @@ sequenceDiagram
   BGP->>BGP: graceful restart (re-establish peers)
 ```
 
-`scripts/fast-reboot-dump.py` が ASIC/[FDB](../../reference/glossary.md#term-fdb) の dump を取り、`/host/fast-reboot/` に保存します。新 image 起動後の `fast-reboot-finalizer` が dump と比較して route / neighbor の差分を打ち消します。
+`scripts/fast-reboot-dump.py` が ASIC/[FDB](../../reference/glossary.md#term-fdb) の dump を取ります。dump は `/host/warmboot/` 配下に保存されます。新 image 起動後の `warmboot-finalizer` (`finalize-warmboot.sh`) が dump と比較して route / neighbor の差分を打ち消します。
 
 ## sonic-installer の内部
 

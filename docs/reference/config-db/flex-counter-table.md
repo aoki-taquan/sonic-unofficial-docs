@@ -248,9 +248,10 @@ counterpoll show
 対象テーブル: `FLEX_COUNTER_TABLE`
 
 ### CLI
-- `config flex-counter enable/disable <group>`
-- `config flex-counter interval <group> <msec>`
-  - ソース: `sonic-utilities/config/main.py (flex-counter グループ)`
+- `counterpoll <group> enable`
+- `counterpoll <group> disable`
+- `counterpoll <group> interval <msec>`
+  - ソース: `sonic-utilities/counterpoll/main.py`
 
 ### minigraph / sonic-cfggen
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる

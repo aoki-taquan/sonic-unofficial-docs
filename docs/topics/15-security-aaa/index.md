@@ -133,10 +133,10 @@ SONiC のセキュリティは大きく三つの層に分かれます。第一�
 - [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)
 - [TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）](../../management/tacacs-authentication.md)
 - [TACACS+ 認証テストプラン（pam_tacplus + ssh login）](../../management/tacacs-test-plan.md)
-- [既定パスワードの初回ログイン強制変更（California SB-327 準拠）](../../management/default-credential-management-for-california-sb-327-conformance.md)
 - [P4Runtime PacketIO（generic netlink + send_to_ingress）](../../management/packetio.md)
 - [Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）](../../management/send-to-ingress-hld.md)
 - [TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus）](../../management/sonic-tacacs-improvement.md)
+- [config reload の event-driven 化（FEATURE.delayed + PortInitDone）](../../management/config-reload-enhancement.md)
 
 **関連トラブルシュート 5 件**
 

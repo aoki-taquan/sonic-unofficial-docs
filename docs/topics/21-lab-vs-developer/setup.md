@@ -279,7 +279,7 @@ VS では [SAI](../../reference/glossary.md#term-sai) が仮想実装のため�
 | `virt-install` で `KVM is unavailable` | nested virtualization が無効 / BIOS で VT-x 無効 | `cat /sys/module/kvm_intel/parameters/nested`、ホストの BIOS で VT-x 有効化 |
 | SONiC-VS のシリアル console で何も出ない | grub の console 設定不一致 / domain XML の serial 未定義 | `virsh dumpxml sonic-vs` で `<serial type='pty'>` 確認、`virsh console --force` 試行 |
 | containerlab で `eth1` が現れない | host kernel に macvlan / bridge 不足 | `lsmod \| grep -E 'macvlan\|veth\|bridge'`、`modprobe macvlan veth bridge` |
-| BGP が UP しない | router-id 未設定 / loopback IP 未投入 / 別端で listen していない | `show ip bgp summary`、`config bgp router-id ...`、`show interfaces ip address Loopback0` |
+| BGP が UP しない | router-id 未設定 / loopback IP 未投入 / 別端で listen していない | `show ip bgp summary`、router-id は `redis-cli -n 4 HSET "BGP_GLOBALS|default" router_id <IP>` または `sonic-cfggen` / [vtysh](../../reference/glossary.md#term-vtysh) `bgp router-id` 経由で設定（`config bgp router-id` サブコマンドは存在しない）、`show interfaces ip address Loopback0` |
 | `config load_minigraph` が失敗 | [minigraph.xml](../../reference/glossary.md#term-minigraph.xml) と [HwSku](../../reference/glossary.md#term-hwsku) 不整合 | `/usr/share/sonic/device/x86_64-kvm_x86_64-r0/Force10-S6000/` 配下の HwSku を確認、`sonic-cfggen -m -d` で minigraph パース確認 |
 | docker ps に container が出ない | image build 失敗 / `INCLUDE_*` flag 不足 | `make -j$(nproc) target/sonic-vs.img.gz 2>&1 \| tee build.log`、`rules/config` の include flag を確認 |
 | DASH の [ENI](../../reference/glossary.md#term-eni) を投入したが [ASIC_DB](../../reference/glossary.md#term-asic_db) に object が出ない | DASH SAI 未実装 image、ENI key の MAC 表記揺れ | DASH 対応 image (`docker-sonic-vs-dash`) を使う、MAC を大文字無区切り 12 桁に統一 |
@@ -308,4 +308,4 @@ CI / test plan に出てくる configuration ([VRF](../../reference/glossary.md#
 - [Lab vs Developer の概要](concept.md)
 - [Lab vs Developer の運用](operations.md)
 
-<!-- glossary-links-injected: 5c9b3765d470 -->
+<!-- glossary-links-injected: ee79766d4c7b -->
