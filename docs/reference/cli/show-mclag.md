@@ -17,7 +17,6 @@ related:
   - MCLAG_INTERFACE
   cli:
   - mclagdctl
-  - show mclag
   yang:
   - sonic-mclag
 ---
@@ -98,14 +97,14 @@ iccpd 内部のログレベル切替。値は iccpd の syslog 等でデバッ�
 ### 典型的な使い方
 
 ```bash
-# 例 1: MCLAG ブリーフ
-show mclag brief
+# 例 1: MCLAG セッション状態のダンプ
+mclagdctl -i 4095 dump state
 ```
 
 ### よくある引数の組み合わせ
 
 ```bash
-show mclag interface 4095 PortChannel0002
+mclagdctl -i 4095 dump portlist local
 ```
 
 ### 期待される出力 (抜粋)
@@ -153,15 +152,15 @@ flowchart LR
 
 ### よくある落とし穴
 
-- `show mclag brief` は mclagdctl 経由で取得するため iccpd が落ちていると応答しない。
-- system MAC が両端で異なると [LAG](../../reference/glossary.md#term-lag) メンバが flap する。`show mclag config` で必ず確認。
+- `mclagdctl` は iccpd コンテナの Unix ソケットに接続するため、iccpd が落ちていると応答しない。
+- system MAC が両端で異なると [LAG](../../reference/glossary.md#term-lag) メンバが flap する。`mclagdctl -i <domain_id> dump state` で必ず確認。
 
 ### 関連する show / debug
 
 ```bash
-show mclag brief
-show mclag interface
 mclagdctl -i 1000 dump state
+mclagdctl -i 1000 dump portlist local
+mclagdctl -i 1000 dump portlist peer
 ```
 <!-- /ops-hint -->
 

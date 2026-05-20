@@ -16,8 +16,7 @@ related:
   - show platform temperature
   - show platform fan
   - show platform psu
-  yang:
-  - sonic-device_metadata
+  yang: []
 ---
 
 # show environment サブコマンド
@@ -78,9 +77,9 @@ flowchart LR
 ## 関連リファレンス
 
 - CLI: [show platform](show-platform.md) / [show system-health](show-system-health.md)
-- [YANG](../../reference/glossary.md#term-yang): [sonic-device_metadata](../yang/sonic-device_metadata.md)
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): [DEVICE_METADATA](../config-db/device-metadata.md)
 - Topic: [プラットフォーム / ポート / 光モジュール](../../topics/14-platform-port-optics/index.md)
+
+CONFIG_DB / YANG への参照はなし (`sensors(1)` 経由で `/sys/class/hwmon` を読むのみ)。
 
 <!-- ref-triangle:end -->
 

@@ -18,6 +18,9 @@ related:
   - SNMP_USER
   - ACL_RULE
   - STP
+  - STP_PORT
+  - STP_VLAN
+  - STP_VLAN_PORT
   cli:
   - show runningconfiguration
   - show startupconfiguration

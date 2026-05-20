@@ -18,10 +18,7 @@ related:
   - config reload
   - config replace
   - config qos reload
-  yang:
-  - sonic-mgmt_interface
-  - sonic-mgmt_port
-  - sonic-mgmt_vrf
+  yang: []
 ---
 
 # config save / load / reload / replace / qos reload
@@ -159,20 +156,23 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- Mgmt [VRF](../../reference/glossary.md#term-vrf) / Mgmt interface / Mgmt route のまとめて設定。
-- out-of-band 監視ネット切替時の安全な再設定。
+- 設定変更後に永続化したい場合は `config save` を実行する (`/etc/sonic/config_db.json` 上書き)。
+- マイナーな差分のみ適用したい場合は `config replace --dry-run` で JSON Patch を確認してから本適用する。
+- フル再ロードが必要な場合 (services 含む) は `config reload` を使う。事前に `config save` 推奨。
 
 ### よくある落とし穴
 
-- Mgmt [VRF](../../reference/glossary.md#term-vrf) を有効化すると SSH/[SNMP](../../reference/glossary.md#term-snmp)/NTP も [VRF](../../reference/glossary.md#term-vrf) コンテキストへ切り替わる。
-- Mgmt route を消すと自分の SSH が切れる可能性。console 経由で作業する。
+- `config reload` は CONFIG_DB を **全削除** してから再注入するため、save 未済の一時設定は失われる。
+- `config load` は merge 動作で、削除済みエントリは復元されない。クリーンに戻したい場合は `config reload` を使う。
+- `config reload` は `/etc/sonic/reload.lock` で多重起動を防ぐ。前回 reload が異常終了した場合は `--bypass-lock` での解除を検討。
+- `config qos reload` は `BUFFER_*` / `QUEUE` / `SCHEDULER` / `WRED_PROFILE` などを一旦削除して再生成するため、手動カスタマイズした QoS は失われる。
 
 ### 関連する show / debug
 
 ```bash
-show mgmt-vrf
-show management_interface address
-ip -4 route show vrf mgmt
+show runningconfiguration all
+sonic-db-cli CONFIG_DB keys '*'
+ls -l /etc/sonic/reload.lock
 ```
 <!-- /ops-hint -->
 

@@ -29,7 +29,7 @@ related:
 
 `show nat` は SONiC の [NAT](../../reference/glossary.md#term-nat) 機能の **動的な変換テーブル** および **静的な設定** を表示する CLI で、`show/nat.py` の `@click.group()` がエントリポイントとなる[^1]。
 
-実装は薄く、`natshow` / `natconfig` という C/Python の補助バイナリを `clicommon.run_command(...)` で呼び出すだけのラッパー。`natshow` は [ASIC_DB](../../reference/glossary.md#term-asic_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を参照し、`natconfig` は [CONFIG_DB](../../reference/glossary.md#term-config_db) を整形して出すように分業されている。
+実装は薄く、`natshow` / `natconfig` という C/Python の補助バイナリを `clicommon.run_command(...)` で呼び出すだけのラッパー。`natshow` は [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を参照し、`natconfig` は [CONFIG_DB](../../reference/glossary.md#term-config_db) を整形して出すように分業されている。
 
 ## コマンド一覧
 
@@ -83,7 +83,7 @@ related:
 
 ## 関連リファレンス
 
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): `STATIC_NAT` / `STATIC_NAPT` / [`NAT_POOL`](../config-db/nat.md) / [`NAT_BINDINGS`](../config-db/nat.md) / [`NAT_GLOBAL`](../config-db/nat.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`STATIC_NAT` / `STATIC_NAPT`](../config-db/nat-static.md) / [`NAT_POOL`](../config-db/nat-pool.md) / [`NAT_BINDINGS`](../config-db/nat-bindings.md) / [`NAT_GLOBAL`](../config-db/nat.md)
 
 <!-- ref-triangle:end -->
 

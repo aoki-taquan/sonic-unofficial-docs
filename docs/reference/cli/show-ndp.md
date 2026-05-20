@@ -71,7 +71,7 @@ cmd += ['-d', str(display)]
 ```mermaid
 flowchart LR
   CLI["show ndp"]
-  SRC0[("APP_DB<br/>NEIGH_TABLE")]
+  SRC0[("APPL_DB<br/>NEIGH_TABLE")]
   V0["nbrshow (-6)"]
   SRC0 --> V0 --> CLI
 ```

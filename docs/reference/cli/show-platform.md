@@ -14,7 +14,6 @@ related:
   - show platform
   yang:
   - sonic-device_metadata
-  - sonic-chassis-module
 ---
 
 # show platform サブコマンド

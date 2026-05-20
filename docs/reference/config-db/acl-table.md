@@ -88,14 +88,14 @@ ACL_TABLE|<table_name>
 - `EGR_SET_DSCP` ... egress [DSCP](../../reference/glossary.md#term-dscp) 上書き
 - `CTRLPLANE` ... コントロールプレーン (`copp` 制御)
 
-ユーザ定義型は `ACL_TABLE_TYPE|<name>` でフィールド `MATCHES` / `ACTIONS` / `BPOINT_TYPES` を指定する。
+ユーザ定義型は `ACL_TABLE_TYPE|<name>` でフィールド `MATCHES` / `ACTIONS` / `BIND_POINTS` を指定する。
 
 ## 関連サブテーブル
 
 - `ACL_TABLE_TYPE|<name>`
     - `MATCHES` (string list): 許可する match キー（`SRC_IP`, `DST_IP`, `L4_SRC_PORT` 等）
     - `ACTIONS` (string list): 許可する action（`PACKET_ACTION`, `REDIRECT_ACTION` 等）
-    - `BPOINT_TYPES` (string list): バインド可能なポイント種別（`PORT`, `LAG`, `SWITCH`, `VLAN` 等）
+    - `BIND_POINTS` (string list): バインド可能なポイント種別（`PORT`, `PORTCHANNEL` のみ; `aclBindPointTypeLookup` 参照）
 
 ## 購読者
 
@@ -477,7 +477,7 @@ XML `<AclInterface>` 要素から `ACL_TABLE` エントリを生成し CONFIG_DB
 `doAclTableTask()` L5432-5437: `getAclTableType()` が nullptr を返すと `it++; continue` で ACL_TABLE エントリを**保留キューに残す**。組み込み型（`L3`/`MIRROR`/`CTRLPLANE` 等）はコンストラクタ時点で登録済みのため不要。ユーザ定義型を使う場合のみ、`ACL_TABLE_TYPE|<name>` を ACL_TABLE SET より先に書き込むこと。
 
 ```
-SET ACL_TABLE_TYPE|<type_name>  MATCHES=...,ACTIONS=...,BPOINT_TYPES=...
+SET ACL_TABLE_TYPE|<type_name>  MATCHES=...,ACTIONS=...,BIND_POINTS=...
 SET ACL_TABLE|<table_name>      type=<type_name> stage=ingress ports=...
 SET ACL_RULE|<table_name>|<rule_name>  PRIORITY=...
 ```
