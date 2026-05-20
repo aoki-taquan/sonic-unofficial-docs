@@ -163,22 +163,21 @@ show mux config
 | `use_well_known_mac` | `enabled` | 既知 MAC を宛先 MAC として ICMP 送信 |
 | `use_well_known_mac` | `disabled` | 動的 MAC を使用 |
 | `src_mac` | `ToRMac` | ToR デバイス MAC を送信元 MAC に使用 |
-| `src_mac` | `VlanMac` | VLAN インターフェース MAC を送信元 MAC に使用 |
+| `src_mac` | `VlanMac` | [VLAN](../../reference/glossary.md#term-vlan) インターフェース MAC を送信元 MAC に使用 |
 | `log_verbosity` | `info` | 標準ログレベル |
 | `log_verbosity` | `debug`/`trace` | 詳細デバッグログ出力 |
-| `kill_radv` | `True` (default) | MUX 切替時に radv を graceful でなく強制終了 |
+| `kill_radv` | `True` (default) | [MUX](../../reference/glossary.md#term-mux) 切替時に radv を graceful でなく強制終了 |
 | `kill_radv` | `False` | radv を graceful shutdown |
 
 enum: `use_well_known_mac`=enabled/disabled、`src_mac`=ToRMac/VlanMac、`log_verbosity`=trace/debug/info/error/fatal、`kill_radv`=True/False。
 <!-- /value-behavior -->
-
 
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **linkmgrd**: `MUX_LINKMGR` テーブルを `ConfigDBConnector` で購読してリンクプローバのパラメータを設定。
+- **[linkmgrd](../../reference/glossary.md#term-linkmgrd)**: `MUX_LINKMGR` テーブルを `ConfigDBConnector` で購読してリンクプローバのパラメータを設定。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -187,7 +186,7 @@ enum: `use_well_known_mac`=enabled/disabled、`src_mac`=ToRMac/VlanMac、`log_ve
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。プローバのタイマー設定変更がリンク障害検知速度に影響する。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。プローバのタイマー設定変更がリンク障害検知速度に影響する。
 
 ### 段階 4: タイミング + 副作用
 
@@ -202,7 +201,7 @@ MUX_LINKMGR テーブルへの書き込みが発生するコード経路を網�
 
 ### CLI
 
-  - `config muxcable linkmgr ...` — `config/muxcable.py` が MUX_LINKMGR を書き込む (sonic-utilities/config/muxcable.py)
+  - `config muxcable linkmgr ...` — `config/muxcable.py` が MUX_LINKMGR を書き込む ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/muxcable.py)
 
 ### minigraph / sonic-cfggen
 
@@ -210,7 +209,7 @@ minigraph.py に MUX_LINKMGR 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -269,7 +268,7 @@ YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たな
 
 ### Phase 7: 条件付き登録
 
-`MUX_LINKMGR` は orchagent では処理されない。`linkmgrd` (sonic-linkmgrd) が CONFIG_DB を直接購読する。orchdaemon.cpp の条件付き登録なし。
+`MUX_LINKMGR` は [orchagent](../../reference/glossary.md#term-orchagent) では処理されない。`linkmgrd` (sonic-linkmgrd) が CONFIG_DB を直接購読する。orchdaemon.cpp の条件付き登録なし。
 
 ### グレップカバレッジ
 
@@ -291,7 +290,7 @@ YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たな
 | `linkmgrd` | CONFIG_DB 購読ハンドラ | `kill_radv == "True"` | RA デーモン (radvd) を停止 | `sonic-linkmgrd` (kill_radv デフォルト=True) |
 | `linkmgrd` | CONFIG_DB 購読ハンドラ | `interval_v4`/`interval_v6`/`positive_signal_count`/`negative_signal_count` 等 | HB タイマー・閾値を更新 | `sonic-linkmgrd/src/MuxManager.cpp` |
 
-> **スキャン証跡**: MUX_LINKMGR は orchagent 非経由で linkmgrd が直接処理することを確認。orchdaemon.cpp での条件付き登録なし — 誤読なし。
+> **スキャン証跡**: MUX_LINKMGR は [orchagent](../../reference/glossary.md#term-orchagent) 非経由で linkmgrd が直接処理することを確認。orchdaemon.cpp での条件付き登録なし — 誤読なし。
 
 <!-- /handler-branching -->
 
@@ -306,10 +305,10 @@ YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たな
 |---|---|---|---|
 | `MUX_CABLE` | `ConfigDBConnector` で別途購読 + `MuxPort::setMuxLinkmgrStateMachineConfig()` | `sonic-linkmgrd/src/MuxManager.cpp` | `MUX_LINKMGR` のプローブパラメータ (`interval_v4`, `interval_v6`, `positive_signal_count`, `negative_signal_count`) を各 `MUX_CABLE|<ifname>` に対応する `MuxPort` ステートマシンへ一括適用する。`MUX_CABLE` エントリが存在しないインターフェースには設定が反映されない |
 | `MUX_CABLE` | `MuxPort::setTimeoutIpv4_msec()` / `setTimeoutIpv6_msec()` 等の setter | `sonic-linkmgrd/src/MuxPort.cpp` | `interval_v4` / `interval_v6` 変更時に各 MuxPort の ICMP heartbeat タイマーを動的更新。`MUX_CABLE` テーブルにポートエントリがなければ対象ポートの MuxPort オブジェクト自体が存在せずスキップされる |
-| `PEER_SWITCH` | `MuxOrch::handlePeerSwitch()` 経由 (orchagent 側) — linkmgrd は STATE_DB の `MUX_CABLE_TABLE` を介して間接参照 | `sonic-swss/orchagent/muxorch.cpp:2340-` / `sonic-linkmgrd/src/DbInterface.cpp` | `PEER_SWITCH` に定義された peer ToR IP は orchagent がトンネル (MuxTunnel0) を生成する際に参照する。linkmgrd 側は `MUX_LINKMGR|LINK_PROBER.interval_v4` 等を ICMP probe 送出間隔として使い、peer ToR への heartbeat 経路 (PEER_SWITCH 由来のトンネル) でリンク品質を測定する。`PEER_SWITCH` エントリが未設定だとトンネルが生成されず Active-Standby の peer リンクチェックが機能しない |
+| `PEER_SWITCH` | `MuxOrch::handlePeerSwitch()` 経由 ([orchagent](../../reference/glossary.md#term-orchagent) 側) — linkmgrd は [STATE_DB](../../reference/glossary.md#term-state_db) の `MUX_CABLE_TABLE` を介して間接参照 | `sonic-swss/orchagent/muxorch.cpp:2340-` / `sonic-linkmgrd/src/DbInterface.cpp` | `PEER_SWITCH` に定義された peer ToR IP は orchagent がトンネル (MuxTunnel0) を生成する際に参照する。linkmgrd 側は `MUX_LINKMGR|LINK_PROBER.interval_v4` 等を ICMP probe 送出間隔として使い、peer ToR への heartbeat 経路 (PEER_SWITCH 由来のトンネル) でリンク品質を測定する。`PEER_SWITCH` エントリが未設定だとトンネルが生成されず Active-Standby の peer リンクチェックが機能しない |
 
 > - `MUX_CABLE` は leafref の起点でもある。`MUX_LINKMGR` で変更したパラメータは `MuxManager::processMuxLinkmgrConfigNotification()` が受け取り、その時点で登録済みの全 `MuxPort` (= `MUX_CABLE` エントリに対応) へ伝搬させる。`MUX_CABLE` エントリが後から追加されても `MuxPort` 生成時に既存の `MUX_LINKMGR` 設定を引き継ぐ。
-> - `PEER_SWITCH` は `MUX_LINKMGR` から直接参照されない。`linkmgrd` は peer ToR の IP を `PEER_SWITCH` ではなく orchagent が STATE_DB / APPL_DB に書き込んだ結果を通じて取得する。ただし `MUX_LINKMGR|LINK_PROBER.interval_v4` 等で制御される ICMP probe がそのトンネル経路を利用するため、`PEER_SWITCH` 設定の有無が `MUX_LINKMGR` パラメータの実効性に影響する。
+> - `PEER_SWITCH` は `MUX_LINKMGR` から直接参照されない。`linkmgrd` は peer ToR の IP を `PEER_SWITCH` ではなく orchagent が [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込んだ結果を通じて取得する。ただし `MUX_LINKMGR|LINK_PROBER.interval_v4` 等で制御される ICMP probe がそのトンネル経路を利用するため、`PEER_SWITCH` 設定の有無が `MUX_LINKMGR` パラメータの実効性に影響する。
 > - `oscillation_enabled` / `kill_radv` の 2 フィールドは DualToR 全体の動作モードを制御するが、参照する他テーブルはない。変更の反映は linkmgrd 内部ステートのみ。
 
 <!-- /cross-refs -->
@@ -327,14 +326,14 @@ YANG はほぼすべての MUX_LINKMGR フィールドに `default` を持たな
 | テーブル | キー形式 | フィールド | 値 | トリガ | 証跡 |
 |---------|---------|-----------|-----|--------|------|
 | `MUX_LINKMGR_TABLE` | `<ifname>` (例: `Ethernet0`) | `state` | `active` / `standby` / `unknown` / `wait` | linkmgrd ステートマシン遷移時 (`setMuxLinkmgrState()`) | `DbInterface.cpp:471` |
-| `MUX_METRICS_TABLE` | `<ifname>` | `linkmgrd_switch_<state>_start` / `_end` | タイムスタンプ (ISO8601) | MUX 切替開始・完了時 (`handlePostMuxMetrics()`) | `DbInterface.cpp:484-` |
+| `MUX_METRICS_TABLE` | `<ifname>` | `linkmgrd_switch_<state>_start` / `_end` | タイムスタンプ (ISO8601) | [MUX](../../reference/glossary.md#term-mux) 切替開始・完了時 (`handlePostMuxMetrics()`) | `DbInterface.cpp:484-` |
 | `MUX_SWITCH_CAUSE` | `<ifname>` | `cause` | 切替原因文字列 | ステートマシン遷移原因記録時 | `DbInterface.h:63` |
 
 `MUX_LINKMGR_TABLE` は `show mux status` CLI が参照する最終的な linkmgrd 状態表示用テーブル。
 
 ### APPL_DB への書込 (xcvrd 通信)
 
-linkmgrd は `MUX_LINKMGR` の `interval_v4` / `negative_signal_count` 等の変更によりプローバ動作が変化した結果、以下の APPL_DB テーブルへコマンドを書込む。
+linkmgrd は `MUX_LINKMGR` の `interval_v4` / `negative_signal_count` 等の変更によりプローバ動作が変化した結果、以下の [APPL_DB](../../reference/glossary.md#term-appl_db) テーブルへコマンドを書込む。
 
 | テーブル | キー | フィールド | 値 | 目的 | 証跡 |
 |---------|------|-----------|-----|------|------|
@@ -359,7 +358,7 @@ STATE_DB MUX_LINKMGR_TABLE (state フィールド更新)
          MUX_METRICS_TABLE (切替タイムスタンプ記録)
 ```
 
-> `interval_v4` / `interval_v6` を変更しても即時 STATE_DB 書込は発生しない。次のプローバサイクル後にステート遷移が起きた場合のみ STATE_DB が更新される。
+> `interval_v4` / `interval_v6` を変更しても即時 [STATE_DB](../../reference/glossary.md#term-state_db) 書込は発生しない。次のプローバサイクル後にステート遷移が起きた場合のみ STATE_DB が更新される。
 
 <!-- /side-effects -->
 
@@ -391,7 +390,7 @@ STATE_DB MUX_LINKMGR_TABLE (state フィールド更新)
 
 ### SAI 失敗 (orchagent 経由)
 
-linkmgrd は SAI を直接呼ばない。MUX switchover は orchagent を通じて SAI に要求される。
+linkmgrd は [SAI](../../reference/glossary.md#term-sai) を直接呼ばない。MUX switchover は orchagent を通じて [SAI](../../reference/glossary.md#term-sai) に要求される。
 
 | ケース | linkmgrd の挙動 | ログ |
 |--------|----------------|------|
@@ -406,7 +405,7 @@ linkmgrd は SAI を直接呼ばない。MUX switchover は orchagent を通じ�
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`linkmgrd` は ASIC ベンダー識別子（broadcom / mellanox 等）を参照しない。プラットフォームプロファイルは **ケーブルタイプ** (`PortCableType`) によって決まる。`MUX_LINKMGR` フィールドの有効性・意味論はケーブルタイプによって以下のとおり異なる。
+`linkmgrd` は [ASIC](../../reference/glossary.md#term-asic) ベンダー識別子（broadcom / mellanox 等）を参照しない。プラットフォームプロファイルは **ケーブルタイプ** (`PortCableType`) によって決まる。`MUX_LINKMGR` フィールドの有効性・意味論はケーブルタイプによって以下のとおり異なる。
 
 ### 識別方法
 
@@ -441,7 +440,7 @@ cable_type == "active-active"   →  PortCableType::ActiveActive   (Y-cable Smar
 
 ### SmartSwitch DPU との関係
 
-`docker-mux` (linkmgrd) は `feature: subtype=="DualToR"` 環境専用デーモン。SmartSwitch の DPU ポートは `MUX_CABLE` テーブルに登録されず `MUX_LINKMGR` も参照されない。なお Active-Active ケーブルタイプは Y-cable SmartNiC 搭載の DualToR 向けであり、SmartSwitch DPU（`subtype=="SmartSwitch"`）とは別概念。
+`docker-mux` (linkmgrd) は `feature: subtype=="DualToR"` 環境専用デーモン。[SmartSwitch](../../reference/glossary.md#term-smartswitch) の [DPU](../../reference/glossary.md#term-dpu) ポートは `MUX_CABLE` テーブルに登録されず `MUX_LINKMGR` も参照されない。なお Active-Active ケーブルタイプは Y-cable SmartNiC 搭載の DualToR 向けであり、[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)（`subtype=="SmartSwitch"`）とは別概念。
 
 詳細根拠は `meta/_intermediate/cdb-flow/mux-linkmgr-platform.md` を参照。
 <!-- /platform -->
@@ -501,7 +500,7 @@ static auto DEFAULT_LOGGING_FILTER_LEVEL = boost::log::trivial::debug;
 #define APP_ICMP_ECHO_SESSION_TABLE_NAME    "ICMP_ECHO_SESSION_TABLE"
 ```
 
-ICMP_ECHO_SESSION を STATE_DB / APPL_DB 両方に同名テーブルで管理する。
+ICMP_ECHO_SESSION を STATE_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) 両方に同名テーブルで管理する。
 
 ### IcmpPayload.h — ICMP バッファサイズ
 
@@ -669,3 +668,5 @@ linkmgrd SubscriberStateTable (appDbForwardingResponseTable)
 > **証跡**: `DbInterface.cpp:1829` — `swss::SubscriberStateTable appDbMuxResponseTable(appDbPtr.get(), APP_MUX_CABLE_RESPONSE_TABLE_NAME);`
 
 <!-- /pubsub -->
+
+<!-- glossary-links-injected: 6b5c377c7f42 -->

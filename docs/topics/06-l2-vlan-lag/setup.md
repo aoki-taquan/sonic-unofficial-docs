@@ -135,7 +135,7 @@ config interface ip add Ethernet0.100 198.51.100.1/31
 
 ## TPID を変える
 
-TPID は VLAN tag を識別する EtherType です。SONiC では `0x8100`、`0x9100`、`0x9200`、`0x88A8` が対象です。物理ポートと LAG の両方に関係しますが、ASIC capability に依存します。
+TPID は VLAN tag を識別する EtherType です。[SONiC](../../reference/glossary.md#term-sonic) では `0x8100`、`0x9100`、`0x9200`、`0x88A8` が対象です。物理ポートと LAG の両方に関係しますが、[ASIC](../../reference/glossary.md#term-asic) capability に依存します。
 
 ```bash
 config interface tpid Ethernet64 0x9200
@@ -316,4 +316,4 @@ LAG 削除順序: `VLAN_MEMBER (LAG)` → `PORTCHANNEL_MEMBER` → `PORTCHANNEL`
 - [CONFIG_DB: PORTCHANNEL_INTERFACE](../../reference/config-db/portchannel-interface.md)
 - [TPID 設定 HLD](../../platform/sonictpidsettinghld1.md)
 
-<!-- glossary-links-injected: 5d1a738969d8 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

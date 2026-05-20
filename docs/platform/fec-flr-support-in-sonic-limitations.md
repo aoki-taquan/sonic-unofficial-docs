@@ -35,7 +35,7 @@ related:
 - 非ゼロ bin が 2 個未満で回帰できない場合は `FLR(P) = 0`[^1]
 - interleaving factor X は **port speed × lane 数の固定テーブル** で代替。新 SAI 属性が追加されればそちらに置換予定[^1]
 - 100G × 1 lane の場合 X は **autonegotiated**（1 or 2）。誤った X を使うと FLR が 2 倍ずれる[^1]
-- 計算は `port_stat POLL_INTERVAL × FLR_INTERVAL_FACTOR` 周期。ASIC counter の更新粒度に依存
+- 計算は `port_stat POLL_INTERVAL × FLR_INTERVAL_FACTOR` 周期。[ASIC](../reference/glossary.md#term-asic) counter の更新粒度に依存
 - predicted は **線形回帰の外挿** に過ぎず、低 BER 領域での実測 FLR と乖離する可能性
 
 ## 2. 実装との乖離（2026-05-09 / 05-11 裏取り）
@@ -115,4 +115,4 @@ git -C .cache/sonic-sources/sonic-utilities log --oneline | grep -iE 'flr|flex.*
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 5440b86e15ed -->
+<!-- glossary-links-injected: c006405759d8 -->

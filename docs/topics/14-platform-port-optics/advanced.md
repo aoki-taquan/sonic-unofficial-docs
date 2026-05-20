@@ -71,8 +71,8 @@ dynamic add / delete を多用する運用 ([ZTP](../../reference/glossary.md#te
 
 ## 発展トピック
 
-- **CMIS 5.x optics**: 400G/800G ZR / ZR+ など coherent optics の管理は CMIS で行い、SONiC `xcvrd` が state machine を実装する。Application select、re-provisioning、firmware download などが要点。
-- **Optics firmware upgrade**: `gnoi.os.Install` の概念に近く、optics 内 firmware を host から書き換える。途中で reboot を挟まない hot upgrade 対応が ASIC / optics で異なる。
+- **CMIS 5.x optics**: 400G/800G ZR / ZR+ など coherent optics の管理は CMIS で行い、[SONiC](../../reference/glossary.md#term-sonic) `xcvrd` が state machine を実装する。Application select、re-provisioning、firmware download などが要点。
+- **Optics firmware upgrade**: `gnoi.os.Install` の概念に近く、optics 内 firmware を host から書き換える。途中で reboot を挟まない hot upgrade 対応が [ASIC](../../reference/glossary.md#term-asic) / optics で異なる。
 - **Linkmgrd と link prober**: Dual-ToR の link prober 以外にも、汎用 link healthcheck 機能が `linkmgrd` 系で拡張されつつある。[SAI](../../reference/glossary.md#term-sai) sub-second link state notification が前提。
 - **Breakout dynamic**: port breakout (4x25G / 2x50G など) の動的切替は `dynamic-port-breakout` HLD と組合せ、buffer / QoS / ACL を全部 reprovision する。
 - **PoE / 外部給電**: 一部 platform で PoE 機能 (`POE` schema 提案) があり、port lifecycle と組合せる。
@@ -132,4 +132,4 @@ dynamic add / delete を多用する運用 ([ZTP](../../reference/glossary.md#te
 - [07 ACL / CoPP / Mirror: port lifecycle と ACL bind の付け替え](../07-acl-copp-mirror/index.md)
 - [12 Multi-ASIC / VOQ: chassis 内 module hot-swap](../12-multi-asic-voq/index.md)
 
-<!-- glossary-links-injected: f7c82909d898 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

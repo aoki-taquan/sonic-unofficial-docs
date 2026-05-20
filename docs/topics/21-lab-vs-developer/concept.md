@@ -37,7 +37,7 @@ related:
 
 # 概念
 
-「lab」と一口に言っても、SONiC では大きく次の 3 つの面が混ざっています。読み手の役割と目的で使い分けを決めると迷いません。
+「lab」と一口に言っても、[SONiC](../../reference/glossary.md#term-sonic) では大きく次の 3 つの面が混ざっています。読み手の役割と目的で使い分けを決めると迷いません。
 
 ## この章は何のためにあるか
 
@@ -80,7 +80,7 @@ flowchart LR
 
 | 用語 | 意味 | 補足 |
 | --- | --- | --- |
-| SONiC-VS | [SAI](../../reference/glossary.md#term-sai) VS を使った仮想 SONiC | Linux bridge を ASIC 代わりに使う |
+| SONiC-VS | [SAI](../../reference/glossary.md#term-sai) VS を使った仮想 SONiC | Linux bridge を [ASIC](../../reference/glossary.md#term-asic) 代わりに使う |
 | SAI VS | virtual switch 実装の SAI | counter / capability は限定的 |
 | PTF | Packet Test Framework | scapy ベースで packet を生成して検証 |
 | spytest | 物理 / 仮想両対応のテストランナー | feature テストの主要枠 |
@@ -176,4 +176,4 @@ test plan ページは「機能章の検証可能性を読み解く参考」と�
 
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 
-<!-- glossary-links-injected: c41a67c19350 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

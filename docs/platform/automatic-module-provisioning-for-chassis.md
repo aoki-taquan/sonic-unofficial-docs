@@ -42,7 +42,7 @@ related:
 
 ## 概要
 
-SONiC モジュラー chassis では、各 line card（LC）が **独立した SONiC インスタンスとして動作** する。新規 LC を空きスロットに挿す、または既存 LC を交換する場合、その LC が SONiC を実行できる状態になっている保証は無い。ベンダーによっては Supervisor 上でスクリプトを走らせる等、**「工場状態の LC を SONiC が動くようにする手順」** を踏む必要がある[^1]。
+[SONiC](../reference/glossary.md#term-sonic) モジュラー chassis では、各 line card（LC）が **独立した SONiC インスタンスとして動作** する。新規 LC を空きスロットに挿す、または既存 LC を交換する場合、その LC が SONiC を実行できる状態になっている保証は無い。ベンダーによっては Supervisor 上でスクリプトを走らせる等、**「工場状態の LC を SONiC が動くようにする手順」** を踏む必要がある[^1]。
 
 本 [HLD](../reference/glossary.md#term-hld) はこのプロセスを SONiC 共通の枠組みとして取り込むため、**新しいプラットフォーム API `provision_module()` と新しい pmon デーモン `sonic-provisiond`** を導入する。Supervisor で LC 検出 → state 監視 → API 呼び出し → ベンダー固有変換 → 再起動して LC を SONiC 化、という流れを統一する。
 
@@ -279,4 +279,4 @@ redis-cli -n 4 hgetall 'PORT|Ethernet0'
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 4e4b0dab1086 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

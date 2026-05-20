@@ -50,7 +50,7 @@ related:
 
 ## 読み手が知りたいこと
 
-- SONiC で設定を入れる方法は何種類あり、どう使い分けるか
+- [SONiC](../reference/glossary.md#term-sonic) で設定を入れる方法は何種類あり、どう使い分けるか
 - 永続化されるのはどれか、再起動で消えるのはどれか
 - 自動化／コントローラ統合に使えるのはどれか
 - 「触ってはいけない」低レベル手段はどれか
@@ -131,7 +131,7 @@ YANG モデルに基づく標準 API。RESTCONF は OpenConfig 対応でマル�
 
 ### `vtysh`（FRRouting）
 
-BGP / OSPF の上級設定。**vtysh だけの変更は永続化されない**。CONFIG_DB / FRR テンプレートに転記しないと再起動で失われる[^1]。
+BGP / OSPF の上級設定。**[vtysh](../reference/glossary.md#term-vtysh) だけの変更は永続化されない**。CONFIG_DB / FRR テンプレートに転記しないと再起動で失われる[^1]。
 
 ### `redis-cli` 直接操作
 
@@ -179,7 +179,7 @@ redis-cli -n 4 SET CONFIG_DB_INITIALIZED true
 # その後 config load_minigraph を再実行
 ```
 
-**根本原因の予防:** minigraph.xml 内の hostname は **全箇所で一致**させる必要がある。1 箇所だけ変更するとパース時に `KeyError` が発生する。
+**根本原因の予防:** [minigraph.xml](../reference/glossary.md#term-minigraph.xml) 内の hostname は **全箇所で一致**させる必要がある。1 箇所だけ変更するとパース時に `KeyError` が発生する。
 
 - 参照: [sonic-net/SONiC#145](https://github.com/sonic-net/SONiC/issues/145)
 
@@ -283,4 +283,4 @@ diff /etc/sonic/config_db.json <(show runningconfiguration all)
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 2fc91c683735 -->

@@ -45,7 +45,7 @@ related:
 
 ## 概要
 
-SONiC の制御プレーンでは [FRR](../reference/glossary.md#term-frr) を使ってルーティングプロトコル（[BGP](../reference/glossary.md#term-bgp) / OSPF / 等）を回す。Linux カーネルの sysctl は **forwarding 有効化、[ARP](../reference/glossary.md#term-arp) 挙動、neighbor GC、ルート / IGMP / MLD のスケール上限など** を細かく制御でき、FRR の挙動を大きく左右する[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の制御プレーンでは [FRR](../reference/glossary.md#term-frr) を使ってルーティングプロトコル（[BGP](../reference/glossary.md#term-bgp) / OSPF / 等）を回す。Linux カーネルの sysctl は **forwarding 有効化、[ARP](../reference/glossary.md#term-arp) 挙動、neighbor GC、ルート / IGMP / MLD のスケール上限など** を細かく制御でき、FRR の挙動を大きく左右する[^1]。
 
 このページは sonic-frr 同梱の `doc/user/Useful_Sysctl_Settings.md` が示す **「論理的なデフォルト set」** を整理したもの。BGP unnumbered や OSPF を素直に動かすのに有用な値が並ぶ[^1]。
 
@@ -273,4 +273,4 @@ sysctl net.ipv4.tcp_l3mdev_accept
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 3ded3a99de10 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

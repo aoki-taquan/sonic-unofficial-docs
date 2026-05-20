@@ -39,7 +39,7 @@ related:
 
 ## 概要
 
-[DASH](../reference/glossary.md#term-dash)（**Disaggregated APIs for SONiC Hosts**）は、[SmartSwitch](../reference/glossary.md#term-smartswitch) [DPU](../reference/glossary.md#term-dpu) や appliance card 上で SONiC スタックが多数の **[ENI](../reference/glossary.md#term-eni) (Elastic Network Interface)** を扱い、各 ENI に対する VNet / [ACL](../reference/glossary.md#term-acl) / metering / Service Tunnel / Private Link 等のデータプレーン処理を行うための仕組み[^1]。本ファイルは DASH を SONiC 内に乗せるための実装側 [HLD](../reference/glossary.md#term-hld)（API / Orch / Config DB / APP DB スキーマ）を扱う。一般 DASH 概念は [DASH 高位 HLD](https://github.com/sonic-net/DASH/tree/main/documentation/general/dash-high-level-design.md) を参照。
+[DASH](../reference/glossary.md#term-dash)（**Disaggregated APIs for [SONiC](../reference/glossary.md#term-sonic) Hosts**）は、[SmartSwitch](../reference/glossary.md#term-smartswitch) [DPU](../reference/glossary.md#term-dpu) や appliance card 上で SONiC スタックが多数の **[ENI](../reference/glossary.md#term-eni) (Elastic Network Interface)** を扱い、各 ENI に対する VNet / [ACL](../reference/glossary.md#term-acl) / metering / Service Tunnel / Private Link 等のデータプレーン処理を行うための仕組み[^1]。本ファイルは DASH を SONiC 内に乗せるための実装側 [HLD](../reference/glossary.md#term-hld)（API / Orch / Config DB / APP DB スキーマ）を扱う。一般 DASH 概念は [DASH 高位 HLD](https://github.com/sonic-net/DASH/tree/main/documentation/general/dash-high-level-design.md) を参照。
 
 ## 動作仕様
 
@@ -96,7 +96,7 @@ DPU 上の DASH [SAI](../reference/glossary.md#term-sai) 実装が、ENI に対�
 
 ### 主要シナリオ（HLD §1.1 抜粋）
 
-- **VNet 内転送**: ENI → outbound route → VxLAN encap → リモート VTEP
+- **VNet 内転送**: ENI → outbound route → VxLAN encap → リモート [VTEP](../reference/glossary.md#term-vtep)
 - **Service Tunnel (ST)**: VNet 内とは別経路で SLB / NSG への中継
 - **Private Link (PL)**: 別 VNet 上のサービスに対する private endpoint 経由のアクセス
 - **PL-NSG**: Private Link with Network Security Group
@@ -175,4 +175,4 @@ docker exec swss orchagent_restart_check 2>&1 | tail
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 7eb91d359acf -->
+<!-- glossary-links-injected: c5c8b661ae7e -->

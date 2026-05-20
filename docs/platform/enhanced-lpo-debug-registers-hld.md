@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-LPO (Linear Pluggable Optic) は DSP を持たない optic。host 側 [SerDes](../reference/glossary.md#term-serdes) の電気信号が直接モジュレータを駆動するため、debug には **TX 側 VMA**（電気振幅）と **RX 側 OMA**（光振幅）の監視が決定的。本 [HLD](../reference/glossary.md#term-hld) は CMIS LPO 上に **拡張デバッグレジスタ**を新設し、SONiC から [Redis](../reference/glossary.md#term-redis) に公開する設計[^1]。
+LPO (Linear Pluggable Optic) は DSP を持たない optic。host 側 [SerDes](../reference/glossary.md#term-serdes) の電気信号が直接モジュレータを駆動するため、debug には **TX 側 VMA**（電気振幅）と **RX 側 OMA**（光振幅）の監視が決定的。本 [HLD](../reference/glossary.md#term-hld) は CMIS LPO 上に **拡張デバッグレジスタ**を新設し、[SONiC](../reference/glossary.md#term-sonic) から [Redis](../reference/glossary.md#term-redis) に公開する設計[^1]。
 
 ## 動作仕様
 
@@ -153,4 +153,4 @@ elif vendor_name == 'Arista' and re.match(ARISTA_ENHANCED_LPO, vendor_pn):
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 710f941d149a -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

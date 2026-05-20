@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-IEEE P802.3dj が定める **200 / 400 / 800 Gb/s と 1.6 Tb/s** のインターフェース定義を SONiC に取り込むための変更点を列挙した [HLD](../reference/glossary.md#term-hld)[^1]。本質は **lane あたり 200G PAM4（GBd 106.25）** という新しい [SerDes](../reference/glossary.md#term-serdes) レートを足元のコードに通すこと。
+IEEE P802.3dj が定める **200 / 400 / 800 Gb/s と 1.6 Tb/s** のインターフェース定義を [SONiC](../reference/glossary.md#term-sonic) に取り込むための変更点を列挙した [HLD](../reference/glossary.md#term-hld)[^1]。本質は **lane あたり 200G PAM4（GBd 106.25）** という新しい [SerDes](../reference/glossary.md#term-serdes) レートを足元のコードに通すこと。
 
 主要変更点（4 リポジトリ横断）[^1]:
 
@@ -229,7 +229,7 @@ show interfaces status | grep Ethernet0
 
 ### コマンド例
 
-multi-ASIC / VoQ chassis の各 namespace 状態を確認する。
+multi-[ASIC](../reference/glossary.md#term-asic) / VoQ chassis の各 namespace 状態を確認する。
 
 ```bash
 # multi-ASIC / VoQ chassis
@@ -262,4 +262,4 @@ done
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 710f941d149a -->
+<!-- glossary-links-injected: ec18b66e3507 -->

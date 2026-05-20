@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-SONiC の [syncd](../reference/glossary.md#term-syncd) は **OCP [SAI](../reference/glossary.md#term-sai) リポジトリのヘッダ** に対してコンパイルされ、リンクは **vendor が `sonic-buildimage` 配下に配置した `libsai.so`** に対して行われる。OCP SAI ヘッダが更新されたが vendor 側 `libsai.so` の差し替えが間に合っていないと、ABI 不一致や属性 ID / enum 値のミスマッチが発生し、最悪 syncd が起動しない or 不可解な振る舞いをする[^1]。SAI は属性追加・enum 拡張に **後方互換を保たない** ため、片方だけ進むと壊れる。
+[SONiC](../reference/glossary.md#term-sonic) の [syncd](../reference/glossary.md#term-syncd) は **OCP [SAI](../reference/glossary.md#term-sai) リポジトリのヘッダ** に対してコンパイルされ、リンクは **vendor が `sonic-buildimage` 配下に配置した `libsai.so`** に対して行われる。OCP SAI ヘッダが更新されたが vendor 側 `libsai.so` の差し替えが間に合っていないと、ABI 不一致や属性 ID / enum 値のミスマッチが発生し、最悪 syncd が起動しない or 不可解な振る舞いをする[^1]。SAI は属性追加・enum 拡張に **後方互換を保たない** ため、片方だけ進むと壊れる。
 
 本機能は次の 2 段で問題を検出する設計である[^1]:
 
@@ -241,4 +241,4 @@ redis-cli -n 6 keys 'ASIC_SDK_HEALTH_EVENT*'
 - vendor lib に `sai_query_api_version` が無ければ `AC_MSG_ERROR("SAI library libsai.so does not have sai_query_api_version API which is required")` で停止
 -->
 
-<!-- glossary-links-injected: dc4464ba2b89 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

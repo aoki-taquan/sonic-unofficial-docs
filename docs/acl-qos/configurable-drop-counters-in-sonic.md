@@ -135,7 +135,7 @@ show dropcounters counts
 ## 制限事項
 
 - カウンタ数・サポート reason はプラットフォーム依存（`DEBUG_COUNTER_CAPABILITIES` で公開）。
-- ASIC ASIC が SAI debug counter API を実装していない場合は機能しない。
+- [ASIC](../reference/glossary.md#term-asic) ASIC が SAI debug counter API を実装していない場合は機能しない。
 - v1.1 の persistent monitoring 拡張は最近の追加で、現行 master の取り込み状況は別途裏取り。
 - 詳細フロー / SAI 属性マッピング / Open Questions は HLD `doc/drop_counters/drop_counters_HLD.md` を参照。
 
@@ -173,4 +173,4 @@ redis-cli -n 4 keys 'DEBUG_COUNTER_DROP_REASON|*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: d254c26cc494 -->
+<!-- glossary-links-injected: c006405759d8 -->

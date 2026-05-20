@@ -63,7 +63,7 @@ flowchart LR
 1. `gnoi_reboot_daemon.py` 起動時に `CHASSIS_MODULE_INFO_TABLE` を subscribe（startup 系の遷移は no-op）[^1]
 2. ユーザが `config chassis module shutdown DPUx` を発行
 3. `chassisd` → `module_base.set_admin_state(down)` を呼出
-4. `module_base.py` は **DEVICE_METADATA の `subtype="SmartSwitch"` かつ `switch_type != dpu`** を確認。条件成立で `graceful_shutdown_handler()` 経路へ。それ以外は通常の `module.set_admin_state(down)`
+4. `module_base.py` は **[DEVICE_METADATA](../reference/glossary.md#term-device_metadata) の `subtype="SmartSwitch"` かつ `switch_type != dpu`** を確認。条件成立で `graceful_shutdown_handler()` 経路へ。それ以外は通常の `module.set_admin_state(down)`
 5. `graceful_shutdown_handler()` が [STATE_DB](../reference/glossary.md#term-state_db) の `CHASSIS_MODULE_INFO_TABLE|DPUx` に `state_transition_in_progress=True`, `transition_type=shutdown` を書き込む
 6. `gnoi_reboot_daemon` は変化を検出し DPUx の sysmgr に **gNOI Reboot RPC `HALT`** を送る。sysmgr は DBUS で `reboot -p` を発行
 7. daemon が `gnoi_client -rpc RebootStatus` で polling
@@ -288,4 +288,4 @@ show chassis modules status
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 898f4197cacb -->
+<!-- glossary-links-injected: 81b1fc9c897b -->

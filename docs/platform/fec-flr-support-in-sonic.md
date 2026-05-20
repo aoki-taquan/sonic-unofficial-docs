@@ -57,7 +57,7 @@ related:
 FLR = (Total TX Frames - Total RX Frames) / Total TX Frames
 ```
 
-物理層側では Codeword Error Ratio（CER）が分かれば、interleaving 係数を掛けて FLR を見積もれる。SONiC はこれを **counter poll プラグイン (`port_flr.lua`)** として ASIC の FEC counter から計算し、COUNTER_DB に保管 → telemetry 配信する設計を導入する[^1]。
+物理層側では Codeword Error Ratio（CER）が分かれば、interleaving 係数を掛けて FLR を見積もれる。[SONiC](../reference/glossary.md#term-sonic) はこれを **counter poll プラグイン (`port_flr.lua`)** として [ASIC](../reference/glossary.md#term-asic) の FEC counter から計算し、COUNTER_DB に保管 → telemetry 配信する設計を導入する[^1]。
 
 機能[^1]:
 
@@ -406,4 +406,4 @@ counterpoll --help 2>&1 | grep -iE 'flr|fec' || echo 'flr-interval-factor: 未�
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 14f8bd377123 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

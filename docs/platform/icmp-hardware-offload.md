@@ -43,7 +43,7 @@ related:
 
 ## 概要
 
-SONiC の DualToR では、ToR ↔ サーバ NIC 間のリンク状態を **ICMP echo の往復** で監視している。`linkmgrd` 内のソフトウェアベース link prober が Linux raw socket 経由でパケットを生成・受信するため、検出時間は **200〜400 ms** が下限となっていた[^1]。本機能は ICMP echo セッションを **[NPU](../reference/glossary.md#term-npu) にオフロード** することで、検出時間を **< 10 ms** まで短縮することを要件とする。
+[SONiC](../reference/glossary.md#term-sonic) の DualToR では、ToR ↔ サーバ NIC 間のリンク状態を **ICMP echo の往復** で監視している。`linkmgrd` 内のソフトウェアベース link prober が Linux raw socket 経由でパケットを生成・受信するため、検出時間は **200〜400 ms** が下限となっていた[^1]。本機能は ICMP echo セッションを **[NPU](../reference/glossary.md#term-npu) にオフロード** することで、検出時間を **< 10 ms** まで短縮することを要件とする。
 
 オフロードに伴い `linkmgrd` の挙動が大きく変わる。プローブには 3 ms オーダーの極小タイマーを使うため deadline timer を廃止し、ハードウェア処理と TLV パケットを処理するソフトウェアスレッドを併存させる **ハイブリッドモデル** を採用する。NPU が認識しないコントロールメッセージ（TLV 入り ICMP）はソフトウェア側 cookie で送出する。
 
@@ -240,7 +240,7 @@ show icmp sessions
 
 - **Software link prober**: 同一 mux ポートで HW / SW の両方を同時に走らせない設計。capability が無ければ自動 SW にフォールバック。
 - **TLV パケット**: HW モードでも TLV 入り ICMP は SW 経路でやりとりされる。peer NPU が誤って offload しないよう、software cookie の固定値が peer 側 NPU の検査ロジックに浸透している必要がある。
-- **[CoPP](../reference/glossary.md#term-copp) / [ACL](../reference/glossary.md#term-acl)**: ICMP echo が大量に増えるため、ACL / CoPP の制御値によっては ASIC レベルで絞られる。HW offload なら CoPP を通らない経路が一般的だが、プラットフォーム依存。
+- **[CoPP](../reference/glossary.md#term-copp) / [ACL](../reference/glossary.md#term-acl)**: ICMP echo が大量に増えるため、ACL / CoPP の制御値によっては [ASIC](../reference/glossary.md#term-asic) レベルで絞られる。HW offload なら CoPP を通らない経路が一般的だが、プラットフォーム依存。
 - **Loopback IP**: HLD は両 ToR が **同じ Loopback IP を ICMP echo の src** として使うトポロジ前提。これは DualToR の active-active 設計と整合する。
 
 ## トラブルシューティング
@@ -292,4 +292,4 @@ docker exec swss show copp 2>&1 | tail
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 712ec0192f02 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

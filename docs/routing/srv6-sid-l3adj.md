@@ -35,7 +35,7 @@ related:
 
 ## なぜ必要か
 
-SONiC の [SRv6](../reference/glossary.md#term-srv6) サポートは別 [HLD](../reference/glossary.md#term-hld)（[srv6_hld.md](https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md)）で定義済みだが、**cross-connect 系 behavior**（`uA` / `End.X` / `uDX4` / `uDX6` / `End.DX4` / `End.DX6`）は出口の **L3 隣接 (L3Adj)** を必要とする[^1]。これらの behavior 用に **[APPL_DB](../reference/glossary.md#term-appl_db) に `adj` パラメータ** が追加されているにもかかわらず、`SRv6Orch` がこれを処理していなかった。本 HLD は **`SRv6Orch` を L3Adj 対応に拡張** し、SID と nexthop ID を ASIC に programming できるようにする[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の [SRv6](../reference/glossary.md#term-srv6) サポートは別 [HLD](../reference/glossary.md#term-hld)（[srv6_hld.md](https://github.com/sonic-net/SONiC/blob/master/doc/srv6/srv6_hld.md)）で定義済みだが、**cross-connect 系 behavior**（`uA` / `End.X` / `uDX4` / `uDX6` / `End.DX4` / `End.DX6`）は出口の **L3 隣接 (L3Adj)** を必要とする[^1]。これらの behavior 用に **[APPL_DB](../reference/glossary.md#term-appl_db) に `adj` パラメータ** が追加されているにもかかわらず、`SRv6Orch` がこれを処理していなかった。本 HLD は **`SRv6Orch` を L3Adj 対応に拡張** し、SID と nexthop ID を [ASIC](../reference/glossary.md#term-asic) に programming できるようにする[^1]。
 
 対象 behavior[^1]:
 
@@ -133,4 +133,4 @@ sonic-db-cli ASIC_DB keys '*MY_SID*'                  # ASIC に降りている�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: bc7fc7c93f94 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

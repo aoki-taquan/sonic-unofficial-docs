@@ -40,12 +40,12 @@ related:
 
 ## 概要
 
-[Everflow](https://github.com/sonic-net/SONiC/wiki/Everflow-High-Level-Design) は SONiC のミラーリング機能（ERSPAN）で、destination IP を持つ ミラーセッションを作るとパケットが GRE encap されて送られる。**通常スイッチ** では `mirrororch` が `routeorch` / `neighorch` に問い合わせ、出力 IF と DST MAC を決定し、[SAI](../reference/glossary.md#term-sai) `create_mirror_session` を呼ぶ[^1]。
+[Everflow](https://github.com/sonic-net/SONiC/wiki/Everflow-High-Level-Design) は [SONiC](../reference/glossary.md#term-sonic) のミラーリング機能（ERSPAN）で、destination IP を持つ ミラーセッションを作るとパケットが GRE encap されて送られる。**通常スイッチ** では `mirrororch` が `routeorch` / `neighorch` に問い合わせ、出力 IF と DST MAC を決定し、[SAI](../reference/glossary.md#term-sai) `create_mirror_session` を呼ぶ[^1]。
 
 VoQ Chassis では構造が大きく異なる。複数 LC にまたがる中で、**ミラー送信元と宛先が別 LC** という構成が普通に発生する[^1]:
 
 - 各 FSI（line card 上の SONiC instance）からは「他 LC のポートは `SYSTEM_PORT` としてのみ見える」
-- パケットの egress rewrite は宛先 LC の egress ASIC で行う
+- パケットの egress rewrite は宛先 LC の egress [ASIC](../reference/glossary.md#term-asic) で行う
 - そのままでは `SAI_MIRROR_SESSION_ATTR_MONITOR_PORT` に他 LC のポートを指定できない
 
 本 [HLD](../reference/glossary.md#term-hld) はこの問題を **「ingress LC の段階で完全に GRE rewrite し、ingress ASIC の recycle port から再注入する」** 方式で解く[^1]。ASIC を 2 段通すことで、最終 LC への配送を underlay の switch fabric に任せる。
@@ -281,4 +281,4 @@ HLD で並列提示された Option 1 (recycle port 方式) / Option 2 (dst LC �
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 74c72b83304f -->
+<!-- glossary-links-injected: ec18b66e3507 -->

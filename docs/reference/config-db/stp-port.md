@@ -31,18 +31,38 @@ related:
 ## 概要
 
 `STP_PORT` テーブルはインタフェースごとの STP 設定を保持する。キーは `<intf_name>` (例: `Ethernet0`, `PortChannel1`)。
-`stpmgrd` (`sonic-swss/cfgmgr/stpmgrd.cpp`) が CONFIG_DB の変更を購読し、`processStpPortAttr()` でフィールドを解析して Unix Domain Socket 経由で STP デーモンに IPC メッセージを送信する。
+`stpmgrd` (`sonic-swss/cfgmgr/stpmgrd.cpp`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の変更を購読し、`processStpPortAttr()` でフィールドを解析して Unix Domain Socket 経由で STP デーモンに IPC メッセージを送信する。
 
-PVST (Per-VLAN STP) と MST (Multiple STP) でフィールドセットが異なる。
+PVST (Per-[VLAN](../../reference/glossary.md#term-vlan) STP) と MST (Multiple STP) でフィールドセットが異なる。
 
 <!-- defaults -->
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>STP")]
+  DM["stpmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_DB")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_stp_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## 暗黙デフォルトとハードコード挙動
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-port-defaults.md -->
 
 ### 1. PVST 有効化時の STP_PORT 初期書き込み
 
-`interface_enable_stp()` (`config/stp.py:292-301`) および `enable_stp_for_interfaces()` (`config/stp.py:361-379`) で、VLAN メンバのインタフェースに対して以下が一括書き込まれる:
+`interface_enable_stp()` (`config/stp.py:292-301`) および `enable_stp_for_interfaces()` (`config/stp.py:361-379`) で、[VLAN](../../reference/glossary.md#term-vlan) メンバのインタフェースに対して以下が一括書き込まれる:
 
 ```python
 fvs = {
@@ -132,7 +152,7 @@ MST_AUTO_LINK_TYPE = 'auto'         # 他に 'p2p', 'shared'
 
 ### 4. stpmgrd でのフィールド処理 — `processStpPortAttr()`
 
-`stpmgr.cpp:519-624` が CONFIG_DB の `STP_PORT` エントリ変更を受信して IPC メッセージ `STP_PORT_CONFIG` を組み立てる:
+`stpmgr.cpp:519-624` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `STP_PORT` エントリ変更を受信して IPC メッセージ `STP_PORT_CONFIG` を組み立てる:
 
 | フィールド | 処理条件 | 変換方式 |
 |---|---|---|
@@ -276,7 +296,7 @@ DEL イベントは `L2_NONE` であっても即座に消費される（適用�
 |---|----------|------|--------|
 | 1 | `STP\|GLOBAL` → `STP_PORT` 受信 | 先行必須（欠如時 silent defer） | `STP\|GLOBAL` 受信後の SELECT ループで自動処理 |
 | 2 | `STP\|GLOBAL.mode` 受信 → `l2ProtoEnabled` 確定 → `STP_PORT` SET | 先行必須（欠如時 silent skip） | `mode` フィールド受信後に自動復旧 |
-| 3 | `STP_PORT` 受信 → `STP_VLAN` / `STP_VLAN_PORT` / `STP_MST_PORT` 受信 | `stpPortTask` が後段ゲート | PVST: GLOBAL→PORT→VLAN→VLAN_PORT 順を維持 |
+| 3 | `STP_PORT` 受信 → `STP_VLAN` / `STP_VLAN_PORT` / `STP_MST_PORT` 受信 | `stpPortTask` が後段ゲート | PVST: GLOBAL→PORT→[VLAN](../../reference/glossary.md#term-vlan)→VLAN_PORT 順を維持 |
 
 <!-- /ordering -->
 
@@ -289,7 +309,7 @@ DEL イベントは `L2_NONE` であっても即座に消費される（適用�
 
 ### 1. STP|GLOBAL — stpGlobalTask フラグ + l2ProtoEnabled（必須依存）
 
-- **参照先**: CONFIG_DB `STP|GLOBAL` / stpmgrd 内部フラグ `stpGlobalTask`・`l2ProtoEnabled`
+- **参照先**: [CONFIG_DB](../../reference/glossary.md#term-config_db) `STP|GLOBAL` / stpmgrd 内部フラグ `stpGlobalTask`・`l2ProtoEnabled`
 - **方向**: 読み取り（内部フラグ経由）
 - **参照元**: `stpmgr.cpp:630-634`
 - **意味**: `doStpPortTask()` の先頭で `stpGlobalTask == false` なら即 `return`。`STP|GLOBAL.mode` が未受信のうちは `l2ProtoEnabled == L2_NONE` のため SET がすべて defer される。
@@ -299,7 +319,7 @@ DEL イベントは `L2_NONE` であっても即座に消費される（適用�
 - **参照先**: stpmgrd 内部 `m_lagMap`（`doLagMemUpdateTask()` が `PORTCHANNEL_MEMBER` 変更を受信するたびに更新）
 - **方向**: 読み取り（内部 map）
 - **参照元**: `stpmgr.cpp:648-653`, `isLagEmpty()` (`stpmgr.cpp:1306-1325`)
-- **意味**: キーが `PortChannel` を含む場合に `m_lagMap` にエントリがなければ（LAG にメンバーがいない）SET を **即消去**（silent drop、エラーなし）。PortChannel にメンバーが追加された際に `doLagMemUpdateTask()` が STP_PORT 設定を再プッシュする仕組み。
+- **意味**: キーが `PortChannel` を含む場合に `m_lagMap` にエントリがなければ（[LAG](../../reference/glossary.md#term-lag) にメンバーがいない）SET を **即消去**（silent drop、エラーなし）。[PortChannel](../../reference/glossary.md#term-portchannel) にメンバーが追加された際に `doLagMemUpdateTask()` が STP_PORT 設定を再プッシュする仕組み。
 
 ### 3. STATE_DB:STATE_VLAN_MEMBER_TABLE — ポート所属 VLAN 列挙
 
@@ -352,7 +372,7 @@ STP_PORT テーブル処理
 | `link_type` フィールドが設定された MST 環境 | `processStpPortAttr()` `stpmgr.cpp:611-613`（`stoi(field)` バグ） | `stoi("link_type")` → `std::invalid_argument` → **stpmgrd プロセスクラッシュ** | なし（例外伝播） | `stpmgr.cpp:611-613` |
 | `sendMsgStpd()` 内で `tx_msg` calloc 失敗 | `sendMsgStpd()` `stpmgr.cpp:1231` | IPC 送信中断・`return -1`（呼び出し元は戻り値無視）・consumer エントリは消去済み | `SWSS_LOG_ERROR("tx_msg mem alloc error")` | `stpmgr.cpp:1231-1232` |
 | `sendto()` 失敗（stpd socket 送信エラー） | `sendMsgStpd()` `stpmgr.cpp:1246` | IPC 送信失敗・エラーログのみ・consumer エントリは消去済み（**再送なし**） | `SWSS_LOG_ERROR("tx_msg send error")` | `stpmgr.cpp:1246-1248` |
-| PortChannel にメンバーが存在しない（`isLagEmpty()` == true） | `doStpPortTask()` `stpmgr.cpp:648-653` | エントリを即消去（silent drop）。LAG メンバー追加時に `doLagMemUpdateTask()` が再プッシュ | なし | `stpmgr.cpp:648-653`, `doLagMemUpdateTask()` |
+| [PortChannel](../../reference/glossary.md#term-portchannel) にメンバーが存在しない（`isLagEmpty()` == true） | `doStpPortTask()` `stpmgr.cpp:648-653` | エントリを即消去（silent drop）。[LAG](../../reference/glossary.md#term-lag) メンバー追加時に `doLagMemUpdateTask()` が再プッシュ | なし | `stpmgr.cpp:648-653`, `doLagMemUpdateTask()` |
 
 ### DEL 処理における失敗経路
 
@@ -429,7 +449,7 @@ STP_PORT テーブル処理
 <!-- evidence: meta/_intermediate/cdb-flow/stp-port-side-effects.md -->
 
 `stpmgrd` (`sonic-swss/cfgmgr/stpmgr.cpp`) は `STP_PORT` SET/DEL イベントを `doStpPortTask()` → `processStpPortAttr()` で処理する。
-CONFIG_DB 以外の永続ストレージ（STATE_DB / APPL_DB / ASIC_DB）への直接書き込みは発生しない。
+CONFIG_DB 以外の永続ストレージ（[STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db)）への直接書き込みは発生しない。
 副次効果は **stpd への IPC 送信** と **内部フラグ `stpPortTask` の立て上げ** の 2 種類のみ。
 
 ### 1. stpd への IPC 送信（STP_PORT_CONFIG メッセージ）
@@ -476,13 +496,13 @@ if (stpPortTask == false)
 
 ### STATE_DB の利用（読み取り専用）
 
-`stpmgrd` は STATE_DB を読み取りにのみ使用し、書き込みは行わない:
+`stpmgrd` は [STATE_DB](../../reference/glossary.md#term-state_db) を読み取りにのみ使用し、書き込みは行わない:
 
-| STATE_DB テーブル | 用途 | 参照箇所 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) テーブル | 用途 | 参照箇所 |
 |---|---|---|
 | `STATE_VLAN_MEMBER_TABLE` | `getAllPortVlan()` — SET 処理時にポート所属 VLAN 一覧を取得 | `stpmgr.cpp:978-1025` |
 | `STATE_VLAN_TABLE` | `isVlanStateOk()` — VLAN ready 確認 | 各 task 関数 |
-| `STATE_LAG_TABLE` | `isLagStateOk()` — LAG ready 確認 | 各 task 関数 |
+| `STATE_LAG_TABLE` | `isLagStateOk()` — [LAG](../../reference/glossary.md#term-lag) ready 確認 | 各 task 関数 |
 | `STATE_STP_TABLE` | `getStpMaxInstances()` — MST 最大インスタンス数取得（60秒ポーリング） | MST 処理 |
 
 ### 副次効果サマリ
@@ -504,11 +524,11 @@ CONFIG_DB 以外の永続 DB への書き込みは **発生しない**。
 
 ### 書き込み側の通信構造
 
-`CONFIG_DB` の `STP_PORT` テーブルへの書き込み元は **SONiC CLI (`config/stp.py`)** のみ。`ProducerStateTable` / ZMQ は使用されず、click フレームワーク経由で CONFIG_DB に直接書き込まれる。
+`CONFIG_DB` の `STP_PORT` テーブルへの書き込み元は **[SONiC](../../reference/glossary.md#term-sonic) CLI (`config/stp.py`)** のみ。`ProducerStateTable` / ZMQ は使用されず、click フレームワーク経由で CONFIG_DB に直接書き込まれる。
 
 | テーブル | 書き込み元 | 書き込み方式 |
 |---------|-----------|------------|
-| `STP_PORT` (CONFIG_DB) | SONiC CLI (`config/stp.py`) | CONFIG_DB 直接書き込み |
+| `STP_PORT` (CONFIG_DB) | [SONiC](../../reference/glossary.md#term-sonic) CLI (`config/stp.py`) | CONFIG_DB 直接書き込み |
 
 ### 購読方式: SubscriberStateTable (keyspace PSUBSCRIBE)
 
@@ -522,7 +542,7 @@ addExecutor(new Consumer(
     this, tableName));
 ```
 
-`SubscriberStateTable` は Redis keyspace notification を PSUBSCRIBE する (`subscriberstatetable.cpp:20-24`):
+`SubscriberStateTable` は [Redis](../../reference/glossary.md#term-redis) keyspace notification を PSUBSCRIBE する (`subscriberstatetable.cpp:20-24`):
 
 ```cpp
 m_keyspace = "__keyspace@";
@@ -574,9 +594,9 @@ CONFIG_DB: CLI が STP_PORT|<interface> を書き込む
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-port-platform.md -->
 
-`STP_PORT` テーブルの処理に ASIC ベンダー固有のコード分岐は存在しない。
-stpmgrd は SAI を直接呼ばず、Unix Domain Socket 経由で stpd に IPC を送信する設計であり、
-ASIC 差異は stpd 内部で吸収される。
+`STP_PORT` テーブルの処理に [ASIC](../../reference/glossary.md#term-asic) ベンダー固有のコード分岐は存在しない。
+stpmgrd は [SAI](../../reference/glossary.md#term-sai) を直接呼ばず、Unix Domain Socket 経由で stpd に IPC を送信する設計であり、
+[ASIC](../../reference/glossary.md#term-asic) 差異は stpd 内部で吸収される。
 ただし以下 3 点においてプラットフォーム依存の挙動が観測される。
 
 ### 1. STP プロトコルモード (L2_PVSTP vs L2_MSTP)
@@ -599,7 +619,7 @@ if (l2ProtoEnabled == L2_NONE)
 | `L2_NONE` | なし | SET はキューに残留、DEL は即消去 |
 
 プロトコルモードはプラットフォームではなく CLI 設定 (`STP|GLOBAL.mode`) で決まる。
-DPU / SmartSwitch NPU 側では `stpmgrd` が起動しないため `STP_PORT` は実質的に無効となる。
+[DPU](../../reference/glossary.md#term-dpu) / [SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) 側では `stpmgrd` が起動しないため `STP_PORT` は実質的に無効となる。
 
 証跡: `stpmgr.cpp:119-127, 630-677`
 
@@ -607,7 +627,7 @@ DPU / SmartSwitch NPU 側では `stpmgrd` が起動しないため `STP_PORT` �
 
 ### 2. ASIC ごとの最大 STP インスタンス数 (SAI_SWITCH_ATTR_MAX_STP_INSTANCE)
 
-`StpOrch` 初期化時に SAI 属性 `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を照会し、
+`StpOrch` 初期化時に [SAI](../../reference/glossary.md#term-sai) 属性 `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` を照会し、
 `STATE_DB:STP_TABLE|GLOBAL.max_stp_inst` に書き込む (`stporch.cpp:29-40, 603-615`)。
 
 ```cpp
@@ -626,9 +646,9 @@ if (max_stp_instances == 0)
     max_stp_instances = STP_DEFAULT_MAX_INSTANCES;  // = 255
 ```
 
-| プラットフォーム例 | SAI 照会結果 | `max_stp_instances` 実効値 |
+| プラットフォーム例 | [SAI](../../reference/glossary.md#term-sai) 照会結果 | `max_stp_instances` 実効値 |
 |-------------------|-------------|---------------------------|
-| 多くの Broadcom ASIC | 成功 (255 以上) | SAI 値 - 1 |
+| 多くの Broadcom [ASIC](../../reference/glossary.md#term-asic) | 成功 (255 以上) | SAI 値 - 1 |
 | 一部 Marvell / 低グレード ASIC | 成功 (少ない値) | SAI 値 - 1 |
 | VS (仮想スイッチ) | 失敗 または 0 | `STP_DEFAULT_MAX_INSTANCES` = 255 (フォールバック) |
 
@@ -647,10 +667,10 @@ PVST が有効な環境でのみ `STP_PORT` が stpd に到達するため間接
 
 | 環境 | 挙動 |
 |------|------|
-| 標準 SONiC (物理 ASIC) | ebtables 有効。PVST+ マルチキャストが遮断され STP_PORT 設定が stpd に反映される |
+| 標準 [SONiC](../../reference/glossary.md#term-sonic) (物理 ASIC) | ebtables 有効。PVST+ マルチキャストが遮断され STP_PORT 設定が stpd に反映される |
 | VS (仮想スイッチ) | ebtables 呼び出しは成功するが、仮想環境ではハードウェアフラッディングが発生しないため実効影響なし |
 | ebtables 非存在環境 (コンテナ) | `system()` 失敗。`SWSS_LOG_DEBUG` のみ出力され stpmgrd は継続動作する |
-| SmartSwitch DPU | stpmgrd 通常非起動のため対象外 |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | stpmgrd 通常非起動のため対象外 |
 
 証跡: `stpmgr.cpp:47-48, 113-117, 161-165`
 
@@ -663,7 +683,7 @@ PVST が有効な環境でのみ `STP_PORT` が stpd に到達するため間接
 | 物理 ASIC (PVST) | PVST フィールドセット | SAI 照会値 - 1 | 有効 |
 | 物理 ASIC (MSTP) | MST フィールドセット | SAI 照会値 - 1 | 無効 |
 | VS (仮想スイッチ) | 動作 | 255 (フォールバック) | no-op の場合あり |
-| SmartSwitch DPU | 非起動 | N/A | N/A |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | 非起動 | N/A | N/A |
 
 <!-- /platform -->
 
@@ -690,3 +710,5 @@ PVST が有効な環境でのみ `STP_PORT` が stpd に到達するため間接
 - [CONFIG_DB: VLAN](vlan.md)
 - [CONFIG_DB: PORT](port.md)
 - [CONFIG_DB: PORTCHANNEL](portchannel.md)
+
+<!-- glossary-links-injected: 59b64402d6ab -->

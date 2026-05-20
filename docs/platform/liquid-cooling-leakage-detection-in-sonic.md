@@ -38,7 +38,7 @@ related:
 
 ## 概要
 
-高密度スイッチでは空冷では熱を捌ききれず液冷（Liquid Cooling）が必須となるが、液漏れは即座に致命的故障につながる。本機能は液冷漏洩を検出するセンサを監視し、漏洩発生時に SONiC が **即時** アラート（syslog + [STATE_DB](../reference/glossary.md#term-state_db) + [gNMI](../reference/glossary.md#term-gnmi) event）を出すパイプラインを定義する[^1]。
+高密度スイッチでは空冷では熱を捌ききれず液冷（Liquid Cooling）が必須となるが、液漏れは即座に致命的故障につながる。本機能は液冷漏洩を検出するセンサを監視し、漏洩発生時に [SONiC](../reference/glossary.md#term-sonic) が **即時** アラート（syslog + [STATE_DB](../reference/glossary.md#term-state_db) + [gNMI](../reference/glossary.md#term-gnmi) event）を出すパイプラインを定義する[^1]。
 
 要件[^1]:
 
@@ -348,4 +348,4 @@ show platform temperature
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f5299aff9050 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

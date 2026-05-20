@@ -32,7 +32,7 @@ related:
 
 BIOS、CPLD、[FPGA](../reference/glossary.md#term-fpga)、BMC、SSD などのプラットフォームコンポーネントの **ファームウェアを統一 CLI から操作** するためのユーティリティ[^1]。狙い:
 
-- ベンダ固有 utility に頼らず SONiC 標準コマンドで firmware を扱う
+- ベンダ固有 utility に頼らず [SONiC](../reference/glossary.md#term-sonic) 標準コマンドで firmware を扱う
 - バージョン情報の取得・install・update（次回起動時反映）を共通インタフェース化
 - platform 側の plugin で実機固有の install ロジックを吸収する
 
@@ -69,7 +69,7 @@ flowchart LR
 ## 制限事項
 
 - **platform plugin が必要**: plugin 未実装の component は `fwutil` から触れない
-- **ASIC 本体の firmware は対象外**: [SAI](../reference/glossary.md#term-sai)/SDK 経由で扱う想定（fwutil は周辺コンポーネント向け）
+- **[ASIC](../reference/glossary.md#term-asic) 本体の firmware は対象外**: [SAI](../reference/glossary.md#term-sai)/SDK 経由で扱う想定（fwutil は周辺コンポーネント向け）
 - **手動 image 指定 vs manifest**: 両者で受け付ける引数フォーマットが異なる
 - **書き換え失敗の rollback**: 多くは hardware 側保証（dual-bank） に依存
 
@@ -117,4 +117,4 @@ ls /usr/share/sonic/device/*/fw/ 2>/dev/null | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: d12a6eddadee -->
+<!-- glossary-links-injected: ec18b66e3507 -->
