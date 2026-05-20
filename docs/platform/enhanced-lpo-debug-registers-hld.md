@@ -14,6 +14,7 @@ related:
   cli: []
   yang: []
   _no_related_cli: true
+  _no_yang: true
 ---
 
 <!-- topics-tip -->

@@ -15,6 +15,7 @@ related:
   cli:
   - show techsupport
   yang: []
+  _no_yang: true
 ---
 
 <!-- topics-tip -->
