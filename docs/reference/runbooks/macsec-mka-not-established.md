@@ -31,7 +31,7 @@ related:
 ## 想定原因（優先度順）
 
 1. **CAK / CKN 不一致**: 対向と pre-shared key の hex 表現が一致していない
-2. **MACsec profile が port に紐付いていない**: `config macsec port add <port> <profile>` 未実行
+2. **[MACsec](../../reference/glossary.md#term-macsec) profile が port に紐付いていない**: `config macsec port add <port> <profile>` 未実行
 3. **cipher_suite 不一致**: `GCM-AES-128` vs `GCM-AES-256` の食い違い
 4. **MKA priority / key_server 不適切**: 双方とも server_priority=0 等で衝突
 5. **時刻同期ズレで replay window エラー**
@@ -117,4 +117,4 @@ docker logs swss 2>&1 | grep -iE "macsec" | tail -100
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — macsecorch.cpp
 [^2]: sonic-net/wpa_supplicant @ master — ieee802_1x_kay.c
 
-<!-- glossary-links-injected: 1fe559aeba2e -->
+<!-- glossary-links-injected: e9c9fcf0f205 -->

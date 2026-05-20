@@ -40,7 +40,7 @@ related:
 
 # 設定データフロー
 
-SONiC の設定を読むときは、まず `CONFIG_DB` を起点にします。`CONFIG_DB` はユーザや controller が投入した意図を保持し、各 daemon がそれを購読して自分の担当する実行状態へ変換します。代表的には、`*mgrd` が `CONFIG_DB` を読み、`APPL_DB` に [orchagent](../../reference/glossary.md#term-orchagent) 向けのテーブルを作り、orchagent が `ASIC_DB` 経由で [syncd](../../reference/glossary.md#term-syncd) / [SAI](../../reference/glossary.md#term-sai) へ渡します。
+[SONiC](../../reference/glossary.md#term-sonic) の設定を読むときは、まず `CONFIG_DB` を起点にします。`CONFIG_DB` はユーザや controller が投入した意図を保持し、各 daemon がそれを購読して自分の担当する実行状態へ変換します。代表的には、`*mgrd` が `CONFIG_DB` を読み、`APPL_DB` に [orchagent](../../reference/glossary.md#term-orchagent) 向けのテーブルを作り、orchagent が `ASIC_DB` 経由で [syncd](../../reference/glossary.md#term-syncd) / [SAI](../../reference/glossary.md#term-sai) へ渡します。
 
 ## CONFIG_DB はどの情報を持つか
 
@@ -52,11 +52,11 @@ SONiC の設定を読むときは、まず `CONFIG_DB` を起点にします。`
 | `FEATURE|<name>` | bgp、telemetry、snmp など feature service の起動制御を見る | `hostcfgd`、system health |
 | 機能別テーブル | [VLAN](../../reference/glossary.md#term-vlan)、BGP、[ACL](../../reference/glossary.md#term-acl)、[QoS](../../reference/glossary.md#term-qos) など各機能の設定を見る | 各 `*mgrd` / `*cfgd` |
 
-`DEVICE_METADATA` は多くの章の前提条件です。BGP、Multi-ASIC、Dual-ToR、[SmartSwitch](../../reference/glossary.md#term-smartswitch)、buffer、DHCP server などの挙動がここから分岐するため、機能ページで謎の既定値が出てきたら最初に確認してください。
+`DEVICE_METADATA` は多くの章の前提条件です。BGP、[Multi-ASIC](../../reference/glossary.md#term-multi-asic)、Dual-ToR、[SmartSwitch](../../reference/glossary.md#term-smartswitch)、buffer、DHCP server などの挙動がここから分岐するため、機能ページで謎の既定値が出てきたら最初に確認してください。
 
 ## APPL_DB / STATE_DB / ASIC_DB の読み方
 
-[swss-schema](../../internals/swss-schema.md) は `APPL_DB` と `STATE_DB` の中心スキーマをまとめる参照ページです。`APPL_DB` は orchagent に対する依頼、`STATE_DB` は SONiC 内部の状態共有、`ASIC_DB` は syncd に渡す ASIC 操作に近い層です。
+[swss-schema](../../internals/swss-schema.md) は `APPL_DB` と `STATE_DB` の中心スキーマをまとめる参照ページです。`APPL_DB` は orchagent に対する依頼、`STATE_DB` は SONiC 内部の状態共有、`ASIC_DB` は syncd に渡す [ASIC](../../reference/glossary.md#term-asic) 操作に近い層です。
 
 ```mermaid
 flowchart TB
@@ -110,4 +110,4 @@ REST / [gNMI](../../reference/glossary.md#term-gnmi) / Management Framework 側�
 - [DEVICE_METADATA テーブル](../../reference/config-db/device-metadata.md)
 - [FEATURE テーブル](../../reference/config-db/feature.md)
 
-<!-- glossary-links-injected: f61af9b56853 -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

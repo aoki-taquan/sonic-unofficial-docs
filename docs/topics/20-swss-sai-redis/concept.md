@@ -42,7 +42,7 @@ related:
 
 # 概要
 
-SONiC は「設定の入口」「制御プレーン daemon」「ASIC への橋渡し」が別プロセスで分かれており、これらを [Redis](../../reference/glossary.md#term-redis) 上の名前付き DB で結んでいる。機能章を読むときの共通語彙はこの章でまとめる。
+[SONiC](../../reference/glossary.md#term-sonic) は「設定の入口」「制御プレーン daemon」「[ASIC](../../reference/glossary.md#term-asic) への橋渡し」が別プロセスで分かれており、これらを [Redis](../../reference/glossary.md#term-redis) 上の名前付き DB で結んでいる。機能章を読むときの共通語彙はこの章でまとめる。
 
 ## この章は何のためにあるか
 
@@ -173,7 +173,7 @@ sequenceDiagram
 
 ## この章での読み方
 
-DB と daemon の地図がほしい人は [アーキテクチャ](architecture.md) を先に読む。multi-namespace（Multi-ASIC）や独自 Redis instance を構成したい人は [設定](setup.md) に進む。SAI 失敗の見方を覚えたい人は [運用](operations.md) と [内部実装](internals.md) を続けて読む。bulk/flex counter、debug、dump の設計差は [内部実装](internals.md) を読む。startup や warm reboot の view switching は [発展トピック](advanced.md) に置いた。
+DB と daemon の地図がほしい人は [アーキテクチャ](architecture.md) を先に読む。multi-namespace（[Multi-ASIC](../../reference/glossary.md#term-multi-asic)）や独自 Redis instance を構成したい人は [設定](setup.md) に進む。SAI 失敗の見方を覚えたい人は [運用](operations.md) と [内部実装](internals.md) を続けて読む。bulk/flex counter、debug、dump の設計差は [内部実装](internals.md) を読む。startup や warm reboot の view switching は [発展トピック](advanced.md) に置いた。
 
 ## 読了後にできること
 
@@ -196,4 +196,4 @@ DB と daemon の地図がほしい人は [アーキテクチャ](architecture.m
 
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 
-<!-- glossary-links-injected: 22f1eb196c54 -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

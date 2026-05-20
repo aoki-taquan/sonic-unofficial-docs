@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-`SRV6_MY_LOCATORS` は SRv6 ロケータを定義し、SID アドレス空間をブロック・ノード・ファンクション・アーギュメントの各ビット長に分割するテーブル[^1]。`bgpcfgd` の `SRv6Mgr` が CONFIG_DB を購読し、FRR (zebra) の `segment-routing srv6 locators` コマンドへ変換する[^2]。`SRV6_MY_SIDS` テーブルの各エントリは対応するロケータが先に存在していることを必要とする。
+`SRV6_MY_LOCATORS` は [SRv6](../../reference/glossary.md#term-srv6) ロケータを定義し、SID アドレス空間をブロック・ノード・ファンクション・アーギュメントの各ビット長に分割するテーブル[^1]。`bgpcfgd` の `SRv6Mgr` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、[FRR](../../reference/glossary.md#term-frr) ([zebra](../../reference/glossary.md#term-zebra)) の `segment-routing srv6 locators` コマンドへ変換する[^2]。`SRV6_MY_SIDS` テーブルの各エントリは対応するロケータが先に存在していることを必要とする。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -33,14 +33,14 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SRV6_MY_LOCATORS")]
-  DM["bgpcfgd<br/>SRv6Mgr"]
+  DM["Srv6Orch"]
   CDB --> DM
-  FRR["FRR zebra<br/>segment-routing srv6"]
-  DM --> FRR
+  SAI["SAI<br/>sai_srv6_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から FRR までの典型経路。詳細・例外は本ページ本文を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -53,33 +53,33 @@ SRV6_MY_LOCATORS|<locator_name>
 
 ## フィールド
 
-| フィールド | 型 | YANG default | 説明 |
+| フィールド | 型 | [YANG](../../reference/glossary.md#term-yang) default | 説明 |
 |-----------|----|-----------|----|
-| `prefix` | IPv6 アドレス | **必須** (mandatory) | ロケータの IPv6 プレフィックス先頭アドレス。bgpcfgd が `block_len + node_len` ビット長を付加して `/N` を計算する |
-| `block_len` | uint8 (1–128) | `32` | SRv6 ロケータブロック部のビット長 |
-| `node_len` | uint8 (1–128) | `16` | SRv6 ロケータノード部のビット長 |
+| `prefix` | IPv6 アドレス | **必須** (mandatory) | ロケータの IPv6 プレフィックス先頭アドレス。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が `block_len + node_len` ビット長を付加して `/N` を計算する |
+| `block_len` | uint8 (1–128) | `32` | [SRv6](../../reference/glossary.md#term-srv6) ロケータブロック部のビット長 |
+| `node_len` | uint8 (1–128) | `16` | [SRv6](../../reference/glossary.md#term-srv6) ロケータノード部のビット長 |
 | `func_len` | uint8 (0–128) | `16` | SRv6 SID ファンクション部のビット長 |
 | `arg_len` | uint8 (0–128) | `0` | SRv6 SID アーギュメント部のビット長 |
-| `vrf` | string | `"default"` | VRF 名。bgpcfgd は現時点で FRR コマンドに反映しない（YANG default のみ） |
+| `vrf` | string | `"default"` | [VRF](../../reference/glossary.md#term-vrf) 名。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は現時点で [FRR](../../reference/glossary.md#term-frr) コマンドに反映しない（[YANG](../../reference/glossary.md#term-yang) default のみ） |
 
 **YANG 制約**: `block_len + node_len + func_len + arg_len <= 128`
 
 ## 制約
 
-- `prefix` は省略不可 (`mandatory true`)。bgpcfgd の `Locator` クラスは `data['prefix']` に直接アクセスするため、欠落時は `KeyError` で処理失敗。
+- `prefix` は省略不可 (`mandatory true`)。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) の `Locator` クラスは `data['prefix']` に直接アクセスするため、欠落時は `KeyError` で処理失敗。
 - デフォルト値のみ使用時: ビット長合計は 32 + 16 + 16 + 0 = 64 ≤ 128 で YANG 制約を満たす。
 - `SRV6_MY_SIDS` エントリの処理は、対応ロケータが先に `SRV6_MY_LOCATORS` に存在しない場合にペンディングされ、ロケータ登録後に自動再試行される。
 
 ## 購読者
 
-- `bgpcfgd` (`SRv6Mgr`): CONFIG_DB `SRV6_MY_LOCATORS` を購読し、`segment-routing srv6 locators locator <name> prefix <p> block-len <b> node-len <n> func-bits <f>` コマンドを FRR へ投入。
-- `frrcfgd` (`frrcfgd.py`): `SRV6_MY_LOCATORS` を zebra に転送する経路も存在する。
+- `bgpcfgd` (`SRv6Mgr`): [CONFIG_DB](../../reference/glossary.md#term-config_db) `SRV6_MY_LOCATORS` を購読し、`segment-routing srv6 locators locator <name> prefix <p> block-len <b> node-len <n> func-bits <f>` コマンドを [FRR](../../reference/glossary.md#term-frr) へ投入。
+- `frrcfgd` (`frrcfgd.py`): `SRV6_MY_LOCATORS` を [zebra](../../reference/glossary.md#term-zebra) に転送する経路も存在する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `SRV6_MY_SIDS`（ロケータを leafref 参照）
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-srv6`
-- 関連 CLI: なし（config_db.json または RESTCONF で投入）
+- 関連 CLI: なし（[config_db.json](../../reference/glossary.md#term-config_db.json) または RESTCONF で投入）
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
@@ -108,7 +108,7 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 
 ### vrf フィールドの乖離
 
-`sonic-srv6.yang` は `vrf` に `default "default"` を定義するが、`bgpcfgd/managers_srv6.py` の `Locator` クラスは `vrf` を読み取らない。FRR の locator コマンド (`locator <name> prefix ... block-len ... node-len ... func-bits ... behavior usid`) に vrf オプションは含まれていない。`frrcfgd.py` 側の zebra 購読経路 (`SRV6_MY_LOCATORS: ['zebra']`) では vrf が反映される可能性があるが、`Locator` クラス経由では無効。
+`sonic-srv6.yang` は `vrf` に `default "default"` を定義するが、`bgpcfgd/managers_srv6.py` の `Locator` クラスは `vrf` を読み取らない。FRR の locator コマンド (`locator <name> prefix ... block-len ... node-len ... func-bits ... behavior usid`) に vrf オプションは含まれていない。`frrcfgd.py` 側の [zebra](../../reference/glossary.md#term-zebra) 購読経路 (`SRV6_MY_LOCATORS: ['zebra']`) では vrf が反映される可能性があるが、`Locator` クラス経由では無効。
 
 <!-- /defaults -->
 
@@ -156,8 +156,8 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 | 参照元 | 参照先 | 種別 | 必須条件 |
 |--------|--------|------|----------|
 | `SRV6_MY_SIDS.locator_name` | `SRV6_MY_LOCATORS.locator_name` | YANG leafref | SID 書き込み前にロケータが存在すること |
-| `SRV6_MY_LOCATORS.vrf` | `VRF.name` | YANG leafref | 非 `"default"` VRF 指定時のみ |
-| `Srv6Orch` (swss orchagent) | `CONFIG_DB SRV6_MY_LOCATORS` | 直接 DB 参照 | MySID APPL_DB 処理時にビット長を取得 |
+| `SRV6_MY_LOCATORS.vrf` | `VRF.name` | YANG leafref | 非 `"default"` [VRF](../../reference/glossary.md#term-vrf) 指定時のみ |
+| `Srv6Orch` (swss [orchagent](../../reference/glossary.md#term-orchagent)) | `CONFIG_DB SRV6_MY_LOCATORS` | 直接 DB 参照 | MySID [APPL_DB](../../reference/glossary.md#term-appl_db) 処理時にビット長を取得 |
 | `frrcfgd` | `CONFIG_DB SRV6_MY_LOCATORS` | 購読 → zebra 転送 | bgpcfgd と並立した FRR 通知経路 |
 
 ### SRV6_MY_SIDS からの leafref 参照
@@ -166,11 +166,11 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 
 ### VRF テーブルへの leafref
 
-`sonic-srv6.yang:81-82` が `SRV6_MY_LOCATORS` の `vrf` フィールドを `VRF.name` への leafref として定義している。`vrf` に `"default"` 以外の値を指定する場合は `VRF` テーブルに対象 VRF が先に存在しなければならない。bgpcfgd は `vrf` を FRR コマンドに反映しないが、YANG バリデーション層は本制約を強制する。
+`sonic-srv6.yang:81-82` が `SRV6_MY_LOCATORS` の `vrf` フィールドを `VRF.name` への leafref として定義している。`vrf` に `"default"` 以外の値を指定する場合は `VRF` テーブルに対象 [VRF](../../reference/glossary.md#term-vrf) が先に存在しなければならない。bgpcfgd は `vrf` を FRR コマンドに反映しないが、YANG バリデーション層は本制約を強制する。
 
 ### srv6orch による CONFIG_DB 直接参照
 
-`Srv6Orch` は `m_locatorCfgTable`（`srv6orch.cpp:107`）で CONFIG_DB の `SRV6_MY_LOCATORS` を直接読み取る。`getLocatorCfgFromDb()`（`srv6orch.cpp:331-350`）は APPL_DB の MySID エントリ処理時にロケータの `block_len` / `node_len` / `func_len` / `arg_len` を取得し、SAI エントリに詰める。ロケータが CONFIG_DB に存在しない場合は `SWSS_LOG_ERROR` を出力してエントリ処理が失敗する。
+`Srv6Orch` は `m_locatorCfgTable`（`srv6orch.cpp:107`）で CONFIG_DB の `SRV6_MY_LOCATORS` を直接読み取る。`getLocatorCfgFromDb()`（`srv6orch.cpp:331-350`）は [APPL_DB](../../reference/glossary.md#term-appl_db) の MySID エントリ処理時にロケータの `block_len` / `node_len` / `func_len` / `arg_len` を取得し、[SAI](../../reference/glossary.md#term-sai) エントリに詰める。ロケータが CONFIG_DB に存在しない場合は `SWSS_LOG_ERROR` を出力してエントリ処理が失敗する。
 
 <!-- /cross-refs -->
 
@@ -185,8 +185,8 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 | 1 | `prefix` フィールド欠落 | `Locator.__init__():142` | bgpcfgd `KeyError` / ロケータ FRR 通知失敗 | なし | `log_err` / Python traceback |
 | 2 | SID 処理時ロケータ未登録 | `sids_set_handler():62-69` | SID FRR 通知保留 | あり (`on_deps_change`) | `log_warn` |
 | 3 | SID prefix がロケータ配下外 | `sids_set_handler():74-76` | SID 即時拒否・retry なし | なし | `log_err` |
-| 4 | MySID 処理時ロケータ未登録 (Srv6Orch) | `getLocatorCfgFromDb():331-338` | MySID SAI 転送失敗 | なし | `SWSS_LOG_ERROR` |
-| 5 | DSCP ロケータ逆引き失敗 (Srv6Orch) | `getMySidEntryDscpMode():468` | DSCP モード未設定 | なし | `SWSS_LOG_ERROR` |
+| 4 | MySID 処理時ロケータ未登録 (Srv6Orch) | `getLocatorCfgFromDb():331-338` | MySID [SAI](../../reference/glossary.md#term-sai) 転送失敗 | なし | `SWSS_LOG_ERROR` |
+| 5 | [DSCP](../../reference/glossary.md#term-dscp) ロケータ逆引き失敗 (Srv6Orch) | `getMySidEntryDscpMode():468` | [DSCP](../../reference/glossary.md#term-dscp) モード未設定 | なし | `SWSS_LOG_ERROR` |
 
 ### prefix フィールド欠落 (失敗 #1)
 
@@ -202,7 +202,7 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 
 ### Srv6Orch ロケータ未登録エラー (失敗 #4・#5)
 
-`Srv6Orch::getLocatorCfgFromDb()` (`srv6orch.cpp:331-338`) は CONFIG_DB の `SRV6_MY_LOCATORS` を直接 GET する。ロケータが存在しない場合 `SWSS_LOG_ERROR` を出力して `false` を返す。Orch 側に retry 機構はなく、APPL_DB イベントが再発火するか設定が修正されるまで MySID は SAI へ転送されない。DSCP ロケータ逆引き失敗 (`srv6orch.cpp:468`) も同様に自動回復なし。
+`Srv6Orch::getLocatorCfgFromDb()` (`srv6orch.cpp:331-338`) は CONFIG_DB の `SRV6_MY_LOCATORS` を直接 GET する。ロケータが存在しない場合 `SWSS_LOG_ERROR` を出力して `false` を返す。Orch 側に retry 機構はなく、[APPL_DB](../../reference/glossary.md#term-appl_db) イベントが再発火するか設定が修正されるまで MySID は [SAI](../../reference/glossary.md#term-sai) へ転送されない。[DSCP](../../reference/glossary.md#term-dscp) ロケータ逆引き失敗 (`srv6orch.cpp:468`) も同様に自動回復なし。
 
 <!-- /failure -->
 
@@ -227,7 +227,7 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 
 ### FRR コマンドへのハードコード埋め込み
 
-`locators_set_handler()` (`managers_srv6.py:37-53`) が生成する FRR vtysh コマンドには 2 つのハードコード要素が存在する:
+`locators_set_handler()` (`managers_srv6.py:37-53`) が生成する FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドには 2 つのハードコード要素が存在する:
 
 | 項目 | ハードコード値 | 意味 |
 |------|--------------|------|
@@ -273,7 +273,7 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 
 **frrcfgd の二重送信 (副作用 #3)**:
 `frrcfgd.py` も `SRV6_MY_LOCATORS` を購読し (`frrcfgd.py:2335`、`SRV6_MY_LOCATORS: ['zebra']`)、
-bgpcfgd と独立して同一の vtysh コマンドを発行する (`frrcfgd.py:2732-2742`)。
+bgpcfgd と独立して同一の [vtysh](../../reference/glossary.md#term-vtysh) コマンドを発行する (`frrcfgd.py:2732-2742`)。
 FRR 設定は冪等なため実害はないが、2 つの異なるプロセスが同一コマンドを発行する点に注意。
 
 ### DEL 時の副作用
@@ -298,7 +298,7 @@ FRR 側では `no locator <name>` によりロケータ設定が削除される�
 
 ### 購読者一覧
 
-| 購読者 | 購読方式 | Redis primitive | PSUBSCRIBE パターン |
+| 購読者 | 購読方式 | [Redis](../../reference/glossary.md#term-redis) primitive | PSUBSCRIBE パターン |
 |--------|---------|-----------------|-------------------|
 | bgpcfgd `SRv6Mgr` | `SubscriberStateTable` | keyspace PSUBSCRIBE | `__keyspace@4__:SRV6_MY_LOCATORS|*` |
 | frrcfgd | `SubscriberStateTable` | keyspace PSUBSCRIBE | `__keyspace@4__:SRV6_MY_LOCATORS|*` |
@@ -306,9 +306,9 @@ FRR 側では `no locator <name>` によりロケータ設定が削除される�
 
 ### bgpcfgd パス
 
-`Runner.add_manager()` (`runner.py:49-51`) が `swsscommon.SubscriberStateTable(conn, "SRV6_MY_LOCATORS")` を生成して `swsscommon.Select()` セレクタに登録する。`runner.py:54-73` の主ループは 1000 ms タイムアウトの `selector.select()` でイベントを待受け、受信時に `subscriber.pop()` でキュードレインして `SRv6Mgr.locators_set_handler()` / `SRv6Mgr.locators_del_handler()` を呼び出す。ループ末尾の `cfg_mgr.commit()` で積み上がった FRR vtysh コマンドを一括送信する。
+`Runner.add_manager()` (`runner.py:49-51`) が `swsscommon.SubscriberStateTable(conn, "SRV6_MY_LOCATORS")` を生成して `swsscommon.Select()` セレクタに登録する。`runner.py:54-73` の主ループは 1000 ms タイムアウトの `selector.select()` でイベントを待受け、受信時に `subscriber.pop()` でキュードレインして `SRv6Mgr.locators_set_handler()` / `SRv6Mgr.locators_del_handler()` を呼び出す。ループ末尾の `cfg_mgr.commit()` で積み上がった FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドを一括送信する。
 
-`SRV6_MY_LOCATORS|<locator_name>` への HSET / HDEL 操作が走ると、Redis が `__keyspace@4__:SRV6_MY_LOCATORS|<locator_name>` チャネルへ keyspace notification を自動 PUBLISH する。`SubscriberStateTable.pops()` はフィールド値を通知ペイロードではなく **HGETALL で別途取得**するため、通知→取得の間に更新があれば最新値が読まれる（lost-update 耐性あり）。
+`SRV6_MY_LOCATORS|<locator_name>` への HSET / HDEL 操作が走ると、[Redis](../../reference/glossary.md#term-redis) が `__keyspace@4__:SRV6_MY_LOCATORS|<locator_name>` チャネルへ keyspace notification を自動 PUBLISH する。`SubscriberStateTable.pops()` はフィールド値を通知ペイロードではなく **HGETALL で別途取得**するため、通知→取得の間に更新があれば最新値が読まれる（lost-update 耐性あり）。
 
 bgpcfgd 起動時は `SubscriberStateTable` ctor (`subscriberstatetable.cpp:26-42`) が PSUBSCRIBE 直後に既存全エントリを HGETALL してバッファに積むため、起動順序に関わらず既存ロケータが即座に処理される。
 
@@ -324,7 +324,7 @@ bgpcfgd 起動時は `SubscriberStateTable` ctor (`subscriberstatetable.cpp:26-4
 self.directory.subscribe([(self.db_name, "SRV6_MY_LOCATORS", locator_name)], self.on_deps_change)
 ```
 
-これは Redis Pub/Sub ではなく bgpcfgd インプロセスの Directory オブジェクト内通知機構。ロケータが Directory に登録されると `on_deps_change()` が発火し、保留中の `SRV6_MY_SIDS` エントリが自動再処理される。外部プロセスには見えない。
+これは [Redis](../../reference/glossary.md#term-redis) Pub/Sub ではなく bgpcfgd インプロセスの Directory オブジェクト内通知機構。ロケータが Directory に登録されると `on_deps_change()` が発火し、保留中の `SRV6_MY_SIDS` エントリが自動再処理される。外部プロセスには見えない。
 
 ### Srv6Orch の直接 GET（Consumer 購読なし）
 
@@ -340,9 +340,9 @@ self.directory.subscribe([(self.db_name, "SRV6_MY_LOCATORS", locator_name)], sel
 
 ### SAI 非依存テーブル（ハードウェア制約なし）
 
-`SRV6_MY_LOCATORS` は CONFIG_DB から FRR (zebra) へのソフトウェア通知専用テーブルであり、SAI / ASIC への書込みを直接引き起こさない。`Srv6Orch` は `m_locatorCfgTable` を GET 専用（`Table` 型）でのみ保持し (`srv6orch.cpp:107`)、ロケータそのものを SAI オブジェクトとして作成・削除しない。
+`SRV6_MY_LOCATORS` は CONFIG_DB から FRR (zebra) へのソフトウェア通知専用テーブルであり、SAI / [ASIC](../../reference/glossary.md#term-asic) への書込みを直接引き起こさない。`Srv6Orch` は `m_locatorCfgTable` を GET 専用（`Table` 型）でのみ保持し (`srv6orch.cpp:107`)、ロケータそのものを SAI オブジェクトとして作成・削除しない。
 
-したがって、`SRV6_MY_LOCATORS` の適用可否にプラットフォーム固有のハードウェアケイパビリティ照会は不要。ASIC が SRv6 My-SID をサポートするか否かに関わらず、ロケータエントリは常に FRR へ通知できる。
+したがって、`SRV6_MY_LOCATORS` の適用可否にプラットフォーム固有のハードウェアケイパビリティ照会は不要。[ASIC](../../reference/glossary.md#term-asic) が SRv6 My-SID をサポートするか否かに関わらず、ロケータエントリは常に FRR へ通知できる。
 
 ### `behavior usid` の暗黙強制（bgpcfgd 経路）
 
@@ -374,13 +374,13 @@ FRR 設定の冪等性により両者が同じロケータを設定する場合�
 
 ### `arg_len` フィールドの FRR 未対応
 
-`managers_srv6.py` の FRR コマンド生成は `block-len`・`node-len`・`func-bits` の 3 パラメータのみを送信し、`arg_len` を FRR コマンドに含めない。FRR の `locator` コマンドが `args-bits`（または相当オプション）をサポートしているかは FRR バージョン依存であり、SONiC コードは引き渡しを行わない設計となっている。`arg_len` はロケータの SAI エントリ（`srv6orch.cpp:339-349`）でのみ利用される。
+`managers_srv6.py` の FRR コマンド生成は `block-len`・`node-len`・`func-bits` の 3 パラメータのみを送信し、`arg_len` を FRR コマンドに含めない。FRR の `locator` コマンドが `args-bits`（または相当オプション）をサポートしているかは FRR バージョン依存であり、[SONiC](../../reference/glossary.md#term-sonic) コードは引き渡しを行わない設計となっている。`arg_len` はロケータの SAI エントリ（`srv6orch.cpp:339-349`）でのみ利用される。
 
 ### プラットフォーム制約まとめ
 
 | 機能 / 制約 | 内容 | 検出タイミング |
 |------------|------|--------------|
-| SAI / ASIC ケイパビリティ照会 | 不要（ロケータは FRR 専用、SAI 直接操作なし） | 該当なし |
+| SAI / [ASIC](../../reference/glossary.md#term-asic) ケイパビリティ照会 | 不要（ロケータは FRR 専用、SAI 直接操作なし） | 該当なし |
 | `behavior usid` 強制 | bgpcfgd 経路では必ずロケータが uSID モードで設定される | 起動時・設定適用時 |
 | IPv6 必須 | `prefix` は `inet:ipv6-prefix` 型のみ | YANG バリデーション時 |
 | `arg_len` FRR 未対応 | arg_len は Srv6Orch (SAI) にのみ反映、FRR コマンドには含まれない | なし（サイレント無視） |
@@ -392,3 +392,5 @@ FRR 設定の冪等性により両者が同じロケータを設定する場合�
 
 [^1]: SRv6 YANG モデル: `sonic-srv6.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-srv6.yang>
 [^2]: SRv6 bgpcfgd マネージャ: `managers_srv6.py`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py>
+
+<!-- glossary-links-injected: 69ea927e57d7 -->

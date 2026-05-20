@@ -54,6 +54,7 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`ROUTE_MAP`](../config-db/route-map.md)
+- [`ROUTE_MAP_SET`](../config-db/route-map-set.md)
 
 ### 関連 HLD
 

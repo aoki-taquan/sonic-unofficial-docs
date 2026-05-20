@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-`show services` は **稼働中の SONiC docker コンテナ全てに対して `ps aux` を一括実行**して結果を結合表示するデバッグ用コマンド。各 docker サービスの中で動いているプロセスツリーをまとめて見られる[^1]。
+`show services` は **稼働中の [SONiC](../../reference/glossary.md#term-sonic) docker コンテナ全てに対して `ps aux` を一括実行**して結果を結合表示するデバッグ用コマンド。各 docker サービスの中で動いているプロセスツリーをまとめて見られる[^1]。
 
 ## シグネチャ
 
@@ -68,7 +68,7 @@ def services():
 
 ## 注意点
 
-- **コンテナが大量にあるシャーシ系・multi-ASIC では出力が非常に長くなる**。スクロールしたくない場合は `show services | less` を推奨。
+- **コンテナが大量にあるシャーシ系・multi-[ASIC](../../reference/glossary.md#term-asic) では出力が非常に長くなる**。スクロールしたくない場合は `show services | less` を推奨。
 - pager は内部で付かないため、デフォルトはそのまま stdout に流れる。
 - `docker ps` で見える「停止中のコンテナ」は含まれない。停止中サービスの状態を見るには `show feature status` や `systemctl status` を使う。
 
@@ -118,4 +118,4 @@ flowchart LR
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: ec18b66e3507 -->

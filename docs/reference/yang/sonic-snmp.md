@@ -31,7 +31,7 @@ related:
 - import: `ietf-inet-types`
 - top container: `sonic-snmp`
 
-Simple Network Management Protocol ([SNMP](../../reference/glossary.md#term-snmp)) agent configuration [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
+Simple Network Management Protocol ([SNMP](../../reference/glossary.md#term-snmp)) agent configuration [YANG](../../reference/glossary.md#term-yang) module for [SONiC](../../reference/glossary.md#term-sonic) OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -163,4 +163,4 @@ module: sonic-snmp
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-snmp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

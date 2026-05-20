@@ -14,7 +14,7 @@ related:
 
 # SONiC 非公式ドキュメント (日本語)
 
-SONiC NOS (community master) の AI 再構成 日本語ドキュメント。
+[SONiC](./reference/glossary.md#term-sonic) NOS (community master) の AI 再構成 日本語ドキュメント。
 公式 [HLD](./reference/glossary.md#term-hld) の分散・古さ・実装乖離を補い、引用付きで master を追う。
 
 [はじめての方は概要から :material-arrow-right:](topics/01-overview/index.md){ .md-button .md-button--primary }
@@ -33,7 +33,7 @@ SONiC NOS (community master) の AI 再構成 日本語ドキュメント。
     - **runbook-verified ページ**: 27 件（Runbook 専用。実運用で症状再現性が確認済み）
     - **discrepancy-found ページ**: 107 件（HLD と実装の乖離を明示）
     - **監査平均評価**: 4.99 / 5.0（quality-audit round 52）
-    - すべての本文ページが `hld-only` を脱却し、`code-verified` または `discrepancy-found` に到達済み
+    - **hld-only ページ**: 2 件（裏取り待ち）
     - **保守フェーズ運用中** (2026-05-13〜): 月次 master 追従 / 偶数 round stratified audit / feedback 反映で 4.97+ プラトーを維持 (`meta/maintenance-mode.md`)
 <!-- quality-banner-end -->
 
@@ -82,4 +82,4 @@ SONiC NOS (community master) の AI 再構成 日本語ドキュメント。
 
 誤情報の報告・改善要望は [GitHub Issues](https://github.com/aoki-taquan/sonic-unofficial-docs/issues/new/choose) / [Discussions](https://github.com/aoki-taquan/sonic-unofficial-docs/discussions) へ。プロジェクトの全体像は [このドキュメントについて](about.md) にまとまっています。
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

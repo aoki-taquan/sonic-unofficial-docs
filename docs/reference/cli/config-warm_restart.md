@@ -41,7 +41,7 @@ related:
 
 ### enable / disable
 
-`<module>` を省略すると `system`。`module != system` の場合は [CONFIG_DB](../../reference/glossary.md#term-config_db) `FEATURE` テーブルに存在する feature 名だけを受け付ける。namespace 指定が無い場合、single-ASIC では default namespace、multi-ASIC では default + ASIC namespace 群に反映する[^2]。
+`<module>` を省略すると `system`。`module != system` の場合は [CONFIG_DB](../../reference/glossary.md#term-config_db) `FEATURE` テーブルに存在する feature 名だけを受け付ける。namespace 指定が無い場合、single-[ASIC](../../reference/glossary.md#term-asic) では default namespace、multi-[ASIC](../../reference/glossary.md#term-asic) では default + [ASIC](../../reference/glossary.md#term-asic) namespace 群に反映する[^2]。
 
 ### timer 系
 
@@ -115,4 +115,4 @@ sonic-db-cli STATE_DB keys 'WARM_RESTART_TABLE|*'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 2659d47ccbe6 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

@@ -309,7 +309,7 @@ $ grep -rn "error-database\|error_database" .cache/sonic-sources/sonic-utilities
 
 #### 読者への影響
 
-- BGP が経路追加を要求し、ASIC FIB がそれを `SAI_STATUS_TABLE_FULL` で reject した場合、fpmsyncd / bgpd は **失敗を知らない**ため、`show ip route` には経路が見えるが `show ip fib` には無い、というサイレントな乖離が発生する。
+- BGP が経路追加を要求し、[ASIC](../reference/glossary.md#term-asic) FIB がそれを `SAI_STATUS_TABLE_FULL` で reject した場合、fpmsyncd / bgpd は **失敗を知らない**ため、`show ip route` には経路が見えるが `show ip fib` には無い、というサイレントな乖離が発生する。
 - HLD 通りに `show error-database` を期待する自動化スクリプトは即座に失敗する。
 - retry / rollback ロジックが実装されないため、ASIC リソース不足（[TCAM](../reference/glossary.md#term-tcam) full 等）の状態は手動介入が必要。
 - 一時的回避として OrchAgent のログを syslog で grep する以外に体系的な検知手段が無い。
@@ -361,4 +361,4 @@ redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*' | wc -l   # RIB �
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: c006405759d8 -->

@@ -27,7 +27,7 @@ hard: 0
 
 ## 概要
 
-sonic-buildimage は Docker ベースの階層的なビルドシステムを使用する。
+[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) は Docker ベースの階層的なビルドシステムを使用する。
 ホスト OS・Docker バージョン・プラットフォームの組み合わせによって
 様々なビルドエラーが発生することが報告されている。
 
@@ -104,7 +104,7 @@ systemctl status docker
 Docker in docker builds do not work in build container (Arch linux host)
 ```
 
-**原因**: SONiC のビルドコンテナ（sonic-slave）は Ubuntu ベースで
+**原因**: [SONiC](../reference/glossary.md#term-sonic) のビルドコンテナ（sonic-slave）は Ubuntu ベースで
 設計されており、Arch Linux などの非 Ubuntu ホストでは
 カーネルパラメータや cgroup の設定が異なる。
 
@@ -205,7 +205,7 @@ make sonic-slave-bullseye
 VS image build failed when P4RT container is enabled
 ```
 
-**背景**: P4RT（P4 Runtime）は PINS プロジェクトの opt-in 機能。
+**背景**: [P4RT](../reference/glossary.md#term-p4rt)（P4 Runtime）は [PINS](../reference/glossary.md#term-pins) プロジェクトの opt-in 機能。
 デフォルト設定では無効のため、通常のビルドには影響しない。
 
 **対処**:
@@ -255,3 +255,5 @@ export SONIC_DEBUGGING_ON=y
 
 - [ビルドシステム改善 HLD](../architecture/build-system-improvements.md)
 - [ビルドプロファイル](../architecture/build-profiles.md)
+
+<!-- glossary-links-injected: a8f7c59145cf -->

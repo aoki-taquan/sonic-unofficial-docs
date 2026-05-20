@@ -46,7 +46,7 @@ related:
 
 ## なぜ必要か
 
-従来の SONiC は `APP_DB.ROUTE_TABLE` 各エントリにネクストホップ情報 (`nexthop` / `ifname`) を **直接埋め込んで** いた。数百万ルートが同じネクストホップ群を共有する大規模シナリオでは、毎ルートで同一情報を APP_DB に書き [orchagent](../reference/glossary.md#term-orchagent) でパースするため、メモリと処理時間が二重に重い[^1]。
+従来の [SONiC](../reference/glossary.md#term-sonic) は `APP_DB.ROUTE_TABLE` 各エントリにネクストホップ情報 (`nexthop` / `ifname`) を **直接埋め込んで** いた。数百万ルートが同じネクストホップ群を共有する大規模シナリオでは、毎ルートで同一情報を APP_DB に書き [orchagent](../reference/glossary.md#term-orchagent) でパースするため、メモリと処理時間が二重に重い[^1]。
 
 本機能は **APP_DB 側でネクストホップ群を独立テーブルに切り出し**、ルートはそのキー参照だけを持つ形に変える。
 
@@ -189,4 +189,4 @@ show ip route summary
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: fa4061b260ea -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -83,7 +83,7 @@ ACL_RULE|<table>|<rule>:
 
 ### STATE_DB
 
-`STATE_DB.SWITCH_TRIMMING_CAPABILITY` で ASIC が PT をサポートしているか / supported size 範囲 / asymmetric DSCP 可否を公開[^1]。CLI が事前 check に使う。
+`STATE_DB.SWITCH_TRIMMING_CAPABILITY` で [ASIC](../reference/glossary.md#term-asic) が PT をサポートしているか / supported size 範囲 / asymmetric DSCP 可否を公開[^1]。CLI が事前 check に使う。
 
 ### 動作フロー
 
@@ -222,4 +222,4 @@ show queue counters | grep -i trim
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c5a6ce567024 -->
+<!-- glossary-links-injected: c006405759d8 -->

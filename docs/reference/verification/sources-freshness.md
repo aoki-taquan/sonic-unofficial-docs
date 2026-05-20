@@ -10,7 +10,7 @@ tags:
 
 # ソース pinned SHA の新鮮度（sources-freshness）
 
-本サイトの各ページは frontmatter `sources[].ref` で SONiC 上流リポのコミット SHA を**固定**している。固定 SHA は `meta/index/repos.json` で一元管理しており、Indexer 再走時に更新される。
+本サイトの各ページは frontmatter `sources[].ref` で [SONiC](../../reference/glossary.md#term-sonic) 上流リポのコミット SHA を**固定**している。固定 SHA は `meta/index/repos.json` で一元管理しており、Indexer 再走時に更新される。
 
 このページは `meta/scripts/check_sources_freshness.py --write` で生成され、各対象リポについて pinned SHA と upstream HEAD の差分を可視化する。**読者はサイトの記述がどの時点の SONiC master を反映しているかをここで確認できる**。
 
@@ -50,3 +50,5 @@ tags:
 - 定期的に **Indexer を再走させて `meta/index/repos.json` を更新する**（四半期サイクル目安）。更新後は本ページを `python3 meta/scripts/check_sources_freshness.py --write` で再生成する。
 - 個別ページの `sources[].ref` は当該ページの裏取り時点で固定する設計であり、サイト全体で一斉に SHA を bump する必要はない。本ページはあくまで「サイト全体としてどの時点の master を見ているか」の俯瞰指標。
 - 詳細手順は `meta/discrepancy-operations.md` の「定期実行」節を参照。
+
+<!-- glossary-links-injected: 8ba32e5aa69d -->

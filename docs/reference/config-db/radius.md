@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-RADIUS クライアントのグローバル設定を保持するシングルトンテーブル[^1]。`hostcfgd` の [AAA](../../reference/glossary.md#term-aaa) ハンドラが読み、PAM (`/etc/pam.d/common-auth`) と NSS、`/etc/pam_radius_auth.conf` を生成する。サーバ固有の設定は `RADIUS_SERVER` 側にある。
+[RADIUS](../../reference/glossary.md#term-radius) クライアントのグローバル設定を保持するシングルトンテーブル[^1]。`hostcfgd` の [AAA](../../reference/glossary.md#term-aaa) ハンドラが読み、PAM (`/etc/pam.d/common-auth`) と NSS、`/etc/pam_radius_auth.conf` を生成する。サーバ固有の設定は `RADIUS_SERVER` 側にある。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -52,9 +52,9 @@ RADIUS|global
 
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
-| `passkey` | string (1..65 chars、SPACE/`#`/`,` 不可) | なし | 既定の共有秘密鍵 (RADIUS shared secret) |
+| `passkey` | string (1..65 chars、SPACE/`#`/`,` 不可) | なし | 既定の共有秘密鍵 ([RADIUS](../../reference/glossary.md#term-radius) shared secret) |
 | `auth_type` | enum `pap`/`chap`/`mschapv2` | `pap` | 既定の認証プロトコル |
-| `src_ip` | `inet:ip-address` | なし | RADIUS パケット送信元アドレス |
+| `src_ip` | `inet:ip-address` | なし | [RADIUS](../../reference/glossary.md#term-radius) パケット送信元アドレス |
 | `nas_ip` | `inet:ip-address` | なし | NAS-IP-Address / NAS-IPv6-Address 属性に乗せる値 |
 | `statistics` | boolean | なし | サーバ統計収集の有効化 |
 | `timeout` | uint16 (1..60 秒) | `5` | 既定の応答待ちタイムアウト |
@@ -154,7 +154,6 @@ show radius
 
 [^2]: [hostcfgd](../../reference/glossary.md#term-hostcfgd) 実装: `sonic-host-services/scripts/hostcfgd`. <https://github.com/sonic-net/sonic-host-services/blob/master/scripts/hostcfgd>
 
-
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
@@ -179,7 +178,7 @@ show radius
 
 **nas_ip / nas_id の load 時単回解決 (依存 #3, #4)**: `modify_conf_file()` は `'nas_ip' not in radius_global` の場合に `get_interface_ip("eth0")` を呼んで eth0 の IP を nas_ip とする。`'nas_id' not in radius_global` の場合は `get_hostname()` で hostname を取得する。これらは `modify_conf_file()` 呼び出しごとに再評価されるため、runtime での `MGMT_INTERFACE` / `DEVICE_METADATA` 変更は次回の `RADIUS` イベント時に自動的に反映されるが、`RADIUS|global` に `nas_ip` / `nas_id` を明示指定すれば環境依存を排除できる（evidence: `hostcfgd:667-678`）。
 
-**AAA 後書き推奨 (依存 #5)**: `AAA.authentication.login = "radius"` を書く前に `RADIUS_SERVER` エントリを揃えること。`AAA` を先に書くと `modify_conf_file()` が RADIUS サーバなしで PAM 設定を再生成し、RADIUS サーバ追加 (`RADIUS_SERVER` 書き込み) まで既存ログインは local フォールバックで処理される（evidence: `hostcfgd:752-780`）。
+**[AAA](../../reference/glossary.md#term-aaa) 後書き推奨 (依存 #5)**: `AAA.authentication.login = "radius"` を書く前に `RADIUS_SERVER` エントリを揃えること。`AAA` を先に書くと `modify_conf_file()` が RADIUS サーバなしで PAM 設定を再生成し、RADIUS サーバ追加 (`RADIUS_SERVER` 書き込み) まで既存ログインは local フォールバックで処理される（evidence: `hostcfgd:752-780`）。
 
 <!-- /ordering -->
 
@@ -192,8 +191,8 @@ show radius
 
 | テーブル | 参照タイミング | 用途 | evidence |
 |---|---|---|---|
-| [`RADIUS_SERVER`](radius-server.md) | 毎回 | サーバ毎の `auth_port` / `passkey` / `retransmit` / `timeout` / `src_intf` を global dict とマージ | hostcfgd:681-695 |
-| [`AAA`](aaa.md) | 毎回 | `authentication.login` に `radius` が含まれる場合のみ PAM に RADIUS 設定を反映 | hostcfgd:752-780 |
+| [`RADIUS_SERVER`](radius-server.md) | 毎回 | サーバ毎の `auth_port` / `passkey` / `retransmit` / `timeout` / `src_intf` を global dict とマージ | [hostcfgd](../../reference/glossary.md#term-hostcfgd):681-695 |
+| [`AAA`](aaa.md) | 毎回 | `authentication.login` に `radius` が含まれる場合のみ PAM に RADIUS 設定を反映 | [hostcfgd](../../reference/glossary.md#term-hostcfgd):752-780 |
 
 ### 動的 IP / hostname 解決 (modify_conf_file 内で get_interface_ip 経由)
 
@@ -213,8 +212,8 @@ RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけで
 |---|---|---|---|
 | `MGMT_INTERFACE` | `mgmt_intf_handler` → `handle_radius_source_intf_ip_chg()` + `handle_radius_nas_ip_chg()` | eth0 IP 変化時に `src_ip` / `nas_ip` を再計算して conf 再生成 | hostcfgd:2348-2349, 2485 |
 | `INTERFACE` | `phy_intf_handler` → `handle_radius_source_intf_ip_chg()` | 物理ポート IP 変化時に RADIUS `src_ip` を更新 | hostcfgd:2365, 2489 |
-| `VLAN_INTERFACE` | `vlan_intf_handler` → `handle_radius_source_intf_ip_chg()` | VLAN IP 変化時に RADIUS `src_ip` を更新 | hostcfgd:2369, 2486 |
-| `PORTCHANNEL_INTERFACE` | `portchannel_intf_handler` → `handle_radius_source_intf_ip_chg()` | PortChannel IP 変化時に RADIUS `src_ip` を更新 | hostcfgd:2377, 2488 |
+| `VLAN_INTERFACE` | `vlan_intf_handler` → `handle_radius_source_intf_ip_chg()` | [VLAN](../../reference/glossary.md#term-vlan) IP 変化時に RADIUS `src_ip` を更新 | hostcfgd:2369, 2486 |
+| `PORTCHANNEL_INTERFACE` | `portchannel_intf_handler` → `handle_radius_source_intf_ip_chg()` | [PortChannel](../../reference/glossary.md#term-portchannel) IP 変化時に RADIUS `src_ip` を更新 | hostcfgd:2377, 2488 |
 | [`DEVICE_METADATA`](device-metadata.md) | `device_metadata_handler` → `aaacfg.hostname_update()` | hostname 変化時に RADIUS `nas_id` を再生成 | hostcfgd:2280, 2492 |
 
 > RADIUS 設定ファイル (`pam_radius_auth.conf` / `radius_nss.conf`) は `RADIUS` テーブルの変更以外にも、上記テーブルの変更で再生成される。特に `MGMT_INTERFACE` の IP 変化は `nas_ip` に影響するため、管理アドレス変更時は RADIUS 認証が一時的に中断される可能性がある。
@@ -262,7 +261,7 @@ RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけで
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`RADIUS` テーブルを処理する `hostcfgd` (`sonic-host-services/scripts/hostcfgd`) 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+`RADIUS` テーブルを処理する `hostcfgd` (`sonic-host-services/scripts/hostcfgd`) 内に存在する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG で管理されないハードコード定数の一覧。
 
 ### RADIUS 設定ファイルパス
 
@@ -302,7 +301,7 @@ RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけで
 > 調査証跡: `meta/_intermediate/cdb-flow/radius-side-effects.md`
 > ソース: `sonic-host-services/scripts/hostcfgd` L641-860 (`modify_conf_file`)
 
-`RADIUS` の SET/DEL を受けた `hostcfgd` (`AaaCfg`) の処理経路では **Redis DB（STATE_DB / APPL_DB / COUNTERS_DB 等）への書き込みは一切発生しない**。副次動作はすべて OS ファイルシステムへの設定ファイル再生成と systemd サービス制御。
+`RADIUS` の SET/DEL を受けた `hostcfgd` (`AaaCfg`) の処理経路では **[Redis](../../reference/glossary.md#term-redis) DB（[STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 等）への書き込みは一切発生しない**。副次動作はすべて OS ファイルシステムへの設定ファイル再生成と systemd サービス制御。
 
 ### PAM 設定ファイル再生成
 
@@ -329,7 +328,7 @@ RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけで
 
 ### Redis DB への書き込み: なし
 
-`modify_conf_file()` は `swsscommon` の `Table.set()` / `ProducerStateTable` / `ConfigDBConnector.set_entry()` を一切呼び出さない。RADIUS 処理経路は CONFIG_DB から読み取るのみで、他の Redis DB への書き戻しは行わない。
+`modify_conf_file()` は `swsscommon` の `Table.set()` / `ProducerStateTable` / `ConfigDBConnector.set_entry()` を一切呼び出さない。RADIUS 処理経路は CONFIG_DB から読み取るのみで、他の [Redis](../../reference/glossary.md#term-redis) DB への書き戻しは行わない。
 
 <!-- /side-effects -->
 
@@ -338,7 +337,7 @@ RADIUS 設定は `RADIUS` / `RADIUS_SERVER` テーブルのイベントだけで
 
 ### Redis 購読方式
 
-`RADIUS` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:RADIUS|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+`RADIUS` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **[Redis](../../reference/glossary.md#term-redis) keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:RADIUS|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
 
 | 購読者 | 購読 API | 購読テーブル | ハンドラ |
 |--------|---------|--------------|---------|
@@ -381,8 +380,8 @@ radius_global_handler(key="global", op=SET, data={passkey: "..."})
 |---|---|---|---|
 | `MGMT_INTERFACE` | `handle_radius_source_intf_ip_chg()` + `handle_radius_nas_ip_chg()` | eth0 IP 変化時に `src_ip` / `nas_ip` を再計算して PAM 再生成 | hostcfgd:2348-2349, 2485 |
 | `INTERFACE` | `handle_radius_source_intf_ip_chg()` | 物理ポート IP 変化時に `src_ip` を更新 | hostcfgd:2365, 2489 |
-| `VLAN_INTERFACE` | `handle_radius_source_intf_ip_chg()` | VLAN IP 変化時に `src_ip` を更新 | hostcfgd:2369, 2486 |
-| `PORTCHANNEL_INTERFACE` | `handle_radius_source_intf_ip_chg()` | PortChannel IP 変化時に `src_ip` を更新 | hostcfgd:2377, 2488 |
+| `VLAN_INTERFACE` | `handle_radius_source_intf_ip_chg()` | [VLAN](../../reference/glossary.md#term-vlan) IP 変化時に `src_ip` を更新 | hostcfgd:2369, 2486 |
+| `PORTCHANNEL_INTERFACE` | `handle_radius_source_intf_ip_chg()` | [PortChannel](../../reference/glossary.md#term-portchannel) IP 変化時に `src_ip` を更新 | hostcfgd:2377, 2488 |
 | `DEVICE_METADATA` | `hostname_update()` | hostname 変化時に `nas_id` を再生成 | hostcfgd:2280, 2492 |
 
 ### サービス再起動トリガー
@@ -399,17 +398,17 @@ radius_global_handler(key="global", op=SET, data={passkey: "..."})
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: RADIUS は SSH / コンソール認証のコントロールプレーン処理であり、SAI 非経由。ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+**プラットフォーム差なし**: RADIUS は SSH / コンソール認証のコントロールプレーン処理であり、[SAI](../../reference/glossary.md#term-sai) 非経由。[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/radius-platform.md`
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `hostcfgd` の RADIUS ハンドラは SAI API を呼び出さない。PAM / NSS 設定ファイルの生成のみ (`hostcfgd:527-545, 641-851`) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `hostcfgd` の RADIUS ハンドラは [SAI](../../reference/glossary.md#term-sai) API を呼び出さない。PAM / NSS 設定ファイルの生成のみ (`hostcfgd:527-545, 641-851`) |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `hostcfgd` は `ConfigDBConnector()` (引数なし) で host 単体の CONFIG_DB のみを購読する。`asicN` namespace を iterate しない (`hostcfgd:2166-2185`)。RADIUS は per-host 認証のため namespace 分割は無関係 |
-| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | RADIUS テーブルは host scope。chassis 全体での集中認証機構はなく、各 line card host で `hostcfgd` が独立に PAM 設定を再生成する |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | RADIUS テーブルは host scope。chassis 全体での集中認証機構はなく、各 line card host で `hostcfgd` が独立に PAM 設定を再生成する |
 | ベンダー固有 PAM モジュール | なし | community master の RADIUS スタックは `pam_radius_auth.so` (Debian 標準パッケージ)。`sonic-buildimage` の `files/image_config/` にベンダー向け hook 注入箇所なし |
-| SmartSwitch (NPU + DPU 構成) | 影響なし | RADIUS は管理プレーン認証。DPU 側の orchagent / SAI は参照しない。`DPU` テーブルに RADIUS 関連フィールドなし |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([NPU](../../reference/glossary.md#term-npu) + [DPU](../../reference/glossary.md#term-dpu) 構成) | 影響なし | RADIUS は管理プレーン認証。[DPU](../../reference/glossary.md#term-dpu) 側の [orchagent](../../reference/glossary.md#term-orchagent) / [SAI](../../reference/glossary.md#term-sai) は参照しない。`DPU` テーブルに RADIUS 関連フィールドなし |
 | Jinja2 テンプレート内のプラットフォーム分岐 | なし | `pam_radius_auth.conf.j2` / `radius_nss.conf.j2` を `platform|asic|chassis|namespace|vendor` で grep して 0 ヒット。分岐は `auth_type` / `src_ip` / `vrf_name` / `statistics` フィールド値のみ |
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd:527-545 (radius_global_update — SAI 呼び出しなし) -->
@@ -443,7 +442,6 @@ hostcfgd の `RadiusCfg` は `self.radius_global_default` というモジュー�
 
 > **Evidence**: `sonic-host-services/scripts/hostcfgd:92-96` (モジュール定数)、`:374-382` (`self.radius_global_default` 構築)。SHA `c5bbbe8b07b96f078fa4b761316627404b01bd04`。詳細は `meta/_intermediate/cdb-flow/radius-defaults.md` を参照。
 <!-- /defaults -->
-
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
@@ -503,7 +501,7 @@ RADIUS / RADIUS_SERVER テーブルへの書き込みが発生するコード経
 
 ### CLI
 
-  - `config radius add/del/set ...` — `config/aaa.py` が RADIUS_SERVER を書き込む (sonic-utilities/config/aaa.py)
+  - `config radius add/del/set ...` — `config/aaa.py` が RADIUS_SERVER を書き込む ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/aaa.py)
 
 ### minigraph / sonic-cfggen
 
@@ -511,7 +509,7 @@ minigraph.py に RADIUS テーブル生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -530,4 +528,4 @@ db_migrator.py での RADIUS マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 9bd150521228 -->
+<!-- glossary-links-injected: 841e6cdca746 -->

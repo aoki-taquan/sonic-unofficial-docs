@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-`PIM_GLOBALS` と `PIM_INTERFACE` は PIM-SM (Protocol Independent Multicast Sparse Mode) の設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。`sonic-buildimage` の `frrcfgd` がこれらのテーブルを購読し、`vtysh` コマンドに変換して FRR の `pimd` へ注入する。SONiC における IP マルチキャスト転送の中核を担う設定テーブルである。
+`PIM_GLOBALS` と `PIM_INTERFACE` は PIM-SM (Protocol Independent Multicast Sparse Mode) の設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。`sonic-buildimage` の `frrcfgd` がこれらのテーブルを購読し、`vtysh` コマンドに変換して [FRR](../../reference/glossary.md#term-frr) の `pimd` へ注入する。[SONiC](../../reference/glossary.md#term-sonic) における IP マルチキャスト転送の中核を担う設定テーブルである。
 
 <!-- cdb-mermaid -->
 ### データフロー
@@ -63,18 +63,18 @@ flowchart LR
 PIM_GLOBALS|<vrf>|<af>
 ```
 
-- `<vrf>`: VRF 名。デフォルト VRF は `"default"`
+- `<vrf>`: [VRF](../../reference/glossary.md#term-vrf) 名。デフォルト [VRF](../../reference/glossary.md#term-vrf) は `"default"`
 - `<af>`: アドレスファミリ。現状 `"ipv4"` のみサポート
 
 ### フィールド
 
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
-| `join-prune-interval` | uint32 (秒) | `60` | Join/Prune メッセージの送信間隔 (RFC 4601: t_periodic)。FRR `pimd.c` で `PIM_DEFAULT_T_PERIODIC = 60` に初期化[^2] |
-| `keep-alive-timer` | uint32 (秒) | `210` | マルチキャストルートのキープアライブタイマー。FRR `pim_upstream.h` で `PIM_KEEPALIVE_PERIOD = 210` に定義[^3] |
+| `join-prune-interval` | uint32 (秒) | `60` | Join/Prune メッセージの送信間隔 (RFC 4601: t_periodic)。[FRR](../../reference/glossary.md#term-frr) `pimd.c` で `PIM_DEFAULT_T_PERIODIC = 60` に初期化[^2] |
+| `keep-alive-timer` | uint32 (秒) | `210` | マルチキャストルートのキープアライブタイマー。[FRR](../../reference/glossary.md#term-frr) `pim_upstream.h` で `PIM_KEEPALIVE_PERIOD = 210` に定義[^3] |
 | `ssm-ranges` | string | 省略可 | SSM (Source Specific Multicast) レンジを指定する prefix-list 名。省略時は FRR コマンド非発行 |
-| `ecmp-enabled` | boolean string | `"false"` | ECMP (Equal Cost Multi-Path) マルチキャスト転送を有効化。FRR `pim_instance.c` で `ecmp_enable = false` に初期化[^4] |
-| `ecmp-rebalance-enabled` | boolean string | `"false"` | ECMP リバランスを有効化。`ecmp-enabled = true` が前提。FRR `pim_instance.c` で `ecmp_rebalance_enable = false` に初期化[^4] |
+| `ecmp-enabled` | boolean string | `"false"` | [ECMP](../../reference/glossary.md#term-ecmp) (Equal Cost Multi-Path) マルチキャスト転送を有効化。FRR `pim_instance.c` で `ecmp_enable = false` に初期化[^4] |
+| `ecmp-rebalance-enabled` | boolean string | `"false"` | [ECMP](../../reference/glossary.md#term-ecmp) リバランスを有効化。`ecmp-enabled = true` が前提。FRR `pim_instance.c` で `ecmp_rebalance_enable = false` に初期化[^4] |
 
 ## PIM_INTERFACE テーブル
 
@@ -84,7 +84,7 @@ PIM_GLOBALS|<vrf>|<af>
 PIM_INTERFACE|<vrf>|<af>|<interface>
 ```
 
-- `<vrf>`: VRF 名。デフォルト VRF は `"default"`
+- `<vrf>`: [VRF](../../reference/glossary.md#term-vrf) 名。デフォルト VRF は `"default"`
 - `<af>`: アドレスファミリ。現状 `"ipv4"` のみサポート
 - `<interface>`: インタフェース名 (例: `"Ethernet0"`, `"Vlan10"`)
 
@@ -95,19 +95,19 @@ PIM_INTERFACE|<vrf>|<af>|<interface>
 | `mode` | enum string | 実質必須 | PIM 動作モード。`"sm"` で sparse-mode 有効化 (`ip pim`)。空文字列または OP_DELETE で無効化 (`no ip pim`) |
 | `dr-priority` | uint32 | `1` | Designated Router 優先度 (RFC 4601: 4.3.1)。FRR `pim_pim.h` で `PIM_DEFAULT_DR_PRIORITY = 1`[^5] |
 | `hello-interval` | string | `"30"` | Hello メッセージ間隔 (秒)。カンマ区切りで `"<interval>,<hold-time>"` 形式も可。FRR `pim_pim.h` で `PIM_DEFAULT_HELLO_PERIOD = 30`[^5] |
-| `bfd-enabled` | boolean string | `"false"` | BFD による PIM 隣接監視を有効化 |
+| `bfd-enabled` | boolean string | `"false"` | [BFD](../../reference/glossary.md#term-bfd) による PIM 隣接監視を有効化 |
 
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`frrcfgd` (`BGPConfigDaemon`) が CONFIG_DB の `PIM_GLOBALS` および `PIM_INTERFACE` を購読し、`bgp_table_handler_common` を通じて `__update_bgp()` キューで逐次処理する[^1]。以下の書き込み順序を守ること。
+`frrcfgd` (`BGPConfigDaemon`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `PIM_GLOBALS` および `PIM_INTERFACE` を購読し、`bgp_table_handler_common` を通じて `__update_bgp()` キューで逐次処理する[^1]。以下の書き込み順序を守ること。
 
 ### 依存関係サマリ
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
 | 1 | `PIM_INTERFACE` SET に `mode` を必ず含める | **必須**（欠如時 全フィールド silent drop） | なし |
-| 2 | `VRF\|<vrf>` → `PIM_GLOBALS\|<vrf>\|<af>` / `PIM_INTERFACE\|<vrf>\|<af>\|<if>` | 推奨先行 | VRF 欠如時 vtysh が LOG_ERR を出力 |
+| 2 | `VRF\|<vrf>` → `PIM_GLOBALS\|<vrf>\|<af>` / `PIM_INTERFACE\|<vrf>\|<af>\|<if>` | 推奨先行 | VRF 欠如時 [vtysh](../../reference/glossary.md#term-vtysh) が LOG_ERR を出力 |
 | 3 | `PORT` / `VLAN` 等インタフェース → `PIM_INTERFACE\|...\|<if>` | 推奨先行 | インタフェース未存在時 FRR が LOG_ERR を出力 |
 | 4 | `PIM_GLOBALS` → `PIM_INTERFACE` | 推奨（中間状態最小化） | FRR デフォルト値で pimd が動作継続 |
 | 5 | `ecmp-enabled = "true"` → `ecmp-rebalance-enabled = "true"` | **必須**（FRR が rebalance を無視） | なし |
@@ -117,7 +117,7 @@ PIM_INTERFACE|<vrf>|<af>|<interface>
 
 **`mode` 必須 (依存 #1)**
 
-`frrcfgd.py` L3787-3802 において、`PIM_INTERFACE` の処理は `'mode' in data` の条件を通過した場合のみ `key_map.run_command()` を呼び出す[^1]。`mode` が SET に含まれない UPDATE では `dr-priority` / `hello-interval` / `bfd-enabled` を含む全フィールドが **silent drop** される。YANG mandatory 宣言はないが動作上は必須フィールドである。
+`frrcfgd.py` L3787-3802 において、`PIM_INTERFACE` の処理は `'mode' in data` の条件を通過した場合のみ `key_map.run_command()` を呼び出す[^1]。`mode` が SET に含まれない UPDATE では `dr-priority` / `hello-interval` / `bfd-enabled` を含む全フィールドが **silent drop** される。[YANG](../../reference/glossary.md#term-yang) mandatory 宣言はないが動作上は必須フィールドである。
 
 ```
 PIM_INTERFACE|<vrf>|ipv4|<if>  ← mode を含む SET が必須
@@ -129,7 +129,7 @@ PIM_INTERFACE|<vrf>|ipv4|<if>  ← mode を含む SET が必須
 
 **VRF 先行推奨 (依存 #2)**
 
-`frrcfgd` は VRF 存在確認を行わず、vtysh コマンドを `vrf <vrf>` コンテキストで直接発行する（frrcfgd.py L3808-3809）。`VRF|<vrf>` が CONFIG_DB に存在しない場合、カーネル VRF が未作成なため vtysh が失敗し LOG_ERR が出力される。非 default VRF では `VRF|<vrf>` を先行設定すること。
+`frrcfgd` は VRF 存在確認を行わず、[vtysh](../../reference/glossary.md#term-vtysh) コマンドを `vrf <vrf>` コンテキストで直接発行する（frrcfgd.py L3808-3809）。`VRF|<vrf>` が [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在しない場合、カーネル VRF が未作成なため [vtysh](../../reference/glossary.md#term-vtysh) が失敗し LOG_ERR が出力される。非 default VRF では `VRF|<vrf>` を先行設定すること。
 
 **インタフェース先行推奨 (依存 #3)**
 
@@ -137,7 +137,7 @@ PIM_INTERFACE|<vrf>|ipv4|<if>  ← mode を含む SET が必須
 
 **`ecmp-rebalance-enabled` の前提条件 (依存 #5)**
 
-`ecmp-rebalance-enabled = "true"` は `ecmp-enabled = "true"` が先行している場合のみ有効。frrcfgd は両フィールドを独立したコマンドとして発行する（frrcfgd.py L2068-2069）が、FRR pimd は ECMP が無効な状態では rebalance を無視する。CONFIG_DB レベルの強制はないため、先行順序を手動で守る必要がある。
+`ecmp-rebalance-enabled = "true"` は `ecmp-enabled = "true"` が先行している場合のみ有効。frrcfgd は両フィールドを独立したコマンドとして発行する（frrcfgd.py L2068-2069）が、FRR pimd は [ECMP](../../reference/glossary.md#term-ecmp) が無効な状態では rebalance を無視する。CONFIG_DB レベルの強制はないため、先行順序を手動で守る必要がある。
 
 **削除順序 (依存 #6)**
 
@@ -174,7 +174,7 @@ IGMP は PIM sparse-mode が有効な (`mode = "sm"`) インタフェースで�
 
 ### VRF 削除時の孤立キャッシュ
 
-`vrf_handler` は BGP / static-route のキャッシュ整合を行うが、PIM テーブルはその処理対象に含まれない (frrcfgd.py L2415-2467)。`VRF` エントリを削除した後に `PIM_GLOBALS` / `PIM_INTERFACE` エントリが残存すると、frrcfgd のキャッシュ内に孤立データが残り得る。VRF 削除時は先に PIM テーブルを削除すること。
+`vrf_handler` は [BGP](../../reference/glossary.md#term-bgp) / static-route のキャッシュ整合を行うが、PIM テーブルはその処理対象に含まれない (frrcfgd.py L2415-2467)。`VRF` エントリを削除した後に `PIM_GLOBALS` / `PIM_INTERFACE` エントリが残存すると、frrcfgd のキャッシュ内に孤立データが残り得る。VRF 削除時は先に PIM テーブルを削除すること。
 
 ### 範囲外 (誤解されやすいテーブル)
 
@@ -188,7 +188,7 @@ IGMP は PIM sparse-mode が有効な (`mode = "sm"`) インタフェースで�
 <!-- failure -->
 ## 失敗挙動・retry / recovery (Phase D)
 
-`frrcfgd` の PIM テーブルハンドラ (`bgp_table_handler_common` → `__update_bgp()`) は **retry キューを持たない**。SET / DEL のいずれも 1 回の `key_map.run_command()` 呼び出しで完結し、失敗時は `LOG_ERR` を出力して `continue`（次イベントへ進む）するだけで **自動 retry は発生しない**。これは BGP の `bgpcfgd` (`set_queue` ベース deps-driven retry) とは異なる設計である。
+`frrcfgd` の PIM テーブルハンドラ (`bgp_table_handler_common` → `__update_bgp()`) は **retry キューを持たない**。SET / DEL のいずれも 1 回の `key_map.run_command()` 呼び出しで完結し、失敗時は `LOG_ERR` を出力して `continue`（次イベントへ進む）するだけで **自動 retry は発生しない**。これは [BGP](../../reference/glossary.md#term-bgp) の `bgpcfgd` (`set_queue` ベース deps-driven retry) とは異なる設計である。
 
 ### SET 処理における失敗経路
 
@@ -244,7 +244,7 @@ IGMP は PIM sparse-mode が有効な (`mode = "sm"`) インタフェースで�
 
 **`mode` は実質的な必須フィールド**
 
-`frrcfgd.py` L3787-3803 において、`PIM_INTERFACE` エントリの処理は `'mode' in data` のチェックを通過した場合のみ `key_map.run_command()` を呼び出す[^1]。`mode` フィールドが CONFIG_DB エントリに存在しない場合、`hello-interval` や `dr-priority` を含む全フィールドの FRR コマンドが **silent drop** される。YANG 上での mandatory 宣言はないが、動作上は必須。
+`frrcfgd.py` L3787-3803 において、`PIM_INTERFACE` エントリの処理は `'mode' in data` のチェックを通過した場合のみ `key_map.run_command()` を呼び出す[^1]。`mode` フィールドが CONFIG_DB エントリに存在しない場合、`hello-interval` や `dr-priority` を含む全フィールドの FRR コマンドが **silent drop** される。[YANG](../../reference/glossary.md#term-yang) 上での mandatory 宣言はないが、動作上は必須。
 
 ```python
 # frrcfgd.py L3787-3802
@@ -282,7 +282,7 @@ if 'mode' in data:
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-CONFIG_DB の `PIM_GLOBALS` / `PIM_INTERFACE` テーブルで管理されず、FRR `pimd` またはフレームワーク `frrcfgd` のコードに直書きされた定数。変更には FRR / sonic-buildimage のリコンパイルが必要。
+CONFIG_DB の `PIM_GLOBALS` / `PIM_INTERFACE` テーブルで管理されず、FRR `pimd` またはフレームワーク `frrcfgd` のコードに直書きされた定数。変更には FRR / [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) のリコンパイルが必要。
 
 ### FRR タイマーデフォルト (pim_pim.h / pim_upstream.h)
 
@@ -360,7 +360,7 @@ CONFIG_DB PIM_INTERFACE write
 
 ### PIM_INTERFACE.bfd-enabled の変更
 
-`bfd-enabled = "true"` 設定時、pimd は `pim_bfd_reg_dereg_all_nbr(ifp, ZEBRA_BFD_DEST_REGISTER)` を実行し、現在の全 PIM 隣接に対して **BFD セッション登録要求** をゼブラ経由で `bfdd` プロセスに送信する。BFD セッションはゼブラ (`zebra`) を介して `bfdd` が管理し、隣接喪失 (BFD down) を pimd にコールバックする。[^11]
+`bfd-enabled = "true"` 設定時、pimd は `pim_bfd_reg_dereg_all_nbr(ifp, ZEBRA_BFD_DEST_REGISTER)` を実行し、現在の全 PIM 隣接に対して **[BFD](../../reference/glossary.md#term-bfd) セッション登録要求** をゼブラ経由で `bfdd` プロセスに送信する。[BFD](../../reference/glossary.md#term-bfd) セッションはゼブラ (`zebra`) を介して `bfdd` が管理し、隣接喪失 (BFD down) を pimd にコールバックする。[^11]
 
 `bfd-enabled = "false"` (OP_DELETE) 時は `ZEBRA_BFD_DEST_DEREGISTER` を送信して全セッションを解除する。
 
@@ -383,11 +383,11 @@ CONFIG_DB PIM_INTERFACE write
 <!-- pubsub -->
 ## CONFIG_DB 購読メカニズム (Phase G)
 
-`PIM_GLOBALS` および `PIM_INTERFACE` テーブルを CONFIG_DB から購読するのは `frrcfgd` のみである。swss orchagent・bgpcfgd 等の他デーモンによる購読は確認されていない[^1]。
+`PIM_GLOBALS` および `PIM_INTERFACE` テーブルを CONFIG_DB から購読するのは `frrcfgd` のみである。swss [orchagent](../../reference/glossary.md#term-orchagent)・[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 等の他デーモンによる購読は確認されていない[^1]。
 
 ### frrcfgd — ExtConfigDBConnector + keyspace イベント
 
-`BGPConfigDaemon` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用する。`listen()` が Redis keyspace イベント全体を `psubscribe` で監視し、変更イベントを `sub_msg_handler` でテーブル名ごとにルーティングする[^1]。
+`BGPConfigDaemon` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用する。`listen()` が [Redis](../../reference/glossary.md#term-redis) keyspace イベント全体を `psubscribe` で監視し、変更イベントを `sub_msg_handler` でテーブル名ごとにルーティングする[^1]。
 
 ```python
 # frrcfgd.py L1538-1539
@@ -426,7 +426,7 @@ frrcfgd の `daemon_table_map` (frrcfgd.py L117-120) により、PIM テーブ�
 'PIM_INTERFACE': ['pimd'],
 ```
 
-frrcfgd から pimd への経路は単方向であり、pimd から CONFIG_DB への逆方向書き込みは行われない。STATE_DB 連携もない。
+frrcfgd から pimd への経路は単方向であり、pimd から CONFIG_DB への逆方向書き込みは行われない。[STATE_DB](../../reference/glossary.md#term-state_db) 連携もない。
 
 ### 起動時の config replay
 
@@ -437,11 +437,11 @@ frrcfgd から pimd への経路は単方向であり、pimd から CONFIG_DB �
 | 観点 | 内容 |
 |------|------|
 | 購読デーモン | `frrcfgd` のみ |
-| 購読方式 | Redis keyspace イベント (`psubscribe "__keyspace@N__:*"`) |
+| 購読方式 | [Redis](../../reference/glossary.md#term-redis) keyspace イベント (`psubscribe "__keyspace@N__:*"`) |
 | イベント処理 | `bgp_table_handler_common` → `bgp_message` queue → `__update_bgp()` |
 | 最終到達 | `vtysh` → `pimd`（単方向） |
 | 起動時 replay | `get_table()` → queue 投入（unified config mode） |
-| STATE_DB 連携 | なし |
+| [STATE_DB](../../reference/glossary.md#term-state_db) 連携 | なし |
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-pubsub.md`
 <!-- /pubsub -->
@@ -449,14 +449,14 @@ frrcfgd から pimd への経路は単方向であり、pimd から CONFIG_DB �
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-PIM_GLOBALS / PIM_INTERFACE の処理は FRR `pimd` + `frrcfgd` の純粋な制御プレーン実装であり、SAI / ASIC 非経由のため ASIC 種別によるプラットフォーム差はない。ただし起動制御フラグと multi-asic 構成には制約がある。詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-platform.md`。
+PIM_GLOBALS / PIM_INTERFACE の処理は FRR `pimd` + `frrcfgd` の純粋な制御プレーン実装であり、[SAI](../../reference/glossary.md#term-sai) / [ASIC](../../reference/glossary.md#term-asic) 非経由のため [ASIC](../../reference/glossary.md#term-asic) 種別によるプラットフォーム差はない。ただし起動制御フラグと multi-asic 構成には制約がある。詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-platform.md`。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Cisco / vs 等) | 影響なし | PIM は SAI 非経由。pimd がカーネル mroute API (`MRT_INIT` / `MRT_ADD_VIF`) を直接使用。`frrcfgd.py` の PIM ハンドラにプラットフォーム分岐コードなし |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Cisco / vs 等) | 影響なし | PIM は [SAI](../../reference/glossary.md#term-sai) 非経由。pimd がカーネル mroute API (`MRT_INIT` / `MRT_ADD_VIF`) を直接使用。`frrcfgd.py` の PIM ハンドラにプラットフォーム分岐コードなし |
 | `DEVICE_METADATA.frr_mgmt_framework_config` | **必須前提** | `"true"` 以外の場合 pimd / frrcfgd が supervisord に登録されず起動しない。`PIM_GLOBALS` / `PIM_INTERFACE` の CONFIG_DB エントリはサイレントに無視される (`supervisord.conf.j2:120-148`, `critical_processes.j2:5-9`) |
 | multi-asic (`asicN` namespace) | 非対応（実用上単一 ASIC 前提） | `frrcfgd.py` は `multi_asic` / namespace を import しない (grep 0 ヒット)。複数 pimd が同一 VRF の mroute socket を競合するシナリオは非サポート |
-| VOQ chassis (supervisor / line cards) | 不明 / 非推奨 | コミュニティ PIM HLD に chassis サポートの記載なし |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor / line cards) | 不明 / 非推奨 | コミュニティ PIM [HLD](../../reference/glossary.md#term-hld) に chassis サポートの記載なし |
 | MAXVIFS インタフェース上限 | **255**（全プラットフォーム共通） | カーネル `MRT_ADD_VIF` API 由来。`pimd/pim_mroute.h:47-48` で `MAXVIFS=256`、`pim_oil.h:52` で `PIM_MAX_USABLE_VIFS = MAXVIFS-1 = 255` |
 | テンプレート内プラットフォーム分岐 | なし | `frr.conf.j2` に pim テンプレートブロックなし。`supervisord.conf.j2` の分岐は `frr_mgmt_framework_config` フラグのみ |
 
@@ -487,3 +487,5 @@ PIM_GLOBALS / PIM_INTERFACE の処理は FRR `pimd` + `frrcfgd` の純粋な制�
 [^10]: `sonic-frr/pimd/pim_iface.c` L286 — `pim_hello_restart_now(ifp)` (sparse-mode 有効化時); L769-770 — `pim_rp_setup()` / `pim_rp_check_on_if_add()` (インタフェース追加後の RP 再評価)
 [^11]: `sonic-frr/pimd/pim_bfd.c` L109-176 — `pim_bfd_reg_dereg_nbr()` / `pim_bfd_reg_dereg_all_nbr()`: `bfd_peer_sendmsg(ZEBRA_BFD_DEST_REGISTER/DEREGISTER)` によるゼブラ経由 BFD セッション管理
 [^12]: `sonic-frr/pimd/pim_ssm.c` L33-66 — `pim_ssm_range_reevaluate()` / `pim_ssm_prefix_list_update()`: SSM レンジ変更時の (S,G) エントリ再評価
+
+<!-- glossary-links-injected: d6ea86224f5e -->

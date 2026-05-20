@@ -27,7 +27,7 @@ related:
 
 # 内部実装
 
-ここでは、port / optics / PHY を「ベンダー実装の境界」から見直します。SONiC core と platform driver の責任分担、Gearbox 接続、sysfs / BMC 経由の管理を 1 枚にして読みます。
+ここでは、port / optics / PHY を「ベンダー実装の境界」から見直します。[SONiC](../../reference/glossary.md#term-sonic) core と platform driver の責任分担、Gearbox 接続、sysfs / BMC 経由の管理を 1 枚にして読みます。
 
 ## Driver boundary
 
@@ -167,4 +167,4 @@ ASIC_DB:
 - [support BMC flows in SONiC](../../platform/support-bmc-flows-in-sonic.md)
 - [SONiC BMC platform management monitoring](../../system/sonic-bmc-platform-management-monitoring.md)
 
-<!-- glossary-links-injected: 34e33b94bfc4 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->
