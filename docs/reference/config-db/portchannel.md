@@ -32,14 +32,14 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>PORTCHANNEL")]
-  TMGRD["teammgrd"]
-  CDB --> TMGRD
-  APPDB[("APPL_DB<br/>LAG_TABLE")]
-  TMGRD --> APPDB
-  ORCH["orchagent<br/>PortsOrch/LagOrch"]
-  APPDB --> ORCH
+  DM["teammgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_LAG_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
   SAI["SAI<br/>sai_lag_api"]
-  ORCH --> SAI
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"

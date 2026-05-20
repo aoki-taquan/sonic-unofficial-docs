@@ -1858,7 +1858,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [PORT (macsec フィールド)](config-db/macsec-port.md) (186)
 - [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (83)
 - [SAG テーブル](config-db/sag.md) (76)
-- [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (58)
+- [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (59)
 
 ### [MACsec](#term-macsec)
 
@@ -1940,10 +1940,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [orchagent](#term-orchagent)
 
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (218)
-- [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (109)
+- [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (98)
 - [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (70)
-- [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (66)
 - [DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)](config-db/dpu-orch.md) (65)
+- [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (63)
 
 ### [PFC](#term-pfc)
 
@@ -2018,7 +2018,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [POLICER テーブル](config-db/policer.md) (42)
 - [PORT_STORM_CONTROL テーブル — 暗黙デフォルト詳細](config-db/storm-control.md) (41)
-- [PORT_STORM_CONTROL テーブル](config-db/port-storm-control.md) (24)
+- [PORT_STORM_CONTROL テーブル](config-db/port-storm-control.md) (26)
 - [APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)](config-db/appl-mirror.md) (9)
 - [MIRROR_SESSION (ERSPAN 種別)](config-db/erspan.md) (9)
 
@@ -2188,7 +2188,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [LOGGER テーブル](config-db/log-config.md) (14)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (13)
 - [ALARM テーブル (EVENT_DB)](config-db/alarm-table.md) (10)
-- [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (10)
+- [Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）](../architecture/error-handling-framework-in-sonic.md) (9)
 
 ### [sonic-sairedis](#term-sonic-sairedis)
 

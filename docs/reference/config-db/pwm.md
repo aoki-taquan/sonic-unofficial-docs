@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-Periodic watermark のテレメトリ周期を設定するテーブル[^1]。`WatermarkOrch` ([orchagent](../../reference/glossary.md#term-orchagent)) が購読し、`PERIODIC_WATERMARKS` テーブル (COUNTERS_DB) を指定周期で自動クリアする。`FLEX_COUNTER_TABLE` の `QUEUE_WATERMARK` / `PG_WATERMARK` グループが enable になったときにタイマーが起動する。
+Periodic watermark のテレメトリ周期を設定するテーブル[^1]。`WatermarkOrch` ([orchagent](../../reference/glossary.md#term-orchagent)) が購読し、`PERIODIC_WATERMARKS` テーブル ([COUNTERS_DB](../../reference/glossary.md#term-counters_db)) を指定周期で自動クリアする。`FLEX_COUNTER_TABLE` の `QUEUE_WATERMARK` / `PG_WATERMARK` グループが enable になったときにタイマーが起動する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -35,12 +35,12 @@ flowchart LR
   CDB[("CONFIG_DB<br/>WATERMARK_TABLE")]
   DM["WatermarkOrch"]
   CDB --> DM
-  WM["COUNTERS_DB<br/>PERIODIC_WATERMARKS"]
-  DM --> WM
+  SAI["SAI<br/>sai_buffer_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から COUNTERS_DB までの典型経路を示す。詳細・例外は本ページ本文を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -57,7 +57,7 @@ WATERMARK_TABLE|TELEMETRY_INTERVAL
 |----------|----|------|
 | `interval` | uint32 (秒) | periodic watermark クリア間隔。省略時は 120 秒が内部デフォルト。 |
 
-YANG モデルなし。スキーマ検証は orchagent 側の `to_uint<uint32_t>()` によるランタイム型変換のみ。
+[YANG](../../reference/glossary.md#term-yang) モデルなし。スキーマ検証は [orchagent](../../reference/glossary.md#term-orchagent) 側の `to_uint<uint32_t>()` によるランタイム型変換のみ。
 
 ## 購読者
 
@@ -67,7 +67,7 @@ YANG モデルなし。スキーマ検証は orchagent 側の `to_uint<uint32_t>
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `FLEX_COUNTER_TABLE`（`QUEUE_WATERMARK` / `PG_WATERMARK` の enable/disable でタイマー起動/停止）
 - 関連 CLI: `watermarkcfg -c <秒>`（周期設定）、`watermarkcfg -s`（現在値表示）
-- 関連 [YANG](../../reference/glossary.md#term-yang): なし（YANG モデル未定義）
+- 関連 [YANG](../../reference/glossary.md#term-yang): なし（[YANG](../../reference/glossary.md#term-yang) モデル未定義）
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
@@ -85,7 +85,7 @@ auto intervT = timespec { .tv_sec = DEFAULT_TELEMETRY_INTERVAL , .tv_nsec = 0 };
 m_telemetryTimer = new SelectableTimer(intervT);
 ```
 
-`WATERMARK_TABLE|TELEMETRY_INTERVAL` エントリが CONFIG_DB に存在しない場合、orchagent は **120 秒**を telemetry 周期として使用する。`watermarkcfg -s` もエントリ不在時に `"Telemetry interval 120 second(s)"` を表示する (`watermarkcfg:show_interval()`)。
+`WATERMARK_TABLE|TELEMETRY_INTERVAL` エントリが [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在しない場合、[orchagent](../../reference/glossary.md#term-orchagent) は **120 秒**を telemetry 周期として使用する。`watermarkcfg -s` もエントリ不在時に `"Telemetry interval 120 second(s)"` を表示する (`watermarkcfg:show_interval()`)。
 
 ### タイマー起動条件 — FLEX_COUNTER enable 依存
 
@@ -140,10 +140,10 @@ WATERMARK_TABLE|TELEMETRY_INTERVAL (interval フィールド)
 | 参照方向 | このテーブル | 相手テーブル / ページ | 条件 |
 |---------|------------|---------------------|------|
 | WATERMARK_TABLE → | `interval` 変更 → タイマー制御 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `QUEUE_WATERMARK` / `PG_WATERMARK` の `FLEX_COUNTER_STATUS=enable` がないとタイマーが起動しない。`WATERMARK_TABLE` 単独では watermark 自動クリアは動作しない |
-| WATERMARK_TABLE → | タイマー満了ごとの 0 クリア | COUNTERS_DB `PERIODIC_WATERMARKS` | `WatermarkOrch` が telemetry 周期ごとに SAI 統計をリセットして書き込む |
+| WATERMARK_TABLE → | タイマー満了ごとの 0 クリア | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) `PERIODIC_WATERMARKS` | `WatermarkOrch` が telemetry 周期ごとに [SAI](../../reference/glossary.md#term-sai) 統計をリセットして書き込む |
 | → WATERMARK_TABLE | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` / `FLEX_COUNTER_TABLE\|PG_WATERMARK` の `FLEX_COUNTER_STATUS` | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_STATUS` の変化が `m_wmStatus` ビットマスクを更新し、タイマー起動 (`start()`) / 停止 (`stop()`) を制御する (`watermarkorch.cpp:136-138, 254-257`) |
-| → WATERMARK_TABLE | APPL_DB `WATERMARK_CLEAR_REQUEST` 通知 | `watermarkstat -c` CLI | `"PERSISTENT"` / `"USER"` op でそれぞれの COUNTERS_DB テーブルをリセット。`PERIODIC_WATERMARKS` はタイマーのみがリセット対象 |
-| CLI | `watermarkcfg -c <秒>` / `-s` | [`watermarkcfg`](../cli/) | `interval` フィールドの書き込み（CONFIG_DB HSET）と読み出し |
+| → WATERMARK_TABLE | [APPL_DB](../../reference/glossary.md#term-appl_db) `WATERMARK_CLEAR_REQUEST` 通知 | `watermarkstat -c` CLI | `"PERSISTENT"` / `"USER"` op でそれぞれの [COUNTERS_DB](../../reference/glossary.md#term-counters_db) テーブルをリセット。`PERIODIC_WATERMARKS` はタイマーのみがリセット対象 |
+| CLI | `watermarkcfg -c <秒>` / `-s` | [`watermarkcfg`](../cli/) | `interval` フィールドの書き込み（[CONFIG_DB](../../reference/glossary.md#term-config_db) HSET）と読み出し |
 
 > **ポイント**: `WATERMARK_TABLE` は interval 制御のみを担い、タイマー起動/停止は `FLEX_COUNTER_TABLE` が主導する。両テーブルを `WatermarkOrch` が同一 `Consumer` ループで購読する (`watermarkorch.cpp:72-78`)。
 
@@ -211,7 +211,7 @@ DEL 後もタイマーは直前の周期（またはデフォルト 120 秒）�
 
 ### クリア要求文字列定数 (watermarkorch.cpp)
 
-APPL_DB の `WATERMARK_CLEAR_REQUEST` 通知チャネルで使用される `data` 文字列はハードコードされており、`watermarkcfg` CLI が固定文字列を送信する。
+[APPL_DB](../../reference/glossary.md#term-appl_db) の `WATERMARK_CLEAR_REQUEST` 通知チャネルで使用される `data` 文字列はハードコードされており、`watermarkcfg` CLI が固定文字列を送信する。
 
 | 定数マクロ | 値 | 証拠 | 対象 WM テーブル |
 |-----------|-----|------|----------------|
@@ -243,7 +243,7 @@ APPL_DB の `WATERMARK_CLEAR_REQUEST` 通知チャネルで使用される `data
 > **調査根拠**: `sonic-swss/orchagent/watermarkorch.cpp` 全行精読 (2026-05-18)  
 > 詳細証跡: `meta/_intermediate/cdb-flow/pwm-side-effects.md`
 
-`WATERMARK_TABLE|TELEMETRY_INTERVAL` および `FLEX_COUNTER_TABLE` への書込みが引き起こす、CONFIG_DB 以外の DB への副次的な書込みと SAI 呼び出しを示す。
+`WATERMARK_TABLE|TELEMETRY_INTERVAL` および `FLEX_COUNTER_TABLE` への書込みが引き起こす、CONFIG_DB 以外の DB への副次的な書込みと [SAI](../../reference/glossary.md#term-sai) 呼び出しを示す。
 
 ### タイマー tick — COUNTERS_DB `PERIODIC_WATERMARKS` への自動ゼロクリア
 
@@ -263,7 +263,7 @@ telemetry タイマーが満了するたびに `clearSingleWm()` が呼ばれ、
 
 ### 手動クリア — COUNTERS_DB `PERSISTENT_WATERMARKS` / `USER_WATERMARKS`
 
-`watermarkcfg clear` CLI が APPL_DB `WATERMARK_CLEAR_REQUEST` 通知チャネルへ送信すると、`WatermarkOrch::doTask(NotificationConsumer)` が対応する COUNTERS_DB テーブルをゼロクリアする。
+`watermarkcfg clear` CLI が [APPL_DB](../../reference/glossary.md#term-appl_db) `WATERMARK_CLEAR_REQUEST` 通知チャネルへ送信すると、`WatermarkOrch::doTask(NotificationConsumer)` が対応する COUNTERS_DB テーブルをゼロクリアする。
 
 | `op` 値 | `data` 値 | 対象 DB / テーブル | 書込内容 |
 |---------|---------|-----------------|---------|
@@ -277,7 +277,7 @@ telemetry タイマーが満了するたびに `clearSingleWm()` が呼ばれ、
 
 ### SAI 呼び出し
 
-`WATERMARK_TABLE|TELEMETRY_INTERVAL` への書込みは SAI を直接呼び出さない。orchagent が COUNTERS_DB へ書き込むことで flex_counter が SAI 統計を読み出すタイミングと周期が間接的に制御される。SAI への直接操作は `clearSingleWm()` からは行われない（Redis テーブルへの書き込みのみ）。
+`WATERMARK_TABLE|TELEMETRY_INTERVAL` への書込みは [SAI](../../reference/glossary.md#term-sai) を直接呼び出さない。orchagent が COUNTERS_DB へ書き込むことで flex_counter が SAI 統計を読み出すタイミングと周期が間接的に制御される。SAI への直接操作は `clearSingleWm()` からは行われない（[Redis](../../reference/glossary.md#term-redis) テーブルへの書き込みのみ）。
 
 <!-- /side-effects -->
 
@@ -295,7 +295,7 @@ telemetry タイマーが満了するたびに `clearSingleWm()` が呼ばれ、
 | CONFIG_DB → WatermarkOrch | `SubscriberStateTable` | `__keyspace@4__:WATERMARK_TABLE\|*` |
 | CONFIG_DB → WatermarkOrch | `SubscriberStateTable` | `__keyspace@4__:FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` / `PG_WATERMARK` |
 | WatermarkOrch → COUNTERS_DB | `Table::set()` 直接書き込み | `PERIODIC_WATERMARKS` / `PERSISTENT_WATERMARKS` / `USER_WATERMARKS` |
-| watermarkstat → WatermarkOrch | `APPL_DB.publish()` (Redis Pub/Sub) | `WATERMARK_CLEAR_REQUEST` チャンネル |
+| watermarkstat → WatermarkOrch | `APPL_DB.publish()` ([Redis](../../reference/glossary.md#term-redis) Pub/Sub) | `WATERMARK_CLEAR_REQUEST` チャンネル |
 | CONFIG_DB 書き込み側 | `watermarkcfg` CLI | `ConfigDBConnector.mod_entry('WATERMARK_TABLE', 'TELEMETRY_INTERVAL', ...)` |
 
 ### SubscriberStateTable の動作
@@ -373,7 +373,7 @@ APPL_DB 書き込み: なし（WATERMARK_CLEAR_REQUEST はキーなし通知チ�
 > 詳細証跡: `meta/_intermediate/cdb-flow/pwm-platform.md`
 > スキャン範囲: `sonic-swss/orchagent/watermarkorch.cpp` 全行, `sonic-swss/orchagent/orchdaemon.cpp:432-437`, `sonic-swss/orchagent/main.cpp:997`
 
-`watermarkorch.cpp` に `getenv("platform")` による ASIC 種別分岐は存在しない。`WATERMARK_TABLE|TELEMETRY_INTERVAL` の処理ロジック自体はプラットフォーム非依存だが、以下の構成・スイッチタイプ起因の差異がある。
+`watermarkorch.cpp` に `getenv("platform")` による [ASIC](../../reference/glossary.md#term-asic) 種別分岐は存在しない。`WATERMARK_TABLE|TELEMETRY_INTERVAL` の処理ロジック自体はプラットフォーム非依存だが、以下の構成・スイッチタイプ起因の差異がある。
 
 ### fabric スイッチタイプ — WatermarkOrch が存在しない
 
@@ -386,11 +386,11 @@ APPL_DB 書き込み: なし（WATERMARK_CLEAR_REQUEST はキーなし通知チ�
 
 ### allPortsReady() ガードによる初期化遅延
 
-`watermarkorch.cpp:56, 147` の `allPortsReady()` チェックにより、全フロントパネルポートが初期化完了するまで `doTask()` が early return する。`WATERMARK_TABLE|TELEMETRY_INTERVAL` の更新もその間は保留される。VOQ シャーシやラインカード構成では初期化完了が遅れる場合がある。
+`watermarkorch.cpp:56, 147` の `allPortsReady()` チェックにより、全フロントパネルポートが初期化完了するまで `doTask()` が early return する。`WATERMARK_TABLE|TELEMETRY_INTERVAL` の更新もその間は保留される。[VOQ](../../reference/glossary.md#term-voq) シャーシやラインカード構成では初期化完了が遅れる場合がある。
 
 ### VOQ / multi-ASIC — 挙動は通常スイッチと同一
 
-`watermarkorch.cpp` に `gMySwitchType` 分岐は存在しない。VOQ シャーシでも interval 更新は通常通り動作する。multi-ASIC 構成では各 ASIC namespace の orchagent が独立して `WATERMARK_TABLE|TELEMETRY_INTERVAL` を読み取るため、全 ASIC に同じ interval を設定するには各 namespace に個別書き込みが必要（自動同期なし）。
+`watermarkorch.cpp` に `gMySwitchType` 分岐は存在しない。[VOQ](../../reference/glossary.md#term-voq) シャーシでも interval 更新は通常通り動作する。multi-[ASIC](../../reference/glossary.md#term-asic) 構成では各 [ASIC](../../reference/glossary.md#term-asic) namespace の orchagent が独立して `WATERMARK_TABLE|TELEMETRY_INTERVAL` を読み取るため、全 ASIC に同じ interval を設定するには各 namespace に個別書き込みが必要（自動同期なし）。
 
 ### プラットフォーム差サマリ
 
@@ -415,3 +415,5 @@ APPL_DB 書き込み: なし（WATERMARK_CLEAR_REQUEST はキーなし通知チ�
 ## 引用元
 
 [^1]: `WatermarkOrch` 実装: `sonic-swss/orchagent/watermarkorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/watermarkorch.cpp>
+
+<!-- glossary-links-injected: ee1299b15703 -->

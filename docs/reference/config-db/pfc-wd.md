@@ -34,7 +34,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>PFC_WD")]
   DM["PfcWdSwOrch"]
   CDB --> DM
-  SAI["SAI<br/>sai_port_api / sai_queue_api / sai_acl_api<br/>(platform-dependent)"]
+  SAI["SAI<br/>sai_acl_api"]
   DM --> SAI
 ```
 
