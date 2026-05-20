@@ -29,9 +29,9 @@ related:
 
 <!-- quality-banner-start -->
 !!! success "最新の品質状態"
-    - **code-verified ページ**: 734 件（HLD と実コードを照合済み）
+    - **code-verified ページ**: 735 件（HLD と実コードを照合済み）
     - **runbook-verified ページ**: 27 件（Runbook 専用。実運用で症状再現性が確認済み）
-    - **discrepancy-found ページ**: 107 件（HLD と実装の乖離を明示）
+    - **discrepancy-found ページ**: 106 件（HLD と実装の乖離を明示）
     - **監査平均評価**: 4.99 / 5.0（quality-audit round 52）
     - **hld-only ページ**: 2 件（裏取り待ち）
     - **保守フェーズ運用中** (2026-05-13〜): 月次 master 追従 / 偶数 round stratified audit / feedback 反映で 4.97+ プラトーを維持 (`meta/maintenance-mode.md`)
