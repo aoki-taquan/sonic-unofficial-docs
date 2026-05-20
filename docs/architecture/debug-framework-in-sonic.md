@@ -45,7 +45,7 @@ related:
 
 ## 概要
 
-SONiC コンポーネント（特に OrchAgent モジュール）が **内部状態のスナップショットダンプ** を登録し、CLI / assert / 重大ログから一斉トリガできる仕組み[^1]。[Redis](../reference/glossary.md#term-redis) チャネル経由でトリガを配り、SwSS 共有ライブラリの `SWSS_DEBUG_PRINT` マクロで出力先（syslog / per-component log）と post-action（compress-rotate / upload）を一元管理する。あわせて assert マクロを拡張して類型化された debug 情報収集を可能にする。
+[SONiC](../reference/glossary.md#term-sonic) コンポーネント（特に OrchAgent モジュール）が **内部状態のスナップショットダンプ** を登録し、CLI / assert / 重大ログから一斉トリガできる仕組み[^1]。[Redis](../reference/glossary.md#term-redis) チャネル経由でトリガを配り、SwSS 共有ライブラリの `SWSS_DEBUG_PRINT` マクロで出力先（syslog / per-component log）と post-action（compress-rotate / upload）を一元管理する。あわせて assert マクロを拡張して類型化された debug 情報収集を可能にする。
 
 ## 動作仕様
 
@@ -123,7 +123,7 @@ show debug neighorch nhops
 show debug neighorch neigh
 ```
 
-出力にはプレフィックス、ネクストホップ、[SAI](../reference/glossary.md#term-sai) OID、[ECMP](../reference/glossary.md#term-ecmp) グループ ref count などを含む（ASIC OID と app 構造体ポインタの紐付け確認に使う設計）。
+出力にはプレフィックス、ネクストホップ、[SAI](../reference/glossary.md#term-sai) OID、[ECMP](../reference/glossary.md#term-ecmp) グループ ref count などを含む（[ASIC](../reference/glossary.md#term-asic) OID と app 構造体ポインタの紐付け確認に使う設計）。
 
 ### Configuration Defaults
 
@@ -289,4 +289,4 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: ab467fd16eb5 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

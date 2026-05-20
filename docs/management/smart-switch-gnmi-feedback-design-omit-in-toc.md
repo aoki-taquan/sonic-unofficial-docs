@@ -207,7 +207,7 @@ DASH_ROUTE_GROUP_TABLE:{group_id}
 
 - **[DASH](../reference/glossary.md#term-dash) スキーマ**: `DASH_ROUTE_TABLE` / `DASH_ROUTE_GROUP_TABLE` / `DASH_VNET_MAPPING` などが APPL_STATE_DB のミラー対象。DASH 機能の変更は本 HLD のキー設計に直結する。
 - **ZMQ producer/consumer state table**: NPU の gNMI Server から DPU SWSS への伝送路として ZMQ ベースの producer/consumer state table パターンを使う。
-- **DPU 側 [syncd](../reference/glossary.md#term-syncd)**: 実際に SAI コールするのは DPU SONiC の SYNCD。NPU SONiC は仲介役。
+- **DPU 側 [syncd](../reference/glossary.md#term-syncd)**: 実際に SAI コールするのは DPU [SONiC](../reference/glossary.md#term-sonic) の SYNCD。NPU SONiC は仲介役。
 
 ## トラブルシューティング
 
@@ -289,4 +289,4 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

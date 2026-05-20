@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-[gNMI](../reference/glossary.md#term-gnmi) Subscribe は [YANG](../reference/glossary.md#term-yang) path に紐づくデータを **stream / poll / once** モードでクライアントに push する仕組み[^1]。SONiC は `sonic-mgmt-framework` の Translib + [STATE_DB](../reference/glossary.md#term-state_db) / [COUNTERS_DB](../reference/glossary.md#term-counters_db) / [APPL_DB](../reference/glossary.md#term-appl_db) の表購読を組合せ、openconfig YANG パスでのサブスクリプションを実現する。
+[gNMI](../reference/glossary.md#term-gnmi) Subscribe は [YANG](../reference/glossary.md#term-yang) path に紐づくデータを **stream / poll / once** モードでクライアントに push する仕組み[^1]。[SONiC](../reference/glossary.md#term-sonic) は `sonic-mgmt-framework` の Translib + [STATE_DB](../reference/glossary.md#term-state_db) / [COUNTERS_DB](../reference/glossary.md#term-counters_db) / [APPL_DB](../reference/glossary.md#term-appl_db) の表購読を組合せ、openconfig YANG パスでのサブスクリプションを実現する。
 
 サポートする SubscriptionMode（per-path）:
 
@@ -120,4 +120,4 @@ show gnmi-server
 - gNMI Master Arbitration / dial-out telemetry との実装関係確認
 -->
 
-<!-- glossary-links-injected: 9cb1b1c08d60 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

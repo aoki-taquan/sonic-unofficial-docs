@@ -74,10 +74,10 @@ ethtool Ethernet0
 
 1. **Transceiver 未挿入 / EEPROM 異常** — `sfputil show presence` が `Not present`
 2. **speed / FEC / autoneg の不一致** — 25G で FEC 設定が片側 RS、片側 none など
-3. **portsorch が [CONFIG_DB](../../reference/glossary.md#term-config_db) を [APPL_DB](../../reference/glossary.md#term-appl_db) に反映できていない** — `swss` container の異常
+3. **[portsorch](../../reference/glossary.md#term-portsorch) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を [APPL_DB](../../reference/glossary.md#term-appl_db) に反映できていない** — `swss` container の異常
 4. **lane / serdes 設定の platform.json バグ** — port-breakout 後の設定残り
 5. **[SAI](../../reference/glossary.md#term-sai) driver / FW のリンクトレーニング失敗** — `syncd` ログに `link training failed`
-6. **kernel netdev は up だが ASIC 側で down** — host-side のみ up となる multi-asic 構成の罠
+6. **kernel netdev は up だが [ASIC](../../reference/glossary.md#term-asic) 側で down** — host-side のみ up となる multi-asic 構成の罠
 
 `portsorch` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `PORT` 変更を [SAI](../../reference/glossary.md#term-sai) 属性 (`SAI_PORT_ATTR_ADMIN_STATE` 等) に変換して [syncd](../../reference/glossary.md#term-syncd) へ渡し、`xcvrd` は EEPROM 読出し結果を [STATE_DB](../../reference/glossary.md#term-state_db) の `TRANSCEIVER_INFO` に書き戻す[^1]。
 
@@ -91,4 +91,4 @@ ethtool Ethernet0
 - [interface-mtu-mismatch.md](interface-mtu-mismatch.md)
 - [../cli/show-interfaces.md](../cli/show-interfaces.md)
 
-<!-- glossary-links-injected: 6f36db8074ad -->
+<!-- glossary-links-injected: 9937abcefc29 -->

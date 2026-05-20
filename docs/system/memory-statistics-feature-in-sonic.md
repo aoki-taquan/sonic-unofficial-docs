@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-OS レベルの **メモリ使用量（total / used / free / available / cached / shared / buffers）** を SONiC ネイティブで定期サンプリングし、CLI から履歴クエリできるようにする機能。サードパーティ監視ツールへの依存を減らす目的[^1]。
+OS レベルの **メモリ使用量（total / used / free / available / cached / shared / buffers）** を [SONiC](../reference/glossary.md#term-sonic) ネイティブで定期サンプリングし、CLI から履歴クエリできるようにする機能。サードパーティ監視ツールへの依存を減らす目的[^1]。
 
 新規デーモン `memorystatsd` がデータを収集し、圧縮ログとして保持する。`hostcfgd` が [CONFIG_DB](../reference/glossary.md#term-config_db) の設定変化を監視して SIGHUP で再ロードする。**デフォルトは無効**（リソース節約のため）[^1]。
 
@@ -156,4 +156,4 @@ docker ps | grep -i memory-stats
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: efdba57a44d3 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

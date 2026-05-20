@@ -28,7 +28,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-banner`
 
-Login, MOTD, and logout banner message [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
+Login, MOTD, and logout banner message [YANG](../../reference/glossary.md#term-yang) module for [SONiC](../../reference/glossary.md#term-sonic) OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -85,7 +85,7 @@ module: sonic-banner
 |------|------|----|------|-----------|----------------------|------|
 | `state` | `sonic-banner/BANNER_MESSAGE/global/state` | `stypes:admin_mode` |  | `disabled` |  | Enable or disable the banner feature. |
 | `login` | `sonic-banner/BANNER_MESSAGE/global/login` | `string` |  | `Debian GNU/Linux 11` |  | Banner message displayed to user before login prompt. |
-| `motd` | `sonic-banner/BANNER_MESSAGE/global/motd` | `string` |  | SONiC ASCII art and welcome message |  | Banner message displayed to user after login prompt. |
+| `motd` | `sonic-banner/BANNER_MESSAGE/global/motd` | `string` |  | [SONiC](../../reference/glossary.md#term-sonic) ASCII art and welcome message |  | Banner message displayed to user after login prompt. |
 | `logout` | `sonic-banner/BANNER_MESSAGE/global/logout` | `string` |  | `""` |  | Banner message displayed to users on logout. |
 
 ## leafref / 依存
@@ -145,4 +145,4 @@ show banner
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-banner.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 92c530e50bae -->

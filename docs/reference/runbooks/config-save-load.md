@@ -41,7 +41,7 @@ related:
 1. **`/etc/sonic/config_db.json` の権限 / オーナーが root 以外で書き込み失敗**
 2. **multi-asic 環境で host 側だけ save し、`config_db<N>.json` が更新されていない**
 3. **[YANG](../../reference/glossary.md#term-yang) / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) 検証で reject されたが ユーザが気付いていない**
-4. **db_migrator のバージョン不整合**: ファイル format version と SONiC ビルドの期待バージョン不一致
+4. **db_migrator のバージョン不整合**: ファイル format version と [SONiC](../../reference/glossary.md#term-sonic) ビルドの期待バージョン不一致
 5. **[minigraph.xml](../../reference/glossary.md#term-minigraph.xml) を編集したのに `load_minigraph` を打たず `reload` だけしている**
 
 ## 切り分け手順
@@ -144,4 +144,4 @@ done
 
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — `config/main.py`, `scripts/db_migrator.py`
 
-<!-- glossary-links-injected: 250244b14646 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

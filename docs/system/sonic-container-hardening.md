@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-SONiC の docker は歴史的に多くが **`--privileged`** で動いていた。CVE 対策とコンプライアンス要請から、**最低限必要な linux capability・mount・device だけを与える** 形に絞り込む取り組みが本 [HLD](../reference/glossary.md#term-hld) のスコープ[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の docker は歴史的に多くが **`--privileged`** で動いていた。CVE 対策とコンプライアンス要請から、**最低限必要な linux capability・mount・device だけを与える** 形に絞り込む取り組みが本 [HLD](../reference/glossary.md#term-hld) のスコープ[^1]。
 
 主な硬化軸:
 
@@ -144,4 +144,4 @@ grep -iE 'AppArmor|seccomp' /var/log/syslog | tail
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f6289dc80312 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

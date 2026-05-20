@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-`config vnet` は overlay [VNET](../../reference/glossary.md#term-vnet) と [VNET](../../reference/glossary.md#term-vnet) route を [CONFIG_DB](../../reference/glossary.md#term-config_db) に作成・削除する CLI グループ。multi-ASIC では `--namespace` で対象 namespace を選択できる[^1]。
+`config vnet` は overlay [VNET](../../reference/glossary.md#term-vnet) と [VNET](../../reference/glossary.md#term-vnet) route を [CONFIG_DB](../../reference/glossary.md#term-config_db) に作成・削除する CLI グループ。multi-[ASIC](../../reference/glossary.md#term-asic) では `--namespace` で対象 namespace を選択できる[^1]。
 
 ## コマンド一覧
 
@@ -137,4 +137,4 @@ show vnet endpoint
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 2acdb695c264 -->
+<!-- glossary-links-injected: c006405759d8 -->

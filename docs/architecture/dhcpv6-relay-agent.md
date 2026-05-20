@@ -38,7 +38,7 @@ related:
 
 ## 結論
 
-DHCPv6 では SONiC 自前実装の relay daemon を使う[^1]。理由は (1) ISC が **Option 79 (RFC 6939, client link-layer address)** を未対応、(2) 設定変更で container 再起動が要る、の 2 点を解消するため。Option 79 は default on で、MAC ベース予約と multi-hop relay の MAC 伝搬を成立させる。dual ToR 用に **loopback 送信元 IP** オプションを追加する。
+DHCPv6 では [SONiC](../reference/glossary.md#term-sonic) 自前実装の relay daemon を使う[^1]。理由は (1) ISC が **Option 79 (RFC 6939, client link-layer address)** を未対応、(2) 設定変更で container 再起動が要る、の 2 点を解消するため。Option 79 は default on で、MAC ベース予約と multi-hop relay の MAC 伝搬を成立させる。dual ToR 用に **loopback 送信元 IP** オプションを追加する。
 
 ## 動作仕様
 
@@ -194,4 +194,4 @@ docker logs dhcp_relay 2>&1 | tail -50
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

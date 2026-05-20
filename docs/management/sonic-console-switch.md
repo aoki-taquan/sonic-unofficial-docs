@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-SONiC スイッチを「**network 機器を console（serial）経由で管理する集約ホスト**」として使うための機能[^1]。serial hub やオンボードの USB → serial アダプタを通じて多数の network device の console を接続し、SSH で SONiC スイッチに入った user が `consutil` で各 console line に入る運用を想定する。
+[SONiC](../reference/glossary.md#term-sonic) スイッチを「**network 機器を console（serial）経由で管理する集約ホスト**」として使うための機能[^1]。serial hub やオンボードの USB → serial アダプタを通じて多数の network device の console を接続し、SSH で SONiC スイッチに入った user が `consutil` で各 console line に入る運用を想定する。
 
 特徴:
 
@@ -149,7 +149,7 @@ ssh -p 2001 admin@sonic-switch  # line 1 へ reverse SSH
 
 ## 干渉する機能
 
-- **[AAA](../reference/glossary.md#term-aaa) / RADIUS / TACACS+**: console session も RADIUS 認証可能か（PAM `login` 経由扱い）
+- **[AAA](../reference/glossary.md#term-aaa) / [RADIUS](../reference/glossary.md#term-radius) / TACACS+**: console session も RADIUS 認証可能か（PAM `login` 経由扱い）
 - **reverse SSH の port range**: 既存 SSH (22) と衝突しないようにする
 - **mgmt [VRF](../reference/glossary.md#term-vrf)**: line 用 management IP を mgmt VRF に置く運用が多い
 
@@ -260,3 +260,5 @@ ls -l /dev/ttyUSB* /dev/ttyS*
 - `sonic-console`
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: db62d2100cef -->

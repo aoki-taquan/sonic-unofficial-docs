@@ -95,7 +95,7 @@ sonic-db-cli COUNTERS_DB dbsize
 ## よくある原因
 
 1. **[BGP](../../reference/glossary.md#term-bgp) flap による大量 route churn** — routeorch が `SAI_STATUS_ITEM_NOT_FOUND` retry でループ
-2. **[ACL](../../reference/glossary.md#term-acl) rule 大量挿入で ASIC table full** — aclorch が同一エラーを retry し続ける（`sai-table-full.md` 参照）
+2. **[ACL](../../reference/glossary.md#term-acl) rule 大量挿入で [ASIC](../../reference/glossary.md#term-asic) table full** — aclorch が同一エラーを retry し続ける（`sai-table-full.md` 参照）
 3. **[CRM](../../reference/glossary.md#term-crm) / sai resource 枯渇** — `crm-threshold-exceeded.md` 参照
 4. **依存関係解決の循環** — port / vlan / neigh の add 順序が逆で `SAI_STATUS_OBJECT_IN_USE`
 5. **[syncd](../../reference/glossary.md#term-syncd) レスポンス遅延** — [orchagent](../../reference/glossary.md#term-orchagent) は応答待ちで spin（厳密にはブロックだが top では busy に見える）
@@ -107,7 +107,7 @@ sonic-db-cli COUNTERS_DB dbsize
 - [ACL](../../reference/glossary.md#term-acl) / route の bulk delete を試す前に `config save -y` で backup
 - 最終手段として `docker restart swss`（中断発生）→ warm-restart 設定がある場合のみ無瞬断に近い
 
-`Orch::doTask` は [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) から取り出した変更を 1 件ずつ ASIC へ適用し、[SAI](../../reference/glossary.md#term-sai) が失敗を返したエントリは `m_toSync` に残して次回ループで再試行する設計のため、解消不能なエラーが入ると CPU を使い切る[^1]。
+`Orch::doTask` は [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) から取り出した変更を 1 件ずつ [ASIC](../../reference/glossary.md#term-asic) へ適用し、[SAI](../../reference/glossary.md#term-sai) が失敗を返したエントリは `m_toSync` に残して次回ループで再試行する設計のため、解消不能なエラーが入ると CPU を使い切る[^1]。
 
 [^1]: `sonic-net/sonic-swss` `orchagent/orch.cpp::Orch::doTask` および `orchagent/orchdaemon.cpp` のメインループ実装。`SAI_STATUS_*` エラーは consumer 側で再キューイングされ、根本原因が解決するまで指数バックオフ無しで retry される。
 
@@ -118,4 +118,4 @@ sonic-db-cli COUNTERS_DB dbsize
 - [flex-counter-stuck.md](flex-counter-stuck.md)
 - [appdb-asicdb-sync-lag.md](appdb-asicdb-sync-lag.md)
 
-<!-- glossary-links-injected: 76c8c3f52726 -->
+<!-- glossary-links-injected: e82be350a384 -->

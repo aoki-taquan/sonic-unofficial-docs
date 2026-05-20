@@ -41,9 +41,9 @@ related:
 
 ## 概要
 
-gNMI dial-in サーバ (`telemetry` デーモン、Docker コンテナ `docker-sonic-gnmi`) のポート・TLS・認証・ログ設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル。
+[gNMI](../../reference/glossary.md#term-gnmi) dial-in サーバ (`telemetry` デーモン、Docker コンテナ `docker-sonic-gnmi`) のポート・TLS・認証・ログ設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル。
 
-起動スクリプト `gnmi-native.sh` が `sonic-cfggen` で `GNMI|gnmi` および `GNMI|certs` を読み出し、CLI フラグとして `telemetry` バイナリ (Go) に渡す。YANG モデル `sonic-gnmi.yang` はスキーマバリデーションを担う。
+起動スクリプト `gnmi-native.sh` が `sonic-cfggen` で `GNMI|gnmi` および `GNMI|certs` を読み出し、CLI フラグとして `telemetry` バイナリ (Go) に渡す。[YANG](../../reference/glossary.md#term-yang) モデル `sonic-gnmi.yang` はスキーマバリデーションを担う。
 
 以前は `TELEMETRY` テーブルに格納されていたが、db_migrator の `migrate_gnmi()` によって `GNMI` テーブルへ移行済み。
 
@@ -75,7 +75,7 @@ GNMI|certs      # TLS 証明書パス
 
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
-| `port` | uint16 (inet:port-number) | `8080` ※1 | gNMI サーバが listen するポート番号 |
+| `port` | uint16 (inet:port-number) | `8080` ※1 | [gNMI](../../reference/glossary.md#term-gnmi) サーバが listen するポート番号 |
 | `client_auth` | boolean | `false` | `true` のとき TLS クライアント証明書を必須化。`false` のとき `--allow_no_client_auth` を付与 |
 | `log_level` | uint8 (0–100) | `2` | プロセスログレベル (`-v` フラグ) |
 | `threshold` | uint32 | `100` | 同時クライアント接続数上限 |
@@ -93,7 +93,7 @@ GNMI|certs      # TLS 証明書パス
 | `server_crt` | string (パス `.cer`) | — | TLS サーバ証明書のローカルパス |
 | `server_key` | string (パス `.key`) | — | TLS サーバ秘密鍵のローカルパス |
 
-> ※1: `GNMI` テーブルが CONFIG_DB に存在しない場合のシェルスクリプトデフォルト。テーブルが存在する場合は `port` フィールドが必須 (0 以下は起動エラー)。  
+> ※1: `GNMI` テーブルが [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在しない場合のシェルスクリプトデフォルト。テーブルが存在する場合は `port` フィールドが必須 (0 以下は起動エラー)。  
 > ※2: `user_auth` が CONFIG_DB に存在しない (`null`) 場合、スクリプトが `cert` を補う。
 
 ## 制約
@@ -106,11 +106,11 @@ GNMI|certs      # TLS 証明書パス
 ## 購読者
 
 - `gnmi-native.sh` (起動スクリプト): CONFIG_DB を読み取り、`telemetry` バイナリへ CLI フラグとして渡す。Hot reload なし — 設定変更はコンテナ再起動が必要
-- `telemetry` バイナリ (Go): gNMI サーバ本体。起動時にフラグを解析し、証明書変更は `fsnotify` で動的リロード
+- `telemetry` バイナリ (Go): [gNMI](../../reference/glossary.md#term-gnmi) サーバ本体。起動時にフラグを解析し、証明書変更は `fsnotify` で動的リロード
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`GNMI_CLIENT_CERT`](gnmi-client-cert.md), [`DEVICE_METADATA`](device-metadata.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `GNMI_CLIENT_CERT`, [`DEVICE_METADATA`](device-metadata.md)
 - 関連 CLI: `config gnmi`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-gnmi`
 
@@ -125,8 +125,8 @@ GNMI|certs      # TLS 証明書パス
 | `threshold` が負値 | telemetry.go が起動エラー (`threshold must be >= 0`) |
 | `idle_conn_duration` が負値 | telemetry.go が起動エラー (`idle_conn_duration must be >= 0`) |
 | `user_auth=cert` かつ `ca_crt` 未設定 | 認証モード `cert` を自動無効化 (silent fallback)。ログに警告を出力 |
-| SmartSwitch (`DEVICE_METADATA.subtype=SmartSwitch`) | `gnmi-native.sh` が `-zmq_port=8100` を自動追加 |
-| 管理 VRF 有効 (`MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled=true`) | `gnmi-native.sh` が `--vrf mgmt` を自動追加 |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) (`DEVICE_METADATA.subtype=SmartSwitch`) | `gnmi-native.sh` が `-zmq_port=8100` を自動追加 |
+| 管理 [VRF](../../reference/glossary.md#term-vrf) 有効 (`MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled=true`) | `gnmi-native.sh` が `--vrf mgmt` を自動追加 |
 | `TELEMETRY` テーブルが残存している場合 | `db_migrator.migrate_gnmi()` が `GNMI` テーブルへ自動移行。両方存在する場合 `GNMI` テーブルが優先 |
 
 <!-- evidence: sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh:64-147; sonic-net/sonic-gnmi:telemetry/telemetry.go:171-250 -->
@@ -170,7 +170,7 @@ GNMI|certs      # TLS 証明書パス
 | `max_recv_msg_size` | `4 * 1024 * 1024` (4 MiB) | gRPC 受信メッセージ最大サイズ (telemetry.go:209) |
 | `max_send_msg_size` | `4 * 1024 * 1024` (4 MiB) | gRPC 送信メッセージ最大サイズ (telemetry.go:210) |
 | TLS 最小バージョン | `TLS 1.2` | `tls.VersionTLS12` (telemetry.go:482) |
-| keepalive MinTime | `20` 秒 | DPU Proxy 等の keepalive ping 許容間隔 (telemetry.go:547) |
+| keepalive MinTime | `20` 秒 | [DPU](../../reference/glossary.md#term-dpu) Proxy 等の keepalive ping 許容間隔 (telemetry.go:547) |
 
 ### `save_on_set` の注記
 
@@ -207,8 +207,8 @@ rsyslogd 起動 (priority=1)
 | 1 | `start.sh` 完了 → `gnmi-native.sh` 起動 | **強制先行**（supervisord `dependent_startup_wait_for=start:exited`） | `gnmi-native.sh` は `start.sh` が終了するまで起動しない |
 | 2 | CONFIG_DB への `GNMI\|gnmi` / `GNMI\|certs` 書込み → `gnmi-native.sh` 実行 | **強制先行**（スクリプト起動時に `sonic-cfggen` で一括読み取り） | 起動後の設定変更はコンテナ再起動まで反映されない（hot reload なし） |
 | 3 | `gnmi-native.sh:running` → `dialout.sh` 起動 | **強制先行**（supervisord `dependent_startup_wait_for=gnmi-native:running`） | gNMI サーバが起動していないと dial-out テレメトリも開始しない |
-| 4 | `DEVICE_METADATA\|localhost.subtype` 読み取り → ZMQ ポート設定 | **起動時スナップショット**（`sonic-db-cli` で inline 読み取り） | SmartSwitch 判定は起動時に確定。再起動なしに変更不可 |
-| 5 | `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` 読み取り → VRF 設定 | **起動時スナップショット**（同上） | 管理 VRF 有効化後のコンテナ再起動が必要 |
+| 4 | `DEVICE_METADATA\|localhost.subtype` 読み取り → ZMQ ポート設定 | **起動時スナップショット**（`sonic-db-cli` で inline 読み取り） | [SmartSwitch](../../reference/glossary.md#term-smartswitch) 判定は起動時に確定。再起動なしに変更不可 |
+| 5 | `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` 読み取り → [VRF](../../reference/glossary.md#term-vrf) 設定 | **起動時スナップショット**（同上） | 管理 [VRF](../../reference/glossary.md#term-vrf) 有効化後のコンテナ再起動が必要 |
 
 ### 重要な制約
 
@@ -226,12 +226,12 @@ rsyslogd 起動 (priority=1)
 
 | 参照先テーブル / キー | 参照方向 | 条件 | 参照元 evidence |
 |---------------------|---------|------|----------------|
-| `GNMI\|gnmi` / `GNMI\|certs` (CONFIG_DB) | 設定読み取り（起動時 sonic-cfggen） | 常時。存在しない場合はシェルデフォルト値を使用 | `telemetry_vars.j2:2-3`; `gnmi-native.sh:19-23` |
-| `DEVICE_METADATA\|localhost.x509` (CONFIG_DB) | TLS 証明書パスの旧フォールバック（起動時 sonic-cfggen） | `GNMI\|certs` が未設定の場合のみ有効。旧 `TELEMETRY` テーブル時代の設定経路 | `telemetry_vars.j2:4`; `gnmi-native.sh:21,46-58` |
-| `DEVICE_METADATA\|localhost.subtype` (CONFIG_DB) | SmartSwitch 判定（起動時 sonic-db-cli） | `subtype=SmartSwitch` の場合のみ `-zmq_port=8100` フラグを付与。起動時スナップショット | `gnmi-native.sh:89-92` |
+| `GNMI\|gnmi` / `GNMI\|certs` (CONFIG_DB) | 設定読み取り（起動時 [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)） | 常時。存在しない場合はシェルデフォルト値を使用 | `telemetry_vars.j2:2-3`; `gnmi-native.sh:19-23` |
+| `DEVICE_METADATA\|localhost.x509` (CONFIG_DB) | TLS 証明書パスの旧フォールバック（起動時 [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)） | `GNMI\|certs` が未設定の場合のみ有効。旧 `TELEMETRY` テーブル時代の設定経路 | `telemetry_vars.j2:4`; `gnmi-native.sh:21,46-58` |
+| `DEVICE_METADATA\|localhost.subtype` (CONFIG_DB) | [SmartSwitch](../../reference/glossary.md#term-smartswitch) 判定（起動時 sonic-db-cli） | `subtype=SmartSwitch` の場合のみ `-zmq_port=8100` フラグを付与。起動時スナップショット | `gnmi-native.sh:89-92` |
 | `MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` (CONFIG_DB) | 管理 VRF フラグ付与（起動時 sonic-db-cli） | `mgmtVrfEnabled=true` の場合のみ `--vrf mgmt` を付与。起動時スナップショット | `gnmi-native.sh:95-98` |
 | `GNMI_CLIENT_CERT\|<CommonName>` (CONFIG_DB) | クライアント証明書 CN → ロールマッピング（runtime 都度読み取り） | `user_auth=cert` 時のみ。各 gNMI RPC で `configDbConnector.Get_entry()` を呼び出す | `gnmi_server/clientCertAuth.go:254-277` |
-| `MID_PLANE_BRIDGE\|GLOBAL`, `DPUS\|<dpuId>`, `DHCP_SERVER_IPV4_PORT\|<key>` (CONFIG_DB) | SmartSwitch DPU ZMQ アドレス解決（runtime） | SmartSwitch ZMQ 構成 (`-zmq_port` 指定) 時のみ。`getDpuAddress()` が ZMQ クライアント接続確立時に参照 | `sonic_data_client/mixed_db_client.go:118-151` |
+| `MID_PLANE_BRIDGE\|GLOBAL`, `DPUS\|<dpuId>`, `DHCP_SERVER_IPV4_PORT\|<key>` (CONFIG_DB) | SmartSwitch [DPU](../../reference/glossary.md#term-dpu) ZMQ アドレス解決（runtime） | SmartSwitch ZMQ 構成 (`-zmq_port` 指定) 時のみ。`getDpuAddress()` が ZMQ クライアント接続確立時に参照 | `sonic_data_client/mixed_db_client.go:118-151` |
 | `DEVICE_METADATA\|localhost.hwsku` (CONFIG_DB) | bypass validation SKU 判定（runtime 都度読み取り） | SmartSwitch 向け gNMI Set RPC 時。`AllowedSKUPrefixes` と照合し CVL validation を bypass するかどうか決定 | `pkg/bypass/bypass.go:148-168` |
 
 !!! note "起動時スナップショット vs. runtime 参照"
@@ -312,7 +312,7 @@ rsyslogd 起動 (priority=1)
 | `jwt_valid_int` | `3600` 秒 | JWT トークンの有効期間 | `telemetry.go:184` |
 | `max_recv_msg_size` | `4194304` (4 MiB) | gRPC 受信メッセージ最大サイズ | `telemetry.go:209` |
 | `max_send_msg_size` | `4194304` (4 MiB) | gRPC 送信メッセージ最大サイズ | `telemetry.go:210` |
-| `img_dir` | `/tmp/host_tmp` | gNOI SetPackage 等で画像転送先として使用するディレクトリ | `telemetry.go:195` |
+| `img_dir` | `/tmp/host_tmp` | [gNOI](../../reference/glossary.md#term-gnoi) SetPackage 等で画像転送先として使用するディレクトリ | `telemetry.go:195` |
 | `ca_cert_lnk` | `/keys/ca_cert.lnk` | CA 証明書のシンボリックリンクパス（`ca_crt` 指定時は自動上書き） | `telemetry.go:199,303-305` |
 | `server_cert_lnk` | `/keys/server_cert.lnk` | サーバ証明書のシンボリックリンクパス（`server_crt` 指定時は自動上書き） | `telemetry.go:200,306-308` |
 | `server_key_lnk` | `/keys/server_key.lnk` | サーバ秘密鍵のシンボリックリンクパス（`server_key` 指定時は自動上書き） | `telemetry.go:201,309-311` |
@@ -403,31 +403,31 @@ rsyslogd 起動 (priority=1)
 
 > 調査証跡: `meta/_intermediate/cdb-flow/gnmi-dialin-side-effects.md`
 
-`GNMI|gnmi` テーブルを直接起点とする DB 書込ではないが、`telemetry` デーモン（dial-in gNMI サーバ）は Subscribe RPC のセッション状態を STATE_DB に記録する副次的な書込を行う。
+`GNMI|gnmi` テーブルを直接起点とする DB 書込ではないが、`telemetry` デーモン（dial-in gNMI サーバ）は Subscribe RPC のセッション状態を [STATE_DB](../../reference/glossary.md#term-state_db) に記録する副次的な書込を行う。
 
 ### STATE_DB — TELEMETRY_CONNECTIONS
 
-| 操作タイミング | Redis 操作 | キー形式 | 値 |
+| 操作タイミング | [Redis](../../reference/glossary.md#term-redis) 操作 | キー形式 | 値 |
 |---|---|---|---|
 | `client_subscribe.go` 初期化 (`PrepareRedis()`) | `HGetAll` + 既存エントリ全 `HDel` | `TELEMETRY_CONNECTIONS` Hash | — |
 | Subscribe RPC 開始 (`Add()`) | `HSet(table, key, "active")` | `<peer_ip:port>\|<target_1>\|...\|<RFC3339_timestamp>` | `"active"` (固定) |
 | Subscribe RPC 終了 (`Remove()`) | `HDel(table, key)` | 同上 | — |
 
 - **threshold 連動**: `GNMI|gnmi.threshold`（デフォルト `100`）に達した場合は新規 Subscribe を拒否し HSet を行わない (`connection_manager.go:65`)。`threshold=0` は無制限。
-- **フォールトトレラント**: STATE_DB が利用不可能な場合 (`rclient == nil`) は警告ログのみで `telemetry` サーバは継続動作する (`connection_manager.go:111-115`)。
+- **フォールトトレラント**: [STATE_DB](../../reference/glossary.md#term-state_db) が利用不可能な場合 (`rclient == nil`) は警告ログのみで `telemetry` サーバは継続動作する (`connection_manager.go:111-115`)。
 
 ### カウンタ統計 — SysV IPC 共有メモリ
 
-`NewServer()` が `InitCounters()` を呼び出し、32 種類の gNMI/gNOI/gNSI 操作カウンタを SysV IPC 共有メモリ（`memKey=7749`）に管理する。**Redis COUNTERS_DB への書込は一切行わない**。`gnmi_dump` ツールが共有メモリから読み取る。
+`NewServer()` が `InitCounters()` を呼び出し、32 種類の gNMI/[gNOI](../../reference/glossary.md#term-gnoi)/gNSI 操作カウンタを SysV IPC 共有メモリ（`memKey=7749`）に管理する。**[Redis](../../reference/glossary.md#term-redis) [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込は一切行わない**。`gnmi_dump` ツールが共有メモリから読み取る。
 
 ### その他の DB 書込
 
 | DB | 書込 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `gnmi_server/server.go` に ProducerStateTable / NotificationProducer 書込なし |
-| COUNTERS_DB | なし | カウンタは SysV 共有メモリのみ。`redis-cli` から不可視 |
-| ASIC_DB | なし | SAI 非経由 |
-| FLEX_COUNTER_DB | なし | 参照なし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `gnmi_server/server.go` に [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) / NotificationProducer 書込なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | カウンタは SysV 共有メモリのみ。`redis-cli` から不可視 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由 |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | 参照なし |
 
 <!-- evidence: sonic-net/sonic-gnmi:gnmi_server/connection_manager.go:32-61,65,94-116,127 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:gnmi_server/client_subscribe.go:84 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:gnmi_server/server.go:528 (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:common_utils/context.go (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22); sonic-net/sonic-gnmi:common_utils/shareMem.go (ref: eb635b7679b260c3fd0786a6d0734fc8e82c9a22) -->
 <!-- /side-effects -->
@@ -437,7 +437,7 @@ rsyslogd 起動 (priority=1)
 
 ### GNMI|gnmi / GNMI|certs テーブルの読み取り方式
 
-`GNMI|gnmi` および `GNMI|certs` テーブルに対する Redis Subscribe は**存在しない**。`gnmi-native.sh` 起動スクリプトが `sonic-cfggen -d` コマンドで CONFIG_DB を**起動時に 1 回だけ読み取り**、得られた値を Go バイナリの CLI フラグへ変換して `exec` する。以降の CONFIG_DB 変更は**コンテナ再起動までテレメトリデーモンに反映されない**（hot reload なし）。`swsscommon.SubscriberStateTable` / `ConsumerStateTable` は一切使用しない。
+`GNMI|gnmi` および `GNMI|certs` テーブルに対する [Redis](../../reference/glossary.md#term-redis) Subscribe は**存在しない**。`gnmi-native.sh` 起動スクリプトが `sonic-cfggen -d` コマンドで CONFIG_DB を**起動時に 1 回だけ読み取り**、得られた値を Go バイナリの CLI フラグへ変換して `exec` する。以降の CONFIG_DB 変更は**コンテナ再起動までテレメトリデーモンに反映されない**（hot reload なし）。`swsscommon.SubscriberStateTable` / `ConsumerStateTable` は一切使用しない。
 
 | 消費者 | API 種別 | 対象テーブル | タイミング |
 |--------|---------|------------|-----------|
@@ -445,7 +445,7 @@ rsyslogd 起動 (priority=1)
 | `gnmi-native.sh` | `sonic-db-cli CONFIG_DB hget` (inline 読み取り) | `DEVICE_METADATA\|localhost.subtype`・`MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled` | コンテナ起動時 1 回のみ |
 | `clientCertAuth.go` — `PopulateAuthStructByCommonName()` | `ConfigDBConnector.Connect(false)` + `Get_entry()` (接続ごとポイントインタイム読み取り) | `GNMI_CLIENT_CERT\|<CN>` | gNMI クライアント接続ごと |
 | `bypass.go` — `IsAllowedSKU()` | `ConfigDBConnector.Get_entry()` (RPC ごとポイントインタイム読み取り) | `DEVICE_METADATA\|localhost.hwsku` | SmartSwitch gNMI Set RPC ごと |
-| `connection_manager.go` | `HSet` / `HDel` (書込み専用、subscribe なし) | `TELEMETRY_CONNECTIONS` (STATE_DB) | Subscribe RPC 開始 / 終了時 |
+| `connection_manager.go` | `HSet` / `HDel` (書込み専用、subscribe なし) | `TELEMETRY_CONNECTIONS` ([STATE_DB](../../reference/glossary.md#term-state_db)) | Subscribe RPC 開始 / 終了時 |
 
 ### 証明書ファイルの fsnotify 監視
 
@@ -469,7 +469,7 @@ processTelemetryClientConfig(ctx, redisDb, key, op)
 
 ### gNMI Subscribe RPC — DB データの keyspace 購読
 
-`telemetry` は外部 gNMI クライアントからの **Subscribe RPC** を受けると、要求されたパス (例: `STATE_DB/PORT_TABLE/Ethernet0`) に対応する Redis DB へ `PSubscribe __keyspace@<N>__:<table>|<key>*` を張る。この購読は `GNMI|gnmi` テーブル自体ではなく、gNMI クライアントが監視したい任意の SONiC DB テーブルを対象とする (`sonic_data_client/db_client.go:1419-1447`)。
+`telemetry` は外部 gNMI クライアントからの **Subscribe RPC** を受けると、要求されたパス (例: `STATE_DB/PORT_TABLE/Ethernet0`) に対応する Redis DB へ `PSubscribe __keyspace@<N>__:<table>|<key>*` を張る。この購読は `GNMI|gnmi` テーブル自体ではなく、gNMI クライアントが監視したい任意の [SONiC](../../reference/glossary.md#term-sonic) DB テーブルを対象とする (`sonic_data_client/db_client.go:1419-1447`)。
 
 | Subscribe モード | 実装 | キャッシュ更新トリガー |
 |----------------|------|-------------------|
@@ -511,11 +511,11 @@ if [[ x"${LOCALHOST_SUBTYPE}" == x"SmartSwitch" ]]; then
 fi
 ```
 
-`DEVICE_METADATA|localhost.subtype == "SmartSwitch"` の場合のみ `-zmq_port=8100` が付与され、orchagent との ZMQ 通信経路が有効化される。非 SmartSwitch 機では ZMQ ポートは付与されず、Redis ベース通信のみが使用される。値 `8100` はハードコード定数であり、`GNMI` テーブルに `zmq_port` フィールドは存在しない。
+`DEVICE_METADATA|localhost.subtype == "SmartSwitch"` の場合のみ `-zmq_port=8100` が付与され、[orchagent](../../reference/glossary.md#term-orchagent) との ZMQ 通信経路が有効化される。非 SmartSwitch 機では ZMQ ポートは付与されず、Redis ベース通信のみが使用される。値 `8100` はハードコード定数であり、`GNMI` テーブルに `zmq_port` フィールドは存在しない。
 
 ### 管理 VRF 対応機種 — `--vrf mgmt` 付与
 
-`gnmi-native.sh:95-98` の条件分岐は ASIC 種別非依存であり、管理 VRF 機能を有効化した全機種に共通する。
+`gnmi-native.sh:95-98` の条件分岐は [ASIC](../../reference/glossary.md#term-asic) 種別非依存であり、管理 VRF 機能を有効化した全機種に共通する。
 
 | 条件 | 挙動 |
 |------|------|
@@ -532,7 +532,7 @@ GNMI テーブルは host namespace の CONFIG_DB にのみ存在する。`gnmi-
 
 ### ASIC 種別・YANG 差異なし
 
-`telemetry/telemetry.go`, `gnmi-native.sh`, `gnmi_server/clientCertAuth.go` を `platform|asic|broadcom|mellanox|marvell|vendor` で grep → **0 ヒット**（無関係なコメントを除く）。gNMI サーバは SAI 非経由であり、ASIC ドライバに依存するコードパスを持たない。
+`telemetry/telemetry.go`, `gnmi-native.sh`, `gnmi_server/clientCertAuth.go` を `platform|asic|broadcom|mellanox|marvell|vendor` で grep → **0 ヒット**（無関係なコメントを除く）。gNMI サーバは [SAI](../../reference/glossary.md#term-sai) 非経由であり、[ASIC](../../reference/glossary.md#term-asic) ドライバに依存するコードパスを持たない。
 
 `sonic-gnmi.yang` は単一ファイルであり、platform 固有の if-feature / deviation なし。すべての機種で同一 YANG スキーマが適用される。
 
@@ -551,8 +551,10 @@ GNMI テーブルは host namespace の CONFIG_DB にのみ存在する。`gnmi-
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-gnmi`](../yang/sonic-gnmi.md)
-- CONFIG_DB: [`GNMI_CLIENT_CERT`](gnmi-client-cert.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-gnmi`
+- CONFIG_DB: `GNMI_CLIENT_CERT`
 - 関連ページ: [gNMI 利用ガイド](../../management/gnmi-usage.md)
 
 <!-- ref-triangle:end -->
+
+<!-- glossary-links-injected: e5198ec2fc8a -->

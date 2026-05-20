@@ -36,7 +36,7 @@ related:
 
 ## なぜ必要か
 
-分散 [VOQ](../reference/glossary.md#term-voq) シャシは **複数 ASIC が独立した SONiC instance** で動き、ASIC 間情報共有は **supervisor 上の `CHASSIS_APP_DB`** で行う[^1]。[LAG](../reference/glossary.md#term-lag) は全 ASIC で共通に見せる必要があり、本 [HLD](../reference/glossary.md#term-hld) はその仕組みを定義する。
+分散 [VOQ](../reference/glossary.md#term-voq) シャシは **複数 [ASIC](../reference/glossary.md#term-asic) が独立した [SONiC](../reference/glossary.md#term-sonic) instance** で動き、ASIC 間情報共有は **supervisor 上の `CHASSIS_APP_DB`** で行う[^1]。[LAG](../reference/glossary.md#term-lag) は全 ASIC で共通に見せる必要があり、本 [HLD](../reference/glossary.md#term-hld) はその仕組みを定義する。
 
 要件と制約[^1]:
 
@@ -206,7 +206,7 @@ redis-cli -h <supervisor> -n CHASSIS_APP_DB hgetall 'SYSTEM_LAG_TABLE:<host>|<as
 # system_lag_id が remote ASIC でも programming されているかを確認
 ```
 
-- 別 ASIC 経由 egress でパケロス → `SYSTEM_LAG_MEMBER_TABLE` の有無、購読側 portsorch ログ
+- 別 ASIC 経由 egress でパケロス → `SYSTEM_LAG_MEMBER_TABLE` の有無、購読側 [portsorch](../reference/glossary.md#term-portsorch) ログ
 - LAG 作成失敗 → `chassisdb.conf` の範囲、Lua `lag_id_add` 戻り値
 - warm boot で LAG が壊れる → 仕様（FSI warm boot 未対応）
 
@@ -227,4 +227,4 @@ redis-cli -h <supervisor> -n CHASSIS_APP_DB hgetall 'SYSTEM_LAG_TABLE:<host>|<as
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 3279fa7c3594 -->
+<!-- glossary-links-injected: 45f78fb52e76 -->

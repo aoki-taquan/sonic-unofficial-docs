@@ -51,7 +51,7 @@ related:
 ## 症状
 
 - `vtysh -c "show ip route <prefix>"` に該当経路が出るが `*` (FIB selected) が付かない
-- `show ip route <prefix>` (SONiC 側) に出ない、または出るのに traffic は DROP
+- `show ip route <prefix>` ([SONiC](../../reference/glossary.md#term-sonic) 側) に出ない、または出るのに traffic は DROP
 - `APPL_DB ROUTE_TABLE` に entry が無い
 
 ## 切り分けフロー
@@ -99,9 +99,9 @@ ip neigh | grep <nexthop_ip>
 
 1. **Nexthop が unresolved** — [ARP](../../reference/glossary.md#term-arp) が無く、[zebra](../../reference/glossary.md#term-zebra) が FIB に入れない
 2. **[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) と [zebra](../../reference/glossary.md#term-zebra) の [FPM](../../reference/glossary.md#term-fpm) socket 断** — [FRR](../../reference/glossary.md#term-frr) の [FPM](../../reference/glossary.md#term-fpm) が disable / socket reconnect ループ
-3. **routeorch の bulk pending** — ASIC への書き込みが queue 滞留中
+3. **routeorch の bulk pending** — [ASIC](../../reference/glossary.md#term-asic) への書き込みが queue 滞留中
 4. **[CRM](../../reference/glossary.md#term-crm) route / nexthop 枯渇** — `crm show resources` で `used == max`
-5. **ASIC FIB table full** — `sai-table-full.md` 参照
+5. **[ASIC](../../reference/glossary.md#term-asic) FIB table full** — `sai-table-full.md` 参照
 6. **同一 prefix を別 source が上書き** — static route と [BGP](../../reference/glossary.md#term-bgp) route の admin distance
 7. **Blackhole / Null route** — `null0` が選択されていて意図せず DROP
 
@@ -117,4 +117,4 @@ ip neigh | grep <nexthop_ip>
 - [swss-orchagent-busy-loop.md](swss-orchagent-busy-loop.md)
 - [arp-entry-stuck.md](arp-entry-stuck.md)
 
-<!-- glossary-links-injected: bc3113061698 -->
+<!-- glossary-links-injected: 1288c04b3f8a -->

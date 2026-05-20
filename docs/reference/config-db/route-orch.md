@@ -37,9 +37,9 @@ related:
 
 ## 概要
 
-`orchagent` 内の `RouteOrch` は [APPL_DB](../../reference/glossary.md#term-appl_db) の `ROUTE_TABLE` を購読して SAI route エントリを管理するが、**CONFIG_DB を直接購読しない**。
+`orchagent` 内の `RouteOrch` は [APPL_DB](../../reference/glossary.md#term-appl_db) の `ROUTE_TABLE` を購読して [SAI](../../reference/glossary.md#term-sai) route エントリを管理するが、**[CONFIG_DB](../../reference/glossary.md#term-config_db) を直接購読しない**。
 
-CONFIG_DB を購読するのは同じ orchagent プロセス内の `FlowCounterRouteOrch` であり、CONFIG_DB `FLOW_COUNTER_ROUTE_PATTERN` テーブルからルートフローカウンターのパターンを受け取る[^1]。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) を購読するのは同じ [orchagent](../../reference/glossary.md#term-orchagent) プロセス内の `FlowCounterRouteOrch` であり、[CONFIG_DB](../../reference/glossary.md#term-config_db) `FLOW_COUNTER_ROUTE_PATTERN` テーブルからルートフローカウンターのパターンを受け取る[^1]。
 
 !!! info "関連ページ"
     - APPL_DB の `ROUTE_TABLE` フィールドと fpmsyncd 書き込み動作: [`ROUTE_TABLE (APPL_DB)`](route.md)
@@ -47,25 +47,23 @@ CONFIG_DB を購読するのは同じ orchagent プロセス内の `FlowCounterR
     - 静的経路の CONFIG_DB 設定: [`STATIC_ROUTE`](static-route.md)
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CLI["sonic-utilities<br/>config flow_counters route add"]
-  CFGDB[("CONFIG_DB<br/>FLOW_COUNTER_ROUTE_PATTERN")]
-  FC["orchagent<br/>FlowCounterRouteOrch"]
-  RO["orchagent<br/>RouteOrch"]
+  CDB[("CONFIG_DB<br/>STATIC_ROUTE")]
+  DM["fpmsyncd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_ROUTE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
   SAI["SAI<br/>sai_route_api"]
-  ASIC["ASIC"]
-  CLI --> CFGDB
-  CFGDB --> FC
-  FC -->|bindFlowCounter| SAI
-  RO -->|addRoute/removeRoute| SAI
-  SAI --> ASIC
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    FlowCounterRouteOrch は RouteOrch が管理する SAI route エントリに flex counter を付与する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -76,8 +74,8 @@ FLOW_COUNTER_ROUTE_PATTERN:<vrf_name>|<prefix>
 ```
 
 - `<prefix>` は IPv4 / IPv6 プレフィックス（例: `10.0.0.0/8`、`2001:db8::/32`）。
-- `<vrf_name>` は VRF 名（例: `Vrf-RED`）または VNET 名。セパレータは `|`。
-- デフォルト VRF の場合は `<vrf_name>` を省略し `<prefix>` のみ記述する。
+- `<vrf_name>` は [VRF](../../reference/glossary.md#term-vrf) 名（例: `Vrf-RED`）または [VNET](../../reference/glossary.md#term-vnet) 名。セパレータは `|`。
+- デフォルト [VRF](../../reference/glossary.md#term-vrf) の場合は `<vrf_name>` を省略し `<prefix>` のみ記述する。
 - `<prefix>` がデフォルトルート（`0.0.0.0/0` / `::/0`）の場合は **完全一致** パターンとして扱われる[^2]。
 - 重複・包含関係にあるパターンは登録時にエラーとなる（`validateRoutePattern()`）[^1]。
 
@@ -126,7 +124,7 @@ for (auto valuePair : data)
 
 ### FlexCounter ポーリングインターバル — 固定 `10000ms`
 
-`FlowCounterRouteOrch` の FlexCounter グループは `10000ms`（10 秒）ポーリング間隔でハードコードされており、CONFIG_DB から変更できない[^1]:
+`FlowCounterRouteOrch` の [FlexCounter](../../reference/glossary.md#term-flexcounter) グループは `10000ms`（10 秒）ポーリング間隔でハードコードされており、CONFIG_DB から変更できない[^1]:
 
 ```cpp
 // flowcounterrouteorch.cpp
@@ -148,7 +146,7 @@ void FlowCounterRouteOrch::doTask(Consumer &consumer)
 }
 ```
 
-サポート状態は STATE_DB `FLOW_COUNTER_CAPABILITY_TABLE|route` の `support` フィールドに `"true"` / `"false"` として書き込まれる。
+サポート状態は [STATE_DB](../../reference/glossary.md#term-state_db) `FLOW_COUNTER_CAPABILITY_TABLE|route` の `support` フィールドに `"true"` / `"false"` として書き込まれる。
 
 ### パターンマッチングロジック
 
@@ -182,7 +180,7 @@ bool is_match(sai_object_id_t vrf, IpPrefix prefix) const
 - 重複・包含関係にあるパターンは登録不可（`validateRoutePattern()` でエラー）。
 - `max_match_count = 0` は無効値。
 - ルートフローカウンターがサポートされないプラットフォームでは、パターン登録は受け付けられるが実際のバインドは行われない。
-- パターン削除時は対応する SAI counter が即時アンバインドされ、COUNTERS_DB からも削除される。
+- パターン削除時は対応する [SAI](../../reference/glossary.md#term-sai) counter が即時アンバインドされ、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) からも削除される。
 
 ## 購読者 / 生成者
 
@@ -192,9 +190,9 @@ bool is_match(sai_object_id_t vrf, IpPrefix prefix) const
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 CONFIG_DB: `STATIC_ROUTE`（静的経路の設定元）、`VRF`
-- 関連 APPL_DB: `ROUTE_TABLE`（RouteOrch が購読する経路テーブル）
+- 関連 [APPL_DB](../../reference/glossary.md#term-appl_db): `ROUTE_TABLE`（RouteOrch が購読する経路テーブル）
 - 関連 CLI: `config flow_counters route`、`show flow_counters route`
-- 関連 YANG: 未定義（スキーマの正本は `flowcounterrouteorch.cpp` / `flow_counter_util/route.py`）
+- 関連 [YANG](../../reference/glossary.md#term-yang): 未定義（スキーマの正本は `flowcounterrouteorch.cpp` / `flow_counter_util/route.py`）
 
 <!-- ordering -->
 ## 処理順序 — `FlowCounterRouteOrch` の初期化・タスク処理の順序制約 (Phase B)
@@ -215,7 +213,7 @@ m_orchList = { gSwitchOrch, gCrmOrch, gPortsOrch, gBufferOrch,
                gFlowCounterRouteOrch, gIntfsOrch, ..., gRouteOrch, ... }
 ```
 
-コンストラクタ内では `initRouteFlowCounterCapability()` を即時呼び出し、プラットフォームサポート確認と STATE_DB 書き込みを完了させる。サポートあり場合のみ `FLEX_COUNTER_UPD_TIMER`（1 秒周期）を登録する。
+コンストラクタ内では `initRouteFlowCounterCapability()` を即時呼び出し、プラットフォームサポート確認と [STATE_DB](../../reference/glossary.md#term-state_db) 書き込みを完了させる。サポートあり場合のみ `FLEX_COUNTER_UPD_TIMER`（1 秒周期）を登録する。
 
 ### CONFIG_DB 変更のキー処理順序
 
@@ -231,11 +229,11 @@ orchdaemon.cpp のコメント（行 494–498）は複数テーブルを持つ 
 比較キー: (vrf_name 辞書順, ip_prefix 順)
 ```
 
-デフォルト VRF は `vrf_name = ""` となるため、辞書順で最小（先頭）に配置される。
+デフォルト [VRF](../../reference/glossary.md#term-vrf) は `vrf_name = ""` となるため、辞書順で最小（先頭）に配置される。
 
 ### バインド処理の遅延キューと再試行順序
 
-`bindFlowCounter()` 呼び出し時に ASIC_DB `VIDTORID` への VID 登録が未完了だった場合、エントリは `mPendingAddToFlexCntr`（`RouterFlowCounterCache` 型、`std::map`）へキューイングされる。`doTask(SelectableTimer &timer)` が 1 秒ごとに全 pending エントリをスキャンし、VID 解決済みのものから順次 FlexDB へ登録する[^1]。
+`bindFlowCounter()` 呼び出し時に [ASIC_DB](../../reference/glossary.md#term-asic_db) `VIDTORID` への VID 登録が未完了だった場合、エントリは `mPendingAddToFlexCntr`（`RouterFlowCounterCache` 型、`std::map`）へキューイングされる。`doTask(SelectableTimer &timer)` が 1 秒ごとに全 pending エントリをスキャンし、VID 解決済みのものから順次 FlexDB へ登録する[^1]。
 
 pending キューが空になると `mFlexCounterUpdTimer->stop()` でタイマーを停止する。
 
@@ -254,21 +252,21 @@ pending キューが空になると `mFlexCounterUpdTimer->stop()` でタイマ�
 <!-- cross-refs -->
 ## 暗黙参照 — `FlowCounterRouteOrch` が依存する関連テーブル (Phase C)
 
-`FLOW_COUNTER_ROUTE_PATTERN` は YANG 定義を持たない（YANG 未カバー）ため leafref による明示参照はゼロ件。
+`FLOW_COUNTER_ROUTE_PATTERN` は [YANG](../../reference/glossary.md#term-yang) 定義を持たない（[YANG](../../reference/glossary.md#term-yang) 未カバー）ため leafref による明示参照はゼロ件。
 代わりに `flowcounterrouteorch.cpp` の全 997 行から抽出した **8 系統の暗黙依存** が実装レベルの cross-table 参照となる。
 
 ### 主要テーブル / Orch 参照
 
 | 参照先 (テーブル / Orch) | フィールド / 条件 | 参照方向 | evidence |
 |---|---|---|---|
-| `RouteOrch` / `ROUTE_TABLE` (APPL_DB) | 常時（パターンマッチング走査） | 読み取り（シンク済みルート一覧） | `flowcounterrouteorch.cpp:634` `gRouteOrch->getSyncdRoutes()` |
+| `RouteOrch` / `ROUTE_TABLE` ([APPL_DB](../../reference/glossary.md#term-appl_db)) | 常時（パターンマッチング走査） | 読み取り（シンク済みルート一覧） | `flowcounterrouteorch.cpp:634` `gRouteOrch->getSyncdRoutes()` |
 | `VRFOrch` / `VRF` (CONFIG_DB) | key の `<vrf_name>` が非デフォルト VRF のとき | OID → 名前変換 | `flowcounterrouteorch.cpp:410-411` `getVRFname(vrf_id)` |
-| `VNetOrch` / VNET ルートキャッシュ | key の `<vrf_name>` が VNET 名のとき | 読み取り（VNET ルートマップ走査） | `flowcounterrouteorch.cpp:696-743` `getRouteMap()` |
+| `VNetOrch` / [VNET](../../reference/glossary.md#term-vnet) ルートキャッシュ | key の `<vrf_name>` が [VNET](../../reference/glossary.md#term-vnet) 名のとき | 読み取り（VNET ルートマップ走査） | `flowcounterrouteorch.cpp:696-743` `getRouteMap()` |
 | `FlexCounterOrch` / `FLEX_COUNTER_TABLE` (CONFIG_DB) | 常時（カウンター有効化フラグ確認） | 状態読み取り | `flowcounterrouteorch.cpp:947-948` `getRouteFlowCountersState()` |
 | `ASIC_DB:VIDTORID` | バインド試行時（VID 存在確認） | 読み取り（RID 解決） | `flowcounterrouteorch.cpp:116` `mVidToRidTable->hget()` |
 | `COUNTERS_DB:COUNTERS_ROUTE_NAME_MAP` | バインド成功後 | 書き込み（prefix → counter OID） | `flowcounterrouteorch.cpp:33, 126, 152, 921` |
 | `COUNTERS_DB:COUNTERS_ROUTE_TO_PATTERN_MAP` | バインド成功後 | 書き込み（prefix → パターン逆引き） | `flowcounterrouteorch.cpp:34, 129, 155, 920` |
-| `STATE_DB:FLOW_COUNTER_CAPABILITY_TABLE\|route` | orchagent 起動時（一度のみ） | 書き込み（`support = true/false`） | `flowcounterrouteorch.cpp:174-178` |
+| `STATE_DB:FLOW_COUNTER_CAPABILITY_TABLE\|route` | [orchagent](../../reference/glossary.md#term-orchagent) 起動時（一度のみ） | 書き込み（`support = true/false`） | `flowcounterrouteorch.cpp:174-178` |
 
 ### 初期化ガード順序
 
@@ -309,7 +307,7 @@ CONFIG_DB エントリは失敗後も残り続ける。`STATE_DB` / `ERROR_TABLE
 | 1 | `gRouteOrch = null` またはプラットフォーム非対応 | `doTask()` ガード | 全エントリを無視（ログなし） | なし |
 | 2 | パターン重複・包含関係 | `validateRoutePattern()` | ERROR ログ。パターン登録拒否 | なし |
 | 3 | VRF/VNET 名が未解決 | `parseRouteKeyForRoutePattern()` | NOTICE ログ。`vrf_id = SAI_NULL_OBJECT_ID` で登録継続（デフォルト VRF と混同リスク） | なし |
-| 4 | SAI generic counter 作成失敗 | `bindFlowCounter()` | ERROR ログ。当該ルートへのバインドをスキップ | なし |
+| 4 | [SAI](../../reference/glossary.md#term-sai) generic counter 作成失敗 | `bindFlowCounter()` | ERROR ログ。当該ルートへのバインドをスキップ | なし |
 | 5 | SAI `set_route_entry_attribute` 失敗（bind） | `bindFlowCounter()` | WARN ログ。作成済み counter を即クリーンアップ | なし |
 | 6 | SAI `set_route_entry_attribute` 失敗（unbind） | `unbindFlowCounter()` | WARN ログ。`removeGenericCounter` は実行。SAI 側と不整合のリスク | なし |
 | 7 | DEL 対象パターンが未登録 | `removeRoutePattern()` | ERROR ログ。no-op | なし |
@@ -331,7 +329,7 @@ recovery: 競合する既存パターンを DEL してから再登録する。
 ### SAI counter unbind 失敗時のリスク
 
 `unbindFlowCounter()` では SAI が失敗しても `FlowCounterHandler::removeGenericCounter(counter_oid)` は**必ず実行**される[^1]。
-SAI 側に counter が残ったまま orchagent 内部状態は解放済みとなり、SAI と orchagent の間で不整合が生じる可能性がある。
+SAI 側に counter が残ったまま [orchagent](../../reference/glossary.md#term-orchagent) 内部状態は解放済みとなり、SAI と orchagent の間で不整合が生じる可能性がある。
 
 ### STATE_DB / syslog 確認方法
 
@@ -356,11 +354,11 @@ sudo tail -f /var/log/syslog | grep -i flowcounter
 | 定数名 | 値 | 意味 | CONFIG_DB 変更可否 |
 |--------|----|------|--------------------|
 | `ROUTE_PATTERN_DEFAULT_MAX_MATCH_COUNT` | `30` | パターン 1 件あたりのフローカウンター最大付与数のデフォルト。`max_match_count` フィールドで上書き可能だが、`0` 設定時のフォールバック値としても使用される | × (フォールバック値としてハードコード) |
-| `ROUTE_FLOW_COUNTER_POLLING_INTERVAL_MS` | `10000`（ms） | FlexCounter グループのポーリング間隔（10 秒）。`FlowCounterRouteOrch` コンストラクタで直接渡され、CONFIG_DB による変更手段はない | × |
+| `ROUTE_FLOW_COUNTER_POLLING_INTERVAL_MS` | `10000`（ms） | [FlexCounter](../../reference/glossary.md#term-flexcounter) グループのポーリング間隔（10 秒）。`FlowCounterRouteOrch` コンストラクタで直接渡され、CONFIG_DB による変更手段はない | × |
 | `FLEX_COUNTER_UPD_INTERVAL` | `1`（秒） | バインド保留キュー（`mPendingAddToFlexCntr`）を再試行する `SelectableTimer` の周期。VID 解決待ちエントリを 1 秒ごとにスキャンする | × |
-| `ROUTE_FLOW_COUNTER_FLEX_COUNTER_GROUP` | `"ROUTE_FLOW_COUNTER"` | FlexCounter グループ ID 文字列。FLEX_COUNTER_TABLE のキープレフィックスとして使用される | × |
+| `ROUTE_FLOW_COUNTER_FLEX_COUNTER_GROUP` | `"ROUTE_FLOW_COUNTER"` | [FlexCounter](../../reference/glossary.md#term-flexcounter) グループ ID 文字列。FLEX_COUNTER_TABLE のキープレフィックスとして使用される | × |
 | `FLOW_COUNTER_ROUTE_KEY` | `"route"` | `FLOW_COUNTER_CAPABILITY_TABLE` のエントリキー | × |
-| `FLOW_COUNTER_SUPPORT_FIELD` | `"support"` | STATE_DB 書き込み時のフィールド名 | × |
+| `FLOW_COUNTER_SUPPORT_FIELD` | `"support"` | [STATE_DB](../../reference/glossary.md#term-state_db) 書き込み時のフィールド名 | × |
 
 ```cpp
 // orchagent/flex_counter/flowcounterrouteorch.cpp (L21-26)
@@ -381,8 +379,8 @@ sudo tail -f /var/log/syslog | grep -i flowcounter
 
 | 定数名 | 値 | 意味 | 備考 |
 |--------|----|------|------|
-| `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | SAI が ECMP グループ数上限を返さなかった場合のデフォルト上限 | SAI capability で上書きされる場合あり |
-| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | ECMP グループあたりの最大ネクストホップ数デフォルト | 同上 |
+| `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | SAI が [ECMP](../../reference/glossary.md#term-ecmp) グループ数上限を返さなかった場合のデフォルト上限 | SAI capability で上書きされる場合あり |
+| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | [ECMP](../../reference/glossary.md#term-ecmp) グループあたりの最大ネクストホップ数デフォルト | 同上 |
 | `NHGRP_MAX_SIZE` | `128` | ネクストホップグループサイズの上限（`routeorch.h`） | × |
 | `EUI64_INTF_ID_LEN` | `8` | EUI-64 インターフェース ID バイト長 | × |
 
@@ -415,12 +413,12 @@ sudo tail -f /var/log/syslog | grep -i flowcounter
 | # | DB | テーブル / キー | トリガー | 書き込み内容 | evidence |
 |---|----|----|---------|------------|---------|
 | 1 | STATE_DB | `FLOW_COUNTER_CAPABILITY_TABLE\|route` | orchagent **起動時に 1 回** | `support = "true"` / `"false"` — プラットフォームの route flow counter サポート状況 | `flowcounterrouteorch.cpp:174-178` |
-| 2 | COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP` | バインド成功時（`doTask(SelectableTimer)` 内） | `<vrf:prefix>` → `<counter_oid>` のマッピングをハッシュに追記 | `flowcounterrouteorch.cpp:152` |
-| 3 | COUNTERS_DB | `COUNTERS_ROUTE_TO_PATTERN_MAP` | バインド成功時（`doTask(SelectableTimer)` 内） | `<vrf:prefix>` → `<pattern_prefix>` の逆引きマッピングをハッシュに追記 | `flowcounterrouteorch.cpp:157` |
+| 2 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_ROUTE_NAME_MAP` | バインド成功時（`doTask(SelectableTimer)` 内） | `<vrf:prefix>` → `<counter_oid>` のマッピングをハッシュに追記 | `flowcounterrouteorch.cpp:152` |
+| 3 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_ROUTE_TO_PATTERN_MAP` | バインド成功時（`doTask(SelectableTimer)` 内） | `<vrf:prefix>` → `<pattern_prefix>` の逆引きマッピングをハッシュに追記 | `flowcounterrouteorch.cpp:157` |
 | 4 | COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP` | アンバインド時（`removeRouteFlowCounterFromDB()`） | 対象プレフィックスエントリを `hdel` で削除 | `flowcounterrouteorch.cpp:921-922` |
 | 5 | COUNTERS_DB | `COUNTERS_ROUTE_TO_PATTERN_MAP` | アンバインド時（同上） | 対象プレフィックスエントリを `hdel` で削除 | `flowcounterrouteorch.cpp:920` |
-| 6 | FLEX_COUNTER_DB | `FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER\|<counter_oid>` | バインド成功時（`FlexCounterManager::setCounterIdList()`） | カウンター OID に対するポーリング対象 stat ID リストを登録 | `flex_counter_manager.cpp:225` |
-| 7 | FLEX_COUNTER_DB | `FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER\|<counter_oid>` | アンバインド時（`FlexCounterManager::clearCounterIdList()`） | 対象 OID のポーリングエントリを削除 | `flex_counter_manager.cpp:235-260` |
+| 6 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER\|<counter_oid>` | バインド成功時（`FlexCounterManager::setCounterIdList()`） | カウンター OID に対するポーリング対象 stat ID リストを登録 | `flex_counter_manager.cpp:225` |
+| 7 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER\|<counter_oid>` | アンバインド時（`FlexCounterManager::clearCounterIdList()`） | 対象 OID のポーリングエントリを削除 | `flex_counter_manager.cpp:235-260` |
 
 ### 書き込みタイミングの詳細
 
@@ -437,16 +435,16 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 
 **COUNTERS_DB 書き込み（テーブル #2, #3）**: `doTask(SelectableTimer &timer)` の 1 秒周期タイマーコールバックで、`mPendingAddToFlexCntr` キューから VID 解決済みのエントリをバッチ処理し、`mPrefixToCounterTable->set("", prefixToCounterMap)` および `mPrefixToPatternTable->set("", prefixToPatternMap)` でまとめて書き込む[^1]。タイマーは pending キューが空になると `stop()` される。
 
-**FLEX_COUNTER_DB 書き込み（テーブル #6, #7）**: `FlexCounterManager` 経由で `FLEX_COUNTER_DB` に書き込む。`show flow_counters route` が参照する実カウンター値は syncd が FLEX_COUNTER_DB の登録エントリをもとに ASIC から読み取り COUNTERS_DB に書き込む。
+**[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) 書き込み（テーブル #6, #7）**: `FlexCounterManager` 経由で `FLEX_COUNTER_DB` に書き込む。`show flow_counters route` が参照する実カウンター値は [syncd](../../reference/glossary.md#term-syncd) が FLEX_COUNTER_DB の登録エントリをもとに [ASIC](../../reference/glossary.md#term-asic) から読み取り COUNTERS_DB に書き込む。
 
 ### 副作用の読み取り側
 
 | DB | テーブル | 読み取り側 | 用途 |
 |----|---------|-----------|------|
 | STATE_DB | `FLOW_COUNTER_CAPABILITY_TABLE\|route` | `acl-loader`, `sonic-mgmt-common (translib)`, CLI `show flow_counters route` | プラットフォームのサポート状況確認 |
-| COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP` | `show flow_counters route`（sonic-utilities） | prefix → counter OID 解決 |
-| COUNTERS_DB | `COUNTERS_ROUTE_TO_PATTERN_MAP` | `show flow_counters route`（sonic-utilities） | counter → パターン逆引き表示 |
-| FLEX_COUNTER_DB | `FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER\|*` | `syncd` | 実 ASIC カウンター値のポーリング対象登録 |
+| COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP` | `show flow_counters route`（[sonic-utilities](../../reference/glossary.md#term-sonic-utilities)） | prefix → counter OID 解決 |
+| COUNTERS_DB | `COUNTERS_ROUTE_TO_PATTERN_MAP` | `show flow_counters route`（[sonic-utilities](../../reference/glossary.md#term-sonic-utilities)） | counter → パターン逆引き表示 |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER\|*` | `syncd` | 実 [ASIC](../../reference/glossary.md#term-asic) カウンター値のポーリング対象登録 |
 
 <!-- evidence:
 source: sonic-net/sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp#L31-34 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
@@ -456,6 +454,26 @@ excerpt: |
   mPrefixToPatternTable(std::unique_ptr<Table>(new Table(mCounterDb.get(), COUNTERS_ROUTE_TO_PATTERN_MAP))),
 reasoning: COUNTERS_DB への書き込みは mPrefixToCounterTable / mPrefixToPatternTable を通じて行われる。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp#L31-34 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp#L31-34 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    mCounterDb(std::shared_ptr<DBConnector>(new DBConnector("COUNTERS_DB", 0))),
+    mPrefixToCounterTable(std::unique_ptr<Table>(new Table(mCounterDb.get(), COUNTERS_ROUTE_NAME_MAP))),
+    mPrefixToPatternTable(std::unique_ptr<Table>(new Table(mCounterDb.get(), COUNTERS_ROUTE_TO_PATTERN_MAP))),
+    ```
+
+    **判断根拠**: COUNTERS_DB への書き込みは mPrefixToCounterTable / mPrefixToPatternTable を通じて行われる。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-net/sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp#L174-178 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
 excerpt: |
@@ -465,6 +483,27 @@ excerpt: |
   capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 reasoning: STATE_DB FLOW_COUNTER_CAPABILITY_TABLE|route への起動時 1 回書き込みを確認。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp#L174-178 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp#L174-178 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)`
+
+    **抜粋**:
+
+    ```text
+    swss::DBConnector state_db("STATE_DB", 0);
+    swss::Table capability_table(&state_db, STATE_FLOW_COUNTER_CAPABILITY_TABLE_NAME);
+    fvs.emplace_back(FLOW_COUNTER_SUPPORT_FIELD, mRouteFlowCounterSupported ? "true" : "false");
+    capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
+    ```
+
+    **判断根拠**: STATE_DB FLOW_COUNTER_CAPABILITY_TABLE|route への起動時 1 回書き込みを確認。
+
+<!-- evidence-rendered:end -->
+
 <!-- /side-effects -->
 
 <!-- pubsub -->
@@ -577,7 +616,7 @@ bool FlowCounterHandler::queryRouteFlowCounterCapability()
 
 | プラットフォーム | `SAI_ROUTE_ENTRY_ATTR_COUNTER_ID` 対応 | `mRouteFlowCounterSupported` | CONFIG_DB パターン処理 | STATE_DB 書込み値 |
 |----------------|----------------------------------------|-----------------------------|-----------------------|-------------------|
-| broadcom (ASIC SDK ≥ 6.5 相当) | `set_implemented = true` | `true` | 有効（パターン登録・counter bind）| `"true"` |
+| broadcom ([ASIC SDK](../../reference/glossary.md#term-asic-sdk) ≥ 6.5 相当) | `set_implemented = true` | `true` | 有効（パターン登録・counter bind）| `"true"` |
 | mellanox (MLNX SAI 対応版) | `set_implemented = true` | `true` | 有効 | `"true"` |
 | marvell-prestera / teralynx (対応 SDK) | SAI 実装依存 | SAI 戻り値次第 | SAI 次第 | SAI 次第 |
 | vs (virtual switch) | `set_implemented = false` または status ≠ SUCCESS | `false` | **全スキップ** | `"false"` |
@@ -602,8 +641,8 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 
 ### multi-asic / SmartSwitch 環境
 
-- multi-asic 構成では namespace ごとに `FlowCounterRouteOrch` が独立して起動し、各 ASIC SAI の capability をそれぞれ照会する。
-- 異種 ASIC が混在する SmartSwitch 環境では namespace 間で `mRouteFlowCounterSupported` の値が異なる場合があり、一部 namespace のみルートフローカウンターが有効になることがある。
+- multi-asic 構成では namespace ごとに `FlowCounterRouteOrch` が独立して起動し、各 [ASIC](../../reference/glossary.md#term-asic) SAI の capability をそれぞれ照会する。
+- 異種 ASIC が混在する [SmartSwitch](../../reference/glossary.md#term-smartswitch) 環境では namespace 間で `mRouteFlowCounterSupported` の値が異なる場合があり、一部 namespace のみルートフローカウンターが有効になることがある。
 - `STATE_DB FLOW_COUNTER_CAPABILITY_TABLE|route` は namespace ごとに独立するため、参照側（CLI / monitoring）は対象 namespace を明示する必要がある。
 
 > **スキャン証跡**: `flow_counter_handler.cpp:51-62` (`queryRouteFlowCounterCapability`) / `flowcounterrouteorch.cpp:166-179` (`initRouteFlowCounterCapability`) / `flowcounterrouteorch.cpp:55-61` (doTask guard) / `flowcounterrouteorch.cpp:305-366` (`onAddMiscRouteEntry`/`onRemoveMiscRouteEntry` guards) / `flowcounterrouteorch.cpp:401-451` (`onAddVR`/`onRemoveVR` guards)。中間ファイル: `meta/_intermediate/cdb-flow/route-orch-platform.md`
@@ -662,3 +701,5 @@ FLOW_COUNTER_ROUTE_PATTERN:Vrf-RED|2001:db8::/32
 - パターン登録でエラー → 既存パターンと IP 範囲が重複または包含関係にないか確認する（`validateRoutePattern()` チェック）。
 - `max_match_count` を減らしたのに反映されない → FlexCounter タイマー（1 秒）待機後に COUNTERS_DB を再確認する。
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: de977081e0df -->

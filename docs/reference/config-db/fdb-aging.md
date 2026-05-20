@@ -23,27 +23,24 @@ related:
 
 ## 概要
 
-`SWITCH_TABLE:switch` の `fdb_aging_time` フィールドは、ハードウェア FDB ([Forwarding Database](../../reference/glossary.md#term-forwarding-database)) の動的エントリをエージングアウトするまでのタイムアウト時間を秒単位で指定する[^1]。`orchagent` の `SwitchOrch` がこのフィールドを読み取り、SAI 属性 `SAI_SWITCH_ATTR_FDB_AGING_TIME` としてスイッチ ASIC に設定する。
+`SWITCH_TABLE:switch` の `fdb_aging_time` フィールドは、ハードウェア [FDB](../../reference/glossary.md#term-fdb) ([Forwarding Database](../../reference/glossary.md#term-forwarding-database)) の動的エントリをエージングアウトするまでのタイムアウト時間を秒単位で指定する[^1]。`orchagent` の `SwitchOrch` がこのフィールドを読み取り、[SAI](../../reference/glossary.md#term-sai) 属性 `SAI_SWITCH_ATTR_FDB_AGING_TIME` としてスイッチ [ASIC](../../reference/glossary.md#term-asic) に設定する。
 
-このフィールドは [CONFIG_DB](../../reference/glossary.md#term-config_db) には**存在しない**。orchagent コンテナ起動時に `switch.json.j2` テンプレートが展開された `switch.json` を `swssconfig` が APPL_DB `SWITCH_TABLE:switch` に書き込む経路が標準の注入パスである。
+このフィールドは [CONFIG_DB](../../reference/glossary.md#term-config_db) には**存在しない**。[orchagent](../../reference/glossary.md#term-orchagent) コンテナ起動時に `switch.json.j2` テンプレートが展開された `switch.json` を `swssconfig` が [APPL_DB](../../reference/glossary.md#term-appl_db) `SWITCH_TABLE:switch` に書き込む経路が標準の注入パスである。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  J2["switch.json.j2<br/>(build-time template)"]
-  APPDB[("APPL_DB<br/>SWITCH_TABLE:switch")]
-  SO["SwitchOrch<br/>doAppSwitchTableTask()"]
-  SAI["SAI<br/>SAI_SWITCH_ATTR_FDB_AGING_TIME"]
-
-  J2 -->|swssconfig| APPDB
-  APPDB --> SO
-  SO --> SAI
+  CDB[("CONFIG_DB<br/>DEVICE_METADATA")]
+  DM["SwitchOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_switch_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    APPL_DB から SAI までの典型経路。CONFIG_DB を経由しないフィールドのため、APPL_DB が起点となる。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -58,18 +55,18 @@ SWITCH_TABLE:switch
 
 | フィールド | 型 | 既定値 | 説明 |
 |-----------|----|--------|------|
-| `fdb_aging_time` | uint32 (秒) | `600` | FDB 動的エントリのエージングタイムアウト。`0` は aging 無効 |
+| `fdb_aging_time` | uint32 (秒) | `600` | [FDB](../../reference/glossary.md#term-fdb) 動的エントリのエージングタイムアウト。`0` は aging 無効 |
 
 `switch.json.j2` により `switch_type != "dpu"` のノードには起動時に `600` 秒が自動注入される (`switch.json.j2:35-38`)。
 
 ## 購読者
 
-- `orchagent`（`SwitchOrch::doAppSwitchTableTask()`）: APPL_DB `SWITCH_TABLE` を `Consumer` として購読し、`SAI_SWITCH_ATTR_FDB_AGING_TIME` を設定する。
+- `orchagent`（`SwitchOrch::doAppSwitchTableTask()`）: [APPL_DB](../../reference/glossary.md#term-appl_db) `SWITCH_TABLE` を `Consumer` として購読し、`SAI_SWITCH_ATTR_FDB_AGING_TIME` を設定する。
 
 ## 関連 CONFIG_DB / CLI
 
-- 関連 CLI: `show mac aging-time`（APPL_DB の `SWITCH_TABLE*` から `fdb_aging_time` を表示）
-- 関連 [YANG](../../reference/glossary.md#term-yang): なし（`fdb_aging_time` フィールドの YANG 定義は存在しない）
+- 関連 CLI: `show mac aging-time`（[APPL_DB](../../reference/glossary.md#term-appl_db) の `SWITCH_TABLE*` から `fdb_aging_time` を表示）
+- 関連 [YANG](../../reference/glossary.md#term-yang): なし（`fdb_aging_time` フィールドの [YANG](../../reference/glossary.md#term-yang) 定義は存在しない）
 
 <!-- ordering -->
 ## 書込み順序依存・タイミング依存 (Phase B)
@@ -78,10 +75,10 @@ SWITCH_TABLE:switch
 
 ### SAI create_switch → fdb_aging_time SET（hard 先行必須）
 
-`SwitchOrch::doAppSwitchTableTask()` は `sai_switch_api->set_switch_attribute(gSwitchId, &attr)` で SAI へ書き込む。有効な `gSwitchId` は orchagent 起動時の `create_switch` で確定するため、orchagent が起動してメインループを開始するまで `fdb_aging_time` は適用されない。
+`SwitchOrch::doAppSwitchTableTask()` は `sai_switch_api->set_switch_attribute(gSwitchId, &attr)` で [SAI](../../reference/glossary.md#term-sai) へ書き込む。有効な `gSwitchId` は [orchagent](../../reference/glossary.md#term-orchagent) 起動時の `create_switch` で確定するため、[orchagent](../../reference/glossary.md#term-orchagent) が起動してメインループを開始するまで `fdb_aging_time` は適用されない。
 
 - **方向**: `create_switch` 完了 → `fdb_aging_time` SET
-- **強度**: hard（gSwitchId なし = SAI 呼び出し不可）
+- **強度**: hard（gSwitchId なし = [SAI](../../reference/glossary.md#term-sai) 呼び出し不可）
 - **緩和策**: orchagent が保証（ユーザー操作不要）
 - **evidence**: `switchorch.cpp:22-27`（extern gSwitchId 宣言）
 
@@ -89,7 +86,7 @@ SWITCH_TABLE:switch
 
 `swssconfig.sh` は `swssconfig switch.json` で APPL_DB に書き込む前後に `sleep 1` を挟む (`swssconfig.sh:96-101`)。`SwitchOrch` の Consumer 登録 → メインループ開始 → `swssconfig` 書込 の順序がこの sleep により担保される。orchagent 起動が著しく遅延した場合でも、エントリは Consumer キューに積まれ次のループで処理される。
 
-- **方向**: orchagent メインループ開始 → swssconfig switch.json 書込
+- **方向**: orchagent メインループ開始 → [swssconfig](../../reference/glossary.md#term-swssconfig) switch.json 書込
 - **強度**: soft（sleep 1 による時間的分離）
 - **証跡**: `docker-orchagent/swssconfig.sh:96-101`
 
@@ -106,7 +103,7 @@ SWITCH_TABLE:switch
 
 warm-reboot パスで `checkRestartNoFreeze()` が false の場合、`orchdaemon.cpp:1065-1068` が `gSwitchOrch->setAgingFDB(0)` を呼び `fdb_aging_time` を 0（aging 無効）に設定する。これは warm-reboot 中に MAC エントリが aging で失われないための意図的な設計。warm-reboot 完了後、`swssconfig` の再実行で 600 秒が復元される。
 
-- **方向**: warm-reboot 検出 → aging 0（無効）→ 再起動後 swssconfig → aging 600（復元）
+- **方向**: warm-reboot 検出 → aging 0（無効）→ 再起動後 [swssconfig](../../reference/glossary.md#term-swssconfig) → aging 600（復元）
 - **強度**: hard（意図的設計）
 - **evidence**: `orchdaemon.cpp:1065-1068`, `switchorch.cpp:1671-1688`
 
@@ -122,10 +119,10 @@ warm-reboot パスで `checkRestartNoFreeze()` が false の場合、`orchdaemon
 | # | 依存関係 | 方向 | 強度 | 緩和策 |
 |---|----------|------|------|--------|
 | 1 | SAI create_switch → fdb_aging_time SAI set | 強制先行 | hard | orchagent が保証 |
-| 2 | orchagent メインループ開始 → swssconfig 書込 | 時間的分離 | soft | sleep 1 により担保 |
+| 2 | orchagent メインループ開始 → [swssconfig](../../reference/glossary.md#term-swssconfig) 書込 | 時間的分離 | soft | sleep 1 により担保 |
 | 3 | 不明フィールド先行 → fdb_aging_time スキップ | break 中断 | medium | 有効属性のみ書き込む |
 | 4 | warm-reboot → aging 0 → 再起動後復元 | 意図的一時無効化 | hard | 自動復元 (swssconfig) |
-| 5 | SAI 失敗 → 次ループ再試行 | 一時スキップ + 自動再試行 | soft | ASIC 正常稼働で解消 |
+| 5 | SAI 失敗 → 次ループ再試行 | 一時スキップ + 自動再試行 | soft | [ASIC](../../reference/glossary.md#term-asic) 正常稼働で解消 |
 
 <!-- /ordering -->
 
@@ -192,7 +189,7 @@ aging 無効化が SAI レベルで失敗しても orchagent は処理を継続�
 
 ### STATE_DB・ERROR_TABLE への影響
 
-- **STATE_DB**: `fdb_aging_time` に対する書き込みなし（SAI 設定のみ）
+- **[STATE_DB](../../reference/glossary.md#term-state_db)**: `fdb_aging_time` に対する書き込みなし（SAI 設定のみ）
 - **ERROR_TABLE**: 書き込みなし（`SWSS_LOG_ERROR` のみ）
 - **APPL_DB エントリ**: `retry = false` の場合エントリ削除。`retry = true` の場合エントリ保持
 
@@ -222,7 +219,7 @@ aging 無効化が SAI レベルで失敗しても orchagent は処理を継続�
 ## 引用元
 
 [^1]: `SwitchOrch::doAppSwitchTableTask()`: `sonic-swss/orchagent/switchorch.cpp:595-748`. fdb_aging_time の SAI マッピング: `switchorch.cpp:49` (`switch_attribute_map`). warm-reboot での aging 無効化: `orchdaemon.cpp:1068`. デフォルト値: `sonic-buildimage/dockers/docker-orchagent/switch.json.j2:38`.
-[^2]: `switchorch.cpp:664-666` の `case SAI_SWITCH_ATTR_FDB_AGING_TIME:` は `to_uint<uint32_t>(value)` でキャストするのみ。プラットフォーム識別関数 (`isMlnxPlatform()` 等) は `doAppSwitchTableTask()` 内には存在しない。プラットフォーム別の `querySwitchCapability()` チェックは ECMP/LAG hash offset (`switchorch.cpp:683-703`) にのみ適用される。
+[^2]: `switchorch.cpp:664-666` の `case SAI_SWITCH_ATTR_FDB_AGING_TIME:` は `to_uint<uint32_t>(value)` でキャストするのみ。プラットフォーム識別関数 (`isMlnxPlatform()` 等) は `doAppSwitchTableTask()` 内には存在しない。プラットフォーム別の `querySwitchCapability()` チェックは [ECMP](../../reference/glossary.md#term-ecmp)/[LAG](../../reference/glossary.md#term-lag) hash offset (`switchorch.cpp:683-703`) にのみ適用される。
 
 ## 関連ページ
 - [CONFIG_DB index](index.md)
@@ -233,7 +230,7 @@ aging 無効化が SAI レベルで失敗しても orchagent は処理を継続�
 ## 暗黙参照テーブル (Phase C)
 
 `fdb_aging_time` フィールドはコードの直接 leafref 参照を持たないが、値の**注入元テンプレート**
-`switch.json.j2` が CONFIG_DB `DEVICE_METADATA` を暗黙的に参照して注入条件を決定する。
+`switch.json.j2` が [CONFIG_DB](../../reference/glossary.md#term-config_db) `DEVICE_METADATA` を暗黙的に参照して注入条件を決定する。
 
 <!-- evidence: meta/_intermediate/cdb-flow/fdb-aging-cross-refs.md -->
 
@@ -252,7 +249,7 @@ SAI `SAI_SWITCH_ATTR_FDB_AGING_TIME` は orchagent 初期化時のハードウ�
 
 ### 直接 APPL_DB 参照なし
 
-`SwitchOrch::doAppSwitchTableTask()` は `fdb_aging_time` 値を処理するにあたり、他の CONFIG_DB / APPL_DB
+`SwitchOrch::doAppSwitchTableTask()` は `fdb_aging_time` 値を処理するにあたり、他の [CONFIG_DB](../../reference/glossary.md#term-config_db) / APPL_DB
 テーブルを参照しない（値をそのまま `uint32_t` にキャストして SAI に渡す）。
 `orchdaemon.cpp` の warm-reboot パスが呼ぶ `setAgingFDB(0)` も APPL_DB を経由せず直接 SAI API を呼ぶため、
 cross-refs としての依存テーブルはない（Phase B 順序依存として記載済み）。
@@ -263,13 +260,13 @@ cross-refs としての依存テーブルはない（Phase B 順序依存とし�
 
 <!-- evidence: meta/_intermediate/cdb-flow/fdb-aging-constants.md -->
 
-`fdb_aging_time` の処理に関わるハードコード定数は CONFIG_DB / YANG で管理されない。以下にソースコード上の全定数を列挙する。
+`fdb_aging_time` の処理に関わるハードコード定数は CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されない。以下にソースコード上の全定数を列挙する。
 
 ### switchorch.cpp の定数
 
 | 定数 | 値 | 用途 | ソース |
 |------|----|------|--------|
-| `SWITCH_STAT_COUNTER_POLLING_INTERVAL_MS` | `60000` ms (60 秒) | スイッチ統計カウンタの FlexCounter polling 間隔。`fdb_aging_time` 直接依存ではないが、SwitchOrch が管理する唯一の polling 定数 | `switchorch.cpp:32` |
+| `SWITCH_STAT_COUNTER_POLLING_INTERVAL_MS` | `60000` ms (60 秒) | スイッチ統計カウンタの [FlexCounter](../../reference/glossary.md#term-flexcounter) polling 間隔。`fdb_aging_time` 直接依存ではないが、SwitchOrch が管理する唯一の polling 定数 | `switchorch.cpp:32` |
 | SAI マッピングキー `"fdb_aging_time"` | 文字列リテラル | APPL_DB フィールド名 → `SAI_SWITCH_ATTR_FDB_AGING_TIME` の `switch_attribute_map` キー。文字列変更は後方互換性を破壊する | `switchorch.cpp:49` |
 | warm-reboot 時 aging 無効化値 | `0` (uint32_t 即値) | `setAgingFDB(0)` で渡される即値。SAI 仕様で `0` = aging 無効を規定。YANG / CONFIG_DB 管理外 | `orchdaemon.cpp:1068` |
 
@@ -279,7 +276,7 @@ cross-refs としての依存テーブルはない（Phase B 順序依存とし�
 |------|----|------|--------|
 | `fdb_aging_time` デフォルト | `"600"` 秒 | `switch_type != "dpu"` ノード向けに orchagent コンテナ起動時に自動注入されるデフォルト値。YANG / CONFIG_DB の直接管理なし | `switch.json.j2:38` |
 
-`switch_type == "dpu"` の場合このフィールドは注入されず、ASIC のハードウェアデフォルトが適用される。
+`switch_type == "dpu"` の場合このフィールドは注入されず、[ASIC](../../reference/glossary.md#term-asic) のハードウェアデフォルトが適用される。
 
 ### swssconfig.sh のハードコード定数
 
@@ -311,14 +308,14 @@ cross-refs としての依存テーブルはない（Phase B 順序依存とし�
 
 <!-- evidence: meta/_intermediate/cdb-flow/fdb-aging-F.md -->
 
-`APPL_DB SWITCH_TABLE:switch` の `fdb_aging_time` フィールドを `SwitchOrch::doAppSwitchTableTask()` が処理する際、および warm-reboot パスで呼ばれる `setAgingFDB()` の実行時に、**副次的な DB 書込は発生しない**。いずれの処理パスも SAI `set_switch_attribute(gSwitchId, &attr)` を呼ぶのみで、APPL_DB / STATE_DB / COUNTERS_DB への書込を一切行わない。
+`APPL_DB SWITCH_TABLE:switch` の `fdb_aging_time` フィールドを `SwitchOrch::doAppSwitchTableTask()` が処理する際、および warm-reboot パスで呼ばれる `setAgingFDB()` の実行時に、**副次的な DB 書込は発生しない**。いずれの処理パスも SAI `set_switch_attribute(gSwitchId, &attr)` を呼ぶのみで、APPL_DB / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込を一切行わない。
 
 | 副次 DB | 書込有無 | 根拠 |
 |---------|---------|------|
 | APPL_DB | なし | `doAppSwitchTableTask()` L595-748 全体を `set(`/`hset`/`Producer`/`Notification` で検索してマッチ 0 件 |
-| STATE_DB | なし | `fdb_aging_time` 処理パス (`switchorch.cpp:664-666`, `switchorch.cpp:1671-1688`) に `m_stateDb`/`m_switchTable` 書込なし。`set_switch_capability()` による `STATE_DB SWITCH_CAPABILITY_TABLE` 書込は PFC DLR / ASIC SDK health 等の能力フラグのためであり `fdb_aging_time` SET とは独立したパス |
-| COUNTERS_DB | なし | `switchorch.cpp` 全体に COUNTERS_DB 書込は FlexCounter 統計グループ登録のみで `fdb_aging_time` 処理に連動しない |
-| ASIC_DB | 間接のみ | orchagent は ASIC_DB に直接書き込まない。SAI 操作は syncd が ASIC_DB に記録するが orchagent 側に明示的書込なし |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `fdb_aging_time` 処理パス (`switchorch.cpp:664-666`, `switchorch.cpp:1671-1688`) に `m_stateDb`/`m_switchTable` 書込なし。`set_switch_capability()` による `STATE_DB SWITCH_CAPABILITY_TABLE` 書込は [PFC](../../reference/glossary.md#term-pfc) DLR / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) health 等の能力フラグのためであり `fdb_aging_time` SET とは独立したパス |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `switchorch.cpp` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書込は [FlexCounter](../../reference/glossary.md#term-flexcounter) 統計グループ登録のみで `fdb_aging_time` 処理に連動しない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | 間接のみ | orchagent は [ASIC_DB](../../reference/glossary.md#term-asic_db) に直接書き込まない。SAI 操作は [syncd](../../reference/glossary.md#term-syncd) が [ASIC_DB](../../reference/glossary.md#term-asic_db) に記録するが orchagent 側に明示的書込なし |
 
 ### SwitchOrch が持つ STATE_DB 書込経路（fdb_aging_time 非連動）
 
@@ -326,9 +323,9 @@ cross-refs としての依存テーブルはない（Phase B 順序依存とし�
 
 | 経路 | 書込テーブル | トリガー | コード箇所 |
 |------|------------|---------|-----------|
-| `set_switch_capability()` | `STATE_DB SWITCH_CAPABILITY_TABLE:switch` | コンストラクタ起動時・能力照会時（PFC DLR / TPID / ASIC SDK health 等） | `switchorch.cpp:1864-1866` |
+| `set_switch_capability()` | `STATE_DB SWITCH_CAPABILITY_TABLE:switch` | コンストラクタ起動時・能力照会時（[PFC](../../reference/glossary.md#term-pfc) DLR / TPID / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) health 等） | `switchorch.cpp:1864-1866` |
 | `m_asicSensorsTable->set()` | `STATE_DB ASIC_TEMPERATURE_INFO_TABLE` | 温度 polling timer 発火時 | `switchorch.cpp:1860` |
-| `m_asicSdkHealthEventTable->set()` | `STATE_DB STATE_ASIC_SDK_HEALTH_EVENT_TABLE` | ASIC SDK health event 通知受信時 | `switchorch.cpp:155-156` |
+| `m_asicSdkHealthEventTable->set()` | `STATE_DB STATE_ASIC_SDK_HEALTH_EVENT_TABLE` | [ASIC SDK](../../reference/glossary.md#term-asic-sdk) health event 通知受信時 | `switchorch.cpp:155-156` |
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/fdb-aging-F.md` を参照。
 <!-- /side-effects -->
@@ -366,7 +363,7 @@ CONFIG_DB を経由しないため、`SubscriberStateTable` / `ProducerStateTabl
 
 ### keyspace 通知 / pub-sub の有無
 
-APPL_DB `SWITCH_TABLE` への書き込みは `swss::Select` ループが検知する。`SwitchOrch` の Orch 基底クラスが `ConsumerStateTable` を生成し、Redis keyspace notification (`PSUBSCRIBE`) で変化を受け取る。`orchdaemon.cpp:1000ms` の `SELECT_TIMEOUT` でポーリングも行う。
+APPL_DB `SWITCH_TABLE` への書き込みは `swss::Select` ループが検知する。`SwitchOrch` の Orch 基底クラスが `ConsumerStateTable` を生成し、[Redis](../../reference/glossary.md#term-redis) keyspace notification (`PSUBSCRIBE`) で変化を受け取る。`orchdaemon.cpp:1000ms` の `SELECT_TIMEOUT` でポーリングも行う。
 
 CONFIG_DB → fabricmgrd のような中継デーモンは**存在しない**。`fdb_aging_time` は CONFIG_DB に永続化されず、再起動時は常に `switch.json.j2` からの再注入で復元される。
 
@@ -374,7 +371,7 @@ CONFIG_DB → fabricmgrd のような中継デーモンは**存在しない**。
 
 warm-reboot 中の aging 無効化 (`setAgingFDB(0)`) は APPL_DB を**経由しない**。`orchdaemon.cpp:1068` が `gSwitchOrch->setAgingFDB(0)` を直接呼び、`switchorch.cpp:1671-1688` が `sai_switch_api->set_switch_attribute()` を呼ぶ。Consumer キューの処理を待たずに即時 SAI 設定が行われる。
 
-| 通信経路 | Redis pub-sub | 経由する DB | SAI 呼び出しタイミング |
+| 通信経路 | [Redis](../../reference/glossary.md#term-redis) pub-sub | 経由する DB | SAI 呼び出しタイミング |
 |---------|-------------|------------|----------------------|
 | `swssconfig` → `SwitchOrch` | あり (keyspace) | APPL_DB | 次の orchagent ループ (最大 1 秒遅延) |
 | warm-reboot `setAgingFDB(0)` | なし (直接) | なし | 即時 |
@@ -402,13 +399,13 @@ warm-reboot 中の aging 無効化 (`setAgingFDB(0)`) は APPL_DB を**経由し
 | `switch_type` 値 | `fdb_aging_time` 注入 | SAI 設定値 | 備考 |
 |---|---|---|---|
 | 未設定（通常スイッチ） | される (`"600"`) | 600 秒 | ToRRouter / LeafRouter / SpineRouter 等 |
-| `"dpu"` | されない | ASIC ハードウェアデフォルト | SmartSwitch DPU スロット (DASH ターゲット) |
+| `"dpu"` | されない | ASIC ハードウェアデフォルト | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) スロット ([DASH](../../reference/glossary.md#term-dash) ターゲット) |
 | `"chassis-packet"` | される (`"600"`) | 600 秒 | `dpu` でないため条件を通過 |
 | その他の任意文字列 | される (`"600"`) | 600 秒 | `dpu` 以外は全て注入 |
 
-`switch_type == "dpu"` のノードでは APPL_DB `SWITCH_TABLE:switch` に `fdb_aging_time` フィールド自体が存在しないため、`SwitchOrch` は当フィールドを処理しない。DPU ノードは DASH ターゲットとして扱われ、Ethernet スイッチング (FDB aging) を必要としない。
+`switch_type == "dpu"` のノードでは APPL_DB `SWITCH_TABLE:switch` に `fdb_aging_time` フィールド自体が存在しないため、`SwitchOrch` は当フィールドを処理しない。[DPU](../../reference/glossary.md#term-dpu) ノードは [DASH](../../reference/glossary.md#term-dash) ターゲットとして扱われ、Ethernet スイッチング ([FDB](../../reference/glossary.md#term-fdb) aging) を必要としない。
 
-> **実証**: `sonic-buildimage/src/sonic-config-engine/tests/sample_output/t1-smartswitch-dpu.json` は DPU 向け生成 JSON であり、`SWITCH_TABLE` エントリが一切存在しない。
+> **実証**: `sonic-buildimage/src/sonic-config-engine/tests/sample_output/t1-smartswitch-dpu.json` は [DPU](../../reference/glossary.md#term-dpu) 向け生成 JSON であり、`SWITCH_TABLE` エントリが一切存在しない。
 
 ### SAI capability チェックの有無
 
@@ -422,3 +419,5 @@ warm-reboot 中の aging 無効化 (`setAgingFDB(0)`) は APPL_DB を**経由し
 <!-- /platform -->
 
 <!-- glossary-links-injected: fdb-aging -->
+
+<!-- glossary-links-injected: 69a752a37c06 -->

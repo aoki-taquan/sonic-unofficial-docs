@@ -48,7 +48,7 @@ related:
 
 ## 読み手が知りたいこと
 
-- なぜ VoQ シャーシは普通の [BGP](../reference/glossary.md#term-bgp) 設定では駄目で、ASIC 間で **[ECMP](../reference/glossary.md#term-ecmp) 集合が同一** である必要があるのか
+- なぜ VoQ シャーシは普通の [BGP](../reference/glossary.md#term-bgp) 設定では駄目で、[ASIC](../reference/glossary.md#term-asic) 間で **[ECMP](../reference/glossary.md#term-ecmp) 集合が同一** である必要があるのか
 - そのために必要な 4 つの設定は何か（特に `bgp bestpath peer-type multipath-relax` の役割）
 - どの [CONFIG_DB](../reference/glossary.md#term-config_db) テーブルと minigraph 要素で「VoQ 内部 iBGP ピア」を表現するか
 - `bgp shutdown all` 等の運用 CLI は内部ピアを扱うのか
@@ -161,7 +161,7 @@ exit-address-family
 
 ## 制限事項
 
-- **新規 FRR コマンド** `bgp bestpath peer-type multipath-relax` の SONiC 同梱 FRR への取り込み状況は要追跡
+- **新規 FRR コマンド** `bgp bestpath peer-type multipath-relax` の [SONiC](../reference/glossary.md#term-sonic) 同梱 FRR への取り込み状況は要追跡
 - **AS_PATH prepending 禁止**: ASIC 間 iBGP では eBGP 学習を AS_PATH 不変で渡す必要あり[^1]
 - **ルートモニタ**: 既存 iBGP route monitor は全 ASIC とピアリングする必要がある（1 ASIC だけだと他 ASIC の経路が見えない）[^1]
 - **過剰経路の subset**: 等コスト経路数が `maximum-paths` を超えると ASIC ごとに異なる subset を選びうる。HLD はこれを許容[^1]
@@ -223,4 +223,4 @@ redis-cli -n 4 keys 'BGP_NEIGHBOR|*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 0a0d068c456d -->
+<!-- glossary-links-injected: ec18b66e3507 -->
