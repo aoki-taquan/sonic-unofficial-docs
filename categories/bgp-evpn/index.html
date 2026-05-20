@@ -18629,7 +18629,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
   
 
     
@@ -35345,7 +35345,7 @@
 <li><a href="../../routing/bgp-loading-optimization-for-sonic/">BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）</a> (area: <code>routing</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../routing/bgp-prefix-independent-convergence-architecture-document/">BGP PIC（Prefix Independent Convergence / NHG 階層）</a> (area: <code>routing</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../routing/bgp-route-aggregation-with-bbr-awareness/">BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）</a> (area: <code>routing</code>, verification: <code>code-verified</code>)</li>
-<li><a href="../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/">BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）</a> (area: <code>routing</code>, verification: <code>hld-only</code>)</li>
+<li><a href="../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/">BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）</a> (area: <code>routing</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../routing/bgp-route-install-error-handling/">BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）</a> (area: <code>routing</code>, verification: <code>discrepancy-found</code>)</li>
 <li><a href="../../routing/bfd-hw-offload-for-bgp-session/">BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）</a> (area: <code>routing</code>, verification: <code>discrepancy-found</code>)</li>
 <li><a href="../../routing/bgp-setup-for-voq-chassis/">VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）</a> (area: <code>routing</code>, verification: <code>code-verified</code>)</li>
@@ -35355,7 +35355,7 @@
 <li><a href="../../routing/overlay-ecmp-with-bfd-monitoring/">Overlay ECMP with BFD monitoring（VxLAN VNet ルートと BFD 連動）</a> (area: <code>routing</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../routing/sonic-weighted-ecmp/">Weighted ECMP（WCMP / BGP link-bandwidth ext community）</a> (area: <code>routing</code>, verification: <code>code-verified</code>)</li>
 <li><a href="../../routing/test-plan-for-inner-packet-hashing-in-ecmp/">ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）</a> (area: <code>routing</code>, verification: <code>code-verified</code>)</li>
-<li><a href="../../routing/vrf-feature-ansible-test-plan-omit-in-toc/">VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）</a> (area: <code>routing</code>, verification: <code>hld-only</code>)</li>
+<li><a href="../../routing/vrf-feature-ansible-test-plan-omit-in-toc/">VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）</a> (area: <code>routing</code>, verification: <code>code-verified</code>)</li>
 </ul>
 <h3 id="overlayvxlan-vnet">overlay（VXLAN / VNET）<a class="headerlink" href="#overlayvxlan-vnet" title="Permanent link">&para;</a></h3>
 <ul>
@@ -35364,7 +35364,7 @@
 </ul>
 <h3 id="architecture">architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../architecture/sonic-policy-based-hashing/">Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）</a> (area: <code>architecture</code>, verification: <code>hld-only</code>)</li>
+<li><a href="../../architecture/sonic-policy-based-hashing/">Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）</a> (area: <code>architecture</code>, verification: <code>code-verified</code>)</li>
 </ul>
 <h3 id="reference-cli">reference - CLI<a class="headerlink" href="#reference-cli" title="Permanent link">&para;</a></h3>
 <ul>
@@ -35413,7 +35413,6 @@
 </ul>
 <h2 id="verification">verification ステータス注意点<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>hld-only</strong>: <code>sonic-policy-based-hashing.md</code>, <code>bgp-suppress-announcements-of-routes-not-installed-in-hw.md</code>, <code>vrf-feature-ansible-test-plan-omit-in-toc.md</code></li>
 <li><strong>discrepancy-found</strong>: <code>bfd-hw-offload-for-bgp-session.md</code>, <code>bgp-route-install-error-handling.md</code>, <code>evpn-vxlan-hld.md</code>, <code>evpn-vxlan-multihoming.md</code> — 各ページ末尾に差分メモあり</li>
 </ul>
 <h2 id="_4">関連カテゴリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>

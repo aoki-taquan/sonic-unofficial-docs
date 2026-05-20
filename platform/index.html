@@ -18634,7 +18634,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
   
 
     
@@ -35016,6 +35016,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        コミュニティ報告ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#hld-only" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35027,7 +35038,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         ページ一覧
@@ -35068,8 +35079,8 @@
 <p>目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。<code>Discrepancy-found</code> は <a href="../reference/glossary/#term-hld">HLD</a> と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。</p>
 <h2 id="_3">検証状況<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ページ数: 43</li>
-<li>分布: Code-verified: 33 / Discrepancy-found: 6 / HLD-only: 4</li>
+<li>ページ数: 51</li>
+<li>分布: Code-verified: 33 / Discrepancy-found: 10 / HLD-only: 4 / Community-report: 4</li>
 </ul>
 <h2 id="_4">実装差分があるページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35079,6 +35090,17 @@
 <li><a href="sonic-port-naming-convention-change/">[SONiC](../reference/glossary.md#term-sonic) ポート命名規則の変更案（et[sX]pY[abcd]）</a></li>
 <li><a href="smartswitch-dpu-graceful-shutdown/">Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）</a></li>
 <li><a href="liquid-cooling-leakage-detection-in-sonic/">液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）</a></li>
+<li><a href="fec-flr-support-in-sonic-concepts/">FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）</a></li>
+<li><a href="fec-flr-support-in-sonic-internals/">FEC FLR 内部実装（port_flr.lua / FlexCounterOrch / SAI counter mapping）</a></li>
+<li><a href="fec-flr-support-in-sonic-limitations/">FEC FLR 制限事項と HLD との乖離（CLI 未取り込み / ハードコード値）</a></li>
+<li><a href="fec-flr-support-in-sonic-operations/">FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）</a></li>
+</ul>
+<h2 id="_5">コミュニティ報告ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="sfp-eeprom-parsing-gaps/">SfpUtilBase の EEPROM 解析欠損</a></li>
+<li><a href="sfp-sff8472-rx-power-calibration/">SFF-8472 外部キャリブレーション SFP の Rx パワー変換誤り</a></li>
+<li><a href="thermalctld-speed-tolerance-api-change/">thermalctld の speed_tolerance API 廃止と移行</a></li>
+<li><a href="xcvrd-cmis-mediainterface-crash/">xcvrd クラッシュ（MediaInterfaceIDApp 未定義）</a></li>
 </ul>
 <h2 id="hld-only">HLD-only のページ<a class="headerlink" href="#hld-only" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35087,7 +35109,7 @@
 <li><a href="everflow-support-on-voq-chassis/">VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）</a></li>
 <li><a href="enhanced-lpo-debug-registers-hld/">拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）</a></li>
 </ul>
-<h2 id="_5">ページ一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_6">ページ一覧<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35267,6 +35289,38 @@
 <tr>
 <td><a href="liquid-cooling-leakage-detection-in-sonic/">液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）</a></td>
 <td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="fec-flr-support-in-sonic-concepts/">FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="fec-flr-support-in-sonic-internals/">FEC FLR 内部実装（port_flr.lua / FlexCounterOrch / SAI counter mapping）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="fec-flr-support-in-sonic-limitations/">FEC FLR 制限事項と HLD との乖離（CLI 未取り込み / ハードコード値）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="fec-flr-support-in-sonic-operations/">FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="sfp-eeprom-parsing-gaps/">SfpUtilBase の EEPROM 解析欠損</a></td>
+<td>Community-report</td>
+</tr>
+<tr>
+<td><a href="sfp-sff8472-rx-power-calibration/">SFF-8472 外部キャリブレーション SFP の Rx パワー変換誤り</a></td>
+<td>Community-report</td>
+</tr>
+<tr>
+<td><a href="thermalctld-speed-tolerance-api-change/">thermalctld の speed_tolerance API 廃止と移行</a></td>
+<td>Community-report</td>
+</tr>
+<tr>
+<td><a href="xcvrd-cmis-mediainterface-crash/">xcvrd クラッシュ（MediaInterfaceIDApp 未定義）</a></td>
+<td>Community-report</td>
 </tr>
 </tbody>
 </table>

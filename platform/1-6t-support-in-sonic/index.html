@@ -18953,7 +18953,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
   
 
     
@@ -35765,6 +35765,10 @@
 </tbody>
 </table>
 <p><code>106.25</code> 系（IEEE Clause 180 系）と <code>113.4375</code> 系（Clause 181 / 183）の <strong>2 種類のシグナリングレート</strong> が共存する点に注意<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<div class="admonition note">
+<p class="admonition-title">ID 番号空間の補足</p>
+<p>SFF-8024 では Host Electrical Interface ID と SMF/MMF Media Interface ID は <strong>独立した番号空間</strong> であり、同じ数値（例: 上記の <code>128</code>）が異なるテーブルで別意味として割り当てられている。Host Electrical の <code>128 = 200GAUI-1</code> と SMF Media の <code>128 = 1.6TBASE-DR8-2</code> はそれぞれ別テーブルのエントリであり、衝突ではない。</p>
+</div>
 <h3 id="sonic-platform-daemons-xcvrd">sonic-platform-daemons (xcvrd)<a class="headerlink" href="#sonic-platform-daemons-xcvrd" title="Permanent link">&para;</a></h3>
 <p><code>xcvrd.py</code> の <code>get_interface_speed</code> に <strong><code>1.6T</code> 分岐を追加</strong>。HLD の patch 抜粋<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">if</span> <span class="s1">&#39;1.6T&#39;</span> <span class="ow">in</span> <span class="n">ifname</span><span class="p">:</span>
@@ -35794,12 +35798,12 @@
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="nf">logit</span><span class="p">(</span><span class="s2">&quot;Invalid serdes speed&quot;</span><span class="p">)</span>
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="kr">end</span>
 </span></code></pre></div>
-<p>これは Frame Loss Ratio 計算で <strong>シンボル時間</strong> を求めるための係数。レーン 200G PAM4 の symbol rate が 106.25 Gsym/s で実効ビットレートが 212.5 Gb/s となるため、Lua 側でも反映する必要がある<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>これは Frame Loss Ratio 計算で <strong>シンボル時間</strong> を求めるための係数。<code>serdes</code> 変数はレーン実効ビットレート (bit/s) を保持する（100G NRZ では 106.25 Gb/s、200G PAM4 では 212.5 Gb/s）。物理 baud rate は 200G PAM4 でも 106.25 Gbaud だが、Lua 側のテーブルは bit/s で揃えるため <code>212.5e+9</code> を入れる必要がある<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
     PORT[CONFIG_DB.PORT.speed] --&gt;|&lt;= 1600000?| PO[PortsOrch porthlpr]
     PO --&gt;|valid| AOR[ASIC config]
     PO --&gt; COUNTERS[port_rates.lua]
-    COUNTERS --&gt;|lane 200000 → 212.5GBd| FLR[FLR 計算]</code></pre>
+    COUNTERS --&gt;|lane 200000 → 212.5 Gb/s| FLR[FLR 計算]</code></pre>
 <h3 id="sonic-utilities">sonic-utilities<a class="headerlink" href="#sonic-utilities" title="Permanent link">&para;</a></h3>
 <p><code>show interfaces status</code> の表示と <code>config interface speed &lt;ifname&gt; 1600000</code>（または <code>1.6T</code>）受理を更新<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体的なソースの変更点は HLD には書かれていない（要件のみ）。</p>
 <!-- evidence:

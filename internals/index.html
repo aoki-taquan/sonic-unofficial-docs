@@ -18634,7 +18634,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
   
 
     
@@ -35049,10 +35049,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hld-only" class="md-nav__link">
+  <a href="#community-report" class="md-nav__link">
     <span class="md-ellipsis">
       
-        HLD-only のページ
+        Community-report のページ
       
     </span>
   </a>
@@ -35098,7 +35098,7 @@
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p><a href="../reference/glossary/#term-redis">Redis</a>、SwSS、<a href="../reference/glossary/#term-orchagent">orchagent</a>、counter、P4Orch など実装内部の構造を扱う章。</p>
 <h2 id="_2">この章の趣旨<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>機能 HLD ではなく、<a href="../reference/glossary/#term-sonic">SONiC</a> 全体の <strong>内部基盤</strong> を扱う。具体的には:</p>
+<p>機能 <a href="../reference/glossary/#term-hld">HLD</a> ではなく、<a href="../reference/glossary/#term-sonic">SONiC</a> 全体の <strong>内部基盤</strong> を扱う。具体的には:</p>
 <ul>
 <li><strong>Redis DB スキーマ・分割</strong>: <a href="../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../reference/glossary/#term-state_db">STATE_DB</a> / multi-namespace / 複数インスタンス分散</li>
 <li><strong>SwSS / orchagent コア</strong>: producer/consumer state table、ZMQ、view switching</li>
@@ -35111,6 +35111,8 @@
 <h2 id="_4">主要ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="swss-schema/">swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）</a></li>
+<li><a href="swss-common-database-config/">swss-common database_config.json 仕様</a></li>
+<li><a href="swss-common-db-link-ordering/">swss-common DB link ordering</a></li>
 <li><a href="zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a></li>
 <li><a href="support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）</a></li>
 <li><a href="support-multiple-user-defined-redis-database-instances/">複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）</a></li>
@@ -35130,16 +35132,22 @@
 </ul>
 <h2 id="_6">検証状況<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ページ数: 12</li>
-<li>分布: Code-verified: 10 / Discrepancy-found: 1 / <a href="../reference/glossary/#term-hld">HLD</a>-only: 1</li>
+<li>ページ数: 18（split-hub 1 + split-child 4 + standalone 13）</li>
+<li>分布: Code-verified: 10 / Discrepancy-found: 6 / Community-report: 2</li>
 </ul>
 <h2 id="_7">実装差分があるページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（kernel ARP gc / sairedis bulk / fpmsyncd / show arp）</a></li>
+<li><a href="l3-scaling-and-performance-enhancements-concepts/">L3 Scaling と Performance 強化 概念</a></li>
+<li><a href="l3-scaling-and-performance-enhancements-operations/">L3 Scaling と Performance 強化 設定・運用</a></li>
+<li><a href="l3-scaling-and-performance-enhancements-internals/">L3 Scaling と Performance 強化 内部実装</a></li>
+<li><a href="l3-scaling-and-performance-enhancements-limitations/">L3 Scaling と Performance 強化 制限事項と HLD との乖離</a></li>
+<li><a href="zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a></li>
 </ul>
-<h2 id="hld-only">HLD-only のページ<a class="headerlink" href="#hld-only" title="Permanent link">&para;</a></h2>
+<h2 id="community-report">Community-report のページ<a class="headerlink" href="#community-report" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="swss-schema/">swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）</a></li>
+<li><a href="swss-common-database-config/">swss-common database_config.json 仕様</a></li>
+<li><a href="swss-common-db-link-ordering/">swss-common DB link ordering</a></li>
 </ul>
 <h2 id="_8">ページ一覧<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <table>
@@ -35159,6 +35167,22 @@
 <td>Discrepancy-found</td>
 </tr>
 <tr>
+<td><a href="l3-scaling-and-performance-enhancements-concepts/">L3 Scaling と Performance 強化 概念</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="l3-scaling-and-performance-enhancements-operations/">L3 Scaling と Performance 強化 設定・運用</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="l3-scaling-and-performance-enhancements-internals/">L3 Scaling と Performance 強化 内部実装</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
+<td><a href="l3-scaling-and-performance-enhancements-limitations/">L3 Scaling と Performance 強化 制限事項と HLD との乖離</a></td>
+<td>Discrepancy-found</td>
+</tr>
+<tr>
 <td><a href="support-redis-databases-in-multiple-namespaces/">Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）</a></td>
 <td>Code-verified</td>
 </tr>
@@ -35172,7 +35196,7 @@
 </tr>
 <tr>
 <td><a href="zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a></td>
-<td>Code-verified</td>
+<td>Discrepancy-found</td>
 </tr>
 <tr>
 <td><a href="dump-utility-for-easy-debugging/">dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）</a></td>
@@ -35184,7 +35208,15 @@
 </tr>
 <tr>
 <td><a href="swss-schema/">swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）</a></td>
-<td>HLD-only</td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="swss-common-database-config/">swss-common database_config.json 仕様</a></td>
+<td>Community-report</td>
+</tr>
+<tr>
+<td><a href="swss-common-db-link-ordering/">swss-common DB link ordering</a></td>
+<td>Community-report</td>
 </tr>
 <tr>
 <td><a href="why-need-health-check/">コンテナ health-check（k8s readiness probe）</a></td>
@@ -35200,7 +35232,7 @@
 </tr>
 </tbody>
 </table>
-<!-- glossary-links-injected: 4a5eb5b30e9a -->
+<!-- glossary-links-injected: 167700005048 -->
 
 
 

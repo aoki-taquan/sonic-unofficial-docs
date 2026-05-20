@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="gNSI 各サービスの内部実装。Certz の Profile / CSR、Authz / Pathz のポリシー適用経路、Credentialz の console_mgmt / ssh_mgmt host service モジュールの責務を整理する。">
+        <meta name="description" content="gNSI 各サービスの内部実装。Certz の Profile / CSR、Authz / Pathz のポリシー適用経路、Credentialz の gnsi_console / ssh_mgmt host service モジュールの責務を整理する。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="gNSI 内部実装（Certz / Authz / Pathz / Credentialz handler と host service） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="gNSI 各サービスの内部実装。Certz の Profile / CSR、Authz / Pathz のポリシー適用経路、Credentialz の console_mgmt / ssh_mgmt host service モジュールの責務を整理する。" />
+<meta property="og:description" content="gNSI 各サービスの内部実装。Certz の Profile / CSR、Authz / Pathz のポリシー適用経路、Credentialz の gnsi_console / ssh_mgmt host service モジュールの責務を整理する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/gnsi-hld-internals.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/management/gnsi-hld-internals/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="gNSI 内部実装（Certz / Authz / Pathz / Credentialz handler と host service） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="gNSI 各サービスの内部実装。Certz の Profile / CSR、Authz / Pathz のポリシー適用経路、Credentialz の console_mgmt / ssh_mgmt host service モジュールの責務を整理する。" />
+<meta property="twitter:description" content="gNSI 各サービスの内部実装。Certz の Profile / CSR、Authz / Pathz のポリシー適用経路、Credentialz の gnsi_console / ssh_mgmt host service モジュールの責務を整理する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/gnsi-hld-internals.png" />
 </head>
   
@@ -15786,10 +15786,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#console-console_mgmt-host-service-module" class="md-nav__link">
+  <a href="#console-gnsi_console-host-service-module" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Console (console_mgmt host service module)
+        Console (gnsi_console host service module)
       
     </span>
   </a>
@@ -18803,7 +18803,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
   
 
     
@@ -35225,10 +35225,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#console-console_mgmt-host-service-module" class="md-nav__link">
+  <a href="#console-gnsi_console-host-service-module" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Console (console_mgmt host service module)
+        Console (gnsi_console host service module)
       
     </span>
   </a>
@@ -35302,7 +35302,7 @@
 <p>このページは <a href="../gnsi-hld/">gNSI（概要ハブ）</a> の派生で、<strong>4 サービスの内部実装と host service</strong> に絞る。概念は <a href="../gnsi-hld-concepts/">gnsi-hld-concepts.md</a>、設定 / 運用は <a href="../gnsi-hld-operations/">gnsi-hld-operations.md</a>、制限と <a href="../../reference/glossary/#term-hld">HLD</a> 乖離は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
 <div class="admonition note">
 <p class="admonition-title">実装状況の境界（partially implemented）</p>
-<p>以下の内部実装記述のうち、<strong>Certz の handler は <code>sonic-gnmi</code> に実装済</strong> で master 上で動作する。一方 <strong>Authz / Pathz handler および Credentialz の <code>console_mgmt</code> / <code>ssh_mgmt</code> host service は未実装</strong> で、HLD 提案段階のまま対応 PR が未取り込み。具体的な PR 一覧と未対応 RPC は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
+<p>以下の内部実装記述のうち、<strong>Certz / Authz / Pathz の handler は <code>sonic-gnmi</code> に実装済</strong>（<code>gnmi_server/gnsi_certz.go</code> / <code>gnsi_authz.go</code> / <code>gnsi_pathz.go</code>）で master 上で動作する。一方 <strong>Credentialz の gNMI server handler のみ未配線</strong> で、HLD 提案段階のまま対応 PR が未取り込み。具体的な PR 一覧と未対応 RPC は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
 </div>
 <h2 id="1-certz">1. Certz<a class="headerlink" href="#1-certz" title="Permanent link">&para;</a></h2>
 <p><code>Certz.Rotate</code> は <strong>bidirectional streaming RPC</strong> で以下を入れ替える<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -35355,10 +35355,10 @@
 </ul>
 <h2 id="4-credentialz">4. Credentialz<a class="headerlink" href="#4-credentialz" title="Permanent link">&para;</a></h2>
 <p>コンソールユーザと SSH の鍵・パスワード管理。host service モジュール経由で <code>/etc/passwd</code> / <code>/etc/shadow</code> / <code>/etc/sshd/...</code> 等を直接書き換える<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h3 id="console-console_mgmt-host-service-module">Console (<code>console_mgmt</code> host service module)<a class="headerlink" href="#console-console_mgmt-host-service-module" title="Permanent link">&para;</a></h3>
+<h3 id="console-gnsi_console-host-service-module">Console (<code>gnsi_console</code> host service module)<a class="headerlink" href="#console-gnsi_console-host-service-module" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
     participant FE as gNSI Credentialz FE
-    participant HS as console_mgmt
+    participant HS as gnsi_console
     FE-&gt;&gt;HS: create_checkpoint
     HS-&gt;&gt;HS: cp /etc/passwd /etc/shadow → backup
     FE-&gt;&gt;HS: set (JSON: ConsolePasswords[])
@@ -35375,7 +35375,7 @@
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span><span class="w"> </span><span class="nt">&quot;ConsolePasswords&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;...&quot;</span><span class="p">}</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="ssh-ssh_mgmt-host-service-module">SSH (<code>ssh_mgmt</code> host service module)<a class="headerlink" href="#ssh-ssh_mgmt-host-service-module" title="Permanent link">&para;</a></h3>
-<p><code>console_mgmt</code> と同じ checkpoint / set / restore / delete 構造。バックアップ対象ファイルが SSH 系全般（<code>sshd_config</code>、host key、各 home の <code>authorized_keys</code> / <code>authorized_users</code>、CA 公開鍵）に拡大される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>gnsi_console</code> と同じ checkpoint / set / restore / delete 構造。バックアップ対象ファイルが SSH 系全般（<code>sshd_config</code>、host key、各 home の <code>authorized_keys</code> / <code>authorized_users</code>、CA 公開鍵）に拡大される<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p><code>set</code> のリクエスト種別<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
 <thead>

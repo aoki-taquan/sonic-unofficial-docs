@@ -18629,7 +18629,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
   
 
     
@@ -35311,7 +35311,7 @@
 <h1 id="gnmi-gnoi-openconfig">gNMI / gNOI / OpenConfig 関連<a class="headerlink" href="#gnmi-gnoi-openconfig" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/glossary/#term-sonic">SONiC</a> の管理プレーンは <strong>Management Framework</strong>（REST / <a href="../../reference/glossary/#term-gnmi">gNMI</a> / Translib / Transformer）と <strong>sonic-gnmi</strong>（gNMI Server）を中心に、<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> と SONiC <a href="../../reference/glossary/#term-yang">YANG</a> / OpenConfig YANG の双方を扱う構造になっています。<code>telemetryd</code> が gNMI Subscribe を提供し、<code>gnmi-native</code> モード（SONiC YANG）と <code>gnmi-translib</code> モード（OpenConfig 経由）が共存します。設定経路では <strong>Generic Config Updater (<a href="../../reference/glossary/#term-gcu">GCU</a>)</strong> が JSON Patch を YANG 制約に従って段階的に apply する仕組みを担当します。</p>
-<p><a href="../../reference/glossary/#term-gnoi">gNOI</a> は gRPC ベースの <strong>運用 API</strong>（OS install / System reboot / File / FactoryReset / Healthz / Wake-on-LAN など）で、DBUS 経由でホスト側サービスを叩く構造になっています。SONiC 内では <code>system / OS / file / factory_reset / healthz</code> などのサービス実装が <code>sonic-gnmi</code> 配下にあり、<a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> では <a href="../../reference/glossary/#term-dpu">DPU</a> 単位の gNOI を持ちます。</p>
+<p><a href="../../reference/glossary/#term-gnoi">gNOI</a> は gRPC ベースの <strong>運用 API</strong>（OS install / System reboot / File / FactoryReset / Healthz / Wake-on-LAN など）で、DBUS 経由でホスト側サービスを叩く構造になっています。SONiC 内では <code>system / OS / file / factory_reset / healthz / wol</code> などのサービス実装が <code>sonic-gnmi</code> 配下にあり、<a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> では <a href="../../reference/glossary/#term-dpu">DPU</a> 単位の gNOI を持ちます。</p>
 <p>このカテゴリは gNMI / gNOI / OpenConfig / YANG・Management Framework に関わるページを area 横断でまとめます。本ドキュメントで最も関連ページが多い（57 件）カテゴリで、YANG リファレンスが大半を占めるのは設計通りです。</p>
 <p>主要キーワード: <code>gNMI</code>, <code>gNOI</code>, <code>OpenConfig</code>, <code>YANG</code>, <code>REST</code>, <code>Management Framework</code>, <code>telemetry</code>, <code>GCU</code>, <code>Translib</code></p>
 <h2 id="_2">関連ページ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>

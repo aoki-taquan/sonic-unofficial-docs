@@ -15627,17 +15627,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#gnoi-file-factoryreset_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: gNOI File / FactoryReset 確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -18858,7 +18847,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
   
 
     
@@ -35317,17 +35306,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#gnoi-file-factoryreset_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: gNOI File / FactoryReset 確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -35551,17 +35529,9 @@
 <p>下記コマンドで関連する CONFIG_DB / APP_DB / <a href="../../reference/glossary/#term-state_db">STATE_DB</a> と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># gNOI File.Get / FactoryReset を gnoic で叩く</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>gnoic<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span>--skip-verify<span class="w"> </span>file<span class="w"> </span>stat<span class="w"> </span>--file<span class="w"> </span>/etc/sonic/config_db.json
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>gnoic<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span>--skip-verify<span class="w"> </span>factory-reset<span class="w"> </span>start<span class="w"> </span>--factory-os<span class="w"> </span>--zero-fill
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>gnoic<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:9339<span class="w"> </span>--skip-verify<span class="w"> </span>file<span class="w"> </span>stat<span class="w"> </span>--file<span class="w"> </span>/etc/sonic/config_db.json
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>gnoic<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:9339<span class="w"> </span>--skip-verify<span class="w"> </span>factory-reset<span class="w"> </span>start<span class="w"> </span>--factory-os<span class="w"> </span>--zero-fill
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>docker<span class="w"> </span>logs<span class="w"> </span>gnmi<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-30
-</span></code></pre></div>
-<h3 id="gnoi-file-factoryreset_1">コマンド例: gNOI File / FactoryReset 確認<a class="headerlink" href="#gnoi-file-factoryreset_1" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># gNOI File.Get / FactoryReset を gnoic で叩く</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>gnoic<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span>--skip-verify<span class="w"> </span>file<span class="w"> </span>stat<span class="w"> </span>--file<span class="w"> </span>/etc/sonic/config_db.json
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>gnoic<span class="w"> </span>-a<span class="w"> </span><span class="m">127</span>.0.0.1:8080<span class="w"> </span>--skip-verify<span class="w"> </span>factory-reset<span class="w"> </span>start<span class="w"> </span>--factory-os<span class="w"> </span>--zero-fill
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>docker<span class="w"> </span>logs<span class="w"> </span>gnmi<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-30
 </span></code></pre></div>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>

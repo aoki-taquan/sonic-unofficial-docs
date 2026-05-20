@@ -18885,7 +18885,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
   
 
     
@@ -35469,9 +35469,9 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p><code>sonic-swss-common/common/zmq{client,server,producerstatetable,consumerstatetable}.{h,cpp}</code> を確認。<code>ZmqProducerStateTable : public ProducerStateTable</code> と <code>ZmqClient&amp;</code> メンバ、コンストラクタ既定 <code>dbPersistence = true</code> (Producer) / <code>false</code> (Consumer)、フラグに応じた DB 書き込み分岐を確認。Python は <code>pyext/swsscommon.i</code> L296-346 で <code>ZmqProducerStateTable</code> director 化と <code>zmqWait</code> ヘルパを確認 (verified at: 2026-05-09)。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: Discrepancy-found</p>
+<p><code>sonic-swss-common/common/zmq{client,server,producerstatetable,consumerstatetable}.{h,cpp}</code> を確認。<code>ZmqProducerStateTable : public ProducerStateTable</code> と <code>ZmqClient&amp;</code> メンバ、コンストラクタ既定 <code>dbPersistence = true</code> (Producer) / <code>false</code> (Consumer)、フラグに応じた DB 書き込み分岐を確認。Python は <code>pyext/swsscommon.i</code> L296-346 で <code>ZmqProducerStateTable</code> director 化と <code>zmqWait</code> ヘルパを確認。その後 2026-05-13 に discrepancy-found へ降格（詳細は本文末尾の「実装との乖離 / 補足」節を参照）。</p>
 </div>
 <h1 id="zmq-producerstatetable-consumerstatetable">ZMQ ProducerStateTable / ConsumerStateTable 設計<a class="headerlink" href="#zmq-producerstatetable-consumerstatetable" title="Permanent link">&para;</a></h1>
 <h2 id="_1">読み手が知りたいこと<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

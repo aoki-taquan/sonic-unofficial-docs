@@ -15991,17 +15991,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#aaa_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: AAA 設定確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -18919,7 +18908,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
   
 
     
@@ -35406,17 +35395,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#aaa_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: AAA 設定確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -35537,8 +35515,8 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified / 採否不明な提案</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: discrepancy-found / 採否不明な提案</p>
 <p>本 HLD は 2020 年 Martin Bélanger（Rev 0.4）の <strong>設計討議文書</strong>。AAA / PAM / NSS の本質的問題提起と提案で、現行 master が本提案を全面採用しているかは要確認。<code>priority=high</code>。</p>
 </div>
 <h1 id="aaa-improvementspam-nss-d-bus-rbac">AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）<a class="headerlink" href="#aaa-improvementspam-nss-d-bus-rbac" title="Permanent link">&para;</a></h1>
@@ -35664,16 +35642,6 @@ reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;TACPLUS_SERVER|*&#39;</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># PAM 経路</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/pam.d/common-auth-sonic
-</span></code></pre></div>
-<h3 id="aaa_1">コマンド例: AAA 設定確認<a class="headerlink" href="#aaa_1" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># AAA 設定と認証経路の確認</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>aaa
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;AAA|authentication&#39;</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;TACPLUS_SERVER|*&#39;</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># PAM 経路</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/pam.d/common-auth-sonic
 </span></code></pre></div>
 <!-- phase-boundary -->
 <h2 id="_9">実装フェーズ境界<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>

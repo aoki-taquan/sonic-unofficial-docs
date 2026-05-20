@@ -18758,7 +18758,7 @@
   <span class="md-ellipsis">
     
   
-    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）
+    L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
   
 
     
@@ -35256,7 +35256,7 @@
 <li>CMIS 対応（QSFP-DD / OSFP / CMIS 準拠 SFP 等）光モジュールを使用する環境</li>
 </ul>
 <h2 id="_3">原因<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p><code>sonic-platform-common</code> PR #457 において、アプリケーション広告リスト（Application Advertisement List）データへのアクセス方法が変更された。この変更により、<code>MediaInterfaceIDApp</code> が <code>Undefined</code> または未定義の場合に、<code>xcvrd</code> がその値を処理しようとして例外を発生させクラッシュする。</p>
+<p>CMIS のアプリケーション広告リスト（Application Advertisement List）データへのアクセスにおいて、<code>MediaInterfaceIDApp</code> が <code>Undefined</code> または未定義のエントリを含むモジュールでも辞書を直接参照していたため、<code>xcvrd</code> がその値を処理しようとして例外を発生させクラッシュする（詳細は <a href="https://github.com/sonic-net/sonic-platform-common/issues/489">Issue #489</a>）。</p>
 <p>具体的には、アプリケーション広告エントリの <code>MediaInterfaceIDApp</code> フィールドが存在しないモジュールでは、辞書アクセスが <code>KeyError</code> を引き起こす。</p>
 <h2 id="_4">症状<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>xcvrd crashed with exception:
