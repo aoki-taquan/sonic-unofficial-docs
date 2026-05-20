@@ -49,15 +49,15 @@ DUT 側 (telemetry container) の起動と、client 側からの疎通確認ま�
 # DUT 側
 sudo systemctl start telemetry
 sudo systemctl enable telemetry
-redis-cli -n 4 HSET 'TELEMETRY|gnmi' port 50051 client_auth true
-redis-cli -n 4 HSET 'TELEMETRY|certs' \
+redis-cli -n 4 HSET 'GNMI|gnmi' port 8080 client_auth true
+redis-cli -n 4 HSET 'GNMI|certs' \
   server_crt /etc/sonic/telemetry/dut.crt \
   server_key /etc/sonic/telemetry/dut.key \
   ca_crt     /etc/sonic/telemetry/ca.crt
 sudo systemctl restart telemetry
 
 # client 側 (gNMI tools)
-gnmi_capabilities -target_addr dut.example.com:50051 \
+gnmi_capabilities -target_addr dut.example.com:8080 \
   -cert client.crt -key client.key -ca ca.crt
 ```
 
@@ -77,11 +77,11 @@ gNMI_version: "0.7.0"
 設定後の確認。
 
 ```bash
-$ ss -tlnp | grep 50051
-LISTEN 0 128 *:50051 *:* users:(("telemetry",pid=12345,fd=7))
+$ ss -tlnp | grep 8080
+LISTEN 0 128 *:8080 *:* users:(("telemetry",pid=12345,fd=7))
 
 $ docker logs telemetry 2>&1 | tail -3
-INFO[2026-05-11T03:14:21Z] Starting gNMI server on :50051
+INFO[2026-05-11T03:14:21Z] Starting gNMI server on :8080
 INFO[2026-05-11T03:14:21Z] Loaded server cert from /etc/sonic/telemetry/dut.crt
 INFO[2026-05-11T03:14:21Z] Loaded CA cert from /etc/sonic/telemetry/ca.crt
 ```
@@ -93,7 +93,7 @@ INFO[2026-05-11T03:14:21Z] Loaded CA cert from /etc/sonic/telemetry/ca.crt
 Get:
 
 ```bash
-gnmi_get -target_addr dut:50051 -cert client.crt -key client.key -ca ca.crt \
+gnmi_get -target_addr dut:8080 -cert client.crt -key client.key -ca ca.crt \
   -xpath '/interfaces/interface[name=Ethernet0]/state' \
   -encoding JSON_IETF
 ```
@@ -115,14 +115,14 @@ gnmi_get -target_addr dut:50051 -cert client.crt -key client.key -ca ca.crt \
 Set (MTU 変更、replace モード):
 
 ```bash
-gnmi_set -target_addr dut:50051 -cert client.crt -key client.key -ca ca.crt \
+gnmi_set -target_addr dut:8080 -cert client.crt -key client.key -ca ca.crt \
   -replace '/interfaces/interface[name=Ethernet0]/config/mtu:::JSON_IETF:::9216'
 ```
 
 Subscribe (ON_CHANGE で oper-status):
 
 ```bash
-gnmi_cli -address dut:50051 -tls -client_crt client.crt -client_key client.key -ca_crt ca.crt \
+gnmi_cli -address dut:8080 -tls -client_crt client.crt -client_key client.key -ca_crt ca.crt \
   -query_type s \
   -query 'interfaces/interface[name=Ethernet0]/state/oper-status' \
   -streaming_type ON_CHANGE
@@ -149,7 +149,7 @@ cat > /tmp/bgp_nbr.json <<'JSON'
 }
 JSON
 
-gnmi_set -target_addr dut:50051 -cert client.crt -key client.key -ca ca.crt \
+gnmi_set -target_addr dut:8080 -cert client.crt -key client.key -ca ca.crt \
   -update '/sonic-bgp-neighbor:sonic-bgp-neighbor/BGP_NEIGHBOR:::JSON_IETF:::@/tmp/bgp_nbr.json'
 ```
 
@@ -202,14 +202,14 @@ OpenConfig がカバーしないフィールド (たとえば SONiC 固有の fe
 
 CLI と gNMI を併用する運用では、同じノードを CLI で書いて gNMI で読むケースが多い。CLI が YANG から自動生成される機能領域では、両者の表現が一致するため `gnmi_get` の結果と `show` 出力を相互参照できる。自動生成範囲外の機能では、CLI が CONFIG_DB を直接更新するケースもあり、その場合 gNMI subscribe で「設定変更があった」と通知される。自動生成の仕組みは [CLI auto-generation tool](../../management/sonic-cli-auto-generation-tool.md) を参照する。
 
-## CONFIG_DB / TELEMETRY 関連 table
+## CONFIG_DB / GNMI 関連 table
 
-gNMI server の起動制御に使う table。
+gNMI server の起動制御に使う table（旧 `TELEMETRY` は `db_migrator` の `migrate_gnmi()` で `GNMI` に移行済み）。
 
 ```json
 {
-  "TELEMETRY": {
-    "gnmi": {"port":"50051","client_auth":"true","log_level":"2"},
+  "GNMI": {
+    "gnmi": {"port":"8080","client_auth":"true","log_level":"2"},
     "certs":{"server_crt":"/etc/sonic/telemetry/dut.crt",
              "server_key":"/etc/sonic/telemetry/dut.key",
              "ca_crt":"/etc/sonic/telemetry/ca.crt"}

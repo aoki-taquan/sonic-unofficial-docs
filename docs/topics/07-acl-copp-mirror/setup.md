@@ -21,24 +21,15 @@ related:
   cli:
   - show acl
   - config acl
-  - config bgp
-  - show bgp
   config_db:
   - COPP_GROUP
   - POLICER
   - COPP_TRAP
   - MIRROR_SESSION
   - ACL_RULE
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
   yang:
   - sonic-copp
   - sonic-mirror-session
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
 ---
 
 # 設定

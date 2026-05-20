@@ -48,7 +48,7 @@ flowchart LR
 | `translib` (`sonic-mgmt-common/translib/`) | `translib.go`、`transformer/` | YANG path ↔ [Redis](../../reference/glossary.md#term-redis) テーブルの双方向変換、ocyang バインドを使う |
 | `transformer` | per-module transformer（`translib/transformer/xfmr_*.go`） | OpenConfig path から [SONiC](../../reference/glossary.md#term-sonic) YANG / Redis テーブルへの mapping 規則 |
 | `sonic-yang-mgmt` / `sonic-yang-models` | `yang-models/*.yang` | SONiC 独自 YANG。CONFIG_DB との整合の根拠 |
-| `dialin` / `dialout` server | `telemetry/dialin.go` / `dialout.go` | dial-in (subscribe) と dial-out collector |
+| `dialin` (gNMI Subscribe) / `dialout` server | dial-in は `gnmi_server/server.go` の Subscribe RPC が担当（独立した `dialin.go` は存在しない）。dial-out は `dialout/dialout_client/dialout_client.go` / `dialout/dialout_server/dialout_server.go` | dial-in (subscribe) と dial-out collector |
 | `gNOI` services | `gnoi/system`、`gnoi/file`、`gnoi/os` | `Reboot`、`Time`、`Ping`、`SetPackage` 等。host service 経由で OS 操作 |
 | `gNSI` services | `gnsi/certz`、`gnsi/authz`、`gnsi/pathz` | 証明書ローテーション / 認可ポリシー |
 

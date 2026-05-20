@@ -34,7 +34,9 @@ related:
   - show arp
   config_db:
   - PORTCHANNEL
+  - PORTCHANNEL_MEMBER
   - VLAN
+  - VLAN_MEMBER
   - VLAN_SUB_INTERFACE
   - INTERFACE
   - PORT
