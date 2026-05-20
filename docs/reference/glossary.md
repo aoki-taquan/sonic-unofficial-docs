@@ -1696,7 +1696,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (248)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (250)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (42)
 - [VRRP テーブル](config-db/vrrp.md) (41)
@@ -2034,7 +2034,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)](config-db/appl-mirror.md) (84)
 - [P4RT テーブル (PINS p4rt 設定)](config-db/pin-config.md) (66)
-- [P4RT アプリケーション（PINS の gRPC サービス、port 9559）](../management/p4rt-application-hld.md) (53)
+- [P4RT アプリケーション（PINS の gRPC サービス、port 9559）](../management/p4rt-application-hld.md) (54)
 - [IP マルチキャストルート (P4RT)](config-db/ip-mcast-route.md) (40)
 - [TUNNEL_ENCAP_TABLE (P4RT FIXED_TUNNEL_TABLE)](config-db/tunnel-encap-table.md) (33)
 
