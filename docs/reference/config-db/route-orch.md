@@ -435,7 +435,7 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 
 **COUNTERS_DB 書き込み（テーブル #2, #3）**: `doTask(SelectableTimer &timer)` の 1 秒周期タイマーコールバックで、`mPendingAddToFlexCntr` キューから VID 解決済みのエントリをバッチ処理し、`mPrefixToCounterTable->set("", prefixToCounterMap)` および `mPrefixToPatternTable->set("", prefixToPatternMap)` でまとめて書き込む[^1]。タイマーは pending キューが空になると `stop()` される。
 
-**[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) 書き込み（テーブル #6, #7）**: `FlexCounterManager` 経由で `FLEX_COUNTER_DB` に書き込む。`show flow_counters route` が参照する実カウンター値は [syncd](../../reference/glossary.md#term-syncd) が FLEX_COUNTER_DB の登録エントリをもとに ASIC から読み取り COUNTERS_DB に書き込む。
+**[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) 書き込み（テーブル #6, #7）**: `FlexCounterManager` 経由で `FLEX_COUNTER_DB` に書き込む。`show flow_counters route` が参照する実カウンター値は [syncd](../../reference/glossary.md#term-syncd) が FLEX_COUNTER_DB の登録エントリをもとに [ASIC](../../reference/glossary.md#term-asic) から読み取り COUNTERS_DB に書き込む。
 
 ### 副作用の読み取り側
 
@@ -444,7 +444,7 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 | STATE_DB | `FLOW_COUNTER_CAPABILITY_TABLE\|route` | `acl-loader`, `sonic-mgmt-common (translib)`, CLI `show flow_counters route` | プラットフォームのサポート状況確認 |
 | COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP` | `show flow_counters route`（[sonic-utilities](../../reference/glossary.md#term-sonic-utilities)） | prefix → counter OID 解決 |
 | COUNTERS_DB | `COUNTERS_ROUTE_TO_PATTERN_MAP` | `show flow_counters route`（[sonic-utilities](../../reference/glossary.md#term-sonic-utilities)） | counter → パターン逆引き表示 |
-| FLEX_COUNTER_DB | `FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER\|*` | `syncd` | 実 ASIC カウンター値のポーリング対象登録 |
+| FLEX_COUNTER_DB | `FLEX_COUNTER_TABLE\|ROUTE_FLOW_COUNTER\|*` | `syncd` | 実 [ASIC](../../reference/glossary.md#term-asic) カウンター値のポーリング対象登録 |
 
 <!-- evidence:
 source: sonic-net/sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp#L31-34 (sha: 4305596156d70e9797e8a881b3d19b46de0bce0d)
@@ -641,7 +641,7 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 
 ### multi-asic / SmartSwitch 環境
 
-- multi-asic 構成では namespace ごとに `FlowCounterRouteOrch` が独立して起動し、各 ASIC SAI の capability をそれぞれ照会する。
+- multi-asic 構成では namespace ごとに `FlowCounterRouteOrch` が独立して起動し、各 [ASIC](../../reference/glossary.md#term-asic) SAI の capability をそれぞれ照会する。
 - 異種 ASIC が混在する [SmartSwitch](../../reference/glossary.md#term-smartswitch) 環境では namespace 間で `mRouteFlowCounterSupported` の値が異なる場合があり、一部 namespace のみルートフローカウンターが有効になることがある。
 - `STATE_DB FLOW_COUNTER_CAPABILITY_TABLE|route` は namespace ごとに独立するため、参照側（CLI / monitoring）は対象 namespace を明示する必要がある。
 
@@ -702,4 +702,4 @@ FLOW_COUNTER_ROUTE_PATTERN:Vrf-RED|2001:db8::/32
 - `max_match_count` を減らしたのに反映されない → FlexCounter タイマー（1 秒）待機後に COUNTERS_DB を再確認する。
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: c057beddeb11 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

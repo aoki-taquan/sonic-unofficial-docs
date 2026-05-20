@@ -167,11 +167,11 @@ vtysh -c 'show bgp community-list'
 
 `bgpcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `COMMUNITY_SET` テーブルを購読する。
 
-`COMMUNITY_SET` は SONiC の route policy 管理用 (OpenConfig 準拠)。
+`COMMUNITY_SET` は [SONiC](../../reference/glossary.md#term-sonic) の route policy 管理用 (OpenConfig 準拠)。
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由で community-list を設定)
+なし (FRR [vtysh](../../reference/glossary.md#term-vtysh) 経由で community-list を設定)
 
 ### 段階 3 — APPL→SAI
 
@@ -289,9 +289,9 @@ def subscribe_all(self):
         self.config_db.subscribe(table, hdlr)
 ```
 
-変更検知後、`comm_set_handler` が `bgp_table_handler_common` を経由して `hdl_com_set()` を呼び出し、FRR vtysh コマンドを生成・実行する。
+変更検知後、`comm_set_handler` が `bgp_table_handler_common` を経由して `hdl_com_set()` を呼び出し、FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドを生成・実行する。
 
-**vtysh 経路** (`hdl_com_set` L981-1006):
+**[vtysh](../../reference/glossary.md#term-vtysh) 経路** (`hdl_com_set` L981-1006):
 
 ```python
 # frrcfgd.py L981-1006
@@ -539,4 +539,4 @@ DB 更新ハンドラ全体を囲む `except Exception as e` ブロックが `sy
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ext-community-set-cross-refs.md` を参照。
 <!-- /cross-refs-extcomm -->
 
-<!-- glossary-links-injected: 4ccf06ec7abd -->
+<!-- glossary-links-injected: e6631779773c -->

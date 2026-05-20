@@ -165,7 +165,7 @@ active → unknown 遷移時は `linkprober_suspend_timer` で一時的に heart
 
 - IPinIP tunnel object 作成（`tunnel_type=IPINIP`、`dst_ip=Loopback0`、`dscp_mode=uniform`、`encap_ecn_mode=standard`、`ecn_mode=copy_from_outer`、`ttl_mode=pipe`）
 - decap entry / tunnel termination 作成
-- `SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP` を MuxOrch の next hop として供給
+- `SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP` を [MuxOrch](../reference/glossary.md#term-muxorch) の next hop として供給
 
 ### MuxOrch
 
@@ -387,4 +387,4 @@ redis-cli -n 6 hgetall 'LINK_PROBE_STATS|Ethernet0'
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: b5409080014b -->
+<!-- glossary-links-injected: 0a1df176ebd3 -->

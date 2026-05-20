@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-`DASH_VNET` は [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) 上で動作する [DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for SONiC Hosts) 仮想ネットワークを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義するテーブル。
+`DASH_VNET` は [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) 上で動作する [DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for [SONiC](../../reference/glossary.md#term-sonic) Hosts) 仮想ネットワークを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義するテーブル。
 各エントリは VNI ([VXLAN](../../reference/glossary.md#term-vxlan) Network Identifier) で識別される論理ネットワークを表す[^yang]。
 
 [DASH](../../reference/glossary.md#term-dash) は [SmartSwitch](../../reference/glossary.md#term-smartswitch) の [DPU](../../reference/glossary.md#term-dpu) 上で動作する高性能パケット処理レイヤーで、クラウドネットワーキングのアクセラレーションを提供する。
@@ -432,7 +432,7 @@ keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`DASH_VNET` / `DASH_VNET_MAPPING_TABLE` の処理は **`switch_type=dpu` のノード専用**であり、伝統的な ASIC ベンダー別分岐（mellanox / broadcom / barefoot 等）は存在しない。
+`DASH_VNET` / `DASH_VNET_MAPPING_TABLE` の処理は **`switch_type=dpu` のノード専用**であり、伝統的な [ASIC](../../reference/glossary.md#term-asic) ベンダー別分岐（mellanox / broadcom / barefoot 等）は存在しない。
 
 ### 動作条件: switch_type=dpu のみ
 
@@ -460,7 +460,7 @@ keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
 | Outbound CA-to-PA 作成/削除 | `CRM_DASH_IPV4_OUTBOUND_CA_TO_PA` / `CRM_DASH_IPV6_OUTBOUND_CA_TO_PA` (`ctxt.dip.isV4()` で分岐) |
 | PA Validation 作成/削除 | `CRM_DASH_IPV4_PA_VALIDATION` / `CRM_DASH_IPV6_PA_VALIDATION` (`underlay_ip.has_ipv4()` で分岐) |
 
-ただしこれはネットワークアドレスのアドレスファミリによる区別であり、動作するハードウェア ASIC ベンダーには依存しない (`dashvnetorch.cpp:525, 561, 706`)[^orch]。
+ただしこれはネットワークアドレスのアドレスファミリによる区別であり、動作するハードウェア [ASIC](../../reference/glossary.md#term-asic) ベンダーには依存しない (`dashvnetorch.cpp:525, 561, 706`)[^orch]。
 
 !!! note "T0/T1/VOQ chassis 環境"
     `DASH_VNET` テーブルは `DPU_APPL_DB` にのみ存在する。T0/T1/VOQ chassis の `APPL_DB` には `DASH_VNET_TABLE` エントリが存在せず、`DashVnetOrch` も起動しない。
@@ -494,4 +494,4 @@ keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
 
 <!-- glossary-links-injected: dash-vnet-001 -->
 
-<!-- glossary-links-injected: 0eadf050681b -->
+<!-- glossary-links-injected: 1288c04b3f8a -->

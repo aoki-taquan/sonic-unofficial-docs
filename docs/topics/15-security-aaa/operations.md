@@ -61,7 +61,7 @@ TACPLUS_SERVER address 10.0.0.10
 
 ## Password hardening
 
-local user のパスワードに対する最低長、強度、履歴、有効期限、ロックアウトなどのポリシーは [password hardening 設計](../../architecture/pw-hardening-design.md) に集約されています。SONiC は Linux 標準の `pam_pwquality` / `pam_faillock` / `chage` を組み合わせ、`CONFIG_DB` 経由で設定をテンプレート展開します。
+local user のパスワードに対する最低長、強度、履歴、有効期限、ロックアウトなどのポリシーは [password hardening 設計](../../architecture/pw-hardening-design.md) に集約されています。[SONiC](../../reference/glossary.md#term-sonic) は Linux 標準の `pam_pwquality` / `pam_faillock` / `chage` を組み合わせ、`CONFIG_DB` 経由で設定をテンプレート展開します。
 
 運用観点では次を確認します。
 
@@ -221,4 +221,4 @@ SOC / 監査対応で求められる最低限のイベントは次のとおり�
 
 データプレーンの暗号や platform 信頼チェーンの運用は [内部実装](internals.md) と [発展トピック](advanced.md) で扱います。management plane の到達性確認は [Telemetry / SNMP の運用](../09-telemetry-snmp/operations.md) も合わせて参照してください。
 
-<!-- glossary-links-injected: bf8806c6923e -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

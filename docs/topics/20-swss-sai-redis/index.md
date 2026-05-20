@@ -45,7 +45,7 @@ related:
 
 # SWSS / SAI / Redis 内部実装
 
-この章は、SONiC の機能章を読み解くときに何度も出てくる「[Redis](../../reference/glossary.md#term-redis) DB」「[orchagent](../../reference/glossary.md#term-orchagent)」「[syncd](../../reference/glossary.md#term-syncd)」「[SAI](../../reference/glossary.md#term-sai)」の関係を、機能横断の内部実装としてまとめ直すための入口である。各機能章（[BGP](../../reference/glossary.md#term-bgp)、L2、[ACL](../../reference/glossary.md#term-acl)、[VRF](../../reference/glossary.md#term-vrf) など）では Redis DB と daemon の名前が前提のように出てくるが、その共通の地図はここに置く。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) の機能章を読み解くときに何度も出てくる「[Redis](../../reference/glossary.md#term-redis) DB」「[orchagent](../../reference/glossary.md#term-orchagent)」「[syncd](../../reference/glossary.md#term-syncd)」「[SAI](../../reference/glossary.md#term-sai)」の関係を、機能横断の内部実装としてまとめ直すための入口である。各機能章（[BGP](../../reference/glossary.md#term-bgp)、L2、[ACL](../../reference/glossary.md#term-acl)、[VRF](../../reference/glossary.md#term-vrf) など）では Redis DB と daemon の名前が前提のように出てくるが、その共通の地図はここに置く。
 
 主な問いは次の 4 つ。
 
@@ -133,4 +133,4 @@ related:
 - [P4 / PINS / Programmable Pipeline](../18-p4-pins/index.md)
 - [リファレンス横断索引](../22-reference-index/index.md)
 
-<!-- glossary-links-injected: 91256395cb11 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

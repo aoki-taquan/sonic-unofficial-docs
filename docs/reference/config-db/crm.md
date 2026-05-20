@@ -22,7 +22,7 @@ hard: 0
 
 ## 概要
 
-Critical Resource Monitoring ([CRM](../../reference/glossary.md#term-crm)) は ASIC の HW リソース使用率 (route / nexthop / [FDB](../../reference/glossary.md#term-fdb) / [ACL](../../reference/glossary.md#term-acl) / [NAT](../../reference/glossary.md#term-nat) / [MPLS](../../reference/glossary.md#term-mpls) / [SRv6](../../reference/glossary.md#term-srv6) / [DASH](../../reference/glossary.md#term-dash)) をポーリング監視し、閾値超過時に `THRESHOLD_EXCEEDED` / `THRESHOLD_CLEAR` アラートを生成する機能。設定は `CRM|Config` の単一エントリに集約される[^1]。`orchagent` の `CrmOrch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、`COUNTERS_DB` の [CRM](../../reference/glossary.md#term-crm) 統計を更新する。
+Critical Resource Monitoring ([CRM](../../reference/glossary.md#term-crm)) は [ASIC](../../reference/glossary.md#term-asic) の HW リソース使用率 (route / nexthop / [FDB](../../reference/glossary.md#term-fdb) / [ACL](../../reference/glossary.md#term-acl) / [NAT](../../reference/glossary.md#term-nat) / [MPLS](../../reference/glossary.md#term-mpls) / [SRv6](../../reference/glossary.md#term-srv6) / [DASH](../../reference/glossary.md#term-dash)) をポーリング監視し、閾値超過時に `THRESHOLD_EXCEEDED` / `THRESHOLD_CLEAR` アラートを生成する機能。設定は `CRM|Config` の単一エントリに集約される[^1]。`orchagent` の `CrmOrch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、`COUNTERS_DB` の [CRM](../../reference/glossary.md#term-crm) 統計を更新する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -91,7 +91,7 @@ CRM|Config
 | フィールド | 値 | 挙動 |
 |-----------|-----|------|
 | `<resource>_threshold_type` | `percentage`（既定） | 閾値を使用率 % として解釈。`high_threshold > 100` または `low_threshold > 100` の場合 runtime_error を発生させ処理を中断（`crmorch.cpp:428-431`）。アラートは `used/total * 100 >= high_threshold` で発火。 |
-| `<resource>_threshold_type` | `used` | 閾値を「使用中エントリ数」の絶対値として解釈。ASIC の total 数に依存せず細かく制御可能。100 超でもエラーにならない。 |
+| `<resource>_threshold_type` | `used` | 閾値を「使用中エントリ数」の絶対値として解釈。[ASIC](../../reference/glossary.md#term-asic) の total 数に依存せず細かく制御可能。100 超でもエラーにならない。 |
 | `<resource>_threshold_type` | `free` | 閾値を「空きエントリ数」として解釈。アラートの超過/クリアの向きが percentage/used と逆（残り少なくなると EXCEEDED）。 |
 | `dash_*_threshold_type` | 任意 | `DEVICE_METADATA.switch_type = 'dpu'` のときのみ有効（YANG `when` 制約）。通常スイッチでは YANG validator が拒否。 |
 <!-- /value-behavior -->
@@ -186,7 +186,7 @@ crm show resources all
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -456,7 +456,7 @@ CRM は各リソースの available カウンタを `getResAvailability` で 2 �
 
 **優先パス: `sai_object_type_get_availability`**
 
-SAI object-level availability API。ASIC ベンダーが実装していれば、より細粒度な capacity を返す。  
+SAI object-level availability API。[ASIC](../../reference/glossary.md#term-asic) ベンダーが実装していれば、より細粒度な capacity を返す。  
 `CRM_IPV4/6_ROUTE`、`CRM_IPV4/6_NEIGHBOR`、`CRM_MPLS_NEXTHOP` (`SAI_NEXT_HOP_TYPE_MPLS` フィルタ)、`CRM_SRV6_NEXTHOP` (`SAI_NEXT_HOP_TYPE_SRV6_SIDLIST` フィルタ)、`CRM_NEXTHOP_GROUP`、`CRM_FDB_ENTRY`、`CRM_MPLS_INSEG`、`CRM_SRV6_MY_SID_ENTRY` など。<!-- evidence: crmorch.cpp:760-801 -->
 
 **フォールバックパス: `sai_switch_api->get_switch_attribute`**
@@ -593,4 +593,4 @@ COUNTERS_DB CRM テーブル
 > **スキャン証跡**: `crmorch.cpp` L428-538（handleSetCommand / CrmResourceEntry コンストラクタ）、L760-835（getResAvailability）、L878-1060（getResAvailableCounters）全行読了。10 件失敗パターン抽出。
 <!-- /failure -->
 
-<!-- glossary-links-injected: 4547f65b8f82 -->
+<!-- glossary-links-injected: 865a18402f05 -->

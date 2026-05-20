@@ -87,12 +87,12 @@ last_verified: 2026-05-13
 - [DOT1P_TO_PG_MAP テーブル（非実在）](../../reference/config-db/dot1p-to-pg-map.md)  
   area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
   
-  `DOT1P_TO_PG_MAP` は名称としては想定可能だが、SONiC CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。dot1p → Priority Group マッピングは `DOT1P_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
+  `DOT1P_TO_PG_MAP` は名称としては想定可能だが、[SONiC](../../reference/glossary.md#term-sonic) CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。dot1p → [Priority Group](../../reference/glossary.md#term-priority-group) マッピングは `DOT1P_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
 
 - [DSCP_TO_PG_MAP テーブル（非実在）](../../reference/config-db/dscp-to-pg-map.md)  
   area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-15`
   
-  `DSCP_TO_PG_MAP` は名称としては想定可能だが、SONiC CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。DSCP → Priority Group マッピングは `DSCP_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
+  `DSCP_TO_PG_MAP` は名称としては想定可能だが、[SONiC](../../reference/glossary.md#term-sonic) CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。DSCP → [Priority Group](../../reference/glossary.md#term-priority-group) マッピングは `DSCP_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
 
 - [HARDWARE テーブル](../../reference/config-db/hardware.md)  
   area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
@@ -867,12 +867,12 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
 - [DOT1P_TO_PG_MAP テーブル（非実在）](../../reference/config-db/dot1p-to-pg-map.md)  
   area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
   
-  `DOT1P_TO_PG_MAP` は名称としては想定可能だが、SONiC CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。dot1p → Priority Group マッピングは `DOT1P_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
+  `DOT1P_TO_PG_MAP` は名称としては想定可能だが、[SONiC](../../reference/glossary.md#term-sonic) CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。dot1p → [Priority Group](../../reference/glossary.md#term-priority-group) マッピングは `DOT1P_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
 
 - [DSCP_TO_PG_MAP テーブル（非実在）](../../reference/config-db/dscp-to-pg-map.md)  
   area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-15`
   
-  `DSCP_TO_PG_MAP` は名称としては想定可能だが、SONiC CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。DSCP → Priority Group マッピングは `DSCP_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
+  `DSCP_TO_PG_MAP` は名称としては想定可能だが、[SONiC](../../reference/glossary.md#term-sonic) CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。DSCP → [Priority Group](../../reference/glossary.md#term-priority-group) マッピングは `DSCP_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
 
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](../../reference/config-db/errordb.md)  
   area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-15`

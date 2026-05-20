@@ -446,7 +446,7 @@ SNAT エントリは `addHwSnatEntry()` を直接呼ぶため platform 非依存
 - `twice_nat_id`: 1..9999 (YANG `range "1..9999"` / natmgr 両方で検証)
 - 同一 `twice_nat_id` を持てるエントリ: 最大 2 件 (`STATIC_NAT` + `STATIC_NAPT` + `NAT_BINDINGS` 合計)
 - エントリ数: CLI では `COUNTERS_DB:COUNTERS_GLOBAL_NAT:Values` の `SNAT_ENTRIES >= MAX_NAT_ENTRIES` でスキップ (`nat.py:298-300`)
-- `NAT_GLOBAL.admin_mode = disabled` の状態ではエントリを受け付けるが ASIC に反映しない (キュー保持)
+- `NAT_GLOBAL.admin_mode = disabled` の状態ではエントリを受け付けるが [ASIC](../../reference/glossary.md#term-asic) に反映しない (キュー保持)
 
 ## 購読者
 
@@ -512,4 +512,4 @@ show nat translations
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9591d97a1b4f -->
+<!-- glossary-links-injected: c006405759d8 -->

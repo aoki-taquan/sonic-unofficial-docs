@@ -238,16 +238,16 @@ show ip interfaces
 
 ### 段階 1: Consumer 登録
 
-- **[orchagent](../../reference/glossary.md#term-orchagent) / IntfsOrch** (`sonic-swss/orchagent/intfsorch.cpp`): `PORTCHANNEL_INTERFACE` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / [IntfsOrch](../../reference/glossary.md#term-intfsorch)** (`sonic-swss/orchagent/intfsorch.cpp`): `PORTCHANNEL_INTERFACE` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- IntfsOrch がエントリを解析し IP プレフィックス情報を取得。LAG の L3 インタフェース作成に進む。
+- [IntfsOrch](../../reference/glossary.md#term-intfsorch) がエントリを解析し IP プレフィックス情報を取得。LAG の L3 インタフェース作成に進む。
 - APP_DB `INTF_TABLE` への書き込み後、[orchagent](../../reference/glossary.md#term-orchagent) が SAI を呼び出す。
 
 ### 段階 3: APPL → SAI
 
-- IntfsOrch が `sai_router_interface_api->create_router_interface()` で SAI [RIF](../../reference/glossary.md#term-rif) を作成。
+- [IntfsOrch](../../reference/glossary.md#term-intfsorch) が `sai_router_interface_api->create_router_interface()` で SAI [RIF](../../reference/glossary.md#term-rif) を作成。
 - IP プレフィックスは `sai_route_api` でルートエントリに変換。
 
 ### 段階 4: タイミング + 副作用
@@ -449,7 +449,7 @@ PORTCHANNEL_INTERFACE (intfmgr SET処理)
 
 | 失敗シナリオ | コード根拠 | 動作 | ログ | リカバリ |
 |---|---|---|---|---|
-| LAG オブジェクト未生成 (`gPortsOrch->getPort` 失敗) | `intfsorch.cpp:905-924` | `it++` → retry | なし (silent) | PortsOrch が LAG オブジェクト生成後に自動再試行 |
+| LAG オブジェクト未生成 (`gPortsOrch->getPort` 失敗) | `intfsorch.cpp:905-924` | `it++` → retry | なし (silent) | [PortsOrch](../../reference/glossary.md#term-portsorch) が LAG オブジェクト生成後に自動再試行 |
 | SAI RIF 作成失敗 (`create_router_interface` 失敗) | `intfsorch.cpp:1297-1304` | `runtime_error` をスロー → orchagent クラッシュ | `SWSS_LOG_ERROR "Failed to create router interface"` | supervisord による orchagent 再起動 |
 | SAI RIF 削除失敗 (`remove_router_interface` 失敗) | `intfsorch.cpp:1352-1355` | `runtime_error` をスロー → orchagent クラッシュ | `SWSS_LOG_ERROR "Failed to remove router interface"` | supervisord による orchagent 再起動 |
 | `mac_addr` SAI SET 失敗 | `intfsorch.cpp:1017-1025` | `task_need_retry` → retry、それ以外は継続 | `SWSS_LOG_ERROR "Failed to set router interface mac"` | SAI 状態回復後に自動再試行 |
@@ -813,7 +813,7 @@ if (rc == 0) {
 
 ### C. SAI RIF 生成 — 全プラットフォーム共通
 
-`IntfsOrch::addRouterIntfs()` は `port.m_type == Port::LAG` の場合 `SAI_ROUTER_INTERFACE_TYPE_PORT` / `SAI_ROUTER_INTERFACE_ATTR_PORT_ID = m_lag_id` を設定し (`intfsorch.cpp:1214-1243`)、プラットフォームによる分岐はない。`loopback_action` の SAI 変換 (`getSaiLoopbackAction()`) も `"drop"` → `SAI_PACKET_ACTION_DROP`、`"forward"` → `SAI_PACKET_ACTION_FORWARD` の固定マップで、ASIC ベンダー差分はない (`intfsorch.cpp:1146-1164`)。
+`IntfsOrch::addRouterIntfs()` は `port.m_type == Port::LAG` の場合 `SAI_ROUTER_INTERFACE_TYPE_PORT` / `SAI_ROUTER_INTERFACE_ATTR_PORT_ID = m_lag_id` を設定し (`intfsorch.cpp:1214-1243`)、プラットフォームによる分岐はない。`loopback_action` の SAI 変換 (`getSaiLoopbackAction()`) も `"drop"` → `SAI_PACKET_ACTION_DROP`、`"forward"` → `SAI_PACKET_ACTION_FORWARD` の固定マップで、[ASIC](../../reference/glossary.md#term-asic) ベンダー差分はない (`intfsorch.cpp:1146-1164`)。
 
 | 観点 | 全プラットフォーム共通動作 |
 |------|--------------------------|
@@ -835,4 +835,4 @@ if (rc == 0) {
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp:169-190,601-611 (platform/getenv grep = 0 hits); sonic-swss/orchagent/intfsorch.cpp:1146-1164,1180-1243 (platform/getenv grep = 0 hits) -->
 <!-- /platform -->
 
-<!-- glossary-links-injected: 13255cdf389d -->
+<!-- glossary-links-injected: 134a5cd6580b -->

@@ -298,7 +298,7 @@ assert(!entry.second.routeTable.empty());
 
 ### 主要な制約詳細
 
-**PortsOrch 先行必須 (依存 #1)**: `RouteOrch::doTask()` の冒頭 (routeorch.cpp:609) で `gPortsOrch->allPortsReady()` を確認し、false なら即 return する。ポート初期化が完了するまで [APPL_DB](../../reference/glossary.md#term-appl_db) に積まれた [ROUTE_TABLE](../../reference/glossary.md#term-route_table) エントリは一切処理されず、`publishRouteState()` も `notifyNextHopChangeObservers()` も発火しない（evidence: `routeorch.cpp:605-612`）。
+**[PortsOrch](../../reference/glossary.md#term-portsorch) 先行必須 (依存 #1)**: `RouteOrch::doTask()` の冒頭 (routeorch.cpp:609) で `gPortsOrch->allPortsReady()` を確認し、false なら即 return する。ポート初期化が完了するまで [APPL_DB](../../reference/glossary.md#term-appl_db) に積まれた [ROUTE_TABLE](../../reference/glossary.md#term-route_table) エントリは一切処理されず、`publishRouteState()` も `notifyNextHopChangeObservers()` も発火しない（evidence: `routeorch.cpp:605-612`）。
 
 **orchList 処理順序 (依存 #2)**: orchdaemon.cpp の `m_orchList` は `gNeighOrch` → `gNhgOrch` → `gCbfNhgOrch` → `gFgNhgOrch` → `gRouteOrch` の順で `doTask()` を呼ぶ (orchdaemon.cpp:500)。これにより同一バッチサイクルで NeighOrch・NhgOrch が処理を完了してから RouteOrch が起動するため、`addRoute()` 内で `hasNhg()` / `hasNextHop()` を確認した時点で同バッチ内のエントリが既に登録済みになる（evidence: `orchdaemon.cpp:500`）。
 
@@ -467,7 +467,7 @@ RouteOrch が `addRoute()` 内で `hasNhg()` / `hasNextHop()` を確認した時
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
-| `CONFIG_DB DEVICE_METADATA\|localhost.suppress-fib-pending` | 読み取り（起動時 + 動的変更 Subscribe） | fpmsyncd 起動時・DEVICE_METADATA 変更通知受信時 | `fpmsyncd.cpp` L113–117, L278–302 |
+| `CONFIG_DB DEVICE_METADATA\|localhost.suppress-fib-pending` | 読み取り（起動時 + 動的変更 Subscribe） | fpmsyncd 起動時・[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 変更通知受信時 | `fpmsyncd.cpp` L113–117, L278–302 |
 | `APPL_STATE_DB ROUTE_TABLE` | 書き込み先（SAI SET 成功時） | `publishRouteState()` が `protocol` / `err_str` を書き込む | `response_publisher.cpp` L93–148 |
 | `fpmsyncd` (`APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 消費) | Pub/Sub 通知送信先 | `suppress-fib-pending = enabled` かつ fpmsyncd 稼働中のみ | `fpmsyncd.cpp` L78, L116; `routesync.cpp` L3156–3190 |
 | `CONFIG_DB MIRROR_SESSION` | 間接参照（MirrorOrch が `attach()`/`detach()` のトリガ） | MirrorOrch がセッションエントリを処理するとき | `mirrororch.cpp` L517 (`attach`), L557 (`detach`) |
@@ -538,7 +538,7 @@ if (status.ok()) { state_attrs = intent_attrs; }
 |----------|--------|-------------|
 | VRF が `m_syncdRoutes` に未登録 | L2396–2401 | VRF 登録後に自動再処理 |
 | NhgOrch / CbfNhgOrch に NHG 未登録 | L2411–2415 | NHG 登録後に自動再処理 |
-| 単一 NH の [RIF](../../reference/glossary.md#term-rif) が `SAI_NULL_OBJECT_ID` | L2431–2436 | IntfsOrch [RIF](../../reference/glossary.md#term-rif) 作成後に再処理 |
+| 単一 NH の [RIF](../../reference/glossary.md#term-rif) が `SAI_NULL_OBJECT_ID` | L2431–2436 | [IntfsOrch](../../reference/glossary.md#term-intfsorch) [RIF](../../reference/glossary.md#term-rif) 作成後に再処理 |
 | `hasNextHop()` = false | L2440–2445 | NeighOrch 登録後に再処理 |
 | [ECMP](../../reference/glossary.md#term-ecmp) NHG 未登録（tmp_next_hop フォールバック後） | L2451–2458 | NHG 生成後に再処理 |
 
@@ -558,7 +558,7 @@ if (status != SAI_STATUS_SUCCESS) {
 publishRouteState(ctx);  // DEL を APPL_STATE_DB に書く
 ```
 
-| 条件 | APPL_STATE_DB | 実際の ASIC |
+| 条件 | APPL_STATE_DB | 実際の [ASIC](../../reference/glossary.md#term-asic) |
 |------|---------------|------------|
 | SAI DEL 失敗かつ `task_success` 扱い | エントリ削除（矛盾） | ルート残存 |
 | SAI DEL 失敗かつ `task_not_processed` など | 更新なし・リトライ | ルート残存 |
@@ -571,7 +571,7 @@ publishRouteState(ctx);  // DEL を APPL_STATE_DB に書く
 |---|---|---|---|
 | SAI ADD 失敗（`addRoutePost` false） | 更新なし | 通知なし | 継続・次サイクルでリトライ |
 | VRF / NH / NHG 未登録 | 更新なし | 通知なし | 継続・自動リトライ |
-| SAI DEL 失敗（task_success 扱い） | エントリ削除（ASIC と矛盾） | DEL 通知送出 | 継続 |
+| SAI DEL 失敗（task_success 扱い） | エントリ削除（[ASIC](../../reference/glossary.md#term-asic) と矛盾） | DEL 通知送出 | 継続 |
 | SAI DEL 失敗（task_not_processed） | 更新なし | 通知なし | 継続・リトライ |
 
 <!-- /failure -->
@@ -815,6 +815,9 @@ RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^6] [^7] [^8]
+
 [^1]: RouteOrch 実装: `orchagent/routeorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp>
 [^2]: RouteOrch ヘッダ: `orchagent/routeorch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.h>
 [^3]: ResponsePublisher 実装: `orchagent/response_publisher.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp>
@@ -864,4 +867,4 @@ APPL_STATE_DB ROUTE_TABLE:192.168.1.0/24
 - `protocol` が空文字列 → APPL_DB の `ROUTE_TABLE` エントリに `protocol` フィールドが存在しない（静的経路や一部の直接書き込みツールで発生する）。
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 860db3436ce7 -->
+<!-- glossary-links-injected: c608f3d09650 -->

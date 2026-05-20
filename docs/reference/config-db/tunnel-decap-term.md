@@ -141,7 +141,7 @@ TUNNEL_DECAP_TERM_TABLE エントリを書き込む際に守るべき順序制�
 
 | 依存テーブル / 条件 | 理由 | 緩和策 | evidence |
 |---|---|---|---|
-| PortsOrch 初期化完了 (`allPortsReady()`) | doTask() 先頭ガード — false なら TERM 処理もスキップ | なし（自動待機） | `tunneldecaporch.cpp` L55-57 |
+| [PortsOrch](../../reference/glossary.md#term-portsorch) 初期化完了 (`allPortsReady()`) | doTask() 先頭ガード — false なら TERM 処理もスキップ | なし（自動待機） | `tunneldecaporch.cpp` L55-57 |
 | `TUNNEL_DECAP_TABLE:<tunnel_name>` SET 済み | `tunnel_exists` が false の場合 `addUnhandledDecapTunnelTerm()` に保留。トンネル本体作成成功後に `processUnhandledDecapTunnelTerms()` で一括再処理 | **前後逆でも自動調停** | `tunneldecaporch.cpp` L511-521, L1497-1520 |
 | subnet decap term の場合: `SUBNET_DECAP` で `enable=true` + `src_ip`/`src_ip_v6` 設定済み | `subnetDecapConfig.enable` が false だとエントリを消費してスキップ。`src_ip` 未設定でも消費スキップ | TUNNEL_DECAP_TERM_TABLE SET 前に SUBNET_DECAP を先に SET する | `tunneldecaporch.cpp` L501-514 |
 
@@ -288,7 +288,7 @@ TUNNEL_DECAP_TERM_TABLE エントリの SET / DEL が引き起こす、当該テ
 
 | 副作用 | 対象 | 詳細 | evidence |
 |--------|------|------|----------|
-| SAI term entry 作成 | [ASIC_DB](../../reference/glossary.md#term-asic_db) → [syncd](../../reference/glossary.md#term-syncd) → ASIC | `sai_tunnel_api->create_tunnel_term_table_entry()` 呼び出し | `tunneldecaporch.cpp` L979 |
+| SAI term entry 作成 | [ASIC_DB](../../reference/glossary.md#term-asic_db) → [syncd](../../reference/glossary.md#term-syncd) → [ASIC](../../reference/glossary.md#term-asic) | `sai_tunnel_api->create_tunnel_term_table_entry()` 呼び出し | `tunneldecaporch.cpp` L979 |
 | 親トンネル ref_count +1 | `tunnelTable[name].ref_count` (in-memory) | `increaseTunnelRefCount()` — ref_count が 1 以上の間は親トンネル DEL が抑制される | `tunneldecaporch.cpp` L997, `tunneldecaporch.h` L157-160 |
 | in-memory キャッシュ登録 | `tunnel.tunnel_term_info[dst_ip]` | `TunnelTermEntry` 構造体を追加。後続 DEL / 参照管理の根拠データ | `tunneldecaporch.cpp` L990-996 |
 | [STATE_DB](../../reference/glossary.md#term-state_db) 書き込み | `STATE_TUNNEL_DECAP_TERM_TABLE:<tunnel_name>|<dst_ip>` | `setDecapTunnelTermStatus()` — `term_type`・`src_ip`（非空時）・`subnet_type`（非空時）を書き込む | `tunneldecaporch.cpp` L998, L1539-1561 |
@@ -297,7 +297,7 @@ TUNNEL_DECAP_TERM_TABLE エントリの SET / DEL が引き起こす、当該テ
 
 | 副作用 | 対象 | 詳細 | evidence |
 |--------|------|------|----------|
-| SAI term entry 削除 | [ASIC_DB](../../reference/glossary.md#term-asic_db) → [syncd](../../reference/glossary.md#term-syncd) → ASIC | `sai_tunnel_api->remove_tunnel_term_table_entry()` 呼び出し | `tunneldecaporch.cpp` L1248 |
+| SAI term entry 削除 | [ASIC_DB](../../reference/glossary.md#term-asic_db) → [syncd](../../reference/glossary.md#term-syncd) → [ASIC](../../reference/glossary.md#term-asic) | `sai_tunnel_api->remove_tunnel_term_table_entry()` 呼び出し | `tunneldecaporch.cpp` L1248 |
 | 親トンネル ref_count -1 | `tunnelTable[name].ref_count` (in-memory) | `decreaseTunnelRefCount()` | `tunneldecaporch.cpp` L1260, `tunneldecaporch.h` L161-163 |
 | 親トンネルの自動削除（条件付き） | `TUNNEL_DECAP_TABLE` の SAI エントリ | ref_count が 0 になった場合、`RemoveTunnelIfNotReferenced()` → `removeDecapTunnel()` でカスケード削除 | `tunneldecaporch.cpp` L531, L1569-1576 |
 | STATE_DB エントリ削除 | `STATE_TUNNEL_DECAP_TERM_TABLE:<tunnel_name>|<dst_ip>` | `removeDecapTunnelTermStatus()` | `tunneldecaporch.cpp` L1261, L1563-1567 |
@@ -379,7 +379,7 @@ RouteOrch / VNetRouteOrch
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-TUNNEL_DECAP_TERM_TABLE エントリを **処理する `tunneldecaporch`** にはプラットフォーム差なし。差異は **書き込み側**（`ipinip.json.j2` テンプレート）で生じ、`switch_type`・ASIC ベンダー・デバイスタイプ・ルーティング IF 数の組み合わせによって生成エントリ数が変わる。
+TUNNEL_DECAP_TERM_TABLE エントリを **処理する `tunneldecaporch`** にはプラットフォーム差なし。差異は **書き込み側**（`ipinip.json.j2` テンプレート）で生じ、`switch_type`・[ASIC](../../reference/glossary.md#term-asic) ベンダー・デバイスタイプ・ルーティング IF 数の組み合わせによって生成エントリ数が変わる。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
@@ -452,4 +452,4 @@ CONFIG_DB `TUNNEL` テーブルを購読し、`src_ip` の有無から自動的�
 [^1]: [tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) 実装: `tunnelmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/tunnelmgr.cpp>
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L50>
 
-<!-- glossary-links-injected: 21c8646d8a3e -->
+<!-- glossary-links-injected: 762e0b60ecf6 -->

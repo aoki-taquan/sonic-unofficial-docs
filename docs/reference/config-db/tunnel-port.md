@@ -42,8 +42,8 @@ related:
 
 | 種別 | 名前形式 | 生成トリガー |
 |------|---------|------------|
-| Local SRC VTEP ポート | `Port_SRC_VTEP_<src_ip>` | `VXLAN_TUNNEL_MAP` 処理 (DIP トンネル非サポート時) |
-| [EVPN](../../reference/glossary.md#term-evpn) DIP トンネルポート | `Port_EVPN_<remote_vtep_ip>` | `addTunnelUser()` ([EVPN](../../reference/glossary.md#term-evpn) リモート VTEP 学習時) |
+| Local SRC [VTEP](../../reference/glossary.md#term-vtep) ポート | `Port_SRC_VTEP_<src_ip>` | `VXLAN_TUNNEL_MAP` 処理 (DIP トンネル非サポート時) |
+| [EVPN](../../reference/glossary.md#term-evpn) DIP トンネルポート | `Port_EVPN_<remote_vtep_ip>` | `addTunnelUser()` ([EVPN](../../reference/glossary.md#term-evpn) リモート [VTEP](../../reference/glossary.md#term-vtep) 学習時) |
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -98,7 +98,7 @@ VxlanTunnelMapOrch::addOperation [vxlanorch.cpp:2079]
 ## 購読者
 
 - `VxlanTunnelOrch::addTunnelUser()`: [EVPN](../../reference/glossary.md#term-evpn) DIP トンネルポートを生成
-- `VxlanTunnelMapOrch::addOperation()`: Local SRC VTEP ポートを生成 (DIP 非サポート時)
+- `VxlanTunnelMapOrch::addOperation()`: Local SRC [VTEP](../../reference/glossary.md#term-vtep) ポートを生成 (DIP 非サポート時)
 - `VxlanTunnelOrch::deleteTunnelPort()`: [FDB](../../reference/glossary.md#term-fdb) カウントが 0 の場合にポートを削除
 - `VxlanTunnelOrch::updateDbTunnelOperStatus()`: [STATE_DB](../../reference/glossary.md#term-state_db) の oper status を更新
 
@@ -321,7 +321,7 @@ SAI ポートステータス変化イベント
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-`Port::TUNNEL` は CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) テーブルを直接購読しない。親テーブル (`VXLAN_TUNNEL_MAP` / `VXLAN_EVPN_NVO`) の処理結果として動的生成されるオブジェクトであり、pubsub の観点では「PortsOrch が内部 API 経由で生成し、STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を書く」構造である[^1]。
+`Port::TUNNEL` は CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) テーブルを直接購読しない。親テーブル (`VXLAN_TUNNEL_MAP` / `VXLAN_EVPN_NVO`) の処理結果として動的生成されるオブジェクトであり、pubsub の観点では「[PortsOrch](../../reference/glossary.md#term-portsorch) が内部 API 経由で生成し、STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を書く」構造である[^1]。
 
 ### 書き込みパス
 
@@ -415,7 +415,7 @@ sonic-db-cli STATE_DB keys 'VXLAN_TUNNEL_TABLE|*'
 
 ## 引用元
 
-[^1]: VxlanTunnelOrch / PortsOrch 実装: `orchagent/vxlanorch.cpp`, `orchagent/portsorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp>
+[^1]: VxlanTunnelOrch / [PortsOrch](../../reference/glossary.md#term-portsorch) 実装: `orchagent/vxlanorch.cpp`, `orchagent/portsorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp>
 
 ## 関連ページ
 
@@ -449,4 +449,4 @@ show vxlan remotevtep
 - **トンネルポート oper DOWN 継続**: アンダーレイルートが未到達の場合は oper status が `DOWN` のまま。[BGP](../../reference/glossary.md#term-bgp)/IGP のアンダーレイ経路を確認する。
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: b85d96c09662 -->
+<!-- glossary-links-injected: 2a31e066c05b -->

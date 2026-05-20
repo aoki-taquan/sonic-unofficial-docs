@@ -56,7 +56,7 @@ related:
 
 ## 読み手が知りたいこと
 
-1. SONiC の [VXLAN](../reference/glossary.md#term-vxlan) は **VTEP と VNet の組合せ** とよく言われるが、両者の関係は？
+1. [SONiC](../reference/glossary.md#term-sonic) の [VXLAN](../reference/glossary.md#term-vxlan) は **[VTEP](../reference/glossary.md#term-vtep) と VNet の組合せ** とよく言われるが、両者の関係は？
 2. **L2 VXLAN と L3 VXLAN** はどう作り分けられる？（mapper / tunnel が別なのか）
 3. **どの [orchagent](../reference/glossary.md#term-orchagent) が何を担当** するのか？
 4. **[CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB に何を入れれば** VNet ピアリングが動くのか？
@@ -282,7 +282,7 @@ APP_DB に `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を投入してベア�
 | VRF 数 | 128 |
 | ルート数 | 512K |
 
-設計目標であり実 ASIC のスケールに依存する[^1]。
+設計目標であり実 [ASIC](../reference/glossary.md#term-asic) のスケールに依存する[^1]。
 
 ## 7. トラブルシューティング
 
@@ -390,4 +390,4 @@ reasoning: VxlanOrch / VnetOrch / VnetRouteOrch の責務分担と peer_list 経
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: edc9bd421e86 -->
+<!-- glossary-links-injected: 7b27b638c4f3 -->

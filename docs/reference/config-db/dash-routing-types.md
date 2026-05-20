@@ -155,7 +155,7 @@ DASH_ROUTING_TYPE_TABLE|<routing_type>
 | `action_name` | protobuf の zero value (`""`) — SAI には渡されない | YANG default なし・SAI 非使用 | `sonic-dash.yang:369-374`（SAI 変換コードなし） |
 | `action_type` | protobuf の zero value (`ACTION_TYPE_UNSPECIFIED` = 0) — orchagent はそのまま格納。SAI 変換は `staticencap` / `maprouting` 等のみ | YANG default なし | `dashvnetorch.cpp:325` — `action.action_type()` チェック |
 | `encap_type` | `action_type=staticencap` の場合は **実質必須**。省略時 `SAI_DASH_ENCAPSULATION_INVALID` のまま SAI に渡されてエラー | 条件付き必須・コード強制 | `dashvnetorch.cpp:322, 337-339` |
-| `vni` | 省略時 `routing_type_tunnel_key = 0`。SAI の VNI 属性は設定されない（ASIC 実装依存のデフォルト VNI が適用） | YANG default なし・暗黙 0 | `dashvnetorch.cpp:341-343` |
+| `vni` | 省略時 `routing_type_tunnel_key = 0`。SAI の VNI 属性は設定されない（[ASIC](../../reference/glossary.md#term-asic) 実装依存のデフォルト VNI が適用） | YANG default なし・暗黙 0 | `dashvnetorch.cpp:341-343` |
 
 ### 補足
 
@@ -471,9 +471,9 @@ SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_
 
 ### SAI API 呼び出し: なし（in-memory 格納のみ）
 
-`DashOrch::addRoutingTypeEntry()` / `removeRoutingTypeEntry()` は SAI API を一切呼び出さず、受信した protobuf を `routing_type_entries_` in-memory マップに格納するだけで処理が完結する。ASIC ベンダー依存の SAI 呼び出しは存在せず、ベンダー固有の条件分岐もない。
+`DashOrch::addRoutingTypeEntry()` / `removeRoutingTypeEntry()` は SAI API を一切呼び出さず、受信した protobuf を `routing_type_entries_` in-memory マップに格納するだけで処理が完結する。[ASIC](../../reference/glossary.md#term-asic) ベンダー依存の SAI 呼び出しは存在せず、ベンダー固有の条件分岐もない。
 
-SAI API が呼び出されるのは、この routing type を参照する `DashVnetOrch` や `DashRouteOrch` がマッピング・ルートエントリをプログラムする時点であり、`DASH_ROUTING_TYPE_TABLE` 処理自体は ASIC 種別に依存しない。
+SAI API が呼び出されるのは、この routing type を参照する `DashVnetOrch` や `DashRouteOrch` がマッピング・ルートエントリをプログラムする時点であり、`DASH_ROUTING_TYPE_TABLE` 処理自体は [ASIC](../../reference/glossary.md#term-asic) 種別に依存しない。
 
 ### SAI capability クエリ: 関与なし
 
@@ -503,12 +503,15 @@ SAI API が呼び出されるのは、この routing type を参照する `DashV
 
 ## 関連リファレンス
 
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DASH_ROUTE_TABLE`](dash-route-table.md)（routing_type を leafref 参照）
-- CONFIG_DB: [`DASH_VNET_MAPPING_TABLE`](dash-vnet-mapping-table.md)（routing_type フィールドで本テーブルを参照）
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `DASH_ROUTE_TABLE`（routing_type を leafref 参照）
+- CONFIG_DB: `DASH_VNET_MAPPING_TABLE`（routing_type フィールドで本テーブルを参照）
 
 <!-- ref-triangle:end -->
 
 ## 引用元
+
+<!-- footnote anchor seeds -->
+出典: [^2] [^3]
 
 [^1]: `sonic-swss/orchagent/dash/dashorch.cpp` — `doTaskRoutingTypeTable()` (L473-537), `addRoutingTypeEntry()` (L441-455), `getRouteTypeActions()` (L82-94). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashorch.cpp>
 
@@ -537,4 +540,4 @@ sonic-db-cli APPL_DB keys 'DASH_ROUTING_TYPE_TABLE|*' | sort
 - **更新は削除→再作成が必要**: `addRoutingTypeEntry()` は既存エントリをスキップするため、routing type の変更は DEL → SET の順で実施する
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 8172c89ec828 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

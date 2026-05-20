@@ -96,7 +96,7 @@ NAT_BINDINGS|<name>
 ## 購読者
 
 - `natmgrd`: [CONFIG_DB](../../reference/glossary.md#term-config_db) の NAT 設定を読み、[APPL_DB](../../reference/glossary.md#term-appl_db) NAT table 群へ反映する。
-- `orchagent` / `NatOrch`: [APPL_DB](../../reference/glossary.md#term-appl_db) の NAT global / pool / binding / static entry を消費し、[SAI](../../reference/glossary.md#term-sai) NAT object や kernel / ASIC 設定へ反映する。
+- `orchagent` / `NatOrch`: [APPL_DB](../../reference/glossary.md#term-appl_db) の NAT global / pool / binding / static entry を消費し、[SAI](../../reference/glossary.md#term-sai) NAT object や kernel / [ASIC](../../reference/glossary.md#term-asic) 設定へ反映する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -169,7 +169,7 @@ show nat translations
 | フィールド | 値 | 挙動 |
 |-----------|-----|------|
 | `admin_mode` | `disabled` (default) | NAT 無効。pool/binding/static エントリを受け付けるがハードウェアに降ろさない (キュー保持) |
-| `admin_mode` | `enabled` | NAT 有効化。キュー内の全エントリを ASIC に反映。conntrack エントリの aging 開始 |
+| `admin_mode` | `enabled` | NAT 有効化。キュー内の全エントリを [ASIC](../../reference/glossary.md#term-asic) に反映。conntrack エントリの aging 開始 |
 | `nat_timeout` | 600 (default) | 非 TCP/UDP NAT セッションを 600秒でタイムアウト |
 | `nat_tcp_timeout` | 86400 (default) | TCP セッションを 24時間でタイムアウト |
 | `nat_udp_timeout` | 300 (default) | UDP セッションを 5分でタイムアウト |
@@ -416,7 +416,7 @@ init_cfg.json.j2 および minigraph.py からの `NAT_GLOBAL` / `STATIC_NAT` / 
 
 ### ASIC_DB (SAI nat_entry) への副次書込
 
-`NatOrch` (`orchagent` コンテナ) が `sai_nat_api` 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) に SAI NAT エントリを書込む。[syncd](../../reference/glossary.md#term-syncd) が [Redis](../../reference/glossary.md#term-redis) [ASIC_DB](../../reference/glossary.md#term-asic_db) に記録し、ASIC へ転送する。
+`NatOrch` (`orchagent` コンテナ) が `sai_nat_api` 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) に SAI NAT エントリを書込む。[syncd](../../reference/glossary.md#term-syncd) が [Redis](../../reference/glossary.md#term-redis) [ASIC_DB](../../reference/glossary.md#term-asic_db) に記録し、[ASIC](../../reference/glossary.md#term-asic) へ転送する。
 
 | SAI オブジェクト種別 | SAI nat_type | 書込条件 | ソース |
 |---|---|---|---|
@@ -751,4 +751,4 @@ SWSS_LOG_NOTICE("DNAT nexthop tracking is %s",
 > 中間調査詳細: `meta/_intermediate/cdb-flow/nat-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: acdee472d3da -->
+<!-- glossary-links-injected: 8df9850464d2 -->

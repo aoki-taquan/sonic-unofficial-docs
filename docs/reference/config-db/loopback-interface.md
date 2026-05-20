@@ -103,7 +103,7 @@ LOOPBACK_INTERFACE|<name>|<ip-prefix>           # IP プレフィクス
 ### 典型値
 
 - key 形式: `LOOPBACK_INTERFACE|Loopback0` (L3 enable 行) と `LOOPBACK_INTERFACE|Loopback0|<ip/prefix>`。
-- `Loopback0` は [BGP](../../reference/glossary.md#term-bgp) router-id / VTEP src として標準利用。
+- `Loopback0` は [BGP](../../reference/glossary.md#term-bgp) router-id / [VTEP](../../reference/glossary.md#term-vtep) src として標準利用。
 
 ### よくある誤設定
 
@@ -258,7 +258,7 @@ Loopback の `nat_zone` は設定可能だが、実際の [NAT](../../reference/
 ### IPv6 link-local アドレス — silent drop
 
 `fe80::/10` の IPv6 アドレスはカーネルには付与されるが、APP_DB には
-送信されない（`intfmgr.cpp:1123-1139`）。IntfsOrch / SAI に通知されず、
+送信されない（`intfmgr.cpp:1123-1139`）。[IntfsOrch](../../reference/glossary.md#term-intfsorch) / SAI に通知されず、
 SAI ルータ IF の更新は発生しない。
 
 ### Loopback0 IPv4 欠如 — BGP peer ブロック（経路依存乖離）
@@ -443,8 +443,8 @@ VRF 解除後のアドレス競合（グローバル VRF への暗黙フォー�
 | `ip link set <Lo> up/down` が runtime_error | intfmgrd | WARN | **なし** | OS の admin 状態と CONFIG_DB が乖離（`intfmgr.cpp:879-882`） |
 | VRF 変更（既バインド VRF から別 VRF への直接変更） | intfmgrd | ERROR | **なし** | 変更イベントを消費して拒否。CONFIG_DB の値は書き換わるが実態は旧 VRF のまま（`intfmgr.cpp:846-849`） |
 | `vrf_name` 指定時に STATE_VRF_TABLE に VRF 未登録 | intfmgrd | DEBUG | あり（VRF ready 後） | 設定がキューで保留。VRF 完了後に自動リトライ（`intfmgr.cpp:839-842`） |
-| SAI `create_router_interface` が非 SUCCESS | [orchagent](../../reference/glossary.md#term-orchagent) IntfsOrch | ERROR | あり（`task_success` 非時） | `handleSaiCreateStatus` 判定後 `runtime_error` → フレームワークがタスクをリトライキューに戻す（`intfsorch.cpp:1296-1304`） |
-| `loopback_action` に `"drop"` / `"forward"` 以外の値 | orchagent IntfsOrch | WARN | **なし** | SAI 属性未設定。SAI 実装依存のデフォルト action が維持される（`intfsorch.cpp:1162`） |
+| SAI `create_router_interface` が非 SUCCESS | [orchagent](../../reference/glossary.md#term-orchagent) [IntfsOrch](../../reference/glossary.md#term-intfsorch) | ERROR | あり（`task_success` 非時） | `handleSaiCreateStatus` 判定後 `runtime_error` → フレームワークがタスクをリトライキューに戻す（`intfsorch.cpp:1296-1304`） |
+| `loopback_action` に `"drop"` / `"forward"` 以外の値 | orchagent [IntfsOrch](../../reference/glossary.md#term-intfsorch) | WARN | **なし** | SAI 属性未設定。SAI 実装依存のデフォルト action が維持される（`intfsorch.cpp:1162`） |
 | [RIF](../../reference/glossary.md#term-rif) 削除時に参照カウント非 0（ネクストホップ等が参照中） | orchagent IntfsOrch | NOTICE | あり（自動） | 参照が解放されるまで [RIF](../../reference/glossary.md#term-rif) 削除を保留してリトライ（`intfsorch.cpp:1327-1330`） |
 | 属性ロウ DEL 時に IP プレフィクスロウが残存 | orchagent IntfsOrch | なし | あり（自動） | IP 削除まで属性ロウ DEL を保留（サイレントリトライ、`intfsorch.cpp:1053-1064`） |
 
@@ -695,4 +695,4 @@ ip -6 address add 2001:db8::1/128 dev Loopback0 metric 256
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 81cce5a42126 -->
+<!-- glossary-links-injected: 34b8de0711fb -->

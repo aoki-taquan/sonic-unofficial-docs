@@ -119,8 +119,8 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 | 参照先テーブル | 参照フィールド | 方向 | 直接/間接 | 証跡 |
 |--------------|-------------|------|-----------|------|
 | `CONFIG_DB.TELEMETRY\|gnmi` / `TELEMETRY\|certs` | `port`, `server_crt`, `server_key`, `ca_crt` | TELEMETRY_CLIENT → TELEMETRY | 間接（`supervisord.conf` の `dependent_startup_wait_for=gnmi-native:running` により `dialout` は gnmi-native 起動後に起動） | `gnmi-native.sh:L18`, `supervisord.conf:L70` |
-| `CONFIG_DB.DEVICE_METADATA\|x509` | `server_crt`, `server_key`, `ca_crt` | TELEMETRY_CLIENT → DEVICE_METADATA | 間接（gnmi-native.sh が `TELEMETRY\|certs` 非設定時のフォールバックとして使用） | `telemetry_vars.j2:L4`, `gnmi-native.sh:L44-55` |
-| `CONFIG_DB.DEVICE_METADATA\|localhost` | `subtype` | TELEMETRY_CLIENT → DEVICE_METADATA | 間接（gnmi-native.sh が [SmartSwitch](../../reference/glossary.md#term-smartswitch) 判定 → ZMQ ポート追加） | `gnmi-native.sh:L88-90` |
+| `CONFIG_DB.DEVICE_METADATA\|x509` | `server_crt`, `server_key`, `ca_crt` | TELEMETRY_CLIENT → [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) | 間接（gnmi-native.sh が `TELEMETRY\|certs` 非設定時のフォールバックとして使用） | `telemetry_vars.j2:L4`, `gnmi-native.sh:L44-55` |
+| `CONFIG_DB.DEVICE_METADATA\|localhost` | `subtype` | TELEMETRY_CLIENT → [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) | 間接（gnmi-native.sh が [SmartSwitch](../../reference/glossary.md#term-smartswitch) 判定 → ZMQ ポート追加） | `gnmi-native.sh:L88-90` |
 | `CONFIG_DB.MGMT_VRF_CONFIG\|vrf_global` | `mgmtVrfEnabled` | TELEMETRY_CLIENT → MGMT_VRF_CONFIG | 間接（gnmi-native.sh が管理 [VRF](../../reference/glossary.md#term-vrf) バインド → dial-out も mgmt [VRF](../../reference/glossary.md#term-vrf) 経由になる） | `gnmi-native.sh:L93-96` |
 
 ### 補足
@@ -307,7 +307,7 @@ pubsub := redisDb.PSubscribe(context.Background(), pattern)
 | `dialout_client.go` のプラットフォーム分岐 | `platform` / `DEVICE_METADATA` / `ASIC` / `namespace` / `multi_npu` への参照が全 746 行で **0 ヒット** | `sonic-gnmi/dialout/dialout_client/dialout_client.go` 全行 |
 | `Dockerfile.j2` のプラットフォーム条件 | プラットフォーム固有の `{% if %}` 分岐なし。ベースは `docker-config-engine-bookworm` のみ | `dockers/docker-sonic-gnmi/Dockerfile.j2` |
 | [SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) 依存 | dial-out は TCP/gRPC レベルのアプリケーション。[SAI](../../reference/glossary.md#term-sai) 非経由 | アーキテクチャ上自明 |
-| multi-ASIC / namespace | `dialout_client.go` は `asicN` namespace への接続切り替えを実装しない。host CONFIG_DB の `TELEMETRY_CLIENT` のみ購読 | `dialout_client.go` 全行、`db_client.go:524`（dial-in 側の実装） |
+| multi-[ASIC](../../reference/glossary.md#term-asic) / namespace | `dialout_client.go` は `asicN` namespace への接続切り替えを実装しない。host CONFIG_DB の `TELEMETRY_CLIENT` のみ購読 | `dialout_client.go` 全行、`db_client.go:524`（dial-in 側の実装） |
 
 <!-- /platform -->
 
@@ -484,4 +484,4 @@ REST/gNMI 書き込み経路なし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 45c1b64b226e -->
+<!-- glossary-links-injected: 82a0d64e070d -->

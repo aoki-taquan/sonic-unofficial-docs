@@ -470,7 +470,7 @@ CONFIG_DB MGMT_PORT|eth0 (SET/DEL)
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`MGMT_PORT` の処理は SAI を一切経由しないため、ASIC 種別によるプラットフォーム差はない。ただし `speed` フィールドの有無は **[HwSku](../../reference/glossary.md#term-hwsku)（platform）依存** であり、以下に示す観点でプラットフォーム間に動作差が生じる。詳細根拠は [`meta/_intermediate/cdb-flow/mgmt-port-platform.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/mgmt-port-platform.md) を参照。
+`MGMT_PORT` の処理は SAI を一切経由しないため、[ASIC](../../reference/glossary.md#term-asic) 種別によるプラットフォーム差はない。ただし `speed` フィールドの有無は **[HwSku](../../reference/glossary.md#term-hwsku)（platform）依存** であり、以下に示す観点でプラットフォーム間に動作差が生じる。詳細根拠は [`meta/_intermediate/cdb-flow/mgmt-port-platform.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/mgmt-port-platform.md) を参照。
 
 ### A. speed フィールドの有無 — HwSku 依存
 
@@ -491,7 +491,7 @@ if alias in port_speeds_default:
 
 | 観点 | 結果 | 根拠 |
 |---|---|---|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | MGMT_PORT は SAI 非経由。eth0 は Linux netdev であり ASIC と独立 |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | MGMT_PORT は SAI 非経由。eth0 は Linux netdev であり [ASIC](../../reference/glossary.md#term-asic) と独立 |
 | `portmgrd` の購読対象 | MGMT_PORT を**購読しない** | `portmgrd.cpp:28` — `CFG_PORT_TABLE_NAME`（= `"PORT"`）のみ購読 |
 
 ### C. multi-asic 構成 — host-scoped で影響なし
@@ -508,4 +508,4 @@ if alias in port_speeds_default:
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: d310af42d56c -->
+<!-- glossary-links-injected: 8df9850464d2 -->

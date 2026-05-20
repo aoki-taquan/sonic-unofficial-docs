@@ -59,7 +59,7 @@ related:
 
 ## 概要
 
-SONiC の [MCLAG](../../reference/glossary.md#term-mclag) (Multi-Chassis Link Aggregation) 環境では、2 台のノードが ICCP セッションを確立して制御プレーン情報を同期する。
+[SONiC](../../reference/glossary.md#term-sonic) の [MCLAG](../../reference/glossary.md#term-mclag) (Multi-Chassis Link Aggregation) 環境では、2 台のノードが ICCP セッションを確立して制御プレーン情報を同期する。
 STP との連携は主に以下の 2 つの側面で存在する:
 
 1. **STP ロール決定** — iccpd が `MCLAG_DOMAIN.source_ip` と `peer_ip` を比較してノードの Active/Standby を決定し、STP デーモンへ通知する
@@ -693,7 +693,7 @@ static const unordered_set<string> supported {
 
 | 環境 | 挙動 |
 |------|------|
-| VS（仮想スイッチ）| platform がホワイトリスト外のため **ACL 方式** にフォールバック。STP ロール決定ロジック自体は物理 ASIC と同一 |
+| VS（仮想スイッチ）| platform がホワイトリスト外のため **ACL 方式** にフォールバック。STP ロール決定ロジック自体は物理 [ASIC](../../reference/glossary.md#term-asic) と同一 |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | `docker-iccpd` は [DPU](../../reference/glossary.md#term-dpu) 上では起動しないため STP/ICCP 連携は非適用。[SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) 側では通常動作 |
 
 ### プラットフォーム差異要約
@@ -721,6 +721,9 @@ static const unordered_set<string> supported {
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^1] [^2] [^3] [^4] [^5] [^6] [^7] [^8] [^9]
+
 [^1]: ICCP CSM 実装: `iccp_csm.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c>
 [^2]: [MCLAG](../../reference/glossary.md#term-mclag) リンクハンドラ: `mlacp_link_handler.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mlacp_link_handler.c>
 [^3]: MCLAG FSM: `mlacp_fsm.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mlacp_fsm.c>
@@ -738,4 +741,4 @@ static const unordered_set<string> supported {
 - [CONFIG_DB: MCLAG_DOMAIN](mclag-domain.md)
 - [CONFIG_DB: PORTCHANNEL](portchannel.md)
 
-<!-- glossary-links-injected: 591a4c409903 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

@@ -186,12 +186,12 @@ dst_ip のルートが存在しない場合、セッションは永久に `inact
 | 2 | `MIRROR_SESSION` SET → `m_routeOrch->attach(this, entry.dstIp)` → RouteOrch が nexthop 解決 callback → `activateSession()` | **非同期先行**（RouteOrch 依存） | dst_ip のルートが未確定の間はセッションが `inactive` のまま。RouteOrch の処理完了 (callback) まで SAI への create_mirror_session は実行されない |
 | 3 | nexthop 解決済み neighbor MAC → `NeighOrch::getNeighborEntry()` 成功 → `activateSession()` 実行 | **非同期先行**（NeighOrch 依存） | neighbor が [ARP](../../reference/glossary.md#term-arp)/ND 解決済みでない場合は `getNeighborInfo()` が失敗し `activateSession()` がスキップされる（`mirrororch.cpp:656-664`） |
 | 4 | `createEntry()` 成功 (SAI create_mirror_session) → [STATE_DB](../../reference/glossary.md#term-state_db) `MIRROR_SESSION_TABLE.<name>.status = "active"` | SET 成功後即時 | STATUS は `setSessionState()` 内で `status=active` に書き込まれる。consumer は `inactive` を一時的に観測しうる |
-| 5 | orchdaemon 起動時: PortsOrch / RouteOrch / NeighOrch / FdbOrch / PolicerOrch / SwitchOrch の 3 ループが先行 → その後 MirrorOrch `doTask()` → さらに AclOrch `doTask()` | **強制順序**（orchdaemon 設計） | `orchdaemon.cpp:1127-1142` コメント「MirrorOrch depends on everything else being settled before it can run, and mirror [ACL](../../reference/glossary.md#term-acl) rules depend on MirrorOrch, so run these two at the end」。AclOrch の mirror アクション [ACL](../../reference/glossary.md#term-acl) はセッションが active になった後に処理される |
+| 5 | orchdaemon 起動時: [PortsOrch](../../reference/glossary.md#term-portsorch) / RouteOrch / NeighOrch / FdbOrch / PolicerOrch / SwitchOrch の 3 ループが先行 → その後 MirrorOrch `doTask()` → さらに AclOrch `doTask()` | **強制順序**（orchdaemon 設計） | `orchdaemon.cpp:1127-1142` コメント「MirrorOrch depends on everything else being settled before it can run, and mirror [ACL](../../reference/glossary.md#term-acl) rules depend on MirrorOrch, so run these two at the end」。AclOrch の mirror アクション [ACL](../../reference/glossary.md#term-acl) はセッションが active になった後に処理される |
 | 6 | `POLICER` SET が先行 → `MIRROR_SESSION` で `policer` フィールド参照 | 任意先行（省略可） | `policer` フィールド省略時は PolicerOrch 参照なし。指定時は `gPolicerOrch->getPolicer()` が失敗すると `task_need_retry` でキュー再試行 |
 
 ### 主要な制約詳細
 
-**PortsOrch 初期化ガード (依存 #1)**: `doTask()` 冒頭で `gPortsOrch->allPortsReady()` をチェックし、false の場合は即 return する（`mirrororch.cpp:1571`）。これにより起動直後の設定投入は全ポート初期化完了まで実際の処理がされない。
+**[PortsOrch](../../reference/glossary.md#term-portsorch) 初期化ガード (依存 #1)**: `doTask()` 冒頭で `gPortsOrch->allPortsReady()` をチェックし、false の場合は即 return する（`mirrororch.cpp:1571`）。これにより起動直後の設定投入は全ポート初期化完了まで実際の処理がされない。
 
 **RouteOrch 非同期依存 (依存 #2)**: ERSPAN セッション作成時、`createEntry()` は `m_routeOrch->attach(this, entry.dstIp)` で MirrorOrch を RouteOrch の observer に登録する（`mirrororch.cpp:517`）。RouteOrch が dst_ip のルート/nexthop を解決すると `MirrorOrch::updateNextHop()` → `updateSession()` → `activateSession()` の callback チェーンが走る。`MIRROR_SESSION` SET と SAI create の間に任意の遅延が発生しうる。
 
@@ -208,7 +208,7 @@ dst_ip のルートが存在しない場合、セッションは永久に `inact
 
 | 参照先テーブル / コンポーネント | YANG leafref | 参照種別 | 非充足時の挙動 | evidence |
 |---|:---:|---|---|---|
-| `PORT` (PortsOrch `allPortsReady()`) | ✗ | 起動順序ガード（常時） | false の間は全 MIRROR_SESSION 処理がブロック。CONFIG_DB エントリは Consumer キューに滞留し、全ポート初期化完了後に一括処理される | `mirrororch.cpp:1571` |
+| `PORT` ([PortsOrch](../../reference/glossary.md#term-portsorch) `allPortsReady()`) | ✗ | 起動順序ガード（常時） | false の間は全 MIRROR_SESSION 処理がブロック。CONFIG_DB エントリは Consumer キューに滞留し、全ポート初期化完了後に一括処理される | `mirrororch.cpp:1571` |
 | RouteOrch (`m_routeOrch->attach(dst_ip)`) | ✗ | 非同期 nexthop 解決（ERSPAN 常時） | dst_ip のルートが未確定の間は `activateSession()` が実行されず、セッションは `inactive` のまま。RouteOrch callback を受信後に初めて SAI create が実行される | `mirrororch.cpp:517, 557` |
 | NeighOrch (`getNeighborEntry()`) | ✗ | nexthop neighbor MAC/port 解決（ERSPAN 常時） | [ARP](../../reference/glossary.md#term-arp)/ND が未解決の場合 `getNeighborInfo()` が false を返し `activateSession()` がスキップされる。解決後に FdbOrch / NeighOrch callback 経由で再実行 | `mirrororch.cpp:656-664` |
 | `POLICER` (PolicerOrch `getPolicerOid()`) | ✗ | policer OID 解決（`policer` フィールド指定時のみ） | POLICER エントリ未登録なら `getPolicerOid()` が false → `activateSession()` return false → セッション `inactive` のまま | `mirrororch.cpp:1052-1060` |
@@ -510,7 +510,7 @@ if (session.queue != 0)
 }
 ```
 
-`queue` を省略（デフォルト `0`）した場合は TC 属性を送らず、プラットフォームの global mirror session TC が採用される。`queue >= 1` を指定した際に `SAI_MIRROR_SESSION_ATTR_TC` 非対応 ASIC では `create_mirror_session()` がエラーを返す可能性がある[^4]。
+`queue` を省略（デフォルト `0`）した場合は TC 属性を送らず、プラットフォームの global mirror session TC が採用される。`queue >= 1` を指定した際に `SAI_MIRROR_SESSION_ATTR_TC` 非対応 [ASIC](../../reference/glossary.md#term-asic) では `create_mirror_session()` がエラーを返す可能性がある[^4]。
 
 ### 差異 3: VoQ シャーシ — monitor port と DST MAC の自動置換
 
@@ -525,11 +525,11 @@ VoQ ではチャーシス ファブリック側が L3 転送を担当するた�
 
 ### 差異 4: ハードウェアリソース可用性の SAI 依存
 
-`isHwResourcesAvailable()` (`mirrororch.cpp:357-379`) が `sai_object_type_get_availability(SAI_OBJECT_TYPE_MIRROR_SESSION)` を呼ぶ。SAI が `NOT_SUPPORTED` / `NOT_IMPLEMENTED` を返す ASIC では警告ログのみで `true`（利用可能）として扱い、リソース上限監視を省略する。`availCount == 0` の場合は `createEntry()` が `task_need_retry` を返してセッション作成を保留する[^4]。
+`isHwResourcesAvailable()` (`mirrororch.cpp:357-379`) が `sai_object_type_get_availability(SAI_OBJECT_TYPE_MIRROR_SESSION)` を呼ぶ。SAI が `NOT_SUPPORTED` / `NOT_IMPLEMENTED` を返す [ASIC](../../reference/glossary.md#term-asic) では警告ログのみで `true`（利用可能）として扱い、リソース上限監視を省略する。`availCount == 0` の場合は `createEntry()` が `task_need_retry` を返してセッション作成を保留する[^4]。
 
 ### 差異 5: Ingress / Egress mirror ASIC capability チェック
 
-`setUnsetPortMirror()` (`mirrororch.cpp:817-826`) は `SwitchOrch::isPortIngressMirrorSupported()` / `isPortEgressMirrorSupported()` を確認する。Ingress mirror 非対応 ASIC に対して ingress 方向の mirror を設定しようとするとエラーログを出力して `false` を返し、SAI には属性が渡らない（セッション自体は STATE_DB に残る）[^4]。
+`setUnsetPortMirror()` (`mirrororch.cpp:817-826`) は `SwitchOrch::isPortIngressMirrorSupported()` / `isPortEgressMirrorSupported()` を確認する。Ingress mirror 非対応 [ASIC](../../reference/glossary.md#term-asic) に対して ingress 方向の mirror を設定しようとするとエラーログを出力して `false` を返し、SAI には属性が渡らない（セッション自体は STATE_DB に残る）[^4]。
 
 [^3]: MirrorEntry コンストラクタ platform 分岐: `sonic-swss/orchagent/mirrororch.cpp:57-77`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/mirrororch.cpp#L57>
 
@@ -593,4 +593,4 @@ show mirror_session
 
 <!-- ref-triangle:end -->
 
-<!-- glossary-links-injected: 6e6f33a030e5 -->
+<!-- glossary-links-injected: 4aeda46c88ba -->

@@ -319,8 +319,8 @@ L341: gCoppOrch = new CoppOrch(...)     # PortsOrch 生成後に生成
 
 | 操作 | 推奨順序 | 違反時の結果 |
 |------|---------|------------|
-| 起動時 genetlink HostIf 作成 | `allPortsReady()` が true になるまで自動遅延 | `m_toSync` に蓄積。PortsOrch 初期化完了後に自動処理（問題なし） |
-| 新規 `COPP_GROUP` (genetlink フィールド付き) 書込み | PortsOrch 初期化後が理想だが事前書込みも可 | `allPortsReady()` 前は処理スキップ、次回 `doTask()` で再試行 |
+| 起動時 genetlink HostIf 作成 | `allPortsReady()` が true になるまで自動遅延 | `m_toSync` に蓄積。[PortsOrch](../../reference/glossary.md#term-portsorch) 初期化完了後に自動処理（問題なし） |
+| 新規 `COPP_GROUP` (genetlink フィールド付き) 書込み | [PortsOrch](../../reference/glossary.md#term-portsorch) 初期化後が理想だが事前書込みも可 | `allPortsReady()` 前は処理スキップ、次回 `doTask()` で再試行 |
 | `COPP_GROUP` DEL (genetlink フィールドあり) | 順序制約なし | `allPortsReady()` 前は DEL も遅延（自動再試行） |
 
 ### coppmgr 側の TRAP → GROUP 順序
@@ -350,7 +350,7 @@ L341: gCoppOrch = new CoppOrch(...)     # PortsOrch 生成後に CoppOrch を生
 
 | 操作 | 制約 | 違反時の結果 |
 |------|------|------------|
-| 起動時 genetlink HostIf 作成 | `allPortsReady()` が true になるまで自動遅延 | `m_toSync` に蓄積 → PortsOrch 初期化後に自動処理 |
+| 起動時 genetlink HostIf 作成 | `allPortsReady()` が true になるまで自動遅延 | `m_toSync` に蓄積 → [PortsOrch](../../reference/glossary.md#term-portsorch) 初期化後に自動処理 |
 | 新規 COPP_GROUP (genetlink フィールド付き) 書込み | PortsOrch 初期化後が理想。事前書込みは自動遅延 | `allPortsReady()` 前はスキップ、次回 `doTask` 呼出しで再処理 |
 | COPP_GROUP DEL (genetlink フィールドあり) | 順序制約なし（`allPortsReady()` ゲートは存在） | `allPortsReady()` 前は DEL も遅延 |
 
@@ -579,11 +579,11 @@ orchagent: CoppOrch::doTask()
 
 `createGenetlinkHostIf()` 内の `sai_hostif_api->create_hostif()` に `SAI_HOSTIF_TYPE_GENETLINK` を渡す。SAI 実装がこの HostIf 型をサポートしない場合、`create_hostif()` は `SAI_STATUS_NOT_SUPPORTED` 等を返し `task_failed` になる（`copporch.cpp:664-675`）。`handleSaiCreateStatus()` の戻り値に依存してプロセスが終了に至る可能性もある。<!-- evidence: copporch.cpp L657-679 -->
 
-**genetlink フィールド自体に `platform` 環境変数チェックは存在しない。** コード内に platform 条件分岐はなく、SAI 実装がサポートしているか否かのみで動作が決まる。psample ベースの sflow をサポートする ASIC（Broadcom、一部 Mellanox 等）では動作する実績があるが、すべてのベンダー SAI で保証されるわけではない。
+**genetlink フィールド自体に `platform` 環境変数チェックは存在しない。** コード内に platform 条件分岐はなく、SAI 実装がサポートしているか否かのみで動作が決まる。psample ベースの sflow をサポートする [ASIC](../../reference/glossary.md#term-asic)（Broadcom、一部 Mellanox 等）では動作する実績があるが、すべてのベンダー SAI で保証されるわけではない。
 
 ### カーネル psample モジュール
 
-genetlink HostIf が SAI 側で作成されても、カーネルに `psample` モジュールがロードされていない場合、カーネル側の genetlink ソケットが存在せずパケットが転送されない。SONiC 標準イメージは `psample` を標準でロードするが、カスタムカーネルや一部プラットフォームでは手動でのモジュールロードが必要な場合がある。
+genetlink HostIf が SAI 側で作成されても、カーネルに `psample` モジュールがロードされていない場合、カーネル側の genetlink ソケットが存在せずパケットが転送されない。[SONiC](../../reference/glossary.md#term-sonic) 標準イメージは `psample` を標準でロードするが、カスタムカーネルや一部プラットフォームでは手動でのモジュールロードが必要な場合がある。
 
 ### sflow FEATURE 状態とプラットフォームの組み合わせ
 
@@ -606,4 +606,4 @@ genetlink フィールド自体の処理は `platform` 環境変数でゲート�
 > **スキャン証跡**: `copporch.cpp` L657-714 (createGenetlinkHostIf/removeGenetlinkHostIf), L419-493 (createGenetlinkHostIfTable), L1265-1286 (getAttribsFromTrapGroup — platform チェックなし確認), L1184-1194 (trap_priority platform チェック)。`coppmgr.cpp` L82-106 (setFeatureTrapIdsStatus)。`copp_cfg.j2` L131-134 (sflow COPP_TRAP)。`orch.h` L41-42 定義確認。中間ファイル: `meta/_intermediate/cdb-flow/copp-port-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 7065969e4d9e -->
+<!-- glossary-links-injected: 0de90571b5ef -->

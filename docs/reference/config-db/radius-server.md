@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-サーバごとの RADIUS クライアント設定を保持するリストテーブル[^1]。`hostcfgd` の [AAA](../../reference/glossary.md#term-aaa) ハンドラが読み、`/etc/pam_radius_auth.d/<ip>_<port>.conf` を生成する。グローバル設定は `RADIUS|global` 側にある。
+サーバごとの [RADIUS](../../reference/glossary.md#term-radius) クライアント設定を保持するリストテーブル[^1]。`hostcfgd` の [AAA](../../reference/glossary.md#term-aaa) ハンドラが読み、`/etc/pam_radius_auth.d/<ip>_<port>.conf` を生成する。グローバル設定は `RADIUS|global` 側にある。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -58,7 +58,7 @@ RADIUS_SERVER|<ip_or_hostname>
 
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
-| `auth_port` | `inet:port-number` (1..65535) | `1812` | RADIUS 認証 UDP ポート番号 |
+| `auth_port` | `inet:port-number` (1..65535) | `1812` | [RADIUS](../../reference/glossary.md#term-radius) 認証 UDP ポート番号 |
 | `passkey` | string (1..65 chars、SPACE/`#`/`,` 不可) | なし (空文字列フォールバック) | サーバ固有の共有秘密鍵 |
 | `auth_type` | enum `pap`/`chap`/`mschapv2` | `pap` | サーバ固有の認証プロトコル |
 | `priority` | uint8 (1..64) | `1` (CLI 経由) | サーバ選択優先度。降順でソートされる |
@@ -270,7 +270,7 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 
 ### RADIUS 設定ファイル生成順序
 
-`hostcfgd` の `modify_conf_file()` は以下の順序で RADIUS 設定を生成する。
+`hostcfgd` の `modify_conf_file()` は以下の順序で [RADIUS](../../reference/glossary.md#term-radius) 設定を生成する。
 
 1. **グローバル設定マージ**: `radius_global_default` に `RADIUS|global` の値を上書きコピー (`radius_global.update(self.radius_global)`)。
 2. **NAS 情報補完**: `nas_ip` 未設定 → `get_interface_ip("eth0")` で eth0 IP を取得。`nas_id` 未設定 → `get_hostname()` でホスト名を取得。
@@ -560,7 +560,7 @@ CONFIG_DB LOOPBACK_INTERFACE / MGMT_INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INT
 
 ### 結論
 
-**プラットフォーム差なし**。RADIUS_SERVER 処理は host 単位で適用され、ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダー固有 PAM モジュールに依存しない。
+**プラットフォーム差なし**。RADIUS_SERVER 処理は host 単位で適用され、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダー固有 PAM モジュールに依存しない。
 
 ### 根拠
 
@@ -576,7 +576,7 @@ CONFIG_DB LOOPBACK_INTERFACE / MGMT_INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INT
 
 #### 3. PAM モジュールにプラットフォーム差なし
 
-`pam_radius_auth.so` は community SONiC の標準 Debian パッケージ。`common-auth-sonic.j2` テンプレート (`sonic-host-services/data/templates/`) を `platform|asic|chassis|namespace|vendor` で検索してもヒットなし。条件分岐は `AAA.authentication.login` 文字列・`failthrough` / `debug` / `trace` ブール・サーバリストのみ。`pam_radius_auth.conf.j2` テンプレートもプラットフォーム固有分岐なし。
+`pam_radius_auth.so` は community [SONiC](../../reference/glossary.md#term-sonic) の標準 Debian パッケージ。`common-auth-sonic.j2` テンプレート (`sonic-host-services/data/templates/`) を `platform|asic|chassis|namespace|vendor` で検索してもヒットなし。条件分岐は `AAA.authentication.login` 文字列・`failthrough` / `debug` / `trace` ブール・サーバリストのみ。`pam_radius_auth.conf.j2` テンプレートもプラットフォーム固有分岐なし。
 
 #### 4. VOQ chassis / line card
 
@@ -590,4 +590,4 @@ CONFIG_DB LOOPBACK_INTERFACE / MGMT_INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INT
 
 <!-- glossary-links-injected: radius-server-2026-05-14 -->
 
-<!-- glossary-links-injected: 505310f6ce22 -->
+<!-- glossary-links-injected: 8690148feb1c -->

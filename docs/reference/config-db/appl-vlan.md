@@ -135,7 +135,7 @@ APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` の書込み元 (`cfgmgr/vlanmgr.cpp`
 | `no_linklocal_learn` | `1` | `ip link set Bridge type bridge no_linklocal_learn 1` 固定 | `vlanmgr.cpp:114` |
 | `arp_evict_nocarrier` | `0` | VLAN IF 作成直後に `/proc/sys/net/ipv4/conf/Vlan<id>/arp_evict_nocarrier` へ `0` を書込み | `vlanmgr.cpp:139` |
 
-これら 3 設定は VLAN 作成時に常時適用され、ASIC ベンダー非依存・全プラットフォーム共通。
+これら 3 設定は VLAN 作成時に常時適用され、[ASIC](../../reference/glossary.md#term-asic) ベンダー非依存・全プラットフォーム共通。
 
 ### portsorch.cpp `#define` 定数（VLAN 経路）
 
@@ -150,7 +150,7 @@ APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` の書込み元 (`cfgmgr/vlanmgr.cpp`
 | [SAI](../../reference/glossary.md#term-sai) 属性 / enum | 値 | 用途 | ソース |
 |---|---|---|---|
 | `SAI_VLAN_ATTR_VLAN_ID` | key から抽出 | `create_vlan()` 必須引数 | `portsorch.cpp:7389` |
-| `uuc_flood_type` / `bc_flood_type` 初期値 | `SAI_VLAN_FLOOD_CONTROL_TYPE_ALL` | `addVlan()` の PortsOrch 内部状態初期化 | `portsorch.cpp:7409-7410` |
+| `uuc_flood_type` / `bc_flood_type` 初期値 | `SAI_VLAN_FLOOD_CONTROL_TYPE_ALL` | `addVlan()` の [PortsOrch](../../reference/glossary.md#term-portsorch) 内部状態初期化 | `portsorch.cpp:7409-7410` |
 | UUC/BC flood control フォールバック | `SAI_VLAN_FLOOD_CONTROL_TYPE_ALL` | [SAI](../../reference/glossary.md#term-sai) capability 未対応時に `COMBINED` 切替を抑止 | `portsorch.cpp:7800,7814,7835,7849` |
 | `tagging_mode` enum 初期化 | `SAI_VLAN_TAGGING_MODE_TAGGED` | `addVlanMember()` 内 SAI enum 変数の C++ 初期化値 | `portsorch.cpp:7540` |
 | `"untagged"` → SAI | `SAI_VLAN_TAGGING_MODE_UNTAGGED` | 文字列→enum マッピング | `portsorch.cpp:7543` |
@@ -219,7 +219,7 @@ YANG では `2..4094` だが vlanmgr 側に数値範囲チェックなし。`Vla
 - **`mac` の書き込み順依存**: `gMacAddress` が未初期化（スイッチ MAC 未確定）の間、vlanmgrd は `isVlanMacOk()` チェック (L316-L321) で全 VLAN タスクを保留する。
 - **`mtu` の silent drop**: `mtu` は APPL_DB に書かれるが、portsorch は mtu 更新を `setRouterIntfsMtu()` 経由で処理するのみで、ホスト netdev (`ip link set Vlan<N> mtu`) への適用は vlanmgr.cpp:401-406 の TODO コメント通り未実装。
 - **`tagging_mode` の二重補完**: vlanmgrd が CONFIG_DB の raw フィールドをそのまま転送するため (vlanmgr.cpp:672)、`tagging_mode` が CONFIG_DB に存在しない場合は APPL_DB にも書かれない。portsorch が受信側で再度 `"untagged"` に fallback する。
-- **`priority_tagged` の bridge/SAI 乖離**: `priority_tagged` は vlanmgr.cpp:238 で `bridge vlan add ... pvid untagged`（`untagged` と同一）として処理されるが、portsorch は SAI では `SAI_VLAN_TAGGING_MODE_PRIORITY_TAGGED` と区別する。ホスト転送と ASIC 転送で動作が乖離する。
+- **`priority_tagged` の bridge/SAI 乖離**: `priority_tagged` は vlanmgr.cpp:238 で `bridge vlan add ... pvid untagged`（`untagged` と同一）として処理されるが、portsorch は SAI では `SAI_VLAN_TAGGING_MODE_PRIORITY_TAGGED` と区別する。ホスト転送と [ASIC](../../reference/glossary.md#term-asic) 転送で動作が乖離する。
 <!-- /defaults -->
 
 <!-- ordering -->
@@ -246,7 +246,7 @@ YANG では `2..4094` だが vlanmgr 側に数値範囲チェックなし。`Vla
 | 条件 | 出典 | 違反時挙動 |
 |---|---|---|
 | APPL_DB `VLAN_TABLE` が先に処理されて `m_portList[vlan_alias]` 登録済 | `portsorch.cpp:5896-5905` | `getPort(vlan_alias, vlan)` 失敗で `it++` retain。Debug ビルドでは L5896 assert で abort |
-| PORT/LAG が PortsOrch に既知 (`m_portList[port_alias]`) | `portsorch.cpp:5907-5912` | `it++` retain |
+| PORT/LAG が [PortsOrch](../../reference/glossary.md#term-portsorch) に既知 (`m_portList[port_alias]`) | `portsorch.cpp:5907-5912` | `it++` retain |
 | `addBridgePort(port) && addVlanMember(...)` の 2 段順序 (短絡評価で bridge port 先) | `portsorch.cpp:5940` | bridge port 失敗時は VLAN member 作成せず retain |
 | L3 化されていない (`port.m_rif_id == 0`) | `portsorch.cpp:7198-7202` | `addBridgePort` 拒否。`VLAN_MEMBER` と `INTERFACE` (L3) は同 port で排他 |
 
@@ -320,7 +320,7 @@ PAC 経路 (vlanmgr.cpp:894) では state vector ではなく APPL_DB 用 vector
 
 ### COUNTERS_DB
 
-`vlanmgr.cpp` は `COUNTERS_DB` の `DBConnector` を保持しない。`portsorch.cpp` は `m_counter_db` を持つが用途は `COUNTERS_PORT_NAME_MAP` / `COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_PG_NAME_MAP` 等 **物理ポート単位** に限定され (portsorch.cpp:758-785)、`addVlan()` / `addVlanMember()` 経路では [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に何も書込まない。SAI 仕様上 `SAI_VLAN_STAT_*` は存在するが、SONiC master は `COUNTERS_VLAN_NAME_MAP` を実装していない。
+`vlanmgr.cpp` は `COUNTERS_DB` の `DBConnector` を保持しない。`portsorch.cpp` は `m_counter_db` を持つが用途は `COUNTERS_PORT_NAME_MAP` / `COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_PG_NAME_MAP` 等 **物理ポート単位** に限定され (portsorch.cpp:758-785)、`addVlan()` / `addVlanMember()` 経路では [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に何も書込まない。SAI 仕様上 `SAI_VLAN_STAT_*` は存在するが、[SONiC](../../reference/glossary.md#term-sonic) master は `COUNTERS_VLAN_NAME_MAP` を実装していない。
 
 ### FLEX_COUNTER_DB
 
@@ -332,7 +332,7 @@ PAC 経路 (vlanmgr.cpp:894) では state vector ではなく APPL_DB 用 vector
 <!-- platform -->
 ## プラットフォーム差
 
-APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` 自体のスキーマ・暗黙デフォルトはすべてのプラットフォームで同一。`vlanmgrd` (`cfgmgr/vlanmgr.cpp` / `cfgmgr/vlanmgrd.cpp`) に `platform` / `asic_type` / `MLNX_PLATFORM_SUBSTRING` / `is_multi_npu` / `chassis` 参照は一切ない（`grep` で `using namespace std/swss` 以外 0 ヒット）。書き込み経路は ASIC ベンダー非依存[^vlanmgr]。
+APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` 自体のスキーマ・暗黙デフォルトはすべてのプラットフォームで同一。`vlanmgrd` (`cfgmgr/vlanmgr.cpp` / `cfgmgr/vlanmgrd.cpp`) に `platform` / `asic_type` / `MLNX_PLATFORM_SUBSTRING` / `is_multi_npu` / `chassis` 参照は一切ない（`grep` で `using namespace std/swss` 以外 0 ヒット）。書き込み経路は [ASIC](../../reference/glossary.md#term-asic) ベンダー非依存[^vlanmgr]。
 
 ただし**購読側の `PortsOrch` には SAI capability 依存の分岐**が存在する[^portsorch]:
 
@@ -403,7 +403,7 @@ APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` は YANG 未定義のため、明示�
 
 | 参照元 | 参照先テーブル / リソース | 解決経路 | 失敗時挙動 |
 |--------|---------------------------|----------|------------|
-| `VLAN_MEMBER_TABLE\|Vlan<id>\|EthernetN` | `APPL_DB\|PORT_TABLE` / `STATE_DB\|PORT_TABLE` | `PortsOrch::getPort(alias)` / `VlanMgr::isMemberStateOk` (`vlanmgr.cpp:486-510`, `portsorch.cpp:5898-5912`) | `it++` で無限ポーリング再試行（PortsOrch）／ APPL_DB 書込み保留（vlanmgrd） |
+| `VLAN_MEMBER_TABLE\|Vlan<id>\|EthernetN` | `APPL_DB\|PORT_TABLE` / `STATE_DB\|PORT_TABLE` | `PortsOrch::getPort(alias)` / `VlanMgr::isMemberStateOk` (`vlanmgr.cpp:486-510`, `portsorch.cpp:5898-5912`) | `it++` で無限ポーリング再試行（[PortsOrch](../../reference/glossary.md#term-portsorch)）／ APPL_DB 書込み保留（vlanmgrd） |
 | `VLAN_MEMBER_TABLE\|Vlan<id>\|PortChannelN` | `STATE_DB\|LAG_TABLE` (`m_stateLagTable`) | `VlanMgr::isMemberStateOk` (`vlanmgr.cpp:495`) ＋ `Port::LAG` OID 解決 (`portsorch.cpp:2049, 2627`) | LAG 未確立中は書込保留。bridge コマンド失敗時は LAG 削除レース判定で retry スキップ (`vlanmgr.cpp:260-272`) |
 | `VLAN_MEMBER_TABLE` フィールド `end_point_ip` | VxlanTunnelOrch + `vlan.m_vlan_info.l2mc_group_id` | `PortsOrch::addVlanMember` → `addVlanFloodGroups` (`portsorch.cpp:7511-7740`) | SAI capability 不足時 `Flood group with end point ip is not supported` で失敗 |
 | `doVlanPacFdbTask` (`VLAN_TABLE` 確立後) | `APPL_DB\|FDB_TABLE` (`m_appFdbTableProducer`) | `vlanmgr.cpp:776-841` (key=`Vlan<id>:<MAC>`) | `m_vlans.count(vlan_name)` 未登録なら [FDB](../../reference/glossary.md#term-fdb) 注入保留 (`vlanmgr.cpp:806-811`) |
@@ -413,7 +413,7 @@ APPL_DB `VLAN_TABLE` / `VLAN_MEMBER_TABLE` は YANG 未定義のため、明示�
 
 - `VLAN_TABLE` SET が先行しない VLAN_MEMBER は portsorch 側で `getPort(vlan_alias)` 失敗で保留される (`portsorch.cpp:5900-5905`)。
 - `VLAN_TABLE` 確立後でないと `doVlanPacFdbTask` の [FDB](../../reference/glossary.md#term-fdb) 注入は `m_vlans.count()` ガードで保留される。
-- `end_point_ip` 付き VLAN_MEMBER は L2MC group OID (`vlan.m_vlan_info.l2mc_group_id`) が VLAN 作成時に確立されている必要があり、対応する VxLAN remote VTEP は VxlanTunnelOrch 経由で別途解決される。
+- `end_point_ip` 付き VLAN_MEMBER は L2MC group OID (`vlan.m_vlan_info.l2mc_group_id`) が VLAN 作成時に確立されている必要があり、対応する VxLAN remote [VTEP](../../reference/glossary.md#term-vtep) は VxlanTunnelOrch 経由で別途解決される。
 
 ### MCLAG との関係
 
@@ -512,4 +512,4 @@ VLAN 経路には `createRetryCache()` のような明示的 retry キャッシ�
 - [CLI: config vlan](../cli/config-vlan.md)
 - [CLI: show vlan](../cli/show-vlan.md)
 
-<!-- glossary-links-injected: f1a688744bfa -->
+<!-- glossary-links-injected: 3354063f1674 -->

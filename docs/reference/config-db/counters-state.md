@@ -313,7 +313,7 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 
 ### DEBUG_COUNTER_CAPABILITIES のリソース枯渇警告
 
-コードコメント (drop_counter.cpp:425-431) によると、プラットフォームの debug counter リソースは ASIC の他オブジェクト（[ACL](../../reference/glossary.md#term-acl) 等）とハードウェアリソースを共有する場合がある。`getSupportedDebugCounterAmounts()` が返す count は起動時以降に変化する可能性があるが、STATE_DB への再書き込みは行われない（コンストラクタ呼び出し時のスナップショットのみ）。
+コードコメント (drop_counter.cpp:425-431) によると、プラットフォームの debug counter リソースは [ASIC](../../reference/glossary.md#term-asic) の他オブジェクト（[ACL](../../reference/glossary.md#term-acl) 等）とハードウェアリソースを共有する場合がある。`getSupportedDebugCounterAmounts()` が返す count は起動時以降に変化する可能性があるが、STATE_DB への再書き込みは行われない（コンストラクタ呼び出し時のスナップショットのみ）。
 
 <!-- /failure -->
 
@@ -457,7 +457,7 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 
 ### 読み取りパス（Consumer 側）
 
-keyspace 通知を購読する実装は SONiC ソース内に存在しない。CLI ツールが実行時に直接 HGET/HGETALL でスナップショット取得する。
+keyspace 通知を購読する実装は [SONiC](../../reference/glossary.md#term-sonic) ソース内に存在しない。CLI ツールが実行時に直接 HGET/HGETALL でスナップショット取得する。
 
 | 読み取り元 | 対象テーブル | [Redis](../../reference/glossary.md#term-redis) 操作 | コード |
 |-----------|------------|-----------|--------|
@@ -465,7 +465,7 @@ keyspace 通知を購読する実装は SONiC ソース内に存在しない。C
 | `dropconfig` | `DEBUG_COUNTER_CAPABILITIES\|*` | `db.keys(STATE_DB, ...)` + `db.get_all()` | dropconfig:423-431 |
 | `dropconfig` (個別) | `DEBUG_COUNTER_CAPABILITIES\|<counter_type>` | `db.get_all(STATE_DB, key)` | dropconfig:444-455 |
 
-`QUEUE_COUNTER_CAPABILITIES` を参照する CLI ツールは SONiC ソース内に確認できない（orchagent が書くが読者不在）。
+`QUEUE_COUNTER_CAPABILITIES` を参照する CLI ツールは [SONiC](../../reference/glossary.md#term-sonic) ソース内に確認できない（orchagent が書くが読者不在）。
 
 ### データフロー
 
@@ -495,7 +495,7 @@ STATE_DB
 
 > 調査証跡: `meta/_intermediate/cdb-flow/counters-state-platform.md`
 
-これらの STATE_DB テーブルの内容は CONFIG_DB 設定ではなく **ASIC が SAI を通じて公開する能力** によって決まる。プラットフォームによって書き込まれる値が根本的に異なる。
+これらの STATE_DB テーブルの内容は CONFIG_DB 設定ではなく **[ASIC](../../reference/glossary.md#term-asic) が SAI を通じて公開する能力** によって決まる。プラットフォームによって書き込まれる値が根本的に異なる。
 
 ### WRED カウンタ能力 — ASIC 依存
 
@@ -503,7 +503,7 @@ STATE_DB
 
 | プラットフォーム状況 | 挙動 |
 |---------------------|------|
-| WRED をハードウェア実装した ASIC (Broadcom Tomahawk 系・Mellanox Spectrum 系等) | 対応する WRED 統計 enum が返却 → 該当フィールドが `isSupported="true"` に更新 |
+| WRED をハードウェア実装した [ASIC](../../reference/glossary.md#term-asic) (Broadcom Tomahawk 系・Mellanox Spectrum 系等) | 対応する WRED 統計 enum が返却 → 該当フィールドが `isSupported="true"` に更新 |
 | WRED サポートなし ASIC / VS (virtual switch) | `SAI_STATUS_SUCCESS` でも対象 enum が含まれない → 全フィールドが `"false"` のまま残る |
 | SAI query 自体が失敗 (`SAI_STATUS_NOT_IMPLEMENTED` 等) | `SWSS_LOG_NOTICE` を出力して続行。全フィールドが初期値 `"false"` のまま |
 
@@ -560,8 +560,8 @@ getSupportedCounterTypes() の失敗パス:
 [^5]: debugcounterorch.cpp:315-363。`publishDropCounterCapabilities()` はコンストラクタで呼ばれる (debugcounterorch.cpp:37)
 [^6]: portstat.py:314-329。`is_wred_stats_reqd` が False または `isSupported != "true"` の場合に除外
 [^7]: portsorch.cpp:1850-1968。`initCounterCapabilities()` は portsorch コンストラクタ末尾 (portsorch.cpp:1107) で呼ばれる
-[^8]: orchdaemon.cpp:232 (PortsOrch), orchdaemon.cpp:452 (DebugCounterOrch)。debugcounterorch.cpp:37 で `publishDropCounterCapabilities()` が `gPortsOrch->attach(this)` より前に実行される
+[^8]: orchdaemon.cpp:232 ([PortsOrch](../../reference/glossary.md#term-portsorch)), orchdaemon.cpp:452 (DebugCounterOrch)。debugcounterorch.cpp:37 で `publishDropCounterCapabilities()` が `gPortsOrch->attach(this)` より前に実行される
 [^9]: portsorch.cpp:9102-9129 (`generatePortCounterMap`)。FLEX_COUNTER_DB への登録のみで STATE_DB への読み書きなし
 [^10]: portstat.py:295-331。`wred_green_pkt_stat_capable` 等のグローバル変数に `STATE_DB HGET` 結果を格納し、`!= "true"` の場合に `counter_bucket_dict` から該当 SAI カウンタを削除する
 
-<!-- glossary-links-injected: 6159cc662c38 -->
+<!-- glossary-links-injected: 8ed4709bb920 -->

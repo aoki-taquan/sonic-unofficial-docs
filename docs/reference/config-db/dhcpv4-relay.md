@@ -215,7 +215,7 @@ SET DHCPV4_RELAY|<vlan>  dhcpv4_servers=<ip,...>  [server_vrf=<vrf>]  [source_in
 |---|---|---|---|
 | `VLAN_INTERFACE` | DHCPV4_RELAY SET 処理時・VLAN_MEMBER UPDATE 時 | `server_vrf` 未設定なら `VLAN_INTERFACE[vlan].vrf_name` を読んで `relay_msg->vrf` を決定。空なら `"default"` を使用 | dhcp4relay_mgr.cpp:424-430, dhcp4relay.cpp:888-892 |
 | `DHCPV4_RELAY` | VLAN_INTERFACE_UPDATE 受信時 | `SERVER_VRF_FIELD` を self-read して `server_vrf` が空の場合のみ VRF ソケットを更新 | dhcp4relay.cpp:1378-1390 |
-| `MID_PLANE_BRIDGE` | DEVICE_METADATA subtype=[SmartSwitch](../../reference/glossary.md#term-smartswitch) のとき | `GLOBAL.bridge` フィールドで midplane bridge 名を取得 | dhcp4relay_mgr.cpp:201,244 |
+| `MID_PLANE_BRIDGE` | [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) subtype=[SmartSwitch](../../reference/glossary.md#term-smartswitch) のとき | `GLOBAL.bridge` フィールドで midplane bridge 名を取得 | dhcp4relay_mgr.cpp:201,244 |
 
 ### STATE_DB — subscribe で監視
 
@@ -425,13 +425,13 @@ COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|TX  {Discover: N, Offer: N, ..., Dropped: N}
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`sonic-dhcpv4-relay` (`DHCPMgr`) は `DEVICE_METADATA.subtype` を購読し、プラットフォーム種別に応じて中継動作を自動変更する。ASIC 種別・multi-ASIC・[VOQ](../../reference/glossary.md#term-voq) chassis の差は [SAI](../../reference/glossary.md#term-sai) 非経由のため発生しない。
+`sonic-dhcpv4-relay` (`DHCPMgr`) は `DEVICE_METADATA.subtype` を購読し、プラットフォーム種別に応じて中継動作を自動変更する。[ASIC](../../reference/glossary.md#term-asic) 種別・multi-[ASIC](../../reference/glossary.md#term-asic)・[VOQ](../../reference/glossary.md#term-voq) chassis の差は [SAI](../../reference/glossary.md#term-sai) 非経由のため発生しない。
 
 | プラットフォーム | 差異 | 根拠 |
 |-----------------|------|------|
 | **DualToR** (`subtype = "DualToR"`) | `source_interface` を `"Loopback0"` に強制上書き（`DHCPV4_RELAY` フィールド値を無視）; `link_selection` を設定値に関わらず自動 enable | `dhcp4relay.cpp:263-267` (source_interface 強制), `dhcp4relay.cpp:521` (`is_dualTor \|\| link_selection_opt == "enable"`) |
 | **SmartSwitch** (`subtype = "SmartSwitch"`) | OPTION82 SUBOPT_REMOTE_ID にホスト MAC ではなく midplane bridge (`MID_PLANE_BRIDGE\|GLOBAL.bridge`) の MAC を使用; [DPU](../../reference/glossary.md#term-dpu) インタフェース (`dpu*`) からのパケットを midplane bridge VLAN にマッピング | `dhcp4relay.cpp:509-517` (Remote-ID MAC 切替), `dhcp4relay.cpp:1001-1003` ([DPU](../../reference/glossary.md#term-dpu)→midplane bridge マッピング) |
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | SAI 非経由 — Linux カーネルの UDP 中継のみ |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | SAI 非経由 — Linux カーネルの UDP 中継のみ |
 | multi-ASIC / namespace | 影響なし | CPU-side relay; namespace ループなし |
 | [VOQ](../../reference/glossary.md#term-voq) chassis | 影響なし | `DHCPMgr` は host CONFIG_DB のみ購読 |
 
@@ -564,7 +564,7 @@ show dhcprelay_helper ipv4
 
 `dhcrelay` / `dhcp_relay` サービス (DHCPv4 relay 専用) が CONFIG_DB の `DHCPV4_RELAY` テーブルを購読する。
 
-`DHCPV4_RELAY` は一部の SONiC バージョンで `DHCP_RELAY` と統合/分離されている。
+`DHCPV4_RELAY` は一部の [SONiC](../../reference/glossary.md#term-sonic) バージョンで `DHCP_RELAY` と統合/分離されている。
 
 ### 段階 2 — CFG→APPL 翻訳
 
@@ -594,7 +594,7 @@ show dhcprelay_helper ipv4
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -609,4 +609,4 @@ show dhcprelay_helper ipv4
 - なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 92fe7e64c171 -->
+<!-- glossary-links-injected: bcd3ab0b11e4 -->

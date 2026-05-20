@@ -400,7 +400,7 @@ orchdaemon select() ループ
 
 ### SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED サポート
 
-CBF NHG は `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` を SAI に渡す (`cbfnhgorch.cpp:302`)。このグループ型のサポートはプラットフォーム依存であり、ASIC ベンダーごとに異なる。VS プラットフォームはスタブ実装として `SAI_STATUS_SUCCESS` を返すが実転送はない。
+CBF NHG は `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` を SAI に渡す (`cbfnhgorch.cpp:302`)。このグループ型のサポートはプラットフォーム依存であり、[ASIC](../../reference/glossary.md#term-asic) ベンダーごとに異なる。VS プラットフォームはスタブ実装として `SAI_STATUS_SUCCESS` を返すが実転送はない。
 
 ### NHG 総数上限: Mellanox のみ補正
 
@@ -417,7 +417,7 @@ CBF NHG は `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` を SAI に渡す (`cbfnhgorch
 
 | 状況 | 結果 |
 |------|------|
-| SAI 対応 ASIC | `max_num_fcs = attr.value.u8`（ASIC 依存値） |
+| SAI 対応 [ASIC](../../reference/glossary.md#term-asic) | `max_num_fcs = attr.value.u8`（[ASIC](../../reference/glossary.md#term-asic) 依存値） |
 | SAI 非対応 ASIC | `SWSS_LOG_WARN("Switch does not support FCs")` + `max_num_fcs = 0` → 全 FC 値が範囲外エラーで破棄される |
 
 `CbfNhg::sync()` (`cbfnhgorch.cpp:311-312`) はメンバー数が `getMaxNumFcs()` を超えると `SWSS_LOG_WARN` を出力するが処理は継続する。
@@ -499,4 +499,4 @@ sonic-db-cli APPL_DB hgetall 'CLASS_BASED_NEXT_HOP_GROUP_TABLE:CbfNhg1'
 - `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX` は `CREATE_ONLY` 属性のため、member 順序変更時は全 member を remove → 再 sync する仕様 (`cbfnhgorch.cpp:509-516`)。
 <!-- /defaults -->
 
-<!-- glossary-links-injected: d3e390c4f883 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

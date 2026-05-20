@@ -311,7 +311,7 @@ uplink ポート + different_tc_to_queue_map + tunnel_qos_remap_enable → AZURE
 | TC 最小値 | `0` | `tc_type` YANG typedef 下限 |
 | TC 最大値 | `7` | `tc_type` YANG typedef 上限 |
 | queue インデックス最小値 | `0` | `sai_qos_map_t.value.queue_index` 下限 |
-| queue インデックス最大値 | プラットフォーム依存 | SAI / ASIC が許容する物理キュー数に依存（典型値 8〜12）。YANG 制約は `0..9` だが実装はチェックしない |
+| queue インデックス最大値 | プラットフォーム依存 | SAI / [ASIC](../../reference/glossary.md#term-asic) が許容する物理キュー数に依存（典型値 8〜12）。YANG 制約は `0..9` だが実装はチェックしない |
 
 ### デフォルトマップ名
 
@@ -474,7 +474,7 @@ sai_port_api->set_port_attribute(port.m_port_id, &attr);  // qosorch.cpp L2193
 
 ### ASIC キャパビリティ
 
-`TC_TO_QUEUE_MAP` ハンドラは SAI の `create_qos_map()` を直接呼ぶのみで、ASIC ケーパビリティクエリ（`querySwitchCapability`）を実施しない。`DSCP_TO_TC_MAP` が `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` でクエリを行うのと異なり、TC→queue マップの対応可否判定は SAI ベンダー実装に委ねられる。`create_qos_map()` 失敗時は `"Failed to create tc_to_queue map. status:%d"` を LOG_ERROR して `task_failed` を返す。
+`TC_TO_QUEUE_MAP` ハンドラは SAI の `create_qos_map()` を直接呼ぶのみで、[ASIC](../../reference/glossary.md#term-asic) ケーパビリティクエリ（`querySwitchCapability`）を実施しない。`DSCP_TO_TC_MAP` が `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` でクエリを行うのと異なり、TC→queue マップの対応可否判定は SAI ベンダー実装に委ねられる。`create_qos_map()` 失敗時は `"Failed to create tc_to_queue map. status:%d"` を LOG_ERROR して `task_failed` を返す。
 
 ### ベンダー別 queue 数差
 
@@ -499,7 +499,7 @@ sai_port_api->set_port_attribute(port.m_port_id, &attr);  // qosorch.cpp L2193
 | TC_TO_QUEUE_MAP 生成 | qos_config.j2 共通パス | 同上（変化なし） |
 | queue 数 | HWSKU 依存（デフォルト 0–7） | SYSTEM_PORT ベース、一部キューのみ明示 |
 | ポート適用時のキュー ID 解決 | `port.m_queue_ids` | `getPortVoQIds()` |
-| ASIC ケーパビリティクエリ | なし | なし |
+| [ASIC](../../reference/glossary.md#term-asic) ケーパビリティクエリ | なし | なし |
 | uplink 別マップ | `AZURE_UPLINK`（条件付き） | 非適用 |
 
 <!-- /platform -->
@@ -553,4 +553,4 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 536dcadd2fa7 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

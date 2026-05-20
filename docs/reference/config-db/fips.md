@@ -165,7 +165,7 @@ show fips status
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -345,7 +345,7 @@ show fips status
 
 | リテラル | 用途 | ソース |
 |----------|------|--------|
-| `'sonic_fips=1'` | SONiC 独自の FIPS enforce カーネルパラメータ。`/proc/cmdline` 中に存在する場合 `cur_enforced=True` と判定 | hostcfgd L1773 |
+| `'sonic_fips=1'` | [SONiC](../../reference/glossary.md#term-sonic) 独自の FIPS enforce カーネルパラメータ。`/proc/cmdline` 中に存在する場合 `cur_enforced=True` と判定 | hostcfgd L1773 |
 | `'fips=1'` | 汎用 Linux FIPS カーネルパラメータ（RHEL 系互換）。上記と OR で判定 | hostcfgd L1773 |
 
 ### STATE_DB キー / フィールドリテラル
@@ -522,11 +522,11 @@ def make_callback(func):
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: FIPS は host 単位で適用され、ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
+**プラットフォーム差なし**: FIPS は host 単位で適用され、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | FIPS は [SAI](../../reference/glossary.md#term-sai) 非経由。`hostcfgd` が `/etc/fips/fips_enable` 書換えと bootloader grub 操作を行うのみ (`FipsCfg.update` hostcfgd:1788–1846) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | FIPS は [SAI](../../reference/glossary.md#term-sai) 非経由。`hostcfgd` が `/etc/fips/fips_enable` 書換えと bootloader grub 操作を行うのみ (`FipsCfg.update` hostcfgd:1788–1846) |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `FipsCfg` は host CONFIG_DB (`ConfigDBConnector()` 引数なし相当) のみを購読。`asicN` namespace を iterate しない。`is_multi_npu` 値は FIPS 経路に渡されない |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | FIPS テーブルは host scope。chassis 全体での集中適用機構はなく、各 line card host で `hostcfgd` が独立に `/etc/fips/fips_enable` を書き換える |
 | ベンダー固有モジュール | なし | community master の FIPS 経路は OpenSSL FIPS provider + `sonic_installer.bootloader` の標準実装。`files/image_config/` にも `files/build_templates/` にもベンダー hook 注入箇所なし |
@@ -535,4 +535,4 @@ def make_callback(func):
 詳細根拠は `meta/_intermediate/cdb-flow/fips-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: 173642ce6749 -->
+<!-- glossary-links-injected: f1e797ff320f -->

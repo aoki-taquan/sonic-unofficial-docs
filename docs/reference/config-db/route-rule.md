@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for SONiC Hosts) のインバウンドルーティングエントリ (Inbound Routing Rule) を保持するテーブル[^1]。
+[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for [SONiC](../../reference/glossary.md#term-sonic) Hosts) のインバウンドルーティングエントリ (Inbound Routing Rule) を保持するテーブル[^1]。
 
 外部から [DASH](../../reference/glossary.md#term-dash) スイッチへ流入するパケット (インバウンド方向) が [VXLAN](../../reference/glossary.md#term-vxlan) トンネルのデカプセルを受けるルールを定義する。エントリは [ENI](../../reference/glossary.md#term-eni)・VNI・SIP プレフィックス (または PREFIX TAG)・優先度の 4 要素で一意に識別され、PA 検証の要否と [VNET](../../reference/glossary.md#term-vnet) マッピングを制御する。
 
@@ -457,7 +457,7 @@ if (gMySwitchType == "dpu")
 
 ### dashrouteorch.cpp 内のプラットフォーム分岐
 
-`dashrouteorch.cpp` 内に `getenv("platform")`、`gMySwitchType`、ベンダー固有の条件分岐は存在しない。SAI 呼び出し (`sai_dash_inbound_routing_api->create_inbound_routing_entry()`) はすべてのプラットフォームで同一コードパスを通る。プラットフォーム差はすべて SAI 実装層 (ASIC ドライバ) が吸収する。
+`dashrouteorch.cpp` 内に `getenv("platform")`、`gMySwitchType`、ベンダー固有の条件分岐は存在しない。SAI 呼び出し (`sai_dash_inbound_routing_api->create_inbound_routing_entry()`) はすべてのプラットフォームで同一コードパスを通る。プラットフォーム差はすべて SAI 実装層 ([ASIC](../../reference/glossary.md#term-asic) ドライバ) が吸収する。
 
 ### プラットフォーム差サマリ
 
@@ -474,6 +474,6 @@ if (gMySwitchType == "dpu")
 <!-- evidence: sonic-net/sonic-swss/orchagent/dash/dashrouteorch.cpp:421-477 (プラットフォーム分岐なし) -->
 <!-- /platform -->
 
-[^1]: sonic-net/SONiC `doc/dash/dash-sonic-hld.md` §3.2.10 "ROUTE RULE TABLE - INBOUND" (ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+[^1]: sonic-net/[SONiC](../../reference/glossary.md#term-sonic) `doc/dash/dash-sonic-hld.md` §3.2.10 "ROUTE RULE TABLE - INBOUND" (ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 
-<!-- glossary-links-injected: 57468d8b5592 -->
+<!-- glossary-links-injected: 7fcd30b4fb74 -->

@@ -54,7 +54,7 @@ flowchart LR
 
 <!-- evidence: meta/_intermediate/cdb-flow/pbh-table-ordering.md -->
 
-`PBH_TABLE` 自体は他の PBH テーブルに対する上流依存を持たないが、参照する `PORT` / `PORTCHANNEL` の PortsOrch 初期化を必要とする。`PBH_RULE` はこのテーブルに依存するため、**作成は PBH_RULE より前**、**削除は PBH_RULE より後**が必須。
+`PBH_TABLE` 自体は他の PBH テーブルに対する上流依存を持たないが、参照する `PORT` / `PORTCHANNEL` の [PortsOrch](../../reference/glossary.md#term-portsorch) 初期化を必要とする。`PBH_RULE` はこのテーブルに依存するため、**作成は PBH_RULE より前**、**削除は PBH_RULE より後**が必須。
 
 ### `deployPbhTasks()` の固定処理順序
 
@@ -75,11 +75,11 @@ PortsOrch::allPortsReady() == true  先行
 PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD の全 SET 処理開始
 ```
 
-`PbhOrch::doTask()` (`pbhorch.cpp:1808`) は `this->portsOrch->allPortsReady()` が false の間は即 return する。[CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込まれたエントリは PortsOrch 完了後の最初のイベントループで一括処理される（自動回復）。
+`PbhOrch::doTask()` (`pbhorch.cpp:1808`) は `this->portsOrch->allPortsReady()` が false の間は即 return する。[CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込まれたエントリは [PortsOrch](../../reference/glossary.md#term-portsorch) 完了後の最初のイベントループで一括処理される（自動回復）。
 
 ### 依存 2: interface_list の PORT / PORTCHANNEL 解決
 
-`createPbhTable()` (`pbhorch.cpp:266-272`) は `AclTable::validateAddPorts()` → `gPortsOrch->getPort()` で各インターフェースを解決する。ポートが PortsOrch 未登録の場合は `pendingPortSet` に保留され、`SUBJECT_TYPE_PORT_CHANGE` 通知で再バインドを試みる (`aclorch.cpp:2698-2703`)。
+`createPbhTable()` (`pbhorch.cpp:266-272`) は `AclTable::validateAddPorts()` → `gPortsOrch->getPort()` で各インターフェースを解決する。ポートが [PortsOrch](../../reference/glossary.md#term-portsorch) 未登録の場合は `pendingPortSet` に保留され、`SUBJECT_TYPE_PORT_CHANGE` 通知で再バインドを試みる (`aclorch.cpp:2698-2703`)。
 
 **違反時**: `interface_list` に指定したポートが `allPortsReady()` 後も未登録であれば `"Failed to configure PBH table(%s) ports"` + `return false`。CONFIG_DB エントリは残り、後続 SET で再試行。
 
@@ -190,7 +190,7 @@ PBH_TABLE が SAI に未反映のまま
 
 - `PbhOrch` は [STATE_DB](../../reference/glossary.md#term-state_db) に PBH_TABLE のステータスを書き込まない。失敗確認は `/var/log/syslog` の `SWSS_LOG_ERROR` を参照すること。
 - SET 失敗後も CONFIG_DB のエントリは残る。[orchagent](../../reference/glossary.md#term-orchagent) は CONFIG_DB に書き戻さない。
-- SAI 失敗（ケース 3）は retry なしで "ASIC and CONFIG DB are diverged" 状態になる。`config reload` または個別の DEL → SET が回復手順。
+- SAI 失敗（ケース 3）は retry なしで "[ASIC](../../reference/glossary.md#term-asic) and CONFIG DB are diverged" 状態になる。`config reload` または個別の DEL → SET が回復手順。
 
 <!-- /failure -->
 
@@ -460,4 +460,4 @@ PBH_TABLE|<table_name>
 
 [^1]: YANG 定義: `sonic-pbh.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-pbh.yang>
 
-<!-- glossary-links-injected: ef36624845e3 -->
+<!-- glossary-links-injected: 0c3f62ad4cac -->

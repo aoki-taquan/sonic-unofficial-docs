@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-`PIM_GLOBALS` と `PIM_INTERFACE` は PIM-SM (Protocol Independent Multicast Sparse Mode) の設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。`sonic-buildimage` の `frrcfgd` がこれらのテーブルを購読し、`vtysh` コマンドに変換して [FRR](../../reference/glossary.md#term-frr) の `pimd` へ注入する。SONiC における IP マルチキャスト転送の中核を担う設定テーブルである。
+`PIM_GLOBALS` と `PIM_INTERFACE` は PIM-SM (Protocol Independent Multicast Sparse Mode) の設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。`sonic-buildimage` の `frrcfgd` がこれらのテーブルを購読し、`vtysh` コマンドに変換して [FRR](../../reference/glossary.md#term-frr) の `pimd` へ注入する。[SONiC](../../reference/glossary.md#term-sonic) における IP マルチキャスト転送の中核を担う設定テーブルである。
 
 <!-- cdb-mermaid -->
 ### データフロー
@@ -107,7 +107,7 @@ PIM_INTERFACE|<vrf>|<af>|<interface>
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
 | 1 | `PIM_INTERFACE` SET に `mode` を必ず含める | **必須**（欠如時 全フィールド silent drop） | なし |
-| 2 | `VRF\|<vrf>` → `PIM_GLOBALS\|<vrf>\|<af>` / `PIM_INTERFACE\|<vrf>\|<af>\|<if>` | 推奨先行 | VRF 欠如時 vtysh が LOG_ERR を出力 |
+| 2 | `VRF\|<vrf>` → `PIM_GLOBALS\|<vrf>\|<af>` / `PIM_INTERFACE\|<vrf>\|<af>\|<if>` | 推奨先行 | VRF 欠如時 [vtysh](../../reference/glossary.md#term-vtysh) が LOG_ERR を出力 |
 | 3 | `PORT` / `VLAN` 等インタフェース → `PIM_INTERFACE\|...\|<if>` | 推奨先行 | インタフェース未存在時 FRR が LOG_ERR を出力 |
 | 4 | `PIM_GLOBALS` → `PIM_INTERFACE` | 推奨（中間状態最小化） | FRR デフォルト値で pimd が動作継続 |
 | 5 | `ecmp-enabled = "true"` → `ecmp-rebalance-enabled = "true"` | **必須**（FRR が rebalance を無視） | なし |
@@ -129,7 +129,7 @@ PIM_INTERFACE|<vrf>|ipv4|<if>  ← mode を含む SET が必須
 
 **VRF 先行推奨 (依存 #2)**
 
-`frrcfgd` は VRF 存在確認を行わず、vtysh コマンドを `vrf <vrf>` コンテキストで直接発行する（frrcfgd.py L3808-3809）。`VRF|<vrf>` が [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在しない場合、カーネル VRF が未作成なため vtysh が失敗し LOG_ERR が出力される。非 default VRF では `VRF|<vrf>` を先行設定すること。
+`frrcfgd` は VRF 存在確認を行わず、[vtysh](../../reference/glossary.md#term-vtysh) コマンドを `vrf <vrf>` コンテキストで直接発行する（frrcfgd.py L3808-3809）。`VRF|<vrf>` が [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在しない場合、カーネル VRF が未作成なため [vtysh](../../reference/glossary.md#term-vtysh) が失敗し LOG_ERR が出力される。非 default VRF では `VRF|<vrf>` を先行設定すること。
 
 **インタフェース先行推奨 (依存 #3)**
 
@@ -449,11 +449,11 @@ frrcfgd から pimd への経路は単方向であり、pimd から CONFIG_DB �
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-PIM_GLOBALS / PIM_INTERFACE の処理は FRR `pimd` + `frrcfgd` の純粋な制御プレーン実装であり、[SAI](../../reference/glossary.md#term-sai) / ASIC 非経由のため ASIC 種別によるプラットフォーム差はない。ただし起動制御フラグと multi-asic 構成には制約がある。詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-platform.md`。
+PIM_GLOBALS / PIM_INTERFACE の処理は FRR `pimd` + `frrcfgd` の純粋な制御プレーン実装であり、[SAI](../../reference/glossary.md#term-sai) / [ASIC](../../reference/glossary.md#term-asic) 非経由のため [ASIC](../../reference/glossary.md#term-asic) 種別によるプラットフォーム差はない。ただし起動制御フラグと multi-asic 構成には制約がある。詳細スキャンノート: `meta/_intermediate/cdb-flow/pim-platform.md`。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Cisco / vs 等) | 影響なし | PIM は [SAI](../../reference/glossary.md#term-sai) 非経由。pimd がカーネル mroute API (`MRT_INIT` / `MRT_ADD_VIF`) を直接使用。`frrcfgd.py` の PIM ハンドラにプラットフォーム分岐コードなし |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Cisco / vs 等) | 影響なし | PIM は [SAI](../../reference/glossary.md#term-sai) 非経由。pimd がカーネル mroute API (`MRT_INIT` / `MRT_ADD_VIF`) を直接使用。`frrcfgd.py` の PIM ハンドラにプラットフォーム分岐コードなし |
 | `DEVICE_METADATA.frr_mgmt_framework_config` | **必須前提** | `"true"` 以外の場合 pimd / frrcfgd が supervisord に登録されず起動しない。`PIM_GLOBALS` / `PIM_INTERFACE` の CONFIG_DB エントリはサイレントに無視される (`supervisord.conf.j2:120-148`, `critical_processes.j2:5-9`) |
 | multi-asic (`asicN` namespace) | 非対応（実用上単一 ASIC 前提） | `frrcfgd.py` は `multi_asic` / namespace を import しない (grep 0 ヒット)。複数 pimd が同一 VRF の mroute socket を競合するシナリオは非サポート |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor / line cards) | 不明 / 非推奨 | コミュニティ PIM [HLD](../../reference/glossary.md#term-hld) に chassis サポートの記載なし |
@@ -488,4 +488,4 @@ PIM_GLOBALS / PIM_INTERFACE の処理は FRR `pimd` + `frrcfgd` の純粋な制�
 [^11]: `sonic-frr/pimd/pim_bfd.c` L109-176 — `pim_bfd_reg_dereg_nbr()` / `pim_bfd_reg_dereg_all_nbr()`: `bfd_peer_sendmsg(ZEBRA_BFD_DEST_REGISTER/DEREGISTER)` によるゼブラ経由 BFD セッション管理
 [^12]: `sonic-frr/pimd/pim_ssm.c` L33-66 — `pim_ssm_range_reevaluate()` / `pim_ssm_prefix_list_update()`: SSM レンジ変更時の (S,G) エントリ再評価
 
-<!-- glossary-links-injected: 29b4a8b7f0fa -->
+<!-- glossary-links-injected: 19c203825ef7 -->

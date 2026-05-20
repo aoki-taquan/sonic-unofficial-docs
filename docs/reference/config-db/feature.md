@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-SONiC の機能 docker（bgp、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd)、snmp、sflow、telemetry 等）の有効化、自動再起動、起動遅延、scope（global / per-asic / per-dpu）、Kubernetes 管理切り替えを保持する[^1]。`hostcfgd` の `FeatureHandler` がこのテーブルを購読し、systemd サービスファイル (`sonic.target.wants/<feature>.service`) の enable/disable とテンプレ展開を行う。
+[SONiC](../../reference/glossary.md#term-sonic) の機能 docker（bgp、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd)、snmp、sflow、telemetry 等）の有効化、自動再起動、起動遅延、scope（global / per-asic / per-dpu）、Kubernetes 管理切り替えを保持する[^1]。`hostcfgd` の `FeatureHandler` がこのテーブルを購読し、systemd サービスファイル (`sonic.target.wants/<feature>.service`) の enable/disable とテンプレ展開を行う。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -55,7 +55,7 @@ FEATURE|<name>
 | `auto_restart` | string | - | `enabled` | 失敗時の自動再起動 |
 | `delayed` | string | - | `false` | システム初期化完了まで起動遅延 |
 | `has_global_scope` | string | - | `false` | true で 1 装置 1 インスタンス |
-| `has_per_asic_scope` | string | - | `false` | true で ASIC ごとにインスタンス |
+| `has_per_asic_scope` | string | - | `false` | true で [ASIC](../../reference/glossary.md#term-asic) ごとにインスタンス |
 | `has_per_dpu_scope` | string | - | `false` | true で [DPU](../../reference/glossary.md#term-dpu) ごとにインスタンス |
 | `high_mem_alert` | string | - | `disabled` | メモリ高使用時のアラート |
 | `set_owner` | string `kube`/`local` | - | `local` | Kubernetes 管理かローカル管理か |
@@ -215,7 +215,7 @@ show feature status
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -647,4 +647,4 @@ else:
 > **Evidence**: `sonic-host-services/scripts/featured:142,148,151-162,312-355,373-380,408-415,570-591`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:67-130`; 詳細分析 `meta/_intermediate/cdb-flow/feature-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 12145a3bfbd4 -->
+<!-- glossary-links-injected: 7fcd30b4fb74 -->

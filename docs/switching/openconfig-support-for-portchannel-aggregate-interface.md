@@ -45,7 +45,7 @@ related:
 
 ## なぜ OpenConfig が必要か
 
-SONiC の [PortChannel](../reference/glossary.md#term-portchannel) は REST/[gNMI](../reference/glossary.md#term-gnmi) で操作できるが、SONiC 独自 [YANG](../reference/glossary.md#term-yang)（`sonic-portchannel` 等）に縛られる。本 [HLD](../reference/glossary.md#term-hld) は **ベンダ間共通の OpenConfig** ツリー（`openconfig-interfaces` / `openconfig-if-aggregate` / `openconfig-if-ethernet`）で read/write できることを目指す[^1]。マッピングは **`sonic-mgmt-common` の transformer 基盤** に閉じ、**DB スキーマ変更を一切伴わない**[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の [PortChannel](../reference/glossary.md#term-portchannel) は REST/[gNMI](../reference/glossary.md#term-gnmi) で操作できるが、SONiC 独自 [YANG](../reference/glossary.md#term-yang)（`sonic-portchannel` 等）に縛られる。本 [HLD](../reference/glossary.md#term-hld) は **ベンダ間共通の OpenConfig** ツリー（`openconfig-interfaces` / `openconfig-if-aggregate` / `openconfig-if-ethernet`）で read/write できることを目指す[^1]。マッピングは **`sonic-mgmt-common` の transformer 基盤** に閉じ、**DB スキーマ変更を一切伴わない**[^1]。
 
 スコープ: REST + gNMI（KLISH CLI / subinterface は対象外）[^1]。
 
@@ -176,4 +176,4 @@ show interfaces portchannel
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6bd1731a2f9b -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

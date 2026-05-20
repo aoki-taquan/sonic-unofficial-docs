@@ -62,7 +62,7 @@ flowchart TD
 
 要点[^1]:
 
-- 旧来の host route は SDK が暗黙生成する非 SAI オブジェクトであり、SONiC からは制御できない。
+- 旧来の host route は SDK が暗黙生成する非 SAI オブジェクトであり、[SONiC](../reference/glossary.md#term-sonic) からは制御できない。
 - 新方式の prefix route は SAI ルートオブジェクトとして可視であり、`set route attribute next_hop` で書き換えられる。
 - ネイバエントリ自体は遷移中も **persistent**。SAI の `create_neighbor_entry` / `remove_neighbor_entry` を呼ばないので大幅に軽い。
 
@@ -122,7 +122,7 @@ reasoning: NO_HOST_ROUTE 属性とプレフィックスルート差し替えに�
 
 ### Capability チェックと後方互換
 
-ASIC が `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` をサポートしない場合、自動的に **host_route 方式へフォールバック** する[^1]。さらに per-port の config knob `neighbor_mode` で強制的に host_route に戻すこともできる。これによりプラットフォーム間の混在配備と新旧比較デバッグを許す。
+[ASIC](../reference/glossary.md#term-asic) が `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` をサポートしない場合、自動的に **host_route 方式へフォールバック** する[^1]。さらに per-port の config knob `neighbor_mode` で強制的に host_route に戻すこともできる。これによりプラットフォーム間の混在配備と新旧比較デバッグを許す。
 
 ネイバモードの **動的変更はサポート対象外**。一度 mux ネイバとして作られたら、その port の mode 変更は config reload を伴う想定[^1]。
 
@@ -176,7 +176,7 @@ NEIGHBOR     MAC                PORT       MUX_STATE  NEIGHBOR_IN_ASIC  PREFIX_R
 
 ## 干渉する機能
 
-- **`linkmgrd` / `MuxOrch` の状態機械**: 状態遷移は従来どおり linkmgrd → MuxOrch だが、SAI 操作の中身が neighbor add/remove から route attribute set に置き換わる。
+- **`linkmgrd` / `MuxOrch` の状態機械**: 状態遷移は従来どおり linkmgrd → [MuxOrch](../reference/glossary.md#term-muxorch) だが、SAI 操作の中身が neighbor add/remove から route attribute set に置き換わる。
 - **IPinIP トンネル**: standby 時の tunnel nexthop は既存 IPinIP 機構を再利用する。tunnel terminator 側に変更はない。
 - **暗黙ホストルート挙動の差**: 他機能（例: [ARP](../reference/glossary.md#term-arp)/ND 学習に紐づくホストルート期待）が暗黙ホストルートに依存している場合、mux ポートでは prefix route で代替されるため挙動を確認する必要がある。
 
@@ -226,4 +226,4 @@ redis-cli -n 4 keys 'MUX_CABLE|*'
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 2f9f3ecb28d2 -->
+<!-- glossary-links-injected: 6e8f493be6ef -->

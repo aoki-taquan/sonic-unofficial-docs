@@ -31,7 +31,7 @@ related:
 本ページで扱う **[EVPN](../../reference/glossary.md#term-evpn) DIP トンネル** は、`orchagent` の `VxlanTunnel::createDynamicDIPTunnel()` が
 [BGP](../../reference/glossary.md#term-bgp) [EVPN](../../reference/glossary.md#term-evpn) でリモート
 [VTEP](../../reference/glossary.md#term-vtep) を学習した際に**ランタイムで動的生成**する
-per-remote-VTEP P2P トンネルである[^1]。
+per-remote-[VTEP](../../reference/glossary.md#term-vtep) P2P トンネルである[^1]。
 
 - トンネル名: `EVPN_<remote_vtep_ip>` (prefix `EVPN_TUNNEL_NAME_PREFIX`)
 - トンネルポート名: `Port_EVPN_<remote_vtep_ip>` (prefix `EVPN_TUNNEL_PORT_PREFIX`)
@@ -74,7 +74,7 @@ flowchart LR
 
 - `orchagent` `EvpnRemoteVniOrch` / `EvpnRemoteVnip2pOrch`: `EVPN_REMOTE_VNI_TABLE` (APP_DB) を
   購読し DIP トンネルを生成
-- `EvpnNvoOrch`: EVPN VTEP ポインタを管理し `getEVPNVtep()` で参照提供
+- `EvpnNvoOrch`: EVPN [VTEP](../../reference/glossary.md#term-vtep) ポインタを管理し `getEVPNVtep()` で参照提供
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
@@ -175,7 +175,7 @@ VLAN への leafref (`VXLAN_TUNNEL_MAP.name → VLAN.name`) はコメントア�
 | 1 | `CONFIG_DB VXLAN_EVPN_NVO` | 読み取り (EvpnNvoOrch::getEVPNVtep()) | **必須** (NULL → silent drop) | EVPN VTEP ポインタが NULL の場合 `addTunnelUser()` は即 `false` を返しトンネル生成をスキップ | `vxlanorch.cpp:1685-1692` |
 | 2 | `CONFIG_DB VXLAN_TUNNEL` | 読み取り (VxlanTunnel::isActive()) | **必須** (false → silent drop) | VTEP ポインタが非 NULL でも `isActive()` が false の場合 `addTunnelUser()` は `false` を返す | `vxlanorch.cpp:1694-1699` |
 | 3 | `CONFIG_DB VXLAN_TUNNEL_MAP` | 読み取り (isVniVlanMapExists()) | **必須** (未存在 → return false) | `EvpnRemoteVnip2pOrch::addOperation()` で VNI-VLAN マップ未存在なら処理中断。コード注記: `"Remote end point can be added only after local VLAN to VNI map gets created"` | `vxlanorch.cpp:2490-2494` |
-| 4 | `CONFIG_DB VLAN` (PortsOrch) | 読み取り (getVlanByVlanId()) | **必須** (未存在 → return false) | VLAN が PortsOrch に未登録の場合 `addOperation()` は処理を中断。DIP トンネルポートを VLAN flood domain へ参加させる前提 | `vxlanorch.cpp:2483-2487` |
+| 4 | `CONFIG_DB VLAN` ([PortsOrch](../../reference/glossary.md#term-portsorch)) | 読み取り (getVlanByVlanId()) | **必須** (未存在 → return false) | VLAN が [PortsOrch](../../reference/glossary.md#term-portsorch) に未登録の場合 `addOperation()` は処理を中断。DIP トンネルポートを VLAN flood domain へ参加させる前提 | `vxlanorch.cpp:2483-2487` |
 | 5 | `APP_DB EVPN_REMOTE_VNI_TABLE` | 読み取り (EvpnRemoteVnip2pOrch subscribe) | 起動トリガ | [BGP](../../reference/glossary.md#term-bgp) EVPN が学習したリモート VTEP を [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が書き込み、`EvpnRemoteVnip2pOrch` が購読して DIP トンネル生成を開始 | `vxlanorch.cpp:2447-2520` |
 | 6 | `STATE_DB VXLAN_TUNNEL_TABLE` | 書き込み (m_stateVxlanTable.set()) | 書き込み先 | DIP トンネル生成後に `src_ip`, `dst_ip`, `tnl_src="EVPN"`, `operstatus` を書き込む。削除時は del | `vxlanorch.cpp:1910`, `1928-1953` |
 
@@ -212,7 +212,7 @@ EVPN DIP トンネルは CONFIG_DB エントリを持たず、`APP_DB EVPN_REMOT
 | `getEVPNVtep()` が nullptr（VXLAN_EVPN_NVO 未設定） | `VxlanTunnelOrch::addTunnelUser()` | `return false` — [orchagent](../../reference/glossary.md#term-orchagent) タスクキューに残留してリトライ | SWSS_LOG_WARN `"Unable to find EVPN VTEP. user=%d remote_vtep=%s"` | `vxlanorch.cpp:1689` |
 | VTEP が存在するが `isActive()` が false | `VxlanTunnelOrch::addTunnelUser()` | `return false` — タスクキューに残留してリトライ | SWSS_LOG_WARN `"VTEP not yet active.user=%d remote_vtep=%s"` | `vxlanorch.cpp:1696` |
 | `isDipTunnelsSupported()` が false（プラットフォーム非対応） | `VxlanTunnelOrch::addTunnelUser()` | DIP トンネル作成をスキップし `return true`。`updateRemoteEndPointIpRef()` で IP 参照カウントのみ更新（縮退動作） | （ログなし） | `vxlanorch.cpp:1701-1704` |
-| VLAN が PortsOrch 未登録（`getVlanByVlanId()` 失敗） | `EvpnRemoteVniOrch::addOperation()` | `return false` — タスクキューに残留してリトライ | SWSS_LOG_WARN `"Vxlan tunnel map vlan id doesn't exist: %d"` | `vxlanorch.cpp:2483-2487` |
+| VLAN が [PortsOrch](../../reference/glossary.md#term-portsorch) 未登録（`getVlanByVlanId()` 失敗） | `EvpnRemoteVniOrch::addOperation()` | `return false` — タスクキューに残留してリトライ | SWSS_LOG_WARN `"Vxlan tunnel map vlan id doesn't exist: %d"` | `vxlanorch.cpp:2483-2487` |
 | VNI-VLAN マップ未存在（`isVniVlanMapExists()` 失敗） | `EvpnRemoteVniOrch::addOperation()` | `return false` — タスクキューに残留してリトライ | SWSS_LOG_WARN `"Vxlan tunnel map is not created for vni:%d"` | `vxlanorch.cpp:2491-2494` |
 | L3 VNI として登録済みの VNI に対する Remote VNI add | `EvpnRemoteVniOrch::addOperation()` | `return false`（再試行なし扱い） | SWSS_LOG_WARN `"Ignoring remote VNI add for L3 VNI:%d, remote:%s"` | `vxlanorch.cpp:2499` |
 | `getTunnelPort()` 失敗（addTunnelUser 後にポート未生成） | `EvpnRemoteVniOrch::addOperation()` | `return false` — タスクキューに残留してリトライ | SWSS_LOG_WARN `"Vxlan tunnelPort doesn't exist: %s"` | `vxlanorch.cpp:2520` |
@@ -439,7 +439,7 @@ EVPN DIP トンネルの動作はプラットフォームの SAI ケーパビリ
 ### 1. DIP トンネルサポート判定 (起動時 SAI 照会)
 
 `vxlanorch.cpp:1256-1274` — `VxlanTunnelOrch` コンストラクタが `sai_query_attribute_enum_values_capability()` で
-`SAI_OBJECT_TYPE_TUNNEL` / `SAI_TUNNEL_ATTR_PEER_MODE` に対して ASIC のサポートする peer mode を照会する。
+`SAI_OBJECT_TYPE_TUNNEL` / `SAI_TUNNEL_ATTR_PEER_MODE` に対して [ASIC](../../reference/glossary.md#term-asic) のサポートする peer mode を照会する。
 
 | 照会結果 | `is_dip_tunnel_supported` | 実装モード |
 |---------|--------------------------|-----------|
@@ -475,14 +475,14 @@ SAI クエリに失敗した場合は `SWSS_LOG_WARN("Unable to get supported tu
 EVPN DIP トンネルは `VxlanTunnel` コンストラクタの `ttl_mode` 引数を省略するため
 `VxlanTunnelTTLMode::NOT_SET` が適用される。`createTunnelHw()` は `NOT_SET` の場合
 `SAI_TUNNEL_ATTR_DECAP_TTL_MODE` を属性リストに追加しない (`vxlanorch.cpp:372-383`)。
-結果として ASIC ベンダーの SAI 実装デフォルト TTL モードが適用される。
+結果として [ASIC](../../reference/glossary.md#term-asic) ベンダーの SAI 実装デフォルト TTL モードが適用される。
 
 | プラットフォーム傾向 | 一般的な SAI デフォルト |
 |--------------------|----------------------|
 | Broadcom XGS / Trident / Tomahawk | `PIPE` (実装依存) |
 | Mellanox / NVIDIA Spectrum | `PIPE` (実装依存) |
 | VS (仮想スイッチ) | SAI stub — 実際の TTL 書換なし |
-| その他 ASIC | ベンダー定義。変更手段なし |
+| その他 [ASIC](../../reference/glossary.md#term-asic) | ベンダー定義。変更手段なし |
 
 `DEFAULT_TUNNEL_ENCAP_TTL = 255` (`vxlanorch.h:49`) は CLI 生成トンネル専用であり、EVPN DIP トンネルには**適用されない**。
 
@@ -491,7 +491,7 @@ EVPN DIP トンネルは `VxlanTunnel` コンストラクタの `ttl_mode` 引�
 WarmBoot 中は `vxlanorch.cpp:1925-1948` のガードにより STATE_DB `VXLAN_TUNNEL_TABLE` への重複書込みをスキップする。
 `is_dip_tunnel_supported` フラグは WarmBoot 後の orchagent 再起動時に再度 SAI 照会によって設定される。
 プラットフォームの SAI が WarmBoot で peer mode ケーパビリティを変化させると、DIP/P2MP モードが切り替わる可能性があるが
-SONiC コード上には明示的な変化検出ロジックは存在しない。
+[SONiC](../../reference/glossary.md#term-sonic) コード上には明示的な変化検出ロジックは存在しない。
 
 ### プラットフォーム差異サマリ
 
@@ -575,4 +575,4 @@ show vxlan remotevtep
   ベンダーのドキュメントを参照。
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 9d669bf85c78 -->

@@ -576,6 +576,9 @@ sonic-db-cli STATE_DB keys 'COPP_*TABLE|*'
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^1] [^2] [^3]
+
 [^1]: `sonic-swss/cfgmgr/coppmgr.cpp` — `setCoppGroupStateOk()` / `setCoppTrapStateOk()` の実装。  
 [^2]: `sonic-swss/orchagent/copporch.cpp` — `updateTrapOperStatus()` / `publishTrapIdsCapability()` の実装。  
 [^3]: `sonic-swss-common/common/schema.h` L448-450 — テーブル名定数定義。

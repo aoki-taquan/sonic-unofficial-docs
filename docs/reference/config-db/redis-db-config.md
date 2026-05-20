@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-SONiC は [Redis](../../reference/glossary.md#term-redis) を複数データベースに分割して使用し、その構成を `/var/run/redis/sonic-db/database_config.json` で管理する[^1]。このファイルには **[Redis](../../reference/glossary.md#term-redis) インスタンス定義** (接続先 hostname/port/UNIX ソケット) と **データベース定義** (DB ID・セパレータ・所属インスタンス) が含まれる。
+[SONiC](../../reference/glossary.md#term-sonic) は [Redis](../../reference/glossary.md#term-redis) を複数データベースに分割して使用し、その構成を `/var/run/redis/sonic-db/database_config.json` で管理する[^1]。このファイルには **[Redis](../../reference/glossary.md#term-redis) インスタンス定義** (接続先 hostname/port/UNIX ソケット) と **データベース定義** (DB ID・セパレータ・所属インスタンス) が含まれる。
 
 `SonicDBConfig` クラス (`sonic-swss-common`) がこの JSON を解析し、すべての DB 接続を仲介する。アプリケーションは `SonicDBConfig::getDbId()` / `getDbSock()` / `getSeparator()` 等の API を通じて DB 情報を取得する[^2]。
 
@@ -160,7 +160,7 @@ docker-database コンテナ起動
 
 **二重初期化禁止 (依存 #2)**: `SonicDBConfig::initialize()` は `m_init` が真のとき `runtime_error("SonicDBConfig already initialized")` を投げる。アプリがカスタムパスで初期化した後にデフォルト自動初期化が走ることはない（evidence: `dbconnector.cpp:193-194`）。
 
-**グローバル設定未初期化でのクラッシュ (依存 #5)**: マルチ ASIC / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 環境で namespace を指定した API (`getDbId(..., netns)` 等) を `initializeGlobalConfig()` 前に呼ぶと、`SWSS_LOG_THROW` で即座にプロセスが終了する。これはプログラミングエラーを早期に露出させる設計判断（evidence: `dbconnector.cpp:259-261`）。
+**グローバル設定未初期化でのクラッシュ (依存 #5)**: マルチ [ASIC](../../reference/glossary.md#term-asic) / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 環境で namespace を指定した API (`getDbId(..., netns)` 等) を `initializeGlobalConfig()` 前に呼ぶと、`SWSS_LOG_THROW` で即座にプロセスが終了する。これはプログラミングエラーを早期に露出させる設計判断（evidence: `dbconnector.cpp:259-261`）。
 
 **database_config.json 生成後の変更は非対応**: `SonicDBConfig` は起動時に一度ファイルを読み込んだあとは再読み込みを行わない。Redis ポートや DB ID を変更する場合はコンテナ再起動が必要（`reset()` + `initialize()` の明示的な再実行、または再起動）。
 
@@ -181,16 +181,16 @@ docker-database コンテナ起動
 | 参照先リソース | 参照タイミング | 依存内容 | 証跡 |
 |--------------|--------------|---------|------|
 | `/etc/sonic/database_config.json` (オーバーライドファイル) | `docker-database` コンテナ起動時 | 存在する場合はテンプレートレンダリングをスキップしてそのままコピー。存在しない場合のみ `database_config.json.j2` を使用 | `docker-database-init.sh:55-61` |
-| `/etc/sonic/enable_multidb` (フラグファイル) | `docker-database` コンテナ起動時 | 存在すると `multi_database_config.json.j2` を使用。複数 ASIC / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成を切り替えるスイッチ | `docker-database-init.sh:58-61` |
+| `/etc/sonic/enable_multidb` (フラグファイル) | `docker-database` コンテナ起動時 | 存在すると `multi_database_config.json.j2` を使用。複数 [ASIC](../../reference/glossary.md#term-asic) / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成を切り替えるスイッチ | `docker-database-init.sh:58-61` |
 | `/usr/share/sonic/platform/chassisdb.conf` | `docker-database` コンテナ起動時 | `source` で読み込み、`start_chassis_db` / `chassis_db_address` / `chassis_db_port` を取得。`start_chassis_db=1` 時のみ `CHASSIS_APP_DB` エントリを最終設定に含める | `docker-database-init.sh:77-78`, `docker-database-init.sh:124-127` |
-| `/var/run/redis/sonic-db/database_global.json` | `SonicDBConfig::initializeGlobalConfig()` 呼び出し時 | マルチ ASIC / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 環境で namespace 付き API 使用前に必須。未初期化で namespace 付き API を呼ぶと `SWSS_LOG_THROW` で即クラッシュ | `dbconnector.cpp:228-231` |
+| `/var/run/redis/sonic-db/database_global.json` | `SonicDBConfig::initializeGlobalConfig()` 呼び出し時 | マルチ [ASIC](../../reference/glossary.md#term-asic) / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 環境で namespace 付き API 使用前に必須。未初期化で namespace 付き API を呼ぶと `SWSS_LOG_THROW` で即クラッシュ | `dbconnector.cpp:228-231` |
 | `/etc/sonic/database_global.json` (グローバルオーバーライド) | `docker-database` コンテナ起動時 (マルチ ASIC / SmartSwitch のみ) | 存在する場合はテンプレートレンダリングをスキップしてそのままコピー | `docker-database-init.sh:106-109` |
 | `NAMESPACE_COUNT` / `NUM_DPU` 環境変数 | `docker-database` コンテナ起動時 | `NAMESPACE_COUNT > 1` または `NUM_DPU > 1` の場合のみ `database_global.json` を生成 | `docker-database-init.sh:104-110` |
 
 ### CONFIG_DB テーブルとの間接依存
 
 `database_config.json` 自体は CONFIG_DB に格納されない。ただし `SonicDBConfig` によって
-定義された DB ID / インスタンス情報は SONiC の全デーモン (`swss`, `syncd`, `mgmt`, `snmp` 等)
+定義された DB ID / インスタンス情報は [SONiC](../../reference/glossary.md#term-sonic) の全デーモン (`swss`, `syncd`, `mgmt`, `snmp` 等)
 が起動時に依存する基盤層であり、間接的にすべての CONFIG_DB テーブル操作の前提条件となる。
 
 <!-- /cross-refs -->
@@ -480,6 +480,9 @@ docker-database-init.sh
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^3] [^4]
+
 [^1]: `sonic-net/sonic-swss-common` `common/database_config.json` — 配布デフォルト JSON。<https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/database_config.json>
 
 [^2]: `sonic-net/sonic-swss-common` `common/dbconnector.h` / `dbconnector.cpp` — `SonicDBConfig` クラス、`DEFAULT_SONIC_DB_CONFIG_FILE` 定数、`parseDatabaseConfig()` 実装。<https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/dbconnector.h>
@@ -488,4 +491,4 @@ docker-database-init.sh
 
 [^4]: `sonic-net/sonic-buildimage` `dockers/docker-database/docker-database-init.sh` — docker-database 起動スクリプト、ファイル生成ロジック。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/dockers/docker-database/docker-database-init.sh>
 
-<!-- glossary-links-injected: dbd9c95a9d8a -->
+<!-- glossary-links-injected: 77f342e1a22c -->

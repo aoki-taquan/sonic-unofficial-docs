@@ -112,6 +112,9 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 | `family` (IP prefix) | **dead field**: [CONFIG_DB](../../reference/glossary.md#term-config_db) 値は読まれず、intfmgr が ip-prefix の型から自動判定して APP_DB へ書く | intfmgr.cpp:1129 |
 | `secondary` (IP prefix) | **dead consumer**: intfmgr・orchagent のどちらもこのフィールドを参照しない | intfmgr.cpp:784-829; intfsorch.cpp:720-814 |
 
+<!-- footnote anchor seeds -->
+出典: [^fdb1]
+
 [^d1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
 [^d2]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
 
@@ -197,7 +200,7 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 | `VLAN|Vlan<N>` + [vlanmgrd](../../reference/glossary.md#term-vlanmgrd) STATE_VLAN_TABLE ready | `intfmgr.cpp:653-660` | `isIntfStateOk()` が STATE_VLAN_TABLE を参照。未登録なら retry |
 | `VRF|<name>` + [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) STATE_VRF_TABLE ready | `intfmgr.cpp:839-842` | `vrf_name` 指定時のみ。未登録なら `return false` で retry |
 | VNetOrch が `VNET|<name>` 処理済み | `intfsorch.cpp:933-939` | `vnet_name` 指定時のみ。orchagent 側チェック |
-| PortsOrch が VLAN ポートオブジェクト生成済み | `intfsorch.cpp:905` | APP_DB → SAI 経路のチェック。CONFIG_DB 書込みとは独立 |
+| [PortsOrch](../../reference/glossary.md#term-portsorch) が VLAN ポートオブジェクト生成済み | `intfsorch.cpp:905` | APP_DB → SAI 経路のチェック。CONFIG_DB 書込みとは独立 |
 
 ### 属性ロウ → IP プレフィクスロウ の順序
 
@@ -486,15 +489,15 @@ CLI / minigraph
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / IntfsOrch**: `VLAN_INTERFACE` テーブルを `SubscriberStateTable` で購読。
+- **orchagent / [IntfsOrch](../../reference/glossary.md#term-intfsorch)**: `VLAN_INTERFACE` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- IntfsOrch が VLAN L3 インタフェースの IP プレフィックスを APP_DB `INTF_TABLE` に書き込む。
+- [IntfsOrch](../../reference/glossary.md#term-intfsorch) が VLAN L3 インタフェースの IP プレフィックスを APP_DB `INTF_TABLE` に書き込む。
 
 ### 段階 3: APPL → SAI
 
-- IntfsOrch が `sai_router_interface_api->create_router_interface()` で VLAN に対する SAI RIF を作成。
+- [IntfsOrch](../../reference/glossary.md#term-intfsorch) が `sai_router_interface_api->create_router_interface()` で VLAN に対する SAI RIF を作成。
 - IP プレフィックスに対して `sai_route_api` でコネクテッドルートを作成。
 
 ### 段階 4: タイミング + 副作用
@@ -695,7 +698,7 @@ if (status != SAI_STATUS_SUCCESS)
 | `sai_route_api->create_route_entry(...)` (IP2me) | [ASIC_DB](../../reference/glossary.md#term-asic_db) (SAI) | — | 常時 (`addIp2MeRoute()`) |
 | `sai_neighbor_api->create_neighbor_entry(broadcast)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) (SAI) | — | VLAN IF への IPv4 prefix 付与時 (`addDirectedBroadcast()`, `intfsorch.cpp:595-597`) |
 | [CRM](../../reference/glossary.md#term-crm) カウンタ increment | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [CRM](../../reference/glossary.md#term-crm) | — | 常時 |
-| `gNeighOrch->addInbandNeighbor(alias, ip)` | 他 ASIC へのネイバー伝播 | — | [VOQ](../../reference/glossary.md#term-voq) chassis かつ inband port (`intfsorch.cpp:586-592`) |
+| `gNeighOrch->addInbandNeighbor(alias, ip)` | 他 [ASIC](../../reference/glossary.md#term-asic) へのネイバー伝播 | — | [VOQ](../../reference/glossary.md#term-voq) chassis かつ inband port (`intfsorch.cpp:586-592`) |
 
 ### DEL — 属性ロウ (`VLAN_INTERFACE|Vlan<N>`)
 
@@ -829,7 +832,7 @@ VLAN IF へ IPv6 アドレスを付与する場合、VOQ 構成では `ip -6 add
 | 構成 | 追加動作 |
 |------|---------|
 | VOQ chassis (local port/[LAG](../../reference/glossary.md#term-lag)) | RIF 作成・削除時に `CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE` へ `oper_status` を SET / DEL |
-| VOQ chassis (inband port) | IP 追加/削除時に `addInbandNeighbor` / `delInbandNeighbor` を呼び出しリモート ASIC にネイバー伝播（`intfsorch.cpp:586-593`） |
+| VOQ chassis (inband port) | IP 追加/削除時に `addInbandNeighbor` / `delInbandNeighbor` を呼び出しリモート [ASIC](../../reference/glossary.md#term-asic) にネイバー伝播（`intfsorch.cpp:586-593`） |
 | VOQ chassis (remote port) | `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME` からの通知でリモートネクストホップを更新（`intfsorch.cpp:881-892`） |
 | VOQ chassis (IPv6 アドレス追加) | `ip -6 address add ... metric 256` を付与。通常構成は metric 指定なし（`intfmgr.cpp:103-106`） |
 | 通常シングルスイッチ | CHASSIS_APP_DB 操作は一切なし |
@@ -845,4 +848,4 @@ VLAN IF へ IPv6 アドレスを付与する場合、VOQ 構成では `ip -6 add
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: ebd887894237 -->
+<!-- glossary-links-injected: b9c5a02feb48 -->

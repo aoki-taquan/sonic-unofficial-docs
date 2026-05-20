@@ -208,7 +208,7 @@ show nat translations
 ### 段階 3: APPL → SAI
 
 - `NatOrch::doDnatPoolTableTask()` (`natorch.cpp:2968`) が `NAT_DNAT_POOL_TABLE` 変更を受けて `addHwDnatPoolEntry()` を呼び出す。
-- `sai_nat_api->create_nat_entry()` で `SAI_NAT_TYPE_DESTINATION_NAT_POOL` エントリを ASIC に書き込む。
+- `sai_nat_api->create_nat_entry()` で `SAI_NAT_TYPE_DESTINATION_NAT_POOL` エントリを [ASIC](../../reference/glossary.md#term-asic) に書き込む。
 
 <!-- /runtime-trace -->
 
@@ -467,7 +467,7 @@ ref-count は内部マップ `m_natDnatPoolInfo[destIp]` で管理される。�
 | pool IP 追加 | `sai_nat_api->create_nat_entry()` | `SAI_NAT_TYPE_DESTINATION_NAT_POOL` | `natorch.cpp:1805` |
 | pool IP 削除 | `sai_nat_api->remove_nat_entry()` | `SAI_NAT_TYPE_DESTINATION_NAT_POOL` | `natorch.cpp:1837` |
 
-`addHwDnatPoolEntry()` は `isNatEnabled()` が false の場合に SAI 書込をスキップして success (`true`) を返す (`natorch.cpp:1789-1793`)。APPL_DB エントリは保持されるため、NAT が後から有効化されると `enableNatFeature()` → `addAllDnatPoolEntries()` で全 pool IP が遡及的に ASIC に投入される。
+`addHwDnatPoolEntry()` は `isNatEnabled()` が false の場合に SAI 書込をスキップして success (`true`) を返す (`natorch.cpp:1789-1793`)。APPL_DB エントリは保持されるため、NAT が後から有効化されると `enableNatFeature()` → `addAllDnatPoolEntries()` で全 pool IP が遡及的に [ASIC](../../reference/glossary.md#term-asic) に投入される。
 
 ### COUNTERS_DB — 初期化時の静的書込
 
@@ -480,7 +480,7 @@ NAT pool エントリ追加・削除に直接連動した [COUNTERS_DB](../../re
 `NatMgr` および `NatOrch` は [STATE_DB](../../reference/glossary.md#term-state_db) への書込を行わない。`STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_INTERFACE_TABLE` は L3 インタフェース readiness ガード用の**読み取り専用**アクセスのみ。
 
 [^F1]: natmgr APPL_DB 書込実装: `sonic-swss/cfgmgr/natmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/natmgr.cpp>
-[^F2]: NatOrch ASIC 書込実装: `sonic-swss/orchagent/natorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/natorch.cpp>
+[^F2]: NatOrch [ASIC](../../reference/glossary.md#term-asic) 書込実装: `sonic-swss/orchagent/natorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/natorch.cpp>
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-side-effects.md`
 <!-- /side-effects -->
@@ -596,7 +596,7 @@ status = sai_nat_api->create_nat_entry(&dnat_pool_entry, attr_count, nat_entry_a
 | DNAT pool entry への platform 差 | なし（platform 分岐なし） |
 | SNAT ハードウェア上限超過 | `totalSnatEntries == maxAllowedSNatEntries` → ageout 通知（DNAT pool は無関係） |
 
-現行 SONiC コミュニティ実装では **Broadcom ASIC のみが NAT ハードウェアオフロードを実運用レベルでサポートする**。
+現行 [SONiC](../../reference/glossary.md#term-sonic) コミュニティ実装では **Broadcom ASIC のみが NAT ハードウェアオフロードを実運用レベルでサポートする**。
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-platform.md`
 <!-- /platform -->
@@ -608,4 +608,4 @@ status = sai_nat_api->create_nat_entry(&dnat_pool_entry, attr_count, nat_entry_a
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9a77ce320a89 -->
+<!-- glossary-links-injected: 865a18402f05 -->

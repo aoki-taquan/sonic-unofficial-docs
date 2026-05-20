@@ -706,8 +706,8 @@ PBH_RULE → PBH_TABLE → PBH_HASH → PBH_HASH_FIELD
 
 ### 解決タイミング
 
-- `interface_list` に指定したポートが PortsOrch 未登録の場合、`pendingPortSet` に保留され
-  PortsOrch の `SUBJECT_TYPE_PORT_CHANGE` 通知で再バインドを試みる (`aclorch.cpp:2698-2703`)。
+- `interface_list` に指定したポートが [PortsOrch](../../reference/glossary.md#term-portsorch) 未登録の場合、`pendingPortSet` に保留され
+  [PortsOrch](../../reference/glossary.md#term-portsorch) の `SUBJECT_TYPE_PORT_CHANGE` 通知で再バインドを試みる (`aclorch.cpp:2698-2703`)。
 - `PBH_RULE.table_name` が指す `PBH_TABLE` エントリが未作成の場合、RULE は `pendingSetupMap` に
   留まり retry loop に入る (`deployPbhTasks()` — `HASH_FIELD → HASH → TABLE → RULE` 順序依存)。
 - `PBH_RULE.hash` が指す `PBH_HASH` エントリが未作成の場合も同様に retry。
@@ -716,7 +716,7 @@ PBH_RULE → PBH_TABLE → PBH_HASH → PBH_HASH_FIELD
 
 `PbhOrch` は `AclOrch *` と `PortsOrch *` をコンストラクタ引数に受け取り (`pbhorch.cpp:90-91`)、
 これらのオーケストレータが先に初期化されていることを前提とする。
-`orchdaemon.cpp:553-565` で AclOrch / PortsOrch 作成後に PbhOrch を生成する順序が保証されている。
+`orchdaemon.cpp:553-565` で AclOrch / [PortsOrch](../../reference/glossary.md#term-portsorch) 作成後に PbhOrch を生成する順序が保証されている。
 
 <!-- /cross-refs -->
 
@@ -798,4 +798,4 @@ sonic-db-cli STATE_DB hgetall 'PBH_CAPABILITIES_TABLE|hash'
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 33cbd4cf768b -->
+<!-- glossary-links-injected: 6cf1efdb47f1 -->

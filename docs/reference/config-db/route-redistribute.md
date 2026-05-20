@@ -31,7 +31,7 @@ hard: 0
 
 ## 概要
 
-`ROUTE_REDISTRIBUTE` は [BGP](../../reference/glossary.md#term-bgp) へのルート再配布設定を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。ソースプロトコル (`src_protocol`)、宛先プロトコル (`dst_protocol`)、アドレスファミリ (`address_family`) の 3 軸で 1 エントリを構成し、[FRR](../../reference/glossary.md#term-frr) vtysh の `redistribute <src_proto>` コマンド生成をトリガーする[^1]。
+`ROUTE_REDISTRIBUTE` は [BGP](../../reference/glossary.md#term-bgp) へのルート再配布設定を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。ソースプロトコル (`src_protocol`)、宛先プロトコル (`dst_protocol`)、アドレスファミリ (`address_family`) の 3 軸で 1 エントリを構成し、[FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) の `redistribute <src_proto>` コマンド生成をトリガーする[^1]。
 
 `frrcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `ROUTE_REDISTRIBUTE` テーブルを購読し、[VRF](../../reference/glossary.md#term-vrf) ごとの [BGP](../../reference/glossary.md#term-bgp) インスタンスに `address-family ipv4/ipv6 unicast` ブロック内で `redistribute <src>` コマンドを発行する[^2]。
 
@@ -73,7 +73,7 @@ ROUTE_REDISTRIBUTE|<vrf_name>|<src_protocol>|<dst_protocol>|<address_family>
 
 ## 購読者
 
-- `frrcfgd`: CONFIG_DB `ROUTE_REDISTRIBUTE` を購読し、`bgpd` へ [FRR](../../reference/glossary.md#term-frr) vtysh コマンドを発行する。`dst_protocol != 'bgp'` の場合は `log_err` で拒否してスキップする[^2]。
+- `frrcfgd`: CONFIG_DB `ROUTE_REDISTRIBUTE` を購読し、`bgpd` へ [FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) コマンドを発行する。`dst_protocol != 'bgp'` の場合は `log_err` で拒否してスキップする[^2]。
 - `bgpd` ([FRR](../../reference/glossary.md#term-frr)): `address-family <af> unicast` コンテキスト内の `redistribute <src>` を受け取り、経路選択に反映する。
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -156,7 +156,7 @@ ROUTE_REDISTRIBUTE|<vrf_name>|<src_protocol>|<dst_protocol>|<address_family>
 2. `af == 'ipv6' and src_proto == 'ospf3'` の場合 `src_proto = 'ospf6'` に変換
 3. `dst_proto != 'bgp'` の場合 `LOG_ERR` 出力して skip
 4. `cmd_prefix = ['configure terminal', 'router bgp <asn> vrf <vrf>', 'address-family <af> unicast']` を生成
-5. `key_map.run_command()` → `__run_command()` → `g_run_command()` → `bgpd_client.run_vtysh_command()` で vtysh 実行
+5. `key_map.run_command()` → `__run_command()` → `g_run_command()` → `bgpd_client.run_vtysh_command()` で [vtysh](../../reference/glossary.md#term-vtysh) 実行
 
 生成 vtysh コマンド例（connected を IPv4 unicast に再配布）:
 
@@ -214,6 +214,9 @@ vtysh -c "configure terminal"
 <!-- ref-triangle:end -->
 
 ## 引用元
+
+<!-- footnote anchor seeds -->
+出典: [^3]
 
 [^1]: frrcfgd ROUTE_REDISTRIBUTE ハンドラ: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` L3149-3168. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py>
 [^2]: frrcfgd route_redist_key_map: `frrcfgd.py` L1979-1980. `route_redist_key_map = [(['protocol', '++metric', '+route_map'], '{no:no-prefix}redistribute {} {:redist-metric} {:redist-route-map}', hdl_route_redist_set)]`
@@ -336,7 +339,7 @@ evidence: `routesync.cpp:156` (`m_routeTable = createProducerStateTable(APP_ROUT
 
 ### 5. orchagent → SAI/ASIC FIB
 
-[orchagent](../../reference/glossary.md#term-orchagent) は `APPL_DB:ROUTE_TABLE` を購読し、[SAI](../../reference/glossary.md#term-sai) API 経由で ASIC の FIB エントリを更新する。ROUTE_REDISTRIBUTE の変更は最終的にデータプレーン転送経路の追加 / 削除につながる。
+[orchagent](../../reference/glossary.md#term-orchagent) は `APPL_DB:ROUTE_TABLE` を購読し、[SAI](../../reference/glossary.md#term-sai) API 経由で [ASIC](../../reference/glossary.md#term-asic) の FIB エントリを更新する。ROUTE_REDISTRIBUTE の変更は最終的にデータプレーン転送経路の追加 / 削除につながる。
 
 ### 6. bgpcfgd の STATIC_ROUTE 自動 redistribute（独立経路）
 
@@ -452,7 +455,7 @@ router bgp <local_asn> vrf <vrf>
 
 ### FRR バージョン差
 
-`frrcfgd.py` および `managers_static_rt.py` に `frr_version` / `FRR_MAJOR` 等のバージョン条件分岐は存在しない。SONiC master は FRR バージョンをビルドシステムで統一するため実行時バージョン判定が不要。
+`frrcfgd.py` および `managers_static_rt.py` に `frr_version` / `FRR_MAJOR` 等のバージョン条件分岐は存在しない。[SONiC](../../reference/glossary.md#term-sonic) master は FRR バージョンをビルドシステムで統一するため実行時バージョン判定が不要。
 
 ### SmartSwitch
 
@@ -495,4 +498,4 @@ vtysh -c 'show ip bgp'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: e218ca79381e -->
+<!-- glossary-links-injected: 72f9adc75e1d -->

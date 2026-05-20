@@ -30,7 +30,7 @@ hard: 0
 
 ## 概要
 
-ASIC 上の共有 / 専用バッファプールを [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。`BUFFER_PROFILE.pool` から leafref で参照される。`bufferorch` ([orchagent](../../reference/glossary.md#term-orchagent)) または `buffermgrd` (dynamic buffer model) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、[SAI](../../reference/glossary.md#term-sai) BUFFER_POOL に変換する[^1]。
+[ASIC](../../reference/glossary.md#term-asic) 上の共有 / 専用バッファプールを [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。`BUFFER_PROFILE.pool` から leafref で参照される。`bufferorch` ([orchagent](../../reference/glossary.md#term-orchagent)) または `buffermgrd` (dynamic buffer model) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、[SAI](../../reference/glossary.md#term-sai) BUFFER_POOL に変換する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -113,13 +113,13 @@ BUFFER_POOL|<name>
 ### 典型値
 
 - key 形式: `BUFFER_POOL|<pool-name>` (`ingress_lossless_pool` / `egress_lossless_pool` / `egress_lossy_pool` 等)。
-- `size`: ASIC 別の SDK 値（例 100G TOR で `12766208`）。
+- `size`: [ASIC](../../reference/glossary.md#term-asic) 別の SDK 値（例 100G TOR で `12766208`）。
 - `type`: `ingress` / `egress`。
 - `mode`: `dynamic` / `static`。
 
 ### よくある誤設定
 
-- `size` を ASIC 上限超過で入れると bufferorch が `SAI_STATUS_NO_MEMORY` を返し、すべての buffer 設定が止まる。
+- `size` を [ASIC](../../reference/glossary.md#term-asic) 上限超過で入れると bufferorch が `SAI_STATUS_NO_MEMORY` を返し、すべての buffer 設定が止まる。
 - `mode: dynamic` を ASIC 未対応のまま使うと [PFC](../../reference/glossary.md#term-pfc) で head-of-line を起こす。`traditional` プラットフォームでは `static`。
 
 ### 確認コマンド
@@ -216,7 +216,7 @@ show buffer pool
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -748,4 +748,4 @@ FlexCounterOrch から `FLEX_COUNTER_STATUS=enable` を受信した際に全プ�
 - **ポーリング間隔非設定**: `BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS = "60000"` はコードハードコード。CONFIG_DB からの変更手段なし。
 <!-- /constants -->
 
-<!-- glossary-links-injected: 9d23cf771572 -->
+<!-- glossary-links-injected: 865a18402f05 -->

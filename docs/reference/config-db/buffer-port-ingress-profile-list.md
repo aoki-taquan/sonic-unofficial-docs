@@ -105,7 +105,7 @@ YANG に `default` 節は存在しない。以下はすべてコード実装か�
 |---|----------------------|------------|---------|
 | 1 | `BUFFER_PROFILE` エントリが先行（参照プロファイルが `m_bufferProfileLookup` / [orchagent](../../reference/glossary.md#term-orchagent) に認識済み） | `task_need_retry`（silent retry、ログに残る） | `buffermgrdyn.cpp:3282-3285`, `bufferorch.cpp:1683-1688` |
 | 2 | `BUFFER_POOL` エントリが先行（`m_bufferPoolReady == true`） | APPL_DB 書き込み pending（`m_bufferObjectsPending=true`）、BUFFER_POOL 完了後自動再処理 | `buffermgrdyn.cpp:3408-3414` |
-| 3 | `PORT` エントリが先行（PortsOrch にポート認識済み） | `task_invalid_entry`（エントリ消去、永続エラー） | `bufferorch.cpp:1762-1765` |
+| 3 | `PORT` エントリが先行（[PortsOrch](../../reference/glossary.md#term-portsorch) にポート認識済み） | `task_invalid_entry`（エントリ消去、永続エラー） | `bufferorch.cpp:1762-1765` |
 
 ### ハードコード禁止事項
 
@@ -227,7 +227,7 @@ show buffer pool
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -461,7 +461,7 @@ evidence: `bufferorch.cpp:1660-1774`（`processIngressBufferProfileList`: voq �
 | Mellanox DEL 未サポートコメント | **あり** | 処理は動作するが正式未サポート注記 |
 | Mellanox 8 レーン xon 倍増 | 間接的 | 参照 BUFFER_PROFILE 名に影響、テーブル処理コードに分岐なし |
 | VOQ Chassis | **差分なし** | 処理開始タイミング以外は同一コードパス |
-| その他 ASIC vendor | **差分なし** | Lua プラグイン名のみ異なる |
+| その他 [ASIC](../../reference/glossary.md#term-asic) vendor | **差分なし** | Lua プラグイン名のみ異なる |
 <!-- /platform -->
 
 <!-- failure -->
@@ -520,7 +520,7 @@ evidence: `bufferorch.cpp:1660-1774`（`processIngressBufferProfileList`: voq �
 | `profile_list` 各要素 | `BUFFER_PROFILE` | `BUFFER_PROFILE\|<name>` | `buffermgrd` の `m_bufferProfileLookup` | `task_need_retry`（silent retry）— `buffermgrdyn.cpp:3280-3285` |
 | `profile_list` 各要素 | APPL_DB `BUFFER_PROFILE_TABLE` | `BUFFER_PROFILE_TABLE:<name>` | `BufferOrch` の `resolveFieldRefArray` | `task_need_retry` — `bufferorch.cpp:1683-1688` |
 | SET 処理時の pool 準備チェック | `BUFFER_POOL` (ingress 系全プール) | `BUFFER_POOL\|<pool>` | `buffermgrd` の `m_bufferPoolReady` フラグ | APPL_DB 書き込みを pending（`m_bufferObjectsPending=true`）、BUFFER_POOL 完了後自動再処理 — `buffermgrdyn.cpp:3408-3414` |
-| キー `<port>` (ポート名) | `PORT` | `PORT\|<port>` | `BufferOrch` の PortsOrch ポートマップ | `task_invalid_entry`（エントリ消去）— `bufferorch.cpp:1762-1765` |
+| キー `<port>` (ポート名) | `PORT` | `PORT\|<port>` | `BufferOrch` の [PortsOrch](../../reference/glossary.md#term-portsorch) ポートマップ | `task_invalid_entry`（エントリ消去）— `bufferorch.cpp:1762-1765` |
 | キー `<port>` (ポート名) | `PORT` | `PORT\|<port>` | `buffermgrd` の `m_portInfoLookup` | admin-down 判定に使用。空文字なら `task_invalid_entry` — `buffermgrdyn.cpp:3509-3513` |
 
 ### 特記事項
@@ -531,4 +531,4 @@ evidence: `bufferorch.cpp:1660-1774`（`processIngressBufferProfileList`: voq �
 - 詳細スキャン記録: `meta/_intermediate/cdb-flow/buffer-port-ingress-profile-list-cross-refs.md`
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 7e045f0ebc94 -->
+<!-- glossary-links-injected: dc406ba15580 -->

@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-SONiC の [QoS](../../reference/glossary.md#term-qos) アーキテクチャでは dot1p 値を PG に直接マッピングするテーブルを持たない。実際の経路は以下のとおり:
+[SONiC](../../reference/glossary.md#term-sonic) の [QoS](../../reference/glossary.md#term-qos) アーキテクチャでは dot1p 値を PG に直接マッピングするテーブルを持たない。実際の経路は以下のとおり:
 
 ```
 dot1p (0-7)
@@ -160,7 +160,7 @@ type_map QosOrch::m_qos_maps = {
 | `DOT1P_TO_TC_MAP\|<name>` ([CONFIG_DB](../../reference/glossary.md#term-config_db)) | 被参照 (`resolveFieldRefValue`) | `PORT_QOS_MAP` エントリ SET 時に `dot1p_to_tc_map` フィールドが存在する場合。未解決なら `task_need_retry` | `qosorch.cpp:102`, `qosorch.cpp:2124` |
 | `TC_TO_PRIORITY_GROUP_MAP\|<name>` (CONFIG_DB) | 被参照 (`resolveFieldRefValue`) | `PORT_QOS_MAP` エントリ SET 時に `tc_to_pg_map` フィールドが存在する場合。未解決なら `task_need_retry` | `qosorch.cpp:106`, `qosorch.cpp:2124` |
 | `PORT_QOS_MAP\|<port_name>` (CONFIG_DB) | 参照元（2 段マップの最終適用対象） | 常時。`dot1p_to_tc_map` / `tc_to_pg_map` フィールドを通じて 2 つのマップを取り込み、[SAI](../../reference/glossary.md#term-sai) に適用 | `qosorch.cpp:2046-2156` |
-| `PORT` (PortsOrch `gPortsOrch->getPort()`) | ポート存在チェック | `PORT_QOS_MAP` の key が `global` でない場合。未登録ポートはエラーログ + `continue` でスキップ | `qosorch.cpp:28`, `qosorch.cpp:2068` |
+| `PORT` ([PortsOrch](../../reference/glossary.md#term-portsorch) `gPortsOrch->getPort()`) | ポート存在チェック | `PORT_QOS_MAP` の key が `global` でない場合。未登録ポートはエラーログ + `continue` でスキップ | `qosorch.cpp:28`, `qosorch.cpp:2068` |
 
 !!! note "SWITCH レベル direct 適用は DSCP_TO_TC のみ"
     `handleGlobalQosMap()` 経路 (`PORT_QOS_MAP|global`) で SWITCH に直接適用されるのは `DSCP_TO_TC_MAP` のみ (`qosorch.cpp:1956`)。
@@ -237,9 +237,9 @@ type_map QosOrch::m_qos_maps = {
 | SAI 定数 | 使用箇所 | 意味 |
 |----------|---------|------|
 | `SAI_QOS_MAP_TYPE_DOT1P_TO_TC` | `qosorch.cpp:406` | dot1p → Traffic Class マップの SAI タイプ |
-| `SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP` | `qosorch.cpp:913` | TC → Priority Group マップの SAI タイプ |
+| `SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP` | `qosorch.cpp:913` | TC → [Priority Group](../../reference/glossary.md#term-priority-group) マップの SAI タイプ |
 
-> **重要**: `SAI_QOS_MAP_TYPE_DOT1P_TO_PRIORITY_GROUP` は SAI 仕様に存在しない。これが `DOT1P_TO_PG_MAP` テーブルが SONiC に存在しない根本理由の一つである。
+> **重要**: `SAI_QOS_MAP_TYPE_DOT1P_TO_PRIORITY_GROUP` は SAI 仕様に存在しない。これが `DOT1P_TO_PG_MAP` テーブルが [SONiC](../../reference/glossary.md#term-sonic) に存在しない根本理由の一つである。
 
 ### SAI ポート属性定数
 
@@ -454,7 +454,7 @@ NotificationConsumer: なし
 
 ## 実装との乖離
 
-`DOT1P_TO_PG_MAP` は名称としては想定可能だが、SONiC CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。dot1p → Priority Group マッピングは `DOT1P_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
+`DOT1P_TO_PG_MAP` は名称としては想定可能だが、[SONiC](../../reference/glossary.md#term-sonic) CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。dot1p → [Priority Group](../../reference/glossary.md#term-priority-group) マッピングは `DOT1P_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
 
 | 乖離 | 期待（誤解されがちな設計） | 実装 (community master) | 根拠 |
 |------|-------------------------|------------------------|------|
@@ -482,4 +482,4 @@ NotificationConsumer: なし
 - [CONFIG_DB: TC_TO_PRIORITY_GROUP_MAP](tc-to-priority-group-map.md)
 - [CONFIG_DB: PORT_QOS_MAP](port-qos-map.md)
 
-<!-- glossary-links-injected: bd47c43cc7ff -->
+<!-- glossary-links-injected: f0d782cfbbed -->

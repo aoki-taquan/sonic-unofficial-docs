@@ -159,8 +159,8 @@ show mclag interface
    - evidence: `mclaglink.cpp:814-818`, `mclaglink.cpp:910-921`
 
 4. **allPortsReady() 完了後にエントリが処理される**
-   - `MlagOrch::doTask()` L49-52 で全ポート初期化前は即 return。PortsOrch 起動完了が先行必須。
-   - MCLAG_INTERFACE エントリはキューに保留され、PortsOrch 起動完了後に一括処理される。
+   - `MlagOrch::doTask()` L49-52 で全ポート初期化前は即 return。[PortsOrch](../../reference/glossary.md#term-portsorch) 起動完了が先行必須。
+   - MCLAG_INTERFACE エントリはキューに保留され、[PortsOrch](../../reference/glossary.md#term-portsorch) 起動完了後に一括処理される。
    - evidence: `mlagorch.cpp:49-52`
 
 ### 削除順序
@@ -330,7 +330,7 @@ MCLAG_INTERFACE の SET/DEL を受けた mclagsyncd → iccpd → mclagsyncd IPC
 
 | # | 失敗条件 | 発生箇所 | 結果 | retry |
 |---|---------|---------|------|-------|
-| 1 | `allPortsReady()` 未完了 | `mlagorch.cpp:49-52` | 即 `return`。エントリはキューに保留 | あり（PortsOrch 起動完了後に自動処理） |
+| 1 | `allPortsReady()` 未完了 | `mlagorch.cpp:49-52` | 即 `return`。エントリはキューに保留 | あり（[PortsOrch](../../reference/glossary.md#term-portsorch) 起動完了後に自動処理） |
 | 2 | 不明 operation type（SET / DEL 以外） | `mlagorch.cpp:148-151` | `SWSS_LOG_ERROR` + エントリ erase（ドロップ） | なし |
 | 3 | 重複 SET（既登録 if_name を再 SET） | `mlagorch.cpp:196-213` | `SWSS_LOG_ERROR("MLAG adds duplicate MLAG interface")` のみ。`m_mlagIntfs` 変更・Observer 通知なし。エントリは erase される | なし |
 | 4 | 未知 if_name の DEL（未登録 if_name を DEL） | `mlagorch.cpp:219-233` | `SWSS_LOG_ERROR("MLAG deletes unknown MLAG interface")` のみ。エントリは erase される | なし |
@@ -590,7 +590,7 @@ else if (temps == (Selectable *)mclag.getMclagIntfCfgTable()) {
 
 `mclagsyncd` が iccpd から受け取ったポート隔離指示を APPL_DB に変換する `MclagLink::setPortIsolate()`（`mclaglink.cpp:190`）は、`getenv("platform")` でプラットフォーム文字列を取得し、ホワイトリストと照合して 2 つのパスに分岐する（`mclaglink.cpp:192-202`）。
 
-| プラットフォーム（`getenv("platform")` の値） | 代表 ASIC / ベンダー | 隔離メカニズム |
+| プラットフォーム（`getenv("platform")` の値） | 代表 [ASIC](../../reference/glossary.md#term-asic) / ベンダー | 隔離メカニズム |
 |---|---|---|
 | `"broadcom"` | Broadcom XGS / DNX | APPL_DB `ISOLATION_GROUP_TABLE` |
 | `"barefoot"` | Intel Tofino / Tofino2 | APPL_DB `ISOLATION_GROUP_TABLE` |
@@ -642,9 +642,9 @@ APPL_DB:ACL_RULE_TABLE:mclag:mclag
 
 ### multi-ASIC / VoQ chassis 非対応
 
-`mlagorch.cpp` に `gMySwitchType == "voq"` 等の分岐はなく、`mclaglink.cpp` / `mclagsyncd.cpp` に `CHASSIS_APP_DB` 参照もない。[MCLAG](../../reference/glossary.md#term-mclag) 機能は single-ASIC single-box 構成を前提とし、multi-ASIC / VoQ chassis 環境では動作保証なし。`docker-iccpd` は名前空間引数を取らず、単一の CONFIG_DB / STATE_DB / APPL_DB のみを参照する。
+`mlagorch.cpp` に `gMySwitchType == "voq"` 等の分岐はなく、`mclaglink.cpp` / `mclagsyncd.cpp` に `CHASSIS_APP_DB` 参照もない。[MCLAG](../../reference/glossary.md#term-mclag) 機能は single-[ASIC](../../reference/glossary.md#term-asic) single-box 構成を前提とし、multi-[ASIC](../../reference/glossary.md#term-asic) / VoQ chassis 環境では動作保証なし。`docker-iccpd` は名前空間引数を取らず、単一の CONFIG_DB / STATE_DB / APPL_DB のみを参照する。
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-interface-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: d2191ccfe0bd -->
+<!-- glossary-links-injected: 4aeda46c88ba -->

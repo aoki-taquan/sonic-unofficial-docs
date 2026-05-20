@@ -211,7 +211,7 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 ### 失敗後の状態整合性
 
 - `task_failed` でエントリが破棄されると `DashAclOrch::doTask()` が WARN ログを出力し `erase(it)` でキューから除去する (`dashaclorch.cpp:146-153`)
-- タグはオーケストレーターメモリにのみ存在し SAI への書き込みがないため、`task_failed` による部分的な ASIC 汚染は発生しない
+- タグはオーケストレーターメモリにのみ存在し SAI への書き込みがないため、`task_failed` による部分的な [ASIC](../../reference/glossary.md#term-asic) 汚染は発生しない
 - `task_need_retry` エントリはキューに残留し上限なく自動再試行される
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-failure.md`
@@ -256,7 +256,7 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 | 項目 | 管理方法 |
 |------|---------|
 | `ip_version` 許容値 | protobuf enum `IpVersion` (proto 定義) |
-| `prefix_list` サイズ上限 | 実装上制限なし（SAI / ASIC 依存） |
+| `prefix_list` サイズ上限 | 実装上制限なし（SAI / [ASIC](../../reference/glossary.md#term-asic) 依存） |
 | タグ名フォーマット | 任意文字列（制限なし） |
 | refcount (`m_groups`) 上限 | 実装上制限なし |
 
@@ -350,7 +350,7 @@ DashAclOrch::doTask(ConsumerBase&)
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
-**[DPU](../../reference/glossary.md#term-dpu) ([SmartSwitch](../../reference/glossary.md#term-smartswitch)) 専用**: `DashAclOrch` および内包する `DashTagMgr` は `gMySwitchType == "dpu"` のときのみ `DpuOrchDaemon` 内で生成される (`main.cpp:990`, `orchdaemon.cpp:1378`)。通常スイッチ・VoQ シャーシ・Fabric モードでは本テーブルは存在しない。`DashTagMgr` は SAI API を一切呼び出さずタグを orchagent 内メモリのみに保持するため、ASIC 種別による挙動差異はない。
+**[DPU](../../reference/glossary.md#term-dpu) ([SmartSwitch](../../reference/glossary.md#term-smartswitch)) 専用**: `DashAclOrch` および内包する `DashTagMgr` は `gMySwitchType == "dpu"` のときのみ `DpuOrchDaemon` 内で生成される (`main.cpp:990`, `orchdaemon.cpp:1378`)。通常スイッチ・VoQ シャーシ・Fabric モードでは本テーブルは存在しない。`DashTagMgr` は SAI API を一切呼び出さずタグを orchagent 内メモリのみに保持するため、[ASIC](../../reference/glossary.md#term-asic) 種別による挙動差異はない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
@@ -406,4 +406,4 @@ DashAclOrch::doTask(ConsumerBase&)
 
 [^1]: `sonic-swss/orchagent/dash/dashtagmgr.cpp` — `from_pb`, `DashTagMgr::create/update/remove/attach/detach` 実装。<https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/dash/dashtagmgr.cpp>
 
-<!-- glossary-links-injected: e53a813bad38 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

@@ -97,7 +97,7 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 
 **[HLD](../../reference/glossary.md#term-hld) との乖離**: [HLD](../../reference/glossary.md#term-hld) (doc/ipv6/ipv6_link_local.md) は APP_DB にも `"disable"` が書かれると示唆するが、実装ではフィールドが空の場合は APP_DB への書き込みをスキップする。
 
-**[orchagent](../../reference/glossary.md#term-orchagent) (dead consumer)**: IntfsOrch は APP_DB の `ipv6_use_link_local_only` フィールドを受け取っても [SAI](../../reference/glossary.md#term-sai) に転送しない。IPv6 link-local 自体は Linux カーネルの IPv6 スタックと intfmgr の sysctl 制御で実現するため、[SAI](../../reference/glossary.md#term-sai) 側の [RIF](../../reference/glossary.md#term-rif) 属性変更は不要。
+**[orchagent](../../reference/glossary.md#term-orchagent) (dead consumer)**: [IntfsOrch](../../reference/glossary.md#term-intfsorch) は APP_DB の `ipv6_use_link_local_only` フィールドを受け取っても [SAI](../../reference/glossary.md#term-sai) に転送しない。IPv6 link-local 自体は Linux カーネルの IPv6 スタックと intfmgr の sysctl 制御で実現するため、[SAI](../../reference/glossary.md#term-sai) 側の [RIF](../../reference/glossary.md#term-rif) 属性変更は不要。
 
 **neighsync の silent drop パターン**:
 - `Ethernet` / `PortChannel` / `Vlan` で始まらないインターフェース名 (例: `eth0`, `lo`, `docker0`) → `isLinkLocalEnabled()` が即 `false` 返却
@@ -153,7 +153,7 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 | APP_DB | `NEIGH_TABLE` | `neighsyncd/neighsync.cpp:227` | link-local neigh 登録時のフィルタキー |
 | daemon | `intfmgrd` | `cfgmgr/intfmgr.cpp` | CONFIG_DB → APP_DB 転送と `m_ipv6LinkLocalModeList` 管理 |
 | daemon | `neighsyncd` | `neighsync.cpp:193-239` | **CONFIG_DB を直接参照** (APP_DB 経由ではない) |
-| daemon | `orchagent` IntfsOrch | `orchagent/intfsorch.cpp` | APP_DB を購読するが本フィールドを [SAI](../../reference/glossary.md#term-sai) 転送しない (dead consumer) |
+| daemon | `orchagent` [IntfsOrch](../../reference/glossary.md#term-intfsorch) | `orchagent/intfsorch.cpp` | APP_DB を購読するが本フィールドを [SAI](../../reference/glossary.md#term-sai) 転送しない (dead consumer) |
 | CLI (config) | `config interface ipv6 enable/disable use-link-local-only` | `config/main.py:L9462-L9484` | 個別 IF への書込み、テーブルは `get_interface_table_name()` で判別 |
 | CLI (config) | `config ipv6 enable/disable link-local` | `config/main.py` (`enable_ipv6_link_local_all` 系) | 全 IF 一括、[VLAN](../../reference/glossary.md#term-vlan)/[PortChannel](../../reference/glossary.md#term-portchannel) member は除外 |
 | CLI (show) | `show ipv6 link-local-mode` | `show/main.py:1611-1630` | `PORT`/`PORTCHANNEL`/`VLAN` と INTERFACE 属性ロウの join 表示 |
@@ -164,7 +164,7 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 ### 整合性メモ
 
 - **三テーブル共有**: `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` はフィールド名・型・semantics が完全に同一で、`intfmgr.cpp` の `doIntfGeneralTask()` が共通 parser で処理する。CLI レイヤだけが `get_interface_table_name(interface_name)` で書き分ける
-- **APP_DB は dead path**: `intfmgr` は `INTF_TABLE` に `ipv6_use_link_local_only` を転送するが、[orchagent](../../reference/glossary.md#term-orchagent) IntfsOrch は受信しても SAI に渡さない。実効的な依存先は `neighsyncd` であり、しかも `neighsyncd` は CONFIG_DB を直接参照するため APP_DB の値変更は実質的に観測者がいない
+- **APP_DB は dead path**: `intfmgr` は `INTF_TABLE` に `ipv6_use_link_local_only` を転送するが、[orchagent](../../reference/glossary.md#term-orchagent) [IntfsOrch](../../reference/glossary.md#term-intfsorch) は受信しても SAI に渡さない。実効的な依存先は `neighsyncd` であり、しかも `neighsyncd` は CONFIG_DB を直接参照するため APP_DB の値変更は実質的に観測者がいない
 - **`show` 母集合の非対称**: `show ipv6 link-local-mode` は PORT / PORTCHANNEL / VLAN を全件走査し、INTERFACE 属性ロウが欠如するポートを `Disabled` 表示する。属性ロウ削除と `"disable"` 設定はランタイム上区別されない (Phase A の "disable は属性ロウ自体を削除する" 挙動と整合)
 - **YANG default と実装の役割分担**: YANG `default disable` はスキーマ宣言上の値で、`intfmgr` のフィールド欠如時 fallback (APP_DB に書かない) とは別レイヤ。YANG validation を通った絶対無設定状態でも `intfmgrd` は何もしない
 
@@ -389,17 +389,17 @@ flowchart TD
 
 ### intfmgrd は per-asic スコープではない (host 単一インスタンス)
 
-`intfmgrd.cpp` はシングルインスタンスで起動し、複数 ASIC 構成でも追加インスタンスを持たない。`INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` テーブルは host namespace の CONFIG_DB のみに存在し、`asic0..N` の [Redis](../../reference/glossary.md#term-redis) には複製されない。
+`intfmgrd.cpp` はシングルインスタンスで起動し、複数 [ASIC](../../reference/glossary.md#term-asic) 構成でも追加インスタンスを持たない。`INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` テーブルは host namespace の CONFIG_DB のみに存在し、`asic0..N` の [Redis](../../reference/glossary.md#term-redis) には複製されない。
 
 | 構成 | 挙動 |
 |------|------|
 | single-asic | intfmgrd が 1 インスタンス、host CONFIG_DB を購読 |
 | multi-asic ([VOQ](../../reference/glossary.md#term-voq) chassis 含む) | intfmgrd は host 側で 1 インスタンスのみ起動。各 asic namespace の CONFIG_DB には `INTERFACE` テーブルが存在せず、per-asic intfmgrd インスタンスも起動しない |
-| Virtual Switch (VS) | 挙動は real ASIC と同一。sysctl は実行されるが Linux カーネルの動作に依存 |
+| Virtual Switch (VS) | 挙動は real [ASIC](../../reference/glossary.md#term-asic) と同一。sysctl は実行されるが Linux カーネルの動作に依存 |
 
 ### Linux sysctl 依存（カーネルドライバ不問）
 
-`enableIpv6Flag()` が実行する `net.ipv6.conf.<alias>.disable_ipv6 = 0` は Linux カーネルの IPv6 スタック制御であり、ASIC / SAI ドライバとは独立している。SAI API の呼び出しは一切なく、[ASIC_DB](../../reference/glossary.md#term-asic_db) への書込も発生しない（dead consumer の確認は Phase G 済み）。このため、Broadcom / Mellanox / Barefoot / Cisco など ASIC 種別を問わず動作は一定である。
+`enableIpv6Flag()` が実行する `net.ipv6.conf.<alias>.disable_ipv6 = 0` は Linux カーネルの IPv6 スタック制御であり、[ASIC](../../reference/glossary.md#term-asic) / SAI ドライバとは独立している。SAI API の呼び出しは一切なく、[ASIC_DB](../../reference/glossary.md#term-asic_db) への書込も発生しない（dead consumer の確認は Phase G 済み）。このため、Broadcom / Mellanox / Barefoot / Cisco など ASIC 種別を問わず動作は一定である。
 
 ### neighsyncd の動作もプラットフォーム不問
 
@@ -466,4 +466,4 @@ show ipv6 link-local-mode
 - [CONFIG_DB index](index.md)
 - [INTERFACE テーブル](interface.md)
 
-<!-- glossary-links-injected: d1fd50454c2e -->
+<!-- glossary-links-injected: f70a845c813c -->

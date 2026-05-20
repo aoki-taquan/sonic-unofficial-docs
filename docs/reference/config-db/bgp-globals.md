@@ -110,7 +110,7 @@ BGP_GLOBALS|<vrf_name>
 
 ## 購読者
 
-- `bgpcfgd` / `frr-mgmt-framework`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → vtysh / [FRR](../../reference/glossary.md#term-frr) config に変換
+- `bgpcfgd` / `frr-mgmt-framework`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → [vtysh](../../reference/glossary.md#term-vtysh) / [FRR](../../reference/glossary.md#term-frr) config に変換
 - `bgpd` ([FRR](../../reference/glossary.md#term-frr))
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -211,7 +211,7 @@ vtysh -c 'show running-config bgpd'
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由)
+なし (FRR [vtysh](../../reference/glossary.md#term-vtysh) 経由)
 
 ### 段階 3 — APPL→SAI
 
@@ -325,7 +325,7 @@ YANG `sonic-bgp-global.yang` の `BGP_GLOBALS_LIST` 本体には `default` 文�
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-BGP_GLOBALS は `frrcfgd`（`BGPConfigDaemon`）が CONFIG_DB を購読して FRR vtysh に反映する。以下の書き込み順序・制約を守ること。
+BGP_GLOBALS は `frrcfgd`（`BGPConfigDaemon`）が CONFIG_DB を購読して FRR [vtysh](../../reference/glossary.md#term-vtysh) に反映する。以下の書き込み順序・制約を守ること。
 
 ### 依存関係サマリ
 
@@ -420,7 +420,7 @@ TSA は `BGP_DEVICE_GLOBAL` テーブルを経由して BGP peer-group の route
 
 ### multi-asic 構成
 
-multi-asic 環境では各 ASIC コンテナ（`bgp0`, `bgp1` ...）が独立して `bgpcfgd` を起動し、対応 ASIC namespace の CONFIG_DB に接続する。`bgpcfgd` 内に `is_multi_asic()` / `is_multi_npu()` の呼び出しは存在しない（全ディレクトリ grep 0 ヒット）。multi-asic 対応はコンテナ多重起動で実現され、BGP_GLOBALS 処理ロジック自体は単一 CONFIG_DB 前提のまま変わらない。
+multi-asic 環境では各 [ASIC](../../reference/glossary.md#term-asic) コンテナ（`bgp0`, `bgp1` ...）が独立して `bgpcfgd` を起動し、対応 [ASIC](../../reference/glossary.md#term-asic) namespace の CONFIG_DB に接続する。`bgpcfgd` 内に `is_multi_asic()` / `is_multi_npu()` の呼び出しは存在しない（全ディレクトリ grep 0 ヒット）。multi-asic 対応はコンテナ多重起動で実現され、BGP_GLOBALS 処理ロジック自体は単一 CONFIG_DB 前提のまま変わらない。
 
 ### VOQ chassis: BGP_VOQ_CHASSIS_NEIGHBOR
 
@@ -464,7 +464,7 @@ multi-asic 環境では各 ASIC コンテナ（`bgp0`, `bgp1` ...）が独立し
 
 ### FRR 組み込み既定値 (CONFIG_DB 未設定時に FRR が使用する値)
 
-SONiC は `BGP_GLOBALS` フィールドが未設定の場合、FRR 自身のハードコード値をそのまま使用する。
+[SONiC](../../reference/glossary.md#term-sonic) は `BGP_GLOBALS` フィールドが未設定の場合、FRR 自身のハードコード値をそのまま使用する。
 
 | タイマー/パラメータ | FRR 定数名 | standard モード値 | datacenter モード値 | evidence |
 |-------------------|-----------|-----------------|-------------------|---------|
@@ -478,7 +478,7 @@ SONiC は `BGP_GLOBALS` フィールドが未設定の場合、FRR 自身のハ�
 | subgroup pkt queue max | `BGP_DEFAULT_SUBGROUP_PKT_QUEUE_MAX` | **40** | **40** | `sonic-frr/bgpd/bgpd.h:1414` |
 | dynamic neighbors limit | `BGP_DYNAMIC_NEIGHBORS_LIMIT_DEFAULT` | **100** | **100** | `sonic-frr/bgpd/bgpd.h:1431` |
 
-> **注記**: standard / datacenter モードの切り替えは FRR ビルド時の `--enable-datacenter` フラグで決定される（`sonic-frr/defaults.h`）。SONiC の debian build rules に明示記載なし。keepalive/holdtime を明示設定しない場合、実際の動作値はビルド設定に依存する。
+> **注記**: standard / datacenter モードの切り替えは FRR ビルド時の `--enable-datacenter` フラグで決定される（`sonic-frr/defaults.h`）。[SONiC](../../reference/glossary.md#term-sonic) の debian build rules に明示記載なし。keepalive/holdtime を明示設定しない場合、実際の動作値はビルド設定に依存する。
 
 ### router-id 自動選択
 
@@ -619,4 +619,4 @@ DEL (`data is None`) では `del_table=True` が設定され `no router bgp <asn
 
 <!-- /failure -->
 
-<!-- glossary-links-injected: e5a385690671 -->
+<!-- glossary-links-injected: f2f08ee123f7 -->

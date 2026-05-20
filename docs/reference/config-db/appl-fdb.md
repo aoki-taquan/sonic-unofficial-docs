@@ -136,7 +136,7 @@ FDB_TABLE:<VlanName>:<MAC>
 
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
-| `remote_vtep` | string (IP) | `""` | リモート VTEP の IP アドレス |
+| `remote_vtep` | string (IP) | `""` | リモート [VTEP](../../reference/glossary.md#term-vtep) の IP アドレス |
 | `esi` | string | `""` | Ethernet Segment Identifier ([EVPN](../../reference/glossary.md#term-evpn)) |
 | `vni` | uint32 | `0` | [VXLAN](../../reference/glossary.md#term-vxlan) Network Identifier |
 
@@ -192,9 +192,9 @@ flowchart LR
 
 | 先行条件 | 理由 | 違反時の挙動 |
 |---|---|---|
-| PortsOrch `allPortsReady()` | `doTask()` 冒頭の全体ガード | 全 PORT の SAI 作成完了まで FDB_TABLE のイベントは一切処理されず `m_toSync` に滞留（`fdborch.cpp:711-714`） |
-| `VLAN|<name>` (= PortsOrch に `Vlan<id>` 登録済み) | `doTask()` で `m_portsOrch->getPort(keys[0], vlan)` により [VLAN](../../reference/glossary.md#term-vlan) OID を解決 | SET は `it++` で次周回再試行（**自動ポーリング**）、DEL は `deleteFdbEntryFromSavedFDB()` だけ実行して erase（`fdborch.cpp:739-761`） |
-| `PORT|<alias>` の bridge_port 作成完了 | `addFdbEntry()` が `port.m_bridge_port_id != SAI_NULL_OBJECT_ID` を要求 | `saved_fdb_entries[port_name]` に push して保留。PortsOrch observer 経由で replay（`fdborch.cpp:1297-1304`） |
+| [PortsOrch](../../reference/glossary.md#term-portsorch) `allPortsReady()` | `doTask()` 冒頭の全体ガード | 全 PORT の SAI 作成完了まで FDB_TABLE のイベントは一切処理されず `m_toSync` に滞留（`fdborch.cpp:711-714`） |
+| `VLAN|<name>` (= [PortsOrch](../../reference/glossary.md#term-portsorch) に `Vlan<id>` 登録済み) | `doTask()` で `m_portsOrch->getPort(keys[0], vlan)` により [VLAN](../../reference/glossary.md#term-vlan) OID を解決 | SET は `it++` で次周回再試行（**自動ポーリング**）、DEL は `deleteFdbEntryFromSavedFDB()` だけ実行して erase（`fdborch.cpp:739-761`） |
+| `PORT|<alias>` の bridge_port 作成完了 | `addFdbEntry()` が `port.m_bridge_port_id != SAI_NULL_OBJECT_ID` を要求 | `saved_fdb_entries[port_name]` に push して保留。[PortsOrch](../../reference/glossary.md#term-portsorch) observer 経由で replay（`fdborch.cpp:1297-1304`） |
 | `VLAN_MEMBER|<vlan>|<port>` | `addFdbEntry()` が `m_portsOrch->isVlanMember()` を要求 | 同上 `saved_fdb_entries` に保留。`updateVlanMember(add=true)` で **自動 replay**（`fdborch.cpp:1240-1275, 1312-1319`） |
 | VxlanTunnelOrch / EvpnNvoOrch の tunnel 作成 (`APP_VXLAN_FDB_TABLE` 経路のみ) | `getTunnelPortName(remote_ip)` / `getEVPNVtep()` の解決を要求 | **再試行されず `m_toSync.erase` で破棄**。tunnel を先に作る運用が必須（`fdborch.cpp:832-856`） |
 
@@ -215,7 +215,7 @@ SET APPL_DB FDB_TABLE:Vlan100:00:11:22:33:44:55  port=Ethernet0  type=static
 
 - **doTask 周回再試行**: [VLAN](../../reference/glossary.md#term-vlan) 未解決の SET は `m_toSync` に残し続け、`Orch::doTask()` の次回スケジュールで再評価される。[VLAN](../../reference/glossary.md#term-vlan) 作成完了まで無限ポーリング。
 - **saved_fdb_entries による保留**: PORT 未解決 / VLAN メンバー未満足の SET は `saved_fdb_entries[port_name]` に push して**呼び出し側からは成功扱い** (`return true`) で `m_toSync` から消える。実際の SAI 作成は PortsOrch からの `updateVlanMember()` 通知で `addFdbEntry()` を再実行することで完了する (`fdborch.cpp:39` `m_portsOrch->attach(this)` で observer 登録)。
-- **[VXLAN](../../reference/glossary.md#term-vxlan) 経路は救済なし**: `remote_ip` 未指定 / VTEP 未作成のときは `m_toSync.erase` で**破棄**される。再投入が必要。
+- **[VXLAN](../../reference/glossary.md#term-vxlan) 経路は救済なし**: `remote_ip` 未指定 / [VTEP](../../reference/glossary.md#term-vtep) 未作成のときは `m_toSync.erase` で**破棄**される。再投入が必要。
 
 ### SET 後 DEL の順序依存
 
@@ -340,11 +340,11 @@ FdbOrch は SAI capability を**事前 query せず**、以下の attr / API を
 
 FDB aging time そのものは **SwitchOrch** が `SAI_SWITCH_ATTR_FDB_AGING_TIME` で一元管理する設計で、FdbOrch は aging 通知 (`SAI_FDB_EVENT_AGED`) を**受信する側**として動作する (`fdborch.cpp:421-545`)。
 
-`dynamic_local`（MCLAG remote を ASIC 上ローカル扱いに格上げした状態）は意図的に `SAI_FDB_ENTRY_TYPE_DYNAMIC` で登録され、コメントに `aging enabled` と明記されている (`fdborch.cpp:1552-1556`)。これにより、ピア由来 MAC でも一定時間トラフィックが無ければ ASIC 側 aging により消える。
+`dynamic_local`（MCLAG remote を [ASIC](../../reference/glossary.md#term-asic) 上ローカル扱いに格上げした状態）は意図的に `SAI_FDB_ENTRY_TYPE_DYNAMIC` で登録され、コメントに `aging enabled` と明記されている (`fdborch.cpp:1552-1556`)。これにより、ピア由来 MAC でも一定時間トラフィックが無ければ [ASIC](../../reference/glossary.md#term-asic) 側 aging により消える。
 
 **プラットフォーム差の注意**:
 
-- ASIC によっては aging 通知が**個別 MAC 単位で発行されず**、バルク flush 経由でのみ通知される実装がある。
+- [ASIC](../../reference/glossary.md#term-asic) によっては aging 通知が**個別 MAC 単位で発行されず**、バルク flush 経由でのみ通知される実装がある。
 - `dynamic_local` の aging 有効化前提が成立しない vendor SAI では、MCLAG remote MAC が削除されず残る可能性がある。
 
 いずれも fdborch.cpp 側に capability 分岐は無く、ASIC 実装依存。
@@ -416,7 +416,7 @@ FDB aging time そのものは **SwitchOrch** が `SAI_SWITCH_ATTR_FDB_AGING_TIM
 - **参照先**: CONFIG_DB `VXLAN_TUNNEL` / `VXLAN_EVPN_NVO`（`VxlanTunnelOrch` / `EvpnNvoOrch` 管理）
 - **方向**: 読み取り (`getTunnelPortName(remote_ip)` / `getEVPNVtep()`)
 - **参照元**: `fdborch.cpp:834-857`, `fdborch.cpp:1467` / `1481`（`SAI_FDB_ENTRY_ATTR_ENDPOINT_IP`）
-- **意味**: write 元テーブルが `VXLAN_FDB_TABLE` のとき (`origin == FDB_ORIGIN_VXLAN_ADVERTIZED`)、`remote_ip` フィールドからリモート VTEP IP を取得して `VxlanTunnelOrch::getTunnelPortName()` でトンネル port 名に解決。`port` フィールドはこの解決値で上書きされる。DIP-tunnel 非対応モードでは `EvpnNvoOrch::getEVPNVtep()` で SIP tunnel を使用。VTEP / tunnel 未作成だと該当 FDB は `m_toSync` から erase されて無視される。
+- **意味**: write 元テーブルが `VXLAN_FDB_TABLE` のとき (`origin == FDB_ORIGIN_VXLAN_ADVERTIZED`)、`remote_ip` フィールドからリモート [VTEP](../../reference/glossary.md#term-vtep) IP を取得して `VxlanTunnelOrch::getTunnelPortName()` でトンネル port 名に解決。`port` フィールドはこの解決値で上書きされる。DIP-tunnel 非対応モードでは `EvpnNvoOrch::getEVPNVtep()` で SIP tunnel を使用。VTEP / tunnel 未作成だと該当 FDB は `m_toSync` から erase されて無視される。
 
 ### 5. STATE_DB FDB_TABLE（ローカル MAC の書き戻し）
 
@@ -702,4 +702,4 @@ flowchart LR
 
 [^1]: `sonic-swss-common/common/schema.h:52` — `#define APP_FDB_TABLE_NAME "FDB_TABLE"`. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
 
-<!-- glossary-links-injected: dcc162a12574 -->
+<!-- glossary-links-injected: 886e40ae98b9 -->

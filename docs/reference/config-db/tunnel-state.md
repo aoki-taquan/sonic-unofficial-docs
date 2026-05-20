@@ -265,7 +265,7 @@ STATE_DB の TUNNEL 系テーブルは他 Orch からの**直接読み取り対�
 | `RouteOrch` (routeorch.cpp:2714, 3222, 3245) | SubnetDecap ルート処理 | `getSubnetDecapConfig()` で decap src_ip・有効フラグを取得 |
 | `VnetOrch` (vnetorch.cpp:1565, 1583) | [VNET](../../reference/glossary.md#term-vnet) ルートフィルタ | `getSubnetDecapConfig()` で decap 有効フラグを取得 |
 
-MuxOrch は `TunnelDecapOrch*` を直接保持しており、`TUNNEL_DECAP_TABLE` の STATE_DB エントリが存在しない（トンネル SAI 未作成）状態での `MUX_CABLE` SET は不整合を引き起こす[^6]。
+[MuxOrch](../../reference/glossary.md#term-muxorch) は `TunnelDecapOrch*` を直接保持しており、`TUNNEL_DECAP_TABLE` の STATE_DB エントリが存在しない（トンネル SAI 未作成）状態での `MUX_CABLE` SET は不整合を引き起こす[^6]。
 
 ### VXLAN_TUNNEL_TABLE — 書き込み契機 Orch
 
@@ -328,7 +328,7 @@ MuxOrch は `TunnelDecapOrch*` を直接保持しており、`TUNNEL_DECAP_TABLE
 |---|---|---|---|---|
 | `gPortsOrch->allPortsReady()` が false（全ポート未 ready） | `TunnelDecapOrch::doTask()` | 全タスクスキップ → STATE_DB 書き込みなし（次サイクルで再試行） | （ログなし） | `tunneldecaporch.cpp:55-58` |
 | SAI `create_tunnel` 失敗（vxlanorch） | `VxlanTunnel::createTunnel()` | 例外キャッチ → `addRemoveStateTableEntry()` 未呼び出し → STATE_DB 書き込みなし | SWSS_LOG_ERROR | `vxlanorch.cpp:848` |
-| P2P トンネルで `dst_ip` が 0 (VTEP 用) の場合 | `VxlanTunnel` コンストラクタ | `addRemoveStateTableEntry()` 未呼び出し → `VXLAN_TUNNEL_TABLE` に書き込まれない | （ログなし） | `vxlanorch.cpp:529-532` |
+| P2P トンネルで `dst_ip` が 0 ([VTEP](../../reference/glossary.md#term-vtep) 用) の場合 | `VxlanTunnel` コンストラクタ | `addRemoveStateTableEntry()` 未呼び出し → `VXLAN_TUNNEL_TABLE` に書き込まれない | （ログなし） | `vxlanorch.cpp:529-532` |
 | SAI `remove_tunnel` 失敗（vxlanorch） | `VxlanTunnel::deleteTunnel()` | `~VxlanTunnel()` が途中で例外キャッチ → `del()` が呼ばれずエントリ残存 | SWSS_LOG_ERROR | `vxlanorch.cpp:874` |
 
 ### VXLAN_TABLE — 失敗経路
@@ -462,7 +462,7 @@ SAI トンネル作成成功時に `addTunnelToFlexCounter()` が呼ばれ、`m_
 
 #### PortsOrch への登録順序
 
-`addTunnelUser()` 内では `gPortsOrch->addTunnel()` → `addBridgePort()` の後に `addRemoveStateTableEntry(add=true)` が呼ばれる。STATE_DB への書き込みは PortsOrch 登録が完了した後に確定する[^11]。
+`addTunnelUser()` 内では `gPortsOrch->addTunnel()` → `addBridgePort()` の後に `addRemoveStateTableEntry(add=true)` が呼ばれる。STATE_DB への書き込みは [PortsOrch](../../reference/glossary.md#term-portsorch) 登録が完了した後に確定する[^11]。
 
 #### link ステータス変化による上書き
 
@@ -551,7 +551,7 @@ if (status != SAI_STATUS_SUCCESS) {
 }
 ```
 
-| ASIC 対応状況 | `is_dip_tunnel_supported` | VXLAN_TUNNEL_TABLE への影響 |
+| [ASIC](../../reference/glossary.md#term-asic) 対応状況 | `is_dip_tunnel_supported` | VXLAN_TUNNEL_TABLE への影響 |
 |-------------|--------------------------|--------------------------|
 | `SAI_TUNNEL_PEER_MODE_P2P` 対応 | `true` | EVPN 由来 DIP トンネルが STATE_DB に書かれる |
 | `SAI_TUNNEL_PEER_MODE_P2P` 非対応 | `false` | `createDynamicDIPTunnel()` が呼ばれず、DIP エントリが STATE_DB に書かれない |
@@ -559,7 +559,7 @@ if (status != SAI_STATUS_SUCCESS) {
 
 ### TUNNEL_DECAP_TABLE — overlay RIF MTU ハードコード (9100 バイト)
 
-decap トンネル作成時に overlay Router Interface の MTU を `9100` にハードコードして SAI に渡す[^17]。ASIC の MTU 上限がこれより低い環境では `sai_router_intfs_api->create_router_interface()` が失敗し、STATE_DB `TUNNEL_DECAP_TABLE` への書き込みが行われない。
+decap トンネル作成時に overlay Router Interface の MTU を `9100` にハードコードして SAI に渡す[^17]。[ASIC](../../reference/glossary.md#term-asic) の MTU 上限がこれより低い環境では `sai_router_intfs_api->create_router_interface()` が失敗し、STATE_DB `TUNNEL_DECAP_TABLE` への書き込みが行われない。
 
 ```cpp
 // tunneldecaporch.cpp:14 + L749-750
@@ -578,7 +578,7 @@ overlay_intf_attr.value.u32 = OVERLAY_RIF_DEFAULT_MTU;
 | `ecn_mode` | `SAI_TUNNEL_ATTR_DECAP_ECN_MODE` | SWSS_LOG_WARN でスキップ。STATE_DB の値はそのまま残るが SAI は変更されない (`tunneldecaporch.cpp:179`) |
 | `encap_ecn_mode` | `SAI_TUNNEL_ATTR_ENCAP_ECN_MODE` | SWSS_LOG_NOTICE でスキップ。同様 (`tunneldecaporch.cpp:195`) |
 
-SAI 仕様上の create-only 属性であるため ASIC ベンダーによらず共通の制約。
+SAI 仕様上の create-only 属性であるため [ASIC](../../reference/glossary.md#term-asic) ベンダーによらず共通の制約。
 
 ### VXLAN_TUNNEL_TABLE — FlexCounter 登録方式の差 (Traditional vs Non-Traditional)
 
@@ -593,6 +593,9 @@ SAI 仕様上の create-only 属性であるため ASIC ベンダーによらず
 <!-- /platform -->
 
 ## 引用元
+
+<!-- footnote anchor seeds -->
+出典: [^1]
 
 [^1]: schema.h 定数定義: <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L488-L489>
 
@@ -630,4 +633,4 @@ SAI 仕様上の create-only 属性であるため ASIC ベンダーによらず
 
 [^18]: `gTraditionalFlexCounter` による VIDTORID 使用分岐: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1297-L1318>
 
-<!-- glossary-links-injected: 79673da1aae4 -->
+<!-- glossary-links-injected: bc95bed5b5dc -->

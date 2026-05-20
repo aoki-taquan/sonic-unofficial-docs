@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-SONiC の Event and Alarm Framework は `eventd` デーモンが中心となってイベント収集・配信を行う[^1]。基本トランスポート設定 (ZMQ エンドポイント等) は [`event-publisher.md`](event-publisher.md) を参照。本ページは**拡張監視設定**として:
+[SONiC](../../reference/glossary.md#term-sonic) の Event and Alarm Framework は `eventd` デーモンが中心となってイベント収集・配信を行う[^1]。基本トランスポート設定 (ZMQ エンドポイント等) は [`event-publisher.md`](event-publisher.md) を参照。本ページは**拡張監視設定**として:
 
 1. **EVENT テーブル保持上限** (`/etc/eventd.json`) — イベント履歴の最大レコード数と保持日数
 2. **イベントプロファイル** (`/etc/evprofile/default.json`) — イベント種別ごとの severity と有効/無効フラグ
@@ -521,11 +521,11 @@ systemctl restart eventd
 
 ### SAI・プラットフォーム依存なし（全 ASIC 共通）
 
-`eventd` は [SAI](../../reference/glossary.md#term-sai) API を呼び出さず、`getenv("platform")` 参照もなく、`#ifdef` によるプラットフォーム分岐も存在しない。ZMQ ブローカーとして Redis DB（EVENT_DB / COUNTERS_DB）への書き込みのみを行う純粋なユーザー空間デーモンであるため、**ASIC ベンダー・ハードウェア世代・スイッチチップの種類によって挙動は変わらない**[^4]。
+`eventd` は [SAI](../../reference/glossary.md#term-sai) API を呼び出さず、`getenv("platform")` 参照もなく、`#ifdef` によるプラットフォーム分岐も存在しない。ZMQ ブローカーとして Redis DB（EVENT_DB / COUNTERS_DB）への書き込みのみを行う純粋なユーザー空間デーモンであるため、**[ASIC](../../reference/glossary.md#term-asic) ベンダー・ハードウェア世代・スイッチチップの種類によって挙動は変わらない**[^4]。
 
 | プラットフォーム要素 | eventd の依存 |
 |---------------------|--------------|
-| SAI / ASIC ドライバ | なし |
+| SAI / [ASIC](../../reference/glossary.md#term-asic) ドライバ | なし |
 | `platform` 環境変数 | 参照しない |
 | `switch_type` (voq/chassis) | 参照しない |
 | CPU アーキテクチャ (x86/ARM) | 変わらない（ZMQ は CPU 非依存） |
@@ -542,7 +542,7 @@ VM テストベッド（`sonic-vs`）でも `eventd` は同一バイナリで動
 
 ### マルチ ASIC 構成
 
-マルチ ASIC 環境では `eventd` インスタンスが per-switch-ASIC ではなく **グローバルに 1 インスタンス**のみ起動する（`docker-eventd` は ASIC 数に依存しない単一コンテナ）。すべての ASIC のイベントは同一の ZMQ ブローカー（`tcp://127.0.0.1:5570` 等）に集約される。
+マルチ [ASIC](../../reference/glossary.md#term-asic) 環境では `eventd` インスタンスが per-switch-ASIC ではなく **グローバルに 1 インスタンス**のみ起動する（`docker-eventd` は ASIC 数に依存しない単一コンテナ）。すべての ASIC のイベントは同一の ZMQ ブローカー（`tcp://127.0.0.1:5570` 等）に集約される。
 
 `COUNTERS_DB` インスタンスもシングル（`DBConnector("COUNTERS_DB", 0)`）であり、マルチ ASIC 用の namespace 分割はない（`eventd.cpp:178`）。
 
@@ -572,4 +572,4 @@ VM テストベッド（`sonic-vs`）でも `eventd` は同一バイナリで動
 - [SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブル](suppress-asic-sdk-health-event.md)
 - [CONFIG_DB index](index.md)
 
-<!-- glossary-links-injected: cd4aea9a0354 -->
+<!-- glossary-links-injected: 865a18402f05 -->

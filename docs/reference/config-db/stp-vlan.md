@@ -302,7 +302,7 @@ if (l2ProtoEnabled == L2_NONE || !isVlanStateOk(key))
 ### 3. isVlanStateOk — STATE_VLAN 存在確認が先行必須
 
 `isVlanStateOk(key)` は `STATE_DB:STATE_VLAN_TABLE` に対象 VLAN のエントリが存在するか確認する (`stpmgr.cpp:1276-1290`)。
-`vlanmgrd` が VLAN を ASIC に適用してから `STATE_VLAN_TABLE|Vlan<vid>` を書き込む。
+`vlanmgrd` が VLAN を [ASIC](../../reference/glossary.md#term-asic) に適用してから `STATE_VLAN_TABLE|Vlan<vid>` を書き込む。
 
 !!! warning "VLAN が STATE_VLAN_TABLE に登録される前に STP_VLAN を書くと設定が適用されない"
     `config spanning-tree enable pvst` を実行した直後など、`vlanmgrd` が STATE_VLAN を未書込の
@@ -397,7 +397,7 @@ if ((l2ProtoEnabled == L2_NONE) || (m_vlanInstMap[vlan_id] == INVALID_INSTANCE))
 
 - **参照先**: [STATE_DB](../../reference/glossary.md#term-state_db) `STATE_VLAN_TABLE|Vlan<vid>` ([vlanmgrd](../../reference/glossary.md#term-vlanmgrd) が書き込む)
 - **方向**: 読み取り（`stpmgr.cpp:1276-1290`、`isVlanStateOk()`）
-- **意味**: `doStpVlanTask()` SET ハンドラ内 (`stpmgr.cpp:210`) で `isVlanStateOk(key)` を確認する。対象 VLAN が STATE_VLAN_TABLE に存在しない場合 SET はイテレータを進めて持ち越し（silent skip）。`vlanmgrd` が ASIC 適用後に STATE_VLAN_TABLE を書き込むまで繰り返される。
+- **意味**: `doStpVlanTask()` SET ハンドラ内 (`stpmgr.cpp:210`) で `isVlanStateOk(key)` を確認する。対象 VLAN が STATE_VLAN_TABLE に存在しない場合 SET はイテレータを進めて持ち越し（silent skip）。`vlanmgrd` が [ASIC](../../reference/glossary.md#term-asic) 適用後に STATE_VLAN_TABLE を書き込むまで繰り返される。
 
 !!! warning "vlanmgrd との順序依存"
     `config spanning-tree enable pvst` 直後など、対象 VLAN の `STATE_VLAN_TABLE` エントリが未書込の状態で `STP_VLAN` SET が到達しても処理されない。エラーログは出力されず、次の SELECT ループで自動リトライされる。
@@ -432,7 +432,7 @@ if ((l2ProtoEnabled == L2_NONE) || (m_vlanInstMap[vlan_id] == INVALID_INSTANCE))
 
 - **参照先**: Unix Domain Socket `/var/run/stpipc.sock` (stpd が待ち受け)
 - **方向**: 書き込み（`stpmgr.cpp:332`、`sendMsgStpd(STP_VLAN_CONFIG, ...)`）
-- **意味**: `STP_VLAN` SET 処理後に `STP_VLAN_CONFIG` IPC メッセージを stpd に送信する。`STP_VLAN_PORT` は `STP_VLAN_PORT_CONFIG` として送信される。CONFIG_DB から [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への書き込みは行わず、IPC 経由で stpd が直接 ASIC を制御する構成になっている。
+- **意味**: `STP_VLAN` SET 処理後に `STP_VLAN_CONFIG` IPC メッセージを stpd に送信する。`STP_VLAN_PORT` は `STP_VLAN_PORT_CONFIG` として送信される。CONFIG_DB から [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への書き込みは行わず、IPC 経由で stpd が直接 [ASIC](../../reference/glossary.md#term-asic) を制御する構成になっている。
 
 ### 参照関係サマリ
 
@@ -974,6 +974,9 @@ PVST モード有効化時に `stpmgr` は Cisco PVST+ マルチキャストア�
 | `max_stp_instances` 上限 | SAI 照会値 − 1 | N/A | 255 (フォールバック) | N/A |
 | ebtables PVST フィルタ | 有効 | STP 無効化時に削除 | no-op (バイナリ非存在時) | N/A |
 
+<!-- footnote anchor seeds -->
+出典: [^1] [^3]
+
 [^4]: `sonic-swss/orchagent/stporch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp>
 
 <!-- /platform -->
@@ -1007,4 +1010,4 @@ PVST モード有効化時に `stpmgr` は Cisco PVST+ マルチキャストア�
 - [CONFIG_DB: VLAN](vlan.md)
 - [CONFIG_DB: PORT](port.md)
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

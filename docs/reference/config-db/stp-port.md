@@ -524,11 +524,11 @@ CONFIG_DB 以外の永続 DB への書き込みは **発生しない**。
 
 ### 書き込み側の通信構造
 
-`CONFIG_DB` の `STP_PORT` テーブルへの書き込み元は **SONiC CLI (`config/stp.py`)** のみ。`ProducerStateTable` / ZMQ は使用されず、click フレームワーク経由で CONFIG_DB に直接書き込まれる。
+`CONFIG_DB` の `STP_PORT` テーブルへの書き込み元は **[SONiC](../../reference/glossary.md#term-sonic) CLI (`config/stp.py`)** のみ。`ProducerStateTable` / ZMQ は使用されず、click フレームワーク経由で CONFIG_DB に直接書き込まれる。
 
 | テーブル | 書き込み元 | 書き込み方式 |
 |---------|-----------|------------|
-| `STP_PORT` (CONFIG_DB) | SONiC CLI (`config/stp.py`) | CONFIG_DB 直接書き込み |
+| `STP_PORT` (CONFIG_DB) | [SONiC](../../reference/glossary.md#term-sonic) CLI (`config/stp.py`) | CONFIG_DB 直接書き込み |
 
 ### 購読方式: SubscriberStateTable (keyspace PSUBSCRIBE)
 
@@ -594,9 +594,9 @@ CONFIG_DB: CLI が STP_PORT|<interface> を書き込む
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-port-platform.md -->
 
-`STP_PORT` テーブルの処理に ASIC ベンダー固有のコード分岐は存在しない。
+`STP_PORT` テーブルの処理に [ASIC](../../reference/glossary.md#term-asic) ベンダー固有のコード分岐は存在しない。
 stpmgrd は [SAI](../../reference/glossary.md#term-sai) を直接呼ばず、Unix Domain Socket 経由で stpd に IPC を送信する設計であり、
-ASIC 差異は stpd 内部で吸収される。
+[ASIC](../../reference/glossary.md#term-asic) 差異は stpd 内部で吸収される。
 ただし以下 3 点においてプラットフォーム依存の挙動が観測される。
 
 ### 1. STP プロトコルモード (L2_PVSTP vs L2_MSTP)
@@ -648,7 +648,7 @@ if (max_stp_instances == 0)
 
 | プラットフォーム例 | [SAI](../../reference/glossary.md#term-sai) 照会結果 | `max_stp_instances` 実効値 |
 |-------------------|-------------|---------------------------|
-| 多くの Broadcom ASIC | 成功 (255 以上) | SAI 値 - 1 |
+| 多くの Broadcom [ASIC](../../reference/glossary.md#term-asic) | 成功 (255 以上) | SAI 値 - 1 |
 | 一部 Marvell / 低グレード ASIC | 成功 (少ない値) | SAI 値 - 1 |
 | VS (仮想スイッチ) | 失敗 または 0 | `STP_DEFAULT_MAX_INSTANCES` = 255 (フォールバック) |
 
@@ -667,7 +667,7 @@ PVST が有効な環境でのみ `STP_PORT` が stpd に到達するため間接
 
 | 環境 | 挙動 |
 |------|------|
-| 標準 SONiC (物理 ASIC) | ebtables 有効。PVST+ マルチキャストが遮断され STP_PORT 設定が stpd に反映される |
+| 標準 [SONiC](../../reference/glossary.md#term-sonic) (物理 ASIC) | ebtables 有効。PVST+ マルチキャストが遮断され STP_PORT 設定が stpd に反映される |
 | VS (仮想スイッチ) | ebtables 呼び出しは成功するが、仮想環境ではハードウェアフラッディングが発生しないため実効影響なし |
 | ebtables 非存在環境 (コンテナ) | `system()` 失敗。`SWSS_LOG_DEBUG` のみ出力され stpmgrd は継続動作する |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | stpmgrd 通常非起動のため対象外 |
@@ -711,4 +711,4 @@ PVST が有効な環境でのみ `STP_PORT` が stpd に到達するため間接
 - [CONFIG_DB: PORT](port.md)
 - [CONFIG_DB: PORTCHANNEL](portchannel.md)
 
-<!-- glossary-links-injected: e8fdcec29c06 -->
+<!-- glossary-links-injected: 8de83b4fd2a7 -->

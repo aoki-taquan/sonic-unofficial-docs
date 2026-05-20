@@ -110,9 +110,9 @@ PAM テンプレート `common-auth-sonic.j2` が `login` 文字列に完全一�
 | `tacacs+` | TACACS+ サーバ全台 → root は local 強制 | `common-auth-sonic.j2:29` |
 | `tacacs+,local` | TACACS+ サーバ全台 → `pam_unix.so` | `common-auth-sonic.j2:29` |
 | `local,tacacs+` | `pam_unix.so` 先行 → TACACS+ サーバ残台数 | `common-auth-sonic.j2:15` |
-| `radius` | root を local 強制スキップ → RADIUS chain → deny → cache → local | `common-auth-sonic.j2:56` |
-| `radius,local` | root local skip → RADIUS chain → local | `common-auth-sonic.j2:44` |
-| `local,radius` | local → RADIUS chain → deny → cache | `common-auth-sonic.j2:32` |
+| `radius` | root を local 強制スキップ → [RADIUS](../../reference/glossary.md#term-radius) chain → deny → cache → local | `common-auth-sonic.j2:56` |
+| `radius,local` | root local skip → [RADIUS](../../reference/glossary.md#term-radius) chain → local | `common-auth-sonic.j2:44` |
+| `local,radius` | local → [RADIUS](../../reference/glossary.md#term-radius) chain → deny → cache | `common-auth-sonic.j2:32` |
 | `ldap` | `pam_ldap.so minimum_uid=1000` のみ | `common-auth-sonic.j2:84` |
 | `ldap,local` | `pam_ldap.so` → `pam_unix.so` | `common-auth-sonic.j2:82` |
 | `local,ldap` | `pam_unix.so` → `pam_ldap.so` | `common-auth-sonic.j2:83` |
@@ -217,7 +217,7 @@ show aaa
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - あり: `migrate_aaa_table_field_sync()` で `authentication`/`accounting`/`authorization` エントリを再生成 (db_migrator.py:879,886,895)
@@ -323,11 +323,11 @@ YANG default 以外の fallback。`hostcfgd` (`AaaCfg` クラス) の `__init__`
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: AAA は host 単位で適用され、ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
+**プラットフォーム差なし**: AAA は host 単位で適用され、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | AAA は [SAI](../../reference/glossary.md#term-sai) 非経由。`hostcfgd` が Linux PAM / NSS 設定ファイルを直接書き換えるのみ (段階 3 トレース参照) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | AAA は [SAI](../../reference/glossary.md#term-sai) 非経由。`hostcfgd` が Linux PAM / NSS 設定ファイルを直接書き換えるのみ (段階 3 トレース参照) |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `AaaCfg` は host CONFIG_DB (`ConfigDBConnector()` 引数なし) のみを購読。`asicN` namespace を iterate しない (`hostcfgd:2166-2185`)。`is_multi_npu` 値は AAA 経路に渡されない |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | AAA テーブルは host scope。chassis 全体での集中適用機構はなく、各 line card host で `hostcfgd` が独立に PAM を再生成 |
 | ベンダー固有 PAM モジュール | なし | community master の PAM スタックは `pam_unix` / `pam_tacplus` / `pam_radius_auth` / `pam_ldap` の Debian 標準。`files/image_config/` にも `files/build_templates/` にもベンダー hook 注入箇所なし (`ls files/image_config \| grep -iE 'aaa\|tacacs\|radius\|ldap\|pam\|nss'` が 0 ヒット) |
@@ -408,7 +408,7 @@ CONFIG_DB `AAA` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハン
 
 | 定数 | 値 | 用途 | ソース |
 |------|----|------|--------|
-| `PAM_AUTH_CONF` | `/etc/pam.d/common-auth-sonic` | SONiC 専用 PAM auth 共通インクルード (テンプレートから再生成) | hostcfgd L28 |
+| `PAM_AUTH_CONF` | `/etc/pam.d/common-auth-sonic` | [SONiC](../../reference/glossary.md#term-sonic) 専用 PAM auth 共通インクルード (テンプレートから再生成) | hostcfgd L28 |
 | `PAM_PASSWORD_CONF` | `/etc/pam.d/common-password` | パスワードポリシー PAM 設定 | hostcfgd L30 |
 | `NSS_TACPLUS_CONF` | `/etc/tacplus_nss.conf` | libnss-tacplus 設定ファイル | hostcfgd L34 |
 | `NSS_RADIUS_CONF` | `/etc/radius_nss.conf` | libnss-radius 設定ファイル | hostcfgd L36 |
@@ -422,7 +422,7 @@ CONFIG_DB `AAA` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハン
 | `ETC_LOGIN_DEF` | `/etc/login.defs` | Linux パスワードエージング設定 | hostcfgd L52 |
 | `RADIUS_PAM_AUTH_CONF_DIR` | `/etc/pam_radius_auth.d/` | サーバごと `{ip}_{auth_port}.conf` を 0600 で生成するディレクトリ | hostcfgd L97, L829 |
 
-> **注意**: SONiC は `/etc/pam.d/common-auth` (Debian 標準) を直接書換せず、`/etc/pam.d/common-auth-sonic` を生成して `sshd` / `login` の include 行のみ書き換える。これにより Debian の `pam-auth-update` 機構を回避している。
+> **注意**: [SONiC](../../reference/glossary.md#term-sonic) は `/etc/pam.d/common-auth` (Debian 標準) を直接書換せず、`/etc/pam.d/common-auth-sonic` を生成して `sshd` / `login` の include 行のみ書き換える。これにより Debian の `pam-auth-update` 機構を回避している。
 
 ### PAM モジュール / セッションルール
 
@@ -533,4 +533,4 @@ CONFIG_DB `AAA` テーブルの変更に伴って `hostcfgd` の `AaaCfg` ハン
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/aaa-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: b17d8178482e -->
+<!-- glossary-links-injected: ce56b84a4b97 -->

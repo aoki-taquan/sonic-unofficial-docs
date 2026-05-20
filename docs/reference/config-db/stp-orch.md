@@ -102,7 +102,7 @@ void StpOrch::doTask(Consumer &consumer)
 }
 ```
 
-起動直後はすべての STP [APPL_DB](../../reference/glossary.md#term-appl_db) エントリが保留される。PortsOrch が `PortInitDone` を受信するまで処理されない (エラーログなし)。
+起動直後はすべての STP [APPL_DB](../../reference/glossary.md#term-appl_db) エントリが保留される。[PortsOrch](../../reference/glossary.md#term-portsorch) が `PortInitDone` を受信するまで処理されない (エラーログなし)。
 
 証跡: `stporch.cpp:574-601`
 
@@ -286,9 +286,9 @@ void StpOrch::doTask(Consumer &consumer)
 }
 ```
 
-`allPortsReady()` が false の間、**すべてのテーブル処理を無音スキップ**する。PortsOrch が `PORT_INIT_DONE` を受信するまで `m_toSync` のエントリは保留され、エラーログも出力されない。
+`allPortsReady()` が false の間、**すべてのテーブル処理を無音スキップ**する。[PortsOrch](../../reference/glossary.md#term-portsorch) が `PORT_INIT_DONE` を受信するまで `m_toSync` のエントリは保留され、エラーログも出力されない。
 
-→ 順序依存: PortsOrch の初期化完了が StpOrch 全体の前提。
+→ 順序依存: [PortsOrch](../../reference/glossary.md#term-portsorch) の初期化完了が StpOrch 全体の前提。
 
 ### 2. STP_VLAN_INSTANCE_TABLE — VLAN 先行ガード
 
@@ -582,7 +582,7 @@ attr.value.oid = stp_oid;
 sai_vlan_api->set_vlan_attribute(vlan_oid, &attr);
 ```
 
-これにより ASIC 上の VLAN が指定 STP インスタンスの制御下に置かれ、L2 フォワーディング挙動が変化する。
+これにより [ASIC](../../reference/glossary.md#term-asic) 上の VLAN が指定 STP インスタンスの制御下に置かれ、L2 フォワーディング挙動が変化する。
 
 #### 3. `m_vlanAliasToStpInstanceMap` 内部マップ更新
 
@@ -612,7 +612,7 @@ sai_vlan_api->set_vlan_attribute(vlan_oid, &attr);
 
 #### 7. SAI STP ポート作成 (`create_stp_port`) / 状態更新
 
-`create_stp_port` で SAI STP ポートオブジェクトを生成し (`SAI_STP_PORT_STATE_BLOCKING` 初期値)、続いて `set_stp_port_attribute(SAI_STP_PORT_ATTR_STATE)` で実際の状態に更新する。ASIC のポートフォワーディング挙動が変化する。
+`create_stp_port` で SAI STP ポートオブジェクトを生成し (`SAI_STP_PORT_STATE_BLOCKING` 初期値)、続いて `set_stp_port_attribute(SAI_STP_PORT_ATTR_STATE)` で実際の状態に更新する。[ASIC](../../reference/glossary.md#term-asic) のポートフォワーディング挙動が変化する。
 
 ### APPL_DB:STP_PORT_STATE_TABLE DEL の副作用
 
@@ -624,7 +624,7 @@ sai_vlan_api->set_vlan_attribute(vlan_oid, &attr);
 
 #### 9. FDB エントリ一括フラッシュ
 
-`state == "true"` のとき `gFdbOrch->flushFdbByVlan(vlan_alias)` を呼び、対象 VLAN の全 FDB エントリを削除する。ASIC の L2 学習テーブルがクリアされ、次のフレーム受信時に再学習が発生する。VLAN 未登録時は no-op (fail-silent)。
+`state == "true"` のとき `gFdbOrch->flushFdbByVlan(vlan_alias)` を呼び、対象 VLAN の全 FDB エントリを削除する。[ASIC](../../reference/glossary.md#term-asic) の L2 学習テーブルがクリアされ、次のフレーム受信時に再学習が発生する。VLAN 未登録時は no-op (fail-silent)。
 
 ### APPL_DB:STP_INST_PORT_FLUSH_TABLE SET の副作用
 
@@ -668,7 +668,7 @@ StpOrch が扱う通信経路は「APPL_DB の 4 テーブルを `ConsumerStateT
 
 ### APPL_DB 書き手 (stpd / stpmgrd) → StpOrch
 
-STP デーモン (`stpd`) は Unix Domain Socket 経由で `stpmgrd` (`cfgmgr/stpmgrd.cpp`) と IPC し、`stpmgrd` が APPL_DB の 4 テーブルへ書き込む。SONiC の APPL_DB 書き込み標準は `ProducerStateTable` 経由で、書き込みごとに `<TABLE>_CHANNEL@0` チャネルへ PUBLISH が発行される。
+STP デーモン (`stpd`) は Unix Domain Socket 経由で `stpmgrd` (`cfgmgr/stpmgrd.cpp`) と IPC し、`stpmgrd` が APPL_DB の 4 テーブルへ書き込む。[SONiC](../../reference/glossary.md#term-sonic) の APPL_DB 書き込み標準は `ProducerStateTable` 経由で、書き込みごとに `<TABLE>_CHANNEL@0` チャネルへ PUBLISH が発行される。
 
 `Orch::addConsumer()` (`orch.cpp:1186-1197`) は DB ID に応じて Consumer を選択する:
 
@@ -777,6 +777,9 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^1] [^2] [^3] [^4]
+
 [^1]: StpOrch 実装: `orchagent/stporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp>
 [^2]: StpOrch ヘッダ: `orchagent/stporch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.h>
 [^3]: orchdaemon 登録: `orchagent/orchdaemon.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
@@ -790,4 +793,4 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 - [CONFIG_DB: STP_PORT テーブル](stp-port.md)
 - [CONFIG_DB: VLAN](vlan.md)
 
-<!-- glossary-links-injected: f79d5e772286 -->
+<!-- glossary-links-injected: 56bcc3ff7b07 -->

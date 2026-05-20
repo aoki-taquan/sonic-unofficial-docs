@@ -29,7 +29,7 @@ hard: 0
 
 ## 概要
 
-SONiC の [SRv6](../../reference/glossary.md#term-srv6) 制御面は 3 層構造をとる。
+[SONiC](../../reference/glossary.md#term-sonic) の [SRv6](../../reference/glossary.md#term-srv6) 制御面は 3 層構造をとる。
 
 1. **[CONFIG_DB](../../reference/glossary.md#term-config_db)** (`SRV6_MY_SIDS` / `SRV6_MY_LOCATORS`) — ユーザー設定の起点
 2. **[APPL_DB](../../reference/glossary.md#term-appl_db)** (`SRV6_MY_SID_TABLE` / `SRV6_SID_LIST_TABLE`) — [FRR](../../reference/glossary.md#term-frr) → [SAI](../../reference/glossary.md#term-sai) のパイプライン中継点
@@ -333,11 +333,11 @@ CONFIG_DB `SRV6_MY_SID_TABLE` (db_id=4) は `SubscriberStateTable` ブランチ�
 
 ### 差異 1: SAI SRv6 API 未実装プラットフォーム
 
-`Srv6Orch` は `sai_srv6_api->create_srv6_sidlist()` / `create_my_sid_entry()` を直接呼び出す。VS (Virtual Switch) など SAI SRv6 API が stub 実装のプラットフォームでは、これらが `SAI_STATUS_NOT_IMPLEMENTED` を返し、`SRV6_SID_LIST_TABLE` SET は `task_failed` で破棄され、`SRV6_MY_SID_TABLE` SET も `false` を返してエントリが ASIC に登録されない。
+`Srv6Orch` は `sai_srv6_api->create_srv6_sidlist()` / `create_my_sid_entry()` を直接呼び出す。VS (Virtual Switch) など SAI SRv6 API が stub 実装のプラットフォームでは、これらが `SAI_STATUS_NOT_IMPLEMENTED` を返し、`SRV6_SID_LIST_TABLE` SET は `task_failed` で破棄され、`SRV6_MY_SID_TABLE` SET も `false` を返してエントリが [ASIC](../../reference/glossary.md#term-asic) に登録されない。
 
 | プラットフォーム | SAI SRv6 対応 | SRV6_MY_SID_TABLE 処理 |
 |----------------|--------------|----------------------|
-| HW ASIC（SAI 対応） | あり | 正常に SAI へ登録 |
+| HW [ASIC](../../reference/glossary.md#term-asic)（SAI 対応） | あり | 正常に SAI へ登録 |
 | VS / stub SAI | なし（多くの場合） | SAI 呼び出し失敗 → エントリ破棄 |
 
 ### 差異 2: DSCP モード設定が必要な MySID（IP-in-IP トンネル）
@@ -473,4 +473,4 @@ FRR 経由で登録されるすべての SID リストは実質 `type=encaps.red
 
 [^1]: `sonic-swss/tests/test_srv6.py:837` より実例。
 
-<!-- glossary-links-injected: 7847adf7e237 -->
+<!-- glossary-links-injected: 1288c04b3f8a -->

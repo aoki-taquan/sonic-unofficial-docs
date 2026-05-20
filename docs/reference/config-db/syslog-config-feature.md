@@ -348,11 +348,11 @@ containercfgd 起動
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`SYSLOG_CONFIG_FEATURE` は `containercfgd` が CONFIG_DB のみを参照し [SAI](../../reference/glossary.md#term-sai) を経由しないため、ASIC ベンダー差異は存在しない。multi-asic 環境では CLI と `containercfgd` の連携に固有の挙動がある。
+`SYSLOG_CONFIG_FEATURE` は `containercfgd` が CONFIG_DB のみを参照し [SAI](../../reference/glossary.md#term-sai) を経由しないため、[ASIC](../../reference/glossary.md#term-asic) ベンダー差異は存在しない。multi-asic 環境では CLI と `containercfgd` の連携に固有の挙動がある。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco) | 差異なし | [SAI](../../reference/glossary.md#term-sai) 非経由。`containercfgd.py` を `platform\|vendor\|broadcom` でスキャンして 0 ヒット |
+| [ASIC](../../reference/glossary.md#term-asic) ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco) | 差異なし | [SAI](../../reference/glossary.md#term-sai) 非経由。`containercfgd.py` を `platform\|vendor\|broadcom` でスキャンして 0 ヒット |
 | multi-asic (`is_multi_asic() == True`) | CLI が namespace 分散書込み、`containercfgd` が `NAMESPACE_ID` で service_name を正規化 | `containercfgd.py:190-195`、`syslog_util/common.py:92-104`、`config/syslog.py:469-501` |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line card) | 各 host で独立動作 | `containercfgd.py` に `chassisdb` / `REDIS_CHASSIS_SERVER` 参照なし |
 | namespace (asic0..asicN) | 各 asic namespace の `containercfgd` インスタンスが独立して CONFIG_DB を購読 | `ConfigDBConnector` は host ローカル [Redis](../../reference/glossary.md#term-redis) のみ接続 |
@@ -550,4 +550,4 @@ CONFIG_DB に接続し、`listen(init_data_handler=self.init_data_handler)` を�
 
 <!-- /ordering -->
 
-<!-- glossary-links-injected: 9a81cc90e52a -->
+<!-- glossary-links-injected: e82be350a384 -->

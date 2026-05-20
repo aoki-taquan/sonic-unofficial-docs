@@ -39,7 +39,7 @@ related:
 
 ## なぜ SPM が要るか
 
-3rd-party / 任意の docker コンテナを「SONiC application extension」として **inbox 機能と同じ管理面で扱う** ためのフレームワーク[^1]:
+3rd-party / 任意の docker コンテナを「[SONiC](../reference/glossary.md#term-sonic) application extension」として **inbox 機能と同じ管理面で扱う** ためのフレームワーク[^1]:
 
 - アプリ追加が `apt`-相当の単一 CLI で済む（`sonic-package-manager install`）
 - 通常の SONiC 機能と同じく `FEATURE` テーブル・`config feature` で on/off
@@ -185,4 +185,4 @@ yang-models ディレクトリからの [YANG](../reference/glossary.md#term-yan
 
 [^1]: `sonic-net/SONiC` `doc/sonic-application-extension/sonic-application-extention-hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 78d8e9231d61 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

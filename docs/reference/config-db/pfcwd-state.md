@@ -134,7 +134,7 @@ COUNTERS:<queue_oid>   # per-queue PFC WD カウンタ
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | PortsOrch による PFC マスク解決 → `registerInWdDb()` 実行 | **強制先行** | PFC マスク未解決または lossless TC 空のポートはフィールド書込みが一切行われない |
+| 1 | [PortsOrch](../../reference/glossary.md#term-portsorch) による PFC マスク解決 → `registerInWdDb()` 実行 | **強制先行** | PFC マスク未解決または lossless TC 空のポートはフィールド書込みが一切行われない |
 | 2 | config フィールド書込み (`DETECTION_TIME` 等) → `initWdCounters()` (`PFC_WD_STATUS`) | 先行（同一関数内） | 2 ステップ間の中間観測で `PFC_WD_STATUS` が未存在の状態が生じうる |
 | 3 | `pfcwd stop` での status フィールド DEL → カウンタフィールド残留 | 非対称（status のみ削除） | `pfcwd start` 再実行後は旧カウンタ値を引き継いで継続カウント |
 | 4 | storm 検知 → `PFC_WD_STATUS=stormed` + `DEADLOCK_DETECTED++` → storm 解消 → `PFC_WD_STATUS=operational` + `DEADLOCK_RESTORED++` | 2 段階遷移 | 遷移中間で `stormed` と古いカウンタが共存する一時状態あり |
@@ -333,7 +333,7 @@ sai_switch_api->set_switch_attribute(gSwitchId, SAI_SWITCH_ATTR_PFC_DLR_PACKET_A
 
 ### SONiC events framework — `pfc-storm` イベント発行
 
-storm 検知時に `report_pfc_storm()` (`pfcwdorch.cpp:965`) が SONiC events framework 経由でイベントを発行する:
+storm 検知時に `report_pfc_storm()` (`pfcwdorch.cpp:965`) が [SONiC](../../reference/glossary.md#term-sonic) events framework 経由でイベントを発行する:
 
 ```cpp
 event_publish(g_events_handle, "pfc-storm", &params);
@@ -481,4 +481,4 @@ show pfcwd stats
 
 [^1]: `pfcactionhandler.cpp` および `pfcwdorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/pfcactionhandler.cpp>
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 200456e0db28 -->

@@ -69,7 +69,7 @@ NTP_SERVER|<server_address>
 - `association_type`: テンプレート `{% set association_type = config.association_type | d('server') -%}` により DB キー不在時は `server` ディレクティブとして書き込まれる (`sonic-buildimage/files/image_config/chrony/chrony.conf.j2:26`)。YANG `default server` と同値だが Jinja2 側でも独立してフォールバックを担保。
 - `resolve_as`: テンプレート `{% set resolve_as = config.resolve_as | d(server) -%}` で DB キー不在時はループ変数 `server` (= NTP_SERVER テーブル key = ユーザが入力したサーバアドレス) をそのまま採用 (`chrony.conf.j2:27`)。さらに `association_type == 'pool'` の場合は `resolve_as` の値に関わらず `resolve_as = server` で上書きされ、pool は常に FQDN のまま使われる (`chrony.conf.j2:49-51`)。
 - `iburst`: テンプレートは `{% if config.iburst %}` で **truthy 判定のみ**を行い `| d(...)` を持たない (`chrony.conf.j2:37-39`)。DB キー不在なら `iburst` オプション付与なし。一方 `'on'` でも `'off'` でも文字列非空であれば `iburst` が付与されるテンプレート上の癖がある。実運用では minigraph.py が起動時に `iburst: 'on'` を一斉投入し (`sonic-buildimage/src/sonic-config-engine/minigraph.py:2646`)、YANG `default on` も合わさるため、実害は出にくい。
-- `minpoll` / `maxpoll`: **[CONFIG_DB](../../reference/glossary.md#term-config_db) モデル未実装**。`chrony.conf.j2` にも `sonic-ntp.yang` `NTP_SERVER_LIST` にも該当 leaf が存在せず、chrony 側のデフォルト (`minpoll 6 / maxpoll 10` ≒ 64〜1024 秒) がそのまま使われる。SONiC からは制御不可。
+- `minpoll` / `maxpoll`: **[CONFIG_DB](../../reference/glossary.md#term-config_db) モデル未実装**。`chrony.conf.j2` にも `sonic-ntp.yang` `NTP_SERVER_LIST` にも該当 leaf が存在せず、chrony 側のデフォルト (`minpoll 6 / maxpoll 10` ≒ 64〜1024 秒) がそのまま使われる。[SONiC](../../reference/glossary.md#term-sonic) からは制御不可。
 - `version`: テンプレートは `{% if config.version %}` で truthy 判定のみ。DB キー不在なら `version` オプション付与なし → chrony 側のデフォルト (NTPv4)。YANG `default 4` で DB 投入時には 4 が埋まる前提。
 - `admin_state`: テンプレートは `for server in NTP_SERVER if NTP_SERVER[server].admin_state != 'disabled'` (`chrony.conf.j2:20`)。DB キー不在なら `!= 'disabled'` が真と評価され、エントリは chrony.conf に含まれる (= 有効扱い)。YANG `default enabled` と同等の運用効果。
 - `key`: テンプレートは `global.authentication == 'enabled'` かつ `config.key` が truthy の場合のみ `key <id>` を付与 (`chrony.conf.j2:30-34`)。DB に `key` があっても NTP 認証が disabled なら chrony.conf には書かれない。
@@ -237,7 +237,7 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 |------|-----|---------|------|
 | NTP サービスポート | **UDP 123** | `caclmgrd:98` (`"dst_ports": ["123"]`) | iptables [ACL](../../reference/glossary.md#term-acl) ルール生成の宛先ポート。CONFIG_DB から変更不可 |
 | プロトコル | **`udp`** | `caclmgrd:97` | NTP パケットフィルタのプロトコル固定値 |
-| `multi_asic_ns_to_host_fwd` | **`False`** | `caclmgrd:99` | multi-ASIC 環境での名前空間→ホスト転送なし |
+| `multi_asic_ns_to_host_fwd` | **`False`** | `caclmgrd:99` | multi-[ASIC](../../reference/glossary.md#term-asic) 環境での名前空間→ホスト転送なし |
 
 ### hostcfgd のコマンド定数
 
@@ -256,7 +256,7 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 | パラメータ | chrony 内部デフォルト | 備考 |
 |-----------|---------------------|------|
 | `minpoll` | **6**（= 64 秒間隔） | YANG / CONFIG_DB にフィールドなし。chrony デフォルト値が使用される |
-| `maxpoll` | **10**（= 1024 秒間隔） | 同上。SONiC からは制御不可 |
+| `maxpoll` | **10**（= 1024 秒間隔） | 同上。[SONiC](../../reference/glossary.md#term-sonic) からは制御不可 |
 
 <!-- /constants -->
 
@@ -272,7 +272,7 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 | [APPL_DB](../../reference/glossary.md#term-appl_db) | **なし** | `NtpCfg.ntp_srv_key_update()` に ProducerTable / Table.set() 呼び出しが 0 件 (`hostcfgd:1366-1406`) |
 | [STATE_DB](../../reference/glossary.md#term-state_db) | **なし** | `NtpCfg` クラスは `state_db_conn` を保持せず [STATE_DB](../../reference/glossary.md#term-state_db) に一切アクセスしない (`hostcfgd:1272-1407`) |
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | **なし** | NTP はデータプレーン統計を持たない。`hostcfgd` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書き込みなし |
-| [ASIC_DB](../../reference/glossary.md#term-asic_db) | **なし** | [SAI](../../reference/glossary.md#term-sai) 非経由。NTP は CPU 側でのみ処理され、ASIC プログラムは発生しない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | **なし** | [SAI](../../reference/glossary.md#term-sai) 非経由。NTP は CPU 側でのみ処理され、[ASIC](../../reference/glossary.md#term-asic) プログラムは発生しない |
 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | **なし** | [FlexCounter](../../reference/glossary.md#term-flexcounter) 不使用 |
 
 ### ホスト OS への副次作用
@@ -631,9 +631,9 @@ mgmt VRF で chronyd を起動する場合、NTP パケットは Linux の mgmt 
 | `chrony.conf` NTP サーバ有効化 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) ノードのみ `allow + binddevice bridge-midplane` を追記 |
 | `chronyd` 起動 VRF | mgmt VRF 有効かつ `NTP.vrf != "default"` の場合に `ip vrf exec mgmt` 経由で起動 |
 | `bindacqaddress` 出力 | mgmt VRF モードでは抑制。それ以外は `src_intf` 種別でテーブルを切り替え |
-| multi-ASIC / VoQ chassis | NTP_SERVER テーブル処理への直接影響なし（管理インタフェース経由） |
+| multi-[ASIC](../../reference/glossary.md#term-asic) / VoQ chassis | NTP_SERVER テーブル処理への直接影響なし（管理インタフェース経由） |
 
 > **スキャン証跡**: `sonic-buildimage/files/image_config/chrony/chrony.conf.j2` 全行スキャン、`chronyd-starter.sh` 全行スキャン、`hostcfgd:1278-1410` 確認。`getenv("platform")` 参照なし — 誤読なし。
 <!-- /platform -->
 
-<!-- glossary-links-injected: e88359461acf -->
+<!-- glossary-links-injected: 77f342e1a22c -->

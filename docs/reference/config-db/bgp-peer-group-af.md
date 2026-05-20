@@ -178,7 +178,7 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 |------|------|--------|
 | key パース時 `\|` が不正 (ValueError) | catch → continue (skip) | `frrcfgd.py` L2665 |
 | `local_asn` が未設定の [VRF](../../reference/glossary.md#term-vrf) | LOG_DEBUG して skip | `frrcfgd.py` L2660 |
-| 対象 peer-group が FRR に未存在のまま AF 設定 | vtysh コマンド失敗 → `failed running BGP neighbor config command` を LOG_ERR → continue | `frrcfgd.py` L2791 |
+| 対象 peer-group が FRR に未存在のまま AF 設定 | [vtysh](../../reference/glossary.md#term-vtysh) コマンド失敗 → `failed running BGP neighbor config command` を LOG_ERR → continue | `frrcfgd.py` L2791 |
 | `BGP_PEER_GROUP_AF` と `BGP_NEIGHBOR_AF` の key_map 共用 | 両テーブルは同一 `nbr_af_key_map` を使用。max_prefix / send_default_route の複合条件は BGP_NEIGHBOR_AF と同様 | `frrcfgd.py` L2112 |
 <!-- /cdb-exceptions -->
 
@@ -194,7 +194,7 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由)
+なし (FRR [vtysh](../../reference/glossary.md#term-vtysh) 経由)
 
 ### 段階 3 — APPL→SAI
 
@@ -282,7 +282,7 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 ### 設計上の理由
 
-`frrcfgd` は FRR (bgpd) と vtysh 経由で通信するコントロールプレーンデーモンであり、ASIC / ハードウェアアクセラレーションと無関係。BGP peer-group の AF 設定は FRR 内部で処理されるため、プラットフォーム種別によるコードパスの差異は生じない。
+`frrcfgd` は FRR (bgpd) と [vtysh](../../reference/glossary.md#term-vtysh) 経由で通信するコントロールプレーンデーモンであり、[ASIC](../../reference/glossary.md#term-asic) / ハードウェアアクセラレーションと無関係。BGP peer-group の AF 設定は FRR 内部で処理されるため、プラットフォーム種別によるコードパスの差異は生じない。
 
 詳細スキャン手順・grep 証跡は `meta/_intermediate/cdb-flow/bgp-peer-group-af-platform.md` を参照。
 <!-- /platform -->
@@ -551,4 +551,4 @@ Redis keyspace pmessage ("__keyspace@4__:BGP_PEER_GROUP_AF|<vrf>|<pg>|<af>")
 詳細は `meta/_intermediate/cdb-flow/bgp-peer-group-af-pubsub.md` を参照。
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: dc502b10f44e -->
+<!-- glossary-links-injected: 657966932508 -->

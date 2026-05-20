@@ -37,14 +37,14 @@ related:
 
 ## なぜ必要か
 
-[PINS](../reference/glossary.md#term-pins) (P4 Integrated Network Stack) は SONiC を **P4 / P4Runtime で遠隔制御** する。中核の **`P4Orch`** は `APPL_DB.P4RT` テーブルを購読し、[SAI](../reference/glossary.md#term-sai) 呼び出しに変換して [ASIC_DB](../reference/glossary.md#term-asic_db) に書く[^1]。
+[PINS](../reference/glossary.md#term-pins) (P4 Integrated Network Stack) は [SONiC](../reference/glossary.md#term-sonic) を **P4 / P4Runtime で遠隔制御** する。中核の **`P4Orch`** は `APPL_DB.P4RT` テーブルを購読し、[SAI](../reference/glossary.md#term-sai) 呼び出しに変換して [ASIC_DB](../reference/glossary.md#term-asic_db) に書く[^1]。
 
 通常 [orchagent](../reference/glossary.md#term-orchagent) との差異[^1]:
 
 | 観点 | 既存 orchagent | P4Orch |
 |------|---------------|--------|
 | 依存関係 | 後続再試行で解決 | **依存は前提**。未充足は拒否 |
-| 応答 | application 層に返さない | **完了通知を P4RT app に返す** |
+| 応答 | application 層に返さない | **完了通知を [P4RT](../reference/glossary.md#term-p4rt) app に返す** |
 | 公開 API | 他 orch から参照可 | **限定的**（他 orch から P4RT object 不可視） |
 
 ## `P4RT` テーブルと Manager 構成
@@ -170,7 +170,7 @@ sonic-db-cli APPL_STATE_DB keys '*'
 ## 干渉する機能
 
 - PINS infra: P4RT server / response path / PacketIO / hostif user-defined trap
-- 既存 SONiC orchagent: PortsOrch / VrfOrch / CrmOrch を参照
+- 既存 SONiC orchagent: [PortsOrch](../reference/glossary.md#term-portsorch) / VrfOrch / CrmOrch を参照
 - `APPL_STATE_DB` + 同期 syncd モード（応答経路の前提）
 - 既存 RouteOrch / NeighOrch / NhgOrch / AclOrch とは **資源分離**
 
@@ -197,4 +197,4 @@ sonic-db-cli APPL_STATE_DB keys '*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 5c794d9f4a5c -->
+<!-- glossary-links-injected: abcd70fa5536 -->

@@ -480,7 +480,7 @@ vector<TableConnector> acl_table_connectors = {
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`ACL_TABLE_TYPE` のプラットフォーム依存性は 2 つの経路で顕在化する: (1) `initDefaultTableTypes()` による **組み込み型の定義差**、(2) SAI capability クエリによる **アクション有効/無効の差**。ユーザー定義型（CONFIG_DB に書き込む型）は `AclTableTypeParser` が解析するが、記述できる match/action の有効性は実行時の ASIC capability に委ねられる。
+`ACL_TABLE_TYPE` のプラットフォーム依存性は 2 つの経路で顕在化する: (1) `initDefaultTableTypes()` による **組み込み型の定義差**、(2) SAI capability クエリによる **アクション有効/無効の差**。ユーザー定義型（CONFIG_DB に書き込む型）は `AclTableTypeParser` が解析するが、記述できる match/action の有効性は実行時の [ASIC](../../reference/glossary.md#term-asic) capability に委ねられる。
 
 ### プラットフォーム識別文字列 (orch.h:40-50)
 
@@ -562,8 +562,11 @@ capability 結果は `STATE_DB` の `ACL_STAGE_CAPABILITY_TABLE|{INGRESS,EGRESS}
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^3]
+
 [^1]: テーブル定義は `sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2` (sha `9ea932ec`) L354-388 (`ACL_TABLE_TYPE` コンテナ) より。処理ロジックは `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) L752-895 (`AclTableTypeParser`)、L4912-4942 (`addAclTableType`/`removeAclTableType`)、L5740-5773 (`doAclTableTypeTask`)、L3724 (`initDefaultTableTypes`) より。フィールド定数は `orchagent/acltable.h` L18-20 より。
 [^2]: 副作用の調査は `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) `doAclTableTypeTask()` L5738-5774、`addAclTableType()` L4912-4930、`removeAclTableType()` L4932-4948、`doAclTableTask()` L5432 (`getAclTableType()` による retry 制御) より。STATE_DB テーブル名は `sonic-swss-common/common/schema.h` L418/514/515 より。
 [^3]: 通信メカニズムの調査は `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) L4197-4299 (AclOrch ctor、doTask)、`orchagent/orchdaemon.cpp` L408-422, L533-534 (TableConnector 構築)、`orchagent/orch.cpp` L1186-1196 (addConsumer DB 種別分岐)、`orchagent/vnetorch.cpp` L3738, L3781、`orchagent/dash/dashenifwdorch.cpp` L404, L625, L649、`sonic-swss-common/common/schema.h` L95 (`APP_ACL_TABLE_TYPE_TABLE_NAME`) より。
 
-<!-- glossary-links-injected: d2f032dde68b -->
+<!-- glossary-links-injected: c006405759d8 -->

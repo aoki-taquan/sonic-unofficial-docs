@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-VRRP_TRACK テーブルは、VRRP IPv4 インスタンスが監視するアップリンクインタフェース（追跡インタフェース）と、そのインタフェースがダウンした際に VRRP priority から差し引く `priority_increment` 値を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。
+VRRP_TRACK テーブルは、[VRRP](../../reference/glossary.md#term-vrrp) IPv4 インスタンスが監視するアップリンクインタフェース（追跡インタフェース）と、そのインタフェースがダウンした際に [VRRP](../../reference/glossary.md#term-vrrp) priority から差し引く `priority_increment` 値を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。
 
 [FRR](../../reference/glossary.md#term-frr) の `vrrpd` は `zebra` 経由でカーネルのインタフェース状態変化イベントを受信し、VRRP_TRACK に登録された追跡インタフェースの Up/Down に応じて VRRP インスタンスの priority を動的に加減算する。追跡インタフェースがダウンすると priority が `priority_increment` 分だけ減少し、バックアップルータへのフェイルオーバーを促す。インタフェースが復旧すると priority が元の値に戻る。
 
@@ -58,7 +58,7 @@ flowchart LR
 VRRP_TRACK|<interface_name>|<vrid>|<track_interface>
 ```
 
-- `<interface_name>`: VRRP インスタンスが設定されているベースインタフェース名 (例: `Ethernet64`, `Vlan1`, `PortChannel001`)
+- `<interface_name>`: [VRRP](../../reference/glossary.md#term-vrrp) インスタンスが設定されているベースインタフェース名 (例: `Ethernet64`, `Vlan1`, `PortChannel001`)
 - `<vrid>`: 仮想ルータ識別子 (1–255)。`VRRP|<interface_name>|<vrid>` として存在する親インスタンスへの参照
 - `<track_interface>`: 追跡対象インタフェース名 (Ethernet, Vlan, [PortChannel](../../reference/glossary.md#term-portchannel) のいずれか)
 
@@ -308,7 +308,7 @@ VRRP_TRACK priority_increment 変化
 
 | コンポーネント | コンテナ | 購読元 | 購読 API | 書き込み先 |
 |---|---|---|---|---|
-| `macvlanmgrd` | [BGP](../../reference/glossary.md#term-bgp) | CONFIG_DB `VRRP_TRACK` / `VRRP6_TRACK` | `SubscriberStateTable` (keyspace) | FRR vrrpd (vtysh 経由、DB 書き込みなし) |
+| `macvlanmgrd` | [BGP](../../reference/glossary.md#term-bgp) | CONFIG_DB `VRRP_TRACK` / `VRRP6_TRACK` | `SubscriberStateTable` (keyspace) | FRR vrrpd ([vtysh](../../reference/glossary.md#term-vtysh) 経由、DB 書き込みなし) |
 
 ### 通知フロー
 
@@ -324,11 +324,11 @@ vrrpd が VRRP Advertisement パケット送信 (priority フィールド更新)
 
 ### macvlanmgrd — CONFIG_DB SubscriberStateTable
 
-`macvlanmgrd` は [BGP](../../reference/glossary.md#term-bgp) コンテナ内で動作し、CONFIG_DB の `VRRP` / `VRRP6` / `VRRP_TRACK` / `VRRP6_TRACK` の全 4 テーブルを `SubscriberStateTable` で一括購読する。`VRRP_TRACK` 変更受信時は vtysh 経由で FRR `vrrpd` に track 設定を投入する。Linux カーネルへの netlink 書き込みや APPL_DB への書き込みは発生しない（[HLD](../../reference/glossary.md#term-hld) L219-225）。
+`macvlanmgrd` は [BGP](../../reference/glossary.md#term-bgp) コンテナ内で動作し、CONFIG_DB の `VRRP` / `VRRP6` / `VRRP_TRACK` / `VRRP6_TRACK` の全 4 テーブルを `SubscriberStateTable` で一括購読する。`VRRP_TRACK` 変更受信時は [vtysh](../../reference/glossary.md#term-vtysh) 経由で FRR `vrrpd` に track 設定を投入する。Linux カーネルへの netlink 書き込みや APPL_DB への書き込みは発生しない（[HLD](../../reference/glossary.md#term-hld) L219-225）。
 
 | 購読テーブル | PSUBSCRIBE パターン | 処理内容 |
 |---|---|---|
-| `VRRP_TRACK` | `__keyspace@4__:VRRP_TRACK\|*` | vtysh 経由で vrrpd に track 設定投入 |
+| `VRRP_TRACK` | `__keyspace@4__:VRRP_TRACK\|*` | [vtysh](../../reference/glossary.md#term-vtysh) 経由で vrrpd に track 設定投入 |
 | `VRRP6_TRACK` | `__keyspace@4__:VRRP6_TRACK\|*` | vtysh 経由で vrrpd に track 設定投入 |
 
 ### vrrpsyncd / vrrporch との関係
@@ -341,11 +341,11 @@ vrrpd が VRRP Advertisement パケット送信 (priority フィールド更新)
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: `VRRP_TRACK` テーブルへの書き込み・読み込みは ASIC 種別・multi-asic 構成・[VOQ](../../reference/glossary.md#term-voq) chassis 構成に依らない。
+**プラットフォーム差なし**: `VRRP_TRACK` テーブルへの書き込み・読み込みは [ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic 構成・[VOQ](../../reference/glossary.md#term-voq) chassis 構成に依らない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | VRRP_TRACK は [SAI](../../reference/glossary.md#term-sai) 非経由。macvlanmgrd が CONFIG_DB を購読し FRR `vrrpd` に vtysh 経由で設定を投入するのみ。ASIC との接点なし (HLD L219-225) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | VRRP_TRACK は [SAI](../../reference/glossary.md#term-sai) 非経由。macvlanmgrd が CONFIG_DB を購読し FRR `vrrpd` に vtysh 経由で設定を投入するのみ。[ASIC](../../reference/glossary.md#term-asic) との接点なし (HLD L219-225) |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `config/main.py` の `add_track_interface()` / `remove_track_interface()` は `is_multi_npu()` / namespace iteration を呼び出さない。VRRP は host-scope FRR 機能であり、`asicN` namespace を持たない (スキャン: `config/main.py:6993-7077`) |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | VRRP_TRACK は host CONFIG_DB のみ参照。chassis 全体での集中管理機構はなく、各 host の macvlanmgrd が独立して vrrpd に設定を投入する |
 | [SAI](../../reference/glossary.md#term-sai) `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL` 未サポート ASIC | 間接的のみ | 当該 [SAI](../../reference/glossary.md#term-sai) capability 差は `vrrporch` / ASIC_DB 層の話であり、VRRP_TRACK → FRR vrrpd 経路には影響しない。VRRP_TRACK エントリ自体の書き込み・読み込みに差は出ない (HLD L519-520) |
@@ -392,4 +392,4 @@ show vrrp
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 42cf85332cbc -->
+<!-- glossary-links-injected: 56d5f42550d2 -->

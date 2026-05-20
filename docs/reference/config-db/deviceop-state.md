@@ -54,7 +54,7 @@ flowchart LR
 
 ## 外部ポート一覧としての機能
 
-SONiC の複数 daemon は `DEVICE_NEIGHBOR.keys()` を「自スイッチが持つ外部ポート（対向機器と直結するポート）の一覧」として扱う。DEVICE_NEIGHBOR が config としてだけでなく **ランタイムの port scope 決定器** として機能する点が本ページの主題である。
+[SONiC](../../reference/glossary.md#term-sonic) の複数 daemon は `DEVICE_NEIGHBOR.keys()` を「自スイッチが持つ外部ポート（対向機器と直結するポート）の一覧」として扱う。DEVICE_NEIGHBOR が config としてだけでなく **ランタイムの port scope 決定器** として機能する点が本ページの主題である。
 
 ## consumer 別動作
 
@@ -92,7 +92,7 @@ if not server_facing_ports:
 
 ### ecnconfig — ポート一覧（非 multi-ASIC 環境）
 
-`ecnconfig` (`scripts/ecnconfig:282-287`) は非 multi-ASIC 環境で DEVICE_NEIGHBOR を外部ポート一覧として使用する。
+`ecnconfig` (`scripts/ecnconfig:282-287`) は非 multi-[ASIC](../../reference/glossary.md#term-asic) 環境で DEVICE_NEIGHBOR を外部ポート一覧として使用する。
 
 ```python
 port_table = self.config_db.get_table(DEVICE_NEIGHBOR_TABLE_NAME)
@@ -164,7 +164,7 @@ DEVICE_NEIGHBOR テーブルは **consumer が起動時に一括読み出し（`
 
 **pfcwd の起動時スナップショット (依存 #1)**: `pfcwd start_default` (`pfcwd/main.py:405-416`) は `self.config_db.get_table('DEVICE_NEIGHBOR')` を呼び出した時点のスナップショットで `external_ports` を確定する。DEVICE_NEIGHBOR に後から行を追加しても、既に起動済みの pfcwd ポートスコープには反映されない。`pfcwd start_default` を再実行するまで古いスコープが維持される。
 
-**ecnconfig の起動前条件 (依存 #2)**: `ecnconfig` (`scripts/ecnconfig:282-287`) は DEVICE_NEIGHBOR が空の場合に `Exception("No active ports detected in table 'DEVICE_NEIGHBOR'")` を raise して停止する。このため、DEVICE_NEIGHBOR の書込みが完了する前に ecnconfig コマンドを実行すると、コマンド自体が失敗する。multi-ASIC 環境では `SYSTEM_PORT_TABLE` を代替として使用するためこの制約は生じない。
+**ecnconfig の起動前条件 (依存 #2)**: `ecnconfig` (`scripts/ecnconfig:282-287`) は DEVICE_NEIGHBOR が空の場合に `Exception("No active ports detected in table 'DEVICE_NEIGHBOR'")` を raise して停止する。このため、DEVICE_NEIGHBOR の書込みが完了する前に ecnconfig コマンドを実行すると、コマンド自体が失敗する。multi-[ASIC](../../reference/glossary.md#term-asic) 環境では `SYSTEM_PORT_TABLE` を代替として使用するためこの制約は生じない。
 
 **[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) の 2 段前提 (依存 #3)**: bgpcfgd の `BGPPeerMgrBase` は `check_neig_meta` が有効な場合、`deps` に `CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME` を追加する。[BGP](../../reference/glossary.md#term-bgp) neighbor の `set_handler` 内で `data['name']`（= DEVICE_NEIGHBOR の `name` フィールド値）が DEVICE_NEIGHBOR_METADATA に存在しない場合、`return False` を返してハンドラを延期する。DEVICE_NEIGHBOR_METADATA が書き込まれるまで BGP セッション確立処理が進まない。DEVICE_NEIGHBOR 書込み → DEVICE_NEIGHBOR_METADATA 書込み の 2 段順序が必要（evidence: `managers_bgp.py:118-150,219-224`）。
 
@@ -201,7 +201,7 @@ DEVICE_NEIGHBOR は CONFIG_DB の読み取り専用テーブルとして機能�
 
 | consumer | 失敗ケース | 発生箇所 | 挙動 | retry / 回復 |
 |---------|-----------|---------|------|-------------|
-| `ecnconfig` (非 multi-ASIC) | DEVICE_NEIGHBOR テーブルが空 | `scripts/ecnconfig:287` | `Exception("No active ports detected in table 'DEVICE_NEIGHBOR'")` を raise → コマンド異常終了 | なし（再実行が必要） |
+| `ecnconfig` (非 multi-[ASIC](../../reference/glossary.md#term-asic)) | DEVICE_NEIGHBOR テーブルが空 | `scripts/ecnconfig:287` | `Exception("No active ports detected in table 'DEVICE_NEIGHBOR'")` を raise → コマンド異常終了 | なし（再実行が必要） |
 | `pfcwd start_default` | DEVICE_NEIGHBOR テーブルが空 | `pfcwd/main.py:412` | `external_ports = []` としてサイレント継続。バックプレーンポートのみが `active_ports` に入る | なし（`pfcwd start_default` 再実行で回復） |
 | `pfcwd get_server_facing_ports` | DEVICE_NEIGHBOR エントリの `name` フィールドが欠落 | `pfcwd/main.py:102` | `candidates[port]['name']` で `KeyError` → pfcwd 起動シーケンス中断 | なし（エントリ修正後に再実行） |
 | `pfcwd get_server_facing_ports` | DEVICE_NEIGHBOR_METADATA に `type='server'` エントリがない | `pfcwd/main.py:106-107` | サーバー向けポート 0 件 → `VLAN_MEMBER` フォールバックへ（非自明挙動） | なし（VLAN_MEMBER でフォールバック継続） |
@@ -592,4 +592,4 @@ pfcwd show ports
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:282-287`; `show/interfaces/__init__.py:317-319,346-348`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:221-223`
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: 84c709a9728b -->
+<!-- glossary-links-injected: 865a18402f05 -->

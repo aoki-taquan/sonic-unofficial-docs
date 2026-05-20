@@ -39,7 +39,7 @@ related:
 
 ## 概要
 
-SONiC の [BGP](../../reference/glossary.md#term-bgp) ランタイム状態は 2 つの [Redis](../../reference/glossary.md#term-redis) DB にまたがって格納される。
+[SONiC](../../reference/glossary.md#term-sonic) の [BGP](../../reference/glossary.md#term-bgp) ランタイム状態は 2 つの [Redis](../../reference/glossary.md#term-redis) DB にまたがって格納される。
 
 - **[STATE_DB](../../reference/glossary.md#term-state_db)** — `BGP_STATE_TABLE`（EOIU マーカー）・`BGP_PEER_CONFIGURED_TABLE`（[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) によるピア確認状態）
 - **BMP_STATE_DB** — `BGP_NEIGHBOR_TABLE`・`BGP_RIB_IN_TABLE`・`BGP_RIB_OUT_TABLE`（BMP コンテナが [FRR](../../reference/glossary.md#term-frr)/bgpd から収集する [BGP](../../reference/glossary.md#term-bgp) モニタリングデータ）
@@ -335,8 +335,8 @@ BMP（BGP Monitoring Protocol）テーブルは `openbmpd` が FRR bgpd から B
 | 参照先テーブル / コンポーネント | 参照方向 | 条件 | evidence |
 |--------------------------------|---------|------|---------|
 | `BMP` (CONFIG_DB, `BMP_TABLE`) | `bmpcfgd` が `config_db.subscribe(BMP_TABLE, ...)` で購読。各フィールド (`bgp_neighbor_table` / `bgp_rib_in_table` / `bgp_rib_out_table`) が `"false"` の場合は `delete_all_by_pattern` でテーブルを全削除する | 常時 | bmpcfgd.py:82–86 |
-| FRR bgpd BMP ソケット | `openbmpd` が bgpd の BMP ポートに TCP 接続。BGP OPEN メッセージ受信後にのみ `BGP_NEIGHBOR_TABLE` エントリが生成される | bgpd との接続が確立しない間はエントリが生成されない | SONiC/doc/bmp/bmp.md L141–166 |
-| FRR bgpd UPDATE メッセージ | `openbmpd` が BGP UPDATE を解析して `BGP_RIB_IN_TABLE` / `BGP_RIB_OUT_TABLE` を書く | BGP OPEN 完了後に受信・送信する UPDATE のみ対象 | SONiC/doc/bmp/bmp.md L286–306 |
+| FRR bgpd BMP ソケット | `openbmpd` が bgpd の BMP ポートに TCP 接続。BGP OPEN メッセージ受信後にのみ `BGP_NEIGHBOR_TABLE` エントリが生成される | bgpd との接続が確立しない間はエントリが生成されない | [SONiC](../../reference/glossary.md#term-sonic)/doc/bmp/bmp.md L141–166 |
+| FRR bgpd UPDATE メッセージ | `openbmpd` が BGP UPDATE を解析して `BGP_RIB_IN_TABLE` / `BGP_RIB_OUT_TABLE` を書く | BGP OPEN 完了後に受信・送信する UPDATE のみ対象 | [SONiC](../../reference/glossary.md#term-sonic)/doc/bmp/bmp.md L286–306 |
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/state-bgp-cross-refs.md`
 <!-- /cross-refs -->
@@ -551,7 +551,7 @@ Warm Restart の有効化は CONFIG_DB `WARM_RESTART` テーブルで制御さ�
 
 ### マルチ ASIC 環境
 
-`bgpcfgd` 本体に multi-ASIC 対応コードは存在しない。multi-ASIC 環境では各 ASIC namespace ごとに独立した bgpcfgd インスタンスが起動するため、`BGP_PEER_CONFIGURED_TABLE` は各 namespace の STATE_DB に個別に書き込まれる。`fpmsyncd` および `bgp_eoiu_marker` も namespace ごとに独立して動作する。[SNMP](../../reference/glossary.md#term-snmp) サブエージェント（sonic-snmpagent）は全 namespace の STATE_DB を横断収集するが、これは consumer 側の動作であり書き込み挙動には影響しない。
+`bgpcfgd` 本体に multi-[ASIC](../../reference/glossary.md#term-asic) 対応コードは存在しない。multi-[ASIC](../../reference/glossary.md#term-asic) 環境では各 [ASIC](../../reference/glossary.md#term-asic) namespace ごとに独立した bgpcfgd インスタンスが起動するため、`BGP_PEER_CONFIGURED_TABLE` は各 namespace の STATE_DB に個別に書き込まれる。`fpmsyncd` および `bgp_eoiu_marker` も namespace ごとに独立して動作する。[SNMP](../../reference/glossary.md#term-snmp) サブエージェント（sonic-snmpagent）は全 namespace の STATE_DB を横断収集するが、これは consumer 側の動作であり書き込み挙動には影響しない。
 <!-- /platform -->
 
-<!-- glossary-links-injected: 4032c63773b7 -->
+<!-- glossary-links-injected: 8de83b4fd2a7 -->

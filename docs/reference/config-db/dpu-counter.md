@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-`FLEX_COUNTER_TABLE|ENI` および `FLEX_COUNTER_TABLE|DASH_METER` は、[DASH](../../reference/glossary.md#term-dash) (Disaggregated API for SONiC Hosts) の [ENI](../../reference/glossary.md#term-eni) (Elastic Network Interface) カウンタと [DASH](../../reference/glossary.md#term-dash) メータカウンタのポーリング設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するエントリ[^1]。これらは [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) ノード専用であり、`switch_type == 'dpu'` の場合のみ `enable_counters.py` が自動的に有効化する[^2]。通常の ToR / Spine では `init_cfg.json.j2` に記載がなく、デフォルトで無効状態となる。
+`FLEX_COUNTER_TABLE|ENI` および `FLEX_COUNTER_TABLE|DASH_METER` は、[DASH](../../reference/glossary.md#term-dash) (Disaggregated API for [SONiC](../../reference/glossary.md#term-sonic) Hosts) の [ENI](../../reference/glossary.md#term-eni) (Elastic Network Interface) カウンタと [DASH](../../reference/glossary.md#term-dash) メータカウンタのポーリング設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するエントリ[^1]。これらは [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) ノード専用であり、`switch_type == 'dpu'` の場合のみ `enable_counters.py` が自動的に有効化する[^2]。通常の ToR / Spine では `init_cfg.json.j2` に記載がなく、デフォルトで無効状態となる。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -191,7 +191,7 @@ if platform_info.get('switch_type') == 'dpu':
 | # | 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
 |---|--------|-----|---------|-------------|--------------|------|
 | 1 | `DEVICE_METADATA\|localhost.switch_type` | CONFIG_DB | 読み取り | なし | DPU 自動有効化に必須 | `enable_counters.py:42-45`, `device_info.py:563-566` |
-| 2 | `PORT` (PortsOrch `allPortsReady()`) | — | 状態確認 (起動順序ガード) | なし | `FlexCounterOrch` 処理開始の前提 | `flexcounterorch.cpp:164-166` |
+| 2 | `PORT` ([PortsOrch](../../reference/glossary.md#term-portsorch) `allPortsReady()`) | — | 状態確認 (起動順序ガード) | なし | `FlexCounterOrch` 処理開始の前提 | `flexcounterorch.cpp:164-166` |
 | 3 | `APP_DASH_ENI_TABLE` → `DashOrch::eni_entries_` | [APPL_DB](../../reference/glossary.md#term-appl_db) | 間接 (DashOrch 内部マップ) | なし | カウンタ ID 投入に実質必須 | `dashorch.cpp:69`, `dashorch.h:128` |
 | 4 | `COUNTERS_ENI_NAME_MAP` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | 書き込み (DashOrch が生産) | なし | `counterpoll` / `show dash counters eni` の前提 | `dashorch.cpp:68`, `schema.h:249` |
 | 5 | `DEVICE_METADATA\|localhost.create_only_config_db_buffers` | CONFIG_DB | 読み取り (初期化のみ) | なし | ENI/DASH_METER 処理パスに非直接 | `flexcounterorch.cpp:114` |
@@ -551,7 +551,7 @@ if (dash_orch && (key == DASH_METER_KEY))
 | モード | 書き込み API | 通知方式 |
 |--------|------------|---------|
 | Traditional (`--traditional-flexcounter`) | `ProducerTable::set()` (`saihelper.cpp:1047`) | `FLEX_COUNTER_TABLE_CHANNEL` で [syncd](../../reference/glossary.md#term-syncd) が起床 |
-| 非 Traditional (デフォルト) | `SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER` 属性経由 (`saihelper.cpp:1055-1063`) | ASIC チャンネル経由。FLEX_COUNTER_DB への直接 PUBLISH は行わない |
+| 非 Traditional (デフォルト) | `SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER` 属性経由 (`saihelper.cpp:1055-1063`) | [ASIC](../../reference/glossary.md#term-asic) チャンネル経由。FLEX_COUNTER_DB への直接 PUBLISH は行わない |
 
 ### Producer / Consumer ペアサマリ
 
@@ -561,7 +561,7 @@ if (dash_orch && (key == DASH_METER_KEY))
 | CONFIG_DB → `FlexCounterOrch` | `SubscriberStateTable` (PSUBSCRIBE) | keyspace notification |
 | `FlexCounterOrch` → `DashOrch` | 関数呼び出し (`handleFCStatusUpdate` / `handleMeterFCStatusUpdate`) | — (同プロセス内) |
 | `FlexCounterOrch` → FLEX_COUNTER_DB (traditional) | `ProducerTable` | `FLEX_COUNTER_TABLE_CHANNEL` (syncd が消費) |
-| `FlexCounterOrch` → syncd (非 traditional) | SAI [Redis](../../reference/glossary.md#term-redis) Attribute / ASIC channel | — |
+| `FlexCounterOrch` → syncd (非 traditional) | SAI [Redis](../../reference/glossary.md#term-redis) Attribute / [ASIC](../../reference/glossary.md#term-asic) channel | — |
 | syncd FlexCounter → COUNTERS_DB | `swss::Table::set()` (plain HSET) | **なし (PUBLISH 非発行)** |
 
 !!! warning "COUNTERS_DB は push 通知なし"
@@ -619,7 +619,7 @@ auto stat_enum_list = queryAvailableCounterStats((sai_object_type_t)SAI_OBJECT_T
 // saihelper.cpp:1099-1123: sai_metadata_get_object_type_info から statenum を取得
 ```
 
-| ASIC 観点 | 結果 |
+| [ASIC](../../reference/glossary.md#term-asic) 観点 | 結果 |
 |-----------|------|
 | orchagent コード側の ASIC 種別分岐 | なし |
 | ENI 統計 ID の種類 | ベンダー SAI メタデータ定義に依存 |
@@ -811,4 +811,4 @@ show dash counters eni
 
 <!-- glossary-links-injected: dpu-counter-a1b2c3 -->
 
-<!-- glossary-links-injected: de4ace31363e -->
+<!-- glossary-links-injected: aa689fd9123a -->

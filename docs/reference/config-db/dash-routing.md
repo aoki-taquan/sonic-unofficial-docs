@@ -40,7 +40,7 @@ related:
 
 ## 概要
 
-[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for SONiC Hosts) データプレーンのルーティングポリシーを定義する 4 テーブル群[^1]。
+[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for [SONiC](../../reference/glossary.md#term-sonic) Hosts) データプレーンのルーティングポリシーを定義する 4 テーブル群[^1]。
 
 - **`DASH_ROUTING_TYPE_TABLE`**: ルーティングタイプ名 (`vnet`, `vnet_direct`, `direct`, `drop` 等) と転送アクション・カプセル化設定のマッピングを定義する。他テーブルから参照される。
 - **`DASH_ROUTE_GROUP_TABLE`**: Outbound ルートのグループコンテナ。[ENI](../../reference/glossary.md#term-eni) は `DASH_ENI_ROUTE_TABLE` 経由でグループにバインドする。
@@ -674,7 +674,7 @@ dash_route_orch->unbindRouteGroup(old_group_id);
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
-**[DPU](../../reference/glossary.md#term-dpu) ([SmartSwitch](../../reference/glossary.md#term-smartswitch)) 専用**: `DashRouteOrch` / `DashOrch` は `gMySwitchType == "dpu"` のときのみ `DpuOrchDaemon` 内で生成される。通常スイッチ・VoQ シャーシ・Fabric モードでは本テーブル群は存在しない。[SAI](../../reference/glossary.md#term-sai) DASH Outbound/Inbound Routing API を経由するため [ASIC](../../reference/glossary.md#term-asic) が当該 API をサポートすることが前提。コード内に ASIC 種別の条件分岐はなく SAI 実装（[syncd](../../reference/glossary.md#term-syncd) 経由のベンダー SAI ライブラリ）に委ねられる。
+**[DPU](../../reference/glossary.md#term-dpu) ([SmartSwitch](../../reference/glossary.md#term-smartswitch)) 専用**: `DashRouteOrch` / `DashOrch` は `gMySwitchType == "dpu"` のときのみ `DpuOrchDaemon` 内で生成される。通常スイッチ・VoQ シャーシ・Fabric モードでは本テーブル群は存在しない。[SAI](../../reference/glossary.md#term-sai) DASH Outbound/Inbound Routing API を経由するため [ASIC](../../reference/glossary.md#term-asic) が当該 API をサポートすることが前提。コード内に [ASIC](../../reference/glossary.md#term-asic) 種別の条件分岐はなく SAI 実装（[syncd](../../reference/glossary.md#term-syncd) 経由のベンダー SAI ライブラリ）に委ねられる。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
@@ -700,4 +700,4 @@ dash_route_orch->unbindRouteGroup(old_group_id);
 
 [^1]: `SONiC/doc/dash/dash-sonic-hld.md` §3.2.6〜§3.2.10 (DASH_ROUTING_TYPE_TABLE, DASH_ROUTE_GROUP_TABLE, DASH_ROUTE_TABLE, DASH_ROUTE_RULE_TABLE スキーマ定義). <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dash/dash-sonic-hld.md>
 
-<!-- glossary-links-injected: cb6bca23862f -->
+<!-- glossary-links-injected: ec18b66e3507 -->

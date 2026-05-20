@@ -86,7 +86,7 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 | `port` | 存在する PORT 名 | 物理ポートを LAG に bind |
 | `port` | 存在しない PORT 名 | YANG leafref 違反 reject |
 | `port` | PHY / SYSTEM 型以外 | `LAG member port has to be of type PHY or SYSTEM` SWSS_LOG_ERROR |
-| `port` | 異なる ASIC の switch_id (chassis) | `System lag switch id mismatch` SWSS_LOG_ERROR |
+| `port` | 異なる [ASIC](../../reference/glossary.md#term-asic) の switch_id (chassis) | `System lag switch id mismatch` SWSS_LOG_ERROR |
 
 *このテーブルはキー (name, port) のみで付加フィールドを持たない。enum なし。*
 
@@ -136,7 +136,7 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 | YANG leafref 違反 (`name`/`port` 参照先なし) | config-load で reject（DB 書き込みなし） | — | エントリ作成前に拒否 |
 | `STATE_PORT_TABLE` 未準備（ポート `state != ok`） | 暗黙 continue（リトライ待機） | なし | [portmgrd](../../reference/glossary.md#term-portmgrd) が [STATE_DB](../../reference/glossary.md#term-state_db) を更新後に自動解消 |
 | `STATE_LAG_TABLE` 未準備（teamd 未起動） | 暗黙 continue（リトライ待機） | なし | teamd 起動後に自動解消 |
-| MACsec Ingress SA 未確立（MACsec 有効時のみ） | 暗黙 continue（リトライ待機） | `SWSS_LOG_INFO` | SA 確立後に自動解消 |
+| [MACsec](../../reference/glossary.md#term-macsec) Ingress SA 未確立（[MACsec](../../reference/glossary.md#term-macsec) 有効時のみ） | 暗黙 continue（リトライ待機） | `SWSS_LOG_INFO` | SA 確立後に自動解消 |
 | `ip link show <member>` 失敗（kernel netdev 不在） | `task_ignore`（エントリ破棄） | `SWSS_LOG_WARN`: `Unable to find port %s` | エントリ破棄。ポート復旧後に再投入必要 |
 | ポートが既に別 LAG にスレーブ済み | `task_ignore`（ログなし） | なし | べき等処理 |
 | `teamdctl port add` 失敗 + ポート admin-up | `task_need_retry`（自動再試行） | `SWSS_LOG_INFO`: `Failed to add %s to port channel %s, retry...` | [portmgrd](../../reference/glossary.md#term-portmgrd) 競合とみなし自動再試行 (`teammgr.cpp:779`) |
@@ -153,7 +153,7 @@ PORTCHANNEL_MEMBER|<portchannel_name>|<port_name>
 
 `teammgrd` の select ループには `task_need_retry` のリトライ上限カウンタが存在しない。
 `m_toSync` はエントリを保持し続け、次の select イテレーションで再試行する設計（無限リトライ）。
-依存状態（`STATE_LAG_TABLE`・`STATE_PORT_TABLE`・MACsec SA）が解消されれば自然に成功する。
+依存状態（`STATE_LAG_TABLE`・`STATE_PORT_TABLE`・[MACsec](../../reference/glossary.md#term-macsec) SA）が解消されれば自然に成功する。
 
 ### VLAN_MEMBER 競合の詳細
 
@@ -210,7 +210,7 @@ show interfaces portchannel
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / PortsOrch**: `PORTCHANNEL_MEMBER` テーブルを `SubscriberStateTable` で購読。
+- **orchagent / [PortsOrch](../../reference/glossary.md#term-portsorch)**: `PORTCHANNEL_MEMBER` テーブルを `SubscriberStateTable` で購読。
 - **teammgrd** (`sonic-swss/cfgmgr/teammgr.cpp`): LAG メンバの追加・削除を `teamd` に伝達。
 
 ### 段階 2: CFG → APPL 翻訳
@@ -220,7 +220,7 @@ show interfaces portchannel
 
 ### 段階 3: APPL → SAI
 
-- PortsOrch が APP_DB を読み `sai_lag_api->create_lag_member()` / `remove_lag_member()` を呼び出し。
+- [PortsOrch](../../reference/glossary.md#term-portsorch) が APP_DB を読み `sai_lag_api->create_lag_member()` / `remove_lag_member()` を呼び出し。
 - [LACP](../../reference/glossary.md#term-lacp) が有効な場合は teamd がネゴシエーションを担う。
 
 ### 段階 4: タイミング + 副作用
@@ -346,7 +346,7 @@ DEL PORTCHANNEL|PortChannel0001
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-`PORTCHANNEL_MEMBER` の [CONFIG_DB](../../reference/glossary.md#term-config_db) Consumer 経路は **CONFIG_DB → TeamMgr → teamd (UNIX ソケット) → APP_DB → PortsOrch → SAI** の 3 段構成である。
+`PORTCHANNEL_MEMBER` の [CONFIG_DB](../../reference/glossary.md#term-config_db) Consumer 経路は **CONFIG_DB → TeamMgr → teamd (UNIX ソケット) → APP_DB → [PortsOrch](../../reference/glossary.md#term-portsorch) → SAI** の 3 段構成である。
 
 ### 1. CONFIG_DB → TeamMgr: SubscriberStateTable (keyspace PSUBSCRIBE)
 
@@ -420,7 +420,7 @@ teamd 操作完了後、TeamMgr が APP_DB `LAG_MEMBER_TABLE` (= `APP_LAG_MEMBER
 | `config switchport mode` (CLI) | `config/switchport.py:44-47` `get_table('PORTCHANNEL_MEMBER')` | ポートが PORTCHANNEL_MEMBER 在籍中は `ctx.fail()` で拒否 |
 | `config stp` (CLI) | `config/stp.py:331` `get_table('PORTCHANNEL_MEMBER')` | LAG メンバーポートの判定に使用 |
 | `PORT` DEL guard | `m_port_ref_count` (portsorch.cpp:8205, 8253, 5649) | PORTCHANNEL_MEMBER 在籍中は対応 PORT の DEL を拒否 |
-| `multi_asic` (sonic-py-common) | `multi_asic.py:410,435` `get_keys('PORTCHANNEL_MEMBER')` | LAG メンバーの internal/backend 属性を伝播; マルチ ASIC 環境の backend LAG 判定に使用 |
+| `multi_asic` (sonic-py-common) | `multi_asic.py:410,435` `get_keys('PORTCHANNEL_MEMBER')` | LAG メンバーの internal/backend 属性を伝播; マルチ [ASIC](../../reference/glossary.md#term-asic) 環境の backend LAG 判定に使用 |
 | `show interfaces portchannel` (CLI) | `show/interfaces/__init__.py:1141,1173` | メンバーポート一覧を表示 |
 
 ### VLAN_MEMBER との相互排他 (詳細)
@@ -498,7 +498,7 @@ LAG メンバの有効化・無効化シーケンスは Mellanox の SAI 制約�
 
 ### Multi-ASIC — バックエンド LAG 判定
 
-マルチ ASIC 環境では `sonic_py_common.multi_asic.is_port_channel_internal()` が PORTCHANNEL_MEMBER を参照して LAG の内部 (backend) / 外部 (frontend) を判定する (`multi_asic.py:L401-415`)。
+マルチ [ASIC](../../reference/glossary.md#term-asic) 環境では `sonic_py_common.multi_asic.is_port_channel_internal()` が PORTCHANNEL_MEMBER を参照して LAG の内部 (backend) / 外部 (frontend) を判定する (`multi_asic.py:L401-415`)。
 
 | 条件 | 結果 |
 |------|------|
@@ -551,4 +551,4 @@ STATE_DB に `LAG_MEMBER_TABLE` は書き込まれない。LAG メンバの状�
 
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: e0e4e4c09a96 -->
+<!-- glossary-links-injected: 9880a19c4dc4 -->

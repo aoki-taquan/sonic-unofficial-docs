@@ -180,7 +180,7 @@ show buffer pool
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -349,7 +349,7 @@ evidence: `bufferorch.cpp:1990`
 | `resolveFieldRefArray()` が `not_resolved`（BUFFER_PROFILE が APPL_DB 未到着） | `task_need_retry` | `SWSS_LOG_INFO("Missing or invalid egress buffer profile reference specified for:%s")` / `bufferorch.cpp:1875-1878` |
 | `resolveFieldRefArray()` がその他エラー | `task_failed` | `SWSS_LOG_ERROR("Failed resolving egress buffer profile reference specified for:%s")` / `bufferorch.cpp:1880-1881` |
 | `packet_discard_action = trim` のプロファイル（trimming-eligible）を指定 | `task_failed` | `SWSS_LOG_ERROR("Failed to configure egress buffer profile list(%s): buffer profile(%s) is trimming eligible")` / `bufferorch.cpp:1917-1921` |
-| ポート名が PortsOrch マップに未登録 | `task_invalid_entry` | `SWSS_LOG_ERROR("Port with alias:%s not found")` / `bufferorch.cpp:1954-1955` |
+| ポート名が [PortsOrch](../../reference/glossary.md#term-portsorch) マップに未登録 | `task_invalid_entry` | `SWSS_LOG_ERROR("Port with alias:%s not found")` / `bufferorch.cpp:1954-1955` |
 | SAI `set_ports_attribute` 失敗（Bulk SAI） | `handleSaiSetStatus()` 経由で retry 判定、retry 時は consumer に再登録 | `SWSS_LOG_ERROR("Failed to set egress buffer profile list on port, status:%d, key:%s")` / `bufferorch.cpp:1974`、Bulk は `SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR` で他ポートをブロックしない（L2013-2014） |
 
 ### retry 解消トリガ
@@ -478,7 +478,7 @@ YANG leafref が静的 validation を提供するのに対し、以下の参照�
 
 #### PORT への暗黙参照
 
-`bufferorch.cpp:processEgressBufferProfileList` はキーのポート名を `gPortsOrch->getPort(port_name, port)` で解決する。PortsOrch のポートマップに存在しない場合は `task_invalid_entry` を返し、エントリが**永続的に破棄**される（retry なし）。PORT テーブルが先に存在している必要がある (`bufferorch.cpp:1952-1956`)。
+`bufferorch.cpp:processEgressBufferProfileList` はキーのポート名を `gPortsOrch->getPort(port_name, port)` で解決する。[PortsOrch](../../reference/glossary.md#term-portsorch) のポートマップに存在しない場合は `task_invalid_entry` を返し、エントリが**永続的に破棄**される（retry なし）。PORT テーブルが先に存在している必要がある (`bufferorch.cpp:1952-1956`)。
 
 #### BUFFER_POOL への間接参照
 
@@ -552,4 +552,4 @@ ASIC (sairedis → ASIC_DB)
 ```
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: e9832f5ecb12 -->
+<!-- glossary-links-injected: 0b737357a1f2 -->

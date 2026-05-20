@@ -405,7 +405,7 @@ linkmgrd は [SAI](../../reference/glossary.md#term-sai) を直接呼ばない�
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`linkmgrd` は ASIC ベンダー識別子（broadcom / mellanox 等）を参照しない。プラットフォームプロファイルは **ケーブルタイプ** (`PortCableType`) によって決まる。`MUX_LINKMGR` フィールドの有効性・意味論はケーブルタイプによって以下のとおり異なる。
+`linkmgrd` は [ASIC](../../reference/glossary.md#term-asic) ベンダー識別子（broadcom / mellanox 等）を参照しない。プラットフォームプロファイルは **ケーブルタイプ** (`PortCableType`) によって決まる。`MUX_LINKMGR` フィールドの有効性・意味論はケーブルタイプによって以下のとおり異なる。
 
 ### 識別方法
 
@@ -530,7 +530,7 @@ ICMP heartbeat パケットバッファの最大サイズ。Jumbo frame 対応 (
 ### MUX_LINKMGR は orchagent 非経由 — 他テーブルと独立
 
 `linkmgrd` は `CFG_MUX_LINKMGR_TABLE_NAME` を CONFIG_DB から直接購読する (`DbInterface.cpp:1820`)。
-orchagent / MuxOrch は MUX_LINKMGR を処理しない。TUNNEL / PEER_SWITCH / MUX_CABLE の
+orchagent / [MuxOrch](../../reference/glossary.md#term-muxorch) は MUX_LINKMGR を処理しない。TUNNEL / PEER_SWITCH / MUX_CABLE の
 準備状態とは独立して MUX_LINKMGR を書き込める。
 
 ### SET 時の先行必須テーブル
@@ -669,4 +669,4 @@ linkmgrd SubscriberStateTable (appDbForwardingResponseTable)
 
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 292338be829f -->
+<!-- glossary-links-injected: b7e35f529315 -->

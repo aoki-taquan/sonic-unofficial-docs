@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-[SmartSwitch](../../reference/glossary.md#term-smartswitch) は [NPU](../../reference/glossary.md#term-npu)（スイッチ本体）に [DPU](../../reference/glossary.md#term-dpu)（Data Processing Unit）を搭載した SONiC プラットフォームである。[CONFIG_DB](../../reference/glossary.md#term-config_db) には [DPU](../../reference/glossary.md#term-dpu) の接続・アドレス・HA（High Availability）設定を保持する複数テーブルが存在する[^1]。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) は [NPU](../../reference/glossary.md#term-npu)（スイッチ本体）に [DPU](../../reference/glossary.md#term-dpu)（Data Processing Unit）を搭載した [SONiC](../../reference/glossary.md#term-sonic) プラットフォームである。[CONFIG_DB](../../reference/glossary.md#term-config_db) には [DPU](../../reference/glossary.md#term-dpu) の接続・アドレス・HA（High Availability）設定を保持する複数テーブルが存在する[^1]。
 
 テーブル一覧:
 
@@ -727,4 +727,4 @@ Mellanox 実装では、ミッドプレーンインターフェース名を `/us
 
 [^1]: YANG 定義: `sonic-smart-switch.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-smart-switch.yang>
 
-<!-- glossary-links-injected: e925d7048c4d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

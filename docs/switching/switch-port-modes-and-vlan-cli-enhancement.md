@@ -46,7 +46,7 @@ related:
 
 ## 概要
 
-SONiC のレガシー [VLAN](../reference/glossary.md#term-vlan) CLI は `config vlan add 10` / `config vlan member add 10 Ethernet0 -u` のように **VLAN ID 単発操作** を強いる。多数 VLAN の運用では繰り返し叩くことになり、誤入力やループスクリプトでのレース問題があった。さらにポートの「routed / access / trunk」のような **意味的なモード**は CLI に明示されておらず、運用者の認知コストが高かった[^1]。
+[SONiC](../reference/glossary.md#term-sonic) のレガシー [VLAN](../reference/glossary.md#term-vlan) CLI は `config vlan add 10` / `config vlan member add 10 Ethernet0 -u` のように **VLAN ID 単発操作** を強いる。多数 VLAN の運用では繰り返し叩くことになり、誤入力やループスクリプトでのレース問題があった。さらにポートの「routed / access / trunk」のような **意味的なモード**は CLI に明示されておらず、運用者の認知コストが高かった[^1]。
 
 本機能は次の 2 つを導入する[^1]:
 
@@ -462,4 +462,4 @@ show interfaces status  # PR #3788 取込後は switchport mode 列が出る
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f960e6599a3c -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

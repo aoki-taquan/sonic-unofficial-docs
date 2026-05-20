@@ -96,7 +96,7 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 |---|----------|------|--------|
 | 1 | `MGMT_VRF_CONFIG.mgmtVrfEnabled` → `MGMT_INTERFACE` 書込み | **推奨先行**（VRF 有効フラグが読まれるタイミングに影響） | `interfaces.j2` は再実行されるたびに最新値を参照する |
 | 2 | `SYSLOG_SERVER` → `MGMT_INTERFACE` 書込み | 推奨先行（`forced_mgmt_routes` 相当のログサーバ経路が正しく生成されるため） | `SYSLOG_SERVER` 未設定時は `10.20.6.16/32` がハードコードで注入される |
-| 3 | `MGMT_INTERFACE` 変更 → RADIUS `src_intf` 解決 | 先行推奨（`aaacfg.handle_radius_source_intf_ip_chg()` が呼ばれ RADIUS 送信元 IP が更新される） | `mgmt_intf_handler` が変更をトリガーするため後から更新すれば自動復旧 |
+| 3 | `MGMT_INTERFACE` 変更 → [RADIUS](../../reference/glossary.md#term-radius) `src_intf` 解決 | 先行推奨（`aaacfg.handle_radius_source_intf_ip_chg()` が呼ばれ [RADIUS](../../reference/glossary.md#term-radius) 送信元 IP が更新される） | `mgmt_intf_handler` が変更をトリガーするため後から更新すれば自動復旧 |
 
 ### 主要な制約詳細
 
@@ -104,7 +104,7 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 
 **`SYSLOG_SERVER` 暗黙依存 (依存 #2)**: `interfaces.j2:101-113` は `SYSLOG_SERVER` の有無でルート注入先を切り替える。`SYSLOG_SERVER` が CONFIG_DB にない場合に `10.20.6.16/32` がハードコードで注入されるため、`SYSLOG_SERVER` を後から追加しても `interfaces-config` が再起動されるまでハードコードルートが残留する（evidence: `interfaces.j2:101-130`）。
 
-**RADIUS 送信元 IP 解決 (依存 #3)**: `mgmt_intf_handler()` は `MGMT_INTERFACE` の変更を受け取ると `aaacfg.handle_radius_source_intf_ip_chg(mgmt_intf_name)` を呼び RADIUS の送信元 IP を再解決する（`hostcfgd:2348-2350`）。RADIUS 設定が先に存在し `src_intf=eth0` が設定されている場合、`MGMT_INTERFACE` の IP 変更後に RADIUS 送信元 IP が自動更新される。この依存は `RADIUS_SERVER.src_intf` を使用する構成でのみ顕在化する。
+**[RADIUS](../../reference/glossary.md#term-radius) 送信元 IP 解決 (依存 #3)**: `mgmt_intf_handler()` は `MGMT_INTERFACE` の変更を受け取ると `aaacfg.handle_radius_source_intf_ip_chg(mgmt_intf_name)` を呼び RADIUS の送信元 IP を再解決する（`hostcfgd:2348-2350`）。RADIUS 設定が先に存在し `src_intf=eth0` が設定されている場合、`MGMT_INTERFACE` の IP 変更後に RADIUS 送信元 IP が自動更新される。この依存は `RADIUS_SERVER.src_intf` を使用する構成でのみ顕在化する。
 
 <!-- /ordering -->
 
@@ -251,7 +251,7 @@ enum なし。
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -688,4 +688,4 @@ DPU ノードで `MGMT_INTERFACE` エントリが存在しない場合、`eth0` 
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 97586ba38bda -->
+<!-- glossary-links-injected: 1f629f272c19 -->

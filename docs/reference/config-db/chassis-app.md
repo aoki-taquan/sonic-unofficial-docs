@@ -167,7 +167,7 @@ OrchDaemon::init():
 
 ### PortInitDone ゲートの詳細
 
-PortsOrch は `PortInitDone` メッセージを受け取るまでポートリストを確定させない:
+[PortsOrch](../../reference/glossary.md#term-portsorch) は `PortInitDone` メッセージを受け取るまでポートリストを確定させない:
 
 ```
 portsyncd → APP_DB:"PORT|PortConfigDone" (count=N)
@@ -431,7 +431,7 @@ DEL イベント受信時: SAI からのneighbor削除 → STATE_DB エントリ
 **購読側 (ラインカード bgpcfgd)**: `ChassisAppDbMgr` (`managers_chassis_app_db.py`) が CHASSIS_APP_DB の変化を受信
 
 - `lc_tsa == "false"` のときのみ `DeviceGlobalCfgMgr.isolate_unisolate_device(data["tsa_enabled"])` を呼出し (`managers_chassis_app_db.py:41-44`)
-- `isolate_unisolate_device()` は出力 route-map を Jinja2 テンプレートで生成し [FRR](../../reference/glossary.md#term-frr) (vtysh) に push する — これにより全 [BGP](../../reference/glossary.md#term-bgp) 出力ルートが TSA (unreachable 相当) または TSB (通常) に切り替わる
+- `isolate_unisolate_device()` は出力 route-map を Jinja2 テンプレートで生成し [FRR](../../reference/glossary.md#term-frr) ([vtysh](../../reference/glossary.md#term-vtysh)) に push する — これにより全 [BGP](../../reference/glossary.md#term-bgp) 出力ルートが TSA (unreachable 相当) または TSB (通常) に切り替わる
 - `lc_tsa == "true"` の場合はスーパーバイザーの指示を無視（LC 側 TSA が優先）
 
 ### 副作用マトリクス
@@ -611,4 +611,4 @@ chassisd は CHASSIS_APP_DB に直接書き込まない。CHASSIS_APP_DB への�
 [^2]: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:593-658` @ 4ba9612 — `_cleanup_chassis_app_db()` の実装
 [^3]: `sonic-swss/orchagent/lagid.h:12` @ 4305596 — `LAG_ID_ALLOCATOR_ERROR_DELETE_ENTRY_NOT_FOUND = 0` の定義。`lagIdDel()` が 0 を返しても削除失敗ではなくエントリ不在の no-op を意味する
 
-<!-- glossary-links-injected: 0eb5ef60ba75 -->
+<!-- glossary-links-injected: a861be5db4bd -->

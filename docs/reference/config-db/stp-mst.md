@@ -238,7 +238,7 @@ if (stpMstInstTask == false)
 
 !!! note "キー解析の注意"
     `doStpMstInstTask()` は `key.substr(13)` で `"MST_INSTANCE|"` プレフィックス（13文字）を除去してインスタンス ID を取得する。
-    MST 有効化時に書き込まれるキー `MST_INSTANCE:INSTANCE0`（コロン区切り）と、stpmgrd が期待するキー `MST_INSTANCE|0`（パイプ区切り）の形式が異なる点は [discrepancy #5](#発見された-discrepancy--暗黙デフォルト-サマリー) に記録済み。
+    MST 有効化時に書き込まれるキー `MST_INSTANCE:INSTANCE0`（コロン区切り）と、stpmgrd が期待するキー `MST_INSTANCE|0`（パイプ区切り）の形式が異なる点は本ページの discrepancy として記録済み。
 
 ### STP_MST_PORT の起動ガード
 
@@ -663,15 +663,15 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / [APPL_DB](../../reference/
 > 調査証跡: `meta/_intermediate/cdb-flow/stp-mst-platform.md`
 > 調査対象: `sonic-swss/cfgmgr/stpmgrd.cpp`, `sonic-swss/cfgmgr/stpmgr.cpp`, `sonic-swss/cfgmgr/stpmgr.h`
 
-`stpmgrd` は [SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を一切経由しない純粋なソフトウェア STP デーモンであり、ASIC ベンダー固有の処理は存在しない。プラットフォーム差は `max_stp_instances` の上限値と multi-asic / VoQ chassis への非対応に集約される。
+`stpmgrd` は [SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を一切経由しない純粋なソフトウェア STP デーモンであり、[ASIC](../../reference/glossary.md#term-asic) ベンダー固有の処理は存在しない。プラットフォーム差は `max_stp_instances` の上限値と multi-asic / VoQ chassis への非対応に集約される。
 
 ### max_stp_instances — ASIC 能力依存の上限値
 
-`stpmgrd` 起動時 (`stpmgrd.cpp:77-78`) に `getStpMaxInstances()` が `STATE_STP_TABLE|GLOBAL.max_stp_inst` を最大 60 秒ポーリングして取得し、stpd へ `STP_INIT_READY` メッセージで通知する。この値はプラットフォームドライバが書き込む ASIC 能力に由来する[^ph1]。
+`stpmgrd` 起動時 (`stpmgrd.cpp:77-78`) に `getStpMaxInstances()` が `STATE_STP_TABLE|GLOBAL.max_stp_inst` を最大 60 秒ポーリングして取得し、stpd へ `STP_INIT_READY` メッセージで通知する。この値はプラットフォームドライバが書き込む [ASIC](../../reference/glossary.md#term-asic) 能力に由来する[^ph1]。
 
 | 状態 | `max_stp_instances` の値 | 備考 |
 |---|---|---|
-| STATE_STP_TABLE 書込み済み | プラットフォームドライバが書いた値 | ASIC 依存（例: Broadcom は一般的に最大 64） |
+| STATE_STP_TABLE 書込み済み | プラットフォームドライバが書いた値 | [ASIC](../../reference/glossary.md#term-asic) 依存（例: Broadcom は一般的に最大 64） |
 | 60 秒タイムアウト or 値 0 | `STP_DEFAULT_MAX_INSTANCES = 255` | ハードコードフォールバック (`stpmgr.h:38`) |
 | VS (virtual switch) | 多くの場合 255（STATE_DB 未書込のため） | テスト用フォールバック動作 |
 
@@ -689,7 +689,7 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / [APPL_DB](../../reference/
 
 ### PortInitDone 待機 — ポート初期化タイミング依存
 
-`stpmgrd.cpp:72` の `stpmgr.isPortInitDone(&app_db)` が `APPL_DB:APP_PORT_TABLE|PortInitDone` を無限ループで待機する。PortsOrch が全ポートの [SAI](../../reference/glossary.md#term-sai) OID 取得完了を宣言するまで stpmgrd の処理は開始されない。プラットフォームによって起動所要時間は異なるが、stpmgrd 自体の動作ロジックに差はない[^ph3]。
+`stpmgrd.cpp:72` の `stpmgr.isPortInitDone(&app_db)` が `APPL_DB:APP_PORT_TABLE|PortInitDone` を無限ループで待機する。[PortsOrch](../../reference/glossary.md#term-portsorch) が全ポートの [SAI](../../reference/glossary.md#term-sai) OID 取得完了を宣言するまで stpmgrd の処理は開始されない。プラットフォームによって起動所要時間は異なるが、stpmgrd 自体の動作ロジックに差はない[^ph3]。
 
 ### PortChannel (LAG) の ready 判定
 
@@ -706,6 +706,9 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / [APPL_DB](../../reference/
 | `max_stp_instances` 上限 | STATE_DB 値（ASIC 依存） | 255（フォールバック） | 255（STATE_DB 未書込の場合が多い） |
 | multi-asic namespace 対応 | N/A（シングルのみ） | N/A | **非対応**（ホスト namespace のみ） |
 | warm-reboot リストア | なし（全再処理） | なし | なし |
+
+<!-- footnote anchor seeds -->
+出典: [^1]
 
 [^ph1]: getStpMaxInstances 実装: `sonic-swss/cfgmgr/stpmgr.cpp:1381-1413`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp#L1381>
 [^ph2]: stpmgrd DBConnector 初期化: `sonic-swss/cfgmgr/stpmgrd.cpp:35-37`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgrd.cpp#L35>
@@ -735,4 +738,4 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / [APPL_DB](../../reference/
 - [CONFIG_DB: STP_VLAN / STP_VLAN_PORT](stp-vlan.md)
 - [CONFIG_DB: PORT](port.md)
 
-<!-- glossary-links-injected: 4d7fbc265bcc -->
+<!-- glossary-links-injected: 762e0b60ecf6 -->

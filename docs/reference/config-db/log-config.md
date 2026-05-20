@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-`LOGGER` テーブルは、SONiC の各デーモン（`orchagent`、`syncd` 等）および [SAI](../../reference/glossary.md#term-sai) API コンポーネント（`SAI_API_*`）のログ verbosity と出力先を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持する[^1]。各プロセスは起動時に `Logger::linkToDbNative()` / `linkToDb()` で自分のエントリを DB に登録し、以降 `settingThread` がテーブル変更を購読してリアルタイムに loglevel を変更する。
+`LOGGER` テーブルは、[SONiC](../../reference/glossary.md#term-sonic) の各デーモン（`orchagent`、`syncd` 等）および [SAI](../../reference/glossary.md#term-sai) API コンポーネント（`SAI_API_*`）のログ verbosity と出力先を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持する[^1]。各プロセスは起動時に `Logger::linkToDbNative()` / `linkToDb()` で自分のエントリを DB に登録し、以降 `settingThread` がテーブル変更を購読してリアルタイムに loglevel を変更する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -362,11 +362,11 @@ CONFIG_DB への `HSET` から `settingThread` が反映するまでの最大遅
 
 ### ASIC/ベンダー依存性
 
-`logger.cpp` の `linkToDbWithOutput()` および `settingThread()` は `DBConnector db("CONFIG_DB", 0)` でデフォルト namespace の CONFIG_DB に直接接続する。`platform` / `asic` / `hwsku` / `vendor` / `chassis` に基づく条件分岐は一切存在しない。ASIC ベンダーによる差異はない。
+`logger.cpp` の `linkToDbWithOutput()` および `settingThread()` は `DBConnector db("CONFIG_DB", 0)` でデフォルト namespace の CONFIG_DB に直接接続する。`platform` / `asic` / `hwsku` / `vendor` / `chassis` に基づく条件分岐は一切存在しない。[ASIC](../../reference/glossary.md#term-asic) ベンダーによる差異はない。
 
 ### multi-asic 構成
 
-`swssloglevel` (C++ バイナリ) は namespace オプションを持たず、常にそのコンテナ内のデフォルト CONFIG_DB に接続する (`loglevel.cpp:129`)。multi-asic 構成では各 ASIC コンテナ (`asic0`, `asic1`, ...) で `swssloglevel` を個別実行する必要がある。
+`swssloglevel` (C++ バイナリ) は namespace オプションを持たず、常にそのコンテナ内のデフォルト CONFIG_DB に接続する (`loglevel.cpp:129`)。multi-asic 構成では各 [ASIC](../../reference/glossary.md#term-asic) コンテナ (`asic0`, `asic1`, ...) で `swssloglevel` を個別実行する必要がある。
 
 ホストから namespace を横断して設定できるのは `config syslog level` CLI のみ:
 
@@ -384,7 +384,7 @@ cfg_db = db.cfgdb_clients[namespace]
 
 ### SAI コンポーネント (`SAI_API_*`)
 
-`syncd` は各 ASIC コンテナ内に 1 インスタンスとして存在する。`SAI_API_*` の LOGGER エントリは各コンテナの CONFIG_DB に独立して存在し、ASIC ベンダーによって登録される `SAI_API_*` コンポーネント名の一覧が異なる可能性がある。ただし logger.cpp/loglevel.cpp の処理ロジックはベンダー非依存で共通。
+`syncd` は各 [ASIC](../../reference/glossary.md#term-asic) コンテナ内に 1 インスタンスとして存在する。`SAI_API_*` の LOGGER エントリは各コンテナの CONFIG_DB に独立して存在し、ASIC ベンダーによって登録される `SAI_API_*` コンポーネント名の一覧が異なる可能性がある。ただし logger.cpp/loglevel.cpp の処理ロジックはベンダー非依存で共通。
 
 ### SmartSwitch / VOQ Chassis
 
@@ -412,7 +412,7 @@ cfg_db = db.cfgdb_clients[namespace]
 
 ## 関連リファレンス
 
-- [YANG: sonic-logger](../yang/sonic-logger.md)
+- YANG: sonic-logger
 
 <!-- ref-triangle:end -->
 
@@ -423,4 +423,4 @@ cfg_db = db.cfgdb_clients[namespace]
 
 <!-- glossary-links-injected: placeholder -->
 
-<!-- glossary-links-injected: ff9fa769839c -->
+<!-- glossary-links-injected: 865a18402f05 -->

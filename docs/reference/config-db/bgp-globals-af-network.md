@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-**[VRF](../../reference/glossary.md#term-vrf) × アドレスファミリ単位** で [BGP](../../reference/glossary.md#term-bgp) に **静的に注入するネットワーク** (`network <prefix>` ステートメント) を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。[FRR](../../reference/glossary.md#term-frr) `bgpd` の `address-family <afi> <safi>` 配下の `network <ip_prefix>` に対応する。`frr-mgmt-framework` 経路 (DEVICE_METADATA `frr_mgmt_framework_config = true`) で使用される。
+**[VRF](../../reference/glossary.md#term-vrf) × アドレスファミリ単位** で [BGP](../../reference/glossary.md#term-bgp) に **静的に注入するネットワーク** (`network <prefix>` ステートメント) を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。[FRR](../../reference/glossary.md#term-frr) `bgpd` の `address-family <afi> <safi>` 配下の `network <ip_prefix>` に対応する。`frr-mgmt-framework` 経路 ([DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) `frr_mgmt_framework_config = true`) で使用される。
 
 `BGP_GLOBALS_AF_AGGREGATE_ADDR` が複数の動的ルートを **集約** するのに対し、こちらは管理者が **明示的に広告したいプレフィックス** を列挙する用途。
 
@@ -70,13 +70,13 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 
 ## 購読者
 
-- `frr-mgmt-framework`: vtysh の `network <prefix> [route-map <name>] [backdoor]` コマンドに変換
+- `frr-mgmt-framework`: [vtysh](../../reference/glossary.md#term-vtysh) の `network <prefix> [route-map <name>] [backdoor]` コマンドに変換
 - `bgpd` ([FRR](../../reference/glossary.md#term-frr)): network 経由で BGP UPDATE に該当プレフィックスを注入
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BGP_GLOBALS`, `BGP_GLOBALS_AF`, `BGP_GLOBALS_AF_AGGREGATE_ADDR`, `ROUTE_MAP_SET`, `STATIC_ROUTE`
-- 関連 CLI: vtysh の `network <prefix>` (`frr-mgmt-framework` 経路では [CONFIG_DB](../../reference/glossary.md#term-config_db) 投入)
+- 関連 CLI: [vtysh](../../reference/glossary.md#term-vtysh) の `network <prefix>` (`frr-mgmt-framework` 経路では [CONFIG_DB](../../reference/glossary.md#term-config_db) 投入)
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-bgp-global`
 
 <!-- cdb-exceptions -->
@@ -288,7 +288,7 @@ vtysh -c "show ip bgp"
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -358,7 +358,7 @@ vtysh -c "show ip bgp"
 | `DEVICE_METADATA` 参照 | `frr_mgmt_framework_config` フラグ読み取りのみ（プラットフォーム選択ではない） |
 
 `BGP_GLOBALS_AF_NETWORK` は FRR (`bgpd`) へ直接 vtysh コマンドを発行し、
-[orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) / [SAI](../../reference/glossary.md#term-sai) を経由しない。ASIC ケイパビリティ差による分岐が
+[orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) / [SAI](../../reference/glossary.md#term-sai) を経由しない。[ASIC](../../reference/glossary.md#term-asic) ケイパビリティ差による分岐が
 発生する設計上の余地がない。
 
 <!-- evidence: sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py (grep: platform/hwsku/asic = 0 hits) -->
@@ -524,4 +524,4 @@ CONFIG_DB `BGP_GLOBALS_AF_NETWORK` テーブルの変更に伴って `frrcfgd` �
 <!-- evidence: frrcfgd.py:99,3169-3196 -->
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: cc8502ec9221 -->
+<!-- glossary-links-injected: f4b44e225fb3 -->

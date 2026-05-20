@@ -97,7 +97,7 @@ VRF_TABLE:<vrf_name>
 | `mgmtVrfEnabled` | boolean | なし ※4 | (ignored) | mgmt [VRF](../../reference/glossary.md#term-vrf) 有効フラグ |
 | `in_band_mgmt_enabled` | boolean | なし ※4 | (ignored) | in-band mgmt 有効フラグ |
 
-- ※1 フィールド省略時は SAI `create_virtual_router()` の attrs リストに含まれない → SAI / ASIC 側デフォルト値が適用される
+- ※1 フィールド省略時は SAI `create_virtual_router()` の attrs リストに含まれない → SAI / [ASIC](../../reference/glossary.md#term-asic) 側デフォルト値が適用される
 - ※2 `vni` は SAI 属性に直接マップされず `updateVrfVNIMap()` 経由で [VXLAN](../../reference/glossary.md#term-vxlan) VRF マップに書く (vrforch.cpp:114)
 - ※3 `fallback` は `vrforch.h` の `request_description` に宣言のみ、`addOperation` にハンドラなし → `SWSS_LOG_ERROR("Logic error: Unknown attribute")` で破棄 (dead field)
 - ※4 `mgmtVrfEnabled` / `in_band_mgmt_enabled` は `SWSS_LOG_INFO("MGMT VRF field: %s ignored")` で明示的に無視 (vrforch.cpp:74-78)
@@ -200,7 +200,7 @@ VRFOrch は VRF 作成/更新成功後に `STATE_VRF_OBJECT_TABLE|<vrf_name>` �
 | # | 先行条件 | 方向 | 違反時の挙動 |
 |---|----------|------|-------------|
 | 1 | Linux VRF デバイス作成（vrfmgrd `setLink()`） | **強制先行** | VRF プールが空 (`getFreeTable()` → `0`) の場合 `ip link add` が失敗しエントリが [APPL_DB](../../reference/glossary.md#term-appl_db) に書かれない (`vrfmgr.cpp:185-188`) |
-| 2 | [EVPN](../../reference/glossary.md#term-evpn) VTEP（`VXLAN_EVPN_NVO` テーブル）— `vni` フィールドが非ゼロの VRF のみ | **強制先行** | `updateVrfVNIMap()` が `evpn_orch->getEVPNVtep()` null を検出して `false` を返し、`addOperation` が `false` でリターン → Consumer がエントリを `m_toSync` に残して次ループで再試行 (`vrforch.cpp:225-230`) |
+| 2 | [EVPN](../../reference/glossary.md#term-evpn) [VTEP](../../reference/glossary.md#term-vtep)（`VXLAN_EVPN_NVO` テーブル）— `vni` フィールドが非ゼロの VRF のみ | **強制先行** | `updateVrfVNIMap()` が `evpn_orch->getEVPNVtep()` null を検出して `false` を返し、`addOperation` が `false` でリターン → Consumer がエントリを `m_toSync` に残して次ループで再試行 (`vrforch.cpp:225-230`) |
 | 3 | [APPL_DB](../../reference/glossary.md#term-appl_db) VRF_TABLE エントリ到着（VRFOrch の前提）— vrfmgrd が先に書いていること | 自然順（vrfmgrd → APPL_DB → VRFOrch） | `VRFOrch::addOperation` は APPL_DB の Consumer イベントで駆動されるため、vrfmgrd が `m_appVrfTableProducer.set()` を呼ぶまで SAI 作成は発生しない (`vrfmgr.cpp:303`) |
 
 **推奨書込み順序（VNI 付き VRF の場合）**:
@@ -234,8 +234,8 @@ DEL CONFIG_DB VRF|VrfRed
 
 ### 自動調停の仕組み
 
-- **VNI 解決待ち（doTask 再試行）**: `addOperation` が `false` を返すと `Orch2::doTask()` が `m_toSync` にエントリを残したまま次ループへ。[EVPN](../../reference/glossary.md#term-evpn) VTEP 作成後の次スケジュールで自動再評価される。
-- **ref_count ガード（delOperation 再試行）**: `delOperation` が `false` を返した場合も同様。参照 Orch（RouteOrch / IntfsOrch 等）が `decreaseVrfRefCount()` を呼び ref_count が 0 になるまでポーリングを繰り返す。
+- **VNI 解決待ち（doTask 再試行）**: `addOperation` が `false` を返すと `Orch2::doTask()` が `m_toSync` にエントリを残したまま次ループへ。[EVPN](../../reference/glossary.md#term-evpn) [VTEP](../../reference/glossary.md#term-vtep) 作成後の次スケジュールで自動再評価される。
+- **ref_count ガード（delOperation 再試行）**: `delOperation` が `false` を返した場合も同様。参照 Orch（RouteOrch / [IntfsOrch](../../reference/glossary.md#term-intfsorch) 等）が `decreaseVrfRefCount()` を呼び ref_count が 0 になるまでポーリングを繰り返す。
 - **VNI マップ整合性**: VNI 変更 (SET) 時は `updateVrfVNIMap()` が新旧 VNI を比較し差分のみ更新するため、同一 VNI での再投入は冪等 (`vrforch.cpp:212`)。
 
 <!-- /ordering -->
@@ -251,7 +251,7 @@ DEL CONFIG_DB VRF|VrfRed
 |--------------------------|---------|------|----------------|
 | `CONFIG_DB VRF\|<vrf_name>` | SET/DEL トリガ → Linux `ip link add/del` → APPL_DB VRF_TABLE に転写 | 常時。通常の VRF 追加・削除の主経路 | `vrfmgr.cpp:273-310` (`doTask` SET/DEL 分岐) |
 | `CONFIG_DB MGMT_VRF_CONFIG\|vrf_global` | `mgmtVrfEnabled` / `in_band_mgmt_enabled` 解釈 → vrf_name を `"mgmt"` 固定で SET/DEL | mgmt VRF のみ。`mgmtVrfEnabled=false` または `in_band_mgmt_enabled=false` のとき DEL に強制変換される | `vrfmgr.cpp:229-270` |
-| `CONFIG_DB VXLAN_EVPN_NVO\|<nvo_name>` (`source_vtep` フィールド) | [EVPN](../../reference/glossary.md#term-evpn) VTEP tunnel 名を `m_evpnVxlanTunnel` にキャッシュ | EVPN NVO 設定時のみ。VNI 付き VRF の `APPL_DB VXLAN_VRF_TABLE` 書込み (`doVrfVxlanTableUpdate`) の前提 | `vrfmgr.cpp:373-396` (`doVrfEvpnNvoAddTask`) |
+| `CONFIG_DB VXLAN_EVPN_NVO\|<nvo_name>` (`source_vtep` フィールド) | [EVPN](../../reference/glossary.md#term-evpn) [VTEP](../../reference/glossary.md#term-vtep) tunnel 名を `m_evpnVxlanTunnel` にキャッシュ | EVPN NVO 設定時のみ。VNI 付き VRF の `APPL_DB VXLAN_VRF_TABLE` 書込み (`doVrfVxlanTableUpdate`) の前提 | `vrfmgr.cpp:373-396` (`doVrfEvpnNvoAddTask`) |
 
 ### B. VRFOrch が参照する内部 Orch / グローバルリソース
 
@@ -259,7 +259,7 @@ DEL CONFIG_DB VRF|VrfRed
 |--------|---------|------|----------------|
 | `EvpnNvoOrch::getEVPNVtep()` (`gDirectory.get<EvpnNvoOrch*>()`) | EVPN VTEP オブジェクト取得 → null なら VRF 作成を中断・再キュー | `vni != 0` のとき `addOperation` / `updateVrfVNIMap` で参照。VTEP が null なら `false` 返却 → Consumer が `m_toSync` に残して再試行 | `vrforch.cpp:205, 225-229` (`updateVrfVNIMap`) |
 | `VxlanTunnelOrch::getVlanMappedToVni(vni)` (`gDirectory.get<VxlanTunnelOrch*>()`) | VNI → [VLAN](../../reference/glossary.md#term-vlan) ID 解決 → L3 VNI [VLAN](../../reference/glossary.md#term-vlan) インターフェイス UP/DOWN 決定 | `vni != 0` かつ EVPN VTEP 取得成功後。[VLAN](../../reference/glossary.md#term-vlan) ID = 0 なら `updateL3VniStatus` は呼ばれない | `vrforch.cpp:207, 233-241` |
-| `gPortsOrch->updateL3VniStatus(vlan_id, true)` / `updateL3VniStatus(vlan_id, false)` | VE インターフェイス UP/DOWN 通知 | VLAN ID が非ゼロの VNI 付き VRF の add / del 時。直接 PortsOrch に作用するため VRF 削除で VLAN VE がダウンする | `vrforch.cpp:239` (add), `vrforch.cpp:267` (del), `vrforch.cpp:285` (`updateL3VniVlan`) |
+| `gPortsOrch->updateL3VniStatus(vlan_id, true)` / `updateL3VniStatus(vlan_id, false)` | VE インターフェイス UP/DOWN 通知 | VLAN ID が非ゼロの VNI 付き VRF の add / del 時。直接 [PortsOrch](../../reference/glossary.md#term-portsorch) に作用するため VRF 削除で VLAN VE がダウンする | `vrforch.cpp:239` (add), `vrforch.cpp:267` (del), `vrforch.cpp:285` (`updateL3VniVlan`) |
 | `gFlowCounterRouteOrch->onAddVR(router_id)` | SAI Virtual Router OID を FlowCounterRouteOrch に登録 | VRF create 成功直後（SAI `create_virtual_router` 戻り値の OID を引数） | `vrforch.cpp:110` |
 | `gFlowCounterRouteOrch->onRemoveVR(router_id)` | FlowCounterRouteOrch から VR 登録を削除 | SAI `remove_virtual_router` 成功後、`vrf_table_` / `vrf_id_table_` erase の直前 | `vrforch.cpp:184` |
 
@@ -392,7 +392,7 @@ VNI 付き VRF の追加時に `gPortsOrch->updateL3VniStatus(vlan_id, true)` �
 
 > 調査証跡: `meta/_intermediate/cdb-flow/vrf-orch-pubsub.md`
 
-`APPL_DB VRF_TABLE` を書くのは `vrfmgrd` の `ProducerStateTable` であり、消費するのは `VRFOrch` の `ConsumerStateTable`。CONFIG_DB → vrfmgrd の経路は [CONFIG_DB VRF テーブル](./vrf.md#通信メカニズム-phase-g) を参照。ここでは APPL_DB → VRFOrch の経路に絞る。
+`APPL_DB VRF_TABLE` を書くのは `vrfmgrd` の `ProducerStateTable` であり、消費するのは `VRFOrch` の `ConsumerStateTable`。CONFIG_DB → vrfmgrd の経路は [CONFIG_DB VRF テーブル](./vrf.md) を参照。ここでは APPL_DB → VRFOrch の経路に絞る。
 
 ### vrfmgrd → APPL_DB（ProducerStateTable）
 
@@ -484,7 +484,7 @@ orchagent Select::select()
 {%- endif %}
 ```
 
-fabric ASIC スロット（chassis linecard のファブリック面プロセス）では `vrfmgrd` が起動しない。
+fabric [ASIC](../../reference/glossary.md#term-asic) スロット（chassis linecard のファブリック面プロセス）では `vrfmgrd` が起動しない。
 
 - `APPL_DB VRF_TABLE` は書き込まれない → `VRFOrch::addOperation` がトリガされない
 - `STATE_DB VRF_OBJECT_TABLE` も書き込まれない
@@ -529,7 +529,7 @@ vrfmgrd コンストラクタは `WarmStart::isWarmStart()` で以下のよう�
 
 | 観点 | プラットフォーム差 | コード上の capability 分岐 |
 |---|---|---|
-| fabric ASIC | vrfmgrd 非起動 → APPL_DB VRF_TABLE / STATE_DB VRF_OBJECT_TABLE 未書込み | `supervisord.conf.j2:247-263` の Jinja 条件 |
+| fabric [ASIC](../../reference/glossary.md#term-asic) | vrfmgrd 非起動 → APPL_DB VRF_TABLE / STATE_DB VRF_OBJECT_TABLE 未書込み | `supervisord.conf.j2:247-263` の Jinja 条件 |
 | SAI 属性サポート | vendor SAI が `violation_ttl1` / `ip_opt` / `l3_mc` / `src_mac` 未実装なら SAI エラー | **なし**（無条件 attr 投入） |
 | l3mdev カーネル | l3mdev 未対応カーネルでは vrfmgrd クラッシュ | **なし**（例外発生） |
 | warm restart | 起動時 Linux VRF デバイスの削除 vs 保持 | `WarmStart::isWarmStart()` 条件 |
@@ -553,9 +553,12 @@ vrfmgrd コンストラクタは `WarmStart::isWarmStart()` で以下のよう�
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^1] [^2] [^3] [^4]
+
 [^1]: `sonic-swss/orchagent/vrforch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/vrforch.cpp>
 [^2]: `sonic-swss/orchagent/vrforch.h` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/vrforch.h>
 [^3]: `sonic-swss/cfgmgr/vrfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vrfmgr.cpp>
 [^4]: `sonic-swss-common/common/schema.h` <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
 
-<!-- glossary-links-injected: 9f7d57d168bb -->
+<!-- glossary-links-injected: 2c399997fb09 -->

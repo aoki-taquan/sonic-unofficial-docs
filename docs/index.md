@@ -14,7 +14,7 @@ related:
 
 # SONiC 非公式ドキュメント (日本語)
 
-SONiC NOS (community master) の AI 再構成 日本語ドキュメント。
+[SONiC](./reference/glossary.md#term-sonic) NOS (community master) の AI 再構成 日本語ドキュメント。
 公式 [HLD](./reference/glossary.md#term-hld) の分散・古さ・実装乖離を補い、引用付きで master を追う。
 
 [はじめての方は概要から :material-arrow-right:](topics/01-overview/index.md){ .md-button .md-button--primary }
@@ -82,4 +82,4 @@ SONiC NOS (community master) の AI 再構成 日本語ドキュメント。
 
 誤情報の報告・改善要望は [GitHub Issues](https://github.com/aoki-taquan/sonic-unofficial-docs/issues/new/choose) / [Discussions](https://github.com/aoki-taquan/sonic-unofficial-docs/discussions) へ。プロジェクトの全体像は [このドキュメントについて](about.md) にまとまっています。
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

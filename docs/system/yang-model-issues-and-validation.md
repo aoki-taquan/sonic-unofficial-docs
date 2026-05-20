@@ -39,7 +39,7 @@ hard: 0
 
 ## 概要
 
-SONiC の [YANG](../reference/glossary.md#term-yang) モデルは `sonic-buildimage/src/sonic-yang-models/yang-models/` 以下に格納され、
+[SONiC](../reference/glossary.md#term-sonic) の [YANG](../reference/glossary.md#term-yang) モデルは `sonic-buildimage/src/sonic-yang-models/yang-models/` 以下に格納され、
 [CONFIG_DB](../reference/glossary.md#term-config_db) の検証・管理フレームワーク（mgmt-framework）・[DPB](../reference/glossary.md#term-dpb) の依存解決に使用される。
 本ページは issue tracker で報告された YANG モデルの既知問題を整理する。
 
@@ -288,4 +288,4 @@ docker logs mgmt-framework | grep -E 'xDbSpecMap|xpath' | tail -20
 - [動的ポートブレイクアウト DPB 既知問題](dynamic-port-breakout-known-issues.md)
 - [CONFIG_DB リファレンス](../reference/config-db/index.md)
 
-<!-- glossary-links-injected: 1ab7adde3f4b -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

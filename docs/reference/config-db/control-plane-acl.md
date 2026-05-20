@@ -239,7 +239,7 @@ CTRLPLANE ACL の実体は `caclmgrd` が管理する iptables ルール群で�
 | 4 | [BFD](../../reference/glossary.md#term-bfd) UDP 3784,4784 ACCEPT | INPUT -I 2 | [BFD](../../reference/glossary.md#term-bfd) セッションが [STATE_DB](../../reference/glossary.md#term-state_db) に存在する場合のみ |
 | 5 | VxLAN UDP 4789 ACCEPT | INPUT -I 2 | VXLAN_TUNNEL に src_ip がある場合のみ |
 | 6 | [DASH](../../reference/glossary.md#term-dash)-HA swbus_port ACCEPT | INPUT -I 2 | dash-ha feature が存在する場合のみ |
-| 7 | 内部 Docker IP ACCEPT | INPUT | multi-ASIC 時のみ実質追加 |
+| 7 | 内部 Docker IP ACCEPT | INPUT | multi-[ASIC](../../reference/glossary.md#term-asic) 時のみ実質追加 |
 | 8 | Chassis midplane ACCEPT | INPUT | chassis / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 時のみ |
 | 9 | ESTABLISHED/RELATED ACCEPT | INPUT | conntrack |
 | 10 | ICMPv4 (echo/reply/unreachable/time-exceeded) ACCEPT | INPUT | 常時 |
@@ -417,7 +417,7 @@ CONFIG_DB フィールド名と C++ マクロ名の対応。
 
 `services` フィールドに設定できる有効値は以下 5 種のみ。それ以外は `log_warning` 後スキップ。
 
-| services 値 | プロトコル | 宛先ポート | multi-ASIC NAT転送 | evidence |
+| services 値 | プロトコル | 宛先ポート | multi-[ASIC](../../reference/glossary.md#term-asic) NAT転送 | evidence |
 |---|---|---|---|---|
 | `NTP` | udp | 123 | False | `caclmgrd:96-100` |
 | `SNMP` | tcp, udp | 161 | True | `caclmgrd:101-105` |
@@ -491,7 +491,7 @@ evidence: `caclmgrd:625-901` (`get_acl_rules_and_translate_to_iptables_commands(
 
 #### iptables nat テーブル (multi-ASIC 専用)
 
-multi-ASIC 環境では各 ASIC 名前空間の nat テーブルも書き換わる。
+multi-[ASIC](../../reference/glossary.md#term-asic) 環境では各 ASIC 名前空間の nat テーブルも書き換わる。
 
 | 副作用 | 対象サービス | 書き込み |
 |-------|-------------|---------|
@@ -702,4 +702,4 @@ config_db.set_entry("ACL_TABLE", table_name, table_info)
 
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 8f7d07149a0b -->
+<!-- glossary-links-injected: 8df9850464d2 -->

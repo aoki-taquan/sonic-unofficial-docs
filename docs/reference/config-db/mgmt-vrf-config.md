@@ -482,7 +482,7 @@ orchestrator が `STATE_DB.VRF_OBJECT_TABLE|mgmt` を保持する間、`isVrfObj
 
 #### MGMT_INTERFACE
 
-`hostcfgd` の `get_interface_ip("eth0")` (hostcfgd:599-600) は NTP / RADIUS の送信元 IP 解決のために `MGMT_INTERFACE` キー一覧を取得する。`mgmtVrfEnabled=true` 時に eth0 が mgmt VRF 名前空間に移動するため、**MGMT_INTERFACE に IP が設定されていないと VRF 有効化後の src_ip 解決が失敗する**。CLI (`config vrf add mgmt`) はこの順序を強制しないため、手動設定時は MGMT_INTERFACE → MGMT_VRF_CONFIG の順で設定することが推奨される。
+`hostcfgd` の `get_interface_ip("eth0")` (hostcfgd:599-600) は NTP / [RADIUS](../../reference/glossary.md#term-radius) の送信元 IP 解決のために `MGMT_INTERFACE` キー一覧を取得する。`mgmtVrfEnabled=true` 時に eth0 が mgmt VRF 名前空間に移動するため、**MGMT_INTERFACE に IP が設定されていないと VRF 有効化後の src_ip 解決が失敗する**。CLI (`config vrf add mgmt`) はこの順序を強制しないため、手動設定時は MGMT_INTERFACE → MGMT_VRF_CONFIG の順で設定することが推奨される。
 
 #### DEVICE_METADATA
 
@@ -565,7 +565,7 @@ iface eth0 inet dhcp
 
 ### B. Fabric ASIC — vrfmgrd が supervisord に生成されず MGMT_VRF_CONFIG が無視される
 
-`docker-orchagent/supervisord.conf.j2` は ASIC 種別を `is_fabric_asic` フラグで判定し、Fabric ASIC では `vrfmgrd` プログラムブロックを生成しない。
+`docker-orchagent/supervisord.conf.j2` は [ASIC](../../reference/glossary.md#term-asic) 種別を `is_fabric_asic` フラグで判定し、Fabric [ASIC](../../reference/glossary.md#term-asic) では `vrfmgrd` プログラムブロックを生成しない。
 
 ```jinja
 {% if is_fabric_asic == 0 %}
@@ -575,7 +575,7 @@ command=/usr/bin/vrfmgrd
 {% endif %}
 ```
 
-| ASIC 種別 | [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) 起動 | MGMT_VRF_CONFIG 反映 |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 | [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) 起動 | MGMT_VRF_CONFIG 反映 |
 |---|---|---|
 | 通常 ASIC (`is_fabric_asic == 0`) | あり | `vrfmgr` が VRF テーブルマップと [APPL_DB](../../reference/glossary.md#term-appl_db) を管理する |
 | Fabric ASIC (`is_fabric_asic == 1`) | **なし** | CONFIG_DB への書き込みは無視される（購読者不在） |
@@ -611,4 +611,4 @@ mgmt VRF の Linux ルーティングテーブル ID は **コンパイル時定
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 80747a20eb82 -->
+<!-- glossary-links-injected: 3d04e8b573f2 -->

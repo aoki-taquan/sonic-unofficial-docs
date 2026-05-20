@@ -164,7 +164,7 @@ show lldp neighbors Ethernet0
 
 | 値 | 意味 | 挙動 |
 |----|------|------|
-| `"5"` | Interface Name | SONiC 同士接続で多い |
+| `"5"` | Interface Name | [SONiC](../../reference/glossary.md#term-sonic) 同士接続で多い |
 | `"7"` | Locally Assigned | 一部ベンダー装置 |
 
 ### `lldp_rem_man_addr` (複数値)
@@ -194,7 +194,7 @@ show lldp neighbors Ethernet0
 | `lldp_rem_man_addr` が空文字列 | `sonic-snmpagent` の `update_rem_if_mgmt()` が early return。そのポートの Management Address SNMP MIB エントリが欠落する |
 | `lldp_rem_sys_cap_*` フィールド欠落 | `KeyError` をキャッチし、警告ログ (`0 - b'LLDP_ENTRY_TABLE' missing attribute`) のみ出力。MIB エントリは 0 として返す |
 | `lldp_rem_time_mark` が欠落 | `lldp_rem_time_mark` は SNMP TimeMark として使用。欠落時は int 変換に失敗し AttributeError、当該エントリの SNMP 応答が欠落する可能性 |
-| lldpd が TTL 切れエントリを削除 | `lldpd` が TTL 超過時に lldp-[syncd](../../reference/glossary.md#term-syncd) へ削除通知を送る。lldp-[syncd](../../reference/glossary.md#term-syncd) が APPL_DB の当該エントリを削除。SONiC コード側では TTL 管理を行わない |
+| lldpd が TTL 切れエントリを削除 | `lldpd` が TTL 超過時に lldp-[syncd](../../reference/glossary.md#term-syncd) へ削除通知を送る。lldp-[syncd](../../reference/glossary.md#term-syncd) が APPL_DB の当該エントリを削除。[SONiC](../../reference/glossary.md#term-sonic) コード側では TTL 管理を行わない |
 | ポートが down になった場合 | lldpd がエントリを削除 → lldp-syncd が APPL_DB から削除。`show lldp table` からエントリが消える |
 
 <!-- /cdb-exceptions -->
@@ -403,7 +403,7 @@ priority 値は supervisord の dependent_startup 起動順序制御に使用。
 
 | 定数 / 動作 | 値 | 用途 |
 |------------|-----|------|
-| `time_mark` (SNMP OID インデックス要素) | `0` (ハードコード) | lldpRemTable の OID インデックスは `(timeMark, ifIndex, remIndex)` の 3 要素構成。Multi-ASIC 環境で同一 ifIndex が複数 timeMark で重複するのを避けるため、timeMark を常に `0` として OID を構築する。`lldp_rem_time_mark` フィールドの実際値は OID 計算に使用されない (ieee802_1ab.py L453) |
+| `time_mark` (SNMP OID インデックス要素) | `0` (ハードコード) | lldpRemTable の OID インデックスは `(timeMark, ifIndex, remIndex)` の 3 要素構成。[Multi-ASIC](../../reference/glossary.md#term-multi-asic) 環境で同一 ifIndex が複数 timeMark で重複するのを避けるため、timeMark を常に `0` として OID を構築する。`lldp_rem_time_mark` フィールドの実際値は OID 計算に使用されない (ieee802_1ab.py L453) |
 
 !!! note "PORT_INIT_TIMEOUT の強制 resume"
     300 秒 (5 分) を経過すると `port_init_done` / `port_config_done` が強制的に `True` に設定され、`lldpcli resume` が実行される。ポートが未初期化でも LLDPDU を送出し始めるため、不完全な TLV (alias 未設定 port ID 等) が対向ノードに伝達される可能性がある。
@@ -513,8 +513,8 @@ LLDP テーブルへの書き込み自体はサービス再起動を伴わない
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | **影響なし** | LLDP は [SAI](../../reference/glossary.md#term-sai) 非経由。`lldpd` が OS netdev を直接操作するため ASIC ベンダーに依存しない |
-| multi-asic (namespace_id あり) | **影響あり** | lldpd が `Ethernet[0-9]*` のみ監視（`eth0` 除外）。各 ASIC namespace で独立した lldp コンテナが起動し、それぞれ独自の `LLDP_ENTRY_TABLE` を書き込む (`supervisord.conf.j2:52-56`) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | **影響なし** | LLDP は [SAI](../../reference/glossary.md#term-sai) 非経由。`lldpd` が OS netdev を直接操作するため [ASIC](../../reference/glossary.md#term-asic) ベンダーに依存しない |
+| multi-asic (namespace_id あり) | **影響あり** | lldpd が `Ethernet[0-9]*` のみ監視（`eth0` 除外）。各 [ASIC](../../reference/glossary.md#term-asic) namespace で独立した lldp コンテナが起動し、それぞれ独自の `LLDP_ENTRY_TABLE` を書き込む (`supervisord.conf.j2:52-56`) |
 | multi-asic — eth0 LLDP 設定 | **生成されない** | `lldpd.conf.j2:15` の `{% if not namespace_id %}` ガードにより、namespace 環境では eth0 の `portidsubtype local` が設定されない |
 | multi-asic — SNMP OID 重複 | **ワークアラウンド適用** | 同一 ifIndex が複数 namespace の timeMark で重複しないよう `time_mark = 0` をハードコード固定 (`ieee802_1ab.py:449-455`) |
 | multi-asic — sonic-snmpagent | **Namespace API 対応済み** | `Namespace.init_namespace_dbs()` / `get_sync_d_from_all_namespace()` で全 namespace の APPL_DB を横断取得 (`ieee802_1ab.py:118, 157, 182`) |
@@ -544,7 +544,7 @@ multi-asic 環境では各 ASIC namespace が独立した docker-lldp コンテ�
 
 | フィールド / 設定 | 暗黙値 | ソース |
 |-----------------|-------|--------|
-| `lldp_rem_chassis_id_subtype` | `"4"` (MAC Address) | lldpd デフォルト。SONiC 同士では通常 4 |
+| `lldp_rem_chassis_id_subtype` | `"4"` (MAC Address) | lldpd デフォルト。[SONiC](../../reference/glossary.md#term-sonic) 同士では通常 4 |
 | `lldp_rem_port_id_subtype` | `"5"` (Interface Name) | lldpd.conf.j2 で `configure lldp portidsubtype ifname` をハードコード |
 | `lldp_rem_port_desc` | `""` (空文字列) | Description TLV が送信されない隣接装置からは空になる。SONiC 側は port alias を portid として送るが Description TLV 自体の送信は構成依存 |
 | `lldp_rem_sys_cap_*` の値 `"28 00"` | Bridge + Router | SONiC デフォルトの capability ビットマスク。`28 00` = 0x2800 = bit3(Bridge) + bit5(Router) |
@@ -561,4 +561,4 @@ capability 情報は別途 `lldpCapTableMap` (bool map) として管理され、
 
 <!-- glossary-links-injected: lldp-state-v1 -->
 
-<!-- glossary-links-injected: da081ece9670 -->
+<!-- glossary-links-injected: f33b35cb96ec -->

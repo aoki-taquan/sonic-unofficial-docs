@@ -319,7 +319,7 @@ self.pamLimitsCfg.update_config_file()
 - **起動直後の PAM limits 未確定ウィンドウ**: `load()` フェーズで `sshscfg.load()` 完了前は `max_sessions` 制限が PAM に反映されていない可能性がある（`__init__` 時点での `PamLimitsCfg` 実行は SSH_SERVER 不在の場合スキップされる）。
 - **原子性欠如**: `ssh_handler` は `sshd_config` 更新と PAM limits 更新をトランザクションなしで逐次実行する。ディスクフル等で PAM limits 更新のみ失敗した場合、両設定が不整合になる。
 - **sshd 検証ゲート**: `sshd -T -f <tmp>` が非ゼロを返した場合、全フィールドの変更をロールバック（`tmp` ファイル削除）。フィールド単位の部分適用はなく、すべて適用 or すべて棄却。
-- **`DEVICE_METADATA|localhost` 連動**: `PamLimitsCfg.update_config_file()` は `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` の両エントリ不在時に早期 return（L1430）。通常の SONiC デプロイでは影響なし。
+- **`DEVICE_METADATA|localhost` 連動**: `PamLimitsCfg.update_config_file()` は `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` の両エントリ不在時に早期 return（L1430）。通常の [SONiC](../../reference/glossary.md#term-sonic) デプロイでは影響なし。
 
 <!-- /ordering -->
 
@@ -332,15 +332,15 @@ self.pamLimitsCfg.update_config_file()
 |---------|-------------|-------------|------|
 | SSH_SERVER → | `max_sessions` (PamLimitsCfg) | `DEVICE_METADATA` | `update_config_file()` が `DEVICE_METADATA\|localhost` キー存在確認。不在かつ `SSH_SERVER\|POLICIES` も不在なら early return (hostcfgd:L1430) |
 | ← SSH_SERVER (間接) | `PasswordAuthentication` (sshd_config) | `AAA` | `AaaCfg.modify_conf_file()` が `/etc/pam.d/sshd` を書き換える。パスワード認証と PAM 認証スタックが実質連動 (hostcfgd:L748-751) |
-| ← SSH_SERVER (間接) | SSH 認証経路 | `MGMT_INTERFACE` | TACACS+/RADIUS の `src_intf=eth0` 時に `AaaCfg.get_interface_ip()` が `MGMT_INTERFACE` の IP を解決 (hostcfgd:L596-606) |
+| ← SSH_SERVER (間接) | SSH 認証経路 | `MGMT_INTERFACE` | TACACS+/[RADIUS](../../reference/glossary.md#term-radius) の `src_intf=eth0` 時に `AaaCfg.get_interface_ip()` が `MGMT_INTERFACE` の IP を解決 (hostcfgd:L596-606) |
 
 ### 詳細
 
-**`DEVICE_METADATA|localhost` (暗黙先行必須)**: `PamLimitsCfg.update_config_file()` は `get_table('DEVICE_METADATA')` で `localhost` キーの存在確認を行い、`localhost["hwsku"]` / `localhost["type"]` を PAM limits テンプレートに渡す（hostcfgd:L1422-1430）。`SSH_SERVER|POLICIES.max_sessions` の PAM への反映は `DEVICE_METADATA|localhost` の存在が前提。通常の SONiC デプロイでは常に存在するため実害なし。
+**`DEVICE_METADATA|localhost` (暗黙先行必須)**: `PamLimitsCfg.update_config_file()` は `get_table('DEVICE_METADATA')` で `localhost` キーの存在確認を行い、`localhost["hwsku"]` / `localhost["type"]` を PAM limits テンプレートに渡す（hostcfgd:L1422-1430）。`SSH_SERVER|POLICIES.max_sessions` の PAM への反映は `DEVICE_METADATA|localhost` の存在が前提。通常の [SONiC](../../reference/glossary.md#term-sonic) デプロイでは常に存在するため実害なし。
 
 **`AAA` テーブル (/etc/pam.d/sshd 共有)**: `AaaCfg.modify_conf_file()` が `/etc/pam.d/sshd` を直接書き換える（hostcfgd:L748-751）。SSH_SERVER の `password_authentication` フィールドと PAM の認証スタックは独立した設定ファイル管理だが、sshd が両方を参照するため実質的に連動する。`PasswordAuthentication yes` + PAM `common-auth-sonic`（TACACS+）の組み合わせで TACACS+ パスワード認証が有効になる。
 
-**`MGMT_INTERFACE` (間接参照)**: SSH_SERVER テーブルは `MGMT_INTERFACE` を直接参照しないが、SSH 認証バックエンドとして TACACS+/RADIUS を使用する場合、[AAA](../../reference/glossary.md#term-aaa) の `src_intf` → `MGMT_INTERFACE` の IP 解決が SSH 認証経路に影響する（hostcfgd:L596-606）。
+**`MGMT_INTERFACE` (間接参照)**: SSH_SERVER テーブルは `MGMT_INTERFACE` を直接参照しないが、SSH 認証バックエンドとして TACACS+/[RADIUS](../../reference/glossary.md#term-radius) を使用する場合、[AAA](../../reference/glossary.md#term-aaa) の `src_intf` → `MGMT_INTERFACE` の IP 解決が SSH 認証経路に影響する（hostcfgd:L596-606）。
 <!-- /cross-refs -->
 
 <!-- failure -->
@@ -508,16 +508,16 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5", ...})
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**。`SSH_SERVER` は `hostcfgd` が host namespace の CONFIG_DB のみを購読し、[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を経由しない純粋な host-only 設定処理のため、ASIC ベンダー・multi-asic / chassis 構成に依存しない。
+**プラットフォーム差なし**。`SSH_SERVER` は `hostcfgd` が host namespace の CONFIG_DB のみを購読し、[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を経由しない純粋な host-only 設定処理のため、[ASIC](../../reference/glossary.md#term-asic) ベンダー・multi-asic / chassis 構成に依存しない。
 
 ### 検証結果
 
 | 差異候補 | 実態 | evidence |
 |---------|------|----------|
-| `hwsku` / `type` (DEVICE_METADATA) の参照 | `PamLimitsCfg.render_conf_file()` がテンプレートに渡すが `limits.conf.j2` / `pam_limits.j2` は未参照 (`max_sessions` のみ条件使用) | `hostcfgd:1460-1476`; `data/templates/limits.conf.j2` |
+| `hwsku` / `type` ([DEVICE_METADATA](../../reference/glossary.md#term-device_metadata)) の参照 | `PamLimitsCfg.render_conf_file()` がテンプレートに渡すが `limits.conf.j2` / `pam_limits.j2` は未参照 (`max_sessions` のみ条件使用) | `hostcfgd:1460-1476`; `data/templates/limits.conf.j2` |
 | multi-asic 構成 | `is_multi_npu()` は `HostconfigDaemon` で取得するが `SshServer` / `PamLimitsCfg` には渡されない。`SSH_SERVER` は host CONFIG_DB のみに存在し `asicN` namespace には置かれない | `hostcfgd:2182,2201,2191` |
-| [SAI](../../reference/glossary.md#term-sai) / ASIC capability | 経路なし。`SshServer.set_policies()` は `sshd_config` 直接書換え + `systemctl restart ssh` のみ | `hostcfgd:1045-1186` |
-| 暗号スイート (`ciphers` / `kex_algorithms` / `macs`) | YANG enumeration で許容値が固定されており ASIC 非依存 | `sonic-ssh-server.yang` |
+| [SAI](../../reference/glossary.md#term-sai) / [ASIC](../../reference/glossary.md#term-asic) capability | 経路なし。`SshServer.set_policies()` は `sshd_config` 直接書換え + `systemctl restart ssh` のみ | `hostcfgd:1045-1186` |
+| 暗号スイート (`ciphers` / `kex_algorithms` / `macs`) | YANG enumeration で許容値が固定されており [ASIC](../../reference/glossary.md#term-asic) 非依存 | `sonic-ssh-server.yang` |
 | [VOQ](../../reference/glossary.md#term-voq) chassis / line card 分散 | 各 host の `hostcfgd` が独立に同一処理を実行。chassis 集中適用機構なし | 設計上の派生 |
 
 !!! note "プラットフォーム差なしの根拠"
@@ -528,4 +528,4 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5", ...})
 
 <!-- glossary-links-injected: ssh-config-2026-05-14 -->
 
-<!-- glossary-links-injected: 2ec24b6f0879 -->
+<!-- glossary-links-injected: d2c51e6c6a9b -->

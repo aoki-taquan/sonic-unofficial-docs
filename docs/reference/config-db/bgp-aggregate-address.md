@@ -178,7 +178,7 @@ vtysh -c 'show bgp ipv4 unicast'
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由)
+なし (FRR [vtysh](../../reference/glossary.md#term-vtysh) 経由)
 
 ### 段階 3 — APPL→SAI
 
@@ -196,13 +196,13 @@ vtysh -c 'show bgp ipv4 unicast'
 
 ### Producer/Consumer ペア
 
-`BGP_AGGREGATE_ADDRESS` テーブルは CONFIG_DB → [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) → FRR vtysh の経路をとる。[APPL_DB](../../reference/glossary.md#term-appl_db) / [SAI](../../reference/glossary.md#term-sai) への中継は無く、STATE_DB は [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 自身が `swsscommon.Table` で直接書き込む。
+`BGP_AGGREGATE_ADDRESS` テーブルは CONFIG_DB → [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) → FRR [vtysh](../../reference/glossary.md#term-vtysh) の経路をとる。[APPL_DB](../../reference/glossary.md#term-appl_db) / [SAI](../../reference/glossary.md#term-sai) への中継は無く、STATE_DB は [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 自身が `swsscommon.Table` で直接書き込む。
 
 | 区間 | 方式 | チャンネル/パターン |
 |------|------|--------------------|
 | CONFIG_DB → bgpcfgd | `SubscriberStateTable` | `__keyspace@{config_db_id}__:BGP_AGGREGATE_ADDRESS\|*` |
 | bgpcfgd → STATE_DB | `swsscommon.Table` (HSET 直接) | `BGP_AGGREGATE_ADDRESS\|<prefix>` (`state=active/inactive`) |
-| bgpcfgd → FRR | vtysh コマンド発行 | `aggregate-address <prefix> [summary-only] [as-set]` |
+| bgpcfgd → FRR | [vtysh](../../reference/glossary.md#term-vtysh) コマンド発行 | `aggregate-address <prefix> [summary-only] [as-set]` |
 | BGP_BBR.status → bgpcfgd | `directory.subscribe()` (in-process callback) | `on_bbr_change()` |
 
 ### SubscriberStateTable の動作
@@ -358,11 +358,11 @@ YANG `default` 宣言に加えて、`bgpcfgd` (`managers_aggregate_address.py`) 
 <!-- platform -->
 ## プラットフォーム差
 
-**プラットフォーム差なし**。`BGP_AGGREGATE_ADDRESS` の適用経路は FRR (ユーザ空間 `bgpd`) で完結し、[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を直接呼び出さない。ASIC ベンダー・T0 / T1 / [VOQ](../../reference/glossary.md#term-voq) chassis・single-asic / multi-asic いずれの構成でも `bgpcfgd` の `AggregateAddressMgr` が CONFIG_DB を購読し `vtysh` 経由で `aggregate-address` を投入する経路は同一。
+**プラットフォーム差なし**。`BGP_AGGREGATE_ADDRESS` の適用経路は FRR (ユーザ空間 `bgpd`) で完結し、[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を直接呼び出さない。[ASIC](../../reference/glossary.md#term-asic) ベンダー・T0 / T1 / [VOQ](../../reference/glossary.md#term-voq) chassis・single-asic / multi-asic いずれの構成でも `bgpcfgd` の `AggregateAddressMgr` が CONFIG_DB を購読し `vtysh` 経由で `aggregate-address` を投入する経路は同一。
 
 | 観点 | 差分有無 | 根拠 |
 |------|---------|------|
-| ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium / Barefoot) | なし | 集約は FRR `bgpd` で生成され、[SAI](../../reference/glossary.md#term-sai) route API はすべてのベンダーで共通の `RouteOrch` から呼ばれる |
+| [ASIC](../../reference/glossary.md#term-asic) ベンダー (Broadcom / Mellanox / Marvell / Innovium / Barefoot) | なし | 集約は FRR `bgpd` で生成され、[SAI](../../reference/glossary.md#term-sai) route API はすべてのベンダーで共通の `RouteOrch` から呼ばれる |
 | T0 / T1 / T2 / [VOQ](../../reference/glossary.md#term-voq) chassis | なし | `main.py` L105-106 の `AggregateAddressMgr` 登録は無条件 (`is_chassis()` 分岐は別マネージャ `ChassisAppDbMgr` のため) |
 | single-asic / multi-asic | なし | `managers_aggregate_address.py` / `frrcfgd.py` を `platform / asic / chassis / multi_npu` で grep しても 0 ヒット |
 | platform-specific j2 / hwsku 上書き | なし | `device/<vendor>/<platform>/` および `files/image_config/` に aggregate-address 差分なし |
@@ -537,4 +537,4 @@ journalctl -u bgp | grep -iE 'aggregate|frr daemon'
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1982 -->
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 36e1c1567c92 -->
+<!-- glossary-links-injected: 9d67aec2d553 -->

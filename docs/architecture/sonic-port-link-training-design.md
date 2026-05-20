@@ -32,13 +32,13 @@ related:
 
 - リンクトレーニング（LT）とは何で、なぜ必要なのか
 - `media_settings.json` の静的 FIR とどう違うのか
-- どの port で使えるか（ASIC 制約）
+- どの port で使えるか（[ASIC](../reference/glossary.md#term-asic) 制約）
 - auto-negotiation と一緒に有効化していいのか
 - LT が trained にならない時の見方
 
 ## 結論
 
-LT は CR/KR 系で送受信が **動的に FIR の等化係数を擦り合わせる** IEEE 802.3 clause 72/93 のプロトコル[^1]。SONiC は既存 [SAI](../reference/glossary.md#term-sai) 属性 + `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE`（per-port 能力）を使って on/off と状態取得を [CONFIG_DB](../reference/glossary.md#term-config_db) / [STATE_DB](../reference/glossary.md#term-state_db) に揃える。auto-neg との同時利用可否は ASIC ごとに異なる。
+LT は CR/KR 系で送受信が **動的に FIR の等化係数を擦り合わせる** IEEE 802.3 clause 72/93 のプロトコル[^1]。[SONiC](../reference/glossary.md#term-sonic) は既存 [SAI](../reference/glossary.md#term-sai) 属性 + `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE`（per-port 能力）を使って on/off と状態取得を [CONFIG_DB](../reference/glossary.md#term-config_db) / [STATE_DB](../reference/glossary.md#term-state_db) に揃える。auto-neg との同時利用可否は ASIC ごとに異なる。
 
 ## 動作仕様
 
@@ -89,7 +89,7 @@ flowchart TB
     SET --> SAVE[pre-emphasis 要求は replay]
 ```
 
-起動時に PortsOrch が syncd に per-port LT 能力を問い合わせ `Port::m_port_cap_lt` に保持する。AN との共存可否は ASIC 実装次第[^1]。
+起動時に [PortsOrch](../reference/glossary.md#term-portsorch) が syncd に per-port LT 能力を問い合わせ `Port::m_port_cap_lt` に保持する。AN との共存可否は ASIC 実装次第[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/port_link_training/port-link-training-design.md#L270-L290 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -195,4 +195,4 @@ config interface autoneg Ethernet0 off    # AN を切って LT 単独で再評�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 03fb69fa3601 -->
+<!-- glossary-links-injected: 3ee471c35881 -->

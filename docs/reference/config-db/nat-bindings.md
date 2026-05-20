@@ -38,7 +38,7 @@ related:
 
 ## 概要
 
-`NAT_BINDINGS` は dynamic [NAT](../../reference/glossary.md#term-nat) のバインディングを定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。[ACL](../../reference/glossary.md#term-acl) テーブルと [NAT](../../reference/glossary.md#term-nat) pool を関連付け、対象トラフィックの動的 SNAT ルールを `natmgrd` 経由で kernel / ASIC に適用する[^1]。エントリ最大 16 件。
+`NAT_BINDINGS` は dynamic [NAT](../../reference/glossary.md#term-nat) のバインディングを定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。[ACL](../../reference/glossary.md#term-acl) テーブルと [NAT](../../reference/glossary.md#term-nat) pool を関連付け、対象トラフィックの動的 SNAT ルールを `natmgrd` 経由で kernel / [ASIC](../../reference/glossary.md#term-asic) に適用する[^1]。エントリ最大 16 件。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -251,7 +251,7 @@ enum: `nat_type`=snat/dnat (有効値は snat のみ)。
 
 ### NAT_POOL が先行必須
 
-`natmgr.cpp:addDynamicNatRule()` は `NAT_BINDINGS` エントリ処理時に pool キャッシュ (`m_natPoolInfo[pool_name]`) を参照する。pool が未登録の場合は `"Pool is not yet enabled, skipping dynamic nat rules addition"` をログしてルール設定をスキップする。pool が後から登録された際に binding が自動再トリガーされるため**エントリは失われない**が、iptables/ASIC ルールは pool 登録完了まで反映されない。
+`natmgr.cpp:addDynamicNatRule()` は `NAT_BINDINGS` エントリ処理時に pool キャッシュ (`m_natPoolInfo[pool_name]`) を参照する。pool が未登録の場合は `"Pool is not yet enabled, skipping dynamic nat rules addition"` をログしてルール設定をスキップする。pool が後から登録された際に binding が自動再トリガーされるため**エントリは失われない**が、iptables/[ASIC](../../reference/glossary.md#term-asic) ルールは pool 登録完了まで反映されない。
 
 ```
 # 推奨順序
@@ -431,7 +431,7 @@ if (platform && strstr(platform, BRCM_PLATFORM_SUBSTRING))
 | Broadcom (`gNhTrackingSupported=true`) | `addDnatToNhCache()` でネクストホップ解決キャッシュに格納し、[ARP](../../reference/glossary.md#term-arp)/ルート解決後に `addHwDnatEntry()` を呼び出す |
 | 非 Broadcom (`gNhTrackingSupported=false`) | `addHwDnatEntry()` を即座に呼び出す |
 
-Broadcom では ネクストホップ未解決時に DNAT エントリを SAI に書き込まず、`NeighborOrch` / `RouteOrch` の通知 (`update()`) を受けてから遅延投入する。これにより Broadcom ASIC でのブラックホールルート問題を回避している。
+Broadcom では ネクストホップ未解決時に DNAT エントリを SAI に書き込まず、`NeighborOrch` / `RouteOrch` の通知 (`update()`) を受けてから遅延投入する。これにより Broadcom [ASIC](../../reference/glossary.md#term-asic) でのブラックホールルート問題を回避している。
 
 **`gNhTrackingSupported` が影響する主な処理**:
 
@@ -442,7 +442,7 @@ Broadcom では ネクストホップ未解決時に DNAT エントリを SAI �
 
 ### 非 Broadcom: 制限事項
 
-非 Broadcom ASIC では `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` が `0` または `SAI_STATUS_NOT_SUPPORTED` を返す実装が多く、その場合 `gIsNatSupported=false` となり NAT 機能全体が無効化される。現行の SONiC コミュニティ実装では **Broadcom ASIC のみが NAT ハードウェアオフロードを実運用レベルでサポートする**。
+非 Broadcom ASIC では `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` が `0` または `SAI_STATUS_NOT_SUPPORTED` を返す実装が多く、その場合 `gIsNatSupported=false` となり NAT 機能全体が無効化される。現行の [SONiC](../../reference/glossary.md#term-sonic) コミュニティ実装では **Broadcom ASIC のみが NAT ハードウェアオフロードを実運用レベルでサポートする**。
 
 ### まとめ
 
@@ -734,4 +734,4 @@ SAI エントリの追加/削除に連動して `gCrmOrch` が [CRM](../../refer
 
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 8ddef2f4a573 -->
+<!-- glossary-links-injected: 865a18402f05 -->

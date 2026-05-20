@@ -30,14 +30,14 @@ related:
 
 ## 概要
 
-IEEE P802.3dj が定める **200 / 400 / 800 Gb/s と 1.6 Tb/s** のインターフェース定義を SONiC に取り込むための変更点を列挙した [HLD](../reference/glossary.md#term-hld)[^1]。本質は **lane あたり 200G PAM4（GBd 106.25）** という新しい [SerDes](../reference/glossary.md#term-serdes) レートを足元のコードに通すこと。
+IEEE P802.3dj が定める **200 / 400 / 800 Gb/s と 1.6 Tb/s** のインターフェース定義を [SONiC](../reference/glossary.md#term-sonic) に取り込むための変更点を列挙した [HLD](../reference/glossary.md#term-hld)[^1]。本質は **lane あたり 200G PAM4（GBd 106.25）** という新しい [SerDes](../reference/glossary.md#term-serdes) レートを足元のコードに通すこと。
 
 主要変更点（4 リポジトリ横断）[^1]:
 
 1. **SFF-8024**: 新しい host electrical / MMF / SMF interface ID の追加
 2. **sonic-platform-daemons / xcvrd**: `1.6T` スピード認識
 3. **[sonic-utilities](../reference/glossary.md#term-sonic-utilities)**: `show interfaces status` / `config interface speed` の表示・受理
-4. **[sonic-swss](../reference/glossary.md#term-sonic-swss) / [orchagent](../reference/glossary.md#term-orchagent)**: PortsOrch の最大スピード上限と FLR 計算（lane speed 200000 → SerDes 212.5e9）
+4. **[sonic-swss](../reference/glossary.md#term-sonic-swss) / [orchagent](../reference/glossary.md#term-orchagent)**: [PortsOrch](../reference/glossary.md#term-portsorch) の最大スピード上限と FLR 計算（lane speed 200000 → SerDes 212.5e9）
 
 ## 動作仕様
 
@@ -226,7 +226,7 @@ show interfaces status | grep Ethernet0
 
 ### コマンド例
 
-multi-ASIC / VoQ chassis の各 namespace 状態を確認する。
+multi-[ASIC](../reference/glossary.md#term-asic) / VoQ chassis の各 namespace 状態を確認する。
 
 ```bash
 # multi-ASIC / VoQ chassis
@@ -259,4 +259,4 @@ done
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 710f941d149a -->
+<!-- glossary-links-injected: 3ee471c35881 -->

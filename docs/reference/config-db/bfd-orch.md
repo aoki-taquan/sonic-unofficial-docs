@@ -81,7 +81,7 @@ BFD_SESSION_TABLE:<vrf>:<interface>:<peer_ip>
 
 ## use_software_bfd 切り替え動作
 
-`BgpGlobalStateOrch::getSoftwareBfd()` が `true` を返す場合 (= BFD hardware offload が ASIC に未実装)、bfdorch は `doTask()` の SET ハンドラで SAI API を呼ばず [STATE_DB](../../reference/glossary.md#term-state_db) `SOFTWARE_BFD_SESSION_TABLE` にエントリを書き込む。この場合、本テーブルの `tx_interval` / `multiplier` などのデフォルト値が適用される前に bfdorch がリターンするため、SAI 向けのデフォルト値は意味を持たない。
+`BgpGlobalStateOrch::getSoftwareBfd()` が `true` を返す場合 (= BFD hardware offload が [ASIC](../../reference/glossary.md#term-asic) に未実装)、bfdorch は `doTask()` の SET ハンドラで SAI API を呼ばず [STATE_DB](../../reference/glossary.md#term-state_db) `SOFTWARE_BFD_SESSION_TABLE` にエントリを書き込む。この場合、本テーブルの `tx_interval` / `multiplier` などのデフォルト値が適用される前に bfdorch がリターンするため、SAI 向けのデフォルト値は意味を持たない。
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
@@ -136,7 +136,7 @@ if (alias != "default")
 }
 ```
 
-出力インタフェース指定 BFD（hardware lookup 無効 = ASIC が次ホップを引かない方式）では `PORT|<alias>` が PortsOrch に登録済みでないと SET が成立しない。一方 `alias == "default"`（hardware lookup 有効）の純 L3 BFD は PORT 未初期化でも処理が進むため、PortsOrch readiness と無関係。
+出力インタフェース指定 BFD（hardware lookup 無効 = [ASIC](../../reference/glossary.md#term-asic) が次ホップを引かない方式）では `PORT|<alias>` が [PortsOrch](../../reference/glossary.md#term-portsorch) に登録済みでないと SET が成立しない。一方 `alias == "default"`（hardware lookup 有効）の純 L3 BFD は PORT 未初期化でも処理が進むため、[PortsOrch](../../reference/glossary.md#term-portsorch) readiness と無関係。
 
 → 順序依存: 出力インタフェース指定時のみ `PORT|<alias>` が先行必須。
 
@@ -175,7 +175,7 @@ if (!register_state_change_notif)
 }
 ```
 
-`register_bfd_state_change_notification()` (`bfdorch.cpp:270-303`) は `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` の `set_implemented` capability を照会し、false の ASIC では永続的に false を返す → そのプラットフォームでは**全 BFD セッションが reject** され続ける（順序解消されない致命的依存）。
+`register_bfd_state_change_notification()` (`bfdorch.cpp:270-303`) は `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` の `set_implemented` capability を照会し、false の [ASIC](../../reference/glossary.md#term-asic) では永続的に false を返す → そのプラットフォームでは**全 BFD セッションが reject** され続ける（順序解消されない致命的依存）。
 
 ### 5. software BFD 経路への切替時の書込み順序
 
@@ -676,4 +676,4 @@ STATE_DB 書込み時の `state` 文字列 (`session_state_lookup`):
 > **中間ファイル**: `meta/_intermediate/cdb-flow/bfd-orch-cross-refs.md`
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 6ab2de320b6f -->
+<!-- glossary-links-injected: 8a59592f36f2 -->

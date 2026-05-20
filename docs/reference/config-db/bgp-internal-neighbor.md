@@ -32,11 +32,11 @@ related:
 
 ## 概要
 
-[マルチ ASIC](../../reference/glossary.md#term-multi-asic) プラットフォームにおける ASIC 間内部 iBGP セッションを [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。同一物理筐体内の複数 ASIC が iBGP で経路を交換するために使用する。`bgpcfgd` (`docker-fpm-frr` 内) が読み出して Jinja2 テンプレート (`bgpd/templates/internal/`) 経由で [FRR](../../reference/glossary.md#term-frr) (`bgpd`) に反映する[^1]。
+[マルチ ASIC](../../reference/glossary.md#term-multi-asic) プラットフォームにおける [ASIC](../../reference/glossary.md#term-asic) 間内部 iBGP セッションを [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。同一物理筐体内の複数 [ASIC](../../reference/glossary.md#term-asic) が iBGP で経路を交換するために使用する。`bgpcfgd` (`docker-fpm-frr` 内) が読み出して Jinja2 テンプレート (`bgpd/templates/internal/`) 経由で [FRR](../../reference/glossary.md#term-frr) (`bgpd`) に反映する[^1]。
 
 通常の `BGP_NEIGHBOR` との主要な差異:
 
-- iBGP のみ（ASN は DEVICE_METADATA の `bgp_asn` と一致することが [YANG](../../reference/glossary.md#term-yang) `must` で強制）
+- iBGP のみ（ASN は [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) の `bgp_asn` と一致することが [YANG](../../reference/glossary.md#term-yang) `must` で強制）
 - `holdtime`/`keepalive`/`nhopself` は [CONFIG_DB](../../reference/glossary.md#term-config_db) 値を **無視**し、テンプレートがハードコード値を適用
 - `sub_role` / `switch_type` によってルートマップ・next-hop-self が自動付与される
 
@@ -62,7 +62,7 @@ BGP_INTERNAL_NEIGHBOR|<neighbor>
 BGP_INTERNAL_NEIGHBOR|<vrf_name>|<neighbor>
 ```
 
-`<neighbor>` は内部 ASIC の IP アドレス（IPv4 または IPv6）。
+`<neighbor>` は内部 [ASIC](../../reference/glossary.md#term-asic) の IP アドレス（IPv4 または IPv6）。
 
 ## フィールド一覧
 
@@ -70,8 +70,8 @@ BGP_INTERNAL_NEIGHBOR|<vrf_name>|<neighbor>
 
 | フィールド | 型 | [YANG](../../reference/glossary.md#term-yang) default | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 実装挙動 |
 |-----------|----|-------------|-----------------|
-| `neighbor` (key) | inet:ip-address | — | [YANG](../../reference/glossary.md#term-yang) `must` で DEVICE_METADATA の `bgp_asn` 参照 |
-| `asn` | uint32 0..4294967295 | なし | YANG `must` で DEVICE_METADATA `bgp_asn` と一致を強制 |
+| `neighbor` (key) | inet:ip-address | — | [YANG](../../reference/glossary.md#term-yang) `must` で [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) の `bgp_asn` 参照 |
+| `asn` | uint32 0..4294967295 | なし | YANG `must` で [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) `bgp_asn` と一致を強制 |
 | `local_addr` | inet:ip-address | なし (mandatory) | YANG mandatory true; [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は欠如時 warn のみで処理続行（乖離） |
 | `name` | string | なし | optional; 欠如時は neighbor アドレスを tag として使用 |
 | `holdtime` | uint16 | なし | **dead field** — テンプレートが `timers 3 10` をハードコードで上書き |
@@ -378,7 +378,7 @@ managers_bgp.py: deps 充足チェック → add_peer() / update_peer()
 `BGPPeerMgrBase`（`peer_type="internal"`）は CONFIG_DB `BGP_INTERNAL_NEIGHBOR` の
 set/del を受けて **[STATE_DB](../../reference/glossary.md#term-state_db) `BGP_PEER_CONFIGURED_TABLE`** に副次書込を行う。
 [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / APPL_STATE_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) への直接書込は無い。
-FRR bgpd への反映は `cfg_mgr.push()` 経由の vtysh push のみ。
+FRR bgpd への反映は `cfg_mgr.push()` 経由の [vtysh](../../reference/glossary.md#term-vtysh) push のみ。
 
 | 副次 DB | テーブル / フィールド | 発火タイミング | コード根拠 |
 |---|---|---|---|
@@ -477,7 +477,7 @@ multi-ASIC 機器では `enable_internal_bgp_session()` (L1888-1901) が FrontEn
 | `sub_role == 'BackEnd'` かつ `Loopback4096` に IPv4 なし | `policies.conf.j2` L7-13 | `originator-id` 行が生成されない（テンプレート内サイレントスキップ）。ルートリフレクタ機能が劣化 | なし |
 | `BGP_GLOBALS\|<vrf>.local_asn` が frrcfgd 処理前に未設定 | `frrcfgd.py` L2659-2662 | frrcfgd が当該 [VRF](../../reference/glossary.md#term-vrf) の全テーブル更新をスキップ。FRR bgpd インスタンス未生成のまま bgpcfgd 出力も無視 | `syslog LOG_DEBUG("ignore table {} update because local_asn for VRF {} was not configured")` |
 | `/run/frr/bgpd.vty` ソケット接続が 100 回リトライ後も失敗 | `frrcfgd.py` L183-198 `__create_frr_client()` | `RuntimeError` → frrcfgd プロセスがクラッシュ・再起動ループ。最大待ち時間 200 秒 | `syslog LOG_ERR("re-tried too many times, give up")` + `LOG_ERR("failed to create socket to FRR daemon")` |
-| vtysh コマンド失敗（bgp_asn 設定時） | `frrcfgd.py` L2701, 2706-2707 | `LOG_ERR` 後 `self.bgp_asn[vrf]` 未更新。後続イベントも local_asn 未設定としてスキップされ続ける | `syslog LOG_ERR("failed to set local_asn %s to VRF %s")` |
+| [vtysh](../../reference/glossary.md#term-vtysh) コマンド失敗（bgp_asn 設定時） | `frrcfgd.py` L2701, 2706-2707 | `LOG_ERR` 後 `self.bgp_asn[vrf]` 未更新。後続イベントも local_asn 未設定としてスキップされ続ける | `syslog LOG_ERR("failed to set local_asn %s to VRF %s")` |
 
 ### DEL 処理における失敗経路
 
@@ -545,4 +545,4 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 1923553a088d -->
+<!-- glossary-links-injected: 2a665be5e7e3 -->

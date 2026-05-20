@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for SONiC Hosts) データプレーンのルーティングポリシーを定義する 3 テーブル群。SDN コントローラ / [gNMI](../../reference/glossary.md#term-gnmi) 経由で APP_DB に書き込まれ、`DashRouteOrch` が protobuf デコードして [DASH](../../reference/glossary.md#term-dash) [SAI](../../reference/glossary.md#term-sai) API (Outbound / Inbound Routing) 経由で [DPU](../../reference/glossary.md#term-dpu) ハードウェアに反映する。
+[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for [SONiC](../../reference/glossary.md#term-sonic) Hosts) データプレーンのルーティングポリシーを定義する 3 テーブル群。SDN コントローラ / [gNMI](../../reference/glossary.md#term-gnmi) 経由で APP_DB に書き込まれ、`DashRouteOrch` が protobuf デコードして [DASH](../../reference/glossary.md#term-dash) [SAI](../../reference/glossary.md#term-sai) API (Outbound / Inbound Routing) 経由で [DPU](../../reference/glossary.md#term-dpu) ハードウェアに反映する。
 
 - **`DASH_ROUTE_GROUP_TABLE`**: ルートグループ（ルートの集合単位）を作成。[ENI](../../reference/glossary.md#term-eni) からグループへのバインドは `DASH_ENI_ROUTE_TABLE` で管理される。
 - **`DASH_ROUTE_TABLE`**: アウトバウンドルート。CA (Customer Address) プレフィックス単位で `routing_type` を指定し、VNet 転送・直接転送・ドロップ等を制御する。
@@ -672,4 +672,4 @@ IPv6 の `underlay_sip` を指定しても SAI 属性は設定されず、無言
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-table-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 397f3aeaf405 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

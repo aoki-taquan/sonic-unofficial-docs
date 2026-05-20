@@ -46,7 +46,7 @@ related:
 - 通常の netdev PacketIO で何が足りなくて、なぜ別経路が必要なのか
 - 受信側で **input port + 期待 egress port** メタデータをどう運ぶか
 - `send_to_ingress` とは何で、どこで設定するか
-- ベンダ ASIC ドライバに何を実装してもらう必要があるか
+- ベンダ [ASIC](../reference/glossary.md#term-asic) ドライバに何を実装してもらう必要があるか
 
 ## なぜ PacketIO に拡張が要るか
 
@@ -167,7 +167,7 @@ graph LR
 ## 干渉する機能
 
 - **CoppOrch**: user-defined trap + genetlink hostif 生成主体
-- **PortsOrch**: `SEND_TO_INGRESS_PORT` 処理 + CPU port netdev 作成
+- **[PortsOrch](../reference/glossary.md#term-portsorch)**: `SEND_TO_INGRESS_PORT` 処理 + CPU port netdev 作成
 - **既存 sFlow / `psample`**: genetlink 仕様を共有
 - **ベンダ [ASIC SDK](../reference/glossary.md#term-asic-sdk) / kernel driver**: receive 経路と CPU port ingress を実装
 - **既存 [CoPP](../reference/glossary.md#term-copp) (`copp_cfg.j2`)**: trap group / queue マッピングの拡張
@@ -226,4 +226,4 @@ docker logs swss 2>&1 | grep -i 'hostif' | tail
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 80e52dad0ad6 -->
+<!-- glossary-links-injected: cc9e55db7709 -->

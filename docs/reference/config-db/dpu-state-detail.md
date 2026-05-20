@@ -468,7 +468,7 @@ sonic-db-cli CHASSIS_STATE_DB hgetall 'DPU_STATE|DPU0'
 | `DPU_STATE` 変化 (`SubscriberStateTable` 受信) | `DpuStateUpdater.update_state()` 再実行 → CP/DP state 再書込み | `CHASSIS_STATE_DB DPU_STATE` (自己) | `poll_dpu_state=False` モード限定、かつ状態変化時のみ |
 | `show dpu` CLI 呼び出し | なし (read-only 参照) | — | CLI 呼び出し時 |
 
-community SONiC において `DPU_STATE` の変化を受けて CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に新たなエントリを書き込む副次動作は確認されない。
+community [SONiC](../../reference/glossary.md#term-sonic) において `DPU_STATE` の変化を受けて CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に新たなエントリを書き込む副次動作は確認されない。
 
 ### `DpuStateManagerTask` 自己フィードバックループ
 
@@ -585,7 +585,7 @@ NotificationProducer: なし
 
 ### 前提: SmartSwitch 専用ページ
 
-このページが記述するフィールドは [SmartSwitch](../../reference/glossary.md#term-smartswitch) プラットフォーム上の DPU 側 `chassisd` (`DpuChassisdDaemon`) が書き込む。通常の SONiC スイッチ (非 [SmartSwitch](../../reference/glossary.md#term-smartswitch)) では `DPU_STATE` テーブル自体が存在しないため、フィールドレベルの差分も適用外。
+このページが記述するフィールドは [SmartSwitch](../../reference/glossary.md#term-smartswitch) プラットフォーム上の DPU 側 `chassisd` (`DpuChassisdDaemon`) が書き込む。通常の [SONiC](../../reference/glossary.md#term-sonic) スイッチ (非 [SmartSwitch](../../reference/glossary.md#term-smartswitch)) では `DPU_STATE` テーブル自体が存在しないため、フィールドレベルの差分も適用外。
 
 ```python
 # chassisd:1574-1579
@@ -658,9 +658,12 @@ DPU reboot タイムアウトはベンダーが `platform_env.conf` で調整可
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^1]
+
 [^1]: `chassisd` ソース: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` —
     フィールド名定数 (line 108-111)、`update_dpu_state()` (line 864-891)、
     `DpuStateUpdater` クラス (line 1234-1320)、`set_initial_dpu_admin_state()` (line 1364-1405)。
     `show dpu` CLI: `sonic-utilities/show/system_health.py:show_dpu_state()` (line 172-222)。
 
-<!-- glossary-links-injected: 6b11a2ca8266 -->
+<!-- glossary-links-injected: 92c530e50bae -->

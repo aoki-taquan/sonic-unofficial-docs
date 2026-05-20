@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for SONiC Hosts) データプレーンの [ACL](../../reference/glossary.md#term-acl) ポリシーを定義する 4 テーブル群。[ENI](../../reference/glossary.md#term-eni) (仮想 NIC) 単位にインバウンド / アウトバウンド方向・ステージ番号ごとに [ACL](../../reference/glossary.md#term-acl) グループを割り当て、グループ内のルールリストでパケットを ALLOW / DENY する。`DashAclOrch` / `DashAclGroupMgr` が APP_DB エントリを protobuf でデコードし、[DASH](../../reference/glossary.md#term-dash) [SAI](../../reference/glossary.md#term-sai) API 経由で [DPU](../../reference/glossary.md#term-dpu) ハードウェアへ書き込む。
+[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for [SONiC](../../reference/glossary.md#term-sonic) Hosts) データプレーンの [ACL](../../reference/glossary.md#term-acl) ポリシーを定義する 4 テーブル群。[ENI](../../reference/glossary.md#term-eni) (仮想 NIC) 単位にインバウンド / アウトバウンド方向・ステージ番号ごとに [ACL](../../reference/glossary.md#term-acl) グループを割り当て、グループ内のルールリストでパケットを ALLOW / DENY する。`DashAclOrch` / `DashAclGroupMgr` が APP_DB エントリを protobuf でデコードし、[DASH](../../reference/glossary.md#term-dash) [SAI](../../reference/glossary.md#term-sai) API 経由で [DPU](../../reference/glossary.md#term-dpu) ハードウェアへ書き込む。
 
 !!! warning "YANG 未定義"
     4 テーブルはすべて YANG モジュールで未定義。スキーマの正本は `sonic-swss/orchagent/dash/dashaclorch.{h,cpp}` および `dashaclgroupmgr.{h,cpp}`。
@@ -616,7 +616,7 @@ ZMQ 無効時は通常の `ConsumerStateTable`（channel ベース PUBLISH/SUBSC
 
 [SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成の [DPU](../../reference/glossary.md#term-dpu) カード、または DPU 単体動作デバイスのみが対象。通常のスイッチ (`gMySwitchType="switch"`) 環境で DASH_ACL_* テーブルを投入しても orchagent は何も処理しない。
 
-DASH ACL コード内にプラットフォーム文字列照会（`MLNX_PLATFORM_SUBSTRING` 等）は**存在しない**。ベンダー別の動作差は SAI 実装差として ASIC 側に委譲される。
+DASH ACL コード内にプラットフォーム文字列照会（`MLNX_PLATFORM_SUBSTRING` 等）は**存在しない**。ベンダー別の動作差は SAI 実装差として [ASIC](../../reference/glossary.md#term-asic) 側に委譲される。
 
 ### ステージ上限の固定マッピング
 
@@ -626,7 +626,7 @@ DASH ACL コード内にプラットフォーム文字列照会（`MLNX_PLATFORM
 (direction, ip_version, stage) → SAI_ENI_ATTR_*_STAGE{N}_DASH_ACL_GROUP_ID
 ```
 
-対応する `<stage>` キー値は `"1"`〜`"5"` のみ。`"6"` 以上を指定すると `lexical_convert()` が `invalid_argument` 例外をスローしてタスク失敗となる。ASIC が 5 未満のステージしか実装していない場合は `set_eni_attribute()` が `SAI_STATUS_NOT_SUPPORTED` 等で失敗する。
+対応する `<stage>` キー値は `"1"`〜`"5"` のみ。`"6"` 以上を指定すると `lexical_convert()` が `invalid_argument` 例外をスローしてタスク失敗となる。[ASIC](../../reference/glossary.md#term-asic) が 5 未満のステージしか実装していない場合は `set_eni_attribute()` が `SAI_STATUS_NOT_SUPPORTED` 等で失敗する。
 
 ### CRM リソース追跡
 
@@ -640,7 +640,7 @@ ACL グループ・ルールの作成削除ごとに CRM カウンタが更新�
 | ACL ルール作成 (IPv4 グループ) | `CRM_DASH_IPV4_ACL_RULE` inc |
 | ACL ルール作成 (IPv6 グループ) | `CRM_DASH_IPV6_ACL_RULE` inc |
 
-グループ・ルール上限は CRM の `threshold` 設定と ASIC SAI 実装の上限（`SAI_STATUS_TABLE_FULL` 等）に依存する。orchagent 側に事前上限チェックはない。
+グループ・ルール上限は CRM の `threshold` 設定と [ASIC](../../reference/glossary.md#term-asic) SAI 実装の上限（`SAI_STATUS_TABLE_FULL` 等）に依存する。orchagent 側に事前上限チェックはない。
 
 ### SAI DASH ACL API 実装依存
 
@@ -662,4 +662,4 @@ ACL グループ・ルールの作成削除ごとに CRM カウンタが更新�
 > **Evidence**: `main.cpp:990-994`（`gMySwitchType` 分岐）、`orchdaemon.cpp:1378`（`DashAclOrch` 生成）、`dashaclgroupmgr.cpp:94-128`（`getSaiStage` 静的マップ）、`dashaclgroupmgr.cpp:174-176, 213-216, 374-376`（CRM カウンタ）、`dashaclorch.cpp:43-70`（ステージ文字列変換）、`crmorch.h:49-52`（CRM リソース型定義）；詳細分析 `meta/_intermediate/cdb-flow/dash-acl-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 61004cb9d751 -->
+<!-- glossary-links-injected: 865a18402f05 -->

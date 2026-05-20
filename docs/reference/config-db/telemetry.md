@@ -369,7 +369,7 @@ systemctl restart telemetry
 
 ### SAI 参照
 
-なし。telemetry (gnmi_server) は CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) / DATA_DB を gRPC/gNMI 経由でクライアントに公開するが、[SAI](../../reference/glossary.md#term-sai)/ASIC に直接アクセスしない。
+なし。telemetry (gnmi_server) は CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) / DATA_DB を gRPC/gNMI 経由でクライアントに公開するが、[SAI](../../reference/glossary.md#term-sai)/[ASIC](../../reference/glossary.md#term-asic) に直接アクセスしない。
 
 <!-- /cross-refs -->
 
@@ -617,11 +617,11 @@ HSET "TELEMETRY|gnmi" port 50052
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: `TELEMETRY` テーブルの設定・処理において、ASIC 種別・multi-asic・[VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダー固有挙動は検出されなかった。
+**プラットフォーム差なし**: `TELEMETRY` テーブルの設定・処理において、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic・[VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダー固有挙動は検出されなかった。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `gnmi_server` は [SAI](../../reference/glossary.md#term-sai) / [ASIC_DB](../../reference/glossary.md#term-asic_db) に直接アクセスしない。CONFIG_DB / STATE_DB / DATA_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を Redis プロトコルで読み取るのみ (`telemetry.sh`, `server.go` に ASIC 種別参照なし) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `gnmi_server` は [SAI](../../reference/glossary.md#term-sai) / [ASIC_DB](../../reference/glossary.md#term-asic_db) に直接アクセスしない。CONFIG_DB / STATE_DB / DATA_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を Redis プロトコルで読み取るのみ (`telemetry.sh`, `server.go` に ASIC 種別参照なし) |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `TELEMETRY` テーブルは host namespace CONFIG_DB (db 4) の 1 エントリ。ASIC namespace 数に依存しない。gNMI クライアントが購読するデータパスは namespace 指定で各 ASIC を参照できるが、`TELEMETRY` 設定内容は変わらない (`server.go` に namespace 参照なし) |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各ラインカードで独立適用 | `TELEMETRY` テーブルはラインカードごとの host CONFIG_DB に独立して存在する。`telemetry.sh` / `server.go` に [VOQ](../../reference/glossary.md#term-voq) 固有コードなし |
 | ベンダー固有設定 | なし | `docker-sonic-telemetry/Dockerfile.j2` に platform 条件分岐なし。`telemetry_vars.j2` は `TELEMETRY` / `DEVICE_METADATA` のみ参照 |
@@ -630,4 +630,4 @@ HSET "TELEMETRY|gnmi" port 50052
 詳細根拠は `meta/_intermediate/cdb-flow/telemetry-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: 55d2351240af -->
+<!-- glossary-links-injected: 8df9850464d2 -->

@@ -130,7 +130,7 @@ void BfdOrch::createSoftwareBfdSession(const string &key, const vector<swss::Fie
 }
 ```
 
-この場合は `state` フィールドが含まれず、`bgpcfgd` の `BfdMgr` が [FRR](../../reference/glossary.md#term-frr) に vtysh 経由で設定を注入し、[FRR](../../reference/glossary.md#term-frr) 側で状態管理する。
+この場合は `state` フィールドが含まれず、`bgpcfgd` の `BfdMgr` が [FRR](../../reference/glossary.md#term-frr) に [vtysh](../../reference/glossary.md#term-vtysh) 経由で設定を注入し、[FRR](../../reference/glossary.md#term-frr) 側で状態管理する。
 
 ## 購読者 (consumer)
 
@@ -175,7 +175,7 @@ auto bfdStateNotificatier = new Notifier(m_bfdStateNotificationConsumer, this, "
 Orch::addExecutor(bfdStateNotificatier);
 ```
 
-を登録し、SAI 側に `register_bfd_state_change_notification()` (`bfdorch.cpp:270-303`) で `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` を query + set する。SAI ASIC が `bfd_session_state_change` を発火するたびに `doTask(NotificationConsumer&)` (`bfdorch.cpp:220-268`) が:
+を登録し、SAI 側に `register_bfd_state_change_notification()` (`bfdorch.cpp:270-303`) で `SAI_SWITCH_ATTR_BFD_SESSION_STATE_CHANGE_NOTIFY` を query + set する。SAI [ASIC](../../reference/glossary.md#term-asic) が `bfd_session_state_change` を発火するたびに `doTask(NotificationConsumer&)` (`bfdorch.cpp:220-268`) が:
 
 ```cpp
 // bfdorch.cpp:252
@@ -204,7 +204,7 @@ m_stateBfdSessionTable.hset(key, "state", session_state_lookup.at(state));
 | CLI / snapshot 読者 | `sonic-db-cli STATE_DB hgetall 'BFD_SESSION_TABLE\|*'` (polling) | `show bfd peers` |
 | [gNMI](../../reference/glossary.md#term-gnmi) / translib | STATE_DB HGETALL マッピング | [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common bfd モジュール |
 
-`BFD_SESSION_TABLE` 用の `NotificationProducer` / `ResponsePublisher` / `ZmqProducerStateTable` は SONiC ソース内に存在しない (`bfdorch.cpp` 範囲で確認、`BfdOrch` は `Orch` 直系で `ZmqOrch` 非継承)。
+`BFD_SESSION_TABLE` 用の `NotificationProducer` / `ResponsePublisher` / `ZmqProducerStateTable` は [SONiC](../../reference/glossary.md#term-sonic) ソース内に存在しない (`bfdorch.cpp` 範囲で確認、`BfdOrch` は `Orch` 直系で `ZmqOrch` 非継承)。
 
 ### ソフトウェア BFD 経路 (`BFD_SOFTWARE_SESSION_TABLE`)
 
@@ -456,14 +456,14 @@ STATE_DB `BFD_SESSION_TABLE` の書き手は `bfdorch` のみで、`swss::Table:
 <!-- platform -->
 ## プラットフォーム差 (SAI capability / HW vs SW BFD / ASIC vendor)
 
-`bfdorch` は `platform` / `sub_platform` 環境変数の static 比較を**行わず**、**SAI 動的 capability 照会**のみで ASIC 対応を判定する (他の orch とは設計が異なる)[^h1]。STATE_DB `BFD_SESSION_TABLE` への書込みが発生するか否かは、以下の組合せで決まる。
+`bfdorch` は `platform` / `sub_platform` 環境変数の static 比較を**行わず**、**SAI 動的 capability 照会**のみで [ASIC](../../reference/glossary.md#term-asic) 対応を判定する (他の orch とは設計が異なる)[^h1]。STATE_DB `BFD_SESSION_TABLE` への書込みが発生するか否かは、以下の組合せで決まる。
 
 ### HW BFD 経路 vs SW BFD 経路
 
 | 条件 | `BFD_SESSION_TABLE` (STATE_DB) | `BFD_SOFTWARE_SESSION_TABLE` |
 |------|-------------------------------|------------------------------|
 | `BGP_DEVICE_GLOBAL.STATE.use_software_bfd == "true"` | **書込みなし** | `bfdorch::createSoftwareBfdSession()` 経由で書込み |
-| `use_software_bfd == "false"` (デフォルト) + ASIC が SAI BFD 対応 | 書込みあり | なし |
+| `use_software_bfd == "false"` (デフォルト) + [ASIC](../../reference/glossary.md#term-asic) が SAI BFD 対応 | 書込みあり | なし |
 | `use_software_bfd == "false"` + ASIC が SAI BFD 未対応 | **書込みなし** (create 失敗) | なし |
 
 ### 動的照会される SAI capability
@@ -544,7 +544,7 @@ HW BFD 経路では SAI 通知が ASIC 内のタイマ精度に依存する。br
 | 観点 | 含意 |
 |------|------|
 | 故障診断 | BFD セッション統計を取得したい場合、COUNTERS_DB ではなく SAI API (`sai_bfd_api->get_bfd_session_stats`) を直接叩く必要がある (sonic-utilities `show bfd peers details` は STATE_DB しか読まないため統計は出ない) |
-| flex counter 拡張 | 将来 BFD 統計を flex counter 化するには、別途 `BfdCounterOrch` 等を新設し COUNTERS_DB / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書込を実装する必要がある (現状は SONiC master に存在しない) |
+| flex counter 拡張 | 将来 BFD 統計を flex counter 化するには、別途 `BfdCounterOrch` 等を新設し COUNTERS_DB / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書込を実装する必要がある (現状は [SONiC](../../reference/glossary.md#term-sonic) master に存在しない) |
 | ACK パターン | APPL_STATE_DB 経由の two-phase delete (例: portsorch の `_REMOVE` ack) は BFD には適用されない。BFD の削除は同期的に `remove_bfd_session()` → SAI → STATE_DB `del()` で完結 |
 
 [^se1]: `sonic-swss/orchagent/bfdorch.cpp` (L57-88 BfdOrch::BfdOrch — `DBConnector("ASIC_DB")` / `DBConnector("STATE_DB")` 各 1 件のみ、COUNTERS_DB/APPL_STATE_DB の生成 0 件)、`bfdorch.h` (L18-53 メンバ定義 — `m_stateBfdSessionTable` / `m_stateSoftBfdSessionTable` / `m_bfdStateNotificationConsumer` 以外の DB ハンドル無し)。全行 grep で `COUNTERS_DB` / `APPL_STATE_DB` / `FLEX_COUNTER` hit 0 件。<https://github.com/sonic-net/sonic-swss/blob/master/orchagent/bfdorch.cpp>
@@ -598,4 +598,4 @@ show bfd peers details
 
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: abe00f6b08fa -->
+<!-- glossary-links-injected: 90eadcf82bb6 -->

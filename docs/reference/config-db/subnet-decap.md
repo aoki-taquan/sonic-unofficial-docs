@@ -256,7 +256,7 @@ YANG は `src_ip` と `src_ip_v6` 両方を `mandatory true` とするが、実�
    MP2MP tunnel term の source IP を補完する。SUBNET_DECAP の設定が tunnel term 処理
    より前に確定していなければ、subnet decap term を正しく生成できない。
 
-2. **PortsOrch 依存**  
+2. **[PortsOrch](../../reference/glossary.md#term-portsorch) 依存**  
    `doTask()` は `gPortsOrch->allPortsReady()` が `true` を返すまで早期リターンする。
    したがって SUBNET_DECAP の実際の反映はポート初期化完了後になる。
 
@@ -321,7 +321,7 @@ routeorch / vnetorch が **ランタイムで動的生成** する。
 - 以降の新規 tunnel term 生成が抑止されるのみ
 - 既存 term を削除するには `APP_TUNNEL_DECAP_TERM_TABLE` への明示的な DEL 操作が必要
 
-> **コード証跡**: `tunneldecaporch.cpp` L39-48 (先読み初期化), L55-57 (PortsOrch ガード),
+> **コード証跡**: `tunneldecaporch.cpp` L39-48 (先読み初期化), L55-57 ([PortsOrch](../../reference/glossary.md#term-portsorch) ガード),
 > L392-394 (is_subnet_decap_term 判定), L468-509 (src_ip 補完ロジック), L691-694 (DEL処理);
 > `routeorch.cpp` L2714-2718, L3220-3235; `vnetorch.cpp` L1563-1594;
 > `orchdaemon.cpp` L343-348; `ipinip.json.j2` L37-42, L93-123, L160-190
@@ -579,7 +579,7 @@ TunnelDecapOrch::doSubnetDecapTask(consumer)
 <!-- source: sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2 ref:master -->
 <!-- source: sonic-swss/orchagent/tunneldecaporch.cpp ref:master -->
 
-`SUBNET_DECAP` テーブルの消費動作はデバイスタイプ・ASIC ベンダー・トポロジー規模によって大きく変わる。差異の根拠はビルド時テンプレート `ipinip.json.j2` と `TunnelDecapOrch` の SAI 呼び出し経路にある。
+`SUBNET_DECAP` テーブルの消費動作はデバイスタイプ・[ASIC](../../reference/glossary.md#term-asic) ベンダー・トポロジー規模によって大きく変わる。差異の根拠はビルド時テンプレート `ipinip.json.j2` と `TunnelDecapOrch` の SAI 呼び出し経路にある。
 
 ### DPU デバイス — 設定が一切生成されない
 
@@ -587,7 +587,7 @@ TunnelDecapOrch::doSubnetDecapTask(consumer)
 
 ### dscp_mode — Broadcom / 非 Broadcom 分岐
 
-| ASIC / デバイスタイプ | `dscp_mode` | 追加フィールド |
+| [ASIC](../../reference/glossary.md#term-asic) / デバイスタイプ | `dscp_mode` | 追加フィールド |
 |----------------------|-------------|--------------|
 | Broadcom T1 (`LeafRouter` を含む `type`) | `"pipe"` | なし |
 | Broadcom 非 T1 | `"uniform"` | なし |
@@ -615,7 +615,7 @@ TunnelDecapOrch::doSubnetDecapTask(consumer)
 
 ### SAI MP2MP 未対応 ASIC — サブネットデカプセルエントリ登録失敗
 
-`subnet_type: vlan` / `subnet_type: vip` を持つ TUNNEL_DECAP_TERM_TABLE エントリは `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP` として SAI に登録される (`tunneldecaporch.cpp:934-936`)。ASIC が MP2MP を未実装の場合 `addDecapTunnelTermEntry()` が `false` を返し、エントリは `unhandledTerms` キューに残って後続のポーリングで再試行される。再試行が成功するまで SUBNET_DECAP 機能は有効にならない。
+`subnet_type: vlan` / `subnet_type: vip` を持つ TUNNEL_DECAP_TERM_TABLE エントリは `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP` として SAI に登録される (`tunneldecaporch.cpp:934-936`)。[ASIC](../../reference/glossary.md#term-asic) が MP2MP を未実装の場合 `addDecapTunnelTermEntry()` が `false` を返し、エントリは `unhandledTerms` キューに残って後続のポーリングで再試行される。再試行が成功するまで SUBNET_DECAP 機能は有効にならない。
 
 > 詳細根拠: `meta/_intermediate/cdb-flow/subnet-decap-platform.md`
 <!-- /platform -->
@@ -654,4 +654,4 @@ db_migrator.py での SUBNET_DECAP マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 8a59592f36f2 -->

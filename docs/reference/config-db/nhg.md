@@ -159,7 +159,7 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 | `NeighOrch` 内部テーブル (`m_neighborTable`) | 読み取り — [ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) 解決状態 | `NextHopGroupMember::getNhId()` が `gNeighOrch->hasNextHop()` / `getNextHopId()` を参照して SAI NH ID を取得 | `nhgorch.cpp` L529-585 |
 | `PortsOrch::allPortsReady()` | 起動順序ガード | `allPortsReady()` が false の間は `doTask()` が即 return。全ポート初期化完了まで NHG 処理を行わない | `nhgorch.cpp` L41-44 |
 | `RouteOrch` ECMP カウンタ (`getNhgCount()` / `getMaxNhgCount()`) | リソース上限チェック | `RouteOrch::getNhgCount() + NextHopGroup::getSyncedCount() >= RouteOrch::getMaxNhgCount()` で NHG 数上限を判定。上限時は temporary NHG にフォールバック | `nhgorch.cpp` L252; `routeorch.cpp` L86-90 |
-| `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` | SAI クエリ → 上限値決定 | [orchagent](../../reference/glossary.md#term-orchagent) 起動時 (`RouteOrch` init) に ASIC からクエリ。失敗時は `DEFAULT_NUMBER_OF_ECMP_GROUPS=128` をフォールバック | `routeorch.cpp` L37, L67-90 |
+| `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` | SAI クエリ → 上限値決定 | [orchagent](../../reference/glossary.md#term-orchagent) 起動時 (`RouteOrch` init) に [ASIC](../../reference/glossary.md#term-asic) からクエリ。失敗時は `DEFAULT_NUMBER_OF_ECMP_GROUPS=128` をフォールバック | `routeorch.cpp` L37, L67-90 |
 | `CrmOrch` (`gCrmOrch`) | リソース使用量追跡 | NHG 作成時 `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` / 削除時 `decCrmResUsedCounter` | `nhgorch.cpp` L795 |
 | `FG_NHG` (CONFIG\_DB) / `FgNhgOrch` | 独立経路 — 参照なし | Fine-Grained ECMP (`FgNhgOrch`) は `FG_NHG*` テーブルを直接処理し、`NhgOrch` とは独立。本テーブル (`NEXTHOP_GROUP_TABLE`) との直接依存はない | `fgnhgorch.cpp` 分離実装 |
 
@@ -264,7 +264,7 @@ orchagent 起動時、`Select::select()` ループ開始前に `ConsumerStateTab
 | 単一メンバー非再帰 NHG で NH ID が SAI_NULL_OBJECT_ID | `NextHopGroup::sync()` L746-749 | `return false` → retry | `SWSS_LOG_WARN("Next hop %s is not synced")` | `nhgorch.cpp:746-749` |
 | SRv6 Nexthop 作成失敗（`createSrv6NexthopWithoutVpn` 失敗） | `NextHopGroupMember::getNhId()` L551-553 | SAI_NULL_OBJECT_ID を返す → 上位でメンバー sync 失敗として retry | `SWSS_LOG_ERROR("Failed to create SRv6 nexthop %s")` | `nhgorch.cpp:551-553` |
 | メンバー weight 更新失敗（SAI set_attribute 失敗） | `NextHopGroup::update()` L1042-1045 | `return false` → retry | `SWSS_LOG_WARN("Failed to update member %s weight")` | `nhgorch.cpp:1042-1045` |
-| NHG update で古いメンバー削除失敗 | `NextHopGroup::update()` L1057-1060 | `return false` → retry。部分削除状態が ASIC に残る可能性あり | `SWSS_LOG_WARN("Failed to remove members from group %s")` | `nhgorch.cpp:1057-1060` |
+| NHG update で古いメンバー削除失敗 | `NextHopGroup::update()` L1057-1060 | `return false` → retry。部分削除状態が [ASIC](../../reference/glossary.md#term-asic) に残る可能性あり | `SWSS_LOG_WARN("Failed to remove members from group %s")` | `nhgorch.cpp:1057-1060` |
 | NHG update で新メンバー sync 失敗 | `NextHopGroup::update()` L1080-1083 | `return false` → retry | `SWSS_LOG_WARN("Failed to sync new members for group %s")` | `nhgorch.cpp:1080-1083` |
 
 ### DEL 処理における失敗経路
@@ -288,7 +288,7 @@ SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時は�
 ### 部分適用の注意
 
 - `syncMembers()` は `ObjectBulker` による bulk create を使用する。flush 後に個別 SAI ID を確認するため、一部成功・一部失敗の部分適用が発生しうる。
-- NHG update 時に古いメンバー削除後・新しいメンバー追加前の間、NHG は縮退した状態で ASIC に存在する。
+- NHG update 時に古いメンバー削除後・新しいメンバー追加前の間、NHG は縮退した状態で [ASIC](../../reference/glossary.md#term-asic) に存在する。
 - `validateNextHop` / `invalidateNextHop` の失敗時は即 `return false` で後続 NHG への適用を中断する（`nhgorch.cpp:477-483, 513-519`）。
 
 <!-- /failure -->
@@ -398,4 +398,4 @@ if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))  // "mellanox"
 
 <!-- glossary-links-injected: nhg-2026-0515 -->
 
-<!-- glossary-links-injected: b8f6e68b15ec -->
+<!-- glossary-links-injected: 8df9850464d2 -->

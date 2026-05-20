@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-`STATE_DB` の `FEATURE` テーブルは、SONiC 機能 docker コンテナのランタイム状態を保持する読み取り専用テーブル[^1]。Config_DB の [`FEATURE`](feature.md) テーブルが設定を管理するのに対し、[STATE_DB](../../reference/glossary.md#term-state_db) の `FEATURE` テーブルは実際の動作状態を反映する。
+`STATE_DB` の `FEATURE` テーブルは、[SONiC](../../reference/glossary.md#term-sonic) 機能 docker コンテナのランタイム状態を保持する読み取り専用テーブル[^1]。Config_DB の [`FEATURE`](feature.md) テーブルが設定を管理するのに対し、[STATE_DB](../../reference/glossary.md#term-state_db) の `FEATURE` テーブルは実際の動作状態を反映する。
 
 書き込み元は主に 2 つのデーモン:
 
@@ -344,7 +344,7 @@ STATE_DB `FEATURE` テーブルを書き込む 3 デーモン (`featured` / `con
 
 | 副次書込み先 | 書込み元 | 条件 | evidence |
 |---|---|---|---|
-| `CONFIG_DB FEATURE\|<name>` の `has_global_scope` / `has_per_asic_scope` | `featured` | `sync_feature_scope()` により、scope フィールドが実際に変化した場合のみ上書き。Multi-ASIC では名前空間ごとの CONFIG_DB にも伝播 | `featured:290-355` |
+| `CONFIG_DB FEATURE\|<name>` の `has_global_scope` / `has_per_asic_scope` | `featured` | `sync_feature_scope()` により、scope フィールドが実際に変化した場合のみ上書き。[Multi-ASIC](../../reference/glossary.md#term-multi-asic) では名前空間ごとの CONFIG_DB にも伝播 | `featured:290-355` |
 | `CONFIG_DB FEATURE\|<name>` の `state` | `featured` | `resync_feature_state()` — feature の state が immutable (`always_enabled` / `always_disabled`) またはテンプレート文字列の場合のみ CONFIG_DB を書き戻す。通常の `enabled` / `disabled` 変更では書き戻さない | `featured:550-572` |
 | `STATE_DB KUBE_LABELS\|SET` (`<feat>_local_version`) | `container_startup.py` | `owner == "local"` のコンテナ起動時に `drop_label()` が書き込む。Kubernetes が同バージョンの再デプロイを抑止するためのラベル | `container_startup.py:99-106,179-181` |
 | `STATE_DB KUBE_LABELS\|SET` (`<feat>_enabled`) | `ctrmgrd.py` | CONFIG_DB `set_owner` の変化を検知した `handle_update()` が `"true"` / `"false"` を書き込む。`KubeLabelStats` がこのテーブルを監視して kube API Server へ同期する | `ctrmgrd.py:505-506,638-654` |
@@ -473,7 +473,7 @@ APPL_DB PORT_TABLE|* 変更 (port ready)
 
 ### Multi-ASIC — 各 namespace の STATE_DB に同一内容を書込み
 
-multi-ASIC 構成 (`is_multi_npu == True`) では、`FeatureHandler.__init__()` が `device_info.get_namespaces()` で各 namespace を取得し、それぞれの STATE_DB に独立した `Table` オブジェクトを生成する (`featured:151-161`)。`set_feature_state()` は主 STATE_DB への書込みの直後に、各 namespace の `ns_feature_state_tbl` に対しても同一の `('state', state)` を書き込む (`featured:588-590`)。フィールド・値の内容は全 namespace で同一。
+multi-[ASIC](../../reference/glossary.md#term-asic) 構成 (`is_multi_npu == True`) では、`FeatureHandler.__init__()` が `device_info.get_namespaces()` で各 namespace を取得し、それぞれの STATE_DB に独立した `Table` オブジェクトを生成する (`featured:151-161`)。`set_feature_state()` は主 STATE_DB への書込みの直後に、各 namespace の `ns_feature_state_tbl` に対しても同一の `('state', state)` を書き込む (`featured:588-590`)。フィールド・値の内容は全 namespace で同一。
 
 ### Kubernetes 管理 — `ctrmgrd.py` / `container_startup.py` が追加フィールドを書込み
 
@@ -484,7 +484,7 @@ multi-ASIC 構成 (`is_multi_npu == True`) では、`FeatureHandler.__init__()` 
 | `set_owner = local` | `featured` が書込み | `"local"` (container_startup.py) | `"none"` (初期値のみ) | `""` (書込なし) |
 | `set_owner = kube` | `featured` が書込み | `"kube"` (container_startup.py) | `"pending"` → `"running"` → `"ready"` | `ctrmgrd.py` が書込み |
 
-> **Evidence**: `sonic-host-services/scripts/featured:135` (`FEATURE_EXCLUSION_LIST`)、`featured:466` (`is_feature_in_exclusion_list`)、`featured:376-379` (SpineRouter `Restart=no`)、`featured:142,151-161` (multi-ASIC namespace 初期化)、`featured:585-590` (`set_feature_state` + namespace 書込み)。`sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/container_startup.py:164-186` (`update_state`)、`ctrmgrd.py:593-612` (`do_tag_latest`)
+> **Evidence**: `sonic-host-services/scripts/featured:135` (`FEATURE_EXCLUSION_LIST`)、`featured:466` (`is_feature_in_exclusion_list`)、`featured:376-379` (SpineRouter `Restart=no`)、`featured:142,151-161` (multi-[ASIC](../../reference/glossary.md#term-asic) namespace 初期化)、`featured:585-590` (`set_feature_state` + namespace 書込み)。`sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/container_startup.py:164-186` (`update_state`)、`ctrmgrd.py:593-612` (`do_tag_latest`)
 <!-- /platform -->
 
 <!-- ops-hint -->
@@ -535,4 +535,4 @@ show feature status bgp
 
 [^1]: `sonic-host-services/scripts/featured` (L132-134 定数, L190 _del, L344,510,513,544,547 state 遷移, L585-590 set_feature_state); `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/container_startup.py` (L16-51 定数・デフォルト, L164-186 update_state, L201-268 container_up); `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py` (L47-54 定数, L92-101 dflt_st_feat, L593-612 do_tag_latest). <https://github.com/sonic-net/sonic-host-services/blob/master/scripts/featured>
 
-<!-- glossary-links-injected: 9282e30564ef -->
+<!-- glossary-links-injected: 2944c7fe34f2 -->

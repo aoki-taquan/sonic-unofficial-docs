@@ -52,7 +52,7 @@ related:
 
 ## 概要
 
-SONiC の [gNMI](../../reference/glossary.md#term-gnmi) サブシステムは **dial-in サーバ** (クライアントからの Subscribe/Get/Set を受け付ける) と **dial-out クライアント** (テレメトリデータを外部コレクターへ push する) の 2 コンポーネントから構成される。いずれも `docker-sonic-gnmi` コンテナ内で動作し、それぞれの設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) から読み出す。
+[SONiC](../../reference/glossary.md#term-sonic) の [gNMI](../../reference/glossary.md#term-gnmi) サブシステムは **dial-in サーバ** (クライアントからの Subscribe/Get/Set を受け付ける) と **dial-out クライアント** (テレメトリデータを外部コレクターへ push する) の 2 コンポーネントから構成される。いずれも `docker-sonic-gnmi` コンテナ内で動作し、それぞれの設定を [CONFIG_DB](../../reference/glossary.md#term-config_db) から読み出す。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -373,7 +373,7 @@ gNMI サブシステムは CONFIG_DB テーブルのうち GNMI / GNMI_CLIENT_CE
 `telemetry_vars.j2` は `sonic-cfggen -d` で CONFIG_DB をスナップショット取得し、`GNMI` (= `GNMI|certs`) が存在しない場合に `DEVICE_METADATA["x509"]` の `server_crt` / `server_key` / `ca_crt` を TLS 証明書ソースとして使用する。これは `docker-sonic-telemetry` 時代のレガシー経路であり、`GNMI|certs` を使用する新設構成では `DEVICE_METADATA|x509` は参照されない (evidence: `telemetry_vars.j2:2-5`, `gnmi-native.sh:32-61`)。
 
 **`DEVICE_METADATA|localhost.subtype` (参照 #2) / `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled` (参照 #3)**:
-これら 2 つのフィールドは GNMI テーブルに対応するフィールドを持たず、スクリプトが `sonic-db-cli CONFIG_DB hget` で直接取得する。どちらもコンテナ起動時 1 回の読み取りであり、設定変更の反映にはコンテナ再起動が必要。詳細は [VRF / SmartSwitch 自動連携](#vrf--smartswitch-自動連携) を参照。
+これら 2 つのフィールドは GNMI テーブルに対応するフィールドを持たず、スクリプトが `sonic-db-cli CONFIG_DB hget` で直接取得する。どちらもコンテナ起動時 1 回の読み取りであり、設定変更の反映にはコンテナ再起動が必要。
 
 **`GNMI_CLIENT_CERT|<cert_cname>` (参照 #4)**:
 `PopulateAuthStructByCommonName()` (`clientCertAuth.go:254`) は毎接続の認証インターセプター内から呼ばれ、`swsscommon.ConfigDBConnector.Get_entry(serviceConfigTableName, certCommonName)` で `GNMI_CLIENT_CERT|<cert_cname>` エントリを読み取る。`GNMI_CLIENT_CERT` は GNMI テーブルと同一ページに収録されているが、参照方向（認証ランタイム → ConfigDB）を明示するため暗黙参照として列挙する。エントリが存在しない場合は `Unauthenticated` エラーが返る (evidence: `clientCertAuth.go:273-283`)。
@@ -579,12 +579,12 @@ GNMI / GNMI_CLIENT_CERT / TELEMETRY_CLIENT テーブルの定義・処理ロジ�
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | gNMI サーバは [SAI](../../reference/glossary.md#term-sai) 非経由。`telemetry.go` / `gnmi-native.sh` を `platform\|asic\|vendor\|broadcom\|mellanox` で grep して 0 ヒット |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | gNMI サーバは [SAI](../../reference/glossary.md#term-sai) 非経由。`telemetry.go` / `gnmi-native.sh` を `platform\|asic\|vendor\|broadcom\|mellanox` で grep して 0 ヒット |
 | multi-asic (`GetDbAllNamespaces()`) | CONFIG_DB テーブル自体に影響なし | `sonic_data_client/db_client.go:initRedisDbClients()` が全 namespace のデータ DB クライアントを初期化するのは gNMI パス解決 (Subscribe/Get) のためであり、GNMI / TELEMETRY_CLIENT テーブルのスキーマ・書込先には影響しない |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | GNMI テーブルは host CONFIG_DB スコープ。`gnmi-native.sh` の `sonic-cfggen -d` は host DB のみ参照し `asicN` namespace を iterate しない |
 | SmartSwitch (`DEVICE_METADATA\|localhost.subtype == "SmartSwitch"`) | **ZMQ ポート付与あり** | `gnmi-native.sh:89-92` が `LOCALHOST_SUBTYPE` を評価し、`"SmartSwitch"` の場合のみ `-zmq_port=8100` を `telemetry` 起動引数に追加する。非 SmartSwitch 機では ZMQ ポートは付与されず Redis ベース通信のみ。GNMI テーブルに `zmq_port` フィールドは存在しない |
-| [VRF](../../reference/glossary.md#term-vrf) (`MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled`) | VRF 対応機種全般で共通 | `gnmi-native.sh:95-98` で `--vrf mgmt` を付与。特定 ASIC への依存なし |
-| ビルドタグ (`gnmi_native_write` / `gnmi_translib_write`) | ASIC 非依存 | 管理フレームワーク統合の有無に依存するビルド時条件分岐。コミュニティ版標準 SONiC では常に `false` (`constants_native.go:5`, `constants_translib.go:5`) |
+| [VRF](../../reference/glossary.md#term-vrf) (`MGMT_VRF_CONFIG\|vrf_global.mgmtVrfEnabled`) | VRF 対応機種全般で共通 | `gnmi-native.sh:95-98` で `--vrf mgmt` を付与。特定 [ASIC](../../reference/glossary.md#term-asic) への依存なし |
+| ビルドタグ (`gnmi_native_write` / `gnmi_translib_write`) | [ASIC](../../reference/glossary.md#term-asic) 非依存 | 管理フレームワーク統合の有無に依存するビルド時条件分岐。コミュニティ版標準 [SONiC](../../reference/glossary.md#term-sonic) では常に `false` (`constants_native.go:5`, `constants_translib.go:5`) |
 
 ### SmartSwitch ZMQ 分岐の詳細
 
@@ -622,4 +622,4 @@ fi
 [^2]: `sonic-gnmi/telemetry/telemetry.go:318-320` (sha: eb635b76)
 [^3]: `sonic-gnmi/gnmi_server/clientCertAuth.go:254-263` (sha: eb635b76)
 
-<!-- glossary-links-injected: b6331ec991a1 -->
+<!-- glossary-links-injected: 77f342e1a22c -->

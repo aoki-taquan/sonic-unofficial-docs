@@ -31,7 +31,7 @@ related:
 
 [portsorch](../../reference/glossary.md#term-portsorch)（[orchagent](../../reference/glossary.md#term-orchagent) 内）が [SAI](../../reference/glossary.md#term-sai) の flex counter 機構を通じてポートの送信キューごとに取得する統計カウンタ群[^1]。値は `COUNTERS_DB` の `COUNTERS:<oid>` に格納され、`queuestat` コマンドが読み出す。
 
-> **関連ページ**: PG（Priority Group）カウンタおよびウォーターマーク体系の全体像は [`COUNTERS_DB キュー / PG カウンタテーブル群`](counters-queue.md) を参照。
+> **関連ページ**: PG（[Priority Group](../../reference/glossary.md#term-priority-group)）カウンタおよびウォーターマーク体系の全体像は [`COUNTERS_DB キュー / PG カウンタテーブル群`](counters-queue.md) を参照。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -140,7 +140,7 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 
 ### Packet Trimming フィールドは常時 queue_stat_ids に含まれる
 
-`SAI_QUEUE_STAT_TRIM_PACKETS` / `SAI_QUEUE_STAT_DROPPED_TRIM_PACKETS` / `SAI_QUEUE_STAT_TX_TRIM_PACKETS` は、Packet Trimming 機能の有効・無効に関係なく `queue_stat_ids` に含まれる。Trimming 非対応 ASIC では値 `0` か `N/A`。`queuestat` の `--all`（`-a`）フラグで表示列が追加される（デフォルト `queuestat` では非表示）。
+`SAI_QUEUE_STAT_TRIM_PACKETS` / `SAI_QUEUE_STAT_DROPPED_TRIM_PACKETS` / `SAI_QUEUE_STAT_TX_TRIM_PACKETS` は、Packet Trimming 機能の有効・無効に関係なく `queue_stat_ids` に含まれる。Trimming 非対応 [ASIC](../../reference/glossary.md#term-asic) では値 `0` か `N/A`。`queuestat` の `--all`（`-a`）フラグで表示列が追加される（デフォルト `queuestat` では非表示）。
 
 ### ポーリング間隔のコードデフォルト
 
@@ -154,7 +154,7 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 
 ### WRED カウンタは SAI ケイパビリティチェック必須
 
-`SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` 等の WRED 統計は `checkWredCapability()`（portsorch.cpp:1894-1909）が SAI のケイパビリティクエリを実施し、サポートを確認したポートの queue にのみ `wred_queue_stat_manager` へ追加される[^3]。未サポート ASIC では `FLEX_COUNTER_TABLE|WRED_ECN_QUEUE` を `enable` にしても `COUNTERS:<oid>` に WRED フィールドが現れない（silent 非追加）。
+`SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` 等の WRED 統計は `checkWredCapability()`（portsorch.cpp:1894-1909）が SAI のケイパビリティクエリを実施し、サポートを確認したポートの queue にのみ `wred_queue_stat_manager` へ追加される[^3]。未サポート [ASIC](../../reference/glossary.md#term-asic) では `FLEX_COUNTER_TABLE|WRED_ECN_QUEUE` を `enable` にしても `COUNTERS:<oid>` に WRED フィールドが現れない（silent 非追加）。
 
 ### ウォーターマークは READ_AND_CLEAR で動作
 
@@ -554,7 +554,7 @@ QUEUE カウンタの有効化ロジックは `gMySwitchType` によって分岐
 
 ### WRED カウンタの SAI ケイパビリティ依存
 
-`SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` / `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` 等の WRED 統計は、`initCounterCapabilities()` (`portsorch.cpp:1881-1922`) が `sai_query_stats_capability(SAI_OBJECT_TYPE_QUEUE)` を呼んで各ベンダー SAI のサポート状況を確認してから登録する。サポートしない ASIC ではこれらのフィールドが `COUNTERS:<oid>` に現れない（silent 非追加）。
+`SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` / `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` 等の WRED 統計は、`initCounterCapabilities()` (`portsorch.cpp:1881-1922`) が `sai_query_stats_capability(SAI_OBJECT_TYPE_QUEUE)` を呼んで各ベンダー SAI のサポート状況を確認してから登録する。サポートしない [ASIC](../../reference/glossary.md#term-asic) ではこれらのフィールドが `COUNTERS:<oid>` に現れない（silent 非追加）。
 
 | SAI ケイパビリティ | 登録されるカウンタ |
 |------------------|-----------------|
@@ -601,4 +601,4 @@ VOQ モードでは `COUNTERS_QUEUE_NAME_MAP` のキー形式が通常と異な�
 
 [^5]: `sonic-swss/orchagent/portsorch.cpp:6583-6598,8391-8443,8700-8755` / `sonic-swss/orchagent/flexcounterorch.cpp:127-136,156-167,247-252,544-554` — 書込み順序依存・タイミング依存の実装根拠。<https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp>
 
-<!-- glossary-links-injected: 841e6cdca746 -->
+<!-- glossary-links-injected: f155c5571cef -->

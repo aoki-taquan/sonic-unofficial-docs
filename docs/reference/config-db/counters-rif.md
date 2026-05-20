@@ -207,7 +207,7 @@ intfsorch は [RIF](../../reference/glossary.md#term-rif) ごとに `COUNTERS_RI
 
 ### SAI フィールド未サポート時の挙動
 
-ASIC が対応していない SAI カウンタは `intfstat` の `get_counters()` で `STATUS_NA` ('N/A') として扱われ、表示に `N/A` が出る（scripts/intfstat:93-98）。
+[ASIC](../../reference/glossary.md#term-asic) が対応していない SAI カウンタは `intfstat` の `get_counters()` で `STATUS_NA` ('N/A') として扱われ、表示に `N/A` が出る（scripts/intfstat:93-98）。
 
 <!-- /defaults -->
 
@@ -222,10 +222,10 @@ ASIC が対応していない SAI カウンタは `intfstat` の `get_counters()
 |------|-----------|------|
 | 1 | `PortsOrch` | — |
 | 2 | `VRFOrch` | — |
-| 3 | `IntfsOrch` | VRFOrch, PortsOrch |
+| 3 | `IntfsOrch` | VRFOrch, [PortsOrch](../../reference/glossary.md#term-portsorch) |
 | 4 | `FlexCounterOrch` | gIntfsOrch (既に設定済み) |
 
-`FlexCounterOrch::doTask()` は `gIntfsOrch != nullptr` を確認してから `generateInterfaceMap()` を呼ぶため、IntfsOrch より前に `FLEX_COUNTER_TABLE|RIF enable` が来ても安全に無視される（`gIntfsOrch` が nullptr なら分岐しない）。
+`FlexCounterOrch::doTask()` は `gIntfsOrch != nullptr` を確認してから `generateInterfaceMap()` を呼ぶため、[IntfsOrch](../../reference/glossary.md#term-intfsorch) より前に `FLEX_COUNTER_TABLE|RIF enable` が来ても安全に無視される（`gIntfsOrch` が nullptr なら分岐しない）。
 
 ### PortsOrch ガード — 全ポート Ready 前は INTERFACE 処理なし
 
@@ -235,7 +235,7 @@ ASIC が対応していない SAI カウンタは `intfstat` の `get_counters()
 if (!gPortsOrch->allPortsReady()) return;
 ```
 
-`APP_INTF_TABLE` の SET メッセージは Consumer キューに積まれたまま保持され、`PortsOrch::allPortsReady()` が `true` を返した後に初めて処理される。したがって `INTERFACE` エントリに対応する物理ポート（`Ethernet0`、`PortChannel0001`、`Vlan1000` 等）が PortsOrch に登録済みであることが前提になる。
+`APP_INTF_TABLE` の SET メッセージは Consumer キューに積まれたまま保持され、`PortsOrch::allPortsReady()` が `true` を返した後に初めて処理される。したがって `INTERFACE` エントリに対応する物理ポート（`Ethernet0`、`PortChannel0001`、`Vlan1000` 等）が [PortsOrch](../../reference/glossary.md#term-portsorch) に登録済みであることが前提になる。
 
 ### RIF 作成 → タイマー駆動の非同期 FlexCounter 登録
 
@@ -282,11 +282,11 @@ FlexCounterOrch::doTask()
 
 1. `COUNTERS_RIF_NAME_MAP` と `COUNTERS_RIF_TYPE_MAP` から hdel
 2. `FLEX_COUNTER_DB` の COUNTER_ID_LIST を `stopFlexCounterPolling()` で削除
-3. `COUNTERS:<oid>` は syncd 側が SAI の remove 応答後にクリーンアップする（IntfsOrch は直接削除しない）
+3. `COUNTERS:<oid>` は syncd 側が SAI の remove 応答後にクリーンアップする（[IntfsOrch](../../reference/glossary.md#term-intfsorch) は直接削除しない）
 
 `m_rifsToAdd` にまだキューイングされている RIF（`addRifToFlexCounter` 未実行）は `removeRouterIntfs()` 内でリストから除去されるだけで FlexCounter 側のクリーンアップは不要（`intfsorch.cpp:1337-1344`）。
 
-> **コード証跡**: `intfsorch.cpp` L43 (priority 35), L45,78 (UPDATE_MAPS_SEC=1), L665-668 (PortsOrch ガード), L1296-1311 (addRouterIntfs→m_rifsToAdd), L1527-1552 (addRifToFlexCounter 書き込み順序), L1576-1578 (generateInterfaceMap), L1598-1638 (doTask Timer + gTraditionalFlexCounter 分岐), L1337-1344 (削除時クリーンアップ);
+> **コード証跡**: `intfsorch.cpp` L43 (priority 35), L45,78 (UPDATE_MAPS_SEC=1), L665-668 ([PortsOrch](../../reference/glossary.md#term-portsorch) ガード), L1296-1311 (addRouterIntfs→m_rifsToAdd), L1527-1552 (addRifToFlexCounter 書き込み順序), L1576-1578 (generateInterfaceMap), L1598-1638 (doTask Timer + gTraditionalFlexCounter 分岐), L1337-1344 (削除時クリーンアップ);
 > `flexcounterorch.cpp` L157-160 (delayTimer ガード), L283-285 (RIF enable → generateInterfaceMap);
 > `orchdaemon.cpp` L232, L283, L296, L625 (初期化順序)
 
@@ -311,7 +311,7 @@ FlexCounterOrch::doTask()
 
 ### 解決タイミング
 
-- **PORT**: `allPortsReady()` による自動待機。PortsOrch が初期化完了後に IntfsOrch の INTERFACE 処理がアンブロックされる。
+- **PORT**: `allPortsReady()` による自動待機。PortsOrch が初期化完了後に [IntfsOrch](../../reference/glossary.md#term-intfsorch) の INTERFACE 処理がアンブロックされる。
 - **VRF_TABLE**: `doTask` ループの `continue` でリトライ。VRF が後から追加されると次の Consumer イベント処理時に解決する。
 - **FLEX_COUNTER_TABLE**: `FlexCounterOrch::doTask()` が即時評価。`enable` 書込み時点でタイマーがキックされ、最大 1 秒後に登録が完了する。
 - **[ASIC_DB](../../reference/glossary.md#term-asic_db) VIDTORID**: `doTask(SelectableTimer)` の 1 秒タイマーでリトライ。通常は RIF 作成後 1 秒以内に syncd が書き込む。
@@ -473,7 +473,7 @@ SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_PACKETS
 SAI_ROUTER_INTERFACE_STAT_OUT_ERROR_OCTETS
 ```
 
-この配列は定数であり、実行時や CONFIG_DB 設定で変更できない。ASIC が対応しないカウンタは syncd が SAI エラーを返し、`intfstat` では `N/A` として表示される。
+この配列は定数であり、実行時や CONFIG_DB 設定で変更できない。[ASIC](../../reference/glossary.md#term-asic) が対応しないカウンタは syncd が SAI エラーを返し、`intfstat` では `N/A` として表示される。
 
 <!-- /constants -->
 
@@ -575,7 +575,7 @@ RIF カウンタの制御経路は **CONFIG_DB → FlexCounterOrch → IntfsOrch
 | IntfsOrch タイマー起動後 | `SelectableTimer` 駆動 | `doTask(SelectableTimer&)` で `m_rifsToAdd` リストを処理 |
 | IntfsOrch → COUNTERS_DB | 直接書き込み | `m_rifNameTable->set()` / `m_rifTypeTable->set()` |
 | IntfsOrch → FLEX_COUNTER_DB | `startFlexCounterPolling()` | `RIF_STAT_COUNTER:<oid>:COUNTER_ID_LIST` を書き込む |
-| syncd → ASIC | SAI flex counter ポーリング | 1000 ms 間隔で SAI stat API をポーリング |
+| syncd → [ASIC](../../reference/glossary.md#term-asic) | SAI flex counter ポーリング | 1000 ms 間隔で SAI stat API をポーリング |
 | syncd → COUNTERS_DB | 直接書き込み | `COUNTERS:<oid>` Hash に各 SAI フィールドをアトミック更新 |
 | syncd + rif_rates.lua | Lua プラグイン実行 | ポーリング毎に `RATES:<oid>` の RX_BPS/TX_BPS/RX_PPS/TX_PPS を指数平滑化計算 |
 | COUNTERS_DB → intfstat | `SonicV2Connector.get()` 直接読み出し | `COUNTERS_RIF_NAME_MAP` で名前→OID 解決後、`COUNTERS:<oid>` を読む（pull 型） |
@@ -642,6 +642,9 @@ APPL_DB 書き込み: なし
 STATE_DB 書き込み: なし
 NotificationConsumer: なし（カウンタ配信に使用せず）
 ```
+
+<!-- footnote anchor seeds -->
+出典: [^12] [^17] [^18] [^19]
 
 [^17]: FlexCounterOrch RIF enable ブランチ: `sonic-swss/orchagent/flexcounterorch.cpp:283-286`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L283>
 [^18]: IntfsOrch doTask(SelectableTimer) / addRifToFlexCounter: `sonic-swss/orchagent/intfsorch.cpp:1598-1637`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1598>
@@ -739,4 +742,4 @@ VoQ シャーシ環境 (`gMySwitchType == "voq"` かつ `isChassisDbInUse()`) �
 [^13]: FLEX_COUNTER_DELAY_SEC 定数: `sonic-swss/orchagent/flexcounterorch.cpp:44`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44>
 [^14]: RIF_COUNTER_ID_LIST / RIF_PLUGIN_FIELD 定数: `sonic-swss-common/common/schema.h:302,330`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d/common/schema.h#L302>
 
-<!-- glossary-links-injected: e71717a88701 -->
+<!-- glossary-links-injected: 50d6071562c1 -->

@@ -37,7 +37,7 @@ related:
 
 ## なぜ必要か
 
-SONiC の機能は **複数 DB**（[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) / [STATE_DB](../reference/glossary.md#term-state_db) / [COUNTERS_DB](../reference/glossary.md#term-counters_db) / 設定 JSON）に状態が分散する。設定が [orchagent](../reference/glossary.md#term-orchagent) → [SAI](../reference/glossary.md#term-sai) → ASIC まで伝播したかを見るには各 DB を個別に grep する必要があり、属人化していた[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の機能は **複数 DB**（[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) / [STATE_DB](../reference/glossary.md#term-state_db) / [COUNTERS_DB](../reference/glossary.md#term-counters_db) / 設定 JSON）に状態が分散する。設定が [orchagent](../reference/glossary.md#term-orchagent) → [SAI](../reference/glossary.md#term-sai) → [ASIC](../reference/glossary.md#term-asic) まで伝播したかを見るには各 DB を個別に grep する必要があり、属人化していた[^1]。
 
 `dump state <module> <id>` は、モジュール毎に「どの DB のどのキーを取れば良いか」を **プラグイン定義** で持ち、DB 横断で 1 view に集約する。
 
@@ -276,4 +276,4 @@ syncd が master RPC イメージでクラッシュする問題。RPC ビルド�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f5123b3043d1 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

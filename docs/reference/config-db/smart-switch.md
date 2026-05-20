@@ -37,7 +37,7 @@ related:
 
 ## 概要
 
-[SmartSwitch](../../reference/glossary.md#term-smartswitch) は SONiC [NPU](../../reference/glossary.md#term-npu) と複数の [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) を搭載した複合スイッチ筐体。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) は [SONiC](../../reference/glossary.md#term-sonic) [NPU](../../reference/glossary.md#term-npu) と複数の [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) を搭載した複合スイッチ筐体。
 [NPU](../../reference/glossary.md#term-npu)-[DPU](../../reference/glossary.md#term-dpu) 間はミッドプレーンブリッジ (`bridge-midplane`) を介して L2 接続され、[DPU](../../reference/glossary.md#term-dpu) への IPv4 割り当ては
 DHCP サーバ (`dhcp_server` feature) が `DHCP_SERVER_IPV4_PORT` テーブルを参照してポートごとに固定 IP を払い出す。
 
@@ -152,7 +152,7 @@ SmartSwitch では `ips` が使用され、各 DPU に `169.254.200.<dpu_id+1>` 
 
 ### 主要な制約詳細
 
-**DEVICE_METADATA.subtype 先行必須 (依存 #1)**: `dhcp_cfggen.py:65-76` の `generate()` は最初に `DEVICE_METADATA` を読み `is_smart_switch()` を評価する。`subtype != "SmartSwitch"` の場合 `_parse_dpu()` は呼ばれず `MID_PLANE_BRIDGE` / `DHCP_SERVER_IPV4_PORT` / `DPUS` が存在していても SmartSwitch 用 Kea 設定が生成されない。`config_samples.py:83` でも `subtype` 設定を `MID_PLANE_BRIDGE` より先に行う（evidence: `dhcp_cfggen.py:65-76`; `utils.py:153-161`）。
+**[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).subtype 先行必須 (依存 #1)**: `dhcp_cfggen.py:65-76` の `generate()` は最初に `DEVICE_METADATA` を読み `is_smart_switch()` を評価する。`subtype != "SmartSwitch"` の場合 `_parse_dpu()` は呼ばれず `MID_PLANE_BRIDGE` / `DHCP_SERVER_IPV4_PORT` / `DPUS` が存在していても SmartSwitch 用 Kea 設定が生成されない。`config_samples.py:83` でも `subtype` 設定を `MID_PLANE_BRIDGE` より先に行う（evidence: `dhcp_cfggen.py:65-76`; `utils.py:153-161`）。
 
 **bridge + ip_prefix の同時書き込み必須 (依存 #2)**: `dhcp_cfggen.py:84` の条件 `"bridge" in mid_plane and "ip_prefix" in mid_plane` を両方満たすとき初めて SmartSwitch サブネットが Kea 設定に追加される。YANG `must "(current()/../ip_prefix)"` 制約も `bridge` と `ip_prefix` の同時存在を強制する（evidence: `dhcp_cfggen.py:84`, `sonic-smart-switch.yang:63-74`）。
 
@@ -718,4 +718,4 @@ SmartSwitch 環境では `CHASSIS_MODULE` のキーは `"DPU"` プレフィッ�
 - [SmartSwitch IP アドレス割り当て設計](../../system/smart-switch-ip-address-assignment.md)
 - [SmartSwitch データベース設計](../../architecture/smart-switch-database-design.md)
 
-<!-- glossary-links-injected: 2087de3b8bba -->
+<!-- glossary-links-injected: 2e92ab097103 -->

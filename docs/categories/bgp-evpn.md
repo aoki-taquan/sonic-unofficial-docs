@@ -16,7 +16,7 @@ related:
 
 ## 概要
 
-SONiC のルーティングは **FRRouting (FRR)** を中心に構築されており、その大部分が [BGP](../reference/glossary.md#term-bgp) / [EVPN](../reference/glossary.md#term-evpn)-[VXLAN](../reference/glossary.md#term-vxlan) / [VNET](../reference/glossary.md#term-vnet) の運用に関わります。[fpmsyncd](../reference/glossary.md#term-fpmsyncd) が FRR の [Netlink](../reference/glossary.md#term-netlink) を受け取って [ROUTE_TABLE](../reference/glossary.md#term-route_table) / NEXTHOP_GROUP_TABLE に書き込み、[orchagent](../reference/glossary.md#term-orchagent) が [SAI](../reference/glossary.md#term-sai) 経由で ASIC を更新するという経路が基本構造です。さらに `bgpcfgd` / `frrcfgd` が [CONFIG_DB](../reference/glossary.md#term-config_db) の `BGP_*` テーブルや OpenConfig [YANG](../reference/glossary.md#term-yang) を FRR の vtysh コンフィグへ翻訳します。
+[SONiC](../reference/glossary.md#term-sonic) のルーティングは **FRRouting (FRR)** を中心に構築されており、その大部分が [BGP](../reference/glossary.md#term-bgp) / [EVPN](../reference/glossary.md#term-evpn)-[VXLAN](../reference/glossary.md#term-vxlan) / [VNET](../reference/glossary.md#term-vnet) の運用に関わります。[fpmsyncd](../reference/glossary.md#term-fpmsyncd) が FRR の [Netlink](../reference/glossary.md#term-netlink) を受け取って [ROUTE_TABLE](../reference/glossary.md#term-route_table) / NEXTHOP_GROUP_TABLE に書き込み、[orchagent](../reference/glossary.md#term-orchagent) が [SAI](../reference/glossary.md#term-sai) 経由で [ASIC](../reference/glossary.md#term-asic) を更新するという経路が基本構造です。さらに `bgpcfgd` / `frrcfgd` が [CONFIG_DB](../reference/glossary.md#term-config_db) の `BGP_*` テーブルや OpenConfig [YANG](../reference/glossary.md#term-yang) を FRR の [vtysh](../reference/glossary.md#term-vtysh) コンフィグへ翻訳します。
 
 このカテゴリは BGP / EVPN に関わるページを area 横断でまとめます。**routing**（BGP loading 最適化、PIC、BMP、[BFD](../reference/glossary.md#term-bfd) HW offload、EVPN-VXLAN、EVPN multihoming、Weighted [ECMP](../reference/glossary.md#term-ecmp)、suppress-fib-pending、router-id、VoQ 向け BGP、Overlay ECMP）・**overlay**（VXLAN / VNet 全体設計、VNET local endpoint）・**architecture**（PBH = Policy Based Hashing）・**reference**（`config bgp` / `config vxlan` / `show bgp` / `show route-map` CLI、BGP_NEIGHBOR / BGP_PEER_GROUP / PREFIX_LIST / ROUTE_MAP / VXLAN_TUNNEL などの CONFIG_DB テーブル、対応する YANG）に広く分散しています。
 
@@ -111,4 +111,4 @@ EVPN-VXLAN は [FRR](../reference/glossary.md#term-frr) の `bgpd` + `zebra` + E
 - [Multi-ASIC / VOQ chassis 関連](multi-asic.md)
 - [gNMI / gNOI / OpenConfig 関連](gnmi-openconfig.md)
 
-<!-- glossary-links-injected: ae7131e40624 -->
+<!-- glossary-links-injected: d62d2c91ba87 -->

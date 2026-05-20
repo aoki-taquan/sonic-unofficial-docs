@@ -43,7 +43,7 @@ related:
 
 ## 概要
 
-従来の port 構成は [SAI](../reference/glossary.md#term-sai) profile から事前作成 → PortsOrch が [CONFIG_DB](../reference/glossary.md#term-config_db) と比較し不一致 port を **個別に削除→再作成** する 2 phase。port 数だけ SAI/SDK 呼び出しが発生し fast-boot の 30 秒制約を圧迫していた[^1]。SAI 側に **bulk object API**（`create_ports` / `remove_ports` / `set_ports_attribute` / `get_ports_attribute`）が追加された[^1]ことを受け、PortsOrch を bulk 対応に拡張して呼び出し回数を削減する設計。CLI / DB schema / [YANG](../reference/glossary.md#term-yang) / warm reboot は不変で、PortsOrch のみが変わる。
+従来の port 構成は [SAI](../reference/glossary.md#term-sai) profile から事前作成 → [PortsOrch](../reference/glossary.md#term-portsorch) が [CONFIG_DB](../reference/glossary.md#term-config_db) と比較し不一致 port を **個別に削除→再作成** する 2 phase。port 数だけ SAI/SDK 呼び出しが発生し fast-boot の 30 秒制約を圧迫していた[^1]。SAI 側に **bulk object API**（`create_ports` / `remove_ports` / `set_ports_attribute` / `get_ports_attribute`）が追加された[^1]ことを受け、PortsOrch を bulk 対応に拡張して呼び出し回数を削減する設計。CLI / DB schema / [YANG](../reference/glossary.md#term-yang) / warm reboot は不変で、PortsOrch のみが変わる。
 
 ## 動作仕様
 
@@ -94,7 +94,7 @@ sequenceDiagram
 
 ### Legacy flow（fallback）
 
-bulk 非対応 vendor では従来通り、個別 `create_port` / `remove_port` / `set_port_attribute` を port ごとに発行する[^1]。Multi-ASIC は ASIC ごとに swss / [Redis](../reference/glossary.md#term-redis) が独立しているため bulk 判定も ASIC 単位で行われる。
+bulk 非対応 vendor では従来通り、個別 `create_port` / `remove_port` / `set_port_attribute` を port ごとに発行する[^1]。[Multi-ASIC](../reference/glossary.md#term-multi-asic) は [ASIC](../reference/glossary.md#term-asic) ごとに swss / [Redis](../reference/glossary.md#term-redis) が独立しているため bulk 判定も ASIC 単位で行われる。
 
 ### SAI API（参考）
 
@@ -184,4 +184,4 @@ reasoning: 本機能の主要 goal が fast-boot 30s 達成にある根拠。
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: bb6970f11536 -->
+<!-- glossary-links-injected: ad65c402a362 -->

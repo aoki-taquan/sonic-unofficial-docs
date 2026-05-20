@@ -70,7 +70,7 @@ TC_TO_DSCP_MAP|<name>|<tc>
 | 値 | 挙動 |
 |----|------|
 | `0`..`7` | qosorch が `SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP` エントリを生成 |
-| `8`..`15` | YANG は許可するが大多数の ASIC は TC 0..7 のみサポート → [SAI](../../reference/glossary.md#term-sai) エラー (`task_failed`) |
+| `8`..`15` | YANG は許可するが大多数の [ASIC](../../reference/glossary.md#term-asic) は TC 0..7 のみサポート → [SAI](../../reference/glossary.md#term-sai) エラー (`task_failed`) |
 | 非数値文字列 | `stoi()` 例外 → `task_invalid_entry` |
 
 ### `dscp` (string 0..63)
@@ -82,7 +82,7 @@ TC_TO_DSCP_MAP|<name>|<tc>
 | `64` 以上 | `DSCP_MAX_VAL=63` 超過を明示チェック → `task_invalid_entry` |
 | 非数値文字列 | `invalid_argument` 例外 → `task_invalid_entry`（try-catch あり） |
 
-> スパース定義可能。未定義 TC の egress DSCP はデフォルト値なし（ASIC/SAI 実装依存）。
+> スパース定義可能。未定義 TC の egress DSCP はデフォルト値なし（[ASIC](../../reference/glossary.md#term-asic)/SAI 実装依存）。
 > `PORT_QOS_MAP.tc_to_dscp_map` または `TUNNEL.encap_tc_to_dscp_map` から参照されない限り SAI に反映されない。
 
 <!-- /value-behavior -->
@@ -101,7 +101,7 @@ TC_TO_DSCP_MAP|<name>|<tc>
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-tc-dscp-map`](../yang/sonic-tc-dscp-map.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-tc-dscp-map`
 
 <!-- ref-triangle:end -->
 
@@ -127,7 +127,7 @@ TC_TO_DSCP_MAP|<name>|<tc>
 
 ### よくある誤設定
 
-- TC を 8 以上に書くと ASIC が拒否（TC は実運用上 0..7 のみ有効）。
+- TC を 8 以上に書くと [ASIC](../../reference/glossary.md#term-asic) が拒否（TC は実運用上 0..7 のみ有効）。
 - DSCP を 63 超に書くと qosorch がエラーで reject する。
 
 ### 確認コマンド
@@ -180,13 +180,13 @@ show qos map tc-dscp
 対象テーブル: `TC_TO_DSCP_MAP`
 
 ### CLI
-- なし（TC_TO_DSCP_MAP の直接 CLI コマンドは標準 SONiC に存在しない）
+- なし（TC_TO_DSCP_MAP の直接 CLI コマンドは標準 [SONiC](../../reference/glossary.md#term-sonic) に存在しない）
 
 ### minigraph / sonic-cfggen
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし（対応 OpenConfig/SONiC YANG transformer なし）
+- なし（対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし）
 
 ### db_migrator
 - なし
@@ -384,7 +384,7 @@ sudo grep -i "tc.*dscp\|Invalid DSCP\|qosorch" /var/log/syslog
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`TC_TO_DSCP_MAP` の処理に関わる定数はすべてソースコードに固定されており、CONFIG_DB や DEVICE_METADATA から変更できない。
+`TC_TO_DSCP_MAP` の処理に関わる定数はすべてソースコードに固定されており、CONFIG_DB や [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) から変更できない。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/tc-to-dscp-map-constants.md`
 
@@ -577,4 +577,4 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 484985ad478d -->
+<!-- glossary-links-injected: bcd3ab0b11e4 -->

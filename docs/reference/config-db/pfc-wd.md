@@ -677,7 +677,7 @@ Lua スクリプト (`pfc_detect_<platform>.lua`) が FLEX_COUNTER 経由でカ�
 
 <!-- evidence: meta/_intermediate/cdb-flow/pfc-wd-platform.md -->
 
-PFC_WD の platform 差は community SONiC の中でも特に重大なカテゴリ。ASIC ベンダーが識別できない場合は **PFC-WD 機能自体が無効化** され、ベンダーが識別できても Handler クラス・SAI カウンタ種別・Lua 検出スクリプトがすべて異なる。
+PFC_WD の platform 差は community [SONiC](../../reference/glossary.md#term-sonic) の中でも特に重大なカテゴリ。[ASIC](../../reference/glossary.md#term-asic) ベンダーが識別できない場合は **PFC-WD 機能自体が無効化** され、ベンダーが識別できても Handler クラス・SAI カウンタ種別・Lua 検出スクリプトがすべて異なる。
 
 ### ASIC ベンダー別 Handler 登録・SAI カウンタ種別
 
@@ -709,8 +709,8 @@ PFC_WD の platform 差は community SONiC の中でも特に重大なカテゴ�
 
 ### multi-asic / VoQ / DASH — PFC_WD への影響なし
 
-`pfcwdorch.cpp` に `gMySwitchType`・`gFabricPortsOrch`・`IS_MULTI_NPU` 参照はゼロ。multi-asic 構成では各 ASIC namespace の orchagent が独立して `PFC_WD` テーブルを購読するが、コードパスは同一。VoQ chassis・[DASH](../../reference/glossary.md#term-dash) 環境でも PFC_WD の動作ロジックは変化しない。
+`pfcwdorch.cpp` に `gMySwitchType`・`gFabricPortsOrch`・`IS_MULTI_NPU` 参照はゼロ。multi-asic 構成では各 [ASIC](../../reference/glossary.md#term-asic) namespace の orchagent が独立して `PFC_WD` テーブルを購読するが、コードパスは同一。VoQ chassis・[DASH](../../reference/glossary.md#term-dash) 環境でも PFC_WD の動作ロジックは変化しない。
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: b7376d4b8e9e -->
+<!-- glossary-links-injected: 1288c04b3f8a -->

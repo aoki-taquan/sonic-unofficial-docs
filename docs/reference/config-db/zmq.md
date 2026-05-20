@@ -45,7 +45,7 @@ related:
 
 ## 概要
 
-SONiC の **northbound ZMQ チャネル**は [orchagent](../../reference/glossary.md#term-orchagent) が [gNMI](../../reference/glossary.md#term-gnmi) / [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) 等の上位コンポーネントから
+[SONiC](../../reference/glossary.md#term-sonic) の **northbound ZMQ チャネル**は [orchagent](../../reference/glossary.md#term-orchagent) が [gNMI](../../reference/glossary.md#term-gnmi) / [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) 等の上位コンポーネントから
 [APPL_DB](../../reference/glossary.md#term-appl_db) テーブルへの書き込みを直接受け取るための ZeroMQ ベースの高スループット通信路。
 
 ZMQ に関連する [CONFIG_DB](../../reference/glossary.md#term-config_db) フィールドは独立テーブルを持たず、
@@ -116,10 +116,10 @@ ZMQ 関連フィールドは独立テーブルを持たず `DEVICE_METADATA|loca
 
 | 参照方向 | このフィールド | 相手テーブル / ページ | 条件 |
 |---------|--------------|---------------------|------|
-| → DEVICE_METADATA 読み取り | `orch_northbond_dash_zmq_enabled` | [`DEVICE_METADATA`](device-metadata.md) | `get_feature_status(ORCH_NORTHBOND_DASH_ZMQ_ENABLED, true)` が起動時に CONFIG_DB `DEVICE_METADATA\|localhost` を直接 `hget`。存在しない場合は `true` (DASH ZMQ 有効) (`orch_zmq_config.cpp:88`) |
-| → DEVICE_METADATA 読み取り | `orch_northbond_route_zmq_enabled` | [`DEVICE_METADATA`](device-metadata.md) | `create_local_zmq_client(ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED, false)` が同様に `hget`。存在しない場合は `false` (ROUTE ZMQ 無効) (`routesync.cpp:155`) |
+| → [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 読み取り | `orch_northbond_dash_zmq_enabled` | [`DEVICE_METADATA`](device-metadata.md) | `get_feature_status(ORCH_NORTHBOND_DASH_ZMQ_ENABLED, true)` が起動時に CONFIG_DB `DEVICE_METADATA\|localhost` を直接 `hget`。存在しない場合は `true` (DASH ZMQ 有効) (`orch_zmq_config.cpp:88`) |
+| → [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 読み取り | `orch_northbond_route_zmq_enabled` | [`DEVICE_METADATA`](device-metadata.md) | `create_local_zmq_client(ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED, false)` が同様に `hget`。存在しない場合は `false` (ROUTE ZMQ 無効) (`routesync.cpp:155`) |
 | → [DPU](../../reference/glossary.md#term-dpu) 読み取り | `orchagent_zmq_port` | [`dpu`](dpu.md) | `gnmi-native.sh` / `orchagent.sh` が `DPU\|<name>` の `orchagent_zmq_port` を読み取り ZMQ 接続ポートを決定。YANG 定義: `sonic-smart-switch.yang:176-179` |
-| DEVICE_METADATA → | `subtype == "SmartSwitch"` | [`smart-switch`](smart-switch.md) | `orchagent.sh` が `subtype` を参照して ZMQ アドレスを `tcp://eth0-midplane` または `tcp://127.0.0.1` に切り替える (`orchagent.sh:105-118`) |
+| [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) → | `subtype == "SmartSwitch"` | [`smart-switch`](smart-switch.md) | `orchagent.sh` が `subtype` を参照して ZMQ アドレスを `tcp://eth0-midplane` または `tcp://127.0.0.1` に切り替える (`orchagent.sh:105-118`) |
 | DEVICE_METADATA → | `switch_type == "dpu"` | [`smart-switch`](smart-switch.md) | `orchagent.sh:38-39` が `switch_type` を参照して `-z zmq_sync -k 65536` を orchagent 起動引数に付与。ZMQ 同期モードが強制される |
 | フラグ有効 → [APPL_DB](../../reference/glossary.md#term-appl_db) 書き込み先 | `orch_northbond_dash_zmq_enabled=true` | [APPL_DB](../../reference/glossary.md#term-appl_db) `DASH_*` テーブル群 (22 種) | `orch_zmq_tables.conf.j2` で conf に追記された DASH テーブル群が ZMQ 経由でオーケストレータに直接届く。無効時は [gNMI](../../reference/glossary.md#term-gnmi) が [Redis](../../reference/glossary.md#term-redis) [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) を使用 |
 | フラグ有効 → APPL_DB 書き込み先 | `orch_northbond_route_zmq_enabled=true` | APPL_DB `ROUTE_TABLE` / `LABEL_ROUTE_TABLE` | `fpmsyncd` が `ZmqProducerStateTable` 経由で直接 orchagent に送信。無効時は [Redis](../../reference/glossary.md#term-redis) 経由 (`orch_zmq_config.cpp:117-140`) |
@@ -315,11 +315,11 @@ orchagent 側は `ZmqConsumerStateTable` で ZMQ メッセージを受信する�
 
 ### 共通: ZMQ ロジック自体はプラットフォーム非依存
 
-`orch_zmq_config.cpp` / `orchdaemon.cpp` に `getenv("platform")` / `MLNX_PLATFORM_SUBSTRING` 等の ASIC 種別判定はない。ZMQ チャネルのセットアップはすべての ASIC 種別で共通コードパスを使用する。
+`orch_zmq_config.cpp` / `orchdaemon.cpp` に `getenv("platform")` / `MLNX_PLATFORM_SUBSTRING` 等の [ASIC](../../reference/glossary.md#term-asic) 種別判定はない。ZMQ チャネルのセットアップはすべての [ASIC](../../reference/glossary.md#term-asic) 種別で共通コードパスを使用する。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `orch_zmq_config.cpp` にプラットフォーム分岐なし |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `orch_zmq_config.cpp` にプラットフォーム分岐なし |
 | multi-asic (multi-[NPU](../../reference/glossary.md#term-npu)) | ZMQ ポートに NAMESPACE_ID オフセットが付く | `get_zmq_port()` (`orch_zmq_config.cpp:37-51`) が `NAMESPACE_ID` 環境変数を読み取り `8100 + NAMESPACE_ID + 1` を計算。global namespace では `NAMESPACE_ID` 未設定 → ポート固定 8100 |
 | [VOQ](../../reference/glossary.md#term-voq) chassis | 影響なし | `switch_type == "voq"` 向けの ZMQ 固有分岐はなし |
 
@@ -581,7 +581,7 @@ gnmi の ZMQ ポート (`-zmq_port=8100`) も `gnmi-native.sh` で `subtype == "
 ## 関連リファレンス
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DEVICE_METADATA`](device-metadata.md) — `orch_northbond_dash_zmq_enabled` / `orch_northbond_route_zmq_enabled` / `subtype` / `switch_type` フィールドの全体像
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-smart-switch`](../yang/sonic-smart-switch.md) — `DPU_LIST.orchagent_zmq_port` 定義
+- [YANG](../../reference/glossary.md#term-yang): `sonic-smart-switch` — `DPU_LIST.orchagent_zmq_port` 定義
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): [`smart-switch`](smart-switch.md) — SmartSwitch 関連テーブル群
 
 <!-- ref-triangle:end -->
@@ -621,4 +621,4 @@ sonic-db-cli CONFIG_DB hget "DPU|dpu0" orchagent_zmq_port
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 6738054fa24f -->
+<!-- glossary-links-injected: cf7cac6ac04d -->

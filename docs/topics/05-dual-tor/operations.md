@@ -43,7 +43,7 @@ related:
 
 # Dual-ToR の運用
 
-Dual-ToR の障害対応では、最初に「mux がどちらを向いているか」だけを見ると誤ります。サーバ側リンク、ICMP prober、Y-cable / SoC 制御、default route、MuxOrch の route programming が別々に壊れ得るためです。
+Dual-ToR の障害対応では、最初に「mux がどちらを向いているか」だけを見ると誤ります。サーバ側リンク、ICMP prober、Y-cable / SoC 制御、default route、[MuxOrch](../../reference/glossary.md#term-muxorch) の route programming が別々に壊れ得るためです。
 
 ## まず確認する順番
 
@@ -79,7 +79,7 @@ Active-Standby で複数 nexthop route が mux port をまたぐ場合、standby
 
 ## ICMP hardware offload
 
-ICMP hardware offload は、Dual-ToR の link prober を [NPU](../../reference/glossary.md#term-npu) 側へ寄せ、検出時間を短縮するための仕組みです。software prober では raw socket とユーザ空間処理が入るため、数百 ms 程度の検出が下限になります。hardware prober では ICMP echo session を ASIC に作り、状態通知を `IcmpOrch` 経由で受けます。
+ICMP hardware offload は、Dual-ToR の link prober を [NPU](../../reference/glossary.md#term-npu) 側へ寄せ、検出時間を短縮するための仕組みです。software prober では raw socket とユーザ空間処理が入るため、数百 ms 程度の検出が下限になります。hardware prober では ICMP echo session を [ASIC](../../reference/glossary.md#term-asic) に作り、状態通知を `IcmpOrch` 経由で受けます。
 
 運用者目線では、`prober_type` が hardware か software か、offload session が作成されているか、TLV 入り ICMP などソフトウェア処理に残る部分があるかを分けて見ます。高速検出を期待するなら、単に `MUX_CABLE` を入れるだけでなく、対象 ASIC / [SAI](../../reference/glossary.md#term-sai) / ICMP offload 機能の対応も前提です。
 
@@ -234,4 +234,4 @@ linkmgrd: BFD session for upstream peer 10.0.0.1 went down
 - [プレフィックスルート方式の Mux ネイバ](../../routing/prefix-based-mux-neighbors.md)
 - [multi-nexthop route ループ回避](../../routing/multiple-nexthop-route-hld.md)
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: b7e35f529315 -->

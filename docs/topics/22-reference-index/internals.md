@@ -86,7 +86,7 @@ flowchart LR
 
 | YANG モジュール | CONFIG_DB テーブル | 主な利用者 |
 | --- | --- | --- |
-| `sonic-port` | `PORT` | PortsOrch |
+| `sonic-port` | `PORT` | [PortsOrch](../../reference/glossary.md#term-portsorch) |
 | `sonic-vlan` | `VLAN`、`VLAN_MEMBER`、`VLAN_INTERFACE` | VlanMgr / IntfMgr |
 | `sonic-portchannel` | `PORTCHANNEL`、`PORTCHANNEL_MEMBER` | TeamMgr |
 | `sonic-bgp-neighbor` | `BGP_NEIGHBOR`、`BGP_PEER_RANGE` | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) |
@@ -95,7 +95,7 @@ flowchart LR
 | `sonic-vxlan` | `VXLAN_TUNNEL`、`VNET` | VxlanOrch / VNetOrch |
 | `sonic-nat` | `NAT_*` | NatMgr / NatOrch |
 
-OpenConfig YANG は translib transformer が間に入って SONiC YANG / Redis テーブルに射影されます（→ 10 章）。
+OpenConfig YANG は translib transformer が間に入って [SONiC](../../reference/glossary.md#term-sonic) YANG / Redis テーブルに射影されます（→ 10 章）。
 
 ## CLI とテーブル一覧（抜粋）
 
@@ -106,7 +106,7 @@ OpenConfig YANG は translib transformer が間に入って SONiC YANG / Redis �
 | `config bgp shutdown` | CONFIG_DB:BGP_NEIGHBOR |
 | `config qos clear / reload` | CONFIG_DB:BUFFER_* / QOS_* |
 | `show interfaces counters` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db):COUNTERS:<oid> |
-| `show ip route` | APPL_DB / [FRR](../../reference/glossary.md#term-frr) vtysh 経由 |
+| `show ip route` | APPL_DB / [FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) 経由 |
 | `show platform` | [STATE_DB](../../reference/glossary.md#term-state_db):PLATFORM_*、CHASSIS_STATE_DB（chassis のとき） |
 | `show warm-restart` | STATE_DB:WARM_RESTART_TABLE |
 
@@ -164,4 +164,4 @@ Indexer は AST 解析（Click は ast.parse、YANG は pyang）を使い、生�
 - [Quality gaps](./quality-gaps.md)
 - [20 章 swss / sai / Redis 内部実装](../20-swss-sai-redis/internals.md)
 
-<!-- glossary-links-injected: 710f941d149a -->
+<!-- glossary-links-injected: 7e34fbe17c30 -->

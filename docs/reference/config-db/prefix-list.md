@@ -63,7 +63,7 @@ PREFIX_LIST|<prefix_type>|<ip-prefix>
 
 ## 購読者
 
-- `bgpcfgd` (`docker-fpm-frr`): テンプレート展開で [FRR](../../reference/glossary.md#term-frr) vtysh `ip prefix-list <prefix_type> seq N permit <prefix>` を生成
+- `bgpcfgd` (`docker-fpm-frr`): テンプレート展開で [FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) `ip prefix-list <prefix_type> seq N permit <prefix>` を生成
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -153,7 +153,7 @@ vtysh -c 'show ip prefix-list'
 ## 例外条件・特殊挙動
 
 - **prefix_type が未サポート**: `ANCHOR_PREFIX` / `SUPPRESS_PREFIX` 以外の type キーは `log_warn` を出してスキップされ、FRR への設定生成は行われない。[^2]
-- **DEVICE_METADATA 未準備**: `DEVICE_METADATA|localhost` が未存在の場合はリトライ待ちになる。`type` / `bgp_asn` キーが欠けている場合も `KeyError` をキャッチしてスキップ。[^2]
+- **[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 未準備**: `DEVICE_METADATA|localhost` が未存在の場合はリトライ待ちになる。`type` / `bgp_asn` キーが欠けている場合も `KeyError` をキャッチしてスキップ。[^2]
 - **デバイスタイプ制限 (ANCHOR_PREFIX)**: `ANCHOR_PREFIX` は `SpineRouter/UpstreamLC` または `UpperSpineRouter` デバイスのみ許可される。他デバイスでは `log_warn` してスキップ。`SUPPRESS_PREFIX` は全デバイスで有効。[^2]
 - **プレフィクス形式不正**: `netaddr.IPNetwork()` がパース失敗した場合 (`NotRegisteredError` / `AddrFormatError` / `AddrConversionError`) は `log_warn` してエントリをスキップする（処理自体は `return True` で継続）。[^2]
 - **constants オーバーライド**: `bgp.prefix_list.<type>.ipv4_name` / `ipv6_name` が constants に定義されていれば、デフォルトの prefix list 名を上書きする。
@@ -230,7 +230,7 @@ bgpcfgd が PrefixListMgr 経由で FRR に送出するテンプレートコマ�
 | 1 | `add_radian.conf.j2` (ANCHOR_PREFIX) | `ip/ipv6 prefix-list ANCHOR_CONTRIBUTING_ROUTES permit <prefix> ge <len+1>` → その後 `router bgp <asn>` 内で `aggregate-address` route-map 参照 |
 | 2 | `add_suppress_prefix.conf.j2` (SUPPRESS_PREFIX) | `ip/ipv6 prefix-list <SUPPRESS_IPV4/V6_PREFIX> permit <prefix>` のみ。route-map 参照なし |
 
-**注意**: `ANCHOR_PREFIX` テンプレートは prefix-list 設定と BGP aggregate-address（route-map `TAG_ANCHOR_COMMUNITY` 参照）を **同一 vtysh セッション**で送出する。prefix-list の欠如により aggregate-address が無効化されるリスクを避けるため、両者は `cfg_mgr.push()` により原子的に適用される。
+**注意**: `ANCHOR_PREFIX` テンプレートは prefix-list 設定と BGP aggregate-address（route-map `TAG_ANCHOR_COMMUNITY` 参照）を **同一 [vtysh](../../reference/glossary.md#term-vtysh) セッション**で送出する。prefix-list の欠如により aggregate-address が無効化されるリスクを避けるため、両者は `cfg_mgr.push()` により原子的に適用される。
 
 > **スキャン証跡**: `managers_prefix_list.py`、`add_radian.conf.j2`、`add_suppress_prefix.conf.j2`、`bgpd.main.conf.j2`、`frrcfgd.py` (table_handler_list L2293-2338) を確認。
 
@@ -503,7 +503,7 @@ CONFIG_DB PREFIX_LIST (SubscriberStateTable)
 
 ### FRR バージョン差
 
-`managers_prefix_list.py` および bgpcfgd コード全体に FRR バージョン条件分岐は存在しない。`ip prefix-list` / `ipv6 prefix-list` コマンド構文は FRR 7.x 以降で安定しており、SONiC が対象とする FRR バージョン範囲 (7.5+) 内で差異なし。テンプレートもバージョン分岐なし。
+`managers_prefix_list.py` および bgpcfgd コード全体に FRR バージョン条件分岐は存在しない。`ip prefix-list` / `ipv6 prefix-list` コマンド構文は FRR 7.x 以降で安定しており、[SONiC](../../reference/glossary.md#term-sonic) が対象とする FRR バージョン範囲 (7.5+) 内で差異なし。テンプレートもバージョン分岐なし。
 
 ### IPv4 / IPv6 差
 
@@ -523,8 +523,8 @@ ANCHOR_PREFIX の場合は IPv4/IPv6 とも prefix list 名は `ANCHOR_CONTRIBUT
 | `ANCHOR_PREFIX` | SpineRouter/UpstreamLC、UpperSpineRouter | `log_warn` + スキップ (FRR 設定生成なし) |
 | `SUPPRESS_PREFIX` | 全デバイス | 制限なし |
 
-ASIC ベンダー差・アーキテクチャ差・[SmartSwitch](../../reference/glossary.md#term-smartswitch) 専用ロジックはなし。PREFIX_LIST はコントロールプレーン (FRR bgpd) のみで処理され [SAI](../../reference/glossary.md#term-sai) を経由しないため、ASIC 依存性ゼロ。
+[ASIC](../../reference/glossary.md#term-asic) ベンダー差・アーキテクチャ差・[SmartSwitch](../../reference/glossary.md#term-smartswitch) 専用ロジックはなし。PREFIX_LIST はコントロールプレーン (FRR bgpd) のみで処理され [SAI](../../reference/glossary.md#term-sai) を経由しないため、[ASIC](../../reference/glossary.md#term-asic) 依存性ゼロ。
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 5ae8fdcacc91 -->
+<!-- glossary-links-injected: b5cd6aa2e7b0 -->

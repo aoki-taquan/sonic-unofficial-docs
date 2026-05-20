@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-SONiC には `ROUTE_TABLE` という名称のテーブルが **3 つの DB** に存在する。このページでは `orchagent` (`RouteOrch`) が書き込む **[STATE_DB](../../reference/glossary.md#term-state_db)** と **APPL_STATE_DB** の 2 テーブルを扱う。
+[SONiC](../../reference/glossary.md#term-sonic) には `ROUTE_TABLE` という名称のテーブルが **3 つの DB** に存在する。このページでは `orchagent` (`RouteOrch`) が書き込む **[STATE_DB](../../reference/glossary.md#term-state_db)** と **APPL_STATE_DB** の 2 テーブルを扱う。
 
 | DB | 用途 | 書込み主体 |
 |----|------|-----------|
@@ -516,7 +516,7 @@ SAI が `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` として返す値は「[ECMP](.
 | サポートあり | `support=true` | `COUNTERS_ROUTE_NAME_MAP` 等への書き込み **発生** |
 | サポートなし | `support=false` | 書き込み **発生しない** |
 
-`support=false` のプラットフォーム（ソフトウェア ASIC、一部ハードウェア ASIC）では、route-state.md の副作用セクションで述べた `COUNTERS_ROUTE_NAME_MAP` / `COUNTERS_ROUTE_TO_PATTERN_MAP` への副次書き込みが完全にスキップされる。
+`support=false` のプラットフォーム（ソフトウェア [ASIC](../../reference/glossary.md#term-asic)、一部ハードウェア [ASIC](../../reference/glossary.md#term-asic)）では、route-state.md の副作用セクションで述べた `COUNTERS_ROUTE_NAME_MAP` / `COUNTERS_ROUTE_TO_PATTERN_MAP` への副次書き込みが完全にスキップされる。
 
 ### SmartSwitch DPU / その他
 
@@ -528,7 +528,7 @@ SAI が `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` として返す値は「[ECMP](.
 |-----------------|---------|--------------------------------------|
 | Mellanox | ECMP グループ最大数を 1/32 に補正 | なし（間接的に SAI 失敗率に影響する可能性） |
 | VoQ Chassis | ECMP メンバー上限 128 固定 | なし（同上） |
-| Flow Counter 非対応 ASIC | `FLOW_COUNTER_CAPABILITY_TABLE\|route support=false` | `COUNTERS_ROUTE_*_MAP` への副次書き込みが発生しない |
+| Flow Counter 非対応 [ASIC](../../reference/glossary.md#term-asic) | `FLOW_COUNTER_CAPABILITY_TABLE\|route support=false` | `COUNTERS_ROUTE_*_MAP` への副次書き込みが発生しない |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) / 標準 [NPU](../../reference/glossary.md#term-npu) | 差分なし | なし |
 
 <!-- /platform -->
@@ -615,4 +615,4 @@ APPL_STATE_DB ROUTE_TABLE:10.1.0.0/24
 - APPL_STATE_DB にエントリがない → SAI プログラミングに失敗している可能性。`/var/log/syslog` の orchagent ログで `err_str` を確認
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 7a23f69a8ab9 -->
+<!-- glossary-links-injected: 865a18402f05 -->

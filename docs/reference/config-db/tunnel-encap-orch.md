@@ -74,7 +74,7 @@ encap mapper の生成方式は `tunnel_map_use_t` 列挙型で制御される[^
 | モード | 説明 | 使用場面 |
 |-------|------|---------|
 | `TUNNEL_MAP_USE_DEDICATED_ENCAP_DECAP` | encap / decap それぞれ専用 mapper を作成 | L3VNI ([VRF](../../reference/glossary.md#term-vrf)) / Bridge VNI |
-| `TUNNEL_MAP_USE_COMMON_ENCAP_DECAP` | src VTEP の encap / decap mapper を共有 | [EVPN](../../reference/glossary.md#term-evpn) DIP トンネル |
+| `TUNNEL_MAP_USE_COMMON_ENCAP_DECAP` | src [VTEP](../../reference/glossary.md#term-vtep) の encap / decap mapper を共有 | [EVPN](../../reference/glossary.md#term-evpn) DIP トンネル |
 | `TUNNEL_MAP_USE_COMMON_DECAP_DEDICATED_ENCAP` | decap は共有、encap は専用 | [EVPN](../../reference/glossary.md#term-evpn) 混在構成 |
 | `TUNNEL_MAP_USE_DECAP_ONLY` | decap のみ（encap mapper なし） | 特殊用途 |
 
@@ -364,7 +364,7 @@ EvpnNvoOrch* evpn_nvo_orch =
 
 | 呼び出し元 | 呼び出し先 | 契機 | evidence |
 |-----------|-----------|------|---------|
-| `VxlanTunnelOrch` | `EvpnNvoOrch` | `addTunnelUser()` / `delTunnelUser()` 時にリモート VTEP エンドポイント処理 | `vxlanorch.cpp:1678,1733,1795` |
+| `VxlanTunnelOrch` | `EvpnNvoOrch` | `addTunnelUser()` / `delTunnelUser()` 時にリモート [VTEP](../../reference/glossary.md#term-vtep) エンドポイント処理 | `vxlanorch.cpp:1678,1733,1795` |
 | `VxlanTunnelMapOrch` | `VxlanTunnelOrch` | `addOperation()` 時にトンネル存在確認 + tunnel OID 取得 | `vxlanorch.cpp:2046` |
 | `VxlanVrfMapOrch` | `VxlanTunnelOrch` + `VxlanTunnelMapOrch` | VRF-VNI マッピング生成時 | `vxlanorch.cpp:2260-2261` |
 
@@ -395,7 +395,7 @@ sai_query_attribute_enum_values_capability(
 
 この結果により `is_dip_tunnel_supported` フラグが確定し、EVPN トンネルアーキテクチャ全体が変化する。
 
-| 条件 | `isDipTunnelsSupported()` | EVPN DIP トンネルポート (`Port_EVPN_*`) | SRC VTEP ポート (`Port_SRC_VTEP_*`) |
+| 条件 | `isDipTunnelsSupported()` | EVPN DIP トンネルポート (`Port_EVPN_*`) | SRC [VTEP](../../reference/glossary.md#term-vtep) ポート (`Port_SRC_VTEP_*`) |
 |-----|--------------------------|----------------------------------------|--------------------------------------|
 | SAI が `SAI_TUNNEL_PEER_MODE_P2P` を返す | `true` | リモート VTEP ごとに個別生成 | 生成されない |
 | SAI が P2P を返さない (P2MP のみ対応) | `false` | 生成されない | `VXLAN_TUNNEL_MAP` 追加時に 1 つだけ生成、全リモート VTEP を共用 |
@@ -436,10 +436,13 @@ sai_query_attribute_enum_values_capability(
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^3]
+
 [^1]: VxlanTunnelOrch 実装: `orchagent/vxlanorch.cpp`, `orchagent/vxlanorch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp>
 [^2]: orchdaemon 初期化順序 (`orchdaemon.cpp:350-590`), VxlanMgr::doTask() (`cfgmgr/vxlanmgr.cpp:213-262`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
 [^3]: VxlanTunnel::createTunnelHw() ロールバック (`vxlanorch.cpp:895-940`), VxlanTunnelMapOrch::addOperation() 依存チェック (`vxlanorch.cpp:2012-2090`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L895>
 [^4]: VxlanTunnel ctor/dtor/addRemoveStateTableEntry (`vxlanorch.cpp:537,545,1913`), addTunnelToFlexCounter (`vxlanorch.cpp:911,1342`), addVlanMappedToVni (`vxlanorch.cpp:2120`, `vxlanorch.h:354`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp>
 [^5]: `VxlanTunnelOrch` コンストラクタ SAI capability query (`vxlanorch.cpp:1256–1278`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1256>
 
-<!-- glossary-links-injected: 4dda22dc23df -->
+<!-- glossary-links-injected: 764ef78dbc78 -->

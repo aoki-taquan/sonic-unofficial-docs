@@ -85,7 +85,7 @@ BUFFER_PROFILE|<name>
 | `xon_offset` | `0` | 空文字列の場合は [APPL_DB](../../reference/glossary.md#term-appl_db) 出力スキップ (lossless=true でも) | YANG vs 実装 discrepancy |
 | `xoff` | `0` | lossless=false では APPL_DB/SAI に出力されない。`xoff` フィールドの存在が `lossless=true` のトリガー | dead field (lossless=false 時) |
 | `headroom_type` | `static` | YANG と一致。`dynamic` 指定時は `lossless=true` + `direction=BUFFER_INGRESS` を強制セット | 副作用あり |
-| `packet_discard_action` | なし | 省略時 APPL_DB/SAI に出力されない。SAI 実装依存の DROP が適用 (ASIC vendor 固有) | ハードコード固定値 (SAI 側) |
+| `packet_discard_action` | なし | 省略時 APPL_DB/SAI に出力されない。SAI 実装依存の DROP が適用 ([ASIC](../../reference/glossary.md#term-asic) vendor 固有) | ハードコード固定値 (SAI 側) |
 | `static_th` / `dynamic_th` | なし | 相互排他。pool の mode と不一致時 `task_failed` | 複合必須制約 |
 
 ### 書き込み経路別の差異
@@ -105,7 +105,7 @@ BUFFER_PROFILE|<name>
 - ingress PG への適用: `task_failed` (bufferorch.cpp L1382)
 - ingress port profile list への適用: `task_failed` (bufferorch.cpp L1725)
 - egress port profile list への適用: `task_failed` (bufferorch.cpp L1915)
-- egress shared buffer のみ有効。`SAI_STATUS_ATTR_NOT_IMPLEMENTED_0` 返却時は `task_ignore` (ASIC 非対応)。
+- egress shared buffer のみ有効。`SAI_STATUS_ATTR_NOT_IMPLEMENTED_0` 返却時は `task_ignore` ([ASIC](../../reference/glossary.md#term-asic) 非対応)。
 
 <!-- /defaults -->
 
@@ -265,7 +265,7 @@ COUNTERS_DB `COUNTERS_BUFFER_POOL_NAME_MAP` および FLEX_COUNTER_DB への書�
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -418,7 +418,7 @@ APPL_STATE_DB:BUFFER_PROFILE_TABLE
 | `pool` 参照解決でその他エラー | `task_failed` → エントリ廃棄 | `bufferorch.cpp:651-652` |
 | `packet_discard_action` に `drop`/`trim` 以外の値 | `task_failed` → エントリ廃棄 | `bufferorch.cpp:740-743` |
 | `packet_discard_action=trim` かつ `isTrimmingProhibited()` が true（ingress PG/profile list への適用） | `task_failed` → エントリ廃棄 | `bufferorch.cpp:757-763` |
-| SAI `set_buffer_profile_attribute` が `SAI_STATUS_ATTR_NOT_IMPLEMENTED_0`（trim 未サポート ASIC 等） | `task_ignore` → ハードウェア非反映のまま成功扱い | `bufferorch.cpp:773-776` |
+| SAI `set_buffer_profile_attribute` が `SAI_STATUS_ATTR_NOT_IMPLEMENTED_0`（trim 未サポート [ASIC](../../reference/glossary.md#term-asic) 等） | `task_ignore` → ハードウェア非反映のまま成功扱い | `bufferorch.cpp:773-776` |
 | SAI `set_buffer_profile_attribute` がその他エラー（1回リトライ後も失敗） | `handleSaiSetStatus()` に委譲 → 通常 `task_need_retry` または `task_failed` | `bufferorch.cpp:791` |
 | SAI `create_buffer_profile` 失敗 | `handleSaiCreateStatus()` に委譲 → 通常 `task_need_retry` | `bufferorch.cpp:805` |
 | DEL 時にプロファイルが PG/Queue から参照中 | `m_pendingRemove=true` → `task_need_retry` → 参照解除まで削除保留 | `bufferorch.cpp:839-843` |
@@ -711,4 +711,4 @@ BUFFER_PROFILE
 詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-profile-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 25c864da36a0 -->
+<!-- glossary-links-injected: 865a18402f05 -->

@@ -54,7 +54,7 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
 | `tunnel_name` (key) | string (1..255) | — | NVGRE トンネル名 |
-| `src_ip` | inet:ip-address | yes | ソース VTEP IP |
+| `src_ip` | inet:ip-address | yes | ソース [VTEP](../../reference/glossary.md#term-vtep) IP |
 
 ## NVGRE_TUNNEL_MAP フィールド
 
@@ -167,7 +167,7 @@ SET NVGRE_TUNNEL_MAP|<tunnel_name>|<map_name>  vlan_id=<vid> vsid=<vsid>  # そ�
 
 ### VLAN が先行必須（MAP 登録時）
 
-`addOperation()` L489: `gPortsOrch->getVlanByVlanId(vlan_id, port)` が false を返すと WARN + `return true` でエントリ破棄。`VLAN|<vlan_id>` が PortsOrch に登録されてから MAP を書き込むこと。
+`addOperation()` L489: `gPortsOrch->getVlanByVlanId(vlan_id, port)` が false を返すと WARN + `return true` でエントリ破棄。`VLAN|<vlan_id>` が [PortsOrch](../../reference/glossary.md#term-portsorch) に登録されてから MAP を書き込むこと。
 
 ### 安全な DEL 順序
 
@@ -197,14 +197,14 @@ YANG leafref を超えた実装上の依存関係。ソース: `sonic-swss/orcha
 | 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
 |--------|-----------|------|------|-----------|
 | `NVGRE_TUNNEL\|<tunnel_name>` | [CONFIG_DB](../../reference/glossary.md#term-config_db) (orchagent 内部 map) | READ | `NvgreTunnelMapOrch::addOperation()` 冒頭で `isTunnelExists(tunnel_name)` を呼ぶ。親トンネルが未登録なら WARN + エントリ破棄（retry なし） | `nvgreorch.cpp:464-472` |
-| `VLAN\|Vlan<vlan_id>` | CONFIG_DB / PortsOrch 内部 map | READ | MAP 登録時に `gPortsOrch->getVlanByVlanId(vlan_id, port)` で VLAN の存在確認。VLAN 未登録なら `VLAN ID doesn't exist` WARN + エントリ破棄 | `nvgreorch.cpp:489-492` |
+| `VLAN\|Vlan<vlan_id>` | CONFIG_DB / [PortsOrch](../../reference/glossary.md#term-portsorch) 内部 map | READ | MAP 登録時に `gPortsOrch->getVlanByVlanId(vlan_id, port)` で VLAN の存在確認。VLAN 未登録なら `VLAN ID doesn't exist` WARN + エントリ破棄 | `nvgreorch.cpp:489-492` |
 | `gUnderlayIfId` | SAI グローバル（ルータ IF OID） | READ | `NvgreTunnel` 構築時に `sai_create_tunnel(..., gUnderlayIfId)` でアンダーレイ [RIF](../../reference/glossary.md#term-rif) として渡す。orchagent 起動時にグローバル初期化されたオブジェクト | `nvgreorch.cpp:312` |
 | `gVirtualRouterId` | SAI グローバル（デフォルト VR OID） | READ | `sai_create_tunnel_termination(..., gVirtualRouterId)` でトンネル終端のデフォルト [VRF](../../reference/glossary.md#term-vrf) を指定 | `nvgreorch.cpp:313` |
 
 ### 依存解決タイミング
 
 - **`NVGRE_TUNNEL` → `NVGRE_TUNNEL_MAP`**: `NvgreTunnelMapOrch` は親トンネルを `isTunnelExists()` でチェックするが、未登録時に retry キューへ戻さず即廃棄する。よって `NVGRE_TUNNEL` の SET が orchagent で処理完了してから `NVGRE_TUNNEL_MAP` を書き込む必要がある（ordering 参照）。
-- **`VLAN` 参照**: `gPortsOrch->getVlanByVlanId()` は PortsOrch 内部の VLAN マップを参照する。`VLAN` テーブルの SET が PortsOrch により処理完了していない場合、MAP エントリは永続的に失われる。
+- **`VLAN` 参照**: `gPortsOrch->getVlanByVlanId()` は [PortsOrch](../../reference/glossary.md#term-portsorch) 内部の VLAN マップを参照する。`VLAN` テーブルの SET が PortsOrch により処理完了していない場合、MAP エントリは永続的に失われる。
 - **`gUnderlayIfId` / `gVirtualRouterId`**: orchagent 起動時に `main.cpp` が SAI を初期化して設定するグローバル値。これらは orchagent が稼動していれば常に有効であり、ユーザーが CONFIG_DB に書き込む前提条件にはならない。
 
 <!-- /cross-refs -->
@@ -252,7 +252,7 @@ YANG leafref を超えた実装上の依存関係。ソース: `sonic-swss/orcha
 ### 典型値
 
 - key 形式: `NVGRE_TUNNEL|<name>` / `NVGRE_TUNNEL_MAP|<tunnel>|<map_entry>`。
-- `src_ip`: ローカル VTEP の loopback アドレス。
+- `src_ip`: ローカル [VTEP](../../reference/glossary.md#term-vtep) の loopback アドレス。
 - `vsid`: 24bit (0..16777214)、`vlan_id`: 1..4094。
 
 ### よくある誤設定
@@ -278,7 +278,7 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 ### 段階 2: CFG → APPL 翻訳
 
 - TunnelDecapOrch がエントリを解析し APP_DB `TUNNEL_DECAP_TABLE` に書き込む (一部実装)。
-- 実装は VS/仮想 ASIC 向けが主体で、物理 ASIC サポートはベンダー依存。
+- 実装は VS/仮想 [ASIC](../../reference/glossary.md#term-asic) 向けが主体で、物理 [ASIC](../../reference/glossary.md#term-asic) サポートはベンダー依存。
 
 ### 段階 3: APPL → SAI
 
@@ -288,7 +288,7 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 ### 段階 4: タイミング + 副作用
 
 - トンネル作成は orchagent が処理を受け取った数 ms 以内。
-- 副作用: 対応する SAI サポートが必要。非サポート ASIC では task_failed となる。
+- 副作用: 対応する SAI サポートが必要。非サポート [ASIC](../../reference/glossary.md#term-asic) では task_failed となる。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -447,7 +447,7 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 
 ### FLEX_COUNTER_DB への書込み
 
-`NvgreTunnelOrch` は [FlexCounter](../../reference/glossary.md#term-flexcounter) への登録を行わない（`nvgreorch.cpp` に `addFlexCounter` / `FLEX_COUNTER_DB` 参照なし）。NVGRE トンネルのトラフィック統計はハードウェアサポート依存であり、SONiC の [FlexCounter](../../reference/glossary.md#term-flexcounter) フレームワーク経由では管理されない。
+`NvgreTunnelOrch` は [FlexCounter](../../reference/glossary.md#term-flexcounter) への登録を行わない（`nvgreorch.cpp` に `addFlexCounter` / `FLEX_COUNTER_DB` 参照なし）。NVGRE トンネルのトラフィック統計はハードウェアサポート依存であり、[SONiC](../../reference/glossary.md#term-sonic) の [FlexCounter](../../reference/glossary.md#term-flexcounter) フレームワーク経由では管理されない。
 
 詳細スキャン証跡: `meta/_intermediate/cdb-flow/nvgre-tunnel-side-effects.md`
 <!-- /side-effects -->
@@ -534,4 +534,4 @@ multi-asic 構成では orchagent が `asic0`/`asic1`/... ごとに独立起動�
 
 <!-- /handler-branching -->
 
-<!-- glossary-links-injected: 6d8c674afa21 -->
+<!-- glossary-links-injected: 9d669bf85c78 -->

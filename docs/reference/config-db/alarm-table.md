@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-**ALARM テーブル**は SONiC の Event/Alarm Framework において **アクティブなアラーム（未クリア・未クリア状態のもの）** を一時的に保持するテーブルである[^1]。
+**ALARM テーブル**は [SONiC](../../reference/glossary.md#term-sonic) の Event/Alarm Framework において **アクティブなアラーム（未クリア・未クリア状態のもの）** を一時的に保持するテーブルである[^1]。
 
 > **注意**: このテーブルは **[CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく EVENT_DB** ([Redis](../../reference/glossary.md#term-redis) DB index 6) に存在する。
 > `schema.h` で `EVENT_CURRENT_ALARM_TABLE_NAME = "ALARM"` と定義されている[^2]。
@@ -315,7 +315,7 @@ App (pmon/swss/bgp 等) ─ events_publish(RAISE_ALARM) ─▶ ZMQ ─▶ zmqpro
 | OpenConfig [gNMI](../../reference/glossary.md#term-gnmi)/REST | translib が EVENT_DB を HGETALL してマッピング (HLD Section 3.1.6) |
 | pmon System LED | `ALARM_STATS\|state` を HGETALL し severity 別カウンタで LED 色を決定 |
 
-- ALARM テーブルに対する `SubscriberStateTable` / `ConsumerStateTable` / `NotificationProducer` の購読者は SONiC ソース内に **存在しない**。
+- ALARM テーブルに対する `SubscriberStateTable` / `ConsumerStateTable` / `NotificationProducer` の購読者は [SONiC](../../reference/glossary.md#term-sonic) ソース内に **存在しない**。
 - これは ALARM テーブルが「ある瞬間のアクティブアラーム集合」というスナップショット型設計であり、差分通知より全件取得が自然な利用パターンであるため。
 - EVENT_DB は `notify-keyspace-events` がデフォルト無効で、Redis keyspace 通知に依存する購読者は想定されていない。
 
@@ -356,7 +356,7 @@ ALARM 行の `type-id` / `severity` / `action` フィールドは、publisher �
 
 ### CONFIG_DB / STATE_DB の暗黙間接依存 (healthd 経由)
 
-`eventd` プロセスは DEVICE_METADATA を直接読まないが (`src/sonic-eventd/src/` 配下 `grep "DEVICE_METADATA"` ヒット 0)、主要な ALARM publisher である **healthd (system-health)** は CONFIG_DB / STATE_DB の以下エントリに起動時依存する。これらが欠落すると `sonic-events-host` 系の RAISE_ALARM が発火せず、ALARM テーブルが空のままになる。
+`eventd` プロセスは [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) を直接読まないが (`src/sonic-eventd/src/` 配下 `grep "DEVICE_METADATA"` ヒット 0)、主要な ALARM publisher である **healthd (system-health)** は CONFIG_DB / STATE_DB の以下エントリに起動時依存する。これらが欠落すると `sonic-events-host` 系の RAISE_ALARM が発火せず、ALARM テーブルが空のままになる。
 
 | 参照元 | 参照先 | 種別 | 用途 | 参照箇所 |
 |---|---|---|---|---|
@@ -406,7 +406,7 @@ ALARM 行が立つ「条件」は機種依存だが、立った瞬間の書込�
 | `liquid-cooling-leak` (`sonic-events-host`) | liquid cooling 搭載機のみ発火 (該当 STATE_DB エントリが無ければ 0 件) | `system-health/health_checker/hardware_checker.py:7-8,298-302` |
 | `process-not-running` (`sonic-events-host`) | `CONFIG_DB:FEATURE.has_per_asic_scope=True` の機種では `<container>0..N` を期待コンテナとして展開 | `system-health/health_checker/service_checker.py:130-138` |
 | chassis supervisor / disaggregated chassis | `database-chassis` コンテナの稼働を追加チェック (RAISE 候補が増える) | `service_checker.py:144-146` |
-| ASIC 温度監視 (`TEMPERATURE_INFO\|ASIC*`) | STATE_DB に該当キーを書く platform plugin のある機種のみ判定が走る (※ ALARM 直接 raise ではなく `set_object_not_ok` 経由) | `hardware_checker.py:15,46-71` |
+| [ASIC](../../reference/glossary.md#term-asic) 温度監視 (`TEMPERATURE_INFO\|ASIC*`) | STATE_DB に該当キーを書く platform plugin のある機種のみ判定が走る (※ ALARM 直接 raise ではなく `set_object_not_ok` 経由) | `hardware_checker.py:15,46-71` |
 
 ### System LED 連動はドライバ依存
 
@@ -418,7 +418,7 @@ ALARM 行が立つ「条件」は機種依存だが、立った瞬間の書込�
 
 ### ベンダー固有 ALARM publisher hook なし
 
-community master 内にベンダー固有 alarm publisher SDK や「platform plugin が ALARM テーブルへ直接書く」経路は存在しない。すべての RAISE_ALARM は `swsscommon.event_publish()` API → ZMQ → eventd 経由で集中処理される。ベンダー版 SONiC (NVIDIA / Edgecore / Cisco / [AsterNOS](../../reference/glossary.md#term-asternos) 等) は本リポジトリのスコープ外。
+community master 内にベンダー固有 alarm publisher SDK や「platform plugin が ALARM テーブルへ直接書く」経路は存在しない。すべての RAISE_ALARM は `swsscommon.event_publish()` API → ZMQ → eventd 経由で集中処理される。ベンダー版 [SONiC](../../reference/glossary.md#term-sonic) (NVIDIA / Edgecore / Cisco / [AsterNOS](../../reference/glossary.md#term-asternos) 等) は本リポジトリのスコープ外。
 
 詳細解析: `meta/_intermediate/cdb-flow/alarm-table-platform.md`
 
@@ -496,7 +496,7 @@ eventd の supervisord 設定は `autorestart=false` だが、`critical_processe
 
 ## 関連ページ
 
-- [CONFIG_DB / EVENT_DB: EVENT テーブル](event-table.md)
+- CONFIG_DB / EVENT_DB: EVENT テーブル
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -522,4 +522,4 @@ sonic-db-cli EVENT_DB hgetall 'ALARM_STATS|state'
 - `show alarm summary` で severity 別カウントを確認できる
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: ce7a9e0ca25a -->
+<!-- glossary-links-injected: 1f635a13725f -->

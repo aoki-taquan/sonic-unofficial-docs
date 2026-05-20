@@ -30,7 +30,7 @@ related:
 - import: `ietf-inet-types`, `sonic-port`, `sonic-mgmt_vrf`, `sonic-portchannel`, `sonic-loopback-interface`, `sonic-mgmt_port`, `sonic-types`
 - top container: `sonic-ntp`
 
-Network Time Protocol (NTP) client configuration [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
+Network Time Protocol (NTP) client configuration [YANG](../../reference/glossary.md#term-yang) module for [SONiC](../../reference/glossary.md#term-sonic) OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -197,4 +197,4 @@ show ntp
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

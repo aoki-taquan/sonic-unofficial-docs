@@ -23,7 +23,7 @@ hard: 0
 
 ## 概要
 
-ポートの ingress バッファ Priority Group (PG) ごとにどの BUFFER_PROFILE を割り当てるかを保持する[^1]。lossless トラフィックの xon/xoff 閾値、[PFC](../../reference/glossary.md#term-pfc) 動作の根本となる設定。`buffermgrd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に転送、`orchagent` `BufferOrch` が [SAI](../../reference/glossary.md#term-sai) ingress PG buffer profile を設定する。
+ポートの ingress バッファ [Priority Group](../../reference/glossary.md#term-priority-group) (PG) ごとにどの BUFFER_PROFILE を割り当てるかを保持する[^1]。lossless トラフィックの xon/xoff 閾値、[PFC](../../reference/glossary.md#term-pfc) 動作の根本となる設定。`buffermgrd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に転送、`orchagent` `BufferOrch` が [SAI](../../reference/glossary.md#term-sai) ingress PG buffer profile を設定する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -271,7 +271,7 @@ APPL_DB への書き込みと常に同時に発生する。
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -527,7 +527,7 @@ BUFFER_PG エントリが正常に SAI まで到達するには、以下の順�
 | BUFFER_PROFILE 参照が未解決 | `task_need_retry` | `SWSS_LOG_INFO("Missing or invalid pg profile reference specified")` | `bufferorch.cpp:1347` |
 | BUFFER_PROFILE 参照がその他エラーで解決失敗 | `task_failed` | `SWSS_LOG_ERROR("Resolving pg profile reference failed")` | `bufferorch.cpp:1350-1351` |
 | BUFFER_PROFILE が trimming eligible | `task_failed` | `SWSS_LOG_ERROR("...buffer profile(%s) is trimming eligible")` | `bufferorch.cpp:759-763` |
-| ポート名が PortsOrch に未登録 | `task_invalid_entry` | `SWSS_LOG_ERROR("Port with alias:%s not found")` | `bufferorch.cpp:1035` |
+| ポート名が [PortsOrch](../../reference/glossary.md#term-portsorch) に未登録 | `task_invalid_entry` | `SWSS_LOG_ERROR("Port with alias:%s not found")` | `bufferorch.cpp:1035` |
 | PG インデックスがポートの PG 数超過 | `task_invalid_entry` | `SWSS_LOG_ERROR("Invalid pg index specified:%zd")` | `bufferorch.cpp:1063` |
 | SAI `set_attribute` が非 SUCCESS を返却 | `handleSaiSetStatus()` に委譲（retry 可能か判定） | `SWSS_LOG_ERROR("Failed to set port:%s pg:%zd buffer profile attribute, status:%d")` | `bufferorch.cpp:1507-1512` |
 | DEL 対象が APPL_DB に存在しない | SAI call をスキップして `task_success` | `SWSS_LOG_INFO("...doesn't not exist, don't need to notfiy SAI")` | `bufferorch.cpp:1409-1413` |
@@ -604,4 +604,4 @@ YANG leafref は `profile → BUFFER_PROFILE.name` の 1 件のみ定義。以�
 
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 0e9356a6eb27 -->
+<!-- glossary-links-injected: 6d37fdaa7e9b -->

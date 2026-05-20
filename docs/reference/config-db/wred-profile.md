@@ -319,7 +319,7 @@ WRED_PROFILE の処理において、プラットフォーム識別文字列（`
 | `gMySwitchType == "voq"` | `getPortVoQIds()` で取得した VoQ ID |
 | それ以外（通常スイッチ / multi-asic / [DPU](../../reference/glossary.md#term-dpu) 等） | `port.m_queue_ids[queue_ind]`（物理キュー） |
 
-VoQ chassis ではローカル ASIC のポートか否かも判定される。非ローカルポートへの WRED bind は暗黙的にスキップされる（`qosorch.cpp:1790-1800`）。
+VoQ chassis ではローカル [ASIC](../../reference/glossary.md#term-asic) のポートか否かも判定される。非ローカルポートへの WRED bind は暗黙的にスキップされる（`qosorch.cpp:1790-1800`）。
 
 ### 差異 2: VoQ chassis — QUEUE キーフォーマットが 4 トークンに変わる
 
@@ -340,7 +340,7 @@ VoQ 環境で `QUEUE` テーブルを書く場合は `hostname|asicN|EthernetX|q
 
 ### 差異 4: SAI capability 照会なし — ASIC 非対応は SAI エラー時のみ判明
 
-WRED の各 SAI 属性（`SAI_WRED_ATTR_ECN_MARK_MODE`、`SAI_WRED_ATTR_*_{ENABLE/MIN_THRESHOLD/MAX_THRESHOLD/DROP_PROBABILITY}`、`SAI_WRED_ATTR_WEIGHT`）は能力照会なしで直接 `sai_wred_api->create_wred()` / `set_wred_attribute()` に渡される。ASIC が非対応の場合 SAI がエラーを返し、[orchagent](../../reference/glossary.md#term-orchagent) はエントリを破棄する（ログ: `"Failed to create wred profile: %d"`）。対応可否は各ベンダーの `libsai` 実装に依存。
+WRED の各 SAI 属性（`SAI_WRED_ATTR_ECN_MARK_MODE`、`SAI_WRED_ATTR_*_{ENABLE/MIN_THRESHOLD/MAX_THRESHOLD/DROP_PROBABILITY}`、`SAI_WRED_ATTR_WEIGHT`）は能力照会なしで直接 `sai_wred_api->create_wred()` / `set_wred_attribute()` に渡される。[ASIC](../../reference/glossary.md#term-asic) が非対応の場合 SAI がエラーを返し、[orchagent](../../reference/glossary.md#term-orchagent) はエントリを破棄する（ログ: `"Failed to create wred profile: %d"`）。対応可否は各ベンダーの `libsai` 実装に依存。
 
 ### 差異 5: プラットフォーム別 WRED テンプレート（build-time）
 
@@ -691,4 +691,4 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 
 <!-- /ordering -->
 
-<!-- glossary-links-injected: 69ebec87307c -->
+<!-- glossary-links-injected: e82be350a384 -->

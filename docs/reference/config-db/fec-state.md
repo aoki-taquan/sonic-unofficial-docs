@@ -82,7 +82,7 @@ PORT_TABLE|<name>
 
 `updateDbPortOperFec(port, fec_str)` (portsorch.cpp:9864) は以下の 2 箇所から呼ばれる:
 
-1. **ポート oper-status が UP に変化したとき** — PortsOrch がポートアップ通知を受信 (portsorch.cpp:9682)
+1. **ポート oper-status が UP に変化したとき** — [PortsOrch](../../reference/glossary.md#term-portsorch) がポートアップ通知を受信 (portsorch.cpp:9682)
 2. **`refreshPortStatus()` 実行時** — [orchagent](../../reference/glossary.md#term-orchagent) 起動時の同期処理 (portsorch.cpp:9920)
 
 ### 値決定ロジック
@@ -167,8 +167,8 @@ STATE_DB `PORT_TABLE` の `fec` / `supported_fecs` フィールドは `PortsOrch
 | 1 | SAI ポート作成 (`initializePorts`) → `supported_fecs` 書込み | **強制先行** | `initPortSupportedFecModes` は有効な SAI port_id なしでは実行不可 (portsorch.cpp:6461, 3265) |
 | 2 | `postPortInit()` 完了 → `supported_fecs` STATE_DB 書込み | **ポート登録時 1 回限り** | cold boot では `addPort()` の後 `postPortInit()` を呼ぶ (portsorch.cpp:4078, 6461) |
 | 3 | ポート oper-status UP 通知 → `fec` 書込み | **イベント駆動・UP 時のみ** | DOWN 遷移では書き込まれない。最後の UP 時の値が残留 (portsorch.cpp:9682–9694) |
-| 4 | `oper_fec_sup` フラグ確定 (PortsOrch コンストラクタ) → `fec` 書込み可否決定 | **初期化先行・1 回限り** | false 確定後は `fec` が常に `"N/A"` になることが全呼び出し経路で保証される (portsorch.cpp:1001–1010) |
-| 5 | `fec_override_sup` フラグ確定 (PortsOrch コンストラクタ) → `supported_fecs` の `"auto"` 追加可否 | **初期化先行・1 回限り** | true でなければ `"auto"` は絶対に末尾追加されない (portsorch.cpp:990–998, 3310–3313) |
+| 4 | `oper_fec_sup` フラグ確定 ([PortsOrch](../../reference/glossary.md#term-portsorch) コンストラクタ) → `fec` 書込み可否決定 | **初期化先行・1 回限り** | false 確定後は `fec` が常に `"N/A"` になることが全呼び出し経路で保証される (portsorch.cpp:1001–1010) |
+| 5 | `fec_override_sup` フラグ確定 ([PortsOrch](../../reference/glossary.md#term-portsorch) コンストラクタ) → `supported_fecs` の `"auto"` 追加可否 | **初期化先行・1 回限り** | true でなければ `"auto"` は絶対に末尾追加されない (portsorch.cpp:990–998, 3310–3313) |
 | 6 | warm boot: `onWarmBootEnd()` → `refreshPortStatus()` → `fec` 再同期 | **warm boot 限定・起動後 1 回** | `m_isWarmRestoreStage=false` 直後に全 PHY ポートの FEC を SAI から再取得して上書き (portsorch.cpp:6431) |
 
 ### 主要な制約詳細
@@ -558,4 +558,4 @@ SAI capability クエリ結果（`oper_fec_sup` / `fec_override_sup`）のみで
 - アーキテクチャ: [`Port Auto FEC 設計`](../../architecture/sonic-port-auto-fec-design.md) — `fec=auto` モードと `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` の詳細
 - CLI: `show interfaces fec status` — oper / admin FEC をまとめて表示
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 6cf1efdb47f1 -->

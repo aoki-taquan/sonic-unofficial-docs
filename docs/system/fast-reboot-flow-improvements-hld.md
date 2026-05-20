@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-SONiC fast-reboot を「**dataplane downtime < 30s, control plane < 90s**」に収めるための既存フロー改善 [HLD](../reference/glossary.md#term-hld)[^1]。中身は次の 2 軸:
+[SONiC](../reference/glossary.md#term-sonic) fast-reboot を「**dataplane downtime < 30s, control plane < 90s**」に収めるための既存フロー改善 [HLD](../reference/glossary.md#term-hld)[^1]。中身は次の 2 軸:
 
 1. **fast-reboot の終了を示す flag を導入**（warmboot-finalizer を流用）。これにより flex counter 有効化など「init 完了後に走らせたい処理」を遅延起動できる
 2. **異 NOS（vendor 製 → SONiC）からの ISSU でも fast-reboot を完遂**。dump file（default gateway / neighbor / [FDB](../reference/glossary.md#term-fdb)）が SONiC スキーマで提供されれば SONiC→SONiC と同等。提供なしでも slow path で復旧可（ただし downtime 増）[^1]
@@ -63,7 +63,7 @@ flowchart TB
 
 ### syncd: INIT view → APPLY view
 
-[syncd](../reference/glossary.md#term-syncd) は再起動時に **INIT view**（再構成しようとする ASIC 状態）と APPLY view（現状）を比較し、差分のみ ASIC に適用する[^1]。これにより不要な up-down が発生しない。
+[syncd](../reference/glossary.md#term-syncd) は再起動時に **INIT view**（再構成しようとする [ASIC](../reference/glossary.md#term-asic) 状態）と APPLY view（現状）を比較し、差分のみ ASIC に適用する[^1]。これにより不要な up-down が発生しない。
 
 ### neighsyncd: restore_neighbors.py
 
@@ -356,4 +356,4 @@ HLD が掲げる「fast-reboot / warm-reboot で finalizer を共通化し、各
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 11ddc0e513c8 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

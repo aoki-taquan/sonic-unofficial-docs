@@ -188,7 +188,7 @@ VRF_OBJECT_TABLE|<vrf_name>
 
 **テーブル名**: `FIPS_MACSEC_POST_TABLE` (`schema.h:471`)
 
-FIPS 規格の MACsec Power-On Self Test (POST) 結果を格納するテーブル[^5]。[orchagent](../../reference/glossary.md#term-orchagent) 起動時と SAI 通知コールバックで更新される。
+FIPS 規格の [MACsec](../../reference/glossary.md#term-macsec) Power-On Self Test (POST) 結果を格納するテーブル[^5]。[orchagent](../../reference/glossary.md#term-orchagent) 起動時と SAI 通知コールバックで更新される。
 
 ### キー構造
 
@@ -209,7 +209,7 @@ FIPS_MACSEC_POST_TABLE|sai
 
 | 値 | 意味 |
 |----|------|
-| `"disabled"` | MACsec POST 非対応、または無効 (main.cpp:791) |
+| `"disabled"` | [MACsec](../../reference/glossary.md#term-macsec) POST 非対応、または無効 (main.cpp:791) |
 | `"macsec-level-post-in-progress"` | POST テスト実行中 (main.cpp:924) |
 | `"pass"` | POST テスト成功 (macsecorch.cpp:705, 786) |
 | `"fail"` | POST テスト失敗 (macsecorch.cpp:710, 791) |
@@ -300,9 +300,9 @@ orchagent が STATE_DB へ書き込む各テーブルは、以下の上流 DB・
 | `FDB_TABLE\|*` | [APPL_DB](../../reference/glossary.md#term-appl_db) | READ | FDB_TABLE | 必須 (APPL_DB [FDB](../../reference/glossary.md#term-fdb) エントリを購読して STATE_DB に反映) | `fdborch.cpp:31-32`, `orchdaemon.cpp:227` |
 | `VRF_TABLE\|*` | APPL_DB | READ | VRF_OBJECT_TABLE | 必須 (VRF エントリを受けて SAI create → 成功時に `state="ok"` 書込) | `vrforch.h:52`, `orchdaemon.cpp:283` |
 | `WARM_RESTART_TABLE\|orchagent` | STATE_DB (自己) | READ | WARM_RESTART_TABLE | warm start 時のみ必須 (restore_count インクリメントに現在値を読取) | `warm_restart.cpp:113-125` |
-| SAI `create_virtual_router` レスポンス | SAI / ASIC | READ (SAI resp) | VRF_OBJECT_TABLE | **必須** (SAI 失敗時はエントリ書込なし) | `vrforch.cpp:93, 120, 150` |
-| SAI `SAI_SWITCH_ATTR_MACSEC_SUPPORTED` 取得 | SAI / ASIC | READ (SAI resp) | FIPS_MACSEC_POST_TABLE | 必須 (非対応時は `post_state="disabled"` で固定) | `main.cpp:791-793, 924` |
-| SAI MACsec POST 完了コールバック | SAI / ASIC | 非同期 NOTIFY | FIPS_MACSEC_POST_TABLE | MACsec POST 対応 SAI のみ | `macsecorch.cpp:705, 710, 786, 791` |
+| SAI `create_virtual_router` レスポンス | SAI / [ASIC](../../reference/glossary.md#term-asic) | READ (SAI resp) | VRF_OBJECT_TABLE | **必須** (SAI 失敗時はエントリ書込なし) | `vrforch.cpp:93, 120, 150` |
+| SAI `SAI_SWITCH_ATTR_MACSEC_SUPPORTED` 取得 | SAI / [ASIC](../../reference/glossary.md#term-asic) | READ (SAI resp) | FIPS_MACSEC_POST_TABLE | 必須 (非対応時は `post_state="disabled"` で固定) | `main.cpp:791-793, 924` |
+| SAI [MACsec](../../reference/glossary.md#term-macsec) POST 完了コールバック | SAI / [ASIC](../../reference/glossary.md#term-asic) | 非同期 NOTIFY | FIPS_MACSEC_POST_TABLE | MACsec POST 対応 SAI のみ | `macsecorch.cpp:705, 710, 786, 791` |
 
 ### APPL_DB PORT_TABLE — PortInitDone / PortConfigDone
 
@@ -771,4 +771,4 @@ sonic-db-cli STATE_DB hgetall 'FIPS_MACSEC_POST_TABLE|sai'
 show warm_restart
 ```
 
-<!-- glossary-links-injected: 9b708954ced4 -->
+<!-- glossary-links-injected: de75ea3c956e -->

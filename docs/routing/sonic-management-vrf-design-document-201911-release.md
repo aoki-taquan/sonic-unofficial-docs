@@ -95,7 +95,7 @@ sudo config tacacs add --use-mgmt-vrf 10.11.55.40
 | アプリ | mgmt VRF 通信方法 |
 |--------|-------------------|
 | sshd / TCP 受信 | `tcp_l3mdev_accept=1` で透過対応 |
-| UDP 受信 | Linux 4.9 では未サポート → SONiC 用パッチを backport |
+| UDP 受信 | Linux 4.9 では未サポート → [SONiC](../reference/glossary.md#term-sonic) 用パッチを backport |
 | ping / traceroute | `cgexec -g l3mdev:mgmt ping ...` |
 | TACACS+ | NSS/PAM コードに `--use-mgmt-vrf` 拡張、`SO_BINDTODEVICE` で `mgmt` 縛り |
 | NTP | `init.d/ntp` を改修し `cgexec -g l3mdev:mgmt` で起動 |
@@ -156,7 +156,7 @@ sudo ip rule del from <重複IP> lookup mgmt
 
 ## 7. 干渉する機能
 
-- **TACACS+ / RADIUS / LDAP**: `--use-mgmt-vrf` 系オプションで mgmt 経由認証
+- **TACACS+ / [RADIUS](../reference/glossary.md#term-radius) / LDAP**: `--use-mgmt-vrf` 系オプションで mgmt 経由認証
 - **DHCP**: client は mgmt と data 双方、relay は data 側のみ
 - **NTP**: cgexec ラッパーで起動するため `init.d/ntp` をベンダーパッケージから上書き保守
 - **namespace ベース VRF**: HLD で比較されたが採用されず、l3mdev に統一
@@ -192,4 +192,4 @@ ip route show vrf mgmt
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/sonic_stretch_management_vrf_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 75921d013977 -->
+<!-- glossary-links-injected: db62d2100cef -->

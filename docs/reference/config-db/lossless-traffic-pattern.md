@@ -191,7 +191,7 @@ show buffer profile
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -279,7 +279,7 @@ Mellanox 向け Lua プラグインは [STATE_DB](../../reference/glossary.md#te
 
 | 依存テーブル | 理由 | 違反時の挙動 | evidence |
 |---|---|---|---|
-| `STATE_DB.ASIC_TABLE` (Mellanox) | `cell_size` 等の ASIC パラメータが取得できなければ計算式が `nil` 演算でエラー | headroom 計算失敗 → BUFFER_PROFILE が APPL_DB に転送されない | `buffer_headroom_mellanox.lua:61-80` |
+| `STATE_DB.ASIC_TABLE` (Mellanox) | `cell_size` 等の [ASIC](../../reference/glossary.md#term-asic) パラメータが取得できなければ計算式が `nil` 演算でエラー | headroom 計算失敗 → BUFFER_PROFILE が APPL_DB に転送されない | `buffer_headroom_mellanox.lua:61-80` |
 
 詳細スキャンノートは `meta/_intermediate/cdb-flow/lossless-traffic-pattern-ordering.md` を参照。
 <!-- /ordering -->
@@ -300,9 +300,9 @@ Mellanox 向け Lua プラグインは [STATE_DB](../../reference/glossary.md#te
   - `buffer_headroom_mellanox.lua:62-80`
   - `buffer_headroom_barefoot.lua:57-76`
 - **意味**:
-  - これらの ASIC パラメータは `mtu`・`small_packet_percentage` とともにヘッドルーム計算式に入力される。
+  - これらの [ASIC](../../reference/glossary.md#term-asic) パラメータは `mtu`・`small_packet_percentage` とともにヘッドルーム計算式に入力される。
   - `asic_keys[1]` が nil（[STATE_DB](../../reference/glossary.md#term-state_db) 未投入）の場合、`HGETALL nil` で Lua エラーとなり headroom 計算全体が失敗する。
-  - ASIC_TABLE は `syncd` が ASIC 初期化時に STATE_DB へ書き込む。SONiC 起動シーケンス上 `buffermgrdyn` より先に完了するため、通常は問題にならない。
+  - ASIC_TABLE は `syncd` が [ASIC](../../reference/glossary.md#term-asic) 初期化時に STATE_DB へ書き込む。[SONiC](../../reference/glossary.md#term-sonic) 起動シーケンス上 `buffermgrdyn` より先に完了するため、通常は問題にならない。
 
 ### 2. CONFIG_DB.DEFAULT_LOSSLESS_BUFFER_PARAMETER
 
@@ -650,4 +650,4 @@ Lua 側では `is_8lane = (ARGV[5] == "8")` で判定し、8 レーンポート�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 7ee8248d2631 -->
+<!-- glossary-links-injected: 77f342e1a22c -->

@@ -481,7 +481,7 @@ sel.addSelectable(sst_device_confdb)
 
 | メカニズム | 使用有無 | 備考 |
 |-----------|---------|------|
-| `swsscommon.SubscriberStateTable` | 使用（3 テーブル） | APPL_DB PORT, CONFIG_DB DEVICE_METADATA, MGMT_INTERFACE |
+| `swsscommon.SubscriberStateTable` | 使用（3 テーブル） | APPL_DB PORT, CONFIG_DB [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata), MGMT_INTERFACE |
 | [Redis](../../reference/glossary.md#term-redis) native keyspace notification (`psubscribe __keyspace@*__:*`) | 不使用 | lldpmgrd は swsscommon ラッパー経由のみ |
 | `LLDP_PORT` keyspace 購読 | なし | 設計上未購読。書き込んでも lldpd に反映されない |
 | `LLDP\|GLOBAL` keyspace 購読 | なし | 同上 |
@@ -496,11 +496,11 @@ sel.addSelectable(sst_device_confdb)
 
 ### ASIC 種別による影響
 
-`LLDP_PORT` の処理は `lldpmgrd`（Python）+ `lldpd`（open-lldp フォーク）のユーザー空間スタックで完結し、[SAI](../../reference/glossary.md#term-sai) を経由しない。ASIC 種別（Broadcom / Mellanox / Marvell / Innovium 等）は `LLDP_PORT` の挙動に影響を与えない。
+`LLDP_PORT` の処理は `lldpmgrd`（Python）+ `lldpd`（open-lldp フォーク）のユーザー空間スタックで完結し、[SAI](../../reference/glossary.md#term-sai) を経由しない。[ASIC](../../reference/glossary.md#term-asic) 種別（Broadcom / Mellanox / Marvell / Innovium 等）は `LLDP_PORT` の挙動に影響を与えない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | LLDP は SAI 非経由。`lldpmgrd` / `lldpd` は ASIC を直接操作しない |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | LLDP は SAI 非経由。`lldpmgrd` / `lldpd` は [ASIC](../../reference/glossary.md#term-asic) を直接操作しない |
 | multi-asic (namespace あり) | **挙動差あり** | `supervisord.conf.j2` / `lldpd.conf.j2` に `namespace_id` 分岐が存在（下記参照） |
 | [VOQ](../../reference/glossary.md#term-voq) chassis | 部分的差異あり | `DEVICE_METADATA.chassis_hostname` 優先解決（System Name TLV のみ影響、LLDP_PORT 処理には非影響） |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) | 調査対象外 | community master に [SmartSwitch](../../reference/glossary.md#term-smartswitch) 固有 LLDP_PORT 分岐なし |
@@ -546,4 +546,4 @@ if any([port_name.startswith(inband_prefix()),
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: bb2fc1abc72b -->
+<!-- glossary-links-injected: cc2a9c492c44 -->

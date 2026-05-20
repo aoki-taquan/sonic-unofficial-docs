@@ -193,7 +193,7 @@ show mclag unique-ip
 
 ### mclagsyncdSendMclagUniqueIpCfg() のプラットフォーム差
 
-`mclagsyncdSendMclagUniqueIpCfg()` (`mclaglink.cpp:1088-1181`) には `getenv("platform")` や ASIC 識別コードが一切存在しない。SET/DEL を `MCLAG_CFG_OPER_ADD` / `MCLAG_CFG_OPER_DEL` に変換して `MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_UNIQUE_IP` メッセージを TCP IPC で iccpd へ送信するのみ。**全プラットフォーム共通**。
+`mclagsyncdSendMclagUniqueIpCfg()` (`mclaglink.cpp:1088-1181`) には `getenv("platform")` や [ASIC](../../reference/glossary.md#term-asic) 識別コードが一切存在しない。SET/DEL を `MCLAG_CFG_OPER_ADD` / `MCLAG_CFG_OPER_DEL` に変換して `MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_UNIQUE_IP` メッセージを TCP IPC で iccpd へ送信するのみ。**全プラットフォーム共通**。
 
 ### iccpd (iccp_mclagsyncd_mclag_unique_ip_cfg_handler) のプラットフォーム差
 
@@ -202,7 +202,7 @@ show mclag unique-ip
 1. `sys->unq_ip_if_list` への ADD/DEL (in-memory リスト管理)
 2. `local_if_is_l3_mode(lif)` 判定 → `update_vlan_if_mac_on_standby()` / `recover_vlan_if_mac_on_standby()` 呼び出し
 
-`local_if_is_l3_mode()` (`port.c:382-397`) は `ipv4_addr != 0 || ipv6_addr != null || master_ifindex != 0` という純粋なカーネルネットワークスタック状態判定であり、ASIC 依存性なし。
+`local_if_is_l3_mode()` (`port.c:382-397`) は `ipv4_addr != 0 || ipv6_addr != null || master_ifindex != 0` という純粋なカーネルネットワークスタック状態判定であり、[ASIC](../../reference/glossary.md#term-asic) 依存性なし。
 
 ### setIntfMac() のプラットフォーム差
 
@@ -231,7 +231,7 @@ MCLAG_UNIQUE_IP の ConfigDB エントリ自体は全プラットフォームで
 
 ### multi-ASIC / VoQ chassis
 
-`mclagsyncd` の UNIQUE_IP 処理 (`MclagLink::mclagsyncdSendMclagUniqueIpCfg`) は single-ASIC 前提で実装されており、VoQ chassis / multi-ASIC 構成での動作保証は明示されていない。`MclagLink` コンストラクタ (`mclaglink.cpp:1795-1823`) は単一の `CONFIG_DB` / `APPL_DB` / `STATE_DB` を参照する設計。
+`mclagsyncd` の UNIQUE_IP 処理 (`MclagLink::mclagsyncdSendMclagUniqueIpCfg`) は single-[ASIC](../../reference/glossary.md#term-asic) 前提で実装されており、VoQ chassis / multi-ASIC 構成での動作保証は明示されていない。`MclagLink` コンストラクタ (`mclaglink.cpp:1795-1823`) は単一の `CONFIG_DB` / `APPL_DB` / `STATE_DB` を参照する設計。
 
 ### まとめ
 
@@ -423,7 +423,7 @@ CONFIG_DB MCLAG_UNIQUE_IP SET
 
 ### ピア間 ICCP 通信
 
-`iccp_mclagsyncd_mclag_unique_ip_cfg_handler()` は `syn_local_neigh_mac_info_to_peer()` を呼び出してピア iccpd へネイバー / MAC 情報を ICCP プロトコルで同期するが、これは iccpd ↔ iccpd 間の TCP 通信であり SONiC [Redis](../../reference/glossary.md#term-redis) DB への直接書込みではない。
+`iccp_mclagsyncd_mclag_unique_ip_cfg_handler()` は `syn_local_neigh_mac_info_to_peer()` を呼び出してピア iccpd へネイバー / MAC 情報を ICCP プロトコルで同期するが、これは iccpd ↔ iccpd 間の TCP 通信であり [SONiC](../../reference/glossary.md#term-sonic) [Redis](../../reference/glossary.md#term-redis) DB への直接書込みではない。
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-side-effects.md`
 <!-- /side-effects -->
@@ -500,4 +500,4 @@ STANDBY ノードかつ L3 モードの場合、iccpd が `MCLAG_MSG_TYPE_SET_IN
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-pubsub.md`
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 65275754a584 -->
+<!-- glossary-links-injected: 865a18402f05 -->

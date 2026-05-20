@@ -1122,6 +1122,110 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: ゼロタッチプロビジョニング
 - **説明**: 初期起動時に DHCP option 経由でプロビジョニング URL を取得し設定を自動投入する仕組み。`sonic-ztp` で実装。
 
+## 補追用語
+
+CONFIG_DB / オーケストレータ群から参照される共通用語のスタブ集。詳細は本文中のリンク先または専用ページを参照。
+
+### ASIC {#term-asic}
+
+- **略称**: ASIC (Application-Specific Integrated Circuit)
+- **説明**: スイッチング/フォワーディングを担う専用 LSI。SONiC は SAI 経由で抽象化された ASIC 上でデータプレーンを実行する。
+
+### CBF {#term-cbf}
+
+- **略称**: CBF (Class-Based Forwarding)
+- **説明**: トラフィッククラス (TC) や DSCP に基づいて出力キュー / 転送経路を分けるキューイング/フォワーディング機構。
+
+### DEVICE_METADATA {#term-device_metadata}
+
+- **略称**: `DEVICE_METADATA`
+- **説明**: CONFIG_DB のメタデータテーブル。ホスト名・タイプ (ToR/Leaf 等)・MAC・platform 種別などスイッチ全体の identity を保持する。
+
+### dot1x {#term-dot1x}
+
+- **略称**: IEEE 802.1X
+- **説明**: ポートベースの認証プロトコル。SONiC では `hostcfgd` / RADIUS と連携する。
+
+### EXP {#term-exp}
+
+- **略称**: EXP (MPLS Experimental bits / Traffic Class field)
+- **説明**: MPLS ラベル内の 3 bit フィールド。QoS マーキング用途で使用される。
+
+### Forwarding Database {#term-forwarding-database}
+
+- **略称**: FDB (Forwarding Database)
+- **説明**: L2 MAC アドレス学習テーブル。SAI の FDB API 経由で ASIC に書き込まれる。
+
+### IntfsOrch {#term-intfsorch}
+
+- **説明**: `sonic-swss/orchagent/intfsorch.cpp` で実装される L3 インタフェースオーケストレータ。`INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` などを購読する。
+
+### MAC {#term-mac}
+
+- **略称**: MAC (Media Access Control)
+- **説明**: L2 アドレス。SONiC では FDB / NEIGH / `DEVICE_METADATA` 等の各所で参照される。
+
+### MACsec {#term-macsec}
+
+- **略称**: MACsec (IEEE 802.1AE)
+- **説明**: L2 リンク暗号化規格。SONiC では `MACSEC_PORT` / `MACSEC_PROFILE` テーブルと `macsecmgrd` で制御される。
+
+### Multi-ASIC {#term-multi-asic}
+
+- **説明**: 1 台のシャーシ内に複数の ASIC を搭載する構成。`namespace`/`asic_id` で各 ASIC を分離して SONiC コンテナを起動する。
+
+### MuxOrch {#term-muxorch}
+
+- **説明**: Dual-ToR (active/standby) 構成で `MUX_CABLE` の active/standby 状態を SAI に反映するオーケストレータ。`sonic-swss/orchagent/muxorch.cpp`。
+
+### P4RT {#term-p4rt}
+
+- **略称**: P4Runtime
+- **説明**: P4 プログラマブルデータプレーンを操作する gRPC API。SONiC では DASH 系で利用される。
+
+### PortsOrch {#term-portsorch}
+
+- **説明**: `sonic-swss/orchagent/portsorch.cpp` で実装されるポートオーケストレータ。`PORT` テーブル変更を SAI ポート属性に反映する。
+
+### Priority Group {#term-priority-group}
+
+- **略称**: PG (Priority Group)
+- **説明**: ingress 側のバッファプール会計単位。`BUFFER_PG` テーブルと SAI Ingress Priority Group API で制御される。
+
+### RADIUS {#term-radius}
+
+- **略称**: RADIUS (Remote Authentication Dial-In User Service)
+- **説明**: AAA サーバプロトコル。SONiC では `AAA` / `RADIUS` テーブルから `hostcfgd` が PAM 設定を生成する。
+
+### route_map {#term-route_map}
+
+- **略称**: `route-map`
+- **説明**: FRR (BGP/OSPF 等) のルートフィルタリング/属性書き換えポリシー。`ROUTE_MAP` 系 CONFIG_DB テーブル経由で設定される。
+
+### SONiC {#term-sonic}
+
+- **略称**: SONiC (Software for Open Networking in the Cloud)
+- **説明**: Linux ベースのオープンソース NOS。本ドキュメントの主題。コミュニティ master を対象とする。
+
+### ToR {#term-tor}
+
+- **略称**: ToR (Top of Rack switch)
+- **説明**: ラック上端に配置されるアクセススイッチ。SONiC の `DEVICE_METADATA.type` で `ToRRouter` などとして識別される。
+
+### VRRP {#term-vrrp}
+
+- **略称**: VRRP (Virtual Router Redundancy Protocol)
+- **説明**: ゲートウェイ冗長プロトコル。FRR `vrrpd` 経由で `VRRP` / `VRRP6` テーブルから設定される。
+
+### VTEP {#term-vtep}
+
+- **略称**: VTEP (VXLAN Tunnel End Point)
+- **説明**: VXLAN トンネル終端。`VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` テーブルで設定される。
+
+### vtysh {#term-vtysh}
+
+- **説明**: FRR の統合 CLI シェル。SONiC 上では BGP/OSPF など FRR 系コマンドの実行に使用する。
+
 ## 関連
 
 - [SONiC アーキテクチャ概要](../architecture/index.md)
@@ -2172,5 +2276,169 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [ビルドプロファイル（rules/profiles/*.mk）](../architecture/build-profiles.md) (6)
 - [config-setup サービス（first-boot config 生成 / 版間 migration）](../system/sonic-configuration-setup-service.md) (6)
 - [サイトマップ](../_meta/sitemap.md) (5)
+
+### [ASIC](#term-asic)
+
+- [SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブル](config-db/suppress-asic-sdk-health-event.md) (112)
+- [サイトマップ](../_meta/sitemap.md) (97)
+- [CHASSIS_STATE_DB テーブル群](config-db/chassis-state.md) (65)
+- [概念](../topics/12-multi-asic-voq/concept.md) (63)
+- [DEVICE_METADATA テーブル](config-db/device-metadata.md) (54)
+
+### [CBF](#term-cbf)
+
+- [NEXTHOP_GROUP_TABLE / CLASS_BASED_NEXT_HOP_GROUP_TABLE](config-db/nhg-table.md) (37)
+- [CLASS_BASED_NEXT_HOP_GROUP テーブル](config-db/cbf-nhg.md) (33)
+- [NEXTHOP_GROUP / CBF_NHG / NHG_MAP テーブル](config-db/nhg-orch.md) (16)
+- [クラスベース転送 (CBF) — DSCP/EXP→FC マップと CLASS_BASED_NEXT_HOP_GROUP](../routing/class-based-forwarding-enhancement.md) (11)
+- [EXP_TO_FC_MAP テーブル](config-db/exp-to-fc-map.md) (7)
+
+### [DEVICE_METADATA](#term-device_metadata)
+
+- [sonic-device_metadata YANG](yang/sonic-device_metadata.md) (63)
+- [DEVICE_METADATA テーブル](config-db/device-metadata.md) (62)
+- [cluster フィールド (DEVICE_METADATA / DEVICE_NEIGHBOR_METADATA)](config-db/cluster.md) (37)
+- [BGP_INTERNAL_NEIGHBOR テーブル](config-db/bgp-internal-neighbor.md) (29)
+- [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (28)
+
+### [dot1x](#term-dot1x)
+
+- [DOT1X / PAC テーブル](config-db/dot1x.md) (45)
+- [Port Access Control（PAC: 802.1x / MAB / RADIUS）](../acl-qos/port-access-control-in-sonic.md) (6)
+- [サイトマップ](../_meta/sitemap.md) (1)
+
+### [EXP](#term-exp)
+
+- [EXP_TO_FC_MAP テーブル](config-db/exp-to-fc-map.md) (84)
+- [Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）](../system/sonic-express-reboot-hld-spec.md) (14)
+- [MPLS TC → TC map（MPLS パケットの QoS classification）](../routing/mpls-tc-to-tc-map.md) (9)
+- [COMMUNITY_SET テーブル](config-db/community-set.md) (8)
+- [DSCP_TO_FC_MAP テーブル](config-db/dscp-to-fc-map.md) (8)
+
+### [Forwarding Database](#term-forwarding-database)
+
+- [サイトマップ](../_meta/sitemap.md) (2)
+- [show mac サブコマンド](cli/show-mac.md) (1)
+- [FDB Aging Time (SWITCH_TABLE.fdb_aging_time)](config-db/fdb-aging.md) (1)
+
+### [IntfsOrch](#term-intfsorch)
+
+- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (32)
+- [NAT ゾーン設定 (nat_zone フィールド)](config-db/nat-zone.md) (28)
+- [PORTCHANNEL_INTERFACE テーブル](config-db/portchannel-interface.md) (23)
+- [INTERFACE テーブル](config-db/interface.md) (18)
+- [VLAN_INTERFACE テーブル](config-db/vlan-interface.md) (17)
+
+### [MAC](#term-mac)
+
+- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (202)
+- [PORT (macsec フィールド)](config-db/macsec-port.md) (186)
+- [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (83)
+- [SAG テーブル](config-db/sag.md) (76)
+- [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (58)
+
+### [MACsec](#term-macsec)
+
+- [PORT (macsec フィールド)](config-db/macsec-port.md) (126)
+- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (118)
+- [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (35)
+- [Gearbox PHY ごとの MACsec backend 決定（macsec_supported）](../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md) (27)
+- [MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）](../switching/macsec-sonic-high-level-design-document.md) (25)
+
+### [Multi-ASIC](#term-multi-asic)
+
+- [サイトマップ](../_meta/sitemap.md) (26)
+- [概念](../topics/12-multi-asic-voq/concept.md) (19)
+- [Multi-ASIC / VOQ chassis 関連](../categories/multi-asic.md) (16)
+- [設定](../topics/20-swss-sai-redis/setup.md) (10)
+- [Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md) (8)
+
+### [MuxOrch](#term-muxorch)
+
+- [MUX_CABLE テーブル](config-db/mux-cable.md) (33)
+- [PEER_SWITCH テーブル](config-db/peer-switch.md) (20)
+- [MUX_CABLE テーブル（per-port フィールド詳細）](config-db/mux-cable-port.md) (15)
+- [dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）](../routing/multiple-nexthop-route-hld.md) (14)
+- [MUX_CABLE_TABLE / HW_MUX_CABLE_TABLE (STATE_DB)](config-db/mux-cable-state.md) (10)
+
+### [P4RT](#term-p4rt)
+
+- [APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)](config-db/appl-mirror.md) (84)
+- [P4RT テーブル (PINS p4rt 設定)](config-db/pin-config.md) (66)
+- [P4RT アプリケーション（PINS の gRPC サービス、port 9559）](../management/p4rt-application-hld.md) (53)
+- [IP マルチキャストルート (P4RT)](config-db/ip-mcast-route.md) (40)
+- [TUNNEL_ENCAP_TABLE (P4RT FIXED_TUNNEL_TABLE)](config-db/tunnel-encap-table.md) (33)
+
+### [PortsOrch](#term-portsorch)
+
+- [PORT テーブル](config-db/port.md) (43)
+- [PORT_TABLE ステータスフィールド（STATE_DB）](config-db/ports-status.md) (42)
+- [FABRIC_MONITOR テーブル](config-db/fabric-monitor.md) (39)
+- [APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト](config-db/stp-orch.md) (36)
+- [頻出 SAI 属性早見表](sai-attributes.md) (34)
+
+### [Priority Group](#term-priority-group)
+
+- [サイトマップ](../_meta/sitemap.md) (6)
+- [DOT1P_TO_PG_MAP テーブル（非実在）](config-db/dot1p-to-pg-map.md) (5)
+- [DSCP_TO_PG_MAP テーブル（非実在）](config-db/dscp-to-pg-map.md) (5)
+- [COUNTERS_DB バッファ / ウォーターマーク カウンタ](config-db/counter-buffer.md) (4)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (4)
+
+### [RADIUS](#term-radius)
+
+- [RADIUS テーブル](config-db/radius.md) (152)
+- [RADIUS_SERVER テーブル](config-db/radius-server.md) (104)
+- [sonic-system-radius YANG](yang/sonic-system-radius.md) (50)
+- [RADIUS 管理 user 認証（PAM / NSS / nss-mapper / 多サーバ priority）](../management/radius-management-user-authentication.md) (44)
+- [AAA テーブル](config-db/aaa.md) (43)
+
+### [route_map](#term-route_map)
+
+- [ROUTE_MAP テーブル](config-db/route-map.md) (32)
+- [ROUTE_MAP_SET テーブル](config-db/route-map-set.md) (18)
+- [BGP_PEER_GROUP_AF テーブル](config-db/bgp-peer-group-af.md) (14)
+- [ROUTE_REDISTRIBUTE テーブル](config-db/route-common.md) (14)
+- [show route-map コマンド](cli/show-route-map.md) (12)
+
+### [SONiC](#term-sonic)
+
+- [サイトマップ](../_meta/sitemap.md) (350)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (37)
+- [概要](../topics/10-gnmi-openconfig/concept.md) (28)
+- [GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）](../architecture/sonic-on-gns3-vm.md) (27)
+- [概要](../topics/02-bgp/concept.md) (27)
+
+### [ToR](#term-tor)
+
+- [サイトマップ](../_meta/sitemap.md) (78)
+- [Dual-ToR の考え方](../topics/05-dual-tor/concept.md) (65)
+- [DEVICE_METADATA テーブル](config-db/device-metadata.md) (59)
+- [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (40)
+- [Dual-ToR の発展トピック](../topics/05-dual-tor/advanced.md) (36)
+
+### [VRRP](#term-vrrp)
+
+- [VRRP テーブル](config-db/vrrp.md) (194)
+- [VRRP_TRACK テーブル](config-db/vrrp-track.md) (124)
+- [VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking）](../routing/virtual-router-redundancy-protocol-adaptation-hld.md) (36)
+- [サイトマップ](../_meta/sitemap.md) (13)
+- [config interface サブコマンド](cli/config-interface.md) (11)
+
+### [VTEP](#term-vtep)
+
+- [EVPN DIP トンネル (動的生成)](config-db/vxlan-evpn-tunnel.md) (38)
+- [VXLAN トンネルポート (Port::TUNNEL)](config-db/tunnel-port.md) (35)
+- [VXLAN_EVPN_NVO テーブル](config-db/vxlan-evpn-nvo.md) (34)
+- [VXLAN_TUNNEL テーブル](config-db/vxlan-tunnel.md) (22)
+- [VXLAN_FDB_TABLE テーブル](config-db/vxlan-fdb.md) (18)
+
+### [vtysh](#term-vtysh)
+
+- [BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル](config-db/bgp-globals-af-aggregate-addr.md) (34)
+- [PIM_GLOBALS / PIM_INTERFACE テーブル](config-db/pim.md) (31)
+- [AS_PATH_SET テーブル](config-db/as-path-set.md) (27)
+- [BGP_NEIGHBOR_AF テーブル](config-db/bgp-neighbor-af.md) (27)
+- [ROUTE_REDISTRIBUTE テーブル](config-db/route-redistribute.md) (26)
 
 <!-- /glossary-xref -->

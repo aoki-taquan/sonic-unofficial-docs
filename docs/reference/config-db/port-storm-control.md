@@ -448,9 +448,9 @@ minigraph.py および init_cfg.json.j2 からの `PORT_STORM_CONTROL` 自動派
 
 ### SAI capability チェックなし — orchagent は直接 push
 
-`PolicerOrch::handlePortStormControlTable()` は `sai_query_attribute_capability()` を呼ばない。storm control policer は ASIC capability の事前確認なしに SAI へ push される。
+`PolicerOrch::handlePortStormControlTable()` は `sai_query_attribute_capability()` を呼ばない。storm control policer は [ASIC](../../reference/glossary.md#term-asic) capability の事前確認なしに SAI へ push される。
 
-ASIC が storm control をサポートしない場合、`sai_policer_api->create_policer()` または `sai_port_api->set_port_attribute()` が `SAI_STATUS_NOT_SUPPORTED` 等を返し、orchagent が `SWSS_LOG_ERROR` を記録して `task_need_retry` または `task_failed` を返す (SAI エラー任せ)。
+[ASIC](../../reference/glossary.md#term-asic) が storm control をサポートしない場合、`sai_policer_api->create_policer()` または `sai_port_api->set_port_attribute()` が `SAI_STATUS_NOT_SUPPORTED` 等を返し、orchagent が `SWSS_LOG_ERROR` を記録して `task_need_retry` または `task_failed` を返す (SAI エラー任せ)。
 
 証跡: `policerorch.cpp:226-313`
 
@@ -463,7 +463,7 @@ ASIC が storm control をサポートしない場合、`sai_policer_api->create
 | CLI (`config storm-control add`) | `is_storm_control_supported()` が `STATE_DB` を参照し、`supported == 0` なら CONFIG_DB 書き込みをスキップ | `sonic-utilities/config/main.py:806-824` |
 | orchagent (PolicerOrch) | `BUM_STORM_CAPABILITY` を `TableConnector` で定義しているが、`handlePortStormControlTable()` 内でその値を参照する分岐は存在しない | `orchdaemon.cpp:401`, `policerorch.cpp` |
 
-つまり、直接 CONFIG_DB に書き込んだ場合は capability 非対応 ASIC でも orchagent が処理を試み、SAI エラーで失敗する可能性がある。
+つまり、直接 CONFIG_DB に書き込んだ場合は capability 非対応 [ASIC](../../reference/glossary.md#term-asic) でも orchagent が処理を試み、SAI エラーで失敗する可能性がある。
 
 ### プラットフォーム依存挙動のまとめ
 
@@ -484,9 +484,9 @@ ASIC が storm control をサポートしない場合、`sai_policer_api->create
 
 ### PORT 先行制約
 
-`handlePortStormControlTable()` は処理冒頭で `gPortsOrch->getPort(interface_name, port)` を呼ぶ。PORT テーブルが未初期化 (PortsOrch が当該ポートを登録していない) 場合、`task_success` を返してエントリを **erase** する (サイレント破棄、リトライなし)。
+`handlePortStormControlTable()` は処理冒頭で `gPortsOrch->getPort(interface_name, port)` を呼ぶ。PORT テーブルが未初期化 ([PortsOrch](../../reference/glossary.md#term-portsorch) が当該ポートを登録していない) 場合、`task_success` を返してエントリを **erase** する (サイレント破棄、リトライなし)。
 
-さらに `doTask()` 冒頭で `gPortsOrch->allPortsReady()` が false なら即座 `return` するため、PortsOrch の全ポート初期化完了が PORT_STORM_CONTROL 処理の大域ガードになっている。
+さらに `doTask()` 冒頭で `gPortsOrch->allPortsReady()` が false なら即座 `return` するため、[PortsOrch](../../reference/glossary.md#term-portsorch) の全ポート初期化完了が PORT_STORM_CONTROL 処理の大域ガードになっている。
 
 ```
 PORT (PortsOrch 初期化完了)
@@ -593,4 +593,4 @@ CONFIG_DB `PORT_STORM_CONTROL` への変更が連鎖して書き込まれる副�
 4. [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込は **なし**。[CRM](../../reference/glossary.md#term-crm) カウンタ更新も **なし**
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 4a8428bf2594 -->
+<!-- glossary-links-injected: 8a59592f36f2 -->

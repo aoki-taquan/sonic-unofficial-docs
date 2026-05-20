@@ -43,13 +43,13 @@ related:
 
 | 乖離 | 期待（設計意図） | 実装 (community master) | 根拠 |
 |------|----------------|------------------------|------|
-| `COUNTER_MODE` の反映 | [ACL](../../reference/glossary.md#term-acl) カウンタ粒度を ASIC に設定する | `orchagent/aclorch.cpp` に参照 0 件。[SAI](../../reference/glossary.md#term-sai) API は呼ばれない | `sonic-swss/` 全体を grep して COUNTER_MODE 参照なし |
-| `LOOKUP_MODE` の反映 | [TCAM](../../reference/glossary.md#term-tcam) ルックアップ戦略を ASIC に設定する | `orchagent/aclorch.cpp` に参照 0 件。[SAI](../../reference/glossary.md#term-sai) API は呼ばれない | `sonic-swss/` 全体を grep して LOOKUP_MODE 参照なし |
-| `TCAM_SHARING` の反映 | TCAM 共有グループを ASIC に設定する | `orchagent/aclorch.cpp` に参照 0 件。[SAI](../../reference/glossary.md#term-sai) API は呼ばれない | `sonic-swss/` 全体を grep して TCAM_SHARING 参照なし |
+| `COUNTER_MODE` の反映 | [ACL](../../reference/glossary.md#term-acl) カウンタ粒度を [ASIC](../../reference/glossary.md#term-asic) に設定する | `orchagent/aclorch.cpp` に参照 0 件。[SAI](../../reference/glossary.md#term-sai) API は呼ばれない | `sonic-swss/` 全体を grep して COUNTER_MODE 参照なし |
+| `LOOKUP_MODE` の反映 | [TCAM](../../reference/glossary.md#term-tcam) ルックアップ戦略を [ASIC](../../reference/glossary.md#term-asic) に設定する | `orchagent/aclorch.cpp` に参照 0 件。[SAI](../../reference/glossary.md#term-sai) API は呼ばれない | `sonic-swss/` 全体を grep して LOOKUP_MODE 参照なし |
+| `TCAM_SHARING` の反映 | TCAM 共有グループを [ASIC](../../reference/glossary.md#term-asic) に設定する | `orchagent/aclorch.cpp` に参照 0 件。[SAI](../../reference/glossary.md#term-sai) API は呼ばれない | `sonic-swss/` 全体を grep して TCAM_SHARING 参照なし |
 | [YANG](../../reference/glossary.md#term-yang) モジュール | CVL によるスキーマ検証が行われる | [YANG](../../reference/glossary.md#term-yang) モジュール未定義。任意の文字列を書き込んでも CVL はエラーにならない | `sonic-yang-models/` に HARDWARE テーブル対応モジュールなし |
 | テーブル名の統一 | `HARDWARE|ACCESS_LIST` として使用 | testdata に `HARDWARE_TABLE|ACCESS_LIST`（アンダースコア区切り）変種も出現。community では両者とも dead consumer | `sonic-gnmi/testdata/db_dump.json` |
 
-community SONiC において `HARDWARE|ACCESS_LIST` は [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込み可能だが、**いかなる [orchagent](../../reference/glossary.md#term-orchagent) / cfgmgr / [hostcfgd](../../reference/glossary.md#term-hostcfgd) もこれを読み取らず、ASIC / SAI へは一切影響しない**（dead consumer）。
+community [SONiC](../../reference/glossary.md#term-sonic) において `HARDWARE|ACCESS_LIST` は [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込み可能だが、**いかなる [orchagent](../../reference/glossary.md#term-orchagent) / cfgmgr / [hostcfgd](../../reference/glossary.md#term-hostcfgd) もこれを読み取らず、ASIC / SAI へは一切影響しない**（dead consumer）。
 
 <!-- cdb-mermaid -->
 ### データフロー
@@ -147,7 +147,7 @@ community [sonic-swss](../../reference/glossary.md#term-sonic-swss)/[orchagent](
 
 > 調査証跡: `meta/_intermediate/cdb-flow/hardware-cross-refs.md`
 
-`HARDWARE|ACCESS_LIST` は CONFIG_DB に書き込まれるが、community SONiC コードパスでは**いずれのコンポーネントも参照しない**（dead consumer）。YANG モジュールが存在しないため leafref による参照整合性保証も一切ない。
+`HARDWARE|ACCESS_LIST` は CONFIG_DB に書き込まれるが、community [SONiC](../../reference/glossary.md#term-sonic) コードパスでは**いずれのコンポーネントも参照しない**（dead consumer）。YANG モジュールが存在しないため leafref による参照整合性保証も一切ない。
 
 | 参照元 / 参照先 | DB / リソース | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
 |---|---|---|---|---|---|
@@ -179,7 +179,7 @@ Dell 等のベンダー向け [gNMI](../../reference/glossary.md#term-gnmi)/tran
 
 | # | 失敗トリガー | 挙動 | 備考 |
 |---|------------|------|------|
-| 1 | `HARDWARE\|ACCESS_LIST` の `HSET` が [Redis](../../reference/glossary.md#term-redis) 書込みエラー | [Redis](../../reference/glossary.md#term-redis) 自体のエラー（メモリ不足等）としてクライアントに返る。consumer がいないため ASIC / SAI への二次影響なし | community SONiC での通常運用では発生しない |
+| 1 | `HARDWARE\|ACCESS_LIST` の `HSET` が [Redis](../../reference/glossary.md#term-redis) 書込みエラー | [Redis](../../reference/glossary.md#term-redis) 自体のエラー（メモリ不足等）としてクライアントに返る。consumer がいないため ASIC / SAI への二次影響なし | community [SONiC](../../reference/glossary.md#term-sonic) での通常運用では発生しない |
 | 2 | `COUNTER_MODE` / `LOOKUP_MODE` に不正値を書き込む | YANG CVL 検証なし（YANG モジュール未定義）、consumer なし。書込みは成功し CONFIG_DB に保存されるが ASIC 設定には影響しない | 実質 no-op |
 | 3 | `TCAM_SHARING` の leaf-list エンコーディング不正（`@` サフィックス欠落） | Redis に通常フィールドとして格納。consumer がいないため実害なし。ただしベンダー translib が期待する leaf-list 形式と乖離する | community では無影響 |
 | 4 | orchagent 起動中・停止中にかかわらず書き込む | orchagent は `HARDWARE` テーブルを購読していないため、いかなるタイミングでも ACL 設定変更は行われない | dead consumer |
@@ -320,4 +320,4 @@ CONFIG_DB `HARDWARE|ACCESS_LIST` に書き込まれたキー変更イベント�
 [^1]: sonic-net/sonic-gnmi `testdata/db_dump.json` @ eb635b7679b260c3fd0786a6d0734fc8e82c9a22
 [^2]: sonic-net/sonic-mgmt-common `tools/test/dbinit.py` @ f71cf829883c36963455cf4d90fe16dae35f0b80
 
-<!-- glossary-links-injected: 3122af494af8 -->
+<!-- glossary-links-injected: 8de83b4fd2a7 -->

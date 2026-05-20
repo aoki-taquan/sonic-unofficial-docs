@@ -502,11 +502,11 @@ gNSI Certz (`gnsi_certz.go`) はプロファイル管理に CONFIG_DB を使用�
 <!-- platform -->
 ## プラットフォーム差分 (Phase H)
 
-**プラットフォーム差なし**: `SECURITY_PROFILES` / `SECURITY_GLOBAL` テーブルおよび gNSI Certz は ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 構成に依らず同一動作をする。
+**プラットフォーム差なし**: `SECURITY_PROFILES` / `SECURITY_GLOBAL` テーブルおよび gNSI Certz は [ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 構成に依らず同一動作をする。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `SECURITY_PROFILES` を消費する [SAI](../../reference/glossary.md#term-sai) 経由ハンドラが community master に存在しない。証明書管理はファイルシステム + gRPC のみで ASIC [SAI](../../reference/glossary.md#term-sai) API を呼ばない |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `SECURITY_PROFILES` を消費する [SAI](../../reference/glossary.md#term-sai) 経由ハンドラが community master に存在しない。証明書管理はファイルシステム + gRPC のみで [ASIC](../../reference/glossary.md#term-asic) [SAI](../../reference/glossary.md#term-sai) API を呼ばない |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | gNSI Certz (`gnsi_certz.go`) は `ConfigDBConnector` 引数なし (host CONFIG_DB のみ) で起動し、`asicN` namespace を iterate しない。`sonic-pki.yang` も host scope で定義されている |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | `SECURITY_PROFILES` / `SECURITY_GLOBAL` は host scope テーブル。chassis 全体集中管理機構はなく、各 line card host で独立して CVL バリデーションが適用される |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([NPU](../../reference/glossary.md#term-npu) + [DPU](../../reference/glossary.md#term-dpu)) | 影響なし | `gnmi-native.sh` が [SmartSwitch](../../reference/glossary.md#term-smartswitch) 時に ZMQ オプションを付与する (`gnmi-native.sh:88-91`) が、これは [gNMI](../../reference/glossary.md#term-gnmi) サーバ全体の通信チャネル切替であり gNSI Certz のプロファイル管理・証明書ファイル操作には影響しない。[DPU](../../reference/glossary.md#term-dpu) 側での `SECURITY_PROFILES` ハンドラも未実装 |
@@ -533,4 +533,4 @@ gNSI Certz (`gnsi_certz.go`) はプロファイル管理に CONFIG_DB を使用�
 [^1]: `sonic-mgmt-common` `cvl/testdata/schema/sonic-pki.yang` + `sonic-security-global.yang` — YANG スキーマ定義と CVL leafref テスト
 [^2]: `sonic-gnmi` `gnmi_server/gnsi_certz.go` — gNSI Certz 実装。defaultProfile, bootstrapDefaultProfile, writeEntityFreshness
 
-<!-- glossary-links-injected: ef83b08b87b0 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-SONiC ビルドは大別すると 2 段階で構成される[^1]:
+[SONiC](../reference/glossary.md#term-sonic) ビルドは大別すると 2 段階で構成される[^1]:
 
 1. Debian / Python パッケージ コンパイル — 比較的速い
 2. **Docker イメージビルド** — 遅い（特に複数ユーザ並列時）
@@ -455,4 +455,4 @@ docker images | grep sonic
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 3f5eea8d47a1 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

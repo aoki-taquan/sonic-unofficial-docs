@@ -80,7 +80,7 @@ ROUTE_TABLE:<vrf_name>:<prefix>
 | `mpls_nh` | string | `""` (フィールド不在) | [MPLS](../../reference/glossary.md#term-mpls) nexthop ラベルスタック。[MPLS](../../reference/glossary.md#term-mpls) 経路のみ設定 |
 | `weight` | string | `"1"` per nexthop | カンマ区切り [ECMP](../../reference/glossary.md#term-ecmp) 重みリスト。netlink weight=0 は 1 にフォールバック |
 | `vni_label` | string | `""` (フィールド不在) | [EVPN](../../reference/glossary.md#term-evpn) VNI のカンマ区切りリスト。[EVPN](../../reference/glossary.md#term-evpn) 経路のみ |
-| `router_mac` | string | `""` (フィールド不在) | [EVPN](../../reference/glossary.md#term-evpn) 宛先 VTEP MAC アドレスのカンマ区切りリスト |
+| `router_mac` | string | `""` (フィールド不在) | [EVPN](../../reference/glossary.md#term-evpn) 宛先 [VTEP](../../reference/glossary.md#term-vtep) MAC アドレスのカンマ区切りリスト |
 | `segment` | string | `""` (フィールド不在) | [SRv6](../../reference/glossary.md#term-srv6) SID リストキー。[SRv6](../../reference/glossary.md#term-srv6) steer route のみ |
 | `seg_src` | string | `""` (フィールド不在) | [SRv6](../../reference/glossary.md#term-srv6) encapsulation source IPv6 アドレス。SRv6 route のみ |
 
@@ -173,7 +173,7 @@ else
 | プラットフォーム | [SAI](../../reference/glossary.md#term-sai) 返値の解釈 | 有効上限 |
 |-----------------|---------------|---------|
 | Mellanox (`"mellanox"`) | ECMP size=1 前提の最大数を返すため ÷32 補正 | `SAI 返値 / 32` |
-| その他 ASIC | [SAI](../../reference/glossary.md#term-sai) 返値をそのまま使用 | `SAI 返値` |
+| その他 [ASIC](../../reference/glossary.md#term-asic) | [SAI](../../reference/glossary.md#term-sai) 返値をそのまま使用 | `SAI 返値` |
 | SAI 問い合わせ失敗 | フォールバック | 128 |
 
 この上限は `SwitchOrch::set_switch_capability()` で `MAX_NEXTHOP_GROUP_COUNT` として [STATE_DB](../../reference/glossary.md#term-state_db) に公開される。
@@ -193,11 +193,11 @@ if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
 }
 ```
 
-[VOQ](../../reference/glossary.md#term-voq) chassis では複数 line card 間でフォワーディングテーブルを同期するため ECMP メンバー数を抑えて同期負荷を制限する。通常の box スイッチや fabric スイッチでは ASIC 能力値をそのまま使う。
+[VOQ](../../reference/glossary.md#term-voq) chassis では複数 line card 間でフォワーディングテーブルを同期するため ECMP メンバー数を抑えて同期負荷を制限する。通常の box スイッチや fabric スイッチでは [ASIC](../../reference/glossary.md#term-asic) 能力値をそのまま使う。
 
 | `gMySwitchType` | ECMP メンバー上限の扱い |
 |-----------------|----------------------|
-| `"voq"` | min(ASIC 能力, 128) を SAI に設定 |
+| `"voq"` | min([ASIC](../../reference/glossary.md#term-asic) 能力, 128) を SAI に設定 |
 | `"switch"` / `"fabric"` 等 | ASIC 能力値のまま（orchagent から変更しない） |
 
 ### SAI Bulk API 対応差
@@ -245,7 +245,7 @@ nexthop が IP アドレスでインタフェース直結でない場合（非 `
 
 ### ADD 時: インタフェース直結経路は RIF 登録が先行必須
 
-nexthop が `isIntfNextHop()` の場合、`m_intfsOrch->getRouterIntfsId(alias)` が `SAI_NULL_OBJECT_ID` ならば `return false` で後回し。`INTERFACE` / `PORTCHANNEL_INTERFACE` テーブルへの IP アドレス設定 → IntfsOrch が [RIF](../../reference/glossary.md#term-rif) を SAI 登録 → [ROUTE_TABLE](../../reference/glossary.md#term-route_table) 書き込み、の順を守る[^3]。
+nexthop が `isIntfNextHop()` の場合、`m_intfsOrch->getRouterIntfsId(alias)` が `SAI_NULL_OBJECT_ID` ならば `return false` で後回し。`INTERFACE` / `PORTCHANNEL_INTERFACE` テーブルへの IP アドレス設定 → [IntfsOrch](../../reference/glossary.md#term-intfsorch) が [RIF](../../reference/glossary.md#term-rif) を SAI 登録 → [ROUTE_TABLE](../../reference/glossary.md#term-route_table) 書き込み、の順を守る[^3]。
 
 ### DEL 時: 経路 DEL → 参照先オブジェクト DEL の順が必須
 
@@ -325,7 +325,7 @@ EVPN L3 VNI を持つ経路では `m_vrfOrch->isL3VniVlan(vni)` も確認する�
 
 ### MUX_CABLE (CONFIG_DB) — MuxOrch 経由
 
-Dual-ToR 環境では RouteOrch が `gDirectory.get<MuxOrch*>()` で MuxOrch を取得し、mux tunnel nexthop を NHG から除外するロジックを適用する[^cr1]。
+Dual-ToR 環境では RouteOrch が `gDirectory.get<MuxOrch*>()` で [MuxOrch](../../reference/glossary.md#term-muxorch) を取得し、mux tunnel nexthop を NHG から除外するロジックを適用する[^cr1]。
 
 ```cpp
 MuxOrch* mux_orch = gDirectory.get<MuxOrch*>();
@@ -339,7 +339,7 @@ if (mux_orch->isMuxNexthops(nextHops))
     mux_orch->updateRoute(ipPrefix);
 ```
 
-MuxOrch が初期化されていない場合 (`gDirectory.get<MuxOrch*>()` が失敗) は orchagent が異常終了する可能性がある。
+[MuxOrch](../../reference/glossary.md#term-muxorch) が初期化されていない場合 (`gDirectory.get<MuxOrch*>()` が失敗) は orchagent が異常終了する可能性がある。
 
 ### 暗黙参照サマリ
 
@@ -348,7 +348,7 @@ MuxOrch が初期化されていない場合 (`gDirectory.get<MuxOrch*>()` が�
 | NEIGHBOR | APPL_DB | `NEIGH_TABLE` / NeighOrch | `hasNextHop()` / `getNextHopId()` | READ (依存・後回し) |
 | NEXTHOP_GROUP | APPL_DB | `NEXTHOP_GROUP_TABLE` / NhgOrch | `gNhgOrch->hasNhg()` / `gCbfNhgOrch->hasNhg()` | READ (依存・後回し) |
 | VRF | [CONFIG_DB](../../reference/glossary.md#term-config_db) | `VRF` / VRFOrch | `isVRFexists()` / `getVRFid()` | READ (依存・後回し) |
-| MUX_CABLE | [CONFIG_DB](../../reference/glossary.md#term-config_db) | `MUX_CABLE` / MuxOrch | `isMuxNexthops()` / `updateRoute()` | WRITE (通知・委譲) |
+| MUX_CABLE | [CONFIG_DB](../../reference/glossary.md#term-config_db) | `MUX_CABLE` / [MuxOrch](../../reference/glossary.md#term-muxorch) | `isMuxNexthops()` / `updateRoute()` | WRITE (通知・委譲) |
 
 [^cr1]: `orchagent/routeorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp>
 <!-- /cross-refs -->
@@ -744,4 +744,4 @@ ROUTE_TABLE:10.2.0.0/24
 - デフォルト経路が eth0 に向いてしまう → fpmsyncd の eth0/docker0 フィルタが機能しているか確認（FRR の `show ip route 0.0.0.0/0`）。
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 02a24385dd40 -->
+<!-- glossary-links-injected: f697e4ec81bf -->

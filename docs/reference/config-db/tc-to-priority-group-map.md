@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-Traffic Class (TC) を ingress Priority Group (PG) へマップする[^1]。PG はバッファ admission control（`BUFFER_PG`）と [PFC](../../reference/glossary.md#term-pfc) の対象グループを決定し、lossless トラフィック (TC 3, 4) が正しい PG に割り当てられることで [PFC](../../reference/glossary.md#term-pfc) が動作する。`qosorch` が [SAI](../../reference/glossary.md#term-sai) map (`SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP`) を生成し、`PORT_QOS_MAP.tc_to_pg_map` で各ポートに適用する。
+Traffic Class (TC) を ingress [Priority Group](../../reference/glossary.md#term-priority-group) (PG) へマップする[^1]。PG はバッファ admission control（`BUFFER_PG`）と [PFC](../../reference/glossary.md#term-pfc) の対象グループを決定し、lossless トラフィック (TC 3, 4) が正しい PG に割り当てられることで [PFC](../../reference/glossary.md#term-pfc) が動作する。`qosorch` が [SAI](../../reference/glossary.md#term-sai) map (`SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP`) を生成し、`PORT_QOS_MAP.tc_to_pg_map` で各ポートに適用する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -59,7 +59,7 @@ TC_TO_PRIORITY_GROUP_MAP|<name>|<tc>
 |-----------|----|------|------|
 | `name` (key lv1) | string 1..32 | ✅ | マップ名（例: `AZURE`） |
 | `tc` (key lv2) | `tc_type` (0..15) | ✅ | 入力 Traffic Class |
-| `pg` (value) | string `[0-7]?` | ✅ | 出力 Priority Group (0-7) |
+| `pg` (value) | string `[0-7]?` | ✅ | 出力 [Priority Group](../../reference/glossary.md#term-priority-group) (0-7) |
 
 ## 購読者
 
@@ -97,13 +97,13 @@ TC_TO_PRIORITY_GROUP_MAP|<name>|<tc>
 | フィールド | 値 | 挙動 |
 |-----------|-----|-----|
 | `tc` | `0`..`7` | 有効な Traffic Class。実用範囲 |
-| `tc` | `8`..`15` | YANG 許容（uint8 0..15）だが ASIC/[SAI](../../reference/glossary.md#term-sai) が拒否する場合が多い（プラットフォーム依存） |
-| `pg` | `"0"`..`"7"` | 対応する ingress Priority Group にマッピング |
+| `tc` | `8`..`15` | YANG 許容（uint8 0..15）だが [ASIC](../../reference/glossary.md#term-asic)/[SAI](../../reference/glossary.md#term-sai) が拒否する場合が多い（プラットフォーム依存） |
+| `pg` | `"0"`..`"7"` | 対応する ingress [Priority Group](../../reference/glossary.md#term-priority-group) にマッピング |
 | `pg` | 空文字列 | YANG pattern `[0-7]?` は許容するが `stoi()` 例外 → `task_invalid_entry` でエントリ破棄 |
 | `pg` | 数字以外の文字列 | `stoi()` 例外 → `task_invalid_entry` でエントリ破棄 |
 | マップ全体 | PORT_QOS_MAP / TUNNEL_DECAP_TABLE 参照中に DEL | DEL 保留 (`m_pendingRemove=true`)。参照解放まで待機 |
 | マップ全体 | 参照なし + DEL | SAI `remove_qos_map()` を即時呼び出し |
-| count=0 | サブキーなしで SET | SAI create_qos_map(count=0) が呼ばれる。ASIC が空マップを拒否するかは実装依存 |
+| count=0 | サブキーなしで SET | SAI create_qos_map(count=0) が呼ばれる。[ASIC](../../reference/glossary.md#term-asic) が空マップを拒否するかは実装依存 |
 
 <!-- /value-behavior -->
 
@@ -142,7 +142,7 @@ TC_TO_PRIORITY_GROUP_MAP|AZURE|7  →  7   (high priority control)
 
 ### よくある誤設定
 
-- TC 8..15 の PG マッピングを書いても ASIC が TC 0..7 しかサポートしない場合、SAI が拒否し当該エントリが install されない。
+- TC 8..15 の PG マッピングを書いても [ASIC](../../reference/glossary.md#term-asic) が TC 0..7 しかサポートしない場合、SAI が拒否し当該エントリが install されない。
 - `pg` フィールドに空文字列を書くと YANG 検証を通過するが [orchagent](../../reference/glossary.md#term-orchagent) で silent drop される。
 - lossless PG（3,4）を [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) の `profile` で lossless 設定しないと [PFC](../../reference/glossary.md#term-pfc) が動作しない。
 
@@ -506,7 +506,7 @@ NotificationConsumer: なし
 | `generate_tc_to_pg_map` + `tunnel_qos_remap_enable=true` | VxLAN decap TC→PG 再マッピング対応プラットフォーム (Broadcom 等) | SKU 定義関数が生成 |
 | `generate_tc_to_pg_map` + `backend_device_types` + `ComputeAI` | Azure AI ラック向け BackEndToRRouter / BackEndLeafRouter | SKU 定義関数が生成 |
 | `generate_tc_to_pg_map_per_sku` | 一部 Mellanox / Broadcom SKU | SKU ごとに異なる TC→PG 対応表 |
-| その他（デフォルト） | 一般コミュニティ SONiC | `AZURE`（TC3→PG3, TC4→PG4, 他→PG0） |
+| その他（デフォルト） | 一般コミュニティ [SONiC](../../reference/glossary.md#term-sonic) | `AZURE`（TC3→PG3, TC4→PG4, 他→PG0） |
 
 ### B. SmartSwitch / DPU — AZURE_DPC マップ
 
@@ -581,4 +581,4 @@ YANG の `tc_type` は `uint8 0..15` を許容するが、実用上 TC 8..15 を
 
 <!-- glossary-links-injected: tc-to-priority-group-map -->
 
-<!-- glossary-links-injected: bdd3b0101b43 -->
+<!-- glossary-links-injected: f62fb9abad0b -->

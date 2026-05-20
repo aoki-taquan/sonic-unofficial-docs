@@ -32,7 +32,7 @@ related:
 - import: `ietf-inet-types`, `sonic-types`
 - top container: `sonic-nat`
 
-SONiC [NAT](../../reference/glossary.md#term-nat) yang model[^1]
+[SONiC](../../reference/glossary.md#term-sonic) [NAT](../../reference/glossary.md#term-nat) yang model[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -229,4 +229,4 @@ show nat translations
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -70,7 +70,7 @@ flowchart LR
 
 SRv6 の設定は [CONFIG_DB](../../reference/glossary.md#term-config_db) から [SAI](../../reference/glossary.md#term-sai) まで以下の **非同期パイプライン** を通じて伝達される。
 [Redis](../../reference/glossary.md#term-redis) の `ProducerStateTable` / `ConsumerStateTable` は APP_DB 区間のみで使用され、
-他の区間は vtysh CLI または [FPM](../../reference/glossary.md#term-fpm) TCP ソケットで繋がれる。
+他の区間は [vtysh](../../reference/glossary.md#term-vtysh) CLI または [FPM](../../reference/glossary.md#term-fpm) TCP ソケットで繋がれる。
 
 ```
 CONFIG_DB (SRV6_MY_SIDS / SRV6_MY_LOCATORS)
@@ -101,7 +101,7 @@ ASIC
 
 - `SRV6_MY_SIDS` エントリは参照するロケータ名 (`SRV6_MY_LOCATORS`) が未到達の場合、
   `directory.subscribe()` でロケータ到着を待ちペンディングする（`managers_srv6.py:62-68`）。
-- `cfg_mgr.push_list()` は vtysh TCP ソケット経由で [FRR](../../reference/glossary.md#term-frr) bgpd へコマンドを送信する。
+- `cfg_mgr.push_list()` は [vtysh](../../reference/glossary.md#term-vtysh) TCP ソケット経由で [FRR](../../reference/glossary.md#term-frr) bgpd へコマンドを送信する。
   [Redis](../../reference/glossary.md#term-redis) channel は介在しない。
 
 ### fpmsyncd → APP_DB (ProducerStateTable)
@@ -166,7 +166,7 @@ else if (table_name == CFG_SRV6_MY_SID_TABLE_NAME)    doTaskCfgMySidTable(t);
 
 - `SRV6_MY_SIDS` / `SRV6_MY_LOCATORS` に対して [orchagent](../../reference/glossary.md#term-orchagent) が `SubscriberStateTable` を直接使う箇所はなし。
 - `NotificationProducer` で SRv6 関連の通知を発行する箇所はソース全体になし。
-- [STATE_DB](../../reference/glossary.md#term-state_db) への書き戻しは Srv6Orch 自体が行わず、SAI/ASIC 層で完結する。
+- [STATE_DB](../../reference/glossary.md#term-state_db) への書き戻しは Srv6Orch 自体が行わず、SAI/[ASIC](../../reference/glossary.md#term-asic) 層で完結する。
 <!-- /pubsub -->
 
 ---
@@ -422,7 +422,7 @@ neighbor 変化（ADD / DEL）を `updateNeighbor(NeighborUpdate&)` で受け取
 
 - **neighbor ADD**: `m_pendingSRv6MySIDEntries` を走査し、解決できる MySID エントリを
   `createUpdateMysidEntry()` で再インストール試行する（`srv6orch.cpp:1212–1248`）。
-- **neighbor DEL**: 対象 nexthop を使用するインストール済み SID を ASIC から削除し
+- **neighbor DEL**: 対象 nexthop を使用するインストール済み SID を [ASIC](../../reference/glossary.md#term-asic) から削除し
   pending に差し戻す（`srv6orch.cpp:1197–1210`）。
 - [ECMP](../../reference/glossary.md#term-ecmp) adj（カンマ区切り複数アドレス）は `"ECMP adjacency not yet supported"` エラーで全拒否
   （`srv6orch.cpp:1516–1519`）。全プラットフォーム共通の実装制限。
@@ -579,7 +579,7 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 1. `adj` に指定された nexthop が NeighOrch に未解決の場合、エントリを `m_pendingSRv6MySIDEntries` に保留する（`srv6orch.cpp:1532-1542`）。
 2. NeighOrch から neighbor ADD 通知が届いた時点で `updateNeighbor()` が `createUpdateMysidEntry()` を再呼び出しする（`srv6orch.cpp:1236-1248`）。
 3. 再インストールも失敗した場合はエントリを pending に残したまま `continue`（ループ継続）。
-4. neighbor DELETE 通知時は、インストール済み SID を ASIC から削除して pending に戻す（`srv6orch.cpp:1197-1210`）。
+4. neighbor DELETE 通知時は、インストール済み SID を [ASIC](../../reference/glossary.md#term-asic) から削除して pending に戻す（`srv6orch.cpp:1197-1210`）。
 
 ### PIC_CONTEXT_TABLE の失敗ケース
 
@@ -723,7 +723,7 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 <!-- platform -->
 ## プラットフォーム差分 (Phase H)
 
-> 根拠: `srv6orch.cpp` (rev 4305596156d70e9797e8a881b3d19b46de0bce0d) 全行精読、`sonic-sairedis/syncd/VendorSai.cpp`、`sonic-sairedis/vslib/vpp/SwitchVppSRv6.cpp`、SONiC [HLD](../../reference/glossary.md#term-hld) `doc/srv6/srv6_hld.md`、`SRv6_uSID.md`、`srv6_sid_l3adj.md`。
+> 根拠: `srv6orch.cpp` (rev 4305596156d70e9797e8a881b3d19b46de0bce0d) 全行精読、`sonic-sairedis/syncd/VendorSai.cpp`、`sonic-sairedis/vslib/vpp/SwitchVppSRv6.cpp`、[SONiC](../../reference/glossary.md#term-sonic) [HLD](../../reference/glossary.md#term-hld) `doc/srv6/srv6_hld.md`、`SRv6_uSID.md`、`srv6_sid_l3adj.md`。
 > evidence: `meta/_intermediate/cdb-flow/srv6-platform.md`
 
 ### SAI capability — MySID カウンタ非対応 ASIC
@@ -742,7 +742,7 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 | 起動ログ | `"SRv6 counters are not supported on this platform"` (`srv6orch.cpp:125`) |
 | カウンタ変更要求ログ | `"Ignoring SRv6 counters state change as they are not supported on this platform"` (`srv6orch.cpp:257`) |
 
-SONiC は特定ベンダー名（Mellanox / Broadcom 等）を直接判別せず、SAI capability query の結果のみで動的に判断する。
+[SONiC](../../reference/glossary.md#term-sonic) は特定ベンダー名（Mellanox / Broadcom 等）を直接判別せず、SAI capability query の結果のみで動的に判断する。
 
 ### SID List タイプの ASIC 非対応
 
@@ -774,7 +774,7 @@ SAI 仕様では `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN` / `_UA` 等として定
 ### SmartSwitch DPU
 
 `srv6orch.cpp` に `switch_type == "dpu"` 固有の分岐は存在しない。
-[DPU](../../reference/glossary.md#term-dpu) は独立した SONiC インスタンスとして動作し、SRv6 サポートは [DPU](../../reference/glossary.md#term-dpu) 側 SAI 実装に依存する。
+[DPU](../../reference/glossary.md#term-dpu) は独立した [SONiC](../../reference/glossary.md#term-sonic) インスタンスとして動作し、SRv6 サポートは [DPU](../../reference/glossary.md#term-dpu) 側 SAI 実装に依存する。
 
 ### VPP ソフトウェアスイッチ
 
@@ -787,4 +787,4 @@ VPP には SID リストの最大エントリ数 16 の制約がある（`Switch
 [^1]: `sonic-swss/orchagent/srv6orch.cpp` (revision 4305596156d70e9797e8a881b3d19b46de0bce0d) より。
 [^2]: SRv6 uSID [HLD](../../reference/glossary.md#term-hld): <https://github.com/sonic-net/SONiC/blob/master/doc/srv6/SRv6_uSID.md>
 
-<!-- glossary-links-injected: 3410abe6021e -->
+<!-- glossary-links-injected: 40651b628d90 -->

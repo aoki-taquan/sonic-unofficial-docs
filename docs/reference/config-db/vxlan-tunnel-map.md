@@ -167,7 +167,7 @@ VXLAN_EVPN_NVO 削除 → VXLAN_TUNNEL_MAP 全削除 → VXLAN_TUNNEL 削除 →
 
 | 条件 | ログメッセージ | コードロケーション |
 |------|-------------|------------------|
-| VLAN が PortsOrch に未登録 | `"Vxlan tunnel map vlan id doesn't exist: %d"` (SWSS_LOG_WARN) | `vxlanorch.cpp:2030-2033` |
+| VLAN が [PortsOrch](../../reference/glossary.md#term-portsorch) に未登録 | `"Vxlan tunnel map vlan id doesn't exist: %d"` (SWSS_LOG_WARN) | `vxlanorch.cpp:2030-2033` |
 | 親 VXLAN_TUNNEL が未存在 | `"Vxlan tunnel '%s' doesn't exist"` (SWSS_LOG_WARN) | `vxlanorch.cpp:2047-2050` |
 | `del_tnl_hw_pending` フラグが立っている | `"Tunnel Mapper deletion is pending"` (SWSS_LOG_WARN) | `vxlanorch.cpp:2057-2060` |
 | `createTunnelHw()` が失敗（SAI 内部エラー） | — | `vxlanorch.cpp:2069-2074` |
@@ -239,8 +239,8 @@ HW にマッピング実体が存在しない状態となる。後続の `delOpe
 | 定数 | 値 | 用途 | コードロケーション |
 |-----|-----|------|-----------------|
 | `TUNNEL_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"TUNNEL_STAT_COUNTER"` | flex_counter_manager へ渡すグループ名 | `vxlanorch.h:39` |
-| `LOCAL_TUNNEL_PORT_PREFIX` | `"Port_SRC_VTEP_"` | 自ノード VTEP 発トンネルポート名のプレフィクス | `vxlanorch.h:41` |
-| `EVPN_TUNNEL_PORT_PREFIX` | `"Port_EVPN_"` | [EVPN](../../reference/glossary.md#term-evpn) remote VTEP トンネルポート名のプレフィクス | `vxlanorch.h:42` |
+| `LOCAL_TUNNEL_PORT_PREFIX` | `"Port_SRC_VTEP_"` | 自ノード [VTEP](../../reference/glossary.md#term-vtep) 発トンネルポート名のプレフィクス | `vxlanorch.h:41` |
+| `EVPN_TUNNEL_PORT_PREFIX` | `"Port_EVPN_"` | [EVPN](../../reference/glossary.md#term-evpn) remote [VTEP](../../reference/glossary.md#term-vtep) トンネルポート名のプレフィクス | `vxlanorch.h:42` |
 | `EVPN_TUNNEL_NAME_PREFIX` | `"EVPN_"` | EVPN 動的 DIP トンネル名のプレフィクス | `vxlanorch.h:43` |
 
 ### MAP_T 列挙 → SAI マッピングテーブル
@@ -262,7 +262,7 @@ HW にマッピング実体が存在しない状態となる。後続の `delOpe
 
 | 列挙値 | 使用箇所 |
 |--------|---------|
-| `TUNNEL_MAP_USE_DEDICATED_ENCAP_DECAP` | CLI / NVO VTEP 用（**VXLAN_TUNNEL_MAP 追加時**） (`vxlanorch.cpp:2070`) |
+| `TUNNEL_MAP_USE_DEDICATED_ENCAP_DECAP` | CLI / NVO [VTEP](../../reference/glossary.md#term-vtep) 用（**VXLAN_TUNNEL_MAP 追加時**） (`vxlanorch.cpp:2070`) |
 | `TUNNEL_MAP_USE_COMMON_ENCAP_DECAP` | EVPN remote DIP トンネル生成時 (`vxlanorch.cpp:1169`) |
 | `TUNNEL_MAP_USE_COMMON_DECAP_DEDICATED_ENCAP` | 混在モード（内部利用） |
 | `TUNNEL_MAP_USE_DECAP_ONLY` | decap 専用（内部利用） |
@@ -360,11 +360,11 @@ APPL_DB 書込 → Redis Lists → orchagent VxlanTunnelMapOrch ConsumerStateTab
 
 <!-- evidence: meta/_intermediate/cdb-flow/vxlan-tunnel-map-platform.md; sonic-swss/orchagent/vxlanorch.cpp -->
 
-`VXLAN_TUNNEL_MAP` の SAI オブジェクト生成・削除パスは、`VxlanTunnelOrch` 初期化時に実行される SAI ケーパビリティクエリによって P2P / P2MP モードが決定され、ASIC 種別によって挙動が分岐する。
+`VXLAN_TUNNEL_MAP` の SAI オブジェクト生成・削除パスは、`VxlanTunnelOrch` 初期化時に実行される SAI ケーパビリティクエリによって P2P / P2MP モードが決定され、[ASIC](../../reference/glossary.md#term-asic) 種別によって挙動が分岐する。
 
 ### SAI ケーパビリティクエリによるモード決定 (vxlanorch.cpp:1256-1274)
 
-`VxlanTunnelOrch` コンストラクタ起動時に `sai_query_attribute_enum_values_capability()` で ASIC がサポートするトンネルピアモードを問い合わせる:
+`VxlanTunnelOrch` コンストラクタ起動時に `sai_query_attribute_enum_values_capability()` で [ASIC](../../reference/glossary.md#term-asic) がサポートするトンネルピアモードを問い合わせる:
 
 | 結果 | `is_dip_tunnel_supported` | 動作モード |
 |------|--------------------------|-----------|
@@ -372,7 +372,7 @@ APPL_DB 書込 → Redis Lists → orchagent VxlanTunnelMapOrch ConsumerStateTab
 | `SAI_TUNNEL_PEER_MODE_P2P` が列挙に含まれる | `true` | P2P モード（DIP トンネルあり） |
 | `SAI_TUNNEL_PEER_MODE_P2P` が列挙にない（P2MP のみ） | `false` | P2MP モード（DIP トンネルなし） |
 
-CONFIG_DB の `VXLAN_TUNNEL_MAP` スキーマにこの差異を制御するフィールドはなく、**ASIC の SAI 実装次第で自動選択される**。
+CONFIG_DB の `VXLAN_TUNNEL_MAP` スキーマにこの差異を制御するフィールドはなく、**[ASIC](../../reference/glossary.md#term-asic) の SAI 実装次第で自動選択される**。
 
 ### MAP addOperation() でのプラットフォーム分岐
 
@@ -565,4 +565,4 @@ VRF  (VRFOrch)  ───┼──→ VXLAN_TUNNEL ──→ VXLAN_TUNNEL_MAP
 
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 121cb3ca4e5a -->
+<!-- glossary-links-injected: 553e0b66dc06 -->

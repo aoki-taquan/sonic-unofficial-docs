@@ -110,7 +110,7 @@ GNMI|certs      # TLS 証明書パス
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`GNMI_CLIENT_CERT`](gnmi-client-cert.md), [`DEVICE_METADATA`](device-metadata.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `GNMI_CLIENT_CERT`, [`DEVICE_METADATA`](device-metadata.md)
 - 関連 CLI: `config gnmi`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-gnmi`
 
@@ -469,7 +469,7 @@ processTelemetryClientConfig(ctx, redisDb, key, op)
 
 ### gNMI Subscribe RPC — DB データの keyspace 購読
 
-`telemetry` は外部 gNMI クライアントからの **Subscribe RPC** を受けると、要求されたパス (例: `STATE_DB/PORT_TABLE/Ethernet0`) に対応する Redis DB へ `PSubscribe __keyspace@<N>__:<table>|<key>*` を張る。この購読は `GNMI|gnmi` テーブル自体ではなく、gNMI クライアントが監視したい任意の SONiC DB テーブルを対象とする (`sonic_data_client/db_client.go:1419-1447`)。
+`telemetry` は外部 gNMI クライアントからの **Subscribe RPC** を受けると、要求されたパス (例: `STATE_DB/PORT_TABLE/Ethernet0`) に対応する Redis DB へ `PSubscribe __keyspace@<N>__:<table>|<key>*` を張る。この購読は `GNMI|gnmi` テーブル自体ではなく、gNMI クライアントが監視したい任意の [SONiC](../../reference/glossary.md#term-sonic) DB テーブルを対象とする (`sonic_data_client/db_client.go:1419-1447`)。
 
 | Subscribe モード | 実装 | キャッシュ更新トリガー |
 |----------------|------|-------------------|
@@ -515,7 +515,7 @@ fi
 
 ### 管理 VRF 対応機種 — `--vrf mgmt` 付与
 
-`gnmi-native.sh:95-98` の条件分岐は ASIC 種別非依存であり、管理 VRF 機能を有効化した全機種に共通する。
+`gnmi-native.sh:95-98` の条件分岐は [ASIC](../../reference/glossary.md#term-asic) 種別非依存であり、管理 VRF 機能を有効化した全機種に共通する。
 
 | 条件 | 挙動 |
 |------|------|
@@ -532,7 +532,7 @@ GNMI テーブルは host namespace の CONFIG_DB にのみ存在する。`gnmi-
 
 ### ASIC 種別・YANG 差異なし
 
-`telemetry/telemetry.go`, `gnmi-native.sh`, `gnmi_server/clientCertAuth.go` を `platform|asic|broadcom|mellanox|marvell|vendor` で grep → **0 ヒット**（無関係なコメントを除く）。gNMI サーバは [SAI](../../reference/glossary.md#term-sai) 非経由であり、ASIC ドライバに依存するコードパスを持たない。
+`telemetry/telemetry.go`, `gnmi-native.sh`, `gnmi_server/clientCertAuth.go` を `platform|asic|broadcom|mellanox|marvell|vendor` で grep → **0 ヒット**（無関係なコメントを除く）。gNMI サーバは [SAI](../../reference/glossary.md#term-sai) 非経由であり、[ASIC](../../reference/glossary.md#term-asic) ドライバに依存するコードパスを持たない。
 
 `sonic-gnmi.yang` は単一ファイルであり、platform 固有の if-feature / deviation なし。すべての機種で同一 YANG スキーマが適用される。
 
@@ -551,10 +551,10 @@ GNMI テーブルは host namespace の CONFIG_DB にのみ存在する。`gnmi-
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-gnmi`](../yang/sonic-gnmi.md)
-- CONFIG_DB: [`GNMI_CLIENT_CERT`](gnmi-client-cert.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-gnmi`
+- CONFIG_DB: `GNMI_CLIENT_CERT`
 - 関連ページ: [gNMI 利用ガイド](../../management/gnmi-usage.md)
 
 <!-- ref-triangle:end -->
 
-<!-- glossary-links-injected: 639b97382f4c -->
+<!-- glossary-links-injected: 1288c04b3f8a -->

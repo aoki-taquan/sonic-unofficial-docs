@@ -104,7 +104,7 @@ bool oper  = flags & IFF_RUNNING;   // netdev_oper_status
 
 ### `mtu`
 
-`rtnl_link_get_mtu(link)` で取得したカーネル netdev の MTU を文字列化して書き込む。CONFIG\_DB `PORT.mtu` が [orchagent](../../reference/glossary.md#term-orchagent) 経由で ASIC に設定された結果としてカーネル MTU に反映されるが、あくまでカーネル値を読む。
+`rtnl_link_get_mtu(link)` で取得したカーネル netdev の MTU を文字列化して書き込む。CONFIG\_DB `PORT.mtu` が [orchagent](../../reference/glossary.md#term-orchagent) 経由で [ASIC](../../reference/glossary.md#term-asic) に設定された結果としてカーネル MTU に反映されるが、あくまでカーネル値を読む。
 
 ### `speed`
 
@@ -156,7 +156,7 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 | 1 | APP_DB `PORT_TABLE` の存在 → `portsyncd` の [STATE_DB](../../reference/glossary.md#term-state_db) 書き込み許可 | **強制先行** | [orchagent](../../reference/glossary.md#term-orchagent) が APP_DB を書くまで [STATE_DB](../../reference/glossary.md#term-state_db) エントリは不在 |
 | 2 | 起動時 `ip link set down` → RTM_NEWLINK 再受信 → [STATE_DB](../../reference/glossary.md#term-state_db) 更新 | 起動シーケンス依存 | 旧インタフェースからの RTM は無視ガードで除外 |
 | 3 | `portsyncd` 4 フィールドの atomic set | 同一 RTM_NEWLINK イベント内で原子的 | 順序依存なし |
-| 4 | PortsOrch ポート初期化完了 → `supported_speeds` / `supported_fecs` 書き込み | **強制先行**（serdes 設定後） | 起動直後は不在。SAI キャッシュ後は変化しない |
+| 4 | [PortsOrch](../../reference/glossary.md#term-portsorch) ポート初期化完了 → `supported_speeds` / `supported_fecs` 書き込み | **強制先行**（serdes 設定後） | 起動直後は不在。SAI キャッシュ後は変化しない |
 | 5 | SAI admin set 成功 → `host_tx_ready = "true"` | **強制先行**（SAI 成功必須） | CMIS 環境は SAI コールバック経由 |
 | 6 | oper UP → speed / fec 更新 | oper UP 依存（DOWN 時 stale 残留） | consumer は `netdev_oper_status` で補正 |
 | 7 | `CONFIG_DB PORT.autoneg` 変更 → `rmt_adv_speeds` 書き込み/削除 | [CONFIG_DB](../../reference/glossary.md#term-config_db) イベント依存 | autoneg OFF で自動 hdel |
@@ -244,7 +244,7 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 |------------------|-----|----------|-----------|
 | `PORT_STATE_POLLING_SEC` | `5` | `portsorch.cpp:86` | `m_port_state_poller` の SelectableTimer 周期 [秒]。SAI イベント通知が失敗した場合に `refreshPortStatus()` がポート oper 状態を最大 5 秒遅れで STATE_DB に書き込む |
 | `PORT_SPEED_LIST_DEFAULT_SIZE` | `16` | `portsorch.cpp:85` | `getPortSupportedSpeeds()` の SAI クエリ用 vector 初期サイズ。サポート速度数が 16 を超える場合は SAI が `SAI_STATUS_BUFFER_OVERFLOW` を返し、vector が自動リサイズされる |
-| `MAX_MACSEC_SECTAG_SIZE` | `32` | `portsorch.h:28` | MACsec SecTAG ヘッダのバイトサイズ。`setPortMtu()` 内で MACsec 有効時の SAI MTU 設定値を `requested_mtu - 32` で算出するため、MACsec 環境では STATE_DB `mtu` フィールドがカーネル設定値より 32 大きくなる可能性がある (`portsorch.cpp:6756-6759`) |
+| `MAX_MACSEC_SECTAG_SIZE` | `32` | `portsorch.h:28` | [MACsec](../../reference/glossary.md#term-macsec) SecTAG ヘッダのバイトサイズ。`setPortMtu()` 内で [MACsec](../../reference/glossary.md#term-macsec) 有効時の SAI MTU 設定値を `requested_mtu - 32` で算出するため、[MACsec](../../reference/glossary.md#term-macsec) 環境では STATE_DB `mtu` フィールドがカーネル設定値より 32 大きくなる可能性がある (`portsorch.cpp:6756-6759`) |
 | `"ok"` | 文字列リテラル | `linksync.cpp:196` | `state` フィールドの固定値。RTM\_NEWLINK 受信時に必ずこの値が書き込まれ、`"error"` 等の他の値はコードに存在しない |
 | `"N/A"` | 文字列リテラル | `portsorch.cpp:9855, 9919, 3292` | `speed` / `fec` / `supported_fecs` のフォールバック文字列。SAI 取得失敗・変換不可時にフィールド不在ではなく `"N/A"` 文字列として書き込まれる |
 | `"false"` | 文字列リテラル | `portsorch.cpp:2203, 2274` | `host_tx_ready` の初期値。`initHostTxReadyState()` でフィールド未設定時、および admin DOWN / Gearbox 失敗時に書き込まれる |
@@ -287,7 +287,7 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 
 3. **`admin_status` は CONFIG\_DB と独立**: linksync が書き込む `admin_status` はカーネル IFF\_UP フラグ由来で、CONFIG\_DB `PORT.admin_status` とは非同期で動く。通常は同期しているが、起動シーケンス中は一時的に乖離する可能性がある。
 
-4. **`mtu` の二重管理**: CONFIG\_DB `PORT.mtu` → orchagent → SAI → カーネル netdev という経路で MTU が設定されるが、STATE\_DB `PORT_TABLE.mtu` はカーネル MTU を直接読む。orchagent が ASIC に設定した MTU と STATE\_DB の値は通常一致するが、遅延がある。
+4. **`mtu` の二重管理**: CONFIG\_DB `PORT.mtu` → orchagent → SAI → カーネル netdev という経路で MTU が設定されるが、STATE\_DB `PORT_TABLE.mtu` はカーネル MTU を直接読む。orchagent が [ASIC](../../reference/glossary.md#term-asic) に設定した MTU と STATE\_DB の値は通常一致するが、遅延がある。
 
 5. **`host_tx_ready` の CMIS 依存**: `m_cmisModuleAsicSyncSupported` が true の場合、orchagent は `host_tx_ready` を直接制御しない。SAI コールバック `on_port_host_tx_ready` (portsorch.cpp:977) が代わりに呼ばれる。100G ZR など光トランシーバ環境ではこのフラグが重要。
 
@@ -366,9 +366,9 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 
 ### 副次書き込みなし（直接）
 
-- **[ASIC_DB](../../reference/glossary.md#term-asic_db)**: PORT_TABLE への書き込みは [ASIC_DB](../../reference/glossary.md#term-asic_db) に直接波及しない。[ASIC_DB](../../reference/glossary.md#term-asic_db) への書き込みは PortsOrch が SAI 経由で独立して行う。
+- **[ASIC_DB](../../reference/glossary.md#term-asic_db)**: PORT_TABLE への書き込みは [ASIC_DB](../../reference/glossary.md#term-asic_db) に直接波及しない。[ASIC_DB](../../reference/glossary.md#term-asic_db) への書き込みは [PortsOrch](../../reference/glossary.md#term-portsorch) が SAI 経由で独立して行う。
 - **[COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)**: PORT_TABLE の SET/DEL はカウンタグループ設定を変更しない。
-- **STATE_DB（自テーブル以外）**: [portsyncd](../../reference/glossary.md#term-portsyncd) / PortsOrch の PORT_TABLE 書き込みは他の STATE_DB テーブルへの直接副次書き込みを行わない。
+- **STATE_DB（自テーブル以外）**: [portsyncd](../../reference/glossary.md#term-portsyncd) / [PortsOrch](../../reference/glossary.md#term-portsorch) の PORT_TABLE 書き込みは他の STATE_DB テーブルへの直接副次書き込みを行わない。
 
 <!-- /side-effects -->
 
@@ -439,7 +439,7 @@ intfmgrd (swss::Select, SELECT_TIMEOUT=1000 ms)
 #### DPU (gMySwitchType == "dpu")
 
 [DPU](../../reference/glossary.md#term-dpu) 環境では `postPortInit()` (portsorch.cpp:6449) 内で buffer 最大値パラメータ初期化をスキップし、
-`initializePorts()` (portsorch.cpp:6589) で Priority Group / Queue / [Scheduler](../../reference/glossary.md#term-scheduler) Group の
+`initializePorts()` (portsorch.cpp:6589) で [Priority Group](../../reference/glossary.md#term-priority-group) / Queue / [Scheduler](../../reference/glossary.md#term-scheduler) Group の
 一括初期化もスキップする。
 
 STATE_DB `PORT_TABLE` への書き込みフィールド自体は非 [DPU](../../reference/glossary.md#term-dpu) と同一。
@@ -493,4 +493,4 @@ VoQ 環境の PHY ポートは `updateSystemPort()` (portsorch.cpp:11033) で
 - STATE\_DB: [`FEC ステート`](fec-state.md) — `fec` / `supported_fecs` フィールドの詳細
 - CLI: `show interfaces status` — oper speed / admin\_status / mtu の表示
 
-<!-- glossary-links-injected: e68424f7234c -->
+<!-- glossary-links-injected: 817ed393b094 -->

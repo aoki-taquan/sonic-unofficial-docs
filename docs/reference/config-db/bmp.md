@@ -24,7 +24,7 @@ hard: 0
 [BGP](../../reference/glossary.md#term-bgp) Monitoring Protocol (BMP, RFC 7854) の **テーブルダンプ機能のオンオフ**を設定するテーブル[^1]。
 BMP collector への接続自体は `BGP_MONITORS` で定義し、`BMP` テーブルは「どのテーブルダンプ ([BGP](../../reference/glossary.md#term-bgp) neighbor / Adj-RIB-In / Adj-RIB-Out) を送るか」のフラグだけを持つ。
 
-`openbmpd`（BMP collector 側）ではなく、SONiC スイッチ側の BMP exporter を制御する想定。
+`openbmpd`（BMP collector 側）ではなく、[SONiC](../../reference/glossary.md#term-sonic) スイッチ側の BMP exporter を制御する想定。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -140,7 +140,7 @@ show bmp
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし ([FRR](../../reference/glossary.md#term-frr) vtysh 経由で BMP 設定)
+なし ([FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) 経由で BMP 設定)
 
 ### 段階 3 — APPL→SAI
 
@@ -167,7 +167,7 @@ show bmp
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -243,7 +243,7 @@ show bmp
 - **`CONFIG_DB` 無限リトライ**: `retry_on=True` により Redis 応答まで無限ブロック。デーモン停止のトリガーにはならない。
 - **`BMP_STATE_DB` 接続は 1 回のみ**: `SonicV2Connector.connect()` は `__init__` で 1 度のみ呼ばれる。接続断後の自動復旧機構はない。
 - **`supervisorctl` 呼び出しの failure-silencing**: `stop_bmp()` / `start_bmp()` は returncode を確認しない。openbmpd 起動失敗が bmpcfgd に伝わらず、BMP 機能が静かに停止したままになるリスクがある。
-- **vtysh 非使用**: `bmpcfgd.py` は vtysh / FRR CLI を直接呼び出さない。frrcfgd.py の vtysh 失敗経路は BMP テーブル処理に関与しない。
+- **[vtysh](../../reference/glossary.md#term-vtysh) 非使用**: `bmpcfgd.py` は [vtysh](../../reference/glossary.md#term-vtysh) / FRR CLI を直接呼び出さない。frrcfgd.py の vtysh 失敗経路は BMP テーブル処理に関与しない。
 
 <!-- /failure -->
 <!-- side-effects -->
@@ -495,10 +495,10 @@ FRR テンプレートおよびデーモンコードに埋め込まれた定数�
 | 確認観点 | 結果 | ソース |
 |---------|------|--------|
 | ビルドフラグ `INCLUDE_SYSTEM_BMP` | `rules/config` でデフォルト `y`。プラットフォーム別 `.mk` による上書きなし | `sonic-buildimage/rules/config:163`、`platform/*/` 全 `.mk` 0 ヒット |
-| `bmpcfgd.py` の ASIC / namespace 分岐 | `device_info` / `is_multi_npu()` / `asic_id` / `namespace` への参照が全 98 行で 0 ヒット | `sonic-bmpcfgd/bmpcfgd/bmpcfgd.py` 全行 |
+| `bmpcfgd.py` の [ASIC](../../reference/glossary.md#term-asic) / namespace 分岐 | `device_info` / `is_multi_npu()` / `asic_id` / `namespace` への参照が全 98 行で 0 ヒット | `sonic-bmpcfgd/bmpcfgd/bmpcfgd.py` 全行 |
 | `frrcfgd.py` との関係 | `frrcfgd.py` 内に "bmp" / "BMP" 文字列が 0 ヒット。BMP は `frrcfgd` 経由なし | `sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` |
 | `docker-sonic-bmp` コンテナ | ベースは `docker-config-engine-bookworm` のみ。[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) 依存なし | `dockers/docker-sonic-bmp/Dockerfile.j2` |
-| [SAI](../../reference/glossary.md#term-sai) 経由の有無 | BMP は TCP レベルのアプリケーション層プロトコル。SAI / ASIC 非依存 | アーキテクチャ上自明 |
+| [SAI](../../reference/glossary.md#term-sai) 経由の有無 | BMP は TCP レベルのアプリケーション層プロトコル。SAI / [ASIC](../../reference/glossary.md#term-asic) 非依存 | アーキテクチャ上自明 |
 
 multi-asic 構成でも `bmpcfgd` は host CONFIG_DB の `BMP` テーブルのみを購読し、`asicN` namespace への接続は実装されていない。
 <!-- /platform -->
@@ -544,9 +544,9 @@ multi-asic 構成でも `bmpcfgd` は host CONFIG_DB の `BMP` テーブルの�
 | `BMP_STATE_DB.BGP_RIB_IN_TABLE*` | State テーブル | BMP → BMP_STATE_DB | 間接（openbmpd） | `bmpcfgd.py` L64 |
 | `BMP_STATE_DB.BGP_RIB_OUT_TABLE*` | State テーブル | BMP → BMP_STATE_DB | 間接（openbmpd） | `bmpcfgd.py` L65 |
 | `CONFIG_DB.BGP_NEIGHBOR` | CONFIG テーブル | BGP_NEIGHBOR → BMP dump 対象 | 間接（openbmpd peer リスト） | `bgpcfgd/main.py` L87 |
-| `CONFIG_DB.DEVICE_METADATA.bgp_asn` | CONFIG テーブル | DEVICE_METADATA → FRR `bmp targets` 注入の前提 | 間接（FRR j2 テンプレート） | `bgpd.main.conf.j2:94-136` |
+| `CONFIG_DB.DEVICE_METADATA.bgp_asn` | CONFIG テーブル | [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) → FRR `bmp targets` 注入の前提 | 間接（FRR j2 テンプレート） | `bgpd.main.conf.j2:94-136` |
 | `CONFIG_DB.FEATURE[bmp\|frr_bmp].state` | CONFIG テーブル | FEATURE → FRR `bmp targets` 有効化の前提 | 間接（FRR j2 テンプレート） | `bgpd.main.conf.j2:125-128` |
 
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: cf2715cc523e -->
+<!-- glossary-links-injected: f043335951ec -->

@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-SONiC の [CONFIG_DB](../../reference/glossary.md#term-config_db) には独立した `CLUSTER` テーブルは存在しない。「cluster」概念は以下の 2 テーブルのフィールドとして実装されている[^1]。
+[SONiC](../../reference/glossary.md#term-sonic) の [CONFIG_DB](../../reference/glossary.md#term-config_db) には独立した `CLUSTER` テーブルは存在しない。「cluster」概念は以下の 2 テーブルのフィールドとして実装されている[^1]。
 
 | テーブル | キー | フィールド | 意味 |
 |---------|------|-----------|------|
@@ -106,7 +106,7 @@ elif node.tag == str(QName(ns, "ClusterName")):
 ```
 
 - `<ClusterName>` タグが**存在しない**場合: `cluster = None` のまま → `if cluster != None:` が False → 書き込まない
-- `<ClusterName>` タグが**存在し空文字列**の場合: `cluster = ""` → `if cluster != None:` が True → 空文字列 `""` が書き込まれる (DEVICE_METADATA と挙動が異なる)
+- `<ClusterName>` タグが**存在し空文字列**の場合: `cluster = ""` → `if cluster != None:` が True → 空文字列 `""` が書き込まれる ([DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) と挙動が異なる)
 - `<ClusterName>` タグが**存在し非空**の場合: 値を書き込む
 
 #### 非対称性のまとめ
@@ -191,7 +191,7 @@ leaf cluster {
 
 | 消費元 | 参照箇所 | 使用目的 |
 |-------|---------|---------|
-| `minigraph.py:2170` | `get('cluster', "")` | 自ノード cluster 名を DEVICE_METADATA に書き込む前処理 |
+| `minigraph.py:2170` | `get('cluster', "")` | 自ノード cluster 名を [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) に書き込む前処理 |
 | `swss_vars.j2` | Jinja2 変数参照 | template 展開 (存在しない場合は空文字列) |
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -343,7 +343,7 @@ XML に `<ClusterName></ClusterName>` (空タグ) が存在する場合、`node.
 | 定数 / パターン | 値 | 用途 | ソース |
 |----------------|-----|------|--------|
 | XML タグ名 | `"ClusterName"` | minigraph XML からクラスタ名を読み出すタグ名。リテラルとして埋め込み | `minigraph.py:514` |
-| CONFIG_DB フィールドキー | `"cluster"` | DEVICE_METADATA / DEVICE_NEIGHBOR_METADATA の両テーブルで共通のフィールド名 | `minigraph.py:668, 811, 2172` |
+| CONFIG_DB フィールドキー | `"cluster"` | [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) / DEVICE_NEIGHBOR_METADATA の両テーブルで共通のフィールド名 | `minigraph.py:668, 811, 2172` |
 | `parse_device()` 初期値 | `None` | cluster 変数を `None` で初期化。XML タグが存在しない場合はこのまま返却 | `minigraph.py:493` |
 | `get()` フォールバック | `""` (空文字列) | `devices[...].get('cluster', "")` の第 2 引数。DEVICE_METADATA 書き込み前の展開値 | `minigraph.py:2170` |
 
@@ -423,7 +423,7 @@ minigraph XML (<ClusterName>) → minigraph.py parse_device()
 
 ### 購読なし（write-only フィールド）の理由
 
-`cluster` はデータセンター内のネットワーク論理グループ識別子であり、SONiC ランタイムの転送・バッファ・[ACL](../../reference/glossary.md#term-acl) 処理には影響しない。SONiC のデーモン群は自ノードの `cluster` 名を参照して動作を変える設計を持たないため、`SubscriberStateTable` / `ConsumerStateTable` によるリアルタイム通知チャンネルが存在しない。
+`cluster` はデータセンター内のネットワーク論理グループ識別子であり、[SONiC](../../reference/glossary.md#term-sonic) ランタイムの転送・バッファ・[ACL](../../reference/glossary.md#term-acl) 処理には影響しない。[SONiC](../../reference/glossary.md#term-sonic) のデーモン群は自ノードの `cluster` 名を参照して動作を変える設計を持たないため、`SubscriberStateTable` / `ConsumerStateTable` によるリアルタイム通知チャンネルが存在しない。
 
 !!! note "keyspace 通知は発火するが受信者なし"
     `sonic-cfggen` が `HSET "DEVICE_METADATA|localhost" cluster <name>` を実行すると Redis keyspace 通知 (`__keyspace@4__:DEVICE_METADATA|localhost`) は発火する。しかし、この通知を `cluster` フィールドとして処理するデーモンが存在しないため、通知は実質的に無効。
@@ -438,7 +438,7 @@ minigraph XML (<ClusterName>) → minigraph.py parse_device()
 
 ### SAI 非経由フィールド
 
-`cluster` は CONFIG_DB (`DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA`) にのみ書き込まれ、[SAI](../../reference/glossary.md#term-sai)・ASIC を経由しない。ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium 等) による差異はない。
+`cluster` は CONFIG_DB (`DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA`) にのみ書き込まれ、[SAI](../../reference/glossary.md#term-sai)・[ASIC](../../reference/glossary.md#term-asic) を経由しない。[ASIC](../../reference/glossary.md#term-asic) ベンダー (Broadcom / Mellanox / Marvell / Innovium 等) による差異はない。
 
 ### シングル ASIC vs マルチ ASIC
 
@@ -446,7 +446,7 @@ minigraph XML (<ClusterName>) → minigraph.py parse_device()
 
 | 構成 | 呼び出し関数 | 書き込み先 | ロジック差異 |
 |------|------------|-----------|------------|
-| シングル ASIC / 非チャーシス | `parse_png()` | `DEVICE_NEIGHBOR_METADATA\|<dev>` | `if cluster != None:` のみ |
+| シングル [ASIC](../../reference/glossary.md#term-asic) / 非チャーシス | `parse_png()` | `DEVICE_NEIGHBOR_METADATA\|<dev>` | `if cluster != None:` のみ |
 | マルチ ASIC / チャーシス | `parse_asic_png()` | 各 ASIC namespace の `DEVICE_NEIGHBOR_METADATA\|<dev>` | `if cluster != None:` のみ（同一） |
 | 全構成共通 | `parse_xml()` (L2170) | `DEVICE_METADATA\|localhost` | `if cluster:` (truthy check) |
 
@@ -471,4 +471,4 @@ minigraph XML (<ClusterName>) → minigraph.py parse_device()
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: ab5ce810f103 -->
+<!-- glossary-links-injected: c67cb67420af -->

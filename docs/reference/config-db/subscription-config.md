@@ -560,13 +560,13 @@ __keyspace@<CONFIG_DB_ID>__:TELEMETRY_CLIENT|*
 ns, _ := sdcfg.GetDbDefaultNamespace()  // 常に "" (デフォルト namespace) を返す
 ```
 
-このため multi-ASIC 構成でも:
+このため multi-[ASIC](../../reference/glossary.md#term-asic) 構成でも:
 
 | 観点 | 挙動 |
 |------|------|
 | 参照 CONFIG_DB | ホスト global namespace の `TELEMETRY_CLIENT` のみ |
-| per-ASIC namespace の `TELEMETRY_CLIENT` | 無視される（`dialout_client` には届かない） |
-| `TELEMETRY_CLIENT` 設定の単位 | 全 ASIC 共通で 1 つの設定セット |
+| per-[ASIC](../../reference/glossary.md#term-asic) namespace の `TELEMETRY_CLIENT` | 無視される（`dialout_client` には届かない） |
+| `TELEMETRY_CLIENT` 設定の単位 | 全 [ASIC](../../reference/glossary.md#term-asic) 共通で 1 つの設定セット |
 
 ### ビルドフラグ
 
@@ -582,13 +582,16 @@ Supervisor Card 上のホスト CONFIG_DB の `TELEMETRY_CLIENT` のみが有効
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-telemetry_client`](../yang/sonic-telemetry_client.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-telemetry_client`
 - [CONFIG_DB: TELEMETRY_CLIENT](telemetry-client.md) (テーブル全体の概要)
 - [CONFIG_DB: TELEMETRY](telemetry.md) (dial-in 側設定)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
+
+<!-- footnote anchor seeds -->
+出典: [^1]
 
 [^1]: YANG 定義: `sonic-telemetry_client.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-telemetry_client.yang>
 
@@ -601,4 +604,4 @@ Supervisor Card 上のホスト CONFIG_DB の `TELEMETRY_CLIENT` のみが有効
 
 <!-- glossary-links-injected: subscription-config -->
 
-<!-- glossary-links-injected: 661e7b29f7eb -->
+<!-- glossary-links-injected: 8df9850464d2 -->

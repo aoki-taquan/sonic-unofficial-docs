@@ -51,7 +51,7 @@ related:
 ## 2. 既知の懸念点（Verifier hint）
 
 - [linkmgrd](../reference/glossary.md#term-linkmgrd) の LinkProber / MuxState / LinkState / LinkManager 4 サブモジュールの現行実装確認 — 実装の構成は `link_prober/` / `mux_state/` / `link_manager/` の 3 ディレクトリ + `DbInterface.cpp` で概ね一致を確認済
-- MuxOrch の neighbor handling 3 案のうちどれが採用されているか確認 — `createStandaloneTunnelRoute` / `removeStandaloneTunnelRoute` 案で確定
+- [MuxOrch](../reference/glossary.md#term-muxorch) の neighbor handling 3 案のうちどれが採用されているか確認 — `createStandaloneTunnelRoute` / `removeStandaloneTunnelRoute` 案で確定
 - ycabled の I2C リトライ + MUX_FAIL 報告ロジック実装確認
 - 6.3.5.1 の Loopback0 宛 encap パケット listen + ping 駆動 service の所在確認
 - 6.3.5.2 の zero mac neighbor + tunnel route 自動 install の [neighsyncd](../reference/glossary.md#term-neighsyncd) / muxorch 実装確認
@@ -78,4 +78,4 @@ related:
 
 [^1]: `sonic-net/SONiC` `doc/dualtor/dualtor_active_standby_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 899526be8f4a -->
+<!-- glossary-links-injected: 0a1df176ebd3 -->

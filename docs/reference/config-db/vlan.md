@@ -457,20 +457,20 @@ APP_DB `VLAN_TABLE` の `host_ifname` フィールドが設定されている場
 
 ### カーネル Linux bridge vs SAI VLAN — 二重平面の非対称動作
 
-SONiC の VLAN 制御は 2 平面で並列動作し、互いの完了を待たない:
+[SONiC](../../reference/glossary.md#term-sonic) の VLAN 制御は 2 平面で並列動作し、互いの完了を待たない:
 
 | 平面 | コンポーネント | 実装 |
 |------|--------------|------|
 | カーネル側 | vlanmgrd | `ip link add Bridge type bridge`、`bridge vlan add vid <N>` |
-| ASIC/SAI 側 | [orchagent](../../reference/glossary.md#term-orchagent) (VlanOrch) | `sai_vlan_api->create_vlan(SAI_VLAN_ATTR_VLAN_ID)` のみ |
+| [ASIC](../../reference/glossary.md#term-asic)/SAI 側 | [orchagent](../../reference/glossary.md#term-orchagent) (VlanOrch) | `sai_vlan_api->create_vlan(SAI_VLAN_ATTR_VLAN_ID)` のみ |
 
 - **DPU モードでもカーネル bridge は作成される**。DPU の転送はカーネル bridge を通過しないため、カーネル bridge は制御面・管理面専用となる[^plat2]。
 - **MTU 非対称**: vlanmgrd は `DEFAULT_MTU_STR=9100` を APP_DB に書くが、カーネル netdev MTU の設定は TODO 状態 (vlanmgr.cpp:401-406)。ホスト側と SAI 側で MTU が乖離し得る[^plat2]。
-- **SAI デフォルト属性依存**: `create_vlan()` は `SAI_VLAN_ATTR_VLAN_ID` のみ指定し flooding control 等はベンダー SAI デフォルトに委ねる (portsorch.cpp:7392)。VS SAI と実 ASIC SAI でデフォルト挙動が異なる[^plat1]。
+- **SAI デフォルト属性依存**: `create_vlan()` は `SAI_VLAN_ATTR_VLAN_ID` のみ指定し flooding control 等はベンダー SAI デフォルトに委ねる (portsorch.cpp:7392)。VS SAI と実 [ASIC](../../reference/glossary.md#term-asic) SAI でデフォルト挙動が異なる[^plat1]。
 
 ### SAI Flood control capability — `COMBINED` 非対応 ASIC
 
-orchagent 起動時に `sai_query_attribute_enum_values_capability()` で UUC (Unknown Unicast) / BC (Broadcast) の flood control タイプを問い合わせる (portsorch.cpp:900-931)。`SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` をサポートしない ASIC では、[VXLAN](../../reference/glossary.md#term-vxlan) [EVPN](../../reference/glossary.md#term-evpn) エンドポイント (`VLAN_MEMBER.end_point_ip`) を用いた flood group 設定がエラー終了する (portsorch.cpp:7517-7524)。VS (Virtual Switch) SAI は `ALL` / `NONE` / `L2MC_GROUP` の 3 種のみ返し `COMBINED` を返さないため、VS 環境では [EVPN](../../reference/glossary.md#term-evpn) flood group は設定不可[^plat1]。
+orchagent 起動時に `sai_query_attribute_enum_values_capability()` で UUC (Unknown Unicast) / BC (Broadcast) の flood control タイプを問い合わせる (portsorch.cpp:900-931)。`SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` をサポートしない [ASIC](../../reference/glossary.md#term-asic) では、[VXLAN](../../reference/glossary.md#term-vxlan) [EVPN](../../reference/glossary.md#term-evpn) エンドポイント (`VLAN_MEMBER.end_point_ip`) を用いた flood group 設定がエラー終了する (portsorch.cpp:7517-7524)。VS (Virtual Switch) SAI は `ALL` / `NONE` / `L2MC_GROUP` の 3 種のみ返し `COMBINED` を返さないため、VS 環境では [EVPN](../../reference/glossary.md#term-evpn) flood group は設定不可[^plat1]。
 
 ### create_vlan() — SAI 属性最小化とベンダー SAI デフォルト依存
 
@@ -580,4 +580,4 @@ STATE_DB を通じて以下のテーブルを**暗黙的に参照**する。YANG
   `VLAN` を先に SET せずに `VLAN_INTERFACE` を SET すると L3 IF が孤立する。
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 06353fe06907 -->
+<!-- glossary-links-injected: 865a18402f05 -->

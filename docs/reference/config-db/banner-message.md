@@ -124,7 +124,7 @@ CONFIG_DB 書込み → keyspace 通知到達 → `banner_handler` 呼び出し 
 |-----------|----|------|------|
 | `state`  | `admin_mode` (enabled/disabled) | `disabled` | バナー機能の有効化フラグ |
 | `login`  | string | `Debian GNU/Linux 11` | ログインプロンプト前に表示 |
-| `motd`   | string | SONiC アスキーアート + 警告文 | ログイン直後に表示 |
+| `motd`   | string | [SONiC](../../reference/glossary.md#term-sonic) アスキーアート + 警告文 | ログイン直後に表示 |
 | `logout` | string | `""` | ログアウト時に表示 |
 
 <!-- defaults -->
@@ -137,7 +137,7 @@ YANG `default` 文はプロビジョニング時 ([sonic-cfggen](../../reference
 |-----------|-------------|-----------------|--------------------------|
 | `state`   | `disabled`  | `"disabled"`    | `hostcfgd` `.get("state", {})` → `{}` → `banner-config.sh` で `STATE=` (空文字列) → バナー無効と同等 |
 | `login`   | `"Debian GNU/Linux 11"` | `"Debian GNU/Linux 11"` | `.get("login", {})` → `{}` → `state=disabled` 時 no-op、`state=enabled` 時 `LOGIN=` (空文字列) → `/etc/issue` / `/etc/issue.net` 空白化 |
-| `motd`    | SONiC ASCII アート + 警告文 (多行) | 同一内容 | `.get("motd", {})` → `{}` → `state=enabled` 時 `MOTD=` → `/etc/motd` 空白化 |
+| `motd`    | [SONiC](../../reference/glossary.md#term-sonic) ASCII アート + 警告文 (多行) | 同一内容 | `.get("motd", {})` → `{}` → `state=enabled` 時 `MOTD=` → `/etc/motd` 空白化 |
 | `logout`  | `""` (空文字列) | `""` | `.get("logout", {})` → `{}` → `state=enabled` 時 `LOGOUT=` → `/etc/logout_message` 空白化 |
 
 **コード根拠**:
@@ -212,7 +212,7 @@ YANG `default` 文はプロビジョニング時 ([sonic-cfggen](../../reference
 | LOGIN_BANNER_PATH | `/etc/issue` | コンソール (getty) ログインプロンプト前に表示される Linux 標準 issue ファイル | banner-config.sh:13 |
 | LOGIN_NET_BANNER_PATH | `/etc/issue.net` | sshd `Banner /etc/issue.net` ディレクティブ経由で SSH ログイン前に表示される | banner-config.sh:12 |
 | MOTD_PATH | `/etc/motd` | PAM `pam_motd.so` がログイン成功直後に cat する標準 MOTD ファイル | banner-config.sh:14 |
-| LOGOUT_BANNER_PATH | `/etc/logout_message` | SONiC 独自パス。`~/.bash_logout` 等から参照する想定 (Debian 標準ではない) | banner-config.sh:15 |
+| LOGOUT_BANNER_PATH | `/etc/logout_message` | [SONiC](../../reference/glossary.md#term-sonic) 独自パス。`~/.bash_logout` 等から参照する想定 (Debian 標準ではない) | banner-config.sh:15 |
 
 > **注意**: `/etc/logout_message` は Debian / Linux 標準にないファイル名で、SONiC が独自に導入したもの。実際に logout 時に cat されるかは shell プロファイル設定 (`/etc/skel/.bash_logout` 等) に依存する。
 
@@ -511,7 +511,7 @@ show banner
 
 **結論: プラットフォーム差なし**（multi-asic / chassis / ベンダー固有 banner すべて該当なし）。
 
-`BANNER_MESSAGE` はホスト名前空間限定のシングルトンテーブルで、購読者である `hostcfgd` `BannerCfg` と `banner-config.sh` はいずれも Linux ホスト上のテキストファイル (`/etc/issue` / `/etc/issue.net` / `/etc/motd` / `/etc/logout_message`) を書き換えるだけで、SAI / ASIC / chassis ハードウェアには一切タッチしない。
+`BANNER_MESSAGE` はホスト名前空間限定のシングルトンテーブルで、購読者である `hostcfgd` `BannerCfg` と `banner-config.sh` はいずれも Linux ホスト上のテキストファイル (`/etc/issue` / `/etc/issue.net` / `/etc/motd` / `/etc/logout_message`) を書き換えるだけで、SAI / [ASIC](../../reference/glossary.md#term-asic) / chassis ハードウェアには一切タッチしない。
 
 ### 根拠（コード単位）
 
@@ -519,7 +519,7 @@ show banner
 |------|---------|------|
 | multi-asic (namespace 分岐) | なし | `hostcfgd` `BannerCfg` クラス (`sonic-host-services/scripts/hostcfgd:2044-2114`) 全体に `namespace` / `asic_id` / `multi_asic` の参照・分岐なし。グローバル CONFIG_DB のみ参照 |
 | chassis (VoQ / packet-chassis) | なし | `banner-config.sh` は `sonic-db-cli CONFIG_DB HGET 'BANNER_MESSAGE|global' ...` を 4 回呼ぶだけ。`linecard` / `supervisor` / `database-chassis` 分岐なし (`sonic-buildimage/files/image_config/bannerconfig/banner-config.sh:1-18`) |
-| ASIC ベンダー固有 (Broadcom/Mellanox/Marvell/…) | なし | SAI 非経由。Linux ファイル書き換えのみ。`platform/*/` 配下に `banner` 関連オーバーライドファイルなし |
+| [ASIC](../../reference/glossary.md#term-asic) ベンダー固有 (Broadcom/Mellanox/Marvell/…) | なし | SAI 非経由。Linux ファイル書き換えのみ。`platform/*/` 配下に `banner` 関連オーバーライドファイルなし |
 | ビルド時 platform 条件 | なし | `sonic_debian_extension.j2:652-654` で全プラットフォーム共通 (platform 別 `if` の外) に `banner-config.service` / `banner-config.sh` をコピー |
 | systemd template (`@.service`) | なし | `banner-config.service` は単一 unit。`[Install] WantedBy=sonic.target` 固定 (`sonic-buildimage/files/image_config/bannerconfig/banner-config.service:1-14`) |
 | [HLD](../../reference/glossary.md#term-hld) 上の platform 言及 | なし | `SONiC/doc/banner/banner_hld.md` 全文に `asic` / `chassis` / `namespace` / `vendor` の言及なし |
@@ -569,4 +569,4 @@ show banner
 詳細な走査コマンドと grep ヒット一覧は `meta/_intermediate/cdb-flow/banner-message-side.md` を参照。
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 0dff654a160a -->
+<!-- glossary-links-injected: d3bc8f725ce5 -->

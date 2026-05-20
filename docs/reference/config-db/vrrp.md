@@ -38,8 +38,8 @@ related:
 
 | テーブル | 説明 |
 |---------|------|
-| `VRRP` | IPv4 VRRP インスタンス設定 |
-| `VRRP6` | IPv6 VRRP インスタンス設定 |
+| `VRRP` | IPv4 [VRRP](../../reference/glossary.md#term-vrrp) インスタンス設定 |
+| `VRRP6` | IPv6 [VRRP](../../reference/glossary.md#term-vrrp) インスタンス設定 |
 | `VRRP_TRACK` | IPv4 VRRP インスタンスのアップリンク追跡 |
 | `VRRP6_TRACK` | IPv6 VRRP インスタンスのアップリンク追跡 |
 
@@ -109,7 +109,7 @@ RFC 5798 に基づき以下の仮想 MAC が使用される:
 
 ## 購読者
 
-- `macvlanmgrd`: CONFIG_DB の `VRRP` / `VRRP6` テーブルを subscribe し、macvlan デバイスを Linux カーネルに作成。[APPL_DB](../../reference/glossary.md#term-appl_db) の `VRRP_TABLE` に VMAC 情報を書き込む。vtysh 経由で vrrpd に設定を投入する
+- `macvlanmgrd`: CONFIG_DB の `VRRP` / `VRRP6` テーブルを subscribe し、macvlan デバイスを Linux カーネルに作成。[APPL_DB](../../reference/glossary.md#term-appl_db) の `VRRP_TABLE` に VMAC 情報を書き込む。[vtysh](../../reference/glossary.md#term-vtysh) 経由で vrrpd に設定を投入する
 - `vrrpsyncd`: Linux カーネルの macvlan インターフェース状態変化を listen し、[APPL_DB](../../reference/glossary.md#term-appl_db) の `INTF_TABLE` を更新する
 - `intforch`: APPL_DB の `INTF_TABLE` を受けて VIP と仮想 MAC エントリを [ASIC_DB](../../reference/glossary.md#term-asic_db) に書き込む
 
@@ -279,7 +279,7 @@ YANG バリデーションとは独立して CLI が `get_table()` で存在確�
 |---|---|---|
 | macvlanmgrd 未起動時の CONFIG_DB 書き込み | エントリは購読キューに滞留し、macvlanmgrd 起動後にリプレイされて macvlan デバイスが作成される | [HLD](../../reference/glossary.md#term-hld) `Modules Design and Flows` セクション |
 | Linux カーネルが 5.1 未満 | macvlan デバイスの protodown がサポートされないため VRRP 状態機械が正常動作しない | [HLD](../../reference/glossary.md#term-hld) `Operating environment` (L199-200) |
-| vtysh コマンド失敗 ([FRR](../../reference/glossary.md#term-frr) 側) | macvlanmgrd の vtysh 投入失敗時の明示的ロールバック仕様は [HLD](../../reference/glossary.md#term-hld) に記述なし。CONFIG_DB / APPL_DB は書き込み済みのまま | HLD 記述範囲外 |
+| [vtysh](../../reference/glossary.md#term-vtysh) コマンド失敗 ([FRR](../../reference/glossary.md#term-frr) 側) | macvlanmgrd の [vtysh](../../reference/glossary.md#term-vtysh) 投入失敗時の明示的ロールバック仕様は [HLD](../../reference/glossary.md#term-hld) に記述なし。CONFIG_DB / APPL_DB は書き込み済みのまま | HLD 記述範囲外 |
 
 ### Warmboot 非対応
 
@@ -463,8 +463,8 @@ VRRP 仮想ルータインターフェース (Virtual RIF) は `create_router_in
 
 | プラットフォーム状況 | 挙動 | 機能影響 |
 |------------------|------|---------|
-| `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL` をサポート | Virtual RIF として作成。Neighbor エントリを持てない読み取り専用 RIF に最適化。ASIC リソースを節約 | 最適動作 |
-| 未サポート (`sai_query_attribute_capability` 失敗) | 属性なしで通常 RIF として作成 | 機能は維持。ASIC リソースは無駄に消費される場合あり |
+| `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL` をサポート | Virtual RIF として作成。Neighbor エントリを持てない読み取り専用 RIF に最適化。[ASIC](../../reference/glossary.md#term-asic) リソースを節約 | 最適動作 |
+| 未サポート (`sai_query_attribute_capability` 失敗) | 属性なしで通常 RIF として作成 | 機能は維持。[ASIC](../../reference/glossary.md#term-asic) リソースは無駄に消費される場合あり |
 
 RFC 5798 準拠の Virtual RIF では `ADMIN state`・`MTU size`・`packet action`・`multicast enable` の各属性が無効となる（SAI 仕様）。通常 RIF として作成した場合はこれらのリソース最適化が適用されない。
 
@@ -481,12 +481,12 @@ VRRP コントロールパケットの受信は `copporch.cpp` で登録され�
 
 ### Multi-ASIC / VOQ / DPU — 未定義
 
-VRRP_Adaptation_HLD には multi-asic・[VOQ](../../reference/glossary.md#term-voq) chassis・[DPU](../../reference/glossary.md#term-dpu) に関する記述がない。VRRP は Linux macvlan デバイスと FRR `vrrpd` を用いた Linux ネットワークスタック上の機能であるため、ASIC 種別・マルチ ASIC 構成への直接依存は最小となる。
+VRRP_Adaptation_HLD には multi-asic・[VOQ](../../reference/glossary.md#term-voq) chassis・[DPU](../../reference/glossary.md#term-dpu) に関する記述がない。VRRP は Linux macvlan デバイスと FRR `vrrpd` を用いた Linux ネットワークスタック上の機能であるため、[ASIC](../../reference/glossary.md#term-asic) 種別・マルチ ASIC 構成への直接依存は最小となる。
 
 | 構成 | 状況 |
 |------|------|
 | 通常シングル ASIC | 正常動作（設計対象） |
-| Multi-ASIC (`is_multi_npu=True`) | HLD で非対応。`macvlanmgrd` はホスト CONFIG_DB のみを参照し、`asicN` namespace を走査しない |
+| [Multi-ASIC](../../reference/glossary.md#term-multi-asic) (`is_multi_npu=True`) | HLD で非対応。`macvlanmgrd` はホスト CONFIG_DB のみを参照し、`asicN` namespace を走査しない |
 | [VOQ](../../reference/glossary.md#term-voq) chassis | HLD で未定義 |
 | [DPU](../../reference/glossary.md#term-dpu) (`gMySwitchType = "dpu"`) | HLD で未定義 |
 
@@ -527,4 +527,4 @@ sonic-db-cli CONFIG_DB keys 'VRRP_TRACK|*'
 
 <!-- glossary-links-injected: vrrp-phase-b -->
 
-<!-- glossary-links-injected: ca090795a117 -->
+<!-- glossary-links-injected: ad716c1f2069 -->

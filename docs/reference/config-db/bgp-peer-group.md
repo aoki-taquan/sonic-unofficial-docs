@@ -136,7 +136,7 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 
 | 条件 | 挙動 | ソース |
 |------|------|--------|
-| peer-group が FRR に未存在のまま SET が到達 | frrcfgd が `neighbor {} peer-group` を vtysh 実行。失敗時 `failed to create peer-group %s for VRF %s` を LOG_ERR → continue | `frrcfgd.py` L2799 |
+| peer-group が FRR に未存在のまま SET が到達 | frrcfgd が `neighbor {} peer-group` を [vtysh](../../reference/glossary.md#term-vtysh) 実行。失敗時 `failed to create peer-group %s for VRF %s` を LOG_ERR → continue | `frrcfgd.py` L2799 |
 | `local_asn` 未設定 [VRF](../../reference/glossary.md#term-vrf) | LOG_DEBUG して skip | `frrcfgd.py` L2660 |
 | `BGPPeerGroupMgr.update_policy()` の Jinja2 エラー | `log_err` して `return False` | `managers_bgp.py` `update_policy()` |
 | `BGPPeerGroupMgr.update_pg()` の Jinja2 エラー | `log_err` して `return False` | `managers_bgp.py` `update_pg()` |
@@ -156,7 +156,7 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由)
+なし (FRR [vtysh](../../reference/glossary.md#term-vtysh) 経由)
 
 ### 段階 3 — APPL→SAI
 
@@ -243,7 +243,7 @@ peer-group に設定した `peer_type` は、その peer-group に属する全 n
 
 frrcfgd は `BGP_PEER_GROUP` の処理ループ先頭で `__get_vrf_asn(vrf)` を呼び出し、
 当該 VRF の `BGP_GLOBALS.local_asn` を取得する。`None` の場合は LOG_DEBUG を出力して
-当該エントリの処理を **スキップ**（エラーなし）。FRR vtysh コマンド
+当該エントリの処理を **スキップ**（エラーなし）。FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンド
 `router bgp <local_asn> vrf <vrf>` の生成に必須のため、`BGP_GLOBALS` 投入前に
 `BGP_PEER_GROUP` が到達してもすべて破棄される（`frrcfgd.py` L2658–2662）。
 
@@ -288,7 +288,7 @@ FRR `neighbor <pg> route-map <name> in/out` コマンドの `<name>` として�
 | `switch_type=chassis-packet` | `neighbor INTERNAL_PEER_V4/V6 update-source Loopback4096` + `ttl-security hops 1` |
 | `sub_role=BackEnd` | AF 内に `neighbor INTERNAL_PEER_V4/V6 route-reflector-client`；route-map に `set originator-id <Loopback4096>` |
 | `switch_type=chassis-packet && subtype != DownstreamLC` | FALLBACK_COMMUNITY を `set tag route_eligible_for_fallback_to_default_tag` |
-| その他 (single-ASIC) | `route-reflector-client` なし、`update-source` なし |
+| その他 (single-[ASIC](../../reference/glossary.md#term-asic)) | `route-reflector-client` なし、`update-source` なし |
 
 ### VoQ シャーシ peer-group (`peer_type=voq_chassis`)
 
@@ -634,4 +634,4 @@ bgpcfgd テンプレートが参照する runtime 定数。値はデプロイ時
 | local-preference (NO_EXPORT 一致時) | `80` | `FROM_VOQ_CHASSIS V4 permit 2` / `V6 permit 3` の `set local-preference` | `voq_chassis/policies.conf.j2:16,50` |
 <!-- /constants -->
 
-<!-- glossary-links-injected: 7b742164b01f -->
+<!-- glossary-links-injected: 657966932508 -->

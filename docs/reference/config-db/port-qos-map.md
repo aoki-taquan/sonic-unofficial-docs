@@ -173,7 +173,7 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 | 存在しない map 名 | `Object with name:%s not found.` SWSS_LOG_ERROR、適用中断 |
 | 未設定 (optional) | その map は binding しない |
 
-*enum なし — pfc_enable / pfcwd_sw_enable は ([0-7](,[0-7])*)? の string pattern。map 系は leafref。*
+*enum なし — pfc_enable / pfcwd_sw_enable は `([0-7](,[0-7])*)?` の string pattern。map 系は leafref。*
 
 <!-- /value-behavior -->
 
@@ -250,7 +250,7 @@ YANG は全フィールドを optional とし `default` 文なし。エントリ
 | YANG | (なし — optional leafref) | `sonic-port-qos-map.yang` 全行 |
 | ランタイム (未設定時) | SAI_NULL_OBJECT_ID (map 未バインド) | `qosorch.cpp:2119-2133` |
 | ランタイム (DEL 時) | SAI_NULL_OBJECT_ID を明示 set | `qosorch.cpp:2082-2097` |
-| ビルド時 `qos_config.j2` | `dscp_to_tc_map: "AZURE"`, `tc_to_queue_map: "AZURE"`, `tc_to_pg_map: "AZURE"`, `pfc_to_queue_map: "AZURE"`, `pfc_to_pg_map: "AZURE"` (ASIC 対応時) | `qos_config.j2:444-479` |
+| ビルド時 `qos_config.j2` | `dscp_to_tc_map: "AZURE"`, `tc_to_queue_map: "AZURE"`, `tc_to_pg_map: "AZURE"`, `pfc_to_queue_map: "AZURE"`, `pfc_to_pg_map: "AZURE"` ([ASIC](../../reference/glossary.md#term-asic) 対応時) | `qos_config.j2:444-479` |
 
 backend/storage device の場合は `dscp_to_tc_map` の代わりに `dot1p_to_tc_map: "AZURE"` が付与される (`qos_config.j2:435`)。
 
@@ -275,7 +275,7 @@ backend/storage device の場合は `dscp_to_tc_map` の代わりに `dot1p_to_t
 
 ### global エントリの dscp_to_tc_map (db_migrator 自動挿入)
 
-`migrate_port_qos_map_global()` が Broadcom ASIC 限定で `PORT_QOS_MAP|global` に `dscp_to_tc_map` を自動挿入する。値は `DSCP_TO_TC_MAP` テーブルの先頭キー (典型: `"AZURE"`)。既に `global` エントリが存在する場合はスキップ。
+`migrate_port_qos_map_global()` が Broadcom [ASIC](../../reference/glossary.md#term-asic) 限定で `PORT_QOS_MAP|global` に `dscp_to_tc_map` を自動挿入する。値は `DSCP_TO_TC_MAP` テーブルの先頭キー (典型: `"AZURE"`)。既に `global` エントリが存在する場合はスキップ。
 
 ソース: `db_migrator.py:700-715`
 
@@ -445,7 +445,7 @@ PORT_QOS_MAP エントリを SET する前に、参照する全 QoS map テー�
 
 `doTask(Consumer)` の冒頭で `gPortsOrch->allPortsReady()` を確認し、false の間は全 PORT_QOS_MAP 処理をスキップする（`qosorch.cpp:2258`）。また SET / DEL パスともに `gPortsOrch->getPort(port_name, port)` が失敗したポートはスキップされる（`qosorch.cpp:2068, 2180`）。
 
-**PORT テーブルの全対象ポートが PortsOrch に登録済みになってから PORT_QOS_MAP を投入する**。
+**PORT テーブルの全対象ポートが [PortsOrch](../../reference/glossary.md#term-portsorch) に登録済みになってから PORT_QOS_MAP を投入する**。
 
 ### 3. global vs per-port
 
@@ -506,7 +506,7 @@ SET パス内でまず全 map 属性を `sai_port_api->set_port_attribute()` で
 
 ### Broadcom global vs Mellanox / その他 per-port
 
-`db_migrator.py` の `migrate_port_qos_map_global()` が `PORT_QOS_MAP|global` エントリを **Broadcom ASIC 限定** で自動挿入する。
+`db_migrator.py` の `migrate_port_qos_map_global()` が `PORT_QOS_MAP|global` エントリを **Broadcom [ASIC](../../reference/glossary.md#term-asic) 限定** で自動挿入する。
 
 ```python
 asics_require_global_dscp_to_tc_map = ["broadcom"]
@@ -631,7 +631,7 @@ evidence: `qosorch.cpp:2213-2221`
 
 #### PFC Watchdog bitmask の内部状態更新
 
-`gPortsOrch->setPortPfcWatchdogStatus(port.m_port_id, pfcwd_sw_enable)` — **無条件**に呼び出される。PortsOrch 内部の `m_port_list[].m_pfc_bitmask` を更新する（CONFIG_DB / APPL_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) への直接書込なし）。PfcWdOrch がポーリングして参照する。
+`gPortsOrch->setPortPfcWatchdogStatus(port.m_port_id, pfcwd_sw_enable)` — **無条件**に呼び出される。[PortsOrch](../../reference/glossary.md#term-portsorch) 内部の `m_port_list[].m_pfc_bitmask` を更新する（CONFIG_DB / APPL_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) への直接書込なし）。PfcWdOrch がポーリングして参照する。
 
 evidence: `qosorch.cpp:2224`
 
@@ -649,7 +649,7 @@ evidence: `qosorch.cpp:1951-1976, 2030`
 |---|---|---|
 | ASIC_DB (`SAI_OBJECT_TYPE_PORT`) | SAI ポート属性 set/clear ([syncd](../../reference/glossary.md#term-syncd) 経由) | per-port SET / DEL |
 | ASIC_DB (`SAI_OBJECT_TYPE_SWITCH`) | SAI switch 属性 set/clear (syncd 経由) | global SET / DEL |
-| PortsOrch 内部状態 (`m_pfc_bitmask`) | [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) bitmask 更新 | `pfcwd_sw_enable` 省略時も含む無条件 |
+| [PortsOrch](../../reference/glossary.md#term-portsorch) 内部状態 (`m_pfc_bitmask`) | [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) bitmask 更新 | `pfcwd_sw_enable` 省略時も含む無条件 |
 | QosOrch in-process (`m_qos_maps`) | 参照カウント更新 | SET / DEL 両方 |
 | APPL_DB | なし (QosOrch は直接 APPL_DB を書かない) | — |
 | CONFIG_DB | なし | — |
@@ -659,4 +659,4 @@ evidence: `qosorch.cpp:1951-1976, 2030`
 
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 2376e6ba4970 -->
+<!-- glossary-links-injected: 4aeda46c88ba -->

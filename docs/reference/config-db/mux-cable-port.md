@@ -68,12 +68,12 @@ MUX_CABLE|<ifname>
 | `server_ipv6` | ipv6-prefix | — | サーバ IPv6 アドレス (同上) |
 | `soc_ipv4` | ipv4-prefix | — | SoC IPv4 (active-active 専用。ycabled の gRPC セットアップに必須) |
 | `soc_ipv6` | ipv6-prefix | — | SoC IPv6 (active-active 専用。ycabled 未参照、[linkmgrd](../../reference/glossary.md#term-linkmgrd) は no-op) |
-| `prober_type` | enum `hardware`/`software` | `software` | ICMP prober モード。ASIC 非対応時は silent に `software` 降格 |
-| `neighbor_mode` | enum `prefix-route`/`host-route` | `host-route` | neighbor 経路モード。[SAI](../../reference/glossary.md#term-sai) 非対応 ASIC では silent に `host-route` 動作 |
+| `prober_type` | enum `hardware`/`software` | `software` | ICMP prober モード。[ASIC](../../reference/glossary.md#term-asic) 非対応時は silent に `software` 降格 |
+| `neighbor_mode` | enum `prefix-route`/`host-route` | `host-route` | neighbor 経路モード。[SAI](../../reference/glossary.md#term-sai) 非対応 [ASIC](../../reference/glossary.md#term-asic) では silent に `host-route` 動作 |
 
 ## 購読者
 
-- **ycabled** (`sonic-ycabled`): `y_cable_table_helper.py` が `swsscommon.Table(config_db, "MUX_CABLE")` で各 ASIC ごとに `port_tbl` を保持。
+- **ycabled** (`sonic-ycabled`): `y_cable_table_helper.py` が `swsscommon.Table(config_db, "MUX_CABLE")` で各 [ASIC](../../reference/glossary.md#term-asic) ごとに `port_tbl` を保持。
   `check_mux_cable_port_type()` が `cable_type` と `state` を参照してポートを active-active / active-standby に分類する。
 - **[linkmgrd](../../reference/glossary.md#term-linkmgrd)**: `ConfigDBConnector` で `MUX_CABLE` を購読。`processPortCableType()` / `processProberType()` / `processSoCIpAddress()` で per-port 設定を反映。
 - **[orchagent](../../reference/glossary.md#term-orchagent)** (`MuxOrch`): `CFG_MUX_CABLE_TABLE_NAME` を購読し [SAI](../../reference/glossary.md#term-sai) nexthop を操作。
@@ -186,7 +186,7 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 |--------------|---------|------|---------|
 | `PEER_SWITCH\|<name>` (CONFIG_DB) | 処理前提 (先行必須) | `address_ipv4` が未確定の間は `handleMuxCfg()` が `return false` で保留。自動回復あり | `muxorch.cpp:2271` |
 | `TUNNEL\|MuxTunnel0` (CONFIG_DB) | `TunnelDecapOrch` キャッシュ経由 | `handlePeerSwitch()` が `getDstIpAddresses("MuxTunnel0")` 等でトンネル情報を取得。未存在なら `return false` でリトライ | `muxorch.cpp:2348, 2359, 2367, 2374` |
-| `PORT\|<ifname>` (CONFIG_DB / PortsOrch キャッシュ) | `gPortsOrch->getPort()` 経由 | `MuxCable` 状態遷移時にポート SAI oid を取得。未登録なら即リターン | `muxorch.cpp:468, 493` |
+| `PORT\|<ifname>` (CONFIG_DB / [PortsOrch](../../reference/glossary.md#term-portsorch) キャッシュ) | `gPortsOrch->getPort()` 経由 | `MuxCable` 状態遷移時にポート SAI oid を取得。未登録なら即リターン | `muxorch.cpp:468, 493` |
 | `NEIGHBOR_TABLE` ([APPL_DB](../../reference/glossary.md#term-appl_db) / NeighOrch キャッシュ) | `gNeighOrch->getMuxNeighborsForPort()` 経由 | `addOperation()` 末尾で既存ネイバーを [MUX](../../reference/glossary.md#term-mux) ネイバーに変換 | `muxorch.cpp:2290` |
 
 ### orchagent が書き出す STATE/APP テーブル
@@ -581,4 +581,4 @@ show mux config
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 13c74aa566f9 -->
+<!-- glossary-links-injected: 762e0b60ecf6 -->

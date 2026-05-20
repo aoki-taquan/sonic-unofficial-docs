@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-RADIUS クライアントのグローバル設定を保持するシングルトンテーブル[^1]。`hostcfgd` の [AAA](../../reference/glossary.md#term-aaa) ハンドラが読み、PAM (`/etc/pam.d/common-auth`) と NSS、`/etc/pam_radius_auth.conf` を生成する。サーバ固有の設定は `RADIUS_SERVER` 側にある。
+[RADIUS](../../reference/glossary.md#term-radius) クライアントのグローバル設定を保持するシングルトンテーブル[^1]。`hostcfgd` の [AAA](../../reference/glossary.md#term-aaa) ハンドラが読み、PAM (`/etc/pam.d/common-auth`) と NSS、`/etc/pam_radius_auth.conf` を生成する。サーバ固有の設定は `RADIUS_SERVER` 側にある。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -52,9 +52,9 @@ RADIUS|global
 
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
-| `passkey` | string (1..65 chars、SPACE/`#`/`,` 不可) | なし | 既定の共有秘密鍵 (RADIUS shared secret) |
+| `passkey` | string (1..65 chars、SPACE/`#`/`,` 不可) | なし | 既定の共有秘密鍵 ([RADIUS](../../reference/glossary.md#term-radius) shared secret) |
 | `auth_type` | enum `pap`/`chap`/`mschapv2` | `pap` | 既定の認証プロトコル |
-| `src_ip` | `inet:ip-address` | なし | RADIUS パケット送信元アドレス |
+| `src_ip` | `inet:ip-address` | なし | [RADIUS](../../reference/glossary.md#term-radius) パケット送信元アドレス |
 | `nas_ip` | `inet:ip-address` | なし | NAS-IP-Address / NAS-IPv6-Address 属性に乗せる値 |
 | `statistics` | boolean | なし | サーバ統計収集の有効化 |
 | `timeout` | uint16 (1..60 秒) | `5` | 既定の応答待ちタイムアウト |
@@ -398,13 +398,13 @@ radius_global_handler(key="global", op=SET, data={passkey: "..."})
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: RADIUS は SSH / コンソール認証のコントロールプレーン処理であり、[SAI](../../reference/glossary.md#term-sai) 非経由。ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
+**プラットフォーム差なし**: RADIUS は SSH / コンソール認証のコントロールプレーン処理であり、[SAI](../../reference/glossary.md#term-sai) 非経由。[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/radius-platform.md`
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `hostcfgd` の RADIUS ハンドラは [SAI](../../reference/glossary.md#term-sai) API を呼び出さない。PAM / NSS 設定ファイルの生成のみ (`hostcfgd:527-545, 641-851`) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | `hostcfgd` の RADIUS ハンドラは [SAI](../../reference/glossary.md#term-sai) API を呼び出さない。PAM / NSS 設定ファイルの生成のみ (`hostcfgd:527-545, 641-851`) |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `hostcfgd` は `ConfigDBConnector()` (引数なし) で host 単体の CONFIG_DB のみを購読する。`asicN` namespace を iterate しない (`hostcfgd:2166-2185`)。RADIUS は per-host 認証のため namespace 分割は無関係 |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | RADIUS テーブルは host scope。chassis 全体での集中認証機構はなく、各 line card host で `hostcfgd` が独立に PAM 設定を再生成する |
 | ベンダー固有 PAM モジュール | なし | community master の RADIUS スタックは `pam_radius_auth.so` (Debian 標準パッケージ)。`sonic-buildimage` の `files/image_config/` にベンダー向け hook 注入箇所なし |
@@ -528,4 +528,4 @@ db_migrator.py での RADIUS マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 5c81a03a7d31 -->
+<!-- glossary-links-injected: a2e5f094899b -->

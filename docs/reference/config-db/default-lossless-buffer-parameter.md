@@ -177,7 +177,7 @@ show buffer profile
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -535,7 +535,7 @@ m_overSubscribeRatio 更新 → refreshSharedHeadroomPool()
 |------|----------|----------|----|------|
 | **`over_subscribe_ratio` を Lua ヘッドルーム計算に反映** | yes (SHP 有効時 `headroom_size = xon_value` に縮小) | **no** (Lua で参照しない。`headroom_size = xon_value` 常時) | yes | `buffer_headroom_mellanox.lua:104-116`; `buffer_headroom_barefoot.lua` で `over_subscribe_ratio` 参照なし |
 | **8-lane プロファイル命名 (`_8lane` サフィックス)** | SPC3 (4xxx系) / SPC4/5 (5xxx系) のみ適用 | **なし** | **なし** | `buffermgrdyn.cpp:504-523` |
-| **Spectrum-4/5 の `kb_on_tile` 補正** | SPC4 / SPC5 ASIC (`ASIC_TABLE` キー末尾が `4` or `5`) のみ `port_speed / 1000 * 120 / 8` を `propagation_delay` に加算 | なし | なし | `buffer_headroom_mellanox.lua:83-87` |
+| **Spectrum-4/5 の `kb_on_tile` 補正** | SPC4 / SPC5 [ASIC](../../reference/glossary.md#term-asic) (`ASIC_TABLE` キー末尾が `4` or `5`) のみ `port_speed / 1000 * 120 / 8` を `propagation_delay` に加算 | なし | なし | `buffer_headroom_mellanox.lua:83-87` |
 | **SPC6 の `modification_descriptors_pool_size`** | `m_model_number >= 6000` のとき 32 MB 確保、`egress_mirror_headroom = 0` | なし | なし | `buffer_pool_mellanox.lua:190-205` |
 | **ヘッドルーム計算の `cell_occupancy` 算出式** | `small_packet_percentage_by_byte` (バイト換算済) を使用 | percentage 値を直接使用 (バイト換算なし) | Mellanox 同様 | `buffer_headroom_mellanox.lua:146-147`; `buffer_headroom_barefoot.lua:114` |
 | **400G `peer_response_time` 倍加** | なし | 400G 限定で `peer_response_time *= 2` | なし | `buffer_headroom_barefoot.lua:127-129` |
@@ -554,9 +554,9 @@ m_overSubscribeRatio 更新 → refreshSharedHeadroomPool()
 
 ### multi-asic / VOQ chassis 構成
 
-`buffermgrdyn` はスイッチごとに 1 インスタンス起動し、各 ASIC namespace の CONFIG_DB を購読する。`DEFAULT_LOSSLESS_BUFFER_PARAMETER` も namespace ごとに独立して管理される。Lua プラグインは各 namespace の STATE_DB に存在する `ASIC_TABLE` を参照するため、ASIC が異なれば `cell_size` / `pipeline_latency` 等の値が異なり、ヘッドルーム計算結果も namespace ごとに独立する。
+`buffermgrdyn` はスイッチごとに 1 インスタンス起動し、各 [ASIC](../../reference/glossary.md#term-asic) namespace の CONFIG_DB を購読する。`DEFAULT_LOSSLESS_BUFFER_PARAMETER` も namespace ごとに独立して管理される。Lua プラグインは各 namespace の STATE_DB に存在する `ASIC_TABLE` を参照するため、[ASIC](../../reference/glossary.md#term-asic) が異なれば `cell_size` / `pipeline_latency` 等の値が異なり、ヘッドルーム計算結果も namespace ごとに独立する。
 
 詳細根拠は `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: c21f0a247f96 -->
+<!-- glossary-links-injected: 865a18402f05 -->

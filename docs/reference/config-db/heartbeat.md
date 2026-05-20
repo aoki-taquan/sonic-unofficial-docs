@@ -393,7 +393,7 @@ Redis keyspace notification は発火するが受信側が存在しないため�
 
 ### SAI Capability 依存なし
 
-`HEARTBEAT` テーブルは APPL_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) / SAI を経由しない。コンシューマはホストサービス層 (`supervisor-proc-exit-listener`) と [orchagent](../../reference/glossary.md#term-orchagent) 起動スクリプト (`orchagent.sh`) に限定されるため、ASIC Capability の問い合わせは一切発生しない。
+`HEARTBEAT` テーブルは APPL_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) / SAI を経由しない。コンシューマはホストサービス層 (`supervisor-proc-exit-listener`) と [orchagent](../../reference/glossary.md#term-orchagent) 起動スクリプト (`orchagent.sh`) に限定されるため、[ASIC](../../reference/glossary.md#term-asic) Capability の問い合わせは一切発生しない。
 
 ### ベンダー固有コードなし
 
@@ -410,7 +410,7 @@ Redis keyspace notification は発火するが受信側が存在しないため�
 
 ### multi-ASIC 環境
 
-multi-ASIC 構成では NAMESPACE_ID ごとに独立した orchagent インスタンスが起動するが、各インスタンスは同一の CONFIG_DB（または名前空間内の DB インスタンス）から `HEARTBEAT|orchagent` を読む。ASIC 数による処理の差異はない。
+multi-[ASIC](../../reference/glossary.md#term-asic) 構成では NAMESPACE_ID ごとに独立した orchagent インスタンスが起動するが、各インスタンスは同一の CONFIG_DB（または名前空間内の DB インスタンス）から `HEARTBEAT|orchagent` を読む。[ASIC](../../reference/glossary.md#term-asic) 数による処理の差異はない。
 
 ### vs (virtual switch)
 
@@ -430,7 +430,7 @@ vs 環境でも `supervisor-proc-exit-listener` は同一コードで動作す�
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -445,4 +445,4 @@ vs 環境でも `supervisor-proc-exit-listener` は同一コードで動作す�
 - `system-health` / `watchdog` 系デーモンが定期的に heartbeat タイムスタンプを書き込む。CLI 書き込みパスなし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 9c055dbbb376 -->
+<!-- glossary-links-injected: 865a18402f05 -->

@@ -488,7 +488,7 @@ journal.ps = journal.rc.PSubscribe(ctx, keyspace, keyevent)
 
 ### gNMI Subscribe RPC — DB データの keyspace 購読
 
-`telemetry` は外部 gNMI クライアントからの **Subscribe RPC** を受けると、要求されたパス (例: `STATE_DB/PORT_TABLE/Ethernet0`) に対応する Redis DB へ `PSubscribe __keyspace@<N>__:<table>|<key>*` を張る。この購読は **CONFIG_DB の GNMI テーブル自体** ではなく、gNMI クライアントが監視したい任意の SONiC DB テーブルを対象とする (`sonic_data_client/db_client.go:1419-1447`)。
+`telemetry` は外部 gNMI クライアントからの **Subscribe RPC** を受けると、要求されたパス (例: `STATE_DB/PORT_TABLE/Ethernet0`) に対応する Redis DB へ `PSubscribe __keyspace@<N>__:<table>|<key>*` を張る。この購読は **CONFIG_DB の GNMI テーブル自体** ではなく、gNMI クライアントが監視したい任意の [SONiC](../../reference/glossary.md#term-sonic) DB テーブルを対象とする (`sonic_data_client/db_client.go:1419-1447`)。
 
 | Subscribe モード | 実装 | キャッシュ更新トリガー |
 |----------------|------|-------------------|
@@ -534,12 +534,12 @@ journal.ps = journal.rc.PSubscribe(ctx, keyspace, keyevent)
 
 `sonic_data_client/mixed_db_client.go:437-463`
 
-[SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成では **namespace 数 (`namespace_cnt`)** と **container 数 (`container_cnt`)** の両方が 1 より大きくなる。この場合、gNMI パスの第 2 要素は namespace (ASIC) と container ([DPU](../../reference/glossary.md#term-dpu)) の両方の候補として試行される。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成では **namespace 数 (`namespace_cnt`)** と **container 数 (`container_cnt`)** の両方が 1 より大きくなる。この場合、gNMI パスの第 2 要素は namespace ([ASIC](../../reference/glossary.md#term-asic)) と container ([DPU](../../reference/glossary.md#term-dpu)) の両方の候補として試行される。
 
 | 構成 | `namespace_cnt` | `container_cnt` | パス第 2 要素の解釈 |
 |------|-----------------|-----------------|---------------------|
-| single-ASIC / single-container | 1 | 1 | 第 2 要素はテーブル名 (namespace/container 無視) |
-| multi-ASIC only (pure multi-asic [NPU](../../reference/glossary.md#term-npu)) | > 1 | 1 | 第 2 要素を namespace (例: `asic0`, `asic1`) として解釈 |
+| single-[ASIC](../../reference/glossary.md#term-asic) / single-container | 1 | 1 | 第 2 要素はテーブル名 (namespace/container 無視) |
+| multi-[ASIC](../../reference/glossary.md#term-asic) only (pure multi-asic [NPU](../../reference/glossary.md#term-npu)) | > 1 | 1 | 第 2 要素を namespace (例: `asic0`, `asic1`) として解釈 |
 | multi-container only (SmartSwitch [DPU](../../reference/glossary.md#term-dpu)) | 1 | > 1 | 第 2 要素を container (例: `dpu0`, `dpu1`) として解釈 |
 | multi-ASIC + multi-container (SmartSwitch with multi-ASIC) | > 1 | > 1 | 第 2 要素を namespace で試行し、失敗した場合に container として再試行。`localhost` は常にデフォルト namespace にマップ |
 
@@ -696,4 +696,4 @@ CONFIG_DB に対応フィールドはなく、`gnmi-native.sh` からも設定�
 [^1]: `sonic-buildimage` `dockers/docker-sonic-gnmi/gnmi-native.sh` — ConfigDB → telemetry 引数変換ロジック全体
 [^2]: `sonic-gnmi` `gnmi_server/clientCertAuth.go:254-284` — `PopulateAuthStructByCommonName()` による GNMI_CLIENT_CERT 参照
 
-<!-- glossary-links-injected: 18e0f2827593 -->
+<!-- glossary-links-injected: 865a18402f05 -->

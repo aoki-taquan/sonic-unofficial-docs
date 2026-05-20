@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-SONiC の [QoS](../../reference/glossary.md#term-qos) アーキテクチャでは [DSCP](../../reference/glossary.md#term-dscp) 値を PG に直接マッピングするテーブルを持たない。実際の経路は以下のとおり:
+[SONiC](../../reference/glossary.md#term-sonic) の [QoS](../../reference/glossary.md#term-qos) アーキテクチャでは [DSCP](../../reference/glossary.md#term-dscp) 値を PG に直接マッピングするテーブルを持たない。実際の経路は以下のとおり:
 
 ```
 DSCP (0-63)
@@ -143,7 +143,7 @@ m_qos_handler_map.insert(qos_handler_pair(CFG_TC_TO_PRIORITY_GROUP_MAP_TABLE_NAM
 
 ### allPortsReady() ブロック
 
-`QosOrch::doTask()` (`qosorch.cpp:2258`) は `gPortsOrch->allPortsReady()` が false の間は即 return する。`DSCP_TO_TC_MAP`・`TC_TO_PRIORITY_GROUP_MAP`・`PORT_QOS_MAP` すべての処理が**完全にブロック**される。orchdaemon が PortsOrch の初期化完了を保証するため通常は意識不要だが、起動シーケンス中の早期書き込みは処理待ちになる。
+`QosOrch::doTask()` (`qosorch.cpp:2258`) は `gPortsOrch->allPortsReady()` が false の間は即 return する。`DSCP_TO_TC_MAP`・`TC_TO_PRIORITY_GROUP_MAP`・`PORT_QOS_MAP` すべての処理が**完全にブロック**される。orchdaemon が [PortsOrch](../../reference/glossary.md#term-portsorch) の初期化完了を保証するため通常は意識不要だが、起動シーケンス中の早期書き込みは処理待ちになる。
 
 ### SET 順序（マップ先行）
 
@@ -306,9 +306,9 @@ PORT_QOS_MAP
 | SAI 定数 | 使用箇所 | 意味 |
 |----------|---------|------|
 | `SAI_QOS_MAP_TYPE_DSCP_TO_TC` | `qosorch.cpp:265` | DSCP → Traffic Class マップの SAI タイプ |
-| `SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP` | `qosorch.cpp:913` | TC → Priority Group マップの SAI タイプ |
+| `SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP` | `qosorch.cpp:913` | TC → [Priority Group](../../reference/glossary.md#term-priority-group) マップの SAI タイプ |
 
-> **重要**: `SAI_QOS_MAP_TYPE_DSCP_TO_PRIORITY_GROUP` は SAI 仕様に存在しない。これが `DSCP_TO_PG_MAP` テーブルが SONiC に存在しない根本理由の一つである。
+> **重要**: `SAI_QOS_MAP_TYPE_DSCP_TO_PRIORITY_GROUP` は SAI 仕様に存在しない。これが `DSCP_TO_PG_MAP` テーブルが [SONiC](../../reference/glossary.md#term-sonic) に存在しない根本理由の一つである。
 
 ### SAI ポート属性定数
 
@@ -370,7 +370,7 @@ YANG バリデーションで強制される値域はコードではなく YANG 
 | PORT_QOS_MAP SET (dscp_to_tc_map) | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | 指定ポート全対象 (qosorch.cpp:2086, 2193) |
 | PORT_QOS_MAP SET (tc_to_pg_map) | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` | 指定ポート全対象 (qosorch.cpp:2086, 2193) |
 | PORT_QOS_MAP SET (pfc_enable) | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL` | pfc_enable != 0 または旧値 != 0 時 (qosorch.cpp:2208-2216) |
-| PORT_QOS_MAP SET (pfcwd_sw_enable) | PortsOrch 内部 `m_port.m_pfcwd_sw_bitmap` (メモリのみ) | — | 無条件; [STATE_DB](../../reference/glossary.md#term-state_db) への書き込みなし (qosorch.cpp:2224) |
+| PORT_QOS_MAP SET (pfcwd_sw_enable) | [PortsOrch](../../reference/glossary.md#term-portsorch) 内部 `m_port.m_pfcwd_sw_bitmap` (メモリのみ) | — | 無条件; [STATE_DB](../../reference/glossary.md#term-state_db) への書き込みなし (qosorch.cpp:2224) |
 | PORT_QOS_MAP DEL | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` = `SAI_NULL_OBJECT_ID` および `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP` = `SAI_NULL_OBJECT_ID` | DEL 時に全マップ属性をクリア (qosorch.cpp:2086) |
 | PORT_QOS_MAP DEL ([PFC](../../reference/glossary.md#term-pfc)) | ASIC_DB `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL` = 0 | DEL 時に [PFC](../../reference/glossary.md#term-pfc) 強制無効化 (qosorch.cpp:2100) |
 
@@ -395,7 +395,7 @@ YANG バリデーションで強制される値域はコードではなく YANG 
 | ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP`, `SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP`, `SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL` | 各属性を SAI_NULL_OBJECT_ID / 0 にクリア |
 | ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_SWITCH` | `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` (global キーのみ) | SAI_NULL_OBJECT_ID |
 | ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL` | decap [QoS](../../reference/glossary.md#term-qos) 属性 (tunneldecaporch 経由) | — |
-| PortsOrch 内部 | `m_port.m_pfcwd_sw_bitmap` (メモリ) | setPortPfcWatchdogStatus 呼び出し | — |
+| [PortsOrch](../../reference/glossary.md#term-portsorch) 内部 | `m_port.m_pfcwd_sw_bitmap` (メモリ) | setPortPfcWatchdogStatus 呼び出し | — |
 | [APPL_DB](../../reference/glossary.md#term-appl_db) | — | なし | なし |
 | STATE_DB | — | なし | なし |
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | — | なし | なし |
@@ -472,7 +472,7 @@ NotificationConsumer: なし
 
 ### DSCP_TO_TC_MAP / TC_TO_PRIORITY_GROUP_MAP ハンドラ本体 — プラットフォーム差なし
 
-`DscpToTcMapHandler` / `TcToPgHandler` の各コンバータ・addQosItem・removeQosItem には `gMySwitchType` / `platform` / ASIC ベンダー参照が存在しない。全 switch_type で同一経路（`sai_qos_map_api->create_qos_map / set_qos_map_attribute / remove_qos_map`）が実行される。
+`DscpToTcMapHandler` / `TcToPgHandler` の各コンバータ・addQosItem・removeQosItem には `gMySwitchType` / `platform` / [ASIC](../../reference/glossary.md#term-asic) ベンダー参照が存在しない。全 switch_type で同一経路（`sai_qos_map_api->create_qos_map / set_qos_map_attribute / remove_qos_map`）が実行される。
 
 `gMySwitchType == "voq"` 分岐は `applySchedulerToQueueSchedulerGroup()` (L1637)・`applyWredProfileToQueue()` (L1715)・`handleQueueTable()` (L1772) のみに存在し、DSCP/TC/PG マップハンドラには影響しない。
 
@@ -482,7 +482,7 @@ NotificationConsumer: なし
 
 ### PORT_QOS_MAP|global — SAI switch-level capability ゲート
 
-`applyDscpToTcMapToSwitch()` (L1950-1975) は `querySwitchCapability(SAI_OBJECT_TYPE_SWITCH, SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP)` を事前確認する。非対応 ASIC では `PORT_QOS_MAP|global` の SAI 適用がスキップされ（エラーログのみ）、`DSCP_TO_TC_MAP` をスイッチ全体に適用できない。ポート個別の `PORT_QOS_MAP|<port>` には影響しない。
+`applyDscpToTcMapToSwitch()` (L1950-1975) は `querySwitchCapability(SAI_OBJECT_TYPE_SWITCH, SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP)` を事前確認する。非対応 [ASIC](../../reference/glossary.md#term-asic) では `PORT_QOS_MAP|global` の SAI 適用がスキップされ（エラーログのみ）、`DSCP_TO_TC_MAP` をスイッチ全体に適用できない。ポート個別の `PORT_QOS_MAP|<port>` には影響しない。
 
 ### qos_config.j2 テンプレート初期値のプラットフォーム差
 
@@ -493,14 +493,14 @@ CONFIG_DB への初期投入は `qos_config.j2` テンプレートが担う。�
 | [DPU](../../reference/glossary.md#term-dpu) 接続ポート (`PORT_DPC`) | `TC_TO_PRIORITY_GROUP_MAP|AZURE_DPC` が追加される（TC 0-6 → PG 0、TC 7 → PG 7）。`PORT_QOS_MAP.<port>.tc_to_pg_map = "AZURE_DPC"` に切り替わる |
 | `generate_tc_to_pg_map` マクロ定義あり（tunnel_qos_remap / BackEnd ComputeAI） | `TC_TO_PRIORITY_GROUP_MAP` の内容がプラットフォーム固有マクロで置換される |
 | BackEndToR/LeafRouter かつ `storage_device=true` | `DSCP_TO_TC_MAP` が投入されず `DOT1P_TO_TC_MAP` が代わりに設定される。`PORT_QOS_MAP` フィールドも `dot1p_to_tc_map` に切り替わる。`require_global_dscp_to_tc_map=false` となり global エントリも投入されない |
-| `asic_type` が `mellanox` / `barefoot` | `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` テーブルおよび `PORT_QOS_MAP.<port>.pfc_to_pg_map` フィールドが追加される（他 ASIC では存在しない） |
+| `asic_type` が `mellanox` / `barefoot` | `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` テーブルおよび `PORT_QOS_MAP.<port>.pfc_to_pg_map` フィールドが追加される（他 [ASIC](../../reference/glossary.md#term-asic) では存在しない） |
 
 > **Evidence**: `qosorch.cpp:L32,L1637,L1715,L1772,L1950-1975`; `qos_config.j2:L163,L170-205,L265-360,L395-480,L450-478`
 <!-- /platform -->
 
 ## 実装との乖離
 
-`DSCP_TO_PG_MAP` は名称としては想定可能だが、SONiC CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。DSCP → Priority Group マッピングは `DSCP_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
+`DSCP_TO_PG_MAP` は名称としては想定可能だが、[SONiC](../../reference/glossary.md#term-sonic) CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。DSCP → [Priority Group](../../reference/glossary.md#term-priority-group) マッピングは `DSCP_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
 
 | 乖離 | 期待（誤解されがちな設計） | 実装 (community master) | 根拠 |
 |------|-------------------------|------------------------|------|
@@ -529,4 +529,4 @@ CONFIG_DB への初期投入は `qos_config.j2` テンプレートが担う。�
 - [CONFIG_DB: TC_TO_PRIORITY_GROUP_MAP](tc-to-priority-group-map.md)
 - [CONFIG_DB: PORT_QOS_MAP](port-qos-map.md)
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: f4efdef1695e -->

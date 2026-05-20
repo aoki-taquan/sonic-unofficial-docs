@@ -196,7 +196,7 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-本ページが扱う STATE_DB 3 テーブルでは、テーブル名・フィールド名・状態文字列・ステージ文字列・真偽デフォルトのほぼ全てがソースコード側の `#define` または静的データに固定されている。CONFIG_DB / DEVICE_METADATA 等の外部入力で変わるのは `<table_name>` / `<rule_name>` の動的部分と、プラットフォーム分岐される `supported_L3V4V6` / `action_list` の値のみ。
+本ページが扱う STATE_DB 3 テーブルでは、テーブル名・フィールド名・状態文字列・ステージ文字列・真偽デフォルトのほぼ全てがソースコード側の `#define` または静的データに固定されている。CONFIG_DB / [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 等の外部入力で変わるのは `<table_name>` / `<rule_name>` の動的部分と、プラットフォーム分岐される `supported_L3V4V6` / `action_list` の値のみ。
 
 ### STATE_DB テーブル名（`sonic-swss-common/common/schema.h`）
 
@@ -283,7 +283,7 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 | `ACL_TABLE_TABLE` ([APPL_DB](../../reference/glossary.md#term-appl_db)) | 同等の入力経路 | [APPL_DB](../../reference/glossary.md#term-appl_db) 経由の動的 ACL（feature プロセス等） | `aclorch.cpp` L4283 (`APP_ACL_TABLE_TABLE_NAME` も dispatch) |
 | `ACL_RULE_TABLE` ([APPL_DB](../../reference/glossary.md#term-appl_db)) | 同等の入力経路、retry cache 対象 | APPL_DB 経由の動的 ACL ルール。SAI リソース枯渇時は retry cache にパーク | `aclorch.cpp` L4222 (`createRetryCache(APP_ACL_RULE_TABLE_NAME)`), L4287 |
 | `ACL_TABLE_TYPE` (CONFIG_DB) / `ACL_TABLE_TYPE_TABLE` (APPL_DB) | カスタム型解決 | `ACL_TABLE` の `type` がカスタム型のとき。未定義なら `status="Inactive"` | `aclorch.cpp` L4291 |
-| `PORT` (PortsOrch `allPortsReady()`) | 起動順序ガード | 常時。false の間は `doAclRuleTask()` に到達せず STATE_DB `ACL_RULE_TABLE` に新規エントリが書かれない | `aclorch.cpp` L4276 |
+| `PORT` ([PortsOrch](../../reference/glossary.md#term-portsorch) `allPortsReady()`) | 起動順序ガード | 常時。false の間は `doAclRuleTask()` に到達せず STATE_DB `ACL_RULE_TABLE` に新規エントリが書かれない | `aclorch.cpp` L4276 |
 | SAI Switch capability (`SAI_SWITCH_ATTR_ACL_STAGE_*`) | SAI クエリ → STATE_DB 書込み | 起動時 1 回。`ACL_STAGE_CAPABILITY_TABLE` の動的値ソース。失敗時は `defaultAclActionsSupported` でフォールバック | `aclorch.cpp` L4025–4036, L4056–4101 (`putAclActionCapabilityInDB`), L4104–4118 |
 | `DEVICE_METADATA\|localhost.platform`（platform 文字列） | プラットフォーム分岐 | `supported_L3V4V6` フィールド決定時 (MRVL_PRST / MRVL_TL / VS で `true`、他で `false`) | `aclorch.cpp` L3489–3510 (`queryMirrorTableCapability`), L4093–4099 |
 | SAI ACL API 戻り値 (`create/remove_acl_table/entry`) | 戻り値判定 → `status` 値 | 常時。`Active` / `Inactive` / `Pending creation` / `Pending removal` を決定。リソース枯渇は retry cache にパーク | `aclorch.cpp` L5462–5508 (table), L5670–5726 (rule), `isSaiStatusResourceFull()` L5683–5692 |
@@ -373,7 +373,7 @@ ACL_STAGE_CAPABILITY_TABLE|EGRESS
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-STATE_DB に書き出される 3 テーブル（`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `ACL_STAGE_CAPABILITY_TABLE`）は、ASIC / SAI capability および `platform` / `sub_platform` 環境変数によって書込み内容に差が出る。差は (a) `ACL_STAGE_CAPABILITY_TABLE` のフィールド値に直接現れる差、(b) `ACL_TABLE_TABLE.status` / `ACL_RULE_TABLE.status` の分布に間接的に現れる差、の 2 系統に整理できる。
+STATE_DB に書き出される 3 テーブル（`ACL_TABLE_TABLE` / `ACL_RULE_TABLE` / `ACL_STAGE_CAPABILITY_TABLE`）は、[ASIC](../../reference/glossary.md#term-asic) / SAI capability および `platform` / `sub_platform` 環境変数によって書込み内容に差が出る。差は (a) `ACL_STAGE_CAPABILITY_TABLE` のフィールド値に直接現れる差、(b) `ACL_TABLE_TABLE.status` / `ACL_RULE_TABLE.status` の分布に間接的に現れる差、の 2 系統に整理できる。
 
 ### プラットフォーム識別文字列 (orch.h:40-50)
 
@@ -396,7 +396,7 @@ STATE_DB に書き出される 3 テーブル（`ACL_TABLE_TABLE` / `ACL_RULE_TA
 | フィールド | 決定経路 | プラットフォーム別の値 | evidence |
 |------------|---------|----------------------|----------|
 | `supported_L3V4V6` (INGRESS / EGRESS) | **静的比較** (`m_L3V4V6Capability`) | marvell-prestera / marvell-teralynx / vs → `"true"`、それ以外 → `"false"` | `aclorch.cpp:3515-3533, 4093-4099` |
-| `action_list` (INGRESS / EGRESS) | **SAI 動的照会** (`sai_query_attribute_enum_values_capability`) | SAI 成功 → ASIC が返す enum リスト（broadcom / mellanox / barefoot / cisco-8000 等は SDK バージョン依存）。SAI 失敗 → `defaultAclActionsSupported[stage]` ハードコードフォールバック (`aclorch.cpp:168-196`) | `aclorch.cpp:4017-4101, 4104-4118` |
+| `action_list` (INGRESS / EGRESS) | **SAI 動的照会** (`sai_query_attribute_enum_values_capability`) | SAI 成功 → [ASIC](../../reference/glossary.md#term-asic) が返す enum リスト（broadcom / mellanox / barefoot / cisco-8000 等は SDK バージョン依存）。SAI 失敗 → `defaultAclActionsSupported[stage]` ハードコードフォールバック (`aclorch.cpp:168-196`) | `aclorch.cpp:4017-4101, 4104-4118` |
 | `is_action_list_mandatory` (INGRESS / EGRESS) | SAI 動的照会 (`AclActionCapabilities::isActionListMandatoryOnTableCreation`) | SAI 戻り値の `boolalpha` 出力。フォールバック時は `"false"` 固定 (`aclorch.h:143` 初期値) | `aclorch.cpp:4056-4101`, `aclorch.h:138-148` |
 
 !!! note "init() 完了時点で必ず 1 回書かれる"
@@ -412,7 +412,7 @@ STATE_DB に書き出される 3 テーブル（`ACL_TABLE_TABLE` / `ACL_RULE_TA
 | `type=L3V4V6` を marvell-* / vs 以外で作成 | `ACL_TABLE_TABLE|<name>:status="Inactive"` (`validate()` reject) | `aclorch.cpp:2737-2745, 3515-3533` |
 | broadcom (非 DNX) `stage=EGRESS` + L4 range match ルール | `ACL_TABLE_TABLE` は `"Active"` だが配下 `ACL_RULE_TABLE` の range match ルールが `"Inactive"` (range フィールド付加されず) | `aclorch.cpp:2608-2628` |
 | mellanox / clounix で 17 個目以降の range オブジェクト | `ACL_RULE_TABLE|<table>|<rule>:status="Inactive"` (`return NULL`) | `aclorch.cpp:3370-3378`, `aclorch.h:109-110` |
-| SAI リソース枯渇 (全 ASIC 共通だが density により頻度差) | `ACL_RULE_TABLE|...|status="Pending creation"` → retry cache → 他ルール DEL 後に `"Active"` 上書き | `aclorch.cpp:5673-5692, 5710-5721` |
+| SAI リソース枯渇 (全 [ASIC](../../reference/glossary.md#term-asic) 共通だが density により頻度差) | `ACL_RULE_TABLE|...|status="Pending creation"` → retry cache → 他ルール DEL 後に `"Active"` 上書き | `aclorch.cpp:5673-5692, 5710-5721` |
 | DTEL action ルールを barefoot / vs 以外で作成 | `DTelOrch` 非起動のため SAI 反映なし、`ACL_RULE_TABLE.status` は `"Inactive"` または該当 action 無視 | `orchdaemon.cpp:502-530` |
 | broadcom-dnx `type=PFCWD` | `ACL_TABLE_TABLE|<pfcwd>:status="Active"` (CONFIG_DB `ports` 無視 / SWITCH 単位バインド) | `aclorch.cpp:3811-3830` |
 
@@ -541,4 +541,4 @@ consumer 側 (on-demand polling)
 
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) `orchagent/aclorch.cpp` — `setAclTableStatus()` L6088, `setAclRuleStatus()` L6102, `putAclActionCapabilityInDB()` L4056, `init()` L3475
 
-<!-- glossary-links-injected: cc07f19ae466 -->
+<!-- glossary-links-injected: cdb7c84145d9 -->

@@ -24,8 +24,8 @@ related:
 
 ## 概要
 
-IEEE 802.1AE MACsec のセキュリティプロファイルを定義するテーブル[^1]。
-`PORT.macsec` (port 側の leaf) から名前参照され、`macsecmgrd` / `wpa_supplicant` ベースの MKA (MACsec Key Agreement) 実装が CAK/CKN を読んで MACsec SA を確立する。
+IEEE 802.1AE [MACsec](../../reference/glossary.md#term-macsec) のセキュリティプロファイルを定義するテーブル[^1]。
+`PORT.macsec` (port 側の leaf) から名前参照され、`macsecmgrd` / `wpa_supplicant` ベースの MKA ([MACsec](../../reference/glossary.md#term-macsec) Key Agreement) 実装が CAK/CKN を読んで [MACsec](../../reference/glossary.md#term-macsec) SA を確立する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -216,7 +216,7 @@ CONFIG_DB:PORT.macsec  ──名前参照──▶  CONFIG_DB:MACSEC_PROFILE
 | `replay_window` | `macsec_replay_window`（`enable_replay_protect=true` 時のみ） |
 | `policy` | `macsec_integ_only`（`integrity_only` → 1） |
 
-詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md)
+詳細分析: `meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md`
 <!-- /cross-refs -->
 
 ## 引用元
@@ -455,7 +455,7 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -553,7 +553,7 @@ enableMACsec()
   └─ disableMACsec() 呼出し（ポートを非暗号化状態へ復元）
 ```
 
-詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-failure.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-failure.md)
+詳細分析: `meta/_intermediate/cdb-flow/macsec-profile-failure.md`
 <!-- /failure -->
 
 <!-- pubsub -->
@@ -608,7 +608,7 @@ macsecmgrd::enableMACsec()
        sai_macsec_api → ASIC/HW
 ```
 
-詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-pubsub.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-pubsub.md)
+詳細分析: `meta/_intermediate/cdb-flow/macsec-profile-pubsub.md`
 <!-- /pubsub -->
 
 <!-- side-effects -->
@@ -741,7 +741,7 @@ else
 
 ### SAI MACsec capability クエリ
 
-初期化時に以下の SAI ケーパビリティを実行時にクエリし、ASIC ベンダーの実装状態に応じて動作を変える。
+初期化時に以下の SAI ケーパビリティを実行時にクエリし、[ASIC](../../reference/glossary.md#term-asic) ベンダーの実装状態に応じて動作を変える。
 
 | SAI ケーパビリティ | 用途 | 非対応時の挙動 |
 |-------------------|------|--------------|
@@ -765,11 +765,11 @@ if (status != SAI_STATUS_SUCCESS)
 
 ### POST (Power-On Self-Test) 対応差異
 
-`SAI_MACSEC_ATTR_ENABLE_POST` / `SAI_SWITCH_ATTR_MACSEC_POST_STATUS` は ASIC ベンダー依存の POST 機能。
+`SAI_MACSEC_ATTR_ENABLE_POST` / `SAI_SWITCH_ATTR_MACSEC_POST_STATUS` は [ASIC](../../reference/glossary.md#term-asic) ベンダー依存の POST 機能。
 
 | POST 状態 | `STATE_DB.MACSEC_POST_STATUS` 値 | 動作 |
 |-----------|----------------------------------|------|
-| `switch-level-post-in-progress` | ASIC 全体レベルで POST が進行中。Switch 初期化時に有効化済み | `SAI_SWITCH_ATTR_MACSEC_POST_STATUS` をポーリングして pass/fail を記録 |
+| `switch-level-post-in-progress` | [ASIC](../../reference/glossary.md#term-asic) 全体レベルで POST が進行中。Switch 初期化時に有効化済み | `SAI_SWITCH_ATTR_MACSEC_POST_STATUS` をポーリングして pass/fail を記録 |
 | `macsec-level-post-in-progress` | MACsec オブジェクト初期化時に POST を有効化する方式 | `SAI_MACSEC_ATTR_ENABLE_POST = true` を egress/ingress オブジェクト作成時に付与 |
 | 上記以外 | POST 非対応 ASIC | POST 通知サブスクリプションを設定しない |
 
@@ -797,8 +797,8 @@ attr.value.booldata = true;
 ### 非対応 / スコープ外
 
 - ベンダー固有 ASIC ドライバの内部実装差（SAI 抽象化で隠蔽）
-- ベンダー版 SONiC（NVIDIA Cumulus / Edgecore ECNOS 等）はスコープ外
+- ベンダー版 [SONiC](../../reference/glossary.md#term-sonic)（NVIDIA Cumulus / Edgecore ECNOS 等）はスコープ外
 - master ブランチ以外のバックポート差異はスコープ外
 <!-- /platform -->
 
-<!-- glossary-links-injected: cff110ea7ef9 -->
+<!-- glossary-links-injected: a5c0240e77a7 -->

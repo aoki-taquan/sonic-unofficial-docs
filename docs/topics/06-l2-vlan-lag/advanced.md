@@ -43,7 +43,7 @@ related:
 
 ## OpenConfig VLAN / PortChannel
 
-SONiC 独自 CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく、REST / [gNMI](../../reference/glossary.md#term-gnmi) で OpenConfig [YANG](../../reference/glossary.md#term-yang) モデルを使う場合は、transformer が OpenConfig tree と SONiC の既存 CONFIG_DB を対応付けます。
+[SONiC](../../reference/glossary.md#term-sonic) 独自 CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく、REST / [gNMI](../../reference/glossary.md#term-gnmi) で OpenConfig [YANG](../../reference/glossary.md#term-yang) モデルを使う場合は、transformer が OpenConfig tree と SONiC の既存 CONFIG_DB を対応付けます。
 
 PortChannel では `openconfig-interfaces` と `openconfig-if-aggregate` を使い、Ethernet 側の `aggregate-id` で member を表現し、PortChannel 側の `aggregation/config/min-links` で集約条件を表現します。
 
@@ -51,7 +51,7 @@ VLAN では `openconfig-vlan` の `switched-vlan` と `routed-vlan` を使いま
 
 ## Distributed VOQ LAG
 
-分散 VOQ シャシでは、各 ASIC が独立した SONiC インスタンスとして動作し、ASIC 間共有情報を `CHASSIS_APP_DB` に載せます。LAG は全 ASIC から一貫して見える必要があるため、`SYSTEM_LAG_TABLE` と `SYSTEM_LAG_MEMBER_TABLE` で system-wide な LAG 情報を共有します。
+分散 VOQ シャシでは、各 [ASIC](../../reference/glossary.md#term-asic) が独立した SONiC インスタンスとして動作し、ASIC 間共有情報を `CHASSIS_APP_DB` に載せます。LAG は全 ASIC から一貫して見える必要があるため、`SYSTEM_LAG_TABLE` と `SYSTEM_LAG_MEMBER_TABLE` で system-wide な LAG 情報を共有します。
 
 重要な制約は、メンバが複数 ASIC を跨ぐ LAG はサポートしないことです。各 ASIC のローカル LAG は通常どおり `PORTCHANNEL` / `PORTCHANNEL_MEMBER` で設定され、他 ASIC から見える remote LAG は swss / [syncd](../../reference/glossary.md#term-syncd) 側で扱われます。
 
@@ -142,4 +142,4 @@ Wake-on-LAN は L2 frame または UDP payload で Magic Packet を送る機能�
 - [10 gNMI / OpenConfig: 変換層の責務](../10-gnmi-openconfig/index.md)
 - [12 Multi-ASIC / VOQ: chassis 内 LAG とリモート LAG](../12-multi-asic-voq/index.md)
 
-<!-- glossary-links-injected: 53f62ebf112b -->
+<!-- glossary-links-injected: ec18b66e3507 -->

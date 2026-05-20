@@ -176,7 +176,7 @@ YANG `leafref` による明示的な参照は持たないが、orchagent / chass
 
 - **CHASSIS_MODULE → DPU 制御**: `chassisd` の `SmartSwitchConfigManagerTask` がリアルタイムに
   `CHASSIS_MODULE` の変化を購読。`admin_status` 変化のたびに DPU の admin state が更新される。
-- **DEVICE_METADATA.subtype → DashEniFwdOrch 起動**: `orchagent` 起動時（`main.cpp:269`）に一度だけ読み取る。
+- **[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).subtype → DashEniFwdOrch 起動**: `orchagent` 起動時（`main.cpp:269`）に一度だけ読み取る。
   実行時の変化は反映されない（orchagent 再起動が必要）。
 - **DPUS 参照**: `container_checker` は monit が定期実行するたびに `DPUS` テーブルを参照する。
   `DPU` テーブルと `DPUS` テーブルは別々に書き込まれるが、SmartSwitch では両方の整合が必要。
@@ -396,4 +396,4 @@ SmartSwitch [NPU](../../reference/glossary.md#term-npu) 側では `sonic-config-
 
 [^1]: YANG 定義: `sonic-smart-switch.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-smart-switch.yang>
 
-<!-- glossary-links-injected: 9dd53197a4cb -->
+<!-- glossary-links-injected: 81b1fc9c897b -->

@@ -118,6 +118,9 @@ VNET スコープの VXLAN トンネル encapsulation 経路。
 - **VNET 未存在**: `vnet_orch_->getTypeMap()` で VNET エントリが見つからない場合、メッセージを保留してリトライ。
 - **VNI 0 の encapsulation**: `vni=0` で tunnel nexthop 作成時、VXLAN orch はベース tunnel の VNI にフォールバックする。
 
+<!-- footnote anchor seeds -->
+出典: [^1]
+
 [^yang]: YANG 定義: `sonic-vnet.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vnet.yang>
 [^schema]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
 [^vnetorch]: 実装: `vnetorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vnetorch.cpp>
@@ -128,7 +131,7 @@ VNET スコープの VXLAN トンネル encapsulation 経路。
 
 - CONFIG_DB: [`VNET`](./vnet.md)
 - YANG: [`sonic-vnet`](../yang/sonic-vnet.md)
-- CLI: [`show vnet routes`](../cli/show-vnet.md)
+- CLI: `show vnet routes`
 
 <!-- ref-triangle:end -->
 
@@ -241,7 +244,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 
 - **`consistent_hashing_buckets` の dead field 性**: `vnet_route_description` への登録がないため `handleTunnel()` が読み取らない。[CONFIG_DB](../../reference/glossary.md#term-config_db) に保存されるが APPL_DB に転送後も無視される。
 - **`metric` の dead field 性**: `vnetorch.h:327` で `REQ_T_UINT` として登録はされるが、`handleTunnel()` 内に読み取り・使用コードが存在しない。[YANG](../../reference/glossary.md#term-yang) コメント通り経路選択に影響しない。
-- **`mac_address` = ゼロ MAC**: 省略時は各 endpoint の inner dst-mac が `00:00:00:00:00:00` になる。remote VTEP が MAC 学習する構成では問題ないが、固定 MAC が必要な場合は明示指定が必要。
+- **`mac_address` = ゼロ MAC**: 省略時は各 endpoint の inner dst-mac が `00:00:00:00:00:00` になる。remote [VTEP](../../reference/glossary.md#term-vtep) が MAC 学習する構成では問題ないが、固定 MAC が必要な場合は明示指定が必要。
 - **`vni` = 0 のフォールバック**: [VXLAN](../../reference/glossary.md#term-vxlan) orch に `vni=0` を渡すとベース tunnel の VNI が encapsulation に使われる（`createNextHopTunnel()` 呼び出し経路）。
 <!-- /defaults -->
 
@@ -282,7 +285,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 | `VNET` (CONFIG_DB) / `VNetOrch` | `isVnetExists(vnet)` で存在確認。`false` なら `return false`（APPL_DB エントリ保留・retry） | 常時 | `vnetorch.cpp:1158-1163, 1492-1497` |
 | peer `VNET` エントリ群 | `getPeerList()` で peer 一覧取得後、全 peer について `isVnetExists(peer)` を確認。1 件でも未存在なら `return false` | `VNET.peer_list` が設定されているとき | `vnetorch.cpp:1166-1183` |
 | `NeighOrch` (`gNeighOrch`) | `hasNextHop()` + `getNextHopId()` で nexthop OID 取得。存在しなければ SAI 投入をスキップ | `isLocalEp = true`（ローカル endpoint）のとき | `vnetorch.cpp:790, 795, 950, 958-960` |
-| SAI `sai_route_api` | `create_route_entry()` / `remove_route_entry()` / `set_route_entry_attribute()` で経路を ASIC に反映 | 常時 | `vnetorch.cpp:651, 689, 722` |
+| SAI `sai_route_api` | `create_route_entry()` / `remove_route_entry()` / `set_route_entry_attribute()` で経路を [ASIC](../../reference/glossary.md#term-asic) に反映 | 常時 | `vnetorch.cpp:651, 689, 722` |
 | `CrmOrch` (`gCrmOrch`) | `inc/decCrmResUsedCounter(CRM_IPV4_ROUTE / CRM_IPV6_ROUTE)` で残量カウンタ更新 | IPv4 / IPv6 経路の create / remove ごと | `vnetorch.cpp:665, 669, 698, 702` |
 
 ### VNET_ROUTE_TUNNEL（VXLAN トンネル経路）— `VNetRouteOrch::handleTunnel()`
@@ -333,7 +336,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 | 4 | peer VNET が 1 件でも未存在 | `false` | あり | なし |
 | 5 | Port/[RIF](../../reference/glossary.md#term-rif) 未存在（subnet 経路） | `false` | あり | なし |
 | 6 | SAI `create_route_entry()` / `remove_route_entry()` 失敗 | `false` | あり | SAI 変更なし / 部分変更 |
-| 7 | `RouteOrch::addRoutePost()` / `removeRoutePost()` 失敗 | `false` | あり | ASIC 状態依存 |
+| 7 | `RouteOrch::addRoutePost()` / `removeRoutePost()` 失敗 | `false` | あり | [ASIC](../../reference/glossary.md#term-asic) 状態依存 |
 
 #### APPL 層 — VNET_ROUTE_TUNNEL（VXLAN トンネル経路）
 
@@ -578,7 +581,7 @@ BFD セッション自体の書き込みは `bfd_session_producer_`（[ProducerS
 `gSwitchOrch->checkOrderedEcmpEnable()` の SAI capability 照会結果に基づいて NHG type と
 メンバー属性を決定する。
 
-| ASIC capability | NHG type (`SAI_NEXT_HOP_GROUP_ATTR_TYPE`) | NHG Member `SEQUENCE_ID` | 動作 |
+| [ASIC](../../reference/glossary.md#term-asic) capability | NHG type (`SAI_NEXT_HOP_GROUP_ATTR_TYPE`) | NHG Member `SEQUENCE_ID` | 動作 |
 |----------------|------------------------------------------|--------------------------|------|
 | Ordered ECMP 対応かつ有効化 | `SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP` | 設定あり | endpoint の優先順序を ASIC が保持 |
 | 非対応または無効 | `SAI_NEXT_HOP_GROUP_TYPE_ECMP` | 設定なし | 通常 ECMP（ラウンドロビン） |
@@ -605,15 +608,15 @@ BFD セッション自体の書き込みは `bfd_session_producer_`（[ProducerS
 
 `vnetorch.h:63-67` には `VNET_EXEC_VRF` / `VNET_EXEC_BRIDGE` / `VNET_EXEC_INVALID` の
 3 モードが定義されているが、`orchdaemon.cpp:276` では引数省略で `VNetOrch` が生成されるため
-デフォルト値の `VNET_EXEC::VNET_EXEC_VRF` が常に使用される。コミュニティ SONiC では
+デフォルト値の `VNET_EXEC::VNET_EXEC_VRF` が常に使用される。コミュニティ [SONiC](../../reference/glossary.md#term-sonic) では
 BRIDGE モードは無効。
 
 ### VoQ / Multi-ASIC
 
-`vnetorch.cpp` に VoQ / Multi-ASIC 固有の分岐は存在しない。VNET は単一 ASIC 構成を前提とした
-機能であり、Multi-ASIC / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 向け拡張は対象外。
+`vnetorch.cpp` に VoQ / [Multi-ASIC](../../reference/glossary.md#term-multi-asic) 固有の分岐は存在しない。VNET は単一 ASIC 構成を前提とした
+機能であり、[Multi-ASIC](../../reference/glossary.md#term-multi-asic) / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 向け拡張は対象外。
 
 > **スキャン証跡**: `vnetorch.cpp:804,841,2778`（Ordered ECMP NHG type・SEQUENCE_ID 分岐）、`switchorch.cpp:467-501`（`setSwitchNonSaiAttributes` — `ordered_ecmp` 属性処理）、`switchorch.h:68`（`checkOrderedEcmpEnable`）、`vnetorch.h:63-67`（`VNET_EXEC` enum）、`orchdaemon.cpp:276`（VRF モード固定）。詳細は `meta/_intermediate/cdb-flow/vnet-route-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: 9f7d57d168bb -->
+<!-- glossary-links-injected: 96f8c273ec2d -->

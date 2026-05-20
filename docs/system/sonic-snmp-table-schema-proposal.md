@@ -39,7 +39,7 @@ related:
 
 ## 概要
 
-SONiC の [SNMP](../reference/glossary.md#term-snmp) 設定（コミュニティ・ロケーション・コンタクト・SNMPv3 ユーザ）が `/etc/sonic/snmp.yml` と `config_db.json` の `SNMP_ACL` に分散していた状態を解消し、[CONFIG_DB](../reference/glossary.md#term-config_db) に **SNMP / SNMP_COMMUNITY / SNMP_USER** の 3 テーブルとして集約するためのスキーマ提案[^1]。具体的な移行手順や CLI は別 [HLD](../reference/glossary.md#term-hld)（`snmp-configdb-migration-hld.md`）が扱う。
+[SONiC](../reference/glossary.md#term-sonic) の [SNMP](../reference/glossary.md#term-snmp) 設定（コミュニティ・ロケーション・コンタクト・SNMPv3 ユーザ）が `/etc/sonic/snmp.yml` と `config_db.json` の `SNMP_ACL` に分散していた状態を解消し、[CONFIG_DB](../reference/glossary.md#term-config_db) に **SNMP / SNMP_COMMUNITY / SNMP_USER** の 3 テーブルとして集約するためのスキーマ提案[^1]。具体的な移行手順や CLI は別 [HLD](../reference/glossary.md#term-hld)（`snmp-configdb-migration-hld.md`）が扱う。
 
 ## 動作仕様
 
@@ -219,4 +219,4 @@ docker exec snmp supervisorctl status snmpd
 
 [^1]: `sonic-net/SONiC` `doc/snmp/snmp-schema-addition.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: b51c6da52a8e -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

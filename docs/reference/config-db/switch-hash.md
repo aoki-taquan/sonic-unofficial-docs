@@ -106,8 +106,8 @@ SWITCH_HASH|GLOBAL
 
 | フィールド | 値 | [SAI](../../reference/glossary.md#term-sai) 挙動 |
 |-----------|----|---------:|
-| `ecmp_hash` / `lag_hash` | ASIC 非サポートフィールドを含む | SET 拒否 (`capability is not supported`) |
-| `ecmp_hash_algorithm` | ASIC 非サポートアルゴリズム | SET 拒否 (同上) |
+| `ecmp_hash` / `lag_hash` | [ASIC](../../reference/glossary.md#term-asic) 非サポートフィールドを含む | SET 拒否 (`capability is not supported`) |
+| `ecmp_hash_algorithm` | [ASIC](../../reference/glossary.md#term-asic) 非サポートアルゴリズム | SET 拒否 (同上) |
 | 任意フィールド | DEL | 拒否 (`operation is not supported`) |
 
 <!-- /value-behavior -->
@@ -117,7 +117,7 @@ SWITCH_HASH|GLOBAL
 
 <!-- evidence: sonic-swss/orchagent/switchorch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L797-989 -->
 
-- **ASIC capability 未サポート**: `SwitchOrch` が SAI から取得した capability に設定値が含まれない場合、`"Failed to validate switch ECMP/LAG hash: capability is not supported"` を LOG_ERROR して SET を拒否する（`return false`）。適用されず [CONFIG_DB](../../reference/glossary.md#term-config_db) の値は保留状態のまま。
+- **[ASIC](../../reference/glossary.md#term-asic) capability 未サポート**: `SwitchOrch` が SAI から取得した capability に設定値が含まれない場合、`"Failed to validate switch ECMP/LAG hash: capability is not supported"` を LOG_ERROR して SET を拒否する（`return false`）。適用されず [CONFIG_DB](../../reference/glossary.md#term-config_db) の値は保留状態のまま。
 - **SAI set 失敗**: SAI API 呼び出しが `SAI_STATUS_SUCCESS` 以外を返すと `"Failed to set switch ECMP/LAG hash in SAI"` を LOG_ERROR して処理を中断する。
 - **DEL 操作不可**: `ecmp_hash` / `lag_hash` / `ecmp_hash_algorithm` / `lag_hash_algorithm` はいずれも DEL 操作をサポートしない。削除を試みると `"Failed to remove switch ECMP/LAG hash configuration: operation is not supported"` を LOG_ERROR して `return false`。
 - **ASIC/[CONFIG_DB](../../reference/glossary.md#term-config_db) 乖離**: 初期化時に ASIC 側と CONFIG_DB 側の値が食い違っている場合、SET 時に `"Failed to set switch hash: ASIC and CONFIG DB are diverged"`、DEL 時に `"Failed to remove switch hash: operation is not supported: ASIC and CONFIG DB are diverged"` を LOG_ERROR。
@@ -154,7 +154,7 @@ show switch-hash global
 
 `SwitchHash` 構造体 (`sonic-swss/orchagent/switch/switch_container.h:18-26`) は `ecmp_hash` / `lag_hash` をいずれも `is_set = false` で初期化する。CONFIG_DB の `SWITCH_HASH|GLOBAL` エントリにフィールドが含まれない場合、`setSwitchHash()` (`switchorch.cpp:789-822`) は SAI への書き込みを行わず、**有効な hash field 集合は SAI ベンダー実装 / ASIC のデフォルト**（`SAI_SWITCH_ATTR_ECMP_HASH` / `SAI_SWITCH_ATTR_LAG_HASH` が指す hash オブジェクトの初期 `NATIVE_HASH_FIELD_LIST`）に従う。
 
-`sonic-hash.yang` の `ecmp_hash` / `lag_hash` leaf-list には `default` 文が無く、YANG レベルでもデフォルトは規定されていない。SONiC [orchagent](../../reference/glossary.md#term-orchagent) 自身は IPv4 / IPv6 別の hash-field 集合をハードコードしておらず、`hash-field` enum も `SRC_IP` / `DST_IP` の単一集合で IPv4/IPv6 を区別しない（IPv6 対応は ASIC 側で自動的に handled）。
+`sonic-hash.yang` の `ecmp_hash` / `lag_hash` leaf-list には `default` 文が無く、YANG レベルでもデフォルトは規定されていない。[SONiC](../../reference/glossary.md#term-sonic) [orchagent](../../reference/glossary.md#term-orchagent) 自身は IPv4 / IPv6 別の hash-field 集合をハードコードしておらず、`hash-field` enum も `SRC_IP` / `DST_IP` の単一集合で IPv4/IPv6 を区別しない（IPv6 対応は ASIC 側で自動的に handled）。
 
 ### `ecmp_hash_algorithm` / `lag_hash_algorithm` — コード側デフォルトなし
 
@@ -562,4 +562,4 @@ db_migrator.py での SWITCH_HASH マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 7508f6b9dd2f -->
+<!-- glossary-links-injected: 865a18402f05 -->

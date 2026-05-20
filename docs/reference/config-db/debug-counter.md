@@ -204,7 +204,7 @@ show dropcounters configuration
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -290,7 +290,7 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
-| `PORT` (CONFIG_DB / PortsOrch) | 読み取り（ポート一覧取得 + 変更イベント購読） | `PORT_INGRESS_DROPS` / `PORT_EGRESS_DROPS` 型カウンタ作成時。`gPortsOrch->getAllPorts()` で `Port::Type::PHY` のみ [FlexCounter](../../reference/glossary.md#term-flexcounter) 登録対象に選択。ポート追加/削除で `installDebugFlexCounters()` / `uninstallDebugFlexCounters()` が自動呼び出し。 | `debugcounterorch.cpp:16,39,71,92,106,629,682` |
+| `PORT` (CONFIG_DB / [PortsOrch](../../reference/glossary.md#term-portsorch)) | 読み取り（ポート一覧取得 + 変更イベント購読） | `PORT_INGRESS_DROPS` / `PORT_EGRESS_DROPS` 型カウンタ作成時。`gPortsOrch->getAllPorts()` で `Port::Type::PHY` のみ [FlexCounter](../../reference/glossary.md#term-flexcounter) 登録対象に選択。ポート追加/削除で `installDebugFlexCounters()` / `uninstallDebugFlexCounters()` が自動呼び出し。 | `debugcounterorch.cpp:16,39,71,92,106,629,682` |
 | `FLEX_COUNTER_DB FLEX_COUNTER_GROUP_TABLE` (`DEBUG_COUNTER` グループ) | 書き込み（orchagent → [syncd](../../reference/glossary.md#term-syncd) 経路） | `DebugCounterOrch` コンストラクタで初期化。カウンタ作成/削除時に `flex_counter_manager.addFlexCounterStat()` / `removeFlexCounterStat()` で stat を登録・解除。 | `debugcounterorch.cpp:25-29,625,644; debugcounterorch.h:19` |
 | `FLEX_COUNTER_DB FLEX_COUNTER_GROUP_TABLE` (`DEBUG_MONITOR_COUNTER` グループ) | 書き込み（drop monitor Lua 用） | コンストラクタで `setFlexCounterGroupParameter(DEBUG_DROP_MONITOR_FLEX_COUNTER_GROUP, ...)` を呼び、drop_monitor.lua を Lua プラグインとして登録。`drop_monitor_status=enabled` 時に `startFlexCounterPolling()` でポーリング開始。 | `debugcounterorch.cpp:55-59,241,651,710; debugcounterorch.h:20-21` |
 | `STATE_DB DEBUG_COUNTER_CAPABILITIES` | 書き込み（自身が情報源） | 起動時 1 回 `publishDropCounterCapabilities()` が SAI に `sai_query_attribute_enum_values_capability` を投げ、サポートされているカウンタ種別・drop reason 一覧を書き込む。 | `debugcounterorch.cpp:31,314-361` |
@@ -462,7 +462,7 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 | 区間 | 方式 | チャンネル/パターン |
 |------|------|--------------------|
 | CONFIG_DB → DebugCounterOrch | `SubscriberStateTable` (Orch 基底クラス経由) | `__keyspace@{config_db_id}__:DEBUG_COUNTER\|*` 等 |
-| PortsOrch → DebugCounterOrch | Subject/Observer (`attach`/`update`) | `SUBJECT_TYPE_PORT_CHANGE` イベント |
+| [PortsOrch](../../reference/glossary.md#term-portsorch) → DebugCounterOrch | Subject/Observer (`attach`/`update`) | `SUBJECT_TYPE_PORT_CHANGE` イベント |
 | DebugCounterOrch → SAI | SAI API 直接呼び出し | `sai_debug_counter_api->create/remove/set_debug_counter()` |
 | DebugCounterOrch → [STATE_DB](../../reference/glossary.md#term-state_db) | `Table::set()` | `DEBUG_COUNTER_CAPABILITIES` テーブル（起動時 1 回） |
 | DebugCounterOrch → COUNTERS_DB | `Table::set()` / `Table::hdel()` | `COUNTERS_DEBUG_NAME_PORT_STAT_MAP`, `COUNTERS_DEBUG_NAME_SWITCH_STAT_MAP` |
@@ -534,8 +534,8 @@ PortsOrch.attach(DebugCounterOrch):
 
 | 制約 | 詳細 | evidence |
 |------|------|---------|
-| SAI `sai_query_attribute_enum_values_capability` 未実装 ASIC | `getSupportedCounterTypes()` が空集合を返し、すべての `installDebugCounter()` が `task_failed`。`DEBUG_COUNTER_CAPABILITIES` には type エントリが書き込まれない | `drop_counter.cpp:380-384` |
-| ハードウェアリソース共有 | 一部の ASIC では debug counter が [ACL](../../reference/glossary.md#term-acl) entry 等と hardware resource を共有するため、`sai_object_type_get_availability` の返り値がシステム負荷で動的に変動する。SAI create 失敗時は `task_failed` | `drop_counter.cpp:425-428` |
+| SAI `sai_query_attribute_enum_values_capability` 未実装 [ASIC](../../reference/glossary.md#term-asic) | `getSupportedCounterTypes()` が空集合を返し、すべての `installDebugCounter()` が `task_failed`。`DEBUG_COUNTER_CAPABILITIES` には type エントリが書き込まれない | `drop_counter.cpp:380-384` |
+| ハードウェアリソース共有 | 一部の [ASIC](../../reference/glossary.md#term-asic) では debug counter が [ACL](../../reference/glossary.md#term-acl) entry 等と hardware resource を共有するため、`sai_object_type_get_availability` の返り値がシステム負荷で動的に変動する。SAI create 失敗時は `task_failed` | `drop_counter.cpp:425-428` |
 | PORT_DEBUG 型 — PHY ポートのみ | `PORT_INGRESS_DROPS` / `PORT_EGRESS_DROPS` の FlexCounter エントリは `Port::Type::PHY` のポートのみ対象。[LAG](../../reference/glossary.md#term-lag)・[VLAN](../../reference/glossary.md#term-vlan)・CPU ポートは silent skip（コード固定、プラットフォーム非依存） | `debugcounterorch.cpp:629-648` |
 | VS (Virtual Switch) 環境 | SAI stub が capability クエリを実装していない場合は全 counter 作成不可。ただし swss テスト (`test_virtual_chassis.py`) では SAI stub に debug counter サポートが注入される | `drop_counter.cpp:380-384`; `tests/test_virtual_chassis.py:1306` |
 
@@ -553,4 +553,4 @@ PortsOrch.attach(DebugCounterOrch):
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: cacab8caf47a -->
+<!-- glossary-links-injected: 32419b2f922c -->

@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-SONiC の P4RT サブシステムは IP マルチキャスト転送を 2 種類の APP_DB テーブルで実現する。
+[SONiC](../../reference/glossary.md#term-sonic) の [P4RT](../../reference/glossary.md#term-p4rt) サブシステムは IP マルチキャスト転送を 2 種類の APP_DB テーブルで実現する。
 
 | テーブル | 役割 |
 |---------|------|
@@ -42,7 +42,7 @@ SONiC の P4RT サブシステムは IP マルチキャスト転送を 2 種類�
 | `FIXED_IPV4_MULTICAST_TABLE` | [VRF](../../reference/glossary.md#term-vrf) + IPv4 マルチキャスト宛先 → グループ ID のルート |
 | `FIXED_IPV6_MULTICAST_TABLE` | [VRF](../../reference/glossary.md#term-vrf) + IPv6 マルチキャスト宛先 → グループ ID のルート |
 
-これらはすべて **APP_DB** テーブルであり、P4RT-app (`p4rt`) がコントロールプレーンの指示を受けて書き込む。[CONFIG_DB](../../reference/glossary.md#term-config_db) には専用テーブルは存在しない。
+これらはすべて **APP_DB** テーブルであり、[P4RT](../../reference/glossary.md#term-p4rt)-app (`p4rt`) がコントロールプレーンの指示を受けて書き込む。[CONFIG_DB](../../reference/glossary.md#term-config_db) には専用テーブルは存在しない。
 
 [orchagent](../../reference/glossary.md#term-orchagent) の `L3MulticastManager` が `REPLICATION_IP_MULTICAST_TABLE` を消費して [SAI](../../reference/glossary.md#term-sai) `IPMC_GROUP` / `IPMC_GROUP_MEMBER` を作成し、`IpMulticastManager` が `FIXED_IPV4/IPV6_MULTICAST_TABLE` を消費して [SAI](../../reference/glossary.md#term-sai) `IPMC_ENTRY` を作成する[^1]。
 
@@ -176,7 +176,7 @@ RPF group は最初の IPMC エントリ追加時に自動作成され (`createD
 > 根拠: `ip_multicast_manager.cpp` `validateSetIpMulticastEntry()` L493-533、`validateIpMulticastEntry()` L471-491、`l3_multicast_manager.cpp` `validateReplicas()` L978-1057 全行精読。
 > evidence: `meta/_intermediate/cdb-flow/ip-mcast-route-ordering.md`
 
-P4RT フレームワークは依存オブジェクトが未存在の場合に即座に `SWSS_RC_NOT_FOUND` を返す。**pending キューや自動 retry は存在しない**。コントローラ (`p4rt-app`) が依存関係を守った順序で書き込む必要がある。
+[P4RT](../../reference/glossary.md#term-p4rt) フレームワークは依存オブジェクトが未存在の場合に即座に `SWSS_RC_NOT_FOUND` を返す。**pending キューや自動 retry は存在しない**。コントローラ (`p4rt-app`) が依存関係を守った順序で書き込む必要がある。
 
 ### 検出された順序依存
 
@@ -555,4 +555,4 @@ gP4Orch = new P4Orch(m_applDb, p4rt_tables, m_p4OrchZmqServer, vrf_orch, gCoppOr
 [^2]: SAI 固定属性: `ip_multicast_manager.cpp:L54-79` `prepareIpmcSaiAttrs()` および `L699-721` `prepareSaiIpmcEntry()`
 [^3]: RPF group ライフサイクル: `ip_multicast_manager.cpp:L647-697` `createDefaultRpfGroup()` / `L687-697` `deleteDefaultRpfGroup()`
 
-<!-- glossary-links-injected: 7dd8990fd499 -->
+<!-- glossary-links-injected: 40a813912b33 -->

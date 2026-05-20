@@ -196,7 +196,7 @@ show ip bgp vrf Vnet1 summary
 
 - **`update.conf.j2` / `delete.conf.j2` が peer_type の template directory に無いと機能しない**[^1]。dynamic peer の動的編集が peer_type 依存
 - update/delete 各 1 ファイルで instance/policies/peer-group を全部扱う粗粒度設計
-- diff 算出は vtysh の現行値を信頼するため、**vtysh と bgpcfgd の整合**が崩れると delete_ranges が誤算出され得る
+- diff 算出は [vtysh](../reference/glossary.md#term-vtysh) の現行値を信頼するため、**vtysh と bgpcfgd の整合**が崩れると delete_ranges が誤算出され得る
 - `BGP_PEER_CONFIGURED_TABLE` は **bgpcfgd の処理完了** をミラーするだけで、BGP session 確立までは追跡しない
 - HLD は 2025-07 Rev 1.0。master 取り込み状況は要追跡
 
@@ -251,4 +251,4 @@ docker exec bgp vtysh -c 'show bgp neighbors' | head
 
 [^1]: `sonic-net/SONiC` `doc/BGP/Bgpcfgd-dyn-peer-modification-support.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 193ac213e3ad -->
+<!-- glossary-links-injected: ee79766d4c7b -->

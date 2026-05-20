@@ -40,9 +40,9 @@ related:
 
 ## 概要
 
-SONiC の [AAA](../reference/glossary.md#term-aaa)（Authentication / Authorization / Accounting）を Linux PAM / NSS / D-Bus 層から見直し、以下の既知の問題を解く設計提案[^1]:
+[SONiC](../reference/glossary.md#term-sonic) の [AAA](../reference/glossary.md#term-aaa)（Authentication / Authorization / Accounting）を Linux PAM / NSS / D-Bus 層から見直し、以下の既知の問題を解く設計提案[^1]:
 
-1. **多重ロール（RBAC）非対応**: RADIUS / TACACS+ から学習した role を Primary GID 1 つに突っ込んでいる
+1. **多重ロール（RBAC）非対応**: [RADIUS](../reference/glossary.md#term-radius) / TACACS+ から学習した role を Primary GID 1 つに突っ込んでいる
 2. **RADIUS user は 2 回ログインしないと role が反映されない**: 1 回目で `getpwnam()` 失敗 → PAM 認証中に local account を生成 → 2 回目で動く、という workaround
 3. **console / non-console の判別が `login` プログラム名頼り**: telnet daemon も `login` を使うため誤判定
 4. **`sudo` / `su` は local 認証のみ**: PAM 設定が sshd / login にしか入っていない
@@ -243,4 +243,4 @@ sudo cat /etc/pam.d/common-auth-sonic
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: db62d2100cef -->

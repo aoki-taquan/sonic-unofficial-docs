@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-ASIC / SDK が発する health event のうち、重大度 (severity) ごとに**抑制ルールとカテゴリフィルタ**を定義するテーブル[^1]。
+[ASIC](../../reference/glossary.md#term-asic) / SDK が発する health event のうち、重大度 (severity) ごとに**抑制ルールとカテゴリフィルタ**を定義するテーブル[^1]。
 イベントの発火頻度が高いベンダーで、必要なものだけを `STATE_DB`/`SYSLOG` に通すために使う。
 
 <!-- cdb-mermaid -->
@@ -122,7 +122,7 @@ sonic-db-cli STATE_DB keys 'ASIC_SDK_HEALTH_EVENT_TABLE|*'
 | `software` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_SW` | ソフトウェア起因イベントを抑制。 |
 | `firmware` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_FW` | ファームウェア起因イベントを抑制。 |
 | `cpu_hw` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_CPU_HW` | CPU ハードウェア起因イベントを抑制。 |
-| `asic_hw` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_ASIC_HW` | ASIC ハードウェア起因イベントを抑制。 |
+| `asic_hw` | `SAI_SWITCH_ASIC_SDK_HEALTH_CATEGORY_ASIC_HW` | [ASIC](../../reference/glossary.md#term-asic) ハードウェア起因イベントを抑制。 |
 | 省略（未指定） | なし | 全カテゴリが抑制対象として登録される。DEL 操作時も同様に全カテゴリの抑制を解除。 |
 
 <!-- /value-behavior -->
@@ -357,7 +357,7 @@ Consumer: `SwitchOrch::doCfgSuppressAsicSdkHealthEventTableTask()` (`orchagent/s
 | プラットフォーム非対応 severity | **0 回**（即 erase） | プラットフォーム変更以外に解消手段なし |
 | `categories` 内の不明な値 | なし（値をスキップして継続） | 影響: 不正値が参照するカテゴリは抑制されず全購読になる |
 | SAI `set_switch_attribute` 失敗 | **0 回**（ログのみ、正常消費） | なし。orchagent はエラーログのみで処理継続 |
-| SAI 非対応（起動時） | **0 回**（全件スキップ） | ASIC が当該 SAI 属性に対応するまで機能しない |
+| SAI 非対応（起動時） | **0 回**（全件スキップ） | [ASIC](../../reference/glossary.md#term-asic) が当該 SAI 属性に対応するまで機能しない |
 
 ### SAI エラーのサイレント消費に関する注意
 
@@ -671,4 +671,4 @@ db_migrator.py での SUPPRESS_ASIC_SDK_HEALTH_EVENT マイグレーションな
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: d8dc41925c7d -->
+<!-- glossary-links-injected: 8df9850464d2 -->

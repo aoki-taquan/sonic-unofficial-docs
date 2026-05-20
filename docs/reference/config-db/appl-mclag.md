@@ -112,7 +112,7 @@ MCLAG_FDB_TABLE|Vlan<vid>:<mac>
 | `MCLAG_FDB_TYPE_DYNAMIC` | 2 | `"dynamic"` |
 | `MCLAG_FDB_TYPE_DYNAMIC_LOCAL` | 3 | `"dynamic_local"` |
 
-`dynamic_local` は aging が有効なローカルエントリとして ASIC に書き込む際に使用する。
+`dynamic_local` は aging が有効なローカルエントリとして [ASIC](../../reference/glossary.md#term-asic) に書き込む際に使用する。
 
 ---
 
@@ -633,7 +633,7 @@ journalctl -u mclag | grep mclagsyncd
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`mclagsyncd` の APPL_DB 書込経路は **ASIC 種別** によって `ISOLATION_GROUP_TABLE` 経路と `ACL_TABLE_TABLE`/`ACL_RULE_TABLE` フォールバック経路に分岐する[^link]。判定材料は CONFIG_DB の `DEVICE_METADATA|localhost.platform` ではなく **`asic_type`** で、`docker-iccpd/iccpd.sh:3` がコンテナ起動時に環境変数 `platform` として export し、`mclaglink.cpp:201` の `getenv("platform")` で読まれる。
+`mclagsyncd` の APPL_DB 書込経路は **[ASIC](../../reference/glossary.md#term-asic) 種別** によって `ISOLATION_GROUP_TABLE` 経路と `ACL_TABLE_TABLE`/`ACL_RULE_TABLE` フォールバック経路に分岐する[^link]。判定材料は CONFIG_DB の `DEVICE_METADATA|localhost.platform` ではなく **`asic_type`** で、`docker-iccpd/iccpd.sh:3` がコンテナ起動時に環境変数 `platform` として export し、`mclaglink.cpp:201` の `getenv("platform")` で読まれる。
 
 ### ASIC 別 isolation 経路
 
@@ -647,7 +647,7 @@ journalctl -u mclag | grep mclagsyncd
 | `marvell-teralynx` | `ISOLATION_GROUP_TABLE` | 同上 |
 | `mellanox` / `vs` / その他 | `ACL_TABLE_TABLE`(`mclag`) + `ACL_RULE_TABLE`(`mclag:mclag`) | `SAI_OBJECT_TYPE_ACL_TABLE` (type=L3) + `SAI_OBJECT_TYPE_ACL_ENTRY` (PACKET_ACTION=DROP) |
 
-許可リストは `mclaglink.h:54-59` の 6 つの `*_PLATFORM_SUBSTRING` で固定。新規 ASIC 対応にはコード追加が必要[^link]。
+許可リストは `mclaglink.h:54-59` の 6 つの `*_PLATFORM_SUBSTRING` で固定。新規 [ASIC](../../reference/glossary.md#term-asic) 対応にはコード追加が必要[^link]。
 
 ### 経路別の細かい差
 
@@ -815,4 +815,4 @@ ICCP セッション開始
 [^iccpcli]: iccpd CLI キーワード定数: `sonic-buildimage/src/iccpd/include/iccp_cli.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_cli.h>
 [^mclagyang]: MCLAG YANG モデル（domain_id / keepalive_interval / session_timeout 範囲）: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mclag.yang>
 
-<!-- glossary-links-injected: ab1386703095 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

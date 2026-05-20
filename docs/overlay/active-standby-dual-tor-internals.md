@@ -68,7 +68,7 @@ active → unknown 遷移時は `linkprober_suspend_timer` で一時的に heart
 
 - [IPinIP](../reference/glossary.md#term-ipinip) tunnel object 作成（`tunnel_type=IPINIP`、`dst_ip=Loopback0`、`dscp_mode=uniform`、`encap_ecn_mode=standard`、`ecn_mode=copy_from_outer`、`ttl_mode=pipe`）
 - decap entry / tunnel termination 作成
-- `SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP` を MuxOrch の next hop として供給
+- `SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP` を [MuxOrch](../reference/glossary.md#term-muxorch) の next hop として供給
 
 ## 3. MuxOrch
 
@@ -170,4 +170,4 @@ sequenceDiagram
 
 [^1]: `sonic-net/SONiC` `doc/dualtor/dualtor_active_standby_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 3dc47e5d23ad -->
+<!-- glossary-links-injected: 0a1df176ebd3 -->

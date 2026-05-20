@@ -246,7 +246,7 @@ static const vector<sai_ingress_priority_group_stat_t> ingressPriorityGroupWater
 | `DEFAULT_TELEMETRY_INTERVAL` | `120` 秒 | `watermarkorch.cpp:9` | `watermarkorch` が `m_telemetryTimer` を初期化する際のデフォルト周期。`WATERMARK_TABLE|TELEMETRY_INTERVAL` エントリの `interval` フィールドで上書き可能。変更単位は秒 |
 | `CLEAR_PG_HEADROOM_REQUEST` | `"PG_HEADROOM"` | `watermarkorch.cpp:11` | `WATERMARK_CLEAR_REQUEST` [APPL_DB](../../reference/glossary.md#term-appl_db) 通知チャネルへのリクエスト文字列。`watermarkcfg clear pg-headroom` CLI が発行する値と一致しなければクリア処理が発火しない |
 | `CLEAR_PG_SHARED_REQUEST` | `"PG_SHARED"` | `watermarkorch.cpp:12` | 同上。`watermarkcfg clear pg-shared` CLI が発行するリクエスト文字列 |
-| `SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES` | SAI enum 値 | `portsorch.cpp:412` (`ingressPriorityGroupWatermarkStatIds[]`) | FlexCounter が各 PG OID に対して収集する SAI カウンタ 1 つ目。XOFF（headroom）ウォーターマークをバイト単位で返す。ASIC が非対応の場合は `SAI_STATUS_NOT_SUPPORTED` が返るが、orchagent はエラー扱いしない |
+| `SAI_INGRESS_PRIORITY_GROUP_STAT_XOFF_ROOM_WATERMARK_BYTES` | SAI enum 値 | `portsorch.cpp:412` (`ingressPriorityGroupWatermarkStatIds[]`) | FlexCounter が各 PG OID に対して収集する SAI カウンタ 1 つ目。XOFF（headroom）ウォーターマークをバイト単位で返す。[ASIC](../../reference/glossary.md#term-asic) が非対応の場合は `SAI_STATUS_NOT_SUPPORTED` が返るが、orchagent はエラー扱いしない |
 | `SAI_INGRESS_PRIORITY_GROUP_STAT_SHARED_WATERMARK_BYTES` | SAI enum 値 | `portsorch.cpp:413` (`ingressPriorityGroupWatermarkStatIds[]`) | FlexCounter が各 PG OID に対して収集する SAI カウンタ 2 つ目。Shared バッファウォーターマークをバイト単位で返す。収集カウンタリストはコードで完全に固定されており、CONFIG_DB や YANG からの変更手段はない |
 
 !!! note "POLL_MSECS 二重定義の理由"
@@ -375,7 +375,7 @@ syncd FlexCounter スレッド: FLEX_COUNTER_DB を読んで SAI ポーリング
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`FLEX_COUNTER_TABLE|PG_WATERMARK` の処理ロジック自体は ASIC ベンダー・スイッチタイプに依存しないが、有効化後に実際に収集されるカウンタ値やカウンタの存在はプラットフォーム構成に依存する。
+`FLEX_COUNTER_TABLE|PG_WATERMARK` の処理ロジック自体は [ASIC](../../reference/glossary.md#term-asic) ベンダー・スイッチタイプに依存しないが、有効化後に実際に収集されるカウンタ値やカウンタの存在はプラットフォーム構成に依存する。
 
 ### 管理デバイス (mgmt_device) — minigraph が強制 disable
 
@@ -388,7 +388,7 @@ syncd FlexCounter スレッド: FLEX_COUNTER_DB を読んで SAI ポーリング
 
 ### SAI カウンタサポート差 — ASIC 依存
 
-収集対象の 2 SAI カウンタはハードコードされており、ASIC が対応していない場合はサイレントに 0 値またはエラーが返る[^5]。
+収集対象の 2 SAI カウンタはハードコードされており、[ASIC](../../reference/glossary.md#term-asic) が対応していない場合はサイレントに 0 値またはエラーが返る[^5]。
 
 | SAI カウンタ | ASIC 非対応時の挙動 |
 |-------------|------------------|
@@ -471,4 +471,4 @@ watermarkstat priority-group headroom
 
 [^7]: watermarkorch.cpp:9,116-141 — `DEFAULT_TELEMETRY_INTERVAL = 120` および `handleFcConfigUpdate()` による telemetry タイマー制御。<https://github.com/sonic-net/sonic-swss/blob/master/orchagent/watermarkorch.cpp>
 
-<!-- glossary-links-injected: a13a62f294a1 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

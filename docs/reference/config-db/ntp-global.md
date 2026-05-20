@@ -210,7 +210,7 @@ NTP_GLOBAL テーブルは YANG で定義されるが、CLI は NTP_SERVER/NTP_K
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-`sonic-host-services/scripts/hostcfgd` の `NtpCfg` クラスと `sonic-buildimage/files/image_config/chrony/chrony.conf.j2` テンプレを精査し、[CONFIG_DB](../../reference/glossary.md#term-config_db) に値が無いときの実効デフォルトを整理する。SONiC master は `ntpd` ではなく **chrony** を採用しているため、テンプレ実体は `chrony.conf.j2`（旧 [HLD](../../reference/glossary.md#term-hld) の `ntp.conf.j2` は不在）。
+`sonic-host-services/scripts/hostcfgd` の `NtpCfg` クラスと `sonic-buildimage/files/image_config/chrony/chrony.conf.j2` テンプレを精査し、[CONFIG_DB](../../reference/glossary.md#term-config_db) に値が無いときの実効デフォルトを整理する。[SONiC](../../reference/glossary.md#term-sonic) master は `ntpd` ではなく **chrony** を採用しているため、テンプレ実体は `chrony.conf.j2`（旧 [HLD](../../reference/glossary.md#term-hld) の `ntp.conf.j2` は不在）。
 
 | フィールド | YANG default | コード由来 fallback | 実効デフォルト (未設定時) | chrony.conf 反映 |
 |-----------|-------------|-------------------|------------------------|----------------|
@@ -496,7 +496,7 @@ MGMT VRF は single-asic / multi-asic 双方の host 単位で有効化される
 
 ### multi-asic での src_intf 注意点
 
-`chrony.conf.j2` の `get_ip_on_interface` マクロは host CONFIG_DB のテーブルを参照して `bindacqaddress` を生成する。multi-asic 環境では `EthernetX` / `PortChannelX` はデータプレーン ASIC namespace に存在し、host CONFIG_DB の `INTERFACE` / `PORTCHANNEL_INTERFACE` にはアドレスが設定されないことがある。この場合 `bindacqaddress` が空になり、NTP パケットの送信元 IP 制限が silent に無効化される（エラーにはならない）。管理インタフェース経由で NTP を使う場合は `src_intf=eth0` または `Loopback0` 等を使うことを推奨する。
+`chrony.conf.j2` の `get_ip_on_interface` マクロは host CONFIG_DB のテーブルを参照して `bindacqaddress` を生成する。multi-asic 環境では `EthernetX` / `PortChannelX` はデータプレーン [ASIC](../../reference/glossary.md#term-asic) namespace に存在し、host CONFIG_DB の `INTERFACE` / `PORTCHANNEL_INTERFACE` にはアドレスが設定されないことがある。この場合 `bindacqaddress` が空になり、NTP パケットの送信元 IP 制限が silent に無効化される（エラーにはならない）。管理インタフェース経由で NTP を使う場合は `src_intf=eth0` または `Loopback0` 等を使うことを推奨する。
 
 調査メモ: `meta/_intermediate/cdb-flow/ntp-platform.md`
 
@@ -539,4 +539,4 @@ minigraph.py からの `NTP_GLOBAL` 自動派生はなし。`NTP_SERVER` のみ 
 
 <!-- /handler-branching -->
 
-<!-- glossary-links-injected: f1014c26b070 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

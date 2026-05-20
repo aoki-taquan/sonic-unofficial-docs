@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-`SWITCH_TABLE:switch` の `fdb_aging_time` フィールドは、ハードウェア [FDB](../../reference/glossary.md#term-fdb) ([Forwarding Database](../../reference/glossary.md#term-forwarding-database)) の動的エントリをエージングアウトするまでのタイムアウト時間を秒単位で指定する[^1]。`orchagent` の `SwitchOrch` がこのフィールドを読み取り、[SAI](../../reference/glossary.md#term-sai) 属性 `SAI_SWITCH_ATTR_FDB_AGING_TIME` としてスイッチ ASIC に設定する。
+`SWITCH_TABLE:switch` の `fdb_aging_time` フィールドは、ハードウェア [FDB](../../reference/glossary.md#term-fdb) ([Forwarding Database](../../reference/glossary.md#term-forwarding-database)) の動的エントリをエージングアウトするまでのタイムアウト時間を秒単位で指定する[^1]。`orchagent` の `SwitchOrch` がこのフィールドを読み取り、[SAI](../../reference/glossary.md#term-sai) 属性 `SAI_SWITCH_ATTR_FDB_AGING_TIME` としてスイッチ [ASIC](../../reference/glossary.md#term-asic) に設定する。
 
 このフィールドは [CONFIG_DB](../../reference/glossary.md#term-config_db) には**存在しない**。[orchagent](../../reference/glossary.md#term-orchagent) コンテナ起動時に `switch.json.j2` テンプレートが展開された `switch.json` を `swssconfig` が [APPL_DB](../../reference/glossary.md#term-appl_db) `SWITCH_TABLE:switch` に書き込む経路が標準の注入パスである。
 
@@ -122,7 +122,7 @@ warm-reboot パスで `checkRestartNoFreeze()` が false の場合、`orchdaemon
 | 2 | orchagent メインループ開始 → [swssconfig](../../reference/glossary.md#term-swssconfig) 書込 | 時間的分離 | soft | sleep 1 により担保 |
 | 3 | 不明フィールド先行 → fdb_aging_time スキップ | break 中断 | medium | 有効属性のみ書き込む |
 | 4 | warm-reboot → aging 0 → 再起動後復元 | 意図的一時無効化 | hard | 自動復元 (swssconfig) |
-| 5 | SAI 失敗 → 次ループ再試行 | 一時スキップ + 自動再試行 | soft | ASIC 正常稼働で解消 |
+| 5 | SAI 失敗 → 次ループ再試行 | 一時スキップ + 自動再試行 | soft | [ASIC](../../reference/glossary.md#term-asic) 正常稼働で解消 |
 
 <!-- /ordering -->
 
@@ -276,7 +276,7 @@ cross-refs としての依存テーブルはない（Phase B 順序依存とし�
 |------|----|------|--------|
 | `fdb_aging_time` デフォルト | `"600"` 秒 | `switch_type != "dpu"` ノード向けに orchagent コンテナ起動時に自動注入されるデフォルト値。YANG / CONFIG_DB の直接管理なし | `switch.json.j2:38` |
 
-`switch_type == "dpu"` の場合このフィールドは注入されず、ASIC のハードウェアデフォルトが適用される。
+`switch_type == "dpu"` の場合このフィールドは注入されず、[ASIC](../../reference/glossary.md#term-asic) のハードウェアデフォルトが適用される。
 
 ### swssconfig.sh のハードコード定数
 
@@ -420,4 +420,4 @@ warm-reboot 中の aging 無効化 (`setAgingFDB(0)`) は APPL_DB を**経由し
 
 <!-- glossary-links-injected: fdb-aging -->
 
-<!-- glossary-links-injected: e7851a706a1d -->
+<!-- glossary-links-injected: 8df9850464d2 -->

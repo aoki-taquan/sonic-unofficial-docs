@@ -172,7 +172,7 @@ if (vni != 0)
 
 ### `v4` / `v6` — SAI デフォルト依存 (YANG 未定義)
 
-フィールドが存在する場合は `SAI_VIRTUAL_ROUTER_ATTR_ADMIN_V4_STATE` / `ADMIN_V6_STATE` に変換されるが、CONFIG_DB `sonic-vrf.yang` に定義がなく通常の `config vrf add` では書き込まれない。省略時は [SAI](../../reference/glossary.md#term-sai) attrs に追加されないため SAI/ASIC 実装のデフォルト値が使用される。[VNET](../../reference/glossary.md#term-vnet) テーブル経由で直接書き込む場合にのみ機能する残存コード。
+フィールドが存在する場合は `SAI_VIRTUAL_ROUTER_ATTR_ADMIN_V4_STATE` / `ADMIN_V6_STATE` に変換されるが、CONFIG_DB `sonic-vrf.yang` に定義がなく通常の `config vrf add` では書き込まれない。省略時は [SAI](../../reference/glossary.md#term-sai) attrs に追加されないため SAI/[ASIC](../../reference/glossary.md#term-asic) 実装のデフォルト値が使用される。[VNET](../../reference/glossary.md#term-vnet) テーブル経由で直接書き込む場合にのみ機能する残存コード。
 
 ### `src_mac` — 省略時はスイッチ MAC を SAI が使用 (YANG 未定義)
 
@@ -226,7 +226,7 @@ else if ((name == "mgmtVrfEnabled") || (name == "in_band_mgmt_enabled"))
 | 先行テーブル / 状態 | 理由 | ソース |
 |---|---|---|
 | `MGMT_VRF_CONFIG` の Linux mgmt VRF 作成 (`hostcfgd` 側) | `vrfmgrd::setLink` は `vrfName == "mgmt"` の場合 `ip link add` を呼ばず `MGMT_VRF_TABLE_ID = 6000` を予約するだけ。`hostcfgd` が先に Linux mgmt VRF を作っていない状態で書くと SAI Virtual Router は作成されるが Linux 側 netdev と不整合になる | `vrfmgr.cpp:13-16, 73-84, 164-201` |
-| `VXLAN_EVPN_NVO` (`vni != 0` の場合) | `updateVrfVNIMap` が `EvpnNvoOrch::getEVPNVtep()` を必須で参照。VTEP 未作成だと `false` 返却で `addOperation` 失敗、SAI VR は create 済みなのに `STATE_VRF_OBJECT_TABLE` と VNI map が抜ける半作成状態が残る | `vrforch.cpp:225-230` |
+| `VXLAN_EVPN_NVO` (`vni != 0` の場合) | `updateVrfVNIMap` が `EvpnNvoOrch::getEVPNVtep()` を必須で参照。[VTEP](../../reference/glossary.md#term-vtep) 未作成だと `false` 返却で `addOperation` 失敗、SAI VR は create 済みなのに `STATE_VRF_OBJECT_TABLE` と VNI map が抜ける半作成状態が残る | `vrforch.cpp:225-230` |
 | `VXLAN_TUNNEL_MAP` ([VLAN](../../reference/glossary.md#term-vlan)-VNI map) (`vni != 0` の場合) | `VxlanTunnelOrch::getVlanMappedToVni(vni)` が 0 のとき `updateL3VniStatus` が呼ばれず L3 VNI は半設定状態のまま保留される | `vrforch.cpp:233-241` |
 
 !!! warning "mgmt VRF は二系統の同期が必要"
@@ -273,7 +273,7 @@ vrfmgrd が CONFIG_DB VRF / MGMT_VRF_CONFIG を受信
 VRFOrch が SAI Virtual Router create → updateVrfVNIMap → STATE_VRF_OBJECT_TABLE|<vrf>=ok
 ```
 
-実運用では `config vrf add Vrfxxx` が `VRF` テーブルのみを書く（VNI 未設定）ため、[EVPN](../../reference/glossary.md#term-evpn) VTEP / [VLAN](../../reference/glossary.md#term-vlan)-VNI map 依存は L3 VNI 機能を使う場合のみ。
+実運用では `config vrf add Vrfxxx` が `VRF` テーブルのみを書く（VNI 未設定）ため、[EVPN](../../reference/glossary.md#term-evpn) [VTEP](../../reference/glossary.md#term-vtep) / [VLAN](../../reference/glossary.md#term-vlan)-VNI map 依存は L3 VNI 機能を使う場合のみ。
 
 <!-- /ordering -->
 
@@ -302,7 +302,7 @@ VRFOrch が SAI Virtual Router create → updateVrfVNIMap → STATE_VRF_OBJECT_T
 | **SAI `create_virtual_router()` 失敗 (resource 系)** | INSUFFICIENT_RESOURCES / TABLE_FULL / NO_MEMORY / NV_STORAGE_FULL | `SWSS_LOG_ERROR "Failed to create virtual router"` | `return false` → 永久 retry |
 | **SAI `create_virtual_router()` 失敗 (NOT_SUPPORTED 等)** | default ブランチ | `handleSaiFailure` で crash dump 要求 | `return true` → エントリ削除・no retry |
 | **SAI `create_virtual_router()` の `ITEM_ALREADY_EXISTS` 系** | 既存 router_id 衝突 | `SWSS_LOG_NOTICE "Returning success"` | `task_success` 扱いで通過。**`router_id` が未初期化のまま `vrf_table_[vrf_name].vrf_id = router_id` を実行する潜在不具合**。VRFOrch に明示 fallback 無し |
-| **[EVPN](../../reference/glossary.md#term-evpn) VTEP 不在 (`vni>0` 時)** | `VXLAN_EVPN_NVO` 未投入で `vni!=0` 書込 | `SWSS_LOG_NOTICE "updateVrfVNIMap unable to find EVPN VTEP"` (ERROR 無し) | `updateVrfVNIMap` が `false` → `addOperation` も `false` → 永久 retry。**SAI Virtual Router は手前で create 済み**だが `STATE_VRF_OBJECT_TABLE` `state=ok` と `vrf_vni_map_table_` は未投入。`EvpnNvoOrch` 側の明示的再 kick は無く `doTask()` ループ任せ → 運用上は **silent skip** に見える |
+| **[EVPN](../../reference/glossary.md#term-evpn) [VTEP](../../reference/glossary.md#term-vtep) 不在 (`vni>0` 時)** | `VXLAN_EVPN_NVO` 未投入で `vni!=0` 書込 | `SWSS_LOG_NOTICE "updateVrfVNIMap unable to find EVPN VTEP"` (ERROR 無し) | `updateVrfVNIMap` が `false` → `addOperation` も `false` → 永久 retry。**SAI Virtual Router は手前で create 済み**だが `STATE_VRF_OBJECT_TABLE` `state=ok` と `vrf_vni_map_table_` は未投入。`EvpnNvoOrch` 側の明示的再 kick は無く `doTask()` ループ任せ → 運用上は **silent skip** に見える |
 | **SAI `set_virtual_router_attribute()` 部分失敗 (update パス)** | 複数 attrs の途中で SAI 失敗 | `SWSS_LOG_ERROR "Failed to update virtual router attribute"` | resource 系のみ `return false` で retry。**先行 attr の SAI 書込は rollback されず部分適用が残る**。retry 時はループ先頭から再投入 (idempotent な属性のみ安全) |
 | **SAI `remove_virtual_router()` default 失敗** | default ブランチ | `handleSaiFailure` | `return true` でエントリ削除されるが `vrf_table_.erase()` 前に抜ける → **内部 map に VRF が残置 (リーク)** |
 | **SAI `remove_virtual_router()` の `OBJECT_IN_USE`** | SAI 側参照残 | `handleSaiRemoveStatus` で `task_need_retry` | `return false` → retry |
@@ -330,7 +330,7 @@ if(!evpn_vtep_ptr)
 
 ### 部分適用 / rollback 不在
 
-`addOperation` の update パス (`vrforch.cpp:129-141`) は attribute を逐次 SAI に流すため、途中失敗時の rollback が一切無い。`l3_mc_action` のような SAI 任意属性が未対応 ASIC で `NOT_SUPPORTED` を返すと、**先行属性 (例: `src_mac`) は SAI に書込済みのまま** エントリは削除される。STATE_DB の整合チェック側でも検出されないため、ユーザは `sonic-db-cli ASIC_DB hgetall ASIC_STATE:SAI_OBJECT_TYPE_VIRTUAL_ROUTER:<oid>` で実状態を直接確認する必要がある。
+`addOperation` の update パス (`vrforch.cpp:129-141`) は attribute を逐次 SAI に流すため、途中失敗時の rollback が一切無い。`l3_mc_action` のような SAI 任意属性が未対応 [ASIC](../../reference/glossary.md#term-asic) で `NOT_SUPPORTED` を返すと、**先行属性 (例: `src_mac`) は SAI に書込済みのまま** エントリは削除される。STATE_DB の整合チェック側でも検出されないため、ユーザは `sonic-db-cli ASIC_DB hgetall ASIC_STATE:SAI_OBJECT_TYPE_VIRTUAL_ROUTER:<oid>` で実状態を直接確認する必要がある。
 
 <!-- /failure -->
 
@@ -385,7 +385,7 @@ APPL_DB `VRF_TABLE` への SET/DEL は、`orchagent` 内の `VRFOrch` (`vrforch.
 <!-- platform -->
 ## プラットフォーム / SAI Capability 差異 (Phase H)
 
-APPL_DB `VRF_TABLE` のスキーマ自体はプラットフォーム共通だが、`VRFOrch::addOperation` が SAI Virtual Router に渡す拡張属性 4 種 (`src_mac` / `ttl_action` / `ip_opt_action` / `l3_mc_action`) は SAI 任意属性であり、ASIC SAI 実装と VS/VPP シムで挙動が異なる。さらに `vni != 0` の L3 VNI マッピングは [EVPN](../../reference/glossary.md#term-evpn) VTEP 事前作成を必須とする。
+APPL_DB `VRF_TABLE` のスキーマ自体はプラットフォーム共通だが、`VRFOrch::addOperation` が SAI Virtual Router に渡す拡張属性 4 種 (`src_mac` / `ttl_action` / `ip_opt_action` / `l3_mc_action`) は SAI 任意属性であり、[ASIC](../../reference/glossary.md#term-asic) SAI 実装と VS/VPP シムで挙動が異なる。さらに `vni != 0` の L3 VNI マッピングは [EVPN](../../reference/glossary.md#term-evpn) VTEP 事前作成を必須とする。
 
 ### VRF / VNET capability 4 属性
 
@@ -543,4 +543,4 @@ APPL_DB `VRF_TABLE` は YANG 未モデル化のオペレーショナルテーブ
 - [APPL_DB ROUTE_TABLE](./appl-db-route.md)
 - [HLD: VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
 
-<!-- glossary-links-injected: 0c51907d2986 -->
+<!-- glossary-links-injected: 22c0088f05b2 -->

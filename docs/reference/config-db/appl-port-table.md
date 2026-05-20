@@ -46,7 +46,7 @@ related:
 
 1. **[portsyncd](../../reference/glossary.md#term-portsyncd)** — 起動時に [CONFIG_DB](../../reference/glossary.md#term-config_db) `PORT` テーブルの全フィールドを [APPL_DB](../../reference/glossary.md#term-appl_db) に転写する
 2. **[portmgrd](../../reference/glossary.md#term-portmgrd)** — [CONFIG_DB](../../reference/glossary.md#term-config_db) の変更を監視し、`admin_status` / `mtu` の変更を [APPL_DB](../../reference/glossary.md#term-appl_db) に反映する。初回書き込み時はコード由来のデフォルト値を補完する
-3. **[orchagent](../../reference/glossary.md#term-orchagent) (PortsOrch)** — [SAI](../../reference/glossary.md#term-sai) から通知を受けた `oper_status` / `flap_count` / `last_up_time` / `last_down_time` を書き戻す
+3. **[orchagent](../../reference/glossary.md#term-orchagent) ([PortsOrch](../../reference/glossary.md#term-portsorch))** — [SAI](../../reference/glossary.md#term-sai) から通知を受けた `oper_status` / `flap_count` / `last_up_time` / `last_down_time` を書き戻す
 
 ```mermaid
 flowchart LR
@@ -121,9 +121,9 @@ PORT_TABLE:<port_name>
 
 ## 購読者
 
-- **orchagent (PortsOrch)**: `PORT_TABLE` を `SubscriberStateTable` / `Table` で読み取り、[SAI](../../reference/glossary.md#term-sai) に反映する。PortsOrch は `PORT_TABLE` の oper_status / flap_count を書き戻す唯一のプロセス
+- **orchagent ([PortsOrch](../../reference/glossary.md#term-portsorch))**: `PORT_TABLE` を `SubscriberStateTable` / `Table` で読み取り、[SAI](../../reference/glossary.md#term-sai) に反映する。[PortsOrch](../../reference/glossary.md#term-portsorch) は `PORT_TABLE` の oper_status / flap_count を書き戻す唯一のプロセス
 - **[linkmgrd](../../reference/glossary.md#term-linkmgrd)**: `mux_cable` フラグを含むポートを検索するために読み込む
-- 各種 orchs: IntfsOrch / BufferOrch 等が PORT_TABLE の `oper_status` 変化を受けて副次処理を実行
+- 各種 orchs: [IntfsOrch](../../reference/glossary.md#term-intfsorch) / BufferOrch 等が PORT_TABLE の `oper_status` 変化を受けて副次処理を実行
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
@@ -202,7 +202,7 @@ PORT_TABLE:<port_name>
 | `gMySwitchType` | `device.metadata` の `switch_type` (`portsorch.cpp:69`) | `"switch"` (既定) / `"voq"` ([VOQ](../../reference/glossary.md#term-voq) chassis) / `"dpu"` ([SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)) |
 | `gMyAsicName` | namespace 名 (`portsorch.cpp:72`) | `"asic0"` `"asic1"` 等 (multi-asic / [VOQ](../../reference/glossary.md#term-voq)) |
 | `platform` env | `getenv("platform")` (`portsorch.cpp:691`) | `"mellanox"` 部分一致で `isMlnxPlatform()` true |
-| Gearbox 有無 | `gearbox_config.json` の有無 (`isGearboxEnabled()`) | line-side PHY 搭載 ASIC のみ true |
+| Gearbox 有無 | `gearbox_config.json` の有無 (`isGearboxEnabled()`) | line-side PHY 搭載 [ASIC](../../reference/glossary.md#term-asic) のみ true |
 
 ### SAI capability 差異一覧
 
@@ -213,7 +213,7 @@ PORT_TABLE:<port_name>
 | `SAI_PORT_ATTR_SUPPORTED_SPEED` | `get_port_attribute` (`portsorch.cpp:3122-3158`) | `supported_speeds = ""` → STATE_DB 空 / speed バリデーション skip ("Unable to validate speed ... Not supported by platform" WARN) | `portsorch.cpp:3146` |
 | `SAI_PORT_ATTR_SUPPORTED_FEC_MODE` | `get_port_attribute` (`portsorch.cpp:3225-3265`) | `m_portSupportedFecModes[...].supported = false` → `isFecModeSupported()` 常に true (FEC バリデーション無効化) | `portsorch.cpp:3245-3260` |
 | `SAI_PORT_ATTR_SUPPORTED_AUTO_NEG_MODE` | `get_port_attribute` (`portsorch.cpp:3179-3196`) | `port.m_cap_an = 1` フォールバック (互換性維持コメントあり) | `portsorch.cpp:3189-3191` |
-| `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE` | **照会されず** (TODO) | `m_cap_lt = 1` 固定 → 非対応 ASIC で `link_training` を投げると SAI エラー | `portsorch.cpp:3197-3205` |
+| `SAI_PORT_ATTR_SUPPORTED_LINK_TRAINING_MODE` | **照会されず** (TODO) | `m_cap_lt = 1` 固定 → 非対応 [ASIC](../../reference/glossary.md#term-asic) で `link_training` を投げると SAI エラー | `portsorch.cpp:3197-3205` |
 
 ### `gMySwitchType` 別挙動
 
@@ -238,7 +238,7 @@ PORT_TABLE:<port_name>
 
 ### Gearbox 専用フィールド
 
-`system_oper_status` / `line_oper_status` は `isGearboxEnabled()` true の環境（line-side PHY 搭載 ASIC）でのみ書かれる。詳細は上記 Phase A 「コード由来の暗黙デフォルト」セクション参照。
+`system_oper_status` / `line_oper_status` は `isGearboxEnabled()` true の環境（line-side PHY 搭載 [ASIC](../../reference/glossary.md#term-asic)）でのみ書かれる。詳細は上記 Phase A 「コード由来の暗黙デフォルト」セクション参照。
 
 !!! warning "DPU では FEC override / oper FEC が照会されない"
     `gMySwitchType == "dpu"` の環境では `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` / `SAI_PORT_ATTR_OPER_PORT_FEC_MODE` を一切照会しない (`portsorch.cpp:987`)。STATE_DB の `oper_fec` は空のまま、CONFIG_DB に `fec` を設定しても autoneg override 経路は動かない。
@@ -687,4 +687,4 @@ sonic-db-cli CONFIG_DB hget 'PORT|Ethernet0' admin_status
 [^4]: orchagent portsorch.cpp (副次 DB 書込): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp> および <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
 [^5]: orchagent portsorch.cpp `doPortTask()` / `setPort*` 系失敗分岐 (Phase D): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp> および `handleSaiSetStatus()`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/saihelper.cpp>
 
-<!-- glossary-links-injected: ed1765ad1ba0 -->
+<!-- glossary-links-injected: db7bd9685603 -->

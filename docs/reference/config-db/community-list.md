@@ -367,11 +367,11 @@ CLI 経由では DB 書き込み後に `systemctl restart snmp.service` が自�
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: `SNMP_COMMUNITY` は ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。`docker-snmp` コンテナが host CONFIG_DB を一括読み取りするのみで、[SAI](../../reference/glossary.md#term-sai) 経由操作が存在しないため ASIC 差異が入り込む余地がない。
+**プラットフォーム差なし**: `SNMP_COMMUNITY` は [ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。`docker-snmp` コンテナが host CONFIG_DB を一括読み取りするのみで、[SAI](../../reference/glossary.md#term-sai) 経由操作が存在しないため [ASIC](../../reference/glossary.md#term-asic) 差異が入り込む余地がない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | SNMP_COMMUNITY は [SAI](../../reference/glossary.md#term-sai) 非経由。`snmpd.conf.j2` の community 処理ブロック (L48-64) にプラットフォーム条件なし (`platform`/`asic`/`vendor` grep 0 ヒット) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | SNMP_COMMUNITY は [SAI](../../reference/glossary.md#term-sai) 非経由。`snmpd.conf.j2` の community 処理ブロック (L48-64) にプラットフォーム条件なし (`platform`/`asic`/`vendor` grep 0 ヒット) |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `snmp_yml_to_configdb.py` は `ConfigDBConnector()` 引数なし（host CONFIG_DB のみ接続）。`asicN` namespace を iterate しない。SNMP_COMMUNITY は host 単位で一元管理 |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | `docker-snmp` は per-host コンテナ。SNMP_COMMUNITY テーブルは各 host の CONFIG_DB に独立して存在し、chassis 全体を統一する集中管理機構はない |
 | ベンダー固有 hook | なし | `snmpd.conf.j2` にベンダー分岐なし。`sonic-snmp.yang` にもプラットフォーム条件なし |
@@ -467,4 +467,4 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（Op
 
 <!-- glossary-links-injected: placeholder -->
 
-<!-- glossary-links-injected: 351eaace0304 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

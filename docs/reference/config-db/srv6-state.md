@@ -69,7 +69,7 @@ MySID プレフィックス文字列から [SAI](../../reference/glossary.md#ter
 |-----------|-----|------|
 | `<mysid_prefix>` | string (OID) | MySID IPv6 プレフィックス（例: `fcbb:bbbb:20:f1::/64`）→ [SAI](../../reference/glossary.md#term-sai) カウンタ OID（例: `oid:0x17000000001000`）のマッピング |
 
-- **書き込み**: `Srv6Orch::addMySidCounter()` — MySID エントリを ASIC に追加した直後
+- **書き込み**: `Srv6Orch::addMySidCounter()` — MySID エントリを [ASIC](../../reference/glossary.md#term-asic) に追加した直後
 - **削除**: `Srv6Orch::removeMySidCounter()` — MySID エントリ削除時
 
 ## テーブル: `COUNTERS:<oid>`
@@ -251,7 +251,7 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が�
 |----------|----------|------|----------|----------|
 | SAI が `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` 未対応 | `queryMySidCountersCapability()` `srv6orch.cpp:144-155` | カウンタ機能全体が無効化（起動時一回限り確定） | orchagent 再起動のみ | `SWSS_LOG_INFO("SRv6 counters are not supported on this platform")` |
 | `sai_query_attribute_capability()` 呼び出し自体が非 SUCCESS | `queryMySidCountersCapability()` `srv6orch.cpp:147-151` | 同上 | orchagent 再起動のみ | `SWSS_LOG_WARN("Could not query SRv6 MySID entry attribute SAI_MY_SID_ENTRY_ATTR_COUNTER_ID %d")` |
-| SAI generic counter 作成失敗 | `addMySidCounter()` `srv6orch.cpp:188-192` | `addMySidCounter` が false → **MySID エントリ自体が ASIC 未作成** | なし | `SWSS_LOG_ERROR("Failed to create SAI counter for SRv6 MySID entry")` |
+| SAI generic counter 作成失敗 | `addMySidCounter()` `srv6orch.cpp:188-192` | `addMySidCounter` が false → **MySID エントリ自体が [ASIC](../../reference/glossary.md#term-asic) 未作成** | なし | `SWSS_LOG_ERROR("Failed to create SAI counter for SRv6 MySID entry")` |
 | `setMySidEntryCounter()` での SAI セット失敗 | `setMySidEntryCounter()` `srv6orch.cpp:244-248` | `COUNTERS_SRV6_NAME_MAP` 書き込み済みだが SAI エントリへのカウンタ紐付けが失敗状態 | なし（ロールバックなし） | `SWSS_LOG_ERROR("Failed to set my_sid entry counter oid to %s, rc: %s")` |
 | SAI platform が disable 時の `set_my_sid_entry_attribute` 失敗 | `setCountersState(false)` `srv6orch.cpp:278-280` | エラーログのみ。`removeMySidCounter()` は続行され `COUNTERS_SRV6_NAME_MAP` から削除される | なし | `SWSS_LOG_ERROR` (setMySidEntryCounter 経由) |
 
@@ -287,7 +287,7 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が�
 #define SRV6_STAT_COUNTER_POLLING_INTERVAL_MS 10000 // FlexCounter ポーリング間隔（ミリ秒）
 ```
 
-MySID エントリが ASIC に追加されると `addMySidCounter()` が `m_pending_counters` にカウンタ OID を積む
+MySID エントリが [ASIC](../../reference/glossary.md#term-asic) に追加されると `addMySidCounter()` が `m_pending_counters` にカウンタ OID を積む
 （`srv6orch.cpp:201-202`）。その後 `SRV6_FLEX_COUNTER_UPDATE_TIMER = 1` 秒のタイマーで
 `FLEX_COUNTER_DB SRV6_COUNTER_ID_LIST` に OID が書き込まれ、
 [syncd](../../reference/glossary.md#term-syncd) FlexCounter が `SRV6_STAT_COUNTER_POLLING_INTERVAL_MS = 10000` ms 周期で SAI をポーリングして
@@ -454,4 +454,4 @@ VS (Virtual Switch) など `sai_query_attribute_capability()` 自体が `SAI_STA
 [^1]: [SRv6](../../reference/glossary.md#term-srv6) カウンタ管理: `srv6orch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/srv6orch.cpp>
 [^2]: FlexCounter スキーマ定義: `schema.h` L257, L313. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
 
-<!-- glossary-links-injected: d2191ccfe0bd -->
+<!-- glossary-links-injected: 8df9850464d2 -->

@@ -434,7 +434,7 @@ CLI の `config snmp agentaddress add/del` は CONFIG_DB 書き込み直後に `
 
 ### snmp-subagent の再起動と MIB ポーリング中断
 
-`supervisord.conf.j2` の依存起動チェーン (`rsyslogd:running` → `start:exited` → `snmpd:running` → `snmp-subagent:running`) により、コンテナ再起動時に snmp-subagent も再起動される。SONiC MIB への SNMP ポーリングは snmp-subagent が再起動するまで中断する。
+`supervisord.conf.j2` の依存起動チェーン (`rsyslogd:running` → `start:exited` → `snmpd:running` → `snmp-subagent:running`) により、コンテナ再起動時に snmp-subagent も再起動される。[SONiC](../../reference/glossary.md#term-sonic) MIB への SNMP ポーリングは snmp-subagent が再起動するまで中断する。
 
 ### 他テーブル・他プロセスへの波及なし
 
@@ -503,8 +503,8 @@ snmpd 起動 → 新しいアドレス/ポートで listen
 
 | 環境 | minigraph による自動生成 | snmpd のリッスン範囲 |
 |------|------------------------|-------------------|
-| **single-ASIC** | `MGMT_INTERFACE` + `LOOPBACK_INTERFACE` の全 IP を port=161、vrf='' で自動登録 | 管理 IP + Loopback0 IP のみ（明示的バインド） |
-| **multi-ASIC / chassis** | 空辞書（自動生成なし） | `udp:161` + `udp6:161` の全インタフェース fallback |
+| **single-[ASIC](../../reference/glossary.md#term-asic)** | `MGMT_INTERFACE` + `LOOPBACK_INTERFACE` の全 IP を port=161、vrf='' で自動登録 | 管理 IP + Loopback0 IP のみ（明示的バインド） |
+| **multi-[ASIC](../../reference/glossary.md#term-asic) / chassis** | 空辞書（自動生成なし） | `udp:161` + `udp6:161` の全インタフェース fallback |
 
 `snmpd.conf.j2:16-17` のコメントがこの設計意図を明示している:
 
@@ -513,7 +513,7 @@ snmpd 起動 → 新しいアドレス/ポートで listen
 # Listen on managment and loopback0 ips for single asic platform
 ```
 
-multi-ASIC 環境では `SNMP_AGENT_ADDRESS_CONFIG` が空のため `snmpd.conf.j2` の else 分岐（L32-33）が適用され、全インタフェースで SNMP が公開される。セキュリティ要件がある場合は CLI で明示的にエントリを登録して絞り込む。
+multi-[ASIC](../../reference/glossary.md#term-asic) 環境では `SNMP_AGENT_ADDRESS_CONFIG` が空のため `snmpd.conf.j2` の else 分岐（L32-33）が適用され、全インタフェースで SNMP が公開される。セキュリティ要件がある場合は CLI で明示的にエントリを登録して絞り込む。
 
 ### chassis-packet (switch_type) の差異
 
@@ -553,4 +553,4 @@ if ip_addr.version == 6 and ip_addr.is_link_local:
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 5b7a01a916db -->
+<!-- glossary-links-injected: 865a18402f05 -->

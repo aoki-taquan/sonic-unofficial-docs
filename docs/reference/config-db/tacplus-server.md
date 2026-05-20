@@ -393,7 +393,7 @@ YANG では `key_encrypt` フィールドが両テーブルに定義されデフ
 
 ### dead consumer: `src_intf`
 
-YANG: `TACPLUS|global.src_intf` (leafref union)。hostcfgd は `if 'src_ip' in tacplus_global` を参照するが、`src_intf` を IP アドレスに解決するコードがない (RADIUS には実装済み)。`src_intf` を設定しても PAM / NSS 設定に `source_ip=` は挿入されない。TACPLUS の送信元 interface 指定機能は実質的に動作しない。**YANG-実装 discrepancy**。
+YANG: `TACPLUS|global.src_intf` (leafref union)。hostcfgd は `if 'src_ip' in tacplus_global` を参照するが、`src_intf` を IP アドレスに解決するコードがない ([RADIUS](../../reference/glossary.md#term-radius) には実装済み)。`src_intf` を設定しても PAM / NSS 設定に `source_ip=` は挿入されない。TACPLUS の送信元 interface 指定機能は実質的に動作しない。**YANG-実装 discrepancy**。
 
 ### `priority` 未設定時の KeyError リスク
 
@@ -556,7 +556,7 @@ make_callback() で (key=<ip>, op=SET, data=HGETALL結果) を生成
 
 ### 結論
 
-**プラットフォーム差なし**。TACPLUS_SERVER 処理は host 単位で適用され、ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)・ベンダー固有 PAM モジュールに依存しない。
+**プラットフォーム差なし**。TACPLUS_SERVER 処理は host 単位で適用され、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)・ベンダー固有 PAM モジュールに依存しない。
 
 ### 根拠
 
@@ -587,4 +587,4 @@ make_callback() で (key=<ip>, op=SET, data=HGETALL結果) を生成
 > **Evidence**: `hostcfgd:2182-2185` (is_multi_npu / AaaCfg 初期化)、`hostcfgd:641-816` (modify_conf_file)、`sonic_debian_extension.j2:317-335` (インストールブロック)、`tacplus_nss.conf.j2` (テンプレート全行)、`common-auth-sonic.j2` (テンプレート全行); 詳細分析 `meta/_intermediate/cdb-flow/tacplus-server-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 1531a1cd1e36 -->
+<!-- glossary-links-injected: f55fa9db56c3 -->

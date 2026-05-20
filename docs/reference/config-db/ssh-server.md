@@ -290,7 +290,7 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 
 `PamLimitsCfg.update_config_file()` は `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` の**どちらも存在しない**場合に early return する（L1430）。  
 `DEVICE_METADATA|localhost` が先に書き込まれている前提で PAM limits の更新が動作する。  
-通常の SONiC デプロイでは `DEVICE_METADATA|localhost` は必ず存在するため問題にならないが、ミニマル構成やテスト環境では注意が必要。
+通常の [SONiC](../../reference/glossary.md#term-sonic) デプロイでは `DEVICE_METADATA|localhost` は必ず存在するため問題にならないが、ミニマル構成やテスト環境では注意が必要。
 
 ### sshd 検証ゲート（アトミック性）
 
@@ -311,12 +311,12 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 | 参照方向 | このテーブル | 相手テーブル / ページ | 条件 |
 |---------|------------|---------------------|------|
 | SSH_SERVER → | `max_sessions`（PamLimitsCfg） | [`DEVICE_METADATA`](./device-metadata.md) | `update_config_file()` が `DEVICE_METADATA\|localhost` キーの存在を確認。不在時は early return し PAM limits を更新しない |
-| SSH_SERVER ← | `PasswordAuthentication`（sshd_config） | [`AAA`](./aaa.md) | `AaaCfg.modify_conf_file()` が `/etc/pam.d/sshd` を書き換え、TACACS+/RADIUS/LDAP 有効時に `common-auth-sonic` に切り替える。SSH のパスワード認証と PAM 認証スタックが実質的に連動する |
-| SSH_SERVER ← (間接) | SSH 認証経路 | [`MGMT_INTERFACE`](./mgmt-interface.md) | TACACS+/RADIUS の `src_intf = eth0` 設定時、`AaaCfg.get_interface_ip()` が `MGMT_INTERFACE` テーブルの IP を解決。SSH 認証バックエンドとして TACACS+/RADIUS を使用する場合に影響 |
-| CLI | `config ssh-server` / `show ssh-server` | [`config ssh-server`](../cli/config-ssh-server.md) | SSH_SERVER テーブルの読み書き CLI |
+| SSH_SERVER ← | `PasswordAuthentication`（sshd_config） | [`AAA`](./aaa.md) | `AaaCfg.modify_conf_file()` が `/etc/pam.d/sshd` を書き換え、TACACS+/[RADIUS](../../reference/glossary.md#term-radius)/LDAP 有効時に `common-auth-sonic` に切り替える。SSH のパスワード認証と PAM 認証スタックが実質的に連動する |
+| SSH_SERVER ← (間接) | SSH 認証経路 | [`MGMT_INTERFACE`](./mgmt-interface.md) | TACACS+/[RADIUS](../../reference/glossary.md#term-radius) の `src_intf = eth0` 設定時、`AaaCfg.get_interface_ip()` が `MGMT_INTERFACE` テーブルの IP を解決。SSH 認証バックエンドとして TACACS+/[RADIUS](../../reference/glossary.md#term-radius) を使用する場合に影響 |
+| CLI | `config ssh-server` / `show ssh-server` | `config ssh-server` | SSH_SERVER テーブルの読み書き CLI |
 | YANG | `SSH_SERVER\|POLICIES` | [`sonic-ssh-server`](../yang/sonic-ssh-server.md) | 全フィールドのスキーマ定義 |
 
-> **Evidence**: `sonic-host-services/scripts/hostcfgd` L1422-1430 (PamLimitsCfg → DEVICE_METADATA); L744-751 (AaaCfg → /etc/pam.d/sshd); L596-606 (get_interface_ip → MGMT_INTERFACE); 詳細分析 `meta/_intermediate/cdb-flow/ssh-server-cross-refs.md`
+> **Evidence**: `sonic-host-services/scripts/hostcfgd` L1422-1430 (PamLimitsCfg → [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata)); L744-751 (AaaCfg → /etc/pam.d/sshd); L596-606 (get_interface_ip → MGMT_INTERFACE); 詳細分析 `meta/_intermediate/cdb-flow/ssh-server-cross-refs.md`
 <!-- /cross-refs -->
 
 <!-- failure -->
@@ -530,7 +530,7 @@ FIPS モードが有効なビルドでは `sonic-buildimage/rules/sonic-fips.mk`
 |------|------|
 | ベアメタル | 標準 |
 | VS (Virtual Switch) | 同一。`SshServer` / `PamLimitsCfg` に VS 固有ブランチなし |
-| multi-ASIC | 同一。hostcfgd は CONFIG_DB 接続 1 本のみ使用。namespace 分割なし |
+| multi-[ASIC](../../reference/glossary.md#term-asic) | 同一。hostcfgd は CONFIG_DB 接続 1 本のみ使用。namespace 分割なし |
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd:101-103 (DEFAULT_FIPS_RESTART_SERVICES) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd:1808-1840 (FipsCfg.restart — cur_enforced ガード) -->
@@ -540,4 +540,4 @@ FIPS モードが有効なビルドでは `sonic-buildimage/rules/sonic-fips.mk`
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang:77-132 (cipher/kex/mac enum) -->
 <!-- /platform -->
 
-<!-- glossary-links-injected: f87ac934e964 -->
+<!-- glossary-links-injected: 07f145a6461e -->

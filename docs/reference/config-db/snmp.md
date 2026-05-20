@@ -463,7 +463,7 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 
 ### SAI 参照
 
-なし。snmpd は純粋なユーザー空間デーモンで [SAI](../../reference/glossary.md#term-sai)/ASIC に一切触れない。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継もない。
+なし。snmpd は純粋なユーザー空間デーモンで [SAI](../../reference/glossary.md#term-sai)/[ASIC](../../reference/glossary.md#term-asic) に一切触れない。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継もない。
 
 <!-- /cross-refs -->
 
@@ -523,7 +523,7 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 
 | `DEVICE_METADATA.localhost.switch_type` | snmp-subagent 起動オプション | 効果 |
 |----------------------------------------|---------------------------|------|
-| `chassis-packet` | `--enable_dynamic_frequency` あり | ASIC 数・IF 数が多い chassis-packet 構成で CPU 使用率を抑制するため MIB 更新周期を負荷に応じて動的調整 |
+| `chassis-packet` | `--enable_dynamic_frequency` あり | [ASIC](../../reference/glossary.md#term-asic) 数・IF 数が多い chassis-packet 構成で CPU 使用率を抑制するため MIB 更新周期を負荷に応じて動的調整 |
 | その他 (`npu` / `voq` / `fabric` / `dpu` 等) | オプションなし | 固定周期 (`DEFAULT_UPDATE_FREQUENCY`) で更新 |
 
 `DEVICE_METADATA.localhost` が CONFIG_DB に存在しない場合はテンプレート展開が KeyError で失敗し docker-snmp コンテナが起動しない (全 switch_type 共通の前提条件)。
@@ -534,7 +534,7 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 
 | 構成 | 動作 |
 |------|------|
-| single-ASIC | デフォルト namespace のみ参照。内部ポートチャネルフィルタはノーオペレーション |
+| single-[ASIC](../../reference/glossary.md#term-asic) | デフォルト namespace のみ参照。内部ポートチャネルフィルタはノーオペレーション |
 | multi-ASIC | フロントエンド ASIC の namespace のみ経路取得。BackEnd ASIC namespace をスキップし、`INTERNAL_PORT` role のポートチャネルを inetCidrRouteTable から除外 |
 
 ### 差異 3: multi-ASIC 構成 — ARP テーブル取得 (rfc1213)
@@ -636,4 +636,4 @@ CONFIG_DB に書き込まれた値はこのファイル生成を経て初めて 
 
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 6c25629a2f31 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

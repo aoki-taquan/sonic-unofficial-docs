@@ -100,7 +100,7 @@ DHCP_SERVER_IPV4|<name>
 | 存在する DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS.name | kea-dhcp4 設定にカスタムオプションを追加 |
 | 存在しない option 名 | YANG leafref 違反で reject |
 
-> DEVICE_METADATA.dhcp_server が未設定の場合、dhcpservd 自体が起動しないため state の設定は無効。
+> [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).dhcp_server が未設定の場合、dhcpservd 自体が起動しないため state の設定は無効。
 
 <!-- /value-behavior -->
 
@@ -179,7 +179,7 @@ show dhcp_server ipv4 info
 
 `dhcpservd` (`sonic-dhcp-server`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `DHCP_SERVER_IPV4` テーブルを購読する。
 
-`DHCP_SERVER_IPV4` は SONiC 独自の DHCP server 機能 (sonic-dhcp-server)。
+`DHCP_SERVER_IPV4` は [SONiC](../../reference/glossary.md#term-sonic) 独自の DHCP server 機能 (sonic-dhcp-server)。
 
 ### 段階 2 — CFG→APPL 翻訳
 
@@ -210,7 +210,7 @@ show dhcp_server ipv4 info
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -426,7 +426,7 @@ CLI `config dhcp_server` グループ入口で `FEATURE|dhcp_server.state` を�
 
 ### SAI 参照
 
-なし。`dhcpservd` / `kea-dhcp4` は Linux ユーザー空間の DHCP サーバであり [SAI](../../reference/glossary.md#term-sai)/ASIC に一切触れない。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継もない。
+なし。`dhcpservd` / `kea-dhcp4` は Linux ユーザー空間の DHCP サーバであり [SAI](../../reference/glossary.md#term-sai)/[ASIC](../../reference/glossary.md#term-asic) に一切触れない。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継もない。
 
 <!-- /cross-refs -->
 
@@ -613,7 +613,7 @@ YANG 未定義の `binary` / `boolean` は直接 DB 書込みによる拡張型�
 
 `DEVICE_METADATA.localhost.subtype == "SmartSwitch"` を `is_smart_switch()` で判定し、以下が分岐する。
 
-| 項目 | 通常 SONiC | SmartSwitch |
+| 項目 | 通常 [SONiC](../../reference/glossary.md#term-sonic) | SmartSwitch |
 |---|---|---|
 | DHCP 対象インタフェース | `VLAN` / `VLAN_INTERFACE` ベース | 上記 + `MID_PLANE_BRIDGE.GLOBAL.bridge` (mid-plane bridge) |
 | [DPU](../../reference/glossary.md#term-dpu) ポート扱い | なし | `DPUS.*.midplane_interface` を仮想ポートとして追加 |
@@ -636,4 +636,4 @@ SmartSwitch 固有の追加前提: `MID_PLANE_BRIDGE.GLOBAL.{bridge,ip_prefix}` 
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 9269ec434583 -->
+<!-- glossary-links-injected: 1f635a13725f -->

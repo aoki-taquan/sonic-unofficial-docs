@@ -397,7 +397,7 @@ SmartSwitch DPU として動作させるためには `switch_type = "dpu"` が�
 | 定数 | 値 | 定義場所 | 用途 |
 |------|----|---------|------|
 | `ZMQ_LOCAL_ADDRESS` | `"tcp://localhost"` | `orch_zmq_config.h:16` | `create_local_zmq_client()` が ZMQ クライアントを生成するときに使うベースアドレス |
-| `ORCH_ZMQ_PORT` (基底ポート) | `8100` | `sonic-swss-common/common/zmqserver.h:16` | `get_zmq_port()` が計算の起点とするポート番号。`NAMESPACE_ID` が空の場合 `8100` がそのまま使われる。マルチ ASIC 環境では `8100 + namespace_id + 1` に加算される |
+| `ORCH_ZMQ_PORT` (基底ポート) | `8100` | `sonic-swss-common/common/zmqserver.h:16` | `get_zmq_port()` が計算の起点とするポート番号。`NAMESPACE_ID` が空の場合 `8100` がそのまま使われる。マルチ [ASIC](../../reference/glossary.md#term-asic) 環境では `8100 + namespace_id + 1` に加算される |
 | `ZMQ_TABLE_CONFIGFILE` | `"/etc/swss/orch_zmq_tables.conf"` | `orch_zmq_config.cpp:10` | `load_zmq_tables()` が読み込む ZMQ テーブルリストファイルのパス。内容は `orch_zmq_tables.conf.j2` テンプレートから生成される |
 
 ### orch_zmq_config — フィーチャーフラグキー名
@@ -548,7 +548,7 @@ DASH Orch が SAI 完了後に `DPU_APPL_STATE_DB` の結果テーブルへ書�
 <!-- platform -->
 ## プラットフォーム差分 (Phase H)
 
-`DpuOrchDaemon` の動作は `DEVICE_METADATA|localhost` の `switch_type = "dpu"` で固定されるが、ASIC プラットフォーム (`platform` 環境変数 = `asic_type`) および `subtype` フィールドによってさらに細かい分岐が存在する。
+`DpuOrchDaemon` の動作は `DEVICE_METADATA|localhost` の `switch_type = "dpu"` で固定されるが、[ASIC](../../reference/glossary.md#term-asic) プラットフォーム (`platform` 環境変数 = `asic_type`) および `subtype` フィールドによってさらに細かい分岐が存在する。
 
 ### `platform` 分岐: MAC アドレス取得元 (orchagent.sh)
 
@@ -671,6 +671,9 @@ if platform_info.get('switch_type') == 'dpu':
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^3] [^4]
+
 [^1]: DpuOrchDaemon クラス定義と起動条件: `sonic-swss/orchagent/orchdaemon.h:150-158`, `sonic-swss/orchagent/orchdaemon.cpp:1313-1419`, `sonic-swss/orchagent/main.cpp:981-994`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp>
 
 [^2]: ZMQ 機能フラグ実装: `sonic-swss/lib/orch_zmq_config.h:21`, `sonic-swss/lib/orch_zmq_config.cpp:81-103`. <https://github.com/sonic-net/sonic-swss/blob/master/lib/orch_zmq_config.cpp>
@@ -681,4 +684,4 @@ if platform_info.get('switch_type') == 'dpu':
 
 [^5]: ZmqOrch / ZmqConsumerStateTable 実装: `sonic-swss/orchagent/zmqorch.cpp:59-80`, `sonic-swss-common/common/zmqconsumerstatetable.cpp:20-47`, `sonic-swss/lib/orch_zmq_config.cpp:35-80`, `sonic-swss/orchagent/main.cpp:646-654, 1032-1037`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/zmqorch.cpp>
 
-<!-- glossary-links-injected: 72d4095c354e -->
+<!-- glossary-links-injected: e82be350a384 -->

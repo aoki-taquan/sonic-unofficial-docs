@@ -11,7 +11,7 @@ last_verified: 2026-05-13
 
 ## この章の趣旨
 
-物理 underlay の上に仮想ネットワーク（テナント / マルチサイト / [DPU](../reference/glossary.md#term-dpu) offload）を構築するための SONiC 機能群を扱う。具体的には以下:
+物理 underlay の上に仮想ネットワーク（テナント / マルチサイト / [DPU](../reference/glossary.md#term-dpu) offload）を構築するための [SONiC](../reference/glossary.md#term-sonic) 機能群を扱う。具体的には以下:
 
 - **VXLAN / VNet**: VxlanOrch / VnetOrch / [VRF](../reference/glossary.md#term-vrf) mapper を中心とした L2VPN / L3VPN overlay
 - **Dual ToR**: y-cable / [linkmgrd](../reference/glossary.md#term-linkmgrd) / [IPinIP](../reference/glossary.md#term-ipinip) tunnel による HA、active-active 構成も含む
@@ -60,4 +60,4 @@ last_verified: 2026-05-13
 | [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](vxlan-sonic.md) | Code-verified |
 | [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](dscp-remapping-for-tunnel-traffic.md) | Discrepancy-found |
 
-<!-- glossary-links-injected: a33e47022552 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -54,7 +54,7 @@ related:
 
 ## なぜ「1 テーブル 1 マネージャ」なのか
 
-SONiC の初期実装は port / IP / [LAG](../reference/glossary.md#term-lag) を `/etc/network/interfaces` や `/etc/teamd/` の **静的ファイル** に書き出していた。再起動なしの設定変更ができず運用上厳しい。本 [HLD](../reference/glossary.md#term-hld) は構成変更を **[CONFIG_DB](../reference/glossary.md#term-config_db) から incremental に流す** モデルを定め、原則を **theorem** として明文化する[^1]:
+[SONiC](../reference/glossary.md#term-sonic) の初期実装は port / IP / [LAG](../reference/glossary.md#term-lag) を `/etc/network/interfaces` や `/etc/teamd/` の **静的ファイル** に書き出していた。再起動なしの設定変更ができず運用上厳しい。本 [HLD](../reference/glossary.md#term-hld) は構成変更を **[CONFIG_DB](../reference/glossary.md#term-config_db) から incremental に流す** モデルを定め、原則を **theorem** として明文化する[^1]:
 
 > "Each configuration table can have one and only one manager daemon associated with it."
 
@@ -272,4 +272,4 @@ show interfaces portchannel
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 2f664c9182a3 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

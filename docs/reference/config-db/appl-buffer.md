@@ -211,7 +211,7 @@ threshold_mode が未設定のとき、ingress_lossless_pool の `mode` フィ�
 
 ### `packet_discard_action` (BUFFER_PROFILE_TABLE) — 省略 = drop 相当
 
-フィールドが APPL_DB に存在しない場合、bufferorch は SAI 属性を設定しない（= ASIC デフォルト動作 = パケット DROP）。`"trim"` を設定した場合のみ `SAI_BUFFER_PROFILE_PACKET_ADMISSION_FAIL_ACTION_DROP_AND_TRIM` が渡る (L730-744)。
+フィールドが APPL_DB に存在しない場合、bufferorch は SAI 属性を設定しない（= [ASIC](../../reference/glossary.md#term-asic) デフォルト動作 = パケット DROP）。`"trim"` を設定した場合のみ `SAI_BUFFER_PROFILE_PACKET_ADMISSION_FAIL_ACTION_DROP_AND_TRIM` が渡る (L730-744)。
 
 ### `profile` (BUFFER_PG_TABLE / BUFFER_QUEUE_TABLE) — 不在時は retry
 
@@ -238,11 +238,11 @@ threshold_mode が未設定のとき、ingress_lossless_pool の `mode` フィ�
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`BufferOrch` は SAI の隠れた依存ツリー（pool → profile → PG/Queue/ProfileList）に従って APPL_DB の `BUFFER_*_TABLE` を処理する。**外部から書き込む順序が逆でも `task_need_retry` で最終的には収束**するが、各 doTask が retry を出し続けるためログが暴れる。順序依存と PortsOrch readiness ゲートを以下に整理する[^buforch]。
+`BufferOrch` は SAI の隠れた依存ツリー（pool → profile → PG/Queue/ProfileList）に従って APPL_DB の `BUFFER_*_TABLE` を処理する。**外部から書き込む順序が逆でも `task_need_retry` で最終的には収束**するが、各 doTask が retry を出し続けるためログが暴れる。順序依存と [PortsOrch](../../reference/glossary.md#term-portsorch) readiness ゲートを以下に整理する[^buforch]。
 
 ### 1. PortsOrch readiness ゲート (全 BUFFER_* 共通)
 
-`BufferOrch::doTask(Consumer&)` の冒頭で PortsOrch の初期化フラグをチェックし、未完了なら**全 BUFFER_* テーブルの処理が一括ブロック**される。`m_toSync` は erase されず保留されるため、PortsOrch 完了後に自動再ディスパッチされる。
+`BufferOrch::doTask(Consumer&)` の冒頭で [PortsOrch](../../reference/glossary.md#term-portsorch) の初期化フラグをチェックし、未完了なら**全 BUFFER_* テーブルの処理が一括ブロック**される。`m_toSync` は erase されず保留されるため、[PortsOrch](../../reference/glossary.md#term-portsorch) 完了後に自動再ディスパッチされる。
 
 | 経路 | チェック | 行 |
 |---|---|---|
@@ -668,9 +668,9 @@ bufferorch は静的にベンダ名を判定せず、**SAI 戻り値で実行時
 |---|---|---|---|
 | `clear_buffer_pool_stats` | L310-322 | `noWmClrCapability` ビットマスクに記録 (32 プールまで) | watermark clear API (pool 単位で個別) |
 | `set_buffer_pool_attribute` | L506-512 | `task_ignore` | BUFFER_POOL_TABLE 属性 SET |
-| `set_buffer_profile_attribute` | L773-777 | `task_ignore` | **`xon_offset`** / `packet_discard_action=trim` 等 ASIC 非対応 attr |
+| `set_buffer_profile_attribute` | L773-777 | `task_ignore` | **`xon_offset`** / `packet_discard_action=trim` 等 [ASIC](../../reference/glossary.md#term-asic) 非対応 attr |
 
-→ `xon_offset` (`SAI_BUFFER_PROFILE_ATTR_XON_OFFSET_TH`) を非対応な ASIC では bufferorch が `task_ignore` で握り潰す。CONFIG_DB / APPL_DB に値が残っていてもハードウェアには反映されない (silent skip)。`packet_discard_action=trim` も同様で、加えて trimming-eligible profile を PG / profile-list に貼ろうとすると `task_failed` になる (L1382-1388 / L1728 / L1918)[^buforch]。
+→ `xon_offset` (`SAI_BUFFER_PROFILE_ATTR_XON_OFFSET_TH`) を非対応な [ASIC](../../reference/glossary.md#term-asic) では bufferorch が `task_ignore` で握り潰す。CONFIG_DB / APPL_DB に値が残っていてもハードウェアには反映されない (silent skip)。`packet_discard_action=trim` も同様で、加えて trimming-eligible profile を PG / profile-list に貼ろうとすると `task_failed` になる (L1382-1388 / L1728 / L1918)[^buforch]。
 
 ### 3. dynamic / static buffer model のベンダ別配布
 
@@ -864,4 +864,4 @@ APPL_DB の `BUFFER_*_TABLE` 群を `BufferOrch` が処理する際に SAI OID �
 
 [^schema]: `sonic-swss-common/common/schema.h` — `APP_BUFFER_*_TABLE_NAME` 定数. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
 
-<!-- glossary-links-injected: 01f594772796 -->
+<!-- glossary-links-injected: 4aeda46c88ba -->

@@ -102,7 +102,7 @@ SflowOrch *sflow_orch = new SflowOrch(m_applDb, sflow_tables);
 
 ### SAI samplepacket_api 呼び出し
 
-`sfloworch.cpp` が `sai_samplepacket_api` グローバルポインタを使用し、ASIC にサンプリングセッションを設定する。
+`sfloworch.cpp` が `sai_samplepacket_api` グローバルポインタを使用し、[ASIC](../../reference/glossary.md#term-asic) にサンプリングセッションを設定する。
 
 | [SAI](../../reference/glossary.md#term-sai) API | 呼び出し条件 | 説明 |
 |---|---|---|
@@ -676,4 +676,4 @@ PORT oper_speed 変化  →  STATE_DB PORT_TABLE 更新
 > **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:31-46` (テーブル登録・起動スナップショット)、`sonic-swss/cfgmgr/sflowmgr.h:39-40` (`ProducerStateTable` 宣言)、`sonic-swss/cfgmgr/sflowmgr.cpp:403-410` (`doTask` テーブル名ルーティング)、`sonic-swss/orchagent/orchdaemon.cpp:439-444` (`SflowOrch` 登録)、`sonic-swss/orchagent/sfloworch.cpp:359-369` (APPL_DB 振り分け); 詳細分析 `meta/_intermediate/cdb-flow/sflow-pubsub.md`
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 06b4df326411 -->
+<!-- glossary-links-injected: c006405759d8 -->

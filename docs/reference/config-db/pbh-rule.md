@@ -57,7 +57,7 @@ flowchart LR
 
 <!-- evidence: sonic-swss/orchagent/pbhorch.cpp:1539-1550 (deployPbhTasks), pbhmgr.cpp:81-113 (validateDependencies), pbhorch.cpp:941-946, 1288-1303 -->
 
-`PBH_RULE` の [SAI](../../reference/glossary.md#term-sai) 反映は複数の外部状態（PortsOrch 初期化、`PBH_TABLE`、`PBH_HASH`）に依存する。違反時の挙動はすべて自動 retry（自動回復）で、エントリは削除されない。
+`PBH_RULE` の [SAI](../../reference/glossary.md#term-sai) 反映は複数の外部状態（[PortsOrch](../../reference/glossary.md#term-portsorch) 初期化、`PBH_TABLE`、`PBH_HASH`）に依存する。違反時の挙動はすべて自動 retry（自動回復）で、エントリは削除されない。
 
 ### 依存 1: PortsOrch 初期化（必須先行・グローバル）
 
@@ -67,9 +67,9 @@ PortsOrch::allPortsReady() == true  先行
 PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD のどの SET も処理開始
 ```
 
-`PbhOrch::doTask()` (`pbhorch.cpp:1808`) は `this->portsOrch->allPortsReady()` が false の間は即 return。PBH 関連の全 [CONFIG_DB](../../reference/glossary.md#term-config_db) エントリは PortsOrch の `PORT` 初期化完了を待つ。
+`PbhOrch::doTask()` (`pbhorch.cpp:1808`) は `this->portsOrch->allPortsReady()` が false の間は即 return。PBH 関連の全 [CONFIG_DB](../../reference/glossary.md#term-config_db) エントリは [PortsOrch](../../reference/glossary.md#term-portsorch) の `PORT` 初期化完了を待つ。
 
-**違反時**: 書込み自体は CONFIG_DB に残り、PortsOrch 完了後の最初のイベントループで一括処理（自動回復）。
+**違反時**: 書込み自体は CONFIG_DB に残り、[PortsOrch](../../reference/glossary.md#term-portsorch) 完了後の最初のイベントループで一括処理（自動回復）。
 
 ### 依存 2: PBH_TABLE 先行（必須先行・自動回復あり）
 
@@ -235,7 +235,7 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 | 失敗条件 | ログ | 動作 |
 |---|---|---|
 | フィールド操作（ADD/UPDATE/REMOVE）が capability で未サポート | `"Failed to validate field(%s): capability(%s) is not supported"` (ERROR) | `return false` — UPDATE 全体が中断 |
-| 未知の ASIC vendor | `"Failed to initialize PBH capabilities: unknown ASIC vendor"` (ERROR) | `return false` |
+| 未知の [ASIC](../../reference/glossary.md#term-asic) vendor | `"Failed to initialize PBH capabilities: unknown ASIC vendor"` (ERROR) | `return false` |
 
 - ASIC_VENDOR 未設定時は GENERIC platform へ fallback（`pbhcap.cpp:297-318`）
 - `validatePbhRuleCap()` の失敗は `createPbhRule()` / `updatePbhRule()` 経由で retry loop として伝播する
@@ -492,7 +492,7 @@ Mellanox プラットフォームでは `updatePbhRule()` (`pbhorch.cpp:839-863`
   AclOrch::updateAclRule()      ← SAI update
 ```
 
-`disableAction()` は SAI ACL entry の action フィールドを一時的にクリアして Mellanox ASIC の制約（action が SET されている状態での [ECMP](../../reference/glossary.md#term-ecmp)/[LAG](../../reference/glossary.md#term-lag) hash 変更が不可）を回避する。失敗した場合は UPDATE 全体が `return false` となり retry loop に入る。
+`disableAction()` は SAI ACL entry の action フィールドを一時的にクリアして Mellanox [ASIC](../../reference/glossary.md#term-asic) の制約（action が SET されている状態での [ECMP](../../reference/glossary.md#term-ecmp)/[LAG](../../reference/glossary.md#term-lag) hash 変更が不可）を回避する。失敗した場合は UPDATE 全体が `return false` となり retry loop に入る。
 
 **generic プラットフォームでは `disableAction()` を呼ばない**。条件分岐は `this->pbhCap.getAsicVendor() == PbhAsicVendor::MELLANOX` で制御される。
 
@@ -521,7 +521,7 @@ STATE_DB:
 
 | 差異 | generic | mellanox |
 |------|---------|----------|
-| `hash` / `packet_action` UPDATE 前に `disableAction()` | 不要 | **必須**（ASIC 制約） |
+| `hash` / `packet_action` UPDATE 前に `disableAction()` | 不要 | **必須**（[ASIC](../../reference/glossary.md#term-asic) 制約） |
 | `PBH_HASH.hash_field_list` UPDATE | 可能（UPDATE 登録済み） | **不可**（空 capability） |
 | `PBH_RULE` フィールド capability | 上表参照 | 上表参照（同一） |
 | capability 検出 | `ASIC_VENDOR` 未設定 / 未知 → fallback | `ASIC_VENDOR=mellanox` |
@@ -568,4 +568,4 @@ PBH_RULE|<table_name>|<rule_name>
 
 [^1]: YANG 定義: `sonic-pbh.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-pbh.yang>
 
-<!-- glossary-links-injected: 78dcd3c82940 -->
+<!-- glossary-links-injected: 4aeda46c88ba -->

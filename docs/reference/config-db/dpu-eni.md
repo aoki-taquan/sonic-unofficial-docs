@@ -234,6 +234,9 @@ DPUS|<dpu_name>
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^1] [^2] [^3]
+
 [^1]: `sonic-swss/orchagent/dash/dashenifwdorch.h` (L62-89 テーブル名・フィールド名定数、L129-156 request_description). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.h>
 
 [^2]: `sonic-swss/orchagent/dash/dashenifwdorch.cpp` (L212-347 `DpuRegistry::populate()`, `processDpuTable()`, `processRemoteDpuTable()`, `processVdpuTable()`). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.cpp>
@@ -694,7 +697,7 @@ if (gMySwitchSubType == "SmartSwitch")
 
 ### ASIC 種別依存
 
-`DashEniFwdOrch` はエンドポイント到達確認に `NeighOrch` を使い、ACL ルール書き込みに `AclOrch` を経由する。ACL 実装は ASIC ベンダー依存だが、ENI 転送 ACL は専用テーブルタイプ (`ACL_TABLE_TYPE_TABLE`) を自前定義して使用するため (`dashenifwdorch.cpp:403-450`)、standard ACL type の platform 差（MIRRORV6 可否・L3V4V6 可否等）は ENI 転送ルールには直接影響しない。
+`DashEniFwdOrch` はエンドポイント到達確認に `NeighOrch` を使い、ACL ルール書き込みに `AclOrch` を経由する。ACL 実装は [ASIC](../../reference/glossary.md#term-asic) ベンダー依存だが、ENI 転送 ACL は専用テーブルタイプ (`ACL_TABLE_TYPE_TABLE`) を自前定義して使用するため (`dashenifwdorch.cpp:403-450`)、standard ACL type の platform 差（MIRRORV6 可否・L3V4V6 可否等）は ENI 転送ルールには直接影響しない。
 
 ### プラットフォーム差サマリー
 
@@ -702,9 +705,9 @@ if (gMySwitchSubType == "SmartSwitch")
 |------|------|------|
 | SmartSwitch 非対応プラットフォーム | DashEniFwdOrch 非存在。DPU/ENI テーブルは処理されない | `orchdaemon.cpp:613` |
 | DPU ロール (`switch_type=dpu`) | DpuOrchDaemon が動作。NPU 側の DPU/VDPU テーブル消費なし | `main.cpp:994` |
-| ASIC 種別 (broadcom/mellanox 等) | ENI 専用 ACL タイプを自前定義するため主要な差なし | `dashenifwdorch.cpp:403-450` |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (broadcom/mellanox 等) | ENI 専用 ACL タイプを自前定義するため主要な差なし | `dashenifwdorch.cpp:403-450` |
 | [VOQ](../../reference/glossary.md#term-voq) chassis | SmartSwitch と排他。DashEniFwdOrch は非起動 | `orchdaemon.cpp:613` |
-| multi-asic | SmartSwitch 構成では単一 ASIC を想定。multi-asic では DashEniFwdOrch 非起動 | `orchdaemon.cpp:613` |
+| multi-asic | SmartSwitch 構成では単一 [ASIC](../../reference/glossary.md#term-asic) を想定。multi-asic では DashEniFwdOrch 非起動 | `orchdaemon.cpp:613` |
 <!-- /platform -->
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

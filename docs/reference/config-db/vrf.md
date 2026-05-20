@@ -283,7 +283,7 @@ vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割�
 2. `sai_virtual_router_api->create_virtual_router(&router_id, ...)` — SAI VR オブジェクト生成 (vrforch.cpp:93)
 3. `vrf_table_[vrf_name].vrf_id = router_id; ref_count = 0` — 内部テーブル登録 (vrforch.cpp:107–108)
 4. `gFlowCounterRouteOrch->onAddVR(router_id)` — フローカウンタ登録 (vrforch.cpp:110)
-5. `vni != 0` の場合 `updateVrfVNIMap()` → EVPN VTEP 存在確認 → `vrf_vni_map_table_` 更新 (vrforch.cpp:111–118)
+5. `vni != 0` の場合 `updateVrfVNIMap()` → EVPN [VTEP](../../reference/glossary.md#term-vtep) 存在確認 → `vrf_vni_map_table_` 更新 (vrforch.cpp:111–118)
 6. `m_stateVrfObjectTable.hset(vrf_name, "state", "ok")` — [STATE_DB](../../reference/glossary.md#term-state_db) に SAI VR 完了を通知 (vrforch.cpp:120)
 
 **依存**: SAI VR 作成が完了し STATE_DB `VRF_OBJECT_TABLE|<name>` に `state=ok` が書かれるまで、`intfsorch` は `isVRFexists()` をブロックとして使用し、ROUTE/NEIGHBOR の処理は SAI VR OID (`vrf_id`) が確立するまで待機する。
@@ -373,7 +373,7 @@ NEIGHBOR（neigh エントリ）は VRF の ref_count を直接操作しない�
 
 ### `EvpnNvoOrch` / `VXLAN_EVPN_NVO` — VNI マッピング前提条件（vrforch.cpp 由来）
 
-`VRFOrch::updateVrfVNIMap` は VNI 非ゼロ設定時に `gDirectory.get<EvpnNvoOrch*>()->getEVPNVtep()` を呼び出し、EVPN VTEP が未設定の場合 `return false` でエントリを破棄する（`vrforch.cpp:225-229`）。`VXLAN_EVPN_NVO` テーブルに有効な NVO エントリが存在しない限り `VRF.vni` の設定は orchagent 側で無効化される。CONFIG_DB の `VRF` テーブルには `vni` フィールドしか見えないが、実際には `VXLAN_EVPN_NVO` への暗黙依存がある。
+`VRFOrch::updateVrfVNIMap` は VNI 非ゼロ設定時に `gDirectory.get<EvpnNvoOrch*>()->getEVPNVtep()` を呼び出し、EVPN [VTEP](../../reference/glossary.md#term-vtep) が未設定の場合 `return false` でエントリを破棄する（`vrforch.cpp:225-229`）。`VXLAN_EVPN_NVO` テーブルに有効な NVO エントリが存在しない限り `VRF.vni` の設定は orchagent 側で無効化される。CONFIG_DB の `VRF` テーブルには `vni` フィールドしか見えないが、実際には `VXLAN_EVPN_NVO` への暗黙依存がある。
 
 ### `VxlanTunnelOrch` / `PortsOrch` — VLAN-VNI マッピングと kernel netns L3 VNI（vrforch.cpp 由来）
 
@@ -540,7 +540,7 @@ YANG `sonic-vrf.yang` も `pattern "Vrf[a-zA-Z0-9_-]+"` で同値を強制して
 
 `ttl_action` と `l3_mc_action` はいずれも `REQ_T_PACKET_ACTION` 型（`vrforch.h:31,33`）で、取りうる値は SAI 標準の `SAI_PACKET_ACTION_FORWARD` / `SAI_PACKET_ACTION_DROP` / `SAI_PACKET_ACTION_TRAP` 等。デフォルト値のハードコードはなく、フィールド省略時は SAI 実装ベンダーのデフォルトが適用される。
 
-MTU に相当する SAI 属性は `vrforch.cpp` / `vrforch.h` に存在しない（VRF レベルの MTU 設定は SONiC VRF モデルの対象外）。
+MTU に相当する SAI 属性は `vrforch.cpp` / `vrforch.h` に存在しない（VRF レベルの MTU 設定は [SONiC](../../reference/glossary.md#term-sonic) VRF モデルの対象外）。
 
 <!-- /constants -->
 
@@ -710,7 +710,7 @@ SAI 副作用 ([ASIC_DB](../../reference/glossary.md#term-asic_db) 経由): `cre
 | `gPortsOrch->updateL3VniStatus(vlan_id, true)` | VLAN VE インタフェース UP | VNI マッピング追加時、VLAN-VNI マップが既存の場合 (vrforch.cpp:239) |
 | `gPortsOrch->updateL3VniStatus(vlan_id, false)` | VLAN VE インタフェース DOWN | VNI マッピング削除時、VLAN-VNI マップが存在する場合 (vrforch.cpp:267) |
 
-`updateL3VniStatus` は VLAN の VE（Virtual Ethernet）インタフェースの UP/DOWN を制御し、L3 VNI の有効化/無効化と連動する。VTEP・VLAN-VNI マッピングが存在しない場合は実行されない。
+`updateL3VniStatus` は VLAN の VE（Virtual Ethernet）インタフェースの UP/DOWN を制御し、L3 VNI の有効化/無効化と連動する。[VTEP](../../reference/glossary.md#term-vtep)・VLAN-VNI マッピングが存在しない場合は実行されない。
 
 ### STATE_DB テーブル役割まとめ
 
@@ -741,11 +741,11 @@ sonic-db-cli APPL_DB hgetall 'VXLAN_VRF_TABLE:vtep1:evpn_map_10001_VrfRed'
 
 ### Linux ルーティングテーブル ID プール — 全プラットフォーム共通定数
 
-テーブル ID 範囲（`VRF_TABLE_START=1001`〜`VRF_TABLE_END=5097`、最大 4096 VRF）はハードウェア ASIC とは無関係な Linux カーネルリソース。一部の組み込み Linux 構成（[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 等）ではカーネルのルーティングテーブル最大数設定が異なる場合があるが、vrfmgrd の定数は変更されない。
+テーブル ID 範囲（`VRF_TABLE_START=1001`〜`VRF_TABLE_END=5097`、最大 4096 VRF）はハードウェア [ASIC](../../reference/glossary.md#term-asic) とは無関係な Linux カーネルリソース。一部の組み込み Linux 構成（[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 等）ではカーネルのルーティングテーブル最大数設定が異なる場合があるが、vrfmgrd の定数は変更されない。
 
 ### VNET 経由 SAI Virtual Router 属性 — ASIC ベンダー依存
 
-orchagent は `v4`/`v6`/`src_mac`/`ttl_action`/`ip_opt_action`/`l3_mc_action` を SAI VR 属性に変換できるが、これらは CONFIG_DB `VRF` テーブルフィールドには存在せず、VNET テーブル経由の APP_DB 直接書込み時のみ機能する残存コード（`vrforch.cpp:38-84`）。`SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS` 等の対応は ASIC ベンダーにより異なる。SAI capability query は実施されておらず、非サポート ASIC に渡した場合の挙動はベンダー SAI 実装依存。
+orchagent は `v4`/`v6`/`src_mac`/`ttl_action`/`ip_opt_action`/`l3_mc_action` を SAI VR 属性に変換できるが、これらは CONFIG_DB `VRF` テーブルフィールドには存在せず、VNET テーブル経由の APP_DB 直接書込み時のみ機能する残存コード（`vrforch.cpp:38-84`）。`SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS` 等の対応は [ASIC](../../reference/glossary.md#term-asic) ベンダーにより異なる。SAI capability query は実施されておらず、非サポート [ASIC](../../reference/glossary.md#term-asic) に渡した場合の挙動はベンダー SAI 実装依存。
 
 ### `fallback` フィールド — 全 ASIC で silent drop
 
@@ -761,4 +761,4 @@ VPP（Vector Packet Processing）SAI バックエンドを使う VS プラット
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 1f2c44f107e1 -->
+<!-- glossary-links-injected: f9c06cf8e957 -->

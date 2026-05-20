@@ -165,7 +165,7 @@ show mux config
 
 ### 段階 3: APPL → SAI
 
-- [orchagent](../../reference/glossary.md#term-orchagent) / MuxOrch が APP_DB `MUX_CABLE_TABLE` を購読し、[SAI](../../reference/glossary.md#term-sai) neighbor/nexthop を操作して active/standby トラフィックパスを制御。
+- [orchagent](../../reference/glossary.md#term-orchagent) / [MuxOrch](../../reference/glossary.md#term-muxorch) が APP_DB `MUX_CABLE_TABLE` を購読し、[SAI](../../reference/glossary.md#term-sai) neighbor/nexthop を操作して active/standby トラフィックパスを制御。
 - [SAI](../../reference/glossary.md#term-sai): `sai_neighbor_api` でネクストホップの有効・無効を切替。
 
 ### 段階 4: タイミング + 副作用
@@ -228,14 +228,14 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 | 条件 | 影響 | ソース |
 |---|---|---|
 | `MuxOrch` は常時登録 (platform 非依存) | `CFG_MUX_CABLE_TABLE_NAME` + `CFG_PEER_SWITCH_TABLE_NAME` を購読 | `orchdaemon.cpp:467-471` |
-| `gPortsOrch->allPortsReady()` が false | 処理待機 (MuxOrch は allPortsReady 後に本処理開始) | `sonic-swss/orchagent/muxorch.cpp` |
+| `gPortsOrch->allPortsReady()` が false | 処理待機 ([MuxOrch](../../reference/glossary.md#term-muxorch) は allPortsReady 後に本処理開始) | `sonic-swss/orchagent/muxorch.cpp` |
 
 ### グレップカバレッジ
 
 | 項目 | hit 数 | 証跡 |
 |---|---|---|
 | minigraph.py MUX_CABLE 生成 | 2 | `minigraph.py:2617,2621-2622` |
-| MuxOrch 登録 | 1 | `orchdaemon.cpp:467-471` |
+| [MuxOrch](../../reference/glossary.md#term-muxorch) 登録 | 1 | `orchdaemon.cpp:467-471` |
 
 <!-- /derivation -->
 
@@ -359,8 +359,8 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 
 ### 注記
 
-- **`prober_type = hardware` の silent 降格**: スイッチの ASIC が ICMP offload 非対応（`SWITCH_CAPABILITY.ICMP_OFFLOAD_CAPABLE != "true"`）の場合、CONFIG_DB に `prober_type = hardware` と設定しても linkmgrd は `software` として動作し、エラーは発生しない。ログ(`MUXLOGWARNING`)のみ。
-- **`neighbor_mode = prefix-route` の silent 無視**: `isNoHostRouteSupported()` が false を返す ASIC では、`prefix-route` 指定が無視され `host-route` として動作する。動的変更（既存エントリへの再設定）は orchagent が `SWSS_LOG_ERROR` を出して拒否する。再起動が必要。
+- **`prober_type = hardware` の silent 降格**: スイッチの [ASIC](../../reference/glossary.md#term-asic) が ICMP offload 非対応（`SWITCH_CAPABILITY.ICMP_OFFLOAD_CAPABLE != "true"`）の場合、CONFIG_DB に `prober_type = hardware` と設定しても linkmgrd は `software` として動作し、エラーは発生しない。ログ(`MUXLOGWARNING`)のみ。
+- **`neighbor_mode = prefix-route` の silent 無視**: `isNoHostRouteSupported()` が false を返す [ASIC](../../reference/glossary.md#term-asic) では、`prefix-route` 指定が無視され `host-route` として動作する。動的変更（既存エントリへの再設定）は orchagent が `SWSS_LOG_ERROR` を出して拒否する。再起動が必要。
 - **`server_ipv4` / `server_ipv6` の実質 mandatory**: YANG 定義では `mandatory true` がなく optional だが、orchagent の `handleMuxCfg` は両フィールドを無条件で `getAttrIpPrefix()` により読み取る。欠落すると `std::out_of_range` 例外が発生し orchagent が異常終了する可能性がある。minigraph 経由では `lo_addr` から自動補完されるが、手動設定時は必須。
 - **warm restart 後の `state` 強制 `auto`**: `warmRestartReconciliation()` が呼ばれると `state = "auto"` が CONFIG_DB に書き戻される。manual/active/standby で固定設定していても上書きされる。
 - **`neighbor_mode` 初期化タイミング**: MuxCable オブジェクト生成時にのみ有効。生成後に CONFIG_DB を更新しても orchagent は変更を拒否する（ポート削除+再登録が必要）。
@@ -453,7 +453,7 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 - `soc_ipv4` / `soc_ipv6` は [SmartSwitch](../../reference/glossary.md#term-smartswitch) の SoC ([DPU](../../reference/glossary.md#term-dpu): Data Processing Unit) に対応するフィールド。
 - SoC IP は `addSkipNeighbors()` で登録され、通常の neighbor → tunnel NH 切替から除外される (muxorch.cpp:2281)。
 - DELETE 時は `removeSkipNeighbors()` でクリア (muxorch.cpp:2327)。
-- `prefix_nbrs_supported_` が `false` の ASIC では `neighbor_mode=prefix-route` を指定しても silent に `host-route` 動作となる (muxorch.cpp:2240)。起動時ログ: `"MuxOrch: prefix_nbrs_supported_ = %s"` (muxorch.cpp:2193)。
+- `prefix_nbrs_supported_` が `false` の [ASIC](../../reference/glossary.md#term-asic) では `neighbor_mode=prefix-route` を指定しても silent に `host-route` 動作となる (muxorch.cpp:2240)。起動時ログ: `"MuxOrch: prefix_nbrs_supported_ = %s"` (muxorch.cpp:2193)。
 
 ### neighbor_mode × ASIC サポート差
 
@@ -646,4 +646,4 @@ flowchart TD
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 067dc626c119 -->

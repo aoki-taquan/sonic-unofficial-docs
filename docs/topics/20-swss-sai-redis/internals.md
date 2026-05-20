@@ -74,7 +74,7 @@ flowchart LR
 
 - `redis-server` が単一スレッドで、APPL/CONFIG/STATE/COUNTERS を集約すると hot spot。複数インスタンス化が選択肢。
 - sairedis async モードで「ASIC_DB write 成功」と「SAI 実反映」が分離。確認は notification か [COUNTERS_DB](../../reference/glossary.md#term-counters_db) で。
-- SAI capability の問い合わせを起動時に行う設計（`sai_query_api_version` / `sai_query_attribute_capability` / `sai_query_stats_capability`）が増えており、起動時間が ASIC capability の数に比例して伸びる。
+- SAI capability の問い合わせを起動時に行う設計（`sai_query_api_version` / `sai_query_attribute_capability` / `sai_query_stats_capability`）が増えており、起動時間が [ASIC](../../reference/glossary.md#term-asic) capability の数に比例して伸びる。
 - 大量 route loading で `gRingBuffer` + assistant thread が入ったが、orchagent main loop の lock contention は完全には消えていない。
 
 ## SAI / syncd 整合性の三本柱
@@ -87,7 +87,7 @@ flowchart LR
 
 ### SAI API バージョン整合
 
-SONiC のビルドは `libsai` のヘッダに依存する。同じ syncd バイナリが古い libsai と新しいヘッダで組まれた状態で動くと、関数ポインタや enum 値のずれが silent な誤動作になりやすい。`sai_query_api_version` を起動時に呼び、ビルド時記録と突き合わせて mismatch を検知する設計が入っている。詳細は [SAI API バージョン整合チェック](../../platform/sai-api-version-check.md) を読む。
+[SONiC](../../reference/glossary.md#term-sonic) のビルドは `libsai` のヘッダに依存する。同じ syncd バイナリが古い libsai と新しいヘッダで組まれた状態で動くと、関数ポインタや enum 値のずれが silent な誤動作になりやすい。`sai_query_api_version` を起動時に呼び、ビルド時記録と突き合わせて mismatch を検知する設計が入っている。詳細は [SAI API バージョン整合チェック](../../platform/sai-api-version-check.md) を読む。
 
 ### stats capability の動的問い合わせ
 
@@ -187,4 +187,4 @@ error: 'sai_query_attribute_capability' method is missing from libsai.so
 - [dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）](../../internals/dump-utility-for-easy-debugging.md)
 - [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](../../platform/dump-on-sai-failure.md)
 
-<!-- glossary-links-injected: 9cc90e2e6da0 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

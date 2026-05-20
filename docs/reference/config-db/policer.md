@@ -134,7 +134,7 @@ POLICER|<name>
 | `DENY` | `SAI_PACKET_ACTION_DENY` |
 | `TRANSIT` | `SAI_PACKET_ACTION_TRANSIT` |
 
-ドキュメント外の値 (`COPY` / `COPY_CANCEL` / `TRAP` / `LOG` / `DENY` / `TRANSIT`) も実装では受理されるが、SAI 対応状況は ASIC 依存。
+ドキュメント外の値 (`COPY` / `COPY_CANCEL` / `TRAP` / `LOG` / `DENY` / `TRANSIT`) も実装では受理されるが、SAI 対応状況は [ASIC](../../reference/glossary.md#term-asic) 依存。
 
 ### storm-control ハードコード固定値 (`policerorch.cpp:156-169`)
 
@@ -185,9 +185,9 @@ storm-control 由来の SAI policer は `POLICER` テーブルとは独立した
 |-----------|--------------|------|
 | `METER_TYPE` | ERROR ログ出力後に SAI `create_policer()` が続行 → SAI エラー。エントリは `m_toSync` から削除されリトライなし | 必須欠落バグ (silent-proceed) |
 | `MODE` | 同上 | 必須欠落バグ (silent-proceed) |
-| `COLOR_SOURCE` | SAI プラットフォームデフォルト (SAI 仕様では `BLIND`、ASIC 依存) | platform-dependent |
+| `COLOR_SOURCE` | SAI プラットフォームデフォルト (SAI 仕様では `BLIND`、[ASIC](../../reference/glossary.md#term-asic) 依存) | platform-dependent |
 | `CIR` / `CBS` / `PIR` / `PBS` | SAI へ渡されない → SAI デフォルト 0 (unlimited または platform-defined) | platform-dependent |
-| `GREEN_PACKET_ACTION` | SAI デフォルト `FORWARD` (ASIC 依存) | platform-dependent |
+| `GREEN_PACKET_ACTION` | SAI デフォルト `FORWARD` ([ASIC](../../reference/glossary.md#term-asic) 依存) | platform-dependent |
 | `YELLOW_PACKET_ACTION` | SAI デフォルト `FORWARD` (ASIC 依存) | platform-dependent |
 | `RED_PACKET_ACTION` | SAI デフォルト `DROP` (ASIC 依存) | platform-dependent |
 
@@ -482,11 +482,11 @@ storm-control UPDATE パスでは `CIR` のみ SAI に渡し、`CBS` は更新�
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | `allPortsReady()` 完了 → POLICER 処理 | 強制先行 | なし（PortsOrch 起動完了待ち） |
+| 1 | `allPortsReady()` 完了 → POLICER 処理 | 強制先行 | なし（[PortsOrch](../../reference/glossary.md#term-portsorch) 起動完了待ち） |
 | 2 | POLICER 作成 → MIRROR_SESSION SET (policer 指定時) | 推奨先行（未作成でも session 自体は作成されるが policer 未 attach） | policer 作成後に session を DEL → SET で再設定 |
 | 3 | create-only フィールドは初回 SET に含める必須 | 必須（後送り不可、サイレント破棄） | 再作成（DEL → SET）で変更 |
 | 4 | 参照先（MIRROR_SESSION 等）DEL → POLICER DEL | 強制先行（参照残存中は SAI 削除がブロック） | 参照テーブルを先に DEL |
-| 5 | PORT_STORM_CONTROL 依存ポートの PortsOrch 登録 | 自動 retry で調停 | `task_need_retry` により次のループで再試行 |
+| 5 | PORT_STORM_CONTROL 依存ポートの [PortsOrch](../../reference/glossary.md#term-portsorch) 登録 | 自動 retry で調停 | `task_need_retry` により次のループで再試行 |
 | 6 | SAI create / set 失敗 → 自動 retry | 自動（一時エラー時） | `task_need_retry` 機構 |
 | 7 | orchagent 再起動後 MIRROR_SESSION + POLICER replay 整合 | 手動復旧が必要な場合あり | MIRROR_SESSION の DEL → SET |
 
@@ -494,7 +494,7 @@ storm-control UPDATE パスでは `CIR` のみ SAI に渡し、`CBS` は更新�
 
 #### 1. PortsOrch 初期化ガード
 
-`doTask()` 冒頭 (`policerorch.cpp:379`) で `gPortsOrch->allPortsReady()` が false の間は即 return する。POLICER / PORT_STORM_CONTROL の両テーブル処理がブロックされるため、PortsOrch の起動完了前に書き込んだエントリは一括キューイングされ、ポート初期化完了後に処理される。
+`doTask()` 冒頭 (`policerorch.cpp:379`) で `gPortsOrch->allPortsReady()` が false の間は即 return する。POLICER / PORT_STORM_CONTROL の両テーブル処理がブロックされるため、[PortsOrch](../../reference/glossary.md#term-portsorch) の起動完了前に書き込んだエントリは一括キューイングされ、ポート初期化完了後に処理される。
 
 #### 2. MIRROR_SESSION への policer attach は SET 時のみ
 
@@ -727,4 +727,4 @@ evidence: `p4orch/acl_rule_manager.cpp:762-804`
 
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 09d906734655 -->
+<!-- glossary-links-injected: 4aeda46c88ba -->

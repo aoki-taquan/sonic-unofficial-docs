@@ -599,7 +599,7 @@ fabric 固有 SAI (fabric link monitor threshold)
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -614,4 +614,4 @@ fabric 固有 SAI (fabric link monitor threshold)
 - なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 793fe06cecf4 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

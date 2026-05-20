@@ -596,7 +596,7 @@ def rsyslog_handler(self):
 
 | フィールド | 変数名 | 用途 | evidence |
 |---|---|---|---|
-| `platform` | `$PLATFORM` | ASIC 設定ファイルのパス決定 → Multi-[NPU](../../reference/glossary.md#term-npu) 判定 (複数 ASIC 時は `docker0` IP をリッスン) | rsyslog-config.sh:3,6-8,15-18 |
+| `platform` | `$PLATFORM` | [ASIC](../../reference/glossary.md#term-asic) 設定ファイルのパス決定 → Multi-[NPU](../../reference/glossary.md#term-npu) 判定 (複数 [ASIC](../../reference/glossary.md#term-asic) 時は `docker0` IP をリッスン) | rsyslog-config.sh:3,6-8,15-18 |
 | `syslog_with_osversion` | `$syslog_with_osversion` | `true` の場合 rsyslog フォーマットを `SONiCForwardFormatWithOsVersion` に変更（OS バージョン付き） | rsyslog-config.sh:28-31 / rsyslog.conf.j2:63,65-69 |
 | `syslog_counter` | `$syslog_counter` | `true` の場合 `omprog` モジュール + `/usr/bin/syslog-counter` が有効化 | rsyslog-config.sh:38-41 / rsyslog.conf.j2:25-27,127-129 |
 
@@ -667,4 +667,4 @@ if ($.PLATFORM == "x86_64-mlnx_msn2700-r0" or $.PLATFORM == "x86_64-mlnx_msn2700
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 6e29208fb37d -->
+<!-- glossary-links-injected: e82be350a384 -->

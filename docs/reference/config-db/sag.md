@@ -153,7 +153,7 @@ APPL_DB: SAG_TABLE|GLOBAL (SET)
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
-> **調査根拠**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) アーキテクチャ記述 + `sonic-swss-common/common/schema.h:127,393` 定数確認 (2026-05-18)。[sonic-swss](../../reference/glossary.md#term-sonic-swss) master に SAG 専用実装ファイル (`sagmgr.cpp` / `sagorch.cpp`) は存在しないため、本節は HLD 記載設計 + [intfmgrd](../../reference/glossary.md#term-intfmgrd) / IntfsOrch の SONiC 共通失敗挙動モデルに基づく推定。  
+> **調査根拠**: `SONiC/doc/sag/sag-HLD.md` (sha=49bab5b) アーキテクチャ記述 + `sonic-swss-common/common/schema.h:127,393` 定数確認 (2026-05-18)。[sonic-swss](../../reference/glossary.md#term-sonic-swss) master に SAG 専用実装ファイル (`sagmgr.cpp` / `sagorch.cpp`) は存在しないため、本節は HLD 記載設計 + [intfmgrd](../../reference/glossary.md#term-intfmgrd) / [IntfsOrch](../../reference/glossary.md#term-intfsorch) の [SONiC](../../reference/glossary.md#term-sonic) 共通失敗挙動モデルに基づく推定。  
 > 詳細証跡: `meta/_intermediate/cdb-flow/sag-failure.md`
 
 !!! warning "HLD-only 推定"
@@ -171,7 +171,7 @@ APPL_DB: SAG_TABLE|GLOBAL (SET)
 | 失敗条件 | 挙動 | 証跡 |
 |---|---|---|
 | `SAG\|GLOBAL.gateway_mac` 未設定時に `VLAN_INTERFACE.static_anycast_gateway=true` を受信 | `gateway_mac` を取得できないため、APPL_DB への転送を省略またはシステム MAC を使用。`SAG\|GLOBAL` 追加後に runtime 再評価で最終収束 | HLD §Architecture |
-| [Redis](../../reference/glossary.md#term-redis) (CONFIG_DB / APPL_DB) 切断中に SubscriberStateTable / [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) の IO が失敗 | [Redis](../../reference/glossary.md#term-redis) 例外が `intfmgrd` プロセスへ伝播 → プロセス abort → swss コンテナが `critical_processes` 登録に従って再起動。再起動後 CONFIG_DB 再投入で再収束 | SONiC cfgmgr 共通パターン |
+| [Redis](../../reference/glossary.md#term-redis) (CONFIG_DB / APPL_DB) 切断中に SubscriberStateTable / [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) の IO が失敗 | [Redis](../../reference/glossary.md#term-redis) 例外が `intfmgrd` プロセスへ伝播 → プロセス abort → swss コンテナが `critical_processes` 登録に従って再起動。再起動後 CONFIG_DB 再投入で再収束 | [SONiC](../../reference/glossary.md#term-sonic) cfgmgr 共通パターン |
 
 ### C. IntfsOrch → SAI 設定段階
 
@@ -184,9 +184,9 @@ APPL_DB: SAG_TABLE|GLOBAL (SET)
 
 | フェーズ | 挙動 |
 |---|---|
-| `SAG\|GLOBAL` DEL 直後 | IntfsOrch が RIF の MAC をシステム CPU MAC に差し戻す。この間、SAG を使用する全 VLAN インターフェースで MAC が変化 |
+| `SAG\|GLOBAL` DEL 直後 | [IntfsOrch](../../reference/glossary.md#term-intfsorch) が RIF の MAC をシステム CPU MAC に差し戻す。この間、SAG を使用する全 VLAN インターフェースで MAC が変化 |
 | 新 MAC で `SAG\|GLOBAL` SET 前 | VLAN インターフェースはシステム MAC で動作。ホストが旧 MAC へ向けたトラフィックは drop される可能性 |
-| `SAG\|GLOBAL` SET 後 | IntfsOrch が全対象 VLAN RIF に新 MAC を再設定。IPv6 link-local route も RouteOrch 経由で del → add が実行され、切替期間中は IPv6 link-local 通信断が生じうる |
+| `SAG\|GLOBAL` SET 後 | [IntfsOrch](../../reference/glossary.md#term-intfsorch) が全対象 VLAN RIF に新 MAC を再設定。IPv6 link-local route も RouteOrch 経由で del → add が実行され、切替期間中は IPv6 link-local 通信断が生じうる |
 
 ### 自己回復まとめ
 
@@ -272,8 +272,8 @@ HLD §Testing: *"Verify that VLAN interface can be created with SAG MAC address 
 
 | 副次処理 | 対象リソース | 可逆性 |
 |---------|------------|--------|
-| IPv6 link-local to-me route del → add (RouteOrch 経由) | APPL_DB `ROUTE_TABLE` / ASIC route テーブル | 可逆（SAG 無効化で元に戻る） |
-| SAI RIF の `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` 変更 | ASIC RIF エントリ（全対象 VLAN） | 可逆 |
+| IPv6 link-local to-me route del → add (RouteOrch 経由) | APPL_DB `ROUTE_TABLE` / [ASIC](../../reference/glossary.md#term-asic) route テーブル | 可逆（SAG 無効化で元に戻る） |
+| SAI RIF の `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` 変更 | [ASIC](../../reference/glossary.md#term-asic) RIF エントリ（全対象 VLAN） | 可逆 |
 | カーネル VLAN インターフェース MAC 変更 | Linux netdev 状態 | 可逆 |
 
 <!-- /side-effects -->
@@ -311,7 +311,7 @@ EVALSHA <luaSet>
   PUBLISH SAG_TABLE_CHANNEL@0 "G"
 ```
 
-PUBLISH ペイロードは固定文字列 `"G"`（SONiC [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 共通仕様）。
+PUBLISH ペイロードは固定文字列 `"G"`（[SONiC](../../reference/glossary.md#term-sonic) [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 共通仕様）。
 
 ### 3. APPL_DB → orchagent/IntfsOrch (ConsumerStateTable)
 
@@ -379,7 +379,7 @@ SAG のコードパスにはプラットフォーム固有の分岐は**存在�
 
 ### SAI レベルで ASIC 非依存
 
-HLD §SAI API に "There are no changes to SAI headers/implementation to support this feature." と明記されている[^1]。SAG の本質は VLAN インターフェースの SAI RIF 属性 `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` を仮想 MAC に差し替えるだけであり、この属性はすべての主要 ASIC ベンダーが SAI v1 時点からサポートしている。
+HLD §SAI API に "There are no changes to SAI headers/implementation to support this feature." と明記されている[^1]。SAG の本質は VLAN インターフェースの SAI RIF 属性 `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` を仮想 MAC に差し替えるだけであり、この属性はすべての主要 [ASIC](../../reference/glossary.md#term-asic) ベンダーが SAI v1 時点からサポートしている。
 
 ### 実装コードの調査結果
 
@@ -398,4 +398,4 @@ sonic-swss master に SAG 専用の実装ファイル（`sagmgr.cpp` / `sagorch.
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 0378e8bb9b54 -->
+<!-- glossary-links-injected: d1d93430d484 -->

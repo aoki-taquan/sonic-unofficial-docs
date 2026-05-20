@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-SONiC は DHCPv6 **リレー**機能（`DHCP_RELAY` テーブル）を持つが、DHCPv6 **サーバ**機能は未実装である。IPv4 側の対応テーブルである `DHCP_SERVER_IPV4` が `dhcpservd` + kea-dhcp4 によって実装されているのに対し、kea-dhcp6 を管理するデーモンおよび対応 [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルは存在しない。
+[SONiC](../../reference/glossary.md#term-sonic) は DHCPv6 **リレー**機能（`DHCP_RELAY` テーブル）を持つが、DHCPv6 **サーバ**機能は未実装である。IPv4 側の対応テーブルである `DHCP_SERVER_IPV4` が `dhcpservd` + kea-dhcp4 によって実装されているのに対し、kea-dhcp6 を管理するデーモンおよび対応 [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルは存在しない。
 
 <!-- defaults -->
 <!-- cdb-mermaid -->
@@ -56,7 +56,7 @@ flowchart LR
 
 **調査結果: フィールドなし（テーブル未実装）**
 
-SONiC master における `DHCP_SERVER_IPV6` テーブルの [YANG](../../reference/glossary.md#term-yang) モデル、Python デーモン、CLI プラグインは確認されなかった。コード由来のデフォルト値を抽出できるフィールドが存在しない。
+[SONiC](../../reference/glossary.md#term-sonic) master における `DHCP_SERVER_IPV6` テーブルの [YANG](../../reference/glossary.md#term-yang) モデル、Python デーモン、CLI プラグインは確認されなかった。コード由来のデフォルト値を抽出できるフィールドが存在しない。
 
 実装済み IPv4 版との対比:
 
@@ -74,7 +74,7 @@ SONiC master における `DHCP_SERVER_IPV6` テーブルの [YANG](../../refere
 <!-- ordering -->
 ## 書込み順依存 (Phase B 調査)
 
-`DHCP_SERVER_IPV6` は未実装だが、SONiC の DHCPv6 リレー機能（`DHCP_RELAY` テーブル / `dhcp6relay` プロセス）には以下の順序依存が確認されている。将来 `DHCP_SERVER_IPV6` が実装された場合も同等の [VLAN](../../reference/glossary.md#term-vlan) 前提条件が継承される見込み。
+`DHCP_SERVER_IPV6` は未実装だが、[SONiC](../../reference/glossary.md#term-sonic) の DHCPv6 リレー機能（`DHCP_RELAY` テーブル / `dhcp6relay` プロセス）には以下の順序依存が確認されている。将来 `DHCP_SERVER_IPV6` が実装された場合も同等の [VLAN](../../reference/glossary.md#term-vlan) 前提条件が継承される見込み。
 
 ### VLAN_INTERFACE 先行が必須
 
@@ -276,7 +276,7 @@ CONFIG_DB の `dhcpv6_servers` を変更しても dhcp6relay は無視する。*
 
 **VLAN_MEMBER**: `relay.cpp:856` で `"VLAN_MEMBER|" + vlan + "|*"` を取得し、member interface → VLAN の逆引きマップを構築する。これがないとクライアントパケットの VLAN 判定が不可能。
 
-詳細: [`meta/_intermediate/cdb-flow/dhcp-server-ipv6-cross-refs.md`](../../../../meta/_intermediate/cdb-flow/dhcp-server-ipv6-cross-refs.md)
+詳細: `meta/_intermediate/cdb-flow/dhcp-server-ipv6-cross-refs.md`
 
 <!-- /cross-refs -->
 
@@ -392,7 +392,7 @@ popen(cmd.c_str(), "r")  // netlink ソケット直接使用なし
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | **dhcp6relay 非対応** — [DPU](../../reference/glossary.md#term-dpu) 経路実装なし | `dhcp4relay` は `is_SmartSwitch` フラグ・`DPUS` テーブル監視・`bridge-midplane` MAC 取得を実装するが、`dhcp6relay/src/` には [SmartSwitch](../../reference/glossary.md#term-smartswitch)/[DPU](../../reference/glossary.md#term-dpu) 関連コードが存在しない |
 | IPv6 link-local アドレス (LLA) | **DHCPv6 固有の生成待機ロジック** | `check_is_lla_ready()` が `ip -6 addr show <vlan> scope link` で LLA 存在を確認。60 秒タイマー (`lla_check_callback`) でポーリングし、LLA 生成後にソケットを動的追加 (`relay.cpp:1288-1310`) |
 | multi-asic | 影響なし | `initialize_swss()` は `CONFIG_DB` を namespace 引数なしで接続。`asicN` namespace を iterate しない |
-| ASIC ベンダー | 影響なし | `dhcp6relay` は純粋 L3 UDP リレー処理。[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) 非経由 |
+| [ASIC](../../reference/glossary.md#term-asic) ベンダー | 影響なし | `dhcp6relay` は純粋 L3 UDP リレー処理。[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) 非経由 |
 
 ### DualToR 構成の詳細
 
@@ -442,4 +442,4 @@ DHCPv6 サーバ機能（kea-dhcp6 管理、ステートフル/ステートレ�
 
 <!-- ref-triangle:end -->
 
-<!-- glossary-links-injected: 11841568e9ce -->
+<!-- glossary-links-injected: 49a6be408bbc -->

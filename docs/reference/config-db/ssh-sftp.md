@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-SONiC は OpenSSH パッケージが提供する sshd_config テンプレートに `Subsystem sftp /usr/lib/openssh/sftp-server` を含めており、SFTP サブシステムは **常時有効** となっている[^1]。
+[SONiC](../../reference/glossary.md#term-sonic) は OpenSSH パッケージが提供する sshd_config テンプレートに `Subsystem sftp /usr/lib/openssh/sftp-server` を含めており、SFTP サブシステムは **常時有効** となっている[^1]。
 
 `SSH_SERVER` テーブルを処理する `hostcfgd` の `SshServer.set_policies()` が更新するフィールドセット (`SSH_CONFIG_NAMES`) に `Subsystem` キーは含まれていないため、[CONFIG_DB](../../reference/glossary.md#term-config_db) からは SFTP サブシステムを制御できない。
 
@@ -43,7 +43,7 @@ flowchart LR
 
 ## CONFIG_DB との関係
 
-SONiC に `SSH_SFTP` という独立したテーブルは存在しない。SFTP サブシステムは `SSH_SERVER` テーブルの管理スコープ外にある。
+[SONiC](../../reference/glossary.md#term-sonic) に `SSH_SFTP` という独立したテーブルは存在しない。SFTP サブシステムは `SSH_SERVER` テーブルの管理スコープ外にある。
 
 ### SSH_CONFIG_NAMES（hostcfgd L67-75）
 
@@ -382,8 +382,8 @@ ssh_handler(key="POLICIES", op=SET, data={ciphers:"aes128-ctr,aes256-ctr"})
 
 | 構成 | SSH_SERVER テーブルの所在 | SFTP 有効化 | 備考 |
 |------|--------------------------|-------------|------|
-| single-ASIC (T0/T1) | host CONFIG_DB のみ | OS テンプレート固定 | 標準構成 |
-| multi-ASIC (複数 [NPU](../../reference/glossary.md#term-npu)) | host CONFIG_DB のみ（asicN namespace には非存在） | 同上 | `is_multi_npu` は SSH 経路で未参照 |
+| single-[ASIC](../../reference/glossary.md#term-asic) (T0/T1) | host CONFIG_DB のみ | OS テンプレート固定 | 標準構成 |
+| multi-[ASIC](../../reference/glossary.md#term-asic) (複数 [NPU](../../reference/glossary.md#term-npu)) | host CONFIG_DB のみ（asicN namespace には非存在） | 同上 | `is_multi_npu` は SSH 経路で未参照 |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (line card) | 各 line card host の CONFIG_DB | 同上 | line card 独立管理 |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor) | supervisor host の CONFIG_DB | 同上 | chassis 全体集中管理なし |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([NPU](../../reference/glossary.md#term-npu) 側) | host CONFIG_DB | 同上 | [DPU](../../reference/glossary.md#term-dpu) 側に hostcfgd は別インスタンス |
@@ -394,7 +394,7 @@ ssh_handler(key="POLICIES", op=SET, data={ciphers:"aes128-ctr,aes256-ctr"})
 
 ### SFTP バイナリはパッケージ提供（ベンダー非依存）
 
-`/usr/lib/openssh/sftp-server` は `openssh-server` Debian パッケージが提供する標準バイナリ。`sonic-buildimage/files/image_config/` に SSH 固有のプラットフォーム別オーバーレイは存在せず、community SONiC master 全機種で同一パスが使用される。
+`/usr/lib/openssh/sftp-server` は `openssh-server` Debian パッケージが提供する標準バイナリ。`sonic-buildimage/files/image_config/` に SSH 固有のプラットフォーム別オーバーレイは存在せず、community [SONiC](../../reference/glossary.md#term-sonic) master 全機種で同一パスが使用される。
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1161 (SshServer — platform 分岐なし) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L2166-2201 (hostcfgd.__init__ — is_multi_npu は SshServer に渡されない) -->
@@ -457,4 +457,4 @@ sudo systemctl restart ssh
 
 [^1]: `sonic-host-services` テスト sample_output `SSH_SERVER_default_values/sshd_config` L112: `Subsystem sftp /usr/lib/openssh/sftp-server`。hostcfgd の `SSH_CONFIG_NAMES`（L67-75）に `Subsystem` キーが存在しないことで、CONFIG_DB 非管理であることを確認。<https://github.com/sonic-net/sonic-host-services/blob/c5bbbe8b07b96f078fa4b761316627404b01bd04/scripts/hostcfgd>
 
-<!-- glossary-links-injected: f6f695723302 -->
+<!-- glossary-links-injected: d3bc8f725ce5 -->

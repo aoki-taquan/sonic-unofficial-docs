@@ -511,7 +511,7 @@ evidence: `flexcounterorch.cpp:287-340`
 | モード | 書き込み API | 通知方式 |
 |--------|------------|---------|
 | Traditional (`gTraditionalFlexCounter = true`) | `ProducerTable::set()` (`saihelper.cpp:1047`) | `_KEY_SET` + `PUBLISH FLEX_COUNTER_TABLE_CHANNEL` で [syncd](../../reference/glossary.md#term-syncd) が即時起床 |
-| 非 Traditional（デフォルト） | `SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER` 属性経由 (`saihelper.cpp:1055-1063`) | ASIC チャンネル経由で [syncd](../../reference/glossary.md#term-syncd) へ伝達。FLEX_COUNTER_DB への直接 PUBLISH は行わない |
+| 非 Traditional（デフォルト） | `SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER` 属性経由 (`saihelper.cpp:1055-1063`) | [ASIC](../../reference/glossary.md#term-asic) チャンネル経由で [syncd](../../reference/glossary.md#term-syncd) へ伝達。FLEX_COUNTER_DB への直接 PUBLISH は行わない |
 
 !!! note "Traditional モードと FLEX_COUNTER_TABLE の可視性"
     Traditional モードでは `gFlexCounterTable = ProducerTable(FLEX_COUNTER_DB, FLEX_COUNTER_TABLE)` が使われ (`saihelper.cpp:324`)、per-OID エントリが FLEX_COUNTER_DB 上で可視になる。非 Traditional モードでは FLEX_COUNTER_DB にエントリが書き込まれないため、`redis-cli -n 5 HGETALL "FLEX_COUNTER_TABLE:PORT_STAT_COUNTER:oid:..."` で確認できない。
@@ -527,7 +527,7 @@ m_flexCounter = std::make_shared<swss::ConsumerTable>(m_dbFlexCounter.get(), FLE
 `syncd` は `ConsumerTable` (`Syncd.cpp:5855`) を SELECT ループに登録し、Traditional モードで
 orchagent が書き込んだ SET/DEL イベントを `processFlexCounterEvent()` (`Syncd.cpp:5982`) で処理する。
 非 Traditional モードでは `REDIS_FLEX_COUNTER_COMMAND_START_POLL` / `STOP_POLL` コマンドが
-ASIC チャンネルから届き同様に処理される。
+[ASIC](../../reference/glossary.md#term-asic) チャンネルから届き同様に処理される。
 
 ### syncd FlexCounter → COUNTERS_DB 書き込み（polling スレッド）
 
@@ -547,7 +547,7 @@ consumer 側はすべて on-demand polling で読み出す必要がある。
 | 区間 | 方式 | チャンネル |
 |------|------|-----------|
 | orchagent → FLEX_COUNTER_DB (traditional) | `ProducerTable` | `FLEX_COUNTER_TABLE_CHANNEL`（`syncd` が消費） |
-| orchagent → syncd (非 traditional) | SAI [Redis](../../reference/glossary.md#term-redis) Attribute / ASIC channel | — |
+| orchagent → syncd (非 traditional) | SAI [Redis](../../reference/glossary.md#term-redis) Attribute / [ASIC](../../reference/glossary.md#term-asic) channel | — |
 | syncd [FlexCounter](../../reference/glossary.md#term-flexcounter) → [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `swss::Table::set()` (plain HSET) | **なし（PUBLISH 非発行）** |
 | CLI / [SNMP](../../reference/glossary.md#term-snmp) / [gNMI](../../reference/glossary.md#term-gnmi) ← [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | on-demand polling (`HGETALL`) / [gNMI](../../reference/glossary.md#term-gnmi) STREAM subscription | — |
 
@@ -644,4 +644,4 @@ Mellanox Spectrum では `SAI_PORT_STAT_DROPPED_TRIM_PACKETS` をネイティブ
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: da3fe3f7edd8 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

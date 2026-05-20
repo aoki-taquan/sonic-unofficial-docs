@@ -98,7 +98,7 @@ if not fvs:
 
 [SmartSwitch](../../reference/glossary.md#term-smartswitch) では `admin_status` エントリが存在しない [DPU](../../reference/glossary.md#term-dpu) は**デフォルト停止**扱い。YANG の `default up` と動作が逆になる。
 
-`SmartSwitchModuleUpdater.get_module_admin_status()` はエントリ不在時に `MODULE_STATUS_EMPTY` = `'Empty'` を返す (chassisd:756)。これは `!= 'down'` 条件 (chassisd:447) を満たすため、実質 up 扱いで ASIC テーブル更新が継続される。
+`SmartSwitchModuleUpdater.get_module_admin_status()` はエントリ不在時に `MODULE_STATUS_EMPTY` = `'Empty'` を返す (chassisd:756)。これは `!= 'down'` 条件 (chassisd:447) を満たすため、実質 up 扱いで [ASIC](../../reference/glossary.md#term-asic) テーブル更新が継続される。
 
 ### startup コマンドの silent deletion (書き込み時 vs 実行時 乖離)
 
@@ -120,11 +120,11 @@ chassisd が platform API から値を取得できない場合、[STATE_DB](../.
 | `name` / `desc` / `serial` / `model` / `presence` / `is_replaceable` | `'N/A'` |
 | `slot` | `-1` (INVALID_SLOT) |
 | `oper_status` | `'Offline'` (MODULE_STATUS_OFFLINE) |
-| `asics` リスト | `[]` (空) → ASIC テーブル更新なし |
+| `asics` リスト | `[]` (空) → [ASIC](../../reference/glossary.md#term-asic) テーブル更新なし |
 | `midplane_ip` | `'0.0.0.0'` |
 | `midplane_access` | `False` |
 
-`oper_status = 'Offline'` の fallback は `str(ModuleBase.MODULE_STATUS_ONLINE)` との比較 (chassisd:420) で失敗し、当該モジュールの ASIC テーブル更新がスキップされる。
+`oper_status = 'Offline'` の fallback は `str(ModuleBase.MODULE_STATUS_ONLINE)` との比較 (chassisd:420) で失敗し、当該モジュールの [ASIC](../../reference/glossary.md#term-asic) テーブル更新がスキップされる。
 
 ### プラットフォームファイル由来のハードコードデフォルト
 
@@ -279,7 +279,7 @@ chassisd が停止中でもタイムアウト後に強制実行される。
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-chassis-module`](../yang/sonic-chassis-module.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-chassis-module`
 - CLI: `config chassis_modules shutdown <name>` / `config chassis_modules startup <name>`
 - CLI: `show chassis modules status`
 
@@ -293,7 +293,7 @@ chassisd が停止中でもタイムアウト後に強制実行される。
 | 参照先テーブル | 方向 | 機構 | 条件 |
 |---|---|---|---|
 | [`PORT`](./port.md) | CHASSIS_MODULE → PORT | `chassisd` の `_get_data_plane_state_common()` が `CONFIG_DB` の `PORT` テーブルを全件列挙し、`APPL_DB.PORT_TABLE.oper_status` とクロスチェック。PORT が空なら全ポート up 扱いになるサイレント挙動 | SmartSwitch の DPU データプレーン状態判定時のみ (chassisd:1268-1273) |
-| [`DEVICE_METADATA`](./device-metadata.md) | CHASSIS_MODULE → DEVICE_METADATA | `is_smartswitch()` が `platform.json` の `"DPUS"` キーを検査（DB 直接参照ではなくファイル参照）。`DEVICE_METADATA|localhost|subtype = SmartSwitch` が書き込まれた環境と間接的に連動し、`admin_status` デフォルト fallback (`up` vs `down`) が分岐 | SmartSwitch 環境のみ |
+| [`DEVICE_METADATA`](./device-metadata.md) | CHASSIS_MODULE → [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) | `is_smartswitch()` が `platform.json` の `"DPUS"` キーを検査（DB 直接参照ではなくファイル参照）。`DEVICE_METADATA|localhost|subtype = SmartSwitch` が書き込まれた環境と間接的に連動し、`admin_status` デフォルト fallback (`up` vs `down`) が分岐 | SmartSwitch 環境のみ |
 | `SYSTEM_PORT` | — | 直接参照なし。[VOQ](../../reference/glossary.md#term-voq) 構成の `SYSTEM_PORT` は `voqorch` が管理し `CHASSIS_MODULE` との直接依存は不在 | — |
 
 > **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:1268-1273`; `sonic-utilities/utilities_common/chassis.py:21-22`; `sonic-utilities/config/chassis_modules.py:61`; `sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py:671-682`
@@ -735,4 +735,4 @@ SmartSwitch では `SmartSwitchModuleUpdater` が `chassisStateDB` の `DPU_STAT
 > **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:92-93,125-141,143-149,192-212,235-256,309-311,338-341,420-435,471-478,663-664,1400-1401,1424-1427`; `config/chassis_modules.py:12`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-module-failure.md`
 <!-- /failure -->
 
-<!-- glossary-links-injected: 60733fd975a3 -->
+<!-- glossary-links-injected: cc2a9c492c44 -->

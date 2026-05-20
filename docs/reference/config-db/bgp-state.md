@@ -100,7 +100,7 @@ bgpmon 起動時に `NEIGH_STATE_TABLE|*` のエントリがすべて削除さ�
 
 ### 購読者
 
-- **[SNMP](../../reference/glossary.md#term-snmp) サブエージェント** (`sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py`): `NEIGH_STATE_TABLE|*` を読み取り CiscoBgp4MIB (cbgpPeer2State, OID `.1.3.6.1.4.1.9.9.187.1.2.5.1.3`) に変換。マルチ ASIC 構成では各 namespace の [STATE_DB](../../reference/glossary.md#term-state_db) から収集。
+- **[SNMP](../../reference/glossary.md#term-snmp) サブエージェント** (`sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py`): `NEIGH_STATE_TABLE|*` を読み取り CiscoBgp4MIB (cbgpPeer2State, OID `.1.3.6.1.4.1.9.9.187.1.2.5.1.3`) に変換。マルチ [ASIC](../../reference/glossary.md#term-asic) 構成では各 namespace の [STATE_DB](../../reference/glossary.md#term-state_db) から収集。
 - テレメトリ / 将来拡張 (snmp_ciscobgp4mib.md L33)
 
 ---
@@ -279,7 +279,7 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 | 文字列値 | 用途 | ソース |
 |---------|------|--------|
 | `"/var/log/frr/frr.log"` | FRR ログファイルのタイムスタンプ監視 | `bgpmon.py:61` |
-| `"show bgp summary json"` | vtysh 経由で BGP ネイバー状態を取得するコマンド | `bgpmon.py:80` |
+| `"show bgp summary json"` | [vtysh](../../reference/glossary.md#term-vtysh) 経由で BGP ネイバー状態を取得するコマンド | `bgpmon.py:80` |
 <!-- /constants -->
 
 <!-- failure -->
@@ -414,7 +414,7 @@ STATE_DB `BGP_PEER_CONFIGURED_TABLE` への書き込みは `BGPPeerMgrBase.updat
 
 ### マルチ ASIC 構成での動作（テーブル内容に変化なし）
 
-マルチ ASIC 構成では、bgpmon および bgpcfgd は各 ASIC コンテナ内で独立して動作し、
+マルチ [ASIC](../../reference/glossary.md#term-asic) 構成では、bgpmon および bgpcfgd は各 [ASIC](../../reference/glossary.md#term-asic) コンテナ内で独立して動作し、
 それぞれの namespace 内 STATE_DB に書き込む。テーブルのスキーマ・フィールドに変化はない。
 
 **SNMP 読み取り側**（`sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py` L22, L29–30）
@@ -469,6 +469,9 @@ keyspace notification (`__keyspace@6__:BGP_PEER_CONFIGURED_TABLE|*`) は STATE_D
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^1] [^2] [^3] [^4] [^5]
+
 [^1]: `sonic-buildimage/src/sonic-bgpcfgd/bgpmon/bgpmon.py` (L37-51 BgpStateGet.__init__, L70-76 update_new_peer_states, L154-189 update_neigh_states, L163,171 peerType 判定). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpmon/bgpmon.py>
 
 [^2]: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py` (L284-303 update_state_db). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py>
@@ -496,4 +499,4 @@ sonic-db-cli STATE_DB hgetall 'BGP_PEER_CONFIGURED_TABLE|10.0.0.1'
 vtysh -c 'show bgp summary json'
 ```
 
-<!-- glossary-links-injected: d6ea86224f5e -->
+<!-- glossary-links-injected: b86bd80f1174 -->

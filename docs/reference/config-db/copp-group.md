@@ -245,7 +245,7 @@ show copp config
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -517,8 +517,8 @@ journalctl -u swss | grep -i copp
 
 - **COPP_TRAP → COPP_GROUP 依存**: COPP_TRAP の SET 処理時に即座に確認。未解決は
   保留キューで管理され、COPP_GROUP 登録後の `doTask()` 再実行で解消。
-- **DEVICE_METADATA → cir/cbs**: ビルド時（`sonic-cfggen`）に解決済み。
-  実行時の DEVICE_METADATA 変化は COPP_GROUP に影響しない。
+- **[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) → cir/cbs**: ビルド時（`sonic-cfggen`）に解決済み。
+  実行時の [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 変化は COPP_GROUP に影響しない。
 - **FEATURE → trap_ids**: `doFeatureTask()` が FEATURE テーブルの変化を購読し、
   state 変更のたびに影響する COPP_TRAP の trap_ids を再評価・APPL_DB を更新。
   COPP_GROUP エントリ自体は変化しない（APPL_DB 上の `trap_ids` リストが変化する）。
@@ -601,4 +601,4 @@ sonic-db-cli COUNTERS_DB hgetall COUNTERS_TRAP_NAME_MAP
 ```
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 4175e24580be -->
+<!-- glossary-links-injected: 51110fb4efcb -->

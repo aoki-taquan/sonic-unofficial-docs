@@ -118,14 +118,17 @@ IFA 機能の全体的な有効/無効フラグ。singleton。key は固定値 `
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-tam`](../yang/sonic-tam.md)
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-ifa`](../yang/sonic-ifa.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-tam`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-ifa`
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): [`acl-table`](acl-table.md)
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): [`acl-rule`](acl-rule.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
+
+<!-- footnote anchor seeds -->
+出典: [^1] [^2] [^4]
 
 [^1]: YANG 定義 (TAM): `sonic-tam.yang`. <https://github.com/sonic-net/sonic-mgmt-common/blob/HEAD/cvl/testdata/schema/sonic-tam.yang>
 
@@ -186,7 +189,7 @@ sonic-db-cli CONFIG_DB hgetall 'TAM_INT_IFA_FLOW_TABLE|flow1'
 | 値 | 挙動 |
 |----|------|
 | `0`（デフォルト） | TAM デバイス ID 未設定。SAI_TAM_INT_ATTR_DEVICE_ID に `0` が渡される。 |
-| `1..65535` | デバイス固有の ID として ASIC に設定される（Path Tracing で使用）。 |
+| `1..65535` | デバイス固有の ID として [ASIC](../../reference/glossary.md#term-asic) に設定される（Path Tracing で使用）。 |
 
 ### `TAM_INT_IFA_FEATURE_TABLE.enable` 値別挙動
 
@@ -526,4 +529,4 @@ CVL（sonic-mgmt-common / Management Framework）によるバリデーション�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 4871112f5213 -->
+<!-- glossary-links-injected: c006405759d8 -->

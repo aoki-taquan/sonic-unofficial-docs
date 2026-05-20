@@ -563,7 +563,7 @@ void RouteOrch::updateDefRouteState(string ip, bool add)
 
 ### 4. fpmsyncd → FPM (オフロード確認応答)
 
-`RouteSync::sendOffloadReply()` (`routesync.cpp:3100-3131`) は `RTM_NEWROUTE` に `RTM_F_OFFLOAD` フラグを付加して [zebra](../../reference/glossary.md#term-zebra) へ FPM メッセージを送り返す。これにより zebra は経路が ASIC にオフロードされたことを認識する。
+`RouteSync::sendOffloadReply()` (`routesync.cpp:3100-3131`) は `RTM_NEWROUTE` に `RTM_F_OFFLOAD` フラグを付加して [zebra](../../reference/glossary.md#term-zebra) へ FPM メッセージを送り返す。これにより zebra は経路が [ASIC](../../reference/glossary.md#term-asic) にオフロードされたことを認識する。
 
 route suppression (`isSuppressionEnabled()`) が有効な場合のみ `onRouteResponse()` がオフロード応答を生成する。無効時は `onRouteResponse()` が即 return し、オフロード応答は送出されない (`routesync.cpp:3174-3177`)。
 
@@ -725,7 +725,7 @@ ASIC / APPL_STATE_DB ROUTE_TABLE
 
 #### Mellanox: ECMP グループ数上限の補正
 
-`RouteOrch` コンストラクタが `platform` 環境変数を参照し、`"mellanox"` が含まれる場合は SAI から取得した `m_maxNextHopGroupCount` を `DEFAULT_MAX_ECMP_GROUP_SIZE`（=32）で除算する (`routeorch.cpp` L83-87)。Mellanox ASIC は `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` として「[ECMP](../../reference/glossary.md#term-ecmp) サイズ=1 のときの最大グループ数」を返すため、実際の最大 [ECMP](../../reference/glossary.md#term-ecmp) グループ数はその 1/32 に補正される。この処理は RouteOrch の初期化時のみ実行され、経路書き込みロジック自体には影響しない。
+`RouteOrch` コンストラクタが `platform` 環境変数を参照し、`"mellanox"` が含まれる場合は SAI から取得した `m_maxNextHopGroupCount` を `DEFAULT_MAX_ECMP_GROUP_SIZE`（=32）で除算する (`routeorch.cpp` L83-87)。Mellanox [ASIC](../../reference/glossary.md#term-asic) は `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` として「[ECMP](../../reference/glossary.md#term-ecmp) サイズ=1 のときの最大グループ数」を返すため、実際の最大 [ECMP](../../reference/glossary.md#term-ecmp) グループ数はその 1/32 に補正される。この処理は RouteOrch の初期化時のみ実行され、経路書き込みロジック自体には影響しない。
 
 ```
 MLNX_PLATFORM_SUBSTRING = "mellanox"  (orchagent/orch.h L42)
@@ -744,7 +744,7 @@ DEFAULT_MAX_ECMP_GROUP_SIZE = 32       (routeorch.cpp L38)
 | Mellanox | 変更なし | ECMP グループ数上限を /32 補正 (初期化時のみ) |
 | [VOQ](../../reference/glossary.md#term-voq) chassis | 変更なし | ECMP メンバー数を 128 に制限 (SAI 設定) |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([NPU](../../reference/glossary.md#term-npu) 側) | 変更なし | 変更なし |
-| multi-asic | 変更なし | 変更なし (各 ASIC namespace 独立) |
+| multi-asic | 変更なし | 変更なし (各 [ASIC](../../reference/glossary.md#term-asic) namespace 独立) |
 
 <!-- evidence: sonic-net/sonic-swss/orchagent/routeorch.cpp:83-87L (Mellanox ECMP グループ数補正) -->
 <!-- evidence: sonic-net/sonic-swss/orchagent/routeorch.cpp:109-123L (VOQ ECMP メンバー数制限) -->
@@ -766,8 +766,11 @@ DEFAULT_MAX_ECMP_GROUP_SIZE = 32       (routeorch.cpp L38)
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^2]
+
 [^1]: RouteSync 実装: `fpmsyncd/routesync.h` / `routesync.cpp` @ `4305596156d70e9797e8a881b3d19b46de0bce0d`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp>
 [^2]: RouteSync ヘッダ宣言: `fpmsyncd/routesync.h` @ `4305596156d70e9797e8a881b3d19b46de0bce0d`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.h>
 [^3]: orchagent フィールド消費: `orchagent/routeorch.cpp` @ `4305596156d70e9797e8a881b3d19b46de0bce0d`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp>
 
-<!-- glossary-links-injected: 47e2127d8b17 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

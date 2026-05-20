@@ -77,7 +77,7 @@ STATIC_ROUTE|<vrf_name>|<prefix>
 
 ## 購読者
 
-- `staticd` / `zebra` ([FRR](../../reference/glossary.md#term-frr)): SONiC の設定生成パスを通じて static route を [FRR](../../reference/glossary.md#term-frr) に反映する。
+- `staticd` / `zebra` ([FRR](../../reference/glossary.md#term-frr)): [SONiC](../../reference/glossary.md#term-sonic) の設定生成パスを通じて static route を [FRR](../../reference/glossary.md#term-frr) に反映する。
 - `bgpcfgd` / routing config パス: `advertise` が有効な static route を [BGP](../../reference/glossary.md#term-bgp) 広告対象として扱う。
 - `orchagent` / route orch: kernel / [FRR](../../reference/glossary.md#term-frr) から [APPL_DB](../../reference/glossary.md#term-appl_db) 経由で転送経路を [SAI](../../reference/glossary.md#term-sai) route へ反映する。
 
@@ -160,7 +160,7 @@ vtysh -c 'show ip route'
 - **IpNextHopSet 構築例外**: ネクストホップ解析中に例外が発生した場合 `log_crit` を出して `return False` でスキップ。その静的経路は FRR に設定されない。[^2]
 - **[APPL_DB](../../reference/glossary.md#term-appl_db) の key フォーマット不正**: APPL_DB の key で VRF を含む場合 `<vrf>:<prefix>` 形式を期待し、コロン区切りで 2 要素に分割できない場合は `ValueError` で処理中断。[^2]
 - **BFD 有効時の APPL_DB 削除スキップ**: `bfd=true` の静的経路で APPL_DB から削除イベントが来ても、[CONFIG_DB](../../reference/glossary.md#term-config_db) に経路が残っている場合は FRR からの削除をスキップする（staticroutebfd との race condition 防止）。[^2]
-- **BGP ASN 未設定時の redistribute 保留**: 最初の静的経路設定時に `bgp_asn` が DEVICE_METADATA に存在しない場合、redistribute static コマンドは `vrf_pending_redistribution` に保留されて後で適用される。[^2]
+- **BGP ASN 未設定時の redistribute 保留**: 最初の静的経路設定時に `bgp_asn` が [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) に存在しない場合、redistribute static コマンドは `vrf_pending_redistribution` に保留されて後で適用される。[^2]
 - **BFD セッション全断時の自動削除**: BFD が有効な nexthop のすべての BFD セッションが down になると APPL_DB から経路エントリが削除されて FRR からも経路が削除される。[^2]
 
 [^2]: [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) StaticRouteMgr 実装: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py>
@@ -263,7 +263,7 @@ db_migrator.py での STATIC_ROUTE マイグレーションなし
 | 2 | nexthop が zero-IP かつ ifname 未指定（blackhole でない） | `IpNextHop.__init__()` → `log_err('Mandatory attribute not found for nexthop')` + `raise ValueError` | 対象 nexthop のみ `IpNextHopSet` に追加されずスキップ | なし |
 | 3 | nexthop の IP 文字列が不正 (`socket.inet_pton` 失敗) | `IpNextHop.is_ip_valid()` → `socket.error` | 例外が `set_handler()` の `try/except` でキャッチされ `log_crit` + `return False` | なし |
 | 4 | VRF 未解決（APPL_DB key の `:` 区切りが 1 要素以下） | `StaticRouteMgr.split_key()` → `log_debug` + `raise ValueError` | `set_handler()` / `del_handler()` が例外で中断。当該経路は FRR に設定されない | なし |
-| 5 | vtysh への設定書き込み失敗（FRR デーモン未起動等） | `FRR.write()` → `log_err('can\'t push configuration from file ...')` | コマンドリストは破棄。FRR 設定に反映されない。retcode != 0 を返す | なし |
+| 5 | [vtysh](../../reference/glossary.md#term-vtysh) への設定書き込み失敗（FRR デーモン未起動等） | `FRR.write()` → `log_err('can\'t push configuration from file ...')` | コマンドリストは破棄。FRR 設定に反映されない。retcode != 0 を返す | なし |
 | 6 | FRR デーモン起動タイムアウト | `FRR.wait_for_daemons()` → `raise RuntimeError` | bgpcfgd プロセスが起動失敗。`systemctl restart bgp` が必要 | なし |
 | 7 | [fpmsyncd](../../reference/glossary.md#term-fpmsyncd): VRF ifindex からの名前解決失敗 | `routesync.cpp` → `SWSS_LOG_ERROR("Fail to get the VRF name (ifindex %u)")` + `return` | 当該 netlink メッセージを破棄。APP_DB に反映されない | なし |
 | 8 | [fpmsyncd](../../reference/glossary.md#term-fpmsyncd): VRF 名が `Vrf` プレフィクスで始まらない | `routesync.cpp` → `SWSS_LOG_ERROR("Invalid VRF name %s")` + `return` | 同上。APP_DB に反映されない | なし |
@@ -313,7 +313,7 @@ journalctl -u swss | grep -i "VRF name\|RTN_BLACKHOLE"
 <!-- pubsub -->
 ## CONFIG_DB 購読メカニズム (Phase G)
 
-`STATIC_ROUTE` テーブルは `bgpcfgd` の `StaticRouteMgr` が `SubscriberStateTable` 経由で購読し、FRR vtysh コマンドに変換する。
+`STATIC_ROUTE` テーブルは `bgpcfgd` の `StaticRouteMgr` が `SubscriberStateTable` 経由で購読し、FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドに変換する。
 
 ### bgpcfgd — StaticRouteMgr (CONFIG_DB / APPL_DB)
 
@@ -355,7 +355,7 @@ return '{}{} route {}{}{}{}'.format(
 
 生成されたコマンドは `cfg_mgr.push_list(cmd_list)` でバッファに積まれ、`Runner.run()` の `cfg_manager.commit()` で `vtysh -f <tmpfile>` として一括実行される。
 
-**FRR vtysh コマンド例:**
+**FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンド例:**
 
 ```
 ip route 10.0.0.0/24 192.0.2.1 tag 1
@@ -637,4 +637,4 @@ redistribute static コマンドは `["ipv4", "ipv6"]` の両 AF に対して発
 
 <!-- /constants -->
 
-<!-- glossary-links-injected: 55cdd588f0ac -->
+<!-- glossary-links-injected: 891abe570ccd -->

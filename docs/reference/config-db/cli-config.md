@@ -250,7 +250,7 @@ sudo sshd -T | grep -E 'maxauthtries|logingracetimedead|port|clientaliveinterval
 
 ### REST / gNMI
 
-なし (対応 OpenConfig/SONiC YANG transformer なし)
+なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 
@@ -312,7 +312,7 @@ sudo sshd -T | grep -E 'maxauthtries|logingracetimedead|port|clientaliveinterval
 | 依存 | 方向 | 備考 |
 |------|------|------|
 | systemd 初期化 完了 → SSH_SERVER / SERIAL_CONSOLE 適用 | 強制先行 | sshd / serial-config.service 起動前は `sshd -T` 失敗リスク |
-| [AAA](../../reference/glossary.md#term-aaa) / TACPLUS / RADIUS / LDAP → SSH_SERVER / SERIAL_CONSOLE | [AAA](../../reference/glossary.md#term-aaa) が先 | load_independent_config() は systemctl 待ち前に実行 |
+| [AAA](../../reference/glossary.md#term-aaa) / TACPLUS / [RADIUS](../../reference/glossary.md#term-radius) / LDAP → SSH_SERVER / SERIAL_CONSOLE | [AAA](../../reference/glossary.md#term-aaa) が先 | load_independent_config() は systemctl 待ち前に実行 |
 
 ### 2. PamLimitsCfg の DEVICE_METADATA 先行必須
 
@@ -571,11 +571,11 @@ ssh_handler("POLICIES", SET, {inactivity_timeout:"20"})
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: SERIAL_CONSOLE / SSH_SERVER は host 単位で適用される host-only 設定であり、ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
+**プラットフォーム差なし**: SERIAL_CONSOLE / SSH_SERVER は host 単位で適用される host-only 設定であり、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | SSH / シリアルコンソール設定は SAI 非経由。`hostcfgd` が Linux `sshd_config` / PAM limits / `sysctl` ファイルを直接書き換えるのみ |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | SSH / シリアルコンソール設定は SAI 非経由。`hostcfgd` が Linux `sshd_config` / PAM limits / `sysctl` ファイルを直接書き換えるのみ |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `SshServer` / `SerialConsoleCfg` はいずれも host CONFIG_DB (`ConfigDBConnector()` 引数なし) のみを購読。`asicN` namespace を iterate しない (`hostcfgd:2182` で `is_multi_npu` 取得するが SSH/シリアル経路に渡されない) |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | `SSH_SERVER` / `SERIAL_CONSOLE` テーブルは host scope。chassis 全体での集中適用機構はなく、各 host の `hostcfgd` が独立に `sshd_config` / PAM を再生成する |
 | ベンダー固有モジュール | なし | community master の SSH スタックは OpenSSH (Debian 標準)。`files/image_config/cli_sessions/` にプラットフォーム別差し替え機構なし |
@@ -584,4 +584,4 @@ ssh_handler("POLICIES", SET, {inactivity_timeout:"20"})
 詳細根拠は `meta/_intermediate/cdb-flow/cli-config-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: dd8fd04303c6 -->
+<!-- glossary-links-injected: d2ea779eaee1 -->

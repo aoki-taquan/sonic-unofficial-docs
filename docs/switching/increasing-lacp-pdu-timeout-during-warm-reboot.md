@@ -43,7 +43,7 @@ related:
 
 ## なぜ必要か
 
-[LACP](../reference/glossary.md#term-lacp) の long rate は 30 秒間隔、3 回連続未受信で [LAG](../reference/glossary.md#term-lag) Down → 実効タイムアウト **90 秒**。SONiC の warm-reboot はコントロールプレーン断が最大 ~90 秒で、わずかな揺らぎで LAG が落ちる[^1]。
+[LACP](../reference/glossary.md#term-lacp) の long rate は 30 秒間隔、3 回連続未受信で [LAG](../reference/glossary.md#term-lag) Down → 実効タイムアウト **90 秒**。[SONiC](../reference/glossary.md#term-sonic) の warm-reboot はコントロールプレーン断が最大 ~90 秒で、わずかな揺らぎで LAG が落ちる[^1]。
 
 本 [HLD](../reference/glossary.md#term-hld) は LACP を **SONiC 独自に拡張** し、retry count を一時的に上げる:
 
@@ -123,7 +123,7 @@ warm-reboot
 - retry は `3〜10`。それ以上不可
 - **設定は永続化されない**（再起動で 3 に戻る）
 - IEEE 標準準拠機器との相互運用は想定外
-- [SAI](../reference/glossary.md#term-sai) / ASIC 側変更は不要[^1]（[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / libteam パッチのみ）
+- [SAI](../reference/glossary.md#term-sai) / [ASIC](../reference/glossary.md#term-asic) 側変更は不要[^1]（[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / libteam パッチのみ）
 
 ## 干渉する機能
 
@@ -158,4 +158,4 @@ warm-reboot 後に LAG が落ちる場合、まず peer の SONiC バージョ�
 - `sonic-net/sonic-buildimage` #13453 (teamd / libteam)
 - `sonic-net/sonic-mgmt` #8152 (テスト)
 
-<!-- glossary-links-injected: 25d6debf2bd2 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

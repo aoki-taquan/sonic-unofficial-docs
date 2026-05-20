@@ -77,7 +77,7 @@ flowchart LR
 
 ### Misc one-shot task
 
-boot up 時に platform hwsku / ASIC 名 / reboot cause / syseeprom decode（model / serial / base MAC / manufacture date / vendor ext 等）をまとめて取得し STATE_DB に書く。**1 回限りで exit**[^1]。
+boot up 時に platform hwsku / [ASIC](../reference/glossary.md#term-asic) 名 / reboot cause / syseeprom decode（model / serial / base MAC / manufacture date / vendor ext 等）をまとめて取得し STATE_DB に書く。**1 回限りで exit**[^1]。
 
 ### STATE_DB Schema
 
@@ -176,7 +176,7 @@ BMC (Baseboard Management Controller) 経由でファン・センサー制御が
 
 ### ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）
 
-ポートのステータス変更が SONiC に反映されない問題。xcvrd または [portsyncd](../reference/glossary.md#term-portsyncd) がポートの物理状態変更を正しく検知できていない場合に発生。`sudo systemctl restart pmon` で回復できることがある
+ポートのステータス変更が [SONiC](../reference/glossary.md#term-sonic) に反映されない問題。xcvrd または [portsyncd](../reference/glossary.md#term-portsyncd) がポートの物理状態変更を正しく検知できていない場合に発生。`sudo systemctl restart pmon` で回復できることがある
 
 - 参照: [sonic-net/sonic-buildimage#4646](https://github.com/sonic-net/sonic-buildimage/issues/4646)
 
@@ -241,4 +241,4 @@ CMIS 4.0 QSFP-DD の EEPROM デコードが失敗する問題。CMIS 4.0 対応�
 - ledd / xcvrd と新 daemon の責務境界の更新版 HLD 有無確認
 -->
 
-<!-- glossary-links-injected: 5c5be28daffd -->
+<!-- glossary-links-injected: ec18b66e3507 -->

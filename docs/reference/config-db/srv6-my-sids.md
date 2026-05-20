@@ -96,7 +96,7 @@ Python レベルの fallback を持ち、完全に一致している。
 **`decap_dscp_mode` 未指定時の挙動**:
 `srv6orch.cpp` の `addMySidCfgCacheEntry` で `boost::optional<sai_tunnel_dscp_mode_t> dscp_mode = boost::none`
 に初期化し、フィールド未指定時はそのまま SAI に [DSCP](../../reference/glossary.md#term-dscp) mode 属性を送らない。
-SAI 実装の多くは `uniform` をデフォルトとするが SONiC コードではハードコードしていない。
+SAI 実装の多くは `uniform` をデフォルトとするが [SONiC](../../reference/glossary.md#term-sonic) コードではハードコードしていない。
 <!-- /defaults -->
 
 <!-- ordering -->
@@ -166,7 +166,7 @@ DEL SRV6_MY_LOCATORS|<locator_name>            # ロケータは後
 
 | 書込み先 | タイミング | 場所 |
 |---------|----------|------|
-| [FRR](../../reference/glossary.md#term-frr) `segment-routing srv6 static-sids` | SET/DEL 処理時 | `managers_srv6.py:88-94, 127-131` (bgpcfgd → vtysh) |
+| [FRR](../../reference/glossary.md#term-frr) `segment-routing srv6 static-sids` | SET/DEL 処理時 | `managers_srv6.py:88-94, 127-131` (bgpcfgd → [vtysh](../../reference/glossary.md#term-vtysh)) |
 | `APP_SRV6_MY_SID_TABLE` (APP_DB) | Srv6Orch が APP_DB から読み取り SAI へ投入 | `srv6orch.cpp:104` (`m_mysidTable`) |
 | `SAI_OBJECT_TYPE_MY_SID_ENTRY` | SET 処理完了時 | `srv6orch.cpp:1606` (`create_my_sid_entry`) |
 | `SAI_OBJECT_TYPE_TUNNEL` + TERM_ENTRY | uDT46 等デカプセル動作時のみ | `srv6orch.cpp:1551-1576` (`createMySidIpInIpTunnel`) |
@@ -214,7 +214,7 @@ SRV6_MY_SIDS のエントリが参照する外部リソースには refcount が
 | 失敗条件 | 検出箇所 | 結果 | ログ |
 |---------|---------|------|------|
 | 存在しない SID の削除要求 | `srv6orch.cpp:1660-1663` | `return false` | `SWSS_LOG_ERROR("My_sid_entry doesn't exist for %s")` |
-| SAI `remove_my_sid_entry` 失敗 | `srv6orch.cpp:1670-1673` | `return false`（ASIC に残存） | `SWSS_LOG_ERROR("Failed to delete my_sid entry rv %d")` |
+| SAI `remove_my_sid_entry` 失敗 | `srv6orch.cpp:1670-1673` | `return false`（[ASIC](../../reference/glossary.md#term-asic) に残存） | `SWSS_LOG_ERROR("Failed to delete my_sid entry rv %d")` |
 | [IPinIP](../../reference/glossary.md#term-ipinip) Tunnel Term エントリ削除失敗 | `srv6orch.cpp:1698-1701` | `return false`（テーブル未消去） | `SWSS_LOG_ERROR("Failed to remove tunnel termination entry for MySID entry")` |
 | bgpcfgd 側で未存在 SID の削除 | `managers_srv6.py:122-124` | silent skip | `log_warn` |
 
@@ -222,7 +222,7 @@ SRV6_MY_SIDS のエントリが参照する外部リソースには refcount が
 
 - **ロケータより先に SID を削除しなかった場合**: `locators_del_handler()` はロケータ削除時に SID エントリを自動削除しない。SID が bgpcfgd キャッシュに残留し FRR 設定が不整合となる（`managers_srv6.py:106-115`）。
 - **VRF 削除前に SID が残存する場合**: VRFOrch refcount が正のまま VRF 削除がブロックされる（`srv6orch.cpp:1639, 1683`）。
-- **Neighbor 消失時の自動 ASIC 削除**: nexthop が消えると `updateNeighbor()` が MY_SID を ASIC から自動削除し `m_pendingSRv6MySIDEntries` に保留する（`srv6orch.cpp:1272-1342`）。Neighbor 再出現時に自動復元されるためユーザー介入は不要。
+- **Neighbor 消失時の自動 [ASIC](../../reference/glossary.md#term-asic) 削除**: nexthop が消えると `updateNeighbor()` が MY_SID を [ASIC](../../reference/glossary.md#term-asic) から自動削除し `m_pendingSRv6MySIDEntries` に保留する（`srv6orch.cpp:1272-1342`）。Neighbor 再出現時に自動復元されるためユーザー介入は不要。
 
 <!-- /failure -->
 
@@ -286,7 +286,7 @@ SRV6_MY_SIDS のエントリが参照する外部リソースには refcount が
 
 ### bgpcfgd パス（SRv6Mgr → FRR）
 
-`SRv6Mgr::sids_set_handler()` (`managers_srv6.py:88-94`) は FRR への vtysh コマンドを `cfg_mgr.push_list()` に積む:
+`SRv6Mgr::sids_set_handler()` (`managers_srv6.py:88-94`) は FRR への [vtysh](../../reference/glossary.md#term-vtysh) コマンドを `cfg_mgr.push_list()` に積む:
 
 ```
 segment-routing
@@ -344,7 +344,7 @@ IPinIP Tunnel SAI オブジェクトは `decap_dscp_mode` 値ごとに 1 つ共�
 
 `runner.py:49`: `swsscommon.SubscriberStateTable(conn, "SRV6_MY_SIDS")` を生成し `swsscommon.Select()` セレクタに追加する。  
 `Runner.run()` (`runner.py:54-73`) が `selector.select(timeout=1000ms)` で待受け、イベント発生時に `subscriber.pop()` でドレインして `SRv6Mgr.handler()` を呼び出す。  
-各イテレーション末尾で `cfg_manager.commit()` が積み上がった FRR vtysh コマンドを一括送信する。
+各イテレーション末尾で `cfg_manager.commit()` が積み上がった FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドを一括送信する。
 
 **ロケータ未存在時のインプロセス購読**:  
 `managers_srv6.py:67-68` でロケータが未登録の場合、bgpcfgd 内部 `Directory` オブジェクトに追加購読を登録する:
@@ -432,11 +432,11 @@ SWSS_LOG_ERROR("Failed to create my_sid entry %s adj %s: ECMP adjacency not yet 
 
 ### IPinIP Tunnel の SAI 対応要件
 
-`decap_dscp_mode` を指定した `uN` / `uDT46` SID では IPinIP Tunnel (`SAI_TUNNEL_TYPE_IPINIP`) を作成する (`srv6orch.cpp:538`)。SONiC はトンネル作成前に SAI ケイパビリティを照会しないため、プラットフォームが非対応の場合は `create_tunnel` 呼び出し時点で `SAI_STATUS_NOT_SUPPORTED` が返り、SID 作成全体が失敗する。
+`decap_dscp_mode` を指定した `uN` / `uDT46` SID では IPinIP Tunnel (`SAI_TUNNEL_TYPE_IPINIP`) を作成する (`srv6orch.cpp:538`)。[SONiC](../../reference/glossary.md#term-sonic) はトンネル作成前に SAI ケイパビリティを照会しないため、プラットフォームが非対応の場合は `create_tunnel` 呼び出し時点で `SAI_STATUS_NOT_SUPPORTED` が返り、SID 作成全体が失敗する。
 
 ### action サポート範囲のプラットフォーム依存
 
-`end_behavior_map` (`srv6orch.cpp:41-62`) は 19 種の action を SAI にマップするが、各 action の SAI 実装はプラットフォーム依存であり、SONiC は action ごとの事前ケイパビリティ照会を行わない。非対応 action は SAI エラーで初めて判明する。CONFIG_DB 経由（bgpcfgd パス）では `supported_SRv6_behaviors = {'uN', 'uDT46'}` に絞り込まれるため、この問題が顕在化する可能性は低い。
+`end_behavior_map` (`srv6orch.cpp:41-62`) は 19 種の action を SAI にマップするが、各 action の SAI 実装はプラットフォーム依存であり、[SONiC](../../reference/glossary.md#term-sonic) は action ごとの事前ケイパビリティ照会を行わない。非対応 action は SAI エラーで初めて判明する。CONFIG_DB 経由（bgpcfgd パス）では `supported_SRv6_behaviors = {'uN', 'uDT46'}` に絞り込まれるため、この問題が顕在化する可能性は低い。
 
 ### プラットフォーム制約まとめ
 
@@ -479,4 +479,4 @@ SWSS_LOG_ERROR("Failed to create my_sid entry %s adj %s: ECMP adjacency not yet 
 
 [^1]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-srv6.yang` (revision 2024-12-05) より。
 
-<!-- glossary-links-injected: b07e5b258ce6 -->
+<!-- glossary-links-injected: ebdeb0e6e3b0 -->

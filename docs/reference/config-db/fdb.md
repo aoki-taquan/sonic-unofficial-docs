@@ -104,7 +104,7 @@ string type = "dynamic";
 | `SAI_FDB_ENTRY_ATTR_TYPE` | `SAI_FDB_ENTRY_TYPE_STATIC` / `SAI_FDB_ENTRY_TYPE_DYNAMIC` | L1424–L1435 |
 | `SAI_FDB_ENTRY_ATTR_BRIDGE_PORT_ID` | ポートの bridge port OID | L1449 |
 | `SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE` | static エントリ時 `true` (MCLAG 連携) | L1444–L1445 |
-| `SAI_FDB_ENTRY_ATTR_ENDPOINT_IP` | VxLAN リモート VTEP IP | L1467 / L1481 |
+| `SAI_FDB_ENTRY_ATTR_ENDPOINT_IP` | VxLAN リモート [VTEP](../../reference/glossary.md#term-vtep) IP | L1467 / L1481 |
 | `SAI_FDB_ENTRY_ATTR_PACKET_ACTION` | `SAI_PACKET_ACTION_DROP` (`discard="true"`) / `SAI_PACKET_ACTION_FORWARD` | L1496–L1497 |
 
 ### FDB フラッシュ属性（`sai_fdb_flush_attr_t`）
@@ -250,7 +250,7 @@ if (!m_portsOrch->allPortsReady())
 }
 ```
 
-PortsOrch が全ポートを初期化完了するまで `doTask()` は即 return する。FDB エントリは **キューに残り**、ポート初期化完了後に一括処理される。`doTask(NotificationConsumer&)` も同等のガード (`fdborch.cpp:927`) を持つ。
+[PortsOrch](../../reference/glossary.md#term-portsorch) が全ポートを初期化完了するまで `doTask()` は即 return する。FDB エントリは **キューに残り**、ポート初期化完了後に一括処理される。`doTask(NotificationConsumer&)` も同等のガード (`fdborch.cpp:927`) を持つ。
 
 → `PORT` テーブルの初期化完了が FDB 処理より**hard 先行必須**。
 
@@ -267,7 +267,7 @@ if (!m_portsOrch->getPort(keys[0], vlan))
 }
 ```
 
-キーの `<VlanName>` が PortsOrch の [VLAN](../../reference/glossary.md#term-vlan) テーブルに未登録の場合、SET は `it++` で待機ループに入り毎サイクル再試行される。`addFdbEntry()` (`fdborch.cpp:1291-1294`) でも同様に VLAN OID を再確認し、取得失敗時は `return false`。
+キーの `<VlanName>` が [PortsOrch](../../reference/glossary.md#term-portsorch) の [VLAN](../../reference/glossary.md#term-vlan) テーブルに未登録の場合、SET は `it++` で待機ループに入り毎サイクル再試行される。`addFdbEntry()` (`fdborch.cpp:1291-1294`) でも同様に VLAN OID を再確認し、取得失敗時は `return false`。
 
 → `VLAN|Vlan<id>` が VlanOrch に処理済み（SAI VLAN OID 確定）であることが FDB SET より**先行必須**（soft: 待機ループで自動調停）。
 
@@ -283,7 +283,7 @@ if (!m_portsOrch->getPort(port_name, port) || (port.m_bridge_port_id == SAI_NULL
 }
 ```
 
-`port` フィールドに指定したポートが PortsOrch 未登録またはブリッジポート OID 未確定の場合、エントリを `saved_fdb_entries` に退避して待機する。ポートが後から有効化されると `SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` イベント経由 (`fdborch.cpp:661`) で saved エントリが自動再投入される (`fdborch.cpp:1264-1268`)。
+`port` フィールドに指定したポートが [PortsOrch](../../reference/glossary.md#term-portsorch) 未登録またはブリッジポート OID 未確定の場合、エントリを `saved_fdb_entries` に退避して待機する。ポートが後から有効化されると `SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` イベント経由 (`fdborch.cpp:661`) で saved エントリが自動再投入される (`fdborch.cpp:1264-1268`)。
 
 → `port` フィールドのポートがブリッジポートとして確定済みであることが**推奨先行**（soft: 自動退避 + 再投入）。
 
@@ -397,7 +397,7 @@ FDB                 (SAI create_fdb_entry)
 |---|-----------|---------|------|-------|-----------|
 | 1 | VLAN 未解決（VLAN OID 取得失敗） | `doTask:739` | `it++`（無制限待機ループ） | 無制限 | INFO |
 | 2 | [VXLAN](../../reference/glossary.md#term-vxlan) DIP トンネルポート未作成 | `doTask:836` | erase（silently drop） | なし | — |
-| 3 | [VXLAN](../../reference/glossary.md#term-vxlan) SIP VTEP 未取得（`getEVPNVtep()` NULL） | `doTask:847` | erase（silently drop） | なし | — |
+| 3 | [VXLAN](../../reference/glossary.md#term-vxlan) SIP [VTEP](../../reference/glossary.md#term-vtep) 未取得（`getEVPNVtep()` NULL） | `doTask:847` | erase（silently drop） | なし | — |
 | 4 | `addFdbEntry()` が `false` を返した | `doTask:870` | `it++`（無制限 retry） | 無制限 | INFO/ERROR |
 | 5 | SAI `create_fdb_entry()` 失敗 | `addFdbEntry:1532` | SWSS_LOG_ERROR → `handleSaiCreateStatus` 判定 | 条件次第 | ERROR |
 | 6 | SAI `set_fdb_entry_attribute()` 失敗（MAC update） | `addFdbEntry:1508` | SWSS_LOG_ERROR → `handleSaiSetStatus` 判定 | 条件次第 | ERROR |
@@ -513,9 +513,9 @@ status = sai_fdb_api->create_fdb_entry(&fdb_entry, (uint32_t)attrs.size(), attrs
 
 ### SAI FDB サポート差 — DIP トンネル vs SIP トンネル
 
-[VXLAN](../../reference/glossary.md#term-vxlan) FDB エントリの SAI プログラム方法はプラットフォームの VTEP トンネルモデルによって二分岐する（`fdborch.cpp:836-854, 1308-1313`）。
+[VXLAN](../../reference/glossary.md#term-vxlan) FDB エントリの SAI プログラム方法はプラットフォームの [VTEP](../../reference/glossary.md#term-vtep) トンネルモデルによって二分岐する（`fdborch.cpp:836-854, 1308-1313`）。
 
-| 項目 | DIP トンネル対応 ASIC | SIP トンネル ASIC（DIP 非対応） |
+| 項目 | DIP トンネル対応 [ASIC](../../reference/glossary.md#term-asic) | SIP トンネル [ASIC](../../reference/glossary.md#term-asic)（DIP 非対応） |
 |------|----------------------|-------------------------------|
 | トンネルポート | リモート VTEP ごとに個別ポート (`getTunnelPortName(remote_ip)`) | EVPN VTEP 単一共有ポート (`getEVPNVtep()`) |
 | `SAI_FDB_ENTRY_ATTR_ENDPOINT_IP` | 設定しない | リモート IP をセット（VLAN メンバー一意識別のため必須） |
@@ -546,7 +546,7 @@ MCLAG リモート MAC (`FDB_ORIGIN_MCLAG_ADVERTIZED`) は通常の PROVISIONED 
 
 **`SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE` の付加** (`fdborch.cpp:461-465`): MCLAG/VXLAN リモート `dynamic` MAC には `ALLOW_MAC_MOVE=true` が付与される。ローカル学習イベントで同一 MAC が到達した際に SAI レベルで上書き移動が許可される。
 
-**AGE イベントでの MCLAG MAC 保護** (`fdborch.cpp:490-521`): MCLAG リモートエントリが ASIC の aging で削除通知を受けた場合、orchagent は削除せず `SAI_FDB_ENTRY_TYPE_STATIC` + `ALLOW_MAC_MOVE=true` で即座に再作成する。MCLAG ピアから広告されたリモート MAC が ASIC aging によって消えないよう保護する。
+**AGE イベントでの MCLAG MAC 保護** (`fdborch.cpp:490-521`): MCLAG リモートエントリが [ASIC](../../reference/glossary.md#term-asic) の aging で削除通知を受けた場合、orchagent は削除せず `SAI_FDB_ENTRY_TYPE_STATIC` + `ALLOW_MAC_MOVE=true` で即座に再作成する。MCLAG ピアから広告されたリモート MAC が ASIC aging によって消えないよう保護する。
 
 **MCLAG リモート → ローカル移動** (`fdborch.cpp:332-384`): LEARN イベントで既存 MCLAG リモート MAC と同一エントリを検出した場合、SAI FDB エントリをローカルブリッジポート + `SAI_FDB_ENTRY_TYPE_DYNAMIC` で更新し、STATE_DB の MCLAG FDB テーブル (`m_mclagFdbStateTable`) から当該エントリを削除する。
 
@@ -571,4 +571,4 @@ SWSS_LOG_NOTICE("Add warm input FDB State: %s, %zd", APP_FDB_TABLE_NAME, refille
 - **SIP トンネル ASIC**: STATE_DB に `remote_ip`（エンドポイント IP）が保存・復元されていないと `SAI_FDB_ENTRY_ATTR_ENDPOINT_IP` のセットに失敗し、VLAN メンバー識別が不能になる。
 <!-- /platform -->
 
-<!-- glossary-links-injected: 77eccf2dd8e3 -->
+<!-- glossary-links-injected: 886e40ae98b9 -->

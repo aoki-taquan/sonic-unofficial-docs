@@ -26,7 +26,7 @@ related:
 - **ERSPAN** ... GRE カプセル化して remote analyzer に転送
 - **SPAN** ... 同一スイッチ内の特定ポートに複製出力
 
-実装は `config/main.py` のみ（独立モジュールではない）に集約されており、`add_erspan` / `add_span` ヘルパが [CONFIG_DB](../../reference/glossary.md#term-config_db) の `MIRROR_SESSION|<session_name>` を `set_entry` で書き込む[^1]。multi-ASIC 環境では front_ns 全てに同じセッションを複製書き込みし、`src_port` が指定された場合は **該当ポートが属する namespace にのみ** `src_port` を書く設計になっている。
+実装は `config/main.py` のみ（独立モジュールではない）に集約されており、`add_erspan` / `add_span` ヘルパが [CONFIG_DB](../../reference/glossary.md#term-config_db) の `MIRROR_SESSION|<session_name>` を `set_entry` で書き込む[^1]。multi-[ASIC](../../reference/glossary.md#term-asic) 環境では front_ns 全てに同じセッションを複製書き込みし、`src_port` が指定された場合は **該当ポートが属する namespace にのみ** `src_port` を書く設計になっている。
 
 ## コマンド一覧
 
@@ -75,7 +75,7 @@ config mirror_session erspan add <session_name> <src_ip> <dst_ip> <dscp> <ttl>
 - `--policer <name>` ... `POLICER` テーブルの policer 名
 
 **動作**:
-`session_info = {"type": "ERSPAN", "src_ip", "dst_ip", "dscp", "ttl", ...}` を組み立て、`config_db.set_entry("MIRROR_SESSION", session_name, session_info)`[^2]。multi-ASIC 環境では front_ns 全てに同じ「base info」を書き込み、`src_port` が指定されている場合だけ `get_port_namespace(orig)` で対応 namespace を解決し、そこにのみ `src_port` + `direction` を書く（front-panel port でなければ即 fail）。
+`session_info = {"type": "ERSPAN", "src_ip", "dst_ip", "dscp", "ttl", ...}` を組み立て、`config_db.set_entry("MIRROR_SESSION", session_name, session_info)`[^2]。multi-[ASIC](../../reference/glossary.md#term-asic) 環境では front_ns 全てに同じ「base info」を書き込み、`src_port` が指定されている場合だけ `get_port_namespace(orig)` で対応 namespace を解決し、そこにのみ `src_port` + `direction` を書く（front-panel port でなければ即 fail）。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/config/main.py#L3213-L3313 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -121,7 +121,7 @@ config mirror_session span add <session_name> <dst_port>
 - `<queue>` ... 任意
 
 **動作**:
-`session_info = {"type": "SPAN", "dst_port": ..., ...}` を組み立て `MIRROR_SESSION` に書き込む。`dst_port` の **元名** から namespace を判定して該当 namespace に書く（multi-ASIC）。`validate_mirror_session_config` で同名セッションの重複や `dst_port` の妥当性を事前検証する。
+`session_info = {"type": "SPAN", "dst_port": ..., ...}` を組み立て `MIRROR_SESSION` に書き込む。`dst_port` の **元名** から namespace を判定して該当 namespace に書く（multi-[ASIC](../../reference/glossary.md#term-asic)）。`validate_mirror_session_config` で同名セッションの重複や `dst_port` の妥当性を事前検証する。
 
 ### `config mirror_session remove <session_name>`
 
@@ -280,4 +280,4 @@ show acl rule | grep MIRROR
 - [reference/CLI: config acl](config-acl.md)
 - [reference/CLI: show acl](show-acl.md)
 
-<!-- glossary-links-injected: a35f1b1cdfa7 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

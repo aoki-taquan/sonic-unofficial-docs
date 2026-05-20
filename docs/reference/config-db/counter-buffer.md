@@ -49,7 +49,7 @@ related:
 
 ## 概要
 
-[portsorch](../../reference/glossary.md#term-portsorch)（[orchagent](../../reference/glossary.md#term-orchagent) 内）および `bufferorch`・`watermarkorch` が [SAI](../../reference/glossary.md#term-sai) の flex counter 機構を通じて Queue / Priority Group (PG) / [Buffer Pool](../../reference/glossary.md#term-buffer-pool) ごとに収集するバッファ統計カウンタ群[^1]。
+[portsorch](../../reference/glossary.md#term-portsorch)（[orchagent](../../reference/glossary.md#term-orchagent) 内）および `bufferorch`・`watermarkorch` が [SAI](../../reference/glossary.md#term-sai) の flex counter 機構を通じて Queue / [Priority Group](../../reference/glossary.md#term-priority-group) (PG) / [Buffer Pool](../../reference/glossary.md#term-buffer-pool) ごとに収集するバッファ統計カウンタ群[^1]。
 
 - **Queue カウンタ**: パケット数・バイト数・ドロップ数を `COUNTERS:<oid>` に格納
 - **Queue ウォーターマーク**: 共有バッファ最大占有量 (bytes) を `COUNTERS/<PERIODIC/PERSISTENT/USER_WATERMARKS:<oid>` に格納
@@ -138,7 +138,7 @@ VoQ (Virtual Output Queue) 環境では追加で:
 |---------------|------|
 | `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` | Credit Watchdog 削除パケット数 |
 
-[WRED](../../reference/glossary.md#term-wred) 対応 ASIC の場合 (`WRED_ECN_QUEUE_STAT_COUNTER` グループ):
+[WRED](../../reference/glossary.md#term-wred) 対応 [ASIC](../../reference/glossary.md#term-asic) の場合 (`WRED_ECN_QUEUE_STAT_COUNTER` グループ):
 
 | SAI フィールド | 意味 |
 |---------------|------|
@@ -274,7 +274,7 @@ redis.call('HSET', ..., periodic_shared_wm and math.max(...) or pg_shared_wm)
 
 ### WRED Queue カウンタの SAI 能力ガード
 
-`portsorch.cpp:1882-1909` で `sai_query_stats_capability()` を呼び出し、ASIC が対応する SAI_QUEUE_STAT_WRED_* を確認する。未対応フィールドは `wred_queue_stat_ids` から除外されて syncd へ投入されない。能力照会自体が失敗した場合 (`SAI_STATUS_NOT_SUPPORTED`) は全 WRED フィールドをスキップする[^9]。
+`portsorch.cpp:1882-1909` で `sai_query_stats_capability()` を呼び出し、[ASIC](../../reference/glossary.md#term-asic) が対応する SAI_QUEUE_STAT_WRED_* を確認する。未対応フィールドは `wred_queue_stat_ids` から除外されて syncd へ投入されない。能力照会自体が失敗した場合 (`SAI_STATUS_NOT_SUPPORTED`) は全 WRED フィールドをスキップする[^9]。
 
 ### PG ウォーターマークの登録タイミング依存
 
@@ -514,7 +514,7 @@ SAI `create_buffer_pool` 失敗時は `handleSaiCreateStatus(SAI_API_BUFFER, sai
 
 `flexcounterorch.cpp:44` で `FLEX_COUNTER_DELAY_SEC = 60`（秒）が定義されており、orchdaemon 起動から 60 秒間は `FlexCounterOrch::doTask()` が `m_delayTimerExpired == false` チェックで早期 return する[^15]。
 
-この 60 秒ウィンドウにより、起動直後の ASIC 設定が安定する前にポーリングが始まらないよう設計されている。バッファカウンタ登録 (`FLEX_COUNTER_STATUS=enable`) は 60 秒後まで保留されるため、起動直後に `COUNTERS_DB` のバッファカウンタが空でも正常動作である。
+この 60 秒ウィンドウにより、起動直後の [ASIC](../../reference/glossary.md#term-asic) 設定が安定する前にポーリングが始まらないよう設計されている。バッファカウンタ登録 (`FLEX_COUNTER_STATUS=enable`) は 60 秒後まで保留されるため、起動直後に `COUNTERS_DB` のバッファカウンタが空でも正常動作である。
 
 ### FLEX_COUNTER_TABLE キー文字列定数
 
@@ -829,4 +829,4 @@ WRED 統計 (`SAI_QUEUE_STAT_WRED_*`) は `sai_query_stats_capability()` (portso
 [^20]: APPL_STATE_DB ResponsePublisher: `sonic-swss/orchagent/bufferorch.cpp:555,589,832,880`, `orchagent/orch.h:382`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.cpp#L555>
 [^21]: FLEX_COUNTER_TABLE Buffer Pool WM 登録: `sonic-swss/orchagent/bufferorch.cpp:247,333-358`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.cpp#L247>
 
-<!-- glossary-links-injected: 6f7d024ed5a3 -->
+<!-- glossary-links-injected: f155c5571cef -->

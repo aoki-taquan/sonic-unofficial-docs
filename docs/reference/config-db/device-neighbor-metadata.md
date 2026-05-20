@@ -102,7 +102,7 @@ DEVICE_NEIGHBOR_METADATA|<name>
 | 1 | `DEVICE_NEIGHBOR_METADATA` ロード → BGP ピア `set_handler` 実行許可（`use_neighbors_meta=True` 時） | **強制先行** | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) の directory メカニズムがテーブル到着後に自動再試行 |
 | 2 | 個別 `DEVICE_NEIGHBOR_METADATA` エントリ存在 → 対応 BGP ピア設定の適用 | **強制先行** | `return False` で再キュー、エントリ到着後に再処理 |
 | 3 | `DEVICE_NEIGHBOR` ロード → `DEVICE_NEIGHBOR_METADATA` 参照（pfcwd） | 実質的直列（同一 `sonic-cfggen` 実行内） | 欠落時は `VLAN_MEMBER` フォールバック |
-| 4 | single / multi-ASIC 環境差 → 収録エントリ集合の違い | 環境依存（書込み前提条件） | multi-ASIC では間接隣接デバイスのメタが欠落する前提で consumer を設計 |
+| 4 | single / multi-[ASIC](../../reference/glossary.md#term-asic) 環境差 → 収録エントリ集合の違い | 環境依存（書込み前提条件） | multi-[ASIC](../../reference/glossary.md#term-asic) では間接隣接デバイスのメタが欠落する前提で consumer を設計 |
 
 ### 主要な制約詳細
 
@@ -219,12 +219,12 @@ pfcwd の起動シーケンス (`start_default`) が中断される。
 
 | 定数 | 値 | 用途 | ソース |
 |------|----|------|--------|
-| `backend_device_types` | `['BackEndToRRouter', 'BackEndLeafRouter']` | バックエンドデバイス判定（DEVICE_METADATA.localhost 対象） | `minigraph.py:51` |
+| `backend_device_types` | `['BackEndToRRouter', 'BackEndLeafRouter']` | バックエンドデバイス判定（[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).localhost 対象） | `minigraph.py:51` |
 | `leafrouter_device_types` | `['LeafRouter']` | リーフルーター判定 | `minigraph.py:55` |
 | `dhcp_server_enabled_device_types` | `['BmcMgmtToRRouter']` | DHCP サーバ有効化対象デバイス種別 | `minigraph.py:53` |
 | `mgmt_device_types` | `['BmcMgmtToRRouter', 'MgmtToRRouter', 'MgmtTsToR']` | 管理デバイス判定 | `minigraph.py:54` |
 
-> これらのリストは DEVICE_METADATA.localhost.type の判定に使用されるが、DEVICE_NEIGHBOR_METADATA の `type` フィールドにも同系統の文字列（`LeafRouter`, `SpineRouter`, `ToRRouter`, `Server`, `EdgeZoneAggregator` 等）が格納される。両テーブルで参照される文字列リテラルは YANG 上制約されておらず、コード内ハードコードのみが事実上の仕様。
+> これらのリストは [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).localhost.type の判定に使用されるが、DEVICE_NEIGHBOR_METADATA の `type` フィールドにも同系統の文字列（`LeafRouter`, `SpineRouter`, `ToRRouter`, `Server`, `EdgeZoneAggregator` 等）が格納される。両テーブルで参照される文字列リテラルは YANG 上制約されておらず、コード内ハードコードのみが事実上の仕様。
 
 ### minigraph.py — `slice_type` の固定値
 
@@ -444,7 +444,7 @@ show lldp table
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -476,7 +476,7 @@ show lldp table
 | `mgmt_addr` | なし | `<ManagementAddress><IPPrefix>` 欠落時 silent drop。show コマンドでは文字列 `'None'` を表示 | silent drop |
 | `mgmt_addr_v6` | なし | 欠落時 silent drop | silent drop |
 | `type` | なし（string、enum 制約なし） | `<ElementType>` 欠落時は属性 `xsi:type` にフォールバック。それも欠落なら silent drop。pfcwd は `type` キー欠落時に KeyError（`pfcwd/main.py:104`）。qos_config.j2 は `'ToRRouter' in neighbor_info.type` で `type` が None だとエラー。show コマンドでは文字列 `'None'` 表示 | silent drop + 消費者依存エラー |
-| `deployment_id` | なし（uint32） | `<DeploymentId>` テキストを文字列として格納。欠落時 silent drop。bgpcfgd は DEVICE_NEIGHBOR_METADATA の `deployment_id` を直接参照しない（DEVICE_METADATA.localhost.deployment_id を使用） | dead field 候補 |
+| `deployment_id` | なし（uint32） | `<DeploymentId>` テキストを文字列として格納。欠落時 silent drop。bgpcfgd は DEVICE_NEIGHBOR_METADATA の `deployment_id` を直接参照しない（[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).localhost.deployment_id を使用） | dead field 候補 |
 | `slice_type` | なし | `<AssociatedSliceStr>` テキストに `"AZNG_Production"` が含まれる場合のみ `"AZNG_Production"` 固定値で書き込まれる。それ以外は silent drop | ハードコード固定値 |
 | `resource_type` | なし | YANG に定義されているが `parse_device()` が書き込まない。minigraph は `resource_type` を DEVICE_METADATA.localhost にのみ書き込む | dead field / YANG-実装 discrepancy |
 | `subtype` | YANG 外フィールド | `parse_device()` が `<SubType>` ノードから読み出し `device_data['subtype']` として書き込む。YANG モデルに定義なし | YANG-実装 discrepancy |
@@ -497,7 +497,7 @@ results['DEVICE_NEIGHBOR_METADATA'] = {
 }
 ```
 
-multi-ASIC 環境では直接隣接していないデバイスのメタデータが欠落する。
+multi-[ASIC](../../reference/glossary.md#term-asic) 環境では直接隣接していないデバイスのメタデータが欠落する。
 
 ### `type` フィールドの大文字小文字制約
 
@@ -583,4 +583,4 @@ bgpcfgd の `BGPPeerMgrBase` は `constants.bgp.use_neighbors_meta == True` の�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 1a5b6692d41e -->
+<!-- glossary-links-injected: cf7cac6ac04d -->

@@ -33,7 +33,7 @@ related:
 | 書き込み主体 | トリガー | 書き込みフィールド |
 |------------|---------|-----------------|
 | `portsyncd/linksync` | カーネル netlink RTM_NEWLINK | `state`, `netdev_oper_status`, `admin_status`, `mtu` |
-| `orchagent` PortsOrch | [SAI](../../reference/glossary.md#term-sai) oper-status 通知 / 初期化 | `speed`, `fec`, `supported_speeds`, `supported_fecs`, `host_tx_ready`, `link_training_status`, `rmt_adv_speeds`, `phy_ctrl_unreliable_los` |
+| `orchagent` [PortsOrch](../../reference/glossary.md#term-portsorch) | [SAI](../../reference/glossary.md#term-sai) oper-status 通知 / 初期化 | `speed`, `fec`, `supported_speeds`, `supported_fecs`, `host_tx_ready`, `link_training_status`, `rmt_adv_speeds`, `phy_ctrl_unreliable_los` |
 
 !!! note "CONFIG_DB との関係"
     ポートの **設定** は `CONFIG_DB` の `PORT` テーブルで行う。このページのフィールドは設定が ASIC / カーネルに適用された結果として STATE_DB に書き戻された **oper 状態値**。直接編集しても portsyncd / PortsOrch が上書きする。
@@ -106,7 +106,7 @@ bool oper  = flags & IFF_RUNNING;
 
 ### `mtu`
 
-カーネル netdev の MTU を文字列化して書き込む。[portmgrd](../../reference/glossary.md#term-portmgrd) がデフォルト `9100` を APP_DB に書き（`portmgr.h:15`、`portmgr.cpp:176`）、[orchagent](../../reference/glossary.md#term-orchagent) 経由で SAI に反映した後、SAI が kernel netdev を更新し、linksync が [STATE_DB](../../reference/glossary.md#term-state_db) に書く。**SAI に渡す実際の値は `mtu + 22 bytes`（Ethernet ヘッダ 14 + FCS 4 + [VLAN](../../reference/glossary.md#term-vlan) tag 4）**（MACsec ポートはさらに加算）。[STATE_DB](../../reference/glossary.md#term-state_db) の `mtu` 値は SAI 適用後の **kernel 側の値**であり、SAI に渡した値（+22 の加算後）とは異なる点に注意。
+カーネル netdev の MTU を文字列化して書き込む。[portmgrd](../../reference/glossary.md#term-portmgrd) がデフォルト `9100` を APP_DB に書き（`portmgr.h:15`、`portmgr.cpp:176`）、[orchagent](../../reference/glossary.md#term-orchagent) 経由で SAI に反映した後、SAI が kernel netdev を更新し、linksync が [STATE_DB](../../reference/glossary.md#term-state_db) に書く。**SAI に渡す実際の値は `mtu + 22 bytes`（Ethernet ヘッダ 14 + FCS 4 + [VLAN](../../reference/glossary.md#term-vlan) tag 4）**（[MACsec](../../reference/glossary.md#term-macsec) ポートはさらに加算）。[STATE_DB](../../reference/glossary.md#term-state_db) の `mtu` 値は SAI 適用後の **kernel 側の値**であり、SAI に渡した値（+22 の加算後）とは異なる点に注意。
 
 ### `host_tx_ready`
 
@@ -201,7 +201,7 @@ DOWN 時はフィールドが更新されない（stale 値が残留する）。
 
 2. **`oper_status` は STATE_DB にない**: SAI oper-status (`up`/`down`) は `PortsOrch::updateDbPortOperStatus()` が APP_DB `PORT_TABLE` に書く (`portsorch.cpp:3930`)。STATE_DB ではないため `sonic-db-cli STATE_DB hget 'PORT_TABLE|Ethernet0' oper_status` では取得できない。
 
-3. **RTM_DELLINK = 全フィールド消去**: ポートがカーネルから削除されると STATE_DB エントリ全体が `del()` される。PortsOrch が書いた `speed` / `supported_speeds` / `host_tx_ready` なども消える。
+3. **RTM_DELLINK = 全フィールド消去**: ポートがカーネルから削除されると STATE_DB エントリ全体が `del()` される。[PortsOrch](../../reference/glossary.md#term-portsorch) が書いた `speed` / `supported_speeds` / `host_tx_ready` なども消える。
 
 4. **`host_tx_ready` と CMIS**: `m_cmisModuleAsicSyncSupported=true` の環境（CMIS モジュール非同期対応プラットフォーム）では admin_status 変更時に `host_tx_ready` を更新しない。CMIS 側のシーケンスが完了してから別途書き込まれる。
 
@@ -224,7 +224,7 @@ DOWN 時はフィールドが更新されない（stale 値が残留する）。
 
 ### 主要な制約詳細
 
-**`state="ok"` が書かれるまでの中間状態 (依存 #2)**: `portsyncd` が `PortInitDone` を publish しても、linksync の RTM_NEWLINK 受信と `state="ok"` の書込みは非同期で進む。PortsOrch が `PortInitDone` を受信して処理を開始した時点では、個別ポートの STATE_DB エントリがまだ存在しない場合がある。portmgrd は `isPortStateOk()` が false の間イベントをスキップし次周回で自動再試行するため、この中間状態はユーザーが意識する必要はないが、ログに `Port Ethernet0 is not ready` が一時的に現れることがある。
+**`state="ok"` が書かれるまでの中間状態 (依存 #2)**: `portsyncd` が `PortInitDone` を publish しても、linksync の RTM_NEWLINK 受信と `state="ok"` の書込みは非同期で進む。[PortsOrch](../../reference/glossary.md#term-portsorch) が `PortInitDone` を受信して処理を開始した時点では、個別ポートの STATE_DB エントリがまだ存在しない場合がある。portmgrd は `isPortStateOk()` が false の間イベントをスキップし次周回で自動再試行するため、この中間状態はユーザーが意識する必要はないが、ログに `Port Ethernet0 is not ready` が一時的に現れることがある。
 
 **`supported_speeds` の 1 回限り書込み (依存 #3)**: `initPortSupportedSpeeds()` はキャッシュマップ `m_portSupportedSpeeds` を確認し、エントリが存在する場合は SAI を再クエリせず早期 return する（`portsorch.cpp:3161-3163`）。トランシーバ換装後も orchagent 再起動まで STATE_DB の `supported_speeds` が更新されない理由がここにある。
 
@@ -403,7 +403,7 @@ static map<sai_port_link_training_rx_status_t, string> link_training_rx_status_m
 | デーモン | 用途 |
 |----------|------|
 | `natmgr` | [NAT](../../reference/glossary.md#term-nat) 設定適用前のポート状態確認（`m_statePortTable.get()`） |
-| `macsecmgr` | MACsec 設定前のポート状態確認（`m_statePortTable.get()`） |
+| `macsecmgr` | [MACsec](../../reference/glossary.md#term-macsec) 設定前のポート状態確認（`m_statePortTable.get()`） |
 | `nbrmgr` | 近隣テーブル設定前のポート状態確認 |
 | `vlanmgr` | [VLAN](../../reference/glossary.md#term-vlan) メンバー追加前のポート状態確認（`m_statePortTable.get()`） |
 
@@ -510,7 +510,7 @@ admin UP 設定時の host_tx_ready 確定ロジック:
 
 ### プラットフォーム差のないフィールド
 
-`state`, `netdev_oper_status`, `admin_status`, `mtu` は linksync が netlink イベントから直接書き込むため、ASIC ベンダー・switch_type・Gearbox 有無を問わず同一のロジックで書かれる。`link_training_status`, `rmt_adv_speeds`, `phy_ctrl_unreliable_los`, `supported_speeds` の書き込み関数にも `platform` 環境変数参照・`gMySwitchType` 分岐は存在しない（SAI の capability 不備がフォールバック値 `"N/A"` や空文字列に現れる）。
+`state`, `netdev_oper_status`, `admin_status`, `mtu` は linksync が netlink イベントから直接書き込むため、[ASIC](../../reference/glossary.md#term-asic) ベンダー・switch_type・Gearbox 有無を問わず同一のロジックで書かれる。`link_training_status`, `rmt_adv_speeds`, `phy_ctrl_unreliable_los`, `supported_speeds` の書き込み関数にも `platform` 環境変数参照・`gMySwitchType` 分岐は存在しない（SAI の capability 不備がフォールバック値 `"N/A"` や空文字列に現れる）。
 
 <!-- /platform -->
 
@@ -530,4 +530,4 @@ admin UP 設定時の host_tx_ready 確定ロジック:
 - CLI: `show interfaces status` — admin / oper status の一覧表示
 - CLI: `sonic-db-cli STATE_DB hgetall 'PORT_TABLE|Ethernet0'` — 全フィールドの確認
 
-<!-- glossary-links-injected: d61d6e4574c0 -->
+<!-- glossary-links-injected: fac5026e22e6 -->

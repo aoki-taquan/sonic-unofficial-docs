@@ -310,16 +310,16 @@ show subinterface status
 
 ### 段階 1: Consumer 登録
 
-- **[orchagent](../../reference/glossary.md#term-orchagent) / IntfsOrch**: `VLAN_SUB_INTERFACE` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / [IntfsOrch](../../reference/glossary.md#term-intfsorch)**: `VLAN_SUB_INTERFACE` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- IntfsOrch がサブインタフェース (例: `Ethernet0.100`) の VLAN ID と IP を解析。
+- [IntfsOrch](../../reference/glossary.md#term-intfsorch) がサブインタフェース (例: `Ethernet0.100`) の VLAN ID と IP を解析。
 - APP_DB `INTF_TABLE` に書き込み。
 
 ### 段階 3: APPL → SAI
 
-- IntfsOrch が `sai_router_interface_api->create_router_interface()` で `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` タイプの RIF を作成。
+- [IntfsOrch](../../reference/glossary.md#term-intfsorch) が `sai_router_interface_api->create_router_interface()` で `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` タイプの RIF を作成。
 
 ### 段階 4: タイミング + 副作用
 
@@ -953,7 +953,7 @@ case Port::SUBPORT:
     attrs.push_back(attr);
 ```
 
-`sai_router_intf_api->create_router_interface()` に `attrs` を渡して ASIC に sub_port RIF を生成する。`SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID`（VRF OID）は全 RIF タイプで先頭に push される固定順序 (`intfsorch.cpp:1183`)。
+`sai_router_intf_api->create_router_interface()` に `attrs` を渡して [ASIC](../../reference/glossary.md#term-asic) に sub_port RIF を生成する。`SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID`（VRF OID）は全 RIF タイプで先頭に push される固定順序 (`intfsorch.cpp:1183`)。
 
 ### STATE_DB への書き込み
 
@@ -986,4 +986,4 @@ if (TIMEOUT) { intfmgr.doTask(); }  // 未処理タスクを全 consumer で再�
 
 <!-- /comm-mechanism -->
 
-<!-- glossary-links-injected: 383fcf1b2f7f -->
+<!-- glossary-links-injected: 9561ad03473a -->

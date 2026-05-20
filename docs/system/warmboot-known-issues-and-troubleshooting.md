@@ -32,7 +32,7 @@ hard: 0
 
 ## 概要
 
-SONiC のウォームブート（warm-reboot）・高速リブート（fast-reboot）は複数の
+[SONiC](../reference/glossary.md#term-sonic) のウォームブート（warm-reboot）・高速リブート（fast-reboot）は複数の
 サブシステムが協調する複雑なシーケンスを持つ。本ページは
 [sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) issue tracker (#6723 〜 #12512 の範囲) に記録された
 実環境での既知問題と対処法をまとめる。
@@ -69,7 +69,7 @@ SAI バージョンを syncd と整合させることで解消する。
 syncd: translateVidToRid: failed to translate VID <oid> to RID
 ```
 
-**原因**: syncd がウォームブート後の新 ASIC VIEW への変換を
+**原因**: syncd がウォームブート後の新 [ASIC](../reference/glossary.md#term-asic) VIEW への変換を
 まだ完了していない段階で統計クエリが走ることで、
 ingress/egress buffer pool OID が一時的に無効になる。
 
@@ -243,4 +243,4 @@ kernel: igb 0000:0a:00.0 eth0: igb_watchdog_task: Detected Tx Unit Hang
 - [swss Docker ウォームリスタート](sonic-swss-docker-warm-restart.md)
 - [multi-ASIC ウォームリブート](multi-asic-warm-reboot.md)
 
-<!-- glossary-links-injected: 3b7e0fc72b62 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

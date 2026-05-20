@@ -76,7 +76,7 @@ ROUTE_TABLE|<vrf-name>:<prefix>
 | `nexthop_group` | string | `""` (省略) | NhgOrch が管理する NHG インデックスキー文字列。指定時は `nexthop`/`ifname` と排他 |
 | `mpls_nh` | string | `""` (省略) | outgoing [MPLS](../../reference/glossary.md#term-mpls) ラベル操作のカンマ区切りリスト（[SRv6](../../reference/glossary.md#term-srv6)/[MPLS](../../reference/glossary.md#term-mpls) ハイブリッド経路用） |
 | `vni_label` | string | `""` (省略) | [EVPN](../../reference/glossary.md#term-evpn) [VXLAN](../../reference/glossary.md#term-vxlan) の VNI 値。存在すれば overlay_nh フラグが有効になる |
-| `router_mac` | string | `""` (省略) | [EVPN](../../reference/glossary.md#term-evpn) 宛先 VTEP の MAC アドレス |
+| `router_mac` | string | `""` (省略) | [EVPN](../../reference/glossary.md#term-evpn) 宛先 [VTEP](../../reference/glossary.md#term-vtep) の MAC アドレス |
 | `segment` | string | `""` (省略) | [SRv6](../../reference/glossary.md#term-srv6) SID-list テーブルキー（`SRV6_SID_LIST_TABLE` の key を参照） |
 | `seg_src` | string | `""` (省略) | [SRv6](../../reference/glossary.md#term-srv6) encap の source アドレス |
 
@@ -275,7 +275,7 @@ if (next_hop_id == SAI_NULL_OBJECT_ID)
 }
 ```
 
-interface NH (directly-connected) で IntfsOrch が [RIF](../../reference/glossary.md#term-rif) を未作成の場合、`addRoute` false → 残置。IntfsOrch が [CONFIG_DB](../../reference/glossary.md#term-config_db) `INTERFACE` / APPL_DB `INTF_TABLE` を処理し [RIF](../../reference/glossary.md#term-rif) を作成後に成立。
+interface NH (directly-connected) で [IntfsOrch](../../reference/glossary.md#term-intfsorch) が [RIF](../../reference/glossary.md#term-rif) を未作成の場合、`addRoute` false → 残置。[IntfsOrch](../../reference/glossary.md#term-intfsorch) が [CONFIG_DB](../../reference/glossary.md#term-config_db) `INTERFACE` / APPL_DB `INTF_TABLE` を処理し [RIF](../../reference/glossary.md#term-rif) を作成後に成立。
 
 → 順序依存: directly-connected ルートは `INTF_TABLE` (RIF) が先行必須。
 
@@ -316,7 +316,7 @@ if (m_nextHopGroupCount + NhgOrch::getSyncedNhgCount() >= m_maxNextHopGroupCount
 }
 ```
 
-`addNextHopGroup` が NHG 上限で false を返した場合、元 ECMP は `m_toSync` 残置のまま **単一 NH のサブセット tempRoute** を ASIC に install。doTask ループ中に bulker 削除待ちがあれば `break` して flush を促す（NHG 解放後の再評価）。
+`addNextHopGroup` が NHG 上限で false を返した場合、元 ECMP は `m_toSync` 残置のまま **単一 NH のサブセット tempRoute** を [ASIC](../../reference/glossary.md#term-asic) に install。doTask ループ中に bulker 削除待ちがあれば `break` して flush を促す（NHG 解放後の再評価）。
 
 → タイミング依存: NHG 上限近傍ではフル ECMP install が遅延。`m_maxNextHopGroupCount` は Mellanox 補正で削減され、上限到達確率はプラットフォーム依存（Phase H 参照）。
 
@@ -359,11 +359,11 @@ if (status == SAI_STATUS_ITEM_ALREADY_EXISTS)
 | NhgOrch 全般 | `PORT` 初期化 (`allPortsReady`) | 即 return（NHG 経路のみ） |
 | 非デフォルト VRF prefix | `VRF` (VrfOrch) | ログなし `it++` 残置 |
 | `nexthop_group` 指定 | NHG エントリ (NhgOrch) | ERROR + `++it` 残置 |
-| directly-connected | RIF (IntfsOrch) | `addRoute` false → 残置 |
+| directly-connected | RIF ([IntfsOrch](../../reference/glossary.md#term-intfsorch)) | `addRoute` false → 残置 |
 | single NH | NEIGH (NeighOrch) | `resolveNeighbor` → 残置 |
 | ECMP | 全 NH の NEIGH | tempRoute サブセット install + 残置 |
 | SRv6 PIC | `PIC_CONTEXT` (Srv6Orch) | RetryCache park |
-| ASIC NHG 上限 | NHG 解放 | tempRoute install + bulker flush 促進 |
+| [ASIC](../../reference/glossary.md#term-asic) NHG 上限 | NHG 解放 | tempRoute install + bulker flush 促進 |
 | DualToR DEL→SET race | — | `m_syncdRoutes` 補正で次サイクル create |
 | bulker 同一バッチ重複 | — | ERROR + 残置で次サイクル |
 
@@ -408,7 +408,7 @@ if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
 
 ### SRv6 / EVPN overlay ネクストホップ: ASIC SAI capability に依存
 
-`routeorch.cpp` L736-L795 で APPL_DB の `vni_label` / `segment` / `seg_src` から `overlay_nh` / `srv6_nh` を立てるが、SAI 側で `SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP` / `SAI_NEXT_HOP_TYPE_SRV6_SIDLIST` / `SAI_OBJECT_TYPE_MY_SID_ENTRY` が未実装の ASIC は create_next_hop / create_my_sid_entry が `SAI_STATUS_NOT_SUPPORTED` を返し routeorch がエラーログを残す（L2130 / L2136）。community master では Broadcom DNX / Mellanox 一部 SKU で SRv6 が機能、VS / VPP はスタブ実装。
+`routeorch.cpp` L736-L795 で APPL_DB の `vni_label` / `segment` / `seg_src` から `overlay_nh` / `srv6_nh` を立てるが、SAI 側で `SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP` / `SAI_NEXT_HOP_TYPE_SRV6_SIDLIST` / `SAI_OBJECT_TYPE_MY_SID_ENTRY` が未実装の [ASIC](../../reference/glossary.md#term-asic) は create_next_hop / create_my_sid_entry が `SAI_STATUS_NOT_SUPPORTED` を返し routeorch がエラーログを残す（L2130 / L2136）。community master では Broadcom DNX / Mellanox 一部 SKU で SRv6 が機能、VS / VPP はスタブ実装。
 
 ### CRM 集計: SAI 任意属性
 
@@ -599,7 +599,7 @@ APPL_DB `ROUTE_TABLE` の主購読者 `routeorch::doRouteTask()` は `ConsumerSt
 | `next_hop_ids.size()==0` (active NH ゼロ) | INFO `"Skipping creation of nexthop group as none of nexthop are active"` → `addNextHopGroup` false → `addRoute` false | neighbor / IFDOWN 解除 | `routeorch.cpp:1548-1551` |
 | **NHG 上限到達** (`m_nextHopGroupCount + NhgOrch::getSyncedNhgCount() >= m_maxNextHopGroupCount`) | DEBUG ログ → `addNextHopGroup` false → `addTempRoute` で単一 NH サブセットを install、元 ECMP は `m_toSync` 残置。bulker 内に削除待ち NHG があれば flush して空き作成 (L1094-1100) | 他ルート DEL で NHG 解放 | `routeorch.cpp:1424-1429, 1478-1483, 2237-2243` |
 | SRv6 nexthop / VPN 作成失敗 (SAI NOT_SUPPORTED 含む) | ERROR `"Failed to create SRV6 vpn"` / `"Failed to create SRV6 nexthop"` → false | SRv6Orch / SAI 状態変化 | `routeorch.cpp:2099-2147, 2168-2173` |
-| [EVPN](../../reference/glossary.md#term-evpn) remote VTEP / Tunnel NH 作成失敗 | ERROR → false | VxlanOrch / EvpnOrch 状態 | `routeorch.cpp:2126-2138, 2200-2213` |
+| [EVPN](../../reference/glossary.md#term-evpn) remote [VTEP](../../reference/glossary.md#term-vtep) / Tunnel NH 作成失敗 | ERROR → false | VxlanOrch / EvpnOrch 状態 | `routeorch.cpp:2126-2138, 2200-2213` |
 | PIC `context_index` 未登録 | INFO `"Context ID X does not exist, move task entry to RetryCache"` → `ctx.retry_cst = make_constraint(RETRY_CST_PIC, context_index)` で **RetryCache に park** → false | `m_srv6Orch` 経由の `notifyRetry(RETRY_CST_PIC+context_index)` で `m_toSync` 再 enqueue | `routeorch.cpp:2055-2060, 192` |
 
 ### C. SAI 失敗 → `handleSaiCreateStatus` / `handleSaiSetStatus` / `handleSaiRemoveStatus` 経由
@@ -672,7 +672,7 @@ else if ((utilization <= res.lowThreshold) && (cnt.exceededLogCounter > 0) && ..
 | `NhgOrch` / `CbfNhgOrch` (`NEXTHOP_GROUP_TABLE` / `CLASS_BASED_NEXT_HOP_GROUP_TABLE`) | `nexthop_group` フィールド | index 解決 + 排他チェック + refcount | `routeorch.cpp:810-814, 838-839, 1006-1012, 1096, 1424, 1478, 2042-2057, 2411, 2546` (`getNhg` / `getSyncedNhgCount` / `incNhgRefCount`) |
 | `FgNhgOrch` (`FG_NHG` / `FG_NHG_PREFIX`) | プレフィクスが Fine-Grained NHG 設定にマッチ | 専用 NHG 構築 (通常 NHG をバイパス) | `routeorch.cpp:529, 597, 2028-2037, 2403, 2475` (`isRouteFineGrained` / `setFgNhg` / `removeFgNhg`) |
 | `Srv6Orch` (`SRV6_SID_LIST_TABLE` / `SRV6_MY_SID_TABLE`) | `segment` / `seg_src` 非空 (`srv6_nh = true`) | SRv6 nexthop OID 生成 + 集約 ID 取得 | `routeorch.cpp:1250, 2055, 2100, 2143, 2169, 2295, 2352` (`srv6Nexthops` / `getAggId` / `contextIdExists`) |
-| `VxlanTunnelOrch` / remote VTEP | `vni_label` 非空 (`overlay_nh = true`) かつ SRv6 でない | L3 VNI 検証 + remote VTEP 作成 + tunnel NH 生成 | `routeorch.cpp:872, 2127, 2133, 2208` (`isL3VniVlan` / `createRemoteVtep` / `addTunnelNextHop`); 削除: `L1781-1789` |
+| `VxlanTunnelOrch` / remote [VTEP](../../reference/glossary.md#term-vtep) | `vni_label` 非空 (`overlay_nh = true`) かつ SRv6 でない | L3 VNI 検証 + remote VTEP 作成 + tunnel NH 生成 | `routeorch.cpp:872, 2127, 2133, 2208` (`isL3VniVlan` / `createRemoteVtep` / `addTunnelNextHop`); 削除: `L1781-1789` |
 | `FlowCounterRouteOrch` | 常時 (ROUTE add/remove ごと) | 通知のみ (refcount / OID 無関係) | `routeorch.cpp:259, 282, 2708` (`onAddMiscRouteEntry` / `onRemoveMiscRouteEntry` / `handleRouteAdd`) |
 
 ### refcount / 解決の semantics
@@ -703,4 +703,4 @@ else if ((utilization <= res.lowThreshold) && (cnt.exceededLogCounter > 0) && ..
 - `fpmsyncd::RouteSync::onRouteMsg()` (`sonic-swss/fpmsyncd/routesync.cpp`): カーネル netlink IPv4/IPv6 ルート受信時
 - `fpmsyncd::RouteSync::onSrv6Msg()` (`sonic-swss/fpmsyncd/routesync.cpp`): SRv6 VPN ルート受信時
 
-<!-- glossary-links-injected: cf78d07d5ebe -->
+<!-- glossary-links-injected: 61c80e9ef933 -->

@@ -82,7 +82,7 @@ route_redist_key_map = [
 |---|----------|------|------|--------|
 | 1 | `BGP_GLOBALS.local_asn` 設定 → `ROUTE_REDISTRIBUTE` 書き込み | ハード先行必須 | local_asn 未設定の場合は silent drop | `BGP_GLOBALS` を先に設定すること |
 | 2 | `BGP_GLOBALS.local_asn` SET 後 → `ROUTE_REDISTRIBUTE` 自動再適用 | 自動リカバー | 順序逆でも BGP_GLOBALS SET 後に自動的に反映される | 本番では正順を守る |
-| 3 | unified モード: `BGP_GLOBALS` が `ROUTE_REDISTRIBUTE` より先に処理 | 起動時保証 | unified モードでは正常 | 通常の SONiC unified モードで保証 |
+| 3 | unified モード: `BGP_GLOBALS` が `ROUTE_REDISTRIBUTE` より先に処理 | 起動時保証 | unified モードでは正常 | 通常の [SONiC](../../reference/glossary.md#term-sonic) unified モードで保証 |
 | 4 | `ROUTE_REDISTRIBUTE` DEL → `BGP_GLOBALS` DEL | 推奨削除順序 | BGP_GLOBALS 先削除時は FRR に redistribute 設定が残存 | `ROUTE_REDISTRIBUTE` を全削除してから `BGP_GLOBALS` を削除 |
 
 ### 主要な制約詳細
@@ -134,7 +134,7 @@ ROUTE_REDISTRIBUTE
 
 <!-- evidence: meta/_intermediate/cdb-flow/route-common-failure.md -->
 
-`frrcfgd`（`BGPConfigDaemon`）が `ROUTE_REDISTRIBUTE` イベントを処理する際の失敗は、(A) `BGP_GLOBALS.local_asn` 未設定による silent drop、(B) `dst_protocol` 不正による LOG_ERR + 恒久スキップ、(C) vtysh コマンド送出失敗による FRR 未反映の 3 系統に分類される。いずれの場合も CONFIG_DB エントリは変更されず、FRR running-config との乖離が生じる。
+`frrcfgd`（`BGPConfigDaemon`）が `ROUTE_REDISTRIBUTE` イベントを処理する際の失敗は、(A) `BGP_GLOBALS.local_asn` 未設定による silent drop、(B) `dst_protocol` 不正による LOG_ERR + 恒久スキップ、(C) [vtysh](../../reference/glossary.md#term-vtysh) コマンド送出失敗による FRR 未反映の 3 系統に分類される。いずれの場合も CONFIG_DB エントリは変更されず、FRR running-config との乖離が生じる。
 
 ### A. BGP_GLOBALS.local_asn 未設定 → silent drop
 
@@ -168,7 +168,7 @@ YANG バリデーションは `dst_protocol` の値を制約しないため、�
 
 ### C. vtysh コマンド送出失敗 → LOG_ERR + FRR 未反映
 
-`key_map.run_command()` が `False` を返した場合（FRR bgpd への接続失敗・vtysh エラー等）、LOG_ERR を記録して `continue`（evidence: `frrcfgd.py:3165-3168`）[^2]。
+`key_map.run_command()` が `False` を返した場合（FRR bgpd への接続失敗・[vtysh](../../reference/glossary.md#term-vtysh) エラー等）、LOG_ERR を記録して `continue`（evidence: `frrcfgd.py:3165-3168`）[^2]。
 
 ```python
 ret_val = key_map.run_command(self, table, data, cmd_prefix)
@@ -185,7 +185,7 @@ FRR bgpd が未起動の場合や socket 切断時に発生する。CONFIG_DB �
 |---|---|---|---|
 | `BGP_GLOBALS.local_asn` 未設定（silent drop） | 未反映 | DEBUG | あり（BGP_GLOBALS.local_asn SET 後に自動再適用） |
 | `dst_protocol != 'bgp'`（不正値） | 未反映 | ERR | なし（CONFIG_DB から不正エントリを削除するまで繰り返し drop） |
-| vtysh コマンド送出失敗（FRR 未接続等） | 未反映 | ERR | なし（frrcfgd / FRR 再起動後に手動 re-trigger 必要） |
+| [vtysh](../../reference/glossary.md#term-vtysh) コマンド送出失敗（FRR 未接続等） | 未反映 | ERR | なし（frrcfgd / FRR 再起動後に手動 re-trigger 必要） |
 
 <!-- /failure -->
 
@@ -313,7 +313,7 @@ CONFIG_DB:ROUTE_REDISTRIBUTE
 | `unified` | `ROUTE_REDISTRIBUTE` を含む全テーブルを CONFIG_DB から読み込み FRR へ一括リプレイ（`frrcfgd.py:2344-2357`） | SET/DEL イベント購読・処理（変更なし） |
 | `separated`（デフォルト） | 起動時リプレイなし | SET/DEL イベント購読・処理（変更なし） |
 
-`unified` モードは T1/T2 以上の SONiC 構成で利用されることが多く、frrcfgd 再起動後に CONFIG_DB の設定が FRR へ自動再適用される点が `separated` との唯一の動作差分。
+`unified` モードは T1/T2 以上の [SONiC](../../reference/glossary.md#term-sonic) 構成で利用されることが多く、frrcfgd 再起動後に CONFIG_DB の設定が FRR へ自動再適用される点が `separated` との唯一の動作差分。
 
 ### VOQ Chassis
 
@@ -403,4 +403,4 @@ flowchart LR
 [^1]: YANG 定義: `sonic-route-common.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-route-common.yang>
 [^2]: ハンドラ実装: `frrcfgd.py`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py>
 
-<!-- glossary-links-injected: a7899f892b9f -->
+<!-- glossary-links-injected: 4184f5fdb3c1 -->

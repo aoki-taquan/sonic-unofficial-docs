@@ -59,7 +59,7 @@ DEVICE_RUNTIME_METADATA|MACSEC_SUPPORTED
 |---------|-----------|----|------|
 | `CHASSIS_METADATA` | `module_type` | `supervisor` / `linecard` | シャーシ環境でのみ存在。`is_supervisor()` の判定結果 |
 | `ETHERNET_PORTS_PRESENT` | (直値) | `True`/`False` | `port_config.ini` がプラットフォーム配下に存在するかどうか。`get_path_to_port_config_file()` の結果 |
-| `MACSEC_SUPPORTED` | (直値) | `True`/`False` | プラットフォーム JSON で MACsec 機能が宣言されているか |
+| `MACSEC_SUPPORTED` | (直値) | `True`/`False` | プラットフォーム JSON で [MACsec](../../reference/glossary.md#term-macsec) 機能が宣言されているか |
 
 実コードでは `runtime_metadata` 辞書に `chassis_metadata` / `port_metadata` / `macsec_support_metadata` を merge して返している[^1]。
 
@@ -101,7 +101,7 @@ DEVICE_RUNTIME_METADATA|MACSEC_SUPPORTED
 
 - **`platform_env.conf` が存在しないプラットフォーム** → `is_supervisor()=False`, `is_macsec_supported()=0`。結果として `MACSEC_SUPPORTED=False`、(chassis 環境の場合) `module_type='linecard'` がデフォルトになる (`device_info.py:700-702, 720-721`)。
 - **`switch_type` 未設定** (`get_platform_info().get('switch_type')` が空) → `is_voq_chassis()=False`, `is_packet_chassis()=False` → 仮想 chassis でなければ `is_chassis()=False` → `CHASSIS_METADATA` キー自体が生成されない。
-- **multi-[NPU](../../reference/glossary.md#term-npu) プラットフォーム** → `get_path_to_port_config_file()` 呼び出し時に `asic="0"` を指定して ASIC#0 名前空間の port_config.ini を確認する (`device_info.py:741`)。
+- **multi-[NPU](../../reference/glossary.md#term-npu) プラットフォーム** → `get_path_to_port_config_file()` 呼び出し時に `asic="0"` を指定して [ASIC](../../reference/glossary.md#term-asic)#0 名前空間の port_config.ini を確認する (`device_info.py:741`)。
 
 ### init_cfg.json.j2 が参照するデフォルト経路
 
@@ -136,8 +136,8 @@ DEVICE_RUNTIME_METADATA|MACSEC_SUPPORTED
 
 | 値 | 挙動 |
 |----|------|
-| `True` | init_cfg.json.j2 に MACsec 関連 FEATURE エントリが含まれる |
-| `False` / キーなし | MACsec FEATURE エントリは生成されない |
+| `True` | init_cfg.json.j2 に [MACsec](../../reference/glossary.md#term-macsec) 関連 FEATURE エントリが含まれる |
+| `False` / キーなし | [MACsec](../../reference/glossary.md#term-macsec) FEATURE エントリは生成されない |
 
 > 明示的な enum 制約なし。[YANG](../../reference/glossary.md#term-yang) スキーマなし。CONFIG_DB に永続化されない仮想テーブル。
 
@@ -237,7 +237,7 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -388,13 +388,13 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 
 ### マルチ NPU での ASIC 番号ハードコード
 
-`ETHERNET_PORTS_PRESENT` の判定で multi-[NPU](../../reference/glossary.md#term-npu) 環境では常に ASIC `"0"` のポート設定ファイルを確認する:
+`ETHERNET_PORTS_PRESENT` の判定で multi-[NPU](../../reference/glossary.md#term-npu) 環境では常に [ASIC](../../reference/glossary.md#term-asic) `"0"` のポート設定ファイルを確認する:
 
 ```python
 get_path_to_port_config_file(hwsku=None, asic="0" if is_multi_npu() else None)
 ```
 
-ASIC 番号の起点 `"0"` がハードコードされており、ASIC 1 以降の存在は確認されない (`device_info.py:741`)。
+[ASIC](../../reference/glossary.md#term-asic) 番号の起点 `"0"` がハードコードされており、ASIC 1 以降の存在は確認されない (`device_info.py:741`)。
 
 <!-- /constants -->
 
@@ -497,7 +497,7 @@ ASIC 番号の起点 `"0"` がハードコードされており、ASIC 1 以降�
 | 通常 ToR / Leaf / Spine | `True` | hwsku ディレクトリ配下に `port_config.ini` が存在する |
 | Supervisor カード (chassis) | `False` | supervisor の hwsku には `port_config.ini` が存在しない |
 | Fabric カード ([VOQ](../../reference/glossary.md#term-voq) chassis) | `False` | fabric カードはデータプレーンポートを持たず `port_config.ini` 不在 |
-| Multi-ASIC プラットフォーム | ASIC #0 の `port_config.ini` 存否に依存 | `asic="0"` をハードコードして検索 (`device_info.py:741`) |
+| [Multi-ASIC](../../reference/glossary.md#term-multi-asic) プラットフォーム | ASIC #0 の `port_config.ini` 存否に依存 | `asic="0"` をハードコードして検索 (`device_info.py:741`) |
 | VS (Virtual Switch) テスト | `True` (通常) | VS プラットフォームのテスト hwsku に `port_config.ini` が付属する |
 
 Multi-[NPU](../../reference/glossary.md#term-npu) 環境では常に ASIC `"0"` のポート設定ファイルを確認する。ASIC 1 以降は確認しない (`device_info.py:741`)。
@@ -519,4 +519,4 @@ MACsec 対応の宣言は `platform_env.conf` の `macsec_enabled=1` 行のみ�
 > **Evidence**: `device_info.py:630-668` (`is_voq_chassis` / `is_packet_chassis` / `is_virtual_chassis` / `is_chassis`)、`device_info.py:699-732` (`is_supervisor` / `is_macsec_supported`)、`device_info.py:735-747` (`get_device_runtime_metadata`)
 <!-- /platform -->
 
-<!-- glossary-links-injected: 66eb21e0af0e -->
+<!-- glossary-links-injected: 3362e3114677 -->

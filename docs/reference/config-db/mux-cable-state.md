@@ -136,7 +136,10 @@ ycabled が gRPC 経由でハードウェア (Y-Cable / SoC) から取得した 
 
 ## 引用元
 
-[^1]: `muxorch.cpp` MuxStateOrch / MuxOrch — [STATE_DB](../../reference/glossary.md#term-state_db) MUX_CABLE_TABLE 書き込みロジック. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/muxorch.cpp>
+<!-- footnote anchor seeds -->
+出典: [^1] [^2]
+
+[^1]: `muxorch.cpp` MuxStateOrch / [MuxOrch](../../reference/glossary.md#term-muxorch) — [STATE_DB](../../reference/glossary.md#term-state_db) MUX_CABLE_TABLE 書き込みロジック. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/muxorch.cpp>
 [^2]: `y_cable_helper.py` put_init_values_for_grpc_states — HW_MUX_CABLE_TABLE 初期化. <https://github.com/sonic-net/sonic-platform-daemons/blob/master/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py>
 
 <!-- topics-back-ref -->
@@ -420,7 +423,7 @@ const std::string loopback3 = "Loopback3|";
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の状態遷移は STATE_DB 本体への書き込み以外に、[APPL_DB](../../reference/glossary.md#term-appl_db) の複数テーブル・STATE_DB 内のメトリクステーブル・[SAI](../../reference/glossary.md#term-sai) (ASIC) への副次操作を引き起こす。
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の状態遷移は STATE_DB 本体への書き込み以外に、[APPL_DB](../../reference/glossary.md#term-appl_db) の複数テーブル・STATE_DB 内のメトリクステーブル・[SAI](../../reference/glossary.md#term-sai) ([ASIC](../../reference/glossary.md#term-asic)) への副次操作を引き起こす。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/mux-cable-state-side-effects.md`
 
@@ -501,7 +504,7 @@ DbInterface::handleSwssNotification() (DbInterface.cpp:1813)
 
 ### MuxStateOrch の購読セットアップ
 
-`MuxStateOrch` は `Orch2` フレームワークで `STATE_DB HW_MUX_CABLE_TABLE` を購読する。`orchdaemon.cpp:477` で `new MuxStateOrch(m_stateDb, STATE_HW_MUX_CABLE_TABLE_NAME)` としてインスタンス化され、SONiC の OrchAgent 主ループがテーブル変更イベントを `addOperation()` に配送する。
+`MuxStateOrch` は `Orch2` フレームワークで `STATE_DB HW_MUX_CABLE_TABLE` を購読する。`orchdaemon.cpp:477` で `new MuxStateOrch(m_stateDb, STATE_HW_MUX_CABLE_TABLE_NAME)` としてインスタンス化され、[SONiC](../../reference/glossary.md#term-sonic) の OrchAgent 主ループがテーブル変更イベントを `addOperation()` に配送する。
 
 `addOperation()` は届いた `hw_state` と `MuxCable` 内部の `mux_state` を比較し:
 
@@ -542,7 +545,7 @@ ycabled は `HW_MUX_CABLE_TABLE` の **書き込み側** であり、このテ�
 
 ### MuxOrch / MuxStateOrch のプラットフォーム非依存性
 
-`orchagent/muxorch.cpp` には `getenv("platform")` / `getenv("ASIC_VENDOR")` の呼び出しが **一切存在しない**。STATE_DB への書き込み文字列定数・ステートマシン遷移ロジック・SAI 呼び出し順序はすべてプラットフォーム共通で動作する。mellanox / broadcom / barefoot 等の ASIC 差分はここでは吸収されない。
+`orchagent/muxorch.cpp` には `getenv("platform")` / `getenv("ASIC_VENDOR")` の呼び出しが **一切存在しない**。STATE_DB への書き込み文字列定数・ステートマシン遷移ロジック・SAI 呼び出し順序はすべてプラットフォーム共通で動作する。mellanox / broadcom / barefoot 等の [ASIC](../../reference/glossary.md#term-asic) 差分はここでは吸収されない。
 
 ### neighbor_mode = "prefix-route" の SAI capability ゲート
 
@@ -585,4 +588,4 @@ ycabled は `/etc/sonic/mux_simulator.json` ファイルの存在を検出し、
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: dec7378867ab -->
+<!-- glossary-links-injected: 5f68ff19ed74 -->

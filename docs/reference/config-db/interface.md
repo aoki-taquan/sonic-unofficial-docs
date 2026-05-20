@@ -208,7 +208,7 @@ show ip interfaces
 | 箇所 | 条件 | 挙動 |
 |------|------|------|
 | `intfmgr.cpp:833-836` | `isIntfStateOk(alias)` が false（STATE_PORT_TABLE に `state=ok` 未登録） | `SWSS_LOG_DEBUG("Interface is not ready, skipping %s")` → `return false`、`m_toSync` 残留・1000 ms 後に再試行 |
-| `intfsorch.cpp:905-924` | `gPortsOrch->getPort(alias, port)` が false（PortsOrch 未登録） | `it++; continue` → `m_toSync` 残留・再試行。PORT が PortsOrch に登録されるまで [SAI](../../reference/glossary.md#term-sai) 処理不可 |
+| `intfsorch.cpp:905-924` | `gPortsOrch->getPort(alias, port)` が false（[PortsOrch](../../reference/glossary.md#term-portsorch) 未登録） | `it++; continue` → `m_toSync` 残留・再試行。PORT が [PortsOrch](../../reference/glossary.md#term-portsorch) に登録されるまで [SAI](../../reference/glossary.md#term-sai) 処理不可 |
 
 ### VRF 未解決 → retry または即座スキップ
 
@@ -533,7 +533,7 @@ STATE_DB[STATE_PORT_TABLE / STATE_LAG_TABLE]
 
 ### `nat_zone` — SAI capability query による有効/無効
 
-`gIsNatSupported` フラグが `false` の ASIC では `nat_zone` フィールドを設定しても SAI に渡されない。起動時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を取得し、返り値が `0` なら [NAT](../../reference/glossary.md#term-nat) 非対応と判断する。
+`gIsNatSupported` フラグが `false` の [ASIC](../../reference/glossary.md#term-asic) では `nat_zone` フィールドを設定しても SAI に渡されない。起動時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を取得し、返り値が `0` なら [NAT](../../reference/glossary.md#term-nat) 非対応と判断する。
 
 ```cpp
 // main.cpp:936-947
@@ -549,9 +549,9 @@ if (gIsNatSupported) {
 }
 ```
 
-| ASIC / プラットフォーム | `nat_zone` SAI 反映 |
+| [ASIC](../../reference/glossary.md#term-asic) / プラットフォーム | `nat_zone` SAI 反映 |
 |------------------------|---------------------|
-| NAT HW オフロード対応 ASIC | 反映される |
+| NAT HW オフロード対応 [ASIC](../../reference/glossary.md#term-asic) | 反映される |
 | NAT 非対応 ASIC (SAI が `AVAILABLE_SNAT_ENTRY=0` を返す) | 黙殺 |
 | VS (virtual switch) | 反映される (`AVAILABLE_SNAT_ENTRY=100` を返す) |
 
@@ -758,4 +758,4 @@ YANG leafref を超えた他テーブル・他 DB・プラットフォームフ�
 
 <!-- /constants -->
 
-<!-- glossary-links-injected: 841e6cdca746 -->
+<!-- glossary-links-injected: 8a59592f36f2 -->

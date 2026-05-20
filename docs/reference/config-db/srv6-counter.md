@@ -154,7 +154,7 @@ sonic-db-cli CONFIG_DB hgetall 'FLEX_COUNTER_TABLE|SRV6'
 
 ### よくある誤設定
 
-- `enable` を設定しても SAI が `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` をサポートしない ASIC では、カウンタが常にゼロのまま。`"SRv6 counters are not supported on this platform"` ログを確認すること。
+- `enable` を設定しても SAI が `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` をサポートしない [ASIC](../../reference/glossary.md#term-asic) では、カウンタが常にゼロのまま。`"SRv6 counters are not supported on this platform"` ログを確認すること。
 - MySID エントリが `SRV6_MY_SIDS` に存在しない状態で enable にしても [COUNTERS_DB](../../reference/glossary.md#term-counters_db) にエントリは現れない（SID 追加後に自動登録される）。
 
 <!-- /ops-hint -->
@@ -406,7 +406,7 @@ YANG `sonic-flex_counter.yang` の `SRV6` container には leafref 定義が存�
 |-------------|-----------|--------|
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_SRV6_NAME_MAP` | `hset("", sid_prefix, counter_oid)` — MySID ごとのカウンタ OID を登録 | `srv6orch.cpp:196-199` |
 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `SRV6_STAT_COUNTER:<oid>` | `setCounterIdList` — ASIC_DB VIDTORID 確認後に登録（1 秒タイマー経由） | `srv6orch.cpp:300` |
-| SAI / `sai_srv6_api` | `set_my_sid_entry_attribute(SAI_MY_SID_ENTRY_ATTR_COUNTER_ID, counter_oid)` — ASIC へのカウンタ紐付け | `srv6orch.cpp:276, 244` |
+| SAI / `sai_srv6_api` | `set_my_sid_entry_attribute(SAI_MY_SID_ENTRY_ATTR_COUNTER_ID, counter_oid)` — [ASIC](../../reference/glossary.md#term-asic) へのカウンタ紐付け | `srv6orch.cpp:276, 244` |
 
 FLEX_COUNTER_DB への書込みは `gTraditionalFlexCounter` が有効な場合は ASIC_DB `VIDTORID` の VID→RID 解決を確認してから行われる（`srv6orch.cpp:293-295`）。プラットフォームが `SAI_MY_SID_ENTRY_ATTR_COUNTER_ID` を非サポートの場合は `setCountersState` が early-return し、副次書込みは一切発生しない（`srv6orch.cpp:256-260`）。
 
@@ -414,7 +414,7 @@ FLEX_COUNTER_DB への書込みは `gTraditionalFlexCounter` が有効な場合�
 
 | 副次 DB / API | キー / 操作 | ソース |
 |-------------|-----------|--------|
-| SAI / `sai_srv6_api` | `set_my_sid_entry_attribute(SAI_MY_SID_ENTRY_ATTR_COUNTER_ID, SAI_NULL_OBJECT_ID)` — ASIC からカウンタ切離し | `srv6orch.cpp:278, 244` |
+| SAI / `sai_srv6_api` | `set_my_sid_entry_attribute(SAI_MY_SID_ENTRY_ATTR_COUNTER_ID, SAI_NULL_OBJECT_ID)` — [ASIC](../../reference/glossary.md#term-asic) からカウンタ切離し | `srv6orch.cpp:278, 244` |
 | COUNTERS_DB / `COUNTERS_SRV6_NAME_MAP` | `hdel("", sid_prefix)` — 名前マップエントリ削除 | `srv6orch.cpp:223` |
 | FLEX_COUNTER_DB / `SRV6_STAT_COUNTER:<oid>` | `clearCounterIdList` — FLEX_COUNTER_DB エントリ削除 | `srv6orch.cpp:229` |
 
@@ -565,7 +565,7 @@ NotificationConsumer: なし  /  ConsumerStateTable: なし  /  TTL/expire: な�
 | `false`（デフォルト・現行 master） | `m_vid_to_rid_table` を初期化しない | `m_pending_counters` の全 OID を即座に `setCounterIdList()` で登録 |
 | `true`（旧互換） | `m_vid_to_rid_table = Table(ASIC_DB, "VIDTORID")` を初期化 | ASIC_DB `VIDTORID` に OID が現れるまで登録を保留（タイマー次回 tick に再試行） |
 
-`gTraditionalFlexCounter = true` は syncd の SAI redis 通信モードが "traditional" のレガシー構成のみ使用。現行 SONiC master ではデフォルト `false`。
+`gTraditionalFlexCounter = true` は syncd の SAI redis 通信モードが "traditional" のレガシー構成のみ使用。現行 [SONiC](../../reference/glossary.md#term-sonic) master ではデフォルト `false`。
 
 ### 確認方法
 
@@ -587,4 +587,4 @@ ps aux | grep orchagent | grep -o -- '-c [a-z]*'
 
 <!-- glossary-links-injected: srv6-counter-page -->
 
-<!-- glossary-links-injected: 70e3d52db32d -->
+<!-- glossary-links-injected: 865a18402f05 -->

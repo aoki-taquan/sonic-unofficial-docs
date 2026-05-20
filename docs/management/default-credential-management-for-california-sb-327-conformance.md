@@ -38,7 +38,7 @@ related:
 
 ## 概要
 
-[California SB-327](https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=201720180SB327) は IoT 機器の既定パスワード使用を制限する州法であり、**初回ログイン時にユーザに強制でパスワード変更させる** ことが代表的な準拠手段である[^1]。本 [HLD](../reference/glossary.md#term-hld) はこれを SONiC OS で実装する設計を定める。
+[California SB-327](https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=201720180SB327) は IoT 機器の既定パスワード使用を制限する州法であり、**初回ログイン時にユーザに強制でパスワード変更させる** ことが代表的な準拠手段である[^1]。本 [HLD](../reference/glossary.md#term-hld) はこれを [SONiC](../reference/glossary.md#term-sonic) OS で実装する設計を定める。
 
 要件[^1]:
 
@@ -146,7 +146,7 @@ CHANGE_DEFAULT_PASSWORD=true make target/sonic.bin
 
 ## 制限事項
 
-- **Remote [AAA](../reference/glossary.md#term-aaa) (LDAP / RADIUS / TACACS+) では動作しない**[^1]。リモート認証はカスタマー責務
+- **Remote [AAA](../reference/glossary.md#term-aaa) (LDAP / [RADIUS](../reference/glossary.md#term-radius) / TACACS+) では動作しない**[^1]。リモート認証はカスタマー責務
 - **build flag が必須**。runtime に有効化する CLI / DB は無い
 - 機能は **Linux native ツール (`chage` + `pam_unix_account.so`) に依拠**。これらの挙動が変わると同期が必要
 - `/etc/rc.local` の 1st boot 検知ロジックの堅牢性は HLD では明示されていない
@@ -211,4 +211,4 @@ sudo chage -l admin
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: db62d2100cef -->

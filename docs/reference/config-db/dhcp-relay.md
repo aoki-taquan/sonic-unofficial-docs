@@ -203,7 +203,7 @@ show dhcprelay_helper ipv4
 | 非 DualToR | Interface-ID オプション**無効**（ハードコード `interface_id_default = false`、cpp:118） |
 | DualToR (`dual_tor_sock` 存在) | Interface-ID オプション**有効**（cpp:121 で `true` に変更） |
 
-**DualToR 判定**: `dhcpv6-relay.agents.j2:16` で `DEVICE_METADATA.localhost.subtype == "DualToR"` の場合に `-u Loopback0` オプションが付き `dual_tor_sock` が生成される。`interface_id` のデフォルトは **DEVICE_METADATA.subtype に間接依存**。
+**DualToR 判定**: `dhcpv6-relay.agents.j2:16` で `DEVICE_METADATA.localhost.subtype == "DualToR"` の場合に `-u Loopback0` オプションが付き `dual_tor_sock` が生成される。`interface_id` のデフォルトは **[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).subtype に間接依存**。
 
 **YANG-実装 discrepancy**: `rfc6939_support` と同様、YANG の flat field `interface_id` ではなく `dhcpv6_option|interface_id` を daemon が読む（cpp:172）。YANG 経由の設定は **silent drop**。
 
@@ -278,7 +278,7 @@ show dhcprelay_helper ipv4
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる。`dhcpv6_servers` のみ書き込まれ、`rfc6939_support` / `interface_id` は省略される（minigraph.py:1071-1078）
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -788,7 +788,7 @@ res = subprocess.run(cmds, check=True)
 | DB | 理由 |
 |----|------|
 | [APPL_DB](../../reference/glossary.md#term-appl_db) | 書き込みなし（dhcp6relay・dhcprelayd ともに非使用） |
-| [ASIC_DB](../../reference/glossary.md#term-asic_db) / SAI | dhcrelay は L4 UDP relay。SAI/ASIC 非経由 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / SAI | dhcrelay は L4 UDP relay。SAI/[ASIC](../../reference/glossary.md#term-asic) 非経由 |
 | ERROR_TABLE (STATE_DB) | dhcp6relay は ERROR_TABLE を使用しない |
 
 > **Evidence**: `relay.cpp:18, 264-304, 1342-1401`（STATE_DB カウンタ書込）、`dhcprelayd.py:209-225`（supervisorctl）、`dhcprelayd.py:290-313`（dhcrelay subprocess）、`dhcprelayd.py:343-373`（プロセス終了）、`dhcprelayd.py:376-384`（STATE_DB 読み取り）、`start.sh:6-9`（[COUNTERS_DB](../../reference/glossary.md#term-counters_db) クリア）
@@ -831,7 +831,7 @@ DualToR 環境でのみ、クライアントパケット受信時に `STATE_DB::
 
 ### SAI 参照
 
-なし。`dhcp6relay` は Linux カーネルの L4 UDP relay であり SAI/ASIC に一切触れない。
+なし。`dhcp6relay` は Linux カーネルの L4 UDP relay であり SAI/[ASIC](../../reference/glossary.md#term-asic) に一切触れない。
 <!-- /cross-refs -->
 
 <!-- platform -->
@@ -876,7 +876,7 @@ DHCPv4 と DHCPv6 では relay の設定テーブル・プロセス・ランタ�
 | 比較項目 | DHCPv4 relay | DHCPv6 relay |
 |---------|-------------|-------------|
 | 設定テーブル | `VLAN.dhcp_servers`（旧）または `DHCP_SERVER_IPV4`（新） | `DHCP_RELAY` テーブル専用 |
-| プロセス | `dhcrelay`（ISC DHCP）または `dhcp4relay`（SONiC 独自） | `dhcp6relay`（SONiC 独自）|
+| プロセス | `dhcrelay`（ISC DHCP）または `dhcp4relay`（[SONiC](../../reference/glossary.md#term-sonic) 独自） | `dhcp6relay`（[SONiC](../../reference/glossary.md#term-sonic) 独自）|
 | 切替フラグ | `DEVICE_METADATA.localhost.has_sonic_dhcpv4_relay == "True"` で新旧切替 | 切替なし |
 | ランタイム変更 | `dhcprelayd` が kill + 再起動で反映 | dead consumer — コンテナ再起動が必要 |
 | deployment_id 分岐 | `deployment_id == "8"` 時に `-si` オプション追加 | deployment_id 依存なし |
@@ -895,4 +895,4 @@ DHCPv4 と DHCPv6 では relay の設定テーブル・プロセス・ランタ�
 | IPv4 vs IPv6 | relay プロセス・テーブル・ランタイム変更可否が異なる | プロトコル種別 | `dhcpv4-relay.agents.j2`, `dhcpv6-relay.agents.j2` |
 <!-- /platform -->
 
-<!-- glossary-links-injected: 459cbe4aca50 -->
+<!-- glossary-links-injected: b59835b223a2 -->

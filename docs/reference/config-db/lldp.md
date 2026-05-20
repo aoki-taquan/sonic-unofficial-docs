@@ -144,7 +144,7 @@ grouping `lldp_mode_config` を `uses`:
 | 失敗条件 | 検出箇所 | 結果 | [STATE_DB](../../reference/glossary.md#term-state_db) 記録 | evidence |
 |---------|---------|------|--------------|---------|
 | `hostname` が空文字 / None | `update_hostname()` | WARNING ログ → `return`（lldpcli 未発行） | なし | `lldpmgrd:84-87` |
-| `lldpcli configure system hostname` 失敗 | `update_hostname()` | WARNING ログ → `self.hostname` 未更新。次回 DEVICE_METADATA イベントまで再試行なし | なし | `lldpmgrd:90-96` |
+| `lldpcli configure system hostname` 失敗 | `update_hostname()` | WARNING ログ → `self.hostname` 未更新。次回 [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) イベントまで再試行なし | なし | `lldpmgrd:90-96` |
 | `lldpcli configure system ip management pattern` 失敗 | `update_mgmt_addr()` | WARNING ログ → `self.mgmt_ip` 未更新。次回 MGMT_INTERFACE イベントまで再試行なし | なし | `lldpmgrd:109-114` |
 | ポートが `netdev_oper_status != up` | `process_pending_cmds()` | INFO ログ → コマンドをキューに残し 10 秒後に再チェック | なし | `lldpmgrd:176-179` |
 | `lldpcli configure ports <ifname>` 失敗（retry 中） | `process_pending_cmds()` | INFO ログ → `failed_count++`、6 秒後に再試行（最大 5 回） | なし | `lldpmgrd:197-200` |
@@ -158,7 +158,7 @@ grouping `lldp_mode_config` を `uses`:
 
 | 失敗種別 | retry | 上限 | 間隔 | recovery 条件 |
 |---------|-------|------|------|--------------|
-| hostname lldpcli 失敗 | なし | — | — | 次回 DEVICE_METADATA 変化 |
+| hostname lldpcli 失敗 | なし | — | — | 次回 [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 変化 |
 | mgmt IP lldpcli 失敗 | なし | — | — | 次回 MGMT_INTERFACE 変化 |
 | portidsubtype lldpcli 失敗 | あり | 5 回 | 6 秒 | 5 回超過で silent drop |
 | ポート down 待機 | 自動 | なし | 10 秒ループ | ポート up 検知 |
@@ -462,7 +462,7 @@ SONiC Software Version: SONiC.<build_version> - HwSku: <hwsku> - Distribution: D
 
 ### lldpd 組み込みデフォルト
 
-CONFIG_DB から制御できないが、SONiC の YANG `default` 文と偶然一致する lldpd 内部値。
+CONFIG_DB から制御できないが、[SONiC](../../reference/glossary.md#term-sonic) の YANG `default` 文と偶然一致する lldpd 内部値。
 
 | 設定 | 値 | 備考 |
 |-----|-----|------|
@@ -551,7 +551,7 @@ sel.addSelectable(sst_device_confdb)
 
 | メカニズム | 使用有無 | 備考 |
 |-----------|---------|------|
-| `swsscommon.SubscriberStateTable` | 使用（3 テーブル） | APPL_DB PORT, CONFIG_DB DEVICE_METADATA, MGMT_INTERFACE |
+| `swsscommon.SubscriberStateTable` | 使用（3 テーブル） | APPL_DB PORT, CONFIG_DB [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata), MGMT_INTERFACE |
 | [Redis](../../reference/glossary.md#term-redis) native keyspace notification (`psubscribe __keyspace@*__:*`) | 不使用 | lldpmgrd は swsscommon ラッパー経由のみ |
 | `LLDP` keyspace 購読 | なし | 設計上未購読。書き込んでも lldpd に反映されない |
 | `LLDP_PORT` keyspace 購読 | なし | 同上 |
@@ -566,11 +566,11 @@ sel.addSelectable(sst_device_confdb)
 
 ### ASIC 種別による影響
 
-LLDP は [SAI](../../reference/glossary.md#term-sai) 非経由（`lldpd` ユーザー空間デーモン）で動作するため、ASIC 種別（Broadcom / Mellanox / Marvell / Innovium 等）は **影響なし**。`sai.profile` や [SAI](../../reference/glossary.md#term-sai) capability query を参照するコードパスは存在しない。
+LLDP は [SAI](../../reference/glossary.md#term-sai) 非経由（`lldpd` ユーザー空間デーモン）で動作するため、[ASIC](../../reference/glossary.md#term-asic) 種別（Broadcom / Mellanox / Marvell / Innovium 等）は **影響なし**。`sai.profile` や [SAI](../../reference/glossary.md#term-sai) capability query を参照するコードパスは存在しない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | LLDP は SAI 非経由。`lldpmgrd` / `lldpd` は ASIC を直接操作しない |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | LLDP は SAI 非経由。`lldpmgrd` / `lldpd` は [ASIC](../../reference/glossary.md#term-asic) を直接操作しない |
 | multi-asic (namespace あり) | **挙動差あり** | `supervisord.conf.j2` / `lldpd.conf.j2` に `namespace_id` 分岐が存在（下記参照） |
 | [VOQ](../../reference/glossary.md#term-voq) chassis | 部分的差異あり | `DEVICE_METADATA.chassis_hostname` 優先解決（下記参照） |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) | 調査対象外 | community master に [SmartSwitch](../../reference/glossary.md#term-smartswitch) 固有 LLDP 分岐なし |
@@ -611,4 +611,4 @@ hostname = device_dict.get("chassis_hostname") or device_dict.get("hostname")
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: bd944efa7000 -->
+<!-- glossary-links-injected: cf7cac6ac04d -->

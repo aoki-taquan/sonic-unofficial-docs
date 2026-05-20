@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-SONiC の Event and Alarm Framework は `eventd` デーモンが中心となり、ZeroMQ (ZMQ) メッセージバスを介して全コンテナ・プロセスからのイベントを収集・配信する[^1]。`eventd` は起動時に `/etc/sonic/init_cfg.json` の `"events"` キーを読み込み、ZMQ エンドポイントアドレス・キャッシュ上限・統計更新間隔を取得する。
+[SONiC](../../reference/glossary.md#term-sonic) の Event and Alarm Framework は `eventd` デーモンが中心となり、ZeroMQ (ZMQ) メッセージバスを介して全コンテナ・プロセスからのイベントを収集・配信する[^1]。`eventd` は起動時に `/etc/sonic/init_cfg.json` の `"events"` キーを読み込み、ZMQ エンドポイントアドレス・キャッシュ上限・統計更新間隔を取得する。
 
 これらのパラメータは従来の [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルではなく、ファイルベース設定として管理される点が他テーブルと異なる。
 
@@ -137,7 +137,7 @@ flowchart LR
 
 ### 主要な制約詳細
 
-**`init_cfg.json` の先行書き込み (依存 #1)**: `eventd` が起動すると `run_eventd_service()` の最初の `get_config_data()` 呼び出しで `cfg_data` が確定し、以後変更できない。`docker restart eventd` でのみ再読み込みされる。SONiC の `config reload` は `init_cfg.json` の再書き込みを含まないため、手動で `init_cfg.json` を編集した後は `systemctl restart eventd` が必要。
+**`init_cfg.json` の先行書き込み (依存 #1)**: `eventd` が起動すると `run_eventd_service()` の最初の `get_config_data()` 呼び出しで `cfg_data` が確定し、以後変更できない。`docker restart eventd` でのみ再読み込みされる。[SONiC](../../reference/glossary.md#term-sonic) の `config reload` は `init_cfg.json` の再書き込みを含まないため、手動で `init_cfg.json` を編集した後は `systemctl restart eventd` が必要。
 
 **ZMQ メッセージ消失リスク (依存 #2)**: `zmq_connect()` は ZMQ 設計上 lazy であり、eventd bind 完了前でも呼び出し自体はエラーにならない。しかし `eventd_proxy` が XSUB にバインドされるまでに publish されたメッセージは ZMQ の内部キューに保持されず消失する。`docker-eventd` は他コンテナより先に起動するよう systemd の After= 依存関係で制御される。
 
@@ -395,11 +395,11 @@ systemctl restart eventd
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: `eventd` は ZMQ ブローカーおよびファイルベース設定 (`init_cfg.json`) のみで動作し、[SAI](../../reference/glossary.md#term-sai) / ASIC ベンダー依存コードを一切持たない。
+**プラットフォーム差なし**: `eventd` は ZMQ ブローカーおよびファイルベース設定 (`init_cfg.json`) のみで動作し、[SAI](../../reference/glossary.md#term-sai) / [ASIC](../../reference/glossary.md#term-asic) ベンダー依存コードを一切持たない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Cisco-8000 等) | 影響なし | `eventd.cpp` / `eventd.h` / `events_common.cpp` に `getenv("platform")` 参照・ASIC 種別分岐はゼロ。SAI API 呼び出しなし (`eventd.cpp` 全行確認) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Cisco-8000 等) | 影響なし | `eventd.cpp` / `eventd.h` / `events_common.cpp` に `getenv("platform")` 参照・[ASIC](../../reference/glossary.md#term-asic) 種別分岐はゼロ。SAI API 呼び出しなし (`eventd.cpp` 全行確認) |
 | multi-asic (`IS_MULTI_NPU`) | 影響なし | `eventd` は単一コンテナとして host network namespace で動作する。`asicN` namespace への個別接続・ループ処理なし。`IS_MULTI_NPU` / `gMySwitchType` 参照もなし |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各ノードで独立動作 | `eventd` は各ノードの `docker-eventd` コンテナとして独立起動する。ノード間でイベントを集約する仕組みは community master に存在しない |
 | VS (仮想スイッチ / sonic-vs) | 完全サポート (差異なし) | `eventd_ut.cpp` テストが VS 環境で動作する。ZMQ ポートアドレスは `init_cfg.json` で変更可能なため環境依存なし |
@@ -417,4 +417,4 @@ systemctl restart eventd
 
 [^3]: `sonic-net/sonic-buildimage/src/sonic-eventd/src/eventd.cpp` — `HEARTBEAT_INTERVAL_SECS`、`MAX_CACHE_SIZE`、`EVT_SIZE_AVG` 定数定義および `stats_collector` 実装. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-eventd/src/eventd.cpp>
 
-<!-- glossary-links-injected: dad1e1df7f04 -->
+<!-- glossary-links-injected: 77f342e1a22c -->

@@ -519,7 +519,7 @@ selectable = [
 
 ### 前提: SmartSwitch 専用テーブル
 
-`DPU_STATE` は [SmartSwitch](../../reference/glossary.md#term-smartswitch) プラットフォーム上の DPU 側 `chassisd` (`DpuChassisdDaemon`) が書き込む CHASSIS_STATE_DB テーブルであり、通常の SONiC スイッチ (非 SmartSwitch) ではこのテーブル自体が存在しない。
+`DPU_STATE` は [SmartSwitch](../../reference/glossary.md#term-smartswitch) プラットフォーム上の DPU 側 `chassisd` (`DpuChassisdDaemon`) が書き込む CHASSIS_STATE_DB テーブルであり、通常の [SONiC](../../reference/glossary.md#term-sonic) スイッチ (非 SmartSwitch) ではこのテーブル自体が存在しない。
 
 ```python
 # chassisd:1574-1579
@@ -558,7 +558,7 @@ else:
 |------|-------------------|------|
 | SmartSwitch DPU | あり (`DpuChassisdDaemon`) | 本テーブルの対象 |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor / line card) | なし | `CHASSIS_MODULE` テーブルと `CHASSIS_STATE_DB LINE_CARD` エントリを使用 |
-| multi-asic (複数 ASIC 単体スイッチ) | なし | SmartSwitch DPU とは別アーキテクチャ |
+| multi-asic (複数 [ASIC](../../reference/glossary.md#term-asic) 単体スイッチ) | なし | SmartSwitch DPU とは別アーキテクチャ |
 | 通常スイッチ | なし | `chassis.is_smartswitch()` が `False` のため `ChassisdDaemon` が起動 |
 
 ### SmartSwitch 固有の platform 設定
@@ -589,4 +589,4 @@ else:
 
 [^1]: `chassisd` ソース: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` — `SmartSwitchModuleUpdater.update_dpu_state` (line 864-891)、`DpuStateUpdater` クラス (line 1234-1320)、`set_initial_dpu_admin_state` (line 1364-1405)、定数定義 (line 108-111)。`show dpu` CLI: `sonic-utilities/show/system_health.py:show_dpu_state` (line 172-222)。
 
-<!-- glossary-links-injected: e4bfe36988c3 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

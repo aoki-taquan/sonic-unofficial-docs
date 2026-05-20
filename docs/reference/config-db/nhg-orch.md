@@ -194,9 +194,9 @@ NHG 数が上限 (`getMaxNhgCount()`) に達した場合、1 メンバーをラ�
 
 ### 6. update() — 削除先行・追加後続（ASIC メンバー上限対策）
 
-NHG 更新時は ①`removeMembers()`（旧メンバー削除）→ ②`syncMembers()`（新メンバー追加）の順序が強制される。逆順では ASIC グループメンバー数上限に達して追加失敗する可能性がある[^1]。
+NHG 更新時は ①`removeMembers()`（旧メンバー削除）→ ②`syncMembers()`（新メンバー追加）の順序が強制される。逆順では [ASIC](../../reference/glossary.md#term-asic) グループメンバー数上限に達して追加失敗する可能性がある[^1]。
 
-> コード根拠: `nhgorch.cpp:988–1087`（コメント: "avoid cases where we reached the ASIC group members limit"）
+> コード根拠: `nhgorch.cpp:988–1087`（コメント: "avoid cases where we reached the [ASIC](../../reference/glossary.md#term-asic) group members limit"）
 
 ### 順序依存サマリ
 
@@ -206,7 +206,7 @@ NHG 更新時は ①`removeMembers()`（旧メンバー削除）→ ②`syncMemb
 | 2 | allPortsReady() → NhgOrch doTask() | 先行必須 | 初期化完了前は全エントリ無視 |
 | 3 | メンバー NHG sync → recursive NHG | 先行必須 | 未 sync メンバーは除外、部分適用 |
 | 4 | create_next_hop_group → create_next_hop_group_member | 強制先行（sync() 内） | SAI API 構造上保証 |
-| 5 | removeMembers → syncMembers（update 時） | 強制先行（ASIC 上限回避） | 削除で空きを確保してから追加 |
+| 5 | removeMembers → syncMembers（update 時） | 強制先行（[ASIC](../../reference/glossary.md#term-asic) 上限回避） | 削除で空きを確保してから追加 |
 
 <!-- /ordering -->
 
@@ -508,4 +508,4 @@ sonic-db-cli APPL_DB keys 'FC_TO_NHG_INDEX_MAP_TABLE:*'
 
 <!-- glossary-links-injected: nhg-orch -->
 
-<!-- glossary-links-injected: de911a3c2f37 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

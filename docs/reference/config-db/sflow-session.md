@@ -90,6 +90,9 @@ SFLOW_SESSION|all      # 全ポートへのグローバル既定
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^2] [^3]
+
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-sflow.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-sflow.yang>
 
 [^2]: sflowmgrd 実装: `sonic-swss/cfgmgr/sflowmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp>
@@ -195,7 +198,7 @@ PORT|<port>  SET  →  m_sflowPortConfMap 登録  →  SFLOW_SESSION|<port>  SET
 
 ### gPortsOrch（PortsOrch 初期化完了待ち）
 
-`sfloworch.cpp:370-373`: `gPortsOrch->allPortsReady()` が false の間は `APP_SFLOW_SESSION_TABLE` 処理全体をスキップする。PortsOrch が全ポート初期化を完了するまで SflowOrch の SESSION 処理は開始されない。起動直後の SESSION エントリは PortsOrch 完了後に処理される。
+`sfloworch.cpp:370-373`: `gPortsOrch->allPortsReady()` が false の間は `APP_SFLOW_SESSION_TABLE` 処理全体をスキップする。[PortsOrch](../../reference/glossary.md#term-portsorch) が全ポート初期化を完了するまで SflowOrch の SESSION 処理は開始されない。起動直後の SESSION エントリは [PortsOrch](../../reference/glossary.md#term-portsorch) 完了後に処理される。
 
 | 参照先 | 参照種別 | 条件 | コード箇所 |
 |--------|---------|------|-----------|
@@ -204,7 +207,7 @@ PORT|<port>  SET  →  m_sflowPortConfMap 登録  →  SFLOW_SESSION|<port>  SET
 | `SFLOW\|global` | 実効化前提（m_gEnable） | admin_state=up が APP_DB 書込みの必須前提 | `sflowmgr.cpp:531-534` |
 | `SFLOW_SESSION\|all` | 暗黙継承（方向・admin デフォルト） | per-port direction/admin 未指定時 | `sflowmgr.cpp:374-382` |
 | `APP_SFLOW_TABLE` | SflowOrch 段の前提依存 | m_sflowStatus=false の間 SESSION をスキップ | `sfloworch.cpp:388-392` |
-| `gPortsOrch` | PortsOrch 初期化完了待ち | allPortsReady()=false の間 SESSION 処理なし | `sfloworch.cpp:370-373` |
+| `gPortsOrch` | [PortsOrch](../../reference/glossary.md#term-portsorch) 初期化完了待ち | allPortsReady()=false の間 SESSION 処理なし | `sfloworch.cpp:370-373` |
 
 <!-- /cross-refs -->
 
@@ -496,7 +499,7 @@ SAI がエラーを返した場合は `handleSaiCreateStatus` / `handleSaiSetSta
 
 `sfloworch.cpp` 自体はベンダー文字列を参照しないが、SAI 実装ごとの典型的な対応状況:
 
-| ASIC / プラットフォーム | hardware sFlow | 備考 |
+| [ASIC](../../reference/glossary.md#term-asic) / プラットフォーム | hardware sFlow | 備考 |
 |---|---|---|
 | broadcom (Trident3 / Tomahawk) | あり | SAI samplepacket API 実装済み |
 | broadcom-dnx (Jericho / Qumran) | 機種依存 | DNX SAI で一部制限あり |
@@ -513,4 +516,4 @@ SAI がエラーを返した場合は `handleSaiCreateStatus` / `handleSaiSetSta
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 5d3ea6ea3a11 -->
+<!-- glossary-links-injected: 0c3f62ad4cac -->

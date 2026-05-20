@@ -176,8 +176,8 @@ show interfaces breakout
 
 | 失敗条件 | 結果 | evidence |
 |---|---|---|
-| `MAX_WAIT=60` 秒以内に削除ポートが ASIC DB から消えない | `LOG_CRIT "!!! Critical Failure, Ports are not Deleted from ASIC DB, Bail Out !!!"` → `Exception` 伝播 → `breakOutPort()` が `None, False` を返す | `config_mgmt.py:403-406` |
-| ASIC DB ポーリング例外 | CONFIG_DB は PORT 削除済みで新ポート未追加のまま停止。`BREAKOUT_CFG` は**旧値のまま**残る | `config_mgmt.py:462-464` |
+| `MAX_WAIT=60` 秒以内に削除ポートが [ASIC](../../reference/glossary.md#term-asic) DB から消えない | `LOG_CRIT "!!! Critical Failure, Ports are not Deleted from ASIC DB, Bail Out !!!"` → `Exception` 伝播 → `breakOutPort()` が `None, False` を返す | `config_mgmt.py:403-406` |
+| [ASIC](../../reference/glossary.md#term-asic) DB ポーリング例外 | CONFIG_DB は PORT 削除済みで新ポート未追加のまま停止。`BREAKOUT_CFG` は**旧値のまま**残る | `config_mgmt.py:462-464` |
 
 ### DPB 実行フェーズ: port 再作成失敗
 
@@ -191,7 +191,7 @@ show interfaces breakout
 
 - **retry なし**: DPB はいずれの失敗ステップでも自動 retry を行わない。全フェーズ単発実行。
 - **部分適用リスク**: `writeConfigDB(delConfigToLoad)` 後に `_verifyAsicDB()` タイムアウトが発生した場合、PORT テーブルは削除済みだが新ポートは未追加の状態となり `BREAKOUT_CFG` は旧値のまま残る。手動 `config reload` が必要。
-- **BREAKOUT_CFG 保護**: `breakOutPort()` 失敗時は `BREAKOUT_CFG.brkout_mode` を書き込まない設計（`config/main.py:5548` 以降）。ASIC 状態との乖離を防ぐ意図的なガード。
+- **BREAKOUT_CFG 保護**: `breakOutPort()` 失敗時は `BREAKOUT_CFG.brkout_mode` を書き込まない設計（`config/main.py:5548` 以降）。[ASIC](../../reference/glossary.md#term-asic) 状態との乖離を防ぐ意図的なガード。
 - **Yang モデルなしテーブル**: `breakout_warnUser_extraTables()` が失敗すると `raise Exception("Failed in breakout_warnUser_extraTables. Error: {}")` を送出し `sys.exit(1)` で終了。
 
 <!-- /failure -->
@@ -233,7 +233,7 @@ show interfaces breakout
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -287,7 +287,7 @@ show interfaces breakout
 
 ### Producer/Consumer ペア
 
-`BREAKOUT_CFG` テーブルを直接 Subscribe するランタイムデーモンは存在しない。CLI が CONFIG_DB[PORT] を変更することで、[portsyncd](../../reference/glossary.md#term-portsyncd) → PortsOrch → BufferOrch → [SAI](../../reference/glossary.md#term-sai) の間接連鎖が起動する。
+`BREAKOUT_CFG` テーブルを直接 Subscribe するランタイムデーモンは存在しない。CLI が CONFIG_DB[PORT] を変更することで、[portsyncd](../../reference/glossary.md#term-portsyncd) → [PortsOrch](../../reference/glossary.md#term-portsorch) → BufferOrch → [SAI](../../reference/glossary.md#term-sai) の間接連鎖が起動する。
 
 | 区間 | 方式 | チャンネル/パターン |
 |------|------|-------------------|
@@ -295,8 +295,8 @@ show interfaces breakout
 | CLI → CONFIG_DB[PORT] | `writeConfigDB()` → [Redis](../../reference/glossary.md#term-redis) `HSET` | — |
 | CONFIG_DB[PORT] → [portsyncd](../../reference/glossary.md#term-portsyncd) | 起動時一括読み取り (`getKeys`) | — |
 | [portsyncd](../../reference/glossary.md#term-portsyncd) → [APPL_DB](../../reference/glossary.md#term-appl_db)[PORT_TABLE] | `ProducerStateTable::set()` | [APPL_DB](../../reference/glossary.md#term-appl_db) channel |
-| [APPL_DB](../../reference/glossary.md#term-appl_db)[PORT_TABLE] → PortsOrch | `ConsumerStateTable` (keyspace 通知) | `__keyspace@appl_db__:PORT_TABLE\|*` |
-| PortsOrch → BufferOrch | 関数呼び出し `gBufferOrch->isPortReady()` | — |
+| [APPL_DB](../../reference/glossary.md#term-appl_db)[PORT_TABLE] → [PortsOrch](../../reference/glossary.md#term-portsorch) | `ConsumerStateTable` (keyspace 通知) | `__keyspace@appl_db__:PORT_TABLE\|*` |
+| [PortsOrch](../../reference/glossary.md#term-portsorch) → BufferOrch | 関数呼び出し `gBufferOrch->isPortReady()` | — |
 | PortsOrch → SAI | SAI API 直接呼び出し | `sai_port_api->create_port_bulk()` |
 
 ### CLI 起動経路（Producer ロール）
@@ -607,4 +607,4 @@ Arista は `[fallback_speed_list]` 構文、Celestica/Accton は `(num_lanes)` �
 - `sonic-swss/orchagent/portsorch.cpp` L4026–4032, L858–863: ASIC バリデーション・Mellanox 分岐
 <!-- /platform -->
 
-<!-- glossary-links-injected: 9f5aa9878193 -->
+<!-- glossary-links-injected: 56bcc3ff7b07 -->

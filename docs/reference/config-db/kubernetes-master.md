@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-SONiC ホストを Kubernetes worker としてマスターに参加させるための接続情報を保持するテーブル。SONiC の K8s 統合 (Smart Switch でも参照される [DPU](../../reference/glossary.md#term-dpu) 管理経路の一部) でコンテナ化された feature を K8s から起動するために使われる[^1]。
+[SONiC](../../reference/glossary.md#term-sonic) ホストを Kubernetes worker としてマスターに参加させるための接続情報を保持するテーブル。[SONiC](../../reference/glossary.md#term-sonic) の K8s 統合 (Smart Switch でも参照される [DPU](../../reference/glossary.md#term-dpu) 管理経路の一部) でコンテナ化された feature を K8s から起動するために使われる[^1]。
 
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
@@ -543,7 +543,7 @@ show kube server config
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -558,4 +558,4 @@ show kube server config
 - `kubemgrd` が Kubernetes 接続状態を CONFIG_DB と同期
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 2848bcf1df7c -->
+<!-- glossary-links-injected: 97063dcb81c4 -->

@@ -11,7 +11,7 @@ last_verified: 2026-05-13
 
 ## この章の趣旨
 
-機能 HLD ではなく、SONiC 全体の **内部基盤** を扱う。具体的には:
+機能 HLD ではなく、[SONiC](../reference/glossary.md#term-sonic) 全体の **内部基盤** を扱う。具体的には:
 
 - **Redis DB スキーマ・分割**: [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) / multi-namespace / 複数インスタンス分散
 - **SwSS / orchagent コア**: producer/consumer state table、ZMQ、view switching
@@ -69,4 +69,4 @@ last_verified: 2026-05-13
 | [バイト/パケットレートとポート使用率（RATES テーブル + EMA）](byte-packet-rates-port-utilization-in-sonic.md) | Code-verified |
 | [複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）](support-multiple-user-defined-redis-database-instances.md) | Code-verified |
 
-<!-- glossary-links-injected: 1b6c3f32912c -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

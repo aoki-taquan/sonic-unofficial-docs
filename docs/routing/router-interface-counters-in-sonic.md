@@ -47,7 +47,7 @@ related:
 
 ## 概要
 
-SONiC のポート単位カウンタ（`portstat` 系）は L2 のフレーム数・バイト数・エラー数を返すが、L3 で観測される **ルータインタフェース ([RIF](../reference/glossary.md#term-rif))** 単位の入出力統計は別経路で取得する必要がある。RIF とは物理ポート上の Router Port、[VLAN](../reference/glossary.md#term-vlan) インタフェース、ポートチャネル上の L3 サブインタフェースなど、[SAI](../reference/glossary.md#term-sai) が `sai_router_interface` オブジェクトとして扱うものを指す。
+[SONiC](../reference/glossary.md#term-sonic) のポート単位カウンタ（`portstat` 系）は L2 のフレーム数・バイト数・エラー数を返すが、L3 で観測される **ルータインタフェース ([RIF](../reference/glossary.md#term-rif))** 単位の入出力統計は別経路で取得する必要がある。RIF とは物理ポート上の Router Port、[VLAN](../reference/glossary.md#term-vlan) インタフェース、ポートチャネル上の L3 サブインタフェースなど、[SAI](../reference/glossary.md#term-sai) が `sai_router_interface` オブジェクトとして扱うものを指す。
 
 本機能は SAI の `SAI_ROUTER_INTERFACE_STAT_*` カウンタを **flex counter で定期取得** し、`COUNTERS_DB` に集約したうえで、`show interfaces counters rif` CLI から RX/TX のパケット・バイト・エラーを表示できるようにするものである[^1]。
 
@@ -212,7 +212,7 @@ redis-cli -n 2 keys 'COUNTERS:oid:0x6*' | head
 ## 制限事項
 
 - counter は SAI の per-RIF counter を polling で取得しており、polling 間隔より短いバースト trafic は反映が遅れる。
-- ASIC が per-RIF counter を持たない platform では本機能は no-op となり、`show interfaces counters rif` が常に 0 になる。
+- [ASIC](../reference/glossary.md#term-asic) が per-RIF counter を持たない platform では本機能は no-op となり、`show interfaces counters rif` が常に 0 になる。
 - multi-asic chassis では namespace ごとに counter 表示が分かれるため、全 fabric を見たい場合は集約スクリプトが必要。
 
 ## 既知の問題
@@ -260,4 +260,4 @@ grep -i error /var/log/swss/sairedis.rec | tail -20
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 27ed3fd12050 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

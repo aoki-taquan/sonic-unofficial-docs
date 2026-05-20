@@ -162,7 +162,7 @@ ROUTE_MAP_SET テーブルには **購読デーモンが存在しない**。frrc
 | ROUTE_MAP_SET エントリ SET | gNMI / NETCONF 経由かつ ROUTE_MAP.call_route_map から参照中の name と重複 | YANG leafref 整合性違反として拒否 | sonic-db-cli 直接書き込みではバイパス |
 | ROUTE_MAP_SET エントリ DEL | gNMI / NETCONF 経由かつ ROUTE_MAP.call_route_map が参照中 | YANG leafref 参照先削除として拒否 | sonic-db-cli では拒否されず [Redis](../../reference/glossary.md#term-redis) から削除される |
 | ROUTE_MAP_SET エントリ SET | sonic-db-cli 直接書き込み | 常に成功（YANG 検証なし） | 購読デーモンがないため副作用なし |
-| 存在しない ROUTE_MAP_SET を参照する ROUTE_MAP の FRR 反映 | frrcfgd が call_route_map 値をそのまま vtysh に渡す | FRR が `% Unknown command` 等で拒否 → `LOG_ERR` + `continue` | frrcfgd の実行時チェックなし (`frrcfgd.py:1942`) |
+| 存在しない ROUTE_MAP_SET を参照する ROUTE_MAP の FRR 反映 | frrcfgd が call_route_map 値をそのまま [vtysh](../../reference/glossary.md#term-vtysh) に渡す | FRR が `% Unknown command` 等で拒否 → `LOG_ERR` + `continue` | frrcfgd の実行時チェックなし (`frrcfgd.py:1942`) |
 
 ### ステータス書き戻しなし
 
@@ -258,15 +258,15 @@ CONFIG_DB hset 'ROUTE_MAP_SET|ALLOW' ''
 
 ### プラットフォーム非依存の設計
 
-`ROUTE_MAP_SET` は YANG leafref 整合性検証のための**純粋な名前レジストリ**であり、SAI API・ASIC Capability・プラットフォーム固有ビルドテンプレートのいずれにも依存しない。
+`ROUTE_MAP_SET` は YANG leafref 整合性検証のための**純粋な名前レジストリ**であり、SAI API・[ASIC](../../reference/glossary.md#term-asic) Capability・プラットフォーム固有ビルドテンプレートのいずれにも依存しない。
 
 | 観点 | 状況 |
 |------|------|
 | j2 テンプレートによるビルド時注入 | **なし**（`qos_config.j2` 等の全 j2 を grep しても `ROUTE_MAP_SET` 出現なし） |
 | SAI 呼び出し | **なし**（`orchagent/` 全体 grep で出現なし。FRR 側で完結） |
-| ASIC Capability チェック | **なし** |
+| [ASIC](../../reference/glossary.md#term-asic) Capability チェック | **なし** |
 | platform_config.json / device profile 注入 | **なし** |
-| multi-ASIC / [VOQ](../../reference/glossary.md#term-voq) chassis 分岐 | **なし** |
+| multi-[ASIC](../../reference/glossary.md#term-asic) / [VOQ](../../reference/glossary.md#term-voq) chassis 分岐 | **なし** |
 
 ### 結論
 
@@ -308,4 +308,4 @@ vtysh -c 'show route-map'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: d2191ccfe0bd -->
+<!-- glossary-links-injected: b86bd80f1174 -->

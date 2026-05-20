@@ -46,7 +46,7 @@ related:
 
 ## 読み手が知りたいこと
 
-1. SONiC で MACsec を有効化すると **どのコンポーネントが動く** のか？
+1. [SONiC](../reference/glossary.md#term-sonic) で [MACsec](../reference/glossary.md#term-macsec) を有効化すると **どのコンポーネントが動く** のか？
 2. **[CONFIG_DB](../reference/glossary.md#term-config_db) に何を入れれば** 暗号化が始まるのか？
 3. MKA（キー交換）は誰がやるのか？ なぜ **`wpa_supplicant` 拡張版** が必要なのか？
 4. **[PFC](../reference/glossary.md#term-pfc)** や **[ACL](../reference/glossary.md#term-acl)** との相互作用は？
@@ -72,7 +72,7 @@ flowchart LR
 - **wpa_supplicant（SONiC 拡張）**: MKA（Key Agreement）の peer を確立し、SAK（Secure Association Key）を生成
 - **SONiC plugin**: wpa_supplicant のイベント（SAK install/remove）を [APPL_DB](../reference/glossary.md#term-appl_db) に書く
 - **MACsec Orch**: APPL_DB を購読し [SAI](../reference/glossary.md#term-sai) MACsec API を呼ぶ
-- **ASIC（SAI MACsec）**: 実際の暗号化・復号
+- **[ASIC](../reference/glossary.md#term-asic)（SAI MACsec）**: 実際の暗号化・復号
 
 ## 2. 設定（CONFIG_DB と CLI）
 
@@ -210,4 +210,4 @@ MACsec を [LAG](../reference/glossary.md#term-lag) と組み合わせる場合�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 0d35a6e72048 -->
+<!-- glossary-links-injected: 21ed5be09831 -->

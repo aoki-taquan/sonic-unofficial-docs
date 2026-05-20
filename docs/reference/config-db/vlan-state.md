@@ -359,13 +359,13 @@ poll のタイミングは、各 consumer が自身の（CONFIG_DB 等の）イ�
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`STATE_DB VLAN_TABLE` の書込スキーマ・格納先・通信方式は**全プラットフォームで共通**。`vlanmgr.cpp` 全 1008 行を `platform`・`mellanox`・`broadcom`・`voq`・`getenv`・`SAI` で grep してもヒット 0 件。Linux kernel bridge 操作のみで SAI を呼ばない純 cfgmgr ロジックのため、ASIC ベンダー依存がない。
+`STATE_DB VLAN_TABLE` の書込スキーマ・格納先・通信方式は**全プラットフォームで共通**。`vlanmgr.cpp` 全 1008 行を `platform`・`mellanox`・`broadcom`・`voq`・`getenv`・`SAI` で grep してもヒット 0 件。Linux kernel bridge 操作のみで SAI を呼ばない純 cfgmgr ロジックのため、[ASIC](../../reference/glossary.md#term-asic) ベンダー依存がない。
 
 詳細調査ログ: `meta/_intermediate/cdb-flow/vlan-state-platform.md`
 
 ### 1. fabric ASIC カード — vlanmgrd 不起動
 
-[VOQ](../../reference/glossary.md#term-voq) chassis のファブリック ASIC カードでは `switch_type = "fabric"` となり、`supervisord.conf.j2` の Jinja2 テンプレートが vlanmgrd を起動しない:
+[VOQ](../../reference/glossary.md#term-voq) chassis のファブリック [ASIC](../../reference/glossary.md#term-asic) カードでは `switch_type = "fabric"` となり、`supervisord.conf.j2` の Jinja2 テンプレートが vlanmgrd を起動しない:
 
 ```jinja2
 {# supervisord.conf.j2:33-38 #}
@@ -378,7 +378,7 @@ poll のタイミングは、各 consumer が自身の（CONFIG_DB 等の）イ�
 [program:vlanmgrd]   {# fabric ASIC では block ごと除外 #}
 ```
 
-`switch_type = "fabric"` の ASIC では `STATE_DB VLAN_TABLE` へのエントリが**一切書かれない**。`switch_type = "voq"`（line card）や `switch_type = "switch"`（fixed T0/T1）では `is_fabric_asic=0` となり vlanmgrd は通常起動する（`supervisord.conf.j2:164-177`）。
+`switch_type = "fabric"` の [ASIC](../../reference/glossary.md#term-asic) では `STATE_DB VLAN_TABLE` へのエントリが**一切書かれない**。`switch_type = "voq"`（line card）や `switch_type = "switch"`（fixed T0/T1）では `is_fabric_asic=0` となり vlanmgrd は通常起動する（`supervisord.conf.j2:164-177`）。
 
 | switch_type | is_fabric_asic | vlanmgrd 起動 | VLAN_TABLE 書込 |
 |------------|--------------|-------------|---------------|
@@ -454,4 +454,4 @@ sonic-db-cli STATE_DB hgetall 'VLAN_TABLE|Vlan100'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 52272bfad047 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

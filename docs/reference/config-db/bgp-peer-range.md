@@ -146,8 +146,8 @@ vtysh -c 'show bgp listen range'
 
 | 条件 | 挙動 | ソース |
 |------|------|--------|
-| `deployment_id` が DEVICE_METADATA に未設定で `peer_asn` も未設定 | Jinja2 で `UndefinedError` / `KeyError` → `log_err` + `return True` (drop) | `dynamic/instance.conf.j2`, `managers_bgp.py` |
-| `ip_range` が空または未設定 | `bgp listen range <empty>` が vtysh に送られ [FRR](../../reference/glossary.md#term-frr) エラー | `dynamic/instance.conf.j2` |
+| `deployment_id` が [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) に未設定で `peer_asn` も未設定 | Jinja2 で `UndefinedError` / `KeyError` → `log_err` + `return True` (drop) | `dynamic/instance.conf.j2`, `managers_bgp.py` |
+| `ip_range` が空または未設定 | `bgp listen range <empty>` が [vtysh](../../reference/glossary.md#term-vtysh) に送られ [FRR](../../reference/glossary.md#term-frr) エラー | `dynamic/instance.conf.j2` |
 | `ip_range` 更新時の既存 range 取得失敗 | `LOG_ERR` して空リスト返却 → 全 range を新規追加として処理 | `managers_bgp.py` `get_existing_ip_ranges()` |
 | `src_address` 未設定 | Loopback1 の IPv4 アドレスで補完。Loopback1 が未設定の場合 Jinja2 エラー → drop | `dynamic/instance.conf.j2` |
 | [FRR](../../reference/glossary.md#term-frr) 10.1 以降: listen range 削除失敗後も peer-group 削除を続行 | range 削除の `log_err` 後、peer-group 削除を試みる → [FRR](../../reference/glossary.md#term-frr) 側エラーの可能性 | `managers_bgp.py` `del_handler()` |
@@ -165,7 +165,7 @@ vtysh -c 'show bgp listen range'
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由)
+なし (FRR [vtysh](../../reference/glossary.md#term-vtysh) 経由)
 
 ### 段階 3 — APPL→SAI
 
@@ -191,7 +191,7 @@ vtysh -c 'show bgp listen range'
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -261,7 +261,7 @@ vtysh -c 'show bgp listen range'
 
 ### 結論
 
-`BGP_PEER_RANGE` は peer_type="dynamic" の固定ロールであり、FRR 経路（[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) + dynamic テンプレート）は全 SONiC プラットフォームで同一動作をする。switch_type / sub_role による挙動変化はない。
+`BGP_PEER_RANGE` は peer_type="dynamic" の固定ロールであり、FRR 経路（[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) + dynamic テンプレート）は全 [SONiC](../../reference/glossary.md#term-sonic) プラットフォームで同一動作をする。switch_type / sub_role による挙動変化はない。
 <!-- /platform -->
 
 <!-- ordering -->
@@ -274,8 +274,8 @@ vtysh -c 'show bgp listen range'
 | 1 | `BGP_GLOBALS.<vrf>.local_asn` → `BGP_PEER_RANGE` | 先行必須（欠如時 silent drop） | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は deps ガードで再試行待ち、frrcfgd は `continue` でスキップ（リトライなし） |
 | 2 | `BGP_PEER_GROUP` → listen range 設定（frrcfgd 経路） | 自動 defer（逆順は後付け再適用） | `__apply_dep_vrf_table` で peer-group 作成後に自動再適用 |
 | 3 | `no bgp listen range` → peer-group 削除（FRR 10.1+） | 強制順序（bgpcfgd が自動処理） | 外部直接操作時は `no bgp listen range` を先に発行すること |
-| 4 | `DEVICE_METADATA.localhost.bgp_asn` → `BGP_PEER_RANGE` | 先行必須（deps guard） | 起動時は DEVICE_METADATA が先に読み込まれる前提 |
-| 5 | `ip_range` 差分計算の逐次性 | 推奨（並行変更は重複リスク） | SET を逐次発行し vtysh 反映を確認してから次変更を送ること |
+| 4 | `DEVICE_METADATA.localhost.bgp_asn` → `BGP_PEER_RANGE` | 先行必須（deps guard） | 起動時は [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) が先に読み込まれる前提 |
+| 5 | `ip_range` 差分計算の逐次性 | 推奨（並行変更は重複リスク） | SET を逐次発行し [vtysh](../../reference/glossary.md#term-vtysh) 反映を確認してから次変更を送ること |
 
 ### 詳細
 
@@ -527,4 +527,4 @@ CONFIG_DB: BGP_PEER_RANGE (Redis keyspace イベント)
 **二重管理構造**: `bgpcfgd` の `BGP_PEER_RANGE` 経路と `frrcfgd` の `BGP_GLOBALS_LISTEN_PREFIX` 経路は別テーブルを購読するが、FRR への `bgp listen range` コマンド生成という同等機能を持つ。実運用では `bgpcfgd` が主経路として機能する。
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: d35a50e01459 -->
+<!-- glossary-links-injected: 620e343c2ad7 -->

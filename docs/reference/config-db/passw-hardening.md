@@ -292,12 +292,12 @@ passwh_handler(key="POLICIES", op=SET, data={state:"enabled", ...})
 
 ### プラットフォーム差なし
 
-`hostcfgd` の `PasswHardening` クラスは Linux PAM 設定ファイル (`/etc/pam.d/common-password`) と `/etc/login.defs` を書き換えるのみであり、ASIC 種別・`switch_type`・multi-asic 構成・chassis 構成に一切依存しない。`hostcfgd` コード全体に `getenv("platform")`・`gMySwitchType`・`mellanox` 等のプラットフォーム条件分岐は存在せず、全プラットフォームで同一の挙動となる。
+`hostcfgd` の `PasswHardening` クラスは Linux PAM 設定ファイル (`/etc/pam.d/common-password`) と `/etc/login.defs` を書き換えるのみであり、[ASIC](../../reference/glossary.md#term-asic) 種別・`switch_type`・multi-asic 構成・chassis 構成に一切依存しない。`hostcfgd` コード全体に `getenv("platform")`・`gMySwitchType`・`mellanox` 等のプラットフォーム条件分岐は存在せず、全プラットフォームで同一の挙動となる。
 
 | 構成 | 挙動 |
 |------|------|
 | 標準スイッチ (T0/T1/T2) | 変更なし |
-| Mellanox / Broadcom / その他 ASIC | 変更なし (PAM/login.defs 操作は ASIC 非依存) |
+| Mellanox / Broadcom / その他 [ASIC](../../reference/glossary.md#term-asic) | 変更なし (PAM/login.defs 操作は [ASIC](../../reference/glossary.md#term-asic) 非依存) |
 | multi-asic | 変更なし (hostcfgd は各 namespace を持たず、ホスト OS の PAM のみ管理) |
 | [VOQ](../../reference/glossary.md#term-voq) chassis / [SmartSwitch](../../reference/glossary.md#term-smartswitch) | 変更なし |
 
@@ -444,4 +444,4 @@ show passw-hardening policies
 - なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: ce5cfc741166 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

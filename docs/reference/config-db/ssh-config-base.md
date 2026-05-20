@@ -117,7 +117,7 @@ YANG に `default` 宣言がない。DB に設定しない場合は sshd の組�
 
 | テーブル | 要否 | 理由 |
 |---------|------|------|
-| `DEVICE_METADATA\|localhost` | 任意（実質必須） | `PamLimitsCfg.update_config_file()` は `SSH_SERVER` と `DEVICE_METADATA` の両方が不在の場合に早期 return（`hostcfgd` L1430）。通常の SONiC デプロイでは常に存在 |
+| `DEVICE_METADATA\|localhost` | 任意（実質必須） | `PamLimitsCfg.update_config_file()` は `SSH_SERVER` と `DEVICE_METADATA` の両方が不在の場合に早期 return（`hostcfgd` L1430）。通常の [SONiC](../../reference/glossary.md#term-sonic) デプロイでは常に存在 |
 | その他 [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル | なし | `SshServer.set_policies()` は外部 OID 参照なし |
 
 ### 起動時シーケンス
@@ -180,7 +180,7 @@ hostcfgd 起動
 
 ### `DEVICE_METADATA|localhost` — PAM limits ガード
 
-`PamLimitsCfg.update_config_file()` は `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` の両方が不在の場合のみ early-return する（どちらか一方が存在すれば続行）。通常の SONiC デプロイでは `DEVICE_METADATA|localhost` は必ず存在する。
+`PamLimitsCfg.update_config_file()` は `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` の両方が不在の場合のみ early-return する（どちらか一方が存在すれば続行）。通常の [SONiC](../../reference/glossary.md#term-sonic) デプロイでは `DEVICE_METADATA|localhost` は必ず存在する。
 
 ```python
 # hostcfgd L1430
@@ -434,8 +434,8 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5"})
 
 | 構成 | SSH_SERVER テーブルの所在 | SSH 設定適用先 | 備考 |
 |------|--------------------------|---------------|------|
-| single-ASIC (T0/T1) | host CONFIG_DB のみ | `/etc/ssh/sshd_config`（host） | 標準構成 |
-| multi-ASIC (複数 [NPU](../../reference/glossary.md#term-npu)) | host CONFIG_DB のみ（asicN namespace には非存在） | 同上 | `is_multi_npu` は SSH 経路で未参照 |
+| single-[ASIC](../../reference/glossary.md#term-asic) (T0/T1) | host CONFIG_DB のみ | `/etc/ssh/sshd_config`（host） | 標準構成 |
+| multi-[ASIC](../../reference/glossary.md#term-asic) (複数 [NPU](../../reference/glossary.md#term-npu)) | host CONFIG_DB のみ（asicN namespace には非存在） | 同上 | `is_multi_npu` は SSH 経路で未参照 |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (line card) | 各 line card host の CONFIG_DB | 各 host の sshd_config | line card 独立管理 |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor) | supervisor host の CONFIG_DB | supervisor host の sshd_config | chassis 全体集中管理なし |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([NPU](../../reference/glossary.md#term-npu) 側) | host CONFIG_DB | host の sshd_config | [DPU](../../reference/glossary.md#term-dpu) 側に hostcfgd は別インスタンス |
@@ -446,7 +446,7 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5"})
 
 ### sshd バイナリはパッケージ提供（ベンダー非依存）
 
-`sshd` は `openssh-server` Debian パッケージが提供する標準バイナリ。`sonic-buildimage/files/image_config/` に SSH 固有のプラットフォーム別オーバーレイは存在しない（`find files/image_config -iname "*ssh*"` 0 ヒット）。community SONiC master 全機種で同一バイナリ・同一設定パスが使用される。
+`sshd` は `openssh-server` Debian パッケージが提供する標準バイナリ。`sonic-buildimage/files/image_config/` に SSH 固有のプラットフォーム別オーバーレイは存在しない（`find files/image_config -iname "*ssh*"` 0 ヒット）。community [SONiC](../../reference/glossary.md#term-sonic) master 全機種で同一バイナリ・同一設定パスが使用される。
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1161 (SshServer — platform 分岐なし) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1418-1490 (PamLimitsCfg — platform 分岐なし) -->
@@ -467,4 +467,4 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5"})
 
 [^1]: `src/sonic-yang-models/yang-models/sonic-ssh-server.yang` (container `SSH_SERVER` / container `POLICIES`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-ssh-server.yang>
 
-<!-- glossary-links-injected: 016d37f129b8 -->
+<!-- glossary-links-injected: d3bc8f725ce5 -->

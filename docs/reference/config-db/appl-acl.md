@@ -315,7 +315,7 @@ if (bHasTCPFlag && !bHasIPProtocol)
 |---|----------|------|--------|
 | 1 | `allPortsReady()` 完了 → 全 ACL テーブル処理開始 | 強制先行 | doTask 冒頭で return（m_toSync 保留、次回イテレーションで自動再試行） |
 | 2 | ACL_TABLE_TYPE_TABLE（カスタム type）SET → ACL_TABLE_TABLE SET | 強制先行（カスタム type 時のみ） | `it++` 周回再試行、無制限 |
-| 3 | PORT 作成（PortsOrch 登録）→ ACL_TABLE の PORTS バインド完了 | 部分調停（未バインドでも TABLE 自体は作成される） | PortsOrch observer → `AclTable::onUpdate()` で自動バインド |
+| 3 | PORT 作成（[PortsOrch](../../reference/glossary.md#term-portsorch) 登録）→ ACL_TABLE の PORTS バインド完了 | 部分調停（未バインドでも TABLE 自体は作成される） | [PortsOrch](../../reference/glossary.md#term-portsorch) observer → `AclTable::onUpdate()` で自動バインド |
 | 4 | bind 可能ポート型の事前確認 → PORTS 指定 | 破壊的制約（bind 不可ポート型は即廃棄・retry なし） | 正しいポート型のみ指定 |
 | 5 | ACL_TABLE_TABLE SAI 成功（`m_AclTables` 登録）→ ACL_RULE_TABLE 処理 | 強制先行 | `it++` 周回再試行、無制限 |
 | 6 | 同テーブル内ルール DEL 成功 → retry cache の `Pending creation` ルール再評価 | 操作依存（非自明） | `notifyRetry()` 自動再キュー |
@@ -328,7 +328,7 @@ if (bHasTCPFlag && !bHasIPProtocol)
 
 **ACL_TABLE_TYPE → ACL_TABLE 待機 (#2)**: `doAclTableTask()` L5432–5436 で `getAclTableType(tableTypeName)` が `nullptr` の場合（カスタム type 未登録）、`it++; continue;` で無制限再試行。組込み type（`L3`, `L3V6`, `MIRROR` 等）は起動時に `initAclTableTypes()` で登録済みのため待機不要。vnetorch が使う `VNET_TUNNEL_TERM_ACL_TABLE_TYPE` 等のカスタム type は ACL_TABLE_TYPE_TABLE への先行 SET が必要。
 
-**PORTS の部分解決は許容・自動バインド (#3)**: `processAclTablePorts()` L5786–5791 で PortsOrch 未登録のポートは `pendingPortSet` に追加して処理を続行する。PortsOrch が後からポートを作成すると `AclOrch::update()` → `AclTable::onUpdate()` L2882–2891 が `pendingPortSet` からポートを取り出して `bind()` する（observer pattern による自動調停）。一方、PortsOrch に登録済みでも `getAclBindPortId()` が false のポート（bind 不可な型）は `return false` → 即廃棄（evidence: L5795–5799）。
+**PORTS の部分解決は許容・自動バインド (#3)**: `processAclTablePorts()` L5786–5791 で [PortsOrch](../../reference/glossary.md#term-portsorch) 未登録のポートは `pendingPortSet` に追加して処理を続行する。PortsOrch が後からポートを作成すると `AclOrch::update()` → `AclTable::onUpdate()` L2882–2891 が `pendingPortSet` からポートを取り出して `bind()` する（observer pattern による自動調停）。一方、PortsOrch に登録済みでも `getAclBindPortId()` が false のポート（bind 不可な型）は `return false` → 即廃棄（evidence: L5795–5799）。
 
 **ACL_TABLE → ACL_RULE 親子順序 (#5)**: `doAclRuleTask()` L5548–5564 で `getTableById(table_id)` が `SAI_NULL_OBJECT_ID` を返す間（対応 ACL_TABLE が SAI 未登録）、`it++; continue;` で無制限待機。書き込み元プロセスが ACL_RULE_TABLE を先に投入しても自動待機で吸収される。
 
@@ -397,7 +397,7 @@ ACL_RULE 系のみ `RetryCache` が用意されており、`ConsumerBase::addToR
 | `PORTS` に未登録ポート | `processAclTablePorts()` L5786-5791 | `pendingPortSet.emplace()` スキップ継続 | 変化なし | `onPortReady()` で自動解消 |
 | `PORTS` に bind 不可ポート | `getAclBindPortId()` L5795-5799 | `return false` → `bAllAttributesOk=false` → erase | `"Inactive"` | なし |
 | ユーザ定義 `TYPE` 未登録（vnetorch の VNET_TUNNEL_TERM 等） | `getAclTableType()` L5432-5437 | `it++`（保留） | 変化なし | ACL_TABLE_TYPE_TABLE 登録まで無制限 |
-| `type=L3V4V6` + ASIC 非サポート | `AclTable::validate()` L2737-2745 | `validate()` false → erase | `"Inactive"` | なし |
+| `type=L3V4V6` + [ASIC](../../reference/glossary.md#term-asic) 非サポート | `AclTable::validate()` L2737-2745 | `validate()` false → erase | `"Inactive"` | なし |
 | action 非サポート（SAI capability 不足） | `AclTable::validate()` L2759-2766 | `validate()` false → erase | `"Inactive"` | なし |
 | `addAclTable()` SAI 失敗（MIRROR capability 欠如等） | `doAclTableTask()` L5474-5485 | `it++`（retry） | `"Pending creation"` | 無制限 |
 | `updateAclTable()` 失敗 | `doAclTableTask()` L5465-5470 | `it++`（retry） | 変化なし | 無制限 |
@@ -640,7 +640,7 @@ APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` は `A
 
 | capability | スコープ | APPL_DB での実発火 | 効果 | evidence |
 |---|---|---|---|---|
-| **ASIC action capability** (`isAclActionSupported`) | ASIC (SAI 動的照会) | vnetorch の `REDIRECT_ACTION` / dashenifwdorch の REDIRECT 系 | SAI が action 未実装の ASIC では `validateAddAction()` が false → rule INACTIVE | `aclorch.cpp:1681-1688, 3987-4042, 5237-5246` |
+| **[ASIC](../../reference/glossary.md#term-asic) action capability** (`isAclActionSupported`) | [ASIC](../../reference/glossary.md#term-asic) (SAI 動的照会) | vnetorch の `REDIRECT_ACTION` / dashenifwdorch の REDIRECT 系 | SAI が action 未実装の ASIC では `validateAddAction()` が false → rule INACTIVE | `aclorch.cpp:1681-1688, 3987-4042, 5237-5246` |
 | **ACL 優先度範囲** (`m_minPriority` / `m_maxPriority`) | ASIC (起動時 SAI 取得) | 全書込み元 | 範囲外の `PRIORITY` で `setPriority()` false → rule INACTIVE | `aclorch.cpp:3687-3699, 1654-1661` |
 | **[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 分岐** (`gMySwitchType == "dpu"`) | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 側 orchagent | dashenifwdorch ([DPU](../../reference/glossary.md#term-dpu) 側) のみ | DPU 側では priority 範囲取得と `queryAclActionCapability()` を **スキップ** → `m_minPriority = m_maxPriority = 0` のまま動作、action capability 未検証 | `aclorch.cpp:3686-3710` |
 | **multi-asic namespace** | 構成 | 全書込み元 (namespace 毎に独立 orchagent) | 各 ASIC の SAI capability / 優先度範囲が異なれば、同一 APPL_DB エントリでも namespace ごとに異なる挙動 | 構成上の派生 (`aclorch.cpp` 自体は namespace 非対応) |
@@ -669,7 +669,7 @@ CONFIG_DB 版で列挙される MIRROR V6 / `isCombinedMirrorV6Table` / `L3V4V6`
     INACTIVE になる ASIC とそうでない ASIC が混在し得る。確認は各 namespace の
     `sonic-db-cli -n asicN STATE_DB hgetall 'ACL_TABLE_TABLE|<name>'` で行う。
 
-詳細な platform 識別文字列 (`BRCM_PLATFORM_SUBSTRING` 等) / capability 表 / プラットフォーム別サマリは CONFIG_DB 版 [`ACL_RULE`](acl-rule.md#プラットフォーム差-phase-h) を参照。
+詳細な platform 識別文字列 (`BRCM_PLATFORM_SUBSTRING` 等) / capability 表 / プラットフォーム別サマリは CONFIG_DB 版 [`ACL_RULE`](acl-rule.md) を参照。
 
 > **証跡**: `AclOrch::init()` priority 範囲取得 `aclorch.cpp:3687-3699`、DPU 分岐 `aclorch.cpp:3686-3710`、`isAclActionSupported()` `aclorch.cpp:5237-5246`、`validateAddAction()` `aclorch.cpp:1681-1688`、`queryAclActionCapability()` `aclorch.cpp:3987-4042`、`setPriority()` 範囲チェック `aclorch.cpp:1654-1661`、書き込み元仕様 `vnetorch.cpp:3775-3837` / `mclaglink.cpp:325-373` / `dashenifwdorch.cpp:619-643`。詳細分析 `meta/_intermediate/cdb-flow/appl-acl-platform.md`
 <!-- /platform -->
@@ -992,4 +992,4 @@ APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` は 3 
 
 [^1]: テーブル名定数は `sonic-swss-common/common/schema.h` (sha `158de8d3`) L94-96 より。フィールド名は `sonic-swss/orchagent/acltable.h` (sha `43055961`) L12-20 より。書き込みロジックは `vnetorch.cpp` L3775-3837、`mclaglink.cpp` L325-373、`dashenifwdorch.cpp` L619-643、デフォルト挙動は `aclorch.h` L543、`aclorch.cpp` L905, 5413, 5633, 5823 より。
 
-<!-- glossary-links-injected: a6cc59cbe7fc -->
+<!-- glossary-links-injected: 4aeda46c88ba -->

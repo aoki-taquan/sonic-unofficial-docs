@@ -275,7 +275,7 @@ if (it.second.m_type != Port::Type::PHY) continue;
 
 ### SAI フィールド未サポート時の挙動
 
-ASIC が対応していない SAI カウンタは `portstat.py` の `get_counters()` で `STATUS_NA` ('N/A') として扱われ、表示に `N/A` が出る。WRED カウンタは `STATE_DB` の `PORT_COUNTER_CAPABILITIES` で対応確認後、未サポートなら `counter_bucket_dict` から除外される (portstat.py:297-329)。
+[ASIC](../../reference/glossary.md#term-asic) が対応していない SAI カウンタは `portstat.py` の `get_counters()` で `STATUS_NA` ('N/A') として扱われ、表示に `N/A` が出る。WRED カウンタは `STATE_DB` の `PORT_COUNTER_CAPABILITIES` で対応確認後、未サポートなら `counter_bucket_dict` から除外される (portstat.py:297-329)。
 
 ### gearbox (gb) ポートの別テーブル
 
@@ -421,7 +421,7 @@ Warm Start の場合、`FlexCounterOrch` ctor が `FLEX_COUNTER_DELAY_SEC = 60` 
 
 ### SAI カウンタ非サポート時の N/A 表示
 
-SAI が特定の counter stat を返せない場合（ASIC 実装なし等）、syncd は当該フィールドを
+SAI が特定の counter stat を返せない場合（[ASIC](../../reference/glossary.md#term-asic) 実装なし等）、syncd は当該フィールドを
 `COUNTERS:<oid>` に書き込まない。`portstat.py` はフィールドが取得できない場合 `STATUS_NA`
 ('N/A') を返す (portstat.py:297-329)。WRED drop counter は起動時に
 `STATE_DB:PORT_COUNTER_CAPABILITIES` を確認し、未サポートなら `counter_bucket_dict` から
@@ -429,7 +429,7 @@ SAI が特定の counter stat を返せない場合（ASIC 実装なし等）、
 
 | ケース | portstat 表示 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 状態 |
 |--------|-------------|-----------------|
-| ASIC サポートあり | 数値 | 値あり |
+| [ASIC](../../reference/glossary.md#term-asic) サポートあり | 数値 | 値あり |
 | ASIC 非サポート (WRED 等) | N/A | フィールド不在 or 0 |
 | counterpoll disable 後 | 前回値 (stale) | 最後の値が残留 |
 
@@ -696,4 +696,4 @@ Gearbox 有効時は `port_rates.lua` も `GB_COUNTERS_DB` に別途ロードさ
 [^4]: warm-start 遅延タイマー: `sonic-swss/orchagent/flexcounterorch.cpp:127-137`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L127>
 [^5]: プラットフォーム統計 capability 初期化: `sonic-swss/orchagent/portsorch.cpp:1842-1969`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L1842>
 
-<!-- glossary-links-injected: 95ce9454a2da -->
+<!-- glossary-links-injected: 8df9850464d2 -->

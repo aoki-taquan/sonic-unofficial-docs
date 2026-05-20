@@ -80,7 +80,7 @@ active-active は **両 ToR が常時トラフィックを処理する** 設計[
 | 帯域 | 1 リンク分 | 2 リンク分 |
 | Northbound | 両 ToR に複製 | NIC が分散 |
 | cable control | I2C (smart y-cable) | gRPC over DAC (ToR ⇔ SoC NIC) |
-| MuxOrch ingress drop | 必要 | 不要（NIC 側が制御） |
+| [MuxOrch](../reference/glossary.md#term-muxorch) ingress drop | 必要 | 不要（NIC 側が制御） |
 | state machine | y-cable 方向ベース | リンク健全性ベース（独立判断） |
 
 ```mermaid
@@ -306,4 +306,4 @@ redis-cli -n 4 hgetall 'MUX_CABLE|Ethernet0'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ca7c1453b3b7 -->
+<!-- glossary-links-injected: 0a1df176ebd3 -->

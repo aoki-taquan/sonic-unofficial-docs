@@ -72,7 +72,7 @@ QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
 | `hostname` (key) | `hostname` | ✅ | シャーシホスト名 |
-| `asic_name` (key) | `asic_name` | ✅ | ASIC 名 |
+| `asic_name` (key) | `asic_name` | ✅ | [ASIC](../../reference/glossary.md#term-asic) 名 |
 | `ifname` (key) | string (1..128) | ✅ | IF 名 |
 | `qindex` (key) | string | ✅ | Q-index |
 | `scheduler` | leafref `SCHEDULER.name` | - | スケジューラ |
@@ -144,7 +144,7 @@ show queue counters
 ### `scheduler` フィールド挙動
 | 状態 | 挙動 |
 |------|------|
-| 省略 | スケジューラなし。ASIC デフォルト動作。 |
+| 省略 | スケジューラなし。[ASIC](../../reference/glossary.md#term-asic) デフォルト動作。 |
 | 存在する SCHEDULER 名 | `qosorch` が SAI scheduler を queue に適用。 |
 | 存在しない SCHEDULER 名 | `task_need_retry`（後で再試行）。解決不可なら `task_failed`。 |
 
@@ -316,7 +316,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 | フィールド | 省略/未設定時の実装動作 | コードロケーション |
 |-----------|----------------------|------------------|
-| `scheduler` | SAI scheduler group に何も設定しない (no-op)。ASIC 実装依存のデフォルト動作。 | `qosorch.cpp` `handleQueueTable` `donotChangeScheduler=true` |
+| `scheduler` | SAI scheduler group に何も設定しない (no-op)。[ASIC](../../reference/glossary.md#term-asic) 実装依存のデフォルト動作。 | `qosorch.cpp` `handleQueueTable` `donotChangeScheduler=true` |
 | `wred_profile` | SAI `WRED_PROFILE_ID` 未設定。実質 tail-drop (WRED なし)。 | `qosorch.cpp` `donotChangeWredProfile=true` |
 | `scheduler` (後から削除) | `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` を NULL OID に更新しスケジューラ解除。 | `qosorch.cpp` SET 時フィールド消去パス |
 | `wred_profile` (後から削除) | `SAI_QUEUE_ATTR_WRED_PROFILE_ID` を NULL OID に更新し WRED 解除。 | `qosorch.cpp` SET 時フィールド消去パス |
@@ -515,13 +515,13 @@ qosorch.cpp:applySchedulerToQueueSchedulerGroup
 | 非 [VOQ](../../reference/glossary.md#term-voq) | `port.m_queue_ids` (egress queue リスト) |
 | [VOQ](../../reference/glossary.md#term-voq) | `getPortVoQIds()` → `SAI_SYSTEM_PORT_ATTR_QOS_VOQ_LIST` から取得した VoQ OID リスト |
 
-[VOQ](../../reference/glossary.md#term-voq) の VoQ 数はプラットフォームの [SAI](../../reference/glossary.md#term-sai) 実装が返す値に依存し、SONiC 側でハードコードしていない。
+[VOQ](../../reference/glossary.md#term-voq) の VoQ 数はプラットフォームの [SAI](../../reference/glossary.md#term-sai) 実装が返す値に依存し、[SONiC](../../reference/glossary.md#term-sonic) 側でハードコードしていない。
 
 ---
 
 ### vendor SAI — WRED 閾値更新の制約
 
-一部ベンダーの SAI 実装では、WRED の `min_threshold` / `max_threshold` を 1 属性ずつ SET する制約上、中間状態で `min > max` となりサニティチェックが失敗するケースがある。SONiC は「違反する属性を 2nd half リストに分離して適用順を制御する」ワークアラウンドを実装済み (`qosorch.cpp:595-632`)。
+一部ベンダーの SAI 実装では、WRED の `min_threshold` / `max_threshold` を 1 属性ずつ SET する制約上、中間状態で `min > max` となりサニティチェックが失敗するケースがある。[SONiC](../../reference/glossary.md#term-sonic) は「違反する属性を 2nd half リストに分離して適用順を制御する」ワークアラウンドを実装済み (`qosorch.cpp:595-632`)。
 
 ---
 
@@ -696,4 +696,4 @@ DPC ポートは q3/q4 も `"scheduler.0"` (lossless なし)。VOQ remote port �
 
 <!-- /constants -->
 
-<!-- glossary-links-injected: 6600c227ac02 -->
+<!-- glossary-links-injected: 77f342e1a22c -->

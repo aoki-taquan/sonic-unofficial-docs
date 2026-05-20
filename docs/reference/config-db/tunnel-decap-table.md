@@ -301,7 +301,7 @@ TUNNEL_DECAP_TABLE エントリを書き込む際に守るべき順序制約を�
 
 | 依存テーブル | 理由 | 緩和策 | evidence |
 |---|---|---|---|
-| PortsOrch 初期化完了 (`allPortsReady()`) | `doTask()` が false の間即 return — TUNNEL_DECAP_TABLE / DECAP_TERM_TABLE ともにキュー待機 | なし（自動待機） | `tunneldecaporch.cpp:L55-57` |
+| [PortsOrch](../../reference/glossary.md#term-portsorch) 初期化完了 (`allPortsReady()`) | `doTask()` が false の間即 return — TUNNEL_DECAP_TABLE / DECAP_TERM_TABLE ともにキュー待機 | なし（自動待機） | `tunneldecaporch.cpp:L55-57` |
 | `CONFIG_DB TUNNEL` SET 済み | `tunnelmgrd` が TUNNEL を受け取って初めて [APPL_DB](../../reference/glossary.md#term-appl_db) へ投影。APPL_DB エントリは自動生成 | なし | `tunnelmgr.cpp:L263-293` |
 | `LOOPBACK_INTERFACE\|Loopback3` IP 設定 | [tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) がトンネル IF への IP 付与に Loopback3 の IP を参照。未設定時は IP 付与スキップ | Loopback3 後付けで遅延付与される | `tunnelmgr.cpp:L337-348` |
 
@@ -424,7 +424,7 @@ YANG leafref は存在せず、すべて実装コードのみに現れる暗黙�
 | `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2P` | SAI enum | `tunneldecaporch.cpp` L928 | `term_type == P2P` のとき `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_TYPE` に設定 |
 | `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP` | SAI enum | `tunneldecaporch.cpp` L932 | `term_type == P2MP` のとき同属性に設定（省略時のデフォルト） |
 | `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_MP2MP` | SAI enum | `tunneldecaporch.cpp` L936 | `term_type == MP2MP` のとき同属性に設定（subnet decap 必須） |
-| `MUX_TUNNEL` | `"MuxTunnel0"` | `tunneldecaporch.h` L21 | [MuxOrch](../../reference/glossary.md#term-muxorch) が固定参照する Dual-ToR トンネル名。キーが異なると MuxOrch はトンネルを見つけられずエラー |
+| `MUX_TUNNEL` | `"MuxTunnel0"` | `tunneldecaporch.h` L21 | [MuxOrch](../../reference/glossary.md#term-muxorch) が固定参照する Dual-ToR トンネル名。キーが異なると [MuxOrch](../../reference/glossary.md#term-muxorch) はトンネルを見つけられずエラー |
 | `SubnetDecapConfig.tunnel` | `"IPINIP_SUBNET"` | `tunneldecaporch.h` L101 | サブネット decap 用 IPv4 トンネル内部識別子 |
 | `SubnetDecapConfig.tunnel_v6` | `"IPINIP_SUBNET_V6"` | `tunneldecaporch.h` L102 | サブネット decap 用 IPv6 トンネル内部識別子 |
 
@@ -529,7 +529,7 @@ void TunnelDecapOrch::doTask(Consumer &consumer)
 }
 ```
 
-`gPortsOrch->allPortsReady()` が `false` の間は全トンネルタスクをスキップ。PortsOrch が ready 状態になると orchagent のメインループが次の select サイクルで `doTask()` を再呼び出しし、スタックしていたエントリを処理する（受動的待機パターン）。
+`gPortsOrch->allPortsReady()` が `false` の間は全トンネルタスクをスキップ。[PortsOrch](../../reference/glossary.md#term-portsorch) が ready 状態になると orchagent のメインループが次の select サイクルで `doTask()` を再呼び出しし、スタックしていたエントリを処理する（受動的待機パターン）。
 
 ### SAI tunnel_api 呼び出し（出力方向）
 
@@ -580,4 +580,4 @@ SAI `create_tunnel()` / `create_tunnel_term_table_entry()` 成功後、`stateTun
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: da83a21dfcb6 -->
+<!-- glossary-links-injected: d7b61461af7b -->

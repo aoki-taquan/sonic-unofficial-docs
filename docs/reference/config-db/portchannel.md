@@ -205,7 +205,7 @@ teamdctl PortChannel0001 state
 
 ### 段階 1: Consumer 登録
 
-- **[orchagent](../../reference/glossary.md#term-orchagent) / PortsOrch**: `PORTCHANNEL` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / [PortsOrch](../../reference/glossary.md#term-portsorch)**: `PORTCHANNEL` テーブルを `SubscriberStateTable` で購読。
 - **teammgrd**: `PORTCHANNEL` テーブルを購読して `teamd` プロセスを管理。
 
 ### 段階 2: CFG → APPL 翻訳
@@ -214,7 +214,7 @@ teamdctl PortChannel0001 state
 
 ### 段階 3: APPL → SAI
 
-- PortsOrch が APP_DB `LAG_TABLE` を読み `sai_lag_api->create_lag()` で SAI LAG オブジェクトを作成。
+- [PortsOrch](../../reference/glossary.md#term-portsorch) が APP_DB `LAG_TABLE` を読み `sai_lag_api->create_lag()` で SAI LAG オブジェクトを作成。
 - min_links / LACP タイマ設定を SAI 属性に反映。
 
 ### 段階 4: タイミング + 副作用
@@ -392,7 +392,7 @@ YANG スキーマに `default` 文が存在しないフィールドでも、cons
 | 書込み先 | 用途 |
 |---|---|
 | `STATE_LAG_TABLE` ([STATE_DB](../../reference/glossary.md#term-state_db)) | teammgrd が LAG up/down 状態を書込み。`show interfaces portchannel` が参照 |
-| `STATE_MACSEC_INGRESS_SA_TABLE` (STATE_DB) | `macsec` フィールドが設定されている場合に MACsec SA と連動 (`teammgr.cpp:116-117`) |
+| `STATE_MACSEC_INGRESS_SA_TABLE` (STATE_DB) | `macsec` フィールドが設定されている場合に [MACsec](../../reference/glossary.md#term-macsec) SA と連動 (`teammgr.cpp:116-117`) |
 
 !!! warning "YANG 未定義制約"
     ACL_TABLE バインドチェック・PBH バインドチェック・VLAN_MEMBER ガードはいずれも CLI アドホックバリデーションであり、YANG スキーマには `must` / `leafref` 制約が存在しない (`# TODO: MISSING CONSTRAINT IN YANG MODEL`)。NETCONF/gNMI 経由で直接書き込む場合はこれらのガードが効かない。
@@ -590,9 +590,9 @@ TeamMgr::isLagStateOk() = true → addLagMember() 可能
 
 | 待機条件 | コード箇所 | 解消トリガー |
 |---|---|---|
-| ポートの `STATE_DB` 状態が未準備 (`isPortStateOk()` false) | `teammgr.cpp:357` | PortsOrch が STATE_DB `PORT_TABLE` にエントリ書き込み |
+| ポートの `STATE_DB` 状態が未準備 (`isPortStateOk()` false) | `teammgr.cpp:357` | [PortsOrch](../../reference/glossary.md#term-portsorch) が STATE_DB `PORT_TABLE` にエントリ書き込み |
 | LAG の `STATE_DB` 状態が未準備 (`isLagStateOk()` false) | `teammgr.cpp:357` | LagOrch が STATE_DB にエントリ書き込み |
-| MACsec 付きポートで Ingress SA 未確立 | `teammgr.cpp:362-365` | MACsec ハンドシェイク完了・SA 確立 |
+| [MACsec](../../reference/glossary.md#term-macsec) 付きポートで Ingress SA 未確立 | `teammgr.cpp:362-365` | [MACsec](../../reference/glossary.md#term-macsec) ハンドシェイク完了・SA 確立 |
 
 ### doPortUpdateTask() — ポート再作成後の自動リカバリ
 
@@ -622,7 +622,7 @@ TeamMgr::isLagStateOk() = true → addLagMember() 可能
 | 失敗箇所 | 条件 | ログ | リカバリ |
 |---|---|---|---|
 | LAG ID 払い出し失敗 | VoQ 環境で `LagIdAllocator` がユニーク ID を払い出せない | `SWSS_LOG_ERROR "Failed to allocate unique LAG id for local lag %s rv:%d"` | LAG ID 枯渇。VoQ シャーシ構成を見直し |
-| SAI `create_lag()` 失敗 | ASIC/SAI が LAG オブジェクト作成を拒否 | `SWSS_LOG_ERROR "Failed to create LAG %s lid:"` | ASIC リソース枯渇またはファームウェア不整合。ASIC リセットまたはシステム再起動が必要 |
+| SAI `create_lag()` 失敗 | [ASIC](../../reference/glossary.md#term-asic)/SAI が LAG オブジェクト作成を拒否 | `SWSS_LOG_ERROR "Failed to create LAG %s lid:"` | [ASIC](../../reference/glossary.md#term-asic) リソース枯渇またはファームウェア不整合。[ASIC](../../reference/glossary.md#term-asic) リセットまたはシステム再起動が必要 |
 
 > **注意**: SAI LAG 作成失敗時はエントリが `m_syncdApplNotifications` に残り `orchagent` が再処理を試みない。手動で `config portchannel del` → `config portchannel add` による再投入が必要。
 
@@ -770,7 +770,7 @@ LAG メンバの enabled/disabled 状態を切り替えるとき、orchagent は
 
 ### VoQ スイッチ — `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` 追加属性
 
-通常スイッチでは `create_lag()` を 0 属性で呼び出すが、VoQ スイッチ (`gMySwitchType == "voq"`) では `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` を追加する (portsorch.cpp:7962-7991)。Multi-ASIC VoQ 構成では CHASSIS_APP_DB の `LagIdAllocator` でシャーシ全体でユニークな LAG ID を払い出し、LAG 名も `<hostname>|<asic>|PortChannelXXXX` 形式に変換する。これにより通常スイッチと VoQ スイッチで `create_lag()` の属性セットが異なる[^plat1]。
+通常スイッチでは `create_lag()` を 0 属性で呼び出すが、VoQ スイッチ (`gMySwitchType == "voq"`) では `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` を追加する (portsorch.cpp:7962-7991)。[Multi-ASIC](../../reference/glossary.md#term-multi-asic) VoQ 構成では CHASSIS_APP_DB の `LagIdAllocator` でシャーシ全体でユニークな LAG ID を払い出し、LAG 名も `<hostname>|<asic>|PortChannelXXXX` 形式に変換する。これにより通常スイッチと VoQ スイッチで `create_lag()` の属性セットが異なる[^plat1]。
 
 ### `SAI_LAG_ATTR_TPID` — ASIC 対応依存
 
@@ -789,4 +789,4 @@ orchagent は `platform` 環境変数の部分文字列でベンダーを識別�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: d39c1d9927a5 -->
+<!-- glossary-links-injected: a56ace311354 -->

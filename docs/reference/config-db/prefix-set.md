@@ -73,7 +73,7 @@ PREFIX_SET|<name>
 ## 購読者
 
 - `frr-mgmt-framework`: ルーティングポリシ管理（`DEVICE_METADATA.frr_mgmt_framework_config = true` 環境）
-- 一部 [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common transformer がここから [FRR](../../reference/glossary.md#term-frr) vtysh コマンドへ変換
+- 一部 [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common transformer がここから [FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) コマンドへ変換
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -208,7 +208,7 @@ YANG モードで投入する経路（sonic-yang-mgmt / [sonic-cfggen](../../ref
 
 ### 段階 2: CFG → APPL 翻訳
 
-- [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が FRR の prefix-list 設定を生成して vtysh 経由で反映。
+- [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が FRR の prefix-list 設定を生成して [vtysh](../../reference/glossary.md#term-vtysh) 経由で反映。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI
@@ -343,7 +343,7 @@ LOG_ERR: 'no mode given for prefix-set <name>'
 LOG_ERR: 'could not find prefix-set <name> from cache'
 ```
 
-vtysh コマンド未発行。PREFIX エントリは CONFIG_DB に残るが FRR には反映されない。
+[vtysh](../../reference/glossary.md#term-vtysh) コマンド未発行。PREFIX エントリは CONFIG_DB に残るが FRR には反映されない。
 
 ### 4. PREFIX メンバ vtysh DEL 失敗 → LOG_ERR + キャッシュ不整合
 
@@ -543,11 +543,11 @@ CONFIG_DB PREFIX_SET / PREFIX
 > 調査対象: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`, `templates/bgpd/bgpd.conf.db.pref_list.j2`, `sonic-device_metadata.yang`
 > 調査日: 2026-05-19
 
-**プラットフォーム固有差異なし**: PREFIX_SET は FRR (`bgpd` / `zebra`) 制御プレーン上の prefix-list であり [SAI](../../reference/glossary.md#term-sai) 非経由。ASIC 種別（Broadcom / Mellanox / Marvell / Innovium / VPP）・[VOQ](../../reference/glossary.md#term-voq) chassis / chassis-packet・multi-asic namespace・ベンダー image_config のいずれにも分岐コードは存在しない。
+**プラットフォーム固有差異なし**: PREFIX_SET は FRR (`bgpd` / `zebra`) 制御プレーン上の prefix-list であり [SAI](../../reference/glossary.md#term-sai) 非経由。[ASIC](../../reference/glossary.md#term-asic) 種別（Broadcom / Mellanox / Marvell / Innovium / VPP）・[VOQ](../../reference/glossary.md#term-voq) chassis / chassis-packet・multi-asic namespace・ベンダー image_config のいずれにも分岐コードは存在しない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 | 影響なし | [SAI](../../reference/glossary.md#term-sai) 非経由 (FRR 内部 prefix-list)。[orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) 経由なし |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 | 影響なし | [SAI](../../reference/glossary.md#term-sai) 非経由 (FRR 内部 prefix-list)。[orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) 経由なし |
 | multi-asic (`asicN` namespace) | 各 namespace 独立・同一ロジック | `frrcfgd` は per-namespace 起動。PREFIX_SET / PREFIX ハンドラ (`frrcfgd.py:2894-2995`) に namespace 分岐なし |
 | `switch_type` (voq / chassis-packet) | 影響なし | `frrcfgd.py` の PREFIX ハンドラ部を `platform\|asic\|switch_type\|chassis\|sub_role\|namespace` で grep して 0 ヒット |
 | `sub_role` (FrontEnd / BackEnd) | 影響なし | 同上で参照 0 |
@@ -578,4 +578,4 @@ PREFIX テーブルのエントリ処理では `PREFIX_SET.mode` の AF に応�
 > 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-platform.md` を参照
 <!-- /platform -->
 
-<!-- glossary-links-injected: 731de8c709a4 -->
+<!-- glossary-links-injected: 9d67aec2d553 -->

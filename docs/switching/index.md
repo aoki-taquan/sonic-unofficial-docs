@@ -7,7 +7,7 @@ last_verified: 2026-05-13
 ---
 
 # スイッチング
-[VLAN](../reference/glossary.md#term-vlan)、[LAG](../reference/glossary.md#term-lag)、[MCLAG](../reference/glossary.md#term-mclag)、STP、MACsec、L2 forwarding など L2 制御面を扱う章。
+[VLAN](../reference/glossary.md#term-vlan)、[LAG](../reference/glossary.md#term-lag)、[MCLAG](../reference/glossary.md#term-mclag)、STP、[MACsec](../reference/glossary.md#term-macsec)、L2 forwarding など L2 制御面を扱う章。
 
 ## この章の趣旨
 
@@ -16,7 +16,7 @@ L2 / link layer の制御面を扱う。具体的には:
 - **VLAN / Switchport モード**: access / trunk / routed、VLAN range、OpenConfig [YANG](../reference/glossary.md#term-yang) 対応
 - **LAG ([PortChannel](../reference/glossary.md#term-portchannel))**: teammgrd、[LACP](../reference/glossary.md#term-lacp)、warm-reboot 中の retry、分散 [VOQ](../reference/glossary.md#term-voq) シャシでの system LAG
 - **MCLAG / ICCP**: dynamic config、unique IP、isolation group
-- **MSTP**: Multiple Spanning Tree Protocol on SONiC
+- **MSTP**: Multiple Spanning Tree Protocol on [SONiC](../reference/glossary.md#term-sonic)
 - **MACsec**: wpa_supplicant 連携、Gearbox PHY 上の backend 選択、FIPS POST
 - **L2 forwarding**: [FDB](../reference/glossary.md#term-fdb) flush / aging、static MAC、リンクイベントダンピング、Wake-on-LAN
 
@@ -81,4 +81,4 @@ L2 / link layer の制御面を扱う。具体的には:
 | [リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）](link-event-damping-hld.md) | Discrepancy-found |
 | [分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）](lag-on-distributed-voq-system.md) | HLD-only |
 
-<!-- glossary-links-injected: ced6bb784b29 -->
+<!-- glossary-links-injected: 7f5f0607acdd -->

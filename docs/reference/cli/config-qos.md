@@ -56,7 +56,7 @@ config qos reload [--ports <port[,port...]>]
 
 `--ports` がある場合は、対象 port に関連する table だけを再計算する `_qos_update_ports()` に進む。対象 table は port 単独 key の `PORT_QOS_MAP`, `BUFFER_PORT_INGRESS_PROFILE_LIST`, `BUFFER_PORT_EGRESS_PROFILE_LIST` と、複合 key の `QUEUE`, `BUFFER_PG`, `BUFFER_QUEUE`[^2]。
 
-`--ports` がない場合、既存 QoS を clear してから HWSKU 配下の template を展開する。Mellanox/Barefoot で `--no-dynamic-buffer` が無い場合は `buffers_dynamic.json.j2` を使い、`DEVICE_METADATA|localhost` の `buffer_model` を `dynamic` に更新する。そうでない場合は `buffers.json.j2` を使い、対応 ASIC では `traditional` に更新する[^3]。
+`--ports` がない場合、既存 QoS を clear してから HWSKU 配下の template を展開する。Mellanox/Barefoot で `--no-dynamic-buffer` が無い場合は `buffers_dynamic.json.j2` を使い、`DEVICE_METADATA|localhost` の `buffer_model` を `dynamic` に更新する。そうでない場合は `buffers.json.j2` を使い、対応 [ASIC](../../reference/glossary.md#term-asic) では `traditional` に更新する[^3]。
 
 `--dry_run` を指定すると [CONFIG_DB](../../reference/glossary.md#term-config_db) に書かず、展開後 JSON をファイルへ出力する。
 
@@ -186,4 +186,4 @@ show queue counters
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: b5626ca1f0f9 -->
+<!-- glossary-links-injected: c006405759d8 -->

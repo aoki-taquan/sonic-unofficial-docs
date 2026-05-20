@@ -588,7 +588,7 @@ orchagent / VNetOrch (orchagent/vnetorch.cpp L377)
 
 ### VNET_EXEC モード (VRF 固定)
 
-`vnetorch.h` では `VNET_EXEC_VRF` と `VNET_EXEC_BRIDGE` の 2 モードが定義されているが、`orchdaemon.cpp:276` では常に `VNET_EXEC_VRF` が使用される。コミュニティ SONiC では BRIDGE モードは無効。
+`vnetorch.h` では `VNET_EXEC_VRF` と `VNET_EXEC_BRIDGE` の 2 モードが定義されているが、`orchdaemon.cpp:276` では常に `VNET_EXEC_VRF` が使用される。コミュニティ [SONiC](../../reference/glossary.md#term-sonic) では BRIDGE モードは無効。
 
 ### VoQ / Multi-ASIC
 
@@ -597,4 +597,4 @@ VNET テーブル処理に VoQ / multi-ASIC 分岐は存在しない。VNET は�
 > **スキャン証跡**: `vnetorch.cpp:804,841,2778`（Ordered ECMP NHG type 分岐）、`vnetorch.h:63-67`（VNET_EXEC enum）、`orchdaemon.cpp:276`（VRF モード固定）、`vxlanmgr.cpp` 全体（ベンダー分岐 0 件確認）
 <!-- /platform -->
 
-<!-- glossary-links-injected: 01d232883f43 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

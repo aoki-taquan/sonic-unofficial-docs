@@ -30,7 +30,7 @@ related:
 
 # ACL in SONiC（テーブル型 / マッチ・アクション / SWSS パイプライン）
 
-読み手が真っ先に知りたいのは「SONiC の [ACL](../reference/glossary.md#term-acl) はどの単位で書き、どこを経由して [TCAM](../reference/glossary.md#term-tcam) に降りるのか」「どの type なら何が match / action できるのか」「動的に CLI で追加した rule と起動時の静的 JSON はどう統合されるのか」の 3 点だろう。以下、その順に答える。
+読み手が真っ先に知りたいのは「[SONiC](../reference/glossary.md#term-sonic) の [ACL](../reference/glossary.md#term-acl) はどの単位で書き、どこを経由して [TCAM](../reference/glossary.md#term-tcam) に降りるのか」「どの type なら何が match / action できるのか」「動的に CLI で追加した rule と起動時の静的 JSON はどう統合されるのか」の 3 点だろう。以下、その順に答える。
 
 ## ACL はどの単位で書くのか
 
@@ -59,7 +59,7 @@ ACL_RULE|<table_name>|<rule_name>
 
 ## CLI → ASIC まで何が起きるのか
 
-CONFIG_DB → [APPL_DB](../reference/glossary.md#term-appl_db) → AclOrch → [SAI](../reference/glossary.md#term-sai) [Redis](../reference/glossary.md#term-redis) → [ASIC_DB](../reference/glossary.md#term-asic_db) → [syncd](../reference/glossary.md#term-syncd) → SAI → ASIC TCAM、というスタックを通る[^1]。
+CONFIG_DB → [APPL_DB](../reference/glossary.md#term-appl_db) → AclOrch → [SAI](../reference/glossary.md#term-sai) [Redis](../reference/glossary.md#term-redis) → [ASIC_DB](../reference/glossary.md#term-asic_db) → [syncd](../reference/glossary.md#term-syncd) → SAI → [ASIC](../reference/glossary.md#term-asic) TCAM、というスタックを通る[^1]。
 
 ```mermaid
 flowchart LR
@@ -239,4 +239,4 @@ warm reboot 後にミラーリングルールの適用が失敗する問題。�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e2892b76fd9a -->
+<!-- glossary-links-injected: ec18b66e3507 -->

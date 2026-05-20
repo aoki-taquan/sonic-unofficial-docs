@@ -36,7 +36,7 @@ related:
 
 ## 何のための設計か
 
-複数の [NPU](../reference/glossary.md#term-npu)（line card）を fabric card で繋ぎ、外側からは「1 台のスイッチ」に見える **分散 VoQ chassis** を SONiC で動かす設計[^1]。要点:
+複数の [NPU](../reference/glossary.md#term-npu)（line card）を fabric card で繋ぎ、外側からは「1 台のスイッチ」に見える **分散 VoQ chassis** を [SONiC](../reference/glossary.md#term-sonic) で動かす設計[^1]。要点:
 
 - **Virtual Output Queue (VoQ)**: 入力側 NPU が、出力側 NPU の各 port / class に対する仮想キューを持つ。HoL ブロッキングを避け、輻輳判定を fabric を跨いで行う
 - **system-port**: chassis 全体で一意な論理 port 識別子。各 NPU の物理 port が system-port にマップされる
@@ -88,7 +88,7 @@ flowchart LR
 
 ## 制限事項
 
-- **対応 ASIC が限定的**: VoQ をサポートする NPU / fabric chip 上でのみ動く
+- **対応 [ASIC](../reference/glossary.md#term-asic) が限定的**: VoQ をサポートする NPU / fabric chip 上でのみ動く
 - **single-asic 前提機能との非互換**: 一部の機能（[VLAN](../reference/glossary.md#term-vlan)、特定 [ACL](../reference/glossary.md#term-acl)）は VoQ 上で挙動差・未対応あり
 - **show 単位の曖昧さ**: `show interfaces counters` で port / system-port / fabric のどれを指すか文脈依存
 - **[HLD](../reference/glossary.md#term-hld) は包括設計のみ**: バッファ計算、scheduler、warmboot、congestion の詳細は派生 HLD 参照
@@ -139,4 +139,4 @@ done
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8202771bf345 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

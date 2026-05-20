@@ -83,7 +83,7 @@ NEIGH|<port>|<ip_address>
 <!-- ordering -->
 ## 書込み順依存（orchagent / SAI プログラミング経路）
 
-> 本セクションは [APPL_DB](../../reference/glossary.md#term-appl_db) `NEIGH_TABLE` → [orchagent](../../reference/glossary.md#term-orchagent) (`neighorch`) → [SAI](../../reference/glossary.md#term-sai) → ASIC の経路を対象とする。
+> 本セクションは [APPL_DB](../../reference/glossary.md#term-appl_db) `NEIGH_TABLE` → [orchagent](../../reference/glossary.md#term-orchagent) (`neighorch`) → [SAI](../../reference/glossary.md#term-sai) → [ASIC](../../reference/glossary.md#term-asic) の経路を対象とする。
 > [CONFIG_DB](../../reference/glossary.md#term-config_db) `NEIGH` → `nbrmgrd` → カーネル [Netlink](../../reference/glossary.md#term-netlink) 経路は [SAI](../../reference/glossary.md#term-sai) を経由しない独立経路（詳細は「実コンテナ動作トレース」段階 4 参照）。
 
 ### 前提：`allPortsReady()` ガード（最上位）
@@ -202,7 +202,7 @@ CONFIG_DB から `NEIGH` エントリを削除しても、`doSetNeighTask` の `
 > **ソース**: `sonic-swss/orchagent/neighorch.cpp` (SHA: `4305596156d70e9797e8a881b3d19b46de0bce0d`)
 >
 > CONFIG_DB `NEIGH` は `nbrmgrd` → Netlink 経路であり SAI を通らない。以下の定数は
-> APPL_DB `NEIGH_TABLE` → `NeighOrch` → SAI / ASIC 経路に関するもの（同一 neighbor エントリの下流 ASIC プログラミング段階）。
+> APPL_DB `NEIGH_TABLE` → `NeighOrch` → SAI / [ASIC](../../reference/glossary.md#term-asic) 経路に関するもの（同一 neighbor エントリの下流 [ASIC](../../reference/glossary.md#term-asic) プログラミング段階）。
 
 ### orch 優先度
 
@@ -667,4 +667,4 @@ NbrMgr nbrmgr(&cfgDb, &appDb, &stateDb, cfg_nbr_tables);
 ASIC への neighbor プログラムは `neighsyncd` が APPL_DB `NEIGH_TABLE` を経由して `neighorch` へ伝達する別経路で行われる。
 <!-- /runtime-trace -->
 
-<!-- glossary-links-injected: 0231a6ea6c66 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

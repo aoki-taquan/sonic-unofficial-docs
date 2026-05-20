@@ -112,7 +112,7 @@ PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>|<pfc_priority>
 
 ### 投入トリガー
 
-`config qos reload` 実行時に `sonic-cfggen` が `qos_config.j2` を展開し [CONFIG_DB](../../reference/glossary.md#term-config_db) へ書き込む。`asic_type` が `mellanox` / `barefoot` 以外（例: broadcom, vs）では **PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブルは生成されない**。ただし `QosOrch` は ASIC 種別に関わらずテーブルを購読するため、CONFIG_DB に entry がなければ SAI 呼び出しも発生しない。
+`config qos reload` 実行時に `sonic-cfggen` が `qos_config.j2` を展開し [CONFIG_DB](../../reference/glossary.md#term-config_db) へ書き込む。`asic_type` が `mellanox` / `barefoot` 以外（例: broadcom, vs）では **PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブルは生成されない**。ただし `QosOrch` は [ASIC](../../reference/glossary.md#term-asic) 種別に関わらずテーブルを購読するため、CONFIG_DB に entry がなければ SAI 呼び出しも発生しない。
 
 ### priority 0-7 のうち 3 と 4 だけの理由
 
@@ -518,7 +518,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 
 ### ASIC 限定生成 — Mellanox / Barefoot のみ
 
-`qos_config.j2:163` で対応 ASIC を限定している:
+`qos_config.j2:163` で対応 [ASIC](../../reference/glossary.md#term-asic) を限定している:
 
 ```jinja
 {%- set pfc_to_pg_map_supported_asics = ['mellanox', 'barefoot'] -%}
@@ -526,7 +526,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 
 `config qos reload` 実行時、`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` テーブルが CONFIG_DB に投入されるのは **Mellanox (NVIDIA) と Barefoot (Intel Tofino) プラットフォームのみ** (`qos_config.j2:395-410`)。Broadcom / Marvell / Cisco-8000 / VS では本テーブルが生成されない。
 
-| ASIC / プラットフォーム | テーブル生成 | デフォルトマップ名 |
+| [ASIC](../../reference/glossary.md#term-asic) / プラットフォーム | テーブル生成 | デフォルトマップ名 |
 |------------------------|------------|-----------------|
 | Mellanox (NVIDIA) | あり | `AZURE` |
 | Barefoot (Intel Tofino) | あり | `AZURE` |
@@ -559,4 +559,4 @@ Mellanox DualToR 構成 (`port_names_list_extra_queues` が非空) では `AZURE
 <!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-platform.md -->
 <!-- /platform -->
 
-<!-- glossary-links-injected: 60ee6110a22f -->
+<!-- glossary-links-injected: 8df9850464d2 -->

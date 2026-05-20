@@ -40,8 +40,8 @@ related:
 
 [APPL_DB](../../reference/glossary.md#term-appl_db) に存在する 2 つの次ホップグループテーブル[^1]。
 
-- **`NEXTHOP_GROUP_TABLE`**: [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が [FRR](../../reference/glossary.md#term-frr) の [Netlink](../../reference/glossary.md#term-netlink) メッセージから解析した次ホップグループを書き込む。`orchagent` の `NhgOrch` が購読し、[SAI](../../reference/glossary.md#term-sai) `sai_next_hop_group_api` 経由で ASIC に反映する。
-- **`CLASS_BASED_NEXT_HOP_GROUP_TABLE`**: クラスベース転送 (CBF) 用グループ。`CbfNhgOrch` が購読し、`SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` として ASIC に反映する。CLI 書き込み経路は存在せず、`config_db.json` 直編集または [gNMI](../../reference/glossary.md#term-gnmi) 経由で設定する。
+- **`NEXTHOP_GROUP_TABLE`**: [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が [FRR](../../reference/glossary.md#term-frr) の [Netlink](../../reference/glossary.md#term-netlink) メッセージから解析した次ホップグループを書き込む。`orchagent` の `NhgOrch` が購読し、[SAI](../../reference/glossary.md#term-sai) `sai_next_hop_group_api` 経由で [ASIC](../../reference/glossary.md#term-asic) に反映する。
+- **`CLASS_BASED_NEXT_HOP_GROUP_TABLE`**: クラスベース転送 (CBF) 用グループ。`CbfNhgOrch` が購読し、`SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` として [ASIC](../../reference/glossary.md#term-asic) に反映する。CLI 書き込み経路は存在せず、`config_db.json` 直編集または [gNMI](../../reference/glossary.md#term-gnmi) 経由で設定する。
 
 `ROUTE_TABLE` の `nexthop_group` フィールドが本テーブルのキーを参照することで、経路とグループが結び付けられる。
 
@@ -176,7 +176,7 @@ SAI グループ属性は固定:
 
 ### 主要な制約詳細
 
-**PortsOrch 初期化ガード (依存 #1)**: `NhgOrch::doTask()` / `CbfNhgOrch::doTask()` はどちらも最初の行で `gPortsOrch->allPortsReady()` を評価し、`false` の場合は即 `return` する（`nhgorch.cpp:41-43`、`cbfnhgorch.cpp:42-44`）。システム起動直後にエントリが投入されても、全ポートが ready になるまで処理が始まらない。
+**[PortsOrch](../../reference/glossary.md#term-portsorch) 初期化ガード (依存 #1)**: `NhgOrch::doTask()` / `CbfNhgOrch::doTask()` はどちらも最初の行で `gPortsOrch->allPortsReady()` を評価し、`false` の場合は即 `return` する（`nhgorch.cpp:41-43`、`cbfnhgorch.cpp:42-44`）。システム起動直後にエントリが投入されても、全ポートが ready になるまで処理が始まらない。
 
 **fpmsyncd の書込み順序 (依存 #2)**: fpmsyncd は [FRR](../../reference/glossary.md#term-frr) の [Netlink](../../reference/glossary.md#term-netlink) nexthop メッセージを受け取ると、まず `m_nexthop_groupTable.set()` で `NEXTHOP_GROUP_TABLE` を更新し、その後 `m_routeTable->set()` で `ROUTE_TABLE` を書き込む（`routesync.cpp:1882-1896`）。これにより、[orchagent](../../reference/glossary.md#term-orchagent) が [ROUTE_TABLE](../../reference/glossary.md#term-route_table) を処理する時点では NHG が [APPL_DB](../../reference/glossary.md#term-appl_db) に存在している。
 
@@ -294,7 +294,7 @@ Consumer: `NhgOrch::doTask()` (`orchagent/nhgorch.cpp`) および `CbfNhgOrch::d
 | シナリオ | retry 上限 | 解消トリガー |
 |---|---|---|
 | 再帰 NHG メンバー未登録 | なし（無制限） | 子 NHG の SET 処理後 |
-| NHG 数上限到達（SRv6） | なし（無制限） | ASIC リソース解放時 |
+| NHG 数上限到達（SRv6） | なし（無制限） | [ASIC](../../reference/glossary.md#term-asic) リソース解放時 |
 | NHG 数上限到達（temp NHG） | なし（temp 経由で継続） | リソース解放後に完全 NHG へ昇格 |
 | DEL が参照カウントにブロック | なし（無制限） | 参照元（ROUTE_TABLE 等）の DEL 処理後 |
 | フィールド不正（混在・不一致） | **0 回**（即 erase） | CONFIG 修正 + 再投入が必要 |
@@ -668,4 +668,4 @@ redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP*'
 
 [^1]: テーブル名定数: `sonic-swss-common/common/schema.h:55-56`. `APP_NEXTHOP_GROUP_TABLE_NAME = "NEXTHOP_GROUP_TABLE"`, `APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME = "CLASS_BASED_NEXT_HOP_GROUP_TABLE"`. NhgOrch 実装: `sonic-swss/orchagent/nhgorch.cpp`. CbfNhgOrch 実装: `sonic-swss/orchagent/cbf/cbfnhgorch.cpp`. fpmsyncd 書き込み: `sonic-swss/fpmsyncd/routesync.cpp:1138-1158`.
 
-<!-- glossary-links-injected: e37e2307c0f6 -->
+<!-- glossary-links-injected: 762e0b60ecf6 -->

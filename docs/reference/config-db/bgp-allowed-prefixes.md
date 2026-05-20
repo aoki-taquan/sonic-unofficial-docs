@@ -79,7 +79,7 @@ BGP_ALLOWED_PREFIXES|<deployment>|<id>[|<neighbor>|<neighbor_type>][|<community>
 
 ## 購読者
 
-- `bgpcfgd` (`docker-fpm-frr`): deployment id ごとに `BGP_ALLOWED_PREFIXES_*` を読み、Jinja テンプレで `ip prefix-list` / `route-map` 文を vtysh に流す
+- `bgpcfgd` (`docker-fpm-frr`): deployment id ごとに `BGP_ALLOWED_PREFIXES_*` を読み、Jinja テンプレで `ip prefix-list` / `route-map` 文を [vtysh](../../reference/glossary.md#term-vtysh) に流す
 - `bgpd` ([FRR](../../reference/glossary.md#term-frr)): 生成された prefix-list / route-map を [BGP](../../reference/glossary.md#term-bgp) neighbor / peer-group に適用
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -136,7 +136,7 @@ YANG の `default` 節には値がないが、`bgpcfgd` (`managers_allow_list.py
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-CONFIG_DB `BGP_ALLOWED_PREFIXES` テーブルの変更に伴って `bgpcfgd` の `BGPAllowListMgr` ハンドラが副次的に書き込む DB エントリは **存在しない**。出力はすべて [FRR](../../reference/glossary.md#term-frr) vtysh への設定 push (`ip prefix-list` / `ipv6 prefix-list` / `bgp community-list standard` / `route-map`) と必要に応じた peer-group `soft clear` に閉じる。
+CONFIG_DB `BGP_ALLOWED_PREFIXES` テーブルの変更に伴って `bgpcfgd` の `BGPAllowListMgr` ハンドラが副次的に書き込む DB エントリは **存在しない**。出力はすべて [FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) への設定 push (`ip prefix-list` / `ipv6 prefix-list` / `bgp community-list standard` / `route-map`) と必要に応じた peer-group `soft clear` に閉じる。
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
@@ -145,7 +145,7 @@ CONFIG_DB `BGP_ALLOWED_PREFIXES` テーブルの変更に伴って `bgpcfgd` の
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `managers_allow_list.py` 全体に `COUNTERS_DB` 参照なし。ALLOW_LIST は [BGP](../../reference/glossary.md#term-bgp) UPDATE 経路フィルタのため統計テーブルも存在しない |
 | その他 ([ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db)) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由 (段階 3 トレース参照、[BGP](../../reference/glossary.md#term-bgp) UPDATE フィルタは FRR ユーザ空間で完結)。`sonic-swss/` で `BGP_ALLOWED_PREFIXES` を grep して 0 ヒット (購読 mgrd/[orchagent](../../reference/glossary.md#term-orchagent) なし) |
 
-主購読者 `BGPAllowListMgr.set_handler()` / `del_handler()` の副作用は `__update_policy()` / `__remove_policy()` 内の `cfg_mgr.push_list()` 呼出による FRR vtysh への route-map / prefix-list / community-list 投入 (`managers_allow_list.py:167-176, 200-207`) と、`__find_peer_group()` で逆引きした peer-group に対する `restart_peer_groups()` (BGP soft clear) のみ。[Redis](../../reference/glossary.md#term-redis) (CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db)) を経由しない。
+主購読者 `BGPAllowListMgr.set_handler()` / `del_handler()` の副作用は `__update_policy()` / `__remove_policy()` 内の `cfg_mgr.push_list()` 呼出による FRR [vtysh](../../reference/glossary.md#term-vtysh) への route-map / prefix-list / community-list 投入 (`managers_allow_list.py:167-176, 200-207`) と、`__find_peer_group()` で逆引きした peer-group に対する `restart_peer_groups()` (BGP soft clear) のみ。[Redis](../../reference/glossary.md#term-redis) (CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db)) を経由しない。
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-side.md` を参照。
 <!-- /side-effects -->
@@ -282,11 +282,11 @@ CONFIG_DB から変更不可。
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**ASIC・ベンダー依存はないが、`switch_type` と `type/subtype` で FRR route-map 生成テンプレートが分岐する**。テーブル処理ロジック自体 (`managers_allow_list.py`) はプラットフォーム非依存だが、ALLOW_LIST がぶら下がる `FROM_BGP_PEER_V4/V6` ポリシーの末尾処理が [VOQ](../../reference/glossary.md#term-voq) chassis (chassis-packet) で差し替わり、追加の DEFAULT prefix-list ブロックは UpstreamLC な SpineRouter でのみ生成される。
+**[ASIC](../../reference/glossary.md#term-asic)・ベンダー依存はないが、`switch_type` と `type/subtype` で FRR route-map 生成テンプレートが分岐する**。テーブル処理ロジック自体 (`managers_allow_list.py`) はプラットフォーム非依存だが、ALLOW_LIST がぶら下がる `FROM_BGP_PEER_V4/V6` ポリシーの末尾処理が [VOQ](../../reference/glossary.md#term-voq) chassis (chassis-packet) で差し替わり、追加の DEFAULT prefix-list ブロックは UpstreamLC な SpineRouter でのみ生成される。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | BGP_ALLOWED_PREFIXES → FRR prefix-list / route-map → BGP UPDATE フィルタは [FRR](../../reference/glossary.md#term-frr) ユーザ空間で完結、[SAI](../../reference/glossary.md#term-sai) 非経由 |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | BGP_ALLOWED_PREFIXES → FRR prefix-list / route-map → BGP UPDATE フィルタは [FRR](../../reference/glossary.md#term-frr) ユーザ空間で完結、[SAI](../../reference/glossary.md#term-sai) 非経由 |
 | [HwSku](../../reference/glossary.md#term-hwsku) | 影響なし | `managers_allow_list.py` および `policies.conf.j2` を `hwsku` で grep して 0 ヒット |
 | multi-asic (`is_multi_npu` true) | 実質影響なし | 各 `asicN` namespace の `bgpcfgd` プロセスが同一バイナリで独立に処理。テーブル処理に差は出ない |
 | `switch_type == 'chassis-packet'` | **分岐あり** | `policies.conf.j2:48,71` で `route-map FROM_BGP_PEER_V4/V6 permit 13` の `set tag` が `route_do_not_send_appdb_tag` → `route_eligible_for_fallback_to_default_tag` に切り替わる (chassis-packet LC では fallback default 用にマーク) |
@@ -392,7 +392,7 @@ vtysh -c 'show running-config bgp'
 
 `bgpcfgd` が CONFIG_DB の `BGP_ALLOWED_PREFIXES` テーブルを購読する。
 
-`BGP_ALLOWED_PREFIXES` テーブルは SONiC の内部フィルタ管理用。
+`BGP_ALLOWED_PREFIXES` テーブルは [SONiC](../../reference/glossary.md#term-sonic) の内部フィルタ管理用。
 
 ### 段階 2 — CFG→APPL 翻訳
 
@@ -422,7 +422,7 @@ vtysh -c 'show running-config bgp'
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -457,10 +457,10 @@ vtysh -c 'show running-config bgp'
 
 `BGPAllowListMgr` は `bgpcfgd/main.py:73-104` の Manager 配列で次の位置に登録される:
 
-- **前**: `BGPDataBaseMgr` (DEVICE_METADATA), `InterfaceMgr` 一式, `BGPPeerMgrBase` 一式 (general / internal / monitors / dynamic / voq_chassis / sentinels)
+- **前**: `BGPDataBaseMgr` ([DEVICE_METADATA](../../reference/glossary.md#term-device_metadata)), `InterfaceMgr` 一式, `BGPPeerMgrBase` 一式 (general / internal / monitors / dynamic / voq_chassis / sentinels)
 - **後**: `BBRMgr`, `StaticRouteMgr`, `RouteMapMgr`, `DeviceGlobalCfgMgr`
 
-これにより、初回スキャン時には DEVICE_METADATA / peer-group が `BGP_ALLOWED_PREFIXES` 処理前に running-config に反映される設計。ただし**運用中の動的追加** (peer-group を後から追加) では順序逆転が発生しうるため、`BGP_ALLOWED_PREFIXES` の再 SET が必要になる場合がある。
+これにより、初回スキャン時には [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) / peer-group が `BGP_ALLOWED_PREFIXES` 処理前に running-config に反映される設計。ただし**運用中の動的追加** (peer-group を後から追加) では順序逆転が発生しうるため、`BGP_ALLOWED_PREFIXES` の再 SET が必要になる場合がある。
 
 ### `set_handler` 内 vtysh push 順 (固定)
 
@@ -611,4 +611,4 @@ CONFIG_DB write から FRR 反映まで通常**≤ 1 秒** (Select timeout = 100
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:38 -->
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 6df21cca5fe5 -->
+<!-- glossary-links-injected: 25901a0831b6 -->

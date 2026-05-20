@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-SONiC OS のイメージバージョン・ビルド情報は `/etc/sonic/sonic_version.yml` に格納される[^1]。このファイルは `sonic-buildimage` のビルドプロセス（`build_debian.sh`）が Jinja2 テンプレート（`files/build_templates/sonic_version.yml.j2`）から生成し、インストールされたイメージのファイルシステムルートに配置される。
+[SONiC](../../reference/glossary.md#term-sonic) OS のイメージバージョン・ビルド情報は `/etc/sonic/sonic_version.yml` に格納される[^1]。このファイルは `sonic-buildimage` のビルドプロセス（`build_debian.sh`）が Jinja2 テンプレート（`files/build_templates/sonic_version.yml.j2`）から生成し、インストールされたイメージのファイルシステムルートに配置される。
 
 [Redis](../../reference/glossary.md#term-redis) の [CONFIG_DB](../../reference/glossary.md#term-config_db) / [STATE_DB](../../reference/glossary.md#term-state_db) テーブルとは異なり、**ファイルシステム上の静的 YAML ファイル**として提供される。ランタイムでは `sonic-py-common` の `device_info.get_sonic_version_info()` API が読み込んで返す。
 
@@ -55,7 +55,7 @@ SONiC OS のイメージバージョン・ビルド情報は `/etc/sonic/sonic_v
 | `build_version` | string | 必須 | イメージのバージョン文字列。タグ付きビルドではタグ名、開発ビルドでは `<branch>.<build_number>-<commit_sha>` 形式 |
 | `debian_version` | string | 任意 | ビルド時の Debian OS バージョン (`/etc/debian_version` の内容) |
 | `kernel_version` | string | 任意 | ビルドに使用したカーネルバージョン |
-| `asic_type` | string | 必須 | ASIC プラットフォーム種別 (例: `broadcom`, `mellanox`, `vs`) |
+| `asic_type` | string | 必須 | [ASIC](../../reference/glossary.md#term-asic) プラットフォーム種別 (例: `broadcom`, `mellanox`, `vs`) |
 | `asic_subtype` | string | 任意 | ターゲットマシン種別 (`TARGET_MACHINE`)。空の場合は省略 |
 | `commit_id` | string | 必須 | ビルド時の git コミット short SHA |
 | `branch` | string | 必須 | ビルド時の git ブランチ名 |
@@ -63,7 +63,7 @@ SONiC OS のイメージバージョン・ビルド情報は `/etc/sonic/sonic_v
 | `build_date` | string | 必須 | ビルド日時 (UTC, `date -u` の出力形式) |
 | `build_number` | integer | 必須 (デフォルト `0`) | CI ビルド番号 (`BUILD_NUMBER` 変数、未設定時 `0`) |
 | `built_by` | string | 必須 | ビルドを実行したユーザー (`$USER@$BUILD_HOSTNAME`) |
-| `sonic_os_version` | string | 必須 | SONiC OS バージョン番号。`SONIC_OS_VERSION` 変数 (デフォルト `13`) |
+| `sonic_os_version` | string | 必須 | [SONiC](../../reference/glossary.md#term-sonic) OS バージョン番号。`SONIC_OS_VERSION` 変数 (デフォルト `13`) |
 | `secure_boot_image` | string | 必須 | `'yes'` または `'no'`。`SECURE_UPGRADE_MODE` が `dev` か `prod` のとき `'yes'` |
 | `asan` | string | 任意 | `'yes'` (ASAN 有効ビルド時のみ存在) |
 | `<component>` | string | 任意 | `COMPONENTS` 変数で列挙されたパッケージ名をキー、バージョンを値とする動的フィールド群 |
@@ -155,7 +155,7 @@ Built by: johnar@jenkins-worker-8
 |---|----------|------|------------|
 | 1 | 環境変数エクスポート → `j2` レンダリング (`build_debian.sh`) | **強制先行（同スクリプト内逐次実行）** | 必須フィールドが空、またはガード対象フィールドが省略される |
 | 2 | CI による `BUILD_NUMBER` 設定 → `build_debian.sh` 実行 | **推奨先行** | `BUILD_NUMBER` 未設定時は `functions.sh:60` の `${BUILD_NUMBER:-0}` フォールバックで `build_number: 0` が刻まれる |
-| 3 | SONiC イメージインストール（ファイル配置完了） → `get_sonic_version_info()` 呼び出し | **強制先行** | ファイル不在時は `os.path.isfile()` チェックで `None` を返す（`device_info.py:512-513`）。`show version` / [gNMI](../../reference/glossary.md#term-gnmi) が version なし表示になる |
+| 3 | [SONiC](../../reference/glossary.md#term-sonic) イメージインストール（ファイル配置完了） → `get_sonic_version_info()` 呼び出し | **強制先行** | ファイル不在時は `os.path.isfile()` チェックで `None` を返す（`device_info.py:512-513`）。`show version` / [gNMI](../../reference/glossary.md#term-gnmi) が version なし表示になる |
 | 4 | 初回 `get_sonic_version_info()` 呼び出し → 以降の同プロセス参照 | **プロセスライフタイム固定（キャッシュ）** | `global sonic_ver_info` に結果を保持し、2 回目以降はファイルを再読しない（`device_info.py:515-517`）。ファイルを書き換えてもプロセス再起動なしでは反映されない |
 
 ### 主要な制約詳細
@@ -314,7 +314,7 @@ Kubernetes 環境 (`FEATURE` テーブルで `set_owner=kube` が設定されて
 |---|---|---|---|
 | `syncd_init_common.sh` | `asic_type` | [syncd](../../reference/glossary.md#term-syncd) 起動パラメータ決定 (`syncd_init_common.sh:20-21`) | なし（環境変数として利用） |
 | `rsyslog-config.sh` | `build_version` | rsyslog タグ文字列設定 (`rsyslog-config.sh:33`) | なし（設定ファイルのみ） |
-| `generic_config_updater` | `asic_type`、`build_version` | ASIC 固有バリデーション判定 (`field_operation_validators.py:33`) | なし |
+| `generic_config_updater` | `asic_type`、`build_version` | [ASIC](../../reference/glossary.md#term-asic) 固有バリデーション判定 (`field_operation_validators.py:33`) | なし |
 | `db_migrator.py` | `asic_type` | asic 固有マイグレーション分岐 (`db_migrator.py:96-97`) | なし（判定用途のみ） |
 | `show version` | 全フィールド | CLI 表示 | なし |
 
@@ -367,7 +367,7 @@ Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書�
 | フィールド定義・YANG | 差なし | YANG モジュール未定義。全プラットフォームで同一フィールド構造 |
 | `asic_type` の値 | プラットフォーム依存 | `broadcom` / `mellanox` / `marvell` / `vs` 等、ビルドターゲット (`sonic_asic_platform`) がそのまま入る |
 | `asic_subtype` の値 | HW SKU 依存 | `TARGET_MACHINE` 変数。空の場合はフィールド自体が省略される |
-| multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis | 影響なし | `sonic_version.yml` は 1 ファイル。multi-asic 環境でも ASIC ごとに複数のファイルは存在しない |
+| multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis | 影響なし | `sonic_version.yml` は 1 ファイル。multi-asic 環境でも [ASIC](../../reference/glossary.md#term-asic) ごとに複数のファイルは存在しない |
 
 ### `asic_type` 依存の下流分岐
 
@@ -388,6 +388,9 @@ Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書�
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^3] [^4] [^5]
+
 [^1]: `sonic-buildimage/build_debian.sh` L642-654 — sonic_version.yml 生成処理。<https://github.com/sonic-net/sonic-buildimage/blob/master/build_debian.sh>
 
 [^2]: `sonic-buildimage/functions.sh:sonic_get_version()` L53-68 — build_version 文字列の生成ロジック。<https://github.com/sonic-net/sonic-buildimage/blob/master/functions.sh>
@@ -398,4 +401,4 @@ Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書�
 
 [^5]: `sonic-utilities/show/main.py:version()` L1716-1733 — `show version` コマンド実装。<https://github.com/sonic-net/sonic-utilities/blob/master/show/main.py>
 
-<!-- glossary-links-injected: 7f747eaf4baa -->
+<!-- glossary-links-injected: 8de83b4fd2a7 -->

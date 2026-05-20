@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-**ERROR_DB** は SONiC Error Handling Framework が導入する専用 [Redis](../../reference/glossary.md#term-redis) データベースである[^1]。  
+**ERROR_DB** は [SONiC](../../reference/glossary.md#term-sonic) Error Handling Framework が導入する専用 [Redis](../../reference/glossary.md#term-redis) データベースである[^1]。  
 [SAI](../../reference/glossary.md#term-sai) CREATE/SET 操作が失敗した場合、[syncd](../../reference/glossary.md#term-syncd) が [ASIC_DB](../../reference/glossary.md#term-asic_db) の通知チャネル経由で OrchAgent に通知し、OrchAgent が [SAI](../../reference/glossary.md#term-sai) 型 → ERROR_DB 型へ翻訳してエントリを書き込む。
 
 > **注意**: ERROR_DB は **[CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく独立した [Redis](../../reference/glossary.md#term-redis) データベース** (database_config.json 未登録、実装時に新 DB ID が割り当てられる予定) である。  
@@ -536,17 +536,17 @@ HLD Section 3.2 に定義された SAI ステータス → `SWSS_RC_*` のマッ
 |------|-----------------|------|
 | `SWSS_RC_*` enum 定義 | **なし** | `status_code_util.h` — 静的マッピング、条件分岐なし |
 | SAI → `SWSS_RC_*` 変換 | **なし** | HLD Section 3.2 — 固定マッピング表 |
-| ERROR_DB スキーマ（フィールド名・型） | **なし** | HLD Section 3.4.3 — 全 ASIC 共通 |
+| ERROR_DB スキーマ（フィールド名・型） | **なし** | HLD Section 3.4.3 — 全 [ASIC](../../reference/glossary.md#term-asic) 共通 |
 | pub/sub 通知方式 | **なし** | Redis PUBLISH/SUBSCRIBE — 実装非依存 |
 | `bgp_error_handling` 有効化条件 | **なし** | CONFIG_DB グローバル設定、プラットフォーム非依存 |
 
 ### 間接的プラットフォーム影響: SAI エラー発生頻度
 
-プラットフォームごとに ASIC テーブルサイズや対応 SAI 機能が異なるため、特定の SAI エラーの発生しやすさは変わる。しかし ERROR_DB フレームワークの動作仕様自体（スキーマ・書込順序・通知方式）は変化しない。
+プラットフォームごとに [ASIC](../../reference/glossary.md#term-asic) テーブルサイズや対応 SAI 機能が異なるため、特定の SAI エラーの発生しやすさは変わる。しかし ERROR_DB フレームワークの動作仕様自体（スキーマ・書込順序・通知方式）は変化しない。
 
 | SAI エラー | 発生しやすいプラットフォーム条件 | ERROR_DB に現れる `rc` |
 |------------|-------------------------------|----------------------|
-| `SAI_STATUS_TABLE_FULL` | テーブルサイズが小さい ASIC（一部 OF-DPA 等） | `SWSS_RC_FULL` |
+| `SAI_STATUS_TABLE_FULL` | テーブルサイズが小さい [ASIC](../../reference/glossary.md#term-asic)（一部 OF-DPA 等） | `SWSS_RC_FULL` |
 | `SAI_STATUS_NO_MEMORY` | メモリ制限の厳しい環境 | `SWSS_RC_NO_MEMORY` |
 | `SAI_STATUS_NOT_SUPPORTED` | 機能非対応 ASIC (例: L3V4V6 非対応) | `SWSS_RC_UNAVAIL` |
 | ベンダー固有 SAI 拡張エラーコード | 任意 | `SWSS_RC_UNKNOWN`（フォールバック） |
@@ -610,7 +610,7 @@ ERROR_DB は `sonic-net/SONiC` の error_handling HLD で定義されている�
 
 ### 注意事項
 
-ERROR_DB / ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE は **2026-05 時点で未実装** のため、実際の SONiC 環境では以下の代替手段を使う:
+ERROR_DB / ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE は **2026-05 時点で未実装** のため、実際の [SONiC](../../reference/glossary.md#term-sonic) 環境では以下の代替手段を使う:
 
 ```bash
 # 現行: ASIC リソース枯渇は CRM で監視
@@ -636,4 +636,4 @@ sonic-db-cli ERROR_DB keys '*'
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: d00c99a72f50 -->
+<!-- glossary-links-injected: 77f342e1a22c -->

@@ -338,7 +338,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 
 ### 主要な制約詳細
 
-**SAI カウンタ取得失敗時の 0 上書き問題 (ポーリング失敗)**: `getNatCounters()` (`natorch.cpp:3507`) は `nat_translations_pkts / bytes` を 0 で初期化し、SAI `get_nat_entry_attribute` が失敗した場合はこの 0 のまま `updateNatCounters(ipAddr, 0, 0)` を呼ぶ (`natorch.cpp:3573-3574`)。これはカウンタが前回値ではなく `"0"` に上書きされることを意味する。SAI 一時障害（ASIC リセット中など）でポーリングが 1 回失敗するだけで統計が消える。`show nat statistics` で突然カウンタがゼロになった場合、SAI ポーリング失敗の疑いがある。
+**SAI カウンタ取得失敗時の 0 上書き問題 (ポーリング失敗)**: `getNatCounters()` (`natorch.cpp:3507`) は `nat_translations_pkts / bytes` を 0 で初期化し、SAI `get_nat_entry_attribute` が失敗した場合はこの 0 のまま `updateNatCounters(ipAddr, 0, 0)` を呼ぶ (`natorch.cpp:3573-3574`)。これはカウンタが前回値ではなく `"0"` に上書きされることを意味する。SAI 一時障害（[ASIC](../../reference/glossary.md#term-asic) リセット中など）でポーリングが 1 回失敗するだけで統計が消える。`show nat statistics` で突然カウンタがゼロになった場合、SAI ポーリング失敗の疑いがある。
 
 **SAI 登録失敗のカウンタ不在 vs ポーリング失敗の 0**: SAI `create_nat_entry` が失敗した場合は COUNTERS_DB にキー自体が作成されない（エントリ不在）。一方、SAI `get_nat_entry_attribute` の 5 秒ポーリングが失敗した場合はキーが存在しながら `"0"` が書かれる。どちらも `show nat statistics` では 0 と表示されるため、区別には `sonic-db-cli COUNTERS_DB exists 'COUNTERS_NAT|<ip>'` でキーの存在を確認する必要がある。
 
@@ -591,4 +591,4 @@ SNAT / NAPT / Twice NAT エントリおよび `COUNTERS_GLOBAL_NAT` の書き込
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 3c54856380ca -->
+<!-- glossary-links-injected: c006405759d8 -->

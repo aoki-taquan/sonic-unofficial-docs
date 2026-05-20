@@ -102,7 +102,7 @@ DSCP_TO_FC_MAP|<name>|<dscp>
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-dscp-fc-map`](../yang/sonic-dscp-fc-map.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-dscp-fc-map`
 
 <!-- ref-triangle:end -->
 
@@ -249,7 +249,7 @@ config cbf clear
 - **参照方向**: SAI query（実行時依存）
 - **条件**: `DscpToFcMapHandler::convertFieldValuesToAttributes()` が呼ばれるたびに `NhgMapOrch::getMaxNumFcs()` を呼び出し（内部は static キャッシュ — 初回のみ実際の SAI query を発行）
 - **参照元**: `qosorch.cpp:1043`; `nhgmaporch.cpp:299-325`
-- **意味**: FC 上限値をランタイムで SAI から取得。FC 非対応 ASIC では `max_num_fcs=0` → 全 FC 値が reject され SAI map 未作成となる。初回クエリ後は orchagent 再起動まで固定
+- **意味**: FC 上限値をランタイムで SAI から取得。FC 非対応 [ASIC](../../reference/glossary.md#term-asic) では `max_num_fcs=0` → 全 FC 値が reject され SAI map 未作成となる。初回クエリ後は orchagent 再起動まで固定
 
 ### 3. EXP_TO_FC_MAP (CONFIG_DB)
 
@@ -286,7 +286,7 @@ DSCP_TO_FC_MAP
 |---|---|---|---|---|
 | 1 | DSCP 値 < 0 または > 63 | `convertFieldValuesToAttributes()` L1057-1069 | `task_invalid_entry` | なし（erase） |
 | 2 | FC 値が範囲外 (`< 0` または `>= max_num_fcs`) | `convertFieldValuesToAttributes()` L1072-1082 | `task_invalid_entry` | なし（erase） |
-| 3 | FC 非対応 ASIC (`max_num_fcs=0`) で全 FC reject | `convertFieldValuesToAttributes()` L1072-1082 | `task_invalid_entry` | なし（erase） |
+| 3 | FC 非対応 [ASIC](../../reference/glossary.md#term-asic) (`max_num_fcs=0`) で全 FC reject | `convertFieldValuesToAttributes()` L1072-1082 | `task_invalid_entry` | なし（erase） |
 | 4 | 非整数文字列 (`stoi` 例外) | `convertFieldValuesToAttributes()` L1083-1089 | `task_invalid_entry` | なし（erase） |
 | 5 | SAI `create_qos_map` 失敗 | `addQosItem()` L1115-1120 → `processWorkItem()` L157-164 | `task_failed` | なし（erase） |
 | 6 | SAI `modifyQosItem()` 失敗 | `processWorkItem()` L151-158 | `task_failed` | なし（erase） |
@@ -304,7 +304,7 @@ DSCP_TO_FC_MAP
 
 **DSCP / FC バリデーション失敗 (# 1-4)**: `convertFieldValuesToAttributes()` が `false` を返し、`processWorkItem()` は即座に `task_invalid_entry` を返してエントリを `m_toSync` から erase する。SAI への呼び出しは行われない。エラーは `SWSS_LOG_ERROR` でのみ通知される。
 
-**FC 非対応 ASIC の silent reject (# 3)**: `NhgMapOrch::getMaxNumFcs()` が 0 を返すとき（`SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` 非対応 ASIC）、条件 `value >= max_num_fcs` が `value >= 0` と等価になり**全 FC 値が reject**される。FC 非対応スイッチで CBF 設定を試みても SAI map は作成されない（evidence: `nhgmaporch.cpp:299-325`）。
+**FC 非対応 [ASIC](../../reference/glossary.md#term-asic) の silent reject (# 3)**: `NhgMapOrch::getMaxNumFcs()` が 0 を返すとき（`SAI_SWITCH_ATTR_MAX_NUMBER_OF_FORWARDING_CLASSES` 非対応 ASIC）、条件 `value >= max_num_fcs` が `value >= 0` と等価になり**全 FC 値が reject**される。FC 非対応スイッチで CBF 設定を試みても SAI map は作成されない（evidence: `nhgmaporch.cpp:299-325`）。
 
 **SAI create / modify 失敗 (# 5-6)**: `task_failed` を返すためエントリは erase され自動 retry されない。ASIC 側の一時的エラーでも再投入が必要。ログに `SWSS_LOG_ERROR` が出力される。
 
@@ -540,4 +540,4 @@ FC 非対応 ASIC では DSCP_TO_FC_MAP の全エントリが SAI map を作成�
 
 <!-- glossary-links-injected: dscp-to-fc-map-2026-05-14 -->
 
-<!-- glossary-links-injected: 9aa0b6b2614d -->
+<!-- glossary-links-injected: 8df9850464d2 -->

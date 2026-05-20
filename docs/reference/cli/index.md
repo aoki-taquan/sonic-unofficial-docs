@@ -17,7 +17,7 @@ related:
 
 # CLI リファレンス
 
-SONiC の運用 CLI は `sonic-utilities` リポジトリの click ベースのコマンドツリーで定義される。本リファレンスは、master の固定 commit (`39732bc`) を一次情報として、コマンド単位ではなく **「最初のサブグループ単位」** でページを区切って整理する。
+[SONiC](../../reference/glossary.md#term-sonic) の運用 CLI は `sonic-utilities` リポジトリの click ベースのコマンドツリーで定義される。本リファレンスは、master の固定 commit (`39732bc`) を一次情報として、コマンド単位ではなく **「最初のサブグループ単位」** でページを区切って整理する。
 
 ## トップレベルツリー
 
@@ -61,7 +61,7 @@ sonic-package-manager
 - `config vlan` ... [VLAN](../../reference/glossary.md#term-vlan) 作成、メンバ追加、DHCP relay
 - `config portchannel` ... [LAG](../../reference/glossary.md#term-lag) ([LACP](../../reference/glossary.md#term-lacp)) 作成・メンバ追加
 - `config acl` ... [ACL](../../reference/glossary.md#term-acl) テーブル更新・ルール削除
-- `config vxlan` ... VTEP / [EVPN](../../reference/glossary.md#term-evpn) / [VLAN](../../reference/glossary.md#term-vlan)-VNI マッピング
+- `config vxlan` ... [VTEP](../../reference/glossary.md#term-vtep) / [EVPN](../../reference/glossary.md#term-evpn) / [VLAN](../../reference/glossary.md#term-vlan)-VNI マッピング
 
 ### show 系
 
@@ -92,7 +92,7 @@ config.add_command(vxlan.vxlan)
 
 ### `--namespace` / `-n` オプション (multi-ASIC)
 
-`config` / `show` の多くのコマンドは multi-ASIC SONiC で動作する場合 `--namespace asic0` 等を受け取る。各ページの「オプション」節で個別に明示しないコマンドでも、SONiC が multi-ASIC で動いているときは `-n` が常に有効である[^2]。
+`config` / `show` の多くのコマンドは multi-[ASIC](../../reference/glossary.md#term-asic) [SONiC](../../reference/glossary.md#term-sonic) で動作する場合 `--namespace asic0` 等を受け取る。各ページの「オプション」節で個別に明示しないコマンドでも、[SONiC](../../reference/glossary.md#term-sonic) が multi-[ASIC](../../reference/glossary.md#term-asic) で動いているときは `-n` が常に有効である[^2]。
 
 ### CONFIG_DB との対応
 
@@ -113,4 +113,4 @@ config.add_command(vxlan.vxlan)
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 20b83416e87a -->
+<!-- glossary-links-injected: 8fb085081581 -->

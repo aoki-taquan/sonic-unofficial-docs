@@ -460,7 +460,7 @@ FG_NHG|<name>          ← 最後に削除
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -487,7 +487,7 @@ FG_NHG|<name>          ← 最後に削除
 |---|---|---|---|---|---|
 | `ROUTE_TABLE\|<vrf>\|<prefix>` ([APPL_DB](../../reference/glossary.md#term-appl_db)) | [APPL_DB](../../reference/glossary.md#term-appl_db) | 読み書き (FG 適用判定・経路切替) | なし | 実質必須 | fgnhgorch.cpp:1851, 1865, 1877 |
 | `NEIGH_TABLE` / NeighOrch | [APPL_DB](../../reference/glossary.md#term-appl_db) | 読み取り (nexthop 解決・refcount) | なし | 実質必須 | fgnhgorch.cpp:1415, 1459, 1479, 1547 |
-| `PORT` / `PORTCHANNEL` (PortsOrch) | CONFIG_DB | 読み取り (link oper-state 監視) | `FG_NHG_MEMBER.link` leafref のみ | link 設定時必須 | fgnhgorch.cpp:46-92, 1374-1393 |
+| `PORT` / `PORTCHANNEL` ([PortsOrch](../../reference/glossary.md#term-portsorch)) | CONFIG_DB | 読み取り (link oper-state 監視) | `FG_NHG_MEMBER.link` leafref のみ | link 設定時必須 | fgnhgorch.cpp:46-92, 1374-1393 |
 | `STATE_FG_ROUTE_TABLE` ([STATE_DB](../../reference/glossary.md#term-state_db)) | [STATE_DB](../../reference/glossary.md#term-state_db) | 書き込み (warm-restart 復旧用) | なし | warm-restart 時必須 | fgnhgorch.cpp:31 |
 | `VRF` (VRFOrch) | CONFIG_DB / APPL_DB | 読み取り ([VRF](../../reference/glossary.md#term-vrf) refcount 管理) | なし | [VRF](../../reference/glossary.md#term-vrf) 利用時必須 | fgnhgorch.cpp:1326 |
 
@@ -529,7 +529,7 @@ FG_NHG|<name>          ← 最後に削除
 | CONFIG_DB[FG_NHG_PREFIX\|*] → FgNhgOrch | `ConsumerStateTable` (keyspace 通知) | `__keyspace@config_db__:FG_NHG_PREFIX\|*` |
 | CONFIG_DB[FG_NHG_MEMBER\|*] → FgNhgOrch | `ConsumerStateTable` (keyspace 通知) | `__keyspace@config_db__:FG_NHG_MEMBER\|*` |
 | FgNhgOrch → NeighOrch | 直接メソッド呼び出し | — |
-| FgNhgOrch → PortsOrch | Observer `attach()/update()` | `SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` |
+| FgNhgOrch → [PortsOrch](../../reference/glossary.md#term-portsorch) | Observer `attach()/update()` | `SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` |
 | FgNhgOrch → APPL_DB[[ROUTE_TABLE](../../reference/glossary.md#term-route_table)] | `ProducerStateTable::set()/del()` | APPL_DB channel |
 | FgNhgOrch → SAI | SAI API 直接呼び出し | `sai_next_hop_group_api` / `sai_route_api` |
 
@@ -706,14 +706,14 @@ else
 | プラットフォーム | `real_bucket_size` 決定方法 | SAI クエリ失敗時 |
 |---|---|---|
 | VS (`platform=vs`) | `configured_bucket_size`（CONFIG_DB の `bucket_size` 値）をそのまま使用 | クエリなし（スキップ） |
-| 実 ASIC (Broadcom / Mellanox 等) | SAI `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` クエリ結果を使用 | NHG ロールバック後 `return false`（作成失敗） |
+| 実 [ASIC](../../reference/glossary.md#term-asic) (Broadcom / Mellanox 等) | SAI `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` クエリ結果を使用 | NHG ロールバック後 `return false`（作成失敗） |
 
 !!! note "VS 環境での注意"
     VS プラットフォームでは `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` の実装が未完了 (TODO コメント)。`real_bucket_size = configured_bucket_size` として扱うため、**実 ASIC では ASIC 内部アライメントにより `real_bucket_size` が `configured_bucket_size` より大きくなる場合がある**（ハードウェアのバケット数が設定値の倍数に丸められる等）。VS でテストした `bucket_size` 設定が実機で同一動作とは限らない。
 
 ### SAI Fine-Grained ECMP 対応 — ASIC ベンダー差
 
-FG ECMP は SAI の `SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP` 型 NHG を使用する。すべての ASIC が本機能をサポートするわけではなく、`sai_next_hop_group_api->create_next_hop_group()` が `SAI_STATUS_NOT_SUPPORTED` 等を返した場合、`RouteOrch::createFineGrainedNextHopGroup()` が `false` を返し FG NHG 作成が失敗する。
+FG ECMP は SAI の `SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP` 型 NHG を使用する。すべての [ASIC](../../reference/glossary.md#term-asic) が本機能をサポートするわけではなく、`sai_next_hop_group_api->create_next_hop_group()` が `SAI_STATUS_NOT_SUPPORTED` 等を返した場合、`RouteOrch::createFineGrainedNextHopGroup()` が `false` を返し FG NHG 作成が失敗する。
 
 ```cpp
 // routeorch.cpp L1431–1442
@@ -726,7 +726,7 @@ if (status != SAI_STATUS_SUCCESS)
 }
 ```
 
-この場合 syslog に `"Failed to create next hop group"` が出力されるが、**FG_NHG テーブルの設定自体はエラーにならず、CONFIG_DB に残り続ける**。ASIC が FG ECMP をサポートしない環境では FG NHG は実質的に機能しない。
+この場合 syslog に `"Failed to create next hop group"` が出力されるが、**FG_NHG テーブルの設定自体はエラーにならず、CONFIG_DB に残り続ける**。[ASIC](../../reference/glossary.md#term-asic) が FG ECMP をサポートしない環境では FG NHG は実質的に機能しない。
 
 ### VRF 対応 — デフォルト VRF のみ
 
@@ -754,4 +754,4 @@ FgNhgOrch のコードには [VOQ](../../reference/glossary.md#term-voq) (Virtua
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 8b572e7ecef7 -->
+<!-- glossary-links-injected: 7f1484b83d31 -->

@@ -191,14 +191,14 @@ DEL が `m_pendingRemove` 状態のまま同一名の SET を発行すると、S
 |---------|------------------------|--------------|--------------|---------|------|
 | 逆参照（被参照） | `QUEUE.<port>\|<idx>.scheduler` | `SCHEDULER`（本テーブル） | `SCHEDULER\|<name>` | `handleQueueTable()` が `resolveFieldRefValue()` で SCHEDULER SAI オブジェクトを解決。SCHEDULER 未登録の場合は `task_need_retry` を返し QUEUE の SAI バインドを保留。YANG `sonic-queue.yang` でも `leafref path "...SCHEDULER_LIST/name"` として宣言 | `qosorch.cpp:1822-1852`, `sonic-queue.yang:84-87`, `sonic-queue.yang:132-135` |
 | 逆参照（削除ガード） | `QUEUE.*` が参照中 | `SCHEDULER`（本テーブル） | `SCHEDULER\|<name>` | SCHEDULER DEL 時に `isObjectBeingReferenced()` で確認。QUEUE から参照中の場合は `m_pendingRemove = true` をセットして `task_need_retry`。参照解除後に自動 DEL が実行される | `qosorch.cpp:1483-1491` |
-| 起動ガード | `PortsOrch::allPortsReady()` | PORT テーブル（PortsOrch 管理） | `PORT\|<port_name>` | `QosOrch::doTask(Consumer&)` 冒頭で `gPortsOrch->allPortsReady()` が偽の間は全 [QoS](../../reference/glossary.md#term-qos) タスク（SCHEDULER 含む）が処理されない。PortsOrch による全ポート初期化完了まで SAI オブジェクトは生成されない | `qosorch.cpp:2258-2261` |
+| 起動ガード | `PortsOrch::allPortsReady()` | PORT テーブル（[PortsOrch](../../reference/glossary.md#term-portsorch) 管理） | `PORT\|<port_name>` | `QosOrch::doTask(Consumer&)` 冒頭で `gPortsOrch->allPortsReady()` が偽の間は全 [QoS](../../reference/glossary.md#term-qos) タスク（SCHEDULER 含む）が処理されない。[PortsOrch](../../reference/glossary.md#term-portsorch) による全ポート初期化完了まで SAI オブジェクトは生成されない | `qosorch.cpp:2258-2261` |
 | 実行時依存（QUEUE 経由） | `handleQueueTable()` → `applySchedulerToQueueSchedulerGroup()` | SCHEDULER_GROUP（SAI 管理） | SAI OID（DB なし） | QUEUE に SCHEDULER が紐付く際、`getSchedulerGroup()` でキュー→スケジューラグループ ID を検索し `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` をセット。SAI 内部のスケジューラグループツリーに依存（DB テーブルなし） | `qosorch.cpp:1630-1710` |
 
 ### 解決タイミング
 
 - **QUEUE → SCHEDULER 参照**: `handleQueueTable()` の SET 処理時に `resolveFieldRefValue()` で即座に確認。未解決（`not_resolved`）は `task_need_retry` で `m_toSync` に残留し、SCHEDULER の SAI 登録後の次回 `doTask()` で再評価される（`qosorch.cpp:1828-1833`）。
 - **SCHEDULER DEL ガード**: DEL 処理時に `isObjectBeingReferenced()` でリアルタイム確認。参照カウンタがゼロになった次の `task_need_retry` サイクルで自動 DEL が実行される（`qosorch.cpp:1483-1491`）。
-- **PortsOrch ガード**: PortsOrch の `allPortsReady()` フラグが立つまで全 [QoS](../../reference/glossary.md#term-qos) 処理は doorbell 待ち。この間は SCHEDULER エントリが CONFIG_DB に存在しても SAI には送信されない（`qosorch.cpp:2258-2261`）。
+- **[PortsOrch](../../reference/glossary.md#term-portsorch) ガード**: PortsOrch の `allPortsReady()` フラグが立つまで全 [QoS](../../reference/glossary.md#term-qos) 処理は doorbell 待ち。この間は SCHEDULER エントリが CONFIG_DB に存在しても SAI には送信されない（`qosorch.cpp:2258-2261`）。
 
 !!! note "SCHEDULER は「被参照専用」テーブル"
     SCHEDULER エントリ自体は他の CONFIG_DB テーブルを参照しない（leafref なし）。依存の方向は常に外部テーブル → SCHEDULER であり、SCHEDULER を先に投入してから参照側テーブルを投入するのが正しい順序である。
@@ -389,15 +389,15 @@ ASIC_DB への SAI 書き込み
 
 > 証跡: `meta/_intermediate/cdb-flow/scheduler-orch-platform.md`
 
-`QosOrch::handleSchedulerTable()` のコード自体に ASIC ベンダー・`platform` / `sub_platform` 文字列・`gMySwitchType` に依存する処理分岐は**存在しない**。プラットフォーム差は SAI 層での属性サポート有無という形で間接的に現れる。
+`QosOrch::handleSchedulerTable()` のコード自体に [ASIC](../../reference/glossary.md#term-asic) ベンダー・`platform` / `sub_platform` 文字列・`gMySwitchType` に依存する処理分岐は**存在しない**。プラットフォーム差は SAI 層での属性サポート有無という形で間接的に現れる。
 
 ### 実装コードは ASIC 非依存
 
 | 観点 | 影響 | 根拠 |
 |------|------|------|
-| ASIC ベンダー (Broadcom / Mellanox / Marvell / Cisco / Barefoot) | コード分岐なし — 同一パスを通る | `handleSchedulerTable()` L1347–1509 に `platform` 条件式ゼロ (`qosorch.cpp` 全文 grep) |
+| [ASIC](../../reference/glossary.md#term-asic) ベンダー (Broadcom / Mellanox / Marvell / Cisco / Barefoot) | コード分岐なし — 同一パスを通る | `handleSchedulerTable()` L1347–1509 に `platform` 条件式ゼロ (`qosorch.cpp` 全文 grep) |
 | `sub_platform` (broadcom-dnx 等) | 影響なし | `qosorch.h` に `BRCM_DNX_PLATFORM_SUBSTRING` 等の参照なし |
-| multi-asic / namespace | SCHEDULER テーブルはホスト CONFIG_DB で namespace 統一。各 ASIC の orchagent が独立して処理するため名前空間間で SAI オブジェクト ID は分離 | `orchdaemon.cpp:384` — namespace ごとに addConsumer |
+| multi-asic / namespace | SCHEDULER テーブルはホスト CONFIG_DB で namespace 統一。各 [ASIC](../../reference/glossary.md#term-asic) の orchagent が独立して処理するため名前空間間で SAI オブジェクト ID は分離 | `orchdaemon.cpp:384` — namespace ごとに addConsumer |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | 影響なし — QosOrch は [DPU](../../reference/glossary.md#term-dpu) 固有の capability を参照しない | `qosorch.cpp` に `DPU` / `dpuorch` 参照なし |
 
 ### VoQ モードの唯一の分岐（SCHEDULER 自体ではなく QUEUE バインド時）
@@ -474,4 +474,4 @@ sudo grep -i "Unknown field\|scheduler" /var/log/swss/orchagent.log | tail -20
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: d7049e1d7cc3 -->
+<!-- glossary-links-injected: 4aeda46c88ba -->

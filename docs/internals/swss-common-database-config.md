@@ -17,7 +17,7 @@ last_verified: 2026-05-20
 
 ## database_config.json の役割
 
-`database_config.json` は `swss-common` が使用する Redis データベースの接続設定を定義するファイルである。標準的な SONiC イメージでは `/var/run/redis/sonic-db/database_config.json` に配置される。
+`database_config.json` は `swss-common` が使用する Redis データベースの接続設定を定義するファイルである。標準的な [SONiC](../reference/glossary.md#term-sonic) イメージでは `/var/run/redis/sonic-db/database_config.json` に配置される。
 
 ```json
 {
@@ -107,4 +107,4 @@ export SONIC_DB_CONFIG_FILE=/path/to/database_config.json
 - [swss-common DB リンク順序制約](swss-common-db-link-ordering.md)
 - GitHub Issue: [sonic-net/sonic-swss-common#322](https://github.com/sonic-net/sonic-swss-common/issues/322)
 
-<!-- glossary-links-injected: 0f594312e2b7 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

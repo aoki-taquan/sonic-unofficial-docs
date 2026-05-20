@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`DOT1P_TO_TC_MAP` テーブルは IEEE 802.1p Priority Code Point (PCP, 0-7) を SONiC の Traffic Class へマップするテーブル[^1]。[QoS](../../reference/glossary.md#term-qos) 入口分類で使われ、`PORT_QOS_MAP.dot1p_to_tc_map` から参照される。`qosorch` ([sonic-swss](../../reference/glossary.md#term-sonic-swss)) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み、[SAI](../../reference/glossary.md#term-sai) の `SAI_QOS_MAP_TYPE_DOT1P_TO_TC` オブジェクトを生成する。
+`DOT1P_TO_TC_MAP` テーブルは IEEE 802.1p Priority Code Point (PCP, 0-7) を [SONiC](../../reference/glossary.md#term-sonic) の Traffic Class へマップするテーブル[^1]。[QoS](../../reference/glossary.md#term-qos) 入口分類で使われ、`PORT_QOS_MAP.dot1p_to_tc_map` から参照される。`qosorch` ([sonic-swss](../../reference/glossary.md#term-sonic-swss)) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み、[SAI](../../reference/glossary.md#term-sai) の `SAI_QOS_MAP_TYPE_DOT1P_TO_TC` オブジェクトを生成する。
 
 [YANG](../../reference/glossary.md#term-yang) は親 `DOT1P_TO_TC_MAP_LIST`（key: `name`）と、その下の inner list `DOT1P_TO_TC_MAP`（key: `dot1p`）の 2 段構造。
 
@@ -50,7 +50,7 @@ flowchart LR
 DOT1P_TO_TC_MAP|<name>             # マップ全体（hash で dot1p→tc の dict）
 ```
 
-[CONFIG_DB](../../reference/glossary.md#term-config_db) 上は `DOT1P_TO_TC_MAP|<name>` の単一ハッシュで `dot1p` → `tc` の対応を保持する（一般的な SONiC [QoS](../../reference/glossary.md#term-qos) map と同形式）。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) 上は `DOT1P_TO_TC_MAP|<name>` の単一ハッシュで `dot1p` → `tc` の対応を保持する（一般的な [SONiC](../../reference/glossary.md#term-sonic) [QoS](../../reference/glossary.md#term-qos) map と同形式）。
 
 | キー | 型 | 説明 |
 |------|----|------|
@@ -63,7 +63,7 @@ inner list で定義される各エントリ:
 | フィールド | 型 | 説明 |
 |-----------|----|------|
 | `dot1p` | string パターン `[0-7]?` | 802.1p PCP 値（0-7） |
-| `tc` | `sonic-types:tc_type` (uint8 0..15) | マップ先 Traffic Class。YANG は 0..15 を許容するが多くの ASIC は 0..7 のみサポート |
+| `tc` | `sonic-types:tc_type` (uint8 0..15) | マップ先 Traffic Class。YANG は 0..15 を許容するが多くの [ASIC](../../reference/glossary.md#term-asic) は 0..7 のみサポート |
 
 <!-- value-behavior -->
 ## 値依存挙動マトリクス
@@ -79,8 +79,8 @@ inner list で定義される各エントリ:
 
 | 値 | 挙動 |
 |----|------|
-| `0`..`7` | [SAI](../../reference/glossary.md#term-sai) QoS map オブジェクトの Traffic Class 値として設定（全 ASIC で動作） |
-| `8`..`15` | YANG 検証は通過（`tc_type` は `uint8 range 0..15`）。qosorch も通過するが ASIC が拒否する場合あり（プラットフォーム依存） |
+| `0`..`7` | [SAI](../../reference/glossary.md#term-sai) QoS map オブジェクトの Traffic Class 値として設定（全 [ASIC](../../reference/glossary.md#term-asic) で動作） |
+| `8`..`15` | YANG 検証は通過（`tc_type` は `uint8 range 0..15`）。qosorch も通過するが [ASIC](../../reference/glossary.md#term-asic) が拒否する場合あり（プラットフォーム依存） |
 | `16` 以上 | YANG 検証で reject |
 
 > `stypes:tc_type` の実体は `uint8 range 0..15`。PORT_QOS_MAP.dot1p_to_tc_map から参照されない限り SAI に反映されない。
@@ -190,7 +190,7 @@ show qos map dot1p-tc
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -513,4 +513,4 @@ TC 8..15 を設定した場合、YANG バリデーションは通過するが SA
 > **Evidence**: `qosorch.cpp:1979-2054` (handleGlobalQosMap — DOT1P 非対象確認); `qos_config.j2:164,240-253` (ストレージバックエンド条件); `qos_config.j2:435` (PORT_QOS_MAP への dot1p_to_tc_map 割り当て); `db_migrator.py:575-577` (ABNF 参照削除)
 <!-- /platform -->
 
-<!-- glossary-links-injected: ee0f0c62dd51 -->
+<!-- glossary-links-injected: 8de83b4fd2a7 -->

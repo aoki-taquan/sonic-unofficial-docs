@@ -253,7 +253,7 @@ show kdump config
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -331,7 +331,7 @@ KDUMP (CONFIG_DB) 変更
 
 ### KVM / 仮想プラットフォーム (VS) の差異
 
-KVM/QEMU 環境を考慮した `ata_piix.prefer_ms_hyperv=0` パラメータが `/etc/default/kdump-tools` の `KDUMP_CMDLINE_APPEND` にデフォルトで含まれる。実機 ASIC プラットフォームでは `ata_piix` ドライバが存在しないため無害に無視される。
+KVM/QEMU 環境を考慮した `ata_piix.prefer_ms_hyperv=0` パラメータが `/etc/default/kdump-tools` の `KDUMP_CMDLINE_APPEND` にデフォルトで含まれる。実機 [ASIC](../../reference/glossary.md#term-asic) プラットフォームでは `ata_piix` ドライバが存在しないため無害に無視される。
 
 ### ARM (U-Boot) プラットフォームの特殊処理
 
@@ -538,7 +538,7 @@ def kdump_update(self, key, data):
 
 `sonic-kdump-config --enable/--disable` はカーネルブートラインの `crashkernel=` パラメータを
 `/host/grub/grub.cfg` に直接書き込む (`rewrite_cfg()`)。grub-mkconfig は呼ばず、
-SONiC 独自の grub.cfg 直接書き換え方式を採用している。
+[SONiC](../../reference/glossary.md#term-sonic) 独自の grub.cfg 直接書き換え方式を採用している。
 
 ```python
 # sonic-utilities/scripts/sonic-kdump-config:686-687
@@ -633,4 +633,4 @@ KDUMP (CONFIG_DB) 変更
 
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 81cb712f4c0e -->
+<!-- glossary-links-injected: 7fcd30b4fb74 -->

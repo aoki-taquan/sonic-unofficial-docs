@@ -56,7 +56,7 @@ flowchart LR
 
 <!-- evidence: sonic-swss/orchagent/aclorch.cpp AclOrch::doAclRuleTask:5520 / AclTable::add:2988 / AclRuleMirror::activate:2324 / AclRulePacket::getRedirectObjectId:2078 -->
 
-`ACL_RULE` の SAI 反映は複数の外部状態（PortsOrch 初期化、`ACL_TABLE`、`MIRROR_SESSION`、REDIRECT 先 next-hop、SAI リソース余裕）に依存する。違反時の挙動はガード機構により**自動回復するもの**と**rule INACTIVE で erase されるもの**に分かれる。
+`ACL_RULE` の SAI 反映は複数の外部状態（[PortsOrch](../../reference/glossary.md#term-portsorch) 初期化、`ACL_TABLE`、`MIRROR_SESSION`、REDIRECT 先 next-hop、SAI リソース余裕）に依存する。違反時の挙動はガード機構により**自動回復するもの**と**rule INACTIVE で erase されるもの**に分かれる。
 
 ### 依存 1: PortsOrch 初期化（必須先行・グローバル）
 
@@ -66,9 +66,9 @@ PortsOrch::allPortsReady() == true  先行
 ACL_TABLE / ACL_TABLE_TYPE / ACL_RULE のどの SET も処理開始
 ```
 
-`AclOrch::doTask()` (`aclorch.cpp:4276`) は `gPortsOrch->allPortsReady()` が false の間は何も処理しない。[ACL](../../reference/glossary.md#term-acl) 関連の全 [CONFIG_DB](../../reference/glossary.md#term-config_db) エントリは PortsOrch の `PORT` 初期化完了を待つ。
+`AclOrch::doTask()` (`aclorch.cpp:4276`) は `gPortsOrch->allPortsReady()` が false の間は何も処理しない。[ACL](../../reference/glossary.md#term-acl) 関連の全 [CONFIG_DB](../../reference/glossary.md#term-config_db) エントリは [PortsOrch](../../reference/glossary.md#term-portsorch) の `PORT` 初期化完了を待つ。
 
-**違反時**: 書込み自体は [CONFIG_DB](../../reference/glossary.md#term-config_db) に残り、PortsOrch 完了後の最初のイベントループで一括処理（自動回復）。
+**違反時**: 書込み自体は [CONFIG_DB](../../reference/glossary.md#term-config_db) に残り、[PortsOrch](../../reference/glossary.md#term-portsorch) 完了後の最初のイベントループで一括処理（自動回復）。
 
 ### 依存 2: ACL_TABLE 先行（必須先行・自動回復あり）
 
@@ -304,8 +304,8 @@ ACL_RULE で使用可能な match / action は ACL_TABLE の `type` によって
 |---|---|---|---|
 | `L3` | `PACKET_ACTION`, `REDIRECT_ACTION` | 通常 IPv4 ACL | `acltable.h:26`, `aclorch.cpp:200,454` |
 | `L3V6` | `PACKET_ACTION`, `REDIRECT_ACTION` | IPv6 ACL。`IP_PROTOCOL` は非推奨 | `acltable.h:27`, `aclorch.cpp:220,1231` |
-| `MIRROR` | `MIRROR_INGRESS_ACTION` | ASIC capability 必須 | `acltable.h:29`, `aclorch.cpp:260,3502` |
-| `MIRRORV6` | `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` | ASIC capability 照会、一部統合 | `acltable.h:30`, `aclorch.cpp:279,3503,5811` |
+| `MIRROR` | `MIRROR_INGRESS_ACTION` | [ASIC](../../reference/glossary.md#term-asic) capability 必須 | `acltable.h:29`, `aclorch.cpp:260,3502` |
+| `MIRRORV6` | `MIRROR_INGRESS_ACTION` / `MIRROR_EGRESS_ACTION` | [ASIC](../../reference/glossary.md#term-asic) capability 照会、一部統合 | `acltable.h:30`, `aclorch.cpp:279,3503,5811` |
 
 ### 値別 grep カバレッジ
 
@@ -406,7 +406,7 @@ YANG 未定義テーブルのため、全デフォルトはコード実装が正
 |---|---|---|
 | `AclOrch` は常時登録 (platform 非依存) | ACL_TABLE / ACL_RULE 購読は無条件 | `orchdaemon.cpp:533,569` |
 | `DTelOrch` は `platform==BFN\|VS` かつ capability あり のみ生成 | DTelOrch なし → DTEL 系 action (`FLOW_OP`, `INT_SESSION` 等) が機能しない | `orchdaemon.cpp:502-530` |
-| `type=MIRROR`/`MIRRORV6` + ASIC capability なし | 起動時 SAI capability query 失敗 → ACL_TABLE 作成 reject | `aclorch.cpp:3500-3541` |
+| `type=MIRROR`/`MIRRORV6` + [ASIC](../../reference/glossary.md#term-asic) capability なし | 起動時 SAI capability query 失敗 → ACL_TABLE 作成 reject | `aclorch.cpp:3500-3541` |
 | `type=L3V4V6` + ASIC 未サポート | `isAclL3V4V6TableSupported()` → false → reject | `aclorch.cpp:2737-2739` |
 | `META_DATA` 系 action + capability なし | `sai_query_attribute_capability()` で確認後に有効化 | `aclorch.cpp:3590-3659` |
 
@@ -885,7 +885,7 @@ dataplane ACL は full update 方式、controlplane ACL は差分更新。
 configdb.set_entry(ACL_RULE, key, None)
 ```
 
-Multi-ASIC: 各 namespace の `namespace_configdb` にも同じ操作を適用。
+[Multi-ASIC](../../reference/glossary.md#term-multi-asic): 各 namespace の `namespace_configdb` にも同じ操作を適用。
 
 **デフォルト deny ルール自動追加** (`createDefaultDenyAclRule()` L1138):
 
@@ -1066,4 +1066,4 @@ SAI: sai_acl_api->create_acl_entry / set_acl_entry_attribute / remove_acl_entry
 > **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:22-23,408-422,533,959` (TableConnector / SELECT_TIMEOUT / `new AclOrch(...)` / select ループ)、`sonic-swss/orchagent/orch.cpp:1186-1196` (`Orch::addConsumer()` DB ID 分岐)、`sonic-swss/orchagent/aclorch.cpp:4221-4222,4272-4295` (`createRetryCache(CFG_ACL_RULE_TABLE_NAME)` / `doTask` ディスパッチ)、`sonic-swss-common/common/subscriberstatetable.cpp:17,45-165` (`SubscriberStateTable` の `PSUBSCRIBE` + `HGETALL` 動作)、`sonic-swss-common/common/table.h:164` (`DEFAULT_POP_BATCH_SIZE = 128`)、`sonic-swss-common/common/schema.h` (`CFG_ACL_RULE_TABLE_NAME` 定数); 詳細分析 `meta/_intermediate/cdb-flow/acl-rule-pubsub.md`
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 0d35a6e72048 -->
+<!-- glossary-links-injected: 224d99ac10be -->

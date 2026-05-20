@@ -176,7 +176,7 @@ show copp config
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -354,7 +354,7 @@ show copp config
 
 - **COPP_GROUP**: SET 処理時に即座に参照確認。未解決は保留キューで管理され、GROUP 登録後に `doTask` 再実行で解消する。
 - **FEATURE**: `doFeatureTask()` が FEATURE テーブルの変化を購読し、state 変更のたびに影響する COPP_TRAP を再評価・再書き込みする。
-- **DEVICE_METADATA**: `copp_cfg.j2` 展開時（ビルド時または初回起動時）にのみ評価。ランタイムでの再評価はない。
+- **[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata)**: `copp_cfg.j2` 展開時（ビルド時または初回起動時）にのみ評価。ランタイムでの再評価はない。
 - **SAI HOSTIF**: `CoppOrch::processCoppTrap()` 内でポート初期化完了後に即時生成。SAI オブジェクト ID は `m_trap_group_hostif_map` / `m_trapid_hostif_table_map` にキャッシュされる。
 
 ### init_cfg 由来の暗黙初期化
@@ -574,4 +574,4 @@ Broadcom 等その他プラットフォームでは priority=1 をデフォル�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: ab1515757c31 -->
+<!-- glossary-links-injected: 2e92ab097103 -->

@@ -163,7 +163,7 @@ vtysh -c 'show bgp summary'
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし ([FRR](../../reference/glossary.md#term-frr) vtysh 経由)
+なし ([FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) 経由)
 
 ### 段階 3 — APPL→SAI
 
@@ -179,7 +179,7 @@ vtysh -c 'show bgp summary'
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`BGPPeerMgrBase` は `BGP_MONITORS` の SET/DEL 処理後に FRR (vtysh) への適用が成功するたびに **[STATE_DB](../../reference/glossary.md#term-state_db) / `BGP_PEER_CONFIGURED_TABLE`** へ副次書き込みを行う。`update_state_db()` が各ハンドラから直接呼ばれる設計であり、[APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書き込みは発生しない。
+`BGPPeerMgrBase` は `BGP_MONITORS` の SET/DEL 処理後に FRR ([vtysh](../../reference/glossary.md#term-vtysh)) への適用が成功するたびに **[STATE_DB](../../reference/glossary.md#term-state_db) / `BGP_PEER_CONFIGURED_TABLE`** へ副次書き込みを行う。`update_state_db()` が各ハンドラから直接呼ばれる設計であり、[APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書き込みは発生しない。
 
 ### STATE_DB / `BGP_PEER_CONFIGURED_TABLE`
 
@@ -199,7 +199,7 @@ key 形式: default [VRF](../../reference/glossary.md#term-vrf) の場合 `<nbr_
 
 ### 副次書込なし
 
-- **[APPL_DB](../../reference/glossary.md#term-appl_db)**: `bgpcfgd` は CONFIG_DB → FRR (vtysh) の直接送信モデルを採用。[APPL_DB](../../reference/glossary.md#term-appl_db) 中間層は存在しない。
+- **[APPL_DB](../../reference/glossary.md#term-appl_db)**: `bgpcfgd` は CONFIG_DB → FRR ([vtysh](../../reference/glossary.md#term-vtysh)) の直接送信モデルを採用。[APPL_DB](../../reference/glossary.md#term-appl_db) 中間層は存在しない。
 - **[COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)**: BGP peer カウンタは `bgpcfgd` ではなく FRR 統計として管理される。`managers_bgp.py` に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書き込みは存在しない。
 
 <!-- /side-effects -->
@@ -217,7 +217,7 @@ key 形式: default [VRF](../../reference/glossary.md#term-vrf) の場合 `<nbr_
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -427,7 +427,7 @@ BGP_MONITORS (bgpcfgd)
 
 | FRR コマンド | 注入条件 | 証跡 |
 |------------|---------|------|
-| `neighbor <addr> remote-as <bgp_asn>` | 常時。`bgp_asn` は DEVICE_METADATA 由来 | `instance.conf.j2:4` |
+| `neighbor <addr> remote-as <bgp_asn>` | 常時。`bgp_asn` は [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 由来 | `instance.conf.j2:4` |
 | `neighbor <addr> peer-group BGPMON` | 常時 | `instance.conf.j2:5` |
 | `neighbor <addr> activate` (IPv4 + IPv6) | 常時 | `instance.conf.j2:7,9` |
 | `neighbor BGPMON update-source Loopback4096` | `switch_type=voq` または chassisdb.conf 存在時 | `peer-group.conf.j2:10` |
@@ -442,11 +442,11 @@ BGP_MONITORS (bgpcfgd)
 
 | フィールド | YANG 定義 | 実装挙動 | 乖離種別 |
 |-----------|---------|---------|---------|
-| `asn` | uint32、Optional | FRR の `remote-as` は DEVICE_METADATA の `bgp_asn` を使用。CONFIG_DB の `asn` は**参照されない** | **重大 discrepancy**: `asn` は dead field |
+| `asn` | uint32、Optional | FRR の `remote-as` は [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) の `bgp_asn` を使用。CONFIG_DB の `asn` は**参照されない** | **重大 discrepancy**: `asn` は dead field |
 | `admin_status` | Optional | 欠如時でも peer 追加続行 (`up` 相当) | soft — YANG は明示を推奨しない |
 | `local_addr` | Optional, inet:ip-address | 欠如時は warn のみ。`update-source` 未設定 | soft — YANG の optional と整合 |
 
-> **注意**: `BGP_MONITORS|<addr>|asn` を CONFIG_DB に設定しても、bgpcfgd は FRR peer の `remote-as` をローカル ASN (DEVICE_METADATA) から取得するため、そのフィールドは無視される。BGP_MONITORS の peer は常にローカル ASN に対してピアリングする設計（内部 route-monitor 用途）。
+> **注意**: `BGP_MONITORS|<addr>|asn` を CONFIG_DB に設定しても、bgpcfgd は FRR peer の `remote-as` をローカル ASN ([DEVICE_METADATA](../../reference/glossary.md#term-device_metadata)) から取得するため、そのフィールドは無視される。BGP_MONITORS の peer は常にローカル ASN に対してピアリングする設計（内部 route-monitor 用途）。
 
 <!-- /defaults -->
 
@@ -571,4 +571,4 @@ self.callbacks["CONFIG_DB"]["BGP_MONITORS"].append(manager.handler)
 > 詳細解析: `meta/_intermediate/cdb-flow/bgp-monitors-pubsub.md`
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 4d1c2733fe41 -->
+<!-- glossary-links-injected: e934b3d5ce46 -->

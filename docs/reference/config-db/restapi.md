@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`go-server-server` ベースの SONiC REST API (`docker-sonic-restapi`) の TLS 設定とランタイム挙動を保持するテーブル[^1]。`certs` (証明書パス群) と `config` (動作モード) の 2 つのシングルトン container から構成される。
+`go-server-server` ベースの [SONiC](../../reference/glossary.md#term-sonic) REST API (`docker-sonic-restapi`) の TLS 設定とランタイム挙動を保持するテーブル[^1]。`certs` (証明書パス群) と `config` (動作モード) の 2 つのシングルトン container から構成される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -90,6 +90,9 @@ container `RESTAPI` の下に固定キー `certs` / `config` の 2 シングル�
 <!-- ref-triangle:end -->
 
 ## 引用元
+
+<!-- footnote anchor seeds -->
+出典: [^3]
 
 [^1]: `src/sonic-yang-models/yang-models/sonic-restapi.yang` (container `RESTAPI` / `certs` / `config`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-restapi.yang>
 
@@ -320,7 +323,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 **`DEVICE_METADATA|localhost.x509` (cert フォールバック)**: `rest-server.sh` は `MGMT_VARS=$(sonic-cfggen -d -t mgmt_vars.j2)` を一括取得した後、`REST_SERVER.server_crt` / `server_key` / `ca_crt` が全て空であれば `X509=$(echo $MGMT_VARS | jq -r '.x509')` から証明書パスを読み出す (`rest-server.sh:27–41`)。`DEVICE_METADATA|localhost` に `x509` キーが存在しない場合は空文字列となり、最終的に `/tmp/` 自己署名証明書を自動生成する。本番環境では `RESTAPI|certs` を明示設定しないと `DEVICE_METADATA.x509` に依存することになる点に注意。
 
-**`FEATURE|restapi` (コンテナ起動制御)**: `FEATURE` テーブルは SONiC `hostcfgd` が管理し、`restapi` コンテナの起動・停止を制御する。`RESTAPI` テーブルに正しい値が設定されていても `FEATURE|restapi.state=disabled` であれば `rest-server.sh` は実行されない。`minigraph.py` は `RESTAPI` と `FEATURE` を同一解析パスで生成するため、minigraph 由来の環境では両者は常に整合する (`minigraph.py:2689–2702`)。
+**`FEATURE|restapi` (コンテナ起動制御)**: `FEATURE` テーブルは [SONiC](../../reference/glossary.md#term-sonic) `hostcfgd` が管理し、`restapi` コンテナの起動・停止を制御する。`RESTAPI` テーブルに正しい値が設定されていても `FEATURE|restapi.state=disabled` であれば `rest-server.sh` は実行されない。`minigraph.py` は `RESTAPI` と `FEATURE` を同一解析パスで生成するため、minigraph 由来の環境では両者は常に整合する (`minigraph.py:2689–2702`)。
 
 **`db_migrator.py` の既存エントリ優先**: `migrate_restapi()` (`db_migrator.py:609–619`) は `config_db.get_entry('RESTAPI', 'config')` が空の場合のみ書き込む。既存エントリが存在する場合は上書きしない（アップグレード時に手動設定が保持される）。
 
@@ -551,14 +554,14 @@ supervisord 起動
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: RESTAPI は管理プレーン専用機能であり、SAI を経由しないため ASIC 種別・ベンダー・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成による動作差は存在しない。
+**プラットフォーム差なし**: RESTAPI は管理プレーン専用機能であり、SAI を経由しないため [ASIC](../../reference/glossary.md#term-asic) 種別・ベンダー・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成による動作差は存在しない。
 
 > **調査根拠**: `rest-server.sh`, `mgmt_vars.j2`, `supervisord.conf`, `minigraph.py:2689-2701` 精読 (2026-05-19)
 > 詳細証跡: `meta/_intermediate/cdb-flow/restapi-platform.md`
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `rest-server.sh` は `sonic-cfggen -d -t mgmt_vars.j2` で CONFIG_DB を読み取るのみ。SAI 非経由 |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `rest-server.sh` は `sonic-cfggen -d -t mgmt_vars.j2` で CONFIG_DB を読み取るのみ。SAI 非経由 |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `mgmt_vars.j2` (4 行全体) に namespace / asic 分岐なし。`rest-server.sh` も `SONIC_ASIC_ID` / `SONIC_ASIC_COUNT` を参照しない |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | RESTAPI テーブルは host scope。chassis 全体での集中管理機構はなく、各 line card host で `rest-server.sh` が独立に CONFIG_DB を読み取る |
 | ベンダー固有 hook | なし | `docker-sonic-mgmt-framework/` 配下にベンダー条件分岐なし。`rest-server.sh` / `mgmt_vars.j2` / `supervisord.conf` の全行を検索しても `vendor` / `broadcom` / `mellanox` / `marvell` は 0 ヒット |
@@ -567,4 +570,4 @@ supervisord 起動
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 95a43da65936 -->
+<!-- glossary-links-injected: f1e797ff320f -->

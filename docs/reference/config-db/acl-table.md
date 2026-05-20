@@ -164,7 +164,7 @@ ACL_TABLE の処理失敗は `doAclTableTask()` 内の `bAllAttributesOk` フラ
 | `ports` に bind 不可ポート（IN_PORTS/OUT_PORTS 等） | `getAclBindPortId()` L5795-5799 | `return false` → `bAllAttributesOk=false` → erase | `"Inactive"` | なし |
 | `ports` に未登録ポート | `processAclTablePorts()` L5786-5791 | `pendingPortSet.emplace()` でスキップ継続（erase しない） | 変化なし | `onPortReady()` で自動解消 |
 | ユーザ定義 type 未登録 | `getAclTableType()` L5432-5437 | `it++`（保留） | 変化なし | ACL_TABLE_TYPE 登録まで無制限 |
-| `type=L3V4V6` + ASIC 非サポート | `AclTable::validate()` L2737-2745 | `validate()` false → erase | `"Inactive"` | なし |
+| `type=L3V4V6` + [ASIC](../../reference/glossary.md#term-asic) 非サポート | `AclTable::validate()` L2737-2745 | `validate()` false → erase | `"Inactive"` | なし |
 | action 非サポート | `AclTable::validate()` L2759-2766 | `validate()` false → erase | `"Inactive"` | なし |
 | `addAclTable()` SAI 失敗（MIRROR capability 欠如等） | `doAclTableTask()` L5480-5485 | `it++`（retry） | `"Pending creation"` | 無制限 |
 | `updateAclTable()` 失敗（ports 更新失敗） | `doAclTableTask()` L5467-5469 | `it++`（retry） | 変化なし | 無制限 |
@@ -206,13 +206,13 @@ DEL 受信
 [YANG](../../reference/glossary.md#term-yang) 定義 4 値 (sonic-acl.yang:59-65): `MIRROR/MIRRORV6/L3/L3V6`。
 実装定義マクロ (acltable.h:26-42): `TABLE_TYPE_L3` / `TABLE_TYPE_L3V6` / `TABLE_TYPE_L3V4V6` / `TABLE_TYPE_MIRROR` / `TABLE_TYPE_MIRRORV6` / `TABLE_TYPE_MIRROR_DSCP` / `TABLE_TYPE_PFCWD` / `TABLE_TYPE_CTRLPLANE` / `TABLE_TYPE_MCLAG` / `TABLE_TYPE_MUX` / `TABLE_TYPE_DROP` / `TABLE_TYPE_MARK_META` / `TABLE_TYPE_MARK_META_V6` / `TABLE_TYPE_EGR_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCPV6`。`processAclTableType()` は type 空文字のみ reject、それ以外はそのまま通す (aclorch.cpp:5821-5833)。
 
-| 値 | 動作 | ASIC 確認 | evidence |
+| 値 | 動作 | [ASIC](../../reference/glossary.md#term-asic) 確認 | evidence |
 |---|---|---|---|
 | `L3` | IPv4 L3 [ACL](../../reference/glossary.md#term-acl)。INGRESS/EGRESS 両対応 (`TABLE_TYPE_L3`) | なし | `acltable.h:26`, `aclorch.cpp:200,454` |
 | `L3V6` | IPv6 L3 [ACL](../../reference/glossary.md#term-acl)。`IP_PROTOCOL` 使用は非推奨 (WARN ログ) (`TABLE_TYPE_L3V6`) | なし | `acltable.h:27`, `aclorch.cpp:220,1231` |
 | `L3V4V6` | IPv4/IPv6 デュアルスタック ACL (`TABLE_TYPE_L3V4V6`) | `isAclL3V4V6TableSupported()` 必須 (`aclorch.cpp:2737`) | `acltable.h:28`, `aclorch.cpp:240,3541-3543` |
 | `MIRROR` | INGRESS mirror セッション転送専用 (`TABLE_TYPE_MIRROR`) | `m_mirrorTableCapabilities[MIRROR]` 必須 | `acltable.h:29`, `aclorch.cpp:260,3502,3671` |
-| `MIRRORV6` | IPv6 INGRESS mirror 専用。ASIC によっては MIRROR テーブルに統合 (`TABLE_TYPE_MIRRORV6`) | `m_mirrorTableCapabilities[MIRRORV6]` 必須 | `acltable.h:30`, `aclorch.cpp:279,3503,3510-3511,5811` |
+| `MIRRORV6` | IPv6 INGRESS mirror 専用。[ASIC](../../reference/glossary.md#term-asic) によっては MIRROR テーブルに統合 (`TABLE_TYPE_MIRRORV6`) | `m_mirrorTableCapabilities[MIRRORV6]` 必須 | `acltable.h:30`, `aclorch.cpp:279,3503,3510-3511,5811` |
 | `MIRROR_DSCP` | [DSCP](../../reference/glossary.md#term-dscp) 値でミラー先決定 (`TABLE_TYPE_MIRROR_DSCP`) | なし | `acltable.h:31`, `aclorch.cpp:298` |
 | `PFCWD` | [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) 専用 (`TABLE_TYPE_PFCWD`)。BRCM DNX では `SAI_ACL_BIND_POINT_TYPE_SWITCH` | なし | `acltable.h:32`, `aclorch.cpp:316,3811-3825` |
 | `CTRLPLANE` | SAI テーブル作成なし。`copporch` 経由で制御 (`TABLE_TYPE_CTRLPLANE`) | なし (stage 無視) | `acltable.h:33`, `aclorch.cpp:2727` |
@@ -445,7 +445,7 @@ XML `<AclInterface>` 要素から `ACL_TABLE` エントリを生成し CONFIG_DB
 - REST path: `PATCH /openconfig-acl:acl/acl-sets/acl-set/{name}/{type}`
 - [gNMI](../../reference/glossary.md#term-gnmi) path: `/openconfig-acl:acl/acl-sets/acl-set[name=...][type=...]`
 - `AclApp.processCreate()` → `processCommon()` → `d.SetEntry(app.aclTs, ...)` で CONFIG_DB の ACL_TABLE に書き込み
-- OpenConfig type → SONiC type マッピング: `ACL_IPV4` → `L3`、`ACL_IPV6` → `L3V6` など
+- OpenConfig type → [SONiC](../../reference/glossary.md#term-sonic) type マッピング: `ACL_IPV4` → `L3`、`ACL_IPV6` → `L3V6` など
 
 ### db_migrator
 
@@ -470,7 +470,7 @@ XML `<AclInterface>` 要素から `ACL_TABLE` エントリを生成し CONFIG_DB
 
 ### 前提: allPortsReady() ガード
 
-`AclOrch::doTask()` (`aclorch.cpp:4276`) は `gPortsOrch->allPortsReady()` が false の間は即 return する。`ACL_TABLE` / `ACL_TABLE_TYPE` / `ACL_RULE` すべての処理が**完全にブロック**される。orchdaemon が PortsOrch の初期化完了を保証するため、通常は意識不要だが起動シーケンス中の早期書き込みは処理待ちになる。
+`AclOrch::doTask()` (`aclorch.cpp:4276`) は `gPortsOrch->allPortsReady()` が false の間は即 return する。`ACL_TABLE` / `ACL_TABLE_TYPE` / `ACL_RULE` すべての処理が**完全にブロック**される。orchdaemon が [PortsOrch](../../reference/glossary.md#term-portsorch) の初期化完了を保証するため、通常は意識不要だが起動シーケンス中の早期書き込みは処理待ちになる。
 
 ### ACL_TABLE_TYPE (ユーザ定義型) が先行必須
 
@@ -564,8 +564,8 @@ DEL ACL_TABLE_TYPE|<type_name>           # ユーザ定義 type を削除する�
 
 ### 解決タイミング
 
-- `ports` に指定したポートが PortsOrch 未登録の場合、`pendingPortSet` に保留され
-  PortsOrch の `SUBJECT_TYPE_PORT_CHANGE` 通知で再バインドを試みる (`aclorch.cpp:2866-2901`)。
+- `ports` に指定したポートが [PortsOrch](../../reference/glossary.md#term-portsorch) 未登録の場合、`pendingPortSet` に保留され
+  [PortsOrch](../../reference/glossary.md#term-portsorch) の `SUBJECT_TYPE_PORT_CHANGE` 通知で再バインドを試みる (`aclorch.cpp:2866-2901`)。
 - `type` にユーザ定義型を指定する場合は `ACL_TABLE_TYPE|<type>` が先に存在している必要がある。
 
 ### 間接参照
@@ -803,4 +803,4 @@ sonic-db-cli COUNTERS_DB hgetall ACL_COUNTER_RULE_MAP
 > **証跡**: `setAclTableStatus()` L6088-6098、`removeAllAclTableStatus()` L6119-6125、`putAclActionCapabilityInDB()` L4056-4101、`registerFlexCounter()` L6020-6042、`deregisterFlexCounter()` L6044-6048、`incCrmAclUsedCounter()` L2855、`decCrmAclUsedCounter()` L4877。全行精読 + `schema.h:418,514` 確認。
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: df32ca8fe4b1 -->
+<!-- glossary-links-injected: 56bcc3ff7b07 -->

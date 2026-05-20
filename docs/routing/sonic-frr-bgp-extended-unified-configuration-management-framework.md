@@ -46,7 +46,7 @@ related:
 
 ## 概要
 
-SONiC Management Framework（REST / [gNMI](../reference/glossary.md#term-gnmi) / IS-CLI）から **OpenConfig [BGP](../reference/glossary.md#term-bgp)** モデル経由で [FRR](../reference/glossary.md#term-frr)-BGP を一気通貫に扱えるようにする設計[^1]。`bgpcfgd`（FRR template ベース）の制約（特定の機能しか出せない）を超え、新設の **`frrcfgd`** daemon が [CONFIG_DB](../reference/glossary.md#term-config_db) の差分イベントから直接 FRR vty コマンドを生成して FRR に流す。
+[SONiC](../reference/glossary.md#term-sonic) Management Framework（REST / [gNMI](../reference/glossary.md#term-gnmi) / IS-CLI）から **OpenConfig [BGP](../reference/glossary.md#term-bgp)** モデル経由で [FRR](../reference/glossary.md#term-frr)-BGP を一気通貫に扱えるようにする設計[^1]。`bgpcfgd`（FRR template ベース）の制約（特定の機能しか出せない）を超え、新設の **`frrcfgd`** daemon が [CONFIG_DB](../reference/glossary.md#term-config_db) の差分イベントから直接 FRR vty コマンドを生成して FRR に流す。
 
 切り替えは `DEVICE_METADATA.localhost.frr_mgmt_framework_config = "true"` で行う[^1]。default は `false`（従来 [bgpcfgd](../reference/glossary.md#term-bgpcfgd)）。state / statistics の get は FRR から on-demand 取得するため warm boot 影響なし。
 
@@ -99,7 +99,7 @@ VRF キーが各 BGP テーブルの最上位に来る点（`<vrf>|...`）が、
 
 ### State / Statistics の取得
 
-`frrcfgd` は state / counters は持たず、Management Framework から要求が来たら **FRR vtysh の `show ... json` を直接叩いて返す**。[COUNTERS_DB](../reference/glossary.md#term-counters_db) / [STATE_DB](../reference/glossary.md#term-state_db) に永続化しないため warm boot 復元の必要なし[^1]。
+`frrcfgd` は state / counters は持たず、Management Framework から要求が来たら **FRR [vtysh](../reference/glossary.md#term-vtysh) の `show ... json` を直接叩いて返す**。[COUNTERS_DB](../reference/glossary.md#term-counters_db) / [STATE_DB](../reference/glossary.md#term-state_db) に永続化しないため warm boot 復元の必要なし[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/mgmt/SONiC_Design_Doc_Unified_FRR_Mgmt_Interface.md#L96-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -231,7 +231,7 @@ ospfclient が SONiC docker コンテナ内で起動できない問題。コン�
 
 ### カーネルルートが ASIC に伝播されない問題（sonic-buildimage#4969）
 
-カーネルルートが ASIC に伝播されない問題。[fpmsyncd](../reference/glossary.md#term-fpmsyncd) が FRR から [APPL_DB](../reference/glossary.md#term-appl_db) への route 書き込みに失敗している場合がある
+カーネルルートが [ASIC](../reference/glossary.md#term-asic) に伝播されない問題。[fpmsyncd](../reference/glossary.md#term-fpmsyncd) が FRR から [APPL_DB](../reference/glossary.md#term-appl_db) への route 書き込みに失敗している場合がある
 
 - 参照: [sonic-net/sonic-buildimage#4969](https://github.com/sonic-net/sonic-buildimage/issues/4969)
 
@@ -320,4 +320,4 @@ sonic-cfggen -d -v 'BGP_GLOBALS'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 33a20020a722 -->
+<!-- glossary-links-injected: d62d2c91ba87 -->

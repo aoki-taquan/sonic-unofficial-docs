@@ -42,7 +42,7 @@ related:
 
 # 概要
 
-SONiC は「設定の入口」「制御プレーン daemon」「ASIC への橋渡し」が別プロセスで分かれており、これらを [Redis](../../reference/glossary.md#term-redis) 上の名前付き DB で結んでいる。機能章を読むときの共通語彙はこの章でまとめる。
+[SONiC](../../reference/glossary.md#term-sonic) は「設定の入口」「制御プレーン daemon」「[ASIC](../../reference/glossary.md#term-asic) への橋渡し」が別プロセスで分かれており、これらを [Redis](../../reference/glossary.md#term-redis) 上の名前付き DB で結んでいる。機能章を読むときの共通語彙はこの章でまとめる。
 
 ## この章は何のためにあるか
 
@@ -143,7 +143,7 @@ sequenceDiagram
 | 要素 | 主に出てくる場面 | この章での扱い |
 | --- | --- | --- |
 | Redis DB 群 | 各機能章の「設定どこ」「状態どこ」 | DB の責務分担と命名規約 |
-| orchagent | 機能ごとの sub-Orch（PortsOrch、RouteOrch、AclOrch、VxlanOrch 等） | APPL_DB → ASIC_DB の共通インタフェース |
+| orchagent | 機能ごとの sub-Orch（[PortsOrch](../../reference/glossary.md#term-portsorch)、RouteOrch、AclOrch、VxlanOrch 等） | APPL_DB → ASIC_DB の共通インタフェース |
 | syncd / sairedis | 各機能章の「ASIC に書く」「offload する」 | ASIC_DB の async 適用と SAI 呼び出し |
 | SAI | ベンダ間の差異吸収 | バージョン整合、capability 問い合わせ、失敗ハンドリング |
 | Counter / Debug | telemetry、observability、ASIC 計数 | bulk/flex counter、dump、ERROR_DB |
@@ -173,7 +173,7 @@ sequenceDiagram
 
 ## この章での読み方
 
-DB と daemon の地図がほしい人は [アーキテクチャ](architecture.md) を先に読む。multi-namespace（Multi-ASIC）や独自 Redis instance を構成したい人は [設定](setup.md) に進む。SAI 失敗の見方を覚えたい人は [運用](operations.md) と [内部実装](internals.md) を続けて読む。bulk/flex counter、debug、dump の設計差は [内部実装](internals.md) を読む。startup や warm reboot の view switching は [発展トピック](advanced.md) に置いた。
+DB と daemon の地図がほしい人は [アーキテクチャ](architecture.md) を先に読む。multi-namespace（[Multi-ASIC](../../reference/glossary.md#term-multi-asic)）や独自 Redis instance を構成したい人は [設定](setup.md) に進む。SAI 失敗の見方を覚えたい人は [運用](operations.md) と [内部実装](internals.md) を続けて読む。bulk/flex counter、debug、dump の設計差は [内部実装](internals.md) を読む。startup や warm reboot の view switching は [発展トピック](advanced.md) に置いた。
 
 ## 読了後にできること
 
@@ -196,4 +196,4 @@ DB と daemon の地図がほしい人は [アーキテクチャ](architecture.m
 
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 
-<!-- glossary-links-injected: 22f1eb196c54 -->
+<!-- glossary-links-injected: 261aa082c134 -->

@@ -29,7 +29,7 @@ related:
 
 ## なぜ必要か
 
-SONiC ビルドは元々 x86_64 中心で、Makefile / docker / ONIE installer / kernel ビルド / sonic-installer が AMD64 をハードコードしていた。本 [HLD](../reference/glossary.md#term-hld) は **ARM32 (armhf) / ARM64 サポート** のため変更対象を整理する[^1]。
+[SONiC](../reference/glossary.md#term-sonic) ビルドは元々 x86_64 中心で、Makefile / docker / ONIE installer / kernel ビルド / sonic-installer が AMD64 をハードコードしていた。本 [HLD](../reference/glossary.md#term-hld) は **ARM32 (armhf) / ARM64 サポート** のため変更対象を整理する[^1]。
 
 変更対象: `sonic-slave`（ビルド環境 docker）、`dockers/`（base / ptf 等）、`rules/` / `Makefile` / build script、`apt` repo list、ONIE image / installer。
 
@@ -210,4 +210,4 @@ Broadcom [SAI](../reference/glossary.md#term-sai) を 3.7.3.2 にアップグレ
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

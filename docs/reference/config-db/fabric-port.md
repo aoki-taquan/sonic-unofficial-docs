@@ -318,7 +318,7 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 | `SWITCH_DEBUG_COUNTER_FLEX_COUNTER_GROUP` | `"SWITCH_DEBUG_COUNTER"` | スイッチドロップカウンタ FlexCounter グループ名 |
 | `SWITCH_STANDARD_DROP_COUNTERS` | `"SWITCH_ID"` | COUNTERS_DB デバッグ名前マップのキー |
 
-`FabricPortsOrch` はポーリング間隔・FlexCounter 周期・リンク監視閾値のほぼ全てをソース上の `#define` またはクラスメンバ初期化子に固定している。これらは CONFIG_DB・DEVICE_METADATA・FABRIC_MONITOR のいずれからも変更できない。一部は FABRIC_MONITOR テーブルのフィールド（`monPollThreshIsolation` 等）で実行時に上書きされるが、上書き不可の定数が多数残る。
+`FabricPortsOrch` はポーリング間隔・FlexCounter 周期・リンク監視閾値のほぼ全てをソース上の `#define` またはクラスメンバ初期化子に固定している。これらは CONFIG_DB・[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata)・FABRIC_MONITOR のいずれからも変更できない。一部は FABRIC_MONITOR テーブルのフィールド（`monPollThreshIsolation` 等）で実行時に上書きされるが、上書き不可の定数が多数残る。
 
 ### ポーリング間隔（`fabricportsorch.cpp:21-48`）
 
@@ -644,7 +644,7 @@ show fabric counters port
 
 `fabricmgrd` → `FabricPortsOrch` (APPL_DB 経由) が CONFIG_DB の `FABRIC_PORT` テーブルを購読する。
 
-`FABRIC_PORT` は Chassis の fabric ASIC ポートを管理。通常の ToR では使用しない。
+`FABRIC_PORT` は Chassis の fabric [ASIC](../../reference/glossary.md#term-asic) ポートを管理。通常の ToR では使用しない。
 
 ### 段階 2 — CFG→APPL 翻訳
 
@@ -674,7 +674,7 @@ fabric 固有 SAI (fabric port enable/isolate)
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -689,4 +689,4 @@ fabric 固有 SAI (fabric port enable/isolate)
 - なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: e1b91b1b1f1c -->
+<!-- glossary-links-injected: facf7233e77b -->

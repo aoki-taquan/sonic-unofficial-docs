@@ -340,7 +340,7 @@ DEL の逆順序: `NTP_SERVER` の `key` フィールドをクリアまたは `N
 |---|---|---|---|
 | [`MGMT_INTERFACE`](mgmt-interface.md) | `chrony.conf.j2` テンプレート生成時 | `src_intf=eth0` 時の IPv4/IPv6 アドレスを `bindacqaddress` に変換 | `chrony.conf.j2:91-92` |
 
-`hostcfgd` の `mgmt_intf_handler` (hostcfgd:2345-2351) は `MGMT_INTERFACE` 変更を購読するが、コールバック先は `AaaCfg` の RADIUS IP 更新と `MgmtIfaceCfg.update_mgmt_iface()` のみで、`NtpCfg` への直接コールバックはない。`eth0` の IP が変化した場合、次回 NTP 関連の変更で chrony が再起動されるまで `bindacqaddress` の IP は古い値のまま残る。
+`hostcfgd` の `mgmt_intf_handler` (hostcfgd:2345-2351) は `MGMT_INTERFACE` 変更を購読するが、コールバック先は `AaaCfg` の [RADIUS](../../reference/glossary.md#term-radius) IP 更新と `MgmtIfaceCfg.update_mgmt_iface()` のみで、`NtpCfg` への直接コールバックはない。`eth0` の IP が変化した場合、次回 NTP 関連の変更で chrony が再起動されるまで `bindacqaddress` の IP は古い値のまま残る。
 
 ### DEVICE_METADATA — SmartSwitch 条件分岐
 
@@ -622,7 +622,7 @@ binddevice bridge-midplane
 
 ### multi-asic / VOQ chassis での NTP 適用範囲
 
-`NtpCfg` は host CONFIG_DB のみを参照し、`asicN` namespace への接続を行わない。NTP はホスト管理プレーンで完結するため ASIC 数に依存しない。
+`NtpCfg` は host CONFIG_DB のみを参照し、`asicN` namespace への接続を行わない。NTP はホスト管理プレーンで完結するため [ASIC](../../reference/glossary.md#term-asic) 数に依存しない。
 
 ただし `src_intf` の有効性は構成に依存する:
 
@@ -630,7 +630,7 @@ binddevice bridge-midplane
 |---------------|---------------------|
 | `eth0` | host に 1 つ。multi-asic でも同じ動作 |
 | `LoopbackX` | host CONFIG_DB の `LOOPBACK_INTERFACE` に IP が設定されているかを確認 |
-| `EthernetX` / `PortChannelX` | multi-asic 環境ではデータプレーン側インタフェースが ASIC namespace に存在し、host CONFIG_DB の `INTERFACE` / `PORTCHANNEL_INTERFACE` にアドレスが設定されない場合がある。その場合 `bindacqaddress` が空となり、ソース IP 制限が実質的に無効化される（エラーなしのサイレント動作） |
+| `EthernetX` / `PortChannelX` | multi-asic 環境ではデータプレーン側インタフェースが [ASIC](../../reference/glossary.md#term-asic) namespace に存在し、host CONFIG_DB の `INTERFACE` / `PORTCHANNEL_INTERFACE` にアドレスが設定されない場合がある。その場合 `bindacqaddress` が空となり、ソース IP 制限が実質的に無効化される（エラーなしのサイレント動作） |
 
 ### プラットフォーム差サマリ
 
@@ -663,4 +663,4 @@ binddevice bridge-midplane
 
 [^5]: `chrony-config.sh:11`: `chmod o-r /etc/chrony/chrony.keys` — 鍵ファイルへの world-read アクセスを禁止。`chrony.keys.j2:7-18` が `NTP_KEY` テーブルから鍵 ID・タイプ・Base64 デコード済み値を書き込む。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/files/image_config/chrony/chrony.keys.j2>
 
-<!-- glossary-links-injected: 301dd3bf0e04 -->
+<!-- glossary-links-injected: 3b8dfaa0af6c -->

@@ -192,7 +192,7 @@ bgpcfgd は常時起動し `RouteMapMgr` を無条件登録する。参照先の
 | `RouteMapMgr` | `SET_COMMUNITY` フィールドあり | `set community <value>` 追加 | `managers_route_map.py` |
 | `RouteMapMgr` | del_handler | FRR に `no route-map <name>` 発行 | `managers_route_map.py` |
 
-> **スキャン証跡**: `ROUTE_MAP` は BGP ルーティングポリシーの中核。bgpcfgd が FRR vtysh に変換。CONFIG_DB 内フィールド間の自動派生なし。
+> **スキャン証跡**: `ROUTE_MAP` は BGP ルーティングポリシーの中核。bgpcfgd が FRR [vtysh](../../reference/glossary.md#term-vtysh) に変換。CONFIG_DB 内フィールド間の自動派生なし。
 
 <!-- /handler-branching -->
 
@@ -270,7 +270,7 @@ def subscribe_all(self):
         self.config_db.subscribe(table, hdlr)
 ```
 
-変更検知後、`bgp_table_handler_common` が Jinja2 テンプレート (`bgpd.conf.db.route_map.j2`) を展開して FRR vtysh コマンドを生成・実行する。
+変更検知後、`bgp_table_handler_common` が Jinja2 テンプレート (`bgpd.conf.db.route_map.j2`) を展開して FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドを生成・実行する。
 
 **Jinja2 テンプレート経路** (`bgpd.conf.db.route_map.j2`):
 
@@ -304,7 +304,7 @@ def set_handler(self, key, data):
     self.__update_rm(key, data)
 ```
 
-`__update_rm` は `cfg_mgr.push_list(cmds)` で FRR vtysh に直接コマンドを送信する。
+`__update_rm` は `cfg_mgr.push_list(cmds)` で FRR [vtysh](../../reference/glossary.md#term-vtysh) に直接コマンドを送信する。
 
 ### 購読フロー要約
 
@@ -684,4 +684,4 @@ vtysh -c 'show route-map'
 
 <!-- /failure -->
 
-<!-- glossary-links-injected: a2f846f7ae39 -->
+<!-- glossary-links-injected: c5636d67e559 -->

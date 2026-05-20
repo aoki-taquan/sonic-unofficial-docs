@@ -256,7 +256,7 @@ counterpoll show
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -312,7 +312,7 @@ YANG に `default` 宣言なし。orchagent コメント「counters are disabled
 
 | 種類 | 内容 |
 |------|------|
-| dead consumer (プラットフォーム依存) | `FLOW_CNT_ROUTE` は `getRouteFlowCounterSupported()` が false（SAI 未対応 ASIC）の場合、`enable` を書いても SAI 設定ゼロ・エラー通知なし |
+| dead consumer (プラットフォーム依存) | `FLOW_CNT_ROUTE` は `getRouteFlowCounterSupported()` が false（SAI 未対応 [ASIC](../../reference/glossary.md#term-asic)）の場合、`enable` を書いても SAI 設定ゼロ・エラー通知なし |
 | 経路依存連動 | `PORT_PHY_ATTR` を enable にすると `PORT_PHY_SERDES_ATTR` も **自動で連動** enable/disable される。CONFIG_DB に `PORT_PHY_SERDES_ATTR` キーを直接書く必要はなく、書いても orchagent は `PORT_PHY_ATTR` の値で上書く |
 | 書込み順依存 | `allPortsReady()` が false の間は `doTask` が早期 return → `enable` エントリが m_toSync に蓄積され、全ポート ready 後に一括適用 |
 | warm-reboot 遅延 | warm-reboot 時のみ: delay timer 60 秒間は全 SET が無視される (`m_delayTimerExpired = false`)。通常起動では即時適用 |
@@ -589,7 +589,7 @@ flexcounterorch.cpp:getQueueConfigurations()
 
 ### SAI Capability — FLOW_CNT_ROUTE の有効化条件
 
-`FLOW_CNT_ROUTE` グループへの `FLEX_COUNTER_STATUS=enable` 設定は、[SAI](../../reference/glossary.md#term-sai) が `SAI_ROUTE_ENTRY_ATTR_COUNTER_ID` の set 操作をサポートしている場合のみ有効となる。起動時に `sai_query_attribute_capability()` を呼び出し、`capability.set_implemented` が `false` またはクエリ失敗の ASIC では `FLOW_CNT_ROUTE` の enable は無操作になる。
+`FLOW_CNT_ROUTE` グループへの `FLEX_COUNTER_STATUS=enable` 設定は、[SAI](../../reference/glossary.md#term-sai) が `SAI_ROUTE_ENTRY_ATTR_COUNTER_ID` の set 操作をサポートしている場合のみ有効となる。起動時に `sai_query_attribute_capability()` を呼び出し、`capability.set_implemented` が `false` またはクエリ失敗の [ASIC](../../reference/glossary.md#term-asic) では `FLOW_CNT_ROUTE` の enable は無操作になる。
 
 ```
 flow_counter_handler.cpp:queryRouteFlowCounterCapability()
@@ -617,4 +617,4 @@ flow_counter_handler.cpp:queryRouteFlowCounterCapability()
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: f4b210d50723 -->
+<!-- glossary-links-injected: 1288c04b3f8a -->

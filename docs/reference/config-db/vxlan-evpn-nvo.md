@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`VXLAN_EVPN_NVO` テーブルは [EVPN](../../reference/glossary.md#term-evpn) ベースの Network Virtualization Overlay (NVO) インスタンスを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義する[^1]。[EVPN](../../reference/glossary.md#term-evpn) コントロールプレーン ([FRR](../../reference/glossary.md#term-frr) + bgpd の `l2vpn evpn`) を有効化する際に、source VTEP として参照する VXLAN_TUNNEL を結びつける。1 エントリのみ許可される (`max-elements 1`)。
+`VXLAN_EVPN_NVO` テーブルは [EVPN](../../reference/glossary.md#term-evpn) ベースの Network Virtualization Overlay (NVO) インスタンスを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義する[^1]。[EVPN](../../reference/glossary.md#term-evpn) コントロールプレーン ([FRR](../../reference/glossary.md#term-frr) + bgpd の `l2vpn evpn`) を有効化する際に、source [VTEP](../../reference/glossary.md#term-vtep) として参照する VXLAN_TUNNEL を結びつける。1 エントリのみ許可される (`max-elements 1`)。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -60,7 +60,7 @@ VXLAN_EVPN_NVO|<name>
 
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
-| `source_vtep` | leafref → `VXLAN_TUNNEL.name` | yes | ソース VTEP として参照する VXLAN_TUNNEL |
+| `source_vtep` | leafref → `VXLAN_TUNNEL.name` | yes | ソース [VTEP](../../reference/glossary.md#term-vtep) として参照する VXLAN_TUNNEL |
 
 <!-- defaults -->
 ## フィールドのコード由来デフォルト
@@ -84,7 +84,7 @@ VXLAN_EVPN_NVO|<name>
 | 順序 | テーブル | 理由 |
 |------|---------|------|
 | 1 | `VXLAN_TUNNEL\|<name>` | `EvpnNvoOrch::addOperation()` が `source_vtep` を `getVxlanTunnel()` でルックアップする。TUNNEL 未登録なら null ポインタになり後続 EVPN 処理が `return false` でリトライ待ち (vxlanorch.cpp:2784) |
-| 2 | `VXLAN_TUNNEL_MAP\|<name>\|<map>` | 初回 MAP エントリで `createTunnelHw()` がトリガーされ VTEP が `isActive() = true` になる (vxlanorch.cpp:2063)。VTEP active 前は EVPN remote VTEP 追加が `return false` でリトライ待ち (vxlanorch.cpp:1694) |
+| 2 | `VXLAN_TUNNEL_MAP\|<name>\|<map>` | 初回 MAP エントリで `createTunnelHw()` がトリガーされ [VTEP](../../reference/glossary.md#term-vtep) が `isActive() = true` になる (vxlanorch.cpp:2063)。VTEP active 前は EVPN remote VTEP 追加が `return false` でリトライ待ち (vxlanorch.cpp:1694) |
 | 3 | `VXLAN_EVPN_NVO\|<nvo-name>` | source_vtep 参照先 TUNNEL が存在し、かつ VTEP active 後に設定するのが推奨 |
 
 ### 削除順序（逆順）
@@ -145,7 +145,7 @@ EVPN remote VTEP 削除 → VXLAN_EVPN_NVO 削除 → VXLAN_TUNNEL_MAP 全削除
 
 <!-- evidence: sonic-swss/orchagent/vxlanorch.cpp:1256-1274, 1701-1724, 1807-1822, 903, 356-370 -->
 
-`VXLAN_EVPN_NVO` が参照する source VTEP（`VXLAN_TUNNEL`）の実際の ASIC 動作は、`VxlanTunnelOrch` 初期化時に `sai_query_attribute_enum_values_capability` で `SAI_TUNNEL_ATTR_PEER_MODE` を問い合わせた結果で決まる。
+`VXLAN_EVPN_NVO` が参照する source VTEP（`VXLAN_TUNNEL`）の実際の [ASIC](../../reference/glossary.md#term-asic) 動作は、`VxlanTunnelOrch` 初期化時に `sai_query_attribute_enum_values_capability` で `SAI_TUNNEL_ATTR_PEER_MODE` を問い合わせた結果で決まる。
 
 | 差異ポイント | P2P モード (DIP サポートあり) | P2MP モード (DIP サポートなし) |
 |---|---|---|
@@ -472,4 +472,4 @@ VRF  (VRFOrch)  ───┼──→ VXLAN_TUNNEL ──→ VXLAN_TUNNEL_MAP �
 
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 6149b933efc1 -->
+<!-- glossary-links-injected: c41a649bc9af -->

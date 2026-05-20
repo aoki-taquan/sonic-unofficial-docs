@@ -403,7 +403,7 @@ iccpd からの命令を受けて [APPL_DB](../../reference/glossary.md#term-app
 |-----------------|--------|
 | `MCLAG_FDB_TABLE` | FdbOrch |
 | `ISOLATION_GROUP_TABLE` | IsolationGroupOrch |
-| `INTF_TABLE` / `LAG_TABLE` / `PORT_TABLE` | IntfsOrch / PortsOrch |
+| `INTF_TABLE` / `LAG_TABLE` / `PORT_TABLE` | [IntfsOrch](../../reference/glossary.md#term-intfsorch) / [PortsOrch](../../reference/glossary.md#term-portsorch) |
 | `ACL_TABLE_TABLE` / `ACL_RULE_TABLE` | AclOrch |
 | `FLUSHFDBREQUEST`（NotificationProducer） | FdbOrch |
 
@@ -477,7 +477,7 @@ iccpd からの命令を受けて [APPL_DB](../../reference/glossary.md#term-app
    - evidence: `config/mclag.py:338-347`, `sonic-mclag.yang:137-142`
 
 5. **allPortsReady() 完了後**にエントリが処理される
-   - `MlagOrch::doTask()` L49-52 で全ポート初期化前は即 return。PortsOrch 起動完了が先行必須。
+   - `MlagOrch::doTask()` L49-52 で全ポート初期化前は即 return。[PortsOrch](../../reference/glossary.md#term-portsorch) 起動完了が先行必須。
    - evidence: `mlagorch.cpp:49-52`
 
 ### 削除順序
@@ -494,7 +494,7 @@ iccpd からの命令を受けて [APPL_DB](../../reference/glossary.md#term-app
 
 | # | 依存関係 | 強制度 | 緩和策 |
 |---|----------|--------|--------|
-| 1 | allPortsReady() 完了 → MCLAG 処理 | 強制 | PortsOrch 起動待ち（自動） |
+| 1 | allPortsReady() 完了 → MCLAG 処理 | 強制 | [PortsOrch](../../reference/glossary.md#term-portsorch) 起動待ち（自動） |
 | 2 | PORT / PORTCHANNEL → MCLAG_DOMAIN.peer_link | YANG バリデーション必須 | ポートを先に設定 |
 | 3 | PORTCHANNEL + MCLAG_DOMAIN → MCLAG_INTERFACE | YANG バリデーション必須 | 1→2→3 の順序 |
 | 4 | MCLAG_DOMAIN → MCLAG_UNIQUE_IP | YANG must 必須 + CLI チェック | MCLAG_DOMAIN を先に書く |
@@ -592,7 +592,7 @@ mclagsyncd が ISOLATION_GROUP_TABLE の MEMBERS を構築する際、ASIC_DB �
 
 ### MlagOrch (orchagent) 側のプラットフォーム差
 
-`MlagOrch` は **ASIC 識別ロジックを持たない**。`mlagorch.cpp` 全行 (250 行) に `getenv("platform")` / `m_platform` / SAI 直接呼び出しは 0 件。`addIslInterface()` / `addMlagInterface()` は Subject 通知 (`SUBJECT_TYPE_MLAG_ISL_CHANGE` / `SUBJECT_TYPE_MLAG_INTF_CHANGE`) のみを broadcast し、実際の SAI 操作は `FdbOrch` 側が担う。CONFIG_DB の `MCLAG_DOMAIN` / `MCLAG_INTERFACE` フィールド値はすべてのプラットフォームで共通。
+`MlagOrch` は **[ASIC](../../reference/glossary.md#term-asic) 識別ロジックを持たない**。`mlagorch.cpp` 全行 (250 行) に `getenv("platform")` / `m_platform` / SAI 直接呼び出しは 0 件。`addIslInterface()` / `addMlagInterface()` は Subject 通知 (`SUBJECT_TYPE_MLAG_ISL_CHANGE` / `SUBJECT_TYPE_MLAG_INTF_CHANGE`) のみを broadcast し、実際の SAI 操作は `FdbOrch` 側が担う。CONFIG_DB の `MCLAG_DOMAIN` / `MCLAG_INTERFACE` フィールド値はすべてのプラットフォームで共通。
 
 ### SAI bridge_port capability と FDB 解決
 
@@ -609,11 +609,11 @@ if (attr_port_id == hash.end())
 }
 ```
 
-| ASIC 種別 | bridge_port 解決経路 | 影響 |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 | bridge_port 解決経路 | 影響 |
 |---|---|---|
 | Broadcom / Mellanox (通常ポート) | `SAI_BRIDGE_PORT_ATTR_PORT_ID` (一次) | 正常解決 |
 | VxLAN トンネルポート系 | `SAI_BRIDGE_PORT_ATTR_TUNNEL_ID` (フォールバック) | 正常解決 |
-| capability 未実装 ASIC | 両 attr 不在 → `continue` | APPL_DB への FDB 伝播スキップ |
+| capability 未実装 [ASIC](../../reference/glossary.md#term-asic) | 両 attr 不在 → `continue` | APPL_DB への FDB 伝播スキップ |
 
 ### Broadcom / Mellanox MCLAG port isolation 対応差
 
@@ -661,4 +661,4 @@ MCLAG は kernel bridge (`brX`) を iccpd が直接操作しない設計。FDB �
 > 中間調査詳細: `meta/_intermediate/cdb-flow/mclag-domain-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: dde85d8f2f31 -->
+<!-- glossary-links-injected: db7bd9685603 -->

@@ -52,7 +52,7 @@ related:
 
 ## 概要
 
-[SONiC](../../reference/glossary.md#term-sonic) の `portsorch`（[orchagent](../../reference/glossary.md#term-orchagent) 内）は、ポートの Queue（送信キュー）と Priority Group（優先度グループ、PG）ごとの [SAI](../../reference/glossary.md#term-sai) ハードウェアカウンタを [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に収集する[^1]。このページではカウンタ収集に使われる [Redis](../../reference/glossary.md#term-redis) テーブル群・フィールド一覧・[FlexCounter](../../reference/glossary.md#term-flexcounter) グループのコード由来デフォルトを解説する。
+[SONiC](../../reference/glossary.md#term-sonic) の `portsorch`（[orchagent](../../reference/glossary.md#term-orchagent) 内）は、ポートの Queue（送信キュー）と [Priority Group](../../reference/glossary.md#term-priority-group)（優先度グループ、PG）ごとの [SAI](../../reference/glossary.md#term-sai) ハードウェアカウンタを [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に収集する[^1]。このページではカウンタ収集に使われる [Redis](../../reference/glossary.md#term-redis) テーブル群・フィールド一覧・[FlexCounter](../../reference/glossary.md#term-flexcounter) グループのコード由来デフォルトを解説する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -252,7 +252,7 @@ Warm-reboot 時のみ `m_delayTimerExpired` フラグが false のままタイ�
 
 - **FLEX_COUNTER_TABLE**: `FlexCounterOrch::doTask()` が即時評価。`enable` 書込み時点でカウンタ登録処理が実行される（allPortsReady 後）。
 - **BUFFER_QUEUE / [BUFFER_PG](../../reference/glossary.md#term-buffer-pg)**: `getQueueConfigurations()` / `getPgConfigurations()` が呼ばれるたびに `gBufferOrch->getBufferObjectsWithNonZeroProfile()` で動的に再取得される（`create_only_config_db_buffers=true` 時のみ）。
-- **DEVICE_METADATA**: コンストラクタで 1 回読込み + `handleDeviceMetadataTable()` で動的更新。既登録カウンタへの遡及適用はなく、orchagent 再起動が必要。
+- **[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata)**: コンストラクタで 1 回読込み + `handleDeviceMetadataTable()` で動的更新。既登録カウンタへの遡及適用はなく、orchagent 再起動が必要。
 - **PORT**: `allPortsReady()` による自動待機。portsorch が全ポート初期化完了後に `FlexCounterOrch` のキュー処理がアンブロックされる。
 <!-- /cross-refs -->
 
@@ -280,7 +280,7 @@ SWSS_LOG_ERROR("Failed to get number of queues for port %s rv:%d", ...)
 throw runtime_error("PortsOrch initialization failure.")
 ```
 
-supervisor による orchagent 自動再起動後に再試行される。SAI ドライバ / ASIC 側の問題である場合、再起動ループに入る。
+supervisor による orchagent 自動再起動後に再試行される。SAI ドライバ / [ASIC](../../reference/glossary.md#term-asic) 側の問題である場合、再起動ループに入る。
 
 ### `getQueueTypeAndIndex()` — SAI 一時エラーで該当 Queue をスキップ
 
@@ -307,7 +307,7 @@ supervisor による orchagent 自動再起動後に再試行される。SAI ド
 
 `isPortStatSupported()` (`portsorch.cpp:664-680`) が `sai_query_stats_capability` で WRED stat サポートを確認できない場合（`SAI_STATUS_SUCCESS` 以外）、`return false` を返して WRED 統計を silent に非登録にする。エラーログは出力されない。
 
-ASIC が WRED/ECN 統計をサポートしない環境では `FLEX_COUNTER_TABLE|WRED_ECN_QUEUE = enable` にしても COUNTERS_DB に WRED フィールドが現れない。`counterpoll show` の STATUS が enable に見えても実カウンタは常にゼロになる。
+[ASIC](../../reference/glossary.md#term-asic) が WRED/ECN 統計をサポートしない環境では `FLEX_COUNTER_TABLE|WRED_ECN_QUEUE = enable` にしても COUNTERS_DB に WRED フィールドが現れない。`counterpoll show` の STATUS が enable に見えても実カウンタは常にゼロになる。
 
 ### Redis 接続断 — orchagent クラッシュ
 
@@ -427,7 +427,7 @@ Queue / PG マッピング書き込み関数は COUNTERS_DB 更新と同時に `
 
 ### WRED 能力チェック → STATE_DB への QUEUE_COUNTER_CAPABILITIES 書き込み
 
-`checkWredCapability()` が WRED/ECN サポートを確認した後、`QUEUE_COUNTER_CAPABILITIES` テーブルが [STATE_DB](../../reference/glossary.md#term-state_db) に書き込まれ、外部ツール・オーケストレータが WRED サポート状況を参照可能になる。ASIC が WRED をサポートしない場合はこのエントリが存在しない。外部ツールは `key not found` を「未サポート」として扱う必要がある。
+`checkWredCapability()` が WRED/ECN サポートを確認した後、`QUEUE_COUNTER_CAPABILITIES` テーブルが [STATE_DB](../../reference/glossary.md#term-state_db) に書き込まれ、外部ツール・オーケストレータが WRED サポート状況を参照可能になる。[ASIC](../../reference/glossary.md#term-asic) が WRED をサポートしない場合はこのエントリが存在しない。外部ツールは `key not found` を「未サポート」として扱う必要がある。
 
 <!-- /side-effects -->
 
@@ -693,4 +693,4 @@ sonic-db-cli COUNTERS_DB hgetall "COUNTERS:<OID>"
 
 [^6]: portsorch.cpp:8525, 8754, 8819, 8886, 8941, 9099 — Queue / PG マッピング書き込み・削除関数での `CounterCheckOrch::getInstance().addPort()` / `removePort()` 呼び出し。`countercheckorch.cpp:43-50` の 5 分タイマーで `mcCounterCheck()` と `pfcFrameCounterCheck()` を実行。
 
-<!-- glossary-links-injected: 0edb7d21faa7 -->
+<!-- glossary-links-injected: 65c84ed1d8a8 -->

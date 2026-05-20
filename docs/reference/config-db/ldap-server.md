@@ -90,7 +90,7 @@ key の `<hostname>` は `inet:host` (FQDN または IPv4/IPv6 アドレス)。
 | `base_dn` | なし | `BASE = 'ou=users,dc=example,dc=com'` | 未設定のまま nslcd が起動されることはない (`is_ldap_config_complete` ガード)[^3] |
 | `scope` | (YANG にフィールドなし) | `SCOPE = "sub"` | CONFIG_DB から設定不可。nslcd.conf は常に `scope sub` |
 
-> **注**: `hostcfgd` の `ldap_global_default = {}` は空 dict。TACACS/RADIUS と異なり LDAP は [hostcfgd](../../reference/glossary.md#term-hostcfgd) 層での追加デフォルト注入を行わない。YANG default と LdapCfg fallback のみが有効。
+> **注**: `hostcfgd` の `ldap_global_default = {}` は空 dict。TACACS/[RADIUS](../../reference/glossary.md#term-radius) と異なり LDAP は [hostcfgd](../../reference/glossary.md#term-hostcfgd) 層での追加デフォルト注入を行わない。YANG default と LdapCfg fallback のみが有効。
 
 <!-- /defaults -->
 
@@ -247,7 +247,7 @@ sudo cat /etc/nslcd.conf
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -299,7 +299,7 @@ sudo cat /etc/nslcd.conf
 |---|---|---|---|---|---|
 | `AAA\|authentication` (`login` フィールド) | CONFIG_DB | 読み取り (`is_ldap_config_complete()` 判定) | なし | **必須** (未設定または `login` に `ldap` なしで nslcd 停止) | `hostcfgd:437-442`, `hostcfgd:241-251` |
 | `LDAP\|global` (`bind_dn`, `base_dn`, `bind_password`) | CONFIG_DB | 読み取り (nslcd.conf 生成・completeness チェック) | なし (同一 YANG モジュール内の別コンテナ) | **必須** (未設定で nslcd 停止・`LdapCfg` fallback 値使用) | `hostcfgd:437-442`, `hostcfgd:650-651`, `hostcfgd:706-713` |
-| `DEVICE_METADATA\|localhost` (`hostname`) | CONFIG_DB | 読み取り (hostcfgd 初期化時) | なし | 任意 (LDAP 動作への直接影響なし; RADIUS `nas_id` で使用) | `hostcfgd:1422-1496`, `hostcfgd:675-678` |
+| `DEVICE_METADATA\|localhost` (`hostname`) | CONFIG_DB | 読み取り (hostcfgd 初期化時) | なし | 任意 (LDAP 動作への直接影響なし; [RADIUS](../../reference/glossary.md#term-radius) `nas_id` で使用) | `hostcfgd:1422-1496`, `hostcfgd:675-678` |
 
 ### AAA|authentication — LDAP 有効化ゲート
 
@@ -311,7 +311,7 @@ sudo cat /etc/nslcd.conf
 
 ### DEVICE_METADATA|localhost — hostname 取得
 
-hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得し `self.hostname` に保持する (`hostcfgd:1422-1496`)。この値は RADIUS の `nas_id` に使われるが LDAP の nslcd.conf 生成には直接関与しない。`DEVICE_METADATA|localhost` が未設定でも LDAP 認証は動作する。
+hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得し `self.hostname` に保持する (`hostcfgd:1422-1496`)。この値は [RADIUS](../../reference/glossary.md#term-radius) の `nas_id` に使われるが LDAP の nslcd.conf 生成には直接関与しない。`DEVICE_METADATA|localhost` が未設定でも LDAP 認証は動作する。
 
 ### SAI 参照
 
@@ -579,7 +579,7 @@ dbId は CONFIG_DB の通常値 4 ([sonic-swss-common](../../reference/glossary.
 | `LDAP_SERVER` / `LDAP\|global` / `AAA` 変更で `is_ldap_config_complete()` が False | `systemctl stop/mask nslcd` | `handle_nslcd_service(False)` — hostcfgd:246-251 |
 | `nslcd.conf` / `ldap.conf` 書き換え | デーモン restart あり (`nslcd` は設定をロード時のみ読む) | `modify_conf_file()` → `handle_nslcd_service()` |
 
-> **[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) / NotificationProducer 非使用の確認**: `LDAP_SERVER` は `swsscommon.ConsumerStateTable` の購読者なし。`NotificationProducer` で LDAP 関連通知を出す箇所も SONiC ソース内になし。APPL_DB/[STATE_DB](../../reference/glossary.md#term-state_db) の中継・通知パスを持たない。
+> **[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) / NotificationProducer 非使用の確認**: `LDAP_SERVER` は `swsscommon.ConsumerStateTable` の購読者なし。`NotificationProducer` で LDAP 関連通知を出す箇所も [SONiC](../../reference/glossary.md#term-sonic) ソース内になし。APPL_DB/[STATE_DB](../../reference/glossary.md#term-state_db) の中継・通知パスを持たない。
 
 <!-- /pubsub -->
 
@@ -590,7 +590,7 @@ dbId は CONFIG_DB の通常値 4 ([sonic-swss-common](../../reference/glossary.
 
 ### 結論
 
-**プラットフォーム差なし**。LDAP_SERVER 処理は host 単位で適用され、ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)・ベンダー固有 PAM モジュールに依存しない。
+**プラットフォーム差なし**。LDAP_SERVER 処理は host 単位で適用され、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)・ベンダー固有 PAM モジュールに依存しない。
 
 ### 根拠
 
@@ -621,4 +621,4 @@ LDAP_SERVER / LDAP|global テーブルには RADIUS の `vrf` フィールドに
 > 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 841e6cdca746 -->
+<!-- glossary-links-injected: 2fd44f3e8adb -->

@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-P4RT controller が **[APPL_DB](../../reference/glossary.md#term-appl_db) の `P4RT_TABLE:FIXED_NEXTHOP_TABLE`** に書き込む nexthop エントリ。[orchagent](../../reference/glossary.md#term-orchagent) の `NextHopManager` がこれを購読し、[SAI](../../reference/glossary.md#term-sai) `sai_next_hop_api->create_next_hops()` を呼び出してハードウェアに nexthop を設定する[^1]。
+[P4RT](../../reference/glossary.md#term-p4rt) controller が **[APPL_DB](../../reference/glossary.md#term-appl_db) の `P4RT_TABLE:FIXED_NEXTHOP_TABLE`** に書き込む nexthop エントリ。[orchagent](../../reference/glossary.md#term-orchagent) の `NextHopManager` がこれを購読し、[SAI](../../reference/glossary.md#term-sai) `sai_next_hop_api->create_next_hops()` を呼び出してハードウェアに nexthop を設定する[^1]。
 
 本ページは `FIXED_NEXTHOP_TABLE` 全体ではなく、**GRE IP-in-IP encap トンネルを使う `set_p2p_tunnel_encap_nexthop` アクション**にフォーカスする。他アクション (`set_ip_nexthop` / `set_nexthop` 等) は対象外。
 
@@ -99,7 +99,7 @@ APPL_DB:   P4RT_TABLE:FIXED_NEXTHOP_TABLE:<json_key>
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | `FIXED_TUNNEL_TABLE` (GRE トンネル本体) → `FIXED_NEXTHOP_TABLE` `set_p2p_tunnel_encap_nexthop` | **先行必須**（欠如時 `SWSS_RC_NOT_FOUND`） | P4RT controller がトンネル作成後に nexthop を書く順守 |
+| 1 | `FIXED_TUNNEL_TABLE` (GRE トンネル本体) → `FIXED_NEXTHOP_TABLE` `set_p2p_tunnel_encap_nexthop` | **先行必須**（欠如時 `SWSS_RC_NOT_FOUND`） | [P4RT](../../reference/glossary.md#term-p4rt) controller がトンネル作成後に nexthop を書く順守 |
 | 2 | GRE トンネル配下の [RIF](../../reference/glossary.md#term-rif)・neighbor → `FIXED_NEXTHOP_TABLE` | **先行必須**（BRCM [SAI](../../reference/glossary.md#term-sai) 要件: `next_hop_manager.cpp:144-158`） | [RIF](../../reference/glossary.md#term-rif) / neighbor は P4Orch 内で GRE より先順位に処理される |
 | 3 | `FIXED_NEXTHOP_TABLE` エントリ → WCMP / Route 下流 | 先行必須（下流が nexthop OID を参照） | WCMP / Route は P4Orch 内で nexthop より後順位 |
 | 4 | DEL 時: WCMP / Route → `FIXED_NEXTHOP_TABLE` | **先行必須**（`ref_count > 0` は `SWSS_RC_INVALID_PARAM`） | 上流の参照を先に削除してから nexthop DEL |
@@ -113,7 +113,7 @@ P4Orch 内部の `m_p4ManagerAddPrecedence` が以下の順でマネージャを
 RIF (2位) → Neighbor (3位) → GRE Tunnel (4位) → NextHop (5位) → WCMP (6位) → Route
 ```
 
-P4RT controller が単一 WriteRequest でこれらを混在させた場合でも P4Orch がこの順に処理する。ただし `FIXED_TUNNEL_TABLE` 自体の依存（[RIF](../../reference/glossary.md#term-rif) / neighbor）が未作成の場合は GRE Tunnel SET が失敗し、後続の NextHop SET もキャンセルされる。
+[P4RT](../../reference/glossary.md#term-p4rt) controller が単一 WriteRequest でこれらを混在させた場合でも P4Orch がこの順に処理する。ただし `FIXED_TUNNEL_TABLE` 自体の依存（[RIF](../../reference/glossary.md#term-rif) / neighbor）が未作成の場合は GRE Tunnel SET が失敗し、後続の NextHop SET もキャンセルされる。
 
 ### Bulk SAI のキャンセル伝搬
 
@@ -440,7 +440,7 @@ SET 成功時に `gCrmOrch->incCrmResUsedCounter()` が呼ばれる（`next_hop_
 |----------------|------|
 | Broadcom (BRCM SAI) | 対応（neighbor 事前生成が必須要件） |
 | VS / VPP (libsaivs / libsaivpp) | `create_next_hops` は `SAI_STATUS_SUCCESS` を返すがハードウェア転送なし。CI / テスト専用 |
-| その他 ASIC | SAI 実装次第。`SAI_STATUS_NOT_SUPPORTED` 返却時は `SWSS_LOG_ERROR` のみ |
+| その他 [ASIC](../../reference/glossary.md#term-asic) | SAI 実装次第。`SAI_STATUS_NOT_SUPPORTED` 返却時は `SWSS_LOG_ERROR` のみ |
 
 ### SAI Bulk モード固定
 
@@ -470,4 +470,4 @@ SET 成功時に `gCrmOrch->incCrmResUsedCounter()` が呼ばれる（`next_hop_
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L63>
 [^3]: SAI 属性設定: `next_hop_manager.cpp` `prepareSaiAttrs()`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/next_hop_manager.cpp#L201-L261>
 
-<!-- glossary-links-injected: 1ac8ae5180dc -->
+<!-- glossary-links-injected: a7a32c5af13d -->

@@ -209,7 +209,7 @@ YANG にも CLI にも公開されていない SAI 属性:
 
 | SAI 属性 | 挙動 |
 |---|---|
-| `SAI_POLICER_ATTR_CBS` | 未設定。SAI/HW デフォルト (多くの ASIC では 0 または HW 最小値) |
+| `SAI_POLICER_ATTR_CBS` | 未設定。SAI/HW デフォルト (多くの [ASIC](../../reference/glossary.md#term-asic) では 0 または HW 最小値) |
 | `SAI_POLICER_ATTR_GREEN_PACKET_ACTION` | 未設定。SAI デフォルト (通常 FORWARD) |
 | `SAI_POLICER_ATTR_YELLOW_PACKET_ACTION` | 未設定。SAI デフォルト (通常 FORWARD) |
 | `SAI_POLICER_ATTR_COLOR_SOURCE` | 未設定。SAI デフォルト (通常 BLIND) |
@@ -272,7 +272,7 @@ def add_storm_config(self, port, storm_type, kbps):
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|---|---|---|
-| 1 | `PORT` (PortsOrch allPortsReady) → `PORT_STORM_CONTROL` | **先行必須** (全ポート初期化完了前は doTask が即 return) | 起動後は自動処理; 手動適用時は起動完了を確認 |
+| 1 | `PORT` ([PortsOrch](../../reference/glossary.md#term-portsorch) allPortsReady) → `PORT_STORM_CONTROL` | **先行必須** (全ポート初期化完了前は doTask が即 return) | 起動後は自動処理; 手動適用時は起動完了を確認 |
 | 2 | `PORT_STORM_CONTROL` キー内ポート名が `Ethernet` で始まること | **先行必須** ([PortChannel](../../reference/glossary.md#term-portchannel) / [VLAN](../../reference/glossary.md#term-vlan) は silent drop) | [LAG](../../reference/glossary.md#term-lag) メンバーポートに直接設定すること |
 | 3 | 対象 `PORT` エントリが CONFIG_DB に存在すること | **先行必須** (`getPort()` 失敗 → task_success erase、リトライなし) | PORT を先に設定してから STORM_CONTROL を書き込む |
 | 4 | 3 種 (broadcast / unknown-unicast / unknown-multicast) は相互独立 | 順不同で設定可 | — |
@@ -290,7 +290,7 @@ if (!gPortsOrch->allPortsReady())
 }
 ```
 
-`gPortsOrch->allPortsReady()` が `false` の間、`doTask` は即 return する。SONiC 起動シーケンス中は PortsOrch が全ポートを学習し終わるまで PORT_STORM_CONTROL の処理は **自動的にキュー待機**される。
+`gPortsOrch->allPortsReady()` が `false` の間、`doTask` は即 return する。[SONiC](../../reference/glossary.md#term-sonic) 起動シーケンス中は [PortsOrch](../../reference/glossary.md#term-portsorch) が全ポートを学習し終わるまで PORT_STORM_CONTROL の処理は **自動的にキュー待機**される。
 
 ポートが存在しない場合 (`policerorch.cpp:138-143`):
 
@@ -317,7 +317,7 @@ if (!gPortsOrch->getPort(interface_name, port))
 gSwitchOrch → gCrmOrch → gPortsOrch → gBufferOrch → ... → gPolicerOrch → ...
 ```
 
-`gPortsOrch` は `gPolicerOrch` より先に登録されており、PortsOrch が allPortsReady を設定してから PolicerOrch の処理が有効になる設計。
+`gPortsOrch` は `gPolicerOrch` より先に登録されており、[PortsOrch](../../reference/glossary.md#term-portsorch) が allPortsReady を設定してから PolicerOrch の処理が有効になる設計。
 
 ### 順序フロー図
 
@@ -359,7 +359,7 @@ PolicerOrch::handlePortStormControlTable()
 - **参照先**: `STATE_DB:BUM_STORM_CAPABILITY|<storm_type>` の `supported` フィールド
 - **方向**: CLI (`config/main.py:806-813`) が書き込み前に確認
 - **参照元**: `is_storm_control_supported()` in `config/main.py:806-813`
-- **意味**: CLI が storm control 設定前に ASIC の BUM storm control サポートを確認する。orchagent 側には同等チェックが存在せず、DB に直接書き込んだ場合は SAI 呼び出しが試みられ、非対応時は SAI エラーで記録される（silent な SAI failure）。
+- **意味**: CLI が storm control 設定前に [ASIC](../../reference/glossary.md#term-asic) の BUM storm control サポートを確認する。orchagent 側には同等チェックが存在せず、DB に直接書き込んだ場合は SAI 呼び出しが試みられ、非対応時は SAI エラーで記録される（silent な SAI failure）。
 - **非対称性**: CLI → [STATE_DB](../../reference/glossary.md#term-state_db) 確認 → スキップ可能。orchagent → 非確認 → SAI fail-through。
 
 ### 4. ASIC_DB / SAI（policer と port 属性の書き込み先）
@@ -373,7 +373,7 @@ PolicerOrch::handlePortStormControlTable()
 | `sai_port_api->set_port_attribute()` | ポートへの policer OID アタッチ / NULL デタッチ | `policerorch.cpp:206-214, 283-286, 326-347` |
 | `sai_policer_api->remove_policer()` | policer オブジェクト削除 | `policerorch.cpp:293-304, 349-361` |
 
-いずれも [syncd](../../reference/glossary.md#term-syncd) 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) に反映され、物理 ASIC へのプログラムが行われる。
+いずれも [syncd](../../reference/glossary.md#term-syncd) 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) に反映され、物理 [ASIC](../../reference/glossary.md#term-asic) へのプログラムが行われる。
 
 ### 参照関係サマリ
 
@@ -655,6 +655,9 @@ storm control の CONFIG_DB 参照は `namespace` 単位で独立している。
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^1] [^2] [^3] [^4]
+
 [^1]: YANG 定義: `sonic-storm-control.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-storm-control.yang>
 [^2]: PolicerOrch 実装: `policerorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/policerorch.cpp>
 [^3]: CLI 実装: `config/main.py`. <https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py>
@@ -666,4 +669,4 @@ storm control の CONFIG_DB 参照は `namespace` 単位で独立している。
 - [CONFIG_DB: PORT](port.md)
 - [CONFIG_DB: POLICER](policer.md)
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 56bcc3ff7b07 -->

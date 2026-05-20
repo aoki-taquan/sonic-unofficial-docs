@@ -41,7 +41,7 @@ related:
 
 ## 概要
 
-SONiC の [VRF](../../reference/glossary.md#term-vrf) 削除処理は `vrfmgrd`（Linux [VRF](../../reference/glossary.md#term-vrf) デバイス管理）と `orchagent/VRFOrch`（[SAI](../../reference/glossary.md#term-sai) VR オブジェクト管理）が非同期に動作するため、両者の完了を同期するための sentinel として [STATE_DB](../../reference/glossary.md#term-state_db) に 2 つのテーブルが使われる。
+[SONiC](../../reference/glossary.md#term-sonic) の [VRF](../../reference/glossary.md#term-vrf) 削除処理は `vrfmgrd`（Linux [VRF](../../reference/glossary.md#term-vrf) デバイス管理）と `orchagent/VRFOrch`（[SAI](../../reference/glossary.md#term-sai) VR オブジェクト管理）が非同期に動作するため、両者の完了を同期するための sentinel として [STATE_DB](../../reference/glossary.md#term-state_db) に 2 つのテーブルが使われる。
 
 | DB | テーブル名 | 書込み主体 | 意味 |
 |----|-----------|-----------|------|
@@ -453,11 +453,11 @@ consumer 側（on-demand polling、doTask() イテレーション内）
 
 <!-- evidence: sonic-buildimage/dockers/docker-orchagent/supervisord.conf.j2 L247-262 / sonic-swss/cfgmgr/vrfmgr.cpp L148,176-183,289 / sonic-swss/orchagent/vrforch.cpp L74-78,93-120 / sonic-swss/orchagent/orchdaemon.cpp L283 -->
 
-`VRF_TABLE` / `VRF_OBJECT_TABLE` の書き込みコード（`vrfmgrd` / `VRFOrch`）には `getenv("platform")` による ASIC 種別分岐は存在しない。ただし以下の構成・プラットフォーム起因の差異がある。
+`VRF_TABLE` / `VRF_OBJECT_TABLE` の書き込みコード（`vrfmgrd` / `VRFOrch`）には `getenv("platform")` による [ASIC](../../reference/glossary.md#term-asic) 種別分岐は存在しない。ただし以下の構成・プラットフォーム起因の差異がある。
 
 ### fabric ASIC では vrfmgrd が起動しない
 
-`docker-orchagent/supervisord.conf.j2:247-262` の Jinja 条件により、fabric ASIC スロット（linecard の SAI ファブリック側プロセス）では `vrfmgrd` が起動しない:
+`docker-orchagent/supervisord.conf.j2:247-262` の Jinja 条件により、fabric [ASIC](../../reference/glossary.md#term-asic) スロット（linecard の SAI ファブリック側プロセス）では `vrfmgrd` が起動しない:
 
 ```jinja
 {% if is_fabric_asic == 0 %}
@@ -469,7 +469,7 @@ consumer 側（on-demand polling、doTask() イテレーション内）
 | 構成 | `STATE_DB:VRF_TABLE` | `STATE_DB:VRF_OBJECT_TABLE` |
 |------|----------------------|-----------------------------|
 | 通常 NIC/[NPU](../../reference/glossary.md#term-npu) スロット (`is_fabric_asic == 0`) | `vrfmgrd` により書き込まれる | `VRFOrch` により書き込まれる |
-| fabric ASIC スロット (`is_fabric_asic == 1`) | **書き込まれない**（`vrfmgrd` 非起動） | **書き込まれない**（APP_DB にトリガなし） |
+| fabric [ASIC](../../reference/glossary.md#term-asic) スロット (`is_fabric_asic == 1`) | **書き込まれない**（`vrfmgrd` 非起動） | **書き込まれない**（APP_DB にトリガなし） |
 
 `orchagent` 自体は fabric ASIC でも起動するが、APP_DB の `APP_VRF_TABLE_NAME` エントリが存在しないため `VRFOrch::addOperation()` が呼ばれず `VRF_OBJECT_TABLE` は空のまま。
 
@@ -534,4 +534,4 @@ sonic-db-cli STATE_DB hgetall 'VRF_OBJECT_TABLE|VrfRed'
 - CLI: [`config vrf`](../cli/config-vrf.md)
 - [HLD](../../reference/glossary.md#term-hld): [VRF サポート設計](../../routing/sonic-vrf-support-design-spec-draft.md)
 
-<!-- glossary-links-injected: cfa718f19481 -->
+<!-- glossary-links-injected: 865a18402f05 -->

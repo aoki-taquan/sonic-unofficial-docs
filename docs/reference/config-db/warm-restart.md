@@ -68,7 +68,7 @@ WARM_RESTART|<module>
 
 ## 購読者
 
-- `bgpcfgd`: `bgp_timer` / `bgp_eoiu` を vtysh の `bgp graceful-restart` 系設定に変換
+- `bgpcfgd`: `bgp_timer` / `bgp_eoiu` を [vtysh](../../reference/glossary.md#term-vtysh) の `bgp graceful-restart` 系設定に変換
 - `teamd` ([LACP](../../reference/glossary.md#term-lacp)): `teamsyncd_timer` を読み、[LAG](../../reference/glossary.md#term-lag) 再収束タイムアウトとして使用
 - `orchagent` / `neighsyncd` / `fpmsyncd`: `neighsyncd_timer` を [ARP](../../reference/glossary.md#term-arp)/route の reconciliation 待ちに使用
 - `warmboot-finalizer.sh`: `WARM_RESTART_TABLE` 状態を見ながら最終的に dataplane を unfreeze
@@ -84,7 +84,7 @@ WARM_RESTART|<module>
 
 | フィールド | 値 | 実挙動 |
 |-----------|-----|--------|
-| `module` | `bgp` | `bgp_eoiu` / `bgp_timer` が有効。`bgpcfgd` が vtysh の `bgp graceful-restart restart-time <val>` に変換 |
+| `module` | `bgp` | `bgp_eoiu` / `bgp_timer` が有効。`bgpcfgd` が [vtysh](../../reference/glossary.md#term-vtysh) の `bgp graceful-restart restart-time <val>` に変換 |
 | `module` | `teamd` | `teamsyncd_timer` が有効。`teamd` が [LAG](../../reference/glossary.md#term-lag) 再収束タイムアウトとして使用 |
 | `module` | `swss` | `neighsyncd_timer` が有効。`neighsyncd` が [ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) reconciliation 待ちに使用 |
 | `module` | `system` | システム全体の warm-restart 制御。個別タイマフィールドなし |
@@ -172,7 +172,7 @@ show warm_restart state
 
 ### 段階 3: APPL → SAI
 
-- [SAI](../../reference/glossary.md#term-sai): warm restart 時は [syncd](../../reference/glossary.md#term-syncd) が `SAI_SWITCH_ATTR_WARM_BOOT_WRITE/READ_FILE` を使用して ASIC 状態を保存・復元する。
+- [SAI](../../reference/glossary.md#term-sai): warm restart 時は [syncd](../../reference/glossary.md#term-syncd) が `SAI_SWITCH_ATTR_WARM_BOOT_WRITE/READ_FILE` を使用して [ASIC](../../reference/glossary.md#term-asic) 状態を保存・復元する。
 - swss / [orchagent](../../reference/glossary.md#term-orchagent) は warm restart 完了後に APP_DB を再生して [SAI](../../reference/glossary.md#term-sai) との整合を確認する。
 
 ### 段階 4: タイミング + 副作用
@@ -408,7 +408,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 | `MAXIMUM_WARMRESTART_TIMER_VALUE` | `9999` | `getWarmStartTimer()` 内でタイマー有効範囲の上限として使用。値がこれを超えると 0 を返しハードコードデフォルトへフォールバック（`warm_restart.cpp:161`） |
 | `DISABLE_WARMRESTART_TIMER_VALUE` | `9999`（`MAXIMUM_WARMRESTART_TIMER_VALUE` と同値） | タイマー無効化に使うセンチネル値。外部から変更不可 |
 
-これらの値は CONFIG_DB・DEVICE_METADATA いずれからも変更できない。
+これらの値は CONFIG_DB・[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) いずれからも変更できない。
 
 ### bgp タイマーデフォルト値（`fpmsyncd.cpp:46,51`）
 
@@ -449,7 +449,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 <!-- side-effects -->
 ## 副作用・波及効果 (Phase F)
 
-`WARM_RESTART` テーブルは直接 ASIC に波及しない設定テーブルだが、プロセス起動時の読み取りを通じて **STATE_DB への複数の書き込み** を副次的に発生させる。[APPL_DB](../../reference/glossary.md#term-appl_db)、ERROR_TABLE への書き込みはない。
+`WARM_RESTART` テーブルは直接 [ASIC](../../reference/glossary.md#term-asic) に波及しない設定テーブルだが、プロセス起動時の読み取りを通じて **STATE_DB への複数の書き込み** を副次的に発生させる。[APPL_DB](../../reference/glossary.md#term-appl_db)、ERROR_TABLE への書き込みはない。
 
 ### STATE_DB への副次書き込み
 
@@ -487,7 +487,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 |---|---|---|
 | [APPL_DB](../../reference/glossary.md#term-appl_db) | **なし** | `WARM_RESTART` は CONFIG_DB → 各プロセス直接読み取り経路であり [APPL_DB](../../reference/glossary.md#term-appl_db) を経由しない |
 | ERROR_TABLE | **なし** | 失敗はログのみ（syslog）または例外によるプロセス abort |
-| [ASIC_DB](../../reference/glossary.md#term-asic_db) | 間接のみ | orchagent の warm restore 完了後に `syncd_apply_view()` 経由で間接的に [ASIC_DB](../../reference/glossary.md#term-asic_db) が更新されるが、`WARM_RESTART` テーブル自体が直接 [SAI](../../reference/glossary.md#term-sai)/ASIC に書き込むことはない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | 間接のみ | orchagent の warm restore 完了後に `syncd_apply_view()` 経由で間接的に [ASIC_DB](../../reference/glossary.md#term-asic_db) が更新されるが、`WARM_RESTART` テーブル自体が直接 [SAI](../../reference/glossary.md#term-sai)/[ASIC](../../reference/glossary.md#term-asic) に書き込むことはない |
 
 > **Evidence**: `sonic-swss-common/common/warm_restart.cpp:113,125,133,227,247`; `sonic-swss/orchagent/orchdaemon.cpp:1099,1170,1204`; `sonic-swss/cfgmgr/vlanmgr.cpp:59,61`; `sonic-swss/cfgmgr/intfmgr.cpp:289,292`; `sonic-swss/fpmsyncd/bgp_eoiu_marker.py:85-87,94-95`; `sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh:175`
 
@@ -588,4 +588,4 @@ done
 <!-- evidence: sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh L194-202 (finalize_global — mellanox CPU governor) -->
 <!-- /platform -->
 
-<!-- glossary-links-injected: 4a3c4472b289 -->
+<!-- glossary-links-injected: 6afbf21fda0d -->

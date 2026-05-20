@@ -22,7 +22,7 @@ hard: 0
 
 ## 概要
 
-SONiC を **console switch** として動かすときの、シリアル/コンソールポートの設定テーブル群[^1]。
+[SONiC](../../reference/glossary.md#term-sonic) を **console switch** として動かすときの、シリアル/コンソールポートの設定テーブル群[^1]。
 `CONSOLE_PORT` は各シリアルライン (1 行 = 1 物理ポート) のボーレート・接続先・エスケープ文字、
 `CONSOLE_SWITCH` は機能のオンオフとデフォルトエスケープ文字を保持する。
 
@@ -357,8 +357,8 @@ def init_device_prefix():
 
 ### ASIC ベンダー固有差異なし
 
-- [SAI](../../reference/glossary.md#term-sai) 非経由（consutil は Linux シリアルデバイスと直接通信）。Broadcom / Mellanox / Marvell 等の ASIC ベンダーによる差異はなし。
-- Multi-ASIC プラットフォームへの対応は `consutil` 現実装には含まれていない（シングルホスト前提）。
+- [SAI](../../reference/glossary.md#term-sai) 非経由（consutil は Linux シリアルデバイスと直接通信）。Broadcom / Mellanox / Marvell 等の [ASIC](../../reference/glossary.md#term-asic) ベンダーによる差異はなし。
+- [Multi-ASIC](../../reference/glossary.md#term-multi-asic) プラットフォームへの対応は `consutil` 現実装には含まれていない（シングルホスト前提）。
 
 <!-- evidence: sonic-utilities/consutil/lib.py:297-307 -->
 <!-- evidence: sonic-buildimage/device/nexthop/arm64-nexthop_b27-r0/udevprefix.conf -->
@@ -439,7 +439,7 @@ show console
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -505,4 +505,4 @@ show console
 **db_migrator の前提条件 (依存 #4)**: `migrate_console_switch()` は `self.configDB.get_entry('CONSOLE_SWITCH', 'console_mgmt')` で現在の DB 値を取得し、空の場合（`if not console_mgmt`）のみ `set_entry` を実行する。このため、マイグレーション前に `config console enable` / `disable` コマンドを手動実行してキーが存在する場合、移行元 `config_src_data` の値は書き込まれない（evidence: `db_migrator.py:659–666`）。
 <!-- /ordering -->
 
-<!-- glossary-links-injected: 394bbbc9e1a4 -->
+<!-- glossary-links-injected: 2aa71248eb25 -->

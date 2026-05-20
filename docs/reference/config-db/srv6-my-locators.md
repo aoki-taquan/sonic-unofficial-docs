@@ -227,7 +227,7 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 
 ### FRR コマンドへのハードコード埋め込み
 
-`locators_set_handler()` (`managers_srv6.py:37-53`) が生成する FRR vtysh コマンドには 2 つのハードコード要素が存在する:
+`locators_set_handler()` (`managers_srv6.py:37-53`) が生成する FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドには 2 つのハードコード要素が存在する:
 
 | 項目 | ハードコード値 | 意味 |
 |------|--------------|------|
@@ -273,7 +273,7 @@ self.prefix = data['prefix'].lower() + "/{}".format(self.block_len + self.node_l
 
 **frrcfgd の二重送信 (副作用 #3)**:
 `frrcfgd.py` も `SRV6_MY_LOCATORS` を購読し (`frrcfgd.py:2335`、`SRV6_MY_LOCATORS: ['zebra']`)、
-bgpcfgd と独立して同一の vtysh コマンドを発行する (`frrcfgd.py:2732-2742`)。
+bgpcfgd と独立して同一の [vtysh](../../reference/glossary.md#term-vtysh) コマンドを発行する (`frrcfgd.py:2732-2742`)。
 FRR 設定は冪等なため実害はないが、2 つの異なるプロセスが同一コマンドを発行する点に注意。
 
 ### DEL 時の副作用
@@ -306,7 +306,7 @@ FRR 側では `no locator <name>` によりロケータ設定が削除される�
 
 ### bgpcfgd パス
 
-`Runner.add_manager()` (`runner.py:49-51`) が `swsscommon.SubscriberStateTable(conn, "SRV6_MY_LOCATORS")` を生成して `swsscommon.Select()` セレクタに登録する。`runner.py:54-73` の主ループは 1000 ms タイムアウトの `selector.select()` でイベントを待受け、受信時に `subscriber.pop()` でキュードレインして `SRv6Mgr.locators_set_handler()` / `SRv6Mgr.locators_del_handler()` を呼び出す。ループ末尾の `cfg_mgr.commit()` で積み上がった FRR vtysh コマンドを一括送信する。
+`Runner.add_manager()` (`runner.py:49-51`) が `swsscommon.SubscriberStateTable(conn, "SRV6_MY_LOCATORS")` を生成して `swsscommon.Select()` セレクタに登録する。`runner.py:54-73` の主ループは 1000 ms タイムアウトの `selector.select()` でイベントを待受け、受信時に `subscriber.pop()` でキュードレインして `SRv6Mgr.locators_set_handler()` / `SRv6Mgr.locators_del_handler()` を呼び出す。ループ末尾の `cfg_mgr.commit()` で積み上がった FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドを一括送信する。
 
 `SRV6_MY_LOCATORS|<locator_name>` への HSET / HDEL 操作が走ると、[Redis](../../reference/glossary.md#term-redis) が `__keyspace@4__:SRV6_MY_LOCATORS|<locator_name>` チャネルへ keyspace notification を自動 PUBLISH する。`SubscriberStateTable.pops()` はフィールド値を通知ペイロードではなく **HGETALL で別途取得**するため、通知→取得の間に更新があれば最新値が読まれる（lost-update 耐性あり）。
 
@@ -340,9 +340,9 @@ self.directory.subscribe([(self.db_name, "SRV6_MY_LOCATORS", locator_name)], sel
 
 ### SAI 非依存テーブル（ハードウェア制約なし）
 
-`SRV6_MY_LOCATORS` は CONFIG_DB から FRR (zebra) へのソフトウェア通知専用テーブルであり、SAI / ASIC への書込みを直接引き起こさない。`Srv6Orch` は `m_locatorCfgTable` を GET 専用（`Table` 型）でのみ保持し (`srv6orch.cpp:107`)、ロケータそのものを SAI オブジェクトとして作成・削除しない。
+`SRV6_MY_LOCATORS` は CONFIG_DB から FRR (zebra) へのソフトウェア通知専用テーブルであり、SAI / [ASIC](../../reference/glossary.md#term-asic) への書込みを直接引き起こさない。`Srv6Orch` は `m_locatorCfgTable` を GET 専用（`Table` 型）でのみ保持し (`srv6orch.cpp:107`)、ロケータそのものを SAI オブジェクトとして作成・削除しない。
 
-したがって、`SRV6_MY_LOCATORS` の適用可否にプラットフォーム固有のハードウェアケイパビリティ照会は不要。ASIC が SRv6 My-SID をサポートするか否かに関わらず、ロケータエントリは常に FRR へ通知できる。
+したがって、`SRV6_MY_LOCATORS` の適用可否にプラットフォーム固有のハードウェアケイパビリティ照会は不要。[ASIC](../../reference/glossary.md#term-asic) が SRv6 My-SID をサポートするか否かに関わらず、ロケータエントリは常に FRR へ通知できる。
 
 ### `behavior usid` の暗黙強制（bgpcfgd 経路）
 
@@ -374,13 +374,13 @@ FRR 設定の冪等性により両者が同じロケータを設定する場合�
 
 ### `arg_len` フィールドの FRR 未対応
 
-`managers_srv6.py` の FRR コマンド生成は `block-len`・`node-len`・`func-bits` の 3 パラメータのみを送信し、`arg_len` を FRR コマンドに含めない。FRR の `locator` コマンドが `args-bits`（または相当オプション）をサポートしているかは FRR バージョン依存であり、SONiC コードは引き渡しを行わない設計となっている。`arg_len` はロケータの SAI エントリ（`srv6orch.cpp:339-349`）でのみ利用される。
+`managers_srv6.py` の FRR コマンド生成は `block-len`・`node-len`・`func-bits` の 3 パラメータのみを送信し、`arg_len` を FRR コマンドに含めない。FRR の `locator` コマンドが `args-bits`（または相当オプション）をサポートしているかは FRR バージョン依存であり、[SONiC](../../reference/glossary.md#term-sonic) コードは引き渡しを行わない設計となっている。`arg_len` はロケータの SAI エントリ（`srv6orch.cpp:339-349`）でのみ利用される。
 
 ### プラットフォーム制約まとめ
 
 | 機能 / 制約 | 内容 | 検出タイミング |
 |------------|------|--------------|
-| SAI / ASIC ケイパビリティ照会 | 不要（ロケータは FRR 専用、SAI 直接操作なし） | 該当なし |
+| SAI / [ASIC](../../reference/glossary.md#term-asic) ケイパビリティ照会 | 不要（ロケータは FRR 専用、SAI 直接操作なし） | 該当なし |
 | `behavior usid` 強制 | bgpcfgd 経路では必ずロケータが uSID モードで設定される | 起動時・設定適用時 |
 | IPv6 必須 | `prefix` は `inet:ipv6-prefix` 型のみ | YANG バリデーション時 |
 | `arg_len` FRR 未対応 | arg_len は Srv6Orch (SAI) にのみ反映、FRR コマンドには含まれない | なし（サイレント無視） |
@@ -393,4 +393,4 @@ FRR 設定の冪等性により両者が同じロケータを設定する場合�
 [^1]: SRv6 YANG モデル: `sonic-srv6.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-srv6.yang>
 [^2]: SRv6 bgpcfgd マネージャ: `managers_srv6.py`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py>
 
-<!-- glossary-links-injected: fc6086834412 -->
+<!-- glossary-links-injected: 19c203825ef7 -->

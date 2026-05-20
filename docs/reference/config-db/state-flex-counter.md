@@ -85,7 +85,7 @@ FLEX_COUNTER_TABLE|<group>|<oid>
   <COUNTER_ID_LIST_FIELD> = <comma-separated SAI stat enum>
 ```
 
-[orchagent](../../reference/glossary.md#term-orchagent) の各 Orch（PortsOrch / IntfsOrch / BufferOrch 等）が、`FLEX_COUNTER_STATUS = enable` を受信すると、ハードウェアオブジェクトごとにエントリを書き込む。詳細は [`counters-flex`](counters-flex.md) を参照。
+[orchagent](../../reference/glossary.md#term-orchagent) の各 Orch（[PortsOrch](../../reference/glossary.md#term-portsorch) / [IntfsOrch](../../reference/glossary.md#term-intfsorch) / BufferOrch 等）が、`FLEX_COUNTER_STATUS = enable` を受信すると、ハードウェアオブジェクトごとにエントリを書き込む。詳細は [`counters-flex`](counters-flex.md) を参照。
 
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来挙動 (Phase A)
@@ -220,7 +220,7 @@ FLEX_COUNTER_DB は warm-reboot 後に全クリアされ、orchagent 起動時�
 | 1 | `FLEX_COUNTER_GROUP_TABLE` STATUS=enable と `FLEX_COUNTER_TABLE` OID リストの syncd 到着順不定 | [Redis](../../reference/glossary.md#term-redis) イベントキュー | `m_enable=true` + OID 空、または OID あり + `m_enable=false` — どちらも 3 条件が揃った時点でポーリング自動起動 | `FlexCounter::addCounter()` / `setStatus()` は独立更新、3 条件チェックは毎ポーリングループで再評価 |
 | 2 | portsorch ハードコード `POLL_INTERVAL` 書込み → CONFIG_DB 値による上書き | 起動順序（init → doTask） | orchagent 起動直後〜`FlexCounterOrch::doTask()` が CONFIG_DB 値を処理するまで FLEX_COUNTER_DB には portsorch 初期値が入っている | `counterpoll interval <group> <ms>` で再設定すると即上書き可能 |
 | 3 | `FLEX_COUNTER_STATUS=enable` 受信 → `generatePortCounterMap()` → `setFlexCounterGroupOperation()` の 2 ステップ | 単一 doTask イテレーション内 | COUNTER_TABLE SET と GROUP_TABLE SET は別 [Redis](../../reference/glossary.md#term-redis) write — syncd では依存 #1 と同様に別イベントとして到達 | 最終的に収束（依存 #1 の自動解消と同様） |
-| 4 | PortsOrch ポート初期化完了 → OID 逐次追加 | 起動シーケンス（initPort() ループ） | orchagent 起動直後は `FLEX_COUNTER_TABLE` が空 → `allIdsEmpty()=true` でポーリング無効 | `initPort()` が各 Ethernet<N> を追加するたびに OID リストが追記され、最終的にすべてのポートがカバーされる |
+| 4 | [PortsOrch](../../reference/glossary.md#term-portsorch) ポート初期化完了 → OID 逐次追加 | 起動シーケンス（initPort() ループ） | orchagent 起動直後は `FLEX_COUNTER_TABLE` が空 → `allIdsEmpty()=true` でポーリング無効 | `initPort()` が各 Ethernet<N> を追加するたびに OID リストが追記され、最終的にすべてのポートがカバーされる |
 
 ### 主要な制約詳細
 
@@ -242,7 +242,7 @@ FLEX_COUNTER_DB は warm-reboot 後に全クリアされ、orchagent 起動時�
 | 参照方向 | このテーブル | 相手テーブル / Orch | 条件 |
 |---------|------------|-------------------|------|
 | FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `CONFIG_DB:DEVICE_METADATA` `.create_only_config_db_buffers` | コンストラクタで hget; `"true"` のとき Queue/PG 設定で非ゼロプロファイルのポートのみ対象に絞る (`flexcounterorch.cpp:106-120`) |
-| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gPortsOrch->allPortsReady()` | doTask 先頭ガード; PortsOrch が未初期化なら全イベントを silent defer (`flexcounterorch.cpp:164-167`) |
+| FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gPortsOrch->allPortsReady()` | doTask 先頭ガード; [PortsOrch](../../reference/glossary.md#term-portsorch) が未初期化なら全イベントを silent defer (`flexcounterorch.cpp:164-167`) |
 | FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gFabricPortsOrch->allPortsReady()` | 同上; Fabric 版PortsOrch ガード (`flexcounterorch.cpp:169-172`) |
 | FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gPortsOrch->generate*Map()` 各メソッド | `FLEX_COUNTER_STATUS=enable` 時に PORT/QUEUE/PG/[WRED](../../reference/glossary.md#term-wred) 系グループのOIDリストを FLEX_COUNTER_DB へ書き込む起点 (`flexcounterorch.cpp:235-295`) |
 | FlexCounterOrch → | `FLEX_COUNTER_TABLE` | `gIntfsOrch->generateInterfaceMap()` | `RIF` グループ enable 時。[RIF](../../reference/glossary.md#term-rif) OIDリストを FLEX_COUNTER_DB へ登録 (`flexcounterorch.cpp:283-286`) |
@@ -558,7 +558,7 @@ Gearbox なし構成ではこのコードパスは実行されず、Gearbox 用 
 
 ### MACsec ハードウェアオフロード — MACSEC_SA / MACSEC_FLOW グループ
 
-`MACSEC_SA`・`MACSEC_SA_ATTR`・`MACSEC_FLOW` の 3 グループは `flexCounterGroupMap` に定義されており（`flexcounterorch.cpp:89-91`）、MACsec オフロード有効プラットフォーム (`macsecorch` が初期化される構成) でのみ `FLEX_COUNTER_GROUP_TABLE|MACSEC_*` エントリが FLEX_COUNTER_DB に書き込まれる。MACsec 非搭載構成では `macsecorch` が存在せず、これらのグループは生成されない。
+`MACSEC_SA`・`MACSEC_SA_ATTR`・`MACSEC_FLOW` の 3 グループは `flexCounterGroupMap` に定義されており（`flexcounterorch.cpp:89-91`）、[MACsec](../../reference/glossary.md#term-macsec) オフロード有効プラットフォーム (`macsecorch` が初期化される構成) でのみ `FLEX_COUNTER_GROUP_TABLE|MACSEC_*` エントリが FLEX_COUNTER_DB に書き込まれる。[MACsec](../../reference/glossary.md#term-macsec) 非搭載構成では `macsecorch` が存在せず、これらのグループは生成されない。
 
 ### VOQ chassis — QUEUE グループの一括展開
 
@@ -617,4 +617,4 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS:*' | head -5
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ed74267ec152 -->
+<!-- glossary-links-injected: 26f97f2ac54e -->

@@ -50,7 +50,7 @@ related:
 
 ## 概要
 
-SONiC には 2 種類のアプリケーションレベルフローカウンタがある[^1]。
+[SONiC](../../reference/glossary.md#term-sonic) には 2 種類のアプリケーションレベルフローカウンタがある[^1]。
 
 1. **Trap flow counter** (`FLOW_CNT_TRAP`) — ホスト CPU に転送されるパケットを trap グループ（`COPP_TABLE` エントリ）単位でカウントする。copporch が [SAI](../../reference/glossary.md#term-sai) HOSTIF trap に generic counter を紐付け、`COUNTERS_DB` に `SAI_COUNTER_STAT_PACKETS` / `SAI_COUNTER_STAT_BYTES` を格納する。
 2. **Route flow counter** (`FLOW_CNT_ROUTE`) — ユーザー指定のプレフィックスパターンにマッチするルートのパケット・バイト数をカウントする。FlowCounterRouteOrch が [SAI](../../reference/glossary.md#term-sai) route entry に generic counter を紐付ける。
@@ -222,7 +222,7 @@ FlowCounterRouteOrch は [COUNTERS_DB](../../reference/glossary.md#term-counters
 
 `mRouteFlowCounterSupported` は **コンストラクタで 1 回だけセットされる**（`flowcounterrouteorch.cpp:39` から `initRouteFlowCounterCapability()` を呼ぶ）。再評価する手段は orchagent 再起動のみ。よって `FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` への `FLEX_COUNTER_STATUS=enable` が読まれる時点で capability は既に [STATE_DB](../../reference/glossary.md#term-state_db) に publish 済みであり、ユーザーは `show flowcnt-route capabilities` で **enable 投入前に** `support` を確認できる。
 
-`generateRouteFlowStats()` (`flowcounterrouteorch.cpp:181-194`) は capability=false で early return するため、SAI 非対応 ASIC で enable しても counter は生成されない（no-op）。
+`generateRouteFlowStats()` (`flowcounterrouteorch.cpp:181-194`) は capability=false で early return するため、SAI 非対応 [ASIC](../../reference/glossary.md#term-asic) で enable しても counter は生成されない（no-op）。
 
 ### 設定書き込み順序（運用）
 
@@ -238,7 +238,7 @@ FlowCounterRouteOrch は [COUNTERS_DB](../../reference/glossary.md#term-counters
 
 ### FLEX_COUNTER_UPD_TIMER の起動条件
 
-`mFlexCounterUpdTimer` は **capability=true のときだけ** `Orch::addExecutor` される (`flowcounterrouteorch.cpp:42-46`)。capability=false ASIC では `mPendingAddToFlexCntr` に積まれても永遠に flush されない（`addRoutePattern()` 自体が capability ガードで early return するため積まれもしないが）。
+`mFlexCounterUpdTimer` は **capability=true のときだけ** `Orch::addExecutor` される (`flowcounterrouteorch.cpp:42-46`)。capability=false [ASIC](../../reference/glossary.md#term-asic) では `mPendingAddToFlexCntr` に積まれても永遠に flush されない（`addRoutePattern()` 自体が capability ガードで early return するため積まれもしないが）。
 
 ### warm restart の 60 秒遅延
 
@@ -494,7 +494,7 @@ fvs.emplace_back(FLOW_COUNTER_SUPPORT_FIELD, mRouteFlowCounterSupported ? "true"
 capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 ```
 
-`mRouteFlowCounterSupported == false` の場合、`flowcounterrouteorch.cpp` 内の `generateRouteFlowStats()` / `addRoutePattern()` / `removeRoutePattern()` / `onRoutePatternChange()` ほか合計 10 箇所超の関数がすべて即 `return` する。さらに `flexcounterorch.cpp:324` の `FLOW_CNT_ROUTE` enable 受信処理も `getRouteFlowCounterSupported()` を AND 条件にしているため、**SAI 非対応 ASIC では `FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` を `enable` にしても `FLOW_COUNTER_ROUTE_PATTERN` にパターンを書き込んでもカウンタは生成されない**。
+`mRouteFlowCounterSupported == false` の場合、`flowcounterrouteorch.cpp` 内の `generateRouteFlowStats()` / `addRoutePattern()` / `removeRoutePattern()` / `onRoutePatternChange()` ほか合計 10 箇所超の関数がすべて即 `return` する。さらに `flexcounterorch.cpp:324` の `FLOW_CNT_ROUTE` enable 受信処理も `getRouteFlowCounterSupported()` を AND 条件にしているため、**SAI 非対応 [ASIC](../../reference/glossary.md#term-asic) では `FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` を `enable` にしても `FLOW_COUNTER_ROUTE_PATTERN` にパターンを書き込んでもカウンタは生成されない**。
 
 ### ASIC 別の対応状況（community master）
 
@@ -638,7 +638,7 @@ VS / VPP では `queryRouteFlowCounterCapability()` が `false` を返すため 
      sonic-swss/orchagent/flex_counter/flowcounterrouteorch.cpp,
      sonic-swss/orchagent/copporch.cpp -->
 
-`FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` および `FLOW_COUNTER_ROUTE_PATTERN` を変更すると、orchagent (`FlexCounterOrch` / `CoppOrch` / `FlowCounterRouteOrch`) が CONFIG_DB 自身ではなく **COUNTERS_DB / STATE_DB / FLEX_COUNTER_DB** に副次的に書込む。これらは `show flowcnt-*` / `counterpoll show` / SONiC counters API の情報源となる。
+`FLEX_COUNTER_TABLE|FLOW_CNT_TRAP` / `FLOW_CNT_ROUTE` および `FLOW_COUNTER_ROUTE_PATTERN` を変更すると、orchagent (`FlexCounterOrch` / `CoppOrch` / `FlowCounterRouteOrch`) が CONFIG_DB 自身ではなく **COUNTERS_DB / STATE_DB / FLEX_COUNTER_DB** に副次的に書込む。これらは `show flowcnt-*` / `counterpoll show` / [SONiC](../../reference/glossary.md#term-sonic) counters API の情報源となる。
 
 ### COUNTERS_DB
 
@@ -702,4 +702,4 @@ VS / VPP では `queryRouteFlowCounterCapability()` が `false` を返すため 
 [^3]: SAI route counter 能力チェック: `sonic-swss/orchagent/flex_counter/flow_counter_handler.cpp:51-62`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/flex_counter/flow_counter_handler.cpp#L51>
 [^4]: Generic counter stat リスト: `sonic-swss/orchagent/flex_counter/flow_counter_handler.cpp:10-13`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/flex_counter/flow_counter_handler.cpp#L10>
 
-<!-- glossary-links-injected: 26ae2ca80949 -->
+<!-- glossary-links-injected: 77f342e1a22c -->

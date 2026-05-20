@@ -208,15 +208,15 @@ if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
 
 ### SRv6 / EVPN overlay ネクストホップ: SAI capability 依存
 
-`routeorch.cpp` L736-L795 で APPL_DB の `vni_label` / `segment` / `seg_src` から `overlay_nh` / `srv6_nh` を立てるが、SAI 側で `SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP`（EVPN encap）/ `SAI_NEXT_HOP_TYPE_SRV6_SIDLIST` / `SAI_OBJECT_TYPE_MY_SID_ENTRY` が未対応の ASIC では `create_next_hop` / `create_my_sid_entry` が `SAI_STATUS_NOT_SUPPORTED` を返し routeorch がエラーログを残す（L2130 / L2136 付近）。community master では Broadcom DNX / Mellanox 一部 SKU で SRv6 が機能し、VS / VPP はスタブ実装。
+`routeorch.cpp` L736-L795 で APPL_DB の `vni_label` / `segment` / `seg_src` から `overlay_nh` / `srv6_nh` を立てるが、SAI 側で `SAI_NEXT_HOP_TYPE_TUNNEL_ENCAP`（EVPN encap）/ `SAI_NEXT_HOP_TYPE_SRV6_SIDLIST` / `SAI_OBJECT_TYPE_MY_SID_ENTRY` が未対応の [ASIC](../../reference/glossary.md#term-asic) では `create_next_hop` / `create_my_sid_entry` が `SAI_STATUS_NOT_SUPPORTED` を返し routeorch がエラーログを残す（L2130 / L2136 付近）。community master では Broadcom DNX / Mellanox 一部 SKU で SRv6 が機能し、VS / VPP はスタブ実装。
 
 ### CRM 集計: SAI 任意属性
 
-`crmorch.cpp` L76-L77 で `CRM_IPV4_ROUTE` / `CRM_IPV6_ROUTE` を `SAI_SWITCH_ATTR_AVAILABLE_IPV4_ROUTE_ENTRY` / `_IPV6_ROUTE_ENTRY` に紐付ける。SAI が当該属性を未実装の ASIC（古い SDK / VS / VPP の一部）では `crm_stats_ipv4_route_available` / `ipv6_route_available` が [STATE_DB](../../reference/glossary.md#term-state_db) `CRM` に出ない。
+`crmorch.cpp` L76-L77 で `CRM_IPV4_ROUTE` / `CRM_IPV6_ROUTE` を `SAI_SWITCH_ATTR_AVAILABLE_IPV4_ROUTE_ENTRY` / `_IPV6_ROUTE_ENTRY` に紐付ける。SAI が当該属性を未実装の [ASIC](../../reference/glossary.md#term-asic)（古い SDK / VS / VPP の一部）では `crm_stats_ipv4_route_available` / `ipv6_route_available` が [STATE_DB](../../reference/glossary.md#term-state_db) `CRM` に出ない。
 
 ### multi-asic / VOQ chassis での namespace 分離
 
-`routeorch` は `DBConnector` の namespace に従って `swss@asicN` Docker ごとに 1 インスタンス起動し、それぞれ独立した APPL_DB `ROUTE_TABLE` を購読する。fpmsyncd も `asicN` namespace 単位で動作し、ASIC 間で `route_entry` / `next_hop_group` の名前空間は交わらない。chassis 全体の [VOQ](../../reference/glossary.md#term-voq) ルーティングは `CHASSIS_APP_DB`（redis index 12、`chassisdb.sock`）+ `voqorch` 経由で同期されるため、`APPL_DB:ROUTE_TABLE` 自体に chassis-wide 同期機構はない。
+`routeorch` は `DBConnector` の namespace に従って `swss@asicN` Docker ごとに 1 インスタンス起動し、それぞれ独立した APPL_DB `ROUTE_TABLE` を購読する。fpmsyncd も `asicN` namespace 単位で動作し、[ASIC](../../reference/glossary.md#term-asic) 間で `route_entry` / `next_hop_group` の名前空間は交わらない。chassis 全体の [VOQ](../../reference/glossary.md#term-voq) ルーティングは `CHASSIS_APP_DB`（redis index 12、`chassisdb.sock`）+ `voqorch` 経由で同期されるため、`APPL_DB:ROUTE_TABLE` 自体に chassis-wide 同期機構はない。
 
 ### VS / VPP プラットフォーム
 
@@ -334,7 +334,7 @@ if (status != SAI_STATUS_SUCCESS)
 
 | 失敗カテゴリ | 主な syslog / イベント | 観測手段 |
 |------------|---------------------|---------|
-| Ports 未準備 | PortsOrch 側のログ | `m_toSync` の積み上がり |
+| Ports 未準備 | [PortsOrch](../../reference/glossary.md#term-portsorch) 側のログ | `m_toSync` の積み上がり |
 | VRF 未作成 | サイレント retry | `redis-cli -n 0 keys 'ROUTE_TABLE:Vrf*'` と APPL_STATE_DB の差分 |
 | NHG ref 不在 | `Next hop group %s does not exist` | `redis-cli -n 0 keys 'NEXTHOP_GROUP_TABLE:*'` |
 | neighbor 未解決 | `Failed to get next hop ..., resolving neighbor` | `ip neigh` / NEIGH_TABLE 監視 |
@@ -373,7 +373,7 @@ if (!gPortsOrch->allPortsReady())
 `NhgOrch::doTask` は `allPortsReady()` が false の間、`NEXTHOP_GROUP_TABLE` 処理を即 return で
 保留する。`RouteOrch::doTask` 自体に直接ガードは無いが、`addRoute()` 内で
 `m_intfsOrch->getRouterIntfsId(alias) == SAI_NULL_OBJECT_ID` のとき `return false`
-（`routeorch.cpp:2086-2090`）になるため、結果として PortsOrch / IntfsOrch 初期化完了が
+（`routeorch.cpp:2086-2090`）になるため、結果として [PortsOrch](../../reference/glossary.md#term-portsorch) / [IntfsOrch](../../reference/glossary.md#term-intfsorch) 初期化完了が
 [ROUTE_TABLE](../../reference/glossary.md#term-route_table) 確定の前提となる。
 
 → 順序依存: `PORT` 初期化 → `INTERFACE`/`VLAN_INTERFACE` の [RIF](../../reference/glossary.md#term-rif) → `ROUTE_TABLE`。
@@ -422,7 +422,7 @@ catch (const std::out_of_range& e)
 
 `nexthop_group=<idx>` 指定で `NhgOrch::m_syncdNextHopGroups` 未登録 → `ERROR` + `++it` 残置。
 NhgOrch が `NEXTHOP_GROUP_TABLE` を消化するまで retry し続ける。NhgOrch 自身が項 1 の
-`allPortsReady` ガードを持つため、PortsOrch 完了が連鎖的な前提になる。
+`allPortsReady` ガードを持つため、[PortsOrch](../../reference/glossary.md#term-portsorch) 完了が連鎖的な前提になる。
 
 → 順序依存: `nexthop_group` 指定経路は `NEXTHOP_GROUP_TABLE|<idx>` の NhgOrch 反映が先行必須。
 
@@ -480,10 +480,10 @@ if (next_hop_id == SAI_NULL_OBJECT_ID)
 }
 ```
 
-interface NH で IntfsOrch が RIF を未作成のとき `return false` 残置 →
+interface NH で [IntfsOrch](../../reference/glossary.md#term-intfsorch) が RIF を未作成のとき `return false` 残置 →
 `INTERFACE`/`VLAN_INTERFACE`/`PORTCHANNEL_INTERFACE` 消化後の次サイクルで成立。
 
-→ 順序依存: directly-connected 経路は IntfsOrch RIF 作成が先行必須。
+→ 順序依存: directly-connected 経路は [IntfsOrch](../../reference/glossary.md#term-intfsorch) RIF 作成が先行必須。
 
 ### 7. SRv6 PIC `context_index` の RetryCache park
 
@@ -724,7 +724,7 @@ APPL_DB `ROUTE_TABLE` は [YANG](../../reference/glossary.md#term-yang) 未定�
 | `NEXTHOP_GROUP_TABLE` / `CLASS_BASED_NEXT_HOP_GROUP_TABLE` (NhgOrch / CbfNhgOrch) | index 解決 + 共有 NHG OID + refcount + 上限 | `nexthop_group` 非空（`nexthop`/`ifname` と排他） | `routeorch.cpp` L807–812（排他）、L838–839 / L996–1012 (`getNhg` — `out_of_range` で retry)、L1096 / L1424 / L1478（NHG 上限）、L2411 (`hasNhg` OR)、L2546 (`incNhgRefCount`)、`nhgorch.cpp` L319–362（temp NHG 保持と promotion） |
 | `FG_NHG` / `FG_NHG_PREFIX` (FgNhgOrch) | 適用判定 + 専用 SAI NHG + ロールバック | `isRouteFineGrained(vrf_id, prefix, NHs)` が true | `routeorch.cpp` L529 / L597、L1424–1431（上限ガード）、L2028–2037 (`setFgNhg`)、L2403 / L2470–2477 (`removeFgNhg`) |
 | `SRV6_SID_LIST_TABLE` / `SRV6_MY_SID_TABLE` (Srv6Orch) | SRv6 NH OID + Agg ID + バルク削除 | `segment` または `seg_src` 非空（`srv6_nh = true`） | `routeorch.cpp` L736–795（フラグ立て）、L1250 (`removeSrv6Nexthops`)、L2055 (`contextIdExists`)、L2100 / L2143 / L2169 (`srv6Nexthops`)、L2295 / L2352 (`getAggId`)、L2188–2200（temp route 非生成） |
-| `VXLAN_TUNNEL` / remote VTEP (VxlanTunnelOrch + NeighOrch) | L3 VNI 検証 + remote VTEP 作成 + tunnel NH | `vni_label` 非空（`overlay_nh = true`）かつ非 SRv6 | `routeorch.cpp` L872 / L893–897 (`isL3VniVlan`)、L2127 (`createRemoteVtep`)、L2133 / L2208 (`addTunnelNextHop`)、L2128–2141（失敗時 retry）、L1781–1789（remove） |
+| `VXLAN_TUNNEL` / remote [VTEP](../../reference/glossary.md#term-vtep) (VxlanTunnelOrch + NeighOrch) | L3 VNI 検証 + remote [VTEP](../../reference/glossary.md#term-vtep) 作成 + tunnel NH | `vni_label` 非空（`overlay_nh = true`）かつ非 SRv6 | `routeorch.cpp` L872 / L893–897 (`isL3VniVlan`)、L2127 (`createRemoteVtep`)、L2133 / L2208 (`addTunnelNextHop`)、L2128–2141（失敗時 retry）、L1781–1789（remove） |
 
 ### 通知 / side ref
 
@@ -922,4 +922,4 @@ Orch 層のリトライ機構で、依存リソース（NHG / NEIGH / VRF / RIF�
 
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 705dd044ad80 -->
+<!-- glossary-links-injected: 1b52685f0827 -->

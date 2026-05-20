@@ -119,7 +119,7 @@ WATERMARK_TABLE|TELEMETRY_INTERVAL (interval フィールド)
 
 | 優先度 | ルール | 根拠 |
 |--------|--------|------|
-| 必須 | PortsOrch の `allPortsReady()` が true になるまで `WATERMARK_TABLE` / `FLEX_COUNTER_TABLE` への書込みは保留される | `watermarkorch.cpp:56` の早期 return ガード。false の間は `m_toSync` にキューイングされ自動再処理される |
+| 必須 | [PortsOrch](../../reference/glossary.md#term-portsorch) の `allPortsReady()` が true になるまで `WATERMARK_TABLE` / `FLEX_COUNTER_TABLE` への書込みは保留される | `watermarkorch.cpp:56` の早期 return ガード。false の間は `m_toSync` にキューイングされ自動再処理される |
 | 重要 | telemetry タイマーを起動させるには `FLEX_COUNTER_TABLE|QUEUE_WATERMARK` または `FLEX_COUNTER_TABLE|PG_WATERMARK` の `FLEX_COUNTER_STATUS=enable` が必要 | `watermarkorch.cpp:136-138`: `!prevStatus && m_wmStatus` の条件を満たさないとタイマーが起動しない。`WATERMARK_TABLE` の設定だけではタイマーは起動しない |
 | 推奨 | `WATERMARK_TABLE|TELEMETRY_INTERVAL` は `FLEX_COUNTER_TABLE` の enable より前に書く | enable 後の `interval` 変更は現タイマー満了（最大 120 秒）まで新値が適用されない (`m_timerChanged = true` → 次 tick で `reset()`) |
 | 注意 | `FLEX_COUNTER_TABLE` の `QUEUE_WATERMARK` と `PG_WATERMARK` が両方 disable になるとタイマーが停止する | `watermarkorch.cpp:254-257`: `m_wmStatus == 0` のとき `m_telemetryTimer->stop()`。PERIODIC_WATERMARKS の自動クリアが停止する |
@@ -143,7 +143,7 @@ WATERMARK_TABLE|TELEMETRY_INTERVAL (interval フィールド)
 | WATERMARK_TABLE → | タイマー満了ごとの 0 クリア | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) `PERIODIC_WATERMARKS` | `WatermarkOrch` が telemetry 周期ごとに [SAI](../../reference/glossary.md#term-sai) 統計をリセットして書き込む |
 | → WATERMARK_TABLE | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` / `FLEX_COUNTER_TABLE\|PG_WATERMARK` の `FLEX_COUNTER_STATUS` | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_STATUS` の変化が `m_wmStatus` ビットマスクを更新し、タイマー起動 (`start()`) / 停止 (`stop()`) を制御する (`watermarkorch.cpp:136-138, 254-257`) |
 | → WATERMARK_TABLE | [APPL_DB](../../reference/glossary.md#term-appl_db) `WATERMARK_CLEAR_REQUEST` 通知 | `watermarkcfg clear` CLI | `"PERSISTENT"` / `"USER"` op でそれぞれの [COUNTERS_DB](../../reference/glossary.md#term-counters_db) テーブルをリセット。`PERIODIC_WATERMARKS` はタイマーのみがリセット対象 |
-| CLI | `watermarkcfg -c <秒>` / `-s` | [`watermarkcfg`](../cli/) | `interval` フィールドの書き込み（[CONFIG_DB](../../reference/glossary.md#term-config_db) HSET）と読み出し |
+| CLI | `watermarkcfg -c <秒>` / `-s` | [`watermarkcfg`](../cli/index.md) | `interval` フィールドの書き込み（[CONFIG_DB](../../reference/glossary.md#term-config_db) HSET）と読み出し |
 
 > **ポイント**: `WATERMARK_TABLE` は interval 制御のみを担い、タイマー起動/停止は `FLEX_COUNTER_TABLE` が主導する。両テーブルを `WatermarkOrch` が同一 `Consumer` ループで購読する (`watermarkorch.cpp:72-78`)。
 
@@ -183,7 +183,7 @@ DEL 後もタイマーは直前の周期（またはデフォルト 120 秒）�
 
 ### `allPortsReady()` 未達 — 無限保留
 
-`doTask()` 冒頭 (`watermarkorch.cpp:56`) で `!gPortsOrch->allPortsReady()` の場合は即 return する。`WATERMARK_TABLE` / `FLEX_COUNTER_TABLE` 両イベントが `m_toSync` に保留され、ports ready 後に再処理される。通常は一時的だが、PortsOrch 初期化が永続的に失敗した環境では両テーブルの設定が永遠に適用されない。
+`doTask()` 冒頭 (`watermarkorch.cpp:56`) で `!gPortsOrch->allPortsReady()` の場合は即 return する。`WATERMARK_TABLE` / `FLEX_COUNTER_TABLE` 両イベントが `m_toSync` に保留され、ports ready 後に再処理される。通常は一時的だが、[PortsOrch](../../reference/glossary.md#term-portsorch) 初期化が永続的に失敗した環境では両テーブルの設定が永遠に適用されない。
 
 ### WATERMARK_CLEAR_REQUEST 不正 op / data
 
@@ -373,7 +373,7 @@ APPL_DB 書き込み: なし（WATERMARK_CLEAR_REQUEST はキーなし通知チ�
 > 詳細証跡: `meta/_intermediate/cdb-flow/pwm-platform.md`
 > スキャン範囲: `sonic-swss/orchagent/watermarkorch.cpp` 全行, `sonic-swss/orchagent/orchdaemon.cpp:432-437`, `sonic-swss/orchagent/main.cpp:997`
 
-`watermarkorch.cpp` に `getenv("platform")` による ASIC 種別分岐は存在しない。`WATERMARK_TABLE|TELEMETRY_INTERVAL` の処理ロジック自体はプラットフォーム非依存だが、以下の構成・スイッチタイプ起因の差異がある。
+`watermarkorch.cpp` に `getenv("platform")` による [ASIC](../../reference/glossary.md#term-asic) 種別分岐は存在しない。`WATERMARK_TABLE|TELEMETRY_INTERVAL` の処理ロジック自体はプラットフォーム非依存だが、以下の構成・スイッチタイプ起因の差異がある。
 
 ### fabric スイッチタイプ — WatermarkOrch が存在しない
 
@@ -390,7 +390,7 @@ APPL_DB 書き込み: なし（WATERMARK_CLEAR_REQUEST はキーなし通知チ�
 
 ### VOQ / multi-ASIC — 挙動は通常スイッチと同一
 
-`watermarkorch.cpp` に `gMySwitchType` 分岐は存在しない。[VOQ](../../reference/glossary.md#term-voq) シャーシでも interval 更新は通常通り動作する。multi-ASIC 構成では各 ASIC namespace の orchagent が独立して `WATERMARK_TABLE|TELEMETRY_INTERVAL` を読み取るため、全 ASIC に同じ interval を設定するには各 namespace に個別書き込みが必要（自動同期なし）。
+`watermarkorch.cpp` に `gMySwitchType` 分岐は存在しない。[VOQ](../../reference/glossary.md#term-voq) シャーシでも interval 更新は通常通り動作する。multi-[ASIC](../../reference/glossary.md#term-asic) 構成では各 [ASIC](../../reference/glossary.md#term-asic) namespace の orchagent が独立して `WATERMARK_TABLE|TELEMETRY_INTERVAL` を読み取るため、全 ASIC に同じ interval を設定するには各 namespace に個別書き込みが必要（自動同期なし）。
 
 ### プラットフォーム差サマリ
 
@@ -416,4 +416,4 @@ APPL_DB 書き込み: なし（WATERMARK_CLEAR_REQUEST はキーなし通知チ�
 
 [^1]: `WatermarkOrch` 実装: `sonic-swss/orchagent/watermarkorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/watermarkorch.cpp>
 
-<!-- glossary-links-injected: 4548987f1a29 -->
+<!-- glossary-links-injected: 8a59592f36f2 -->

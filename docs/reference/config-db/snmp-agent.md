@@ -372,7 +372,7 @@ minigraph.py は `MGMT_VRF_CONFIG` を先行して格納後、`mgmt_intf`（MGMT
 
 ### SAI 参照
 
-なし。`SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` はいずれも snmpd（ユーザー空間デーモン）の設定のみに作用し、[SAI](../../reference/glossary.md#term-sai)・ASIC・[APPL_DB](../../reference/glossary.md#term-appl_db) には一切関与しない。
+なし。`SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` はいずれも snmpd（ユーザー空間デーモン）の設定のみに作用し、[SAI](../../reference/glossary.md#term-sai)・[ASIC](../../reference/glossary.md#term-asic)・[APPL_DB](../../reference/glossary.md#term-appl_db) には一切関与しない。
 
 <!-- /cross-refs -->
 
@@ -533,7 +533,7 @@ clicommon.run_command(['systemctl', 'restart', 'snmp.service'], display_cmd=Fals
 ### Net-SNMP 永続ステート: `/var/lib/snmp/snmpd.conf`
 
 `CreateUser` ディレクティブは Net-[SNMP](../../reference/glossary.md#term-snmp) が処理した後 `usmUser` 行に書き換えて `/var/lib/snmp/snmpd.conf` に自動保存する（Net-[SNMP](../../reference/glossary.md#term-snmp) の内部動作）。
-SONiC の `docker-snmp` コンテナは `/var/lib/snmp/` を永続ボリュームとしてマウントしていないため、コンテナ再起動ごとにリセットされ、常に `snmpd.conf` の `CreateUser` ディレクティブから再構築される。
+[SONiC](../../reference/glossary.md#term-sonic) の `docker-snmp` コンテナは `/var/lib/snmp/` を永続ボリュームとしてマウントしていないため、コンテナ再起動ごとにリセットされ、常に `snmpd.conf` の `CreateUser` ディレクティブから再構築される。
 
 ### APPL_DB / STATE_DB への副次書込
 
@@ -640,8 +640,8 @@ else:
 
 | 環境 | minigraph 初期値 | snmpd の listen 動作 |
 |------|----------------|---------------------|
-| **Single-ASIC** | MGMT IP + Loopback IP を自動列挙。`<ip>\|161\|` 形式でエントリを生成 | 特定の IP アドレスでのみ listen |
-| **Multi-ASIC** (`is_multi_asic() == True` または ASIC 分割時) | 空辞書 `{}` のみ。エントリなし | フォールバック: `agentAddress udp:161` / `udp6:161` — 全インタフェースで listen |
+| **Single-[ASIC](../../reference/glossary.md#term-asic)** | MGMT IP + Loopback IP を自動列挙。`<ip>\|161\|` 形式でエントリを生成 | 特定の IP アドレスでのみ listen |
+| **[Multi-ASIC](../../reference/glossary.md#term-multi-asic)** (`is_multi_asic() == True` または [ASIC](../../reference/glossary.md#term-asic) 分割時) | 空辞書 `{}` のみ。エントリなし | フォールバック: `agentAddress udp:161` / `udp6:161` — 全インタフェースで listen |
 
 `snmpd.conf.j2` の先頭コメントに明示されている:
 ```
@@ -649,7 +649,7 @@ else:
 # Listen on managment and loopback0 ips for single asic platform
 ```
 
-Multi-ASIC では全 ASIC の [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を単一の docker-snmp コンテナで集約するため、snmpd を全インタフェースでリッスンさせる設計になっている。[^5]
+[Multi-ASIC](../../reference/glossary.md#term-multi-asic) では全 ASIC の [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を単一の docker-snmp コンテナで集約するため、snmpd を全インタフェースでリッスンさせる設計になっている。[^5]
 
 ### IPv6 リンクローカルアドレスのスコープサフィックス (Single-ASIC のみ)
 
@@ -663,7 +663,7 @@ if ip_addr.version == 6 and ip_addr.is_link_local:
 
 テスト期待値 (`test_cfggen.py:1163`): `'fe80::1%Management0|161|'`
 
-`snmpd.conf.j2` の `protocol()` マクロは `ip_addr.split('%')[0]` でスコープサフィックスを除去してから IPv6 判定するため、スコープサフィックス付き key でも `udp6` が正しく選択される。Multi-ASIC ではこのエントリは生成されない（テーブルが空のため）。
+`snmpd.conf.j2` の `protocol()` マクロは `ip_addr.split('%')[0]` でスコープサフィックスを除去してから IPv6 判定するため、スコープサフィックス付き key でも `udp6` が正しく選択される。[Multi-ASIC](../../reference/glossary.md#term-multi-asic) ではこのエントリは生成されない（テーブルが空のため）。
 
 ### snmpd.conf.j2 / SNMP_USER: プラットフォーム非依存
 
@@ -708,4 +708,4 @@ MIB データ収集のため `sonic_ax_impl` は multi-ASIC 環境で `database_
 
 [^7]: `sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py:580-630` — multi-ASIC DB 接続初期化 (database_global.json). <https://github.com/sonic-net/sonic-snmpagent/blob/master/src/sonic_ax_impl/mibs/__init__.py>
 
-<!-- glossary-links-injected: 933b9dda9277 -->
+<!-- glossary-links-injected: e658214e3870 -->

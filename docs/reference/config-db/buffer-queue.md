@@ -74,7 +74,7 @@ BUFFER_QUEUE|<hostname>|<asic_name>|<port>|<qindex>
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
 | `hostname` (key) | `hostname` | ✅ | VOQ シャーシのホスト名 |
-| `asic_name` (key) | `asic_name` | ✅ | ASIC インスタンス名 |
+| `asic_name` (key) | `asic_name` | ✅ | [ASIC](../../reference/glossary.md#term-asic) インスタンス名 |
 | `port` (key) | string (1..128) | ✅ | リニアカード上のポート名 |
 | `qindex` (key) | string | ✅ | Q-index |
 | `profile` | leafref `BUFFER_PROFILE.name` | - | buffer profile |
@@ -261,7 +261,7 @@ show buffer queue
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -590,7 +590,7 @@ profile 名に `_zero_` を含む場合 (`counter_needs_to_add = false`)、カ�
 | モード | 条件 | 動作 |
 |--------|------|------|
 | **ベンダー指定対象に zero profile 適用** | `queues_to_apply_zero_profile` が定義済み | 指定 queue index にのみ zero profile を適用し、残りは APPL_DB から削除 |
-| **全設定 queue に zero profile 適用** | `queues_to_apply_zero_profile` が未定義 | 設定済み全 queue + ASIC がサポートする未設定 queue にも zero profile を適用 (`buffers_config.j2` コメント例: 16 queue の場合 0-2, 5-6, 7-15 → lossy zero, 3-4 → lossless zero) |
+| **全設定 queue に zero profile 適用** | `queues_to_apply_zero_profile` が未定義 | 設定済み全 queue + [ASIC](../../reference/glossary.md#term-asic) がサポートする未設定 queue にも zero profile を適用 (`buffers_config.j2` コメント例: 16 queue の場合 0-2, 5-6, 7-15 → lossy zero, 3-4 → lossless zero) |
 
 Static モードデーモン (`buffermgr`) はこの `reclaimReservedBufferForPort` 処理を持たない。
 
@@ -604,7 +604,7 @@ Static モードデーモン (`buffermgr`) はこの `reclaimReservedBufferForPo
 | その他 (`"broadcom"` 等) | なし | なし |
 | 未設定 (`""`) | なし | なし |
 
-ベンダー別 Lua プラグイン (`buffer_headroom_<vendor>.lua`, `buffer_pool_<vendor>.lua`) は BUFFER_PG / BUFFER_POOL の計算専用であり BUFFER_QUEUE の profile 値には影響しない。Mellanox 8-lane サフィックス等のランタイム ASIC 依存処理は BUFFER_QUEUE に適用されない。
+ベンダー別 Lua プラグイン (`buffer_headroom_<vendor>.lua`, `buffer_pool_<vendor>.lua`) は BUFFER_PG / BUFFER_POOL の計算専用であり BUFFER_QUEUE の profile 値には影響しない。Mellanox 8-lane サフィックス等のランタイム [ASIC](../../reference/glossary.md#term-asic) 依存処理は BUFFER_QUEUE に適用されない。
 
 ### ASIC queue 数差異
 
@@ -629,4 +629,4 @@ YANG の qindex 正規表現は `(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?` で **0〜1
 詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: 571dabcf0bb2 -->
+<!-- glossary-links-injected: 865a18402f05 -->

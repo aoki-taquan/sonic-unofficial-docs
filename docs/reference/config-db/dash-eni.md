@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for SONiC Hosts) の Elastic Network Interface ([ENI](../../reference/glossary.md#term-eni)) エントリを保持するテーブル[^1]。[ENI](../../reference/glossary.md#term-eni) は [DASH](../../reference/glossary.md#term-dash) ソフトウェアスイッチにおける仮想 NIC の論理単位であり、[VNET](../../reference/glossary.md#term-vnet) への所属・アンダーレイ IP・[ACL](../../reference/glossary.md#term-acl) バインド・ルーティング・メータリングなどの起点となる。
+[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for [SONiC](../../reference/glossary.md#term-sonic) Hosts) の Elastic Network Interface ([ENI](../../reference/glossary.md#term-eni)) エントリを保持するテーブル[^1]。[ENI](../../reference/glossary.md#term-eni) は [DASH](../../reference/glossary.md#term-dash) ソフトウェアスイッチにおける仮想 NIC の論理単位であり、[VNET](../../reference/glossary.md#term-vnet) への所属・アンダーレイ IP・[ACL](../../reference/glossary.md#term-acl) バインド・ルーティング・メータリングなどの起点となる。
 
 `DashOrch` (`sonic-swss/orchagent/dash/dashorch.cpp`) が ZMQ 経由で受信した Protobuf メッセージを解釈し、[SAI](../../reference/glossary.md#term-sai) の `sai_dash_eni_api` を通じてデータプレーンに [ENI](../../reference/glossary.md#term-eni) を作成する。MAC アドレスは ENI ether address map entry のキーとして使用され、受信パケットの内部 src-MAC (Outbound) または内部 dst-MAC (Inbound) で ENI を特定するための LUT を構成する。
 
@@ -85,10 +85,10 @@ DASH_ENI_TABLE:<eni_mac>
 ## 関連 CONFIG_DB
 
 - [`DASH_VNET_TABLE`](dash-vnet.md): ENI が所属する [VNET](../../reference/glossary.md#term-vnet)
-- [`DASH_QOS_TABLE`](dash-qos.md): ENI に適用する [QoS](../../reference/glossary.md#term-qos) プロファイル (PPS / CPS / Flows)
-- [`DASH_APPLIANCE_TABLE`](dash-appliance.md): Appliance グローバル設定 (VM VNI など)
+- `DASH_QOS_TABLE`: ENI に適用する [QoS](../../reference/glossary.md#term-qos) プロファイル (PPS / CPS / Flows)
+- `DASH_APPLIANCE_TABLE`: Appliance グローバル設定 (VM VNI など)
 - [`DASH_ACL_IN_TABLE`](dash-acl.md) / [`DASH_ACL_OUT_TABLE`](dash-acl.md): ENI への [ACL](../../reference/glossary.md#term-acl) バインド
-- [`DASH_ENI_ROUTE_TABLE`](dash-eni-route.md): ENI のルートグループバインド
+- `DASH_ENI_ROUTE_TABLE`: ENI のルートグループバインド
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
@@ -495,11 +495,11 @@ ENI 1 件の作成・削除ごとに以下の **2 つのカウンタが独立し
 
 ### SAI DASH ENI API — ベンダー分岐なし
 
-`dashorch.cpp` は `sai_dash_eni_api->create_eni()` / `remove_eni()` 等の SAI DASH Extension API を一律呼び出す。ベンダー固有の環境変数（`platform` / `sub_platform` 等）への参照は一切存在せず、ASIC ベンダー差は SAI 実装側が抽象化する。
+`dashorch.cpp` は `sai_dash_eni_api->create_eni()` / `remove_eni()` 等の SAI DASH Extension API を一律呼び出す。ベンダー固有の環境変数（`platform` / `sub_platform` 等）への参照は一切存在せず、[ASIC](../../reference/glossary.md#term-asic) ベンダー差は SAI 実装側が抽象化する。
 
 ### SAI capability クエリ: HA Flow Owner 属性（唯一のプラットフォーム差）
 
-`isHaFlowOwnerAttrSupported()` (`dashorch.cpp:102-125`) が起動時に一度だけ `sai_query_attribute_capability()` を呼び出し、SAI ASIC が `SAI_ENI_ATTR_IS_HA_FLOW_OWNER` の `set_implemented` または `create_implemented` をサポートするかを検出する。
+`isHaFlowOwnerAttrSupported()` (`dashorch.cpp:102-125`) が起動時に一度だけ `sai_query_attribute_capability()` を呼び出し、SAI [ASIC](../../reference/glossary.md#term-asic) が `SAI_ENI_ATTR_IS_HA_FLOW_OWNER` の `set_implemented` または `create_implemented` をサポートするかを検出する。
 
 | capability 検出結果 | ENI 作成時の挙動 |
 |--------------------|----------------|
@@ -517,7 +517,7 @@ ENI 1 件の作成・削除ごとに以下の **2 つのカウンタが独立し
 
 ### FlexCounter ポーリング間隔（全ベンダー共通）
 
-ENI 統計 (`ENI_STAT_COUNTER_FLEX_COUNTER_GROUP`) および Meter 統計 (`METER_STAT_COUNTER_FLEX_COUNTER_GROUP`) のポーリング間隔は `10,000 ms` にハードコードされており (`dashorch.h:30, 33`)、ASIC ベンダーによる差異はない。
+ENI 統計 (`ENI_STAT_COUNTER_FLEX_COUNTER_GROUP`) および Meter 統計 (`METER_STAT_COUNTER_FLEX_COUNTER_GROUP`) のポーリング間隔は `10,000 ms` にハードコードされており (`dashorch.h:30, 33`)、[ASIC](../../reference/glossary.md#term-asic) ベンダーによる差異はない。
 
 > **Evidence**: `main.cpp:242-268, 990-994`（switch_type 判定・DpuOrchDaemon 起動）、`orchdaemon.cpp:613-615, 1322-1418`（DashEniFwdOrch 登録・DpuOrchDaemon::init）、`dashorch.cpp:39, 102-125, 692-715, 738`（SAI API 参照・capability 検出・ENI 作成）、`dashorch.h:29-33`（FlexCounter 定数）
 
@@ -531,4 +531,4 @@ ENI 統計 (`ENI_STAT_COUNTER_FLEX_COUNTER_GROUP`) および Meter 統計 (`METE
 
 <!-- glossary-links-injected: dash-eni-2026-0514 -->
 
-<!-- glossary-links-injected: 477e29d8a67b -->
+<!-- glossary-links-injected: 865a18402f05 -->

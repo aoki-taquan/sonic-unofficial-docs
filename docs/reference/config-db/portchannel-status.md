@@ -94,7 +94,7 @@ LAG_TABLE:<lag_name>
 
 ## 購読者
 
-- **[orchagent](../../reference/glossary.md#term-orchagent) (PortsOrch)**: `APP_LAG_TABLE` を `SubscriberStateTable` で読み取り、`sai_lag_api->create_lag()` で [SAI](../../reference/glossary.md#term-sai) [LAG](../../reference/glossary.md#term-lag) オブジェクトを作成する。`oper_status` / `mtu` / `learn_mode` / `tpid` を [SAI](../../reference/glossary.md#term-sai) 属性に反映する
+- **[orchagent](../../reference/glossary.md#term-orchagent) ([PortsOrch](../../reference/glossary.md#term-portsorch))**: `APP_LAG_TABLE` を `SubscriberStateTable` で読み取り、`sai_lag_api->create_lag()` で [SAI](../../reference/glossary.md#term-sai) [LAG](../../reference/glossary.md#term-lag) オブジェクトを作成する。`oper_status` / `mtu` / `learn_mode` / `tpid` を [SAI](../../reference/glossary.md#term-sai) 属性に反映する
 - **[intfmgrd](../../reference/glossary.md#term-intfmgrd)**: `STATE_LAG_TABLE` ([STATE_DB](../../reference/glossary.md#term-state_db)) の `state: ok` を確認してから [LAG](../../reference/glossary.md#term-lag) インタフェースの設定を適用する
 
 <!-- defaults -->
@@ -117,7 +117,7 @@ LAG_TABLE:<lag_name>
 - teamsyncd が RTM_NEWLINK イベントで `rtnl_link_get_flags(link) & IFF_LOWER_UP` の結果を書き込む (`teamsync.cpp:152`)
 - LAG 作成直後はメンバが存在しないため `IFF_LOWER_UP` は立たず `"down"` が書かれる
 - [LACP](../../reference/glossary.md#term-lacp) ネゴシエーション完了後にメンバがアクティブになると teamsyncd が RTM_NEWLINK を受け `"up"` に更新する
-- [orchagent](../../reference/glossary.md#term-orchagent) (PortsOrch) は `oper_status` フィールドを読み取り (`portsorch.cpp:6088-6096`)、[SAI](../../reference/glossary.md#term-sai) に反映する。[orchagent](../../reference/glossary.md#term-orchagent) が APPL_DB の `oper_status` を書き戻す処理はない ([STATE_DB](../../reference/glossary.md#term-state_db) または SAI 通知に基づく)
+- [orchagent](../../reference/glossary.md#term-orchagent) ([PortsOrch](../../reference/glossary.md#term-portsorch)) は `oper_status` フィールドを読み取り (`portsorch.cpp:6088-6096`)、[SAI](../../reference/glossary.md#term-sai) に反映する。[orchagent](../../reference/glossary.md#term-orchagent) が APPL_DB の `oper_status` を書き戻す処理はない ([STATE_DB](../../reference/glossary.md#term-state_db) または SAI 通知に基づく)
 
 **暗黙デフォルト**: `"down"` (LAG 作成直後、メンバなし状態での IFF_LOWER_UP 未セット)
 
@@ -192,7 +192,7 @@ APPL_DB `LAG_TABLE` への書き込みは **teamsyncd** (カーネル RTM_NEWLIN
 | `LAG_TABLE` | STATE_DB | WRITE（副産物） | `teamsyncd` の `addLag()` が APPL_DB 書き込み成功後に `m_stateLagTable.set()` で `state: "ok"` を STATE_DB に書き込む。STATE_DB の `LAG_TABLE` は APPL_DB `LAG_TABLE` と同名だが別 DB の別テーブル | `teamsync.cpp:175, 203` |
 | `LAG_TABLE` (STATE_DB) | STATE_DB | READ | `intfmgrd` が `STATE_LAG_TABLE_NAME` を `Consumer` として購読し、LAG の `state: ok` を確認してからインタフェース設定を適用する。STATE_DB キーが存在しない場合 `intfmgrd` は LAG インタフェースを処理しない | `intfmgr.cpp:51-52, 1183` |
 | `COUNTERS_LAG_NAME_MAP` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | WRITE | `portsorch` の `addLag()` が LAG SAI オブジェクト作成成功時に `m_counterLagTable->set()` で `<lag_alias>` → `<sai_oid>` マッピングを書き込む。`removeLag()` で `hdel` により削除 | `portsorch.cpp:762, 8022, 8095` |
-| IntfsOrch（内部）— [RIF](../../reference/glossary.md#term-rif) MTU 伝播 | orchagent 内部 | CALL | `doLagTask()` が `mtu` フィールドを更新した際、LAG に [RIF](../../reference/glossary.md#term-rif) (Router Interface) が存在する場合は `gIntfsOrch->setRouterIntfsMtu(l)` を呼んで [RIF](../../reference/glossary.md#term-rif) の MTU も連動更新する。LAG の MTU 変更は L3 転送側にも波及する | `portsorch.cpp:6163` |
+| [IntfsOrch](../../reference/glossary.md#term-intfsorch)（内部）— [RIF](../../reference/glossary.md#term-rif) MTU 伝播 | orchagent 内部 | CALL | `doLagTask()` が `mtu` フィールドを更新した際、LAG に [RIF](../../reference/glossary.md#term-rif) (Router Interface) が存在する場合は `gIntfsOrch->setRouterIntfsMtu(l)` を呼んで [RIF](../../reference/glossary.md#term-rif) の MTU も連動更新する。LAG の MTU 変更は L3 転送側にも波及する | `portsorch.cpp:6163` |
 | `CHASSIS_APP_LAG_TABLE` | CHASSIS_APP_DB | WRITE (VoQ のみ) | VoQ モード (`gMySwitchType == "voq"`) では `addLag()` / `removeLag()` がそれぞれ `voqSyncAddLag()` / `voqSyncDelLag()` を呼び、CHASSIS_APP_DB の `CHASSIS_APP_LAG_TABLE_NAME` へ同期書き込みする。非 VoQ 環境では発生しない | `portsorch.cpp:8037-8039, 8114-8116` |
 | SUBJECT_TYPE_PORT_CHANGE 通知 | orchagent 内部 | NOTIFY | `addLag()` / `removeLag()` は `notify(SUBJECT_TYPE_PORT_CHANGE, ...)` で orchagent 内の subscriber Orch（[VXLAN](../../reference/glossary.md#term-vxlan) Orch 等）に LAG の追加/削除を通知する。通知はメモリ内イベントバスを通じて伝達される（DB 書き込みなし） | `portsorch.cpp:8024-8025, 8090-8091` |
 
@@ -206,7 +206,7 @@ APPL_DB `LAG_TABLE` への書き込みは **teamsyncd** (カーネル RTM_NEWLIN
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
-APPL_DB `LAG_TABLE` の書き込み経路（teamsyncd / teammgrd）と orchagent (PortsOrch) の消費経路それぞれで、以下の失敗パスが存在する。
+APPL_DB `LAG_TABLE` の書き込み経路（teamsyncd / teammgrd）と orchagent ([PortsOrch](../../reference/glossary.md#term-portsorch)) の消費経路それぞれで、以下の失敗パスが存在する。
 
 ### 失敗パスまとめ
 
@@ -245,8 +245,8 @@ APPL_DB `LAG_TABLE` の書き込み経路（teamsyncd / teammgrd）と orchagent
 | `TEAMSYNCD_APP_NAME` | `"teamsyncd"` | `teamsync.h:14` | `WarmStart::initialize()` / `WarmStart::checkWarmStart()` に渡すアプリケーション名。warm reboot タイマー設定のキー |
 | LAG warmboot dump パス | `"/var/warmboot/teamd/"` | `teammgr.cpp:573` | warmboot 時に teamd 状態ファイルを保存するディレクトリパス。このパス以下にある per-LAG バイナリから partner MAC (`partner_system_id_offset=40` bytes) を読み取ってウォームスタート後の LAG MAC を復元する |
 | `partner_system_id_offset` | `40` バイト | `teammgr.cpp:581` | warmboot dump ファイル内で [LACP](../../reference/glossary.md#term-lacp) partner system ID (MAC アドレス) を読む固定バイトオフセット。LACP PDU のフォーマットに基づく値 |
-| teamd runner 名 | `"lacp"` | `teammgr.cpp:609` | teamd 設定 JSON に固定埋め込みされる runner 名。SONiC の LAG は常に LACP runner のみをサポートし、static LAG 等の他 runner は設定不可 |
-| teamd `active: true` | `true` | `teammgr.cpp:608` | LACP runner の active/passive モード設定。SONiC は常に active モードで teamd を起動する |
+| teamd runner 名 | `"lacp"` | `teammgr.cpp:609` | teamd 設定 JSON に固定埋め込みされる runner 名。[SONiC](../../reference/glossary.md#term-sonic) の LAG は常に LACP runner のみをサポートし、static LAG 等の他 runner は設定不可 |
+| teamd `active: true` | `true` | `teammgr.cpp:608` | LACP runner の active/passive モード設定。[SONiC](../../reference/glossary.md#term-sonic) は常に active モードで teamd を起動する |
 
 !!! note "DEFAULT_MTU_STR 9100 の出処"
     `DEFAULT_MTU_STR "9100"` は SONiC 全体で統一されたデフォルト MTU 値。`portmgr.h` で定義された同一マクロが portmgrd (物理ポート) と teammgrd (LAG) の両方で使用される。Jumbo Frame 標準 (9000 bytes payload + 100 bytes overhead) に由来するが、公式 HLD には明記なし。
@@ -434,11 +434,11 @@ LAG メンバーの enabled/disabled 状態を切り替えるとき、orchagent 
 
 ### VoQ スイッチ — `create_lag()` に `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` 追加
 
-通常スイッチでは `sai_lag_api->create_lag()` を 0 属性で呼び出すが、VoQ スイッチ (`gMySwitchType == "voq"`) では `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` 属性を追加する (`portsorch.cpp:7962-7991`)。Multi-ASIC VoQ 構成では `LagIdAllocator` でシャーシ全体でユニークな LAG ID を払い出し、LAG 名も `<hostname>|<asic>|PortChannelXXXX` 形式に変換する。さらに `voqSyncAddLag()` が CHASSIS_APP_DB `CHASSIS_APP_LAG_TABLE_NAME` にも書き込む (`portsorch.cpp:8039`)。
+通常スイッチでは `sai_lag_api->create_lag()` を 0 属性で呼び出すが、VoQ スイッチ (`gMySwitchType == "voq"`) では `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID` 属性を追加する (`portsorch.cpp:7962-7991`)。[Multi-ASIC](../../reference/glossary.md#term-multi-asic) VoQ 構成では `LagIdAllocator` でシャーシ全体でユニークな LAG ID を払い出し、LAG 名も `<hostname>|<asic>|PortChannelXXXX` 形式に変換する。さらに `voqSyncAddLag()` が CHASSIS_APP_DB `CHASSIS_APP_LAG_TABLE_NAME` にも書き込む (`portsorch.cpp:8039`)。
 
 ### `SAI_LAG_ATTR_TPID` — ASIC 対応依存
 
-`setLagTpid()` (`portsorch.cpp:8267-8291`) は SAI capability チェックなしに `SAI_LAG_ATTR_TPID` を直接 SET する。`SAI_LAG_ATTR_TPID` に非対応の ASIC では `SAI_STATUS_NOT_SUPPORTED` が返り `SWSS_LOG_ERROR` が出力される。VS (Virtual Switch) SAI は `SAI_LAG_ATTR_TPID` の SET をサポートしないため、VS 環境での TPID 設定は常にエラーになる。APPL_DB の `tpid` フィールドへの書き込み (teammgrd 側) はプラットフォームに依らず行われる。
+`setLagTpid()` (`portsorch.cpp:8267-8291`) は SAI capability チェックなしに `SAI_LAG_ATTR_TPID` を直接 SET する。`SAI_LAG_ATTR_TPID` に非対応の [ASIC](../../reference/glossary.md#term-asic) では `SAI_STATUS_NOT_SUPPORTED` が返り `SWSS_LOG_ERROR` が出力される。VS (Virtual Switch) SAI は `SAI_LAG_ATTR_TPID` の SET をサポートしないため、VS 環境での TPID 設定は常にエラーになる。APPL_DB の `tpid` フィールドへの書き込み (teammgrd 側) はプラットフォームに依らず行われる。
 
 ### プラットフォーム識別定数
 
@@ -483,11 +483,11 @@ teamdctl PortChannel0001 state
 
 - CONFIG_DB: [`PORTCHANNEL テーブル`](./portchannel.md)
 - CONFIG_DB: [`PORTCHANNEL_MEMBER テーブル`](./portchannel-member.md)
-- CLI: [`show interfaces portchannel`](../cli/show-interfaces-portchannel.md)
+- CLI: `show interfaces portchannel`
 
 ## 引用元
 
 [^1]: teamsyncd teamsync.cpp: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/teamsyncd/teamsync.cpp>
 [^2]: teammgrd teammgr.cpp, portmgr.h: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/teammgr.cpp>
 
-<!-- glossary-links-injected: dc1d5168cba6 -->
+<!-- glossary-links-injected: c35d7dd9a62b -->

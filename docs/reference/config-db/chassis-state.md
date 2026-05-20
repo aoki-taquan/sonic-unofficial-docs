@@ -53,8 +53,8 @@ flowchart LR
 | テーブル名 | キー形式 | 書き込み元 | 用途 |
 |-----------|---------|----------|------|
 | `CHASSIS_MODULE_TABLE` | `LINE-CARD<N>` | `ModuleUpdater` (line card 側) | hostname / slot / num_asics をスーパーバイザーへ通知 |
-| `CHASSIS_ASIC_TABLE` | `LINE-CARD<N>\|asic<id>` | `ModuleUpdater` (非 supervisor) | ラインカード上の ASIC 情報 |
-| `CHASSIS_FABRIC_ASIC_TABLE` | `asic<id>` | `ModuleUpdater` (supervisor) | ファブリックカード上の ASIC 情報 |
+| `CHASSIS_ASIC_TABLE` | `LINE-CARD<N>\|asic<id>` | `ModuleUpdater` (非 supervisor) | ラインカード上の [ASIC](../../reference/glossary.md#term-asic) 情報 |
+| `CHASSIS_FABRIC_ASIC_TABLE` | `asic<id>` | `ModuleUpdater` (supervisor) | ファブリックカード上の [ASIC](../../reference/glossary.md#term-asic) 情報 |
 | `CHASSIS_MODULE_REBOOT_INFO_TABLE` | `<module_name>` | `ModuleUpdater` | midplane 喪失時のタイムスタンプ記録 |
 | `DPU_STATE` | `DPU<N>` | `SmartSwitchModuleUpdater`, `DpuStateUpdater` | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) の midplane / データプレーン / コントロールプレーン状態 |
 | `REBOOT_CAUSE` | `DPU<N>\|<timestamp>` | `SmartSwitchModuleUpdater` | [DPU](../../reference/glossary.md#term-dpu) 再起動原因の履歴 |
@@ -77,7 +77,7 @@ CHASSIS_MODULE_TABLE|LINE-CARD<N>
 |-----------|----|----------------------|------|
 | `slot` | string | `str(my_slot)` ; platform API 失敗時 `"-1"` | ラインカードのスロット番号 |
 | `hostname` | string | `device_info.get_hostname()` ; 失敗時 `"None"` (文字列) | ラインカードのホスト名 |
-| `num_asics` | string | `str(len(asics))` ; asics リスト取得失敗時 `"0"` | ラインカード上の ASIC 数 |
+| `num_asics` | string | `str(len(asics))` ; asics リスト取得失敗時 `"0"` | ラインカード上の [ASIC](../../reference/glossary.md#term-asic) 数 |
 
 !!! warning "`hostname` fallback は文字列 `\"None\"`"
     platform API 失敗時の fallback は Python の `None` 型ではなく文字列 `"None"`。比較時に注意。
@@ -720,4 +720,4 @@ while True:
 > **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:125-141,288-297,420,462-468,471-478,864-891,1289-1320,1364-1405`; `sonic-buildimage` `files/scripts/asic_status.py:40-44`
 <!-- /cdb-exceptions -->
 
-<!-- glossary-links-injected: 2f7001d8a888 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

@@ -98,8 +98,8 @@ HSET "EXP_TO_FC_MAP|AZURE" "0" "0" "1" "1" "2" "2" "3" "3" "4" "4" "5" "5" "6" "
 
 | 発見種別 | 詳細 |
 |---------|------|
-| 未定義 EXP の fallback | EXP_TO_FC_MAP に EXP 値を記述しない場合、その EXP ビットに対する FC は未定義。ASIC 実装依存（多くは FC=0 にフォールバック） |
-| 空マップ | kfvFieldsValues が空でも YANG は reject しないが、SAI map count=0 で `sai_create_qos_map` を呼ぶ。SAI の動作は ASIC 依存 |
+| 未定義 EXP の fallback | EXP_TO_FC_MAP に EXP 値を記述しない場合、その EXP ビットに対する FC は未定義。[ASIC](../../reference/glossary.md#term-asic) 実装依存（多くは FC=0 にフォールバック） |
+| 空マップ | kfvFieldsValues が空でも YANG は reject しないが、SAI map count=0 で `sai_create_qos_map` を呼ぶ。SAI の動作は [ASIC](../../reference/glossary.md#term-asic) 依存 |
 
 <!-- /defaults -->
 
@@ -271,7 +271,7 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 
 ### REST / gNMI (sonic-mgmt-common)
 
-- なし（対応 OpenConfig/SONiC YANG transformer なし）
+- なし（対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし）
 
 ### db_migrator
 
@@ -447,7 +447,7 @@ EXP 値は 0..7 の範囲のみ有効。`convertFieldValuesToAttributes()` L1150
 |--------|---------|--------|
 | SAI QoS map オブジェクト生成 (`SAI_QOS_MAP_TYPE_MPLS_EXP_TO_FORWARDING_CLASS`) | SET (新規) | `qosorch.cpp:1189-1213` |
 | SAI QoS map 属性更新 (`set_qos_map_attribute`) | SET (既存) | `qosorch.cpp:204-214` |
-| 参照ポートの MPLS EXP→FC 分類を即時変更 | SET (既存 in-place 更新) | ASIC に伝播 (`qosorch.cpp:151-157`) |
+| 参照ポートの MPLS EXP→FC 分類を即時変更 | SET (既存 in-place 更新) | [ASIC](../../reference/glossary.md#term-asic) に伝播 (`qosorch.cpp:151-157`) |
 | SAI QoS map 削除 (`remove_qos_map`) | DEL かつ参照なし | `qosorch.cpp:188-194` |
 | `getTypeMap()` への OID 登録 | SET 新規成功 | `qosorch.cpp:168` |
 | 同上エントリの erase | DEL 成功 | `qosorch.cpp:194` |
@@ -559,4 +559,4 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 > **Evidence**: `nhgmaporch.cpp:299-325` (`NhgMapOrch::getMaxNumFcs()`); `qosorch.cpp:1189-1213` (`addQosItem()`); `cbf_config.j2:70-80` (AZURE デフォルト); `test_qos_map.py:314` (max_num_fcs=63 テスト実績); `qosorch.cpp:2258-2261` (allPortsReady ガード)
 <!-- /platform -->
 
-<!-- glossary-links-injected: 8c310ea8a5aa -->
+<!-- glossary-links-injected: 865a18402f05 -->

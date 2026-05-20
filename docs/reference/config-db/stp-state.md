@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-`STATE_DB` の `STP_TABLE` は、スイッチ ASIC のハードウェア STP インスタンス上限を格納する **読み取り専用** の状態テーブル。`orchagent` の `StpOrch` が [SAI](../../reference/glossary.md#term-sai) 属性 `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` から取得した値を書き込み、`stpmgrd` がこの値を読み取って STP インスタンス数を管理する。
+`STATE_DB` の `STP_TABLE` は、スイッチ [ASIC](../../reference/glossary.md#term-asic) のハードウェア STP インスタンス上限を格納する **読み取り専用** の状態テーブル。`orchagent` の `StpOrch` が [SAI](../../reference/glossary.md#term-sai) 属性 `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` から取得した値を書き込み、`stpmgrd` がこの値を読み取って STP インスタンス数を管理する。
 
 テーブルには `GLOBAL` キーの 1 エントリのみが存在し、フィールドは `max_stp_inst` の 1 本のみ。
 
@@ -74,7 +74,7 @@ STP_TABLE|GLOBAL
 
 | フィールド | 書込み主体 | 型 | コード由来デフォルト | 説明 |
 |-----------|---------|-----|---------------------|------|
-| `max_stp_inst` | `orchagent/StpOrch` | uint16 (文字列) | **HW 依存** (`SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1`) | スイッチ ASIC がサポートする最大 STP インスタンス数 |
+| `max_stp_inst` | `orchagent/StpOrch` | uint16 (文字列) | **HW 依存** (`SAI_SWITCH_ATTR_MAX_STP_INSTANCE - 1`) | スイッチ [ASIC](../../reference/glossary.md#term-asic) がサポートする最大 STP インスタンス数 |
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
@@ -407,7 +407,7 @@ STP 設定変更の受信は `stpmgrd.cpp:43-65` の `TableConnector` 群 → `O
 > **調査根拠**: `stporch.cpp` / `stpmgr.cpp` / `stpmgrd.cpp` を `platform` / `is_multi_npu` / `chassis` / `vendor` / `mellanox` / `broadcom` で grep → 全 0 ヒット (2026-05-19)
 > 詳細証跡: `meta/_intermediate/cdb-flow/stp-state-platform.md`
 
-`STP_TABLE|GLOBAL.max_stp_inst` の**値**は SAI `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` に依存するため ASIC ベンダーごとに異なるが、書き込み・読み取りの**コードパスは全プラットフォーム共通**。`stporch.cpp` に ASIC ベンダー分岐は存在しない。
+`STP_TABLE|GLOBAL.max_stp_inst` の**値**は SAI `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` に依存するため [ASIC](../../reference/glossary.md#term-asic) ベンダーごとに異なるが、書き込み・読み取りの**コードパスは全プラットフォーム共通**。`stporch.cpp` に ASIC ベンダー分岐は存在しない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
@@ -447,4 +447,4 @@ sonic-db-cli STATE_DB hgetall 'STP_TABLE|GLOBAL'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 261f97dfe984 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

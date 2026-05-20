@@ -23,7 +23,7 @@ related:
 
 ## 概要
 
-SONiC Dual-ToR (Active-Standby) 構成における peer ToR の識別情報を保持するテーブル[^1]。`TUNNEL_LIST.src_ip` が `PEER_SWITCH_LIST.address_ipv4` への leafref として参照する。エントリは Dual-ToR 構成上、**最大 1 つ** ([YANG](../../reference/glossary.md#term-yang) `max-elements 1`)。
+[SONiC](../../reference/glossary.md#term-sonic) Dual-ToR (Active-Standby) 構成における peer ToR の識別情報を保持するテーブル[^1]。`TUNNEL_LIST.src_ip` が `PEER_SWITCH_LIST.address_ipv4` への leafref として参照する。エントリは Dual-ToR 構成上、**最大 1 つ** ([YANG](../../reference/glossary.md#term-yang) `max-elements 1`)。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -79,7 +79,7 @@ PEER_SWITCH|<peer_switch>
 | フィールド | YANG default | コード実装デフォルト | 備考 |
 |-----------|------------|-----------------|------|
 | `peer_switch` (key) | なし | なし | エントリ 0 件で `is_dualtor = false` ([neighsyncd](../../reference/glossary.md#term-neighsyncd):69)、link-local IPv4 neighbor フィルタが無効化される |
-| `address_ipv4` | なし | `0x0` (0.0.0.0) — MuxOrch 内部変数 `mux_peer_switch_` の初期値 | 未設定時は MUX_CABLE 処理が defer / cached neighbor 更新がスキップされる |
+| `address_ipv4` | なし | `0x0` (0.0.0.0) — [MuxOrch](../../reference/glossary.md#term-muxorch) 内部変数 `mux_peer_switch_` の初期値 | 未設定時は MUX_CABLE 処理が defer / cached neighbor 更新がスキップされる |
 
 ### 注意点
 
@@ -206,7 +206,7 @@ show mux status
 ### 段階 1: Consumer 登録
 
 - **linkmgrd**: `PEER_SWITCH` テーブルを `ConfigDBConnector` で購読してピアスイッチ IP を認識。
-- **[orchagent](../../reference/glossary.md#term-orchagent) / MuxOrch**: ピア情報を参照して dual-ToR フェイルオーバーロジックを制御。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / [MuxOrch](../../reference/glossary.md#term-muxorch)**: ピア情報を参照して dual-ToR フェイルオーバーロジックを制御。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -220,7 +220,7 @@ show mux status
 ### 段階 4: タイミング + 副作用
 
 - ピア接続障害を検知するまでプローバサイクル × ネガティブカウントの時間を要する。
-- 副作用: ピア障害検知後、MuxOrch がトラフィックを local に引き込む自動フェイルオーバーを実施。
+- 副作用: ピア障害検知後、[MuxOrch](../../reference/glossary.md#term-muxorch) がトラフィックを local に引き込む自動フェイルオーバーを実施。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -585,4 +585,4 @@ PEER_SWITCH が未設定の場合、`mux_peer_switch_.isZero()` が true とな�
 
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 1ec5d309adeb -->
+<!-- glossary-links-injected: 832ce64dc615 -->

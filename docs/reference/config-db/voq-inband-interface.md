@@ -178,7 +178,7 @@ show ip interface | grep Ethernet-IB
 
 ### 段階 3: APPL → SAI
 
-- IntfsOrch が [SAI](../../reference/glossary.md#term-sai) で inband ポートの [RIF](../../reference/glossary.md#term-rif) を作成し、VOQ 配送に使用するルートを設定。
+- [IntfsOrch](../../reference/glossary.md#term-intfsorch) が [SAI](../../reference/glossary.md#term-sai) で inband ポートの [RIF](../../reference/glossary.md#term-rif) を作成し、VOQ 配送に使用するルートを設定。
 
 ### 段階 4: タイミング + 副作用
 
@@ -474,11 +474,11 @@ orchagent が `switch_type == "voq"` のとき `sai_create_switch()` に次の�
 | SAI 属性 | 値 | 意味 |
 |----------|-----|------|
 | `SAI_SWITCH_ATTR_TYPE` | `SAI_SWITCH_TYPE_VOQ` | SAI に VOQ 動作モードを宣言 |
-| `SAI_SWITCH_ATTR_SWITCH_ID` | `gVoqMySwitchId` | DEVICE_METADATA.localhost.switch_id から取得 |
-| `SAI_SWITCH_ATTR_MAX_SYSTEM_CORES` | `gVoqMaxCores` | DEVICE_METADATA.localhost.max_cores から取得 |
+| `SAI_SWITCH_ATTR_SWITCH_ID` | `gVoqMySwitchId` | [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).localhost.switch_id から取得 |
+| `SAI_SWITCH_ATTR_MAX_SYSTEM_CORES` | `gVoqMaxCores` | [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).localhost.max_cores から取得 |
 | `SAI_SWITCH_ATTR_SYSTEM_PORT_CONFIG_LIST` | システムポートリスト | SYSTEM_PORT テーブルから生成。0 件なら `exit(EXIT_FAILURE)` |
 
-`SAI_SWITCH_TYPE_VOQ` をサポートしない ASIC では orchagent 起動時点で SAI エラーが発生し、`VOQ_INBAND_INTERFACE` の処理に到達しない。
+`SAI_SWITCH_TYPE_VOQ` をサポートしない [ASIC](../../reference/glossary.md#term-asic) では orchagent 起動時点で SAI エラーが発生し、`VOQ_INBAND_INTERFACE` の処理に到達しない。
 
 ### multi-asic VOQ chassis vs. standalone VOQ
 
@@ -498,8 +498,8 @@ orchagent が `switch_type == "voq"` のとき `sai_create_switch()` に次の�
 
 ### ベンダー ASIC 固有性
 
-VOQ SAI (`SAI_SWITCH_TYPE_VOQ`) を実装しているベンダー ASIC に限定される。コミュニティ SONiC では Cisco 8000 シリーズなどが代表例として挙げられるが、SONiC コードは ASIC 種別を直接確認せず `switch_type` 設定のみで判定する。
+VOQ SAI (`SAI_SWITCH_TYPE_VOQ`) を実装しているベンダー [ASIC](../../reference/glossary.md#term-asic) に限定される。コミュニティ [SONiC](../../reference/glossary.md#term-sonic) では Cisco 8000 シリーズなどが代表例として挙げられるが、[SONiC](../../reference/glossary.md#term-sonic) コードは [ASIC](../../reference/glossary.md#term-asic) 種別を直接確認せず `switch_type` 設定のみで判定する。
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 1ec79361a878 -->
+<!-- glossary-links-injected: 0f6be0963ca5 -->

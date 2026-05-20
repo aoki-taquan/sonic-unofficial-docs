@@ -184,7 +184,7 @@ SAI 側の初期値は `SAI_VLAN_TAGGING_MODE_TAGGED` (portsorch.cpp:7540)。マ
 
 `priority_tagged` は YANG typedef (`sonic-types.yang`) に列挙されておりコードでも受理されるが、CLI (`config/vlan.py:407`) は `"untagged"` / `"tagged"` のみを書き込み、`priority_tagged` を設定する CLI 経路は存在しない。
 
-加えて、`priority_tagged` と `untagged` は Linux bridge レベルでは同一コマンド (`bridge vlan add ... pvid untagged`) が使われる (vlanmgr.cpp:238) が、[orchagent](../../reference/glossary.md#term-orchagent) は SAI では `SAI_VLAN_TAGGING_MODE_PRIORITY_TAGGED` として区別する。Linux ホスト転送と ASIC 転送で動作が乖離する。
+加えて、`priority_tagged` と `untagged` は Linux bridge レベルでは同一コマンド (`bridge vlan add ... pvid untagged`) が使われる (vlanmgr.cpp:238) が、[orchagent](../../reference/glossary.md#term-orchagent) は SAI では `SAI_VLAN_TAGGING_MODE_PRIORITY_TAGGED` として区別する。Linux ホスト転送と [ASIC](../../reference/glossary.md#term-asic) 転送で動作が乖離する。
 
 ### APP_DB フィールド欠落伝播
 
@@ -483,7 +483,7 @@ APPL_DB に書き込まれるフィールド: CONFIG_DB の raw フィールド�
 
 ### PortsOrch::addVlanMember / removeVlanMember による書込み (orchagent/portsorch.cpp)
 
-APPL_DB `VLAN_MEMBER_TABLE` を PortsOrch が購読し SAI 呼び出しを行い、[syncd](../../reference/glossary.md#term-syncd) 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) へ書き込まれる。
+APPL_DB `VLAN_MEMBER_TABLE` を [PortsOrch](../../reference/glossary.md#term-portsorch) が購読し SAI 呼び出しを行い、[syncd](../../reference/glossary.md#term-syncd) 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) へ書き込まれる。
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|-----------------|-----------------|------|
@@ -579,8 +579,8 @@ APP_DB `VLAN_MEMBER_TABLE` エントリに `end_point_ip` が付与される [EV
 
 ### Multi-ASIC — CLI で `--namespace` 必須
 
-Multi-ASIC 環境では `config vlan member add/del` に `--namespace` が必須で、指定なしはエラー終了する (config/vlan.py:23)。VLAN_MEMBER は特定 ASIC の namespace DB に書き込まれる。Single ASIC 環境では `DEFAULT_NAMESPACE` が自動設定されるため不要。
+[Multi-ASIC](../../reference/glossary.md#term-multi-asic) 環境では `config vlan member add/del` に `--namespace` が必須で、指定なしはエラー終了する (config/vlan.py:23)。VLAN_MEMBER は特定 [ASIC](../../reference/glossary.md#term-asic) の namespace DB に書き込まれる。Single [ASIC](../../reference/glossary.md#term-asic) 環境では `DEFAULT_NAMESPACE` が自動設定されるため不要。
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: eff92f9fe9ff -->
+<!-- glossary-links-injected: d1b4721425dc -->

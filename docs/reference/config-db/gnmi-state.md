@@ -412,13 +412,13 @@ telemetry デーモン
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`TELEMETRY_CONNECTIONS` テーブルへの書き込みロジックは `gnmi_server/connection_manager.go` 内に完結しており、ASIC 種別・`DEVICE_METADATA` の `platform` / `hwsku` フィールド・サードパーティ [SAI](../../reference/glossary.md#term-sai) 実装に**依存しない**。STATE_DB への HSet / HDel は Redis TCP 接続経由でのみ行われ、スイッチ ASIC とは直接関係しない。
+`TELEMETRY_CONNECTIONS` テーブルへの書き込みロジックは `gnmi_server/connection_manager.go` 内に完結しており、[ASIC](../../reference/glossary.md#term-asic) 種別・`DEVICE_METADATA` の `platform` / `hwsku` フィールド・サードパーティ [SAI](../../reference/glossary.md#term-sai) 実装に**依存しない**。STATE_DB への HSet / HDel は Redis TCP 接続経由でのみ行われ、スイッチ [ASIC](../../reference/glossary.md#term-asic) とは直接関係しない。
 
 ### A. 設計上プラットフォーム非依存な点
 
 | 項目 | 詳細 | evidence |
 |------|------|----------|
-| ASIC 種別 | `connection_manager.go` は ASIC / [SAI](../../reference/glossary.md#term-sai) API を参照しない。broadcom / mellanox / barefoot / cisco-8000 等で挙動に差はない | `connection_manager.go` 全体 — `sai_*` 系 import なし |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 | `connection_manager.go` は ASIC / [SAI](../../reference/glossary.md#term-sai) API を参照しない。broadcom / mellanox / barefoot / cisco-8000 等で挙動に差はない | `connection_manager.go` 全体 — `sai_*` 系 import なし |
 | `platform` / `hwsku` 文字列 | `DEVICE_METADATA|localhost` の `platform` / `hwsku` を参照しない。プラットフォーム分岐コードなし | `connection_manager.go` — `DEVICE_METADATA` 参照なし |
 | connection key フォーマット | peer IP:port + gNMI query + RFC3339 タイムスタンプで構成。ASIC に依存しない | `connection_manager.go:94-108` — `createKey()` |
 | `"active"` 固定値 | 全プラットフォームで HSet 値は `"active"` のみ | `connection_manager.go:116` |
@@ -456,4 +456,4 @@ Virtual Switch (`platform = "vs"`) 環境では Redis が通常通り起動し�
 
 [^1]: `sonic-gnmi` `gnmi_server/connection_manager.go:16` — `const table = "TELEMETRY_CONNECTIONS"`、`PrepareRedis()` / `Add()` / `Remove()` で STATE_DB を読み書き
 
-<!-- glossary-links-injected: c87a1cb9badd -->
+<!-- glossary-links-injected: 8df9850464d2 -->

@@ -75,7 +75,7 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 | `route_flap_dampen_max_suppress` | uint8 1..255 | - | max suppress duration |
 | `autort` | enum `rfc8365-compatible` | - | RFC8365 互換 route-target 自動生成 |
 | `advertise-all-vni` | boolean | - | L2VPN で全 VNI を advertise |
-| `advertise-svi-ip` | boolean | - | local SVI IP を remote VTEP へ advertise |
+| `advertise-svi-ip` | boolean | - | local SVI IP を remote [VTEP](../../reference/glossary.md#term-vtep) へ advertise |
 
 ### BGP_GLOBALS_AF_AGGREGATE_ADDR
 
@@ -105,7 +105,7 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 
 - `bgpcfgd`: [CONFIG_DB](../../reference/glossary.md#term-config_db) の [BGP](../../reference/glossary.md#term-bgp) global AF 設定を [FRR](../../reference/glossary.md#term-frr) address-family 設定へ変換する。
 - `frr-mgmt-framework`: `DEVICE_METADATA.frr_mgmt_framework_config = true` のときに generic [BGP](../../reference/glossary.md#term-bgp) model として処理する。
-- `bgpd` ([FRR](../../reference/glossary.md#term-frr)): vtysh / mgmt framework 経由で最終的な AF 設定を保持する。
+- `bgpd` ([FRR](../../reference/glossary.md#term-frr)): [vtysh](../../reference/glossary.md#term-vtysh) / mgmt framework 経由で最終的な AF 設定を保持する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -243,7 +243,7 @@ vtysh -c 'show bgp l2vpn evpn summary'
 | 条件 | 挙動 | ソース |
 |------|------|--------|
 | `local_asn` が未設定の VRF で更新が到達 | `frrcfgd` が `ignore table {} update because local_asn for VRF {} was not configured` を LOG_DEBUG して skip | `frrcfgd.py` L2660 |
-| BGP_GLOBALS_AF 更新コマンドが vtysh で失敗 | `failed running BGP global AF config command` を LOG_ERR → continue (drop) | `frrcfgd.py` L2780 |
+| BGP_GLOBALS_AF 更新コマンドが [vtysh](../../reference/glossary.md#term-vtysh) で失敗 | `failed running BGP global AF config command` を LOG_ERR → continue (drop) | `frrcfgd.py` L2780 |
 | `route_flap_dampen` を IPv4 unicast 以外の AFI に設定 | YANG `must` 制約により事前拒否 (`afi_safi = 'ipv4_unicast'` のみ許可) | `sonic-bgp-global.yang` |
 | `import_vrf` に未設定 VRF を指定 | frrcfgd は存在チェックなし → FRR 側でエラー (ログなし) | `frrcfgd.py` |
 | BGP_GLOBALS_AF_AGGREGATE_ADDR の IP プレフィックスが不正形式 | `invalid IP prefix format %s for af %s` を LOG_ERR → skip | `frrcfgd.py` L3174 |
@@ -263,7 +263,7 @@ vtysh -c 'show bgp l2vpn evpn summary'
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由)
+なし (FRR [vtysh](../../reference/glossary.md#term-vtysh) 経由)
 
 ### 段階 3 — APPL→SAI
 
@@ -341,7 +341,7 @@ vtysh -c 'show bgp l2vpn evpn summary'
 
 **結論: プラットフォーム差なし。**
 
-`BGP_GLOBALS_AF` の購読・適用は `frrcfgd.BGPConfigDaemon.bgp_af_handler` (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`) 一本に集約され、最終 sink は FRR (`bgpd`) の vtysh コマンドである。[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) / platform driver には到達しない純制御プレーン経路のため、ASIC 種別・hwsku・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 等の物理構成差で挙動が変わらない。
+`BGP_GLOBALS_AF` の購読・適用は `frrcfgd.BGPConfigDaemon.bgp_af_handler` (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`) 一本に集約され、最終 sink は FRR (`bgpd`) の vtysh コマンドである。[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) / platform driver には到達しない純制御プレーン経路のため、[ASIC](../../reference/glossary.md#term-asic) 種別・hwsku・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 等の物理構成差で挙動が変わらない。
 
 ### 根拠サマリ
 
@@ -353,7 +353,7 @@ vtysh -c 'show bgp l2vpn evpn summary'
 | multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis | 各 `asicN` namespace で同一コードが独立に動作。frrcfgd 自身に namespace 分岐なし |
 | 最終 sink | FRR vtysh (`address-family <afi> <safi>` 配下の `maximum-paths` / `distance bgp` / `bgp dampening` / `autort` / `advertise-all-vni` 等) |
 
-`max_ebgp_paths` / `max_ibgp_paths` の YANG 上限 (1..256) は制御プレーン上の multipath 計算上限であり、ASIC の [ECMP](../../reference/glossary.md#term-ecmp) group 容量との突き合わせは本テーブル外 (別経路で扱う)。
+`max_ebgp_paths` / `max_ibgp_paths` の YANG 上限 (1..256) は制御プレーン上の multipath 計算上限であり、[ASIC](../../reference/glossary.md#term-asic) の [ECMP](../../reference/glossary.md#term-ecmp) group 容量との突き合わせは本テーブル外 (別経路で扱う)。
 
 詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-af-platform.md`。
 <!-- /platform -->
@@ -563,7 +563,7 @@ DEL (`data is None`) では `del_table=True` が設定され AF 設定全体を 
 | `table-map` コマンド | `{no:no-prefix}table-map {}` | `route_download_filter` で FIB download フィルタを設定 | `frrcfgd.py:1840` |
 | `bgp dampening` コマンド雛形 | `{no:no-prefix}bgp dampening {} {} {} {}` | `route_flap_dampen` 系 4 フィールドで dampening 設定 | `frrcfgd.py:1841-1845` |
 | `advertise-all-vni` コマンド | `{no:no-prefix}advertise-all-vni` | 全 VNI 広告を有効化 (l2vpn_evpn AF、boolean) | `frrcfgd.py:1846` |
-| `advertise-svi-ip` コマンド | `{no:no-prefix}advertise-svi-ip` | SVI IP を VTEP 広告 (boolean) | `frrcfgd.py:1847` |
+| `advertise-svi-ip` コマンド | `{no:no-prefix}advertise-svi-ip` | SVI IP を [VTEP](../../reference/glossary.md#term-vtep) 広告 (boolean) | `frrcfgd.py:1847` |
 | `advertise-default-gw` コマンド | `{no:no-prefix}advertise-default-gw` | デフォルト GW 広告 (boolean) | `frrcfgd.py:1848` |
 | `advertise ipv4/ipv6 unicast` コマンド | `{no:no-prefix}advertise ipv4/ipv6 unicast` | unicast prefix を [EVPN](../../reference/glossary.md#term-evpn) へ広告 (boolean) | `frrcfgd.py:1849-1850` |
 | `default-originate ipv4/ipv6` コマンド | `{no:no-prefix}default-originate ipv4/ipv6` | default route の originate (boolean) | `frrcfgd.py:1851-1852` |
@@ -613,4 +613,4 @@ DEL (`data is None`) では `del_table=True` が設定され AF 設定全体を 
 > **スキャン証跡**: `frrcfgd.py` L82 / L813 / L1389-1396 / L1824-1864 / L2107 / L2136-2140 / L2297 / L2771-2782 / L3938-3941 を確認。FRR コマンド literal 27 件 + vtysh prefix 3 件 + AF 文字列 3 件 + FRR デフォルト値 6 件 + enum 変換 1 件 + comb_attr_list 2 件 = 計 42 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-constants.md`
 <!-- /constants -->
 
-<!-- glossary-links-injected: ab9cccd2712f -->
+<!-- glossary-links-injected: 0614c731880a -->

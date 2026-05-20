@@ -301,7 +301,7 @@ global テーブル (single key `GLOBAL`) と feature テーブルを同一ハ�
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -393,15 +393,15 @@ CONFIG_DB `AUTO_TECHSUPPORT` テーブルの変更を直接の入力とする ho
 <!-- platform -->
 ## プラットフォーム差
 
-AUTO_TECHSUPPORT (GLOBAL) の挙動は ASIC ベンダー / [VOQ](../../reference/glossary.md#term-voq) chassis / namespace 構成に対して**ほぼ非依存**。実装上の配慮は multi-asic で container 名 (`swss0` / `syncd1` 等) を feature 名と照合する 1 箇所のみ。
+AUTO_TECHSUPPORT (GLOBAL) の挙動は [ASIC](../../reference/glossary.md#term-asic) ベンダー / [VOQ](../../reference/glossary.md#term-voq) chassis / namespace 構成に対して**ほぼ非依存**。実装上の配慮は multi-asic で container 名 (`swss0` / `syncd1` 等) を feature 名と照合する 1 箇所のみ。
 
 | 観点 | 影響 | 根拠 |
 |------|------|------|
-| ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco / [DASH](../../reference/glossary.md#term-dash)) | なし | SAI 非経由。consumer 4 ファイルに vendor 分岐 0 hit |
+| [ASIC](../../reference/glossary.md#term-asic) ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco / [DASH](../../reference/glossary.md#term-dash)) | なし | SAI 非経由。consumer 4 ファイルに vendor 分岐 0 hit |
 | multi-asic (`is_multi_npu() == True`) | key 構造は不変。container 名のみ `startswith` で前方一致 | `sonic-utilities/scripts/memory_threshold_check.py:204` |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line card) | 各 host で独立動作 | `chassisdb` (`REDIS_CHASSIS_SERVER`) 非参照、host ごとに local CONFIG_DB と `/var/dump/` を扱う |
 | namespace (asic0..asicN) | 影響なし | 全 consumer が `SonicV2Connector(use_unix_socket_path=True)` で host CONFIG_DB のみ接続 |
-| init_cfg / build template | 分岐なし | `enable_auto_tech_support` ビルド変数で `state` を切替えるのみ。ASIC/chassis 条件式なし |
+| init_cfg / build template | 分岐なし | `enable_auto_tech_support` ビルド変数で `state` を切替えるのみ。[ASIC](../../reference/glossary.md#term-asic)/chassis 条件式なし |
 
 !!! note "sonic-host-services/scripts/ に consumer なし"
     `grep -rli AUTO_TECHSUPPORT .cache/sonic-sources/sonic-host-services/` は 0 hit。実コンシューマは `sonic-utilities/scripts/{coredump_gen_handler,techsupport_cleanup,memory_threshold_check}.py` + `utilities_common/auto_techsupport_helper.py` に集約。
@@ -706,7 +706,7 @@ kernel.core_pipe_limit = 16
 
 ### 6. systemd-coredump との関係
 
-SONiC は **systemd-coredump を使用しない**。`kernel.core_pattern` をパイプ (`|`) で独自スクリプト (`coredump-compress`) に向けることで systemd-coredump の介在を排除している。`/etc/systemd/coredump.conf` は参照されない。
+[SONiC](../../reference/glossary.md#term-sonic) は **systemd-coredump を使用しない**。`kernel.core_pattern` をパイプ (`|`) で独自スクリプト (`coredump-compress`) に向けることで systemd-coredump の介在を排除している。`/etc/systemd/coredump.conf` は参照されない。
 
 ### 7. AUTO_TECHSUPPORT 連携まとめ
 
@@ -724,4 +724,4 @@ SONiC は **systemd-coredump を使用しない**。`kernel.core_pattern` をパ
 ```
 <!-- /ordering -->
 
-<!-- glossary-links-injected: b3297726fc57 -->
+<!-- glossary-links-injected: 77f342e1a22c -->

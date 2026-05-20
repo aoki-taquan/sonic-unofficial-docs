@@ -41,7 +41,7 @@ related:
 
 ## 概要
 
-SONiC は Debian-based Linux の上に立つため、**新 Debian release を取り込む cadence** を明文化することが本ドキュメントの目的[^1]。範囲は (1) **base image の Debian アップグレード**、(2) **各 container の Debian アップグレード**、(3) **複数 Debian バージョンのサポート期間**、(4) **古い Debian の deprecation**。Debian は公式の release schedule を持たないが Stretch 以降は **約 2 年周期で 6〜8 月に release** されている経験則を踏まえ、SONiC の 11 月 release で base 取り込みを目標とする。
+[SONiC](../reference/glossary.md#term-sonic) は Debian-based Linux の上に立つため、**新 Debian release を取り込む cadence** を明文化することが本ドキュメントの目的[^1]。範囲は (1) **base image の Debian アップグレード**、(2) **各 container の Debian アップグレード**、(3) **複数 Debian バージョンのサポート期間**、(4) **古い Debian の deprecation**。Debian は公式の release schedule を持たないが Stretch 以降は **約 2 年周期で 6〜8 月に release** されている経験則を踏まえ、SONiC の 11 月 release で base 取り込みを目標とする。
 
 ## 動作仕様
 
@@ -216,4 +216,4 @@ show version
 - 廃止された Debian バージョンと release ノート整合確認
 -->
 
-<!-- glossary-links-injected: 75921d013977 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

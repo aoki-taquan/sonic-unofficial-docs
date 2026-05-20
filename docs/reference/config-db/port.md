@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-物理スイッチポートの設定を保持するテーブル。ポート名（`Ethernet0` など）をキーに、speed、lanes、MTU、admin status、FEC、auto-negotiation、breakout subport、MACsec プロファイル、TPID、mux cable 情報、400G ZR トランシーバ向けの tx-power / laser_freq などを記載する[^1]。
+物理スイッチポートの設定を保持するテーブル。ポート名（`Ethernet0` など）をキーに、speed、lanes、MTU、admin status、FEC、auto-negotiation、breakout subport、[MACsec](../../reference/glossary.md#term-macsec) プロファイル、TPID、mux cable 情報、400G ZR トランシーバ向けの tx-power / laser_freq などを記載する[^1]。
 
 `portmgrd` / `orchagent` の `PortsOrch` が PORT テーブルを購読し、[SAI](../../reference/glossary.md#term-sai) 経由で hardware に設定を反映する。`speed` と `lanes` は通常 `port_config.ini` 由来の初期値で、運用中に CLI で変更可能。
 
@@ -62,8 +62,8 @@ PORT|<name>
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
 | `name` (key) | string (1..128) | ✅ | - | 物理ポート名（例: `Ethernet0`） |
-| `core_id` | string (1..16) | - | - | ポートが属する ASIC コア |
-| `core_port_id` | string (1..16) | - | - | ASIC コア上のポート ID |
+| `core_id` | string (1..16) | - | - | ポートが属する [ASIC](../../reference/glossary.md#term-asic) コア |
+| `core_port_id` | string (1..16) | - | - | [ASIC](../../reference/glossary.md#term-asic) コア上のポート ID |
 | `num_voq` | string (1..16) | - | - | このポートでサポートする VoQ 数 |
 | `alias` | string (1..128) | - | - | ベンダ固有のポート別名／フロントパネル表記 |
 | `lanes` | string (1..128) | ✅ (chassis 例外あり) | - | ハードウェアレーン数（chassis では条件付き） |
@@ -79,7 +79,7 @@ PORT|<name>
 | `mtu` | uint16 (68..9216) | - | - | MTU [byte] |
 | `subport` | uint8 (0..8) | - | - | breakout で生成された論理サブポート番号 |
 | `index` | uint16 | - | - | フロントパネルポートインデックス |
-| `asic_port_name` | string | - | - | ASIC 内部のポート名（例: `Eth0-ASIC1`） |
+| `asic_port_name` | string | - | - | [ASIC](../../reference/glossary.md#term-asic) 内部のポート名（例: `Eth0-ASIC1`） |
 | `role` | string `Ext`/`Int`/`Inb`/`Rec`/`Dpc` | - | `Ext` | 多 ASIC / [SmartSwitch](../../reference/glossary.md#term-smartswitch) のロール |
 | `admin_status` | `admin_status` (`up`/`down`) | - | `down` | 管理状態 |
 | `fec` | string `rs`/`fc`/`none`/`auto` | - | - | 前方誤り訂正モード |
@@ -87,7 +87,7 @@ PORT|<name>
 | `pfc_asym` | string `on`/`off` | - | - | 非対称 [PFC](../../reference/glossary.md#term-pfc) |
 | `tpid` | `tpid_type` (0x8100 / 0x9100 / 0x9200 / 0x88a8) | - | - | TPID。HW 対応時のみ |
 | `mux_cable` | boolean | - | - | dual-ToR mux cable 接続フラグ |
-| `macsec` | leafref `MACSEC_PROFILE.name` | - | - | 適用する MACsec プロファイル |
+| `macsec` | leafref `MACSEC_PROFILE.name` | - | - | 適用する [MACsec](../../reference/glossary.md#term-macsec) プロファイル |
 | `tx_power` | decimal64 | - | - | 400G ZR 向け目標出力 [dBm] |
 | `laser_freq` | int32 | - | - | 400G ZR 向け目標レーザ周波数 [GHz] |
 | `fast_linkup` | boolean | - | `false` | fast link-up |
@@ -103,7 +103,7 @@ PORT|<name>
 - `portmgrd`: ポート status と admin_status をモニタ
 - `xcvrd`: トランシーバ関連 (`tx_power`、`laser_freq`、`dom_polling`) をモニタ
 - `linkmgrd`: `mux_cable = true` のポートを mux 制御対象として扱う
-- `macsecmgrd`: `macsec` 参照をもとに MACsec セッション確立
+- `macsecmgrd`: `macsec` 参照をもとに [MACsec](../../reference/glossary.md#term-macsec) セッション確立
 
 ## 関連 CONFIG_DB テーブル / YANG / CLI
 
@@ -116,7 +116,7 @@ PORT|<name>
 
 ### PORT.admin_status
 
-| 値 | PortsOrch / [portmgrd](../../reference/glossary.md#term-portmgrd) 挙動 |
+| 値 | [PortsOrch](../../reference/glossary.md#term-portsorch) / [portmgrd](../../reference/glossary.md#term-portmgrd) 挙動 |
 |----|--------------------------|
 | `up` | SAI SAI_PORT_ATTR_ADMIN_STATE=true、Linux netdev も up |
 | `down` (デフォルト) | SAI SAI_PORT_ATTR_ADMIN_STATE=false、netdev down |
@@ -244,14 +244,14 @@ show interfaces transceiver eeprom Ethernet0
 
 ### 段階 1: Consumer 登録
 
-- **[orchagent](../../reference/glossary.md#term-orchagent) / PortsOrch** (`sonic-swss/orchagent/portsorch.cpp`): `PORT` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / [PortsOrch](../../reference/glossary.md#term-portsorch)** (`sonic-swss/orchagent/portsorch.cpp`): `PORT` テーブルを `SubscriberStateTable` で購読。
 - **[portmgrd](../../reference/glossary.md#term-portmgrd)** (`sonic-swss/cfgmgr/portmgr.cpp`): `PORT` テーブルを購読して Linux netdev を設定。
 - **xcvrd** (`sonic-platform-daemons`): トランシーバ関連フィールドを購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
 - [portmgrd](../../reference/glossary.md#term-portmgrd) が `PORT` → `APP_PORT_TABLE` に admin_status / mtu / speed 等を書き込む。
-- PortsOrch は [CONFIG_DB](../../reference/glossary.md#term-config_db) と APP_DB 両方から PORT 情報を統合して処理。
+- [PortsOrch](../../reference/glossary.md#term-portsorch) は [CONFIG_DB](../../reference/glossary.md#term-config_db) と APP_DB 両方から PORT 情報を統合して処理。
 
 ### 段階 3: APPL → SAI
 
@@ -659,7 +659,7 @@ PortsOrch::handleNotification() → STATE_DB[PORT_TABLE|Ethernet*]
 | `PortsOrch` | `doTask()` | `admin_status == "up"` | SAI `set_port_attribute(SAI_PORT_ATTR_ADMIN_STATE, true)` | `portsorch.cpp` |
 | `PortsOrch` | `doTask()` | `fec` フィールドあり | SAI `SAI_PORT_ATTR_FEC_MODE` を設定。`auto` の場合は `SAI_PORT_FEC_MODE_AUTO` | `portsorch.cpp` |
 | `PortsOrch` | `doTask()` | `autoneg == "on"` かつ `speed` 指定あり | `SAI_PORT_ATTR_AUTO_NEG_MODE` + advertised speed 設定 | `portsorch.cpp` |
-| `PortsOrch` | `doTask()` | `mux_cable == "true"` | ポートの [MUX](../../reference/glossary.md#term-mux) cable フラグを設定し MuxOrch に通知 | `portsorch.cpp` |
+| `PortsOrch` | `doTask()` | `mux_cable == "true"` | ポートの [MUX](../../reference/glossary.md#term-mux) cable フラグを設定し [MuxOrch](../../reference/glossary.md#term-muxorch) に通知 | `portsorch.cpp` |
 | `PortsOrch` | `doTask()` | SET でポートが `allPortsReady()` を完成させた場合 | `allPortsReady` = true、他 orch の doTask() をアンブロック | `portsorch.cpp:allPortsReady()` |
 
 > **スキャン証跡**: `portsorch.cpp` PORT 処理ロジックおよび `init_cfg.json.j2:29`、`minigraph.py:2621-2622` を確認、6 件分岐抽出 — 誤読なし。
@@ -715,7 +715,7 @@ PORT エントリが存在しない状態でこれらのテーブルに書き込
 | 参照 | 方向 | 機構 | 備考 |
 |---|---|---|---|
 | `BUFFER_PG` / `BUFFER_QUEUE` | → PORT | `gBufferOrch->isPortReady()` で PORT ready 待機 | BUFFER 処理が完了するまで PORT HW 反映を保留 |
-| `MUX_CABLE` | ← / → PORT | [linkmgrd](../../reference/glossary.md#term-linkmgrd) が `PORT.mux_cable=true` を検知し MuxOrch へ通知 | minigraph.py が MUX_CABLE 存在時に自動派生 |
+| `MUX_CABLE` | ← / → PORT | [linkmgrd](../../reference/glossary.md#term-linkmgrd) が `PORT.mux_cable=true` を検知し [MuxOrch](../../reference/glossary.md#term-muxorch) へ通知 | minigraph.py が MUX_CABLE 存在時に自動派生 |
 | `STATE_PORT_TABLE` | PORT → STATE_DB | portsorch が oper_status / speed / flap_count を書き込む | warm reboot 復元時の引き継ぎ元 |
 | `PORT_SERDES` | PORT → | PORT DEL 時に自動連動削除 | `portsorch.cpp:1526` |
 | 他テーブル全体 | PORT → | `allPortsReady()` が true になるまで VLAN/INTERFACE/LAG/[ACL](../../reference/glossary.md#term-acl) orch の doTask() を保留 | 最後の PORT が初期化完了するとゲート解除 |
@@ -1075,4 +1075,4 @@ Gearbox（外付け PHY）が搭載されたプラットフォーム（例: Bare
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 9c25daff0a44 -->
+<!-- glossary-links-injected: 70458c1c1898 -->

@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-P4RT controller が **[APPL_DB](../../reference/glossary.md#term-appl_db) の `P4RT_TABLE:FIXED_TUNNEL_TABLE`** に書き込む GRE IP-in-IP encap トンネルエントリ。[orchagent](../../reference/glossary.md#term-orchagent) の `GreTunnelManager` がこれを購読し、[SAI](../../reference/glossary.md#term-sai) `sai_tunnel_api->create_tunnels()` を呼び出してハードウェアに GRE トンネルを設定する[^1]。
+[P4RT](../../reference/glossary.md#term-p4rt) controller が **[APPL_DB](../../reference/glossary.md#term-appl_db) の `P4RT_TABLE:FIXED_TUNNEL_TABLE`** に書き込む GRE IP-in-IP encap トンネルエントリ。[orchagent](../../reference/glossary.md#term-orchagent) の `GreTunnelManager` がこれを購読し、[SAI](../../reference/glossary.md#term-sai) `sai_tunnel_api->create_tunnels()` を呼び出してハードウェアに GRE トンネルを設定する[^1]。
 
 テーブル名定数は `schema.h` の `APP_P4RT_TUNNEL_TABLE_NAME = "FIXED_TUNNEL_TABLE"`[^2]。
 
@@ -114,9 +114,9 @@ APPL_DB:   P4RT_TABLE:FIXED_TUNNEL_TABLE:<json_key>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): なし（P4RT は [CONFIG_DB](../../reference/glossary.md#term-config_db) を経由しない）
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): なし（[P4RT](../../reference/glossary.md#term-p4rt) は [CONFIG_DB](../../reference/glossary.md#term-config_db) を経由しない）
 - 関連 [YANG](../../reference/glossary.md#term-yang): なし
-- 関連 CLI: なし（P4RT controller が直接 [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込む）
+- 関連 CLI: なし（[P4RT](../../reference/glossary.md#term-p4rt) controller が直接 [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込む）
 
 <!-- ordering -->
 ## 処理順序・依存関係・Warm-reboot 挙動
@@ -414,7 +414,7 @@ entries[i].overlay_if_oid = gUnderlayIfId;
 |----------------|------|
 | Broadcom (BRCM SAI) | 対応（`neighbor_id = encap_dst_ip` の事前生成が必要） |
 | VS / VPP (libsaivs / libsaivpp) | create_tunnels が `SAI_STATUS_SUCCESS` を返すがハードウェア転送なし。CI / テスト専用 |
-| その他 ASIC | SAI 実装次第。`SAI_STATUS_NOT_SUPPORTED` 返却時は `SWSS_LOG_ERROR` のみでロールバック不可 |
+| その他 [ASIC](../../reference/glossary.md#term-asic) | SAI 実装次第。`SAI_STATUS_NOT_SUPPORTED` 返却時は `SWSS_LOG_ERROR` のみでロールバック不可 |
 
 ### SAI Bulk モード固定
 
@@ -440,4 +440,4 @@ entries[i].overlay_if_oid = gUnderlayIfId;
 [^4]: `createGreTunnels()` overlay_if / neighbor_id: `gre_tunnel_manager.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L400-L425>
 [^5]: P4Orch マネージャ ADD 優先順位 (`m_p4ManagerAddPrecedence`): `p4orch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/p4orch.cpp#L88-L102>
 
-<!-- glossary-links-injected: d78a46c9b875 -->
+<!-- glossary-links-injected: a7a32c5af13d -->

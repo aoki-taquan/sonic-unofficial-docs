@@ -194,7 +194,7 @@ invoke_ts_cmd(db, num_retry=0)
 |-----------|------|------|
 | CONFIG_DB | **read-only** (本 script 経路) | `coredump_gen_handler.py` / `techsupport_cleanup.py` ともに `db.get(CFG_DB, ...)` のみ。`AUTO_TECHSUPPORT\|GLOBAL` / `AUTO_TECHSUPPORT_FEATURE\|<feat>` を参照するが書き戻さない |
 | [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) | 書込なし | 両 script は `db.connect(CFG_DB)` と `db.connect(STATE_DB)` のみ呼び出し、他 DB に接続しない (`coredump_gen_handler.py:69-71`, `techsupport_cleanup.py:52-54`) |
-| [SAI](../../reference/glossary.md#term-sai) / [syncd](../../reference/glossary.md#term-syncd) | 経由しない | techsupport 収集は OS レベル diagnostic (kernel core, syslog, show コマンド出力) に閉じる。ASIC 触らず |
+| [SAI](../../reference/glossary.md#term-sai) / [syncd](../../reference/glossary.md#term-syncd) | 経由しない | techsupport 収集は OS レベル diagnostic (kernel core, syslog, show コマンド出力) に閉じる。[ASIC](../../reference/glossary.md#term-asic) 触らず |
 | Notification / Pub-Sub (`NotificationProducer` / `ProducerStateTable` / `publish`) | 使用なし | grep で 0 ヒット。`SonicV2Connector` の素の `set` / `delete` のみ。Redis keyspace 通知は発火可能だが本 script 由来の購読クライアントは無い |
 
 ### 特性
@@ -286,7 +286,7 @@ ls -lh /var/dump/
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -382,11 +382,11 @@ YANG 宣言デフォルトに加え、Python コードが持つ fallback を per
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: AUTO_TECHSUPPORT_FEATURE は host 単位で適用され、ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)・ベンダーに依らない。
+**プラットフォーム差なし**: AUTO_TECHSUPPORT_FEATURE は host 単位で適用され、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)・ベンダーに依らない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium / Cisco) | 影響なし | [SAI](../../reference/glossary.md#term-sai) 非経由 (runtime-trace 段階 3 参照)。`coredump_gen_handler.py` (82 行) / `techsupport_cleanup.py` (59 行) を `platform\|asic\|chassis\|namespace\|vendor` で grep して 0 ヒット |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium / Cisco) | 影響なし | [SAI](../../reference/glossary.md#term-sai) 非経由 (runtime-trace 段階 3 参照)。`coredump_gen_handler.py` (82 行) / `techsupport_cleanup.py` (59 行) を `platform\|asic\|chassis\|namespace\|vendor` で grep して 0 ヒット |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `SonicV2Connector(use_unix_socket_path=True)` で host CONFIG_DB のみ参照、`asicN` namespace を iterate しない。container 名の asic suffix (`swss0`/`syncd1` 等) は `trim_masic_suffix()` で末尾数字を剥がした後に CONFIG_DB key を HGET する (`coredump_gen_handler.py:52`) |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line card) | 各 host で独立適用 | chassisdb (REDIS_CHASSIS_SERVER) 非参照。各 line card host で独立にローカル CONFIG_DB を見てローカル `/var/dump/` に techsupport を生成。chassis 全体集中機構なし |
 | namespace (asic0..asicN) | 影響なし | `coredump_gen_handler.py` / `techsupport_cleanup.py` / `auto_techsupport_helper.py` のいずれにも namespace 引数なし。すべて host namespace の `unix:///var/run/redis/redis.sock` に接続 |
@@ -598,4 +598,4 @@ per-feature `rate_limit_interval` の経過判定は CONFIG_DB 値だけでは�
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-feature-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 92f616021a79 -->
+<!-- glossary-links-injected: 865a18402f05 -->

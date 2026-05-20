@@ -276,7 +276,7 @@ excerpt: |
 | `DPU\|dpu<N>` (CONFIG_DB) | `gnmi_port` | `dpuproxy/resolver.go:98` | [DPU](../../reference/glossary.md#term-dpu) への転送先 gRPC ポート決定（未設定時デフォルト `8080`） |
 | `CHASSIS_MIDPLANE_TABLE\|DPU<N>` (STATE_DB) | `ip_address`, `access` | `dpuproxy/resolver.go:69` | [DPU](../../reference/glossary.md#term-dpu) の IP アドレスと到達性確認 |
 
-> [SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成 (`pkg/interceptors/dpuproxy/`) でのみ使用。通常の SONiC ではこの参照は発生しない。
+> [SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成 (`pkg/interceptors/dpuproxy/`) でのみ使用。通常の [SONiC](../../reference/glossary.md#term-sonic) ではこの参照は発生しない。
 
 ### CONFIG_DB — `GNMI` テーブル（間接参照）
 
@@ -624,4 +624,4 @@ DBUS fail---0
 
 [^1]: `common_utils/context.go`, `common_utils/shareMem.go`, `gnmi_dump/gnmi_dump.go` — sonic-net/sonic-gnmi (master). <https://github.com/sonic-net/sonic-gnmi/blob/master/common_utils/context.go>
 
-<!-- glossary-links-injected: 2ad224851078 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -501,7 +501,7 @@ constexpr char *kSaiComponent = "[SAI] ";
 |------|-----|------|-----|------|
 | `FLUSH_TIMEOUT` | `500` | ミリ秒 | `fpmsyncd.cpp:25` | [FPM](../../reference/glossary.md#term-fpm) 受信後のバッファフラッシュ待機上限。idle 時間がこの値を超えるとフラッシュ実行 |
 | `SMALL_TRAFFIC` | `500` | メッセージ数 | `fpmsyncd.cpp:28` | フラッシュ判定閾値。pending が `500` 件以下なら idle >= FLUSH_TIMEOUT 待ちを適用 |
-| `DEFAULT_ROUTING_RESTART_INTERVAL` | `120` | 秒 | `fpmsyncd.cpp:46` | warm restart タイマーのデフォルトインターバル（DEVICE_METADATA 設定がない場合） |
+| `DEFAULT_ROUTING_RESTART_INTERVAL` | `120` | 秒 | `fpmsyncd.cpp:46` | warm restart タイマーのデフォルトインターバル（[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 設定がない場合） |
 | `DEFAULT_EOIU_HOLD_INTERVAL` | `3` | 秒 | `fpmsyncd.cpp:51` | EOIU（End of Initial Update）受信後の hold インターバル |
 
 ### テーブル名・チャネル名定数（`schema.h` + `fpmsyncd.cpp`）
@@ -737,7 +737,7 @@ if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))
 
 - `MLNX_PLATFORM_SUBSTRING = "mellanox"` (`orch.h:L42`)
 - `DEFAULT_MAX_ECMP_GROUP_SIZE = 32` (`routeorch.cpp:L38`)
-- Mellanox ASIC は `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` を「[ECMP](../../reference/glossary.md#term-ecmp) サイズ=1 前提の最大グループ数」として返すため、SONiC は /32 して実効 [ECMP](../../reference/glossary.md#term-ecmp) グループ数を算出する
+- Mellanox [ASIC](../../reference/glossary.md#term-asic) は `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` を「[ECMP](../../reference/glossary.md#term-ecmp) サイズ=1 前提の最大グループ数」として返すため、[SONiC](../../reference/glossary.md#term-sonic) は /32 して実効 [ECMP](../../reference/glossary.md#term-ecmp) グループ数を算出する
 - 結果: 有効 ECMP グループ上限が他プラットフォームより 1/32 になり、ECMP 経路が上限に達すると SAI プログラミングが失敗し APPL_STATE_DB へのエントリ書き込みが発生しない
 
 #### VOQ chassis: ECMP メンバー数を 128 に制限
@@ -765,7 +765,7 @@ if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
 | Mellanox        | 変更なし                | ECMP グループ上限を /32 補正（初期化時のみ） |
 | [VOQ](../../reference/glossary.md#term-voq) chassis     | 変更なし                | ECMP メンバー数を 128 に制限（SAI 設定） |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch)     | 変更なし                | 変更なし                               |
-| multi-asic      | 変更なし                | 各 ASIC namespace 独立、処理自体は同一  |
+| multi-asic      | 変更なし                | 各 [ASIC](../../reference/glossary.md#term-asic) namespace 独立、処理自体は同一  |
 
 <!-- /platform -->
 
@@ -815,4 +815,4 @@ APPL_STATE_DB> hgetall ROUTE_TABLE:192.168.0.0/16
 [^fpmsyncd]: fpmsyncd onRouteResponse / markRoutesOffloaded 実装: `fpmsyncd/routesync.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp#L3165>
 [^schema]: テーブル名・DB インデックス定数: `common/schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L27>
 
-<!-- glossary-links-injected: aafbf5726e6e -->
+<!-- glossary-links-injected: 9136791e8ca6 -->

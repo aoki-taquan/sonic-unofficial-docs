@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-[BGP](../../reference/glossary.md#term-bgp) 隣接 (peer) を [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。`bgpcfgd` (テンプレ展開) または `frr-mgmt-framework` (DEVICE_METADATA の `frr_mgmt_framework_config = true` のとき) が読み出し、[FRR](../../reference/glossary.md#term-frr) (`bgpd`) に反映する[^1]。テーブル定義は 2 形態に分かれる:
+[BGP](../../reference/glossary.md#term-bgp) 隣接 (peer) を [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。`bgpcfgd` (テンプレ展開) または `frr-mgmt-framework` ([DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) の `frr_mgmt_framework_config = true` のとき) が読み出し、[FRR](../../reference/glossary.md#term-frr) (`bgpd`) に反映する[^1]。テーブル定義は 2 形態に分かれる:
 
 - `BGP_NEIGHBOR_TEMPLATE_LIST` (key: `neighbor`): [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) テンプレ用の単純形式
 - `BGP_NEIGHBOR_LIST` (key: `vrf_name`, `neighbor`): generic 形式。`frr_mgmt_framework_config = true` のときに使われる
@@ -95,9 +95,9 @@ BGP_NEIGHBOR|<vrf_name>|<neighbor>       # generic 形式
 
 ## 購読者
 
-- `bgpcfgd` (`docker-fpm-frr` 内): [CONFIG_DB](../../reference/glossary.md#term-config_db) → vtysh コマンド変換。テンプレベース
+- `bgpcfgd` (`docker-fpm-frr` 内): [CONFIG_DB](../../reference/glossary.md#term-config_db) → [vtysh](../../reference/glossary.md#term-vtysh) コマンド変換。テンプレベース
 - `frr-mgmt-framework`: `DEVICE_METADATA.frr_mgmt_framework_config = true` のときに代替パスとして動作
-- `bgpd` ([FRR](../../reference/glossary.md#term-frr)): vtysh / config 経由で間接反映
+- `bgpd` ([FRR](../../reference/glossary.md#term-frr)): [vtysh](../../reference/glossary.md#term-vtysh) / config 経由で間接反映
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -202,7 +202,7 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由)
+なし (FRR [vtysh](../../reference/glossary.md#term-vtysh) 経由)
 
 ### 段階 3 — APPL→SAI
 
@@ -627,7 +627,7 @@ BGP_NEIGHBOR は FRR (`bgpd`) 止まりで [SAI](../../reference/glossary.md#ter
 |------|---------|-------------|
 | `switch_type=voq` のシャーシ内部 iBGP | `BGP_VOQ_CHASSIS_NEIGHBOR` | 強制 `up` |
 | `switch_type=chassis-packet` のシャーシ内部 iBGP | `BGP_INTERNAL_NEIGHBOR` | 強制 `up` |
-| Multi-ASIC FrontEnd ↔ BackEnd 間 | `BGP_INTERNAL_NEIGHBOR` | 強制 `up` |
+| [Multi-ASIC](../../reference/glossary.md#term-multi-asic) FrontEnd ↔ BackEnd 間 | `BGP_INTERNAL_NEIGHBOR` | 強制 `up` |
 | その他 | `BGP_NEIGHBOR` | 未設定 |
 
 ソース: `minigraph.py` L1324–1356
@@ -646,7 +646,7 @@ BGP_NEIGHBOR は FRR (`bgpd`) 止まりで [SAI](../../reference/glossary.md#ter
 
 ### type / subtype による FRR テンプレート分岐 (general peer_type)
 
-| DEVICE_METADATA.type | FRR 差異 |
+| [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).type | FRR 差異 |
 |---------------------|---------|
 | `ToRRouter` | `allowas-in 1` (IPv4/IPv6) |
 | `LeafRouter` かつ BBR enabled | `allowas-in 1` |
@@ -682,4 +682,4 @@ BGP_NEIGHBOR は FRR (`bgpd`) 止まりで [SAI](../../reference/glossary.md#ter
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 5d3183af9ba3 -->
+<!-- glossary-links-injected: 11fb04b8ba84 -->

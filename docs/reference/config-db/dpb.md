@@ -172,7 +172,7 @@ YANG レイヤーは補完しない。[CONFIG_DB](../../reference/glossary.md#te
 5. writeConfigDB()   — 新ポートを CONFIG_DB に追加
 ```
 
-ステップ 4 は [syncd](../../reference/glossary.md#term-syncd)/orchagent が [SAI](../../reference/glossary.md#term-sai) 経由でポートを ASIC から削除し [ASIC_DB](../../reference/glossary.md#term-asic_db) を更新するまでブロックする。タイムアウト（60 秒）すると例外を投げて新ポート追加は行われない（evidence: `config_mgmt.py:377-412,450-460`）。
+ステップ 4 は [syncd](../../reference/glossary.md#term-syncd)/orchagent が [SAI](../../reference/glossary.md#term-sai) 経由でポートを [ASIC](../../reference/glossary.md#term-asic) から削除し [ASIC_DB](../../reference/glossary.md#term-asic_db) を更新するまでブロックする。タイムアウト（60 秒）すると例外を投げて新ポート追加は行われない（evidence: `config_mgmt.py:377-412,450-460`）。
 
 **BREAKOUT_CFG 更新は最後（依存 #5）**: `breakout()` (main.py:5548-5554) は `breakout_Ports()` が成功した後にのみ `BREAKOUT_CFG.brkout_mode` を新モードに更新する。途中失敗時は旧モードが残り、次回コマンド実行の起点となる。
 
@@ -376,7 +376,7 @@ DPB シーケンスで `PORT` テーブルが変更されると、`portmgrd` が
 | `platform.json` 非対応環境（`port_config.ini` 形式） | **DPB 完全無効** — CLI が冒頭で即 Abort。`BREAKOUT_CFG` テーブル自体が `sonic-cfggen` によって生成されない | `portconfig.py:464` (`return None`), `main.py:5468–5471` |
 | Broadcom ハードウェアプロファイル | [SAI](../../reference/glossary.md#term-sai) `create_port` / `remove_port` が動作するために `portmap_N=<lane>:<speed>[:<speed>:i]` 形式のハードウェアプロファイル事前設定が必要。未設定の場合 `_verifyAsicDB()` がタイムアウトする | [HLD](../../reference/glossary.md#term-hld) L1090 |
 | multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 環境 | `breakout` コマンドは **namespace iteration を行わない**。`ctx.obj['config_db']`（デフォルト namespace 単一 CONFIG_DB）のみを対象とする。他の CLI コマンド（`config mirror`・`config cbf reload` 等）が全 namespace を iterate するのと対照的 | `main.py:5460–5560`（`namespace` / `multi_asic` ヒット 0） |
-| 非対称 breakout モードの ASIC 制限 | 利用可能モードは `platform.json` の `breakout_modes` に列挙されたもののみ。ASIC 固有の制限は `platform.json` で表現され、未定義モードは `_validate_interface_mode()` が即拒否 | [HLD](../../reference/glossary.md#term-hld) L206, `main.py:5208–5209` |
+| 非対称 breakout モードの [ASIC](../../reference/glossary.md#term-asic) 制限 | 利用可能モードは `platform.json` の `breakout_modes` に列挙されたもののみ。[ASIC](../../reference/glossary.md#term-asic) 固有の制限は `platform.json` で表現され、未定義モードは `_validate_interface_mode()` が即拒否 | [HLD](../../reference/glossary.md#term-hld) L206, `main.py:5208–5209` |
 | YANG モデルのプラットフォーム分岐 | **なし** — `sonic-breakout_cfg.yang` はプラットフォーム条件を含まない | `sonic-breakout_cfg.yang` |
 
 ### `platform.json` 非対応プラットフォームの詳細
@@ -395,4 +395,4 @@ multi-asic 構成では、対象ポートが属する ASIC の namespace に対�
 
 [^2]: HLD 記載: `port` を `PORT` テーブルへの leafref でなく string とした理由 — DPB 操作中は親ポートが `PORT` テーブルに存在しない場合があるため。 <https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dynamic-port-breakout/sonic-dynamic-port-breakout-HLD.md>
 
-<!-- glossary-links-injected: 30eefb91caa3 -->
+<!-- glossary-links-injected: 8df9850464d2 -->

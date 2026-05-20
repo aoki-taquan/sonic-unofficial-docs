@@ -73,7 +73,7 @@ DSCP_TO_TC_MAP|<name>|<dscp>
 | 値 | 挙動 |
 |----|------|
 | `0`..`7` | [SAI](../../reference/glossary.md#term-sai) QoS map オブジェクトの Traffic Class 値として設定 |
-| 8 以上 | ASIC が拒否（SAI エラー） |
+| 8 以上 | [ASIC](../../reference/glossary.md#term-asic) が拒否（SAI エラー） |
 
 > 明示的な enum 制約なし（スパース定義可能）。PORT_QOS_MAP.dscp_to_tc_map から参照されない限り SAI に反映されない。未定義 [DSCP](../../reference/glossary.md#term-dscp) はデフォルト TC=0 になるのが一般的。
 
@@ -119,7 +119,7 @@ DSCP_TO_TC_MAP|<name>|<dscp>
 
 ### よくある誤設定
 
-- TC を 8 以上に書くと ASIC が拒否（TC は 0..7）。
+- TC を 8 以上に書くと [ASIC](../../reference/glossary.md#term-asic) が拒否（TC は 0..7）。
 
 ### 確認コマンド
 
@@ -155,7 +155,7 @@ show qos map dscp-tc
 | TC 値が非数値文字列 | 同上 |
 | 未知オペレーション (SET/DEL 以外) | `"Unknown operation type %s"` ログ → `task_invalid_entry` (qosorch.cpp:198-199) |
 
-> `#define DSCP_MAX_VAL 63` (qosorch.cpp:119) は `DscpToFcMapHandler` の検証に使われるが、`DscpToTcMapHandler` では **使用されない**。範囲外 DSCP (64..255) を書いても orchagent 側ではじかれず SAI に渡される（ASIC が reject する）。
+> `#define DSCP_MAX_VAL 63` (qosorch.cpp:119) は `DscpToFcMapHandler` の検証に使われるが、`DscpToTcMapHandler` では **使用されない**。範囲外 DSCP (64..255) を書いても orchagent 側ではじかれず SAI に渡される（[ASIC](../../reference/glossary.md#term-asic) が reject する）。
 
 ### SAI `qos_map_api` 失敗 → `task_failed`
 
@@ -257,7 +257,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -333,7 +333,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 
 - 0..63 全エントリの定義は不要（スパース定義可能）
 - 未定義 DSCP のデフォルト TC は **ASIC/SAI 実装依存**（一般的に TC=0 だが非保証）
-- SONiC 標準 AZURE マップは全 64 エントリを明示定義 (`qos_config.j2:265-332`)
+- [SONiC](../../reference/glossary.md#term-sonic) 標準 AZURE マップは全 64 エントリを明示定義 (`qos_config.j2:265-332`)
 
 ### ビルド時ハードコードデフォルト (`qos_config.j2`)
 
@@ -579,4 +579,4 @@ YANG 定義は `tc_type: uint8 range "0..15"` だが、実際の ASIC 対応は�
 > **Evidence**: `qosorch.cpp:1955-1975` (capability check); `db_migrator.py:700-715` (Broadcom 限定自動生成); `qos_config.j2:437-447` (AZURE_UPLINK 条件分岐); `device/mellanox/.../qos.json.j2:23,160-170` (`different_dscp_to_tc_map`)
 <!-- /platform -->
 
-<!-- glossary-links-injected: 1e2db98c8c8b -->
+<!-- glossary-links-injected: 77f342e1a22c -->

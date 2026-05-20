@@ -35,12 +35,12 @@ related:
 
 ## 概要
 
-SONiC は **Linux kernel の conntrack/iptables を真実源** として、ハードウェア [NAT](../reference/glossary.md#term-nat) エンジン（[SAI](../reference/glossary.md#term-sai) NAT API）にエントリを同期する 2 段構成を採る[^1]。設計上の役割分担:
+[SONiC](../reference/glossary.md#term-sonic) は **Linux kernel の conntrack/iptables を真実源** として、ハードウェア [NAT](../reference/glossary.md#term-nat) エンジン（[SAI](../reference/glossary.md#term-sai) NAT API）にエントリを同期する 2 段構成を採る[^1]。設計上の役割分担:
 
 - **`natmgrd`**: `CONFIG_DB` の static / dynamic NAT 設定を読み iptables ルールに変換
 - **kernel**: iptables / conntrack で NAT 動作と translation を生成
 - **`natsyncd`**: kernel の conntrack エントリを netlink で受信し `APP_DB` に NAT_TABLE / NAPT_TABLE として publish
-- **`NatOrch`**: APP_DB を消費し SAI 経由で ASIC に NAT エントリを programming
+- **`NatOrch`**: APP_DB を消費し SAI 経由で [ASIC](../reference/glossary.md#term-asic) に NAT エントリを programming
 
 これにより control-path（policy）は Linux に従い、data-path（per-packet rewrite）は ASIC で行われる。
 
@@ -167,4 +167,4 @@ redis-cli -n 0 keys 'NAT_TABLE:*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e2892b76fd9a -->
+<!-- glossary-links-injected: ec18b66e3507 -->
