@@ -133,7 +133,7 @@ module: sonic-system-aaa
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`AAA`](../config-db/aaa.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`AAA`](../config-db/aaa.md)
 - CLI: [`config aaa`](../cli/config-aaa.md)
 
 <!-- ref-triangle:end -->
@@ -150,4 +150,4 @@ module: sonic-system-aaa
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 896d391185a9 -->
