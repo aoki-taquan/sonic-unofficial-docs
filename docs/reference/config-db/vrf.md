@@ -84,7 +84,7 @@ VRF|<name>
 | フィールド | 値 | 実挙動 |
 |-----------|-----|--------|
 | `fallback` | `false` | デフォルト。当該 VRF の経路テーブルのみ参照 |
-| `fallback` | `true` | VRF に経路がない場合にデフォルト VRF（main routing table）へフォールバック |
+| `fallback` | `true` | (dead field) `orchagent/vrforch.cpp` の `addOperation` に `"fallback"` のハンドラが存在せず silent drop されるため、実際の挙動変化なし。詳細は下記「暗黙デフォルト・コード由来挙動」セクション参照 |
 | `vni` | `0` | L3 VNI マッピングなし（デフォルト、YANG default 0）|
 | `vni` | `1`〜`16777215` | EVPN L3 VNI マッピングを設定。`vrfmgrd` が VXLAN_TUNNEL_MAP に `evpn_map_<vni>_<vrf>` エントリを作成 (vrfmgr.cpp:510) |
 | `vni` | 重複 VNI | `vrfmgrd` が `"vni %d is already mapped to vrf %s"` でエラーして破棄 (vrfmgr.cpp:441) |
@@ -156,7 +156,7 @@ ip vrf show
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / VrfOrch** (`sonic-swss/orchagent/vrforch.cpp`): `VRF` テーブルを `SubscriberStateTable` で購読。
+- **orchagent / VrfOrch** (`sonic-swss/orchagent/vrforch.cpp`): [APPL_DB](../../reference/glossary.md#term-appl_db) の `VRF_TABLE` を `ConsumerStateTable` で購読 (`Orch2(appDb, APP_VRF_TABLE_NAME)`)。[CONFIG_DB](../../reference/glossary.md#term-config_db) の `VRF` テーブルは直接購読しない。
 - **[vrfmgrd](../../reference/glossary.md#term-vrfmgrd)** (`sonic-swss/cfgmgr/vrfmgr.cpp`): `VRF` テーブルを購読して Linux VRF デバイスを管理。
 
 ### 段階 2: CFG → APPL 翻訳
@@ -244,7 +244,7 @@ vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割�
 
 ### orchagent 内部フィールド (YANG 未定義・CONFIG_DB 非経由)
 
-`vrforch.h` には `v4`/`v6`/`src_mac`/`ttl_action`/`ip_opt_action`/`l3_mc_action` が宣言されており、orchagent で SAI 属性に変換される実装がある。しかし **YANG `sonic-vrf.yang` には存在せず**、通常の `config vrf add` で [CONFIG_DB](../../reference/glossary.md#term-config_db) に書かれることはない。[VNET](../../reference/glossary.md#term-vnet) テーブル経由で APP_DB に直接書き込まれた場合のみ機能する残存コード。
+`vrforch.h` には `v4`/`v6`/`src_mac`/`ttl_action`/`ip_opt_action`/`l3_mc_action` が宣言されており、orchagent で SAI 属性に変換される実装がある。しかし **YANG `sonic-vrf.yang` には存在せず**、通常の `config vrf add` で CONFIG_DB に書かれることはない。[VNET](../../reference/glossary.md#term-vnet) テーブル経由で APP_DB に直接書き込まれた場合のみ機能する残存コード。
 
 <!-- /defaults -->
 
@@ -677,7 +677,7 @@ SAI (ハードウェア VRF)
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|------------------|-----------------|------|
 | `m_stateVrfTable.set(name, [{state:"ok"}])` | STATE_DB / `VRF_TABLE` | `<name>` field=`state` | Linux netdev 作成後、常時 (vrfmgr.cpp:289) |
-| `m_appVrfTableProducer.set(name, fields)` | [APPL_DB](../../reference/glossary.md#term-appl_db) / `VRF_TABLE` | `<name>` | VRF_TABLE または MGMT_VRF_CONFIG 経由 (vrfmgr.cpp:303) |
+| `m_appVrfTableProducer.set(name, fields)` | APPL_DB / `VRF_TABLE` | `<name>` | VRF_TABLE または MGMT_VRF_CONFIG 経由 (vrfmgr.cpp:303) |
 | `m_appVxlanVrfTableProducer.set(key, [{vni,vrf}])` | APPL_DB / `VXLAN_VRF_TABLE` | `<tunnel>:evpn_map_<vni>_<vrf>` | `vni` 非ゼロ かつ EVPN NVO トンネル設定済み (vrfmgr.cpp:521) |
 
 カーネル副作用 (DB 外): `ip link add <name> type vrf table <id>` / `ip link set <name> up`。mgmt VRF では `ip link add` をスキップ。

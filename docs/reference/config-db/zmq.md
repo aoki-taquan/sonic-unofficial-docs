@@ -36,7 +36,6 @@ related:
     - DPU
   cli: []
   yang:
-    - sonic-smart-switch
     - sonic-device_metadata
   _no_related_cli: true
 ---
@@ -118,7 +117,7 @@ ZMQ 関連フィールドは独立テーブルを持たず `DEVICE_METADATA|loca
 |---------|--------------|---------------------|------|
 | → [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 読み取り | `orch_northbond_dash_zmq_enabled` | [`DEVICE_METADATA`](device-metadata.md) | `get_feature_status(ORCH_NORTHBOND_DASH_ZMQ_ENABLED, true)` が起動時に CONFIG_DB `DEVICE_METADATA\|localhost` を直接 `hget`。存在しない場合は `true` (DASH ZMQ 有効) (`orch_zmq_config.cpp:88`) |
 | → [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 読み取り | `orch_northbond_route_zmq_enabled` | [`DEVICE_METADATA`](device-metadata.md) | `create_local_zmq_client(ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED, false)` が同様に `hget`。存在しない場合は `false` (ROUTE ZMQ 無効) (`routesync.cpp:155`) |
-| → [DPU](../../reference/glossary.md#term-dpu) 読み取り | `orchagent_zmq_port` | [`dpu`](dpu.md) | `gnmi-native.sh` / `orchagent.sh` が `DPU\|<name>` の `orchagent_zmq_port` を読み取り ZMQ 接続ポートを決定。YANG 定義: `sonic-smart-switch.yang:176-179` |
+| → [DPU](../../reference/glossary.md#term-dpu) 読み取り | `orchagent_zmq_port` | [`dpu`](dpu.md) | `gnmi-native.sh` / `orchagent.sh` が `DPU\|<name>` の `orchagent_zmq_port` を読み取り ZMQ 接続ポートを決定。[YANG](../../reference/glossary.md#term-yang) 定義: `sonic-smart-switch.yang:176-179` |
 | [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) → | `subtype == "SmartSwitch"` | [`smart-switch`](smart-switch.md) | `orchagent.sh` が `subtype` を参照して ZMQ アドレスを `tcp://eth0-midplane` または `tcp://127.0.0.1` に切り替える (`orchagent.sh:105-118`) |
 | DEVICE_METADATA → | `switch_type == "dpu"` | [`smart-switch`](smart-switch.md) | `orchagent.sh:38-39` が `switch_type` を参照して `-z zmq_sync -k 65536` を orchagent 起動引数に付与。ZMQ 同期モードが強制される |
 | フラグ有効 → [APPL_DB](../../reference/glossary.md#term-appl_db) 書き込み先 | `orch_northbond_dash_zmq_enabled=true` | [APPL_DB](../../reference/glossary.md#term-appl_db) `DASH_*` テーブル群 (22 種) | `orch_zmq_tables.conf.j2` で conf に追記された DASH テーブル群が ZMQ 経由でオーケストレータに直接届く。無効時は [gNMI](../../reference/glossary.md#term-gnmi) が [Redis](../../reference/glossary.md#term-redis) [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) を使用 |
@@ -402,23 +401,6 @@ ZMQ チャネル実装に存在する、CONFIG_DB / YANG では管理されな�
 
 <!-- /constants -->
 
-<!-- platform -->
-## プラットフォーム差 (Phase H)
-
-> 調査証跡: `meta/_intermediate/cdb-flow/zmq-platform.md`
-
-| 観点 | 結果 | 根拠 |
-|------|------|------|
-| ASIC 種別 (Broadcom / Mellanox 等) | **影響なし** | ZMQ は orchagent northbound 通信層であり [SAI](../../reference/glossary.md#term-sai) 非経由。`get_feature_status()` / `get_zmq_port()` はベンダー依存コードを含まない (`orch_zmq_config.cpp:35-79`) |
-| multi-ASIC / namespace | **ZMQ ポート番号が変化** | `get_zmq_port()` が `NAMESPACE_ID` 環境変数を参照し `8100 + NAMESPACE_ID + 1` で計算。global=8100、asic0=8101、asic1=8102 (`orch_zmq_config.cpp:38-51`)。`orch_northbond_*_zmq_enabled` はグローバル CONFIG_DB に一元管理され、各 namespace orchagent が共通参照する |
-| SmartSwitch / DPU | **専用フィールドあり** | `DPU|<name>.orchagent_zmq_port` は SmartSwitch 専用。`orchagent.sh` が `subtype=="SmartSwitch"` で ZMQ アドレスを `tcp://eth0-midplane` に切替え、`switch_type=="dpu"` で zmq_sync モードを強制 (`orchagent.sh:38-39,105-118`) |
-| [VOQ](../../reference/glossary.md#term-voq) chassis | 影響なし (確認) | 各 line card orchagent が独立して ZMQ を管理。chassis-wide な ZMQ 集約機構なし |
-
-<!-- evidence: sonic-swss/lib/orch_zmq_config.cpp:35-52 (get_zmq_port — NAMESPACE_ID 分岐) -->
-<!-- evidence: sonic-buildimage/dockers/docker-orchagent/orchagent.sh:38-39,105-118 (SmartSwitch / DPU 専用分岐) -->
-<!-- evidence: sonic-swss-common/common/zmqserver.h:16 (ORCH_ZMQ_PORT = 8100) -->
-<!-- /platform -->
-
 ---
 
 ## DEVICE_METADATA|localhost の ZMQ フィールド
@@ -581,8 +563,7 @@ gnmi の ZMQ ポート (`-zmq_port=8100`) も `gnmi-native.sh` で `subtype == "
 ## 関連リファレンス
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DEVICE_METADATA`](device-metadata.md) — `orch_northbond_dash_zmq_enabled` / `orch_northbond_route_zmq_enabled` / `subtype` / `switch_type` フィールドの全体像
-- [YANG](../../reference/glossary.md#term-yang): `sonic-smart-switch` — `DPU_LIST.orchagent_zmq_port` 定義
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`smart-switch`](smart-switch.md) — SmartSwitch 関連テーブル群
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`smart-switch`](smart-switch.md) — SmartSwitch 関連テーブル群 (`sonic-smart-switch.yang:176-179` の `DPU_LIST.orchagent_zmq_port` 定義も参照)
 
 <!-- ref-triangle:end -->
 
@@ -621,4 +602,4 @@ sonic-db-cli CONFIG_DB hget "DPU|dpu0" orchagent_zmq_port
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 26f7864b6d8c -->
+<!-- glossary-links-injected: 96bf538717ad -->
