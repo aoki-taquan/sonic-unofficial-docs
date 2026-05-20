@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-`config syslog` は SONiC ホストおよび feature コンテナの syslog 設定 (リモート送信先 / レート制限 / ログレベル) を [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込む CLI で、`config/syslog.py` の `@click.group()` がエントリポイントとなる[^1]。
+`config syslog` は [SONiC](../../reference/glossary.md#term-sonic) ホストおよび feature コンテナの syslog 設定 (リモート送信先 / レート制限 / ログレベル) を [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込む CLI で、`config/syslog.py` の `@click.group()` がエントリポイントとなる[^1]。
 
 `hostcfgd` および各 feature コンテナの supervisord ラッパが [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読して `rsyslog` 設定を再生成する。CLI 自身は rsyslog をリスタートしないため、変更が反映されるまでタイムラグがある。
 
@@ -65,7 +65,7 @@ related:
 
 ### `config syslog rate-limit-container <service_name> [-i <interval>] [-b <burst>] [-n <namespace>]`
 
-`SYSLOG_CONFIG_FEATURE|<service>` に同フィールドを書く。`-n` を付けると multi-ASIC namespace の CONFIG_DB に書き込む。
+`SYSLOG_CONFIG_FEATURE|<service>` に同フィールドを書く。`-n` を付けると multi-[ASIC](../../reference/glossary.md#term-asic) namespace の CONFIG_DB に書き込む。
 
 ### `config syslog rate-limit-feature enable|disable [<service>] [-n <ns>]`
 
@@ -198,4 +198,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: a7c87bab11c9 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

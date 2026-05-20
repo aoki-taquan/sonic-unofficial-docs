@@ -23,9 +23,9 @@ related:
 
 ## 概要
 
-BFD (Bidirectional Forwarding Detection) セッションのパラメータを [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。`sonic-swss` の `bfdorch` が APPL_DB の `BFD_SESSION_TABLE` を購読し、SAI BFD セッションを作成・削除する。BGP 等のルーティングプロトコルが隣接ノードの生死を高速に検出するために使用する。
+[BFD](../../reference/glossary.md#term-bfd) (Bidirectional Forwarding Detection) セッションのパラメータを [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。`sonic-swss` の `bfdorch` が [APPL_DB](../../reference/glossary.md#term-appl_db) の `BFD_SESSION_TABLE` を購読し、[SAI](../../reference/glossary.md#term-sai) [BFD](../../reference/glossary.md#term-bfd) セッションを作成・削除する。[BGP](../../reference/glossary.md#term-bgp) 等のルーティングプロトコルが隣接ノードの生死を高速に検出するために使用する。
 
-software BFD モード (`BGP_DEVICE_GLOBAL.STATE.use_software_bfd = true`) では bfdorch は STATE_DB の `SOFTWARE_BFD_SESSION_TABLE` に書き込むのみで SAI を経由しない。この場合は `bgpcfgd` の `BfdMgr` が STATE_DB を読み出して FRR の bfdd へ設定を注入する。
+software [BFD](../../reference/glossary.md#term-bfd) モード (`BGP_DEVICE_GLOBAL.STATE.use_software_bfd = true`) では bfdorch は [STATE_DB](../../reference/glossary.md#term-state_db) の `SOFTWARE_BFD_SESSION_TABLE` に書き込むのみで [SAI](../../reference/glossary.md#term-sai) を経由しない。この場合は `bgpcfgd` の `BfdMgr` が [STATE_DB](../../reference/glossary.md#term-state_db) を読み出して [FRR](../../reference/glossary.md#term-frr) の bfdd へ設定を注入する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -50,7 +50,7 @@ flowchart LR
 BFD_SESSION|<vrf>|<interface>|<peer_ip>
 ```
 
-- `<vrf>`: VRF 名。デフォルト VRF は `"default"`
+- `<vrf>`: [VRF](../../reference/glossary.md#term-vrf) 名。デフォルト [VRF](../../reference/glossary.md#term-vrf) は `"default"`
 - `<interface>`: 出力インタフェース名。hardware lookup を使用する場合は `"default"`
 - `<peer_ip>`: BFD ピアの IP アドレス (IPv4 / IPv6)
 
@@ -60,25 +60,25 @@ BFD_SESSION|<vrf>|<interface>|<peer_ip>
 |-----------|----|-----------|------|
 | `local_addr` | IP アドレス (string) | **必須** | BFD セッションのローカル送信元 IP アドレス |
 | `type` | enum | `"async_active"` | BFD セッション種別。`async_active` / `async_passive` / `demand_active` / `demand_passive` |
-| `tx_interval` | uint32 (ms) | `1000` | 送信間隔 (ミリ秒)。SAI 投入時に ×1000 してマイクロ秒変換 |
+| `tx_interval` | uint32 (ms) | `1000` | 送信間隔 (ミリ秒)。[SAI](../../reference/glossary.md#term-sai) 投入時に ×1000 してマイクロ秒変換 |
 | `rx_interval` | uint32 (ms) | `1000` | 最小受信間隔 (ミリ秒)。SAI 投入時に ×1000 してマイクロ秒変換 |
 | `multiplier` | uint8 | `10` | 検知乗数 (detect multiplier)。`tx_interval × multiplier` で隣接ダウン判定 |
 | `multihop` | boolean string | `"false"` | マルチホップ BFD を有効化。`"true"` のとき `SAI_BFD_SESSION_ATTR_MULTIHOP = true` をセット |
-| `tos` | uint8 | `192` | IP TOS / DSCP 値。デフォルト DSCP 48 (EF) を 2 ビット左シフトして 192 (0xC0) |
+| `tos` | uint8 | `192` | IP TOS / [DSCP](../../reference/glossary.md#term-dscp) 値。デフォルト [DSCP](../../reference/glossary.md#term-dscp) 48 (EF) を 2 ビット左シフトして 192 (0xC0) |
 | `dst_mac` | MAC アドレス (string) | 条件付き必須 | 宛先 MAC アドレス。`interface != "default"` の場合は必須、`interface == "default"` では指定禁止 |
 | `shutdown_bfd_during_tsa` | boolean string | 未指定 = TSA 連動なし | `"true"` のとき TSA (Traffic Shift Away) 状態になると BFD セッションを削除し Down を通知 |
 
 ## 制約
 
-- `local_addr` は必須。省略するとセッション作成をスキップし `ERROR` ログを出力する (YANG mandatory 宣言なし、コードレベル強制)
+- `local_addr` は必須。省略するとセッション作成をスキップし `ERROR` ログを出力する ([YANG](../../reference/glossary.md#term-yang) mandatory 宣言なし、コードレベル強制)
 - `interface != "default"` かつ `dst_mac` 未指定 → セッション作成失敗
 - `interface == "default"` かつ `dst_mac` 指定 → セッション作成失敗
 - `vrf != "default"` かつ `interface != "default"` → `"vrf is not supported when hardware lookup not valid"` エラー
 
 ## 購読者
 
-- `bfdorch` (`sonic-swss/orchagent/bfdorch.cpp`): APPL_DB `BFD_SESSION_TABLE` を購読して SAI BFD セッションを作成
-- `BfdMgr` (`sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bfd.py`): software BFD モードで STATE_DB `SOFTWARE_BFD_SESSION_TABLE` を購読して FRR bfdd に vtysh コマンドを注入
+- `bfdorch` (`sonic-swss/orchagent/bfdorch.cpp`): [APPL_DB](../../reference/glossary.md#term-appl_db) `BFD_SESSION_TABLE` を購読して SAI BFD セッションを作成
+- `BfdMgr` (`sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bfd.py`): software BFD モードで [STATE_DB](../../reference/glossary.md#term-state_db) `SOFTWARE_BFD_SESSION_TABLE` を購読して [FRR](../../reference/glossary.md#term-frr) bfdd に [vtysh](../../reference/glossary.md#term-vtysh) コマンドを注入
 
 ## 関連 CONFIG_DB / CLI
 
@@ -104,7 +104,7 @@ BFD_SESSION|<vrf>|<interface>|<peer_ip>
 
 ### `type` (enum)
 
-| 値 | SAI 属性 | software BFD (FRR) | evidence |
+| 値 | SAI 属性 | software BFD ([FRR](../../reference/glossary.md#term-frr)) | evidence |
 |---|---|---|---|
 | `async_active` (既定) | `SAI_BFD_SESSION_TYPE_ASYNC_ACTIVE` | `passive-mode = false` | `bfdorch.cpp:340,388; managers_bfd.py:107-108` |
 | `async_passive` | `SAI_BFD_SESSION_TYPE_ASYNC_PASSIVE` | `passive-mode = true` | `bfdorch.cpp:388; managers_bfd.py:109-110` |
@@ -116,21 +116,21 @@ BFD_SESSION|<vrf>|<interface>|<peer_ip>
 | 経路 | 既定値 | SAI 変換 | evidence |
 |---|---|---|---|
 | hardware BFD (bfdorch) | `1000` ms | `× 1000` → マイクロ秒 で SAI 投入 | `bfdorch.cpp:15-16, 451-458` |
-| software BFD (bgpcfgd/BfdMgr) | `200` ms | FRR vtysh `transmit-interval` / `receive-interval` コマンドに ms 値をそのまま渡す | `managers_bfd.py:14-15, 146-148` |
-| static route BFD (staticroutebfd) | `50` ms | APPL_DB `BFD_SESSION_TABLE` に `"tx_interval": "50"` として書き込み | `staticroutebfd/main.py:101` |
+| software BFD ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd)/BfdMgr) | `200` ms | FRR [vtysh](../../reference/glossary.md#term-vtysh) `transmit-interval` / `receive-interval` コマンドに ms 値をそのまま渡す | `managers_bfd.py:14-15, 146-148` |
+| static route BFD (staticroutebfd) | `50` ms | [APPL_DB](../../reference/glossary.md#term-appl_db) `BFD_SESSION_TABLE` に `"tx_interval": "50"` として書き込み | `staticroutebfd/main.py:101` |
 
 ### `multiplier` (uint8)
 
 | 経路 | 既定値 | evidence |
 |---|---|---|
 | hardware BFD (bfdorch) | `10` | `bfdorch.cpp:17, 345` |
-| software BFD (bgpcfgd/BfdMgr) | `3` | `managers_bfd.py:13, 70` |
+| software BFD ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd)/BfdMgr) | `3` | `managers_bfd.py:13, 70` |
 
 ### `tos` (uint8)
 
 | 値 | 意味 | evidence |
 |---|---|---|
-| `192` (既定) | DSCP 48 (EF class) << 2 \| ECN 0 = 0xC0 | `bfdorch.cpp:18-19` |
+| `192` (既定) | [DSCP](../../reference/glossary.md#term-dscp) 48 (EF class) << 2 \| ECN 0 = 0xC0 | `bfdorch.cpp:18-19` |
 | 任意 uint8 | 上位 6 ビット = DSCP, 下位 2 ビット = ECN | `bfdorch.cpp:395-397` |
 
 ### `multihop` (boolean string)
@@ -151,19 +151,19 @@ BFD_SESSION|<vrf>|<interface>|<peer_ip>
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-`BfdOrch` は CONFIG_DB の `BFD_SESSION` を **直接購読しない**。`orchdaemon.cpp:243` で APPL_DB + `APP_BFD_SESSION_TABLE_NAME = "BFD_SESSION_TABLE"` を渡して生成されるため、`Orch::addConsumer()` の DB 種別分岐で **`ConsumerStateTable`** (channel ベースの Producer/Consumer 方式) が選ばれる。CONFIG_DB → APPL_DB の橋渡しは別コンポーネント (`bgpcfgd`、`staticroutebfd`、`DashHaOrch` 等) が担う。さらに `BfdOrch` は **2 つ目の Executor** として ASIC_DB 上の `NotificationConsumer` (channel `NOTIFICATIONS`、op `bfd_session_state_change`) を持ち、SAI からの state 通知を受ける。詳細スキャンノート: [`meta/_intermediate/cdb-flow/bfd-session-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-pubsub.md)。
+`BfdOrch` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BFD_SESSION` を **直接購読しない**。`orchdaemon.cpp:243` で APPL_DB + `APP_BFD_SESSION_TABLE_NAME = "BFD_SESSION_TABLE"` を渡して生成されるため、`Orch::addConsumer()` の DB 種別分岐で **`ConsumerStateTable`** (channel ベースの Producer/Consumer 方式) が選ばれる。CONFIG_DB → APPL_DB の橋渡しは別コンポーネント (`bgpcfgd`、`staticroutebfd`、`DashHaOrch` 等) が担う。さらに `BfdOrch` は **2 つ目の Executor** として [ASIC_DB](../../reference/glossary.md#term-asic_db) 上の `NotificationConsumer` (channel `NOTIFICATIONS`、op `bfd_session_state_change`) を持ち、SAI からの state 通知を受ける。詳細スキャンノート: [`meta/_intermediate/cdb-flow/bfd-session-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-pubsub.md)。
 
 | 項目 | 値 |
 |------|-----|
 | 購読クラス (設定経路) | `ConsumerStateTable` (APPL_DB / `Orch::addConsumer` の `else` 分岐) |
 | 購読対象 | `BFD_SESSION_TABLE` (APPL_DB)、key 区切り `:` |
-| channel | `BFD_SESSION_TABLE_CHANNEL` (ProducerStateTable / ConsumerStateTable が暗黙生成) |
-| POP_BATCH_SIZE | `gBatchSize` (orchagent グローバル、既定 128。CLI `--batchsize` で上書き可) |
+| channel | `BFD_SESSION_TABLE_CHANNEL` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) / [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) が暗黙生成) |
+| POP_BATCH_SIZE | `gBatchSize` ([orchagent](../../reference/glossary.md#term-orchagent) グローバル、既定 128。CLI `--batchsize` で上書き可) |
 | 優先度 (`pri`) | 0 (`Orch::Orch(db, tableName)` の `default_orch_pri`) |
-| 起動時スナップショット | LIST 上の未処理エントリのみ。Redis 既存キーの `HGETALL` 再配信なし (cold-start は ctor で STATE_DB を `del`) |
+| 起動時スナップショット | LIST 上の未処理エントリのみ。[Redis](../../reference/glossary.md#term-redis) 既存キーの `HGETALL` 再配信なし (cold-start は ctor で STATE_DB を `del`) |
 | TTL | 未設定 (APPL_DB / STATE_DB ともに永続) |
 | ディスパッチ | `Consumer::execute()` → `BfdOrch::doTask(Consumer&)` (`bfdorch.cpp:111-217`)、`use_software_bfd` で hardware/software 経路分岐 |
-| 2nd Executor (state 通知) | `NotificationConsumer` on ASIC_DB channel `NOTIFICATIONS`、op `"bfd_session_state_change"` → `doTask(NotificationConsumer&)` → STATE_DB `BFD_SESSION_TABLE.state` 更新 |
+| 2nd Executor (state 通知) | `NotificationConsumer` on [ASIC_DB](../../reference/glossary.md#term-asic_db) channel `NOTIFICATIONS`、op `"bfd_session_state_change"` → `doTask(NotificationConsumer&)` → STATE_DB `BFD_SESSION_TABLE.state` 更新 |
 | 失敗時挙動 | `create_bfd_session()` false → `it++` で次イベントループ周回で**自動再試行** |
 
 注意: APPL_DB `BFD_SESSION_TABLE` を直接書き込むのが hardware 経路への正規ルート。CONFIG_DB `BFD_SESSION` を `sonic-db-cli` で直書きしても `BfdOrch` には届かない (`sonic-cfggen` 等の橋渡しが必要)。
@@ -193,7 +193,7 @@ BFD_SESSION|<vrf>|<interface>|<peer_ip>
 
 ### 典型値
 
-- key 形式: `BFD_SESSION|default|default|<peer_ip>` (VRF default、interface default = hardware lookup 有効)
+- key 形式: `BFD_SESSION|default|default|<peer_ip>` ([VRF](../../reference/glossary.md#term-vrf) default、interface default = hardware lookup 有効)
 - 最小構成: `local_addr` + key の peer_ip のみ。`tx_interval=1000`, `rx_interval=1000`, `multiplier=10` がデフォルト適用される
 - マルチホップ BFD: `multihop=true` + `interface=default` (interface 指定は VRF なし単一ホップのみ対応)
 
@@ -217,7 +217,7 @@ show bfd peers details
 <!-- cross-refs -->
 ## 暗黙参照 — `bfdorch` が他テーブル由来の状態を直接参照する経路 (Phase C)
 
-`BFD_SESSION` は YANG schema を持たず leafref / subscribe 経由の明示参照を宣言しない。しかし `bfdorch` (`sonic-swss/orchagent/bfdorch.cpp`) は SAI 投入時に **他 CONFIG_DB テーブル由来の orchagent 内オブジェクト** を直接参照しており、暗黙的な前提依存が発生する。本ブロックではコード経路ベースで観測される暗黙参照をまとめる。
+`BFD_SESSION` は [YANG](../../reference/glossary.md#term-yang) schema を持たず leafref / subscribe 経由の明示参照を宣言しない。しかし `bfdorch` (`sonic-swss/orchagent/bfdorch.cpp`) は SAI 投入時に **他 CONFIG_DB テーブル由来の [orchagent](../../reference/glossary.md#term-orchagent) 内オブジェクト** を直接参照しており、暗黙的な前提依存が発生する。本ブロックではコード経路ベースで観測される暗黙参照をまとめる。
 
 ### CONFIG_DB レベル — bfdorch が参照する他テーブル
 
@@ -228,21 +228,21 @@ show bfd peers details
 | [`BGP_DEVICE_GLOBAL`](bgp-device-global.md) (`STATE.use_software_bfd` / `STATE.tsa_enabled`) | `doTask()` 毎周回 + TSA state change 通知時 | `BgpGlobalStateOrch::getSoftwareBfd()` / `getTsaState()` で hardware/software 経路 と TSA shutdown 挙動を決定 | 制御依存 | `bfdorch.cpp:114-138, 683-748` |
 | `STATIC_ROUTE` (`STATIC_ROUTE|<vrf>|<prefix>`) | `staticroutebfd` プロセス (別プロセス) が CONFIG_DB を subscribe し、BFD 監視対象の next-hop に対応する BFD セッションを APPL_DB `BFD_SESSION_TABLE` に push する | static route の BFD 監視は `staticroutebfd` 経由で **逆方向に `BFD_SESSION_TABLE` を生成** する (`tx/rx_interval=50ms` 既定上書き) | **逆方向** (STATIC_ROUTE → BFD_SESSION) | `staticroutebfd/main.py:23-24, 118-120, 283-288, 366-559, 720-730` |
 
-> 上記は `bfdorch` が CONFIG_DB を直接 subscribe するわけではない点に注意。`PORT` / `VRF` は orchagent 内 in-memory state (`gPortsOrch` / `VRFOrch`) 経由、`BGP_DEVICE_GLOBAL` は `BgpGlobalStateOrch` 経由で参照される。順序依存は [書込み順依存 (Phase B)](#書込み順依存-phase-b--コード由来) を参照。
+> 上記は `bfdorch` が CONFIG_DB を直接 subscribe するわけではない点に注意。`PORT` / `VRF` は [orchagent](../../reference/glossary.md#term-orchagent) 内 in-memory state (`gPortsOrch` / `VRFOrch`) 経由、`BGP_DEVICE_GLOBAL` は `BgpGlobalStateOrch` 経由で参照される。順序依存は 書込み順依存 (Phase B) を参照。
 
 ### STATE_DB / APPL_DB レベル — 経路別の中継
 
 | 参照先 | 役割 | 経路 | evidence |
 |---|---|---|---|
-| `STATE_DB.SOFTWARE_BFD_SESSION_TABLE` | `use_software_bfd=true` 時の中継。`bfdorch` が CONFIG_DB から転記し、`bgpcfgd/BfdMgr` が subscribe して FRR `bfdd` に vtysh 経由で投入 | `bfdorch` (write) → `BfdMgr` (read/subscribe) | `bfdorch.cpp:114-138` / `managers_bfd.py` |
-| `APPL_DB.BFD_SESSION_TABLE` | hardware BFD の SAI 投入直前段。`staticroutebfd` も ProducerStateTable で直接書き込む | `staticroutebfd` (producer) → `bfdorch` (consumer) | `staticroutebfd/main.py:118-120` |
+| `STATE_DB.SOFTWARE_BFD_SESSION_TABLE` | `use_software_bfd=true` 時の中継。`bfdorch` が CONFIG_DB から転記し、`bgpcfgd/BfdMgr` が subscribe して FRR `bfdd` に [vtysh](../../reference/glossary.md#term-vtysh) 経由で投入 | `bfdorch` (write) → `BfdMgr` (read/subscribe) | `bfdorch.cpp:114-138` / `managers_bfd.py` |
+| `APPL_DB.BFD_SESSION_TABLE` | hardware BFD の SAI 投入直前段。`staticroutebfd` も [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) で直接書き込む | `staticroutebfd` (producer) → `bfdorch` (consumer) | `staticroutebfd/main.py:118-120` |
 | `STATE_DB.BFD_SESSION_TABLE` | hardware BFD の状態通知 (`UP` / `DOWN`)。SAI notification handler が更新 | `bfdorch` (write) → `staticroutebfd.bfd_state_set_handler` (read/subscribe) | `bfdorch.cpp:274-302` / `staticroutebfd/main.py:296-300, 641-710` |
 
 ### 範囲外 (誤解されやすい隣接テーブル)
 
 - **`INTERFACE` / `PORTCHANNEL_INTERFACE` / `LOOPBACK_INTERFACE`**: `bfdorch.cpp` は `local_addr` の所属インタフェースを検証しない。妥当性確認は SAI 実装側に委ねる。`staticroutebfd` はこれらを subscribe するが、`bfdorch` 自身は読まない (`staticroutebfd/main.py:718-730`)
 - **`ROUTE_TABLE` / 通常の `STATIC_ROUTE` 経路**: `bfdorch` が ROUTE を直接読むことはない。`STATIC_ROUTE` は `staticroutebfd` を経由する**間接的な書込み源**であり、APPL_DB に到達した時点で他の BFD セッションと区別はない
-- **`BGP_NEIGHBOR` / `BGP_PEER_RANGE`**: BGP セッションで BFD を有効化する設定はこちらにあるが、`BFD_SESSION` テーブルへの投入は `bgpcfgd` / FRR が担当し `bfdorch` のスコープ外
+- **`BGP_NEIGHBOR` / `BGP_PEER_RANGE`**: [BGP](../../reference/glossary.md#term-bgp) セッションで BFD を有効化する設定はこちらにあるが、`BFD_SESSION` テーブルへの投入は `bgpcfgd` / FRR が担当し `bfdorch` のスコープ外
 - **`DEVICE_METADATA` / `SWITCH`**: `gSwitchId` / `gVirtualRouterId` は SwitchOrch 起動時に確定済みのグローバル変数として参照される (`bfdorch.cpp:27, 533`)。`bfdorch` が `DEVICE_METADATA` を直接読むことはない
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bfd-session-cross-refs.md` を参照。
@@ -251,7 +251,7 @@ show bfd peers details
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG schema が存在しないため、すべてのデフォルトはコード (`bfdorch.cpp`) の変数初期化またはマクロ定義から由来する。
+[YANG](../../reference/glossary.md#term-yang) schema が存在しないため、すべてのデフォルトはコード (`bfdorch.cpp`) の変数初期化またはマクロ定義から由来する。
 
 | フィールド | コード由来デフォルト | fallback 源 | 備考 |
 |-----------|-------------------|------------|------|
@@ -268,8 +268,8 @@ YANG schema が存在しないため、すべてのデフォルトはコード (
 ### 補足
 
 - `multiplier` のデフォルト値が hardware BFD (`bfdorch`: 10) と software BFD (`bgpcfgd/BfdMgr`: 3) で異なる。`use_software_bfd` フラグ (`BGP_DEVICE_GLOBAL.STATE.use_software_bfd`) で経路が切り替わる。
-- `tx_interval` / `rx_interval` のデフォルトも経路で異なる: hardware=1000ms、bgpcfgd BfdMgr=200ms、static route BFD=50ms。
-- BFD_SESSION テーブルに対応する YANG schema (sonic-bfd.yang 等) は現時点 (2026-05) で sonic-buildimage の yang-models ディレクトリに存在しない。すべての制約はコードレベルで実施される。
+- `tx_interval` / `rx_interval` のデフォルトも経路で異なる: hardware=1000ms、[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) BfdMgr=200ms、static route BFD=50ms。
+- BFD_SESSION テーブルに対応する YANG schema (sonic-bfd.yang 等) は現時点 (2026-05) で [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) の yang-models ディレクトリに存在しない。すべての制約はコードレベルで実施される。
 <!-- /defaults -->
 
 <!-- constants -->
@@ -341,22 +341,22 @@ STATE_DB へ書き戻される `state` 値も固定 (`session_state_lookup`, `bf
 
 - 依存 #1 / #2 は doTask が **false 返却 → `it++` で次イベントループ周回再試行**する設計のため、PORT / VRF が後追いで作成されても自動的に追従する。ただし orchagent ログには `Failed to locate port ...` が周回ごとに記録され続けるため、ログノイズを避けたい場合は PORT/VRF を先行投入することが望ましい。
 - 依存 #3 は software ⇄ hardware の経路切替が運用中に発生する珍しいケース。通常は `BGP_DEVICE_GLOBAL` を最初に確定してから BFD_SESSION を投入する。
-- レコード内整合性 (`local_addr` 必須、`interface` と `dst_mac` の併用条件) は順序ではないが、不整合な SET は永続スキップされる ([例外条件・特殊挙動](#例外条件特殊挙動) 参照)。
+- レコード内整合性 (`local_addr` 必須、`interface` と `dst_mac` の併用条件) は順序ではないが、不整合な SET は永続スキップされる (例外条件・特殊挙動 参照)。
 <!-- /ordering -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-CONFIG_DB `BFD_SESSION` の SET/DEL を起点に `bfdorch` (`sonic-swss/orchagent/bfdorch.cpp`) が副次的に書き込む DB は **STATE_DB の 2 テーブル** に閉じる。APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB への書込は `bfdorch` 起点では存在しない。
+CONFIG_DB `BFD_SESSION` の SET/DEL を起点に `bfdorch` (`sonic-swss/orchagent/bfdorch.cpp`) が副次的に書き込む DB は **STATE_DB の 2 テーブル** に閉じる。APPL_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書込は `bfdorch` 起点では存在しない。
 
 | 副次 DB | テーブル | 書込有無 | 操作 | 根拠 |
 |---|---|---|---|---|
 | STATE_DB | `BFD_SESSION_TABLE` | あり (hardware 経路) | SET / DEL / HSET | hardware 経路で SAI `create_bfd_session` 成功直後に SET (`bfdorch.cpp:565`)、SAI `remove_bfd_session` 成功時に DEL (`bfdorch.cpp:629`)、SAI state-change notify ハンドラから `state` フィールドのみ HSET (`bfdorch.cpp:252`)。起動時に stale エントリを cleanup する DEL もあり (`bfdorch.cpp:75-78`) |
 | STATE_DB | `SOFTWARE_BFD_SESSION_TABLE` | あり (software 経路) | SET / DEL | software 経路 (`use_software_bfd=true` または SAI offload capability なし) で `createSoftwareBfdSession()` / `removeSoftwareBfdSession()` が CONFIG_DB の fvVector をそのまま転記 (`bfdorch.cpp:706-716`、`doTask` からの直接呼出 `bfdorch.cpp:136, 185`)。起動時 cleanup DEL もあり (`bfdorch.cpp:81-84`) |
 | APPL_DB | — | なし | — | `bfdorch` は `BFD_SESSION_TABLE` を **subscribe** するのみで、APPL_DB へ Producer/Table の書込呼出は `bfdorch.cpp` に 0 件 (`grep -nE "APPL_DB\|m_app\|appDb" bfdorch.cpp` で no match) |
-| COUNTERS_DB | — | なし | — | `bfdorch.cpp` 全体で `COUNTERS_DB` / `FlexCounter` / `m_counters` への参照が 0 件。SAI には `SAI_BFD_SESSION_STAT_*` enum が存在するが、`bfdorch` には FlexCounterManager 登録呼出が無く `COUNTERS:BFD_SESSION:` キーは master では生成されない |
-| FLEX_COUNTER_DB | — | なし | — | 同上。BFD カウンタの polling 登録は実装されていない |
-| ASIC_DB | — | 間接 (SAI 経由) | — | `sai_bfd_api->create_bfd_session()` 経由で syncd が ASIC_DB を更新するが、`bfdorch` は ASIC_DB を直接書かない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | — | なし | — | `bfdorch.cpp` 全体で `COUNTERS_DB` / `FlexCounter` / `m_counters` への参照が 0 件。SAI には `SAI_BFD_SESSION_STAT_*` enum が存在するが、`bfdorch` には FlexCounterManager 登録呼出が無く `COUNTERS:BFD_SESSION:` キーは master では生成されない |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | — | なし | — | 同上。BFD カウンタの polling 登録は実装されていない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | — | 間接 (SAI 経由) | — | `sai_bfd_api->create_bfd_session()` 経由で [syncd](../../reference/glossary.md#term-syncd) が ASIC_DB を更新するが、`bfdorch` は ASIC_DB を直接書かない |
 
 ### キー / 値の要点
 
@@ -366,14 +366,14 @@ CONFIG_DB `BFD_SESSION` の SET/DEL を起点に `bfdorch` (`sonic-swss/orchagen
 ### 注記
 
 - software BFD 経路の `state` 反映は `bgpcfgd` `BfdMgr` の責務であり、本ページの主購読者 `bfdorch` の副次書込からは外れる (読出側)。
-- hardware/software の経路判定は起動時の SAI capability 照会で固定される (`bfdorch.cpp:735` / [プラットフォーム差](#プラットフォーム差-phase-h))。
+- hardware/software の経路判定は起動時の SAI capability 照会で固定される (`bfdorch.cpp:735` / プラットフォーム差)。
 - 詳細スキャン手順と grep 結果は [`meta/_intermediate/cdb-flow/bfd-session-side.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-side.md) を参照。
 <!-- /side-effects -->
 
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-BFD_SESSION の処理は **SAI 動的 capability 照会** で hardware/software 経路を起動時に決定する。ACL 系のように `platform` / `sub_platform` 環境変数を静的比較する分岐は `bfdorch.cpp` には存在しない。差異の決定は SAI 実装 (`libsai*.so`) 側の `set_implemented` / `get_implemented` プロパティに完全依存する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/bfd-session-platform.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-platform.md)。
+BFD_SESSION の処理は **SAI 動的 capability 照会** で hardware/software 経路を起動時に決定する。[ACL](../../reference/glossary.md#term-acl) 系のように `platform` / `sub_platform` 環境変数を静的比較する分岐は `bfdorch.cpp` には存在しない。差異の決定は SAI 実装 (`libsai*.so`) 側の `set_implemented` / `get_implemented` プロパティに完全依存する。詳細スキャンノート: [`meta/_intermediate/cdb-flow/bfd-session-platform.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-platform.md)。
 
 ### 動的に照会される SAI capability
 
@@ -389,7 +389,7 @@ BFD_SESSION の処理は **SAI 動的 capability 照会** で hardware/software 
 
 | SAI 照会結果 | `bfd_offload` | `getSoftwareBfd()` | 経路 | SAI 経由 | state 通知 |
 |---|---|---|---|---|---|
-| IPv4/IPv6 両方 capability あり + `OFFLOAD_TYPE != NONE` | true | false | **hardware BFD** | あり (`bfdorch` → SAI → ASIC) | SAI notify handler |
+| IPv4/IPv6 両方 capability あり + `OFFLOAD_TYPE != NONE` | true | false | **hardware BFD** | あり (`bfdorch` → SAI → [ASIC](../../reference/glossary.md#term-asic)) | SAI notify handler |
 | いずれかが `get_implemented=false` | false | true | **software BFD** | なし (STATE_DB のみ) | bgpcfgd `BfdMgr` polling |
 | いずれかが `OFFLOAD_TYPE_NONE` | false | true | software BFD | なし | 同上 |
 | `sai_query` 失敗 (ERROR ログ) | false | true | software BFD | なし | 同上 |
@@ -411,7 +411,7 @@ BFD_SESSION の処理は **SAI 動的 capability 照会** で hardware/software 
 
 `bfdorch.cpp` 自体はベンダー文字列を見ないが、SAI 実装による `BFD_SESSION_OFFLOAD_TYPE` capability の典型的な実装状況は以下:
 
-| ASIC / プラットフォーム | hardware BFD offload | 備考 |
+| [ASIC](../../reference/glossary.md#term-asic) / プラットフォーム | hardware BFD offload | 備考 |
 |---|---|---|
 | broadcom (XGS / 非 DNX) | あり (機種・SDK バージョン依存) | Trident / Tomahawk 系の一部で実装 |
 | broadcom-dnx (Jericho / Qumran) | あり | DNX SDK は BFD endpoint をサポート |
@@ -496,3 +496,5 @@ BFD_SESSION の処理は **SAI 動的 capability 照会** で hardware/software 
     回復には CONFIG_DB から該当 key を一度 DEL → 正しい値で SET し直す必要がある。
 
 <!-- /failure -->
+
+<!-- glossary-links-injected: c252b8cd8678 -->

@@ -103,7 +103,7 @@ LACP の retry 拡張は teamd 側のオプション化されており、warm re
 
 ## multi-ASIC warm reboot
 
-multi-ASIC では、namespace ごとに service、DB、ASIC が分かれます。warm reboot は default namespace だけで完結せず、ASIC namespace 群の shutdown / boot 順序、除外指定、DB backup、peer 影響を合わせて扱います。詳細は [Multi-ASIC warm reboot](../../system/multi-asic-warm-reboot.md) を参照します。
+multi-[ASIC](../../reference/glossary.md#term-asic) では、namespace ごとに service、DB、ASIC が分かれます。warm reboot は default namespace だけで完結せず、ASIC namespace 群の shutdown / boot 順序、除外指定、DB backup、peer 影響を合わせて扱います。詳細は [Multi-ASIC warm reboot](../../system/multi-asic-warm-reboot.md) を参照します。
 
 運用上は、対象 ASIC を絞った reboot とシステム全体 reboot を混同しないことが重要です。`-m` のような除外指定を使う場合は、残す ASIC と落とす ASIC の依存関係を確認します。
 
@@ -227,4 +227,4 @@ May 10 11:01:09 sw01 INFO swss#orchagent: EOIU received from all components
 - [SWSS docker warm restart](../../system/sonic-swss-docker-warm-restart.md)
 - [SWSS docker の Warm Restart 実装メモ](../../system/swss-docker-warm-restart-code-reference.md)
 
-<!-- glossary-links-injected: a0c544b0ce3b -->
+<!-- glossary-links-injected: c006405759d8 -->

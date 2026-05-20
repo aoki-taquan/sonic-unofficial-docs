@@ -34,9 +34,9 @@ related:
 
 データフローは以下の通り:
 
-1. **fdbsyncd** が Linux カーネルの netlink イベント（`RTM_NEWNEIGH` / `RTM_DELNEIGH`）を受信
+1. **[fdbsyncd](../../reference/glossary.md#term-fdbsyncd)** が Linux カーネルの netlink イベント（`RTM_NEWNEIGH` / `RTM_DELNEIGH`）を受信
 2. [VXLAN](../../reference/glossary.md#term-vxlan) インタフェース上の MAC 学習イベントを `VXLAN_FDB_TABLE` として APP_DB に書き込む
-3. **orchagent** の `FdbOrch` が `APP_VXLAN_FDB_TABLE` を購読し、SAI FDB エントリを生成する
+3. **[orchagent](../../reference/glossary.md#term-orchagent)** の `FdbOrch` が `APP_VXLAN_FDB_TABLE` を購読し、[SAI](../../reference/glossary.md#term-sai) [FDB](../../reference/glossary.md#term-fdb) エントリを生成する
 
 [CONFIG_DB](../../reference/glossary.md#term-config_db) の静的エントリ (`FDB` テーブル) とは異なり、本テーブルはランタイム動的学習エントリのみを保持する。
 
@@ -45,20 +45,19 @@ related:
 
 ```mermaid
 flowchart LR
-  KNL["Linux Kernel\n(netlink RTM_NEWNEIGH)"]
-  FDBSYNCD["fdbsyncd"]
-  KNL --> FDBSYNCD
-  APPDB[("APP_DB\nVXLAN_FDB_TABLE")]
-  FDBSYNCD --> APPDB
-  ORCH["orchagent\nFdbOrch"]
-  APPDB --> ORCH
-  SAI["SAI\nsai_fdb_api"]
-  ORCH --> SAI
+  CDB[("CONFIG_DB<br/>VXLAN_TUNNEL")]
+  DM["vxlanmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VXLAN_TUNNEL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_tunnel_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    VXLAN_FDB_TABLE は CONFIG_DB ではなく APP_DB に書かれる。fdbsyncd (fdbsyncd コンテナ) が netlink から直接書き込む。
-
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -79,8 +78,8 @@ VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2
 
 | フィールド | 型 | 説明 |
 |-----------|-----|------|
-| `remote_vtep` | IPv4 アドレス文字列 | リモート VTEP の IP アドレス |
-| `type` | string `dynamic`\|`static` | FDB エントリ種別 |
+| `remote_vtep` | IPv4 アドレス文字列 | リモート [VTEP](../../reference/glossary.md#term-vtep) の IP アドレス |
+| `type` | string `dynamic`\|`static` | [FDB](../../reference/glossary.md#term-fdb) エントリ種別 |
 | `vni` | string (数値) | VxLAN Network Identifier |
 
 !!! note "esi フィールド"
@@ -88,7 +87,7 @@ VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2
 
 ## 購読者
 
-- **orchagent / FdbOrch**: `APP_VXLAN_FDB_TABLE_NAME` を `ConsumerStateTable` で購読し、`FDB_ORIGIN_VXLAN_ADVERTIZED` として SAI FDB エントリを生成する（`fdborch.cpp:719-722`）
+- **[orchagent](../../reference/glossary.md#term-orchagent) / FdbOrch**: `APP_VXLAN_FDB_TABLE_NAME` を `ConsumerStateTable` で購読し、`FDB_ORIGIN_VXLAN_ADVERTIZED` として [SAI](../../reference/glossary.md#term-sai) [FDB](../../reference/glossary.md#term-fdb) エントリを生成する（`fdborch.cpp:719-722`）
 - **show vxlan remotemac**: `sonic-utilities/show/vxlan.py:360` が APP_DB を直接参照して表示する
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -106,7 +105,7 @@ VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2
 | `type` | fdborch 受信側でフィールド省略 | `"dynamic"` デフォルト初期化 | ローカル変数初期化 | `fdborch.cpp:770` |
 | `vni` | フィールド省略または数値変換失敗 | `0` デフォルト → エントリはそのまま処理続行 | ローカル変数初期化 | `fdborch.cpp:773, 820-824` |
 | `remote_vtep` | 不正 IP または省略 | `""` → silent drop（DIP トンネルモード） | バリデーション失敗 → silent drop | `fdborch.cpp:795-841` |
-| `esi` | fdbsyncd 経由 | 常に空文字列（書き込まれない） | 書き込み元依存 | `fdbsync.cpp:658-664` |
+| `esi` | [fdbsyncd](../../reference/glossary.md#term-fdbsyncd) 経由 | 常に空文字列（書き込まれない） | 書き込み元依存 | `fdbsync.cpp:658-664` |
 | `origin` | テーブル名 = `APP_VXLAN_FDB_TABLE_NAME` | `FDB_ORIGIN_VXLAN_ADVERTIZED` にハードコード | ハードコード | `fdborch.cpp:719-722` |
 | warm-restart 中 | `isWarmStartInProgress() == true` | APP_DB 直書きせず `insertToMap()` でキャッシュ蓄積、完了後に一括フラッシュ | warm-restart 遅延書き込み | `fdbsync.cpp:669-673` |
 | エントリ削除トリガー | `RTM_DELNEIGH` または state が `NUD_INCOMPLETE`/`NUD_FAILED` | `macDelVxlan()` を呼び APP_DB からエントリ削除 | netlink state ハードコード | `fdbsync.cpp:787-792` |
@@ -129,7 +128,7 @@ else
 }
 ```
 
-`NUD_NOARP` は「ARP タイムアウトなし（固定 = static）」を意味する Linux カーネルの neigh state フラグ。EVPN type-2 で学習される通常のリモート MAC は ARP によって老化するため `NUD_NOARP` が立たず、`"dynamic"` となる。
+`NUD_NOARP` は「[ARP](../../reference/glossary.md#term-arp) タイムアウトなし（固定 = static）」を意味する Linux カーネルの neigh state フラグ。[EVPN](../../reference/glossary.md#term-evpn) type-2 で学習される通常のリモート MAC は [ARP](../../reference/glossary.md#term-arp) によって老化するため `NUD_NOARP` が立たず、`"dynamic"` となる。
 
 <!-- /defaults -->
 
@@ -142,10 +141,10 @@ else
 
 | 先行条件 | 理由 | 違反時の挙動 |
 |---|---|---|
-| PortsOrch `allPortsReady()` | `doTask()` 冒頭のグローバルガード | 全 PORT の SAI 作成完了まで `APP_VXLAN_FDB_TABLE` のイベントは一切処理されず `m_toSync` に滞留する（`fdborch.cpp:710-713`） |
-| `VLAN|<name>` (PortsOrch に `Vlan<id>` 登録済み) | `doTask()` が `m_portsOrch->getPort(keys[0], vlan)` で VLAN OID を解決する | SET は `it++` で次周回再試行（自動ポーリング）、DEL は `deleteFdbEntryFromSavedFDB()` を呼んで erase（破棄）（`fdborch.cpp:736-754`） |
+| PortsOrch `allPortsReady()` | `doTask()` 冒頭のグローバルガード | 全 PORT の [SAI](../../reference/glossary.md#term-sai) 作成完了まで `APP_VXLAN_FDB_TABLE` のイベントは一切処理されず `m_toSync` に滞留する（`fdborch.cpp:710-713`） |
+| `VLAN|<name>` (PortsOrch に `Vlan<id>` 登録済み) | `doTask()` が `m_portsOrch->getPort(keys[0], vlan)` で [VLAN](../../reference/glossary.md#term-vlan) OID を解決する | SET は `it++` で次周回再試行（自動ポーリング）、DEL は `deleteFdbEntryFromSavedFDB()` を呼んで erase（破棄）（`fdborch.cpp:736-754`） |
 | `VXLAN_TUNNEL` / VxlanTunnelOrch の tunnel 作成完了 (`isDipTunnelsSupported() == true` 時) | `tunnel_orch->getTunnelPortName(remote_ip)` でトンネルポート名を解決する | `remote_ip` が空ならば `m_toSync.erase` で**再試行なし破棄**（`fdborch.cpp:834-841`） |
-| `VXLAN_EVPN_NVO` / EvpnNvoOrch の source VTEP 作成完了 (`isDipTunnelsSupported() == false` 時) | `evpn_nvo_orch->getEVPNVtep()` で source VTEP を解決する | 戻り値が `NULL` なら `m_toSync.erase` で**再試行なし破棄**（`fdborch.cpp:847-854`） |
+| `VXLAN_EVPN_NVO` / EvpnNvoOrch の source [VTEP](../../reference/glossary.md#term-vtep) 作成完了 (`isDipTunnelsSupported() == false` 時) | `evpn_nvo_orch->getEVPNVtep()` で source VTEP を解決する | 戻り値が `NULL` なら `m_toSync.erase` で**再試行なし破棄**（`fdborch.cpp:847-854`） |
 
 **推奨書込み順序**:
 
@@ -163,9 +162,9 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 
 ### retry / 自動調停の仕組み
 
-- **VLAN 未解決の SET**: `m_toSync` に残り続け、`Orch::doTask()` の次回スケジュールで再評価（無限ポーリング）。
-- **VXLAN tunnel 未解決 / `remote_vtep` 不正**: `m_toSync.erase` で即破棄。**自動救済なし**。再投入が必要。
-- **EVPN NVO の source VTEP が NULL**: 同上、即破棄。
+- **[VLAN](../../reference/glossary.md#term-vlan) 未解決の SET**: `m_toSync` に残り続け、`Orch::doTask()` の次回スケジュールで再評価（無限ポーリング）。
+- **[VXLAN](../../reference/glossary.md#term-vxlan) tunnel 未解決 / `remote_vtep` 不正**: `m_toSync.erase` で即破棄。**自動救済なし**。再投入が必要。
+- **[EVPN](../../reference/glossary.md#term-evpn) NVO の source VTEP が NULL**: 同上、即破棄。
 
 ### `remote_vtep` バリデーション (fail-fast)
 
@@ -182,7 +181,7 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 | 参照先テーブル/オブジェクト | 参照種別 | 依存方向 | コード根拠 |
 |---------------------------|---------|---------|-----------|
 | `PORT` 群 (PortsOrch `allPortsReady`) | 全ポート初期化ガード | VXLAN_FDB_TABLE → PortsOrch | `fdborch.cpp:711-714` — `m_portsOrch->allPortsReady()` が false の間は全イベントを `m_toSync` に留め置き処理しない |
-| `VLAN` (PortsOrch) | VLAN OID 解決 | VXLAN_FDB_TABLE → VLAN | `fdborch.cpp:739-759` — `m_portsOrch->getPort(keys[0], vlan)` で key の VlanName から VLAN OID を取得; SET は次周回再試行、DEL は即破棄 |
+| `VLAN` (PortsOrch) | [VLAN](../../reference/glossary.md#term-vlan) OID 解決 | VXLAN_FDB_TABLE → VLAN | `fdborch.cpp:739-759` — `m_portsOrch->getPort(keys[0], vlan)` で key の VlanName から VLAN OID を取得; SET は次周回再試行、DEL は即破棄 |
 | `VXLAN_TUNNEL` (VxlanTunnelOrch) | リモート VTEP ポート名解決 (DIP モード) | VXLAN_FDB_TABLE → VXLAN_TUNNEL | `fdborch.cpp:834,836,843` — `isDipTunnelsSupported() == true` 時に `getTunnelPortName(remote_ip)` で VTEP ポートを解決; `remote_vtep` 空なら即破棄 (`fdborch.cpp:838-841`) |
 | `VXLAN_EVPN_NVO` (EvpnNvoOrch) | source VTEP 解決 (非 DIP モード) | VXLAN_FDB_TABLE → VXLAN_EVPN_NVO | `fdborch.cpp:847-854` — `isDipTunnelsSupported() == false` 時に `evpn_nvo_orch->getEVPNVtep()` で source VTEP を取得; NULL なら即破棄 |
 
@@ -203,7 +202,7 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 
 > 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-failure.md`
 
-`VXLAN_FDB_TABLE` は APP_DB テーブルであり、書き込みは `fdbsyncd` が行い、消費は `orchagent/FdbOrch::doTask()` が行う。失敗経路は **fdbsyncd 側**（netlink イベント処理・warm-restart）と **orchagent 側**（APP_DB エントリ処理・SAI 操作）の 2 層に分かれる。
+`VXLAN_FDB_TABLE` は APP_DB テーブルであり、書き込みは `fdbsyncd` が行い、消費は `orchagent/FdbOrch::doTask()` が行う。失敗経路は **[fdbsyncd](../../reference/glossary.md#term-fdbsyncd) 側**（netlink イベント処理・warm-restart）と **[orchagent](../../reference/glossary.md#term-orchagent) 側**（APP_DB エントリ処理・SAI 操作）の 2 層に分かれる。
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.cpp:580-583,609-612,639-642; sonic-swss/fdbsyncd/fdbsync.h:15; sonic-swss/orchagent/fdborch.cpp:711-713,739-759,801-808,836-854,870-895,917-918,1291-1318,1531-1542 -->
 
@@ -213,7 +212,7 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 |---|----------|------|-------|---------|
 | 1 | warm-restart タイマー進行中 (120 秒) | `macAddVxlan` / `macUpdateVxlan` / `macDelVxlan` が APP_DB へ直接書かず `AppRestartAssist::insertToMap()` でキャッシュ蓄積。タイマー完了後の reconcile フェーズで差分を一括反映 | 自動 (reconcile) | `fdbsync.cpp:580-583, 609-612, 639-642; fdbsync.h:15` |
 | 2 | netlink MAC が `00:00:00:00:00:00` (BUM / IMET) | `VXLAN_FDB_TABLE` に書かず `APP_VXLAN_REMOTE_VNI_TABLE_NAME` に書く | なし | `fdbsync.cpp:805` |
-| 3 | 非 VXLAN インタフェースの netlink イベント | `isVxlanIntf == false` → スキップ | なし | `fdbsync.cpp` |
+| 3 | 非 [VXLAN](../../reference/glossary.md#term-vxlan) インタフェースの netlink イベント | `isVxlanIntf == false` → スキップ | なし | `fdbsync.cpp` |
 
 ### B. orchagent (FdbOrch) 側の失敗パターン
 
@@ -238,8 +237,8 @@ SET APP_DB VXLAN_FDB_TABLE|Vlan200:00:02:00:00:47:e2  remote_vtep=10.0.0.2  type
 |---|---|---|
 | warm-restart 120 秒タイムアウト超過 | reconcile が完了せず古いエントリが残存 | `fdbsyncd` の warm-restart 完了を待つ / 再起動 |
 | `remote_vtep` 不正 IP | エントリ即破棄（VXLAN FDB 未登録、パケット転送不可） | `fdbsyncd` が正しい IP を再送信するか手動で APP_DB を修正 |
-| EVPN NVO 未設定で VXLAN FDB エントリが先着 | エントリ即破棄 | EVPN NVO を設定後、BGP / `fdbsyncd` が再学習するのを待つ |
-| SAI `create_fdb_entry` 失敗 | 次周回で自動再試行。ASIC リソース枯渇時は再試行が続く | `show vxlan remotemac` でエントリが現れるか確認 |
+| EVPN NVO 未設定で VXLAN FDB エントリが先着 | エントリ即破棄 | EVPN NVO を設定後、[BGP](../../reference/glossary.md#term-bgp) / `fdbsyncd` が再学習するのを待つ |
+| SAI `create_fdb_entry` 失敗 | 次周回で自動再試行。[ASIC](../../reference/glossary.md#term-asic) リソース枯渇時は再試行が続く | `show vxlan remotemac` でエントリが現れるか確認 |
 
 !!! note "`VXLAN_FDB_TABLE` に失敗ステータスは書かれない"
     orchagent は `VXLAN_FDB_TABLE` の失敗を STATE_DB / ERROR_TABLE には記録しない。失敗は `SWSS_LOG_*` 経由でのみ `/var/log/swss/orchagent.log` に出力される。エントリの存否は `sonic-db-cli APPL_DB keys 'VXLAN_FDB_TABLE:*'` または `show vxlan remotemac` で確認する。
@@ -314,9 +313,9 @@ FDB_ORIGIN_MCLAG_ADVERTIZED = 8
 
 | タイミング | テーブル | キー | フィールド | 備考 |
 |---|---|---|---|---|
-| `addFdbEntry()` — VXLAN origin | `FDB_TABLE` (STATE_DB) | — | **書かない** | `FDB_ORIGIN_VXLAN_ADVERTIZED` は `m_fdbStateTable.set()` の条件に含まれない (`fdborch.cpp:1567-1582`) |
-| `removeFdbEntry()` — VXLAN origin | `FDB_TABLE` (STATE_DB) | — | **削除しない** | `origin != FDB_ORIGIN_VXLAN_ADVERTIZED` の時のみ削除するため (`fdborch.cpp:1722-1726`) |
-| `addFdbEntry()` — MCLAG origin | `MCLAG_REMOTE_FDB_TABLE` (STATE_DB) | `<VlanName>:<MAC>` | `port`, `type` | VXLAN FDB は該当しない (`fdborch.cpp:1595-1613`) |
+| `addFdbEntry()` — VXLAN origin | `FDB_TABLE` ([STATE_DB](../../reference/glossary.md#term-state_db)) | — | **書かない** | `FDB_ORIGIN_VXLAN_ADVERTIZED` は `m_fdbStateTable.set()` の条件に含まれない (`fdborch.cpp:1567-1582`) |
+| `removeFdbEntry()` — VXLAN origin | `FDB_TABLE` ([STATE_DB](../../reference/glossary.md#term-state_db)) | — | **削除しない** | `origin != FDB_ORIGIN_VXLAN_ADVERTIZED` の時のみ削除するため (`fdborch.cpp:1722-1726`) |
+| `addFdbEntry()` — [MCLAG](../../reference/glossary.md#term-mclag) origin | `MCLAG_REMOTE_FDB_TABLE` ([STATE_DB](../../reference/glossary.md#term-state_db)) | `<VlanName>:<MAC>` | `port`, `type` | VXLAN FDB は該当しない (`fdborch.cpp:1595-1613`) |
 
 VXLAN 由来の FDB エントリは STATE_DB:FDB_TABLE に **一切書かれない**。`show mac` / `show fdb` が表示するエントリはローカル学習・プロビジョニング MAC のみであり、VXLAN リモート MAC は `show vxlan remotemac` で確認する。
 
@@ -330,12 +329,12 @@ sonic-db-cli STATE_DB keys 'FDB_TABLE:*'  # VXLAN エントリは含まれない
 
 ### CRM カウンタ (COUNTERS_DB)
 
-| タイミング | 操作 | CRM リソース | コード根拠 |
+| タイミング | 操作 | [CRM](../../reference/glossary.md#term-crm) リソース | コード根拠 |
 |---|---|---|---|
 | `addFdbEntry()` — 新規 (macUpdate=false) | `incCrmResUsedCounter` | `CRM_FDB_ENTRY` | `fdborch.cpp:1617` |
 | `removeFdbEntry()` 成功 | `decCrmResUsedCounter` | `CRM_FDB_ENTRY` | `fdborch.cpp:1728` |
 
-CRM カウンタは `COUNTERS_DB` の `CRM:ACL_STATS:FDB_ENTRY` に反映される。`show crm resources fdb` で確認可能。
+[CRM](../../reference/glossary.md#term-crm) カウンタは `COUNTERS_DB` の `CRM:ACL_STATS:FDB_ENTRY` に反映される。`show crm resources fdb` で確認可能。
 
 ### 内部 Observer 通知 (SUBJECT_TYPE_FDB_CHANGE)
 
@@ -344,7 +343,7 @@ CRM カウンタは `COUNTERS_DB` の `CRM:ACL_STATS:FDB_ENTRY` に反映され�
 | Observer | 反応内容 | コード根拠 |
 |---|---|---|
 | **MirrorOrch** | `m_fdbOrch->attach(this)` でサブスクライブ。ミラーセッション next-hop が FDB テーブルの変化で再評価される | `mirrororch.cpp:95, 179, 1400` |
-| **MuxOrch** | MUX テーブルの状態管理に FDB 変化を反映 | `muxorch.cpp:2161` |
+| **MuxOrch** | [MUX](../../reference/glossary.md#term-mux) テーブルの状態管理に FDB 変化を反映 | `muxorch.cpp:2161` |
 
 いずれも **DB への直接書き込みではなく内部メモリ/SAI 操作**であり、外部から観測可能な DB 副作用はない。
 
@@ -373,7 +372,7 @@ VXLAN_FDB_TABLE エントリ削除によって当該トンネルポートの FDB
 
 > 調査証跡: `meta/_intermediate/cdb-flow/vxlan-fdb-pubsub.md`
 
-`VXLAN_FDB_TABLE` は APP_DB (dbId=0) に存在し、**書き込みは fdbsyncd の ProducerStateTable**、**消費は orchagent/FdbOrch の ConsumerStateTable** という非対称な構造を持つ。CONFIG_DB ベースのテーブルと異なり keyspace notification (PSUBSCRIBE) ではなく **PUBLISH/SUBSCRIBE チャネル**で通知される。
+`VXLAN_FDB_TABLE` は APP_DB (dbId=0) に存在し、**書き込みは fdbsyncd の [ProducerStateTable](../../reference/glossary.md#term-producerstatetable)**、**消費は orchagent/FdbOrch の [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** という非対称な構造を持つ。[CONFIG_DB](../../reference/glossary.md#term-config_db) ベースのテーブルと異なり keyspace notification (PSUBSCRIBE) ではなく **PUBLISH/SUBSCRIBE チャネル**で通知される。
 
 ### Producer/Consumer ペア
 
@@ -381,8 +380,8 @@ VXLAN_FDB_TABLE エントリ削除によって当該トンネルポートの FDB
 |------|-----|-----|------------------|------|
 | fdbsyncd → APP_DB | 書き込み | `ProducerStateTable` | `VXLAN_FDB_TABLE_CHANNEL@0` | `fdbsync.h:88, fdbsync.cpp:25,645,676` |
 | APP_DB → orchagent | 読み取り | `ConsumerStateTable` | `VXLAN_FDB_TABLE_CHANNEL@0` | `orchdaemon.cpp:228, orch.cpp:1194` |
-| ASIC_DB → orchagent | 逆通知 (FDB 学習) | `NotificationConsumer` | `NOTIFICATIONS` (ASIC_DB) | `fdborch.cpp:46-49` |
-| CLI / sonic-utilities → orchagent | フラッシュ指示 | `NotificationConsumer` | `FLUSHFDBREQUEST` (APP_DB) | `fdborch.cpp:41-43` |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) → orchagent | 逆通知 (FDB 学習) | `NotificationConsumer` | `NOTIFICATIONS` ([ASIC_DB](../../reference/glossary.md#term-asic_db)) | `fdborch.cpp:46-49` |
+| CLI / [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) → orchagent | フラッシュ指示 | `NotificationConsumer` | `FLUSHFDBREQUEST` (APP_DB) | `fdborch.cpp:41-43` |
 
 ### 書き込み側 (fdbsyncd) — ProducerStateTable
 
@@ -395,7 +394,7 @@ warm-restart タイマー (120 秒) 中は直接 `m_fdbTable` への書き込み
 
 ### 読み取り側 (orchagent) — ConsumerStateTable
 
-`FdbOrch` は `Orch(applDbConnector, appFdbTables)` 基底クラス経由で `addConsumer()` を呼ぶ (`fdborch.cpp:29`)。`applDbConnector` は APP_DB (dbId=0) であり CONFIG_DB / STATE_DB ではないため、`Orch::addConsumer()` は **ConsumerStateTable** ブランチを選択する (`orch.cpp:1193-1195`)。
+`FdbOrch` は `Orch(applDbConnector, appFdbTables)` 基底クラス経由で `addConsumer()` を呼ぶ (`fdborch.cpp:29`)。`applDbConnector` は APP_DB (dbId=0) であり CONFIG_DB / STATE_DB ではないため、`Orch::addConsumer()` は **[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** ブランチを選択する (`orch.cpp:1193-1195`)。
 
 | パラメータ | 値 | 根拠 |
 |-----------|-----|------|
@@ -407,7 +406,7 @@ orchagent のメインループは 1000 ms タイムアウト付きブロッキ�
 
 ### ASIC_DB 逆方向通知 (FDB_NOTIFICATIONS)
 
-FdbOrch はローカル MAC 学習・エージングイベントを ASIC_DB の `NOTIFICATIONS` チャネルから受け取る (`fdborch.cpp:46-49`)。このパスは ASIC → orchagent の一方向通知であり、`VXLAN_FDB_TABLE` への書き込みとは逆方向。VXLAN_FDB_TABLE への副作用はない（`FDB_ORIGIN_VXLAN_ADVERTIZED` エントリは STATE_DB:FDB_TABLE に書かれないため、ASIC FDB 通知でも STATE_DB は更新されない）。
+FdbOrch はローカル MAC 学習・エージングイベントを [ASIC_DB](../../reference/glossary.md#term-asic_db) の `NOTIFICATIONS` チャネルから受け取る (`fdborch.cpp:46-49`)。このパスは [ASIC](../../reference/glossary.md#term-asic) → orchagent の一方向通知であり、`VXLAN_FDB_TABLE` への書き込みとは逆方向。VXLAN_FDB_TABLE への副作用はない（`FDB_ORIGIN_VXLAN_ADVERTIZED` エントリは STATE_DB:FDB_TABLE に書かれないため、[ASIC](../../reference/glossary.md#term-asic) FDB 通知でも STATE_DB は更新されない）。
 
 <!-- evidence: sonic-swss/fdbsyncd/fdbsync.h:88-90; sonic-swss/fdbsyncd/fdbsync.cpp:24-34,641,645,672,676; sonic-swss/orchagent/fdborch.cpp:25,27-49; sonic-swss/orchagent/orchdaemon.cpp:23,227-229,959; sonic-swss/orchagent/orch.cpp:17,913,1186-1196; sonic-swss-common/common/table.h:85,94 -->
 
@@ -481,9 +480,6 @@ if (fdbData.origin == FDB_ORIGIN_VXLAN_ADVERTIZED)
 - **ローカル MAC 学習で VXLAN エントリが削除される**: `fdbsyncd` は同じ Vlan+MAC がローカルに学習された場合 (`STATE_FDB_TABLE`)、対応する `VXLAN_FDB_TABLE` エントリを削除する (`fdbsync.cpp:343-350: macDelVxlanEntry + macDelVxlan`)。これは local learn 優先の動作である。
 - **warm-restart 中のバッファリング**: `fdbsyncd` の warm-restart 中（`DEFAULT_FDBSYNC_WARMSTART_TIMER = 120 秒`）は APP_DB への直接書き込みが抑制され、キャッシュに蓄積される。完了後に `reconciliation` フェーズで差分のみを反映する。
 - **DIP トンネル未サポートモード**: `isDipTunnelsSupported() == false` の場合、`remote_vtep` が空でも EVPN NVO の source VTEP を使ってトンネルポートを解決する（`fdborch.cpp:847-854`）。
-
-[^exc1]: `sonic-swss/fdbsyncd/fdbsync.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/fdbsyncd/fdbsync.cpp>
-[^exc2]: `sonic-swss/orchagent/fdborch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/fdborch.cpp>
 
 <!-- ref-triangle:start -->
 
@@ -563,3 +559,5 @@ show vxlan remotemac <remote-vtep-ip>
 - EVPN NVO 削除時は全 VXLAN FDB エントリが一斉フラッシュされる
 
 <!-- /runtime-trace -->
+
+<!-- glossary-links-injected: fcc6ec69fc33 -->

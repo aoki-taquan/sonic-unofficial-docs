@@ -42,7 +42,7 @@ related:
 
 ## 概要
 
-外部 PHY / Gearbox を持つプラットフォームでは、ポートが PHY 側 [SAI](../reference/glossary.md#term-sai)（gbsyncd）の `switch_id` に紐づいて管理されている。従来の MACsec orchestration は **「Gearbox ポートなら PHY 側で MACsec オブジェクトを作る」** という固定動作だった[^1]。問題は、PHY SAI が MACsec エンジンを実装していない場合に **`SAI_STATUS_NOT_IMPLEMENTED`** が返り、`gbsyncd` がエラー、[orchagent](../reference/glossary.md#term-orchagent) が不安定になる点。
+外部 PHY / Gearbox を持つプラットフォームでは、ポートが PHY 側 [SAI](../reference/glossary.md#term-sai)（gbsyncd）の `switch_id` に紐づいて管理されている。従来の [MACsec](../reference/glossary.md#term-macsec) orchestration は **「Gearbox ポートなら PHY 側で MACsec オブジェクトを作る」** という固定動作だった[^1]。問題は、PHY SAI が MACsec エンジンを実装していない場合に **`SAI_STATUS_NOT_IMPLEMENTED`** が返り、`gbsyncd` がエラー、[orchagent](../reference/glossary.md#term-orchagent) が不安定になる点。
 
 本 [HLD](../reference/glossary.md#term-hld) は HWSKU の `gearbox_config.json` に **PHY ごとの `macsec_supported`（boolean）** を加え、`MACsecOrch` がその capability を見て「PHY backend」か「[NPU](../reference/glossary.md#term-npu) backend（既定 SAI switch）」を **決定論的に選ぶ** ようにする[^1]。runtime probing やフォールバックは行わない。
 
@@ -104,7 +104,7 @@ flowchart TB
 - `_GEARBOX_TABLE` のエントリ自体が無い: PHY backend（NOTICE ログ、後方互換）
 - PHY 側 SAI から `SAI_STATUS_NOT_IMPLEMENTED` が返ったとき **runtime fallback はしない**。エラーログを出して失敗扱い
 
-「自動フォールバックしない」というのが本 HLD の重要な設計判断で、ASIC ベンダーが自分の plat で `macsec_supported` を正しく宣言することが運用要件になる。
+「自動フォールバックしない」というのが本 HLD の重要な設計判断で、[ASIC](../reference/glossary.md#term-asic) ベンダーが自分の plat で `macsec_supported` を正しく宣言することが運用要件になる。
 
 ### コンポーネント変更
 
@@ -260,4 +260,4 @@ docker logs macsec 2>&1 | tail
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ece1ecd2bc09 -->
+<!-- glossary-links-injected: 8a1c8f4a431d -->

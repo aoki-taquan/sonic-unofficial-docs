@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-SONiC の data plane [ACL](../reference/glossary.md#term-acl) の **初期設計** を定義する文書。ハードウェア（[SAI](../reference/glossary.md#term-sai)）に降ろすための ACL テーブル / ルールの **APP_DB スキーマ** と、それを操作する `swssconfig` ベースの設定フローを規定している[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の data plane [ACL](../reference/glossary.md#term-acl) の **初期設計** を定義する文書。ハードウェア（[SAI](../reference/glossary.md#term-sai)）に降ろすための ACL テーブル / ルールの **APP_DB スキーマ** と、それを操作する `swssconfig` ベースの設定フローを規定している[^1]。
 
 要件は **Must Have (M)** と **Should Have (S)** に分かれており、リリース必須機能は[^1]:
 
@@ -292,4 +292,4 @@ show acl rule
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6946893a7d04 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

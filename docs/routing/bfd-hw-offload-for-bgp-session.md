@@ -46,7 +46,7 @@ related:
 
 ## 概要
 
-[FRR](../reference/glossary.md#term-frr)/bfdd の **[BFD](../reference/glossary.md#term-bfd) dataplane (DP) インターフェース** を経由して、[BGP](../reference/glossary.md#term-bgp) が要求した BFD セッションを SONiC の `BfdOrch` 経由でハードウェアオフロードする仕組み。SW BFD と比較して高速な障害検出と多数セッション収容を狙う[^1]。
+[FRR](../reference/glossary.md#term-frr)/bfdd の **[BFD](../reference/glossary.md#term-bfd) dataplane (DP) インターフェース** を経由して、[BGP](../reference/glossary.md#term-bgp) が要求した BFD セッションを [SONiC](../reference/glossary.md#term-sonic) の `BfdOrch` 経由でハードウェアオフロードする仕組み。SW BFD と比較して高速な障害検出と多数セッション収容を狙う[^1]。
 
 新規コンポーネント `bfdsyncd` が bgp コンテナ内で動作し、`bfdd` の DP socket と [Redis](../reference/glossary.md#term-redis) (`APPL_DB` / `STATE_DB`) の両側を仲介する。
 
@@ -288,4 +288,4 @@ docker exec bgp vtysh -c 'show bfd peers' | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: cba1420b5c94 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

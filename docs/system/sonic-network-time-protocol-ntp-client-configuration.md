@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-SONiC のシステム時刻は外部 NTP サーバから同期する[^1]。本 [HLD](../reference/glossary.md#term-hld) は [CONFIG_DB](../reference/glossary.md#term-config_db) の **`NTP` / `NTP_SERVER` / `NTP_KEY`** を真実源として、`hostcfgd` が `/etc/ntp.conf` (or `/etc/chrony/chrony.conf`) を rendering する設計を扱う。
+[SONiC](../reference/glossary.md#term-sonic) のシステム時刻は外部 NTP サーバから同期する[^1]。本 [HLD](../reference/glossary.md#term-hld) は [CONFIG_DB](../reference/glossary.md#term-config_db) の **`NTP` / `NTP_SERVER` / `NTP_KEY`** を真実源として、`hostcfgd` が `/etc/ntp.conf` (or `/etc/chrony/chrony.conf`) を rendering する設計を扱う。
 
 主要な観点:
 
@@ -259,4 +259,4 @@ sudo systemctl restart chrony
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 2fe85315ed00 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -44,7 +44,7 @@ related:
 
 ## 概要
 
-SONiC の MC-[LAG](../reference/glossary.md#term-lag)（Multi-Chassis LAG）は専用デーモン **ICCPd**（ICCP daemon、`docker-iccp` コンテナ内）で実装されている。ICCPd は IETF [RFC 7275](https://www.rfc-editor.org/rfc/rfc7275) の ICCP（Inter-Chassis Communication Protocol）を実装し、その上に MLACP（Multi-chassis LACP）を載せて 2 台のピア間で MC-LAG ポートチャネルを協調制御する[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の MC-[LAG](../reference/glossary.md#term-lag)（Multi-Chassis LAG）は専用デーモン **ICCPd**（ICCP daemon、`docker-iccp` コンテナ内）で実装されている。ICCPd は IETF [RFC 7275](https://www.rfc-editor.org/rfc/rfc7275) の ICCP（Inter-Chassis Communication Protocol）を実装し、その上に MLACP（Multi-chassis LACP）を載せて 2 台のピア間で MC-LAG ポートチャネルを協調制御する[^1]。
 
 このページは ICCPd ソースコードのファイル別役割を、[HLD](../reference/glossary.md#term-hld) のコード解説ドキュメントから再構成した **読み手のためのコードマップ** である。実装を追う際の入口に使う。
 
@@ -133,7 +133,7 @@ flowchart LR
     CLI2["iccp_cli.c\ndomain-id / local-ip / peer-ip /\npeer-link / mclag-interface"] --> SYS
 ```
 
-ICCPd 起動時、[CONFIG_DB](../reference/glossary.md#term-config_db) から `iccpd.j2` テンプレートを通じて `/etc/iccpd/iccpd.conf` を生成し、`iccp_cmd.c` がそれを読む[^1]。`system-id` は `localhost.mac`（DEVICE_METADATA 配下）を使う **グローバル設定** であり、CLI で変えるものではない。
+ICCPd 起動時、[CONFIG_DB](../reference/glossary.md#term-config_db) から `iccpd.j2` テンプレートを通じて `/etc/iccpd/iccpd.conf` を生成し、`iccp_cmd.c` がそれを読む[^1]。`system-id` は `localhost.mac`（[DEVICE_METADATA](../reference/glossary.md#term-device_metadata) 配下）を使う **グローバル設定** であり、CLI で変えるものではない。
 
 ### CLI / 表示経路
 
@@ -154,7 +154,7 @@ ICCPd (iccp_cmd_show.c) → 内部状態を整形して返却
 |---------|------|
 | MC-LAG link add | peer-link との **isolation を必ず付ける**（自リンクと peer-link で二重経路にならないように） |
 | MC-LAG link delete | peer-link からの isolation を解除 |
-| 自 MC-LAG link up | ピア側で同名 portchannel が up なら自リンクを peer-link から isolate（down なら isolation 解除）。同名ポート学習 MAC を ASIC へ、同名 IF 学習 ARP を Linux kernel へ追加 |
+| 自 MC-LAG link up | ピア側で同名 portchannel が up なら自リンクを peer-link から isolate（down なら isolation 解除）。同名ポート学習 MAC を [ASIC](../reference/glossary.md#term-asic) へ、同名 IF 学習 ARP を Linux kernel へ追加 |
 | 自 MC-LAG link down | peer-link と peer 側同名 LAG が共に up なら、同名ポート学習 MAC を peer-link 経由にリダイレクト。同名 IF 学習 ARP を kernel から削除 |
 | Peer link up | peer-link を経路とする MAC エントリを ASIC に登録 |
 | Peer link down | 同 MAC エントリを ASIC から削除 |
@@ -309,4 +309,4 @@ ICCPd 内部構成マップは現行 master と整合。`code-verified` に昇�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c187d8716cf1 -->
+<!-- glossary-links-injected: facf7233e77b -->

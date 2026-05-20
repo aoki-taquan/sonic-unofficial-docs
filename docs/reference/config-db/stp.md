@@ -36,19 +36,39 @@ related:
 
 ## 概要
 
-STP 設定は `stpmgrd` (sonic-swss/cfgmgr/stpmgrd.cpp) が CONFIG_DB を購読し、Unix Domain Socket (`/var/run/stpipc.sock`) 経由で STP デーモンに IPC メッセージを送信する。
-CLI の `config spanning-tree` コマンド (sonic-utilities/config/stp.py) が CONFIG_DB に書き込みを行う。
+STP 設定は `stpmgrd` ([sonic-swss](../../reference/glossary.md#term-sonic-swss)/cfgmgr/stpmgrd.cpp) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、Unix Domain Socket (`/var/run/stpipc.sock`) 経由で STP デーモンに IPC メッセージを送信する。
+CLI の `config spanning-tree` コマンド ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/stp.py) が [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込みを行う。
 
 テーブル構成:
 
 | テーブル | キー形式 | 役割 |
 |---|---|---|
 | `STP` | `GLOBAL` | グローバル STP 設定 (mode, タイマー, rootguard_timeout) |
-| `STP_VLAN` | `Vlan<vid>` | VLAN ごとの STP 設定 (タイマー, priority) |
+| `STP_VLAN` | `Vlan<vid>` | [VLAN](../../reference/glossary.md#term-vlan) ごとの STP 設定 (タイマー, priority) |
 | `STP_PORT` | `<intf_name>` | インタフェースごとの STP 設定 (guard, portfast 等) |
-| `STP_VLAN_PORT` | `Vlan<vid>\|<intf>` | per-VLAN per-port の path_cost / priority |
+| `STP_VLAN_PORT` | `Vlan<vid>\|<intf>` | per-[VLAN](../../reference/glossary.md#term-vlan) per-port の path_cost / priority |
 
 <!-- defaults -->
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>STP")]
+  DM["stpmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_DB")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_stp_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## 暗黙デフォルトとハードコード挙動
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-defaults.md -->
@@ -95,7 +115,7 @@ fvs = {
 
 ### 3. STP_VLAN — PVST 有効化時に全 VLAN へ自動適用
 
-PVST 有効化時に `enable_stp_for_vlans()` (`config/stp.py:251-266`) が全 VLAN に対して実行される。
+PVST 有効化時に `enable_stp_for_vlans()` (`config/stp.py:251-266`) が全 [VLAN](../../reference/glossary.md#term-vlan) に対して実行される。
 各 VLAN エントリのデフォルト値は `STP|GLOBAL` の値を継承する:
 
 ```python
@@ -222,7 +242,7 @@ PVST と MST でフィールド名が異なる:
 | MST | `bpdu_guard_do` |
 
 同一の物理的機能 (BPDU guard 発動時にポートを shutdown するか否か) にもかかわらず、フィールド名が統一されていない。
-`stpmgr.cpp:processStpPortAttr()` では `bpdu_guard_do_disable` のみ処理しており、MST の `bpdu_guard_do` は現在の実装では **処理されない可能性がある** (YANG-実装 discrepancy)。
+`stpmgr.cpp:processStpPortAttr()` では `bpdu_guard_do_disable` のみ処理しており、MST の `bpdu_guard_do` は現在の実装では **処理されない可能性がある** ([YANG](../../reference/glossary.md#term-yang)-実装 discrepancy)。
 
 証跡: `config/stp.py:294-298, 441-451`, `stpmgr.cpp:586-590`
 
@@ -239,7 +259,7 @@ STP タイマーは `validate_params()` (`config/stp.py:183-187`) により以�
 デフォルト値での検証: `2*(15-1)=28 >= 20 >= 2*(2+1)=6` → 満足
 
 この制約は `STP|GLOBAL` と `STP_VLAN` の両方で個別にチェックされる。
-stpmgrd 側での検証はなく、CONFIG_DB に不正値が書き込まれた場合の動作は未定義。
+stpmgrd 側での検証はなく、[CONFIG_DB](../../reference/glossary.md#term-config_db) に不正値が書き込まれた場合の動作は未定義。
 
 証跡: `config/stp.py:183-207`
 
@@ -291,10 +311,6 @@ stpmgrd 側の `STP_DEFAULT_MAX_INSTANCES = 255` (`stpmgr.h:38`) と整合して
 
 ## 引用元
 
-[^1]: STP CLI 実装: `config/stp.py`. <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py>
-[^2]: STP Manager 実装: `stpmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp>
-[^3]: STP Manager ヘッダ: `stpmgr.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h>
-
 <!-- ordering -->
 ## 処理順序・依存関係・warm-reboot 挙動
 
@@ -303,7 +319,7 @@ stpmgrd 側の `STP_DEFAULT_MAX_INSTANCES = 255` (`stpmgr.h:38`) と整合して
 ### 1. 起動前提条件 — PORT_INIT_DONE 待機
 
 `stpmgrd` は起動直後に `isPortInitDone()` (`stpmgr.cpp:1257-1273`) を呼び出し、
-APPL_DB の `APP_PORT_TABLE` に `PortInitDone` キーが出現するまで **1 秒ポーリングでブロッキング待機** する。
+[APPL_DB](../../reference/glossary.md#term-appl_db) の `APP_PORT_TABLE` に `PortInitDone` キーが出現するまで **1 秒ポーリングでブロッキング待機** する。
 `portsyncd` / `orchagent` が PORT テーブルを初期化しない限り、stpmgrd は STP 処理を開始できない。
 
 ```
@@ -323,7 +339,7 @@ APPL_DB:APP_PORT_TABLE|PortInitDone が存在する → 処理開始
 - `STP_VLAN_PORT` (`CFG_STP_VLAN_PORT_TABLE_NAME`)
 - `STP_PORT` (`CFG_STP_PORT_TABLE_NAME`)
 - `STP_MST` / `STP_MST_INST` / `STP_MST_PORT`
-- `PORTCHANNEL_MEMBER` (LAG メンバー更新)
+- `PORTCHANNEL_MEMBER` ([LAG](../../reference/glossary.md#term-lag) メンバー更新)
 - `STATE_VLAN_MEMBER` (State DB)
 
 各タスク関数には **bool フラグによるガード** が実装されており、
@@ -378,7 +394,7 @@ APPL_DB:APP_PORT_TABLE|PortInitDone が存在する → 処理開始
 ### 4. LAG (PortChannel) 依存
 
 `doStpPortTask()` はキーが `PortChannel` を含む場合に `isLagEmpty(key)` を確認する。
-LAG にメンバーが存在しない場合、SET をスキップする (`stpmgr.cpp:648-653`)。
+[LAG](../../reference/glossary.md#term-lag) にメンバーが存在しない場合、SET をスキップする (`stpmgr.cpp:648-653`)。
 この場合の再試行は `doLagMemUpdateTask()` による `m_lagMap` 更新後、次回 SELECT ループに依存する。
 
 証跡: `stpmgr.cpp:648-653, doLagMemUpdateTask()`
@@ -414,12 +430,12 @@ stpmgrd 自身の warm-reboot reconcile フェーズは **事実上スタブ** �
 
 | 参照先テーブル / リソース | DB | 参照方向 | 条件 | 参照元 evidence |
 |---|---|---|---|---|
-| `APP_PORT_TABLE\|PortInitDone` | APPL_DB | 起動ガード（存在確認） | 常時。stpmgrd 起動直後に 1 秒ポーリング。`portsyncd`/`orchagent` が書き込むまで全 STP 処理が停止 | `stpmgr.cpp:1257-1273`, `stpmgrd.cpp:72` |
-| `STATE_VLAN_TABLE\|<vlan>` | STATE_DB | 存在確認 → SET/スキップ判定 | `STP_VLAN` の各 SET 前に `isVlanStateOk()` で参照。エントリなしなら silent skip | `stpmgr.cpp:210, 1276-1290` |
-| `STATE_LAG_TABLE\|<lag>` | STATE_DB | 存在確認 → SET/スキップ判定 | `STP_PORT` / `STP_VLAN_PORT` でキーが PortChannel の場合に `isLagStateOk()` で参照 | `stpmgr.cpp:1291-1305` |
-| `STATE_STP_TABLE\|<key>` | STATE_DB | 既存エントリ確認 | `doStpVlanPortTask()` 内でポート STP 状態確認 | `stpmgr.cpp:1391` |
+| `APP_PORT_TABLE\|PortInitDone` | [APPL_DB](../../reference/glossary.md#term-appl_db) | 起動ガード（存在確認） | 常時。stpmgrd 起動直後に 1 秒ポーリング。`portsyncd`/`orchagent` が書き込むまで全 STP 処理が停止 | `stpmgr.cpp:1257-1273`, `stpmgrd.cpp:72` |
+| `STATE_VLAN_TABLE\|<vlan>` | [STATE_DB](../../reference/glossary.md#term-state_db) | 存在確認 → SET/スキップ判定 | `STP_VLAN` の各 SET 前に `isVlanStateOk()` で参照。エントリなしなら silent skip | `stpmgr.cpp:210, 1276-1290` |
+| `STATE_LAG_TABLE\|<lag>` | [STATE_DB](../../reference/glossary.md#term-state_db) | 存在確認 → SET/スキップ判定 | `STP_PORT` / `STP_VLAN_PORT` でキーが [PortChannel](../../reference/glossary.md#term-portchannel) の場合に `isLagStateOk()` で参照 | `stpmgr.cpp:1291-1305` |
+| `STATE_STP_TABLE\|<key>` | [STATE_DB](../../reference/glossary.md#term-state_db) | 既存エントリ確認 | `doStpVlanPortTask()` 内でポート STP 状態確認 | `stpmgr.cpp:1391` |
 | `VLAN_MEMBER\|<vlan>\|<port>` | CONFIG_DB | VLAN メンバーシップ解決 | `doStpVlanPortTask()` での VLAN メンバー確認。未所属ポートは設定遅延 | `stpmgr.cpp:1366` |
-| `LAG_MEMBER\|<lag>\|<port>` | CONFIG_DB | LAG メンバー数管理 | `doLagMemUpdateTask()` が `m_lagMap` を更新。メンバーなし LAG は STP_PORT SET がスキップ | `stpmgr.cpp:648-653, doLagMemUpdateTask()` |
+| `LAG_MEMBER\|<lag>\|<port>` | CONFIG_DB | [LAG](../../reference/glossary.md#term-lag) メンバー数管理 | `doLagMemUpdateTask()` が `m_lagMap` を更新。メンバーなし LAG は STP_PORT SET がスキップ | `stpmgr.cpp:648-653, doLagMemUpdateTask()` |
 | `STP_MST` / `STP_MST_INST` / `STP_MST_PORT` | CONFIG_DB | MST モード時の主購読 | `mode = "mst"` 時のみ使用。PVST 時はこれらのテーブルが処理されない | `stpmgrd.cpp:47-54`, `stpmgr.cpp:1023-1031, 1155-1160` |
 
 !!! note "STATE_DB 参照は silent skip のトリガ"
@@ -533,7 +549,7 @@ IPC 送信失敗後もエントリは `consumer.m_toSync.erase(it)` で消費さ
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`stpmgrd` / `config/stp.py` が設定・運用で使う固定値の一覧。CONFIG_DB・DEVICE_METADATA 等の外部入力では変更不能。
+`stpmgrd` / `config/stp.py` が設定・運用で使う固定値の一覧。CONFIG_DB・[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 等の外部入力では変更不能。
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-constants.md -->
 
@@ -666,13 +682,13 @@ PVST モード切替時に `stpmgr` が `ebtables` をシステムコールで�
 
 ### 3. STATE_DB `STP_TABLE|GLOBAL.max_stp_inst` 書込 (`stporch.cpp:612`)
 
-`StpOrch` は orchagent 起動時に SAI から `sai_switch_attr_max_stp_instance` を取得し、STATE_DB の `STP_TABLE|GLOBAL` に `max_stp_inst` フィールドを 1 回書き込む。
+`StpOrch` は [orchagent](../../reference/glossary.md#term-orchagent) 起動時に [SAI](../../reference/glossary.md#term-sai) から `sai_switch_attr_max_stp_instance` を取得し、STATE_DB の `STP_TABLE|GLOBAL` に `max_stp_inst` フィールドを 1 回書き込む。
 
 | 副次キー | DB | 書込タイミング | 読み手 |
 |---------|-----|---------------|--------|
-| `STP_TABLE\|GLOBAL.max_stp_inst` | STATE_DB | orchagent 起動時 1 回のみ | `stpmgr.cpp:1391` — PVST インスタンス数上限として使用 |
+| `STP_TABLE\|GLOBAL.max_stp_inst` | STATE_DB | [orchagent](../../reference/glossary.md#term-orchagent) 起動時 1 回のみ | `stpmgr.cpp:1391` — PVST インスタンス数上限として使用 |
 
-CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。SAI 取得失敗時は `255` を書き込む。
+CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。[SAI](../../reference/glossary.md#term-sai) 取得失敗時は `255` を書き込む。
 
 ### CONFIG_DB / APP_DB への直接書込みなし
 
@@ -685,7 +701,7 @@ CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。SA
 <!-- pubsub -->
 ## 通知メカニズム (Phase G)
 
-`STP` / `STP_VLAN` / `STP_PORT` / `STP_VLAN_PORT` (CONFIG_DB) への変更は、**keyspace 通知** ベースの `SubscriberStateTable` で `stpmgrd` に配送され、さらに Unix Domain Socket (UDS) 経由で STP デーモン (`stpd`) に転送される。その後 `stpd` が APPL_DB に書き込んだエントリを orchagent の `StpOrch` が **ConsumerStateTable** (channel PUBLISH/SUBSCRIBE) で消費する。
+`STP` / `STP_VLAN` / `STP_PORT` / `STP_VLAN_PORT` (CONFIG_DB) への変更は、**keyspace 通知** ベースの `SubscriberStateTable` で `stpmgrd` に配送され、さらに Unix Domain Socket (UDS) 経由で STP デーモン (`stpd`) に転送される。その後 `stpd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込んだエントリを [orchagent](../../reference/glossary.md#term-orchagent) の `StpOrch` が **[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** (channel PUBLISH/SUBSCRIBE) で消費する。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/stp-pubsub.md`
 
@@ -757,14 +773,14 @@ while (true) {
 
 ### APPL_DB → StpOrch: ConsumerStateTable
 
-`StpOrch` は `Orch(db, tableNames)` (APPL_DB, dbId=0) として初期化される (stporch.cpp:17-18)。APPL_DB は `addConsumer()` の else 分岐 → **ConsumerStateTable** (channel PUBLISH/SUBSCRIBE) が使用される:
+`StpOrch` は `Orch(db, tableNames)` (APPL_DB, dbId=0) として初期化される (stporch.cpp:17-18)。APPL_DB は `addConsumer()` の else 分岐 → **[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** (channel PUBLISH/SUBSCRIBE) が使用される:
 
-| APPL_DB テーブル | 処理ハンドラ | SAI 操作 |
+| APPL_DB テーブル | 処理ハンドラ | [SAI](../../reference/glossary.md#term-sai) 操作 |
 |----------------|------------|---------|
 | `STP_VLAN_INSTANCE_TABLE` | `doStpTask()` (stporch.cpp:380) | `sai_vlan_api` VLAN-STP インスタンス関連付け |
 | `STP_PORT_STATE_TABLE` | `doStpPortStateTask()` (stporch.cpp:429) | `sai_stp_api->set_stp_port_state()` |
 | `STP_FASTAGEING_FLUSH_TABLE` | `doStpFastAgeFlushTask()` | `gFdbOrch->flushFdbByVlan()` |
-| `STP_INST_PORT_FLUSH_TABLE` | (flush ハンドラ) | FDB flush |
+| `STP_INST_PORT_FLUSH_TABLE` | (flush ハンドラ) | [FDB](../../reference/glossary.md#term-fdb) flush |
 
 orchdaemon の select timeout: `SELECT_TIMEOUT = 1000` ms (orchdaemon.cpp:23,959)。
 
@@ -779,15 +795,15 @@ orchdaemon の select timeout: `SELECT_TIMEOUT = 1000` ms (orchdaemon.cpp:23,959
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`stpmgrd` は SAI / ASIC SDK を一切経由しない純粋なソフトウェア STP 実装。プラットフォーム依存の挙動は以下の 2 点に集約される。
+`stpmgrd` は SAI / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を一切経由しない純粋なソフトウェア STP 実装。プラットフォーム依存の挙動は以下の 2 点に集約される。
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-platform.md -->
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | PVST インスタンス上限のみ影響 | `getStpMaxInstances()` が `STATE_STP_TABLE\|GLOBAL.max_stp_inst` を読み取り、ASIC 能力 (`sai_switch_attr_max_stp_instance`) が実効上限になる。stpmgrd の処理ロジック自体は ASIC 非依存 (`stpmgr.cpp:1381-1413`) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | PVST インスタンス上限のみ影響 | `getStpMaxInstances()` が `STATE_STP_TABLE\|GLOBAL.max_stp_inst` を読み取り、[ASIC](../../reference/glossary.md#term-asic) 能力 (`sai_switch_attr_max_stp_instance`) が実効上限になる。stpmgrd の処理ロジック自体は [ASIC](../../reference/glossary.md#term-asic) 非依存 (`stpmgr.cpp:1381-1413`) |
 | multi-asic (`is_multi_npu() == True`) | 非対応 | `stpmgrd.cpp:35-37` は `DBConnector` をすべて `DEFAULT_UNIXSOCKET`（ホスト namespace）で生成。`is_multi_npu()` / CHASSIS_APP_DB 参照なし。asicN namespace の STP は管理されない |
-| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | stpmgrd はホスト単体スコープ。他カードとの PVST 状態同期機構は存在しない |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | stpmgrd はホスト単体スコープ。他カードとの PVST 状態同期機構は存在しない |
 | VS（仮想スイッチ） | `max_stp_instances` がフォールバック 255 | VS では `StpOrch` が `STATE_STP_TABLE\|GLOBAL.max_stp_inst` を書き込まない場合が多く、`STP_DEFAULT_MAX_INSTANCES = 255` が使われる |
 | warm-reboot | 全プラットフォーム共通スタブ | `WarmStart::initialize/checkWarmStart` を呼ぶが `setWarmStartState()` および reconcile ロジックは未実装。cold reboot と同一フロー |
 | PVST BPDU ebtables ルール | ASIC 非依存（カーネル依存のみ） | `ebtables -A FORWARD -d 01:00:0c:cc:cc:cd -j DROP` はカーネルの ebtables モジュール使用。ASIC ベンダー固有処理なし (`stpmgr.cpp:113`) |
@@ -804,3 +820,5 @@ orchdaemon の select timeout: `SELECT_TIMEOUT = 1000` ms (orchdaemon.cpp:23,959
 - [CONFIG_DB: VLAN](vlan.md)
 - [CONFIG_DB: PORT](port.md)
 - [CONFIG_DB: PORTCHANNEL](portchannel.md)
+
+<!-- glossary-links-injected: 07d24e4e47ef -->

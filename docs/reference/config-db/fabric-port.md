@@ -97,11 +97,11 @@ FABRIC_PORT|<name>
 
 CONFIG_DB の `isolateStatus=False` を設定しても、`FabricPortsOrch` 内の `autoIsolated` フラグが 1 の場合は SAI 上の isolate 状態が維持される。実効 isolate 状態は `cfgIsolated OR autoIsolated OR permIsolated` の論理 OR で決まり、`CONFIG_DB` の値だけでは SAI 状態を保証できない（`fabricportsorch.cpp` `updateFabricDebugCounters`）。
 
-`monState=disable` の場合、`isolateStatus` の変更は CONFIG_DB / APPL_DB には書かれるが、`FabricPortsOrch` の `doFabricPortTask` が early return するため SAI への反映がスキップされる（経路依存乖離）。monState を後から enable に変更しても pending 分は再適用されない。
+`monState=disable` の場合、`isolateStatus` の変更は CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) には書かれるが、`FabricPortsOrch` の `doFabricPortTask` が early return するため SAI への反映がスキップされる（経路依存乖離）。monState を後から enable に変更しても pending 分は再適用されない。
 
 ### `isolateStatus` — silent drop + fallback
 
-`doFabricPortTask` は個別フィールドのみの更新（partial update）を受け取ることがある。その際 `isolateStatus=""` の場合 APPL_DB から `hget` で再取得する。`alias` または `lanes` も欠如している場合は処理を silent skip する（`fabricportsorch.cpp:1480-1484`）。
+`doFabricPortTask` は個別フィールドのみの更新（partial update）を受け取ることがある。その際 `isolateStatus=""` の場合 [APPL_DB](../../reference/glossary.md#term-appl_db) から `hget` で再取得する。`alias` または `lanes` も欠如している場合は処理を silent skip する（`fabricportsorch.cpp:1480-1484`）。
 
 ### `isolateStatus` — 大文字小文字制約
 
@@ -113,11 +113,11 @@ FabricPortsOrch は `applResult == "True"` で比較する。YANG の `boolean_t
 
 ### `forceUnisolateStatus` — エッジトリガ（冪等ではない）
 
-`forceUnisolateStatus` は単なるフラグではなくカウンタ。CLI `unisolate -f` は現在値 +1 を書き込む（`fabric.py:108-111`）。FabricPortsOrch は STATE_DB の `FORCE_UN_ISOLATE` と比較し、値が異なる場合のみ force unisolate を実行する（`fabricportsorch.cpp:1517-1542`）。同じ値を 2 回書いても 2 回目は効果なし。
+`forceUnisolateStatus` は単なるフラグではなくカウンタ。CLI `unisolate -f` は現在値 +1 を書き込む（`fabric.py:108-111`）。FabricPortsOrch は [STATE_DB](../../reference/glossary.md#term-state_db) の `FORCE_UN_ISOLATE` と比較し、値が異なる場合のみ force unisolate を実行する（`fabricportsorch.cpp:1517-1542`）。同じ値を 2 回書いても 2 回目は効果なし。
 
 ### `forceUnisolateStatus` — 永続 isolate との関係（複合必須制約）
 
-force unisolate 後、STATE_DB の `POLL_WITH_NO_ERRORS` が 8（`m_defaultPollWithNoErrors`）、`POLL_WITH_NOFEC_ERRORS` が 8（`m_defaultPollWithNoFecErrors`）にリセットされる。これらのデフォルト値はハードコードされており（`fabricportsorch.h:63,65`）、FABRIC_MONITOR の設定（`monPollThreshRecovery`）と無関係にリセットされる。
+force unisolate 後、[STATE_DB](../../reference/glossary.md#term-state_db) の `POLL_WITH_NO_ERRORS` が 8（`m_defaultPollWithNoErrors`）、`POLL_WITH_NOFEC_ERRORS` が 8（`m_defaultPollWithNoFecErrors`）にリセットされる。これらのデフォルト値はハードコードされており（`fabricportsorch.h:63,65`）、FABRIC_MONITOR の設定（`monPollThreshRecovery`）と無関係にリセットされる。
 
 ### `lanes` — SAI lane ID への直接変換
 
@@ -166,7 +166,7 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 |---|----------|------|--------|
 | 1 | SAI `getFabricPortList()` 完了 → ポート状態更新・デバッグカウンタ収集 | **強制先行** | `m_getFabricPortListDone` フラグが false の間、`updateFabricPortState()` / `updateFabricDebugCounters()` は全てスキップ（`fabricportsorch.cpp:1568-1576`, `1594-1598`） |
 | 2 | `APPL_DB APP_FABRIC_MONITOR_DATA` の `monState=enable` → `doFabricPortTask()` の実行 | **強制先行（機能 ON/OFF）** | `checkFabricPortMonState()` が false を返すと `doFabricPortTask()` が early return し、CONFIG_DB の `isolateStatus` 変更は SAI に反映されない（`fabricportsorch.cpp:1396-1399`） |
-| 3 | `STATE_DB FABRIC_PORT_TABLE|PORT<lane>` エントリ存在 → `forceUnisolateStatus` 差分比較 | 条件付き先行 | STATE_DB エントリ不在の場合は `FORCE_UN_ISOLATE` を 0 扱いで比較するため、`forceUnisolateStatus=0` の config では force unisolate がスキップされる（`fabricportsorch.cpp:1499-1516`） |
+| 3 | `STATE_DB FABRIC_PORT_TABLE|PORT<lane>` エントリ存在 → `forceUnisolateStatus` 差分比較 | 条件付き先行 | [STATE_DB](../../reference/glossary.md#term-state_db) エントリ不在の場合は `FORCE_UN_ISOLATE` を 0 扱いで比較するため、`forceUnisolateStatus=0` の config では force unisolate がスキップされる（`fabricportsorch.cpp:1499-1516`） |
 | 4 | `alias` + `lanes` + `isolateStatus` の 3 フィールド揃い → isolate 処理実行 | **強制先行（データ完全性）** | いずれか 1 つでも空の場合は APPL_DB から `hget` で補完を試み、それでも欠落なら `m_toSync` から erase して silent drop（`fabricportsorch.cpp:1436-1484`） |
 | 5 | CONFIG_DB 変更 → fabricmgrd が APPL_DB `APP_FABRIC_MONITOR_PORT_TABLE` に書き込み → `doFabricPortTask()` 実行 | 非同期パイプライン | fabricmgrd のポーリング間隔分の遅延が発生する。CONFIG_DB を変更しても即座に SAI 状態は変わらない |
 
@@ -207,7 +207,7 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 
 `sai_switch_api->get_switch_attribute(SAI_SWITCH_ATTR_NUMBER_OF_FABRIC_PORTS)` が失敗した場合、`handleSaiGetStatus()` を呼び出す。`task_success` 以外が返れば `FABRIC_PORT_ERROR (0)` を返して関数を終了し、`m_getFabricPortListDone` は `false` のまま維持される（`fabricportsorch.cpp:172-180`）。
 
-この状態では `updateFabricPortState()` / `updateFabricDebugCounters()` が冒頭の `if (!m_getFabricPortListDone) return;` でスキップされ続けるため、STATE_DB へのファブリックポート状態書き込みと FlexCounter 登録が一切行われない。30 秒ポーリング (`FABRIC_POLL`) のたびに再試行されるが、SAI が capability を返せる状態になるまでこの状態が継続する。
+この状態では `updateFabricPortState()` / `updateFabricDebugCounters()` が冒頭の `if (!m_getFabricPortListDone) return;` でスキップされ続けるため、STATE_DB へのファブリックポート状態書き込みと [FlexCounter](../../reference/glossary.md#term-flexcounter) 登録が一切行われない。30 秒ポーリング (`FABRIC_POLL`) のたびに再試行されるが、SAI が capability を返せる状態になるまでこの状態が継続する。
 
 #### 1b / 1c. `FABRIC_PORT_LIST` / レーン番号取得失敗（orchagent 異常終了）
 
@@ -252,7 +252,7 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 
 - `monState` は `doFabricPortTask()` 呼び出しのたびに毎回評価される（キャッシュなし）。`FABRIC_MONITOR.monState` を `disable` → `enable` に変更しても、その間に届いた `FABRIC_PORT` の CONFIG_DB 変更は `m_toSync` から erase 済みのため**自動再適用されない**。
 - `FORCE_UN_ISOLATE` は STATE_DB エントリが存在しない場合、デフォルト 0 として比較される。`forceUnisolateStatus=0` の SET は差分なし（0==0）となり force unisolate が実行されない。
-- SAI `getFabricPortList()` 失敗時は 30 秒ポーリングで再試行される。成功まで COUNTERS_DB への FlexCounter 登録と STATE_DB への状態書き込みは行われない。
+- SAI `getFabricPortList()` 失敗時は 30 秒ポーリングで再試行される。成功まで [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への [FlexCounter](../../reference/glossary.md#term-flexcounter) 登録と STATE_DB への状態書き込みは行われない。
 
 > **Evidence**: `sonic-swss` `orchagent/fabricportsorch.cpp:80-228,420-520,1394-1542`、`cfgmgr/fabricmgr.cpp:14-124`、`sonic-swss-common/common/schema.h` (`APP_FABRIC_PORT_TABLE_NAME`, `COUNTERS_FABRIC_PORT_NAME_MAP`)、`orchdaemon.cpp:26-27` (`APP_FABRIC_MONITOR_PORT_TABLE_NAME`, `APP_FABRIC_MONITOR_DATA_TABLE_NAME`)
 <!-- /cross-refs -->
@@ -270,7 +270,7 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 | `APP_FABRIC_MONITOR_PORT_TABLE_NAME` | `"FABRIC_PORT_TABLE"` | APPL_DB | `schema.h:549` |
 | `APP_FABRIC_PORT_TABLE_NAME` | `"FABRIC_PORT_TABLE"` | STATE_DB | `schema.h:40` |
 | `APP_FABRIC_MONITOR_DATA_TABLE_NAME` | `"FABRIC_MONITOR_TABLE"` | APPL_DB | `schema.h:548` |
-| `COUNTERS_FABRIC_PORT_NAME_MAP` | `"COUNTERS_FABRIC_PORT_NAME_MAP"` | COUNTERS_DB | `schema.h:255` |
+| `COUNTERS_FABRIC_PORT_NAME_MAP` | `"COUNTERS_FABRIC_PORT_NAME_MAP"` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `schema.h:255` |
 | `STATE_FABRIC_CAPACITY_TABLE_NAME` | `"FABRIC_CAPACITY_TABLE"` | STATE_DB | `fabricportsorch.h:15` |
 | `STATE_PORT_CAPACITY_TABLE_NAME` | `"PORT_CAPACITY_TABLE"` | STATE_DB | `fabricportsorch.h:16` |
 
@@ -304,7 +304,7 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 | マクロ名 | 値 | 用途 |
 |---|---|---|
 | `FABRIC_PORT_PREFIX` | `"PORT"` | STATE_DB キー生成 (`PORT<lane>`) |
-| `APPL_FABRIC_PORT_PREFIX` | `"Fabric"` | COUNTERS_DB 名前マップのポート名プレフィックス |
+| `APPL_FABRIC_PORT_PREFIX` | `"Fabric"` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 名前マップのポート名プレフィックス |
 | `FABRIC_MONITOR_DATA` | `"FABRIC_MONITOR_DATA"` | APPL_DB `monState` 取得時のキー |
 | `FABRIC_PORT_ERROR` | `0` | `getFabricPortList()` 失敗時の戻り値 |
 | `FABRIC_PORT_SUCCESS` | `1` | `getFabricPortList()` 成功時の戻り値 |
@@ -313,12 +313,12 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 
 | マクロ名 | 値 | 用途 |
 |---|---|---|
-| `FABRIC_PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"FABRIC_PORT_STAT_COUNTER"` | ポートレベル FlexCounter グループ名 |
+| `FABRIC_PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"FABRIC_PORT_STAT_COUNTER"` | ポートレベル [FlexCounter](../../reference/glossary.md#term-flexcounter) グループ名 |
 | `FABRIC_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"FABRIC_QUEUE_STAT_COUNTER"` | キューレベル FlexCounter グループ名 |
 | `SWITCH_DEBUG_COUNTER_FLEX_COUNTER_GROUP` | `"SWITCH_DEBUG_COUNTER"` | スイッチドロップカウンタ FlexCounter グループ名 |
 | `SWITCH_STANDARD_DROP_COUNTERS` | `"SWITCH_ID"` | COUNTERS_DB デバッグ名前マップのキー |
 
-`FabricPortsOrch` はポーリング間隔・FlexCounter 周期・リンク監視閾値のほぼ全てをソース上の `#define` またはクラスメンバ初期化子に固定している。これらは CONFIG_DB・DEVICE_METADATA・FABRIC_MONITOR のいずれからも変更できない。一部は FABRIC_MONITOR テーブルのフィールド（`monPollThreshIsolation` 等）で実行時に上書きされるが、上書き不可の定数が多数残る。
+`FabricPortsOrch` はポーリング間隔・FlexCounter 周期・リンク監視閾値のほぼ全てをソース上の `#define` またはクラスメンバ初期化子に固定している。これらは CONFIG_DB・[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata)・FABRIC_MONITOR のいずれからも変更できない。一部は FABRIC_MONITOR テーブルのフィールド（`monPollThreshIsolation` 等）で実行時に上書きされるが、上書き不可の定数が多数残る。
 
 ### ポーリング間隔（`fabricportsorch.cpp:21-48`）
 
@@ -550,7 +550,7 @@ APPL_DB (DB=0)
 
 `fabricmgrd.cpp:27-35` にて `FabricMgr` を `Orch` 派生として構築する際、`Orch::Orch(DBConnector*, vector<string>)` 経由で各テーブルに対して `addConsumer()` → `Consumer(new SubscriberStateTable(...))` を生成する。
 
-| 購読元 | DB | Redis DB 番号 | テーブル定数 | 実テーブル名 | PSUBSCRIBE パターン |
+| 購読元 | DB | [Redis](../../reference/glossary.md#term-redis) DB 番号 | テーブル定数 | 実テーブル名 | PSUBSCRIBE パターン |
 |--------|----|--------------|------------|------------|-------------------|
 | CONFIG_DB | CONFIG_DB | 4 | `CFG_FABRIC_MONITOR_PORT_TABLE_NAME` | `FABRIC_PORT` | `__keyspace@4__:FABRIC_PORT\|*` |
 
@@ -568,7 +568,7 @@ APPL_DB (DB=0)
 
 `orchdaemon.cpp:603-607` にて `FabricPortsOrch` を初期化する際、以下の 2 テーブルが `SubscriberStateTable` として登録される。orchagent 主ループの SELECT_TIMEOUT は `1000` ms (`orchdaemon.cpp:23`)。
 
-| 購読元 | DB | Redis DB 番号 | テーブル定数 | 実テーブル名 | PSUBSCRIBE パターン | 優先度 |
+| 購読元 | DB | [Redis](../../reference/glossary.md#term-redis) DB 番号 | テーブル定数 | 実テーブル名 | PSUBSCRIBE パターン | 優先度 |
 |--------|----|--------------|------------|------------|-------------------|-------|
 | APPL_DB | APPL_DB | 0 | `APP_FABRIC_MONITOR_PORT_TABLE_NAME` | `FABRIC_PORT_TABLE` | `__keyspace@0__:FABRIC_PORT_TABLE\|*` | 30 |
 | APPL_DB | APPL_DB | 0 | `APP_FABRIC_MONITOR_DATA_TABLE_NAME` | `FABRIC_MONITOR_TABLE` | `__keyspace@0__:FABRIC_MONITOR_TABLE\|*` | 30 |
@@ -637,7 +637,6 @@ show fabric counters port
 > **Evidence**: [sonic-swss](../../reference/glossary.md#term-sonic-swss) `orchagent/fabricportsorch.cpp:179-396,534-536`
 <!-- /cdb-exceptions -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -645,7 +644,7 @@ show fabric counters port
 
 `fabricmgrd` → `FabricPortsOrch` (APPL_DB 経由) が CONFIG_DB の `FABRIC_PORT` テーブルを購読する。
 
-`FABRIC_PORT` は Chassis の fabric ASIC ポートを管理。通常の ToR では使用しない。
+`FABRIC_PORT` は Chassis の fabric [ASIC](../../reference/glossary.md#term-asic) ポートを管理。通常の ToR では使用しない。
 
 ### 段階 2 — CFG→APPL 翻訳
 
@@ -675,7 +674,7 @@ fabric 固有 SAI (fabric port enable/isolate)
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -690,4 +689,4 @@ fabric 固有 SAI (fabric port enable/isolate)
 - なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 5db0229b5faf -->
+<!-- glossary-links-injected: 7f69824d178b -->

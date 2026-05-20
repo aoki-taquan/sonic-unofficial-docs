@@ -46,21 +46,19 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>ACL_TABLE (CTRLPLANE)")]
+  CDB[("CONFIG_DB<br/>ACL_TABLE")]
   DM["AclOrch"]
   CDB --> DM
-  DM -->|"m_ctrlAclTables<br/>(SAI 投入なし)"| MEM["orchagent 内部"]
-  COPP_CDB[("CONFIG_DB<br/>COPP_GROUP / COPP_TRAP")]
-  COPPMGR["coppmgrd"]
-  COPP_CDB --> COPPMGR
-  APPDB[("APP_DB<br/>COPP_TABLE")]
-  COPPMGR --> APPDB
-  SAI["SAI<br/>sai_hostif_api"]
-  APPDB --> SAI
+  APPDB[("APP_DB<br/>APP_ACL_TABLE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_acl_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CTRLPLANE ACL テーブルは orchagent が SAI に渡さない。実際の CPU 宛パケット制御は COPP_GROUP/COPP_TRAP 経路が担う。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -69,21 +67,21 @@ flowchart LR
 ACL_TABLE|<table_name>
 ```
 
-`<table_name>` はユーザ任意の文字列。`type` フィールドに `CTRLPLANE` を指定することでコントロールプレーン ACL として扱われる。
+`<table_name>` はユーザ任意の文字列。`type` フィールドに `CTRLPLANE` を指定することでコントロールプレーン [ACL](../../reference/glossary.md#term-acl) として扱われる。
 
 ## フィールド一覧
 
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
-| `type` | `CTRLPLANE` (固定) | ✅ | コントロールプレーン ACL を示す type 値 |
+| `type` | `CTRLPLANE` (固定) | ✅ | コントロールプレーン [ACL](../../reference/glossary.md#term-acl) を示す type 値 |
 | `policy_desc` | string | - | テーブルの説明文 |
-| `stage` | enum `ingress`/`egress` | - | ACL 適用段 (CTRLPLANE では orchagent が無視) |
-| `services` | カンマ区切り string | - | サービス名リスト (orchagent が読み捨て) |
+| `stage` | enum `ingress`/`egress` | - | ACL 適用段 (CTRLPLANE では [orchagent](../../reference/glossary.md#term-orchagent) が無視) |
+| `services` | カンマ区切り string | - | サービス名リスト ([orchagent](../../reference/glossary.md#term-orchagent) が読み捨て) |
 | `ports` | カンマ区切り PORT 名 | - | バインドポート (CTRLPLANE では通常空) |
 
 ## 購読者
 
-- `orchagent` の `AclOrch`: `m_ctrlAclTables` に記録するのみ。SAI テーブル未生成
+- `orchagent` の `AclOrch`: `m_ctrlAclTables` に記録するのみ。[SAI](../../reference/glossary.md#term-sai) テーブル未生成
 - `AclOrch::doAclRuleTask()`: `m_ctrlAclTables` に登録済みのテーブル名の ACL_RULE は INFO ログ後 erase (無視)
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -98,7 +96,7 @@ ACL_TABLE|<table_name>
 | 条件 | 挙動 |
 |------|------|
 | `type=CTRLPLANE` | `AclTable::validate()` が stage チェックをスキップして即 `return true` |
-| `type=CTRLPLANE` + `addAclTable()` | SAI `create_acl_table` を呼ばず `m_ctrlAclTables` に追加して即 return |
+| `type=CTRLPLANE` + `addAclTable()` | [SAI](../../reference/glossary.md#term-sai) `create_acl_table` を呼ばず `m_ctrlAclTables` に追加して即 return |
 | `ACL_TABLE_SERVICES` フィールド | `doAclTableTask()` 内で `continue`（完全無視） |
 | `ACL_RULE` を CTRLPLANE テーブルに追加 | `doAclRuleTask()` が `m_ctrlAclTables` でキーを発見 → INFO ログ + erase |
 | default trap group DEL 試行 | `CoppOrch` が `"Cannot remove default trap group"` と WARN して task_ignore を返す |
@@ -119,13 +117,13 @@ CTRLPLANE を `TABLE_TYPE_CTRLPLANE` マクロで定義 (`acltable.h:33`)。
 
 ### `services` 値別挙動
 
-YANG では `must` 制約で CTRLPLANE 時に必須とされるが、orchagent は `continue` で無視する。
+[YANG](../../reference/glossary.md#term-yang) では `must` 制約で CTRLPLANE 時に必須とされるが、[orchagent](../../reference/glossary.md#term-orchagent) は `continue` で無視する。
 
 | 経路 | 挙動 |
 |---|---|
 | minigraph.py | XML `<Type>` 要素テキストを `services` リストに追加 (minigraph.py:1232,1247) |
 | orchagent (doAclTableTask) | `continue` で完全無視 (aclorch.cpp:5410-5413) |
-| CoPP 実際の制御 | `COPP_TRAP.trap_ids` フィールドが担う (copporch.cpp:26) |
+| [CoPP](../../reference/glossary.md#term-copp) 実際の制御 | `COPP_TRAP.trap_ids` フィールドが担う (copporch.cpp:26) |
 
 ### `stage` 値別挙動 (CTRLPLANE での特殊性)
 
@@ -165,7 +163,7 @@ minigraph.py は `acl_intfs` リストが空 (インターフェースバイン�
 
 ### CTRLPLANE ACL ルールの扱い
 
-`ACL_RULE|<ctrlplane_table>|<rule>` が CONFIG_DB に存在する場合、orchagent の `doAclRuleTask()` は `m_ctrlAclTables` でテーブルを検索し、見つかれば INFO ログ `"Skip control plane ACL rule"` を出力してエントリを erase する (aclorch.cpp:5556-5560)。ACL_RULE は SAI に一切送出されない。
+`ACL_RULE|<ctrlplane_table>|<rule>` が [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在する場合、orchagent の `doAclRuleTask()` は `m_ctrlAclTables` でテーブルを検索し、見つかれば INFO ログ `"Skip control plane ACL rule"` を出力してエントリを erase する (aclorch.cpp:5556-5560)。ACL_RULE は SAI に一切送出されない。
 
 ### LSP トレース証跡
 
@@ -238,20 +236,20 @@ CTRLPLANE ACL の実体は `caclmgrd` が管理する iptables ルール群で�
 | 1 | デフォルトポリシー ACCEPT (INPUT/FORWARD/OUTPUT) | 設定 | フラッシュ中の接続断を防ぐ |
 | 2 | 既存チェーン flush・delete | 削除 | DualToR 時 DHCP チェーンは保持 |
 | 3 | loopback 127.0.0.1/::1 ACCEPT | INPUT | 常時 |
-| 4 | BFD UDP 3784,4784 ACCEPT | INPUT -I 2 | BFD セッションが STATE_DB に存在する場合のみ |
+| 4 | [BFD](../../reference/glossary.md#term-bfd) UDP 3784,4784 ACCEPT | INPUT -I 2 | [BFD](../../reference/glossary.md#term-bfd) セッションが [STATE_DB](../../reference/glossary.md#term-state_db) に存在する場合のみ |
 | 5 | VxLAN UDP 4789 ACCEPT | INPUT -I 2 | VXLAN_TUNNEL に src_ip がある場合のみ |
-| 6 | DASH-HA swbus_port ACCEPT | INPUT -I 2 | dash-ha feature が存在する場合のみ |
-| 7 | 内部 Docker IP ACCEPT | INPUT | multi-ASIC 時のみ実質追加 |
-| 8 | Chassis midplane ACCEPT | INPUT | chassis / SmartSwitch 時のみ |
+| 6 | [DASH](../../reference/glossary.md#term-dash)-HA swbus_port ACCEPT | INPUT -I 2 | dash-ha feature が存在する場合のみ |
+| 7 | 内部 Docker IP ACCEPT | INPUT | multi-[ASIC](../../reference/glossary.md#term-asic) 時のみ実質追加 |
+| 8 | Chassis midplane ACCEPT | INPUT | chassis / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 時のみ |
 | 9 | ESTABLISHED/RELATED ACCEPT | INPUT | conntrack |
 | 10 | ICMPv4 (echo/reply/unreachable/time-exceeded) ACCEPT | INPUT | 常時 |
-| 11 | ICMPv6 (同上 + NDP NS/NA/RS/RA) ACCEPT | INPUT | 常時 |
+| 11 | ICMPv6 (同上 + [NDP](../../reference/glossary.md#term-ndp) NS/NA/RS/RA) ACCEPT | INPUT | 常時 |
 | 12 | DualToR: UDP 67 → DHCP チェーン | INPUT | DualToR 時のみ |
 | 13 | DHCP UDP 67:68 / 546:547 ACCEPT | INPUT | 常時 |
-| 14 | BGP TCP 179 ACCEPT (`! -i eth0`) | INPUT | 常時 |
+| 14 | [BGP](../../reference/glossary.md#term-bgp) TCP 179 ACCEPT (`! -i eth0`) | INPUT | 常時 |
 | 15 | ICMPv6 conntrack 無効化 | raw PREROUTING/OUTPUT | 常時 |
-| 16 | **CONFIG_DB ACL_RULE → iptables -A INPUT** | INPUT | PRIORITY 降順ソート後に追加 |
-| 17 | ip2me DROP (各インターフェース IP) | INPUT | LOOPBACK/VLAN/PORTCHANNEL/INTERFACE |
+| 16 | **[CONFIG_DB](../../reference/glossary.md#term-config_db) ACL_RULE → iptables -A INPUT** | INPUT | PRIORITY 降順ソート後に追加 |
+| 17 | ip2me DROP (各インターフェース IP) | INPUT | LOOPBACK/[VLAN](../../reference/glossary.md#term-vlan)/PORTCHANNEL/INTERFACE |
 | 18 | TTL < 2 ICMP/UDP/TCP ACCEPT (traceroute) | INPUT | 常時 |
 | 19 | デフォルト DROP (num_ctrl_plane_acl_rules > 0 の場合のみ) | INPUT | ルール 0 件なら追加しない |
 
@@ -305,7 +303,7 @@ After=config-setup.service
 
 warm-reboot 時は caclmgrd が systemd によって再起動され、起動直後に `update_control_plane_acls()` が全 namespace に対してフルリプログラムを実施する。
 
-**影響**: iptables チェーンのフラッシュとルール再投入の間、デフォルトポリシーが `ACCEPT` に設定される (順位 1)。このため再起動中に CPU 宛パケット（SSH/SNMP/BGP 等）が一時的に全通過する状態になる。ACL による制限は全ルール再投入完了（順位 19 の DROP 追加）後に復元される。
+**影響**: iptables チェーンのフラッシュとルール再投入の間、デフォルトポリシーが `ACCEPT` に設定される (順位 1)。このため再起動中に CPU 宛パケット（SSH/[SNMP](../../reference/glossary.md#term-snmp)/[BGP](../../reference/glossary.md#term-bgp) 等）が一時的に全通過する状態になる。ACL による制限は全ルール再投入完了（順位 19 の DROP 追加）後に復元される。
 
 ### 5. orchagent (AclOrch) 側の順序依存
 
@@ -324,19 +322,19 @@ warm-reboot 時は caclmgrd が systemd によって再起動され、起動直�
 ## 暗黙参照テーブル (Phase C)
 
 `ACL_TABLE (CTRLPLANE)` は `orchagent` 側では SAI に投入されず参照テーブルが最小限に留まる。
-実際の CPU 宛ルール生成は `caclmgrd` が行い、複数の CONFIG_DB / STATE_DB テーブルを暗黙参照する。
+実際の CPU 宛ルール生成は `caclmgrd` が行い、複数の CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) テーブルを暗黙参照する。
 
 | 参照元 (caclmgrd) | 参照先テーブル | 参照先フィールド | 用途 | evidence |
 |---|---|---|---|---|
 | `get_acl_rules_and_translate_to_iptables_commands()` | `ACL_RULE` | `PRIORITY`, `PACKET_ACTION`, `SRC_IP`, `IP_PROTOCOL` 等 | iptables ルール本体の生成 | `caclmgrd L729-730` |
 | `__init__()` | `DEVICE_METADATA` | `localhost.subtype`, `localhost.platform` | DualToR 判定・プラットフォーム判定 | `caclmgrd L165` |
 | `main()` VxLAN subscribe | `VXLAN_TUNNEL` | `src_ip` | VxLAN UDP 4789 ACCEPT ルール生成条件 | `caclmgrd L1160` |
-| `main()` BFD subscribe | `STATE_DB/BFD_SESSION_TABLE` | セッション存在有無 | BFD UDP 3784/4784 ACCEPT ルール生成条件 | `caclmgrd L1157` |
+| `main()` [BFD](../../reference/glossary.md#term-bfd) subscribe | `STATE_DB/BFD_SESSION_TABLE` | セッション存在有無 | BFD UDP 3784/4784 ACCEPT ルール生成条件 | `caclmgrd L1157` |
 | `generate_block_ip2me_traffic_iptables_commands()` | `LOOPBACK_INTERFACE`, `VLAN_INTERFACE`, `INTERFACE`, `PORTCHANNEL_INTERFACE` | 各 IP prefix | ip2me DROP ルール生成 | `caclmgrd L286-330` |
 
 ### orchagent 側の参照
 
-`AclOrch` は CTRLPLANE テーブルを `m_ctrlAclTables` に登録するのみ。SAI / APPL_DB への書き込みなし。他テーブルへの暗黙参照もない。
+`AclOrch` は CTRLPLANE テーブルを `m_ctrlAclTables` に登録するのみ。SAI / [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みなし。他テーブルへの暗黙参照もない。
 
 > **スキャン証跡**: `sonic-host-services/scripts/caclmgrd` 全行読了。`caclmgrd L77-91` (定数定義), `L165,L286-330,L729-730,L1157,L1160` (テーブル参照箇所) を確認。
 
@@ -419,7 +417,7 @@ CONFIG_DB フィールド名と C++ マクロ名の対応。
 
 `services` フィールドに設定できる有効値は以下 5 種のみ。それ以外は `log_warning` 後スキップ。
 
-| services 値 | プロトコル | 宛先ポート | multi-ASIC NAT転送 | evidence |
+| services 値 | プロトコル | 宛先ポート | multi-[ASIC](../../reference/glossary.md#term-asic) NAT転送 | evidence |
 |---|---|---|---|---|
 | `NTP` | udp | 123 | False | `caclmgrd:96-100` |
 | `SNMP` | tcp, udp | 161 | True | `caclmgrd:101-105` |
@@ -434,8 +432,8 @@ CONFIG_DB フィールド名と C++ マクロ名の対応。
 | 定数名 | 値 | 用途 | evidence |
 |---|---|---|---|
 | `UPDATE_DELAY_SECS` | `0.5` | ACL 更新デバウンス間隔 (秒) | `caclmgrd:123` |
-| `smartswitch_midplane_bridge_ip` | `"169.254.200.254"` | SmartSwitch midplane bridge IP (ConfigDB から取得できない場合のフォールバック) | `caclmgrd:121` |
-| BGP ポート | `179` | iptables ACCEPT ルール (ハードコード) | `caclmgrd:720-721` |
+| `smartswitch_midplane_bridge_ip` | `"169.254.200.254"` | [SmartSwitch](../../reference/glossary.md#term-smartswitch) midplane bridge IP (ConfigDB から取得できない場合のフォールバック) | `caclmgrd:121` |
+| [BGP](../../reference/glossary.md#term-bgp) ポート | `179` | iptables ACCEPT ルール (ハードコード) | `caclmgrd:720-721` |
 | DHCP v4 ポート | `67:68` | iptables ACCEPT ルール (ハードコード) | `caclmgrd:711-712` |
 | DHCP v6 ポート | `546:547` | iptables ACCEPT ルール (ハードコード) | `caclmgrd:715-716` |
 | traceroute ポート範囲 | `1025:65535` | TTL<2 パケットの ACCEPT 範囲 | `caclmgrd:891-894` |
@@ -467,8 +465,8 @@ ACL_TABLE (CTRLPLANE) が SET/DEL されたとき、複数の担い手がカー�
 |-------|-----------|------|---------|
 | `status = "active"` を書き込む | `STATE_DB / ACL_TABLE_TABLE` | CTRLPLANE SET 成功時 (addAclTable が true を返すと doAclTableTask が setAclTableStatus を呼ぶ) | `aclorch.cpp:4680-4684, 5474-5477, 6088-6093` |
 | SAI への書き込み | なし | CTRLPLANE では addAclTable が SAI API を呼ばずに即 return | `aclorch.cpp:4680-4684` |
-| APPL_DB への書き込み | なし | AclOrch は APPL_DB に書き込まない | — |
-| ACL_RULE の STATE_DB 書き込み | なし | CTRLPLANE ルールは erase されるため setAclRuleStatus は呼ばれない | `aclorch.cpp:5556-5560` |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込み | なし | AclOrch は [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込まない | — |
+| ACL_RULE の [STATE_DB](../../reference/glossary.md#term-state_db) 書き込み | なし | CTRLPLANE ルールは erase されるため setAclRuleStatus は呼ばれない | `aclorch.cpp:5556-5560` |
 
 > **補足**: `AclOrch::init()` は起動時に全 ACL テーブル・ルールのステータスを STATE_DB からクリア (`removeAllAclTableStatus()` / `removeAllAclRuleStatus()`) する。CTRLPLANE テーブルが ACL_TABLE_TABLE に `active` として書き込まれても、次の orchagent 再起動時にはクリアされ、CONFIG_DB からの再読み込みで再び `active` に戻る。`aclorch.cpp:3479-3481`
 
@@ -483,9 +481,9 @@ CONFIG_DB の `ACL_TABLE` / `ACL_RULE` が変更されると、caclmgrd は **�
 | `INPUT / FORWARD / OUTPUT` デフォルトポリシーを `ACCEPT` に変更 | iptables + ip6tables | 常時（フラッシュ前の暫定設定） |
 | 全チェーンのルールをフラッシュ (`-F`) | iptables | 常時（DualToR 時は DHCP チェーンを保持） |
 | 非デフォルトチェーンを削除 (`-X`) | iptables + ip6tables | 常時 |
-| loopback / BFD / VxLAN / DASH-HA / ICMP / DHCP / BGP ルールを再追加 | iptables + ip6tables | 常時（各機能の有効状態に依存） |
+| loopback / BFD / VxLAN / [DASH](../../reference/glossary.md#term-dash)-HA / ICMP / DHCP / BGP ルールを再追加 | iptables + ip6tables | 常時（各機能の有効状態に依存） |
 | CONFIG_DB ACL_RULE を `iptables -A INPUT` として追加 | iptables または ip6tables | CTRLPLANE ACL_RULE が存在する場合 |
-| ip2me DROP ルールを追加 | iptables + ip6tables | LOOPBACK/VLAN/PORTCHANNEL/INTERFACE の IP 数だけ |
+| ip2me DROP ルールを追加 | iptables + ip6tables | LOOPBACK/[VLAN](../../reference/glossary.md#term-vlan)/PORTCHANNEL/INTERFACE の IP 数だけ |
 | デフォルト DROP (`-A INPUT -j DROP`) を追加 | iptables + ip6tables | `num_ctrl_plane_acl_rules > 0` の場合のみ |
 | ip6tables raw テーブルに ICMPv6 NOTRACK を追加 | ip6tables raw | 常時 |
 
@@ -493,13 +491,13 @@ evidence: `caclmgrd:625-901` (`get_acl_rules_and_translate_to_iptables_commands(
 
 #### iptables nat テーブル (multi-ASIC 専用)
 
-multi-ASIC 環境では各 ASIC 名前空間の nat テーブルも書き換わる。
+multi-[ASIC](../../reference/glossary.md#term-asic) 環境では各 ASIC 名前空間の nat テーブルも書き換わる。
 
 | 副作用 | 対象サービス | 書き込み |
 |-------|-------------|---------|
 | nat チェーン全削除・フラッシュ | — | `iptables/ip6tables -t nat -X / -F` |
-| DNAT: フロントパネル着信 → host mgmt IP | SNMP, SSH (`multi_asic_ns_to_host_fwd=True`) | `iptables -t nat -A PREROUTING ... -j DNAT` |
-| SNAT: host → namespace docker IP | SNMP, SSH | `iptables -t nat -A POSTROUTING ... -j SNAT` |
+| DNAT: フロントパネル着信 → host mgmt IP | [SNMP](../../reference/glossary.md#term-snmp), SSH (`multi_asic_ns_to_host_fwd=True`) | `iptables -t nat -A PREROUTING ... -j DNAT` |
+| SNAT: host → namespace docker IP | [SNMP](../../reference/glossary.md#term-snmp), SSH | `iptables -t nat -A POSTROUTING ... -j SNAT` |
 
 evidence: `caclmgrd:476-516` (`generate_fwd_traffic_from_namespace_to_host_commands()`)
 
@@ -542,9 +540,9 @@ evidence: `caclmgrd:1169-1171`
 | CONFIG_DB | `ACL_TABLE` | `SubscriberStateTable` | CTRLPLANE ACL テーブル定義 SET/DEL の検出 |
 | CONFIG_DB | `ACL_RULE` | `SubscriberStateTable` | CTRLPLANE ACL ルール SET/DEL の検出 |
 | CONFIG_DB | `VXLAN_TUNNEL` | `SubscriberStateTable` | VxLAN トンネル設定変更の検出 |
-| CONFIG_DB | `DPU` | `SubscriberStateTable` | DASH-HA 用 DPU 設定変更の検出 |
+| CONFIG_DB | `DPU` | `SubscriberStateTable` | [DASH](../../reference/glossary.md#term-dash)-HA 用 [DPU](../../reference/glossary.md#term-dpu) 設定変更の検出 |
 | STATE_DB | `BFD_SESSION_TABLE` | `SubscriberStateTable` (one-shot) | BFD セッション初回 SET の検出後に購読解除 |
-| STATE_DB | `MUX_CABLE_TABLE` | `SubscriberStateTable` | DualToR 時のみ: MUX ケーブル状態変化 |
+| STATE_DB | `MUX_CABLE_TABLE` | `SubscriberStateTable` | DualToR 時のみ: [MUX](../../reference/glossary.md#term-mux) ケーブル状態変化 |
 | STATE_DB | `DHCP_PACKET_MARK` | `SubscriberStateTable` | DualToR 時のみ: DHCP パケットマーク変化 |
 
 caclmgrd は `swsscommon.Select` に全テーブルを `addSelectable()` で登録し、`sel.select(1000ms)` でブロッキングポーリングを行う。`hostcfgd` が Python ラッパの `ConfigDBConnector.subscribe()` を使うのとは異なり、caclmgrd は swsscommon 低レベル API を直接使用し、マルチ namespace にも対応している。
@@ -585,10 +583,10 @@ BFD セッションの最初の SET を検出後、caclmgrd は `sel.removeSelec
 | プラットフォーム種別 | 判定条件 | 追加挙動 | ソース |
 |---|---|---|---|
 | 単一 ASIC 標準スイッチ | 上記以外 | デフォルト namespace のみ処理。追加ルールなし | — |
-| multi-ASIC | `device_info.is_multi_npu()` | 全 namespace (front/back/fabric) で独立ルールセット適用。`SNMP` / `SSH` の front panel → host NAT (SNAT/DNAT) ルールを namespace 単位で生成 | `caclmgrd L147,169-190,1124,1169-1184,476-516` |
+| multi-ASIC | `device_info.is_multi_npu()` | 全 namespace (front/back/fabric) で独立ルールセット適用。`SNMP` / `SSH` の front panel → host [NAT](../../reference/glossary.md#term-nat) (SNAT/DNAT) ルールを namespace 単位で生成 | `caclmgrd L147,169-190,1124,1169-1184,476-516` |
 | DualToR | `DEVICE_METADATA\|localhost\|subtype == 'DualToR'` | DHCP カスタムチェーン作成。`MUX_CABLE_TABLE` / `DHCP_PACKET_MARK` 購読。SoC 向け POSTROUTING SNAT 追加。BGP to Loopback1 DROP ルール追加。chain flush 時に DHCP チェーンを除外 | `caclmgrd L165-167,1143-1154,644,707-708,935-940` |
 | Chassis (ラインカード) | `device_info.is_chassis() and not namespace` | midplane インターフェース `eth1-midplane` の IP を取得し、自己 IP → 自己 IP ACCEPT + midplane デバイスからの全 INPUT ACCEPT を追加 | `caclmgrd L358-363` |
-| SmartSwitch | `device_info.is_smartswitch()` | `MID_PLANE_BRIDGE\|GLOBAL\|ip_prefix` から midplane bridge IP を取得し、その IP 宛 INPUT ACCEPT を追加。取得失敗時 fallback `169.254.200.254` | `caclmgrd L365-368,333-354` |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) | `device_info.is_smartswitch()` | `MID_PLANE_BRIDGE\|GLOBAL\|ip_prefix` から midplane bridge IP を取得し、その IP 宛 INPUT ACCEPT を追加。取得失敗時 fallback `169.254.200.254` | `caclmgrd L365-368,333-354` |
 
 ### AclOrch / orchdaemon 側
 
@@ -596,9 +594,9 @@ BFD セッションの最初の SET を検出後、caclmgrd は `sel.removeSelec
 
 ### multi-ASIC 時の NAT ルール対象サービス
 
-`ACL_SERVICES` 定義のうち `multi_asic_ns_to_host_fwd: True` のサービスのみ namespace → host NAT 対象となる。
+`ACL_SERVICES` 定義のうち `multi_asic_ns_to_host_fwd: True` のサービスのみ namespace → host [NAT](../../reference/glossary.md#term-nat) 対象となる。
 
-| サービス | multi_asic_ns_to_host_fwd | NAT 対象 |
+| サービス | multi_asic_ns_to_host_fwd | [NAT](../../reference/glossary.md#term-nat) 対象 |
 |---|---|---|
 | `NTP` | False | 非対象 |
 | `SNMP` | True | PREROUTING DNAT + POSTROUTING SNAT |
@@ -654,7 +652,7 @@ BFD セッションの最初の SET を検出後、caclmgrd は `sel.removeSelec
 ### よくある誤設定
 
 - CTRLPLANE ACL に `ACL_RULE` を追加しても orchagent が erase するため、ルールは hardware に降りない。CPU 宛パケット制御は `COPP_GROUP` / `COPP_TRAP` で行う。
-- `services` フィールドを変更しても orchagent に影響なし。CoPP 設定は `COPP_TRAP.trap_ids` を変更する。
+- `services` フィールドを変更しても orchagent に影響なし。[CoPP](../../reference/glossary.md#term-copp) 設定は `COPP_TRAP.trap_ids` を変更する。
 
 ### 確認コマンド
 
@@ -703,3 +701,5 @@ config_db.set_entry("ACL_TABLE", table_name, table_info)
 `orchagent` の `AclOrch` は ACL_TABLE を購読するのみ（書き込みなし）。
 
 <!-- /entry-points -->
+
+<!-- glossary-links-injected: d1ddc53adcf6 -->

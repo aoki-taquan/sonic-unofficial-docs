@@ -33,10 +33,10 @@ related:
 
 switch を適温に保つために cooling device（主に fan）を制御する 2 階建ての仕組み[^1]:
 
-1. **thermal device monitoring**: CPU / ASIC / 光モジュール / PSU 等の温度と fan running status を周期 poll し `STATE_DB` に保存
+1. **thermal device monitoring**: CPU / [ASIC](../reference/glossary.md#term-asic) / 光モジュール / PSU 等の温度と fan running status を周期 poll し `STATE_DB` に保存
 2. **thermal control management**: 取得値と **ポリシー** を突合し、PWM 調整・アラート・syslog を発する
 
-ベンダ独自アルゴリズムが kernel / BMC 等で動く場合は SONiC 側制御を **disable** にして監視のみも可[^1]。
+ベンダ独自アルゴリズムが kernel / BMC 等で動く場合は [SONiC](../reference/glossary.md#term-sonic) 側制御を **disable** にして監視のみも可[^1]。
 
 ## どんな platform API を使うか
 
@@ -202,4 +202,4 @@ ls /usr/share/sonic/device/$PLATFORM/thermal_policy.json 2>/dev/null
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 0823a263c666 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

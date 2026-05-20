@@ -38,7 +38,7 @@ related:
 
 ## 概要
 
-SONiC スイッチの一部が **過剰な disk write で SSD が劣化し read-only file system に陥る** 問題が顕在化している[^1]。本ドキュメントは 3 SKU × 3 OS バージョン × 各 100 台 = 900 台でフィールド計測した上で、**主要な disk writer を特定**し、**`/tmp` の tmpfs 化** や **bgpmon の vtysh 履歴抑止** など低リスクで disk I/O を 78〜91% 削減する最適化を提案する。
+[SONiC](../reference/glossary.md#term-sonic) スイッチの一部が **過剰な disk write で SSD が劣化し read-only file system に陥る** 問題が顕在化している[^1]。本ドキュメントは 3 SKU × 3 OS バージョン × 各 100 台 = 900 台でフィールド計測した上で、**主要な disk writer を特定**し、**`/tmp` の tmpfs 化** や **bgpmon の [vtysh](../reference/glossary.md#term-vtysh) 履歴抑止** など低リスクで disk I/O を 78〜91% 削減する最適化を提案する。
 
 ## 動作仕様
 
@@ -190,4 +190,4 @@ reasoning: 主要 writer の比率と vtysh history 書込みの根因の根拠�
 - 計測再現性 (新しい SKU での確認、recent OS バージョンでの再測)
 -->
 
-<!-- glossary-links-injected: 76f50f4814f9 -->
+<!-- glossary-links-injected: 7ac8e66e1af3 -->

@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-ASIC / SDK が検出した内部不整合・FW assert・queue stuck・memory error などを **[SAI](../reference/glossary.md#term-sai) の health event 通知** として上に上げ、SONiC が運用フックに変換するパス[^1]。狙い:
+[ASIC](../reference/glossary.md#term-asic) / SDK が検出した内部不整合・FW assert・queue stuck・memory error などを **[SAI](../reference/glossary.md#term-sai) の health event 通知** として上に上げ、[SONiC](../reference/glossary.md#term-sonic) が運用フックに変換するパス[^1]。狙い:
 
 - 従来 platform-specific ログに埋もれていた重要イベントを **共通スキーマで [STATE_DB](../reference/glossary.md#term-state_db) に出す**
 - syslog / show / telemetry のいずれからも一貫した形で観測可能にする
@@ -121,4 +121,4 @@ redis-cli -n 6 keys 'ASIC_SDK_HEALTH_EVENT*'
 - system health / dump-on-sai-failure / telemetry との統合経路の現行実装確認
 -->
 
-<!-- glossary-links-injected: 4811545374b1 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

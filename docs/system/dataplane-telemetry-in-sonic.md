@@ -43,7 +43,7 @@ related:
 
 ## 概要
 
-**Dataplane Telemetry (DTel)** は ASIC dataplane から **per-packet メタデータ**（path / latency / queue / drop など）を抽出して collector に送る機構[^1]。In-band Network Telemetry ([INT](../reference/glossary.md#term-int))、Postcard、Drop report、Queue report の 4 系統を扱い、[SAI](../reference/glossary.md#term-sai) 側は OCP の `SAI-Proposal-Data-Plane-Telemetry.md`、SONiC 側は本 [HLD](../reference/glossary.md#term-hld) で **[CONFIG_DB](../reference/glossary.md#term-config_db) 中心の構成** を定義する。当初は CLI が無く `redis-cli` / `swss-py-sdk` / 専用 Python モジュール `euclid` で設定する。
+**Dataplane Telemetry (DTel)** は [ASIC](../reference/glossary.md#term-asic) dataplane から **per-packet メタデータ**（path / latency / queue / drop など）を抽出して collector に送る機構[^1]。In-band Network Telemetry ([INT](../reference/glossary.md#term-int))、Postcard、Drop report、Queue report の 4 系統を扱い、[SAI](../reference/glossary.md#term-sai) 側は OCP の `SAI-Proposal-Data-Plane-Telemetry.md`、[SONiC](../reference/glossary.md#term-sonic) 側は本 [HLD](../reference/glossary.md#term-hld) で **[CONFIG_DB](../reference/glossary.md#term-config_db) 中心の構成** を定義する。当初は CLI が無く `redis-cli` / `swss-py-sdk` / 専用 Python モジュール `euclid` で設定する。
 
 ## 動作仕様
 
@@ -190,4 +190,4 @@ reasoning: DtelOrch の demux 動作と再起動時 replay の順序保証の根
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1d2244168bb3 -->
+<!-- glossary-links-injected: ec18b66e3507 -->
