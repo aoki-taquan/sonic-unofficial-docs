@@ -23,6 +23,10 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-20 #4765 docs: doc-review fixes (batch 009)
+- 2026-05-20 #4738 docs: doc-review fixes (batch 034)
+- 2026-05-20 #4731 docs: doc-review fixes (batch 007)
+- 2026-05-20 #4728 docs: doc-review fixes (batch 000)
 - 2026-05-20 #4730 docs: doc-review fixes (batch 001)
 - 2026-05-20 #4729 docs: doc-review fixes (batch 003)
 - 2026-05-20 #4776 chore: minimal CI green fixes
@@ -519,8 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3529 docs(config-db): add Phase H platform block to copp-state
 - 2026-05-19 #3527 docs(config-db): add Phase E hardcoded-constants block to pin-config
 - 2026-05-19 #3526 docs(config-db): add Phase G pubsub block to state-bgp
-- 2026-05-19 #3525 docs(config-db): add Phase H platform block to pfcwd-state
-- 2026-05-19 #3524 docs(config-db): add Phase E hardcoded-constants block to extended-monitor
-- 2026-05-19 #3523 docs(config-db): add Phase F side-effects block to erspan
-- 2026-05-19 #3522 docs(config-db): add Phase H platform block to cbf-nhg
 
