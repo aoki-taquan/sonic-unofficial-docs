@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-20 #4741 docs: doc-review fixes (batch 026)
 - 2026-05-20 #4768 docs: doc-review fixes (batch 009)
 - 2026-05-20 #4767 docs: doc-review fixes (batch 040)
 - 2026-05-20 #4763 docs: doc-review fixes (batch 033)
@@ -519,7 +520,6 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3553 docs(config-db): add Phase H platform block to copp-port
 - 2026-05-19 #3552 docs(config-db): add Phase E hardcoded-constants block to state-db-port
 - 2026-05-19 #3551 docs(config-db): add Phase F side-effects block to scheduler-orch
-- 2026-05-19 #3546 docs(config-db): add Phase G pubsub block to passw-hardening
 - 2026-05-19 #3550 docs(config-db): add Phase E hardcoded-constants block to state-db-port
 - 2026-05-19 #3549 docs(config-db): add Phase D failure-behavior block to heartbeat
 - 2026-05-19 #3548 docs(config-db): add Phase F side-effects block to device-runtime-metadata
