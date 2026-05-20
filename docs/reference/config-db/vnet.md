@@ -114,14 +114,14 @@ VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>
 
 | フィールド | 値 | 実挙動 |
 |-----------|-----|--------|
-| `scope` | `"default"` | YANG pattern で唯一許可される値。デフォルト VRF スコープ |
+| `scope` | `"default"` | YANG pattern で唯一許可される値。デフォルト [VRF](../../reference/glossary.md#term-vrf) スコープ |
 | `scope` | その他 | YANG バリデーションで `"Invalid VRF name"` エラー (sonic-vnet.yang) |
-| `advertise_prefix` | `true` | VNET ルートプレフィクスを BGP に広告 |
+| `advertise_prefix` | `true` | VNET ルートプレフィクスを [BGP](../../reference/glossary.md#term-bgp) に広告 |
 | `advertise_prefix` | `false` | 広告しない（デフォルト動作）|
 | `vni` | 任意 VNI | VXLAN overlay header に使用する VNI。同一デバイス内で重複すると orchagent が後勝ちで上書き |
 | `VNET_ROUTE_TUNNEL.metric` | uint8 | 経路選択に影響しない（YANG コメント: "not used for route selection, but for route classification"）|
-| `VNET_ROUTE_TUNNEL.consistent_hashing_buckets` | uint16 | orchagent 未読取 (dead field)。設定しても ECMP バケット数に影響しない（`vnetorch.h` に登録なし） |
-| `VNET_ROUTE.nexthop` | カンマ区切り IP リスト | ECMP nexthop として複数 IP 指定可（`ipv4-address-list` 型）|
+| `VNET_ROUTE_TUNNEL.consistent_hashing_buckets` | uint16 | orchagent 未読取 (dead field)。設定しても [ECMP](../../reference/glossary.md#term-ecmp) バケット数に影響しない（`vnetorch.h` に登録なし） |
+| `VNET_ROUTE.nexthop` | カンマ区切り IP リスト | [ECMP](../../reference/glossary.md#term-ecmp) nexthop として複数 IP 指定可（`ipv4-address-list` 型）|
 
 <!-- /value-behavior -->
 
@@ -180,7 +180,6 @@ show vnet routes all
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -217,7 +216,7 @@ minigraph.py に VNET 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし (VNET は手動 JSON 投入が主経路)
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし (VNET は手動 JSON 投入が主経路)
 
 ### db_migrator
 
@@ -248,7 +247,7 @@ db_migrator.py での VNET マイグレーションなし
 | `peer_list` | なし | 空セット `{}` — peer なし動作 | vnetorch.cpp:440 |
 | `guid` | なし | [orchagent](../../reference/glossary.md#term-orchagent) 未使用（dead field） | vnetorch.h |
 | `scope` | なし | 空文字列 `""` — [YANG](../../reference/glossary.md#term-yang) を通れば常に `"default"` | vnetorch.cpp:444 |
-| `advertise_prefix` | なし | `false` — prefix を BGP 広告しない | vnetorch.cpp:441 |
+| `advertise_prefix` | なし | `false` — prefix を [BGP](../../reference/glossary.md#term-bgp) 広告しない | vnetorch.cpp:441 |
 | `overlay_dmac` | なし | `00:00:00:00:00:00`（ゼロ MAC）— ping 機能無効 | macaddress.cpp:10-13, vnetorch.cpp:445 |
 | `src_mac` | なし | [SAI](../../reference/glossary.md#term-sai)/プラットフォームデフォルト（スイッチ MAC） | vnetorch.cpp:449-454 |
 
@@ -286,7 +285,7 @@ db_migrator.py での VNET マイグレーションなし
 
 ### STATE_DB VRF ready 待ち（VxlanMgr 経路）
 
-`doVxlanCreateTask()` L327-333: `isVrfStateOk(vnet_name)` (`vxlanmgr.cpp:738`) が `STATE_VRF_TABLE` に当該 VRF 名を見つけられない間は `return false` で保留。VNetOrch が [SAI](../../reference/glossary.md#term-sai) 上で VRF を作成し STATE_DB に書き込んだ後でなければカーネル VXLAN デバイス作成に進まない。orchdaemon の初期化順序（VNetOrch L276 → VRFOrch L283）により通常は自動解消されるが、起動直後の早期書き込みでは注意。
+`doVxlanCreateTask()` L327-333: `isVrfStateOk(vnet_name)` (`vxlanmgr.cpp:738`) が `STATE_VRF_TABLE` に当該 VRF 名を見つけられない間は `return false` で保留。VNetOrch が [SAI](../../reference/glossary.md#term-sai) 上で VRF を作成し [STATE_DB](../../reference/glossary.md#term-state_db) に書き込んだ後でなければカーネル VXLAN デバイス作成に進まない。orchdaemon の初期化順序（VNetOrch L276 → VRFOrch L283）により通常は自動解消されるが、起動直後の早期書き込みでは注意。
 
 ### ルータ MAC アドレスが取得済みであること
 
@@ -313,7 +312,7 @@ DEL VXLAN_TUNNEL|<tunnel_name>   # 他 VNET が残らない場合のみ
 | 依存関係 | 方向 | 緩和策 |
 |----------|------|--------|
 | `VXLAN_TUNNEL` SET → `VNET` SET | 強制先行 | `return false` で自動保留・再試行 |
-| STATE_DB VRF ready → `VNET` 処理 | 強制先行 | `return false` で自動保留・再試行 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) VRF ready → `VNET` 処理 | 強制先行 | `return false` で自動保留・再試行 |
 | `DEVICE_METADATA` mac 設定 → `VNET` 処理 | 強制先行 | `return false` で自動保留・再試行 |
 | `VNET` SET → `VNET_ROUTE` SAI 反映 | 論理的先行 | APPL_DB への転記は即時、SAI 反映は遅延 |
 | `VNET_ROUTE` DEL → `VNET` DEL | 推奨 | orchagent が内部で自動削除するが明示削除が安全 |
@@ -347,11 +346,11 @@ DEL VXLAN_TUNNEL|<tunnel_name>   # 他 VNET が残らない場合のみ
 
 ### STATE_DB 参照（読み取り）
 
-| STATE_DB テーブル | 参照元 | 用途 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) テーブル | 参照元 | 用途 |
 |------------------|--------|------|
 | `STATE_VRF_TABLE` | `vxlanmgrd:isVrfStateOk()` | VRF 作成完了待ち |
 | `STATE_VNET_RT_TUNNEL_TABLE_NAME` | `VNetRouteOrch` | endpoint monitor 結果の取得 |
-| `STATE_VNET_MONITOR_TABLE_NAME` | `MonitorOrch` | BFD/ping monitor 状態の購読 |
+| `STATE_VNET_MONITOR_TABLE_NAME` | `MonitorOrch` | [BFD](../../reference/glossary.md#term-bfd)/ping monitor 状態の購読 |
 
 > 出典: `vxlanmgr.cpp` L738-752、`vnetorch.cpp` L742-748
 
@@ -404,13 +403,13 @@ CONFIG_DB: VNET
 
 **VNET 削除時のルート残存 (失敗 #9)**: `vrf_obj->getRouteCount() > 0` の場合 `SWSS_LOG_ERROR("VNET '%s': Routes are still present")` + `return false` (`vnetorch.cpp:584-585`)。VNET_ROUTE / VNET_ROUTE_TUNNEL を先に全削除しないと VNET 本体の削除が永続ブロックされる（強制削除順序制約）。
 
-**NextHop group 上限超過 (失敗 #13)**: ASIC の NHG 上限に達した場合 `SWSS_LOG_ERROR("Reached maximum number of next hop groups.")` + `return false` (`vnetorch.cpp:773-774`)。新規 VNET_ROUTE_TUNNEL の ECMP グループが作成できず、該当ルートのみ再試行キューに残る。既存ルートへの影響はない。
+**NextHop group 上限超過 (失敗 #13)**: ASIC の NHG 上限に達した場合 `SWSS_LOG_ERROR("Reached maximum number of next hop groups.")` + `return false` (`vnetorch.cpp:773-774`)。新規 VNET_ROUTE_TUNNEL の [ECMP](../../reference/glossary.md#term-ecmp) グループが作成できず、該当ルートのみ再試行キューに残る。既存ルートへの影響はない。
 
 ### 失敗挙動サマリ
 
 | # | 失敗条件 | ログレベル | 再試行 | 分類 |
 |---|----------|-----------|--------|------|
-| 1 | `VXLAN_TUNNEL` 未作成（vxlanmgrd） | DEBUG | ✅ 自動再試行 | 順序依存 suspend |
+| 1 | `VXLAN_TUNNEL` 未作成（[vxlanmgrd](../../reference/glossary.md#term-vxlanmgrd)） | DEBUG | ✅ 自動再試行 | 順序依存 suspend |
 | 2 | `vxlan_tunnel`/`vni` フィールド欠落 | DEBUG | ❌ **永久 erase** | サイレントドロップ |
 | 3 | VRF STATE_DB 未 ready | DEBUG | ✅ 自動再試行 | 起動シーケンス待ち |
 | 4 | ルータ MAC 未設定 | DEBUG | ✅ 自動再試行 | 起動シーケンス待ち |
@@ -441,7 +440,7 @@ CONFIG_DB: VNET
 | `VNET_ROUTE_FULL_MASK_OFFSET_MAX` | `3000` | /32 ルートの bitmap オフセット最大値（bitmap モードのみ）| `vnetorch.h:22` |
 | `VNET_NEIGHBOR_MAX` | `0xffff`（65535）| neighbor エントリ上限（bitmap モードのみ）| `vnetorch.h:23` |
 | `VXLAN_ENCAP_TTL` | `128` | VXLAN encapsulation 時の outer IP TTL 固定値 | `vnetorch.h:24` |
-| `VNET_BITMAP_RIF_MTU` | `9100` | bitmap モードで RIF 作成時に使用する MTU 固定値 | `vnetorch.h:25` |
+| `VNET_BITMAP_RIF_MTU` | `9100` | bitmap モードで [RIF](../../reference/glossary.md#term-rif) 作成時に使用する MTU 固定値 | `vnetorch.h:25` |
 
 ### monitoring 種別文字列定数
 
@@ -449,8 +448,8 @@ CONFIG_DB: VNET
 
 | 定数 | 値 | 用途 | ソース |
 |------|----|------|--------|
-| `VNET_MONITORING_TYPE_CUSTOM` | `"custom"` | カスタム BFD/ping モニタリング（`MonitorOrch` 連携）| `vnetorch.h:27` |
-| `VNET_MONITORING_TYPE_CUSTOM_BFD` | `"custom_bfd"` | BFD セッション直接管理モード | `vnetorch.h:28` |
+| `VNET_MONITORING_TYPE_CUSTOM` | `"custom"` | カスタム [BFD](../../reference/glossary.md#term-bfd)/ping モニタリング（`MonitorOrch` 連携）| `vnetorch.h:27` |
+| `VNET_MONITORING_TYPE_CUSTOM_BFD` | `"custom_bfd"` | [BFD](../../reference/glossary.md#term-bfd) セッション直接管理モード | `vnetorch.h:28` |
 
 `monitoring` フィールドがこれら 2 値以外の場合、orchagent は endpoint の BFD 状態チェックをスキップして常時 UP 扱いにする（`vnetorch.cpp:786`）。
 
@@ -487,12 +486,12 @@ CONFIG_DB `VNET` / `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` テーブルの変更に�
 | 副次 DB | 書込有無 | 対象テーブル / 根拠 |
 |---|---|---|
 | STATE_DB | **あり** | `VNET_ROUTE_TUNNEL_TABLE` — トンネルルート active 化時に `active_endpoints` + `state` を書込 (`vnetorch.cpp:2572`) |
-| STATE_DB | **あり** | `ADVERTISE_NETWORK_TABLE` — `advertise_prefix: true` かつルート active 化時に prefix を書込、BGP コンテナが広告経路として参照 (`vnetorch.cpp:2645`) |
+| STATE_DB | **あり** | `ADVERTISE_NETWORK_TABLE` — `advertise_prefix: true` かつルート active 化時に prefix を書込、[BGP](../../reference/glossary.md#term-bgp) コンテナが広告経路として参照 (`vnetorch.cpp:2645`) |
 | APP_DB | **あり** | `VNET_MONITOR_TABLE` — `monitoring` フィールド付き `VNET_ROUTE_TUNNEL` 追加時にモニタリングセッションを書込 (`vnetorch.cpp:2247`) |
 | APP_DB | **あり** | `BFD_SESSION_TABLE` — `monitoring: bfd` / `ping` 指定時に `createBfdSession()` が BFD セッションを書込 (`vnetorch.cpp:2046-2115`) |
-| ASIC_DB (SAI 経由) | **あり** | `sai_virtual_router_api->create_virtual_router()` によって VRF オブジェクトが ASIC_DB に間接書込。VNET 削除時には `remove_virtual_router()` + `gFlowCounterRouteOrch->onRemoveVR()` が呼ばれる (`vnetorch.cpp:91-108`, `345-362`) |
-| COUNTERS_DB | なし | `vnetorch.cpp` 全体で COUNTERS_DB への書込コード 0 件 |
-| FLEX_COUNTER_DB / LOGLEVEL_DB | なし | `vnetorch.cpp` 内に参照 0 件 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) (SAI 経由) | **あり** | `sai_virtual_router_api->create_virtual_router()` によって VRF オブジェクトが [ASIC_DB](../../reference/glossary.md#term-asic_db) に間接書込。VNET 削除時には `remove_virtual_router()` + `gFlowCounterRouteOrch->onRemoveVR()` が呼ばれる (`vnetorch.cpp:91-108`, `345-362`) |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `vnetorch.cpp` 全体で [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込コード 0 件 |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) | なし | `vnetorch.cpp` 内に参照 0 件 |
 
 ### STATE_DB 書込の対応表
 
@@ -520,8 +519,8 @@ CONFIG_DB の `VNET` / `VNET_ROUTE` / `VNET_ROUTE_TUNNEL` テーブルは `vxlan
 
 | 区間 | 方式 | チャンネル / パターン |
 |------|------|----------------------|
-| CONFIG_DB[VNET] → vxlanmgrd | `Orch::addConsumer()` による `Selectable` 登録、`select()` ループで受信 | `CFG_VNET_TABLE_NAME` キースペース通知 |
-| CONFIG_DB[VXLAN_TUNNEL] → vxlanmgrd | 同上 | `CFG_VXLAN_TUNNEL_TABLE_NAME` キースペース通知 |
+| CONFIG_DB[VNET] → [vxlanmgrd](../../reference/glossary.md#term-vxlanmgrd) | `Orch::addConsumer()` による `Selectable` 登録、`select()` ループで受信 | `CFG_VNET_TABLE_NAME` キースペース通知 |
+| CONFIG_DB[VXLAN_TUNNEL] → [vxlanmgrd](../../reference/glossary.md#term-vxlanmgrd) | 同上 | `CFG_VXLAN_TUNNEL_TABLE_NAME` キースペース通知 |
 | vxlanmgrd → APPL_DB[VNET_TABLE] | `ProducerStateTable::set()` (`m_appVxlanTunnelTable` 等) | APPL_DB pub/sub チャンネル |
 | APPL_DB[VNET_TABLE] → VNetOrch | `Orch2(db, APP_VNET_TABLE_NAME, ...)` → `ConsumerStateTable` で受信 | `__keyspace@1__:VNET_TABLE\|*` |
 | APPL_DB[VNET_RT_TABLE / VNET_RT_TUNNEL_TABLE] → VNetRouteOrch | `Orch2(db, tableNames, ...)` → `ConsumerStateTable` | `__keyspace@1__:VNET_ROUTE_TABLE\|*` 他 |
@@ -574,7 +573,7 @@ orchagent / VNetOrch (orchagent/vnetorch.cpp L377)
 
 ### Ordered ECMP サポート — ASIC Capability 依存
 
-`VNetRouteOrch` が `VNET_ROUTE_TUNNEL` の ECMP Next Hop Group を作成する際、`gSwitchOrch->checkOrderedEcmpEnable()` の SAI capability 問い合わせ結果に基づいて NHG type を決定する (`vnetorch.cpp:804`)。
+`VNetRouteOrch` が `VNET_ROUTE_TUNNEL` の ECMP [Next Hop Group](../../reference/glossary.md#term-next-hop-group) を作成する際、`gSwitchOrch->checkOrderedEcmpEnable()` の SAI capability 問い合わせ結果に基づいて NHG type を決定する (`vnetorch.cpp:804`)。
 
 | ASIC capability | NHG type | 動作 |
 |----------------|---------|------|
@@ -589,7 +588,7 @@ orchagent / VNetOrch (orchagent/vnetorch.cpp L377)
 
 ### VNET_EXEC モード (VRF 固定)
 
-`vnetorch.h` では `VNET_EXEC_VRF` と `VNET_EXEC_BRIDGE` の 2 モードが定義されているが、`orchdaemon.cpp:276` では常に `VNET_EXEC_VRF` が使用される。コミュニティ SONiC では BRIDGE モードは無効。
+`vnetorch.h` では `VNET_EXEC_VRF` と `VNET_EXEC_BRIDGE` の 2 モードが定義されているが、`orchdaemon.cpp:276` では常に `VNET_EXEC_VRF` が使用される。コミュニティ [SONiC](../../reference/glossary.md#term-sonic) では BRIDGE モードは無効。
 
 ### VoQ / Multi-ASIC
 
@@ -598,4 +597,4 @@ VNET テーブル処理に VoQ / multi-ASIC 分岐は存在しない。VNET は�
 > **スキャン証跡**: `vnetorch.cpp:804,841,2778`（Ordered ECMP NHG type 分岐）、`vnetorch.h:63-67`（VNET_EXEC enum）、`orchdaemon.cpp:276`（VRF モード固定）、`vxlanmgr.cpp` 全体（ベンダー分岐 0 件確認）
 <!-- /platform -->
 
-<!-- glossary-links-injected: f94986e6b96c -->
+<!-- glossary-links-injected: f4980b5d1557 -->
