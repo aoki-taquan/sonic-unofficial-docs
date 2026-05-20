@@ -35604,7 +35604,7 @@
 </tr>
 <tr>
 <td>工場初期化</td>
-<td><code>sonic-installer set-default &lt;image&gt;</code> ／ <code>config reset-factory</code></td>
+<td><code>sonic-installer set-default &lt;image&gt;</code> ／ <code>sudo reset-factory</code></td>
 </tr>
 </tbody>
 </table>
@@ -35643,7 +35643,7 @@
 <li><strong>設定差分の慎重な適用</strong> — <code>config apply-patch</code> で patch を適用する前に <code>config checkpoint &lt;name&gt;</code> を取り、失敗時に <code>config rollback &lt;name&gt;</code> で戻せる状態を作ります。GCU は YANG 検証を通すため、<code>config replace</code> よりも安全側です。</li>
 <li><strong>kube 管理への移行</strong> — <code>SetOwner</code> を <code>kube</code> に切り替えた直後は <code>CurrentOwner</code> が <code>local</code> のまま残るのが正常で、kube join 後に一致します。長時間一致しない場合は kube image pull と <code>acms</code> connectivity を疑います。</li>
 <li><strong>緊急時の reload と reboot 判断</strong> — service 個別 restart で復旧する見込みがあるなら <code>systemctl restart &lt;feature&gt;</code> で局所化します。CONFIG_DB の不整合が広範な場合のみ <code>config reload -y</code>、kernel / image 自体の問題なら <code>fast-reboot</code> または <code>reboot</code> を選びます。</li>
-<li><strong>factory reset の決断</strong> — <code>config reload</code> でも復旧しない設定 corruption、または機材払い出し前のサニタイズ用途でのみ <code>config reset-factory</code> を選びます。本番投入機ではログとユーザを残すモードを選び、データ消失を最小化します。</li>
+<li><strong>factory reset の決断</strong> — <code>config reload</code> でも復旧しない設定 corruption、または機材払い出し前のサニタイズ用途でのみ <code>reset-factory</code> を選びます。本番投入機ではログとユーザを残すモードを選び、データ消失を最小化します。</li>
 </ol>
 <h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>

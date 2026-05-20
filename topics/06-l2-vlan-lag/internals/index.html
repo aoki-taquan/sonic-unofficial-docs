@@ -35465,7 +35465,7 @@
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="nt">ASIC_DB</span><span class="p">:</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">LAG, LAG_MEMBER, VLAN, VLAN_MEMBER, BRIDGE_PORT, FDB_ENTRY, STP</span>
 </span></code></pre></div>
-<p><code>FdbOrch</code> は <a href="../../../reference/glossary/#term-asic">ASIC</a> からの notification (<code>SAI_FDB_EVENT_LEARNED / AGED / FLUSHED</code>) を <a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub 経由で受け、APPL_DB.FDB_TABLE を更新します。MC-LAG の remote FDB は iccpd が <code>MCLAG_REMOTE_FDB_TABLE</code> に書き、<code>FdbOrch</code> がそれを static 同等として SAI に投入します。</p>
+<p><code>FdbOrch</code> は <a href="../../../reference/glossary/#term-asic">ASIC</a> からの notification (<code>SAI_FDB_EVENT_LEARNED / AGED / FLUSHED</code>) を <a href="../../../reference/glossary/#term-redis">Redis</a> pub/sub 経由で受け、APPL_DB.FDB_TABLE を更新します。MC-LAG の remote FDB は iccpd / mclagsyncd が <code>APP_MCLAG_FDB_TABLE</code> (APPL_DB) に書き、<code>FdbOrch</code> がそれを static 同等として SAI に投入します。投入後は STATE_DB の <code>MCLAG_REMOTE_FDB_TABLE</code> に記録されます。</p>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
 <li>通常 L2 系は <a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> / SubscriberStateTable の Redis pub/sub のみ。ZMQ は使いません。</li>
@@ -35499,7 +35499,7 @@
 <tr>
 <td>FDB</td>
 <td>learned MAC</td>
-<td><code>MCLAG_REMOTE_FDB_TABLE</code> → FdbOrch</td>
+<td><code>APP_MCLAG_FDB_TABLE</code> (APPL_DB) → FdbOrch</td>
 </tr>
 <tr>
 <td><a href="../../../reference/glossary/#term-arp">ARP</a> / ND</td>

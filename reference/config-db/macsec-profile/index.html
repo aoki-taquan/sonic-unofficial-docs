@@ -37313,7 +37313,7 @@
 <p><code>PORT</code> テーブルの <code>macsec</code> フィールドに記載されたプロファイル名を <code>macsecmgrd</code> (<code>MACsecMgr::enableMACsec</code>) が読み取り、<code>MACSEC_PROFILE</code> エントリを検索する。プロファイルが未ロードの場合は <code>task_need_retry</code> が返却され、ポートの MACsec は有効化されない。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>CONFIG_DB:PORT.macsec  ──名前参照──▶  CONFIG_DB:MACSEC_PROFILE
 </span></code></pre></div>
-<p>プロファイル削除時、当該プロファイルを参照中のポートが存在する場合は削除が拒否される (<code>task_failed</code>)。</p>
+<p>プロファイル削除時、当該プロファイルを参照中のポートが存在する場合は削除が拒否される (<code>task_need_retry</code> — 全ポート MACsec 無効化まで待機、<code>macsecmgr.cpp:452-466</code>)。</p>
 <h3 id="macsec_sc">MACSEC_SC への間接参照<a class="headerlink" href="#macsec_sc" title="Permanent link">&para;</a></h3>
 <p><code>configureMACsec()</code> が <code>wpa_supplicant</code> を通じて MKA セッションを確立後、<code>macsecorch</code> が <a href="../../glossary/#term-appl_db">APPL_DB</a> 経由で <a href="../../glossary/#term-sai">SAI</a> MACsec SC (Secure Channel) オブジェクトを生成する。<code>send_sci</code> / <code>policy</code> / <code>cipher_suite</code> の各フィールドが SC の動作モードに直接影響する。</p>
 <h3 id="wpa_supplicant_1">wpa_supplicant 連携<a class="headerlink" href="#wpa_supplicant_1" title="Permanent link">&para;</a></h3>

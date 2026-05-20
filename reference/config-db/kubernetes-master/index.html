@@ -37679,7 +37679,7 @@
 <!-- runtime-trace -->
 <h2 id="_18">実コンテナ動作トレース<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>kube_scheduler</code> / <code>hostcfgd</code> が CONFIG_DB の <code>KUBERNETES_MASTER</code> テーブルを購読する。</p>
+<p><code>ctrmgrd</code> (<code>docker-config-engine</code>) が CONFIG_DB の <code>KUBERNETES_MASTER</code> テーブルを購読する。</p>
 <p><code>KUBERNETES_MASTER</code> の key は <code>SERVER</code> (単一エントリ)。<code>ip</code> / <code>port</code> / <code>insecure</code> フィールド。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (APPL_DB 中継なし)</p>

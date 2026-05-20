@@ -35462,7 +35462,8 @@
 <ul>
 <li>主要実装: <a href="https://github.com/sonic-net/sonic-sairedis/blob/d54977f297301f972e2839d526d8130a5f66e893/syncd/syncd_applyview.cpp"><code>syncd/syncd_applyview.cpp</code></a></li>
 <li>設計ドキュメント: 未公開</li>
-<li>状況: コードは sairedis に入っているが SONiC 通常パスでは使われていない。production 検証なし。syncd docker 内 unit test のみ</li>
+<li>状況（<a href="../../reference/glossary/#term-hld">HLD</a> 時点）: コードは sairedis に入っているが SONiC 通常パスでは使われていない。production 検証なし。syncd docker 内 unit test のみ</li>
+<li>現状（最新コード裏取り）: verification block も参照。<code>syncd_applyview.cpp</code> の view-comparison ロジックは master に取り込み済み。HLD 起草時点の「通常パス未使用」記述は時点依存で、現行 master では OID 復元戦略として採用されている</li>
 </ul>
 <h3 id="planned-vs-unplanned-warm-restart">Planned vs Unplanned warm restart<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup><a class="headerlink" href="#planned-vs-unplanned-warm-restart" title="Permanent link">&para;</a></h3>
 <p>libsai に対し <strong>planned warm restart のみ必須</strong>。SONiC が SDK / libsai に明示要求する。unplanned は要求なし。</p>
@@ -35474,7 +35475,7 @@
 </ol>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>syncd view comparison は production 検証無し</li>
+<li>syncd view comparison は HLD 起草時点では production 検証無し（現行 master では採用済み。verification block 参照）</li>
 <li>idempotent 案も完全 review 未実施</li>
 <li>SAI 互換切れは個別対応</li>
 <li>unplanned warm restart は libsai 要件外</li>
@@ -35487,7 +35488,7 @@
 <li><strong><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> save/restore</strong>: Phase 3 の system warm reboot</li>
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 167700005048 -->
 
 <div class="footnote">
 <hr />

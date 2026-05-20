@@ -35753,7 +35753,7 @@
 </tr>
 <tr>
 <td>ASIC FIB に入った経路</td>
-<td><code>show ip route</code>, <code>redis-cli -n 1 keys 'ROUTE_TABLE:*'</code>, ASIC_DB</td>
+<td><code>show ip route</code>, <code>redis-cli -n 0 keys 'ROUTE_TABLE:*'</code>（APPL_DB）, <code>redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*'</code>（ASIC_DB）</td>
 </tr>
 <tr>
 <td>FPM 反映の停滞</td>
@@ -35803,7 +35803,7 @@
 <td>unnumbered / dynamic peer の subnet 単位定義。leaf-spine ECMP fabric の主流</td>
 </tr>
 <tr>
-<td><code>BGP_GLOBAL</code></td>
+<td><code>BGP_GLOBALS</code></td>
 <td>router-id、ebgp/ibgp multipath、graceful-restart などのグローバル設定</td>
 </tr>
 <tr>

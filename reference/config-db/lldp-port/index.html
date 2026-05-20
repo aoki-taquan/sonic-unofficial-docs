@@ -36646,7 +36646,7 @@
 <h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>LLDP_PORT|&lt;Ethernet&gt;</code>。</li>
-<li><code>admin_status</code>: <code>rx_and_tx</code>。<code>description</code> を物理配線管理用に活用する。</li>
+<li><code>enabled</code>: <code>true</code>（デフォルト、双方向）。<code>description</code> を物理配線管理用に活用する。</li>
 </ul>
 <h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36771,11 +36771,11 @@
 </thead>
 <tbody>
 <tr>
-<td><code>admin_status</code> に不正値</td>
+<td><code>enabled</code> に不正値 (boolean 以外)</td>
 <td><code>lldpcli configure ports ... lldp status &lt;value&gt;</code> が失敗。CONFIG_DB にはバリデーションなしで書けるが lldpd には反映されない</td>
 </tr>
 <tr>
-<td><code>admin_status=disabled</code></td>
+<td><code>enabled=false</code></td>
 <td>LLDP フレームの送受信停止。<code>DEVICE_NEIGHBOR</code> テーブルへの自動学習が発生せず minigraph との乖離が生じる</td>
 </tr>
 <tr>

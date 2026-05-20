@@ -35568,6 +35568,14 @@ reasoning: hostcfgd が「変更購読」と「起動時の現状突合」の両
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># 機能を無効化</span>
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>config<span class="w"> </span>feature<span class="w"> </span>disable<span class="w"> </span>telemetry
 </span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">実装との差分（HLD 仕様 vs 現行 master）</p>
+<ul>
+<li>CLI: HLD は <code>config feature enable|disable &lt;name&gt;</code> を提案するが、現行実装は <strong><code>config feature state &lt;name&gt; enabled|disabled</code></strong>（本ページ L172 のコマンド例も実装版）</li>
+<li>フィールド名: HLD は <code>FEATURE.status=enabled</code> だが、現行 CONFIG_DB は <strong><code>state</code></strong> フィールド（<code>docs/reference/config-db/feature.md</code> L54 参照）</li>
+<li>L33 / L42 / L75 / L113 / L114 / L127 / L137 / L143 / L161 の HLD 表記は <strong>未採用の初版設計</strong> として残置</li>
+</ul>
+</div>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>本 HLD は 2019 年の初版</strong>。現行 master の FEATURE テーブルは <code>auto_restart</code> / <code>delayed</code> / <code>has_global_scope</code> / <code>set_owner</code> 等の追加フィールドを持ち、<code>hostcfgd</code> の挙動も拡張されている</li>

@@ -32966,7 +32966,7 @@
   <a href="#monitor-partially-implemented" class="md-nav__link">
     <span class="md-ellipsis">
       
-        partially_implemented — 部分実装 (60 件)
+        partially_implemented — 部分実装 (59 件)
       
     </span>
   </a>
@@ -32977,7 +32977,7 @@
   <a href="#monitor-evolved-beyond-hld" class="md-nav__link">
     <span class="md-ellipsis">
       
-        evolved_beyond_hld — HLD と乖離した形で実装/進化 (30 件)
+        evolved_beyond_hld — HLD と乖離した形で実装/進化 (31 件)
       
     </span>
   </a>
@@ -35361,7 +35361,7 @@
   <a href="#monitor-partially-implemented" class="md-nav__link">
     <span class="md-ellipsis">
       
-        partially_implemented — 部分実装 (60 件)
+        partially_implemented — 部分実装 (59 件)
       
     </span>
   </a>
@@ -35372,7 +35372,7 @@
   <a href="#monitor-evolved-beyond-hld" class="md-nav__link">
     <span class="md-ellipsis">
       
-        evolved_beyond_hld — HLD と乖離した形で実装/進化 (30 件)
+        evolved_beyond_hld — HLD と乖離した形で実装/進化 (31 件)
       
     </span>
   </a>
@@ -35593,12 +35593,12 @@
 </tr>
 <tr>
 <td><a href="#monitor-partially-implemented"><code>partially_implemented</code></a></td>
-<td style="text-align: right;">60</td>
+<td style="text-align: right;">59</td>
 <td>部分実装</td>
 </tr>
 <tr>
 <td><a href="#monitor-evolved-beyond-hld"><code>evolved_beyond_hld</code></a></td>
-<td style="text-align: right;">30</td>
+<td style="text-align: right;">31</td>
 <td>HLD と乖離した形で実装/進化</td>
 </tr>
 <tr>
@@ -35731,7 +35731,7 @@
   area: <code>system</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>per-page queue で既出の通り提案 HLD は未採用。再走査でも:</p>
-<h3 id="monitor-partially-implemented"><code>partially_implemented</code> — 部分実装 (60 件)<a class="headerlink" href="#monitor-partially-implemented" title="Permanent link">&para;</a></h3>
+<h3 id="monitor-partially-implemented"><code>partially_implemented</code> — 部分実装 (59 件)<a class="headerlink" href="#monitor-partially-implemented" title="Permanent link">&para;</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">部分実装</p>
 <p>HLD のスコープのうち<strong>一部の構成要素だけ</strong>が現行 master に取り込まれているページ群。データ層 / CLI / orch のどれが欠けているかは個別ページで明示。</p>
@@ -35903,13 +35903,6 @@
   area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
 <li>
-<p><a href="../../../management/gnsi-hld/">gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル</a><br />
-  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
-</li>
-</ul>
-<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b76</code>）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという <strong>一部のみの部分実装</strong> 状態:</p>
-<ul>
-<li>
 <p><a href="../../../platform/everflow-support-on-voq-chassis/">VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）</a><br />
   area: <code>platform</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></p>
 </li>
@@ -36075,7 +36068,7 @@
 </li>
 </ul>
 <p>per-page queue で既出の通り、<a href="../../glossary/#term-hld">HLD</a> が定義する専用機構は未取り込み。<code>.cache/sonic-sources/</code> 全体を再走査した結果:</p>
-<h3 id="monitor-evolved-beyond-hld"><code>evolved_beyond_hld</code> — HLD と乖離した形で実装/進化 (30 件)<a class="headerlink" href="#monitor-evolved-beyond-hld" title="Permanent link">&para;</a></h3>
+<h3 id="monitor-evolved-beyond-hld"><code>evolved_beyond_hld</code> — HLD と乖離した形で実装/進化 (31 件)<a class="headerlink" href="#monitor-evolved-beyond-hld" title="Permanent link">&para;</a></h3>
 <div class="admonition info">
 <p class="admonition-title">HLD と乖離した形で実装/進化</p>
 <p>HLD で示された設計が、その後<strong>別アーキテクチャに置換された</strong>、または<strong>HLD の記述を超えて拡張された</strong>ページ群。HLD と現行コードの両方を読まないと全体像が掴めない。</p>
@@ -36170,6 +36163,11 @@
   area: <code>management</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b7679b260c3fd0786a6d0734fc8e82c9a22</code>）:</p>
+<ul>
+<li><a href="../../../management/gnsi-hld/">gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル</a><br />
+  area: <code>management</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+</ul>
+<p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b76</code>）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという <strong>一部のみの部分実装</strong> 状態:</p>
 <ul>
 <li><a href="../../../overlay/dscp-remapping-for-tunnel-traffic/">トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）</a><br />
   area: <code>overlay</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
@@ -36562,7 +36560,7 @@
 </li>
 <li>
 <p><a href="../../../management/gnsi-hld/">gNSI（Certz / Authz / Pathz / Credentialz）の Rotate モデル</a><br />
-  area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
+  area: <code>management</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
 </li>
 </ul>
 <p>実コード裏取りで判明した HLD との差分（verified at: 2026-05-09, sonic-gnmi @ <code>eb635b76</code>）。HLD の 4 サービス（Authz / Certz / Pathz / Credentialz）のうち 3 つは取り込み済みで、Credentialz のみ未取り込みという <strong>一部のみの部分実装</strong> 状態:</p>

@@ -35539,7 +35539,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: Code-verified</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-gnmi</code> の Set ハンドラ、<code>sonic-host-services</code> 側の DBUS エンドポイント、<code>telemetry.sh</code> 起動スクリプトの実コード裏取りは未済。</p>
+<p><code>sonic-gnmi</code> の Set ハンドラ・<code>sonic-host-services</code> 側の DBUS エンドポイント・<code>telemetry.sh</code> 起動スクリプトをコードで確認済み（Verifier batch 29）。フラグ → 関数ポインタ → DBUS 経路が実コードと一致することを検証。</p>
 </div>
 <h1 id="gnmi-save-on-setset-configdb">gNMI Save-On-Set（Set ごとの ConfigDB 永続化）<a class="headerlink" href="#gnmi-save-on-setset-configdb" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -35996,7 +35996,7 @@
 <li><strong>standby で IPv6 neighbor が FAILED 化</strong>: <code>accept_untracked_na=1</code> + <code>arp_update</code> script が <code>FAILED</code> を <code>INCOMPLETE</code> に書き換え、active 側 NA で resolve<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ol>
 <h2 id="5-y-cable-i2c-ycabled">5. y-cable I2C 障害（ycabled）<a class="headerlink" href="#5-y-cable-i2c-ycabled" title="Permanent link">&para;</a></h2>
-<p>旧 <code>xcvrd</code> を <code>ycabled</code> に改名<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>APP_DB.HW_MUX_CABLE</code> を購読し I2C 経由で MUX を toggle する。<code>i2c_retry_count</code> 回失敗で <code>MUX_FAIL</code> を <code>STATE_DB.HW_MUX_CABLE_TABLE</code> に書く。報告状態: <code>MUX_XCVRD_ACTIVE</code> / <code>MUX_XCVRD_STANDBY</code> / <code>MUX_XCVRD_FAIL</code>。</p>
+<p>旧 <code>xcvrd</code> を <code>ycabled</code> に改名<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>APP_DB.HW_MUX_CABLE</code> を購読し I2C 経由で MUX を toggle する。<code>i2c_retry_count</code> 回失敗で <code>MUX_FAIL</code> を <code>STATE_DB.HW_MUX_CABLE_TABLE</code> に書く。報告状態（コード上の定数名 → 実 DB 文字列値）: <code>MUX_XCVRD_ACTIVE</code> → <code>active</code> / <code>MUX_XCVRD_STANDBY</code> → <code>standby</code> / <code>MUX_XCVRD_UNKNOWN</code> → <code>unknown</code>。<code>STATE_DB.HW_MUX_CABLE_TABLE</code> の <code>state</code> フィールドには小文字の文字列値 (<code>active</code> / <code>standby</code> / <code>unknown</code>) が書き込まれる。</p>
 <h3 id="switchover-standby-active">switchover シーケンス（standby → active）<a class="headerlink" href="#switchover-standby-active" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>sequenceDiagram
     participant LM as linkmgrd (standby)
@@ -36006,7 +36006,7 @@
     participant SDB as STATE_DB
     participant OR as orchagent (MuxOrch)
     LM-&gt;&gt;LM: LinkProber Standby → Unknown
-    LM-&gt;&gt;LM: LINKMANAGER_SWITCH → MuxLinkWait
+    LM-&gt;&gt;LM: LINKMANAGER_SWITCH → LinkWait
     LM-&gt;&gt;ADB: HW_MUX_CABLE.state = active
     ADB-&gt;&gt;YC: notify
     YC-&gt;&gt;I2C: toggle MUX direction

@@ -35343,7 +35343,7 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p><a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-evpn">EVPN</a> / <a href="../../../reference/glossary/#term-vnet">VNET</a> の内部実装は「<a href="../../../reference/glossary/#term-frr">FRR</a> (bgpd) が EVPN type-2/type-5 を学習し、<a href="../../../reference/glossary/#term-zebra">zebra</a> が kernel/<a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> に渡し、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> が VxlanOrch / VNetOrch / VRFOrch / NeighOrch を通じて <a href="../../../reference/glossary/#term-sai">SAI</a> tunnel 系オブジェクトを <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> に投入する」という縦の流れと「外部 controller が VNET_TUNNEL / VNET_ROUTE_TUNNEL を直接 <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> に書く」という横の流れに分かれます。<a href="../../../reference/glossary/#term-hld">HLD</a> の章をまたいで読むときは、この二経路をまず分離します。</p>
+<p><a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-evpn">EVPN</a> / <a href="../../../reference/glossary/#term-vnet">VNET</a> の内部実装は「<a href="../../../reference/glossary/#term-frr">FRR</a> (bgpd) が EVPN type-2/type-5 を学習し、<a href="../../../reference/glossary/#term-zebra">zebra</a> が kernel/<a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> に渡し、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> が VxlanOrch / VNetOrch / VRFOrch / NeighOrch を通じて <a href="../../../reference/glossary/#term-sai">SAI</a> tunnel 系オブジェクトを <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> に投入する」という縦の流れと「外部 controller が VNET / VNET_ROUTE_TUNNEL を直接 <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> に書く」という横の流れに分かれます。<a href="../../../reference/glossary/#term-hld">HLD</a> の章をまたいで読むときは、この二経路をまず分離します。</p>
 <h2 id="_2">データフロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   subgraph control[制御プレーン]
@@ -35358,7 +35358,7 @@
   end
   subgraph redis[Redis]
     CFG[(CONFIG_DB&lt;br/&gt;VXLAN_TUNNEL / VNET)]
-    APP[(APPL_DB&lt;br/&gt;VNET_TUNNEL_TABLE / VNET_ROUTE_TUNNEL_TABLE)]
+    APP[(APPL_DB&lt;br/&gt;VNET_TABLE / VNET_ROUTE_TUNNEL_TABLE)]
     ASIC[(ASIC_DB&lt;br/&gt;SAI_OBJECT_TYPE_TUNNEL)]
   end
   BGPD --&gt; ZEBRA --&gt; FPMSYNCD --&gt; APP
@@ -35472,7 +35472,7 @@
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">BGP_NEIGHBOR (l2vpn evpn AF)  ─&gt; bgpcfgd → FRR</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nt">APPL_DB</span><span class="p">:</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">VNET_TUNNEL_TABLE / VNET_ROUTE_TABLE / VNET_ROUTE_TUNNEL_TABLE ─&gt; VNetOrch / VNetRouteOrch</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">VNET_TABLE / VNET_ROUTE_TABLE / VNET_ROUTE_TUNNEL_TABLE ─&gt; VNetOrch / VNetRouteOrch</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">EVPN_REMOTE_VNI_TABLE ─&gt; EvpnRemoteVnipOrch</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">NEIGH_TABLE (type-2) ─&gt; NeighOrch</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>

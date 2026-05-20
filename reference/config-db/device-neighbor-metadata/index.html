@@ -37036,7 +37036,7 @@
 <tr>
 <td>2</td>
 <td>個別エントリ <code>data['name']</code> が neigmeta に不在</td>
-<td>bgpcfgd <code>BGPPeerMgrBase.add_peer</code></td>
+<td>bgpcfgd <code>BGPPeerMgrBase.set_handler</code></td>
 <td><code>log_info("DEVICE_NEIGHBOR_METADATA is not ready for neighbor ...")</code>, <code>return False</code></td>
 <td>あり（エントリ到着後に directory が再通知）</td>
 </tr>
@@ -37498,7 +37498,7 @@ minigraph 経由では <code>type</code> が常に書き込まれるが、直接
 <!-- runtime-trace -->
 <h2 id="_21">実コンテナ動作トレース<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>lldpmgrd</code> / <code>intfmgrd</code> / neighbor discovery が CONFIG_DB の <code>DEVICE_NEIGHBOR_METADATA</code> テーブルを購読する。</p>
+<p><code>bgpcfgd</code> / <code>pfcwd</code> / <code>show</code> / <code>db_migrator</code> が CONFIG_DB の <code>DEVICE_NEIGHBOR_METADATA</code> テーブルを購読する（lldpmgrd は購読しない — pubsub セクション参照）。</p>
 <p><code>DEVICE_NEIGHBOR_METADATA</code> は <code>&lt;device_name&gt;</code> の key で hwsku / type 情報を保持。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継なし)</p>

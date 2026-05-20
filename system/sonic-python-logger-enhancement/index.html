@@ -35730,8 +35730,8 @@
 <p>「redis が無いと壊れる」を避けるため、<strong>redis 未起動時は default level でそのまま動く</strong>。<code>swsscommon.Logger</code> のように初期化で接続を必須にしない<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <p><code>swssloglevel</code> は <code>swsscommon.Logger</code> のスレッドに依存し、<strong>他コンテナの daemon にはシグナルを送れない</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 HLD では新しい CLI を追加:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>syslog<span class="w"> </span>level<span class="w"> </span>-c<span class="w"> </span>&lt;component&gt;<span class="w"> </span>-l<span class="w"> </span>&lt;log_level&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">                    </span><span class="o">[</span>--service<span class="w"> </span>&lt;service_name&gt;<span class="o">]</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config<span class="w"> </span>syslog<span class="w"> </span>level<span class="w"> </span>-i<span class="w"> </span>&lt;identifier&gt;<span class="w"> </span>-l<span class="w"> </span>&lt;log_level&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">                    </span><span class="o">[</span>--container<span class="w"> </span>&lt;container_name&gt;<span class="o">]</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">                    </span><span class="o">[</span>--program<span class="w"> </span>&lt;program_name&gt;<span class="o">]</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">                    </span><span class="o">[</span>--pid<span class="w"> </span>&lt;pid&gt;<span class="o">]</span>
 </span></code></pre></div>
@@ -35744,7 +35744,7 @@
 </thead>
 <tbody>
 <tr>
-<td><code>-c</code></td>
+<td><code>-i</code>（HLD では <code>-c</code>）</td>
 <td>component / log identifier。<code>LOGGER</code> テーブルのキー</td>
 </tr>
 <tr>
@@ -35752,19 +35752,23 @@
 <td>log level（<code>DEBUG</code> / <code>INFO</code> / <code>NOTICE</code> / <code>WARN</code> / <code>ERROR</code>）</td>
 </tr>
 <tr>
-<td><code>--service</code></td>
+<td><code>--container</code>（HLD では <code>--service</code>）</td>
 <td>コンテナ名。SIGHUP を送る対象コンテナ</td>
 </tr>
 <tr>
 <td><code>--program</code></td>
-<td>コンテナ内のプログラム名。<code>--service</code> 必須</td>
+<td>コンテナ内のプログラム名。<code>--container</code> 必須</td>
 </tr>
 <tr>
 <td><code>--pid</code></td>
-<td>プロセス ID。<code>--service</code> 指定時はそのコンテナ内 PID、未指定時はホスト側 PID</td>
+<td>プロセス ID。<code>--container</code> 指定時はそのコンテナ内 PID、未指定時はホスト側 PID</td>
 </tr>
 </tbody>
 </table>
+<div class="admonition warning">
+<p class="admonition-title">実装オプション名の差分</p>
+<p>HLD 原文では <code>-c</code> / <code>--service</code> だが、現行実装（<code>docs/reference/cli/config-syslog.md</code> L42, L74）では <strong><code>-i</code></strong> / <strong><code>--container</code></strong> が正。本ページのコマンド例は実装オプション名に統一して記載している。</p>
+</div>
 <p>検証ルール（HLD 例より）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><code>--program</code> は <code>--service</code> と併用必須</li>

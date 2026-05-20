@@ -37584,9 +37584,9 @@
 </table>
 <p>SAI 操作は FdbOrch 経由: MCLAG メンバーが oper-down の場合に <code>sai_fdb_api-&gt;remove_fdb_entry()</code> を呼ぶ（<code>fdborch.cpp:1666</code>）。mclagsyncd は <a href="../../glossary/#term-asic_db">ASIC_DB</a> の <code>ASIC_STATE:SAI_OBJECT_TYPE_BRIDGE_PORT:*</code> を<strong>読み取り専用</strong>で参照し FDB ポート OID を解決する（<code>mclaglink.cpp:79-95</code>）。</p>
 <h3 id="mclagsyncd-iccpd-tcp-ipc">mclagsyncd → iccpd TCP IPC<a class="headerlink" href="#mclagsyncd-iccpd-tcp-ipc" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>CONFIG_DB ──SubscriberStateTable──▶ mclagsyncd ──TCP 127.0.6.1:2626──▶ iccpd
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>CONFIG_DB ──SubscriberStateTable──▶ mclagsyncd ──TCP 127.0.0.6:2626──▶ iccpd
 </span></code></pre></div>
-<p>定数: <code>MCLAG_DEFAULT_IP = 0x7f000006</code>（127.0.6.1）、<code>MCLAG_DEFAULT_PORT = 2626</code>（<code>mclag.h:23,56</code>）。<br />
+<p>定数: <code>MCLAG_DEFAULT_IP = 0x7f000006</code>（127.0.0.6）、<code>MCLAG_DEFAULT_PORT = 2626</code>（<code>mclag.h:23,56</code>）。<br />
 mclagsyncd が TCP サーバとして <code>listen / accept</code> し、iccpd が接続する。テーブル変化ごとに差分のみを <code>write(m_connection_socket, ...)</code> で送信する。</p>
 <h3 id="mclagsyncd-appl_db-producerstatetable">mclagsyncd → APPL_DB (ProducerStateTable)<a class="headerlink" href="#mclagsyncd-appl_db-producerstatetable" title="Permanent link">&para;</a></h3>
 <p>iccpd からの命令を受けて <a href="../../glossary/#term-appl_db">APPL_DB</a> へ書き込む:</p>

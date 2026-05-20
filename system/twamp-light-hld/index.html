@@ -35405,15 +35405,15 @@
 </ul>
 <h2 id="db">コンポーネント / DB<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    USER[(CONFIG_DB\nCFG_TWAMP_SESSION_TABLE)] --&gt; ORCH[twamp orch]
+    USER[(CONFIG_DB\nTWAMP_SESSION)] --&gt; ORCH[twamp orch]
     ORCH --&gt;|capability query| STATE[(STATE_DB\nSTATE_SWITCH_CAPABILITY_TABLE)]
     ORCH --&gt; SAI[(SAI TWAMP)]
     SAI --&gt;|stats| CDB[(COUNTERS_DB)]
     SAI --&gt;|session-sender event| ORCH
-    ORCH --&gt; STATE2[(STATE_DB\nSTATE_TWAMP_SESSION_TABLE)]
+    ORCH --&gt; STATE2[(STATE_DB\nTWAMP_SESSION_TABLE)]
     CDB --&gt; CLI[show twamp-light ...]</code></pre>
 <h3 id="config_db">CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>CFG_TWAMP_SESSION_TABLE|&lt;name&gt;:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>TWAMP_SESSION|&lt;name&gt;:
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  mode             = SENDER | REFLECTOR
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  src_ip / dst_ip
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  src_udp_port / dst_udp_port
@@ -35426,7 +35426,7 @@
 </span></code></pre></div>
 <h3 id="state_db-counters_db">STATE_DB / COUNTERS_DB<a class="headerlink" href="#state_db-counters_db" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>STATE_TWAMP_SESSION_TABLE|&lt;name&gt;</code>: 状態（active / completed / error）、<code>tx_packets</code> / <code>rx_packets</code> / latency / jitter</li>
+<li><code>TWAMP_SESSION_TABLE|&lt;name&gt;</code>: 状態（active / completed / error）、<code>tx_packets</code> / <code>rx_packets</code> / latency / jitter</li>
 <li><code>STATE_SWITCH_CAPABILITY_TABLE</code>: ASIC TWAMP support flag、CLI が事前 check<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><a href="../../reference/glossary/#term-counters_db">COUNTERS_DB</a>: session 単位で <code>tx_pkts</code> / <code>rx_pkts</code> / <code>latency_*</code> / <code>jitter_*</code> polling<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>

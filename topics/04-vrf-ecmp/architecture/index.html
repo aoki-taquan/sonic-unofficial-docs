@@ -35285,7 +35285,7 @@
     MGR --&gt; FRR[FRR&lt;br/&gt;staticd / bgpd / zebra]
     FRR --&gt;|FPM netlink| FPMSYNCD[fpmsyncd]
     FPMSYNCD --&gt; RT[(APPL_DB&lt;br/&gt;ROUTE_TABLE)]
-    FPMSYNCD --&gt; NHGT[(APPL_DB&lt;br/&gt;NEXT_HOP_GROUP_TABLE)]
+    FPMSYNCD --&gt; NHGT[(APPL_DB&lt;br/&gt;NEXTHOP_GROUP_TABLE)]
     RT --&gt; ROUTEORCH[RouteOrch]
     NHGT --&gt; NHGORCH[NhgOrch]
     ROUTEORCH --&gt; INTFS[IntfsOrch / NeighOrch / VRFOrch]

@@ -36034,7 +36034,7 @@
 <td><code>stats_upd_secs</code></td>
 <td>string (数値)</td>
 <td><code>"5"</code></td>
-<td><a href="../../glossary/#term-counters_db">COUNTERS_DB</a> への統計書き込み間隔 (秒)</td>
+<td>ハートビート間隔計算 (<code>STATS_HEARTBEAT_MIN</code>) に使用されるパラメータ。<a href="../../glossary/#term-counters_db">COUNTERS_DB</a> への実際の書き込み間隔はこの値ではなく <code>run_writer</code> の 10 ms ポーリング周期 (<code>eventd.cpp:215-221</code>) による</td>
 </tr>
 <tr>
 <td><code>cache_max_cnt</code></td>

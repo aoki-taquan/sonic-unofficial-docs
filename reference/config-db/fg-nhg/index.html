@@ -37451,11 +37451,11 @@
 <h3 id="3_1">3 テーブルの投入順序<a class="headerlink" href="#3_1" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>FG_NHG|&lt;name&gt;          ← 最初に投入（必須）
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  ↓
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>FG_NHG_PREFIX|&lt;prefix&gt; ← FG_NHG 処理完了後（逆順は破棄・再試行なし）
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>FG_NHG_PREFIX|&lt;prefix&gt; ← FG_NHG 処理完了後（逆順時は自動 retry あり）
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>FG_NHG_MEMBER|&lt;nh_ip&gt;  ← FG_NHG 処理完了後（逆順は自動 retry あり）
 </span></code></pre></div>
 <ul>
-<li><code>FG_NHG_PREFIX</code> は親 FG_NHG が未存在の場合 <code>SWSS_LOG_ERROR</code> + <code>return true</code>（破棄・再試行なし）。<strong>FG_NHG より後に投入しないと消える</strong>。</li>
+<li><code>FG_NHG_PREFIX</code> は親 FG_NHG が未存在の場合 <code>SWSS_LOG_INFO "FG_NHG entry not received yet, continue"</code> + <code>return false</code>（Consumer キューに残り自動 retry）。FG_NHG の処理完了後に自動投入される (<code>doTaskFgNhgPrefix()</code> L1821)。</li>
 <li><code>FG_NHG_MEMBER</code> は親 FG_NHG が未存在の場合 <code>return false</code>（Consumer キューに残り自動 retry）。FG_NHG の処理完了後に自動投入される。</li>
 </ul>
 <h3 id="nexthop">NEXTHOP 解決順序<a class="headerlink" href="#nexthop" title="Permanent link">&para;</a></h3>

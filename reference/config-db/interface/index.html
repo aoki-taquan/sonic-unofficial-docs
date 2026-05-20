@@ -37398,11 +37398,11 @@
 <p><code>intfmgrd</code> → <code>IntfsOrch</code> (<a href="../../glossary/#term-appl_db">APPL_DB</a> 経由) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>INTERFACE</code> テーブルを購読する。</p>
 <p><code>INTERFACE</code> の key は <code>&lt;intf_name&gt;|&lt;ip_prefix&gt;</code> または <code>&lt;intf_name&gt;</code> (intf 属性のみ)。physical port の L3 設定。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
-<p><code>APP_INTF_TABLE</code> に書き込み (IP address 付き router interface)</p>
+<p><code>INTF_TABLE</code> に書き込み (IP address 付き router interface)</p>
 <h3 id="3-applsai">段階 3 — APPL→SAI<a class="headerlink" href="#3-applsai" title="Permanent link">&para;</a></h3>
 <p><code>sai_router_intf_api</code> — router interface を作成/更新 + <code>sai_neighbor_api</code> で ネイバー設定</p>
 <h3 id="4">段階 4 — タイミングと副作用<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
-<p><strong>適用タイミング</strong>: <a href="../../glossary/#term-config_db">CONFIG_DB</a> 変化を <code>intfmgrd</code> が検知後 <code>APP_INTF_TABLE</code> に書き込み。<code>IntfsOrch</code> が <a href="../../glossary/#term-appl_db">APPL_DB</a> を購読して SAI router interface を作成/更新。IP address 追加は即時反映。</p>
+<p><strong>適用タイミング</strong>: <a href="../../glossary/#term-config_db">CONFIG_DB</a> 変化を <code>intfmgrd</code> が検知後 <code>INTF_TABLE</code> に書き込み。<code>IntfsOrch</code> が <a href="../../glossary/#term-appl_db">APPL_DB</a> を購読して SAI router interface を作成/更新。IP address 追加は即時反映。</p>
 <p><strong>副作用</strong>: IP address 追加は <a href="../../glossary/#term-arp">ARP</a>/<a href="../../glossary/#term-ndp">NDP</a> 送信を開始。IP address 削除は関連する <a href="../../glossary/#term-arp">ARP</a> エントリと neighbor を削除。MTU 変更は PMTUD に影響。</p>
 <!-- /runtime-trace -->
 
@@ -37487,7 +37487,7 @@
 <p>イベント (<code>hset</code> / <code>hdel</code> / <code>del</code>) 受信 → <code>readData()</code> がバッファに蓄積 → <code>pops()</code> でキーを取り出し <code>TABLE.get(key)</code> で現在値取得 → <code>Consumer::doTask()</code> 呼び出し。</p>
 <p>また、PORT / <a href="../../glossary/#term-lag">LAG</a> の状態変化を検知するために <a href="../../glossary/#term-state_db">STATE_DB</a> の <code>STATE_PORT_TABLE</code> と <code>STATE_LAG_TABLE</code> も別途 <code>SubscriberStateTable</code> で購読する（親ポートの admin_status・MTU 変化をサブインタフェースに伝播）。</p>
 <h4 id="intfmgrd-appl_db">intfmgrd → APPL_DB<a class="headerlink" href="#intfmgrd-appl_db" title="Permanent link">&para;</a></h4>
-<p>処理完了後、<code>ProducerStateTable m_appIntfTableProducer</code> で <code>APP_INTF_TABLE</code> に書き込む。</p>
+<p>処理完了後、<code>ProducerStateTable m_appIntfTableProducer</code> で <code>INTF_TABLE</code> (C++ マクロ <code>APP_INTF_TABLE_NAME</code>) に書き込む。</p>
 <table>
 <thead>
 <tr>

@@ -35440,7 +35440,7 @@
     ENABLED --&gt; ENFORCED : enforce=true + warm/fast-reboot
     ENFORCED --&gt; NONE : enforce=false + warm/fast-reboot</code></pre>
 <ul>
-<li><strong>None Enforce</strong>: <code>/etc/fips/fips_enabled</code> を runtime で 1/0 にし、SymCrypt engine を有効/無効化。対応サービス（sshd / telemetry / restapi）の <strong>再起動が必要</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong>None Enforce</strong>: <code>/etc/fips/fips_enable</code>（実装名。HLD は <code>fips_enabled</code>）を runtime で 1/0 にし、SymCrypt engine を有効/無効化。対応サービス（sshd / telemetry / restapi）の <strong>再起動が必要</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><strong>Enforce</strong>: kernel cmdline に依存。切替は <strong>warm/fast-reboot 必須</strong><sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li><code>enforce=true</code> なら <code>enable</code> は無視される。<code>enable</code> は enforce 前の中間モード兼ロールバック弁<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>

@@ -35558,7 +35558,7 @@
 <td>15</td>
 </tr>
 <tr>
-<td><code>max_syslogins</code></td>
+<td><code>max_sessions</code></td>
 <td>システム全体の並列ログイン上限</td>
 <td>0..100 (0 = 無制限)</td>
 <td>0</td>
@@ -35607,13 +35607,13 @@
 <td>シェルレベル idle</td>
 </tr>
 <tr>
-<td><code>max_syslogins</code></td>
+<td><code>max_sessions</code></td>
 <td><code>limits.conf.j2</code> 経由で <code>/etc/security/limits.conf</code> の <code>* - maxsyslogins &lt;N&gt;</code></td>
 <td>PAM レベルの全ユーザ並列ログイン上限</td>
 </tr>
 </tbody>
 </table>
-<p><code>max_syslogins</code> は jinja2 テンプレートで条件分岐される<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><code>max_sessions</code> は jinja2 テンプレートで条件分岐される（CONFIG_DB のフィールド名は <code>max_sessions</code>、PAM 側ディレクティブ名は <code>maxsyslogins</code>）<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-jinja highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">{%</span> <span class="k">if</span> <span class="nv">max_sessions</span> -<span class="cp">%}</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="x">* - maxsyslogins </span><span class="cp">{{</span> <span class="nv">max_sessions</span> <span class="cp">}}</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="cp">{%</span> <span class="k">endif</span> -<span class="cp">%}</span>
@@ -35628,7 +35628,7 @@
     participant HC as hostcfgd
     participant FS as sshd_config / limits.conf
     participant SVC as ssh service
-    U-&gt;&gt;CFG: SSH_SERVER|POLICIES = {ports:"22,2222", max_syslogins:"5", ...}
+    U-&gt;&gt;CFG: SSH_SERVER|POLICIES = {ports:"22,2222", max_sessions:"5", ...}
     CFG--&gt;&gt;HC: notify
     HC-&gt;&gt;FS: update /etc/ssh/sshd_config (Port, MaxAuthTries, LoginGraceTime)
     HC-&gt;&gt;FS: render /etc/security/limits.conf (maxsyslogins)
@@ -35700,7 +35700,7 @@ reasoning: 設定 → sshd_config 更新 → service 再起動 という反映�
 <tr>
 <td></td>
 <td></td>
-<td><code>max_syslogins</code></td>
+<td><code>max_sessions</code></td>
 <td>0..100（既定 0=無制限）</td>
 </tr>
 </tbody>
@@ -35713,7 +35713,7 @@ reasoning: 設定 → sshd_config 更新 → service 再起動 という反映�
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">            </span><span class="nt">&quot;login_timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;120&quot;</span><span class="p">,</span>
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">            </span><span class="nt">&quot;ports&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;22&quot;</span><span class="p">,</span>
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">            </span><span class="nt">&quot;inactivity_timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15&quot;</span><span class="p">,</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">            </span><span class="nt">&quot;max_syslogins&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">            </span><span class="nt">&quot;max_sessions&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0&quot;</span>
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="p">}</span>
 </span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">}</span>
@@ -35727,13 +35727,13 @@ reasoning: 設定 → sshd_config 更新 → service 再起動 という反映�
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">login_timeout</span><span class="w">         </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">uint32</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nv">1..600</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="mi">120</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">ports</span><span class="w">                 </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">string</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">pattern</span><span class="w"> </span><span class="s1">&#39;([1-9]|[1-9]\d{1,3}|...|6553[0-6])(,...)*&#39;</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">  </span><span class="k">default</span><span class="w"> </span><span class="s2">&quot;22&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">inactivity_timeout</span><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">uint32</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nv">0..35000</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">  </span><span class="k">default</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">max_syslogins</span><span class="w">         </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">uint32</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nv">0..100</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="k">leaf</span><span class="w"> </span><span class="nv">max_sessions</span><span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">uint32</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nv">0..100</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">    </span><span class="k">default</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="_8">設定例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 待受ポートを 22 と 2222 の両方にし、最大同時ログインを 5 に制限</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;SSH_SERVER|POLICIES&#39;</span><span class="w"> </span>ports<span class="w"> </span><span class="s2">&quot;22,2222&quot;</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;SSH_SERVER|POLICIES&#39;</span><span class="w"> </span>max_syslogins<span class="w"> </span><span class="m">5</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hset<span class="w"> </span><span class="s1">&#39;SSH_SERVER|POLICIES&#39;</span><span class="w"> </span>max_sessions<span class="w"> </span><span class="m">5</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>config<span class="w"> </span>save
 </span></code></pre></div>
@@ -35741,7 +35741,7 @@ reasoning: 設定 → sshd_config 更新 → service 再起動 という反映�
 <h2 id="_9">干渉する機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>シリアルコンソール HLD (<code>SERIAL_CONSOLE.POLICIES</code>)</strong>: <code>inactivity_timeout</code> は同じシェルレベル <code>TMOUT</code> フローを共有している。シリアル側 / SSH 側のどちらかで設定すると同じ値が両方に効く可能性。HLD では「既存の inactivity flow を使う」と明記されているため共有設計である<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>PAM <code>limits.conf</code></strong>: <code>max_syslogins</code> は SSH 限定ではなく <code>* - maxsyslogins</code> として <strong>全ユーザ全セッション</strong> に適用される。シリアルログインも対象になる点に注意。</li>
+<li><strong>PAM <code>limits.conf</code></strong>: <code>max_sessions</code> は SSH 限定ではなく <code>* - maxsyslogins</code>（PAM ディレクティブ）として展開され、<strong>全ユーザ全セッション</strong> に適用される。シリアルログインも対象になる点に注意。</li>
 <li><strong><code>ports</code> 変更</strong>: 自分が SSH で繋いでいるセッションが切れる可能性がある。事前にコンソール経路を確保したうえで変更する。</li>
 <li><strong>fail2ban / 外部認可</strong>: <code>authentication_retries</code> を上げすぎると brute-force 試行を検知しにくくなる。</li>
 </ul>

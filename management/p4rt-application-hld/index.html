@@ -35786,7 +35786,7 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>P4Orch / HashOrch</strong>: 本 App が APPL_DB に書く先。P4Orch は <code>P4RT_TABLE</code> を購読、HashOrch は P4Info 由来のハッシュ設定を SAI に流す。</li>
+<li><strong>P4Orch / SwitchOrch（ハッシュ責務）</strong>: 本 App が APPL_DB に書く先。P4Orch は <code>P4RT_TABLE</code> を購読。HLD は P4Info 由来のハッシュ設定を専任で扱う <code>HashOrch</code> の新設を示唆していたが、現行 master では独立した <code>HashOrch</code> クラスは存在せず、既存の <code>SwitchOrch</code> が <code>CFG_SWITCH_HASH_TABLE_NAME</code> を消費して SAI ハッシュ属性を設定する（詳細は本ページ末尾「HLD と実装の差分」を参照）。</li>
 <li><strong>APPL_STATE_DB</strong>: 本 HLD で導入される新しいレスポンスチャネル。他 SONiC コンポーネントと用途が違うため認識のズレに注意。</li>
 <li><strong>gRPC 認証</strong>: <code>cert_crl_dir</code> / <code>authz_policy</code> 等の鍵・権限ポリシーが PINS デプロイ前提。SONiC 標準の SSH/console 認証経路とは別系統。</li>
 </ul>
@@ -35821,7 +35821,7 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 <p><strong>読者への影響</strong>:</p>
 <ul>
 <li>アーキ図に <code>HashOrch</code> を書き起こすと <strong>存在しない box</strong> になる。レビュー時に「HashOrch のソースはどこか」と質問された場合、<code>SwitchOrch</code> を案内する必要がある。</li>
-<li>P4RT App から hash 設定を反映させる経路は HLD と論理的には同じ（P4RT App → CONFIG_DB → orchagent → SAI hash 属性）だが、debug 時に attach するクラス名が違う。</li>
+<li>P4RT App から hash 設定を反映させる経路は HLD と論理的には同じだが、debug 時に attach するクラス名が違う。実体経路は P4RT App → APPL_DB → P4Orch（テーブル系）、ハッシュ設定そのものは <code>SwitchOrch</code> が CONFIG_DB の <code>CFG_SWITCH_HASH_TABLE_NAME</code> を購読して SAI 属性へ変換する形になっており、P4RT App が直接 CONFIG_DB を書くわけではない。</li>
 <li>P4Info 由来の hash 設定が反映されない場合のトラブルシュート先は <code>SwitchOrch::doTask</code> 系（<code>switchorch.cpp:1507</code> 付近）。</li>
 </ul>
 <p><strong>回避策 / 対応方法</strong>:</p>

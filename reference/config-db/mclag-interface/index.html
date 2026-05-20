@@ -37003,7 +37003,7 @@ reasoning: ICCP セッション確立直後に APPL_DB の FLUSHFDBREQUEST チ�
 </span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="n">mclag</span><span class="p">.</span><span class="n">mclagsyncdSendMclagIfaceCfg</span><span class="p">(</span><span class="n">entries</span><span class="p">);</span>
 </span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>pops()</code> で取り出したエントリを <code>mclagsyncdSendMclagIfaceCfg()</code> に渡し、<code>MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_IFACE</code> メッセージとして TCP ソケット（<code>127.0.6.1:2626</code>）経由で <code>iccpd</code> に送信する。Select タイムアウトは指定なし（無限待機）。</p>
+<p><code>pops()</code> で取り出したエントリを <code>mclagsyncdSendMclagIfaceCfg()</code> に渡し、<code>MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_IFACE</code> メッセージとして TCP ソケット（<code>127.0.0.6:2626</code>）経由で <code>iccpd</code> に送信する。Select タイムアウトは指定なし（無限待機）。</p>
 <h3 id="mclagsyncd-fetch">mclagsyncd — 起動時全量 fetch<a class="headerlink" href="#mclagsyncd-fetch" title="Permanent link">&para;</a></h3>
 <p>接続確立直後に <code>mclagsyncdFetchMclagInterfaceConfigFromConfigdb()</code>（<code>mclagsyncd.cpp:58</code>）が呼ばれ、<code>Table::dump()</code> で CONFIG_DB の全 MCLAG_INTERFACE エントリを取得して iccpd に一括送信する。iccpd 再起動・接続断後の再接続時も全設定が自動復元される。</p>
 <h3 id="mlagorch-orchagent-consumer">MlagOrch (orchagent) — Consumer 登録<a class="headerlink" href="#mlagorch-orchagent-consumer" title="Permanent link">&para;</a></h3>
@@ -37029,7 +37029,7 @@ reasoning: ICCP セッション確立直後に APPL_DB の FLUSHFDBREQUEST チ�
 <td>CONFIG_DB → mclagsyncd</td>
 <td>SubscriberStateTable (動的登録)</td>
 <td><a href="../../glossary/#term-redis">Redis</a> keyspace notification</td>
-<td>iccpd (TCP IPC 127.0.6.1:2626)</td>
+<td>iccpd (TCP IPC 127.0.0.6:2626)</td>
 </tr>
 <tr>
 <td>iccpd → mclagsyncd → STATE_DB</td>

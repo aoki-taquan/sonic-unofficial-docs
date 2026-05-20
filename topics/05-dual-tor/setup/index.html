@@ -35635,9 +35635,9 @@
 <td><code>show muxcable grpc connection-info</code> でエラー詳細</td>
 </tr>
 <tr>
-<td><code>prefix-route</code> モードで neighbor が消える</td>
-<td>neighbor learning が standby で抑止される設計</td>
-<td>仕様。<code>host-route</code> モードの方が観測上は残る</td>
+<td><code>prefix-route</code> モードで standby 時に /32 route の nexthop が tunnel に切り替わる</td>
+<td>neighbor entry 自体は削除されず、サーバ IP の <code>/32</code> または <code>/128</code> route の nexthop だけが直接 neighbor と tunnel の間で切り替わる設計</td>
+<td>仕様。詳細は internals.md と <a href="../../../reference/config-db/mux-cable/">MUX_CABLE テーブル</a> を参照</td>
 </tr>
 </tbody>
 </table>

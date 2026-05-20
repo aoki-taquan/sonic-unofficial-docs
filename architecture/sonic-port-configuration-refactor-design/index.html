@@ -7791,17 +7791,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#port-config-refactor_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: Port config refactor 確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -7834,17 +7823,6 @@
     <span class="md-ellipsis">
       
         関連 Topics
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        参考リンク
       
     </span>
   </a>
@@ -35423,17 +35401,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#port-config-refactor_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: Port config refactor 確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -35466,17 +35433,6 @@
     <span class="md-ellipsis">
       
         関連 Topics
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        参考リンク
       
     </span>
   </a>
@@ -35653,14 +35609,6 @@ reasoning: 一元化の動機が「platform.json への移行容易化」にあ�
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORT|Ethernet*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;portsorch&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
 </span></code></pre></div>
-<h3 id="port-config-refactor_1">コマンド例: Port config refactor 確認<a class="headerlink" href="#port-config-refactor_1" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># PORT エントリ反映と orchagent ログ</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>status
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;PORT|Ethernet*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;portsorch&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
-</span></code></pre></div>
 <h2 id="_10">参考リンク<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/yang/sonic-port/">YANG: sonic-port</a></li>
@@ -35686,15 +35634,6 @@ reasoning: 一元化の動機が「platform.json への移行容易化」にあ�
 </ul>
 <!-- /topics-back-ref -->
 
-<h2 id="_12">参考リンク<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
-<p>本ページに関連する参照ドキュメント:</p>
-<ul>
-<li><a href="../../reference/cli/show-interfaces/"><code>show interfaces</code> CLI リファレンス</a></li>
-<li><a href="../../reference/config-db/port/"><code>PORT</code> CONFIG_DB スキーマ</a></li>
-<li><a href="../../reference/config-db/port-storm-control/"><code>PORT_STORM_CONTROL</code> CONFIG_DB スキーマ</a></li>
-<li><a href="../../reference/config-db/port-qos-map/"><code>PORT_QOS_MAP</code> CONFIG_DB スキーマ</a></li>
-<li><a href="../../reference/config-db/portchannel/"><code>PORTCHANNEL</code> CONFIG_DB スキーマ</a></li>
-</ul>
 <!-- augmented-links: v1 -->
 
 <!-- glossary-links-injected: 8ba32e5aa69d -->

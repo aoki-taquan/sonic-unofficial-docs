@@ -8435,17 +8435,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#bulk-counter-polling_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: Bulk counter polling 確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -35345,17 +35334,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#bulk-counter-polling_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: Bulk counter polling 確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -35522,14 +35500,6 @@ reasoning: 採用判定ルールと fallback の根拠。
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>counterpoll<span class="w"> </span>show
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FLEX_COUNTER_TABLE|PORT&#39;</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FLEX_COUNTER_TABLE|QUEUE&#39;</span>
-</span></code></pre></div>
-<h3 id="bulk-counter-polling_1">コマンド例: Bulk counter polling 確認<a class="headerlink" href="#bulk-counter-polling_1" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Bulk counter 設定と現在の polling 状況を確認</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>counterpoll<span class="w"> </span>show
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FLEX_COUNTER_TABLE|PORT&#39;</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;FLEX_COUNTER_TABLE|QUEUE&#39;</span>
 </span></code></pre></div>
 <h2 id="2026-05-11">裏取り済み実装位置 (2026-05-11)<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h2>
 <ul>

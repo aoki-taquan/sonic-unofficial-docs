@@ -35382,7 +35382,7 @@
 <td><a href="../../../reference/cli/show-pfc/">show-pfc</a></td>
 </tr>
 <tr>
-<td><code>show buffer pool persistent-watermark</code></td>
+<td><code>show buffer_pool persistent-watermark</code></td>
 <td>プール peak</td>
 <td><a href="../../../reference/cli/show-buffer/">show-buffer</a></td>
 </tr>
@@ -35481,7 +35481,7 @@
 <p><code>STORM DETECTED</code> の累計が秒〜分のオーダーで増え続けるなら、PFC を出している側を直さない限り収束しません。応急で PFCWD <code>action: forward</code> にすると drop を止められますが、ingress 側の buffer 圧迫が他 PG に飛び火するので恒久対応にはしません。</p>
 <h2 id="buffer-pool">Buffer pool の枯渇を見つける<a class="headerlink" href="#buffer-pool" title="Permanent link">&para;</a></h2>
 <p><code>show buffer pool persistent-watermark</code> で、ingress / egress / lossless / lossy pool の peak バイトを見ます。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ show buffer_pool persistent_watermark
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ show buffer_pool persistent-watermark
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>       Pool                   Bytes
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>-----------  ----------------------
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>ingress_lossless_pool        12345600

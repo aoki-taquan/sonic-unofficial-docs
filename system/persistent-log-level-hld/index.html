@@ -35780,9 +35780,9 @@ reasoning: Phase 2 で LOGLEVEL_DB と jinja2 キャッシュを完全削除す�
 </ul>
 <h3 id="_10">コマンド例<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <p>logger ごとの永続化された log level を確認する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>show<span class="w"> </span>logging<span class="w"> </span>level
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;LOGGER|*&#39;</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>config<span class="w"> </span>logging<span class="w"> </span>level<span class="w"> </span>swss<span class="w"> </span>INFO<span class="w"> </span>--persistent
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>swssloglevel<span class="w"> </span>-l<span class="w"> </span>SAI_LOG_LEVEL_INFO<span class="w"> </span>-c<span class="w"> </span>orchagent
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>swssloglevel<span class="w"> </span>-d
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;LOGGER|*&#39;</span>
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;log[_ ]level&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
 </span></code></pre></div>
 <h2 id="_11">参考リンク<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
