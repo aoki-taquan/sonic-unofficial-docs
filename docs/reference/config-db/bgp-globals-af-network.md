@@ -256,9 +256,9 @@ vtysh -c "show ip bgp"
 
 ### 段階 1 — Consumer 登録
 
-`bgpcfgd` が CONFIG_DB の `BGP_GLOBALS_AF_NETWORK` テーブルを購読する。
+`frrcfgd` が CONFIG_DB の `BGP_GLOBALS_AF_NETWORK` テーブルを購読する。
 
-`BGP_GLOBALS_AF_NETWORK` は `<vrf>|<prefix>` の key 構造。
+`BGP_GLOBALS_AF_NETWORK` は `<vrf>|<afi_safi>|<ip_prefix>` の key 構造。
 
 ### 段階 2 — CFG→APPL 翻訳
 
