@@ -83,9 +83,9 @@ mirror / ACL の章本文は [07 ACL / CoPP / Mirror](../07-acl-copp-mirror/inde
 
 `reliable-tsa` （Traffic Shift Away）は、特定 device を BGP コミュニティで隔離して traffic を退避させる仕組みです。VOQ chassis では:
 
-- TSA は line card 単位ではなく chassis 単位で発動する。
-- chassis 内の複数 BGP プロセスを一貫して isolate / unisolate する必要がある。
-- 失敗 / 部分適用を避けるため、Chassis DB を通じた一斉切替を行う。
+- 旧実装では Supervisor が各 LC へ SSH で順次発行する chassis 単位の動作だったが、Reliable TSA では Supervisor と LC がそれぞれ独立した `tsa_enabled` を持ち、operational TSA 状態は両者の OR で決まる。
+- LC 単位での独立適用と、Supervisor からの全体強制 TSA の両方が可能。LC で `TSA` を実行した場合は当該 LC の各 asic にのみ適用される。
+- 失敗や部分適用を避けるため、状態は Chassis DB を通じて共有される。
 
 ルーティング保守の章で扱うべきテーマで、ここでは「chassis 全体での同期が必要な保守操作」として位置付けます。
 

@@ -109,6 +109,7 @@ SONiC のセキュリティは大きく三つの層に分かれます。第一�
 | ページ | 状態 | verification |
 |---|---|---|
 | concept | ✅ 完成 (154 行) | meta |
+| architecture | ✅ 完成 | meta |
 | setup | ✅ 完成 (211 行) | meta |
 | operations | ✅ 完成 (193 行) | meta |
 | internals | ✅ 完成 (132 行) | meta |

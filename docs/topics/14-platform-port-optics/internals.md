@@ -17,12 +17,10 @@ sources:
 related:
   cli:
   - show platform
-  - show lldp
   config_db:
-  - LLDP
-  - LLDP_PORT
+  - PORT
   yang:
-  - sonic-lldp
+  - sonic-port
 ---
 
 # 内部実装

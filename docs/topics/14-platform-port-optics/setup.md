@@ -221,7 +221,7 @@ ASIC の SerDes preemphasis / 振幅は default では `port_config.ini` の lan
 }
 ```
 
-編集後 `systemctl restart xcvrd` で再ロードされ、次回 link up 時から反映されます。`docker exec xcvrd cat /var/log/xcvrd.log` で `media_settings applied` のログを確認します。
+編集後 `docker exec pmon supervisorctl restart xcvrd` で再ロードされ、次回 link up 時から反映されます。`docker exec pmon tail -n 50 /var/log/syslog | grep xcvrd` で `media_settings applied` のログを確認します。
 
 ## Platform capability ファイル
 

@@ -47,7 +47,7 @@ related:
 
 ## 4 つの責務
 
-- [NAT](../../reference/glossary.md#term-nat): data plane でのアドレス書換。`docker-nat` の `natmgrd` / `natsyncd` が CONFIG_DB を読み、Linux iptables の conntrack エントリと [SAI](../../reference/glossary.md#term-sai) NAT 属性を同期します。SONiC では iptables ↔ SAI の二重管理がポイントです。
+- [NAT](../../reference/glossary.md#term-nat): data plane でのアドレス書換。`docker-nat` の `natmgrd` が CONFIG_DB を読み、`natsyncd` が kernel conntrack を観測して、Linux iptables の conntrack エントリと [SAI](../../reference/glossary.md#term-sai) NAT 属性を同期します。SONiC では iptables ↔ SAI の二重管理がポイントです。
 - DHCP relay: client broadcast を upstream server へ unicast 中継する agent。`docker-dhcp-relay` 内の ISC 由来 `dhcrelay` を [VLAN](../../reference/glossary.md#term-vlan) 単位で起動し、`dhcpmon` が監視と counter を持ちます。v4 と v6 で別プロセスです。
 - DHCP server: kea ベースのポートベース server。`docker-dhcp-server` の `dhcpservd` が CONFIG_DB の `DHCP_SERVER_IPV4*` を読んで `kea-dhcp4.conf` を生成し、relay 側と Option 82 で連携します。
 - Time / DNS: chrony（旧 ntpd）と静的 resolv.conf。OS レイヤの daemon が management [VRF](../../reference/glossary.md#term-vrf) 内で外向き通信します。CONFIG_DB の `NTP_*` / `DNS_NAMESERVER` から生成される設定ファイルが入口です。
@@ -156,7 +156,7 @@ flowchart LR
 ### 用語の最短整理
 
 - **`natmgrd`**: CONFIG_DB の `STATIC_NAT` / `STATIC_NAPT` / `NAT_POOL` / `NAT_BINDINGS` / `NAT_GLOBAL` を読んで iptables と APP_DB に展開する
-- **`natsyncd`**: conntrack エントリを観測し APP_DB と [STATE_DB](../../reference/glossary.md#term-state_db) に同期する
+- **`natsyncd`**: kernel netlink (conntrack) を購読し、動的 NAT エントリを APP_DB に書き込む（[STATE_DB](../../reference/glossary.md#term-state_db) は warm restart 用 `STATE_NAT_RESTORE_TABLE` を read-only で参照するのみ）
 - **SAI NAT object**: ASIC 側 NAT エントリ。fast path に乗せるためのもの
 - **`dhcrelay`**: ISC dhcp 由来。VLAN 1 本に 1 process が標準
 - **`dhcpmon`**: relay のヘルスとパケット counter を取る別 process。`COUNTERS_DB` に書く
