@@ -29,7 +29,7 @@ related:
 
 # 運用
 
-リファレンス索引章での「運用」は、reference ページ / 機能章 / categories の整合を維持し、**欠落と discrepancy を検出して埋めるための定期作業** を扱う。本ページは「索引そのものをどう運用するか」が中心で、SONiC 装置の運用ではないことに注意。
+リファレンス索引章での「運用」は、reference ページ / 機能章 / categories の整合を維持し、**欠落と discrepancy を検出して埋めるための定期作業** を扱う。本ページは「索引そのものをどう運用するか」が中心で、[SONiC](../../reference/glossary.md#term-sonic) 装置の運用ではないことに注意。
 
 ## 定期チェックの流れ
 
@@ -138,4 +138,4 @@ Writer / Verifier を並列に動かすとき、索引層のメタファイル�
 - 品質と未カバー → [品質と gap](quality-gaps.md)。
 - 内部構造 → [内部実装](internals.md) と [発展](advanced.md)。
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

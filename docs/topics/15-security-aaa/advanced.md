@@ -59,9 +59,9 @@ secure boot は起動時の真正性、OpenSSL FIPS は実行時の暗号モジ�
 
 ## OpenSSL FIPS 140-3
 
-OpenSSL FIPS は、暗号モジュールが FIPS 140-3 の要件を満たして動作することを保証する仕組みです。SONiC では FIPS provider の有効化と、FIPS モード時に許可されるアルゴリズム集合の制約が [OpenSSL FIPS 140-3 HLD](../../system/sonic-openssl-fips-140-3-hld.md) に整理されています。
+OpenSSL FIPS は、暗号モジュールが FIPS 140-3 の要件を満たして動作することを保証する仕組みです。[SONiC](../../reference/glossary.md#term-sonic) では FIPS provider の有効化と、FIPS モード時に許可されるアルゴリズム集合の制約が [OpenSSL FIPS 140-3 HLD](../../system/sonic-openssl-fips-140-3-hld.md) に整理されています。
 
-実装と運用は [SONiC FIPS deployment](../../system/sonic-fips-deployment.md) で別ページに分けられており、image ビルド、起動時の自己テスト、CLI からの状態確認、トラブルシュートの観点が含まれます。FIPS モードを有効にすると SSH、IPsec、HTTPS、MACsec MKA など暗号を使う全ての経路の挙動が変わるため、本機能を導入するときは [認証認可の設定](setup.md) で並べたバックエンドの cipher suite と矛盾しないかを確認します。
+実装と運用は [SONiC FIPS deployment](../../system/sonic-fips-deployment.md) で別ページに分けられており、image ビルド、起動時の自己テスト、CLI からの状態確認、トラブルシュートの観点が含まれます。FIPS モードを有効にすると SSH、IPsec、HTTPS、[MACsec](../../reference/glossary.md#term-macsec) MKA など暗号を使う全ての経路の挙動が変わるため、本機能を導入するときは [認証認可の設定](setup.md) で並べたバックエンドの cipher suite と矛盾しないかを確認します。
 
 ## Secure boot
 
@@ -85,7 +85,7 @@ SONiC は機能を Docker コンテナに分割しており、各コンテナの
 ## 発展トピック
 
 - **gNSI による証明書 / authz 集中管理**: [gNMI](../../reference/glossary.md#term-gnmi) 接続の TLS 証明書、RBAC、Pathz による path レベル authz を controller から push する仕組み。手動 ssh と分離した運用と監査が可能になる。
-- **MACsec MKA scale**: MACsec を全 port に展開する場合、MKA セッション数と鍵更新コストが ASIC / CPU に効く。`MACSEC_PROFILE` の rekey interval 設計が要点。
+- **MACsec MKA scale**: MACsec を全 port に展開する場合、MKA セッション数と鍵更新コストが [ASIC](../../reference/glossary.md#term-asic) / CPU に効く。`MACSEC_PROFILE` の rekey interval 設計が要点。
 - **HSM / TPM 連携**: secure boot 鍵や TLS 秘密鍵を HSM / TPM に保管する構成。`tpm2-tools` と secure upgrade の連携が議題。
 - **role-based access control (RBAC)**: ユーザロールと権限の細分化。AAA 認証後の authz で扱うが、CLI / gNMI 両面で一貫した role が要求される。
 - **audit logging**: 全ての設定変更を audit log に残す要件で、`auditd` + structured logging への対応拡張。FIPS / セキュア環境では必須。
@@ -108,7 +108,7 @@ SONiC は機能を Docker コンテナに分割しており、各コンテナの
 - [RFC 8446](https://datatracker.ietf.org/doc/html/rfc8446) — TLS 1.3
 - [RFC 4254](https://datatracker.ietf.org/doc/html/rfc4254) — SSH Connection Protocol
 - [RFC 8907](https://datatracker.ietf.org/doc/html/rfc8907) — TACACS+
-- [RFC 2865](https://datatracker.ietf.org/doc/html/rfc2865) / [RFC 6929](https://datatracker.ietf.org/doc/html/rfc6929) — RADIUS / Extended Attributes
+- [RFC 2865](https://datatracker.ietf.org/doc/html/rfc2865) / [RFC 6929](https://datatracker.ietf.org/doc/html/rfc6929) — [RADIUS](../../reference/glossary.md#term-radius) / Extended Attributes
 - [FIPS PUB 140-3](https://csrc.nist.gov/publications/detail/fips/140/3/final) — Cryptographic Module Validation
 - [IEEE 802.1AE](https://1.ieee802.org/security/802-1ae/) — MACsec
 - [IEEE 802.1X](https://1.ieee802.org/security/802-1x/) — Port Access Control
@@ -119,4 +119,4 @@ SONiC は機能を Docker コンテナに分割しており、各コンテナの
 - secure upgrade 周りで署名検証パスのリファクタが進行中。`sonic-installer` のテレメトリ出力改善も並走。
 - container hardening の対象 docker (bgp, swss, [syncd](../../reference/glossary.md#term-syncd), telemetry など) ごとに capability 削減 PR が段階投入されている。
 
-<!-- glossary-links-injected: f871da4a7b84 -->
+<!-- glossary-links-injected: ae6c3c279b05 -->

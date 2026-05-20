@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-物理スイッチポートの設定を保持するテーブル。ポート名（`Ethernet0` など）をキーに、speed、lanes、MTU、admin status、FEC、auto-negotiation、breakout subport、MACsec プロファイル、TPID、mux cable 情報、400G ZR トランシーバ向けの tx-power / laser_freq などを記載する[^1]。
+物理スイッチポートの設定を保持するテーブル。ポート名（`Ethernet0` など）をキーに、speed、lanes、MTU、admin status、FEC、auto-negotiation、breakout subport、[MACsec](../../reference/glossary.md#term-macsec) プロファイル、TPID、mux cable 情報、400G ZR トランシーバ向けの tx-power / laser_freq などを記載する[^1]。
 
 `portmgrd` / `orchagent` の `PortsOrch` が PORT テーブルを購読し、[SAI](../../reference/glossary.md#term-sai) 経由で hardware に設定を反映する。`speed` と `lanes` は通常 `port_config.ini` 由来の初期値で、運用中に CLI で変更可能。
 
@@ -62,8 +62,8 @@ PORT|<name>
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
 | `name` (key) | string (1..128) | ✅ | - | 物理ポート名（例: `Ethernet0`） |
-| `core_id` | string (1..16) | - | - | ポートが属する ASIC コア |
-| `core_port_id` | string (1..16) | - | - | ASIC コア上のポート ID |
+| `core_id` | string (1..16) | - | - | ポートが属する [ASIC](../../reference/glossary.md#term-asic) コア |
+| `core_port_id` | string (1..16) | - | - | [ASIC](../../reference/glossary.md#term-asic) コア上のポート ID |
 | `num_voq` | string (1..16) | - | - | このポートでサポートする VoQ 数 |
 | `alias` | string (1..128) | - | - | ベンダ固有のポート別名／フロントパネル表記 |
 | `lanes` | string (1..128) | ✅ (chassis 例外あり) | - | ハードウェアレーン数（chassis では条件付き） |
@@ -79,7 +79,7 @@ PORT|<name>
 | `mtu` | uint16 (68..9216) | - | - | MTU [byte] |
 | `subport` | uint8 (0..8) | - | - | breakout で生成された論理サブポート番号 |
 | `index` | uint16 | - | - | フロントパネルポートインデックス |
-| `asic_port_name` | string | - | - | ASIC 内部のポート名（例: `Eth0-ASIC1`） |
+| `asic_port_name` | string | - | - | [ASIC](../../reference/glossary.md#term-asic) 内部のポート名（例: `Eth0-ASIC1`） |
 | `role` | string `Ext`/`Int`/`Inb`/`Rec`/`Dpc` | - | `Ext` | 多 ASIC / [SmartSwitch](../../reference/glossary.md#term-smartswitch) のロール |
 | `admin_status` | `admin_status` (`up`/`down`) | - | `down` | 管理状態 |
 | `fec` | string `rs`/`fc`/`none`/`auto` | - | - | 前方誤り訂正モード |
@@ -87,7 +87,7 @@ PORT|<name>
 | `pfc_asym` | string `on`/`off` | - | - | 非対称 [PFC](../../reference/glossary.md#term-pfc) |
 | `tpid` | `tpid_type` (0x8100 / 0x9100 / 0x9200 / 0x88a8) | - | - | TPID。HW 対応時のみ |
 | `mux_cable` | boolean | - | - | dual-ToR mux cable 接続フラグ |
-| `macsec` | leafref `MACSEC_PROFILE.name` | - | - | 適用する MACsec プロファイル |
+| `macsec` | leafref `MACSEC_PROFILE.name` | - | - | 適用する [MACsec](../../reference/glossary.md#term-macsec) プロファイル |
 | `tx_power` | decimal64 | - | - | 400G ZR 向け目標出力 [dBm] |
 | `laser_freq` | int32 | - | - | 400G ZR 向け目標レーザ周波数 [GHz] |
 | `fast_linkup` | boolean | - | `false` | fast link-up |
@@ -103,7 +103,7 @@ PORT|<name>
 - `portmgrd`: ポート status と admin_status をモニタ
 - `xcvrd`: トランシーバ関連 (`tx_power`、`laser_freq`、`dom_polling`) をモニタ
 - `linkmgrd`: `mux_cable = true` のポートを mux 制御対象として扱う
-- `macsecmgrd`: `macsec` 参照をもとに MACsec セッション確立
+- `macsecmgrd`: `macsec` 参照をもとに [MACsec](../../reference/glossary.md#term-macsec) セッション確立
 
 ## 関連 CONFIG_DB テーブル / YANG / CLI
 
@@ -116,7 +116,7 @@ PORT|<name>
 
 ### PORT.admin_status
 
-| 値 | PortsOrch / portmgrd 挙動 |
+| 値 | PortsOrch / [portmgrd](../../reference/glossary.md#term-portmgrd) 挙動 |
 |----|--------------------------|
 | `up` | SAI SAI_PORT_ATTR_ADMIN_STATE=true、Linux netdev も up |
 | `down` (デフォルト) | SAI SAI_PORT_ATTR_ADMIN_STATE=false、netdev down |
@@ -144,8 +144,8 @@ PORT|<name>
 | 値 | 挙動 |
 |----|------|
 | `routed` (デフォルト) | L3 ルーテッドポートとして扱う |
-| `access` | L2 access ポート (single VLAN) |
-| `trunk` | L2 trunk ポート (複数 VLAN) |
+| `access` | L2 access ポート (single [VLAN](../../reference/glossary.md#term-vlan)) |
+| `trunk` | L2 trunk ポート (複数 [VLAN](../../reference/glossary.md#term-vlan)) |
 
 ### PORT.role (multi-ASIC / SmartSwitch)
 
@@ -239,31 +239,30 @@ show interfaces transceiver eeprom Ethernet0
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / PortsOrch** (`sonic-swss/orchagent/portsorch.cpp`): `PORT` テーブルを `SubscriberStateTable` で購読。
-- **portmgrd** (`sonic-swss/cfgmgr/portmgr.cpp`): `PORT` テーブルを購読して Linux netdev を設定。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / PortsOrch** (`sonic-swss/orchagent/portsorch.cpp`): `PORT` テーブルを `SubscriberStateTable` で購読。
+- **[portmgrd](../../reference/glossary.md#term-portmgrd)** (`sonic-swss/cfgmgr/portmgr.cpp`): `PORT` テーブルを購読して Linux netdev を設定。
 - **xcvrd** (`sonic-platform-daemons`): トランシーバ関連フィールドを購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- portmgrd が `PORT` → `APP_PORT_TABLE` に admin_status / mtu / speed 等を書き込む。
-- PortsOrch は CONFIG_DB と APP_DB 両方から PORT 情報を統合して処理。
+- [portmgrd](../../reference/glossary.md#term-portmgrd) が `PORT` → `APP_PORT_TABLE` に admin_status / mtu / speed 等を書き込む。
+- PortsOrch は [CONFIG_DB](../../reference/glossary.md#term-config_db) と APP_DB 両方から PORT 情報を統合して処理。
 
 ### 段階 3: APPL → SAI
 
 - PortsOrch が `sai_port_api->set_port_attribute()` で speed/FEC/autoneg/MTU/admin_status を SAI に反映。
-- syncd が SAI 呼び出しをシリアライズして ASIC ドライバに転送。
+- [syncd](../../reference/glossary.md#term-syncd) が SAI 呼び出しをシリアライズして ASIC ドライバに転送。
 
 ### 段階 4: タイミング + 副作用
 
 - admin_status 変更: SAI 反映後に Linux netdev も portmgrd が更新 (二重管理)。数百 ms 以内。
 - speed/FEC 変更: リンクフラップが発生する。対向装置との調整が必要。
-- 副作用: breakout 操作は他サブポートへの影響大。VLAN/LAG に所属している場合は先に削除が必要。
+- 副作用: breakout 操作は他サブポートへの影響大。VLAN/[LAG](../../reference/glossary.md#term-lag) に所属している場合は先に削除が必要。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -273,19 +272,19 @@ PORT テーブルへの書き込みが発生するコード経路を網羅的に
 
 ### CLI
 
-  - `config interface ...` — `config/main.py` が PORT テーブルを更新 (speed/mtu/fec/autoneg など); `config/switchport.py` が `set_entry('PORT', port, data)` を呼ぶ (sonic-utilities/config/switchport.py:69)
+  - `config interface ...` — `config/main.py` が PORT テーブルを更新 (speed/mtu/fec/autoneg など); `config/switchport.py` が `set_entry('PORT', port, data)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/switchport.py:69)
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** が `results['PORT']` にポート一覧 (alias / speed / lanes / description) を投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py:2515)
+**minigraph.py** が `results['PORT']` にポート一覧 (alias / speed / lanes / description) を投入 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py:2515)
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし (PORT はプラットフォーム初期化で確定)
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし (PORT はプラットフォーム初期化で確定)
 
 ### db_migrator
 
-**db_migrator.py** が PORT テーブルのマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py:224)
+**db_migrator.py** が PORT テーブルのマイグレーション処理を実装 ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/scripts/db_migrator.py:224)
 
 ### ビルド時デフォルト (build-time default)
 
@@ -305,12 +304,12 @@ REST/gNMI 書き込み経路なし (PORT はプラットフォーム初期化で
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
-> **注記**: YANG `default` 指定がない場合でも、portmgr / portsorch がコード内でデフォルト値を注入する。以下は実装精読から検出した暗黙デフォルトと挙動。
+> **注記**: YANG `default` 指定がない場合でも、portmgr / [portsorch](../../reference/glossary.md#term-portsorch) がコード内でデフォルト値を注入する。以下は実装精読から検出した暗黙デフォルトと挙動。
 
 ### admin_status
 
 - YANG: `default "down"`。portmgr.h でも `DEFAULT_ADMIN_STATUS_STR "down"` をハードコード (`portmgr.h:14`)
-- portmgr が**初回 SET 時**（ポートが未登録）に CONFIG_DB に `admin_status` フィールドがなければ `"down"` を APP_DB に書き込む (`portmgr.cpp:175`)
+- portmgr が**初回 SET 時**（ポートが未登録）に [CONFIG_DB](../../reference/glossary.md#term-config_db) に `admin_status` フィールドがなければ `"down"` を APP_DB に書き込む (`portmgr.cpp:175`)
 - PortsOrch は `admin_status` の SAI 反映を**最後**に実行する（speed / fec / autoneg の設定後）。speed や fec 変更中はポートを一時的に `down` に落とし、完了後に CONFIG_DB の値に戻す (`portsorch.cpp:5500-5529`)
 
 ### mtu
@@ -354,7 +353,7 @@ REST/gNMI 書き込み経路なし (PORT はプラットフォーム初期化で
 
 - YANG: デフォルト指定なし
 - 非サポートプラットフォームでは SAI_STATUS_NOT_SUPPORTED を受け取っても **成功扱い**（silent succeed）(`portsorch.cpp:2540-2543`)
-- `pfc_asym=on`（SEPARATE モード）設定時は RX PFC を `0xff`（全優先度有効）に強制設定 — CONFIG_DB に RX PFC 明示フィールドなし (`portsorch.cpp:2556-2570`)
+- `pfc_asym=on`（SEPARATE モード）設定時は RX [PFC](../../reference/glossary.md#term-pfc) を `0xff`（全優先度有効）に強制設定 — CONFIG_DB に RX [PFC](../../reference/glossary.md#term-pfc) 明示フィールドなし (`portsorch.cpp:2556-2570`)
 
 <!-- /defaults -->
 
@@ -422,7 +421,7 @@ MACsec ポートではさらに `MAX_MACSEC_SECTAG_SIZE = 32 bytes` を追加。
 
 | 派生先フィールド | 派生元条件 | 派生値 | ソース |
 |---|---|---|---|
-| `PORT` エントリ全体 | minigraph.py が XML `Interfaces` / port_config.ini を解析したとき | `alias`、`lanes`、`speed`、`admin_status` 等 | `sonic-buildimage/src/sonic-config-engine/minigraph.py` |
+| `PORT` エントリ全体 | minigraph.py が XML `Interfaces` / [port_config.ini](../../reference/glossary.md#term-port-config-ini) を解析したとき | `alias`、`lanes`、`speed`、`admin_status` 等 | `sonic-buildimage/src/sonic-config-engine/minigraph.py` |
 | `admin_status` | minigraph.py デフォルト | `"up"` (明示的に down 指定がない限り) | `minigraph.py` PORT 生成ロジック |
 | `mux_cable` | 対応 MUX_CABLE エントリが存在する場合 | `"true"` | `minigraph.py:2621-2622` |
 | init_cfg.json.j2 | 全 PORT エントリのデフォルト | `"admin_status": "up"` など最小限の属性 | `sonic-buildimage/files/build_templates/init_cfg.json.j2:29` |
@@ -454,7 +453,7 @@ MACsec ポートではさらに `MAX_MACSEC_SECTAG_SIZE = 32 bytes` を追加。
 |---|---|---|
 | `BUFFER_POOL` → `BUFFER_PG` | `gBufferOrch->isPortReady()` が true を返すまで PORT SET はハードウェア反映保留。`m_pendingPortSet` に積まれリトライ待ちとなる | `portsorch.cpp:4779`, `bufferorch.cpp:254-274` |
 | `MACSEC_PROFILE` | `PORT.macsec` は YANG leafref 参照。MACSEC_PROFILE エントリが存在しない状態で PORT に `macsec` フィールドを書くと YANG バリデーション失敗。`macsecmgrd` もプロファイルを参照してセッションを確立する | `sonic-port.yang`, `macsecmgrd` |
-| なし (VLAN/INTERFACE/LAG は PORT 作成後) | `allPortsReady()` が true になった後にのみ VLAN/INTERFACE/PORTCHANNEL などの他テーブルが処理される。PORT は他テーブルより先に作成される | `portsorch.cpp:6514-6517`, `orchdaemon.cpp:500` |
+| なし (VLAN/INTERFACE/[LAG](../../reference/glossary.md#term-lag) は PORT 作成後) | `allPortsReady()` が true になった後にのみ VLAN/INTERFACE/PORTCHANNEL などの他テーブルが処理される。PORT は他テーブルより先に作成される | `portsorch.cpp:6514-6517`, `orchdaemon.cpp:500` |
 
 ### フィールド適用順 (SET 内部順序)
 
@@ -478,7 +477,7 @@ PORT の DEL は `m_port_ref_count[alias] == 0` を要求する (`portsorch.cpp:
 | 削除順 | テーブル / 操作 | 理由 |
 |---|---|---|
 | 1 | `VLAN_MEMBER` DEL | bridge_port_oid が残っていると DEL 拒否 (`portsorch.cpp:5661`) |
-| 2 | `PORTCHANNEL_MEMBER` DEL | LAG メンバシップが ref_count を保持 |
+| 2 | `PORTCHANNEL_MEMBER` DEL | [LAG](../../reference/glossary.md#term-lag) メンバシップが ref_count を保持 |
 | 3 | `INTERFACE` DEL | `intfsorch` が `increasePortRefCount()` を呼ぶ (`intfsorch.cpp:498`) |
 | 4 | `BUFFER_PG` / `BUFFER_QUEUE` DEL | `bufferorch` が `increasePortRefCount()` を呼ぶ (`bufferorch.cpp:1175,1546`) |
 | 5 | `PORT` DEL | ref_count=0 を確認後に SAI `remove_port()` を発行 |
@@ -487,9 +486,9 @@ PORT の DEL は `m_port_ref_count[alias] == 0` を要求する (`portsorch.cpp:
 
 ### warm-reboot 影響
 
-- **warm reboot 中**: portsyncd は APP_PORT_TABLE への書込みおよび `PortConfigDone` 通知をスキップする (`portsyncd.cpp:205,211`)。PortsOrch は APP_DB の `PortConfigDone` / `PortInitDone` の有無でポートテーブルを再利用し、見つからない場合は cold start にフォールバック (`portsorch.cpp:4357-4362`)。
-- **oper_status 引き継ぎ**: warm reboot 復元時にポートの `oper_status` / `flap_count` を STATE_DB から引き継ぐ (`portsorch.cpp:6609-6648`)。
-- **fast reboot**: kernel/hardware 状態を保持するが portsyncd は cold start 相当の手順で PORT を処理する（特別分岐なし）。
+- **warm reboot 中**: [portsyncd](../../reference/glossary.md#term-portsyncd) は APP_PORT_TABLE への書込みおよび `PortConfigDone` 通知をスキップする (`portsyncd.cpp:205,211`)。PortsOrch は APP_DB の `PortConfigDone` / `PortInitDone` の有無でポートテーブルを再利用し、見つからない場合は cold start にフォールバック (`portsorch.cpp:4357-4362`)。
+- **oper_status 引き継ぎ**: warm reboot 復元時にポートの `oper_status` / `flap_count` を [STATE_DB](../../reference/glossary.md#term-state_db) から引き継ぐ (`portsorch.cpp:6609-6648`)。
+- **fast reboot**: kernel/hardware 状態を保持するが [portsyncd](../../reference/glossary.md#term-portsyncd) は cold start 相当の手順で PORT を処理する（特別分岐なし）。
 
 ### boot order (起動時シーケンス)
 
@@ -544,7 +543,7 @@ allPortsReady() = true → VLAN / LAG / INTERFACE / ACL orch がアンブロッ�
 
 - **DEL が先行**: PortsOrch は同一レーンセットの旧ポートを先に `removePortBulk()` で削除してから新ポートを `addPortBulk()` で作成する。この 2 ステップは同一 `doTask()` 呼び出し内でアトミックに実行される（`portsorch.cpp:4712-4748`）。
 - **Breakout 中の副作用**: `addSubPort()` は親ポートの `hostif` VLAN tag を変更する（最初のサブポート追加時: `portsorch.cpp:2059-2067`）。最後のサブポート削除時に親ポートの hostif tag を復元する（`portsorch.cpp:2122-2130`）。
-- **前提条件**: DPB 実行前に対象ポートの `VLAN_MEMBER` / `PORTCHANNEL_MEMBER` / `INTERFACE` / `BUFFER_PG` / `BUFFER_QUEUE` を全て DEL しておく必要がある（`m_port_ref_count == 0` 要件）。
+- **前提条件**: [DPB](../../reference/glossary.md#term-dpb) 実行前に対象ポートの `VLAN_MEMBER` / `PORTCHANNEL_MEMBER` / `INTERFACE` / `BUFFER_PG` / `BUFFER_QUEUE` を全て DEL しておく必要がある（`m_port_ref_count == 0` 要件）。
 
 ### host_tx_ready 同期メカニズム
 
@@ -552,7 +551,7 @@ allPortsReady() = true → VLAN / LAG / INTERFACE / ACL orch がアンブロッ�
 
 #### 初期化
 
-- ポート作成後の `initPortsBulk()` 内で `initHostTxReadyState()` を呼び出し、`host_tx_ready` が STATE_DB に存在しなければ `"false"` で初期化する（`portsorch.cpp:5494`）。
+- ポート作成後の `initPortsBulk()` 内で `initHostTxReadyState()` を呼び出し、`host_tx_ready` が [STATE_DB](../../reference/glossary.md#term-state_db) に存在しなければ `"false"` で初期化する（`portsorch.cpp:5494`）。
 
 #### admin_status との連動 (レガシーモード: `m_cmisModuleAsicSyncSupported == false`)
 
@@ -567,7 +566,7 @@ allPortsReady() = true → VLAN / LAG / INTERFACE / ACL orch がアンブロッ�
 
 #### CMIS Async モード (`m_cmisModuleAsicSyncSupported == true`)
 
-SAI から `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` コールバック（`on_port_host_tx_ready`）が非同期で通知される方式。admin_status 変更時は `host_tx_ready` を直接変更せず、コールバック受信時に `setHostTxReady()` で STATE_DB を更新する（`portsorch.cpp:9709-9724`）。このモードは `SAI_SWITCH_ATTR_RW_HW_TX_SIGNAL_SUPPORT` と `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` が両方サポートされる場合にのみ有効（`portsorch.cpp:969-980`）。
+SAI から `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` コールバック（`on_port_host_tx_ready`）が非同期で通知される方式。admin_status 変更時は `host_tx_ready` を直接変更せず、コールバック受信時に `setHostTxReady()` で [STATE_DB](../../reference/glossary.md#term-state_db) を更新する（`portsorch.cpp:9709-9724`）。このモードは `SAI_SWITCH_ATTR_RW_HW_TX_SIGNAL_SUPPORT` と `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` が両方サポートされる場合にのみ有効（`portsorch.cpp:969-980`）。
 
 <!-- /ordering -->
 
@@ -578,7 +577,7 @@ SAI から `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` コールバック（`on_
 
 ### CONFIG_DB → portmgrd (SubscriberStateTable / keyspace notification)
 
-`portmgrd` は `Orch` 基底クラス経由で `SubscriberStateTable` を登録し、Redis の keyspace notification を購読する。
+`portmgrd` は `Orch` 基底クラス経由で `SubscriberStateTable` を登録し、[Redis](../../reference/glossary.md#term-redis) の keyspace notification を購読する。
 
 ```
 PSUBSCRIBE __keyspace@{db_id}__:PORT|*
@@ -594,11 +593,11 @@ PSUBSCRIBE __keyspace@{db_id}__:PORT|*
 
 ### portmgrd → APPL_DB (ProducerStateTable / PUBLISH)
 
-portmgrd は `ProducerStateTable` を使って APPL_DB に書き込む。書き込みは Lua スクリプト (`EVALSHA`) で原子的に実行される:
+portmgrd は `ProducerStateTable` を使って [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込む。書き込みは Lua スクリプト (`EVALSHA`) で原子的に実行される:
 
 1. `SADD PORT_TABLE_KEY_SET <key>` — 変更キーをセットに追加
 2. `HSET _PORT_TABLE:<key> <fields>` — 一時 hash に値を書き込む
-3. `PUBLISH PORT_TABLE_CHANNEL@0 G` — orchagent を wake-up する通知を送信
+3. `PUBLISH PORT_TABLE_CHANNEL@0 G` — [orchagent](../../reference/glossary.md#term-orchagent) を wake-up する通知を送信
 
 ### APPL_DB → orchagent PortsOrch (ConsumerStateTable / SUBSCRIBE)
 
@@ -612,7 +611,7 @@ SUBSCRIBE PORT_TABLE_CHANNEL@0
 
 ### syncd → PortsOrch (NotificationConsumer / SUBSCRIBE)
 
-ポートの oper_status 変化は SAI → syncd → orchagent の非同期通知経路で伝達される。`NotificationConsumer` は keyspace notification ではなく通常の Redis SUBSCRIBE を使う:
+ポートの oper_status 変化は SAI → [syncd](../../reference/glossary.md#term-syncd) → orchagent の非同期通知経路で伝達される。`NotificationConsumer` は keyspace notification ではなく通常の [Redis](../../reference/glossary.md#term-redis) SUBSCRIBE を使う:
 
 ```
 SUBSCRIBE NOTIFICATIONS  (ASIC_DB)
@@ -620,7 +619,7 @@ SUBSCRIBE NOTIFICATIONS  (ASIC_DB)
 
 | イベント | 送信元 | 意味 |
 |---------|--------|------|
-| `port_state_change` | syncd | SAI から通知されたポートの oper_status 変化 |
+| `port_state_change` | [syncd](../../reference/glossary.md#term-syncd) | SAI から通知されたポートの oper_status 変化 |
 | `port_host_tx_ready` | syncd | ホスト側 Tx ready 状態変化 |
 
 - `allPortsReady()` が false の間は `doTask(NotificationConsumer&)` は即時リターン（初期化完了待ち）
@@ -660,7 +659,7 @@ PortsOrch::handleNotification() → STATE_DB[PORT_TABLE|Ethernet*]
 | `PortsOrch` | `doTask()` | `admin_status == "up"` | SAI `set_port_attribute(SAI_PORT_ATTR_ADMIN_STATE, true)` | `portsorch.cpp` |
 | `PortsOrch` | `doTask()` | `fec` フィールドあり | SAI `SAI_PORT_ATTR_FEC_MODE` を設定。`auto` の場合は `SAI_PORT_FEC_MODE_AUTO` | `portsorch.cpp` |
 | `PortsOrch` | `doTask()` | `autoneg == "on"` かつ `speed` 指定あり | `SAI_PORT_ATTR_AUTO_NEG_MODE` + advertised speed 設定 | `portsorch.cpp` |
-| `PortsOrch` | `doTask()` | `mux_cable == "true"` | ポートの MUX cable フラグを設定し MuxOrch に通知 | `portsorch.cpp` |
+| `PortsOrch` | `doTask()` | `mux_cable == "true"` | ポートの [MUX](../../reference/glossary.md#term-mux) cable フラグを設定し MuxOrch に通知 | `portsorch.cpp` |
 | `PortsOrch` | `doTask()` | SET でポートが `allPortsReady()` を完成させた場合 | `allPortsReady` = true、他 orch の doTask() をアンブロック | `portsorch.cpp:allPortsReady()` |
 
 > **スキャン証跡**: `portsorch.cpp` PORT 処理ロジックおよび `init_cfg.json.j2:29`、`minigraph.py:2621-2622` を確認、6 件分岐抽出 — 誤読なし。
@@ -682,11 +681,11 @@ PORT エントリが存在しない状態でこれらのテーブルに書き込
 | L2 | `VLAN_MEMBER`, `PORTCHANNEL_MEMBER`, `MCLAG_INTF` |
 | L3 | `INTERFACE`, `BGP_NEIGHBOR`, `BGP_PEER_RANGE`, `NEIGH`, `ROUTE_MAP`, `FINE_GRAINED_ECMP` |
 | バッファ | `BUFFER_PG`, `BUFFER_QUEUE`, `BUFFER_PORT_INGRESS_PROFILE_LIST`, `BUFFER_PORT_EGRESS_PROFILE_LIST` |
-| QoS | `PORT_QOS_MAP`, `QUEUE`, `PFCWD`, `STORM_CONTROL`, `CABLE_LENGTH` |
+| [QoS](../../reference/glossary.md#term-qos) | `PORT_QOS_MAP`, `QUEUE`, `PFCWD`, `STORM_CONTROL`, `CABLE_LENGTH` |
 | セキュリティ | `MACSEC_PROFILE`(PORT.macsec の leafref), `ACL_TABLE`(port bind) |
 | 可視化・管理 | `MIRROR_SESSION`(dst_port), `SFLOW_SESSION`, `LLDP_PORT_TABLE`, `HIGH_FREQUENCY_TELEMETRY` |
 | 隣接・デバイス | `DEVICE_NEIGHBOR`, `MUX_CABLE` |
-| AAA | `RADIUS_SERVER`, `TACACS_SERVER`, `NTP_SERVER` |
+| [AAA](../../reference/glossary.md#term-aaa) | `RADIUS_SERVER`, `TACACS_SERVER`, `NTP_SERVER` |
 | その他 | `PBH_RULE`, `DHCPV4_RELAY`, `DHCP_SERVER_IPV4` |
 
 ### orchagent ref_count を保持するコンポーネント
@@ -701,8 +700,8 @@ PORT エントリが存在しない状態でこれらのテーブルに書き込
 | `portsorch` (sub-intf) | sub-interface 作成時 | `portsorch.cpp:2071` |
 | `portsorch` (bridge port) | VLAN_MEMBER 追加時 | `portsorch.cpp:2943` |
 | `portsorch` (LAG member) | PORTCHANNEL_MEMBER 追加時 | `portsorch.cpp:8205` |
-| P4 Router Interface Mgr | P4 RIF 作成時 | `p4orch/router_interface_manager.cpp:354` |
-| P4 ACL Rule Mgr | port bind 時 | `p4orch/acl_rule_manager.cpp:2077` |
+| P4 Router Interface Mgr | P4 [RIF](../../reference/glossary.md#term-rif) 作成時 | `p4orch/router_interface_manager.cpp:354` |
+| P4 [ACL](../../reference/glossary.md#term-acl) Rule Mgr | port bind 時 | `p4orch/acl_rule_manager.cpp:2077` |
 | P4 L3 Admit Mgr | L3 admit 設定時 | `p4orch/l3_admit_manager.cpp:283` |
 | P4 Mirror Session Mgr | ミラーセッション設定時 | `p4orch/mirror_session_manager.cpp:387` |
 | P4 L3 Multicast Mgr | マルチキャストレプリカ設定時 | `p4orch/l3_multicast_manager.cpp:1844` |
@@ -716,10 +715,10 @@ PORT エントリが存在しない状態でこれらのテーブルに書き込
 | 参照 | 方向 | 機構 | 備考 |
 |---|---|---|---|
 | `BUFFER_PG` / `BUFFER_QUEUE` | → PORT | `gBufferOrch->isPortReady()` で PORT ready 待機 | BUFFER 処理が完了するまで PORT HW 反映を保留 |
-| `MUX_CABLE` | ← / → PORT | linkmgrd が `PORT.mux_cable=true` を検知し MuxOrch へ通知 | minigraph.py が MUX_CABLE 存在時に自動派生 |
-| `STATE_PORT_TABLE` | PORT → STATE_DB | portsorch が oper_status / speed / flap_count を書き込む | warm reboot 復元時の引き継ぎ元 |
+| `MUX_CABLE` | ← / → PORT | [linkmgrd](../../reference/glossary.md#term-linkmgrd) が `PORT.mux_cable=true` を検知し MuxOrch へ通知 | minigraph.py が MUX_CABLE 存在時に自動派生 |
+| `STATE_PORT_TABLE` | PORT → STATE_DB | [portsorch](../../reference/glossary.md#term-portsorch) が oper_status / speed / flap_count を書き込む | warm reboot 復元時の引き継ぎ元 |
 | `PORT_SERDES` | PORT → | PORT DEL 時に自動連動削除 | `portsorch.cpp:1526` |
-| 他テーブル全体 | PORT → | `allPortsReady()` が true になるまで VLAN/INTERFACE/LAG/ACL orch の doTask() を保留 | 最後の PORT が初期化完了するとゲート解除 |
+| 他テーブル全体 | PORT → | `allPortsReady()` が true になるまで VLAN/INTERFACE/LAG/[ACL](../../reference/glossary.md#term-acl) orch の doTask() を保留 | 最後の PORT が初期化完了するとゲート解除 |
 
 <!-- /cross-refs -->
 
@@ -734,7 +733,7 @@ PORT テーブルの SET 処理は `PortsOrch::doTask()` のタスクキュー (
 
 | パターン | 代表的なトリガー | 挙動 |
 |---|---|---|
-| **保留** (`m_pendingPortSet`) | `gBufferOrch->isPortReady()` が false | BUFFER_PG/BUFFER_POOL が設定されるまで無制限保留 |
+| **保留** (`m_pendingPortSet`) | `gBufferOrch->isPortReady()` が false | [BUFFER_PG](../../reference/glossary.md#term-buffer-pg)/BUFFER_POOL が設定されるまで無制限保留 |
 | **`it++` 無制限リトライ** | MTU, TPID, setPortFec 失敗, setPortAdminStatus 一時 DOWN 失敗, portmgrd `portOk` 未確立 | 次 doTask() サイクルで再試行。上限なし |
 | **`task_need_retry` → `it++`** | SAI 一時エラー (autoneg / speed / adv_speeds / interface_type / adv_interface_types / link_training) | SAI が `task_need_retry` を返した場合に限りリトライ |
 | **`task_failed` → タスク削除** | autoneg/link_training 非サポート HW, fast_linkup 失敗, fec=auto 非サポート, fec 非サポートモード, link_training on non-PHY | CONFIG_DB の値は残るが実装に反映されない |
@@ -859,16 +858,16 @@ if (!gBufferOrch->isPortReady(pCfg.key))
 
 > 詳細証跡: `meta/_intermediate/cdb-flow/port-side-effects.md`
 
-CONFIG_DB の PORT テーブルへの SET/DEL は複数の DB に副次的な書き込みを引き起こす。以下は portmgrd・PortsOrch・portsyncd の実装精読から抽出した全副次書き込み。
+CONFIG_DB の PORT テーブルへの SET/DEL は複数の DB に副次的な書き込みを引き起こす。以下は portmgrd・PortsOrch・[portsyncd](../../reference/glossary.md#term-portsyncd) の実装精読から抽出した全副次書き込み。
 
-> **ソース精読メモ**: `APPL_DB PORT_TABLE_TX_READY` という独立テーブルは `portsorch.cpp` に存在しない。`host_tx_ready` フィールドは **STATE_DB の `PORT_TABLE`** (`m_portStateTable`) に書き込まれる (`portsorch.cpp:2274`)。また **APPL_STATE_DB** は portsorch の PORT 処理では使用されない（`ResponsePublisher::publish()` が PORT テーブルに対して呼ばれていないため）。
+> **ソース精読メモ**: `APPL_DB PORT_TABLE_TX_READY` という独立テーブルは `portsorch.cpp` に存在しない。`host_tx_ready` フィールドは **STATE_DB の `PORT_TABLE`** (`m_portStateTable`) に書き込まれる (`portsorch.cpp:2274`)。また **APPL_STATE_DB** は [portsorch](../../reference/glossary.md#term-portsorch) の PORT 処理では使用されない（`ResponsePublisher::publish()` が PORT テーブルに対して呼ばれていないため）。
 
 ### portmgrd — APPL_DB への転送
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|------------------|-----------------|------|
-| `m_appPortTable.set(alias, field_values)` | APPL_DB / `PORT_TABLE` | `<Ethernet*>` | SET 時 常時 (`writeConfigToAppDb`) |
-| `m_appPortTable.set(alias, {mtu: "9100"})` | APPL_DB / `PORT_TABLE` | `<Ethernet*>` field=`mtu` | 初回 SET かつ CONFIG_DB に `mtu` なし — 暗黙デフォルト注入 |
+| `m_appPortTable.set(alias, field_values)` | [APPL_DB](../../reference/glossary.md#term-appl_db) / `PORT_TABLE` | `<Ethernet*>` | SET 時 常時 (`writeConfigToAppDb`) |
+| `m_appPortTable.set(alias, {mtu: "9100"})` | [APPL_DB](../../reference/glossary.md#term-appl_db) / `PORT_TABLE` | `<Ethernet*>` field=`mtu` | 初回 SET かつ CONFIG_DB に `mtu` なし — 暗黙デフォルト注入 |
 | `m_appPortTable.set(alias, {admin_status: "down"})` | APPL_DB / `PORT_TABLE` | `<Ethernet*>` field=`admin_status` | 初回 SET かつ CONFIG_DB に `admin_status` なし — 暗黙デフォルト注入 |
 | `m_appPortTable.del(alias)` | APPL_DB / `PORT_TABLE` | `<Ethernet*>` | DEL 時 常時 |
 
@@ -878,17 +877,17 @@ CONFIG_DB の PORT テーブルへの SET/DEL は複数の DB に副次的な書
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|------------------|-----------------|------|
-| `setCounterNameMap(alias, port_id)` | COUNTERS_DB / `COUNTERS_PORT_NAME_MAP` | `""` field=`<alias>` | 常時 (`portsorch.cpp:4118`) |
-| `m_portSerdesIdToPortIdTable->set(...)` | COUNTERS_DB / `COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` | `""` field=`<serdes_oid>` | port_serdes_id が有効な場合 |
-| `port_stat_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | PortCountersState が有効な場合 |
-| `port_phy_attr_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_PHY_ATTR_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | PortPhyAttrCounterState が有効かつ PHY タイプ |
-| `port_phy_serdes_attr_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_PHY_SERDES_ATTR_FLEX_COUNTER_GROUP:<serdes_oid>` | `<serdes_oid>` | PhySerdesAttrCountersState が有効かつ PHY・serdes_id 有効 |
+| `setCounterNameMap(alias, port_id)` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_PORT_NAME_MAP` | `""` field=`<alias>` | 常時 (`portsorch.cpp:4118`) |
+| `m_portSerdesIdToPortIdTable->set(...)` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` | `""` field=`<serdes_oid>` | port_serdes_id が有効な場合 |
+| `port_stat_manager.setCounterIdList(...)` | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | PortCountersState が有効な場合 |
+| `port_phy_attr_manager.setCounterIdList(...)` | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `PORT_PHY_ATTR_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | PortPhyAttrCounterState が有効かつ PHY タイプ |
+| `port_phy_serdes_attr_manager.setCounterIdList(...)` | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `PORT_PHY_SERDES_ATTR_FLEX_COUNTER_GROUP:<serdes_oid>` | `<serdes_oid>` | PhySerdesAttrCountersState が有効かつ PHY・serdes_id 有効 |
 | `port_buffer_drop_stat_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | PortBufferDropCountersState が有効な場合 |
 | `wred_port_stat_manager.setCounterIdList(...)` | FLEX_COUNTER_DB / `WRED_PORT_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | WredPortCountersState が有効な場合 |
-| `addPortBufferQueueCounters(...)` | COUNTERS_DB / `COUNTERS_QUEUE_NAME_MAP` 他 Queue マップ群 | `""` | QueueCountersState または QueueWatermarkCountersState が有効 |
+| `addPortBufferQueueCounters(...)` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_QUEUE_NAME_MAP` 他 Queue マップ群 | `""` | QueueCountersState または QueueWatermarkCountersState が有効 |
 | `addPortBufferPgCounters(...)` | COUNTERS_DB / `COUNTERS_PG_NAME_MAP` 他 PG マップ群 | `""` | PgCountersState または PgWatermarkCountersState が有効 |
 
-SAI 呼び出し → ASIC_DB: `sai_port_api->create_ports()` でポート OID エントリ生成
+SAI 呼び出し → [ASIC_DB](../../reference/glossary.md#term-asic_db): `sai_port_api->create_ports()` でポート OID エントリ生成
 
 ### PortsOrch — フィールド変更時の STATE_DB 書き込み
 
@@ -929,7 +928,7 @@ syncd から `port_state_change` 通知を受けると、PortsOrch は以下を�
 | `deletePortBufferPgCounters(...)` | COUNTERS_DB / PG マップ群 削除 | PgCountersState が有効な場合 |
 | `m_stateBufferMaximumValueTable->del(alias)` | STATE_DB / `BUFFER_MAX_PARAM_TABLE` | 常時 |
 
-SAI 呼び出し → ASIC_DB: `sai_port_api->remove_port()` でポート OID エントリ削除。`PORT_SERDES` は `removePortSerdesAttribute()` で自動連動削除 (`portsorch.cpp:1526`)。
+SAI 呼び出し → [ASIC_DB](../../reference/glossary.md#term-asic_db): `sai_port_api->remove_port()` でポート OID エントリ削除。`PORT_SERDES` は `removePortSerdesAttribute()` で自動連動削除 (`portsorch.cpp:1526`)。
 
 ### 副次書き込みサマリ表
 
@@ -940,9 +939,9 @@ SAI 呼び出し → ASIC_DB: `sai_port_api->remove_port()` でポート OID エ
 | STATE_DB | `BUFFER_MAX_PARAM_TABLE` | DEL (ポート削除時) |
 | COUNTERS_DB | `COUNTERS_PORT_NAME_MAP` | SET (ポート作成時) / DEL (ポート削除時) |
 | COUNTERS_DB | `COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` | SET / DEL (serdes_id 有効時) |
-| COUNTERS_DB | Queue / PG マップ群 | SET / DEL (FlexCounter 有効時) |
-| FLEX_COUNTER_DB | PORT_STAT / PORT_PHY_ATTR / PORT_PHY_SERDES_ATTR / PORT_BUFFER_DROP / WRED_PORT グループ | SET / DEL (各 FlexCounter 状態に依存) |
-| ASIC_DB | PORT OID エントリ (syncd 経由) | create_ports (SET) / remove_port (DEL) |
+| COUNTERS_DB | Queue / PG マップ群 | SET / DEL ([FlexCounter](../../reference/glossary.md#term-flexcounter) 有効時) |
+| FLEX_COUNTER_DB | PORT_STAT / PORT_PHY_ATTR / PORT_PHY_SERDES_ATTR / PORT_BUFFER_DROP / WRED_PORT グループ | SET / DEL (各 [FlexCounter](../../reference/glossary.md#term-flexcounter) 状態に依存) |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | PORT OID エントリ (syncd 経由) | create_ports (SET) / remove_port (DEL) |
 | ASIC_DB | PORT_SERDES OID エントリ | 自動作成 / 自動削除 |
 
 <!-- /side-effects -->
@@ -989,7 +988,7 @@ PortsOrch はポート初期化時に SAI に対して各属性の対応状況�
 
 | 挙動 | 条件 | 詳細 |
 |------|------|------|
-| NVIDIA 専用 trim 統計プラグイン追加 | `SAI_PORT_STAT_TRIM_PACKETS` / `TX_TRIM_PACKETS` 対応かつ `DROPPED_TRIM_PACKETS` 非対応 | FlexCounter に `nvdaPortTrimSha` プラグインを追加 (`portsorch.cpp:863`) |
+| NVIDIA 専用 trim 統計プラグイン追加 | `SAI_PORT_STAT_TRIM_PACKETS` / `TX_TRIM_PACKETS` 対応かつ `DROPPED_TRIM_PACKETS` 非対応 | [FlexCounter](../../reference/glossary.md#term-flexcounter) に `nvdaPortTrimSha` プラグインを追加 (`portsorch.cpp:863`) |
 | LAG distribution-only モード非対応 | Mellanox 全プラットフォーム | LAG MEMBER enable 時: collection → distribution の順。disable 時: distribution → collection の順を強制 (`portsorch.cpp:6362,6379`) |
 
 ### platform_asic ファイルと ASIC タイプ
@@ -1049,10 +1048,10 @@ Gearbox（外付け PHY）が搭載されたプラットフォーム（例: Bare
 
 ### VOQ Chassis (system_port) 差異
 
-`gMySwitchType == "voq"` の VOQ chassis 構成では、PORT テーブルに加えて **SYSTEM_PORT** が SAI レイヤに登録される。
+`gMySwitchType == "voq"` の [VOQ](../../reference/glossary.md#term-voq) chassis 構成では、PORT テーブルに加えて **SYSTEM_PORT** が SAI レイヤに登録される。
 
 - `PortInitDone` 受信後、`addSystemPorts()` (`portsorch.cpp:10864`) が呼ばれ、`APP_SYSTEM_PORT_TABLE` から `switch_id` / `core_index` / `core_port_index` / `system_port_id` を読み取り `SAI_SYSTEM_PORT_ATTR_CONFIG_INFO` で SAI に登録する。
-- PORT テーブルの `core_id` / `core_port_index` / `num_voq` フィールドは VOQ chassis 専用。非 VOQ 環境では設定しても参照されない。
+- PORT テーブルの `core_id` / `core_port_index` / `num_voq` フィールドは [VOQ](../../reference/glossary.md#term-voq) chassis 専用。非 [VOQ](../../reference/glossary.md#term-voq) 環境では設定しても参照されない。
 - `lanes` フィールドは YANG の `when` 条件により `switch_type=voq` / `chassis-packet` / `fabric` の場合は必須でなくなる。
 - VOQ 環境のポートは `SAI_QUEUE_TYPE_UNICAST_VOQ` キューを持ち、カウンタも `COUNTERS_VOQ_NAME_MAP` に記録される (`portsorch.cpp:779`)。
 - ポート作成後、VOQ 環境では `removeDefaultVlanMembers()` と `removeDefaultBridgePorts()` が追加実行される (`portsorch.cpp:1496-1499`)。
@@ -1060,18 +1059,20 @@ Gearbox（外付け PHY）が搭載されたプラットフォーム（例: Bare
 
 ### SAI port_serdes 差異
 
-`SAI_PORT_ATTR_PORT_SERDES_ID` / `sai_port_api->create_port_serdes()` で管理される SerDes チューニング値は、ASIC / Gearbox line-side / Gearbox system-side の 3 種に分岐する。
+`SAI_PORT_ATTR_PORT_SERDES_ID` / `sai_port_api->create_port_serdes()` で管理される [SerDes](../../reference/glossary.md#term-serdes) チューニング値は、ASIC / Gearbox line-side / Gearbox system-side の 3 種に分岐する。
 
-| SerDes 対象 | SAI スイッチ OID | 設定タイミング |
+| [SerDes](../../reference/glossary.md#term-serdes) 対象 | SAI スイッチ OID | 設定タイミング |
 |------------|----------------|-------------|
 | ASIC ポート (`m_port_id`) | `gSwitchId` | `doPortTask` 処理中 (`portsorch.cpp:4541`) |
 | Gearbox system-side (`m_system_side_id`) | PHY OID (`phyOid`) | `initGearboxPort()` 内 (`portsorch.cpp:10671`) |
 | Gearbox line-side (`m_line_side_id`) | PHY OID (`phyOid`) | `initGearboxPort()` 内 (`portsorch.cpp:10691`) |
 
-- SerDes 属性適用前にポートを **admin DOWN** にする必要がある (`portsorch.cpp:4527-4538`)。admin UP 状態での設定変更は不可。
+- [SerDes](../../reference/glossary.md#term-serdes) 属性適用前にポートを **admin DOWN** にする必要がある (`portsorch.cpp:4527-4538`)。admin UP 状態での設定変更は不可。
 - Gearbox 非搭載環境では `m_system_side_id` / `m_line_side_id` は未設定のままとなり、ASIC ポートのみに SerDes が適用される。
 - `setPortSerdesAttribute()` (`portsorch.cpp:10123`) は既存の serdes オブジェクトを remove してから再作成する（create-only 属性のため）。このとき `m_portIdToSerdesId` マップと `COUNTERS_DB/COUNTERS_PORT_SERDES_ID_TO_PORT_ID_MAP` の両方を更新する。
 - プラットフォームが `SAI_PORT_SERDES_ATTR_PORT_ID` を未実装の場合、`sai_port_api->get_port_attribute(SAI_PORT_ATTR_PORT_SERDES_ID)` が失敗し ERROR ログ後にタスクが中断される。
 - FlexCounter の `PORT_PHY_SERDES_ATTR` カウンタは `getPortPhySerdesSupportedAttrs()` で実際にサポートされる属性のみ登録する (`portsorch.cpp:4177-4181`)。
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: 858afbae41e9 -->

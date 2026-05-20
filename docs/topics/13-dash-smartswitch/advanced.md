@@ -38,11 +38,11 @@ related:
 
 # gNOI 連携と他章との境界
 
-[DASH](../../reference/glossary.md#term-dash) / [SmartSwitch](../../reference/glossary.md#term-smartswitch) は単独で完結する機能ではなく、管理面 ([gNMI](../../reference/glossary.md#term-gnmi) / [gNOI](../../reference/glossary.md#term-gnoi))、Multi-ASIC / [VOQ](../../reference/glossary.md#term-voq)、Platform 章と境界を持ちます。ここでは「どこから先は別の章が主」かを整理します。
+[DASH](../../reference/glossary.md#term-dash) / [SmartSwitch](../../reference/glossary.md#term-smartswitch) は単独で完結する機能ではなく、管理面 ([gNMI](../../reference/glossary.md#term-gnmi) / [gNOI](../../reference/glossary.md#term-gnoi))、[Multi-ASIC](../../reference/glossary.md#term-multi-asic) / [VOQ](../../reference/glossary.md#term-voq)、Platform 章と境界を持ちます。ここでは「どこから先は別の章が主」かを整理します。
 
 ## gNOI 系との関係
 
-SmartSwitch の reboot / shutdown / upgrade は、SONiC の gNOI 実装をそのまま使います。
+SmartSwitch の reboot / shutdown / upgrade は、[SONiC](../../reference/glossary.md#term-sonic) の gNOI 実装をそのまま使います。
 
 | gNOI API | この章での使い方 |
 |---|---|
@@ -54,7 +54,7 @@ gNOI 自体の API 設計・認証・transport は管理章の責務です。本
 
 ## Multi-ASIC / VOQ との境界
 
-SmartSwitch の DPU per-instance redis は、multi-ASIC の per-namespace redis と同じ `featured` 機構を使います。両者は似た形に見えますが、目的が異なります。
+SmartSwitch の DPU per-instance redis は、multi-[ASIC](../../reference/glossary.md#term-asic) の per-namespace redis と同じ `featured` 機構を使います。両者は似た形に見えますが、目的が異なります。
 
 | 観点 | Multi-ASIC / VOQ | SmartSwitch |
 |---|---|---|
@@ -152,4 +152,4 @@ DPU の PCIe / midplane / 電源 / リセットといった物理層は Platform
 - [07 ACL / CoPP / Mirror: DPU 上の flow rule](../07-acl-copp-mirror/index.md)
 - [18 P4 / PINS: P4 pipeline の表現](../18-p4-pins/index.md)
 
-<!-- glossary-links-injected: ca666ecaafdc -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

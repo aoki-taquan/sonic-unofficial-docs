@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-ポートごとのケーブル長を保持し、バッファマネージャ (`buffermgr` / `buffermgrdyn`) が lossless Priority Group (PG) の headroom サイズを計算するために参照する[^1]。dynamic buffer モードでは `buffermgrdyn` が speed・mtu と組み合わせてリアルタイムに `BUFFER_PG` プロファイルを生成する。
+ポートごとのケーブル長を保持し、バッファマネージャ (`buffermgr` / `buffermgrdyn`) が lossless [Priority Group](../../reference/glossary.md#term-priority-group) (PG) の headroom サイズを計算するために参照する[^1]。dynamic buffer モードでは `buffermgrdyn` が speed・mtu と組み合わせてリアルタイムに `BUFFER_PG` プロファイルを生成する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -42,16 +42,12 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>CABLE_LENGTH")]
-  BM["buffermgr / buffermgrdyn"]
-  CDB --> BM
-  APPL[("APPL_DB<br/>BUFFER_PG / BUFFER_PROFILE")]
-  BM --> APPL
-  SAI["SAI<br/>buffer API"]
-  APPL --> SAI
+  DM["buffermgrd"]
+  CDB --> DM
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を示すミニ図。詳細・例外は本ページ本文を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -64,7 +60,7 @@ CABLE_LENGTH|<name>
 
 ## 主要フィールド
 
-| フィールド | 型 | YANG default | 説明 |
+| フィールド | 型 | [YANG](../../reference/glossary.md#term-yang) default | 説明 |
 |-----------|----|--------------|------|
 | `<ifname>` (フィールド名) | `string` (`[0-9]+m`) | — | ポート名をキーとし、ケーブル長 (`40m` 等) を値とする。`PORT_LIST.name` への leafref |
 
@@ -79,9 +75,9 @@ CABLE_LENGTH|<name>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `BUFFER_PG`、`BUFFER_PROFILE`、`BUFFER_POOL`、`DEVICE_METADATA` (buffer_model)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_PG`、`BUFFER_PROFILE`、`BUFFER_POOL`、`DEVICE_METADATA` (buffer_model)
 - 関連 CLI: `config interface cable-length <ifname> <length>` (dynamic buffer モードのみ)
-- 関連 YANG: `sonic-cable-length`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-cable-length`
 
 <!-- ref-triangle:start -->
 
@@ -161,11 +157,11 @@ show buffer information
 ### 段階 3: headroom 計算 → APPL_DB
 
 - **static モード** (`buffermgr`): `pg_profile_lookup.ini` から speed + cable_length に対応するエントリを引いて `BUFFER_PROFILE` を設定。
-- **dynamic モード** (`buffermgrdyn`): `allocateProfile()` が speed/cable/mtu/threshold を引数に headroom ツール (`generate_headroom_info.py` or 内部計算) を呼び出し、`BUFFER_PROFILE` と `BUFFER_PG` を APPL_DB に書き込む。
+- **dynamic モード** (`buffermgrdyn`): `allocateProfile()` が speed/cable/mtu/threshold を引数に headroom ツール (`generate_headroom_info.py` or 内部計算) を呼び出し、`BUFFER_PROFILE` と `BUFFER_PG` を [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込む。
 
 ### 段階 4: APPL → SAI
 
-- `bufferorch` が APPL_DB の `BUFFER_PG`・`BUFFER_PROFILE` を購読し、SAI buffer API (`sai_buffer_api`) を通じてチップの PG headroom を設定。
+- `bufferorch` が [APPL_DB](../../reference/glossary.md#term-appl_db) の `BUFFER_PG`・`BUFFER_PROFILE` を購読し、[SAI](../../reference/glossary.md#term-sai) buffer API (`sai_buffer_api`) を通じてチップの PG headroom を設定。
 
 <!-- /runtime-trace -->
 
@@ -202,19 +198,19 @@ CABLE_LENGTH テーブルへの書き込みが発生するコード経路。
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
-| `length != "None"` かつ値が変化 | CONFIG_DB `BUFFER_PROFILE` に `pg_lossless_<speed>_<cable>_profile` を set | buffermgr.cpp:274 |
+| `length != "None"` かつ値が変化 | [CONFIG_DB](../../reference/glossary.md#term-config_db) `BUFFER_PROFILE` に `pg_lossless_<speed>_<cable>_profile` を set | buffermgr.cpp:274 |
 | lossless PG が未設定ポート | CONFIG_DB `BUFFER_PG.<port>\|<pg>.profile` をプロファイル名に set | buffermgr.cpp:305 |
-| `length == "0m"` | `doSpeedUpdateTask` が early return → BUFFER_PROFILE / BUFFER_PG への書込みなし | buffermgr.cpp:159-163 |
+| `length == "0m"` | `doSpeedUpdateTask` が early return → BUFFER_PROFILE / [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) への書込みなし | buffermgr.cpp:159-163 |
 
 **dynamic モード (`buffermgrdyn`)**
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
-| speed・mtu が揃い `PORT_READY` / `PORT_INITIALIZING` | APPL_DB `BUFFER_PROFILE_TABLE` に `pg_lossless_<speed>_<cable>_<mtu>_profile` を set | buffermgrdyn.cpp:919 |
-| 上記と同条件 | STATE_DB `BUFFER_PROFILE_TABLE` に同名プロファイルを set (二重書込み) | buffermgrdyn.cpp:920 |
+| speed・mtu が揃い `PORT_READY` / `PORT_INITIALIZING` | [APPL_DB](../../reference/glossary.md#term-appl_db) `BUFFER_PROFILE_TABLE` に `pg_lossless_<speed>_<cable>_<mtu>_profile` を set | buffermgrdyn.cpp:919 |
+| 上記と同条件 | [STATE_DB](../../reference/glossary.md#term-state_db) `BUFFER_PROFILE_TABLE` に同名プロファイルを set (二重書込み) | buffermgrdyn.cpp:920 |
 | 上記と同条件 | APPL_DB `BUFFER_PG_TABLE.<port>\|<pg>.profile` を新プロファイル名に set | buffermgrdyn.cpp:1568 |
 | `length == "0m"` かつ lossless PG が存在 | APPL_DB `BUFFER_PG_TABLE.<port>\|<pg>` を del | buffermgrdyn.cpp:1505 |
-| 旧プロファイルの参照ポートがゼロになった | APPL_DB / STATE_DB `BUFFER_PROFILE_TABLE` から旧プロファイルを del | buffermgrdyn.cpp:1047-1049 |
+| 旧プロファイルの参照ポートがゼロになった | APPL_DB / [STATE_DB](../../reference/glossary.md#term-state_db) `BUFFER_PROFILE_TABLE` から旧プロファイルを del | buffermgrdyn.cpp:1047-1049 |
 | `PORT_INITIALIZING` → 初回 cable_length 設定 | ポート状態を `PORT_READY` に遷移 | buffermgrdyn.cpp:2184 |
 
 ### Phase 7: 条件付き module/manager 登録
@@ -266,7 +262,7 @@ CFG_PORT_CABLE_LEN_TABLE_NAME  // Orch(cfgDb, tableNames) コンストラクタ�
 
 ### Lua plugin 経路 — headroom 計算
 
-`refreshPgsForPort()` → `calculateHeadroomSize()` がベンダー固有 Lua スクリプトを Redis EVALSHA 経由で実行する (`buffermgrdyn.cpp:603-648`)。
+`refreshPgsForPort()` → `calculateHeadroomSize()` がベンダー固有 Lua スクリプトを [Redis](../../reference/glossary.md#term-redis) EVALSHA 経由で実行する (`buffermgrdyn.cpp:603-648`)。
 
 ```
 EVALSHA buffer_headroom_<platform>.lua 1 <profile_name>
@@ -274,17 +270,17 @@ EVALSHA buffer_headroom_<platform>.lua 1 <profile_name>
 → ["xon:18432", "xoff:18432", "size:36864", "xon_offset:2048"]
 ```
 
-スクリプトは起動時に **APPL_DB** の Redis インスタンスへロードされる (`loadRedisScript(applDb, ...)`)。ロード失敗時は `buffermgrd` が起動を中断する (`buffermgrdyn.cpp:121`)。対象スクリプト: `buffer_headroom_<platform>.lua`, `buffer_pool_<platform>.lua`, `buffer_check_headroom_<platform>.lua`。
+スクリプトは起動時に **APPL_DB** の [Redis](../../reference/glossary.md#term-redis) インスタンスへロードされる (`loadRedisScript(applDb, ...)`)。ロード失敗時は `buffermgrd` が起動を中断する (`buffermgrdyn.cpp:121`)。対象スクリプト: `buffer_headroom_<platform>.lua`, `buffer_pool_<platform>.lua`, `buffer_check_headroom_<platform>.lua`。
 
 ### APPL_DB ProducerStateTable 書き込み
 
 headroom 計算後、`allocateProfile()` が APPL_DB へ書き込む:
 
-| APPL_DB テーブル | ProducerStateTable メンバ | 後続コンシューマ |
+| APPL_DB テーブル | [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) メンバ | 後続コンシューマ |
 |----------------|------------------------|----------------|
-| `BUFFER_PROFILE_TABLE` | `m_applBufferProfileTable` (static) / dynamic は内部 | `bufferorch` ConsumerStateTable |
-| `BUFFER_PG_TABLE` | `m_applBufferPgTable` / `m_applBufferObjectTables[0]` | `bufferorch` → SAI PG headroom |
-| `BUFFER_POOL_TABLE` | `m_applBufferPoolTable` | `bufferorch` → SAI buffer pool |
+| `BUFFER_PROFILE_TABLE` | `m_applBufferProfileTable` (static) / dynamic は内部 | `bufferorch` [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) |
+| `BUFFER_PG_TABLE` | `m_applBufferPgTable` / `m_applBufferObjectTables[0]` | `bufferorch` → [SAI](../../reference/glossary.md#term-sai) PG headroom |
+| `BUFFER_POOL_TABLE` | `m_applBufferPoolTable` | `bufferorch` → [SAI](../../reference/glossary.md#term-sai) buffer pool |
 
 ### 全体フロー
 
@@ -318,7 +314,7 @@ SAI buffer API → チップ PG headroom 設定
 | `PORT` (`speed` フィールド) | `buffermgrdyn.handleCableLenTable()` が `effectiveSpeed.empty()` を確認し、空の場合は WARN ログを出しリトライなしで中断する。`buffermgr.doCableTask()` も `doSpeedUpdateTask()` 内で `m_speedLookup[port]` を参照するため speed 未着では不正キーになる | `buffermgrdyn.cpp:2155-2159`, `buffermgr.cpp:101-109` |
 | `PORT_QOS_MAP` (`pfc_enable`) | `buffermgr.doSpeedUpdateTask()` が `m_portStatusLookup.count(port) == 0` で `task_need_retry` を返す。PORT_QOS_MAP が未着だと CABLE_LENGTH 通知がクリアされ、PORT_QOS_MAP 着信時に自動再処理される（static モードのみ） | `buffermgr.cpp:165-178` |
 | `BUFFER_POOL` (`ingress_lossless_pool`) | `buffermgrdyn.allocateProfile()` が `m_bufferPoolReady == false` の場合に `task_need_retry` を返す。BUFFER_POOL 確立後にリトライキューから自動再処理（dynamic モードのみ） | `buffermgrdyn.cpp:978` |
-| `PortInitDone` (STATE_DB / APPL_DB) | `m_portInitDone = false` の間はポートが PORT_INITIALIZING 状態に留まり、`refreshPgsForPort()` で PORT_READY チェックが通らず headroom 計算がスキップされる（dynamic モードのみ） | `buffermgrdyn.cpp:826-856`, `buffermgrdyn.cpp:1485-1487` |
+| `PortInitDone` ([STATE_DB](../../reference/glossary.md#term-state_db) / APPL_DB) | `m_portInitDone = false` の間はポートが PORT_INITIALIZING 状態に留まり、`refreshPgsForPort()` で PORT_READY チェックが通らず headroom 計算がスキップされる（dynamic モードのみ） | `buffermgrdyn.cpp:826-856`, `buffermgrdyn.cpp:1485-1487` |
 
 !!! warning "speed 未設定はリトライなし（dynamic モード）"
     `buffermgrdyn` では speed が未設定の状態で `CABLE_LENGTH` を書いても headroom 計算はスキップされ、
@@ -355,7 +351,7 @@ APPL_DB.BUFFER_PROFILE / BUFFER_PG 生成 → bufferorch → SAI buffer API
 
 実運用では `config qos reload` と `config load_minigraph` が Jinja テンプレート
 (`buffers_config.j2`) から PORT / CABLE_LENGTH / BUFFER_POOL を一括生成するため、
-順序は sonic-cfggen が暗黙に担保する。
+順序は [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) が暗黙に担保する。
 
 <!-- /ordering -->
 
@@ -411,7 +407,7 @@ WARN: "Lua scripts for headroom calculation were not executed successfully"  # �
 
 - 関数は `return` で抜けるだけで例外は伝播しない。
 - 空フィールドで APPL_DB に書き込まれると `bufferorch` 側でエラーが発生する可能性がある。
-- 根本原因: Lua スクリプトの Redis ロード失敗（通常は起動時に検出されるが、APPL_DB 再起動等で再発する場合あり）。
+- 根本原因: Lua スクリプトの [Redis](../../reference/glossary.md#term-redis) ロード失敗（通常は起動時に検出されるが、APPL_DB 再起動等で再発する場合あり）。
 
 #### headroom チェック Lua 失敗 → WARN のみ、制約スキップ
 
@@ -503,16 +499,16 @@ YANG default と別に、コード側で「フィールド不在時の fallback�
 | `BUFFERMGR_TIMER_PERIOD = 10` | `int` (秒) | `buffermgrdyn.h:17` | バッファマネージャのポーリング間隔 | 10 秒周期でリトライキュー処理 |
 | `speed_of_light = 198000000` | `int` (m/s) | `buffer_headroom_mellanox.lua:119` | ケーブル内伝播遅延計算に使用 (光速の約 66%) | `bytes_on_cable = 2 * cable_length * port_speed * 1e9 / speed_of_light / 8000` |
 | `minimal_packet_size = 64` | `int` (bytes) | `buffer_headroom_mellanox.lua:120` | worst-case cell 占有率計算の最小パケット長 | cell_size > 128 → `cell/64`, それ以外 → `2*cell/(1+cell)` |
-| `pause_quanta_per_speed[1G] = 2` | `int` | `buffer_headroom_mellanox.lua:50` | 速度別 PFC pause quanta (1 Gbps) | 512-bit 単位 |
-| `pause_quanta_per_speed[10G] = 67` | `int` | `buffer_headroom_mellanox.lua:49` | 速度別 PFC pause quanta (10 Gbps) | 同上 |
-| `pause_quanta_per_speed[25G] = 80` | `int` | `buffer_headroom_mellanox.lua:48` | 速度別 PFC pause quanta (25 Gbps) | 同上 |
+| `pause_quanta_per_speed[1G] = 2` | `int` | `buffer_headroom_mellanox.lua:50` | 速度別 [PFC](../../reference/glossary.md#term-pfc) pause quanta (1 Gbps) | 512-bit 単位 |
+| `pause_quanta_per_speed[10G] = 67` | `int` | `buffer_headroom_mellanox.lua:49` | 速度別 [PFC](../../reference/glossary.md#term-pfc) pause quanta (10 Gbps) | 同上 |
+| `pause_quanta_per_speed[25G] = 80` | `int` | `buffer_headroom_mellanox.lua:48` | 速度別 [PFC](../../reference/glossary.md#term-pfc) pause quanta (25 Gbps) | 同上 |
 | `pause_quanta_per_speed[40G] = 118` | `int` | `buffer_headroom_mellanox.lua:47` | 速度別 PFC pause quanta (40 Gbps) | 同上 |
 | `pause_quanta_per_speed[50G] = 147` | `int` | `buffer_headroom_mellanox.lua:46` | 速度別 PFC pause quanta (50 Gbps) | 同上 |
 | `pause_quanta_per_speed[100G] = 394` | `int` | `buffer_headroom_mellanox.lua:45` | 速度別 PFC pause quanta (100 Gbps) | 同上 |
 | `pause_quanta_per_speed[200G] = 453` | `int` | `buffer_headroom_mellanox.lua:44` | 速度別 PFC pause quanta (200 Gbps) | 同上 |
 | `pause_quanta_per_speed[400G] = 905` | `int` | `buffer_headroom_mellanox.lua:43` | 速度別 PFC pause quanta (400 Gbps) | 同上 |
 | `pause_quanta_per_speed[800G] = 905` | `int` | `buffer_headroom_mellanox.lua:42` | 速度別 PFC pause quanta (800 Gbps) | 400G と同値 |
-| `ppg_headroom = 400 * cell_size` | `int` (bytes) | `buffer_pool_barefoot.lua:13` | Barefoot (Tofino) ASIC の per-PG headroom 固定計算式 | cell_size は ASIC テーブルから取得 |
+| `ppg_headroom = 400 * cell_size` | `int` (bytes) | `buffer_pool_barefoot.lua:13` | Barefoot (Tofino) [ASIC](../../reference/glossary.md#term-asic) の per-PG headroom 固定計算式 | cell_size は [ASIC](../../reference/glossary.md#term-asic) テーブルから取得 |
 | `gearbox_delay = 0` | `int` | `buffer_headroom_mellanox.lua:57` | gearbox 遅延未設定時のフォールバック値 | ARGV[4] が nil のとき 0 バイトと扱う |
 | プロファイル名テンプレート `"pg_lossless_<speed>_<cable>_profile"` | `string` | `buffermgr.cpp:183-184`, `buffermgrdyn.cpp:487,491` | PG プロファイルのキー命名規則 | MTU = 9100 のとき mtu サフィックス省略; `pg_lossless_<speed>_<cable>_mtu<mtu>_profile` に変化 |
 
@@ -591,7 +587,7 @@ CABLE_LENGTH テーブルの処理中に `buffermgr` / `buffermgrdyn` が暗黙�
 
 - **参照箇所**: `buffermgr.cpp:27,115,481` / `buffermgrdyn.cpp:443,2509`
 - **参照フィールド**: `mode`, `size`
-- **依存性質**: 制約チェック。CABLE_LENGTH 由来の headroom 計算後、`ingress_lossless_pool` の `mode` を `getPgPoolMode()` で参照し `BUFFER_PROFILE` の `dynamic_th` を設定する。dynamic モードでは SHP (Shared Headroom Pool) サイズとの整合性チェックにも使用される。
+- **依存性質**: 制約チェック。CABLE_LENGTH 由来の headroom 計算後、`ingress_lossless_pool` の `mode` を `getPgPoolMode()` で参照し `BUFFER_PROFILE` の `dynamic_th` を設定する。dynamic モードでは SHP (Shared [Headroom](../../reference/glossary.md#term-headroom) Pool) サイズとの整合性チェックにも使用される。
 
 ### BUFFER_PROFILE テーブル (CONFIG_DB)
 
@@ -630,7 +626,7 @@ CABLE_LENGTH テーブルの処理中に `buffermgr` / `buffermgrdyn` が暗黙�
 
 - `buffermgr.cpp:21` — コンストラクタが `pg_lookup_file` パスを受け取り `readPgProfileLookupFile()` で読み込む
 - `buffermgr.cpp:37` — `ASIC_VENDOR` 環境変数を `m_platform` にセット
-- INI の数値内容はプラットフォームパッケージ (HWSKU) が提供。Broadcom / Mellanox / Marvel 各 ASIC で異なる
+- INI の数値内容はプラットフォームパッケージ (HWSKU) が提供。Broadcom / Mellanox / Marvel 各 [ASIC](../../reference/glossary.md#term-asic) で異なる
 - admin down ポートの PG 削除は `m_platform == "mellanox" || m_platform == "barefoot"` の場合のみ (`buffermgr.cpp:206`)
 
 **dynamic モード — Lua プラグイン:**
@@ -655,3 +651,5 @@ dynamic: pg_lossless_<speed>_<cable>[_mtu<N>][_th<T>][_<gearbox>][_8lane]_profil
 ```
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: dccd277ef02b -->

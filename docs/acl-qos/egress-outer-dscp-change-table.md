@@ -51,7 +51,7 @@ encapsulated 後の **outer header の [DSCP](../reference/glossary.md#term-dscp
 
 - Ingress L3 ACL で DSCP を書き換えると **inner DSCP 自体が変わってしまう**（後段で復元できない）
 - Tunnel encap 設定で inner→outer DSCP コピーは可能だが、書き換えの自由度が無い
-- Egress L3 ACL は outer の DSCP を書けるが、**inner L3 フィールドにマッチできるかは ASIC 依存**
+- Egress L3 ACL は outer の DSCP を書けるが、**inner L3 フィールドにマッチできるかは [ASIC](../reference/glossary.md#term-asic) 依存**
 
 本 [HLD](../reference/glossary.md#term-hld) は ASIC ハードウェア要件として `SAI_ACL_ENTRY_ATTR_ACTION_SET_ACL_META_DATA` と `SAI_ACL_ENTRY_ATTR_FIELD_ACL_USER_META` を使うことで、platform 中立な解を出す[^1]。
 
@@ -209,4 +209,4 @@ redis-cli -n 6 hget 'SWITCH_CAPABILITY|switch' ACL_ACTIONS_EGRESS
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: c006405759d8 -->

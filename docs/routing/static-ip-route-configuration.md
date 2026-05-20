@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-CLI / REST / [gNMI](../reference/glossary.md#term-gnmi) から **non-management な static route** を SONiC 管理フレームワーク経由で投入する設計。[CONFIG_DB](../reference/glossary.md#term-config_db) の `STATIC_ROUTE` テーブルに書き込み、`frrcfgd` がそれを vtysh 経由で [FRR](../reference/glossary.md#term-frr) に流し込む形を取る[^1]。[VRF](../reference/glossary.md#term-vrf) 間の route leak（`nexthop-vrf`）と blackhole route も同じテーブルで表現する。
+CLI / REST / [gNMI](../reference/glossary.md#term-gnmi) から **non-management な static route** を [SONiC](../reference/glossary.md#term-sonic) 管理フレームワーク経由で投入する設計。[CONFIG_DB](../reference/glossary.md#term-config_db) の `STATIC_ROUTE` テーブルに書き込み、`frrcfgd` がそれを [vtysh](../reference/glossary.md#term-vtysh) 経由で [FRR](../reference/glossary.md#term-frr) に流し込む形を取る[^1]。[VRF](../reference/glossary.md#term-vrf) 間の route leak（`nexthop-vrf`）と blackhole route も同じテーブルで表現する。
 
 ## 動作仕様
 
@@ -151,7 +151,7 @@ sonic-cfggen -a '{
 
 ## トラブルシューティング
 
-- 静的経路が ASIC に積まれない → `vtysh -c 'show ip route static'` で FRR 側に入っているか確認、`fpmsyncd` のログでエラーがないか確認。
+- 静的経路が [ASIC](../reference/glossary.md#term-asic) に積まれない → `vtysh -c 'show ip route static'` で FRR 側に入っているか確認、`fpmsyncd` のログでエラーがないか確認。
 - VRF leak が動かない → `nexthop-vrf` で指定した VRF が VRF テーブルに存在し、対象インタフェースがその VRF にバインドされているかを確認。
 - 設定が反映されない → `frrcfgd` が起動しているか、CONFIG_DB の `STATIC_ROUTE` キーフォーマット（`vrf|prefix`）が正しいか確認。
 
@@ -176,4 +176,4 @@ sonic-cfggen -d -v 'STATIC_ROUTE'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 33284a13dfdc -->
+<!-- glossary-links-injected: d62d2c91ba87 -->

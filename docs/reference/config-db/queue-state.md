@@ -35,29 +35,27 @@ related:
 
 ## 概要
 
-`STATE_DB` の `QUEUE_COUNTER_CAPABILITIES` テーブルは、`sonic-swss` の `portsorch` が orchagent 起動時に [SAI](../../reference/glossary.md#term-sai) ケイパビリティクエリ（`sai_query_stats_capability`）を実行した結果を書き込む読み取り専用テーブルである[^1]。
+`STATE_DB` の `QUEUE_COUNTER_CAPABILITIES` テーブルは、`sonic-swss` の `portsorch` が [orchagent](../../reference/glossary.md#term-orchagent) 起動時に [SAI](../../reference/glossary.md#term-sai) ケイパビリティクエリ（`sai_query_stats_capability`）を実行した結果を書き込む読み取り専用テーブルである[^1]。
 
-書き込まれるフィールドは WRED/ECN キューカウンタ 4 種のサポート可否フラグ（`isSupported: "true"/"false"`）のみ。`wredstat` スクリプトおよび `portstat.py` がこのフラグを参照して、未サポートの ASIC では COUNTERS_DB から対応フィールドを除外する。
+書き込まれるフィールドは [WRED](../../reference/glossary.md#term-wred)/ECN キューカウンタ 4 種のサポート可否フラグ（`isSupported: "true"/"false"`）のみ。`wredstat` スクリプトおよび `portstat.py` がこのフラグを参照して、未サポートの [ASIC](../../reference/glossary.md#term-asic) では [COUNTERS_DB](../../reference/glossary.md#term-counters_db) から対応フィールドを除外する。
 
 !!! note "CONFIG_DB との関係"
     `QUEUE_COUNTER_CAPABILITIES` は STATE_DB の**読み取り専用**テーブルであり、CONFIG_DB には対応する設定テーブルが存在しない。WRED/ECN カウンタの有効化は `FLEX_COUNTER_TABLE|WRED_ECN_QUEUE` の `FLEX_COUNTER_STATUS` で行うが、ASIC が対応していない場合はフラグが `"false"` のまま残る。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  SAI["SAI<br/>sai_query_stats_capability()"]
-  OA["portsorch<br/>(orchagent)"]
-  STATE[("STATE_DB<br/>QUEUE_COUNTER_CAPABILITIES")]
-  UTIL["wredstat / portstat"]
-
-  OA -->|"起動時 initCounterCapabilities()"| SAI
-  SAI -->|"SAI_OBJECT_TYPE_QUEUE ケイパビリティ結果"| OA
-  OA -->|"isSupported = true/false"| STATE
-  STATE -->|"フラグ参照（不要カウンタを除外）"| UTIL
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -68,7 +66,7 @@ QUEUE_COUNTER_CAPABILITIES|<capability_name>
 
 現在定義されているキー（`portsorch.cpp:1872-1875`）:
 
-| キー | 対応 SAI 統計 |
+| キー | 対応 [SAI](../../reference/glossary.md#term-sai) 統計 |
 |------|-------------|
 | `WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` | `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` |
 | `WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER` | `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` |
@@ -81,14 +79,14 @@ QUEUE_COUNTER_CAPABILITIES|<capability_name>
 
 | フィールド | 型 | 書込み主体 | デフォルト | 説明 |
 |-----------|----|-----------|-----------|------|
-| `isSupported` | boolean string | `portsorch` (initCounterCapabilities) | `"false"` | ASIC が当該 WRED/ECN カウンタをサポートする場合 `"true"`、未サポートの場合 `"false"` |
+| `isSupported` | boolean string | `portsorch` (initCounterCapabilities) | `"false"` | [ASIC](../../reference/glossary.md#term-asic) が当該 [WRED](../../reference/glossary.md#term-wred)/ECN カウンタをサポートする場合 `"true"`、未サポートの場合 `"false"` |
 
 ## 書き込みロジック詳細
 
 `portsorch.cpp:1850-1918` の `initCounterCapabilities()` が `switchId` を引数に起動直後 1 回だけ呼ばれる:
 
 1. **初期化フェーズ**: 4 つの全キーに `isSupported = "false"` を書き込む（デフォルト）
-2. **SAI クエリフェーズ**: `sai_query_stats_capability(switchId, SAI_OBJECT_TYPE_QUEUE, &queue_stats_capability)` を実行
+2. **[SAI](../../reference/glossary.md#term-sai) クエリフェーズ**: `sai_query_stats_capability(switchId, SAI_OBJECT_TYPE_QUEUE, &queue_stats_capability)` を実行
 3. **更新フェーズ**: クエリが `SAI_STATUS_SUCCESS` を返した場合のみ、対応する統計を含む行があれば `isSupported = "true"` に上書き
 4. **失敗時**: `SAI_STATUS_SUCCESS` 以外（`SAI_STATUS_BUFFER_OVERFLOW` リトライ失敗含む）では全フラグが `"false"` のまま
 
@@ -110,14 +108,14 @@ if (SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS == queue_stats_capability.list[it].st
 
 | プロセス | 参照方法 | 用途 |
 |---------|---------|------|
-| `sonic-utilities/utilities_common/portstat.py` | `STATE_DB QUEUE_COUNTER_CAPABILITIES|...` の `isSupported` フィールドを直接 GET | portstat が COUNTERS_DB から取得するカウンタ列を絞り込む |
+| `sonic-utilities/utilities_common/portstat.py` | `STATE_DB QUEUE_COUNTER_CAPABILITIES|...` の `isSupported` フィールドを直接 GET | portstat が [COUNTERS_DB](../../reference/glossary.md#term-counters_db) から取得するカウンタ列を絞り込む |
 | `sonic-utilities/scripts/wredstat` | `state_db.connect(STATE_DB)` 後に参照 | wredstat が N/A 表示 vs 実値表示を制御 |
 | `sonic-utilities/counterpoll/main.py` | 間接的（FLEX_COUNTER_TABLE|WRED_ECN_QUEUE 経由） | counterpoll show で `WRED_ECN_QUEUE_STAT` 行を表示 |
 
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG schema は存在しない。すべてのデフォルトは `portsorch.cpp` のコードに由来する。
+[YANG](../../reference/glossary.md#term-yang) schema は存在しない。すべてのデフォルトは `portsorch.cpp` のコードに由来する。
 
 | フィールド / キー | コード由来デフォルト | fallback 源 |
 |-----------------|-------------------|------------|
@@ -128,8 +126,8 @@ YANG schema は存在しない。すべてのデフォルトは `portsorch.cpp` 
 
 ### 補足
 
-- **全デフォルトは `"false"`**: ASIC が WRED/ECN 統計をまったくサポートしない環境では、4 フィールド全てが `"false"` のままとなる。`wredstat` は N/A を表示し、counterpoll の WRED_ECN_QUEUE を `enable` にしても COUNTERS_DB に対応フィールドが現れない（silent non-addition）。
-- **orchagent 再起動でリセット**: `initCounterCapabilities()` は起動のたびに実行される。ただし `sai_query_stats_capability()` の結果が一貫しているため、再起動ごとに同じフラグが書き込まれる。
+- **全デフォルトは `"false"`**: [ASIC](../../reference/glossary.md#term-asic) が [WRED](../../reference/glossary.md#term-wred)/ECN 統計をまったくサポートしない環境では、4 フィールド全てが `"false"` のままとなる。`wredstat` は N/A を表示し、counterpoll の WRED_ECN_QUEUE を `enable` にしても [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に対応フィールドが現れない（silent non-addition）。
+- **[orchagent](../../reference/glossary.md#term-orchagent) 再起動でリセット**: `initCounterCapabilities()` は起動のたびに実行される。ただし `sai_query_stats_capability()` の結果が一貫しているため、再起動ごとに同じフラグが書き込まれる。
 - **部分サポートあり**: ECN マーキングのみサポートし WRED ドロップはサポートしない ASIC の場合、`WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` / `WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER` のみ `"true"` となる（独立したフラグ）。
 - **`PORT_COUNTER_CAPABILITIES` との対称性**: 同じ `initCounterCapabilities()` 内でポート側の `PORT_COUNTER_CAPABILITIES` テーブルも同様のパターンで書き込まれる。ポート側は `SAI_OBJECT_TYPE_PORT` でクエリする。
 
@@ -142,7 +140,7 @@ YANG schema は存在しない。すべてのデフォルトは `portsorch.cpp` 
 |------|------|
 | `sai_query_stats_capability()` 失敗 | `SWSS_LOG_NOTICE("Queue stat capability get failed: ...")` を出力し、4 フィールド全て `"false"` のまま |
 | SAI が `SAI_STATUS_BUFFER_OVERFLOW` を返す | `queue_stats_capability.list` をリサイズして再クエリ。再クエリも失敗した場合は上記と同じ |
-| orchagent 起動前に `wredstat` を実行 | STATE_DB に当該キーが存在しないため、`state_db.get()` が `None` を返す。wredstat は WRED カウンタを N/A 扱いする |
+| [orchagent](../../reference/glossary.md#term-orchagent) 起動前に `wredstat` を実行 | [STATE_DB](../../reference/glossary.md#term-state_db) に当該キーが存在しないため、`state_db.get()` が `None` を返す。wredstat は WRED カウンタを N/A 扱いする |
 | FLEX_COUNTER_TABLE|WRED_ECN_QUEUE が `disable` | `QUEUE_COUNTER_CAPABILITIES` の `isSupported` には影響しない（SAI ケイパビリティフラグは FLEX_COUNTER 設定と独立） |
 
 <!-- /cdb-exceptions -->
@@ -159,7 +157,7 @@ YANG schema は存在しない。すべてのデフォルトは `portsorch.cpp` 
 | 1 | 全 4 キーへの `isSupported = "false"` 初期化 → SAI クエリ | **強制先行** — 初期化が必ず先に実行される | orchagent 起動直後の一瞬、すべてのキーが `"false"` の中間状態になる |
 | 2 | SAI クエリ成功 → 対応キーへの `isSupported = "true"` 上書き | **SAI 応答後**（初期化完了後のみ） | SAI クエリ失敗時は上書きされず全キーが `"false"` のまま確定 |
 | 3 | `SAI_STATUS_BUFFER_OVERFLOW` 発生 → リスト拡張 → 再クエリ | 最大 1 回リトライ | 再クエリも失敗した場合は上書きされない（初期化値 `"false"` が確定） |
-| 4 | `QUEUE_COUNTER_CAPABILITIES` 書込み完了 → `wredstat` / `portstat.py` の参照 | **orchagent 初期化完了後に参照すること** | 初期化前に参照すると STATE_DB にキーが存在せず `None` が返る |
+| 4 | `QUEUE_COUNTER_CAPABILITIES` 書込み完了 → `wredstat` / `portstat.py` の参照 | **orchagent 初期化完了後に参照すること** | 初期化前に参照すると [STATE_DB](../../reference/glossary.md#term-state_db) にキーが存在せず `None` が返る |
 
 ### 主要な制約詳細
 
@@ -174,19 +172,19 @@ YANG schema は存在しない。すべてのデフォルトは `portsorch.cpp` 
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-YANG leafref を超えた他テーブル・他 DB・プラットフォームとの実装上の依存関係。`QUEUE_COUNTER_CAPABILITIES` は `portsorch` が**書き手専用**のテーブルであり、consumer 側（`wredstat` / `portstat.py`）は参照のみ行う。
+[YANG](../../reference/glossary.md#term-yang) leafref を超えた他テーブル・他 DB・プラットフォームとの実装上の依存関係。`QUEUE_COUNTER_CAPABILITIES` は `portsorch` が**書き手専用**のテーブルであり、consumer 側（`wredstat` / `portstat.py`）は参照のみ行う。
 
 | 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
 |--------|-----------|------|------|-----------|
 | SAI `sai_query_stats_capability(gSwitchId, SAI_OBJECT_TYPE_QUEUE, ...)` | SAI / プラットフォーム | READ | `initCounterCapabilities()` が orchagent 初期化時に 1 回呼び出す。返却された統計ケイパビリティリストに基づいて 4 キーの `isSupported` フラグを確定する。クエリ失敗時は全フラグが `"false"` のまま固定される | `portsorch.cpp:1882-1916` |
-| `PORT_COUNTER_CAPABILITIES` | STATE_DB | WRITE（兄弟テーブル） | 同じ `initCounterCapabilities()` 内で `SAI_OBJECT_TYPE_PORT` ケイパビリティを問い合わせ、`WRED_ECN_PORT_*` キーを書き込む。QUEUE 側の 4 キーと PORT 側の 4 キーは独立して成否が決まり、相互依存はない | `portsorch.cpp:1927-1970` |
-| `FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE` | CONFIG_DB | READ（間接） | `counterpoll wred-queue enable` により `FLEX_COUNTER_STATUS = enable` が書かれると `FlexCounterOrch` が `addWredQueueFlexCounters()` を呼ぶ。`isSupported = "false"` のポートのキューカウンタは `wred_queue_stat_manager.setCounterIdList()` に渡されないため COUNTERS_DB に出現しない | `flexcounterorch.cpp:276-281`, `portsorch.cpp:9574-9593` |
-| `COUNTERS_DB COUNTERS:<queue_oid>` | COUNTERS_DB | READ（downstream consumer） | `wredstat` スクリプトが COUNTERS_DB から WRED/ECN カウンタ値を取得する際、`QUEUE_COUNTER_CAPABILITIES.isSupported = "false"` のキューは FlexCounter に登録されていないため `None` が返り `STATUS_NA` が表示される | `wredstat:198-204` |
+| `PORT_COUNTER_CAPABILITIES` | [STATE_DB](../../reference/glossary.md#term-state_db) | WRITE（兄弟テーブル） | 同じ `initCounterCapabilities()` 内で `SAI_OBJECT_TYPE_PORT` ケイパビリティを問い合わせ、`WRED_ECN_PORT_*` キーを書き込む。QUEUE 側の 4 キーと PORT 側の 4 キーは独立して成否が決まり、相互依存はない | `portsorch.cpp:1927-1970` |
+| `FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE` | [CONFIG_DB](../../reference/glossary.md#term-config_db) | READ（間接） | `counterpoll wred-queue enable` により `FLEX_COUNTER_STATUS = enable` が書かれると `FlexCounterOrch` が `addWredQueueFlexCounters()` を呼ぶ。`isSupported = "false"` のポートのキューカウンタは `wred_queue_stat_manager.setCounterIdList()` に渡されないため COUNTERS_DB に出現しない | `flexcounterorch.cpp:276-281`, `portsorch.cpp:9574-9593` |
+| `COUNTERS_DB COUNTERS:<queue_oid>` | COUNTERS_DB | READ（downstream consumer） | `wredstat` スクリプトが COUNTERS_DB から WRED/ECN カウンタ値を取得する際、`QUEUE_COUNTER_CAPABILITIES.isSupported = "false"` のキューは [FlexCounter](../../reference/glossary.md#term-flexcounter) に登録されていないため `None` が返り `STATUS_NA` が表示される | `wredstat:198-204` |
 
 ### 補足
 
 - **書き手は `portsorch` のみ**: `QUEUE_COUNTER_CAPABILITIES` に書き込むのは `initCounterCapabilities()` 1 関数だけで、動的な更新（フィールドの追加・変更）は orchagent 再起動以外では発生しない。
-- **`FLEX_COUNTER_TABLE` との関係は間接的**: `QUEUE_COUNTER_CAPABILITIES` 自体は `FLEX_COUNTER_TABLE` を参照しない。FlexCounter の enable/disable が `addWredQueueFlexCounters()` 呼び出し可否を制御し、その内部で syncd 側の登録対象（`setCounterIdList()`）が変わることで COUNTERS_DB の出現可否に影響する。
+- **`FLEX_COUNTER_TABLE` との関係は間接的**: `QUEUE_COUNTER_CAPABILITIES` 自体は `FLEX_COUNTER_TABLE` を参照しない。[FlexCounter](../../reference/glossary.md#term-flexcounter) の enable/disable が `addWredQueueFlexCounters()` 呼び出し可否を制御し、その内部で [syncd](../../reference/glossary.md#term-syncd) 側の登録対象（`setCounterIdList()`）が変わることで COUNTERS_DB の出現可否に影響する。
 - **SAI プラットフォーム依存**: `sai_query_stats_capability` の結果はプラットフォーム実装に依存する。`SAI_STATUS_NOT_SUPPORTED` を返す SAI 実装では常に全フラグ `"false"` となる。
 
 <!-- /cross-refs -->
@@ -245,7 +243,7 @@ else
 | SAI クエリ BUFFER_OVERFLOW → リトライ失敗 | `SWSS_LOG_NOTICE` | 全 4 キーが `"false"` のまま確定 | orchagent 再起動 |
 | orchagent 起動完了前に consumer が参照 | なし（consumer 側で N/A） | STATE_DB にキーが存在しない | orchagent 起動完了後に再実行 |
 | 一部キーのみ SAI 未サポート（部分的） | なし（正常フロー） | 未サポートキーは `"false"`、サポートキーは `"true"` | N/A（仕様通り） |
-| FlexCounter 未登録（isSupported が false） | なし | COUNTERS_DB に対応カウンタが出現しない | プラットフォームの SAI 実装変更が必要 |
+| [FlexCounter](../../reference/glossary.md#term-flexcounter) 未登録（isSupported が false） | なし | COUNTERS_DB に対応カウンタが出現しない | プラットフォームの SAI 実装変更が必要 |
 
 <!-- /failure -->
 
@@ -255,7 +253,7 @@ else
 > **調査根拠**: `sonic-swss/orchagent/portsorch.cpp` @ master 全行精読  
 > 詳細証跡: `meta/_intermediate/cdb-flow/queue-state-constants.md`
 
-`QUEUE_COUNTER_CAPABILITIES` テーブルに関わるハードコード定数は `portsorch.cpp` の `initCounterCapabilities()` 内にすべて埋め込まれており、YANG / CONFIG_DB に対応するスキーマ定義は存在しない。
+`QUEUE_COUNTER_CAPABILITIES` テーブルに関わるハードコード定数は `portsorch.cpp` の `initCounterCapabilities()` 内にすべて埋め込まれており、[YANG](../../reference/glossary.md#term-yang) / [CONFIG_DB](../../reference/glossary.md#term-config_db) に対応するスキーマ定義は存在しない。
 
 ### テーブル名定数
 
@@ -305,9 +303,9 @@ else
 
 | 操作 | 対象 DB / テーブル | キー | 条件 |
 |------|-----------------|------|------|
-| SET `isSupported=false`（初期化） | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER` | 常に（portsorch.cpp:1876） |
-| SET `isSupported=false`（初期化） | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER` | 常に（portsorch.cpp:1877） |
-| SET `isSupported=false`（初期化） | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_RED_DROP_COUNTER` | 常に（portsorch.cpp:1878） |
+| SET `isSupported=false`（初期化） | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER` | 常に（[portsorch](../../reference/glossary.md#term-portsorch).cpp:1876） |
+| SET `isSupported=false`（初期化） | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER` | 常に（[portsorch](../../reference/glossary.md#term-portsorch).cpp:1877） |
+| SET `isSupported=false`（初期化） | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_RED_DROP_COUNTER` | 常に（[portsorch](../../reference/glossary.md#term-portsorch).cpp:1878） |
 | SET `isSupported=false`（初期化） | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_TOTAL_DROP_COUNTER` | 常に（portsorch.cpp:1879） |
 | SET `isSupported=true` | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER` | `SAI_OBJECT_TYPE_PORT` クエリ成功 + `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` 確認時（portsorch.cpp:1943） |
 | SET `isSupported=true` | STATE_DB / `PORT_COUNTER_CAPABILITIES` | `WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER` | `SAI_OBJECT_TYPE_PORT` クエリ成功 + `SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS` 確認時（portsorch.cpp:1948） |
@@ -329,7 +327,7 @@ else
 
 ### Producer/Consumer 構造
 
-`QUEUE_COUNTER_CAPABILITIES` は **orchagent 起動時 1 回のみ書き込まれる静的ステータステーブル**であり、Redis Pub/Sub や keyspace notification を使用しない。
+`QUEUE_COUNTER_CAPABILITIES` は **orchagent 起動時 1 回のみ書き込まれる静的ステータステーブル**であり、[Redis](../../reference/glossary.md#term-redis) Pub/Sub や keyspace notification を使用しない。
 
 | 区間 | 方式 | 使用クラス / API |
 |------|------|----------------|
@@ -338,7 +336,7 @@ else
 
 ### Producer 詳細 — portsorch の書き込み
 
-`PortsOrch` コンストラクタ（`portsorch.cpp:793`）で `swss::Table` インスタンスを生成し、`initCounterCapabilities()` 内で `table->set()` を呼ぶ。`swss::Table` は内部で `HSET` を実行するため、Redis Pub/Sub の `LPUSH` + `PUBLISH` は発行されない。
+`PortsOrch` コンストラクタ（`portsorch.cpp:793`）で `swss::Table` インスタンスを生成し、`initCounterCapabilities()` 内で `table->set()` を呼ぶ。`swss::Table` は内部で `HSET` を実行するため、[Redis](../../reference/glossary.md#term-redis) Pub/Sub の `LPUSH` + `PUBLISH` は発行されない。
 
 ```cpp
 // portsorch.cpp:793
@@ -351,7 +349,7 @@ m_queueCounterCapabilitiesTable->set("WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER", f
 // ...（SAI クエリ成功後は fieldValuesTrue で上書き）
 ```
 
-書き込みは `PortsOrch::PortsOrch()` → `init()` → `initCounterCapabilities(gSwitchId)` の呼び出しチェーンで起動時 **1 回のみ**実行される。CONFIG_DB イベントに反応した動的更新はない。
+書き込みは `PortsOrch::PortsOrch()` → `init()` → `initCounterCapabilities(gSwitchId)` の呼び出しチェーンで起動時 **1 回のみ**実行される。[CONFIG_DB](../../reference/glossary.md#term-config_db) イベントに反応した動的更新はない。
 
 ### Consumer 詳細 — 直接 HGET による読み出し
 
@@ -371,7 +369,7 @@ self.state_db.connect(self.state_db.STATE_DB)
 STATE_DB の `notify-keyspace-events` 設定に関わらず、orchagent / consumer のいずれも `SUBSCRIBE` / `PSUBSCRIBE` を使用しない。このため:
 
 - **consumer は orchagent の書き込み完了を待機しない**: `wredstat` は起動時に都度 GET するため、orchagent がまだ書き込む前に実行された場合は `None` が返り N/A 表示になる（Phase D 「orchagent 起動前の wredstat」参照）
-- **書き込み通知遅延は存在しない**: SET 後は即時 Redis に反映され、次回 GET で最新値が得られる
+- **書き込み通知遅延は存在しない**: SET 後は即時 [Redis](../../reference/glossary.md#term-redis) に反映され、次回 GET で最新値が得られる
 
 <!-- /pubsub -->
 
@@ -387,10 +385,10 @@ STATE_DB の `notify-keyspace-events` 設定に関わらず、orchagent / consum
 | switchType | `initCounterCapabilities()` 実行有無 | WRED/ECN カウンタ期待値 |
 |-----------|-----------------------------------|--------------------|
 | 標準 BOX スイッチ（Broadcom ASIC 等） | 常に実行（無条件） | SAI 実装依存。WRED 対応 SKU では対応キーが `"true"` |
-| DPU (`gMySwitchType == "dpu"`) | 常に実行（DPU 用スキップなし） | DPU SAI は WRED 未サポートが多く、全 4 キーが `"false"` となる傾向 |
+| [DPU](../../reference/glossary.md#term-dpu) (`gMySwitchType == "dpu"`) | 常に実行（[DPU](../../reference/glossary.md#term-dpu) 用スキップなし） | [DPU](../../reference/glossary.md#term-dpu) SAI は WRED 未サポートが多く、全 4 キーが `"false"` となる傾向 |
 | VoQ シャーシ (`gMySwitchType == "voq"`) | 常に実行（VoQ 用スキップなし） | VoQ ハードウェアは WRED/ECN をサポートしないケースが多く、全 4 キーが `"false"` となる傾向 |
 
-`initCounterCapabilities()` の呼び出し元 (`portsorch.cpp:1107`) は DPU / VOQ / 標準スイッチいずれの場合も条件なしで到達する。
+`initCounterCapabilities()` の呼び出し元 (`portsorch.cpp:1107`) は DPU / [VOQ](../../reference/glossary.md#term-voq) / 標準スイッチいずれの場合も条件なしで到達する。
 
 ### SAI 実装ごとの差異
 
@@ -465,3 +463,5 @@ wredstat
 - `"true"` になっているのに wredstat が N/A の場合は FLEX_COUNTER_TABLE|WRED_ECN_QUEUE の STATUS を確認する
 
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: d888931b5354 -->

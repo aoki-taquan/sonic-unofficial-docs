@@ -39,7 +39,7 @@ related:
 
 # 運用
 
-Multi-ASIC / [VOQ](../../reference/glossary.md#term-voq) chassis の運用調査は、pizza-box と比べて「どこから見るか」が増えます。supervisor から見るか、line card から見るか、ASIC namespace から見るか。ここでは典型的な確認順を整理します。
+[Multi-ASIC](../../reference/glossary.md#term-multi-asic) / [VOQ](../../reference/glossary.md#term-voq) chassis の運用調査は、pizza-box と比べて「どこから見るか」が増えます。supervisor から見るか、line card から見るか、[ASIC](../../reference/glossary.md#term-asic) namespace から見るか。ここでは典型的な確認順を整理します。
 
 ## どこから見るかの判定
 
@@ -223,7 +223,7 @@ SNMPv2-SMI::mib-2.47.1.1.1.1.2.10 = STRING: "ASIC 0 on Linecard slot 1"
 
 ### よくある事故パターン
 
-1. **全 line card 同時 reboot** — supervisor で `config reload -y` を流すと全 line card 側 SONiC が再展開されることがあり、chassis 全断になる。事前にメンテナンス窓を取り、必要なら line card ごとに区切って流す。
+1. **全 line card 同時 reboot** — supervisor で `config reload -y` を流すと全 line card 側 [SONiC](../../reference/glossary.md#term-sonic) が再展開されることがあり、chassis 全断になる。事前にメンテナンス窓を取り、必要なら line card ごとに区切って流す。
 2. **fabric card の片系抜き差し時の輻輳** — 片系 fabric だけで sustain できないトラフィック量で fabric を抜くと VOQ ingress 側で詰まる。`show queue counters` の上昇を見ながら段階的に行う。
 3. **namespace を間違えた `config save`** — line card 側で `config save` を `--namespace` 指定せずに流すと、host config のみ更新され ASIC namespace の差分が消える。
 4. **Chassis DB の port-channel ID 衝突** — 大規模 chassis で port-channel ID を line card で独立して採番すると衝突する。supervisor 側の chassis-wide 採番ポリシーを使う。
@@ -252,4 +252,4 @@ SNMPv2-SMI::mib-2.47.1.1.1.1.2.10 = STRING: "ASIC 0 on Linecard slot 1"
 - [PMON for Chassis Subsystem](../../system/platform-monitor-requirement-for-chassis-subsystem.md)
 - [Entity MIB / Entity Sensor MIB 拡張](../../system/sonic-entity-mib-and-entity-sensor-mib-extension.md)
 
-<!-- glossary-links-injected: 0ae9a48e5601 -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

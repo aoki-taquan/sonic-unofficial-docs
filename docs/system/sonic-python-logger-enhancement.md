@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-SONiC の Python デーモンが使う logger には複数の選択肢があるが、いずれも **動作中にログレベルを変更できない** または **redis 起動前に呼べない** という不足があった[^1]:
+[SONiC](../reference/glossary.md#term-sonic) の Python デーモンが使う logger には複数の選択肢があるが、いずれも **動作中にログレベルを変更できない** または **redis 起動前に呼べない** という不足があった[^1]:
 
 | logger | 問題 |
 |--------|------|
@@ -326,4 +326,4 @@ grep -rn 'from sonic_py_common import logger' .cache/sonic-sources/sonic-buildim
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

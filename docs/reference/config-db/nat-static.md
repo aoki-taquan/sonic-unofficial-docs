@@ -32,21 +32,21 @@ related:
 
 ## 概要
 
-`STATIC_NAT` は global IP と local IP を 1:1 静的にマッピングする [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`natmgrd` (`doStaticNatTask`) がエントリを解析し、kernel iptables ルールと [APPL_DB](../../reference/glossary.md#term-appl_db) NAT テーブルへ反映する。[YANG](../../reference/glossary.md#term-yang) モジュール `sonic-nat` 内の `STATIC_NAT_LIST` として定義される。`nat_type` のデフォルトは `"dnat"` で、`NAT_BINDINGS.nat_type` のデフォルト `"snat"` と逆方向である点に注意。
+`STATIC_NAT` は global IP と local IP を 1:1 静的にマッピングする [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`natmgrd` (`doStaticNatTask`) がエントリを解析し、kernel iptables ルールと [APPL_DB](../../reference/glossary.md#term-appl_db) [NAT](../../reference/glossary.md#term-nat) テーブルへ反映する。[YANG](../../reference/glossary.md#term-yang) モジュール `sonic-nat` 内の `STATIC_NAT_LIST` として定義される。`nat_type` のデフォルトは `"dnat"` で、`NAT_BINDINGS.nat_type` のデフォルト `"snat"` と逆方向である点に注意。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>STATIC_NAT")]
+  CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
   DM["natmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>NAT_TABLE")]
+  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
   DM --> APPDB
-  SYNCD["orchagent / NatOrch"]
+  SYNCD["syncd"]
   APPDB --> SYNCD
-  SAI["SAI<br/>sai_nat_api"]
+  SAI["SAI<br/>sai_switch_api"]
   SYNCD --> SAI
 ```
 
@@ -67,13 +67,13 @@ STATIC_NAT|<global_ip>
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
 | `local_ip` | `inet:ipv4-address` | yes | — | 変換先ローカル IP アドレス |
-| `nat_type` | enum `snat` / `dnat` | no | `"dnat"` | NAT 種別。省略時は DNAT エントリとして処理される |
-| `twice_nat_id` | uint16 1..9999 | no | `""` → Single NAT | Twice NAT 用 ID。省略時は Single NAT |
+| `nat_type` | enum `snat` / `dnat` | no | `"dnat"` | [NAT](../../reference/glossary.md#term-nat) 種別。省略時は DNAT エントリとして処理される |
+| `twice_nat_id` | uint16 1..9999 | no | `""` → Single [NAT](../../reference/glossary.md#term-nat) | Twice NAT 用 ID。省略時は Single NAT |
 
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG default とコード hardcode の両方を確認した結果。
+[YANG](../../reference/glossary.md#term-yang) default とコード hardcode の両方を確認した結果。
 
 | フィールド | YANG default | コード hardcode | fallback 源 |
 |-----------|-------------|----------------|------------|
@@ -171,7 +171,7 @@ DEL STATIC_NAT|<global_ip>     # APPL_DB からも除去
 | 依存関係 | 方向 | 緩和策 |
 |----------|------|--------|
 | `NAT_GLOBAL.admin_mode=enabled` → STATIC_NAT APPL_DB 書込み | 必須 | キャッシュ保持 → admin_mode 有効化で自動再処理 |
-| `INTERFACE\|<port>\|<prefix>` + STATE_DB ready → DNAT APPL_DB 書込み | 必須 (DNAT のみ) | キャッシュ保持 → インタフェース ready で自動再処理 |
+| `INTERFACE\|<port>\|<prefix>` + [STATE_DB](../../reference/glossary.md#term-state_db) ready → DNAT APPL_DB 書込み | 必須 (DNAT のみ) | キャッシュ保持 → インタフェース ready で自動再処理 |
 | SNAT エントリ → インタフェース設定 | 不要 | `getIpEnabledIntf()` チェックなし |
 | STATIC_NAPT との global_ip 重複排除 | 論理制約 | 重複時は後着がスキップ (APPL_DB 反映なし) |
 
@@ -186,7 +186,7 @@ DEL STATIC_NAT|<global_ip>     # APPL_DB からも除去
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
 | `NAT_GLOBAL\|Values.admin_mode` (CONFIG_DB) | 読み取り (ガード) | 常時。`natAdminMode == ENABLED` でなければ `addStaticNatEntry()` が即 return し APPL_DB に反映しない | `natmgr.cpp` L150–157 (`isNatEnabled()`), L1557–1560 |
-| `STATE_INTERFACE_TABLE\|<port>\|<ip/prefix>` (STATE_DB) | 読み取り (ガード) | `doNatIpInterfaceTask()` が `INTERFACE` の IP prefix エントリを受信する際に `isIntfStateOk()` を呼ぶ。ready でなければリトライキュー (it++) に戻る | `natmgr.cpp` L135–147 (`isIntfStateOk()`), L7593–7597 |
+| `STATE_INTERFACE_TABLE\|<port>\|<ip/prefix>` ([STATE_DB](../../reference/glossary.md#term-state_db)) | 読み取り (ガード) | `doNatIpInterfaceTask()` が `INTERFACE` の IP prefix エントリを受信する際に `isIntfStateOk()` を呼ぶ。ready でなければリトライキュー (it++) に戻る | `natmgr.cpp` L135–147 (`isIntfStateOk()`), L7593–7597 |
 | `INTERFACE\|<port>\|<ip/prefix>` (CONFIG_DB) → `m_natIpInterfaceInfo` | 読み取り (ガード, DNAT のみ) | `getIpEnabledIntf()` が `m_natIpInterfaceInfo` を走査し、`global_ip` がいずれかのサブネットに含まれるか確認。含まれなければ APPL_DB 反映を保留 | `natmgr.cpp` L236–254 (`getIpEnabledIntf()`), L1564–1568 |
 | `STATIC_NAPT\|<global_ip>\|<proto>\|<port>` (CONFIG_DB) → `m_staticNaptEntry` | 存在確認 (論理排他) | `addStaticNatEntry()` 内で `isMatchesWithStaticNapt()` を呼ぶ。同 `global_ip` の NAPT エントリが存在する場合は APPL_DB 反映を中断 (return) | `natmgr.cpp` L200–233 (`isMatchesWithStaticNapt()`), L1571–1575 |
 | `NAT_POOL\|<pool_name>.ip_range` (CONFIG_DB) → `m_natPoolInfo` | 存在確認 (重複排除) | `doStaticNatTask()` の SET パス内で `m_natPoolInfo` 全体を走査し、`global_ip` が Dynamic Pool の IP 範囲と重複しないか確認。重複時はエントリを erase (DROP) | `natmgr.cpp` L6021–6056 |
@@ -201,7 +201,7 @@ DEL STATIC_NAT|<global_ip>     # APPL_DB からも除去
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
-STATIC_NAT エントリは CONFIG_DB → `natmgrd` → APPL_DB → `NatOrch` → SAI の 2 段階パイプラインで処理される。各段階での失敗パターンを以下に示す。
+STATIC_NAT エントリは CONFIG_DB → `natmgrd` → APPL_DB → `NatOrch` → [SAI](../../reference/glossary.md#term-sai) の 2 段階パイプラインで処理される。各段階での失敗パターンを以下に示す。
 
 ### 段階 1: CONFIG_DB → natmgrd (`doStaticNatTask`) の失敗パターン
 
@@ -228,15 +228,15 @@ STATIC_NAT エントリは CONFIG_DB → `natmgrd` → APPL_DB → `NatOrch` →
 | APPL_DB `NAT_TABLE` のキーサイズ != 1 | `natorch.cpp:2636-2640` | `SWSS_LOG_ERROR` + `m_toSync.erase()` | なし |
 | 重複エントリ（`m_natEntries` に既存） | `natorch.cpp:1873-1880` | INFO ログのみ、`return true`（無視） | なし |
 | dynamic SNAT エントリで `totalSnatEntries == maxAllowedSNatEntries` | `natorch.cpp:1886-1892` | `setTimeoutNotifier->send("AGEOUT-SINGLE-NAT")` を発行し `return true` | 間接的（ageout 後に再試行される可能性） |
-| `isNatEnabled() == false`（orchagent 側の NAT 無効） | `natorch.cpp:1910-1915` | `SWSS_LOG_WARN` + `return true`（エントリはキャッシュに保持） | `doNatGlobalTableTask()` で `admin_mode = enabled` 受信時に `addHwDnatEntry()` / `addHwSnatEntry()` が自動呼出し |
-| SAI `create_nat_entry` 失敗（ハードウェアエラー） | `natorch.cpp:774-786` (`addHwDnatEntry()`), `natorch.cpp:1307-1319` (`addHwSnatEntry()`) | `SWSS_LOG_ERROR` + `handleSaiCreateStatus()` + `parseHandleSaiStatusFailure()` → `return false` → `doNatTableTask()` で `it++`（保留） | SAI が解消されるまで無限 retry |
+| `isNatEnabled() == false`（[orchagent](../../reference/glossary.md#term-orchagent) 側の NAT 無効） | `natorch.cpp:1910-1915` | `SWSS_LOG_WARN` + `return true`（エントリはキャッシュに保持） | `doNatGlobalTableTask()` で `admin_mode = enabled` 受信時に `addHwDnatEntry()` / `addHwSnatEntry()` が自動呼出し |
+| [SAI](../../reference/glossary.md#term-sai) `create_nat_entry` 失敗（ハードウェアエラー） | `natorch.cpp:774-786` (`addHwDnatEntry()`), `natorch.cpp:1307-1319` (`addHwSnatEntry()`) | `SWSS_LOG_ERROR` + `handleSaiCreateStatus()` + `parseHandleSaiStatusFailure()` → `return false` → `doNatTableTask()` で `it++`（保留） | SAI が解消されるまで無限 retry |
 | 不明 op type | `natorch.cpp:2672-2675` | `SWSS_LOG_ERROR` + `m_toSync.erase()` | なし |
 
 **SAI 失敗時の retry**: `addNatEntry()` が `false` を返すと `doNatTableTask()` は `it++`（erase せず保留）する（`natorch.cpp:2661-2663`）。次の consumer tick で再試行されるため、SAI の一時的なリソース枯渇は自然に回復する。ただし `m_natEntries` キャッシュには既にエントリが追加されているため、再 SET 時に `Duplicate` と判定されて `return true` となり erase される点に注意（二重追加は発生しない）。
 
 ### STATE_DB / エラー通知
 
-NAT パスには STATE_DB へのステータス書き込みはない。orchagent は `SWSS_LOG_ERROR` / `SWSS_LOG_WARN` で syslog にのみ記録する。`ERROR_TABLE` への書き込みも行われない。失敗の確認は syslog (`/var/log/syslog` の `natorch` / `natmgrd` エントリ) を参照すること。
+NAT パスには [STATE_DB](../../reference/glossary.md#term-state_db) へのステータス書き込みはない。[orchagent](../../reference/glossary.md#term-orchagent) は `SWSS_LOG_ERROR` / `SWSS_LOG_WARN` で syslog にのみ記録する。`ERROR_TABLE` への書き込みも行われない。失敗の確認は syslog (`/var/log/syslog` の `natorch` / `natmgrd` エントリ) を参照すること。
 
 > **証跡**: `natmgr.cpp:doStaticNatTask` L5813-6136、`addStaticNatEntry()` L1548-1590、`addStaticSingleNatEntry()` L1992-2064、`natorch.cpp:doNatTableTask` L2617-2681、`addNatEntry()` L1866-1937、`addHwDnatEntry()` L738-800、`addHwSnatEntry()` L1271-1330。
 <!-- /failure -->
@@ -300,8 +300,8 @@ STATIC_NAT 自体のフィールドではないが、`addStaticSingleNatEntry()`
 | APPL_DB | `NAT_DNAT_POOL_TABLE\|<dnat_ip>` | なし (NULL:NULL フラグ) | DNAT エントリ追加時に `addDnatPoolEntry()` を呼ぶ。参照カウンタ (`m_natDnatPoolInfo`) で管理し、refcount が 0 になるまで DEL しない | `natmgr.cpp:2031-2033, 1502-1524` |
 | kernel conntrack | 仮 conntrack エントリ (UDP, timeout=432000 秒) | — | `addConntrackStaticSingleNatEntry()` が `/usr/sbin/conntrack -I` を実行。static NAT セッションを conntrack テーブルに事前登録し dynamic セッションとの競合を防ぐ | `natmgr.cpp:2058, 457-489` |
 | kernel iptables | `nat` テーブル PREROUTING / POSTROUTING ルール | — | `setStaticNatIptablesRules(INSERT, ...)` が iptables コマンドを直接実行。DNAT / SNAT ルールを mark ベースで挿入 | `natmgr.cpp:2060-2068, 956-1000` |
-| COUNTERS_DB | `COUNTERS_NAT\|<global_ip>` | `NAT_TRANSLATIONS_PKTS`, `NAT_TRANSLATIONS_BYTES` (0 初期化) | NatOrch が `addHwNatEntry()` 完了直後に `updateNatCounters(ip, 0, 0)` を呼ぶ | `natorch.cpp:789, 4049-4061` |
-| COUNTERS_DB | `COUNTERS_GLOBAL_NAT\|Values` | `STATIC_NAT_ENTRIES` (int) | NatOrch が static NAT エントリ追加/削除後に `updateStaticNatCounters(count)` を呼ぶ | `natorch.cpp:796, 4481-4490` |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_NAT\|<global_ip>` | `NAT_TRANSLATIONS_PKTS`, `NAT_TRANSLATIONS_BYTES` (0 初期化) | NatOrch が `addHwNatEntry()` 完了直後に `updateNatCounters(ip, 0, 0)` を呼ぶ | `natorch.cpp:789, 4049-4061` |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_GLOBAL_NAT\|Values` | `STATIC_NAT_ENTRIES` (int) | NatOrch が static NAT エントリ追加/削除後に `updateStaticNatCounters(count)` を呼ぶ | `natorch.cpp:796, 4481-4490` |
 
 ### DNAT Pool の参照カウンタ管理
 
@@ -309,11 +309,11 @@ STATIC_NAT 自体のフィールドではないが、`addStaticSingleNatEntry()`
 
 ### kernel への直接書き込み
 
-iptables / conntrack への書き込みは `swss::exec()` による OS コマンド直接実行 (`/usr/sbin/conntrack`、`iptables`) であり、Redis DB を経由しない。`natmgrd` 再起動後も kernel iptables / conntrack は残存するため、`natmgrd` はエントリ再追加前に既存ルールを確認・再同期する。
+iptables / conntrack への書き込みは `swss::exec()` による OS コマンド直接実行 (`/usr/sbin/conntrack`、`iptables`) であり、[Redis](../../reference/glossary.md#term-redis) DB を経由しない。`natmgrd` 再起動後も kernel iptables / conntrack は残存するため、`natmgrd` はエントリ再追加前に既存ルールを確認・再同期する。
 
 ### 検出されなかった書込み
 
-STATE_DB、FLEX_COUNTER_DB、LOGLEVEL_DB、CONFIG_DB への書き戻しは確認されなかった。
+STATE_DB、[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)、[LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db)、CONFIG_DB への書き戻しは確認されなかった。
 
 > **Evidence**: `sonic-swss/cfgmgr/natmgr.cpp` `addStaticSingleNatEntry()` L1992-2069, `removeStaticSingleNatEntry()` L2650-2719, `addDnatPoolEntry()` L1502-1524, `addConntrackStaticSingleNatEntry()` L457-489, `setStaticNatIptablesRules()` L930-1000; `sonic-swss/orchagent/natorch.cpp` `updateNatCounters()` L4049-4061, `updateStaticNatCounters()` L4481-4490; 詳細スキャン結果は `meta/_intermediate/cdb-flow/nat-static-side-effects.md` を参照。
 <!-- /side-effects -->
@@ -333,7 +333,7 @@ CFG_INTF_TABLE_NAME (LAG / VLAN / Loopback バリアント含む),
 CFG_ACL_TABLE_TABLE_NAME, CFG_ACL_RULE_TABLE_NAME
 ```
 
-`NatMgr` は `Orch` を継承し、各テーブルを **`SubscriberStateTable`** として CONFIG_DB (DB 4) から購読する。Redis keyspace notification パターンは `__keyspace@4__:STATIC_NAT|*`。
+`NatMgr` は `Orch` を継承し、各テーブルを **`SubscriberStateTable`** として CONFIG_DB (DB 4) から購読する。[Redis](../../reference/glossary.md#term-redis) keyspace notification パターンは `__keyspace@4__:STATIC_NAT|*`。
 
 ### メインループ — blocking select + タイマー併用
 
@@ -373,9 +373,9 @@ m_appNatTableProducer(appDb, APP_NAT_TABLE_NAME)  // "NAT_TABLE"
 
 | チャネル | 方向 | 用途 |
 |---------|------|------|
-| `NAT_DB_CLEANUP_NOTIFICATION` (APPL_DB `NotificationProducer`) | natmgrd → NatOrch | SIGTERM 受信時に orchagent へ静的 NAT エントリの SAI 削除を要求 |
-| `SETTIMEOUTNAT` | NatOrch → natmgrd | NAT タイムアウト値変更を natmgr 内部状態に反映 |
-| `FLUSHNATENTRIES` | orchagent → natmgrd | dynamic NAT テーブル全消去をトリガ |
+| `NAT_DB_CLEANUP_NOTIFICATION` (APPL_DB `NotificationProducer`) | [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) → NatOrch | SIGTERM 受信時に [orchagent](../../reference/glossary.md#term-orchagent) へ静的 NAT エントリの SAI 削除を要求 |
+| `SETTIMEOUTNAT` | NatOrch → [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) | NAT タイムアウト値変更を natmgr 内部状態に反映 |
+| `FLUSHNATENTRIES` | orchagent → [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) | dynamic NAT テーブル全消去をトリガ |
 
 ### STATE_DB 参照 (購読なし)
 
@@ -402,7 +402,7 @@ m_appNatTableProducer(appDb, APP_NAT_TABLE_NAME)  // "NAT_TABLE"
 
 | platform | DNAT 追加経路 | 挙動 |
 |----------|-------------|------|
-| **Broadcom** (`gNhTrackingSupported = true`) | `addDnatToNhCache(translated_ip, dst_ip)` | nexthop 解決キャッシュ (`m_nhResolvCache`) に格納。`NeighOrch` で `translated_ip` の ARP が解決済みなら即 `addHwDnatEntry()` を呼ぶ。未解決なら `RouteOrch::attach()` でルート変化通知を待ち、解決後に HW 追加 |
+| **Broadcom** (`gNhTrackingSupported = true`) | `addDnatToNhCache(translated_ip, dst_ip)` | nexthop 解決キャッシュ (`m_nhResolvCache`) に格納。`NeighOrch` で `translated_ip` の [ARP](../../reference/glossary.md#term-arp) が解決済みなら即 `addHwDnatEntry()` を呼ぶ。未解決なら `RouteOrch::attach()` でルート変化通知を待ち、解決後に HW 追加 |
 | **非 Broadcom** (`gNhTrackingSupported = false`) | `addHwDnatEntry(dst_ip)` を直接呼ぶ | nexthop 解決を待たず即時 SAI `sai_nat_api` DNAT オブジェクト作成 |
 
 SNAT エントリは `addHwSnatEntry()` を直接呼ぶため platform 非依存。
@@ -411,7 +411,7 @@ SNAT エントリは `addHwSnatEntry()` を直接呼ぶため platform 非依存
 
 | 状況 | Broadcom | 非 Broadcom |
 |------|----------|-------------|
-| ARP 未解決状態での STATIC_NAT 設定 | DNAT エントリはキャッシュ待機。SAI オブジェクトは ARP 解決後に作成 | ARP 解決を待たず SAI オブジェクト作成 |
+| [ARP](../../reference/glossary.md#term-arp) 未解決状態での STATIC_NAT 設定 | DNAT エントリはキャッシュ待機。SAI オブジェクトは [ARP](../../reference/glossary.md#term-arp) 解決後に作成 | ARP 解決を待たず SAI オブジェクト作成 |
 | ルート変化でネクストホップが変わった場合 | `RouteOrch::update()` → `NatOrch::update()` → DNAT HW エントリ自動更新 | 自動追従なし (NAT エントリ削除・再追加が必要) |
 | DNAT エントリ削除時 | `clearDnatNhCacheEntry()` → `removeHwDnatEntry()` | `removeHwDnatEntry()` 直接 |
 
@@ -446,7 +446,7 @@ SNAT エントリは `addHwSnatEntry()` を直接呼ぶため platform 非依存
 - `twice_nat_id`: 1..9999 (YANG `range "1..9999"` / natmgr 両方で検証)
 - 同一 `twice_nat_id` を持てるエントリ: 最大 2 件 (`STATIC_NAT` + `STATIC_NAPT` + `NAT_BINDINGS` 合計)
 - エントリ数: CLI では `COUNTERS_DB:COUNTERS_GLOBAL_NAT:Values` の `SNAT_ENTRIES >= MAX_NAT_ENTRIES` でスキップ (`nat.py:298-300`)
-- `NAT_GLOBAL.admin_mode = disabled` の状態ではエントリを受け付けるが ASIC に反映しない (キュー保持)
+- `NAT_GLOBAL.admin_mode = disabled` の状態ではエントリを受け付けるが [ASIC](../../reference/glossary.md#term-asic) に反映しない (キュー保持)
 
 ## 購読者
 
@@ -511,3 +511,5 @@ show nat translations
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: d108cf417fde -->

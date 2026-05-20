@@ -44,7 +44,7 @@ related:
 
 ## 読者が知りたいこと
 
-- SONiC で **[SRv6](../reference/glossary.md#term-srv6) L3VPN を [BGP](../reference/glossary.md#term-bgp)-VPN AF と組み合わせて動かす** ための data 構造はどこにあるか
+- [SONiC](../reference/glossary.md#term-sonic) で **[SRv6](../reference/glossary.md#term-srv6) L3VPN を [BGP](../reference/glossary.md#term-bgp)-VPN AF と組み合わせて動かす** ための data 構造はどこにあるか
 - **[APPL_DB](../reference/glossary.md#term-appl_db) の新規/拡張テーブル**（`SRV6_POLICY_TABLE` / `ROUTE_TABLE.vpn_sid` / `SRV6_MY_SID_TABLE`）は何のために存在するか
 - **[SAI](../reference/glossary.md#term-sai) / SWSS / SONiC / [FRR](../reference/glossary.md#term-frr)** のどこをいじっているのか
 - **既知の workaround**（[zebra](../reference/glossary.md#term-zebra) が MY_SID を netlink で渡さない問題）と、どんな構成で本機能が動くのか
@@ -126,7 +126,7 @@ Alibaba 運用では **anycast routes を MY_SID として使う** ことで BGP
 
 ## 4. 設定例
 
-SONiC 側は CONFIG_DB を触らない。FRR (vtysh) で設定する。
+SONiC 側は CONFIG_DB を触らない。FRR ([vtysh](../reference/glossary.md#term-vtysh)) で設定する。
 
 ```bash
 # FRR 側 (vtysh) - 概念的な L3VPN over SRv6 設定
@@ -157,7 +157,7 @@ router bgp 65001
 
 ## 7. トラブルシューティング
 
-- VPN ルートが ASIC に積まれない → APPL_DB `ROUTE_TABLE:<VRF>:<prefix>` の `vpn_sid` を確認
+- VPN ルートが [ASIC](../reference/glossary.md#term-asic) に積まれない → APPL_DB `ROUTE_TABLE:<VRF>:<prefix>` の `vpn_sid` を確認
 - SRv6 トンネルが作られない → `SRv6Orch` ログで encap mapper / Prefix AGG_ID 生成を確認
 - MY_SID 削除がうまくいかない → anycast route ハック workaround が効いているか、fpmsyncd ログで route delete を確認
 
@@ -193,4 +193,4 @@ show srv6 sid
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 717245b7d27e -->
+<!-- glossary-links-injected: d62d2c91ba87 -->

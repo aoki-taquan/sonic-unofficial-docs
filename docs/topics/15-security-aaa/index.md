@@ -71,9 +71,9 @@ related:
 
 # Security / AAA / FIPS / Hardening
 
-この章は、SONiC で「誰がログインできるか」「どの経路で管理できるか」「データプレーンの暗号と完全性」「起動とアップグレードの信頼チェーン」を一望するための入口です。既存ページは [AAA](../../reference/glossary.md#term-aaa)、SSH、MACsec、FIPS、secure boot などの [HLD](../../reference/glossary.md#term-hld) 単位に分かれているため、ここでは管理者が「セキュリティ要件をどこに落とすか」を考える順に並べ直します。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) で「誰がログインできるか」「どの経路で管理できるか」「データプレーンの暗号と完全性」「起動とアップグレードの信頼チェーン」を一望するための入口です。既存ページは [AAA](../../reference/glossary.md#term-aaa)、SSH、[MACsec](../../reference/glossary.md#term-macsec)、FIPS、secure boot などの [HLD](../../reference/glossary.md#term-hld) 単位に分かれているため、ここでは管理者が「セキュリティ要件をどこに落とすか」を考える順に並べ直します。
 
-SONiC のセキュリティは大きく三つの層に分かれます。第一は control plane で、TACACS+ / RADIUS / LDAP / local user による認証と、SSH / serial console / banner などの管理面ポリシーが該当します。第二は data plane で、MACsec / MKA とその ASIC / Gearbox サイドの実装が該当します。第三は platform で、OpenSSL FIPS、secure boot、secure upgrade、container hardening、[SAI](../../reference/glossary.md#term-sai) POST が該当します。本章ではこの分類で既存 HLD を再配置します。
+SONiC のセキュリティは大きく三つの層に分かれます。第一は control plane で、TACACS+ / [RADIUS](../../reference/glossary.md#term-radius) / LDAP / local user による認証と、SSH / serial console / banner などの管理面ポリシーが該当します。第二は data plane で、MACsec / MKA とその [ASIC](../../reference/glossary.md#term-asic) / Gearbox サイドの実装が該当します。第三は platform で、OpenSSL FIPS、secure boot、secure upgrade、container hardening、[SAI](../../reference/glossary.md#term-sai) POST が該当します。本章ではこの分類で既存 HLD を再配置します。
 
 ## この章で答える質問
 
@@ -166,4 +166,4 @@ SONiC のセキュリティは大きく三つの層に分かれます。第一�
 - [NAT / DHCP Relay / Time-DNS Services](../16-nat-dhcp-dns/index.md)
 - [Build / Packaging / Application Extension](../19-build-packaging/index.md)
 
-<!-- glossary-links-injected: e522e31a0ddd -->
+<!-- glossary-links-injected: ae6c3c279b05 -->

@@ -72,3 +72,8 @@ nav:
   - twamp-light-hld.md
   - useful-sysctl-settings.md
   - zero-touch-provisioning-ztp.md
+  - buildimage-build-system-known-issues.md
+  - dynamic-port-breakout-known-issues.md
+  - ssh-authentication-failures.md
+  - warmboot-known-issues-and-troubleshooting.md
+  - yang-model-issues-and-validation.md

@@ -26,7 +26,7 @@ related:
 
 # 内部実装
 
-[NAT](../../reference/glossary.md#term-nat) / DHCP / DNS の内部実装は「SONiC は何を ASIC に任せ、何を Linux user space daemon に任せているか」の切り分けを意識すると整理しやすいです。NAT は [SAI](../../reference/glossary.md#term-sai) で hardware offload する path と conntrack で kernel に任せる path があり、DHCP は relay agent / server agent の二種類、DNS は基本 systemd-resolved + /etc/resolv.conf です。
+[NAT](../../reference/glossary.md#term-nat) / DHCP / DNS の内部実装は「[SONiC](../../reference/glossary.md#term-sonic) は何を [ASIC](../../reference/glossary.md#term-asic) に任せ、何を Linux user space daemon に任せているか」の切り分けを意識すると整理しやすいです。NAT は [SAI](../../reference/glossary.md#term-sai) で hardware offload する path と conntrack で kernel に任せる path があり、DHCP は relay agent / server agent の二種類、DNS は基本 systemd-resolved + /etc/resolv.conf です。
 
 ## データフロー
 
@@ -150,4 +150,4 @@ flowchart LR
 - [DHCP relay for IPv6 HLD](../../routing/dhcp-relay-for-ipv6-hld.md)
 - [DHCP relay per-interface counter](../../routing/dhcp-relay-per-interface-counter.md)
 
-<!-- glossary-links-injected: 88eb10d428e5 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

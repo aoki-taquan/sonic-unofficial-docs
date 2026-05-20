@@ -111,22 +111,22 @@ DB 更新を切ると Redis に痕跡が残らない。観測性は失うが Red
 zmq_bind failed on endpoint: ipc:///zmq_swss/p4orch_zmq_swss_ep, zmqerrno: 2
 ```
 
-**原因**: 実機では `/zmq_swss` が `docker-orchagent.mk` の `-v /zmq_swss:/zmq_swss:rw` bind-mount で提供されるが、VS docker はスタンドアロン起動のためホスト側マウントが存在しない。sonic-swss#4243（2026-04-01 merge）以降に顕在化。
+**原因**: 実機では `/zmq_swss` が `docker-orchagent.mk` の `-v /zmq_swss:/zmq_swss:rw` bind-mount で提供されるが、VS docker はスタンドアロン起動のためホスト側マウントが存在しない。[sonic-swss](../reference/glossary.md#term-sonic-swss)#4243（2026-04-01 merge）以降に顕在化。
 
 **回避策**:
 ```bash
 docker exec <container> mkdir -p /zmq_swss
 ```
 
-**参照**: sonic-net/sonic-buildimage#26776（Triaged）
+**参照**: sonic-net/[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)#26776（Triaged）
 
 ---
 
 ### CrmOrch が reboot 時に ZMQ タイムアウトで crash する
 
-**症状**: reboot コマンドは syncd/SAI を先に shutdown するが orchagent は終了しない。CrmOrch が SAI に対して ZMQ 経由でカウンタ要求を送り続け、SAI 側キューが消滅していると ZMQ タイムアウトが発生して orchagent が crash する。
+**症状**: reboot コマンドは [syncd](../reference/glossary.md#term-syncd)/[SAI](../reference/glossary.md#term-sai) を先に shutdown するが orchagent は終了しない。CrmOrch が SAI に対して ZMQ 経由でカウンタ要求を送り続け、SAI 側キューが消滅していると ZMQ タイムアウトが発生して orchagent が crash する。
 
-**対象条件**: SmartSwitch など firmware update により reboot が 1 分超になるケースで特に問題になる。SmartSwitch のロングリブートは HA による redundancy でカバーされる設計のため、機能影響は限定的とされている。
+**対象条件**: [SmartSwitch](../reference/glossary.md#term-smartswitch) など firmware update により reboot が 1 分超になるケースで特に問題になる。SmartSwitch のロングリブートは HA による redundancy でカバーされる設計のため、機能影響は限定的とされている。
 
 **参照**: sonic-net/sonic-buildimage#26300（Bug, Triaged, Medium severity）
 
@@ -186,4 +186,4 @@ docker exec <container> mkdir -p /zmq_swss
 
 [^1]: `sonic-net/SONiC` `doc/sonic-swss-common/ZMQ producer-consumer state table design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 7aa3a64b7a02 -->
+<!-- glossary-links-injected: 7c9bb45c2f86 -->

@@ -26,7 +26,7 @@ related:
 
 ## どんな機能か
 
-RFC 5357 に基づく軽量な双方向性能測定（latency / jitter / packet loss）を SONiC ASIC offload で実装する [HLD](../reference/glossary.md#term-hld)（2023-06）[^1]。control connection を持たず、Session-Sender 側が Test-Request を送り、Session-Reflector が timestamp 付きで返す純粋な data-plane プロトコル。
+RFC 5357 に基づく軽量な双方向性能測定（latency / jitter / packet loss）を [SONiC](../reference/glossary.md#term-sonic) [ASIC](../reference/glossary.md#term-asic) offload で実装する [HLD](../reference/glossary.md#term-hld)（2023-06）[^1]。control connection を持たず、Session-Sender 側が Test-Request を送り、Session-Reflector が timestamp 付きで返す純粋な data-plane プロトコル。
 
 ```text
 Latency = (t3 - t0) - (t2 - t1)
@@ -204,4 +204,4 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_TWAMP_SESSION_NAME_MAP'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: ec18b66e3507 -->
