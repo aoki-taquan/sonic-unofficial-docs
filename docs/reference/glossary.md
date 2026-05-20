@@ -1430,8 +1430,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [COUNTERS_DB NAT カウンタテーブル群](config-db/nat-counters.md) (50)
 - [COUNTERS_DB QUEUE カウンタ](config-db/queue-counter.md) (41)
+- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (38)
 - [PFC_WD 状態フィールド (COUNTERS_DB)](config-db/pfcwd-state.md) (38)
-- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (37)
 - [COUNTERS_DB PORT カウンタ](config-db/counters-port.md) (35)
 
 ### [CoPP](#term-copp)
@@ -1484,7 +1484,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [DPU](#term-dpu)
 
-- [DPU / ENI / VDPU / REMOTE_DPU テーブル](config-db/dpu-eni.md) (237)
+- [DPU / ENI / VDPU / REMOTE_DPU テーブル](config-db/dpu-eni.md) (212)
 - [SmartSwitch DPU テーブル群](config-db/smart-switch-dpu.md) (186)
 - [DPU テーブル](config-db/dpu.md) (174)
 - [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (107)
@@ -1506,7 +1506,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [TC_TO_DSCP_MAP テーブル](config-db/tc-to-dscp-map.md) (99)
 - [DSCP_TO_PG_MAP テーブル（非実在）](config-db/dscp-to-pg-map.md) (92)
-- [DSCP_TO_TC_MAP テーブル](config-db/dscp-to-tc-map.md) (87)
+- [DSCP_TO_TC_MAP テーブル](config-db/dscp-to-tc-map.md) (86)
 - [DSCP_TO_FC_MAP テーブル](config-db/dscp-to-fc-map.md) (63)
 - [SWITCH_TRIMMING テーブル](config-db/switch-trimming.md) (57)
 
@@ -1552,7 +1552,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [DASH_ENI_TABLE テーブル](config-db/dash-eni.md) (158)
 - [DPU カウンタ (ENI / DASH_METER) テーブル](config-db/dpu-counter.md) (151)
-- [DPU / ENI / VDPU / REMOTE_DPU テーブル](config-db/dpu-eni.md) (123)
+- [DPU / ENI / VDPU / REMOTE_DPU テーブル](config-db/dpu-eni.md) (112)
 - [DASH_ROUTING_* テーブル](config-db/dash-routing.md) (51)
 - [SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）](../overlay/smartswitch-eni-based-forwarding.md) (41)
 
@@ -1619,7 +1619,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [FlexCounter](#term-flexcounter)
 
 - [FLEX_COUNTER_DB — ランタイム状態フィールド](config-db/state-flex-counter.md) (91)
-- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (73)
+- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (76)
 - [COUNTERS_DB PortChannel/LAG カウンタ](config-db/counters-portchannel.md) (65)
 - [COUNTERS_DB QUEUE カウンタ](config-db/queue-counter.md) (59)
 - [COUNTERS_DB キュー / PG カウンタテーブル群](config-db/counters-queue.md) (58)
@@ -1766,7 +1766,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [intfsorch](#term-intfsorch)
 
-- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (81)
+- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (83)
 - [VLAN_INTERFACE テーブル](config-db/vlan-interface.md) (69)
 - [VLAN_SUB_INTERFACE テーブル](config-db/vlan-sub-interface.md) (55)
 - [COUNTERS_DB PortChannel/LAG カウンタ](config-db/counters-portchannel.md) (45)
@@ -1941,7 +1941,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (218)
 - [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (109)
-- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (70)
+- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (74)
 - [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (66)
 - [DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)](config-db/dpu-orch.md) (65)
 
@@ -2044,7 +2044,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [PORT テーブル](config-db/port.md) (106)
 - [APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル](config-db/appl-vlan.md) (95)
 - [COUNTERS_DB QUEUE カウンタ](config-db/queue-counter.md) (83)
-- [FABRIC_PORT テーブル](config-db/fabric-port.md) (81)
+- [FABRIC_PORT テーブル](config-db/fabric-port.md) (82)
 
 ### [Priority Group](#term-priority-group)
 
@@ -2081,7 +2081,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [RIF](#term-rif)
 
 - [COUNTERS_DB PortChannel/LAG カウンタ](config-db/counters-portchannel.md) (128)
-- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (124)
+- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (125)
 - [ルータインタフェース (RIF) カウンタ](../routing/router-interface-counters-in-sonic.md) (46)
 - [VLAN_SUB_INTERFACE テーブル](config-db/vlan-sub-interface.md) (42)
 - [バイト/パケットレートとポート使用率（RATES テーブル + EMA）](../internals/byte-packet-rates-port-utilization-in-sonic.md) (34)
@@ -2177,7 +2177,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [sonic-swss](#term-sonic-swss)
 
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (87)
-- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (60)
+- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (66)
 - [VLAN_SUB_INTERFACE テーブル](config-db/vlan-sub-interface.md) (45)
 - [COUNTERS_DB バッファ / ウォーターマーク カウンタ](config-db/counter-buffer.md) (44)
 - [ACL_RULE テーブル](config-db/acl-rule.md) (38)
