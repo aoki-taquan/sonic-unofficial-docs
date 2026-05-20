@@ -34,7 +34,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>INTERFACE")]
   DM["intfmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>INTF_TABLE")]
+  APPDB[("APP_DB<br/>APP_INTF_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD
