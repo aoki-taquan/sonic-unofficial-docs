@@ -277,7 +277,7 @@ error-message: "Authentication with 'tacacs+' is not allowed when passkey not ex
 
 ### Phase 6: 自動派生
 
-hostcfgd が `TACPLUS_SERVER.tcp_port` 未設定の場合にデフォルト `49` を補完し、`timeout` 未設定の場合にデフォルト `5` を補完する。`priority` フィールドの昇順でサーバーを PAM 設定に並べる（ソート派生）。
+hostcfgd が `TACPLUS_SERVER.tcp_port` 未設定の場合にデフォルト `49` を補完し、`timeout` 未設定の場合にデフォルト `5` を補完する。`priority` フィールドの降順 (`sorted(..., reverse=True)`) でサーバーを PAM 設定に並べる。大きい値ほど PAM の先頭に記載され高優先度として扱われる。
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
@@ -290,7 +290,7 @@ hostcfgd は常時起動し `TACPLUS_SERVER` テーブルを無条件購読す�
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
-| `hostcfgd` TACACS+ handler | `auth_type==ascii` | PAM に ascii 認証設定 | `hostcfgd.py` |
+| `hostcfgd` TACACS+ handler | `auth_type==login` | PAM に ASCII ログインシーケンス認証設定 (TACACS+ enum `login`) | `hostcfgd.py` |
 | `hostcfgd` TACACS+ handler | `auth_type==pap` | PAM に pap 認証設定 | `hostcfgd.py` |
 | `hostcfgd` TACACS+ handler | `auth_type==chap` | PAM に chap 認証設定 | `hostcfgd.py` |
 | `hostcfgd` TACACS+ handler | `passkey` フィールドあり | `secret=<passkey>` を設定 | `hostcfgd.py` |

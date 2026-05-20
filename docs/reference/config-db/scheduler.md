@@ -143,7 +143,7 @@ show queue counters
 
 - **type フィールドが未知の値**: `type` が `DWRR` / `WRR` / `STRICT` 以外の場合 `SWSS_LOG_ERROR("Unknown scheduler type value:%s")` を出して `task_invalid_entry` を返す。エントリは破棄されて SAI には反映されない。[^2]
 - **SAI scheduler profile 作成失敗**: `sai_scheduler_api->create_scheduler()` が失敗した場合 `SWSS_LOG_ERROR("Failed to create scheduler profile")` で処理中断。[^2]
-- **SAI scheduler profile 削除失敗**: QUEUE から参照されている SCHEDULER プロファイルを削除しようとすると SAI が EBUSY 等を返し `SWSS_LOG_ERROR("Failed to remove scheduler profile")` となる。[CONFIG_DB](../../reference/glossary.md#term-config_db) からは削除されても ASIC には古いプロファイルが残留する。[^2]
+- **QUEUE 参照中の SCHEDULER 削除**: `handleSchedulerTable()` の DEL ハンドラは `sai_scheduler_api->remove_scheduler()` を呼ぶ前に `isObjectBeingReferenced()` でチェックを実施する。QUEUE からの参照が残っていれば `m_pendingRemove = true` をセットして `task_need_retry` を返す（SAI は呼ばれずエラーも発生しない）。QUEUE 参照が解除された後の次回 `doTask()` サイクルで自動的に SAI DEL が実行されるため、参照解除後の残留は起きない（SAI `remove_scheduler()` 自体が失敗したときのみ残留リスクあり）。[^2]
 - **weight のオーバーフロー**: `weight` フィールドは `uint8` にキャストされるため 0-255 の範囲外は暗黙に切り捨てられる（バリデーションなし）。[^2]
 - **QUEUE 参照がある間は削除不可**: QUEUE が参照している SCHEDULER を削除すると SAI レイヤで失敗する。QUEUE の参照を先に外してから削除する必要がある。[^2]
 
@@ -404,7 +404,7 @@ QUEUE の scheduler / PORT_QOS_MAP の scheduler 参照を解除
 SCHEDULER|<name> を DEL
 ```
 
-参照が残っている間は SAI レベルで EBUSY となり `Failed to remove scheduler profile` エラーが発生する。
+参照が残っている間は orch 層の `isObjectBeingReferenced()` が事前に検出し、`m_pendingRemove = true` をセットして `task_need_retry` を返す（SAI 呼び出しは行われない）。QUEUE 参照が解除されると次回 `doTask()` サイクルで SAI DEL が自動実行される。
 <!-- /cross-refs -->
 
 <!-- side-effects -->

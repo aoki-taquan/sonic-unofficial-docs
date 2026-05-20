@@ -271,9 +271,10 @@ assert(!entry.second.routeTable.empty());
 
 | Observer | 用途 |
 |---------|------|
-| `NeighOrch` | ARP/ND エントリの nexthop 変化追跡 |
 | `MirrorOrch` | ミラーセッションの宛先 IP 解決 |
-| `TunnelDecapOrch` | トンネル decap 処理の nexthop 解決 |
+| `NatOrch` | NAT エントリの nexthop 解決 |
+
+> 注: ソース精読の結果、`RouteOrch::attach()` を呼ぶ Orch は `MirrorOrch` と `NatOrch` のみ。`NeighOrch` は `routeorch.h` の `Subject` 継承を通じて別経路で通知を受け取るが、`attach(IpAddress)` 経由の NextHopObserver 登録は行わない。`TunnelDecapOrch` も `attach()` は呼ばない（後述の暗黙参照テーブル注記を参照）。
 
 ---
 
@@ -803,8 +804,8 @@ RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字
 
 | Observer | `attach()` 箇所 |
 |---------|----------------|
-| `NeighOrch` | ネイバー解決時 |
 | `MirrorOrch` | ミラーセッション設定時 |
+| `NatOrch` | NAT エントリ登録時 (`natorch.cpp` L414, L458, L504, L591) |
 
 ## 関連リファレンス
 

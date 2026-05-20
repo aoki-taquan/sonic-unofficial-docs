@@ -672,7 +672,7 @@ PVST モード切替時に `stpmgr` が `ebtables` をシステムコールで�
 |---------|-----|---------------|--------|
 | `STP_TABLE\|GLOBAL.max_stp_inst` | STATE_DB | orchagent 起動時 1 回のみ | `stpmgr.cpp:1391` — PVST インスタンス数上限として使用 |
 
-CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。SAI 取得失敗時は `255` を書き込む。
+CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。SAI 取得失敗時は `StpOrch::updateMaxStpInstance()` が呼ばれず `STP_TABLE|GLOBAL` エントリは作成されない。`stpmgrd` 側は 60 秒タイムアウト後にフォールバック値 `STP_DEFAULT_MAX_INSTANCES = 255` を内部的に使用する（`stpmgr.cpp:1381-1413` の `getStpMaxInstances()`）。
 
 ### CONFIG_DB / APP_DB への直接書込みなし
 

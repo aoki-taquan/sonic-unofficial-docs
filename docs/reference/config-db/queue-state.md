@@ -416,19 +416,14 @@ STATE_DB の `notify-keyspace-events` 設定に関わらず、orchagent / consum
 
 <!-- /platform -->
 
+<!-- ref-triangle:start -->
+
 ## 関連リファレンス
 
 - CONFIG_DB: [`FLEX_COUNTER_TABLE`](flex-counter-table.md) — WRED_ECN_QUEUE グループの enable/disable 設定
 - CONFIG_DB: [`QUEUE`](queue.md) — egress queue ごとの SCHEDULER / WRED_PROFILE 割り当て
 - CONFIG_DB: [`BUFFER_QUEUE`](buffer-queue.md) — バッファキュー割り当て
 - COUNTERS_DB: [`counters-queue`](counters-queue.md) — Queue/PG カウンタテーブル群の詳細
-
-<!-- ref-triangle:start -->
-
-## 関連リファレンス
-
-- CONFIG_DB: [`FLEX_COUNTER_TABLE`](flex-counter-table.md)
-- CONFIG_DB: [`QUEUE`](queue.md)
 
 <!-- ref-triangle:end -->
 

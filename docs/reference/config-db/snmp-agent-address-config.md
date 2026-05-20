@@ -212,11 +212,12 @@ sonic-snmpagent サービスが有効の場合のみ `SNMP_AGENT_ADDRESS_CONFIG`
 
 ### 段階 1: Consumer 登録
 
-- **hostcfgd**: `SNMP_AGENT_ADDRESS_CONFIG` テーブルを `ConfigDBConnector` で購読。
+- **常駐 Consumer なし**: `SNMP_AGENT_ADDRESS_CONFIG` をリアルタイム購読するプロセスは存在しない。`hostcfgd` は本テーブルを購読しない（pubsub / defaults / cross-refs セクション参照）。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- hostcfgd が SNMP エージェント (`snmpd`) のリッスンアドレス設定を `/etc/snmp/snmpd.conf` に書き込み再起動。
+- `docker-snmp` コンテナ起動時に Jinja2 テンプレート (`snmpd.conf.j2`) が CONFIG_DB を直接読み取り、`/etc/snmp/snmpd.conf` を生成する。
+- 設定変更を反映するには docker-snmp コンテナの再起動が必要 (リアルタイム反映ではない)。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI
@@ -240,7 +241,7 @@ SNMP_AGENT_ADDRESS_CONFIG テーブルへの書き込みが発生するコード
 
 ### minigraph / sonic-cfggen
 
-minigraph.py に SNMP_AGENT_ADDRESS_CONFIG 生成なし
+single-ASIC 環境では `minigraph.py` が `MGMT_INTERFACE` / `LOOPBACK_INTERFACE` を解析した後に `SNMP_AGENT_ADDRESS_CONFIG` を自動生成する (L2308-2322、port=`'161'`、vrf_name=`''` がハードコード)。multi-ASIC 環境では自動生成が行われず空辞書となる。
 
 ### REST / gNMI
 

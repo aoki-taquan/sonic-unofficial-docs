@@ -300,10 +300,11 @@ MySID 追加から `COUNTERS:<oid>` 初回値が出現するまでの最大待�
 
 ### FLEX_COUNTER_TABLE キー固定
 
-`SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP = "SRV6_STAT_COUNTER"` (`srv6orch.h:30`) は
-`FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER` の enable/disable で FlexCounter を一括制御するキーである。
-`flexcounterorch.cpp:64` の `SRV6_KEY = "SRV6"` が `CounterCheckOrch` に渡す識別子であり、
-これを変更することはできない。
+ユーザーが操作する CONFIG_DB キーは `FLEX_COUNTER_TABLE|SRV6` (`flexcounterorch.cpp:64` の `SRV6_KEY = "SRV6"`) で、
+`FlexCounterOrch::doTask()` がこのキーを処理して `gSrv6Orch->setCountersState(enable)` を呼び出す。
+内部の FlexCounter group 名は `SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP = "SRV6_STAT_COUNTER"` (`srv6orch.h:30`) で、
+これは `CounterCheckOrch` に渡される識別子（FLEX_COUNTER_DB 上の group 名）であり、
+ユーザーが直接 CONFIG_DB で操作する対象ではない。
 
 ### ロケータビット長デフォルトとカウンタキー
 

@@ -101,7 +101,7 @@ SUBNET_DECAP|<name>
 ### 典型値
 
 - key 形式: `SUBNET_DECAP|<vrf>`。
-- `status`: `enable`、`src_ip`/`dst_ip`: T1 ToR ペアの管理サブネット。
+- `status`: `enable`、`src_ip`: 管理 IPv4 サブネット（例: `10.0.0.0/8`）、`src_ip_v6`: 管理 IPv6 サブネット（例: `fc00::/7`）。
 
 ### よくある誤設定
 

@@ -17,7 +17,6 @@ sources:
     ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
   config_db:
-    - ROUTE
     - STATIC_ROUTE
   cli:
     - show ip route
