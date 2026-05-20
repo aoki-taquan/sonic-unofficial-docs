@@ -111,13 +111,13 @@ SRv6 は IPv6 をベースに SID list を運ぶ network programming framework�
 
 **関連する HLD 7 件**
 
-- [SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）](../../routing/sonic-usid.md)
 - [SONiC における FRR upgrade の手順とパッチ管理](../../routing/detailed-steps-to-upgrade-frr-in-sonic.md)
 - [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../../routing/srv6-vpn-hld.md)
 - [VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）](../../routing/bgp-setup-for-voq-chassis.md)
 - [Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）](../../routing/reliable-tsa.md)
 - [NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離](../../routing/routing-and-next-hop-table-enhancement.md)
 - [SRv6（Segment Routing over IPv6 / END.DT46 / H.Encaps.Red）](../../routing/segment-routing-over-ipv6-srv6-hld.md)
+- [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../../routing/bfd-hw-offload-for-bgp-session.md)
 
 **関連トラブルシュート 5 件**
 
