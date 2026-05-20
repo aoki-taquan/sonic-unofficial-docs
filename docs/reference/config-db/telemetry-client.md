@@ -99,9 +99,9 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 
 | # | 依存関係 | 方向 | 緩和策 / 備考 |
 |---|----------|------|--------------|
-| 1 | `TELEMETRY_CLIENT\|DestinationGroup_<name>` 書込み → `TELEMETRY_CLIENT\|Subscription_<name>` 書込み | 先行推奨 | 起動時一括読み込みは Redis `KEYS` ランダム順。Subscription を先に処理した場合は `destGroupName` 未解決でサイレントスキップ (`dialout_client.go:622-625`)。keyspace notification 経由のオンライン変更では自動回復する |
-| 2 | `gnmi-native` プロセス `running` → `dialout` (dialout_client_cli) 起動 | supervisord `dependent_startup_wait_for` 強制 | `supervisord.conf:68`。gNMI サーバが listen 前に dialout が起動することはない。CONFIG_DB への事前書き込みは可（起動時一括読み込みで反映） |
-| 3 | `database.service` 起動完了 → `gnmi.service` 起動 | systemd `After=` 強制 | `gnmi.service.j2:3-4`。Redis 未起動時に `TELEMETRY_CLIENT` が参照されることはない |
+| 1 | `TELEMETRY_CLIENT\|DestinationGroup_<name>` 書込み → `TELEMETRY_CLIENT\|Subscription_<name>` 書込み | 先行推奨 | 起動時一括読み込みは [Redis](../../reference/glossary.md#term-redis) `KEYS` ランダム順。Subscription を先に処理した場合は `destGroupName` 未解決でサイレントスキップ (`dialout_client.go:622-625`)。keyspace notification 経由のオンライン変更では自動回復する |
+| 2 | `gnmi-native` プロセス `running` → `dialout` (dialout_client_cli) 起動 | supervisord `dependent_startup_wait_for` 強制 | `supervisord.conf:68`。[gNMI](../../reference/glossary.md#term-gnmi) サーバが listen 前に dialout が起動することはない。CONFIG_DB への事前書き込みは可（起動時一括読み込みで反映） |
+| 3 | `database.service` 起動完了 → `gnmi.service` 起動 | systemd `After=` 強制 | `gnmi.service.j2:3-4`。[Redis](../../reference/glossary.md#term-redis) 未起動時に `TELEMETRY_CLIENT` が参照されることはない |
 | 4 | `TELEMETRY_CLIENT\|Global` 書込み → `TELEMETRY_CLIENT\|DestinationGroup_*` 書込み | 推奨先行 | 逆順でも機能するが、後から Global を変更すると `destGrpNameMap` 全グループの gRPC セッションが再起動される (`dialout_client.go:508-512`)。Global → DestinationGroup → Subscription の順が推奨 |
 | 5 | 使用中 `DestinationGroup` DEL → 参照 `Subscription` DEL | 先行必須 | 参照中 DestinationGroup を DEL しようとすると `"<name> is being used"` を返して拒否 (`dialout_client.go:519-522`)。先に Subscription を削除すること |
 
@@ -119,15 +119,15 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 | 参照先テーブル | 参照フィールド | 方向 | 直接/間接 | 証跡 |
 |--------------|-------------|------|-----------|------|
 | `CONFIG_DB.TELEMETRY\|gnmi` / `TELEMETRY\|certs` | `port`, `server_crt`, `server_key`, `ca_crt` | TELEMETRY_CLIENT → TELEMETRY | 間接（`supervisord.conf` の `dependent_startup_wait_for=gnmi-native:running` により `dialout` は gnmi-native 起動後に起動） | `gnmi-native.sh:L18`, `supervisord.conf:L70` |
-| `CONFIG_DB.DEVICE_METADATA\|x509` | `server_crt`, `server_key`, `ca_crt` | TELEMETRY_CLIENT → DEVICE_METADATA | 間接（gnmi-native.sh が `TELEMETRY\|certs` 非設定時のフォールバックとして使用） | `telemetry_vars.j2:L4`, `gnmi-native.sh:L44-55` |
-| `CONFIG_DB.DEVICE_METADATA\|localhost` | `subtype` | TELEMETRY_CLIENT → DEVICE_METADATA | 間接（gnmi-native.sh が SmartSwitch 判定 → ZMQ ポート追加） | `gnmi-native.sh:L88-90` |
-| `CONFIG_DB.MGMT_VRF_CONFIG\|vrf_global` | `mgmtVrfEnabled` | TELEMETRY_CLIENT → MGMT_VRF_CONFIG | 間接（gnmi-native.sh が管理 VRF バインド → dial-out も mgmt VRF 経由になる） | `gnmi-native.sh:L93-96` |
+| `CONFIG_DB.DEVICE_METADATA\|x509` | `server_crt`, `server_key`, `ca_crt` | TELEMETRY_CLIENT → [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) | 間接（gnmi-native.sh が `TELEMETRY\|certs` 非設定時のフォールバックとして使用） | `telemetry_vars.j2:L4`, `gnmi-native.sh:L44-55` |
+| `CONFIG_DB.DEVICE_METADATA\|localhost` | `subtype` | TELEMETRY_CLIENT → [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) | 間接（gnmi-native.sh が [SmartSwitch](../../reference/glossary.md#term-smartswitch) 判定 → ZMQ ポート追加） | `gnmi-native.sh:L88-90` |
+| `CONFIG_DB.MGMT_VRF_CONFIG\|vrf_global` | `mgmtVrfEnabled` | TELEMETRY_CLIENT → MGMT_VRF_CONFIG | 間接（gnmi-native.sh が管理 [VRF](../../reference/glossary.md#term-vrf) バインド → dial-out も mgmt [VRF](../../reference/glossary.md#term-vrf) 経由になる） | `gnmi-native.sh:L93-96` |
 
 ### 補足
 
 - `dialout_client.go` 自体は `TELEMETRY_CLIENT` 以外の CONFIG_DB テーブルを直接読み取らない。上記の間接参照はすべて `gnmi-native.sh` 経由のコンテナ起動時処理。
-- `TELEMETRY` テーブルの `certs` または `DEVICE_METADATA.x509` が未設定の場合、`gnmi-native.sh` は `--noTLS` モードで gNMI サーバを起動する。この場合、dial-out コレクタへの接続も非 TLS になる。
-- 管理 VRF が有効な環境では `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled=true` を先に設定しないと、gnmi-native が mgmt VRF 外でバインドされ dial-out が期待する送信元 VRF と乖離する可能性がある。
+- `TELEMETRY` テーブルの `certs` または `DEVICE_METADATA.x509` が未設定の場合、`gnmi-native.sh` は `--noTLS` モードで [gNMI](../../reference/glossary.md#term-gnmi) サーバを起動する。この場合、dial-out コレクタへの接続も非 TLS になる。
+- 管理 [VRF](../../reference/glossary.md#term-vrf) が有効な環境では `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled=true` を先に設定しないと、gnmi-native が mgmt VRF 外でバインドされ dial-out が期待する送信元 VRF と乖離する可能性がある。
 
 <!-- /cross-refs -->
 
@@ -229,7 +229,7 @@ TELEMETRY_CLIENT|DestinationGroup|<name>
 
 ### 根拠
 
-`DialOutRun()` および `processTelemetryClientConfig()` は CONFIG_DB に対して読み取り操作 (`PSubscribe`, `Keys`, `HGetAll`) のみを行う。`Set` / `HSet` / `Del` 系の Redis 書込呼び出しは存在しない。設定変更時の副作用はネットワーク層 (gRPC dial-out ストリームの再起動・再接続) であり、Redis DB 上には現れない。
+`DialOutRun()` および `processTelemetryClientConfig()` は CONFIG_DB に対して読み取り操作 (`PSubscribe`, `Keys`, `HGetAll`) のみを行う。`Set` / `HSet` / `Del` 系の [Redis](../../reference/glossary.md#term-redis) 書込呼び出しは存在しない。設定変更時の副作用はネットワーク層 (gRPC dial-out ストリームの再起動・再接続) であり、Redis DB 上には現れない。
 
 ```go
 // 読み取り専用操作のみ
@@ -306,8 +306,8 @@ pubsub := redisDb.PSubscribe(context.Background(), pattern)
 | ビルドフラグ `INCLUDE_SYSTEM_GNMI` | `rules/config:160` でデフォルト `y`。`platform/**/*.mk` による上書き **0 ヒット** | `sonic-buildimage/rules/config:160` |
 | `dialout_client.go` のプラットフォーム分岐 | `platform` / `DEVICE_METADATA` / `ASIC` / `namespace` / `multi_npu` への参照が全 746 行で **0 ヒット** | `sonic-gnmi/dialout/dialout_client/dialout_client.go` 全行 |
 | `Dockerfile.j2` のプラットフォーム条件 | プラットフォーム固有の `{% if %}` 分岐なし。ベースは `docker-config-engine-bookworm` のみ | `dockers/docker-sonic-gnmi/Dockerfile.j2` |
-| SAI / ASIC SDK 依存 | dial-out は TCP/gRPC レベルのアプリケーション。SAI 非経由 | アーキテクチャ上自明 |
-| multi-ASIC / namespace | `dialout_client.go` は `asicN` namespace への接続切り替えを実装しない。host CONFIG_DB の `TELEMETRY_CLIENT` のみ購読 | `dialout_client.go` 全行、`db_client.go:524`（dial-in 側の実装） |
+| [SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) 依存 | dial-out は TCP/gRPC レベルのアプリケーション。[SAI](../../reference/glossary.md#term-sai) 非経由 | アーキテクチャ上自明 |
+| multi-[ASIC](../../reference/glossary.md#term-asic) / namespace | `dialout_client.go` は `asicN` namespace への接続切り替えを実装しない。host CONFIG_DB の `TELEMETRY_CLIENT` のみ購読 | `dialout_client.go` 全行、`db_client.go:524`（dial-in 側の実装） |
 
 <!-- /platform -->
 
@@ -402,7 +402,6 @@ docker logs gnmi | grep -i dial-out
 ```
 <!-- /ops-hint -->
 
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -427,7 +426,7 @@ telemetry サービスが有効の場合のみ `TELEMETRY_CLIENT` テーブル�
 | `telemetry_client` | TLS 設定なし | 平文または server-only TLS で接続 | `telemetry_client` |
 | `telemetry_client` | `retry_interval` 設定 | 接続失敗時の再試行インターバルを設定 | `telemetry_client` |
 
-> **スキャン証跡**: `TELEMETRY_CLIENT` は gNMI dial-out のクライアント設定。`enabled` フィールドが主要分岐。TLS フィールドの有無が接続モードを決定（Phase 6 派生相当）。
+> **スキャン証跡**: `TELEMETRY_CLIENT` は [gNMI](../../reference/glossary.md#term-gnmi) dial-out のクライアント設定。`enabled` フィールドが主要分岐。TLS フィールドの有無が接続モードを決定（Phase 6 派生相当）。
 
 <!-- /handler-branching -->
 
@@ -444,7 +443,7 @@ telemetry サービスが有効の場合のみ `TELEMETRY_CLIENT` テーブル�
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。gNMI Dial-Out でリモートコレクタへ購読データを Push。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。gNMI Dial-Out でリモートコレクタへ購読データを Push。
 
 ### 段階 4: タイミング + 副作用
 
@@ -458,11 +457,11 @@ TELEMETRY_CLIENT テーブルへの書き込みが発生するコード経路を
 
 ### CLI
 
-  - `config hft target/session ...` — `config/hft.py` が TELEMETRY_CLIENT を書き込む (sonic-utilities/config/hft.py)
+  - `config hft target/session ...` — `config/hft.py` が TELEMETRY_CLIENT を書き込む ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/hft.py)
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** が `<TelemetryInfo>` タグから TELEMETRY_CLIENT エントリを生成 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+**minigraph.py** が `<TelemetryInfo>` タグから TELEMETRY_CLIENT エントリを生成 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py)
 
 ### REST / gNMI
 
@@ -470,7 +469,7 @@ REST/gNMI 書き込み経路なし
 
 ### db_migrator
 
-**db_migrator.py** が TELEMETRY_CLIENT のマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+**db_migrator.py** が TELEMETRY_CLIENT のマイグレーション処理を実装 ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/scripts/db_migrator.py)
 
 ### ビルド時デフォルト (build-time default)
 
@@ -485,4 +484,4 @@ REST/gNMI 書き込み経路なし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: 42a2043d128d -->

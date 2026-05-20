@@ -28,7 +28,7 @@ related:
 
 ## なぜ必要なのか
 
-スイッチの ASIC / [NPU](../reference/glossary.md#term-npu) / 周辺デバイスは **PCIe バス越しに CPU と接続** されている。PCIe が enumerate されない / リンク速度が劣化している / AER で訂正不能エラーが出ている、といった異常は **データプレーン全体の死に直結** する。`pcied` はこれらを pmon 系 daemon として監視し [STATE_DB](../reference/glossary.md#term-state_db) へ反映する[^1]。
+スイッチの [ASIC](../reference/glossary.md#term-asic) / [NPU](../reference/glossary.md#term-npu) / 周辺デバイスは **PCIe バス越しに CPU と接続** されている。PCIe が enumerate されない / リンク速度が劣化している / AER で訂正不能エラーが出ている、といった異常は **データプレーン全体の死に直結** する。`pcied` はこれらを pmon 系 daemon として監視し [STATE_DB](../reference/glossary.md#term-state_db) へ反映する[^1]。
 
 ねらい:
 
@@ -109,4 +109,4 @@ sonic-db-cli STATE_DB keys "PCIE_DEVICE|*"
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 42adc551fd3f -->
+<!-- glossary-links-injected: c006405759d8 -->

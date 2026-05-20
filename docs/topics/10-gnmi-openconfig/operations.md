@@ -39,7 +39,7 @@ related:
 
 ## Master arbitration
 
-複数の NMS / 自動化 client が同じ switch に書き込むと、race condition による不整合が起きる。SONiC は gNMI master arbitration で「現在の writer は 1 つだけ」を強制できる。election ID を交換し、より大きい ID を持つ client が master になる。slave 化された client の Set は失敗で返るため、運用 script 側で master 化失敗時の fallback を書く必要がある。
+複数の NMS / 自動化 client が同じ switch に書き込むと、race condition による不整合が起きる。[SONiC](../../reference/glossary.md#term-sonic) は gNMI master arbitration で「現在の writer は 1 つだけ」を強制できる。election ID を交換し、より大きい ID を持つ client が master になる。slave 化された client の Set は失敗で返るため、運用 script 側で master 化失敗時の fallback を書く必要がある。
 
 詳細は [gNMI master arbitration HLD](../../management/gnmi-master-arbitration-hld.md) を参照する。election ID のリセット条件、failover の手順、observability の見方はそのページにまとまっている。
 
@@ -201,4 +201,4 @@ WARN telemetry: subscription cancelled by client (sid=42 path=/openconfig-platfo
 - [Telemetry dial-out mode 2](../../system/sonic-telemetry-in-dial-out-mode-2.md)
 - [gNMI subscription for YANG data](../../routing/gnmi-subscription-for-yang-data.md)
 
-<!-- glossary-links-injected: 3cdf5e8a0b59 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

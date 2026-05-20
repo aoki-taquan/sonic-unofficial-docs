@@ -21,7 +21,7 @@ related:
 
 [gNOI](../../reference/glossary.md#term-gnoi) (gRPC Network Operations Interface) は、設定読み書き ([gNMI](../../reference/glossary.md#term-gnmi)) の隣で「操作」を担当する。reboot、OS install、file transfer、factory reset、health check のような operational action を、ベンダー非依存の API として呼べるようにする。gNSI (gRPC Network Security Interface) は、その隣で証明書配布、認証ポリシー、attestation のような security action を担当する。
 
-SONiC の gNOI / gNSI 実装は、telemetry container 内の同じプロセスで gNMI と一緒に動く。API ごとに SONiC のどの service / script を呼んでいるかを押さえると、障害時の切り分けが速い。
+[SONiC](../../reference/glossary.md#term-sonic) の gNOI / gNSI 実装は、telemetry container 内の同じプロセスで gNMI と一緒に動く。API ごとに SONiC のどの service / script を呼んでいるかを押さえると、障害時の切り分けが速い。
 
 ## API と SONiC service の対応
 
@@ -68,4 +68,4 @@ Factory reset の SONiC 実装 (`reset-factory` design) は章 11 や reset-fact
 - [gNOI Healthz API](../../management/gnoi-hld-for-healthz-api.md)
 - [gNSI HLD](../../management/gnsi-hld.md)
 
-<!-- glossary-links-injected: f5d0d14cf73e -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

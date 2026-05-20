@@ -60,9 +60,9 @@ flowchart LR
 | `SFLOW` (CFG_SFLOW_TABLE_NAME) | CONFIG_DB | グローバル有効化・polling_interval・agent_id・sample_direction |
 | `SFLOW_SESSION` (CFG_SFLOW_SESSION_TABLE_NAME) | CONFIG_DB | per-port または `all` キーのセッション設定 |
 | `PORT` (CFG_PORT_TABLE_NAME) | CONFIG_DB | ポート速度取得（デフォルトサンプリングレート算出用） |
-| `PORT_TABLE` (STATE_PORT_TABLE_NAME) | STATE_DB | oper_speed 変化の監視（オートネゴ時レート自動更新） |
+| `PORT_TABLE` (STATE_PORT_TABLE_NAME) | [STATE_DB](../../reference/glossary.md#term-state_db) | oper_speed 変化の監視（オートネゴ時レート自動更新） |
 
-`doTask()` で受信した `SET` / `DEL` コマンドを処理し、結果を APP_DB の `APP_SFLOW_TABLE` / `APP_SFLOW_SESSION_TABLE` へ **ProducerStateTable** で書き込む。
+`doTask()` で受信した `SET` / `DEL` コマンドを処理し、結果を APP_DB の `APP_SFLOW_TABLE` / `APP_SFLOW_SESSION_TABLE` へ **[ProducerStateTable](../../reference/glossary.md#term-producerstatetable)** で書き込む。
 
 ```
 CONFIG_DB
@@ -75,7 +75,7 @@ STATE_DB
 
 ### hsflowd との通信 — sflowHandleService()
 
-`sflowmgrd` は **hsflowd** プロセス（`sflowd` Docker コンテナ内の sFlow エージェント）とプロセス間シグナル（`service hsflowd restart / stop`）で通信する。Redis Pub/Sub ではなく OS サービス制御コマンドを用いる点が他 mgr と異なる。
+`sflowmgrd` は **hsflowd** プロセス（`sflowd` Docker コンテナ内の sFlow エージェント）とプロセス間シグナル（`service hsflowd restart / stop`）で通信する。[Redis](../../reference/glossary.md#term-redis) Pub/Sub ではなく OS サービス制御コマンドを用いる点が他 mgr と異なる。
 
 ```
 admin_state=up  → swss::exec("service hsflowd restart")
@@ -102,9 +102,9 @@ SflowOrch *sflow_orch = new SflowOrch(m_applDb, sflow_tables);
 
 ### SAI samplepacket_api 呼び出し
 
-`sfloworch.cpp` が `sai_samplepacket_api` グローバルポインタを使用し、ASIC にサンプリングセッションを設定する。
+`sfloworch.cpp` が `sai_samplepacket_api` グローバルポインタを使用し、[ASIC](../../reference/glossary.md#term-asic) にサンプリングセッションを設定する。
 
-| SAI API | 呼び出し条件 | 説明 |
+| [SAI](../../reference/glossary.md#term-sai) API | 呼び出し条件 | 説明 |
 |---|---|---|
 | `sai_samplepacket_api->create_samplepacket()` | 新しいレートのセッションが存在しない | `SAI_SAMPLEPACKET_ATTR_SAMPLE_RATE` を設定してセッション作成 |
 | `sai_samplepacket_api->remove_samplepacket()` | ref_count が 0 になったとき | 既存セッション削除 |
@@ -314,7 +314,7 @@ sflowmgrd は常時起動し `SFLOW` / `SFLOW_SESSION` テーブルを無条件�
 | `sflowmgrd` SFLOW_SESSION | key が `all` | 全ポートに設定を適用 | `sflowmgrd` |
 | `sflowmgrd` SFLOW_SESSION | `sample_rate` フィールドあり | ポートごとのサンプリングレートを明示設定 | `sflowmgrd` |
 
-> **スキャン証跡**: `SFLOW` テーブルは hsflowd 設定生成のための入力。admin_state による主要分岐あり。SAI 経路はなし (ユーザースペース制御)。
+> **スキャン証跡**: `SFLOW` テーブルは hsflowd 設定生成のための入力。admin_state による主要分岐あり。[SAI](../../reference/glossary.md#term-sai) 経路はなし (ユーザースペース制御)。
 
 <!-- /handler-branching -->
 
@@ -332,7 +332,7 @@ sflowmgrd は常時起動し `SFLOW` / `SFLOW_SESSION` テーブルを無条件�
 
 ### 段階 3: APPL → SAI
 
-- orchagent / SflowOrch が APP_DB `SFLOW_SESSION_TABLE` を購読し `sai_samplepacket_api` でハードウェアサンプリングを設定。
+- [orchagent](../../reference/glossary.md#term-orchagent) / SflowOrch が APP_DB `SFLOW_SESSION_TABLE` を購読し `sai_samplepacket_api` でハードウェアサンプリングを設定。
 
 ### 段階 4: タイミング + 副作用
 
@@ -347,8 +347,8 @@ SFLOW / SFLOW_SESSION / SFLOW_COLLECTOR テーブルへの書き込みが発生�
 
 ### CLI
 
-  - `config sflow enable/disable/polling-interval/...` — `config/main.py` が `mod_entry('SFLOW', 'global', ...)` を呼ぶ (sonic-utilities/config/main.py:9066–9260)
-  - `config sflow interface enable/disable ...` — `config/main.py` が `mod_entry('SFLOW_SESSION', ifname, ...)` を呼ぶ (sonic-utilities/config/main.py:9192–9260)
+  - `config sflow enable/disable/polling-interval/...` — `config/main.py` が `mod_entry('SFLOW', 'global', ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py:9066–9260)
+  - `config sflow interface enable/disable ...` — `config/main.py` が `mod_entry('SFLOW_SESSION', ifname, ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py:9192–9260)
 
 ### minigraph / sonic-cfggen
 
@@ -356,11 +356,11 @@ minigraph.py に sFlow テーブル生成なし
 
 ### REST / gNMI
 
-**sonic-mgmt-common** `translib/transformer/xfmr_sflow.go` が REST/gNMI 経由で SFLOW テーブルを書き込む (sonic-mgmt-common/translib/transformer/xfmr_sflow.go)
+**[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common** `translib/transformer/xfmr_sflow.go` が REST/[gNMI](../../reference/glossary.md#term-gnmi) 経由で SFLOW テーブルを書き込む ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common/translib/transformer/xfmr_sflow.go)
 
 ### db_migrator
 
-**db_migrator.py** が SFLOW のマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+**db_migrator.py** が SFLOW のマイグレーション処理を実装 ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/scripts/db_migrator.py)
 
 ### ビルド時デフォルト (build-time default)
 
@@ -382,7 +382,7 @@ CONFIG_DB SFLOW / SFLOW_SESSION テーブルへの書込をトリガーとして
 
 ### 1. APPL_DB `SFLOW_TABLE` への書込 (sflowmgrd 直接転送)
 
-`SFLOW|global` SET 時に `m_appSflowTable.set(key, values)` でフィールドをそのまま APPL_DB `SFLOW_TABLE` に転送する (sflowmgr.cpp:468)。DEL 時は `m_appSflowTable.del(key)` (sflowmgr.cpp:550)。SflowOrch はこの APPL_DB エントリを購読して `m_sflowStatus` を更新し、SAI samplepacket 操作の前提条件とする。[^3]
+`SFLOW|global` SET 時に `m_appSflowTable.set(key, values)` でフィールドをそのまま [APPL_DB](../../reference/glossary.md#term-appl_db) `SFLOW_TABLE` に転送する (sflowmgr.cpp:468)。DEL 時は `m_appSflowTable.del(key)` (sflowmgr.cpp:550)。SflowOrch はこの [APPL_DB](../../reference/glossary.md#term-appl_db) エントリを購読して `m_sflowStatus` を更新し、SAI samplepacket 操作の前提条件とする。[^3]
 
 ### 2. APPL_DB `SFLOW_SESSION_TABLE` への書込 (sflowmgrd)
 
@@ -399,7 +399,7 @@ CONFIG_DB SFLOW / SFLOW_SESSION テーブルへの書込をトリガーとして
 
 ### 3. ASIC_DB — SAI samplepacket セッション操作 (SflowOrch 経由)
 
-SflowOrch が APPL_DB `SFLOW_SESSION_TABLE` を購読し、SAI API でハードウェアサンプリングを設定する。
+SflowOrch が [APPL_DB](../../reference/glossary.md#term-appl_db) `SFLOW_SESSION_TABLE` を購読し、SAI API でハードウェアサンプリングを設定する。
 
 #### 3a. `sai_samplepacket_api->create_samplepacket()`
 
@@ -480,7 +480,7 @@ evidence: sflowmgr.cpp:58–62。hsflowd は sFlow パケットをコレクタ�
 
 [YANG](../../reference/glossary.md#term-yang) 制約で `sample_rate` は `uint32 (256..8388608)` に制限される。デフォルト値は `findSamplingRate()` がポートの `oper_speed`（または設定済み `speed`）をそのまま使用（例: 100GE → 100000）。ベンダー [ASIC](../../reference/glossary.md#term-asic) によってはこの範囲内でも対応できないレートがあるが、ソフトウェア側は SAI エラーとしてのみ検出する。
 
-`oper_speed` は STATE_DB に orchagent が書き込む場合のみ追跡される（ベンダー実装依存）。oper_speed が存在する場合は cfg_speed より優先される（[^3]）。
+`oper_speed` は [STATE_DB](../../reference/glossary.md#term-state_db) に [orchagent](../../reference/glossary.md#term-orchagent) が書き込む場合のみ追跡される（ベンダー実装依存）。oper_speed が存在する場合は cfg_speed より優先される（[^3]）。
 
 ### tx / egress サンプリングのプラットフォーム依存性
 
@@ -488,7 +488,7 @@ evidence: sflowmgr.cpp:58–62。hsflowd は sFlow パケットをコレクタ�
 
 ### VOQ chassis
 
-`sfloworch.cpp` および `sflowmgr.cpp` に VOQ chassis 固有のコードパスは存在しない。sFlow は物理フロントパネルポートレベルで管理され、VOQ system port や fabric port への sFlow 設定はサポートされない（[^3]）。
+`sfloworch.cpp` および `sflowmgr.cpp` に [VOQ](../../reference/glossary.md#term-voq) chassis 固有のコードパスは存在しない。sFlow は物理フロントパネルポートレベルで管理され、[VOQ](../../reference/glossary.md#term-voq) system port や fabric port への sFlow 設定はサポートされない（[^3]）。
 
 [^3]: sfloworch / sflowmgr 実装調査: `sonic-swss/orchagent/sfloworch.cpp`, `sonic-swss/cfgmgr/sflowmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/sfloworch.cpp>
 
@@ -564,7 +564,7 @@ APP_SFLOW_TABLE  SET  →  APP_SFLOW_SESSION_TABLE  SET
 
 ### O5: oper_speed 確定 → `SFLOW_SESSION` 書込み (推奨)
 
-`sflowmgr.cpp:385-401`: `sample_rate` 未指定時は `oper_speed`（STATE_DB）優先、なければ `cfg_speed` を使う。ポート up 前に書き込むと cfg_speed ベースの暫定レートが入る。`local_rate_cfg=false` の場合は oper_speed 確定時に自動更新される。
+`sflowmgr.cpp:385-401`: `sample_rate` 未指定時は `oper_speed`（[STATE_DB](../../reference/glossary.md#term-state_db)）優先、なければ `cfg_speed` を使う。ポート up 前に書き込むと cfg_speed ベースの暫定レートが入る。`local_rate_cfg=false` の場合は oper_speed 確定時に自動更新される。
 
 ### 推奨書込み順序（総合）
 
@@ -619,7 +619,7 @@ APP_SFLOW_TABLE  SET  →  APP_SFLOW_SESSION_TABLE  SET
 
 ### SFLOW_COLLECTOR — hsflowd が直接参照
 
-C++ レベルの `sflowmgr.cpp` / `sfloworch.cpp` に `SFLOW_COLLECTOR` を直接読み込むコードはない。`SFLOW_COLLECTOR` テーブルは **hsflowd** (ユーザー空間 sFlow エージェント) が CONFIG_DB から直接読み取り、コレクタ IP / ポート / VRF を設定ファイルに反映する。`sflowmgrd` は hsflowd の起動トリガーに徹する。
+C++ レベルの `sflowmgr.cpp` / `sfloworch.cpp` に `SFLOW_COLLECTOR` を直接読み込むコードはない。`SFLOW_COLLECTOR` テーブルは **hsflowd** (ユーザー空間 sFlow エージェント) が CONFIG_DB から直接読み取り、コレクタ IP / ポート / [VRF](../../reference/glossary.md#term-vrf) を設定ファイルに反映する。`sflowmgrd` は hsflowd の起動トリガーに徹する。
 
 ### SAI 参照
 
@@ -675,4 +675,5 @@ PORT oper_speed 変化  →  STATE_DB PORT_TABLE 更新
 
 > **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:31-46` (テーブル登録・起動スナップショット)、`sonic-swss/cfgmgr/sflowmgr.h:39-40` (`ProducerStateTable` 宣言)、`sonic-swss/cfgmgr/sflowmgr.cpp:403-410` (`doTask` テーブル名ルーティング)、`sonic-swss/orchagent/orchdaemon.cpp:439-444` (`SflowOrch` 登録)、`sonic-swss/orchagent/sfloworch.cpp:359-369` (APPL_DB 振り分け); 詳細分析 `meta/_intermediate/cdb-flow/sflow-pubsub.md`
 <!-- /pubsub -->
-<!-- glossary-links-injected: 8e8594481100 -->
+
+<!-- glossary-links-injected: d6084d14649a -->

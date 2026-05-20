@@ -25,7 +25,7 @@ related:
 ## 症状
 
 - `show bgp l2vpn evpn` で local MAC が出ない
-- 対向 VTEP に Type-2 が届かない（受信側で `show bgp l2vpn evpn route type macip` が空）
+- 対向 [VTEP](../../reference/glossary.md#term-vtep) に Type-2 が届かない（受信側で `show bgp l2vpn evpn route type macip` が空）
 - [VLAN](../../reference/glossary.md#term-vlan)-to-VNI mapping は設定済みだが overlay 通信できない
 
 ## 想定原因（優先度順）
@@ -122,4 +122,4 @@ docker logs swss 2>&1 | grep -iE "vxlan|evpn" | tail -100
 [^1]: sonic-net/sonic-frr @ master — bgp_evpn.c
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — vxlanorch.cpp
 
-<!-- glossary-links-injected: 164802a4df0c -->
+<!-- glossary-links-injected: 0726817b0ba1 -->

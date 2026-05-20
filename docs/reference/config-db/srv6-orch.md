@@ -28,45 +28,36 @@ hard: 0
 
 ## 概要
 
-`Srv6Orch`（`orchagent/srv6orch.cpp`）は SRv6 のデータプレーン制御を担う Orchestration Agent であり、
-以下の 3 つの APP_DB テーブルを購読して SAI 呼び出しを実行する[^1]。
+`Srv6Orch`（`orchagent/srv6orch.cpp`）は [SRv6](../../reference/glossary.md#term-srv6) のデータプレーン制御を担う Orchestration Agent であり、
+以下の 3 つの APP_DB テーブルを購読して [SAI](../../reference/glossary.md#term-sai) 呼び出しを実行する[^1]。
 
 | テーブル名 (APP_DB) | 役割 |
 |--------------------|------|
-| `SRV6_SID_LIST_TABLE` | SRv6 セグメントリスト（SID リスト）の管理 |
-| `SRV6_MY_SID_TABLE` | ローカル SRv6 SID エントリ（My SID）の管理 |
+| `SRV6_SID_LIST_TABLE` | [SRv6](../../reference/glossary.md#term-srv6) セグメントリスト（SID リスト）の管理 |
+| `SRV6_MY_SID_TABLE` | ローカル [SRv6](../../reference/glossary.md#term-srv6) SID エントリ（My SID）の管理 |
 | `PIC_CONTEXT_TABLE` | SRv6 VPN PIC コンテキスト（prefix aggregation ID）の管理 |
 
-なお、CONFIG_DB 側の `SRV6_MY_SIDS` / `SRV6_MY_LOCATORS` は bgpcfgd の `SRv6Mgr` が管理し、
-APP_DB 経由または FRR 経由で Srv6Orch へ伝達される。
+なお、[CONFIG_DB](../../reference/glossary.md#term-config_db) 側の `SRV6_MY_SIDS` / `SRV6_MY_LOCATORS` は [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) の `SRv6Mgr` が管理し、
+APP_DB 経由または [FRR](../../reference/glossary.md#term-frr) 経由で Srv6Orch へ伝達される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB1[("CONFIG_DB<br/>SRV6_MY_SIDS")]
-  CDB2[("CONFIG_DB<br/>SRV6_MY_LOCATORS")]
-  BGP["bgpcfgd<br/>(SRv6Mgr)"]
-  FRR["FRR (zebra/bgpd)"]
-  APP1[("APP_DB<br/>SRV6_SID_LIST_TABLE")]
-  APP2[("APP_DB<br/>SRV6_MY_SID_TABLE")]
-  APP3[("APP_DB<br/>PIC_CONTEXT_TABLE")]
-  ORCH["Srv6Orch"]
-  SAI["SAI / ASIC"]
-  CDB1 --> BGP --> FRR
-  CDB2 --> BGP
-  FRR --> APP1
-  FRR --> APP2
-  APP1 --> ORCH
-  APP2 --> ORCH
-  APP3 --> ORCH
-  ORCH --> SAI
+  CDB[("CONFIG_DB<br/>SRV6_MY_SIDS")]
+  DM["Srv6Orch"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_SRV6_MY_SID_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_srv6_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    APP_DB テーブルへの書き込みは主に `fpmsyncd` 経由の FRR から行われる。
-    `PIC_CONTEXT_TABLE` は ECMP 経路制御コンポーネントが直接書き込む。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 <!-- pubsub -->
@@ -77,9 +68,9 @@ flowchart LR
 
 ### 全体データフロー
 
-SRv6 の設定は CONFIG_DB から SAI まで以下の **非同期パイプライン** を通じて伝達される。
-Redis の `ProducerStateTable` / `ConsumerStateTable` は APP_DB 区間のみで使用され、
-他の区間は vtysh CLI または FPM TCP ソケットで繋がれる。
+SRv6 の設定は [CONFIG_DB](../../reference/glossary.md#term-config_db) から [SAI](../../reference/glossary.md#term-sai) まで以下の **非同期パイプライン** を通じて伝達される。
+[Redis](../../reference/glossary.md#term-redis) の `ProducerStateTable` / `ConsumerStateTable` は APP_DB 区間のみで使用され、
+他の区間は [vtysh](../../reference/glossary.md#term-vtysh) CLI または [FPM](../../reference/glossary.md#term-fpm) TCP ソケットで繋がれる。
 
 ```
 CONFIG_DB (SRV6_MY_SIDS / SRV6_MY_LOCATORS)
@@ -100,7 +91,7 @@ ASIC
 ### CONFIG_DB → bgpcfgd (SRv6Mgr)
 
 `bgpcfgd` の `SRv6Mgr` は `Manager` 基底クラスを継承し、
-`directory.subscribe()` が内部で CONFIG_DB (dbId=4) の Redis **keyspace notification**
+`directory.subscribe()` が内部で [CONFIG_DB](../../reference/glossary.md#term-config_db) (dbId=4) の [Redis](../../reference/glossary.md#term-redis) **keyspace notification**
 (`PSUBSCRIBE __keyspace@4__:SRV6_MY_SIDS|*` 等) を購読する。
 
 | CONFIG_DB テーブル | コールバック | 処理内容 |
@@ -110,13 +101,13 @@ ASIC
 
 - `SRV6_MY_SIDS` エントリは参照するロケータ名 (`SRV6_MY_LOCATORS`) が未到達の場合、
   `directory.subscribe()` でロケータ到着を待ちペンディングする（`managers_srv6.py:62-68`）。
-- `cfg_mgr.push_list()` は vtysh TCP ソケット経由で FRR bgpd へコマンドを送信する。
-  Redis channel は介在しない。
+- `cfg_mgr.push_list()` は [vtysh](../../reference/glossary.md#term-vtysh) TCP ソケット経由で [FRR](../../reference/glossary.md#term-frr) bgpd へコマンドを送信する。
+  [Redis](../../reference/glossary.md#term-redis) channel は介在しない。
 
 ### fpmsyncd → APP_DB (ProducerStateTable)
 
-`RouteSync` クラス (`routesync.cpp`) が FPM インタフェース（TCP port 2620）経由で
-FRR zebra からのネットリンクメッセージを受信し、APP_DB に `ProducerStateTable` で書き込む。
+`RouteSync` クラス (`routesync.cpp`) が [FPM](../../reference/glossary.md#term-fpm) インタフェース（TCP port 2620）経由で
+[FRR](../../reference/glossary.md#term-frr) [zebra](../../reference/glossary.md#term-zebra) からのネットリンクメッセージを受信し、APP_DB に `ProducerStateTable` で書き込む。
 
 ```cpp
 // routesync.cpp:163-164, 159
@@ -162,8 +153,8 @@ else if (table_name == CFG_SRV6_MY_SID_TABLE_NAME)    doTaskCfgMySidTable(t);
 
 ### ProducerStateTable メンバ（書き込み専用）
 
-`srv6orch.h:238-240` の以下メンバは SAI 処理結果を APP_DB へ書き戻す目的で宣言されている。
-ConsumerStateTable としての購読とは別チャネルであり、二重登録ではない。
+`srv6orch.h:238-240` の以下メンバは [SAI](../../reference/glossary.md#term-sai) 処理結果を APP_DB へ書き戻す目的で宣言されている。
+[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) としての購読とは別チャネルであり、二重登録ではない。
 
 | メンバ | 書き込み先 |
 |--------|-----------|
@@ -173,9 +164,9 @@ ConsumerStateTable としての購読とは別チャネルであり、二重登�
 
 ### NotificationProducer / SubscriberStateTable 非使用確認
 
-- `SRV6_MY_SIDS` / `SRV6_MY_LOCATORS` に対して orchagent が `SubscriberStateTable` を直接使う箇所はなし。
+- `SRV6_MY_SIDS` / `SRV6_MY_LOCATORS` に対して [orchagent](../../reference/glossary.md#term-orchagent) が `SubscriberStateTable` を直接使う箇所はなし。
 - `NotificationProducer` で SRv6 関連の通知を発行する箇所はソース全体になし。
-- STATE_DB への書き戻しは Srv6Orch 自体が行わず、SAI/ASIC 層で完結する。
+- [STATE_DB](../../reference/glossary.md#term-state_db) への書き戻しは Srv6Orch 自体が行わず、SAI/[ASIC](../../reference/glossary.md#term-asic) 層で完結する。
 <!-- /pubsub -->
 
 ---
@@ -203,7 +194,7 @@ SRV6_SID_LIST_TABLE|<seg_name>
 > 根拠: `srv6orch.cpp` 行 73-79, 1079-1089, 1151-1162 の全行精読。
 > evidence: `meta/_intermediate/cdb-flow/srv6-orch-defaults.md`
 
-| フィールド | YANG default | コード fallback | 実効デフォルト |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード fallback | 実効デフォルト |
 |-----------|-------------|----------------|--------------|
 | `path` | N/A (APP_DB) | 省略時 count=0 → スキップ | **省略不可**（SAI 呼び出し不発） |
 | `type` | N/A | `SAI_SRV6_SIDLIST_TYPE_ENCAPS_RED` (`srv6orch.cpp:1083`) | `"encaps.red"` |
@@ -237,7 +228,7 @@ SRV6_MY_SID_TABLE|<block_len>:<node_len>:<func_len>:<args_len>:<sid_ipv6_addr>
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
 | `action` | enum | **なし（必須）** | SRv6 エンドポイント動作（下表参照）。省略または不正値はエラー |
-| `vrf` | string | `""` (action 依存) | デカプセル VRF 名。`"default"` で global VRF。VRF 不要な action では無視 |
+| `vrf` | string | `""` (action 依存) | デカプセル [VRF](../../reference/glossary.md#term-vrf) 名。`"default"` で global [VRF](../../reference/glossary.md#term-vrf)。[VRF](../../reference/glossary.md#term-vrf) 不要な action では無視 |
 | `adj` | string (カンマ区切り) | `""` (action 依存) | L3 Adjacency（nexthop アドレス）。nexthop 不要な action では無視 |
 
 #### action 有効値と VRF/nexthop 要否
@@ -267,7 +258,7 @@ SRV6_MY_SID_TABLE|<block_len>:<node_len>:<func_len>:<args_len>:<sid_ipv6_addr>
 > 根拠: `srv6orch.cpp` 行 41-71, 1384-1430, 2204-2248 の全行精読。
 > evidence: `meta/_intermediate/cdb-flow/srv6-orch-defaults.md`
 
-| フィールド | YANG default | コード fallback | 実効デフォルト |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード fallback | 実効デフォルト |
 |-----------|-------------|----------------|--------------|
 | `action` | N/A (APP_DB) | 省略・不正値 → エラー return | **省略不可** |
 | `vrf` | N/A | `""` → action 不要時は無視。必要 action で空 → VRF 解決失敗 | action 依存（`"default"` を推奨） |
@@ -284,11 +275,11 @@ SRV6_MY_SID_TABLE|<block_len>:<node_len>:<func_len>:<args_len>:<sid_ipv6_addr>
 nexthop が未解決時、`m_pendingSRv6MySIDEntries` に保留し (`srv6orch.cpp:1532-1542`)、
 NeighOrch から neighbor 追加通知を受けた際に自動で再インストールを試みる。
 
-**`un` / `udt46` の IPinIP トンネル自動生成**:
+**`un` / `udt46` の [IPinIP](../../reference/glossary.md#term-ipinip) トンネル自動生成**:
 `mySidTunnelRequired()` (`srv6orch.cpp:1417-1429`) により、`un` / `udt46` で
 `decap_dscp_mode` が CONFIG_DB (`SRV6_MY_SIDS`) に設定されている場合のみ
-IPinIP トンネル (`SAI_TUNNEL_TYPE_IPINIP`) を自動生成する。
-DSCP mode 未設定時はトンネルを生成しない (`boost::none` 判定)。
+[IPinIP](../../reference/glossary.md#term-ipinip) トンネル (`SAI_TUNNEL_TYPE_IPINIP`) を自動生成する。
+[DSCP](../../reference/glossary.md#term-dscp) mode 未設定時はトンネルを生成しない (`boost::none` 判定)。
 <!-- /defaults -->
 
 ---
@@ -316,7 +307,7 @@ PIC_CONTEXT_TABLE|<context_id>
 > 根拠: `srv6orch.cpp` 行 2272-2343 の全行精読。
 > evidence: `meta/_intermediate/cdb-flow/srv6-orch-defaults.md`
 
-| フィールド | YANG default | コード fallback | 実効デフォルト |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード fallback | 実効デフォルト |
 |-----------|-------------|----------------|--------------|
 | `nexthop` | N/A (APP_DB) | 省略時は空ベクタ | 空（整合性エラーなし） |
 | `vpn_sid` | N/A | 省略時は空ベクタ | 空（整合性エラーなし） |
@@ -339,16 +330,16 @@ VPN ごとに内部識別子 `prefix_agg_id` を `getAggId()` で採番 (`srv6or
 
 ## Overlay RIF と IPinIP トンネルのデフォルト
 
-MySID の `un` / `udt46` で IPinIP トンネルを使用する際、内部で自動生成される SAI オブジェクトに
+MySID の `un` / `udt46` で [IPinIP](../../reference/glossary.md#term-ipinip) トンネルを使用する際、内部で自動生成される SAI オブジェクトに
 以下のハードコード値が使用される（`srv6orch.cpp:486-548`）:
 
 | 属性 | 値 | 根拠 |
 |------|----|------|
-| Overlay RIF MTU | `9100` (`OVERLAY_RIF_DEFAULT_MTU`) | `srv6orch.cpp:20` |
+| Overlay [RIF](../../reference/glossary.md#term-rif) MTU | `9100` (`OVERLAY_RIF_DEFAULT_MTU`) | `srv6orch.cpp:20` |
 | Tunnel type | `SAI_TUNNEL_TYPE_IPINIP` | `srv6orch.cpp:515` |
 | Peer mode | `SAI_TUNNEL_PEER_MODE_P2MP` | `srv6orch.cpp:527` |
 | Decap TTL mode | `SAI_TUNNEL_TTL_MODE_PIPE_MODEL` | `srv6orch.cpp:535` |
-| Decap DSCP mode | CONFIG_DB の `decap_dscp_mode` 値 | `srv6orch.cpp:530-532` |
+| Decap [DSCP](../../reference/glossary.md#term-dscp) mode | CONFIG_DB の `decap_dscp_mode` 値 | `srv6orch.cpp:530-532` |
 
 <!-- ordering -->
 ## 処理順序と依存関係（Phase B 解析）
@@ -382,7 +373,7 @@ MySID の `un` / `udt46` で IPinIP トンネルを使用する際、内部で�
 
 | テーブル | 条件 | 挙動 |
 |---------|------|------|
-| `SRV6_MY_SIDS` (bgpcfgd 経由) | ロケータが `SRV6_MY_LOCATORS` に未登録 | `deps` サブスクリプションで保留、ロケータ登録後に自動再試行 (`managers_srv6.py:62–68`) |
+| `SRV6_MY_SIDS` ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 経由) | ロケータが `SRV6_MY_LOCATORS` に未登録 | `deps` サブスクリプションで保留、ロケータ登録後に自動再試行 (`managers_srv6.py:62–68`) |
 | `SRV6_MY_SID_TABLE` (VRF 系 action) | `m_vrfOrch->isVRFexists()` が false | 即時失敗（`return false`）、ペンディング機構なし (`srv6orch.cpp:1500`) |
 | `SRV6_MY_SID_TABLE` (nexthop 系 action) | `m_neighOrch->hasNextHop()` が false | `m_pendingSRv6MySIDEntries` に登録、neighbor ADD 通知で自動再インストール (`srv6orch.cpp:1532–1542`) |
 | `SRV6_SID_LIST_TABLE` DEL | `nexthops.size() > 0` | `task_need_retry`（参照 nexthop が残っている間はリトライ） |
@@ -392,7 +383,7 @@ MySID の `un` / `udt46` で IPinIP トンネルを使用する際、内部で�
 
 `un` / `udt46` アクションで IPinIP トンネルを自動生成するには、CONFIG_DB `SRV6_MY_SIDS` の
 `decap_dscp_mode` が設定されている必要がある（`mySidTunnelRequired()` の `dscp_mode.has_value()` 判定）。
-`decap_dscp_mode` 未設定時はトンネルを生成せず、Overlay RIF も作成されない。
+`decap_dscp_mode` 未設定時はトンネルを生成せず、Overlay [RIF](../../reference/glossary.md#term-rif) も作成されない。
 
 ### Warm-reboot 非対応
 
@@ -431,16 +422,16 @@ neighbor 変化（ADD / DEL）を `updateNeighbor(NeighborUpdate&)` で受け取
 
 - **neighbor ADD**: `m_pendingSRv6MySIDEntries` を走査し、解決できる MySID エントリを
   `createUpdateMysidEntry()` で再インストール試行する（`srv6orch.cpp:1212–1248`）。
-- **neighbor DEL**: 対象 nexthop を使用するインストール済み SID を ASIC から削除し
+- **neighbor DEL**: 対象 nexthop を使用するインストール済み SID を [ASIC](../../reference/glossary.md#term-asic) から削除し
   pending に差し戻す（`srv6orch.cpp:1197–1210`）。
-- ECMP adj（カンマ区切り複数アドレス）は `"ECMP adjacency not yet supported"` エラーで全拒否
+- [ECMP](../../reference/glossary.md#term-ecmp) adj（カンマ区切り複数アドレス）は `"ECMP adjacency not yet supported"` エラーで全拒否
   （`srv6orch.cpp:1516–1519`）。全プラットフォーム共通の実装制限。
 
 **CONFIG_DB 直接読み取りの詳細**:
 
 `SRV6_MY_LOCATORS` は `m_locatorCfgTable`、`SRV6_MY_SIDS` は `m_mysidCfgTable` で
 起動時に CONFIG_DB (dbId=4) へ直接接続する（`srv6orch.cpp:106–107`）。
-DSCP mode は `doTaskCfgMySidTable()` が keyspace 通知を受け取るたびにキャッシュを更新し、
+[DSCP](../../reference/glossary.md#term-dscp) mode は `doTaskCfgMySidTable()` が keyspace 通知を受け取るたびにキャッシュを更新し、
 `getMySidEntryDscpMode()` がキャッシュから解決する（逆引きロケータ照合を含む）。
 
 ### SRV6_SID_LIST_TABLE — nexthop 参照カウント
@@ -519,30 +510,30 @@ PIC_CONTEXT_TABLE (APP_DB)
 ## 副次 DB 書込 (Phase F)
 
 `SRV6_MY_SID_TABLE` の SET/DEL 処理後に `Srv6Orch` が書き込む副次テーブル一覧。
-`SRV6_SID_LIST_TABLE` / `PIC_CONTEXT_TABLE` 処理ではカウンタ管理・CRM 更新は行われない。
+`SRV6_SID_LIST_TABLE` / `PIC_CONTEXT_TABLE` 処理ではカウンタ管理・[CRM](../../reference/glossary.md#term-crm) 更新は行われない。
 
 > 詳細証跡: `meta/_intermediate/cdb-flow/srv6-side-effects.md`
 
 | 副次 DB | テーブル / キー | 操作 | 主要フィールド | evidence |
 |---------|----------------|------|---------------|----------|
-| COUNTERS_DB | `COUNTERS_SRV6_NAME_MAP` | hset / hdel | `<sid_prefix>` → `counter_oid` | `srv6orch.cpp:199,223` |
-| FLEX_COUNTER_DB | `SRV6_STAT_COUNTER:<oid>` | set / del | `SRV6_COUNTER_ID_LIST` = `SAI_COUNTER_STAT_PACKETS,SAI_COUNTER_STAT_BYTES` | `srv6orch.cpp:300,229` |
-| ASIC_DB | `VIDTORID` | hget (読み取りのみ) | VID→RID 解決確認（gTraditionalFlexCounter 有効時のみ） | `srv6orch.cpp:294` |
-| CRM (COUNTERS_DB) | `CRM_STATS` (CrmOrch 経由) | inc / dec | `CRM_SRV6_MY_SID_ENTRY` 使用カウンタ | `srv6orch.cpp:1612,1675` |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_SRV6_NAME_MAP` | hset / hdel | `<sid_prefix>` → `counter_oid` | `srv6orch.cpp:199,223` |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `SRV6_STAT_COUNTER:<oid>` | set / del | `SRV6_COUNTER_ID_LIST` = `SAI_COUNTER_STAT_PACKETS,SAI_COUNTER_STAT_BYTES` | `srv6orch.cpp:300,229` |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | `VIDTORID` | hget (読み取りのみ) | VID→RID 解決確認（gTraditionalFlexCounter 有効時のみ） | `srv6orch.cpp:294` |
+| [CRM](../../reference/glossary.md#term-crm) ([COUNTERS_DB](../../reference/glossary.md#term-counters_db)) | `CRM_STATS` (CrmOrch 経由) | inc / dec | `CRM_SRV6_MY_SID_ENTRY` 使用カウンタ | `srv6orch.cpp:1612,1675` |
 
-**COUNTERS_DB `COUNTERS_SRV6_NAME_MAP`**:
+**[COUNTERS_DB](../../reference/glossary.md#term-counters_db) `COUNTERS_SRV6_NAME_MAP`**:
 MY_SID 追加時に `addMySidCounter()` (`srv6orch.cpp:184-210`) が `m_mysid_counters_table->set("", fvs)` で書き込む。
 hash フィールドは `getMySidCounterKey()` が返す SID プレフィックス文字列（例: `fc00:0:1:1::/64`）、値は SAI counter OID のシリアライズ文字列。
 MY_SID 削除時は `removeMySidCounter()` が `m_mysid_counters_table->hdel("", key)` で削除。
 **条件**: `getMySidCountersSupported()` かつ `getMySidCountersEnabled()` が両方 true の場合のみ。
 起動時に `sai_query_attribute_capability()` (`srv6orch.cpp:147`) で SAI 能力を確認し、非対応プラットフォームでは全 counter 機能が無効化される。
 
-**FLEX_COUNTER_DB `SRV6_STAT_COUNTER`**:
+**[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) `SRV6_STAT_COUNTER`**:
 counter OID は一度 `m_pending_counters` に積まれ、`SRV6_FLEX_COUNTER_UPDATE_TIMER = 1` 秒タイマーが満了するたびに `doTask(SelectableTimer&)` を実行する。
-`gTraditionalFlexCounter` 有効時は ASIC_DB `VIDTORID` で VID→RID 変換が確認できた OID のみ FLEX_COUNTER_DB に登録し、未解決分は次周期に持ち越す。`m_pending_counters` が空になるとタイマーは自動停止する。
+`gTraditionalFlexCounter` 有効時は [ASIC_DB](../../reference/glossary.md#term-asic_db) `VIDTORID` で VID→RID 変換が確認できた OID のみ [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に登録し、未解決分は次周期に持ち越す。`m_pending_counters` が空になるとタイマーは自動停止する。
 グループ名: `SRV6_STAT_COUNTER` (`srv6orch.h:30`)、ポーリング間隔: 10 秒 (`srv6orch.cpp:27`)。
 
-**CRM カウンタ**:
+**[CRM](../../reference/glossary.md#term-crm) カウンタ**:
 `sai_srv6_api->create_my_sid_entry()` 成功後に `gCrmOrch->incCrmResUsedCounter(CRM_SRV6_MY_SID_ENTRY)` (`srv6orch.cpp:1612`)、
 `sai_srv6_api->remove_my_sid_entry()` 成功後に `decCrmResUsedCounter` (`srv6orch.cpp:1675`) を呼ぶ。
 CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（書き出し責務は `crmorch.cpp` 側）。
@@ -574,7 +565,7 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 | 不正な `action` 値 | `SWSS_LOG_ERROR("Invalid my_sid action %s")` → `return false` | エントリは SAI 未登録 |
 | VRF が CONFIG_DB に存在しない（DT 系） | `SWSS_LOG_ERROR("VRF %s doesn't exist in DB")` → `return false` | VRF を先に作成する必要あり |
 | VRF が DB に存在するが SAI OID が null | `SWSS_LOG_ERROR("VRF object not created for DT VRF %s")` → `return false` | VRF Orch の初期化待ち |
-| ECMP adjacency（`adj` にカンマ区切り複数指定） | `SWSS_LOG_ERROR("ECMP adjacency not yet supported")` → `return false` | 現行実装では単一 adj のみ対応 |
+| [ECMP](../../reference/glossary.md#term-ecmp) adjacency（`adj` にカンマ区切り複数指定） | `SWSS_LOG_ERROR("ECMP adjacency not yet supported")` → `return false` | 現行実装では単一 adj のみ対応 |
 | `adj` が NeighOrch に未解決 | `m_pendingSRv6MySIDEntries` に保留 → `return false` | neighbor ADD で自動再インストール |
 | IPinIP トンネル作成失敗（`un`/`udt46`） | `SWSS_LOG_ERROR("Failed to create MySID IPinIP tunnel: %d")` → ロールバック後 `return false` | tunnel term entry 失敗時も `removeMySidIpInIpTunnel()` を呼び部分ロールバック |
 | ロケータが CONFIG_DB に存在しない | `SWSS_LOG_ERROR("Failed to get the SRv6 locator %s - not present in the CONFIG_DB")` | IPinIP tunnel DSCP 解決不可 |
@@ -588,7 +579,7 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 1. `adj` に指定された nexthop が NeighOrch に未解決の場合、エントリを `m_pendingSRv6MySIDEntries` に保留する（`srv6orch.cpp:1532-1542`）。
 2. NeighOrch から neighbor ADD 通知が届いた時点で `updateNeighbor()` が `createUpdateMysidEntry()` を再呼び出しする（`srv6orch.cpp:1236-1248`）。
 3. 再インストールも失敗した場合はエントリを pending に残したまま `continue`（ループ継続）。
-4. neighbor DELETE 通知時は、インストール済み SID を ASIC から削除して pending に戻す（`srv6orch.cpp:1197-1210`）。
+4. neighbor DELETE 通知時は、インストール済み SID を [ASIC](../../reference/glossary.md#term-asic) から削除して pending に戻す（`srv6orch.cpp:1197-1210`）。
 
 ### PIC_CONTEXT_TABLE の失敗ケース
 
@@ -639,7 +630,7 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 | 定数名 | 値 | 用途 |
 |--------|-----|------|
 | `ADJ_DELIMITER` | `','` | `adj` フィールドの複数 nexthop 区切り文字 |
-| `OVERLAY_RIF_DEFAULT_MTU` | `9100` | IpInIp Decap 用オーバーレイ RIF の MTU (bytes) |
+| `OVERLAY_RIF_DEFAULT_MTU` | `9100` | IpInIp Decap 用オーバーレイ [RIF](../../reference/glossary.md#term-rif) の MTU (bytes) |
 | `LOCATOR_DEFAULT_BLOCK_LEN` | `"32"` | ロケータ block 長のデフォルト値 (bits) |
 | `LOCATOR_DEFAULT_NODE_LEN` | `"16"` | ロケータ node 長のデフォルト値 (bits) |
 | `LOCATOR_DEFAULT_FUNC_LEN` | `"16"` | ロケータ function 長のデフォルト値 (bits) |
@@ -732,7 +723,7 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 <!-- platform -->
 ## プラットフォーム差分 (Phase H)
 
-> 根拠: `srv6orch.cpp` (rev 4305596156d70e9797e8a881b3d19b46de0bce0d) 全行精読、`sonic-sairedis/syncd/VendorSai.cpp`、`sonic-sairedis/vslib/vpp/SwitchVppSRv6.cpp`、SONiC HLD `doc/srv6/srv6_hld.md`、`SRv6_uSID.md`、`srv6_sid_l3adj.md`。
+> 根拠: `srv6orch.cpp` (rev 4305596156d70e9797e8a881b3d19b46de0bce0d) 全行精読、`sonic-sairedis/syncd/VendorSai.cpp`、`sonic-sairedis/vslib/vpp/SwitchVppSRv6.cpp`、[SONiC](../../reference/glossary.md#term-sonic) [HLD](../../reference/glossary.md#term-hld) `doc/srv6/srv6_hld.md`、`SRv6_uSID.md`、`srv6_sid_l3adj.md`。
 > evidence: `meta/_intermediate/cdb-flow/srv6-platform.md`
 
 ### SAI capability — MySID カウンタ非対応 ASIC
@@ -740,7 +731,7 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 `Srv6Orch::initializeCounters()`（`srv6orch.cpp:120-142`）は起動時に
 `sai_query_attribute_capability(gSwitchId, SAI_OBJECT_TYPE_MY_SID_ENTRY, SAI_MY_SID_ENTRY_ATTR_COUNTER_ID, &capability)`
 を実行し（`srv6orch.cpp:147`）、`capability.set_implemented && capability.create_implemented` が
-`false` の場合は FlexCounter 初期化全体をスキップする。
+`false` の場合は [FlexCounter](../../reference/glossary.md#term-flexcounter) 初期化全体をスキップする。
 
 該当 ASIC での挙動:
 
@@ -751,7 +742,7 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 | 起動ログ | `"SRv6 counters are not supported on this platform"` (`srv6orch.cpp:125`) |
 | カウンタ変更要求ログ | `"Ignoring SRv6 counters state change as they are not supported on this platform"` (`srv6orch.cpp:257`) |
 
-SONiC は特定ベンダー名（Mellanox / Broadcom 等）を直接判別せず、SAI capability query の結果のみで動的に判断する。
+[SONiC](../../reference/glossary.md#term-sonic) は特定ベンダー名（Mellanox / Broadcom 等）を直接判別せず、SAI capability query の結果のみで動的に判断する。
 
 ### SID List タイプの ASIC 非対応
 
@@ -771,19 +762,19 @@ SAI 仕様では `SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN` / `_UA` 等として定
 
 `adj` フィールドがカンマ区切りの複数アドレスを持つ場合、`srv6orch.cpp:1516-1519` で
 `"ECMP adjacency not yet supported"` エラーを返し処理を拒否する。
-これは ASIC 能力に依存しない orchagent の実装制限であり、全プラットフォームで同様。
+これは ASIC 能力に依存しない [orchagent](../../reference/glossary.md#term-orchagent) の実装制限であり、全プラットフォームで同様。
 
 ### VOQ Chassis
 
-`srv6orch.cpp` に VOQ Chassis 固有の分岐コードは存在しない。処理ロジックはスタンドアロン構成と共通。
-ただし VOQ Chassis では NeighOrch が返す nexthop の実体が NPU 間 system port 経由になるため、
+`srv6orch.cpp` に [VOQ](../../reference/glossary.md#term-voq) Chassis 固有の分岐コードは存在しない。処理ロジックはスタンドアロン構成と共通。
+ただし [VOQ](../../reference/glossary.md#term-voq) Chassis では NeighOrch が返す nexthop の実体が [NPU](../../reference/glossary.md#term-npu) 間 system port 経由になるため、
 `end.x` / `ua` / `end.dx*` 等の `adj` 解決が遅れる場合があり、
 `m_pendingSRv6MySIDEntries` への保留期間が延びる可能性がある。
 
 ### SmartSwitch DPU
 
 `srv6orch.cpp` に `switch_type == "dpu"` 固有の分岐は存在しない。
-DPU は独立した SONiC インスタンスとして動作し、SRv6 サポートは DPU 側 SAI 実装に依存する。
+[DPU](../../reference/glossary.md#term-dpu) は独立した [SONiC](../../reference/glossary.md#term-sonic) インスタンスとして動作し、SRv6 サポートは [DPU](../../reference/glossary.md#term-dpu) 側 SAI 実装に依存する。
 
 ### VPP ソフトウェアスイッチ
 
@@ -794,4 +785,6 @@ VPP には SID リストの最大エントリ数 16 の制約がある（`Switch
 <!-- /platform -->
 
 [^1]: `sonic-swss/orchagent/srv6orch.cpp` (revision 4305596156d70e9797e8a881b3d19b46de0bce0d) より。
-[^2]: SRv6 uSID HLD: <https://github.com/sonic-net/SONiC/blob/master/doc/srv6/SRv6_uSID.md>
+[^2]: SRv6 uSID [HLD](../../reference/glossary.md#term-hld): <https://github.com/sonic-net/SONiC/blob/master/doc/srv6/SRv6_uSID.md>
+
+<!-- glossary-links-injected: 9ae8d7c3a50b -->

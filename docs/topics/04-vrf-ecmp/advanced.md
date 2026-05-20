@@ -44,7 +44,7 @@ related:
 
 - **概念とアーキテクチャ**は本章の [concept](concept.md) / [architecture](architecture.md) と、area HLD の [sonic-vrf-support-design-spec-draft](../../routing/sonic-vrf-support-design-spec-draft.md), [sonic-management-vrf-design-document-201911-release](../../routing/sonic-management-vrf-design-document-201911-release.md), [sonic-weighted-ecmp](../../routing/sonic-weighted-ecmp.md) で完結する。
 - **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `config vrf` 系コマンド、[reference/config_db/VRF](../../reference/config-db/index.md), `MGMT_VRF_CONFIG`, `INTERFACE`, `ROUTE` に集約されている。
-- **本ページ**は基本 VRF/RIF/route を押さえた読者向けに、VRRP / SAG / TSA / NHG scale / WCMP / VRF leaking / fine-grained ECMP といった発展領域だけを扱う。
+- **本ページ**は基本 VRF/RIF/route を押さえた読者向けに、[VRRP](../../reference/glossary.md#term-vrrp) / SAG / TSA / NHG scale / WCMP / VRF leaking / fine-grained ECMP といった発展領域だけを扱う。
 
 ## Fine-Grained ECMP と Weighted ECMP
 
@@ -54,7 +54,7 @@ Weighted ECMP (`sonic-weighted-ecmp`) は member ごとに weight を持つ点�
 
 ## VRRP は interface と VRF の冗長化
 
-VRRP は、複数ルータが 1 つの仮想 router address を共有し、Master 障害時に Backup が引き継ぐ L3 冗長プロトコルです。SONiC では Ethernet、[VLAN](../../reference/glossary.md#term-vlan)、sub-interface、[PortChannel](../../reference/glossary.md#term-portchannel)、non-default VRF が関係します。
+VRRP は、複数ルータが 1 つの仮想 router address を共有し、Master 障害時に Backup が引き継ぐ L3 冗長プロトコルです。[SONiC](../../reference/glossary.md#term-sonic) では Ethernet、[VLAN](../../reference/glossary.md#term-vlan)、sub-interface、[PortChannel](../../reference/glossary.md#term-portchannel)、non-default VRF が関係します。
 
 この章の前提で見るなら、VRRP は「どの L3 interface / VRF 上で VIP と VMAC を扱うか」「[FRR](../../reference/glossary.md#term-frr) vrrpd と [CONFIG_DB](../../reference/glossary.md#term-config_db) がどう連携するか」の機能です。詳細は [VRRP](../../routing/virtual-router-redundancy-protocol-adaptation-hld.md) を参照してください。
 
@@ -90,7 +90,7 @@ VoQ Chassis では Supervisor と Line Card の TSA 状態同期が課題にな�
 
 VRF / NHG / route の基本動作を超えた領域では、scale 改善と障害収束の最適化が主題になる。
 
-- **NHG ([Next Hop Group](../../reference/glossary.md#term-next-hop-group)) スケール拡張**: ECMP/WCMP の path 数を増やすほど [SAI](../../reference/glossary.md#term-sai) / ASIC のリソースを食う。SONiC では NHG を route 間で共有して resource 消費を抑えるが、shared NHG の更新中に flap が出ないよう [orchagent](../../reference/glossary.md#term-orchagent) が swap 戦略を持つ。
+- **NHG ([Next Hop Group](../../reference/glossary.md#term-next-hop-group)) スケール拡張**: ECMP/WCMP の path 数を増やすほど [SAI](../../reference/glossary.md#term-sai) / [ASIC](../../reference/glossary.md#term-asic) のリソースを食う。SONiC では NHG を route 間で共有して resource 消費を抑えるが、shared NHG の更新中に flap が出ないよう [orchagent](../../reference/glossary.md#term-orchagent) が swap 戦略を持つ。
 - **WCMP (Weighted ECMP)**: SAI の `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_WEIGHT` を使い、capacity の異なる link でも均等に近づける配分が可能。SONiC では特定 ASIC でのみ実用に乗っている段階。
 - **VRF leaking**: 同一 SONiC 内で複数 VRF 間に route を leak する設計。FRR の `import vrf` 設定と SONiC の `VRF` テーブルの組み合わせで実現。route-target で leak 範囲を絞る。
 - **管理用 VRF (mgmt VRF)**: `MGMT_VRF_CONFIG` で management 経路と data plane 経路を完全分離。telemetry / NTP / DNS / [SNMP](../../reference/glossary.md#term-snmp) の `bind-to-vrf` を確認する。
@@ -134,4 +134,4 @@ VRF / NHG / route の基本動作を超えた領域では、scale 改善と障�
 - VRF leaking の検証は `sonic-mgmt` の `vrf` test suite で network namespace を分けたシナリオを再現できる。leak 経路の `next-hop-vrf <other>` 設定と FIB 上の経路存在を `show ip route vrf <name>` で確認する。
 - WCMP の動作は `wcmp_manager` の weight 反映遅延を計測することで実機差を見える化できる。SAI vendor によっては bucket resize が atomic でなく数 ms の transient loss を伴う。
 
-<!-- glossary-links-injected: 0e4b2dbde8e1 -->
+<!-- glossary-links-injected: f08c435ee15d -->

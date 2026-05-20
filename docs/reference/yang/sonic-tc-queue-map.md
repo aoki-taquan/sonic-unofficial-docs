@@ -29,7 +29,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-tc-queue-map`
 
-TC_TO_QUEUE_MAP yang Module for SONiC OS[^1]
+TC_TO_QUEUE_MAP yang Module for [SONiC](../../reference/glossary.md#term-sonic) OS[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -147,4 +147,4 @@ show qos map tc-queue
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

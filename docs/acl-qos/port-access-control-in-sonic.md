@@ -47,7 +47,7 @@ related:
 
 ## 概要
 
-物理ポート単位の **クライアント認証** （IEEE 802.1x + MAB）を SONiC に持ち込む機能[^1]。RADIUS で外部 [AAA](../reference/glossary.md#term-aaa) サーバに問合せ、結果に応じて当該 MAC をポートに「authorized / unauthorized」状態で許可する。authorized クライアントを [VLAN](../reference/glossary.md#term-vlan) に動的に割り当てる（VLAN assignment）こともできる。
+物理ポート単位の **クライアント認証** （IEEE 802.1x + MAB）を [SONiC](../reference/glossary.md#term-sonic) に持ち込む機能[^1]。[RADIUS](../reference/glossary.md#term-radius) で外部 [AAA](../reference/glossary.md#term-aaa) サーバに問合せ、結果に応じて当該 MAC をポートに「authorized / unauthorized」状態で許可する。authorized クライアントを [VLAN](../reference/glossary.md#term-vlan) に動的に割り当てる（VLAN assignment）こともできる。
 
 要点:
 
@@ -105,7 +105,7 @@ RADIUS_SERVER|<server-ip>:
   auth_port, key, priority, ...
 ```
 
-`STATE_DB` に client / port の authorized 状態と認証方式（dot1x / mab）を出す[^1]。
+`STATE_DB` に client / port の authorized 状態と認証方式（[dot1x](../reference/glossary.md#term-dot1x) / mab）を出す[^1]。
 
 ### SAI 影響
 
@@ -244,4 +244,4 @@ sudo grep -Ei 'hostapd|pac' /var/log/syslog | tail -50
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: 1c626534d7ce -->

@@ -31,9 +31,9 @@ hard: 0
 
 ## 概要
 
-`ROUTE_REDISTRIBUTE` は [BGP](../../reference/glossary.md#term-bgp) へのルート再配布設定を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。ソースプロトコル (`src_protocol`)、宛先プロトコル (`dst_protocol`)、アドレスファミリ (`address_family`) の 3 軸で 1 エントリを構成し、[FRR](../../reference/glossary.md#term-frr) vtysh の `redistribute <src_proto>` コマンド生成をトリガーする[^1]。
+`ROUTE_REDISTRIBUTE` は [BGP](../../reference/glossary.md#term-bgp) へのルート再配布設定を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。ソースプロトコル (`src_protocol`)、宛先プロトコル (`dst_protocol`)、アドレスファミリ (`address_family`) の 3 軸で 1 エントリを構成し、[FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) の `redistribute <src_proto>` コマンド生成をトリガーする[^1]。
 
-`frrcfgd` が CONFIG_DB の `ROUTE_REDISTRIBUTE` テーブルを購読し、VRF ごとの BGP インスタンスに `address-family ipv4/ipv6 unicast` ブロック内で `redistribute <src>` コマンドを発行する[^2]。
+`frrcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `ROUTE_REDISTRIBUTE` テーブルを購読し、[VRF](../../reference/glossary.md#term-vrf) ごとの [BGP](../../reference/glossary.md#term-bgp) インスタンスに `address-family ipv4/ipv6 unicast` ブロック内で `redistribute <src>` コマンドを発行する[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -58,7 +58,7 @@ ROUTE_REDISTRIBUTE|<vrf_name>|<src_protocol>|<dst_protocol>|<address_family>
 
 | フィールド | 説明 |
 |-----------|------|
-| `<vrf_name>` | 対象 VRF 名（`default` または VRF 名） |
+| `<vrf_name>` | 対象 [VRF](../../reference/glossary.md#term-vrf) 名（`default` または [VRF](../../reference/glossary.md#term-vrf) 名） |
 | `<src_protocol>` | 再配布元プロトコル enum |
 | `<dst_protocol>` | 再配布先プロトコル enum（`bgp` 固定） |
 | `<address_family>` | アドレスファミリ enum（`ipv4` / `ipv6`） |
@@ -73,7 +73,7 @@ ROUTE_REDISTRIBUTE|<vrf_name>|<src_protocol>|<dst_protocol>|<address_family>
 
 ## 購読者
 
-- `frrcfgd`: CONFIG_DB `ROUTE_REDISTRIBUTE` を購読し、`bgpd` へ FRR vtysh コマンドを発行する。`dst_protocol != 'bgp'` の場合は `log_err` で拒否してスキップする[^2]。
+- `frrcfgd`: CONFIG_DB `ROUTE_REDISTRIBUTE` を購読し、`bgpd` へ [FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) コマンドを発行する。`dst_protocol != 'bgp'` の場合は `log_err` で拒否してスキップする[^2]。
 - `bgpd` ([FRR](../../reference/glossary.md#term-frr)): `address-family <af> unicast` コンテキスト内の `redistribute <src>` を受け取り、経路選択に反映する。
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -139,7 +139,7 @@ ROUTE_REDISTRIBUTE|<vrf_name>|<src_protocol>|<dst_protocol>|<address_family>
 
 ### frrcfgd — ConfigDBConnector.subscribe() (keyspace 通知)
 
-`frrcfgd` は `ExtConfigDBConnector`（`swsscommon.ConfigDBConnector` のサブクラス）の `subscribe()` メソッドで `ROUTE_REDISTRIBUTE` ハンドラを登録し、Redis keyspace 通知を使用する。`ConsumerStateTable` / `PUBLISH` 形式は使用しない。
+`frrcfgd` は `ExtConfigDBConnector`（`swsscommon.ConfigDBConnector` のサブクラス）の `subscribe()` メソッドで `ROUTE_REDISTRIBUTE` ハンドラを登録し、[Redis](../../reference/glossary.md#term-redis) keyspace 通知を使用する。`ConsumerStateTable` / `PUBLISH` 形式は使用しない。
 
 | 項目 | 値 |
 |------|-----|
@@ -156,7 +156,7 @@ ROUTE_REDISTRIBUTE|<vrf_name>|<src_protocol>|<dst_protocol>|<address_family>
 2. `af == 'ipv6' and src_proto == 'ospf3'` の場合 `src_proto = 'ospf6'` に変換
 3. `dst_proto != 'bgp'` の場合 `LOG_ERR` 出力して skip
 4. `cmd_prefix = ['configure terminal', 'router bgp <asn> vrf <vrf>', 'address-family <af> unicast']` を生成
-5. `key_map.run_command()` → `__run_command()` → `g_run_command()` → `bgpd_client.run_vtysh_command()` で vtysh 実行
+5. `key_map.run_command()` → `__run_command()` → `g_run_command()` → `bgpd_client.run_vtysh_command()` で [vtysh](../../reference/glossary.md#term-vtysh) 実行
 
 生成 vtysh コマンド例（connected を IPv4 unicast に再配布）:
 
@@ -175,19 +175,19 @@ vtysh -c "configure terminal"
 
 ### bgpcfgd — SubscriberStateTable (STATIC_ROUTE 経由)
 
-`bgpcfgd` は `ROUTE_REDISTRIBUTE` テーブルを**直接購読しない**。`STATIC_ROUTE` テーブルを `swsscommon.SubscriberStateTable` で購読し、静的経路の追加・削除をトリガーに `redistribute static route-map STATIC_ROUTE_FILTER` を BGP に設定する。
+`bgpcfgd` は `ROUTE_REDISTRIBUTE` テーブルを**直接購読しない**。`STATIC_ROUTE` テーブルを `swsscommon.SubscriberStateTable` で購読し、静的経路の追加・削除をトリガーに `redistribute static route-map STATIC_ROUTE_FILTER` を [BGP](../../reference/glossary.md#term-bgp) に設定する。
 
 | 項目 | 値 |
 |------|-----|
 | 購読 API | `swsscommon.SubscriberStateTable` (channel 通知) |
-| 購読テーブル | `STATIC_ROUTE` (CONFIG_DB + APPL_DB) |
+| 購読テーブル | `STATIC_ROUTE` (CONFIG_DB + [APPL_DB](../../reference/glossary.md#term-appl_db)) |
 | ハンドラ | `StaticRouteMgr.handler()` |
 | FRR 送出方法 | `cfg_mgr.push_list()` → `vtysh -f <tmpfile>` (バッチ) |
 | 自動生成 route-map | `STATIC_ROUTE_FILTER permit 10` (固定) |
 
 `SubscriberStateTable` は `swsscommon` の Consumer/Producer channel パターンを使用し、`swsscommon.Select` / `selector.select()` でイベントを待機する。
 
-| 比較項目 | frrcfgd | bgpcfgd |
+| 比較項目 | frrcfgd | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) |
 |---------|---------|---------|
 | 購読 API | `ConfigDBConnector.subscribe()` (keyspace 通知) | `SubscriberStateTable` (channel 通知) |
 | 購読テーブル | `ROUTE_REDISTRIBUTE` | `STATIC_ROUTE` |
@@ -218,7 +218,6 @@ vtysh -c "configure terminal"
 
 [^1]: frrcfgd ROUTE_REDISTRIBUTE ハンドラ: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` L3149-3168. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py>
 [^2]: frrcfgd route_redist_key_map: `frrcfgd.py` L1979-1980. `route_redist_key_map = [(['protocol', '++metric', '+route_map'], '{no:no-prefix}redistribute {} {:redist-metric} {:redist-route-map}', hdl_route_redist_set)]`
-[^3]: bgpcfgd static redistribution: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py` L221-252. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py>
 
 <!-- constants -->
 ## ハードコード定数 (Phase E)
@@ -232,7 +231,7 @@ vtysh -c "configure terminal"
 | 値 | FRR redistribute 対象 | 備考 | evidence |
 |----|----------------------|------|---------|
 | `connected` | 直接接続経路 | `redistribute_connected` フィールド経由でも生成される | frrcfgd.py L1833 |
-| `static` | 静的経路 | STATIC_ROUTE テーブル更新時に bgpcfgd が `STATIC_ROUTE_FILTER` route-map とともに自動生成 | managers_static_rt.py L233 |
+| `static` | 静的経路 | STATIC_ROUTE テーブル更新時に [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が `STATIC_ROUTE_FILTER` route-map とともに自動生成 | managers_static_rt.py L233 |
 | `ospf` | OSPFv2 経路 | af=`ipv4` の場合にそのまま `redistribute ospf` として FRR へ | frrcfgd.py L3150 |
 | `ospf3` | OSPFv3 経路 (CONFIG_DB 値) | af=`ipv6` のとき FRR コマンド生成前に `ospf6` へ変換 | frrcfgd.py L3151-3152 |
 | `kernel` | カーネル経路 | Jinja2 テンプレートの redistribute ブロックで使用 | bgpd.conf.db.addr_family.j2 L69 |
@@ -292,7 +291,7 @@ STATIC_ROUTE テーブル変更時に `bgpcfgd` が自動生成する FRR コマ
 > **調査根拠**: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3149-3168,1330-1341,1979-1980`; `sonic-swss/fpmsyncd/routesync.cpp:156,1433`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_static_rt.py:220-248` (2026-05-18)
 > 詳細証跡: `meta/_intermediate/cdb-flow/route-redistribute-side-effects.md`
 
-`ROUTE_REDISTRIBUTE` の SET / DEL は frrcfgd → FRR bgpd → zebra → fpmsyncd → APPL_DB → orchagent という連鎖を引き起こす。frrcfgd 自身は CONFIG_DB 以外の DB に書き込まない。
+`ROUTE_REDISTRIBUTE` の SET / DEL は frrcfgd → FRR bgpd → [zebra](../../reference/glossary.md#term-zebra) → [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) → [APPL_DB](../../reference/glossary.md#term-appl_db) → [orchagent](../../reference/glossary.md#term-orchagent) という連鎖を引き起こす。frrcfgd 自身は CONFIG_DB 以外の DB に書き込まない。
 
 ### 連鎖変更マップ
 
@@ -323,11 +322,11 @@ bgpd が redistribution で新規経路を学習すると、確立済みの BGP 
 
 ### 3. zebra → カーネル routing table
 
-bgpd が best-path 選択した経路を zebra に通知し、zebra がカーネルの routing table に経路を追加 / 削除する（`ip route` / `ip -6 route`）。この動作も frrcfgd の管理外（FRR 内部）。
+bgpd が best-path 選択した経路を [zebra](../../reference/glossary.md#term-zebra) に通知し、[zebra](../../reference/glossary.md#term-zebra) がカーネルの routing table に経路を追加 / 削除する（`ip route` / `ip -6 route`）。この動作も frrcfgd の管理外（FRR 内部）。
 
 ### 4. fpmsyncd → APPL_DB:ROUTE_TABLE
 
-zebra は FPM プロトコルで経路変化を fpmsyncd に通知する。fpmsyncd は `ProducerStateTable` 経由で `APPL_DB:ROUTE_TABLE` に経路を書き込む。
+zebra は [FPM](../../reference/glossary.md#term-fpm) プロトコルで経路変化を [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) に通知する。[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) は `ProducerStateTable` 経由で `APPL_DB:ROUTE_TABLE` に経路を書き込む。
 
 ```
 zebra (FPM) → fpmsyncd → APPL_DB:ROUTE_TABLE (ProducerStateTable)
@@ -337,7 +336,7 @@ evidence: `routesync.cpp:156` (`m_routeTable = createProducerStateTable(APP_ROUT
 
 ### 5. orchagent → SAI/ASIC FIB
 
-orchagent は `APPL_DB:ROUTE_TABLE` を購読し、SAI API 経由で ASIC の FIB エントリを更新する。ROUTE_REDISTRIBUTE の変更は最終的にデータプレーン転送経路の追加 / 削除につながる。
+[orchagent](../../reference/glossary.md#term-orchagent) は `APPL_DB:ROUTE_TABLE` を購読し、[SAI](../../reference/glossary.md#term-sai) API 経由で [ASIC](../../reference/glossary.md#term-asic) の FIB エントリを更新する。ROUTE_REDISTRIBUTE の変更は最終的にデータプレーン転送経路の追加 / 削除につながる。
 
 ### 6. bgpcfgd の STATIC_ROUTE 自動 redistribute（独立経路）
 
@@ -345,7 +344,7 @@ orchagent は `APPL_DB:ROUTE_TABLE` を購読し、SAI API 経由で ASIC の FI
 
 ### frrcfgd が書き込まない DB
 
-frrcfgd は処理結果を CONFIG_DB 以外のいかなる DB にも書き込まない。エラー発生時は syslog (LOG_ERR) のみで通知される。STATE_DB へのステータス書き込みなし。
+frrcfgd は処理結果を CONFIG_DB 以外のいかなる DB にも書き込まない。エラー発生時は syslog (LOG_ERR) のみで通知される。[STATE_DB](../../reference/glossary.md#term-state_db) へのステータス書き込みなし。
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:3149-3168L (ROUTE_REDISTRIBUTE ハンドラ) -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:1330-1341L (hdl_route_redist_set, no-prefix 先行) -->
@@ -430,7 +429,7 @@ router bgp <local_asn> vrf <vrf>
 ### ROUTE_MAP への暗黙参照
 
 `route_map` フィールドは `sonic-route-common.yang` で `ROUTE_MAP_SET_LIST` への leafref として定義されており、
-YANG バリデーションにより参照先の存在が保証される。
+[YANG](../../reference/glossary.md#term-yang) バリデーションにより参照先の存在が保証される。
 
 `frrcfgd` の `route_redist_key_map` はこれを `redistribute <proto> route-map <name>` コマンドに展開する
 (`frrcfgd.py` L1979-1980)。SET 操作前に `no redistribute <proto>` を先行発行して冪等性を確保する
@@ -440,7 +439,7 @@ YANG バリデーションにより参照先の存在が保証される。
 |-----------|--------|------|
 | `ROUTE_REDISTRIBUTE` 全エントリ | `BGP_GLOBALS|<vrf>|local_asn` | 実行前提（未設定時は保留） |
 | `ROUTE_REDISTRIBUTE` 全エントリ | `BGP_GLOBALS|<vrf>|local_asn` 設定イベント | 再適用トリガー |
-| `ROUTE_REDISTRIBUTE|…|route_map` | `ROUTE_MAP_SET|<name>` | YANG leafref + FRR redistribute コマンド展開 |
+| `ROUTE_REDISTRIBUTE|…|route_map` | `ROUTE_MAP_SET|<name>` | [YANG](../../reference/glossary.md#term-yang) leafref + FRR redistribute コマンド展開 |
 
 <!-- /cross-refs -->
 
@@ -453,21 +452,21 @@ YANG バリデーションにより参照先の存在が保証される。
 
 ### FRR バージョン差
 
-`frrcfgd.py` および `managers_static_rt.py` に `frr_version` / `FRR_MAJOR` 等のバージョン条件分岐は存在しない。SONiC master は FRR バージョンをビルドシステムで統一するため実行時バージョン判定が不要。
+`frrcfgd.py` および `managers_static_rt.py` に `frr_version` / `FRR_MAJOR` 等のバージョン条件分岐は存在しない。[SONiC](../../reference/glossary.md#term-sonic) master は FRR バージョンをビルドシステムで統一するため実行時バージョン判定が不要。
 
 ### SmartSwitch
 
-SmartSwitch (DPU) 構成において、frrcfgd / bgpcfgd は NPU 側ホストで通常通り動作し、ROUTE_REDISTRIBUTE 処理ロジックに変更はない。SmartSwitch 固有の BGP 設定は別テーブル（`BGP_VOQ_CHASSIS_NEIGHBOR` 等）で管理される。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) ([DPU](../../reference/glossary.md#term-dpu)) 構成において、frrcfgd / [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は [NPU](../../reference/glossary.md#term-npu) 側ホストで通常通り動作し、ROUTE_REDISTRIBUTE 処理ロジックに変更はない。[SmartSwitch](../../reference/glossary.md#term-smartswitch) 固有の BGP 設定は別テーブル（`BGP_VOQ_CHASSIS_NEIGHBOR` 等）で管理される。
 
 ### VOQ chassis
 
-VOQ chassis の各 linecard では独立した frrcfgd / bgpcfgd が当該ホストの CONFIG_DB を購読する。ROUTE_REDISTRIBUTE はホストスコープの BGP 設定であり、chassis 集中管理の対象外。supervisor / linecard 間の TSA 同期 (`ChassisAppDbMgr`) は redistribute 設定に影響しない。
+[VOQ](../../reference/glossary.md#term-voq) chassis の各 linecard では独立した frrcfgd / bgpcfgd が当該ホストの CONFIG_DB を購読する。ROUTE_REDISTRIBUTE はホストスコープの BGP 設定であり、chassis 集中管理の対象外。supervisor / linecard 間の TSA 同期 (`ChassisAppDbMgr`) は redistribute 設定に影響しない。
 
 | プラットフォーム | 動作 | 備考 |
 |-----------------|------|------|
 | 標準 T0/T1/T2 | 変更なし | frrcfgd.py L3149–3168 |
-| VOQ chassis (linecard) | 変更なし | 各 linecard host が独立に処理 |
-| SmartSwitch (NPU 側) | 変更なし | DPU 固有経路は別テーブル |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (linecard) | 変更なし | 各 linecard host が独立に処理 |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([NPU](../../reference/glossary.md#term-npu) 側) | 変更なし | [DPU](../../reference/glossary.md#term-dpu) 固有経路は別テーブル |
 | multi-asic | 変更なし | BGP は host namespace 単位 |
 <!-- /platform -->
 
@@ -495,3 +494,5 @@ vtysh -c 'show bgp ipv4 unicast summary'
 vtysh -c 'show ip bgp'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 565f90bf7ea2 -->

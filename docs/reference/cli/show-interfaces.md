@@ -146,7 +146,7 @@ show interfaces counters [errors | fec-stats | fec-histogram | rates | rif | tri
 
 ## オプション・共通仕様
 
-- `-n|--namespace` ... multi-ASIC 専用。`asic0` / `asic1` などを指定して該当 namespace のみ出力
+- `-n|--namespace` ... multi-[ASIC](../../reference/glossary.md#term-asic) 専用。`asic0` / `asic1` などを指定して該当 namespace のみ出力
 - `-d|--display all|external|frontend` ... `--display all` で internal port も含む
 - 引数 `<interfacename>` は `alias` モード時に自動で正規名へ変換される
 
@@ -236,10 +236,10 @@ show interfaces description
 - `show interfaces counters` は累積値。差分は `sonic-clear counters` でリセットしてから観測する。
 - [PortChannel](../../reference/glossary.md#term-portchannel) メンバの speed は `show interfaces status` に出ても [LAG](../../reference/glossary.md#term-lag) 自体の speed は別系統。
 - **`show interfaces counters errors` / `fec-stats` / `rates` はインターフェースフィルタ未対応** (issue [#4501](https://github.com/sonic-net/sonic-utilities/issues/4501)): 親コマンド `show interfaces counters -i Ethernet0` はフィルタが効くが、サブコマンド (`errors`, `fec-stats`, `rates`) は `-i` オプションを持たない。特定ポートのみ確認したい場合は `show interfaces counters errors | grep Ethernet0` のように `grep` で絞る。
-- **multi-ASIC で `counterpoll` を namespace 指定しても default DB が更新される** (issue [#4375](https://github.com/sonic-net/sonic-utilities/issues/4375)): `sudo ip netns exec asic0 counterpoll pg-drop disable` のように `ip netns exec` 経由で呼んでも `CONFIG_DB`（asic0 の DB）ではなく default namespace の DB が更新される。`counterpoll pg-drop disable -n asic0` を使うこと。
+- **multi-[ASIC](../../reference/glossary.md#term-asic) で `counterpoll` を namespace 指定しても default DB が更新される** (issue [#4375](https://github.com/sonic-net/sonic-utilities/issues/4375)): `sudo ip netns exec asic0 counterpoll pg-drop disable` のように `ip netns exec` 経由で呼んでも `CONFIG_DB`（asic0 の DB）ではなく default namespace の DB が更新される。`counterpoll pg-drop disable -n asic0` を使うこと。
 - **QSFP+C トランシーバで 8 lanes が表示される** (issue [#4065](https://github.com/sonic-net/sonic-utilities/issues/4065)): CMIS 管理の QSFP+C は物理 4 lanes だが `show interfaces transceiver status` / `eeprom` が lane 1-8 を出力し、lanes 5-8 は `Unknown` / `False` / 0 が並ぶ。表示上のノイズであり実際の lane 状態は 1-4 のみ参照すること。
 - **sfputil の読み取り系コマンドが `--help` に表示されない** (issue [#4518](https://github.com/sonic-net/sonic-utilities/issues/4518)): `sfputil lpmode --help` や `sfputil firmware --help` には変更コマンドしか表示されず、読み取り系の `sfputil show lpmode` / `sfputil show fwversion` は別の `show` グループにある。`sfputil show --help` で確認すること。
-- **multi-ASIC の `show ip tunnel` / tunnel 表で `val_state` 欠落時にカラムがズレる** (issue [#4480](https://github.com/sonic-net/sonic-utilities/issues/4480)): multi-ASIC モック環境や一部の実装で `val_state` が返らない場合、`status` カラムが 1 列ずれて表示される既知の不具合がある。
+- **multi-[ASIC](../../reference/glossary.md#term-asic) の `show ip tunnel` / tunnel 表で `val_state` 欠落時にカラムがズレる** (issue [#4480](https://github.com/sonic-net/sonic-utilities/issues/4480)): multi-ASIC モック環境や一部の実装で `val_state` が返らない場合、`status` カラムが 1 列ずれて表示される既知の不具合がある。
 
 ### 関連する show / debug
 
@@ -250,4 +250,4 @@ show interfaces transceiver eeprom Ethernet0
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 710f941d149a -->
+<!-- glossary-links-injected: 8df9850464d2 -->

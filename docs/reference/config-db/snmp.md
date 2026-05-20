@@ -181,15 +181,15 @@ sonic-snmpagent サービスが有効の場合のみ `SNMP` テーブルを購�
 
 ### 段階 1: Consumer 登録
 
-- **hostcfgd**: `SNMP` / `SNMP_COMMUNITY` テーブルを `ConfigDBConnector` で購読。
+- **[hostcfgd](../../reference/glossary.md#term-hostcfgd)**: `SNMP` / `SNMP_COMMUNITY` テーブルを `ConfigDBConnector` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- hostcfgd が snmpd の community string / v3 ユーザ設定を `/etc/snmp/snmpd.conf` に書き込み再起動。
+- [hostcfgd](../../reference/glossary.md#term-hostcfgd) が snmpd の community string / v3 ユーザ設定を `/etc/snmp/snmpd.conf` に書き込み再起動。
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。snmpd が MIB ツリーを通じてスイッチ統計を提供。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。snmpd が MIB ツリーを通じてスイッチ統計を提供。
 
 ### 段階 4: タイミング + 副作用
 
@@ -204,8 +204,8 @@ SNMP テーブルへの書き込みが発生するコード経路を網羅的に
 
 ### CLI
 
-  - `config snmp contact add/del/modify ...` — `config/main.py` が `set_entry('SNMP', 'CONTACT', ...)` を呼ぶ (sonic-utilities/config/main.py:4483–4560)
-  - `config snmp location add/del/modify ...` — `config/main.py` が `set_entry('SNMP', 'LOCATION', ...)` を呼ぶ (sonic-utilities/config/main.py:4600–4667)
+  - `config snmp contact add/del/modify ...` — `config/main.py` が `set_entry('SNMP', 'CONTACT', ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py:4483–4560)
+  - `config snmp location add/del/modify ...` — `config/main.py` が `set_entry('SNMP', 'LOCATION', ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py:4600–4667)
 
 ### minigraph / sonic-cfggen
 
@@ -213,7 +213,7 @@ minigraph.py に SNMP 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -308,7 +308,7 @@ key 名の大文字/小文字が一致しない場合、テンプレートが値
 ### メモリ超過時の monit による snmp-subagent 再起動
 
 snmp コンテナが 4 GiB を超過し続けると monit が `snmp-subagent` のみ再起動する[^4]。
-snmpd 本体は継続動作するが、subagent 再起動中は MIB ツリーの一部 (FRR 等の AgentX サブエージェント経由情報) が一時的に応答不能となる。
+snmpd 本体は継続動作するが、subagent 再起動中は MIB ツリーの一部 ([FRR](../../reference/glossary.md#term-frr) 等の AgentX サブエージェント経由情報) が一時的に応答不能となる。
 
 ### 設定変更の反映タイミング
 
@@ -431,7 +431,7 @@ CLI (`config snmp contact/location add/modify/del`) は書き込み後に常に 
 > **調査根拠**: `snmpd.conf.j2`, `supervisord.conf.j2`, `snmp_yml_to_configdb.py`, `start.sh` 全行精読 (2026-05-15)  
 > 詳細証跡: `meta/_intermediate/cdb-flow/snmp-cross-refs.md`
 
-`SNMP` テーブルは YANG leafref を持たないが、`docker-snmp` コンテナ起動時テンプレートと hostcfgd が以下のテーブルを暗黙参照する。
+`SNMP` テーブルは YANG leafref を持たないが、`docker-snmp` コンテナ起動時テンプレートと [hostcfgd](../../reference/glossary.md#term-hostcfgd) が以下のテーブルを暗黙参照する。
 
 | 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
 |---|---|---|---|---|---|
@@ -463,7 +463,7 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 
 ### SAI 参照
 
-なし。snmpd は純粋なユーザー空間デーモンで SAI/ASIC に一切触れない。APPL_DB 中継もない。
+なし。snmpd は純粋なユーザー空間デーモンで [SAI](../../reference/glossary.md#term-sai)/[ASIC](../../reference/glossary.md#term-asic) に一切触れない。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継もない。
 
 <!-- /cross-refs -->
 
@@ -500,12 +500,12 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 
 ### Redis Pub/Sub の使用状況
 
-`sonic-snmpagent` の MIB 実装は LLDP / トランシーバーセンサーで Redis native `psubscribe` (`__keyspace@{db}__:{pattern}`) を使用するが、**SNMP 設定テーブル自身は対象外**。
+`sonic-snmpagent` の MIB 実装は [LLDP](../../reference/glossary.md#term-lldp) / トランシーバーセンサーで [Redis](../../reference/glossary.md#term-redis) native `psubscribe` (`__keyspace@{db}__:{pattern}`) を使用するが、**SNMP 設定テーブル自身は対象外**。
 
 | MIB | DB | 用途 |
 |-----|----|------|
-| `ieee802_1ab.py` (LLDP) | APPL_DB | LLDP Neighbor テーブル変化検知 |
-| `rfc2737.py` (物理テーブル) | STATE_DB | トランシーバー状態変化検知 |
+| `ieee802_1ab.py` ([LLDP](../../reference/glossary.md#term-lldp)) | [APPL_DB](../../reference/glossary.md#term-appl_db) | [LLDP](../../reference/glossary.md#term-lldp) Neighbor テーブル変化検知 |
+| `rfc2737.py` (物理テーブル) | [STATE_DB](../../reference/glossary.md#term-state_db) | トランシーバー状態変化検知 |
 
 `SNMP`, `SNMP_COMMUNITY`, `SNMP_USER`, `SNMP_AGENT_ADDRESS_CONFIG`, `SNMP_TRAP_CONFIG` への keyspace notification 購読は実装されていない。
 
@@ -523,7 +523,7 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 
 | `DEVICE_METADATA.localhost.switch_type` | snmp-subagent 起動オプション | 効果 |
 |----------------------------------------|---------------------------|------|
-| `chassis-packet` | `--enable_dynamic_frequency` あり | ASIC 数・IF 数が多い chassis-packet 構成で CPU 使用率を抑制するため MIB 更新周期を負荷に応じて動的調整 |
+| `chassis-packet` | `--enable_dynamic_frequency` あり | [ASIC](../../reference/glossary.md#term-asic) 数・IF 数が多い chassis-packet 構成で CPU 使用率を抑制するため MIB 更新周期を負荷に応じて動的調整 |
 | その他 (`npu` / `voq` / `fabric` / `dpu` 等) | オプションなし | 固定周期 (`DEFAULT_UPDATE_FREQUENCY`) で更新 |
 
 `DEVICE_METADATA.localhost` が CONFIG_DB に存在しない場合はテンプレート展開が KeyError で失敗し docker-snmp コンテナが起動しない (全 switch_type 共通の前提条件)。
@@ -534,12 +534,12 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 
 | 構成 | 動作 |
 |------|------|
-| single-ASIC | デフォルト namespace のみ参照。内部ポートチャネルフィルタはノーオペレーション |
+| single-[ASIC](../../reference/glossary.md#term-asic) | デフォルト namespace のみ参照。内部ポートチャネルフィルタはノーオペレーション |
 | multi-ASIC | フロントエンド ASIC の namespace のみ経路取得。BackEnd ASIC namespace をスキップし、`INTERNAL_PORT` role のポートチャネルを inetCidrRouteTable から除外 |
 
 ### 差異 3: multi-ASIC 構成 — ARP テーブル取得 (rfc1213)
 
-single-ASIC では NEIGH_TABLE のみ参照。multi-ASIC では host kernel ARP テーブルと各 namespace の NEIGH_TABLE を合算し、eth0 (管理 IF) を namespace ごとに除外する。
+single-ASIC では NEIGH_TABLE のみ参照。multi-ASIC では host kernel [ARP](../../reference/glossary.md#term-arp) テーブルと各 namespace の NEIGH_TABLE を合算し、eth0 (管理 IF) を namespace ごとに除外する。
 
 ### 差異 4: ベンダー固有 MIB — 全デプロイ共通登録
 
@@ -547,7 +547,7 @@ single-ASIC では NEIGH_TABLE のみ参照。multi-ASIC では host kernel ARP 
 
 | MIB | 提供元テーブル |
 |-----|--------------|
-| `ciscoPfcExtMIB` / `ciscoSwitchQosMIB` / `ciscoEntityFruControlMIB` / Cisco `bgp4` | COUNTERS_DB / STATE_DB |
+| `ciscoPfcExtMIB` / `ciscoSwitchQosMIB` / `ciscoEntityFruControlMIB` / Cisco `bgp4` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [STATE_DB](../../reference/glossary.md#term-state_db) |
 | Dell Force10 `SSeriesMIB` (`.1.3.6.1.4.1.6027.3.10.1.2.9`) | `/proc` CPU・メモリ |
 
 Cisco / Dell 以外のハードウェアでも AgentX で OID が応答可能な状態になる点に注意。`SNMP` CONFIG_DB テーブルとは直接連携しない。
@@ -558,7 +558,7 @@ Cisco / Dell 以外のハードウェアでも AgentX で OID が応答可能な
 
 #### agentAddress の VRF バインド
 
-`SNMP_AGENT_ADDRESS_CONFIG` の `vrf` フィールドが空でない場合、snmpd は指定 VRF のネットワーク名前空間にバインドされる。
+`SNMP_AGENT_ADDRESS_CONFIG` の `vrf` フィールドが空でない場合、snmpd は指定 [VRF](../../reference/glossary.md#term-vrf) のネットワーク名前空間にバインドされる。
 
 | `SNMP_AGENT_ADDRESS_CONFIG.vrf` | agentAddress 生成結果 | 効果 |
 |---------------------------------|----------------------|------|
@@ -573,14 +573,14 @@ MGMT_VRF が有効化されている環境 (`MGMT_VRF_CONFIG.mgmtVrfEnabled = "t
 
 | `SNMP_TRAP_CONFIG.<version>TrapDest.vrf` | trapsink 生成結果 |
 |------------------------------------------|-----------------|
-| `"None"` (文字列) | `trapsink <ip>:<port> <community>` (VRF なし) |
-| `"mgmt"` など VRF 名 | `trapsink <ip>:<port>%mgmt <community>` |
+| `"None"` (文字列) | `trapsink <ip>:<port> <community>` ([VRF](../../reference/glossary.md#term-vrf) なし) |
+| `"mgmt"` など [VRF](../../reference/glossary.md#term-vrf) 名 | `trapsink <ip>:<port>%mgmt <community>` |
 
 ### 差異 6: SmartSwitch DPU — switch_type == 'dpu' の挙動
 
 `supervisord.conf.j2` L53–57
 
-SmartSwitch の DPU ノード (`switch_type = 'dpu'`) は `chassis-packet` 分岐に該当しないため、snmp-subagent は `--enable_dynamic_frequency` **なし**の固定頻度モードで起動する。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) の [DPU](../../reference/glossary.md#term-dpu) ノード (`switch_type = 'dpu'`) は `chassis-packet` 分岐に該当しないため、snmp-subagent は `--enable_dynamic_frequency` **なし**の固定頻度モードで起動する。
 
 | `switch_type` | snmp-subagent 動作 |
 |---------------|-------------------|
@@ -588,7 +588,7 @@ SmartSwitch の DPU ノード (`switch_type = 'dpu'`) は `chassis-packet` 分�
 | `chassis-packet` | 動的頻度 (`--enable_dynamic_frequency`) |
 | `npu` / `voq` / `fabric` | 固定頻度 |
 
-DPU ノードでも `DEVICE_METADATA.localhost` の存在が必須 (欠如時は KeyError でコンテナ起動失敗)。
+[DPU](../../reference/glossary.md#term-dpu) ノードでも `DEVICE_METADATA.localhost` の存在が必須 (欠如時は KeyError でコンテナ起動失敗)。
 
 <!-- /platform -->
 
@@ -625,8 +625,8 @@ CONFIG_DB に書き込まれた値はこのファイル生成を経て初めて 
 |---|---|---|---|---|
 | CONFIG_DB | `SNMP_COMMUNITY` | set | `/etc/sonic/snmp.yml` に community 定義がありかつ CONFIG_DB に未登録の場合 | `snmp_yml_to_configdb.py:36–49` |
 | CONFIG_DB | `SNMP\|LOCATION` | set | `/etc/sonic/snmp.yml` に `snmp_location` がありかつ CONFIG_DB に `SNMP\|LOCATION` が未登録の場合 | `snmp_yml_to_configdb.py:51–53` |
-| APPL_DB | なし | — | SNMP テーブルは APPL_DB を経由しない | — |
-| STATE_DB | なし | — | SNMP テーブルは STATE_DB を更新しない | — |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | — | SNMP テーブルは APPL_DB を経由しない | — |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | — | SNMP テーブルは STATE_DB を更新しない | — |
 
 ### 失敗時挙動
 
@@ -636,4 +636,4 @@ CONFIG_DB に書き込まれた値はこのファイル生成を経て初めて 
 
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: 88a11b84726d -->

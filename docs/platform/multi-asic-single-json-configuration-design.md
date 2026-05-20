@@ -41,7 +41,7 @@ related:
 
 ## 何を解決するか
 
-minigraph 廃止後の **Golden Config**（NDM 生成 → HwProxy で push）を multi-ASIC 機にも適用するための JSON スキーマ拡張[^1]。従来 multi-ASIC では host 用 `config_db.json` + ASIC 数だけの `config_db<N>.json` を別ファイルで持っていた。
+minigraph 廃止後の **Golden Config**（NDM 生成 → HwProxy で push）を multi-[ASIC](../reference/glossary.md#term-asic) 機にも適用するための JSON スキーマ拡張[^1]。従来 multi-ASIC では host 用 `config_db.json` + ASIC 数だけの `config_db<N>.json` を別ファイルで持っていた。
 
 本提案は **1 ファイル**で host と全 ASIC を表現するため、トップに `localhost` / `asic0` / `asic1` の **namespace layer を 1 段追加**する。CLI 群（`config reload / save / override / apply-patch`、`show runningconfiguration all`）も同形式を読み書きできるよう拡張する。
 
@@ -171,4 +171,4 @@ reasoning: namespace layer 1 段追加でスキーマ拡張する設計の根拠
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 0c9d5bf2f30d -->
+<!-- glossary-links-injected: c006405759d8 -->
