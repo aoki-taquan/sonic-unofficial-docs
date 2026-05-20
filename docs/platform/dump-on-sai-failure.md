@@ -14,8 +14,8 @@ related:
   - CRM
   cli:
   - show techsupport
-  yang:
-  - sonic-auto_techsupport
+  yang: []
+  _no_yang: true
 ---
 
 <!-- topics-tip -->

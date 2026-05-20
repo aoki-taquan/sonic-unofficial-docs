@@ -267,9 +267,7 @@ show auto-techsupport global
 
 ### 段階 1 — Consumer 登録
 
-`auto_techsupport_handler` (`sonic-host-services`) が CONFIG_DB の `AUTO_TECHSUPPORT` テーブルを購読する。
-
-global テーブル (single key `GLOBAL`) と feature テーブルを同一ハンドラが購読。
+本テーブルに対する常駐 subscriber は存在しない（`sonic-host-services` 全体で `AUTO_TECHSUPPORT` の grep 0 hit）。実装は [hostcfgd](../../reference/glossary.md#term-hostcfgd) と独立した kernel `core_pattern` → `coredump-compress` → `coredump_gen_handler.py` のパイプラインで、必要なフィールドは一発起動スクリプトが同期 HGET で取得する。詳細は Phase G を参照。
 
 ### 段階 2 — CFG→APPL 翻訳
 
@@ -724,4 +722,4 @@ kernel.core_pipe_limit = 16
 ```
 <!-- /ordering -->
 
-<!-- glossary-links-injected: 6be040445d2f -->
+<!-- glossary-links-injected: 9bd150521228 -->

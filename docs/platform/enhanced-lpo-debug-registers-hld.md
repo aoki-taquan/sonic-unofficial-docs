@@ -10,12 +10,11 @@ sources:
   path: doc/cmis-lpo-enhancement/cmis-lpo-enhancement.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - DEBUG_COUNTER
+  config_db: []
   cli: []
-  yang:
-  - sonic-debug-counter
+  yang: []
   _no_related_cli: true
+  _no_yang: true
 ---
 
 <!-- topics-tip -->
