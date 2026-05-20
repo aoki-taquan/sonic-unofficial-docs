@@ -97,6 +97,7 @@ related:
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../../system/sonic-libsairedis-api-idempotence-support.md)
 - [Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB notification）](../../architecture/error-handling-framework-in-sonic-internals.md)
 - [Port Profile Init（SAI bulk port API による fast-boot 高速化）](../../architecture/port-profile-init-hld.md)
+- [Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）](../../system/sonic-express-reboot-hld-spec.md)
 
 **関連トラブルシュート 5 件**
 

@@ -38,10 +38,10 @@ related:
 
 [SmartSwitch](../../reference/glossary.md#term-smartswitch) において [NPU](../../reference/glossary.md#term-npu) から [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) へのパケット転送を実現する 5 テーブル群。[ENI](../../reference/glossary.md#term-eni) (Elastic Network Interface) Based Forwarding アーキテクチャの構成情報を保持し、`DashEniFwdOrch` が読み出して [ACL](../../reference/glossary.md#term-acl) ルール (`ENI:*`) へ変換する。
 
-- **`DPU`**: ローカル DPU (同一 SmartSwitch 内) のエンドポイント情報
-- **`REMOTE_DPU`**: リモート DPU (クラスタ内他 SmartSwitch) のエンドポイント情報
+- **`DPU`**: ローカル [DPU](../../reference/glossary.md#term-dpu) (同一 [SmartSwitch](../../reference/glossary.md#term-smartswitch) 内) のエンドポイント情報
+- **`REMOTE_DPU`**: リモート [DPU](../../reference/glossary.md#term-dpu) (クラスタ内他 [SmartSwitch](../../reference/glossary.md#term-smartswitch)) のエンドポイント情報
 - **`VDPU`**: 仮想 DPU。複数の DPU/REMOTE_DPU をグループ化する抽象レイヤ
-- **`ENI`**: DASH_ENI_FORWARD_TABLE 経由で HaMgrd が書き込む ENI-VDPU マッピング ([APPL_DB](../../reference/glossary.md#term-appl_db))
+- **`ENI`**: DASH_ENI_FORWARD_TABLE 経由で HaMgrd が書き込む [ENI](../../reference/glossary.md#term-eni)-VDPU マッピング ([APPL_DB](../../reference/glossary.md#term-appl_db))
 - **`DPUS`**: SmartSwitch プラットフォーム定義 (platform.json から config-engine が投入)
 
 !!! warning "YANG 未定義"
@@ -108,7 +108,7 @@ REMOTE_DPU は `dpu_type_t::CLUSTER` として登録される。必須フィー�
 
 ### VDPU テーブル
 
-Virtual DPU。DPU または REMOTE_DPU をグループ化し、ENI に対して VDPU ID 単位で primary/secondary を指定できる抽象レイヤ。
+Virtual DPU。DPU または REMOTE_DPU をグループ化し、[ENI](../../reference/glossary.md#term-eni) に対して VDPU ID 単位で primary/secondary を指定できる抽象レイヤ。
 
 ```text
 VDPU|<vdpu_name>
@@ -122,7 +122,7 @@ VDPU は `DPU` / `REMOTE_DPU` テーブルを populate した後に処理され�
 
 ### ENI (DASH_ENI_FORWARD_TABLE)
 
-ENI-to-VDPU マッピング。[CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルではなく APPL_DB の `DASH_ENI_FORWARD_TABLE` として管理される。HaMgrd が書き込み、`DashEniFwdOrch` が購読して ACL ルールへ変換する。
+ENI-to-VDPU マッピング。[CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルではなく [APPL_DB](../../reference/glossary.md#term-appl_db) の `DASH_ENI_FORWARD_TABLE` として管理される。HaMgrd が書き込み、`DashEniFwdOrch` が購読して [ACL](../../reference/glossary.md#term-acl) ルールへ変換する。
 
 ```text
 DASH_ENI_FORWARD_TABLE|<vnet_name>:<mac_address>
@@ -131,11 +131,11 @@ DASH_ENI_FORWARD_TABLE|<vnet_name>:<mac_address>
 | フィールド | 型 | 必須 | 説明 |
 |----------|----|------|------|
 | `vdpu_ids` | コンマ区切り string | **必須** | ENI に関連する VDPU 名のリスト (例: `"vdpu0,vdpu1"`) |
-| `primary_vdpu` | string | **必須** | プライマリ VDPU 名。ACL ルールの redirect 先となる DPU を決定 |
+| `primary_vdpu` | string | **必須** | プライマリ VDPU 名。[ACL](../../reference/glossary.md#term-acl) ルールの redirect 先となる DPU を決定 |
 
 ### DPUS テーブル
 
-SmartSwitch プラットフォーム定義。`platform.json` から `sonic-config-engine/smartswitch_config.py` が CONFIG_DB へ投入する。
+SmartSwitch プラットフォーム定義。`platform.json` から `sonic-config-engine/smartswitch_config.py` が [CONFIG_DB](../../reference/glossary.md#term-config_db) へ投入する。
 
 ```text
 DPUS|<dpu_name>
@@ -159,7 +159,7 @@ DPUS|<dpu_name>
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`DashEniFwdOrch` は CONFIG_DB の `DPU` / `REMOTE_DPU` / `VDPU` を起動後最初の `DASH_ENI_FORWARD_TABLE` エントリ到着時に一括読込し (`lazyInit()`)、その後 APPL_DB へ ACL ルールを書き込む。テーブル間の処理順序と Neighbor 解決タイミングに複数の依存関係が存在する。
+`DashEniFwdOrch` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `DPU` / `REMOTE_DPU` / `VDPU` を起動後最初の `DASH_ENI_FORWARD_TABLE` エントリ到着時に一括読込し (`lazyInit()`)、その後 [APPL_DB](../../reference/glossary.md#term-appl_db) へ ACL ルールを書き込む。テーブル間の処理順序と Neighbor 解決タイミングに複数の依存関係が存在する。
 
 ### 検出された順序依存
 
@@ -325,8 +325,8 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 
 ### 補足
 
-- `DPU` テーブルに対応する YANG schema は現時点 (2026-05) で [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) の yang-models に存在しない。すべての制約はコードレベルで実施される。
-- `state` フィールドのデフォルト: YANG 定義がないため、コードレベルでは「`"down"` 以外はすべて有効」という形。実質的に未指定 = `"up"` 扱い。
+- `DPU` テーブルに対応する [YANG](../../reference/glossary.md#term-yang) schema は現時点 (2026-05) で [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) の yang-models に存在しない。すべての制約はコードレベルで実施される。
+- `state` フィールドのデフォルト: [YANG](../../reference/glossary.md#term-yang) 定義がないため、コードレベルでは「`"down"` 以外はすべて有効」という形。実質的に未指定 = `"up"` 扱い。
 - `DpuRegistry::populate()` はシステム起動時に一度のみ呼ばれる (`lazyInit()`); 実行中の DPU テーブル変更は動的に反映されない。
 <!-- /defaults -->
 
@@ -352,7 +352,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 
 **Neighbor 未解決による ACL 生成保留 (依存 #3)**: `LocalEniNH::resolve()` (`dashenifwdinfo.cpp:18-38`) は `ctx->isNeighborResolved(nh)` が偽の場合、`EniAclRule` の state を `PENDING` のまま維持し `ctx->createAclRule()` を呼ばない。その後 `NeighOrch` から Neighbor Up 通知 (`SUBJECT_TYPE_NEIGH_CHANGE`) が届くと `DashEniFwdOrch::handleNeighUpdate()` → `EniInfo::update(NeighborUpdate)` → `fireAllRules()` の経路で再評価される。このため、DPU の PA への Neighbor が解決されるまで LOCAL ENI の ACL ルールは APPL_DB に書き込まれない。
 
-**VIP_TABLE の先行要件 (依存 #4)**: `RemoteEniNH::resolve()` (`dashenifwdinfo.cpp:40-62`) は ENI の vnet_name から VNI とトンネル名を取得した後、`ctx->getVip()` を呼び出す。`getVip()` は `VIP_TABLE` が空なら `SWSS_LOG_THROW` で orchagent プロセスを abort させる。SmartSwitch 起動シーケンスでは `VIP_TABLE` が ENI forwarding テーブルより先に CONFIG_DB に設定されていなければならない。
+**VIP_TABLE の先行要件 (依存 #4)**: `RemoteEniNH::resolve()` (`dashenifwdinfo.cpp:40-62`) は ENI の vnet_name から VNI とトンネル名を取得した後、`ctx->getVip()` を呼び出す。`getVip()` は `VIP_TABLE` が空なら `SWSS_LOG_THROW` で [orchagent](../../reference/glossary.md#term-orchagent) プロセスを abort させる。SmartSwitch 起動シーケンスでは `VIP_TABLE` が ENI forwarding テーブルより先に CONFIG_DB に設定されていなければならない。
 
 **acl_rule_count_ による ACL table 参照カウント (依存 #5, #6)**: `EniFwdCtxBase` は `acl_rule_count_` で ACL table の存在を管理する。最初の `createAclRule()` で table と table_type を APPL_DB に書き込み (`addAclTable()`)、最後の `deleteAclRule()` で両方を削除する (`deleteAclTable()`)。rule より table が先に書かれ、table より rule が先に消えることが内部カウンタで保証される (`dashenifwdorch.cpp:576-601`, `dashenifwdorch.cpp:603-650`)。
 
@@ -361,7 +361,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`DashEniFwdOrch` は CONFIG_DB の複数テーブルと他 orchagent を横断して参照する。以下はコード (`dashenifwdorch.h` / `dashenifwdorch.cpp` / `dashenifwdinfo.cpp`) から抽出した暗黙参照の一覧。
+`DashEniFwdOrch` は CONFIG_DB の複数テーブルと他 [orchagent](../../reference/glossary.md#term-orchagent) を横断して参照する。以下はコード (`dashenifwdorch.h` / `dashenifwdorch.cpp` / `dashenifwdinfo.cpp`) から抽出した暗黙参照の一覧。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
@@ -372,11 +372,11 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 | `CONFIG_DB:PORT\|<name>` (`port_tbl_`) | 読み取り（PORT_ROLE フィールド） | ACL テーブル作成時の `getBindPoints()` で `role=DPC` のポートを internal として除外 | `dashenifwdorch.cpp:414-431` `findInternalPorts()` |
 | `NeighOrch` (Neighbor テーブル) | OID 解決 + Observer subscribe | LOCAL DPU の `pa_ipv4` に対して Neighbor 解決。未解決時は ACL ルール未インストール。`NeighOrch::attach(this)` で Up/Down 通知を受信 | `dashenifwdorch.cpp:17-21`, `dashenifwdorch.cpp:78-103` |
 | `IntfsOrch` (INTERFACE テーブル) | エイリアス参照 | LOCAL DPU の `pa_ipv4` に対応するルーターインタフェースのエイリアスを取得 (`getRouterIntfsAlias()`) | `dashenifwdorch.cpp:544-547` |
-| `VNetOrch` ([VNET](../../reference/glossary.md#term-vnet) テーブル) | VNI + トンネル名参照 | CLUSTER 型 ENI の vnet_name から VNI とトンネル名を取得 (`findVnetVni()`, `findVnetTunnel()`)。VNET 未登録時は resolve 失敗 | `dashenifwdorch.cpp:549-567` |
+| `VNetOrch` ([VNET](../../reference/glossary.md#term-vnet) テーブル) | VNI + トンネル名参照 | CLUSTER 型 ENI の vnet_name から VNI とトンネル名を取得 (`findVnetVni()`, `findVnetTunnel()`)。[VNET](../../reference/glossary.md#term-vnet) 未登録時は resolve 失敗 | `dashenifwdorch.cpp:549-567` |
 | `VxlanTunnelOrch` (VXLAN_TUNNEL テーブル) | トンネル OID 参照 | CLUSTER 型 ENI の ACL ルール redirect 先となる `<npu_ipv4>@<tunnel>,<vni>` を構築するためにトンネルを解決 | `dashenifwdorch.h:393` `vxlanorch_` |
-| `PortsOrch` (PORT テーブル) | PHY / [LAG](../../reference/glossary.md#term-lag) ポート一覧取得 | ACL テーブル作成時の bind points 列挙 (`getAllPorts()`)。LAG member ポートは除外 | `dashenifwdorch.cpp:433-473` `getBindPoints()` |
+| `PortsOrch` (PORT テーブル) | PHY / [LAG](../../reference/glossary.md#term-lag) ポート一覧取得 | ACL テーブル作成時の bind points 列挙 (`getAllPorts()`)。[LAG](../../reference/glossary.md#term-lag) member ポートは除外 | `dashenifwdorch.cpp:433-473` `getBindPoints()` |
 | `APPL_DB:ACL_TABLE_TYPE_TABLE\|ENI_REDIRECT` | 書き込み（自動管理） | 最初の ENI ACL ルール作成時に `addAclTable()` が自動生成。最後のルール削除時に自動削除 | `dashenifwdorch.cpp:603-644` `addAclTable()` |
-| `APPL_DB:ACL_TABLE_TABLE\|ENI` | 書き込み（自動管理） | `addAclTable()` / `deleteAclTable()` で生成・削除。bind points は PHY / LAG ポート（DPC ロール除く）を列挙 | `dashenifwdorch.cpp:636-643` |
+| `APPL_DB:ACL_TABLE_TABLE\|ENI` | 書き込み（自動管理） | `addAclTable()` / `deleteAclTable()` で生成・削除。bind points は PHY / [LAG](../../reference/glossary.md#term-lag) ポート（DPC ロール除く）を列挙 | `dashenifwdorch.cpp:636-643` |
 | `APPL_DB:ACL_RULE_TABLE\|ENI:*` | 書き込み | ENI ADD/UPDATE/DEL に応じてルールを生成。`acl_rule_count_` で参照カウント | `dashenifwdorch.cpp:574-601` `createAclRule()`, `deleteAclRule()` |
 
 !!! note "VNET テーブルの暗黙依存"
@@ -406,7 +406,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 | `vdpu_ids` または `primary_vdpu` フィールド欠落 | `EniInfo::create()` L285-288 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("Invalid DASH_ENI_FORWARD_TABLE request")` → `false` 返却。`eni_container_` に登録されず ACL ルールなし | 正しいフィールドで再 SET |
 | `primary_vdpu` が DpuRegistry に未登録 | `EniAclRule::processUpdate()` L104-108 | `SWSS_LOG_ERROR("No primary id in DPU Table")` → `update_type_t::INVALID` → `rule_state_t::FAILED` | orchagent 再起動（DpuRegistry は動的更新不可）|
 | LOCAL DPU の Neighbor 未解決 | `LocalEniNH::resolve()` L28-31 (`dashenifwdinfo.cpp`) | `endpoint_status_t::UNRESOLVED` → `rule_state_t::PENDING`。`ctx->createAclRule()` 非呼び出し | `NeighOrch` の Neighbor Up 通知受信で自動再評価 (`handleNeighUpdate()`) |
-| CLUSTER DPU の VNET トンネル名が未登録 | `RemoteEniNH::resolve()` L45-49 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("Couldn't find tunnel name for Vnet")` → `endpoint_status_t::UNRESOLVED` → `rule_state_t::PENDING` | VNetOrch に VNET エントリ登録後、ENI の再 SET で再評価 |
+| CLUSTER DPU の [VNET](../../reference/glossary.md#term-vnet) トンネル名が未登録 | `RemoteEniNH::resolve()` L45-49 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("Couldn't find tunnel name for Vnet")` → `endpoint_status_t::UNRESOLVED` → `rule_state_t::PENDING` | VNetOrch に VNET エントリ登録後、ENI の再 SET で再評価 |
 | CLUSTER DPU の VNET VNI が未登録 | `RemoteEniNH::resolve()` L52-57 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("Couldn't find VNI for Vnet")` → `endpoint_status_t::UNRESOLVED` → `rule_state_t::PENDING` | 上記と同様 |
 | `VIP_TABLE` が空 (CLUSTER 型 ENI の ACL ルール生成時) | `EniFwdCtxBase::getVip()` L499-503 (`dashenifwdorch.cpp`) | `SWSS_LOG_THROW("Invalid Config: VIP info not populated")` → **orchagent プロセス abort** | orchagent 再起動前に `VIP_TABLE` を CONFIG_DB に設定 |
 | `TUNNEL_TERM` ルール用のローカルエンドポイントなし | `EniAclRule::processUpdate()` L93-97 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("No Local endpoint was found for Rule")` → `update_type_t::INVALID` → `rule_state_t::FAILED` | ENI の `vdpu_ids` に LOCAL DPU を含む VDPU を指定 |
@@ -528,7 +528,7 @@ ENI の MAC アドレス（例: `f4:93:9f:ef:c4:7e`）は `EniInfo::formatMac()`
 
 > 詳細証跡: `meta/_intermediate/cdb-flow/dpu-eni-side-effects.md`
 
-`DashEniFwdOrch` は CONFIG_DB / APPL_DB の DPU / ENI テーブルを読み込み、処理結果を APPL_DB の ACL 関連テーブルへ書き出す。STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への直接書込はない。
+`DashEniFwdOrch` は CONFIG_DB / APPL_DB の DPU / ENI テーブルを読み込み、処理結果を APPL_DB の ACL 関連テーブルへ書き出す。[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への直接書込はない。
 
 ### APPL_DB への書込 (ProducerStateTable)
 
@@ -549,10 +549,10 @@ ENI の MAC アドレス（例: `f4:93:9f:ef:c4:7e`）は `EniInfo::formatMac()`
 |---|---|---|
 | APPL_DB: ACL_TABLE_TYPE_TABLE / ACL_TABLE_TABLE | SET / DEL あり | `addAclTable()` / `deleteAclTable()` — `dashenifwdorch.cpp:603-648` |
 | APPL_DB: ACL_RULE_TABLE | SET / DEL あり | `createAclRule()` / `deleteAclRule()` — `dashenifwdorch.cpp:574-601` |
-| STATE_DB | なし | `state_db` / `StateDBConnector` 参照なし |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `state_db` / `StateDBConnector` 参照なし |
 | [ASIC_DB](../../reference/glossary.md#term-asic_db) | [SAI](../../reference/glossary.md#term-sai) 経由で間接更新 (AclOrch が担当) | AclOrch が `ACL_RULE_TABLE` を購読して SAI 操作 |
-| COUNTERS_DB | なし | [CRM](../../reference/glossary.md#term-crm) 連携なし |
-| FLEX_COUNTER_DB | なし | Flex カウンタ設定なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | [CRM](../../reference/glossary.md#term-crm) 連携なし |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | Flex カウンタ設定なし |
 
 ### NeighOrch 副次効果 — ARP/NDP 解決
 
@@ -560,7 +560,7 @@ ENI の MAC アドレス（例: `f4:93:9f:ef:c4:7e`）は `EniInfo::formatMac()`
 
 | ケース | 副次効果 |
 |--------|---------|
-| LOCAL DPU endpoint が未解決 | `NeighOrch::resolveNeighbor()` → ARP/NDP プローブ送出 |
+| LOCAL DPU endpoint が未解決 | `NeighOrch::resolveNeighbor()` → [ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) プローブ送出 |
 | CLUSTER DPU endpoint | resolveNeighbor() 呼び出しなし。VxLAN トンネルのみ使用 |
 
 Neighbor が解決されると `NeighOrch` からの Observer 通知 (`DashEniFwdOrch::update()` → `handleNeighUpdate()`) が発火し (`dashenifwdorch.cpp:31-44`)、影響 ENI の `fireAllRules()` が再実行されて APPL_DB `ACL_RULE_TABLE` への SET が副次的に発生する。
@@ -594,11 +594,11 @@ else
     addExecutor(new Consumer(new ConsumerStateTable(...)));   // Redis List ポーリング
 ```
 
-APPL_DB の DB ID は `0` であり上記の `if` に該当しないため、**[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** (Redis List ポーリング) が使用される。`SubscriberStateTable` (keyspace notification) ではない点に注意。
+APPL_DB の DB ID は `0` であり上記の `if` に該当しないため、**[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** ([Redis](../../reference/glossary.md#term-redis) List ポーリング) が使用される。`SubscriberStateTable` (keyspace notification) ではない点に注意。
 
 | 要素 | 値 |
 |------|-----|
-| pop 元 Redis キー | `DASH_ENI_FORWARD_TABLE_KEY_SET` (Redis List) |
+| pop 元 [Redis](../../reference/glossary.md#term-redis) キー | `DASH_ENI_FORWARD_TABLE_KEY_SET` (Redis List) |
 | pop バッチサイズ | `gBatchSize` (orchagent デフォルト 128) |
 | イベントトリガ | HaMgrd からの `LPUSH` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) の set/del) |
 | 処理メソッド | `Orch2::doTask()` → `addOperation()` / `delOperation()` |
@@ -674,9 +674,9 @@ if (gMySwitchSubType == "SmartSwitch")
 |------|------|------|
 | SmartSwitch 非対応プラットフォーム | DashEniFwdOrch 非存在。DPU/ENI テーブルは処理されない | `orchdaemon.cpp:613` |
 | DPU ロール (`switch_type=dpu`) | DpuOrchDaemon が動作。NPU 側の DPU/VDPU テーブル消費なし | `main.cpp:994` |
-| ASIC 種別 (broadcom/mellanox 等) | ENI 専用 ACL タイプを自前定義するため主要な差なし | `dashenifwdorch.cpp:403-450` |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (broadcom/mellanox 等) | ENI 専用 ACL タイプを自前定義するため主要な差なし | `dashenifwdorch.cpp:403-450` |
 | [VOQ](../../reference/glossary.md#term-voq) chassis | SmartSwitch と排他。DashEniFwdOrch は非起動 | `orchdaemon.cpp:613` |
-| multi-asic | SmartSwitch 構成では単一 ASIC を想定。multi-asic では DashEniFwdOrch 非起動 | `orchdaemon.cpp:613` |
+| multi-asic | SmartSwitch 構成では単一 [ASIC](../../reference/glossary.md#term-asic) を想定。multi-asic では DashEniFwdOrch 非起動 | `orchdaemon.cpp:613` |
 <!-- /platform -->
 
-<!-- glossary-links-injected: b76ffacde722 -->
+<!-- glossary-links-injected: 2eb9de1b0fa8 -->
