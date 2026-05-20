@@ -1874,7 +1874,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [概念](../topics/12-multi-asic-voq/concept.md) (19)
 - [Multi-ASIC / VOQ chassis 関連](../categories/multi-asic.md) (16)
 - [設定](../topics/20-swss-sai-redis/setup.md) (10)
-- [Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md) (8)
+- [Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md) (9)
 
 ### [muxorch](#term-muxorch)
 
@@ -1996,7 +1996,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [設定](../topics/18-p4-pins/setup.md) (17)
 - [発展トピック](../topics/18-p4-pins/advanced.md) (16)
 - [概念](../topics/18-p4-pins/concept.md) (15)
-- [P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md) (8)
+- [P4 / PINS / Programmable Pipeline](../topics/18-p4-pins/index.md) (9)
 
 ### [ProducerStateTable](#term-producerstatetable)
 
