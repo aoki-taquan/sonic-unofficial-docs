@@ -13,24 +13,14 @@ related:
   config_db:
   - ACL_TABLE
   - ACL_RULE
-  - PFC_WD
-  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
   - CRM
-  - BUFFER_POOL
-  - BUFFER_PROFILE
   cli:
   - show acl table
   - show acl rule
   - show acl
   - config acl
-  - show pfc
   yang:
-  - sonic-pfc-priority-priority-group-map
-  - sonic-pfc-priority-queue-map
   - sonic-crm
-  - sonic-pfcwd
-  - sonic-buffer-pool
-  - sonic-buffer-profile
 ---
 
 <!-- topics-tip -->

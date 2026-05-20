@@ -159,7 +159,7 @@ NTP_KEY|<id>
 ### 典型値
 
 - key 形式: `NTP_KEY|<keyid>`。
-- `type`: `SHA1` / `MD5`、`value`: 共有鍵、`trusted`: `true`。
+- `type`: `SHA1` / `MD5`、`value`: 共有鍵、`trusted`: `yes`（YANG `stypes:yes-no` enum）。
 
 ### よくある誤設定
 
@@ -212,16 +212,16 @@ enum: `type`=md5/sha1/sha256/sha384/sha512、`trusted`=yes/no。変更は `syste
 
 ### 段階 2: CFG → APPL 翻訳
 
-- [hostcfgd](../../reference/glossary.md#term-hostcfgd) が `/etc/ntp.keys` を更新し、ntpd に SIGHUP または再起動を発行。
+- [hostcfgd](../../reference/glossary.md#term-hostcfgd) が `/etc/chrony/chrony.keys` を更新し、`systemctl restart chrony` でフルリスタートを発行 (`hostcfgd:1280` `CHRONY_RESTART = ['systemctl', 'restart', 'chrony']`)。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI
 
-- [SAI](../../reference/glossary.md#term-sai) 経由なし。ntpd が認証付き NTP パケット処理に鍵を使用。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。chrony が認証付き NTP パケット処理に鍵を使用。
 
 ### 段階 4: タイミング + 副作用
 
-- 鍵更新後 ntpd 再起動まで数秒。鍵ロールオーバー中は NTP 認証が一時的に失敗する可能性。
+- 鍵更新後 chrony 再起動まで数秒。鍵ロールオーバー中は NTP 認証が一時的に失敗する可能性。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
