@@ -19,19 +19,10 @@ keywords:
 - TACACS
 related:
   cli:
-  - config interface
   - config aaa
   - show aaa
   config_db:
   - AAA
-  - COPP_GROUP
-  - COPP_TRAP
-  - PORT
-  - PORTCHANNEL
-  - VLAN_SUB_INTERFACE
-  - LOOPBACK_INTERFACE
-  yang:
-  - sonic-copp
 ---
 
 # 概念
