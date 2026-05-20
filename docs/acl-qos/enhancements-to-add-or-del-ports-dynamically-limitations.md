@@ -125,4 +125,4 @@ $ grep -rn "addBufferRefCount\|m_portBufferRef\|port_ref_count" \
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 1fe559aeba2e -->

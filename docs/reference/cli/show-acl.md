@@ -16,7 +16,7 @@ related:
   cli:
   - show acl
   yang:
-  - sonic-routing-policy-sets
+  - sonic-acl
 ---
 
 # show acl サブコマンド
