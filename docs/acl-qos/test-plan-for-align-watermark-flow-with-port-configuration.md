@@ -14,7 +14,6 @@ related:
   - FLEX_COUNTER_TABLE
   - PORT
   - QUEUE
-  - PORT_STORM_CONTROL
   - PORT_QOS_MAP
   - PORT_TABLE
   cli:
