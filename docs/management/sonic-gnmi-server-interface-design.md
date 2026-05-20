@@ -63,7 +63,7 @@ origin で **スキーマ**、`elem[0]` で **DB**、`elem[1]` で **インス�
 
 | 要素 | 値 |
 |------|----|
-| `origin` | `sonic_db`（既定）/ `sonic_yang` |
+| `origin` | `sonic-db`（既定）/ `sonic-yang` |
 | `elem[0]` | `CONFIG_DB` / `APPL_DB` / `STATE_DB` / `COUNTERS_DB` |
 | `elem[1]` | `localhost` / `asic0`,`asic1` / `dpu0`,... |
 | `elem[2..]` | DB schema ならテーブル名・キー、YANG なら `sonic-<feat>:<...>` |

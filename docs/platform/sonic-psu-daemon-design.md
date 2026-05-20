@@ -16,9 +16,9 @@ related:
   - psuutil
   - show platform
   - show environment
-  yang:
-  - sonic-asic-sensors
+  yang: []
   _no_related_cdb: true
+  _no_related_yang: true
 ---
 
 <!-- topics-tip -->
