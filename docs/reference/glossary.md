@@ -1873,7 +1873,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [サイトマップ](../_meta/sitemap.md) (26)
 - [概念](../topics/12-multi-asic-voq/concept.md) (19)
 - [Multi-ASIC / VOQ chassis 関連](../categories/multi-asic.md) (16)
-- [Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md) (10)
+- [Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md) (11)
 - [設定](../topics/20-swss-sai-redis/setup.md) (10)
 
 ### [muxorch](#term-muxorch)
