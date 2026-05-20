@@ -36909,7 +36909,7 @@
 <ul>
 <li>syncd の <code>SAI_REDIS</code> ログや <code>saidump</code> 出力中の <code>SAI_*_ATTR_*</code> を本表で検索すれば、
   どの orch が書いた・どの CONFIG_DB に対応するかを当てやすい。</li>
-<li><a href="../glossary/#term-asic_db">ASIC_DB</a> (<code>COUNTERS_DB</code> 上の <a href="../glossary/#term-redis">Redis</a>) を <code>redis-cli -n 1 HGETALL ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x...</code>
+<li><a href="../glossary/#term-asic_db">ASIC_DB</a> (<a href="../glossary/#term-redis">Redis</a> DB ID 1) を <code>redis-cli -n 1 HGETALL ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x...</code>
   すると、ここに並ぶ属性キーがそのまま値として現れる。</li>
 <li>完全な仕様（取得可否・型・デフォルト値・mandatory flag）は SAI ヘッダの doxygen コメントに記載。
   本表は「実装で実際に触られているかどうか」を補完するもの。</li>

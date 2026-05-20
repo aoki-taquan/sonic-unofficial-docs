@@ -35214,10 +35214,6 @@
 
 
 <h1 id="runbook-rib-fib-asic">Runbook: 経路は RIB にあるが FIB / ASIC に降りない<a class="headerlink" href="#runbook-rib-fib-asic" title="Permanent link">&para;</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">HLD-only</p>
-<p>FRR zebra → FPM → fpmsyncd → APPL_DB → routeorch → ASIC_DB の標準パスに基づく運用ノート。</p>
-</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>vtysh -c "show ip route &lt;prefix&gt;"</code> に該当経路が出るが <code>*</code> (FIB selected) が付かない</li>

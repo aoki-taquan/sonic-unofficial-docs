@@ -35657,7 +35657,7 @@
 <h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="_7">典型的なデプロイ位置<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li>ログインバナー / MOTD 設定。<code>BANNER_MESSAGE|global</code> を <a href="../../glossary/#term-hostcfgd">hostcfgd</a> が <code>/etc/issue</code> <code>/etc/motd</code> に書き出す。</li>
+<li>ログインバナー / MOTD 設定。<code>BANNER_MESSAGE|global</code> を <a href="../../glossary/#term-hostcfgd">hostcfgd</a> (banner-config.sh) が <code>/etc/issue.net</code> (SSH バナー)、<code>/etc/issue</code> (コンソール)、<code>/etc/motd</code>、<code>/etc/logout_message</code> の 4 ファイルに書き出す。</li>
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>

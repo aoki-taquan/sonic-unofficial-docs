@@ -35704,20 +35704,20 @@
 <h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="_7">典型的なデプロイ位置<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li>BGP の aggregate-address (経路集約) 設定。<code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> テーブル経由で <a href="../../glossary/#term-frr">FRR</a> の <code>aggregate-address</code> コマンドへ展開。</li>
+<li>BGP の aggregate-address (経路集約) 設定。<code>BGP_AGGREGATE_ADDRESS</code> テーブル経由で <a href="../../glossary/#term-frr">FRR</a> の <code>aggregate-address</code> コマンドへ展開（<a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> 経路）。<code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> は frr-mgmt-framework が扱う別テーブルで本モジュールの対象外。</li>
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>ip_prefix</code> のキー型 (string vs ip-prefix typedef) に注意。CLI 由来で zero-padded prefix を入れると重複キー扱いされる例あり。</li>
 </ul>
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_GLOBALS_AF_AGGREGATE_ADDR|*&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_AGGREGATE_ADDRESS|*&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show ip bgp summary&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
 
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 7d57ed947e8f -->
 
 <div class="footnote">
 <hr />

@@ -35395,7 +35395,7 @@
 <ul>
 <li>監視は <code>COUNTERS_DB</code> の raw 値を直接 poll（portstat 差分 cache に依存しない）</li>
 <li><a href="../../glossary/#term-gnmi">gNMI</a> / telemetry で counters subscribe する方式に切り替え</li>
-<li>portstat 用 cache を別場所へ: 環境変数 <code>PORTSTAT_CACHE_FILE</code> を設定（実装次第）</li>
+<li>portstat 用 cache を別ディレクトリへ: 環境変数 <code>SONIC_CLI_CACHE_DIR</code> を設定（<code>utilities_common.cli.UserCache</code> がこの変数を参照）</li>
 </ul>
 <h2 id="_6">確認<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>対処後の正常化を以下で裏取りする。</p>

@@ -35236,10 +35236,6 @@
 
 
 <h1 id="runbook-orchagent-cpu-100">Runbook: orchagent が CPU 100% で詰まる<a class="headerlink" href="#runbook-orchagent-cpu-100" title="Permanent link">&para;</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">HLD-only</p>
-<p>orchagent の event loop と Orch::doTask のリトライメカニズムからの一般運用ノート。</p>
-</div>
 <div class="admonition danger">
 <p class="admonition-title">実行前提</p>
 <p><code>docker restart swss</code> は ASIC 構成を再 sync するため数十秒〜数分の中断が発生し、warm-restart 未設定時は転送断となる。本番では計画 maintenance window で行う。</p>

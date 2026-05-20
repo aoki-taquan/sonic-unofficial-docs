@@ -35658,7 +35658,7 @@
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>name</code> (neighbor address) は IPv4/IPv6 union。文字列でホスト名を入れると leafref 解決が失敗する。</li>
+<li><code>addr</code> (monitor peer address) は IPv4/IPv6 union。<code>name</code> leaf は <a href="../../glossary/#term-frr">FRR</a> 内部で <code>'BGPMonitor'</code> 固定文字列が期待されるため、任意の値を設定すると <code>must</code> 制約違反となり commit が失敗する。</li>
 </ul>
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_MONITORS|*&#39;</span>
@@ -35667,7 +35667,7 @@
 <!-- /ops-hint -->
 
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 203de1c951ab -->
 
 <div class="footnote">
 <hr />

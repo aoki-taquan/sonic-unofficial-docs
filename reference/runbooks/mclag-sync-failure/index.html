@@ -35382,7 +35382,7 @@
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>keepalive interface 不達</strong>: peer-link または management 経由の TCP/2606 / 8888 が通らない</li>
+<li><strong>keepalive interface 不達</strong>: peer-link または management 経由の TCP/8888 が通らない</li>
 <li><strong>system mac 衝突 / 設定ミス</strong></li>
 <li><strong>iccpd プロセス未起動 / crash loop</strong></li>
 <li><strong>domain ID / peer IP 不整合</strong></li>
@@ -35412,7 +35412,7 @@
 </span></code></pre></div>
 <h3 id="3-keepalive">3. keepalive 疎通<a class="headerlink" href="#3-keepalive" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ping<span class="w"> </span>&lt;peer_ip&gt;
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>any<span class="w"> </span>-nn<span class="w"> </span>host<span class="w"> </span>&lt;peer_ip&gt;<span class="w"> </span>and<span class="w"> </span><span class="se">\(</span>port<span class="w"> </span><span class="m">2606</span><span class="w"> </span>or<span class="w"> </span>port<span class="w"> </span><span class="m">8888</span><span class="se">\)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>tcpdump<span class="w"> </span>-i<span class="w"> </span>any<span class="w"> </span>-nn<span class="w"> </span>host<span class="w"> </span>&lt;peer_ip&gt;<span class="w"> </span>and<span class="w"> </span>port<span class="w"> </span><span class="m">8888</span>
 </span></code></pre></div>
 <h3 id="4-config_db">4. CONFIG_DB<a class="headerlink" href="#4-config_db" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;MCLAG_DOMAIN|&lt;id&gt;&quot;</span>
