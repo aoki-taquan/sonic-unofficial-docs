@@ -294,18 +294,6 @@ make -n configure 2>&1 | grep -E 'SONIC_(BUILD|PROFILE)'
 docker images | grep sonic-slave
 ```
 
-### コマンド例: Build profile 適用状態の確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# ビルドツリーで現在有効な PROFILE 変数を確認
-make -n configure 2>&1 | grep -E 'SONIC_(BUILD|PROFILE)'
-# slave コンテナのキャッシュ状態
-docker images | grep sonic-slave
-```
-
 ## 参考リンク
 
 - [Reference 索引](../reference/index.md)

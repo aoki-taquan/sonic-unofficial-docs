@@ -12,28 +12,9 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/error-handling/error_handling_design_spec.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+_no_related_cdb: true
 related:
-  config_db:
-  - CRM
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  cli:
-  - show ip
-  - clear
-  - config bgp
-  - show bgp
-  yang:
-  - sonic-crm
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-bgp-bbr
-  - sonic-bgp-peerrange
-  - sonic-bgp-device-global
-  - sonic-bgp-sentinel
+  _no_yang: true
 ---
 
 # Error Handling Framework 制限事項と HLD との乖離

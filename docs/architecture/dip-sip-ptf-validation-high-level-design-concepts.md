@@ -75,7 +75,7 @@ dip-sip-ptf concepts の動作確認に使う代表コマンド:
 # 基本動作確認
 show platform summary
 show version
-docker logs --tail 200 $(docker ps --format "{.Names}" | head -1)
+docker logs --tail 200 $(docker ps --format "{{.Names}}" | head -1)
 ```
 
 <!-- glossary-links-injected: 8ba32e5aa69d -->

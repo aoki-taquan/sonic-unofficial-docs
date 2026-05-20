@@ -64,20 +64,14 @@ Stage 1 は build artifacts に依存しないため、他のターゲットと 
 
 ### 実装
 
-ビルドフラグ追加（`rules/config`）[^1]:
+HLD では単一フラグ `ENABLE_RFS_SPLIT_BUILD` が提案されていたが、現行実装では `slave.mk` が `build_debian.sh` に **`RFS_SPLIT_FIRST_STAGE` / `RFS_SPLIT_LAST_STAGE`** の 2 フラグを `export` して Stage 分岐を制御する形に変わっている（`slave.mk:1439-1440, 1701-1702`、`build_debian.sh:63, 605, 622`）。
 
-```bash
-# ENABLE_RFS_SPLIT - enable 2-stage installer build
-ENABLE_RFS_SPLIT_BUILD ?= n
-```
+実装は 2 部に分かれる[^1]:
 
-既定では無効。実装は 2 部に分かれる[^1]:
-
-1. **`slave.mk`**: RFS squashfs 用の新ターゲット生成と依存関係処理
+1. **`slave.mk`**: RFS squashfs 用の新ターゲット生成と依存関係処理。各 Stage 起動時に `RFS_SPLIT_FIRST_STAGE=y` または `RFS_SPLIT_LAST_STAGE=y` を `export` する
 2. **`build_debian.sh`**: 2 段実行サポート
-   - `ENABLE_RFS_SPLIT_BUILD` が有効か判定
-   - Stage 1 では完了時点で rootfs を squashfs に保存して exit
-   - Stage 2 では squashfs を load してから後半ステップを実行
+   - `RFS_SPLIT_FIRST_STAGE` が `y` のとき完了時点で rootfs を squashfs に保存して exit
+   - `RFS_SPLIT_LAST_STAGE` が `y` のとき squashfs を load してから後半ステップを実行
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/sonic-build-system/rfs-split-build-improvement.md#L67-L84 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -119,13 +113,19 @@ reasoning: フラグ名と実装ファイル分担の根拠。
 
 | フラグ | 既定 | 説明 |
 |--------|------|------|
-| `ENABLE_RFS_SPLIT_BUILD` | `n` | `y` で 2 段ビルドを有効化 |
+| `RFS_SPLIT_FIRST_STAGE` | 未設定 | `y` で Stage 1（base image / packages / kernel）を実行し squashfs を保存して exit |
+| `RFS_SPLIT_LAST_STAGE` | 未設定 | `y` で squashfs を load し Stage 2（artifact install / ONIE payload 生成）を実行 |
+
+注: HLD 記載の `ENABLE_RFS_SPLIT_BUILD` 単一フラグは現行 `rules/config` には存在しない。実装では `slave.mk` 側でターゲット依存に応じて上記 2 フラグが `export` される（呼び出し側は通常意識しない）。
 
 ### 設定例
 
 ```bash
-# .platform_env や make 引数で設定
-make ENABLE_RFS_SPLIT_BUILD=y target/sonic-mellanox.bin
+# 通常は slave.mk が分岐するので make の通常 target で十分:
+make target/sonic-mellanox.bin
+# 手動で個別 Stage を再現したい場合のみ環境変数として渡す:
+RFS_SPLIT_FIRST_STAGE=y build_debian.sh ...
+RFS_SPLIT_LAST_STAGE=y  build_debian.sh ...
 ```
 
 ## 制限事項

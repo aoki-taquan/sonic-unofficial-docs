@@ -11,25 +11,9 @@ sources:
 - repo: sonic-net/SONiC
   path: doc/dip-sip/DIP=SIP_HLD.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+_no_related: true
 related:
-  config_db:
-  - LLDP
-  - VLAN
-  - LLDP_PORT
-  - ACL_RULE
-  - ACL_TABLE
-  - VLAN_SUB_INTERFACE
-  - VLAN_INTERFACE
-  cli:
-  - show lldp
-  - show acl
-  - config acl
-  - config vlan
-  - show vlan
-  yang:
-  - sonic-lldp
-  - sonic-vlan
-  - sonic-vlan-sub-interface
+  _no_yang: true
 ---
 
 <!-- topics-tip -->

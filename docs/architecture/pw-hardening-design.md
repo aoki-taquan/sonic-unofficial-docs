@@ -114,7 +114,7 @@ PASSW_HARDENING|POLICIES
 
 ```bash
 # password policy 設定と /etc/pam.d の現状を確認
-show passwd-hardening policies
+show passw-hardening policies
 sudo cat /etc/pam.d/common-password
 redis-cli -n 4 hgetall 'PASSW_HARDENING|POLICIES'
 ```
@@ -126,7 +126,7 @@ redis-cli -n 4 hgetall 'PASSW_HARDENING|POLICIES'
 
 ```bash
 # password policy 設定と /etc/pam.d の現状を確認
-show passwd-hardening policies
+show passw-hardening policies
 sudo cat /etc/pam.d/common-password
 redis-cli -n 4 hgetall 'PASSW_HARDENING|POLICIES'
 ```

@@ -58,10 +58,10 @@ related:
 | `keep-all-config` | 維持 | クリア | （非 default ユーザ削除はしない: HLD のステップ 3 を skip） |
 | `only-config` | 工場 default にリセット | 保持 | （ステップ 3 / 4 共に skip） |
 
-「basic 設定」とは `MGMT_PORT`, `MGMT_INTERFACE`, `PASSW_HARDENING` 等。`config-setup.conf` の `KEEP_BASIC_TABLES` で定義する[^1]:
+「basic 設定」とは `MGMT_PORT`, `MGMT_INTERFACE`, `MGMT_VRF_CONFIG`, `PASSW_HARDENING` 等。`config-setup.conf` の `KEEP_BASIC_TABLES` で JSON 配列形式で定義する（実装確認値）[^1]:
 
 ```text
-KEEP_BASIC_TABLES=MGMT_PORT,MGMT_INTERFACE,PASSW_HARDENING
+KEEP_BASIC_TABLES='["MGMT_PORT","MGMT_INTERFACE","MGMT_VRF_CONFIG","PASSW_HARDENING"]'
 ```
 
 機能 PR がマージされ次第 `SSH_SERVER, USER_TABLE, ROLE_TABLE` を追加する計画[^1]。
