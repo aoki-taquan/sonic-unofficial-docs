@@ -29,3 +29,10 @@ Thumbs.db
 # Claude Code 用ローカル設定
 .claude/
 CLAUDE.local.md
+
+# Node (textlint devDeps)
+/node_modules/
+/package-lock.json
+
+# lychee cache
+/.lycheecache

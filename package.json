@@ -1,0 +1,15 @@
+{
+  "name": "sonic-unofficial-docs-tools",
+  "version": "0.0.0",
+  "private": true,
+  "description": "textlint / prh runtime for CI. このリポジトリは Node.js project ではなく lint ツールの devDependencies だけを持つ。",
+  "scripts": {
+    "textlint": "textlint 'docs/**/*.md'"
+  },
+  "devDependencies": {
+    "textlint": "^14.0.0",
+    "textlint-rule-preset-ja-technical-writing": "^12.0.2",
+    "textlint-rule-prh": "^6.0.0",
+    "textlint-filter-rule-comments": "^1.2.2"
+  }
+}

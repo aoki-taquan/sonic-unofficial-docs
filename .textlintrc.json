@@ -1,0 +1,35 @@
+{
+  "$comment": [
+    "textlint 設定。preset-ja-technical-writing を基盤に、本リポジトリの",
+    "AI 生成文体に合わせて厳格 rule は緩める。prh は専用辞書ファイル",
+    "(meta/prh-sonic.yml) で SONiC 用語・表記を統一する。",
+    "",
+    "rule の strict / warning は CI の continue-on-error で吸収する想定。",
+    "初期は informational 運用。"
+  ],
+  "rules": {
+    "preset-ja-technical-writing": {
+      "no-exclamation-question-mark": false,
+      "no-doubled-joshi": false,
+      "max-ten": false,
+      "sentence-length": false,
+      "max-comma": false,
+      "max-kanji-continuous-len": false,
+      "ja-no-mixed-period": {
+        "allowPeriodMarks": [":", "："]
+      },
+      "no-mix-dearu-desumasu": false,
+      "ja-no-weak-phrase": false,
+      "ja-no-successive-word": false,
+      "ja-no-abusage": true,
+      "ja-no-redundant-expression": true,
+      "no-double-negative-ja": true
+    },
+    "prh": {
+      "rulePaths": ["./meta/prh-sonic.yml"]
+    }
+  },
+  "filters": {
+    "comments": true
+  }
+}
