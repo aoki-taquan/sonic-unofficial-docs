@@ -18,8 +18,6 @@ related:
   - config buffer
   - show buffer
   - show buffer pool
-  - config bgp
-  - show bgp
   config_db:
   - BUFFER_POOL
   - BUFFER_PROFILE
@@ -33,9 +31,6 @@ related:
   - sonic-buffer-profile
   - sonic-buffer-pool
   - sonic-buffer-pg
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
 ---
 
 # QoS / Buffer の発展トピック

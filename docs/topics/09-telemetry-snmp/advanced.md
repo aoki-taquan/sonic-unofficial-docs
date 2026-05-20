@@ -41,7 +41,7 @@ DTel は ASIC capability への依存が大きく、すべての platform で同
 
 ## sFlow
 
-sFlow は古典的なサンプリング + counter polling 型 telemetry です。hsflowd が `psample` 経由で kernel から packet sample を取り、`SFLOW_COLLECTOR` 宛に sFlow datagram を送ります。Counter polling も hsflowd が担当し、`SFLOW.global.polling_interval` で interval を制御します。
+sFlow は古典的なサンプリング + counter polling 型 telemetry です。hsflowd が `psample` 経由で kernel から packet sample を取り、`SFLOW_COLLECTOR` 宛に sFlow datagram を送ります。Counter polling も hsflowd が担当し、`SFLOW|global` テーブルの `polling_interval` フィールドで interval を制御します。
 
 sFlow と DTel の住み分けは、sFlow が「サンプリングされた粗い flow telemetry」、DTel が「flow ごとの精密 in-band telemetry」と覚えると整理できます。test plan ページは collector / agent / sampling rate の確認観点をまとめます。
 

@@ -126,7 +126,7 @@ kernel side が遅延し orchagent 側が先に更新されると、`fpmsyncd` �
 
 ## ECMP hash の制御
 
-ECMP のハッシュフィールドは `SwitchOrch` が起動時に `SWITCH_HASH` テーブル（`CONFIG_DB`）を読み、SAI に投入します。
+ECMP のハッシュフィールドは `SwitchOrch` が `CONFIG_DB:SWITCH_HASH` を購読し、変更を検知した時点で SAI に投入します。起動時に行うのは `querySwitchHashDefaults()` による SAI OID キャッシュのみで、`SWITCH_HASH|GLOBAL` の取り込みは `doCfgSwitchHashTableTask()` 経由の event-driven な経路です。
 
 ```yaml
 CONFIG_DB:SWITCH_HASH|GLOBAL

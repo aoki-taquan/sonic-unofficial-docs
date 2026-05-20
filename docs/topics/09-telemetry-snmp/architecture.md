@@ -40,8 +40,8 @@ related:
 flowchart TB
   ASIC[ASIC / SAI counters] --> SD[syncd<br>flex counter groups]
   SD --> CDB[(COUNTERS_DB<br>COUNTERS:Ethernet*<br>COUNTERS:QUEUE<br>COUNTERS:PG<br>COUNTERS_ACL_*<br>FLOW_CNT_TRAP)]
-  SAIC[CRM ASIC resource query] --> SDC[syncd CRM thread]
-  SDC --> STDB[(STATE_DB<br>CRM table)]
+  SAIC[CRM ASIC resource query] --> SDC[orchagent CrmOrch]
+  SDC --> STDB[(COUNTERS_DB<br>CRM table)]
   LNX[Linux kernel<br>/proc /sys netlink] --> AG[psud / pmon / portsyncd]
   AG --> APP[(APPL_DB / STATE_DB)]
   CDB --> CLI[CLI: show counters]
@@ -53,7 +53,7 @@ flowchart TB
   SNMPS --> SNMP[snmpd]
 ```
 
-ASIC counter は syncd 側の flex counter group がまとめて polling し、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の `COUNTERS:` 名前空間に書きます。group ごとに有効化と polling interval を `FLEX_COUNTER_TABLE` で制御します。[CRM](../../reference/glossary.md#term-crm) は別スレッドで ASIC resource を読み、[STATE_DB](../../reference/glossary.md#term-state_db) の CRM 名前空間に書きます。Linux side の sensor / process / memory 統計は別 daemon が [APPL_DB](../../reference/glossary.md#term-appl_db) / STATE_DB に書き、上位は同じ telemetry / SNMP / CLI から見えます。
+ASIC counter は syncd 側の flex counter group がまとめて polling し、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の `COUNTERS:` 名前空間に書きます。group ごとに有効化と polling interval を `FLEX_COUNTER_TABLE` で制御します。[CRM](../../reference/glossary.md#term-crm) は orchagent 内の `CrmOrch` が ASIC resource を読み、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の CRM 名前空間に書きます。Linux side の sensor / process / memory 統計は別 daemon が [APPL_DB](../../reference/glossary.md#term-appl_db) / STATE_DB に書き、上位は同じ telemetry / SNMP / CLI から見えます。
 
 ## FlexCounter Refactor の意味
 
@@ -63,14 +63,13 @@ Counter initialization optimization は、起動直後に全 port / queue / PG �
 
 ## CRM のレイヤ
 
-CRM は 2 つの世代があります。古い CRM は ASIC sdk の固有 API で resource 使用量を取り、STATE_DB に書きます。新しい SAI generic extension 版は SAI 標準の object stat と attribute capability で同じ用途を実現し、CRM のための ASIC 専用 API を廃止します。読み手にとっては、`crmconfig` で閾値を設定し、`show crm summary` で resource 使用率を見る、という入口は変わりません。
+CRM は 2 つの世代があります。古い CRM は ASIC sdk の固有 API で resource 使用量を取り、COUNTERS_DB に書きます。新しい SAI generic extension 版は SAI 標準の object stat と attribute capability で同じ用途を実現し、CRM のための ASIC 専用 API を廃止します。読み手にとっては、`crmconfig` で閾値を設定し、`show crm summary` で resource 使用率を見る、という入口は変わりません。
 
 ```mermaid
 flowchart LR
-  C[(CONFIG_DB<br>CRM)] --> CD[crmd]
-  CD --> SY[syncd CRM thread]
-  SY --> SAI[SAI resource / stat]
-  SY --> ST[(STATE_DB<br>CRM)]
+  C[(CONFIG_DB<br>CRM)] --> CD[orchagent<br>CrmOrch]
+  CD --> SAI[SAI resource / stat]
+  CD --> ST[(COUNTERS_DB<br>CRM)]
   ST --> SHOW[show crm summary]
   ST --> EV[syslog / event]
 ```

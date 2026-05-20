@@ -19,24 +19,13 @@ related:
   - show interfaces
   - show ip
   - show arp
-  - config bgp
-  - show bgp
   config_db:
   - COPP_TRAP
   - VLAN
   - SNMP
   - MIRROR_SESSION
   - COPP_GROUP
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  yang:
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
+  yang: []
 ---
 
 # 運用

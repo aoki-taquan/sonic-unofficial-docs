@@ -30,6 +30,9 @@ sources:
 - docs/reference/yang/sonic-pfcwd.md
 - docs/reference/yang/sonic-port-qos-map.md
 - docs/reference/yang/sonic-tc-queue-map.md
+- docs/reference/yang/sonic-wred-profile.md
+- docs/reference/yang/sonic-dscp-tc-map.md
+- docs/reference/yang/sonic-pfc-priority-priority-group-map.md
 related:
   cli:
   - config buffer
@@ -77,11 +80,11 @@ related:
 | Egress queue 割当 | [`BUFFER_QUEUE`](../../reference/config-db/buffer-queue.md) | [sonic-buffer-queue](../../reference/yang/sonic-buffer-queue.md) |
 | Queue × scheduler/WRED | [`QUEUE`](../../reference/config-db/queue.md) | [sonic-queue](../../reference/yang/sonic-queue.md) |
 | [Scheduler](../../reference/glossary.md#term-scheduler) / shaping | [`SCHEDULER`](../../reference/config-db/scheduler.md) | [sonic-scheduler](../../reference/yang/sonic-scheduler.md) |
-| WRED / ECN | [`WRED_PROFILE`](../../reference/config-db/wred-profile.md) | — |
-| [DSCP](../../reference/glossary.md#term-dscp)→TC | [`DSCP_TO_TC_MAP`](../../reference/config-db/dscp-to-tc-map.md) | — |
+| WRED / ECN | [`WRED_PROFILE`](../../reference/config-db/wred-profile.md) | [sonic-wred-profile](../../reference/yang/sonic-wred-profile.md) |
+| [DSCP](../../reference/glossary.md#term-dscp)→TC | [`DSCP_TO_TC_MAP`](../../reference/config-db/dscp-to-tc-map.md) | [sonic-dscp-tc-map](../../reference/yang/sonic-dscp-tc-map.md) |
 | TC→queue | [`TC_TO_QUEUE_MAP`](../../reference/config-db/tc-to-queue-map.md) | [sonic-tc-queue-map](../../reference/yang/sonic-tc-queue-map.md) |
 | ポート単位の map 適用 | [`PORT_QOS_MAP`](../../reference/config-db/port-qos-map.md) | [sonic-port-qos-map](../../reference/yang/sonic-port-qos-map.md) |
-| PFC priority→PG | [`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP`](../../reference/config-db/pfc-priority-to-priority-group-map.md) | — |
+| PFC priority→PG | [`PFC_PRIORITY_TO_PRIORITY_GROUP_MAP`](../../reference/config-db/pfc-priority-to-priority-group-map.md) | [sonic-pfc-priority-priority-group-map](../../reference/yang/sonic-pfc-priority-priority-group-map.md) |
 | PFCWD | [`PFC_WD`](../../reference/config-db/pfc-wd.md) | [sonic-pfcwd](../../reference/yang/sonic-pfcwd.md) |
 
 ## シナリオ 1: 最小構成 — lossy のみ ToR

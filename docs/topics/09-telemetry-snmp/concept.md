@@ -78,7 +78,7 @@ Telemetry / SNMP 系は基本的に **management plane** に属しますが、�
 - **gNMI**: gRPC 上で [YANG](../../reference/glossary.md#term-yang) path を Get / Set / Subscribe する Google の管理プロトコル。SONiC では `telemetry` コンテナの `gnmi-server` が実装。
 - **[gNOI](../../reference/glossary.md#term-gnoi) / gNSI**: gNMI と同じ gRPC スタック上で「操作系 (gNOI: reboot / file / OS install / cert install)」と「セキュリティ系 (gNSI: authz / pathz / credential)」を扱う仕様。
 - **FlexCounter**: [syncd](../../reference/glossary.md#term-syncd) の counter polling 機構。port、queue、PG、ACL、route flow、trap flow など複数 group を別 interval で polling し、`COUNTERS_DB` に書きます。
-- **CRM (Critical Resource Monitoring)**: ACL entry、route、neighbor、nexthop group などの ASIC リソース使用量と閾値を watch する仕組み。STATE_DB と syslog に通知。
+- **CRM (Critical Resource Monitoring)**: ACL entry、route、neighbor、nexthop group などの ASIC リソース使用量と閾値を watch する仕組み。COUNTERS_DB に publish し、閾値超過は syslog に通知。
 - **sFlow**: パケットサンプリング + interface counter を `sFlow datagram` として外部 collector に UDP 送信するプロトコル。SONiC では `hsflowd` が担当。
 - **DTel (Data plane Telemetry)**: [INT](../../reference/glossary.md#term-int) (In-band Network Telemetry) を ASIC が直接フレームに埋めて export。SONiC は ASIC 側の設定パスのみ。
 - **[Syslog](../../reference/glossary.md#term-syslog) / Event**: テキストログと構造化イベント。`syslog-ng` で集約し、外部 collector に転送。
@@ -107,12 +107,12 @@ flowchart LR
   EV --> TS[techsupport tarball]
 ```
 
-CRM は ACL / route / neighbor / nexthop など ASIC 資源の使用量を STATE_DB に publish する固有の経路です。SAI generic counter 拡張版は CRM 自身の polling 負荷を別 group の flex counter に逃がしますが、読み手から見れば「資源の上限と消費」を答える機能という位置付けは変わりません。
+CRM は ACL / route / neighbor / nexthop など ASIC 資源の使用量を COUNTERS_DB に publish する固有の経路です。SAI generic counter 拡張版は CRM 自身の polling 負荷を別 group の flex counter に逃がしますが、読み手から見れば「資源の上限と消費」を答える機能という位置付けは変わりません。
 
 ## FlexCounter / CRM / DTel / sFlow / watermark の棲み分け
 
 - **FlexCounter**: [orchagent](../../reference/glossary.md#term-orchagent) ではなく syncd の flex counter infra で各種 counter（port、queue、PG、ACL、route flow、trap flow など）を定期 polling し、COUNTERS_DB に書きます。`COUNTERS:` table の供給元です。
-- **CRM**: ACL entry、route、neighbor、nexthop group などの ASIC resource 使用量と閾値超過を監視し、STATE_DB と syslog に出します。FlexCounter の counter とは別目的です。
+- **CRM**: ACL entry、route、neighbor、nexthop group などの ASIC resource 使用量と閾値超過を監視し、COUNTERS_DB に publish して閾値超過は syslog に出します。FlexCounter の counter とは別目的です。
 - **DTel**: Inband Network Telemetry を ASIC が直接 export するもので、SONiC からは設定パスのみ通り、データは外部 collector へ流れます。
 - **sFlow**: hsflowd がサンプリングと counter を psample / kernel から取り、外部 collector に sFlow datagram を送ります。
 - **Watermark**: queue / PG / buffer の高水位を ASIC が保持し、SONiC が定期 snapshot します。詳細は [QoS](../../reference/glossary.md#term-qos) 章で扱います。
