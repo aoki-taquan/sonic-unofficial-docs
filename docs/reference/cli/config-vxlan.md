@@ -133,7 +133,7 @@ excerpt: |
 
 ### `config vxlan map_range del <vxlan_name> <vlan_start> <vlan_end> <vni_start>`
 
-範囲内の各 (vlan, vni) について、**VRF に紐付いていない VNI のみ削除**し、VRF にマップ済みの VNI はスキップ（保護）する仕様[^2]。完全に削除したい場合は先に `config vrf del_vrf_vni_map` で VRF-VNI マッピングを解除してから `map del` を使う。スキップされた行は print メッセージのみで警告扱い。
+範囲内の各 (vlan, vni) について、**[VRF](../../reference/glossary.md#term-vrf) に紐付いていない VNI のみ削除**し、[VRF](../../reference/glossary.md#term-vrf) にマップ済みの VNI はスキップ（保護）する仕様[^2]。完全に削除したい場合は先に `config vrf del_vrf_vni_map` で VRF-VNI マッピングを解除してから `map del` を使う。スキップされた行は print メッセージのみで警告扱い。
 
 ## 関連する CONFIG_DB
 
@@ -259,4 +259,4 @@ show vxlan name <tunnel>
 - [CONFIG_DB: VXLAN_TUNNEL_MAP](../config-db/vxlan-tunnel-map.md)
 - [YANG: sonic-vxlan](../yang/sonic-vxlan.md)
 
-<!-- glossary-links-injected: 764ef78dbc78 -->
+<!-- glossary-links-injected: 639b97382f4c -->
