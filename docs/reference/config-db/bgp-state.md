@@ -199,7 +199,7 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 ### 範囲外
 
 - **[ASIC_DB](../../reference/glossary.md#term-asic_db) BGP セッション state**: [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) / bgpmon は [ASIC_DB](../../reference/glossary.md#term-asic_db) を参照しない。[ASIC_DB](../../reference/glossary.md#term-asic_db) への BGP 関連書き込みは `routeorch` (SWSS) が担当し、本テーブル群とは独立した経路。
-- **`BGP_PEER_GROUP`** (CONFIG_DB): 独立テーブルとして存在しない。peer-group 設定は `BGP_NEIGHBOR` 等の内容から Jinja2 テンプレートで生成され、FRR に直接投入される。
+- **`BGP_PEER_GROUP`** (CONFIG_DB): `BGP_PEER_GROUP|<vrf>|<pg_name>` キーで CONFIG_DB に存在する独立テーブル。frrcfgd が直接購読する。詳細は [BGP_PEER_GROUP ページ](bgp-peer-group.md) を参照。なお bgpcfgd 経路では peer-group **設定コマンド**を Jinja2 テンプレートで生成し FRR に投入するが、これはテーブル自体の不在を意味しない。
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-state-cross-refs.md` を参照。
 <!-- /cross-refs -->
@@ -468,6 +468,16 @@ keyspace notification (`__keyspace@6__:BGP_PEER_CONFIGURED_TABLE|*`) は STATE_D
 <!-- /pubsub -->
 
 ## 引用元
+
+[^1]: `sonic-buildimage/src/sonic-bgpcfgd/bgpmon/bgpmon.py` (L37-51 BgpStateGet.__init__, L70-76 update_new_peer_states, L154-189 update_neigh_states, L163,171 peerType 判定). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpmon/bgpmon.py>
+
+[^2]: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py` (L284-303 update_state_db). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py>
+
+[^3]: `sonic-net/SONiC/doc/snmp/snmp_ciscobgp4mib.md` (NEIGH_STATE_TABLE スキーマ定義, L27-32). <https://github.com/sonic-net/SONiC/blob/master/doc/snmp/snmp_ciscobgp4mib.md>
+
+[^4]: `sonic-net/SONiC/doc/BGP/Bgpcfgd-dyn-peer-modification-support.md` (BGP_PEER_CONFIGURED_TABLE スキーマ定義, §2.2). <https://github.com/sonic-net/SONiC/blob/master/doc/BGP/Bgpcfgd-dyn-peer-modification-support.md>
+
+[^5]: `sonic-swss-common/common/schema.h` (L437 STATE_BGP_TABLE_NAME, L511 STATE_BGP_PEER_CONFIGURED_TABLE_NAME). <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
 
 [^6]: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py` (L229–243 add_peer テンプレート失敗分岐, L271–304 update_state_db 例外処理, L446–492 del_handler 失敗・順序乖離, L494–508 apply_op 常時 True). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py>
 

@@ -267,7 +267,7 @@ show buffer queue
 - なし
 
 ### ビルド時デフォルト (init_cfg / j2 テンプレート)
-- `qos_config.j2` から [QoS](../../reference/glossary.md#term-qos) マッピングと共に生成
+- `buffers_config.j2` からバッファ設定と共に生成（デフォルトキュープロファイル割り当て）
 
 ### ハードコードデフォルト
 - なし
@@ -629,4 +629,4 @@ YANG の qindex 正規表現は `(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?` で **0〜1
 詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: 4685106499a6 -->
+<!-- glossary-links-injected: c13da27b1272 -->

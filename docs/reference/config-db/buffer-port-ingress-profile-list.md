@@ -437,7 +437,7 @@ evidence: `buffermgrdyn.cpp:3387-3450`, `buffermgr.cpp:476-480`
 - DEL パスに `// Not supported on Mellanox platform for now.` コメントあり。ingress / egress 両 profile list 共通の関数 `handleSingleBufferPortProfileListEntry` 内に存在（`buffermgrdyn.cpp:3443`）。削除処理は実行されるが正式サポート外。
 
 **trim 禁止制約（ベンダー共通）**:
-- `bufferorch.cpp:1725-1731` の `isTrimmingEligible` チェックにより、`packet_discard_action=trim` のプロファイルを ingress profile list に設定すると `task_failed`。SAI 仕様上の制限でベンダー問わず適用。egress 側には同等制約なし。
+- `bufferorch.cpp:1725-1731` の `isTrimmingEligible` チェックにより、`packet_discard_action=trim` のプロファイルを ingress profile list に設定すると `task_failed`。SAI 仕様上の制限でベンダー問わず適用。egress profile list (`bufferorch.cpp:1907-1921`) にも同等の `task_failed` 制約があり、trim 禁止は ingress / egress 双方に適用される（適用可能なのは egress shared buffer のみ）。
 
 **Broadcom / その他**:
 - モデル番号取得や 8 レーン倍増なし。Lua プラグイン名のみ異なる（`buffer_headroom_broadcom.lua` 等）。テーブル処理コードに vendor 条件分岐なし。
@@ -457,7 +457,7 @@ evidence: `bufferorch.cpp:1660-1774`（`processIngressBufferProfileList`: voq �
 | 差分カテゴリ | 差分有無 | 備考 |
 |------------|---------|------|
 | dynamic vs static model | **あり** | direction 検証・admin-down 置換・pool guard は dynamic のみ |
-| trim プロファイル禁止 | **あり（ingress 専用）** | egress には同等制約なし |
+| trim プロファイル禁止 | **あり（ingress / egress profile list 共通）** | `bufferorch.cpp:1725-1731` (ingress) / `bufferorch.cpp:1907-1921` (egress)。egress shared buffer への適用のみ許容 |
 | Mellanox DEL 未サポートコメント | **あり** | 処理は動作するが正式未サポート注記 |
 | Mellanox 8 レーン xon 倍増 | 間接的 | 参照 BUFFER_PROFILE 名に影響、テーブル処理コードに分岐なし |
 | VOQ Chassis | **差分なし** | 処理開始タイミング以外は同一コードパス |
@@ -489,7 +489,7 @@ evidence: `bufferorch.cpp:1660-1774`（`processIngressBufferProfileList`: voq �
 | `gPortsOrch->getPort()` 失敗（ポート未登録） | `task_invalid_entry` | ERROR | `bufferorch.cpp:1762-1765` |
 | SAI Bulk SET 部分失敗（`SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR`） | 失敗ポートのみ `task_need_retry` で再投入（成功ポートは確定） | ERROR | `bufferorch.cpp:1823-1843` |
 
-> **trim 禁止**は ingress 専用制約。egress profile list (`processEgressBufferProfileList`) には同等チェックが存在しない（SAI 仕様上 egress 側のトリミングは許容される）。
+> **trim 禁止**は ingress / egress profile list の双方に適用される制約。egress profile list (`processEgressBufferProfileList`, `bufferorch.cpp:1907-1921`) でも `isTrimmingEligible` チェックにより `task_failed` となる。trim プロファイルは egress shared buffer への適用のみ許容される。
 
 > **SAI Bulk 部分失敗**は `processIngressBufferProfileListBulk()` 内で処理される。`SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR` を使用するため、複数ポートの一括 SET において一部ポートが失敗しても処理は継続する。失敗したポートのエントリは `consumer.m_toSync` に再投入され次回リトライされる。
 

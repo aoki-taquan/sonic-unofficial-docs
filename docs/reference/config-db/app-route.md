@@ -688,7 +688,7 @@ else if ((utilization <= res.lowThreshold) && (cnt.exceededLogCounter > 0) && ..
 
 ### 範囲外 (誤解されやすい隣接)
 
-- `STATIC_ROUTE` (CONFIG_DB) → `staticrouteorch` 経由で別途 APPL_DB `ROUTE_TABLE` に書く側 (`fpmsyncd` 経由でないパス) であり、`routeorch` から見れば本テーブルの同じ key 空間に流れ込むだけで cross-table 参照ではない。
+- `STATIC_ROUTE` (CONFIG_DB) → `bgpcfgd` の `StaticRouteMgr` または `staticrouteorch` 経由で別途 APPL_DB `ROUTE_TABLE` に書く側 (`fpmsyncd` 経由でないパス) であり、`routeorch` から見れば本テーブルの同じ key 空間に流れ込むだけで cross-table 参照ではない。詳細は `static-route.md` を参照。
 - `ROUTE_TABLE` (STATE_DB) — `0.0.0.0/0` / `::/0` のデフォルトルート到達性のみが書き込まれる side-effect であり、`routeorch` の読み取り対象ではない (Phase F 参照)。
 
 詳細スキャン手順と行番号一覧は `meta/_intermediate/cdb-flow/app-route-cross-refs.md` を参照。
