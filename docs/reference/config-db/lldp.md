@@ -229,7 +229,7 @@ grouping `lldp_mode_config` を `uses`:
 ### 典型値
 
 - key 形式: `LLDP|GLOBAL`。
-- `hello_timer`: 10、`mode`: `receive` / `transmit-and-receive`。
+- `hello_time`: 10、`mode`: `receive` / `transmit-and-receive`。
 
 ### よくある誤設定
 
@@ -286,7 +286,7 @@ show lldp table
 | 条件 | 挙動 |
 |------|------|
 | `mode` に不正値 | `lldpcli` が不正コマンドエラー。CONFIG_DB には書けるが lldpd に反映されない |
-| `hello_timer` が 0 または負 | lldpd がデフォルト 30 秒で動作。YANG バリデーション有効時は mgmt-framework 経由で拒否 |
+| `hello_time` が 0 または負 | lldpd がデフォルト 30 秒で動作。YANG バリデーション有効時は mgmt-framework 経由で拒否 |
 | `mode=rx_only` / `receive` 設定 | 自ノードの LLDP TLV を送出しない。対向スイッチのトポロジービューに当該ノードが映らなくなる |
 | `LLDP\|GLOBAL` エントリが存在しない | lldpd がデフォルト設定（hello=30s, mode=tx_and_rx）で起動。エントリ削除後は再起動後にデフォルトへ戻る |
 

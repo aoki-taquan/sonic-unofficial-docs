@@ -150,7 +150,7 @@ module: sonic-lldp
 
 ### よくある落とし穴
 
-- `tx_hold` / `tx_interval` の組み合わせで TTL が決まる。整数 typedef だが範囲制約が緩く、過小値で隣接が flapping する。
+- `hello_time` (5..254) と `multiplier` (1..10) の組み合わせで TTL が決まる (TTL = hello_time × multiplier)。過小値で隣接が flapping する。
 
 ### 関連する config / show コマンド
 

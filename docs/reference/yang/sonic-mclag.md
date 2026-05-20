@@ -11,7 +11,7 @@ sources:
 related:
   config_db: [MCLAG_DOMAIN, MCLAG_INTERFACE, MCLAG_UNIQUE_IP]
   cli: ["config mclag"]
-  yang: [sonic-port, sonic-portchannel, sonic-vlan]
+  yang: [sonic-port, sonic-portchannel]
 ---
 
 # sonic-mclag YANG
@@ -126,16 +126,16 @@ module: sonic-mclag
 
 - [`sonic-port`](sonic-port.md)
 - [`sonic-portchannel`](sonic-portchannel.md)
-- [`sonic-vlan`](sonic-vlan.md)
 - [`sonic-spanning-tree`](sonic-spanning-tree.md)
 - [`sonic-storm-control`](sonic-storm-control.md)
+- [`sonic-vlan`](sonic-vlan.md)
 <!-- /yang-sibling -->
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`MCLAG_DOMAIN`](../config-db/mclag-domain.md) / `MCLAG_INTERFACE` / `MCLAG_UNIQUE_IP`
+- CONFIG_DB: [`MCLAG_DOMAIN`](../config-db/mclag-domain.md) / [`MCLAG_INTERFACE`](../config-db/mclag-interface.md) / [`MCLAG_UNIQUE_IP`](../config-db/mclag-unique-ip.md)
 - CLI: [`config mclag`](../cli/config-mclag.md)
 
 <!-- ref-triangle:end -->

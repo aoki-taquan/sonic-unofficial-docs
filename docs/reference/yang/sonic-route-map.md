@@ -11,7 +11,7 @@ sources:
 related:
   config_db: [ROUTE_MAP, ROUTE_MAP_SET]
   cli: []
-  yang: [sonic-routing-policy-sets]
+  yang: []
 ---
 
 # sonic-route-map YANG

@@ -11,7 +11,7 @@ sources:
 related:
   config_db: [MIRROR_SESSION]
   cli: ["config mirror_session"]
-  yang: [sonic-port, sonic-acl]
+  yang: [sonic-port, sonic-policer]
 ---
 
 # sonic-mirror-session YANG

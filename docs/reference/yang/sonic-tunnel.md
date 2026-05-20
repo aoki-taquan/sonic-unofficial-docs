@@ -11,7 +11,7 @@ sources:
 related:
   config_db: [TUNNEL]
   cli: []
-  yang: [sonic-peer-switch, sonic-mux-cable]
+  yang: [sonic-mux-cable]
 ---
 
 # sonic-tunnel YANG

@@ -116,7 +116,7 @@ module: sonic-breakout_cfg
 
 ### 典型的なデプロイ位置
 
-- Port breakout (4x25G 等) 設定。`BREAKOUT_CFG|<port>` を [portmgrd](../../reference/glossary.md#term-portmgrd) / xcvrd が読み、port 再生成のトリガーになる。
+- Port breakout (4x25G 等) 設定。`BREAKOUT_CFG|<port>` を直接購読する runtime daemon は存在しない。CLI (`config interface breakout`) が [CONFIG_DB](../../reference/glossary.md#term-config_db)[PORT] を書き換え、[portsyncd](../../reference/glossary.md#term-portsyncd) 経由で [APPL_DB](../../reference/glossary.md#term-appl_db)[PORT_TABLE] → PortsOrch ([orchagent](../../reference/glossary.md#term-orchagent)) → [SAI](../../reference/glossary.md#term-sai) に伝播する。
 
 ### よくある落とし穴
 
@@ -134,4 +134,4 @@ show interfaces breakout current-mode
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-breakout_cfg.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: dc62e86e7215 -->
