@@ -7,8 +7,10 @@
 [default]
 # ファイル全体スキャン。バイナリは自動 skip される。
 extend-ignore-re = [
-    # SHA / hash 値 (8+ 桁 hex)
-    "\\b[0-9a-fA-F]{8,}\\b",
+    # SHA / hash 値 (6+ 桁 hex)。短い fragment 引用 (4ba9612 等) もスキップ。
+    "\\b[0-9a-fA-F]{6,}\\b",
+    # @<short-sha> パターン
+    "@[0-9a-fA-F]{4,}",
     # mermaid 内の ascii art / arrow
     "-->",
     # コードフェンス内の生コード（行単位ではなく block 単位検出が望ましいが、簡易版）
@@ -45,6 +47,16 @@ gbsyncd = "gbsyncd"
 stpmgrd = "stpmgrd"
 macsecmgr = "macsecmgr"
 hamgrd = "hamgrd"
+
+# 上流 SONiC コードに実在する typo を忠実に引用するため除外。
+# 直すべきは上流側で、本ドキュメントは追従するだけ。
+Notifiction = "Notifiction"
+notifiction = "notifiction"
+
+# SONiC のフィールド名・パラメータ名 (典型的に short form)
+grat_arp = "grat_arp"
+grat = "grat"
+gratuitous = "gratuitous"
 
 # 略語 / 名詞
 nhg = "nhg"

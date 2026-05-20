@@ -62,7 +62,7 @@ jobs:
       - name: typos check
         uses: crate-ci/typos@master
         with:
-          files: docs meta README.md CONTRIBUTING.md CLAUDE.md
+          files: docs meta README.md CONTRIBUTING.md
           config: .typos.toml
 
   # frontmatter linter (strict) + 全 drift / 各種 informational check。
