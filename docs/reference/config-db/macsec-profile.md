@@ -216,7 +216,7 @@ CONFIG_DB:PORT.macsec  ──名前参照──▶  CONFIG_DB:MACSEC_PROFILE
 | `replay_window` | `macsec_replay_window`（`enable_replay_protect=true` 時のみ） |
 | `policy` | `macsec_integ_only`（`integrity_only` → 1） |
 
-詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md)
+詳細分析: `meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md`
 <!-- /cross-refs -->
 
 ## 引用元
@@ -553,7 +553,7 @@ enableMACsec()
   └─ disableMACsec() 呼出し（ポートを非暗号化状態へ復元）
 ```
 
-詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-failure.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-failure.md)
+詳細分析: `meta/_intermediate/cdb-flow/macsec-profile-failure.md`
 <!-- /failure -->
 
 <!-- pubsub -->
@@ -608,7 +608,7 @@ macsecmgrd::enableMACsec()
        sai_macsec_api → ASIC/HW
 ```
 
-詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-pubsub.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-pubsub.md)
+詳細分析: `meta/_intermediate/cdb-flow/macsec-profile-pubsub.md`
 <!-- /pubsub -->
 
 <!-- side-effects -->

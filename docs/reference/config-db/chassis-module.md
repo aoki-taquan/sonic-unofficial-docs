@@ -286,7 +286,7 @@ chassisd が停止中でもタイムアウト後に強制実行される。
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-chassis-module`](../yang/sonic-chassis-module.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-chassis-module`
 - CLI: `config chassis_modules shutdown <name>` / `config chassis_modules startup <name>`
 - CLI: `show chassis modules status`
 

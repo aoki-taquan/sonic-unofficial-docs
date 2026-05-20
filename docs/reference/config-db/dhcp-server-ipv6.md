@@ -262,7 +262,7 @@ CONFIG_DB の `dhcpv6_servers` を変更しても dhcp6relay は無視する。*
 
 **VLAN_MEMBER**: `relay.cpp:856` で `"VLAN_MEMBER|" + vlan + "|*"` を取得し、member interface → VLAN の逆引きマップを構築する。これがないとクライアントパケットの VLAN 判定が不可能。
 
-詳細: [`meta/_intermediate/cdb-flow/dhcp-server-ipv6-cross-refs.md`](../../../../meta/_intermediate/cdb-flow/dhcp-server-ipv6-cross-refs.md)
+詳細: `meta/_intermediate/cdb-flow/dhcp-server-ipv6-cross-refs.md`
 
 <!-- /cross-refs -->
 

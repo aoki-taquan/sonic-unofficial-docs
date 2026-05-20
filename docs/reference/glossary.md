@@ -1057,7 +1057,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - **略称**: SONiC (Software for Open Networking in the Cloud)
 - **日本語訳**: SONiC
-- **説明**: Linux ベースのオープンソース NOS。本ドキュメントが対象とするコミュニティ版 master ブランチ。詳細は [プロジェクトトップ](../../index.md) を参照。
+- **説明**: Linux ベースのオープンソース NOS。本ドキュメントが対象とするコミュニティ版 master ブランチ。詳細は [プロジェクトトップ](../index.md) を参照。
 
 
 ## T

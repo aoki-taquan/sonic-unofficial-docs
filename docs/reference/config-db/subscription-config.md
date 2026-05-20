@@ -568,7 +568,7 @@ Supervisor Card 上のホスト CONFIG_DB の `TELEMETRY_CLIENT` のみが有効
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-telemetry_client`](../yang/sonic-telemetry_client.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-telemetry_client`
 - [CONFIG_DB: TELEMETRY_CLIENT](telemetry-client.md) (テーブル全体の概要)
 - [CONFIG_DB: TELEMETRY](telemetry.md) (dial-in 側設定)
 

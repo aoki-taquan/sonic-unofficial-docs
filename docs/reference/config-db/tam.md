@@ -118,8 +118,8 @@ IFA 機能の全体的な有効/無効フラグ。singleton。key は固定値 `
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-tam`](../yang/sonic-tam.md)
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-ifa`](../yang/sonic-ifa.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-tam`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-ifa`
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): [`acl-table`](acl-table.md)
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): [`acl-rule`](acl-rule.md)
 

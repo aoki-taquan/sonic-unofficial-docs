@@ -25,6 +25,9 @@ related:
     - PORT_QOS_MAP
   cli:
     - config qos
+  yang:
+    - sonic-dscp-tc-map
+    - sonic-tc-priority-group-map
 monitor: partially_implemented
 ---
 

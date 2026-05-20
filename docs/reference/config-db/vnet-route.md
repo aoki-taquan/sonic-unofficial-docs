@@ -128,7 +128,7 @@ VNET スコープの VXLAN トンネル encapsulation 経路。
 
 - CONFIG_DB: [`VNET`](./vnet.md)
 - YANG: [`sonic-vnet`](../yang/sonic-vnet.md)
-- CLI: [`show vnet routes`](../cli/show-vnet.md)
+- CLI: `show vnet routes`
 
 <!-- ref-triangle:end -->
 
