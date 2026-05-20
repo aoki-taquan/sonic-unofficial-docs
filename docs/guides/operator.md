@@ -51,7 +51,8 @@ related:
 ## 関連 Topics
 
 - [Topics: SONiC 全体像と設定基盤](../topics/01-overview/index.md)
-- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+- [Topics: 再起動とアップグレード](../topics/11-reboot/index.md)
+- [Topics: テレメトリと SNMP](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
 
