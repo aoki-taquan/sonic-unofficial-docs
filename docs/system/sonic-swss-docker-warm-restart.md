@@ -53,7 +53,7 @@ state は複数ソースから来る:
 - [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd): [LAG](../reference/glossary.md#term-lag) state（teamsyncd）
 - bgp / [fpmsyncd](../reference/glossary.md#term-fpmsyncd): [ROUTE_TABLE](../reference/glossary.md#term-route_table)
 - json: COPP / Tunnel / Mirror
-- syncd: [FDB](../reference/glossary.md#term-fdb) / port state（ASIC 由来）
+- syncd: [FDB](../reference/glossary.md#term-fdb) / port state（[ASIC](../reference/glossary.md#term-asic) 由来）
 
 ## 動作仕様
 
@@ -142,4 +142,4 @@ docker logs swss 2>&1 | grep -iE "warm|bake|reconcile" | tail -50
 - 古い HLD（priority=high）のため Warmboot Manager との置換確認
 -->
 
-<!-- glossary-links-injected: 28bb2aad52a3 -->
+<!-- glossary-links-injected: c006405759d8 -->

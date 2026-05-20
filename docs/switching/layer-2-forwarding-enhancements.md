@@ -44,7 +44,7 @@ related:
 
 ## なぜ拡張するのか
 
-SONiC 初期の L2 機能に欠けていた 6 項目を一括導入する [HLD](../reference/glossary.md#term-hld)[^1]:
+[SONiC](../reference/glossary.md#term-sonic) 初期の L2 機能に欠けていた 6 項目を一括導入する [HLD](../reference/glossary.md#term-hld)[^1]:
 
 1. **per-port / per-[VLAN](../reference/glossary.md#term-vlan) / per-(port,VLAN) [FDB](../reference/glossary.md#term-fdb) flush** （port down / VLAN 抜去 / STP topo change 時）
 2. **MAC move event** の [SAI](../reference/glossary.md#term-sai) / [orchagent](../reference/glossary.md#term-orchagent) 対応
@@ -256,4 +256,4 @@ port が VLAN メンバでない間に投入した static は orchagent ログ�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 621fc85fd285 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

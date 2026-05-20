@@ -45,7 +45,7 @@ related:
 
 # DASH と SmartSwitch の考え方
 
-[DASH](../../reference/glossary.md#term-dash) と [SmartSwitch](../../reference/glossary.md#term-smartswitch) は混同されやすい言葉ですが、別レイヤのものです。DASH は **「[ENI](../../reference/glossary.md#term-eni) 単位で VNet / [ACL](../../reference/glossary.md#term-acl) / metering / Service Tunnel を高速にこなす」データプレーン API と SONiC 実装** を指し、SmartSwitch は **「[NPU](../../reference/glossary.md#term-npu) スイッチに複数の [DPU](../../reference/glossary.md#term-dpu) をぶら下げ、DASH を含む処理を DPU で動かす」物理 / 制御プラットフォーム** を指します。
+[DASH](../../reference/glossary.md#term-dash) と [SmartSwitch](../../reference/glossary.md#term-smartswitch) は混同されやすい言葉ですが、別レイヤのものです。DASH は **「[ENI](../../reference/glossary.md#term-eni) 単位で VNet / [ACL](../../reference/glossary.md#term-acl) / metering / Service Tunnel を高速にこなす」データプレーン API と [SONiC](../../reference/glossary.md#term-sonic) 実装** を指し、SmartSwitch は **「[NPU](../../reference/glossary.md#term-npu) スイッチに複数の [DPU](../../reference/glossary.md#term-dpu) をぶら下げ、DASH を含む処理を DPU で動かす」物理 / 制御プラットフォーム** を指します。
 
 つまり「DASH を動かす器」が SmartSwitch であり、SmartSwitch 上で動く主役のオーバーレイ処理が DASH です。
 
@@ -80,7 +80,7 @@ DPU はメモリが厳しいため、DASH の全オブジェクト（多数の E
 
 - DPU 側の RAM 圧迫を避ける
 - コントローラは NPU 側に書くだけで DPU を意識せず済む（API 表面が単純化）
-- multi-ASIC と同じ daemon (`featured`) で機構を再利用できる
+- multi-[ASIC](../../reference/glossary.md#term-asic) と同じ daemon (`featured`) で機構を再利用できる
 
 ## ENI ベース転送と VIP
 
@@ -181,7 +181,7 @@ sequenceDiagram
 | 比較対象 | DASH / SmartSwitch との違い |
 | --- | --- |
 | 通常の SONiC VxLAN / [EVPN](../../reference/glossary.md#term-evpn) ゲートウェイ（[03 章](../03-vxlan-evpn/index.md)） | テナント数・per-ENI state が増えると CPU/[TCAM](../../reference/glossary.md#term-tcam) が破綻する。DASH は per-ENI state を DPU 側に押し込む |
-| Multi-ASIC chassis（[12 章](../12-multi-asic-voq/index.md)） | 複数 ASIC を 1 装置に積む点は似るが、Multi-ASIC は単一スイッチング機能、SmartSwitch は NPU + 別役割の DPU |
+| [Multi-ASIC](../../reference/glossary.md#term-multi-asic) chassis（[12 章](../12-multi-asic-voq/index.md)） | 複数 ASIC を 1 装置に積む点は似るが、Multi-ASIC は単一スイッチング機能、SmartSwitch は NPU + 別役割の DPU |
 | 単体 SmartNIC（DPU 単独） | SmartNIC は server NIC 側に DPU を載せる発想。SmartSwitch は ToR 側に集約 |
 | ホストベースの仮想 router（OVS / VPP） | CPU 上で動かす分柔軟だが、per-flow CPU コストが線形に効く。DASH はパイプライン処理 |
 | [MPLS](../../reference/glossary.md#term-mpls) / [SRv6](../../reference/glossary.md#term-srv6) ベース L3VPN（[17 章](../17-srv6-mpls/index.md)） | DASH は ENI 単位の policy / metering まで含む。MPLS / SRv6 はラベル経路提供が主 |
@@ -210,4 +210,4 @@ sequenceDiagram
 - [VXLAN / EVPN / VNET オーバーレイ](../03-vxlan-evpn/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: 7a2ce05409fb -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

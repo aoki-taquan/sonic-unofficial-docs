@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-ToR スイッチが downstream client から受けた DHCPDISCOVER / REQUEST broadcast を、upstream の DHCP サーバ群へ unicast で中継する仕組み[^1]。SONiC は ISC 由来の `dhcrelay` を [VLAN](../reference/glossary.md#term-vlan) 単位で起動し、付随する `dhcpmon` で監視・統計収集する。
+ToR スイッチが downstream client から受けた DHCPDISCOVER / REQUEST broadcast を、upstream の DHCP サーバ群へ unicast で中継する仕組み[^1]。[SONiC](../reference/glossary.md#term-sonic) は ISC 由来の `dhcrelay` を [VLAN](../reference/glossary.md#term-vlan) 単位で起動し、付随する `dhcpmon` で監視・統計収集する。
 
 主な責務:
 
@@ -162,4 +162,4 @@ docker logs dhcp_relay 2>&1 | tail -50
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -45,7 +45,7 @@ show buffer configuration [--namespace <ns>|--namespace all] [--verbose]
 mmuconfig -l [-n <namespace>] [-vv]
 ```
 
-`--namespace` は multi-ASIC namespace 名または `all` を受け付ける。`--verbose` は `mmuconfig` に `-vv` を渡す。
+`--namespace` は multi-[ASIC](../../reference/glossary.md#term-asic) namespace 名または `all` を受け付ける。`--verbose` は `mmuconfig` に `-vv` を渡す。
 
 ## 注意
 
@@ -101,7 +101,7 @@ flowchart LR
 ### よくある落とし穴
 
 - dynamic buffer mode では profile が自動生成されるため、`config save` 直後の値と実値がズレる。
-- pool size は ASIC 限界に依存。容量超過は syslog にだけ出る。
+- pool size は [ASIC](../../reference/glossary.md#term-asic) 限界に依存。容量超過は syslog にだけ出る。
 
 ### 関連する show / debug
 
@@ -123,4 +123,4 @@ show runningconfiguration | grep -i buffer
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: e82be350a384 -->

@@ -67,7 +67,7 @@ PORTCHANNEL|<name>
 - `untagged` メンバ 1 個のみ → `access`
 - `tagged` メンバを 1 つでも持つ → `trunk`
 
-これにより既存 SONiC からのアップグレードで CONFIG_DB が破綻しない[^1]。
+これにより既存 [SONiC](../reference/glossary.md#term-sonic) からのアップグレードで CONFIG_DB が破綻しない[^1]。
 
 ## フェーズ別 実装境界
 
@@ -131,4 +131,4 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 
 [^1]: `sonic-net/SONiC` `doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: f7808c6675e0 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

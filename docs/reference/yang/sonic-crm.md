@@ -24,7 +24,7 @@ related:
 - import: `sonic-types`, `sonic-device_metadata`
 - top container: `sonic-crm`
 
-Critical Resource Monitoring ([CRM](../../reference/glossary.md#term-crm)) 設定の [YANG](../../reference/glossary.md#term-yang) モデル[^1]。ASIC 上の各種ハードウェアリソース（[ACL](../../reference/glossary.md#term-acl) カウンタ/エントリ、route、neighbor、nexthop、[FDB](../../reference/glossary.md#term-fdb)、[NAT](../../reference/glossary.md#term-nat)、[MPLS](../../reference/glossary.md#term-mpls)、[SRv6](../../reference/glossary.md#term-srv6)、[DASH](../../reference/glossary.md#term-dash) オブジェクト 等）について `threshold_type` / `high_threshold` / `low_threshold` の 3 リーフをひとセットとして繰り返し定義する大型モジュール。
+Critical Resource Monitoring ([CRM](../../reference/glossary.md#term-crm)) 設定の [YANG](../../reference/glossary.md#term-yang) モデル[^1]。[ASIC](../../reference/glossary.md#term-asic) 上の各種ハードウェアリソース（[ACL](../../reference/glossary.md#term-acl) カウンタ/エントリ、route、neighbor、nexthop、[FDB](../../reference/glossary.md#term-fdb)、[NAT](../../reference/glossary.md#term-nat)、[MPLS](../../reference/glossary.md#term-mpls)、[SRv6](../../reference/glossary.md#term-srv6)、[DASH](../../reference/glossary.md#term-dash) オブジェクト 等）について `threshold_type` / `high_threshold` / `low_threshold` の 3 リーフをひとセットとして繰り返し定義する大型モジュール。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -174,4 +174,4 @@ crm show thresholds all
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-crm.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: c006405759d8 -->

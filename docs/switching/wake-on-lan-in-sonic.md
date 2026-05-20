@@ -50,7 +50,7 @@ related:
 
 ## 概要
 
-Wake-on-LAN (WoL) は、特殊な「Magic Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。本機能は SONiC スイッチを **Magic Packet の送信元** として使えるようにするもので、運用ツールから WoL を発行することでサーバ群を遠隔起動できる。NIC 側で WoL 受信が動作するかは別問題（受信側 BIOS / NIC 設定）であり、本 [HLD](../reference/glossary.md#term-hld) のスコープ外である。
+Wake-on-LAN (WoL) は、特殊な「Magic Packet」を NIC が受信した際に対象機器を電源オン / スリープ復帰させる Ethernet 標準である。本機能は [SONiC](../reference/glossary.md#term-sonic) スイッチを **Magic Packet の送信元** として使えるようにするもので、運用ツールから WoL を発行することでサーバ群を遠隔起動できる。NIC 側で WoL 受信が動作するかは別問題（受信側 BIOS / NIC 設定）であり、本 [HLD](../reference/glossary.md#term-hld) のスコープ外である。
 
 機能は 2 経路で利用できる[^1]。
 
@@ -312,4 +312,4 @@ tcpdump -i Ethernet10 ether proto 0x0842
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1f2da1437d5b -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

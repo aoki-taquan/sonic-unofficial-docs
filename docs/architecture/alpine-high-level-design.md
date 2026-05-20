@@ -41,7 +41,7 @@ related:
 
 ## 概要
 
-ALPINE は Google が提案した SONiC のスイッチスタックシミュレーションフレームワーク[^1]。仮想スイッチ本体である **ALViS (Alpine Virtual Switch)** と、KNE (Kubernetes Network Emulation) ベースのデプロイモデル **AKD (Alpine KNE Deployment)** から成る。既存の `sonic-vs` と異なり、SONiC VM とソフトウェア dataplane を **2 つの container に分離** して実機に近い挙動（特に warm reboot 時に dataplane を維持）を再現する点がコア設計。
+ALPINE は Google が提案した [SONiC](../reference/glossary.md#term-sonic) のスイッチスタックシミュレーションフレームワーク[^1]。仮想スイッチ本体である **ALViS (Alpine Virtual Switch)** と、KNE (Kubernetes Network Emulation) ベースのデプロイモデル **AKD (Alpine KNE Deployment)** から成る。既存の `sonic-vs` と異なり、SONiC VM とソフトウェア dataplane を **2 つの container に分離** して実機に近い挙動（特に warm reboot 時に dataplane を維持）を再現する点がコア設計。
 
 ## 動作仕様
 
@@ -60,7 +60,7 @@ flowchart LR
 
 `SwitchStack Container` は qemu で SONiC VM を立ち上げ、その内部で全 SONiC コンテナが動く[^1]。`syncd` は **gRPC ベースの [SAI](../reference/glossary.md#term-sai) クライアント** (`libsai-grpc`) で別 container の dataplane と通信する。CPU port の packet in/out は **UPM (Userspace Packet Module)** が担う。
 
-`ASIC Simulation Container` がソフトウェア dataplane。デフォルトは OpenConfig 由来の **Lucius** (lemming プロジェクト)[^1]。vendor は (1) ASIC sim container イメージ、(2) socket ベースの SAI 実装、(3) UPM、の 3 点を提供すれば差し替え可能。
+`ASIC Simulation Container` がソフトウェア dataplane。デフォルトは OpenConfig 由来の **Lucius** (lemming プロジェクト)[^1]。vendor は (1) [ASIC](../reference/glossary.md#term-asic) sim container イメージ、(2) socket ベースの SAI 実装、(3) UPM、の 3 点を提供すれば差し替え可能。
 
 ### 2 container にする理由
 
@@ -200,4 +200,4 @@ VM は qemu で `-m 32768`（32GB RAM）`-smp 12`（12 vCPU）で起動する[^1
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

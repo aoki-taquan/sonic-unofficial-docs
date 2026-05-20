@@ -43,11 +43,11 @@ related:
 
 ## 概要
 
-FIPS 140-3 準拠を維持するには、暗号機構（MACsec ハードウェアエンジンを含む）が **動作開始前に Pre-Operational Self-Test (POST)** を通っていなければならない。本 [HLD](../reference/glossary.md#term-hld) は SONiC で MACsec の POST を [SAI](../reference/glossary.md#term-sai) 経由でトリガし、その結果を `STATE_DB.FIPS_MACSEC_POST_TABLE` に公開、`MACSecMgr` が POST pass を確認してから MACsec 設定を流す設計を定義する[^1]。
+FIPS 140-3 準拠を維持するには、暗号機構（[MACsec](../reference/glossary.md#term-macsec) ハードウェアエンジンを含む）が **動作開始前に Pre-Operational Self-Test (POST)** を通っていなければならない。本 [HLD](../reference/glossary.md#term-hld) は [SONiC](../reference/glossary.md#term-sonic) で MACsec の POST を [SAI](../reference/glossary.md#term-sai) 経由でトリガし、その結果を `STATE_DB.FIPS_MACSEC_POST_TABLE` に公開、`MACSecMgr` が POST pass を確認してから MACsec 設定を流す設計を定義する[^1]。
 
 設計上の要件は次の 4 点[^1]:
 
-1. ASIC / SAI 実装の差異を吸収するため、POST は **SAI switch init 段** または **SAI MACsec init 段** のいずれでも有効化できること
+1. [ASIC](../reference/glossary.md#term-asic) / SAI 実装の差異を吸収するため、POST は **SAI switch init 段** または **SAI MACsec init 段** のいずれでも有効化できること
 2. POST 通過まで MACsec 設定を流さないこと
 3. POST 失敗が **非 MACsec ポートの動作に影響しない** こと
 4. 失敗時に syslog で詳細（失敗ポートの SAI OID と MACsec エンジン）を出すこと
@@ -272,4 +272,4 @@ cat /proc/cmdline | tr ' ' '\n' | grep fips
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: fae4babedf51 -->
+<!-- glossary-links-injected: 21ed5be09831 -->

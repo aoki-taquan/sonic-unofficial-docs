@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-SONiC スイッチの SSH / シリアルログインを **外部 LDAP サーバで認証** できるようにする Phase 1 設計[^1]。Debian の `libnss-ldapd` / `libpam-ldapd` / `ldap-utils` パッケージを取り込み、`nslcd` デーモンで LDAP との通信を担当する。`hostcfgd` が [CONFIG_DB](../reference/glossary.md#term-config_db) の LDAP 関連テーブルを監視し、`/etc/ldap/ldap.conf` / `/etc/nslcd.conf` / `/etc/nsswitch.conf` / `/etc/pam.d/common-auth-sonic` を再生成する。
+[SONiC](../reference/glossary.md#term-sonic) スイッチの SSH / シリアルログインを **外部 LDAP サーバで認証** できるようにする Phase 1 設計[^1]。Debian の `libnss-ldapd` / `libpam-ldapd` / `ldap-utils` パッケージを取り込み、`nslcd` デーモンで LDAP との通信を担当する。`hostcfgd` が [CONFIG_DB](../reference/glossary.md#term-config_db) の LDAP 関連テーブルを監視し、`/etc/ldap/ldap.conf` / `/etc/nslcd.conf` / `/etc/nsswitch.conf` / `/etc/pam.d/common-auth-sonic` を再生成する。
 
 ローカル認証フォールバックと、LDAP サーバの優先度に基づく順序的フォールバックをサポート。**REST API（nginx）への適用は TODO**[^1]。
 
@@ -143,7 +143,7 @@ sudo config aaa authentication login ldap local
 
 ## 干渉する機能
 
-- **TACACS+ / RADIUS（既存 AAA）**: 同じ AAA テーブルの authentication.login で並列指定可。順序フォールバックで連動する。
+- **TACACS+ / [RADIUS](../reference/glossary.md#term-radius)（既存 AAA）**: 同じ AAA テーブルの authentication.login で並列指定可。順序フォールバックで連動する。
 - **`hostcfgd` AAA クラス**: tacacs / radius / ldap いずれの設定変更も同クラスで処理される。
 - **NSS**: `getent passwd` 等のシステムコールも LDAP を見るようになる（`/etc/nsswitch.conf` 経由）。
 - **REST / [gNMI](../reference/glossary.md#term-gnmi)**: REST API 認証は本機能のスコープ外（TODO）。
@@ -202,4 +202,4 @@ journalctl -u nslcd | tail
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: db62d2100cef -->

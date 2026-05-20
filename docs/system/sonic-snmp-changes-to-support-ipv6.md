@@ -40,7 +40,7 @@ related:
 
 ## どんな問題か
 
-SONiC 単一 ASIC 機の **[SNMP](../reference/glossary.md#term-snmp) over IPv6 がタイムアウトする** バグの設計修正[^1]。
+[SONiC](../reference/glossary.md#term-sonic) 単一 [ASIC](../reference/glossary.md#term-asic) 機の **[SNMP](../reference/glossary.md#term-snmp) over IPv6 がタイムアウトする** バグの設計修正[^1]。
 
 1. SNMP request が `SRC=fc00::72`、`DST=Loopback IPv6 fc00:1::32` で到着
 2. `snmpd` (IPv6 socket `[::]:161`) が受理 → response 生成
@@ -146,4 +146,4 @@ ip netns list                                         # multi-ASIC は分離さ�
 
 [^1]: `sonic-net/SONiC` `doc/snmp/snmp-changes-to-support-ipv6.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: aebe7530a6f6 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

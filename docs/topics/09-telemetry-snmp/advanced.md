@@ -35,7 +35,7 @@ related:
 
 ## Dataplane Telemetry (DTel)
 
-DTel は In-band Network Telemetry を SONiC スイッチがエクスポートする機能です。ASIC が flow ごとにスイッチ内部情報（latency、queue 状態、drop reason 等）を packet header に書き込み、[INT](../../reference/glossary.md#term-int) report として外部 collector に送出します。SONiC は collector / report session / watchlist を [CONFIG_DB](../../reference/glossary.md#term-config_db) と APP_DB に持ち、`dtelorch` が [SAI](../../reference/glossary.md#term-sai) DTEL object に変換します。
+DTel は In-band Network Telemetry を [SONiC](../../reference/glossary.md#term-sonic) スイッチがエクスポートする機能です。[ASIC](../../reference/glossary.md#term-asic) が flow ごとにスイッチ内部情報（latency、queue 状態、drop reason 等）を packet header に書き込み、[INT](../../reference/glossary.md#term-int) report として外部 collector に送出します。SONiC は collector / report session / watchlist を [CONFIG_DB](../../reference/glossary.md#term-config_db) と APP_DB に持ち、`dtelorch` が [SAI](../../reference/glossary.md#term-sai) DTEL object に変換します。
 
 DTel は ASIC capability への依存が大きく、すべての platform で同じ event type / report mode が出るわけではありません。test plan ページは、SAI DTEL object と SONiC table の対応、report format の検証観点を整理しています。
 
@@ -145,4 +145,4 @@ SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産�
 - [10 gNMI / OpenConfig: 変換層と subscribe path](../10-gnmi-openconfig/index.md)
 - [20 SWSS / SAI / Redis: COUNTERS_DB の polling 設計](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: 1f2da1437d5b -->
+<!-- glossary-links-injected: ec18b66e3507 -->
