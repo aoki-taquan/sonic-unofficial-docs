@@ -11,28 +11,16 @@ sources:
   path: doc/secure_upgrade/secure_upgrade.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - SYSLOG_SERVER
-  - SYSLOG_CONFIG
-  - SYSLOG_CONFIG_FEATURE
-  - PORT
-  - PORTCHANNEL
-  - BREAKOUT_CFG
-  - INTERFACE
+  config_db: []
   cli:
   - sonic-installer install
-  - show interfaces
-  - show ip
-  - config syslog
   yang:
   - sonic-versions
-  - sonic-system-defaults
-  - sonic-syslog
 ---
 
 <!-- topics-tip -->
 !!! tip "Topics で読み物として読む"
-    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md) を参照。
 <!-- /topics-tip -->
 
 !!! info "裏取りステータス: code-verified"

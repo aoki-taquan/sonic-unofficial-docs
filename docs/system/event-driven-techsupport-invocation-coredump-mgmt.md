@@ -25,8 +25,8 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! warning "裏取りステータス: code-verified"
-    coredump_gen_handler / techsupport_cleanup の現行 master 取り込み、rate-limit と quota 既定値は未確認。
+!!! warning "裏取りステータス: discrepancy-found"
+    coredump_gen_handler / techsupport_cleanup の現行 master 取り込み、rate-limit と quota 既定値は未確認。詳細は「実装との乖離」節を参照。
 
 !!! note "Verifier 注記（2026-05-10）"
     実コード裏取り: `sonic-utilities/scripts/coredump_gen_handler.py` / `utilities_common/auto_techsupport_helper.py` / `show/plugins/auto_techsupport.py` で auto-techsupport 経路を確認。yang は `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-auto_techsupport.yang` に CONFIG_DB スキーマを確認。

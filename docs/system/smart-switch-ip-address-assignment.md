@@ -64,7 +64,7 @@ NPU 側に **`bridge-midplane`** を作って各 DPU の PCIe netdev を bridge 
 
 - DPU id N の IP = `<bridge_network>` + (N + 1)
 - 例: bridge `169.254.200.254/24` で DPU0 → `169.254.200.1`、DPU1 → `169.254.200.2`[^1]
-- リース期間は `infinite`（state を持たない）
+- リース期間は HLD では `infinite`（state を持たない）を意図しているが、現行の `src/sonic-config-engine/config_samples.py` 実装では `3600`（1 時間）がハードコードされている（`smart-switch-dpu.md` の Phase E 定数表で確認済み）
 
 ### `platform.json` 拡張
 
@@ -107,7 +107,7 @@ MID_PLANE_BRIDGE|GLOBAL:
 
 DHCP_SERVER_IPV4|bridge-midplane:
   gateway    = 169.254.200.254
-  lease_time = infinite
+  lease_time = 3600   # HLD は infinite を意図するが、現行実装では 3600 秒固定
   mode       = PORT
   netmask    = 255.255.255.0
   state      = enabled

@@ -17,7 +17,6 @@ related:
     - PORT
     - BREAKOUT_CFG
     - BUFFER_PORT_EGRESS_PROFILE
-    - BUFFER_PORT_INGRESS_PROFILE
   cli:
     - config interface breakout
     - show interfaces breakout

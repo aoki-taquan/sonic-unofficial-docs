@@ -13,7 +13,7 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-  - DTEL_E_EVENT_TABLE
+  - DTEL_EVENT
   - TELEMETRY_CLIENT
   - TELEMETRY
   - ACL_RULE

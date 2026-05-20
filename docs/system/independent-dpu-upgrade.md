@@ -15,8 +15,6 @@ related:
   - DPU
   - CHASSIS_MODULE
   - MID_PLANE_BRIDGE
-  - SWITCH_TRIMMING
-  - SWITCH_HASH
   - DPUS
   - TELEMETRY
   cli:

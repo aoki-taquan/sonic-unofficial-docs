@@ -218,7 +218,7 @@ Banner 設定の状態を確認する。
 
 ```bash
 show banner
-redis-cli -n 4 hgetall 'BANNER_MESSAGE|global'
+redis-cli -n 4 hgetall 'BANNER_MESSAGE|MESSAGE'
 cat /etc/issue /etc/issue.net /etc/motd
 config banner login 'WARNING: authorized only'
 ```
