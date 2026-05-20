@@ -22,6 +22,7 @@ related:
   cli:
     - show error-database
     - sonic-clear error-database
+  _no_related_yang: true
 ---
 
 # ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)

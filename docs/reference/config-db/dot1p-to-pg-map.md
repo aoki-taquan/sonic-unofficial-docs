@@ -23,6 +23,7 @@ related:
     - PORT_QOS_MAP
   cli:
     - config qos
+  _no_related_yang: true
 ---
 
 # DOT1P_TO_PG_MAP テーブル

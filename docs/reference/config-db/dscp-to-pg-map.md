@@ -26,6 +26,7 @@ related:
     - PORT_QOS_MAP
   cli:
     - config qos
+  _no_related_yang: true
 ---
 
 # DSCP_TO_PG_MAP テーブル

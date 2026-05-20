@@ -2,7 +2,21 @@
   "_comment": "Exceptions for meta/scripts/check_pages_integrity.py. Keys use POSIX paths from repo root. 'missing' = nav entry intentionally absent (e.g. legacy alias). 'orphans' = .md file present but intentionally hidden from awesome-pages. 'duplicates' = intentional double-listing.",
   "missing": [],
   "orphans": [
-    "docs/404.md"
+    "docs/404.md",
+    "docs/internals/swss-common-database-config.md",
+    "docs/internals/swss-common-db-link-ordering.md",
+    "docs/management/gnmi-streaming-telemetry-pitfalls.md",
+    "docs/management/gnmi-translib-write-enable.md",
+    "docs/management/snmp-interface-scope.md",
+    "docs/platform/sfp-eeprom-parsing-gaps.md",
+    "docs/platform/sfp-sff8472-rx-power-calibration.md",
+    "docs/platform/thermalctld-speed-tolerance-api-change.md",
+    "docs/platform/xcvrd-cmis-mediainterface-crash.md",
+    "docs/system/buildimage-build-system-known-issues.md",
+    "docs/system/dynamic-port-breakout-known-issues.md",
+    "docs/system/ssh-authentication-failures.md",
+    "docs/system/warmboot-known-issues-and-troubleshooting.md",
+    "docs/system/yang-model-issues-and-validation.md"
   ],
   "duplicates": []
 }
