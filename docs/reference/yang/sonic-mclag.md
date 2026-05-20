@@ -126,9 +126,9 @@ module: sonic-mclag
 
 - [`sonic-port`](sonic-port.md)
 - [`sonic-portchannel`](sonic-portchannel.md)
-- [`sonic-vlan`](sonic-vlan.md)
 - [`sonic-spanning-tree`](sonic-spanning-tree.md)
 - [`sonic-storm-control`](sonic-storm-control.md)
+- [`sonic-vlan`](sonic-vlan.md)
 <!-- /yang-sibling -->
 
 <!-- ref-triangle:start -->

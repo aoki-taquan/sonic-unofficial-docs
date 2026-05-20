@@ -65,6 +65,10 @@ flowchart LR
 
 - [`config portchannel`](../cli/config-portchannel.md)
 
+### 関連 HLD
+
+- [sonic-port YANG](../../reference/yang/sonic-port.md)
+
 <!-- /yang-xref -->
 
 ## ツリー
