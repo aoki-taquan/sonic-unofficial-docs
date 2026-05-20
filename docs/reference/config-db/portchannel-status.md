@@ -22,7 +22,6 @@ related:
   config_db:
     - PORTCHANNEL
     - PORTCHANNEL_MEMBER
-    - PORTCHANNEL_INTERFACE
   cli:
     - show interfaces portchannel
     - sonic-db-cli APPL_DB

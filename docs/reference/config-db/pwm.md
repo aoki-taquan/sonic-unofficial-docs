@@ -142,8 +142,8 @@ WATERMARK_TABLE|TELEMETRY_INTERVAL (interval フィールド)
 | WATERMARK_TABLE → | `interval` 変更 → タイマー制御 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `QUEUE_WATERMARK` / `PG_WATERMARK` の `FLEX_COUNTER_STATUS=enable` がないとタイマーが起動しない。`WATERMARK_TABLE` 単独では watermark 自動クリアは動作しない |
 | WATERMARK_TABLE → | タイマー満了ごとの 0 クリア | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) `PERIODIC_WATERMARKS` | `WatermarkOrch` が telemetry 周期ごとに [SAI](../../reference/glossary.md#term-sai) 統計をリセットして書き込む |
 | → WATERMARK_TABLE | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` / `FLEX_COUNTER_TABLE\|PG_WATERMARK` の `FLEX_COUNTER_STATUS` | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_STATUS` の変化が `m_wmStatus` ビットマスクを更新し、タイマー起動 (`start()`) / 停止 (`stop()`) を制御する (`watermarkorch.cpp:136-138, 254-257`) |
-| → WATERMARK_TABLE | [APPL_DB](../../reference/glossary.md#term-appl_db) `WATERMARK_CLEAR_REQUEST` 通知 | `watermarkcfg clear` CLI | `"PERSISTENT"` / `"USER"` op でそれぞれの [COUNTERS_DB](../../reference/glossary.md#term-counters_db) テーブルをリセット。`PERIODIC_WATERMARKS` はタイマーのみがリセット対象 |
-| CLI | `watermarkcfg -c <秒>` / `-s` | [`watermarkcfg`](../cli/index.md) | `interval` フィールドの書き込み（[CONFIG_DB](../../reference/glossary.md#term-config_db) HSET）と読み出し |
+| → WATERMARK_TABLE | [APPL_DB](../../reference/glossary.md#term-appl_db) `WATERMARK_CLEAR_REQUEST` 通知 | `watermarkstat -c` CLI | `"PERSISTENT"` / `"USER"` op でそれぞれの [COUNTERS_DB](../../reference/glossary.md#term-counters_db) テーブルをリセット。`PERIODIC_WATERMARKS` はタイマーのみがリセット対象 |
+| CLI | `watermarkcfg -c <秒>` / `-s` | [`watermarkcfg`](../cli/) | `interval` フィールドの書き込み（[CONFIG_DB](../../reference/glossary.md#term-config_db) HSET）と読み出し |
 
 > **ポイント**: `WATERMARK_TABLE` は interval 制御のみを担い、タイマー起動/停止は `FLEX_COUNTER_TABLE` が主導する。両テーブルを `WatermarkOrch` が同一 `Consumer` ループで購読する (`watermarkorch.cpp:72-78`)。
 

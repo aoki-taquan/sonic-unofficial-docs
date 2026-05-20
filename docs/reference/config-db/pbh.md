@@ -731,7 +731,7 @@ PBH_RULE → PBH_TABLE → PBH_HASH → PBH_HASH_FIELD
 
 現在サポートするベンダー:
 
-| `ASIC_VENDOR` 値 | ロードされるクラス | [STATE_DB](../../reference/glossary.md#term-state_db) `PBH_CAPABILITIES_TABLE` へ書込 |
+| `ASIC_VENDOR` 値 | ロードされるクラス | [STATE_DB](../../reference/glossary.md#term-state_db) `PBH_CAPABILITIES` へ書込 |
 |---|---|---|
 | `generic` (またはその他 / 未設定) | `PbhGenericFieldCapabilities` | あり (各フィールドの ADD/UPDATE/REMOVE 組み合わせ) |
 | `mellanox` | `PbhMellanoxFieldCapabilities` | あり (同上) |
@@ -789,11 +789,11 @@ GENERIC platform ではこの処理は行われず、直接 `updateAclRule()` �
 
 ### capability の STATE_DB 書き込み
 
-`PbhCapabilities::writePbhVendorCapabilitiesToDb()` が起動時に `STATE_DB:PBH_CAPABILITIES_TABLE` へ各フィールドの capability 文字列 (`ADD`, `UPDATE`, `REMOVE` のカンマ区切り) を書き込む。確認コマンド:
+`PbhCapabilities::writePbhVendorCapabilitiesToDb()` が起動時に `STATE_DB:PBH_CAPABILITIES` へ各フィールドの capability 文字列 (`ADD`, `UPDATE`, `REMOVE` のカンマ区切り) を書き込む。確認コマンド:
 
 ```bash
-sonic-db-cli STATE_DB hgetall 'PBH_CAPABILITIES_TABLE|rule'
-sonic-db-cli STATE_DB hgetall 'PBH_CAPABILITIES_TABLE|hash'
+sonic-db-cli STATE_DB hgetall 'PBH_CAPABILITIES|rule'
+sonic-db-cli STATE_DB hgetall 'PBH_CAPABILITIES|hash'
 ```
 
 <!-- /platform -->

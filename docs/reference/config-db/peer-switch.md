@@ -367,8 +367,8 @@ CONFIG_DB  PEER_SWITCH|<hostname>  SET
             └─ sai_tunnel_api->create_tunnel(...)    muxorch.cpp:325
                  SAI_TUNNEL_ATTR_TYPE          = SAI_TUNNEL_TYPE_IPINIP
                  SAI_TUNNEL_ATTR_PEER_MODE     = SAI_TUNNEL_PEER_MODE_P2P
-                 SAI_TUNNEL_ATTR_ENCAP_SRC_IP  = PEER_SWITCH.address_ipv4
-                 SAI_TUNNEL_ATTR_ENCAP_DST_IP  = TUNNEL.src_ip
+                 SAI_TUNNEL_ATTR_ENCAP_SRC_IP  = TUNNEL.src_ip（MuxTunnel0 の dst_ip）
+                 SAI_TUNNEL_ATTR_ENCAP_DST_IP  = PEER_SWITCH.address_ipv4
                  SAI_TUNNEL_ATTR_ENCAP/DECAP_TTL_MODE = PIPE_MODEL
                  SAI_TUNNEL_ATTR_LOOPBACK_PACKET_ACTION = DROP
 ```

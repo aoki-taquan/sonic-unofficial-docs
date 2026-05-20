@@ -209,21 +209,23 @@ FIPS_MACSEC_POST_TABLE|sai
 
 | 値 | 意味 |
 |----|------|
-| `"disabled"` | [MACsec](../../reference/glossary.md#term-macsec) POST 非対応、または無効 (main.cpp:791) |
-| `"macsec-level-post-in-progress"` | POST テスト実行中 (main.cpp:924) |
-| `"pass"` | POST テスト成功 (macsecorch.cpp:705, 786) |
-| `"fail"` | POST テスト失敗 (macsecorch.cpp:710, 791) |
+| `"disabled"` | [MACsec](../../reference/glossary.md#term-macsec) POST 非対応、または無効 (main.cpp:791, 930) |
+| `"switch-level-post-in-progress"` | switch レベル POST 実行中 (main.cpp:775) |
+| `"macsec-level-post-in-progress"` | [MACsec](../../reference/glossary.md#term-macsec) レベル POST 実行中 (main.cpp:924) |
+| `"pass"` | POST テスト成功 (macsecorch.cpp:705, 786, 840) |
+| `"fail"` | POST テスト失敗 (macsecorch.cpp:710, 791, 856) |
 
 ### post_state 遷移
 
 ```mermaid
 stateDiagram-v2
     [*] --> disabled : MACsec POST 非対応 (main.cpp:930)
-    [*] --> macsec_post_in_progress : POST 対応 SAI (main.cpp:924)
-    macsec_post_in_progress --> pass : SAI_SWITCH_MACSEC_POST_STATUS_PASS (macsecorch.cpp:786)
-    macsec_post_in_progress --> fail : SAI_SWITCH_MACSEC_POST_STATUS_FAIL (macsecorch.cpp:791)
-    pass --> macsec_post_in_progress : orchagent 再起動
-    fail --> macsec_post_in_progress : orchagent 再起動
+    [*] --> switch_level_post_in_progress : POST 開始 (main.cpp:775)
+    switch_level_post_in_progress --> macsec_level_post_in_progress : switch POST 完了 (main.cpp:924)
+    macsec_level_post_in_progress --> pass : SAI_SWITCH_MACSEC_POST_STATUS_PASS (macsecorch.cpp:786)
+    macsec_level_post_in_progress --> fail : SAI_SWITCH_MACSEC_POST_STATUS_FAIL (macsecorch.cpp:791)
+    pass --> macsec_level_post_in_progress : orchagent 再起動
+    fail --> macsec_level_post_in_progress : orchagent 再起動
 ```
 
 <!-- ordering -->
@@ -302,7 +304,7 @@ orchagent が STATE_DB へ書き込む各テーブルは、以下の上流 DB・
 | `WARM_RESTART_TABLE\|orchagent` | STATE_DB (自己) | READ | WARM_RESTART_TABLE | warm start 時のみ必須 (restore_count インクリメントに現在値を読取) | `warm_restart.cpp:113-125` |
 | SAI `create_virtual_router` レスポンス | SAI / [ASIC](../../reference/glossary.md#term-asic) | READ (SAI resp) | VRF_OBJECT_TABLE | **必須** (SAI 失敗時はエントリ書込なし) | `vrforch.cpp:93, 120, 150` |
 | SAI `SAI_SWITCH_ATTR_MACSEC_SUPPORTED` 取得 | SAI / [ASIC](../../reference/glossary.md#term-asic) | READ (SAI resp) | FIPS_MACSEC_POST_TABLE | 必須 (非対応時は `post_state="disabled"` で固定) | `main.cpp:791-793, 924` |
-| SAI [MACsec](../../reference/glossary.md#term-macsec) POST 完了コールバック | SAI / [ASIC](../../reference/glossary.md#term-asic) | 非同期 NOTIFY | FIPS_MACSEC_POST_TABLE | MACsec POST 対応 SAI のみ | `macsecorch.cpp:705, 710, 786, 791` |
+| SAI MACsec POST 完了コールバック | SAI / [ASIC](../../reference/glossary.md#term-asic) | 非同期 NOTIFY | FIPS_MACSEC_POST_TABLE | MACsec POST 対応 SAI のみ | `macsecorch.cpp:705, 710, 786, 791` |
 
 ### APPL_DB PORT_TABLE — PortInitDone / PortConfigDone
 
