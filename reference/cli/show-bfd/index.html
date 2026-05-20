@@ -35568,11 +35568,11 @@ excerpt: |
 <h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CLI["show bfd"]
-  CDB0[("CONFIG_DB&lt;br/&gt;BFD_SESSION_TABLE")]
-  CDB0 --&gt; CLI</code></pre>
+  SDB0[("STATE_DB&lt;br/&gt;BFD_SESSION_TABLE")]
+  SDB0 --&gt; CLI</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
-<p>show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+<p>show 系 (STATE_DB → CLI) のミニ図。<code>show bfd</code> は CONFIG_DB ではなく STATE_DB を参照する。</p>
 </div>
 <!-- /cli-mermaid -->
 
@@ -35580,7 +35580,7 @@ excerpt: |
 
 <h2 id="_6">関連リファレンス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>BFD_SESSION_TABLE</code></li>
+<li><a href="../../glossary/#term-state_db">STATE_DB</a>: <code>BFD_SESSION_TABLE</code></li>
 </ul>
 <!-- ref-triangle:end -->
 

@@ -35430,7 +35430,7 @@
 </ul>
 <h2 id="1">1. トラフィック分離の挙動<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    MGMT[eth0\n mgmt traffic] --&gt; MV[mgmt VRF\n table 5000]
+    MGMT[eth0\n mgmt traffic] --&gt; MV[mgmt VRF\n table 6000（HLD では 5000）]
     FPP[Front Panel Ports] --&gt; DV[default VRF\n main table]
     MV -.-&gt;|never forwarded| DV</code></pre>
 <ul>
@@ -35535,7 +35535,7 @@
 <ol>
 <li>CONFIG_DB の <code>MGMT_VRF_CONFIG.mgmtVrfEnabled = true</code></li>
 <li><code>interfaces-config</code> を再起動 → <code>interfaces.j2</code> から <code>/etc/network/interfaces</code> を再生成し <code>networking</code> を再起動</li>
-<li><code>mgmt</code> インタフェース（<code>type vrf table 5000</code>）と <code>lo-m</code>（NTP 内部通信用ダミーループバック）を作成</li>
+<li><code>mgmt</code> インタフェース（<code>type vrf table 6000</code>、HLD では <code>5000</code> と記載）と <code>lo-m</code>（NTP 内部通信用ダミーループバック）を作成</li>
 <li><code>eth0</code> を <code>mgmt</code> VRF に enslave（<code>ip link set dev eth0 master mgmt</code>）</li>
 <li><code>l3mdev:mgmt</code> cgroup を作成</li>
 </ol>

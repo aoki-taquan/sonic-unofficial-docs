@@ -35427,12 +35427,14 @@
 <pre class="mermaid"><code>flowchart LR
   CLI["sonic-clear counters / *counters"]
   UT["portstat / queuestat / pfcstat&lt;br/&gt;dropstat / tunnelstat / etc. (-c)"]
-  CNT[("COUNTERS_DB&lt;br/&gt;カウンタ値・LAST_CLEAR")]
+  CNT[("COUNTERS_DB&lt;br/&gt;カウンタ値 (読み取りのみ)")]
+  SNAP[("/tmp/portstat-&amp;lt;uid&amp;gt; 等&lt;br/&gt;スナップショット")]
   CLI --&gt; UT
-  UT --&gt; CNT</code></pre>
+  CNT --&gt; UT
+  UT --&gt; SNAP</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
-<p>clear 系 (CLI → ユーティリティ → COUNTERS_DB) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。</p>
+<p>clear 系 (CLI → ユーティリティ → /tmp スナップショット) のミニ図。ユーティリティは COUNTERS_DB を読み取って /tmp 配下のスナップショットファイルに書き出すのみ。COUNTERS_DB 自体は書き換えない。</p>
 </div>
 <!-- /cli-mermaid -->
 

@@ -35775,9 +35775,9 @@ excerpt: |
 <p><strong>引数</strong>:</p>
 <ul>
 <li><code>&lt;ip&gt;</code> ... IP もしくはホスト名</li>
-<li><code>-r/--retransmit</code> 1-10</li>
+<li><code>-r/--retransmit</code> 1-10（注: <code>config radius retransmit</code> グローバル側は 0-10、<code>-r</code> オプション側は 1-10 と range が異なる。ソース <code>config/aaa.py</code> L356/L510 で個別定義）</li>
 <li><code>-t/--timeout</code> 1-60</li>
-<li><code>-k/--key</code> ... 64 文字以下、空白 / <code>#</code> / <code>,</code> を含まないこと（<code>is_secret</code> でバリデート）</li>
+<li><code>-k/--key</code> ... 65 文字以下、空白 / <code>#</code> / <code>,</code> を含まないこと（<code>is_secret</code> でバリデート、<code>RADIUS_PASSKEY_MAX_LEN = 65</code>）</li>
 <li><code>-a/--auth_type</code> ... <code>chap</code> / <code>pap</code> / <code>mschapv2</code></li>
 <li><code>-o/--auth-port</code> 1-65535、default 1812</li>
 <li><code>-p/--pri</code> 1-64、default 1</li>

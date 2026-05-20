@@ -35454,13 +35454,7 @@
   C1[("CONFIG_DB&lt;br/&gt;AAA")]
   Y --&gt; C1
   D1["hostcfgd"]
-  C1 --&gt; D1
-  C2[("CONFIG_DB&lt;br/&gt;TACPLUS")]
-  Y --&gt; C2
-  C2 --&gt; D1
-  C3[("CONFIG_DB&lt;br/&gt;RADIUS")]
-  Y --&gt; C3
-  C3 --&gt; D1</code></pre>
+  C1 --&gt; D1</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
 <p>YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文を参照。</p>
@@ -35474,7 +35468,6 @@
 <h3 id="config_db">対応 CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="../../config-db/aaa/"><code>AAA</code></a></li>
-<li><a href="../../config-db/radius/"><code>RADIUS</code></a></li>
 </ul>
 <h3 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>
@@ -35586,10 +35579,12 @@
 <h2 id="config_db-cli">関連 CONFIG_DB / CLI<a class="headerlink" href="#config_db-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>AAA</code></li>
-<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>TACPLUS</code></li>
-<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>RADIUS</code></li>
 <li>CLI: <code>config aaa</code></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">TACPLUS / RADIUS について</p>
+<p><code>TACPLUS</code> / <code>TACPLUS_SERVER</code> テーブルは <a href="../sonic-system-tacacs/"><code>sonic-system-tacacs</code></a> が、<code>RADIUS</code> / <code>RADIUS_SERVER</code> テーブルは <a href="../sonic-system-radius/"><code>sonic-system-radius</code></a> が定義する。<code>sonic-system-aaa</code> 内の TACPLUS への参照は <code>must</code> 制約のクロスリファレンスであり、このモジュールはテーブル定義を持たない。</p>
+</div>
 <!-- yang-sibling -->
 <h3 id="yang">関連 YANG モジュール<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p>意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter <code>related.yang</code> から自動抽出):</p>
@@ -35606,7 +35601,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>CONFIG_DB: <a href="../../config-db/aaa/"><code>AAA</code></a> / <code>TACPLUS</code> / <a href="../../config-db/radius/"><code>RADIUS</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/aaa/"><code>AAA</code></a></li>
 <li>CLI: <a href="../../cli/config-aaa/"><code>config aaa</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
@@ -35619,7 +35614,7 @@
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 896d391185a9 -->
 
 <div class="footnote">
 <hr />

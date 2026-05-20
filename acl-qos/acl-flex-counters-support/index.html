@@ -35548,7 +35548,7 @@
 <ul>
 <li>大量 ACL rule で <strong>orchagent の queue を空ける</strong></li>
 <li>ユーザ設定 + <code>counterpoll</code> CLI で <strong>enable/disable</strong></li>
-<li>polling interval を <strong>1〜1000 秒</strong> で変更可能</li>
+<li>polling interval を <strong>1〜30 秒（1000〜30000 ms）</strong> で変更可能（HLD 原文は「1〜1000 秒」だが現行実装は 1〜30 秒）</li>
 </ul>
 <h2 id="sai">SAI レベル<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h2>
 <p>ACL counter は <code>SAI_OBJECT_TYPE_ACL_COUNTER</code> という独立オブジェクトで、<code>SAI_OBJECT_TYPE_ACL_ENTRY</code> に bind される<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
@@ -35640,7 +35640,7 @@
 </tr>
 <tr>
 <td><code>counterpoll acl interval &lt;ms&gt;</code></td>
-<td>polling 間隔（1〜1000 秒）を変更</td>
+<td>polling 間隔（1〜30 秒 / 1000〜30000 ms）を変更</td>
 </tr>
 <tr>
 <td><code>aclshow [-a]</code></td>

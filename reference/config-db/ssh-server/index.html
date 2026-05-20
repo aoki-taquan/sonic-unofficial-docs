@@ -36541,7 +36541,7 @@
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>DEVICE_METADATA</code>（hostname 参照）</li>
-<li>関連 CLI: <code>config ssh-server</code></li>
+<li>関連 CLI: <code>config ssh</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-ssh-server</code></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -36713,7 +36713,7 @@
 <p>SSH_SERVER テーブルへの書き込みが発生するコード経路を調査した結果。</p>
 <h3 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>config ssh-server</code> — <code>sonic-utilities/config/main.py</code> L9987-10000 が <code>config_db.mod_entry("SSH_SERVER", "POLICIES", {...})</code> を呼ぶ</li>
+<li><code>config ssh</code> — <code>sonic-utilities/config/main.py</code> L9987-10000 が <code>config_db.mod_entry("SSH_SERVER", "POLICIES", {...})</code> を呼ぶ</li>
 </ul>
 <h3 id="minigraph-sonic-cfggen">minigraph / sonic-cfggen<a class="headerlink" href="#minigraph-sonic-cfggen" title="Permanent link">&para;</a></h3>
 <p>minigraph.py での SSH_SERVER 自動生成なし</p>
@@ -36913,8 +36913,8 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 </tr>
 <tr>
 <td>CLI</td>
-<td><code>config ssh-server</code> / <code>show ssh-server</code></td>
-<td><code>config ssh-server</code></td>
+<td><code>config ssh</code> / <code>show ssh-server</code></td>
+<td><a href="../../cli/config-ssh/"><code>config ssh</code></a></td>
 <td>SSH_SERVER テーブルの読み書き CLI</td>
 </tr>
 <tr>
@@ -37263,7 +37263,7 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 </table>
 <p><code>hostcfgd</code> 以外で <code>SSH_SERVER</code> テーブルを購読するプロセスは存在しない（<code>sonic-swss</code>・<code>sonic-gnmi</code>・<code>sonic-sairedis</code> に <code>SSH_SERVER</code> 向け Consumer / Subscriber なし）。</p>
 <h3 id="keyspace">keyspace 通知 → ハンドラ呼び出しの流れ<a class="headerlink" href="#keyspace" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>config ssh-server policies inactivity-timeout 10
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>config ssh policies inactivity-timeout 10
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  ↓ HSET &quot;SSH_SERVER|POLICIES&quot; inactivity_timeout &quot;10&quot;
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Redis keyspace PUBLISH &quot;__keyspace@4__:SSH_SERVER|POLICIES&quot;  &quot;hset&quot;
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  ↓ ConfigDBConnector.listen() がパターンマッチ

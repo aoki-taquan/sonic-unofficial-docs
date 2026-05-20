@@ -35415,7 +35415,7 @@
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  VRF_TABLE:&lt;vrfname&gt;            # vrforch 入力
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  INTF_TABLE:&lt;iface&gt;             # 1-segment: vrf binding 行 (v4/v6/vrf_name)
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  INTF_TABLE:&lt;iface&gt;:&lt;prefix&gt;    # 2-segment: IP 付与
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>  ROUTE_TABLE:&lt;vrf&gt;|&lt;prefix&gt;     # default VRF は省略可
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>  ROUTE_TABLE:&lt;vrf&gt;:&lt;prefix&gt;     # default VRF は省略可
 </span></code></pre></div>
 <p><code>INTF_TABLE</code> の <strong>2-segment key</strong> は interface の vrf binding と IP 付与を分離する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="route-leak-loopback-per-vrf">Route leak / Loopback per-VRF<a class="headerlink" href="#route-leak-loopback-per-vrf" title="Permanent link">&para;</a></h3>

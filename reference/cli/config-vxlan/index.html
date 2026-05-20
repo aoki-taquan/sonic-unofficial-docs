@@ -35809,7 +35809,7 @@ excerpt: |
 <p><strong>動作</strong>:
 <code>vlan_start..vlan_end</code> まで連続的にループし、各 <code>vid</code> に対して <code>vni_start + (vid - vlan_start)</code> の VNI を割り当てる。VLAN が存在しなかったり VNI / VLAN がすでにマップ済みの行はスキップ（エラーではない）。各成功エントリは <code>&lt;vxlan_name&gt;|map_&lt;vni&gt;_Vlan&lt;vid&gt;</code> で作成。</p>
 <h3 id="config-vxlan-map_range-del-vxlan_name-vlan_start-vlan_end-vni_start"><code>config vxlan map_range del &lt;vxlan_name&gt; &lt;vlan_start&gt; &lt;vlan_end&gt; &lt;vni_start&gt;</code><a class="headerlink" href="#config-vxlan-map_range-del-vxlan_name-vlan_start-vlan_end-vni_start" title="Permanent link">&para;</a></h3>
-<p>範囲内の各 (vlan, vni) について、<strong><code>is_vni_vrf_mapped</code> が真</strong>（<a href="../../glossary/#term-vrf">VRF</a> に VNI 紐付け済み）の行のみ削除する仕様<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。それ以外の行はスキップしてメッセージを出すだけ。</p>
+<p>範囲内の各 (vlan, vni) について、<strong><a href="../../glossary/#term-vrf">VRF</a> に紐付いていない VNI のみ削除</strong>し、<a href="../../glossary/#term-vrf">VRF</a> にマップ済みの VNI はスキップ（保護）する仕様<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。完全に削除したい場合は先に <code>config vrf del_vrf_vni_map</code> で VRF-VNI マッピングを解除してから <code>map del</code> を使う。スキップされた行は print メッセージのみで警告扱い。</p>
 <h2 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35841,7 +35841,7 @@ excerpt: |
 <h2 id="_4">注意点<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>VTEP / NVO は <strong>デバイス 1 つあたり 1 つ限定</strong></li>
-<li><code>map_range del</code> は <a href="../../glossary/#term-vrf">VRF</a> 紐付けがある VNI のみ削除する仕様で、削除されない行があっても警告は print のみ。完全削除には <code>map del</code> を使う</li>
+<li><code>map_range del</code> は <strong>VRF 紐付けのない VNI のみ削除</strong>し、VRF に紐付け済みの VNI はスキップ（保護）する。スキップされた行は print メッセージのみ。VRF 紐付け済み VNI を含めて削除するには先に <code>config vrf del_vrf_vni_map</code> を実行する</li>
 </ul>
 <!-- cli-mermaid -->
 <h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
@@ -35889,8 +35889,9 @@ excerpt: |
 </span></code></pre></div>
 <h3 id="_10">よくある引数の組み合わせ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>evpn_nvo<span class="w"> </span>add<span class="w"> </span>nvo1<span class="w"> </span>vtep1
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>map_range<span class="w"> </span>add<span class="w"> </span>vtep1<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="m">200</span><span class="w"> </span><span class="m">10100</span><span class="w"> </span><span class="m">10200</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>remove<span class="w"> </span>vtep1
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># VLAN 100〜200 を VNI 10100〜10200 に連続マップ（引数は4つのみ）</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>map_range<span class="w"> </span>add<span class="w"> </span>vtep1<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="m">200</span><span class="w"> </span><span class="m">10100</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>vxlan<span class="w"> </span>del<span class="w"> </span>vtep1
 </span></code></pre></div>
 <h3 id="_11">期待される出力 (抜粋)<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>VxLAN tunnel vtep1 added.
@@ -35933,7 +35934,7 @@ excerpt: |
 <li><a href="../../config-db/vxlan-tunnel-map/">CONFIG_DB: VXLAN_TUNNEL_MAP</a></li>
 <li><a href="../../yang/sonic-vxlan/">YANG: sonic-vxlan</a></li>
 </ul>
-<!-- glossary-links-injected: 764ef78dbc78 -->
+<!-- glossary-links-injected: 639b97382f4c -->
 
 <div class="footnote">
 <hr />

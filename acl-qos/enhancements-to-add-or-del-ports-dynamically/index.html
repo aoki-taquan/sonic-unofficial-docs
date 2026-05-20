@@ -36089,7 +36089,7 @@
 <li>Debug counters: port ingress / egress drops（<code>DEBUG_COUNTER</code> table）— <strong>追加要</strong></li>
 <li><a href="../../reference/glossary/#term-pfc">PFC</a> watchdog counters — <strong>追加要</strong></li>
 </ul>
-<p>これら counter は従来 init 完了後に <strong>全ポートまとめて作成</strong> されていた。動的化すれば未存在ポートに対する誤登録が消える<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実装は sonic-swss #2019 で対応中。</p>
+<p>これら counter は従来 init 完了後に <strong>全ポートまとめて作成</strong> されていた。動的化すれば未存在ポートに対する誤登録が消える<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。実装は sonic-swss #2019 で対応済み（MERGED 2022-04）。</p>
 <h3 id="buffermgrd-race-condition">buffermgrd の改修と race condition<a class="headerlink" href="#buffermgrd-race-condition" title="Permanent link">&para;</a></h3>
 <h4 id="race">加入時 race<a class="headerlink" href="#race" title="Permanent link">&para;</a></h4>
 <p>ユーザが port を追加 → buffer cfg を入れる順だが、port 加入と並行に buffermgr が cfg を見ると、APP_DB に未到着のうちに buffer cfg を流し込む可能性がある。<strong>APP_DB に port が存在することを buffermgr 側でチェックしてから書く</strong> 設計<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>

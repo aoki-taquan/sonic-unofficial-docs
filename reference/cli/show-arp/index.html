@@ -35561,7 +35561,8 @@
 <h3 id="_10">よくある引数の組み合わせ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>arp<span class="w"> </span><span class="m">10</span>.0.0.1
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>arp<span class="w"> </span>-if<span class="w"> </span>Ethernet0
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>arp<span class="w"> </span>-vrf<span class="w"> </span>Vrf_Red
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># VRF 別の ARP は kernel コマンドで取得（show arp 自体には -vrf / -V オプションはない）</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>ip<span class="w"> </span>neigh<span class="w"> </span>show<span class="w"> </span>vrf<span class="w"> </span>Vrf_Red
 </span></code></pre></div>
 <h3 id="_11">期待される出力 (抜粋)<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Address         MacAddress         Iface         Vlan
@@ -35581,7 +35582,7 @@
 </ul>
 <h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>show arp</code> は default <a href="../../glossary/#term-vrf">VRF</a>。<a href="../../glossary/#term-vrf">VRF</a> 内 ARP は <code>show arp -V &lt;vrf&gt;</code> または <code>ip neigh show vrf &lt;vrf&gt;</code>。</li>
+<li><code>show arp</code> は default <a href="../../glossary/#term-vrf">VRF</a> のみ。<a href="../../glossary/#term-vrf">VRF</a> 内 ARP を見るオプション (<code>-vrf</code> / <code>-V</code>) は arp コマンドには存在しないため、<code>ip neigh show vrf &lt;vrf&gt;</code> を使う。</li>
 <li><a href="../../glossary/#term-state_db">STATE_DB</a> の NEIGH_TABLE と kernel ARP がズレる場合あり。両方で裏取り。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>

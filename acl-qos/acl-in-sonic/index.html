@@ -35617,16 +35617,16 @@ reasoning: Rev 1.1 で VXLAN inner src MAC rewrite が追加されたことの�
 <h2 id="_2">既知の問題<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="acl-deny-269">ACL のデフォルト deny は自動で機能しない（#269）<a class="headerlink" href="#acl-deny-269" title="Permanent link">&para;</a></h3>
 <p>JSON 設定または <code>config acl</code> CLI で ACL ルールを定義した場合、<strong>暗黙の default deny は存在しない</strong>。明示的な forward ルールがある場合、それ以外のトラフィックは許可されてしまう。</p>
-<p>default deny を実現するには、<strong>最低優先度（最大の PRIORITY 値）で catch-all の DROP ルール</strong>を明示的に追加する必要がある。</p>
+<p>default deny を実現するには、<strong>最低優先度（最小の PRIORITY 値）の catch-all DROP ルール</strong>を明示的に追加する必要がある（SONiC では PRIORITY 値が小さいほど低優先度＝最後に評価される）。</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">&quot;ACL_RULE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="nt">&quot;TABLE_NAME|CATCH_ALL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10000&quot;</span><span class="p">,</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="nt">&quot;PRIORITY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">        </span><span class="nt">&quot;IP_TYPE&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ipv4any&quot;</span><span class="p">,</span>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">        </span><span class="nt">&quot;PACKET_ACTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DROP&quot;</span>
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>PRIORITY 値が大きいほど<strong>低優先度</strong>（最後に評価）となるため、catch-all を最大値に設定することで他のルールが先に評価される。IPv6 トラフィックに対しても別途 <code>IP_TYPE: ipv6any</code> のルールが必要。</p>
+<p>PRIORITY 値が<strong>小さいほど低優先度</strong>（最後に評価）となるため、catch-all を最小値（例: <code>1</code>、<code>acl_loader</code> の <code>min_priority</code>）に設定することで他のルールが先に評価される。<code>acl_loader</code> は先頭ルールほど大きい PRIORITY 値（<code>max_priority - rule_idx</code>）を割り当て、DEFAULT_RULE には <code>min_priority=1</code> を割り当てる。IPv6 トラフィックに対しても別途 <code>IP_TYPE: ipv6any</code> のルールが必要。</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/SONiC/issues/269">sonic-net/SONiC#269</a></li>
 </ul>

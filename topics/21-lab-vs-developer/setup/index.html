@@ -35852,7 +35852,7 @@
 <tr>
 <td>BGP が UP しない</td>
 <td>router-id 未設定 / loopback IP 未投入 / 別端で listen していない</td>
-<td><code>show ip bgp summary</code>、<code>config bgp router-id ...</code>、<code>show interfaces ip address Loopback0</code></td>
+<td><code>show ip bgp summary</code>、router-id は <code>redis-cli -n 4 HSET "BGP_GLOBALS|default" router_id &lt;IP&gt;</code> または <code>sonic-cfggen</code> / <a href="../../../reference/glossary/#term-vtysh">vtysh</a> <code>bgp router-id</code> 経由で設定（<code>config bgp router-id</code> サブコマンドは存在しない）、<code>show interfaces ip address Loopback0</code></td>
 </tr>
 <tr>
 <td><code>config load_minigraph</code> が失敗</td>
@@ -35901,7 +35901,7 @@
 <li><a href="../concept/">Lab vs Developer の概要</a></li>
 <li><a href="../operations/">Lab vs Developer の運用</a></li>
 </ul>
-<!-- glossary-links-injected: 5c9b3765d470 -->
+<!-- glossary-links-injected: ee79766d4c7b -->
 
 
 

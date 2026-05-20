@@ -35451,12 +35451,15 @@ excerpt: |
 <!-- cli-mermaid -->
 <h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  CLI["show buffer_pool"]
-  CDB0[("CONFIG_DB&lt;br/&gt;BUFFER_POOL")]
-  CDB0 --&gt; CLI</code></pre>
+  CLI["show buffer_pool / headroom-pool"]
+  WS["watermarkstat&lt;br/&gt;(-t buffer_pool / headroom_pool, -p)"]
+  CDB0[("COUNTERS_DB&lt;br/&gt;USER_WATERMARKS / PERSISTENT_WATERMARKS")]
+  CLI --&gt; WS
+  CDB0 --&gt; WS
+  WS --&gt; CLI</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
-<p>show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+<p>show 系 (COUNTERS_DB → watermarkstat → CLI) のミニ図。CONFIG_DB の <code>BUFFER_POOL</code> は読まず、watermark カウンタを COUNTERS_DB から取得する。</p>
 </div>
 <!-- /cli-mermaid -->
 
