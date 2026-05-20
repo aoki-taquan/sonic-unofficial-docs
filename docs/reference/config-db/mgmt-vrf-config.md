@@ -264,7 +264,7 @@ db_migrator.py での MGMT_VRF_CONFIG マイグレーションなし
 
 | Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
-| `VrfMgr` | `doTask()` | `mgmtVrfEnabled == "true"` | `ip link add mgmt type vrf table 1` でカーネル管理 VRF を作成 | `sonic-swss/cfgmgr/vrfmgr.cpp:257` |
+| `VrfMgr` | `doTask()` | `mgmtVrfEnabled == "true"` | `setLink("mgmt")` で table_id 6000 (`MGMT_VRF_TABLE_ID`) を内部 map に登録 (`ip link add` は実行しない)。実際の netdev 作成は hostcfgd が interfaces-config restart 経由で実施 | `sonic-swss/cfgmgr/vrfmgr.cpp:15,180` |
 | `VrfMgr` | `doTask()` | `mgmtVrfEnabled == "false"` または未設定 | VRF 削除処理 (`ip link del mgmt`) または スキップ | `sonic-swss/cfgmgr/vrfmgr.cpp` |
 | `VrfMgr` | `doTask()` | 値が `"false"` → DEL として強制変換 | `mgmtVrfEnabled=false` の SET は DEL 相当として処理 | `sonic-swss/cfgmgr/vrfmgr.cpp:257` |
 

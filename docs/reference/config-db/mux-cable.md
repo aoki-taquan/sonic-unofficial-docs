@@ -98,7 +98,7 @@ MUX_CABLE|<ifname>
 ### 典型値
 
 - key 形式: `MUX_CABLE|Ethernet0`（dual-ToR の Active-Standby 用）。
-- `state`: `auto` / `active` / `standby` / `manual`。
+- `state`: `auto` / `active` / `standby` / `manual` / `detach`（`detach` は active-active ケーブルタイプ専用）。
 - `server_ipv4` / `server_ipv6`: ぶら下がるサーバ IP。
 - `soc_ipv4`: SmartCable SoC IP。
 

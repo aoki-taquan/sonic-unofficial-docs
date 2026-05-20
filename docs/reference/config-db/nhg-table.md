@@ -479,7 +479,7 @@ fpmsyncd: FRR の Netlink nexthop イベント受信
 | パラメータ | 値 | ソース |
 |-----------|-----|--------|
 | `SELECT_TIMEOUT` | 1000 ms | `orchdaemon.cpp:23` |
-| `gBatchSize` | 128 (`DEFAULT_MAX_BULK_SIZE` = 1000 は別用途) | `orchdaemon.cpp:81` |
+| `gBatchSize` | 128 (`DEFAULT_BATCH_SIZE`)。`DEFAULT_MAX_BULK_SIZE` = 1000 は別用途 | `orchagent/main.cpp:59` (`#define DEFAULT_BATCH_SIZE 128`), `main.cpp:459` (`gBatchSize = DEFAULT_BATCH_SIZE`) |
 
 `gBatchSize` は `ConsumerStateTable` のポップ上限として渡され、1 イベントループ当たり最大 128 エントリを一括処理する。NHG エントリ数が多い起動時の初期スナップショット再生も同バッチサイズで処理される。
 

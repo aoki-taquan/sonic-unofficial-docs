@@ -129,6 +129,14 @@ warm reboot なし (通常起動) では `NAT_RESTORE_TABLE|Flags` は**書き�
 | `TCP_TIMEOUT` | uint32 (文字列) | `"86400"` | NatOrch 起動時のみ | TCP NAT タイムアウト秒 |
 | `SNAT_ENTRIES` | int (文字列) | `"0"` | SNAT エントリ追加/削除時 | 現在の SNAT エントリ総数 |
 | `DNAT_ENTRIES` | int (文字列) | `"0"` | DNAT エントリ追加/削除時 | 現在の DNAT エントリ総数 |
+| `STATIC_NAT_ENTRIES` | int (文字列) | `"0"` | `updateStaticNatCounters()` 経由 | 静的 NAT エントリ数 (`natorch.cpp:4481-4490`) |
+| `STATIC_NAPT_ENTRIES` | int (文字列) | `"0"` | 同上 | 静的 NAPT エントリ数 |
+| `STATIC_TWICE_NAT_ENTRIES` | int (文字列) | `"0"` | 同上 | 静的 Twice NAT エントリ数 |
+| `STATIC_TWICE_NAPT_ENTRIES` | int (文字列) | `"0"` | 同上 | 静的 Twice NAPT エントリ数 |
+| `DYNAMIC_NAT_ENTRIES` | int (文字列) | `"0"` | `updateSnatCounters()` / `updateDnatCounters()` 経由 (`natorch.cpp:4569-4577`) | 動的 NAT エントリ数 |
+| `DYNAMIC_NAPT_ENTRIES` | int (文字列) | `"0"` | 同上 | 動的 NAPT エントリ数 |
+| `DYNAMIC_TWICE_NAT_ENTRIES` | int (文字列) | `"0"` | 同上 | 動的 Twice NAT エントリ数 |
+| `DYNAMIC_TWICE_NAPT_ENTRIES` | int (文字列) | `"0"` | 同上 | 動的 Twice NAPT エントリ数 |
 
 ## 制約
 
@@ -495,7 +503,7 @@ if (platform && strstr(platform, BRCM_PLATFORM_SUBSTRING))
 | サポートあり | 実際の上限値を返す | 上限値 (例: `"4096"`) |
 | サポートなし / エラー | `SAI_STATUS_SUCCESS` 以外 | `"0"` (ハードウェア上限不明) |
 
-`MAX_NAT_ENTRIES == "0"` であっても NAT エントリの追加は試みられる（ガードなし）。ハードウェア上限超過は `create_nat_entry()` の戻り値 (`SAI_STATUS_INSUFFICIENT_RESOURCES` 等) で検出される。<!-- evidence: natorch.cpp L107-135 -->
+`MAX_NAT_ENTRIES == "0"` の場合は `gIsNatSupported=false` となり、`enableNatFeature()` が即時 return する (`natorch.cpp:2541-2544`)。`isNatEnabled()` が false のまま維持されるため `addNatEntry()` も SAI 操作をスキップし、NAT 機能全体が無効化される (本ページ「制約」セクションおよび「書込み順依存」セクション参照)。動的上限チェック (`maxAllowedSNatEntries`) はエントリ追加ループ内で別途行われるが、これは `gIsNatSupported=true` のときのみ到達する。<!-- evidence: natorch.cpp L107-135, L2541-2544 -->
 
 ### NAT_RESTORE_TABLE — warm reboot 対応状況
 

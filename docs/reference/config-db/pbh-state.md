@@ -110,12 +110,12 @@ PBH_CAPABILITIES|hash-field
 
 ## ベンダー差異
 
-| ベンダー | 判別条件 | hash-field の hashField 系 |
-|---------|--------|--------------------------|
-| Generic | `ASIC_VENDOR != "mellanox"` / 未設定 | `setPbhDefaults()` 未呼び出し → 全空 |
-| Mellanox | `ASIC_VENDOR = "mellanox"` | 同上 → 全空 |
+| ベンダー | 判別条件 | `hash` サブキーの `hash_field_list` | `hash-field` の hashField 系 |
+|---------|--------|------|--------------------------|
+| Generic | `ASIC_VENDOR != "mellanox"` / 未設定 | `"UPDATE"` (`pbhcap.cpp:123` で `hash.hash_field_list.insert(UPDATE)`) | `setPbhDefaults()` 未呼び出し → 全空 |
+| Mellanox | `ASIC_VENDOR = "mellanox"` | `""` (空。`pbhcap.cpp:126-141` に対応 INSERT なし) | 同上 → 全空 |
 
-現状 Generic と Mellanox の差異は `rule.priority`・`rule.hash` の INSERT なし (UPDATE のみ) と、`hash.hash_field_list` の INSERT なし (UPDATE のみ) の点で完全に一致する。差異は `pbhcap.cpp:94-109` を参照。
+`PBH_CAPABILITIES|hash` の `hash_field_list` は Generic と Mellanox で**異なる**（Generic=`UPDATE`、Mellanox=空）。Mellanox 環境では `config pbh hash update` が `pbh_capabilities_query()` の検証で拒否される。詳細マトリクスは本ページ Phase H セクションを参照。差異は `pbhcap.cpp:94-141` を参照。
 
 ## 購読者
 

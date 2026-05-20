@@ -312,7 +312,7 @@ YANG 定義外の COUNTERS_DB 実行時テーブルのためコード hardcode �
 
 **コンストラクタ → COUNTERS_GLOBAL_NAT の強制先行 (依存 #1)**: `NatOrch::NatOrch()` 末尾で `sai_switch_api->get_switch_attribute(SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY)` を実行し、結果を `maxAllowedSNatEntries` に格納した後 `m_countersGlobalNatTable.set("Values", values)` で `MAX_NAT_ENTRIES` / `TIMEOUT` / `UDP_TIMEOUT` / `TCP_TIMEOUT` を一括書き込む。この書き込みは orchagent 初期化フェーズで 1 回だけ行われ、以後の CONFIG_DB 変更では更新されない (`natorch.cpp:111-134`)。
 
-**NAT 未サポートプラットフォームでのカウンタ停止 (依存 #2)**: `gIsNatSupported` は `switchorch.cpp` が SAI switch 属性 `SAI_SWITCH_ATTR_NAT_ZONE_COUNTER_OBJECT_SUPPORT` を確認して設定するグローバル変数。`false` の場合 `enableNatFeature()` が冒頭で return し (`natorch.cpp:2541-2543`)、タイマーが起動しない。結果として `COUNTERS_NAT` 等のテーブルはエントリ追加時の `update*Counters(0,0)` のみで書かれ、以後 5 秒周期更新を受けない。
+**NAT 未サポートプラットフォームでのカウンタ停止 (依存 #2)**: `gIsNatSupported` は `orchagent/main.cpp:936-948` で SAI switch 属性 `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を照会し、戻り値が 0 より大きい場合のみ `true` に設定されるグローバル変数。`false` の場合 `enableNatFeature()` が冒頭で return し (`natorch.cpp:2541-2543`)、タイマーが起動しない。結果として `COUNTERS_NAT` 等のテーブルはエントリ追加時の `update*Counters(0,0)` のみで書かれ、以後 5 秒周期更新を受けない。
 
 **2 段階カウンタ出現 (依存 #4)**: `addNatEntry()` が SAI `create_nat_entry` 成功後に `updateNatCounters(ip_address, 0, 0)` を呼んでカウンタキーを `0,0` で作成する (`natorch.cpp:789`)。`addNaptEntry()` も同様 (`natorch.cpp:873`)。実際のパケット・バイト数は次の `queryCounters()` → `getNatCounters()` → `update*Counters(pkts, bytes)` が実行されて初めて書き込まれる (最大 5 秒後)。監視ツールがエントリ追加直後にカウンタを読んだ場合、常に `0` を観測する。
 
