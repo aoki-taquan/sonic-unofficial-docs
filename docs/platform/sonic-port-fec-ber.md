@@ -13,8 +13,6 @@ sources:
 related:
   config_db:
   - PORT
-  - PORT_STORM_CONTROL
-  - PORT_QOS_MAP
   - PORT_TABLE
   - TRANSCEIVER_INFO
   - TELEMETRY
