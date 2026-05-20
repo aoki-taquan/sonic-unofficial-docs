@@ -14,13 +14,13 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-  - COPP_TABLE
+  - COPP_GROUP
+  - COPP_TRAP
   - VNET
   - VLAN
   - VLAN_INTERFACE
   - VLAN_MEMBER
   - VLAN_SUB_INTERFACE
-  - COPP_GROUP
   cli:
   - show arp
   - show ndp
@@ -37,7 +37,7 @@ related:
 
 <!-- topics-tip -->
 !!! tip "Topics で読み物として読む"
-    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / L3 Routing](../topics/04-vrf-ecmp/index.md) を参照。
 <!-- /topics-tip -->
 
 !!! danger "裏取りステータス: Discrepancy-found（提案値と現行 default が乖離、一部最適化は実装済み）"

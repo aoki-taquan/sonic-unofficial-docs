@@ -11,19 +11,10 @@ sources:
   path: doc/database/multi_namespace_db_instances.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - AAA
-  - TACPLUS
-  - TACPLUS_SERVER
-  - RADIUS
-  - RADIUS_SERVER
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  cli:
-  - config aaa
-  - show aaa
-  yang:
-  - sonic-port
+  config_db: []
+  cli: []
+  yang: []
+  _no_related: true
 ---
 
 <!-- topics-tip -->
