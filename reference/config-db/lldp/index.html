@@ -37362,7 +37362,7 @@
 <h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>LLDP|GLOBAL</code>。</li>
-<li><code>hello_timer</code>: 10、<code>mode</code>: <code>receive</code> / <code>transmit-and-receive</code>。</li>
+<li><code>hello_time</code>: 10、<code>mode</code>: <code>receive</code> / <code>transmit-and-receive</code>。</li>
 </ul>
 <h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
@@ -37482,7 +37482,7 @@
 <td><code>lldpcli</code> が不正コマンドエラー。CONFIG_DB には書けるが lldpd に反映されない</td>
 </tr>
 <tr>
-<td><code>hello_timer</code> が 0 または負</td>
+<td><code>hello_time</code> が 0 または負</td>
 <td>lldpd がデフォルト 30 秒で動作。YANG バリデーション有効時は mgmt-framework 経由で拒否</td>
 </tr>
 <tr>

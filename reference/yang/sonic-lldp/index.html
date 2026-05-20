@@ -35741,7 +35741,7 @@
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>tx_hold</code> / <code>tx_interval</code> の組み合わせで TTL が決まる。整数 typedef だが範囲制約が緩く、過小値で隣接が flapping する。</li>
+<li><code>hello_time</code> (5..254) と <code>multiplier</code> (1..10) の組み合わせで TTL が決まる (TTL = hello_time × multiplier)。過小値で隣接が flapping する。</li>
 </ul>
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;LLDP|GLOBAL&#39;</span>

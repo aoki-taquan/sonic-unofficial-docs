@@ -35611,7 +35611,7 @@
 <h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="_7">典型的なデプロイ位置<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Port breakout (4x25G 等) 設定。<code>BREAKOUT_CFG|&lt;port&gt;</code> を <a href="../../glossary/#term-portmgrd">portmgrd</a> / xcvrd が読み、port 再生成のトリガーになる。</li>
+<li>Port breakout (4x25G 等) 設定。<code>BREAKOUT_CFG|&lt;port&gt;</code> を直接購読する runtime daemon は存在しない。CLI (<code>config interface breakout</code>) が <a href="../../glossary/#term-config_db">CONFIG_DB</a>[PORT] を書き換え、<a href="../../glossary/#term-portsyncd">portsyncd</a> 経由で <a href="../../glossary/#term-appl_db">APPL_DB</a>[PORT_TABLE] → PortsOrch (<a href="../../glossary/#term-orchagent">orchagent</a>) → <a href="../../glossary/#term-sai">SAI</a> に伝播する。</li>
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
@@ -35624,7 +35624,7 @@
 <!-- /ops-hint -->
 
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: dc62e86e7215 -->
 
 <div class="footnote">
 <hr />
