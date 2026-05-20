@@ -16,7 +16,6 @@ related:
   - VLAN_MEMBER
   - PORTCHANNEL_MEMBER
   - PORTCHANNEL
-  - VLAN_SUB_INTERFACE
   - INTERFACE
   cli:
   - config vlan

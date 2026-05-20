@@ -16,24 +16,17 @@ related:
   - VLAN_INTERFACE
   - VLAN_MEMBER
   - SNMP_AGENT_ADDRESS_CONFIG
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
   cli:
   - sonic-cfggen --preset l2
   - config vlan
   - show arp
   - show vlan
   - config snmp
-  - config bgp
-  - show bgp
   yang:
   - sonic-vlan
   - sonic-snmp
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
   - sonic-portchannel
   - sonic-vlan-sub-interface
-  - sonic-bgp-peergroup
 ---
 
 !!! note "裏取りステータス: code-verified（preset l2 部分）"

@@ -52,11 +52,11 @@ SONiC では機能のオン/オフや既定挙動を切り替える「フラグ�
 
 ### DB スキーマ
 
-`SYSTEM_DEFAULTS` のキーは `feature_name` 単独で、各エントリに少なくとも `status` フィールドを持つ。`status` の値は `enable` / `disable` / `up` / `down` を含む任意の文字列で良い。実装側でフラグごとに必要な追加フィールド（`custom_field`）を自由に持てる設計である。
+`SYSTEM_DEFAULTS` のキーは `feature_name` 単独で、各エントリに少なくとも `status` フィールドを持つ。`status` は現行 YANG モデル (`sonic-system-defaults`) では `stypes:admin_mode` 型に制約され、`enabled` / `disabled` のみが許容される（HLD 原文では `enable`/`disable`/`up`/`down` を含む任意文字列としていたが、現行実装と乖離）。実装側でフラグごとに必要な追加フィールド（`custom_field`）を自由に持てる設計である。
 
 | Table             | Key            | Field         | 値                                                       |
 |-------------------|----------------|---------------|----------------------------------------------------------|
-| `SYSTEM_DEFAULTS` | `feature_name` | `status`      | 任意文字列。例: `enable` / `disable` / `up` / `down`      |
+| `SYSTEM_DEFAULTS` | `feature_name` | `status`      | `enabled` / `disabled`（YANG `admin_mode` 型）            |
 | `SYSTEM_DEFAULTS` | `feature_name` | `<custom>`    | 任意文字列。フィールド名・値ともフラグ実装側が定義       |
 
 サンプル：
@@ -64,9 +64,9 @@ SONiC では機能のオン/オフや既定挙動を切り替える「フラグ�
 ```json
 "SYSTEM_DEFAULTS": {
     "tunnel_qos_remap":   { "status": "enabled" },
-    "default_bgp_status": { "status": "down" },
-    "synchronous_mode":   { "status": "enable" },
-    "dhcp_server":        { "status": "enable" }
+    "default_bgp_status": { "status": "disabled" },
+    "synchronous_mode":   { "status": "enabled" },
+    "dhcp_server":        { "status": "enabled" }
 }
 ```
 

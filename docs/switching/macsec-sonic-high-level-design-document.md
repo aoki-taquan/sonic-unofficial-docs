@@ -171,8 +171,9 @@ MACsec セッション (CA, SA) の状態と統計を確認する。
 
 ```bash
 show macsec
-ipsec statusall 2>/dev/null | head
+docker exec macsec wpa_cli status 2>/dev/null | head
 redis-cli -n 4 keys 'MACSEC_PROFILE|*'
+redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_MACSEC_*'
 ```
 
 ## 制限事項

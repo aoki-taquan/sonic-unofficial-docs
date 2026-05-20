@@ -15,8 +15,6 @@ related:
   - SWITCH
   - VLAN
   - VLAN_MEMBER
-  - STATIC_ROUTE
-  - VLAN_SUB_INTERFACE
   - VLAN_INTERFACE
   cli:
   - sonic-clear fdb

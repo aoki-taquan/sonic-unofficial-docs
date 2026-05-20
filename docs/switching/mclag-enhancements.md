@@ -118,7 +118,7 @@ APPL_DB:
   APP_MCLAG_FDB_TABLE:<vlan>:<mac>      port, type=static|dynamic, mclag=remote|local
 
 STATE_DB:
-  STATE_MCLAG_TABLE|<domain>            oper_status, peer_link_status
+  STATE_MCLAG_TABLE|<domain>            oper_status, role, system_mac
   STATE_MCLAG_REMOTE_INTF_TABLE|<intf>
   STATE_MCLAG_REMOTE_FDB_TABLE|<vlan>:<mac>
 ```

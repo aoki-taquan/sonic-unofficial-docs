@@ -121,7 +121,7 @@ Phase 2 は IPv6 neighbor 削除や [SAI](../reference/glossary.md#term-sai) 問
 |-------|-----|------------|
 | `PORT` | `<port>` | `admin_status`, `mtu` |
 | `INTERFACE` | `<port>\|<IP>` | （key のみ）|
-| `PORTCHANNEL` | `<pc>` | `admin_status`, `mtu`, `min_links`, `fall_back` |
+| `PORTCHANNEL` | `<pc>` | `admin_status`, `mtu`, `min_links`, `fallback` |
 | `PORTCHANNEL_INTERFACE` | `<pc>\|<IP>` | （key のみ）|
 | `PORTCHANNEL_MEMBER` | `<pc>\|<port>` | （key のみ）|
 | `VLAN_INTERFACE` | `<vlan>\|<IP>` | （key のみ）|
@@ -133,7 +133,7 @@ Phase 2 は IPv6 neighbor 削除や [SAI](../reference/glossary.md#term-sai) 問
 config interface Ethernet0 add ip 10.0.0.0/31
 
 # LAG 作成 + member + IP
-config portchannel add PortChannel0001 --min_links 1 --fall_back false
+config portchannel add PortChannel0001 --min_links 1 --fallback false
 config portchannel member add PortChannel0001 Ethernet4
 config interface PortChannel0001 add ip 10.0.0.2/31
 
@@ -228,7 +228,7 @@ PortChannel のメンバーとして設定されているインターフェー�
 
 ## 干渉する機能
 
-旧 `/etc/network/interfaces` 静的設定 / warm reboot（incremental 前提と整合）/ VLAN_INTERFACE / DHCP relay / SAI RIF MTU（[orchagent](../reference/glossary.md#term-orchagent) が追従）/ [LACP](../reference/glossary.md#term-lacp) `fall_back` / `min_links`。
+旧 `/etc/network/interfaces` 静的設定 / warm reboot（incremental 前提と整合）/ VLAN_INTERFACE / DHCP relay / SAI RIF MTU（[orchagent](../reference/glossary.md#term-orchagent) が追従）/ [LACP](../reference/glossary.md#term-lacp) `fallback` / `min_links`。
 
 ## トラブルシューティング
 
