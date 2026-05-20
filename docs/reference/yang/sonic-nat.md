@@ -68,6 +68,11 @@ flowchart LR
 
 本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
+### 対応 CONFIG_DB
+
+- [`NAT_POOL`](../config-db/nat-pool.md)
+- [`NAT_BINDINGS`](../config-db/nat-bindings.md)
+
 ### 関連 CLI
 
 - [`config nat`](../cli/config-nat.md)

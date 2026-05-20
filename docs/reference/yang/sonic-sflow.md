@@ -54,6 +54,8 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`SFLOW`](../config-db/sflow.md)
+- [`SFLOW_COLLECTOR`](../config-db/sflow-collector.md)
+- [`SFLOW_SESSION`](../config-db/sflow-session.md)
 
 ### 関連 CLI
 
