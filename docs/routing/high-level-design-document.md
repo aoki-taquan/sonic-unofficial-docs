@@ -11,21 +11,10 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-  - CRM
-  - ACL_RULE
-  - ACL_TABLE
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DPU
-  - STATIC_ROUTE
+  - SWITCH
   cli:
-  - config route
-  - config bgp
   - show bgp
   - show techsupport
-  - show platform
-  - show version
-  - show acl
   yang:
   - sonic-route-common
   - sonic-hash

@@ -140,17 +140,17 @@ typedef switchport-mode-type {
   default routed;
 }
 
-leaf switchport_mode { type switchport-mode-type; }
+leaf mode { type stypes:switchport_mode; }   // typedef 名は switchport_mode、leaf 名は mode
 ```
 
 CONFIG_DB:
 
 ```text
 PORT|<name>
-  switchport_mode = "routed" | "access" | "trunk"
+  mode = "routed" | "access" | "trunk"
 
 PORTCHANNEL|<name>
-  switchport_mode = ...
+  mode = ...
 ```
 
 メンバ関係は既存 `VLAN_MEMBER` を流用（`tagging_mode`: `untagged` / `tagged`）。本機能は **モード概念を明示** することで CLI の意味付けを揃えるのが主目的で、データプレーン挙動は既存と互換[^1]。
