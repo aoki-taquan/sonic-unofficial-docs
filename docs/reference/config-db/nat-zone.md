@@ -26,6 +26,7 @@ related:
     - LOOPBACK_INTERFACE
     - NAT_GLOBAL
     - NAT_POOL
+    - NAT_BINDINGS
   cli:
     - config nat
   yang:

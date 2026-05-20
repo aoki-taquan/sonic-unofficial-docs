@@ -1807,7 +1807,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [LLDP](#term-lldp)
 
 - [LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル (APPL_DB)](config-db/lldp-state.md) (119)
-- [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (101)
+- [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (102)
 - [LLDP_PORT テーブル](config-db/lldp-port.md) (86)
 - [sonic-lldp YANG](yang/sonic-lldp.md) (35)
 - [サイトマップ](../_meta/sitemap.md) (20)
@@ -1887,9 +1887,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [NAT](#term-nat)
 
 - [NAT_BINDINGS テーブル](config-db/nat-bindings.md) (331)
-- [NAT_GLOBAL / NAT_POOL テーブル](config-db/nat.md) (316)
+- [NAT_GLOBAL / NAT_POOL テーブル](config-db/nat.md) (318)
+- [NAT_RESTORE_TABLE / COUNTERS_NAT テーブル](config-db/nat-state.md) (301)
 - [COUNTERS_DB NAT カウンタテーブル群](config-db/nat-counters.md) (300)
-- [NAT_RESTORE_TABLE / COUNTERS_NAT テーブル](config-db/nat-state.md) (293)
 - [NAT_POOL テーブル](config-db/nat-pool.md) (248)
 
 ### [natmgrd / natsyncd](#term-natmgrd-natsyncd)
@@ -2409,7 +2409,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VRRP_TRACK テーブル](config-db/vrrp-track.md) (124)
 - [VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking）](../routing/virtual-router-redundancy-protocol-adaptation-hld.md) (36)
 - [サイトマップ](../_meta/sitemap.md) (13)
-- [config interface サブコマンド](cli/config-interface.md) (11)
+- [config interface サブコマンド](cli/config-interface.md) (12)
 
 ### [VTEP](#term-vtep)
 
