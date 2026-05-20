@@ -55,7 +55,6 @@ L2 / link layer の制御面を扱う。具体的には:
 ## HLD-only のページ
 - [ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）](brief-introduction-of-iccp-code.md)
 - [SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約](control-sonic-behaviors-with-system-defaults-table.md)
-- [分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）](lag-on-distributed-voq-system.md)
 
 ## ページ一覧
 
@@ -79,6 +78,6 @@ L2 / link layer の制御面を扱う。具体的には:
 | [Wake-on-LAN（wol CLI と SonicWolService gNOI）](wake-on-lan-in-sonic.md) | Discrepancy-found |
 | [Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）](increasing-lacp-pdu-timeout-during-warm-reboot.md) | Code-verified |
 | [リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）](link-event-damping-hld.md) | Discrepancy-found |
-| [分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）](lag-on-distributed-voq-system.md) | HLD-only |
+| [分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）](lag-on-distributed-voq-system.md) | Code-verified |
 
 <!-- glossary-links-injected: 65a8d86c0245 -->

@@ -160,7 +160,7 @@ show mux config
 | `positive_signal_count` | 1 (default) | 1回受信で active 判定 |
 | `oscillation_enabled` | `true` (default) | タイマー駆動で定期的に active/standby 切替を実施 (`interval_sec` 間隔) |
 | `oscillation_enabled` | `false` | タイマー切替を無効化。ICMP prober 結果のみで切替 |
-| `use_well_known_mac` | `enabled` | 既知 MAC を宛先 MAC として ICMP 送信 |
+| `use_well_known_mac` | `enabled` | 既知 MAC を宛先 MAC として ICMP 送信（**実装バグ: コードは `v == "enable"` で判定するため YANG enum 値 `"enabled"` と文字列ミスマッチ、常に `disabled` 相当の動的 MAC が使われる。詳細は本ページ defaults / failure セクション参照**） |
 | `use_well_known_mac` | `disabled` | 動的 MAC を使用 |
 | `src_mac` | `ToRMac` | ToR デバイス MAC を送信元 MAC に使用 |
 | `src_mac` | `VlanMac` | [VLAN](../../reference/glossary.md#term-vlan) インターフェース MAC を送信元 MAC に使用 |

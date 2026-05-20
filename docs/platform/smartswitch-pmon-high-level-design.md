@@ -11,7 +11,6 @@ sources:
 related:
   config_db:
     - DPU
-    - DPU_STATE
     - CHASSIS_MODULE
   cli:
     - show platform dpu
