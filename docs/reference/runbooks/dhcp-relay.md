@@ -15,7 +15,7 @@ sources:
 related:
   config_db:
   - VLAN
-  - DHCP_RELAY
+  - DHCPV4_RELAY
   - VLAN_INTERFACE
   - VRF
   - VLAN_MEMBER
@@ -52,7 +52,7 @@ related:
 
 1. **VLAN_INTERFACE に IP が振られていない**: relay agent の `giaddr` が 0.0.0.0 になり server 側で破棄
 2. **helper サーバへの L3 到達性なし** (route / firewall / [VRF](../../reference/glossary.md#term-vrf) 不一致)
-3. **helper IP の登録漏れ / typo**: `DHCP_RELAY|Vlan100` の `dhcpv4_servers` が空
+3. **helper IP の登録漏れ / typo**: `DHCPV4_RELAY|Vlan100` の `dhcpv4_servers` が空
 4. **`dhcp_relay` コンテナが起動していない**: `show feature status` で disabled
 5. **option 82 (circuit/remote-id) の挿入仕様が server と不一致** → server が DISCOVER を黙って drop
 
@@ -77,7 +77,7 @@ flowchart TD
 ### 1. CONFIG_DB に helper が入っているか
 
 ```bash
-sonic-db-cli CONFIG_DB hgetall "DHCP_RELAY|Vlan100"
+sonic-db-cli CONFIG_DB hgetall "DHCPV4_RELAY|Vlan100"
 sonic-db-cli CONFIG_DB hgetall "VLAN|Vlan100"
 sonic-db-cli CONFIG_DB keys "VLAN_INTERFACE|Vlan100*"
 ```

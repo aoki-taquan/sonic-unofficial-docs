@@ -101,7 +101,7 @@ sudo grep -iE "teamd|portchannel" /var/log/syslog | tail -100
 
 - speed mismatch: `config interface speed Ethernet0 <speed>` で揃える
 - LACP mode 不一致: 対向と協調し `mode active` で揃える
-- `min_links` の見直し: `config portchannel <name> --min-links <N>`
+- `min_links` の見直し: 既存 [PortChannel](../../reference/glossary.md#term-portchannel) への直接更新コマンドは存在しないため、(1) `config portchannel member del <name> <member>` で全メンバー解除 → (2) `config portchannel del <name>` で削除 → (3) `config portchannel add <name> --min-links <N>` で再作成、の手順で変更する
 - [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) crash: `sudo systemctl restart teamd@PortChannel0001`
 
 ## 関連ページ
@@ -117,4 +117,4 @@ sudo grep -iE "teamd|portchannel" /var/log/syslog | tail -100
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — cfgmgr/teammgr.cpp
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — show interfaces portchannel
 
-<!-- glossary-links-injected: 50d40ad47ab6 -->
+<!-- glossary-links-injected: 774b9119d65a -->

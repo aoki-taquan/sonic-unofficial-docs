@@ -110,7 +110,7 @@ ACL_TABLE_TYPE|<type_name>
 | `L4_SRC_PORT` | `SAI_ACL_TABLE_ATTR_FIELD_L4_SRC_PORT` |
 | `L4_DST_PORT` | `SAI_ACL_TABLE_ATTR_FIELD_L4_DST_PORT` |
 | `ETHER_TYPE` | `SAI_ACL_TABLE_ATTR_FIELD_ETHER_TYPE` |
-| `OUTER_VLAN_ID` | `SAI_ACL_TABLE_ATTR_FIELD_OUTER_VLAN_ID` |
+| `VLAN_ID` | `SAI_ACL_TABLE_ATTR_FIELD_OUTER_VLAN_ID` |
 | `IN_PORTS` | `SAI_ACL_TABLE_ATTR_FIELD_IN_PORTS` |
 | `OUT_PORTS` | `SAI_ACL_TABLE_ATTR_FIELD_OUT_PORTS` |
 | `L4_SRC_PORT_RANGE` / `L4_DST_PORT_RANGE` | `SAI_ACL_RANGE_TYPE_L4_SRC_PORT_RANGE` / `SAI_ACL_RANGE_TYPE_L4_DST_PORT_RANGE` (`aclRangeTypeLookup`) |
@@ -125,8 +125,9 @@ ACL_TABLE_TYPE|<type_name>
 | `REDIRECT_ACTION` | リダイレクト |
 | `MIRROR_INGRESS_ACTION` | Ingress mirror |
 | `MIRROR_EGRESS_ACTION` | Egress mirror |
-| `QOS_DSCP_ACTION` | [DSCP](../../reference/glossary.md#term-dscp) 書き換え |
-| `COUNTER` | ヒットカウンタ (`SAI_ACL_ENTRY_ATTR_ACTION_COUNTER`) |
+
+!!! warning "ACTIONS の有効値"
+    `ACTION_COUNTER` (`"COUNTER"`)、`ACTION_META_DATA` (`"META_DATA_ACTION"`)、`ACTION_DSCP` (`"DSCP_ACTION"`) は orchagent の lookup には含まれず、`ACL_TABLE_TYPE.ACTIONS` の有効値ではない (Phase E 参照)。CONFIG_DB に書いても erase される。
 
 ---
 
@@ -136,7 +137,7 @@ ACL_TABLE_TYPE|<type_name>
 # CLI 経由（config acl table は ACL_TABLE を書く; ACL_TABLE_TYPE は直接 CONFIG_DB へ）
 sonic-db-cli CONFIG_DB hmset 'ACL_TABLE_TYPE|MY_CUSTOM_TYPE' \
   MATCHES 'SRC_IP,DST_IP,L4_SRC_PORT,L4_DST_PORT,IP_PROTOCOL' \
-  ACTIONS 'PACKET_ACTION,COUNTER' \
+  ACTIONS 'PACKET_ACTION' \
   BIND_POINTS 'PORT,PORTCHANNEL'
 ```
 
@@ -564,5 +565,6 @@ capability 結果は `STATE_DB` の `ACL_STAGE_CAPABILITY_TABLE|{INGRESS,EGRESS}
 
 [^1]: テーブル定義は `sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2` (sha `9ea932ec`) L354-388 (`ACL_TABLE_TYPE` コンテナ) より。処理ロジックは `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) L752-895 (`AclTableTypeParser`)、L4912-4942 (`addAclTableType`/`removeAclTableType`)、L5740-5773 (`doAclTableTypeTask`)、L3724 (`initDefaultTableTypes`) より。フィールド定数は `orchagent/acltable.h` L18-20 より。
 [^2]: 副作用の調査は `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) `doAclTableTypeTask()` L5738-5774、`addAclTableType()` L4912-4930、`removeAclTableType()` L4932-4948、`doAclTableTask()` L5432 (`getAclTableType()` による retry 制御) より。STATE_DB テーブル名は `sonic-swss-common/common/schema.h` L418/514/515 より。
+[^3]: 通信メカニズムの調査は `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) L4197-4299 (AclOrch ctor、doTask)、`orchagent/orchdaemon.cpp` L408-422, L533-534 (TableConnector 構築)、`orchagent/orch.cpp` L1186-1196 (addConsumer DB 種別分岐)、`orchagent/vnetorch.cpp` L3738, L3781、`orchagent/dash/dashenifwdorch.cpp` L404, L625, L649、`sonic-swss-common/common/schema.h` L95 (`APP_ACL_TABLE_TYPE_TABLE_NAME`) より。
 
-<!-- glossary-links-injected: 73c32348e9af -->
+<!-- glossary-links-injected: 994156b26b07 -->

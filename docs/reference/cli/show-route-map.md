@@ -18,7 +18,6 @@ related:
   - show route-map
   yang:
   - sonic-route-map
-  - sonic-routing-policy-sets
 ---
 
 # show route-map コマンド
