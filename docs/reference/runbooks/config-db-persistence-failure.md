@@ -14,9 +14,7 @@ sources:
   ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
   config_db:
-  - SYSLOG_SERVER
-  - SYSLOG_CONFIG
-  - SYSLOG_CONFIG_FEATURE
+  - DEVICE_METADATA
   - PORT
   - PORTCHANNEL
   - BREAKOUT_CFG
@@ -26,10 +24,8 @@ related:
   - sonic-cfggen
   - show interfaces
   - show ip
-  - config syslog
   yang:
   - sonic-system-defaults
-  - sonic-syslog
 ---
 
 # Runbook: CONFIG_DB の永続化が失敗する (config save 失敗)

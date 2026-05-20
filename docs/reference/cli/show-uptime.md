@@ -106,7 +106,7 @@ show uptime
 ### 期待される出力 (抜粋)
 
 ```text
- 10:42:31 up 5 days,  3:21,  1 user,  load average: 0.21, 0.18, 0.15
+up 5 days, 3 hours, 21 minutes
 ```
 <!-- /usage-example -->
 

@@ -29,7 +29,7 @@ related:
 
 - `show interfaces counters errors` で `RX_ERR` / `SYMBOL_ERR` が継続的に増加
 - リンク自体は UP するが、BER が高く上位プロトコル（[BGP](../../reference/glossary.md#term-bgp) / [LACP](../../reference/glossary.md#term-lacp)）が flap
-- `show interfaces fec stats` で `FEC_PRE / FEC_POST` のカウンタが急増
+- `show interfaces counters fec-stats` で FEC corrected/uncorrected カウンタが急増
 
 ## 想定原因
 

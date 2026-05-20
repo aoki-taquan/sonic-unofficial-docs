@@ -198,7 +198,7 @@ show mac
 ```bash
 show mac -v 100
 show mac -p Ethernet0
-show mac count
+show mac -c
 ```
 
 ### 期待される出力 (抜粋)

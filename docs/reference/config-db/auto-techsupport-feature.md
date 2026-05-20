@@ -252,9 +252,7 @@ ls -lh /var/dump/
 
 ### 段階 1 — Consumer 登録
 
-`auto_techsupport_handler` (`sonic-host-services`) が CONFIG_DB の `AUTO_TECHSUPPORT_FEATURE` テーブルを購読する。
-
-`auto_techsupport_handler` は `hostcfgd` 内部のサブハンドラとして動作。
+本テーブルに対する常駐 subscriber は存在しない（`sonic-host-services/scripts/hostcfgd` の grep で `AUTO_TECHSUPPORT_FEATURE` 0 hit）。実装は [hostcfgd](../../reference/glossary.md#term-hostcfgd) と独立した kernel `core_pattern` → `coredump-compress` → `coredump_gen_handler.py` のパイプラインで、必要なフィールドは一発起動スクリプトが同期 HGET で取得する。詳細は Phase G を参照。
 
 ### 段階 2 — CFG→APPL 翻訳
 
@@ -598,4 +596,4 @@ per-feature `rate_limit_interval` の経過判定は CONFIG_DB 値だけでは�
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-feature-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 4a3c4472b289 -->
+<!-- glossary-links-injected: 9bd150521228 -->

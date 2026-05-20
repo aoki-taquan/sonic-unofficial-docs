@@ -148,19 +148,19 @@ related:
 **関連する HLD 7 件**
 
 - [sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作）](../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset.md)
-- [CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用）](../../platform/custom-si-settings-for-cmis-modules.md)
 - [SONiC ポート命名規則の変更案（et[sX]pY[abcd]）](../../platform/sonic-port-naming-convention-change.md)
 - [VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）](../../platform/fabric-port-support-on-sonic.md)
 - [FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）](../../platform/fec-flr-support-in-sonic-operations.md)
 - [新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）](../../platform/global-platform-specific-psuutil-class-instance.md)
-- [pcieutil / show platform pcieinfo（PCIe デバイス検査と pcie.yaml 比較）](../../platform/pcieinfo-design.md)
+- [sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）](../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs.md)
+- [FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）](../../platform/fec-flr-support-in-sonic-concepts.md)
 
 **関連トラブルシュート 5 件**
 
+- [CONFIG_DB の永続化が失敗する](../../reference/runbooks/config-db-persistence-failure.md)
 - [PINS gRPC (P4Runtime) が応答しない](../../reference/runbooks/pins-grpc-unresponsive.md)
 - [minigraph 適用後に reload が完了しない / 起動が固まる](../../reference/runbooks/minigraph-reload-stuck.md)
 - [Multi-ASIC で namespace 間通信できない](../../reference/runbooks/multi-asic-namespace.md)
-- [CONFIG_DB の永続化が失敗する](../../reference/runbooks/config-db-persistence-failure.md)
 - [counter が更新されない (FLEX_COUNTER)](../../reference/runbooks/flex-counter-stuck.md)
 
 <!-- /next-reads -->

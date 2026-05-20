@@ -243,7 +243,7 @@ done
 - `mirrororch.cpp:960` のコメント `// Set monitor port to recirc port in voq switch.` と続く `if (gMySwitchType == "voq")` 分岐が、HLD の主張する **recycle (recirc) port 経由の rewrite** を裏取り。`mirrororch.cpp:1036` で「voq + ERSPAN の場合は dst MAC を router mac で代入」とあり、これは HLD の「ingress LC ASIC が GRE rewrite を完了させてから recycle ポートから再注入」フローの一部に対応。
 - `neighorch.cpp` の `voqSyncAddNeigh` / `voq_encap_index` (`neighorch.h:32, 160, 164`) は VoQ 系 neighbor の SYSTEM_PORT encap 管理を担っており、ミラー先 neighbor 解決が VoQ chassis 向けに拡張済みである裏取り。
 
-HLD で並列提示された Option 1 (recycle port 方式) / Option 2 (dst LC で rewrite) のうち、master が採用したのは Option 1 系 (recycle port + ingress 完結 rewrite) と判定。本ページの記述は実装と整合。
+HLD で並列提示された Option 1 (recycle port 方式) / Option 2 (dst LC で rewrite) のうち、master の実装は両方の特徴を組み合わせている: **recycle port 経由 (Option 1 系)** で再注入する一方、`mirrororch.cpp:1036` のとおり **dst MAC を router MAC で代入する (Option 2 系の routing 動作)**。本ページ L108-114 の比較表が示す「Option 1 = bridging / Option 2 = routing」の二分法は HLD 提案時点の整理であり、master 実装はそれを跨いだハイブリッドであると理解するのが妥当。
 
 <!-- topics-back-ref -->
 
