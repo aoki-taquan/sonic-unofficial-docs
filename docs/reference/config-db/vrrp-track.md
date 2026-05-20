@@ -81,7 +81,7 @@ VRRP_TRACK|<interface_name>|<vrid>|<track_interface>
 
 ## 関連 CONFIG_DB / CLI
 
-- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VRRP`](../../reference/config-db/vrrp-track.md) (親インスタンステーブル)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`VRRP`](../../reference/config-db/vrrp.md) (親インスタンステーブル)
 - 関連 CLI:
   - `config interface vrrp track_interface add <intf> <vrid> <track_intf> [<priority_increment>]`
   - `config interface vrrp track_interface remove <intf> <vrid> <track_intf>`
