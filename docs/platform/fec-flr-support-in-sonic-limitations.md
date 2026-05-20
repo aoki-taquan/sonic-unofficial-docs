@@ -46,7 +46,7 @@ related:
 | `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S16` の利用 | 必須 | `sonic-swss/crates/countersyncd/src/sai/saiport.rs` L766-782 で S0〜S16 を列挙、L1144- で文字列マッピング | ✓ 実装済み |
 | `COUNTER_DB:RATES` への `FEC_FLR` / `FEC_FLR_PREDICTED` 書き込み | 必須 | `port_flr.lua` L443 / L451 / L452 で `FEC_FLR` / `FEC_FLR_PREDICTED` / `FEC_FLR_R_SQUARED` を HSET | ✓ 実装済み |
 | `show interfaces counters` (portstat) に FLR カラム追加 | 必須 | `sonic-utilities/utilities_common/portstat.py` L50 のヘッダ列定義に `fec_flr`, `fec_flr_predicted`, `fec_flr_r_squared` が追加済、L271-273 で CHASSIS_STATE_DB から読み出し、L671-673 で format して表示。`sonic-utilities/utilities_common/netstat.py` L144 `format_fec_flr` / L156 `format_fec_flr_predicted` も実装 | ✓ 実装済み |
-| `counterpoll port flr-interval-factor` サブコマンド | 提案 | **未実装**。`sonic-utilities/counterpoll/` 配下に `flr` / `flr-interval` サブコマンドは存在しない。`port_flr.lua` L31 で `FEC_FLR_POLL_INTERVAL = 120`（秒）がハードコード | ⚠️ 未取り込み |
+| `counterpoll port flr-interval-factor` サブコマンド | 提案 | **未実装**。`sonic-utilities/counterpoll/` 配下に `flr` / `flr-interval` サブコマンドは存在しない。`port_flr.lua` L31 で `FEC_FLR_POLL_INTERVAL = 120`（port_stat poll 周期との乗数 factor。port_stat poll = 1 秒の場合、FLR poll = 120 秒）がハードコード | ⚠️ 未取り込み |
 | `BIN_FILTER_VALUE` / `MIN_SIGNIFICANT_BINS` / `MFC` のチューニング API | 想定 | `port_flr.lua` L29-32 で `BIN_FILTER_VALUE=10` / `MIN_SIGNIFICANT_BINS=2` / `MFC=8` ハードコード。実行時変更経路無し | ⚠️ 未取り込み |
 | portstat `-f` モードでの FLR(O) / FLR(P) サンプル出力フォーマット | 必須 | HLD のサンプル表示と portstat の列名（`fec_flr` / `fec_flr_predicted`）が一致。L156-180 の `format_fec_flr_predicted` で r_squared から accuracy 列を生成 | ✓ 実装済み |
 
@@ -107,7 +107,7 @@ git -C .cache/sonic-sources/sonic-utilities log --oneline | grep -iE 'flr|flex.*
 !!! tip "読み手向け"
     - **本機能を実運用で使う場合**: 実装は存在するが本 HLD の記述と乖離。最新 master の動作を別途確認した上で適用する
     - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
-    - **代替手段 / 関連 reference**: 本ページの frontmatter `related` が空のため、[Reference 索引](../reference/index.md) から関連テーブル / CLI / YANG を辿る
+    - **代替手段 / 関連 reference**: 関連テーブル / CLI / YANG は frontmatter `related` および [Reference 索引](../reference/index.md) を参照
 
 !!! note "本ドキュメントの追跡"
     - monitor: `evolved_beyond_hld` / last_verified: `2026-05-11`

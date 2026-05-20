@@ -12,23 +12,14 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-  - CRM
-  - ACL_RULE
-  - ACL_TABLE
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DPU
   - PORT
   cli:
   - show interfaces
   - show techsupport
   - show platform
   - show version
-  - show acl
-  - config acl
   yang:
   - sonic-port
-  - sonic-cable-length
   - sonic-crm
   - sonic-system-defaults
 ---
@@ -269,8 +260,8 @@ redis-cli -n 4 hgetall 'PORT|Ethernet0'
 
 本ページに関連する参照ドキュメント:
 
-- [`CRM` CONFIG_DB スキーマ](../reference/config-db/crm.md)
-- [`sonic-crm` YANG モジュール](../reference/yang/sonic-crm.md)
+- [`PORT` CONFIG_DB スキーマ](../reference/config-db/port.md)
+- [`sonic-port` YANG モジュール](../reference/yang/sonic-port.md)
 
 <!-- augmented-links: v1 -->
 

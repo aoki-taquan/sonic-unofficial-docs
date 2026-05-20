@@ -100,6 +100,7 @@ flowchart LR
 |-------|------|
 | `FEC_FLR` | observed FEC FLR（float） |
 | `FEC_FLR_PREDICTED` | predicted FEC FLR（float） |
+| `FEC_FLR_R_SQUARED` | predicted の決定係数（float） |
 | `SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES_last` | 直前値 |
 | `SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES_last` | 直前値 |
 | `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_Si_last` | 直前値（i=0..15） |
@@ -286,7 +287,7 @@ docker exec swss grep FEC_FLR_POLL_INTERVAL /usr/share/swss/port_flr.lua
     | 項目 | HLD | 現行 master | 結果 |
     |------|-----|------|------|
     | `port_flr.lua` の swss 取り込み | 必須 | `sonic-swss/orchagent/port_flr.lua` L1-460 に存在。`FEC_FLR` / `FEC_FLR_PREDICTED` / `FEC_FLR_R_SQUARED` を RATES テーブルへ書く実装あり | ✓ 実装済み |
-    | `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S16` の利用 | 必須 | `sonic-swss/crates/countersyncd/src/sai/saiport.rs` L766-782 で S0〜S16 を列挙、L1144- で文字列マッピング | ✓ 実装済み |
+    | `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S15` の利用 | 必須 | `sonic-swss/orchagent/port_flr.lua` L135 コメントどおり FLR 計算は S0..S15 (RS-544 の 16 bin) を対象とする。`sonic-swss/crates/countersyncd/src/sai/saiport.rs` L766-782 は S0..S16 を列挙するが、S16 は FLR 計算の対象外（拡張定義）| ✓ 実装済み |
     | `COUNTER_DB:RATES` への `FEC_FLR` / `FEC_FLR_PREDICTED` 書き込み | 必須 | `port_flr.lua` L443 / L451 / L452 で `FEC_FLR` / `FEC_FLR_PREDICTED` / `FEC_FLR_R_SQUARED` を HSET | ✓ 実装済み |
     | `show interfaces counters` (portstat) に FLR カラム追加 | 必須 | `sonic-utilities/utilities_common/portstat.py` L50 のヘッダ列定義に `fec_flr`, `fec_flr_predicted`, `fec_flr_r_squared` が追加済、L271-273 で CHASSIS_STATE_DB から読み出し、L671-673 で format して表示。`sonic-utilities/utilities_common/netstat.py` L144 `format_fec_flr` / L156 `format_fec_flr_predicted` も実装 | ✓ 実装済み |
     | `counterpoll port flr-interval-factor` サブコマンド | 提案 | **未実装**。`sonic-utilities/counterpoll/` 配下に `flr` / `flr-interval` サブコマンドは存在しない。`port_flr.lua` L31 で `FEC_FLR_POLL_INTERVAL = 120`（秒）がハードコード | ⚠️ 未取り込み |
@@ -314,7 +315,7 @@ docker exec swss grep FEC_FLR_POLL_INTERVAL /usr/share/swss/port_flr.lua
 
     監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
 
-    - コアロジックと表示は取り込み済み: `sonic-swss/orchagent/port_flr.lua` L1-460、`sonic-swss/crates/countersyncd/src/sai/saiport.rs` L766-782 で SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S16 列挙、`sonic-utilities/utilities_common/portstat.py` L50/L271-273/L671-673 で表示列追加。
+    - コアロジックと表示は取り込み済み: `sonic-swss/orchagent/port_flr.lua` L1-460、`sonic-swss/crates/countersyncd/src/sai/saiport.rs` L766-782 で SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S16 を列挙（ただし FLR 計算側 `port_flr.lua` L135 は S0..S15 の 16 bin のみ使用、S16 は拡張定義）、`sonic-utilities/utilities_common/portstat.py` L50/L271-273/L671-673 で表示列追加。
     - ハードコード値: `port_flr.lua` L29-32 で `BIN_FILTER_VALUE=10` / `MIN_SIGNIFICANT_BINS=2` / `MFC=8`、L31 で `FEC_FLR_POLL_INTERVAL=120`（秒固定）。
     - `counterpoll port flr-interval-factor` サブコマンドは `sonic-utilities/counterpoll/` 配下に未追加（`grep -rn 'flr-interval\|flr_interval' .cache/sonic-sources/sonic-utilities/counterpoll/` ヒット 0）。
     - 関連 PR: port_flr.lua + portstat 表示は 2024 年に merge。チューニング CLI は未提出。

@@ -11,26 +11,11 @@ sources:
   path: doc/pcie-mon/pcieinfo_design.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - SYSLOG_SERVER
-  - SYSLOG_CONFIG
-  - SYSLOG_CONFIG_FEATURE
-  - PORT
-  - PORTCHANNEL
-  - BREAKOUT_CFG
-  - INTERFACE
+  config_db: []
   cli:
   - show platform pcieinfo
   - pcieutil
-  - show platform
-  - show environment
-  - show techsupport
-  - show version
-  - show interfaces
-  yang:
-  - sonic-asic-sensors
-  - sonic-system-defaults
-  - sonic-syslog
+  yang: []
 ---
 
 <!-- topics-tip -->
