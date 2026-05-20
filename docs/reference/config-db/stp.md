@@ -398,7 +398,7 @@ APPL_DB:APP_PORT_TABLE|PortInitDone が存在する → 処理開始
 ### 4. LAG (PortChannel) 依存
 
 `doStpPortTask()` はキーが `PortChannel` を含む場合に `isLagEmpty(key)` を確認する。
-LAG にメンバーが存在しない場合、SET をスキップする (`stpmgr.cpp:648-653`)。
+[LAG](../../reference/glossary.md#term-lag) にメンバーが存在しない場合、SET をスキップする (`stpmgr.cpp:648-653`)。
 この場合の再試行は `doLagMemUpdateTask()` による `m_lagMap` 更新後、次回 SELECT ループに依存する。
 
 証跡: `stpmgr.cpp:648-653, doLagMemUpdateTask()`
@@ -439,7 +439,7 @@ stpmgrd 自身の warm-reboot reconcile フェーズは **事実上スタブ** �
 | `STATE_LAG_TABLE\|<lag>` | [STATE_DB](../../reference/glossary.md#term-state_db) | 存在確認 → SET/スキップ判定 | `STP_PORT` / `STP_VLAN_PORT` でキーが [PortChannel](../../reference/glossary.md#term-portchannel) の場合に `isLagStateOk()` で参照 | `stpmgr.cpp:1291-1305` |
 | `STATE_STP_TABLE\|<key>` | [STATE_DB](../../reference/glossary.md#term-state_db) | 既存エントリ確認 | `doStpVlanPortTask()` 内でポート STP 状態確認 | `stpmgr.cpp:1391` |
 | `VLAN_MEMBER\|<vlan>\|<port>` | CONFIG_DB | VLAN メンバーシップ解決 | `doStpVlanPortTask()` での VLAN メンバー確認。未所属ポートは設定遅延 | `stpmgr.cpp:1366` |
-| `LAG_MEMBER\|<lag>\|<port>` | CONFIG_DB | LAG メンバー数管理 | `doLagMemUpdateTask()` が `m_lagMap` を更新。メンバーなし LAG は STP_PORT SET がスキップ | `stpmgr.cpp:648-653, doLagMemUpdateTask()` |
+| `LAG_MEMBER\|<lag>\|<port>` | CONFIG_DB | [LAG](../../reference/glossary.md#term-lag) メンバー数管理 | `doLagMemUpdateTask()` が `m_lagMap` を更新。メンバーなし LAG は STP_PORT SET がスキップ | `stpmgr.cpp:648-653, doLagMemUpdateTask()` |
 | `STP_MST` / `STP_MST_INST` / `STP_MST_PORT` | CONFIG_DB | MST モード時の主購読 | `mode = "mst"` 時のみ使用。PVST 時はこれらのテーブルが処理されない | `stpmgrd.cpp:47-54`, `stpmgr.cpp:1023-1031, 1155-1160` |
 
 !!! note "STATE_DB 参照は silent skip のトリガ"
@@ -692,7 +692,7 @@ PVST モード切替時に `stpmgr` が `ebtables` をシステムコールで�
 |---------|-----|---------------|--------|
 | `STP_TABLE\|GLOBAL.max_stp_inst` | STATE_DB | [orchagent](../../reference/glossary.md#term-orchagent) 起動時 1 回のみ | `stpmgr.cpp:1391` — PVST インスタンス数上限として使用 |
 
-CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。SAI 取得失敗時は `StpOrch::updateMaxStpInstance()` が呼ばれず `STP_TABLE|GLOBAL` エントリは作成されない。`stpmgrd` 側は 60 秒タイムアウト後にフォールバック値 `STP_DEFAULT_MAX_INSTANCES = 255` を内部的に使用する（`stpmgr.cpp:1381-1413` の `getStpMaxInstances()`）。
+CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。[SAI](../../reference/glossary.md#term-sai) 取得失敗時は `StpOrch::updateMaxStpInstance()` が呼ばれず `STP_TABLE|GLOBAL` エントリは作成されない。`stpmgrd` 側は 60 秒タイムアウト後にフォールバック値 `STP_DEFAULT_MAX_INSTANCES = 255` を内部的に使用する（`stpmgr.cpp:1381-1413` の `getStpMaxInstances()`）。
 
 ### CONFIG_DB / APP_DB への直接書込みなし
 
@@ -779,7 +779,7 @@ while (true) {
 
 `StpOrch` は `Orch(db, tableNames)` (APPL_DB, dbId=0) として初期化される (stporch.cpp:17-18)。APPL_DB は `addConsumer()` の else 分岐 → **[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** (channel PUBLISH/SUBSCRIBE) が使用される:
 
-| APPL_DB テーブル | 処理ハンドラ | SAI 操作 |
+| APPL_DB テーブル | 処理ハンドラ | [SAI](../../reference/glossary.md#term-sai) 操作 |
 |----------------|------------|---------|
 | `STP_VLAN_INSTANCE_TABLE` | `doStpTask()` (stporch.cpp:380) | `sai_vlan_api` VLAN-STP インスタンス関連付け |
 | `STP_PORT_STATE_TABLE` | `doStpPortStateTask()` (stporch.cpp:429) | `sai_stp_api->set_stp_port_state()` |
@@ -825,4 +825,4 @@ orchdaemon の select timeout: `SELECT_TIMEOUT = 1000` ms (orchdaemon.cpp:23,959
 - [CONFIG_DB: PORT](port.md)
 - [CONFIG_DB: PORTCHANNEL](portchannel.md)
 
-<!-- glossary-links-injected: 399d8938198f -->
+<!-- glossary-links-injected: 07d24e4e47ef -->

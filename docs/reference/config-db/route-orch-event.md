@@ -91,10 +91,10 @@ flowchart LR
 
 | 状況 | 行番号 |
 |------|--------|
-| `addRoute()` 内: SAI エラー時 | L923 |
+| `addRoute()` 内: [SAI](../../reference/glossary.md#term-sai) エラー時 | L923 |
 | `addRoute()` 内: 既存エントリと完全一致（再 publish） | L1050 |
 | `addRoute()` 内: 重複エントリ追加スキップ時 | L1090 |
-| `addRoutePost()` 末尾: SAI 操作完了後 | L2729 |
+| `addRoutePost()` 末尾: [SAI](../../reference/glossary.md#term-sai) 操作完了後 | L2729 |
 | `removeRoutePost()` 末尾: SAI 操作完了後 | L2970 |
 
 ### 送出フィールド
@@ -291,7 +291,7 @@ assert(!entry.second.routeTable.empty());
 |---|----------|------|--------|
 | 1 | `PortsOrch::allPortsReady()` → `doTask()` 処理開始 | **強制先行** | 未完了時は全エントリ保留、ポート Ready 後に自動再処理 |
 | 2 | `NeighOrch` / `NhgOrch` `doTask()` → `RouteOrch::doTask()` | `m_orchList` 順序で担保 | 同バッチ内で nexthop 登録 → SAI プログラミングが完結 |
-| 3 | VRF の `VRFOrch` 登録 → VRF ルートの SAI プログラミング | **強制先行** | 未登録時はスキップ・自動リトライ |
+| 3 | [VRF](../../reference/glossary.md#term-vrf) の `VRFOrch` 登録 → [VRF](../../reference/glossary.md#term-vrf) ルートの SAI プログラミング | **強制先行** | 未登録時はスキップ・自動リトライ |
 | 4 | SAI バルクコミット → `notifyNextHopChangeObservers` → `publishRouteState` (ADD) | **固定順序** | Observer 通知が RESPONSE_CHANNEL 通知より常に先行 |
 | 5 | `doTask()` 全ルート処理 → `m_publisher.flush()` → [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) 受信 | バッチ単位 | 個別ルートの即時通知なし。最大 1s の遅延 |
 | 6 | `CONFIG_DB suppress-fib-pending = enabled` + [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) 起動 → RESPONSE_CHANNEL 購読 | **機能有効化依存** | 無効時 fpmsyncd は RESPONSE_CHANNEL を無視 |
@@ -472,7 +472,7 @@ RouteOrch が `addRoute()` 内で `hasNhg()` / `hasNextHop()` を確認した時
 | `APPL_STATE_DB ROUTE_TABLE` | 書き込み先（SAI SET 成功時） | `publishRouteState()` が `protocol` / `err_str` を書き込む | `response_publisher.cpp` L93–148 |
 | `fpmsyncd` (`APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 消費) | Pub/Sub 通知送信先 | `suppress-fib-pending = enabled` かつ fpmsyncd 稼働中のみ | `fpmsyncd.cpp` L78, L116; `routesync.cpp` L3156–3190 |
 | `CONFIG_DB MIRROR_SESSION` | 間接参照（MirrorOrch が `attach()`/`detach()` のトリガ） | MirrorOrch がセッションエントリを処理するとき | `mirrororch.cpp` L517 (`attach`), L557 (`detach`) |
-| `CONFIG_DB NAT_ENTRY` / `NAT_TWICE_ENTRY` | 間接参照（NatOrch が `attach()`/`detach()` のトリガ） | NatOrch が DNAT / 双方向 NAT エントリを処理するとき | `natorch.cpp` L414, L458, L504, L591 (`attach`); L558, L646, L688, L732 (`detach`) |
+| `CONFIG_DB NAT_ENTRY` / `NAT_TWICE_ENTRY` | 間接参照（NatOrch が `attach()`/`detach()` のトリガ） | NatOrch が DNAT / 双方向 [NAT](../../reference/glossary.md#term-nat) エントリを処理するとき | `natorch.cpp` L414, L458, L504, L591 (`attach`); L558, L646, L688, L732 (`detach`) |
 | `APPL_DB ROUTE_TABLE` → `m_syncdRoutes`（RouteOrch 内部テーブル） | 内部依存（最長プレフィックスマッチの計算源） | `notifyNextHopChangeObservers()` が最長マッチを求めるとき | `routeorch.cpp` L1270–1340 |
 
 !!! note "`suppress-fib-pending` が欠如した場合の挙動"
@@ -539,7 +539,7 @@ if (status.ok()) { state_attrs = intent_attrs; }
 |----------|--------|-------------|
 | VRF が `m_syncdRoutes` に未登録 | L2396–2401 | VRF 登録後に自動再処理 |
 | NhgOrch / CbfNhgOrch に NHG 未登録 | L2411–2415 | NHG 登録後に自動再処理 |
-| 単一 NH の [RIF](../../reference/glossary.md#term-rif) が `SAI_NULL_OBJECT_ID` | L2431–2436 | IntfsOrch RIF 作成後に再処理 |
+| 単一 NH の [RIF](../../reference/glossary.md#term-rif) が `SAI_NULL_OBJECT_ID` | L2431–2436 | IntfsOrch [RIF](../../reference/glossary.md#term-rif) 作成後に再処理 |
 | `hasNextHop()` = false | L2440–2445 | NeighOrch 登録後に再処理 |
 | [ECMP](../../reference/glossary.md#term-ecmp) NHG 未登録（tmp_next_hop フォールバック後） | L2451–2458 | NHG 生成後に再処理 |
 
@@ -572,7 +572,7 @@ publishRouteState(ctx);  // DEL を APPL_STATE_DB に書く
 |---|---|---|---|
 | SAI ADD 失敗（`addRoutePost` false） | 更新なし | 通知なし | 継続・次サイクルでリトライ |
 | VRF / NH / NHG 未登録 | 更新なし | 通知なし | 継続・自動リトライ |
-| SAI DEL 失敗（task_success 扱い） | エントリ削除（ASIC と矛盾） | DEL 通知送出 | 継続 |
+| SAI DEL 失敗（task_success 扱い） | エントリ削除（[ASIC](../../reference/glossary.md#term-asic) と矛盾） | DEL 通知送出 | 継続 |
 | SAI DEL 失敗（task_not_processed） | 更新なし | 通知なし | 継続・リトライ |
 
 <!-- /failure -->
@@ -597,7 +597,7 @@ publishRouteState(ctx);  // DEL を APPL_STATE_DB に書く
 | `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | SAI `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` の取得失敗時にフォールバックとして使用 |
 | `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | Mellanox プラットフォーム (`MLNX_PLATFORM_SUBSTRING`) でのみ、SAI 取得値を `/ 32` して再計算する際の除数 |
 
-これらは ECMP グループ上限 `m_maxNextHopGroupCount` を決定し、上限超過時に `addRoute()` が ECMP NHG の作成を拒否するため、間接的に `publishRouteState()` が呼ばれない（リトライに入る）条件に影響する（evidence: `routeorch.cpp:60-88`）。
+これらは [ECMP](../../reference/glossary.md#term-ecmp) グループ上限 `m_maxNextHopGroupCount` を決定し、上限超過時に `addRoute()` が [ECMP](../../reference/glossary.md#term-ecmp) NHG の作成を拒否するため、間接的に `publishRouteState()` が呼ばれない（リトライに入る）条件に影響する（evidence: `routeorch.cpp:60-88`）。
 
 VoQ 環境では追加の上限が適用される:
 
@@ -741,7 +741,7 @@ Redis Pub/Sub はメッセージをバッファリングしないため、fpmsyn
 | Observer | `attach()` 箇所 | 監視 IP |
 |---------|----------------|---------|
 | `MirrorOrch` | `mirrororch.cpp` L517 | ミラーセッションの宛先 IP |
-| `NatOrch` | `natorch.cpp` L414, L458, L504, L591 | DNAT / 双方向 NAT の変換先 IP |
+| `NatOrch` | `natorch.cpp` L414, L458, L504, L591 | DNAT / 双方向 [NAT](../../reference/glossary.md#term-nat) の変換先 IP |
 | `NeighOrch` | ネイバー解決時 | ネイバーの IP アドレス |
 
 ### orchagent select ループとタイムアウト
@@ -773,7 +773,7 @@ RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字
 |-----------------|-------------------|-----------------|
 | 標準 T0/T1/T2 | 変更なし | 変更なし |
 | Mellanox | 変更なし | 変更なし |
-| VOQ chassis | 変更なし | 変更なし |
+| [VOQ](../../reference/glossary.md#term-voq) chassis | 変更なし | 変更なし |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([NPU](../../reference/glossary.md#term-npu) 側) | 変更なし | 変更なし |
 | multi-asic | 変更なし (namespace 独立) | 変更なし |
 
@@ -797,7 +797,7 @@ RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字
 
 | プロセス | 参照 | 用途 |
 |---------|------|------|
-| `fpmsyncd` | `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` | SAI プログラミング結果を FRR へフィードバック |
+| `fpmsyncd` | `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` | SAI プログラミング結果を [FRR](../../reference/glossary.md#term-frr) へフィードバック |
 | `route_check.py` | `APPL_STATE_DB ROUTE_TABLE` | APPL_DB と APPL_STATE_DB の整合確認 |
 
 ### NextHopObserver 通知
@@ -865,4 +865,4 @@ APPL_STATE_DB ROUTE_TABLE:192.168.1.0/24
 - `protocol` が空文字列 → APPL_DB の `ROUTE_TABLE` エントリに `protocol` フィールドが存在しない（静的経路や一部の直接書き込みツールで発生する）。
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 6d59c7deac64 -->
+<!-- glossary-links-injected: d6cf63fda5d8 -->
