@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`show mac` は [FDB](../../reference/glossary.md#term-fdb) (Forwarding Database) のエントリ（MAC アドレス学習テーブル）を表示する。実装は `fdbshow` スクリプトの薄いラッパで、CLI 側はオプションを `fdbshow` の引数に machine-translate するだけ[^1]。`invoke_without_command="true"` の Click group なので、サブコマンドなしで呼ぶと [FDB](../../reference/glossary.md#term-fdb) を、`aging-time` を指定すると別系統 ([APPL_DB](../../reference/glossary.md#term-appl_db)) を読みに行く。
+`show mac` は [FDB](../../reference/glossary.md#term-fdb) ([Forwarding Database](../../reference/glossary.md#term-forwarding-database)) のエントリ（MAC アドレス学習テーブル）を表示する。実装は `fdbshow` スクリプトの薄いラッパで、CLI 側はオプションを `fdbshow` の引数に machine-translate するだけ[^1]。`invoke_without_command="true"` の Click group なので、サブコマンドなしで呼ぶと [FDB](../../reference/glossary.md#term-fdb) を、`aging-time` を指定すると別系統 ([APPL_DB](../../reference/glossary.md#term-appl_db)) を読みに行く。
 
 ## コマンド一覧
 
@@ -55,7 +55,7 @@ show mac
 - `-a / --address` ... 指定 MAC アドレス
 - `-t / --type` ... `static` / `dynamic` のみ
 - `-c / --count` ... 件数表示モード（エントリ一覧の代わりに件数のみ）
-- `-n / --namespace` ... multi-ASIC 環境向け
+- `-n / --namespace` ... multi-[ASIC](../../reference/glossary.md#term-asic) 環境向け
 
 **動作**:
 `fdbshow` コマンドにフラグを渡して exec する。例: `--vlan 100 --port Ethernet0` の場合は `fdbshow -v 100 -p Ethernet0`。
@@ -227,4 +227,4 @@ show mac count
 - [reference/CLI: show vlan](show-vlan.md)
 - [reference/CLI: show interfaces](show-interfaces.md)
 
-<!-- glossary-links-injected: a6254d2db350 -->
+<!-- glossary-links-injected: e88eafb61c57 -->

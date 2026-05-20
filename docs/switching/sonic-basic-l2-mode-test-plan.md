@@ -43,7 +43,7 @@ related:
 
 ## 概要
 
-SONiC を **basic L2 switch** として構成した場合の最小機能を T0 トポロジで検証する[^1]。範囲は意図的に絞られており、L3 / [BGP](../reference/glossary.md#term-bgp) / [ACL](../reference/glossary.md#term-acl) は対象外。L2 モードの構成手順は [SONiC wiki: L2-Switch-mode](https://github.com/sonic-net/SONiC/wiki/L2-Switch-mode#3-generate-a-configuration-for-l2-switch-mode) に従う。
+[SONiC](../reference/glossary.md#term-sonic) を **basic L2 switch** として構成した場合の最小機能を T0 トポロジで検証する[^1]。範囲は意図的に絞られており、L3 / [BGP](../reference/glossary.md#term-bgp) / [ACL](../reference/glossary.md#term-acl) は対象外。L2 モードの構成手順は [SONiC wiki: L2-Switch-mode](https://github.com/sonic-net/SONiC/wiki/L2-Switch-mode#3-generate-a-configuration-for-l2-switch-mode) に従う。
 
 ## 動作仕様
 
@@ -95,4 +95,4 @@ sonic-cfggen -H -p -k $HWSKU --preset l2
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e750be044737 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

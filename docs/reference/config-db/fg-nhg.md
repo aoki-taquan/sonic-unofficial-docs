@@ -145,7 +145,7 @@ show fgnhg active-hops
 
 | 値 | 挙動 |
 |----|------|
-| `0` かつ `match_mode=prefix-based` | `SWSS_LOG_ERROR`（処理は継続するが SAI 動作不定） |
+| `0` かつ `match_mode=prefix-based` | `SWSS_LOG_ERROR`（処理は継続するが [SAI](../../reference/glossary.md#term-sai) 動作不定） |
 | `0` かつ他モード | 無視 |
 | 超過した NH | `SWSS_LOG_WARN` → 超過分無視 |
 
@@ -165,10 +165,10 @@ show fgnhg active-hops
 
 ### SAI next-hop group 属性
 
-| SAI 属性 | 固定値 | 説明 |
+| [SAI](../../reference/glossary.md#term-sai) 属性 | 固定値 | 説明 |
 |----------|--------|------|
 | `SAI_NEXT_HOP_GROUP_ATTR_TYPE` | `SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP` | NHG 作成時に固定設定。通常 ECMP とは別コードパス |
-| `SAI_NEXT_HOP_GROUP_ATTR_CONFIGURED_SIZE` | `bucket_size` | CONFIG_DB の `bucket_size` をそのまま渡す |
+| `SAI_NEXT_HOP_GROUP_ATTR_CONFIGURED_SIZE` | `bucket_size` | [CONFIG_DB](../../reference/glossary.md#term-config_db) の `bucket_size` をそのまま渡す |
 | `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` | ハードウェア返却値 | VS プラットフォーム以外で SAI get により実バケット数を確認。VS では `configured_bucket_size` を `real_bucket_size` として使用（TODO コメントあり） |
 
 ### SAI next-hop group メンバ属性
@@ -353,7 +353,7 @@ FG_NHG_MEMBER|<nh_ip>  ← FG_NHG 処理完了後（逆順は自動 retry あり
 
 ### warm-reboot 復元
 
-- orchagent 再起動時、`m_recoveryMap` (WARM_RESTART DB) に保存済みのバケット→NH マッピングを優先復元。ラウンドロビン再割り当ては行わない。
+- [orchagent](../../reference/glossary.md#term-orchagent) 再起動時、`m_recoveryMap` (WARM_RESTART DB) に保存済みのバケット→NH マッピングを優先復元。ラウンドロビン再割り当ては行わない。
 - 復元時に NH が別バンクにある場合（バンク全断代替）は `inactive_to_active_map` に記録しフォールバックを設定。
 
 ### DEL 推奨順序
@@ -374,7 +374,7 @@ FG_NHG|<name>          ← 最後に削除
 | 4 | バンク番号昇順（0 始まり連番推奨） | 欠番は空バンクとして確保 | 欠番回避のため bank 値は 0 始まり連番推奨 |
 | 5 | SAI NHG member 属性: GROUP_ID → NH_ID → INDEX | create 時固定順 | FgNhgOrch が構築（アプリ側不要） |
 | 6 | NH 追加/削除時のバケット均等化 | バンク単位独立、自動 | 均等化アルゴリズム（ラウンドロビン非採用） |
-| 7 | warm-reboot 復元（recoveryMap 優先） | 復元マップが通常割り当てより優先 | orchagent 起動前に recoveryMap ロード完了 |
+| 7 | warm-reboot 復元（recoveryMap 優先） | 復元マップが通常割り当てより優先 | [orchagent](../../reference/glossary.md#term-orchagent) 起動前に recoveryMap ロード完了 |
 | 8 | prefix-based グループへの FG_NHG_MEMBER 投入禁止 | 破棄（再試行なし） | match_mode 確認後に MEMBER 投入 |
 | 9 | DEL 順序: MEMBER → PREFIX → FG_NHG | 推奨（逆順は SAI クリーンアップ後に DB 残留） | 逆順は推奨しない |
 
@@ -390,7 +390,7 @@ FG_NHG|<name>          ← 最後に削除
 
 | 失敗条件 | 検出箇所 | 結果 | ログ出力 |
 |---|---|---|---|
-| `FG_NHG_MEMBER` 投入時に nexthop が neighOrch に未登録（ARP/NDP 未解決） | `doTaskFgNhgMember()` L2071 | Consumer キューに残り retry | `SWSS_LOG_INFO "Nexthop %s is not resolved yet"` |
+| `FG_NHG_MEMBER` 投入時に nexthop が neighOrch に未登録（[ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) 未解決） | `doTaskFgNhgMember()` L2071 | Consumer キューに残り retry | `SWSS_LOG_INFO "Nexthop %s is not resolved yet"` |
 | `FG_NHG_PREFIX` 投入時に親 `FG_NHG` エントリが未受信 | `doTaskFgNhgPrefix()` L1821 | `return false` → retry | `SWSS_LOG_INFO "FG_NHG entry not received yet, continue"` |
 | `FG_NHG_MEMBER` 投入時に親 `FG_NHG` エントリが未受信 | `doTaskFgNhgMember()` L2004 | `return false` → retry | `SWSS_LOG_INFO "FG_NHG entry not received yet, continue"` |
 | prefix 移行中（APP_DB delete 後に routeorch 削除完了待ち） | `doTaskFgNhgPrefix()` L1883 | `return false` → retry | `SWSS_LOG_INFO "Route(%s) ADD exists in routeorch..."` |
@@ -428,7 +428,7 @@ FG_NHG|<name>          ← 最後に削除
 
 ### 段階 1 — Consumer 登録
 
-`FgNhgOrch` (orchagent 直接 CFG 購読) が CONFIG_DB の `FG_NHG` テーブルを購読する。
+`FgNhgOrch` ([orchagent](../../reference/glossary.md#term-orchagent) 直接 CFG 購読) が CONFIG_DB の `FG_NHG` テーブルを購読する。
 
 `FG_NHG` / `FG_NHG_PREFIX` / `FG_NHG_MEMBER` の 3 テーブルがセット。通常の ECMP とは別のコードパスを使用。
 
@@ -460,7 +460,7 @@ FG_NHG|<name>          ← 最後に削除
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -485,15 +485,15 @@ FG_NHG|<name>          ← 最後に削除
 
 | 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
 |---|---|---|---|---|---|
-| `ROUTE_TABLE\|<vrf>\|<prefix>` (APPL_DB) | APPL_DB | 読み書き (FG 適用判定・経路切替) | なし | 実質必須 | fgnhgorch.cpp:1851, 1865, 1877 |
-| `NEIGH_TABLE` / NeighOrch | APPL_DB | 読み取り (nexthop 解決・refcount) | なし | 実質必須 | fgnhgorch.cpp:1415, 1459, 1479, 1547 |
+| `ROUTE_TABLE\|<vrf>\|<prefix>` ([APPL_DB](../../reference/glossary.md#term-appl_db)) | [APPL_DB](../../reference/glossary.md#term-appl_db) | 読み書き (FG 適用判定・経路切替) | なし | 実質必須 | fgnhgorch.cpp:1851, 1865, 1877 |
+| `NEIGH_TABLE` / NeighOrch | [APPL_DB](../../reference/glossary.md#term-appl_db) | 読み取り (nexthop 解決・refcount) | なし | 実質必須 | fgnhgorch.cpp:1415, 1459, 1479, 1547 |
 | `PORT` / `PORTCHANNEL` (PortsOrch) | CONFIG_DB | 読み取り (link oper-state 監視) | `FG_NHG_MEMBER.link` leafref のみ | link 設定時必須 | fgnhgorch.cpp:46-92, 1374-1393 |
-| `STATE_FG_ROUTE_TABLE` (STATE_DB) | STATE_DB | 書き込み (warm-restart 復旧用) | なし | warm-restart 時必須 | fgnhgorch.cpp:31 |
-| `VRF` (VRFOrch) | CONFIG_DB / APPL_DB | 読み取り (VRF refcount 管理) | なし | VRF 利用時必須 | fgnhgorch.cpp:1326 |
+| `STATE_FG_ROUTE_TABLE` ([STATE_DB](../../reference/glossary.md#term-state_db)) | [STATE_DB](../../reference/glossary.md#term-state_db) | 書き込み (warm-restart 復旧用) | なし | warm-restart 時必須 | fgnhgorch.cpp:31 |
+| `VRF` (VRFOrch) | CONFIG_DB / APPL_DB | 読み取り ([VRF](../../reference/glossary.md#term-vrf) refcount 管理) | なし | [VRF](../../reference/glossary.md#term-vrf) 利用時必須 | fgnhgorch.cpp:1326 |
 
 ### ROUTE_TABLE (APPL_DB) — FG 経路切替の核心
 
-`FgNhgOrch` は `m_routeTable`（`ProducerStateTable` → `APPL_DB:ROUTE_TABLE`）に直接書き込む。`FG_NHG_PREFIX` SET/DEL 時に既存の通常 ECMP 経路を一度削除し (`m_routeTable->del()`)、その後 FG 経路として再投入する (`m_routeTable->set()`) という「del → wait for RouteOrch 削除完了 → set」という 2 ステップ移行シーケンスを踏む（fgnhgorch.cpp:1863–1879）。**APPL_DB ROUTE_TABLE への書き込み権限が無いと FG_NHG_PREFIX の SET/DEL が永久に `return false` でリトライし続ける。**
+`FgNhgOrch` は `m_routeTable`（`ProducerStateTable` → `APPL_DB:ROUTE_TABLE`）に直接書き込む。`FG_NHG_PREFIX` SET/DEL 時に既存の通常 ECMP 経路を一度削除し (`m_routeTable->del()`)、その後 FG 経路として再投入する (`m_routeTable->set()`) という「del → wait for RouteOrch 削除完了 → set」という 2 ステップ移行シーケンスを踏む（fgnhgorch.cpp:1863–1879）。**APPL_DB [ROUTE_TABLE](../../reference/glossary.md#term-route_table) への書き込み権限が無いと FG_NHG_PREFIX の SET/DEL が永久に `return false` でリトライし続ける。**
 
 さらに `RouteOrch::addRoute()` から `m_fgNhgOrch->isRouteFineGrained()` / `setFgNhg()` が呼ばれ、APPL_DB 受信ルートが FG 対象か否かを判定する（routeorch.cpp:2028–2040）。FG 対象ルートは RouteOrch ではなく FgNhgOrch が SAI 操作を担当する。
 
@@ -507,7 +507,7 @@ FG_NHG|<name>          ← 最後に削除
 
 ### STATE_FG_ROUTE_TABLE (STATE_DB) — warm-restart 復旧
 
-コンストラクタで `m_stateWarmRestartRouteTable(stateDb, STATE_FG_ROUTE_TABLE_NAME)` を初期化する (fgnhgorch.cpp:31)。warm-restart 時にこの STATE_DB テーブルから FG ルートの状態を復旧するためのテーブルであり、通常運用時は読み取り専用。
+コンストラクタで `m_stateWarmRestartRouteTable(stateDb, STATE_FG_ROUTE_TABLE_NAME)` を初期化する (fgnhgorch.cpp:31)。warm-restart 時にこの [STATE_DB](../../reference/glossary.md#term-state_db) テーブルから FG ルートの状態を復旧するためのテーブルであり、通常運用時は読み取り専用。
 
 ### SAI 参照
 
@@ -524,13 +524,13 @@ FG_NHG|<name>          ← 最後に削除
 
 | 区間 | 方式 | チャンネル/パターン |
 |------|------|-------------------|
-| CLI → CONFIG_DB[FG_NHG\|*] | Redis `HSET` (sonic-fine-grained-ecmp_yang.py) | — |
+| CLI → CONFIG_DB[FG_NHG\|*] | [Redis](../../reference/glossary.md#term-redis) `HSET` (sonic-fine-grained-ecmp_yang.py) | — |
 | CONFIG_DB[FG_NHG\|*] → FgNhgOrch | `ConsumerStateTable` (keyspace 通知) | `__keyspace@config_db__:FG_NHG\|*` |
 | CONFIG_DB[FG_NHG_PREFIX\|*] → FgNhgOrch | `ConsumerStateTable` (keyspace 通知) | `__keyspace@config_db__:FG_NHG_PREFIX\|*` |
 | CONFIG_DB[FG_NHG_MEMBER\|*] → FgNhgOrch | `ConsumerStateTable` (keyspace 通知) | `__keyspace@config_db__:FG_NHG_MEMBER\|*` |
 | FgNhgOrch → NeighOrch | 直接メソッド呼び出し | — |
 | FgNhgOrch → PortsOrch | Observer `attach()/update()` | `SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` |
-| FgNhgOrch → APPL_DB[ROUTE_TABLE] | `ProducerStateTable::set()/del()` | APPL_DB channel |
+| FgNhgOrch → APPL_DB[[ROUTE_TABLE](../../reference/glossary.md#term-route_table)] | `ProducerStateTable::set()/del()` | APPL_DB channel |
 | FgNhgOrch → SAI | SAI API 直接呼び出し | `sai_next_hop_group_api` / `sai_route_api` |
 
 ### CONFIG_DB Consumer 登録
@@ -587,7 +587,7 @@ CONFIG_DB[FG_NHG_MEMBER|<nh_ip>] SET
 | `m_neighOrch->decreaseNextHopRefCount(nhk)` | L1547 | refcount 減少 |
 | `m_neighOrch->getNeighborEntry(ip, nhk, mac)` | L70, L82 | IP → NextHopKey 解決 |
 
-nexthop が NeighOrch に未登録の場合は `return false` でエントリをキューに残し、ARP/NDP 解決後に自動リトライされる。
+nexthop が NeighOrch に未登録の場合は `return false` でエントリをキューに残し、[ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) 解決後に自動リトライされる。
 
 ### PortsOrch Observer パターン
 
@@ -610,11 +610,11 @@ nexthop が NeighOrch に未登録の場合は `return false` でエントリを
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`FgNhgOrch` は CONFIG_DB の `FG_NHG` / `FG_NHG_PREFIX` / `FG_NHG_MEMBER` を受けて、ASIC_DB（SAI 経由）・STATE_DB・APPL_DB の 3 か所に書き込む。
+`FgNhgOrch` は CONFIG_DB の `FG_NHG` / `FG_NHG_PREFIX` / `FG_NHG_MEMBER` を受けて、[ASIC_DB](../../reference/glossary.md#term-asic_db)（SAI 経由）・STATE_DB・APPL_DB の 3 か所に書き込む。
 
 ### ASIC_DB 書込み（SAI 経由）
 
-orchagent は直接 ASIC_DB には書き込まず、SAI API 呼び出しを通じて syncd が ASIC_DB へ反映する。
+orchagent は直接 [ASIC_DB](../../reference/glossary.md#term-asic_db) には書き込まず、SAI API 呼び出しを通じて [syncd](../../reference/glossary.md#term-syncd) が [ASIC_DB](../../reference/glossary.md#term-asic_db) へ反映する。
 
 | タイミング | SAI API | SAI オブジェクト型 | 主な属性 |
 |---|---|---|---|
@@ -625,7 +625,7 @@ orchagent は直接 ASIC_DB には書き込まず、SAI API 呼び出しを通�
 | NHG 削除 | RouteOrch `removeFineGrainedNextHopGroup()` | `SAI_OBJECT_TYPE_NEXT_HOP_GROUP` | — |
 | FG ルートの next-hop 切替 (`modifyRoutesNextHopId()`) | `sai_route_api->set_route_entry_attribute` | `SAI_OBJECT_TYPE_ROUTE_ENTRY` | `SAI_ROUTE_ENTRY_ATTR_NEXT_HOP_ID` |
 
-CRM カウンタ連動: NHG メンバ作成時に `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP_MEMBER)` (fgnhgorch.cpp:1194)、削除時に `decCrmResUsedCounter` (fgnhgorch.cpp:338)。
+[CRM](../../reference/glossary.md#term-crm) カウンタ連動: NHG メンバ作成時に `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP_MEMBER)` (fgnhgorch.cpp:1194)、削除時に `decCrmResUsedCounter` (fgnhgorch.cpp:338)。
 
 確認コマンド:
 
@@ -663,7 +663,7 @@ sonic-db-cli STATE_DB hgetall 'FG_ROUTE_TABLE|<ip_prefix>'
 
 証跡: fgnhgorch.cpp:1865 `m_routeTable->del()`、1877 `m_routeTable->set()`、1931 `m_routeTable->del()`、1951 `m_routeTable->set()`。
 
-> **注意**: APPL_DB:ROUTE_TABLE への書込権限がない状態では `FG_NHG_PREFIX` の SET/DEL が永久に `return false` でリトライし続ける（cross-refs セクション参照）。
+> **注意**: APPL_DB:[ROUTE_TABLE](../../reference/glossary.md#term-route_table) への書込権限がない状態では `FG_NHG_PREFIX` の SET/DEL が永久に `return false` でリトライし続ける（cross-refs セクション参照）。
 
 確認コマンド:
 
@@ -706,14 +706,14 @@ else
 | プラットフォーム | `real_bucket_size` 決定方法 | SAI クエリ失敗時 |
 |---|---|---|
 | VS (`platform=vs`) | `configured_bucket_size`（CONFIG_DB の `bucket_size` 値）をそのまま使用 | クエリなし（スキップ） |
-| 実 ASIC (Broadcom / Mellanox 等) | SAI `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` クエリ結果を使用 | NHG ロールバック後 `return false`（作成失敗） |
+| 実 [ASIC](../../reference/glossary.md#term-asic) (Broadcom / Mellanox 等) | SAI `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` クエリ結果を使用 | NHG ロールバック後 `return false`（作成失敗） |
 
 !!! note "VS 環境での注意"
     VS プラットフォームでは `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` の実装が未完了 (TODO コメント)。`real_bucket_size = configured_bucket_size` として扱うため、**実 ASIC では ASIC 内部アライメントにより `real_bucket_size` が `configured_bucket_size` より大きくなる場合がある**（ハードウェアのバケット数が設定値の倍数に丸められる等）。VS でテストした `bucket_size` 設定が実機で同一動作とは限らない。
 
 ### SAI Fine-Grained ECMP 対応 — ASIC ベンダー差
 
-FG ECMP は SAI の `SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP` 型 NHG を使用する。すべての ASIC が本機能をサポートするわけではなく、`sai_next_hop_group_api->create_next_hop_group()` が `SAI_STATUS_NOT_SUPPORTED` 等を返した場合、`RouteOrch::createFineGrainedNextHopGroup()` が `false` を返し FG NHG 作成が失敗する。
+FG ECMP は SAI の `SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP` 型 NHG を使用する。すべての [ASIC](../../reference/glossary.md#term-asic) が本機能をサポートするわけではなく、`sai_next_hop_group_api->create_next_hop_group()` が `SAI_STATUS_NOT_SUPPORTED` 等を返した場合、`RouteOrch::createFineGrainedNextHopGroup()` が `false` を返し FG NHG 作成が失敗する。
 
 ```cpp
 // routeorch.cpp L1431–1442
@@ -726,11 +726,11 @@ if (status != SAI_STATUS_SUCCESS)
 }
 ```
 
-この場合 syslog に `"Failed to create next hop group"` が出力されるが、**FG_NHG テーブルの設定自体はエラーにならず、CONFIG_DB に残り続ける**。ASIC が FG ECMP をサポートしない環境では FG NHG は実質的に機能しない。
+この場合 syslog に `"Failed to create next hop group"` が出力されるが、**FG_NHG テーブルの設定自体はエラーにならず、CONFIG_DB に残り続ける**。[ASIC](../../reference/glossary.md#term-asic) が FG ECMP をサポートしない環境では FG NHG は実質的に機能しない。
 
 ### VRF 対応 — デフォルト VRF のみ
 
-`isRouteFineGrained()` および `syncdContainsFgNhg()` で `vrf_id != gVirtualRouterId`（= デフォルト VRF でない）の場合は即座に `false` を返す。
+`isRouteFineGrained()` および `syncdContainsFgNhg()` で `vrf_id != gVirtualRouterId`（= デフォルト [VRF](../../reference/glossary.md#term-vrf) でない）の場合は即座に `false` を返す。
 
 ```cpp
 // fgnhgorch.cpp L1205–1209
@@ -745,13 +745,13 @@ if (!isFineGrainedConfigured || (vrf_id != gVirtualRouterId))
 
 ### VOQ / Chassis 構成
 
-FgNhgOrch のコードには VOQ (Virtual Output Queue) chassis 固有の分岐は存在しない。ただし VOQ chassis 構成では以下の制約が生じる可能性がある:
+FgNhgOrch のコードには [VOQ](../../reference/glossary.md#term-voq) (Virtual Output Queue) chassis 固有の分岐は存在しない。ただし [VOQ](../../reference/glossary.md#term-voq) chassis 構成では以下の制約が生じる可能性がある:
 
-- FG ECMP は `gVirtualRouterId`（デフォルト VRF）に紐付く設計のため、VOQ chassis で VRF が複数スライスに分散する構成では FG ECMP が適用されないルートが発生する
+- FG ECMP は `gVirtualRouterId`（デフォルト VRF）に紐付く設計のため、[VOQ](../../reference/glossary.md#term-voq) chassis で VRF が複数スライスに分散する構成では FG ECMP が適用されないルートが発生する
 - `FG_NHG_MEMBER.link` に指定するポートが同一ラインカード上に存在しない場合、`PortsOrch` による oper-state 追跡が正常に動作しない可能性がある（`fgnhgorch.cpp:1377` では `Port::PHY` 型のみ追跡対象）
 
 コード上に明示的な VOQ 分岐がないため、これらは動作保証外の構成である。
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 0a0e619e9fbc -->
+<!-- glossary-links-injected: d9f5bb08c70f -->

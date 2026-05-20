@@ -63,7 +63,7 @@ HEARTBEAT|<name>
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
-YANG (`sonic-heartbeat.yang`) には `default` 宣言が**存在し**、YANG validator 経由で書き込んだ場合は `heartbeat_interval=10000` ms / `alert_interval=60000` ms が暗黙適用される。`sonic-db-cli` 直接書き込みでは YANG default は注入されない。eventd 側は別経路 (GLOBAL_OPTION_HEARTBEAT JSON RPC) で interval を受け、初期値は `HEARTBEAT_INTERVAL_SECS=2` 秒 (`eventd.cpp:43`)。両者はスキーマ単位 (ms vs 秒) が異なるので混同しないこと。
+[YANG](../../reference/glossary.md#term-yang) (`sonic-heartbeat.yang`) には `default` 宣言が**存在し**、YANG validator 経由で書き込んだ場合は `heartbeat_interval=10000` ms / `alert_interval=60000` ms が暗黙適用される。`sonic-db-cli` 直接書き込みでは YANG default は注入されない。eventd 側は別経路 (GLOBAL_OPTION_HEARTBEAT JSON RPC) で interval を受け、初期値は `HEARTBEAT_INTERVAL_SECS=2` 秒 (`eventd.cpp:43`)。両者はスキーマ単位 (ms vs 秒) が異なるので混同しないこと。
 
 | フィールド | YANG default | コード由来デフォルト | 発生源 |
 |---|---|---|---|
@@ -74,15 +74,15 @@ YANG (`sonic-heartbeat.yang`) には `default` 宣言が**存在し**、YANG val
 
 ### YANG default と sonic-db-cli の差異
 
-YANG default は libyang/sonic-mgmt-common の validation pass を通したときのみ補完される。`config_db.json` を直接書く / `sonic-db-cli HSET` で書く経路では `heartbeat_interval` キーが欠落したまま DB に格納される。コンシューマ (process monitor) 側がキー欠落をどう扱うかが実 fallback を決める。
+YANG default は libyang/[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common の validation pass を通したときのみ補完される。`config_db.json` を直接書く / `sonic-db-cli HSET` で書く経路では `heartbeat_interval` キーが欠落したまま DB に格納される。コンシューマ (process monitor) 側がキー欠落をどう扱うかが実 fallback を決める。
 
 ### eventd 側 `interval` の特殊値 (再掲・本ページ上部の値依存挙動マトリクスと整合)
 
-`set_heartbeat_interval()` (`eventd.cpp:139-161`) は受け取った秒数を `STATS_HEARTBEAT_MIN` (300ms) 単位に切り上げ量子化する。`val=-1` は無効化 (`m_heartbeats_interval_cnt=0` で publish ループ skip)、`val<-1` は invalid。`m_pause_heartbeat` は起動時 `false`、`heartbeat_ctrl(true)` 呼び出しでのみ pause する。CONFIG_DB に "suppress" / "pause" 相当のフィールドは存在しない。
+`set_heartbeat_interval()` (`eventd.cpp:139-161`) は受け取った秒数を `STATS_HEARTBEAT_MIN` (300ms) 単位に切り上げ量子化する。`val=-1` は無効化 (`m_heartbeats_interval_cnt=0` で publish ループ skip)、`val<-1` は invalid。`m_pause_heartbeat` は起動時 `false`、`heartbeat_ctrl(true)` 呼び出しでのみ pause する。[CONFIG_DB](../../reference/glossary.md#term-config_db) に "suppress" / "pause" 相当のフィールドは存在しない。
 
 ### hostcfgd 側
 
-`sonic-host-services/scripts/hostcfgd` に `HEARTBEAT` テーブル handler は**不在**。CONFIG_DB → hostcfgd 経由のランタイム反映パスは無く、本テーブルの直接コンシューマは限定的。
+`sonic-host-services/scripts/hostcfgd` に `HEARTBEAT` テーブル handler は**不在**。[CONFIG_DB](../../reference/glossary.md#term-config_db) → [hostcfgd](../../reference/glossary.md#term-hostcfgd) 経由のランタイム反映パスは無く、本テーブルの直接コンシューマは限定的。
 
 ### 参考: SYSTEM_HEALTH 側
 
@@ -93,7 +93,7 @@ YANG default は libyang/sonic-mgmt-common の validation pass を通したと�
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`HEARTBEAT` テーブルは他の CONFIG_DB テーブルとの明示的な外部キー参照を持たない。エントリは `name` (プロセス名) 単位で独立しており、相互依存はない。ただし、eventd / process-monitor がこのテーブルを**起動時の初回読み込みのみ**で参照する構造上 (subscribe 通知は使用しない — Phase G 参照)、以下の順序制約が存在する。
+`HEARTBEAT` テーブルは他の [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルとの明示的な外部キー参照を持たない。エントリは `name` (プロセス名) 単位で独立しており、相互依存はない。ただし、eventd / process-monitor がこのテーブルを**起動時の初回読み込みのみ**で参照する構造上 (subscribe 通知は使用しない — Phase G 参照)、以下の順序制約が存在する。
 
 ### 検出された順序依存
 
@@ -179,7 +179,6 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 
 <!-- /cdb-exceptions -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -191,11 +190,11 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — システムヘルスチェック設定)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — システムヘルスチェック設定)
 
 ### 段階 4 — タイミングと副作用
 
@@ -225,7 +224,7 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 
 **フィールド同時書込み推奨 (依存 #2)**
 
-`heartbeat_interval` と `alert_interval` は同一 `HEARTBEAT|<name>` エントリのフィールドである。Redis `HSET` で片方ずつ書き込むと中間状態が発生し、`alert_interval` がデフォルト (`60000` ms) のまま `heartbeat_interval` だけ短縮された状態になりえる。`HSET HEARTBEAT|<name> heartbeat_interval <v1> alert_interval <v2>` のように単一コマンドで両フィールドを同時に書くことで回避できる。
+`heartbeat_interval` と `alert_interval` は同一 `HEARTBEAT|<name>` エントリのフィールドである。[Redis](../../reference/glossary.md#term-redis) `HSET` で片方ずつ書き込むと中間状態が発生し、`alert_interval` がデフォルト (`60000` ms) のまま `heartbeat_interval` だけ短縮された状態になりえる。`HSET HEARTBEAT|<name> heartbeat_interval <v1> alert_interval <v2>` のように単一コマンドで両フィールドを同時に書くことで回避できる。
 
 **エントリ間の独立性 (依存 #3)**
 
@@ -333,11 +332,11 @@ CONFIG_DB `HEARTBEAT` テーブルの変更に伴って副次的に書き込ま�
 
 | 副次 DB | 書込有無 | 根拠 |
 |---------|---------|------|
-| APPL_DB | なし | `supervisor-proc-exit-listener` に `Producer`/`Table`/`hset` 書込呼出ゼロ件（スクリプト全文 grep） |
-| STATE_DB | なし | 同スクリプトに STATE_DB への書込参照なし |
-| COUNTERS_DB | なし | HEARTBEAT 監視は統計カウンタを持たない |
-| ASIC_DB | なし | SAI 非経由（ホストサービス設定） |
-| FLEX_COUNTER_DB | なし | 同上 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `supervisor-proc-exit-listener` に `Producer`/`Table`/`hset` 書込呼出ゼロ件（スクリプト全文 grep） |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | 同スクリプトに [STATE_DB](../../reference/glossary.md#term-state_db) への書込参照なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | HEARTBEAT 監視は統計カウンタを持たない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由（ホストサービス設定） |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | 同上 |
 
 ### 実際の副作用（syslog のみ）
 
@@ -360,13 +359,13 @@ CONFIG_DB `HEARTBEAT` テーブルの変更に伴って副次的に書き込ま�
 
 ### 購読方式: なし (起動時の一括読み込みのみ — Redis pub/sub 不使用)
 
-`HEARTBEAT` テーブルを読む全コンシューマは **Redis keyspace notification / ConsumerStateTable / SubscriberStateTable を使用しない**。CONFIG_DB への HSET 書き込みに対して Redis の publish 通知は発火するが、これを受け取る購読プロセスは存在しない。
+`HEARTBEAT` テーブルを読む全コンシューマは **[Redis](../../reference/glossary.md#term-redis) keyspace notification / [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) / SubscriberStateTable を使用しない**。CONFIG_DB への HSET 書き込みに対して [Redis](../../reference/glossary.md#term-redis) の publish 通知は発火するが、これを受け取る購読プロセスは存在しない。
 
 | コンポーネント | 読み方式 | タイミング | 備考 |
 |---|---|---|---|
 | `supervisor-proc-exit-listener` (Python) | `ConfigDBConnector.get_table("HEARTBEAT")` | 起動時 1 回のみ (`load_heartbeat_alert_interval()` L124-135) | 起動後に CONFIG_DB を再読しない。変更は daemon 再起動後に有効 |
 | `supervisor-proc-exit-listener` (Rust) | `config_db.get_table(HEARTBEAT_TABLE_NAME)` | 起動時 1 回のみ (`proc_exit_listener.rs:212-233`) | 同上 |
-| `orchagent.sh` | `sonic-db-cli CONFIG_DB hget "HEARTBEAT\|orchagent" heartbeat_interval` | orchagent 起動スクリプト実行時 1 回 (`orchagent.sh:127-130`) | 取得値を `-I <interval>` フラグとして orchagent プロセスに引数渡しする |
+| `orchagent.sh` | `sonic-db-cli CONFIG_DB hget "HEARTBEAT\|orchagent" heartbeat_interval` | [orchagent](../../reference/glossary.md#term-orchagent) 起動スクリプト実行時 1 回 (`orchagent.sh:127-130`) | 取得値を `-I <interval>` フラグとして [orchagent](../../reference/glossary.md#term-orchagent) プロセスに引数渡しする |
 | `eventd` | CONFIG_DB を**直接読まない** | — | ZeroMQ RPC (`GLOBAL_OPTION_HEARTBEAT`) 経由でのみ interval を受け取る |
 
 ### 変更の反映経路
@@ -382,7 +381,7 @@ Redis keyspace notification は発火するが受信側が存在しないため�
 
 ### APPL_DB / SAI 中継
 
-なし。`HEARTBEAT` テーブルはホストサービス（supervisord 管理下デーモン）の監視設定であり、APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない。
+なし。`HEARTBEAT` テーブルはホストサービス（supervisord 管理下デーモン）の監視設定であり、[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への伝播も [SAI](../../reference/glossary.md#term-sai) 書き込みも発生しない。
 
 <!-- /pubsub -->
 
@@ -394,7 +393,7 @@ Redis keyspace notification は発火するが受信側が存在しないため�
 
 ### SAI Capability 依存なし
 
-`HEARTBEAT` テーブルは APPL_DB / ASIC_DB / SAI を経由しない。コンシューマはホストサービス層 (`supervisor-proc-exit-listener`) と orchagent 起動スクリプト (`orchagent.sh`) に限定されるため、ASIC Capability の問い合わせは一切発生しない。
+`HEARTBEAT` テーブルは APPL_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) / SAI を経由しない。コンシューマはホストサービス層 (`supervisor-proc-exit-listener`) と [orchagent](../../reference/glossary.md#term-orchagent) 起動スクリプト (`orchagent.sh`) に限定されるため、[ASIC](../../reference/glossary.md#term-asic) Capability の問い合わせは一切発生しない。
 
 ### ベンダー固有コードなし
 
@@ -411,7 +410,7 @@ Redis keyspace notification は発火するが受信側が存在しないため�
 
 ### multi-ASIC 環境
 
-multi-ASIC 構成では NAMESPACE_ID ごとに独立した orchagent インスタンスが起動するが、各インスタンスは同一の CONFIG_DB（または名前空間内の DB インスタンス）から `HEARTBEAT|orchagent` を読む。ASIC 数による処理の差異はない。
+multi-[ASIC](../../reference/glossary.md#term-asic) 構成では NAMESPACE_ID ごとに独立した orchagent インスタンスが起動するが、各インスタンスは同一の CONFIG_DB（または名前空間内の DB インスタンス）から `HEARTBEAT|orchagent` を読む。[ASIC](../../reference/glossary.md#term-asic) 数による処理の差異はない。
 
 ### vs (virtual switch)
 
@@ -431,7 +430,7 @@ vs 環境でも `supervisor-proc-exit-listener` は同一コードで動作す�
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -446,4 +445,4 @@ vs 環境でも `supervisor-proc-exit-listener` は同一コードで動作す�
 - `system-health` / `watchdog` 系デーモンが定期的に heartbeat タイムスタンプを書き込む。CLI 書き込みパスなし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: f9445b5b4106 -->

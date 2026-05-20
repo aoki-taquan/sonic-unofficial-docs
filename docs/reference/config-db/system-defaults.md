@@ -87,15 +87,15 @@ SYSTEM_DEFAULTS|<name>
 
 | name | `enabled` 時 | `disabled` 時 |
 |------|-------------|--------------|
-| `tunnel_qos_remap` | [IPinIP](../../reference/glossary.md#term-ipinip) デカプセル時の [QoS](../../reference/glossary.md#term-qos) リマップを有効化 (muxorch 起動時のみ参照) | [QoS](../../reference/glossary.md#term-qos) リマップなし |
-| `synchronous_mode` | [orchagent](../../reference/glossary.md#term-orchagent) が [SAI](../../reference/glossary.md#term-sai) 操作を同期実行 (P4RT 連携時に必要) | 非同期実行 |
+| `tunnel_qos_remap` | [IPinIP](../../reference/glossary.md#term-ipinip) デカプセル時の [QoS](../../reference/glossary.md#term-qos) リマップを有効化 ([muxorch](../../reference/glossary.md#term-muxorch) 起動時のみ参照) | [QoS](../../reference/glossary.md#term-qos) リマップなし |
+| `synchronous_mode` | [orchagent](../../reference/glossary.md#term-orchagent) が [SAI](../../reference/glossary.md#term-sai) 操作を同期実行 ([P4RT](../../reference/glossary.md#term-p4rt) 連携時に必要) | 非同期実行 |
 | `dhcp_server` | 組み込み DHCP サーバを有効化 | 無効 |
 | `mux_tunnel_egress_acl` | Dual-ToR mux [ACL](../../reference/glossary.md#term-acl) を適用 (Mellanox: enabled が init_cfg デフォルト) | [ACL](../../reference/glossary.md#term-acl) 未適用 |
 
 | 状態 | 挙動 |
 |------|-----|
 | エントリ不在 (DEL 後) | 各機能は不在を `disabled` として扱う |
-| `tunnel_qos_remap` 実行中変更 | muxorch は起動時のみ参照のため、サービス再起動まで反映されない |
+| `tunnel_qos_remap` 実行中変更 | [muxorch](../../reference/glossary.md#term-muxorch) は起動時のみ参照のため、サービス再起動まで反映されない |
 
 <!-- /value-behavior -->
 
@@ -130,13 +130,12 @@ sonic-db-cli CONFIG_DB keys 'SYSTEM_DEFAULTS|*'
 ```
 <!-- /ops-hint -->
 
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
 ### Phase 6: 自動派生
 
-各サービスが `SYSTEM_DEFAULTS` を参照して起動時のデフォルト動作を決定する。`synchronous_mode==enable` → orchagent が SAI call を synchronous モードで実行。`interface_naming_mode==alias` → portsyncd / intfmgrd がエイリアス名を使用。`frr_mgmt_framework_config==true` → sonic-mgmt-framework が FRR 設定を管理。
+各サービスが `SYSTEM_DEFAULTS` を参照して起動時のデフォルト動作を決定する。`synchronous_mode==enable` → [orchagent](../../reference/glossary.md#term-orchagent) が [SAI](../../reference/glossary.md#term-sai) call を synchronous モードで実行。`interface_naming_mode==alias` → [portsyncd](../../reference/glossary.md#term-portsyncd) / [intfmgrd](../../reference/glossary.md#term-intfmgrd) がエイリアス名を使用。`frr_mgmt_framework_config==true` → [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework が [FRR](../../reference/glossary.md#term-frr) 設定を管理。
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
@@ -149,9 +148,9 @@ db_migrator が起動時に `SYSTEM_DEFAULTS` テーブルを初期化・マイ�
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
-| `orchagent` 起動 | `synchronous_mode==enable` | SAI API を synchronous モードで呼び出し | `orchagent/main.cpp` |
+| `orchagent` 起動 | `synchronous_mode==enable` | [SAI](../../reference/glossary.md#term-sai) API を synchronous モードで呼び出し | `orchagent/main.cpp` |
 | `orchagent` 起動 | `synchronous_mode==disable` または未設定 | SAI API を asynchronous モードで呼び出し | `orchagent/main.cpp` |
-| 各サービス | `frr_mgmt_framework_config==true` | sonic-mgmt-framework による FRR 設定管理を有効化 | 複数サービス |
+| 各サービス | `frr_mgmt_framework_config==true` | [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework による [FRR](../../reference/glossary.md#term-frr) 設定管理を有効化 | 複数サービス |
 | `portsyncd` / `intfmgrd` | `interface_naming_mode==alias` | インターフェース alias 名を使用 | `portsyncd` |
 | `portsyncd` / `intfmgrd` | `interface_naming_mode==default` | 標準 IF 名を使用 | `portsyncd` |
 
@@ -165,7 +164,7 @@ db_migrator が起動時に `SYSTEM_DEFAULTS` テーブルを初期化・マイ�
 ### 段階 1: Consumer 登録
 
 - **各種 mgrd / orchagent**: `SYSTEM_DEFAULTS` テーブルを起動時に `ConfigDBConnector` で読み込む。
-- 主に `switch_type` (L2, L3, VOQ 等) の判定に使用される。
+- 主に `switch_type` (L2, L3, [VOQ](../../reference/glossary.md#term-voq) 等) の判定に使用される。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -178,7 +177,7 @@ db_migrator が起動時に `SYSTEM_DEFAULTS` テーブルを初期化・マイ�
 ### 段階 4: タイミング + 副作用
 
 - SYSTEM_DEFAULTS は主に起動時設定。変更時はサービス再起動が必要。
-- 副作用: switch_type の変更は swss/syncd の完全再起動が必要でサービス断が生じる。
+- 副作用: switch_type の変更は swss/[syncd](../../reference/glossary.md#term-syncd) の完全再起動が必要でサービス断が生じる。
 
 <!-- /runtime-trace -->
 
@@ -193,15 +192,15 @@ db_migrator が起動時に `SYSTEM_DEFAULTS` テーブルを初期化・マイ�
 
 ### `software_bfd` — SmartSwitch DPU プロファイルで `"enabled"`
 
-`sonic-config-engine/config_samples.py:186-188` の `generate_smartswitch_dpu` プロファイルが `data["SYSTEM_DEFAULTS"]["software_bfd"] = {"status": "enabled"}` を強制注入する。通常スイッチ（非 SmartSwitch DPU）には付かない。
+`sonic-config-engine/config_samples.py:186-188` の `generate_smartswitch_dpu` プロファイルが `data["SYSTEM_DEFAULTS"]["software_bfd"] = {"status": "enabled"}` を強制注入する。通常スイッチ（非 [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)）には付かない。
 
 ### `polaris` — Pensando hwsku のみ `"enabled"`
 
-`config_samples.py:179-184` で `'pensando' in hwsku.lower()` のときに `SYSTEM_DEFAULTS = {"polaris": {"status": "enabled"}}` を上書き設定する。Pensando DPU 向け SmartSwitch プロファイル限定の fallback。
+`config_samples.py:179-184` で `'pensando' in hwsku.lower()` のときに `SYSTEM_DEFAULTS = {"polaris": {"status": "enabled"}}` を上書き設定する。Pensando [DPU](../../reference/glossary.md#term-dpu) 向け [SmartSwitch](../../reference/glossary.md#term-smartswitch) プロファイル限定の fallback。
 
 ### `tunnel_qos_remap` — ビルド時注入なし、不在 = `disabled` 扱い
 
-`init_cfg.json.j2` / `config_samples.py` のいずれにも `tunnel_qos_remap` の自動生成コードは無い。`muxorch` (sonic-swss) が起動時に `SYSTEM_DEFAULTS|tunnel_qos_remap` の `status` を参照するのみで、エントリ不在時は [QoS](../../reference/glossary.md#term-qos) remap を行わない（概念的 `disabled` 扱い）。コード由来のデフォルトは「エントリ不在」そのもの。
+`init_cfg.json.j2` / `config_samples.py` のいずれにも `tunnel_qos_remap` の自動生成コードは無い。`muxorch` ([sonic-swss](../../reference/glossary.md#term-sonic-swss)) が起動時に `SYSTEM_DEFAULTS|tunnel_qos_remap` の `status` を参照するのみで、エントリ不在時は [QoS](../../reference/glossary.md#term-qos) remap を行わない（概念的 `disabled` 扱い）。コード由来のデフォルトは「エントリ不在」そのもの。
 
 ### `synchronous_mode` / `dhcp_server` — テーブル外で管理
 
@@ -211,7 +210,7 @@ db_migrator が起動時に `SYSTEM_DEFAULTS` テーブルを初期化・マイ�
 
 `sonic-system-defaults.yang` の `status` leaf は `admin_mode` enum 制約のみで `default` 宣言を持たない。各 daemon (`muxorch`、`orchagent` 等) は該当 `<name>` エントリ不在を `disabled` として扱い `KeyError` を出さない設計。
 
-> **Evidence**: `sonic-buildimage/files/build_templates/init_cfg.json.j2:5, 77, 188-197` および `src/sonic-config-engine/config_samples.py:160-188`、SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`。`sonic-utilities/scripts/db_migrator.py:670-677` (`synchronous_mode` の DEVICE_METADATA 側補完)、SHA `39732bceb8bdefe706518ab40623bbbba6ff33b9`。詳細は `meta/_intermediate/cdb-flow/system-defaults-defaults.md` を参照。
+> **Evidence**: `sonic-buildimage/files/build_templates/init_cfg.json.j2:5, 77, 188-197` および `src/sonic-config-engine/config_samples.py:160-188`、SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`。`sonic-utilities/scripts/db_migrator.py:670-677` (`synchronous_mode` の [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 側補完)、SHA `39732bceb8bdefe706518ab40623bbbba6ff33b9`。詳細は `meta/_intermediate/cdb-flow/system-defaults-defaults.md` を参照。
 <!-- /defaults -->
 
 <!-- entry-points -->
@@ -229,7 +228,7 @@ minigraph.py に SYSTEM_DEFAULTS 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -237,7 +236,7 @@ db_migrator.py での SYSTEM_DEFAULTS マイグレーションなし
 
 ### ビルド時デフォルト (build-time default)
 
-**`files/build_templates/init_cfg.json.j2`** に SYSTEM_DEFAULTS エントリ (IPv6 forwarding 等) がビルド時に投入 (sonic-buildimage/files/build_templates/init_cfg.json.j2); **`files/build_templates/qos_config.j2`** と **`files/build_templates/buffers_config.j2`** も参照
+**`files/build_templates/init_cfg.json.j2`** に SYSTEM_DEFAULTS エントリ (IPv6 forwarding 等) がビルド時に投入 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/files/build_templates/init_cfg.json.j2); **`files/build_templates/qos_config.j2`** と **`files/build_templates/buffers_config.j2`** も参照
 
 ### ハードコードデフォルト / ランタイム注入
 
@@ -265,7 +264,7 @@ docker-orchagent 内の `supervisord.conf.j2` は `dependent_startup` プラグ�
 | 3 | `portsyncd` | `rsyslogd:running` | なし |
 | 3 | `gearsyncd` | `rsyslogd:running` | なし |
 | **4** | **`orchagent`** | `portsyncd:running`（fabric の場合は `rsyslogd:running`） | **`orchagent.sh` が `sonic-cfggen -d -t swss_vars.j2` を実行し `synchronous_mode`/`dscp_remapping` を読み取り、`-s` フラグ（同期モード）付与を決定** |
-| 5 | `swssconfig` | `orchagent:running` | なし（FDB/ARP/ports/switch.json 適用） |
+| 5 | `swssconfig` | `orchagent:running` | なし（[FDB](../../reference/glossary.md#term-fdb)/[ARP](../../reference/glossary.md#term-arp)/ports/switch.json 適用） |
 | 6–18 | `coppmgrd` / `neighsyncd` / `vlanmgrd` / `intfmgrd` / `buffermgrd` 等 | `swssconfig:exited` | なし（[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 経由で `interface_naming_mode` 等を読む） |
 
 > **証跡**: `sonic-buildimage/dockers/docker-orchagent/supervisord.conf.j2` および `orchagent.sh`、SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
@@ -320,7 +319,7 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 | `status` に `enabled`/`disabled` 以外を書き込もうとする | YANG バリデーション層 (`admin_mode` typedef) | CONFIG_DB への書き込みをブロック。DB には不正値が残らない | YANG エラー | `sonic-system-defaults.yang` `admin_mode` typedef |
 | `tunnel_qos_remap.status=enabled` を orchagent 起動後に書き込む | `muxorch.cpp` L1388（`hget` 1 回限り参照） | orchagent 再起動まで変更が反映されない。ランタイム中の書き込みは silent ignore | なし（コード側 warning なし） | `muxorch.cpp:1388-1390` |
 | `mux_tunnel_egress_acl.status` がエントリ不在 | `muxorch.cpp` L1389-1390 — `hget` が false を返す | `value` が空文字列 → `is_ingress_acl_ = value != "enabled"` が `true`（ingress [ACL](../../reference/glossary.md#term-acl) として処理） | なし | `muxorch.cpp:1390` |
-| `software_bfd.status` が `"enabled"` 以外または不在 | `bgpcfgd/main.py` L118 | `BfdMgr` を登録しない。BFD ソフトウェアセッション管理が無効のまま起動 | なし | `bgpcfgd/main.py:118` |
+| `software_bfd.status` が `"enabled"` 以外または不在 | `bgpcfgd/main.py` L118 | `BfdMgr` を登録しない。[BFD](../../reference/glossary.md#term-bfd) ソフトウェアセッション管理が無効のまま起動 | なし | `bgpcfgd/main.py:118` |
 
 ### DEL 処理における失敗経路
 
@@ -340,7 +339,7 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 
 - **`SYSTEM_DEFAULTS` はイベント駆動ではない**: `ConsumerStateTable` / `SubscriberStateTable` 等の pub/sub 機構を使用しないため、値変更の失敗（pub 失敗）は概念として存在しない。
 - **YANG バリデーション層のブロック**: `status` フィールドへの不正値書き込みは YANG で拒否されるため、不正値が CONFIG_DB に残存するシナリオは正規経路では発生しない。
-- **`polaris` / `software_bfd`**: `config_samples.py` が SmartSwitch DPU プロファイル生成時に無条件で上書き注入する (L179-188)。不在時はコード参照先が存在しないため、影響なし。
+- **`polaris` / `software_bfd`**: `config_samples.py` が [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) プロファイル生成時に無条件で上書き注入する (L179-188)。不在時はコード参照先が存在しないため、影響なし。
 
 > Evidence: `sonic-swss/orchagent/muxorch.cpp:1388-1390`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py:117-119`; `sonic-buildimage/src/sonic-config-engine/config_samples.py:160-188`; `sonic-buildimage/files/build_templates/swss_vars.j2:9,14`; `sonic-buildimage/dockers/docker-orchagent/orchagent.sh:8,37-42`; SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd` / `4305596156d70e9797e8a881b3d19b46de0bce0d`。詳細分析 `meta/_intermediate/cdb-flow/system-defaults-failure.md`
 <!-- /failure -->
@@ -399,11 +398,11 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `orchagent.sh` / `muxorch` / `bgpcfgd` いずれも SYSTEM_DEFAULTS への反応として APPL_DB 書込を行わない |
-| STATE_DB | なし（間接的あり） | `BfdMgr` は `software_bfd=enabled` のとき起動時に STATE_DB `BFD_SESSION_TABLE` を管理するが、これは SYSTEM_DEFAULTS 変更への動的反応ではなく起動時の条件付き有効化 (`bgpcfgd/main.py:117-121`) |
-| ASIC_DB | 間接的あり | `MuxAclHandler::MuxAclHandler()` が `mux_tunnel_egress_acl` を読み取って ACL テーブル / ルールを SAI API 経由で生成する (`muxorch.cpp:1388-1416`)。ただし CONFIG_DB には書き込まない |
-| COUNTERS_DB / FLEX_COUNTER_DB | なし | SYSTEM_DEFAULTS を参照するコードに COUNTERS_DB 書込なし |
-| CONFIG_DB（自己書込） | なし | SYSTEM_DEFAULTS は init_cfg.json / sonic-cfggen によって初期化されるのみ。実行時に自己更新はしない |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `orchagent.sh` / `muxorch` / `bgpcfgd` いずれも SYSTEM_DEFAULTS への反応として [APPL_DB](../../reference/glossary.md#term-appl_db) 書込を行わない |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし（間接的あり） | `BfdMgr` は `software_bfd=enabled` のとき起動時に [STATE_DB](../../reference/glossary.md#term-state_db) `BFD_SESSION_TABLE` を管理するが、これは SYSTEM_DEFAULTS 変更への動的反応ではなく起動時の条件付き有効化 (`bgpcfgd/main.py:117-121`) |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | 間接的あり | `MuxAclHandler::MuxAclHandler()` が `mux_tunnel_egress_acl` を読み取って ACL テーブル / ルールを SAI API 経由で生成する (`muxorch.cpp:1388-1416`)。ただし CONFIG_DB には書き込まない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | SYSTEM_DEFAULTS を参照するコードに [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書込なし |
+| CONFIG_DB（自己書込） | なし | SYSTEM_DEFAULTS は init_cfg.json / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) によって初期化されるのみ。実行時に自己更新はしない |
 
 主な副作用は DB ではなくコンテナ起動引数（`orchagent.sh` が `swss_vars.j2` をレンダリングして `dscp_remapping` を `-s` フラグ等として orchagent に渡す）と、[MuxPort](../../reference/glossary.md#term-mux) 初期化時の SAI ACL オブジェクト生成に閉じる。
 
@@ -427,7 +426,7 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 
 | チャネル | DB | 使用有無 | 理由 |
 |---------|-----|---------|------|
-| `SYSTEM_DEFAULTS_CHANNEL@4` (ProducerStateTable) | 4 | **使用なし** | 書き込みは JSON 一括投入（direct HSET）のみ |
+| `SYSTEM_DEFAULTS_CHANNEL@4` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable)) | 4 | **使用なし** | 書き込みは JSON 一括投入（direct HSET）のみ |
 | `__keyspace@4__:SYSTEM_DEFAULTS\|*` (keyspace notification) | 4 | **使用なし** | どのプロセスも PSUBSCRIBE していない |
 
 ### 動的変更への非対応
@@ -485,4 +484,4 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 > **Evidence**: `sonic-buildimage/files/build_templates/init_cfg.json.j2:188-197`（SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`）; `sonic-buildimage/src/sonic-config-engine/minigraph.py:2202-2215`; `sonic-buildimage/src/sonic-config-engine/config_samples.py:179-188`; `sonic-swss/orchagent/muxorch.cpp:1389-1393`; `sonic-swss/orchagent/aclorch.h:111-112`（SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`）。詳細は `meta/_intermediate/cdb-flow/system-defaults-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: 90fa20b1e615 -->
+<!-- glossary-links-injected: 33e760a5e1b0 -->

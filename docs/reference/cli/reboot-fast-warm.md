@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-SONiC の再起動コマンドは Click ベースではなく **bash スクリプト** として実装されており、`sonic-utilities/scripts/` 配下に置かれる。本ページは以下の 3 系統を一括して扱う:
+[SONiC](../../reference/glossary.md#term-sonic) の再起動コマンドは Click ベースではなく **bash スクリプト** として実装されており、`sonic-utilities/scripts/` 配下に置かれる。本ページは以下の 3 系統を一括して扱う:
 
 - **`reboot`** ... 通常 (cold) reboot。`scripts/reboot`
 - **`fast-reboot`** ... fast-reboot。`scripts/fast-reboot`
@@ -88,7 +88,7 @@ fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c <ip_list>] [-s] [-D] [-
 | `-h` / `-?` | ヘルプ |
 | `-v` | verbose |
 | `-f` | Orchagent RESTARTCHECK の失敗を無視 |
-| `-i` | ASIC MD5 検証を無視 |
+| `-i` | [ASIC](../../reference/glossary.md#term-asic) MD5 検証を無視 |
 | `-d` | DB integrity check を無視 |
 | `-r` | `/sbin/reboot` で再起動 |
 | `-k` | `/sbin/kexec -e` (デフォルト) |
@@ -98,9 +98,9 @@ fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c <ip_list>] [-s] [-D] [-
 | `-t` | kube image を `latest` タグ付けしない (注: `getopts` 文字列に含まれず実際は無効。コードコメントに `TODO "t" is missing` あり) |
 | `-D` | detached モード (端末切断で reboot を中断しない) |
 | `-u` | boot オプションに ssd-upgrader-part を含める |
-| `-n` | peer device に SONiC retry-count 機能を要求しない (デフォルト) |
+| `-n` | peer device に [SONiC](../../reference/glossary.md#term-sonic) retry-count 機能を要求しない (デフォルト) |
 | `-N` | peer device に retry-count 機能を要求する |
-| `-m <list>` | カンマ区切り ASIC 番号を warm-reboot 対象から除外 (multi-ASIC 専用) |
+| `-m <list>` | カンマ区切り [ASIC](../../reference/glossary.md#term-asic) 番号を warm-reboot 対象から除外 (multi-[ASIC](../../reference/glossary.md#term-asic) 専用) |
 
 ### 動作
 
@@ -134,7 +134,7 @@ fast-reboot [-h|-?] [-v] [-f] [-i] [-d] [-r|-k] [-x] [-c <ip_list>] [-s] [-D] [-
 ## 注意
 
 - `warm-reboot` で [BGP](../../reference/glossary.md#term-bgp) セッションを保持するには **GR ([Graceful Restart](../../reference/glossary.md#term-graceful-restart)) が peer 側で有効** なことが前提。
-- `fast-reboot` / `warm-reboot` は **data plane traffic loss** をゼロにするものではない。SONiC 標準実装でも数秒〜数百ミリ秒の packet drop は出る。`-c` の CPA 構成と GR をきちんと組まないと L3 セッションが切れる。
+- `fast-reboot` / `warm-reboot` は **data plane traffic loss** をゼロにするものではない。[SONiC](../../reference/glossary.md#term-sonic) 標準実装でも数秒〜数百ミリ秒の packet drop は出る。`-c` の CPA 構成と GR をきちんと組まないと L3 セッションが切れる。
 - chassis (multi-asic + supervisor + linecard) では `reboot` が CHASSIS_STATE_DB に通知を出すため、ラインカード単独 reboot とシステム全体 reboot で挙動が変わる。
 
 <!-- ref-triangle:start -->
@@ -236,4 +236,4 @@ journalctl -u warm-reboot -b -0
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: c419e969e873 -->
+<!-- glossary-links-injected: 8de83b4fd2a7 -->

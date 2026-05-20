@@ -154,13 +154,12 @@ show buffer profile
 
 <!-- /cdb-exceptions -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`buffermgrdyn` (動的バッファ管理) が CONFIG_DB の `LOSSLESS_TRAFFIC_PATTERN` テーブルを購読する。
+`buffermgrdyn` (動的バッファ管理) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `LOSSLESS_TRAFFIC_PATTERN` テーブルを購読する。
 
 `LOSSLESS_TRAFFIC_PATTERN` の key は `AZURE` 等のパターン名。`mtu` / `small_packet_percentage` 等のパラメータを保持。
 
@@ -170,13 +169,13 @@ show buffer profile
 
 ### 段階 3 — APPL→SAI
 
-なし (直接 SAI 呼び出しなし — 計算結果が BUFFER_PROFILE 経由で SAI に到達)
+なし (直接 [SAI](../../reference/glossary.md#term-sai) 呼び出しなし — 計算結果が BUFFER_PROFILE 経由で [SAI](../../reference/glossary.md#term-sai) に到達)
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB 変化を `buffermgrdyn` が検知後、lossless バッファプロファイルを再計算。再計算結果が APPL_DB の BUFFER_PROFILE_TABLE に書き込まれる。
+**適用タイミング**: [CONFIG_DB](../../reference/glossary.md#term-config_db) 変化を `buffermgrdyn` が検知後、lossless バッファプロファイルを再計算。再計算結果が [APPL_DB](../../reference/glossary.md#term-appl_db) の BUFFER_PROFILE_TABLE に書き込まれる。
 
-**副作用**: PFC lossless traffic パターン変更は lossless バッファ量の再計算を引き起こす。すべての lossless ポートのバッファプロファイルが再生成される。
+**副作用**: [PFC](../../reference/glossary.md#term-pfc) lossless traffic パターン変更は lossless バッファ量の再計算を引き起こす。すべての lossless ポートのバッファプロファイルが再生成される。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -192,7 +191,7 @@ show buffer profile
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - あり: 静的→動的バッファ移行時（Mellanox 系）に `LOSSLESS_TRAFFIC_PATTERN|AZURE` エントリを `mtu=1024, small_packet_percentage=100` でハードコード挿入 (`db_migrator.py:414`)
@@ -245,7 +244,7 @@ show buffer profile
 
 | 依存テーブル | 理由 | 違反時の挙動 | evidence |
 |---|---|---|---|
-| `BUFFER_POOL` | `m_bufferPoolReady == false` のままでは Lua プラグインが呼ばれない | BUFFER_PROFILE の APPL_DB 書き込みがデファー。pool 登録後に `handlePendingBufferObjects()` が一括適用 | `buffermgrdyn.cpp:892-896` |
+| `BUFFER_POOL` | `m_bufferPoolReady == false` のままでは Lua プラグインが呼ばれない | BUFFER_PROFILE の [APPL_DB](../../reference/glossary.md#term-appl_db) 書き込みがデファー。pool 登録後に `handlePendingBufferObjects()` が一括適用 | `buffermgrdyn.cpp:892-896` |
 
 ### DEFAULT_LOSSLESS_BUFFER_PARAMETER 先行必須
 
@@ -255,7 +254,7 @@ show buffer profile
 
 | 依存テーブル | 理由 | 違反時の挙動 | evidence |
 |---|---|---|---|
-| `DEFAULT_LOSSLESS_BUFFER_PARAMETER` | `m_defaultThreshold.empty()` でデファー。Lua 内でも `KEYS DEFAULT_LOSSLESS_BUFFER_PARAMETER*` + `HGET over_subscribe_ratio` を直接読む | BUFFER_PROFILE の APPL_DB 書き込みがデファー | `buffermgrdyn.cpp:1460` / `buffer_headroom_mellanox.lua:105-106` |
+| `DEFAULT_LOSSLESS_BUFFER_PARAMETER` | `m_defaultThreshold.empty()` でデファー。Lua 内でも `KEYS DEFAULT_LOSSLESS_BUFFER_PARAMETER*` + `HGET over_subscribe_ratio` を直接読む | BUFFER_PROFILE の [APPL_DB](../../reference/glossary.md#term-appl_db) 書き込みがデファー | `buffermgrdyn.cpp:1460` / `buffer_headroom_mellanox.lua:105-106` |
 
 ### LOSSLESS_TRAFFIC_PATTERN 自身の存在必須制約
 
@@ -264,7 +263,7 @@ show buffer profile
 エントリが 0 件の場合 `lossless_traffic_keys[1]` は `nil` となり、
 `HGETALL nil` が Lua エラーとなってヘッドルーム計算全体が失敗する。
 その結果、動的バッファモデルにおける全ロスレスポートの BUFFER_PROFILE が
-APPL_DB に転送されず、PFC ヘッドルームが設定されない状態になる。
+APPL_DB に転送されず、[PFC](../../reference/glossary.md#term-pfc) ヘッドルームが設定されない状態になる。
 
 | 条件 | 挙動 | evidence |
 |---|---|---|
@@ -273,14 +272,14 @@ APPL_DB に転送されず、PFC ヘッドルームが設定されない状態�
 
 ### STATE_DB.ASIC_TABLE 先行必須 (Mellanox のみ)
 
-Mellanox 向け Lua プラグインは STATE_DB の `ASIC_TABLE` から `cell_size`、`pipeline_latency`、
+Mellanox 向け Lua プラグインは [STATE_DB](../../reference/glossary.md#term-state_db) の `ASIC_TABLE` から `cell_size`、`pipeline_latency`、
 `mac_phy_delay`、`peer_response_time` を読み込む。
 これらは LOSSLESS_TRAFFIC_PATTERN の値 (`mtu`、`small_packet_percentage`) とともに
 ヘッドルーム計算式に入力される。
 
 | 依存テーブル | 理由 | 違反時の挙動 | evidence |
 |---|---|---|---|
-| `STATE_DB.ASIC_TABLE` (Mellanox) | `cell_size` 等の ASIC パラメータが取得できなければ計算式が `nil` 演算でエラー | headroom 計算失敗 → BUFFER_PROFILE が APPL_DB に転送されない | `buffer_headroom_mellanox.lua:61-80` |
+| `STATE_DB.ASIC_TABLE` (Mellanox) | `cell_size` 等の [ASIC](../../reference/glossary.md#term-asic) パラメータが取得できなければ計算式が `nil` 演算でエラー | headroom 計算失敗 → BUFFER_PROFILE が APPL_DB に転送されない | `buffer_headroom_mellanox.lua:61-80` |
 
 詳細スキャンノートは `meta/_intermediate/cdb-flow/lossless-traffic-pattern-ordering.md` を参照。
 <!-- /ordering -->
@@ -294,16 +293,16 @@ Mellanox 向け Lua プラグインは STATE_DB の `ASIC_TABLE` から `cell_si
 
 ### 1. STATE_DB.ASIC_TABLE
 
-- **参照先テーブル**: `ASIC_TABLE*`（STATE_DB）
+- **参照先テーブル**: `ASIC_TABLE*`（[STATE_DB](../../reference/glossary.md#term-state_db)）
 - **参照フィールド**: `cell_size`、`pipeline_latency`、`mac_phy_delay`、`peer_response_time`
 - **参照方向**: `KEYS ASIC_TABLE*` → `HGETALL asic_keys[1]`（読み取り）
 - **対象 Lua スクリプト**:
   - `buffer_headroom_mellanox.lua:62-80`
   - `buffer_headroom_barefoot.lua:57-76`
 - **意味**:
-  - これらの ASIC パラメータは `mtu`・`small_packet_percentage` とともにヘッドルーム計算式に入力される。
-  - `asic_keys[1]` が nil（STATE_DB 未投入）の場合、`HGETALL nil` で Lua エラーとなり headroom 計算全体が失敗する。
-  - ASIC_TABLE は `syncd` が ASIC 初期化時に STATE_DB へ書き込む。SONiC 起動シーケンス上 `buffermgrdyn` より先に完了するため、通常は問題にならない。
+  - これらの [ASIC](../../reference/glossary.md#term-asic) パラメータは `mtu`・`small_packet_percentage` とともにヘッドルーム計算式に入力される。
+  - `asic_keys[1]` が nil（[STATE_DB](../../reference/glossary.md#term-state_db) 未投入）の場合、`HGETALL nil` で Lua エラーとなり headroom 計算全体が失敗する。
+  - ASIC_TABLE は `syncd` が [ASIC](../../reference/glossary.md#term-asic) 初期化時に STATE_DB へ書き込む。[SONiC](../../reference/glossary.md#term-sonic) 起動シーケンス上 `buffermgrdyn` より先に完了するため、通常は問題にならない。
 
 ### 2. CONFIG_DB.DEFAULT_LOSSLESS_BUFFER_PARAMETER
 
@@ -312,20 +311,20 @@ Mellanox 向け Lua プラグインは STATE_DB の `ASIC_TABLE` から `cell_si
 - **参照方向**: `KEYS DEFAULT_LOSSLESS_BUFFER_PARAMETER*` → `HGET ... over_subscribe_ratio`（読み取り）
 - **対象 Lua スクリプト**: `buffer_headroom_mellanox.lua:105-106`
 - **意味**:
-  - `over_subscribe_ratio` は Shared Headroom Pool サイズの分母として使われる。
+  - `over_subscribe_ratio` は Shared [Headroom](../../reference/glossary.md#term-headroom) Pool サイズの分母として使われる。
   - Lua スクリプトが直接 CONFIG_DB を参照するため、`buffermgrdyn` 本体の `m_defaultThreshold` キャッシュとは独立して読み取られる。
   - `DEFAULT_LOSSLESS_BUFFER_PARAMETER` エントリが存在しない場合、`default_lossless_param_keys[1]` が nil となり Lua エラー。
 
 ### 3. CONFIG_DB.BUFFER_POOL (ingress_lossless_pool)
 
 - **参照先テーブル**: `BUFFER_POOL|ingress_lossless_pool`（CONFIG_DB）
-- **参照フィールド**: `xoff`（Shared Headroom Pool サイズ）
+- **参照フィールド**: `xoff`（Shared [Headroom](../../reference/glossary.md#term-headroom) Pool サイズ）
 - **参照方向**: `HGET BUFFER_POOL|ingress_lossless_pool xoff`（読み取り）
 - **対象 Lua スクリプト**:
   - `buffer_headroom_mellanox.lua:109`
   - `buffer_headroom_barefoot.lua:94`
 - **意味**:
-  - `xoff` 値が Shared Headroom Pool (SHP) のサイズとして headroom 計算に組み込まれる。
+  - `xoff` 値が Shared [Headroom](../../reference/glossary.md#term-headroom) Pool (SHP) のサイズとして headroom 計算に組み込まれる。
   - フィールドが存在しない（SHP 未設定）場合、`tonumber(nil)` → `shp_size = nil` となる。Lua の算術では nil は計算エラーになるが、実際の計算式では `shp_size` が 0 扱いになるパスが多い。
 
 ### 参照関係サマリ
@@ -381,7 +380,7 @@ orchagent / BufferOrch が古い headroom 値または未設定のまま SAI へ
 ### 注意点
 
 - C++ 側には **リトライロジックが存在しない**。エラーが発生してもエントリは削除され、次のトリガイベント（他テーブルの変更等）が来るまで再計算は行われない。
-- YANG `mandatory true` のため CLI / gNMI 経由では不正省略は防止される。手動 redis-cli 書き込みや誤った automation ツールで起こりうる。
+- YANG `mandatory true` のため CLI / [gNMI](../../reference/glossary.md#term-gnmi) 経由では不正省略は防止される。手動 redis-cli 書き込みや誤った automation ツールで起こりうる。
 - `mtu` に `0` や負値は YANG の `range "1..9216"` で拒否されるが、Lua 内でバリデーションはないため YANG をバイパスした書き込みでは `lossless_mtu = 0` となり計算結果が 0 になりうる。
 
 <!-- /failure -->
@@ -516,7 +515,7 @@ orchagent BufferOrch → SAI sai_buffer_api (ASIC_DB 経由)
 <!-- source: sonic-swss/cfgmgr/buffer_headroom_mellanox.lua ref:master -->
 <!-- source: sonic-swss/cfgmgr/buffer_headroom_barefoot.lua ref:master -->
 
-`LOSSLESS_TRAFFIC_PATTERN` テーブルは **`buffermgrdyn` の `SubscriberStateTable` 購読対象に含まれない**。Redis keyspace notification / PSUBSCRIBE は一切使用せず、Lua ヘッドルーム計算プラグインが実行時に CONFIG_DB を直接読み取る設計になっている。
+`LOSSLESS_TRAFFIC_PATTERN` テーブルは **`buffermgrdyn` の `SubscriberStateTable` 購読対象に含まれない**。[Redis](../../reference/glossary.md#term-redis) keyspace notification / PSUBSCRIBE は一切使用せず、Lua ヘッドルーム計算プラグインが実行時に CONFIG_DB を直接読み取る設計になっている。
 
 ### buffermgrdyn の Subscribe 対象テーブル
 
@@ -548,7 +547,7 @@ local lossless_traffic_keys = redis.call('KEYS', 'LOSSLESS_TRAFFIC_PATTERN*')
 local lossless_traffic = redis.call('HGETALL', lossless_traffic_keys[1])
 ```
 
-これは Redis の `EVAL` コマンド内での直接 `KEYS` + `HGETALL` であり、Subscribe / keyspace 通知とは独立している。
+これは [Redis](../../reference/glossary.md#term-redis) の `EVAL` コマンド内での直接 `KEYS` + `HGETALL` であり、Subscribe / keyspace 通知とは独立している。
 
 ### Producer / Consumer ペア
 
@@ -557,7 +556,7 @@ local lossless_traffic = redis.call('HGETALL', lossless_traffic_keys[1])
 | CLI / db_migrator → CONFIG_DB `LOSSLESS_TRAFFIC_PATTERN` | `ConfigDBConnector.set_entry()` (HSET 直接) | なし |
 | Lua (`buffer_headroom_*.lua`) → CONFIG_DB | `redis.call('HGETALL', ...)` 直接読み取り | なし |
 | buffermgrdyn → APP_DB `APP_BUFFER_PROFILE_TABLE` | `ProducerStateTable.set()` | あり (`PUBLISH`) |
-| APP_DB → orchagent `BufferOrch` | `ConsumerStateTable` | あり |
+| APP_DB → [orchagent](../../reference/glossary.md#term-orchagent) `BufferOrch` | `ConsumerStateTable` | あり |
 
 ### 変更の反映タイミング（重要な注意点）
 
@@ -566,7 +565,7 @@ local lossless_traffic = redis.call('HGETALL', lossless_traffic_keys[1])
 | 再計算トリガー | 対象テーブル |
 |--------------|------------|
 | ポート速度 / ケーブル長変更 | `PORT` / `CABLE_LENGTH` |
-| BUFFER_PG エントリ変更 | `BUFFER_PG` |
+| [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) エントリ変更 | `BUFFER_PG` |
 | BUFFER_POOL 変更 | `BUFFER_POOL` |
 | DEFAULT_LOSSLESS_BUFFER_PARAMETER 変更 | `DEFAULT_LOSSLESS_BUFFER_PARAMETER` |
 | `buffermgrd` プロセス再起動 | — |
@@ -651,4 +650,4 @@ Lua 側では `is_8lane = (ARGV[5] == "8")` で判定し、8 レーンポート�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: b5626ca1f0f9 -->
+<!-- glossary-links-injected: 25693156137b -->

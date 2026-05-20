@@ -160,7 +160,7 @@ cat /etc/sonic/reboot.conf
 1. 次回 boot image が `sonic-installer verify-next-image` で通るか。
 2. platform-specific `platform_reboot_pre_check` がある場合に失敗しないか。
 3. warm reboot では pre-shutdown ACK、DB backup、peer 側 graceful behavior が揃っているか。
-4. multi-ASIC では対象 ASIC の除外や namespace 反映が意図通りか。
+4. multi-[ASIC](../../reference/glossary.md#term-asic) では対象 ASIC の除外や namespace 反映が意図通りか。
 
 ## warm restart を有効化する
 
@@ -206,4 +206,4 @@ blocking mode の詳細は [`reboot` コマンドの blocking mode](../../system
 - CONFIG_DB: `WARM_RESTART` table
 - 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md) / [upgrade](upgrade.md)
 
-<!-- glossary-links-injected: ff921c99cb16 -->
+<!-- glossary-links-injected: c006405759d8 -->

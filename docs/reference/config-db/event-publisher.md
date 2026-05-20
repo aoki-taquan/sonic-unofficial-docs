@@ -1,6 +1,6 @@
 ---
 title: イベントパブリッシャー設定 (init_cfg events)
-description: "eventd が読み込む ZMQ エンドポイント・ハートビート・キャッシュ上限などのイベントフレームワーク設定。CONFIG_DB テーブルではなく /etc/sonic/init_cfg.json の "events" キーで管理される。"
+description: "eventd が読み込む ZMQ エンドポイント・ハートビート・キャッシュ上限などのイベントフレームワーク設定。CONFIG_DB テーブルではなく /etc/sonic/init_cfg.json の events キーで管理される。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-14
@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-SONiC の Event and Alarm Framework は `eventd` デーモンが中心となり、ZeroMQ (ZMQ) メッセージバスを介して全コンテナ・プロセスからのイベントを収集・配信する[^1]。`eventd` は起動時に `/etc/sonic/init_cfg.json` の `"events"` キーを読み込み、ZMQ エンドポイントアドレス・キャッシュ上限・統計更新間隔を取得する。
+[SONiC](../../reference/glossary.md#term-sonic) の Event and Alarm Framework は `eventd` デーモンが中心となり、ZeroMQ (ZMQ) メッセージバスを介して全コンテナ・プロセスからのイベントを収集・配信する[^1]。`eventd` は起動時に `/etc/sonic/init_cfg.json` の `"events"` キーを読み込み、ZMQ エンドポイントアドレス・キャッシュ上限・統計更新間隔を取得する。
 
 これらのパラメータは従来の [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルではなく、ファイルベース設定として管理される点が他テーブルと異なる。
 
@@ -71,7 +71,7 @@ flowchart LR
 | `xpub_path` | string (ZMQ URI) | `tcp://127.0.0.1:5571` | サブスクライバーが接続する ZMQ XPUB エンドポイント |
 | `req_rep_path` | string (ZMQ URI) | `tcp://127.0.0.1:5572` | eventd 制御サービスの REQ/REP エンドポイント |
 | `capture_path` | string (ZMQ URI) | `tcp://127.0.0.1:5573` | キャッシュ収集用内部 PUB エンドポイント |
-| `stats_upd_secs` | string (数値) | `"5"` | ハートビート間隔計算 (`STATS_HEARTBEAT_MIN`) に使用されるパラメータ。COUNTERS_DB への実際の書き込み間隔はこの値ではなく `run_writer` の 10 ms ポーリング周期 (`eventd.cpp:215-221`) による |
+| `stats_upd_secs` | string (数値) | `"5"` | ハートビート間隔計算 (`STATS_HEARTBEAT_MIN`) に使用されるパラメータ。[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への実際の書き込み間隔はこの値ではなく `run_writer` の 10 ms ポーリング周期 (`eventd.cpp:215-221`) による |
 | `cache_max_cnt` | string (数値) | `""` → 699050 件 | イベントキャッシュの最大件数。空文字列の場合は MAX_CACHE_SIZE (≈ 100 MB / 150 B) が使用される |
 
 ## ハートビート設定
@@ -98,19 +98,19 @@ flowchart LR
 ## 購読者・利用者
 
 - `eventd` (`docker-eventd`): 全パラメータを消費し ZMQ プロキシ・capture service・stats collector を管理
-- `events_init_publisher()` 呼び出し元 (swss / syncd / bgp / dhcp-relay 等の全コンテナ): `xsub_path` に接続してイベントを発行
+- `events_init_publisher()` 呼び出し元 (swss / [syncd](../../reference/glossary.md#term-syncd) / bgp / dhcp-relay 等の全コンテナ): `xsub_path` に接続してイベントを発行
 - `events_init_subscriber()` 呼び出し元 (telemetry コンテナ等): `xpub_path` に接続してイベントを受信
-- `sonic-gnmi` (`events_client.go`): `xpub_path` 経由でイベントストリームを gNMI クライアントに転送
+- `sonic-gnmi` (`events_client.go`): `xpub_path` 経由でイベントストリームを [gNMI](../../reference/glossary.md#term-gnmi) クライアントに転送
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 直接の CONFIG_DB テーブルなし (ファイル設定のみ)
-- 関連 HLD: `SONiC/doc/event-alarm-framework/event-alarm-framework.md`、`events-producer.md`
+- 直接の [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルなし (ファイル設定のみ)
+- 関連 [HLD](../../reference/glossary.md#term-hld): `SONiC/doc/event-alarm-framework/event-alarm-framework.md`、`events-producer.md`
 
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`init_cfg.json` はファイルベース設定であり、通常の CONFIG_DB テーブルとは異なる読み込みメカニズムを持つ。
+`init_cfg.json` はファイルベース設定であり、通常の [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルとは異なる読み込みメカニズムを持つ。
 `get_config(key)` (`events_common.cpp:74-83`) は lazy 初期化パターンを採用しており、
 最初の `get_config()` 呼び出し時に `read_init_config(INIT_CFG_PATH)` を一度だけ実行する。
 
@@ -137,7 +137,7 @@ flowchart LR
 
 ### 主要な制約詳細
 
-**`init_cfg.json` の先行書き込み (依存 #1)**: `eventd` が起動すると `run_eventd_service()` の最初の `get_config_data()` 呼び出しで `cfg_data` が確定し、以後変更できない。`docker restart eventd` でのみ再読み込みされる。SONiC の `config reload` は `init_cfg.json` の再書き込みを含まないため、手動で `init_cfg.json` を編集した後は `systemctl restart eventd` が必要。
+**`init_cfg.json` の先行書き込み (依存 #1)**: `eventd` が起動すると `run_eventd_service()` の最初の `get_config_data()` 呼び出しで `cfg_data` が確定し、以後変更できない。`docker restart eventd` でのみ再読み込みされる。[SONiC](../../reference/glossary.md#term-sonic) の `config reload` は `init_cfg.json` の再書き込みを含まないため、手動で `init_cfg.json` を編集した後は `systemctl restart eventd` が必要。
 
 **ZMQ メッセージ消失リスク (依存 #2)**: `zmq_connect()` は ZMQ 設計上 lazy であり、eventd bind 完了前でも呼び出し自体はエラーにならない。しかし `eventd_proxy` が XSUB にバインドされるまでに publish されたメッセージは ZMQ の内部キューに保持されず消失する。`docker-eventd` は他コンテナより先に起動するよう systemd の After= 依存関係で制御される。
 
@@ -155,8 +155,8 @@ flowchart LR
 | 依存方向 | 参照元 | 参照先 | 参照先キー形式 | 依存内容 | 証跡 |
 |---------|--------|--------|--------------|---------|------|
 | eventd → `/etc/sonic/init_cfg.json` | `get_config()` — lazy 初期化 (`events_common.cpp:78`) | ファイルシステム (`INIT_CFG_PATH`) | `"events"` キー配下 | 起動時に ZMQ エンドポイント・キャッシュ上限・統計間隔を一度だけ読み込む。ファイル不在でも `cfg_default` でフォールバック | `events_common.h:129`, `events_common.cpp:38-83` |
-| eventd → COUNTERS_DB | `stats_collector::start()` — `m_counters_db` 接続 | `COUNTERS_DB` (DB index 2) | `COUNTERS_EVENTS\|published`, `COUNTERS_EVENTS\|missed_to_cache` | `stats_upd_secs` 間隔でパブリッシュ数・キャッシュ未達数を COUNTERS_DB へ書き込む。COUNTERS_DB 接続失敗は `RET_ON_ERR` でサービス異常終了 | `eventd.cpp:178-210` |
-| パブリッシャー (全コンテナ) → eventd | `events_init_publisher()` — ZMQ connect | ZMQ XSUB `:5570` (`xsub_path`) | N/A (ZMQ socket) | swss / syncd / bgp / dhcp-relay 等が `events_init_publisher()` でこのエンドポイントに接続してイベントを発行する。`xsub_path` 変更時は全コンテナ再起動が必要 | `events_common.cpp:80-81`, `eventd.cpp:80-81` |
+| eventd → [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `stats_collector::start()` — `m_counters_db` 接続 | `COUNTERS_DB` (DB index 2) | `COUNTERS_EVENTS\|published`, `COUNTERS_EVENTS\|missed_to_cache` | `stats_upd_secs` 間隔でパブリッシュ数・キャッシュ未達数を [COUNTERS_DB](../../reference/glossary.md#term-counters_db) へ書き込む。COUNTERS_DB 接続失敗は `RET_ON_ERR` でサービス異常終了 | `eventd.cpp:178-210` |
+| パブリッシャー (全コンテナ) → eventd | `events_init_publisher()` — ZMQ connect | ZMQ XSUB `:5570` (`xsub_path`) | N/A (ZMQ socket) | swss / [syncd](../../reference/glossary.md#term-syncd) / bgp / dhcp-relay 等が `events_init_publisher()` でこのエンドポイントに接続してイベントを発行する。`xsub_path` 変更時は全コンテナ再起動が必要 | `events_common.cpp:80-81`, `eventd.cpp:80-81` |
 | サブスクライバー (telemetry 等) → eventd | `events_init_subscriber()` — ZMQ connect | ZMQ XPUB `:5571` (`xpub_path`) | N/A (ZMQ socket) | telemetry / sonic-gnmi が `events_init_subscriber()` でこのエンドポイントに接続してイベントストリームを受信する | `events_common.cpp:83-87`, `eventd.cpp:83-87` |
 | telemetry → eventd | `event_service` REQ/REP — `EVENT_CACHE_INIT` / `EVENT_CACHE_STOP_SUBCRIBER` / `EVENT_CACHE_READ` リクエスト | ZMQ REQ/REP `:5572` (`req_rep_path`) | N/A (ZMQ socket) | telemetry コンテナが起動時に eventd へキャッシュ転送を要求する。この接続が確立するまで eventd はキャッシュを保持し続ける | `eventd.cpp:682`, `eventd.cpp:706-819` |
 
@@ -241,7 +241,7 @@ capture サービスが NULL のままサービスが継続する (`eventd.cpp:6
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG definition が存在しないため、デフォルト値はすべて `events_common.cpp` の `cfg_default` マップおよび `eventd.cpp` の定数から導出される[^2][^3]。
+[YANG](../../reference/glossary.md#term-yang) definition が存在しないため、デフォルト値はすべて `events_common.cpp` の `cfg_default` マップおよび `eventd.cpp` の定数から導出される[^2][^3]。
 
 | フィールド | コード由来デフォルト | fallback 源 |
 |-----------|-------------------|------------|
@@ -265,7 +265,7 @@ YANG definition が存在しないため、デフォルト値はすべて `event
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`eventd` および `events_common` に存在する、`init_cfg.json` / YANG では管理されないハードコード定数の一覧。
+`eventd` および `events_common` に存在する、`init_cfg.json` / [YANG](../../reference/glossary.md#term-yang) では管理されないハードコード定数の一覧。
 出典は `sonic-buildimage/src/sonic-eventd/src/eventd.cpp`、`eventd.h`、`events_common.h`。
 
 ### キャッシュ・バッファサイズ定数
@@ -319,9 +319,9 @@ YANG definition が存在しないため、デフォルト値はすべて `event
 |---|---|---|
 | `COUNTERS_DB COUNTERS_EVENTS` | **あり（定期書込）** | `stats_collector::run_writer()` が `stats_upd_secs` 間隔で `COUNTERS_EVENTS_TABLE` (`"COUNTERS_EVENTS"`) に 3 カウンタを `set()` する。キーは `"published"` / `"missed_to_cache"` / 内部カウンタ (`eventd.cpp:50-52, 205-210`) |
 | `CONFIG_DB` | なし | `eventd` は `init_cfg.json` をファイル直接読みする。CONFIG_DB へのアクセスなし |
-| `APPL_DB` | なし | `eventd` は APPL_DB への書き込みパスを持たない |
-| `STATE_DB` | なし | `eventd` は STATE_DB への書き込みパスを持たない |
-| `ASIC_DB` | なし | SAI 非経由のため ASIC_DB 書込なし |
+| `APPL_DB` | なし | `eventd` は [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みパスを持たない |
+| `STATE_DB` | なし | `eventd` は [STATE_DB](../../reference/glossary.md#term-state_db) への書き込みパスを持たない |
+| `ASIC_DB` | なし | [SAI](../../reference/glossary.md#term-sai) 非経由のため [ASIC_DB](../../reference/glossary.md#term-asic_db) 書込なし |
 | `FLEX_COUNTER_DB` | なし | Flex カウンタ設定は存在しない |
 
 ### COUNTERS_DB への書込詳細
@@ -353,7 +353,7 @@ YANG definition が存在しないため、デフォルト値はすべて `event
 
 ### 購読方式: なし (ファイル起動時読み込みのみ — ZMQ が内部 pub/sub メカニズム)
 
-`init_cfg.json` の `"events"` 設定を **Redis keyspace 通知で購読するプロセスは存在しない**。
+`init_cfg.json` の `"events"` 設定を **[Redis](../../reference/glossary.md#term-redis) keyspace 通知で購読するプロセスは存在しない**。
 `eventd` は起動時に `read_init_config(INIT_CFG_PATH)` (`events_common.cpp:38-83`) でファイルを直接読み込む。
 `SubscriberStateTable` / `ConsumerStateTable` / `ConfigDBConnector.subscribe()` はいずれも使用しない。
 
@@ -363,7 +363,7 @@ YANG definition が存在しないため、デフォルト値はすべて `event
 |---|---|---|---|
 | `eventd` (`run_eventd_service`) | `ifstream` ファイル直接読み取り | `init_cfg.json ["events"]` キー | 起動時 1 回のみ。lazy 初期化後は `docker restart eventd` でのみ再読み込み |
 | パブリッシャー（全コンテナ） | ZMQ XSUB `zmq_connect` | `:5570` (`xsub_path`) | `events_init_publisher()` で接続。`eventd` proxy が XSUB/XPUB 間でメッセージを転送 |
-| サブスクライバー（telemetry 等） | ZMQ XPUB `zmq_connect` | `:5571` (`xpub_path`) | `events_init_subscriber()` で接続。`sonic-gnmi` も直接接続してイベントストリームを gNMI に転送 |
+| サブスクライバー（telemetry 等） | ZMQ XPUB `zmq_connect` | `:5571` (`xpub_path`) | `events_init_subscriber()` で接続。`sonic-gnmi` も直接接続してイベントストリームを [gNMI](../../reference/glossary.md#term-gnmi) に転送 |
 | telemetry → eventd (キャッシュ制御) | ZMQ REQ/REP | `:5572` (`req_rep_path`) | `EVENT_CACHE_INIT` / `EVENT_CACHE_STOP_SUBCRIBER` / `EVENT_CACHE_READ` リクエスト |
 | `stats_collector` (内部) | ZMQ XPUB `events_init_subscriber` | `:5571` (`xpub_path`) | ハートビート・カウンタ収集用内部サブスクライバー (`eventd.cpp:244`) |
 | `hostcfgd` | 購読しない | — | — |
@@ -371,7 +371,7 @@ YANG definition が存在しないため、デフォルト値はすべて `event
 
 ### 変更の反映経路
 
-CONFIG_DB を経由しないため、Redis keyspace notification は発火しない:
+CONFIG_DB を経由しないため、[Redis](../../reference/glossary.md#term-redis) keyspace notification は発火しない:
 
 ```
 管理者: /etc/sonic/init_cfg.json を手動編集
@@ -388,20 +388,20 @@ systemctl restart eventd
 ### APPL_DB / SAI 中継
 
 なし。`init_cfg.json ["events"]` 設定は `eventd` の ZMQ フレームワーク起動パラメータとして機能し、
-APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない。
+[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への伝播も [SAI](../../reference/glossary.md#term-sai) 書き込みも発生しない。
 
 <!-- /pubsub -->
 
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: `eventd` は ZMQ ブローカーおよびファイルベース設定 (`init_cfg.json`) のみで動作し、SAI / ASIC ベンダー依存コードを一切持たない。
+**プラットフォーム差なし**: `eventd` は ZMQ ブローカーおよびファイルベース設定 (`init_cfg.json`) のみで動作し、[SAI](../../reference/glossary.md#term-sai) / [ASIC](../../reference/glossary.md#term-asic) ベンダー依存コードを一切持たない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Cisco-8000 等) | 影響なし | `eventd.cpp` / `eventd.h` / `events_common.cpp` に `getenv("platform")` 参照・ASIC 種別分岐はゼロ。SAI API 呼び出しなし (`eventd.cpp` 全行確認) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Cisco-8000 等) | 影響なし | `eventd.cpp` / `eventd.h` / `events_common.cpp` に `getenv("platform")` 参照・[ASIC](../../reference/glossary.md#term-asic) 種別分岐はゼロ。SAI API 呼び出しなし (`eventd.cpp` 全行確認) |
 | multi-asic (`IS_MULTI_NPU`) | 影響なし | `eventd` は単一コンテナとして host network namespace で動作する。`asicN` namespace への個別接続・ループ処理なし。`IS_MULTI_NPU` / `gMySwitchType` 参照もなし |
-| VOQ chassis (supervisor + line cards) | 各ノードで独立動作 | `eventd` は各ノードの `docker-eventd` コンテナとして独立起動する。ノード間でイベントを集約する仕組みは community master に存在しない |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各ノードで独立動作 | `eventd` は各ノードの `docker-eventd` コンテナとして独立起動する。ノード間でイベントを集約する仕組みは community master に存在しない |
 | VS (仮想スイッチ / sonic-vs) | 完全サポート (差異なし) | `eventd_ut.cpp` テストが VS 環境で動作する。ZMQ ポートアドレスは `init_cfg.json` で変更可能なため環境依存なし |
 | ベンダー固有 eventd プラグイン | なし | `rsyslog_plugin/` は `eventd` 本体と別バイナリ。syslog テキストを ZMQ に変換する補助コンポーネントであり、platform 条件分岐を持たない (`rsyslog_plugin/rsyslog_plugin.cpp` 全行確認) |
 
@@ -411,8 +411,10 @@ APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない�
 
 ## 引用元
 
-[^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework HLD. <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
+[^1]: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` — Event and Alarm Framework [HLD](../../reference/glossary.md#term-hld). <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
 
 [^2]: `sonic-net/sonic-swss-common/common/events_common.cpp` — `cfg_default` マップ (xsub/xpub/req_rep/capture/stats_upd_secs/cache_max_cnt デフォルト値) および `read_init_config()` 実装. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/events_common.cpp>
 
 [^3]: `sonic-net/sonic-buildimage/src/sonic-eventd/src/eventd.cpp` — `HEARTBEAT_INTERVAL_SECS`、`MAX_CACHE_SIZE`、`EVT_SIZE_AVG` 定数定義および `stats_collector` 実装. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-eventd/src/eventd.cpp>
+
+<!-- glossary-links-injected: c8f5e0aef983 -->

@@ -171,29 +171,28 @@ show mclag brief
 enum: `unique_ip` = `enable` のみ (無効化はエントリ削除)。
 <!-- /value-behavior -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`MlagOrch` (orchagent 直接 CFG 購読) + `mclagsyncd` が CONFIG_DB の `MCLAG_DOMAIN` テーブルを購読する。
+`MlagOrch` ([orchagent](../../reference/glossary.md#term-orchagent) 直接 CFG 購読) + `mclagsyncd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `MCLAG_DOMAIN` テーブルを購読する。
 
 `MCLAG_DOMAIN` の key は domain ID (例: `1`)。`peer_link` / `peer_ip` / `source_ip` / `session_timeout` 等を保持。
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (orchagent が直接 CONFIG_DB を購読)
+なし ([orchagent](../../reference/glossary.md#term-orchagent) が直接 CONFIG_DB を購読)
 
 ### 段階 3 — APPL→SAI
 
-`sai_fdb_api` (FDB 同期) + `mclagsyncd` が MCLAG ピアとの制御接続を管理
+`sai_fdb_api` ([FDB](../../reference/glossary.md#term-fdb) 同期) + `mclagsyncd` が [MCLAG](../../reference/glossary.md#term-mclag) ピアとの制御接続を管理
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: orchagent が CONFIG_DB 変化を検知後、MCLAG セッションのネゴシエーションを開始。`mclagsyncd` が ICCP (Inter-Chassis Control Protocol) 接続を確立。非同期で完了。
+**適用タイミング**: [orchagent](../../reference/glossary.md#term-orchagent) が CONFIG_DB 変化を検知後、[MCLAG](../../reference/glossary.md#term-mclag) セッションのネゴシエーションを開始。`mclagsyncd` が ICCP (Inter-Chassis Control Protocol) 接続を確立。非同期で完了。
 
-**副作用**: MCLAG domain の peer IP/source IP 変更は ICCP session reset を引き起こす。ICCP session reset 中は MCLAG で同期していた FDB/ARP が失われる可能性がある。
+**副作用**: [MCLAG](../../reference/glossary.md#term-mclag) domain の peer IP/source IP 変更は ICCP session reset を引き起こす。ICCP session reset 中は MCLAG で同期していた [FDB](../../reference/glossary.md#term-fdb)/[ARP](../../reference/glossary.md#term-arp) が失われる可能性がある。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -209,7 +208,7 @@ enum: `unique_ip` = `enable` のみ (無効化はエントリ削除)。
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- sonic-mgmt-common xfmr_mclag.go 経由 (OpenConfig MCLAG)
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common xfmr_mclag.go 経由 (OpenConfig MCLAG)
 
 ### db_migrator
 - なし
@@ -292,11 +291,11 @@ minigraph.py および init_cfg.json.j2 からの `MCLAG_DOMAIN` 自動派生は
 
 ### SAI bridge_port 失敗
 
-`MlagOrch` は SAI API を直接呼ばない。`addIslInterface()` / `delIslInterface()` は observer 通知 (`notify()`) のみ実行する。SAI bridge_port 操作は下流 observer が担当し、失敗フィードバックは `mlagorch.cpp` には返らない。
+`MlagOrch` は [SAI](../../reference/glossary.md#term-sai) API を直接呼ばない。`addIslInterface()` / `delIslInterface()` は observer 通知 (`notify()`) のみ実行する。[SAI](../../reference/glossary.md#term-sai) bridge_port 操作は下流 observer が担当し、失敗フィードバックは `mlagorch.cpp` には返らない。
 
 ### STATE_DB / ERROR_TABLE への記録
 
-`MlagOrch` は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。
+`MlagOrch` は [STATE_DB](../../reference/glossary.md#term-state_db) / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。
 
 ```bash
 docker exec swss cat /var/log/swss/orchagent.log | grep -i "MLAG"
@@ -329,7 +328,7 @@ docker exec swss cat /var/log/swss/orchagent.log | grep -i "MLAG"
 
 ### ASIC_DB 参照 (読取のみ)
 
-`mclagsyncd` は FDB エントリのポート解決のため ASIC_DB を**読み取り専用**で参照する。
+`mclagsyncd` は [FDB](../../reference/glossary.md#term-fdb) エントリのポート解決のため [ASIC_DB](../../reference/glossary.md#term-asic_db) を**読み取り専用**で参照する。
 
 ```
 ASIC_STATE:SAI_OBJECT_TYPE_BRIDGE_PORT:<oid>
@@ -341,7 +340,7 @@ evidence: `mclaglink.cpp` `getBridgePortIdToAttrPortIdMap()` (L73-L96)
 
 ### APPL_DB FDB_TABLE
 
-iccpd からの FDB ADD/DEL 通知を受け、`mclagsyncd` が APPL_DB に書き込む。
+iccpd からの FDB ADD/DEL 通知を受け、`mclagsyncd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込む。
 
 ```
 FDB_TABLE|Vlan<vid>:<mac>
@@ -351,7 +350,7 @@ FDB_TABLE|Vlan<vid>:<mac>
 
 - ADD: `MCLAG_FDB_OPER_ADD` 受信時に `p_fdb_tbl->set()` を実行
 - DEL: `MCLAG_FDB_OPER_DEL` 受信時に `p_fdb_tbl->del()` を実行
-- APPL_DB FDB_TABLE → fdbsyncd → orchagent → sai_fdb_api → ASIC_DB の順に伝播
+- [APPL_DB](../../reference/glossary.md#term-appl_db) FDB_TABLE → [fdbsyncd](../../reference/glossary.md#term-fdbsyncd) → orchagent → sai_fdb_api → [ASIC_DB](../../reference/glossary.md#term-asic_db) の順に伝播
 - evidence: `mclaglink.cpp:512-517`
 
 ### MlagOrch observer 通知 (内部)
@@ -378,14 +377,14 @@ MCLAG の通信経路は **MlagOrch 系**（orchagent 内・Observer パター�
 
 ### MlagOrch → 内部 Observer 通知 → FdbOrch
 
-MlagOrch は SAI を直接呼ばず、orchagent 内の Observer 通知を使う:
+MlagOrch は [SAI](../../reference/glossary.md#term-sai) を直接呼ばず、orchagent 内の Observer 通知を使う:
 
 | SubjectType | 発生トリガー | 影響先 |
 |-------------|------------|--------|
 | `SUBJECT_TYPE_MLAG_ISL_CHANGE` | `peer_link` 追加/削除 | FdbOrch が `isIslInterface()` で ISL 判定 |
 | `SUBJECT_TYPE_MLAG_INTF_CHANGE` | MC-LAG メンバー追加/削除 | FdbOrch が `isMlagInterface()` でフラッシュ制御 |
 
-SAI 操作は FdbOrch 経由: MCLAG メンバーが oper-down の場合に `sai_fdb_api->remove_fdb_entry()` を呼ぶ（`fdborch.cpp:1666`）。mclagsyncd は ASIC_DB の `ASIC_STATE:SAI_OBJECT_TYPE_BRIDGE_PORT:*` を**読み取り専用**で参照し FDB ポート OID を解決する（`mclaglink.cpp:79-95`）。
+SAI 操作は FdbOrch 経由: MCLAG メンバーが oper-down の場合に `sai_fdb_api->remove_fdb_entry()` を呼ぶ（`fdborch.cpp:1666`）。mclagsyncd は [ASIC_DB](../../reference/glossary.md#term-asic_db) の `ASIC_STATE:SAI_OBJECT_TYPE_BRIDGE_PORT:*` を**読み取り専用**で参照し FDB ポート OID を解決する（`mclaglink.cpp:79-95`）。
 
 ### mclagsyncd → iccpd TCP IPC
 
@@ -398,7 +397,7 @@ mclagsyncd が TCP サーバとして `listen / accept` し、iccpd が接続す
 
 ### mclagsyncd → APPL_DB (ProducerStateTable)
 
-iccpd からの命令を受けて APPL_DB へ書き込む:
+iccpd からの命令を受けて [APPL_DB](../../reference/glossary.md#term-appl_db) へ書き込む:
 
 | APPL_DB テーブル | 消費者 |
 |-----------------|--------|
@@ -442,15 +441,12 @@ iccpd からの命令を受けて APPL_DB へ書き込む:
 
 | トリガー | 影響先 | 挙動 | evidence |
 |---|---|---|---|
-| MCLAG_INTERFACE 登録済み PortChannel が oper-down | APPL_DB `FDB_TABLE` | FDB フラッシュをスキップ（ピア側保持のため） | `fdborch.cpp:1209-1212` |
+| MCLAG_INTERFACE 登録済み [PortChannel](../../reference/glossary.md#term-portchannel) が oper-down | APPL_DB `FDB_TABLE` | FDB フラッシュをスキップ（ピア側保持のため） | `fdborch.cpp:1209-1212` |
 | MCLAG 広告 FDB の削除 + ポート oper-down | APPL_DB `FDB_TABLE` | 削除 origin を `FDB_ORIGIN_LEARN` に書き換えてローカル MAC 削除 | `fdborch.cpp:1665-1670` |
 
 > **NEIGHBOR への参照なし**: `mlagorch.cpp` は `NEIGHBOR` / `NEIGH` テーブルを直接参照しない。隣接解決は `neighorch` が担当し、MCLAG はポート状態通知に留まる。
 
 <!-- /cross-refs -->
-
-
-
 
 <!-- ordering -->
 ## 書込み順序依存 (Phase B)
@@ -475,8 +471,8 @@ iccpd からの命令を受けて APPL_DB へ書き込む:
    - MCLAG_DOMAIN の書込み前に MCLAG_INTERFACE / MCLAG_UNIQUE_IP を書いても iccpd への通知は届かない。
    - evidence: `mclaglink.cpp:814-818`, `mclaglink.cpp:903-907`, `mclaglink.cpp:910-921`
 
-4. **VLAN_INTERFACE の IP / VRF を先に削除**してから MCLAG_UNIQUE_IP を有効化する
-   - CLI は対象 VLAN IF に VRF バインドまたは IP アドレスがある場合に `ctx.fail()` で拒否する。
+4. **VLAN_INTERFACE の IP / [VRF](../../reference/glossary.md#term-vrf) を先に削除**してから MCLAG_UNIQUE_IP を有効化する
+   - CLI は対象 VLAN IF に [VRF](../../reference/glossary.md#term-vrf) バインドまたは IP アドレスがある場合に `ctx.fail()` で拒否する。
    - YANG 側の back-link 制約は現在コメントアウトされているため、sonic-db-cli 直接書込みでは回避できるが非推奨。
    - evidence: `config/mclag.py:338-347`, `sonic-mclag.yang:137-142`
 
@@ -503,7 +499,7 @@ iccpd からの命令を受けて APPL_DB へ書き込む:
 | 3 | PORTCHANNEL + MCLAG_DOMAIN → MCLAG_INTERFACE | YANG バリデーション必須 | 1→2→3 の順序 |
 | 4 | MCLAG_DOMAIN → MCLAG_UNIQUE_IP | YANG must 必須 + CLI チェック | MCLAG_DOMAIN を先に書く |
 | 5 | MCLAG_DOMAIN 初回 ADD → mclagsyncd が INTF/UNIQUE_IP 購読開始 | mclagsyncd 内部 | MCLAG_DOMAIN SET 完了後に書く |
-| 6 | VLAN_INTERFACE IP/VRF 削除 → MCLAG_UNIQUE_IP 設定 | CLI チェック必須 | CLI 経由では先に IP/VRF を外す |
+| 6 | VLAN_INTERFACE IP/[VRF](../../reference/glossary.md#term-vrf) 削除 → MCLAG_UNIQUE_IP 設定 | CLI チェック必須 | CLI 経由では先に IP/VRF を外す |
 | 7 | MCLAG_INTERFACE DEL → MCLAG_UNIQUE_IP DEL → MCLAG_DOMAIN DEL | 推奨 | CLI del が自動実行（INTF のみ） |
 
 <!-- /ordering -->
@@ -596,7 +592,7 @@ mclagsyncd が ISOLATION_GROUP_TABLE の MEMBERS を構築する際、ASIC_DB �
 
 ### MlagOrch (orchagent) 側のプラットフォーム差
 
-`MlagOrch` は **ASIC 識別ロジックを持たない**。`mlagorch.cpp` 全行 (250 行) に `getenv("platform")` / `m_platform` / SAI 直接呼び出しは 0 件。`addIslInterface()` / `addMlagInterface()` は Subject 通知 (`SUBJECT_TYPE_MLAG_ISL_CHANGE` / `SUBJECT_TYPE_MLAG_INTF_CHANGE`) のみを broadcast し、実際の SAI 操作は `FdbOrch` 側が担う。CONFIG_DB の `MCLAG_DOMAIN` / `MCLAG_INTERFACE` フィールド値はすべてのプラットフォームで共通。
+`MlagOrch` は **[ASIC](../../reference/glossary.md#term-asic) 識別ロジックを持たない**。`mlagorch.cpp` 全行 (250 行) に `getenv("platform")` / `m_platform` / SAI 直接呼び出しは 0 件。`addIslInterface()` / `addMlagInterface()` は Subject 通知 (`SUBJECT_TYPE_MLAG_ISL_CHANGE` / `SUBJECT_TYPE_MLAG_INTF_CHANGE`) のみを broadcast し、実際の SAI 操作は `FdbOrch` 側が担う。CONFIG_DB の `MCLAG_DOMAIN` / `MCLAG_INTERFACE` フィールド値はすべてのプラットフォームで共通。
 
 ### SAI bridge_port capability と FDB 解決
 
@@ -613,11 +609,11 @@ if (attr_port_id == hash.end())
 }
 ```
 
-| ASIC 種別 | bridge_port 解決経路 | 影響 |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 | bridge_port 解決経路 | 影響 |
 |---|---|---|
 | Broadcom / Mellanox (通常ポート) | `SAI_BRIDGE_PORT_ATTR_PORT_ID` (一次) | 正常解決 |
 | VxLAN トンネルポート系 | `SAI_BRIDGE_PORT_ATTR_TUNNEL_ID` (フォールバック) | 正常解決 |
-| capability 未実装 ASIC | 両 attr 不在 → `continue` | APPL_DB への FDB 伝播スキップ |
+| capability 未実装 [ASIC](../../reference/glossary.md#term-asic) | 両 attr 不在 → `continue` | APPL_DB への FDB 伝播スキップ |
 
 ### Broadcom / Mellanox MCLAG port isolation 対応差
 
@@ -638,11 +634,11 @@ if (attr_port_id == hash.end())
 | `broadcom` / `barefoot` / `centec` / `clounix` / `marvell-prestera` / `marvell-teralynx` | `ISOLATION_GROUP_TABLE\|MCLAG_ISO_GRP` (TYPE=bridge-port) | MEMBERS から `Ethernet` 系を除外 | `SAI_OBJECT_TYPE_ISOLATION_GROUP` |
 | `mellanox` / `vs` / その他未定義 | `ACL_TABLE_TABLE\|mclag` + `ACL_RULE_TABLE\|mclag:mclag` (type=L3, PACKET_ACTION=DROP) | OUT_PORTS から `PortChannel` 系を除外 | `SAI_OBJECT_TYPE_ACL_TABLE` / `ACL_ENTRY` |
 
-ACL fallback (`mellanox` 等) では L3 ACL リソースを 1 テーブル消費する点に注意。
+[ACL](../../reference/glossary.md#term-acl) fallback (`mellanox` 等) では L3 [ACL](../../reference/glossary.md#term-acl) リソースを 1 テーブル消費する点に注意。
 
 #### 削除挙動差
 
-| 条件 | ISOLATION_GROUP 経路 (Broadcom 等) | ACL fallback (Mellanox 等) |
+| 条件 | ISOLATION_GROUP 経路 (Broadcom 等) | [ACL](../../reference/glossary.md#term-acl) fallback (Mellanox 等) |
 |---|---|---|
 | ICCP up + リモート全 I/F down | MEMBERS を空にしてエントリ **保持** | — |
 | ICCP down / dst port 空 (`op_len==0`) | `ISOLATION_GROUP_TABLE\|MCLAG_ISO_GRP` DEL | `ACL_TABLE_TABLE\|mclag` DEL |
@@ -664,3 +660,5 @@ MCLAG は kernel bridge (`brX`) を iccpd が直接操作しない設計。FDB �
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/mclag-domain-platform.md`
 <!-- /platform -->
+
+<!-- glossary-links-injected: fc6086834412 -->

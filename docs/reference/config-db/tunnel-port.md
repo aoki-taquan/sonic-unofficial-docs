@@ -42,23 +42,27 @@ related:
 
 | 種別 | 名前形式 | 生成トリガー |
 |------|---------|------------|
-| Local SRC VTEP ポート | `Port_SRC_VTEP_<src_ip>` | `VXLAN_TUNNEL_MAP` 処理 (DIP トンネル非サポート時) |
-| EVPN DIP トンネルポート | `Port_EVPN_<remote_vtep_ip>` | `addTunnelUser()` (EVPN リモート VTEP 学習時) |
+| Local SRC [VTEP](../../reference/glossary.md#term-vtep) ポート | `Port_SRC_VTEP_<src_ip>` | `VXLAN_TUNNEL_MAP` 処理 (DIP トンネル非サポート時) |
+| [EVPN](../../reference/glossary.md#term-evpn) DIP トンネルポート | `Port_EVPN_<remote_vtep_ip>` | `addTunnelUser()` ([EVPN](../../reference/glossary.md#term-evpn) リモート [VTEP](../../reference/glossary.md#term-vtep) 学習時) |
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB\nVXLAN_TUNNEL\nVXLAN_TUNNEL_MAP")]
-  ORCH["VxlanTunnelOrch\n(orchagent)"]
-  PORTS["PortsOrch\nm_portList\n[Port::TUNNEL]"]
-  SAI["SAI\nsai_bridge_api\ncreate_bridge_port()"]
-  CDB --> ORCH
-  ORCH --> PORTS
-  PORTS --> SAI
+  CDB[("CONFIG_DB<br/>VXLAN_TUNNEL")]
+  DM["vxlanmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VXLAN_TUNNEL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_tunnel_api"]
+  SYNCD --> SAI
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## 命名規則
@@ -93,26 +97,26 @@ VxlanTunnelMapOrch::addOperation [vxlanorch.cpp:2079]
 
 ## 購読者
 
-- `VxlanTunnelOrch::addTunnelUser()`: EVPN DIP トンネルポートを生成
-- `VxlanTunnelMapOrch::addOperation()`: Local SRC VTEP ポートを生成 (DIP 非サポート時)
-- `VxlanTunnelOrch::deleteTunnelPort()`: FDB カウントが 0 の場合にポートを削除
-- `VxlanTunnelOrch::updateDbTunnelOperStatus()`: STATE_DB の oper status を更新
+- `VxlanTunnelOrch::addTunnelUser()`: [EVPN](../../reference/glossary.md#term-evpn) DIP トンネルポートを生成
+- `VxlanTunnelMapOrch::addOperation()`: Local SRC [VTEP](../../reference/glossary.md#term-vtep) ポートを生成 (DIP 非サポート時)
+- `VxlanTunnelOrch::deleteTunnelPort()`: [FDB](../../reference/glossary.md#term-fdb) カウントが 0 の場合にポートを削除
+- `VxlanTunnelOrch::updateDbTunnelOperStatus()`: [STATE_DB](../../reference/glossary.md#term-state_db) の oper status を更新
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
 以下のデフォルト値は DB フィールドとして公開されず、`portsorch.cpp` / `vxlanorch.cpp` 内でハードコードまたは暗黙的に設定される[^1]。
 
-| フィールド / SAI 属性 | デフォルト / 実挙動 | 分類 | 根拠 |
+| フィールド / [SAI](../../reference/glossary.md#term-sai) 属性 | デフォルト / 実挙動 | 分類 | 根拠 |
 |----------------------|--------------------|------|------|
 | `m_type` | 常に `Port::TUNNEL` ハードコード | ハードコード | `portsorch.cpp:8362` |
-| `m_learn_mode` (FDB 学習) | 常に `SAI_BRIDGE_PORT_FDB_LEARNING_MODE_DISABLE` — `hwlearning=false` が固定で渡される | ハードコード | `vxlanorch.cpp:1719`, `vxlanorch.cpp:2082`, `portsorch.cpp:8370` |
+| `m_learn_mode` ([FDB](../../reference/glossary.md#term-fdb) 学習) | 常に `SAI_BRIDGE_PORT_FDB_LEARNING_MODE_DISABLE` — `hwlearning=false` が固定で渡される | ハードコード | `vxlanorch.cpp:1719`, `vxlanorch.cpp:2082`, `portsorch.cpp:8370` |
 | `m_oper_status` 初期値 | `SAI_PORT_OPER_STATUS_DOWN` — トンネルポート作成直後は常に DOWN | ハードコード初期値 | `portsorch.cpp:8372` |
-| SAI bridge type | `SAI_BRIDGE_PORT_TYPE_TUNNEL` ハードコード | ハードコード | `portsorch.cpp:7230` |
-| SAI bridge | `m_default1QBridge` (デフォルト 1Q ブリッジ固定) | ハードコード | `portsorch.cpp:7238` |
+| [SAI](../../reference/glossary.md#term-sai) bridge type | `SAI_BRIDGE_PORT_TYPE_TUNNEL` ハードコード | ハードコード | `portsorch.cpp:7230` |
+| [SAI](../../reference/glossary.md#term-sai) bridge | `m_default1QBridge` (デフォルト 1Q ブリッジ固定) | ハードコード | `portsorch.cpp:7238` |
 | SAI admin state | `true` (UP) — ブリッジポート作成時に常に UP | ハードコード | `portsorch.cpp:7250` |
 | `m_fdb_count` 初期値 | `0` | ハードコード初期値 | `port.h:234` |
-| CONFIG_DB フィールド | なし — 全属性がコード内で固定 | CONFIG_DB 非連動 | YANG 定義なし |
+| CONFIG_DB フィールド | なし — 全属性がコード内で固定 | CONFIG_DB 非連動 | [YANG](../../reference/glossary.md#term-yang) 定義なし |
 
 ### 詳細: FDB 学習の無効化
 
@@ -121,7 +125,7 @@ VxlanTunnelMapOrch::addOperation [vxlanorch.cpp:2079]
 `gPortsOrch->addTunnel(name, id, false)` を呼ぶ。`hwlearning=false` により
 `PortsOrch::addTunnel()` 内で `m_learn_mode = SAI_BRIDGE_PORT_FDB_LEARNING_MODE_DISABLE` が設定され、
 後続の `addBridgePort()` で SAI ブリッジポートの `FDB_LEARNING_MODE` 属性として渡される。
-結果として、すべての VXLAN トンネルポートで HW FDB 学習は **常に無効**。CONFIG_DB から
+結果として、すべての [VXLAN](../../reference/glossary.md#term-vxlan) トンネルポートで HW [FDB](../../reference/glossary.md#term-fdb) 学習は **常に無効**。CONFIG_DB から
 この挙動を変更する手段はない[^1]。
 
 ### 詳細: 削除ガード
@@ -141,14 +145,14 @@ VxlanTunnelMapOrch::addOperation [vxlanorch.cpp:2079]
 
 | # | 先行必須 | 後続処理 | 違反時の動作 | 自動回復 |
 |---|----------|----------|-------------|---------|
-| 1 | `VXLAN_TUNNEL` が CONFIG_DB に存在 | `VXLAN_TUNNEL_MAP` が orchagent に処理される | `tunnel_obj` null → `return false` → 再試行 | あり |
-| 2 | `VXLAN_EVPN_NVO` が orchagent に処理済み | `addTunnelUser` による `Port_EVPN_*` 生成 | `getEVPNVtep()==NULL` → WARN + `return false` | あり |
+| 1 | `VXLAN_TUNNEL` が CONFIG_DB に存在 | `VXLAN_TUNNEL_MAP` が [orchagent](../../reference/glossary.md#term-orchagent) に処理される | `tunnel_obj` null → `return false` → 再試行 | あり |
+| 2 | `VXLAN_EVPN_NVO` が [orchagent](../../reference/glossary.md#term-orchagent) に処理済み | `addTunnelUser` による `Port_EVPN_*` 生成 | `getEVPNVtep()==NULL` → WARN + `return false` | あり |
 | 3 | `VXLAN_TUNNEL_MAP` 処理で `active_=true` | `addTunnelUser` の `isActive()` ガード通過 | `isActive()==false` → WARN + `return false` | あり |
 | 4 | `VXLAN_TUNNEL_MAP` が存在 | `Port_SRC_VTEP_*` 生成 (DIP 非サポート時) | 生成トリガーが存在しない（永続的） | なし |
 
 ### 主要な制約詳細
 
-**VXLAN_EVPN_NVO 先行必須 (依存 #2)**: `addTunnelUser` (vxlanorch.cpp:1685) は `evpn_orch->getEVPNVtep()` を呼ぶ。`VXLAN_EVPN_NVO` エントリが CONFIG_DB に書かれ `EvpnNvoOrch::addOperation` (vxlanorch.cpp:2776) が実行されることで `source_vtep_ptr` が設定される。それ以前は `getEVPNVtep()` が `NULL` を返し、`SWSS_LOG_WARN("Unable to find EVPN VTEP")` が記録されてトンネルポートは生成されない。BGP が EVPN リモート VTEP を学習しても `VXLAN_EVPN_NVO` が未設定なら `Port_EVPN_*` は作られない。
+**VXLAN_EVPN_NVO 先行必須 (依存 #2)**: `addTunnelUser` (vxlanorch.cpp:1685) は `evpn_orch->getEVPNVtep()` を呼ぶ。`VXLAN_EVPN_NVO` エントリが CONFIG_DB に書かれ `EvpnNvoOrch::addOperation` (vxlanorch.cpp:2776) が実行されることで `source_vtep_ptr` が設定される。それ以前は `getEVPNVtep()` が `NULL` を返し、`SWSS_LOG_WARN("Unable to find EVPN VTEP")` が記録されてトンネルポートは生成されない。[BGP](../../reference/glossary.md#term-bgp) が EVPN リモート VTEP を学習しても `VXLAN_EVPN_NVO` が未設定なら `Port_EVPN_*` は作られない。
 
 **VTEP isActive() ガード (依存 #3)**: `vtep_ptr->isActive()` (vxlanorch.cpp:1694) は `createTunnelHw()` が SAI `create_tunnel()` を成功させた後に `active_ = true` となる (vxlanorch.cpp:939)。`VXLAN_TUNNEL_MAP` または `VXLAN_VRF_MAP` の追加処理が完了していなければ `active_=false` のままであり、`addTunnelUser` は `SWSS_LOG_WARN("VTEP not yet active")` を出力して失敗する。
 
@@ -159,14 +163,14 @@ VxlanTunnelMapOrch::addOperation [vxlanorch.cpp:2079]
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-VXLAN トンネルポートオブジェクト (`Port::TUNNEL`) は CONFIG_DB テーブルを直接購読しないが、生成・削除・状態更新の各フェーズで以下のオブジェクト / テーブルを暗黙的に参照する。
+[VXLAN](../../reference/glossary.md#term-vxlan) トンネルポートオブジェクト (`Port::TUNNEL`) は CONFIG_DB テーブルを直接購読しないが、生成・削除・状態更新の各フェーズで以下のオブジェクト / テーブルを暗黙的に参照する。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
 | `VXLAN_EVPN_NVO` (CONFIG_DB) | 読み取り (`gDirectory.get<EvpnNvoOrch*>()`) | `addTunnelUser()` 呼び出し時に `evpn_orch->getEVPNVtep()` を取得。未設定なら `Port_EVPN_*` 生成不可 | `vxlanorch.cpp:1678`, `vxlanorch.cpp:1685-1692` |
 | `VXLAN_TUNNEL` (CONFIG_DB) | 読み取り (SAI トンネル OID) | `addTunnel(port_name, tunnel_id, ...)` の `tunnel_id` 引数は SIP トンネルの SAI OID。`isActive()` が `false` なら生成ブロック | `vxlanorch.cpp:1694-1699`, `vxlanorch.cpp:1719` |
 | `VXLAN_TUNNEL_MAP` (CONFIG_DB) | 読み取り (生成トリガー) | DIP 非サポート環境では `VxlanTunnelMapOrch::addOperation` からのみ `Port_SRC_VTEP_*` が生成される | `vxlanorch.cpp:2079-2082` |
-| `STATE_DB:VXLAN_TUNNEL_TABLE` | 書き込み | `updateDbTunnelOperStatus()` がトンネルポートの `operstatus`（`up`/`down`）を STATE_DB に反映 | `vxlanorch.cpp:1893-1912` |
+| `STATE_DB:VXLAN_TUNNEL_TABLE` | 書き込み | `updateDbTunnelOperStatus()` がトンネルポートの `operstatus`（`up`/`down`）を [STATE_DB](../../reference/glossary.md#term-state_db) に反映 | `vxlanorch.cpp:1893-1912` |
 | `PortsOrch::m_portList` (内部) | 書き込み / 読み取り | `addTunnel()` がポートオブジェクトを登録。`getTunnelPort()` が名前で検索して重複防止 | `portsorch.cpp:8362`, `vxlanorch.cpp:1715`, `vxlanorch.cpp:1957-1966` |
 | `PortsOrch::m_default1QBridge` (内部) | 読み取り (ハードコード) | `addBridgePort()` が SAI `SAI_BRIDGE_PORT_ATTR_BRIDGE_ID` にデフォルト 1Q ブリッジ OID を使用 | `portsorch.cpp:7238` |
 | `FdbOrch` (間接) | 参照カウント | `m_fdb_count` が 0 になるまでブリッジポート削除がブロックされる。FDB エントリの追加・削除は FdbOrch が管理 | `vxlanorch.cpp:1770-1776`, `port.h:234` |
@@ -188,8 +192,8 @@ VXLAN トンネルポートオブジェクト (`Port::TUNNEL`) は CONFIG_DB テ
 | `evpn_orch->getEVPNVtep()` が NULL (`VXLAN_EVPN_NVO` 未設定) | `addTunnelUser()` | `return false` → Orch 再試行キューへ。`Port_EVPN_*` は生成されない | `SWSS_LOG_WARN("Unable to find EVPN VTEP. user=%d remote_vtep=%s")` | `vxlanorch.cpp:1689-1692` |
 | `vtep_ptr->isActive()` が false (SIP トンネル HW 未作成) | `addTunnelUser()` | `return false` → Orch 再試行キューへ。`Port_EVPN_*` は生成されない | `SWSS_LOG_WARN("VTEP not yet active.user=%d remote_vtep=%s")` | `vxlanorch.cpp:1696-1699` |
 | `sai_bridge_api->create_bridge_port()` が SAI_STATUS_SUCCESS 以外を返す | `PortsOrch::addBridgePort()` | `handleSaiCreateStatus()` を実行。`task_success` 以外なら `parseHandleSaiStatusFailure()` が呼ばれ `return false` | `SWSS_LOG_ERROR("Failed to add bridge port %s to default 1Q bridge, rv:%d")` | `portsorch.cpp:7261-7265` |
-| `setHostIntfsStripTag()` が false を返す (hostif VLAN タグ設定失敗) | `PortsOrch::addBridgePort()` 末尾 | `return false` — `bridge_port_id` は設定済みだが `m_portList` 更新・通知がスキップされる | `SWSS_LOG_ERROR("Failed to set %s for hostif of port %s")` | `portsorch.cpp:7272-7274` |
-| VLAN ID が VLAN テーブルに存在しない (DIP 非サポート時) | `VxlanTunnelMapOrch::addOperation()` | `return false` — Local SRC VTEP ポートも生成されない | `SWSS_LOG_WARN("Vxlan tunnel map vlan id doesn't exist: %d")` | `vxlanorch.cpp:2032` |
+| `setHostIntfsStripTag()` が false を返す (hostif [VLAN](../../reference/glossary.md#term-vlan) タグ設定失敗) | `PortsOrch::addBridgePort()` 末尾 | `return false` — `bridge_port_id` は設定済みだが `m_portList` 更新・通知がスキップされる | `SWSS_LOG_ERROR("Failed to set %s for hostif of port %s")` | `portsorch.cpp:7272-7274` |
+| [VLAN](../../reference/glossary.md#term-vlan) ID が [VLAN](../../reference/glossary.md#term-vlan) テーブルに存在しない (DIP 非サポート時) | `VxlanTunnelMapOrch::addOperation()` | `return false` — Local SRC VTEP ポートも生成されない | `SWSS_LOG_WARN("Vxlan tunnel map vlan id doesn't exist: %d")` | `vxlanorch.cpp:2032` |
 | VNI ID が最大値超過 (`vni_id >= (1 << 24)`) | `VxlanTunnelMapOrch::addOperation()` | `return false` — 恒久エラー | `SWSS_LOG_ERROR("Vxlan tunnel map vni id is too big: %d")` | `vxlanorch.cpp:2039` |
 | `VXLAN_TUNNEL` が CONFIG_DB に存在しない | `VxlanTunnelMapOrch::addOperation()` | `return false` → Orch 再試行キューへ | `SWSS_LOG_WARN("Vxlan tunnel '%s' doesn't exist")` | `vxlanorch.cpp:2049` |
 
@@ -245,8 +249,8 @@ CONFIG_DB の VXLAN_TUNNEL_MAP / VXLAN_EVPN_NVO テーブルから読み込ま�
 |--------|----|---------|------|
 | `DEFAULT_TUNNEL_ENCAP_TTL` | `255` | `vxlanorch.h:49` | VXLAN encap パケットの TTL デフォルト値。YANG / CONFIG_DB に対応フィールドなし |
 | `TUNNEL_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"TUNNEL_STAT_COUNTER"` | `vxlanorch.h:39` | FlexCounterManager に登録するカウンタグループ名 |
-| `TUNNEL_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` | `vxlanorch.h:40` | FlexCounter のポーリング間隔 (ms)。10 秒固定。CONFIG_DB から変更不可 |
-| `FLEX_COUNTER_UPD_INTERVAL` | `1` | `vxlanorch.cpp:36` | FlexCounter 更新タイマーの秒数 |
+| `TUNNEL_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` | `vxlanorch.h:40` | [FlexCounter](../../reference/glossary.md#term-flexcounter) のポーリング間隔 (ms)。10 秒固定。CONFIG_DB から変更不可 |
+| `FLEX_COUNTER_UPD_INTERVAL` | `1` | `vxlanorch.cpp:36` | [FlexCounter](../../reference/glossary.md#term-flexcounter) 更新タイマーの秒数 |
 
 ### SAI 属性のハードコード値
 
@@ -276,10 +280,10 @@ CONFIG_DB の VXLAN_TUNNEL_MAP / VXLAN_EVPN_NVO テーブルから読み込ま�
 
 | 副次 DB | テーブル / キー | トリガ | タイミング |
 |---------|--------------|--------|----------|
-| STATE_DB | `VXLAN_TUNNEL_TABLE\|<tunnel_name>` (`operstatus`: `up`/`down`) | SAI ポートステータス変化イベント → `updateDbTunnelOperStatus()` (vxlanorch.cpp:1893) | トンネルポート生成後、アンダーレイ経路確立時に非同期 |
-| COUNTERS_DB | `COUNTERS_TUNNEL_NAME_MAP` / `COUNTERS_TUNNEL_TYPE_MAP` | `doTask(SelectableTimer)` → `m_tunnelNameTable->set()` / `m_tunnelTypeTable->set()` (vxlanorch.cpp:1322–1335) | `addTunnelToFlexCounter()` 登録後、最大 1 秒遅延 (SelectableTimer 発火まで) |
-| ASIC_DB (SAI) | `SAI_OBJECT_TYPE_BRIDGE_PORT:<oid>` | `sai_bridge_api->create_bridge_port()` via `addBridgePort()` (portsorch.cpp:7258) | `addBridgePort()` 呼出と同期 |
-| APPL_DB | なし | `VxlanTunnelOrch` / `PortsOrch` の `addTunnel()` / `addBridgePort()` に APPL_DB 書込なし | — |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `VXLAN_TUNNEL_TABLE\|<tunnel_name>` (`operstatus`: `up`/`down`) | SAI ポートステータス変化イベント → `updateDbTunnelOperStatus()` (vxlanorch.cpp:1893) | トンネルポート生成後、アンダーレイ経路確立時に非同期 |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_TUNNEL_NAME_MAP` / `COUNTERS_TUNNEL_TYPE_MAP` | `doTask(SelectableTimer)` → `m_tunnelNameTable->set()` / `m_tunnelTypeTable->set()` (vxlanorch.cpp:1322–1335) | `addTunnelToFlexCounter()` 登録後、最大 1 秒遅延 (SelectableTimer 発火まで) |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) (SAI) | `SAI_OBJECT_TYPE_BRIDGE_PORT:<oid>` | `sai_bridge_api->create_bridge_port()` via `addBridgePort()` ([portsorch](../../reference/glossary.md#term-portsorch).cpp:7258) | `addBridgePort()` 呼出と同期 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `VxlanTunnelOrch` / `PortsOrch` の `addTunnel()` / `addBridgePort()` に [APPL_DB](../../reference/glossary.md#term-appl_db) 書込なし | — |
 | CONFIG_DB | なし | 読取専用。書戻しなし | — |
 
 ### 詳細: STATE_DB 書込シーケンス
@@ -294,21 +298,21 @@ SAI ポートステータス変化イベント
   → STATE_DB::VXLAN_TUNNEL_TABLE|<tunnel_name>
 ```
 
-トンネルポート生成直後は常に `SAI_PORT_OPER_STATUS_DOWN` 初期値（`portsorch.cpp:8373`）で始まり、アンダーレイの BGP/IGP ルートが到達可能になった時点で `up` に遷移する[^1]。
+トンネルポート生成直後は常に `SAI_PORT_OPER_STATUS_DOWN` 初期値（`portsorch.cpp:8373`）で始まり、アンダーレイの [BGP](../../reference/glossary.md#term-bgp)/IGP ルートが到達可能になった時点で `up` に遷移する[^1]。
 
 ### 詳細: COUNTERS_DB 書込と FlexCounter
 
-`addTunnelToFlexCounter(oid, name)` (vxlanorch.cpp:1342) は `m_pendingAddToFlexCntr[oid] = name` に追加するのみ。実際の COUNTERS_DB 書込は `doTask(SelectableTimer)` が `FLEX_COUNTER_UPD_INTERVAL` (1 秒) ごとに発火した際に行われる:
+`addTunnelToFlexCounter(oid, name)` (vxlanorch.cpp:1342) は `m_pendingAddToFlexCntr[oid] = name` に追加するのみ。実際の [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書込は `doTask(SelectableTimer)` が `FLEX_COUNTER_UPD_INTERVAL` (1 秒) ごとに発火した際に行われる:
 
 - `COUNTERS_DB::COUNTERS_TUNNEL_NAME_MAP`: `{tunnel_name → sai_oid}` マッピング追加
 - `COUNTERS_DB::COUNTERS_TUNNEL_TYPE_MAP`: `{sai_oid → "SAI_TUNNEL_TYPE_VXLAN"}` 追加
-- `tunnel_stat_manager->setCounterIdList(oid, CounterType::TUNNEL, stats)`: FLEX_COUNTER_DB 登録
+- `tunnel_stat_manager->setCounterIdList(oid, CounterType::TUNNEL, stats)`: [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) 登録
 
 対象は **VxlanTunnel SAI オブジェクト OID** (tunnel_id) であり、Port::TUNNEL ブリッジポート OID (bridge_port_id) ではない。
 
 ### 詳細: Observer 通知
 
-`addBridgePort()` 終端 (portsorch.cpp:7280–7281) が `SUBJECT_TYPE_BRIDGE_PORT_CHANGE` 通知を発行する。購読者は `IsolationGroupOrch` のみ (isolationgrouporch.cpp:233)。`IsolationGroupOrch` は Port::TUNNEL 型を特別扱いしないため、通知は到達するが実質的な副作用は発生しない。
+`addBridgePort()` 終端 ([portsorch](../../reference/glossary.md#term-portsorch).cpp:7280–7281) が `SUBJECT_TYPE_BRIDGE_PORT_CHANGE` 通知を発行する。購読者は `IsolationGroupOrch` のみ (isolationgrouporch.cpp:233)。`IsolationGroupOrch` は Port::TUNNEL 型を特別扱いしないため、通知は到達するが実質的な副作用は発生しない。
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-port-side.md`
 
@@ -317,19 +321,19 @@ SAI ポートステータス変化イベント
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-`Port::TUNNEL` は CONFIG_DB / APPL_DB テーブルを直接購読しない。親テーブル (`VXLAN_TUNNEL_MAP` / `VXLAN_EVPN_NVO`) の処理結果として動的生成されるオブジェクトであり、pubsub の観点では「PortsOrch が内部 API 経由で生成し、STATE_DB / COUNTERS_DB を書く」構造である[^1]。
+`Port::TUNNEL` は CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) テーブルを直接購読しない。親テーブル (`VXLAN_TUNNEL_MAP` / `VXLAN_EVPN_NVO`) の処理結果として動的生成されるオブジェクトであり、pubsub の観点では「PortsOrch が内部 API 経由で生成し、STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を書く」構造である[^1]。
 
 ### 書き込みパス
 
 | 宛先 DB / API | 経路 | タイプ | タイミング |
 |--------------|------|--------|----------|
-| STATE_DB `VXLAN_TUNNEL_TABLE\|<name>` (`operstatus`) | SAI ポートイベント → `updateDbTunnelOperStatus()` (vxlanorch.cpp:1893) → `Table::set()` | Redis `HSET` 直接発行（ProducerStateTable ではない） | アンダーレイルート確立後、非同期 |
+| STATE_DB `VXLAN_TUNNEL_TABLE\|<name>` (`operstatus`) | SAI ポートイベント → `updateDbTunnelOperStatus()` (vxlanorch.cpp:1893) → `Table::set()` | [Redis](../../reference/glossary.md#term-redis) `HSET` 直接発行（[ProducerStateTable](../../reference/glossary.md#term-producerstatetable) ではない） | アンダーレイルート確立後、非同期 |
 | COUNTERS_DB `COUNTERS_TUNNEL_NAME_MAP` / `COUNTERS_TUNNEL_TYPE_MAP` | `addTunnelToFlexCounter()` → `SelectableTimer` 発火 (vxlanorch.cpp:1322–1335) | `Table::set()` | 最大 1 秒遅延 (タイマー発火まで) |
-| ASIC_DB (SAI) | `create_bridge_port()` 直接呼び出し via `addBridgePort()` (portsorch.cpp:7258) | SAI API 同期呼び出し | `addBridgePort()` と同期 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) (SAI) | `create_bridge_port()` 直接呼び出し via `addBridgePort()` ([portsorch](../../reference/glossary.md#term-portsorch).cpp:7258) | SAI API 同期呼び出し | `addBridgePort()` と同期 |
 
 ### in-process Observer 通知
 
-`PortsOrch::addBridgePort()` / `removeBridgePort()` 末尾 (portsorch.cpp:7280–7281) が `SUBJECT_TYPE_BRIDGE_PORT_CHANGE` を in-process Observer パターンで発行する。購読者は `IsolationGroupOrch` のみ (isolationgrouporch.cpp:233)。`Port::TUNNEL` 型に対する特別処理はなく、実質的な副作用は発生しない。この通知は Redis Pub/Sub チャンネルではなく、`m_observers` 経由のプロセス内通知である。
+`PortsOrch::addBridgePort()` / `removeBridgePort()` 末尾 (portsorch.cpp:7280–7281) が `SUBJECT_TYPE_BRIDGE_PORT_CHANGE` を in-process Observer パターンで発行する。購読者は `IsolationGroupOrch` のみ (isolationgrouporch.cpp:233)。`Port::TUNNEL` 型に対する特別処理はなく、実質的な副作用は発生しない。この通知は [Redis](../../reference/glossary.md#term-redis) Pub/Sub チャンネルではなく、`m_observers` 経由のプロセス内通知である。
 
 !!! note "Redis Pub/Sub は使用しない"
     `Port::TUNNEL` の生成・削除は `ProducerStateTable` / `ConsumerStateTable` 型の Redis Pub/Sub を介さない。STATE_DB / COUNTERS_DB への書込は `Table` 型 (`HSET` 直接発行) であり、外部プロセスへの通知チャンネルは発生しない。VXLAN_TUNNEL_TABLE の変化を知るためには STATE_DB をポーリングするか keyspace notification を利用する必要がある。
@@ -442,5 +446,7 @@ show vxlan remotevtep
 
 - **FDB 残留でトンネルポート削除されない**: `m_fdb_count != 0` の間はブリッジポートが削除されない。`show vxlan remotevtep` でリモート VTEP が消えない場合は FDB エージングを待つ。
 - **DIP トンネル非サポートプラットフォーム**: `isDipTunnelsSupported() = false` の場合は Local SRC VTEP ポートが 1 つだけ生成される。`Port_EVPN_*` は存在しない。
-- **トンネルポート oper DOWN 継続**: アンダーレイルートが未到達の場合は oper status が `DOWN` のまま。BGP/IGP のアンダーレイ経路を確認する。
+- **トンネルポート oper DOWN 継続**: アンダーレイルートが未到達の場合は oper status が `DOWN` のまま。[BGP](../../reference/glossary.md#term-bgp)/IGP のアンダーレイ経路を確認する。
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 25d850426048 -->

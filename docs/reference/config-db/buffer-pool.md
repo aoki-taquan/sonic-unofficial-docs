@@ -30,7 +30,7 @@ hard: 0
 
 ## 概要
 
-ASIC 上の共有 / 専用バッファプールを [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。`BUFFER_PROFILE.pool` から leafref で参照される。`bufferorch` ([orchagent](../../reference/glossary.md#term-orchagent)) または `buffermgrd` (dynamic buffer model) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、[SAI](../../reference/glossary.md#term-sai) BUFFER_POOL に変換する[^1]。
+[ASIC](../../reference/glossary.md#term-asic) 上の共有 / 専用バッファプールを [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。`BUFFER_PROFILE.pool` から leafref で参照される。`bufferorch` ([orchagent](../../reference/glossary.md#term-orchagent)) または `buffermgrd` (dynamic buffer model) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、[SAI](../../reference/glossary.md#term-sai) BUFFER_POOL に変換する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -113,13 +113,13 @@ BUFFER_POOL|<name>
 ### 典型値
 
 - key 形式: `BUFFER_POOL|<pool-name>` (`ingress_lossless_pool` / `egress_lossless_pool` / `egress_lossy_pool` 等)。
-- `size`: ASIC 別の SDK 値（例 100G TOR で `12766208`）。
+- `size`: [ASIC](../../reference/glossary.md#term-asic) 別の SDK 値（例 100G TOR で `12766208`）。
 - `type`: `ingress` / `egress`。
 - `mode`: `dynamic` / `static`。
 
 ### よくある誤設定
 
-- `size` を ASIC 上限超過で入れると bufferorch が `SAI_STATUS_NO_MEMORY` を返し、すべての buffer 設定が止まる。
+- `size` を [ASIC](../../reference/glossary.md#term-asic) 上限超過で入れると bufferorch が `SAI_STATUS_NO_MEMORY` を返し、すべての buffer 設定が止まる。
 - `mode: dynamic` を ASIC 未対応のまま使うと [PFC](../../reference/glossary.md#term-pfc) で head-of-line を起こす。`traditional` プラットフォームでは `static`。
 
 ### 確認コマンド
@@ -135,7 +135,7 @@ show buffer pool
 
 ### `type` (enum: `ingress`/`egress`/`both`)
 
-| 値 | SAI 属性 | 備考 |
+| 値 | [SAI](../../reference/glossary.md#term-sai) 属性 | 備考 |
 |----|---------|------|
 | `ingress` | `SAI_BUFFER_POOL_TYPE_INGRESS` | ingress 方向のみ。`xoff` 設定は ingress pool でのみ有効 |
 | `egress` | `SAI_BUFFER_POOL_TYPE_EGRESS` | egress 方向のみ |
@@ -170,7 +170,7 @@ show buffer pool
 |------|------|--------|
 | `xoff` フィールドが `ingress_lossless_pool` 以外のプールに設定 | `Field xoff is supported for %s only` を LOG_ERROR → xoff は ignored、他フィールドは処理 | `buffermgrdyn.cpp` L2625 |
 | `xoff` 値が MMU サイズを超過 | `Invalid xoff %s, exceeding the mmu size` を LOG_ERROR → xoff 無視、pool size は更新 | `buffermgrdyn.cpp` L757 |
-| SHP 設定が変化なし | `updated without change, skipped` → APPL_DB への書き込みをスキップ | `buffermgrdyn.cpp` L2614 |
+| SHP 設定が変化なし | `updated without change, skipped` → [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みをスキップ | `buffermgrdyn.cpp` L2614 |
 | 同一 pool に複数の zero profile 登録 | `Multiple zero profiles detected for pool %s, takes the former and ignores the latter` を LOG_ERROR | `buffermgrdyn.cpp` L338 |
 | Buffer pools が未準備の状態でプロファイル設定 | `pending` → プロファイル適用を遅延 | `buffermgrdyn.cpp` L894 |
 | 共有バッファプールが未設定 | headroom 計算をスキップ (`No shared buffer pool configured`) | `buffermgrdyn.cpp` L684 |
@@ -184,7 +184,7 @@ show buffer pool
 
 ### 段階 1 — Consumer 登録
 
-`buffermgrd` / `buffermgrdyn` → `BufferOrch` (APPL_DB 経由) が CONFIG_DB の `BUFFER_POOL` テーブルを購読する。
+`buffermgrd` / `buffermgrdyn` → `BufferOrch` ([APPL_DB](../../reference/glossary.md#term-appl_db) 経由) が CONFIG_DB の `BUFFER_POOL` テーブルを購読する。
 
 `BUFFER_POOL` は `ingress_lossless_pool` / `egress_lossy_pool` 等の名前付きプール。
 
@@ -200,7 +200,7 @@ show buffer pool
 
 **適用タイミング**: CONFIG_DB 変化を `buffermgrd(yn)` が検知後 APPL_DB に書き込み。`BufferOrch` が SAI pool オブジェクトを作成/更新。既存プールの size 変更は即時反映。
 
-**副作用**: プールサイズ変更はそのプールを参照するすべてのプロファイルの実効バッファ量に影響。`xoff` 変更は PFC threshold に影響する。
+**副作用**: プールサイズ変更はそのプールを参照するすべてのプロファイルの実効バッファ量に影響。`xoff` 変更は [PFC](../../reference/glossary.md#term-pfc) threshold に影響する。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -216,7 +216,7 @@ show buffer pool
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -260,7 +260,7 @@ show buffer pool
 |---|---|---|---|---|
 | `BufferMgrDynamic` | `handleBufferPoolTable()` | `op == SET_COMMAND` かつ `size` フィールドなし | `dynamic_size = true` → プールサイズを動的計算モードで APPL_DB へ書き込む | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2525` |
 | `BufferMgrDynamic` | `handleBufferPoolTable()` | `size` フィールドあり | `dynamic_size = false` → 指定サイズをそのまま APPL_DB へ書き込む | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2534` |
-| `BufferMgrDynamic` | `handleBufferPoolTable()` | `xoff` フィールドあり（SHP 設定） | Shared Headroom Pool サイズを計算・更新 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2539` |
+| `BufferMgrDynamic` | `handleBufferPoolTable()` | `xoff` フィールドあり（SHP 設定） | Shared [Headroom](../../reference/glossary.md#term-headroom) Pool サイズを計算・更新 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2539` |
 | `BufferMgrDynamic` | `handleBufferPoolTable()` | `op == DEL_COMMAND` | プールを APPL_DB から削除し内部キャッシュを更新 | `sonic-swss/cfgmgr/buffermgrdyn.cpp:2634` |
 
 > **スキャン証跡**: `handleBufferPoolTable` L2509-2669 全行読了。dynamic_size フラグと SHP xoff フィールド有無が核心分岐。4 件抽出。
@@ -284,7 +284,7 @@ void Orch::addConsumer(DBConnector *db, string tableName, int pri)
 }
 ```
 
-`SubscriberStateTable` は Redis keyspace 通知（`__keyspace@4__:BUFFER_POOL|*` の `PSUBSCRIBE`）を購読し、変更検知後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`）。static buffer model の `BufferMgr` も同じ `addConsumer()` 経由で `SubscriberStateTable` を使用する。
+`SubscriberStateTable` は [Redis](../../reference/glossary.md#term-redis) keyspace 通知（`__keyspace@4__:BUFFER_POOL|*` の `PSUBSCRIBE`）を購読し、変更検知後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`）。static buffer model の `BufferMgr` も同じ `addConsumer()` 経由で `SubscriberStateTable` を使用する。
 
 ### buffermgr/buffermgrdyn → APPL_DB: ProducerStateTable
 
@@ -463,7 +463,7 @@ bufferorch は静的なベンダ名判定を行わず SAI 戻り値で capabilit
 
 ### 4. VOQ chassis と BUFFER_POOL の関係
 
-`gMySwitchType == "voq"` による分岐は `BUFFER_QUEUE` に集中する。**BUFFER_POOL テーブルの処理経路 (`handleBufferPoolTable` / `processBufferPool`) には VOQ 固有分岐がない**。VOQ chassis でも BUFFER_POOL の key 形式・field 処理・SAI 反映手順は non-VOQ と同一。
+`gMySwitchType == "voq"` による分岐は `BUFFER_QUEUE` に集中する。**BUFFER_POOL テーブルの処理経路 (`handleBufferPoolTable` / `processBufferPool`) には [VOQ](../../reference/glossary.md#term-voq) 固有分岐がない**。[VOQ](../../reference/glossary.md#term-voq) chassis でも BUFFER_POOL の key 形式・field 処理・SAI 反映手順は non-[VOQ](../../reference/glossary.md#term-voq) と同一。
 
 `buffers_config.j2` の VOQ 分岐 (L36-38, L278-296) は `BUFFER_QUEUE` の system port 向けエントリ生成のみで、`BUFFER_POOL` 定義ブロック自体は変わらない。
 
@@ -502,13 +502,13 @@ bufferorch は静的なベンダ名判定を行わず SAI 戻り値で capabilit
 - **条件**: dynamic buffer model (`buffermgrdyn`) 起動時のみ
 - **参照元**: `buffermgrdyn.cpp:40` (`m_cfgDefaultLosslessBufferParam` メンバ初期化)、`buffermgrdyn.cpp:442` (`handleDefaultLossLessBufferParam` ハンドラ登録)、`buffermgrdyn.cpp:1978-2040` (`handleDefaultLossLessBufferParam()` 実装)、Lua plugin `buffer_headroom_mellanox.lua:105-109` / `buffer_pool_mellanox.lua:261-268`
 - **意味**:
-  - `over_subscribe_ratio` の変化が Shared Headroom Pool (SHP) の有効/無効を切り替える。非ゼロ→ゼロへの変化は SHP 無効化・全プロファイルの headroom 再計算をトリガする。
+  - `over_subscribe_ratio` の変化が Shared [Headroom](../../reference/glossary.md#term-headroom) Pool (SHP) の有効/無効を切り替える。非ゼロ→ゼロへの変化は SHP 無効化・全プロファイルの headroom 再計算をトリガする。
   - `default_dynamic_th` は `m_defaultThreshold` に保持され、`BUFFER_PROFILE` に `dynamic_th` が未指定の場合のフォールバック値として headroom 計算 Lua plugin に渡される。
   - `ingress_lossless_pool` が未設定の状態で SET コマンドを受信すると `task_need_retry` を返し、プール設定完了まで処理を遅延する (`buffermgrdyn.cpp:1987-1992`)。
 
 ### 2. ASIC_TABLE (STATE_DB)
 
-- **参照先テーブル**: `ASIC_TABLE` (STATE_DB)
+- **参照先テーブル**: `ASIC_TABLE` ([STATE_DB](../../reference/glossary.md#term-state_db))
 - **参照方向**: 読み取り（Lua plugin 経由）
 - **条件**: dynamic buffer model の headroom / pool size 計算時（Mellanox・Barefoot プラットフォームのみ）
 - **参照元**: `buffer_headroom_mellanox.lua:62-88`、`buffer_pool_mellanox.lua:289-310`、`buffer_headroom_barefoot.lua:57-75`、`buffer_pool_barefoot.lua:9-20`
@@ -536,7 +536,7 @@ bufferorch は静的なベンダ名判定を行わず SAI 戻り値で capabilit
 - **条件**: static buffer model (`buffermgr`) 起動時のみ
 - **参照元**: `buffermgrd.cpp:201` (`CFG_PORT_QOS_MAP_TABLE_NAME` を購読リストに追加)、`buffermgr.cpp:517-519` (`doPortQosTableTask()` ルーティング)、`buffermgr.cpp:416-462` (`doPortQosTableTask()` 実装)
 - **意味**:
-  - `pfc_enable` フィールドの変化（PFC が有効なキューの変更）を検知すると `doSpeedUpdateTask()` を呼び出し、該当ポートの headroom プロファイルを再計算して APPL_DB へ書き込む。
+  - `pfc_enable` フィールドの変化（[PFC](../../reference/glossary.md#term-pfc) が有効なキューの変更）を検知すると `doSpeedUpdateTask()` を呼び出し、該当ポートの headroom プロファイルを再計算して APPL_DB へ書き込む。
   - PFC 有効キューが変わると `ingress_lossless_pool` の実効使用量（PG headroom 合計）が変化するため BUFFER_POOL の間接的な影響を受ける。
   - `PORT_QOS_MAP` エントリが未設定の場合、`buffermgr.cpp:175` のコメントにあるとおり `BUFFER_PG` 通知をクリアして `pfc_enable` が届いてから再処理する遅延ロジックが働く。
 
@@ -555,7 +555,7 @@ BUFFER_POOL
 <!-- ordering -->
 ## 登録順序依存 (Phase B)
 
-BUFFER_POOL → BUFFER_PROFILE → BUFFER_PG / BUFFER_QUEUE の 3 段が依存関係を形成する。
+BUFFER_POOL → BUFFER_PROFILE → [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) / BUFFER_QUEUE の 3 段が依存関係を形成する。
 誤順序で登録すると `task_need_retry` や SAI create-only 属性の乖離が生じる。
 
 ### 1. Pool → Profile → PG/Queue の必須順
@@ -567,7 +567,7 @@ BUFFER_POOL → BUFFER_PROFILE → BUFFER_PG / BUFFER_QUEUE の 3 段が依存�
 | 3 | `BUFFER_PG` / `BUFFER_QUEUE` | ポートが admin up になる前にプロファイルを適用しないと WARN ログが出力される |
 
 ソース: `bufferorch.cpp:640-662` — `BUFFER_PROFILE` の pool 解決で `ref_resolve_status::not_resolved` を検出すると `task_need_retry` を返す。  
-ソース: `bufferorch.cpp:1206-1210` (BUFFER_QUEUE) / `bufferorch.cpp:1576-1580` (BUFFER_PG) — ポートが up 後にプロファイルを適用すると `SWSS_LOG_WARN` を出力。
+ソース: `bufferorch.cpp:1206-1210` (BUFFER_QUEUE) / `bufferorch.cpp:1576-1580` ([BUFFER_PG](../../reference/glossary.md#term-buffer-pg)) — ポートが up 後にプロファイルを適用すると `SWSS_LOG_WARN` を出力。
 
 ### 2. SAI create-only 制約（Pool）
 
@@ -587,7 +587,7 @@ BUFFER_POOL → BUFFER_PROFILE → BUFFER_PG / BUFFER_QUEUE の 3 段が依存�
 
 ### 3. Lua plugin の起動順（dynamic buffer model）
 
-`BufferMgrDynamic` コンストラクタは以下の順序で 3 本の Lua plugin を Redis に登録する。
+`BufferMgrDynamic` コンストラクタは以下の順序で 3 本の Lua plugin を [Redis](../../reference/glossary.md#term-redis) に登録する。
 いずれか 1 本でもロードに失敗すると例外をキャッチして `buffermgrd` が起動中断する。
 
 | 順序 | plugin ファイル名 | 役割 |
@@ -634,12 +634,12 @@ zero profile の削除は zero pool よりも先に行う（依存関係の逆�
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`BufferOrch` は `BUFFER_POOL` の SET/DEL 処理後に APPL_STATE_DB・COUNTERS_DB・FLEX_COUNTER_DB へ副次書き込みを行う。`buffermgrdyn` は STATE_DB を読み取るのみで書き込みは発生しない。
+`BufferOrch` は `BUFFER_POOL` の SET/DEL 処理後に APPL_STATE_DB・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) へ副次書き込みを行う。`buffermgrdyn` は [STATE_DB](../../reference/glossary.md#term-state_db) を読み取るのみで書き込みは発生しない。
 
 ### APPL_STATE_DB / `APP_BUFFER_POOL_TABLE`
 
 SAI buffer pool 操作完了後、`m_publisher.publish()` が APPL_STATE_DB へ書き込む。
-書き込みは **xoff (Shared Headroom Pool) フィールドが空でない場合のみ**発生する。
+書き込みは **xoff (Shared [Headroom](../../reference/glossary.md#term-headroom) Pool) フィールドが空でない場合のみ**発生する。
 
 | トリガ | フィールド | 値 | evidence |
 |--------|------------|-----|----------|
@@ -668,7 +668,7 @@ SAI buffer pool 操作完了後、`m_publisher.publish()` が APPL_STATE_DB へ�
 
 ### FLEX_COUNTER_DB / `BUFFER_POOL_WATERMARK`
 
-バッファプール watermark のポーリング設定を FLEX_COUNTER_DB に書き込む。
+バッファプール watermark のポーリング設定を [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に書き込む。
 FlexCounterOrch から `FLEX_COUNTER_STATUS=enable` を受信した際に全プール分を一括登録する。
 
 | トリガ | 操作 | キー | フィールド | evidence |
@@ -685,11 +685,11 @@ FlexCounterOrch から `FLEX_COUNTER_STATUS=enable` を受信した際に全プ�
 
 ### STATE_DB / `BUFFER_MAX_PARAM_TABLE`（読み取りのみ）
 
-`buffermgrdyn.cpp` は STATE_DB の `BUFFER_MAX_PARAM_TABLE` から MMU サイズ・最大 PG 数・最大キュー数を **読み取る**のみ (`buffermgrdyn.cpp:133-137, 1873-1966`)。書き込みは `portsorch` が行う。
+`buffermgrdyn.cpp` は [STATE_DB](../../reference/glossary.md#term-state_db) の `BUFFER_MAX_PARAM_TABLE` から MMU サイズ・最大 PG 数・最大キュー数を **読み取る**のみ (`buffermgrdyn.cpp:133-137, 1873-1966`)。書き込みは `portsorch` が行う。
 
 ### 副次書込なし
 
-- **ASIC_DB**: SAI 経由で syncd が書き込む（orchagent の直接書込なし）。
+- **[ASIC_DB](../../reference/glossary.md#term-asic_db)**: SAI 経由で [syncd](../../reference/glossary.md#term-syncd) が書き込む（[orchagent](../../reference/glossary.md#term-orchagent) の直接書込なし）。
 - **STATE_DB** (書き込み側): `bufferorch`/`buffermgrdyn` は `BUFFER_MAX_PARAM_TABLE` を読むのみ。
 
 <!-- /side-effects -->
@@ -737,9 +737,9 @@ FlexCounterOrch から `FLEX_COUNTER_STATUS=enable` を受信した際に全プ�
 
 | 定数名 | 値 | 用途 | ソース |
 |---|---|---|---|
-| `BUFFER_POOL_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"BUFFER_POOL_WATERMARK_STAT_COUNTER"` | FLEX_COUNTER_DB の group name (= `FLEX_COUNTER_GROUP_TABLE` キー) | `bufferorch.h:15` |
+| `BUFFER_POOL_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"BUFFER_POOL_WATERMARK_STAT_COUNTER"` | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) の group name (= `FLEX_COUNTER_GROUP_TABLE` キー) | `bufferorch.h:15` |
 | `BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | `"60000"` (= 60 秒) | watermark ポーリング間隔 (ms)。CONFIG_DB から変更不可 | `bufferorch.h:16` |
-| `COUNTERS_BUFFER_POOL_NAME_MAP` | `"COUNTERS_BUFFER_POOL_NAME_MAP"` | COUNTERS_DB の pool 名→SAI OID マッピング hash 名 | `schema.h:238`, `bufferorch.cpp:55` |
+| `COUNTERS_BUFFER_POOL_NAME_MAP` | `"COUNTERS_BUFFER_POOL_NAME_MAP"` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の pool 名→SAI OID マッピング hash 名 | `schema.h:238`, `bufferorch.cpp:55` |
 
 ### 特記事項
 
@@ -747,4 +747,5 @@ FlexCounterOrch から `FLEX_COUNTER_STATUS=enable` を受信した際に全プ�
 - **`buffer_value_both` の乖離**: `buffermgrdyn.cpp:2544-2549` で `"ingress"` 以外はすべて `BUFFER_EGRESS` に分類するため、`type=both` を指定すると内部キャッシュの `direction` は `BUFFER_EGRESS` になる (SAI には `SAI_BUFFER_POOL_TYPE_BOTH` が渡るが headroom 計算が ingress 側を参照しなくなる)。
 - **ポーリング間隔非設定**: `BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS = "60000"` はコードハードコード。CONFIG_DB からの変更手段なし。
 <!-- /constants -->
-<!-- glossary-links-injected: 44ea702536a5 -->
+
+<!-- glossary-links-injected: 2d5bea2d97e4 -->

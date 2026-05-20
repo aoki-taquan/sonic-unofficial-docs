@@ -148,7 +148,7 @@ DTel の主要 orch 実装は `sonic-swss` に取り込まれている。
 - swss-level テスト: `.cache/sonic-sources/sonic-swss/tests/test_dtel.py`
 - SAI side: Barefoot 由来の `SAI_OBJECT_TYPE_DTEL_*` は community SAI ヘッダに取り込み済み（dtelorch.cpp の include 依存）
 
-テストプランが対象とする CONFIG_DB スキーマ (`DTEL_*`) と orch 動作は現行 master でカバーされており、Barefoot 系 ASIC 向けの DTel feature として実装が継続している。本ページの主張は実装と整合するため `code-verified` に昇格。
+テストプランが対象とする CONFIG_DB スキーマ (`DTEL_*`) と orch 動作は現行 master でカバーされており、Barefoot 系 [ASIC](../reference/glossary.md#term-asic) 向けの DTel feature として実装が継続している。本ページの主張は実装と整合するため `code-verified` に昇格。
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -158,4 +158,4 @@ DTel の主要 orch 実装は `sonic-swss` に取り込まれている。
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: c006405759d8 -->

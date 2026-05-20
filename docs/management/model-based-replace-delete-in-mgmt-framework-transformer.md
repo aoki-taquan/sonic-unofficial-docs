@@ -43,7 +43,7 @@ related:
 
 ## なぜ拡張が必要か
 
-SONiC の Management Framework Transformer は **YANG（OpenConfig 等）↔ 内部 ABNF / [CONFIG_DB](../reference/glossary.md#term-config_db)** を変換するコンポーネント。これまで RESTCONF の **PUT/REPLACE と DELETE は YANG 階層の任意深さで正しく動かない** 問題があった[^1]:
+[SONiC](../reference/glossary.md#term-sonic) の Management Framework Transformer は **YANG（OpenConfig 等）↔ 内部 ABNF / [CONFIG_DB](../reference/glossary.md#term-config_db)** を変換するコンポーネント。これまで RESTCONF の **PUT/REPLACE と DELETE は YANG 階層の任意深さで正しく動かない** 問題があった[^1]:
 
 - `PUT`: payload に無い兄弟ノードを残してしまう（純粋な replace ではない）
 - `DELETE`: target だけ削除し、配下を残す
@@ -145,4 +145,4 @@ curl -i -k -X PUT ... | head -1
 - [HLD: SONiC gNMI Server インタフェース設計](sonic-gnmi-server-interface-design.md)
 - [HLD: SONiC Management Framework](sonic-management-framework.md)
 
-<!-- glossary-links-injected: ef91cb130632 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

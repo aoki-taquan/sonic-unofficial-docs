@@ -43,7 +43,7 @@ related:
 | `VnetOrch` / `VnetRouteOrch` | VNet 単位の [VRF](../reference/glossary.md#term-vrf) / BRIDGE、ピアリング、VNet 経路 |
 | `VrfMgrD` / `VrfOrch` | kernel L3mdev と SAI VRF の同期 |
 | `IntfMgrD` / `IntfsOrch` | VNet 配下の [RIF](../reference/glossary.md#term-rif) |
-| `FdbOrch` | remote VTEP の MAC 学習 |
+| `FdbOrch` | remote [VTEP](../reference/glossary.md#term-vtep) の MAC 学習 |
 
 ```mermaid
 flowchart TB
@@ -141,4 +141,4 @@ sequenceDiagram
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: feffe0589983 -->
+<!-- glossary-links-injected: 0726817b0ba1 -->

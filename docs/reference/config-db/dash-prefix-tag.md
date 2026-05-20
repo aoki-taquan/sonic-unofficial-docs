@@ -23,9 +23,9 @@ related:
 
 ## 概要
 
-DASH ACL で使用される IP プレフィックスタグ (Named Prefix Set) を保持するテーブル[^1]。タグ名をキーとし、IP バージョンとプレフィックスリストを定義する。ACL ルールの `src_tag` / `dst_tag` フィールドからタグ名で参照され、コントロールプレーンが「名前付きアドレス集合」を管理するためのオブジェクト。
+[DASH](../../reference/glossary.md#term-dash) [ACL](../../reference/glossary.md#term-acl) で使用される IP プレフィックスタグ (Named Prefix Set) を保持するテーブル[^1]。タグ名をキーとし、IP バージョンとプレフィックスリストを定義する。[ACL](../../reference/glossary.md#term-acl) ルールの `src_tag` / `dst_tag` フィールドからタグ名で参照され、コントロールプレーンが「名前付きアドレス集合」を管理するためのオブジェクト。
 
-`DashAclOrch` (`sonic-swss/orchagent/dash/dashaclorch.cpp`) が `PbWorker<PrefixTag>` 経由で protobuf を受信し、`taskUpdateDashPrefixTag` → `DashTagMgr::create/update` の順に処理する。タグは SAI には書き込まれず、orchagent 内メモリ (`m_tag_table`) に保持される。ACL group にタグが紐付く際、`DashTagMgr::getPrefixes()` で prefix 集合を取得して SAI ACL エントリに展開する。
+`DashAclOrch` (`sonic-swss/orchagent/dash/dashaclorch.cpp`) が `PbWorker<PrefixTag>` 経由で protobuf を受信し、`taskUpdateDashPrefixTag` → `DashTagMgr::create/update` の順に処理する。タグは [SAI](../../reference/glossary.md#term-sai) には書き込まれず、[orchagent](../../reference/glossary.md#term-orchagent) 内メモリ (`m_tag_table`) に保持される。[ACL](../../reference/glossary.md#term-acl) group にタグが紐付く際、`DashTagMgr::getPrefixes()` で prefix 集合を取得して [SAI](../../reference/glossary.md#term-sai) ACL エントリに展開する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -79,12 +79,12 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 ## 関連 CONFIG_DB
 
 - [`DASH_ACL_IN_TABLE`](dash-acl.md) / [`DASH_ACL_OUT_TABLE`](dash-acl.md): ACL rule の `src_tag` / `dst_tag` フィールドがこのテーブルのタグ名を参照する
-- [`DASH_ENI_TABLE`](dash-eni.md): ENI への ACL グループバインドの起点
+- [`DASH_ENI_TABLE`](dash-eni.md): [ENI](../../reference/glossary.md#term-eni) への ACL グループバインドの起点
 
 <!-- ordering -->
 ## エントリ投入順序・依存関係 (Phase B)
 
-`DASH_PREFIX_TAG_TABLE` は DASH ACL 依存チェーンの **最上流** に位置する。SDN コントローラはタグを ACL ルールより先に投入しなければならない。
+`DASH_PREFIX_TAG_TABLE` は [DASH](../../reference/glossary.md#term-dash) ACL 依存チェーンの **最上流** に位置する。SDN コントローラはタグを ACL ルールより先に投入しなければならない。
 
 ### 投入の必須順序
 
@@ -125,11 +125,11 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 
 ### タグ更新時の非リフレッシュ動作
 
-`DashTagMgr::update()` (`dashtagmgr.cpp:46`) はメモリ上の `m_prefixes` を更新するだけで、既にバインド済みのグループ・ルールへの SAI 再 SET を行わない。タグの `prefix_list` を更新しても実行中 ACL ルールは旧プレフィックスで評価され続ける。新プレフィックスを即時反映するには、グループ解除 → ルール削除 → ルール再作成 → 再バインドの手順が必要。
+`DashTagMgr::update()` (`dashtagmgr.cpp:46`) はメモリ上の `m_prefixes` を更新するだけで、既にバインド済みのグループ・ルールへの [SAI](../../reference/glossary.md#term-sai) 再 SET を行わない。タグの `prefix_list` を更新しても実行中 ACL ルールは旧プレフィックスで評価され続ける。新プレフィックスを即時反映するには、グループ解除 → ルール削除 → ルール再作成 → 再バインドの手順が必要。
 
 ### warm-reboot 挙動
 
-`DashAclOrch` は `ZmqOrch` を継承し `m_orchList` には登録されない（`gDirectory.set()` のみ）。`warmRestoreAndSyncUp()` の 3 イテレーションループは DASH ACL orch を含まないため、**タグエントリを含む DASH ACL 系は warm-reboot の自動リプレイ対象外**となる。リストアは SDN コントローラが gNMI 経由で全エントリを再投入する設計（ステートレス warm-reboot）。
+`DashAclOrch` は `ZmqOrch` を継承し `m_orchList` には登録されない（`gDirectory.set()` のみ）。`warmRestoreAndSyncUp()` の 3 イテレーションループは [DASH](../../reference/glossary.md#term-dash) ACL orch を含まないため、**タグエントリを含む DASH ACL 系は warm-reboot の自動リプレイ対象外**となる。リストアは SDN コントローラが [gNMI](../../reference/glossary.md#term-gnmi) 経由で全エントリを再投入する設計（ステートレス warm-reboot）。
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-ordering.md`
 <!-- /ordering -->
@@ -149,7 +149,7 @@ DASH_PREFIX_TAG_TABLE:<tag_name>
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-YANG 未定義テーブルのため leafref は存在しない。以下はすべて実装レベルの暗黙参照。`DASH_PREFIX_TAG_TABLE` 自体は他テーブルを参照しないが、ACL 系テーブルから参照される側として双方向依存がある。
+[YANG](../../reference/glossary.md#term-yang) 未定義テーブルのため leafref は存在しない。以下はすべて実装レベルの暗黙参照。`DASH_PREFIX_TAG_TABLE` 自体は他テーブルを参照しないが、ACL 系テーブルから参照される側として双方向依存がある。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
@@ -211,7 +211,7 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 ### 失敗後の状態整合性
 
 - `task_failed` でエントリが破棄されると `DashAclOrch::doTask()` が WARN ログを出力し `erase(it)` でキューから除去する (`dashaclorch.cpp:146-153`)
-- タグはオーケストレーターメモリにのみ存在し SAI への書き込みがないため、`task_failed` による部分的な ASIC 汚染は発生しない
+- タグはオーケストレーターメモリにのみ存在し SAI への書き込みがないため、`task_failed` による部分的な [ASIC](../../reference/glossary.md#term-asic) 汚染は発生しない
 - `task_need_retry` エントリはキューに残留し上限なく自動再試行される
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-failure.md`
@@ -220,7 +220,7 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`DASH_PREFIX_TAG_TABLE` 処理に関わる、YANG / CONFIG_DB スキーマで管理されないハードコード定数の一覧。
+`DASH_PREFIX_TAG_TABLE` 処理に関わる、[YANG](../../reference/glossary.md#term-yang) / [CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマで管理されないハードコード定数の一覧。
 
 ### テーブル名定数 (schema.h)
 
@@ -249,14 +249,14 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 
 ### ABORT_IF_NOT マクロ（防御的 assert）
 
-`DashTagMgr::getPrefixes()` / `attach()` / `detach()` (`dashtagmgr.cpp:107, 117, 131`) は、タグが `m_tag_table` に存在しない場合に `ABORT_IF_NOT` で `runtime_error` をスローして **orchagent プロセスを停止**させる。`DashAclGroupMgr::createRule()` は `exists()` チェック後に `getPrefixes()` を呼ぶため通常は到達しないが、実装上のバグや状態不整合時はプロセスクラッシュの原因になる。
+`DashTagMgr::getPrefixes()` / `attach()` / `detach()` (`dashtagmgr.cpp:107, 117, 131`) は、タグが `m_tag_table` に存在しない場合に `ABORT_IF_NOT` で `runtime_error` をスローして **[orchagent](../../reference/glossary.md#term-orchagent) プロセスを停止**させる。`DashAclGroupMgr::createRule()` は `exists()` チェック後に `getPrefixes()` を呼ぶため通常は到達しないが、実装上のバグや状態不整合時はプロセスクラッシュの原因になる。
 
 ### スキーマ / YANG 管理済み（ハードコード定数なし）の項目
 
 | 項目 | 管理方法 |
 |------|---------|
 | `ip_version` 許容値 | protobuf enum `IpVersion` (proto 定義) |
-| `prefix_list` サイズ上限 | 実装上制限なし（SAI / ASIC 依存） |
+| `prefix_list` サイズ上限 | 実装上制限なし（SAI / [ASIC](../../reference/glossary.md#term-asic) 依存） |
 | タグ名フォーマット | 任意文字列（制限なし） |
 | refcount (`m_groups`) 上限 | 実装上制限なし |
 
@@ -266,15 +266,15 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`DASH_PREFIX_TAG_TABLE` の SET / DEL に伴って `DashAclOrch` / `DashTagMgr` が副次的に書き込む DB エントリは **存在しない**。タグは orchagent 内の `m_tag_table` (`unordered_map<string, DashTag>`) にのみ保持される SAI 非経由オブジェクトであり、DB コネクタを保持しない。
+`DASH_PREFIX_TAG_TABLE` の SET / DEL に伴って `DashAclOrch` / `DashTagMgr` が副次的に書き込む DB エントリは **存在しない**。タグは [orchagent](../../reference/glossary.md#term-orchagent) 内の `m_tag_table` (`unordered_map<string, DashTag>`) にのみ保持される SAI 非経由オブジェクトであり、DB コネクタを保持しない。
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `DashTagMgr` 内に `swsscommon::Table` / `ProducerStateTable` の write 呼出が 0 件 (`dashtagmgr.cpp` 全行精読) |
-| STATE_DB | なし | `DashAclOrch` コンストラクタは `app_state_db` 引数を受け取るが初期化リストで `DashTagMgr` へは渡されない (`dashaclorch.cpp:77-85`) |
-| COUNTERS_DB | なし | DASH タグは SAI オブジェクト非作成。カウンタテーブルのエントリも存在しない |
-| ASIC_DB (via CRM) | なし | `gCrmOrch->incCrmDashAclUsedCounter()` は ACL group / rule 作成時のみ発生 (`dashaclgroupmgr.cpp:175-176, 374-376`)。タグ SET/DEL では CRM 更新なし |
-| FLEX_COUNTER_DB | なし | DASH タグに対応する flex-counter エントリなし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `DashTagMgr` 内に `swsscommon::Table` / `ProducerStateTable` の write 呼出が 0 件 (`dashtagmgr.cpp` 全行精読) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `DashAclOrch` コンストラクタは `app_state_db` 引数を受け取るが初期化リストで `DashTagMgr` へは渡されない (`dashaclorch.cpp:77-85`) |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | DASH タグは SAI オブジェクト非作成。カウンタテーブルのエントリも存在しない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) (via [CRM](../../reference/glossary.md#term-crm)) | なし | `gCrmOrch->incCrmDashAclUsedCounter()` は ACL group / rule 作成時のみ発生 (`dashaclgroupmgr.cpp:175-176, 374-376`)。タグ SET/DEL では [CRM](../../reference/glossary.md#term-crm) 更新なし |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | DASH タグに対応する flex-counter エントリなし |
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/dash-prefix-tag-side.md` を参照。
 <!-- /side-effects -->
@@ -289,7 +289,7 @@ YANG 未定義テーブルのため leafref は存在しない。以下はすべ
 | 系統 | 条件 | Executor 型 | 購読 API |
 |------|------|------------|---------|
 | ZMQ 有効 | `ORCH_NORTHBOND_DASH_ZMQ_ENABLED = true`（デフォルト） | `ZmqConsumer`（`ZmqConsumerStateTable` ベース） | ZMQ PUSH/PULL ソケット受信 |
-| ZMQ 無効 | `ORCH_NORTHBOND_DASH_ZMQ_ENABLED = false` | `Consumer`（`ConsumerStateTable` ベース） | Redis channel PUBLISH/SUBSCRIBE |
+| ZMQ 無効 | `ORCH_NORTHBOND_DASH_ZMQ_ENABLED = false` | `Consumer`（`ConsumerStateTable` ベース） | [Redis](../../reference/glossary.md#term-redis) channel PUBLISH/SUBSCRIBE |
 
 **購読テーブル** (`orchdaemon.cpp:1371-1377`):
 
@@ -339,7 +339,7 @@ DashAclOrch::doTask(ConsumerBase&)
 
 ### STATE_DB / 応答 publish の有無
 
-`DashTagMgr` は処理結果を STATE_DB / APPL_DB へ publish しない。タグはメモリ内 `m_tag_table` にのみ保持され、orchagent 外部からは直接観測できない。SDN コントローラはタグ到達確認に STATE_DB 応答を利用できず、ZMQ 経由の処理成功を前提に次ステップ (ACL rule 投入) へ進む設計となっている。
+`DashTagMgr` は処理結果を [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) へ publish しない。タグはメモリ内 `m_tag_table` にのみ保持され、orchagent 外部からは直接観測できない。SDN コントローラはタグ到達確認に [STATE_DB](../../reference/glossary.md#term-state_db) 応答を利用できず、ZMQ 経由の処理成功を前提に次ステップ (ACL rule 投入) へ進む設計となっている。
 
 !!! note "タグ参照時の非同期確認"
     `DASH_ACL_RULE_TABLE` の rule 投入が `task_need_retry` でキューに残った場合、ACL rule が STATE_DB に出現することでタグ投入の成功を間接的に確認できる。タグ単体の STATE_DB エントリは作成されない。
@@ -350,15 +350,15 @@ DashAclOrch::doTask(ConsumerBase&)
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
-**DPU (SmartSwitch) 専用**: `DashAclOrch` および内包する `DashTagMgr` は `gMySwitchType == "dpu"` のときのみ `DpuOrchDaemon` 内で生成される (`main.cpp:990`, `orchdaemon.cpp:1378`)。通常スイッチ・VoQ シャーシ・Fabric モードでは本テーブルは存在しない。`DashTagMgr` は SAI API を一切呼び出さずタグを orchagent 内メモリのみに保持するため、ASIC 種別による挙動差異はない。
+**[DPU](../../reference/glossary.md#term-dpu) ([SmartSwitch](../../reference/glossary.md#term-smartswitch)) 専用**: `DashAclOrch` および内包する `DashTagMgr` は `gMySwitchType == "dpu"` のときのみ `DpuOrchDaemon` 内で生成される (`main.cpp:990`, `orchdaemon.cpp:1378`)。通常スイッチ・VoQ シャーシ・Fabric モードでは本テーブルは存在しない。`DashTagMgr` は SAI API を一切呼び出さずタグを orchagent 内メモリのみに保持するため、[ASIC](../../reference/glossary.md#term-asic) 種別による挙動差異はない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
 | ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 無関係 | `DashTagMgr` は SAI 非呼び出し。タグはメモリ保持のみ (`dashtagmgr.cpp`) |
-| DPU (SmartSwitch) 専用 | 通常スイッチでは無効 | `gMySwitchType == "dpu"` のみ `DpuOrchDaemon` → `DashAclOrch` を生成 (`main.cpp:990`, `orchdaemon.cpp:1378`) |
-| multi-asic | 非対応 | DPU 専用構成のため namespace iterate なし |
-| VOQ chassis / Fabric | 無効 | `DashAclOrch` は DPU モード限定 |
-| ZMQ transport | feature flag `ORCH_NORTHBOND_DASH_ZMQ_ENABLED` で制御 | デフォルト有効。無効化で Redis fallback (`orchdaemon.cpp:1329`) |
+| [DPU](../../reference/glossary.md#term-dpu) ([SmartSwitch](../../reference/glossary.md#term-smartswitch)) 専用 | 通常スイッチでは無効 | `gMySwitchType == "dpu"` のみ `DpuOrchDaemon` → `DashAclOrch` を生成 (`main.cpp:990`, `orchdaemon.cpp:1378`) |
+| multi-asic | 非対応 | [DPU](../../reference/glossary.md#term-dpu) 専用構成のため namespace iterate なし |
+| [VOQ](../../reference/glossary.md#term-voq) chassis / Fabric | 無効 | `DashAclOrch` は DPU モード限定 |
+| ZMQ transport | feature flag `ORCH_NORTHBOND_DASH_ZMQ_ENABLED` で制御 | デフォルト有効。無効化で [Redis](../../reference/glossary.md#term-redis) fallback (`orchdaemon.cpp:1329`) |
 | IPv4 / IPv6 | orchagent メモリ属性のみ、ASIC 非依存 | `to_sai(IpVersion)` が `0` を拒否。SAI 呼び出しなし (`dashtagmgr.cpp:11-14`) |
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-prefix-tag-platform.md`
@@ -367,7 +367,7 @@ DashAclOrch::doTask(ConsumerBase&)
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG / proto3 デフォルト以外の実装由来 fallback。`DashTagMgr::from_pb()` と `to_sai()` (dashtagmgr.cpp / pbutils.cpp) から導出。
+[YANG](../../reference/glossary.md#term-yang) / proto3 デフォルト以外の実装由来 fallback。`DashTagMgr::from_pb()` と `to_sai()` (dashtagmgr.cpp / pbutils.cpp) から導出。
 
 | フィールド | コード由来デフォルト | fallback 源 |
 |-----------|-------------------|------------|
@@ -378,7 +378,7 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashTagMgr::from_
 
 - `ip_version` は proto3 の数値 enum `0` (= `IP_VERSION_UNSPECIFIED`) をコントローラが送ると orchagent が reject する。**コントローラは必ず `IP_VERSION_IPV4 (1)` または `IP_VERSION_IPV6 (2)` を明示しなければならない**。これは proto3 の「フィールド省略 = デフォルト値 0 を使う」という挙動と組み合わさると、省略した場合にエントリが無音で拒否されるというトラップになる。
 - `prefix_list` を空で作成した後に ACL rule からタグ参照が先行するケースでは、rule 評価時に空の prefix 集合が渡されるため、実質的にマッチしないルールになる。SAI 実装によっては空集合の扱いが異なる可能性があり注意が必要。
-- タグは orchagent 内メモリにのみ存在し、SAI オブジェクトは作成されない。ASIC_DB には直接エントリを持たない。
+- タグは orchagent 内メモリにのみ存在し、SAI オブジェクトは作成されない。[ASIC_DB](../../reference/glossary.md#term-asic_db) には直接エントリを持たない。
 
 <!-- /defaults -->
 
@@ -398,10 +398,12 @@ YANG / proto3 デフォルト以外の実装由来 fallback。`DashTagMgr::from_
 
 ### REST / gNMI
 
-- sonic-mgmt-common 経由の gNMI SetRequest で書き込み可能 (sonic-gnmi)
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common 経由の [gNMI](../../reference/glossary.md#term-gnmi) SetRequest で書き込み可能 (sonic-gnmi)
 
 <!-- /entry-points -->
 
 ## 引用元
 
 [^1]: `sonic-swss/orchagent/dash/dashtagmgr.cpp` — `from_pb`, `DashTagMgr::create/update/remove/attach/detach` 実装。<https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/dash/dashtagmgr.cpp>
+
+<!-- glossary-links-injected: 2433b4664c75 -->

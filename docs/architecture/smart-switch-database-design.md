@@ -47,7 +47,7 @@ related:
 
 ## 結論
 
-DPU の [DASH](../reference/glossary.md#term-dash) overlay 用 Redis を **NPU 側に container として立て、DPU から midplane 経由で remote 接続** させる。DPU の RAM 不足を NPU 側に肩代わりさせ、multi-ASIC と同じ機構（`featured` + `has_per_*_scope`）を流用する[^1]。
+DPU の [DASH](../reference/glossary.md#term-dash) overlay 用 Redis を **NPU 側に container として立て、DPU から midplane 経由で remote 接続** させる。DPU の RAM 不足を NPU 側に肩代わりさせ、multi-[ASIC](../reference/glossary.md#term-asic) と同じ機構（`featured` + `has_per_*_scope`）を流用する[^1]。
 
 ## 動作仕様
 
@@ -223,4 +223,4 @@ redis-cli -h 169.254.200.254 -p 6381 KEYS "DASH_*" | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: d5b6931e63bd -->
+<!-- glossary-links-injected: c006405759d8 -->

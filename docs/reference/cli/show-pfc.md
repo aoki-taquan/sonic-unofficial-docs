@@ -38,9 +38,9 @@ related:
 
 ## 詳細
 
-`show pfc` 配下の command は `pfcstat` / `pfc` 系 utility を実行する wrapper として定義される。interface alias mode の場合は必要に応じて alias を SONiC port 名へ変換してから外部コマンドへ渡す。
+`show pfc` 配下の command は `pfcstat` / `pfc` 系 utility を実行する wrapper として定義される。interface alias mode の場合は必要に応じて alias を [SONiC](../../reference/glossary.md#term-sonic) port 名へ変換してから外部コマンドへ渡す。
 
-`show pfcwd config` は `pfcwd show config -d <display>`、`show pfcwd stats` は `pfcwd show stats -d <display>` を実行する。`display` は multi-ASIC 共通 option の表示制御値[^2]。
+`show pfcwd config` は `pfcwd show config -d <display>`、`show pfcwd stats` は `pfcwd show stats -d <display>` を実行する。`display` は multi-[ASIC](../../reference/glossary.md#term-asic) 共通 option の表示制御値[^2]。
 
 ## 注意
 
@@ -142,4 +142,4 @@ show pfcwd stats
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 7cb1f9e73b9e -->
+<!-- glossary-links-injected: ec18b66e3507 -->

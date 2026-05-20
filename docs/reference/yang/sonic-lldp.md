@@ -24,7 +24,7 @@ related:
 - import: `sonic-port`
 - top container: `sonic-lldp`
 
-SONiC [LLDP](../../reference/glossary.md#term-lldp) yang model[^1]
+[SONiC](../../reference/glossary.md#term-sonic) [LLDP](../../reference/glossary.md#term-lldp) yang model[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -164,4 +164,4 @@ show lldp table
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-lldp.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

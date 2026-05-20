@@ -32,12 +32,12 @@ related:
 
 ## 概要
 
-[マルチ ASIC](../../reference/glossary.md#term-multi-asic) プラットフォームにおける ASIC 間内部 iBGP セッションを [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。同一物理筐体内の複数 ASIC が iBGP で経路を交換するために使用する。`bgpcfgd` (`docker-fpm-frr` 内) が読み出して Jinja2 テンプレート (`bgpd/templates/internal/`) 経由で [FRR](../../reference/glossary.md#term-frr) (`bgpd`) に反映する[^1]。
+[マルチ ASIC](../../reference/glossary.md#term-multi-asic) プラットフォームにおける [ASIC](../../reference/glossary.md#term-asic) 間内部 iBGP セッションを [CONFIG_DB](../../reference/glossary.md#term-config_db) で定義するテーブル。同一物理筐体内の複数 [ASIC](../../reference/glossary.md#term-asic) が iBGP で経路を交換するために使用する。`bgpcfgd` (`docker-fpm-frr` 内) が読み出して Jinja2 テンプレート (`bgpd/templates/internal/`) 経由で [FRR](../../reference/glossary.md#term-frr) (`bgpd`) に反映する[^1]。
 
 通常の `BGP_NEIGHBOR` との主要な差異:
 
-- iBGP のみ（ASN は DEVICE_METADATA の `bgp_asn` と一致することが YANG `must` で強制）
-- `holdtime`/`keepalive`/`nhopself` は CONFIG_DB 値を **無視**し、テンプレートがハードコード値を適用
+- iBGP のみ（ASN は [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) の `bgp_asn` と一致することが [YANG](../../reference/glossary.md#term-yang) `must` で強制）
+- `holdtime`/`keepalive`/`nhopself` は [CONFIG_DB](../../reference/glossary.md#term-config_db) 値を **無視**し、テンプレートがハードコード値を適用
 - `sub_role` / `switch_type` によってルートマップ・next-hop-self が自動付与される
 
 <!-- cdb-mermaid -->
@@ -62,17 +62,17 @@ BGP_INTERNAL_NEIGHBOR|<neighbor>
 BGP_INTERNAL_NEIGHBOR|<vrf_name>|<neighbor>
 ```
 
-`<neighbor>` は内部 ASIC の IP アドレス（IPv4 または IPv6）。
+`<neighbor>` は内部 [ASIC](../../reference/glossary.md#term-asic) の IP アドレス（IPv4 または IPv6）。
 
 ## フィールド一覧
 
 `sonic-bgp-common.yang` の `sonic-bgp-cmn-neigh` grouping を `uses` する。`BGP_NEIGHBOR` の `sonic-bgp-cmn` とは **別の grouping**（フィールドが少ない簡略版）であることに注意。
 
-| フィールド | 型 | YANG default | bgpcfgd 実装挙動 |
+| フィールド | 型 | [YANG](../../reference/glossary.md#term-yang) default | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 実装挙動 |
 |-----------|----|-------------|-----------------|
-| `neighbor` (key) | inet:ip-address | — | YANG `must` で DEVICE_METADATA の `bgp_asn` 参照 |
-| `asn` | uint32 0..4294967295 | なし | YANG `must` で DEVICE_METADATA `bgp_asn` と一致を強制 |
-| `local_addr` | inet:ip-address | なし (mandatory) | YANG mandatory true; bgpcfgd は欠如時 warn のみで処理続行（乖離） |
+| `neighbor` (key) | inet:ip-address | — | [YANG](../../reference/glossary.md#term-yang) `must` で [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) の `bgp_asn` 参照 |
+| `asn` | uint32 0..4294967295 | なし | YANG `must` で [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) `bgp_asn` と一致を強制 |
+| `local_addr` | inet:ip-address | なし (mandatory) | YANG mandatory true; [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は欠如時 warn のみで処理続行（乖離） |
 | `name` | string | なし | optional; 欠如時は neighbor アドレスを tag として使用 |
 | `holdtime` | uint16 | なし | **dead field** — テンプレートが `timers 3 10` をハードコードで上書き |
 | `keepalive` | uint16 | なし | **dead field** — テンプレートが `timers 3 10` をハードコードで上書き |
@@ -82,7 +82,7 @@ BGP_INTERNAL_NEIGHBOR|<vrf_name>|<neighbor>
 
 ## ハードコードデフォルトと dead field
 
-`instance.conf.j2` が CONFIG_DB の値に関わらず以下をハードコードする:
+`instance.conf.j2` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の値に関わらず以下をハードコードする:
 
 ```text
 neighbor <addr> timers 3 10        # keepalive=3, holdtime=10 (CONFIG_DB 値無視)
@@ -101,7 +101,7 @@ neighbor INTERNAL_PEER_V4 route-map TO_BGP_INTERNAL_PEER_V4 out
 
 ## プラットフォーム依存挙動
 
-`DEVICE_METADATA.sub_role` および `switch_type` の値によって FRR 設定が自動分岐する:
+`DEVICE_METADATA.sub_role` および `switch_type` の値によって [FRR](../../reference/glossary.md#term-frr) 設定が自動分岐する:
 
 | 条件 | 自動適用される設定 | テンプレート |
 |------|------------------|------------|
@@ -113,7 +113,7 @@ neighbor INTERNAL_PEER_V4 route-map TO_BGP_INTERNAL_PEER_V4 out
 
 ## YANG-実装 Discrepancy
 
-| フィールド | YANG 定義 | bgpcfgd 実装 | 乖離種別 |
+| フィールド | YANG 定義 | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 実装 | 乖離種別 |
 |-----------|----------|-------------|---------|
 | `holdtime` | uint16（YANG default なし） | テンプレートで完全無視、`timers 3 10` ハードコード | dead field |
 | `keepalive` | uint16（YANG default なし） | テンプレートで完全無視、`timers 3 10` ハードコード | dead field |
@@ -156,13 +156,13 @@ neighbor INTERNAL_PEER_V4 route-map TO_BGP_INTERNAL_PEER_V4 out
 
 ### 重要な暗黙挙動
 
-1. **holdtime/keepalive は CONFIG_DB 値が無効**: minigraph が `holdtime=180, keepalive=60` を書き込んでも bgpcfgd テンプレートが `timers 3 10` で上書きするため、オペレーターが CONFIG_DB を変更しても実際の FRR タイマーは変わらない。
+1. **holdtime/keepalive は CONFIG_DB 値が無効**: minigraph が `holdtime=180, keepalive=60` を書き込んでも bgpcfgd テンプレートが `timers 3 10` で上書きするため、オペレーターが CONFIG_DB を変更しても実際の [FRR](../../reference/glossary.md#term-frr) タイマーは変わらない。
 
 2. **nhopself は dead field**: minigraph が `nhopself=1/0` を書き込んでも bgpcfgd は読まない。next-hop-self は `sub_role` と `switch_type` によって自動決定される。
 
 3. **local_addr 欠如時の silent warn**: YANG は mandatory だが bgpcfgd は warn を出して続行する。ただし interface 解決ができなければ peer 追加は延期（書込み順依存）。
 
-4. **admin_status は常に 'up'（minigraph 生成時）**: 内部 BGP セッションを手動で `down` にする実用的なパスは minigraph 以外からの直接 CONFIG_DB 書き込みのみ。
+4. **admin_status は常に 'up'（minigraph 生成時）**: 内部 [BGP](../../reference/glossary.md#term-bgp) セッションを手動で `down` にする実用的なパスは minigraph 以外からの直接 CONFIG_DB 書き込みのみ。
 
 5. **YANG-実装 discrepancy（local_addr mandatory）**: YANG バリデーターは `local_addr` 欠如を拒否するが、bgpcfgd ランタイムは欠如のまま処理を進める。YANG バリデーションを通過しないエントリが CONFIG_DB に直接書き込まれた場合の動作は未定義。
 
@@ -245,7 +245,7 @@ CONFIG_DB の `holdtime` / `keepalive` フィールドは **dead field**。テ�
 
 ### 2. BGP_GLOBALS.local_asn 先行必須（FRR レイヤ）
 
-`frrcfgd` は `BGP_GLOBALS.local_asn` 受信時に `router bgp <ASN>` インスタンスを FRR bgpd に生成する（`frrcfgd.py` L2700-2703）。`local_asn` が未設定の VRF に対する BGP 設定はすべてスキップされる（L2659-2662）。`bgpcfgd` テンプレートが生成する FRR コマンドも `router bgp <ASN>` コンテキスト内で実行されるため、FRR 側に該当 ASN のインスタンスが先に存在していることが前提となる。
+`frrcfgd` は `BGP_GLOBALS.local_asn` 受信時に `router bgp <ASN>` インスタンスを FRR bgpd に生成する（`frrcfgd.py` L2700-2703）。`local_asn` が未設定の [VRF](../../reference/glossary.md#term-vrf) に対する [BGP](../../reference/glossary.md#term-bgp) 設定はすべてスキップされる（L2659-2662）。`bgpcfgd` テンプレートが生成する FRR コマンドも `router bgp <ASN>` コンテキスト内で実行されるため、FRR 側に該当 ASN のインスタンスが先に存在していることが前提となる。
 
 **推奨順序**: `BGP_GLOBALS|default.local_asn` → `BGP_INTERNAL_NEIGHBOR`
 
@@ -314,7 +314,7 @@ CONFIG_DB の `holdtime` / `keepalive` フィールドは **dead field**。テ�
 
 ### BGP_GLOBALS — FRR レイヤの前提条件
 
-`frrcfgd.py` は `BGP_GLOBALS|<vrf>.local_asn` を受信した時点で `router bgp <ASN>` インスタンスを FRR bgpd に生成する（L2700-2703）。`local_asn` が設定されていない VRF への BGP 設定は `vrf_tables` チェック（L2659-2662）でスキップされる。`bgpcfgd` テンプレートが生成する FRR コマンドも `router bgp <ASN>` コンテキスト内で実行されるため、**FRR 側に BGP インスタンスが先に存在していることが前提**。YANG leafref はないが実質的な必須依存。
+`frrcfgd.py` は `BGP_GLOBALS|<vrf>.local_asn` を受信した時点で `router bgp <ASN>` インスタンスを FRR bgpd に生成する（L2700-2703）。`local_asn` が設定されていない [VRF](../../reference/glossary.md#term-vrf) への [BGP](../../reference/glossary.md#term-bgp) 設定は `vrf_tables` チェック（L2659-2662）でスキップされる。`bgpcfgd` テンプレートが生成する FRR コマンドも `router bgp <ASN>` コンテキスト内で実行されるため、**FRR 側に BGP インスタンスが先に存在していることが前提**。YANG leafref はないが実質的な必須依存。
 
 ### PORT / PORTCHANNEL_INTERFACE / INTERFACE — local_addr 解決
 
@@ -331,7 +331,7 @@ CONFIG_DB の `holdtime` / `keepalive` フィールドは **dead field**。テ�
 
 ### SAI 参照
 
-なし。`bgpcfgd` / `frrcfgd` は CONFIG_DB → FRR（ユーザー空間ルーティングデーモン）への経路であり、SAI/ASIC に直接触れない。APPL_DB への中継もない。
+なし。`bgpcfgd` / `frrcfgd` は CONFIG_DB → FRR（ユーザー空間ルーティングデーモン）への経路であり、[SAI](../../reference/glossary.md#term-sai)/ASIC に直接触れない。[APPL_DB](../../reference/glossary.md#term-appl_db) への中継もない。
 <!-- /cross-refs -->
 
 <!-- pubsub -->
@@ -339,7 +339,7 @@ CONFIG_DB の `holdtime` / `keepalive` フィールドは **dead field**。テ�
 
 ### Redis 購読方式
 
-`BGP_INTERNAL_NEIGHBOR` テーブルへの変更通知は、`bgpcfgd` (`docker-fpm-frr` 内) の `Runner` クラスが **`swsscommon.SubscriberStateTable`** を使って受信する。`Runner.add_manager()` が `BGPPeerMgrBase` (peer_type=`"internal"`) を受け取ると、`SubscriberStateTable(conn, "BGP_INTERNAL_NEIGHBOR")` を生成して Redis keyspace 通知を購読する (`runner.py:47-51`)。`frrcfgd` はこのテーブルを購読しない（`table_handler_list` に `BGP_INTERNAL_NEIGHBOR` が含まれないことを確認済み）。
+`BGP_INTERNAL_NEIGHBOR` テーブルへの変更通知は、`bgpcfgd` (`docker-fpm-frr` 内) の `Runner` クラスが **`swsscommon.SubscriberStateTable`** を使って受信する。`Runner.add_manager()` が `BGPPeerMgrBase` (peer_type=`"internal"`) を受け取ると、`SubscriberStateTable(conn, "BGP_INTERNAL_NEIGHBOR")` を生成して [Redis](../../reference/glossary.md#term-redis) keyspace 通知を購読する (`runner.py:47-51`)。`frrcfgd` はこのテーブルを購読しない（`table_handler_list` に `BGP_INTERNAL_NEIGHBOR` が含まれないことを確認済み）。
 
 | 購読者 | 購読 API | 購読テーブル | ハンドラ |
 |--------|---------|------------|---------|
@@ -376,16 +376,16 @@ managers_bgp.py: deps 充足チェック → add_peer() / update_peer()
 ## 副次 DB 書込 (Phase F)
 
 `BGPPeerMgrBase`（`peer_type="internal"`）は CONFIG_DB `BGP_INTERNAL_NEIGHBOR` の
-set/del を受けて **STATE_DB `BGP_PEER_CONFIGURED_TABLE`** に副次書込を行う。
-COUNTERS_DB / APPL_STATE_DB / ASIC_DB への直接書込は無い。
-FRR bgpd への反映は `cfg_mgr.push()` 経由の vtysh push のみ。
+set/del を受けて **[STATE_DB](../../reference/glossary.md#term-state_db) `BGP_PEER_CONFIGURED_TABLE`** に副次書込を行う。
+[COUNTERS_DB](../../reference/glossary.md#term-counters_db) / APPL_STATE_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) への直接書込は無い。
+FRR bgpd への反映は `cfg_mgr.push()` 経由の [vtysh](../../reference/glossary.md#term-vtysh) push のみ。
 
 | 副次 DB | テーブル / フィールド | 発火タイミング | コード根拠 |
 |---|---|---|---|
-| STATE_DB | `BGP_PEER_CONFIGURED_TABLE\|<nbr>` (vrf=default) または `\|<vrf>\|<nbr>` | `add_peer()` 成功後 → `SET` (全フィールド) | `managers_bgp.py:239` |
-| STATE_DB | 同上 | `apply_admin_status()` 成功後 → `SET` | `managers_bgp.py:353` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `BGP_PEER_CONFIGURED_TABLE\|<nbr>` (vrf=default) または `\|<vrf>\|<nbr>` | `add_peer()` 成功後 → `SET` (全フィールド) | `managers_bgp.py:239` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | 同上 | `apply_admin_status()` 成功後 → `SET` | `managers_bgp.py:353` |
 | STATE_DB | 同上 | `del_handler()` 成功後 → `DEL` | `managers_bgp.py:487` |
-| COUNTERS_DB | — | 書込なし | `managers_bgp.py` に `COUNTERS_DB` 参照なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | — | 書込なし | `managers_bgp.py` に `COUNTERS_DB` 参照なし |
 
 `frrcfgd.py`（frr-mgmt-framework パス）は `BGP_INTERNAL_NEIGHBOR` を購読しないため副次書込なし（全体スキャンで一致なし）。
 
@@ -454,7 +454,7 @@ multi-ASIC 機器では `enable_internal_bgp_session()` (L1888-1901) が FrontEn
 | route-map 名 | `FROM/TO_BGP_INTERNAL_PEER_V4/V6` | `FROM/TO_VOQ_CHASSIS_V4/V6_PEER` |
 | subtype 分岐 | `DownstreamLC` vs その他（permit で tag 有無） | `UpstreamLC` vs その他（**deny** vs permit で逆） |
 | Loopback 依存 | `Loopback4096`（managers_bgp.py deps に追加） | `Loopback4096` 依存なし |
-| 生成プラットフォーム | chassis-packet / multi-ASIC | VOQ chassis |
+| 生成プラットフォーム | chassis-packet / multi-ASIC | [VOQ](../../reference/glossary.md#term-voq) chassis |
 
 <!-- /platform -->
 
@@ -475,9 +475,9 @@ multi-ASIC 機器では `enable_internal_bgp_session()` (L1888-1901) が FrontEn
 | `instance.conf.j2` テンプレートレンダリング失敗（`jinja2.TemplateError`） | `add_peer()` L229-234 | `log_err` 後 **`return True`**（再試行なし・FRR に peer 未追加の silent drop） | `log_err("Peer '(%s\|%s)'. Error in rendering the template for 'SET' command '%s'")` |
 | `policies.conf.j2` レンダリング時 `sub_role`/`switch_type` キー欠如 | `BGPPeerGroupMgr.update_policy()` L47-50 | `log_err` → `return False`。peer-group 設定が FRR に未反映 | `log_err("Can't render policy template name: '%s': %s")` |
 | `sub_role == 'BackEnd'` かつ `Loopback4096` に IPv4 なし | `policies.conf.j2` L7-13 | `originator-id` 行が生成されない（テンプレート内サイレントスキップ）。ルートリフレクタ機能が劣化 | なし |
-| `BGP_GLOBALS\|<vrf>.local_asn` が frrcfgd 処理前に未設定 | `frrcfgd.py` L2659-2662 | frrcfgd が当該 VRF の全テーブル更新をスキップ。FRR bgpd インスタンス未生成のまま bgpcfgd 出力も無視 | `syslog LOG_DEBUG("ignore table {} update because local_asn for VRF {} was not configured")` |
+| `BGP_GLOBALS\|<vrf>.local_asn` が frrcfgd 処理前に未設定 | `frrcfgd.py` L2659-2662 | frrcfgd が当該 [VRF](../../reference/glossary.md#term-vrf) の全テーブル更新をスキップ。FRR bgpd インスタンス未生成のまま bgpcfgd 出力も無視 | `syslog LOG_DEBUG("ignore table {} update because local_asn for VRF {} was not configured")` |
 | `/run/frr/bgpd.vty` ソケット接続が 100 回リトライ後も失敗 | `frrcfgd.py` L183-198 `__create_frr_client()` | `RuntimeError` → frrcfgd プロセスがクラッシュ・再起動ループ。最大待ち時間 200 秒 | `syslog LOG_ERR("re-tried too many times, give up")` + `LOG_ERR("failed to create socket to FRR daemon")` |
-| vtysh コマンド失敗（bgp_asn 設定時） | `frrcfgd.py` L2701, 2706-2707 | `LOG_ERR` 後 `self.bgp_asn[vrf]` 未更新。後続イベントも local_asn 未設定としてスキップされ続ける | `syslog LOG_ERR("failed to set local_asn %s to VRF %s")` |
+| [vtysh](../../reference/glossary.md#term-vtysh) コマンド失敗（bgp_asn 設定時） | `frrcfgd.py` L2701, 2706-2707 | `LOG_ERR` 後 `self.bgp_asn[vrf]` 未更新。後続イベントも local_asn 未設定としてスキップされ続ける | `syslog LOG_ERR("failed to set local_asn %s to VRF %s")` |
 
 ### DEL 処理における失敗経路
 
@@ -544,3 +544,5 @@ show ip bgp summary
 vtysh -c 'show bgp neighbor 10.0.0.1'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 8ed5928fd3e2 -->

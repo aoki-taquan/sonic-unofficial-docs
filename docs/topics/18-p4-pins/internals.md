@@ -74,7 +74,7 @@ HLD 当初は 7 Manager の構成でしたが、現行 master ではこれらに
 
 ## 同期書き込みと APPL_STATE_DB
 
-通常の [orchagent](../../reference/glossary.md#term-orchagent) は SAI を非同期に呼びますが、P4Orch は **SAI 応答を待ち、結果を APPL_STATE_DB に書き戻す** ことで P4RT App が controller に成否を返せるようにします。`APPL_STATE_DB=14` は `sonic-swss-common/common/schema.h` で定義されており、PINS のために追加されたものです（[SmartSwitch](../../reference/glossary.md#term-smartswitch) 向けに `DPU_APPL_STATE_DB=16` も別途追加）。
+通常の [orchagent](../../reference/glossary.md#term-orchagent) は SAI を非同期に呼びますが、P4Orch は **SAI 応答を待ち、結果を APPL_STATE_DB に書き戻す** ことで [P4RT](../../reference/glossary.md#term-p4rt) App が controller に成否を返せるようにします。`APPL_STATE_DB=14` は `sonic-swss-common/common/schema.h` で定義されており、PINS のために追加されたものです（[SmartSwitch](../../reference/glossary.md#term-smartswitch) 向けに `DPU_APPL_STATE_DB=16` も別途追加）。
 
 ## warm boot とキャッシュの整合
 
@@ -105,7 +105,7 @@ flowchart LR
 
 ## SAI 属性使用一覧
 
-P4Orch は通常の SONiC SAI object をそのまま使うが、独自の table を P4 program で定義できる:
+P4Orch は通常の [SONiC](../../reference/glossary.md#term-sonic) SAI object をそのまま使うが、独自の table を P4 program で定義できる:
 
 | object | 属性 |
 | --- | --- |
@@ -152,7 +152,7 @@ ASIC_DB:
 - entity_cache_ は in-memory のみで、p4rt-app の restart で消える。controller 側が full reconciliation を行う前提。
 - warm-boot のキャッシュ復元は実装途中の箇所があり、長期間 controller との sync が切れた状態からの復帰には full re-push が必要。
 - table definition の push は P4 program の hash で識別され、program 変更時の rollback / mixed state は HLD 範囲外。
-- WCMP の hash field は `SAI_NEXT_HOP_GROUP_ATTR_HASH_*` に依存し、ASIC で対応が分かれる。
+- WCMP の hash field は `SAI_NEXT_HOP_GROUP_ATTR_HASH_*` に依存し、[ASIC](../../reference/glossary.md#term-asic) で対応が分かれる。
 - p4rt-app と SONiC 標準 orchagent の Manager（`RouteOrch`、`NhgOrch` 等）は同じ SAI object を競合的に作る可能性があり、PINS image では P4Orch のみが正である前提（mixed deployment は HLD 範囲外）。
 
 ## 関連ページ
@@ -161,4 +161,4 @@ ASIC_DB:
 - [P4RT Read cache HLD](../../management/p4rt-read-cache-hld.md)
 - [P4RT Application HLD](../../management/p4rt-application-hld.md)
 
-<!-- glossary-links-injected: b22d62b3d852 -->
+<!-- glossary-links-injected: 4b7e3e133212 -->
