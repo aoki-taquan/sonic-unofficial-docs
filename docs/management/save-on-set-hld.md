@@ -12,22 +12,9 @@ sources:
 related:
   config_db:
   - TELEMETRY
-  - GNMI
-  - CRM
-  - ACL_RULE
-  - ACL_TABLE
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  cli:
-  - show techsupport
-  - show platform
-  - show version
-  - show acl
-  - config acl
   yang:
   - sonic-gnmi
   - sonic-system-defaults
-  - sonic-crm
 ---
 
 <!-- topics-tip -->
@@ -36,7 +23,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
-    このページは公式 HLD のみを根拠に書かれている。`sonic-gnmi` の Set ハンドラ、`sonic-host-services` 側の DBUS エンドポイント、`telemetry.sh` 起動スクリプトの実コード裏取りは未済。
+    `sonic-gnmi` の Set ハンドラ・`sonic-host-services` 側の DBUS エンドポイント・`telemetry.sh` 起動スクリプトをコードで確認済み（Verifier batch 29）。フラグ → 関数ポインタ → DBUS 経路が実コードと一致することを検証。
 
 # gNMI Save-On-Set（Set ごとの ConfigDB 永続化）
 

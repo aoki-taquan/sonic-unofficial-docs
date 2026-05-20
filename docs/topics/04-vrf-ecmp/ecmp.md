@@ -20,6 +20,8 @@ related:
   - config acl
   config_db:
   - FG_NHG
+  - FG_NHG_PREFIX
+  - FG_NHG_MEMBER
   - SWITCH_HASH
   - CRM
   - DSCP_TO_TC_MAP

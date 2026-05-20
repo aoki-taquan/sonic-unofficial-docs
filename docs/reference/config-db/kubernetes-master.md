@@ -510,7 +510,7 @@ show kube server config
 
 ### 段階 1 — Consumer 登録
 
-`kube_scheduler` / `hostcfgd` が CONFIG_DB の `KUBERNETES_MASTER` テーブルを購読する。
+`ctrmgrd` (`docker-config-engine`) が CONFIG_DB の `KUBERNETES_MASTER` テーブルを購読する。
 
 `KUBERNETES_MASTER` の key は `SERVER` (単一エントリ)。`ip` / `port` / `insecure` フィールド。
 

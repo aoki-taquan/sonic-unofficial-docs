@@ -102,7 +102,7 @@ DSCP_TO_FC_MAP|<name>|<dscp>
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): `sonic-dscp-fc-map`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-dscp-fc-map`（リファレンスページ未作成）
 
 <!-- ref-triangle:end -->
 

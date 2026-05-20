@@ -91,7 +91,6 @@ related:
 
 **関連する HLD 7 件**
 
-- [SONiC OS と Docker イメージのセマンティックバージョニング](../../system/sonic-os-sonic-docker-images-versioning.md)
 - [SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動）](../../system/sonic-feature-quality-definition.md)
 - [Alpine 仮想 SONiC（ALViS / KNE デプロイ）](../../architecture/alpine-high-level-design.md)
 - [SONiC Debian アップグレード方針（base / container / 廃止 cadence）](../../system/sonic-debian-upgrade-cadence.md)
