@@ -127,7 +127,7 @@ module: sonic-banner
 
 ### 典型的なデプロイ位置
 
-- ログインバナー / MOTD 設定。`BANNER_MESSAGE|global` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) が `/etc/issue` `/etc/motd` に書き出す。
+- ログインバナー / MOTD 設定。`BANNER_MESSAGE|global` を [hostcfgd](../../reference/glossary.md#term-hostcfgd) (banner-config.sh) が `/etc/issue.net` (SSH バナー)、`/etc/issue` (コンソール)、`/etc/motd`、`/etc/logout_message` の 4 ファイルに書き出す。
 
 ### よくある落とし穴
 

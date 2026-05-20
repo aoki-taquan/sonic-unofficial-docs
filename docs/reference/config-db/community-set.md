@@ -165,7 +165,7 @@ vtysh -c 'show bgp community-list'
 
 ### 段階 1 — Consumer 登録
 
-`bgpcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `COMMUNITY_SET` テーブルを購読する。
+`frrcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `COMMUNITY_SET` テーブルを購読する（`bgpcfgd` は直接購読しない）。
 
 `COMMUNITY_SET` は [SONiC](../../reference/glossary.md#term-sonic) の route policy 管理用 (OpenConfig 準拠)。
 

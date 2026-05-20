@@ -152,7 +152,7 @@ BGP_AGGREGATE_ADDRESS|<aggregate-address>
 
 ### 典型値
 
-- key 形式: `BGP_GLOBALS_AF_AGGREGATE_ADDR|<vrf>|<af>|<prefix>`。
+- key 形式: `BGP_AGGREGATE_ADDRESS|<aggregate-address>`。
 - `as_set`: `false`、`summary_only`: `true`（詳細経路を抑制して集約のみ広告）。
 
 ### よくある誤設定
@@ -162,7 +162,7 @@ BGP_AGGREGATE_ADDRESS|<aggregate-address>
 ### 確認コマンド
 
 ```bash
-sonic-db-cli CONFIG_DB keys 'BGP_GLOBALS_AF_AGGREGATE_ADDR|*'
+sonic-db-cli CONFIG_DB keys 'BGP_AGGREGATE_ADDRESS|*'
 vtysh -c 'show bgp ipv4 unicast'
 ```
 <!-- /ops-hint -->
