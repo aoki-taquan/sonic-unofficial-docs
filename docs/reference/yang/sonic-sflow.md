@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-types`, `sonic-port`, `sonic-portchannel`, `sonic-mgmt_port`, `sonic-mgmt_vrf`
 - top container: `sonic-sflow`
 
-SFLOW yang Module for SONiC OS. sFlow サンプリングコレクタとセッションを定義する。[^1]
+SFLOW yang Module for [SONiC](../../reference/glossary.md#term-sonic) OS. sFlow サンプリングコレクタとセッションを定義する。[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -54,6 +54,8 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`SFLOW`](../config-db/sflow.md)
+- [`SFLOW_COLLECTOR`](../config-db/sflow-collector.md)
+- [`SFLOW_SESSION`](../config-db/sflow-session.md)
 
 ### 関連 CLI
 
@@ -166,4 +168,4 @@ show sflow
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-sflow.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

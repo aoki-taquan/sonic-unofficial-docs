@@ -34,7 +34,7 @@ related:
 2. **[CRM](../../reference/glossary.md#term-crm) [NAT](../../reference/glossary.md#term-nat) table の枯渇**: dynamic [NAT](../../reference/glossary.md#term-nat) で空きエントリなし
 3. **timeout 短すぎ**: idle timeout / udp_timeout で先に削除
 4. **protocol 別 binding ない**: TCP のみ pool に bind され UDP / ICMP は通らない
-5. **conntrack 連携の不整合**: `nf_conntrack` が ASIC 側 NAT と乖離
+5. **conntrack 連携の不整合**: `nf_conntrack` が [ASIC](../../reference/glossary.md#term-asic) 側 NAT と乖離
 
 ## 切り分け手順
 
@@ -123,4 +123,4 @@ sudo dmesg | grep -i nf_conntrack | tail -50
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — natorch.cpp
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — natsyncd.cpp
 
-<!-- glossary-links-injected: 8bdc0c514210 -->
+<!-- glossary-links-injected: c006405759d8 -->

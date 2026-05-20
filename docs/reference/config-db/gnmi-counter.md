@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-`telemetryd` ([sonic-gnmi](https://github.com/sonic-net/sonic-gnmi)) が gRPC リクエストの種別・成否を共有メモリ上のカウンタとして記録する仕組み[^1]。CONFIG_DB テーブルではなく SysV 共有メモリ（キー `7749`）に格納される。デバッグツール `gnmi_dump` で読み出し可能。
+`telemetryd` ([sonic-gnmi](https://github.com/sonic-net/sonic-gnmi)) が gRPC リクエストの種別・成否を共有メモリ上のカウンタとして記録する仕組み[^1]。[CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルではなく SysV 共有メモリ（キー `7749`）に格納される。デバッグツール `gnmi_dump` で読み出し可能。
 
 本ページは、このカウンタ群の種別・初期値・リセット挙動をコードから導出したリファレンスである。
 
@@ -108,12 +108,12 @@ flowchart LR
 
 ## GNMI_SET_BYPASS 発生条件
 
-`bypass.go` による高速パス（GCU バリデーション省略）が適用される 3 条件が **すべて** 満たされた場合に `GNMI_SET_BYPASS` が増分される。
+`bypass.go` による高速パス（[GCU](../../reference/glossary.md#term-gcu) バリデーション省略）が適用される 3 条件が **すべて** 満たされた場合に `GNMI_SET_BYPASS` が増分される。
 
 | 条件 | 詳細 |
 |------|------|
 | gRPC メタデータヘッダ | `x-sonic-ss-bypass-validation: true` が存在 |
-| HwSku プレフィクス | `DEVICE_METADATA\|localhost.hwsku` が `Cisco-8102` / `Cisco-8101` / `Cisco-8223` のいずれかで始まる |
+| [HwSku](../../reference/glossary.md#term-hwsku) プレフィクス | `DEVICE_METADATA\|localhost.hwsku` が `Cisco-8102` / `Cisco-8101` / `Cisco-8223` のいずれかで始まる |
 | 操作対象テーブル | `VNET` / `VNET_ROUTE_TUNNEL` / `VLAN_SUB_INTERFACE` / `ACL_RULE` / `BGP_PEER_RANGE` のみ |
 
 ## GNMI_GET / GNMI_SET の計数方式
@@ -200,7 +200,7 @@ dialout 起動 (priority=4, telemetry:running 待機)
 ### 重要な制約
 
 - **再起動ごとに全カウンタがリセット**: `telemetryd` が再起動するたびに `NewServer()` → `InitCounters()` が走り、共有メモリの全32カウンタが 0 にリセットされる。これは warm-reboot でも同様（telemetry コンテナが再起動するため）。
-- **gnmi_dump は telemetry と独立して実行可能**: `gnmi_dump` は SysV 共有メモリ（key=7749）に直接アクセスするため、gRPC セッションや CONFIG_DB への接続は不要。ただし共有メモリが存在しない場合（telemetryd 未起動）はエラーとなる。
+- **gnmi_dump は telemetry と独立して実行可能**: `gnmi_dump` は SysV 共有メモリ（key=7749）に直接アクセスするため、gRPC セッションや [CONFIG_DB](../../reference/glossary.md#term-config_db) への接続は不要。ただし共有メモリが存在しない場合（telemetryd 未起動）はエラーとなる。
 - **dialout と counters の関係**: `dialout` プロセスは telemetry が起動してから開始するが、dialout の処理自体は `IncCounter` を呼ばない。カウンタは gRPC RPC 受信と DBus 操作のみで増分される。
 
 <!-- /ordering -->
@@ -226,34 +226,57 @@ excerpt: |
   gnmiPort, ok := configFields["gnmi_port"]
 -->
 
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-gnmi/pkg/interceptors/dpuproxy/resolver.go#L66-L102 (master)"
+
+    **出典**:
+
+    `sonic-gnmi/pkg/interceptors/dpuproxy/resolver.go#L66-L102 (master)`
+
+    **抜粋**:
+
+    ```text
+    hwsku, err := rclient.HGet(context.Background(), "DEVICE_METADATA|localhost", "hwsku").Result()
+    ...
+    for _, prefix := range AllowedSKUPrefixes {
+        if strings.HasPrefix(hwsku, prefix) { return true }
+    }
+    res, _ := rclient.HGetAll(context.Background(), "TELEMETRY_CONNECTIONS").Result()
+    configKey := fmt.Sprintf("%s%s", DPUConfigTablePrefix, dpuIndex)  // "DPU|dpu<N>"
+    configFields, err := r.configClient.HGetAll(ctx, configKey)
+    gnmiPort, ok := configFields["gnmi_port"]
+    ```
+
+<!-- evidence-rendered:end -->
+
 `telemetryd` (sonic-gnmi) は gRPC カウンタの増分ロジックに連動して、複数のテーブルを暗黙的に参照する。
 
 ### CONFIG_DB — `DEVICE_METADATA|localhost`
 
 | 参照フィールド | 参照箇所 | 参照タイミング | 用途 |
 |--------------|---------|--------------|------|
-| `hwsku` | `bypass.checkSKU()` (`bypass.go:156`) | `Set()` RPC で bypass 条件判定時（毎リクエスト） | HwSku が `Cisco-8102` / `Cisco-8101` / `Cisco-8223` の前方一致であれば `GNMI_SET_BYPASS` を増分する高速パスへ進む |
+| `hwsku` | `bypass.checkSKU()` (`bypass.go:156`) | `Set()` RPC で bypass 条件判定時（毎リクエスト） | [HwSku](../../reference/glossary.md#term-hwsku) が `Cisco-8102` / `Cisco-8101` / `Cisco-8223` の前方一致であれば `GNMI_SET_BYPASS` を増分する高速パスへ進む |
 
-> `checkSKU()` はキャッシュなしで毎回 CONFIG_DB (DB 4) に Redis `HGet` を発行する。bypass 高速パスを使わない環境では呼ばれない。
+> `checkSKU()` はキャッシュなしで毎回 [CONFIG_DB](../../reference/glossary.md#term-config_db) (DB 4) に [Redis](../../reference/glossary.md#term-redis) `HGet` を発行する。bypass 高速パスを使わない環境では呼ばれない。
 
 ### STATE_DB — `TELEMETRY_CONNECTIONS`
 
 | 操作 | 参照箇所 | タイミング |
 |------|---------|----------|
 | `HGetAll` → 全削除 | `connection_manager.go:52-60` | `telemetryd` 起動時（古い接続エントリをクリア） |
-| `HSet` | `storeKeyRedis()` | gRPC 接続確立時（接続情報を STATE_DB に記録） |
-| `HDel` | `deleteKeyRedis()` | gRPC 接続切断時（接続情報を STATE_DB から削除） |
+| `HSet` | `storeKeyRedis()` | gRPC 接続確立時（接続情報を [STATE_DB](../../reference/glossary.md#term-state_db) に記録） |
+| `HDel` | `deleteKeyRedis()` | gRPC 接続切断時（接続情報を [STATE_DB](../../reference/glossary.md#term-state_db) から削除） |
 
-> `TELEMETRY_CONNECTIONS` は CONFIG_DB ではなく STATE_DB (DB 6) に格納される。カウンタの増分とは独立しているが、同一プロセスが管理する接続状態追跡テーブルである。
+> `TELEMETRY_CONNECTIONS` は CONFIG_DB ではなく [STATE_DB](../../reference/glossary.md#term-state_db) (DB 6) に格納される。カウンタの増分とは独立しているが、同一プロセスが管理する接続状態追跡テーブルである。
 
 ### CONFIG_DB — `DPU|dpu<N>` / STATE_DB — `CHASSIS_MIDPLANE_TABLE|DPU<N>` （SmartSwitch 環境のみ）
 
 | テーブル/DB | 参照フィールド | 参照箇所 | 用途 |
 |------------|--------------|---------|------|
-| `DPU\|dpu<N>` (CONFIG_DB) | `gnmi_port` | `dpuproxy/resolver.go:98` | DPU への転送先 gRPC ポート決定（未設定時デフォルト `8080`） |
-| `CHASSIS_MIDPLANE_TABLE\|DPU<N>` (STATE_DB) | `ip_address`, `access` | `dpuproxy/resolver.go:69` | DPU の IP アドレスと到達性確認 |
+| `DPU\|dpu<N>` (CONFIG_DB) | `gnmi_port` | `dpuproxy/resolver.go:98` | [DPU](../../reference/glossary.md#term-dpu) への転送先 gRPC ポート決定（未設定時デフォルト `8080`） |
+| `CHASSIS_MIDPLANE_TABLE\|DPU<N>` (STATE_DB) | `ip_address`, `access` | `dpuproxy/resolver.go:69` | [DPU](../../reference/glossary.md#term-dpu) の IP アドレスと到達性確認 |
 
-> SmartSwitch 構成 (`pkg/interceptors/dpuproxy/`) でのみ使用。通常の SONiC ではこの参照は発生しない。
+> [SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成 (`pkg/interceptors/dpuproxy/`) でのみ使用。通常の [SONiC](../../reference/glossary.md#term-sonic) ではこの参照は発生しない。
 
 ### CONFIG_DB — `GNMI` テーブル（間接参照）
 
@@ -265,8 +288,8 @@ excerpt: |
 
 ### 範囲外（隣接テーブルとの区別）
 
-- **`COUNTERS_DB`** — sonic-gnmi の `sonic_data_client` が gNMI Get/Subscribe のデータソースとして参照するが、共有メモリカウンタの増分ロジックとは無関係。
-- **`APPL_DB`** — gNMI Set の書き込み先になりうるが、カウンタ自体はテーブルを問わず `GNMI_SET` または `GNMI_SET_FAIL` が増分されるだけで、APPL_DB を参照してカウンタを変えるパスは存在しない。
+- **`COUNTERS_DB`** — sonic-gnmi の `sonic_data_client` が [gNMI](../../reference/glossary.md#term-gnmi) Get/Subscribe のデータソースとして参照するが、共有メモリカウンタの増分ロジックとは無関係。
+- **`APPL_DB`** — [gNMI](../../reference/glossary.md#term-gnmi) Set の書き込み先になりうるが、カウンタ自体はテーブルを問わず `GNMI_SET` または `GNMI_SET_FAIL` が増分されるだけで、[APPL_DB](../../reference/glossary.md#term-appl_db) を参照してカウンタを変えるパスは存在しない。
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/gnmi-counter-cross-refs.md` を参照。
 <!-- /cross-refs -->
@@ -321,7 +344,7 @@ func IncCounter(cnt CounterType) {
 
 ### STATE_DB / CONFIG_DB への影響
 
-カウンタはすべて SysV 共有メモリに格納される。失敗時も STATE_DB / CONFIG_DB / APPL_DB への書込は発生しない。エラーログも `SWSS_LOG_ERROR` ではなく Go の `fmt.Errorf` のみで、syslog には記録されない。
+カウンタはすべて SysV 共有メモリに格納される。失敗時も STATE_DB / CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) への書込は発生しない。エラーログも `SWSS_LOG_ERROR` ではなく Go の `fmt.Errorf` のみで、syslog には記録されない。
 <!-- /failure -->
 
 <!-- constants -->
@@ -335,6 +358,26 @@ excerpt: |
   memMode = 0x380
 reasoning: SysV IPC キー・領域サイズ・flags はすべて定数宣言。CONFIG_DB / YANG 管理なし。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-gnmi/common_utils/shareMem.go (master)"
+
+    **出典**:
+
+    `sonic-net/sonic-gnmi/common_utils/shareMem.go (master)`
+
+    **抜粋**:
+
+    ```text
+    memKey  = 7749
+    memSize = 1024
+    memMode = 0x380
+    ```
+
+    **判断根拠**: SysV IPC キー・領域サイズ・flags はすべて定数宣言。CONFIG_DB / YANG 管理なし。
+
+<!-- evidence-rendered:end -->
+
 <!-- evidence:
 source: sonic-net/sonic-gnmi/common_utils/context.go (master)
 excerpt: |
@@ -342,7 +385,24 @@ excerpt: |
 reasoning: iota 番兵として COUNTER_SIZE = 32 が確定。配列サイズと SetMemCounters ループ上限に使用。
 -->
 
-`sonic-gnmi` の共有メモリカウンタ実装に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-gnmi/common_utils/shareMem.go` と `sonic-gnmi/common_utils/context.go`。
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-gnmi/common_utils/context.go (master)"
+
+    **出典**:
+
+    `sonic-net/sonic-gnmi/common_utils/context.go (master)`
+
+    **抜粋**:
+
+    ```text
+    COUNTER_SIZE CounterType = iota  // value = 32, sentinel
+    ```
+
+    **判断根拠**: iota 番兵として COUNTER_SIZE = 32 が確定。配列サイズと SetMemCounters ループ上限に使用。
+
+<!-- evidence-rendered:end -->
+
+`sonic-gnmi` の共有メモリカウンタ実装に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。出典は `sonic-gnmi/common_utils/shareMem.go` と `sonic-gnmi/common_utils/context.go`。
 
 ### SysV 共有メモリ定数 (`shareMem.go`)
 
@@ -380,11 +440,11 @@ reasoning: iota 番兵として COUNTER_SIZE = 32 が確定。配列サイズと
 <!-- source: sonic-gnmi/gnmi_server/connection_manager.go ref:master -->
 <!-- source: sonic-gnmi/gnmi_server/client_subscribe.go ref:master -->
 
-gNMI カウンタ本体は SysV 共有メモリに格納されるため、カウンタ増分ロジック自体が CONFIG_DB / STATE_DB を書き変えることはない。ただし `telemetryd` は gRPC **Subscribe** セッション管理の一環として **STATE_DB の `TELEMETRY_CONNECTIONS`** テーブルを副次的に読み書きする。
+[gNMI](../../reference/glossary.md#term-gnmi) カウンタ本体は SysV 共有メモリに格納されるため、カウンタ増分ロジック自体が CONFIG_DB / STATE_DB を書き変えることはない。ただし `telemetryd` は gRPC **Subscribe** セッション管理の一環として **STATE_DB の `TELEMETRY_CONNECTIONS`** テーブルを副次的に読み書きする。
 
 ### STATE_DB — `TELEMETRY_CONNECTIONS`
 
-| 操作 | Redis コマンド | タイミング | 書込元 | 根拠 |
+| 操作 | [Redis](../../reference/glossary.md#term-redis) コマンド | タイミング | 書込元 | 根拠 |
 |------|--------------|-----------|--------|------|
 | 起動時クリア | `HGetAll` → 全フィールド `HDel` | `setConnectionManager()` → `PrepareRedis()` 実行時（最初の Subscribe RPC 受信で 1 回のみ） | `connection_manager.go:52-60` | 旧セッション残置エントリを起動直後に掃除する |
 | 接続確立 | `HSet(table, key, "active")` | Subscribe セッション受け入れ時 (`connectionManager.Add()`) | `connection_manager.go:116`, `client_subscribe.go:179` | セッション追跡用エントリ登録 |
@@ -399,9 +459,9 @@ gNMI カウンタ本体は SysV 共有メモリに格納されるため、カウ
 | テーブル / DB | 理由 |
 |-------------|------|
 | CONFIG_DB（全テーブル） | カウンタはメモリのみ。Set RPC の書込先は配下の DB だがカウンタロジック経路での副次書込はなし |
-| COUNTERS_DB | telemetryd はデータの**読み取り元**として使用するが、`IncCounter` 経路での書込なし |
-| FLEX_COUNTER_DB | telemetryd は書込まない（orchagent 管轄） |
-| APPL_DB | 書込なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | telemetryd はデータの**読み取り元**として使用するが、`IncCounter` 経路での書込なし |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | telemetryd は書込まない（[orchagent](../../reference/glossary.md#term-orchagent) 管轄） |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | 書込なし |
 
 > **Get / Set RPC は `TELEMETRY_CONNECTIONS` を更新しない**。`ConnectionManager` は Subscribe セッション専用。
 
@@ -416,7 +476,7 @@ gNMI カウンタ本体は SysV 共有メモリに格納されるため、カウ
 <!-- source: sonic-gnmi/common_utils/context.go ref:master -->
 <!-- source: sonic-gnmi/gnmi_dump/gnmi_dump.go ref:master -->
 
-gNMI 内部カウンタは SysV 共有メモリ（key=`7749`）に格納されるため、**Redis pub/sub 機構は一切存在しない**。`SubscriberStateTable` / `ConsumerStateTable` / `NotificationConsumer` / Redis keyspace 通知のいずれも使用しない。
+gNMI 内部カウンタは SysV 共有メモリ（key=`7749`）に格納されるため、**[Redis](../../reference/glossary.md#term-redis) pub/sub 機構は一切存在しない**。`SubscriberStateTable` / `ConsumerStateTable` / `NotificationConsumer` / Redis keyspace 通知のいずれも使用しない。
 
 ### 購読方式一覧
 
@@ -475,7 +535,7 @@ gRPC RPC 受信
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
-gNMI 内部カウンタは SysV 共有メモリ（key=`7749`）に格納されるため、SAI capability の有無に依存するプラットフォーム差はない。ただし **`GNMI_SET_BYPASS` カウンタ**は特定の Cisco HwSku 専用であり、SmartSwitch/DPU 環境ではカウント集計の分離に注意が必要である。
+gNMI 内部カウンタは SysV 共有メモリ（key=`7749`）に格納されるため、[SAI](../../reference/glossary.md#term-sai) capability の有無に依存するプラットフォーム差はない。ただし **`GNMI_SET_BYPASS` カウンタ**は特定の Cisco [HwSku](../../reference/glossary.md#term-hwsku) 専用であり、[SmartSwitch](../../reference/glossary.md#term-smartswitch)/[DPU](../../reference/glossary.md#term-dpu) 環境ではカウント集計の分離に注意が必要である。
 
 ### GNMI_SET_BYPASS — Cisco 専用バイパス経路
 
@@ -501,15 +561,15 @@ Broadcom / Mellanox / Marvell / Barefoot 系 HwSku ではバイパス条件を�
 
 ### SmartSwitch / DPU 環境
 
-`pkg/interceptors/setup.go` に DPU プロキシインターセプターが登録されており、gRPC メタデータ `x-sonic-target-type: dpu` があれば NPU 側の `telemetryd` が RPC を DPU 側 gNMI サーバーに転送する。
+`pkg/interceptors/setup.go` に DPU プロキシインターセプターが登録されており、gRPC メタデータ `x-sonic-target-type: dpu` があれば [NPU](../../reference/glossary.md#term-npu) 側の `telemetryd` が RPC を DPU 側 gNMI サーバーに転送する。
 
 | 観点 | 挙動 |
 |------|------|
-| NPU 側 gnmi_dump | NPU telemetryd が受け取った RPC のみ計上。DPU に転送された RPC も `GNMI_GET` / `GNMI_SET` が NPU 側で増分されてから転送される |
+| [NPU](../../reference/glossary.md#term-npu) 側 gnmi_dump | [NPU](../../reference/glossary.md#term-npu) telemetryd が受け取った RPC のみ計上。DPU に転送された RPC も `GNMI_GET` / `GNMI_SET` が NPU 側で増分されてから転送される |
 | DPU 側カウンタ | DPU 上の独立した telemetryd が持つ SHM（key=`7749`）に格納される。NPU 側 `gnmi_dump` では **集計されない** |
 | `dpuproxy` パッケージ内 | `IncCounter` 呼び出しは 0 件 (`pkg/interceptors/dpuproxy/` 全体) |
 
-SmartSwitch 構成では NPU + 各 DPU それぞれで `gnmi_dump` を実行しないと全体の RPC 集計が得られない。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成では NPU + 各 DPU それぞれで `gnmi_dump` を実行しないと全体の RPC 集計が得られない。
 
 ### VS / テストシミュレーター
 
@@ -563,3 +623,5 @@ DBUS fail---0
 ## 引用元
 
 [^1]: `common_utils/context.go`, `common_utils/shareMem.go`, `gnmi_dump/gnmi_dump.go` — sonic-net/sonic-gnmi (master). <https://github.com/sonic-net/sonic-gnmi/blob/master/common_utils/context.go>
+
+<!-- glossary-links-injected: 035658f68767 -->

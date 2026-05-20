@@ -46,7 +46,7 @@ related:
 
 ## 症状
 
-- [BGP](../../reference/glossary.md#term-bgp) で受信した route が `show ip route` に出るが、ASIC 側 forwarding に反映されない
+- [BGP](../../reference/glossary.md#term-bgp) で受信した route が `show ip route` に出るが、[ASIC](../../reference/glossary.md#term-asic) 側 forwarding に反映されない
 - `sonic-db-cli APPL_DB hgetall ROUTE_TABLE:...` に値があるのに、対応する `ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*` が存在しない
 - `swss` / `syncd` の CPU が継続的に高い
 
@@ -131,4 +131,4 @@ sonic-db-cli APPL_DB info clients | head
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — orchdaemon.cpp
 [^2]: sonic-net/[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) @ master — Syncd.cpp
 
-<!-- glossary-links-injected: 96956d572342 -->
+<!-- glossary-links-injected: c006405759d8 -->

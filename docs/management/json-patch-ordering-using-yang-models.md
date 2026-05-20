@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-`config apply-patch <jsonpatch>` で投入された JsonPatch (RFC6902) を、**SONiC [YANG](../reference/glossary.md#term-yang) モデル制約を満たしつつ任意の中間状態が valid となるように複数 `JsonChange` に分割** するアルゴリズム[^1]。Generic Config Update and Rollback の "Patch Orderer" 構成要素にあたる。
+`config apply-patch <jsonpatch>` で投入された JsonPatch (RFC6902) を、**[SONiC](../reference/glossary.md#term-sonic) [YANG](../reference/glossary.md#term-yang) モデル制約を満たしつつ任意の中間状態が valid となるように複数 `JsonChange` に分割** するアルゴリズム[^1]。Generic Config Update and Rollback の "Patch Orderer" 構成要素にあたる。
 
 インタフェース[^1]:
 
@@ -218,4 +218,4 @@ reasoning: create-only 拡張のセマンティクスを直接引用
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -103,7 +103,7 @@ LOOPBACK_INTERFACE|<name>|<ip-prefix>           # IP プレフィクス
 ### 典型値
 
 - key 形式: `LOOPBACK_INTERFACE|Loopback0` (L3 enable 行) と `LOOPBACK_INTERFACE|Loopback0|<ip/prefix>`。
-- `Loopback0` は [BGP](../../reference/glossary.md#term-bgp) router-id / VTEP src として標準利用。
+- `Loopback0` は [BGP](../../reference/glossary.md#term-bgp) router-id / [VTEP](../../reference/glossary.md#term-vtep) src として標準利用。
 
 ### よくある誤設定
 
@@ -139,7 +139,7 @@ show ip interfaces | grep Loopback
 
 | 値 | 挙動 |
 |----|------|
-| 設定あり | 指定 VRF にバインド |
+| 設定あり | 指定 [VRF](../../reference/glossary.md#term-vrf) にバインド |
 | 未設定 | デフォルト VRF に属する |
 
 ### L3 enable 行の有無（特殊条件）
@@ -161,19 +161,18 @@ show ip interfaces | grep Loopback
 | L3 enable 行なしで IP 行のみ投入 | dummy デバイス未作成のため `ip addr add` が失敗。L3 enable 行（フィールドなし）が先に必要 |
 | MTU 未設定 | `ip link add <name> mtu 65536 type dummy` で作成（intfmgr.cpp L28 `LOOPBACK_DEFAULT_MTU_STR "65536"`） |
 | `ip link set admin_status` 失敗 | `SWSS_LOG_WARN("Lo interface ip link set admin status %s failure. Runtime error: %s")` → warn のみで継続 |
-| `ip link del` 失敗 | `SWSS_LOG_ERROR` → dummy デバイスが OS に残存するが CONFIG_DB からはエントリが消える（不整合状態） |
+| `ip link del` 失敗 | `SWSS_LOG_ERROR` → dummy デバイスが OS に残存するが [CONFIG_DB](../../reference/glossary.md#term-config_db) からはエントリが消える（不整合状態） |
 | 同名 Loopback への重複 SET | `m_loopbackIntfList` の `find` で既存確認後スキップ |
 | 削除済み Loopback への IP 追加 | L3 enable 行を再設定しないと反映されない |
 
 <!-- /cdb-exceptions -->
-
 
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`intfmgrd` → `IntfsOrch` (APPL_DB 経由) が CONFIG_DB の `LOOPBACK_INTERFACE` テーブルを購読する。
+`intfmgrd` → `IntfsOrch` ([APPL_DB](../../reference/glossary.md#term-appl_db) 経由) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `LOOPBACK_INTERFACE` テーブルを購読する。
 
 `LOOPBACK_INTERFACE` の key は `<lo_name>|<ip_prefix>` または `<lo_name>`。`Loopback0` が BGP router-id として使用される。
 
@@ -187,7 +186,7 @@ show ip interfaces | grep Loopback
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB 変化を `intfmgrd` が検知後 `APP_INTF_TABLE` に書き込み。`IntfsOrch` が SAI loopback router interface を更新。即時反映。
+**適用タイミング**: CONFIG_DB 変化を `intfmgrd` が検知後 `APP_INTF_TABLE` に書き込み。`IntfsOrch` が [SAI](../../reference/glossary.md#term-sai) loopback router interface を更新。即時反映。
 
 **副作用**: Loopback IP address は BGP の Router ID / peering source として使用される。削除すると BGP session に影響する可能性がある。
 <!-- /runtime-trace -->
@@ -205,7 +204,7 @@ show ip interfaces | grep Loopback
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- sonic-mgmt-common OpenConfig interfaces 経由
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common OpenConfig interfaces 経由
 
 ### db_migrator
 - なし
@@ -237,7 +236,7 @@ YANG default は `up`。さらに `intfmgrd` も空値または不正値を受�
 YANG default は `"0"` だが、`natmgr` は Loopback インターフェースに対して
 mangle iptables ルールを**生成しない**（`natmgr.cpp:7526-7549, 7581`）。
 値はキャッシュ (`m_natZoneInterfaceInfo`) に記録されるが、カーネルの mark 付与は行われない。
-Loopback の `nat_zone` は設定可能だが、実際の NAT 効果はゼロ。
+Loopback の `nat_zone` は設定可能だが、実際の [NAT](../../reference/glossary.md#term-nat) 効果はゼロ。
 
 ### `scope`（IP プレフィクスロウ）— dead field
 
@@ -275,7 +274,7 @@ SAI ルータ IF の更新は発生しない。
 |------|------|------|
 | `switch_type == "voq"` | IPv6 アドレス付与時に `metric 256` を自動追加 | `intfmgr.cpp:103-106` |
 | internal BGP peer | `Loopback4096` エントリが必須依存 | `managers_bgp.py:145-146` |
-| `Loopback4096` 未設定 | VOQ 環境の internal BGP peer 設定がブロック | `managers_bgp.py:146` |
+| `Loopback4096` 未設定 | [VOQ](../../reference/glossary.md#term-voq) 環境の internal BGP peer 設定がブロック | `managers_bgp.py:146` |
 
 ### `mac_addr` — 暗黙ゼロ MAC
 
@@ -293,12 +292,12 @@ APP_INTF_TABLE に記録される。
 
 ### 他テーブル先行必須
 
-`LOOPBACK_INTERFACE` は `intfmgrd` が処理する。`isIntfStateOk()` 内で `Loopback` プレフィクスを検知すると **即 `true` を返す**（`intfmgr.cpp:696-699`）。PORT / PORTCHANNEL / VLAN など他テーブルへの依存は存在しない。
+`LOOPBACK_INTERFACE` は `intfmgrd` が処理する。`isIntfStateOk()` 内で `Loopback` プレフィクスを検知すると **即 `true` を返す**（`intfmgr.cpp:696-699`）。PORT / PORTCHANNEL / [VLAN](../../reference/glossary.md#term-vlan) など他テーブルへの依存は存在しない。
 
-| 先行テーブル / 条件 | 確認先 STATE_DB | 依存の内容 | コード根拠 |
+| 先行テーブル / 条件 | 確認先 [STATE_DB](../../reference/glossary.md#term-state_db) | 依存の内容 | コード根拠 |
 |------------------|----------------|-----------|-----------|
 | 依存なし | — | `isIntfStateOk("Loopback*")` は常に `true` | `intfmgr.cpp:696-699` |
-| `VRF` + vrfmgrd が STATE_VRF_TABLE に書く | `STATE_VRF_TABLE` | `vrf_name` 指定時のみ。未 ready → retry | `intfmgr.cpp:839-842` |
+| `VRF` + [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) が STATE_VRF_TABLE に書く | `STATE_VRF_TABLE` | `vrf_name` 指定時のみ。未 ready → retry | `intfmgr.cpp:839-842` |
 | Loopback 属性ロウが STATE_INTERFACE_TABLE に存在 | `STATE_INTERFACE_TABLE` | `isIntfCreated(alias)` が false → IP プレフィクスロウをスキップ | `intfmgr.cpp:1115` |
 
 ### Loopback 生成順序 (kernel)
@@ -325,7 +324,7 @@ APP_INTF_TABLE に記録される。
 > コード上は VRF・MAC の設定（`setIntfVrf` / `setIntfMac`）は `is_lo` ブロックの外の共通パスに位置し、
 > `ip link set up/down` の後に実行される（`intfmgr.cpp:1007-1020`）。
 
-IP プレフィクスロウ（`doIntfAddrTask()` SET パス）は属性ロウの STATE_DB 書込み後に実行される。
+IP プレフィクスロウ（`doIntfAddrTask()` SET パス）は属性ロウの [STATE_DB](../../reference/glossary.md#term-state_db) 書込み後に実行される。
 
 ### SET 後 DEL 順依存
 
@@ -336,7 +335,7 @@ IP プレフィクスロウ（`doIntfAddrTask()` SET パス）は属性ロウの
 
 ### 主要ポイント
 
-- Loopback は他 IF と異なり STATE_DB の ready 待ちが**一切ない**（`isIntfStateOk` 常 true）
+- Loopback は他 IF と異なり [STATE_DB](../../reference/glossary.md#term-state_db) の ready 待ちが**一切ない**（`isIntfStateOk` 常 true）
 - `cold restart` 時は `flushLoopbackIntfs()` でカーネルから全 Loopback を削除後に再作成する（`intfmgr.cpp:57`）
 - `warm-start` 時は `buildIntfReplayList()` が CONFIG_DB から Loopback キーを収集し replay する
 
@@ -354,10 +353,10 @@ YANG leafref を超えた他テーブル・他 DB・プラットフォームフ�
 | `STATE_VRF_TABLE` | STATE_DB | READ | `vrf_name` 指定時の readiness ガード。未登録なら処理をキューに戻してリトライ | `intfmgr.cpp` L839–842 |
 | `STATE_INTF_TABLE` | STATE_DB | READ | VRF 変更禁止チェック (`isIntfChangeVrf`)。既登録 VRF と異なる `vrf_name` 指定時に ERROR で拒否 | `intfmgr.cpp` L846–849 |
 | `STATE_INTERFACE_TABLE` | STATE_DB | READ | IP プレフィクスロウ処理の前提確認 (`isIntfCreated`)。属性ロウ SET 完了前は IP アドレス設定をスキップしてリトライ | `intfmgr.cpp` L1115 |
-| `DEVICE_METADATA\|localhost.switch_type` | CONFIG_DB | READ (起動時 1 回) | VOQ 判定。`voq` のとき IPv6 アドレス付与に `metric 256` を付与。起動後の変更は反映されない | `intfmgr.cpp` L70–75 |
-| `VRF` (VrfOrch 内部マップ経由) | orchagent memory | READ | orchagent 側 VRF 存在確認。`m_vrfOrch->isVRFexists(vrf_name)` が false なら SET をリトライ | `intfsorch.cpp` L826–831 |
+| `DEVICE_METADATA\|localhost.switch_type` | CONFIG_DB | READ (起動時 1 回) | [VOQ](../../reference/glossary.md#term-voq) 判定。`voq` のとき IPv6 アドレス付与に `metric 256` を付与。起動後の変更は反映されない | `intfmgr.cpp` L70–75 |
+| `VRF` (VrfOrch 内部マップ経由) | [orchagent](../../reference/glossary.md#term-orchagent) memory | READ | [orchagent](../../reference/glossary.md#term-orchagent) 側 VRF 存在確認。`m_vrfOrch->isVRFexists(vrf_name)` が false なら SET をリトライ | `intfsorch.cpp` L826–831 |
 | `DEVICE_METADATA\|localhost.mac` → `gMacAddress` | CONFIG_DB (起動時) | READ | `mac_addr` 省略時の SAI `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` フォールバック値 | `intfsorch.cpp` L1205 |
-| `NAT_GLOBAL` → `gIsNatSupported` | CONFIG_DB (起動時) | READ | `nat_zone` 指定時の NAT 有効判定。`gIsNatSupported==false` のとき SAI NAT zone 属性未設定 | `intfsorch.cpp` L1287–1294 |
+| `NAT_GLOBAL` → `gIsNatSupported` | CONFIG_DB (起動時) | READ | `nat_zone` 指定時の [NAT](../../reference/glossary.md#term-nat) 有効判定。`gIsNatSupported==false` のとき SAI NAT zone 属性未設定 | `intfsorch.cpp` L1287–1294 |
 
 !!! note "補足"
     - **`STATE_*TABLE` 依存** は YANG leafref には現れない実行時 readiness ガード。VRF が未 ready なら Consumer がエントリを保持して自動再試行する。
@@ -387,7 +386,7 @@ SWSS_LOG_DEBUG("VRF is not ready, skipping %s", vrf_name.c_str())
 ```
 
 を出力して `false` を返し、イベントをキューに保留する。**CONFIG_DB に VRF エントリが
-存在していても、vrfmgrd が STATE_DB に書き込むまで Loopback は VRF にバインドされない。**
+存在していても、[vrfmgrd](../../reference/glossary.md#term-vrfmgrd) が STATE_DB に書き込むまで Loopback は VRF にバインドされない。**
 
 ### VRF 変更禁止（`isIntfChangeVrf`）
 
@@ -438,15 +437,15 @@ VRF 解除後のアドレス競合（グローバル VRF への暗黙フォー�
 
 | 障害シナリオ | 処理コンポーネント | ログレベル | 自動リトライ | 主な副作用 |
 |------------|-----------------|-----------|-------------|-----------|
-| `ip link add <Lo> type dummy` 失敗 | intfmgrd | ERROR | **なし** | OS に dummy デバイスが作成されないが `m_loopbackIntfList` には登録済みとなり、以後の SET で再作成が試みられない |
-| `ip link del <Lo>` 失敗 | intfmgrd | ERROR | **なし** | OS の dummy デバイスが残存したまま CONFIG_DB エントリは消去される（不整合状態。次回再起動の `flushLoopbackIntfs` で回収） |
-| `admin_status` に `"up"` / `"down"` 以外の値 | intfmgrd | WARN | — | `"up"` へサイレントフォールバック（`intfmgr.cpp:865-868`） |
+| `ip link add <Lo> type dummy` 失敗 | [intfmgrd](../../reference/glossary.md#term-intfmgrd) | ERROR | **なし** | OS に dummy デバイスが作成されないが `m_loopbackIntfList` には登録済みとなり、以後の SET で再作成が試みられない |
+| `ip link del <Lo>` 失敗 | [intfmgrd](../../reference/glossary.md#term-intfmgrd) | ERROR | **なし** | OS の dummy デバイスが残存したまま CONFIG_DB エントリは消去される（不整合状態。次回再起動の `flushLoopbackIntfs` で回収） |
+| `admin_status` に `"up"` / `"down"` 以外の値 | [intfmgrd](../../reference/glossary.md#term-intfmgrd) | WARN | — | `"up"` へサイレントフォールバック（`intfmgr.cpp:865-868`） |
 | `ip link set <Lo> up/down` が runtime_error | intfmgrd | WARN | **なし** | OS の admin 状態と CONFIG_DB が乖離（`intfmgr.cpp:879-882`） |
 | VRF 変更（既バインド VRF から別 VRF への直接変更） | intfmgrd | ERROR | **なし** | 変更イベントを消費して拒否。CONFIG_DB の値は書き換わるが実態は旧 VRF のまま（`intfmgr.cpp:846-849`） |
 | `vrf_name` 指定時に STATE_VRF_TABLE に VRF 未登録 | intfmgrd | DEBUG | あり（VRF ready 後） | 設定がキューで保留。VRF 完了後に自動リトライ（`intfmgr.cpp:839-842`） |
-| SAI `create_router_interface` が非 SUCCESS | orchagent IntfsOrch | ERROR | あり（`task_success` 非時） | `handleSaiCreateStatus` 判定後 `runtime_error` → フレームワークがタスクをリトライキューに戻す（`intfsorch.cpp:1296-1304`） |
+| SAI `create_router_interface` が非 SUCCESS | [orchagent](../../reference/glossary.md#term-orchagent) IntfsOrch | ERROR | あり（`task_success` 非時） | `handleSaiCreateStatus` 判定後 `runtime_error` → フレームワークがタスクをリトライキューに戻す（`intfsorch.cpp:1296-1304`） |
 | `loopback_action` に `"drop"` / `"forward"` 以外の値 | orchagent IntfsOrch | WARN | **なし** | SAI 属性未設定。SAI 実装依存のデフォルト action が維持される（`intfsorch.cpp:1162`） |
-| RIF 削除時に参照カウント非 0（ネクストホップ等が参照中） | orchagent IntfsOrch | NOTICE | あり（自動） | 参照が解放されるまで RIF 削除を保留してリトライ（`intfsorch.cpp:1327-1330`） |
+| [RIF](../../reference/glossary.md#term-rif) 削除時に参照カウント非 0（ネクストホップ等が参照中） | orchagent IntfsOrch | NOTICE | あり（自動） | 参照が解放されるまで [RIF](../../reference/glossary.md#term-rif) 削除を保留してリトライ（`intfsorch.cpp:1327-1330`） |
 | 属性ロウ DEL 時に IP プレフィクスロウが残存 | orchagent IntfsOrch | なし | あり（自動） | IP 削除まで属性ロウ DEL を保留（サイレントリトライ、`intfsorch.cpp:1053-1064`） |
 
 ### ポイント
@@ -471,14 +470,14 @@ VRF 解除後のアドレス競合（グローバル VRF への暗黙フォー�
 |--------|-----|---------|------|
 | `LOOPBACK_PREFIX` | `"Loopback"` | `intfmgr.cpp` L22 | ループバック名のプレフィクス。`alias.compare(0, strlen(LOOPBACK_PREFIX), LOOPBACK_PREFIX)` で `is_lo = true` を判定する |
 | `LOOPBACK_DEFAULT_MTU_STR` | `"65536"` | `intfmgr.cpp` L28 | Linux dummy デバイス作成時の固定 MTU。`ip link add <name> mtu 65536 type dummy` にハードコードされており、CONFIG_DB から変更する手段はない（`LOOPBACK_INTERFACE` テーブルに `mtu` フィールドなし） |
-| `DEFAULT_MTU_STR` | `9100` | `intfmgr.cpp` L29 | 一般インターフェース（Ethernet/LAG/VLAN）のデフォルト MTU。Loopback には使用されない |
+| `DEFAULT_MTU_STR` | `9100` | `intfmgr.cpp` L29 | 一般インターフェース（Ethernet/[LAG](../../reference/glossary.md#term-lag)/[VLAN](../../reference/glossary.md#term-vlan)）のデフォルト MTU。Loopback には使用されない |
 
 ### orchagent IntfsOrch — タスク優先度・更新インターバル
 
 | 定数名 | 値 | 定義場所 | 説明 |
 |--------|-----|---------|------|
 | `intfsorch_pri` | `35` | `intfsorch.cpp` L43 | `IntfsOrch` のタスク優先度。orchagent 内の複数 Orch が同時イベントを持つ場合の処理順序を決定 |
-| `UPDATE_MAPS_SEC` | `1` 秒 | `intfsorch.cpp` L45 | RIF 統計マップの更新インターバル。Loopback IF の統計もこの周期で収集される |
+| `UPDATE_MAPS_SEC` | `1` 秒 | `intfsorch.cpp` L45 | [RIF](../../reference/glossary.md#term-rif) 統計マップの更新インターバル。Loopback IF の統計もこの周期で収集される |
 
 ### orchagent IntfsOrch — loopback_action マッピング
 
@@ -520,14 +519,14 @@ SAI 属性: `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION`
 
 ### APPL_DB — APP_INTF_TABLE
 
-`intfmgrd` は `doIntfGeneralTask()` / `doIntfAddrTask()` で `m_appIntfTableProducer`（Producer Channel）を使い APPL_DB に書く。
+`intfmgrd` は `doIntfGeneralTask()` / `doIntfAddrTask()` で `m_appIntfTableProducer`（Producer Channel）を使い [APPL_DB](../../reference/glossary.md#term-appl_db) に書く。
 
 | キー | 書込みフィールド | タイミング | コード根拠 |
 |------|----------------|-----------|-----------|
 | `APP_INTF_TABLE\|<alias>` | `vrf_name`, `mac_addr`（未設定時 `"00:00:00:00:00:00"`）, `loopback_action`（指定時のみ） | 属性ロウ SET | `intfmgr.cpp:1053` |
 | `APP_INTF_TABLE\|<alias>:<ip-prefix>` | `scope="global"`（ハードコード）, `family` | IP プレフィクスロウ SET（IPv6 link-local を除く） | `intfmgr.cpp:1137` |
 
-**IPv6 link-local アドレス（`fe80::/10`）は APPL_DB に書かれない**。カーネルには付与されるが、APP_INTF_TABLE への `set` はスキップされる（`intfmgr.cpp:1123-1139`）。
+**IPv6 link-local アドレス（`fe80::/10`）は [APPL_DB](../../reference/glossary.md#term-appl_db) に書かれない**。カーネルには付与されるが、APP_INTF_TABLE への `set` はスキップされる（`intfmgr.cpp:1123-1139`）。
 
 ### STATE_DB — STATE_INTERFACE_TABLE
 
@@ -542,18 +541,18 @@ SAI 属性: `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION`
 
 ### COUNTERS_DB — COUNTERS_RIF_NAME_MAP / COUNTERS_RIF_TYPE_MAP
 
-`orchagent` `IntfsOrch` は SAI RIF 作成後に `m_rifsToAdd` リストへ追加し、`UPDATE_MAPS_SEC = 1` 秒インターバルのタイマー（`generateInterfaceMap()`）で COUNTERS_DB に書く（`intfsorch.cpp:1530-1538`）。
+`orchagent` `IntfsOrch` は SAI RIF 作成後に `m_rifsToAdd` リストへ追加し、`UPDATE_MAPS_SEC = 1` 秒インターバルのタイマー（`generateInterfaceMap()`）で [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に書く（`intfsorch.cpp:1530-1538`）。
 
 | テーブル | ハッシュキー | フィールド | コード根拠 |
 |---------|------------|-----------|-----------|
 | `COUNTERS_RIF_NAME_MAP` | `""` | `<alias>` = `<sai_object_id>` | `intfsorch.cpp:1537` |
 | `COUNTERS_RIF_TYPE_MAP` | `""` | `<sai_object_id>` = `<rif_type>` | `intfsorch.cpp:1538` |
 
-削除時は `removeRifFromFlexCounter()` が `hdel` で両テーブルから削除し、FLEX_COUNTER_DB のポーリングを停止する（`intfsorch.cpp:1559-1566`）。
+削除時は `removeRifFromFlexCounter()` が `hdel` で両テーブルから削除し、[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) のポーリングを停止する（`intfsorch.cpp:1559-1566`）。
 
 ### CHASSIS_APP_DB — SYSTEM_INTERFACE_TABLE（VOQ 環境のみ）
 
-`isChassisDbInUse()` が true（VOQ シャーシ構成）の場合のみ `voqSyncAddIntf()` が呼ばれ、`SYSTEM_INTERFACE_TABLE|<system_alias>` に `oper_status` を書く（`intfsorch.cpp:1316-1317`）。通常の非 VOQ 環境では書込みは発生しない。
+`isChassisDbInUse()` が true（[VOQ](../../reference/glossary.md#term-voq) シャーシ構成）の場合のみ `voqSyncAddIntf()` が呼ばれ、`SYSTEM_INTERFACE_TABLE|<system_alias>` に `oper_status` を書く（`intfsorch.cpp:1316-1317`）。通常の非 VOQ 環境では書込みは発生しない。
 
 ### まとめ表
 
@@ -561,7 +560,7 @@ SAI 属性: `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION`
 |----|---------|-----------|
 | APPL_DB | `APP_INTF_TABLE` | 属性/IP ロウ SET 即時 |
 | STATE_DB | `STATE_INTERFACE_TABLE` | 属性/IP ロウ SET 即時 |
-| COUNTERS_DB | `COUNTERS_RIF_NAME_MAP`, `COUNTERS_RIF_TYPE_MAP` | SAI RIF 確定後 ≤1 秒 |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_RIF_NAME_MAP`, `COUNTERS_RIF_TYPE_MAP` | SAI RIF 確定後 ≤1 秒 |
 | CHASSIS_APP_DB | `SYSTEM_INTERFACE_TABLE` | SAI RIF 作成時（VOQ のみ） |
 
 詳細調査ノートは `meta/_intermediate/cdb-flow/loopback-interface-side-effects.md` 参照。
@@ -573,7 +572,7 @@ SAI 属性: `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION`
 
 ### Redis 購読方式
 
-`LOOPBACK_INTERFACE` テーブルへの変更通知は、`intfmgrd` が **`SubscriberStateTable`** を通じた **Redis keyspace 通知** (`PSUBSCRIBE __keyspace@4__:LOOPBACK_INTERFACE|*`) によって受信する。CONFIG_DB の書き手（`config loopback` CLI / `sonic-cfggen` / `swssconfig`）は `HSET LOOPBACK_INTERFACE|<key> ...` を直接実行するだけで `PUBLISH` は行わない。Redis サーバの `notify-keyspace-events` 機能がキー変更時に通知を自動配信する。
+`LOOPBACK_INTERFACE` テーブルへの変更通知は、`intfmgrd` が **`SubscriberStateTable`** を通じた **[Redis](../../reference/glossary.md#term-redis) keyspace 通知** (`PSUBSCRIBE __keyspace@4__:LOOPBACK_INTERFACE|*`) によって受信する。CONFIG_DB の書き手（`config loopback` CLI / `sonic-cfggen` / `swssconfig`）は `HSET LOOPBACK_INTERFACE|<key> ...` を直接実行するだけで `PUBLISH` は行わない。[Redis](../../reference/glossary.md#term-redis) サーバの `notify-keyspace-events` 機能がキー変更時に通知を自動配信する。
 
 | 購読者 | 購読 API | 対象 DB | 購読テーブル / チャンネル | ハンドラ |
 |--------|---------|---------|--------------------------|---------|
@@ -636,7 +635,7 @@ ip -6 address add 2001:db8::1/128 dev Loopback0
 ip -6 address add 2001:db8::1/128 dev Loopback0 metric 256
 ```
 
-これは連結経路と static 経路を同一 metric にして eBGP / iBGP の ECMP グループを統一するためである。IPv4 アドレスへの影響はない（`intfmgr.cpp:87-91`）。
+これは連結経路と static 経路を同一 metric にして eBGP / iBGP の [ECMP](../../reference/glossary.md#term-ecmp) グループを統一するためである。IPv4 アドレスへの影響はない（`intfmgr.cpp:87-91`）。
 
 ### VOQ 環境 — Loopback4096 必須依存 (bgpcfgd)
 
@@ -653,7 +652,7 @@ ip -6 address add 2001:db8::1/128 dev Loopback0 metric 256
 | 環境 | CHASSIS_APP_DB 書込み |
 |------|----------------------|
 | 非 VOQ | なし |
-| VOQ ローカル port/LAG | `SYSTEM_INTERFACE_TABLE|<system_alias>.oper_status` |
+| VOQ ローカル port/[LAG](../../reference/glossary.md#term-lag) | `SYSTEM_INTERFACE_TABLE|<system_alias>.oper_status` |
 | VOQ リモート port | なし（`SAI_SYSTEM_PORT_TYPE_REMOTE` チェックでスキップ） |
 
 ### NAT サポート有無 — SAI RIF 属性の差異
@@ -696,4 +695,4 @@ ip -6 address add 2001:db8::1/128 dev Loopback0 metric 256
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: b5270404647a -->
+<!-- glossary-links-injected: 1d7d9a73e535 -->

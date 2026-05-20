@@ -46,7 +46,7 @@ related:
 
 ## 概要
 
-SONiC の [Warm Reboot](../reference/glossary.md#term-warm-reboot) 設計に関する **open issues / 設計の選択肢** を整理した文書[^1]。3 段階の development phase、docker warm upgrade の手順、kernel warm reboot コマンド、[SAI](../reference/glossary.md#term-sai) API 互換性、OID 復元の 2 アプローチ、planned vs unplanned warm restart、成功判定方法を扱う。
+[SONiC](../reference/glossary.md#term-sonic) の [Warm Reboot](../reference/glossary.md#term-warm-reboot) 設計に関する **open issues / 設計の選択肢** を整理した文書[^1]。3 段階の development phase、docker warm upgrade の手順、kernel warm reboot コマンド、[SAI](../reference/glossary.md#term-sai) API 互換性、OID 復元の 2 アプローチ、planned vs unplanned warm restart、成功判定方法を扱う。
 
 ## 動作仕様
 
@@ -141,4 +141,4 @@ warm restart は 2 段階:
 
 [^1]: [sonic-net/SONiC doc/warm-reboot/open_issues.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/warm-reboot/open_issues.md)
 
-<!-- glossary-links-injected: d01061035612 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -133,7 +133,7 @@ CONFIG_DB に直接書くなら次のような構造になります。
 }
 ```
 
-`AZURE` は SONiC の標準サンプル map 名で、テンプレ展開後にこの名前で参照されるのが慣例です。別名で揃えても動きますが、`config qos reload` の再展開で踏み直されるので、長期運用なら `AZURE` を残して同名で上書きする方が安全です。
+`AZURE` は [SONiC](../../reference/glossary.md#term-sonic) の標準サンプル map 名で、テンプレ展開後にこの名前で参照されるのが慣例です。別名で揃えても動きますが、`config qos reload` の再展開で踏み直されるので、長期運用なら `AZURE` を残して同名で上書きする方が安全です。
 
 確認は次の通り。
 
@@ -199,7 +199,7 @@ Ethernet0    U     12.50 MB/s    ...    0 RX_DRP    0 RX_OVR    0 TX_ERR
 
 ## シナリオ 3: PFCWD を有効化して queue を保護する
 
-PFCWD は「PFC pause が長時間止まったままになり、ASIC の buffer が消費され続ける状態」を検出して queue を強制 drop または forward に切り替える運用安全装置です。lossless を有効にした以上は必須と考えて差し支えありません。
+PFCWD は「PFC pause が長時間止まったままになり、[ASIC](../../reference/glossary.md#term-asic) の buffer が消費され続ける状態」を検出して queue を強制 drop または forward に切り替える運用安全装置です。lossless を有効にした以上は必須と考えて差し支えありません。
 
 ```bash
 # 推奨デフォルトでまとめて enable
@@ -272,4 +272,4 @@ gnmi_set --replace='/sonic-buffer-profile:sonic-buffer-profile/BUFFER_PROFILE/BU
 - YANG: [sonic-buffer-pool](../../reference/yang/sonic-buffer-pool.md) / [sonic-buffer-profile](../../reference/yang/sonic-buffer-profile.md) / [sonic-pfcwd](../../reference/yang/sonic-pfcwd.md)
 - 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md)
 
-<!-- glossary-links-injected: db2ed97924a6 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

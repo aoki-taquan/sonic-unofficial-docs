@@ -72,7 +72,7 @@ QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
 | `hostname` (key) | `hostname` | ✅ | シャーシホスト名 |
-| `asic_name` (key) | `asic_name` | ✅ | ASIC 名 |
+| `asic_name` (key) | `asic_name` | ✅ | [ASIC](../../reference/glossary.md#term-asic) 名 |
 | `ifname` (key) | string (1..128) | ✅ | IF 名 |
 | `qindex` (key) | string | ✅ | Q-index |
 | `scheduler` | leafref `SCHEDULER.name` | - | スケジューラ |
@@ -144,7 +144,7 @@ show queue counters
 ### `scheduler` フィールド挙動
 | 状態 | 挙動 |
 |------|------|
-| 省略 | スケジューラなし。ASIC デフォルト動作。 |
+| 省略 | スケジューラなし。[ASIC](../../reference/glossary.md#term-asic) デフォルト動作。 |
 | 存在する SCHEDULER 名 | `qosorch` が SAI scheduler を queue に適用。 |
 | 存在しない SCHEDULER 名 | `task_need_retry`（後で再試行）。解決不可なら `task_failed`。 |
 
@@ -168,7 +168,6 @@ show queue counters
 - **scheduler group 未検出**: ポートは存在しても queue index に対応する SAI scheduler group が見つからない場合 `task_failed`。[^2]
 
 [^2]: qosorch 実装: `sonic-swss/orchagent/qosorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp>
-
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
@@ -202,7 +201,7 @@ QosOrch は常時登録し `QUEUE` テーブルを無条件購読する。ただ
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / QosOrch** (`sonic-swss/orchagent/qosorch.cpp`): `QUEUE` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / QosOrch** (`sonic-swss/orchagent/qosorch.cpp`): `QUEUE` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -225,11 +224,11 @@ QosOrch は常時登録し `QUEUE` テーブルを無条件購読する。ただ
 
 ### Producer/Consumer ペア
 
-QUEUE テーブルは CONFIG_DB → SAI の **直接経路**をとる。APPL_DB への中継は行わない。
+QUEUE テーブルは [CONFIG_DB](../../reference/glossary.md#term-config_db) → SAI の **直接経路**をとる。[APPL_DB](../../reference/glossary.md#term-appl_db) への中継は行わない。
 
 | 区間 | 方式 | チャンネル/パターン |
 |------|------|--------------------|
-| CONFIG_DB → QosOrch | `SubscriberStateTable` | `__keyspace@{config_db_id}__:QUEUE\|*` |
+| [CONFIG_DB](../../reference/glossary.md#term-config_db) → QosOrch | `SubscriberStateTable` | `__keyspace@{config_db_id}__:QUEUE\|*` |
 | QosOrch → SAI | SAI API 直接呼び出し | `sai_scheduler_group_api` / `sai_queue_api` |
 
 ### SubscriberStateTable の動作
@@ -285,7 +284,7 @@ QUEUE テーブルへの書き込みが発生するコード経路を網羅的�
 
 ### CLI
 
-  - `config qos reload` — sonic-cfggen が `files/build_templates/qos_config.j2` を展開し QUEUE エントリを生成 (sonic-buildimage/files/build_templates/qos_config.j2)
+  - `config qos reload` — [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) が `files/build_templates/qos_config.j2` を展開し QUEUE エントリを生成 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/files/build_templates/qos_config.j2)
 
 ### minigraph / sonic-cfggen
 
@@ -293,11 +292,11 @@ minigraph.py に QUEUE 直接生成なし — `qos_config.j2` テンプレート
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
-**db_migrator.py** が QUEUE テーブルのマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+**db_migrator.py** が QUEUE テーブルのマイグレーション処理を実装 ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/scripts/db_migrator.py)
 
 ### ビルド時デフォルト (build-time default)
 
@@ -317,7 +316,7 @@ REST/gNMI 書き込み経路なし
 
 | フィールド | 省略/未設定時の実装動作 | コードロケーション |
 |-----------|----------------------|------------------|
-| `scheduler` | SAI scheduler group に何も設定しない (no-op)。ASIC 実装依存のデフォルト動作。 | `qosorch.cpp` `handleQueueTable` `donotChangeScheduler=true` |
+| `scheduler` | SAI scheduler group に何も設定しない (no-op)。[ASIC](../../reference/glossary.md#term-asic) 実装依存のデフォルト動作。 | `qosorch.cpp` `handleQueueTable` `donotChangeScheduler=true` |
 | `wred_profile` | SAI `WRED_PROFILE_ID` 未設定。実質 tail-drop (WRED なし)。 | `qosorch.cpp` `donotChangeWredProfile=true` |
 | `scheduler` (後から削除) | `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` を NULL OID に更新しスケジューラ解除。 | `qosorch.cpp` SET 時フィールド消去パス |
 | `wred_profile` (後から削除) | `SAI_QUEUE_ATTR_WRED_PROFILE_ID` を NULL OID に更新し WRED 解除。 | `qosorch.cpp` SET 時フィールド消去パス |
@@ -334,7 +333,7 @@ REST/gNMI 書き込み経路なし
 
 ### 既知 YANG-実装 discrepancy
 
-- `qindex` の YANG 型は `string` (無制限)。実装の `parseIndexRange` は整数または `X-Y` (`X < Y`) のみ受け付ける。YANG バリデーションでは弾かれないが orchagent が `task_invalid_entry` で捨てる。
+- `qindex` の YANG 型は `string` (無制限)。実装の `parseIndexRange` は整数または `X-Y` (`X < Y`) のみ受け付ける。YANG バリデーションでは弾かれないが [orchagent](../../reference/glossary.md#term-orchagent) が `task_invalid_entry` で捨てる。
 - Phase 8 コメントに記載の `dscp_to_tc_map` フィールドは QUEUE テーブルには存在しない。PORT_QOS_MAP テーブルのフィールドであり誤記。
 
 <!-- /defaults -->
@@ -392,7 +391,7 @@ QUEUE テーブルの SET 処理は `QosOrch::handleQueueTable()` が `task_proc
 
 ### 部分適用の注意
 
-`scheduler` と `wred_profile` は独立して適用される (`qosorch.cpp:1922-1944`)。`scheduler` 適用成功後に `wred_profile` で `task_failed` が返ると、scheduler は SAI 書き込み済みのまま rollback されない。range 指定 (`X-Y`) の途中 index での失敗も同様に部分適用が残る。QosOrch は STATE_DB / ERROR_TABLE への失敗記録を行わないため、反映状況の確認は `sonic-db-cli ASIC_DB hgetall` が必要。
+`scheduler` と `wred_profile` は独立して適用される (`qosorch.cpp:1922-1944`)。`scheduler` 適用成功後に `wred_profile` で `task_failed` が返ると、scheduler は SAI 書き込み済みのまま rollback されない。range 指定 (`X-Y`) の途中 index での失敗も同様に部分適用が残る。QosOrch は [STATE_DB](../../reference/glossary.md#term-state_db) / ERROR_TABLE への失敗記録を行わないため、反映状況の確認は `sonic-db-cli ASIC_DB hgetall` が必要。
 
 <!-- /failure -->
 
@@ -443,12 +442,12 @@ QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 
 ### bufferorch との関係 (BUFFER_QUEUE)
 
-`bufferorch` は `BUFFER_QUEUE` テーブル (APPL_DB) を購読し、`SAI_QUEUE_ATTR_BUFFER_PROFILE_ID` を設定する。これは `qosorch` の QUEUE テーブル処理とは独立した経路だが、同一 queue OID を共有する:
+`bufferorch` は `BUFFER_QUEUE` テーブル ([APPL_DB](../../reference/glossary.md#term-appl_db)) を購読し、`SAI_QUEUE_ATTR_BUFFER_PROFILE_ID` を設定する。これは `qosorch` の QUEUE テーブル処理とは独立した経路だが、同一 queue OID を共有する:
 
 | orch | テーブル | SAI 属性 | 先行必須 |
 |------|---------|---------|---------|
 | `qosorch` | `QUEUE` (CONFIG_DB) | `SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID` / `SAI_QUEUE_ATTR_WRED_PROFILE_ID` | PORT, SCHEDULER, WRED_PROFILE |
-| `bufferorch` | `BUFFER_QUEUE` (APPL_DB) | `SAI_QUEUE_ATTR_BUFFER_PROFILE_ID` | PORT, BUFFER_PROFILE |
+| `bufferorch` | `BUFFER_QUEUE` ([APPL_DB](../../reference/glossary.md#term-appl_db)) | `SAI_QUEUE_ATTR_BUFFER_PROFILE_ID` | PORT, BUFFER_PROFILE |
 
 `bufferorch.processQueue()` も VOQ 4-token key を同じロジックで処理する（`bufferorch.cpp:920-944`）。BUFFER_PROFILE が未解決の場合は `task_need_retry`。
 
@@ -475,7 +474,7 @@ QUEUE エントリを投入
 ```
 
 実運用では `config qos reload` が `qos_config.j2` テンプレートから
-SCHEDULER / WRED_PROFILE / QUEUE を一括生成するため、順序は sonic-cfggen が暗黙に担保する。
+SCHEDULER / WRED_PROFILE / QUEUE を一括生成するため、順序は [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) が暗黙に担保する。
 
 <!-- /ordering -->
 
@@ -516,13 +515,13 @@ qosorch.cpp:applySchedulerToQueueSchedulerGroup
 | 非 [VOQ](../../reference/glossary.md#term-voq) | `port.m_queue_ids` (egress queue リスト) |
 | [VOQ](../../reference/glossary.md#term-voq) | `getPortVoQIds()` → `SAI_SYSTEM_PORT_ATTR_QOS_VOQ_LIST` から取得した VoQ OID リスト |
 
-[VOQ](../../reference/glossary.md#term-voq) の VoQ 数はプラットフォームの [SAI](../../reference/glossary.md#term-sai) 実装が返す値に依存し、SONiC 側でハードコードしていない。
+[VOQ](../../reference/glossary.md#term-voq) の VoQ 数はプラットフォームの [SAI](../../reference/glossary.md#term-sai) 実装が返す値に依存し、[SONiC](../../reference/glossary.md#term-sonic) 側でハードコードしていない。
 
 ---
 
 ### vendor SAI — WRED 閾値更新の制約
 
-一部ベンダーの SAI 実装では、WRED の `min_threshold` / `max_threshold` を 1 属性ずつ SET する制約上、中間状態で `min > max` となりサニティチェックが失敗するケースがある。SONiC は「違反する属性を 2nd half リストに分離して適用順を制御する」ワークアラウンドを実装済み (`qosorch.cpp:595-632`)。
+一部ベンダーの SAI 実装では、WRED の `min_threshold` / `max_threshold` を 1 属性ずつ SET する制約上、中間状態で `min > max` となりサニティチェックが失敗するケースがある。[SONiC](../../reference/glossary.md#term-sonic) は「違反する属性を 2nd half リストに分離して適用順を制御する」ワークアラウンドを実装済み (`qosorch.cpp:595-632`)。
 
 ---
 
@@ -555,12 +554,12 @@ QUEUE テーブルへの SET/DEL が引き起こす、CONFIG_DB 以外の DB へ
 
 | 条件 | SAI API / 属性 | 対象 |
 |------|--------------|------|
-| `scheduler` フィールドあり | `set_scheduler_group_attribute(SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID)` | ASIC_DB `SAI_OBJECT_TYPE_SCHEDULER_GROUP` |
-| `wred_profile` フィールドあり | `set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` | ASIC_DB `SAI_OBJECT_TYPE_QUEUE` |
+| `scheduler` フィールドあり | `set_scheduler_group_attribute(SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) `SAI_OBJECT_TYPE_SCHEDULER_GROUP` |
+| `wred_profile` フィールドあり | `set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) `SAI_OBJECT_TYPE_QUEUE` |
 | `scheduler` フィールド削除 | 上記属性を NULL OID に更新 | スケジューラ解除 |
 | `wred_profile` フィールド削除 | `SAI_QUEUE_ATTR_WRED_PROFILE_ID = OID_NULL` | WRED 解除 |
 
-QosOrch は APPL_DB / STATE_DB への直接書き込みを行わない。
+QosOrch は APPL_DB / [STATE_DB](../../reference/glossary.md#term-state_db) への直接書き込みを行わない。
 
 ### ポート作成時 (PORT SET) — COUNTERS_DB Queue マップ群
 
@@ -568,14 +567,14 @@ QosOrch は APPL_DB / STATE_DB への直接書き込みを行わない。
 
 | 対象 DB / テーブル | キー / フィールド | 書込内容 |
 |------------------|-----------------|---------|
-| COUNTERS_DB / `COUNTERS_QUEUE_NAME_MAP` | `""` field=`<alias>:<qindex>` | queue SAI OID |
-| COUNTERS_DB / `COUNTERS_QUEUE_PORT_MAP` | `""` field=`<queue_oid>` | port SAI OID |
-| COUNTERS_DB / `COUNTERS_QUEUE_INDEX_MAP` | `""` field=`<queue_oid>` | queue real index |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_QUEUE_NAME_MAP` | `""` field=`<alias>:<qindex>` | queue SAI OID |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_QUEUE_PORT_MAP` | `""` field=`<queue_oid>` | port SAI OID |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_QUEUE_INDEX_MAP` | `""` field=`<queue_oid>` | queue real index |
 | COUNTERS_DB / `COUNTERS_QUEUE_TYPE_MAP` | `""` field=`<queue_oid>` | queue type 文字列 (`SAI_QUEUE_TYPE_UNICAST` 等) |
 
 ### ポート作成時 — FLEX_COUNTER_DB Queue Counter 登録
 
-| FlexCounter グループ | FLEX_COUNTER_DB キー | ポーリング間隔 | 有効化条件 | カウンタ |
+| [FlexCounter](../../reference/glossary.md#term-flexcounter) グループ | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) キー | ポーリング間隔 | 有効化条件 | カウンタ |
 |--------------------|-------------------|-------------|---------|---------|
 | `QUEUE_STAT_COUNTER` | `QUEUE_STAT_COUNTER:<queue_oid>` | 10,000 ms | `FLEX_COUNTER_TABLE\|QUEUE` enable | PACKETS / BYTES / DROPPED_PACKETS / DROPPED_BYTES / TRIM 系[^3] |
 | `QUEUE_WATERMARK_STAT_COUNTER` | `QUEUE_WATERMARK_STAT_COUNTER:<queue_oid>` | 60,000 ms | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` enable | `SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES` |
@@ -587,7 +586,7 @@ VoQ モードでは `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が自動追加�
 
 `initCounterCapabilities()` が起動時 1 回のみ SAI 能力クエリを実行し書き込む:
 
-| STATE_DB キー | フィールド | デフォルト | SAI 成功時 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) キー | フィールド | デフォルト | SAI 成功時 |
 |--------------|---------|---------|-----------|
 | `QUEUE_COUNTER_CAPABILITIES\|WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` | `isSupported` | `"false"` | `"true"` |
 | `QUEUE_COUNTER_CAPABILITIES\|WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER` | `isSupported` | `"false"` | `"true"` |
@@ -602,8 +601,8 @@ VoQ モードでは `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が自動追加�
 | COUNTERS_DB / `COUNTERS_QUEUE_PORT_MAP` | `hdel` |
 | COUNTERS_DB / `COUNTERS_QUEUE_INDEX_MAP` | `hdel` |
 | COUNTERS_DB / `COUNTERS_QUEUE_TYPE_MAP` | `hdel` |
-| FLEX_COUNTER_DB / `QUEUE_STAT_COUNTER:<oid>` | `clearCounterIdList` |
-| FLEX_COUNTER_DB / `WRED_ECN_QUEUE_STAT_COUNTER:<oid>` | `clearCounterIdList` |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `QUEUE_STAT_COUNTER:<oid>` | `clearCounterIdList` |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `WRED_ECN_QUEUE_STAT_COUNTER:<oid>` | `clearCounterIdList` |
 
 [^3]: カウンタ定義: `sonic-swss/orchagent/portsorch.cpp` L389-435 (`queue_stat_ids`, `queueWatermarkStatIds`, `wred_queue_stat_ids`)
 
@@ -672,7 +671,7 @@ QUEUE テーブル処理でコード内に固定された定数の一覧。`sche
 | 範囲形式 | `X-Y` で **X < Y** が必須。X >= Y は `task_invalid_entry` |
 | 型 | `sai_uint32_t` (uint32) |
 
-YANG 型は `string` のため YANG バリデーションでは弾かれないが、orchagent がエントリを捨てる。
+YANG 型は `string` のため YANG バリデーションでは弾かれないが、[orchagent](../../reference/glossary.md#term-orchagent) がエントリを捨てる。
 
 ### SAI 属性 ID 定数
 
@@ -697,4 +696,4 @@ DPC ポートは q3/q4 も `"scheduler.0"` (lossless なし)。VOQ remote port �
 
 <!-- /constants -->
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 103cf38cde92 -->

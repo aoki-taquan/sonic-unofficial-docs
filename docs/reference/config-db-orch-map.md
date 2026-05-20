@@ -26,7 +26,7 @@ related:
 
 ## このページの目的
 
-SONiC の **[CONFIG_DB](../reference/glossary.md#term-config_db) テーブル** が「誰によって読まれるか」を一望できる早見表。
+[SONiC](../reference/glossary.md#term-sonic) の **[CONFIG_DB](../reference/glossary.md#term-config_db) テーブル** が「誰によって読まれるか」を一望できる早見表。
 個別テーブルページ (`reference/config-db/<table>.md`) は **書く側 (CLI / [YANG](../reference/glossary.md#term-yang) / 値の意味)** に焦点を当てているのに対し、本ページは **読む側 (subscribe 先 Orch / *mgrd / [SAI](../reference/glossary.md#term-sai) 経路)** をまとめる。
 
 経路は大きく 2 種類ある。
@@ -88,7 +88,7 @@ SONiC の **[CONFIG_DB](../reference/glossary.md#term-config_db) テーブル** 
 | CONFIG_DB | subscribe 主体 | APPL_DB 中継 | SAI 経路 |
 |---|---|---|---|
 | `STATIC_ROUTE` | `fpmsyncd` ([FRR](../reference/glossary.md#term-frr) 経由) → `RouteOrch` (`APP_ROUTE_TABLE`) | ✓ | `sai_route_api` |
-| `BGP_NEIGHBOR` | `bgpcfgd` → FRR vtysh | (FRR) | (FRR が APPL_DB に route 書込) |
+| `BGP_NEIGHBOR` | `bgpcfgd` → FRR [vtysh](../reference/glossary.md#term-vtysh) | (FRR) | (FRR が APPL_DB に route 書込) |
 | `BGP_PEER_GROUP` | `bgpcfgd` | (FRR) | — |
 | `BGP_DEVICE_GLOBAL` | `BgpGlobalStateOrch` (直接 CFG) | — | `sai_switch_api` (TCP MD5 等の hint) |
 | `NEIGH` | `nbrmgrd` → `NeighOrch` (`APP_NEIGH_TABLE`) | ✓ | `sai_neighbor_api` |
@@ -262,7 +262,7 @@ CONFIG_DB → APPL_DB → orchagent と同じ構造を **[DPU](../reference/glos
 
 ## 管理 / システムサービス / セキュリティ
 
-これらは orchagent / SAI 経路を持たず、ホスト側 daemon (`hostcfgd` / 専用 daemon / FRR) が CONFIG_DB を直接 subscribe して Linux / FRR / 外部サービスへ反映する。**ASIC を直接プログラムしない** 設定群。
+これらは orchagent / SAI 経路を持たず、ホスト側 daemon (`hostcfgd` / 専用 daemon / FRR) が CONFIG_DB を直接 subscribe して Linux / FRR / 外部サービスへ反映する。**[ASIC](../reference/glossary.md#term-asic) を直接プログラムしない** 設定群。
 
 | CONFIG_DB | subscribe 主体 | APPL_DB 中継 | SAI 経路 |
 |---|---|---|---|
@@ -328,7 +328,7 @@ flowchart LR
 
 - 「`*mgrd` → APPL_DB → orchagent」: ポート/インターフェース/VLAN/LAG/Tunnel/Buffer/sFlow/Macsec/[CoPP](../reference/glossary.md#term-copp)/[NAT](../reference/glossary.md#term-nat)/STP/Fabric
 - 「orchagent が CONFIG_DB を直接 subscribe」: QoS/ACL/Policer/Mirror/Mux/Pbh/Dtel/DebugCounter/Mlag/Crm/Twamp/PfcWd/FgNhg/[FlexCounter](../reference/glossary.md#term-flexcounter)/HFTel/NvgreTunnel/Switch(一部)
-- 「FRR / kernel daemon が中継」: [BGP](../reference/glossary.md#term-bgp)/OSPF/Static route(`fpmsyncd`)、VRRP、NTP、Mgmt [VRF](../reference/glossary.md#term-vrf)、DHCP
+- 「FRR / kernel daemon が中継」: [BGP](../reference/glossary.md#term-bgp)/OSPF/Static route(`fpmsyncd`)、[VRRP](../reference/glossary.md#term-vrrp)、NTP、Mgmt [VRF](../reference/glossary.md#term-vrf)、DHCP
 
 ## 関連リファレンス
 
@@ -345,4 +345,4 @@ flowchart LR
 - [`sonic-swss/cfgmgr/`](https://github.com/sonic-net/sonic-swss/tree/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr) (各 `*mgrd.cpp`)
 - [`sonic-swss-common/common/schema.h`](https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h)
 
-<!-- glossary-links-injected: 7346a8b8c6b2 -->
+<!-- glossary-links-injected: 685759eed1cd -->

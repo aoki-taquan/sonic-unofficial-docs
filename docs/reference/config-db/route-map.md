@@ -161,7 +161,7 @@ vtysh -c 'show route-map'
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-- **BGPRouteMapMgr は固定 2 キーのみ処理**: `FROM_SDN_SLB_ROUTES` / `FROM_SDN_APPLIANCE_ROUTES` 以外の key は `log_err("BGPRouteMapMgr:: Invalid key for route-map %s")` で拒否される。これらは SDN ユースケース専用であり、汎用 route-map の CONFIG_DB 管理は [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) の ROUTE_MAP テーブル consumer ではなく [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) テンプレートが担う。[^2]
+- **BGPRouteMapMgr は固定 2 キーのみ処理**: `FROM_SDN_SLB_ROUTES` / `FROM_SDN_APPLIANCE_ROUTES` 以外の key は `log_err("BGPRouteMapMgr:: Invalid key for route-map %s")` で拒否される。これらは SDN ユースケース専用であり、汎用 route-map の CONFIG_DB 管理は [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) の [ROUTE_MAP](../../reference/glossary.md#term-route_map) テーブル consumer ではなく [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) テンプレートが担う。[^2]
 - **community_id 形式不正**: `<0-65535>:<0-65535>` 形式でない場合 `log_err` してスキップ。[^2]
 - **BGP ASN 未設定 (constants)**: `deployment_id_asn_map` が constants に存在しないか、`deployment_id=2` のエントリがない場合は route-map の更新をスキップする（既存 route-map は残る）。[^2]
 - **シーケンス番号枯渇**: `managers_allow_list.py` との連携でシーケンス番号が不足した場合 `RuntimeError("No free sequence numbers")` で追加が失敗する。[^2]
@@ -174,11 +174,11 @@ vtysh -c 'show route-map'
 
 ### Phase 6: 自動派生
 
-bgpcfgd の `RouteMapMgr` が `ROUTE_MAP` テーブルの各フィールド（`MATCH_PREFIX_LIST`、`MATCH_AS_PATH`、`SET_COMMUNITY` 等）を FRR の `match` / `set` 句コマンドへ変換する。CONFIG_DB 内フィールド間の自動付与なし。
+bgpcfgd の `RouteMapMgr` が `ROUTE_MAP` テーブルの各フィールド（`MATCH_PREFIX_LIST`、`MATCH_AS_PATH`、`SET_COMMUNITY` 等）を [FRR](../../reference/glossary.md#term-frr) の `match` / `set` 句コマンドへ変換する。CONFIG_DB 内フィールド間の自動付与なし。
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
-bgpcfgd は常時起動し `RouteMapMgr` を無条件登録する。参照先の `PREFIX_LIST` / `AS_PATH_SET` / `COMMUNITY_SET` が未設定でも FRR コマンドは発行されるが、FRR 側で未解決参照エラーになる場合がある。
+bgpcfgd は常時起動し `RouteMapMgr` を無条件登録する。参照先の `PREFIX_LIST` / `AS_PATH_SET` / `COMMUNITY_SET` が未設定でも [FRR](../../reference/glossary.md#term-frr) コマンドは発行されるが、FRR 側で未解決参照エラーになる場合がある。
 
 <!-- /derivation -->
 
@@ -194,7 +194,7 @@ bgpcfgd は常時起動し `RouteMapMgr` を無条件登録する。参照先の
 | `RouteMapMgr` | `SET_COMMUNITY` フィールドあり | `set community <value>` 追加 | `managers_route_map.py` |
 | `RouteMapMgr` | del_handler | FRR に `no route-map <name>` 発行 | `managers_route_map.py` |
 
-> **スキャン証跡**: `ROUTE_MAP` は BGP ルーティングポリシーの中核。bgpcfgd が FRR vtysh に変換。CONFIG_DB 内フィールド間の自動派生なし。
+> **スキャン証跡**: `ROUTE_MAP` は BGP ルーティングポリシーの中核。bgpcfgd が FRR [vtysh](../../reference/glossary.md#term-vtysh) に変換。CONFIG_DB 内フィールド間の自動派生なし。
 
 <!-- /handler-branching -->
 
@@ -212,7 +212,7 @@ bgpcfgd は常時起動し `RouteMapMgr` を無条件登録する。参照先の
 
 ### 段階 3: APPL → SAI
 
-- FRR がルートマップを BGP ポリシー (import/export filter, redistribution) として使用。SAI 経由なし。
+- FRR がルートマップを BGP ポリシー (import/export filter, redistribution) として使用。[SAI](../../reference/glossary.md#term-sai) 経由なし。
 
 ### 段階 4: タイミング + 副作用
 
@@ -223,7 +223,7 @@ bgpcfgd は常時起動し `RouteMapMgr` を無条件登録する。参照先の
 <!-- entry-points -->
 ## 書き込み入り口 (Direction A)
 
-ROUTE_MAP テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
+[ROUTE_MAP](../../reference/glossary.md#term-route_map) テーブルへの書き込みが発生するコード経路を網羅的に調査した結果。
 
 ### CLI
 
@@ -231,11 +231,11 @@ ROUTE_MAP テーブルへの書き込みが発生するコード経路を網羅�
 
 ### minigraph / sonic-cfggen
 
-minigraph.py に ROUTE_MAP 生成なし
+minigraph.py に [ROUTE_MAP](../../reference/glossary.md#term-route_map) 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -247,7 +247,7 @@ db_migrator.py での ROUTE_MAP マイグレーションなし
 
 ### ハードコードデフォルト / ランタイム注入
 
-**sonic-bgpcfgd** `managers_rm.py` が ROUTE_MAP テーブルを監視し FRR bgpd に反映 (sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py); **frrcfgd** `frrcfgd.py` も ROUTE_MAP を監視
+**sonic-bgpcfgd** `managers_rm.py` が ROUTE_MAP テーブルを監視し FRR bgpd に反映 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-bgpcfgd/bgpcfgd/managers_rm.py); **frrcfgd** `frrcfgd.py` も ROUTE_MAP を監視
 
 ### 死活・デッドコード
 
@@ -261,7 +261,7 @@ ROUTE_MAP テーブルは 2 つの独立したデーモンが購読する。
 
 ### frrcfgd (sonic-frr-mgmt-framework)
 
-`frrcfgd.py` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用し、Redis keyspace イベント (`__keyspace@<dbid>__:*`) を `psubscribe` で監視する。`subscribe_all()` が `table_handler_list` 内の `('ROUTE_MAP', self.bgp_table_handler_common)` を登録し、変更通知を受け取る。
+`frrcfgd.py` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用し、[Redis](../../reference/glossary.md#term-redis) keyspace イベント (`__keyspace@<dbid>__:*`) を `psubscribe` で監視する。`subscribe_all()` が `table_handler_list` 内の `('ROUTE_MAP', self.bgp_table_handler_common)` を登録し、変更通知を受け取る。
 
 ```python
 # frrcfgd.py L2302, 2359-2361
@@ -272,7 +272,7 @@ def subscribe_all(self):
         self.config_db.subscribe(table, hdlr)
 ```
 
-変更検知後、`bgp_table_handler_common` が Jinja2 テンプレート (`bgpd.conf.db.route_map.j2`) を展開して FRR vtysh コマンドを生成・実行する。
+変更検知後、`bgp_table_handler_common` が Jinja2 テンプレート (`bgpd.conf.db.route_map.j2`) を展開して FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドを生成・実行する。
 
 **Jinja2 テンプレート経路** (`bgpd.conf.db.route_map.j2`):
 
@@ -306,7 +306,7 @@ def set_handler(self, key, data):
     self.__update_rm(key, data)
 ```
 
-`__update_rm` は `cfg_mgr.push_list(cmds)` で FRR vtysh に直接コマンドを送信する。
+`__update_rm` は `cfg_mgr.push_list(cmds)` で FRR [vtysh](../../reference/glossary.md#term-vtysh) に直接コマンドを送信する。
 
 ### 購読フロー要約
 
@@ -342,9 +342,9 @@ CONFIG_DB ROUTE_MAP
 
 | イベント | vtysh コマンド | 対象デーモン |
 |---|---|---|
-| set (`route_operation=permit`) | `route-map <name> permit <seq>` | zebra, bgpd, ospfd |
-| set (`route_operation=deny`) | `route-map <name> deny <seq>` | zebra, bgpd, ospfd |
-| set (match_*/set_* フィールド) | 各 `match`/`set` サブコマンド | zebra, bgpd, ospfd |
+| set (`route_operation=permit`) | `route-map <name> permit <seq>` | [zebra](../../reference/glossary.md#term-zebra), bgpd, ospfd |
+| set (`route_operation=deny`) | `route-map <name> deny <seq>` | [zebra](../../reference/glossary.md#term-zebra), bgpd, ospfd |
+| set (match_*/set_* フィールド) | 各 `match`/`set` サブコマンド | [zebra](../../reference/glossary.md#term-zebra), bgpd, ospfd |
 | del | `no route-map <name> <action> <seq>` | zebra, bgpd, ospfd |
 
 ### kernel route 経路への影響
@@ -360,8 +360,8 @@ route-map は FRR の BGP/OSPF/zebra ルーティングポリシーとして機�
 | FRR zebra/bgpd/ospfd (vtysh) | configure | `route-map <name> permit/deny <seq>` + match/set サブコマンド | `frrcfgd.py:3118-3126`[^4] |
 | FRR zebra/bgpd/ospfd (vtysh) | delete | `no route-map <name> <action> <seq>` | `frrcfgd.py:3143-3148`[^4] |
 | kernel RIB (`ip route`) | 間接変更 | zebra が FRR RIB 変化を kernel に反映 | FRR zebra 標準動作 |
-| STATE_DB | なし | — | スキャン 0 件 |
-| APPL_DB | なし | — | スキャン 0 件 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | — | スキャン 0 件 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | — | スキャン 0 件 |
 
 <!-- /side-effects -->
 
@@ -438,7 +438,7 @@ ROUTE_MAP テーブルは **2 つの独立したデーモン** が異なる経�
 
 | 観点 | bgpcfgd RouteMapMgr | frrcfgd |
 |------|---------------------|---------|
-| 購読元 | APPL_DB `BGP_PROFILE_TABLE` | CONFIG_DB `ROUTE_MAP` |
+| 購読元 | [APPL_DB](../../reference/glossary.md#term-appl_db) `BGP_PROFILE_TABLE` | CONFIG_DB `ROUTE_MAP` |
 | 対象キー | `FROM_SDN_SLB_ROUTES` / `FROM_SDN_APPLIANCE_ROUTES` のみ | 任意の route-map 名・seq |
 | FRR コマンド範囲 | `set as-path prepend` / `set community` / `set origin incomplete` の 3 件 | `match_*` / `set_*` 全 30+ フィールド |
 | ユースケース | SDN SLB / SDN Appliance 専用 | 汎用 BGP ポリシー |
@@ -454,7 +454,7 @@ ROUTE_MAP テーブルは **2 つの独立したデーモン** が異なる経�
 
 ### SmartSwitch DPU
 
-SmartSwitch / DPU 固有の分岐なし。通常の BGP コンテナと同一処理経路。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) / [DPU](../../reference/glossary.md#term-dpu) 固有の分岐なし。通常の BGP コンテナと同一処理経路。
 <!-- /platform -->
 <!-- defaults -->
 ## 暗黙デフォルト・コード由来の落とし穴
@@ -564,7 +564,7 @@ ROUTE_MAP テーブルが直接・間接に参照する他テーブル、およ�
 | フィールド | 参照先テーブル | 参照方式 | 備考 |
 |-----------|--------------|---------|------|
 | `match_interface` | `PORT` | YANG leafref | union 1: ポート名 |
-| `match_interface` | `PORTCHANNEL` | YANG leafref | union 2: LAG 名 |
+| `match_interface` | `PORTCHANNEL` | YANG leafref | union 2: [LAG](../../reference/glossary.md#term-lag) 名 |
 | `match_interface` | `LOOPBACK_INTERFACE` | YANG leafref | union 3: Loopback 名 |
 | `match_prefix_set` | `PREFIX_SET` | YANG leafref + frrcfgd ランタイム参照 | frrcfgd が `PREFIX_SET.mode` を参照して IPv4/IPv6 AF を決定 |
 | `match_ipv6_prefix_set` | `PREFIX_SET` | YANG leafref のみ | frrcfgd 未処理 (dead field) |
@@ -579,7 +579,7 @@ ROUTE_MAP テーブルが直接・間接に参照する他テーブル、およ�
 | `set_community_ref` | `COMMUNITY_SET` | YANG leafref + frrcfgd `get_table()` | 未作成時 silent drop |
 | `set_ext_community_ref` | `EXTENDED_COMMUNITY_SET` | YANG leafref + frrcfgd `get_table()` | |
 
-VLAN (`match_interface` / `match_neighbor`) は YANG 上でコメントアウト済みのため実際には参照不可。
+[VLAN](../../reference/glossary.md#term-vlan) (`match_interface` / `match_neighbor`) は YANG 上でコメントアウト済みのため実際には参照不可。
 
 ### 他テーブル → ROUTE_MAP (逆方向参照)
 
@@ -675,7 +675,7 @@ frrcfgd 起動時、FRR Unix socket (`/run/frr/<daemon>.vty`) への接続を **
 
 ### STATE_DB / ERROR_TABLE
 
-frrcfgd は ROUTE_MAP の失敗を STATE_DB や ERROR_TABLE に**記録しない**。障害検知は syslog のみ。
+frrcfgd は ROUTE_MAP の失敗を [STATE_DB](../../reference/glossary.md#term-state_db) や ERROR_TABLE に**記録しない**。障害検知は syslog のみ。
 
 ```bash
 journalctl -u frr-mgmt-framework | grep 'route-map'
@@ -686,4 +686,4 @@ vtysh -c 'show route-map'
 
 <!-- /failure -->
 
-<!-- glossary-links-injected: 24dbb72211e3 -->
+<!-- glossary-links-injected: 604e3e1620d1 -->

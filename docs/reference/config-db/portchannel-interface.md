@@ -105,10 +105,10 @@ PORTCHANNEL_INTERFACE|<name>|<ip_prefix>          # IP プレフィクス
 
 ### PORTCHANNEL_INTERFACE.mpls
 
-| 値 | intfmgrd 挙動 |
+| 値 | [intfmgrd](../../reference/glossary.md#term-intfmgrd) 挙動 |
 |----|-------------|
-| `enable` | Linux netdev に MPLS routing を有効化 |
-| `disable` | MPLS routing を無効化 |
+| `enable` | Linux netdev に [MPLS](../../reference/glossary.md#term-mpls) routing を有効化 |
+| `disable` | [MPLS](../../reference/glossary.md#term-mpls) routing を無効化 |
 | 未設定 | MPLS 設定を変更しない |
 
 ### PORTCHANNEL_INTERFACE.ipv6_use_link_local_only
@@ -120,13 +120,13 @@ PORTCHANNEL_INTERFACE|<name>|<ip_prefix>          # IP プレフィクス
 
 ### PORTCHANNEL_INTERFACE.nat_zone
 
-| 値 | natmgrd 挙動 |
+| 値 | [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) 挙動 |
 |----|------------|
-| `0` (デフォルト) | NAT ゾーン 0 (未設定相当) |
-| `1`..`3` | 対応 NAT ゾーンに所属 |
+| `0` (デフォルト) | [NAT](../../reference/glossary.md#term-nat) ゾーン 0 (未設定相当) |
+| `1`..`3` | 対応 [NAT](../../reference/glossary.md#term-nat) ゾーンに所属 |
 | 範囲外 (> 3) | YANG range 違反: Invalid nat zone for the portchannel interface. |
 
-*vrf_name は VRF.name への leafref — 存在しない VRF は YANG validate で reject。*
+*vrf_name は [VRF](../../reference/glossary.md#term-vrf).name への leafref — 存在しない VRF は YANG validate で reject。*
 
 <!-- /value-behavior -->
 
@@ -147,7 +147,7 @@ PORTCHANNEL_INTERFACE|<name>|<ip_prefix>          # IP プレフィクス
 
 ### `admin_status` は silent drop
 
-`PORTCHANNEL_INTERFACE` 属性ロウに `admin_status` を書いても intfmgrd は反応しない。`adminStatus` 変数 (intfmgr.cpp:776,797-800) は **`is_lo` ブランチ (Loopback IF) でのみ参照**され、PORTCHANNEL IF を含む非 loopback の `else` 節 (intfmgr.cpp:884-) では未使用。YANG 側でも `PORTCHANNEL_INTERFACE` 属性ロウに `admin_status` leaf 定義なし — LAG の admin up/down は `PORTCHANNEL` テーブルで管理する。
+`PORTCHANNEL_INTERFACE` 属性ロウに `admin_status` を書いても [intfmgrd](../../reference/glossary.md#term-intfmgrd) は反応しない。`adminStatus` 変数 (intfmgr.cpp:776,797-800) は **`is_lo` ブランチ (Loopback IF) でのみ参照**され、PORTCHANNEL IF を含む非 loopback の `else` 節 (intfmgr.cpp:884-) では未使用。YANG 側でも `PORTCHANNEL_INTERFACE` 属性ロウに `admin_status` leaf 定義なし — LAG の admin up/down は `PORTCHANNEL` テーブルで管理する。
 
 ### `mtu` は silent drop
 
@@ -155,7 +155,7 @@ intfmgr.cpp:775 で `mtu = ""` 初期化されるが、PORTCHANNEL_INTERFACE 処
 
 ### `loopback_action` 未設定時の動作は SAI 実装依存
 
-intfmgr.cpp:825-828,893-898 は `loopback_action` フィールドが空なら APP_INTF_TABLE に push しない (silent skip)。SAI 側の初期値はベンダー実装依存で、概ね `forward` 相当だが明文化されない。
+intfmgr.cpp:825-828,893-898 は `loopback_action` フィールドが空なら APP_INTF_TABLE に push しない (silent skip)。[SAI](../../reference/glossary.md#term-sai) 側の初期値はベンダー実装依存で、概ね `forward` 相当だが明文化されない。
 
 ### Loopback IF 専用フォールバック (PORTCHANNEL_INTERFACE には適用されない)
 
@@ -168,14 +168,14 @@ intfmgr.cpp:825-828,893-898 は `loopback_action` フィールドが空なら AP
 | `vrf_name` | default VRF (Linux global namespace) | intfmgr.cpp:789-792 |
 | `mac_addr` | `DEVICE_METADATA.localhost.mac` のシステム MAC | intfmgr.cpp:793-796 |
 | `mpls` | Linux netdev の MPLS 設定を変更しない | intfmgr.cpp:809-812 |
-| `nat_zone` | natmgrd 側で zone `0` 扱い (intfmgr は補填せず) | intfmgr.cpp:813-816 |
+| `nat_zone` | [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) 側で zone `0` 扱い (intfmgr は補填せず) | intfmgr.cpp:813-816 |
 | `ipv6_use_link_local_only` | Linux IPv6 システムデフォルト (YANG default `disable` と整合) | intfmgr.cpp:817-820 |
 
 ### 主要 discrepancy
 
-1. **`admin_status` を書いても無視される** — YANG schema にも leaf 定義がなく、intfmgrd も読まない。混同するとユーザは「反映されない」と感じる。
+1. **`admin_status` を書いても無視される** — YANG schema にも leaf 定義がなく、[intfmgrd](../../reference/glossary.md#term-intfmgrd) も読まない。混同するとユーザは「反映されない」と感じる。
 2. **`mtu` を書いても無視される** — `PORTCHANNEL` テーブル側で管理。
-3. **`loopback_action` 未設定時の SAI 初期値が不明** — ベンダー実装依存で動作が変わる可能性。
+3. **`loopback_action` 未設定時の [SAI](../../reference/glossary.md#term-sai) 初期値が不明** — ベンダー実装依存で動作が変わる可能性。
 
 <!-- /defaults -->
 
@@ -188,8 +188,8 @@ intfmgr.cpp:825-828,893-898 は `loopback_action` フィールドが空なら AP
 - `PORTCHANNEL_INTERFACE` の `nat_zone` は range 0..3: `error-message "Invalid nat zone for the portchannel interface."`。
 
 ### consumer 例外動作
-- PORTCHANNEL が存在しない場合の IP アドレス追加: orchagent は PORTCHANNEL 存在確認後に IP 付与。存在しなければタスクを保留 (依存関係による遅延処理)。
-- VLAN に所属している LAG への操作: `Failed to remove LAG %s, it is still in VLAN` → SWSS_LOG_ERROR。
+- PORTCHANNEL が存在しない場合の IP アドレス追加: [orchagent](../../reference/glossary.md#term-orchagent) は PORTCHANNEL 存在確認後に IP 付与。存在しなければタスクを保留 (依存関係による遅延処理)。
+- [VLAN](../../reference/glossary.md#term-vlan) に所属している LAG への操作: `Failed to remove LAG %s, it is still in VLAN` → SWSS_LOG_ERROR。
 - TPID 設定失敗: `Failed to set LAG %s TPID 0x%x` → SWSS_LOG_ERROR。
 
 <!-- /cdb-exceptions -->
@@ -234,28 +234,27 @@ show ip interfaces
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / IntfsOrch** (`sonic-swss/orchagent/intfsorch.cpp`): `PORTCHANNEL_INTERFACE` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / IntfsOrch** (`sonic-swss/orchagent/intfsorch.cpp`): `PORTCHANNEL_INTERFACE` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
 - IntfsOrch がエントリを解析し IP プレフィックス情報を取得。LAG の L3 インタフェース作成に進む。
-- APP_DB `INTF_TABLE` への書き込み後、orchagent が SAI を呼び出す。
+- APP_DB `INTF_TABLE` への書き込み後、[orchagent](../../reference/glossary.md#term-orchagent) が SAI を呼び出す。
 
 ### 段階 3: APPL → SAI
 
-- IntfsOrch が `sai_router_interface_api->create_router_interface()` で SAI RIF を作成。
+- IntfsOrch が `sai_router_interface_api->create_router_interface()` で SAI [RIF](../../reference/glossary.md#term-rif) を作成。
 - IP プレフィックスは `sai_route_api` でルートエントリに変換。
 
 ### 段階 4: タイミング + 副作用
 
 - PORTCHANNEL テーブルが先に処理されている必要がある。未解決の場合は `task_need_retry`。
-- 副作用: IP アドレス削除時に関連するルート・ARP エントリが自動削除される。
+- 副作用: IP アドレス削除時に関連するルート・[ARP](../../reference/glossary.md#term-arp) エントリが自動削除される。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -265,15 +264,15 @@ PORTCHANNEL_INTERFACE テーブルへの書き込みが発生するコード経�
 
 ### CLI
 
-  - `config interface ip add/remove ...` (portchannel IF) — `config/main.py` が `set_entry('PORTCHANNEL_INTERFACE', ...)` を呼ぶ (sonic-utilities/config/main.py)
+  - `config interface ip add/remove ...` (portchannel IF) — `config/main.py` が `set_entry('PORTCHANNEL_INTERFACE', ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py)
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** が PORTCHANNEL_INTERFACE に IP アドレスを投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+**minigraph.py** が PORTCHANNEL_INTERFACE に IP アドレスを投入 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py)
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -307,7 +306,7 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 
 ### Phase 7: 条件付き登録
 
-`PORTCHANNEL_INTERFACE` は `IntfMgr` (cfgmgr) が CONFIG_DB を購読し、カーネル side の LAG インタフェースに IP アドレスを付与する。orchagent の条件付き platform 登録はなし。
+`PORTCHANNEL_INTERFACE` は `IntfMgr` (cfgmgr) が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、カーネル side の LAG インタフェースに IP アドレスを付与する。orchagent の条件付き platform 登録はなし。
 
 ### グレップカバレッジ
 
@@ -339,7 +338,7 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp -->
 
-`IntfMgr` は `PORTCHANNEL_INTERFACE` エントリを処理する前に、以下の暗黙的な依存テーブルが STATE_DB に存在することを確認する。存在しない場合はタスクをスキップ（`return false`）し、後で再試行する。
+`IntfMgr` は `PORTCHANNEL_INTERFACE` エントリを処理する前に、以下の暗黙的な依存テーブルが [STATE_DB](../../reference/glossary.md#term-state_db) に存在することを確認する。存在しない場合はタスクをスキップ（`return false`）し、後で再試行する。
 
 ### PORTCHANNEL への暗黙参照
 
@@ -347,7 +346,7 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 |---|---|---|---|
 | `PORTCHANNEL.name` (key の LAG 名) | `STATE_DB::LAG_TABLE` | `IntfMgr::isIntfStateOk()` | `intfmgr.cpp:661-668` |
 
-`isIntfStateOk(alias)` はエイリアスが `"PortChannel"` プレフィクスで始まる場合、`m_stateLagTable.get(alias, temp)` で STATE_DB の LAG エントリ存在を確認する。LAG が teamd によって作成され STATE_DB に登録されるまで、`PORTCHANNEL_INTERFACE` の SET 処理は保留される（`intfmgr.cpp:833-836`）。
+`isIntfStateOk(alias)` はエイリアスが `"PortChannel"` プレフィクスで始まる場合、`m_stateLagTable.get(alias, temp)` で [STATE_DB](../../reference/glossary.md#term-state_db) の LAG エントリ存在を確認する。LAG が [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) によって作成され [STATE_DB](../../reference/glossary.md#term-state_db) に登録されるまで、`PORTCHANNEL_INTERFACE` の SET 処理は保留される（`intfmgr.cpp:833-836`）。
 
 **影響**: `PORTCHANNEL` テーブルにエントリがあっても LAG が STATE_DB に登録される前に `PORTCHANNEL_INTERFACE` を書いても、intfmgrd は silent retry するため IP アドレス付与が遅延する。
 
@@ -359,7 +358,7 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 
 `vrf_name` が空でない場合、`isIntfStateOk(vrf_name)` を呼び出して `m_stateVrfTable.get(vrf_name, temp)` で VRF の STATE_DB 登録を確認する。VRF が未作成・未登録の場合は `"VRF is not ready, skipping %s"` をログ出力してスキップ（`intfmgr.cpp:839-842`）。
 
-**影響**: `VRF` テーブルへの書き込みと `PORTCHANNEL_INTERFACE` への `vrf_name` 設定は順序依存。vrfmgrd が VRF を STATE_DB に反映するまで intfmgrd は VRF binding を保留する。
+**影響**: `VRF` テーブルへの書き込みと `PORTCHANNEL_INTERFACE` への `vrf_name` 設定は順序依存。[vrfmgrd](../../reference/glossary.md#term-vrfmgrd) が VRF を STATE_DB に反映するまで intfmgrd は VRF binding を保留する。
 
 ### VRF 直接変更の禁止
 
@@ -392,7 +391,7 @@ PORTCHANNEL_INTERFACE (intfmgr SET処理)
 
 | 参照先テーブル | YANG パス | 意味 |
 |---|---|---|
-| `PORTCHANNEL` (CONFIG_DB) | `PORTCHANNEL_INTERFACE_LIST.name` → `PORTCHANNEL_LIST.name` | key の LAG 名は PORTCHANNEL テーブルに存在しなければならない (`sonic-portchannel.yang:170-172`) |
+| `PORTCHANNEL` ([CONFIG_DB](../../reference/glossary.md#term-config_db)) | `PORTCHANNEL_INTERFACE_LIST.name` → `PORTCHANNEL_LIST.name` | key の LAG 名は PORTCHANNEL テーブルに存在しなければならない (`sonic-portchannel.yang:170-172`) |
 | `PORTCHANNEL` (CONFIG_DB) | `PORTCHANNEL_INTERFACE_IPPREFIX_LIST.name` → 同上 | IP プレフィクスロウの LAG 名も同条件 (`sonic-portchannel.yang:227-229`) |
 | `VRF` (CONFIG_DB) | `PORTCHANNEL_INTERFACE_LIST.vrf_name` → `VRF_LIST.name` | `vrf_name` フィールドは VRF テーブルの既存エントリを参照しなければならない (`sonic-portchannel.yang:177-179`) |
 
@@ -402,19 +401,19 @@ PORTCHANNEL_INTERFACE (intfmgr SET処理)
 
 | 確認先 DB / テーブル | 参照箇所 | 未登録時の動作 |
 |---|---|---|
-| `STATE_DB::LAG_TABLE` | `m_stateLagTable.get(alias, temp)` (`intfmgr.cpp:351-360`) | teamd が LAG を STATE_DB に登録するまで silent retry |
-| `STATE_DB::VRF_TABLE` | `m_stateVrfTable.get(vrf_name, temp)` (`intfmgr.cpp:677-684`) | vrfmgrd が VRF を STATE_DB に登録するまで `"VRF is not ready, skipping"` ログ出力して retry |
+| `STATE_DB::LAG_TABLE` | `m_stateLagTable.get(alias, temp)` (`intfmgr.cpp:351-360`) | [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) が LAG を STATE_DB に登録するまで silent retry |
+| `STATE_DB::VRF_TABLE` | `m_stateVrfTable.get(vrf_name, temp)` (`intfmgr.cpp:677-684`) | [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) が VRF を STATE_DB に登録するまで `"VRF is not ready, skipping"` ログ出力して retry |
 
 ### PORTCHANNEL_INTERFACE を参照するテーブル（← 方向）
 
 | 参照元コンポーネント | 参照箇所 | 用途 |
 |---|---|---|
-| `natmgr.cpp` | `CFG_LAG_INTF_TABLE_NAME` を `doNatIpInterfaceTask()` で購読 (`natmgr.cpp:8178`) | NAT が PortChannel インタフェースの IP アドレスを取得して NAT テーブルを構築 |
-| `neighsync.cpp` | `m_cfgLagInterfaceTable.get(port, values)` (`neighsync.cpp:207`) | PortChannel 上の neighbor を IPv6 link-local 判定で参照 |
+| `natmgr.cpp` | `CFG_LAG_INTF_TABLE_NAME` を `doNatIpInterfaceTask()` で購読 (`natmgr.cpp:8178`) | NAT が [PortChannel](../../reference/glossary.md#term-portchannel) インタフェースの IP アドレスを取得して NAT テーブルを構築 |
+| `neighsync.cpp` | `m_cfgLagInterfaceTable.get(port, values)` (`neighsync.cpp:207`) | [PortChannel](../../reference/glossary.md#term-portchannel) 上の neighbor を IPv6 link-local 判定で参照 |
 
 ### orchagent ref_count ガード
 
-`IntfsOrch` は RIF（Router Interface）を生成した後、内部 ref_count でその参照を管理する。`PORTCHANNEL_INTERFACE` を DEL しようとしても RIF がネイバー / ルートから参照されている場合は `Failed to remove ref count %d LAG %s` エラーを返して処理を拒否する。YANG には逆 leafref 制約は存在しない。
+`IntfsOrch` は [RIF](../../reference/glossary.md#term-rif)（Router Interface）を生成した後、内部 ref_count でその参照を管理する。`PORTCHANNEL_INTERFACE` を DEL しようとしても [RIF](../../reference/glossary.md#term-rif) がネイバー / ルートから参照されている場合は `Failed to remove ref count %d LAG %s` エラーを返して処理を拒否する。YANG には逆 leafref 制約は存在しない。
 
 <!-- /cross-refs -->
 
@@ -430,7 +429,7 @@ PORTCHANNEL_INTERFACE (intfmgr SET処理)
 | 失敗シナリオ | コード根拠 | 戻り値 / 動作 | ログ | リカバリ |
 |---|---|---|---|---|
 | `STATE_LAG_TABLE` 未登録 (LAG 未起動) | `intfmgr.cpp:833-836` | `false` → retry | `SWSS_LOG_DEBUG "Interface is not ready"` | lagmgrd が STATE_LAG_TABLE を書き込み後に自動再試行 |
-| `STATE_VRF_TABLE` 未登録 (`vrf_name` 未生成) | `intfmgr.cpp:839-842` | `false` → retry | `SWSS_LOG_DEBUG "VRF is not ready"` | vrfmgrd が STATE_VRF_TABLE を書き込み後に自動再試行 |
+| `STATE_VRF_TABLE` 未登録 (`vrf_name` 未生成) | `intfmgr.cpp:839-842` | `false` → retry | `SWSS_LOG_DEBUG "VRF is not ready"` | [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) が STATE_VRF_TABLE を書き込み後に自動再試行 |
 | VRF 直接変更 (既存 binding → 別 VRF) | `intfmgr.cpp:846-849` | `true` → エントリ破棄 | `SWSS_LOG_ERROR "can not change to %s directly"` | 手動: DEL → SET の順序で再設定 |
 | MPLS `sysctl` 設定失敗 | `intfmgr.cpp:901-904` | `false` → retry | `SWSS_LOG_ERROR "Failed to set MPLS"` | mpls カーネルモジュールのロード後に自動再試行 |
 | IP prefix: 属性ロウ未登録 (`isIntfCreated` false) | `intfmgr.cpp:1115` | `false` → retry | `SWSS_LOG_DEBUG "Interface is not ready"` | 属性ロウ処理完了後に自動再試行 |
@@ -472,21 +471,21 @@ SAI 操作の失敗のうち、`create_router_interface`・`remove_router_interf
 
 ### VOQ chassis (`switch_type == "voq"`)
 
-| 差異点 | 通常動作 | VOQ chassis 動作 | コード根拠 |
+| 差異点 | 通常動作 | [VOQ](../../reference/glossary.md#term-voq) chassis 動作 | コード根拠 |
 |--------|---------|----------------|-----------|
 | IPv6 アドレス付与コマンド | `ip -6 address add <prefix> dev <lag>` | `metric 256` を自動付加 | `intfmgr.cpp:103-106` |
 | LAG RIF 作成後の CHASSIS_APP_DB 同期 | なし | `isChassisDbInUse()` が true のとき `voqSyncAddIntf(alias)` を呼び出し、`CHASSIS_APP_DB.SYSTEM_INTERFACE_TABLE` に `oper_status` を書く | `intfsorch.cpp:1314-1317` |
 | LAG RIF 削除後の CHASSIS_APP_DB 同期 | なし | `voqSyncDelIntf(alias)` で同テーブルから削除 | `intfsorch.cpp:1367-1370` |
 | リモート System LAG のスキップ | — | `port.m_system_lag_info.switch_id != gVoqMySwitchId` のとき `voqSyncAddIntf` / `voqSyncDelIntf` は何もしない（リモートリーフ由来 LAG は sync 対象外） | `intfsorch.cpp:1681-1683, 1726-1728` |
-| VOQ inband interface 特殊処理 | 通常 `doIntfGeneralTask()` を経由 | `CFG_VOQ_INBAND_INTERFACE_TABLE_NAME` の SET は `doIntfGeneralTask` をスキップし、即座に `APP_INTF_TABLE` に relay して `STATE_INTERFACE_TABLE` に `vrf=""` をセット | `intfmgr.cpp:1195-1203` |
+| [VOQ](../../reference/glossary.md#term-voq) inband interface 特殊処理 | 通常 `doIntfGeneralTask()` を経由 | `CFG_VOQ_INBAND_INTERFACE_TABLE_NAME` の SET は `doIntfGeneralTask` をスキップし、即座に `APP_INTF_TABLE` に relay して `STATE_INTERFACE_TABLE` に `vrf=""` をセット | `intfmgr.cpp:1195-1203` |
 
-**IPv6 metric 256 の理由**: VOQ chassis では eBGP / iBGP 経由で学習した経路と connected route の metric を揃えることで、ECMP グループが正しく構成される。IPv4 は connected route のデフォルト metric が 0 なので不要。
+**IPv6 metric 256 の理由**: [VOQ](../../reference/glossary.md#term-voq) chassis では eBGP / iBGP 経由で学習した経路と connected route の metric を揃えることで、[ECMP](../../reference/glossary.md#term-ecmp) グループが正しく構成される。IPv4 は connected route のデフォルト metric が 0 なので不要。
 
 **PORTCHANNEL_INTERFACE への実質影響**: `PORTCHANNEL_INTERFACE` に IPv6 プレフィクスを設定したとき、intfmgrd が発行する `ip -6 address add` コマンドに `metric 256` が自動付加される。ユーザ側で metric を意識する必要はないが、Linux カーネルの `ip addr show` でメトリックが `256` と表示される。
 
 ### SmartSwitch / DPU (`switch_type == "smartswitch"`)
 
-`intfmgr.cpp` および `intfsorch.cpp` に SmartSwitch / DPU に関する `PORTCHANNEL_INTERFACE` 固有の分岐コードは存在しない（2026-05-16 時点の master 調査結果）。SmartSwitch における Portchannel L3 IF の扱いは通常の `IntfMgr` フローと同一であり、midplane / DPU 側への追加同期処理はなし。
+`intfmgr.cpp` および `intfsorch.cpp` に [SmartSwitch](../../reference/glossary.md#term-smartswitch) / [DPU](../../reference/glossary.md#term-dpu) に関する `PORTCHANNEL_INTERFACE` 固有の分岐コードは存在しない（2026-05-16 時点の master 調査結果）。[SmartSwitch](../../reference/glossary.md#term-smartswitch) における Portchannel L3 IF の扱いは通常の `IntfMgr` フローと同一であり、midplane / [DPU](../../reference/glossary.md#term-dpu) 側への追加同期処理はなし。
 
 <!-- /platform -->
 
@@ -578,7 +577,7 @@ PORTCHANNEL (CONFIG_DB)
             → PORTCHANNEL_INTERFACE 処理続行
 ```
 
-`TeamMgr::addLag()` が teamd 起動に失敗すると `task_need_retry` を返し (teammgr.cpp:644)、LAG を `removeLag()` でクリーンアップしてリトライする (teammgr.cpp:304-308)。この間 `STATE_LAG_TABLE` は未書込みのままなので、`IntfMgr` 側も IP プレフィクス処理をスキップし続ける。
+`TeamMgr::addLag()` が [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) 起動に失敗すると `task_need_retry` を返し (teammgr.cpp:644)、LAG を `removeLag()` でクリーンアップしてリトライする (teammgr.cpp:304-308)。この間 `STATE_LAG_TABLE` は未書込みのままなので、`IntfMgr` 側も IP プレフィクス処理をスキップし続ける。
 
 | teammgr.cpp 行 | 内容 |
 |----------------|------|
@@ -596,10 +595,10 @@ PORTCHANNEL (CONFIG_DB)
 
 ### 通知チャネル一覧
 
-| DB | Redis チャネル / パターン | 用途 |
+| DB | [Redis](../../reference/glossary.md#term-redis) チャネル / パターン | 用途 |
 |---|---|---|
 | CONFIG_DB (db=4) | `__keyspace@4__:PORTCHANNEL_INTERFACE\|*` | `intfmgrd` が `PSUBSCRIBE` — SET/DEL 検知 |
-| APPL_DB (db=0) | `INTF_TABLE_CHANNEL@0` | `IntfsOrch` の `ConsumerStateTable` が `SUBSCRIBE` — INTF_TABLE SET/DEL 受信 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) (db=0) | `INTF_TABLE_CHANNEL@0` | `IntfsOrch` の `ConsumerStateTable` が `SUBSCRIBE` — INTF_TABLE SET/DEL 受信 |
 | STATE_DB (db=6) | `__keyspace@6__:LAG_TABLE\|*` | `intfmgrd` が `SubscriberStateTable` で LAG 状態 (`state=ok`) を監視 |
 | STATE_DB (db=6) | `__keyspace@6__:PORT_TABLE\|*` | `intfmgrd` が `doPortUpdateTask()` でポート再作成イベントを検知 |
 
@@ -626,7 +625,7 @@ m_keyspace = "__keyspace@4__:PORTCHANNEL_INTERFACE|*"
 PSUBSCRIBE(m_keyspace)   // Redis keyspace notification 購読
 ```
 
-- CONFIG_DB の `PORTCHANNEL_INTERFACE|<name>` または `PORTCHANNEL_INTERFACE|<name>|<prefix>` キーへの HSET / DEL が発生すると、Redis が当該 keyspace チャネルに `set` / `del` を PUBLISH する
+- CONFIG_DB の `PORTCHANNEL_INTERFACE|<name>` または `PORTCHANNEL_INTERFACE|<name>|<prefix>` キーへの HSET / DEL が発生すると、[Redis](../../reference/glossary.md#term-redis) が当該 keyspace チャネルに `set` / `del` を PUBLISH する
 - `readData()` (`subscriberstatetable.cpp:45-83`) が `redisGetReply()` で非ブロッキング受信し `m_keyspace_event_buffer` に蓄積
 - `pops()` (`subscriberstatetable.cpp:95-165`) がバッファを消費し `KeyOpFieldsValuesTuple` に変換:
   - `del` イベント → DEL コマンド（テーブル実データ読取りなし）
@@ -637,7 +636,7 @@ PSUBSCRIBE(m_keyspace)   // Redis keyspace notification 購読
 
 `intfmgr.cpp:42` で `m_appIntfTableProducer(appDb, APP_INTF_TABLE_NAME)` が初期化される。`APP_INTF_TABLE_NAME = "INTF_TABLE"` (`schema.h:45`)。
 
-`ProducerStateTable::set()` は Redis Lua スクリプト (EVALSHA) を実行し、以下を **1 トランザクション** で行う（`producerstatetable.cpp:106-113`）:
+`ProducerStateTable::set()` は [Redis](../../reference/glossary.md#term-redis) Lua スクリプト (EVALSHA) を実行し、以下を **1 トランザクション** で行う（`producerstatetable.cpp:106-113`）:
 
 1. Key を key-set (`INTF_TABLE_KEY_SET`) に `SADD`
 2. フィールドを Hash に `HSET` (`_INTF_TABLE:<alias>` の一時 hash)
@@ -726,9 +725,9 @@ STATE_DB INTERFACE_TABLE|PortChannelN  vrf=<vrf_name>
 
 | 操作 | 対象 DB / テーブル | キー | フィールド / 値 | ソース |
 |------|-----------------|------|--------------|-------|
-| SET | APPL_DB / `INTF_TABLE` | `PortChannel<N>` | 各フィールド (vrf_name, mac_addr, mpls, nat_zone, ipv6_use_link_local_only 等) | `intfmgr.cpp:1053` |
+| SET | [APPL_DB](../../reference/glossary.md#term-appl_db) / `INTF_TABLE` | `PortChannel<N>` | 各フィールド (vrf_name, mac_addr, mpls, nat_zone, ipv6_use_link_local_only 等) | `intfmgr.cpp:1053` |
 | SET | STATE_DB / `INTERFACE_TABLE` | `PortChannel<N>` | `vrf` = vrf_name (空なら `""`) | `intfmgr.cpp:1054` |
-| DEL | APPL_DB / `INTF_TABLE` | `PortChannel<N>` | DEL (全フィールド削除) | `intfmgr.cpp:1088` |
+| DEL | [APPL_DB](../../reference/glossary.md#term-appl_db) / `INTF_TABLE` | `PortChannel<N>` | DEL (全フィールド削除) | `intfmgr.cpp:1088` |
 | DEL | STATE_DB / `INTERFACE_TABLE` | `PortChannel<N>` | DEL | `intfmgr.cpp:1089` |
 
 ### IP プレフィクスロウ SET — APPL_DB / STATE_DB 書込み (intfmgrd)
@@ -762,9 +761,9 @@ RIF 作成時に `addRifToFlexCounter()` が以下を書き込む:
 
 | 対象 DB / テーブル | キー / フィールド | 書込内容 | ソース |
 |-----------------|-----------------|---------|-------|
-| COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | `""` field=`PortChannel<N>` | RIF SAI OID | `intfsorch.cpp:1537` |
-| COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | `""` field=`<rif_oid>` | RIF タイプ文字列 | `intfsorch.cpp:1538` |
-| FLEX_COUNTER_DB / `RIF_STAT_COUNTER:<rif_oid>` | `RIF_COUNTER_ID_LIST` | IN/OUT PACKETS/OCTETS/ERROR 系カウンタ ID リスト | `intfsorch.cpp:1544-1551` |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_RIF_NAME_MAP` | `""` field=`PortChannel<N>` | RIF SAI OID | `intfsorch.cpp:1537` |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_RIF_TYPE_MAP` | `""` field=`<rif_oid>` | RIF タイプ文字列 | `intfsorch.cpp:1538` |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `RIF_STAT_COUNTER:<rif_oid>` | `RIF_COUNTER_ID_LIST` | IN/OUT PACKETS/OCTETS/ERROR 系カウンタ ID リスト | `intfsorch.cpp:1544-1551` |
 
 RIF 削除時は上記エントリを `hdel` / `stopFlexCounterPolling` でクリーンアップする (`intfsorch.cpp:1560-1566`)。
 
@@ -806,16 +805,16 @@ if (rc == 0) {
 
 | カーネルバージョン | 挙動 |
 |------------------|------|
-| 5.11+ (`accept_untracked_na` 導入済み) | sysctl ファイルが存在 → NDP untracked NA 受け入れが設定される |
+| 5.11+ (`accept_untracked_na` 導入済み) | sysctl ファイルが存在 → [NDP](../../reference/glossary.md#term-ndp) untracked NA 受け入れが設定される |
 | 5.10 以前 / VS 軽量カーネル | sysctl ファイルが存在しないため書込みをスキップ (エラーなし) |
 
-この差異は `PORTCHANNEL_INTERFACE` テーブルの書込みや RIF 生成には影響せず、NDP 近隣探索の細かい挙動差に留まる。
+この差異は `PORTCHANNEL_INTERFACE` テーブルの書込みや RIF 生成には影響せず、[NDP](../../reference/glossary.md#term-ndp) 近隣探索の細かい挙動差に留まる。
 
 証跡: `intfmgr.cpp:601-611`
 
 ### C. SAI RIF 生成 — 全プラットフォーム共通
 
-`IntfsOrch::addRouterIntfs()` は `port.m_type == Port::LAG` の場合 `SAI_ROUTER_INTERFACE_TYPE_PORT` / `SAI_ROUTER_INTERFACE_ATTR_PORT_ID = m_lag_id` を設定し (`intfsorch.cpp:1214-1243`)、プラットフォームによる分岐はない。`loopback_action` の SAI 変換 (`getSaiLoopbackAction()`) も `"drop"` → `SAI_PACKET_ACTION_DROP`、`"forward"` → `SAI_PACKET_ACTION_FORWARD` の固定マップで、ASIC ベンダー差分はない (`intfsorch.cpp:1146-1164`)。
+`IntfsOrch::addRouterIntfs()` は `port.m_type == Port::LAG` の場合 `SAI_ROUTER_INTERFACE_TYPE_PORT` / `SAI_ROUTER_INTERFACE_ATTR_PORT_ID = m_lag_id` を設定し (`intfsorch.cpp:1214-1243`)、プラットフォームによる分岐はない。`loopback_action` の SAI 変換 (`getSaiLoopbackAction()`) も `"drop"` → `SAI_PACKET_ACTION_DROP`、`"forward"` → `SAI_PACKET_ACTION_FORWARD` の固定マップで、[ASIC](../../reference/glossary.md#term-asic) ベンダー差分はない (`intfsorch.cpp:1146-1164`)。
 
 | 観点 | 全プラットフォーム共通動作 |
 |------|--------------------------|
@@ -836,3 +835,5 @@ if (rc == 0) {
 
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp:169-190,601-611 (platform/getenv grep = 0 hits); sonic-swss/orchagent/intfsorch.cpp:1146-1164,1180-1243 (platform/getenv grep = 0 hits) -->
 <!-- /platform -->
+
+<!-- glossary-links-injected: 9cf92acb8f8c -->

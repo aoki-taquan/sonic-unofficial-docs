@@ -45,7 +45,7 @@ related:
 
 ## 何のための機能か
 
-物理 [DPU](../reference/glossary.md#term-dpu) を持たずに [DASH](../reference/glossary.md#term-dash)（Disaggregated APIs for SONiC Hosts）を検証する仮想スイッチイメージ。目的は 2 つ[^1]:
+物理 [DPU](../reference/glossary.md#term-dpu) を持たずに [DASH](../reference/glossary.md#term-dash)（Disaggregated APIs for [SONiC](../reference/glossary.md#term-sonic) Hosts）を検証する仮想スイッチイメージ。目的は 2 つ[^1]:
 
 1. **POC / 開発**: 物理 HW なしで DASH のコントロール・データプレーンを開発・テスト
 2. **CI**: `sonic-buildimage` / `sonic-swss` の Azure Pipelines に DASH を組み込む
@@ -248,4 +248,4 @@ docker exec swss orchagent_restart_check 2>&1 | tail
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: b4362d98698a -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

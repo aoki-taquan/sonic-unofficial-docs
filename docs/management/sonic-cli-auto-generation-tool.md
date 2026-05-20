@@ -49,7 +49,7 @@ related:
 
 ## なぜ自動生成が要るか
 
-SONiC Application Extension (SAE) として 3rd party 機能を **追加 docker** で持ち込む際に、CLI を都度書く工数を減らすため、**YANG モデルから `show` / `config` click plugin を自動生成** するユーティリティ[^1]。生成 CLI は `sonic-utilities` の plugin 機構経由でロードされ、[CONFIG_DB](../reference/glossary.md#term-config_db) スキーマと整合した形になる。手書きより **YANG 型・enum・range・mandatory 違反が早期検知** される利点もある。
+[SONiC](../reference/glossary.md#term-sonic) Application Extension (SAE) として 3rd party 機能を **追加 docker** で持ち込む際に、CLI を都度書く工数を減らすため、**YANG モデルから `show` / `config` click plugin を自動生成** するユーティリティ[^1]。生成 CLI は `sonic-utilities` の plugin 機構経由でロードされ、[CONFIG_DB](../reference/glossary.md#term-config_db) スキーマと整合した形になる。手書きより **YANG 型・enum・range・mandatory 違反が早期検知** される利点もある。
 
 ```mermaid
 flowchart LR
@@ -195,3 +195,5 @@ ls /usr/local/lib/python*/dist-packages/show/plugins
 - `sonic-cli-gen`
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 8ba32e5aa69d -->

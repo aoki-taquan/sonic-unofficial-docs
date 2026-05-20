@@ -56,7 +56,7 @@ related:
 
 通常 ECMP は next-hop が増減するたびに **hash redistribution が全 flow に波及** する。loadbalanced VM / firewall 群のように **next-hop 単位で flow stickiness と bank（共有状態グループ）を保つ必要があるトポロジ** では、これが致命的になる。
 
-FG ECMP は ASIC 上に hash bucket（`SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX`）を明示的に作り、**消えた next-hop が占めていたバケットだけを同 bank 内の生存 next-hop で埋め直す** ことで bank 内 consistent hashing を実現する[^1]。
+FG ECMP は [ASIC](../reference/glossary.md#term-asic) 上に hash bucket（`SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX`）を明示的に作り、**消えた next-hop が占めていたバケットだけを同 bank 内の生存 next-hop で埋め直す** ことで bank 内 consistent hashing を実現する[^1]。
 
 ## 2. match_mode 3 種
 
@@ -125,7 +125,7 @@ flowchart LR
 要点:
 
 - `routeorch` は通常通り APP_DB route 更新を処理しつつ、FG ECMP 設定にマッチする route を **`fgnhgorch` に redirect**[^1]
-- `fgnhgorch` は portsorch の `SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` を購読し、`FG_NHG_MEMBER.link` 紐付き link down/up で NH を出し入れ[^1]
+- `fgnhgorch` は [portsorch](../reference/glossary.md#term-portsorch) の `SUBJECT_TYPE_PORT_OPER_STATE_CHANGE` を購読し、`FG_NHG_MEMBER.link` 紐付き link down/up で NH を出し入れ[^1]
 - ASIC 上の bucket 配置は `STATE_DB.FG_ROUTE_TABLE` にミラー（warm reboot 復元と show CLI 用）[^1]
 
 **bank 内 consistent hashing**:
@@ -236,4 +236,4 @@ reasoning: bank 内 consistent hashing と「同 bank 内のみで refill」原�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4d2766506160 -->
+<!-- glossary-links-injected: 9937abcefc29 -->

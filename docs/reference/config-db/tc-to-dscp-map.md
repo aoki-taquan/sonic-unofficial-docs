@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-Traffic Class (TC) を [DSCP](../../reference/glossary.md#term-dscp) 値へマップする egress [QoS](../../reference/glossary.md#term-qos) リマーキング定義[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map (`SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP`) を生成する。`PORT_QOS_MAP.tc_to_dscp_map` でポートに、`TUNNEL.encap_tc_to_dscp_map` でトンネル encap 時の DSCP 上書きに使用される。
+Traffic Class (TC) を [DSCP](../../reference/glossary.md#term-dscp) 値へマップする egress [QoS](../../reference/glossary.md#term-qos) リマーキング定義[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map (`SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP`) を生成する。`PORT_QOS_MAP.tc_to_dscp_map` でポートに、`TUNNEL.encap_tc_to_dscp_map` でトンネル encap 時の [DSCP](../../reference/glossary.md#term-dscp) 上書きに使用される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -70,7 +70,7 @@ TC_TO_DSCP_MAP|<name>|<tc>
 | 値 | 挙動 |
 |----|------|
 | `0`..`7` | qosorch が `SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP` エントリを生成 |
-| `8`..`15` | YANG は許可するが大多数の ASIC は TC 0..7 のみサポート → SAI エラー (`task_failed`) |
+| `8`..`15` | YANG は許可するが大多数の [ASIC](../../reference/glossary.md#term-asic) は TC 0..7 のみサポート → [SAI](../../reference/glossary.md#term-sai) エラー (`task_failed`) |
 | 非数値文字列 | `stoi()` 例外 → `task_invalid_entry` |
 
 ### `dscp` (string 0..63)
@@ -82,14 +82,14 @@ TC_TO_DSCP_MAP|<name>|<tc>
 | `64` 以上 | `DSCP_MAX_VAL=63` 超過を明示チェック → `task_invalid_entry` |
 | 非数値文字列 | `invalid_argument` 例外 → `task_invalid_entry`（try-catch あり） |
 
-> スパース定義可能。未定義 TC の egress DSCP はデフォルト値なし（ASIC/SAI 実装依存）。
+> スパース定義可能。未定義 TC の egress DSCP はデフォルト値なし（[ASIC](../../reference/glossary.md#term-asic)/SAI 実装依存）。
 > `PORT_QOS_MAP.tc_to_dscp_map` または `TUNNEL.encap_tc_to_dscp_map` から参照されない限り SAI に反映されない。
 
 <!-- /value-behavior -->
 
 ## 購読者
 
-- `qosorch`: [SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map 生成（直接 CONFIG_DB 購読）
+- `qosorch`: [SAI](../../reference/glossary.md#term-sai) [QoS](../../reference/glossary.md#term-qos) map 生成（直接 [CONFIG_DB](../../reference/glossary.md#term-config_db) 購読）
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -101,7 +101,7 @@ TC_TO_DSCP_MAP|<name>|<tc>
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-tc-dscp-map`](../yang/sonic-tc-dscp-map.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-tc-dscp-map`
 
 <!-- ref-triangle:end -->
 
@@ -127,7 +127,7 @@ TC_TO_DSCP_MAP|<name>|<tc>
 
 ### よくある誤設定
 
-- TC を 8 以上に書くと ASIC が拒否（TC は実運用上 0..7 のみ有効）。
+- TC を 8 以上に書くと [ASIC](../../reference/glossary.md#term-asic) が拒否（TC は実運用上 0..7 のみ有効）。
 - DSCP を 63 超に書くと qosorch がエラーで reject する。
 
 ### 確認コマンド
@@ -180,13 +180,13 @@ show qos map tc-dscp
 対象テーブル: `TC_TO_DSCP_MAP`
 
 ### CLI
-- なし（TC_TO_DSCP_MAP の直接 CLI コマンドは標準 SONiC に存在しない）
+- なし（TC_TO_DSCP_MAP の直接 CLI コマンドは標準 [SONiC](../../reference/glossary.md#term-sonic) に存在しない）
 
 ### minigraph / sonic-cfggen
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし（対応 OpenConfig/SONiC YANG transformer なし）
+- なし（対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし）
 
 ### db_migrator
 - なし
@@ -358,7 +358,7 @@ config qos reload
 | 3 | `dscp` が非数値文字列 | `std::invalid_argument` / `std::out_of_range` 例外を catch → `false` 返却 | `qosorch.cpp:1216-1260` |
 | 4 | `tc` (key) が解析不能 | key 解析失敗 → `task_invalid_entry` | `qosorch.cpp` key parse |
 
-これらはいずれも再試行なしで永久破棄される。YANG バリデーション（`0..63` / `0..15`）では弾かれず orchagent 実装でのみ検出されるため、YANG 準拠の設定ツールを迂回して Redis に直接書き込んだ場合に発生しうる。
+これらはいずれも再試行なしで永久破棄される。YANG バリデーション（`0..63` / `0..15`）では弾かれず orchagent 実装でのみ検出されるため、YANG 準拠の設定ツールを迂回して [Redis](../../reference/glossary.md#term-redis) に直接書き込んだ場合に発生しうる。
 
 ### `task_need_retry` を返す失敗パス
 
@@ -371,7 +371,7 @@ config qos reload
 
 ### STATE_DB / ERROR_TABLE へのフィードバックなし
 
-`QosOrch` は失敗を `SWSS_LOG_ERROR` で syslog に記録するのみで、STATE_DB や ERROR_TABLE への書き込みを行わない。失敗確認は以下のログで行う:
+`QosOrch` は失敗を `SWSS_LOG_ERROR` で syslog に記録するのみで、[STATE_DB](../../reference/glossary.md#term-state_db) や ERROR_TABLE への書き込みを行わない。失敗確認は以下のログで行う:
 
 ```bash
 journalctl -u swss | grep -i "tc.*dscp\|qosorch"
@@ -384,7 +384,7 @@ sudo grep -i "tc.*dscp\|Invalid DSCP\|qosorch" /var/log/syslog
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`TC_TO_DSCP_MAP` の処理に関わる定数はすべてソースコードに固定されており、CONFIG_DB や DEVICE_METADATA から変更できない。
+`TC_TO_DSCP_MAP` の処理に関わる定数はすべてソースコードに固定されており、CONFIG_DB や [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) から変更できない。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/tc-to-dscp-map-constants.md`
 
@@ -434,7 +434,7 @@ sudo grep -i "tc.*dscp\|Invalid DSCP\|qosorch" /var/log/syslog
 
 ソース: `sonic-swss/orchagent/qosorch.cpp`、`sonic-swss/orchagent/tunneldecaporch.cpp`
 
-`TC_TO_DSCP_MAP` の SET/DEL を受けた `QosOrch` が書き込む副次 DB を示す。cfgmgr 中間層はなく [CONFIG_DB](../../reference/glossary.md#term-config_db) → orchagent 直結。[STATE_DB](../../reference/glossary.md#term-state_db) / APPL_DB への書き込みはない。CRM カウンタ・FlexCounter も使用しない。
+`TC_TO_DSCP_MAP` の SET/DEL を受けた `QosOrch` が書き込む副次 DB を示す。cfgmgr 中間層はなく [CONFIG_DB](../../reference/glossary.md#term-config_db) → orchagent 直結。[STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みはない。[CRM](../../reference/glossary.md#term-crm) カウンタ・[FlexCounter](../../reference/glossary.md#term-flexcounter) も使用しない。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/tc-to-dscp-map-side-effects.md`
 
@@ -442,8 +442,8 @@ sudo grep -i "tc.*dscp\|Invalid DSCP\|qosorch" /var/log/syslog
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|------------------|-----------------|------|
-| `sai_qos_map_api->create_qos_map(SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP, ...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` | 新規マップ作成 (`qosorch.cpp:1271-1285`) |
-| `sai_qos_map_api->set_qos_map_attribute(SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST, ...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` field=`SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | 既存マップ更新時 (`qosorch.cpp:204-215`) |
+| `sai_qos_map_api->create_qos_map(SAI_QOS_MAP_TYPE_TC_AND_COLOR_TO_DSCP, ...)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) ([syncd](../../reference/glossary.md#term-syncd) 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` | 新規マップ作成 (`qosorch.cpp:1271-1285`) |
+| `sai_qos_map_api->set_qos_map_attribute(SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST, ...)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) ([syncd](../../reference/glossary.md#term-syncd) 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` field=`SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | 既存マップ更新時 (`qosorch.cpp:204-215`) |
 
 ### SET — PORT_QOS_MAP によるポートバインド
 
@@ -451,7 +451,7 @@ sudo grep -i "tc.*dscp\|Invalid DSCP\|qosorch" /var/log/syslog
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|------------------|-----------------|------|
-| `sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP, oid)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `<port_oid>` field=`SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP` | 参照先マップが SAI 解決済みの各ポート (`qosorch.cpp:66, 2077-2133`) |
+| `sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP, oid)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) ([syncd](../../reference/glossary.md#term-syncd) 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `<port_oid>` field=`SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP` | 参照先マップが SAI 解決済みの各ポート (`qosorch.cpp:66, 2077-2133`) |
 
 `qos_to_attr_map`（`qosorch.cpp:66`）に `{tc_to_dscp_field_name, SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP}` が登録されており、`PORT_QOS_MAP` の SET 時に `resolveFieldRefValue()` が OID を解決してポートに適用する。
 
@@ -459,7 +459,7 @@ sudo grep -i "tc.*dscp\|Invalid DSCP\|qosorch" /var/log/syslog
 
 `TUNNEL.encap_tc_to_dscp_map` フィールドで本マップを参照した際の挙動:
 
-`tunneldecaporch` の `resolveTunnelQosMap()` が OID を解決し、`tunnelTable[key].encap_tc_to_dscp_map_id` に格納する（`tunneldecaporch.cpp:257`）。ただし、OID はメモリ上の struct にのみ保持され、`addDecapTunnel()` の SAI `create_tunnel()` 引数には渡されない（`tunneldecaporch.cpp:300-301`）。`setDecapTunnelStatus()` での STATE_DB 書き込みにも `encap_tc_to_dscp_map_id` は含まれない（`tunneldecaporch.cpp:1526-1531`）。
+`tunneldecaporch` の `resolveTunnelQosMap()` が OID を解決し、`tunnelTable[key].encap_tc_to_dscp_map_id` に格納する（`tunneldecaporch.cpp:257`）。ただし、OID はメモリ上の struct にのみ保持され、`addDecapTunnel()` の SAI `create_tunnel()` 引数には渡されない（`tunneldecaporch.cpp:300-301`）。`setDecapTunnelStatus()` での [STATE_DB](../../reference/glossary.md#term-state_db) 書き込みにも `encap_tc_to_dscp_map_id` は含まれない（`tunneldecaporch.cpp:1526-1531`）。
 
 ### DEL — TC_TO_DSCP_MAP 削除
 
@@ -475,8 +475,8 @@ sudo grep -i "tc.*dscp\|Invalid DSCP\|qosorch" /var/log/syslog
 | ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | create / update (syncd 経由) | remove (syncd 経由, 非参照時のみ) |
 | ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_PORT` field=`SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP` | set_port_attribute (PORT_QOS_MAP 経由, syncd 経由) | SAI_NULL_OBJECT_ID (PORT_QOS_MAP DEL 時) |
 | STATE_DB | — | なし | なし |
-| APPL_DB | — | なし | なし |
-| COUNTERS_DB | — | なし | なし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | — | なし | なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | — | なし | なし |
 
 ```bash
 # SAI QoS map の ASIC_DB エントリ確認
@@ -491,10 +491,10 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:*'
 
 CONFIG_DB の `TC_TO_DSCP_MAP` は `orchdaemon.cpp` の `qos_tables` ベクタ経由で `QosOrch` に登録される。`Orch::addConsumer()` が CONFIG_DB を検出し **`swss::SubscriberStateTable`** を選択する。
 
-- 購読方式: Redis **keyspace 通知** (`__keyspace@<dbId>__:TC_TO_DSCP_MAP|*` への `PSUBSCRIBE`)
+- 購読方式: [Redis](../../reference/glossary.md#term-redis) **keyspace 通知** (`__keyspace@<dbId>__:TC_TO_DSCP_MAP|*` への `PSUBSCRIBE`)
 - 通知到着時に `HGETALL` で値を再取得し `(key, op, fvs)` タプルとして `pops()` で返す
 - バッチサイズ: `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`、ハードコード）
-- `orchagent -b` オプションの影響なし（APPL_DB 側 `ConsumerStateTable` のみに作用）
+- `orchagent -b` オプションの影響なし（[APPL_DB](../../reference/glossary.md#term-appl_db) 側 `ConsumerStateTable` のみに作用）
 
 ### 書き込み側 (publisher)
 
@@ -572,7 +572,9 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 
 ### multi-ASIC / VOQ chassis
 
-- `handleTcToDscpTable()` に multi-ASIC 判定なし。VOQ 分岐（`gMySwitchType == "voq"` チェック）は SCHEDULER / QUEUE 系のみで TC_TO_DSCP_MAP は対象外。
+- `handleTcToDscpTable()` に multi-ASIC 判定なし。[VOQ](../../reference/glossary.md#term-voq) 分岐（`gMySwitchType == "voq"` チェック）は SCHEDULER / QUEUE 系のみで TC_TO_DSCP_MAP は対象外。
 - multi-ASIC 環境では各 ASIC の orchagent が自 namespace の CONFIG_DB を独立して処理する。TC_TO_DSCP_MAP の namespace 間伝播機構はない。
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: a146501e9f25 -->

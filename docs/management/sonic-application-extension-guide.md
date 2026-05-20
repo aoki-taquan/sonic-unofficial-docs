@@ -42,7 +42,7 @@ related:
 
 ## 概要
 
-SONiC の docker 化された機能（DHCP relay 等）を **Application Extension** 形式に移植する手順、新規 extension の開発フロー、3rd party app をパッケージデータベースに登録するフローを示す開発者向けガイド[^1]。コアの [HLD](../reference/glossary.md#term-hld) は別ファイル（`sonic-application-extention-hld.md`）であり、本ページはその実践ガイド側。
+[SONiC](../reference/glossary.md#term-sonic) の docker 化された機能（DHCP relay 等）を **Application Extension** 形式に移植する手順、新規 extension の開発フロー、3rd party app をパッケージデータベースに登録するフローを示す開発者向けガイド[^1]。コアの [HLD](../reference/glossary.md#term-hld) は別ファイル（`sonic-application-extention-hld.md`）であり、本ページはその実践ガイド側。
 
 ## 動作仕様
 
@@ -151,7 +151,7 @@ docker ps -a --format '{{.Names}}	{{.Status}}'
 |-------|--------|--------|
 | Phase 1: パッケージ manifest / install フロー | HLD 記載どおり実装済（`sonic-package-manager` が master 取り込み） | — |
 | Phase 2: CLI / フィールド名整合 | コア CLI は実装済 | Initial Proposal 時のフィールド名・サブコマンドは現行 master と差分がある可能性、未確認・未実装相当 |
-| Phase 3: マルチ ASIC / コンテナ間連携 | — | マルチ ASIC 向けの拡張パッケージ動作は未実装 / 未確認 |
+| Phase 3: マルチ [ASIC](../reference/glossary.md#term-asic) / コンテナ間連携 | — | マルチ ASIC 向けの拡張パッケージ動作は未実装 / 未確認 |
 
 ## 実装との乖離 / 補足
 
@@ -174,3 +174,5 @@ docker ps -a --format '{{.Names}}	{{.Status}}'
 - [`sonic-package-manager`](../reference/cli/sonic-package-manager.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: ec18b66e3507 -->

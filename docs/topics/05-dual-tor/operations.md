@@ -79,7 +79,7 @@ Active-Standby で複数 nexthop route が mux port をまたぐ場合、standby
 
 ## ICMP hardware offload
 
-ICMP hardware offload は、Dual-ToR の link prober を [NPU](../../reference/glossary.md#term-npu) 側へ寄せ、検出時間を短縮するための仕組みです。software prober では raw socket とユーザ空間処理が入るため、数百 ms 程度の検出が下限になります。hardware prober では ICMP echo session を ASIC に作り、状態通知を `IcmpOrch` 経由で受けます。
+ICMP hardware offload は、Dual-ToR の link prober を [NPU](../../reference/glossary.md#term-npu) 側へ寄せ、検出時間を短縮するための仕組みです。software prober では raw socket とユーザ空間処理が入るため、数百 ms 程度の検出が下限になります。hardware prober では ICMP echo session を [ASIC](../../reference/glossary.md#term-asic) に作り、状態通知を `IcmpOrch` 経由で受けます。
 
 運用者目線では、`prober_type` が hardware か software か、offload session が作成されているか、TLV 入り ICMP などソフトウェア処理に残る部分があるかを分けて見ます。高速検出を期待するなら、単に `MUX_CABLE` を入れるだけでなく、対象 ASIC / [SAI](../../reference/glossary.md#term-sai) / ICMP offload 機能の対応も前提です。
 
@@ -156,7 +156,7 @@ Ethernet4   server_ipv4  10.3.1.1        added     -
 | `state=auto` だが切替が起きない | link prober 停止、または `state` が実は manual | `show muxcable status`、`config muxcable mode auto` |
 | `metrics` で `switch_*` 差が 1s 以上 | Y-cable / xcvrd 遅延、SoC busy | `xcvrd` ログ、firmware 不一致 |
 | `pck_loss_count` が連続増加 | server-facing link / NIC firmware / ICMP filter | NIC 側 counter、`show interfaces counters` の Ethernet |
-| `tunnel_route` の `asic=-` | MuxOrch SAI 失敗、tunnel object 不在 | [orchagent](../../reference/glossary.md#term-orchagent) / muxorch ログ、`show vxlan tunnel` |
+| `tunnel_route` の `asic=-` | MuxOrch SAI 失敗、tunnel object 不在 | [orchagent](../../reference/glossary.md#term-orchagent) / [muxorch](../../reference/glossary.md#term-muxorch) ログ、`show vxlan tunnel` |
 | default route が消えても切替しない | linkmgrd の default-route 連動未設定 | `linkmgrd` config、BFD/BGP 上流連動 |
 | ICMP offload 期待だが prober_type=software | ASIC / SAI 未対応、または `MUX_LINKMGR` 設定漏れ | `MUX_LINKMGR` table、`show muxcable status` の prober |
 | `prefix-based mux neighbors` 構成で `/32` が neighbor でなく tunnel | mux state が standby、または neighbor 学習失敗 | `show muxcable status`、`show ip neighbor` |
@@ -234,4 +234,4 @@ linkmgrd: BFD session for upstream peer 10.0.0.1 went down
 - [プレフィックスルート方式の Mux ネイバ](../../routing/prefix-based-mux-neighbors.md)
 - [multi-nexthop route ループ回避](../../routing/multiple-nexthop-route-hld.md)
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: 3baf0ec03624 -->

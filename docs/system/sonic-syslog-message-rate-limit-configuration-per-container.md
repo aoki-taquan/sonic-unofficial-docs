@@ -34,7 +34,7 @@ related:
 
 ## なぜ必要か
 
-SONiC の syslog は **コンテナ毎の rsyslogd** + **host の rsyslogd** で構成され、コンテナ rsyslog は従来 ハードコード で[^1]:
+[SONiC](../reference/glossary.md#term-sonic) の syslog は **コンテナ毎の rsyslogd** + **host の rsyslogd** で構成され、コンテナ rsyslog は従来 ハードコード で[^1]:
 
 ```text
 $SystemLogRateLimitInterval 300
@@ -72,7 +72,7 @@ flowchart LR
 2. **`hostcfgd`**（既存）が `SYSLOG_CONFIG|GLOBAL` を購読し host 側を再描画 + restart
 3. **新 daemon `containercfgd`** が各 container 内で `SYSLOG_CONFIG_FEATURE|<container>` を購読
 4. テンプレ `rsyslog.conf.j2` / `rsyslog-container.conf.j2` に `rate_limit_interval` / `rate_limit_burst` 変数追加
-5. single-ASIC でも `rsyslog-container.conf.j2` テンプレに統一（旧 `rsyslog.conf` 撤廃）
+5. single-[ASIC](../reference/glossary.md#term-asic) でも `rsyslog-container.conf.j2` テンプレに統一（旧 `rsyslog.conf` 撤廃）
 6. **App extension** は capability 申告ベースで自前で読む
 
 ## Container 起動時の流れ
@@ -142,4 +142,4 @@ docker exec bgp supervisorctl status | grep rsyslog
 
 [^1]: `sonic-net/SONiC` `doc/syslog/syslog-rate-limit-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: c5a6ce567024 -->
+<!-- glossary-links-injected: ec18b66e3507 -->
