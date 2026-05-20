@@ -142,6 +142,9 @@ HLD 用語「FAST DOWNLOAD」「SLOW DOWNLOAD」は **コードに literal で�
 - per-prefix table 更新は SLOW DOWNLOAD 側に残るので「N 非依存」は **FAST 部のみ**
 - nexthop tracking が過渡的に機能しないと PIC Edge が動かない可能性
 - FRR (PIC Local) と PIC Edge は **別タイミング**で動くため、両者の干渉を設計上避ける必要
+- BGP PIC は FRR の対応バージョン (8.x 以降) と該当 [SAI](../reference/glossary.md#term-sai) capability の両方が必要で、未対応 platform では nexthop group 単位での速い切替にはならない
+- IBGP PIC edge / core 双方を有効化するには `bgp bestpath multipath-relax` 等の設定組み合わせが前提で、HLD では明示されない場合がある
+- [VRF](../reference/glossary.md#term-vrf) / EVPN との同時利用は VRF leaking パスで遅延が大きくなる事例があり、本機能の効果が打ち消されるケースがある
 
 ## 8. 干渉する機能
 
@@ -155,12 +158,6 @@ HLD 用語「FAST DOWNLOAD」「SLOW DOWNLOAD」は **コードに literal で�
 
 - Topics: [BGP 概念](../topics/02-bgp/concept.md), [BGP アーキテクチャ](../topics/02-bgp/architecture.md), [BGP 内部実装](../topics/02-bgp/internals.md), [VRF / ECMP 内部実装](../topics/04-vrf-ecmp/internals.md)
 - 関連 HLD: [SONiC Weighted ECMP](sonic-weighted-ecmp.md), [Local ARS HLD](local-ars-hld.md), [Routing and Nexthop Table Enhancement](routing-and-next-hop-table-enhancement.md), [fpmsyncd Nexthop Group Enhancement](fpmsyncd-nexthop-group-enhancement-high-level-design-document.md)
-
-## 制限事項
-
-- BGP PIC は FRR の対応バージョン (8.x 以降) と該当 [SAI](../reference/glossary.md#term-sai) capability の両方が必要で、未対応 platform では nexthop group 単位での速い切替にはならない。
-- IBGP PIC edge / core 双方を有効化するには `bgp bestpath multipath-relax` 等の設定組み合わせが前提で、HLD では明示されない場合がある。
-- [VRF](../reference/glossary.md#term-vrf) / EVPN との同時利用は VRF leaking パスで遅延が大きくなる事例があり、本機能の効果が打ち消されるケースがある。
 
 ## 引用元
 

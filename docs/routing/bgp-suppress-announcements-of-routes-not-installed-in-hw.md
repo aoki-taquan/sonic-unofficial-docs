@@ -42,7 +42,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
-    `dplane_fpm_nl` 移行、`RTM_F_OFFLOAD` 通知、`fpmsyncd` の応答チャネル、consistency monitoring script の現行 master 取り込みは未裏取り。
+    `bgpd.main.conf.j2:107` で `bgp suppress-fib-pending` の無条件挿入 (FRR レベルでデフォルト有効)、`sonic-device_metadata.yang` での `suppress-fib-pending` leaf 定義、`fpmsyncd/routesync.{h,cpp}` で `RTM_F_OFFLOAD` 応答経路を確認 (verified 2026-05-11)。consistency monitoring script の現行 master 取り込みは未裏取りで継続課題。
 
 # BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）
 
@@ -55,7 +55,8 @@ T1 リブート直後に「FIB に乗っていない prefix を [BGP](../referen
 - [FRR](../reference/glossary.md#term-frr) の **bgp suppress-fib-pending** 機能を活用。FRR は [zebra](../reference/glossary.md#term-zebra) から `RTM_NEWROUTE` に `RTM_F_OFFLOAD` フラグが立った応答を受けると当該 prefix を peer に advertise する
 - SONiC 側は [orchagent](../reference/glossary.md#term-orchagent) / [fpmsyncd](../reference/glossary.md#term-fpmsyncd) 経由で「ASIC 書き込み完了」を zebra に返すループを実装
 - **FRR の `dplane_fpm_nl` 新プラグインへの移行が前提**（旧 `fpm` plugin は対応せず）[^1]
-- グローバル ON/OFF を `DEVICE_METADATA.localhost.suppress-fib-pending` で切替。default disabled、ランタイム切替可
+- FRR レベルでは `bgpd.main.conf.j2:107` から `bgp suppress-fib-pending` が無条件挿入されるため **常時有効**
+- 一方 SONiC 側のグローバル ON/OFF スイッチ `DEVICE_METADATA.localhost.suppress-fib-pending` (CONFIG_DB) は別次元のフラグであり、CONFIG_DB スキーマ上は **default disabled**、ランタイム切替可。両者の関係は本ページ末尾の裏取りメモ参照
 
 スコープ外: [MPLS](../reference/glossary.md#term-mpls)、[VNET](../reference/glossary.md#term-vnet) routes。directly connected / kernel routes は本機構の対象外で従来通り即時 advertise[^1]。
 

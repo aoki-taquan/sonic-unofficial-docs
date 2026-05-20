@@ -164,11 +164,11 @@ ROUTE_TABLE:10.100.0.0/24
 
 ### コマンド例
 
-ROUTE_TABLE / NEXTHOP_GROUP_TABLE の登録状況を確認する。
+ROUTE_TABLE / NEXT_HOP_GROUP_TABLE の登録状況を確認する。
 
 ```bash
 redis-cli -n 0 keys 'ROUTE_TABLE*' | head
-redis-cli -n 0 keys 'NEXTHOP_GROUP_TABLE*' | head
+redis-cli -n 0 keys 'NEXT_HOP_GROUP_TABLE*' | head
 show ip route summary
 ```
 

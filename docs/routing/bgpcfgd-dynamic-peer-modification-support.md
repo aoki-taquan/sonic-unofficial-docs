@@ -42,7 +42,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! warning "裏取りステータス: Discrepancy-found (partially_implemented)"
     `bgpcfgd/managers_bgp.py` L87 `BGPPeerMgrBase`、L112-115 で `update.conf.j2` / `delete.conf.j2` の searchpath ロード、L287-297 で `STATE_BGP_PEER_CONFIGURED_TABLE_NAME` への CRUD。`sonic-swss-common/common/schema.h` L511 で `STATE_BGP_PEER_CONFIGURED_TABLE_NAME = "BGP_PEER_CONFIGURED_TABLE"`。`docker-fpm-frr/frr/bgpd/templates/dynamic/{update,delete}.conf.j2` の `add_ranges` / `delete_ranges` ロジック。`sonic-utilities/show/bgp_frr_v4.py` L103-168 で `show ip bgp vrf` 系、`utilities_common/bgp_util.py` L304-320 で vtysh 経由の vrf JSON 取得を確認 (verified at: 2026-05-09)。
 
 # bgpcfgd の dynamic BGP peer 動的変更
@@ -238,7 +238,7 @@ docker exec bgp vtysh -c 'show bgp neighbors' | head
 
 | Phase | 実装済 | 未実装 |
 |-------|--------|--------|
-| Phase 1: STATE_DB BGP_PEER_STATE スキーマ | HLD 記載どおり実装済 | — |
+| Phase 1: STATE_DB BGP_PEER_CONFIGURED_TABLE スキーマ | HLD 記載どおり実装済 | — |
 | Phase 2: 動的 peer 追加 / 削除 | bgpcfgd への差分適用ロジックは実装済 | VRF 表示 CLI 等の派生機能は未確認・未実装の可能性 |
 | Phase 3: 大規模 peer flap 時の安定性 | — | 競合ケースの保証は未実装 / 未確認 |
 
