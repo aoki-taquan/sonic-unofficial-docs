@@ -118,8 +118,8 @@ DASH 系と SmartSwitch 系の既存 [HLD](../../reference/glossary.md#term-hld)
 - [単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）](../../platform/single-asic-voq-fixed-system-sonic.md)
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../../platform/hld-for-handling-sai-failures.md)
 - [SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）](../../overlay/smartswitch-eni-based-forwarding.md)
-- [SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観](../../overlay/sonic-dash-hld.md)
 - [ICMP Hardware Offload（DualToR link prober の NPU 化）](../../platform/icmp-hardware-offload.md)
+- [SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観](../../overlay/sonic-dash-hld.md)
 - [VXLAN / VNet 概念（VTEP + VNet + L2/L3 トンネル）](../../overlay/vxlan-sonic-concepts.md)
 
 **関連トラブルシュート 5 件**

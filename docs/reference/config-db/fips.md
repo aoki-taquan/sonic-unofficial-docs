@@ -110,7 +110,7 @@ show fips status
 | `false` | `false` | 通常 OpenSSL モジュールを使用（デフォルト） |
 | `true` | `false` | FIPS-validated module をロード。次回 reboot 後に有効化 |
 | `true` | `true` | FIPS module ロード＋非 FIPS アルゴリズム使用をエラー化（最強制モード） |
-| `false` | `true` | `enable` なしで `enforce` のみ有効化は意味がない（実装で想定されていない組み合わせ） |
+| `false` | `true` | `enforce=true` は内部的に `self.enable=True` に強制引き上げされるため、`enable=false` は無視される（`hostcfgd:1782` `self.enable = self.enforce or is_true(...)`）。実効挙動は `enable=true,enforce=true` と同じ |
 
 <!-- /value-behavior -->
 

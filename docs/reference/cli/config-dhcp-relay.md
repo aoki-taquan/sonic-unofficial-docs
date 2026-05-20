@@ -177,7 +177,7 @@ flowchart LR
 ### よくある落とし穴
 
 - [VLAN](../../reference/glossary.md#term-vlan) に IP が無い状態で relay を入れても client から DISCOVER を受けない。
-- `config dhcp-relay del` で server を全消去すると relay 機能自体が停止する。
+- `config dhcp_relay del` で server を全消去すると relay 機能自体が停止する。
 
 ### 関連する show / debug
 
