@@ -19,6 +19,7 @@ related:
   config_db:
     - PORTCHANNEL_INTERFACE
     - PORTCHANNEL
+    - PORTCHANNEL_MEMBER
     - VRF
   cli:
     - config interface

@@ -175,7 +175,7 @@ show queue counters
 
 ### Phase 6: 自動派生
 
-QosOrch が `QUEUE.wred_profile` / `QUEUE.scheduler` / `QUEUE.dscp_to_tc_map` フィールドを参照して各テーブルの OID を解決し、SAI キューオブジェクトに bind する。参照先テーブルが未作成の場合は設定がペンディング状態になる（待機派生）。
+QosOrch が `QUEUE.wred_profile` / `QUEUE.scheduler` フィールドを参照して各テーブルの OID を解決し、SAI キューオブジェクトに bind する。参照先テーブルが未作成の場合は設定がペンディング状態になる（待機派生）。
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 

@@ -115,6 +115,12 @@ SONiC は Redis を複数データベースに分割して使用し、その構�
 
 `REMOTE_DB_IP` / `REMOTE_DB_PORT` が定義されている場合、instance は `remote_redis` に切り替わる。
 
+#### EVENT_DB (通常ノード)
+
+| DB 名 | id | separator | instance |
+|------|----|-----------|----------|
+| `EVENT_DB` | `19` | `":"` | `redis` |
+
 #### BMP データベース (通常ノード、dpudb/bmcdb 以外)
 
 | DB 名 | id | separator | instance |

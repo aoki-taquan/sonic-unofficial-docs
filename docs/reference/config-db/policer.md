@@ -18,6 +18,7 @@ related:
   - ACL_RULE
   - COPP_GROUP
   - PORT_STORM_CONTROL
+  - MIRROR_SESSION
   cli: []
   yang:
   - sonic-copp
@@ -297,8 +298,8 @@ storm-control update パスでは **`CIR` のみ** SAI に渡す。`CBS` は upd
 ### 典型値
 
 - key 形式: `POLICER|<name>`。
-- `meter_type`: `packets` / `bytes`。
-- `mode`: `sr_tcm` / `tr_tcm` / `storm`。
+- `meter_type`: `PACKETS` / `BYTES`。
+- `mode`: `SR_TCM` / `TR_TCM` / `STORM_CONTROL`。
 - `cir` / `cbs` / `pir` / `pbs`。
 
 ### よくある誤設定

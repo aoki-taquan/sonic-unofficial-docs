@@ -290,11 +290,11 @@ show storm-control all
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / StormControlOrch**: `PORT_STORM_CONTROL` テーブルを `SubscriberStateTable` で購読。
+- **orchagent / PolicerOrch**: `PORT_STORM_CONTROL` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- StormControlOrch がエントリを解析し、ストームコントロール種別 (`broadcast`, `unknown_unicast`, `unknown_multicast`) とレート (kbps/pps) を取得。
+- PolicerOrch がエントリを解析し、ストームコントロール種別 (`broadcast`, `unknown-unicast`, `unknown-multicast`) とレート (kbps/pps) を取得。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI

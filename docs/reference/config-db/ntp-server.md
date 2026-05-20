@@ -1,6 +1,6 @@
 ---
 title: NTP_SERVER テーブル
-description: "NTP_SERVER テーブル — 上流 NTP サーバまたは pool を保持する。hostcfgd の NtpHandler が /etc/chrony/chrony.conf（または ntp.conf）を再生成し、サービスを再起動する。"
+description: "NTP_SERVER テーブル — 上流 NTP サーバまたは pool を保持する。hostcfgd の NtpCfg が /etc/chrony/chrony.conf（または ntp.conf）を再生成し、サービスを再起動する。"
 area: reference
 hard: 0
 verification: code-verified
@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-上流 NTP サーバまたは pool を保持する[^1]。`hostcfgd` の `NtpHandler` が `/etc/chrony/chrony.conf`（または `ntp.conf`）を再生成し、サービスを再起動する。`max-elements 10` でサーバ数上限がある。`NTP_KEY` で対称鍵を、`NTP|global` で client 全体設定を保持する。
+上流 NTP サーバまたは pool を保持する[^1]。`hostcfgd` の `NtpCfg` が `/etc/chrony/chrony.conf`（または `ntp.conf`）を再生成し、サービスを再起動する。`max-elements 10` でサーバ数上限がある。`NTP_KEY` で対称鍵を、`NTP|global` で client 全体設定を保持する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -380,7 +380,7 @@ NTP_SERVER を購読するプロセスは `hostcfgd` のみ。orchagent・syncd�
 
 ## 購読者
 
-- `hostcfgd` `NtpHandler`: chrony / ntp 設定の更新
+- `hostcfgd` `NtpCfg`: chrony / ntp 設定の更新
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -477,7 +477,7 @@ enum: `association_type`=server/pool、`iburst`=on/off、`admin_state`=enabled/d
 
 ### 段階 2: CFG → APPL 翻訳
 
-- hostcfgd の `ntpHandler` が `ntp.conf` の `server` ディレクティブを更新し ntpd 再起動。
+- hostcfgd の `NtpCfg` が `ntp.conf` の `server` ディレクティブを更新し ntpd 再起動。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI

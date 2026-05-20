@@ -22,7 +22,6 @@ related:
   config_db:
     - PORTCHANNEL
     - PORTCHANNEL_MEMBER
-    - PORTCHANNEL_INTERFACE
   cli:
     - show interfaces portchannel
     - sonic-db-cli APPL_DB
@@ -463,7 +462,7 @@ teamdctl PortChannel0001 state
 
 - CONFIG_DB: [`PORTCHANNEL テーブル`](./portchannel.md)
 - CONFIG_DB: [`PORTCHANNEL_MEMBER テーブル`](./portchannel-member.md)
-- CLI: [`show interfaces portchannel`](../cli/show-interfaces-portchannel.md)
+- CLI: `show interfaces portchannel`
 
 ## 引用元
 

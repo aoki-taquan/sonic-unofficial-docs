@@ -35,8 +35,10 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>ROUTE_MAP")]
-  DM["bgpcfgd"]
-  CDB --> DM
+  FRRCFGD["frrcfgd"]
+  BGPCFGD["bgpcfgd<br/>(SDN 専用 2 キーのみ)"]
+  CDB --> FRRCFGD
+  CDB --> BGPCFGD
 ```
 
 !!! note "凡例"

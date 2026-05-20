@@ -116,8 +116,8 @@ bgpcfgd が PREFIX_LIST エントリを `ip prefix-list` / `ipv6 prefix-list` �
 
 ### 典型値
 
-- key 形式: `PREFIX_LIST|<name>|<seq>`。
-- `action`: `permit` / `deny`、`prefix`: CIDR、`ge`/`le`: 長さレンジ。
+- key 形式: `PREFIX_LIST|<prefix_type>|<ip-prefix>`（例: `PREFIX_LIST|ANCHOR_PREFIX|192.168.0.0/24`）。
+- `prefix_type`: `ANCHOR_PREFIX` / `SUPPRESS_PREFIX`、`family`: `IPv4` / `IPv6`。
 
 ### よくある誤設定
 

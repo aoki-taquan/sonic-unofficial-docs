@@ -274,11 +274,11 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / TunnelDecapOrch**: `NVGRE_TUNNEL` テーブルを `SubscriberStateTable` で購読。
+- **orchagent / NvgreTunnelOrch + NvgreTunnelMapOrch**: `NVGRE_TUNNEL` / `NVGRE_TUNNEL_MAP` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- TunnelDecapOrch がエントリを解析し APP_DB `TUNNEL_DECAP_TABLE` に書き込む (一部実装)。
+- NvgreTunnelOrch がエントリを解析し APP_DB `TUNNEL_DECAP_TABLE` に書き込む (一部実装)。
 - 実装は VS/仮想 ASIC 向けが主体で、物理 ASIC サポートはベンダー依存。
 
 ### 段階 3: APPL → SAI
