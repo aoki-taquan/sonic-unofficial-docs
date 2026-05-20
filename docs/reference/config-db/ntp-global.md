@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-NTP クライアントのグローバル設定を保持するシングルトン的テーブル[^1]。[YANG](../../reference/glossary.md#term-yang) 上は `sonic-ntp.yang` の `container NTP` 配下 `container global` として定義され、[CONFIG_DB](../../reference/glossary.md#term-config_db) 上は `NTP|global` の単一エントリで現れる。サーバ単位の設定は別テーブル [`NTP_SERVER`](./ntp-server.md)、鍵は [`NTP_KEY`](./ntp-server.md) で管理される。
+NTP クライアントのグローバル設定を保持するシングルトン的テーブル[^1]。[YANG](../../reference/glossary.md#term-yang) 上は `sonic-ntp.yang` の `container NTP` 配下 `container global` として定義され、[CONFIG_DB](../../reference/glossary.md#term-config_db) 上は `NTP|global` の単一エントリで現れる。サーバ単位の設定は別テーブル [`NTP_SERVER`](./ntp-server.md)、鍵は [`NTP_KEY`](./ntp-key.md) で管理される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -530,8 +530,8 @@ minigraph.py からの `NTP_GLOBAL` 自動派生はなし。`NTP_SERVER` のみ 
 
 | Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
-| `hostcfgd` | `ntp_global_update()` | `vrf` フィールドが `"mgmt"` | ntp.conf に `interface eth0` を追加して管理 VRF 経由 NTP を設定 | `hostcfgd:1331-1365` |
-| `hostcfgd` | `ntp_global_update()` | `vrf` フィールドがなし / `"default"` | `interface` 指定なしで全インタフェース使用 | `hostcfgd:1331-1365` |
+| `hostcfgd` | `ntp_global_update()` | `vrf` フィールドが `"mgmt"` | `chrony.conf.j2:109` の条件により `bindacqaddress` ディレクティブを抑止し、bind 先選択をカーネルの mgmt VRF routing に委ねる（`interface eth0` 等のディレクティブは発行しない） | `hostcfgd:1331-1365`, `chrony.conf.j2:109` |
+| `hostcfgd` | `ntp_global_update()` | `vrf` フィールドがなし / `"default"` | `bindacqaddress` を `src_intf` 設定に従って生成 | `hostcfgd:1331-1365` |
 | `hostcfgd` | `ntp_global_update()` | `mgmtVrfEnabled` が false かつ `vrf=mgmt` | YANG `must` 制約が事前に拒否 (ntp.yang 制約) | `sonic-ntp.yang must` 制約 |
 | `hostcfgd` | `ntp_srv_key_update()` | サーバ設定が前回キャッシュと同一 | `ntp.conf` 再生成スキップ (diff なしの早期リターン) | `hostcfgd:1383-1384` |
 
