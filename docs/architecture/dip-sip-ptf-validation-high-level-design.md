@@ -12,6 +12,8 @@ sources:
   path: doc/dip-sip/DIP=SIP_HLD.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 _no_related: true
+related:
+  _no_yang: true
 ---
 
 <!-- topics-tip -->
