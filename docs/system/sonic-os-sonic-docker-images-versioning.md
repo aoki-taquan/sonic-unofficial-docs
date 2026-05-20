@@ -10,24 +10,11 @@ sources:
   path: doc/sonic-application-extension/sonic-versioning-strategy.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - CRM
-  - ACL_RULE
-  - ACL_TABLE
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DPU
+  config_db: []
   cli:
-  - show techsupport
-  - show platform
   - show version
-  - show acl
-  - config acl
   yang:
   - sonic-versions
-  - sonic-feature
-  - sonic-system-defaults
-  - sonic-crm
 ---
 
 !!! success "裏取りステータス: Code-verified（一部例は未採用）"
