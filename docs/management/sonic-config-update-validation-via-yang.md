@@ -48,7 +48,7 @@ related:
 
 ## 概要
 
-SONiC では従来、`config <feature>` 系 CLI が ConfigDB に書き込む前のフィールド検証を **Python のハードコード（ad-hoc）と [YANG](../reference/glossary.md#term-yang) モデルの両方** で重複定義していた。同じ制約を 2 箇所で書くと乖離が起きやすく、保守コストが高い[^1]。
+[SONiC](../reference/glossary.md#term-sonic) では従来、`config <feature>` 系 CLI が ConfigDB に書き込む前のフィールド検証を **Python のハードコード（ad-hoc）と [YANG](../reference/glossary.md#term-yang) モデルの両方** で重複定義していた。同じ制約を 2 箇所で書くと乖離が起きやすく、保守コストが高い[^1]。
 
 本プロジェクトはその二重管理を解消し、**既存の YANG モデルを単一の Source of Truth** として ConfigDB 更新時に再利用する。具体的には Generic Config Updater ([GCU](../reference/glossary.md#term-gcu)) を介した JSON patch 検証を `ConfigDBConnector.set_entry()` のデコレータとして注入する[^1]。
 
@@ -242,4 +242,4 @@ yangcli --module=sonic-port -- 'xget /sonic-port:sonic-port'
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: ae40922103ac -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

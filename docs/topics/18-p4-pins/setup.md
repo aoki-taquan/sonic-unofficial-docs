@@ -34,7 +34,7 @@ related:
 
 # 設定
 
-[PINS](../../reference/glossary.md#term-pins) は SONiC 上に P4RT サービスを追加することで、外部の SDN コントローラから P4Runtime gRPC で ASIC を直接制御できるようにする機能です。本ページでは、PINS を実用的に動かすための設定フローを「P4RT を起動する」「コントローラ接続を許可する」「Send to Ingress / PacketIO を有効化する」の 3 フェーズで示し、よくある詰まりどころと対処も併記します。
+[PINS](../../reference/glossary.md#term-pins) は [SONiC](../../reference/glossary.md#term-sonic) 上に [P4RT](../../reference/glossary.md#term-p4rt) サービスを追加することで、外部の SDN コントローラから P4Runtime gRPC で [ASIC](../../reference/glossary.md#term-asic) を直接制御できるようにする機能です。本ページでは、PINS を実用的に動かすための設定フローを「P4RT を起動する」「コントローラ接続を許可する」「Send to Ingress / PacketIO を有効化する」の 3 フェーズで示し、よくある詰まりどころと対処も併記します。
 
 CLI / [CONFIG_DB](../../reference/glossary.md#term-config_db) の reference 整備が PINS では他機能より薄いため (後述の「現時点で不足している reference」節を参照)、本ページの CONFIG_DB スキーマは [HLD](../../reference/glossary.md#term-hld) と既存実装（`sonic-buildimage/dockers/docker-sonic-p4rt`、`sonic-pins/`）から推定したものを示します。実機では必ず `redis-cli HGETALL` で実際のキーを確認してから運用に組み込んでください。
 
@@ -318,4 +318,4 @@ PINS 系は `reference/cli/*`、`reference/config-db/p4rt.md`、`reference/yang/
 - [PacketIO HLD](../../management/packetio.md)
 - [Send to Ingress HLD](../../management/send-to-ingress-hld.md)
 
-<!-- glossary-links-injected: fd64496a02ec -->
+<!-- glossary-links-injected: 4b7e3e133212 -->

@@ -33,7 +33,7 @@ related:
 
 [gNOI](../reference/glossary.md#term-gnoi) Healthz は **コンポーネント単位のヘルスチェック結果と関連アーティファクト（log / DB snapshot / show tech 出力等）を gRPC 経由で取得する** ためのサービスである[^1]。OpenConfig の `components` モデルと連携し、telemetry で「unhealthy」を検知したコンポーネントの追加調査を行う想定。
 
-SONiC では既存の [gNMI](../reference/glossary.md#term-gnmi)/UMF サーバ（telemetry コンテナ、TCP 9339）に gNOI Healthz をマウントし、バックエンドの artifact 収集は **SONiC Host Service** の `debug_info` モジュールに DBUS 経由で委譲する[^1]。
+[SONiC](../reference/glossary.md#term-sonic) では既存の [gNMI](../reference/glossary.md#term-gnmi)/UMF サーバ（telemetry コンテナ、TCP 9339）に gNOI Healthz をマウントし、バックエンドの artifact 収集は **SONiC Host Service** の `debug_info` モジュールに DBUS 経由で委譲する[^1]。
 
 本 [HLD](../reference/glossary.md#term-hld) は OpenConfig [`Healthz` proto](https://github.com/openconfig/gnoi/blob/main/healthz/healthz.proto) のうち以下 3 つの RPC を **初期サポート対象** と定める[^1]:
 
@@ -269,4 +269,4 @@ docker logs gnmi 2>&1 | tail -30
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

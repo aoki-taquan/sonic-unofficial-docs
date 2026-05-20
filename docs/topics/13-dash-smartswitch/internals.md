@@ -64,7 +64,7 @@ flowchart LR
   HAM -.->|HA actor| O1
 ```
 
-`featured` daemon は `FEATURE` テーブルの `has_per_dpu_scope` を読んで「この feature は DPU 数だけ instance を起こす」と判断します。これは multi-ASIC の per-namespace 起動と同じ仕組みの再利用です。詳細は [Smart Switch のデータベース構成](../../architecture/smart-switch-database-design.md) を参照してください。
+`featured` daemon は `FEATURE` テーブルの `has_per_dpu_scope` を読んで「この feature は DPU 数だけ instance を起こす」と判断します。これは multi-[ASIC](../../reference/glossary.md#term-asic) の per-namespace 起動と同じ仕組みの再利用です。詳細は [Smart Switch のデータベース構成](../../architecture/smart-switch-database-design.md) を参照してください。
 
 ## DASH オブジェクトの流れ
 
@@ -159,7 +159,7 @@ NPU 側 CONFIG_DB / APPL_DB:
 
 ## ZMQ / SWBUS / Redis pub/sub
 
-- DASH は **ZMQ + SWBUS** を多用します。NPU ↔ DPU 間の制御パスは SONiC 標準の [Redis](../../reference/glossary.md#term-redis) pub/sub ではなく、SWBUS (`sonic-swbus` based。`gnmi-native-write` と並び ZMQ producer/consumer を使う) でメッセージを配送します。これは大量の DASH route / ENI / flow を Redis を介さず直接 orchagent に流すためです。
+- DASH は **ZMQ + SWBUS** を多用します。NPU ↔ DPU 間の制御パスは [SONiC](../../reference/glossary.md#term-sonic) 標準の [Redis](../../reference/glossary.md#term-redis) pub/sub ではなく、SWBUS (`sonic-swbus` based。`gnmi-native-write` と並び ZMQ producer/consumer を使う) でメッセージを配送します。これは大量の DASH route / ENI / flow を Redis を介さず直接 orchagent に流すためです。
 - HA flow sync は DPU 間の専用 channel（DASH-HA dataplane channel）で行い、Redis を経由しません。
 - 通常の DASH 設定（ENI / VNET / route）は SWBUS → 各 DPU の APPL_DB に書かれ、`DashOrch` 系が SubscriberStateTable で読み取ります。
 
@@ -180,4 +180,4 @@ NPU 側 CONFIG_DB / APPL_DB:
 - [DASH ACL タグ](../../acl-qos/dash-acl-tags.md)
 - [SmartSwitch HAMgrD 設計](../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design.md)
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

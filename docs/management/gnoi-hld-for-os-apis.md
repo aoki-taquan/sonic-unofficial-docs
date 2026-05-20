@@ -45,7 +45,7 @@ related:
 - `Activate`: 転送済みのバージョンを **次回起動イメージとして設定**（オプションで即時 reboot）
 - `Verify`: 現行稼働中のバージョンを返す。デュアル SUP 構成では standby 側のステータスも返す
 
-SONiC では既存の [gNMI](../reference/glossary.md#term-gnmi)/UMF サーバ（telemetry, TCP 9339）に gNOI をマウントし、バックエンドは **SONiC Host Service** の `image_service` モジュール（python、`sonic-installer` を内部呼び出し）を DBUS 経由で叩く[^1][^2]。
+[SONiC](../reference/glossary.md#term-sonic) では既存の [gNMI](../reference/glossary.md#term-gnmi)/UMF サーバ（telemetry, TCP 9339）に gNOI をマウントし、バックエンドは **SONiC Host Service** の `image_service` モジュール（python、`sonic-installer` を内部呼び出し）を DBUS 経由で叩く[^1][^2]。
 
 ## 動作仕様
 
@@ -263,3 +263,5 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 - [`sonic-installer`](../reference/cli/sonic-installer.md)
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 8ba32e5aa69d -->

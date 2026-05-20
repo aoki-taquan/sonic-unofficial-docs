@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-SONiC の telemetry コンテナには **3 つの [gNMI](../reference/glossary.md#term-gnmi) クライアントツール** が `/usr/bin` に同梱されており、運用検証や疎通確認に使う[^1]:
+[SONiC](../reference/glossary.md#term-sonic) の telemetry コンテナには **3 つの [gNMI](../reference/glossary.md#term-gnmi) クライアントツール** が `/usr/bin` に同梱されており、運用検証や疎通確認に使う[^1]:
 
 - `gnmi_get`: 単一または複数パスの取得（`Get` RPC）
 - `gnmi_set`: `update` / `replace` / `delete` 操作（`Set` RPC）
@@ -229,4 +229,4 @@ docker logs gnmi 2>&1 | tail -30
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

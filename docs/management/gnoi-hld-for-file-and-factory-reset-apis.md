@@ -41,7 +41,7 @@ related:
 
 ## なぜこの拡張が必要か
 
-gNOI（gRPC Network Operations Interface）は CLI 代替として **gRPC で運用コマンドを実行** する仕様で、protobuf は [openconfig/gnoi](https://github.com/openconfig/gnoi) にある。SONiC では gNMI/telemetry サーバ（UMF）が gNOI も **同じ TCP 9339** で受け、認証認可後にバックエンドへ振り分ける[^1]。本 [HLD](../reference/glossary.md#term-hld) は以下 2 つの RPC を実装[^1]:
+gNOI（gRPC Network Operations Interface）は CLI 代替として **gRPC で運用コマンドを実行** する仕様で、protobuf は [openconfig/gnoi](https://github.com/openconfig/gnoi) にある。[SONiC](../reference/glossary.md#term-sonic) では gNMI/telemetry サーバ（UMF）が gNOI も **同じ TCP 9339** で受け、認証認可後にバックエンドへ振り分ける[^1]。本 [HLD](../reference/glossary.md#term-hld) は以下 2 つの RPC を実装[^1]:
 
 - `gnoi.file.File.Remove`: target ファイル削除（**現状は `config_db.json` 限定**）
 - `gnoi.factory_reset.FactoryReset.Start`: 工場出荷状態に戻す
@@ -210,4 +210,4 @@ docker logs gnmi 2>&1 | tail -30
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

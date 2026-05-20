@@ -30,7 +30,7 @@ related:
 
 # 運用
 
-[PINS](../../reference/glossary.md#term-pins) の運用で確認したいのは「コントローラの Write は ASIC に届いているか」「PacketIO / Send to Ingress の経路は活きているか」「Read が遅いときキャッシュは効いているか」の 3 点です。本ページでは出口（show / DB / ログ / kernel netlink）を実例で並べ、よくある異常と復旧手順を整理します。
+[PINS](../../reference/glossary.md#term-pins) の運用で確認したいのは「コントローラの Write は [ASIC](../../reference/glossary.md#term-asic) に届いているか」「PacketIO / Send to Ingress の経路は活きているか」「Read が遅いときキャッシュは効いているか」の 3 点です。本ページでは出口（show / DB / ログ / kernel netlink）を実例で並べ、よくある異常と復旧手順を整理します。
 
 ## Write が ASIC に届いているかの確認
 
@@ -206,4 +206,4 @@ admin@sonic:~$ docker logs p4rt 2>&1 | grep VerifyState
 - [ACL / CoPP / Mirror 章](../07-acl-copp-mirror/index.md)（trap group / policer の詳細）
 - [SWSS / SAI / Redis 章](../20-swss-sai-redis/index.md)（SAI 失敗観察）
 
-<!-- glossary-links-injected: 062eaeb99c58 -->
+<!-- glossary-links-injected: c006405759d8 -->

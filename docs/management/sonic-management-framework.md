@@ -69,7 +69,7 @@ flowchart LR
 - **Transformer は二種**: app-specific（openconfig ↔ sonic）と sonic-yang only（schema-driven）
 - **gNMI subscription**: STATE_DB の更新を SAMPLE / ON_CHANGE で stream（別ページ「gNMI Subscription for YANG Data」を参照）
 - **mgmt-framework container**: REST / Translib / Transformer / KLISH を 1 コンテナに同居させる構成
-- **認証/認可**: TLS + client cert、TACACS+/RADIUS/LDAP は [AAA](../reference/glossary.md#term-aaa) 改善 [HLD](../reference/glossary.md#term-hld) に従う
+- **認証/認可**: TLS + client cert、TACACS+/[RADIUS](../reference/glossary.md#term-radius)/LDAP は [AAA](../reference/glossary.md#term-aaa) 改善 [HLD](../reference/glossary.md#term-hld) に従う
 
 ## 主要なフロー
 
@@ -164,3 +164,5 @@ diff /etc/sonic/config_db.json <(show runningconfiguration all)
 - `sonic-*`
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: df94ce4c9c04 -->

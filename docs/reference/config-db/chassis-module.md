@@ -31,27 +31,20 @@ related:
 
 ## 概要
 
-`CHASSIS_MODULE` テーブルは [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持され、モジュラーチャシス（VOQ 構成）および SmartSwitch におけるラインカード・ファブリックカード・DPU の**管理状態**を格納する[^1]。`chassisd` デーモンがテーブルを監視し、platform API 経由でモジュールの電源・稼働状態を制御する。
+`CHASSIS_MODULE` テーブルは [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持され、モジュラーチャシス（[VOQ](../../reference/glossary.md#term-voq) 構成）および [SmartSwitch](../../reference/glossary.md#term-smartswitch) におけるラインカード・ファブリックカード・[DPU](../../reference/glossary.md#term-dpu) の**管理状態**を格納する[^1]。`chassisd` デーモンがテーブルを監視し、platform API 経由でモジュールの電源・稼働状態を制御する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CLI["CLI\nconfig chassis_modules"]
-  CDB[("CONFIG_DB\nCHASSIS_MODULE")]
-  CHASSISD["chassisd\n(ModuleConfigUpdater)"]
-  PAL["Platform API\nset_admin_state()"]
-  STDB[("STATE_DB\nCHASSIS_MODULE_TABLE")]
-
-  CLI --> CDB
-  CDB --> CHASSISD
-  CHASSISD --> PAL
-  CHASSISD --> STDB
+  CDB[("CONFIG_DB<br/>CHASSIS_MODULE")]
+  DM["chassisd"]
+  CDB --> DM
 ```
 
 !!! note "凡例"
-    CONFIG_DB から Platform API までの経路を示す。STATE_DB への書き込みは chassisd が poll ベース (10 秒間隔) で実施。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -63,7 +56,7 @@ CHASSIS_MODULE|<module_name>
 `<module_name>` の形式:
 - `LINE-CARD0`, `LINE-CARD1`, … (ラインカード)
 - `FABRIC-CARD0`, `FABRIC-CARD1`, … (ファブリックカード)
-- `DPU0`, `DPU1`, … (SmartSwitch の DPU)
+- `DPU0`, `DPU1`, … ([SmartSwitch](../../reference/glossary.md#term-smartswitch) の [DPU](../../reference/glossary.md#term-dpu))
 
 !!! warning "YANG-実装 discrepancy"
     YANG スキーマ (`sonic-chassis-module.yang`) の key パターンは `LINE-CARD[0-9]+|FABRIC-CARD[0-9]+|DPU[0-9]+` のみを許可するが、CLI 実装 (`config/chassis_modules.py:148,189`) は `SUPERVISOR` prefix も受け付ける。`SUPERVISOR-CARD0` 等のエントリは YANG バリデーションを通過しないが、実装上は設定・読み取り可能。
@@ -72,7 +65,7 @@ CHASSIS_MODULE|<module_name>
 
 | フィールド | 型 | 範囲 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
-| `admin_status` | `admin_status` (up/down) | — | `up` (YANG) | モジュールの管理状態。`up` = 稼働許可、`down` = 管理停止 |
+| `admin_status` | `admin_status` (up/down) | — | `up` ([YANG](../../reference/glossary.md#term-yang)) | モジュールの管理状態。`up` = 稼働許可、`down` = 管理停止 |
 
 ## 暗黙デフォルト・コード由来挙動
 
@@ -103,9 +96,9 @@ if not fvs:
         return 'down'    # エントリ不在 → 'down' ← YANG default 'up' と乖離
 ```
 
-SmartSwitch では `admin_status` エントリが存在しない DPU は**デフォルト停止**扱い。YANG の `default up` と動作が逆になる。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) では `admin_status` エントリが存在しない [DPU](../../reference/glossary.md#term-dpu) は**デフォルト停止**扱い。YANG の `default up` と動作が逆になる。
 
-`SmartSwitchModuleUpdater.get_module_admin_status()` はエントリ不在時に `MODULE_STATUS_EMPTY` = `'Empty'` を返す (chassisd:756)。これは `!= 'down'` 条件 (chassisd:447) を満たすため、実質 up 扱いで ASIC テーブル更新が継続される。
+`SmartSwitchModuleUpdater.get_module_admin_status()` はエントリ不在時に `MODULE_STATUS_EMPTY` = `'Empty'` を返す (chassisd:756)。これは `!= 'down'` 条件 (chassisd:447) を満たすため、実質 up 扱いで [ASIC](../../reference/glossary.md#term-asic) テーブル更新が継続される。
 
 ### startup コマンドの silent deletion (書き込み時 vs 実行時 乖離)
 
@@ -120,18 +113,18 @@ config_db.set_entry('CHASSIS_MODULE', chassis_module_name, None)  # エントリ
 
 ### try_get fallback (Platform API 失敗時)
 
-chassisd が platform API から値を取得できない場合、STATE_DB へ以下を書き込む:
+chassisd が platform API から値を取得できない場合、[STATE_DB](../../reference/glossary.md#term-state_db) へ以下を書き込む:
 
-| STATE_DB フィールド | fallback 値 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) フィールド | fallback 値 |
 |---|---|
 | `name` / `desc` / `serial` / `model` / `presence` / `is_replaceable` | `'N/A'` |
 | `slot` | `-1` (INVALID_SLOT) |
 | `oper_status` | `'Offline'` (MODULE_STATUS_OFFLINE) |
-| `asics` リスト | `[]` (空) → ASIC テーブル更新なし |
+| `asics` リスト | `[]` (空) → [ASIC](../../reference/glossary.md#term-asic) テーブル更新なし |
 | `midplane_ip` | `'0.0.0.0'` |
 | `midplane_access` | `False` |
 
-`oper_status = 'Offline'` の fallback は `str(ModuleBase.MODULE_STATUS_ONLINE)` との比較 (chassisd:420) で失敗し、当該モジュールの ASIC テーブル更新がスキップされる。
+`oper_status = 'Offline'` の fallback は `str(ModuleBase.MODULE_STATUS_ONLINE)` との比較 (chassisd:420) で失敗し、当該モジュールの [ASIC](../../reference/glossary.md#term-asic) テーブル更新がスキップされる。
 
 ### プラットフォームファイル由来のハードコードデフォルト
 
@@ -145,7 +138,7 @@ chassisd が platform API から値を取得できない場合、STATE_DB へ以
 ### FABRIC-CARD shutdown の前提条件依存
 
 `config chassis_modules shutdown FABRIC-CARD*` は以下の順序で実行される:
-1. `admin_status: down` を CONFIG_DB に書き込み
+1. `admin_status: down` を [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込み
 2. 最大 **10 秒** (`TIMEOUT_SECS=10`) 待機し chassisd の反映を確認
 3. タイムアウト後に `fabric_module_set_admin_status()` で ASIC サービス (`swss@<asic>.service`) を強制停止
 
@@ -165,7 +158,7 @@ chassisd が起動していない場合は 10 秒タイムアウト後に強制�
 | 1 | `CHASSIS_MODULE\|DPU*` エントリ → chassisd 起動 (SmartSwitch) | **起動前に存在必須** | エントリ不在時は DPU がデフォルト down で起動 |
 | 2 | ラインカード down → CHASSIS_APP_DB クリーンアップ | **30 分遅延** | 旧 SYSTEM_NEIGH / SYSTEM_LAG エントリが最大 30 分残存 |
 | 3 | supervisor のみ ConfigManagerTask を起動 | アーキテクチャ固定 | ラインカード上 chassisd は CHASSIS_MODULE を subscribe しない |
-| 4 | `admin_status` 書き込み → DPU 電源変化 (SmartSwitch) | 非同期スレッド実行 | STATE_DB 反映は最大 10 秒遅延; DPU midplane 復旧タイムアウト 360 秒 |
+| 4 | `admin_status` 書き込み → DPU 電源変化 (SmartSwitch) | 非同期スレッド実行 | [STATE_DB](../../reference/glossary.md#term-state_db) 反映は最大 10 秒遅延; DPU midplane 復旧タイムアウト 360 秒 |
 | 5 | DEL → `MODULE_ADMIN_UP` (非 SmartSwitch) / `MODULE_ADMIN_DOWN` (SmartSwitch) | 即時 | プラットフォームにより逆の意味になる |
 | 6 | `admin_status: down` 書き込み → `swss@<asic>.service` 停止 (FABRIC-CARD) | 最大 10 秒待機後に強制実行 | chassisd 未起動時は 10 秒後に強制停止 |
 
@@ -286,7 +279,7 @@ chassisd が停止中でもタイムアウト後に強制実行される。
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-chassis-module`](../yang/sonic-chassis-module.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-chassis-module`
 - CLI: `config chassis_modules shutdown <name>` / `config chassis_modules startup <name>`
 - CLI: `show chassis modules status`
 
@@ -300,8 +293,8 @@ chassisd が停止中でもタイムアウト後に強制実行される。
 | 参照先テーブル | 方向 | 機構 | 条件 |
 |---|---|---|---|
 | [`PORT`](./port.md) | CHASSIS_MODULE → PORT | `chassisd` の `_get_data_plane_state_common()` が `CONFIG_DB` の `PORT` テーブルを全件列挙し、`APPL_DB.PORT_TABLE.oper_status` とクロスチェック。PORT が空なら全ポート up 扱いになるサイレント挙動 | SmartSwitch の DPU データプレーン状態判定時のみ (chassisd:1268-1273) |
-| [`DEVICE_METADATA`](./device-metadata.md) | CHASSIS_MODULE → DEVICE_METADATA | `is_smartswitch()` が `platform.json` の `"DPUS"` キーを検査（DB 直接参照ではなくファイル参照）。`DEVICE_METADATA|localhost|subtype = SmartSwitch` が書き込まれた環境と間接的に連動し、`admin_status` デフォルト fallback (`up` vs `down`) が分岐 | SmartSwitch 環境のみ |
-| `SYSTEM_PORT` | — | 直接参照なし。VOQ 構成の `SYSTEM_PORT` は `voqorch` が管理し `CHASSIS_MODULE` との直接依存は不在 | — |
+| [`DEVICE_METADATA`](./device-metadata.md) | CHASSIS_MODULE → [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) | `is_smartswitch()` が `platform.json` の `"DPUS"` キーを検査（DB 直接参照ではなくファイル参照）。`DEVICE_METADATA|localhost|subtype = SmartSwitch` が書き込まれた環境と間接的に連動し、`admin_status` デフォルト fallback (`up` vs `down`) が分岐 | SmartSwitch 環境のみ |
+| `SYSTEM_PORT` | — | 直接参照なし。[VOQ](../../reference/glossary.md#term-voq) 構成の `SYSTEM_PORT` は `voqorch` が管理し `CHASSIS_MODULE` との直接依存は不在 | — |
 
 > **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:1268-1273`; `sonic-utilities/utilities_common/chassis.py:21-22`; `sonic-utilities/config/chassis_modules.py:61`; `sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py:671-682`
 <!-- /cross-refs -->
@@ -393,7 +386,7 @@ SmartSwitch では `set_admin_state_gracefully(admin_state)` が別スレッド�
 - なし (chassis module 設定はミニグラフ生成対象外)
 
 ### REST / gNMI (sonic-mgmt-common)
-- gNMI 経由での読み取りは `sonic-gnmi/gnmi_server/chassis_module_test.go` で確認されているが、書き込みパスは実装依存
+- [gNMI](../../reference/glossary.md#term-gnmi) 経由での読み取りは `sonic-gnmi/gnmi_server/chassis_module_test.go` で確認されているが、書き込みパスは実装依存
 
 ### db_migrator
 - なし
@@ -593,7 +586,7 @@ STATE_DB  CHASSIS_MIDPLANE_INFO_TABLE|<module_name>
 モジュールが offline になってから `CHASSIS_DB_CLEANUP_MODULE_DOWN_PERIOD=30` 分経過後に、Supervisor 上の `chassisd` が CHASSIS_APP_DB (redis_chassis.server:6380, DB#12) の下記テーブルを削除する (chassisd:593-680):
 
 - `SYSTEM_NEIGH*`、`SYSTEM_INTERFACE*`、`SYSTEM_LAG_MEMBER_TABLE*` — 対象ホスト・ASIC のエントリを削除
-- `SYSTEM_LAG_TABLE*` — 対象エントリを削除し、`SYSTEM_LAG_ID_TABLE` と `SYSTEM_LAG_ID_SET` の LAG ID を返却
+- `SYSTEM_LAG_TABLE*` — 対象エントリを削除し、`SYSTEM_LAG_ID_TABLE` と `SYSTEM_LAG_ID_SET` の [LAG](../../reference/glossary.md#term-lag) ID を返却
 
 ### systemd サービス制御（FABRIC-CARD 限定）
 
@@ -612,7 +605,7 @@ ASIC リストは `CHASSIS_STATE_DB.CHASSIS_FABRIC_ASIC_TABLE` から取得す�
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
-`chassisd` はプラットフォーム種別（VOQ チャシス / SmartSwitch DPU 搭載機）およびカード種別（LINE-CARD / FABRIC-CARD / DPU）によって `CHASSIS_MODULE` テーブルの処理クラスと許容 key prefix を切り替える。
+`chassisd` はプラットフォーム種別（[VOQ](../../reference/glossary.md#term-voq) チャシス / SmartSwitch DPU 搭載機）およびカード種別（LINE-CARD / FABRIC-CARD / DPU）によって `CHASSIS_MODULE` テーブルの処理クラスと許容 key prefix を切り替える。
 
 ### プラットフォーム種別による Updater クラスの分岐
 
@@ -741,3 +734,5 @@ SmartSwitch では `SmartSwitchModuleUpdater` が `chassisStateDB` の `DPU_STAT
 
 > **Evidence**: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:92-93,125-141,143-149,192-212,235-256,309-311,338-341,420-435,471-478,663-664,1400-1401,1424-1427`; `config/chassis_modules.py:12`; 詳細分析 `meta/_intermediate/cdb-flow/chassis-module-failure.md`
 <!-- /failure -->
+
+<!-- glossary-links-injected: a1b917b7e320 -->

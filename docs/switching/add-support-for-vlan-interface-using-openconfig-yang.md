@@ -45,7 +45,7 @@ related:
 
 ## なぜ必要か
 
-SONiC は従来 [VLAN](../reference/glossary.md#term-vlan) を **SONiC 独自 [YANG](../reference/glossary.md#term-yang)** 経由でしか REST / [gNMI](../reference/glossary.md#term-gnmi) 公開していなかった。本機能はこれに **OpenConfig YANG** (`openconfig-interfaces` + `openconfig-vlan` + `openconfig-if-ip`) を追加し、相互運用性を上げる[^1]。
+[SONiC](../reference/glossary.md#term-sonic) は従来 [VLAN](../reference/glossary.md#term-vlan) を **SONiC 独自 [YANG](../reference/glossary.md#term-yang)** 経由でしか REST / [gNMI](../reference/glossary.md#term-gnmi) 公開していなかった。本機能はこれに **OpenConfig YANG** (`openconfig-interfaces` + `openconfig-vlan` + `openconfig-if-ip`) を追加し、相互運用性を上げる[^1]。
 
 実装は `sonic-mgmt-common` の **transformer** 経路（translib ベースではない）。Management Framework / gNMI コンテナにコードを追加するだけで、**[CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) / COUNTER_DB のスキーマ変更は無し**[^1]。
 
@@ -151,4 +151,4 @@ PATCH が 4xx → パス表記 (`Vlan<id>`)、モード組合せ、leaf 名を�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 86faf626ff2b -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

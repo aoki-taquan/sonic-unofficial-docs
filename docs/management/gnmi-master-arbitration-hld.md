@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-[gNMI](../reference/glossary.md#term-gnmi) Master Arbitration は **複数の SDN コントローラ（gNMI クライアント）が 1 台の SONiC スイッチに同時接続し得る環境で、`Set` RPC を出せるのは唯一のマスタだけにする** ための調停機構である[^1]。
+[gNMI](../reference/glossary.md#term-gnmi) Master Arbitration は **複数の SDN コントローラ（gNMI クライアント）が 1 台の [SONiC](../reference/glossary.md#term-sonic) スイッチに同時接続し得る環境で、`Set` RPC を出せるのは唯一のマスタだけにする** ための調停機構である[^1]。
 
 仕様は openconfig 側の [gnmi-master-arbitration](https://github.com/openconfig/reference/blob/master/rpc/gnmi/gnmi-master-arbitration.md) に準じ、SONiC では `sonic-gnmi` の telemetry サーバ側に組み込む形で実装する。コアは以下のシンプルなルールである[^1]:
 
@@ -225,7 +225,7 @@ req := &gnmi.SetRequest{ Extension: []*gnmi_ext.Extension{ext}, ... }
 - **gNMI Set の挙動全般**: enable した瞬間、EID を載せない既存クライアントの `Set` は通らなくなる可能性。導入時はクライアント側を先に対応させる
 - **gNMI 認証 / RBAC**: マスタ判定が認証より前に走るため、RBAC で `Set` 権限を絞っていてもマスタ未取得の段階で拒否される
 - **Warm reboot / Fast reboot**: HLD は影響なしと明記[^1]。一方で `masterEID` は揮発するため、warm reboot でも EID は 0 に戻り、コントローラ側は再度 `Set` で EID を主張し直す必要がある（HLD 明記）[^1]
-- **複数 telemetry プロセス / マルチ ASIC**: HLD では言及無し。マルチ ASIC 環境で telemetry が複数立ち上がる場合の `masterEID` 共有有無は未定義
+- **複数 telemetry プロセス / マルチ [ASIC](../reference/glossary.md#term-asic)**: HLD では言及無し。マルチ ASIC 環境で telemetry が複数立ち上がる場合の `masterEID` 共有有無は未定義
 
 ## トラブルシューティング
 
@@ -346,4 +346,4 @@ runtime ログと CONFIG_DB の状態から具体的に確認できる。
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: ec18b66e3507 -->

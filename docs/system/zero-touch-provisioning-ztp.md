@@ -33,7 +33,7 @@ related:
 
 ## 1. 何のための仕組みか
 
-ZTP は **箱出し直後の SONiC を、DHCP オプションで指示された ZTP JSON を取得・順次適用して自動構成する** 仕組み[^1]。
+ZTP は **箱出し直後の [SONiC](../reference/glossary.md#term-sonic) を、DHCP オプションで指示された ZTP JSON を取得・順次適用して自動構成する** 仕組み[^1]。
 
 - 工場出荷後の手動初期構成を不要にする
 - 機種・ロケーションごとの構成を ZTP server で集中管理
@@ -127,4 +127,4 @@ ip -d link show eth0
 
 [^1]: `sonic-net/SONiC` `doc/ztp/ztp.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 7429d2aea81c -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->
