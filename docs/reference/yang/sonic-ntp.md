@@ -62,6 +62,7 @@ flowchart LR
 
 ### 対応 CONFIG_DB
 
+- [`NTP`](../config-db/ntp-global.md)
 - [`NTP_SERVER`](../config-db/ntp-server.md)
 - [`NTP_KEY`](../config-db/ntp-key.md)
 
@@ -160,7 +161,7 @@ module: sonic-ntp
 
 ## 関連リファレンス
 
-- CONFIG_DB: `NTP` / [`NTP_SERVER`](../config-db/ntp-server.md) / [`NTP_KEY`](../config-db/ntp-key.md)
+- CONFIG_DB: [`NTP`](../config-db/ntp-global.md) / [`NTP_SERVER`](../config-db/ntp-server.md) / [`NTP_KEY`](../config-db/ntp-key.md)
 - CLI: [`config ntp`](../cli/config-ntp.md)
 
 <!-- ref-triangle:end -->

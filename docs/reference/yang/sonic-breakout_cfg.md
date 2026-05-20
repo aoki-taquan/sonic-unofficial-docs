@@ -35,7 +35,7 @@ flowchart LR
   Y["sonic-breakout_cfg"]
   C1[("CONFIG_DB<br/>BREAKOUT_CFG")]
   Y --> C1
-  D1["xcvrd"]
+  D1["portsyncd / PortsOrch (via PORT table)"]
   C1 --> D1
 ```
 
@@ -116,7 +116,7 @@ module: sonic-breakout_cfg
 
 ### 典型的なデプロイ位置
 
-- Port breakout (4x25G 等) 設定。`BREAKOUT_CFG|<port>` を [portmgrd](../../reference/glossary.md#term-portmgrd) / xcvrd が読み、port 再生成のトリガーになる。
+- Port breakout (4x25G 等) 設定。`BREAKOUT_CFG|<port>` を直接 subscribe する daemon は存在せず、CLI が CONFIG_DB[PORT] を書き換え、portsyncd 経由で orchagent (PortsOrch) に伝播することで port が再生成される。
 
 ### よくある落とし穴
 

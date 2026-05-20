@@ -164,7 +164,7 @@ module: sonic-copp
 
 ### よくある落とし穴
 
-- `trap_ids` leaf-list の値は [SAI](../../reference/glossary.md#term-sai) trap 名と一致が必要。typo すると [orchagent](../../reference/glossary.md#term-orchagent) が trap 全体を skip する。
+- `trap_ids` leaf（カンマ区切り文字列）の値は [SAI](../../reference/glossary.md#term-sai) trap 名と一致が必要。typo すると [orchagent](../../reference/glossary.md#term-orchagent) が trap 全体を skip する。
 
 ### 関連する config / show コマンド
 

@@ -36,6 +36,8 @@ flowchart LR
   Y --> C1
   D1["vrfmgrd"]
   C1 --> D1
+  D2["hostcfgd"]
+  C1 --> D2
 ```
 
 !!! note "凡例"

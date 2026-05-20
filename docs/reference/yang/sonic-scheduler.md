@@ -52,10 +52,7 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`SCHEDULER`](../config-db/scheduler.md)
-
-### 関連 HLD
-
-- [POLICER テーブル](../../reference/config-db/policer.md)
+- [`POLICER`](../config-db/policer.md)
 
 <!-- /yang-xref -->
 

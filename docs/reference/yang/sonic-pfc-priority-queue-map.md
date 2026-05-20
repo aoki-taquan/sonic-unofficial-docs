@@ -52,10 +52,6 @@ flowchart LR
 
 - [`MAP_PFC_PRIORITY_TO_QUEUE`](../config-db/map-pfc-priority-to-queue.md)
 
-### 関連 HLD
-
-- [sonic-tc-queue-map YANG](../../reference/yang/sonic-tc-queue-map.md)
-
 <!-- /yang-xref -->
 
 ## ツリー

@@ -10,7 +10,7 @@ sources:
   ref: 88bc51ae95df66977601957515e5527119ffd4c5
 - repo: sonic-net/sonic-swss
   path: orchagent/
-  ref: 88bc51ae95df66977601957515e5527119ffd4c5
+  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db: []
   cli: []

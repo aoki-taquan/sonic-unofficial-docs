@@ -107,7 +107,7 @@ module: sonic-dhcp-server
 
 ### 典型的なデプロイ位置
 
-- DHCPv4 server (オンスイッチ DHCP) 設定。`DHCP_SERVER_IPV4*` を dhcp_server_ipv4 コンテナの kea が読む。
+- DHCP relay が転送するサーバ IP アドレスのリスト。`DHCP_SERVER|<ip>` を dhcpservd が参照する。
 
 ### よくある落とし穴
 
@@ -116,8 +116,7 @@ module: sonic-dhcp-server
 ### 関連する config / show コマンド
 
 ```bash
-sonic-db-cli CONFIG_DB keys 'DHCP_SERVER_IPV4*'
-show dhcp_server ipv4 lease
+sonic-db-cli CONFIG_DB keys 'DHCP_SERVER|*'
 ```
 <!-- /ops-hint -->
 

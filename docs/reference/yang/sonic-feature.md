@@ -38,7 +38,7 @@ flowchart LR
   Y["sonic-feature"]
   C1[("CONFIG_DB<br/>FEATURE")]
   Y --> C1
-  D1["coppmgrd"]
+  D1["hostcfgd"]
   C1 --> D1
 ```
 
