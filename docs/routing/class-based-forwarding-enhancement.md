@@ -15,15 +15,11 @@ related:
   - DSCP_TO_FC_MAP
   - EXP_TO_FC_MAP
   - DSCP_TO_TC_MAP
-  - TELEMETRY
-  - GNMI
-  - CRM
   - PORT_QOS_MAP
   cli:
   - config qos
   yang:
   - sonic-dscp-tc-map
-  - sonic-crm
 ---
 
 <!-- topics-tip -->
