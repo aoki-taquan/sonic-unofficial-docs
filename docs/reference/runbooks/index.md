@@ -40,7 +40,7 @@ related:
 | 04 | [Warm Reboot](../../reference/glossary.md#term-warm-reboot) が失敗する / 通信断が長引く | [warm-reboot-failure.md](warm-reboot-failure.md) |
 | 05 | [PFC](../../reference/glossary.md#term-pfc) で帯域が出ない / Buffer overflow | [pfc-bandwidth.md](pfc-bandwidth.md) |
 | 06 | [DHCP Relay](../../reference/glossary.md#term-dhcp-relay) で IP が払い出されない | [dhcp-relay.md](dhcp-relay.md) |
-| 07 | Multi-ASIC で namespace 間通信できない | [multi-asic-namespace.md](multi-asic-namespace.md) |
+| 07 | [Multi-ASIC](../../reference/glossary.md#term-multi-asic) で namespace 間通信できない | [multi-asic-namespace.md](multi-asic-namespace.md) |
 | 08 | Dual-ToR mux が切り替わらない | [dualtor-mux.md](dualtor-mux.md) |
 | 09 | [SAI](../../reference/glossary.md#term-sai) failure / [syncd](../../reference/glossary.md#term-syncd) リスタート多発 | [sai-failure.md](sai-failure.md) |
 | 10 | コンテナが起動しない (FEATURE) | [container-not-starting.md](container-not-starting.md) |
@@ -54,8 +54,8 @@ related:
 | 18 | Y-cable firmware 更新が失敗する | [ycable-firmware-update-failure.md](ycable-firmware-update-failure.md) |
 | 19 | [PINS](../../reference/glossary.md#term-pins) gRPC (P4Runtime) が応答しない | [pins-grpc-unresponsive.md](pins-grpc-unresponsive.md) |
 | 20 | [CRM](../../reference/glossary.md#term-crm) threshold 越え (route / nexthop / [FDB](../../reference/glossary.md#term-fdb) / [ACL](../../reference/glossary.md#term-acl)) | [crm-threshold-exceeded.md](crm-threshold-exceeded.md) |
-| 21 | ASIC link が UP しない (autoneg / FEC / speed) | [asic-link-autoneg-mismatch.md](asic-link-autoneg-mismatch.md) |
-| 22 | MACsec MKA セッションが確立しない | [macsec-mka-not-established.md](macsec-mka-not-established.md) |
+| 21 | [ASIC](../../reference/glossary.md#term-asic) link が UP しない (autoneg / FEC / speed) | [asic-link-autoneg-mismatch.md](asic-link-autoneg-mismatch.md) |
+| 22 | [MACsec](../../reference/glossary.md#term-macsec) MKA セッションが確立しない | [macsec-mka-not-established.md](macsec-mka-not-established.md) |
 | 23 | [DASH](../../reference/glossary.md#term-dash) [ENI](../../reference/glossary.md#term-eni) が落ちる | [dash-eni-down.md](dash-eni-down.md) |
 | 24 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) graceful shutdown 失敗 | [smartswitch-dpu-graceful-shutdown-failure.md](smartswitch-dpu-graceful-shutdown-failure.md) |
 | 25 | APP_DB → [ASIC_DB](../../reference/glossary.md#term-asic_db) の反映遅延 | [appdb-asicdb-sync-lag.md](appdb-asicdb-sync-lag.md) |
@@ -84,7 +84,7 @@ related:
 
 - すべてのコマンドは admin ユーザ（sudo 可）で host 側 shell から実行することを想定する
 - container 内コマンドの場合は明示的に `docker exec -it <container> bash` 経由で示す
-- [Redis](../../reference/glossary.md#term-redis) key の確認は `redis-cli` ではなく **`sonic-db-cli <DB-NAME>`** を推奨（multi-ASIC 環境で namespace を意識せずに済むため）
+- [Redis](../../reference/glossary.md#term-redis) key の確認は `redis-cli` ではなく **`sonic-db-cli <DB-NAME>`** を推奨（multi-[ASIC](../../reference/glossary.md#term-asic) 環境で namespace を意識せずに済むため）
 - 出力例の数値・MAC・IP はマスクされたサンプル
 
 ## 引用元
@@ -94,4 +94,4 @@ related:
 [^1]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb（`show/`, `scripts/` 配下の各種ツール）
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596（[orchagent](../../reference/glossary.md#term-orchagent), [syncd](../../reference/glossary.md#term-syncd) 連携）
 
-<!-- glossary-links-injected: f57a6379559d -->
+<!-- glossary-links-injected: b2808d0c2bca -->

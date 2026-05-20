@@ -42,7 +42,7 @@ related:
 
 ## NTP / chrony 移行
 
-SONiC は長らく `ntpd`（後に NTPsec）を使っていましたが、master では `chrony` への移行が完了しています。背景は次の通りです。
+[SONiC](../../reference/glossary.md#term-sonic) は長らく `ntpd`（後に NTPsec）を使っていましたが、master では `chrony` への移行が完了しています。背景は次の通りです。
 
 - `ntpd` は long jump を完全には抑止できず、1 時間ずれていると 12 分以内に step してしまう。データプレーンへの副作用懸念から step は避けたい。
 - slew 中は kernel time discipline が disable され、HW RTC が更新されず reboot で巻き戻る。
@@ -65,7 +65,7 @@ CLI は `chronyc sources` / `chronyc tracking` で同期状況を見ます。`sh
 
 ## TWAMP Light
 
-TWAMP Light（RFC 5357）は data plane の双方向 latency / jitter / packet loss 測定プロトコルで、control connection を持たない軽量プロトコルです。SONiC では ASIC offload（`SAI_TWAMP_*` 系 API）を想定した [HLD](../../reference/glossary.md#term-hld) があり、`CFG_TWAMP_SESSION_TABLE` で Session-Sender / Reflector を定義する設計になっています。ただし community master では [SAI](../../reference/glossary.md#term-sai) 拡張 / orch / CLI が未取り込みで、HLD-only ステータスです。実機検証時はまずベンダー SDK 側の TWAMP サポートを確認してください。詳細は [TWAMP Light HLD ページ](../../system/twamp-light-hld.md) を参照してください。
+TWAMP Light（RFC 5357）は data plane の双方向 latency / jitter / packet loss 測定プロトコルで、control connection を持たない軽量プロトコルです。SONiC では [ASIC](../../reference/glossary.md#term-asic) offload（`SAI_TWAMP_*` 系 API）を想定した [HLD](../../reference/glossary.md#term-hld) があり、`CFG_TWAMP_SESSION_TABLE` で Session-Sender / Reflector を定義する設計になっています。ただし community master では [SAI](../../reference/glossary.md#term-sai) 拡張 / orch / CLI が未取り込みで、HLD-only ステータスです。実機検証時はまずベンダー SDK 側の TWAMP サポートを確認してください。詳細は [TWAMP Light HLD ページ](../../system/twamp-light-hld.md) を参照してください。
 
 [QoS](../../reference/glossary.md#term-qos) / Observability 寄りの機能ですが、「control 接続を持たない軽量サービス」という性格上、本章の発展トピックとして置きます。
 
@@ -154,4 +154,4 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 - [07 ACL / CoPP / Mirror: DHCP DoS 緩和との境界](../07-acl-copp-mirror/index.md)
 - [15 Security / AAA: mgmt VRF と service bind](../15-security-aaa/index.md)
 
-<!-- glossary-links-injected: cc3a30e152f2 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

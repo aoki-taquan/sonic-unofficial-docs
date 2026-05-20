@@ -48,7 +48,7 @@ related:
 
 ## 何のための仕組みか
 
-[VOQ](../reference/glossary.md#term-voq) シャーシは **forwarding ASIC**（front panel を持つ [NPU](../reference/glossary.md#term-npu)）を **fabric ASIC**（cell ベースの内部 fabric）で相互接続する。本 [HLD](../reference/glossary.md#term-hld) は **fabric ASIC を forwarding ASIC と同様に [syncd](../reference/glossary.md#term-syncd) / sairedis で管理**し、fabric link の状態監視・統計収集・自動 isolation を行う枠組み[^1]。
+[VOQ](../reference/glossary.md#term-voq) シャーシは **forwarding [ASIC](../reference/glossary.md#term-asic)**（front panel を持つ [NPU](../reference/glossary.md#term-npu)）を **fabric ASIC**（cell ベースの内部 fabric）で相互接続する。本 [HLD](../reference/glossary.md#term-hld) は **fabric ASIC を forwarding ASIC と同様に [syncd](../reference/glossary.md#term-syncd) / sairedis で管理**し、fabric link の状態監視・統計収集・自動 isolation を行う枠組み[^1]。
 
 > 詳細は HLD `doc/voq/fabric.md` および `doc/voq/architecture.md` を参照。
 
@@ -56,7 +56,7 @@ related:
 
 ### Fabric ASIC のコンテナ
 
-forwarding ASIC と同じく fabric ASIC ごとに `database` / `swss` / `syncd` を立てる。front panel が無いので `lldp` / `teamd` / `bgp` は disable。SSI（Supervisor SONiC Instance）から chassis 内の fabric ASIC を一括管理する[^1]。
+forwarding ASIC と同じく fabric ASIC ごとに `database` / `swss` / `syncd` を立てる。front panel が無いので `lldp` / `teamd` / `bgp` は disable。SSI（Supervisor [SONiC](../reference/glossary.md#term-sonic) Instance）から chassis 内の fabric ASIC を一括管理する[^1]。
 
 ### `DEVICE_METADATA` で identify
 
@@ -215,4 +215,4 @@ docker logs swss-fabric0 2>&1 | grep -i isolate    # 自動 isolate されたか
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c96384f4952f -->
+<!-- glossary-links-injected: ec18b66e3507 -->

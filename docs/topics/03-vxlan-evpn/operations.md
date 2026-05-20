@@ -41,7 +41,7 @@ related:
 
 # Overlay 運用
 
-Overlay の障害切り分けは、underlay、VTEP、control plane、route programming、[QoS](../../reference/glossary.md#term-qos) / hash の順に見ると無駄が少なくなります。[VXLAN](../../reference/glossary.md#term-vxlan) の外側パケットが届かない問題と、[EVPN](../../reference/glossary.md#term-evpn) / [VNET](../../reference/glossary.md#term-vnet) route が入らない問題は、最初から分けて扱います。
+Overlay の障害切り分けは、underlay、[VTEP](../../reference/glossary.md#term-vtep)、control plane、route programming、[QoS](../../reference/glossary.md#term-qos) / hash の順に見ると無駄が少なくなります。[VXLAN](../../reference/glossary.md#term-vxlan) の外側パケットが届かない問題と、[EVPN](../../reference/glossary.md#term-evpn) / [VNET](../../reference/glossary.md#term-vnet) route が入らない問題は、最初から分けて扱います。
 
 ## 確認順
 
@@ -49,7 +49,7 @@ Overlay の障害切り分けは、underlay、VTEP、control plane、route progr
 2. `VXLAN_TUNNEL` と `VXLAN_TUNNEL_MAP` / `VNET` が想定どおり DB に入っているか。
 3. EVPN 利用時は [BGP](../../reference/glossary.md#term-bgp)-EVPN session、VNI、Type-2 / Type-5 の受信状態を見る。
 4. VNET route 利用時は `VNET_ROUTE_TUNNEL_TABLE`、endpoint、monitoring、[BFD](../../reference/glossary.md#term-bfd) state を見る。
-5. ASIC 側で tunnel object、tunnel nexthop、NHG member、route / [FDB](../../reference/glossary.md#term-fdb) が作られているかを確認する。
+5. [ASIC](../../reference/glossary.md#term-asic) 側で tunnel object、tunnel nexthop、NHG member、route / [FDB](../../reference/glossary.md#term-fdb) が作られているかを確認する。
 6. 負荷分散や loss が問題なら [DSCP](../../reference/glossary.md#term-dscp) remap、PBH inner hash、[ECMP](../../reference/glossary.md#term-ecmp) / ARS の影響を切り分ける。
 
 ## Overlay ECMP と BFD
@@ -204,4 +204,4 @@ syncd: SAI_API_NEXT_HOP_GROUP: SAI_STATUS_TABLE_FULL
 - [Policy Based Hashing](../../architecture/sonic-policy-based-hashing.md)
 - [Local ARS](../../routing/local-ars-hld.md)
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: a05b1a0422d1 -->

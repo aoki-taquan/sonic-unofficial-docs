@@ -39,7 +39,7 @@ related:
 
 # 設定
 
-Multi-ASIC / [VOQ](../../reference/glossary.md#term-voq) chassis の設定の核心は「ASIC ごとに別 JSON を持つのではなく、1 枚の Golden Config から各 namespace に分配する」「line card は supervisor の module provisioning 経由で自動的に組み込む」の 2 点です。
+[Multi-ASIC](../../reference/glossary.md#term-multi-asic) / [VOQ](../../reference/glossary.md#term-voq) chassis の設定の核心は「[ASIC](../../reference/glossary.md#term-asic) ごとに別 JSON を持つのではなく、1 枚の Golden Config から各 namespace に分配する」「line card は supervisor の module provisioning 経由で自動的に組み込む」の 2 点です。
 
 ## ASIC namespace と CONFIG_DB の見取り図
 
@@ -61,7 +61,7 @@ host namespace は管理面（hostname、`MGMT_INTERFACE`、`SNMP`、`DEVICE_MET
 
 ## asic.conf と num_asic
 
-ハードウェア側の事実、つまり「この box に何個の ASIC があるか」は `/usr/share/sonic/device/<platform>/asic.conf` の `NUM_ASIC=` で宣言されます。これは Golden Config 読み込みより前に確定する情報で、`hwsku.json` などのデータがどの namespace に対応するかを SONiC 起動スクリプトが決めるための入力です。
+ハードウェア側の事実、つまり「この box に何個の ASIC があるか」は `/usr/share/sonic/device/<platform>/asic.conf` の `NUM_ASIC=` で宣言されます。これは Golden Config 読み込みより前に確定する情報で、`hwsku.json` などのデータがどの namespace に対応するかを [SONiC](../../reference/glossary.md#term-sonic) 起動スクリプトが決めるための入力です。
 
 ## VOQ Switch Type
 
@@ -267,4 +267,4 @@ flowchart LR
 - [Single-ASIC VOQ Fixed System](../../platform/single-asic-voq-fixed-system-sonic.md)
 - 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md) / [advanced](advanced.md)
 
-<!-- glossary-links-injected: 05d8b676f155 -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`VXLAN_EVPN_NVO` テーブルは [EVPN](../../reference/glossary.md#term-evpn) ベースの Network Virtualization Overlay (NVO) インスタンスを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義する[^1]。[EVPN](../../reference/glossary.md#term-evpn) コントロールプレーン ([FRR](../../reference/glossary.md#term-frr) + bgpd の `l2vpn evpn`) を有効化する際に、source VTEP として参照する VXLAN_TUNNEL を結びつける。1 エントリのみ許可される (`max-elements 1`)。
+`VXLAN_EVPN_NVO` テーブルは [EVPN](../../reference/glossary.md#term-evpn) ベースの Network Virtualization Overlay (NVO) インスタンスを [CONFIG_DB](../../reference/glossary.md#term-config_db) に定義する[^1]。[EVPN](../../reference/glossary.md#term-evpn) コントロールプレーン ([FRR](../../reference/glossary.md#term-frr) + bgpd の `l2vpn evpn`) を有効化する際に、source [VTEP](../../reference/glossary.md#term-vtep) として参照する VXLAN_TUNNEL を結びつける。1 エントリのみ許可される (`max-elements 1`)。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -60,7 +60,7 @@ VXLAN_EVPN_NVO|<name>
 
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
-| `source_vtep` | leafref → `VXLAN_TUNNEL.name` | yes | ソース VTEP として参照する VXLAN_TUNNEL |
+| `source_vtep` | leafref → `VXLAN_TUNNEL.name` | yes | ソース [VTEP](../../reference/glossary.md#term-vtep) として参照する VXLAN_TUNNEL |
 
 <!-- defaults -->
 ## フィールドのコード由来デフォルト
@@ -84,7 +84,7 @@ VXLAN_EVPN_NVO|<name>
 | 順序 | テーブル | 理由 |
 |------|---------|------|
 | 1 | `VXLAN_TUNNEL\|<name>` | `EvpnNvoOrch::addOperation()` が `source_vtep` を `getVxlanTunnel()` でルックアップする。TUNNEL 未登録なら null ポインタになり後続 EVPN 処理が `return false` でリトライ待ち (vxlanorch.cpp:2784) |
-| 2 | `VXLAN_TUNNEL_MAP\|<name>\|<map>` | 初回 MAP エントリで `createTunnelHw()` がトリガーされ VTEP が `isActive() = true` になる (vxlanorch.cpp:2063)。VTEP active 前は EVPN remote VTEP 追加が `return false` でリトライ待ち (vxlanorch.cpp:1694) |
+| 2 | `VXLAN_TUNNEL_MAP\|<name>\|<map>` | 初回 MAP エントリで `createTunnelHw()` がトリガーされ [VTEP](../../reference/glossary.md#term-vtep) が `isActive() = true` になる (vxlanorch.cpp:2063)。VTEP active 前は EVPN remote VTEP 追加が `return false` でリトライ待ち (vxlanorch.cpp:1694) |
 | 3 | `VXLAN_EVPN_NVO\|<nvo-name>` | source_vtep 参照先 TUNNEL が存在し、かつ VTEP active 後に設定するのが推奨 |
 
 ### 削除順序（逆順）
@@ -120,10 +120,10 @@ EVPN remote VTEP 削除 → VXLAN_EVPN_NVO 削除 → VXLAN_TUNNEL_MAP 全削除
 
 | フィールド | 値 | 実挙動 |
 |-----------|-----|--------|
-| `source_vtep` | 有効な `VXLAN_TUNNEL` 名 | NVO 作成成功。`disableLearningForAllVxlanNetdevices()` でシステム全体の VXLAN MAC learning が無効化される (vxlanmgr.cpp) |
+| `source_vtep` | 有効な `VXLAN_TUNNEL` 名 | NVO 作成成功。`disableLearningForAllVxlanNetdevices()` でシステム全体の [VXLAN](../../reference/glossary.md#term-vxlan) MAC learning が無効化される (vxlanmgr.cpp) |
 | `source_vtep` | 存在しない / 未 active な `VXLAN_TUNNEL` 名 | `"NVO %s creation failed. VTEP not present"` でリトライ待ち |
 | エントリ数 | 1 件目 | 正常作成 |
-| エントリ数 | 2 件目以降 | YANG `max-elements 1` で reject。vxlanmgrd も `"Only Single NVO object allowed"` でキャッシュ側防護 |
+| エントリ数 | 2 件目以降 | YANG `max-elements 1` で reject。[vxlanmgrd](../../reference/glossary.md#term-vxlanmgrd) も `"Only Single NVO object allowed"` でキャッシュ側防護 |
 
 <!-- /value-behavior -->
 
@@ -145,17 +145,17 @@ EVPN remote VTEP 削除 → VXLAN_EVPN_NVO 削除 → VXLAN_TUNNEL_MAP 全削除
 
 <!-- evidence: sonic-swss/orchagent/vxlanorch.cpp:1256-1274, 1701-1724, 1807-1822, 903, 356-370 -->
 
-`VXLAN_EVPN_NVO` が参照する source VTEP（`VXLAN_TUNNEL`）の実際の ASIC 動作は、`VxlanTunnelOrch` 初期化時に `sai_query_attribute_enum_values_capability` で `SAI_TUNNEL_ATTR_PEER_MODE` を問い合わせた結果で決まる。
+`VXLAN_EVPN_NVO` が参照する source VTEP（`VXLAN_TUNNEL`）の実際の [ASIC](../../reference/glossary.md#term-asic) 動作は、`VxlanTunnelOrch` 初期化時に `sai_query_attribute_enum_values_capability` で `SAI_TUNNEL_ATTR_PEER_MODE` を問い合わせた結果で決まる。
 
 | 差異ポイント | P2P モード (DIP サポートあり) | P2MP モード (DIP サポートなし) |
 |---|---|---|
-| SAI ケーパビリティクエリ失敗時 | `is_dip_tunnel_supported = true` へ自動 fallback | — |
+| [SAI](../../reference/glossary.md#term-sai) ケーパビリティクエリ失敗時 | `is_dip_tunnel_supported = true` へ自動 fallback | — |
 | リモート VTEP ごとのトンネル | 動的 DIP トンネルを個別生成 | 生成しない (IP 参照カウントのみ) |
 | SIP トンネル削除タイミング | DIP カウントが 0 になるまで延期 | 参照カウント 0 で即時可能 |
 | ブリッジポート | VTEP ごとに個別作成 | SIP 単一ブリッジポートを共有 |
-| FDB/flooding | DIP トンネルポート経由 | P2MP + L2MC グループ (IMET ルート) 経由 |
-| EVPN DIP トンネル SAI mode | `SAI_TUNNEL_PEER_MODE_P2P` | 使用しない |
-| CLI 静的トンネル SAI mode | `SAI_TUNNEL_PEER_MODE_P2MP` | 同左 |
+| [FDB](../../reference/glossary.md#term-fdb)/flooding | DIP トンネルポート経由 | P2MP + L2MC グループ (IMET ルート) 経由 |
+| EVPN DIP トンネル [SAI](../../reference/glossary.md#term-sai) mode | `SAI_TUNNEL_PEER_MODE_P2P` | 使用しない |
+| CLI 静的トンネル [SAI](../../reference/glossary.md#term-sai) mode | `SAI_TUNNEL_PEER_MODE_P2MP` | 同左 |
 
 ### P2P モード詳細 (DIP トンネルサポートあり)
 
@@ -163,11 +163,11 @@ EVPN ルート受信時に `addTunnelUser()` (vxlanorch.cpp:1701) が `createDyn
 
 ### P2MP モード詳細 (DIP トンネルサポートなし)
 
-`addTunnelUser()` は DIP トンネルを生成せず、リモート VTEP の IP 参照カウントを更新するのみ。FDB フラッディングは P2MP SIP トンネルブリッジポートと IMET ルートの L2MC グループメンバーで実現する (vxlanorch.cpp コメント: `"P2MP scenario where P2MP tunnel port is used for FDB learning"`)。
+`addTunnelUser()` は DIP トンネルを生成せず、リモート VTEP の IP 参照カウントを更新するのみ。[FDB](../../reference/glossary.md#term-fdb) フラッディングは P2MP SIP トンネルブリッジポートと IMET ルートの L2MC グループメンバーで実現する (vxlanorch.cpp コメント: `"P2MP scenario where P2MP tunnel port is used for FDB learning"`)。
 
 ### SmartSwitch / DPU
 
-`vxlanorch.cpp` に SmartSwitch DPU 固有の分岐コードは存在しない。EVPN NVO テーブルは NPU 通常モード向けのみであり、DPU 側のオーバーレイスタックとの連携は orchagent 実装外となる。
+`vxlanorch.cpp` に [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 固有の分岐コードは存在しない。EVPN NVO テーブルは [NPU](../../reference/glossary.md#term-npu) 通常モード向けのみであり、[DPU](../../reference/glossary.md#term-dpu) 側のオーバーレイスタックとの連携は [orchagent](../../reference/glossary.md#term-orchagent) 実装外となる。
 
 <!-- /platform -->
 
@@ -208,18 +208,17 @@ show vxlan tunnel
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / VxlanOrch** (`sonic-swss/orchagent/vxlanorch.cpp`): `VXLAN_EVPN_NVO` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / VxlanOrch** (`sonic-swss/orchagent/vxlanorch.cpp`): `VXLAN_EVPN_NVO` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- VxlanOrch が EVPN NVO 設定 (source vtep 名) を解析し FRR 経由で EVPN ルートを受信する準備をする。
-- APP_DB への書き込みなし (orchagent → SAI 直接)。
+- VxlanOrch が EVPN NVO 設定 (source vtep 名) を解析し [FRR](../../reference/glossary.md#term-frr) 経由で EVPN ルートを受信する準備をする。
+- APP_DB への書き込みなし ([orchagent](../../reference/glossary.md#term-orchagent) → SAI 直接)。
 
 ### 段階 3: APPL → SAI
 
@@ -227,7 +226,7 @@ show vxlan tunnel
 
 ### 段階 4: タイミング + 副作用
 
-- VXLAN_TUNNEL テーブルが先に処理されている必要あり。BGP EVPN ルート受信後に MAC/IP ルートが SAI に展開される。
+- VXLAN_TUNNEL テーブルが先に処理されている必要あり。[BGP](../../reference/glossary.md#term-bgp) EVPN ルート受信後に MAC/IP ルートが SAI に展開される。
 - 副作用: EVPN NVO 削除時は全 VNI・MAC エントリが一斉削除されトラフィックが断。
 
 <!-- /runtime-trace -->
@@ -239,13 +238,13 @@ show vxlan tunnel
 
 `VXLAN_EVPN_NVO` テーブルへの変更は **2 段階** で伝播する。
 
-1. **vxlanmgrd** (`docker-swss` 内 cfgmgr プロセス) が **CONFIG_DB** を `ConsumerStateTable` (`swss::Orch` 継承) で購読する。`vxlanmgrd.cpp:46-53` で `CFG_VXLAN_EVPN_NVO_TABLE_NAME` を含むテーブルリストを `VxlanMgr` に渡し、`swss::Select` ループ (`SELECT_TIMEOUT=1000ms`) でイベントを待機する。
-2. **orchagent** (`EvpnNvoOrch`) が **APPL_DB** の `APP_VXLAN_EVPN_NVO_TABLE` を `ConsumerStateTable` (`swss::Orch2` 継承) で購読する (`orchdaemon.cpp:358`)。
+1. **[vxlanmgrd](../../reference/glossary.md#term-vxlanmgrd)** (`docker-swss` 内 cfgmgr プロセス) が **[CONFIG_DB](../../reference/glossary.md#term-config_db)** を `ConsumerStateTable` (`swss::Orch` 継承) で購読する。`vxlanmgrd.cpp:46-53` で `CFG_VXLAN_EVPN_NVO_TABLE_NAME` を含むテーブルリストを `VxlanMgr` に渡し、`swss::Select` ループ (`SELECT_TIMEOUT=1000ms`) でイベントを待機する。
+2. **orchagent** (`EvpnNvoOrch`) が **[APPL_DB](../../reference/glossary.md#term-appl_db)** の `APP_VXLAN_EVPN_NVO_TABLE` を `ConsumerStateTable` (`swss::Orch2` 継承) で購読する (`orchdaemon.cpp:358`)。
 
 | 購読者 | 購読 DB | 購読テーブル | API 種別 | ハンドラ |
 |--------|--------|------------|---------|---------|
 | `vxlanmgrd` (VxlanMgr) | CONFIG_DB | `VXLAN_EVPN_NVO` | `ConsumerStateTable` (Orch 継承) | `doVxlanEvpnNvoCreateTask` / `doVxlanEvpnNvoDeleteTask` |
-| orchagent (EvpnNvoOrch) | APPL_DB | `APP_VXLAN_EVPN_NVO_TABLE` | `ConsumerStateTable` (Orch2 継承) | `EvpnNvoOrch::addOperation` / `delOperation` |
+| orchagent (EvpnNvoOrch) | [APPL_DB](../../reference/glossary.md#term-appl_db) | `APP_VXLAN_EVPN_NVO_TABLE` | `ConsumerStateTable` (Orch2 継承) | `EvpnNvoOrch::addOperation` / `delOperation` |
 
 ### keyspace 通知 → ハンドラ呼び出しの流れ
 
@@ -279,7 +278,7 @@ VXLAN_EVPN_NVO テーブルへの書き込みが発生するコード経路を�
 
 ### CLI
 
-  - `config vxlan evpn_nvo add/del ...` — `config/vxlan.py` が `set_entry('VXLAN_EVPN_NVO', nvo_name, fvs)` を呼ぶ (sonic-utilities/config/vxlan.py:129, 154)
+  - `config vxlan evpn_nvo add/del ...` — `config/vxlan.py` が `set_entry('VXLAN_EVPN_NVO', nvo_name, fvs)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/vxlan.py:129, 154)
 
 ### minigraph / sonic-cfggen
 
@@ -287,7 +286,7 @@ minigraph.py に VXLAN_EVPN_NVO 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -336,7 +335,7 @@ db_migrator.py での VXLAN_EVPN_NVO マイグレーションなし
 
 | シナリオ | retry 挙動 |
 |---|---|
-| `del_tnl_hw_pending` による NVO / VTEP DEL ブロック | `return false` → 上限なしリトライ。FDB 参照解消後に自動解除 |
+| `del_tnl_hw_pending` による NVO / VTEP DEL ブロック | `return false` → 上限なしリトライ。[FDB](../../reference/glossary.md#term-fdb) 参照解消後に自動解除 |
 | EVPN VTEP 未登録・非 active での Remote VNI 追加 | `return false` → VTEP active 化後に解消 |
 | SAI API 失敗 / VXLAN_TUNNEL 名重複 | `return true` — **再試行なし**。同一フィールドの再書き込みで再トリガー必要 |
 
@@ -401,7 +400,7 @@ VTEP トンネル初回作成時（`VxlanTunnel::createMapperHw()`）に SAI tun
   - `SAI_TUNNEL_MAP_TYPE_VNI_TO_VLAN_ID` / `VLAN_ID_TO_VNI`
   - `SAI_TUNNEL_MAP_TYPE_VNI_TO_VIRTUAL_ROUTER_ID` / `VIRTUAL_ROUTER_ID_TO_VNI`
   - `SAI_TUNNEL_MAP_TYPE_VNI_TO_BRIDGE_IF` / `BRIDGE_IF_TO_VNI`
-- **トリガー**: VNI ↔ VLAN/VRF/Bridge マッピング登録時（`VXLAN_TUNNEL_MAP` テーブル処理）
+- **トリガー**: VNI ↔ [VLAN](../../reference/glossary.md#term-vlan)/[VRF](../../reference/glossary.md#term-vrf)/Bridge マッピング登録時（`VXLAN_TUNNEL_MAP` テーブル処理）
 
 ### SAI: `create_tunnel`（`sai_tunnel_api`）
 
@@ -412,12 +411,12 @@ VTEP トンネル初回作成時（`VxlanTunnel::createMapperHw()`）に SAI tun
 ### SAI: `create_tunnel_map_entry`（`sai_tunnel_api`）
 
 - **SAI API**: `sai_tunnel_api->create_tunnel_map_entry()` (vxlanorch.cpp:211)
-- VNI ↔ VLAN/VRF/Bridge ペアごとに 1 呼び出し
+- VNI ↔ [VLAN](../../reference/glossary.md#term-vlan)/[VRF](../../reference/glossary.md#term-vrf)/Bridge ペアごとに 1 呼び出し
 - **トリガー**: `addEncapMapperEntry()` / `addDecapMapperEntry()` 経由 (vxlanorch.cpp:551-560)
 
 ### STATE_DB: `VXLAN_TUNNEL_TABLE`
 
-EVPN 動的トンネル（`TNL_CREATION_SRC_EVPN`）が作成されると STATE_DB に書き込まれる。
+EVPN 動的トンネル（`TNL_CREATION_SRC_EVPN`）が作成されると [STATE_DB](../../reference/glossary.md#term-state_db) に書き込まれる。
 
 ```cpp
 // sonic-swss/orchagent/vxlanorch.cpp:1935-1944
@@ -459,7 +458,7 @@ m_stateVxlanTable.set(tunnel_name, fvVector);
 ### VLAN (PortsOrch)
 
 - **参照箇所**: `vxlanorch.cpp:1719-1721,1750-1761`
-- EVPN NVO 有効状態で DIP トンネル作成時に `gPortsOrch->addTunnel()` / `addBridgePort()` でリモートトンネルポートを VLAN ブリッジドメインに登録する。
+- EVPN NVO 有効状態で DIP トンネル作成時に `gPortsOrch->addTunnel()` / `addBridgePort()` でリモートトンネルポートを [VLAN](../../reference/glossary.md#term-vlan) ブリッジドメインに登録する。
 - 対応 VLAN が未作成の場合、ブリッジポート登録が失敗してリモート MAC/IP ルートが HW に反映されない。
 
 ### 依存解決順序
@@ -473,4 +472,4 @@ VRF  (VRFOrch)  ───┼──→ VXLAN_TUNNEL ──→ VXLAN_TUNNEL_MAP �
 
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 7e2e79cf3524 -->
+<!-- glossary-links-injected: 7edf0caf1dc1 -->

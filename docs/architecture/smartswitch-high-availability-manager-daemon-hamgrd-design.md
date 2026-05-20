@@ -192,7 +192,7 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
 ## 干渉する機能
 
 - **Smart Switch HA HLD（親 HLD）**: 全体設計
-- **[DASH](../reference/glossary.md#term-dash) (Disaggregated API for SONiC Hosts)**: ENI / HA Scope の管理対象
+- **[DASH](../reference/glossary.md#term-dash) (Disaggregated API for [SONiC](../reference/glossary.md#term-sonic) Hosts)**: ENI / HA Scope の管理対象
 - **BFD responder**: DPU が最終 state に到達したとき DPU actor が program
 - **dpu-graceful-shutdown / DPU upgrade 系**: DPU actor の state 監視と整合性が必要
 
@@ -311,4 +311,4 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c3703d8bf136 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -32,7 +32,7 @@ related:
 - import: `sonic-types`, `sonic-system-tacacs`
 - top container: `sonic-system-aaa`
 
-Authentication, Authorization, and Accounting ([AAA](../../reference/glossary.md#term-aaa)) [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
+Authentication, Authorization, and Accounting ([AAA](../../reference/glossary.md#term-aaa)) [YANG](../../reference/glossary.md#term-yang) module for [SONiC](../../reference/glossary.md#term-sonic) OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -158,4 +158,4 @@ module: sonic-system-aaa
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

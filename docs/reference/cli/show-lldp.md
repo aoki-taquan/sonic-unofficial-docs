@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-`show lldp` は [LLDP](../../reference/glossary.md#term-lldp) (Link Layer Discovery Protocol) 隣接情報を表示するグループ。実体は `lldpd` プロセスが収集した隣接情報を、SONiC 同梱の `lldpshow` スクリプト経由でフォーマットして出力する薄いラッパである[^1]。[CONFIG_DB](../../reference/glossary.md#term-config_db) は触らず、`run_command(['sudo', 'lldpshow', ...])` を呼ぶだけ。
+`show lldp` は [LLDP](../../reference/glossary.md#term-lldp) (Link Layer Discovery Protocol) 隣接情報を表示するグループ。実体は `lldpd` プロセスが収集した隣接情報を、[SONiC](../../reference/glossary.md#term-sonic) 同梱の `lldpshow` スクリプト経由でフォーマットして出力する薄いラッパである[^1]。[CONFIG_DB](../../reference/glossary.md#term-config_db) は触らず、`run_command(['sudo', 'lldpshow', ...])` を呼ぶだけ。
 
 ## コマンド一覧
 
@@ -127,7 +127,7 @@ flowchart LR
 
 [^1]: グループ定義は `show/main.py` L1649-L1652。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1649>
 
-[^2]: alias 変換は SONiC の interface naming mode によって行われる。設定は `MGMT_INTERFACE` などとは別の環境変数経由。
+[^2]: alias 変換は [SONiC](../../reference/glossary.md#term-sonic) の interface naming mode によって行われる。設定は `MGMT_INTERFACE` などとは別の環境変数経由。
 
 <!-- usage-example -->
 ## 実行例
@@ -195,4 +195,4 @@ docker exec lldp lldpcli show neighbors
 - [reference/CLI: show interfaces](show-interfaces.md)
 - [reference/CLI: show ip](show-ip.md)
 
-<!-- glossary-links-injected: 0124332555fc -->
+<!-- glossary-links-injected: 92c530e50bae -->
