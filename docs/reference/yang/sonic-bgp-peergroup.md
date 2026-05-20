@@ -9,7 +9,7 @@ sources:
     path: src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
-  config_db: [BGP_PEER_GROUP, BGP_PEER_GROUP_AF]
+  config_db: [BGP_PEER_GROUP, BGP_PEER_GROUP_AF, BGP_GLOBALS_LISTEN_PREFIX]
   cli: ["config bgp"]
   yang: [sonic-bgp-global, sonic-bgp-common]
 ---

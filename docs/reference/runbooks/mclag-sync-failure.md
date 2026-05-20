@@ -30,7 +30,7 @@ related:
 
 ## 想定原因（優先度順）
 
-1. **keepalive interface 不達**: peer-link または management 経由の TCP/2606 / 8888 が通らない
+1. **keepalive interface 不達**: peer-link または management 経由の TCP/8888 が通らない
 2. **system mac 衝突 / 設定ミス**
 3. **iccpd プロセス未起動 / crash loop**
 4. **domain ID / peer IP 不整合**
@@ -74,7 +74,7 @@ ps -ef | grep iccpd
 
 ```bash
 ping <peer_ip>
-sudo tcpdump -i any -nn host <peer_ip> and \(port 2606 or port 8888\)
+sudo tcpdump -i any -nn host <peer_ip> and port 8888
 ```
 
 ### 4. CONFIG_DB
