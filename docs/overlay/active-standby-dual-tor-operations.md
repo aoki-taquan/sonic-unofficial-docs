@@ -17,7 +17,6 @@ related:
   - PEER_SWITCH
   - TUNNEL
   - DEVICE_METADATA
-  - XCVRD_LOG
   cli:
   - config muxcable mode
   - show muxcable config
