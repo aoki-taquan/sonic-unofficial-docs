@@ -216,7 +216,7 @@ dhcpv6              queue1_group3    trap                       3       3      6
 | 動的 NAT セッション | `APPL_DB` `NAT_TABLE`, kernel conntrack | `conntrack -L` |
 | ASIC NAT | `ASIC_DB` `SAI_OBJECT_TYPE_NAT_ENTRY` | `redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_NAT_ENTRY:*'` |
 | DHCP relay 設定 | `CONFIG_DB` `VLAN\|Vlan<N>` の `dhcp_servers` | `redis-cli -n 4 hgetall 'VLAN\|Vlan1000'` |
-| DHCP relay counter | `STATE_DB` `DHCP_COUNTER_TABLE` | `redis-cli -n 6 keys 'DHCP_COUNTER_TABLE*'` |
+| DHCP relay counter | `COUNTERS_DB` `DHCPV4_COUNTER_TABLE` / `DHCPV6_COUNTER_TABLE` | `redis-cli -n 2 keys 'DHCPV4_COUNTER_TABLE*'` |
 | DHCP server 設定 | `CONFIG_DB` `DHCP_SERVER_IPV4*` | `redis-cli -n 4 keys 'DHCP_SERVER_IPV4*'` |
 | kea 生成 config | `docker-dhcp-server:/etc/kea/kea-dhcp4.conf` | `docker exec docker-dhcp-server cat ...` |
 | CoPP trap | `CONFIG_DB` `COPP_TRAP\|dhcp` | `show copp -t dhcp` |
