@@ -94,9 +94,9 @@ DASH_VNET_MAPPING_TABLE|<vnet>:<ip>  DEL  先行（推奨）
 DASH_ROUTING_TYPE_TABLE|<routing_type>  DEL
 ```
 
-`removeRoutingTypeEntry()` (`dashorch.cpp:457-471`) は即時 `routing_type_entries_` から削除する。[VNET](../../reference/glossary.md#term-vnet) Mapping が残ったまま ROUTING_TYPE を先に削除すると、VNET Mapping の再 SET や [orchagent](../../reference/glossary.md#term-orchagent) 再起動時の replay で `getRouteTypeActions()` miss が発生し Mapping が処理待ちになる。
+`removeRoutingTypeEntry()` (`dashorch.cpp:457-471`) は即時 `routing_type_entries_` から削除する。[VNET](../../reference/glossary.md#term-vnet) Mapping が残ったまま ROUTING_TYPE を先に削除すると、[VNET](../../reference/glossary.md#term-vnet) Mapping の再 SET や [orchagent](../../reference/glossary.md#term-orchagent) 再起動時の replay で `getRouteTypeActions()` miss が発生し Mapping が処理待ちになる。
 
-**違反時**: 即時機能影響はないが、VNET Mapping の再設定が必要になる。
+**違反時**: 即時機能影響はないが、[VNET](../../reference/glossary.md#term-vnet) Mapping の再設定が必要になる。
 
 | # | 依存関係 | 方向 | 違反時挙動 |
 |---|----------|------|-----------|
@@ -120,8 +120,8 @@ DASH_ROUTING_TYPE_TABLE|<routing_type>
 
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
-| `name` (key) | enum string | ✅ | - | routing type 識別子。YANG pattern: `direct\|vnet\|vnet_direct\|vnet_encap\|drop\|appliance\|privatelink\|privatelinknsg\|servicetunnel` |
-| `action_name` | string (1–255 文字) | - | - | 転送アクションの論理名。任意のラベル。SAI には渡されない |
+| `name` (key) | enum string | ✅ | - | routing type 識別子。[YANG](../../reference/glossary.md#term-yang) pattern: `direct\|vnet\|vnet_direct\|vnet_encap\|drop\|appliance\|privatelink\|privatelinknsg\|servicetunnel` |
+| `action_name` | string (1–255 文字) | - | - | 転送アクションの論理名。任意のラベル。[SAI](../../reference/glossary.md#term-sai) には渡されない |
 | `action_type` | enum string | - | - | 実適用アクション種別。`none\|maprouting\|direct\|staticencap\|appliance\|4to6\|mapdecap\|decap\|drop` |
 | `encap_type` | enum string | 条件付き | - | カプセル化方式。`vxlan\|nvgre`。`action_type=staticencap` のときのみ有効 |
 | `vni` | uint32 (1–16777215) | - | - | トンネル VNI。`action_type=staticencap` のときに `SAI_OUTBOUND_CA_TO_PA_ENTRY_ATTR_TUNNEL_KEY` として使用 |
@@ -130,7 +130,7 @@ DASH_ROUTING_TYPE_TABLE|<routing_type>
 
 #### `action_type` の実効動作
 
-| `action_type` | SAI 変換 | 使用場面 |
+| `action_type` | [SAI](../../reference/glossary.md#term-sai) 変換 | 使用場面 |
 |--------------|---------|---------|
 | `staticencap` | [VXLAN](../../reference/glossary.md#term-vxlan)/NVGRE カプセル化アクション生成 (`SAI_DASH_ENCAPSULATION_VXLAN` 等) | `vnet_encap`、`privatelink` 等 |
 | `maprouting` | VNET マッピングテーブル参照でオーバーレイアドレスを解決 | `vnet`、`vnet_direct` |
@@ -148,7 +148,7 @@ DASH_ROUTING_TYPE_TABLE|<routing_type>
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG schema (`sonic-dash.yang`) は `DASH_ROUTING_TYPE_LIST` の各フィールドに明示的な `default` ステートメントを持たない。実行時のデフォルト・フォールバックはすべて orchagent コード (`dashorch.cpp`、`dashvnetorch.cpp`) による。
+[YANG](../../reference/glossary.md#term-yang) schema (`sonic-dash.yang`) は `DASH_ROUTING_TYPE_LIST` の各フィールドに明示的な `default` ステートメントを持たない。実行時のデフォルト・フォールバックはすべて orchagent コード (`dashorch.cpp`、`dashvnetorch.cpp`) による。
 
 | フィールド | コード由来デフォルト / fallback | 種別 | evidence |
 |-----------|-------------------------------|------|----------|
@@ -159,7 +159,7 @@ YANG schema (`sonic-dash.yang`) は `DASH_ROUTING_TYPE_LIST` の各フィール�
 
 ### 補足
 
-- **protobuf ベースのエントリ管理**: `DASH_ROUTING_TYPE_TABLE` は他の DASH テーブルと同様に protobuf シリアライズ形式で [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込まれる。`parsePbMessage()` (`dashorch.cpp:501`) でデシリアライズ失敗するとエントリは consumer キューから削除されスキップされる。
+- **protobuf ベースのエントリ管理**: `DASH_ROUTING_TYPE_TABLE` は他の [DASH](../../reference/glossary.md#term-dash) テーブルと同様に protobuf シリアライズ形式で [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込まれる。`parsePbMessage()` (`dashorch.cpp:501`) でデシリアライズ失敗するとエントリは consumer キューから削除されスキップされる。
 - **routing type 名の正規化**: キー文字列は `std::transform(..., ::toupper)` で大文字化後 `"ROUTING_TYPE_"` プレフィックスを付与して enum に変換 (`dashorch.cpp:487-490`)。無効な routing type 名の場合は `SWSS_LOG_WARN` を出してスキップ。
 - **YANG pattern 列挙値**: `direct | vnet | vnet_direct | vnet_encap | drop | appliance | privatelink | privatelinknsg | servicetunnel` のみ受理 (`sonic-dash.yang:365`)。YANG validation を通過した後 orchagent に到達するため、実運用での無効値は発生しにくい。
 - **再登録保護**: `addRoutingTypeEntry()` は既存エントリへの上書きを `SWSS_LOG_WARN` + `return true` でサイレントスキップする (`dashorch.cpp:445-449`)。更新が必要な場合はまず削除してから再設定する必要がある。
@@ -170,7 +170,7 @@ YANG schema (`sonic-dash.yang`) は `DASH_ROUTING_TYPE_LIST` の各フィール�
 
 ### 投入の必須順序
 
-`DASH_ROUTING_TYPE_TABLE` は他の DASH テーブルへの先行依存を持たず、任意のタイミングで書き込める。
+`DASH_ROUTING_TYPE_TABLE` は他の [DASH](../../reference/glossary.md#term-dash) テーブルへの先行依存を持たず、任意のタイミングで書き込める。
 ただし、以下のテーブルは routing type が登録済みであることを前提とする。
 
 ```
@@ -199,7 +199,7 @@ YANG schema (`sonic-dash.yang`) は `DASH_ROUTING_TYPE_LIST` の各フィール�
 ```
 
 `removeRoutingTypeEntry()` (`dashorch.cpp:457-469`) は `routing_type_entries_` から即時削除して `return true` を返す。
-既存 VNET マッピングが SAI / DPU 側にプログラム済みでも orchagent はガードしないため、VNET マッピングを先に削除しないと孤立エントリが残る。
+既存 VNET マッピングが SAI / [DPU](../../reference/glossary.md#term-dpu) 側にプログラム済みでも orchagent はガードしないため、VNET マッピングを先に削除しないと孤立エントリが残る。
 
 ### warm-reboot 挙動
 
@@ -247,7 +247,7 @@ SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_
 
 ### CRM カウンタ
 
-使用なし。`DASH_ROUTING_TYPE_TABLE` は SAI OID を返さないため CRM リソースカウンタは不使用。
+使用なし。`DASH_ROUTING_TYPE_TABLE` は SAI OID を返さないため [CRM](../../reference/glossary.md#term-crm) リソースカウンタは不使用。
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-routing-types-cross-refs.md`
 <!-- /cross-refs -->
@@ -374,12 +374,12 @@ SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_
 |-------------|---------|------|
 | `DPU_APPL_STATE_DB` | ✅ SET/DEL | 外部コントローラへの非同期結果通知 |
 | `ASIC_DB` | ❌ なし | routing type は in-memory のみ。SAI DASH API 呼び出しなし |
-| `COUNTERS_DB` | ❌ なし | SAI OID を持たないため CRM カウンタ更新なし |
+| `COUNTERS_DB` | ❌ なし | SAI OID を持たないため [CRM](../../reference/glossary.md#term-crm) カウンタ更新なし |
 | `FLEX_COUNTER_DB` | ❌ なし | 同上 |
 | `STATE_DB` | ❌ なし | DASH 系は DPU_APPL_STATE_DB を使用 |
 | `CONFIG_DB` | ❌ なし | orchagent は [CONFIG_DB](../../reference/glossary.md#term-config_db) への書戻しを行わない |
 
-`DPU_APPL_STATE_DB / DASH_ROUTING_TYPE_TABLE` は gNMI 等の外部コントローラが SAI プログラム状態を確認するための非同期通知チャネルとして機能する。外部コントローラは `result` フィールドをポーリングすることで routing type の登録成否を確認できる。
+`DPU_APPL_STATE_DB / DASH_ROUTING_TYPE_TABLE` は [gNMI](../../reference/glossary.md#term-gnmi) 等の外部コントローラが SAI プログラム状態を確認するための非同期通知チャネルとして機能する。外部コントローラは `result` フィールドをポーリングすることで routing type の登録成否を確認できる。
 <!-- /side-effects -->
 
 <!-- pubsub -->
@@ -433,7 +433,7 @@ SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_
 
 ### ZMQ 無効時のフォールバック
 
-`ORCH_NORTHBOND_DASH_ZMQ_ENABLED=false`（`-q` オプションなし）時は `ConsumerStateTable`（[Redis](../../reference/glossary.md#term-redis) SUBSCRIBE）にフォールバックする。DPU 環境ではフラグがデフォルト `true` のため通常このパスは使われない (`zmqorch.cpp:63-72`)。
+`ORCH_NORTHBOND_DASH_ZMQ_ENABLED=false`（`-q` オプションなし）時は `ConsumerStateTable`（[Redis](../../reference/glossary.md#term-redis) SUBSCRIBE）にフォールバックする。[DPU](../../reference/glossary.md#term-dpu) 環境ではフラグがデフォルト `true` のため通常このパスは使われない (`zmqorch.cpp:63-72`)。
 
 ### DB・チャンネル使用一覧
 
@@ -473,7 +473,7 @@ SET 完了後に `writeResultToDB(dash_routing_type_result_table_, routing_type_
 
 `DashOrch::addRoutingTypeEntry()` / `removeRoutingTypeEntry()` は SAI API を一切呼び出さず、受信した protobuf を `routing_type_entries_` in-memory マップに格納するだけで処理が完結する。[ASIC](../../reference/glossary.md#term-asic) ベンダー依存の SAI 呼び出しは存在せず、ベンダー固有の条件分岐もない。
 
-SAI API が呼び出されるのは、この routing type を参照する `DashVnetOrch` や `DashRouteOrch` がマッピング・ルートエントリをプログラムする時点であり、`DASH_ROUTING_TYPE_TABLE` 処理自体は ASIC 種別に依存しない。
+SAI API が呼び出されるのは、この routing type を参照する `DashVnetOrch` や `DashRouteOrch` がマッピング・ルートエントリをプログラムする時点であり、`DASH_ROUTING_TYPE_TABLE` 処理自体は [ASIC](../../reference/glossary.md#term-asic) 種別に依存しない。
 
 ### SAI capability クエリ: 関与なし
 
@@ -537,4 +537,4 @@ sonic-db-cli APPL_DB keys 'DASH_ROUTING_TYPE_TABLE|*' | sort
 - **更新は削除→再作成が必要**: `addRoutingTypeEntry()` は既存エントリをスキップするため、routing type の変更は DEL → SET の順で実施する
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: e1a807ce9e84 -->
+<!-- glossary-links-injected: 6d4619f4b469 -->
