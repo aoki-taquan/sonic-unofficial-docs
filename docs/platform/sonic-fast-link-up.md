@@ -92,7 +92,7 @@ CLI / OA はこれを参照して入力検証する。レンジ未公表時は C
 
 ## 動作モデル（recovery only）
 
-ASIC ファームウェアは **既に Up していて落ちた後の再起動** にのみ Fast Link-Up を試みる[^1]:
+[ASIC](../reference/glossary.md#term-asic) ファームウェアは **既に Up していて落ちた後の再起動** にのみ Fast Link-Up を試みる[^1]:
 
 1. リンクフラップ発生
 2. ASIC FW が前回 EQ を使い `polling_time` 秒以内に Up を試行
@@ -129,7 +129,7 @@ sequenceDiagram
 | Global params applied | switchorch | INFO |
 | Out-of-range rejected | switchorch | NOTICE |
 | Unknown field ignored | switchorch | WARN |
-| Per-port apply failed | portsorch | ERROR |
+| Per-port apply failed | [portsorch](../reference/glossary.md#term-portsorch) | ERROR |
 | Not supported (no-op) | both | NOTICE |
 
 ## 設定
@@ -213,4 +213,4 @@ docker exec swss show fast-link-status 2>&1 | tail
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: db593ae1fe11 -->
+<!-- glossary-links-injected: 9937abcefc29 -->

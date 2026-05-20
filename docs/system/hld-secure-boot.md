@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-UEFI Secure Boot を SONiC のブートチェーンに適用する。**HW → shim → GRUB → Linux kernel (vmlinuz) → kernel modules (KO)** の各段で **前の段が次を署名検証** する chain of trust を構築し、改竄された不正コードの実行を防ぐ[^1]。
+UEFI Secure Boot を [SONiC](../reference/glossary.md#term-sonic) のブートチェーンに適用する。**HW → shim → GRUB → Linux kernel (vmlinuz) → kernel modules (KO)** の各段で **前の段が次を署名検証** する chain of trust を構築し、改竄された不正コードの実行を防ぐ[^1]。
 
 実装は次の 2 つに分かれる[^1]:
 
@@ -254,4 +254,4 @@ sudo tpm2_pcrread sha256:0,1,2,3,7
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8935cf9724b3 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

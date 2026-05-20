@@ -111,7 +111,7 @@ sudo grep -i "SAI_STATUS_OBJECT_IN_USE\|$PORT" /var/log/syslog | tail -20
 | Phase | 実装済 (master で動く) | 未実装 (HLD 提案のみ・運用側で代替) |
 |-------|----------------------|----------------------------------|
 | zero-port 起動 | ✅ port=0 で boot 完了 | — |
-| redis-cli / config による port 追加 | ✅ portsorch が SAI port を作成 | — |
+| redis-cli / config による port 追加 | ✅ [portsorch](../reference/glossary.md#term-portsorch) が SAI port を作成 | — |
 | `admin_status` 切替 | ✅ 既存パスで動作 | — |
 | port 削除前の依存検出 | — | ❌ ref counter 自動拒否は未取り込み（運用側で `keys '*|<port>*'` pre-check）|
 | port 削除時の ACL バインド解除 | — | ❌ 自動解除なし（運用側で手順 2 を実行）|
@@ -147,4 +147,4 @@ sudo grep -E 'portsorch|PortConfigDone|PortInitDone' /var/log/syslog | tail -50
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: 889740d66e5f -->

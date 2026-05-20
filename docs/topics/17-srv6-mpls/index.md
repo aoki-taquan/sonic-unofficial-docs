@@ -57,7 +57,7 @@ related:
 
 # SRv6 / MPLS / Path Tracing
 
-この章は、SONiC で [SRv6](../../reference/glossary.md#term-srv6)（Segment Routing over IPv6）、[MPLS](../../reference/glossary.md#term-mpls)、そして経路観測のための Path Tracing をまとめて読むための入口です。SRv6 関連 [HLD](../../reference/glossary.md#term-hld) は base、uSID、static SID、L3 隣接、VPN と段階的に積み上がっているため、ここでは「どの順で読めばよいか」と「[BGP](../../reference/glossary.md#term-bgp) / [VRF](../../reference/glossary.md#term-vrf) / [EVPN](../../reference/glossary.md#term-evpn) 章とどこで接続するか」を最初に整理します。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) で [SRv6](../../reference/glossary.md#term-srv6)（Segment Routing over IPv6）、[MPLS](../../reference/glossary.md#term-mpls)、そして経路観測のための Path Tracing をまとめて読むための入口です。SRv6 関連 [HLD](../../reference/glossary.md#term-hld) は base、uSID、static SID、L3 隣接、VPN と段階的に積み上がっているため、ここでは「どの順で読めばよいか」と「[BGP](../../reference/glossary.md#term-bgp) / [VRF](../../reference/glossary.md#term-vrf) / [EVPN](../../reference/glossary.md#term-evpn) 章とどこで接続するか」を最初に整理します。
 
 SRv6 は IPv6 をベースに SID list を運ぶ network programming framework、MPLS は静的 LSP を起点に label switching を [SAI](../../reference/glossary.md#term-sai)/[orchagent](../../reference/glossary.md#term-orchagent) に拡張した基盤、Path Tracing は転送経路を IPv6 Hop-by-Hop オプションに刻んで観測する仕組みです。三者は別機能ですが、route / [RIF](../../reference/glossary.md#term-rif) / counter / [QoS](../../reference/glossary.md#term-qos) map といった SONiC 内部の共通部品でつながっており、特に SRv6 と Path Tracing は IPv6 forwarding と直接重なります。
 
@@ -147,4 +147,4 @@ SRv6 は IPv6 をベースに SID list を運ぶ network programming framework�
 - [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
 - [VXLAN / EVPN / VNET オーバーレイ](../03-vxlan-evpn/index.md)
 
-<!-- glossary-links-injected: c2701454ab65 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

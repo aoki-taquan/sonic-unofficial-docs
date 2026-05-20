@@ -61,7 +61,7 @@ related:
 
 ## QoS / Buffer 機能は何を解決するか
 
-ネットワーク機器の「公平性」と「優先度」は、ASIC のバッファとキューが有限であるという物理的な事実から逃れられません。100Gbps のリンクが 4 本同じ出口に向けて 100Gbps を送り出そうとした瞬間、3 本ぶんの 300Gbps はバッファに積むしかなく、バッファが尽きればドロップします。QoS / Buffer サブシステムが解決しているのは、この限られたバッファとキューを「どのトラフィックを優遇するか」「どこで止めるか」「どこで捨てるか」というポリシで埋め、運用が意図した挙動に揃えることです。
+ネットワーク機器の「公平性」と「優先度」は、[ASIC](../../reference/glossary.md#term-asic) のバッファとキューが有限であるという物理的な事実から逃れられません。100Gbps のリンクが 4 本同じ出口に向けて 100Gbps を送り出そうとした瞬間、3 本ぶんの 300Gbps はバッファに積むしかなく、バッファが尽きればドロップします。QoS / Buffer サブシステムが解決しているのは、この限られたバッファとキューを「どのトラフィックを優遇するか」「どこで止めるか」「どこで捨てるか」というポリシで埋め、運用が意図した挙動に揃えることです。
 
 具体的には次の問いに答えます。
 
@@ -77,7 +77,7 @@ related:
 QoS / Buffer は **データプレーンに最も深く張り付くサブシステム**で、控えめに見ても以下の 3 層にまたがります。
 
 - **設定 (control plane 寄り)**: `CONFIG_DB` の `BUFFER_*`、`QUEUE`、`SCHEDULER`、`WRED_PROFILE`、各種 MAP テーブルを `qosorch` / `bufferorch` が読み、[APPL_DB](../../reference/glossary.md#term-appl_db) → [ASIC_DB](../../reference/glossary.md#term-asic_db) と流して [syncd](../../reference/glossary.md#term-syncd) 経由で [SAI](../../reference/glossary.md#term-sai) コール（`create_buffer_pool`、`create_queue`、`create_scheduler` など）に変換します。
-- **データプレーン**: ASIC 内のキュー、PG、バッファプール、[WRED](../../reference/glossary.md#term-wred) ドロッパ、scheduler 木が実体です。SONiC は SAI 越しに「設定」を流し込むだけで、パケットごとの判定は ASIC 側で完結します。
+- **データプレーン**: ASIC 内のキュー、PG、バッファプール、[WRED](../../reference/glossary.md#term-wred) ドロッパ、scheduler 木が実体です。[SONiC](../../reference/glossary.md#term-sonic) は SAI 越しに「設定」を流し込むだけで、パケットごとの判定は ASIC 側で完結します。
 - **可観測性**: [FlexCounter](../../reference/glossary.md#term-flexcounter) が queue / PG / pool の使用量と WRED / ECN カウンタを定期的に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に落とし、watermark は別 group として「観測区間ピーク」を保持します。`show queue counters` / `show priority-group watermark` などの CLI は COUNTERS_DB / [STATE_DB](../../reference/glossary.md#term-state_db) を読むだけです。
 
 つまり運用者が触れる [Redis](../../reference/glossary.md#term-redis) テーブルと、実際にパケットが通る ASIC 構造体が 1:1 に近い距離で対応している、それが QoS / Buffer 章を読むときの前提です。
@@ -226,4 +226,4 @@ QoS / Buffer は他のサブシステムと領域が重なって見えがちで�
 - [Platform / Port / Optics / PHY](../14-platform-port-optics/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: 1ef61890526a -->
+<!-- glossary-links-injected: ec18b66e3507 -->

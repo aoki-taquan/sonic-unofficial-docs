@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-port`, `sonic-portchannel`, `sonic-loopback-interface`, `sonic-mgmt_port`
 - top container: `sonic-system-radius`
 
-Remote Authentication Dial-In User Service (RADIUS) [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
+Remote Authentication Dial-In User Service ([RADIUS](../../reference/glossary.md#term-radius)) [YANG](../../reference/glossary.md#term-yang) module for [SONiC](../../reference/glossary.md#term-sonic) OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -54,6 +54,7 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`RADIUS`](../config-db/radius.md)
+- [`RADIUS_SERVER`](../config-db/radius-server.md)
 
 ### 関連 HLD
 
@@ -98,8 +99,8 @@ module: sonic-system-radius
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `passkey` | `sonic-system-radius/RADIUS/global/passkey` | `string` |  |  | length 1..65, pattern `[^ #,]*` | Default shared secret for authenticating RADIUS server communication. |
-| `auth_type` | `sonic-system-radius/RADIUS/global/auth_type` | `auth_type_enumeration` |  | `pap` | `pap`, `chap`, `mschapv2` | Default authentication protocol for RADIUS communication. |
+| `passkey` | `sonic-system-radius/RADIUS/global/passkey` | `string` |  |  | length 1..65, pattern `[^ #,]*` | Default shared secret for authenticating [RADIUS](../../reference/glossary.md#term-radius) server communication. |
+| `auth_type` | `sonic-system-radius/RADIUS/global/auth_type` | `auth_type_enumeration` |  | `pap` | `pap`, `chap`, `mschapv2` | Default authentication protocol for [RADIUS](../../reference/glossary.md#term-radius) communication. |
 | `src_ip` | `sonic-system-radius/RADIUS/global/src_ip` | `inet:ip-address` |  |  |  | Source IP address used for outgoing RADIUS packets. |
 | `nas_ip` | `sonic-system-radius/RADIUS/global/nas_ip` | `inet:ip-address` |  |  |  | NAS-IP-Address attribute sent in outgoing RADIUS packets. |
 | `statistics` | `sonic-system-radius/RADIUS/global/statistics` | `boolean` |  |  |  | Enable or disable RADIUS server statistics collection. |
@@ -154,4 +155,4 @@ module: sonic-system-radius
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-radius.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 1f629f272c19 -->

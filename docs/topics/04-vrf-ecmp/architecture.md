@@ -39,7 +39,7 @@ related:
 
 # RIB-FIB と Route Object 生成
 
-SONiC の L3 pipeline は、[FRR](../../reference/glossary.md#term-frr) が持つ RIB と、[orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) / ASIC が持つ FIB を分けて読むと理解しやすくなります。CLI や [CONFIG_DB](../../reference/glossary.md#term-config_db) で route を設定しても、それが直ちに ASIC route object になるわけではありません。
+[SONiC](../../reference/glossary.md#term-sonic) の L3 pipeline は、[FRR](../../reference/glossary.md#term-frr) が持つ RIB と、[orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) / [ASIC](../../reference/glossary.md#term-asic) が持つ FIB を分けて読むと理解しやすくなります。CLI や [CONFIG_DB](../../reference/glossary.md#term-config_db) で route を設定しても、それが直ちに ASIC route object になるわけではありません。
 
 ## 全体の流れ
 
@@ -110,4 +110,4 @@ route が `APPL_DB` に見えているのに FIB に入らない場合、route �
 - [新 FRR-SONiC 通信チャネル](../../routing/new-frr-sonic-communication-channel.md)
 - [L3 Scaling と Performance 強化](../../internals/l3-scaling-and-performance-enhancements.md)
 
-<!-- glossary-links-injected: 00b3349b6aea -->
+<!-- glossary-links-injected: ec18b66e3507 -->

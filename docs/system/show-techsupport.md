@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-`show techsupport` は SONiC のサブシステム横断の診断情報をひとつの **tarball** に集める既存ツール（[sonic-utilities](../reference/glossary.md#term-sonic-utilities) 由来）。本 [HLD](../reference/glossary.md#term-hld) はそれを Management Framework（[gNMI](../reference/glossary.md#term-gnmi) / REST / NETCONF などの統一管理層）経由でも起動できるようにし、**`--since`** オプションで採取ログの開始時刻を絞り込める CLI を上乗せする[^1]。
+`show techsupport` は [SONiC](../reference/glossary.md#term-sonic) のサブシステム横断の診断情報をひとつの **tarball** に集める既存ツール（[sonic-utilities](../reference/glossary.md#term-sonic-utilities) 由来）。本 [HLD](../reference/glossary.md#term-hld) はそれを Management Framework（[gNMI](../reference/glossary.md#term-gnmi) / REST / NETCONF などの統一管理層）経由でも起動できるようにし、**`--since`** オプションで採取ログの開始時刻を絞り込める CLI を上乗せする[^1]。
 
 要点[^1]:
 
@@ -222,4 +222,4 @@ ls -lh /var/dump/sonic_dump_*.tar.gz
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 12cde428ecc3 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

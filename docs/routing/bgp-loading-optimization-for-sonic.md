@@ -54,7 +54,7 @@ related:
 2. **[orchagent](../reference/glossary.md#term-orchagent)**: 単スレッド（pops / addToSync / drain）→ アシスタントスレッドと ring buffer による pipelining
 3. **sairedis**: 同期 API → 非同期 API 経路と orchagent 側の `ResponseThread`
 
-ASIC / [SAI](../reference/glossary.md#term-sai) 自体の最適化はスコープ外。
+[ASIC](../reference/glossary.md#term-asic) / [SAI](../reference/glossary.md#term-sai) 自体の最適化はスコープ外。
 
 ## 動作仕様
 
@@ -180,4 +180,4 @@ show ip route summary
 - 2M routes ベンチの実測値 vs HLD 主張 50% 高速化の検証
 -->
 
-<!-- glossary-links-injected: ef8c5688ad31 -->
+<!-- glossary-links-injected: c006405759d8 -->

@@ -28,7 +28,7 @@ related:
 
 ## なぜ作り直したか
 
-SONiC の SFP 関連 platform API は **PI（Platform Independent）と PD（Platform Dependent）が混在**しており、vendor が `SfpBase` 派生で両方を実装する必要があった[^1]。`sonic_sfp` は旧 platform API モデルの遺物で新要件を満たさず、各 vendor が同じ PI ロジックを重複実装する状態だった。
+[SONiC](../reference/glossary.md#term-sonic) の SFP 関連 platform API は **PI（Platform Independent）と PD（Platform Dependent）が混在**しており、vendor が `SfpBase` 派生で両方を実装する必要があった[^1]。`sonic_sfp` は旧 platform API モデルの遺物で新要件を満たさず、各 vendor が同じ PI ロジックを重複実装する状態だった。
 
 本リファクタは **xcvr 仕様（SFF-8436 / SFF-8472 / CMIS 等）を中心に PI ロジックを `sonic-platform-common` に集約**し、vendor は真に PD な部分だけ実装すれば済むよう infrastructure を作り直す。
 
@@ -180,4 +180,4 @@ reasoning: identifier-based spec 判定への切替の根拠。
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

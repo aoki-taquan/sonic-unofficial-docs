@@ -33,7 +33,7 @@ related:
 
 ## 何が中核アイデアか
 
-1 台の chassis 内に複数 ASIC を持つ platform で SONiC を動かすための設計[^1]:
+1 台の chassis 内に複数 [ASIC](../reference/glossary.md#term-asic) を持つ platform で [SONiC](../reference/glossary.md#term-sonic) を動かすための設計[^1]:
 
 - **ASIC ごとに linux network namespace を分ける**（`asic0` / `asic1` / ...）
 - 各 namespace に**独自の [Redis](../reference/glossary.md#term-redis) インスタンス**（`database0`、`database1`...）と独自の SWSS / [syncd](../reference/glossary.md#term-syncd) / [FRR](../reference/glossary.md#term-frr)
@@ -150,4 +150,4 @@ done
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: aaa8798bb58a -->
+<!-- glossary-links-injected: ec18b66e3507 -->

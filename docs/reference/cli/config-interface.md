@@ -37,9 +37,9 @@ related:
 
 ## 概要
 
-`config interface` は物理ポート（`PORT`）・[PortChannel](../../reference/glossary.md#term-portchannel)・SubInterface・Loopback の **state / 速度 / FEC / link-training / autoneg / breakout / MTU / TPID** などをまとめて制御するサブグループ。IP アドレスや [VRF](../../reference/glossary.md#term-vrf) 紐付け、IPv6 機能の有無、VRRP 設定、[PFC](../../reference/glossary.md#term-pfc) / Storm-Control / Buffer / Transceiver もここから入る[^1]。
+`config interface` は物理ポート（`PORT`）・[PortChannel](../../reference/glossary.md#term-portchannel)・SubInterface・Loopback の **state / 速度 / FEC / link-training / autoneg / breakout / MTU / TPID** などをまとめて制御するサブグループ。IP アドレスや [VRF](../../reference/glossary.md#term-vrf) 紐付け、IPv6 機能の有無、[VRRP](../../reference/glossary.md#term-vrrp) 設定、[PFC](../../reference/glossary.md#term-pfc) / Storm-Control / Buffer / Transceiver もここから入る[^1]。
 
-`@config.group(...)` 直下で `--namespace`/`-n` を **multi-ASIC のときだけ required**として受け取り、`ConfigDBConnector(namespace=...)` を `ctx.obj['config_db']` に格納する仕組み。配下の各コマンドはこの connector を使って `PORT` 等を mod する。
+`@config.group(...)` 直下で `--namespace`/`-n` を **multi-[ASIC](../../reference/glossary.md#term-asic) のときだけ required**として受け取り、`ConfigDBConnector(namespace=...)` を `ctx.obj['config_db']` に格納する仕組み。配下の各コマンドはこの connector を使って `PORT` 等を mod する。
 
 ```python
 # config/main.py L5080-L5092
@@ -106,7 +106,7 @@ config interface [-n <namespace>] shutdown <interface_name>
 **動作**:
 `<interface_name>` が `PORT` / `PORTCHANNEL` / `VLAN_SUB_INTERFACE` / `LOOPBACK_INTERFACE` のどれかにマッチしたエントリの `admin_status` を `up` / `down` に更新する。**4 種類のテーブルを順に走査**するので、Ethernet0, PortChannel1, Eth0.10, Loopback0 のいずれにも同じコマンドで使える。
 
-interface naming mode が `alias` の場合は `interface_alias_to_name` で先に正規名へ変換。`Ethernet0-3` のような range は内部 `parse_interface_in_filter` で展開され、multi-ASIC 環境では range 形式は禁止される。
+interface naming mode が `alias` の場合は `interface_alias_to_name` で先に正規名へ変換。`Ethernet0-3` のような range は内部 `parse_interface_in_filter` で展開され、multi-[ASIC](../../reference/glossary.md#term-asic) 環境では range 形式は禁止される。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/config/main.py#L5187-L5226 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -152,7 +152,7 @@ excerpt: |
 ### `config interface speed <interface_name> <speed>`
 
 **動作**:
-コマンド本体は [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接書かず、外部ツール `portconfig -p <intf> -s <speed>` を `subprocess` 起動する。`portconfig` 内部で `PORT` テーブルの `speed` フィールドが更新される。multi-ASIC 時は `-n <namespace>` が `portconfig` にも転送される。`-v|--verbose` で `-vv` を付与。
+コマンド本体は [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接書かず、外部ツール `portconfig -p <intf> -s <speed>` を `subprocess` 起動する。`portconfig` 内部で `PORT` テーブルの `speed` フィールドが更新される。multi-[ASIC](../../reference/glossary.md#term-asic) 時は `-n <namespace>` が `portconfig` にも転送される。`-v|--verbose` で `-vv` を付与。
 
 ### `config interface link-training` / `autoneg` / `advertised-speeds` / `type` / `advertised-types` / `mtu` / `tpid` / `fec`
 
@@ -383,4 +383,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: cc62f0a293fd -->
+<!-- glossary-links-injected: f3011e25f563 -->

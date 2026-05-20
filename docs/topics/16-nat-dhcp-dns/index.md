@@ -70,7 +70,7 @@ related:
 
 # NAT / DHCP Relay / Time-DNS Services
 
-この章は、SONiC が「edge / management 側で動く付帯サービス」と呼べる機能群、つまり [NAT](../../reference/glossary.md#term-nat)、DHCP relay と DHCP server、NTP / chrony / DNS、そして TWAMP Light や terminal server のような測定・補助サービスをまとめて読むための入口です。これらは [BGP](../../reference/glossary.md#term-bgp) や [ACL](../../reference/glossary.md#term-acl) のように data plane の主役ではありませんが、ToR / management スイッチを「使える装置」にするための薄い層であり、container と daemon の境界、management [VRF](../../reference/glossary.md#term-vrf) との関係を把握しないと運用で迷います。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) が「edge / management 側で動く付帯サービス」と呼べる機能群、つまり [NAT](../../reference/glossary.md#term-nat)、DHCP relay と DHCP server、NTP / chrony / DNS、そして TWAMP Light や terminal server のような測定・補助サービスをまとめて読むための入口です。これらは [BGP](../../reference/glossary.md#term-bgp) や [ACL](../../reference/glossary.md#term-acl) のように data plane の主役ではありませんが、ToR / management スイッチを「使える装置」にするための薄い層であり、container と daemon の境界、management [VRF](../../reference/glossary.md#term-vrf) との関係を把握しないと運用で迷います。
 
 NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP relay は L2/L3 broadcast を upstream へ橋渡しする agent、DHCP server は kea を内蔵してポート単位で leases を払い出す機能、time / DNS は OS レイヤ寄りの設定で management VRF 越しに通信する、というように責務がはっきり分かれます。章内のページでは、まずこれらを「どの container / daemon が処理するか」で並べ直します。
 
@@ -127,11 +127,11 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 
 - [SWSS docker warm restart（state restore / consistency / sync up）](../../system/sonic-swss-docker-warm-restart.md)
 - [BUM ストームコントロール（PORT_STORM_CONTROL）](../../switching/sonic-bum-storm-control.md)
+- [YANG モデル既知問題と検証](../../system/yang-model-issues-and-validation.md)
 - [Smart Switch DPU IP アドレス割当（midplane bridge / DHCP server）](../../system/smart-switch-ip-address-assignment.md)
 - [SONiC Boot Chart（systemd-bootchart 統合）](../../system/sonic-boot-chart.md)
 - [SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）](../../system/sonic-network-time-protocol-ntp-client-configuration.md)
 - [VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）](../../switching/add-support-for-vlan-interface-using-openconfig-yang.md)
-- [ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）](../../switching/brief-introduction-of-iccp-code.md)
 
 **関連トラブルシュート 5 件**
 
@@ -161,4 +161,4 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 - [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
 - [Security / AAA / FIPS / Hardening](../15-security-aaa/index.md)
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

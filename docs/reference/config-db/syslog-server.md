@@ -161,17 +161,16 @@ show syslog
 ```
 <!-- /ops-hint -->
 
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
 ### Phase 6: 自動派生
 
-hostcfgd が `protocol` フィールド値から rsyslog forwarding 形式を自動決定する。`udp` → `@<host>:<port>` 形式、`tcp` → `@@<host>:<port>` 形式。`port` フィールド未設定の場合はデフォルト UDP/514 を補完する。`vrf==mgmt` の場合は VRF バインド設定を自動付与する。
+[hostcfgd](../../reference/glossary.md#term-hostcfgd) が `protocol` フィールド値から rsyslog forwarding 形式を自動決定する。`udp` → `@<host>:<port>` 形式、`tcp` → `@@<host>:<port>` 形式。`port` フィールド未設定の場合はデフォルト UDP/514 を補完する。`vrf==mgmt` の場合は VRF バインド設定を自動付与する。
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
-hostcfgd は常時起動し `SYSLOG_SERVER` テーブルを無条件購読する。`DEVICE_METADATA.hostname` が必要（hostname ベースのフィルタ設定）。
+[hostcfgd](../../reference/glossary.md#term-hostcfgd) は常時起動し `SYSLOG_SERVER` テーブルを無条件購読する。`DEVICE_METADATA.hostname` が必要（hostname ベースのフィルタ設定）。
 
 <!-- /derivation -->
 
@@ -239,7 +238,7 @@ hostcfgd は常時起動し `SYSLOG_SERVER` テーブルを無条件購読する
 
 ### 補足
 
-- **CLI と hostcfgd の二重再起動**: `config syslog add/del` が CLI 側で `systemctl restart rsyslog-config` を直接実行し、さらに hostcfgd も SYSLOG_SERVER 変更を検知して同サービスを再起動する。CLI 経由では rsyslog-config が二重再起動される設計。
+- **CLI と [hostcfgd](../../reference/glossary.md#term-hostcfgd) の二重再起動**: `config syslog add/del` が CLI 側で `systemctl restart rsyslog-config` を直接実行し、さらに hostcfgd も SYSLOG_SERVER 変更を検知して同サービスを再起動する。CLI 経由では rsyslog-config が二重再起動される設計。
 - **DB 書き込み後 restart 失敗時の不整合**: `add` / `del` は DB 書き込み後に restart を試みる。restart 失敗時は DB と実際の rsyslog 設定が乖離し、次回 hostcfgd による再試行まで古い設定で動作し続ける。
 - **hostcfgd の YANG 再チェックなし**: `RSyslogCfg` は受け取ったテーブル値をそのままテンプレートに渡す。不正 IP・ポート値の再バリデーションは行わない（YANG 層で弾かれた前提）。
 
@@ -258,7 +257,7 @@ hostcfgd は常時起動し `SYSLOG_SERVER` テーブルを無条件購読する
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。rsyslog が UDP/TCP 514 番でリモートサーバへ転送。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。rsyslog が UDP/TCP 514 番でリモートサーバへ転送。
 
 ### 段階 4: タイミング + 副作用
 
@@ -272,15 +271,15 @@ SYSLOG_SERVER テーブルへの書き込みが発生するコード経路を網
 
 ### CLI
 
-  - `config syslog add/del ...` — `config/main.py` または `config/syslog.py` が `set_entry('SYSLOG_SERVER', ...)` を呼ぶ (sonic-utilities/config/main.py, config/syslog.py)
+  - `config syslog add/del ...` — `config/main.py` または `config/syslog.py` が `set_entry('SYSLOG_SERVER', ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py, config/syslog.py)
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** が `<SyslogServer>` タグから SYSLOG_SERVER エントリを生成 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+**minigraph.py** が `<SyslogServer>` タグから SYSLOG_SERVER エントリを生成 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py)
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -302,14 +301,14 @@ db_migrator.py での SYSLOG_SERVER マイグレーションなし
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-CONFIG_DB `SYSLOG_SERVER` テーブルの変更に伴って `hostcfgd` の `RSyslogCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS のファイル書き換えおよび systemd サービス制御に閉じる。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) `SYSLOG_SERVER` テーブルの変更に伴って `hostcfgd` の `RSyslogCfg` ハンドラが副次的に書き込む DB エントリは **存在しない**。副作用はすべて Linux ホスト OS のファイル書き換えおよび systemd サービス制御に閉じる。
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `RSyslogCfg.update_rsyslog_config()` 内に Producer/Table 書込呼出なし (`sonic-host-services/scripts/hostcfgd:1715-1743`) |
-| STATE_DB | なし | `hostcfgd` の `STATE_DB` 参照は `FipsCfg` (`hostcfgd:1759`) と `RestartWaiter` 用 (`hostcfgd:2160`) のみ。`RSyslogCfg` は `state_db_conn` を保持しない |
-| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。syslog 転送経路は SAI を経由しない |
-| ASIC_DB / FLEX_COUNTER_DB | なし | SAI 非経由。rsyslog は UDP/TCP でリモートサーバへ直接転送 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `RSyslogCfg.update_rsyslog_config()` 内に Producer/Table 書込呼出なし (`sonic-host-services/scripts/hostcfgd:1715-1743`) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `hostcfgd` の `STATE_DB` 参照は `FipsCfg` (`hostcfgd:1759`) と `RestartWaiter` 用 (`hostcfgd:2160`) のみ。`RSyslogCfg` は `state_db_conn` を保持しない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `hostcfgd` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 参照なし。syslog 転送経路は [SAI](../../reference/glossary.md#term-sai) を経由しない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由。rsyslog は UDP/TCP でリモートサーバへ直接転送 |
 
 ### 実際の副作用（ファイル書換 + systemd 制御）
 
@@ -357,7 +356,7 @@ self.config_db.subscribe(swsscommon.CFG_SYSLOG_SERVER_TABLE_NAME,
                          make_callback(self.rsyslog_server_handler))
 ```
 
-- `ConfigDBConnector.listen()` が内部で Redis **keyspace 通知** (`__keyspace@4__:SYSLOG_SERVER|*` への PSUBSCRIBE) を購読する。
+- `ConfigDBConnector.listen()` が内部で [Redis](../../reference/glossary.md#term-redis) **keyspace 通知** (`__keyspace@4__:SYSLOG_SERVER|*` への PSUBSCRIBE) を購読する。
 - `SYSLOG_SERVER` と `SYSLOG_CONFIG` を独立して登録するが、両ハンドラとも同じ `rsyslog_handler()` を呼び、**両テーブルを一括再取得**してキャッシュ比較後に `systemctl restart rsyslog-config` を発行する。
 
 ### ハンドラ呼び出しフロー
@@ -398,14 +397,14 @@ fi
 
 ### keyspace 通知パターン
 
-| Redis keyspace 通知 | hostcfgd ハンドラ |
+| [Redis](../../reference/glossary.md#term-redis) keyspace 通知 | hostcfgd ハンドラ |
 |---------------------|------------------|
 | `__keyspace@4__:SYSLOG_SERVER\|192.168.1.1` `hset` | `rsyslog_server_handler("192.168.1.1", SET, {...})` |
 | `__keyspace@4__:SYSLOG_SERVER\|192.168.1.1` `del` | `rsyslog_server_handler("192.168.1.1", DEL, {})` |
 | `__keyspace@4__:SYSLOG_CONFIG\|GLOBAL` `hset` | `rsyslog_config_handler("GLOBAL", SET, {...})` |
 
-- APPL_DB / STATE_DB への中継なし。SAI 経路なし。
-- 経路: CONFIG_DB → hostcfgd (keyspace 通知) → rsyslog-config.service → rsyslogd restart/SIGHUP
+- [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) への中継なし。SAI 経路なし。
+- 経路: [CONFIG_DB](../../reference/glossary.md#term-config_db) → hostcfgd (keyspace 通知) → rsyslog-config.service → rsyslogd restart/SIGHUP
 
 <!-- /pubsub -->
 
@@ -597,7 +596,7 @@ def rsyslog_handler(self):
 
 | フィールド | 変数名 | 用途 | evidence |
 |---|---|---|---|
-| `platform` | `$PLATFORM` | ASIC 設定ファイルのパス決定 → Multi-NPU 判定 (複数 ASIC 時は `docker0` IP をリッスン) | rsyslog-config.sh:3,6-8,15-18 |
+| `platform` | `$PLATFORM` | [ASIC](../../reference/glossary.md#term-asic) 設定ファイルのパス決定 → Multi-[NPU](../../reference/glossary.md#term-npu) 判定 (複数 [ASIC](../../reference/glossary.md#term-asic) 時は `docker0` IP をリッスン) | rsyslog-config.sh:3,6-8,15-18 |
 | `syslog_with_osversion` | `$syslog_with_osversion` | `true` の場合 rsyslog フォーマットを `SONiCForwardFormatWithOsVersion` に変更（OS バージョン付き） | rsyslog-config.sh:28-31 / rsyslog.conf.j2:63,65-69 |
 | `syslog_counter` | `$syslog_counter` | `true` の場合 `omprog` モジュール + `/usr/bin/syslog-counter` が有効化 | rsyslog-config.sh:38-41 / rsyslog.conf.j2:25-27,127-129 |
 
@@ -632,8 +631,8 @@ rsyslog 設定生成スクリプト (`rsyslog-config.sh`) および Jinja2 テ�
 
 | 条件 | `udp_server_ip` の決定方法 | 理由 |
 |------|--------------------------|------|
-| `NUM_ASIC == 1`（シングル NPU） | `lo` (loopback) の先頭 IPv4 アドレス | コンテナがホストの loopback 経由で syslog を送信するため |
-| `NUM_ASIC > 1`（マルチ NPU） | `docker0` の IPv4 アドレス | ネットワーク namespace 内のコンテナが docker0 ブリッジ経由で syslog を送信するため |
+| `NUM_ASIC == 1`（シングル [NPU](../../reference/glossary.md#term-npu)） | `lo` (loopback) の先頭 IPv4 アドレス | コンテナがホストの loopback 経由で syslog を送信するため |
+| `NUM_ASIC > 1`（マルチ [NPU](../../reference/glossary.md#term-npu)） | `docker0` の IPv4 アドレス | ネットワーク namespace 内のコンテナが docker0 ブリッジ経由で syslog を送信するため |
 
 また、`rsyslog.conf.j2` は `docker0_ip` 変数が非空かつ `udp_server_ip` と異なる場合にのみ、`docker0` 上への追加 UDP/RELP 受信設定を出力する。シングル NPU では `docker0_ip` は空のままとなる（`dhcp_server` Feature が有効な場合を除く）。
 
@@ -664,8 +663,8 @@ if ($.PLATFORM == "x86_64-mlnx_msn2700-r0" or $.PLATFORM == "x86_64-mlnx_msn2700
 
 ### SmartSwitch / DPU
 
-ソースコード調査の結果、SmartSwitch DPU 固有の rsyslog 設定生成ロジックは確認されなかった。DPU 上でも同一の `rsyslog-config.sh` + `rsyslog.conf.j2` が使用される。DPU の `NUM_ASIC` は通常 1 であるため、シングル NPU と同等の loopback 受信設定となる。
+ソースコード調査の結果、[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 固有の rsyslog 設定生成ロジックは確認されなかった。[DPU](../../reference/glossary.md#term-dpu) 上でも同一の `rsyslog-config.sh` + `rsyslog.conf.j2` が使用される。[DPU](../../reference/glossary.md#term-dpu) の `NUM_ASIC` は通常 1 であるため、シングル NPU と同等の loopback 受信設定となる。
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 639b97382f4c -->
+<!-- glossary-links-injected: 02f6c7cb23dd -->

@@ -153,7 +153,7 @@ reasoning: HLD 本文 4 ルールをそのまま判定フローに転写
 ## 制限事項
 
 - スケール / 性能テストは本プラン対象外[^1]
-- Vendor ASIC によっては default で install される invisible な trap があるため、テスト前に当該 trap を抜く必要がある（例: bgp 動作確認時に ip2me を抜く）[^1]
+- Vendor [ASIC](../reference/glossary.md#term-asic) によっては default で install される invisible な trap があるため、テスト前に当該 trap を抜く必要がある（例: bgp 動作確認時に ip2me を抜く）[^1]
 
 ## 干渉する機能
 
@@ -187,4 +187,4 @@ show copp configuration
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6f615bbdf47b -->
+<!-- glossary-links-injected: c006405759d8 -->

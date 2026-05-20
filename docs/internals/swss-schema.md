@@ -48,7 +48,7 @@ related:
 
 ## 概要
 
-SONiC の [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) に存在する主要テーブルを、**RFC 5234 ABNF 構文** で機械可読に定義する `sonic-swss` リポジトリ内の参照ドキュメント[^1]。[orchagent](../reference/glossary.md#term-orchagent) / *[syncd](../reference/glossary.md#term-syncd) / *mgrd 系プロセス間で受け渡されるテーブルの正規定義として、サブシステムを跨いで参照される。
+[SONiC](../reference/glossary.md#term-sonic) の [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) に存在する主要テーブルを、**RFC 5234 ABNF 構文** で機械可読に定義する `sonic-swss` リポジトリ内の参照ドキュメント[^1]。[orchagent](../reference/glossary.md#term-orchagent) / *[syncd](../reference/glossary.md#term-syncd) / *mgrd 系プロセス間で受け渡されるテーブルの正規定義として、サブシステムを跨いで参照される。
 
 開発者・Verifier はこのファイルを APPL_DB / STATE_DB スキーマの一次情報として扱う。[CONFIG_DB](../reference/glossary.md#term-config_db) スキーマは別途 `sonic-buildimage/src/sonic-yang-models/` 配下の [YANG](../reference/glossary.md#term-yang) モデルが正規。
 
@@ -163,4 +163,4 @@ redis-cli -n 6 keys 'BFD_SESSION_TABLE|*'
 
 本ページは個別テーブルへの入口として位置付けられたリファレンスで、実テーブル詳細はリンク先の生きた HLD を参照する旨を冒頭で明示しており、参照ドキュメントとしての記述は実体と整合する。
 
-<!-- glossary-links-injected: 710f941d149a -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

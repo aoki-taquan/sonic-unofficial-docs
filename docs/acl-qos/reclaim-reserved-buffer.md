@@ -48,7 +48,7 @@ related:
 
 Mellanox プラットフォームで顕著な「admin-down ポートにも default で reserved buffer が割り当てられ、shared pool が圧迫される」問題に対し、**`zero_profile` を admin-down ポートに明示的に紐付け、reserved buffer をゼロ化して shared pool に取り戻す** 設計[^1]。
 
-対象は次の SONiC buffer config 全体[^1]:
+対象は次の [SONiC](../reference/glossary.md#term-sonic) buffer config 全体[^1]:
 
 - `BUFFER_PG`
 - `BUFFER_QUEUE`
@@ -70,7 +70,7 @@ Mellanox プラットフォームで顕著な「admin-down ポートにも defau
 - 起動時設定なし → SDK default（非ゼロ）
 - 起動後に削除 → 0
 
-という同じ「設定なし」状態で ASIC 側が異なる、という不整合になる[^1]。
+という同じ「設定なし」状態で [ASIC](../reference/glossary.md#term-asic) 側が異なる、という不整合になる[^1]。
 
 ### `zero_profile` 解（採用）
 
@@ -203,4 +203,4 @@ sudo grep -i 'buffermgrd' /var/log/syslog | tail -30
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: ec18b66e3507 -->

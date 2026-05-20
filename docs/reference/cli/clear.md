@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-実行ファイル名は `sonic-clear` だが click のエントリ名は `cli`（`/usr/local/bin/sonic-clear` 経由で呼ばれる）。**カウンタ系のリセット、[ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) テーブルのフラッシュ、[FDB](../../reference/glossary.md#term-fdb) クリア、[NAT](../../reference/glossary.md#term-nat) 統計クリア、PBH カウンタ保存、route flow counter リセット、ASIC/SDK health-event 消去**などをまとめている[^1]。
+実行ファイル名は `sonic-clear` だが click のエントリ名は `cli`（`/usr/local/bin/sonic-clear` 経由で呼ばれる）。**カウンタ系のリセット、[ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) テーブルのフラッシュ、[FDB](../../reference/glossary.md#term-fdb) クリア、[NAT](../../reference/glossary.md#term-nat) 統計クリア、PBH カウンタ保存、route flow counter リセット、[ASIC](../../reference/glossary.md#term-asic)/SDK health-event 消去**などをまとめている[^1]。
 
 ほとんどのコマンドが `portstat` / `intfstat` / `queuestat` / `pfcstat` / `dropstat` / `tunnelstat` / `srv6stat` / `switchstat` / `watermarkstat` / `wredstat` / `fdbclear` / `flow_counters_stat` / `natclear` / `consutil` 等の **C++/python ユーティリティを `-c` (clear) フラグで呼び出すラッパ**。
 
@@ -148,7 +148,7 @@ sonic-clear (= clear)
 
 ### `sonic-clear asic-sdk-health-event [-n <namespace>]`
 
-[CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく **[STATE_DB](../../reference/glossary.md#term-state_db) の `ASIC_SDK_HEALTH_EVENT_TABLE*` キーを namespace ごとに delete** する。multi-ASIC 時に `-n` 指定で対象 namespace のみ。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく **[STATE_DB](../../reference/glossary.md#term-state_db) の `ASIC_SDK_HEALTH_EVENT_TABLE*` キーを namespace ごとに delete** する。multi-[ASIC](../../reference/glossary.md#term-asic) 時に `-n` 指定で対象 namespace のみ。
 
 ### `sonic-clear spanning-tree`
 
@@ -221,4 +221,4 @@ show mac
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: cd64f6828d1b -->
+<!-- glossary-links-injected: e82be350a384 -->

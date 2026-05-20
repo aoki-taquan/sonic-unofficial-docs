@@ -32,7 +32,7 @@ related:
 - import: `ietf-inet-types`, `sonic-types`
 - top container: `sonic-nat`
 
-SONiC [NAT](../../reference/glossary.md#term-nat) yang model[^1]
+[SONiC](../../reference/glossary.md#term-sonic) [NAT](../../reference/glossary.md#term-nat) yang model[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -67,6 +67,11 @@ flowchart LR
 <!-- yang-xref -->
 
 本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 対応 CONFIG_DB
+
+- [`NAT_POOL`](../config-db/nat-pool.md)
+- [`NAT_BINDINGS`](../config-db/nat-bindings.md)
 
 ### 関連 CLI
 
@@ -224,4 +229,4 @@ show nat translations
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

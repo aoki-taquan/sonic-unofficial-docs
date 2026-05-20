@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-per-port sFlow サンプリング設定を保持するテーブル。key が `'all'` の場合は全ポートへのグローバル既定として機能する。`sflowmgrd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読して `APP_DB` の `APP_SFLOW_SESSION_TABLE` に変換し、`orchagent` の `SflowOrch` が SAI `sai_samplepacket_api` でハードウェアサンプリングを設定する[^1]。
+per-port sFlow サンプリング設定を保持するテーブル。key が `'all'` の場合は全ポートへのグローバル既定として機能する。`sflowmgrd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読して `APP_DB` の `APP_SFLOW_SESSION_TABLE` に変換し、`orchagent` の `SflowOrch` が [SAI](../../reference/glossary.md#term-sai) `sai_samplepacket_api` でハードウェアサンプリングを設定する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -36,10 +36,10 @@ flowchart LR
   CDB --> DM
   APPDB[("APP_DB<br/>APP_SFLOW_SESSION_TABLE")]
   DM --> APPDB
-  ORCH["orchagent<br/>SflowOrch"]
-  APPDB --> ORCH
-  SAI["SAI<br/>sai_samplepacket_api<br/>sai_port_api"]
-  ORCH --> SAI
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_samplepacket_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
@@ -63,7 +63,7 @@ SFLOW_SESSION|all      # 全ポートへのグローバル既定
 | `sample_rate` | uint32 (256..8388608) | ポート速度由来 | 1/N パケットサンプリング。`port='all'` キーには YANG で定義なし。 |
 | `sample_direction` | enum `rx`/`tx`/`both` | グローバル方向継承 | サンプリング方向。欠落時はグローバル `m_gDirection` を採用。 |
 
-- `sample_rate` 未指定時: `oper_speed` (STATE_DB) 優先、なければ `cfg_speed` を使用（`sflowmgr.cpp:385-401`）。
+- `sample_rate` 未指定時: `oper_speed` ([STATE_DB](../../reference/glossary.md#term-state_db)) 優先、なければ `cfg_speed` を使用（`sflowmgr.cpp:385-401`）。
 - `sample_direction` 欠落時: グローバルまたは `SFLOW_SESSION|all` の方向を継承（`sflowmgr.cpp:374-382`）。
 - `admin_state` 欠落時: `"up"` をハードコードで注入（`sflowmgr.cpp:364-368`）。
 
@@ -92,9 +92,7 @@ SFLOW_SESSION|all      # 全ポートへのグローバル既定
 
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-sflow.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-sflow.yang>
 
-[^2]: sflowmgrd 実装: `sonic-swss/cfgmgr/sflowmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp>
 
-[^3]: sfloworch 実装: `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/sfloworch.cpp>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
@@ -145,7 +143,7 @@ APP_SFLOW_TABLE  SET  →  APP_SFLOW_SESSION_TABLE  SET
 
 ### O5: oper_speed 確定 → `SFLOW_SESSION` 書込み (推奨)
 
-`sflowmgr.cpp:385-401`: `sample_rate` 未指定時は `oper_speed` (STATE_DB) 優先、なければ `cfg_speed` を使う。ポートが UP する前に SFLOW_SESSION を書くと cfg_speed ベースの暫定レートが入る。`local_rate_cfg = false` のポートは `sflowProcessOperSpeed()` が oper_speed 確定時に自動更新するため実運用上は問題が出にくいが、起動直後の一時的なレート不整合に注意。
+`sflowmgr.cpp:385-401`: `sample_rate` 未指定時は `oper_speed` ([STATE_DB](../../reference/glossary.md#term-state_db)) 優先、なければ `cfg_speed` を使う。ポートが UP する前に SFLOW_SESSION を書くと cfg_speed ベースの暫定レートが入る。`local_rate_cfg = false` のポートは `sflowProcessOperSpeed()` が oper_speed 確定時に自動更新するため実運用上は問題が出にくいが、起動直後の一時的なレート不整合に注意。
 
 ### 推奨書込み順序（総合）
 
@@ -179,7 +177,7 @@ PORT|<port>  SET  →  m_sflowPortConfMap 登録  →  SFLOW_SESSION|<port>  SET
 
 ### STATE_DB PORT（sample_rate 自動導出参照）
 
-`sflowmgrd.cpp:32` および `sflowmgr.cpp:167-218`: sflowmgrd は `STATE_PORT_TABLE_NAME` (STATE_DB) の `speed` フィールド変化を購読する。`sample_rate` 未指定ポートは `oper_speed` 確定時に `sflowProcessOperSpeed()` が自動的に `APP_SFLOW_SESSION_TABLE` を更新する。SFLOW_SESSION に明示的フィールドとしては現れないが、`sample_rate` の実値導出で透過的に参照される。
+`sflowmgrd.cpp:32` および `sflowmgr.cpp:167-218`: sflowmgrd は `STATE_PORT_TABLE_NAME` ([STATE_DB](../../reference/glossary.md#term-state_db)) の `speed` フィールド変化を購読する。`sample_rate` 未指定ポートは `oper_speed` 確定時に `sflowProcessOperSpeed()` が自動的に `APP_SFLOW_SESSION_TABLE` を更新する。SFLOW_SESSION に明示的フィールドとしては現れないが、`sample_rate` の実値導出で透過的に参照される。
 
 ### SFLOW（グローバル有効化 — 実効化前提）
 
@@ -191,7 +189,7 @@ PORT|<port>  SET  →  m_sflowPortConfMap 登録  →  SFLOW_SESSION|<port>  SET
 
 ### APP_SFLOW_TABLE（SflowOrch 段の必須前提）
 
-`sfloworch.cpp:365-368, 388-392`: SflowOrch は `APP_SFLOW_TABLE` の SET を受けて `m_sflowStatus = true` にする。`m_sflowStatus == false` の間は `APP_SFLOW_SESSION_TABLE` の全 SET イベントを `return` でスキップ。sflowmgrd が SESSION を APP_DB に書いても、SflowOrch 側で APP_SFLOW_TABLE が先行していないと SAI 設定まで到達しない。
+`sfloworch.cpp:365-368, 388-392`: SflowOrch は `APP_SFLOW_TABLE` の SET を受けて `m_sflowStatus = true` にする。`m_sflowStatus == false` の間は `APP_SFLOW_SESSION_TABLE` の全 SET イベントを `return` でスキップ。sflowmgrd が SESSION を APP_DB に書いても、SflowOrch 側で APP_SFLOW_TABLE が先行していないと [SAI](../../reference/glossary.md#term-sai) 設定まで到達しない。
 
 ### gPortsOrch（PortsOrch 初期化完了待ち）
 
@@ -238,7 +236,7 @@ PORT|<port>  SET  →  m_sflowPortConfMap 登録  →  SFLOW_SESSION|<port>  SET
 |---------|------|------|-----------|
 | `m_sflowStatus == false`（APP_SFLOW_TABLE SET が未到着） | `return` でループ全体を抜ける。m_toSync にエントリ残留、次回 `doTask()` で再試行 | なし | `sfloworch.cpp:389-392` |
 | `gPortsOrch->allPortsReady()` が false | `return` でスキップ。PortsOrch 完了後に処理再開 | なし | `sfloworch.cpp:370-373` |
-| `rate == 0`（error 文字列由来）の新規ポート | `it++; continue` でスキップ。SAI 設定なし | なし | `sfloworch.cpp:410-415` |
+| `rate == 0`（error 文字列由来）の新規ポート | `it++; continue` でスキップ。[SAI](../../reference/glossary.md#term-sai) 設定なし | なし | `sfloworch.cpp:410-415` |
 | `sai_samplepacket_api->create_samplepacket()` が SAI エラー | `handleSaiCreateStatus()` 判定。`task_success` 以外は `it++; continue` | SWSS_LOG_ERROR ("Failed to create sample packet session with rate %d") | `sfloworch.cpp:29-39` |
 | `sai_port_api->set_port_attribute()` (ingress/egress) が SAI エラー | `handleSaiSetStatus()` 判定。false で `it++; continue` | SWSS_LOG_ERROR ("Failed to set session on port") | `sfloworch.cpp:122-150` |
 | 旧セッション破棄 (`sflowDestroySession()`) が SAI エラー | SWSS_LOG_ERROR のみ。`m_sflowRateSampleMap.erase()` をスキップ。SAI 上のセッションが残存する可能性あり | SWSS_LOG_ERROR ("Failed to clean old session") | `sfloworch.cpp:97-105` |
@@ -327,7 +325,7 @@ findSamplingRate() がポート未登録を検出
 
 #### 1a. `SFLOW_SESSION|<port>` SET 時
 
-`sflowCheckAndFillValues()` でフィールドを補完後、グローバル admin_state が有効（`m_gEnable=true`）の場合のみ APPL_DB に書き込む (sflowmgr.cpp:531-534)。[^4]
+`sflowCheckAndFillValues()` でフィールドを補完後、グローバル admin_state が有効（`m_gEnable=true`）の場合のみ [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込む (sflowmgr.cpp:531-534)。[^4]
 
 | フィールド | 書込値 | evidence |
 |-----------|-------|---------|
@@ -349,7 +347,7 @@ findSamplingRate() がポート未登録を検出
 
 ### 2. ASIC_DB — SAI samplepacket セッション操作 (SflowOrch 経由)
 
-SflowOrch が APPL_DB `SFLOW_SESSION_TABLE` を購読し、SAI API でハードウェアサンプリングを設定する。
+SflowOrch が [APPL_DB](../../reference/glossary.md#term-appl_db) `SFLOW_SESSION_TABLE` を購読し、SAI API でハードウェアサンプリングを設定する。
 
 #### 2a. `sai_samplepacket_api->create_samplepacket()`
 
@@ -378,13 +376,13 @@ evidence: sfloworch.cpp:119–150 (`sflowAddPort`), sfloworch.cpp:161–195 (`sf
 
 | トリガー | consumer | 対象 DB | テーブル | 書込内容 | evidence |
 |---------|---------|--------|---------|---------|---------|
-| `SFLOW_SESSION\|<port>` SET (gEnable=true) | sflowmgrd | APPL_DB | `SFLOW_SESSION_TABLE` | admin_state / sample_rate / sample_direction | sflowmgr.cpp:533 |
+| `SFLOW_SESSION\|<port>` SET (gEnable=true) | sflowmgrd | [APPL_DB](../../reference/glossary.md#term-appl_db) | `SFLOW_SESSION_TABLE` | admin_state / sample_rate / sample_direction | sflowmgr.cpp:533 |
 | `SFLOW_SESSION\|<port>` DEL | sflowmgrd | APPL_DB | `SFLOW_SESSION_TABLE` | キー削除 | sflowmgr.cpp:567 |
 | DEL 後 intfAllConf=true | sflowmgrd | APPL_DB | `SFLOW_SESSION_TABLE` | グローバル設定で再 SET | sflowmgr.cpp:578-580 |
 | `SFLOW_SESSION\|all` SET (gEnable=true) | sflowmgrd | APPL_DB | `SFLOW_SESSION_TABLE` | 全ポート一斉更新 | sflowmgr.cpp:513 |
 | `SFLOW_SESSION\|all` DEL (intfAllConf=false, gEnable=true) | sflowmgrd | APPL_DB | `SFLOW_SESSION_TABLE` | 全ポート再有効化 | sflowmgr.cpp:558-563 |
-| APPL_DB `SFLOW_SESSION_TABLE` SET | SflowOrch | ASIC_DB | SAI samplepacket | create_samplepacket + INGRESS/EGRESS 属性 SET | sfloworch.cpp:29,122,139 |
-| APPL_DB `SFLOW_SESSION_TABLE` DEL | SflowOrch | ASIC_DB | SAI samplepacket | remove_samplepacket + SAI_NULL_OBJECT_ID でポートリセット | sfloworch.cpp:49,165,183 |
+| APPL_DB `SFLOW_SESSION_TABLE` SET | SflowOrch | [ASIC_DB](../../reference/glossary.md#term-asic_db) | SAI samplepacket | create_samplepacket + INGRESS/EGRESS 属性 SET | sfloworch.cpp:29,122,139 |
+| APPL_DB `SFLOW_SESSION_TABLE` DEL | SflowOrch | [ASIC_DB](../../reference/glossary.md#term-asic_db) | SAI samplepacket | remove_samplepacket + SAI_NULL_OBJECT_ID でポートリセット | sfloworch.cpp:49,165,183 |
 
 [^4]: 副次書込調査: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp>
 
@@ -409,7 +407,7 @@ TableConnector conf_sflow_table(&cfgDb, CFG_SFLOW_TABLE_NAME);
 TableConnector conf_sflow_session_table(&cfgDb, CFG_SFLOW_SESSION_TABLE_NAME);
 ```
 
-`Orch` フレームワークが各 `TableConnector` を **`SubscriberStateTable`**（Redis keyspace 通知ベース）に変換し `swss::Select` ループで多重化する。CONFIG_DB の `SFLOW_SESSION|*` に HSET / DEL が発生すると Redis keyspace 通知が届き、`SflowMgr::doTask()` が呼ばれる。書き込み側（CLI / sonic-cfggen）は `HSET` のみ実行し、明示的な `PUBLISH` は行わない。
+`Orch` フレームワークが各 `TableConnector` を **`SubscriberStateTable`**（[Redis](../../reference/glossary.md#term-redis) keyspace 通知ベース）に変換し `swss::Select` ループで多重化する。CONFIG_DB の `SFLOW_SESSION|*` に HSET / DEL が発生すると [Redis](../../reference/glossary.md#term-redis) keyspace 通知が届き、`SflowMgr::doTask()` が呼ばれる。書き込み側（CLI / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)）は `HSET` のみ実行し、明示的な `PUBLISH` は行わない。
 
 ### STATE_DB → sflowmgrd（oper_speed 変化追跡）
 
@@ -423,7 +421,7 @@ ProducerStateTable  m_appSflowTable;
 ProducerStateTable  m_appSflowSessionTable;
 ```
 
-`m_appSflowSessionTable.set()` / `.del()` が APPL_DB `SFLOW_SESSION_TABLE` に書き込む。`ProducerStateTable` は内部で Redis Stream (`XADD`) と通知チャネルへの `PUBLISH` を自動実行する。
+`m_appSflowSessionTable.set()` / `.del()` が APPL_DB `SFLOW_SESSION_TABLE` に書き込む。`ProducerStateTable` は内部で [Redis](../../reference/glossary.md#term-redis) Stream (`XADD`) と通知チャネルへの `PUBLISH` を自動実行する。
 
 ### APPL_DB → SflowOrch（ConsumerStateTable）
 
@@ -474,9 +472,9 @@ sess_info = sess_db.get_all(sess_db.APPL_DB, intf_key)
 
 ### 静的プラットフォーム比較: なし
 
-`sflowmgr.cpp` / `sfloworch.cpp` のいずれにも `getenv("platform")` / `getenv("sub_platform")` の呼び出しが存在しない。ACL 系が行うようなベンダー名文字列比較 (`broadcom`, `mellanox`, etc.) は一切ない。
+`sflowmgr.cpp` / `sfloworch.cpp` のいずれにも `getenv("platform")` / `getenv("sub_platform")` の呼び出しが存在しない。[ACL](../../reference/glossary.md#term-acl) 系が行うようなベンダー名文字列比較 (`broadcom`, `mellanox`, etc.) は一切ない。
 
-VOQ Chassis (`is_chassis()`) / SmartSwitch DPU (`switch_type == "dpu"`) の特殊モード分岐も存在しない。
+[VOQ](../../reference/glossary.md#term-voq) Chassis (`is_chassis()`) / [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) (`switch_type == "dpu"`) の特殊モード分岐も存在しない。
 
 ### 動的 SAI capability 照会: なし
 
@@ -490,13 +488,13 @@ VOQ Chassis (`is_chassis()`) / SmartSwitch DPU (`switch_type == "dpu"`) の特�
 | `SAI_PORT_ATTR_EGRESS_SAMPLEPACKET_ENABLE` | tx / both 方向のポートサンプリング有効化 |
 | `SAI_SAMPLEPACKET_ATTR_SAMPLE_RATE` | サンプリングレート (uint32_t) |
 
-SAI がエラーを返した場合は `handleSaiCreateStatus` / `handleSaiSetStatus` / `handleSaiRemoveStatus` 経由でログを出力し `it++; continue` でスキップする。BFD のような software fallback 経路は存在しない。
+SAI がエラーを返した場合は `handleSaiCreateStatus` / `handleSaiSetStatus` / `handleSaiRemoveStatus` 経由でログを出力し `it++; continue` でスキップする。[BFD](../../reference/glossary.md#term-bfd) のような software fallback 経路は存在しない。
 
 ### ASIC ベンダー別傾向 (SAI 実装依存)
 
 `sfloworch.cpp` 自体はベンダー文字列を参照しないが、SAI 実装ごとの典型的な対応状況:
 
-| ASIC / プラットフォーム | hardware sFlow | 備考 |
+| [ASIC](../../reference/glossary.md#term-asic) / プラットフォーム | hardware sFlow | 備考 |
 |---|---|---|
 | broadcom (Trident3 / Tomahawk) | あり | SAI samplepacket API 実装済み |
 | broadcom-dnx (Jericho / Qumran) | 機種依存 | DNX SAI で一部制限あり |
@@ -512,3 +510,5 @@ SAI がエラーを返した場合は `handleSaiCreateStatus` / `handleSaiSetSta
     ハードウェアサンプリングは機能しない（SAI エラーをログ出力してスキップ）。
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: 28c459c47e18 -->
