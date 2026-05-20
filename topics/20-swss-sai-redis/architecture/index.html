@@ -35277,7 +35277,7 @@
     ORCH --&gt; ASICDB
     ORCH --&gt; STDB
     ASICDB --&gt; SD --&gt; SAI --&gt; ASIC
-    SAI -.failure.-&gt; SD --&gt; ERRDB
+    SAI -.failure.-&gt; SD -.ASIC_DB notify.-&gt; ORCH --&gt; ERRDB
     SD --&gt; STDB
     SD --&gt; CTRDB</code></pre>
 <h2 id="db">DB ごとの責務<a class="headerlink" href="#db" title="Permanent link">&para;</a></h2>
@@ -35287,7 +35287,7 @@
 <p><a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> と <a href="../../../reference/glossary/#term-asic_db">ASIC_DB</a> は、書き手と読み手が別プロセスに分かれる。Redis に直に SET するのではなく、<a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> / <a href="../../../reference/glossary/#term-consumerstatetable">ConsumerStateTable</a> を介して「key の変更通知」を queue として渡す。これにより読み手側は変更分だけを取り出して処理できる。ZMQ ベースに置き換える設計は <a href="../../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a> を読む。</p>
 <p>ASIC_DB 側は sairedis が非同期に消費し、SAI 呼び出しに変換する。SAI 呼び出しの結果は完了通知や ERROR_DB を介して orchagent に戻る。これが「orchagent が ASIC_DB に書いたら、すぐ ASIC に入っているとは限らない」根拠である。</p>
 <h2 id="syncd-sai">syncd と SAI の境界<a class="headerlink" href="#syncd-sai" title="Permanent link">&para;</a></h2>
-<p>syncd は ASIC_DB を消費し、SAI API を呼ぶ唯一の場所である。ベンダごとの SAI 実装は libsai に隠れ、syncd と orchagent はベンダ非依存に保たれる。SAI 失敗は syncd で観測され、<code>handleSaiSetStatus</code>/<code>handleSaiCreateStatus</code> 系の virtual で処理される。fatal なものは crash、recoverable なものは ERROR_DB / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> 経由で上位に通知する設計である。詳細は <a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング</a> と <a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework</a> を読む。</p>
+<p>syncd は ASIC_DB を消費し、SAI API を呼ぶ唯一の場所である。ベンダごとの SAI 実装は libsai に隠れ、syncd と orchagent はベンダ非依存に保たれる。SAI 失敗は syncd で観測されると、ASIC_DB の notification channel 経由で orchagent に通知され、orchagent 側の <code>Orch</code> クラスの virtual メソッド <code>handleSaiSetStatus</code> / <code>handleSaiCreateStatus</code> 系で分類される（<code>handleSai*Status</code> は syncd ではなく orchagent 側に定義されている）。fatal なものは crash、recoverable なものは ERROR_DB / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> 経由で上位に通知する設計だが、<code>ERROR_DB</code> 自体は <a href="../../../reference/glossary/#term-hld">HLD</a> 提案であり実装は未完である (<a href="../../../architecture/error-handling-framework-in-sonic-limitations/">error-handling-framework-in-sonic-limitations</a>)。詳細は <a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング</a> と <a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework</a> を読む。</p>
 <h2 id="_2">機能章はこの絵のどこを使うか<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35324,7 +35324,7 @@
 <li><a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）</a></li>
 <li><a href="../../../architecture/error-handling-framework-in-sonic/">Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）</a></li>
 </ul>
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 167700005048 -->
 
 
 

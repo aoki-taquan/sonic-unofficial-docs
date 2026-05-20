@@ -35409,10 +35409,9 @@
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  func_len  = 16
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  arg_len   = 0
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>SRV6_MY_SIDS|&lt;sid&gt;:
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  locator  = &lt;locator_name&gt;
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  behavior = end.dt46
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  vrf      = Vrf01
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>SRV6_MY_SIDS|&lt;locator_name&gt;|&lt;ip_prefix&gt;:
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  action = end.dt46
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  vrf    = Vrf01
 </span></code></pre></div>
 <p><code>SRv6Mgr</code> は locator 不在のまま SID が来た場合に <code>SRV6_MY_LOCATORS</code> を subscribe して deferred 解決する経路を持つため、locator と SID の投入順序を厳密にそろえる必要はありません。</p>
 <h2 id="srv6-base">SRv6 base スキーマ<a class="headerlink" href="#srv6-base" title="Permanent link">&para;</a></h2>

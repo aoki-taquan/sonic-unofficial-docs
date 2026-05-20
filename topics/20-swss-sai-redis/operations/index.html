@@ -35526,8 +35526,8 @@
 </tr>
 <tr>
 <td>13</td>
-<td>ERROR_DB</td>
-<td>SAI 失敗の app 通知</td>
+<td>CHASSIS_STATE_DB</td>
+<td><a href="../../../reference/glossary/#term-voq">VOQ</a> chassis 用の chassis state</td>
 </tr>
 <tr>
 <td>14</td>
@@ -35536,6 +35536,10 @@
 </tr>
 </tbody>
 </table>
+<div class="admonition warning">
+<p class="admonition-title">ERROR_DB は未実装</p>
+<p><code>ERROR_DB</code> は HLD 上の提案で <code>database_config.json</code> には登録されておらず、<code>sonic-swss-common/common/schema.h</code> にもテーブル define は存在しません。詳細は <a href="../../../architecture/error-handling-framework-in-sonic-limitations/">error-handling-framework-in-sonic-limitations</a> を参照してください。以下の <code>redis-cli -n 13</code> ベースの ERROR_DB 確認手順はあくまで HLD ベースの参考例で、現状の master では機能しません。</p>
+</div>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ASIC_STATE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;PORT_TABLE|*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
@@ -35748,7 +35752,7 @@
 <li><a href="../../19-build-packaging/">Build / Packaging 章</a>（FEATURE / <a href="../../../reference/glossary/#term-hostcfgd">hostcfgd</a> との関係）</li>
 <li><a href="../../17-srv6-mpls/operations/">SRv6 / MPLS 章</a>（SAI 失敗の実例）</li>
 </ul>
-<!-- glossary-links-injected: 818483293d52 -->
+<!-- glossary-links-injected: 841e6cdca746 -->
 
 
 

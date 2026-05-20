@@ -35526,8 +35526,8 @@
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="m">7</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;func_len&quot;</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="m">8</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;16&quot;</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;SRV6_MY_SIDS|*&quot;</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SRV6_MY_SIDS|loc1|fc00:0:1:e000::|uN&quot;</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SRV6_MY_SIDS|loc1|fc00:0:1:e001::|uA&quot;</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SRV6_MY_SIDS|loc1|fc00:0:1:e000::&quot;</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;SRV6_MY_SIDS|loc1|fc00:0:1:e001::&quot;</span>
 </span></code></pre></div>
 <p><code>uA</code> / <code>End.X</code> の SID は <code>nexthop</code> フィールドに紐づく nexthop IP が <strong>既知の neighbor</strong> でないと FRR / <code>srv6orch</code> は pending 扱いになります。</p>
 <h3 id="frr">FRR への配線確認<a class="headerlink" href="#frr" title="Permanent link">&para;</a></h3>

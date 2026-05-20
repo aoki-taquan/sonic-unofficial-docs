@@ -35524,7 +35524,7 @@
 <h3 id="4-controller-punt-flow-match-trap">4. controller の punt flow に match する trap が発火しているか<a class="headerlink" href="#4-controller-punt-flow-match-trap" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$<span class="w"> </span>aclshow<span class="w"> </span>-a
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>admin@sonic:~$<span class="w"> </span>show<span class="w"> </span>ip<span class="w"> </span>access-lists
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;USER_WATERMARKS|COPP_*&quot;</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;USER_WATERMARKS|COPP_*&quot;</span>
 </span></code></pre></div>
 <p><code>aclshow</code> で punt 用 <a href="../../../reference/glossary/#term-acl">ACL</a> の counter が増えるか、CoPP queue の counter が増えるかを見ます。</p>
 <h3 id="_2">よくある罠<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>

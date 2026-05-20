@@ -5982,17 +5982,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        まず層を分ける
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#application-extension" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6015,7 +6004,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章での読み方
@@ -6026,7 +6015,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         他章との境界
@@ -6037,7 +6026,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         読了後にできること
@@ -6048,7 +6037,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -6059,7 +6048,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -35340,17 +35329,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        まず層を分ける
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#application-extension" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35373,7 +35351,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章での読み方
@@ -35384,7 +35362,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         他章との境界
@@ -35395,7 +35373,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         読了後にできること
@@ -35406,7 +35384,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35417,7 +35395,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -35582,7 +35560,6 @@
 </tbody>
 </table>
 <h2 id="_7">まず層を分ける<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h2 id="_8">まず層を分ける<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -35649,15 +35626,15 @@
 <p>Inbox の機能 docker（bgp、<a href="../../../reference/glossary/#term-teamd-teamsyncd-teammgrd">teamd</a>、snmp 等）はすべて <code>sonic-buildimage</code> ツリーで一緒にビルドされ、ONIE installer に焼き込まれる。一方、3rd party や任意の docker を <strong>後から</strong> 入れて、<code>config feature</code> と同じ管理面で扱いたいケースが増えた。SPM はこれを満たすために、<code>sonic-package-manager install</code> で <code>FEATURE</code> テーブルへの登録、<code>docker_image_ctl</code> 経由の起動、warm reboot / showtech / syslog のフックを揃える設計になっている。詳細は <a href="../../../architecture/sonic-application-extension-infrastructure/">Application Extension Infrastructure</a> を参照する。</p>
 <h2 id="build-profile-rfs-split-debian-cadence">なぜ build profile / RFS split / Debian cadence が並ぶのか<a class="headerlink" href="#build-profile-rfs-split-debian-cadence" title="Permanent link">&para;</a></h2>
 <p>build profile は「フラグ一式の再現性」、RFS split は「直列ルールの並列化」、Debian cadence は「base 入れ替えのリズム」と、それぞれ別の遅さを解消する。注意点として、build profile HLD は現行 master に取り込まれていない提案であり、RFS split は HLD の単一フラグでなく <code>RFS_SPLIT_FIRST_STAGE</code> / <code>RFS_SPLIT_LAST_STAGE</code> の 2 段フラグで実装されている。HLD と実装の差は各ページ冒頭の裏取りバナーに明記してある。</p>
-<h2 id="_9">この章での読み方<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">この章での読み方<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>ビルド時間や CI を改善したい場合は <a href="../architecture/">アーキテクチャ</a> から入る。SPM で docker を配布したい場合や <code>config feature</code> との接続を確認したい場合は <a href="../operations/">運用</a> を読む。ARM 向け移植や container 硬化、リリース品質判断は <a href="../advanced/">発展トピック</a> にまとめている。</p>
-<h2 id="_10">他章との境界<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">他章との境界<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>config feature</code> の挙動そのものや warm reboot との連携は <a href="../../11-reboot/">11 Reboot</a> と <a href="../operations/">運用</a> を読む。本章は SPM 側のフック定義に絞る。</li>
 <li>container ランタイムや k8s readiness probe の話は <a href="../../20-swss-sai-redis/">20 SWSS / SAI / Redis</a> や internals 章を参照する。本章は container 硬化の <strong>build/packaging 側の責務</strong> のみ扱う。</li>
 <li>開発者向け lab セットアップは <a href="../../21-lab-vs-developer/">21 Lab / Developer</a> を参照する。本章は image そのものを「作る／配布する」話に限定する。</li>
 </ul>
-<h2 id="_11">読了後にできること<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_10">読了後にできること<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li>「build を速くしたい」「機能を後付けしたい」「OS と docker のバージョンを別管理したい」のどれかという質問を、対応する HLD に振り分けられる。</li>
 <li>build profile・RFS split・Debian cadence がそれぞれ別の遅さに対処していることを 1 行で説明できる。</li>
@@ -35665,7 +35642,7 @@
 <li>container 硬化や ARM 対応など、横断トピックを「build か packaging か」の軸で分類できる。</li>
 <li>各 HLD ページ冒頭の裏取りバナーを見たとき、「これは master 実装済み」「これは提案段階」を区別する目を持てる。</li>
 </ul>
-<h2 id="_12">関連ページ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../architecture/build-system-improvements/">Build system improvements</a></li>
 <li><a href="../../../architecture/build-profiles/">Build profiles</a></li>
@@ -35673,7 +35650,7 @@
 <li><a href="../../../architecture/sonic-application-extension-infrastructure/">Application Extension Infrastructure</a></li>
 </ul>
 <!-- xref-prereq -->
-<h2 id="_13">この章の前提知識<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_12">この章の前提知識<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <p>この章を読み進める前に、次の章を押さえておくと迷子になりにくい。</p>
 <ul>
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>

@@ -35636,6 +35636,10 @@
 <h2 id="1-asic-redis-instance">シナリオ 1: 単一 ASIC + 単一 Redis instance (既定)<a class="headerlink" href="#1-asic-redis-instance" title="Permanent link">&para;</a></h2>
 <p>ホワイトボックス 1 台に SONiC を入れたときの既定構成です。何もしなくてもこの形になります。</p>
 <h3 id="database_configjson">database_config.json (既定)<a class="headerlink" href="#database_configjson" title="Permanent link">&para;</a></h3>
+<div class="admonition note">
+<p class="admonition-title">簡略化例</p>
+<p>以下は読み解き用に主要 DB のみを抜粋した簡略例です。実機 (VS platform <code>sonic-buildimage/platform/vs/docker-sonic-vs/database_config.json</code>) では <code>GB_COUNTERS_DB</code> / <code>GB_FLEX_COUNTER_DB</code> / <code>CHASSIS_APP_DB</code> / <code>APPL_STATE_DB</code> / <code>DPU_APPL_DB</code> / <code>DPU_APPL_STATE_DB</code> / <code>DPU_STATE_DB</code> / <code>DPU_COUNTERS_DB</code> などの SmartSwitch / VOQ chassis 向け追加 DB が含まれ、<code>LOGLEVEL_DB</code> / <code>RESTAPI_DB</code> / <code>persistence_for_warm_boot</code> フィールドは存在しません。</p>
+</div>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;INSTANCES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;redis&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>

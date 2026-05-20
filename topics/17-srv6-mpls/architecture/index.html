@@ -35279,12 +35279,12 @@
 <h1 id="_1">アーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p><a href="../../../reference/glossary/#term-srv6">SRv6</a> / <a href="../../../reference/glossary/#term-mpls">MPLS</a> / Path Tracing は別機能ですが、<a href="../../../reference/glossary/#term-sonic">SONiC</a> 内部では「<a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> → <a href="../../../reference/glossary/#term-orchagent">orchagent</a> → <a href="../../../reference/glossary/#term-sai">SAI</a> → <a href="../../../reference/glossary/#term-asic">ASIC</a>」「<a href="../../../reference/glossary/#term-frr">FRR</a>/netlink → <a href="../../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> → APP_DB → orchagent → SAI」という同じ 2 系統のデータ経路に乗ります。ここでは feature ごとの object flow を、その共通図に当てはめて読みます。</p>
 <h2 id="srv6-object-flow">SRv6 の object flow<a class="headerlink" href="#srv6-object-flow" title="Permanent link">&para;</a></h2>
-<p>SRv6 の中核は <code>srv6orch</code> で、CONFIG_DB の <code>SRV6_MY_SID_TABLE</code> / <code>SRV6_SID_LIST</code> / <code>SRV6_POLICY</code> / <code>SRV6_STEER</code> を読み、SAI の <code>SAI_MY_SID_ENTRY_*</code> や <code>SAI_OBJECT_TYPE_SRV6_SIDLIST</code> を組み立てます。Static SID 経路では <code>bgpcfgd</code> の <code>SRv6Mgr</code> が CONFIG_DB の <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> を受け、<code>vtysh</code> で FRR に <code>segment-routing srv6 static-sids</code> を書き込みます。</p>
+<p>SRv6 の中核は <code>srv6orch</code> で、APP_DB の <code>SRV6_MY_SID_TABLE</code> / <code>SRV6_SID_LIST</code> / <code>SRV6_POLICY</code> / <code>SRV6_STEER</code> を読み、SAI の <code>SAI_MY_SID_ENTRY_*</code> や <code>SAI_OBJECT_TYPE_SRV6_SIDLIST</code> を組み立てます。Static SID 経路では <code>bgpcfgd</code> の <code>SRv6Mgr</code> が CONFIG_DB の <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> を受け、<code>vtysh</code> で FRR に <code>segment-routing srv6 static-sids</code> を書き込みます。</p>
 <pre class="mermaid"><code>flowchart LR
   CFG[CONFIG_DB&lt;br/&gt;SRV6_MY_LOCATORS / SRV6_MY_SIDS] --&gt; SMGR[bgpcfgd&lt;br/&gt;SRv6Mgr]
   SMGR --&gt;|vtysh| FRR[FRR zebra / mgmtd]
   FRR --&gt;|netlink| FPM[fpmsyncd]
-  CFG2[CONFIG_DB&lt;br/&gt;SRV6_MY_SID_TABLE / SRV6_SID_LIST / SRV6_POLICY / SRV6_STEER] --&gt; SRC[srv6orch]
+  CFG2[APP_DB&lt;br/&gt;SRV6_MY_SID_TABLE / SRV6_SID_LIST / SRV6_POLICY / SRV6_STEER] --&gt; SRC[srv6orch]
   FPM --&gt; APP[APP_DB&lt;br/&gt;SRV6_MY_SID / route]
   APP --&gt; SRC
   SRC --&gt;|MY_SID_ENTRY&lt;br/&gt;SRV6_SIDLIST&lt;br/&gt;NEXT_HOP| SAI[SAI / syncd]
