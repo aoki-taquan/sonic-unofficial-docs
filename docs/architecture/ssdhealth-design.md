@@ -12,21 +12,12 @@ sources:
   path: doc/ssdhealth/ssdhealth_design.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - SNMP
-  - SNMP_AGENT_ADDRESS_CONFIG
-  - SNMP_COMMUNITY
-  - SNMP_USER
-  - SNMP_TRAP_CONFIG
-  - MGMT_VRF_CONFIG
+  config_db: []
   cli:
   - show platform ssdhealth
   - ssdhealth
   - show platform
-  - config snmp
-  - show snmpagentaddress
-  yang:
-  - sonic-snmp
+  yang: []
 ---
 
 !!! danger "裏取りステータス: discrepancy-found"
@@ -251,7 +242,7 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 
     | 項目 | HLD | 現行 master | 結果 |
     |------|-----|------|------|
-    | `SsdBase` 基底クラス | 必須 | `sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py` に基底定義 | ✓ |
+    | `SsdBase` 基底クラス | 必須 | master では `sonic-platform-common/sonic_platform_base/sonic_storage/storage_base.py` 等に再構成（旧パス `sonic_ssd/ssd_base.py` は存在せず） | △ パス変更 |
     | `SsdUtil` ベンダー派生 | 必須 | `device/{vendor}/platform/plugins/ssdutil.py` の plugin 取り込み | ✓ |
     | `show platform ssdhealth [verbose\|vendor]` | 必須 | `sonic-utilities/show/platform.py` のサブコマンドに該当 | ✓ |
     | `ssdmond` 常時監視デーモン | Open Question | 現行 `sonic-platform-daemons/` 配下に `ssdmond` 名のデーモン無し | ⚠️ 未取り込み |
@@ -378,9 +369,6 @@ sudo smartctl -A /dev/sda
 
 - [`show platform ssdhealth` CLI リファレンス](../reference/cli/show-platform.md)
 - [`show platform` CLI リファレンス](../reference/cli/show-platform.md)
-- [`config snmp` CLI リファレンス](../reference/cli/config-snmp.md)
-- [`show snmpagentaddress` CLI リファレンス](../reference/cli/show-snmpagentaddress.md)
-- [`SNMP` CONFIG_DB スキーマ](../reference/config-db/snmp.md)
 
 <!-- augmented-links: v1 -->
 

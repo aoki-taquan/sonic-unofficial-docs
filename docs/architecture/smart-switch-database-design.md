@@ -15,8 +15,6 @@ related:
   - VNET
   - ACL_RULE
   - ACL_TABLE
-  - SWITCH_TRIMMING
-  - SWITCH_HASH
   - DPU
   cli:
   - show acl

@@ -83,7 +83,7 @@ flowchart LR
     TIMER[周期 timer] --> SSDMOND[ssdmond]
     SSDMOND --> SB[SsdBase.get_disk_health]
     SB -->|health < threshold| ALERT[syslog / SNMP trap]
-    SB -->|health OK| OK[STATE_DB 更新]
+    SB -->|health OK| OK[STATE_DB 更新<br/>※ HLD 外・実装依存]
 ```
 
 > 現行 master では `ssdmond` は取り込まれていない。詳細は [ssdhealth-design-limitations.md](ssdhealth-design-limitations.md) を参照。

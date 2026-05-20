@@ -14,11 +14,7 @@ related:
   - TELEMETRY
   - GNMI
   cli:
-  - config apply-patch
-  - config replace
-  - config rollback
-  - config checkpoint
-  - config list-checkpoints
+  - show running-configuration
   yang:
   - sonic-system-defaults
 ---

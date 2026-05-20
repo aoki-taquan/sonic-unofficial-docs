@@ -9,11 +9,9 @@ sources:
   path: doc/sonic-multi-architecture/sonic_arm_support.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - STATIC_ROUTE
+  config_db: []
   cli: []
-  yang:
-  - sonic-static-route
+  yang: []
   _no_related_cli: true
 ---
 
@@ -200,14 +198,5 @@ Broadcom SAI を 3.7.3.2 にアップグレード後、Tomahawk3 (TH3) の SDK i
 
 [^1]: `sonic-net/SONiC` `doc/sonic-multi-architecture/sonic_arm_support.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-
-## 参考リンク
-
-本ページに関連する参照ドキュメント:
-
-- [`STATIC_ROUTE` CONFIG_DB スキーマ](../reference/config-db/static-route.md)
-- [`sonic-static-route` YANG モジュール](../reference/yang/sonic-static-route.md)
-
-<!-- augmented-links: v1 -->
 
 <!-- glossary-links-injected: 167700005048 -->

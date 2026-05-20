@@ -203,19 +203,6 @@ redis-cli -n 4 keys 'DEBUG_COUNTER|*'
 sudo grep -Ei 'drop|illegal' /var/log/syslog | tail -50
 ```
 
-### コマンド例: Illegal packet drop 確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# Drop counter で illegal-packet 系を抽出
-show dropcounters counts
-redis-cli -n 4 keys 'DEBUG_COUNTER|*'
-# orchagent の drop reason 反映ログ
-sudo grep -Ei 'drop|illegal' /var/log/syslog | tail -50
-```
-
 ## 裏取り済み実装位置 (2026-05-11)
 
 - RIF → Port aggregation テーブル: `sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py` L34-L38, L42 (`RIF_DROPS_AGGR_MAP`、`SAI_PORT_STAT_IF_IN_OCTETS` → `SAI_ROUTER_INTERFACE_STAT_IN_OCTETS` 等)
