@@ -18,7 +18,7 @@ related:
   - VNET
   - VLAN
   - VRF
-  - VNET_ROUTE_TUNNEL
+  - VNET_ROUTE_TUNNEL_TABLE
   cli:
   - config vxlan
   - config vnet
