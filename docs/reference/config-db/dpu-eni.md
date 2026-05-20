@@ -101,8 +101,8 @@ REMOTE_DPU|<dpu_name>
 |----------|----|------|------|
 | `pa_ipv4` | IPv4 アドレス (string) | **必須** | リモート DPU の PA。VxLAN トンネルの内部 NH として使用 |
 | `pa_ipv6` | IPv6 アドレス (string) | 省略可 | リモート DPU の PA IPv6 アドレス |
-| `npu_ipv4` | IPv4 アドレス (string) | **必須** | リモート SmartSwitch の NPU IP。VxLAN トンネルの宛先 (outer IP) |
-| `npu_ipv6` | IPv6 アドレス (string) | 省略可 | リモート SmartSwitch の NPU IPv6 アドレス |
+| `npu_ipv4` | IPv4 アドレス (string) | **必須** | リモート SmartSwitch の [NPU](../../reference/glossary.md#term-npu) IP。VxLAN トンネルの宛先 (outer IP) |
+| `npu_ipv6` | IPv6 アドレス (string) | 省略可 | リモート SmartSwitch の [NPU](../../reference/glossary.md#term-npu) IPv6 アドレス |
 
 REMOTE_DPU は `dpu_type_t::CLUSTER` として登録される。必須フィールド (`pa_ipv4`, `npu_ipv4`) が欠けると `Request::parse()` が例外を投げてスキップされる。
 
@@ -550,7 +550,7 @@ ENI の MAC アドレス（例: `f4:93:9f:ef:c4:7e`）は `EniInfo::formatMac()`
 | APPL_DB: ACL_TABLE_TYPE_TABLE / ACL_TABLE_TABLE | SET / DEL あり | `addAclTable()` / `deleteAclTable()` — `dashenifwdorch.cpp:603-648` |
 | APPL_DB: ACL_RULE_TABLE | SET / DEL あり | `createAclRule()` / `deleteAclRule()` — `dashenifwdorch.cpp:574-601` |
 | [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `state_db` / `StateDBConnector` 参照なし |
-| [ASIC_DB](../../reference/glossary.md#term-asic_db) | [SAI](../../reference/glossary.md#term-sai) 経由で間接更新 (AclOrch が担当) | AclOrch が `ACL_RULE_TABLE` を購読して SAI 操作 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | [SAI](../../reference/glossary.md#term-sai) 経由で間接更新 (AclOrch が担当) | AclOrch が `ACL_RULE_TABLE` を購読して [SAI](../../reference/glossary.md#term-sai) 操作 |
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | [CRM](../../reference/glossary.md#term-crm) 連携なし |
 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | Flex カウンタ設定なし |
 
@@ -605,7 +605,7 @@ APPL_DB の DB ID は `0` であり上記の `if` に該当しないため、**[
 
 ### 出力側 — ACL テーブルへの ProducerStateTable 書き込み
 
-`EniFwdCtxBase` はコンストラクタで 3 本の `ProducerStateTable` を生成し (`dashenifwdorch.cpp:403-405`)、後段の `AclOrch` が同じ [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) パターンで受け取って SAI へ反映する。
+`EniFwdCtxBase` はコンストラクタで 3 本の `ProducerStateTable` を生成し (`dashenifwdorch.cpp:403-405`)、後段の `AclOrch` が同じ [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) パターンで受け取って [SAI](../../reference/glossary.md#term-sai) へ反映する。
 
 | 出力テーブル | [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 変数 | 後段購読者 |
 |------------|------------------------|-----------|
@@ -679,4 +679,4 @@ if (gMySwitchSubType == "SmartSwitch")
 | multi-asic | SmartSwitch 構成では単一 [ASIC](../../reference/glossary.md#term-asic) を想定。multi-asic では DashEniFwdOrch 非起動 | `orchdaemon.cpp:613` |
 <!-- /platform -->
 
-<!-- glossary-links-injected: 2eb9de1b0fa8 -->
+<!-- glossary-links-injected: d1159e193828 -->
