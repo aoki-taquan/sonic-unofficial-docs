@@ -18,6 +18,7 @@ related:
   yang:
     - openconfig-network-instance
     - openconfig-local-routing
+    - openconfig-local-routing-ext
 ---
 
 <!-- topics-tip -->
