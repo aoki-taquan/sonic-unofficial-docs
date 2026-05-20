@@ -39,9 +39,6 @@ flowchart LR
   C2[("CONFIG_DB<br/>SFLOW_SESSION")]
   Y --> C2
   C2 --> D1
-  C3[("CONFIG_DB<br/>SFLOW_COLLECTOR")]
-  Y --> C3
-  C3 --> D1
 ```
 
 !!! note "凡例"

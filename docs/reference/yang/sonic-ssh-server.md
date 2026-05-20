@@ -61,7 +61,7 @@ flowchart LR
 
 - [`config ssh`](../cli/config-ssh.md)
 
-### 関連 YANG モジュール
+### 関連 HLD
 
 - [sonic-banner YANG](../../reference/yang/sonic-banner.md)
 - [sonic-fips YANG](../../reference/yang/sonic-fips.md)

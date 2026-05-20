@@ -34,10 +34,8 @@ flowchart LR
   Y["sonic-vnet"]
   C1[("CONFIG_DB<br/>VNET")]
   Y --> C1
-  D1["vxlanmgrd"]
-  D1b["vrfmgrd"]
+  D1["vrfmgrd"]
   C1 --> D1
-  C1 --> D1b
   C2[("CONFIG_DB<br/>VNET_ROUTE")]
   Y --> C2
   D2["VNetCfgRouteOrch"]
