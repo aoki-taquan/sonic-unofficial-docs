@@ -35490,7 +35490,7 @@
 <p>「edge / management サービス」は、ToR や management スイッチに乗っている付帯機能の集合で、<a href="../../../reference/glossary/#term-sonic">SONiC</a> では大きく 4 群に分けて読むと混乱しません。L3 forwarding 章で扱う routing そのものとは別の層であり、共通点は「container 単位で隔離された daemon が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> を読んで OS パッケージや iptables を駆動する」点にあります。</p>
 <h2 id="4">4 つの責務<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../../reference/glossary/#term-nat">NAT</a>: data plane でのアドレス書換。<code>docker-nat</code> の <code>natmgrd</code> / <code>natsyncd</code> が CONFIG_DB を読み、Linux iptables の conntrack エントリと <a href="../../../reference/glossary/#term-sai">SAI</a> NAT 属性を同期します。SONiC では iptables ↔ SAI の二重管理がポイントです。</li>
+<li><a href="../../../reference/glossary/#term-nat">NAT</a>: data plane でのアドレス書換。<code>docker-nat</code> の <code>natmgrd</code> が CONFIG_DB を読み、<code>natsyncd</code> が kernel conntrack を観測して、Linux iptables の conntrack エントリと <a href="../../../reference/glossary/#term-sai">SAI</a> NAT 属性を同期します。SONiC では iptables ↔ SAI の二重管理がポイントです。</li>
 <li>DHCP relay: client broadcast を upstream server へ unicast 中継する agent。<code>docker-dhcp-relay</code> 内の ISC 由来 <code>dhcrelay</code> を <a href="../../../reference/glossary/#term-vlan">VLAN</a> 単位で起動し、<code>dhcpmon</code> が監視と counter を持ちます。v4 と v6 で別プロセスです。</li>
 <li>DHCP server: kea ベースのポートベース server。<code>docker-dhcp-server</code> の <code>dhcpservd</code> が CONFIG_DB の <code>DHCP_SERVER_IPV4*</code> を読んで <code>kea-dhcp4.conf</code> を生成し、relay 側と Option 82 で連携します。</li>
 <li>Time / DNS: chrony（旧 ntpd）と静的 resolv.conf。OS レイヤの daemon が management <a href="../../../reference/glossary/#term-vrf">VRF</a> 内で外向き通信します。CONFIG_DB の <code>NTP_*</code> / <code>DNS_NAMESERVER</code> から生成される設定ファイルが入口です。</li>
@@ -35578,7 +35578,7 @@
 <h3 id="_5">用語の最短整理<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong><code>natmgrd</code></strong>: CONFIG_DB の <code>STATIC_NAT</code> / <code>STATIC_NAPT</code> / <code>NAT_POOL</code> / <code>NAT_BINDINGS</code> / <code>NAT_GLOBAL</code> を読んで iptables と APP_DB に展開する</li>
-<li><strong><code>natsyncd</code></strong>: conntrack エントリを観測し APP_DB と <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に同期する</li>
+<li><strong><code>natsyncd</code></strong>: kernel netlink (conntrack) を購読し、動的 NAT エントリを APP_DB に書き込む（<a href="../../../reference/glossary/#term-state_db">STATE_DB</a> は warm restart 用 <code>STATE_NAT_RESTORE_TABLE</code> を read-only で参照するのみ）</li>
 <li><strong>SAI NAT object</strong>: ASIC 側 NAT エントリ。fast path に乗せるためのもの</li>
 <li><strong><code>dhcrelay</code></strong>: ISC dhcp 由来。VLAN 1 本に 1 process が標準</li>
 <li><strong><code>dhcpmon</code></strong>: relay のヘルスとパケット counter を取る別 process。<code>COUNTERS_DB</code> に書く</li>

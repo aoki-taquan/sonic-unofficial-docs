@@ -35513,7 +35513,7 @@
 </ul>
 <h2 id="_7">トラブルシュート観点<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>NAT セッションが超過しているときは、<code>show nat translations count</code> で current/max を確認し、<code>config nat add timeout</code> で aging を短縮する。<code>SAI_STATUS_INSUFFICIENT_RESOURCES</code> が <a href="../../../reference/glossary/#term-syncd">syncd</a> ログに出る場合は TCAM 物理上限到達。</li>
+<li>NAT セッションが超過しているときは、<code>show nat translations count</code> で current/max を確認し、<code>config nat set timeout</code> で aging を短縮する。<code>SAI_STATUS_INSUFFICIENT_RESOURCES</code> が <a href="../../../reference/glossary/#term-syncd">syncd</a> ログに出る場合は TCAM 物理上限到達。</li>
 <li>DHCP relay で <code>discover</code> が forward されない場合、<code>show dhcp_relay ipv4 helper</code> で helper IP の到達性、<a href="../../../reference/glossary/#term-vlan">VLAN</a> 上の broadcast bind、Option 82 の <code>link-selection</code> が relay/server で一致しているかを点検する。</li>
 <li>chrony が NTP sync しないときは、<code>chronyc tracking</code> / <code>chronyc sources -v</code> で Stratum / reach、<code>chronyc activity</code> で source 数を確認。mgmt VRF 配下では <code>bindaddress</code> の固定が必須。</li>
 </ul>

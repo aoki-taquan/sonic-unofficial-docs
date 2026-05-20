@@ -35512,7 +35512,7 @@
 </tr>
 </tbody>
 </table>
-<p>両者が同じ基盤を使うため、<code>has_per_dpu_scope</code> / <code>has_per_asic_scope</code> / <code>has_global_scope</code> の関係や <code>featured</code> の動作は <a href="../../01-overview/">Multi-ASIC / VOQ 章</a> 寄りで扱われる想定です。混同を避けるため、本章では「DPU レイヤの話だけ」を扱います。</p>
+<p>両者が同じ基盤を使うため、<code>has_per_dpu_scope</code> / <code>has_per_asic_scope</code> / <code>has_global_scope</code> の関係や <code>featured</code> の動作は <a href="../../12-multi-asic-voq/">Multi-ASIC / VOQ 章</a> 寄りで扱われる想定です。混同を避けるため、本章では「DPU レイヤの話だけ」を扱います。</p>
 <h2 id="platform">Platform 章との境界<a class="headerlink" href="#platform" title="Permanent link">&para;</a></h2>
 <p>DPU の PCIe / midplane / 電源 / リセットといった物理層は Platform 章 (PMON / sensor / firmware) と重なります。本章では運用フローの中で必要な範囲のみ触れ、ハードウェア抽象や <code>platform.json</code> の詳細は Platform 章に委ねます。</p>
 <h2 id="telemetry-counter">telemetry / counter<a class="headerlink" href="#telemetry-counter" title="Permanent link">&para;</a></h2>
@@ -35569,7 +35569,7 @@
 </ul>
 <h2 id="_6">ハンドオフ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../internals/">internals</a> と、関連 HLD の <a href="../../../overlay/sonic-dash-hld/">SONiC DASH HLD</a>, <a href="../../../system/smart-switch-reboot-high-level-design/">SmartSwitch reboot HLD</a>, <a href="../../../system/independent-dpu-upgrade/">Independent DPU upgrade</a> で完結する。DPU / NPU の責務分担、<code>DASH_APPL_DB</code>, <code>SDN_APPL_DB</code>, <code>DPU_APPL_DB</code> の関係性は internals で詳細化済み。</li>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../internals/">internals</a> と、関連 HLD の <a href="../../../overlay/sonic-dash-hld/">SONiC DASH HLD</a>, <a href="../../../system/smart-switch-reboot-high-level-design/">SmartSwitch reboot HLD</a>, <a href="../../../system/independent-dpu-upgrade/">Independent DPU upgrade</a> で完結する。DPU / NPU の責務分担、<code>APPL_DB</code> / <code>DPU_APPL_DB</code> / <code>DPU_STATE_DB</code> / <code>DPU_COUNTERS_DB</code> の関係性は internals で詳細化済み。</li>
 <li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>show dpu</code> / <code>show dash</code> 系、<code>DPU</code>, <code>DASH_ENI</code>, <code>DASH_VNET</code>, <code>DASH_ACL_GROUP</code>, <code>DASH_ROUTE</code> の <a href="../../../reference/config-db/">CONFIG_DB スキーマ</a>、および <code>sonic-dash-api</code> の proto / gRPC interface に集約。</li>
 <li><strong>本ページ</strong> は DASH counter aggregation、独立 reboot 順序、VNET tunnel との優先度競合、SmartSwitch HA / flow sync など、章境界をまたぐ発展領域だけを扱う。</li>
 </ul>

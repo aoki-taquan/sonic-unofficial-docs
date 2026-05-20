@@ -35496,7 +35496,7 @@
 <tr>
 <td><code>dhcprelay</code> (<code>dockers/docker-dhcp-relay</code>)</td>
 <td><code>isc-dhcp-relay</code> + <code>dhcpmon</code></td>
-<td>DHCPv4 / DHCPv6 relay。<code>dhcpmon</code> がカウンタを <code>STATE_DB</code> に書く</td>
+<td>DHCPv4 / DHCPv6 relay。<code>dhcpmon</code> がカウンタを <code>COUNTERS_DB</code> (<code>DHCPV4_COUNTER_TABLE</code> / <code>DHCPV6_COUNTER_TABLE</code>) に書く</td>
 </tr>
 <tr>
 <td><code>dhcp_server_ipv4</code> (<code>src/sonic-dhcp-server</code>)</td>
@@ -35561,16 +35561,17 @@
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">NAT_TABLE, NAPT_TABLE, NAT_TWICE_TABLE, NAPT_TWICE_TABLE</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="nt">STATE_DB</span><span class="p">:</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">NAT_TABLE, NAPT_TABLE, NAT_RESTORE_TABLE,</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">DHCP_SERVER_IPV4_LEASE,</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">DHCPv4_COUNTERS_TABLE, DHCPv6_COUNTERS_TABLE</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="nt">ASIC_DB</span><span class="p">:</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">NAT_ENTRY</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">DHCP_SERVER_IPV4_LEASE</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="nt">COUNTERS_DB</span><span class="p">:</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">DHCPV4_COUNTER_TABLE, DHCPV6_COUNTER_TABLE</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nt">ASIC_DB</span><span class="p">:</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">NAT_ENTRY</span>
 </span></code></pre></div>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
 <li>NAT: 通常の <a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> / SubscriberStateTable のみ。</li>
 <li><code>natsyncd</code> は <code>conntrack-tools</code> の netlink を直接 listen し、Redis に書く片方向経路。conntrack 自体が pub/sub ではない点に注意。</li>
-<li>DHCP: <code>dhcpmon</code> が pcap または syslog をパースする実装で、Redis 経由ではなく直接 counter を <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に書く。</li>
+<li>DHCP: <code>dhcpmon</code> が pcap または syslog をパースする実装で、Redis 経由ではなく直接 counter を <code>COUNTERS_DB</code> の <code>DHCPV4_COUNTER_TABLE</code> / <code>DHCPV6_COUNTER_TABLE</code> に書く。</li>
 <li>DNS: pub/sub 経路はありません。</li>
 </ul>
 <h2 id="_3">既知の実装上の制約<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -35591,7 +35592,7 @@
   KERNEL --&gt; RELAY[dhcprelayd / kea]
   RELAY --&gt;|unicast to server_vip| EGRESS[egress port]
   RELAY --&gt;|stats| DHCPMON[dhcpmon NFLOG]
-  DHCPMON --&gt; STATE[(STATE_DB&lt;br/&gt;DHCP_COUNTER_TABLE)]</code></pre>
+  DHCPMON --&gt; STATE[(COUNTERS_DB&lt;br/&gt;DHCPV4_COUNTER_TABLE / DHCPV6_COUNTER_TABLE)]</code></pre>
 <p><code>CoPP</code> の trap group <code>dhcp</code> / <code>dhcpv6</code> がデフォルトで設定され、レート制限は <code>COPP_TABLE</code> の <code>cir</code>/<code>cbs</code> で調整されます。dhcpmon の counter は NFLOG ベースで参考値扱いが妥当です。</p>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>

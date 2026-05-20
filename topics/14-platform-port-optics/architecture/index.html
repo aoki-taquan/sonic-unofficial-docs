@@ -35289,7 +35289,7 @@
   SAI --&gt;|create port, set attrs| ASIC[ASIC / PHY]
   ASIC --&gt;|notification| SAI
   SAI --&gt;|STATE_DB| OA
-  OA --&gt;|oper_status| APP[APP_DB]</code></pre>
+  OA --&gt;|oper_status| ST[STATE_DB]</code></pre>
 <p><code>port_config.ini</code> と <code>hwsku.json</code> で決まる初期プロファイルは <a href="../../../architecture/port-profile-init-hld/">port profile init HLD</a> で詳細化されています。設定が <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>PORT</code> に入ると、<code>PortMgr</code> と <code>portsyncd</code> を経由して <a href="../../../reference/glossary/#term-orchagent">orchagent</a> の <code>PortsOrch</code> に到達し、<a href="../../../reference/glossary/#term-sai">SAI</a> 経由で <a href="../../../reference/glossary/#term-asic">ASIC</a> に書かれます。</p>
 <h2 id="dynamic-breakout">Dynamic breakout<a class="headerlink" href="#dynamic-breakout" title="Permanent link">&para;</a></h2>
 <p>1 つの物理ケージを複数の論理 port に分割する dynamic breakout は、運用中に <code>PORT</code> 行を削除・再生成する操作として実装されています。詳細は <a href="../../../system/sonic-dynamic-port-breakout-feature-high-level-design/">dynamic port breakout HLD</a> を参照してください。breakout に伴って、buffer profile、queue、<a href="../../../reference/glossary/#term-acl">ACL</a> bind は再構築されるため、<a href="../../../reference/glossary/#term-qos">QoS</a> / ACL 章と影響範囲が重なります。</p>

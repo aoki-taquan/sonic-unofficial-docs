@@ -35582,7 +35582,7 @@
 </span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>編集後 <code>systemctl restart xcvrd</code> で再ロードされ、次回 link up 時から反映されます。<code>docker exec xcvrd cat /var/log/xcvrd.log</code> で <code>media_settings applied</code> のログを確認します。</p>
+<p>編集後 <code>docker exec pmon supervisorctl restart xcvrd</code> で再ロードされ、次回 link up 時から反映されます。<code>docker exec pmon tail -n 50 /var/log/syslog | grep xcvrd</code> で <code>media_settings applied</code> のログを確認します。</p>
 <h2 id="platform-capability">Platform capability ファイル<a class="headerlink" href="#platform-capability" title="Permanent link">&para;</a></h2>
 <p>ASIC や platform が「何ができるか」を宣言する capability ファイルは、port 設定や機能の可否を実行前に判別するために使われます。詳細は <a href="../../../platform/platform-capability-file-enhancement/">platform capability file enhancement</a> を参照してください。capability に書かれていない機能を設定で要求した場合、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> / SAI 層で reject されます。</p>
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>

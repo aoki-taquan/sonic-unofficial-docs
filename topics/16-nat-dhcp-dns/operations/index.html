@@ -35686,8 +35686,8 @@
 </tr>
 <tr>
 <td>DHCP relay counter</td>
-<td><code>STATE_DB</code> <code>DHCP_COUNTER_TABLE</code></td>
-<td><code>redis-cli -n 6 keys 'DHCP_COUNTER_TABLE*'</code></td>
+<td><code>COUNTERS_DB</code> <code>DHCPV4_COUNTER_TABLE</code> / <code>DHCPV6_COUNTER_TABLE</code></td>
+<td><code>redis-cli -n 2 keys 'DHCPV4_COUNTER_TABLE*'</code></td>
 </tr>
 <tr>
 <td>DHCP server 設定</td>

@@ -35545,7 +35545,7 @@
 </ol>
 <p>実装上の細部は <a href="../../../architecture/smartswitch-high-availability-manager-daemon-hamgrd-design/">HAMgrD 設計</a> と <a href="../../../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup/">DPU-Scope DPU-Driven HA HLD</a> を参照してください。</p>
 <h3 id="ha">HA 状態の確認<a class="headerlink" href="#ha" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@smartswitch:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DASH_HA_SET_TABLE:hasetA&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>admin@smartswitch:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DASH_HA_SET_TABLE:hasetA&#39;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;version&quot;</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;1&quot;</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="m">3</span><span class="o">)</span><span class="w"> </span><span class="s2">&quot;vip_v4&quot;</span>
@@ -35572,7 +35572,7 @@
 </span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="m">2026</span>-05-10T03:21:11.500<span class="w"> </span>WARN<span class="w"> </span>hamgrd<span class="o">[</span>hasetA<span class="o">]</span>:<span class="w"> </span>bulk<span class="w"> </span>sync<span class="w"> </span>timeout,<span class="w"> </span>retrying
 </span></code></pre></div>
 <p><code>ha_role</code> が両側 <code>active</code> のままなら split-brain、両側 <code>standby</code> なら controller / peer link 障害です。<code>STATE_DB</code> の <code>DPU_STATE</code> も併せて確認します。</p>
-<p>DPU 側にログインして見るときは <code>redis-cli -h redisdpu0 -n 6</code> で DPU 側 <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> に直接アタッチします（<code>docker exec -it database bash</code> 経由）。</p>
+<p>DPU 側にログインして見るときは <code>redis-cli -h redisdpu0 -n 0</code> で DPU 側 <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> に直接アタッチします（<code>docker exec -it database bash</code> 経由）。</p>
 <h3 id="ha-db">HA 障害ドメインの DB 対応表<a class="headerlink" href="#ha-db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
