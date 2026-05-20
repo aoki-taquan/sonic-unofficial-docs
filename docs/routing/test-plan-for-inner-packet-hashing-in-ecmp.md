@@ -57,7 +57,7 @@ related:
 | hash | 上記 7 フィールドをまとめた `inner_hash` |
 | rule | outer encap ごとに 8 ルール（NVGRE × {v4,v6}×{v4,v6} priority=2、VxLAN × {v4,v6}×{v4,v6} priority=1）。action=`SET_ECMP_HASH`、counter=ENABLED |
 
-VxLAN は L4 dst port = `0x3412 (4789)` をマッチ条件に含める。NVGRE は IP proto/IPv6 next header = `0x2f`[^1]。
+VxLAN は L4 dst port = `0x3412`（テストプラン固有の定数。ソース HLD の PBH 設定値で、標準 VxLAN UDP 4789 とは異なる）をマッチ条件に含める。NVGRE は IP proto/IPv6 next header = `0x2f`[^1]。
 
 ### 測定方法[^1]
 
@@ -84,7 +84,7 @@ inner tuple を固定し outer tuple を変えた 4000 packets を流すと **�
 
 - T0 トポロジ前提。他トポロジは将来拡張[^1]
 - ハッシュ偏差許容は 25%。少サンプルでは偏差が大きいので **1000 packets/nexthop** が下限
-- VxLAN dst port は `0x3412` 固定（little-endian で 4789）
+- VxLAN dst port は `0x3412` 固定（テストプラン固有の定数）
 
 ## 干渉する機能
 
