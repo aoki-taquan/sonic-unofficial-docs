@@ -53,7 +53,7 @@ related:
 
 ```mermaid
 flowchart LR
-    MGMT[eth0\n mgmt traffic] --> MV[mgmt VRF\n table 5000]
+    MGMT[eth0\n mgmt traffic] --> MV[mgmt VRF\n table 6000（HLD では 5000）]
     FPP[Front Panel Ports] --> DV[default VRF\n main table]
     MV -.->|never forwarded| DV
 ```
@@ -112,7 +112,7 @@ TACACS+ で `config tacacs add --use-mgmt-vrf <ip>` を打つと `TACPLUS_SERVER
 
 1. CONFIG_DB の `MGMT_VRF_CONFIG.mgmtVrfEnabled = true`
 2. `interfaces-config` を再起動 → `interfaces.j2` から `/etc/network/interfaces` を再生成し `networking` を再起動
-3. `mgmt` インタフェース（`type vrf table 5000`）と `lo-m`（NTP 内部通信用ダミーループバック）を作成
+3. `mgmt` インタフェース（`type vrf table 6000`、HLD では `5000` と記載）と `lo-m`（NTP 内部通信用ダミーループバック）を作成
 4. `eth0` を `mgmt` VRF に enslave（`ip link set dev eth0 master mgmt`）
 5. `l3mdev:mgmt` cgroup を作成
 
