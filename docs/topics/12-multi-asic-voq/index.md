@@ -98,12 +98,11 @@ Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC �
 
 | ページ | 状態 | verification |
 |---|---|---|
-| concept | ✅ 完成 (198 行) | meta |
-| architecture | ✅ 完成 (119 行) | meta |
-| setup | ✅ 完成 (270 行) | meta |
-| operations | ✅ 完成 (255 行) | meta |
-| internals | ✅ 完成 (171 行) | meta |
-| advanced | ✅ 完成 (145 行) | meta |
+| concept | ✅ 完成 (151 行) | meta |
+| setup | ✅ 完成 (232 行) | meta |
+| operations | ✅ 完成 (217 行) | meta |
+| internals | ✅ 完成 (140 行) | meta |
+| advanced | ✅ 完成 (108 行) | meta |
 
 <!-- /chapter-progress -->
 
