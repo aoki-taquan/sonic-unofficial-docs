@@ -180,7 +180,7 @@ vtysh -c 'show bgp neighbor <ip>'
 
 ### 段階 1 — Consumer 登録
 
-`bgpcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_NEIGHBOR_AF` テーブルを購読する。
+`frrcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_NEIGHBOR_AF` テーブルを購読する。
 
 `BGP_NEIGHBOR_AF` は `<vrf>|<neighbor>|<af>` の key 構造。
 

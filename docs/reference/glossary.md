@@ -1353,8 +1353,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [BFD](#term-bfd)
 
-- [APPL_DB BFD_SESSION_TABLE (bfdorch)](config-db/bfd-orch.md) (181)
 - [BFD_SESSION_TABLE (STATE_DB)](config-db/bfd-state.md) (168)
+- [APPL_DB BFD_SESSION_TABLE (bfdorch)](config-db/bfd-orch.md) (160)
 - [BFD_SESSION テーブル](config-db/bfd-session.md) (159)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (77)
 - [BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）](../routing/bfd-hw-offload.md) (75)
@@ -1696,7 +1696,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (250)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (248)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (42)
 - [VRRP テーブル](config-db/vrrp.md) (41)

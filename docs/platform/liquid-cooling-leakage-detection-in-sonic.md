@@ -304,7 +304,7 @@ redis-cli -n 6 keys 'FAN_INFO|*'
 
 ```bash
 # 漏液センサ STATE
-sonic-db-cli STATE_DB KEYS 'LEAKAGE_INFO|*'
+sonic-db-cli STATE_DB KEYS 'LIQUID_COOLING_INFO|*'
 sonic-db-cli STATE_DB KEYS 'CHASSIS_MODULE_INFO|*' | head
 
 # pmon コンテナ内のセンサプラグイン
