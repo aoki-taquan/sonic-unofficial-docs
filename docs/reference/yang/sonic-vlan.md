@@ -11,7 +11,7 @@ sources:
 related:
   config_db: [VLAN, VLAN_INTERFACE, VLAN_MEMBER]
   cli: ["config vlan"]
-  yang: [sonic-port, sonic-portchannel]
+  yang: [sonic-port, sonic-portchannel, sonic-interface, sonic-vrf, sonic-vnet]
 ---
 
 # sonic-vlan YANG
@@ -170,9 +170,9 @@ module: sonic-vlan
 
 - [`sonic-port`](sonic-port.md)
 - [`sonic-portchannel`](sonic-portchannel.md)
-- [`sonic-breakout_cfg`](sonic-breakout_cfg.md)
-- [`sonic-fabric-port`](sonic-fabric-port.md)
 - [`sonic-interface`](sonic-interface.md)
+- [`sonic-vrf`](sonic-vrf.md)
+- [`sonic-vnet`](sonic-vnet.md)
 <!-- /yang-sibling -->
 
 <!-- ref-triangle:start -->

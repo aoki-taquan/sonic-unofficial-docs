@@ -23,7 +23,6 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
-- 2026-05-20 #4737 docs: doc-review fixes (batch 028)
 - 2026-05-20 #4735 docs: doc-review fixes (batch 015)
 - 2026-05-20 #4727 docs: doc-review fixes (acl-qos batch)
 - 2026-05-20 #4742 docs: doc-review fixes (batch 039)
@@ -523,4 +522,5 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3538 docs(config-db): add Phase H platform block to dpu-eni
 - 2026-05-19 #3537 docs(config-db): add Phase G pubsub block to event-publisher
 - 2026-05-19 #3536 docs(config-db): add Phase H platform block to nat-static
+- 2026-05-19 #3534 docs(config-db): add Phase F side-effects block to device-neighbor
 
