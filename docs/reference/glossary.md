@@ -1858,7 +1858,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [PORT (macsec フィールド)](config-db/macsec-port.md) (186)
 - [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (83)
 - [SAG テーブル](config-db/sag.md) (76)
-- [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (58)
+- [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (59)
 
 ### [MACsec](#term-macsec)
 
@@ -2018,7 +2018,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [POLICER テーブル](config-db/policer.md) (42)
 - [PORT_STORM_CONTROL テーブル — 暗黙デフォルト詳細](config-db/storm-control.md) (41)
-- [PORT_STORM_CONTROL テーブル](config-db/port-storm-control.md) (24)
+- [PORT_STORM_CONTROL テーブル](config-db/port-storm-control.md) (26)
 - [APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)](config-db/appl-mirror.md) (9)
 - [MIRROR_SESSION (ERSPAN 種別)](config-db/erspan.md) (9)
 
