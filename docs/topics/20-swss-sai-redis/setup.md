@@ -55,6 +55,9 @@ SWSS / [SAI](../../reference/glossary.md#term-sai) / [Redis](../../reference/glo
 
 ### database_config.json (既定)
 
+!!! note "簡略化例"
+    以下は読み解き用に主要 DB のみを抜粋した簡略例です。実機 (VS platform `sonic-buildimage/platform/vs/docker-sonic-vs/database_config.json`) では `GB_COUNTERS_DB` / `GB_FLEX_COUNTER_DB` / `CHASSIS_APP_DB` / `APPL_STATE_DB` / `DPU_APPL_DB` / `DPU_APPL_STATE_DB` / `DPU_STATE_DB` / `DPU_COUNTERS_DB` などの SmartSwitch / VOQ chassis 向け追加 DB が含まれ、`LOGLEVEL_DB` / `RESTAPI_DB` / `persistence_for_warm_boot` フィールドは存在しません。
+
 ```json
 {
   "INSTANCES": {

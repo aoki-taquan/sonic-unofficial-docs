@@ -106,7 +106,7 @@ psample
 ```bash
 admin@sonic:~$ aclshow -a
 admin@sonic:~$ show ip access-lists
-admin@sonic:~$ redis-cli -n 6 KEYS "USER_WATERMARKS|COPP_*"
+admin@sonic:~$ redis-cli -n 2 KEYS "USER_WATERMARKS|COPP_*"
 ```
 
 `aclshow` で punt 用 [ACL](../../reference/glossary.md#term-acl) の counter が増えるか、CoPP queue の counter が増えるかを見ます。

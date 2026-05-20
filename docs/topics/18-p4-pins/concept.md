@@ -24,19 +24,9 @@ related:
   config_db:
   - ACL_RULE
   - ACL_TABLE
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
   yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-bgp-bbr
-  - sonic-bgp-peerrange
-  - sonic-bgp-device-global
-  - sonic-bgp-sentinel
-  - sonic-bgp-monitor
+  - sonic-copp
+  - sonic-crm
 ---
 
 # 概念

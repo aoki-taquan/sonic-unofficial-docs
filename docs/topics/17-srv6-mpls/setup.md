@@ -50,10 +50,9 @@ SRV6_MY_LOCATORS|<locator_name>:
   func_len  = 16
   arg_len   = 0
 
-SRV6_MY_SIDS|<sid>:
-  locator  = <locator_name>
-  behavior = end.dt46
-  vrf      = Vrf01
+SRV6_MY_SIDS|<locator_name>|<ip_prefix>:
+  action = end.dt46
+  vrf    = Vrf01
 ```
 
 `SRv6Mgr` は locator 不在のまま SID が来た場合に `SRV6_MY_LOCATORS` を subscribe して deferred 解決する経路を持つため、locator と SID の投入順序を厳密にそろえる必要はありません。

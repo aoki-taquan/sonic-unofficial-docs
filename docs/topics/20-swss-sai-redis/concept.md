@@ -166,7 +166,7 @@ sequenceDiagram
 | `STATE_DB` | 実際の状態と監視のヒント | 各 daemon、syncd | CLI（show）、監視 |
 | `COUNTERS_DB` | ASIC からの counter 集計 | flexcounter / bulk counter | telemetry、show CLI |
 | `ASIC_DB` | SAI 呼び出し直前の object 表現 | orchagent | syncd（sairedis 経由） |
-| `ERROR_DB` | SAI 失敗を app に伝える | syncd（handleSai*Status） | orchagent、Error Handling Framework |
+| `ERROR_DB` | SAI 失敗を app に伝える (※ HLD 提案、未実装) | orchagent（ASIC_DB notify を受けて変換） | Error Handling Framework |
 | `LOGLEVEL_DB` 他 | ログ等の補助 | 各 daemon | swssloglevel など |
 
 スキーマの一次ソースは [swss-schema](../../internals/swss-schema.md) を読む。

@@ -8,24 +8,15 @@ last_verified: 2026-05-10
 sources: []
 related:
   cli:
-  - config bgp
-  - show bgp
+  - show feature status
+  - show system-health
+  - show warm_restart
   config_db:
   - FEATURE
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
+  - WARM_RESTART
   yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-bgp-bbr
-  - sonic-bgp-peerrange
-  - sonic-bgp-device-global
-  - sonic-bgp-sentinel
-  - sonic-bgp-monitor
+  - sonic-feature
+  - sonic-warm-restart
 ---
 
 # 発展トピック

@@ -105,8 +105,6 @@ sequenceDiagram
 
 ## まず層を分ける
 
-## まず層を分ける
-
 | 層 | 主な責務 | 代表ドキュメント |
 | --- | --- | --- |
 | Build system | Dockerfile レイヤ削減・並列ビルド・sairedis 分離 | [Build system improvements](../../architecture/build-system-improvements.md) |
