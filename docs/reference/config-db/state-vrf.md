@@ -51,31 +51,23 @@ SONiC の VRF 削除処理は `vrfmgrd`（Linux VRF デバイス管理）と `or
 CONFIG_DB の設定フィールドを保持する [`VRF` テーブル](vrf.md) とは別物。このページで説明するテーブルは読み取り専用の状態情報。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>VRF")]
-  VRFMGRD["vrfmgrd"]
-  STATE_VRF[("STATE_DB<br/>VRF_TABLE")]
+  DM["vrfmgrd"]
+  CDB --> DM
   APPDB[("APP_DB<br/>APP_VRF_TABLE")]
-  ORCHAGENT["VRFOrch<br/>(orchagent)"]
-  STATE_OBJ[("STATE_DB<br/>VRF_OBJECT_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
   SAI["SAI<br/>sai_virtual_router_api"]
-
-  CDB --> VRFMGRD
-  VRFMGRD --> STATE_VRF
-  VRFMGRD --> APPDB
-  APPDB --> ORCHAGENT
-  ORCHAGENT --> SAI
-  ORCHAGENT --> STATE_OBJ
-  STATE_VRF -->|"isVrfStateOk()"| VRFMGRD
-  STATE_OBJ -->|"isVrfObjExist()"| VRFMGRD
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    STATE_DB の 2 テーブルは VRF 削除時の順序保証に使われる。詳細は本文参照。
-
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## VRF_TABLE
