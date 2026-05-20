@@ -37500,8 +37500,9 @@
 <!-- runtime-trace -->
 <h2 id="_15">実コンテナ動作トレース<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>lldpmgrd</code> が CONFIG_DB の <code>LLDP</code> テーブルを購読する。</p>
-<p><code>LLDP</code> の key は <code>GLOBAL</code> (単一エントリ)。system description / hello timer 等のグローバルパラメータ。</p>
+<p><code>lldpmgrd</code> は CONFIG_DB の <code>LLDP</code> / <code>LLDP_PORT</code> テーブルを<strong>直接購読しない</strong>（構造的 no-op）。
+実際に購読するのは APPL_DB: PORT_TABLE、CONFIG_DB: DEVICE_METADATA、CONFIG_DB: MGMT_INTERFACE の 3 テーブル。
+<code>LLDP|GLOBAL</code> への書き込みは lldpd に到達しない（各フィールドの dead field 詳細は <code>&lt;!-- defaults --&gt;</code> ブロック参照）。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継なし)</p>
 <h3 id="3-applsai">段階 3 — APPL→SAI<a class="headerlink" href="#3-applsai" title="Permanent link">&para;</a></h3>

@@ -36452,7 +36452,7 @@
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>GNMI_CLIENT_CERT</code>, <a href="../device-metadata/"><code>DEVICE_METADATA</code></a></li>
+<li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../gnmi-server/"><code>GNMI_CLIENT_CERT</code></a> (gnmi-server.md に収録), <a href="../device-metadata/"><code>DEVICE_METADATA</code></a></li>
 <li>関連 CLI: <code>config gnmi</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-gnmi</code></li>
 </ul>
@@ -36563,9 +36563,9 @@
 <tr>
 <td><code>save_on_set</code></td>
 <td>未宣言</td>
-<td>— (フラグなし = 無効)</td>
+<td>起動スクリプトが <code>--with-save-on-set=&lt;値&gt;</code> フラグを付与（未設定時はフラグ非付与 → flag デフォルト <code>false</code>）</td>
 <td><code>false</code></td>
-<td>CONFIG_DB から直接読まれず。YANG フィールドは存在するが <code>gnmi-native.sh</code> は参照しない ※</td>
+<td>詳細は <a href="../gnmi-server/"><code>gnmi-server.md</code></a> の defaults セクション参照</td>
 </tr>
 <tr>
 <td><code>enable_crl</code></td>
@@ -36669,7 +36669,7 @@
 </tbody>
 </table>
 <h3 id="save_on_set"><code>save_on_set</code> の注記<a class="headerlink" href="#save_on_set" title="Permanent link">&para;</a></h3>
-<p>YANG モデル (<code>sonic-gnmi.yang</code>) は <code>save_on_set</code> フィールドを <code>boolean</code> として定義するが、<code>gnmi-native.sh</code> 起動スクリプトはこのフィールドを読み取らない。<code>with-save-on-set</code> Go フラグは CONFIG_DB から自動設定されず、カスタム起動スクリプトや手動フラグ指定が必要。YANG とシェルスクリプトの間に <strong>dead field</strong> 状態が生じている。</p>
+<p>YANG モデル (<code>sonic-gnmi.yang</code>) は <code>save_on_set</code> フィールドを <code>boolean</code> として定義し、起動スクリプト (<code>gnmi-server.md</code> defaults セクション記載のロジック) が <code>CONFIG_DB:GNMI|gnmi.save_on_set</code> を読み取って <code>--with-save-on-set=&lt;値&gt;</code> フラグを付与する。未設定時はフラグ非付与 → Go flag デフォルトの <code>false</code> が適用される。</p>
 <h3 id="user_auth-translib-write"><code>user_auth</code> と translib-write の相関<a class="headerlink" href="#user_auth-translib-write" title="Permanent link">&para;</a></h3>
 <p><code>telemetry.go:217-229</code> では、<code>ENABLE_TRANSLIB_WRITE</code> が <code>true</code> の場合に <code>client_auth</code> フラグ未指定時のデフォルトを <code>password=true, jwt=true</code> に切り替える。CONFIG_DB の <code>user_auth</code> フィールドはシェルスクリプト経由で <code>--client_auth</code> フラグに変換されるため、実際の Go 内部デフォルトは <code>gnmi_translib_write</code> の状態に依存する。</p>
 <!-- evidence: sonic-net/sonic-gnmi:telemetry/telemetry.go:171-328; sonic-net/sonic-buildimage:dockers/docker-sonic-gnmi/gnmi-native.sh:64-150; sonic-net/sonic-buildimage:src/sonic-yang-models/yang-models/sonic-gnmi.yang -->
@@ -37580,8 +37580,8 @@
 
 <h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-gnmi</code></li>
-<li>CONFIG_DB: <code>GNMI_CLIENT_CERT</code></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-gnmi</code> (YANG リファレンスページ未作成)</li>
+<li>CONFIG_DB: <a href="../gnmi-server/"><code>GNMI_CLIENT_CERT</code></a> (gnmi-server.md に収録)</li>
 <li>関連ページ: <a href="../../../management/gnmi-usage/">gNMI 利用ガイド</a></li>
 </ul>
 <!-- ref-triangle:end -->

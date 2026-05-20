@@ -36991,7 +36991,7 @@ NTP_KEY の SET 操作だけでは <code>trusted_str</code> は変わらず、NT
 <h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>NTP_KEY|&lt;keyid&gt;</code>。</li>
-<li><code>type</code>: <code>SHA1</code> / <code>MD5</code>、<code>value</code>: 共有鍵、<code>trusted</code>: <code>true</code>。</li>
+<li><code>type</code>: <code>SHA1</code> / <code>MD5</code>、<code>value</code>: 共有鍵、<code>trusted</code>: <code>yes</code>（YANG <code>stypes:yes-no</code> enum）。</li>
 </ul>
 <h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
@@ -37080,16 +37080,16 @@ NTP_KEY の SET 操作だけでは <code>trusted_str</code> は変わらず、NT
 </ul>
 <h3 id="2-cfg-appl">段階 2: CFG → APPL 翻訳<a class="headerlink" href="#2-cfg-appl" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../glossary/#term-hostcfgd">hostcfgd</a> が <code>/etc/ntp.keys</code> を更新し、ntpd に SIGHUP または再起動を発行。</li>
+<li><a href="../../glossary/#term-hostcfgd">hostcfgd</a> が <code>/etc/chrony/chrony.keys</code> を更新し、<code>systemctl restart chrony</code> でフルリスタートを発行 (<code>hostcfgd:1280</code> <code>CHRONY_RESTART = ['systemctl', 'restart', 'chrony']</code>)。</li>
 <li>APP_DB への書き込みなし。</li>
 </ul>
 <h3 id="3-appl-sai">段階 3: APPL → SAI<a class="headerlink" href="#3-appl-sai" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../glossary/#term-sai">SAI</a> 経由なし。ntpd が認証付き NTP パケット処理に鍵を使用。</li>
+<li><a href="../../glossary/#term-sai">SAI</a> 経由なし。chrony が認証付き NTP パケット処理に鍵を使用。</li>
 </ul>
 <h3 id="4">段階 4: タイミング + 副作用<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
 <ul>
-<li>鍵更新後 ntpd 再起動まで数秒。鍵ロールオーバー中は NTP 認証が一時的に失敗する可能性。</li>
+<li>鍵更新後 chrony 再起動まで数秒。鍵ロールオーバー中は NTP 認証が一時的に失敗する可能性。</li>
 </ul>
 <!-- /runtime-trace -->
 <!-- entry-points -->

@@ -37111,8 +37111,8 @@
 <td><code>VrfMgr</code></td>
 <td><code>doTask()</code></td>
 <td><code>mgmtVrfEnabled == "true"</code></td>
-<td><code>ip link add mgmt type vrf table 1</code> でカーネル管理 VRF を作成</td>
-<td><code>sonic-swss/cfgmgr/vrfmgr.cpp:257</code></td>
+<td><code>setLink("mgmt")</code> で table_id 6000 (<code>MGMT_VRF_TABLE_ID</code>) を内部 map に登録 (<code>ip link add</code> は実行しない)。実際の netdev 作成は hostcfgd が interfaces-config restart 経由で実施</td>
+<td><code>sonic-swss/cfgmgr/vrfmgr.cpp:15,180</code></td>
 </tr>
 <tr>
 <td><code>VrfMgr</code></td>

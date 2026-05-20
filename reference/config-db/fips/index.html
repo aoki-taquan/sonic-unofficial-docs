@@ -36739,7 +36739,7 @@ OpenSSL の FIPS provider 切り替えや、SSH / TLS の暗号スイート絞�
 <tr>
 <td><code>false</code></td>
 <td><code>true</code></td>
-<td><code>enable</code> なしで <code>enforce</code> のみ有効化は意味がない（実装で想定されていない組み合わせ）</td>
+<td><code>enforce=true</code> は内部的に <code>self.enable=True</code> に強制引き上げされるため、<code>enable=false</code> は無視される（<code>hostcfgd:1782</code> <code>self.enable = self.enforce or is_true(...)</code>）。実効挙動は <code>enable=true,enforce=true</code> と同じ</td>
 </tr>
 </tbody>
 </table>

@@ -37255,8 +37255,8 @@
 </tr>
 <tr>
 <td><code>gBatchSize</code></td>
-<td>128 (<code>DEFAULT_MAX_BULK_SIZE</code> = 1000 は別用途)</td>
-<td><code>orchdaemon.cpp:81</code></td>
+<td>128 (<code>DEFAULT_BATCH_SIZE</code>)。<code>DEFAULT_MAX_BULK_SIZE</code> = 1000 は別用途</td>
+<td><code>orchagent/main.cpp:59</code> (<code>#define DEFAULT_BATCH_SIZE 128</code>), <code>main.cpp:459</code> (<code>gBatchSize = DEFAULT_BATCH_SIZE</code>)</td>
 </tr>
 </tbody>
 </table>

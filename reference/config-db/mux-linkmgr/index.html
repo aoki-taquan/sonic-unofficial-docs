@@ -37025,7 +37025,7 @@
 <tr>
 <td><code>use_well_known_mac</code></td>
 <td><code>enabled</code></td>
-<td>既知 MAC を宛先 MAC として ICMP 送信</td>
+<td>既知 MAC を宛先 MAC として ICMP 送信（<strong>実装バグ: コードは <code>v == "enable"</code> で判定するため YANG enum 値 <code>"enabled"</code> と文字列ミスマッチ、常に <code>disabled</code> 相当の動的 MAC が使われる。詳細は本ページ defaults / failure セクション参照</strong>）</td>
 </tr>
 <tr>
 <td><code>use_well_known_mac</code></td>

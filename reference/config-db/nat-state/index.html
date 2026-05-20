@@ -36495,6 +36495,62 @@
 <td>DNAT エントリ追加/削除時</td>
 <td>現在の DNAT エントリ総数</td>
 </tr>
+<tr>
+<td><code>STATIC_NAT_ENTRIES</code></td>
+<td>int (文字列)</td>
+<td><code>"0"</code></td>
+<td><code>updateStaticNatCounters()</code> 経由</td>
+<td>静的 NAT エントリ数 (<code>natorch.cpp:4481-4490</code>)</td>
+</tr>
+<tr>
+<td><code>STATIC_NAPT_ENTRIES</code></td>
+<td>int (文字列)</td>
+<td><code>"0"</code></td>
+<td>同上</td>
+<td>静的 NAPT エントリ数</td>
+</tr>
+<tr>
+<td><code>STATIC_TWICE_NAT_ENTRIES</code></td>
+<td>int (文字列)</td>
+<td><code>"0"</code></td>
+<td>同上</td>
+<td>静的 Twice NAT エントリ数</td>
+</tr>
+<tr>
+<td><code>STATIC_TWICE_NAPT_ENTRIES</code></td>
+<td>int (文字列)</td>
+<td><code>"0"</code></td>
+<td>同上</td>
+<td>静的 Twice NAPT エントリ数</td>
+</tr>
+<tr>
+<td><code>DYNAMIC_NAT_ENTRIES</code></td>
+<td>int (文字列)</td>
+<td><code>"0"</code></td>
+<td><code>updateSnatCounters()</code> / <code>updateDnatCounters()</code> 経由 (<code>natorch.cpp:4569-4577</code>)</td>
+<td>動的 NAT エントリ数</td>
+</tr>
+<tr>
+<td><code>DYNAMIC_NAPT_ENTRIES</code></td>
+<td>int (文字列)</td>
+<td><code>"0"</code></td>
+<td>同上</td>
+<td>動的 NAPT エントリ数</td>
+</tr>
+<tr>
+<td><code>DYNAMIC_TWICE_NAT_ENTRIES</code></td>
+<td>int (文字列)</td>
+<td><code>"0"</code></td>
+<td>同上</td>
+<td>動的 Twice NAT エントリ数</td>
+</tr>
+<tr>
+<td><code>DYNAMIC_TWICE_NAPT_ENTRIES</code></td>
+<td>int (文字列)</td>
+<td><code>"0"</code></td>
+<td>同上</td>
+<td>動的 Twice NAPT エントリ数</td>
+</tr>
 </tbody>
 </table>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
@@ -37199,7 +37255,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>MAX_NAT_ENTRIES == "0"</code> であっても NAT エントリの追加は試みられる（ガードなし）。ハードウェア上限超過は <code>create_nat_entry()</code> の戻り値 (<code>SAI_STATUS_INSUFFICIENT_RESOURCES</code> 等) で検出される。<!-- evidence: natorch.cpp L107-135 --></p>
+<p><code>MAX_NAT_ENTRIES == "0"</code> の場合は <code>gIsNatSupported=false</code> となり、<code>enableNatFeature()</code> が即時 return する (<code>natorch.cpp:2541-2544</code>)。<code>isNatEnabled()</code> が false のまま維持されるため <code>addNatEntry()</code> も SAI 操作をスキップし、NAT 機能全体が無効化される (本ページ「制約」セクションおよび「書込み順依存」セクション参照)。動的上限チェック (<code>maxAllowedSNatEntries</code>) はエントリ追加ループ内で別途行われるが、これは <code>gIsNatSupported=true</code> のときのみ到達する。<!-- evidence: natorch.cpp L107-135, L2541-2544 --></p>
 <h3 id="nat_restore_table-warm-reboot">NAT_RESTORE_TABLE — warm reboot 対応状況<a class="headerlink" href="#nat_restore_table-warm-reboot" title="Permanent link">&para;</a></h3>
 <p><code>STATE_DB:NAT_RESTORE_TABLE</code> は warm reboot シナリオ専用のテーブルである。<code>restore_nat_entries.py</code> が warm reboot 時のみ動作するため、通常起動では <code>NAT_RESTORE_TABLE|Flags</code> は存在しない。NAT docker を含まない（NAT 機能が無効化された）プラットフォーム構成では <code>restore_nat_entries.py</code> が実行されず、warm reboot 後も <code>NAT_RESTORE_TABLE|Flags.restored</code> が <code>"true"</code> にならない。この場合 <code>natsyncd</code> の <code>isNatRestoreDone()</code> は永遠に <code>false</code> を返し、reconciliation が開始されない。<!-- evidence: natsync.cpp:96-108, restore_nat_entries.py:49-52 --></p>
 <h3 id="_19">プラットフォーム差サマリ<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>

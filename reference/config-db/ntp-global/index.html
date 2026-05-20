@@ -36647,7 +36647,7 @@
 
 <h1 id="ntp-global">NTP テーブル (global)<a class="headerlink" href="#ntp-global" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>NTP クライアントのグローバル設定を保持するシングルトン的テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-yang">YANG</a> 上は <code>sonic-ntp.yang</code> の <code>container NTP</code> 配下 <code>container global</code> として定義され、<a href="../../glossary/#term-config_db">CONFIG_DB</a> 上は <code>NTP|global</code> の単一エントリで現れる。サーバ単位の設定は別テーブル <a href="../ntp-server/"><code>NTP_SERVER</code></a>、鍵は <a href="../ntp-server/"><code>NTP_KEY</code></a> で管理される。</p>
+<p>NTP クライアントのグローバル設定を保持するシングルトン的テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../glossary/#term-yang">YANG</a> 上は <code>sonic-ntp.yang</code> の <code>container NTP</code> 配下 <code>container global</code> として定義され、<a href="../../glossary/#term-config_db">CONFIG_DB</a> 上は <code>NTP|global</code> の単一エントリで現れる。サーバ単位の設定は別テーブル <a href="../ntp-server/"><code>NTP_SERVER</code></a>、鍵は <a href="../ntp-key/"><code>NTP_KEY</code></a> で管理される。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -37613,14 +37613,14 @@
 <td><code>hostcfgd</code></td>
 <td><code>ntp_global_update()</code></td>
 <td><code>vrf</code> フィールドが <code>"mgmt"</code></td>
-<td>ntp.conf に <code>interface eth0</code> を追加して管理 VRF 経由 NTP を設定</td>
-<td><code>hostcfgd:1331-1365</code></td>
+<td><code>chrony.conf.j2:109</code> の条件により <code>bindacqaddress</code> ディレクティブを抑止し、bind 先選択をカーネルの mgmt VRF routing に委ねる（<code>interface eth0</code> 等のディレクティブは発行しない）</td>
+<td><code>hostcfgd:1331-1365</code>, <code>chrony.conf.j2:109</code></td>
 </tr>
 <tr>
 <td><code>hostcfgd</code></td>
 <td><code>ntp_global_update()</code></td>
 <td><code>vrf</code> フィールドがなし / <code>"default"</code></td>
-<td><code>interface</code> 指定なしで全インタフェース使用</td>
+<td><code>bindacqaddress</code> を <code>src_intf</code> 設定に従って生成</td>
 <td><code>hostcfgd:1331-1365</code></td>
 </tr>
 <tr>

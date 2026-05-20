@@ -36498,23 +36498,26 @@
 <tr>
 <th>ベンダー</th>
 <th>判別条件</th>
-<th>hash-field の hashField 系</th>
+<th><code>hash</code> サブキーの <code>hash_field_list</code></th>
+<th><code>hash-field</code> の hashField 系</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Generic</td>
 <td><code>ASIC_VENDOR != "mellanox"</code> / 未設定</td>
+<td><code>"UPDATE"</code> (<code>pbhcap.cpp:123</code> で <code>hash.hash_field_list.insert(UPDATE)</code>)</td>
 <td><code>setPbhDefaults()</code> 未呼び出し → 全空</td>
 </tr>
 <tr>
 <td>Mellanox</td>
 <td><code>ASIC_VENDOR = "mellanox"</code></td>
+<td><code>""</code> (空。<code>pbhcap.cpp:126-141</code> に対応 INSERT なし)</td>
 <td>同上 → 全空</td>
 </tr>
 </tbody>
 </table>
-<p>現状 Generic と Mellanox の差異は <code>rule.priority</code>・<code>rule.hash</code> の INSERT なし (UPDATE のみ) と、<code>hash.hash_field_list</code> の INSERT なし (UPDATE のみ) の点で完全に一致する。差異は <code>pbhcap.cpp:94-109</code> を参照。</p>
+<p><code>PBH_CAPABILITIES|hash</code> の <code>hash_field_list</code> は Generic と Mellanox で<strong>異なる</strong>（Generic=<code>UPDATE</code>、Mellanox=空）。Mellanox 環境では <code>config pbh hash update</code> が <code>pbh_capabilities_query()</code> の検証で拒否される。詳細マトリクスは本ページ Phase H セクションを参照。差異は <code>pbhcap.cpp:94-141</code> を参照。</p>
 <h2 id="_6">購読者<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>config pbh table add/update/del</code> (<code>config/plugins/pbh.py:1351</code>) — <code>pbh_capabilities_query(db, "table")</code> で <code>interface_list</code>・<code>description</code> の操作可否チェック</li>
