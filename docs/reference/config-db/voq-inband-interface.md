@@ -77,7 +77,7 @@ VOQ_INBAND_INTERFACE|<name>|<ip-prefix>
 
 ### SYSTEM_PORT_LIST
 
-SYSTEM_PORT の全フィールドはデフォルトなし。`minigraph.py` が minigraph XML の `<SystemPorts>` セクションまたは `InterfaceMetadata` から全量生成して CONFIG_DB に投入する。`system_port_id` は投入時にソート順で `1` から自動採番される (`parse_chassis_deviceinfo_intf_metadata()`)。
+SYSTEM_PORT の全フィールドはデフォルトなし。`minigraph.py` が minigraph XML の `<SystemPorts>` セクションまたは `InterfaceMetadata` から全量生成して [CONFIG_DB](../../reference/glossary.md#term-config_db) に投入する。`system_port_id` は投入時にソート順で `1` から自動採番される (`parse_chassis_deviceinfo_intf_metadata()`)。
 
 <!-- /defaults -->
 
@@ -164,13 +164,12 @@ show ip interface | grep Ethernet-IB
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / VoqOrch** (`sonic-swss/orchagent/voqorch.cpp`): `VOQ_INBAND_INTERFACE` テーブルを購読 (VOQ chassis 環境専用)。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / VoqOrch** (`sonic-swss/orchagent/voqorch.cpp`): `VOQ_INBAND_INTERFACE` テーブルを購読 (VOQ chassis 環境専用)。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -178,11 +177,11 @@ show ip interface | grep Ethernet-IB
 
 ### 段階 3: APPL → SAI
 
-- IntfsOrch が SAI で inband ポートの RIF を作成し、VOQ 配送に使用するルートを設定。
+- IntfsOrch が [SAI](../../reference/glossary.md#term-sai) で inband ポートの [RIF](../../reference/glossary.md#term-rif) を作成し、VOQ 配送に使用するルートを設定。
 
 ### 段階 4: タイミング + 副作用
 
-- VOQ chassis 環境でのみ有効。non-VOQ 環境では orchagent が処理をスキップ。
+- VOQ chassis 環境でのみ有効。non-VOQ 環境では [orchagent](../../reference/glossary.md#term-orchagent) が処理をスキップ。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -196,11 +195,11 @@ VOQ_INBAND_INTERFACE テーブルへの書き込みが発生するコード経�
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** が VOQ_INBAND_INTERFACE を生成し投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+**minigraph.py** が VOQ_INBAND_INTERFACE を生成し投入 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py)
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -212,7 +211,7 @@ db_migrator.py での VOQ_INBAND_INTERFACE マイグレーションなし
 
 ### ハードコードデフォルト / ランタイム注入
 
-**sonic-bgpcfgd** `main.py` が VOQ_INBAND_INTERFACE を監視し BGP ルート配布に使用 (sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/main.py)
+**sonic-[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)** `main.py` が VOQ_INBAND_INTERFACE を監視し [BGP](../../reference/glossary.md#term-bgp) ルート配布に使用 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)/[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)/main.py)
 
 ### 死活・デッドコード
 
@@ -243,14 +242,14 @@ if((table_name == CFG_VOQ_INBAND_INTERFACE_TABLE_NAME) &&
 
 | 先行テーブル / 条件 | 依存の内容 | コード根拠 |
 |------------------|-----------|-----------|
-| VOQ 環境が有効 (`switch_type == "voq"`) | `VoqOrch` が起動していること。non-VOQ 環境では orchagent がスキップ | `sonic-swss/orchagent/voqorch.cpp` |
-| IP プレフィクスロウは属性ロウの STATE_DB 書込み後 | `isIntfCreated()` が false → IP プレフィクスロウをスキップ（2-key パスは `doIntfAddrTask` 経由） | `intfmgr.cpp:1115` |
+| VOQ 環境が有効 (`switch_type == "voq"`) | `VoqOrch` が起動していること。non-VOQ 環境では [orchagent](../../reference/glossary.md#term-orchagent) がスキップ | `sonic-swss/orchagent/voqorch.cpp` |
+| IP プレフィクスロウは属性ロウの [STATE_DB](../../reference/glossary.md#term-state_db) 書込み後 | `isIntfCreated()` が false → IP プレフィクスロウをスキップ（2-key パスは `doIntfAddrTask` 経由） | `intfmgr.cpp:1115` |
 
 ### 主要ポイント
 
-- 単一キー SET（属性ロウ）は `isIntfStateOk()` 検査をバイパスし、即 APP_DB に relay される — PORT / LAG / VLAN の STATE_DB ready を待たない
+- 単一キー SET（属性ロウ）は `isIntfStateOk()` 検査をバイパスし、即 APP_DB に relay される — PORT / [LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) の [STATE_DB](../../reference/glossary.md#term-state_db) ready を待たない
 - IP プレフィクスロウ（2-key）は通常の `doIntfAddrTask()` パスを通るため `isIntfCreated()` が必要
-- `VoqOrch` が APP_DB の `INTF_TABLE` を購読し、inband ポートの SAI RIF を作成する
+- `VoqOrch` が APP_DB の `INTF_TABLE` を購読し、inband ポートの [SAI](../../reference/glossary.md#term-sai) [RIF](../../reference/glossary.md#term-rif) を作成する
 
 詳細調査ノートは `meta/_intermediate/cdb-flow/voq-inband-interface-ordering.md` 参照。
 
@@ -268,7 +267,7 @@ YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上�
 | # | 参照先 | DB / 場所 | 方向 | 依存内容 | 根拠コード |
 |---|--------|-----------|------|---------|-----------|
 | 1 | `DEVICE_METADATA.localhost.switch_type` | CONFIG_DB | READ | `switch_type != "voq"` のとき VoQ 系処理全体がスキップされ VOQ_INBAND_INTERFACE は事実上無効 | `intfmgr.cpp:71-75`, `main.cpp` |
-| 2 | `APP_INTF_TABLE` | APPL_DB | WRITE | 単一キー SET は `doIntfGeneralTask()` をバイパスし `m_appIntfTableProducer.set()` で即時 relay | `intfmgr.cpp:1198-1199` |
+| 2 | `APP_INTF_TABLE` | [APPL_DB](../../reference/glossary.md#term-appl_db) | WRITE | 単一キー SET は `doIntfGeneralTask()` をバイパスし `m_appIntfTableProducer.set()` で即時 relay | `intfmgr.cpp:1198-1199` |
 | 3 | `STATE_INTF_TABLE` | STATE_DB | WRITE/READ | `intfmgrd` が `vrf=""` を書き込み、IP プレフィクスロウ (2-key) の `isIntfCreated()` チェック成立に必要 | `intfmgr.cpp:1200`, `intfmgr.cpp:1115` |
 | 4 | `portsorch` 内部ポートマップ (`getPort()`) | orchagent (in-process) | READ | `setVoqInbandIntf()` が `getPort()` で対象ポートの存在を確認。未登録ならリトライキュー戻し | `portsorch.cpp:11121-11131` |
 | 5 | `VOQ_INBAND_INTERFACE` (READ by nbrmgr) | CONFIG_DB | READ | `nbrmgrd` が VOQ 環境でリモートネイバーのカーネルルート追加時に `inband_type` を参照 | `nbrmgr.cpp:82,524-549` |
@@ -291,7 +290,7 @@ YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上�
 
 ### 単一キー SET — intfmgr 側は失敗分岐なし
 
-`intfmgr.cpp:1195-1204` は `doIntfGeneralTask()` を一切呼ばず、`m_appIntfTableProducer.set()` と `m_stateIntfTable.hset()` を直接実行してから `erase()` する。Redis 書き込みは通常失敗しないため、**intfmgr 側では失敗ケースが存在しない**。
+`intfmgr.cpp:1195-1204` は `doIntfGeneralTask()` を一切呼ばず、`m_appIntfTableProducer.set()` と `m_stateIntfTable.hset()` を直接実行してから `erase()` する。[Redis](../../reference/glossary.md#term-redis) 書き込みは通常失敗しないため、**intfmgr 側では失敗ケースが存在しない**。
 
 ### 2-key SET — isIntfCreated() 待ち
 
@@ -299,18 +298,18 @@ IP プレフィクスロウ (`doIntfAddrTask()`) は `isIntfStateOk()` + `isIntf
 
 ### orchagent 側 (portsorch.cpp:11110-11134)
 
-APPL_DB `INTF_TABLE` を受け取った `IntfsOrch::doTask()` は `setVoqInbandIntf()` を呼び、次の 2 条件で `false` を返す。
+[APPL_DB](../../reference/glossary.md#term-appl_db) `INTF_TABLE` を受け取った `IntfsOrch::doTask()` は `setVoqInbandIntf()` を呼び、次の 2 条件で `false` を返す。
 
 | # | 失敗条件 | ログ | orchagent 挙動 | 解消条件 |
 |---|---------|------|---------------|---------|
-| 1 | `getPort(alias, port)` が false — portsorch の内部マップにポート未登録 | `SWSS_LOG_ERROR("Port/Vlan configured for inband intf %s is not ready!", ...)` | `it++; continue;` → `m_toSync` に残留、次回ループで再試行 | `portsyncd` が APPL_DB `PORT_TABLE` を書き → `portsorch` がポートを登録した時点 |
+| 1 | `getPort(alias, port)` が false — [portsorch](../../reference/glossary.md#term-portsorch) の内部マップにポート未登録 | `SWSS_LOG_ERROR("Port/Vlan configured for inband intf %s is not ready!", ...)` | `it++; continue;` → `m_toSync` に残留、次回ループで再試行 | `portsyncd` が [APPL_DB](../../reference/glossary.md#term-appl_db) `PORT_TABLE` を書き → `portsorch` がポートを登録した時点 |
 | 2 | `type == "port"` かつ `port.m_hif_id == 0` — host interface 未作成 | `SWSS_LOG_ERROR("Host interface is not available for port %s", ...)` | 同上 | `portsorch` が `sai_create_hostif` を完了した時点 |
 
 同名インターフェースが既登録の場合は `SWSS_LOG_NOTICE` を出力して `true` を返す（idempotent）。
 
 ### STATE_DB への障害記録
 
-VOQ 系には ACL/QoS のような `STATE_DB` ステータスエントリがない。失敗時は `syslog`（swss プロセス）へのエラーログのみ。
+VOQ 系には [ACL](../../reference/glossary.md#term-acl)/[QoS](../../reference/glossary.md#term-qos) のような `STATE_DB` ステータスエントリがない。失敗時は `syslog`（swss プロセス）へのエラーログのみ。
 
 ```bash
 # 失敗ログ確認
@@ -327,7 +326,7 @@ journalctl -u swss | grep -i "inband"
 
 | 定数 / マジック値 | 値 | 定義場所 | 意味・影響 |
 |------------------|-----|----------|-----------|
-| IPv6 metric (VOQ 専用) | `256` | `intfmgr.cpp:105` | `switch_type == "voq"` のとき IPv6 アドレス追加コマンドに `metric 256` を付与。カーネルのデフォルト connected route metric (256) と揃えることで、eBGP / iBGP 経路と inband 接続ルートを同一 ECMP グループに収める |
+| IPv6 metric (VOQ 専用) | `256` | `intfmgr.cpp:105` | `switch_type == "voq"` のとき IPv6 アドレス追加コマンドに `metric 256` を付与。カーネルのデフォルト connected route metric (256) と揃えることで、eBGP / iBGP 経路と inband 接続ルートを同一 [ECMP](../../reference/glossary.md#term-ecmp) グループに収める |
 | IPv6 broadcast 付与閾値 | prefixLen `< 127` | `intfmgr.cpp:108` | `/127` 以上 (`/127`, `/128`) では broadcast オプションなしで `ip -6 address add` を実行。Linux カーネルの仕様に準拠 |
 | `SELECT_TIMEOUT` | `1000` ms | `intfmgrd.cpp:17` | `intfmgrd` メインループの `s.select()` タイムアウト値。設定変更が反映されるまでの最大遅延 |
 | `name` パターン | `"Ethernet-IB[0-9]+"` | `sonic-voq-inband-interface.yang:32` | インバンド IF 名の YANG pattern 制約。違反すると YANG バリデーションで reject される |
@@ -356,7 +355,7 @@ journalctl -u swss | grep -i "inband"
 | 操作 | 対象 DB / テーブル | キー / フィールド | コード根拠 |
 |------|------------------|-----------------|-----------|
 | `INTF_TABLE.set(<name>, data)` | APPL_DB / `INTF_TABLE` | `<name>` | `intfmgr.cpp:1199` — `m_appIntfTableProducer.set` |
-| `INTERFACE_TABLE.hset(<name>, "vrf", "")` | STATE_DB / `INTERFACE_TABLE` | `<name>` field=`vrf` 空文字 | `intfmgr.cpp:1200` — VOQ inband は常に global VRF |
+| `INTERFACE_TABLE.hset(<name>, "vrf", "")` | STATE_DB / `INTERFACE_TABLE` | `<name>` field=`vrf` 空文字 | `intfmgr.cpp:1200` — VOQ inband は常に global [VRF](../../reference/glossary.md#term-vrf) |
 
 `bgpcfgd` の `InterfaceMgr` もこのテーブルを購読しており、SET 時に `Directory` の `LOCAL/interfaces` および `LOCAL/local_addresses` を更新し、BGP ピア解決に使用する (`managers_intf.py:38-40`)。
 
@@ -403,7 +402,7 @@ journalctl -u swss | grep -i "inband"
 
 ### 購読方式
 
-`VOQ_INBAND_INTERFACE` テーブルの変更通知は **Redis PUBLISH/SUBSCRIBE** を使った `swss::ConsumerStateTable` で伝達される。`intfmgrd` は `Orch(cfgDb, tableNames)` コンストラクタ経由で `CFG_VOQ_INBAND_INTERFACE_TABLE_NAME` を購読テーブルリストに登録する (`intfmgrd.cpp:34`)。
+`VOQ_INBAND_INTERFACE` テーブルの変更通知は **[Redis](../../reference/glossary.md#term-redis) PUBLISH/SUBSCRIBE** を使った `swss::ConsumerStateTable` で伝達される。`intfmgrd` は `Orch(cfgDb, tableNames)` コンストラクタ経由で `CFG_VOQ_INBAND_INTERFACE_TABLE_NAME` を購読テーブルリストに登録する (`intfmgrd.cpp:34`)。
 
 ### ProducerStateTable → ConsumerStateTable フロー
 
@@ -433,8 +432,8 @@ IP プレフィクスロウ SET パス (keys.size() == 2):
 
 | 名前 | 値 |
 |------|----|
-| intfmgrd 受信チャンネル | `CFG_VOQ_INBAND_INTERFACE_TABLE_NAME_CHANNEL@<cfgDbId>` |
-| orchagent 受信チャンネル | `APP_INTF_TABLE_CHANNEL@<appDbId>` (ProducerStateTable 経由) |
+| [intfmgrd](../../reference/glossary.md#term-intfmgrd) 受信チャンネル | `CFG_VOQ_INBAND_INTERFACE_TABLE_NAME_CHANNEL@<cfgDbId>` |
+| orchagent 受信チャンネル | `APP_INTF_TABLE_CHANNEL@<appDbId>` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 経由) |
 | PUBLISH ペイロード | `"G"` (固定) |
 | 一時ステートハッシュ (cfgDb 側) | `_VOQ_INBAND_INTERFACE|<key>` |
 
@@ -463,7 +462,7 @@ IP プレフィクスロウ SET パス (keys.size() == 2):
 
 | switch_type | 挙動 |
 |-------------|------|
-| `"voq"` | `intfmgrd` が購読 → APP_DB に relay → orchagent `IntfsOrch` / `PortsOrch` が SAI 設定 → VOQ inband ポートを使用 |
+| `"voq"` | `intfmgrd` が購読 → APP_DB に relay → orchagent `IntfsOrch` / `PortsOrch` が [SAI](../../reference/glossary.md#term-sai) 設定 → VOQ inband ポートを使用 |
 | `"switch"` (通常スイッチ) | `intfmgrd` は表を購読しているがコード分岐 (`intfmgr.cpp:1195`) は `switch_type=="voq"` 前提で生成された設定のためあり得ない。`PortsOrch::setVoqInbandIntf()` も呼ばれない |
 | `"fabric"` | `FabricOrchDaemon` を使用し `IntfsOrch` 自体が起動しない。テーブルは完全に無視される |
 
@@ -474,18 +473,18 @@ orchagent が `switch_type == "voq"` のとき `sai_create_switch()` に次の�
 | SAI 属性 | 値 | 意味 |
 |----------|-----|------|
 | `SAI_SWITCH_ATTR_TYPE` | `SAI_SWITCH_TYPE_VOQ` | SAI に VOQ 動作モードを宣言 |
-| `SAI_SWITCH_ATTR_SWITCH_ID` | `gVoqMySwitchId` | DEVICE_METADATA.localhost.switch_id から取得 |
-| `SAI_SWITCH_ATTR_MAX_SYSTEM_CORES` | `gVoqMaxCores` | DEVICE_METADATA.localhost.max_cores から取得 |
+| `SAI_SWITCH_ATTR_SWITCH_ID` | `gVoqMySwitchId` | [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).localhost.switch_id から取得 |
+| `SAI_SWITCH_ATTR_MAX_SYSTEM_CORES` | `gVoqMaxCores` | [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).localhost.max_cores から取得 |
 | `SAI_SWITCH_ATTR_SYSTEM_PORT_CONFIG_LIST` | システムポートリスト | SYSTEM_PORT テーブルから生成。0 件なら `exit(EXIT_FAILURE)` |
 
-`SAI_SWITCH_TYPE_VOQ` をサポートしない ASIC では orchagent 起動時点で SAI エラーが発生し、`VOQ_INBAND_INTERFACE` の処理に到達しない。
+`SAI_SWITCH_TYPE_VOQ` をサポートしない [ASIC](../../reference/glossary.md#term-asic) では orchagent 起動時点で SAI エラーが発生し、`VOQ_INBAND_INTERFACE` の処理に到達しない。
 
 ### multi-asic VOQ chassis vs. standalone VOQ
 
 | 構成 | `gMultiAsicVoq` | 影響 |
 |------|----------------|------|
-| multi-asic chassis（`CHASSIS_APP_DB` 利用可能） | `true` | LAG / System Port が CHASSIS_APP_DB に同期される。`VOQ_INBAND_INTERFACE` 処理自体に差はないが、inband ポートのリモートネイバールートが supervisor 経由で他 asic に配信される |
-| standalone VOQ（`CHASSIS_APP_DB` 不在） | `false` | CHASSIS_APP_DB への同期なし。LAG/System Port の chassis 共有は行われないが、inband インタフェースの APP_DB relay / SAI 設定は同一 |
+| multi-asic chassis（`CHASSIS_APP_DB` 利用可能） | `true` | [LAG](../../reference/glossary.md#term-lag) / System Port が CHASSIS_APP_DB に同期される。`VOQ_INBAND_INTERFACE` 処理自体に差はないが、inband ポートのリモートネイバールートが supervisor 経由で他 asic に配信される |
+| standalone VOQ（`CHASSIS_APP_DB` 不在） | `false` | CHASSIS_APP_DB への同期なし。[LAG](../../reference/glossary.md#term-lag)/System Port の chassis 共有は行われないが、inband インタフェースの APP_DB relay / SAI 設定は同一 |
 
 ### IPv6 metric 差分（switch_type 依存）
 
@@ -493,13 +492,13 @@ orchagent が `switch_type == "voq"` のとき `sai_create_switch()` に次の�
 
 | switch_type | `ip -6 address add` オプション | 理由 |
 |-------------|-------------------------------|------|
-| `"voq"` | `metric 256` を付加 | inband 接続ルートとカーネルの connected route metric を同値にして eBGP/iBGP ECMP を成立させる |
-| その他 | metric 指定なし | VOQ 固有の ECMP 要件なし |
+| `"voq"` | `metric 256` を付加 | inband 接続ルートとカーネルの connected route metric を同値にして eBGP/iBGP [ECMP](../../reference/glossary.md#term-ecmp) を成立させる |
+| その他 | metric 指定なし | VOQ 固有の [ECMP](../../reference/glossary.md#term-ecmp) 要件なし |
 
 ### ベンダー ASIC 固有性
 
-VOQ SAI (`SAI_SWITCH_TYPE_VOQ`) を実装しているベンダー ASIC に限定される。コミュニティ SONiC では Cisco 8000 シリーズなどが代表例として挙げられるが、SONiC コードは ASIC 種別を直接確認せず `switch_type` 設定のみで判定する。
+VOQ SAI (`SAI_SWITCH_TYPE_VOQ`) を実装しているベンダー [ASIC](../../reference/glossary.md#term-asic) に限定される。コミュニティ [SONiC](../../reference/glossary.md#term-sonic) では Cisco 8000 シリーズなどが代表例として挙げられるが、[SONiC](../../reference/glossary.md#term-sonic) コードは [ASIC](../../reference/glossary.md#term-asic) 種別を直接確認せず `switch_type` 設定のみで判定する。
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: b5657f3f91ae -->

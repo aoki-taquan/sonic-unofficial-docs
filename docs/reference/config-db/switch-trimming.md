@@ -96,7 +96,7 @@ SWITCH_TRIMMING|GLOBAL
 
 ### `dscp_value` / `queue_index` の暗黙モード派生
 
-`SWITCH_TRIMMING` のフィールドは「値の種類で SAI resolution mode が自動的に決まる」設計。CONFIG_DB 側に `mode` 専用フィールドは存在せず、parser が値の文字列形を見て対応する SAI enum を選ぶ:
+`SWITCH_TRIMMING` のフィールドは「値の種類で SAI resolution mode が自動的に決まる」設計。[CONFIG_DB](../../reference/glossary.md#term-config_db) 側に `mode` 専用フィールドは存在せず、parser が値の文字列形を見て対応する SAI enum を選ぶ:
 
 ```cpp
 // helper.cpp L96–124 (parseTrimDscp)
@@ -148,7 +148,7 @@ if (!setSwitchTrimming(trim))
 SWSS_LOG_ERROR("Failed to remove switch trimming: operation is not supported: ASIC and CONFIG DB are diverged");
 ```
 
-`tObj = trimHlpr.getConfig()` と新規 `trim` を比較し、各フィールドについて `tObj` 側が `is_set` 未設定 or 値が異なる場合のみ SAI を更新するロジック。SAI capability 検証や set 呼び出しが失敗するとローカルキャッシュ (`trimHlpr.setConfig`) を更新せずに `false` を返すため、再投入には capability 修正か orchagent 再起動が必要。
+`tObj = trimHlpr.getConfig()` と新規 `trim` を比較し、各フィールドについて `tObj` 側が `is_set` 未設定 or 値が異なる場合のみ SAI を更新するロジック。SAI capability 検証や set 呼び出しが失敗するとローカルキャッシュ (`trimHlpr.setConfig`) を更新せずに `false` を返すため、再投入には capability 修正か [orchagent](../../reference/glossary.md#term-orchagent) 再起動が必要。
 
 ### 新規作成 vs 更新の挙動差異
 
@@ -187,9 +187,9 @@ SWSS_LOG_ERROR("Failed to remove switch trimming: operation is not supported: AS
 <!-- evidence: sonic-swss/orchagent/switchorch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L1093-1359 -->
 
 - **フィールド削除不可**: `size`・`dscp.mode` はいずれも DEL 操作をサポートしない。削除を試みると `"Failed to remove switch trimming size/DSCP configuration: operation is not supported"` を LOG_ERROR して `return false`。
-- **ASIC capability 未サポート**: DSCP mode / queue_index の capability チェック失敗時、`"Failed to validate switch trimming DSCP mode/queue index: capability is not supported"` を LOG_ERROR して SET を拒否する。
+- **[ASIC](../../reference/glossary.md#term-asic) capability 未サポート**: DSCP mode / queue_index の capability チェック失敗時、`"Failed to validate switch trimming DSCP mode/queue index: capability is not supported"` を LOG_ERROR して SET を拒否する。
 - **[SAI](../../reference/glossary.md#term-sai) set 失敗**: SAI API 呼び出し失敗時は対応するエラーを LOG_ERROR して `return false`。
-- **ASIC/[CONFIG_DB](../../reference/glossary.md#term-config_db) 乖離**: 初期化時に ASIC 側と [CONFIG_DB](../../reference/glossary.md#term-config_db) 側の値が食い違っていると SET/DEL どちらの操作も `"Failed to set/remove switch trimming: ASIC and CONFIG DB are diverged"` を LOG_ERROR して拒否。
+- **[ASIC](../../reference/glossary.md#term-asic)/[CONFIG_DB](../../reference/glossary.md#term-config_db) 乖離**: 初期化時に [ASIC](../../reference/glossary.md#term-asic) 側と [CONFIG_DB](../../reference/glossary.md#term-config_db) 側の値が食い違っていると SET/DEL どちらの操作も `"Failed to set/remove switch trimming: ASIC and CONFIG DB are diverged"` を LOG_ERROR して拒否。
 - **空キー**: key が空文字列だと `"Failed to parse switch trimming key: empty string"` を LOG_ERROR してエントリをスキップする。
 
 <!-- /cdb-exceptions -->
@@ -215,7 +215,6 @@ sonic-db-cli CONFIG_DB hgetall 'SWITCH_TRIMMING|GLOBAL'
 show switch-trimming
 ```
 <!-- /ops-hint -->
-
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
@@ -251,7 +250,7 @@ SwitchOrch は常時登録し `SWITCH_TRIMMING` テーブルを無条件購読�
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / SwitchOrch**: `SWITCH_TRIMMING` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / SwitchOrch**: `SWITCH_TRIMMING` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -274,7 +273,7 @@ SWITCH_TRIMMING テーブルへの書き込みが発生するコード経路を�
 
 ### CLI
 
-  - `config switch-trimming ...` — `config/plugins/sonic-trimming.py` が `set_entry('SWITCH_TRIMMING', ...)` を呼ぶ (sonic-utilities/config/plugins/sonic-trimming.py)
+  - `config switch-trimming ...` — `config/plugins/sonic-trimming.py` が `set_entry('SWITCH_TRIMMING', ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/plugins/sonic-trimming.py)
 
 ### minigraph / sonic-cfggen
 
@@ -282,7 +281,7 @@ minigraph.py に SWITCH_TRIMMING 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -313,7 +312,7 @@ db_migrator.py での SWITCH_TRIMMING マイグレーションなし
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|---|---|---|
-| 1 | SAI スイッチオブジェクト初期化 (`gSwitchId` 確立) → `SWITCH_TRIMMING\|GLOBAL` SET | **先行必須** (SwitchOrch コンストラクタで capability クエリが即実行される) | orchagent が SAI 初期化を完了してから CONFIG_DB に書き込む; 起動前書き込みはリプレイで問題なし |
+| 1 | SAI スイッチオブジェクト初期化 (`gSwitchId` 確立) → `SWITCH_TRIMMING\|GLOBAL` SET | **先行必須** (SwitchOrch コンストラクタで capability クエリが即実行される) | [orchagent](../../reference/glossary.md#term-orchagent) が SAI 初期化を完了してから CONFIG_DB に書き込む; 起動前書き込みはリプレイで問題なし |
 | 2 | `dscp_value=from-tc` + `tc_value` の同時設定 | **推奨同時** (中間状態では TC が前回 SAI 値を保持) | 同一 `hset` / `sonic-db-cli` コールで両フィールドを渡す |
 | 3 | `dscp_value=from-tc` と `queue_index=dynamic` の併用回避 | **設計上の注意** (導出元が循環し得るため非推奨) | どちらか一方のみを動的モードにする |
 | 4 | `SWITCH_TRIMMING\|GLOBAL` DEL は不可 | **禁止** (`operation is not supported` を返し `return false`) | 削除が必要な場合は orchagent 再起動後に再設定 |
@@ -347,7 +346,7 @@ SET ハンドラが受け取ったフィールド群を `parseTrimConfig()` で�
 
 | 参照先 | 参照方向 | 条件 | 参照元 evidence |
 |--------|---------|------|----------------|
-| `STATE_DB: SWITCH_CAPABILITY\|switch` (書き込み) | capability クエリ結果の書き出し。orchagent 起動時に SAI へ問い合わせた trim 機能の有無と対応モード一覧を STATE_DB に格納する | `SwitchOrch` コンストラクタ内で無条件実行 | `capabilities.cpp:724` (`writeCapabilitiesToDb`)、`capabilities.cpp:145` (コンストラクタから呼び出し) |
+| `STATE_DB: SWITCH_CAPABILITY\|switch` (書き込み) | capability クエリ結果の書き出し。orchagent 起動時に SAI へ問い合わせた trim 機能の有無と対応モード一覧を [STATE_DB](../../reference/glossary.md#term-state_db) に格納する | `SwitchOrch` コンストラクタ内で無条件実行 | `capabilities.cpp:724` (`writeCapabilitiesToDb`)、`capabilities.cpp:145` (コンストラクタから呼び出し) |
 | `SAI sai_switch_api` (必須) | `set_switch_attribute(gSwitchId, ...)` で ASIC に直接書き込む。他の Orch / DB への依存なし | SET ハンドラが valid なエントリを受け取るたび | `switchorch.cpp:1000–1065` (setSwitchTrimming 系各メソッド) |
 
 ### STATE_DB への書き込みフィールド
@@ -465,7 +464,7 @@ CONFIG_DB フィールド名文字列および `dscp_value` / `queue_index` の�
 
 | マクロ名 | 値 |
 |---|---|
-| `CAPABILITY_KEY` | `"switch"` (STATE_DB の行キー固定値) |
+| `CAPABILITY_KEY` | `"switch"` ([STATE_DB](../../reference/glossary.md#term-state_db) の行キー固定値) |
 | `CAPABILITY_SWITCH_TRIMMING_CAPABLE_FIELD` | `"SWITCH_TRIMMING_CAPABLE"` |
 | `CAPABILITY_SWITCH_DSCP_RESOLUTION_MODE_FIELD` | `"SWITCH\|PACKET_TRIMMING_DSCP_RESOLUTION_MODE"` |
 | `CAPABILITY_SWITCH_QUEUE_RESOLUTION_MODE_FIELD` | `"SWITCH\|PACKET_TRIMMING_QUEUE_RESOLUTION_MODE"` |
@@ -482,7 +481,7 @@ CONFIG_DB フィールド名文字列および `dscp_value` / `queue_index` の�
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`SWITCH_TRIMMING` への SET 操作 (`doCfgSwitchTrimmingTableTask()` → `setSwitchTrimming()`) は SAI API を直接呼ぶのみであり、**通常の CONFIG_DB 書込に伴う他 Redis DB への副次書込は発生しない**。
+`SWITCH_TRIMMING` への SET 操作 (`doCfgSwitchTrimmingTableTask()` → `setSwitchTrimming()`) は SAI API を直接呼ぶのみであり、**通常の CONFIG_DB 書込に伴う他 [Redis](../../reference/glossary.md#term-redis) DB への副次書込は発生しない**。
 
 > 調査証跡: `meta/_intermediate/cdb-flow/switch-trimming-side-effects.md`
 
@@ -490,11 +489,11 @@ CONFIG_DB フィールド名文字列および `dscp_value` / `queue_index` の�
 
 | 書込先 DB | CONFIG_DB SET 時の書込 | 根拠 |
 |---|---|---|
-| APPL_DB | **なし** | `doCfgSwitchTrimmingTableTask()` に `ProducerStateTable` / `Table::set` 呼び出しなし (`switchorch.cpp:1320-1371`) |
-| STATE_DB | **なし** (起動時のみ) | `writeCapabilitiesToDb()` は `SwitchTrimmingCapabilities` コンストラクタから起動時一回のみ実行される (`capabilities.cpp:142-146`) |
-| COUNTERS_DB | **なし** | — |
-| FLEX_COUNTER_DB | **なし** | — |
-| ASIC_DB (間接) | **あり** (syncd 経由) | SAI API 呼び出しを syncd が非同期に ASIC_DB に反映する |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | **なし** | `doCfgSwitchTrimmingTableTask()` に `ProducerStateTable` / `Table::set` 呼び出しなし (`switchorch.cpp:1320-1371`) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | **なし** (起動時のみ) | `writeCapabilitiesToDb()` は `SwitchTrimmingCapabilities` コンストラクタから起動時一回のみ実行される (`capabilities.cpp:142-146`) |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | **なし** | — |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | **なし** | — |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) (間接) | **あり** ([syncd](../../reference/glossary.md#term-syncd) 経由) | SAI API 呼び出しを [syncd](../../reference/glossary.md#term-syncd) が非同期に [ASIC_DB](../../reference/glossary.md#term-asic_db) に反映する |
 
 ### SAI 副次呼び出し
 
@@ -541,13 +540,13 @@ else
     addExecutor(new Consumer(new ConsumerStateTable(db, tableName, ...), this, tableName));
 ```
 
-`SWITCH_TRIMMING` は CONFIG_DB テーブルであるため `SubscriberStateTable` が使用される。これは Redis の **keyspace 通知** (`PSUBSCRIBE __keyspace@4__:SWITCH_TRIMMING|*`) で変更イベントを受信する仕組みであり、`ProducerStateTable` ベースの channel PUBLISH/SUBSCRIBE とは異なる。
+`SWITCH_TRIMMING` は CONFIG_DB テーブルであるため `SubscriberStateTable` が使用される。これは [Redis](../../reference/glossary.md#term-redis) の **keyspace 通知** (`PSUBSCRIBE __keyspace@4__:SWITCH_TRIMMING|*`) で変更イベントを受信する仕組みであり、`ProducerStateTable` ベースの channel PUBLISH/SUBSCRIBE とは異なる。
 
 ### Producer/Consumer ペア
 
 | 区間 | 方式 | チャンネル/API |
 |------|------|----------------|
-| CLI `config switch-trimming` → CONFIG_DB `SWITCH_TRIMMING` | `ConfigDBConnector.set_entry()` (HSET) | なし (keyspace 通知を Redis が自動発行) |
+| CLI `config switch-trimming` → CONFIG_DB `SWITCH_TRIMMING` | `ConfigDBConnector.set_entry()` (HSET) | なし (keyspace 通知を [Redis](../../reference/glossary.md#term-redis) が自動発行) |
 | CONFIG_DB `SWITCH_TRIMMING` → `SwitchOrch` | `SubscriberStateTable` (keyspace 通知受信) | Redis `PSUBSCRIBE __keyspace@4__:SWITCH_TRIMMING|*` |
 
 `SwitchOrch` 以外に CONFIG_DB `SWITCH_TRIMMING` を購読するデーモン・サービスは存在しない。
@@ -576,7 +575,7 @@ SwitchOrch::doTask() → tableName == CFG_SWITCH_TRIMMING_TABLE_NAME
 
 | 経路 | 状態 |
 |------|------|
-| APPL_DB への転送 | **なし** |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) への転送 | **なし** |
 | STATE_DB への書込み → keyspace 通知 | **なし** (起動時 capability 書込は CONFIG_DB SET と無関係) |
 | `syncd` → ASIC_DB (間接) | SAI API 経由で syncd が非同期に反映 (`<!-- side-effects -->` 参照) |
 
@@ -601,7 +600,7 @@ SwitchOrch::doTask() → tableName == CFG_SWITCH_TRIMMING_TABLE_NAME
 | `setSwitchTrimming()` / `doCfgSwitchTrimmingTableTask()` 内分岐 | **分岐なし** | `switchorch.cpp` を `platform|BRCM|MLNX|broadcom|mellanox|cisco|marvell|barefoot|vendor` で grep → 0 ヒット |
 | `switch/trimming/` ディレクトリ全体 | **分岐なし** | `capabilities.cpp` / `helper.cpp` / `schema.h` も同様 0 ヒット |
 | SAI capability クエリ | **ASIC 依存** | `SwitchTrimmingCapabilities::queryCapabilities()` が起動時に各属性をクエリ。未サポートなら全 SET が no-op |
-| multi-asic / VOQ chassis | **分岐なし** | `conf_switch_trim` は host `m_configDb` のみ購読。per-asic namespace 展開なし |
+| multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis | **分岐なし** | `conf_switch_trim` は host `m_configDb` のみ購読。per-asic namespace 展開なし |
 
 ### SAI capability によるプラットフォーム差
 
@@ -644,4 +643,4 @@ if (isMlnxPlatform() &&
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: ff319d2bdac9 -->
+<!-- glossary-links-injected: 4325c46d064a -->

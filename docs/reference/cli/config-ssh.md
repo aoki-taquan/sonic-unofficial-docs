@@ -100,7 +100,7 @@ config ssh max-sessions <max-sessions>
 
 ## 注意
 
-- 反映には sshd 再ロードが必要。SONiC では [hostcfgd](../../reference/glossary.md#term-hostcfgd) が CONFIG_DB の変更を監視して `/etc/ssh/sshd_config` を再生成する。
+- 反映には sshd 再ロードが必要。[SONiC](../../reference/glossary.md#term-sonic) では [hostcfgd](../../reference/glossary.md#term-hostcfgd) が CONFIG_DB の変更を監視して `/etc/ssh/sshd_config` を再生成する。
 - 同名の `config serial_console inactivity-timeout` という別ファミリがあり、こちらは `SERIAL_CONSOLE|POLICIES` テーブルへ書く。
 
 <!-- cli-mermaid -->
@@ -145,4 +145,4 @@ flowchart LR
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: a35f1b1cdfa7 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-`config bgp` は [BGP](../../reference/glossary.md#term-bgp) セッションの管理（shutdown / startup / 設定削除）と、device-global の TSA / W-[ECMP](../../reference/glossary.md#term-ecmp)、および aggregate-address (集約広告) の操作を提供する。[BGP](../../reference/glossary.md#term-bgp) データプレーン本体は [FRR](../../reference/glossary.md#term-frr) が握っているが、SONiC はその設定状態を **[CONFIG_DB](../../reference/glossary.md#term-config_db)** に保存し、`bgpcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) → [FRR](../../reference/glossary.md#term-frr) (vtysh) に反映する。`config bgp` は [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接書き換える役割を担う[^1]。
+`config bgp` は [BGP](../../reference/glossary.md#term-bgp) セッションの管理（shutdown / startup / 設定削除）と、device-global の TSA / W-[ECMP](../../reference/glossary.md#term-ecmp)、および aggregate-address (集約広告) の操作を提供する。[BGP](../../reference/glossary.md#term-bgp) データプレーン本体は [FRR](../../reference/glossary.md#term-frr) が握っているが、[SONiC](../../reference/glossary.md#term-sonic) はその設定状態を **[CONFIG_DB](../../reference/glossary.md#term-config_db)** に保存し、`bgpcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) → [FRR](../../reference/glossary.md#term-frr) ([vtysh](../../reference/glossary.md#term-vtysh)) に反映する。`config bgp` は [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接書き換える役割を担う[^1]。
 
 `config/main.py` 末尾で `config.commands['bgp'].add_command(bgp_cli.DEVICE_GLOBAL)` `add_command(bgp_cli.AGGREGATE_ADDRESS)` の形で `config/bgp_cli.py` のサブグループが追加される構造のため、cli.json (機械抽出) には `device-global` / `aggregate-address` 配下が現れない。本ページでは両方を統合して扱う。
 
@@ -65,7 +65,7 @@ config bgp shutdown all [-v|--verbose]
 ```
 
 **動作**:
-全隣接 IP を CONFIG_DB の `BGP_NEIGHBOR` テーブルから列挙し、各エントリの `admin_status` を `down` に書き換える[^2]。multi-ASIC では各 namespace の **front_ns**（外部 EBGP 隣接側）のみが対象。
+全隣接 IP を CONFIG_DB の `BGP_NEIGHBOR` テーブルから列挙し、各エントリの `admin_status` を `down` に書き換える[^2]。multi-[ASIC](../../reference/glossary.md#term-asic) では各 namespace の **front_ns**（外部 EBGP 隣接側）のみが対象。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/config/main.py#L4939-L4959 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -115,7 +115,7 @@ config bgp shutdown neighbor <ipaddr_or_hostname> [-v|--verbose]
 - `<ipaddr_or_hostname>` ... 隣接 IP アドレス、または DEVICE_NEIGHBOR テーブルで定義された hostname
 
 **動作**:
-`_change_bgp_session_status` が CONFIG_DB の `BGP_NEIGHBOR|<ip>` の `admin_status` を `down` に更新する。multi-ASIC では `front_ns` + `back_ns` の両方を走査し、見つからなければエラー終了。
+`_change_bgp_session_status` が CONFIG_DB の `BGP_NEIGHBOR|<ip>` の `admin_status` を `down` に更新する。multi-[ASIC](../../reference/glossary.md#term-asic) では `front_ns` + `back_ns` の両方を走査し、見つからなければエラー終了。
 
 ### `config bgp startup all` / `config bgp startup neighbor`
 
@@ -130,7 +130,7 @@ config bgp remove neighbor <neighbor_ip_or_hostname>
 ```
 
 **動作**:
-`_remove_bgp_neighbor_config` が `BGP_NEIGHBOR` テーブルから当該エントリを完全削除する。`admin_status` を変えるだけの shutdown と異なり、隣接定義そのものが消える。multi-ASIC では `front_ns` + `back_ns` を走査。
+`_remove_bgp_neighbor_config` が `BGP_NEIGHBOR` テーブルから当該エントリを完全削除する。`admin_status` を変えるだけの shutdown と異なり、隣接定義そのものが消える。multi-[ASIC](../../reference/glossary.md#term-asic) では `front_ns` + `back_ns` を走査。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/config/main.py#L5052-L5074 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -381,4 +381,4 @@ show bgp device-global
 - [CONFIG_DB: BGP_NEIGHBOR](../config-db/bgp-neighbor.md)
 - [YANG: sonic-bgp-neighbor](../yang/sonic-bgp-neighbor.md)
 
-<!-- glossary-links-injected: 22dc76970f48 -->
+<!-- glossary-links-injected: 4ae932019d96 -->

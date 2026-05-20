@@ -43,7 +43,7 @@ related:
 
 ## 概要
 
-T0 上で SONiC sFlow 機能を機能検証するテスト[^1]。4 [PortChannel](../reference/glossary.md#term-portchannel) から各 1 ポートを sFlow 有効化、Vlan1000 の 2 ポートを使って PTF docker の collector へ繋ぐ構成。`sflowtool` を PTF docker にインストールし、counter sampling と flow sampling の出力をテキストに落として parse する。
+T0 上で [SONiC](../reference/glossary.md#term-sonic) sFlow 機能を機能検証するテスト[^1]。4 [PortChannel](../reference/glossary.md#term-portchannel) から各 1 ポートを sFlow 有効化、Vlan1000 の 2 ポートを使って PTF docker の collector へ繋ぐ構成。`sflowtool` を PTF docker にインストールし、counter sampling と flow sampling の出力をテキストに落として parse する。
 
 ## 動作仕様
 
@@ -129,4 +129,4 @@ show sflow interface
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 88356dc40f25 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

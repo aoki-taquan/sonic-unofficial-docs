@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-SONiC のシステム時刻 / タイムゾーン操作を **`timedatectl` の薄いラッパー** として CLI 化する [HLD](../reference/glossary.md#term-hld)。`config clock timezone <tz>` / `config clock date <YYYY-MM-DD> <HH:MM:SS>` を導入し、timezone のみ [CONFIG_DB](../reference/glossary.md#term-config_db) に永続化する[^1]。日付時刻自体は CONFIG_DB に保存しない（再起動を跨ぐ意味が薄いため）。
+[SONiC](../reference/glossary.md#term-sonic) のシステム時刻 / タイムゾーン操作を **`timedatectl` の薄いラッパー** として CLI 化する [HLD](../reference/glossary.md#term-hld)。`config clock timezone <tz>` / `config clock date <YYYY-MM-DD> <HH:MM:SS>` を導入し、timezone のみ [CONFIG_DB](../reference/glossary.md#term-config_db) に永続化する[^1]。日付時刻自体は CONFIG_DB に保存しない（再起動を跨ぐ意味が薄いため）。
 
 NTP との関係は明確に切られている[^1]:
 
@@ -230,4 +230,4 @@ sudo journalctl -u chronyd -n 50
 - rsyslog 再起動の自動化フロー
 -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

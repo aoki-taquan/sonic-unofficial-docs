@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-Traffic Class (TC) を ingress Priority Group (PG) へマップする[^1]。PG はバッファ admission control（`BUFFER_PG`）と PFC の対象グループを決定し、lossless トラフィック (TC 3, 4) が正しい PG に割り当てられることで PFC が動作する。`qosorch` が [SAI](../../reference/glossary.md#term-sai) map (`SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP`) を生成し、`PORT_QOS_MAP.tc_to_pg_map` で各ポートに適用する。
+Traffic Class (TC) を ingress [Priority Group](../../reference/glossary.md#term-priority-group) (PG) へマップする[^1]。PG はバッファ admission control（`BUFFER_PG`）と [PFC](../../reference/glossary.md#term-pfc) の対象グループを決定し、lossless トラフィック (TC 3, 4) が正しい PG に割り当てられることで [PFC](../../reference/glossary.md#term-pfc) が動作する。`qosorch` が [SAI](../../reference/glossary.md#term-sai) map (`SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP`) を生成し、`PORT_QOS_MAP.tc_to_pg_map` で各ポートに適用する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -35,17 +35,14 @@ Traffic Class (TC) を ingress Priority Group (PG) へマップする[^1]。PG �
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>TC_TO_PRIORITY_GROUP_MAP")]
-  QO["QosOrch"]
-  CDB --> QO
+  DM["QosOrch"]
+  CDB --> DM
   SAI["SAI<br/>sai_qos_map_api"]
-  QO --> SAI
-  TDO["TunnelDecapOrch"]
-  CDB -->|decap_tc_to_pg_map| TDO
-  TDO --> SAI
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を示すミニ図。`TunnelDecapOrch` は `TUNNEL_DECAP_TABLE` 経由で同マップを参照する。詳細は本ページ本文と対応表を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -62,7 +59,7 @@ TC_TO_PRIORITY_GROUP_MAP|<name>|<tc>
 |-----------|----|------|------|
 | `name` (key lv1) | string 1..32 | ✅ | マップ名（例: `AZURE`） |
 | `tc` (key lv2) | `tc_type` (0..15) | ✅ | 入力 Traffic Class |
-| `pg` (value) | string `[0-7]?` | ✅ | 出力 Priority Group (0-7) |
+| `pg` (value) | string `[0-7]?` | ✅ | 出力 [Priority Group](../../reference/glossary.md#term-priority-group) (0-7) |
 
 ## 購読者
 
@@ -100,13 +97,13 @@ TC_TO_PRIORITY_GROUP_MAP|<name>|<tc>
 | フィールド | 値 | 挙動 |
 |-----------|-----|-----|
 | `tc` | `0`..`7` | 有効な Traffic Class。実用範囲 |
-| `tc` | `8`..`15` | YANG 許容（uint8 0..15）だが ASIC/SAI が拒否する場合が多い（プラットフォーム依存） |
-| `pg` | `"0"`..`"7"` | 対応する ingress Priority Group にマッピング |
+| `tc` | `8`..`15` | YANG 許容（uint8 0..15）だが [ASIC](../../reference/glossary.md#term-asic)/[SAI](../../reference/glossary.md#term-sai) が拒否する場合が多い（プラットフォーム依存） |
+| `pg` | `"0"`..`"7"` | 対応する ingress [Priority Group](../../reference/glossary.md#term-priority-group) にマッピング |
 | `pg` | 空文字列 | YANG pattern `[0-7]?` は許容するが `stoi()` 例外 → `task_invalid_entry` でエントリ破棄 |
 | `pg` | 数字以外の文字列 | `stoi()` 例外 → `task_invalid_entry` でエントリ破棄 |
 | マップ全体 | PORT_QOS_MAP / TUNNEL_DECAP_TABLE 参照中に DEL | DEL 保留 (`m_pendingRemove=true`)。参照解放まで待機 |
 | マップ全体 | 参照なし + DEL | SAI `remove_qos_map()` を即時呼び出し |
-| count=0 | サブキーなしで SET | SAI create_qos_map(count=0) が呼ばれる。ASIC が空マップを拒否するかは実装依存 |
+| count=0 | サブキーなしで SET | SAI create_qos_map(count=0) が呼ばれる。[ASIC](../../reference/glossary.md#term-asic) が空マップを拒否するかは実装依存 |
 
 <!-- /value-behavior -->
 
@@ -145,9 +142,9 @@ TC_TO_PRIORITY_GROUP_MAP|AZURE|7  →  7   (high priority control)
 
 ### よくある誤設定
 
-- TC 8..15 の PG マッピングを書いても ASIC が TC 0..7 しかサポートしない場合、SAI が拒否し当該エントリが install されない。
-- `pg` フィールドに空文字列を書くと YANG 検証を通過するが orchagent で silent drop される。
-- lossless PG（3,4）を BUFFER_PG の `profile` で lossless 設定しないと PFC が動作しない。
+- TC 8..15 の PG マッピングを書いても [ASIC](../../reference/glossary.md#term-asic) が TC 0..7 しかサポートしない場合、SAI が拒否し当該エントリが install されない。
+- `pg` フィールドに空文字列を書くと YANG 検証を通過するが [orchagent](../../reference/glossary.md#term-orchagent) で silent drop される。
+- lossless PG（3,4）を [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) の `profile` で lossless 設定しないと [PFC](../../reference/glossary.md#term-pfc) が動作しない。
 
 ### 確認コマンド
 
@@ -162,7 +159,7 @@ show qos map tc-pg
 
 ### Phase 6: 自動派生
 
-`qosorch.cpp` の `addQosItem()` で SAI map type `SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP` をコード内にハードコード。テーブル名 `TC_TO_PRIORITY_GROUP_MAP` と SAI type の対応はコード固定であり、CONFIG_DB フィールドで変更不可。
+`qosorch.cpp` の `addQosItem()` で SAI map type `SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP` をコード内にハードコード。テーブル名 `TC_TO_PRIORITY_GROUP_MAP` と SAI type の対応はコード固定であり、[CONFIG_DB](../../reference/glossary.md#term-config_db) フィールドで変更不可。
 
 ### Phase 7: 条件付き登録
 
@@ -181,7 +178,7 @@ show qos map tc-pg
 | `QosMapHandler::processWorkItem` | 参照中 + DEL | `m_pendingRemove=true` → `task_need_retry` | `qosorch.cpp` L181-186 |
 | `TunnelDecapOrch` | decap_tc_to_pg_map OID 未解決 | `task_need_retry`（マップ作成待ち） | `tunneldecaporch.cpp` L230-237 |
 
-> **スキャン証跡**: `TC_TO_PRIORITY_GROUP_MAP` は TC から ingress PG へのマッピングテーブル。`QosOrch` が SAI QoS map として管理し、`TunnelDecapOrch` が tunnel decap 経路でも参照する。
+> **スキャン証跡**: `TC_TO_PRIORITY_GROUP_MAP` は TC から ingress PG へのマッピングテーブル。`QosOrch` が SAI [QoS](../../reference/glossary.md#term-qos) map として管理し、`TunnelDecapOrch` が tunnel decap 経路でも参照する。
 
 <!-- /handler-branching -->
 
@@ -190,8 +187,8 @@ show qos map tc-pg
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / QosOrch**: `TC_TO_PRIORITY_GROUP_MAP` テーブルを `SubscriberStateTable` で購読。
-- **orchagent / TunnelDecapOrch**: `APP_TUNNEL_DECAP_TABLE` 経由で `decap_tc_to_pg_map` フィールドを参照（間接）。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / QosOrch**: `TC_TO_PRIORITY_GROUP_MAP` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / TunnelDecapOrch**: `APP_TUNNEL_DECAP_TABLE` 経由で `decap_tc_to_pg_map` フィールドを参照（間接）。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -218,7 +215,7 @@ TC_TO_PRIORITY_GROUP_MAP テーブルへの書き込みが発生するコード�
 
 ### CLI
 
-- `config qos reload` — sonic-cfggen が `files/build_templates/qos_config.j2` を展開し `TC_TO_PRIORITY_GROUP_MAP` エントリを生成。
+- `config qos reload` — [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) が `files/build_templates/qos_config.j2` を展開し `TC_TO_PRIORITY_GROUP_MAP` エントリを生成。
 
 ### minigraph / sonic-cfggen
 
@@ -226,7 +223,7 @@ TC_TO_PRIORITY_GROUP_MAP テーブルへの書き込みが発生するコード�
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし。
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし。
 
 ### db_migrator
 
@@ -262,7 +259,7 @@ REST/gNMI 書き込み経路なし。
 
 ### 主要な制約詳細
 
-**PORT_QOS_MAP との順序依存 (依存 #1)**: `handlePortQosMapTable` は `PORT_QOS_MAP|<port>.tc_to_pg_map` の値を `resolveFieldRefValue` で解決する際、`m_qos_maps[CFG_TC_TO_PRIORITY_GROUP_MAP_TABLE_NAME]` にマップが未登録なら `task_need_retry` を返す (qosorch.cpp:2124-2130)。CONFIG_DB へ同時書き込みしても orchagent の処理順により `PORT_QOS_MAP` が先に処理された場合、自動的に retry が発生し `TC_TO_PRIORITY_GROUP_MAP` 登録後に解消される。
+**PORT_QOS_MAP との順序依存 (依存 #1)**: `handlePortQosMapTable` は `PORT_QOS_MAP|<port>.tc_to_pg_map` の値を `resolveFieldRefValue` で解決する際、`m_qos_maps[CFG_TC_TO_PRIORITY_GROUP_MAP_TABLE_NAME]` にマップが未登録なら `task_need_retry` を返す (qosorch.cpp:2124-2130)。[CONFIG_DB](../../reference/glossary.md#term-config_db) へ同時書き込みしても orchagent の処理順により `PORT_QOS_MAP` が先に処理された場合、自動的に retry が発生し `TC_TO_PRIORITY_GROUP_MAP` 登録後に解消される。
 
 **TUNNEL_DECAP_TABLE との順序依存 (依存 #2)**: `TunnelDecapOrch::doTask` は `decap_tc_to_pg_map` フィールドを `gQosOrch->resolveTunnelQosMap()` で解決する。`SAI_NULL_OBJECT_ID` が返った場合 `"QoS map decap_tc_to_pg_map is not ready yet"` を LOG_NOTICE して `task_need_retry` を返す (tunneldecaporch.cpp:232-237)。マップが後から登録されると次のイテレーションで自動的にトンネルエントリが処理される。
 
@@ -280,7 +277,7 @@ REST/gNMI 書き込み経路なし。
 | 依存方向 | 参照元フィールド | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
 |---------|----------------|--------------|--------------|---------|------|
 | 逆参照（被参照） | `PORT_QOS_MAP\|<port>.tc_to_pg_map` | `TC_TO_PRIORITY_GROUP_MAP`（本テーブル） | `TC_TO_PRIORITY_GROUP_MAP\|<name>` | `handlePortQosMapTable` が `resolveFieldRefValue` でマップ OID を解決。未登録なら `task_need_retry`。参照中は本テーブルの DEL が `m_pendingRemove=true` でブロックされる | `qosorch.cpp:2118-2134`, `qosorch.cpp:181-186` |
-| 逆参照（被参照） | `TUNNEL_DECAP_TABLE\|<name>.decap_tc_to_pg_map` (APPL_DB) | `TC_TO_PRIORITY_GROUP_MAP`（本テーブル） | `TC_TO_PRIORITY_GROUP_MAP\|<name>` | `TunnelDecapOrch::doTask` が `gQosOrch->resolveTunnelQosMap()` で OID を解決。`SAI_NULL_OBJECT_ID` 返却時は `"QoS map decap_tc_to_pg_map is not ready yet"` を LOG_NOTICE して `task_need_retry` | `tunneldecaporch.cpp:230-237` |
+| 逆参照（被参照） | `TUNNEL_DECAP_TABLE\|<name>.decap_tc_to_pg_map` ([APPL_DB](../../reference/glossary.md#term-appl_db)) | `TC_TO_PRIORITY_GROUP_MAP`（本テーブル） | `TC_TO_PRIORITY_GROUP_MAP\|<name>` | `TunnelDecapOrch::doTask` が `gQosOrch->resolveTunnelQosMap()` で OID を解決。`SAI_NULL_OBJECT_ID` 返却時は `"QoS map decap_tc_to_pg_map is not ready yet"` を LOG_NOTICE して `task_need_retry` | `tunneldecaporch.cpp:230-237` |
 
 ### 参照カウント機構
 
@@ -330,7 +327,7 @@ PORT_QOS_MAP と TUNNEL_DECAP_TABLE のいずれか一方でも参照が残る�
 
 - `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` → syslog のみ
 - `ERROR_TABLE` への書き込みなし
-- STATE_DB への反映なし（`TC_TO_PRIORITY_GROUP_MAP` は STATE_DB を持たない）
+- [STATE_DB](../../reference/glossary.md#term-state_db) への反映なし（`TC_TO_PRIORITY_GROUP_MAP` は [STATE_DB](../../reference/glossary.md#term-state_db) を持たない）
 - CONFIG_DB のエントリは失敗後も残存（`task_invalid_entry` の erase はメモリ上の `m_toSync` のみ）
 
 > **Evidence**: `qosorch.cpp:2253-2300` (`QosOrch::doTask(Consumer&)`); `qosorch.cpp:124-201` (`QosMapHandler::processWorkItem()`); `qosorch.cpp:884-934` (`TcToPgHandler::convertFieldValuesToAttributes()`, `addQosItem()`); `tunneldecaporch.cpp:230-243`
@@ -394,7 +391,7 @@ PORT_QOS_MAP と TUNNEL_DECAP_TABLE のいずれか一方でも参照が残る�
 
 | # | 副作用 | トリガー | evidence |
 |---|--------|---------|---------|
-| 1 | ASIC に SAI QoS map オブジェクト生成（`SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP`） | SET（新規） | `qosorch.cpp:904-928` |
+| 1 | ASIC に SAI [QoS](../../reference/glossary.md#term-qos) map オブジェクト生成（`SAI_QOS_MAP_TYPE_TC_TO_PRIORITY_GROUP`） | SET（新規） | `qosorch.cpp:904-928` |
 | 2 | ポートの ingress TC→PG マッピング変更（`SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP`） | `PORT_QOS_MAP|<port>.tc_to_pg_map` 参照時に適用 | `qosorch.cpp:2060-2175` |
 | 3 | トンネル decap の TC→PG マッピング変更（`SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP`） | `TUNNEL_DECAP_TABLE|<name>.decap_tc_to_pg_map` 参照時に適用 | `tunneldecaporch.cpp:230-243` |
 | 4 | 参照中ポート・トンネルへの即時反映（`set_qos_map_attribute()`） | SET（既存マップ上書き） | `qosorch.cpp:204-213` |
@@ -411,8 +408,8 @@ TC→PG マッピングは PFC の動作に直結する。`BUFFER_PG|<port>|<pg>
 
 | 副作用先 | 内容 |
 |---------|------|
-| STATE_DB | **書き込みなし**。`TC_TO_PRIORITY_GROUP_MAP` は STATE_DB テーブルを持たない |
-| APPL_DB | **書き込みなし**。CONFIG_DB → SAI ダイレクトルートであり APPL_DB は経由しない |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | **書き込みなし**。`TC_TO_PRIORITY_GROUP_MAP` は STATE_DB テーブルを持たない |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | **書き込みなし**。CONFIG_DB → SAI ダイレクトルートであり [APPL_DB](../../reference/glossary.md#term-appl_db) は経由しない |
 | ERROR_TABLE | なし |
 | 通知チャネル | なし（syslog のみ） |
 
@@ -509,11 +506,11 @@ NotificationConsumer: なし
 | `generate_tc_to_pg_map` + `tunnel_qos_remap_enable=true` | VxLAN decap TC→PG 再マッピング対応プラットフォーム (Broadcom 等) | SKU 定義関数が生成 |
 | `generate_tc_to_pg_map` + `backend_device_types` + `ComputeAI` | Azure AI ラック向け BackEndToRRouter / BackEndLeafRouter | SKU 定義関数が生成 |
 | `generate_tc_to_pg_map_per_sku` | 一部 Mellanox / Broadcom SKU | SKU ごとに異なる TC→PG 対応表 |
-| その他（デフォルト） | 一般コミュニティ SONiC | `AZURE`（TC3→PG3, TC4→PG4, 他→PG0） |
+| その他（デフォルト） | 一般コミュニティ [SONiC](../../reference/glossary.md#term-sonic) | `AZURE`（TC3→PG3, TC4→PG4, 他→PG0） |
 
 ### B. SmartSwitch / DPU — AZURE_DPC マップ
 
-`PORT_DPC`（DPU 接続ポート）が存在する環境では `AZURE_DPC` マップが追加生成される (`qos_config.j2:182-193`):
+`PORT_DPC`（[DPU](../../reference/glossary.md#term-dpu) 接続ポート）が存在する環境では `AZURE_DPC` マップが追加生成される (`qos_config.j2:182-193`):
 
 ```json
 "AZURE_DPC": {
@@ -522,7 +519,7 @@ NotificationConsumer: なし
 }
 ```
 
-全 TC を PG0（ベストエフォート）に割り当て、TC7 のみ PG7 に割り当てる。PFC は TC7/PG7 のみ対象となる。DPU 接続ポートは `PORT_QOS_MAP.tc_to_pg_map = "AZURE_DPC"` で参照される (`qos_config.j2:476`)。
+全 TC を PG0（ベストエフォート）に割り当て、TC7 のみ PG7 に割り当てる。PFC は TC7/PG7 のみ対象となる。[DPU](../../reference/glossary.md#term-dpu) 接続ポートは `PORT_QOS_MAP.tc_to_pg_map = "AZURE_DPC"` で参照される (`qos_config.j2:476`)。
 
 ### C. トンネル QoS 再マッピング対応プラットフォーム
 
@@ -539,7 +536,7 @@ YANG の `tc_type` は `uint8 0..15` を許容するが、実用上 TC 8..15 を
 
 ### プラットフォーム差異サマリ
 
-| 観点 | 標準プラットフォーム | SKU 固有 (`per_sku` マクロあり) | SmartSwitch DPU ポート | トンネル QoS 対応 |
+| 観点 | 標準プラットフォーム | SKU 固有 (`per_sku` マクロあり) | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) ポート | トンネル QoS 対応 |
 |------|------------------|--------------------------------|----------------------|------------------|
 | 生成マップ名 | `AZURE` | SKU 依存 | `AZURE` + `AZURE_DPC` | SKU 依存 |
 | TC3/TC4 の PG | PG3 / PG4（lossless） | プラットフォーム依存 | PG0（lossy） | プラットフォーム依存 |
@@ -583,3 +580,5 @@ YANG の `tc_type` は `uint8 0..15` を許容するが、実用上 TC 8..15 を
 <!-- /defaults -->
 
 <!-- glossary-links-injected: tc-to-priority-group-map -->
+
+<!-- glossary-links-injected: f9445b5b4106 -->

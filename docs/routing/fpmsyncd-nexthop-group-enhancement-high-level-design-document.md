@@ -197,7 +197,7 @@ docker exec bgp vtysh -c 'show nexthop-group rib'
 
 ## トラブルシュート
 
-- ルート学習後に ASIC まで反映されない場合、`fpmsyncd` の NLMSG パースに失敗していないかを `docker logs bgp` と `/var/log/swss/swss.rec` の両方で確認。
+- ルート学習後に [ASIC](../reference/glossary.md#term-asic) まで反映されない場合、`fpmsyncd` の NLMSG パースに失敗していないかを `docker logs bgp` と `/var/log/swss/swss.rec` の両方で確認。
 - NHG 上限超過時は [orchagent](../reference/glossary.md#term-orchagent) が単一ホップにフォールバックする。`SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` と現在数 (`ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP` の総数) を比較する。
 - FRR と kernel の NHG ID 対応が崩れた場合は `bgp` コンテナ再起動で再 sync するが、APPL_DB の stale エントリは `swssconfig` で flush することを検討。
 
@@ -306,4 +306,4 @@ docker exec bgp vtysh -c 'show nexthop-group rib'
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: e2892b76fd9a -->
+<!-- glossary-links-injected: c006405759d8 -->

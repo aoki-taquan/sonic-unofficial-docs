@@ -28,7 +28,7 @@ related:
 
 # 発展トピック
 
-[PINS](../../reference/glossary.md#term-pins) は data plane を P4Runtime で書く経路ですが、SDN コントローラから見ると **状態取得 / config push の管理面（[gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig）と組で読む** のが自然です。SONiC 標準の管理章と PINS の境界、および [HLD](../../reference/glossary.md#term-hld) と実装のあいだに残っている乖離をここでまとめます。
+[PINS](../../reference/glossary.md#term-pins) は data plane を P4Runtime で書く経路ですが、SDN コントローラから見ると **状態取得 / config push の管理面（[gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig）と組で読む** のが自然です。[SONiC](../../reference/glossary.md#term-sonic) 標準の管理章と PINS の境界、および [HLD](../../reference/glossary.md#term-hld) と実装のあいだに残っている乖離をここでまとめます。
 
 ## ハンドオフ
 
@@ -49,7 +49,7 @@ SONiC の管理面は [YANG](../../reference/glossary.md#term-yang)（OpenConfig
 
 ## HashOrch HLD と実装の乖離
 
-P4RT App HLD では **HashOrch（[orchagent](../../reference/glossary.md#term-orchagent) 新規追加）** がハッシュ属性を扱う前提で書かれていますが、現行 master では独立コンポーネントとしては存在せず、**既存の `SwitchOrch`（`switch_helper.cpp` の `SWITCH_HASH_FIELD_*` マップ）が `CFG_SWITCH_HASH_TABLE_NAME` 経由で扱う形** になっています。PINS 側でハッシュフィールドを controller から制御したい場合、現状は SwitchOrch 経由の経路を読む必要があります。詳細は [P4RT App HLD の Discrepancy 節](../../management/p4rt-application-hld.md) を参照してください。
+[P4RT](../../reference/glossary.md#term-p4rt) App HLD では **HashOrch（[orchagent](../../reference/glossary.md#term-orchagent) 新規追加）** がハッシュ属性を扱う前提で書かれていますが、現行 master では独立コンポーネントとしては存在せず、**既存の `SwitchOrch`（`switch_helper.cpp` の `SWITCH_HASH_FIELD_*` マップ）が `CFG_SWITCH_HASH_TABLE_NAME` 経由で扱う形** になっています。PINS 側でハッシュフィールドを controller から制御したい場合、現状は SwitchOrch 経由の経路を読む必要があります。詳細は [P4RT App HLD の Discrepancy 節](../../management/p4rt-application-hld.md) を参照してください。
 
 ## ベンダ依存の境界
 
@@ -73,7 +73,7 @@ PacketIO の kernel 側（`genl_packet` filter 等）と、[SAI](../../reference
 - **P4 program upgrade**: pipeline 更新時の atomic swap。`SetForwardingPipelineConfig` の VERIFY / SAVE / COMMIT / RECONCILE_AND_COMMIT モードの違いを理解する。
 - **WCMP 大規模化**: 数万 nexthop の WCMP group を扱う性能テスト。`wcmp_manager` の resize と SAI hash optimization が論点。
 - **PacketIO scale**: punt → CPU → controller の経路で、PacketIO rate が [CoPP](../../reference/glossary.md#term-copp) / hostif queue / gRPC stream の各層で制限される。
-- **PINS と SONiC standard ACL の共存**: 同じ ASIC [TCAM](../../reference/glossary.md#term-tcam) を分け合うため、resource allocation を deployment で固定する必要がある。
+- **PINS と SONiC standard ACL の共存**: 同じ [ASIC](../../reference/glossary.md#term-asic) [TCAM](../../reference/glossary.md#term-tcam) を分け合うため、resource allocation を deployment で固定する必要がある。
 
 ## 既知の制約と回避方法
 
@@ -129,4 +129,4 @@ PacketIO の kernel 側（`genl_packet` filter 等）と、[SAI](../../reference
 
 <!-- glossary-links-injected: 4d9f23481e68 -->
 
-<!-- glossary-links-injected: c22475bfc39e -->
+<!-- glossary-links-injected: 4b7e3e133212 -->

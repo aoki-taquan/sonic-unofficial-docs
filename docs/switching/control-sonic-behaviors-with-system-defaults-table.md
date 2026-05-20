@@ -40,7 +40,7 @@ related:
 
 ## 概要
 
-SONiC では機能のオン/オフや既定挙動を切り替える「フラグ」が `CONFIG_DB` の `DEVICE_METADATA|localhost` に蓄積されてきた。`default_bgp_status`, `default_pfcwd_status`, `synchronous_mode`, `dhcp_server` などである。フラグが増えるにつれて `DEVICE_METADATA` が肥大化し、本来「デバイスのメタデータ」とは性格の異なるフラグが混在する状況が生じた。
+[SONiC](../reference/glossary.md#term-sonic) では機能のオン/オフや既定挙動を切り替える「フラグ」が `CONFIG_DB` の `DEVICE_METADATA|localhost` に蓄積されてきた。`default_bgp_status`, `default_pfcwd_status`, `synchronous_mode`, `dhcp_server` などである。フラグが増えるにつれて `DEVICE_METADATA` が肥大化し、本来「デバイスのメタデータ」とは性格の異なるフラグが混在する状況が生じた。
 
 本 [HLD](../reference/glossary.md#term-hld) は、これらのフラグを **新規テーブル `SYSTEM_DEFAULTS`** に切り出し、初期値設定・更新・購読を一元化することを提案している。`DEVICE_METADATA` 内の該当フィールドは `db_migrator.py` で `SYSTEM_DEFAULTS` に移行され、`sonic-device_metadata.yang` の該当エントリは新たな [YANG](../reference/glossary.md#term-yang) モデルへ切り出される。
 
@@ -258,4 +258,4 @@ HLD と実装は一致。`code-verified` に昇格。
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

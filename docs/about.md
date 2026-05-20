@@ -16,7 +16,7 @@ related:
 
 ## ワンライナー
 
-> SONiC NOS（コミュニティ版・`master` ブランチ）の高水準設計（HLD）・実コード・YANG・CLI・GitHub Issue を AI が横断的に**再構成**して書く、**日本語の非公式ドキュメント**です。
+> [SONiC](./reference/glossary.md#term-sonic) NOS（コミュニティ版・`master` ブランチ）の高水準設計（HLD）・実コード・YANG・CLI・GitHub Issue を AI が横断的に**再構成**して書く、**日本語の非公式ドキュメント**です。
 
 ## プロジェクトの目的
 
@@ -70,16 +70,10 @@ SONiC の公式ドキュメントには以下のような構造的な課題が�
 | `meta` | プロジェクト運営に関するメタページ（本ページなど） |
 | `stub` | 執筆途中のスタブ（β 段階では極力残さない） |
 
-品質指標（2026-05-12 時点）:
+品質指標の最新値（総ページ数、`code-verified` / `discrepancy-found` 件数、Reference カバレッジ、監査平均評価など）は [`_meta/snapshot.md`](_meta/snapshot.md) を参照してください。本ページに数値を直書きすると更新漏れで実態と乖離するため、スナップショット側に一本化しています。
 
-- 総ページ数: 833
-- `code-verified` ページ: 597
-- `discrepancy-found` ページ: 48
-- `hld-only` 本文ページ: 0
-- 監査平均評価 (round 32、5 段階): **4.972 / 5.0**
 - Topics 22 章 すべて 100% カバレッジ（概念 / 設定 / 運用 / 内部実装 / 障害切り分け 全部揃い）
 - Reference Mermaid 図カバレッジ: CONFIG_DB / CLI / YANG いずれも 100%
-- CLI Reference: 73 ページ / CONFIG_DB Reference: 122 ページ / YANG Reference: 85 ページ / Runbooks: 46 ページ
 
 最新の品質状態とロードマップは [`CHANGELOG`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/CHANGELOG.md) と `meta/roadmap-v2.md` を参照してください。
 
@@ -141,4 +135,4 @@ AI 駆動の運用パイプライン（Indexer → Backlog Generator → Writer 
 - [カバレッジ状況 (_meta/coverage)](_meta/coverage.md)
 - [HLD と実装の乖離一覧 (_meta/discrepancies)](_meta/discrepancies.md)
 
-<!-- glossary-links-injected: ac66cb8fa7e1 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

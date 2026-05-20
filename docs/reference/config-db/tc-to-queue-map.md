@@ -135,7 +135,6 @@ show qos map tc-queue
 ```
 <!-- /ops-hint -->
 
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -145,7 +144,7 @@ QosOrch が `TC_TO_QUEUE_MAP` テーブル名から SAI map type `SAI_QOS_MAP_TY
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
-QosOrch は常時登録し `TC_TO_QUEUE_MAP` テーブルを無条件購読する。`PORT.tc_to_queue_map` から参照されている場合のみ SAI port QoS map として bind される。未参照の場合は map オブジェクトが作成されるが port に適用されない。
+QosOrch は常時登録し `TC_TO_QUEUE_MAP` テーブルを無条件購読する。`PORT.tc_to_queue_map` から参照されている場合のみ SAI port [QoS](../../reference/glossary.md#term-qos) map として bind される。未参照の場合は map オブジェクトが作成されるが port に適用されない。
 
 <!-- /derivation -->
 
@@ -159,7 +158,7 @@ QosOrch は常時登録し `TC_TO_QUEUE_MAP` テーブルを無条件購読す�
 | `QosOrch` | del_handler | SAI qos map 削除、port 参照を解除してから削除 | `qosorch.cpp` |
 | `QosOrch` | TC 値が範囲外 (0-7 以外) | ログエラー + スキップ | `qosorch.cpp` |
 
-> **スキャン証跡**: `TC_TO_QUEUE_MAP` は Traffic Class からキュー番号へのマッピングテーブル。QosOrch が SAI QoS map として管理。テーブル名からの map type 自動解決が Phase 6 相当。
+> **スキャン証跡**: `TC_TO_QUEUE_MAP` は Traffic Class からキュー番号へのマッピングテーブル。QosOrch が SAI [QoS](../../reference/glossary.md#term-qos) map として管理。テーブル名からの map type 自動解決が Phase 6 相当。
 
 <!-- /handler-branching -->
 
@@ -168,7 +167,7 @@ QosOrch は常時登録し `TC_TO_QUEUE_MAP` テーブルを無条件購読す�
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / QosOrch**: `TC_TO_QUEUE_MAP` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / QosOrch**: `TC_TO_QUEUE_MAP` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -192,7 +191,7 @@ TC_TO_QUEUE_MAP テーブルへの書き込みが発生するコード経路を�
 
 ### CLI
 
-  - `config qos reload` — sonic-cfggen が `files/build_templates/qos_config.j2` を展開し TC_TO_QUEUE_MAP エントリを生成 (sonic-buildimage/files/build_templates/qos_config.j2)
+  - `config qos reload` — [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) が `files/build_templates/qos_config.j2` を展開し TC_TO_QUEUE_MAP エントリを生成 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/files/build_templates/qos_config.j2)
 
 ### minigraph / sonic-cfggen
 
@@ -200,7 +199,7 @@ minigraph.py に TC_TO_QUEUE_MAP 直接生成なし — `qos_config.j2` テン�
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -281,7 +280,7 @@ uplink ポート + different_tc_to_queue_map + tunnel_qos_remap_enable → AZURE
 
 | テーブル | 役割 | TC_TO_QUEUE_MAP との関係 | evidence |
 |---|---|---|---|
-| [`DSCP_TO_TC_MAP`](dscp-to-tc-map.md) | DSCP → TC 変換マップ | パイプライン前段。受信パケットの DSCP 値を TC に変換し、TC_TO_QUEUE_MAP が TC → egress queue に変換する | qosorch.cpp:L61,L81,L100,L1329 |
+| [`DSCP_TO_TC_MAP`](dscp-to-tc-map.md) | [DSCP](../../reference/glossary.md#term-dscp) → TC 変換マップ | パイプライン前段。受信パケットの [DSCP](../../reference/glossary.md#term-dscp) 値を TC に変換し、TC_TO_QUEUE_MAP が TC → egress queue に変換する | qosorch.cpp:L61,L81,L100,L1329 |
 
 ### パイプライン下流 (Queue 番号を消費するテーブル)
 
@@ -313,7 +312,7 @@ uplink ポート + different_tc_to_queue_map + tunnel_qos_remap_enable → AZURE
 | TC 最小値 | `0` | `tc_type` YANG typedef 下限 |
 | TC 最大値 | `7` | `tc_type` YANG typedef 上限 |
 | queue インデックス最小値 | `0` | `sai_qos_map_t.value.queue_index` 下限 |
-| queue インデックス最大値 | プラットフォーム依存 | SAI / ASIC が許容する物理キュー数に依存（典型値 8〜12）。YANG 制約は `0..9` だが実装はチェックしない |
+| queue インデックス最大値 | プラットフォーム依存 | SAI / [ASIC](../../reference/glossary.md#term-asic) が許容する物理キュー数に依存（典型値 8〜12）。YANG 制約は `0..9` だが実装はチェックしない |
 
 ### デフォルトマップ名
 
@@ -361,7 +360,7 @@ TC 7 → queue 7
 
 ### MAP 適用の前提順序
 
-`TC_TO_QUEUE_MAP` は `PORT_QOS_MAP` より**先に** CONFIG_DB へ書き込む必要がある。
+`TC_TO_QUEUE_MAP` は `PORT_QOS_MAP` より**先に** [CONFIG_DB](../../reference/glossary.md#term-config_db) へ書き込む必要がある。
 
 `QosOrch::handlePortQosMapTable()` は `tc_to_queue_map` フィールドを処理する際、`resolveFieldRefValue()` で対応する `TC_TO_QUEUE_MAP|<name>` の SAI オブジェクト存在を確認する（qosorch.cpp:2118-2129）。SAI オブジェクトが未作成であれば `task_need_retry` を返し、Consumer がバックオフ後に再処理する。
 
@@ -437,9 +436,9 @@ PORT_QOS_MAP から参照中の状態で TC_TO_QUEUE_MAP を DEL しようとす
 
 ### ASIC_DB への書込
 
-`TcToQueueMapHandler::addQosItem()` が `sai_qos_map_api->create_qos_map()` を呼び出すと、syncd が `ASIC_DB` の `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:<oid>` を自動生成する（orchagent → syncd → ASIC_DB 経路）。
+`TcToQueueMapHandler::addQosItem()` が `sai_qos_map_api->create_qos_map()` を呼び出すと、[syncd](../../reference/glossary.md#term-syncd) が `ASIC_DB` の `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:<oid>` を自動生成する（[orchagent](../../reference/glossary.md#term-orchagent) → [syncd](../../reference/glossary.md#term-syncd) → [ASIC_DB](../../reference/glossary.md#term-asic_db) 経路）。
 
-| ASIC_DB キー | 属性 | 値 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) キー | 属性 | 値 |
 |-------------|------|-----|
 | `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:<oid>` | `SAI_QOS_MAP_ATTR_TYPE` | `SAI_QOS_MAP_TYPE_TC_TO_QUEUE` |
 | 同上 | `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | `[(tc=0,queue=0), ...]` |
@@ -448,7 +447,7 @@ PORT_QOS_MAP から参照中の状態で TC_TO_QUEUE_MAP を DEL しようとす
 
 ### APPL_STATE_DB への書込
 
-**書込なし。** QosOrch は `TC_TO_QUEUE_MAP` 処理において APPL_STATE_DB / APPL_DB への書き込みを一切行わない。CONFIG_DB → SAI (ASIC_DB) の直接経路のみ。
+**書込なし。** QosOrch は `TC_TO_QUEUE_MAP` 処理において APPL_STATE_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みを一切行わない。[CONFIG_DB](../../reference/glossary.md#term-config_db) → SAI ([ASIC_DB](../../reference/glossary.md#term-asic_db)) の直接経路のみ。
 
 ### PORT への副次反映（SAI port 属性書込）
 
@@ -460,14 +459,14 @@ attr.value.oid = <TC_TO_QUEUE_MAP の SAI OID>;
 sai_port_api->set_port_attribute(port.m_port_id, &attr);  // qosorch.cpp L2193
 ```
 
-これにより syncd 経由で `ASIC_STATE:SAI_OBJECT_TYPE_PORT:<port_oid>` の `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` が更新される。`encap_tc_to_queue_map` フィールドも同テーブルを参照し (qosorch.cpp:116)、Tunnel QoS remap 有効時は Tunnel encap 経路でも同 map OID が書き込まれる。
+これにより [syncd](../../reference/glossary.md#term-syncd) 経由で `ASIC_STATE:SAI_OBJECT_TYPE_PORT:<port_oid>` の `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` が更新される。`encap_tc_to_queue_map` フィールドも同テーブルを参照し (qosorch.cpp:116)、Tunnel QoS remap 有効時は Tunnel encap 経路でも同 map OID が書き込まれる。
 
 | 副次書込先 | 書込タイミング | SAI 属性 / キー | 備考 |
 |-----------|--------------|----------------|------|
 | `ASIC_DB` `SAI_OBJECT_TYPE_QOS_MAP` | `TC_TO_QUEUE_MAP` SET 時 | `SAI_QOS_MAP_ATTR_TYPE`, `SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | syncd 経由 |
 | `ASIC_DB` `SAI_OBJECT_TYPE_PORT` | `PORT_QOS_MAP.tc_to_queue_map` 設定時 | `SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP` | 参照ポート全台 |
 | APPL_STATE_DB | — | なし | 書込経路なし |
-| APPL_DB | — | なし | 書込経路なし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | — | なし | 書込経路なし |
 
 <!-- /side-effects -->
 
@@ -476,7 +475,7 @@ sai_port_api->set_port_attribute(port.m_port_id, &attr);  // qosorch.cpp L2193
 
 ### ASIC キャパビリティ
 
-`TC_TO_QUEUE_MAP` ハンドラは SAI の `create_qos_map()` を直接呼ぶのみで、ASIC ケーパビリティクエリ（`querySwitchCapability`）を実施しない。`DSCP_TO_TC_MAP` が `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` でクエリを行うのと異なり、TC→queue マップの対応可否判定は SAI ベンダー実装に委ねられる。`create_qos_map()` 失敗時は `"Failed to create tc_to_queue map. status:%d"` を LOG_ERROR して `task_failed` を返す。
+`TC_TO_QUEUE_MAP` ハンドラは SAI の `create_qos_map()` を直接呼ぶのみで、[ASIC](../../reference/glossary.md#term-asic) ケーパビリティクエリ（`querySwitchCapability`）を実施しない。`DSCP_TO_TC_MAP` が `SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` でクエリを行うのと異なり、TC→queue マップの対応可否判定は SAI ベンダー実装に委ねられる。`create_qos_map()` 失敗時は `"Failed to create tc_to_queue map. status:%d"` を LOG_ERROR して `task_failed` を返す。
 
 ### ベンダー別 queue 数差
 
@@ -490,18 +489,18 @@ sai_port_api->set_port_attribute(port.m_port_id, &attr);  // qosorch.cpp L2193
 
 ### VOQ chassis 差
 
-`DEVICE_METADATA['localhost']['switch_type'] == 'voq'` のとき VOQ chassis モードとなる。
+`DEVICE_METADATA['localhost']['switch_type'] == 'voq'` のとき [VOQ](../../reference/glossary.md#term-voq) chassis モードとなる。
 
-- `TC_TO_QUEUE_MAP` テーブル本体の生成ロジックは標準と同一（VOQ 固有の分岐なし）
+- `TC_TO_QUEUE_MAP` テーブル本体の生成ロジックは標準と同一（[VOQ](../../reference/glossary.md#term-voq) 固有の分岐なし）
 - `QUEUE` テーブルは SYSTEM_PORT 単位で生成され、queue 3/4 を lossless (`AZURE_LOSSLESS`)、queue 0/1/2/5/6 を best-effort として active ポートのみ明示設定する（通常モードのポートごと 0–7 全指定とは異なる）
-- orchagent の `applyWredProfileToQueue()` では `gMySwitchType == "voq"` 判定があり、VOQ モード時は `getPortVoQIds()` でキュー OID を解決する（通常は `port.m_queue_ids`）。TC_TO_QUEUE_MAP の SAI map 作成パス自体は共通
+- [orchagent](../../reference/glossary.md#term-orchagent) の `applyWredProfileToQueue()` では `gMySwitchType == "voq"` 判定があり、[VOQ](../../reference/glossary.md#term-voq) モード時は `getPortVoQIds()` でキュー OID を解決する（通常は `port.m_queue_ids`）。TC_TO_QUEUE_MAP の SAI map 作成パス自体は共通
 
 | 観点 | 通常モード | VOQ chassis |
 |------|-----------|------------|
 | TC_TO_QUEUE_MAP 生成 | qos_config.j2 共通パス | 同上（変化なし） |
 | queue 数 | HWSKU 依存（デフォルト 0–7） | SYSTEM_PORT ベース、一部キューのみ明示 |
 | ポート適用時のキュー ID 解決 | `port.m_queue_ids` | `getPortVoQIds()` |
-| ASIC ケーパビリティクエリ | なし | なし |
+| [ASIC](../../reference/glossary.md#term-asic) ケーパビリティクエリ | なし | なし |
 | uplink 別マップ | `AZURE_UPLINK`（条件付き） | 非適用 |
 
 <!-- /platform -->
@@ -515,14 +514,14 @@ sai_port_api->set_port_attribute(port.m_port_id, &attr);  // qosorch.cpp L2193
 
 CONFIG_DB の `TC_TO_QUEUE_MAP` は `orchdaemon.cpp` の `qos_tables` ベクタ経由で `QosOrch` に登録される。`Orch::addConsumer()` が CONFIG_DB を検出し **`swss::SubscriberStateTable`** を選択する。
 
-- 購読方式: Redis **keyspace 通知** (`__keyspace@<dbId>__:TC_TO_QUEUE_MAP|*` への `PSUBSCRIBE`)
+- 購読方式: [Redis](../../reference/glossary.md#term-redis) **keyspace 通知** (`__keyspace@<dbId>__:TC_TO_QUEUE_MAP|*` への `PSUBSCRIBE`)
 - 通知到着時に `HGETALL` で値を再取得し `(key, op, fvs)` タプルとして `pops()` で返す
 - バッチサイズ: `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`、ハードコード）
-- `orchagent -b` オプションの影響なし（APPL_DB 側 `ConsumerStateTable` のみに作用）
+- `orchagent -b` オプションの影響なし（[APPL_DB](../../reference/glossary.md#term-appl_db) 側 `ConsumerStateTable` のみに作用）
 
 ### 書き込み側 (publisher)
 
-CLI `config qos reload`（`sonic-cfggen` + `qos_config.j2`）またはプラットフォーム `qos.json` 投入が `swss::Table::set()` / `HSET` を発行。明示的 `PUBLISH` は行われず Redis keyspace 通知で購読者に伝達。
+CLI `config qos reload`（`sonic-cfggen` + `qos_config.j2`）またはプラットフォーム `qos.json` 投入が `swss::Table::set()` / `HSET` を発行。明示的 `PUBLISH` は行われず [Redis](../../reference/glossary.md#term-redis) keyspace 通知で購読者に伝達。
 
 ### ディスパッチ経路
 
@@ -554,3 +553,5 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 | TTL | 未使用 |
 
 <!-- /pubsub -->
+
+<!-- glossary-links-injected: 5ce0fe87aa8f -->

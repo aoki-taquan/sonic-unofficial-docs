@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-vrf`
 - top container: `sonic-srv6`
 
-Segment Routing over IPv6 ([SRv6](../../reference/glossary.md#term-srv6)) configuration for SONiC.[^1]
+Segment Routing over IPv6 ([SRv6](../../reference/glossary.md#term-srv6)) configuration for [SONiC](../../reference/glossary.md#term-sonic).[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -44,6 +44,19 @@ flowchart LR
 !!! note "凡例"
     YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文を参照。
 <!-- /yang-mermaid -->
+
+## 関連ページ
+
+<!-- yang-xref -->
+
+本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
+
+### 対応 CONFIG_DB
+
+- [`SRV6_MY_LOCATORS`](../config-db/srv6-my-locators.md)
+- [`SRV6_MY_SIDS`](../config-db/srv6-my-sids.md)
+
+<!-- /yang-xref -->
 
 ## ツリー
 
@@ -127,4 +140,4 @@ module: sonic-srv6
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-srv6.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

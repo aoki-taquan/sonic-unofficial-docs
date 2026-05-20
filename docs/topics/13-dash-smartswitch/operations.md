@@ -55,7 +55,7 @@ DPU2           169.254.200.3           False
 DPU3           169.254.200.4            True
 ```
 
-`midplane-status: False` は最も多い「DPU が動かない」事象の入口で、原因は (a) DPU 側 SONiC が boot 途中、(b) midplane DHCP が走っていない、(c) PCI detach 中、のいずれかです。`docker ps | grep redisdpu` と NPU 側 `redis-cli -h redisdpu2 ping` を続けて叩いて、DPU 側 redis 到達性まで踏み込みます。
+`midplane-status: False` は最も多い「DPU が動かない」事象の入口で、原因は (a) DPU 側 [SONiC](../../reference/glossary.md#term-sonic) が boot 途中、(b) midplane DHCP が走っていない、(c) PCI detach 中、のいずれかです。`docker ps | grep redisdpu` と NPU 側 `redis-cli -h redisdpu2 ping` を続けて叩いて、DPU 側 redis 到達性まで踏み込みます。
 
 ## HA: DPU-scope, DPU-driven 構成
 
@@ -252,7 +252,7 @@ bulk sync が完了しないまま次の DPU に進むと、HA ペアの両側�
 
 - DASH の API モデルや SAI 経路は [internals](./internals.md) を参照。
 - 初期 fabric / DPU プロビジョニングは [setup](./setup.md) を参照。
-- ASIC リソースカウンタ全般は [Multi-ASIC / VOQ の運用](../12-multi-asic-voq/operations.md) と一部重複します。
+- [ASIC](../../reference/glossary.md#term-asic) リソースカウンタ全般は [Multi-ASIC / VOQ の運用](../12-multi-asic-voq/operations.md) と一部重複します。
 
 ## 関連ページ
 
@@ -263,4 +263,4 @@ bulk sync が完了しないまま次の DPU に進むと、HA ペアの両側�
 - [DPU Graceful Shutdown](../../platform/smartswitch-dpu-graceful-shutdown.md)
 - [DPU 独立アップグレード](../../system/independent-dpu-upgrade.md)
 
-<!-- glossary-links-injected: 302d7ca006cb -->
+<!-- glossary-links-injected: ec18b66e3507 -->

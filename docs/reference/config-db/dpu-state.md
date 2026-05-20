@@ -27,16 +27,16 @@ related:
 
 ## 概要
 
-`DPU_STATE` テーブルは `CHASSIS_STATE_DB` (Redis DB ID=13) に格納される **状態専用テーブル**。CONFIG_DB の設定テーブルとは異なり、SmartSwitch 上の `chassisd` デーモンが運用状態を **push 型** で書き込む。
+`DPU_STATE` テーブルは `CHASSIS_STATE_DB` ([Redis](../../reference/glossary.md#term-redis) DB ID=13) に格納される **状態専用テーブル**。[CONFIG_DB](../../reference/glossary.md#term-config_db) の設定テーブルとは異なり、[SmartSwitch](../../reference/glossary.md#term-smartswitch) 上の `chassisd` デーモンが運用状態を **push 型** で書き込む。
 
 書き込み元は 2 コンポーネント:
 
 | 書き込み元 | 役割 |
 |-----------|------|
 | `SmartSwitchModuleUpdater` | supervisor 側。midplane リンク状態 (`dpu_midplane_link_*`) を管理 |
-| `DpuStateUpdater` | DPU 側 (line card 上の chassisd)。データプレーン / コントロールプレーン状態を管理 |
+| `DpuStateUpdater` | [DPU](../../reference/glossary.md#term-dpu) 側 (line card 上の chassisd)。データプレーン / コントロールプレーン状態を管理 |
 
-`show dpu` CLI (`sonic-utilities/show/system_health.py:show_dpu_state()`) がこのテーブルを読み取り、DPU ごとの運用状態 (`Online` / `Partial Online` / `Offline`) を表示する[^1]。
+`show dpu` CLI (`sonic-utilities/show/system_health.py:show_dpu_state()`) がこのテーブルを読み取り、[DPU](../../reference/glossary.md#term-dpu) ごとの運用状態 (`Online` / `Partial Online` / `Offline`) を表示する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -68,7 +68,7 @@ DPU_STATE|DPU<N>
 
 | キー | 型 | 説明 |
 |------|----|------|
-| `DPU<N>` | string | DPU 識別子 (例: `DPU0`, `DPU1`) |
+| `DPU<N>` | string | [DPU](../../reference/glossary.md#term-dpu) 識別子 (例: `DPU0`, `DPU1`) |
 
 `N` は `chassis.get_dpu_id()` が返す DPU ID (0 始まり整数)。
 
@@ -87,13 +87,13 @@ DPU_STATE|DPU<N>
 ## 制約
 
 - このテーブルは CONFIG_DB ではなく `CHASSIS_STATE_DB` (DB ID=13) に存在する
-- SmartSwitch 専用テーブル。モジュラーチャシス (VOQ 構成) では存在しない
-- YANG モデルは存在しない (STATE_DB は YANG の管轄外)
+- [SmartSwitch](../../reference/glossary.md#term-smartswitch) 専用テーブル。モジュラーチャシス ([VOQ](../../reference/glossary.md#term-voq) 構成) では存在しない
+- [YANG](../../reference/glossary.md#term-yang) モデルは存在しない ([STATE_DB](../../reference/glossary.md#term-state_db) は [YANG](../../reference/glossary.md#term-yang) の管轄外)
 
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-このテーブルは YANG `default` 文を持たない STATE_DB テーブル。以下はコードから読み取ったデフォルト / fallback の調査結果。
+このテーブルは [YANG](../../reference/glossary.md#term-yang) `default` 文を持たない [STATE_DB](../../reference/glossary.md#term-state_db) テーブル。以下はコードから読み取ったデフォルト / fallback の調査結果。
 
 ### 起動時初期化 (`set_initial_dpu_admin_state`)
 
@@ -216,7 +216,7 @@ DpuStateUpdater.update_state()  ← CP/DP 状態を評価して書き込む
 
 `update_dpu_state(key, 'up')` (`chassisd:864-891`) は `dpu_midplane_link_state` のみを更新し、CP/DP フィールドは変更しない。CP/DP の `up` 評価は `DpuStateUpdater.update_state()` (`chassisd:1303-1316`) が platform API または SYSTEM_READY / PORT oper_status を参照して行う。
 
-midplane が `up` になる前に `DpuStateUpdater` が評価を実行すると、platform API が midplane 経由の RPC で `NotImplementedError` を返す可能性があり、fallback ロジック（STATE_DB / CONFIG_DB ポート参照）に切り替わる。
+midplane が `up` になる前に `DpuStateUpdater` が評価を実行すると、platform API が midplane 経由の RPC で `NotImplementedError` を返す可能性があり、fallback ロジック（[STATE_DB](../../reference/glossary.md#term-state_db) / CONFIG_DB ポート参照）に切り替わる。
 
 **違反時**: 自動回復する。次の `update_state()` ポーリングまたは `DpuStateManagerTask` の再評価イベントで正しい状態に収束する。
 
@@ -275,7 +275,7 @@ DpuStateUpdater.deinit()  ← dpu_data_plane_state, dpu_control_plane_state を 
 
 <!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd update_dpu_state:864-891 / try_get:125-139 / set_initial_dpu_admin_state:1364-1405 / DpuChassisdDaemon.run:1408-1461 -->
 
-`DPU_STATE` は `chassisd` が **push 型** で書き込む CHASSIS_STATE_DB テーブルであり、orchagent の `task_need_retry` / `task_failed` 機構とは異なる failure/recovery モデルを持つ。
+`DPU_STATE` は `chassisd` が **push 型** で書き込む CHASSIS_STATE_DB テーブルであり、[orchagent](../../reference/glossary.md#term-orchagent) の `task_need_retry` / `task_failed` 機構とは異なる failure/recovery モデルを持つ。
 
 ### failure パターン概要
 
@@ -413,7 +413,7 @@ if not "DPU_STATE" in key and not "REBOOT_CAUSE" in key:
 
 <!-- evidence: sonic-platform-daemons/sonic-chassisd/scripts/chassisd DpuStateManagerTask.task_worker:1484-1530 / DpuStateUpdater.update_state:1303-1316 / SmartSwitchModuleUpdater.module_down_chassis_db_cleanup:1113-1130 / DpuChassisdDaemon.run:1537-1557 -->
 
-`DPU_STATE` テーブルへの書き込みに伴う副次的な DB 変化を整理する。このテーブルは CHASSIS_STATE_DB の **状態専用テーブル**であり、CONFIG_DB / APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き戻しは発生しない。
+`DPU_STATE` テーブルへの書き込みに伴う副次的な DB 変化を整理する。このテーブルは CHASSIS_STATE_DB の **状態専用テーブル**であり、CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書き戻しは発生しない。
 
 ### DpuStateManagerTask による自己フィードバック書き込み
 
@@ -447,8 +447,8 @@ DPU_STATE エントリは DPU down 状態でも CHASSIS_STATE_DB に残り続け
 |--------|------|
 | `poll_dpu_state = True` の場合 | `DpuStateManagerTask` 未起動。DPU_STATE 変化による自己フィードバックなし (`chassisd:1540-1546`) |
 | CP/DP state が前回値と同一の場合 | `update_state()` が `hset` をスキップ (`chassisd:1303-1316`) |
-| CONFIG_DB / APPL_DB / STATE_DB | `chassisd` はこれらへの書き戻しを行わない |
-| COUNTERS_DB / FLEX_COUNTER_DB | DPU_STATE は SAI counter binding を持たないため書き込みなし |
+| CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / STATE_DB | `chassisd` はこれらへの書き戻しを行わない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | DPU_STATE は [SAI](../../reference/glossary.md#term-sai) counter binding を持たないため書き込みなし |
 
 > **スキャン証跡**: `chassisd` `DpuStateUpdater` クラス全行 (L1234-1320)、`DpuStateManagerTask` 全行 (L1464-1557)、`SmartSwitchModuleUpdater.module_down_chassis_db_cleanup` (L1113-1130) 読了。副次書き込みは `CHASSIS_STATE_DB:DPU_STATE` への自己フィードバック 1 件のみ。詳細は `meta/_intermediate/cdb-flow/dpu-state-side.md` 参照。
 <!-- /side-effects -->
@@ -460,7 +460,7 @@ DPU_STATE エントリは DPU down 状態でも CHASSIS_STATE_DB に残り続け
 
 ### 書き込み側 — swsscommon.Table による直接 hset
 
-`DPU_STATE` への書き込みは **ProducerStateTable ではなく** `swsscommon.Table.hset()` を使用する。これは CHASSIS_STATE_DB が CONFIG_DB / APPL_DB の producer/consumer パターンではなく、デーモン直接書き込みの state DB であるため。
+`DPU_STATE` への書き込みは **[ProducerStateTable](../../reference/glossary.md#term-producerstatetable) ではなく** `swsscommon.Table.hset()` を使用する。これは CHASSIS_STATE_DB が CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) の producer/consumer パターンではなく、デーモン直接書き込みの state DB であるため。
 
 | 書き込み元 | 書き込みメソッド | キー例 |
 |-----------|---------------|--------|
@@ -468,7 +468,7 @@ DPU_STATE エントリは DPU down 状態でも CHASSIS_STATE_DB に残り続け
 | `DpuStateUpdater._update_dp_dpu_state()` (chassisd:1290-1291) | `dpu_state_table.hset(name, DP_STATE, state)` | `DPU_STATE\|DPU0` |
 | `DpuStateUpdater._update_cp_dpu_state()` (chassisd:1294-1295) | `dpu_state_table.hset(name, CP_STATE, state)` | `DPU_STATE\|DPU0` |
 
-`swsscommon.Table.hset()` は内部で Redis keyspace notification (`__keyspace@13__:DPU_STATE|DPU<N>`) を PUBLISH するため、`SubscriberStateTable` で購読している側がイベントを受け取る。
+`swsscommon.Table.hset()` は内部で [Redis](../../reference/glossary.md#term-redis) keyspace notification (`__keyspace@13__:DPU_STATE|DPU<N>`) を PUBLISH するため、`SubscriberStateTable` で購読している側がイベントを受け取る。
 
 ### 読み取り側 — SubscriberStateTable + select ループ
 
@@ -519,7 +519,7 @@ selectable = [
 
 ### 前提: SmartSwitch 専用テーブル
 
-`DPU_STATE` は SmartSwitch プラットフォーム上の DPU 側 `chassisd` (`DpuChassisdDaemon`) が書き込む CHASSIS_STATE_DB テーブルであり、通常の SONiC スイッチ (非 SmartSwitch) ではこのテーブル自体が存在しない。
+`DPU_STATE` は [SmartSwitch](../../reference/glossary.md#term-smartswitch) プラットフォーム上の DPU 側 `chassisd` (`DpuChassisdDaemon`) が書き込む CHASSIS_STATE_DB テーブルであり、通常の [SONiC](../../reference/glossary.md#term-sonic) スイッチ (非 SmartSwitch) ではこのテーブル自体が存在しない。
 
 ```python
 # chassisd:1574-1579
@@ -557,8 +557,8 @@ else:
 | 構成 | `DPU_STATE` 書き込み | 備考 |
 |------|-------------------|------|
 | SmartSwitch DPU | あり (`DpuChassisdDaemon`) | 本テーブルの対象 |
-| VOQ chassis (supervisor / line card) | なし | `CHASSIS_MODULE` テーブルと `CHASSIS_STATE_DB LINE_CARD` エントリを使用 |
-| multi-asic (複数 ASIC 単体スイッチ) | なし | SmartSwitch DPU とは別アーキテクチャ |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor / line card) | なし | `CHASSIS_MODULE` テーブルと `CHASSIS_STATE_DB LINE_CARD` エントリを使用 |
+| multi-asic (複数 [ASIC](../../reference/glossary.md#term-asic) 単体スイッチ) | なし | SmartSwitch DPU とは別アーキテクチャ |
 | 通常スイッチ | なし | `chassis.is_smartswitch()` が `False` のため `ChassisdDaemon` が起動 |
 
 ### SmartSwitch 固有の platform 設定
@@ -588,3 +588,5 @@ else:
 ## 引用元
 
 [^1]: `chassisd` ソース: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` — `SmartSwitchModuleUpdater.update_dpu_state` (line 864-891)、`DpuStateUpdater` クラス (line 1234-1320)、`set_initial_dpu_admin_state` (line 1364-1405)、定数定義 (line 108-111)。`show dpu` CLI: `sonic-utilities/show/system_health.py:show_dpu_state` (line 172-222)。
+
+<!-- glossary-links-injected: 948788a0b27f -->

@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-ここでは SONiC の **config 永続化と全体差し替え** の中核となる以下の 5 コマンドをまとめる:
+ここでは [SONiC](../../reference/glossary.md#term-sonic) の **config 永続化と全体差し替え** の中核となる以下の 5 コマンドをまとめる:
 
 - `config save` ... 現 [CONFIG_DB](../../reference/glossary.md#term-config_db) を JSON ファイルに dump
 - `config load` ... ファイルを [CONFIG_DB](../../reference/glossary.md#term-config_db) に書く (既存の状態を保持しつつ merge)
@@ -187,4 +187,4 @@ ip -4 route show vrf mgmt
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 33504219f563 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

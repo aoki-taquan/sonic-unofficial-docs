@@ -81,7 +81,7 @@ show acl rule DATAACL
 
 `PRIORITY` は値が大きいほど優先です。match は `SRC_IP` / `DST_IP`、`SRC_IPV6` / `DST_IPV6`、`IP_PROTOCOL`、`L4_SRC_PORT` / `L4_DST_PORT`、`ETHER_TYPE`、`TCP_FLAGS` などを組み合わせます。action は `PACKET_ACTION`、`REDIRECT_ACTION`、mirror action、`POLICER`、[DSCP](../../reference/glossary.md#term-dscp) 書換などです。
 
-table type が action の可否を制限するため、rule JSON だけを別 table に移すと失敗することがあります。特に egress stage、mirror、DSCP 書換、packet trimming のような action は ASIC capability の影響を受けます。
+table type が action の可否を制限するため、rule JSON だけを別 table に移すと失敗することがあります。特に egress stage、mirror、DSCP 書換、packet trimming のような action は [ASIC](../../reference/glossary.md#term-asic) capability の影響を受けます。
 
 ## Policer
 
@@ -321,4 +321,4 @@ action / match 制約は ASIC capability に依存する部分があるため、
 - [sonic-copp YANG](../../reference/yang/sonic-copp.md)
 - [sonic-mirror-session YANG](../../reference/yang/sonic-mirror-session.md)
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: c006405759d8 -->

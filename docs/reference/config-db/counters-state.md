@@ -37,12 +37,12 @@ related:
 
 ## 概要
 
-[orchagent](../../reference/glossary.md#term-orchagent) は起動時に SAI へカウンタ能力を問い合わせ、その結果を `STATE_DB` の 3 つのテーブルに書き込む[^1]。これらのテーブルは **読み取り専用** の能力情報であり、ユーザーが CONFIG_DB から書き込む設定テーブルではない。
+[orchagent](../../reference/glossary.md#term-orchagent) は起動時に [SAI](../../reference/glossary.md#term-sai) へカウンタ能力を問い合わせ、その結果を `STATE_DB` の 3 つのテーブルに書き込む[^1]。これらのテーブルは **読み取り専用** の能力情報であり、ユーザーが [CONFIG_DB](../../reference/glossary.md#term-config_db) から書き込む設定テーブルではない。
 
-| STATE_DB テーブル | 書き込み元 | 参照先 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) テーブル | 書き込み元 | 参照先 |
 |-----------------|----------|--------|
-| `PORT_COUNTER_CAPABILITIES` | portsorch (`initCounterCapabilities`) | portstat.py、portstat CLI |
-| `QUEUE_COUNTER_CAPABILITIES` | portsorch (`initCounterCapabilities`) | queuestat CLI |
+| `PORT_COUNTER_CAPABILITIES` | [portsorch](../../reference/glossary.md#term-portsorch) (`initCounterCapabilities`) | portstat.py、portstat CLI |
+| `QUEUE_COUNTER_CAPABILITIES` | [portsorch](../../reference/glossary.md#term-portsorch) (`initCounterCapabilities`) | queuestat CLI |
 | `DEBUG_COUNTER_CAPABILITIES` | debugcounterorch (`publishDropCounterCapabilities`) | show debug-counter capabilities |
 
 <!-- cdb-mermaid -->
@@ -50,18 +50,15 @@ related:
 
 ```mermaid
 flowchart LR
-  SAI["SAI / ASIC<br/>sai_query_stats_capability<br/>sai_query_attribute_enum_values_capability"]
-  ORC["orchagent<br/>portsorch / debugcounterorch"]
-  STATEDB[("STATE_DB<br/>PORT_COUNTER_CAPABILITIES<br/>QUEUE_COUNTER_CAPABILITIES<br/>DEBUG_COUNTER_CAPABILITIES")]
-  CLI["portstat / show debug-counter<br/>(sonic-utilities)"]
-  SAI --> ORC
-  ORC --> STATEDB
-  STATEDB --> CLI
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    これらのテーブルは CONFIG_DB を経由しない。orchagent が SAI から直接能力を読み取り STATE_DB に書き込む。portstat などのツールが COUNTERS_DB ポーリング前にここを参照し、プラットフォームがサポートしないカウンタを事前に除外する。
-
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ---
@@ -77,7 +74,7 @@ STATE_DB / PORT_COUNTER_CAPABILITIES | <counter_group_name>   (Hash)
 
 ### フィールド一覧
 
-| key (counter_group_name) | isSupported 条件 | 対応 SAI 統計 |
+| key (counter_group_name) | isSupported 条件 | 対応 [SAI](../../reference/glossary.md#term-sai) 統計 |
 |--------------------------|----------------|--------------|
 | `WRED_ECN_PORT_WRED_GREEN_DROP_COUNTER` | `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` がプラットフォームでサポートされている | `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` |
 | `WRED_ECN_PORT_WRED_YELLOW_DROP_COUNTER` | `SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS` がサポートされている | `SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS` |
@@ -86,9 +83,9 @@ STATE_DB / PORT_COUNTER_CAPABILITIES | <counter_group_name>   (Hash)
 
 ### 書き込みタイミング
 
-1. **起動直後**: portsorch コンストラクタが `initCounterCapabilities()` を呼ぶ。まず全フィールドを `isSupported="false"` で書き込む[^2]
-2. **SAI 問い合わせ後**: `sai_query_stats_capability(SAI_OBJECT_TYPE_PORT, ...)` でプラットフォームのポート統計能力を取得し、サポートされる統計 enum ごとに `isSupported="true"` に更新[^3]
-3. **SAI 失敗時**: 問い合わせが失敗すると全フィールドが `"false"` のままになる。`SWSS_LOG_NOTICE` を出力するのみで orchagent はエラー終了しない
+1. **起動直後**: [portsorch](../../reference/glossary.md#term-portsorch) コンストラクタが `initCounterCapabilities()` を呼ぶ。まず全フィールドを `isSupported="false"` で書き込む[^2]
+2. **[SAI](../../reference/glossary.md#term-sai) 問い合わせ後**: `sai_query_stats_capability(SAI_OBJECT_TYPE_PORT, ...)` でプラットフォームのポート統計能力を取得し、サポートされる統計 enum ごとに `isSupported="true"` に更新[^3]
+3. **SAI 失敗時**: 問い合わせが失敗すると全フィールドが `"false"` のままになる。`SWSS_LOG_NOTICE` を出力するのみで [orchagent](../../reference/glossary.md#term-orchagent) はエラー終了しない
 
 ---
 
@@ -135,7 +132,7 @@ STATE_DB / DEBUG_COUNTER_CAPABILITIES | <counter_type>   (Hash)
 
 ### 書き込みロジック
 
-`DebugCounterOrch::publishDropCounterCapabilities()` が起動時に呼ばれ、以下の順で STATE_DB を更新する[^5]。
+`DebugCounterOrch::publishDropCounterCapabilities()` が起動時に呼ばれ、以下の順で [STATE_DB](../../reference/glossary.md#term-state_db) を更新する[^5]。
 
 1. SAI drop reason 能力を取得: `getSupportedDropReasons(SAI_DEBUG_COUNTER_ATTR_IN_DROP_REASON_LIST)` および `..._OUT_DROP_REASON_LIST`
 2. サポートされる counter_type を取得: `getSupportedCounterTypes()` が `sai_query_attribute_enum_values_capability()` を呼ぶ
@@ -159,16 +156,16 @@ STATE_DB / DEBUG_COUNTER_CAPABILITIES | <counter_type>   (Hash)
 
 | 種類 | 詳細 |
 |------|------|
-| コード由来デフォルト | 全フィールドが `"false"` で先書きされる (portsorch.cpp:1868-1879)。SAI 問い合わせ完了まで数ミリ秒間、portstat.py が参照すると WRED カウンタが N/A と表示される |
+| コード由来デフォルト | 全フィールドが `"false"` で先書きされる (portsorch.cpp:1868-1879)。SAI 問い合わせ完了まで数ミリ秒間、portstat.py が参照すると [WRED](../../reference/glossary.md#term-wred) カウンタが N/A と表示される |
 | SAI 失敗時残存 | `sai_query_stats_capability()` 失敗時は全フィールドが `"false"` のまま。SWSS_LOG_NOTICE のみで silent 継続 (portsorch.cpp:1965-1968) |
 
 ### portstat.py の WRED silent skip
 
-`portstat.py:297-329` で `isSupported` が `"true"` でない場合、対応する SAI カウンタを `counter_bucket_dict` から削除する。COUNTERS_DB のポーリング対象から外れ、エラーなく `N/A` となる[^6]。
+`portstat.py:297-329` で `isSupported` が `"true"` でない場合、対応する SAI カウンタを `counter_bucket_dict` から削除する。[COUNTERS_DB](../../reference/glossary.md#term-counters_db) のポーリング対象から外れ、エラーなく `N/A` となる[^6]。
 
 | 条件 | 挙動 |
 |------|------|
-| `isSupported = "true"` | COUNTERS_DB から `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` をポーリング |
+| `isSupported = "true"` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) から `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` をポーリング |
 | `isSupported = "false"` または キーなし | ポーリング対象から除外。portstat 表示は `N/A` |
 
 ### DEBUG_COUNTER_CAPABILITIES の選択的書き込み
@@ -191,9 +188,9 @@ STATE_DB / DEBUG_COUNTER_CAPABILITIES | <counter_type>   (Hash)
 
 ### 1. false 先書き → SAI 問い合わせ → true 更新（自己完結型）
 
-`PortsOrch::initCounterCapabilities()` は **単一コンストラクタ呼び出し内** で 2 フェーズに分けて STATE_DB を更新する[^7]。
+`PortsOrch::initCounterCapabilities()` は **単一コンストラクタ呼び出し内** で 2 フェーズに分けて [STATE_DB](../../reference/glossary.md#term-state_db) を更新する[^7]。
 
-1. 全 WRED フィールドを `isSupported="false"` で先書き (portsorch.cpp:1872-1879)
+1. 全 [WRED](../../reference/glossary.md#term-wred) フィールドを `isSupported="false"` で先書き (portsorch.cpp:1872-1879)
 2. `sai_query_stats_capability()` 成功後、サポートされる enum ごとに `isSupported="true"` に上書き (portsorch.cpp:1892-1968)
 
 | タイミング | PORT_COUNTER_CAPABILITIES | QUEUE_COUNTER_CAPABILITIES |
@@ -223,9 +220,9 @@ orchdaemon.cpp:452  gDebugCounterOrch = new DebugCounterOrch(...)
 ### 3. warm-reboot 時の flexcounterorch 60 秒遅延は STATE_DB に無影響
 
 - `FlexCounterOrch` は warm-reboot 時に `FLEX_COUNTER_DELAY_SEC = 60` 秒のタイマーを起動し、`doTask()` を遅延させる (flexcounterorch.cpp:44, 127-137)。
-- この遅延は **FLEX_COUNTER_DB へのカウンタポーリング登録**を遅らせるためのものであり、`STATE_DB / *_COUNTER_CAPABILITIES` の書き込みには影響しない。
+- この遅延は **[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) へのカウンタポーリング登録**を遅らせるためのものであり、`STATE_DB / *_COUNTER_CAPABILITIES` の書き込みには影響しない。
 - `FlexCounterOrch::bake()` は warm-reboot reconcile フェーズで意図的に何もしない（コメント: "FCs are not data plane configuration required during reconciling process"）(flexcounterorch.cpp:525-535)。
-- 結果として STATE_DB 能力テーブルは常に orchagent 起動直後（warm-reboot 開始直後）に書き込まれ、60 秒遅延の影響外となる。
+- 結果として STATE_DB 能力テーブルは常に [orchagent](../../reference/glossary.md#term-orchagent) 起動直後（warm-reboot 開始直後）に書き込まれ、60 秒遅延の影響外となる。
 
 ### 4. generatePortCounterMap() との順序関係
 
@@ -253,7 +250,7 @@ orchdaemon.cpp:452  gDebugCounterOrch = new DebugCounterOrch(...)
 
 > 調査証跡: `meta/_intermediate/cdb-flow/counters-state-cross-refs.md`
 
-`PORT_COUNTER_CAPABILITIES` / `QUEUE_COUNTER_CAPABILITIES` / `DEBUG_COUNTER_CAPABILITIES` はいずれも YANG 未モデル化のオペレーショナルテーブルであり、orchagent が **書き手 (producer only)** として書き込む。ここでの暗黙参照は、生成側（portsorch / debugcounterorch）が依存する SAI / DB リソースと、消費側（portstat / dropconfig）が参照するテーブルを指す。
+`PORT_COUNTER_CAPABILITIES` / `QUEUE_COUNTER_CAPABILITIES` / `DEBUG_COUNTER_CAPABILITIES` はいずれも [YANG](../../reference/glossary.md#term-yang) 未モデル化のオペレーショナルテーブルであり、orchagent が **書き手 (producer only)** として書き込む。ここでの暗黙参照は、生成側（portsorch / debugcounterorch）が依存する SAI / DB リソースと、消費側（portstat / dropconfig）が参照するテーブルを指す。
 
 ### 生成側 (producer) の暗黙依存
 
@@ -268,12 +265,12 @@ orchdaemon.cpp:452  gDebugCounterOrch = new DebugCounterOrch(...)
 
 | 参照元 | 参照テーブル | 参照フィールド | 参照タイミング | 挙動（不在時） | evidence |
 |---|---|---|---|---|---|
-| `portstat.py`（sonic-utilities） | `PORT_COUNTER_CAPABILITIES\|WRED_ECN_PORT_WRED_*_DROP_COUNTER` | `isSupported` | ポーリング実行前（毎回 HGET） | `"true"` 以外 → 対応 SAI カウンタをポーリング対象から silent 除外 → `N/A` 表示 | `portstat.py:297-329` |
-| `scripts/dropconfig`（sonic-utilities） | `DEBUG_COUNTER_CAPABILITIES\|<counter_type>` | `count`, `reasons` | `show debug-counter capabilities` 実行時 | テーブルが空 → 出力が空（エラーなし） | `dropconfig:423-455` |
+| `portstat.py`（[sonic-utilities](../../reference/glossary.md#term-sonic-utilities)） | `PORT_COUNTER_CAPABILITIES\|WRED_ECN_PORT_WRED_*_DROP_COUNTER` | `isSupported` | ポーリング実行前（毎回 HGET） | `"true"` 以外 → 対応 SAI カウンタをポーリング対象から silent 除外 → `N/A` 表示 | `portstat.py:297-329` |
+| `scripts/dropconfig`（[sonic-utilities](../../reference/glossary.md#term-sonic-utilities)） | `DEBUG_COUNTER_CAPABILITIES\|<counter_type>` | `count`, `reasons` | `show debug-counter capabilities` 実行時 | テーブルが空 → 出力が空（エラーなし） | `dropconfig:423-455` |
 
 ### YANG 非定義による暗黙制約
 
-上記いずれの参照も CONFIG_DB / YANG に leafref として記述されていない。WRED カウンタが `N/A` になる場合は以下のコマンドで STATE_DB を直接確認すること:
+上記いずれの参照も [CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) に leafref として記述されていない。[WRED](../../reference/glossary.md#term-wred) カウンタが `N/A` になる場合は以下のコマンドで STATE_DB を直接確認すること:
 
 ```bash
 # PORT_COUNTER_CAPABILITIES 確認
@@ -316,7 +313,7 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 
 ### DEBUG_COUNTER_CAPABILITIES のリソース枯渇警告
 
-コードコメント (drop_counter.cpp:425-431) によると、プラットフォームの debug counter リソースは ASIC の他オブジェクト（ACL 等）とハードウェアリソースを共有する場合がある。`getSupportedDebugCounterAmounts()` が返す count は起動時以降に変化する可能性があるが、STATE_DB への再書き込みは行われない（コンストラクタ呼び出し時のスナップショットのみ）。
+コードコメント (drop_counter.cpp:425-431) によると、プラットフォームの debug counter リソースは [ASIC](../../reference/glossary.md#term-asic) の他オブジェクト（[ACL](../../reference/glossary.md#term-acl) 等）とハードウェアリソースを共有する場合がある。`getSupportedDebugCounterAmounts()` が返す count は起動時以降に変化する可能性があるが、STATE_DB への再書き込みは行われない（コンストラクタ呼び出し時のスナップショットのみ）。
 
 <!-- /failure -->
 
@@ -345,7 +342,7 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 
 ### PORT_COUNTER_CAPABILITIES / QUEUE_COUNTER_CAPABILITIES の固定 key 名
 
-YANG に未定義。`portsorch.cpp:1872-1879` 内ソースリテラルのみで管理される。
+[YANG](../../reference/glossary.md#term-yang) に未定義。`portsorch.cpp:1872-1879` 内ソースリテラルのみで管理される。
 
 | key 名 | テーブル | 対応 SAI enum |
 |--------|---------|--------------|
@@ -395,7 +392,7 @@ YANG に未定義。`portsorch.cpp:1872-1879` 内ソースリテラルのみで�
      sonic-swss/orchagent/flexcounterorch.cpp:271-279,
      sonic-utilities/utilities_common/portstat.py:295-331 -->
 
-これらの STATE_DB テーブルは orchagent コンストラクタが **SAI 問い合わせ結果を起動時 1 回限りで書き込む**ものであり、通常の CONFIG_DB SET/DEL に連動する副作用とは性質が異なる。書き込み後の値を consumer が参照した際に下流で何が変化するかを以下に示す。
+これらの STATE_DB テーブルは orchagent コンストラクタが **SAI 問い合わせ結果を起動時 1 回限りで書き込む**ものであり、通常の [CONFIG_DB](../../reference/glossary.md#term-config_db) SET/DEL に連動する副作用とは性質が異なる。書き込み後の値を consumer が参照した際に下流で何が変化するかを以下に示す。
 
 ### 1. COUNTERS_DB ポーリング対象の変化（portstat.py）
 
@@ -403,7 +400,7 @@ YANG に未定義。`portsorch.cpp:1872-1879` 内ソースリテラルのみで�
 
 | `isSupported` の値 | portstat.py の挙動 | portstat CLI 表示 |
 |-------------------|------------------|-----------------|
-| `"true"` | `SAI_PORT_STAT_*_WRED_*` を COUNTERS_DB ポーリング対象に保持 | WRED カラムに数値が表示される |
+| `"true"` | `SAI_PORT_STAT_*_WRED_*` を [COUNTERS_DB](../../reference/glossary.md#term-counters_db) ポーリング対象に保持 | WRED カラムに数値が表示される |
 | `"false"` または キー不存在 | 対応 SAI カウンタを `counter_bucket_dict` から削除 | WRED カラムが `N/A` になる |
 
 !!! warning "WRED カウンタ N/A の真因"
@@ -426,8 +423,8 @@ YANG に未定義。`portsorch.cpp:1872-1879` 内ソースリテラルのみで�
 
 | 状態 | SAI ポーリング | portstat 表示 |
 |------|-------------|-------------|
-| SAI サポートあり（`isSupported="true"`） | FLEX_COUNTER_DB 登録あり → COUNTERS_DB に値 | 数値表示 |
-| SAI サポートなし（`isSupported="false"`） | FLEX_COUNTER_DB 登録あり（能力チェックなし）→ COUNTERS_DB に 0 または欠損 | N/A 表示 |
+| SAI サポートあり（`isSupported="true"`） | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) 登録あり → COUNTERS_DB に値 | 数値表示 |
+| SAI サポートなし（`isSupported="false"`） | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) 登録あり（能力チェックなし）→ COUNTERS_DB に 0 または欠損 | N/A 表示 |
 
 ### 副作用サマリ
 
@@ -455,20 +452,20 @@ YANG に未定義。`portsorch.cpp:1872-1879` 内ソースリテラルのみで�
 | 書き込みクラス | `Table` (生 `HSET`。`ProducerStateTable` / `NotificationProducer` は不使用) |
 | 書き込みタイミング | orchagent コンストラクタ呼び出し時の **1 回限り** |
 | トリガー | `PortsOrch::initCounterCapabilities(gSwitchId)` (portsorch.cpp:1107) / `DebugCounterOrch::publishDropCounterCapabilities()` (debugcounterorch.cpp:37) |
-| APPL_DB 中継 | なし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) 中継 | なし |
 | 再書き込み | orchagent 再起動時のみ（オンライン変更不可） |
 
 ### 読み取りパス（Consumer 側）
 
-keyspace 通知を購読する実装は SONiC ソース内に存在しない。CLI ツールが実行時に直接 HGET/HGETALL でスナップショット取得する。
+keyspace 通知を購読する実装は [SONiC](../../reference/glossary.md#term-sonic) ソース内に存在しない。CLI ツールが実行時に直接 HGET/HGETALL でスナップショット取得する。
 
-| 読み取り元 | 対象テーブル | Redis 操作 | コード |
+| 読み取り元 | 対象テーブル | [Redis](../../reference/glossary.md#term-redis) 操作 | コード |
 |-----------|------------|-----------|--------|
 | `portstat.py` | `PORT_COUNTER_CAPABILITIES\|<key>` | `db.get(STATE_DB, key, "isSupported")` | portstat.py:299-311 |
 | `dropconfig` | `DEBUG_COUNTER_CAPABILITIES\|*` | `db.keys(STATE_DB, ...)` + `db.get_all()` | dropconfig:423-431 |
 | `dropconfig` (個別) | `DEBUG_COUNTER_CAPABILITIES\|<counter_type>` | `db.get_all(STATE_DB, key)` | dropconfig:444-455 |
 
-`QUEUE_COUNTER_CAPABILITIES` を参照する CLI ツールは SONiC ソース内に確認できない（orchagent が書くが読者不在）。
+`QUEUE_COUNTER_CAPABILITIES` を参照する CLI ツールは [SONiC](../../reference/glossary.md#term-sonic) ソース内に確認できない（orchagent が書くが読者不在）。
 
 ### データフロー
 
@@ -498,7 +495,7 @@ STATE_DB
 
 > 調査証跡: `meta/_intermediate/cdb-flow/counters-state-platform.md`
 
-これらの STATE_DB テーブルの内容は CONFIG_DB 設定ではなく **ASIC が SAI を通じて公開する能力** によって決まる。プラットフォームによって書き込まれる値が根本的に異なる。
+これらの STATE_DB テーブルの内容は CONFIG_DB 設定ではなく **[ASIC](../../reference/glossary.md#term-asic) が SAI を通じて公開する能力** によって決まる。プラットフォームによって書き込まれる値が根本的に異なる。
 
 ### WRED カウンタ能力 — ASIC 依存
 
@@ -506,7 +503,7 @@ STATE_DB
 
 | プラットフォーム状況 | 挙動 |
 |---------------------|------|
-| WRED をハードウェア実装した ASIC (Broadcom Tomahawk 系・Mellanox Spectrum 系等) | 対応する WRED 統計 enum が返却 → 該当フィールドが `isSupported="true"` に更新 |
+| WRED をハードウェア実装した [ASIC](../../reference/glossary.md#term-asic) (Broadcom Tomahawk 系・Mellanox Spectrum 系等) | 対応する WRED 統計 enum が返却 → 該当フィールドが `isSupported="true"` に更新 |
 | WRED サポートなし ASIC / VS (virtual switch) | `SAI_STATUS_SUCCESS` でも対象 enum が含まれない → 全フィールドが `"false"` のまま残る |
 | SAI query 自体が失敗 (`SAI_STATUS_NOT_IMPLEMENTED` 等) | `SWSS_LOG_NOTICE` を出力して続行。全フィールドが初期値 `"false"` のまま |
 
@@ -566,3 +563,5 @@ getSupportedCounterTypes() の失敗パス:
 [^8]: orchdaemon.cpp:232 (PortsOrch), orchdaemon.cpp:452 (DebugCounterOrch)。debugcounterorch.cpp:37 で `publishDropCounterCapabilities()` が `gPortsOrch->attach(this)` より前に実行される
 [^9]: portsorch.cpp:9102-9129 (`generatePortCounterMap`)。FLEX_COUNTER_DB への登録のみで STATE_DB への読み書きなし
 [^10]: portstat.py:295-331。`wred_green_pkt_stat_capable` 等のグローバル変数に `STATE_DB HGET` 結果を格納し、`!= "true"` の場合に `counter_bucket_dict` から該当 SAI カウンタを削除する
+
+<!-- glossary-links-injected: d4406e835d7e -->

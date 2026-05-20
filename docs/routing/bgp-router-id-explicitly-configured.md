@@ -43,7 +43,7 @@ related:
 
 ## 概要
 
-SONiC の [BGP](../reference/glossary.md#term-bgp) は長らく **Loopback インタフェースの IPv4 アドレスを暗黙的に router-id として使う** 設計になっていた。具体的には単一 ASIC では `Loopback0`、マルチ ASIC では `Loopback4096` の IPv4 アドレスをそのまま使用する。さらに `bgpcfgd` 側にも「`Loopback0` の IPv4 が存在しなければ BGP ピアを追加しない」という強い依存があり、Loopback アドレスを使わない構成や、BGP router-id とインタフェースアドレスを分離したい運用では制約となっていた[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の [BGP](../reference/glossary.md#term-bgp) は長らく **Loopback インタフェースの IPv4 アドレスを暗黙的に router-id として使う** 設計になっていた。具体的には単一 [ASIC](../reference/glossary.md#term-asic) では `Loopback0`、マルチ ASIC では `Loopback4096` の IPv4 アドレスをそのまま使用する。さらに `bgpcfgd` 側にも「`Loopback0` の IPv4 が存在しなければ BGP ピアを追加しない」という強い依存があり、Loopback アドレスを使わない構成や、BGP router-id とインタフェースアドレスを分離したい運用では制約となっていた[^1]。
 
 本機能は `CONFIG_DB.DEVICE_METADATA|localhost` に `bgp_router_id` フィールドを追加し、**ユーザが任意の IPv4 を BGP router-id として明示指定できる** ようにする。同時に、`bgp_router_id` が設定されている場合に限り、単一 ASIC 系の BGP ピア追加から `Loopback0` IPv4 への強い依存を切り離す。`bgp_router_id` を設定しない場合、振る舞いは従来と完全に同一である。
 
@@ -249,4 +249,4 @@ docker logs bgp 2>&1 | grep -i 'router-id' | tail
 
 [^1]: `sonic-net/SONiC` `doc/BGP/BGP-router-id.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 8b572e7ecef7 -->
+<!-- glossary-links-injected: ec18b66e3507 -->
