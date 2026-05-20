@@ -10,23 +10,12 @@ sources:
   path: doc/reboot/Reboot_BlockingMode_HLD.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - SYSLOG_SERVER
-  - SYSLOG_CONFIG
-  - SYSLOG_CONFIG_FEATURE
-  - PORT
-  - PORTCHANNEL
-  - BREAKOUT_CFG
-  - INTERFACE
+  config_db: []
   cli:
   - reboot
-  - show interfaces
-  - show ip
-  - config syslog
   yang:
   - sonic-warm-restart
   - sonic-system-defaults
-  - sonic-syslog
 ---
 
 <!-- topics-tip -->

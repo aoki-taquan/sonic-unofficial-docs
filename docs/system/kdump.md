@@ -24,8 +24,8 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! info "裏取りステータス: code-verified"
-    `sonic-utilities/config/kdump.py` を master で確認、`sonic-buildimage/build_debian.sh` で `kdump` 関連処理も確認、`sonic-buildimage/files/image_config/kdump/kdump-tools` も存在。HLD 当時の主要要素は master 取り込み済み。
+!!! warning "裏取りステータス: discrepancy-found"
+    `sonic-utilities/config/kdump.py` を master で確認、`sonic-buildimage/build_debian.sh` で `kdump` 関連処理も確認、`sonic-buildimage/files/image_config/kdump/kdump-tools` も存在。ただし kdump-tools 後続バージョン差分・kernel バージョン更新の影響は未確認のため discrepancy-found に降格 (2026-05-13)。詳細は末尾の裏取りメモを参照。
 
 # kdump（kexec ベース kernel crash dump / makedumpfile）
 

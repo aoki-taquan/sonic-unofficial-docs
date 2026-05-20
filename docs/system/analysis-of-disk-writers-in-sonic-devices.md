@@ -10,25 +10,9 @@ sources:
   path: doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_PEER_GROUP
-  cli:
-  - show bgp
-  - config bgp
-  yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-bgp-bbr
-  - sonic-bgp-peerrange
-  - sonic-bgp-device-global
-  - sonic-bgp-sentinel
-  - sonic-bgp-monitor
+  config_db: []
+  cli: []
+  yang: []
 ---
 
 !!! info "裏取りステータス: code-verified"

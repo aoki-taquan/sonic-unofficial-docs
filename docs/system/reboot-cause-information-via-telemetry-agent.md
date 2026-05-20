@@ -160,7 +160,7 @@ reboot-cause を [gNMI](../reference/glossary.md#term-gnmi) 経由で取得で�
 show reboot-cause
 show reboot-cause history
 gnmi_get -target_addr localhost:8080 -xpath '/reboot-cause'
-cat /host/reboot-cause/reboot-cause.txt
+cat /host/reboot-cause/previous-reboot-cause.json
 ```
 
 ## 引用元

@@ -136,7 +136,7 @@ show run snmp community
 
 - **既存 ACL の `SNMP_ACL`**: 本機能とは独立に CONFIG_DB に存在する。SNMP デーモンの ACL 部分は本機能の対象外。
 - **`docker-snmp` 起動順**: CONFIG_DB が先に上がっていることが前提。`hostcfgd` の起動依存は変更されない。
-- **Watchdog / SNMP trap**: trap は別途 `SNMP_TRAP_RECEIVER` テーブル等で管理（本 HLD のスコープ外）。
+- **Watchdog / SNMP trap**: trap は別途 `SNMP_TRAP_CONFIG` テーブル等で管理（本 HLD のスコープ外）。
 
 ## トラブルシューティング
 

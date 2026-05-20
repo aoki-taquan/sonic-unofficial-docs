@@ -207,7 +207,7 @@ SAI 拡張 CRM 属性が取得できるか確認する。
 ```bash
 crm show resources all
 docker exec syncd saictl -c 'show crm'
-redis-cli -n 1 hgetall 'CRM_TABLE:STATS'
+redis-cli -n 2 hgetall 'CRM:STATS'
 grep -i CRM /var/log/syslog | tail
 ```
 

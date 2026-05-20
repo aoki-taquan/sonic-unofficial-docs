@@ -74,8 +74,8 @@ ssh_path   : "/path/to/ssh_private_key"
 | Command | 用途 |
 |---------|------|
 | `config kdump remote enable` / `disable` | on/off |
-| `config kdump remote add ssh_string <user@host>` | 接続先 |
-| `config kdump remote add ssh_path <path>` | 秘密鍵 |
+| `config kdump add ssh_string <user@host>` | 接続先 |
+| `config kdump add ssh_path <path>` | 秘密鍵 |
 | `config kdump remove ssh_string` / `ssh_path` | 削除 |
 | `show kdump config` | 設定確認 |
 
@@ -84,8 +84,8 @@ ssh_path   : "/path/to/ssh_private_key"
 ```bash
 ssh-keygen
 ssh-copy-id dumper@10.0.0.50
-sudo config kdump remote add ssh_string dumper@10.0.0.50
-sudo config kdump remote add ssh_path /home/admin/.ssh/id_rsa
+sudo config kdump add ssh_string dumper@10.0.0.50
+sudo config kdump add ssh_path /home/admin/.ssh/id_rsa
 sudo config kdump remote enable
 show kdump config
 ```
@@ -115,7 +115,7 @@ kdump の remote SSH 設定と動作を確認する。
 
 ```bash
 show kdump status
-show kdump remote
+show kdump config
 config kdump remote enable
 cat /etc/default/kdump-tools
 ```
