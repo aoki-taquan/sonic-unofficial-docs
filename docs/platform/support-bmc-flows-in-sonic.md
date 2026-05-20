@@ -11,9 +11,6 @@ sources:
 related:
   config_db:
   - DEVICE_METADATA
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DPU
   cli:
   - show platform bmc summary
   - show platform bmc eeprom

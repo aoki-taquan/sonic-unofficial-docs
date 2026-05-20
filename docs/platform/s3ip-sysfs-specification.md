@@ -10,9 +10,8 @@ sources:
   path: doc/s3ip_sysfs/s3ip_sysfs_specification.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - SWITCH_TRIMMING
-  - SWITCH_HASH
+  config_db: []
+  _no_related_cdb: true
   cli:
   - show platform
   yang:

@@ -11,8 +11,8 @@ last_verified: 2026-05-13
 ## この章の読み方
 目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
 ## 検証状況
-- ページ数: 43
-- 分布: Code-verified: 33 / Discrepancy-found: 6 / HLD-only: 4
+- ページ数: 51
+- 分布: Code-verified: 33 / Discrepancy-found: 10 / HLD-only: 4 / Community-report: 4
 
 ## 実装差分があるページ
 - [FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）](fec-flr-support-in-sonic.md)
@@ -21,6 +21,16 @@ last_verified: 2026-05-13
 - [SONiC ポート命名規則の変更案（et[sX]pY[abcd]）](sonic-port-naming-convention-change.md)
 - [Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）](smartswitch-dpu-graceful-shutdown.md)
 - [液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）](liquid-cooling-leakage-detection-in-sonic.md)
+- [FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）](fec-flr-support-in-sonic-concepts.md)
+- [FEC FLR 内部実装（port_flr.lua / FlexCounterOrch / SAI counter mapping）](fec-flr-support-in-sonic-internals.md)
+- [FEC FLR 制限事項と HLD との乖離（CLI 未取り込み / ハードコード値）](fec-flr-support-in-sonic-limitations.md)
+- [FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）](fec-flr-support-in-sonic-operations.md)
+
+## コミュニティ報告ページ
+- [SfpUtilBase の EEPROM 解析欠損](sfp-eeprom-parsing-gaps.md)
+- [SFF-8472 外部キャリブレーション SFP の Rx パワー変換誤り](sfp-sff8472-rx-power-calibration.md)
+- [thermalctld の speed_tolerance API 廃止と移行](thermalctld-speed-tolerance-api-change.md)
+- [xcvrd クラッシュ（MediaInterfaceIDApp 未定義）](xcvrd-cmis-mediainterface-crash.md)
 
 ## HLD-only のページ
 - [BMC / Redfish 統合（platform_common RedfishClient + show platform bmc）](support-bmc-flows-in-sonic.md)
@@ -75,5 +85,13 @@ last_verified: 2026-05-13
 | [拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）](enhanced-lpo-debug-registers-hld.md) | HLD-only |
 | [新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）](global-platform-specific-psuutil-class-instance.md) | Code-verified |
 | [液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）](liquid-cooling-leakage-detection-in-sonic.md) | Discrepancy-found |
+| [FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）](fec-flr-support-in-sonic-concepts.md) | Discrepancy-found |
+| [FEC FLR 内部実装（port_flr.lua / FlexCounterOrch / SAI counter mapping）](fec-flr-support-in-sonic-internals.md) | Discrepancy-found |
+| [FEC FLR 制限事項と HLD との乖離（CLI 未取り込み / ハードコード値）](fec-flr-support-in-sonic-limitations.md) | Discrepancy-found |
+| [FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）](fec-flr-support-in-sonic-operations.md) | Discrepancy-found |
+| [SfpUtilBase の EEPROM 解析欠損](sfp-eeprom-parsing-gaps.md) | Community-report |
+| [SFF-8472 外部キャリブレーション SFP の Rx パワー変換誤り](sfp-sff8472-rx-power-calibration.md) | Community-report |
+| [thermalctld の speed_tolerance API 廃止と移行](thermalctld-speed-tolerance-api-change.md) | Community-report |
+| [xcvrd クラッシュ（MediaInterfaceIDApp 未定義）](xcvrd-cmis-mediainterface-crash.md) | Community-report |
 
 <!-- glossary-links-injected: 0d05a4178472 -->

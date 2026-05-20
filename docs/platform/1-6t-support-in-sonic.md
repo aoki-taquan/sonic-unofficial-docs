@@ -81,6 +81,9 @@ IEEE P802.3dj が定める **200 / 400 / 800 Gb/s と 1.6 Tb/s** のインター
 
 `106.25` 系（IEEE Clause 180 系）と `113.4375` 系（Clause 181 / 183）の **2 種類のシグナリングレート** が共存する点に注意[^1]。
 
+!!! note "ID 番号空間の補足"
+    SFF-8024 では Host Electrical Interface ID と SMF/MMF Media Interface ID は **独立した番号空間** であり、同じ数値（例: 上記の `128`）が異なるテーブルで別意味として割り当てられている。Host Electrical の `128 = 200GAUI-1` と SMF Media の `128 = 1.6TBASE-DR8-2` はそれぞれ別テーブルのエントリであり、衝突ではない。
+
 ### sonic-platform-daemons (xcvrd)
 
 `xcvrd.py` の `get_interface_speed` に **`1.6T` 分岐を追加**。HLD の patch 抜粋[^1]:
@@ -123,14 +126,14 @@ else
 end
 ```
 
-これは Frame Loss Ratio 計算で **シンボル時間** を求めるための係数。レーン 200G PAM4 の symbol rate が 106.25 Gsym/s で実効ビットレートが 212.5 Gb/s となるため、Lua 側でも反映する必要がある[^1]。
+これは Frame Loss Ratio 計算で **シンボル時間** を求めるための係数。`serdes` 変数はレーン実効ビットレート (bit/s) を保持する（100G NRZ では 106.25 Gb/s、200G PAM4 では 212.5 Gb/s）。物理 baud rate は 200G PAM4 でも 106.25 Gbaud だが、Lua 側のテーブルは bit/s で揃えるため `212.5e+9` を入れる必要がある[^1]。
 
 ```mermaid
 flowchart LR
     PORT[CONFIG_DB.PORT.speed] -->|<= 1600000?| PO[PortsOrch porthlpr]
     PO -->|valid| AOR[ASIC config]
     PO --> COUNTERS[port_rates.lua]
-    COUNTERS -->|lane 200000 → 212.5GBd| FLR[FLR 計算]
+    COUNTERS -->|lane 200000 → 212.5 Gb/s| FLR[FLR 計算]
 ```
 
 ### sonic-utilities

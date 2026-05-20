@@ -18,10 +18,7 @@ related:
   - SYSLOG_SERVER
   - SYSLOG_CONFIG
   - SYSLOG_CONFIG_FEATURE
-  cli:
-  - show interfaces
-  - show ip
-  - config syslog
+  cli: []
   yang:
   - sonic-chassis-module
   - sonic-device_metadata
@@ -191,6 +188,8 @@ reasoning: sonic-provisiond の責務（STATE_DB 購読のみ・ProvisionReady �
     ```
 
     **判断根拠**: sonic-provisiond の責務（STATE_DB 購読のみ・ProvisionReady で provision_module() 呼び出し）の根拠。
+
+    **補足**: HLD 原文は `oper_state` と記述するが、chassisd が STATE_DB に書き込む既存 `CHASSIS_MODULE_TABLE` のフィールド名は `oper_status` であり、本ページ本文は実装に合わせて `oper_status` で統一している。新デーモン実装時にはこの命名差を吸収する必要がある。
 
 <!-- evidence-rendered:end -->
 
