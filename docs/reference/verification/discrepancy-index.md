@@ -195,7 +195,7 @@ last_verified: 2026-05-13
 - [L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）](../../internals/l3-scaling-and-performance-enhancements-limitations.md)  
   area: `internals` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
 
-- [L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）](../../internals/l3-scaling-and-performance-enhancements-concepts.md)  
+- [L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）](../../internals/l3-scaling-and-performance-enhancements-concepts.md)  
   area: `internals` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
 
 - [L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）](../../internals/l3-scaling-and-performance-enhancements-operations.md)  
@@ -709,7 +709,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
 - [L3 Scaling と Performance 強化 制限事項と HLD との乖離（gc_thresh / CoPP / partial 取り込み）](../../internals/l3-scaling-and-performance-enhancements-limitations.md)  
   area: `internals` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
 
-- [L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）](../../internals/l3-scaling-and-performance-enhancements-concepts.md)  
+- [L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）](../../internals/l3-scaling-and-performance-enhancements-concepts.md)  
   area: `internals` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
 
 - [L3 Scaling と Performance 強化 設定・運用（sysctl / COPP_TABLE / show arp）](../../internals/l3-scaling-and-performance-enhancements-operations.md)  

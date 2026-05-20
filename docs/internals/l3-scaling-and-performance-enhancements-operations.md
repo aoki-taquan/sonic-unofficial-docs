@@ -44,7 +44,7 @@ related:
 
 | Table | フィールド | 用途 |
 |-------|----------|------|
-| `COPP_TABLE`（CONFIG_DB スキーマ上は [`COPP_GROUP`](../reference/config-db/copp-group.md) + [`COPP_TRAP`](../reference/config-db/copp-trap.md)、`COPP_TABLE` は runtime での APPL_DB 反映名）| [ARP](../reference/glossary.md#term-arp)/ND group の `cir` / `cbs` | 600 → 8000 pps（[HLD](../reference/glossary.md#term-hld) 提案。現行 master は 600 のまま）|
+| `COPP_TABLE`（CONFIG_DB スキーマ上は [`COPP_GROUP`](../reference/config-db/copp-group.md) + [`COPP_TRAP`](../reference/config-db/copp-trap.md)、`COPP_TABLE` は runtime での [APPL_DB](../reference/glossary.md#term-appl_db) 反映名）| [ARP](../reference/glossary.md#term-arp)/ND group の `cir` / `cbs` | 600 → 8000 pps（[HLD](../reference/glossary.md#term-hld) 提案。現行 master は 600 のまま）|
 | (`/etc/sysctl.d/...`) | `net.ipv4.neigh.default.gc_thresh1/2/3` 等 | kernel ARP cache（HLD 提案値と現行 default は乖離）|
 
 ## 3. HLD 提案 vs 現行 default
@@ -158,4 +158,4 @@ sudo grep -i "bulk" /var/log/swss/sairedis.rec | tail
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: f0f6af0a12c5 -->
+<!-- glossary-links-injected: 9cc90e2e6da0 -->
