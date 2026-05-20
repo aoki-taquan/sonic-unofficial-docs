@@ -86,7 +86,11 @@ SECURITY_GLOBAL|global
 - `SECURITY_GLOBAL|global.security_profile` が参照するプロファイルが存在する間は `SECURITY_PROFILES|<profile-name>` の削除が CVL バリデーションでブロックされる (`instance-in-use` エラー)[^1]
 - `certificate-name` フィールドは YANG で `optional` のため省略可能だが、参照元ハンドラの実装は未確認
 
-## 実装状況 (community master 2026-05-14)
+## 実装との乖離
+
+本テーブルは `sonic-mgmt-common` CVL testdata の YANG にのみ存在し、`sonic-buildimage` の主要 YANG モデルにはマージされていない。CONFIG_DB に `SECURITY_PROFILES` を書き込んでも、これを購読する handler/daemon が community master には存在せず、gNSI Certz 実装も本テーブルを参照しない。
+
+### 実装状況 (community master 2026-05-14)
 
 | 項目 | 状態 |
 |-----|------|

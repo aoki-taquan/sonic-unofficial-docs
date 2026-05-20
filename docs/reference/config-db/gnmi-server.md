@@ -373,7 +373,7 @@ gNMI サブシステムは CONFIG_DB テーブルのうち GNMI / GNMI_CLIENT_CE
 `telemetry_vars.j2` は `sonic-cfggen -d` で CONFIG_DB をスナップショット取得し、`GNMI` (= `GNMI|certs`) が存在しない場合に `DEVICE_METADATA["x509"]` の `server_crt` / `server_key` / `ca_crt` を TLS 証明書ソースとして使用する。これは `docker-sonic-telemetry` 時代のレガシー経路であり、`GNMI|certs` を使用する新設構成では `DEVICE_METADATA|x509` は参照されない (evidence: `telemetry_vars.j2:2-5`, `gnmi-native.sh:32-61`)。
 
 **`DEVICE_METADATA|localhost.subtype` (参照 #2) / `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled` (参照 #3)**:
-これら 2 つのフィールドは GNMI テーブルに対応するフィールドを持たず、スクリプトが `sonic-db-cli CONFIG_DB hget` で直接取得する。どちらもコンテナ起動時 1 回の読み取りであり、設定変更の反映にはコンテナ再起動が必要。詳細は [VRF / SmartSwitch 自動連携](#vrf--smartswitch-自動連携) を参照。
+これら 2 つのフィールドは GNMI テーブルに対応するフィールドを持たず、スクリプトが `sonic-db-cli CONFIG_DB hget` で直接取得する。どちらもコンテナ起動時 1 回の読み取りであり、設定変更の反映にはコンテナ再起動が必要。
 
 **`GNMI_CLIENT_CERT|<cert_cname>` (参照 #4)**:
 `PopulateAuthStructByCommonName()` (`clientCertAuth.go:254`) は毎接続の認証インターセプター内から呼ばれ、`swsscommon.ConfigDBConnector.Get_entry(serviceConfigTableName, certCommonName)` で `GNMI_CLIENT_CERT|<cert_cname>` エントリを読み取る。`GNMI_CLIENT_CERT` は GNMI テーブルと同一ページに収録されているが、参照方向（認証ランタイム → ConfigDB）を明示するため暗黙参照として列挙する。エントリが存在しない場合は `Unauthenticated` エラーが返る (evidence: `clientCertAuth.go:273-283`)。

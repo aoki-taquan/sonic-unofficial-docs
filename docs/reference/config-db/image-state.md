@@ -388,6 +388,9 @@ Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書�
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^3] [^4] [^5]
+
 [^1]: `sonic-buildimage/build_debian.sh` L642-654 — sonic_version.yml 生成処理。<https://github.com/sonic-net/sonic-buildimage/blob/master/build_debian.sh>
 
 [^2]: `sonic-buildimage/functions.sh:sonic_get_version()` L53-68 — build_version 文字列の生成ロジック。<https://github.com/sonic-net/sonic-buildimage/blob/master/functions.sh>

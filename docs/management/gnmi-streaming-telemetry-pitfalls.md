@@ -5,7 +5,8 @@ tags: [gnmi, telemetry, streaming, oom, memory]
 description: dial-in ストリーミングテレメトリで発生する OOM・メモリリーク・RESOURCE_EXHAUSTED エラーの原因と対策。
 source_issues:
   - https://github.com/sonic-net/sonic-gnmi/issues/26
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # gNMI ストリーミングテレメトリの落とし穴

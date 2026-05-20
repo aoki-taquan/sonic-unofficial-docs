@@ -88,6 +88,9 @@ SCHEDULER|<name>
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^4]
+
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-scheduler.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-scheduler.yang>
 
 <!-- topics-back-ref -->

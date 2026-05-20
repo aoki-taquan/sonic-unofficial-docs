@@ -228,7 +228,7 @@ show bfd peers details
 | [`BGP_DEVICE_GLOBAL`](bgp-device-global.md) (`STATE.use_software_bfd` / `STATE.tsa_enabled`) | `doTask()` 毎周回 + TSA state change 通知時 | `BgpGlobalStateOrch::getSoftwareBfd()` / `getTsaState()` で hardware/software 経路 と TSA shutdown 挙動を決定 | 制御依存 | `bfdorch.cpp:114-138, 683-748` |
 | `STATIC_ROUTE` (`STATIC_ROUTE|<vrf>|<prefix>`) | `staticroutebfd` プロセス (別プロセス) が CONFIG_DB を subscribe し、BFD 監視対象の next-hop に対応する BFD セッションを APPL_DB `BFD_SESSION_TABLE` に push する | static route の BFD 監視は `staticroutebfd` 経由で **逆方向に `BFD_SESSION_TABLE` を生成** する (`tx/rx_interval=50ms` 既定上書き) | **逆方向** (STATIC_ROUTE → BFD_SESSION) | `staticroutebfd/main.py:23-24, 118-120, 283-288, 366-559, 720-730` |
 
-> 上記は `bfdorch` が CONFIG_DB を直接 subscribe するわけではない点に注意。`PORT` / `VRF` は orchagent 内 in-memory state (`gPortsOrch` / `VRFOrch`) 経由、`BGP_DEVICE_GLOBAL` は `BgpGlobalStateOrch` 経由で参照される。順序依存は [書込み順依存 (Phase B)](#書込み順依存-phase-b--コード由来) を参照。
+> 上記は `bfdorch` が CONFIG_DB を直接 subscribe するわけではない点に注意。`PORT` / `VRF` は orchagent 内 in-memory state (`gPortsOrch` / `VRFOrch`) 経由、`BGP_DEVICE_GLOBAL` は `BgpGlobalStateOrch` 経由で参照される。順序依存は本ページの「書込み順依存」関連節を参照。
 
 ### STATE_DB / APPL_DB レベル — 経路別の中継
 
@@ -341,7 +341,7 @@ STATE_DB へ書き戻される `state` 値も固定 (`session_state_lookup`, `bf
 
 - 依存 #1 / #2 は doTask が **false 返却 → `it++` で次イベントループ周回再試行**する設計のため、PORT / VRF が後追いで作成されても自動的に追従する。ただし orchagent ログには `Failed to locate port ...` が周回ごとに記録され続けるため、ログノイズを避けたい場合は PORT/VRF を先行投入することが望ましい。
 - 依存 #3 は software ⇄ hardware の経路切替が運用中に発生する珍しいケース。通常は `BGP_DEVICE_GLOBAL` を最初に確定してから BFD_SESSION を投入する。
-- レコード内整合性 (`local_addr` 必須、`interface` と `dst_mac` の併用条件) は順序ではないが、不整合な SET は永続スキップされる ([例外条件・特殊挙動](#例外条件特殊挙動) 参照)。
+- レコード内整合性 (`local_addr` 必須、`interface` と `dst_mac` の併用条件) は順序ではないが、不整合な SET は永続スキップされる (本ページ「例外条件・特殊挙動」節を参照)。
 <!-- /ordering -->
 
 <!-- side-effects -->
@@ -366,7 +366,7 @@ CONFIG_DB `BFD_SESSION` の SET/DEL を起点に `bfdorch` (`sonic-swss/orchagen
 ### 注記
 
 - software BFD 経路の `state` 反映は `bgpcfgd` `BfdMgr` の責務であり、本ページの主購読者 `bfdorch` の副次書込からは外れる (読出側)。
-- hardware/software の経路判定は起動時の SAI capability 照会で固定される (`bfdorch.cpp:735` / [プラットフォーム差](#プラットフォーム差-phase-h))。
+- hardware/software の経路判定は起動時の SAI capability 照会で固定される (`bfdorch.cpp:735`、プラットフォーム差は別途参照)。
 - 詳細スキャン手順と grep 結果は [`meta/_intermediate/cdb-flow/bfd-session-side.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/bfd-session-side.md) を参照。
 <!-- /side-effects -->
 

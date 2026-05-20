@@ -815,6 +815,9 @@ RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^6] [^7] [^8]
+
 [^1]: RouteOrch 実装: `orchagent/routeorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.cpp>
 [^2]: RouteOrch ヘッダ: `orchagent/routeorch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/routeorch.h>
 [^3]: ResponsePublisher 実装: `orchagent/response_publisher.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp>

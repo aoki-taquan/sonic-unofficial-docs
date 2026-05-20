@@ -238,7 +238,7 @@ if (stpMstInstTask == false)
 
 !!! note "キー解析の注意"
     `doStpMstInstTask()` は `key.substr(13)` で `"MST_INSTANCE|"` プレフィックス（13文字）を除去してインスタンス ID を取得する。
-    MST 有効化時に書き込まれるキー `MST_INSTANCE:INSTANCE0`（コロン区切り）と、stpmgrd が期待するキー `MST_INSTANCE|0`（パイプ区切り）の形式が異なる点は [discrepancy #5](#発見された-discrepancy--暗黙デフォルト-サマリー) に記録済み。
+    MST 有効化時に書き込まれるキー `MST_INSTANCE:INSTANCE0`（コロン区切り）と、stpmgrd が期待するキー `MST_INSTANCE|0`（パイプ区切り）の形式が異なる点は本ページの discrepancy として記録済み。
 
 ### STP_MST_PORT の起動ガード
 
@@ -706,6 +706,9 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / APPL_DB / ASIC_DB）への
 | `max_stp_instances` 上限 | STATE_DB 値（ASIC 依存） | 255（フォールバック） | 255（STATE_DB 未書込の場合が多い） |
 | multi-asic namespace 対応 | N/A（シングルのみ） | N/A | **非対応**（ホスト namespace のみ） |
 | warm-reboot リストア | なし（全再処理） | なし | なし |
+
+<!-- footnote anchor seeds -->
+出典: [^1]
 
 [^ph1]: getStpMaxInstances 実装: `sonic-swss/cfgmgr/stpmgr.cpp:1381-1413`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp#L1381>
 [^ph2]: stpmgrd DBConnector 初期化: `sonic-swss/cfgmgr/stpmgrd.cpp:35-37`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgrd.cpp#L35>

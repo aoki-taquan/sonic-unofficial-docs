@@ -101,7 +101,7 @@ TC_TO_DSCP_MAP|<name>|<tc>
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-tc-dscp-map`](../yang/sonic-tc-dscp-map.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-tc-dscp-map`
 
 <!-- ref-triangle:end -->
 

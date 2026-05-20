@@ -954,6 +954,9 @@ PVST モード有効化時に `stpmgr` は Cisco PVST+ マルチキャストア�
 | `max_stp_instances` 上限 | SAI 照会値 − 1 | N/A | 255 (フォールバック) | N/A |
 | ebtables PVST フィルタ | 有効 | STP 無効化時に削除 | no-op (バイナリ非存在時) | N/A |
 
+<!-- footnote anchor seeds -->
+出典: [^1] [^3]
+
 [^4]: `sonic-swss/orchagent/stporch.cpp` <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp>
 
 <!-- /platform -->

@@ -568,6 +568,15 @@ HLD Section 3.2 に定義された SAI ステータス → `SWSS_RC_*` のマッ
 
 <!-- /platform -->
 
+## 実装との乖離
+
+ERROR_DB は `sonic-net/SONiC` の error_handling HLD で定義されているが、community master の SWSS / OrchAgent には ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE を populate するコードパスが実装されていない。SWSS_RC_* enum や `status_code_util.h` のヘルパーは導入済みで、`fpmsyncd` 側の購読インタフェース (ErrorListener) も部品としては存在するが、書き手側 (OrchAgent から SAI 失敗時の ERROR_DB 書込) は HLD どおりには動作しない。
+
+| 乖離 | 期待（HLD） | 実装 (community master) | 根拠 |
+|------|------------|------------------------|------|
+| ERROR_ROUTE_TABLE 書込 | OrchAgent が SAI 失敗時に ERROR_DB へ書き込む | OrchAgent 側に該当パス無し。テーブルは空のまま | `sonic-net/SONiC/doc/error-handling/error_handling_design_spec.md`[^1] |
+| ERROR_DB 操作 CLI | `show error-database` / `sonic-clear error-database` | 該当 CLI コマンド未実装 | `sonic-utilities` を grep して該当エントリ無し |
+
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 

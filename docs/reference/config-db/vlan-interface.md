@@ -112,6 +112,9 @@ VLAN_INTERFACE|<name>|<ip_prefix>           # IP プレフィクス
 | `family` (IP prefix) | **dead field**: CONFIG_DB 値は読まれず、intfmgr が ip-prefix の型から自動判定して APP_DB へ書く | intfmgr.cpp:1129 |
 | `secondary` (IP prefix) | **dead consumer**: intfmgr・orchagent のどちらもこのフィールドを参照しない | intfmgr.cpp:784-829; intfsorch.cpp:720-814 |
 
+<!-- footnote anchor seeds -->
+出典: [^fdb1]
+
 [^d1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
 [^d2]: `sonic-swss/orchagent/intfsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/intfsorch.cpp>
 

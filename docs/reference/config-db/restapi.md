@@ -91,6 +91,9 @@ container `RESTAPI` の下に固定キー `certs` / `config` の 2 シングル�
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^3]
+
 [^1]: `src/sonic-yang-models/yang-models/sonic-restapi.yang` (container `RESTAPI` / `certs` / `config`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-restapi.yang>
 
 ## 関連ページ

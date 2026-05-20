@@ -496,7 +496,7 @@ eventd の supervisord 設定は `autorestart=false` だが、`critical_processe
 
 ## 関連ページ
 
-- [CONFIG_DB / EVENT_DB: EVENT テーブル](event-table.md)
+- CONFIG_DB / EVENT_DB: EVENT テーブル
 
 <!-- ops-hint -->
 ## 運用ヒント

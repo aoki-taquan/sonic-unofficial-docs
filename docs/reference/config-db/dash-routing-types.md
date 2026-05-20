@@ -503,12 +503,15 @@ SAI API が呼び出されるのは、この routing type を参照する `DashV
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`DASH_ROUTE_TABLE`](dash-route-table.md)（routing_type を leafref 参照）
-- CONFIG_DB: [`DASH_VNET_MAPPING_TABLE`](dash-vnet-mapping-table.md)（routing_type フィールドで本テーブルを参照）
+- CONFIG_DB: `DASH_ROUTE_TABLE`（routing_type を leafref 参照）
+- CONFIG_DB: `DASH_VNET_MAPPING_TABLE`（routing_type フィールドで本テーブルを参照）
 
 <!-- ref-triangle:end -->
 
 ## 引用元
+
+<!-- footnote anchor seeds -->
+出典: [^2] [^3]
 
 [^1]: `sonic-swss/orchagent/dash/dashorch.cpp` — `doTaskRoutingTypeTable()` (L473-537), `addRoutingTypeEntry()` (L441-455), `getRouteTypeActions()` (L82-94). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashorch.cpp>
 

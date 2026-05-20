@@ -5,7 +5,8 @@ tags: [thermalctld, platform-daemons, fan, thermal, api-change]
 description: thermalctld が speed_tolerance を Redis DB に書き込まなくなった変更と、is_under_speed / is_over_speed API への移行方法。
 source_issues:
   - https://github.com/sonic-net/sonic-platform-daemons/issues/395
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # thermalctld の speed_tolerance API 廃止と移行

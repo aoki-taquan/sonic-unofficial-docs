@@ -5,7 +5,8 @@ tags: [snmp, snmpagent, rfc1213, mib, interface, mgmt]
 description: sonic-snmpagent の RFC1213-MIB ifTable がサポートするインターフェース種別と、管理インターフェース（eth0）が含まれない制約。
 source_issues:
   - https://github.com/sonic-net/sonic-snmpagent/issues/83
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # SNMP エージェントがサポートするインターフェーススコープ

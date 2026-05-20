@@ -118,6 +118,9 @@ VNET スコープの VXLAN トンネル encapsulation 経路。
 - **VNET 未存在**: `vnet_orch_->getTypeMap()` で VNET エントリが見つからない場合、メッセージを保留してリトライ。
 - **VNI 0 の encapsulation**: `vni=0` で tunnel nexthop 作成時、VXLAN orch はベース tunnel の VNI にフォールバックする。
 
+<!-- footnote anchor seeds -->
+出典: [^1]
+
 [^yang]: YANG 定義: `sonic-vnet.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vnet.yang>
 [^schema]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
 [^vnetorch]: 実装: `vnetorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vnetorch.cpp>
@@ -128,7 +131,7 @@ VNET スコープの VXLAN トンネル encapsulation 経路。
 
 - CONFIG_DB: [`VNET`](./vnet.md)
 - YANG: [`sonic-vnet`](../yang/sonic-vnet.md)
-- CLI: [`show vnet routes`](../cli/show-vnet.md)
+- CLI: `show vnet routes`
 
 <!-- ref-triangle:end -->
 

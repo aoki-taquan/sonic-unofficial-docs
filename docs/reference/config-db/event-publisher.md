@@ -1,6 +1,6 @@
 ---
 title: イベントパブリッシャー設定 (init_cfg events)
-description: "eventd が読み込む ZMQ エンドポイント・ハートビート・キャッシュ上限などのイベントフレームワーク設定。CONFIG_DB テーブルではなく /etc/sonic/init_cfg.json の "events" キーで管理される。"
+description: 'eventd が読み込む ZMQ エンドポイント・ハートビート・キャッシュ上限などのイベントフレームワーク設定。CONFIG_DB テーブルではなく /etc/sonic/init_cfg.json の "events" キーで管理される。'
 area: reference
 verification: code-verified
 last_verified: 2026-05-14

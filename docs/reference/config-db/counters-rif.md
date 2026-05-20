@@ -651,6 +651,9 @@ STATE_DB 書き込み: なし
 NotificationConsumer: なし（カウンタ配信に使用せず）
 ```
 
+<!-- footnote anchor seeds -->
+出典: [^12] [^17] [^18] [^19]
+
 [^17]: FlexCounterOrch RIF enable ブランチ: `sonic-swss/orchagent/flexcounterorch.cpp:283-286`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L283>
 [^18]: IntfsOrch doTask(SelectableTimer) / addRifToFlexCounter: `sonic-swss/orchagent/intfsorch.cpp:1598-1637`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1598>
 [^19]: intfstat COUNTERS_DB 直接読み出し: `sonic-utilities/scripts/intfstat:81-82,96,109,123`. <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bd/scripts/intfstat#L81>

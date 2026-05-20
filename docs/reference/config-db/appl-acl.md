@@ -649,7 +649,7 @@ CONFIG_DB 版で列挙される MIRROR V6 / `isCombinedMirrorV6Table` / `L3V4V6`
     INACTIVE になる ASIC とそうでない ASIC が混在し得る。確認は各 namespace の
     `sonic-db-cli -n asicN STATE_DB hgetall 'ACL_TABLE_TABLE|<name>'` で行う。
 
-詳細な platform 識別文字列 (`BRCM_PLATFORM_SUBSTRING` 等) / capability 表 / プラットフォーム別サマリは CONFIG_DB 版 [`ACL_RULE`](acl-rule.md#プラットフォーム差-phase-h) を参照。
+詳細な platform 識別文字列 (`BRCM_PLATFORM_SUBSTRING` 等) / capability 表 / プラットフォーム別サマリは CONFIG_DB 版 [`ACL_RULE`](acl-rule.md) を参照。
 
 > **証跡**: `AclOrch::init()` priority 範囲取得 `aclorch.cpp:3687-3699`、DPU 分岐 `aclorch.cpp:3686-3710`、`isAclActionSupported()` `aclorch.cpp:5237-5246`、`validateAddAction()` `aclorch.cpp:1681-1688`、`queryAclActionCapability()` `aclorch.cpp:3987-4042`、`setPriority()` 範囲チェック `aclorch.cpp:1654-1661`、書き込み元仕様 `vnetorch.cpp:3775-3837` / `mclaglink.cpp:325-373` / `dashenifwdorch.cpp:619-643`。詳細分析 `meta/_intermediate/cdb-flow/appl-acl-platform.md`
 <!-- /platform -->

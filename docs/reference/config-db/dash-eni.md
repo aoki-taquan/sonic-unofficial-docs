@@ -85,10 +85,10 @@ DASH_ENI_TABLE:<eni_mac>
 ## 関連 CONFIG_DB
 
 - [`DASH_VNET_TABLE`](dash-vnet.md): ENI が所属する VNET
-- [`DASH_QOS_TABLE`](dash-qos.md): ENI に適用する QoS プロファイル (PPS / CPS / Flows)
-- [`DASH_APPLIANCE_TABLE`](dash-appliance.md): Appliance グローバル設定 (VM VNI など)
+- `DASH_QOS_TABLE`: ENI に適用する QoS プロファイル (PPS / CPS / Flows)
+- `DASH_APPLIANCE_TABLE`: Appliance グローバル設定 (VM VNI など)
 - [`DASH_ACL_IN_TABLE`](dash-acl.md) / [`DASH_ACL_OUT_TABLE`](dash-acl.md): ENI への ACL バインド
-- [`DASH_ENI_ROUTE_TABLE`](dash-eni-route.md): ENI のルートグループバインド
+- `DASH_ENI_ROUTE_TABLE`: ENI のルートグループバインド
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動

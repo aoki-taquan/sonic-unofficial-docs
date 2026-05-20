@@ -455,6 +455,9 @@ keyspace notification (`__keyspace@6__:BGP_PEER_CONFIGURED_TABLE|*`) は STATE_D
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^1] [^2] [^3] [^4] [^5]
+
 [^1]: `sonic-buildimage/src/sonic-bgpcfgd/bgpmon/bgpmon.py` (L37-51 BgpStateGet.__init__, L70-76 update_new_peer_states, L154-189 update_neigh_states, L163,171 peerType 判定). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpmon/bgpmon.py>
 
 [^2]: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py` (L284-303 update_state_db). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py>

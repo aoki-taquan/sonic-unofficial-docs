@@ -4,6 +4,7 @@ description: "DSCP_TO_PG_MAP — このテーブルは SONiC CONFIG_DB に存在
 area: reference
 hard: 0
 verification: discrepancy-found
+monitor: not_implemented
 last_verified: 2026-05-15
 sources:
   - repo: sonic-net/sonic-swss
@@ -500,6 +501,15 @@ CONFIG_DB への初期投入は `qos_config.j2` テンプレートが担う。�
 
 > **Evidence**: `qosorch.cpp:L32,L1637,L1715,L1772,L1950-1975`; `qos_config.j2:L163,L170-205,L265-360,L395-480,L450-478`
 <!-- /platform -->
+
+## 実装との乖離
+
+`DSCP_TO_PG_MAP` は名称としては想定可能だが、SONiC CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。DSCP → Priority Group マッピングは `DSCP_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
+
+| 乖離 | 期待（誤解されがちな設計） | 実装 (community master) | 根拠 |
+|------|-------------------------|------------------------|------|
+| `DSCP_TO_PG_MAP` の存在 | DSCP から PG への直接マップを 1 テーブルで保持 | テーブル定義なし。`qosorch.cpp` の `m_qos_maps` に該当キー無し | `sonic-swss/orchagent/qosorch.cpp:80-96`[^1] |
+| YANG モデル | `sonic-dscp-pg-map.yang` が存在 | `sonic-yang-models/yang-models/` に該当ファイル無し。`sonic-dscp-tc-map.yang` と `sonic-tc-priority-group-map.yang` のみ存在 | `sonic-buildimage/src/sonic-yang-models/yang-models/`[^2] |
 
 ## 制約
 

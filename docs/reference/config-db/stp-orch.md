@@ -757,6 +757,9 @@ while(max_delay) {  // 最大 60 秒、1 秒間隔
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^1] [^2] [^3] [^4]
+
 [^1]: StpOrch 実装: `orchagent/stporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.cpp>
 [^2]: StpOrch ヘッダ: `orchagent/stporch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/stporch.h>
 [^3]: orchdaemon 登録: `orchagent/orchdaemon.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>

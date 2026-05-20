@@ -110,7 +110,7 @@ GNMI|certs      # TLS 証明書パス
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`GNMI_CLIENT_CERT`](gnmi-client-cert.md), [`DEVICE_METADATA`](device-metadata.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `GNMI_CLIENT_CERT`, [`DEVICE_METADATA`](device-metadata.md)
 - 関連 CLI: `config gnmi`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-gnmi`
 
@@ -551,8 +551,8 @@ GNMI テーブルは host namespace の CONFIG_DB にのみ存在する。`gnmi-
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-gnmi`](../yang/sonic-gnmi.md)
-- CONFIG_DB: [`GNMI_CLIENT_CERT`](gnmi-client-cert.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-gnmi`
+- CONFIG_DB: `GNMI_CLIENT_CERT`
 - 関連ページ: [gNMI 利用ガイド](../../management/gnmi-usage.md)
 
 <!-- ref-triangle:end -->

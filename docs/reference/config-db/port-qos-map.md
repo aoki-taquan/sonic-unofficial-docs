@@ -173,7 +173,7 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 | 存在しない map 名 | `Object with name:%s not found.` SWSS_LOG_ERROR、適用中断 |
 | 未設定 (optional) | その map は binding しない |
 
-*enum なし — pfc_enable / pfcwd_sw_enable は ([0-7](,[0-7])*)? の string pattern。map 系は leafref。*
+*enum なし — pfc_enable / pfcwd_sw_enable は `([0-7](,[0-7])*)?` の string pattern。map 系は leafref。*
 
 <!-- /value-behavior -->
 

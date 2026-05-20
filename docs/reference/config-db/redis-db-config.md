@@ -480,6 +480,9 @@ docker-database-init.sh
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^3] [^4]
+
 [^1]: `sonic-net/sonic-swss-common` `common/database_config.json` — 配布デフォルト JSON。<https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/database_config.json>
 
 [^2]: `sonic-net/sonic-swss-common` `common/dbconnector.h` / `dbconnector.cpp` — `SonicDBConfig` クラス、`DEFAULT_SONIC_DB_CONFIG_FILE` 定数、`parseDatabaseConfig()` 実装。<https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/dbconnector.h>

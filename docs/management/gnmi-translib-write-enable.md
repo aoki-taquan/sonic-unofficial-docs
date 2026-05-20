@@ -6,7 +6,8 @@ description: gNMI SET リクエストが失敗する場合の原因と、Transli
 source_issues:
   - https://github.com/sonic-net/sonic-gnmi/issues/333
   - https://github.com/sonic-net/sonic-gnmi/issues/20
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # gNMI SET / Translib 書き込み有効化

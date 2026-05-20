@@ -1122,6 +1122,110 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: ゼロタッチプロビジョニング
 - **説明**: 初期起動時に DHCP option 経由でプロビジョニング URL を取得し設定を自動投入する仕組み。`sonic-ztp` で実装。
 
+## 補追用語
+
+CONFIG_DB / オーケストレータ群から参照される共通用語のスタブ集。詳細は本文中のリンク先または専用ページを参照。
+
+### ASIC {#term-asic}
+
+- **略称**: ASIC (Application-Specific Integrated Circuit)
+- **説明**: スイッチング/フォワーディングを担う専用 LSI。SONiC は SAI 経由で抽象化された ASIC 上でデータプレーンを実行する。
+
+### CBF {#term-cbf}
+
+- **略称**: CBF (Class-Based Forwarding)
+- **説明**: トラフィッククラス (TC) や DSCP に基づいて出力キュー / 転送経路を分けるキューイング/フォワーディング機構。
+
+### DEVICE_METADATA {#term-device_metadata}
+
+- **略称**: `DEVICE_METADATA`
+- **説明**: CONFIG_DB のメタデータテーブル。ホスト名・タイプ (ToR/Leaf 等)・MAC・platform 種別などスイッチ全体の identity を保持する。
+
+### dot1x {#term-dot1x}
+
+- **略称**: IEEE 802.1X
+- **説明**: ポートベースの認証プロトコル。SONiC では `hostcfgd` / RADIUS と連携する。
+
+### EXP {#term-exp}
+
+- **略称**: EXP (MPLS Experimental bits / Traffic Class field)
+- **説明**: MPLS ラベル内の 3 bit フィールド。QoS マーキング用途で使用される。
+
+### Forwarding Database {#term-forwarding-database}
+
+- **略称**: FDB (Forwarding Database)
+- **説明**: L2 MAC アドレス学習テーブル。SAI の FDB API 経由で ASIC に書き込まれる。
+
+### IntfsOrch {#term-intfsorch}
+
+- **説明**: `sonic-swss/orchagent/intfsorch.cpp` で実装される L3 インタフェースオーケストレータ。`INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` などを購読する。
+
+### MAC {#term-mac}
+
+- **略称**: MAC (Media Access Control)
+- **説明**: L2 アドレス。SONiC では FDB / NEIGH / `DEVICE_METADATA` 等の各所で参照される。
+
+### MACsec {#term-macsec}
+
+- **略称**: MACsec (IEEE 802.1AE)
+- **説明**: L2 リンク暗号化規格。SONiC では `MACSEC_PORT` / `MACSEC_PROFILE` テーブルと `macsecmgrd` で制御される。
+
+### Multi-ASIC {#term-multi-asic}
+
+- **説明**: 1 台のシャーシ内に複数の ASIC を搭載する構成。`namespace`/`asic_id` で各 ASIC を分離して SONiC コンテナを起動する。
+
+### MuxOrch {#term-muxorch}
+
+- **説明**: Dual-ToR (active/standby) 構成で `MUX_CABLE` の active/standby 状態を SAI に反映するオーケストレータ。`sonic-swss/orchagent/muxorch.cpp`。
+
+### P4RT {#term-p4rt}
+
+- **略称**: P4Runtime
+- **説明**: P4 プログラマブルデータプレーンを操作する gRPC API。SONiC では DASH 系で利用される。
+
+### PortsOrch {#term-portsorch}
+
+- **説明**: `sonic-swss/orchagent/portsorch.cpp` で実装されるポートオーケストレータ。`PORT` テーブル変更を SAI ポート属性に反映する。
+
+### Priority Group {#term-priority-group}
+
+- **略称**: PG (Priority Group)
+- **説明**: ingress 側のバッファプール会計単位。`BUFFER_PG` テーブルと SAI Ingress Priority Group API で制御される。
+
+### RADIUS {#term-radius}
+
+- **略称**: RADIUS (Remote Authentication Dial-In User Service)
+- **説明**: AAA サーバプロトコル。SONiC では `AAA` / `RADIUS` テーブルから `hostcfgd` が PAM 設定を生成する。
+
+### route_map {#term-route_map}
+
+- **略称**: `route-map`
+- **説明**: FRR (BGP/OSPF 等) のルートフィルタリング/属性書き換えポリシー。`ROUTE_MAP` 系 CONFIG_DB テーブル経由で設定される。
+
+### SONiC {#term-sonic}
+
+- **略称**: SONiC (Software for Open Networking in the Cloud)
+- **説明**: Linux ベースのオープンソース NOS。本ドキュメントの主題。コミュニティ master を対象とする。
+
+### ToR {#term-tor}
+
+- **略称**: ToR (Top of Rack switch)
+- **説明**: ラック上端に配置されるアクセススイッチ。SONiC の `DEVICE_METADATA.type` で `ToRRouter` などとして識別される。
+
+### VRRP {#term-vrrp}
+
+- **略称**: VRRP (Virtual Router Redundancy Protocol)
+- **説明**: ゲートウェイ冗長プロトコル。FRR `vrrpd` 経由で `VRRP` / `VRRP6` テーブルから設定される。
+
+### VTEP {#term-vtep}
+
+- **略称**: VTEP (VXLAN Tunnel End Point)
+- **説明**: VXLAN トンネル終端。`VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` テーブルで設定される。
+
+### vtysh {#term-vtysh}
+
+- **説明**: FRR の統合 CLI シェル。SONiC 上では BGP/OSPF など FRR 系コマンドの実行に使用する。
+
 ## 関連
 
 - [SONiC アーキテクチャ概要](../architecture/index.md)

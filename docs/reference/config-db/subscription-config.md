@@ -568,13 +568,16 @@ Supervisor Card 上のホスト CONFIG_DB の `TELEMETRY_CLIENT` のみが有効
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-telemetry_client`](../yang/sonic-telemetry_client.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-telemetry_client`
 - [CONFIG_DB: TELEMETRY_CLIENT](telemetry-client.md) (テーブル全体の概要)
 - [CONFIG_DB: TELEMETRY](telemetry.md) (dial-in 側設定)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
+
+<!-- footnote anchor seeds -->
+出典: [^1]
 
 [^1]: YANG 定義: `sonic-telemetry_client.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-telemetry_client.yang>
 

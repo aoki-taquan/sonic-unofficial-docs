@@ -4,6 +4,7 @@ description: "DOT1P_TO_PG_MAP — このテーブルは SONiC CONFIG_DB に存�
 area: reference
 hard: 0
 verification: discrepancy-found
+monitor: not_implemented
 last_verified: 2026-05-14
 sources:
   - repo: sonic-net/sonic-swss
@@ -416,6 +417,15 @@ NotificationConsumer: なし
 > `sonic-swss/orchagent/qosorch.cpp:1637,1715,1772`（voq 分岐は Queue/Wred 系のみ）;
 > `sonic-buildimage/files/build_templates/qos_config.j2:240-252,435`（ストレージバックエンドのみ注入）
 <!-- /platform -->
+
+## 実装との乖離
+
+`DOT1P_TO_PG_MAP` は名称としては想定可能だが、SONiC CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。dot1p → Priority Group マッピングは `DOT1P_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
+
+| 乖離 | 期待（誤解されがちな設計） | 実装 (community master) | 根拠 |
+|------|-------------------------|------------------------|------|
+| `DOT1P_TO_PG_MAP` の存在 | dot1p から PG への直接マップを 1 テーブルで保持 | テーブル定義なし。`qosorch.cpp` の `m_qos_maps` に該当キー無し | `sonic-swss/orchagent/qosorch.cpp:80-96`[^1] |
+| YANG モデル | `sonic-dot1p-pg-map.yang` が存在 | `sonic-yang-models/yang-models/` に該当ファイル無し。`sonic-dot1p-tc-map.yang` のみ存在 | `sonic-buildimage/src/sonic-yang-models/yang-models/`[^2] |
 
 ## 制約
 

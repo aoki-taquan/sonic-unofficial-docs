@@ -701,6 +701,9 @@ static const unordered_set<string> supported {
 
 ## 引用元
 
+<!-- footnote anchor seeds -->
+出典: [^1] [^2] [^3] [^4] [^5] [^6] [^7] [^8] [^9]
+
 [^1]: ICCP CSM 実装: `iccp_csm.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c>
 [^2]: MCLAG リンクハンドラ: `mlacp_link_handler.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mlacp_link_handler.c>
 [^3]: MCLAG FSM: `mlacp_fsm.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mlacp_fsm.c>

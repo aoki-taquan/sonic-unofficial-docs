@@ -412,7 +412,7 @@ cfg_db = db.cfgdb_clients[namespace]
 
 ## 関連リファレンス
 
-- [YANG: sonic-logger](../yang/sonic-logger.md)
+- YANG: sonic-logger
 
 <!-- ref-triangle:end -->
 

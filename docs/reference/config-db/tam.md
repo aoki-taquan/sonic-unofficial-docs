@@ -118,14 +118,17 @@ IFA 機能の全体的な有効/無効フラグ。singleton。key は固定値 `
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-tam`](../yang/sonic-tam.md)
-- [YANG](../../reference/glossary.md#term-yang): [`sonic-ifa`](../yang/sonic-ifa.md)
+- [YANG](../../reference/glossary.md#term-yang): `sonic-tam`
+- [YANG](../../reference/glossary.md#term-yang): `sonic-ifa`
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): [`acl-table`](acl-table.md)
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): [`acl-rule`](acl-rule.md)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
+
+<!-- footnote anchor seeds -->
+出典: [^1] [^2] [^4]
 
 [^1]: YANG 定義 (TAM): `sonic-tam.yang`. <https://github.com/sonic-net/sonic-mgmt-common/blob/HEAD/cvl/testdata/schema/sonic-tam.yang>
 
