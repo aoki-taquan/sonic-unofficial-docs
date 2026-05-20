@@ -35658,6 +35658,10 @@
 <td>predicted FEC FLR（float）</td>
 </tr>
 <tr>
+<td><code>FEC_FLR_R_SQUARED</code></td>
+<td>predicted の決定係数（float）</td>
+</tr>
+<tr>
 <td><code>SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES_last</code></td>
 <td>直前値</td>
 </tr>
@@ -35899,9 +35903,9 @@ reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR �
 <td>✓ 実装済み</td>
 </tr>
 <tr>
-<td><code>SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S16</code> の利用</td>
+<td><code>SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S15</code> の利用</td>
 <td>必須</td>
-<td><code>sonic-swss/crates/countersyncd/src/sai/saiport.rs</code> L766-782 で S0〜S16 を列挙、L1144- で文字列マッピング</td>
+<td><code>sonic-swss/orchagent/port_flr.lua</code> L135 コメントどおり FLR 計算は S0..S15 (RS-544 の 16 bin) を対象とする。<code>sonic-swss/crates/countersyncd/src/sai/saiport.rs</code> L766-782 は S0..S16 を列挙するが、S16 は FLR 計算の対象外（拡張定義）</td>
 <td>✓ 実装済み</td>
 </tr>
 <tr>
@@ -35956,7 +35960,7 @@ reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR �
 <h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
 <p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
 <ul>
-<li>コアロジックと表示は取り込み済み: <code>sonic-swss/orchagent/port_flr.lua</code> L1-460、<code>sonic-swss/crates/countersyncd/src/sai/saiport.rs</code> L766-782 で SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S16 列挙、<code>sonic-utilities/utilities_common/portstat.py</code> L50/L271-273/L671-673 で表示列追加。</li>
+<li>コアロジックと表示は取り込み済み: <code>sonic-swss/orchagent/port_flr.lua</code> L1-460、<code>sonic-swss/crates/countersyncd/src/sai/saiport.rs</code> L766-782 で SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S16 を列挙（ただし FLR 計算側 <code>port_flr.lua</code> L135 は S0..S15 の 16 bin のみ使用、S16 は拡張定義）、<code>sonic-utilities/utilities_common/portstat.py</code> L50/L271-273/L671-673 で表示列追加。</li>
 <li>ハードコード値: <code>port_flr.lua</code> L29-32 で <code>BIN_FILTER_VALUE=10</code> / <code>MIN_SIGNIFICANT_BINS=2</code> / <code>MFC=8</code>、L31 で <code>FEC_FLR_POLL_INTERVAL=120</code>（秒固定）。</li>
 <li><code>counterpoll port flr-interval-factor</code> サブコマンドは <code>sonic-utilities/counterpoll/</code> 配下に未追加（<code>grep -rn 'flr-interval\|flr_interval' .cache/sonic-sources/sonic-utilities/counterpoll/</code> ヒット 0）。</li>
 <li>関連 PR: port_flr.lua + portstat 表示は 2024 年に merge。チューニング CLI は未提出。</li>

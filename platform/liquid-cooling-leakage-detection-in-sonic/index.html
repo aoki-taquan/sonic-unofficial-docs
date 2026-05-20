@@ -35887,7 +35887,7 @@ reasoning: gNMI イベント仕様と双方向通知の根拠。
 </span></code></pre></div>
 <h2 id="_10">確認コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># 漏液センサ STATE</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;LEAKAGE_INFO|*&#39;</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;LIQUID_COOLING_INFO|*&#39;</span>
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;CHASSIS_MODULE_INFO|*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
 </span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="c1"># pmon コンテナ内のセンサプラグイン</span>

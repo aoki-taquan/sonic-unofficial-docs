@@ -35301,7 +35301,7 @@
 <tr>
 <td><code>counterpoll port flr-interval-factor</code> サブコマンド</td>
 <td>提案</td>
-<td><strong>未実装</strong>。<code>sonic-utilities/counterpoll/</code> 配下に <code>flr</code> / <code>flr-interval</code> サブコマンドは存在しない。<code>port_flr.lua</code> L31 で <code>FEC_FLR_POLL_INTERVAL = 120</code>（秒）がハードコード</td>
+<td><strong>未実装</strong>。<code>sonic-utilities/counterpoll/</code> 配下に <code>flr</code> / <code>flr-interval</code> サブコマンドは存在しない。<code>port_flr.lua</code> L31 で <code>FEC_FLR_POLL_INTERVAL = 120</code>（port_stat poll 周期との乗数 factor。port_stat poll = 1 秒の場合、FLR poll = 120 秒）がハードコード</td>
 <td>⚠️ 未取り込み</td>
 </tr>
 <tr>
@@ -35371,7 +35371,7 @@
 <ul>
 <li><strong>本機能を実運用で使う場合</strong>: 実装は存在するが本 HLD の記述と乖離。最新 master の動作を別途確認した上で適用する</li>
 <li><strong>upstream 動向を追う場合</strong>: 関連 issue / PR を <a href="https://github.com/sonic-net/SONiC">sonic-net/SONiC</a> で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）</li>
-<li><strong>代替手段 / 関連 reference</strong>: 本ページの frontmatter <code>related</code> が空のため、<a href="../../reference/">Reference 索引</a> から関連テーブル / CLI / YANG を辿る</li>
+<li><strong>代替手段 / 関連 reference</strong>: 関連テーブル / CLI / YANG は frontmatter <code>related</code> および <a href="../../reference/">Reference 索引</a> を参照</li>
 </ul>
 </div>
 <div class="admonition note">

@@ -32955,7 +32955,7 @@
   <a href="#monitor-not-implemented" class="md-nav__link">
     <span class="md-ellipsis">
       
-        not_implemented — 未実装 (13 件)
+        not_implemented — 未実装 (14 件)
       
     </span>
   </a>
@@ -32977,7 +32977,7 @@
   <a href="#monitor-evolved-beyond-hld" class="md-nav__link">
     <span class="md-ellipsis">
       
-        evolved_beyond_hld — HLD と乖離した形で実装/進化 (31 件)
+        evolved_beyond_hld — HLD と乖離した形で実装/進化 (30 件)
       
     </span>
   </a>
@@ -35350,7 +35350,7 @@
   <a href="#monitor-not-implemented" class="md-nav__link">
     <span class="md-ellipsis">
       
-        not_implemented — 未実装 (13 件)
+        not_implemented — 未実装 (14 件)
       
     </span>
   </a>
@@ -35372,7 +35372,7 @@
   <a href="#monitor-evolved-beyond-hld" class="md-nav__link">
     <span class="md-ellipsis">
       
-        evolved_beyond_hld — HLD と乖離した形で実装/進化 (31 件)
+        evolved_beyond_hld — HLD と乖離した形で実装/進化 (30 件)
       
     </span>
   </a>
@@ -35588,7 +35588,7 @@
 <tbody>
 <tr>
 <td><a href="#monitor-not-implemented"><code>not_implemented</code></a></td>
-<td style="text-align: right;">13</td>
+<td style="text-align: right;">14</td>
 <td>未実装</td>
 </tr>
 <tr>
@@ -35598,7 +35598,7 @@
 </tr>
 <tr>
 <td><a href="#monitor-evolved-beyond-hld"><code>evolved_beyond_hld</code></a></td>
-<td style="text-align: right;">31</td>
+<td style="text-align: right;">30</td>
 <td>HLD と乖離した形で実装/進化</td>
 </tr>
 <tr>
@@ -35661,7 +35661,7 @@
 </table>
 <h2 id="monitor-subtype_1">monitor subtype 別<a class="headerlink" href="#monitor-subtype_1" title="Permanent link">&para;</a></h2>
 <p>各 subtype を material 組み込みの色付き admonition でラップしています。色は重要度ではなく <strong>読み手が誤読する危険度</strong> の目安です（赤=実装ゼロ、黄=一部のみ、青=設計と別物、灰=廃止）。</p>
-<h3 id="monitor-not-implemented"><code>not_implemented</code> — 未実装 (13 件)<a class="headerlink" href="#monitor-not-implemented" title="Permanent link">&para;</a></h3>
+<h3 id="monitor-not-implemented"><code>not_implemented</code> — 未実装 (14 件)<a class="headerlink" href="#monitor-not-implemented" title="Permanent link">&para;</a></h3>
 <div class="admonition danger">
 <p class="admonition-title">未実装</p>
 <p>HLD は提案 / マージされたが、現行 master のコードには対応する実装が<strong>全く存在しない</strong>ページ群。HLD を「設計史料」として読む価値はあるが、「いま動く機能」として参照すると誤読する。</p>
@@ -35696,6 +35696,11 @@
   area: <code>platform</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD の提案 4 stage は <strong>いずれも採用されていない</strong>。</p>
+<ul>
+<li><a href="../../../platform/smartswitch-dpu-graceful-shutdown/">Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）</a><br />
+  area: <code>platform</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
+</ul>
+<p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <ul>
 <li><a href="../../../platform/enhanced-lpo-debug-registers-hld/">拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）</a><br />
   area: <code>platform</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
@@ -36068,7 +36073,7 @@
 </li>
 </ul>
 <p>per-page queue で既出の通り、<a href="../../glossary/#term-hld">HLD</a> が定義する専用機構は未取り込み。<code>.cache/sonic-sources/</code> 全体を再走査した結果:</p>
-<h3 id="monitor-evolved-beyond-hld"><code>evolved_beyond_hld</code> — HLD と乖離した形で実装/進化 (31 件)<a class="headerlink" href="#monitor-evolved-beyond-hld" title="Permanent link">&para;</a></h3>
+<h3 id="monitor-evolved-beyond-hld"><code>evolved_beyond_hld</code> — HLD と乖離した形で実装/進化 (30 件)<a class="headerlink" href="#monitor-evolved-beyond-hld" title="Permanent link">&para;</a></h3>
 <div class="admonition info">
 <p class="admonition-title">HLD と乖離した形で実装/進化</p>
 <p>HLD で示された設計が、その後<strong>別アーキテクチャに置換された</strong>、または<strong>HLD の記述を超えて拡張された</strong>ページ群。HLD と現行コードの両方を読まないと全体像が掴めない。</p>
@@ -36206,11 +36211,6 @@
   area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p><strong>読者への影響</strong>:</p>
-<ul>
-<li><a href="../../../platform/smartswitch-dpu-graceful-shutdown/">Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）</a><br />
-  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
-</ul>
-<p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <ul>
 <li><a href="../../../platform/liquid-cooling-leakage-detection-in-sonic/">液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）</a><br />
   area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
@@ -36611,7 +36611,7 @@
 <p>2026-05-09 時点の現行 master を裏取り。HLD の提案 4 stage は <strong>いずれも採用されていない</strong>。</p>
 <ul>
 <li><a href="../../../platform/smartswitch-dpu-graceful-shutdown/">Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）</a><br />
-  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+  area: <code>platform</code> / monitor: <code>not_implemented</code>（未実装） / last_verified: <code>2026-05-11</code></li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <ul>
