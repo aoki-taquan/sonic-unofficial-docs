@@ -18,10 +18,7 @@ related:
   - SYSLOG_SERVER
   - SYSLOG_CONFIG
   - SYSLOG_CONFIG_FEATURE
-  cli:
-  - show interfaces
-  - show ip
-  - config syslog
+  cli: []
   yang:
   - sonic-chassis-module
   - sonic-device_metadata

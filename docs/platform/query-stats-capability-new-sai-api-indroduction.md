@@ -12,20 +12,10 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-  - CRM
-  - ACL_RULE
-  - ACL_TABLE
   - FLEX_COUNTER_TABLE
-  - BUFFER_POOL
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
   cli:
-  - show buffer pool
   - show techsupport
-  - show platform
   - show version
-  - show acl
-  - config acl
   yang:
   - sonic-flex_counter
   - sonic-debug-counter

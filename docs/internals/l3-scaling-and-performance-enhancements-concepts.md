@@ -1,5 +1,5 @@
 ---
-title: L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 3 系統の改善）
+title: L3 Scaling と Performance 強化 概念（スケール目標 / 性能目標 / 4 系統の改善）
 description: L3 Scaling と Performance 強化 HLD の概念整理。ARP/ND エントリ数と route/ECMP のスケール目標、route
   programming 時間短縮と show コマンド応答短縮の性能目標、kernel gc tuning / sairedis bulk / fpmsyncd
   最適化 / show arp の 4 系統の改善ポイントの位置づけ。
@@ -58,7 +58,7 @@ related:
 | 系統 | 対象 | 効果軸 |
 |------|------|--------|
 | kernel ARP/ND gc tuning | `gc_thresh1/2/3` | スケール（entry 上限）|
-| [CoPP](../reference/glossary.md#term-copp) ARP/ND 上限 | `COPP_TABLE` ARP/ND group | スケール（学習速度）|
+| [CoPP](../reference/glossary.md#term-copp) ARP/ND 上限 | `COPP_TABLE` ARP/ND group（CONFIG_DB スキーマ上は [`COPP_GROUP`](../reference/config-db/copp-group.md) + [`COPP_TRAP`](../reference/config-db/copp-trap.md)、`COPP_TABLE` は runtime での [APPL_DB](../reference/glossary.md#term-appl_db) 反映名）| スケール（学習速度）|
 | sairedis bulk route | `RouteOrch` / sairedis meta | 性能（[Redis](../reference/glossary.md#term-redis) message 数）|
 | [fpmsyncd](../reference/glossary.md#term-fpmsyncd) 最適化 | master device lookup スキップ | 性能（APP_DB 投入時間）|
 | sairedis JSON 更新 | nlohmann/json v2 → v3.6 | 性能（dump 時間）|
@@ -113,4 +113,4 @@ related:
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9cc90e2e6da0 -->
