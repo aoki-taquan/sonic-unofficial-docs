@@ -26,7 +26,7 @@ related:
 
 ## 概要
 
-`show feature` グループは SONiC の **feature** (= 個別 docker コンテナ単位の機能) の現在状態と設定値を表示する。実装は `show/feature.py` の `@click.group(name='feature')`[^1]。
+`show feature` グループは [SONiC](../../reference/glossary.md#term-sonic) の **feature** (= 個別 docker コンテナ単位の機能) の現在状態と設定値を表示する。実装は `show/feature.py` の `@click.group(name='feature')`[^1]。
 
 [CONFIG_DB](../../reference/glossary.md#term-config_db) の `FEATURE` テーブル (Writer 側は `config/feature.py`) と [STATE_DB](../../reference/glossary.md#term-state_db) の `FEATURE|<name>` を組み合わせて表示する。[STATE_DB](../../reference/glossary.md#term-state_db) のキーは `hostcfgd` / `featured` が container 起動状況を逐次書き込む側。
 
@@ -74,7 +74,7 @@ CONFIG_DB の `FEATURE` テーブルから state / auto_restart / set_owner / no
 ## 注意
 
 - `state == always_enabled` の feature は `config feature state` で書き換えられない。CLI 側で `Feature ... state is always enabled and can not be modified` をエラーで返す (`config/feature.py`)。これは `show feature config` の `State` 列でも `always_enabled` で表示される。
-- multi-ASIC 環境では `FEATURE` の状態が namespace 間で食い違うとエラーで停止するため、表示時に値が空欄に見える場合は CONFIG_DB が未初期化の可能性が高い。
+- multi-[ASIC](../../reference/glossary.md#term-asic) 環境では `FEATURE` の状態が namespace 間で食い違うとエラーで停止するため、表示時に値が空欄に見える場合は CONFIG_DB が未初期化の可能性が高い。
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -148,4 +148,4 @@ pmon           enabled   enabled        up
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: f158364c3005 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

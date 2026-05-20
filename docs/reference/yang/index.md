@@ -17,14 +17,14 @@ related:
 
 # YANG リファレンス
 
-`sonic-yang-models` ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) repo の `src/sonic-yang-models/yang-models/`) に同梱される SONiC [YANG](../../reference/glossary.md#term-yang) モデルのリファレンス。
+`sonic-yang-models` ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) repo の `src/sonic-yang-models/yang-models/`) に同梱される [SONiC](../../reference/glossary.md#term-sonic) [YANG](../../reference/glossary.md#term-yang) モデルのリファレンス。
 
 ## SONiC YANG の位置付け
 
-SONiC の [YANG](../../reference/glossary.md#term-yang) モデルは **[CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマの正本**として機能する。具体的には:
+[SONiC](../../reference/glossary.md#term-sonic) の [YANG](../../reference/glossary.md#term-yang) モデルは **[CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマの正本**として機能する。具体的には:
 
 - **CLI 経由 (`config` / `sonic-cfggen` / minigraph)** で書き込まれた [CONFIG_DB](../../reference/glossary.md#term-config_db) の値は、`sonic-yang-mgmt` (`sonic-buildimage/src/sonic-yang-mgmt/`) によって [YANG](../../reference/glossary.md#term-yang) モデルに対してバリデーションされる
-- **[gNMI](../../reference/glossary.md#term-gnmi) / REST 経由**の管理アクセスは `sonic-mgmt-common` の **translib / transformer** レイヤを通る。translib は OpenConfig / IETF YANG をクライアント向けに公開し、transformer がそれを SONiC 内部の `sonic-*` YANG（= [CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマ）に変換する
+- **[gNMI](../../reference/glossary.md#term-gnmi) / REST 経由**の管理アクセスは `sonic-mgmt-common` の **translib / transformer** レイヤを通る。translib は OpenConfig / IETF YANG をクライアント向けに公開し、transformer がそれを [SONiC](../../reference/glossary.md#term-sonic) 内部の `sonic-*` YANG（= [CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマ）に変換する
 - 一部のテーブルは YANG が無いか中途半端な状態。新規テーブルは原則 YANG 必須だが、歴史的経緯で未追従のものもある
 
 つまり「SONiC YANG ＝ CONFIG_DB の型定義 + 整合性制約」と理解して良い。CONFIG_DB リファレンス（`docs/reference/config-db/`）と相互参照する。
@@ -125,4 +125,4 @@ SONiC の [YANG](../../reference/glossary.md#term-yang) モデルは **[CONFIG_D
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 32758c44ab11 -->
+<!-- glossary-links-injected: 97063dcb81c4 -->

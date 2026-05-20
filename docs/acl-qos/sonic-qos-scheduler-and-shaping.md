@@ -47,7 +47,7 @@ related:
 
 ## 概要
 
-SONiC の [QoS](../reference/glossary.md#term-qos) には **scheduling** と **shaping** の 2 軸がある[^1]:
+[SONiC](../reference/glossary.md#term-sonic) の [QoS](../reference/glossary.md#term-qos) には **scheduling** と **shaping** の 2 軸がある[^1]:
 
 - **Scheduling**: egress queue への帯域配分。SP / WRR / [DWRR](../reference/glossary.md#term-dwrr) の 3 方式
 - **[Shaping](../reference/glossary.md#term-shaping)**: queue / port 単位の最大帯域（および queue では最小帯域）制限
@@ -155,7 +155,7 @@ cir / cbs / pir / pbs = 1..11 DIGIT
 ## 制限事項
 
 - 物理ポートおよびその egress queue にのみ適用可能。**[VLAN](../reference/glossary.md#term-vlan) / [PortChannel](../reference/glossary.md#term-portchannel) インタフェースでは設定不可**[^1]
-- scheduler profile 上限は ASIC 依存。[HLD](../reference/glossary.md#term-hld) 上の参考値は **128**[^1]
+- scheduler profile 上限は [ASIC](../reference/glossary.md#term-asic) 依存。[HLD](../reference/glossary.md#term-hld) 上の参考値は **128**[^1]
 - 専用の `show scheduler` 等の CLI は無く、queue 統計で間接的に観測する
 
 ## 干渉する機能
@@ -195,4 +195,4 @@ show interfaces counters rates
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: ec18b66e3507 -->

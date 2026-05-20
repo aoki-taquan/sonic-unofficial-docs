@@ -28,9 +28,9 @@ related:
 
 ## 概要
 
-**ALARM テーブル**は SONiC の Event/Alarm Framework において **アクティブなアラーム（未クリア・未クリア状態のもの）** を一時的に保持するテーブルである[^1]。
+**ALARM テーブル**は [SONiC](../../reference/glossary.md#term-sonic) の Event/Alarm Framework において **アクティブなアラーム（未クリア・未クリア状態のもの）** を一時的に保持するテーブルである[^1]。
 
-> **注意**: このテーブルは **CONFIG_DB ではなく EVENT_DB** (Redis DB index 6) に存在する。
+> **注意**: このテーブルは **[CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく EVENT_DB** ([Redis](../../reference/glossary.md#term-redis) DB index 6) に存在する。
 > `schema.h` で `EVENT_CURRENT_ALARM_TABLE_NAME = "ALARM"` と定義されている[^2]。
 > リブート時に内容はクリアされる（非永続）。
 
@@ -104,7 +104,7 @@ ALARM|<id>
 ## 購読者
 
 - **CLI**: `show alarm [detail | summary | severity | recent | timestamp]`
-- **gNMI/REST**: OpenConfig alarms コンテナ経由で取得 (`/openconfig-alarms:alarms`)
+- **[gNMI](../../reference/glossary.md#term-gnmi)/REST**: OpenConfig alarms コンテナ経由で取得 (`/openconfig-alarms:alarms`)
 - **pmon**: `ALARM_STATS` テーブルのカウンタを参照して System LED を制御 (Critical/Major → 赤、Minor/Warning → 黄、なし → 緑)
 
 ## 関連テーブル
@@ -131,7 +131,7 @@ ALARM|<id>
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-ALARM テーブルは **EVENT_DB (Redis index 6) の push 配信テーブル** であり、CONFIG_DB 派生テーブルとは異なり ZMQ XPUB/XSUB 経由で書き込まれる。順序依存は次の 3 層に分かれる: **(a) eventd の socket bind / publisher の echo handshake 時系列**、**(b) publisher 側 (healthd 等) の CONFIG_DB / STATE_DB 起動時依存**、**(c) 同一 action 内での非トランザクショナルな複数 Redis 書込**。
+ALARM テーブルは **EVENT_DB ([Redis](../../reference/glossary.md#term-redis) index 6) の push 配信テーブル** であり、[CONFIG_DB](../../reference/glossary.md#term-config_db) 派生テーブルとは異なり ZMQ XPUB/XSUB 経由で書き込まれる。順序依存は次の 3 層に分かれる: **(a) eventd の socket bind / publisher の echo handshake 時系列**、**(b) publisher 側 (healthd 等) の [CONFIG_DB](../../reference/glossary.md#term-config_db) / [STATE_DB](../../reference/glossary.md#term-state_db) 起動時依存**、**(c) 同一 action 内での非トランザクショナルな複数 [Redis](../../reference/glossary.md#term-redis) 書込**。
 
 ### 検出された順序依存
 
@@ -140,7 +140,7 @@ ALARM テーブルは **EVENT_DB (Redis index 6) の push 配信テーブル** �
 | 1 | eventd の zmqproxy XSUB/XPUB/CAPTURE bind → publisher の echo handshake | **強制先行** (timeout 時 publisher 取得失敗 / handshake 前の publish は silent drop) | systemd 起動順 + `docker-eventd` ready 待ちで保証 |
 | 2 | event profile (`default.json`) に `(source, tag)` キー存在 → publisher の RAISE_ALARM 発火 | **強制先行** (image build 時に静的解決) | runtime での復旧不可 |
 | 3 | `CONFIG_DB:DEVICE_METADATA` / `FEATURE` + `STATE_DB:FEATURE` → healthd publisher 起動 | 推奨先行 (欠如時 `sonic-events-host` 系 RAISE 発火せず) | systemd `After=` + SubscriberStateTable 後追い |
-| 4 | COUNTERS_DB 起動 → eventd `stats_collector` `run_writer` thread | 緩い依存 (失敗時はカウンタのみ停止・ALARM 本体無影響) | 例外 catch で eventd 本体は継続 |
+| 4 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 起動 → eventd `stats_collector` `run_writer` thread | 緩い依存 (失敗時はカウンタのみ停止・ALARM 本体無影響) | 例外 catch で eventd 本体は継続 |
 | 5 | 同一 RAISE_ALARM 内 — `HSET ALARM` → `HINCRBY ALARM_STATS` | 同期順 (MULTI/EXEC 無し → Redis 切断瞬間に不整合可能) | eventd abort + コンテナ再起動で回帰 (テーブルは空から再開) |
 | 6 | eventd 自身の zmqproxy bind → heartbeat publisher 初期化 | プロセス内自己順序 | heartbeat 不在は ALARM 飢餓の早期検知信号 |
 | 7 | 対応 RAISE_ALARM (lookup map 構築) → CLEAR_ALARM 受信 | **対応先行必須** (RAISE 不在の CLEAR は no-op) | flooding 防止キャッシュで重複 RAISE 黙棄 / lookup map 永続化なし |
@@ -155,7 +155,7 @@ ALARM テーブルは **EVENT_DB (Redis index 6) の push 配信テーブル** �
 
 **同一 action 内の連続書込 (依存 #5)**: Alarm Consumer は RAISE_ALARM 受信で `HSET EVENT_DB ALARM|<id>` → `HINCRBY EVENT_DB ALARM_STATS|state <severity> 1` を順次同期発行するが、Redis MULTI/EXEC でラップされていない。ALARM HSET 成功 + ALARM_STATS HINCRBY 失敗 (Redis 切断瞬間など) という不整合が原理的に発生し得る。Phase D で述べた通り eventd 側で Redis 例外の明示捕捉はなく、発生時はプロセス abort → `supervisor-proc-exit-listener-rs` でコンテナ再起動。再起動後は ALARM テーブルが空から再開され、再 RAISE は publisher 側に依存する。pmon System LED は `ALARM_STATS` を読むため、瞬間不整合中は LED 色判定がずれる可能性 (実害は秒未満)。
 
-**CLEAR の対応 RAISE 先行 (依存 #7)**: Alarm Consumer は内部 lookup map (`<type-id, resource> → <id>`) を保持し、CLEAR_ALARM 受信時にここから `<id>` を解決して `DEL ALARM|<id>`。対応 RAISE が無いと no-op (HLD §3.1.4.2)。publisher 側リブートで内部状態を失い、再起動後に CLEAR_ALARM を送っても eventd 側 lookup map と一致せず、ALARM テーブル上の古い RAISE エントリが消えずに残る可能性。eventd 自身が落ちると lookup map も消えるため、逆方向 (RAISE 再送 → 重複行) も問題となる。lookup map 永続化は未実装で、運用上は `show alarm` 経由で人手 ACK/clear が必要。
+**CLEAR の対応 RAISE 先行 (依存 #7)**: Alarm Consumer は内部 lookup map (`<type-id, resource> → <id>`) を保持し、CLEAR_ALARM 受信時にここから `<id>` を解決して `DEL ALARM|<id>`。対応 RAISE が無いと no-op ([HLD](../../reference/glossary.md#term-hld) §3.1.4.2)。publisher 側リブートで内部状態を失い、再起動後に CLEAR_ALARM を送っても eventd 側 lookup map と一致せず、ALARM テーブル上の古い RAISE エントリが消えずに残る可能性。eventd 自身が落ちると lookup map も消えるため、逆方向 (RAISE 再送 → 重複行) も問題となる。lookup map 永続化は未実装で、運用上は `show alarm` 経由で人手 ACK/clear が必要。
 
 ### キーパースペクティブ
 
@@ -171,12 +171,12 @@ ALARM テーブルは **EVENT_DB (Redis index 6) の push 配信テーブル** �
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG optional / event profile 未指定時の実行時フォールバック。
+[YANG](../../reference/glossary.md#term-yang) optional / event profile 未指定時の実行時フォールバック。
 
 | フィールド | コード由来デフォルト | fallback 源 |
 |-----------|-------------------|------------|
-| `revision` | `0` | event profile の `revision` 未指定時 — HLD Section 3.1.2.3 |
-| `acknowledged` | `"false"` | RAISE_ALARM 処理時に Alarm Consumer が初期化 — HLD Section 3.1.2 |
+| `revision` | `0` | event profile の `revision` 未指定時 — [HLD](../../reference/glossary.md#term-hld) Section 3.1.2.3 |
+| `acknowledged` | `"false"` | RAISE_ALARM 処理時に Alarm Consumer が初期化 — [HLD](../../reference/glossary.md#term-hld) Section 3.1.2 |
 | `action` | `"RAISE"` (ALARM テーブル内では固定) | ALARM テーブルに格納されるのは RAISE イベントのみ |
 | `acknowledge-time` | フィールド不在 | ACK_ALARM / UNACK_ALARM 受信前は存在しない |
 | `resource` | フィールド不在 (optional) | アプリケーションが渡さない場合はフィールドなし |
@@ -205,7 +205,7 @@ ALARM テーブルのスキーマ・運用に直接効く固定値。event profi
 | `WARNING` | 可 | HLD :142 |
 | `INFORMATIONAL` | **不可** (one-shot event 専用) | HLD :144, :348 |
 
-eventd は event profile (`default.json`) に書かれた severity 文字列をそのまま ALARM テーブルへ書き込む。enum は YANG (`openconfig-alarms`) 側に定義され、コード上は文字列比較で扱われる。
+eventd は event profile (`default.json`) に書かれた severity 文字列をそのまま ALARM テーブルへ書き込む。enum は [YANG](../../reference/glossary.md#term-yang) (`openconfig-alarms`) 側に定義され、コード上は文字列比較で扱われる。
 
 ### テーブル名固定文字列
 
@@ -270,12 +270,12 @@ eventd プロセス内の `stats_collector` が `event_publish()` 経路全体�
 
 ### STATE_DB
 
-ALARM テーブル処理に伴う **STATE_DB への副次書込はなし**。
+ALARM テーブル処理に伴う **[STATE_DB](../../reference/glossary.md#term-state_db) への副次書込はなし**。
 
 根拠:
 
 - `sonic-buildimage/src/sonic-eventd/src/` 配下を `grep -rn "STATE_DB"` してもヒット 0 件 (テスト用 `database_config.json` を除く)
-- `sonic-buildimage/src/system-health/` の `SYSTEM_READY` / `ALL_SERVICE_STATUS` / `FAN_INFO` 等の STATE_DB 書込は System Health Monitoring サブシステム由来であり、Event/Alarm Framework の ALARM テーブル (EVENT_DB) の更新トリガとは独立している
+- `sonic-buildimage/src/system-health/` の `SYSTEM_READY` / `ALL_SERVICE_STATUS` / `FAN_INFO` 等の [STATE_DB](../../reference/glossary.md#term-state_db) 書込は System Health Monitoring サブシステム由来であり、Event/Alarm Framework の ALARM テーブル (EVENT_DB) の更新トリガとは独立している
 
 ### その他 (FLEX_COUNTER_DB / APPL_DB / ASIC_DB)
 
@@ -312,10 +312,10 @@ App (pmon/swss/bgp 等) ─ events_publish(RAISE_ALARM) ─▶ ZMQ ─▶ zmqpro
 | 読者 | 取得方法 |
 |------|---------|
 | `show alarm` CLI | `sonic-db-cli EVENT_DB keys 'ALARM\|*'` + `hgetall` (1 回のスナップショット) |
-| OpenConfig gNMI/REST | translib が EVENT_DB を HGETALL してマッピング (HLD Section 3.1.6) |
+| OpenConfig [gNMI](../../reference/glossary.md#term-gnmi)/REST | translib が EVENT_DB を HGETALL してマッピング (HLD Section 3.1.6) |
 | pmon System LED | `ALARM_STATS\|state` を HGETALL し severity 別カウンタで LED 色を決定 |
 
-- ALARM テーブルに対する `SubscriberStateTable` / `ConsumerStateTable` / `NotificationProducer` の購読者は SONiC ソース内に **存在しない**。
+- ALARM テーブルに対する `SubscriberStateTable` / `ConsumerStateTable` / `NotificationProducer` の購読者は [SONiC](../../reference/glossary.md#term-sonic) ソース内に **存在しない**。
 - これは ALARM テーブルが「ある瞬間のアクティブアラーム集合」というスナップショット型設計であり、差分通知より全件取得が自然な利用パターンであるため。
 - EVENT_DB は `notify-keyspace-events` がデフォルト無効で、Redis keyspace 通知に依存する購読者は想定されていない。
 
@@ -340,7 +340,7 @@ App (pmon/swss/bgp 等) ─ events_publish(RAISE_ALARM) ─▶ ZMQ ─▶ zmqpro
 <!-- cross-refs -->
 ## 暗黙参照 (Phase C)
 
-ALARM テーブルは EVENT_DB に存在し、CONFIG_DB 的な YANG `leafref` 制約は持たない。
+ALARM テーブルは EVENT_DB に存在し、CONFIG_DB 的な [YANG](../../reference/glossary.md#term-yang) `leafref` 制約は持たない。
 しかし「ALARM 行が成立する前提として暗黙的に存在しなければならないキー / テーブル」がコード上に固定参照として現れる。
 
 ### event profile キー (`<source>.<tag>`) への暗黙参照
@@ -356,7 +356,7 @@ ALARM 行の `type-id` / `severity` / `action` フィールドは、publisher �
 
 ### CONFIG_DB / STATE_DB の暗黙間接依存 (healthd 経由)
 
-`eventd` プロセスは DEVICE_METADATA を直接読まないが (`src/sonic-eventd/src/` 配下 `grep "DEVICE_METADATA"` ヒット 0)、主要な ALARM publisher である **healthd (system-health)** は CONFIG_DB / STATE_DB の以下エントリに起動時依存する。これらが欠落すると `sonic-events-host` 系の RAISE_ALARM が発火せず、ALARM テーブルが空のままになる。
+`eventd` プロセスは [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) を直接読まないが (`src/sonic-eventd/src/` 配下 `grep "DEVICE_METADATA"` ヒット 0)、主要な ALARM publisher である **healthd (system-health)** は CONFIG_DB / STATE_DB の以下エントリに起動時依存する。これらが欠落すると `sonic-events-host` 系の RAISE_ALARM が発火せず、ALARM テーブルが空のままになる。
 
 | 参照元 | 参照先 | 種別 | 用途 | 参照箇所 |
 |---|---|---|---|---|
@@ -391,11 +391,11 @@ ALARM テーブル本体 (EVENT_DB:ALARM の書込スキーマ・格納先・ret
 
 ### eventd は per-asic スコープではない (host 単一インスタンス)
 
-`files/build_templates/init_cfg.json.j2:95-97` の `FEATURE` タプル `("eventd", "enabled", false, "enabled")` の第 3 要素 `false` が `has_per_asic_scope=False` を意味する。`service_checker.py:130-138` の per-asic コンテナ展開分岐 (`<container>0..N`) を eventd は通らない。multi-asic / VOQ chassis でも:
+`files/build_templates/init_cfg.json.j2:95-97` の `FEATURE` タプル `("eventd", "enabled", false, "enabled")` の第 3 要素 `false` が `has_per_asic_scope=False` を意味する。`service_checker.py:130-138` の per-asic コンテナ展開分岐 (`<container>0..N`) を eventd は通らない。multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis でも:
 
 - eventd コンテナは host namespace に 1 個のみ起動
 - ALARM テーブルは host EVENT_DB (Redis index 6) のみに存在し、`asic0..N` の Redis には存在しない
-- VOQ chassis では line card / supervisor 各 host が独立した EVENT_DB / ALARM テーブルを持ち、chassis 全体の集中 ALARM ストアは存在しない (HLD §3.1.7 にも記載なし)
+- [VOQ](../../reference/glossary.md#term-voq) chassis では line card / supervisor 各 host が独立した EVENT_DB / ALARM テーブルを持ち、chassis 全体の集中 ALARM ストアは存在しない (HLD §3.1.7 にも記載なし)
 
 ### publisher 側に残るプラットフォーム条件
 
@@ -406,7 +406,7 @@ ALARM 行が立つ「条件」は機種依存だが、立った瞬間の書込�
 | `liquid-cooling-leak` (`sonic-events-host`) | liquid cooling 搭載機のみ発火 (該当 STATE_DB エントリが無ければ 0 件) | `system-health/health_checker/hardware_checker.py:7-8,298-302` |
 | `process-not-running` (`sonic-events-host`) | `CONFIG_DB:FEATURE.has_per_asic_scope=True` の機種では `<container>0..N` を期待コンテナとして展開 | `system-health/health_checker/service_checker.py:130-138` |
 | chassis supervisor / disaggregated chassis | `database-chassis` コンテナの稼働を追加チェック (RAISE 候補が増える) | `service_checker.py:144-146` |
-| ASIC 温度監視 (`TEMPERATURE_INFO\|ASIC*`) | STATE_DB に該当キーを書く platform plugin のある機種のみ判定が走る (※ ALARM 直接 raise ではなく `set_object_not_ok` 経由) | `hardware_checker.py:15,46-71` |
+| [ASIC](../../reference/glossary.md#term-asic) 温度監視 (`TEMPERATURE_INFO\|ASIC*`) | STATE_DB に該当キーを書く platform plugin のある機種のみ判定が走る (※ ALARM 直接 raise ではなく `set_object_not_ok` 経由) | `hardware_checker.py:15,46-71` |
 
 ### System LED 連動はドライバ依存
 
@@ -418,7 +418,7 @@ ALARM 行が立つ「条件」は機種依存だが、立った瞬間の書込�
 
 ### ベンダー固有 ALARM publisher hook なし
 
-community master 内にベンダー固有 alarm publisher SDK や「platform plugin が ALARM テーブルへ直接書く」経路は存在しない。すべての RAISE_ALARM は `swsscommon.event_publish()` API → ZMQ → eventd 経由で集中処理される。ベンダー版 SONiC (NVIDIA / Edgecore / Cisco / AsterNOS 等) は本リポジトリのスコープ外。
+community master 内にベンダー固有 alarm publisher SDK や「platform plugin が ALARM テーブルへ直接書く」経路は存在しない。すべての RAISE_ALARM は `swsscommon.event_publish()` API → ZMQ → eventd 経由で集中処理される。ベンダー版 [SONiC](../../reference/glossary.md#term-sonic) (NVIDIA / Edgecore / Cisco / [AsterNOS](../../reference/glossary.md#term-asternos) 等) は本リポジトリのスコープ外。
 
 詳細解析: `meta/_intermediate/cdb-flow/alarm-table-platform.md`
 
@@ -483,7 +483,7 @@ eventd の supervisord 設定は `autorestart=false` だが、`critical_processe
 ## 関連リファレンス
 
 - HLD: [Event and Alarm Framework](https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md)
-- YANG: `openconfig-alarms` (sonic-mgmt-common)
+- YANG: `openconfig-alarms` ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common)
 - CLI: `show alarm`
 
 <!-- ref-triangle:end -->
@@ -496,7 +496,7 @@ eventd の supervisord 設定は `autorestart=false` だが、`critical_processe
 
 ## 関連ページ
 
-- [CONFIG_DB / EVENT_DB: EVENT テーブル](event-table.md)
+- CONFIG_DB / EVENT_DB: EVENT テーブル
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -521,3 +521,5 @@ sonic-db-cli EVENT_DB hgetall 'ALARM_STATS|state'
 - リブート後に ALARM テーブルが空になるのは正常動作
 - `show alarm summary` で severity 別カウントを確認できる
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 4916c06d5d38 -->

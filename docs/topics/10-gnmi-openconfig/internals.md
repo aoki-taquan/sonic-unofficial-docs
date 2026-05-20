@@ -46,7 +46,7 @@ flowchart LR
 | --- | --- | --- |
 | `telemetry` container | `sonic-gnmi`（旧 `sonic-telemetry`）/ `gnmi_server` | gNMI / [gNOI](../../reference/glossary.md#term-gnoi) / gNSI gRPC server。TLS / mTLS 終端 |
 | `translib` (`sonic-mgmt-common/translib/`) | `translib.go`、`transformer/` | YANG path ↔ [Redis](../../reference/glossary.md#term-redis) テーブルの双方向変換、ocyang バインドを使う |
-| `transformer` | per-module transformer（`translib/transformer/xfmr_*.go`） | OpenConfig path から SONiC YANG / Redis テーブルへの mapping 規則 |
+| `transformer` | per-module transformer（`translib/transformer/xfmr_*.go`） | OpenConfig path から [SONiC](../../reference/glossary.md#term-sonic) YANG / Redis テーブルへの mapping 規則 |
 | `sonic-yang-mgmt` / `sonic-yang-models` | `yang-models/*.yang` | SONiC 独自 YANG。CONFIG_DB との整合の根拠 |
 | `dialin` / `dialout` server | `telemetry/dialin.go` / `dialout.go` | dial-in (subscribe) と dial-out collector |
 | `gNOI` services | `gnoi/system`、`gnoi/file`、`gnoi/os` | `Reboot`、`Time`、`Ping`、`SetPackage` 等。host service 経由で OS 操作 |
@@ -86,7 +86,7 @@ SUBSCRIBE は target が `STATE_DB` か `COUNTERS_DB` かによって on_change�
 ## 既知の実装上の制約
 
 - OpenConfig path は `transformer` が個別に実装する必要があり、未実装の path は SET / GET が NotFound になります。すべての OC モジュールが網羅されているわけではありません。
-- gNMI Set の transaction 境界は単一 SetRequest 内のみ。複数 path で一部失敗すると rollback ロジックがあるが、CONFIG_DB に書き込んだ後の orchagent / SAI 反映を待たないため、SET が成功しても ASIC への反映までは別の subscribe で確認する必要があります。
+- gNMI Set の transaction 境界は単一 SetRequest 内のみ。複数 path で一部失敗すると rollback ロジックがあるが、CONFIG_DB に書き込んだ後の orchagent / SAI 反映を待たないため、SET が成功しても [ASIC](../../reference/glossary.md#term-asic) への反映までは別の subscribe で確認する必要があります。
 - TLS 設定は `DEVICE_METADATA` 系ではなく `GNMI` / `TELEMETRY_CLIENT` テーブルで管理し、CONFIG_DB の `TELEMETRY|gnmi` などのキー構造で証明書パスを指定します。CLI/UI が `config gnmi` 系で揃っていない箇所がある点に注意です。
 - gNSI の certz は `sonic-host-service` に証明書ローテーションを依頼する経路で、OS 側 `/etc/sonic/telemetry/` のファイル更新まで含めて atomicity を担保する設計です（途中失敗で telemetry が起動できなくなる事故が過去 issue にあります）。
 - Subscribe の `sample` mode で interval を極端に短く（例: 100ms）すると、counter 読み出し（flexcounter polling は通常 10s）と整合せず、同じ値を返し続けることがあります。
@@ -145,4 +145,4 @@ CONFIG_DB を bypass するため、`config save` / `config reload` の永続化
 - [gNOI / gNSI](./gnoi-gnsi.md)
 - [YANG リファレンス](./yang-reference.md)
 
-<!-- glossary-links-injected: cb52a7361215 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

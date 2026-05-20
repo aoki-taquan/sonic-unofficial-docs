@@ -41,7 +41,7 @@ related:
 
 ## 1. 旧挙動と問題意識
 
-従来 [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossary.md#term-sai) CREATE/SET 失敗を一律 fatal 扱いし [orchagent](../reference/glossary.md#term-orchagent) に shutdown を要求していた[^1]。これは [BGP](../reference/glossary.md#term-bgp) が出した route のうち 1 本だけが ASIC リソース不足で reject されたケースでも全体を巻き込んで再起動するという、運用上著しく粗い挙動だった。
+従来 [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossary.md#term-sai) CREATE/SET 失敗を一律 fatal 扱いし [orchagent](../reference/glossary.md#term-orchagent) に shutdown を要求していた[^1]。これは [BGP](../reference/glossary.md#term-bgp) が出した route のうち 1 本だけが [ASIC](../reference/glossary.md#term-asic) リソース不足で reject されたケースでも全体を巻き込んで再起動するという、運用上著しく粗い挙動だった。
 
 ## 2. 設計の責務境界
 
@@ -135,4 +135,4 @@ app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで **
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: c861ead3a521 -->
+<!-- glossary-links-injected: c006405759d8 -->

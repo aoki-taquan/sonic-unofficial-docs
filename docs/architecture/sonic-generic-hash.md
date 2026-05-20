@@ -31,7 +31,7 @@ related:
 
 ## 読み手が知りたいこと
 
-- [ECMP](../reference/glossary.md#term-ecmp) と [LAG](../reference/glossary.md#term-lag) の hash を SONiC でどう制御するか
+- [ECMP](../reference/glossary.md#term-ecmp) と [LAG](../reference/glossary.md#term-lag) の hash を [SONiC](../reference/glossary.md#term-sonic) でどう制御するか
 - どのフィールドが選べるのか（v6 flow label は使えるのか）
 - 設定したのに分散が変わらない時の見方
 - `hash seed` / `hash offset` は弄れるのか
@@ -105,7 +105,7 @@ show switch-hash capabilities
 ## 制限事項
 
 - `hash seed` / `hash offset` は対象外（プラットフォーム固有処理に委ねる）
-- ASIC の `SAI_SWITCH_ATTR_*_HASH_*` capability に依存、未対応プラットフォームでは意味のあるバリデーション不可
+- [ASIC](../reference/glossary.md#term-asic) の `SAI_SWITCH_ATTR_*_HASH_*` capability に依存、未対応プラットフォームでは意味のあるバリデーション不可
 - フィールド集合は SAI 定義の enum に限られる（任意 bit 切り出し不可）
 - 詳細 SAI mapping / Test plan は [HLD](../reference/glossary.md#term-hld) 本文参照
 
@@ -157,4 +157,4 @@ redis-cli -n 6 hget 'SWITCH_CAPABILITY|switch' HASH_FIELDS
 - [Topic: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md)
 - [Topic: SWSS / SAI / Redis 内部](../topics/20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: e154a08f9ef8 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

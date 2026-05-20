@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-`SERIAL_CONSOLE` と `SSH_SERVER` はどちらも **CLI セッションのセキュリティポリシー** を保持する CONFIG_DB テーブル群[^1][^2]。  
+`SERIAL_CONSOLE` と `SSH_SERVER` はどちらも **CLI セッションのセキュリティポリシー** を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル群[^1][^2]。  
 `SERIAL_CONSOLE|POLICIES` はシリアルコンソールの不活動タイムアウトと Linux SysRq 機能の有効化を制御し、
 `SSH_SERVER|POLICIES` は SSH デーモン (`sshd`) の認証パラメータ・タイムアウト・暗号スイート等を制御する。
 
@@ -70,14 +70,14 @@ SSH_SERVER|POLICIES
 
 ## SERIAL_CONSOLE フィールド
 
-| フィールド | 型 | YANG default | 説明 |
+| フィールド | 型 | [YANG](../../reference/glossary.md#term-yang) default | 説明 |
 |-----------|-----|-------------|------|
 | `inactivity_timeout` | int32 (0..35000) | `15` (分) | シリアルコンソールの無操作タイムアウト (分単位)。0 で無効化 |
 | `sysrq_capabilities` | `enabled`/`disabled` | `disabled` | Linux SysRq キー機能の有効化 |
 
 ## SSH_SERVER フィールド
 
-| フィールド | 型 | YANG default | 説明 |
+| フィールド | 型 | [YANG](../../reference/glossary.md#term-yang) default | 説明 |
 |-----------|-----|-------------|------|
 | `authentication_retries` | uint32 (1..100) | `6` | 1 接続あたりの最大認証試行回数 (`MaxAuthTries`) |
 | `login_timeout` | uint32 (1..600) | `120` (秒) | 認証完了までの最大待機時間 (`LoginGraceTime`) |
@@ -107,9 +107,9 @@ SSH_SERVER|POLICIES
 | `authentication_retries` | `6` | `MaxAuthTries` | なし |
 | `login_timeout` | `120` (秒) | `LoginGraceTime` | なし |
 | `ports` | `"22"` | `Port` | なし |
-| `inactivity_timeout` | `15` (分) | `ClientAliveInterval` (秒×60) | 分→秒変換ロジック (hostcfgd L1129-1131)。実効値 `ClientAliveInterval 900` |
+| `inactivity_timeout` | `15` (分) | `ClientAliveInterval` (秒×60) | 分→秒変換ロジック ([hostcfgd](../../reference/glossary.md#term-hostcfgd) L1129-1131)。実効値 `ClientAliveInterval 900` |
 | `max_sessions` | `0` | PAM limits のみ | `0` → PAM 設定なし (無制限)。sshd_config の `MaxSessions` には反映されない |
-| `password_authentication` | `true` | `PasswordAuthentication` | DB 値 `"false"` → `"no"`、それ以外 → `"yes"` (hostcfgd L1132-1143) |
+| `password_authentication` | `true` | `PasswordAuthentication` | DB 値 `"false"` → `"no"`、それ以外 → `"yes"` ([hostcfgd](../../reference/glossary.md#term-hostcfgd) L1132-1143) |
 | `permit_root_login` | なし | `PermitRootLogin` | DB 不在 → OpenSSH デフォルト `prohibit-password` が暗黙的に有効 |
 | `ciphers` / `kex_algorithms` / `macs` | なし | `Ciphers` / `KexAlgorithms` / `MACs` | DB 不在 → OpenSSH 組み込みデフォルト |
 
@@ -117,7 +117,7 @@ SSH_SERVER|POLICIES
 
 - **`inactivity_timeout` 単位乖離 (両テーブル共通)**: DB 値は **分単位**、実効値は秒単位 (×60 変換)。`show serial_console` / `show ssh` のフォールバック表示 `'900 <default>'` は秒単位のため、CLI 操作者が混乱しやすい。<!-- evidence: tmout-env.sh.j2 L2,L6; hostcfgd L1129-1131; show/main.py L2883,L2903 -->
 - **`max_sessions` は sshd_config 非反映**: `SSH_CONFIG_NAMES` マップに登録されておらず `set_policies()` 内でスキップ。`PamLimitsCfg` 経由で `/etc/security/limits.d/` の `maxlogins` に反映される。<!-- evidence: hostcfgd L1418-1441 -->
-- **`inactivity_timeout` の `ClientAliveCountMax`**: hostcfgd は `ClientAliveCountMax` を sshd_config に書かない。OpenSSH デフォルト (3) が有効。timeout = `ClientAliveInterval × ClientAliveCountMax` = `900 × 3 = 2700` 秒が実際の切断時間。
+- **`inactivity_timeout` の `ClientAliveCountMax`**: [hostcfgd](../../reference/glossary.md#term-hostcfgd) は `ClientAliveCountMax` を sshd_config に書かない。OpenSSH デフォルト (3) が有効。timeout = `ClientAliveInterval × ClientAliveCountMax` = `900 × 3 = 2700` 秒が実際の切断時間。
 - **`serial-config.service` 再起動**: SERIAL_CONSOLE のいずれかのフィールドが変化すると hostcfgd が `service serial-config restart` を実行する。進行中のシリアル接続が切断される可能性がある。<!-- evidence: hostcfgd L2031-2040 -->
 <!-- /defaults -->
 
@@ -225,7 +225,7 @@ sudo sshd -T | grep -E 'maxauthtries|logingracetimedead|port|clientaliveinterval
 
 ### 段階 3 — APPL→SAI
 
-なし (カーネル / デーモン設定のみ、SAI 非経由)
+なし (カーネル / デーモン設定のみ、[SAI](../../reference/glossary.md#term-sai) 非経由)
 
 ### 段階 4 — タイミングと副作用
 
@@ -250,7 +250,7 @@ sudo sshd -T | grep -E 'maxauthtries|logingracetimedead|port|clientaliveinterval
 
 ### REST / gNMI
 
-なし (対応 OpenConfig/SONiC YANG transformer なし)
+なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 
@@ -312,7 +312,7 @@ sudo sshd -T | grep -E 'maxauthtries|logingracetimedead|port|clientaliveinterval
 | 依存 | 方向 | 備考 |
 |------|------|------|
 | systemd 初期化 完了 → SSH_SERVER / SERIAL_CONSOLE 適用 | 強制先行 | sshd / serial-config.service 起動前は `sshd -T` 失敗リスク |
-| AAA / TACPLUS / RADIUS / LDAP → SSH_SERVER / SERIAL_CONSOLE | AAA が先 | load_independent_config() は systemctl 待ち前に実行 |
+| [AAA](../../reference/glossary.md#term-aaa) / TACPLUS / [RADIUS](../../reference/glossary.md#term-radius) / LDAP → SSH_SERVER / SERIAL_CONSOLE | [AAA](../../reference/glossary.md#term-aaa) が先 | load_independent_config() は systemctl 待ち前に実行 |
 
 ### 2. PamLimitsCfg の DEVICE_METADATA 先行必須
 
@@ -346,7 +346,7 @@ load フェーズでは `serial-config.service` の再起動は行わず、キ�
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | systemd init 完了 → SSH_SERVER / SERIAL_CONSOLE 適用 | 強制先行 | AAA のみ systemctl 待ち前に先行 |
+| 1 | systemd init 完了 → SSH_SERVER / SERIAL_CONSOLE 適用 | 強制先行 | [AAA](../../reference/glossary.md#term-aaa) のみ systemctl 待ち前に先行 |
 | 2 | `DEVICE_METADATA\|localhost` 存在 → PAM limits 有効 | 先行必須 | 不在時 early return (max_sessions 未反映) |
 | 3 | `sshscfg.policies_update()` → `pamLimitsCfg.update_config_file()` | ssh_handler 内で自動連動 | DB 再読みで順序問題なし |
 | 4 | load 後の差分変更 → serial-config.service 再起動 | 差分検出で自動 | 一括変更でセッション切断回数を最小化 |
@@ -397,13 +397,13 @@ load フェーズでは `serial-config.service` の再起動は行わず、キ�
 <!-- failure -->
 ## 失敗モード・エラー処理 (Phase D)
 
-`SshServer` / `SerialConsoleCfg` / `PamLimitsCfg` が CONFIG_DB 変化を処理する際に発生しうる失敗モードと hostcfgd の対応を示す。
+`SshServer` / `SerialConsoleCfg` / `PamLimitsCfg` が [CONFIG_DB](../../reference/glossary.md#term-config_db) 変化を処理する際に発生しうる失敗モードと hostcfgd の対応を示す。
 
 ### SSH_SERVER フィールド処理失敗
 
 | # | 失敗箇所 | 検出条件 | ログ (syslog) | 影響 | 回復方法 |
 |---|---------|---------|--------------|------|---------|
-| 1 | `handle_ports_set()` | `ports` 値が 1–65535 外 | `LOG_ERR "Ssh port <N> out of range"` → `"Failed to update sshd config files - wrong port configuration"` | sshd_config 更新中断・既存値保持 | 正値を CONFIG_DB に再設定 |
+| 1 | `handle_ports_set()` | `ports` 値が 1–65535 外 | `LOG_ERR "Ssh port <N> out of range"` → `"Failed to update sshd config files - wrong port configuration"` | sshd_config 更新中断・既存値保持 | 正値を [CONFIG_DB](../../reference/glossary.md#term-config_db) に再設定 |
 | 2 | `set_policies()` 数値検証 | `authentication_retries` / `login_timeout` / `inactivity_timeout` が YANG 範囲外 | `LOG_ERR "Ssh {} {} out of range"` | 当該フィールドのみスキップ（部分適用）、他フィールドは継続 | 正値を CONFIG_DB に再設定 |
 | 3 | `set_policies()` 未知キー | `SSH_CONFIG_NAMES` にも `max_sessions` リストにもないキー | `LOG_ERR "Failed to update sshd config file - wrong key {}"` | 未知キーのみ無視、処理継続 | CONFIG_DB から不正キーを削除 |
 | 4 | `sshd -T` 検証失敗 | 一時 sshd_config が構文不正 | `LOG_ERR "Failed to update sshd config file - sshd -T returned {code} with error {stderr}"` | 一時ファイルを `os.remove()` で削除、既存 `/etc/ssh/sshd_config` 保持 | DB 値を正値に修正 |
@@ -505,10 +505,10 @@ CONFIG_DB `SERIAL_CONSOLE` / `SSH_SERVER` テーブルの変更に伴って `hos
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `SerialConsoleCfg` / `SshServer` / `PamLimitsCfg` 全クラスに `ProducerStateTable` / `Table.set()` 呼出が 0 件 (hostcfgd L2013-2043, L1030-1170, L1404-1480) |
-| STATE_DB | なし | `hostcfgd` の STATE_DB 書込は `FipsCfg` (hostcfgd:1759-1821) と `RestartWaiter` のみ。対象クラスは `state_db_conn` を保持しない |
-| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 書込なし。CLI セッション設定は SAI 非経由 |
-| ASIC_DB / FLEX_COUNTER_DB | なし | `hostcfgd` は orchagent / SAI 非経由。カーネル・デーモン設定のみ |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `SerialConsoleCfg` / `SshServer` / `PamLimitsCfg` 全クラスに `ProducerStateTable` / `Table.set()` 呼出が 0 件 (hostcfgd L2013-2043, L1030-1170, L1404-1480) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `hostcfgd` の [STATE_DB](../../reference/glossary.md#term-state_db) 書込は `FipsCfg` (hostcfgd:1759-1821) と `RestartWaiter` のみ。対象クラスは `state_db_conn` を保持しない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `hostcfgd` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書込なし。CLI セッション設定は [SAI](../../reference/glossary.md#term-sai) 非経由 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | `hostcfgd` は [orchagent](../../reference/glossary.md#term-orchagent) / [SAI](../../reference/glossary.md#term-sai) 非経由。カーネル・デーモン設定のみ |
 
 代わりに以下のファイルシステム書込とサービス再起動が副作用として発生する:
 
@@ -528,14 +528,14 @@ CONFIG_DB `SERIAL_CONSOLE` / `SSH_SERVER` テーブルの変更に伴って `hos
 
 ### Redis 購読方式
 
-`SERIAL_CONSOLE` および `SSH_SERVER` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知** (`PSUBSCRIBE __keyspace@<dbId>__:<TABLE>|*`) によって配信される。`swsscommon.SubscriberStateTable` や channel ベースの `ConsumerStateTable` (PUBLISH/SUBSCRIBE) は**使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+`SERIAL_CONSOLE` および `SSH_SERVER` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **[Redis](../../reference/glossary.md#term-redis) keyspace 通知** (`PSUBSCRIBE __keyspace@<dbId>__:<TABLE>|*`) によって配信される。`swsscommon.SubscriberStateTable` や channel ベースの `ConsumerStateTable` (PUBLISH/SUBSCRIBE) は**使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
 
 | 購読者 | 購読 API | 購読テーブル | ハンドラ |
 |--------|---------|--------------|---------|
 | `hostcfgd` | `ConfigDBConnector.subscribe()` | `SSH_SERVER` | `ssh_handler` → `SshServer.policies_update()` + `PamLimitsCfg.update_config_file()` |
 | `hostcfgd` | `ConfigDBConnector.subscribe()` | `SERIAL_CONSOLE` | `serial_console_config_handler` → `SerialConsoleCfg.update_serial_console_cfg()` |
 
-`hostcfgd` 以外で `SSH_SERVER` / `SERIAL_CONSOLE` テーブルを購読するプロセスは存在しない (sshd / serial-config.service は設定ファイルを起動時に読むのみで Redis を購読しない)。
+`hostcfgd` 以外で `SSH_SERVER` / `SERIAL_CONSOLE` テーブルを購読するプロセスは存在しない (sshd / serial-config.service は設定ファイルを起動時に読むのみで [Redis](../../reference/glossary.md#term-redis) を購読しない)。
 
 ### keyspace 通知 → ハンドラ呼び出しの流れ
 
@@ -554,7 +554,7 @@ ssh_handler("POLICIES", SET, {inactivity_timeout:"20"})
 ```
 
 - keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は HGETALL で取得する。
-- `op` は `data is None ? DEL : SET` で 2 値判定。`HSET` / `HDEL` の Redis 操作種別自体は区別しない。
+- `op` は `data is None ? DEL : SET` で 2 値判定。`HSET` / `HDEL` の [Redis](../../reference/glossary.md#term-redis) 操作種別自体は区別しない。
 - 起動時は `config_db.listen(init_data_handler=self.load)` (hostcfgd:2528) により、Subscribe ループ開始前に `HostConfigDaemon.load()` が `init_data['SSH_SERVER']` / `init_data.get('SERIAL_CONSOLE', {})` を一括スナップショットで適用する。`wait_till_system_init_done()` (hostcfgd:2237) 完了後に処理される (hostcfgd:2265, 2273)。
 
 ### サービス再起動トリガー
@@ -571,17 +571,17 @@ ssh_handler("POLICIES", SET, {inactivity_timeout:"20"})
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: SERIAL_CONSOLE / SSH_SERVER は host 単位で適用される host-only 設定であり、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+**プラットフォーム差なし**: SERIAL_CONSOLE / SSH_SERVER は host 単位で適用される host-only 設定であり、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | SSH / シリアルコンソール設定は SAI 非経由。`hostcfgd` が Linux `sshd_config` / PAM limits / `sysctl` ファイルを直接書き換えるのみ |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | SSH / シリアルコンソール設定は SAI 非経由。`hostcfgd` が Linux `sshd_config` / PAM limits / `sysctl` ファイルを直接書き換えるのみ |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `SshServer` / `SerialConsoleCfg` はいずれも host CONFIG_DB (`ConfigDBConnector()` 引数なし) のみを購読。`asicN` namespace を iterate しない (`hostcfgd:2182` で `is_multi_npu` 取得するが SSH/シリアル経路に渡されない) |
-| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | `SSH_SERVER` / `SERIAL_CONSOLE` テーブルは host scope。chassis 全体での集中適用機構はなく、各 host の `hostcfgd` が独立に `sshd_config` / PAM を再生成する |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | `SSH_SERVER` / `SERIAL_CONSOLE` テーブルは host scope。chassis 全体での集中適用機構はなく、各 host の `hostcfgd` が独立に `sshd_config` / PAM を再生成する |
 | ベンダー固有モジュール | なし | community master の SSH スタックは OpenSSH (Debian 標準)。`files/image_config/cli_sessions/` にプラットフォーム別差し替え機構なし |
 | テンプレート内分岐 | プラットフォーム条件なし | `tmout-env.sh.j2` / `sysrq-sysctl.conf.j2` を `platform\|asic\|chassis\|namespace\|vendor` で grep して 0 ヒット。分岐は `SERIAL_CONSOLE.POLICIES` フィールド値のみ |
 
 詳細根拠は `meta/_intermediate/cdb-flow/cli-config-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
+<!-- glossary-links-injected: 841e6cdca746 -->

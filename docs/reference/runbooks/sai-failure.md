@@ -41,7 +41,7 @@ related:
 
 - `syncd` コンテナが `Exited (134)` / `Aborted (core dumped)` で再起動を繰り返す
 - `ASIC_DB` への書き込みが詰まる、[orchagent](../../reference/glossary.md#term-orchagent) ログに `SAI API failed` が連続
-- ASIC レベルのテーブル限界エラー (`CRM` の overflow) が観測される
+- [ASIC](../../reference/glossary.md#term-asic) レベルのテーブル限界エラー (`CRM` の overflow) が観測される
 
 ## 確認コマンド
 
@@ -62,11 +62,11 @@ crm show thresholds all
 
 ## 想定原因
 
-1. **[CRM](../../reference/glossary.md#term-crm) (Critical Resource Monitor) で table 枯渇**: [FDB](../../reference/glossary.md#term-fdb) / ROUTE / NEXTHOP / [ACL](../../reference/glossary.md#term-acl) のいずれかが ASIC 容量を超過
+1. **[CRM](../../reference/glossary.md#term-crm) (Critical Resource Monitor) で table 枯渇**: [FDB](../../reference/glossary.md#term-fdb) / ROUTE / NEXTHOP / [ACL](../../reference/glossary.md#term-acl) のいずれかが [ASIC](../../reference/glossary.md#term-asic) 容量を超過
 2. **[SAI](../../reference/glossary.md#term-sai) 属性の未対応**: SDK バージョンが古く、[orchagent](../../reference/glossary.md#term-orchagent) が新属性を打って失敗
 3. **同名 object の重複作成 / 削除順序ミス**: 古い参照を残したまま親 object を削除
 4. **メモリ / shared memory 不足**: redis / [syncd](../../reference/glossary.md#term-syncd) が OOM kill
-5. **HW 側の障害**: ASIC reset、PCIe link down、Fabric link error
+5. **HW 側の障害**: [ASIC](../../reference/glossary.md#term-asic) reset、PCIe link down、Fabric link error
 
 ## 切り分け手順
 
@@ -152,4 +152,4 @@ dmesg | grep -i -E "oom|kill" | tail
 [^1]: sonic-net/[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) @ 88bc51a — syncd 本体
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)
 
-<!-- glossary-links-injected: 00adaba8804d -->
+<!-- glossary-links-injected: 8df9850464d2 -->

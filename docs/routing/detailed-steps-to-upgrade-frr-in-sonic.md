@@ -47,7 +47,7 @@ related:
 
 ## 概要
 
-SONiC は upstream `frrouting/frr` を **branch スナップショット + per-release patch 集** という形で取り込んでいる[^1]。[FRR](../reference/glossary.md#term-frr) を新しい upstream version に上げる際は次の点を整える必要がある:
+[SONiC](../reference/glossary.md#term-sonic) は upstream `frrouting/frr` を **branch スナップショット + per-release patch 集** という形で取り込んでいる[^1]。[FRR](../reference/glossary.md#term-frr) を新しい upstream version に上げる際は次の点を整える必要がある:
 
 - どの upstream tag / commit を base にするか
 - SONiC 固有 patch（[FPM](../reference/glossary.md#term-fpm) 拡張、[SAI](../reference/glossary.md#term-sai) と整合させる修正、SONiC ビルド適合）の rebase
@@ -119,7 +119,7 @@ docker exec bgp dpkg -l | grep -i frr
 
 ## 制限事項
 
-- FRR のメジャーバージョン跨ぎでは vtysh コマンド体系・config 互換性が崩れる事があり、手順書のバージョンに固定して実施する必要がある。
+- FRR のメジャーバージョン跨ぎでは [vtysh](../reference/glossary.md#term-vtysh) コマンド体系・config 互換性が崩れる事があり、手順書のバージョンに固定して実施する必要がある。
 - SONiC の bgpcfgd / templates と FRR バージョンには 1:1 の依存関係があり、FRR のみ単独差し替えは推奨されない。
 - 本ページは特定リリースに対する手順であり、master では Dockerfile 側で固定された FRR バージョンに依拠している点に注意。
 
@@ -136,4 +136,4 @@ docker exec bgp dpkg -l | grep -i frr
 - 文書自体（HLD）の改訂日・現行 master FRR version との乖離リスク確認
 -->
 
-<!-- glossary-links-injected: 66eae89ad3e6 -->
+<!-- glossary-links-injected: 7ac8e66e1af3 -->

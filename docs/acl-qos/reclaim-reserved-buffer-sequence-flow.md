@@ -48,7 +48,7 @@ related:
 
 ## なぜ必要か
 
-SONiC のバッファ管理は **buffer pool / profile / PG / queue** で構成され、各ポートに priority group (PG) と queue ごとの **予約バッファ（reserved + headroom）** が確保される。minigraph で neighbor が宣言されない **INACTIVE PORT** の分まで予約すると ASIC の有限リソースを浪費する。
+[SONiC](../reference/glossary.md#term-sonic) のバッファ管理は **buffer pool / profile / PG / queue** で構成され、各ポートに priority group (PG) と queue ごとの **予約バッファ（reserved + headroom）** が確保される。minigraph で neighbor が宣言されない **INACTIVE PORT** の分まで予約すると [ASIC](../reference/glossary.md#term-asic) の有限リソースを浪費する。
 
 本 [HLD](../reference/glossary.md#term-hld) は **「INACTIVE / admin-down ポートの予約を zero buffer profile で 0 化する」** 3 系統のフローを定義する[^1]:
 
@@ -227,4 +227,4 @@ redis-cli -n 6 hgetall 'BUFFER_MAX_PARAM_TABLE|<port>'   # 最大 PG/queue が�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1af9c6208afc -->
+<!-- glossary-links-injected: ec18b66e3507 -->

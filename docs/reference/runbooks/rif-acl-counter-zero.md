@@ -34,7 +34,7 @@ related:
 ## 想定原因
 
 1. **`FLEX_COUNTER_TABLE|ACL` / `FLEX_COUNTER_TABLE|RIF` が disable**
-2. **[ACL](../../reference/glossary.md#term-acl) rule が ASIC に install されていない**: [orchagent](../../reference/glossary.md#term-orchagent) エラーで install 失敗
+2. **[ACL](../../reference/glossary.md#term-acl) rule が [ASIC](../../reference/glossary.md#term-asic) に install されていない**: [orchagent](../../reference/glossary.md#term-orchagent) エラーで install 失敗
 3. **rule の match 条件にトラフィックが該当していない** ([DSCP](../../reference/glossary.md#term-dscp) / src_ip / in_port のミスマッチ)
 4. **rule 優先度 (`PRIORITY`) が他 rule に隠されている**: 先に match した別 rule に取られている
 5. **stage / type 不一致**: L3 rule を `INGRESS_L2` テーブルに入れている
@@ -74,7 +74,7 @@ sonic-db-cli ASIC_DB keys "ASIC_STATE:SAI_OBJECT_TYPE_ACL_ENTRY:*" | head
 docker logs swss 2>&1 | grep -iE "aclorch|acl_entry" | tail
 ```
 
-- 期待: rule 数と ASIC entry 数が概ね一致
+- 期待: rule 数と [ASIC](../../reference/glossary.md#term-asic) entry 数が概ね一致
 - 異常: 0 件 → [orchagent](../../reference/glossary.md#term-orchagent) install 失敗
 
 ### 3. rule の match 条件確認
@@ -123,7 +123,7 @@ sonic-db-cli COUNTERS_DB hgetall "COUNTERS:oid:<RIF OID>"
 
 本ページの根拠は引用元 [^1][^2] を参照。
 
-[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — aclorch / intfsorch
+[^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — aclorch / [intfsorch](../../reference/glossary.md#term-intfsorch)
 [^2]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — acl_loader / aclshow
 
-<!-- glossary-links-injected: eebb97ac8e67 -->
+<!-- glossary-links-injected: 7408f1f3e035 -->

@@ -42,7 +42,7 @@ related:
 
 # 概要
 
-「SONiC で [BGP](../../reference/glossary.md#term-bgp) を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、**SONiC と [FRR](../../reference/glossary.md#term-frr) の境界がどこにあるか** が見えづらいことです。BGP のプロトコル処理は FRR（オープンソースのルーティング suite）が行い、SONiC は設定の受付と ASIC への反映を担当しますが、両者の橋渡しに複数の daemon と DB が並んでいるため、どこで何が起きているかを掴むのに時間がかかります。
+「[SONiC](../../reference/glossary.md#term-sonic) で [BGP](../../reference/glossary.md#term-bgp) を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、**SONiC と [FRR](../../reference/glossary.md#term-frr) の境界がどこにあるか** が見えづらいことです。BGP のプロトコル処理は FRR（オープンソースのルーティング suite）が行い、SONiC は設定の受付と [ASIC](../../reference/glossary.md#term-asic) への反映を担当しますが、両者の橋渡しに複数の daemon と DB が並んでいるため、どこで何が起きているかを掴むのに時間がかかります。
 
 この章は、その境界線をはっきりさせるための入口です。
 
@@ -236,4 +236,4 @@ DC 規模では **route scale が秒間数万 update** に達することがあ�
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
 
-<!-- glossary-links-injected: 6ff44b32cebf -->
+<!-- glossary-links-injected: ec18b66e3507 -->

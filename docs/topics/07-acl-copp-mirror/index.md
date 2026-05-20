@@ -76,7 +76,7 @@ related:
 
 # ACL / CoPP / Mirror / Packet Action
 
-この章は、SONiC で「パケットを分類して、通す、落とす、CPU に送る、複製する、数える」という機能群をまとめて読むための入口です。既存ページは [ACL](../../reference/glossary.md#term-acl)、[CoPP](../../reference/glossary.md#term-copp)、mirror、drop counter、packet trimming などの [HLD](../../reference/glossary.md#term-hld) 単位に分かれているため、ここでは運用者や設計者の質問順に並べ直します。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) で「パケットを分類して、通す、落とす、CPU に送る、複製する、数える」という機能群をまとめて読むための入口です。既存ページは [ACL](../../reference/glossary.md#term-acl)、[CoPP](../../reference/glossary.md#term-copp)、mirror、drop counter、packet trimming などの [HLD](../../reference/glossary.md#term-hld) 単位に分かれているため、ここでは運用者や設計者の質問順に並べ直します。
 
 ACL は data plane の分類器、CoPP は control plane へ punt されるパケットの保護、mirror は観測用コピー、counter は設定が本当に効いているかを確かめる計測面です。これらは別機能に見えますが、SONiC 内部では `ACL_TABLE` / `ACL_RULE`、[SAI](../../reference/glossary.md#term-sai) ACL action、policer、hostif trap、flex counter といった共通部品でつながっています。
 
@@ -85,7 +85,7 @@ ACL は data plane の分類器、CoPP は control plane へ punt されるパ�
 - ACL table type、match、action、counter はどの階層で理解するのか。
 - CoPP、policer、trap、mirror は ACL とどこで交わり、どこから別物なのか。
 - `show acl`、`aclshow`、trap flow counter、drop counter は運用でどう使い分けるのか。
-- egress mirror、outer [DSCP](../../reference/glossary.md#term-dscp) 書換、packet trimming のような ASIC 依存 action はどう確認するのか。
+- egress mirror、outer [DSCP](../../reference/glossary.md#term-dscp) 書換、packet trimming のような [ASIC](../../reference/glossary.md#term-asic) 依存 action はどう確認するのか。
 - [DASH](../../reference/glossary.md#term-dash) ACL、PAC、DHCP DoS 緩和は通常 ACL と同じ章で読むべきか。
 
 ## 読み進め方
@@ -167,4 +167,4 @@ ACL は data plane の分類器、CoPP は control plane へ punt されるパ�
 - [Security / AAA / FIPS / Hardening](../15-security-aaa/index.md)
 - [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: ec18b66e3507 -->
