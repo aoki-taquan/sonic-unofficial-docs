@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-SONiC のビルドは多数のビルドフラグ（`ENABLE_ZTP`, `SECURE_UPGRADE_*`, `USERNAME`, `PASSWORD`, `CHANGE_DEFAULT_PASSWORD` 等）の組み合わせで挙動が変わる。これらを **`make` のコマンドラインで毎回手で羅列する** のは煩雑で、CI 外の手元ビルドや顧客への配布で再現性を取りづらい[^1]。
+[SONiC](../reference/glossary.md#term-sonic) のビルドは多数のビルドフラグ（`ENABLE_ZTP`, `SECURE_UPGRADE_*`, `USERNAME`, `PASSWORD`, `CHANGE_DEFAULT_PASSWORD` 等）の組み合わせで挙動が変わる。これらを **`make` のコマンドラインで毎回手で羅列する** のは煩雑で、CI 外の手元ビルドや顧客への配布で再現性を取りづらい[^1]。
 
 ビルドプロファイル機能は `rules/profiles/<name>.mk` というインクルード可能な Makefile 片を用意しておき、`make PROFILE=<name>` 一発で **そのフラグセット一式** を取り込むためのもの。プロファイルは **リポジトリにコミットして共有** することを前提にしており、`rules/config.user` のような個人ローカル設定とは住み分ける[^1]。
 
@@ -175,7 +175,7 @@ make PROFILE=ztp.signed all
 
 ## VS イメージサイズ削減（実運用 Tips）
 
-SONiC 202505 Bookworm では VS イメージが **約 6GB** になり、RAM が 8GB 前後の resource-constrained な環境でビルドが困難なケースが報告されている（sonic-net/sonic-buildimage#26636）。
+SONiC 202505 Bookworm では VS イメージが **約 6GB** になり、RAM が 8GB 前後の resource-constrained な環境でビルドが困難なケースが報告されている（sonic-net/[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)#26636）。
 
 ### 有効な削減手段
 
@@ -211,7 +211,7 @@ INCLUDE_FIPS = n
 INCLUDE_VS_DASH_SAI = n
 ```
 
-コア必須コンテナは `docker-database`, `docker-orchagent`, `docker-syncd`, `docker-fpm-frr`, `docker-platform-monitor`, `docker-teamd`（LAG 使用時）, `docker-lldp` 程度。
+コア必須コンテナは `docker-database`, `docker-orchagent`, `docker-syncd`, `docker-fpm-frr`, `docker-platform-monitor`, `docker-teamd`（[LAG](../reference/glossary.md#term-lag) 使用時）, `docker-lldp` 程度。
 
 ## 制限事項
 
@@ -341,4 +341,4 @@ docker images | grep sonic-slave
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 61732efa9ddb -->

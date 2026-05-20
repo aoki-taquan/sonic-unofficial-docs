@@ -37,7 +37,7 @@ related:
 
 ## 概要
 
-業務スイッチには、ログイン前後やログアウト時に **法的注意文・運用情報・MOTD** を表示する要件が頻繁にある。SONiC 既定の Debian バナー（`Debian GNU/Linux 11`）と SONiC のアスキーアート MOTD はそのままでは運用ポリシーを満たさないことが多い。本機能は **[CONFIG_DB](../reference/glossary.md#term-config_db) → [hostcfgd](../reference/glossary.md#term-hostcfgd) → banner-config systemd サービス → Linux ファイル** という経路でログインバナー / ログアウトバナー / MOTD を集中管理できるようにする[^1]。
+業務スイッチには、ログイン前後やログアウト時に **法的注意文・運用情報・MOTD** を表示する要件が頻繁にある。[SONiC](../reference/glossary.md#term-sonic) 既定の Debian バナー（`Debian GNU/Linux 11`）と SONiC のアスキーアート MOTD はそのままでは運用ポリシーを満たさないことが多い。本機能は **[CONFIG_DB](../reference/glossary.md#term-config_db) → [hostcfgd](../reference/glossary.md#term-hostcfgd) → banner-config systemd サービス → Linux ファイル** という経路でログインバナー / ログアウトバナー / MOTD を集中管理できるようにする[^1]。
 
 | 種別 | タイミング | 反映先ファイル |
 |------|-----------|----------------|
@@ -243,4 +243,4 @@ config banner login 'WARNING: authorized only'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9f97d965cf27 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -51,7 +51,7 @@ related:
 
 ## どんなときに使うか
 
-- 「`SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US` を ASIC が直接出せない」プラットフォームで、過去の pause 履歴を知りたい
+- 「`SAI_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US` を [ASIC](../reference/glossary.md#term-asic) が直接出せない」プラットフォームで、過去の pause 履歴を知りたい
 - PFC ストームではないが「**pause が断続的に来ていた**」事象を後追いしたい
 
 ストーム検出（PFCWD 本体）は別物。本機能は同じ lua スクリプトに乗る **観測専用の付加機能**。
@@ -189,4 +189,4 @@ redis-cli -n 2 keys 'COUNTERS:oid:*' | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: c006405759d8 -->

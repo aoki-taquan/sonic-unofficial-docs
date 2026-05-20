@@ -102,7 +102,7 @@ CLI ラッパとしては `config interface mpls enable <intf>` / `config interf
 
 ### MPLS と QoS
 
-MPLS パケットの TC を SONiC 内部 TC にマップするには、`MPLS_TC_TO_TC_MAP` を定義し、`PORT_QOS_MAP` の `mpls_tc_to_tc_map` フィールドで参照します。
+MPLS パケットの TC を [SONiC](../../reference/glossary.md#term-sonic) 内部 TC にマップするには、`MPLS_TC_TO_TC_MAP` を定義し、`PORT_QOS_MAP` の `mpls_tc_to_tc_map` フィールドで参照します。
 
 ```text
 MPLS_TC_TO_TC_MAP|AZURE:
@@ -247,7 +247,7 @@ Ethernet0     1234              template_3
 | `End.DT46` SID で trafic が drop される | `vrf` 指定の typo、または [VRF](../../reference/glossary.md#term-vrf) が未作成 | `show vrf`、`sonic-db-cli CONFIG_DB HGETALL VRF\|Vrf01` を確認 |
 | `config interface mpls enable` が `Not supported on platform` | SAI capability に MPLS なし | `show platform syseeprom` / `sai_redis_record` で `SAI_OBJECT_TYPE_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` をチェック |
 | MPLS_TC_TO_TC_MAP 設定後も DSCP マップ動作のまま | `PORT_QOS_MAP|<port>` で `mpls_tc_to_tc_map` を未参照 | 当該 port の `PORT_QOS_MAP` 行を確認 |
-| Path Tracing で MCD が刻まれない | ASIC が Path Tracing 未対応、または FEC / speed 不一致 | capability、`sairedis.rec` のエラーを確認 |
+| Path Tracing で MCD が刻まれない | [ASIC](../../reference/glossary.md#term-asic) が Path Tracing 未対応、または FEC / speed 不一致 | capability、`sairedis.rec` のエラーを確認 |
 | FRR で `segment-routing srv6 sid` 投入後も `Down` のまま | locator と SID の重複 / encap-source-address 未設定 | `vtysh -c "show ipv6 route fcbb:bbbb::/48"`、`segment-routing srv6 encapsulation source-address ...` を投入 |
 
 ## reference の不足を把握する
@@ -274,4 +274,4 @@ SRv6 / MPLS / Path Tracing は CLI / CONFIG_DB / YANG の reference が他の章
 - [Path Tracing Midpoint](../../routing/path-tracing-midpoint.md)
 - [sonic-route-common YANG](../../reference/yang/sonic-route-common.md)
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

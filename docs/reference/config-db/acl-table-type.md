@@ -33,15 +33,15 @@ related:
 
 ## 概要
 
-`ACL_TABLE_TYPE` はユーザー定義の ACL テーブルタイプを格納する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。
+`ACL_TABLE_TYPE` はユーザー定義の [ACL](../../reference/glossary.md#term-acl) テーブルタイプを格納する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。
 `ACL_TABLE` の `type` フィールドから leafref で参照され、`orchagent` の `AclOrch` が
 `doAclTableTypeTask()` で読み取り、内部マップ `m_AclTableTypes` に保持する。
-SAI オブジェクトは作成されない（ソフトウェア定義のみ）。
+[SAI](../../reference/glossary.md#term-sai) オブジェクトは作成されない（ソフトウェア定義のみ）。
 
 組み込み型（`L3`, `L3V6`, `L3V4V6`, `MIRROR`, `MIRRORV6`, `MIRROR_DSCP`, `PFCWD`, `CTRLPLANE`,
 `MCLAG`, `MUX`, `DROP`, `MARK_META`, `MARK_METAV6`, `EGR_SET_DSCP`, `UNDERLAY_SET_DSCP`,
-`UNDERLAY_SET_DSCPV6`, `DTEL_FLOW_WATCHLIST`) は orchagent 起動時に `initDefaultTableTypes()`
-(`aclorch.cpp:3724`) で自動登録されるため、CONFIG_DB への書き込みは不要。
+`UNDERLAY_SET_DSCPV6`, `DTEL_FLOW_WATCHLIST`) は [orchagent](../../reference/glossary.md#term-orchagent) 起動時に `initDefaultTableTypes()`
+(`aclorch.cpp:3724`) で自動登録されるため、[CONFIG_DB](../../reference/glossary.md#term-config_db) への書き込みは不要。
 
 ```mermaid
 flowchart LR
@@ -54,6 +54,26 @@ flowchart LR
 ```
 
 ---
+
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>ACL_TABLE_TYPE")]
+  DM["AclOrch"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_DB")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_acl_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
 
 ## key 構造
 
@@ -69,11 +89,11 @@ ACL_TABLE_TYPE|<type_name>
 
 ## フィールド一覧
 
-| フィールド | 定数 | YANG 型 | 必須 | 説明 |
+| フィールド | 定数 | [YANG](../../reference/glossary.md#term-yang) 型 | 必須 | 説明 |
 |---|---|---|---|---|
-| `MATCHES` | `ACL_TABLE_TYPE_MATCHES` (`acltable.h:18`) | leaf-list string | min-elements 1 (YANG) | カンマ区切りの match キー名。`aclMatchLookup` / `aclRangeTypeLookup` で SAI 属性に変換 |
-| `ACTIONS` | `ACL_TABLE_TYPE_ACTIONS` (`acltable.h:20`) | leaf-list string, default `""` | 省略可 | カンマ区切りの action 名。省略時は空 set (SAI action なし) |
-| `BIND_POINTS` | `ACL_TABLE_TYPE_BPOINT_TYPES` (`acltable.h:19`) | leaf-list enum | min-elements 1 (YANG) | `PORT` / `PORTCHANNEL` のカンマ区切り |
+| `MATCHES` | `ACL_TABLE_TYPE_MATCHES` (`acltable.h:18`) | leaf-list string | min-elements 1 ([YANG](../../reference/glossary.md#term-yang)) | カンマ区切りの match キー名。`aclMatchLookup` / `aclRangeTypeLookup` で [SAI](../../reference/glossary.md#term-sai) 属性に変換 |
+| `ACTIONS` | `ACL_TABLE_TYPE_ACTIONS` (`acltable.h:20`) | leaf-list string, default `""` | 省略可 | カンマ区切りの action 名。省略時は空 set ([SAI](../../reference/glossary.md#term-sai) action なし) |
+| `BIND_POINTS` | `ACL_TABLE_TYPE_BPOINT_TYPES` (`acltable.h:19`) | leaf-list enum | min-elements 1 ([YANG](../../reference/glossary.md#term-yang)) | `PORT` / `PORTCHANNEL` のカンマ区切り |
 
 ### `MATCHES` に使用可能な値
 
@@ -105,7 +125,7 @@ ACL_TABLE_TYPE|<type_name>
 | `REDIRECT_ACTION` | リダイレクト |
 | `MIRROR_INGRESS_ACTION` | Ingress mirror |
 | `MIRROR_EGRESS_ACTION` | Egress mirror |
-| `QOS_DSCP_ACTION` | DSCP 書き換え |
+| `QOS_DSCP_ACTION` | [DSCP](../../reference/glossary.md#term-dscp) 書き換え |
 | `COUNTER` | ヒットカウンタ (`SAI_ACL_ENTRY_ATTR_ACTION_COUNTER`) |
 
 ---
@@ -135,16 +155,16 @@ sonic-db-cli CONFIG_DB hmset 'ACL_TABLE_TYPE|MY_CUSTOM_TYPE' \
 | カスタム type を参照する `ACL_TABLE` の SET | `ACL_TABLE_TYPE` を先に SET | `doAclTableTask()` (`aclorch.cpp:5432-5436`) — `getAclTableType()` が null なら `it++` (retry) |
 | `ACL_TABLE` の SET → `ACL_RULE` の SET | `ACL_TABLE_TYPE` → `ACL_TABLE` → `ACL_RULE` の順 | `doAclRuleTask()` (`aclorch.cpp:5556-5566`) — table_oid 未登録時は `it++` (retry) |
 
-`ACL_TABLE_TYPE` 書き込みが `ACL_TABLE` より遅れた場合、orchagent は `ACL_TABLE` エントリを
+`ACL_TABLE_TYPE` 書き込みが `ACL_TABLE` より遅れた場合、[orchagent](../../reference/glossary.md#term-orchagent) は `ACL_TABLE` エントリを
 `it++` で `m_toSync` に保留し、次回 `doTask()` 呼び出し時（Config DB 変更通知）に再処理する。
-CONFIG_DB への同時書き込みであっても、通知到達順によっては `ACL_TABLE` が先に処理されることがあるため、
+[CONFIG_DB](../../reference/glossary.md#term-config_db) への同時書き込みであっても、通知到達順によっては `ACL_TABLE` が先に処理されることがあるため、
 **明示的に順序を守る**ことが推奨される。
 
 ### 組み込み型は先行不要
 
 組み込み型（`L3`, `L3V6`, `L3V4V6`, `MIRROR`, `MIRRORV6`, `MIRROR_DSCP`, `PFCWD`, `CTRLPLANE`,
 `MCLAG`, `MUX`, `DROP`, `MARK_META`, `MARK_METAV6`, `EGR_SET_DSCP`, `UNDERLAY_SET_DSCP`,
-`UNDERLAY_SET_DSCPV6`, `DTEL_FLOW_WATCHLIST`) は orchagent の `initDefaultTableTypes()`
+`UNDERLAY_SET_DSCPV6`, `DTEL_FLOW_WATCHLIST`) は [orchagent](../../reference/glossary.md#term-orchagent) の `initDefaultTableTypes()`
 (`aclorch.cpp:3724`) で起動時に自動登録される。CONFIG_DB に `ACL_TABLE_TYPE` を書かなくとも
 `ACL_TABLE` から参照可能。
 
@@ -169,7 +189,7 @@ CONFIG_DB への同時書き込みであっても、通知到達順によって�
 ## 暗黙参照テーブル (Phase C)
 
 `ACL_TABLE_TYPE` の処理 (`doAclTableTypeTask()`, `aclorch.cpp:5738-5772`) は
-CONFIG_DB / APPL_DB の他テーブルを**一切参照しない**。フィールド値の検証は C++ 静的ルックアップマップのみで行われ、外部 DB クエリは発生しない。
+CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) の他テーブルを**一切参照しない**。フィールド値の検証は C++ 静的ルックアップマップのみで行われ、外部 DB クエリは発生しない。
 
 ただし `AclOrch::doTask()` 冒頭のゲート (`aclorch.cpp:4276-4279`) により、
 `gPortsOrch->allPortsReady()` が false の間は `doAclTableTypeTask()` を含む全処理が skip される。
@@ -179,7 +199,7 @@ CONFIG_DB / APPL_DB の他テーブルを**一切参照しない**。フィー�
 | 参照元テーブル | 参照フィールド | 参照タイミング | evidence |
 |---|---|---|---|
 | `ACL_TABLE\|*` (CONFIG_DB) の `type` | カスタム型名 | `ACL_TABLE` SET 処理時。`getAclTableType()` が null なら `it++` 待機（無制限） | `aclorch.cpp:5432-5436` |
-| `ACL_TABLE_TABLE\|*` (APPL_DB) の `TYPE` | カスタム型名 | 同一コードパス（CONFIG_DB・APPL_DB 共通ハンドラ） | `aclorch.cpp:4283-4285` |
+| `ACL_TABLE_TABLE\|*` ([APPL_DB](../../reference/glossary.md#term-appl_db)) の `TYPE` | カスタム型名 | 同一コードパス（CONFIG_DB・[APPL_DB](../../reference/glossary.md#term-appl_db) 共通ハンドラ） | `aclorch.cpp:4283-4285` |
 | YANG `ACL_TABLE.type` | leafref | YANG バリデーション時 | `sonic-acl.yang.j2:416-418` |
 
 ### 静的ルックアップ（DB テーブルではない）
@@ -235,7 +255,7 @@ CONFIG_DB / APPL_DB の他テーブルを**一切参照しない**。フィー�
 `ACL_TABLE_TYPE` 処理には **`it++` retry パターンが存在しない**。
 全失敗ケースで `erase(it)` が実行され、再処理は行われない。
 
-- **STATE_DB**: 書き込みなし（`setAclTableStatus()` は呼ばれない）
+- **[STATE_DB](../../reference/glossary.md#term-state_db)**: 書き込みなし（`setAclTableStatus()` は呼ばれない）
 - **ERROR_TABLE**: 書き込みなし
 - **syslog のみ**: `journalctl -u swss | grep "ACL table type"` で確認
 - **SAI 影響**: ゼロ（`ACL_TABLE_TYPE` は SAI オブジェクト非生成）
@@ -357,7 +377,7 @@ CONFIG_DB / APPL_DB の他テーブルを**一切参照しない**。フィー�
 <!-- side-effects -->
 ## 副作用 (Phase F)
 
-`ACL_TABLE_TYPE` エントリの SET/DEL は **orchagent 内の in-memory マップ `m_AclTableTypes`** のみを変更する。SAI API 呼び出し・STATE_DB 書き込み・AppDB 書き込みはいずれも発生しない。[^2]
+`ACL_TABLE_TYPE` エントリの SET/DEL は **orchagent 内の in-memory マップ `m_AclTableTypes`** のみを変更する。SAI API 呼び出し・[STATE_DB](../../reference/glossary.md#term-state_db) 書き込み・AppDB 書き込みはいずれも発生しない。[^2]
 
 ### SET 時の副作用
 
@@ -367,13 +387,13 @@ CONFIG_DB / APPL_DB の他テーブルを**一切参照しない**。フィー�
 
 #### 2. 後続 `ACL_TABLE` 処理のアンブロック
 
-`doAclTableTask()` は `ACL_TABLE_TYPE` が未登録の状態で `ACL_TABLE` が先に到着すると `it++`（retry pending）で保留する。`ACL_TABLE_TYPE` の SET が成功して `m_AclTableTypes` に登録されると、次の `doTask()` サイクルでペンディングが解消され、SAI テーブル生成・STATE_DB `ACL_TABLE_TABLE` への `status=active` 書き込みが行われる。
+`doAclTableTask()` は `ACL_TABLE_TYPE` が未登録の状態で `ACL_TABLE` が先に到着すると `it++`（retry pending）で保留する。`ACL_TABLE_TYPE` の SET が成功して `m_AclTableTypes` に登録されると、次の `doTask()` サイクルでペンディングが解消され、SAI テーブル生成・[STATE_DB](../../reference/glossary.md#term-state_db) `ACL_TABLE_TABLE` への `status=active` 書き込みが行われる。
 
 ### DEL 時の副作用
 
 #### 3. `m_AclTableTypes` からのエントリ削除
 
-`removeAclTableType()` はエントリを削除するのみ。既存の `AclTable` は `AclTableType` のコピーを保持しているため、削除しても実行中の ACL テーブルへの影響はない（SAI オブジェクトも存在しないため SAI 側変更もなし）。
+`removeAclTableType()` はエントリを削除するのみ。既存の `AclTable` は `AclTableType` のコピーを保持しているため、削除しても実行中の [ACL](../../reference/glossary.md#term-acl) テーブルへの影響はない（SAI オブジェクトも存在しないため SAI 側変更もなし）。
 
 #### 4. 新規 `ACL_TABLE` の参照失敗
 
@@ -415,9 +435,9 @@ DEL 後に同名 type を参照する新規 `ACL_TABLE` が到着すると `getA
 | チャンネル | DB | テーブル名 | 購読クラス | 発行元 |
 |---|---|---|---|---|
 | CONFIG_DB | CONFIG_DB (dbId=4) | `ACL_TABLE_TYPE`（`CFG_ACL_TABLE_TYPE_TABLE_NAME`） | `SubscriberStateTable` | `sonic-cfggen` / `config` CLI / `swssconfig` |
-| APPL_DB | APPL_DB (dbId=0) | `ACL_TABLE_TYPE_TABLE`（`APP_ACL_TABLE_TYPE_TABLE_NAME`） | `ConsumerStateTable` | `VnetOrch`、`DashEniFwdOrch`（内部 ProducerStateTable） |
+| APPL_DB | APPL_DB (dbId=0) | `ACL_TABLE_TYPE_TABLE`（`APP_ACL_TABLE_TYPE_TABLE_NAME`） | `ConsumerStateTable` | `VnetOrch`、`DashEniFwdOrch`（内部 [ProducerStateTable](../../reference/glossary.md#term-producerstatetable)） |
 
-`Orch::addConsumer()` (`orch.cpp:1186-1196`) は DB の `getDbId()` により購読クラスを切り替える。CONFIG_DB には `SubscriberStateTable`（Redis keyspace 通知）、APPL_DB には `ConsumerStateTable`（Redis Lists）が選ばれる。
+`Orch::addConsumer()` (`orch.cpp:1186-1196`) は DB の `getDbId()` により購読クラスを切り替える。CONFIG_DB には `SubscriberStateTable`（[Redis](../../reference/glossary.md#term-redis) keyspace 通知）、APPL_DB には `ConsumerStateTable`（[Redis](../../reference/glossary.md#term-redis) Lists）が選ばれる。
 
 ### CONFIG_DB 経路（`SubscriberStateTable`）
 
@@ -433,7 +453,7 @@ vector<TableConnector> acl_table_connectors = {
 };
 ```
 
-- Redis keyspace 通知 (`PSUBSCRIBE __keyspace@4__:ACL_TABLE_TYPE|*`) を購読。CONFIG_DB への `HSET "ACL_TABLE_TYPE|<name>" ...` が自動的に PUBLISH される。
+- [Redis](../../reference/glossary.md#term-redis) keyspace 通知 (`PSUBSCRIBE __keyspace@4__:ACL_TABLE_TYPE|*`) を購読。CONFIG_DB への `HSET "ACL_TABLE_TYPE|<name>" ...` が自動的に PUBLISH される。
 - 1 回の `pops()` で最大 `DEFAULT_POP_BATCH_SIZE = 128` 件を一括取得 (`table.h:164`)。
 - **起動時スナップショット**: `SubscriberStateTable` は購読開始前に既存エントリを `m_buffer` へ流し込む。orchagent 再起動後も CONFIG_DB に残存する `ACL_TABLE_TYPE` エントリは SET として再配信され、`m_AclTableTypes` が再構築される。
 
@@ -443,8 +463,8 @@ vector<TableConnector> acl_table_connectors = {
 
 | 実装 | ファイル | 用途 |
 |---|---|---|
-| `VnetOrch` | `orchagent/vnetorch.cpp:3738, 3781` | VNET トンネル終端用カスタム type を自動 SET |
-| `DashEniFwdOrch` | `orchagent/dash/dashenifwdorch.cpp:404, 625, 649` | DASH ENI フォワーディング用 type を SET / DEL |
+| `VnetOrch` | `orchagent/vnetorch.cpp:3738, 3781` | [VNET](../../reference/glossary.md#term-vnet) トンネル終端用カスタム type を自動 SET |
+| `DashEniFwdOrch` | `orchagent/dash/dashenifwdorch.cpp:404, 625, 649` | [DASH](../../reference/glossary.md#term-dash) [ENI](../../reference/glossary.md#term-eni) フォワーディング用 type を SET / DEL |
 
 - バッチサイズ: `gBatchSize`（orchagent 起動時に決定、デフォルト 128）。
 - 起動時スナップショット機能は `ConsumerStateTable` にはなく、orchagent 再起動時に APPL_DB 経由の type は上位 orch（`VnetOrch` 等）が再 SET する責任を持つ。
@@ -460,7 +480,7 @@ vector<TableConnector> acl_table_connectors = {
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`ACL_TABLE_TYPE` のプラットフォーム依存性は 2 つの経路で顕在化する: (1) `initDefaultTableTypes()` による **組み込み型の定義差**、(2) SAI capability クエリによる **アクション有効/無効の差**。ユーザー定義型（CONFIG_DB に書き込む型）は `AclTableTypeParser` が解析するが、記述できる match/action の有効性は実行時の ASIC capability に委ねられる。
+`ACL_TABLE_TYPE` のプラットフォーム依存性は 2 つの経路で顕在化する: (1) `initDefaultTableTypes()` による **組み込み型の定義差**、(2) SAI capability クエリによる **アクション有効/無効の差**。ユーザー定義型（CONFIG_DB に書き込む型）は `AclTableTypeParser` が解析するが、記述できる match/action の有効性は実行時の [ASIC](../../reference/glossary.md#term-asic) capability に委ねられる。
 
 ### プラットフォーム識別文字列 (orch.h:40-50)
 
@@ -544,4 +564,5 @@ capability 結果は `STATE_DB` の `ACL_STAGE_CAPABILITY_TABLE|{INGRESS,EGRESS}
 
 [^1]: テーブル定義は `sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2` (sha `9ea932ec`) L354-388 (`ACL_TABLE_TYPE` コンテナ) より。処理ロジックは `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) L752-895 (`AclTableTypeParser`)、L4912-4942 (`addAclTableType`/`removeAclTableType`)、L5740-5773 (`doAclTableTypeTask`)、L3724 (`initDefaultTableTypes`) より。フィールド定数は `orchagent/acltable.h` L18-20 より。
 [^2]: 副作用の調査は `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) `doAclTableTypeTask()` L5738-5774、`addAclTableType()` L4912-4930、`removeAclTableType()` L4932-4948、`doAclTableTask()` L5432 (`getAclTableType()` による retry 制御) より。STATE_DB テーブル名は `sonic-swss-common/common/schema.h` L418/514/515 より。
-[^3]: 通信メカニズムの調査は `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) L4197-4299 (AclOrch ctor、doTask)、`orchagent/orchdaemon.cpp` L408-422, L533-534 (TableConnector 構築)、`orchagent/orch.cpp` L1186-1196 (addConsumer DB 種別分岐)、`orchagent/vnetorch.cpp` L3738, L3781、`orchagent/dash/dashenifwdorch.cpp` L404, L625, L649、`sonic-swss-common/common/schema.h` L95 (`APP_ACL_TABLE_TYPE_TABLE_NAME`) より。
+
+<!-- glossary-links-injected: 73c32348e9af -->

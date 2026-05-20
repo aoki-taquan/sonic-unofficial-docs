@@ -44,7 +44,7 @@ related:
 
 ## 2. 設計上の制約
 
-- **L3 VXLAN と L2 VXLAN は別トンネル** として作られる。同じ VTEP で両方使う場合は 2 つの VXLAN tunnel object が SAI に生成される[^1]
+- **L3 VXLAN と L2 VXLAN は別トンネル** として作られる。同じ [VTEP](../reference/glossary.md#term-vtep) で両方使う場合は 2 つの VXLAN tunnel object が SAI に生成される[^1]
 - VTEP の `src_ip` は実在 IF（通常 `Loopback0`）の IP であること
 - `VXLAN_TUNNEL.dst_ip` は P2P 用のオプション。P2MP では空のままにする
 - `VNET.peer_list` 経路複製は **同 VTEP 内** に閉じる（remote VTEP には複製されない）
@@ -79,4 +79,4 @@ HLD 初版が古いため、現行 master の実装と乖離している可能�
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 3c8f190a1c06 -->
+<!-- glossary-links-injected: 0726817b0ba1 -->

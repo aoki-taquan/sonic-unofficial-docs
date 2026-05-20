@@ -61,7 +61,7 @@ Static SID / Locator は `src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py` の `SRv6M
 - `AF_MPLS` の netlink route を受け取り、`RTA_NEWDST` から MPLS NH label stack、`LWTUNNEL_ENCAP_MPLS` から encap label を取り出して APP_DB に書きます。
 - APP_DB の `LABEL_ROUTE_TABLE` を [orchagent](../../reference/glossary.md#term-orchagent) 側が消費し、SAI `INSEG_ENTRY` を bulk で programming します。
 
-per-[RIF](../../reference/glossary.md#term-rif) の MPLS 有効化（`INTERFACE.<intf>.mpls = enable`）は `intfmgrd` / `IntfMgr` が SAI の RIF 属性として渡し、ASIC が MPLS フレームを受理するかどうかを切り替えます。
+per-[RIF](../../reference/glossary.md#term-rif) の MPLS 有効化（`INTERFACE.<intf>.mpls = enable`）は `intfmgrd` / `IntfMgr` が SAI の RIF 属性として渡し、[ASIC](../../reference/glossary.md#term-asic) が MPLS フレームを受理するかどうかを切り替えます。
 
 ## QoS との接続
 
@@ -98,7 +98,7 @@ flowchart LR
 | --- | --- | --- |
 | `Srv6Orch` (`orchagent/srv6orch.cpp`) | `Srv6Orch::doTask`、`createUpdateMysidEntry`、`createSrv6Vpn` | MY_SID_ENTRY、SID list、VPN encap mapper |
 | `MplsRouteOrch` (`orchagent/routeorch.cpp` 内) | label route 処理 | INSEG_ENTRY 作成、bulk programming |
-| `bgpcfgd::SRv6Mgr` | python | static SID/Locator を vtysh で FRR に投入 |
+| `bgpcfgd::SRv6Mgr` | python | static SID/Locator を [vtysh](../../reference/glossary.md#term-vtysh) で FRR に投入 |
 | `fpmsyncd::RouteSync` | C++ | AF_MPLS netlink を LABEL_ROUTE_TABLE に変換 |
 | `IntfMgr` | C++ | per-RIF MPLS 有効化 |
 | `QosOrch::handleMplsTcToTcTable` | C++ | MPLS TC ↔ internal TC map |
@@ -141,7 +141,7 @@ ASIC_DB:
 
 - SRv6 endpoint behavior の SAI mapping は **ベンダ実装で対応が分かれる**。特に `END_DT46` や `UDT*` は未実装の ASIC がある。
 - SID list は SAI で 1 オブジェクト化されるが、SID 数の上限が ASIC [TCAM](../../reference/glossary.md#term-tcam) サイズに律速される。HLD 上の数字より実機が低いケースが多い。
-- MPLS は SONiC core では機能的に古く、`fpmsyncd` の MPLS label 解析は **限定的な netlink encoding** にしか対応していない。L3VPN（VPNv4/VPNv6 over MPLS）の完全サポートは無く、SRv6 経由を推奨。
+- MPLS は [SONiC](../../reference/glossary.md#term-sonic) core では機能的に古く、`fpmsyncd` の MPLS label 解析は **限定的な netlink encoding** にしか対応していない。L3VPN（VPNv4/VPNv6 over MPLS）の完全サポートは無く、SRv6 経由を推奨。
 - per-port MPLS 有効化は RIF 属性で行うが、`SAI_ROUTER_INTERFACE_ATTR_ADMIN_MPLS_STATE` 未対応の ASIC では「kernel は受理するが ASIC が drop」する silent な動作になる。
 - Path Tracing Midpoint は data plane の OAM 拡張で、SONiC では `SAI_PORT_ATTR_PATH_TRACING_*` を介して port 単位設定。midpoint だけで end-to-end が完結するわけではない点に注意。
 - SRv6 VPN の prefix-agg-id は orchagent の内部最適化で、SAI 側では複数 prefix が同じ nexthop （= 同じ vpn_sid）を共有する形になる。`CRM` の prefix 数とは別の集計が必要。
@@ -156,4 +156,4 @@ ASIC_DB:
 - [MPLS HLD](../../routing/mpls-for-sonic-high-level-design-document.md)
 - [Path Tracing Midpoint](../../routing/path-tracing-midpoint.md)
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: d62d2c91ba87 -->

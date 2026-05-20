@@ -32,7 +32,7 @@ related:
 
 # アーキテクチャ
 
-観測経路は ASIC 側で値を作り、[syncd](../../reference/glossary.md#term-syncd) / [orchagent](../../reference/glossary.md#term-orchagent) / 各 daemon が [Redis](../../reference/glossary.md#term-redis) に書き、上から [SNMP](../../reference/glossary.md#term-snmp) / [gNMI](../../reference/glossary.md#term-gnmi) / CLI が読む、という上下構造です。この構造を 1 つの図でつなげると、どこを変えると何が止まるかが分かりやすくなります。
+観測経路は [ASIC](../../reference/glossary.md#term-asic) 側で値を作り、[syncd](../../reference/glossary.md#term-syncd) / [orchagent](../../reference/glossary.md#term-orchagent) / 各 daemon が [Redis](../../reference/glossary.md#term-redis) に書き、上から [SNMP](../../reference/glossary.md#term-snmp) / [gNMI](../../reference/glossary.md#term-gnmi) / CLI が読む、という上下構造です。この構造を 1 つの図でつなげると、どこを変えると何が止まるかが分かりやすくなります。
 
 ## Counter 収集の全体像
 
@@ -79,7 +79,7 @@ flowchart LR
 
 ## Telemetry Agent と SNMP Subagent
 
-gNMI telemetry は専用 container（`telemetry` / `gnmi`）が動き、Redis を購読して subscribe path に変換します。SNMP は `snmp` container 内の snmpd と SONiC subagent（`sonic_ax_impl`）が組で動き、IF-MIB / Entity MIB などを Redis の値から組み立てます。両者は独立プロセスで、共通点は「Redis 読み取りに依存する」ことです。Redis が遅れれば両方とも値が遅れます。
+gNMI telemetry は専用 container（`telemetry` / `gnmi`）が動き、Redis を購読して subscribe path に変換します。SNMP は `snmp` container 内の snmpd と [SONiC](../../reference/glossary.md#term-sonic) subagent（`sonic_ax_impl`）が組で動き、IF-MIB / Entity MIB などを Redis の値から組み立てます。両者は独立プロセスで、共通点は「Redis 読み取りに依存する」ことです。Redis が遅れれば両方とも値が遅れます。
 
 ## Logging と Event の経路
 
@@ -95,4 +95,4 @@ syslog は rsyslog が container と host を集約し、設定された `SYSLOG
 - [CONFIG_DB CRM](../../reference/config-db/crm.md)
 - [FLEX_COUNTER_TABLE](../../reference/config-db/flex-counter-table.md)
 
-<!-- glossary-links-injected: 8ee080235646 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

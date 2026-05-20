@@ -43,7 +43,7 @@ related:
 
 # 概念
 
-「edge / management サービス」は、ToR や management スイッチに乗っている付帯機能の集合で、SONiC では大きく 4 群に分けて読むと混乱しません。L3 forwarding 章で扱う routing そのものとは別の層であり、共通点は「container 単位で隔離された daemon が [CONFIG_DB](../../reference/glossary.md#term-config_db) を読んで OS パッケージや iptables を駆動する」点にあります。
+「edge / management サービス」は、ToR や management スイッチに乗っている付帯機能の集合で、[SONiC](../../reference/glossary.md#term-sonic) では大きく 4 群に分けて読むと混乱しません。L3 forwarding 章で扱う routing そのものとは別の層であり、共通点は「container 単位で隔離された daemon が [CONFIG_DB](../../reference/glossary.md#term-config_db) を読んで OS パッケージや iptables を駆動する」点にあります。
 
 ## 4 つの責務
 
@@ -54,7 +54,7 @@ related:
 
 ## NAT と routing の境界
 
-NAT は routing decision の後に動く data plane 機能ですが、NAT entry そのものは `NatOrch` 経由で SAI のオブジェクトとして ASIC にも乗ります。Linux 側の conntrack も走らせる二段構成で、CPU 経由のパケットは iptables、ASIC をハードウェアパスで通るフローは SAI NAT エントリで処理されます。route lookup と NAT lookup の関係は L3 forwarding 章ではなくこの章で扱います。
+NAT は routing decision の後に動く data plane 機能ですが、NAT entry そのものは `NatOrch` 経由で SAI のオブジェクトとして [ASIC](../../reference/glossary.md#term-asic) にも乗ります。Linux 側の conntrack も走らせる二段構成で、CPU 経由のパケットは iptables、ASIC をハードウェアパスで通るフローは SAI NAT エントリで処理されます。route lookup と NAT lookup の関係は L3 forwarding 章ではなくこの章で扱います。
 
 ## DHCP relay と DHCP server の境界
 
@@ -226,4 +226,4 @@ sequenceDiagram
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
 
-<!-- glossary-links-injected: a5e4127f0b55 -->
+<!-- glossary-links-injected: ec18b66e3507 -->
