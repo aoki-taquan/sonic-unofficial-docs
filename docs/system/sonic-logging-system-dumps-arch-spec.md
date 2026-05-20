@@ -24,9 +24,7 @@ related:
   - show ip
   - config syslog
   yang:
-  - sonic-logger
   - sonic-syslog
-  - sonic-auto_techsupport
   - sonic-system-defaults
 ---
 
