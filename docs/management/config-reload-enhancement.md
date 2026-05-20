@@ -32,7 +32,7 @@ related:
 
 <!-- topics-tip -->
 !!! tip "Topics で読み物として読む"
-    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md) を参照。
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
@@ -228,18 +228,6 @@ sudo config reload -y
 ### コマンド例: config reload 動作確認
 
 下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# config reload の実行ログとサービス再起動状況
-sudo config reload -y -f
-sudo journalctl -u config-setup -n 100 --no-pager
-show services
-```
-
-### コマンド例: config reload 動作確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash

@@ -12,7 +12,6 @@ related:
   config_db:
   - VOQ_INBAND_INTERFACE
   - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
   - DPU
   cli:
   - show queue counters --voq
