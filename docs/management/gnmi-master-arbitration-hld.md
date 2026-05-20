@@ -14,22 +14,10 @@ related:
   config_db:
   - TELEMETRY
   - GNMI
-  - CRM
-  - ACL_RULE
-  - ACL_TABLE
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  cli:
-  - show techsupport
-  - show platform
-  - show version
-  - show acl
-  - config acl
+  cli: []
   yang:
   - sonic-gnmi
   - sonic-telemetry
-  - sonic-system-defaults
-  - sonic-crm
 ---
 
 <!-- topics-tip -->
