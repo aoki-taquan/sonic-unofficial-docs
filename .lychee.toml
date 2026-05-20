@@ -1,0 +1,58 @@
+# lychee 設定。
+# https://github.com/lycheeverse/lychee
+#
+# 外部 URL のみ検証する（内部リンクは mkdocs --strict でカバー済み）。
+# rate-limit 配慮 + GitHub の anonymous rate に頼らないため
+# CI では GITHUB_TOKEN を渡す。
+
+# 並列度。github.com への大量同時 request を避けるため小さめ。
+max_concurrency = 8
+
+# 全体のタイムアウト (秒)
+timeout = 20
+
+# 同一 URL の retry 回数
+max_retries = 2
+retry_wait_time = 5
+
+# キャッシュは GitHub Actions 側で復元するためファイルベース。
+cache = true
+max_cache_age = "1d"
+
+# 200/204/206/301/302/303/307/308 を成功扱い。
+accept = ["200", "204", "206", "301", "302", "303", "307", "308"]
+
+# HEAD で 405/429 を返すサーバが多いので fallback で GET も試す。
+method = "get"
+
+# rate-limit 帯域内に収まるように。
+require_https = false
+
+# 検証対象外 URL パターン（ローカルテスト用 / 短縮 URL の API 制限 / placeholder）
+exclude = [
+    # localhost / 内部 IP
+    "^https?://localhost",
+    "^https?://127\\.0\\.0\\.1",
+    "^https?://10\\.",
+    "^https?://172\\.(1[6-9]|2[0-9]|3[01])\\.",
+    "^https?://192\\.168\\.",
+    # 例示 / RFC reserved domains
+    "^https?://(www\\.)?example\\.(com|org|net)",
+    # GitHub の rate-limit 重い API URL（lychee は HTML を fetch するので API URL は対象外でよい）
+    "^https://api\\.github\\.com",
+    # rfc-editor.org は厳しい rate limit を持つ。informational なので skip。
+    "^https?://(www\\.)?rfc-editor\\.org",
+    "^https?://datatracker\\.ietf\\.org",
+    # placeholder
+    "^<.*>$",
+    "^TBD",
+]
+
+# mailto: スキームは検証しない
+exclude_mail = true
+
+# fragment 検証は無効化（mkdocs 側でカバー、外部 fragment は不安定）
+include_fragments = false
+
+# pattern: ファイル拡張子
+include_verbatim = false

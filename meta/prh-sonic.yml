@@ -1,0 +1,91 @@
+# prh (proofreading helper) ルール。
+# SONiC エコシステム特有の表記揺れを統一する。
+#
+# 形式: https://github.com/prh/prh
+#   expected: 正規表記
+#   pattern:  検出パターン (正規表現 OR 文字列)
+#   prh:      適用理由のコメント
+
+version: 1
+
+rules:
+  # ─── 基本的な日本語表記揺れ ─────────────────────────────
+  - expected: サーバ
+    patterns: [サーバー]
+    prh: JIS 準拠の音引きなし表記に統一
+  - expected: メモリ
+    patterns: [メモリー]
+  - expected: コンピュータ
+    patterns: [コンピューター]
+  - expected: ユーザ
+    patterns: [ユーザー]
+  - expected: ドライバ
+    patterns: [ドライバー]
+  - expected: コンテナ
+    patterns: [コンテナー]
+  - expected: ヘッダ
+    patterns: [ヘッダー]
+    specs:
+      - from: HTTP ヘッダー
+        to: HTTP ヘッダ
+
+  # ─── SONiC 固有の表記統一 ──────────────────────────────
+  - expected: SONiC
+    patterns:
+      - /\bSonic\b/
+      - /\bsonic-(?:NOS|nos)\b/
+    prh: 公式表記は SONiC（S/N 大文字）
+  - expected: CONFIG_DB
+    patterns: [/\bconfig_db\b(?!\.json)/, /\bConfig_DB\b/]
+    prh: 紛れを避けるため大文字統一
+  - expected: APPL_DB
+    patterns: [/\bapp_db\b/i, /\bAppl_DB\b/]
+    prh: 正式名称 (snake_case ALL CAPS)
+  - expected: STATE_DB
+    patterns: [/\bstate_db\b/, /\bState_DB\b/]
+  - expected: COUNTERS_DB
+    patterns: [/\bcounters_db\b/, /\bCounters_DB\b/]
+  - expected: ASIC_DB
+    patterns: [/\basic_db\b/, /\bAsic_DB\b/]
+  - expected: orchagent
+    patterns: [/\bOrchagent\b/, /\borch_agent\b/]
+    prh: 実装上は小文字
+  - expected: syncd
+    patterns: [/\bSyncd\b/, /\bSync_d\b/]
+  - expected: swss
+    patterns: [/\bSWSS\b(?! Container)/]
+    prh: 略称は小文字（dir 名と一致）。略語見出しでの SWSS は OK
+
+  # ─── 一般的な誤り ─────────────────────────────────────
+  - expected: および
+    patterns: ["及び"]
+    prh: 公用文ルールに合わせ平仮名
+  - expected: または
+    patterns: ["又は"]
+  - expected: ない
+    patterns: ["無い"]
+    specs:
+      - from: 関係ない
+        to: 関係ない  # 単独 negative は対象外
+  - expected: できる
+    patterns: ["出来る"]
+  - expected: いう
+    patterns: ["云う", "言う"]
+    specs:
+      - from: "「foo」と言う"
+        to: "「foo」という"
+
+  # ─── 半角／全角 ────────────────────────────────────────
+  - expected: $1（$2）
+    pattern: !!js/regexp /([0-9A-Za-z]) ?\(([^)]{1,15})\) ?([あ-んア-ン一-龯])/
+    prh: 英数字と日本語の括弧は全角で挟む。ただし URL は除外（手動）
+
+  # ─── 互換性 / 接尾辞 ──────────────────────────────────
+  - expected: ファイル
+    patterns: ["フアイル"]
+  - expected: インターフェース
+    patterns:
+      - インタフェース
+    prh: 音引きあり統一（既存の SONiC ドキュメントの主流に合わせる）
+    options:
+      wordBoundary: true

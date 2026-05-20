@@ -68,6 +68,45 @@ jobs:
           files: docs meta README.md CONTRIBUTING.md
           config: .typos.toml
 
+  # 外部 URL リンク切れ検知 (lychee)。設定は .lychee.toml。
+  # 内部リンクは mkdocs --strict でカバー済みなので外部だけ走らせる。
+  # GitHub の rate-limit 緩和のため GITHUB_TOKEN を渡す。
+  # initial 段階では informational。orphan URL の整理が進んだら strict 化。
+  link-check:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore lychee cache
+        uses: actions/cache@v4
+        with:
+          path: .lycheecache
+          key: cache-lychee-${{ github.sha }}
+          restore-keys: cache-lychee-
+      - name: lychee external link check (informational)
+        uses: lycheeverse/lychee-action@v2
+        continue-on-error: true
+        with:
+          args: --cache --config .lychee.toml 'docs/**/*.md' 'README.md' 'CONTRIBUTING.md'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail: false
+
+  # textlint (日本語表記揺れ・技術文書スタイル)。設定は .textlintrc.json。
+  # prh ルールは meta/prh-sonic.yml で SONiC 固有用語を統一。
+  # 初期は informational。既存ドキュメントの揺れが落ち着いたら strict 化。
+  textlint:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm install --no-audit --no-fund
+      - name: textlint (informational)
+        continue-on-error: true
+        run: npx textlint 'docs/**/*.md' || true
+
   # frontmatter linter (strict) + 全 drift / 各種 informational check。
   # 元は job を細かく分けて並走させていたが、setup-python の起動オーバヘッド
   # の方が大きく、step は ~10 秒 / job 並走による並列効果は小さいため、
