@@ -53,7 +53,7 @@ flowchart TB
   SNMPS --> SNMP[snmpd]
 ```
 
-ASIC counter は syncd 側の flex counter group がまとめて polling し、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の `COUNTERS:` 名前空間に書きます。group ごとに有効化と polling interval を `FLEX_COUNTER_TABLE` で制御します。[CRM](../../reference/glossary.md#term-crm) は orchagent 内の `CrmOrch` が ASIC resource を読み、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の CRM 名前空間に書きます。Linux side の sensor / process / memory 統計は別 daemon が [APPL_DB](../../reference/glossary.md#term-appl_db) / STATE_DB に書き、上位は同じ telemetry / SNMP / CLI から見えます。
+ASIC counter は syncd 側の flex counter group がまとめて polling し、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の `COUNTERS:` 名前空間に書きます。group ごとに有効化と polling interval を `FLEX_COUNTER_TABLE` で制御します。[CRM](../../reference/glossary.md#term-crm) は orchagent 内の `CrmOrch` が ASIC resource を読み、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) の CRM 名前空間に書きます。Linux side の sensor / process / memory 統計は別 daemon が [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) に書き、上位は同じ telemetry / SNMP / CLI から見えます。
 
 ## FlexCounter Refactor の意味
 
@@ -94,4 +94,4 @@ syslog は rsyslog が container と host を集約し、設定された `SYSLOG
 - [CONFIG_DB CRM](../../reference/config-db/crm.md)
 - [FLEX_COUNTER_TABLE](../../reference/config-db/flex-counter-table.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 6981be1a469d -->
