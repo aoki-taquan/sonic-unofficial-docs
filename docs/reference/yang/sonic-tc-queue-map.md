@@ -14,7 +14,6 @@ related:
   cli: []
   yang:
   - sonic-dscp-tc-map
-  - sonic-tc-dscp-map
   - sonic-port-qos-map
   - sonic-pfc-priority-queue-map
 ---

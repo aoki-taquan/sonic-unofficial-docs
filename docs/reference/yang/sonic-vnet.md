@@ -34,8 +34,10 @@ flowchart LR
   Y["sonic-vnet"]
   C1[("CONFIG_DB<br/>VNET")]
   Y --> C1
-  D1["vrfmgrd"]
+  D1["vxlanmgrd"]
+  D1b["vrfmgrd"]
   C1 --> D1
+  C1 --> D1b
   C2[("CONFIG_DB<br/>VNET_ROUTE")]
   Y --> C2
   D2["VNetCfgRouteOrch"]
@@ -58,6 +60,8 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`VNET`](../config-db/vnet.md)
+- [`VNET_ROUTE`](../config-db/vnet-route.md)
+- [`VNET_ROUTE_TUNNEL`](../config-db/vnet-route.md)
 
 ### 関連 CLI
 
@@ -168,7 +172,7 @@ module: sonic-vnet
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`VNET`](../config-db/vnet.md) / [`VNET_ROUTE`](../config-db/vnet.md) / [`VNET_ROUTE_TUNNEL`](../config-db/vnet.md)
+- CONFIG_DB: [`VNET`](../config-db/vnet.md) / [`VNET_ROUTE`](../config-db/vnet-route.md) / [`VNET_ROUTE_TUNNEL`](../config-db/vnet-route.md)
 - CLI: [`config vnet`](../cli/config-vnet.md)
 
 <!-- ref-triangle:end -->

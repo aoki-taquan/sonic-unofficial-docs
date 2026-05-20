@@ -11,7 +11,7 @@ sources:
 related:
   config_db: [VLAN, VLAN_INTERFACE, VLAN_MEMBER]
   cli: ["config vlan"]
-  yang: [sonic-port, sonic-portchannel]
+  yang: [sonic-port, sonic-portchannel, sonic-interface, sonic-vrf, sonic-vnet]
 ---
 
 # sonic-vlan YANG

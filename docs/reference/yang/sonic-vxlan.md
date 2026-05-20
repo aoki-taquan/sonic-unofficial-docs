@@ -64,7 +64,7 @@ flowchart LR
 
 - [`config vxlan`](../cli/config-vxlan.md)
 
-### 関連 HLD
+### 関連 APPL_DB
 
 - [TUNNEL_DECAP_TABLE (APPL_DB)](../../reference/config-db/tunnel-decap-table.md)
 

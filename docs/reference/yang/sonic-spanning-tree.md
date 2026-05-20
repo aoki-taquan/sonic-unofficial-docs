@@ -10,7 +10,7 @@ sources:
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db: [STP, STP_VLAN, STP_VLAN_PORT, STP_PORT, STP_MST, STP_MST_INST, STP_MST_PORT]
-  cli: ["config spanning-tree", "show spanning-tree"]
+  cli: ["config spanning-tree", "show spanning_tree"]
   yang: [sonic-extension, sonic-vlan, sonic-port, sonic-portchannel]
 ---
 
@@ -179,7 +179,7 @@ module: sonic-spanning-tree
 ## 関連 CONFIG_DB / CLI
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `STP`, `STP_VLAN`, `STP_VLAN_PORT`, `STP_PORT`, `STP_MST`, `STP_MST_INST`, `STP_MST_PORT`
-- CLI: `config spanning-tree`, `show spanning-tree`
+- CLI: `config spanning-tree`, `show spanning_tree`
 
 <!-- yang-sibling -->
 ### 関連 YANG モジュール
@@ -198,7 +198,7 @@ module: sonic-spanning-tree
 ## 関連リファレンス
 
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `STP` / `STP_VLAN` / `STP_VLAN_PORT` / `STP_PORT` / `STP_MST` / `STP_MST_INST` / `STP_MST_PORT`
-- CLI: `config spanning-tree` / `show spanning-tree`
+- CLI: `config spanning-tree` / `show spanning_tree`
 
 <!-- ref-triangle:end -->
 

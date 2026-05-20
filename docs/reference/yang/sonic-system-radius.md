@@ -54,6 +54,7 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`RADIUS`](../config-db/radius.md)
+- [`RADIUS_SERVER`](../config-db/radius-server.md)
 
 ### 関連 HLD
 
@@ -145,7 +146,7 @@ module: sonic-system-radius
 
 ## 関連リファレンス
 
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`RADIUS`](../config-db/radius.md) / [`RADIUS_SERVER`](../config-db/radius.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`RADIUS`](../config-db/radius.md) / [`RADIUS_SERVER`](../config-db/radius-server.md)
 - CLI: `config radius`
 
 <!-- ref-triangle:end -->
