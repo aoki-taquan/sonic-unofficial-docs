@@ -148,8 +148,8 @@ related:
 - [APPL_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
 - [Multi-ASIC で namespace 間通信できない](../../reference/runbooks/multi-asic-namespace.md)
 - [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
-- [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
 - [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
+- [ARP / Neighbor エントリが古い IP-MAC を保持し続ける](../../reference/runbooks/arp-entry-stuck.md)
 
 <!-- /next-reads -->
 

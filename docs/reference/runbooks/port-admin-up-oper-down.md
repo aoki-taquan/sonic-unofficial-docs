@@ -16,7 +16,8 @@ sources:
     path: config/main.py
     ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
 related:
-  config_db: [PORT, PORT_TABLE]
+  config_db: [PORT]
+  state_db: [PORT_TABLE]
   cli: [show interface status, config interface startup, sfputil]
   yang: [sonic-port]
 ---

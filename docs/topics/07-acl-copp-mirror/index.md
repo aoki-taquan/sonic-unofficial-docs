@@ -65,13 +65,13 @@ related:
   - BGP_GLOBALS_AF_NETWORK
   - BGP_PEER_GROUP_AF
   yang:
+  - sonic-copp
+  - sonic-mirror-session
   - sonic-bgp-bbr
   - sonic-bgp-global
   - sonic-bgp-monitor
   - sonic-bgp-peergroup
   - sonic-bgp-peerrange
-  - sonic-copp
-  - sonic-bgp-aggregate-address
 ---
 
 # ACL / CoPP / Mirror / Packet Action
@@ -142,9 +142,9 @@ ACL は data plane の分類器、CoPP は control plane へ punt されるパ�
 
 - [APPL_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
 - [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
-- [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
 - [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)
 - [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
+- [BGP セッションが UP しない](../../reference/runbooks/bgp-session-down.md)
 
 <!-- /next-reads -->
 

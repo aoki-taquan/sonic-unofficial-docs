@@ -122,9 +122,9 @@ related:
 - [SWSS docker warm restart（state restore / consistency / sync up）](../../system/sonic-swss-docker-warm-restart.md)
 - [Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）](../../system/dataplane-telemetry-in-sonic.md)
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../../system/sonic-libsairedis-api-idempotence-support.md)
-- [Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）](../../architecture/sonic-trap-flow-counter-design.md)
 - [FRR 用 sysctl チューニングのデフォルト](../../system/useful-sysctl-settings.md)
 - [SONiC Disk I/O 削減（writer 分析と tmpfs 化）](../../system/analysis-of-disk-writers-in-sonic-devices.md)
+- [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)
 
 **関連トラブルシュート 5 件**
 
