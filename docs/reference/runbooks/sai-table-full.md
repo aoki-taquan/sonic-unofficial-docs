@@ -1,6 +1,6 @@
 ---
 title: SAI table full (route / nexthop / FDB 上限到達)
-description: "Runbook: SAI table full (route / nexthop / FDB 上限到達) — : sonic-net/sonic-swss @ 4305596 — orchagent/crmorch.cpp : sonic-net/sonic-sairedis @ 4305596 — syncd/Sy…"
+description: "Runbook: SAI table full (route / nexthop / FDB 上限到達) — : sonic-net/sonic-swss @ 4305596 — orchagent/crmorch.cpp : sonic-net/sonic-sairedis @ 88bc51a — syncd/Sy…"
 area: reference
 verification: code-verified
 last_verified: 2026-05-13
@@ -97,6 +97,6 @@ show mac | wc -l
 本ページの根拠は引用元 [^1][^2] を参照。
 
 [^1]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [orchagent](../../reference/glossary.md#term-orchagent)/crmorch.cpp
-[^2]: sonic-net/[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) @ 4305596 — [syncd](../../reference/glossary.md#term-syncd)/Syncd.cpp
+[^2]: sonic-net/[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) @ 88bc51a — [syncd](../../reference/glossary.md#term-syncd)/Syncd.cpp
 
 <!-- glossary-links-injected: 4d9f23481e68 -->

@@ -17,23 +17,11 @@ related:
   - LOGGER
   - BGP_NEIGHBOR
   - BGP_GLOBALS
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
   cli:
   - show techsupport
   - generate_dump
-  - config bgp
-  - show bgp
   yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-bgp-peergroup
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
-  - sonic-bgp-peerrange
-  - sonic-bgp-bbr
+  - sonic-logger
 ---
 
 # Runbook: show techsupport (generate_dump) のアーカイブが GB 級に肥大化
