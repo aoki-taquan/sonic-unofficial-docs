@@ -1297,7 +1297,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [APPL_DB ACL テーブル群](config-db/appl-acl.md) (251)
 - [ACL_TABLE テーブル](config-db/acl-table.md) (243)
 - [ACL_RULE テーブル](config-db/acl-rule.md) (226)
-- [ACL_TABLE_TYPE テーブル](config-db/acl-table-type.md) (168)
+- [ACL_TABLE_TYPE テーブル](config-db/acl-table-type.md) (169)
 - [ACL orchagent STATE_DB テーブル](config-db/aclorch-state.md) (161)
 
 ### [AQM](#term-aqm)

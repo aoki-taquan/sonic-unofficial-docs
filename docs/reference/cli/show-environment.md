@@ -79,7 +79,7 @@ flowchart LR
 - CLI: [show platform](show-platform.md) / [show system-health](show-system-health.md)
 - Topic: [プラットフォーム / ポート / 光モジュール](../../topics/14-platform-port-optics/index.md)
 
-CONFIG_DB / YANG への参照はなし (`sensors(1)` 経由で `/sys/class/hwmon` を読むのみ)。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) への参照はなし (`sensors(1)` 経由で `/sys/class/hwmon` を読むのみ)。
 
 <!-- ref-triangle:end -->
 
@@ -98,4 +98,4 @@ CONFIG_DB / YANG への参照はなし (`sensors(1)` 経由で `/sys/class/hwmon
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9dae6d74c08e -->
