@@ -192,7 +192,7 @@ sudo config snmp location add "Tokyo DC1 Rack-A12"
 sudo config snmp contact add netops netops@example.com
 
 # SNMPv3 user 追加
-sudo config snmp user add snmpadmin priv RW AES MD5 authpass privpass
+sudo config snmp user add snmpadmin priv RW MD5 authpass AES privpass
 ```
 
 ### 期待される出力 (抜粋)

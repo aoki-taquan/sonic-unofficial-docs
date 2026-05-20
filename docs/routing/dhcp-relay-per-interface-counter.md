@@ -200,9 +200,10 @@ sonic-clear dhcp_relay ipv6 counters [--dir TX|RX] [--type <type>] [<vlan>]
 DHCP relay の interface 別カウンタを確認する。
 
 ```bash
-show dhcp_relay ipv4 counters
+show dhcp_relay ipv4 counter
 show dhcp_relay ipv6 counters
-redis-cli -n 6 keys 'DHCP_COUNTER_TABLE|*'
+redis-cli -n 6 keys 'DHCPV4_COUNTER_TABLE|*'
+redis-cli -n 6 keys 'DHCPV6_COUNTER_TABLE|*'
 ```
 
 ## 引用元

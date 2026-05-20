@@ -48,7 +48,7 @@ flowchart TD
   SAI -->|create port, set attrs| ASIC[ASIC / PHY]
   ASIC -->|notification| SAI
   SAI -->|STATE_DB| OA
-  OA -->|oper_status| APP[APP_DB]
+  OA -->|oper_status| ST[STATE_DB]
 ```
 
 `port_config.ini` と `hwsku.json` で決まる初期プロファイルは [port profile init HLD](../../architecture/port-profile-init-hld.md) で詳細化されています。設定が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `PORT` に入ると、`PortMgr` と `portsyncd` を経由して [orchagent](../../reference/glossary.md#term-orchagent) の `PortsOrch` に到達し、[SAI](../../reference/glossary.md#term-sai) 経由で [ASIC](../../reference/glossary.md#term-asic) に書かれます。

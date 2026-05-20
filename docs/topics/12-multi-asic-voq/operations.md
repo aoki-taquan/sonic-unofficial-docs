@@ -111,7 +111,7 @@ Neighbor        V    AS  MsgRcvd  MsgSent  Up/Down   State/PfxRcd
 ### VOQ counter の確認コマンド
 
 ```bash
-admin@sup0:~$ show queue counters system_port LINE-CARD1|asic0|Ethernet0
+admin@sup0:~$ show queue counters --voq 'LINE-CARD1|asic0|Ethernet0'
 For system port LINE-CARD1|asic0|Ethernet0:
    Queue    Counter/pkts    Counter/bytes    Drop/pkts    Drop/bytes
 --------  --------------  ---------------  -----------  ------------
@@ -120,7 +120,7 @@ For system port LINE-CARD1|asic0|Ethernet0:
    ...
    UC7             18,402         945,000         1,230        62,000
 
-admin@sup0:~$ show queue watermark system_port LINE-CARD1|asic0|Ethernet0
+admin@sup0:~$ show queue watermark --voq 'LINE-CARD1|asic0|Ethernet0'
    Queue    Current (bytes)    Peak (bytes)
 --------  -----------------  --------------
    UC0              0             1,572,864

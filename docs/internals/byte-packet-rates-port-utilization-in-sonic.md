@@ -36,7 +36,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
-    `sonic-swss/orchagent/portsorch.h` L30 (`PORT_RATE_COUNTER_FLEX_COUNTER_GROUP`) と `intfsorch.h` L20 (`RIF_RATE_COUNTER_FLEX_COUNTER_GROUP`)、Lua プラグイン `port_rates.lua` / `rif_rates.lua` / `trap_rates.lua` / `tunnel_rates.lua`（`Makefile.am` L20-32）、`flexcounterorch.cpp` L73/L83 で `PORT_RATES` / `RIF_RATES` の counterpoll キー登録を確認。`sonic-utilities/config/main.py` L9586 `smoothing_interval` CLI が `RATES:PORT` / `RATES:RIF` / `RATES:TRAP` を `COUNTERS_DB` に書き込み、`alpha = 2/(N+1)` で EMA 係数を計算 (verified at: 2026-05-09)。
+    `sonic-swss/orchagent/portsorch.h` L30 (`PORT_RATE_COUNTER_FLEX_COUNTER_GROUP`) と `intfsorch.h` L20 (`RIF_RATE_COUNTER_FLEX_COUNTER_GROUP`)、Lua プラグイン `port_rates.lua` / `rif_rates.lua` / `trap_rates.lua` / `tunnel_rates.lua`（`Makefile.am` L20-32）、`flexcounterorch.cpp` L73/L83 で `PORT_RATES` / `RIF_RATES` の counterpoll キー登録を確認。`sonic-utilities/config/main.py` L9586 `smoothing_interval` CLI が `RATES:PORT` / `RATES:RIF` / `RATES:TRAP` を `CONFIG_DB` に書き込み、`alpha = 2/(N+1)` で EMA 係数を計算（書き込み先は本文の mermaid 図 L63–64 と CONFIG_DB スキーマ表 L163–171 と整合） (verified at: 2026-05-09)。
 
 # バイト/パケットレートとポート使用率（RATES テーブル + EMA）
 

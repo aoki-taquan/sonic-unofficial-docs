@@ -291,7 +291,7 @@ sudo journalctl -u swss --since '-1d' | grep -iE 'restart|exit'
 !!! tip "読み手向け"
     - **本機能を実運用で使う場合**: 実装は存在するが本 HLD の記述と乖離。最新 master の動作を別途確認した上で適用する
     - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
-    - **代替手段 / 関連 reference**: 本ページの frontmatter `related` が空のため、[Reference 索引](../reference/index.md) から関連テーブル / CLI / YANG を辿る
+    - **代替手段 / 関連 reference**: frontmatter `related:` セクションを参照（CRM / ACL_RULE / ACL_TABLE / BGP_NEIGHBOR / BGP_GLOBALS 等、関連 CLI / YANG も含む）。さらに広く辿るには [Reference 索引](../reference/index.md) を参照
 
 !!! note "本ドキュメントの追跡"
     - monitor: `evolved_beyond_hld` / last_verified: `2026-05-11`

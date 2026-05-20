@@ -169,7 +169,7 @@ module: sonic-vnet
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`VNET`](../config-db/vnet.md) / [`VNET_ROUTE`](../config-db/vnet.md) / [`VNET_ROUTE_TUNNEL`](../config-db/vnet.md)
+- CONFIG_DB: [`VNET`](../config-db/vnet.md) / [`VNET_ROUTE`](../config-db/vnet-route.md) / [`VNET_ROUTE_TUNNEL`](../config-db/vnet-route.md)
 - CLI: [`config vnet`](../cli/config-vnet.md)
 
 <!-- ref-triangle:end -->
