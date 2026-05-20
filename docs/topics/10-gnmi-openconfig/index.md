@@ -97,12 +97,12 @@ related:
 **関連する HLD 7 件**
 
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）](../../management/sonic-nos-configuration-methods.md)
-- [gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ）](../../management/gnsi-hld-operations.md)
 - [YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）](../../management/sonic-config-update-validation-via-yang.md)
 - [OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）](../../management/openconfig-support-for-ethernet-interfaces.md)
 - [Redis Client Manager（RCM: connection pool / transactional client）](../../management/redis-client-manager-rcm-hld.md)
-- [シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）](../../management/serial-console-global-config-hld.md)
 - [SONiC gNMI Server インタフェース設計（CONFIG_DB / SONiC YANG / Generic Config Updater 連携）](../../management/sonic-gnmi-server-interface-design.md)
+- [gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）](../../management/gnmi-usage.md)
+- [gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）](../../management/gnoi-hld-for-healthz-api.md)
 
 **関連トラブルシュート 5 件**
 

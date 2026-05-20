@@ -42,7 +42,7 @@ related:
 | `login_timeout` | ログイン未完了 timeout | 1..600 (秒) | 120 |
 | `ports` | sshd 待受ポート（複数指定可、カンマ区切り） | 1..65536 | 22 |
 | `inactivity_timeout` | アイドルセッションの自動切断 | 0..35000 (分、0 = 無効) | 15 |
-| `max_syslogins` | システム全体の並列ログイン上限 | 0..100 (0 = 無制限) | 0 |
+| `max_sessions` | システム全体の並列ログイン上限 | 0..100 (0 = 無制限) | 0 |
 
 各ポリシーの既定は Debian の sshd デフォルトをそのまま継承している。`inactivity_timeout` だけは Linux 全般での既存設定を踏襲して 15 分を採用している。
 
@@ -70,9 +70,9 @@ flowchart LR
 | `login_timeout` | `LoginGraceTime` | ログイン猶予時間（秒）|
 | `ports` | `Port` （複数行可） | 待受ポート |
 | `inactivity_timeout` | [hostcfgd](../reference/glossary.md#term-hostcfgd) の **既存 inactivity フロー** で `TMOUT` 系を更新 | シェルレベル idle |
-| `max_syslogins` | `limits.conf.j2` 経由で `/etc/security/limits.conf` の `* - maxsyslogins <N>` | PAM レベルの全ユーザ並列ログイン上限 |
+| `max_sessions` | `limits.conf.j2` 経由で `/etc/security/limits.conf` の `* - maxsyslogins <N>` | PAM レベルの全ユーザ並列ログイン上限 |
 
-`max_syslogins` は jinja2 テンプレートで条件分岐される[^1]:
+`max_sessions` は jinja2 テンプレートで条件分岐される（CONFIG_DB のフィールド名は `max_sessions`、PAM 側ディレクティブ名は `maxsyslogins`）[^1]:
 
 ```jinja
 {% if max_sessions -%}
@@ -95,7 +95,7 @@ sequenceDiagram
     participant HC as hostcfgd
     participant FS as sshd_config / limits.conf
     participant SVC as ssh service
-    U->>CFG: SSH_SERVER|POLICIES = {ports:"22,2222", max_syslogins:"5", ...}
+    U->>CFG: SSH_SERVER|POLICIES = {ports:"22,2222", max_sessions:"5", ...}
     CFG-->>HC: notify
     HC->>FS: update /etc/ssh/sshd_config (Port, MaxAuthTries, LoginGraceTime)
     HC->>FS: render /etc/security/limits.conf (maxsyslogins)
@@ -148,7 +148,7 @@ reasoning: 設定 → sshd_config 更新 → service 再起動 という反映�
 | | | `login_timeout` | 1..600 秒（既定 120）|
 | | | `ports` | 文字列。`"22"` または `"22,2222"` 等 |
 | | | `inactivity_timeout` | 0..35000 分（既定 15、0=無効）|
-| | | `max_syslogins` | 0..100（既定 0=無制限）|
+| | | `max_sessions` | 0..100（既定 0=無制限）|
 
 JSON サンプル[^1]:
 
@@ -160,7 +160,7 @@ JSON サンプル[^1]:
             "login_timeout": "120",
             "ports": "22",
             "inactivity_timeout": "15",
-            "max_syslogins": "0"
+            "max_sessions": "0"
         }
     }
 }
@@ -180,7 +180,7 @@ container POLICIES {
     leaf login_timeout         { type uint32 { range 1..600; }    default 120; }
     leaf ports                 { type string { pattern '([1-9]|[1-9]\d{1,3}|...|6553[0-6])(,...)*' ; }  default "22"; }
     leaf inactivity_timeout    { type uint32 { range 0..35000; }  default 15; }
-    leaf max_syslogins         { type uint32 { range 0..100; }    default 0; }
+    leaf max_sessions          { type uint32 { range 0..100; }    default 0; }
 }
 ```
 
@@ -189,7 +189,7 @@ container POLICIES {
 ```bash
 # 待受ポートを 22 と 2222 の両方にし、最大同時ログインを 5 に制限
 redis-cli -n 4 hset 'SSH_SERVER|POLICIES' ports "22,2222"
-redis-cli -n 4 hset 'SSH_SERVER|POLICIES' max_syslogins 5
+redis-cli -n 4 hset 'SSH_SERVER|POLICIES' max_sessions 5
 
 config save
 ```
@@ -199,7 +199,7 @@ config save
 ## 干渉する機能
 
 - **シリアルコンソール HLD (`SERIAL_CONSOLE.POLICIES`)**: `inactivity_timeout` は同じシェルレベル `TMOUT` フローを共有している。シリアル側 / SSH 側のどちらかで設定すると同じ値が両方に効く可能性。HLD では「既存の inactivity flow を使う」と明記されているため共有設計である[^1]。
-- **PAM `limits.conf`**: `max_syslogins` は SSH 限定ではなく `* - maxsyslogins` として **全ユーザ全セッション** に適用される。シリアルログインも対象になる点に注意。
+- **PAM `limits.conf`**: `max_sessions` は SSH 限定ではなく `* - maxsyslogins`（PAM ディレクティブ）として展開され、**全ユーザ全セッション** に適用される。シリアルログインも対象になる点に注意。
 - **`ports` 変更**: 自分が SSH で繋いでいるセッションが切れる可能性がある。事前にコンソール経路を確保したうえで変更する。
 - **fail2ban / 外部認可**: `authentication_retries` を上げすぎると brute-force 試行を検知しにくくなる。
 
