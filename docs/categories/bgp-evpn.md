@@ -34,7 +34,7 @@ EVPN-VXLAN は [FRR](../reference/glossary.md#term-frr) の `bgpd` + `zebra` + E
 - [BGP Loading Optimization（fpmsyncd flush / orchagent ring buffer / async sairedis）](../routing/bgp-loading-optimization-for-sonic.md) (area: `routing`, verification: `code-verified`)
 - [BGP PIC（Prefix Independent Convergence / NHG 階層）](../routing/bgp-prefix-independent-convergence-architecture-document.md) (area: `routing`, verification: `code-verified`)
 - [BBR 連動の BGP ルート集約（BGP_AGGREGATE_ADDRESS）](../routing/bgp-route-aggregation-with-bbr-awareness.md) (area: `routing`, verification: `code-verified`)
-- [BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）](../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md) (area: `routing`, verification: `hld-only`)
+- [BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）](../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md) (area: `routing`, verification: `code-verified`)
 - [BGP Route Install Error Handling（ERROR_ROUTE_TABLE / FIB-install pending）](../routing/bgp-route-install-error-handling.md) (area: `routing`, verification: `discrepancy-found`)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (area: `routing`, verification: `discrepancy-found`)
 - [VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）](../routing/bgp-setup-for-voq-chassis.md) (area: `routing`, verification: `code-verified`)
@@ -44,7 +44,7 @@ EVPN-VXLAN は [FRR](../reference/glossary.md#term-frr) の `bgpd` + `zebra` + E
 - [Overlay ECMP with BFD monitoring（VxLAN VNet ルートと BFD 連動）](../routing/overlay-ecmp-with-bfd-monitoring.md) (area: `routing`, verification: `code-verified`)
 - [Weighted ECMP（WCMP / BGP link-bandwidth ext community）](../routing/sonic-weighted-ecmp.md) (area: `routing`, verification: `code-verified`)
 - [ECMP inner packet hashing テストプラン（PBH 経由の VxLAN/NVGRE 内側 5-tuple ハッシュ）](../routing/test-plan-for-inner-packet-hashing-in-ecmp.md) (area: `routing`, verification: `code-verified`)
-- [VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）](../routing/vrf-feature-ansible-test-plan-omit-in-toc.md) (area: `routing`, verification: `hld-only`)
+- [VRF Ansible テストプラン（T0 上で BGP/ACL/loopback/warm-reboot 含む E2E 検証）](../routing/vrf-feature-ansible-test-plan-omit-in-toc.md) (area: `routing`, verification: `code-verified`)
 
 ### overlay（VXLAN / VNET）
 
@@ -53,7 +53,7 @@ EVPN-VXLAN は [FRR](../reference/glossary.md#term-frr) の `bgpd` + `zebra` + E
 
 ### architecture
 
-- [Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）](../architecture/sonic-policy-based-hashing.md) (area: `architecture`, verification: `hld-only`)
+- [Policy Based Hashing（PBH: NVGRE / VxLAN inner 5-tuple）](../architecture/sonic-policy-based-hashing.md) (area: `architecture`, verification: `code-verified`)
 
 ### reference - CLI
 
@@ -102,7 +102,6 @@ EVPN-VXLAN は [FRR](../reference/glossary.md#term-frr) の `bgpd` + `zebra` + E
 
 ## verification ステータス注意点
 
-- **hld-only**: `sonic-policy-based-hashing.md`, `bgp-suppress-announcements-of-routes-not-installed-in-hw.md`, `vrf-feature-ansible-test-plan-omit-in-toc.md`
 - **discrepancy-found**: `bfd-hw-offload-for-bgp-session.md`, `bgp-route-install-error-handling.md`, `evpn-vxlan-hld.md`, `evpn-vxlan-multihoming.md` — 各ページ末尾に差分メモあり
 
 ## 関連カテゴリ

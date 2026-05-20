@@ -77,7 +77,7 @@ JSON 形式は正しいが意味的に誤った値（不明な condition / actio
   "policies": [
     {
       "name": "any PSU absence",
-      "conditions": [{"type": "fan.any.absence"}],
+      "conditions": [{"type": "psu.any.absence"}],
       "actions": [
         {"type": "thermal_control.control", "status": "false"},
         {"type": "fan.all.set_speed", "speed": "100"}
@@ -170,7 +170,7 @@ reasoning: PSU absent → FAN 100% / algorithm disable の根拠。
 ```bash
 # Thermal / cooling
 show platform temperature
-show platform fan
+show platform fanstatus
 redis-cli -n 6 keys 'TEMPERATURE_INFO|*'
 redis-cli -n 6 keys 'FAN_INFO|*'
 ```

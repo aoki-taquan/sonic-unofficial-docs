@@ -1,6 +1,6 @@
 ---
 title: gNSI 内部実装（Certz / Authz / Pathz / Credentialz handler と host service）
-description: gNSI 各サービスの内部実装。Certz の Profile / CSR、Authz / Pathz のポリシー適用経路、Credentialz の console_mgmt / ssh_mgmt host service モジュールの責務を整理する。
+description: gNSI 各サービスの内部実装。Certz の Profile / CSR、Authz / Pathz のポリシー適用経路、Credentialz の gnsi_console / ssh_mgmt host service モジュールの責務を整理する。
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
@@ -27,7 +27,7 @@ related:
 このページは [gNSI（概要ハブ）](gnsi-hld.md) の派生で、**4 サービスの内部実装と host service** に絞る。概念は [gnsi-hld-concepts.md](gnsi-hld-concepts.md)、設定 / 運用は [gnsi-hld-operations.md](gnsi-hld-operations.md)、制限と [HLD](../reference/glossary.md#term-hld) 乖離は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
 
 !!! note "実装状況の境界（partially implemented）"
-    以下の内部実装記述のうち、**Certz の handler は `sonic-gnmi` に実装済** で master 上で動作する。一方 **Authz / Pathz handler および Credentialz の `console_mgmt` / `ssh_mgmt` host service は未実装** で、HLD 提案段階のまま対応 PR が未取り込み。具体的な PR 一覧と未対応 RPC は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
+    以下の内部実装記述のうち、**Certz / Authz / Pathz の handler は `sonic-gnmi` に実装済**（`gnmi_server/gnsi_certz.go` / `gnsi_authz.go` / `gnsi_pathz.go`）で master 上で動作する。一方 **Credentialz の gNMI server handler のみ未配線** で、HLD 提案段階のまま対応 PR が未取り込み。具体的な PR 一覧と未対応 RPC は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
 
 ## 1. Certz
 
@@ -72,12 +72,12 @@ gRPC アクセスのポリシーベース認可。policy は **JSON 文字列**�
 
 コンソールユーザと SSH の鍵・パスワード管理。host service モジュール経由で `/etc/passwd` / `/etc/shadow` / `/etc/sshd/...` 等を直接書き換える[^1]。
 
-### Console (`console_mgmt` host service module)
+### Console (`gnsi_console` host service module)
 
 ```mermaid
 sequenceDiagram
     participant FE as gNSI Credentialz FE
-    participant HS as console_mgmt
+    participant HS as gnsi_console
     FE->>HS: create_checkpoint
     HS->>HS: cp /etc/passwd /etc/shadow → backup
     FE->>HS: set (JSON: ConsolePasswords[])
@@ -100,7 +100,7 @@ sequenceDiagram
 
 ### SSH (`ssh_mgmt` host service module)
 
-`console_mgmt` と同じ checkpoint / set / restore / delete 構造。バックアップ対象ファイルが SSH 系全般（`sshd_config`、host key、各 home の `authorized_keys` / `authorized_users`、CA 公開鍵）に拡大される[^1]。
+`gnsi_console` と同じ checkpoint / set / restore / delete 構造。バックアップ対象ファイルが SSH 系全般（`sshd_config`、host key、各 home の `authorized_keys` / `authorized_users`、CA 公開鍵）に拡大される[^1]。
 
 `set` のリクエスト種別[^1]:
 
