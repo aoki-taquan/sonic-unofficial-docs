@@ -34010,7 +34010,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -35377,7 +35377,7 @@
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>show dash eni &lt;eni&gt;</code> で <code>oper_status=down</code> または <code>admin_state=down</code></li>
-<li><code>DASH_ENI_TABLE:STATE_DB</code> の counter が更新されない</li>
+<li><a href="../../glossary/#term-state_db">STATE_DB</a> の <code>DASH_ENI_TABLE</code> の counter が更新されない</li>
 <li>VM → <a href="../../glossary/#term-dpu">DPU</a> → outside の <a href="../../glossary/#term-vnet">VNET</a> 通信が無応答</li>
 </ul>
 <h2 id="_2">想定原因（優先度順）<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
@@ -35399,7 +35399,7 @@
     D -- Yes --&gt; E[DPU データプレーン / SAI DASH counter 確認]</code></pre>
 <h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-config_db-appl_db">1. CONFIG_DB / APPL_DB<a class="headerlink" href="#1-config_db-appl_db" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;DASH_ENI_TABLE|&lt;eni&gt;&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;DASH_ENI_TABLE|&lt;eni&gt;&quot;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;DASH_ENI_TABLE:*&quot;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;DASH_ENI_TABLE|&lt;eni&gt;&quot;</span>
 </span></code></pre></div>
@@ -35443,7 +35443,7 @@
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 6981be1a469d -->
 
 <div class="footnote">
 <hr />

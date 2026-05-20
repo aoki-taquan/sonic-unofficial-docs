@@ -34439,7 +34439,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -36352,7 +36352,7 @@
 <td><code>SAI_ACL_TABLE_ATTR_FIELD_ETHER_TYPE</code></td>
 </tr>
 <tr>
-<td><code>OUTER_VLAN_ID</code></td>
+<td><code>VLAN_ID</code></td>
 <td><code>SAI_ACL_TABLE_ATTR_FIELD_OUTER_VLAN_ID</code></td>
 </tr>
 <tr>
@@ -36395,22 +36395,18 @@
 <td><code>MIRROR_EGRESS_ACTION</code></td>
 <td>Egress mirror</td>
 </tr>
-<tr>
-<td><code>QOS_DSCP_ACTION</code></td>
-<td><a href="../../glossary/#term-dscp">DSCP</a> 書き換え</td>
-</tr>
-<tr>
-<td><code>COUNTER</code></td>
-<td>ヒットカウンタ (<code>SAI_ACL_ENTRY_ATTR_ACTION_COUNTER</code>)</td>
-</tr>
 </tbody>
 </table>
+<div class="admonition warning">
+<p class="admonition-title">ACTIONS の有効値</p>
+<p><code>ACTION_COUNTER</code> (<code>"COUNTER"</code>)、<code>ACTION_META_DATA</code> (<code>"META_DATA_ACTION"</code>)、<code>ACTION_DSCP</code> (<code>"DSCP_ACTION"</code>) は orchagent の lookup には含まれず、<code>ACL_TABLE_TYPE.ACTIONS</code> の有効値ではない (Phase E 参照)。CONFIG_DB に書いても erase される。</p>
+</div>
 <hr />
 <h2 id="_4">書き込み例<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># CLI 経由（config acl table は ACL_TABLE を書く; ACL_TABLE_TYPE は直接 CONFIG_DB へ）</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hmset<span class="w"> </span><span class="s1">&#39;ACL_TABLE_TYPE|MY_CUSTOM_TYPE&#39;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>MATCHES<span class="w"> </span><span class="s1">&#39;SRC_IP,DST_IP,L4_SRC_PORT,L4_DST_PORT,IP_PROTOCOL&#39;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span>ACTIONS<span class="w"> </span><span class="s1">&#39;PACKET_ACTION,COUNTER&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span>ACTIONS<span class="w"> </span><span class="s1">&#39;PACKET_ACTION&#39;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span>BIND_POINTS<span class="w"> </span><span class="s1">&#39;PORT,PORTCHANNEL&#39;</span>
 </span></code></pre></div>
 <hr />
@@ -37377,7 +37373,7 @@ CONFIG_DB / <a href="../../glossary/#term-appl_db">APPL_DB</a> の他テーブ�
 <li>YANG: <code>sonic-acl</code> (<code>sonic-acl.yang.j2</code> — <code>ACL_TABLE_TYPE</code> コンテナ)</li>
 </ul>
 <h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
-<!-- glossary-links-injected: 73c32348e9af -->
+<!-- glossary-links-injected: 994156b26b07 -->
 
 <div class="footnote">
 <hr />
@@ -37387,6 +37383,9 @@ CONFIG_DB / <a href="../../glossary/#term-appl_db">APPL_DB</a> の他テーブ�
 </li>
 <li id="fn:2">
 <p>副作用の調査は <code>sonic-swss/orchagent/aclorch.cpp</code> (sha <code>43055961</code>) <code>doAclTableTypeTask()</code> L5738-5774、<code>addAclTableType()</code> L4912-4930、<code>removeAclTableType()</code> L4932-4948、<code>doAclTableTask()</code> L5432 (<code>getAclTableType()</code> による retry 制御) より。STATE_DB テーブル名は <code>sonic-swss-common/common/schema.h</code> L418/514/515 より。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>通信メカニズムの調査は <code>sonic-swss/orchagent/aclorch.cpp</code> (sha <code>43055961</code>) L4197-4299 (AclOrch ctor、doTask)、<code>orchagent/orchdaemon.cpp</code> L408-422, L533-534 (TableConnector 構築)、<code>orchagent/orch.cpp</code> L1186-1196 (addConsumer DB 種別分岐)、<code>orchagent/vnetorch.cpp</code> L3738, L3781、<code>orchagent/dash/dashenifwdorch.cpp</code> L404, L625, L649、<code>sonic-swss-common/common/schema.h</code> L95 (<code>APP_ACL_TABLE_TYPE_TABLE_NAME</code>) より。&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

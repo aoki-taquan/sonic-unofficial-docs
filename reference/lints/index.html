@@ -33903,7 +33903,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -35245,8 +35245,13 @@ PR ごとに GitHub Actions (<code>.github/workflows/ci.yml</code>) で実行さ
 <td>informational</td>
 </tr>
 <tr>
-<td><code>check_link_density.py</code></td>
-<td>本文字数あたりリンク数 (density) が極端に低い / 高いページ、および <code>split-child</code> のナビゲーション健全性を report</td>
+<td><code>check_link_density.py</code> (<code>--strict-split-child</code>)</td>
+<td><code>split-child</code> のナビゲーション整合性検証 (CI で strict 実行)</td>
+<td><strong>strict</strong></td>
+</tr>
+<tr>
+<td><code>check_link_density.py</code> (density report)</td>
+<td>本文字数あたりリンク数 (density) が極端に低い / 高いページの report</td>
 <td>informational</td>
 </tr>
 <tr>

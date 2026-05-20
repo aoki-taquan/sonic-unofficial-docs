@@ -34405,7 +34405,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -36273,7 +36273,7 @@
 </span></code></pre></div>
 <p><strong>影響</strong>: 起動直後（<a href="../../glossary/#term-syncd">syncd</a> 未完了）に CONFIG_DB へ <code>VLAN</code> SET を書いても、STATE_DB <code>VLAN_TABLE</code> は MAC 確定まで空のまま。downstream consumers は ready を検出できず全て自動リトライ待機に入る。</p>
 <h3 id="downstream-consumers">下流依存: downstream consumers の処理開始条件<a class="headerlink" href="#downstream-consumers" title="Permanent link">&para;</a></h3>
-<p>以下の consumers は <code>isVlanStateOk()</code> で STATE_DB にエントリが存在するかを確認し、存在しない場合は処理をスキップして自動リトライ待機する:</p>
+<p>以下の consumers は <code>isVlanStateOk()</code> または同等の関数（<code>intfmgrd</code> は <code>isIntfStateOk()</code>）で STATE_DB にエントリが存在するかを確認し、存在しない場合は処理をスキップして自動リトライ待機する:</p>
 <table>
 <thead>
 <tr>

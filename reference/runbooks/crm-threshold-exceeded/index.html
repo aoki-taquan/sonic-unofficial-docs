@@ -34010,7 +34010,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -35412,8 +35412,8 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>ipv4<span class="w"> </span>route
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>ipv4<span class="w"> </span>nexthop
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>fdb
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>acl-group
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>acl-table
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>acl<span class="w"> </span>group
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>acl<span class="w"> </span>table
 </span></code></pre></div>
 <h3 id="3-counters_db-asic_db">3. COUNTERS_DB / ASIC_DB 突合<a class="headerlink" href="#3-counters_db-asic_db" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>COUNTERS_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;CRM:STATS&quot;</span>

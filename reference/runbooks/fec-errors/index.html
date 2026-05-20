@@ -33999,7 +33999,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -35356,7 +35356,7 @@
 <ul>
 <li><code>show interfaces counters errors</code> で <code>RX_ERR</code> / <code>SYMBOL_ERR</code> が継続的に増加</li>
 <li>リンク自体は UP するが、BER が高く上位プロトコル（<a href="../../glossary/#term-bgp">BGP</a> / <a href="../../glossary/#term-lacp">LACP</a>）が flap</li>
-<li><code>show interfaces fec stats</code> で <code>FEC_PRE / FEC_POST</code> のカウンタが急増</li>
+<li><code>show interfaces counters fec-stats</code> で FEC corrected/uncorrected カウンタが急増</li>
 </ul>
 <h2 id="_2">想定原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ol>

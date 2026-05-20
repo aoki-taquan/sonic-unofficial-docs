@@ -33814,7 +33814,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -35414,7 +35414,7 @@
 <ul>
 <li>speed mismatch: <code>config interface speed Ethernet0 &lt;speed&gt;</code> で揃える</li>
 <li>LACP mode 不一致: 対向と協調し <code>mode active</code> で揃える</li>
-<li><code>min_links</code> の見直し: <code>config portchannel &lt;name&gt; --min-links &lt;N&gt;</code></li>
+<li><code>min_links</code> の見直し: 既存 <a href="../../glossary/#term-portchannel">PortChannel</a> への直接更新コマンドは存在しないため、(1) <code>config portchannel member del &lt;name&gt; &lt;member&gt;</code> で全メンバー解除 → (2) <code>config portchannel del &lt;name&gt;</code> で削除 → (3) <code>config portchannel add &lt;name&gt; --min-links &lt;N&gt;</code> で再作成、の手順で変更する</li>
 <li><a href="../../glossary/#term-teamd-teamsyncd-teammgrd">teamd</a> crash: <code>sudo systemctl restart teamd@PortChannel0001</code></li>
 </ul>
 <h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
@@ -35425,7 +35425,7 @@
 </ul>
 <h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: 50d40ad47ab6 -->
+<!-- glossary-links-injected: 774b9119d65a -->
 
 <div class="footnote">
 <hr />

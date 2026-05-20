@@ -33812,7 +33812,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -35029,12 +35029,12 @@
   <a href="#coverage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        カバー率 (機械集計, 2026-05-11)
+        カバー率 (手動集計, 2026-05-20)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="カバー率 (機械集計, 2026-05-11)">
+    <nav class="md-nav" aria-label="カバー率 (手動集計, 2026-05-20)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -35335,14 +35335,16 @@
 </tbody>
 </table>
 <p>これらの placeholder は backlog (<code>meta/backlog/reference/</code>) で追跡する。</p>
-<h2 id="coverage">カバー率 (機械集計, 2026-05-11)<a class="headerlink" href="#coverage" title="Permanent link">&para;</a></h2>
-<p><code>docs/reference/&lt;sub&gt;/*.md</code> を直接数えた件数。<code>verification</code> 内訳は frontmatter の <code>verification:</code> キーから抽出した。</p>
+<h2 id="coverage">カバー率 (手動集計, 2026-05-20)<a class="headerlink" href="#coverage" title="Permanent link">&para;</a></h2>
+<p><code>docs/reference/&lt;sub&gt;/*.md</code> を直接数えた件数。<code>verification</code> 内訳は frontmatter の <code>verification:</code> キーから抽出した。本表は <code>gen_coverage.py</code> の自動更新スコープ外であり、手動メンテで更新している。</p>
 <table>
 <thead>
 <tr>
 <th>カテゴリ</th>
 <th style="text-align: right;">総ページ</th>
 <th style="text-align: right;">code-verified</th>
+<th style="text-align: right;">runbook-verified</th>
+<th style="text-align: right;">stub</th>
 <th style="text-align: right;">hld-only</th>
 <th style="text-align: right;">discrepancy-found</th>
 <th style="text-align: right;">meta</th>
@@ -35352,17 +35354,21 @@
 <tr>
 <td>CLI</td>
 <td style="text-align: right;">72</td>
-<td style="text-align: right;">72</td>
+<td style="text-align: right;">71</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">1 (index)</td>
 </tr>
 <tr>
 <td>CONFIG_DB</td>
-<td style="text-align: right;">121</td>
-<td style="text-align: right;">121</td>
+<td style="text-align: right;">293</td>
+<td style="text-align: right;">285</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;">1 (index)</td>
 </tr>
 <tr>
@@ -35371,12 +35377,16 @@
 <td style="text-align: right;">84</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">1 (index)</td>
 </tr>
 <tr>
 <td>Runbooks</td>
-<td style="text-align: right;">45</td>
-<td style="text-align: right;">45</td>
+<td style="text-align: right;">52</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1 (index)</td>
@@ -35387,14 +35397,18 @@
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
 <td style="text-align: right;">2 (index + discrepancy-index)</td>
 </tr>
 <tr>
 <td><strong>合計</strong></td>
-<td style="text-align: right;"><strong>323</strong></td>
-<td style="text-align: right;"><strong>322</strong></td>
-<td style="text-align: right;"><strong>0</strong></td>
-<td style="text-align: right;"><strong>0</strong></td>
+<td style="text-align: right;"><strong>502</strong></td>
+<td style="text-align: right;"><strong>465</strong></td>
+<td style="text-align: right;"><strong>27</strong></td>
+<td style="text-align: right;"><strong>1</strong></td>
+<td style="text-align: right;"><strong>2</strong></td>
+<td style="text-align: right;"><strong>6</strong></td>
 <td style="text-align: right;"><strong>6</strong></td>
 </tr>
 </tbody>

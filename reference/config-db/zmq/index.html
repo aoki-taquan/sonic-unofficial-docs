@@ -30443,17 +30443,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-h_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プラットフォーム差 (Phase H)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#device_metadatalocalhost-zmq" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -34438,7 +34427,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -36018,17 +36007,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-h_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        プラットフォーム差 (Phase H)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#device_metadatalocalhost-zmq" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36365,7 +36343,7 @@
 <td>→ <a href="../../glossary/#term-dpu">DPU</a> 読み取り</td>
 <td><code>orchagent_zmq_port</code></td>
 <td><a href="../dpu/"><code>dpu</code></a></td>
-<td><code>gnmi-native.sh</code> / <code>orchagent.sh</code> が <code>DPU\|&lt;name&gt;</code> の <code>orchagent_zmq_port</code> を読み取り ZMQ 接続ポートを決定。YANG 定義: <code>sonic-smart-switch.yang:176-179</code></td>
+<td><code>gnmi-native.sh</code> / <code>orchagent.sh</code> が <code>DPU\|&lt;name&gt;</code> の <code>orchagent_zmq_port</code> を読み取り ZMQ 接続ポートを決定。<a href="../../glossary/#term-yang">YANG</a> 定義: <code>sonic-smart-switch.yang:176-179</code></td>
 </tr>
 <tr>
 <td><a href="../../glossary/#term-device_metadata">DEVICE_METADATA</a> →</td>
@@ -37006,47 +36984,6 @@ orchagent 自体はクライアント側の送信失敗を直接検出しない�
 </blockquote>
 <!-- /constants -->
 
-<!-- platform -->
-<h2 id="phase-h_1">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h_1" title="Permanent link">&para;</a></h2>
-<blockquote>
-<p>調査証跡: <code>meta/_intermediate/cdb-flow/zmq-platform.md</code></p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th>観点</th>
-<th>結果</th>
-<th>根拠</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ASIC 種別 (Broadcom / Mellanox 等)</td>
-<td><strong>影響なし</strong></td>
-<td>ZMQ は orchagent northbound 通信層であり <a href="../../glossary/#term-sai">SAI</a> 非経由。<code>get_feature_status()</code> / <code>get_zmq_port()</code> はベンダー依存コードを含まない (<code>orch_zmq_config.cpp:35-79</code>)</td>
-</tr>
-<tr>
-<td>multi-ASIC / namespace</td>
-<td><strong>ZMQ ポート番号が変化</strong></td>
-<td><code>get_zmq_port()</code> が <code>NAMESPACE_ID</code> 環境変数を参照し <code>8100 + NAMESPACE_ID + 1</code> で計算。global=8100、asic0=8101、asic1=8102 (<code>orch_zmq_config.cpp:38-51</code>)。<code>orch_northbond_*_zmq_enabled</code> はグローバル CONFIG_DB に一元管理され、各 namespace orchagent が共通参照する</td>
-</tr>
-<tr>
-<td>SmartSwitch / DPU</td>
-<td><strong>専用フィールドあり</strong></td>
-<td><code>DPU|&lt;name&gt;.orchagent_zmq_port</code> は SmartSwitch 専用。<code>orchagent.sh</code> が <code>subtype=="SmartSwitch"</code> で ZMQ アドレスを <code>tcp://eth0-midplane</code> に切替え、<code>switch_type=="dpu"</code> で zmq_sync モードを強制 (<code>orchagent.sh:38-39,105-118</code>)</td>
-</tr>
-<tr>
-<td><a href="../../glossary/#term-voq">VOQ</a> chassis</td>
-<td>影響なし (確認)</td>
-<td>各 line card orchagent が独立して ZMQ を管理。chassis-wide な ZMQ 集約機構なし</td>
-</tr>
-</tbody>
-</table>
-<!-- evidence: sonic-swss/lib/orch_zmq_config.cpp:35-52 (get_zmq_port — NAMESPACE_ID 分岐) -->
-<!-- evidence: sonic-buildimage/dockers/docker-orchagent/orchagent.sh:38-39,105-118 (SmartSwitch / DPU 専用分岐) -->
-<!-- evidence: sonic-swss-common/common/zmqserver.h:16 (ORCH_ZMQ_PORT = 8100) -->
-<!-- /platform -->
-
 <hr />
 <h2 id="device_metadatalocalhost-zmq">DEVICE_METADATA|localhost の ZMQ フィールド<a class="headerlink" href="#device_metadatalocalhost-zmq" title="Permanent link">&para;</a></h2>
 <h3 id="orch_northbond_dash_zmq_enabled"><code>orch_northbond_dash_zmq_enabled</code><a class="headerlink" href="#orch_northbond_dash_zmq_enabled" title="Permanent link">&para;</a></h3>
@@ -37275,8 +37212,7 @@ CONFIG_DB の直接フィールドとしては存在しない。ただし <code>
 <h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../device-metadata/"><code>DEVICE_METADATA</code></a> — <code>orch_northbond_dash_zmq_enabled</code> / <code>orch_northbond_route_zmq_enabled</code> / <code>subtype</code> / <code>switch_type</code> フィールドの全体像</li>
-<li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-smart-switch</code> — <code>DPU_LIST.orchagent_zmq_port</code> 定義</li>
-<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../smart-switch/"><code>smart-switch</code></a> — SmartSwitch 関連テーブル群</li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../smart-switch/"><code>smart-switch</code></a> — SmartSwitch 関連テーブル群 (<code>sonic-smart-switch.yang:176-179</code> の <code>DPU_LIST.orchagent_zmq_port</code> 定義も参照)</li>
 </ul>
 <!-- ref-triangle:end -->
 
@@ -37297,7 +37233,7 @@ CONFIG_DB の直接フィールドとしては存在しない。ただし <code>
 </span></code></pre></div>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 26f7864b6d8c -->
+<!-- glossary-links-injected: 96bf538717ad -->
 
 <div class="footnote">
 <hr />

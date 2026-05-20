@@ -34885,7 +34885,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -37211,7 +37211,7 @@
 <tr>
 <td><code>fallback</code></td>
 <td><code>true</code></td>
-<td>VRF に経路がない場合にデフォルト VRF（main routing table）へフォールバック</td>
+<td>(dead field) <code>orchagent/vrforch.cpp</code> の <code>addOperation</code> に <code>"fallback"</code> のハンドラが存在せず silent drop されるため、実際の挙動変化なし。詳細は下記「暗黙デフォルト・コード由来挙動」セクション参照</td>
 </tr>
 <tr>
 <td><code>vni</code></td>
@@ -37300,7 +37300,7 @@
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>orchagent / VrfOrch</strong> (<code>sonic-swss/orchagent/vrforch.cpp</code>): <code>VRF</code> テーブルを <code>SubscriberStateTable</code> で購読。</li>
+<li><strong>orchagent / VrfOrch</strong> (<code>sonic-swss/orchagent/vrforch.cpp</code>): <a href="../../glossary/#term-appl_db">APPL_DB</a> の <code>VRF_TABLE</code> を <code>ConsumerStateTable</code> で購読 (<code>Orch2(appDb, APP_VRF_TABLE_NAME)</code>)。<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>VRF</code> テーブルは直接購読しない。</li>
 <li><strong><a href="../../glossary/#term-vrfmgrd">vrfmgrd</a></strong> (<code>sonic-swss/cfgmgr/vrfmgr.cpp</code>): <code>VRF</code> テーブルを購読して Linux VRF デバイスを管理。</li>
 </ul>
 <h3 id="2-cfg-appl">段階 2: CFG → APPL 翻訳<a class="headerlink" href="#2-cfg-appl" title="Permanent link">&para;</a></h3>
@@ -37390,7 +37390,7 @@
 <h3 id="mgmt-vrf">mgmt VRF 特例 (プラットフォーム依存)<a class="headerlink" href="#mgmt-vrf" title="Permanent link">&para;</a></h3>
 <p><code>vrfName == "mgmt"</code> の場合、通常の free テーブルプールを使わず固定 ID <code>6000</code> を使用し (<code>vrfmgr.cpp:180-183</code>)、Linux VRF デバイスの <code>ip link add</code> も実行しない。mgmt VRF は <a href="../../glossary/#term-hostcfgd">hostcfgd</a> 側で初期化済みの前提。</p>
 <h3 id="orchagent-yang-config_db">orchagent 内部フィールド (YANG 未定義・CONFIG_DB 非経由)<a class="headerlink" href="#orchagent-yang-config_db" title="Permanent link">&para;</a></h3>
-<p><code>vrforch.h</code> には <code>v4</code>/<code>v6</code>/<code>src_mac</code>/<code>ttl_action</code>/<code>ip_opt_action</code>/<code>l3_mc_action</code> が宣言されており、orchagent で SAI 属性に変換される実装がある。しかし <strong>YANG <code>sonic-vrf.yang</code> には存在せず</strong>、通常の <code>config vrf add</code> で <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書かれることはない。<a href="../../glossary/#term-vnet">VNET</a> テーブル経由で APP_DB に直接書き込まれた場合のみ機能する残存コード。</p>
+<p><code>vrforch.h</code> には <code>v4</code>/<code>v6</code>/<code>src_mac</code>/<code>ttl_action</code>/<code>ip_opt_action</code>/<code>l3_mc_action</code> が宣言されており、orchagent で SAI 属性に変換される実装がある。しかし <strong>YANG <code>sonic-vrf.yang</code> には存在せず</strong>、通常の <code>config vrf add</code> で CONFIG_DB に書かれることはない。<a href="../../glossary/#term-vnet">VNET</a> テーブル経由で APP_DB に直接書き込まれた場合のみ機能する残存コード。</p>
 <!-- /defaults -->
 
 <!-- ordering -->
@@ -38169,7 +38169,7 @@
 </tr>
 <tr>
 <td><code>m_appVrfTableProducer.set(name, fields)</code></td>
-<td><a href="../../glossary/#term-appl_db">APPL_DB</a> / <code>VRF_TABLE</code></td>
+<td>APPL_DB / <code>VRF_TABLE</code></td>
 <td><code>&lt;name&gt;</code></td>
 <td>VRF_TABLE または MGMT_VRF_CONFIG 経由 (vrfmgr.cpp:303)</td>
 </tr>

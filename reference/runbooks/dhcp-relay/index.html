@@ -34010,7 +34010,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -35384,7 +35384,7 @@
 <ol>
 <li><strong>VLAN_INTERFACE に IP が振られていない</strong>: relay agent の <code>giaddr</code> が 0.0.0.0 になり server 側で破棄</li>
 <li><strong>helper サーバへの L3 到達性なし</strong> (route / firewall / <a href="../../glossary/#term-vrf">VRF</a> 不一致)</li>
-<li><strong>helper IP の登録漏れ / typo</strong>: <code>DHCP_RELAY|Vlan100</code> の <code>dhcpv4_servers</code> が空</li>
+<li><strong>helper IP の登録漏れ / typo</strong>: <code>DHCPV4_RELAY|Vlan100</code> の <code>dhcpv4_servers</code> が空</li>
 <li><strong><code>dhcp_relay</code> コンテナが起動していない</strong>: <code>show feature status</code> で disabled</li>
 <li><strong>option 82 (circuit/remote-id) の挿入仕様が server と不一致</strong> → server が DISCOVER を黙って drop</li>
 </ol>
@@ -35401,7 +35401,7 @@
     E -- Yes --&gt; F[dhcpmon カウンタとログを確認]</code></pre>
 <h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-config_db-helper">1. CONFIG_DB に helper が入っているか<a class="headerlink" href="#1-config_db-helper" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;DHCP_RELAY|Vlan100&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;DHCPV4_RELAY|Vlan100&quot;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s2">&quot;VLAN|Vlan100&quot;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;VLAN_INTERFACE|Vlan100*&quot;</span>
 </span></code></pre></div>

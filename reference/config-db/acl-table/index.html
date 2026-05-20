@@ -34775,7 +34775,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -36984,13 +36984,13 @@
 <li><code>EGR_SET_DSCP</code> ... egress <a href="../../glossary/#term-dscp">DSCP</a> 上書き</li>
 <li><code>CTRLPLANE</code> ... コントロールプレーン (<code>copp</code> 制御)</li>
 </ul>
-<p>ユーザ定義型は <code>ACL_TABLE_TYPE|&lt;name&gt;</code> でフィールド <code>MATCHES</code> / <code>ACTIONS</code> / <code>BPOINT_TYPES</code> を指定する。</p>
+<p>ユーザ定義型は <code>ACL_TABLE_TYPE|&lt;name&gt;</code> でフィールド <code>MATCHES</code> / <code>ACTIONS</code> / <code>BIND_POINTS</code> を指定する。</p>
 <h2 id="_4">関連サブテーブル<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>ACL_TABLE_TYPE|&lt;name&gt;</code><ul>
 <li><code>MATCHES</code> (string list): 許可する match キー（<code>SRC_IP</code>, <code>DST_IP</code>, <code>L4_SRC_PORT</code> 等）</li>
 <li><code>ACTIONS</code> (string list): 許可する action（<code>PACKET_ACTION</code>, <code>REDIRECT_ACTION</code> 等）</li>
-<li><code>BPOINT_TYPES</code> (string list): バインド可能なポイント種別（<code>PORT</code>, <code>LAG</code>, <code>SWITCH</code>, <code>VLAN</code> 等）</li>
+<li><code>BIND_POINTS</code> (string list): バインド可能なポイント種別（<code>PORT</code>, <code>PORTCHANNEL</code> のみ; <code>aclBindPointTypeLookup</code> 参照）</li>
 </ul>
 </li>
 </ul>
@@ -37882,7 +37882,7 @@
 <p><code>AclOrch::doTask()</code> (<code>aclorch.cpp:4276</code>) は <code>gPortsOrch-&gt;allPortsReady()</code> が false の間は即 return する。<code>ACL_TABLE</code> / <code>ACL_TABLE_TYPE</code> / <code>ACL_RULE</code> すべての処理が<strong>完全にブロック</strong>される。orchdaemon が PortsOrch の初期化完了を保証するため、通常は意識不要だが起動シーケンス中の早期書き込みは処理待ちになる。</p>
 <h3 id="acl_table_type">ACL_TABLE_TYPE (ユーザ定義型) が先行必須<a class="headerlink" href="#acl_table_type" title="Permanent link">&para;</a></h3>
 <p><code>doAclTableTask()</code> L5432-5437: <code>getAclTableType()</code> が nullptr を返すと <code>it++; continue</code> で ACL_TABLE エントリを<strong>保留キューに残す</strong>。組み込み型（<code>L3</code>/<code>MIRROR</code>/<code>CTRLPLANE</code> 等）はコンストラクタ時点で登録済みのため不要。ユーザ定義型を使う場合のみ、<code>ACL_TABLE_TYPE|&lt;name&gt;</code> を ACL_TABLE SET より先に書き込むこと。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>SET ACL_TABLE_TYPE|&lt;type_name&gt;  MATCHES=...,ACTIONS=...,BPOINT_TYPES=...
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>SET ACL_TABLE_TYPE|&lt;type_name&gt;  MATCHES=...,ACTIONS=...,BIND_POINTS=...
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>SET ACL_TABLE|&lt;table_name&gt;      type=&lt;type_name&gt; stage=ingress ports=...
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>SET ACL_RULE|&lt;table_name&gt;|&lt;rule_name&gt;  PRIORITY=...
 </span></code></pre></div>

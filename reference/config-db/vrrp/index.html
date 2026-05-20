@@ -34504,7 +34504,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -37085,8 +37085,8 @@
 </tbody>
 </table>
 <div class="admonition note">
-<p class="admonition-title">YANG <code>max-elements</code> との乖離</p>
-<p><code>sonic-vrrp.yang</code> の <code>VRRP_LIST</code> / <code>VRRP6_LIST</code> には <code>max-elements 128</code> が宣言されているが、CLI 側の上限は <code>254</code>。CLI 検査が先に発火するため YANG の <code>128</code> 上限は実効的に到達しない。</p>
+<p class="admonition-title">YANG <code>max-elements</code> と CLI 上限の経路非対称性</p>
+<p><code>sonic-vrrp.yang</code> の <code>VRRP_LIST</code> / <code>VRRP6_LIST</code> には <code>max-elements 128</code> が宣言されているが、CLI 側の上限は <code>254</code>。CLI 経路 (<code>config</code> コマンド) は YANG バリデーションを経由しないため CLI 上限 254 が適用される。一方、gNMI / sonic-yang-mgmt 経路では YANG max-elements 128 が先に到達して reject される (128 &lt; 254)。すなわち実効的な上限は経路により異なる。</p>
 </div>
 <h3 id="yang">フィールドデフォルト (YANG スキーマ由来)<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <table>

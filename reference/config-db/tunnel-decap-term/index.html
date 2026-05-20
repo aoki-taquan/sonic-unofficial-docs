@@ -34404,7 +34404,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -36798,7 +36798,7 @@
 <tr>
 <td><code>tunnelmgrd</code> (<code>m_appIpInIpTunnelDecapTermTable</code>)</td>
 <td><code>ProducerStateTable</code></td>
-<td>CONFIG_DB <code>TUNNEL</code> SET/DEL イベント受信後、APPL_DB <code>APP_TUNNEL_DECAP_TABLE</code> と同時に書き込む</td>
+<td>CONFIG_DB <code>TUNNEL</code> SET/DEL イベント受信後、APPL_DB <code>APP_TUNNEL_DECAP_TERM_TABLE</code> (および <code>APP_TUNNEL_DECAP_TABLE</code>) と同時に書き込む</td>
 <td><code>tunnelmgr.cpp</code> L111, L276-309</td>
 </tr>
 <tr>

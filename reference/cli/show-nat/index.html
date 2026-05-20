@@ -34099,7 +34099,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -35550,7 +35550,7 @@
 <h1 id="show-nat">show nat サブコマンド<a class="headerlink" href="#show-nat" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>show nat</code> は <a href="../../glossary/#term-sonic">SONiC</a> の <a href="../../glossary/#term-nat">NAT</a> 機能の <strong>動的な変換テーブル</strong> および <strong>静的な設定</strong> を表示する CLI で、<code>show/nat.py</code> の <code>@click.group()</code> がエントリポイントとなる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>実装は薄く、<code>natshow</code> / <code>natconfig</code> という C/Python の補助バイナリを <code>clicommon.run_command(...)</code> で呼び出すだけのラッパー。<code>natshow</code> は <a href="../../glossary/#term-asic_db">ASIC_DB</a> / <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> を参照し、<code>natconfig</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> を整形して出すように分業されている。</p>
+<p>実装は薄く、<code>natshow</code> / <code>natconfig</code> という C/Python の補助バイナリを <code>clicommon.run_command(...)</code> で呼び出すだけのラッパー。<code>natshow</code> は <a href="../../glossary/#term-state_db">STATE_DB</a> / <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> を参照し、<code>natconfig</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> を整形して出すように分業されている。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35668,7 +35668,7 @@
 
 <h2 id="_5">関連リファレンス<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>STATIC_NAT</code> / <code>STATIC_NAPT</code> / <a href="../../config-db/nat/"><code>NAT_POOL</code></a> / <a href="../../config-db/nat/"><code>NAT_BINDINGS</code></a> / <a href="../../config-db/nat/"><code>NAT_GLOBAL</code></a></li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../../config-db/nat-static/"><code>STATIC_NAT</code> / <code>STATIC_NAPT</code></a> / <a href="../../config-db/nat-pool/"><code>NAT_POOL</code></a> / <a href="../../config-db/nat-bindings/"><code>NAT_BINDINGS</code></a> / <a href="../../config-db/nat/"><code>NAT_GLOBAL</code></a></li>
 </ul>
 <!-- ref-triangle:end -->
 

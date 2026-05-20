@@ -34011,7 +34011,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -35520,9 +35520,13 @@ excerpt: |
 <!-- cli-mermaid -->
 <h3 id="_4">データフロー (自動生成)<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  CLI["show flowcnt-trap"]
+  CLI1["show flowcnt-trap"]
+  CLI2["show flowcnt-route"]
   CDB0[("CONFIG_DB&lt;br/&gt;FLOW_COUNTER_ROUTE_PATTERN")]
-  CDB0 --&gt; CLI</code></pre>
+  COUNTERS[("COUNTERS_DB&lt;br/&gt;flow counter stats")]
+  CDB0 --&gt; CLI2
+  COUNTERS --&gt; CLI1
+  COUNTERS --&gt; CLI2</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
 <p>show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>

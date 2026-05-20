@@ -34088,7 +34088,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -35575,7 +35575,7 @@
 <li><code>HealthCheckerManager</code> を生成し、<code>config.config_file_exists()</code> で構成ファイル（system_health_monitoring_config.json）の有無を確認。なければ exit 1。</li>
 <li><code>chassis = sonic_platform.chassis.Chassis()</code> で chassis オブジェクトを取得。</li>
 <li><code>manager.check(chassis)</code> を呼び、サービス／ハードウェア／FS のチェック結果 dict (<code>stat</code>) を取得。</li>
-<li><code>chassis.initizalize_system_led()</code> を呼んで status LED の現在色を取得。</li>
+<li><code>chassis.get_status_led()</code> で status LED の現在色を取得。</li>
 <li>整形ロジック (<code>display_system_health_summary</code>) で <code>Services</code> / <code>Hardware</code> を OK / Not OK 判定して表示。<code>Services</code> の Not OK 内訳は「Not Running（プロセス未起動）」と「Not Accessible（FS アクセス不可）」に分けて表示する<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</li>
 </ol>
 <!-- evidence:
@@ -35702,14 +35702,19 @@ excerpt: |
 <!-- cli-mermaid -->
 <h3 id="_7">データフロー (手動作成)<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  CLI["show system-health"]
-  SH["system-health daemon&lt;br/&gt;(HealthCheckerManager)"]
-  ST[("STATE_DB&lt;br/&gt;SYSTEM_HEALTH_INFO / DPU_STATE")]
-  CLI --&gt; SH
-  ST --&gt; CLI</code></pre>
+  CLI["show system-health&lt;br/&gt;(summary / monitor-list / detail)"]
+  HCM["HealthCheckerManager&lt;br/&gt;(CLI プロセス内で生成)"]
+  PAPI["platform API&lt;br/&gt;chassis.get_status_led()"]
+  CFG["system_health_monitoring_config.json"]
+  DPU_CLI["show system-health dpu"]
+  CDB[("CHASSIS_STATE_DB&lt;br/&gt;DPU_STATE")]
+  CLI --&gt; HCM
+  HCM --&gt; PAPI
+  HCM --&gt; CFG
+  CDB --&gt; DPU_CLI</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
-<p>show 系 (CLI ← STATE_DB ← system-health daemon) のミニ図。CONFIG_DB を直接介さないコマンドのため手動で記述。</p>
+<p><code>show system-health</code> (summary/monitor-list/detail) は CLI プロセス内で <code>HealthCheckerManager.check(chassis)</code> を直接実行する (STATE_DB 経由ではない)。<code>dpu</code> サブコマンドのみ <code>CHASSIS_STATE_DB.DPU_STATE</code> を読む。設計意図としては <code>system-health daemon</code> が <code>STATE_DB.SYSTEM_HEALTH_INFO</code> に結果を書くフローも存在するが、CLI 側ではこれを読まない。</p>
 </div>
 <!-- /cli-mermaid -->
 

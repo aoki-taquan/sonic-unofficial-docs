@@ -34066,7 +34066,7 @@
   <span class="md-ellipsis">
     
   
-    APP_DB → ASIC_DB の反映が遅延・停止する
+    APPL_DB → ASIC_DB の反映が遅延・停止する
   
 
     
@@ -35593,18 +35593,21 @@ target を読み込み、<code>GenericUpdater().replace(...)</code> が現在の
 <h2 id="_7">運用ヒント<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <h3 id="_8">典型的な利用シーン<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Mgmt <a href="../../glossary/#term-vrf">VRF</a> / Mgmt interface / Mgmt route のまとめて設定。</li>
-<li>out-of-band 監視ネット切替時の安全な再設定。</li>
+<li>設定変更後に永続化したい場合は <code>config save</code> を実行する (<code>/etc/sonic/config_db.json</code> 上書き)。</li>
+<li>マイナーな差分のみ適用したい場合は <code>config replace --dry-run</code> で JSON Patch を確認してから本適用する。</li>
+<li>フル再ロードが必要な場合 (services 含む) は <code>config reload</code> を使う。事前に <code>config save</code> 推奨。</li>
 </ul>
 <h3 id="_9">よくある落とし穴<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Mgmt <a href="../../glossary/#term-vrf">VRF</a> を有効化すると SSH/<a href="../../glossary/#term-snmp">SNMP</a>/NTP も <a href="../../glossary/#term-vrf">VRF</a> コンテキストへ切り替わる。</li>
-<li>Mgmt route を消すと自分の SSH が切れる可能性。console 経由で作業する。</li>
+<li><code>config reload</code> は CONFIG_DB を <strong>全削除</strong> してから再注入するため、save 未済の一時設定は失われる。</li>
+<li><code>config load</code> は merge 動作で、削除済みエントリは復元されない。クリーンに戻したい場合は <code>config reload</code> を使う。</li>
+<li><code>config reload</code> は <code>/etc/sonic/reload.lock</code> で多重起動を防ぐ。前回 reload が異常終了した場合は <code>--bypass-lock</code> での解除を検討。</li>
+<li><code>config qos reload</code> は <code>BUFFER_*</code> / <code>QUEUE</code> / <code>SCHEDULER</code> / <code>WRED_PROFILE</code> などを一旦削除して再生成するため、手動カスタマイズした QoS は失われる。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>mgmt-vrf
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>management_interface<span class="w"> </span>address
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>ip<span class="w"> </span>-4<span class="w"> </span>route<span class="w"> </span>show<span class="w"> </span>vrf<span class="w"> </span>mgmt
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>runningconfiguration<span class="w"> </span>all
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;*&#39;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>ls<span class="w"> </span>-l<span class="w"> </span>/etc/sonic/reload.lock
 </span></code></pre></div>
 <!-- /ops-hint -->
 
