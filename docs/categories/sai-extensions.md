@@ -34,7 +34,7 @@ SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応す�
 ### bulk API / Port
 
 - [Port Profile Init（SAI bulk port API による fast-boot 高速化）](../architecture/port-profile-init-hld.md) (area: `architecture`, verification: `code-verified`)
-- [Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）](../architecture/sonic-port-auto-fec-design.md) (area: `architecture`, verification: `hld-only`)
+- [Port Auto FEC（SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE / FEC=auto）](../architecture/sonic-port-auto-fec-design.md) (area: `architecture`, verification: `code-verified`)
 
 ### failure handling / POST / CRM
 
@@ -60,7 +60,6 @@ SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応す�
 
 ## verification ステータス注意点
 
-- **hld-only**: `sonic-port-auto-fec-design.md`
 - **discrepancy-found**: `hld-for-handling-sai-failures.md`, `dump-on-sai-failure.md` — handleSai*Status の派生クラスや syncd_dump 経路が実コードと差異
 
 ## 関連カテゴリ

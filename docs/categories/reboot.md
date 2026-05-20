@@ -74,11 +74,4 @@ related:
 - [SmartSwitch 関連](smartswitch.md)
 - [SAI 拡張属性追加系](sai-extensions.md)
 
-<!-- topics-back-ref -->
-## 関連 Topics
-
-- [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
-
-<!-- /topics-back-ref -->
-
 <!-- glossary-links-injected: 1af70874b912 -->
