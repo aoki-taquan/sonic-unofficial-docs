@@ -35889,11 +35889,9 @@ reasoning: HLD 時点の proto に UDP 拡張用フィールドが含まれて�
 <!-- /diff-admonition -->
 
 <h3 id="_9">コマンド例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<p>Wake-on-LAN の magic packet 送信と CONFIG_DB を確認する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>show<span class="w"> </span>wol
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>config<span class="w"> </span>wol<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">00</span>:11:22:33:44:55
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;WAKE_ON_LAN|*&#39;</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>tcpdump<span class="w"> </span>-i<span class="w"> </span>Ethernet0<span class="w"> </span>ether<span class="w"> </span>proto<span class="w"> </span>0x0842
+<p>Wake-on-LAN の magic packet 送信を確認する（本機能は send-only で CONFIG_DB エントリを持たない）。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>wol<span class="w"> </span>Ethernet10<span class="w"> </span><span class="m">00</span>:11:22:33:44:55
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>tcpdump<span class="w"> </span>-i<span class="w"> </span>Ethernet10<span class="w"> </span>ether<span class="w"> </span>proto<span class="w"> </span>0x0842
 </span></code></pre></div>
 <h2 id="_10">制限事項<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>

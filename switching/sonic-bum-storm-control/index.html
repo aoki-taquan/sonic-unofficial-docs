@@ -35358,7 +35358,7 @@
     PO --&gt;|set_port_attribute| PORT[SAI port]</code></pre>
 <ol>
 <li><code>config interface storm-control ...</code> が <code>PORT_STORM_CONTROL</code> に書く</li>
-<li><code>PolicerOrch</code> が購読し、内部名 <code>&lt;intf&gt;_&lt;storm_type&gt;</code> で policer を管理</li>
+<li><code>PolicerOrch</code> が購読し、内部名 <code>_&lt;intf&gt;_&lt;storm_type&gt;</code> で policer を管理（先頭 <code>_</code> は通常 POLICER テーブルとの衝突回避用、<code>policerorch.cpp:146</code>）</li>
 <li><code>create_policer</code> で meter 作成</li>
 <li><code>set_port_attribute</code> で対応ポート属性に policer ID をセット</li>
 </ol>
@@ -35403,7 +35403,7 @@
 </tr>
 <tr>
 <td><code>SAI_POLICER_ATTR_CIR</code></td>
-<td>bps 値（kbps × 1000）</td>
+<td>bytes/s 値（kbps × 1000 / 8）</td>
 </tr>
 </tbody>
 </table>
@@ -35448,7 +35448,7 @@
 <h2 id="_4">干渉する機能<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>VLAN / PortChannel: メンバ物理ポートで設定。<a href="../../reference/glossary/#term-lag">LAG</a> ハッシュ前の入力段で計測されるため独立に効く</li>
-<li>PolicerOrch: <a href="../../reference/glossary/#term-acl">ACL</a> ポリサーと同じ Orch だが、ストーム制御は内部命名規則 <code>&lt;intf&gt;_&lt;storm_type&gt;</code> で別管理</li>
+<li>PolicerOrch: <a href="../../reference/glossary/#term-acl">ACL</a> ポリサーと同じ Orch だが、ストーム制御は内部命名規則 <code>_&lt;intf&gt;_&lt;storm_type&gt;</code>（先頭アンダースコア付き）で別管理</li>
 <li>Warm boot: PolicerOrch が CONFIG_DB 再読み込みで SAI 再投入</li>
 </ul>
 <h2 id="_5">トラブルシューティング<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>

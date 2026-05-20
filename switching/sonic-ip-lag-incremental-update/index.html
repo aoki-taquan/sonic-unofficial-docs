@@ -35731,7 +35731,7 @@
 <tr>
 <td><code>PORTCHANNEL</code></td>
 <td><code>&lt;pc&gt;</code></td>
-<td><code>admin_status</code>, <code>mtu</code>, <code>min_links</code>, <code>fall_back</code></td>
+<td><code>admin_status</code>, <code>mtu</code>, <code>min_links</code>, <code>fallback</code></td>
 </tr>
 <tr>
 <td><code>PORTCHANNEL_INTERFACE</code></td>
@@ -35755,7 +35755,7 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>interface<span class="w"> </span>Ethernet0<span class="w"> </span>add<span class="w"> </span>ip<span class="w"> </span><span class="m">10</span>.0.0.0/31
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># LAG 作成 + member + IP</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>config<span class="w"> </span>portchannel<span class="w"> </span>add<span class="w"> </span>PortChannel0001<span class="w"> </span>--min_links<span class="w"> </span><span class="m">1</span><span class="w"> </span>--fall_back<span class="w"> </span><span class="nb">false</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>config<span class="w"> </span>portchannel<span class="w"> </span>add<span class="w"> </span>PortChannel0001<span class="w"> </span>--min_links<span class="w"> </span><span class="m">1</span><span class="w"> </span>--fallback<span class="w"> </span><span class="nb">false</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>config<span class="w"> </span>portchannel<span class="w"> </span>member<span class="w"> </span>add<span class="w"> </span>PortChannel0001<span class="w"> </span>Ethernet4
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>config<span class="w"> </span>interface<span class="w"> </span>PortChannel0001<span class="w"> </span>add<span class="w"> </span>ip<span class="w"> </span><span class="m">10</span>.0.0.2/31
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
@@ -35825,7 +35825,7 @@
 <li>HLD は 2018 年時点。Phase 2 の現行実装範囲は別途裏取り対象</li>
 </ul>
 <h2 id="_6">干渉する機能<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p>旧 <code>/etc/network/interfaces</code> 静的設定 / warm reboot（incremental 前提と整合）/ VLAN_INTERFACE / DHCP relay / SAI RIF MTU（<a href="../../reference/glossary/#term-orchagent">orchagent</a> が追従）/ <a href="../../reference/glossary/#term-lacp">LACP</a> <code>fall_back</code> / <code>min_links</code>。</p>
+<p>旧 <code>/etc/network/interfaces</code> 静的設定 / warm reboot（incremental 前提と整合）/ VLAN_INTERFACE / DHCP relay / SAI RIF MTU（<a href="../../reference/glossary/#term-orchagent">orchagent</a> が追従）/ <a href="../../reference/glossary/#term-lacp">LACP</a> <code>fallback</code> / <code>min_links</code>。</p>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>LAG member の MTU が変わらない → portchannel 側で MTU を変更（member 単独は無効）</li>

@@ -35199,14 +35199,14 @@
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="k">default</span><span class="w"> </span><span class="nv">routed</span><span class="p">;</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="k">leaf</span><span class="w"> </span><span class="nv">switchport_mode</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nv">switchport-mode-type</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="k">leaf</span><span class="w"> </span><span class="nv">mode</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nn">stypes</span><span class="p">:</span><span class="nv">switchport_mode</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c">// typedef 名は switchport_mode、leaf 名は mode</span>
 </span></code></pre></div>
 <p>CONFIG_DB:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>PORT|&lt;name&gt;
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  switchport_mode = &quot;routed&quot; | &quot;access&quot; | &quot;trunk&quot;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  mode = &quot;routed&quot; | &quot;access&quot; | &quot;trunk&quot;
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>PORTCHANNEL|&lt;name&gt;
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  switchport_mode = ...
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  mode = ...
 </span></code></pre></div>
 <p>メンバ関係は既存 <code>VLAN_MEMBER</code> を流用（<code>tagging_mode</code>: <code>untagged</code> / <code>tagged</code>）。本機能は <strong>モード概念を明示</strong> することで CLI の意味付けを揃えるのが主目的で、データプレーン挙動は既存と互換<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="db_migrator"><code>db_migrator</code> 拡張<a class="headerlink" href="#db_migrator" title="Permanent link">&para;</a></h2>
@@ -35229,12 +35229,12 @@
 </thead>
 <tbody>
 <tr>
-<td>YANG <code>switchport_mode</code> leaf 追加 (<code>sonic-port</code> / <code>sonic-portchannel</code>)</td>
+<td>YANG <code>mode</code> leaf 追加 (<code>sonic-port</code> / <code>sonic-portchannel</code>、type は <code>switchport_mode</code> typedef)</td>
 <td>✅ 取り込み済</td>
 <td>—</td>
 </tr>
 <tr>
-<td>CONFIG_DB <code>PORT</code> / <code>PORTCHANNEL</code> の <code>switchport_mode</code> カラム</td>
+<td>CONFIG_DB <code>PORT</code> / <code>PORTCHANNEL</code> の <code>mode</code> カラム</td>
 <td>✅ 取り込み済</td>
 <td>—</td>
 </tr>
@@ -35245,8 +35245,8 @@
 </tr>
 <tr>
 <td><code>db_migrator</code> による旧 <code>config_db.json</code> の自動補完 (<code>routed</code> / <code>access</code> / <code>trunk</code> 推定)</td>
-<td>✅ 取り込み済（VLAN_MEMBER の有無で推定）</td>
 <td>—</td>
+<td>❌ 未取り込み。既存 entry に <code>mode</code> フィールドが無ければ <code>routed</code> 相当として振る舞う暗黙挙動に依存</td>
 </tr>
 <tr>
 <td><code>tagging_mode</code> (<code>untagged</code> / <code>tagged</code>) の意味付け</td>

@@ -35290,7 +35290,7 @@
 <p>本ページは親 <a href="../../reference/glossary/#term-hld">HLD</a> <a href="../switch-port-modes-and-vlan-cli-enhancement/">Switchport モード（access / trunk / routed）と VLAN CLI 拡張</a> の <strong>設定例・運用 Tips・トラブルシューティング</strong> を切り出した派生ページ。HLD 上の CLI 形と現行実装の差分は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を必ず参照（HLD の例そのままでは動かない）。</p>
 <div class="admonition note">
 <p class="admonition-title">実装状況の境界（partially implemented）</p>
-<p>本ページのコマンド例のうち、<strong><code>config switchport mode {access,trunk} &lt;if&gt;</code> と <code>config vlan add 10-20</code> の範囲指定一括 add/del は <code>sonic-utilities</code> に取り込み済</strong> で動作する（master で <code>supported</code>）。一方、HLD が示す <strong><code>config switchport mode routed</code> への明示遷移コマンドと、PORTCHANNEL に対する一部の一括操作は未実装</strong> の状態で、対応 PR が未取り込み。具体的な差分は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
+<p>本ページのコマンド例のうち、<strong><code>config switchport mode {access,trunk,routed} &lt;if&gt;</code> と <code>config vlan add 10-20</code> の範囲指定一括 add/del は <code>sonic-utilities</code> に取り込み済</strong> で動作する（master で <code>supported</code>、<code>config/switchport.py</code> の <code>click.Choice</code> に <code>routed</code> を含む）。一方、HLD が示す <strong>PORTCHANNEL に対する一部の一括操作は未実装</strong> の状態で、対応 PR が未取り込み。具体的な差分は <a href="../switch-port-modes-and-vlan-cli-discrepancy/">discrepancy</a> を参照。</p>
 </div>
 <h2 id="switchport-clihld">Switchport CLI（HLD 仕様）<a class="headerlink" href="#switchport-clihld" title="Permanent link">&para;</a></h2>
 <p>HLD で定義された CLI は次の形<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>

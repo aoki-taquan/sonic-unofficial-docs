@@ -38143,6 +38143,48 @@
 <td><code>false</code></td>
 <td>fast link-up</td>
 </tr>
+<tr>
+<td><code>link_event_damping_algorithm</code></td>
+<td>string <code>aied</code> / <code>disabled</code></td>
+<td>-</td>
+<td><code>disabled</code></td>
+<td>リンクイベントダンピングアルゴリズム選択（<code>porthlpr.cpp</code> L1345-L1373）</td>
+</tr>
+<tr>
+<td><code>max_suppress_time</code></td>
+<td>uint32 [秒]</td>
+<td>-</td>
+<td>-</td>
+<td>ダンピング最大抑制時間</td>
+</tr>
+<tr>
+<td><code>decay_half_life</code></td>
+<td>uint32 [秒]</td>
+<td>-</td>
+<td>-</td>
+<td>ペナルティ半減期</td>
+</tr>
+<tr>
+<td><code>suppress_threshold</code></td>
+<td>uint32</td>
+<td>-</td>
+<td>-</td>
+<td>抑制開始の累積ペナルティしきい値</td>
+</tr>
+<tr>
+<td><code>reuse_threshold</code></td>
+<td>uint32</td>
+<td>-</td>
+<td>-</td>
+<td>抑制解除しきい値</td>
+</tr>
+<tr>
+<td><code>flap_penalty</code></td>
+<td>uint32</td>
+<td>-</td>
+<td>-</td>
+<td>フラップ 1 回あたりの加算ペナルティ</td>
+</tr>
 </tbody>
 </table>
 <h2 id="_4">制約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
