@@ -74,7 +74,7 @@ DPU3           169.254.200.4            True
 ### HA 状態の確認
 
 ```bash
-admin@smartswitch:~$ redis-cli -n 6 hgetall 'DASH_HA_SET_TABLE:hasetA'
+admin@smartswitch:~$ redis-cli -n 0 hgetall 'DASH_HA_SET_TABLE:hasetA'
 1) "version"
 2) "1"
 3) "vip_v4"
@@ -103,7 +103,7 @@ admin@smartswitch:~$ docker logs hamgrd 2>&1 | tail -20
 
 `ha_role` が両側 `active` のままなら split-brain、両側 `standby` なら controller / peer link 障害です。`STATE_DB` の `DPU_STATE` も併せて確認します。
 
-DPU 側にログインして見るときは `redis-cli -h redisdpu0 -n 6` で DPU 側 [APPL_DB](../../reference/glossary.md#term-appl_db) に直接アタッチします（`docker exec -it database bash` 経由）。
+DPU 側にログインして見るときは `redis-cli -h redisdpu0 -n 0` で DPU 側 [APPL_DB](../../reference/glossary.md#term-appl_db) に直接アタッチします（`docker exec -it database bash` 経由）。
 
 ### HA 障害ドメインの DB 対応表
 
