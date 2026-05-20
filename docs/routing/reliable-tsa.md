@@ -45,7 +45,7 @@ related:
 
 ## 概要
 
-TSA（Traffic-Shift Away）は SONiC ルータをトラフィック対象から外すための運用機能で、[BGP](../reference/glossary.md#term-bgp) に対して **「ネイバへ経路を広告しない」Route Policy** を適用する。新規導入時のヘルスチェックや、稼働中ルータのメンテナンス前に使う[^1]。
+TSA（Traffic-Shift Away）は [SONiC](../reference/glossary.md#term-sonic) ルータをトラフィック対象から外すための運用機能で、[BGP](../reference/glossary.md#term-bgp) に対して **「ネイバへ経路を広告しない」Route Policy** を適用する。新規導入時のヘルスチェックや、稼働中ルータのメンテナンス前に使う[^1]。
 
 VoQ Chassis（Supervisor + 複数 Line Card で 1 つの論理ルータを構成）では、従来の TSA 実装が次のように動いていた[^1]:
 
@@ -263,4 +263,4 @@ show ip bgp summary | head
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 3824fa3eb22e -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

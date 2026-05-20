@@ -32,11 +32,11 @@ related:
 
 T0 配下に **flow state を持つ appliance**（FW / SLB 等）が居て、可用性のためペア構成（異 T0 配下）になっている。フロー状態が appliance 間で同期されないと **同じフローが別 appliance に行き当たって state miss する** 恐れがある。T1 から T0 への [ECMP](../reference/glossary.md#term-ecmp) 選択を **全 T1 で同一順序** にすれば、フローは常に同じ T0 → 同じ appliance に着く[^1]。
 
-本 [HLD](../reference/glossary.md#term-hld) は SONiC で **Ordered ECMP**（nexthop の順序を保持した ECMP）を実装する設計。Phase 1 では[^1]:
+本 [HLD](../reference/glossary.md#term-hld) は [SONiC](../reference/glossary.md#term-sonic) で **Ordered ECMP**（nexthop の順序を保持した ECMP）を実装する設計。Phase 1 では[^1]:
 
 - **nexthop IP アドレスでソート** した順を sequence_id として [SAI](../reference/glossary.md#term-sai) に渡す
 - 全 T1 で同じ entropy 計算 + 同じ順序前提なら、同じフローは必ず同 nexthop に landing
-- knob で feature 有効化、SAI 非対応 ASIC では従来挙動にフォールバック
+- knob で feature 有効化、SAI 非対応 [ASIC](../reference/glossary.md#term-asic) では従来挙動にフォールバック
 - **link up/down で nexthop が増減**するときも順序を保つ
 - Overlay ECMP 対応
 
@@ -138,4 +138,4 @@ sequenceDiagram
 
 [^1]: [sonic-net/SONiC doc/ecmp/ordered_ecmp_next_hop_hld.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/ecmp/ordered_ecmp_next_hop_hld.md)
 
-<!-- glossary-links-injected: a0c968f284e3 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

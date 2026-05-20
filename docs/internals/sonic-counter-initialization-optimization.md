@@ -52,7 +52,7 @@ related:
 
 ## なぜ初期化が遅いか（旧フローの問題）
 
-SONiC の counter は **counter group**（port / port-drop / PG-drop / queue / watermark / [RIF](../reference/glossary.md#term-rif) 等）単位で flex counter が管理する。各 group は初期化時、object ごとに **`sai_bulk_object_get_stats`** を 1 件で呼び「この [SAI](../reference/glossary.md#term-sai) object で bulk polling できるか」を確認していた[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の counter は **counter group**（port / port-drop / PG-drop / queue / watermark / [RIF](../reference/glossary.md#term-rif) 等）単位で flex counter が管理する。各 group は初期化時、object ごとに **`sai_bulk_object_get_stats`** を 1 件で呼び「この [SAI](../reference/glossary.md#term-sai) object で bulk polling できるか」を確認していた[^1]。
 
 port 数が多い系（例: 257 ports）では port あたり 3 PG + 8 queue + 1 port = 12 object、これに counter group 数が掛かるため呼び出し回数が爆発する。確認完了までは orchagent が port up 通知を捌けず **ブロックする**。ベンチマークでは初期化時間の **98% がベンダ SAI 内** で消費されていた[^1]。
 
@@ -82,7 +82,7 @@ sequenceDiagram
 ポイント[^1]:
 
 - 集合まとめで叩いて成功すれば 1 回で済む
-- 失敗時は **個別 fallback**。「ほとんどの object が同じ bulk サポート状態」になる ASIC で大幅短縮
+- 失敗時は **個別 fallback**。「ほとんどの object が同じ bulk サポート状態」になる [ASIC](../reference/glossary.md#term-asic) で大幅短縮
 - sub orchagent は **flush 時点を能動的に決める** 必要がある
 
 ## 実装変更点
@@ -150,7 +150,7 @@ sequenceDiagram
 
 ### PFC とキューカウンターが負の値を示す問題（sonic-buildimage#5206）
 
-PFC とキューカウンターが負の値を示す問題。カウンターのオーバーフローまたは初期化前の読み取りが原因。`sonic-clear` で初期化してから再度確認すること
+[PFC](../reference/glossary.md#term-pfc) とキューカウンターが負の値を示す問題。カウンターのオーバーフローまたは初期化前の読み取りが原因。`sonic-clear` で初期化してから再度確認すること
 
 - 参照: [sonic-net/sonic-buildimage#5206](https://github.com/sonic-net/sonic-buildimage/issues/5206)
 
@@ -166,4 +166,4 @@ PFC とキューカウンターが負の値を示す問題。カウンターの�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 14c16f9ace85 -->
+<!-- glossary-links-injected: eaf60e4337f8 -->

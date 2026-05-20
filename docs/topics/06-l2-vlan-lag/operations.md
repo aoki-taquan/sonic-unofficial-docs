@@ -48,7 +48,7 @@ show vlan brief
 show vlan config
 ```
 
-`show vlan brief` は VLAN ID、IP Address、Ports、Port Tagging、Proxy [ARP](../../reference/glossary.md#term-arp) を一覧します。`show vlan config` は 1 行 1 member で VLAN と member port を展開します。multi-ASIC 環境では namespace 指定の有無に注意します。
+`show vlan brief` は VLAN ID、IP Address、Ports、Port Tagging、Proxy [ARP](../../reference/glossary.md#term-arp) を一覧します。`show vlan config` は 1 行 1 member で VLAN と member port を展開します。multi-[ASIC](../../reference/glossary.md#term-asic) 環境では namespace 指定の有無に注意します。
 
 見るべき点は次の順です。
 
@@ -67,7 +67,7 @@ PortChannel の設定は `config portchannel` と [CONFIG_DB](../../reference/gl
 
 ## MC-LAG の状態を見る
 
-SONiC では `show mclag` という Click サブコマンドではなく、実体は `mclagdctl` です。
+[SONiC](../../reference/glossary.md#term-sonic) では `show mclag` という Click サブコマンドではなく、実体は `mclagdctl` です。
 
 ```bash
 mclagdctl dump state
@@ -235,4 +235,4 @@ linkmgrd: Storm control packet drop on Ethernet0 broadcast
 - [リンクイベントダンピング](../../switching/link-event-damping-hld.md)
 - [MCLAG Enhancements](../../switching/mclag-enhancements.md)
 
-<!-- glossary-links-injected: 133c93c6ce9a -->
+<!-- glossary-links-injected: ec18b66e3507 -->

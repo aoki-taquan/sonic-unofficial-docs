@@ -106,8 +106,8 @@ SWITCH_HASH|GLOBAL
 
 | フィールド | 値 | [SAI](../../reference/glossary.md#term-sai) 挙動 |
 |-----------|----|---------:|
-| `ecmp_hash` / `lag_hash` | ASIC 非サポートフィールドを含む | SET 拒否 (`capability is not supported`) |
-| `ecmp_hash_algorithm` | ASIC 非サポートアルゴリズム | SET 拒否 (同上) |
+| `ecmp_hash` / `lag_hash` | [ASIC](../../reference/glossary.md#term-asic) 非サポートフィールドを含む | SET 拒否 (`capability is not supported`) |
+| `ecmp_hash_algorithm` | [ASIC](../../reference/glossary.md#term-asic) 非サポートアルゴリズム | SET 拒否 (同上) |
 | 任意フィールド | DEL | 拒否 (`operation is not supported`) |
 
 <!-- /value-behavior -->
@@ -117,7 +117,7 @@ SWITCH_HASH|GLOBAL
 
 <!-- evidence: sonic-swss/orchagent/switchorch.cpp@4305596156d70e9797e8a881b3d19b46de0bce0d L797-989 -->
 
-- **ASIC capability 未サポート**: `SwitchOrch` が SAI から取得した capability に設定値が含まれない場合、`"Failed to validate switch ECMP/LAG hash: capability is not supported"` を LOG_ERROR して SET を拒否する（`return false`）。適用されず [CONFIG_DB](../../reference/glossary.md#term-config_db) の値は保留状態のまま。
+- **[ASIC](../../reference/glossary.md#term-asic) capability 未サポート**: `SwitchOrch` が SAI から取得した capability に設定値が含まれない場合、`"Failed to validate switch ECMP/LAG hash: capability is not supported"` を LOG_ERROR して SET を拒否する（`return false`）。適用されず [CONFIG_DB](../../reference/glossary.md#term-config_db) の値は保留状態のまま。
 - **SAI set 失敗**: SAI API 呼び出しが `SAI_STATUS_SUCCESS` 以外を返すと `"Failed to set switch ECMP/LAG hash in SAI"` を LOG_ERROR して処理を中断する。
 - **DEL 操作不可**: `ecmp_hash` / `lag_hash` / `ecmp_hash_algorithm` / `lag_hash_algorithm` はいずれも DEL 操作をサポートしない。削除を試みると `"Failed to remove switch ECMP/LAG hash configuration: operation is not supported"` を LOG_ERROR して `return false`。
 - **ASIC/[CONFIG_DB](../../reference/glossary.md#term-config_db) 乖離**: 初期化時に ASIC 側と CONFIG_DB 側の値が食い違っている場合、SET 時に `"Failed to set switch hash: ASIC and CONFIG DB are diverged"`、DEL 時に `"Failed to remove switch hash: operation is not supported: ASIC and CONFIG DB are diverged"` を LOG_ERROR。
@@ -145,7 +145,6 @@ show switch-hash global
 ```
 <!-- /ops-hint -->
 
-
 <!-- defaults -->
 ## コード由来の暗黙デフォルト
 
@@ -155,11 +154,11 @@ show switch-hash global
 
 `SwitchHash` 構造体 (`sonic-swss/orchagent/switch/switch_container.h:18-26`) は `ecmp_hash` / `lag_hash` をいずれも `is_set = false` で初期化する。CONFIG_DB の `SWITCH_HASH|GLOBAL` エントリにフィールドが含まれない場合、`setSwitchHash()` (`switchorch.cpp:789-822`) は SAI への書き込みを行わず、**有効な hash field 集合は SAI ベンダー実装 / ASIC のデフォルト**（`SAI_SWITCH_ATTR_ECMP_HASH` / `SAI_SWITCH_ATTR_LAG_HASH` が指す hash オブジェクトの初期 `NATIVE_HASH_FIELD_LIST`）に従う。
 
-`sonic-hash.yang` の `ecmp_hash` / `lag_hash` leaf-list には `default` 文が無く、YANG レベルでもデフォルトは規定されていない。SONiC orchagent 自身は IPv4 / IPv6 別の hash-field 集合をハードコードしておらず、`hash-field` enum も `SRC_IP` / `DST_IP` の単一集合で IPv4/IPv6 を区別しない（IPv6 対応は ASIC 側で自動的に handled）。
+`sonic-hash.yang` の `ecmp_hash` / `lag_hash` leaf-list には `default` 文が無く、YANG レベルでもデフォルトは規定されていない。[SONiC](../../reference/glossary.md#term-sonic) [orchagent](../../reference/glossary.md#term-orchagent) 自身は IPv4 / IPv6 別の hash-field 集合をハードコードしておらず、`hash-field` enum も `SRC_IP` / `DST_IP` の単一集合で IPv4/IPv6 を区別しない（IPv6 対応は ASIC 側で自動的に handled）。
 
 ### `ecmp_hash_algorithm` / `lag_hash_algorithm` — コード側デフォルトなし
 
-同じくフィールド未指定時は SAI 側のデフォルトアルゴリズム（典型的には `SAI_HASH_ALGORITHM_CRC`）が適用される。orchagent 経路でのハードコードデフォルトは存在しない。
+同じくフィールド未指定時は SAI 側のデフォルトアルゴリズム（典型的には `SAI_HASH_ALGORITHM_CRC`）が適用される。[orchagent](../../reference/glossary.md#term-orchagent) 経路でのハードコードデフォルトは存在しない。
 
 ### `querySwitchHashDefaults()` は OID キャッシュのみ
 
@@ -272,7 +271,7 @@ SwitchOrch は常時登録し `SWITCH_HASH` テーブルを無条件購読する
 
 > 調査証跡: `meta/_intermediate/cdb-flow/switch-hash-failure.md`
 
-`SWITCH_HASH` の処理失敗は `doCfgSwitchHashTableTask()` / `setSwitchHash()` / `setSwitchHashFieldListSai()` 内で検出される。STATE_DB へのステータス書き込みはなく、エラー記録は syslog (`SWSS_LOG_ERROR` / `SWSS_LOG_WARN`) のみ。
+`SWITCH_HASH` の処理失敗は `doCfgSwitchHashTableTask()` / `setSwitchHash()` / `setSwitchHashFieldListSai()` 内で検出される。[STATE_DB](../../reference/glossary.md#term-state_db) へのステータス書き込みはなく、エラー記録は syslog (`SWSS_LOG_ERROR` / `SWSS_LOG_WARN`) のみ。
 
 ### SET 時の失敗パターン
 
@@ -306,7 +305,7 @@ DEL 受信
   └─ 全ケース                               → LOG_ERROR → erase（DEL 非サポート）
 ```
 
-**自動再試行なし**: Consumer が `map.erase(it)` でエントリを消費するため、失敗後は CLI / `sonic-db-cli` による再書き込みが唯一の回復手段。`ERROR_TABLE` への書き込みもなし。CONFIG_DB のエントリは失敗後も残る（orchagent は書き戻さない）。
+**自動再試行なし**: Consumer が `map.erase(it)` でエントリを消費するため、失敗後は CLI / `sonic-db-cli` による再書き込みが唯一の回復手段。`ERROR_TABLE` への書き込みもなし。CONFIG_DB のエントリは失敗後も残る（[orchagent](../../reference/glossary.md#term-orchagent) は書き戻さない）。
 
 確認コマンド:
 ```bash
@@ -386,15 +385,15 @@ YANG の `sonic-types.yang` で定義された `hash-algorithm` typedef の列�
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`SWITCH_HASH|GLOBAL` の SET 処理は `doCfgSwitchHashTableTask()` → `setSwitchHash()` → `setSwitchHashFieldListSai()` / `setSwitchHashAlgorithmSai()` を経て SAI API を直接呼ぶのみであり、**他の Redis DB への副次書込を一切発生させない**。
+`SWITCH_HASH|GLOBAL` の SET 処理は `doCfgSwitchHashTableTask()` → `setSwitchHash()` → `setSwitchHashFieldListSai()` / `setSwitchHashAlgorithmSai()` を経て SAI API を直接呼ぶのみであり、**他の [Redis](../../reference/glossary.md#term-redis) DB への副次書込を一切発生させない**。
 
 | 副次 DB | 書込 | 根拠 |
 |---------|------|------|
-| APPL_DB | なし | `doCfgSwitchHashTableTask()` に `ProducerStateTable` / `Table::set` の呼び出しなし (`switchorch.cpp:943-998`) |
-| STATE_DB | なし | `SwitchOrch` の STATE_DB メンバ (`m_asicSensorsTable`、`m_asicSdkHealthEventTable`) は ASIC センサー系テーブル専用。SWITCH_HASH 処理経路からはアクセスされない |
-| COUNTERS_DB | なし | `m_counterManager` は switch 統計カウンタ向け。SWITCH_HASH 処理経路からは呼ばれない |
-| FLEX_COUNTER_DB | なし | 同上 |
-| ASIC_DB | 間接（syncd 経由） | `setSwitchHashFieldListSai()` が `sai_hash_api->set_hash_attribute()` でハッシュフィールドリストを設定し、`setSwitchHashAlgorithmSai()` が `sai_switch_api->set_switch_attribute()` でアルゴリズムを設定する。syncd が ASIC_DB に反映する |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `doCfgSwitchHashTableTask()` に `ProducerStateTable` / `Table::set` の呼び出しなし (`switchorch.cpp:943-998`) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `SwitchOrch` の [STATE_DB](../../reference/glossary.md#term-state_db) メンバ (`m_asicSensorsTable`、`m_asicSdkHealthEventTable`) は ASIC センサー系テーブル専用。SWITCH_HASH 処理経路からはアクセスされない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `m_counterManager` は switch 統計カウンタ向け。SWITCH_HASH 処理経路からは呼ばれない |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | 同上 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | 間接（[syncd](../../reference/glossary.md#term-syncd) 経由） | `setSwitchHashFieldListSai()` が `sai_hash_api->set_hash_attribute()` でハッシュフィールドリストを設定し、`setSwitchHashAlgorithmSai()` が `sai_switch_api->set_switch_attribute()` でアルゴリズムを設定する。[syncd](../../reference/glossary.md#term-syncd) が [ASIC_DB](../../reference/glossary.md#term-asic_db) に反映する |
 
 ### SAI 副次呼び出し
 
@@ -429,13 +428,13 @@ else
     addExecutor(new Consumer(new ConsumerStateTable(db, tableName, ...), this, tableName));
 ```
 
-`SWITCH_HASH` は CONFIG_DB テーブルであるため `SubscriberStateTable` が使用される。これは Redis の **keyspace 通知** (`PSUBSCRIBE __keyspace@<dbId>__:SWITCH_HASH|*`) で変更イベントを受信する仕組みであり、`ProducerStateTable` ベースの channel PUBLISH/SUBSCRIBE とは異なる。
+`SWITCH_HASH` は CONFIG_DB テーブルであるため `SubscriberStateTable` が使用される。これは [Redis](../../reference/glossary.md#term-redis) の **keyspace 通知** (`PSUBSCRIBE __keyspace@<dbId>__:SWITCH_HASH|*`) で変更イベントを受信する仕組みであり、`ProducerStateTable` ベースの channel PUBLISH/SUBSCRIBE とは異なる。
 
 ### Producer/Consumer ペア
 
 | 区間 | 方式 | チャンネル/API |
 |------|------|----------------|
-| CLI `config switch-hash` → CONFIG_DB `SWITCH_HASH` | `ConfigDBConnector.set_entry()` (HSET) | なし (keyspace 通知を Redis が自動発行) |
+| CLI `config switch-hash` → CONFIG_DB `SWITCH_HASH` | `ConfigDBConnector.set_entry()` (HSET) | なし (keyspace 通知を [Redis](../../reference/glossary.md#term-redis) が自動発行) |
 | CONFIG_DB `SWITCH_HASH` → `SwitchOrch` | `SubscriberStateTable` (keyspace 通知受信) | Redis `PSUBSCRIBE __keyspace@<dbId>__:SWITCH_HASH|*` |
 
 `SwitchOrch` 以外に CONFIG_DB `SWITCH_HASH` を購読するデーモン・サービスは存在しない。
@@ -536,7 +535,7 @@ SWITCH_HASH テーブルへの書き込みが発生するコード経路を網�
 
 ### CLI
 
-  - `config switch-hash global ecmp/lag ...` — `config/plugins/sonic-hash.py` が `set_entry('SWITCH_HASH', ...)` を呼ぶ (sonic-utilities/config/plugins/sonic-hash.py)
+  - `config switch-hash global ecmp/lag ...` — `config/plugins/sonic-hash.py` が `set_entry('SWITCH_HASH', ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/plugins/sonic-hash.py)
 
 ### minigraph / sonic-cfggen
 
@@ -544,7 +543,7 @@ minigraph.py に SWITCH_HASH 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -563,4 +562,4 @@ db_migrator.py での SWITCH_HASH マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: a26ef253c175 -->
+<!-- glossary-links-injected: 9e6ca6d1b46b -->

@@ -128,7 +128,7 @@ DASH のコントローラは設定をプッシュした後、「DPU が実際�
 
 ## DASH SONiC KVM での検証
 
-物理 SmartSwitch がなくても、DASH の動作確認は **BMv2 ベースの仮想 DPU** で行えます。`dash-sonic-kvm` は KVM 上で SONiC を動かし、DPU を BMv2（P4 ソフトウェアスイッチ）として接続することで、`DashOrch` 系 → SAI → BMv2 のループを再現します。
+物理 SmartSwitch がなくても、DASH の動作確認は **BMv2 ベースの仮想 DPU** で行えます。`dash-sonic-kvm` は KVM 上で [SONiC](../../reference/glossary.md#term-sonic) を動かし、DPU を BMv2（P4 ソフトウェアスイッチ）として接続することで、`DashOrch` 系 → SAI → BMv2 のループを再現します。
 
 検証で確認できる主な観点は次の通りです。
 
@@ -184,7 +184,7 @@ DPU が Online になったら、コントローラなしでも [CONFIG_DB](../.
 }
 ```
 
-このファイルを `swssconfig dash_eni.json` で適用すると、`dashorch` が SAI の `create_eni()` / `create_vnet()` を呼び、DPU 側 BMv2 ないし実 ASIC にプログラムされます。確認は次の通りです。
+このファイルを `swssconfig dash_eni.json` で適用すると、`dashorch` が SAI の `create_eni()` / `create_vnet()` を呼び、DPU 側 BMv2 ないし実 [ASIC](../../reference/glossary.md#term-asic) にプログラムされます。確認は次の通りです。
 
 ```bash
 sonic-db-cli APPL_DB KEYS 'DASH_ENI_TABLE:*'
@@ -295,4 +295,4 @@ DPU 1 台が単独で稼働する形では HA の検証ができないため、�
 - [DASH SONiC KVM](../../overlay/dash-sonic-kvm.md)
 - [Smart Switch のデータベース構成](../../architecture/smart-switch-database-design.md)
 
-<!-- glossary-links-injected: 710f941d149a -->
+<!-- glossary-links-injected: ec18b66e3507 -->

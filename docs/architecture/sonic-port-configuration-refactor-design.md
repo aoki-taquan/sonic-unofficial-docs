@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-SONiC のポート定義は伝統的に **`port_config.ini`**（プラットフォーム配下のテキストファイル）に書かれており、ポート名・index・lane・speed 等を保持する[^1]。共通パーサ `sonic-buildimage/src/sonic-config-engine/portconfig.py` がいる一方で、**他のリポジトリ・モジュールにも独自に同じファイルをパースするコード** が散在しており、メンテ性が悪化している。
+[SONiC](../reference/glossary.md#term-sonic) のポート定義は伝統的に **`port_config.ini`**（プラットフォーム配下のテキストファイル）に書かれており、ポート名・index・lane・speed 等を保持する[^1]。共通パーサ `sonic-buildimage/src/sonic-config-engine/portconfig.py` がいる一方で、**他のリポジトリ・モジュールにも独自に同じファイルをパースするコード** が散在しており、メンテ性が悪化している。
 
 本 [HLD](../reference/glossary.md#term-hld) は **すべての `port_config.ini` 関連ロジックを `portconfig.py` に寄せる** リファクタを定義する。さらに当時並行で進んでいた `port_config.ini` → `platform.json` 移行を踏まえ、**パース層を 1 箇所に集約しておけば後段の差し替えコストが下がる** ことを動機にしている[^1]。
 
@@ -226,4 +226,4 @@ sudo grep -E 'portsorch' /var/log/syslog | tail -50
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

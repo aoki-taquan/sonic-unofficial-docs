@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-sFlow コレクタ宛先 (IP アドレス / UDP ポート / VRF) を定義するテーブル。最大 2 エントリ (`max-elements 2`) まで登録可能。`hsflowd` (sflowd container) が `/etc/hsflowd.conf` を介して参照し、収集したサンプルを UDP で転送する[^1]。
+sFlow コレクタ宛先 (IP アドレス / UDP ポート / [VRF](../../reference/glossary.md#term-vrf)) を定義するテーブル。最大 2 エントリ (`max-elements 2`) まで登録可能。`hsflowd` (sflowd container) が `/etc/hsflowd.conf` を介して参照し、収集したサンプルを UDP で転送する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -59,14 +59,14 @@ SFLOW_COLLECTOR|<name>   # コレクタ名 (1..64 文字)
 | `collector_vrf` | `mgmt`/`default` | - | no | コレクタへ到達する [VRF](../../reference/glossary.md#term-vrf) |
 
 - `collector_vrf = 'mgmt'`: `MGMT_VRF_CONFIG.vrf_global.mgmtVrfEnabled = 'true'` のときのみ YANG `must` 制約で許容。
-- `collector_vrf` 未指定: デフォルト VRF を使用。
+- `collector_vrf` 未指定: デフォルト [VRF](../../reference/glossary.md#term-vrf) を使用。
 - 最大 2 コレクタ (`max-elements 2`)。CLI も 2 エントリ上限をチェック (`config/main.py:9354`)。
 
 ## 購読者
 
-**注意**: 現在の sflowmgrd (C++) は SFLOW_COLLECTOR テーブルを直接購読しない (`sflowmgrd.cpp` の TableConnector リストに SFLOW_COLLECTOR なし)。HLD では「sflowmgrd が SFLOW_COLLECTOR を監視して `/etc/hsflowd.conf` を更新する」と記述されているが、実装では直接購読はない。コレクタ設定は hsflowd の起動時に `/etc/hsflowd.conf` として読み込まれる[^2]。
+**注意**: 現在の sflowmgrd (C++) は SFLOW_COLLECTOR テーブルを直接購読しない (`sflowmgrd.cpp` の TableConnector リストに SFLOW_COLLECTOR なし)。[HLD](../../reference/glossary.md#term-hld) では「sflowmgrd が SFLOW_COLLECTOR を監視して `/etc/hsflowd.conf` を更新する」と記述されているが、実装では直接購読はない。コレクタ設定は hsflowd の起動時に `/etc/hsflowd.conf` として読み込まれる[^2]。
 
-- `hsflowd` (sflowd container): 起動時に CONFIG_DB の SFLOW_COLLECTOR エントリから生成された設定ファイルを読み込み、UDP ソケットを開く。
+- `hsflowd` (sflowd container): 起動時に [CONFIG_DB](../../reference/glossary.md#term-config_db) の SFLOW_COLLECTOR エントリから生成された設定ファイルを読み込み、UDP ソケットを開く。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -192,7 +192,7 @@ MGMT_VRF_CONFIG|vrf_global (mgmtVrfEnabled=true) ←── 必須参照 ── S
 
 | ID | 失敗条件 | 検出層 | 結果 |
 |----|---------|-------|------|
-| F6 | 存在しないコレクタ名を指定した DEL (`ADHOC_VALIDATION=True` 時のみ) | CLI (`config/main.py:9374-9378`) | 警告表示・Redis では存在しないキーへの DEL が silent no-op |
+| F6 | 存在しないコレクタ名を指定した DEL (`ADHOC_VALIDATION=True` 時のみ) | CLI (`config/main.py:9374-9378`) | 警告表示・[Redis](../../reference/glossary.md#term-redis) では存在しないキーへの DEL が silent no-op |
 
 ### hsflowd サービス起動失敗
 
@@ -206,7 +206,7 @@ MGMT_VRF_CONFIG|vrf_global (mgmtVrfEnabled=true) ←── 必須参照 ── S
 
 | ID | 失敗条件 | 検出箇所 | 結果 |
 |----|---------|---------|------|
-| F8 | REST/gNMI で `/collectors/collector/config` サブツリーへの DELETE | `xfmr_sflow.go:283-284` | `"Delete operation not supported for this xpath"` エラーを返す。`/collectors/collector` レベルで DELETE する必要あり |
+| F8 | REST/[gNMI](../../reference/glossary.md#term-gnmi) で `/collectors/collector/config` サブツリーへの DELETE | `xfmr_sflow.go:283-284` | `"Delete operation not supported for this xpath"` エラーを返す。`/collectors/collector` レベルで DELETE する必要あり |
 
 <!-- /failure -->
 
@@ -274,15 +274,15 @@ service hsflowd restart  →  /etc/hsflowd.conf 再読込み  →  新コレク�
 
 ### SE3: APPL_DB への波及なし
 
-SFLOW_COLLECTOR テーブルのエントリは APPL_DB に複製されない。APPL_DB への sFlow 書き込みは `SFLOW|global` および `SFLOW_SESSION` の変化時に `m_appSflowTable.set()` / `m_appSflowSessionTable.set()` を通じて発生するが、SFLOW_COLLECTOR は対象外 (`sflowmgr.cpp:468` の `m_appSflowTable.set` は `CFG_SFLOW_TABLE_NAME` ハンドラのみ)。
+SFLOW_COLLECTOR テーブルのエントリは [APPL_DB](../../reference/glossary.md#term-appl_db) に複製されない。[APPL_DB](../../reference/glossary.md#term-appl_db) への sFlow 書き込みは `SFLOW|global` および `SFLOW_SESSION` の変化時に `m_appSflowTable.set()` / `m_appSflowSessionTable.set()` を通じて発生するが、SFLOW_COLLECTOR は対象外 (`sflowmgr.cpp:468` の `m_appSflowTable.set` は `CFG_SFLOW_TABLE_NAME` ハンドラのみ)。
 
 ### SE4: gNMI/REST 経由の制約
 
-`xfmr_sflow.go:282-285`: REST/gNMI で `/collectors/collector/config` サブパスへの DELETE は拒否される。`/collectors/collector` レベルでの DELETE のみ許容。また、gNMI 経由で書き込む際のキー形式は `<ip>_<port>_<vrf>` の自動生成であり (`makeColKey()`)、CLI の任意 `name` とは異なる。
+`xfmr_sflow.go:282-285`: REST/[gNMI](../../reference/glossary.md#term-gnmi) で `/collectors/collector/config` サブパスへの DELETE は拒否される。`/collectors/collector` レベルでの DELETE のみ許容。また、[gNMI](../../reference/glossary.md#term-gnmi) 経由で書き込む際のキー形式は `<ip>_<port>_<vrf>` の自動生成であり (`makeColKey()`)、CLI の任意 `name` とは異なる。
 
 ### 副作用マトリクス
 
-| 操作 | CONFIG_DB | APPL_DB | hsflowd プロセス | 備考 |
+| 操作 | CONFIG_DB | [APPL_DB](../../reference/glossary.md#term-appl_db) | hsflowd プロセス | 備考 |
 |------|-----------|---------|-----------------|------|
 | SET (CLI / gNMI) | 書き込み | 変化なし | 変化なし | hsflowd 再起動まで未反映 |
 | DEL (CLI / gNMI `/collector`) | 削除 | 変化なし | 変化なし | hsflowd 再起動まで未反映 |
@@ -296,17 +296,17 @@ SFLOW_COLLECTOR テーブルのエントリは APPL_DB に複製されない。A
 
 ### Redis 購読方式
 
-`SFLOW_COLLECTOR` テーブルを購読するプロセスは **存在しない**。`sflowmgrd.cpp:31-41` の `TableConnector` リストは `PORT`（CONFIG_DB）・`PORT_TABLE`（STATE_DB）・`SFLOW`・`SFLOW_SESSION` の 4 テーブルのみで、`SFLOW_COLLECTOR` は含まれない。
+`SFLOW_COLLECTOR` テーブルを購読するプロセスは **存在しない**。`sflowmgrd.cpp:31-41` の `TableConnector` リストは `PORT`（CONFIG_DB）・`PORT_TABLE`（[STATE_DB](../../reference/glossary.md#term-state_db)）・`SFLOW`・`SFLOW_SESSION` の 4 テーブルのみで、`SFLOW_COLLECTOR` は含まれない。
 
 | TableConnector | DB | 購読 API | 通知方式 |
 |---------------|----|---------|---------|
 | `CFG_PORT_TABLE_NAME` | CONFIG_DB | `swss::SubscriberStateTable` | keyspace 通知 `__keyspace@4__:PORT\|*` |
-| `STATE_PORT_TABLE_NAME` | STATE_DB | `swss::SubscriberStateTable` | keyspace 通知 `__keyspace@6__:PORT_TABLE\|*` |
+| `STATE_PORT_TABLE_NAME` | [STATE_DB](../../reference/glossary.md#term-state_db) | `swss::SubscriberStateTable` | keyspace 通知 `__keyspace@6__:PORT_TABLE\|*` |
 | `CFG_SFLOW_TABLE_NAME` | CONFIG_DB | `swss::SubscriberStateTable` | keyspace 通知 `__keyspace@4__:SFLOW\|*` |
 | `CFG_SFLOW_SESSION_TABLE_NAME` | CONFIG_DB | `swss::SubscriberStateTable` | keyspace 通知 `__keyspace@4__:SFLOW_SESSION\|*` |
 | `SFLOW_COLLECTOR` | (未登録) | **なし** | **購読なし** |
 
-購読されている 4 テーブルは `Orch::addConsumer()` が CONFIG_DB / STATE_DB では `SubscriberStateTable`（Redis keyspace 通知 `PSUBSCRIBE __keyspace@<dbId>__:<TABLE>|*`）を使い、通知受信後に `HGETALL` で値を再取得する。APPL_DB 側は `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）を使うが、SFLOW_COLLECTOR には APPL_DB コピーも存在しない。CONFIG_DB は永続前提のため TTL は設定されない。
+購読されている 4 テーブルは `Orch::addConsumer()` が CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) では `SubscriberStateTable`（[Redis](../../reference/glossary.md#term-redis) keyspace 通知 `PSUBSCRIBE __keyspace@<dbId>__:<TABLE>|*`）を使い、通知受信後に `HGETALL` で値を再取得する。APPL_DB 側は `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）を使うが、SFLOW_COLLECTOR には APPL_DB コピーも存在しない。CONFIG_DB は永続前提のため TTL は設定されない。
 
 ### keyspace 通知 → ハンドラ呼び出しの流れ
 
@@ -345,15 +345,17 @@ sflowmgrd: doTask(CFG_SFLOW_TABLE_NAME)
 <!-- platform -->
 ## プラットフォーム差異 (Phase H)
 
-**プラットフォーム差なし**: `SFLOW_COLLECTOR` は [SAI](../../reference/glossary.md#term-sai) を経由しない。CONFIG_DB への書き込みと hsflowd 設定ファイル再生成のみで完結するため、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。
+**プラットフォーム差なし**: `SFLOW_COLLECTOR` は [SAI](../../reference/glossary.md#term-sai) を経由しない。CONFIG_DB への書き込みと hsflowd 設定ファイル再生成のみで完結するため、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
 | [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | [SAI](../../reference/glossary.md#term-sai) 非経由。`sfloworch.cpp` に SFLOW_COLLECTOR 参照なし。CONFIG_DB 書き込み → hsflowd conf 再生成のみ |
 | multi-asic (`is_multi_npu` 環境) | 影響なし | `sflowmgrd.cpp:28-31`: `DBConnector("CONFIG_DB", 0)` で host-scope CONFIG_DB のみ接続。asicN namespace を iterate するコードなし |
-| VOQ chassis (supervisor + line cards) | 影響なし | VOQ 固有コードパスなし。chassis 集中コレクタ管理機構は未実装 |
-| `collector_vrf = 'mgmt'` | mgmt VRF 有効化が前提 | kernel routing table のソフトウェア制約。ASIC 非依存。`sonic-utilities/config/main.py:9327-9329` で CLI がチェック |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 影響なし | [VOQ](../../reference/glossary.md#term-voq) 固有コードパスなし。chassis 集中コレクタ管理機構は未実装 |
+| `collector_vrf = 'mgmt'` | mgmt VRF 有効化が前提 | kernel routing table のソフトウェア制約。[ASIC](../../reference/glossary.md#term-asic) 非依存。`sonic-utilities/config/main.py:9327-9329` で CLI がチェック |
 | IPv6 コレクタ | CONFIG_DB 経路は同一 | YANG `inet:ip-address` で IPv4/IPv6 両対応。hsflowd 実装依存だが DB 経路は ASIC 非依存 |
 
 > **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:28-41`（DB 接続・TableConnector リスト）、`sonic-swss/orchagent/sfloworch.cpp`（SFLOW_COLLECTOR 参照なし）、`sonic-utilities/config/main.py:9314-9331`（CLI VRF 制約）、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sflow.yang`（YANG must / max-elements）；詳細分析 `meta/_intermediate/cdb-flow/sflow-collector-platform.md`
 <!-- /platform -->
+
+<!-- glossary-links-injected: 4fa57fff7d6e -->

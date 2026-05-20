@@ -40,7 +40,7 @@ related:
 - **PT Sink**: SRC からの probe を集めて Regional Collector へ
 - **RC (Regional Collector)**: probe を Time Series DB に保存し path / 時刻系列を再構築
 
-本 [HLD](../reference/glossary.md#term-hld) は **Midpoint** の SONiC 実装を扱う。Source / Sink の HLD は別[^1]。
+本 [HLD](../reference/glossary.md#term-hld) は **Midpoint** の [SONiC](../reference/glossary.md#term-sonic) 実装を扱う。Source / Sink の HLD は別[^1]。
 
 ## 動作仕様
 
@@ -109,7 +109,7 @@ flowchart LR
   SAI --> ASIC[ASIC<br/>linerate で MCD push]
 ```
 
-通常の forwarding と同じ経路で programming される（`portsyncd` / `portmgrd` を経由）。Path Tracing 自体は ASIC で **linerate 実装** されることが前提[^1]。
+通常の forwarding と同じ経路で programming される（`portsyncd` / `portmgrd` を経由）。Path Tracing 自体は [ASIC](../reference/glossary.md#term-asic) で **linerate 実装** されることが前提[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/path_tracing/path_tracing_midpoint.md#L80-L94 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -213,4 +213,4 @@ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_PORT:*" | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 024b36777c6d -->
+<!-- glossary-links-injected: ec18b66e3507 -->

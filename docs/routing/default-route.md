@@ -185,7 +185,7 @@ HLD には [CONFIG_DB](../reference/glossary.md#term-config_db) エントリの�
 
 ### 関連する CLI
 
-HLD には `show` / `config` 系の SONiC CLI への追加は記載されていない。本機能は `linkmgrd` プロセスのコマンドラインオプションでのみ制御される。
+HLD には `show` / `config` 系の [SONiC](../reference/glossary.md#term-sonic) CLI への追加は記載されていない。本機能は `linkmgrd` プロセスのコマンドラインオプションでのみ制御される。
 
 | オプション | 用途 |
 |------------|------|
@@ -270,4 +270,4 @@ HLD の主張（orchagent が STATE_DB にデフォルトルート状態を書�
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 6c1c191bd48c -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

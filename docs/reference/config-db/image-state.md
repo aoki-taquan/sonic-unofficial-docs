@@ -35,9 +35,9 @@ related:
 
 ## 概要
 
-SONiC OS のイメージバージョン・ビルド情報は `/etc/sonic/sonic_version.yml` に格納される[^1]。このファイルは `sonic-buildimage` のビルドプロセス（`build_debian.sh`）が Jinja2 テンプレート（`files/build_templates/sonic_version.yml.j2`）から生成し、インストールされたイメージのファイルシステムルートに配置される。
+[SONiC](../../reference/glossary.md#term-sonic) OS のイメージバージョン・ビルド情報は `/etc/sonic/sonic_version.yml` に格納される[^1]。このファイルは `sonic-buildimage` のビルドプロセス（`build_debian.sh`）が Jinja2 テンプレート（`files/build_templates/sonic_version.yml.j2`）から生成し、インストールされたイメージのファイルシステムルートに配置される。
 
-Redis の CONFIG_DB / STATE_DB テーブルとは異なり、**ファイルシステム上の静的 YAML ファイル**として提供される。ランタイムでは `sonic-py-common` の `device_info.get_sonic_version_info()` API が読み込んで返す。
+[Redis](../../reference/glossary.md#term-redis) の [CONFIG_DB](../../reference/glossary.md#term-config_db) / [STATE_DB](../../reference/glossary.md#term-state_db) テーブルとは異なり、**ファイルシステム上の静的 YAML ファイル**として提供される。ランタイムでは `sonic-py-common` の `device_info.get_sonic_version_info()` API が読み込んで返す。
 
 !!! note "STATE_DB 直接格納なし"
     `/etc/sonic/sonic_version.yml` のデータは Redis STATE_DB には書き込まれない。`show version` コマンドおよび gNMI telemetry はいずれもファイルから直接読む。
@@ -55,7 +55,7 @@ Redis の CONFIG_DB / STATE_DB テーブルとは異なり、**ファイルシ�
 | `build_version` | string | 必須 | イメージのバージョン文字列。タグ付きビルドではタグ名、開発ビルドでは `<branch>.<build_number>-<commit_sha>` 形式 |
 | `debian_version` | string | 任意 | ビルド時の Debian OS バージョン (`/etc/debian_version` の内容) |
 | `kernel_version` | string | 任意 | ビルドに使用したカーネルバージョン |
-| `asic_type` | string | 必須 | ASIC プラットフォーム種別 (例: `broadcom`, `mellanox`, `vs`) |
+| `asic_type` | string | 必須 | [ASIC](../../reference/glossary.md#term-asic) プラットフォーム種別 (例: `broadcom`, `mellanox`, `vs`) |
 | `asic_subtype` | string | 任意 | ターゲットマシン種別 (`TARGET_MACHINE`)。空の場合は省略 |
 | `commit_id` | string | 必須 | ビルド時の git コミット short SHA |
 | `branch` | string | 必須 | ビルド時の git ブランチ名 |
@@ -63,7 +63,7 @@ Redis の CONFIG_DB / STATE_DB テーブルとは異なり、**ファイルシ�
 | `build_date` | string | 必須 | ビルド日時 (UTC, `date -u` の出力形式) |
 | `build_number` | integer | 必須 (デフォルト `0`) | CI ビルド番号 (`BUILD_NUMBER` 変数、未設定時 `0`) |
 | `built_by` | string | 必須 | ビルドを実行したユーザー (`$USER@$BUILD_HOSTNAME`) |
-| `sonic_os_version` | string | 必須 | SONiC OS バージョン番号。`SONIC_OS_VERSION` 変数 (デフォルト `13`) |
+| `sonic_os_version` | string | 必須 | [SONiC](../../reference/glossary.md#term-sonic) OS バージョン番号。`SONIC_OS_VERSION` 変数 (デフォルト `13`) |
 | `secure_boot_image` | string | 必須 | `'yes'` または `'no'`。`SECURE_UPGRADE_MODE` が `dev` か `prod` のとき `'yes'` |
 | `asan` | string | 任意 | `'yes'` (ASAN 有効ビルド時のみ存在) |
 | `<component>` | string | 任意 | `COMPONENTS` 変数で列挙されたパッケージ名をキー、バージョンを値とする動的フィールド群 |
@@ -116,7 +116,7 @@ Built by: johnar@jenkins-worker-8
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-`/etc/sonic/sonic_version.yml` は Redis STATE_DB テーブルではなく YAML ファイルとして提供される。YANG schema は存在しない。フィールドとデフォルト値はすべてビルドスクリプトとテンプレートで定義される。
+`/etc/sonic/sonic_version.yml` は [Redis](../../reference/glossary.md#term-redis) [STATE_DB](../../reference/glossary.md#term-state_db) テーブルではなく YAML ファイルとして提供される。[YANG](../../reference/glossary.md#term-yang) schema は存在しない。フィールドとデフォルト値はすべてビルドスクリプトとテンプレートで定義される。
 
 | フィールド | コード由来デフォルト | 根拠 |
 |-----------|------------------|------|
@@ -141,13 +141,13 @@ Built by: johnar@jenkins-worker-8
 - `debian_version` / `kernel_version` は Jinja2 テンプレートで `{% if ... is defined %}` ガードがあるため、未定義の場合はフィールド自体が YAML から省略される。
 - `<component>` フィールド群は `COMPONENTS` 変数が `name==version` 形式のスペース区切りリストで定義されている場合のみ出力される。空の場合はフィールドなし。
 - `get_sonic_version_info()` は戻り値を `sonic_ver_info` グローバル変数でキャッシュする。同一プロセス内で 2 回目以降の呼び出しはファイルを再読しない (`device_info.py:515-525`)。
-- YANG schema、CONFIG_DB エントリ、STATE_DB エントリは存在しない。バージョン情報は専らファイルシステムから参照される。
+- [YANG](../../reference/glossary.md#term-yang) schema、[CONFIG_DB](../../reference/glossary.md#term-config_db) エントリ、[STATE_DB](../../reference/glossary.md#term-state_db) エントリは存在しない。バージョン情報は専らファイルシステムから参照される。
 <!-- /defaults -->
 
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`/etc/sonic/sonic_version.yml` はビルド時に生成される静的ファイルであり、CONFIG_DB / STATE_DB への書込みは行わない。ただし、ビルドパイプライン内の変数確定順序と、ランタイムでの読込みキャッシュ挙動に順序依存が存在する。
+`/etc/sonic/sonic_version.yml` はビルド時に生成される静的ファイルであり、[CONFIG_DB](../../reference/glossary.md#term-config_db) / STATE_DB への書込みは行わない。ただし、ビルドパイプライン内の変数確定順序と、ランタイムでの読込みキャッシュ挙動に順序依存が存在する。
 
 ### 検出された順序依存
 
@@ -155,7 +155,7 @@ Built by: johnar@jenkins-worker-8
 |---|----------|------|------------|
 | 1 | 環境変数エクスポート → `j2` レンダリング (`build_debian.sh`) | **強制先行（同スクリプト内逐次実行）** | 必須フィールドが空、またはガード対象フィールドが省略される |
 | 2 | CI による `BUILD_NUMBER` 設定 → `build_debian.sh` 実行 | **推奨先行** | `BUILD_NUMBER` 未設定時は `functions.sh:60` の `${BUILD_NUMBER:-0}` フォールバックで `build_number: 0` が刻まれる |
-| 3 | SONiC イメージインストール（ファイル配置完了） → `get_sonic_version_info()` 呼び出し | **強制先行** | ファイル不在時は `os.path.isfile()` チェックで `None` を返す（`device_info.py:512-513`）。`show version` / gNMI が version なし表示になる |
+| 3 | [SONiC](../../reference/glossary.md#term-sonic) イメージインストール（ファイル配置完了） → `get_sonic_version_info()` 呼び出し | **強制先行** | ファイル不在時は `os.path.isfile()` チェックで `None` を返す（`device_info.py:512-513`）。`show version` / [gNMI](../../reference/glossary.md#term-gnmi) が version なし表示になる |
 | 4 | 初回 `get_sonic_version_info()` 呼び出し → 以降の同プロセス参照 | **プロセスライフタイム固定（キャッシュ）** | `global sonic_ver_info` に結果を保持し、2 回目以降はファイルを再読しない（`device_info.py:515-517`）。ファイルを書き換えてもプロセス再起動なしでは反映されない |
 
 ### 主要な制約詳細
@@ -164,7 +164,7 @@ Built by: johnar@jenkins-worker-8
 
 **`BUILD_NUMBER` フォールバック (依存 #2)**: `functions.sh:60` の `BUILD_NUMBER=${BUILD_NUMBER:-0}` により、CI 環境変数が未設定のローカルビルドでは常に `build_number: 0` が埋め込まれる。`build_version` 文字列も `<branch>.0-<commit_sha>` 形式になるため、同一コミットの複数ローカルビルドを `build_version` で区別できない。
 
-**プロセスキャッシュと hot-reload 不可 (依存 #4)**: `device_info.get_sonic_version_info()` は `sonic_ver_info` グローバル変数でキャッシュするため、`show version` CLI や gNMI telemetry サービスが起動してから `/etc/sonic/sonic_version.yml` を手動書き換えしても、**該当プロセスを再起動するまで旧バージョン情報が返り続ける**。sonic-py-common を使う全デーモン（`telemetry`・`sonic-utilities`）が影響を受ける。
+**プロセスキャッシュと hot-reload 不可 (依存 #4)**: `device_info.get_sonic_version_info()` は `sonic_ver_info` グローバル変数でキャッシュするため、`show version` CLI や [gNMI](../../reference/glossary.md#term-gnmi) telemetry サービスが起動してから `/etc/sonic/sonic_version.yml` を手動書き換えしても、**該当プロセスを再起動するまで旧バージョン情報が返り続ける**。sonic-py-common を使う全デーモン（`telemetry`・`sonic-utilities`）が影響を受ける。
 
 <!-- /ordering -->
 
@@ -173,12 +173,12 @@ Built by: johnar@jenkins-worker-8
 
 > 調査証跡: `meta/_intermediate/cdb-flow/image-state-cross-refs.md`
 
-`/etc/sonic/sonic_version.yml` は Redis テーブルではないため YANG leafref による参照整合性保証は存在しない。しかし複数のコンポーネントがこのファイルを直接読み込んでおり、ファイル不在またはフィールド欠落時の影響は広範囲に及ぶ。
+`/etc/sonic/sonic_version.yml` は [Redis](../../reference/glossary.md#term-redis) テーブルではないため [YANG](../../reference/glossary.md#term-yang) leafref による参照整合性保証は存在しない。しかし複数のコンポーネントがこのファイルを直接読み込んでおり、ファイル不在またはフィールド欠落時の影響は広範囲に及ぶ。
 
 | コンポーネント | 依存フィールド | ファイル不在時の挙動 | フィールド欠落時の挙動 | evidence |
 |---|---|---|---|---|
-| `show version` (sonic-utilities) | `build_version`・`asic_type` 等 | `get_sonic_version_info()` が `None` を返す → 各フィールド `.get(key, 'N/A')` で graceful fallback | `N/A` 表示 | `show/main.py:1718-1733` |
-| gNMI telemetry (sonic-gnmi) | `build_version` | `SonicVersionInfo.Error` にエラー文字列、`build_version=""` として返却 | 同上 | `non_db_client.go:42-58` |
+| `show version` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)) | `build_version`・`asic_type` 等 | `get_sonic_version_info()` が `None` を返す → 各フィールド `.get(key, 'N/A')` で graceful fallback | `N/A` 表示 | `show/main.py:1718-1733` |
+| [gNMI](../../reference/glossary.md#term-gnmi) telemetry (sonic-gnmi) | `build_version` | `SonicVersionInfo.Error` にエラー文字列、`build_version=""` として返却 | 同上 | `non_db_client.go:42-58` |
 | `db_migrator.py` | `asic_type` | `version_info.get('asic_type')` が `None` → asic 固有 migration が mellanox 向け等でスキップ | mellanox 向け migrate_xxx が実行されない | `db_migrator.py:96-98` |
 | `field_operation_validators.py` (gcu) | `asic_type` | `device_info.get_sonic_version_info()['asic_type']` の直接キーアクセスで **`KeyError`** → gcu フィールド操作が失敗 | `None` 比較で asic 固有ルールが不適用 | `field_operation_validators.py:33` |
 | `sonic_package_manager` | version_info dict 全体 | `None` アクセスでクラッシュの可能性 | パッケージバージョン検証の欠落 | `manager.py:323` |
@@ -207,7 +207,7 @@ Built by: johnar@jenkins-worker-8
 | # | 失敗トリガー | 影響コンポーネント | 挙動 | evidence |
 |---|------------|-----------------|------|---------|
 | 1 | ファイル不在 | `get_sonic_version_info()` | `None` を返す | `device_info.py:512-513` |
-| 2 | ファイル不在 → `show version` | sonic-utilities | `version_info['commit_id']` 等の直接キーアクセスで `TypeError` クラッシュ | `show/main.py:1731-1733` |
+| 2 | ファイル不在 → `show version` | [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) | `version_info['commit_id']` 等の直接キーアクセスで `TypeError` クラッシュ | `show/main.py:1731-1733` |
 | 3 | ファイル不在 / YAML パース失敗 | gNMI telemetry | `BuildVersion="sonic.NA"` + `Error` フィールドに理由文字列を格納して JSON 返却（graceful fallback） | `non_db_client.go:306-319` |
 | 4 | ファイル不在 → gcu バリデーション | generic_config_updater | `get_sonic_version_info()['asic_type']` の直接キーアクセスで `TypeError` 例外伝播、フィールド操作が失敗 | `field_operation_validators.py:33` |
 | 5 | `asic_type` フィールド欠落 | gcu バリデーション | `KeyError` 例外伝播 | `field_operation_validators.py:33` |
@@ -312,9 +312,9 @@ Kubernetes 環境 (`FEATURE` テーブルで `set_owner=kube` が設定されて
 
 | コンポーネント | 参照フィールド | 用途 | DB 書込み |
 |---|---|---|---|
-| `syncd_init_common.sh` | `asic_type` | syncd 起動パラメータ決定 (`syncd_init_common.sh:20-21`) | なし（環境変数として利用） |
+| `syncd_init_common.sh` | `asic_type` | [syncd](../../reference/glossary.md#term-syncd) 起動パラメータ決定 (`syncd_init_common.sh:20-21`) | なし（環境変数として利用） |
 | `rsyslog-config.sh` | `build_version` | rsyslog タグ文字列設定 (`rsyslog-config.sh:33`) | なし（設定ファイルのみ） |
-| `generic_config_updater` | `asic_type`、`build_version` | ASIC 固有バリデーション判定 (`field_operation_validators.py:33`) | なし |
+| `generic_config_updater` | `asic_type`、`build_version` | [ASIC](../../reference/glossary.md#term-asic) 固有バリデーション判定 (`field_operation_validators.py:33`) | なし |
 | `db_migrator.py` | `asic_type` | asic 固有マイグレーション分岐 (`db_migrator.py:96-97`) | なし（判定用途のみ） |
 | `show version` | 全フィールド | CLI 表示 | なし |
 
@@ -327,7 +327,7 @@ Kubernetes 環境 (`FEATURE` テーブルで `set_owner=kube` が設定されて
 
 ### 購読方式: なし (Redis pub/sub 不使用 — ファイル直読み)
 
-`/etc/sonic/sonic_version.yml` は **Redis テーブルではなくファイルシステム上の静的 YAML ファイル**であるため、Redis keyspace notification / ConsumerStateTable / SubscriberStateTable は一切関与しない。全コンシューマはファイルを直接読み込む。
+`/etc/sonic/sonic_version.yml` は **Redis テーブルではなくファイルシステム上の静的 YAML ファイル**であるため、Redis keyspace notification / [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) / SubscriberStateTable は一切関与しない。全コンシューマはファイルを直接読み込む。
 
 | コンポーネント | 読み方式 | タイミング | 変更通知 |
 |---|---|---|---|
@@ -335,7 +335,7 @@ Kubernetes 環境 (`FEATURE` テーブルで `set_owner=kube` が設定されて
 | `sonic-gnmi` (`non_db_client.go`) | Go `os.ReadFile()` + YAML デシリアライズ | `sync.Once` で起動時 1 回のみ | なし — `InvalidateVersionFileStash()` はテスト用 API のみ |
 | `ctrmgrd.py` (`set_node_labels`) | `device_info.get_sonic_version_info()` 経由 | Kubernetes master 接続確立時 1 回 | なし |
 | `db_migrator.py` | `device_info.get_sonic_version_info()` 経由 | マイグレーション実行時 1 回 | なし |
-| `syncd_init_common.sh` | `python3 -c "import sonic_py_common..."` シェル呼び出し | syncd 起動スクリプト実行時 1 回 | なし |
+| `syncd_init_common.sh` | `python3 -c "import sonic_py_common..."` シェル呼び出し | [syncd](../../reference/glossary.md#term-syncd) 起動スクリプト実行時 1 回 | なし |
 
 ### ファイル変更の反映経路
 
@@ -367,7 +367,7 @@ Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書�
 | フィールド定義・YANG | 差なし | YANG モジュール未定義。全プラットフォームで同一フィールド構造 |
 | `asic_type` の値 | プラットフォーム依存 | `broadcom` / `mellanox` / `marvell` / `vs` 等、ビルドターゲット (`sonic_asic_platform`) がそのまま入る |
 | `asic_subtype` の値 | HW SKU 依存 | `TARGET_MACHINE` 変数。空の場合はフィールド自体が省略される |
-| multi-asic / VOQ chassis | 影響なし | `sonic_version.yml` は 1 ファイル。multi-asic 環境でも ASIC ごとに複数のファイルは存在しない |
+| multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis | 影響なし | `sonic_version.yml` は 1 ファイル。multi-asic 環境でも [ASIC](../../reference/glossary.md#term-asic) ごとに複数のファイルは存在しない |
 
 ### `asic_type` 依存の下流分岐
 
@@ -392,8 +392,4 @@ Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書�
 
 [^2]: `sonic-buildimage/functions.sh:sonic_get_version()` L53-68 — build_version 文字列の生成ロジック。<https://github.com/sonic-net/sonic-buildimage/blob/master/functions.sh>
 
-[^3]: `sonic-buildimage/files/build_templates/sonic_version.yml.j2` — YAML テンプレート全体。<https://github.com/sonic-net/sonic-buildimage/blob/master/files/build_templates/sonic_version.yml.j2>
-
-[^4]: `sonic-py-common/sonic_py_common/device_info.py:get_sonic_version_info()` L511-525 — 読み込み API 実装。<https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-py-common/sonic_py_common/device_info.py>
-
-[^5]: `sonic-utilities/show/main.py:version()` L1716-1733 — `show version` コマンド実装。<https://github.com/sonic-net/sonic-utilities/blob/master/show/main.py>
+<!-- glossary-links-injected: b2ce91fb8966 -->

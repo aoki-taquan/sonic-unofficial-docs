@@ -25,9 +25,23 @@ related:
 
 ## 概要
 
-`SSH_SERVER|POLICIES` テーブルの全フィールドについて、YANG モデルが宣言する `default` 値と `hostcfgd` コードが適用する暗黙的な fallback 値を整理したリファレンスページ（Phase A）[^1]。
+`SSH_SERVER|POLICIES` テーブルの全フィールドについて、[YANG](../../reference/glossary.md#term-yang) モデルが宣言する `default` 値と `hostcfgd` コードが適用する暗黙的な fallback 値を整理したリファレンスページ（Phase A）[^1]。
 
 テーブル未設定時の挙動: `SshServer.load()` が `self.policies = {}` をセットし `set_policies()` を呼ばないため、`/etc/ssh/sshd_config` は変更されない。実効デフォルトは OS（Debian）の sshd 初期値となる。
+
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>SSH_SERVER")]
+  DM["hostcfgd"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
 
 ## key 構造
 
@@ -40,7 +54,7 @@ SSH_SERVER|POLICIES
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG `default` 宣言値と、フィールド不在時にコードまたは sshd が適用する実効デフォルトの対応表。
+[YANG](../../reference/glossary.md#term-yang) `default` 宣言値と、フィールド不在時にコードまたは sshd が適用する実効デフォルトの対応表。
 
 | フィールド | YANG default | コード由来暗黙デフォルト | 実効 sshd_config 値 | 根拠 |
 |-----------|-------------|------------------------|-------------------|------|
@@ -57,7 +71,7 @@ YANG `default` 宣言値と、フィールド不在時にコードまたは sshd
 
 ### `inactivity_timeout` — 単位変換 discrepancy
 
-YANG の `description` は "minutes" と明記しているが、変換処理（`× 60`）は hostcfgd 内部にのみ存在する。YANG 型 `uint32` には単位情報がないため、コードを読まないと単位が分であることが分からない。
+YANG の `description` は "minutes" と明記しているが、変換処理（`× 60`）は [hostcfgd](../../reference/glossary.md#term-hostcfgd) 内部にのみ存在する。YANG 型 `uint32` には単位情報がないため、コードを読まないと単位が分であることが分からない。
 
 ```python
 # hostcfgd L1129-1131
@@ -80,7 +94,7 @@ OpenSSH の `MaxSessions`（同時チャンネル数上限）とは別概念で�
 
 ### `authentication_retries` — YANG/hostcfgd min 差異
 
-YANG range は `1..100` だが hostcfgd の `SSH_MIN_VALUES["authentication_retries"] = 3` が実効最小値。値 1〜2 は YANG バリデーション通過後に hostcfgd が ERR ログを出してスキップする。
+YANG range は `1..100` だが [hostcfgd](../../reference/glossary.md#term-hostcfgd) の `SSH_MIN_VALUES["authentication_retries"] = 3` が実効最小値。値 1〜2 は YANG バリデーション通過後に [hostcfgd](../../reference/glossary.md#term-hostcfgd) が ERR ログを出してスキップする。
 
 ### `permit_root_login` — YANG default 欠如
 
@@ -99,12 +113,12 @@ YANG に `default` 宣言がない。DB に設定しない場合は sshd の組�
 
 ### 先行必須テーブル
 
-`SSH_SERVER|POLICIES` は他 CONFIG_DB テーブルへの leafref を持たないため、書き込み前に先行必須テーブルは存在しない。
+`SSH_SERVER|POLICIES` は他 [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルへの leafref を持たないため、書き込み前に先行必須テーブルは存在しない。
 
 | テーブル | 要否 | 理由 |
 |---------|------|------|
-| `DEVICE_METADATA\|localhost` | 任意（実質必須） | `PamLimitsCfg.update_config_file()` は `SSH_SERVER` と `DEVICE_METADATA` の両方が不在の場合に早期 return（`hostcfgd` L1430）。通常の SONiC デプロイでは常に存在 |
-| その他 CONFIG_DB テーブル | なし | `SshServer.set_policies()` は外部 OID 参照なし |
+| `DEVICE_METADATA\|localhost` | 任意（実質必須） | `PamLimitsCfg.update_config_file()` は `SSH_SERVER` と `DEVICE_METADATA` の両方が不在の場合に早期 return（`hostcfgd` L1430）。通常の [SONiC](../../reference/glossary.md#term-sonic) デプロイでは常に存在 |
+| その他 [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル | なし | `SshServer.set_policies()` は外部 OID 参照なし |
 
 ### 起動時シーケンス
 
@@ -166,7 +180,7 @@ hostcfgd 起動
 
 ### `DEVICE_METADATA|localhost` — PAM limits ガード
 
-`PamLimitsCfg.update_config_file()` は `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` の両方が不在の場合のみ early-return する（どちらか一方が存在すれば続行）。通常の SONiC デプロイでは `DEVICE_METADATA|localhost` は必ず存在する。
+`PamLimitsCfg.update_config_file()` は `SSH_SERVER|POLICIES` と `DEVICE_METADATA|localhost` の両方が不在の場合のみ early-return する（どちらか一方が存在すれば続行）。通常の [SONiC](../../reference/glossary.md#term-sonic) デプロイでは `DEVICE_METADATA|localhost` は必ず存在する。
 
 ```python
 # hostcfgd L1430
@@ -243,7 +257,7 @@ PAM limits 例外     → except で吸収・ログのみ・PAM ファイル未�
 
 > 調査証跡: `meta/_intermediate/cdb-flow/ssh-config-base-constants.md`
 
-`hostcfgd` の `SshServer` クラスおよび `PamLimitsCfg` クラスが参照するモジュールレベル定数の一覧。これらの値はコードに直書きされており、CONFIG_DB や YANG から変更できない。
+`hostcfgd` の `SshServer` クラスおよび `PamLimitsCfg` クラスが参照するモジュールレベル定数の一覧。これらの値はコードに直書きされており、[CONFIG_DB](../../reference/glossary.md#term-config_db) や YANG から変更できない。
 
 ### 整数フィールドの min / max 制約
 
@@ -322,10 +336,10 @@ CONFIG_DB `SSH_SERVER|POLICIES` の変更に伴って `hostcfgd` の `SshServer`
 
 | 副次 DB | 書込有無 | 根拠 |
 |--------|---------|------|
-| APPL_DB | なし | `SshServer` および `PamLimitsCfg` クラス全域（`hostcfgd` L1020–1490）に `set(` / `hset(` / `Producer` / `Notification` 呼出が 0 件 |
-| STATE_DB | なし | `hostcfgd` の `STATE_DB` 書込は `FipsCfg`（L1759–1821）と `RestartWaiter`（L2160–2162）のみ。SSH 処理パスには存在しない |
-| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。SSH は SAI 非経由でスイッチ ASICと無関係 |
-| ASIC_DB / FLEX_COUNTER_DB | なし | SAI 非経由。`orchagent` は `SSH_SERVER` テーブルを購読しない |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `SshServer` および `PamLimitsCfg` クラス全域（`hostcfgd` L1020–1490）に `set(` / `hset(` / `Producer` / `Notification` 呼出が 0 件 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `hostcfgd` の `STATE_DB` 書込は `FipsCfg`（L1759–1821）と `RestartWaiter`（L2160–2162）のみ。SSH 処理パスには存在しない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `hostcfgd` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 参照なし。SSH は [SAI](../../reference/glossary.md#term-sai) 非経由でスイッチ ASICと無関係 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由。`orchagent` は `SSH_SERVER` テーブルを購読しない |
 
 ### Linux ホスト OS への副次書込（DB 外）
 
@@ -355,7 +369,7 @@ CONFIG_DB `SSH_SERVER|POLICIES` の変更に伴って `hostcfgd` の `SshServer`
 
 ### Redis 購読方式
 
-`SSH_SERVER` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:SSH_SERVER|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は使用しない。CONFIG_DB は永続前提のため TTL は設定されない。
+`SSH_SERVER` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **[Redis](../../reference/glossary.md#term-redis) keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:SSH_SERVER|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は使用しない。CONFIG_DB は永続前提のため TTL は設定されない。
 
 | 購読者 | 購読 API | 購読テーブル | ハンドラ |
 |--------|---------|--------------|---------|
@@ -385,7 +399,7 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5"})
 ```
 
 - keyspace 通知のペイロードは操作名（`hset`/`del` 等）のみ。フィールド値は `HGETALL` で取得する。
-- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない。
+- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の [Redis](../../reference/glossary.md#term-redis) 操作種別自体は区別しない。
 - 起動時は `config_db.listen(init_data_handler=self.load)`（hostcfgd:2534）により、Subscribe ループ開始前に `SshServer.load()` が `init_data['SSH_SERVER']` を一括スナップショットで適用する。
 
 ### サービス再起動トリガー
@@ -420,11 +434,11 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5"})
 
 | 構成 | SSH_SERVER テーブルの所在 | SSH 設定適用先 | 備考 |
 |------|--------------------------|---------------|------|
-| single-ASIC (T0/T1) | host CONFIG_DB のみ | `/etc/ssh/sshd_config`（host） | 標準構成 |
-| multi-ASIC (複数 NPU) | host CONFIG_DB のみ（asicN namespace には非存在） | 同上 | `is_multi_npu` は SSH 経路で未参照 |
-| VOQ chassis (line card) | 各 line card host の CONFIG_DB | 各 host の sshd_config | line card 独立管理 |
-| VOQ chassis (supervisor) | supervisor host の CONFIG_DB | supervisor host の sshd_config | chassis 全体集中管理なし |
-| SmartSwitch (NPU 側) | host CONFIG_DB | host の sshd_config | DPU 側に hostcfgd は別インスタンス |
+| single-[ASIC](../../reference/glossary.md#term-asic) (T0/T1) | host CONFIG_DB のみ | `/etc/ssh/sshd_config`（host） | 標準構成 |
+| multi-[ASIC](../../reference/glossary.md#term-asic) (複数 [NPU](../../reference/glossary.md#term-npu)) | host CONFIG_DB のみ（asicN namespace には非存在） | 同上 | `is_multi_npu` は SSH 経路で未参照 |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (line card) | 各 line card host の CONFIG_DB | 各 host の sshd_config | line card 独立管理 |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor) | supervisor host の CONFIG_DB | supervisor host の sshd_config | chassis 全体集中管理なし |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([NPU](../../reference/glossary.md#term-npu) 側) | host CONFIG_DB | host の sshd_config | [DPU](../../reference/glossary.md#term-dpu) 側に hostcfgd は別インスタンス |
 
 ### YANG スキーマに機種分岐なし
 
@@ -432,7 +446,7 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5"})
 
 ### sshd バイナリはパッケージ提供（ベンダー非依存）
 
-`sshd` は `openssh-server` Debian パッケージが提供する標準バイナリ。`sonic-buildimage/files/image_config/` に SSH 固有のプラットフォーム別オーバーレイは存在しない（`find files/image_config -iname "*ssh*"` 0 ヒット）。community SONiC master 全機種で同一バイナリ・同一設定パスが使用される。
+`sshd` は `openssh-server` Debian パッケージが提供する標準バイナリ。`sonic-buildimage/files/image_config/` に SSH 固有のプラットフォーム別オーバーレイは存在しない（`find files/image_config -iname "*ssh*"` 0 ヒット）。community [SONiC](../../reference/glossary.md#term-sonic) master 全機種で同一バイナリ・同一設定パスが使用される。
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1161 (SshServer — platform 分岐なし) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1418-1490 (PamLimitsCfg — platform 分岐なし) -->
@@ -452,3 +466,5 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5"})
 ## 引用元
 
 [^1]: `src/sonic-yang-models/yang-models/sonic-ssh-server.yang` (container `SSH_SERVER` / container `POLICIES`). <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-ssh-server.yang>
+
+<!-- glossary-links-injected: 216039880b1a -->

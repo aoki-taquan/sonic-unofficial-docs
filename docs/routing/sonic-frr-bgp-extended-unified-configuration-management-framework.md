@@ -46,7 +46,7 @@ related:
 
 ## 概要
 
-SONiC Management Framework（REST / [gNMI](../reference/glossary.md#term-gnmi) / IS-CLI）から **OpenConfig [BGP](../reference/glossary.md#term-bgp)** モデル経由で [FRR](../reference/glossary.md#term-frr)-BGP を一気通貫に扱えるようにする設計[^1]。`bgpcfgd`（FRR template ベース）の制約（特定の機能しか出せない）を超え、新設の **`frrcfgd`** daemon が [CONFIG_DB](../reference/glossary.md#term-config_db) の差分イベントから直接 FRR vty コマンドを生成して FRR に流す。
+[SONiC](../reference/glossary.md#term-sonic) Management Framework（REST / [gNMI](../reference/glossary.md#term-gnmi) / IS-CLI）から **OpenConfig [BGP](../reference/glossary.md#term-bgp)** モデル経由で [FRR](../reference/glossary.md#term-frr)-BGP を一気通貫に扱えるようにする設計[^1]。`bgpcfgd`（FRR template ベース）の制約（特定の機能しか出せない）を超え、新設の **`frrcfgd`** daemon が [CONFIG_DB](../reference/glossary.md#term-config_db) の差分イベントから直接 FRR vty コマンドを生成して FRR に流す。
 
 切り替えは `DEVICE_METADATA.localhost.frr_mgmt_framework_config = "true"` で行う[^1]。default は `false`（従来 [bgpcfgd](../reference/glossary.md#term-bgpcfgd)）。state / statistics の get は FRR から on-demand 取得するため warm boot 影響なし。
 
@@ -99,7 +99,7 @@ VRF キーが各 BGP テーブルの最上位に来る点（`<vrf>|...`）が、
 
 ### State / Statistics の取得
 
-`frrcfgd` は state / counters は持たず、Management Framework から要求が来たら **FRR vtysh の `show ... json` を直接叩いて返す**。[COUNTERS_DB](../reference/glossary.md#term-counters_db) / [STATE_DB](../reference/glossary.md#term-state_db) に永続化しないため warm boot 復元の必要なし[^1]。
+`frrcfgd` は state / counters は持たず、Management Framework から要求が来たら **FRR [vtysh](../reference/glossary.md#term-vtysh) の `show ... json` を直接叩いて返す**。[COUNTERS_DB](../reference/glossary.md#term-counters_db) / [STATE_DB](../reference/glossary.md#term-state_db) に永続化しないため warm boot 復元の必要なし[^1]。
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/mgmt/SONiC_Design_Doc_Unified_FRR_Mgmt_Interface.md#L96-L114 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -177,10 +177,9 @@ DEVICE_METADATA|localhost:
 
 ### IPv6 ネイバーのアップデートに 7 秒以上かかる問題（sonic-buildimage#2414）
 
-IPv6 ネイバーのアップデートに 7 秒以上かかる問題。IPv6 NDP タイムアウト設定がデフォルトで長い場合がある。`/proc/sys/net/ipv6/neigh/default/delay_first_probe_time` を調整
+IPv6 ネイバーのアップデートに 7 秒以上かかる問題。IPv6 [NDP](../reference/glossary.md#term-ndp) タイムアウト設定がデフォルトで長い場合がある。`/proc/sys/net/ipv6/neigh/default/delay_first_probe_time` を調整
 
 - 参照: [sonic-net/sonic-buildimage#2414](https://github.com/sonic-net/sonic-buildimage/issues/2414)
-
 
 ### IPv4 と IPv6 両方の BGP セッションが確立できない問題（sonic-buildimage#3043）
 
@@ -188,34 +187,29 @@ IPv4 と IPv6 両方の BGP セッションが確立できない問題。デュ�
 
 - 参照: [sonic-net/sonic-buildimage#3043](https://github.com/sonic-net/sonic-buildimage/issues/3043)
 
-
 ### watchfrr が起動していない状態で FRR の一部デーモンがクラッシュしても自動復旧されない（sonic-buildimage#3196）
 
 watchfrr が起動していない状態で FRR の一部デーモンがクラッシュしても自動復旧されない。`supervisorctl status watchfrr` で起動確認すること
 
 - 参照: [sonic-net/sonic-buildimage#3196](https://github.com/sonic-net/sonic-buildimage/issues/3196)
 
-
 ### management VRF を無効化すると zebra がクラッシュする既知の問題（sonic-buildimage#3798）
 
-management VRF を無効化すると zebra がクラッシュする既知の問題。mgmt VRF の有効/無効切り替えは動的には行えず、設定変更後にコンテナ再起動が必要
+management VRF を無効化すると [zebra](../reference/glossary.md#term-zebra) がクラッシュする既知の問題。mgmt VRF の有効/無効切り替えは動的には行えず、設定変更後にコンテナ再起動が必要
 
 - 参照: [sonic-net/sonic-buildimage#3798](https://github.com/sonic-net/sonic-buildimage/issues/3798)
 
-
 ### ルーティングエントリの next-hop であるネイバーエントリを削除する際の順序が重要（sonic-buildimage#4400）
 
-ルーティングエントリの next-hop であるネイバーエントリを削除する際の順序が重要。next-hop が有効な状態でルートを削除してからネイバーを削除しないと orchagent でエラーが発生
+ルーティングエントリの next-hop であるネイバーエントリを削除する際の順序が重要。next-hop が有効な状態でルートを削除してからネイバーを削除しないと [orchagent](../reference/glossary.md#term-orchagent) でエラーが発生
 
 - 参照: [sonic-net/sonic-buildimage#4400](https://github.com/sonic-net/sonic-buildimage/issues/4400)
 
-
 ### CONFIG_DB の BGPv6 ネイバー設定が frr.conf に正しく生成されない問題（sonic-buildimage#4572）
 
-CONFIG_DB の BGPv6 ネイバー設定が frr.conf に正しく生成されない問題。sonic-cfggen のテンプレートが BGPv6 ネイバーを適切に処理していない場合がある
+CONFIG_DB の BGPv6 ネイバー設定が frr.conf に正しく生成されない問題。[sonic-cfggen](../reference/glossary.md#term-sonic-cfggen) のテンプレートが BGPv6 ネイバーを適切に処理していない場合がある
 
 - 参照: [sonic-net/sonic-buildimage#4572](https://github.com/sonic-net/sonic-buildimage/issues/4572)
-
 
 ### CONFIG_DB の BGP_PEER_RANGE 設定が FRR 設定に変換されない問題（sonic-buildimage#4664）
 
@@ -223,13 +217,11 @@ CONFIG_DB の BGP_PEER_RANGE 設定が FRR 設定に変換されない問題。s
 
 - 参照: [sonic-net/sonic-buildimage#4664](https://github.com/sonic-net/sonic-buildimage/issues/4664)
 
-
 ### iptables が /32 ループバックアドレスへのアクセスをブロックする問題（sonic-buildimage#4797）
 
 iptables が /32 ループバックアドレスへのアクセスをブロックする問題。management VRF 有効時に iptables ルールが自動的に追加されるが、/32 アドレスに対するルールが不足していることがある
 
 - 参照: [sonic-net/sonic-buildimage#4797](https://github.com/sonic-net/sonic-buildimage/issues/4797)
-
 
 ### ospfclient が SONiC docker コンテナ内で起動できない問題（sonic-buildimage#4961）
 
@@ -237,13 +229,11 @@ ospfclient が SONiC docker コンテナ内で起動できない問題。コン�
 
 - 参照: [sonic-net/sonic-buildimage#4961](https://github.com/sonic-net/sonic-buildimage/issues/4961)
 
-
 ### カーネルルートが ASIC に伝播されない問題（sonic-buildimage#4969）
 
-カーネルルートが ASIC に伝播されない問題。fpmsyncd が FRR から APPL_DB への route 書き込みに失敗している場合がある
+カーネルルートが [ASIC](../reference/glossary.md#term-asic) に伝播されない問題。[fpmsyncd](../reference/glossary.md#term-fpmsyncd) が FRR から [APPL_DB](../reference/glossary.md#term-appl_db) への route 書き込みに失敗している場合がある
 
 - 参照: [sonic-net/sonic-buildimage#4969](https://github.com/sonic-net/sonic-buildimage/issues/4969)
-
 
 ### カーネルの ip route と BGP ルートが一致しない問題（sonic-buildimage#5026）
 
@@ -251,13 +241,11 @@ ospfclient が SONiC docker コンテナ内で起動できない問題。コン�
 
 - 参照: [sonic-net/sonic-buildimage#5026](https://github.com/sonic-net/sonic-buildimage/issues/5026)
 
-
 ### IPv6 ルートが APPL_DB から ASIC_DB に伝播されない問題（sonic-buildimage#5040）
 
-IPv6 ルートが APPL_DB から ASIC_DB に伝播されない問題。fpmsyncd の IPv6 対応設定と orchagent の IPv6 ルートハンドラーを確認すること
+IPv6 ルートが APPL_DB から [ASIC_DB](../reference/glossary.md#term-asic_db) に伝播されない問題。fpmsyncd の IPv6 対応設定と orchagent の IPv6 ルートハンドラーを確認すること
 
 - 参照: [sonic-net/sonic-buildimage#5040](https://github.com/sonic-net/sonic-buildimage/issues/5040)
-
 
 ### frr.conf が実行中の FRR 設定と一致しない問題（sonic-buildimage#5067）
 
@@ -265,13 +253,11 @@ frr.conf が実行中の FRR 設定と一致しない問題。`vtysh -c "show ru
 
 - 参照: [sonic-net/sonic-buildimage#5067](https://github.com/sonic-net/sonic-buildimage/issues/5067)
 
-
 ### バルクルート API が "not implemented" エラーを出力する問題（sonic-buildimage#5758）
 
-バルクルート API が "not implemented" エラーを出力する問題。一部の SAI 実装ではバルク API をサポートしていないため、orchagent はフォールバックとして個別ルート追加を使用する
+バルクルート API が "not implemented" エラーを出力する問題。一部の [SAI](../reference/glossary.md#term-sai) 実装ではバルク API をサポートしていないため、orchagent はフォールバックとして個別ルート追加を使用する
 
 - 参照: [sonic-net/sonic-buildimage#5758](https://github.com/sonic-net/sonic-buildimage/issues/5758)
-
 
 ### 異なる VRF 間のポートを経由した ping が不可能な問題（sonic-buildimage#5947）
 
@@ -279,10 +265,9 @@ frr.conf が実行中の FRR 設定と一致しない問題。`vtysh -c "show ru
 
 - 参照: [sonic-net/sonic-buildimage#5947](https://github.com/sonic-net/sonic-buildimage/issues/5947)
 
-
 ### デフォルト VRF を有効化すると vrfmgrd がクラッシュする問題（sonic-buildimage#6626）
 
-デフォルト VRF を有効化すると vrfmgrd がクラッシュする問題。VRF の有効化/無効化は動的には行えず、起動時設定で行う必要がある
+デフォルト VRF を有効化すると [vrfmgrd](../reference/glossary.md#term-vrfmgrd) がクラッシュする問題。VRF の有効化/無効化は動的には行えず、起動時設定で行う必要がある
 
 - 参照: [sonic-net/sonic-buildimage#6626](https://github.com/sonic-net/sonic-buildimage/issues/6626)
 
@@ -335,4 +320,4 @@ sonic-cfggen -d -v 'BGP_GLOBALS'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 21c54538406e -->
+<!-- glossary-links-injected: a331f3352c01 -->

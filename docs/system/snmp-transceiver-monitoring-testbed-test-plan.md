@@ -38,7 +38,7 @@ related:
 
 ## 概要
 
-光トランシーバの DOM（Digital Optical Monitoring）情報—TX power / RX power / TX bias / temperature / voltage—を SONiC は [SNMP](../reference/glossary.md#term-snmp) 経由で外部に公開する。MIB は IETF 標準の[^1]:
+光トランシーバの DOM（Digital Optical Monitoring）情報—TX power / RX power / TX bias / temperature / voltage—を [SONiC](../reference/glossary.md#term-sonic) は [SNMP](../reference/glossary.md#term-snmp) 経由で外部に公開する。MIB は IETF 標準の[^1]:
 
 - **RFC 2737 Entity MIB**（chassis / port / sensor 等の物理エンティティのインベントリ）
 - **RFC 3433 Entity Sensor MIB**（sensor の数値・単位・タイムスタンプ）
@@ -142,4 +142,4 @@ snmpwalk -v2c -c public localhost 1.3.6.1.2.1.99.1.1.1.4 | head    # entPhySenso
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: af8665f32249 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -45,7 +45,7 @@ related:
 
 ## 概要
 
-`CHASSIS_APP_DB` は VoQ (Virtual Output Queue) チャシスシステム専用の [Redis](../../reference/glossary.md#term-redis) DB（DB id=12、instance=`redis_chassis`）。チャシス内の全ラインカードが**中央スーパーバイザーの `redis_chassis`** を共有し、ラインカード間でシステムポート・インタフェース・ネイバー・LAG の情報を同期するために使用する[^1]。
+`CHASSIS_APP_DB` は VoQ (Virtual Output Queue) チャシスシステム専用の [Redis](../../reference/glossary.md#term-redis) DB（DB id=12、instance=`redis_chassis`）。チャシス内の全ラインカードが**中央スーパーバイザーの `redis_chassis`** を共有し、ラインカード間でシステムポート・インタフェース・ネイバー・[LAG](../../reference/glossary.md#term-lag) の情報を同期するために使用する[^1]。
 
 非 VoQ 環境（`DEVICE_METADATA.localhost.switch_type != "voq"`）では `isChassisDbInUse()` が false を返し、これらのテーブルへの書き込みはすべてスキップされる。
 
@@ -76,21 +76,21 @@ flowchart LR
 
 ### SYSTEM_INTERFACE テーブル
 
-| フィールド | YANG default | 実装上の暗黙デフォルト / fallback | 備考 |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | 実装上の暗黙デフォルト / fallback | 備考 |
 |-----------|-------------|----------------------------------|------|
-| `oper_status` | なし (YANG 定義外) | `port.m_oper_status == SAI_PORT_OPER_STATUS_UP ? "up" : "down"` で決定 | `intfsorch.cpp:1708`。SAI 初期化前またはリモートポートの場合は書き込み自体をスキップ |
+| `oper_status` | なし ([YANG](../../reference/glossary.md#term-yang) 定義外) | `port.m_oper_status == SAI_PORT_OPER_STATUS_UP ? "up" : "down"` で決定 | `intfsorch.cpp:1708`。[SAI](../../reference/glossary.md#term-sai) 初期化前またはリモートポートの場合は書き込み自体をスキップ |
 
 **書き込み条件**:
 - `isChassisDbInUse()` が true
 - ローカルポートのインタフェース ADD 時 (`voqSyncAddIntf()`)
 - 非ローカルポート（`SAI_SYSTEM_PORT_TYPE_REMOTE`）はスキップ (`intfsorch.cpp:1689`)
-- LAG の場合は `m_system_lag_info.switch_id == gVoqMySwitchId` のみ書き込み
+- [LAG](../../reference/glossary.md#term-lag) の場合は `m_system_lag_info.switch_id == gVoqMySwitchId` のみ書き込み
 
 ### SYSTEM_NEIGH テーブル
 
-| フィールド | YANG default | 実装上の暗黙デフォルト / fallback | 備考 |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | 実装上の暗黙デフォルト / fallback | 備考 |
 |-----------|-------------|----------------------------------|------|
-| `encap_index` | なし | SAI `get_neighbor_entry_attribute(SAI_NEIGHBOR_ENTRY_ATTR_ENCAP_INDEX)` の返り値 | `neighorch.cpp:2595-2606`。`0` の場合は無効値としてエントリ全体の書き込みをスキップ (`neighorch.cpp:2608-2612`) |
+| `encap_index` | なし | [SAI](../../reference/glossary.md#term-sai) `get_neighbor_entry_attribute(SAI_NEIGHBOR_ENTRY_ATTR_ENCAP_INDEX)` の返り値 | `neighorch.cpp:2595-2606`。`0` の場合は無効値としてエントリ全体の書き込みをスキップ (`neighorch.cpp:2608-2612`) |
 | `neigh` | なし | ネイバーの MAC アドレス (`mac.to_string()`) | `neighorch.cpp:2650`。`encap_index == 0` の場合は書き込まれない |
 
 ### SYSTEM_LAG_TABLE テーブル
@@ -98,7 +98,7 @@ flowchart LR
 | フィールド | YANG default | 実装上の暗黙デフォルト / fallback | 備考 |
 |-----------|-------------|----------------------------------|------|
 | `lag_id` | なし | `LagIdAllocator::lagIdAdd()` が `SYSTEM_LAG_ID_TABLE` + `SYSTEM_LAG_IDS_FREE_LIST` Lua スクリプトで払い出す値 | `portsorch.cpp:11155`。フリーリストが空の場合 `LAG_ID_ALLOCATOR_ERROR_TABLE_FULL (-1)` を返しエラー |
-| `switch_id` | なし | `gVoqMySwitchId` (ローカルスイッチの VoQ ID) | `portsorch.cpp:11158`。ローカル LAG のみ書き込み |
+| `switch_id` | なし | `gVoqMySwitchId` (ローカルスイッチの VoQ ID) | `portsorch.cpp:11158`。ローカル [LAG](../../reference/glossary.md#term-lag) のみ書き込み |
 
 **書き込み条件**:
 - `gMultiAsicVoq` が true かつ `switch_id == gVoqMySwitchId` のローカル LAG のみ (`portsorch.cpp:11145-11149`)
@@ -120,9 +120,9 @@ flowchart LR
 
 ### LAG ID 管理用 Redis 生 KEY
 
-`CHASSIS_APP_DB` には標準テーブル形式でない Redis key が直接書き込まれる:
+`CHASSIS_APP_DB` には標準テーブル形式でない [Redis](../../reference/glossary.md#term-redis) key が直接書き込まれる:
 
-| Redis Key | 型 | 役割 | コード根拠 |
+| [Redis](../../reference/glossary.md#term-redis) Key | 型 | 役割 | コード根拠 |
 |-----------|-----|------|-----------|
 | `SYSTEM_LAG_ID_START` | string | LAG ID 割り当て範囲下限（初期化スクリプトが書き込む） | `lagids.lua:15` |
 | `SYSTEM_LAG_ID_END` | string | LAG ID 割り当て範囲上限（初期化スクリプトが書き込む） | `lagids.lua:16` |
@@ -139,7 +139,7 @@ flowchart LR
 
 ### 起動シーケンスと先行条件
 
-CHASSIS_APP_DB への書き込みはすべて `gMultiAsicVoq == true`（＝`isChassisDbInUse()` が true）が前提。このフラグは orchagent 起動時に `DEVICE_METADATA.localhost.switch_type == "voq"` かつ `isChassisAppDbPresent()` の両方が成立した場合にのみ立つ (`main.cpp:727`)。接続失敗時は standalone VOQ モードとなり書き込みは行われない。
+CHASSIS_APP_DB への書き込みはすべて `gMultiAsicVoq == true`（＝`isChassisDbInUse()` が true）が前提。このフラグは [orchagent](../../reference/glossary.md#term-orchagent) 起動時に `DEVICE_METADATA.localhost.switch_type == "voq"` かつ `isChassisAppDbPresent()` の両方が成立した場合にのみ立つ (`main.cpp:727`)。接続失敗時は standalone [VOQ](../../reference/glossary.md#term-voq) モードとなり書き込みは行われない。
 
 ```
 CONFIG_DB.DEVICE_METADATA (switch_type=voq)
@@ -162,8 +162,8 @@ OrchDaemon::init():
 | `SYSTEM_LAG_TABLE` | `gMultiAsicVoq == true` かつ LAG の `switch_id == gVoqMySwitchId` | ローカル LAG でなければスキップ | `portsorch.cpp:11145-11148` |
 | `SYSTEM_LAG_TABLE` | `SYSTEM_LAG_ID_START` / `SYSTEM_LAG_ID_END` が chassis_app_db に書き込み済み（初期化スクリプトが担保） | フリーリスト空 → `LAG_ID_ALLOCATOR_ERROR_TABLE_FULL (-1)` でエラー | `lagids.lua:15-16, portsorch.cpp:11155` |
 | `SYSTEM_LAG_MEMBER_TABLE` | 対応する LAG が `SYSTEM_LAG_TABLE` に登録済み (`voqSyncAddLag` 完了後) | LAG の `switch_id` 不一致でスキップ | `portsorch.cpp:11183-11186` |
-| `SYSTEM_NEIGH` | RIF が存在 (`IntfsOrch::addIntf()` 完了) かつ SAI `encap_index != 0` | `encap_index == 0` → エントリ書き込みをスキップ（無エラー） | `neighorch.cpp:2608-2612` |
-| `BGP_DEVICE_GLOBAL\|STATE` | bgpcfgd が supervisor の CHASSIS_APP_DB を購読中 かつ LC 側 `tsa_enabled == "false"` | lc_tsa != "false" の場合は `isolate_unisolate_device()` を呼ばず上書きしない | `managers_chassis_app_db.py:40-44` |
+| `SYSTEM_NEIGH` | [RIF](../../reference/glossary.md#term-rif) が存在 (`IntfsOrch::addIntf()` 完了) かつ [SAI](../../reference/glossary.md#term-sai) `encap_index != 0` | `encap_index == 0` → エントリ書き込みをスキップ（無エラー） | `neighorch.cpp:2608-2612` |
+| `BGP_DEVICE_GLOBAL\|STATE` | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が supervisor の CHASSIS_APP_DB を購読中 かつ LC 側 `tsa_enabled == "false"` | lc_tsa != "false" の場合は `isolate_unisolate_device()` を呼ばず上書きしない | `managers_chassis_app_db.py:40-44` |
 
 ### PortInitDone ゲートの詳細
 
@@ -182,7 +182,7 @@ IntfsOrch::addIntf() → voqSyncAddIntf() で SYSTEM_INTERFACE を書き込み�
 
 ### warm-reboot での挙動
 
-CHASSIS_APP_DB (redis_chassis) は supervisor 側で保持されるため、**ラインカード orchagent の warm-reboot 中も既存エントリは残存する**。orchagent は `warmRestoreAndSyncUp()` 内で 3 回ループ `doTask()` を実行し、bake() で読み込んだ既存 APP_DB データを再処理して SET を冪等に上書きする (`orchdaemon.cpp:1099-1139`)。
+CHASSIS_APP_DB (redis_chassis) は supervisor 側で保持されるため、**ラインカード [orchagent](../../reference/glossary.md#term-orchagent) の warm-reboot 中も既存エントリは残存する**。[orchagent](../../reference/glossary.md#term-orchagent) は `warmRestoreAndSyncUp()` 内で 3 回ループ `doTask()` を実行し、bake() で読み込んだ既存 APP_DB データを再処理して SET を冪等に上書きする (`orchdaemon.cpp:1099-1139`)。
 
 ```
 WarmStart::isWarmStart() == true
@@ -219,10 +219,10 @@ CHASSIS_APP_DB 各テーブルへの書き込みが依存する他テーブル�
 
 | # | 依存方向 | 参照元 | 参照先テーブル | 依存内容 | 証跡 |
 |---|----------|--------|--------------|---------|------|
-| 1 | CONFIG_DB → CHASSIS_APP_DB (全体ゲート) | `DEVICE_METADATA.localhost.switch_type` | CHASSIS_APP_DB 全テーブル | `switch_type != "voq"` または `/etc/sonic/database_config.json` に `CHASSIS_APP_DB` 不在時は書き込み一切なし | `main.cpp:694-730` |
-| 2 | CONFIG_DB → SYSTEM_LAG_TABLE | `DEVICE_METADATA.localhost.switch_id` | `SYSTEM_LAG_TABLE.switch_id` 値 | ローカル LAG か否かの判定 (`gVoqMySwitchId`) に使用。起動時一度のみ読み取り | `main.cpp:305-313`, `portsorch.cpp:11141-11148` |
-| 3 | APPL_DB → CHASSIS_APP_DB (書き込みトリガ) | `APP_SYSTEM_PORT_TABLE` (PortInitDone 後) | `SYSTEM_INTERFACE` | ポートリスト (`m_portList`) 未完成時は `gPortsOrch->getPort()` 失敗 → 書き込みスキップ | `portsorch.cpp:10864-10870`, `intfsorch.cpp:1676-1681` |
-| 4 | CONFIG_DB → CHASSIS_APP_DB (初期化スクリプト経由) | `SYSTEM_PORT` (暗黙的) | `SYSTEM_LAG_ID_START` / `SYSTEM_LAG_ID_END` | LAG ID 割り当て範囲の初期化。未初期化時は `lagIdAdd()` が `LAG_ID_ALLOCATOR_ERROR_TABLE_FULL (-1)` を返し addLag 失敗 | `lagids.lua:15-16`, `portsorch.cpp:7974-7983` |
+| 1 | [CONFIG_DB](../../reference/glossary.md#term-config_db) → CHASSIS_APP_DB (全体ゲート) | `DEVICE_METADATA.localhost.switch_type` | CHASSIS_APP_DB 全テーブル | `switch_type != "voq"` または `/etc/sonic/database_config.json` に `CHASSIS_APP_DB` 不在時は書き込み一切なし | `main.cpp:694-730` |
+| 2 | [CONFIG_DB](../../reference/glossary.md#term-config_db) → SYSTEM_LAG_TABLE | `DEVICE_METADATA.localhost.switch_id` | `SYSTEM_LAG_TABLE.switch_id` 値 | ローカル LAG か否かの判定 (`gVoqMySwitchId`) に使用。起動時一度のみ読み取り | `main.cpp:305-313`, `portsorch.cpp:11141-11148` |
+| 3 | [APPL_DB](../../reference/glossary.md#term-appl_db) → CHASSIS_APP_DB (書き込みトリガ) | `APP_SYSTEM_PORT_TABLE` (PortInitDone 後) | `SYSTEM_INTERFACE` | ポートリスト (`m_portList`) 未完成時は `gPortsOrch->getPort()` 失敗 → 書き込みスキップ | `portsorch.cpp:10864-10870`, `intfsorch.cpp:1676-1681` |
+| 4 | [CONFIG_DB](../../reference/glossary.md#term-config_db) → CHASSIS_APP_DB (初期化スクリプト経由) | `SYSTEM_PORT` (暗黙的) | `SYSTEM_LAG_ID_START` / `SYSTEM_LAG_ID_END` | LAG ID 割り当て範囲の初期化。未初期化時は `lagIdAdd()` が `LAG_ID_ALLOCATOR_ERROR_TABLE_FULL (-1)` を返し addLag 失敗 | `lagids.lua:15-16`, `portsorch.cpp:7974-7983` |
 | 5 | CONFIG_DB → CHASSIS_APP_DB (適用ガード) | `BGP_DEVICE_GLOBAL.tsa_enabled` (LC 側) | `BGP_DEVICE_GLOBAL\|STATE` | LC 側 TSA が `"true"` の場合、supervisor からの `tsa_enabled` 変更を `isolate_unisolate_device()` に渡さずブロック | `managers_chassis_app_db.py:40-44` |
 | 6 | CHASSIS_APP_DB 内 (LAG → LAG_MEMBER) | `SYSTEM_LAG_TABLE` | `SYSTEM_LAG_MEMBER_TABLE` | LAG が `voqSyncAddLag()` 完了前は `switch_id` 未設定 → `voqSyncAddLagMember()` がスキップ | `portsorch.cpp:11179-11193` |
 | 7 | CHASSIS_STATE_DB → CHASSIS_APP_DB (DEL トリガ) | `CHASSIS_MODULE_TABLE` (oper_status 変化) | CHASSIS_APP_DB 全テーブル | モジュール down 検知から 30 分後に `_cleanup_chassis_app_db()` が Lua スクリプトでパターン削除 | `chassisd:593-658,89-90` |
@@ -288,7 +288,7 @@ SWSS_LOG_ERROR("Failed to allocate unique LAG id for local lag %s rv:%d", lag_al
 
 | 条件 | 結果 | ログ |
 |------|------|------|
-| `data is None` | `set_handler` が `False` を返す（bgpcfgd が再試行）| `log_err("ChassisAppDbMgr:: data is None")` |
+| `data is None` | `set_handler` が `False` を返す（[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が再試行）| `log_err("ChassisAppDbMgr:: data is None")` |
 | `"tsa_enabled"` キーが `data` に不在 | `set_handler` が `False` を返す | なし |
 | CHASSIS_APP_DB 接続失敗 (`get_chassis_tsa_status`) | fallback `"false"` を返す | `log_err("Got an exception {}")` |
 
@@ -356,7 +356,7 @@ Evidence: `managers_chassis_app_db.py:36-46`, `managers_device_global.py:244-249
 | `CHASSIS_INFO_UPDATE_PERIOD_SECS` | `10` 秒 | chassisd メインループ周期 |
 | `SELECT_TIMEOUT` | `1000` ms | swsscommon `sel.select()` タイムアウト |
 | `DEFAULT_LINECARD_REBOOT_TIMEOUT` | `180` 秒 | ラインカードリブート最大待機 |
-| `DEFAULT_DPU_REBOOT_TIMEOUT` | `360` 秒 | DPU リブート最大待機 |
+| `DEFAULT_DPU_REBOOT_TIMEOUT` | `360` 秒 | [DPU](../../reference/glossary.md#term-dpu) リブート最大待機 |
 | `CHASSIS_LOAD_ERROR` | `1` | chassis プラグインロード失敗時の exit code |
 | `CHASSIS_NOT_SUPPORTED` | `2` | chassis API 未サポート時の exit code |
 
@@ -378,7 +378,7 @@ Evidence: `managers_chassis_app_db.py:36-46`, `managers_device_global.py:244-249
 > 調査証跡: `meta/_intermediate/cdb-flow/chassis-app-side-effects.md`
 > 調査対象: `sonic-swss/orchagent/intfsorch.cpp` @ 4305596, `sonic-swss/orchagent/neighorch.cpp` @ 4305596, `sonic-swss/orchagent/portsorch.cpp` @ 4305596, `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_chassis_app_db.py` @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 
-CHASSIS_APP_DB への書き込みは単なるデータ保存ではない。リモートラインカード側の orchagent および bgpcfgd が各テーブルを `SubscriberStateTable` で購読しており、SAI プログラミング・STATE_DB 更新・FRR 設定変更などの連鎖処理が発生する。
+CHASSIS_APP_DB への書き込みは単なるデータ保存ではない。リモートラインカード側の orchagent および [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が各テーブルを `SubscriberStateTable` で購読しており、SAI プログラミング・[STATE_DB](../../reference/glossary.md#term-state_db) 更新・[FRR](../../reference/glossary.md#term-frr) 設定変更などの連鎖処理が発生する。
 
 ### SYSTEM_INTERFACE — 副作用
 
@@ -398,10 +398,10 @@ CHASSIS_APP_DB への書き込みは単なるデータ保存ではない。リ�
 
 SET イベント受信時の副作用チェーン:
 
-1. Inband ポートが UP であることを確認 (非 VLAN タイプでは admin/oper 両方が UP 必須)
+1. Inband ポートが UP であることを確認 (非 [VLAN](../../reference/glossary.md#term-vlan) タイプでは admin/oper 両方が UP 必須)
 2. SAI に remote neighbor を追加 (`addNeighbor()`)
-3. 成功時、**STATE_DB の `SYSTEM_NEIGH` テーブル**に `neigh` (MAC) を書き込む (`neighorch.cpp:2223`)
-4. STATE_DB 書き込みをトリガに `neighbor-manager` がカーネルの neighbor / host-route を追加
+3. 成功時、**[STATE_DB](../../reference/glossary.md#term-state_db) の `SYSTEM_NEIGH` テーブル**に `neigh` (MAC) を書き込む (`neighorch.cpp:2223`)
+4. [STATE_DB](../../reference/glossary.md#term-state_db) 書き込みをトリガに `neighbor-manager` がカーネルの neighbor / host-route を追加
 
 DEL イベント受信時: SAI からのneighbor削除 → STATE_DB エントリ削除 → カーネルエントリ削除  
 `encap_index` 変更時: SAI 上の neighbor を一度削除してから STATE_DB も削除し、再追加する 2 ステップ処理 (`neighorch.cpp:2173`)
@@ -431,7 +431,7 @@ DEL イベント受信時: SAI からのneighbor削除 → STATE_DB エントリ
 **購読側 (ラインカード bgpcfgd)**: `ChassisAppDbMgr` (`managers_chassis_app_db.py`) が CHASSIS_APP_DB の変化を受信
 
 - `lc_tsa == "false"` のときのみ `DeviceGlobalCfgMgr.isolate_unisolate_device(data["tsa_enabled"])` を呼出し (`managers_chassis_app_db.py:41-44`)
-- `isolate_unisolate_device()` は出力 route-map を Jinja2 テンプレートで生成し FRR (vtysh) に push する — これにより全 BGP 出力ルートが TSA (unreachable 相当) または TSB (通常) に切り替わる
+- `isolate_unisolate_device()` は出力 route-map を Jinja2 テンプレートで生成し [FRR](../../reference/glossary.md#term-frr) ([vtysh](../../reference/glossary.md#term-vtysh)) に push する — これにより全 [BGP](../../reference/glossary.md#term-bgp) 出力ルートが TSA (unreachable 相当) または TSB (通常) に切り替わる
 - `lc_tsa == "true"` の場合はスーパーバイザーの指示を無視（LC 側 TSA が優先）
 
 ### 副作用マトリクス
@@ -445,7 +445,7 @@ DEL イベント受信時: SAI からのneighbor削除 → STATE_DB エントリ
 | `SYSTEM_LAG_TABLE` DEL | リモート LC: SAI system LAG 削除 | — |
 | `SYSTEM_LAG_MEMBER_TABLE` SET | リモート LC: SAI LAG メンバー追加・status 設定 | — |
 | `SYSTEM_LAG_MEMBER_TABLE` DEL | リモート LC: SAI LAG メンバー削除 | — |
-| `BGP_DEVICE_GLOBAL\|STATE` SET (tsa_enabled) | LC bgpcfgd: FRR に TSA/TSB route-map を push | BGP アドバタイズメント全体が切替 |
+| `BGP_DEVICE_GLOBAL\|STATE` SET (tsa_enabled) | LC bgpcfgd: [FRR](../../reference/glossary.md#term-frr) に TSA/TSB route-map を push | [BGP](../../reference/glossary.md#term-bgp) アドバタイズメント全体が切替 |
 
 <!-- /side-effects -->
 
@@ -541,17 +541,17 @@ chassisd は起動時に `sonic_platform.platform.Platform().get_chassis()` で�
 
 | 条件 | 使用クラス | 主な違い |
 |-----|-----------|---------|
-| `chassis.is_smartswitch() == True` | `SmartSwitchModuleUpdater` | DPU 向け設定・状態管理、`dpu_reboot_timeout` を `/usr/share/sonic/platform/platform.json` から読み取る |
+| `chassis.is_smartswitch() == True` | `SmartSwitchModuleUpdater` | [DPU](../../reference/glossary.md#term-dpu) 向け設定・状態管理、`dpu_reboot_timeout` を `/usr/share/sonic/platform/platform.json` から読み取る |
 | `chassis.is_smartswitch() == False` | `ModuleUpdater` | VoQ ラインカード/スーパーバイザー向け、`my_slot` / `supervisor_slot` を `get_my_slot()` / `get_supervisor_slot()` で取得 |
 
-非 SmartSwitch の場合、`my_slot` または `supervisor_slot` が `INVALID_SLOT` のとき `CHASSIS_NOT_SUPPORTED=2` で exit する (`chassisd:1424-1427`)。スーパーバイザーか否かの判定は `my_slot == supervisor_slot` で行い (`chassisd:510-511`)、supervisor のみが `ConfigManagerTask` を起動して CONFIG_DB の `CHASSIS_MODULE` を購読する。
+非 [SmartSwitch](../../reference/glossary.md#term-smartswitch) の場合、`my_slot` または `supervisor_slot` が `INVALID_SLOT` のとき `CHASSIS_NOT_SUPPORTED=2` で exit する (`chassisd:1424-1427`)。スーパーバイザーか否かの判定は `my_slot == supervisor_slot` で行い (`chassisd:510-511`)、supervisor のみが `ConfigManagerTask` を起動して CONFIG_DB の `CHASSIS_MODULE` を購読する。
 
 ### プラットフォーム設定ファイル
 
 | ファイルパス | 用途 | 読み取りタイミング | デフォルト値 |
 |------------|------|----------------|------------|
 | `/usr/share/sonic/platform/platform_env.conf` | `linecard_reboot_timeout`（秒）の上書き | `ModuleUpdater.__init__()` 時に一度だけ | `180` 秒 |
-| `/usr/share/sonic/platform/platform.json` | `dpu_reboot_timeout`（秒）の上書き (SmartSwitch 用) | `SmartSwitchModuleUpdater.__init__()` 時に一度だけ | `360` 秒 |
+| `/usr/share/sonic/platform/platform.json` | `dpu_reboot_timeout`（秒）の上書き ([SmartSwitch](../../reference/glossary.md#term-smartswitch) 用) | `SmartSwitchModuleUpdater.__init__()` 時に一度だけ | `360` 秒 |
 | `/var/run/redis/sonic-db/database_config.json` | `CHASSIS_APP_DB` 接続先（host/port/unix-socket）の定義 | orchagent 起動時の `isChassisAppDbPresent()` で読み取り | — |
 
 ### midplane スイッチ初期化
@@ -575,7 +575,7 @@ chassisd は CHASSIS_APP_DB に直接書き込まない。CHASSIS_APP_DB への�
 | exit code | 定数 | 発生条件 |
 |-----------|------|---------|
 | `1` | `CHASSIS_LOAD_ERROR` | `sonic_platform.platform.Platform().get_chassis()` が例外を送出 |
-| `2` | `CHASSIS_NOT_SUPPORTED` | 非 SmartSwitch 環境で `get_my_slot()` / `get_supervisor_slot()` が `INVALID_SLOT` を返す |
+| `2` | `CHASSIS_NOT_SUPPORTED` | 非 [SmartSwitch](../../reference/glossary.md#term-smartswitch) 環境で `get_my_slot()` / `get_supervisor_slot()` が `INVALID_SLOT` を返す |
 
 <!-- /platform -->
 
@@ -610,3 +610,5 @@ chassisd は CHASSIS_APP_DB に直接書き込まない。CHASSIS_APP_DB への�
 [^1]: `sonic-swss-common/common/schema.h:411-414` @ 158de8d3463ff4b841653f6d57190bb142b80d9c — テーブル名定数 `CHASSIS_APP_SYSTEM_INTERFACE_TABLE_NAME`, `CHASSIS_APP_SYSTEM_NEIGH_TABLE_NAME`, `CHASSIS_APP_LAG_TABLE_NAME`, `CHASSIS_APP_LAG_MEMBER_TABLE_NAME`
 [^2]: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd:593-658` @ 4ba9612 — `_cleanup_chassis_app_db()` の実装
 [^3]: `sonic-swss/orchagent/lagid.h:12` @ 4305596 — `LAG_ID_ALLOCATOR_ERROR_DELETE_ENTRY_NOT_FOUND = 0` の定義。`lagIdDel()` が 0 を返しても削除失敗ではなくエントリ不在の no-op を意味する
+
+<!-- glossary-links-injected: 39b236fc23b0 -->
