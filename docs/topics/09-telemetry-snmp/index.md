@@ -143,6 +143,7 @@ related:
 - [ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）](../../system/asic-thermal-monitoring-high-level-design.md)
 - [gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ）](../../management/gnsi-hld-operations.md)
 - [pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）](../../system/platform-monitor-enhancement-design.md)
+- [Redis Client Manager（RCM: connection pool / transactional client）](../../management/redis-client-manager-rcm-hld.md)
 
 **関連トラブルシュート 5 件**
 

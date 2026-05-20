@@ -30,7 +30,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>DEVICE_NEIGHBOR_METADATA")]
-  DM["bgpcfgd / pfcwd"]
+  DM["lldpmgrd"]
   CDB --> DM
 ```
 

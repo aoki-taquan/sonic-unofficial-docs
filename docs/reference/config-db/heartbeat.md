@@ -105,7 +105,7 @@ YANG default は libyang/[sonic-mgmt](../../reference/glossary.md#term-sonic-mgm
 
 ### 主要な制約詳細
 
-**起動前書込み必須 (依存 #1)**: eventd は `set_heartbeat_interval(HEARTBEAT_INTERVAL_SECS)` でデフォルト値 (2 秒) を内部に持ち起動する (`eventd.cpp:130`)。CONFIG_DB の `HEARTBEAT` エントリは起動時の初回読み込みでのみ反映される。eventd / process-monitor は SubscriberStateTable / ConsumerStateTable を使用しないため、起動後に追加・変更しても daemon 再起動まで反映されない (Phase G 参照)。
+**起動前書込み必須 (依存 #1)**: eventd は `set_heartbeat_interval(HEARTBEAT_INTERVAL_SECS)` でデフォルト値 (2 秒) を内部に持ち起動する (`eventd.cpp:130`)。CONFIG_DB の `HEARTBEAT` エントリは起動時の初回読み込みでのみ反映される。eventd / process-monitor は SubscriberStateTable / [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) を使用しないため、起動後に追加・変更しても daemon 再起動まで反映されない (Phase G 参照)。
 
 **フィールド同時書込み (依存 #3)**: `sonic-db-cli CONFIG_DB HSET "HEARTBEAT|<name>" heartbeat_interval 5000 alert_interval 30000` のように 1 コマンドで複数フィールドを書くことで中間状態を回避できる。CLI 書き込みパスが存在しないため、通常は `config_db.json` の load (一括) または 1 エントリ単位の HSET で書き込む。
 
@@ -445,4 +445,4 @@ vs 環境でも `supervisor-proc-exit-listener` は同一コードで動作す�
 - `system-health` / `watchdog` 系デーモンが定期的に heartbeat タイムスタンプを書き込む。CLI 書き込みパスなし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 26210b4650d1 -->
