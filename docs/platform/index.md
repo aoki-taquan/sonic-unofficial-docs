@@ -18,7 +18,7 @@ last_verified: 2026-05-13
 - [FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）](fec-flr-support-in-sonic.md)
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](hld-for-handling-sai-failures.md)
 - [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](dump-on-sai-failure.md)
-- [SONiC ポート命名規則の変更案（et[sX]pY[abcd]）](sonic-port-naming-convention-change.md)
+- [[SONiC](../reference/glossary.md#term-sonic) ポート命名規則の変更案（et[sX]pY[abcd]）](sonic-port-naming-convention-change.md)
 - [Smart Switch DPU Graceful Shutdown（gnoi_reboot_daemon HALT）](smartswitch-dpu-graceful-shutdown.md)
 - [液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）](liquid-cooling-leakage-detection-in-sonic.md)
 
@@ -76,4 +76,4 @@ last_verified: 2026-05-13
 | [新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）](global-platform-specific-psuutil-class-instance.md) | Code-verified |
 | [液冷漏洩検出（LiquidCoolingBase + thermalctld + system-health gNMI イベント）](liquid-cooling-leakage-detection-in-sonic.md) | Discrepancy-found |
 
-<!-- glossary-links-injected: 0d05a4178472 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

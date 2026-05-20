@@ -135,7 +135,7 @@ show runningconfiguration snmp
 <!-- defaults -->
 ## コード由来の暗黙デフォルト・Fallback
 
-`SNMP_AGENT_ADDRESS_CONFIG` は hostcfgd を経由せず、`docker-snmp` の Jinja2 テンプレート (`dockers/docker-snmp/snmpd.conf.j2`) が CONFIG_DB を直接読んで `snmpd.conf` を生成する。このため「コード由来デフォルト」はテンプレートのレンダリングロジックと net-snmp 既定値の組み合わせで決まる。YANG `sonic-snmp.yang` 側に `default` 宣言は無く、空文字許容 (`pattern ''`) のみ。
+`SNMP_AGENT_ADDRESS_CONFIG` は [hostcfgd](../../reference/glossary.md#term-hostcfgd) を経由せず、`docker-snmp` の Jinja2 テンプレート (`dockers/docker-snmp/snmpd.conf.j2`) が CONFIG_DB を直接読んで `snmpd.conf` を生成する。このため「コード由来デフォルト」はテンプレートのレンダリングロジックと net-snmp 既定値の組み合わせで決まる。YANG `sonic-snmp.yang` 側に `default` 宣言は無く、空文字許容 (`pattern ''`) のみ。
 
 ### `port` 空文字 → 実効 161/udp（テンプレ + net-snmp 既定）
 
@@ -212,16 +212,16 @@ sonic-snmpagent サービスが有効の場合のみ `SNMP_AGENT_ADDRESS_CONFIG`
 
 ### 段階 1: Consumer 登録
 
-- **hostcfgd**: `SNMP_AGENT_ADDRESS_CONFIG` テーブルを `ConfigDBConnector` で購読。
+- **[hostcfgd](../../reference/glossary.md#term-hostcfgd)**: `SNMP_AGENT_ADDRESS_CONFIG` テーブルを `ConfigDBConnector` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- hostcfgd が SNMP エージェント (`snmpd`) のリッスンアドレス設定を `/etc/snmp/snmpd.conf` に書き込み再起動。
+- [hostcfgd](../../reference/glossary.md#term-hostcfgd) が SNMP エージェント (`snmpd`) のリッスンアドレス設定を `/etc/snmp/snmpd.conf` に書き込み再起動。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。snmpd がデータプレーン統計を直接 SAI/kernel から読み取る。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。snmpd がデータプレーン統計を直接 [SAI](../../reference/glossary.md#term-sai)/kernel から読み取る。
 
 ### 段階 4: タイミング + 副作用
 
@@ -236,7 +236,7 @@ SNMP_AGENT_ADDRESS_CONFIG テーブルへの書き込みが発生するコード
 
 ### CLI
 
-  - `config snmp agentaddress add/del ...` — `config/main.py` が `set_entry('SNMP_AGENT_ADDRESS_CONFIG', key, {})` を呼ぶ (sonic-utilities/config/main.py:4142–4186)
+  - `config snmp agentaddress add/del ...` — `config/main.py` が `set_entry('SNMP_AGENT_ADDRESS_CONFIG', key, {})` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py:4142–4186)
 
 ### minigraph / sonic-cfggen
 
@@ -244,7 +244,7 @@ minigraph.py に SNMP_AGENT_ADDRESS_CONFIG 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -434,11 +434,11 @@ CLI の `config snmp agentaddress add/del` は CONFIG_DB 書き込み直後に `
 
 ### snmp-subagent の再起動と MIB ポーリング中断
 
-`supervisord.conf.j2` の依存起動チェーン (`rsyslogd:running` → `start:exited` → `snmpd:running` → `snmp-subagent:running`) により、コンテナ再起動時に snmp-subagent も再起動される。SONiC MIB への SNMP ポーリングは snmp-subagent が再起動するまで中断する。
+`supervisord.conf.j2` の依存起動チェーン (`rsyslogd:running` → `start:exited` → `snmpd:running` → `snmp-subagent:running`) により、コンテナ再起動時に snmp-subagent も再起動される。[SONiC](../../reference/glossary.md#term-sonic) MIB への SNMP ポーリングは snmp-subagent が再起動するまで中断する。
 
 ### 他テーブル・他プロセスへの波及なし
 
-CONFIG_DB → APPL_DB / STATE_DB / ASIC_DB / COUNTER_DB への伝播なし。SAI / ファーワードプレーンへの影響もない。変更はコントロールプレーンの snmpd プロセスと snmpd.conf のみで完結する。
+CONFIG_DB → [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) / COUNTER_DB への伝播なし。[SAI](../../reference/glossary.md#term-sai) / ファーワードプレーンへの影響もない。変更はコントロールプレーンの snmpd プロセスと snmpd.conf のみで完結する。
 
 ### 副作用まとめ
 
@@ -446,7 +446,7 @@ CONFIG_DB → APPL_DB / STATE_DB / ASIC_DB / COUNTER_DB への伝播なし。SAI
 |--------|---------|---------|---------|
 | snmpd コンテナ再起動 | `systemctl restart snmp`（CLI 自動呼出し） | docker-snmp コンテナ全体 | 数秒で自動回復 |
 | 既存 SNMP セッション切断 | snmpd プロセス停止 | 全 SNMP クライアント | 再接続で回復 |
-| `/etc/snmp/snmpd.conf` 上書き | start.sh の sonic-cfggen | 全 SNMP 設定（一括） | 次回再起動時に再生成 |
+| `/etc/snmp/snmpd.conf` 上書き | start.sh の [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) | 全 SNMP 設定（一括） | 次回再起動時に再生成 |
 | snmp-subagent 再起動 | supervisord 依存起動チェーン | MIB ポーリング一時中断 | snmpd 起動後に自動回復 |
 
 <!-- /side-effects -->
@@ -459,14 +459,14 @@ CONFIG_DB → APPL_DB / STATE_DB / ASIC_DB / COUNTER_DB への伝播なし。SAI
 
 ### 購読方式: なし (起動時スナップショット読み取りのみ)
 
-`SNMP_AGENT_ADDRESS_CONFIG` を **リアルタイムで購読するプロセスは存在しない**。`docker-snmp/start.sh` が起動時に `sonic-cfggen -d` (CONFIG_DB への一括 HGETALL) を実行して `snmpd.conf.j2` を展開・`snmpd.conf` を生成する。Redis keyspace 通知 (PSUBSCRIBE) / `SubscriberStateTable` / `ConsumerStateTable` はいずれも使用しない。
+`SNMP_AGENT_ADDRESS_CONFIG` を **リアルタイムで購読するプロセスは存在しない**。`docker-snmp/start.sh` が起動時に `sonic-cfggen -d` (CONFIG_DB への一括 HGETALL) を実行して `snmpd.conf.j2` を展開・`snmpd.conf` を生成する。[Redis](../../reference/glossary.md#term-redis) keyspace 通知 (PSUBSCRIBE) / `SubscriberStateTable` / `ConsumerStateTable` はいずれも使用しない。
 
 | コンポーネント | 通信方式 | 対象テーブル | 備考 |
 |---|---|---|---|
 | `docker-snmp` (`start.sh` + `snmpd.conf.j2`) | `sonic-cfggen -d` (起動時一括読み取り) | `SNMP_AGENT_ADDRESS_CONFIG` | 起動時のみ。実行中の変更は反映しない |
-| `sonic-snmpagent` (`sonic_ax_impl`) | `psubscribe("__keyspace@{db}__:{pattern}")` | COUNTERS_DB / STATE_DB (MIB データ) | `SNMP_AGENT_ADDRESS_CONFIG` は対象外 |
+| `sonic-snmpagent` (`sonic_ax_impl`) | `psubscribe("__keyspace@{db}__:{pattern}")` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [STATE_DB](../../reference/glossary.md#term-state_db) (MIB データ) | `SNMP_AGENT_ADDRESS_CONFIG` は対象外 |
 | `hostcfgd` | `ConfigDBConnector.subscribe()` | SNMP_AGENT_ADDRESS_CONFIG を購読しない | — |
-| `orchagent` | ConsumerStateTable | SNMP_AGENT_ADDRESS_CONFIG を処理しない | — |
+| `orchagent` | [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) | SNMP_AGENT_ADDRESS_CONFIG を処理しない | — |
 
 ### 変更の反映経路
 
@@ -487,7 +487,7 @@ snmpd 起動 → 新しいアドレス/ポートで listen
 
 ### APPL_DB / SAI 中継
 
-なし。`SNMP_AGENT_ADDRESS_CONFIG` は CONFIG_DB → snmpd.conf（ファイル）で完結し、APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない。
+なし。`SNMP_AGENT_ADDRESS_CONFIG` は CONFIG_DB → snmpd.conf（ファイル）で完結し、[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への伝播も SAI 書き込みも発生しない。
 
 <!-- /pubsub -->
 
@@ -503,8 +503,8 @@ snmpd 起動 → 新しいアドレス/ポートで listen
 
 | 環境 | minigraph による自動生成 | snmpd のリッスン範囲 |
 |------|------------------------|-------------------|
-| **single-ASIC** | `MGMT_INTERFACE` + `LOOPBACK_INTERFACE` の全 IP を port=161、vrf='' で自動登録 | 管理 IP + Loopback0 IP のみ（明示的バインド） |
-| **multi-ASIC / chassis** | 空辞書（自動生成なし） | `udp:161` + `udp6:161` の全インタフェース fallback |
+| **single-[ASIC](../../reference/glossary.md#term-asic)** | `MGMT_INTERFACE` + `LOOPBACK_INTERFACE` の全 IP を port=161、vrf='' で自動登録 | 管理 IP + Loopback0 IP のみ（明示的バインド） |
+| **multi-[ASIC](../../reference/glossary.md#term-asic) / chassis** | 空辞書（自動生成なし） | `udp:161` + `udp6:161` の全インタフェース fallback |
 
 `snmpd.conf.j2:16-17` のコメントがこの設計意図を明示している:
 
@@ -513,7 +513,7 @@ snmpd 起動 → 新しいアドレス/ポートで listen
 # Listen on managment and loopback0 ips for single asic platform
 ```
 
-multi-ASIC 環境では `SNMP_AGENT_ADDRESS_CONFIG` が空のため `snmpd.conf.j2` の else 分岐（L32-33）が適用され、全インタフェースで SNMP が公開される。セキュリティ要件がある場合は CLI で明示的にエントリを登録して絞り込む。
+multi-[ASIC](../../reference/glossary.md#term-asic) 環境では `SNMP_AGENT_ADDRESS_CONFIG` が空のため `snmpd.conf.j2` の else 分岐（L32-33）が適用され、全インタフェースで SNMP が公開される。セキュリティ要件がある場合は CLI で明示的にエントリを登録して絞り込む。
 
 ### chassis-packet (switch_type) の差異
 
@@ -553,4 +553,4 @@ if ip_addr.version == 6 and ip_addr.is_link_local:
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 59acbdd0f2b6 -->
+<!-- glossary-links-injected: 497f5aedb4f4 -->

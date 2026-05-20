@@ -46,14 +46,14 @@ related:
 
 # 概念
 
-[ACL](../../reference/glossary.md#term-acl)（Access Control List）と [CoPP](../../reference/glossary.md#term-copp)（Control Plane [Policing](../../reference/glossary.md#term-policing)）と Mirror（パケットコピー）は、SONiC 内部では密接に関係していますが、**それぞれが解いている問題は別** です。最初にこの 3 つを分けて理解しておかないと、`ACL_TABLE` / `COPP_TRAP` / `MIRROR_SESSION` の使い分けで迷うことになります。
+[ACL](../../reference/glossary.md#term-acl)（Access Control List）と [CoPP](../../reference/glossary.md#term-copp)（Control Plane [Policing](../../reference/glossary.md#term-policing)）と Mirror（パケットコピー）は、[SONiC](../../reference/glossary.md#term-sonic) 内部では密接に関係していますが、**それぞれが解いている問題は別** です。最初にこの 3 つを分けて理解しておかないと、`ACL_TABLE` / `COPP_TRAP` / `MIRROR_SESSION` の使い分けで迷うことになります。
 
 ## この 3 機能は何を解決するか
 
 | 機能 | 解いている問題 |
 | --- | --- |
 | ACL | data plane に流れるパケットを **classify して、許可 / 拒否 / リダイレクト / カウント / ミラー / [DSCP](../../reference/glossary.md#term-dscp) 書き換え** などの action を当てる |
-| CoPP | ASIC から CPU へ punt される **control plane traffic（[BGP](../../reference/glossary.md#term-bgp) / [LLDP](../../reference/glossary.md#term-lldp) / [ARP](../../reference/glossary.md#term-arp) / DHCP 等）を policer で守る** |
+| CoPP | [ASIC](../../reference/glossary.md#term-asic) から CPU へ punt される **control plane traffic（[BGP](../../reference/glossary.md#term-bgp) / [LLDP](../../reference/glossary.md#term-lldp) / [ARP](../../reference/glossary.md#term-arp) / DHCP 等）を policer で守る** |
 | Mirror | 観測したいトラフィックを **指定先（local port / GRE encap / ERSPAN）へコピー** する |
 
 つまり ACL は「data plane の流量制御 + 分類」、CoPP は「CPU 行きトラフィックの DDoS 防御」、Mirror は「観測 / トラブルシュート用のコピー」が主目的です。3 つは独立した機能ですが、[SAI](../../reference/glossary.md#term-sai) 上では policer / counter / ACL entry など部品を共有します。
@@ -238,4 +238,4 @@ ERSPAN は GRE outer / DSCP / queue / TTL の各属性が SAI mirror session att
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: d03af94d438f -->
+<!-- glossary-links-injected: ec18b66e3507 -->

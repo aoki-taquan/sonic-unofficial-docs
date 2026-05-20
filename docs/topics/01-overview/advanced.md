@@ -29,7 +29,7 @@ related:
 
 # 発展トピック
 
-SONiC を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。個別機能の発展トピックは各章 (`02-bgp/advanced.md` 以降) を読む。本章では「全体像を一段深く読むときに引っ掛かりやすい点」だけを扱う。
+[SONiC](../../reference/glossary.md#term-sonic) を全体像として見たときに、初学者の足場が固まったあとで触れたい横断テーマを並べる。個別機能の発展トピックは各章 (`02-bgp/advanced.md` 以降) を読む。本章では「全体像を一段深く読むときに引っ掛かりやすい点」だけを扱う。
 
 ## GCU と JSON Patch の現実
 
@@ -49,7 +49,7 @@ SONiC の reboot は 4 種類あり、データプレーン断と再収束時間
 | --- | --- | --- | --- |
 | cold reboot | あり (秒〜分) | 全 daemon 再起動 | 通常の reboot、image 入替後の最終確認 |
 | fast reboot | 短い (~30s) | kernel と一部 daemon が引き継ぎ、forwarding は維持 | image 入替の影響緩和 |
-| warm reboot | ほぼゼロ | [SAI](../../reference/glossary.md#term-sai)/[syncd](../../reference/glossary.md#term-syncd) の state 引き継ぎ、ASIC 内 forwarding 継続 | 主要 daemon の hot upgrade |
+| warm reboot | ほぼゼロ | [SAI](../../reference/glossary.md#term-sai)/[syncd](../../reference/glossary.md#term-syncd) の state 引き継ぎ、[ASIC](../../reference/glossary.md#term-asic) 内 forwarding 継続 | 主要 daemon の hot upgrade |
 | warm-restart (per-daemon) | ほぼゼロ | bgpd など個別 daemon の hot restart | [BGP](../../reference/glossary.md#term-bgp) graceful restart 連動 |
 
 warm reboot は SAI vendor 実装と platform driver の対応に強く依存する。同じ platform でも image 版で対応状況が変わるので、`show reboot-cause history` と `show platform warm-reboot capability` を使って事前確認する。詳細は [Reboot 章](../11-reboot/index.md)。
@@ -58,7 +58,7 @@ warm reboot は SAI vendor 実装と platform driver の対応に強く依存す
 
 SONiC を「箱の中に 1 つの ASIC」前提で読むと、最近の以下二系は混乱の元になる。
 
-- **Multi-ASIC / VoQ**: 1 シャーシ内に複数 ASIC があり、`/etc/sonic/sonic_environment` の `NAMESPACE_*` で namespace を切る構成。`show` 系コマンドは `-n asic0` のような namespace 修飾を要求する。詳細は [Multi-ASIC 章](../12-multi-asic-voq/index.md)。
+- **[Multi-ASIC](../../reference/glossary.md#term-multi-asic) / VoQ**: 1 シャーシ内に複数 ASIC があり、`/etc/sonic/sonic_environment` の `NAMESPACE_*` で namespace を切る構成。`show` 系コマンドは `-n asic0` のような namespace 修飾を要求する。詳細は [Multi-ASIC 章](../12-multi-asic-voq/index.md)。
 - **[SmartSwitch](../../reference/glossary.md#term-smartswitch) / [DPU](../../reference/glossary.md#term-dpu)**: [NPU](../../reference/glossary.md#term-npu) + DPU の混載で、DPU 側は独立 SONiC instance になることがある。CONFIG_DB は NPU 側、[DASH](../../reference/glossary.md#term-dash) 用の DPU_APPL_DB / DPU_STATE_DB は DPU 側、と DB が物理的に分かれる。詳細は [DASH/SmartSwitch 章](../13-dash-smartswitch/index.md)。
 
 両者とも「DB 1 つを redis-cli で見れば全体が分かる」前提を崩すため、`show ip route` のような単純コマンドの結果が namespace 別で違うことに最初に気付けるかが分水嶺になる。
@@ -129,4 +129,4 @@ discrepancy を読み手に隠さず、しかし sea of YAML にしないバラ�
 - 個別機能の発展 → 各章の `advanced.md`。
 - 障害時の動線 → [運用入口](operations.md) と [Reboot 章](../11-reboot/index.md)。
 
-<!-- glossary-links-injected: 4ff373e68edd -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

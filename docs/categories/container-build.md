@@ -17,7 +17,7 @@ related:
 
 ## 概要
 
-SONiC は **[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)** リポジトリで Debian ベースの host OS + 機能ごとの **Docker コンテナ**（swss / [syncd](../reference/glossary.md#term-syncd) / bgp / lldp / pmon / snmp / database / [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / dhcp_relay / nat / radv 等）を組み合わせて 1 枚のスイッチイメージを生成する大規模ビルドシステムを採用しています。`make` + `Dockerfile.j2` + `slave docker` という多段ビルドが特徴で、ビルド時間とイメージサイズの最適化が継続的な課題です。
+[SONiC](../reference/glossary.md#term-sonic) は **[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)** リポジトリで Debian ベースの host OS + 機能ごとの **Docker コンテナ**（swss / [syncd](../reference/glossary.md#term-syncd) / bgp / lldp / pmon / snmp / database / [teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) / dhcp_relay / nat / radv 等）を組み合わせて 1 枚のスイッチイメージを生成する大規模ビルドシステムを採用しています。`make` + `Dockerfile.j2` + `slave docker` という多段ビルドが特徴で、ビルド時間とイメージサイズの最適化が継続的な課題です。
 
 このカテゴリは container / build / image / upgrade に関わるページを area 横断でまとめます。**architecture**（ビルドプロファイル・ビルド時間最適化・RFS Split build）・**platform**（[NPU](../reference/glossary.md#term-npu) MDIO / gbsyncd docker 化）・**routing**（dhcp-relay docker）・**system**（Process / Docker stats、Secure Upgrade、Container Hardening、Debian / docker semver、warm restart、syslog rate limit）の 14 ページが対象です。
 
@@ -78,4 +78,4 @@ SONiC は **[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)**
 - [SAI 拡張属性追加系](sai-extensions.md)
 - [gNMI / gNOI / OpenConfig 関連](gnmi-openconfig.md)
 
-<!-- glossary-links-injected: 8c38d3f9eb46 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

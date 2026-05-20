@@ -16,7 +16,7 @@ related:
 
 ## 想定シナリオ
 
-SONiC を初めて触る読者を想定しています。ネットワーク OS としての SONiC の位置付け、コンテナ、[Redis](../reference/glossary.md#term-redis) DB、[SAI](../reference/glossary.md#term-sai)、設定反映の流れを把握し、各 area の意味を理解するための導線です。
+[SONiC](../reference/glossary.md#term-sonic) を初めて触る読者を想定しています。ネットワーク OS としての SONiC の位置付け、コンテナ、[Redis](../reference/glossary.md#term-redis) DB、[SAI](../reference/glossary.md#term-sai)、設定反映の流れを把握し、各 area の意味を理解するための導線です。
 
 ## 推奨 reading path
 
@@ -33,7 +33,7 @@ SONiC を初めて触る読者を想定しています。ネットワーク OS �
 ## 不足コンテンツ注記
 
 - 「SONiC の全体像」を 1 ページで説明する導入記事が不足しています。トップページには要約がありますが、[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) / [ASIC_DB](../reference/glossary.md#term-asic_db)、SwSS、[syncd](../reference/glossary.md#term-syncd)、SAI の関係を初学者向けに順序立てて読む導線はまだ弱い状態です。
-- 「最小用語集」がありません。SAI、[orchagent](../reference/glossary.md#term-orchagent)、syncd、CONFIG_DB、[YANG](../reference/glossary.md#term-yang)、[FRR](../reference/glossary.md#term-frr)、PMON、multi-ASIC などの用語は各ページに散っています。
+- 「最小用語集」がありません。SAI、[orchagent](../reference/glossary.md#term-orchagent)、syncd、CONFIG_DB、[YANG](../reference/glossary.md#term-yang)、[FRR](../reference/glossary.md#term-frr)、PMON、multi-[ASIC](../reference/glossary.md#term-asic) などの用語は各ページに散っています。
 - area index の多くが stub のため、初学者が area の中で何を読むべきか判断しにくい状態です。
 
 <!-- topics-back-ref -->
@@ -44,4 +44,4 @@ SONiC を初めて触る読者を想定しています。ネットワーク OS �
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: feb51e82f53c -->
+<!-- glossary-links-injected: ec18b66e3507 -->

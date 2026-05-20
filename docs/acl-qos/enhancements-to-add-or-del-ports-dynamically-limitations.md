@@ -35,7 +35,7 @@ related:
 ## 2. 干渉する機能
 
 - **ACL / VLAN / LAG / Buffer PG**: port 削除の事前条件。ref counter による [orchagent](../reference/glossary.md#term-orchagent) の防御に依存。
-- **flex counter**: 各 counter group の動的 add/del で実装が広範に変わる。ASIC 側の counter リソース管理にも影響。
+- **flex counter**: 各 counter group の動的 add/del で実装が広範に変わる。[ASIC](../reference/glossary.md#term-asic) 側の counter リソース管理にも影響。
 - **line card manager (chassis 系)**: 本機能の主要利用者。プロビジョニング時に PORT エントリ + buffer cfg を一連で投入する。
 - **`lldpmgrd`**: 改修依存度が高い。pending_cmds 処理が変わる。
 
@@ -125,4 +125,4 @@ $ grep -rn "addBufferRefCount\|m_portBufferRef\|port_ref_count" \
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: e8af0d068bd1 -->
+<!-- glossary-links-injected: c006405759d8 -->

@@ -277,7 +277,7 @@ redis-cli -n 4 hgetall 'MUX_CABLE|Ethernet0'
 現行 master（2026-05 時点）の実コード裏取り結果:
 
 - **linkmgrd active-active state machine**: `sonic-linkmgrd/src/link_manager/LinkManagerStateMachineActiveActive.{cpp,h}` および `src/link_prober/LinkProberStateMachineActiveActive.{cpp,h}` が active-standby と並列に存在。`PeerActiveState` / `PeerUnknownState` / `PeerWaitState` も `src/link_prober/` に追加されており、self / peer 独立判定が実装されている。
-- **MuxOrch の active-active 分岐**: `sonic-swss/orchagent/muxorch.cpp:2233` で `cable_type_str == "active-active"` 判定。prefix-based neighbor の SAI 属性（`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE`）と prefix route の組合せは muxorch / neighorch 内で扱う。
+- **MuxOrch の active-active 分岐**: `sonic-swss/orchagent/muxorch.cpp:2233` で `cable_type_str == "active-active"` 判定。prefix-based neighbor の SAI 属性（`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE`）と prefix route の組合せは [muxorch](../reference/glossary.md#term-muxorch) / neighorch 内で扱う。
 - **新規 APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) テーブル**: `sonic-swss-common/common/schema.h` に `APP_FORWARDING_STATE_COMMAND_TABLE_NAME` (145行)、`APP_FORWARDING_STATE_RESPONSE_TABLE_NAME` (146行)、`APP_PEER_HW_FORWARDING_STATE_TABLE_NAME` (149行)、`STATE_PEER_HW_FORWARDING_STATE_TABLE_NAME` (465行) が定義済み。
 - **`config mux mode detach`**: `sonic-utilities/config/muxcable.py:351` で `click.Choice(["active","auto","manual","standby","detach"])` として `detach` を受け付ける。
 
@@ -306,4 +306,4 @@ redis-cli -n 4 hgetall 'MUX_CABLE|Ethernet0'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ca7c1453b3b7 -->
+<!-- glossary-links-injected: fa77d98b9e28 -->
