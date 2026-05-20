@@ -31,11 +31,11 @@ related:
 
 # アーキテクチャ
 
-ここでは login が成立するまでの経路と、`CONFIG_DB` から `/etc/` 配下のサービス設定ファイルへ反映が走る経路を、SONiC 固有部分に絞って示します。Linux 標準の PAM / NSS の挙動そのものは扱わず、SONiC が「どこで何を差し込んでいるか」に焦点を当てます。
+ここでは login が成立するまでの経路と、`CONFIG_DB` から `/etc/` 配下のサービス設定ファイルへ反映が走る経路を、[SONiC](../../reference/glossary.md#term-sonic) 固有部分に絞って示します。Linux 標準の PAM / NSS の挙動そのものは扱わず、SONiC が「どこで何を差し込んでいるか」に焦点を当てます。
 
 ## Login flow の全体像
 
-外部から SSH や serial console で入ってきたユーザーは、PAM の認証スタックを通り、NSS でユーザー情報の解決を受け、最終的に shell とその sudo 権限を得ます。SONiC は PAM / NSS のモジュールチェーンに TACACS+、RADIUS、LDAP のクライアントを差し込み、`CONFIG_DB` の `AAA` テーブルでそれらの順序を制御します。詳細フローは [AAA improvements](../../management/aaa-improvements.md) と [TACACS+ authentication](../../management/tacacs-authentication.md) に図解があります。
+外部から SSH や serial console で入ってきたユーザーは、PAM の認証スタックを通り、NSS でユーザー情報の解決を受け、最終的に shell とその sudo 権限を得ます。SONiC は PAM / NSS のモジュールチェーンに TACACS+、[RADIUS](../../reference/glossary.md#term-radius)、LDAP のクライアントを差し込み、`CONFIG_DB` の `AAA` テーブルでそれらの順序を制御します。詳細フローは [AAA improvements](../../management/aaa-improvements.md) と [TACACS+ authentication](../../management/tacacs-authentication.md) に図解があります。
 
 ```mermaid
 flowchart LR
@@ -77,6 +77,6 @@ SONiC の TACACS+ 統合は PAM と NSS の二段で実装されています。P
 
 ## Data plane と platform 側の参照
 
-本ページは control plane のフローに限定しています。MACsec と MKA のホスト・[SAI](../../reference/glossary.md#term-sai) 経路は [内部実装](internals.md) で、OpenSSL FIPS / secure boot / secure upgrade / container hardening は [発展トピック](advanced.md) で扱います。
+本ページは control plane のフローに限定しています。[MACsec](../../reference/glossary.md#term-macsec) と MKA のホスト・[SAI](../../reference/glossary.md#term-sai) 経路は [内部実装](internals.md) で、OpenSSL FIPS / secure boot / secure upgrade / container hardening は [発展トピック](advanced.md) で扱います。
 
-<!-- glossary-links-injected: e22f66406f50 -->
+<!-- glossary-links-injected: 7cebab29cbce -->

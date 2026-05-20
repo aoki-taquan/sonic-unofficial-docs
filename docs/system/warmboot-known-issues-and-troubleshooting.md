@@ -32,9 +32,9 @@ hard: 0
 
 ## 概要
 
-SONiC のウォームブート（warm-reboot）・高速リブート（fast-reboot）は複数の
+[SONiC](../reference/glossary.md#term-sonic) のウォームブート（warm-reboot）・高速リブート（fast-reboot）は複数の
 サブシステムが協調する複雑なシーケンスを持つ。本ページは
-sonic-buildimage issue tracker (#6723 〜 #12512 の範囲) に記録された
+[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) issue tracker (#6723 〜 #12512 の範囲) に記録された
 実環境での既知問題と対処法をまとめる。
 
 ---
@@ -43,13 +43,13 @@ sonic-buildimage issue tracker (#6723 〜 #12512 の範囲) に記録された
 
 ### 1-1. `Invalid sai_api_t passed to sai_api_query` (#6723)
 
-**現象**: ウォームブート中に syncd が以下のエラーを出力する。
+**現象**: ウォームブート中に [syncd](../reference/glossary.md#term-syncd) が以下のエラーを出力する。
 
 ```
 SAI_API_UNSPECIFIED:sai_api_initialize: Invalid sai_api_t passed to sai_api_query
 ```
 
-**原因**: 新しい SAI バージョン移行時に旧 `sai_api_t` 値が
+**原因**: 新しい [SAI](../reference/glossary.md#term-sai) バージョン移行時に旧 `sai_api_t` 値が
 `sai_api_query()` に渡されるケース。
 
 **影響**: 単体では crash や warmboot 失敗は発生しない。
@@ -69,7 +69,7 @@ SAI バージョンを syncd と整合させることで解消する。
 syncd: translateVidToRid: failed to translate VID <oid> to RID
 ```
 
-**原因**: syncd がウォームブート後の新 ASIC VIEW への変換を
+**原因**: syncd がウォームブート後の新 [ASIC](../reference/glossary.md#term-asic) VIEW への変換を
 まだ完了していない段階で統計クエリが走ることで、
 ingress/egress buffer pool OID が一時的に無効になる。
 
@@ -94,7 +94,7 @@ syncd: APPLY_VIEW error: brcm_sai_remove_hostif_trap_group in use
 ```
 
 **原因**: BRCM SAI の特定バージョン（4.3.3.x）でのバグ。
-hostif_trap_group が ACL エントリから参照されたまま削除しようとする。
+hostif_trap_group が [ACL](../reference/glossary.md#term-acl) エントリから参照されたまま削除しようとする。
 
 **対処**:
 - SAI バージョンを `4.3.0.13-1` 以前（またはバグ修正版）に変更
@@ -104,15 +104,15 @@ hostif_trap_group が ACL エントリから参照されたまま削除しよう
 
 ## 2. LAG フラップ (#6773)
 
-**現象**: ウォームブート後（特に 2 回目以降）に PortChannel が数回 flap する。
+**現象**: ウォームブート後（特に 2 回目以降）に [PortChannel](../reference/glossary.md#term-portchannel) が数回 flap する。
 
 **対象プラットフォーム**: Broadcom TD3 ベースプラットフォーム、202012 ブランチを含む。
 
 **パターン**:
-- 1 回目のウォームブート: LAG フラップなし
+- 1 回目のウォームブート: [LAG](../reference/glossary.md#term-lag) フラップなし
 - **2 回目以降**: LAG が数回 flap してから安定
 
-**原因**: orchagent がウォームブート後に
+**原因**: [orchagent](../reference/glossary.md#term-orchagent) がウォームブート後に
 PortChannel メンバーの再学習タイミングで競合が発生する。
 
 **対処**: 2 回目以降のウォームブート後に LAG が安定するまで待機（通常 30 秒以内）。
@@ -242,3 +242,5 @@ kernel: igb 0000:0a:00.0 eth0: igb_watchdog_task: Detected Tx Unit Hang
 - [ウォームブートマネージャ](warmboot-manager-hld.md)
 - [swss Docker ウォームリスタート](sonic-swss-docker-warm-restart.md)
 - [multi-ASIC ウォームリブート](multi-asic-warm-reboot.md)
+
+<!-- glossary-links-injected: 3b39e50988ab -->

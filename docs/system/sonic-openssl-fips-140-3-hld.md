@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-FIPS 140-3 認定済みの cryptographic module だけを使うよう SONiC を組み立てるための [HLD](../reference/glossary.md#term-hld)[^1]。SONiC が依存する暗号モジュールは **OpenSSL / Kerberos / Golang / Libgcrypt / Linux Kernel crypto** だが、本 HLD で扱うのは **OpenSSL / Kerberos / Golang** の 3 つ（Kernel と Libgcrypt は scope 外）。OpenSSL 1.1.1 自体には FIPS 認定 module が無いため、Microsoft が提供する **SymCrypt OpenSSL Engine (SCOSSL)** を engine として読み込ませ、Microsoft が CMVP に出している **SymCrypt** を実体として使う構成。Kerberos は内蔵 crypto をやめ OpenSSL 経由、Golang は RedHat の `dev.boringcrypto` ベースの patch で OpenSSL に流すパスを利用する。
+FIPS 140-3 認定済みの cryptographic module だけを使うよう [SONiC](../reference/glossary.md#term-sonic) を組み立てるための [HLD](../reference/glossary.md#term-hld)[^1]。SONiC が依存する暗号モジュールは **OpenSSL / Kerberos / Golang / Libgcrypt / Linux Kernel crypto** だが、本 HLD で扱うのは **OpenSSL / Kerberos / Golang** の 3 つ（Kernel と Libgcrypt は scope 外）。OpenSSL 1.1.1 自体には FIPS 認定 module が無いため、Microsoft が提供する **SymCrypt OpenSSL Engine (SCOSSL)** を engine として読み込ませ、Microsoft が CMVP に出している **SymCrypt** を実体として使う構成。Kerberos は内蔵 crypto をやめ OpenSSL 経由、Golang は RedHat の `dev.boringcrypto` ベースの patch で OpenSSL に流すパスを利用する。
 
 ## 動作仕様
 
@@ -203,4 +203,4 @@ show fips status
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

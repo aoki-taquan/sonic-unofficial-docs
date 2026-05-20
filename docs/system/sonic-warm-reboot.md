@@ -38,7 +38,7 @@ related:
 
 ## 1. warm reboot とは
 
-**データプレーンを乱さずに control plane（kernel / docker）を再起動** する SONiC の機能[^1]。LibSAI が ASIC state をファイルに退避→ kexec → 復元、という流れで、上限 90 秒の制御平面ダウンを許容しつつフォワーディングは継続させる。
+**データプレーンを乱さずに control plane（kernel / docker）を再起動** する [SONiC](../reference/glossary.md#term-sonic) の機能[^1]。LibSAI が [ASIC](../reference/glossary.md#term-asic) state をファイルに退避→ kexec → 復元、という流れで、上限 90 秒の制御平面ダウンを許容しつつフォワーディングは継続させる。
 
 - 同 image / version upgrade は対象、**downgrade は対象外**
 - すべての docker / SAI vendor が warm restart を実装している前提
@@ -150,4 +150,4 @@ sonic-db-cli STATE_DB keys "WARM_RESTART_TABLE|*"
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: be4c83d338a5 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

@@ -31,30 +31,25 @@ related:
 
 ## 概要
 
-VRRP_TRACK テーブルは、VRRP IPv4 インスタンスが監視するアップリンクインタフェース（追跡インタフェース）と、そのインタフェースがダウンした際に VRRP priority から差し引く `priority_increment` 値を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。
+VRRP_TRACK テーブルは、[VRRP](../../reference/glossary.md#term-vrrp) IPv4 インスタンスが監視するアップリンクインタフェース（追跡インタフェース）と、そのインタフェースがダウンした際に [VRRP](../../reference/glossary.md#term-vrrp) priority から差し引く `priority_increment` 値を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。
 
-FRR の `vrrpd` は `zebra` 経由でカーネルのインタフェース状態変化イベントを受信し、VRRP_TRACK に登録された追跡インタフェースの Up/Down に応じて VRRP インスタンスの priority を動的に加減算する。追跡インタフェースがダウンすると priority が `priority_increment` 分だけ減少し、バックアップルータへのフェイルオーバーを促す。インタフェースが復旧すると priority が元の値に戻る。
+[FRR](../../reference/glossary.md#term-frr) の `vrrpd` は `zebra` 経由でカーネルのインタフェース状態変化イベントを受信し、VRRP_TRACK に登録された追跡インタフェースの Up/Down に応じて VRRP インスタンスの priority を動的に加減算する。追跡インタフェースがダウンすると priority が `priority_increment` 分だけ減少し、バックアップルータへのフェイルオーバーを促す。インタフェースが復旧すると priority が元の値に戻る。
 
 !!! note "IPv6 版"
     VRRP IPv6 インスタンスの追跡設定は別テーブル `VRRP6_TRACK` で管理される。`VRRP6_TRACK` はキー構造・フィールドともに本テーブルと同一だが、親インスタンスが `VRRP6` テーブルを参照する点が異なる。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>VRRP_TRACK")]
-  FRR["FRR vrrpd"]
-  ZEBRA["zebra<br/>(インタフェース状態監視)"]
-  KERNEL["Linux カーネル<br/>インタフェース Up/Down"]
-  VRRP_PKT["VRRP Advertisement<br/>(priority 更新)"]
-
-  CDB -->|"track 設定読み込み"| FRR
-  KERNEL -->|"netlink 通知"| ZEBRA
-  ZEBRA -->|"インタフェース状態変化通知"| FRR
-  FRR -->|"priority 再計算 → パケット送信"| VRRP_PKT
+  CDB[("CONFIG_DB<br/>VRRP")]
+  DM["vrrpcfgd"]
+  CDB --> DM
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -63,26 +58,26 @@ flowchart LR
 VRRP_TRACK|<interface_name>|<vrid>|<track_interface>
 ```
 
-- `<interface_name>`: VRRP インスタンスが設定されているベースインタフェース名 (例: `Ethernet64`, `Vlan1`, `PortChannel001`)
+- `<interface_name>`: [VRRP](../../reference/glossary.md#term-vrrp) インスタンスが設定されているベースインタフェース名 (例: `Ethernet64`, `Vlan1`, `PortChannel001`)
 - `<vrid>`: 仮想ルータ識別子 (1–255)。`VRRP|<interface_name>|<vrid>` として存在する親インスタンスへの参照
-- `<track_interface>`: 追跡対象インタフェース名 (Ethernet, Vlan, PortChannel のいずれか)
+- `<track_interface>`: 追跡対象インタフェース名 (Ethernet, Vlan, [PortChannel](../../reference/glossary.md#term-portchannel) のいずれか)
 
 ## フィールド
 
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
-| `priority_increment` | uint8 (1–255) | `20` | 追跡インタフェースがダウンした際に VRRP priority から差し引く値。CLI では 10–50 の範囲が強制されるが YANG では 1–255 を許容する |
+| `priority_increment` | uint8 (1–255) | `20` | 追跡インタフェースがダウンした際に VRRP priority から差し引く値。CLI では 10–50 の範囲が強制されるが [YANG](../../reference/glossary.md#term-yang) では 1–255 を許容する |
 
 ## 制約
 
 - 1 つの VRRP インスタンス (`interface_name` + `vrid`) につき最大 **8 つ**の追跡インタフェースを設定可能 (`config/main.py:7038`)
-- `priority_increment` の CLI 許容範囲は **10–50**（YANG スキーマでは 1–255 を許容。直接 DB 書き込みの場合は YANG 制約が適用される）
-- 追跡インタフェースには Ethernet / VLAN / PortChannel が使用可能。Loopback は不可
-- 追跡インタフェースにはルータインタフェース (`INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE`) が CONFIG_DB に存在する必要がある
+- `priority_increment` の CLI 許容範囲は **10–50**（[YANG](../../reference/glossary.md#term-yang) スキーマでは 1–255 を許容。直接 DB 書き込みの場合は [YANG](../../reference/glossary.md#term-yang) 制約が適用される）
+- 追跡インタフェースには Ethernet / [VLAN](../../reference/glossary.md#term-vlan) / [PortChannel](../../reference/glossary.md#term-portchannel) が使用可能。Loopback は不可
+- 追跡インタフェースにはルータインタフェース (`INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在する必要がある
 
 ## 購読者
 
-- **FRR `vrrpd`**: VRRP_TRACK の設定を読み込み、`zebra` 経由で受信したインタフェース状態変化通知に応じて VRRP priority を動的計算し VRRP Advertisement パケットに反映する
+- **[FRR](../../reference/glossary.md#term-frr) `vrrpd`**: VRRP_TRACK の設定を読み込み、`zebra` 経由で受信したインタフェース状態変化通知に応じて VRRP priority を動的計算し VRRP Advertisement パケットに反映する
 
 ## 関連 CONFIG_DB / CLI
 
@@ -103,7 +98,7 @@ VRRP_TRACK|<interface_name>|<vrid>|<track_interface>
 | 2 | `INTERFACE`/`PORTCHANNEL_INTERFACE`/`VLAN_INTERFACE` (base) 存在 → VRRP_TRACK SET | 強制先行 | `get_interface_table_name(interface_name)` + `get_table()` で存在確認。Loopback は `""` / `"LOOPBACK_INTERFACE"` として拒絶。`config/main.py:7000-7006` |
 | 3 | `INTERFACE`/`PORTCHANNEL_INTERFACE`/`VLAN_INTERFACE` (track) 存在 → VRRP_TRACK SET | 強制先行 | `get_interface_table_name(track_interface)` + `get_table()` で track 対象も同様に確認。`config/main.py:7007-7014` |
 | 4 | VRRP_TRACK DEL → VRRP DEL | 強制先行 | `remove_track_interface()` は VRRP インスタンスの存在確認後に DEL を実行。VRRP インスタンスを先に削除すると `ctx.fail("vrrp instance {} not found")` で track DEL が失敗する。削除はトラック → VRRP の逆順。`config/main.py:7070-7072` |
-| 5 | FRR track 設定読み込み → インタフェース Up/Down イベント | 推奨先行 | CONFIG_DB への VRRP_TRACK 書き込みが FRR に反映される前にインタフェース状態変化が発生すると、priority 計算が欠落する。確実なトラッキングが必要な場合は VRRP インスタンス起動前に VRRP_TRACK を投入する。HLD — Uplink interface tracking セクション (L481-492) |
+| 5 | [FRR](../../reference/glossary.md#term-frr) track 設定読み込み → インタフェース Up/Down イベント | 推奨先行 | CONFIG_DB への VRRP_TRACK 書き込みが FRR に反映される前にインタフェース状態変化が発生すると、priority 計算が欠落する。確実なトラッキングが必要な場合は VRRP インスタンス起動前に VRRP_TRACK を投入する。[HLD](../../reference/glossary.md#term-hld) — Uplink interface tracking セクション (L481-492) |
 
 ### 推奨投入順序
 
@@ -123,15 +118,15 @@ VRRP_TRACK|<interface_name>|<vrid>|<track_interface>
 
 ### YANG leafref (VRRP_TRACK_LIST)
 
-`sonic-vrrp.yang` の `VRRP_TRACK` コンテナ (L135–183) に定義された leafref。`sonic-yang-mgmt` / gNMI 経路でバリデーションされる。
+`sonic-vrrp.yang` の `VRRP_TRACK` コンテナ (L135–183) に定義された leafref。`sonic-yang-mgmt` / [gNMI](../../reference/glossary.md#term-gnmi) 経路でバリデーションされる。
 
 | フィールド | 参照先テーブル | 説明 | evidence |
 |---|---|---|---|
 | `baseifname` | `VRRP/VRRP_LIST/ifname` | 親 VRRP インスタンスの `ifname` を参照 | `sonic-vrrp.yang` L144–146 |
 | `idkey` | `VRRP/VRRP_LIST/idkey` | 親 VRRP インスタンスの `idkey` (vrid) を参照 | `sonic-vrrp.yang` L150–152 |
 | `trackifname` (PORT) | `PORT/PORT_LIST/ifname` | 物理ポートを追跡インタフェースに指定する場合 | `sonic-vrrp.yang` L158–160 |
-| `trackifname` (PortChannel) | `PORTCHANNEL/PORTCHANNEL_LIST/name` | PortChannel を追跡インタフェースに指定する場合 | `sonic-vrrp.yang` L161–163 |
-| `trackifname` (VLAN) | `VLAN/VLAN_LIST/name` | VLAN インタフェースを追跡インタフェースに指定する場合 | `sonic-vrrp.yang` L164–166 |
+| `trackifname` ([PortChannel](../../reference/glossary.md#term-portchannel)) | `PORTCHANNEL/PORTCHANNEL_LIST/name` | PortChannel を追跡インタフェースに指定する場合 | `sonic-vrrp.yang` L161–163 |
+| `trackifname` ([VLAN](../../reference/glossary.md#term-vlan)) | `VLAN/VLAN_LIST/name` | [VLAN](../../reference/glossary.md#term-vlan) インタフェースを追跡インタフェースに指定する場合 | `sonic-vrrp.yang` L164–166 |
 | `trackifname` (Sub-IF) | `VLAN_SUB_INTERFACE/VLAN_SUB_INTERFACE_LIST/id` | サブインタフェースを追跡インタフェースに指定する場合 | `sonic-vrrp.yang` L167–169 |
 
 ### CLI 実行時存在確認 (config/main.py)
@@ -146,7 +141,7 @@ YANG バリデーションとは独立して `add_track_interface()` が実行�
 
 ### データ流出先
 
-VRRP_TRACK への書き込みは直接 APPL_DB / ASIC_DB には流れない。FRR `vrrpd` が CONFIG_DB.VRRP_TRACK を読み込み、`zebra` 経由のインタフェース状態変化通知と組み合わせて priority を再計算する。
+VRRP_TRACK への書き込みは直接 [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) には流れない。FRR `vrrpd` が CONFIG_DB.VRRP_TRACK を読み込み、`zebra` 経由のインタフェース状態変化通知と組み合わせて priority を再計算する。
 
 | 流出先 | 経路 |
 |---|---|
@@ -158,7 +153,7 @@ VRRP_TRACK への書き込みは直接 APPL_DB / ASIC_DB には流れない。FR
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
-`VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは CLI (`sonic-utilities/config/main.py`) 経路と YANG/gNMI 直書き経路で異なる失敗分岐を持つ。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-failure.md)。
+`VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは CLI (`sonic-utilities/config/main.py`) 経路と YANG/[gNMI](../../reference/glossary.md#term-gnmi) 直書き経路で異なる失敗分岐を持つ。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-failure.md)。
 
 ### CLI 経路 — add_track_interface() の失敗パターン
 
@@ -217,8 +212,8 @@ VRRP_TRACK への書き込みは直接 APPL_DB / ASIC_DB には流れない。FR
 
 | 条件 | 挙動 | 備考 |
 |---|---|---|
-| VRRP_TRACK 書き込み直後に FRR が未読み込みの場合 | インタフェース Up/Down 通知が来ても priority 計算が欠落する (一過性) | HLD Uplink interface tracking L481-492 |
-| zebra プロセス障害 | インタフェース状態変化通知が vrrpd に届かず priority 更新が停止 | DB への副次書き込みなし。STATE_DB 更新なし |
+| VRRP_TRACK 書き込み直後に FRR が未読み込みの場合 | インタフェース Up/Down 通知が来ても priority 計算が欠落する (一過性) | [HLD](../../reference/glossary.md#term-hld) Uplink interface tracking L481-492 |
+| [zebra](../../reference/glossary.md#term-zebra) プロセス障害 | インタフェース状態変化通知が vrrpd に届かず priority 更新が停止 | DB への副次書き込みなし。[STATE_DB](../../reference/glossary.md#term-state_db) 更新なし |
 
 <!-- /failure -->
 
@@ -270,7 +265,7 @@ CLI と YANG で許容範囲が意図的に乖離している。
 > 根拠: `SONiC/doc/vrrp/VRRP_Adaptation_HLD.md` L219-232, L481-492 全行精読。
 > 詳細証跡: `meta/_intermediate/cdb-flow/vrrp-track-side-effects.md`
 
-`VRRP_TRACK` / `VRRP6_TRACK` への SET / DEL は **他の DB（APPL_DB / STATE_DB / ASIC_DB）へ直接書き込まない**。変更は CONFIG_DB から FRR `vrrpd` のインメモリ track 設定に反映されるのみであり、DB への副次書き込みは発生しない。
+`VRRP_TRACK` / `VRRP6_TRACK` への SET / DEL は **他の DB（[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db)）へ直接書き込まない**。変更は CONFIG_DB から FRR `vrrpd` のインメモリ track 設定に反映されるのみであり、DB への副次書き込みは発生しない。
 
 ### SET 時
 
@@ -278,7 +273,7 @@ CLI と YANG で許容範囲が意図的に乖離している。
 |---|--------------|------|------|
 | — | なし（DB 書き込みなし） | FRR `vrrpd` がインメモリの priority 計算パラメータを更新する | 常時 |
 
-`vrrpd` は `zebra` 経由で受信するインタフェース Up/Down イベントと `priority_increment` 値を組み合わせて VRRP priority を再計算し、VRRP Advertisement パケットの priority フィールドを更新する。この priority 変化が VRRP 状態遷移（Backup → Master）を引き起こした場合は、下流の波及効果として `vrrpsyncd` が `APPL_DB VRRP_TABLE` を更新し、さらに `vrrporch` が `ASIC_DB` へ仮想 RIF / VIP ルートエントリを追加する。ただしこれは VRRP_TRACK 変更の直接結果ではなく、VRRP 状態機械の遷移に伴う別コンポーネントの書き込みである。
+`vrrpd` は `zebra` 経由で受信するインタフェース Up/Down イベントと `priority_increment` 値を組み合わせて VRRP priority を再計算し、VRRP Advertisement パケットの priority フィールドを更新する。この priority 変化が VRRP 状態遷移（Backup → Master）を引き起こした場合は、下流の波及効果として `vrrpsyncd` が `APPL_DB VRRP_TABLE` を更新し、さらに `vrrporch` が `ASIC_DB` へ仮想 [RIF](../../reference/glossary.md#term-rif) / VIP ルートエントリを追加する。ただしこれは VRRP_TRACK 変更の直接結果ではなく、VRRP 状態機械の遷移に伴う別コンポーネントの書き込みである。
 
 ### DEL 時
 
@@ -307,13 +302,13 @@ VRRP_TRACK priority_increment 変化
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-`VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは **macvlanmgrd が単独で購読する**。`VRRP` テーブルとは異なり、VRRP_TRACK の変更は APPL_DB / ASIC_DB へ直接伝播しない。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-pubsub.md)。
+`VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは **macvlanmgrd が単独で購読する**。`VRRP` テーブルとは異なり、VRRP_TRACK の変更は [APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) へ直接伝播しない。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-track-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-track-pubsub.md)。
 
 ### 購読方式一覧
 
 | コンポーネント | コンテナ | 購読元 | 購読 API | 書き込み先 |
 |---|---|---|---|---|
-| `macvlanmgrd` | BGP | CONFIG_DB `VRRP_TRACK` / `VRRP6_TRACK` | `SubscriberStateTable` (keyspace) | FRR vrrpd (vtysh 経由、DB 書き込みなし) |
+| `macvlanmgrd` | [BGP](../../reference/glossary.md#term-bgp) | CONFIG_DB `VRRP_TRACK` / `VRRP6_TRACK` | `SubscriberStateTable` (keyspace) | FRR vrrpd ([vtysh](../../reference/glossary.md#term-vtysh) 経由、DB 書き込みなし) |
 
 ### 通知フロー
 
@@ -329,11 +324,11 @@ vrrpd が VRRP Advertisement パケット送信 (priority フィールド更新)
 
 ### macvlanmgrd — CONFIG_DB SubscriberStateTable
 
-`macvlanmgrd` は BGP コンテナ内で動作し、CONFIG_DB の `VRRP` / `VRRP6` / `VRRP_TRACK` / `VRRP6_TRACK` の全 4 テーブルを `SubscriberStateTable` で一括購読する。`VRRP_TRACK` 変更受信時は vtysh 経由で FRR `vrrpd` に track 設定を投入する。Linux カーネルへの netlink 書き込みや APPL_DB への書き込みは発生しない（HLD L219-225）。
+`macvlanmgrd` は [BGP](../../reference/glossary.md#term-bgp) コンテナ内で動作し、CONFIG_DB の `VRRP` / `VRRP6` / `VRRP_TRACK` / `VRRP6_TRACK` の全 4 テーブルを `SubscriberStateTable` で一括購読する。`VRRP_TRACK` 変更受信時は [vtysh](../../reference/glossary.md#term-vtysh) 経由で FRR `vrrpd` に track 設定を投入する。Linux カーネルへの netlink 書き込みや APPL_DB への書き込みは発生しない（[HLD](../../reference/glossary.md#term-hld) L219-225）。
 
 | 購読テーブル | PSUBSCRIBE パターン | 処理内容 |
 |---|---|---|
-| `VRRP_TRACK` | `__keyspace@4__:VRRP_TRACK\|*` | vtysh 経由で vrrpd に track 設定投入 |
+| `VRRP_TRACK` | `__keyspace@4__:VRRP_TRACK\|*` | [vtysh](../../reference/glossary.md#term-vtysh) 経由で vrrpd に track 設定投入 |
 | `VRRP6_TRACK` | `__keyspace@4__:VRRP6_TRACK\|*` | vtysh 経由で vrrpd に track 設定投入 |
 
 ### vrrpsyncd / vrrporch との関係
@@ -346,14 +341,14 @@ vrrpd が VRRP Advertisement パケット送信 (priority フィールド更新)
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: `VRRP_TRACK` テーブルへの書き込み・読み込みは ASIC 種別・multi-asic 構成・VOQ chassis 構成に依らない。
+**プラットフォーム差なし**: `VRRP_TRACK` テーブルへの書き込み・読み込みは [ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic 構成・[VOQ](../../reference/glossary.md#term-voq) chassis 構成に依らない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | VRRP_TRACK は SAI 非経由。macvlanmgrd が CONFIG_DB を購読し FRR `vrrpd` に vtysh 経由で設定を投入するのみ。ASIC との接点なし (HLD L219-225) |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | VRRP_TRACK は [SAI](../../reference/glossary.md#term-sai) 非経由。macvlanmgrd が CONFIG_DB を購読し FRR `vrrpd` に vtysh 経由で設定を投入するのみ。[ASIC](../../reference/glossary.md#term-asic) との接点なし (HLD L219-225) |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `config/main.py` の `add_track_interface()` / `remove_track_interface()` は `is_multi_npu()` / namespace iteration を呼び出さない。VRRP は host-scope FRR 機能であり、`asicN` namespace を持たない (スキャン: `config/main.py:6993-7077`) |
-| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | VRRP_TRACK は host CONFIG_DB のみ参照。chassis 全体での集中管理機構はなく、各 host の macvlanmgrd が独立して vrrpd に設定を投入する |
-| SAI `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL` 未サポート ASIC | 間接的のみ | 当該 SAI capability 差は `vrrporch` / ASIC_DB 層の話であり、VRRP_TRACK → FRR vrrpd 経路には影響しない。VRRP_TRACK エントリ自体の書き込み・読み込みに差は出ない (HLD L519-520) |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | VRRP_TRACK は host CONFIG_DB のみ参照。chassis 全体での集中管理機構はなく、各 host の macvlanmgrd が独立して vrrpd に設定を投入する |
+| [SAI](../../reference/glossary.md#term-sai) `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL` 未サポート ASIC | 間接的のみ | 当該 [SAI](../../reference/glossary.md#term-sai) capability 差は `vrrporch` / ASIC_DB 層の話であり、VRRP_TRACK → FRR vrrpd 経路には影響しない。VRRP_TRACK エントリ自体の書き込み・読み込みに差は出ない (HLD L519-520) |
 | ベンダー固有 FRR パッチ | なし | community master の `sonic-frr` は platform 分岐を持たない。`sonic-vrrp.yang` にも platform 条件付きフィールドは存在しない |
 
 詳細根拠は `meta/_intermediate/cdb-flow/vrrp-track-platform.md` を参照。
@@ -396,3 +391,5 @@ sonic-db-cli CONFIG_DB hgetall 'VRRP_TRACK|Ethernet64|8|Ethernet72'
 show vrrp
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 604bfcd4e475 -->

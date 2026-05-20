@@ -38,7 +38,7 @@ related:
 
 ## 概要
 
-SONiC スイッチの **工場出荷状態への復元** を 1 コマンド `reset-factory` で行えるようにする [HLD](../reference/glossary.md#term-hld)。設定の corruption からの復旧や、機材の二次利用前のサニタイズに使う[^1]。
+[SONiC](../reference/glossary.md#term-sonic) スイッチの **工場出荷状態への復元** を 1 コマンド `reset-factory` で行えるようにする [HLD](../reference/glossary.md#term-hld)。設定の corruption からの復旧や、機材の二次利用前のサニタイズに使う[^1]。
 
 主要な設計方針:
 
@@ -294,4 +294,4 @@ sudo diff /etc/sonic/config_db.json /etc/sonic/golden_config_db.json | head
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

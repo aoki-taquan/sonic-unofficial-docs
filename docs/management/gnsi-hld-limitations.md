@@ -38,7 +38,7 @@ related:
 
 - **[gNMI](../reference/glossary.md#term-gnmi) Master Arbitration**: gNSI の `Rotate` は `Set` ではないので Master Arbitration の対象外
 - **[gNOI](../reference/glossary.md#term-gnoi) FactoryReset**: `retain_certs=true` で Credentialz / Certz が積んだ証明書を残せるかは gNOI 側のオプション扱い
-- **TACACS / Linux PAM**: Credentialz が `/etc/passwd` / `/etc/shadow` を置換するため、TACACS や RADIUS 連携の有無で挙動が変わる
+- **TACACS / Linux PAM**: Credentialz が `/etc/passwd` / `/etc/shadow` を置換するため、TACACS や [RADIUS](../reference/glossary.md#term-radius) 連携の有無で挙動が変わる
 - **既存 sshd 設定**: `ssh_mgmt.set` は既存 `authorized_keys` を **置換** する（追記ではない）。warm boot 時の rollback ファイル管理に注意
 
 ## 3. HLD と実装の差分
@@ -103,4 +103,4 @@ related:
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnsi.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: f5d0d14cf73e -->
+<!-- glossary-links-injected: df94ce4c9c04 -->

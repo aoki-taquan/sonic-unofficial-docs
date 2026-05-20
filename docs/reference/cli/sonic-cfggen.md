@@ -21,7 +21,7 @@ related:
 
 ## 概要
 
-`sonic-cfggen` は **SONiC 設定生成エンジンの汎用 CLI**。click ベースの `config` / `show` とは別系統で、`argparse` で定義された引数を取る Python スクリプト。`sonic-buildimage/src/sonic-config-engine/` に置かれ、SONiC イメージ内では `/usr/local/bin/sonic-cfggen` として動く。
+`sonic-cfggen` は **[SONiC](../../reference/glossary.md#term-sonic) 設定生成エンジンの汎用 CLI**。click ベースの `config` / `show` とは別系統で、`argparse` で定義された引数を取る Python スクリプト。`sonic-buildimage/src/sonic-config-engine/` に置かれ、[SONiC](../../reference/glossary.md#term-sonic) イメージ内では `/usr/local/bin/sonic-cfggen` として動く。
 
 主な役割は以下の 4 つ:
 
@@ -58,7 +58,7 @@ sonic-cfggen [入力ソース] [出力モード] [追加オプション]
 | `-j, --json <file>` | JSON 追加変数（`append` 可） |
 | `-a, --additional-data '<json string>'` | コマンドライン JSON 文字列で追加変数を渡す |
 | `-H, --platform-info` | platform / hardware 情報を `device_info` から読む |
-| `-n, --namespace <name>` | multi-ASIC namespace 指定。`asic0` 等。指定すると `asic_id` が逆引きされ port_config 等の path に影響 |
+| `-n, --namespace <name>` | multi-[ASIC](../../reference/glossary.md#term-asic) namespace 指定。`asic0` 等。指定すると `asic_id` が逆引きされ port_config 等の path に影響 |
 | `-s, --redis-unix-sock-file <sock>` | redis unix sock のパス（CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) 接続先切替） |
 | `-p, --port-config <file>` | port config ファイルパス（`-m` / `-k` と併用） |
 | `-S, --hwsku-config <file>` | hwsku config ファイル（`-p` + `-m`/`-k` と併用） |
@@ -110,9 +110,9 @@ sonic-cfggen [入力ソース] [出力モード] [追加オプション]
 
 ## 関連
 
-- `db_migrator.py`、`config-setup`、`load_minigraph` 等の SONiC 起動経路で多用される。
+- `db_migrator.py`、`config-setup`、`load_minigraph` 等の [SONiC](../../reference/glossary.md#term-sonic) 起動経路で多用される。
 - `show runningconfiguration <table>` 系は内部で `sonic-cfggen -d --var-json <TABLE>` を呼ぶ薄いラッパ。
-- multi-ASIC では NAMESPACE_ID 環境変数や `-n` 引数で per-namespace 動作が切り替わる。
+- multi-[ASIC](../../reference/glossary.md#term-asic) では NAMESPACE_ID 環境変数や `-n` 引数で per-namespace 動作が切り替わる。
 
 <!-- cli-mermaid -->
 ### データフロー (手動作成)
@@ -152,4 +152,4 @@ flowchart LR
 
 [^1]: 例: `show runningconfiguration ports` は `sonic-cfggen -d --var-json PORT [--key NAME]` を呼ぶ（`show/main.py` L1868）。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/show/main.py#L1868>
 
-<!-- glossary-links-injected: a35f1b1cdfa7 -->
+<!-- glossary-links-injected: d3bc8f725ce5 -->

@@ -26,7 +26,7 @@ related:
 - import: なし
 - top container: `sonic-versions`
 
-VERSIONS [YANG](../../reference/glossary.md#term-yang) Module for SONiC OS. [CONFIG_DB](../../reference/glossary.md#term-config_db) のスキーマバージョンを記録し、`db_migrator.py` がマイグレーションの判定に使う。[^1]
+VERSIONS [YANG](../../reference/glossary.md#term-yang) Module for [SONiC](../../reference/glossary.md#term-sonic) OS. [CONFIG_DB](../../reference/glossary.md#term-config_db) のスキーマバージョンを記録し、`db_migrator.py` がマイグレーションの判定に使う。[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -110,4 +110,4 @@ module: sonic-versions
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-versions.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

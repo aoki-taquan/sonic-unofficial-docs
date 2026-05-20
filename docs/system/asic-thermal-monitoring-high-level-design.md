@@ -41,7 +41,7 @@ related:
 
 ## 何が課題なのか
 
-スイッチ上の温度センサのうち **外部（オンボード）** は既存ドライバで読めるが、**ASIC 内部センサは [ASIC SDK](../reference/glossary.md#term-asic-sdk) 経由でしか読めない**[^1]。pmon に [SAI](../reference/glossary.md#term-sai) 依存を入れたくないため、[orchagent](../reference/glossary.md#term-orchagent) 側に poller を置いて [STATE_DB](../reference/glossary.md#term-state_db) に書き出し、`thermalctld` / `show platform temperature` / [SNMP](../reference/glossary.md#term-snmp) / Telemetry から透過的に参照できるようにする。
+スイッチ上の温度センサのうち **外部（オンボード）** は既存ドライバで読めるが、**[ASIC](../reference/glossary.md#term-asic) 内部センサは [ASIC SDK](../reference/glossary.md#term-asic-sdk) 経由でしか読めない**[^1]。pmon に [SAI](../reference/glossary.md#term-sai) 依存を入れたくないため、[orchagent](../reference/glossary.md#term-orchagent) 側に poller を置いて [STATE_DB](../reference/glossary.md#term-state_db) に書き出し、`thermalctld` / `show platform temperature` / [SNMP](../reference/glossary.md#term-snmp) / Telemetry から透過的に参照できるようにする。
 
 SAI が提供する関連属性[^1]:
 
@@ -137,4 +137,4 @@ grep -i thermal /var/log/syslog | tail -20
 
 [^1]: `sonic-net/SONiC` `doc/asic-thermal-monitoring/asic_thermal_monitoring_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: ad4074e0b684 -->
+<!-- glossary-links-injected: c006405759d8 -->

@@ -40,7 +40,7 @@ related:
 
 # L2 のアーキテクチャ
 
-L2 設定は、[CONFIG_DB](../../reference/glossary.md#term-config_db) のテーブルごとに担当 daemon が決まり、[APPL_DB](../../reference/glossary.md#term-appl_db) や [orchagent](../../reference/glossary.md#term-orchagent) を通って ASIC に反映されます。読むときの軸は「[VLAN](../../reference/glossary.md#term-vlan) を作る経路」「[LAG](../../reference/glossary.md#term-lag) を作る経路」「L3 interface を作る経路」「MC-LAG で peer と同期する経路」の 4 つです。
+L2 設定は、[CONFIG_DB](../../reference/glossary.md#term-config_db) のテーブルごとに担当 daemon が決まり、[APPL_DB](../../reference/glossary.md#term-appl_db) や [orchagent](../../reference/glossary.md#term-orchagent) を通って [ASIC](../../reference/glossary.md#term-asic) に反映されます。読むときの軸は「[VLAN](../../reference/glossary.md#term-vlan) を作る経路」「[LAG](../../reference/glossary.md#term-lag) を作る経路」「L3 interface を作る経路」「MC-LAG で peer と同期する経路」の 4 つです。
 
 ## 通常 L2 の反映経路
 
@@ -121,4 +121,4 @@ FDB flush と STP は近い位置にあります。Topology change は L2 loop �
 - [IP / LAG / MTU Incremental Update](../../switching/sonic-ip-lag-incremental-update.md)
 - [L2 Forwarding 強化](../../switching/layer-2-forwarding-enhancements.md)
 
-<!-- glossary-links-injected: 6370fa155abe -->
+<!-- glossary-links-injected: c006405759d8 -->

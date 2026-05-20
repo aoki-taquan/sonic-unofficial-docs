@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-`show route-map` は [FRR](../../reference/glossary.md#term-frr) の `route-map` 設定（policy / match / set 句）をそのまま表示するコマンドで、[CONFIG_DB](../../reference/glossary.md#term-config_db) は読まず **`vtysh -c "show route-map [<name>]"` を `sudo` で実行する単純なラッパ**である[^1]。SONiC では route-map は `bgpcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `ROUTE_MAP` テーブル等から [FRR](../../reference/glossary.md#term-frr) config を生成しており、CLI で見えるのは生成後の vtysh 側の状態。
+`show route-map` は [FRR](../../reference/glossary.md#term-frr) の `route-map` 設定（policy / match / set 句）をそのまま表示するコマンドで、[CONFIG_DB](../../reference/glossary.md#term-config_db) は読まず **`vtysh -c "show route-map [<name>]"` を `sudo` で実行する単純なラッパ**である[^1]。[SONiC](../../reference/glossary.md#term-sonic) では route-map は `bgpcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `ROUTE_MAP` テーブル等から [FRR](../../reference/glossary.md#term-frr) config を生成しており、CLI で見えるのは生成後の [vtysh](../../reference/glossary.md#term-vtysh) 側の状態。
 
 ## 用法
 
@@ -49,7 +49,7 @@ if route_map_name is not None:
 run_command(cmd, display_cmd=verbose)
 ```
 
-`constants.RVTYSH_COMMAND` は `rvtysh`（multi-ASIC では `rvtysh -n <ns>` 用ラッパ）または `vtysh`。最終的に bgp コンテナ内の `vtysh` に `show route-map [<name>]` 文字列をそのまま渡す。
+`constants.RVTYSH_COMMAND` は `rvtysh`（multi-[ASIC](../../reference/glossary.md#term-asic) では `rvtysh -n <ns>` 用ラッパ）または `vtysh`。最終的に bgp コンテナ内の `vtysh` に `show route-map [<name>]` 文字列をそのまま渡す。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/main.py#L1266-L1274 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -84,11 +84,11 @@ excerpt: |
 
 ## 出力
 
-[FRR](../../reference/glossary.md#term-frr) の `show route-map` 出力をそのまま表示する。フィールド整形・JSON 化は SONiC 側では行わない。出力形式は FRR のバージョンに従う。
+[FRR](../../reference/glossary.md#term-frr) の `show route-map` 出力をそのまま表示する。フィールド整形・JSON 化は [SONiC](../../reference/glossary.md#term-sonic) 側では行わない。出力形式は FRR のバージョンに従う。
 
 ## 関連 CONFIG_DB
 
-`show route-map` 自体は [CONFIG_DB](../../reference/glossary.md#term-config_db) を参照しない。SONiC で route-map を定義するには `ROUTE_MAP` / `ROUTE_MAP_SET` などのテーブルか、または FRR config を直接書く方法のみで、`config route-map` 系の CLI は **コミュニティ版 master には存在しない**（`config/main.py` 上では `route-map` グループは未定義）。
+`show route-map` 自体は [CONFIG_DB](../../reference/glossary.md#term-config_db) を参照しない。[SONiC](../../reference/glossary.md#term-sonic) で route-map を定義するには `ROUTE_MAP` / `ROUTE_MAP_SET` などのテーブルか、または FRR config を直接書く方法のみで、`config route-map` 系の CLI は **コミュニティ版 master には存在しない**（`config/main.py` 上では `route-map` グループは未定義）。
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -128,4 +128,4 @@ flowchart LR
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 84ca04c9cab5 -->
+<!-- glossary-links-injected: d02528e104f2 -->

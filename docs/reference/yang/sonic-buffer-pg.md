@@ -24,7 +24,7 @@ related:
 - import: `sonic-port`, `sonic-buffer-profile`
 - top container: `sonic-buffer-pg`
 
-Ingress buffer priority group configuration for SONiC ports.[^1]
+Ingress buffer priority group configuration for [SONiC](../../reference/glossary.md#term-sonic) ports.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -75,8 +75,8 @@ module: sonic-buffer-pg
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `port` | `sonic-buffer-pg/BUFFER_PG/BUFFER_PG_LIST/port` | `leafref` | yes |  | /prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name | Port on which the buffer priority group is configured. |
-| `pg_num` | `sonic-buffer-pg/BUFFER_PG/BUFFER_PG_LIST/pg_num` | `string` | yes |  | pattern `[0-7]((-)[0-7])?` | Priority Group number |
-| `profile` | `sonic-buffer-pg/BUFFER_PG/BUFFER_PG_LIST/profile` | `union` |  | 0 | union(leafref, string) | [Buffer Profile](../../reference/glossary.md#term-buffer-profile) associated with Priority Group number for a port |
+| `pg_num` | `sonic-buffer-pg/BUFFER_PG/BUFFER_PG_LIST/pg_num` | `string` | yes |  | pattern `[0-7]((-)[0-7])?` | [Priority Group](../../reference/glossary.md#term-priority-group) number |
+| `profile` | `sonic-buffer-pg/BUFFER_PG/BUFFER_PG_LIST/profile` | `union` |  | 0 | union(leafref, string) | [Buffer Profile](../../reference/glossary.md#term-buffer-profile) associated with [Priority Group](../../reference/glossary.md#term-priority-group) number for a port |
 
 ## leafref / 依存
 
@@ -141,4 +141,4 @@ show priority-group persistent-watermark headroom
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f7191d012485 -->
+<!-- glossary-links-injected: 593d34fc1826 -->

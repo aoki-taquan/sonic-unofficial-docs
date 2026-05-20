@@ -146,7 +146,7 @@ journalctl | grep -iE "voltage.*alarm|current.*alarm"
 - 温度は対象外（`thermalctld` を使う）
 - ベンダの platform API が voltage / current セット を実装していないと検出できない
 - HLD は Rev 1.0 のみで日付欄空欄。改訂時期不明
-- minor / major / critical の閾値定義は platform API に丸投げで、SONiC レベルでの統一フォーマットは規定されていない
+- minor / major / critical の閾値定義は platform API に丸投げで、[SONiC](../reference/glossary.md#term-sonic) レベルでの統一フォーマットは規定されていない
 
 ## 干渉する機能
 
@@ -184,4 +184,4 @@ journalctl --since "1 hour ago" | grep -iE "voltage|current.*alarm"
 
 [^1]: `sonic-net/SONiC` `doc/pmon/pmon-sensormon.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: a6c84020c43e -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

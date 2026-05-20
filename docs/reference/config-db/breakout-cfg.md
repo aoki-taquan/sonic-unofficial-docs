@@ -139,7 +139,7 @@ show interfaces breakout
 | 条件 | 挙動 | ソース |
 |------|------|--------|
 | `platform.json` が存在しない / `.json` 拡張子でない | `Breakout feature is not available without platform.json file` → Abort | `config/main.py` L5469 |
-| BREAKOUT_CFG テーブル自体が CONFIG_DB に存在しない | `BREAKOUT_CFG table is NOT present in CONFIG DB` → Abort | `config/main.py` L5481 |
+| BREAKOUT_CFG テーブル自体が [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在しない | `BREAKOUT_CFG table is NOT present in CONFIG DB` → Abort | `config/main.py` L5481 |
 | 対象 interface が BREAKOUT_CFG に未登録 | `{} interface is NOT present in BREAKOUT_CFG table of CONFIG DB` → Abort | `config/main.py` L5485 |
 | target mode が `platform.json` の interfaces に未定義 | `_validate_interface_mode()` 失敗 → Abort | `config/main.py` L5491 |
 | `del_intf_dict` が空 (削除対象ポートなし) | `del_intf_dict is None! No interfaces are there to be deleted` → Abort | `config/main.py` L5504 |
@@ -158,7 +158,7 @@ show interfaces breakout
 | 失敗条件 | 結果 | evidence |
 |---|---|---|
 | `platform.json` 不在 / 拡張子が `.json` でない | `[ERROR] Breakout feature is not available without platform.json file` → `Abort` | `config/main.py:5469-5471` |
-| `BREAKOUT_CFG` テーブルが CONFIG_DB に存在しない | `[ERROR] BREAKOUT_CFG table is NOT present in CONFIG DB` → `Abort` | `config/main.py:5481-5483` |
+| `BREAKOUT_CFG` テーブルが [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在しない | `[ERROR] BREAKOUT_CFG table is NOT present in CONFIG DB` → `Abort` | `config/main.py:5481-5483` |
 | 対象ポートが `BREAKOUT_CFG` に未登録 | `[ERROR] {interface_name} interface is NOT present in BREAKOUT_CFG table of CONFIG DB` → `Abort` | `config/main.py:5485-5487` |
 | `target_brkout_mode` が `platform.json` の `breakout_modes` に未定義 | `_validate_interface_mode()` 失敗 → `Abort` | `config/main.py:5491` |
 | `del_intf_dict` が空（削除対象子ポートなし） | `[ERROR] del_intf_dict is None!` → `Abort` | `config/main.py:5504-5506` |
@@ -176,8 +176,8 @@ show interfaces breakout
 
 | 失敗条件 | 結果 | evidence |
 |---|---|---|
-| `MAX_WAIT=60` 秒以内に削除ポートが ASIC DB から消えない | `LOG_CRIT "!!! Critical Failure, Ports are not Deleted from ASIC DB, Bail Out !!!"` → `Exception` 伝播 → `breakOutPort()` が `None, False` を返す | `config_mgmt.py:403-406` |
-| ASIC DB ポーリング例外 | CONFIG_DB は PORT 削除済みで新ポート未追加のまま停止。`BREAKOUT_CFG` は**旧値のまま**残る | `config_mgmt.py:462-464` |
+| `MAX_WAIT=60` 秒以内に削除ポートが [ASIC](../../reference/glossary.md#term-asic) DB から消えない | `LOG_CRIT "!!! Critical Failure, Ports are not Deleted from ASIC DB, Bail Out !!!"` → `Exception` 伝播 → `breakOutPort()` が `None, False` を返す | `config_mgmt.py:403-406` |
+| [ASIC](../../reference/glossary.md#term-asic) DB ポーリング例外 | CONFIG_DB は PORT 削除済みで新ポート未追加のまま停止。`BREAKOUT_CFG` は**旧値のまま**残る | `config_mgmt.py:462-464` |
 
 ### DPB 実行フェーズ: port 再作成失敗
 
@@ -191,7 +191,7 @@ show interfaces breakout
 
 - **retry なし**: DPB はいずれの失敗ステップでも自動 retry を行わない。全フェーズ単発実行。
 - **部分適用リスク**: `writeConfigDB(delConfigToLoad)` 後に `_verifyAsicDB()` タイムアウトが発生した場合、PORT テーブルは削除済みだが新ポートは未追加の状態となり `BREAKOUT_CFG` は旧値のまま残る。手動 `config reload` が必要。
-- **BREAKOUT_CFG 保護**: `breakOutPort()` 失敗時は `BREAKOUT_CFG.brkout_mode` を書き込まない設計（`config/main.py:5548` 以降）。ASIC 状態との乖離を防ぐ意図的なガード。
+- **BREAKOUT_CFG 保護**: `breakOutPort()` 失敗時は `BREAKOUT_CFG.brkout_mode` を書き込まない設計（`config/main.py:5548` 以降）。[ASIC](../../reference/glossary.md#term-asic) 状態との乖離を防ぐ意図的なガード。
 - **Yang モデルなしテーブル**: `breakout_warnUser_extraTables()` が失敗すると `raise Exception("Failed in breakout_warnUser_extraTables. Error: {}")` を送出し `sys.exit(1)` で終了。
 
 <!-- /failure -->
@@ -233,7 +233,7 @@ show interfaces breakout
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -287,15 +287,15 @@ show interfaces breakout
 
 ### Producer/Consumer ペア
 
-`BREAKOUT_CFG` テーブルを直接 Subscribe するランタイムデーモンは存在しない。CLI が CONFIG_DB[PORT] を変更することで、portsyncd → PortsOrch → BufferOrch → SAI の間接連鎖が起動する。
+`BREAKOUT_CFG` テーブルを直接 Subscribe するランタイムデーモンは存在しない。CLI が CONFIG_DB[PORT] を変更することで、[portsyncd](../../reference/glossary.md#term-portsyncd) → PortsOrch → BufferOrch → [SAI](../../reference/glossary.md#term-sai) の間接連鎖が起動する。
 
 | 区間 | 方式 | チャンネル/パターン |
 |------|------|-------------------|
-| CLI → CONFIG_DB[BREAKOUT_CFG] | Redis `HSET` 直接書き込み | — |
-| CLI → CONFIG_DB[PORT] | `writeConfigDB()` → Redis `HSET` | — |
-| CONFIG_DB[PORT] → portsyncd | 起動時一括読み取り (`getKeys`) | — |
-| portsyncd → APPL_DB[PORT_TABLE] | `ProducerStateTable::set()` | APPL_DB channel |
-| APPL_DB[PORT_TABLE] → PortsOrch | `ConsumerStateTable` (keyspace 通知) | `__keyspace@appl_db__:PORT_TABLE\|*` |
+| CLI → CONFIG_DB[BREAKOUT_CFG] | [Redis](../../reference/glossary.md#term-redis) `HSET` 直接書き込み | — |
+| CLI → CONFIG_DB[PORT] | `writeConfigDB()` → [Redis](../../reference/glossary.md#term-redis) `HSET` | — |
+| CONFIG_DB[PORT] → [portsyncd](../../reference/glossary.md#term-portsyncd) | 起動時一括読み取り (`getKeys`) | — |
+| [portsyncd](../../reference/glossary.md#term-portsyncd) → [APPL_DB](../../reference/glossary.md#term-appl_db)[PORT_TABLE] | `ProducerStateTable::set()` | [APPL_DB](../../reference/glossary.md#term-appl_db) channel |
+| [APPL_DB](../../reference/glossary.md#term-appl_db)[PORT_TABLE] → PortsOrch | `ConsumerStateTable` (keyspace 通知) | `__keyspace@appl_db__:PORT_TABLE\|*` |
 | PortsOrch → BufferOrch | 関数呼び出し `gBufferOrch->isPortReady()` | — |
 | PortsOrch → SAI | SAI API 直接呼び出し | `sai_port_api->create_port_bulk()` |
 
@@ -307,7 +307,7 @@ show interfaces breakout
 2. `ConfigMgmt.breakOutPort()` を呼び出し (`config_mgmt.py` L451):
    - `_shutdownIntf(delPorts)` — 削除対象ポートを `admin_status: down`
    - `writeConfigDB(delConfigToLoad)` — PORT エントリ削除 → CONFIG_DB
-   - `_verifyAsicDB(timeout=60s)` — ASIC_DB ポーリング確認
+   - `_verifyAsicDB(timeout=60s)` — [ASIC_DB](../../reference/glossary.md#term-asic_db) ポーリング確認
    - `writeConfigDB(addConfigToLoad)` — PORT エントリ追加 → CONFIG_DB
 3. PORT 再構成成功後のみ `CONFIG_DB.set_entry("BREAKOUT_CFG", port, {'brkout_mode': mode})` (L5554)
 
@@ -315,7 +315,7 @@ show interfaces breakout
 
 `portsyncd` は CONFIG_DB[PORT] のエントリを `ProducerStateTable` 経由で APPL_DB[PORT_TABLE] へ転送する (`portsyncd.cpp` L71,179-214)。`PortsOrch` は `Orch(db, tableNames)` 基底クラスの `addConsumer()` が生成する `ConsumerStateTable(APPL_DB, APP_PORT_TABLE_NAME)` でこれを受信し (`orchdaemon.cpp` L217-232)、`doPortTask()` を呼び出す (`portsorch.cpp` L4555)。
 
-`doPortTask()` 内では `gBufferOrch->isPortReady(port_name)` が `true` になるまで新ポートを `m_pendingPortSet` に保留する (L4779-4784)。DPB 後に BUFFER_PG / BUFFER_QUEUE が書き込まれ BufferOrch が処理完了してから、PortsOrch が `sai_port_api->create_port_bulk()` でポートを SAI に登録する。
+`doPortTask()` 内では `gBufferOrch->isPortReady(port_name)` が `true` になるまで新ポートを `m_pendingPortSet` に保留する (L4779-4784)。DPB 後に [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) / BUFFER_QUEUE が書き込まれ BufferOrch が処理完了してから、PortsOrch が `sai_port_api->create_port_bulk()` でポートを SAI に登録する。
 
 ### データフロー図
 
@@ -346,9 +346,9 @@ APPL_DB[BREAKOUT_CFG]: なし（BREAKOUT_CFG は CONFIG_DB 専用）
 
 ### retry メカニズム
 
-新ポートが `m_pendingPortSet` に保留される条件: `gBufferOrch->isPortReady()` が `false`（BUFFER_PG / BUFFER_QUEUE 未登録）。BufferOrch のエントリが揃い次第、次回 `doPortTask()` 呼び出し時に再試行される。
+新ポートが `m_pendingPortSet` に保留される条件: `gBufferOrch->isPortReady()` が `false`（[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) / BUFFER_QUEUE 未登録）。BufferOrch のエントリが揃い次第、次回 `doPortTask()` 呼び出し時に再試行される。
 
-> **Evidence**: `sonic-utilities/config/main.py:5465-5554` (CLI 起動経路全体)、`sonic-swss/portsyncd/portsyncd.cpp:71,179-214` (ProducerStateTable → APPL_DB)、`sonic-swss/orchagent/orchdaemon.cpp:217-232` (PortsOrch 生成・ConsumerStateTable wiring)、`sonic-swss/orchagent/portsorch.cpp:4555-4604,4779-4788` (doPortTask / isPortReady 保留)、`sonic-swss/orchagent/bufferorch.cpp:254-273` (isPortReady 実装); 詳細分析 `meta/_intermediate/cdb-flow/breakout-cfg-pubsub.md`
+> **Evidence**: `sonic-utilities/config/main.py:5465-5554` (CLI 起動経路全体)、`sonic-swss/portsyncd/portsyncd.cpp:71,179-214` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) → APPL_DB)、`sonic-swss/orchagent/orchdaemon.cpp:217-232` (PortsOrch 生成・[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) wiring)、`sonic-swss/orchagent/portsorch.cpp:4555-4604,4779-4788` (doPortTask / isPortReady 保留)、`sonic-swss/orchagent/bufferorch.cpp:254-273` (isPortReady 実装); 詳細分析 `meta/_intermediate/cdb-flow/breakout-cfg-pubsub.md`
 <!-- /pubsub -->
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
@@ -360,7 +360,7 @@ Dynamic Port Breakout (DPB) は **多段フェーズ**で構成され、各ス�
 | ステップ | 操作 | 理由 |
 |---------|------|------|
 | 1 | `_shutdownIntf(delPorts)` — 削除対象ポートを `admin_status: down` | トラフィック転送中の SAI 削除を防ぐ |
-| 2 | `writeConfigDB(delConfigToLoad)` — PORT エントリを CONFIG_DB から削除 | orchagent に削除シグナルを送る |
+| 2 | `writeConfigDB(delConfigToLoad)` — PORT エントリを CONFIG_DB から削除 | [orchagent](../../reference/glossary.md#term-orchagent) に削除シグナルを送る |
 | 3 | `_verifyAsicDB(timeout=60s)` — ASIC DB からポート消滅を最大 60 秒ポーリング確認 | レーン競合を防ぐため追加前に削除完了を保証 |
 | 4 | `writeConfigDB(addConfigtoLoad)` — 新ポートを CONFIG_DB に追加 | ASIC DB 確認後にのみ新ポート生成 |
 | 5 | `BREAKOUT_CFG.brkout_mode` を更新（CLI main.py L5553） | PORT 再構成成功後に限り BREAKOUT_CFG を更新 |
@@ -369,7 +369,7 @@ Dynamic Port Breakout (DPB) は **多段フェーズ**で構成され、各ス�
 
 - `_deletePorts()` は YANG データツリー上の依存ノード（VLAN_MEMBER、ACL_TABLE ポートリスト等）を**ポート削除より先に**削除する (`force=True` 時)。`force=False` かつ依存あり → 処理中断。(`config_mgmt.py L480-520`)
 - 新ポート追加後、`_addPorts(loadDefConfig=True)` が `/etc/sonic/port_breakout_config_db.json` から ACL_TABLE / VLAN_MEMBER のデフォルト設定を自動再注入する (`config_mgmt.py L553-572`)。
-- **順序依存**: portsorch は `gBufferOrch->isPortReady(port)` が `true` になるまでポートを pending 保留する (`portsorch.cpp L4779-4788`)。BUFFER_PG / BUFFER_QUEUE を PORT 追加と同時か直後に書き込まないと新ポートが準備完了にならない。
+- **順序依存**: [portsorch](../../reference/glossary.md#term-portsorch) は `gBufferOrch->isPortReady(port)` が `true` になるまでポートを pending 保留する (`portsorch.cpp L4779-4788`)。[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) / BUFFER_QUEUE を PORT 追加と同時か直後に書き込まないと新ポートが準備完了にならない。
 
 ### warm reboot との関係
 
@@ -465,7 +465,7 @@ breakout 処理コアに埋め込まれた定数。CONFIG_DB フィールドに�
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`BREAKOUT_CFG` への書込（`config interface breakout`）は CONFIG_DB 内の主テーブル更新にとどまらず、PORT テーブル再構成・STATE_DB ポート状態初期化・COUNTERS_DB キューマップ更新という 3 系統の副次書込を引き起こす。
+`BREAKOUT_CFG` への書込（`config interface breakout`）は CONFIG_DB 内の主テーブル更新にとどまらず、PORT テーブル再構成・[STATE_DB](../../reference/glossary.md#term-state_db) ポート状態初期化・[COUNTERS_DB](../../reference/glossary.md#term-counters_db) キューマップ更新という 3 系統の副次書込を引き起こす。
 
 ### CONFIG_DB|PORT テーブル — ポート再構成（直接・同期）
 
@@ -477,7 +477,7 @@ breakout 処理コアに埋め込まれた定数。CONFIG_DB フィールドに�
 
 ### STATE_DB|PORT_TABLE — ポート状態エントリの再初期化
 
-DPB 後に orchagent が SAI レイヤでポートを再生成すると `initPort()` が STATE_DB にポートエントリを書き込み、`deInitPort()` が旧ポートのバッファ最大値エントリを削除する。
+DPB 後に [orchagent](../../reference/glossary.md#term-orchagent) が SAI レイヤでポートを再生成すると `initPort()` が [STATE_DB](../../reference/glossary.md#term-state_db) にポートエントリを書き込み、`deInitPort()` が旧ポートのバッファ最大値エントリを削除する。
 
 | トリガ | 操作 | DB / テーブル | フィールド | evidence |
 |--------|------|--------------|-----------|----------|
@@ -514,17 +514,17 @@ Dynamic Port Breakout (DPB) は `BREAKOUT_CFG` 単体ではなく、`CONFIG_DB` 
 | `BUFFER_QUEUE` | `sonic-buffer-queue.yang` L51 | `port` leafref → `PORT.name` | 対象ポートの BUFFER_QUEUE エントリが削除 |
 | `INTERFACE` | `sonic-interface.yang` L58, L128 | `name` leafref → `PORT.name` | INTERFACE / INTERFACE_IPPREFIX エントリが削除 |
 | `VLAN_MEMBER` | `sonic-vlan.yang` L292 | `port` leafref → `PORT.name` | VLAN_MEMBER_LIST エントリが削除 |
-| `PORT_QOS_MAP` | `sonic-port-qos-map.yang` L78 | `name` leafref → `PORT.name` | QoS マッピングエントリが削除 |
+| `PORT_QOS_MAP` | `sonic-port-qos-map.yang` L78 | `name` leafref → `PORT.name` | [QoS](../../reference/glossary.md#term-qos) マッピングエントリが削除 |
 | `BUFFER_PORT_INGRESS_PROFILE_LIST` | `sonic-buffer-port-ingress-profile-list.yang` L41 | `port` leafref → `PORT.name` | バッファイングレスプロファイルが削除 |
 | `BUFFER_PORT_EGRESS_PROFILE_LIST` | `sonic-buffer-port-egress-profile-list.yang` L41 | `port` leafref → `PORT.name` | バッファイグレスプロファイルが削除 |
-| `PFC_WD` | `sonic-pfcwd.yang` L38 | `ifname` leafref → `PORT.name` | PFC Watchdog エントリが削除 |
+| `PFC_WD` | `sonic-pfcwd.yang` L38 | `ifname` leafref → `PORT.name` | [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) エントリが削除 |
 | `QUEUE` | `sonic-queue.yang` L67 | `port` leafref → `PORT.name` | QUEUE エントリが削除 |
 | `CABLE_LENGTH` | `sonic-cable-length.yang` L47 | `port` leafref → `PORT.name` | ケーブル長エントリが削除 |
 | `STORM_CONTROL` | `sonic-storm-control.yang` L41 | `ifname` leafref → `PORT.name` | ストームコントロールエントリが削除 |
-| `LLDP_PORT_TABLE` | `sonic-lldp.yang` L109 | `name` leafref → `PORT.name` | LLDP ポート設定が削除 |
+| `LLDP_PORT_TABLE` | `sonic-lldp.yang` L109 | `name` leafref → `PORT.name` | [LLDP](../../reference/glossary.md#term-lldp) ポート設定が削除 |
 | `DEVICE_NEIGHBOR` | `sonic-device_neighbor.yang` L55 | `name` leafref → `PORT.name` | 隣接デバイス情報が削除 |
 | `SFLOW` (port sampler) | `sonic-sflow.yang` L110 | `port` leafref → `PORT.name` | sFlow ポートサンプラーが削除 |
-| `BGP_NEIGHBOR` | `sonic-bgp-neighbor.yang` L85 | `local_addr` leafref → `PORT.name` | BGP neighbor (port 指定) が削除 |
+| `BGP_NEIGHBOR` | `sonic-bgp-neighbor.yang` L85 | `local_addr` leafref → `PORT.name` | [BGP](../../reference/glossary.md#term-bgp) neighbor (port 指定) が削除 |
 | `MIRROR_SESSION` | `sonic-mirror-session.yang` L149 | `dst_port` leafref → `PORT.name` | ミラーセッションの宛先が対象ポートの場合に削除 |
 
 > 依存の検出は `SonicYang.find_data_dependencies(xPathPort)` が YANG データツリーを走査して行う。leafref でない参照（`ACL_TABLE.ports` 等）はここでは検出されない。
@@ -606,4 +606,5 @@ Arista は `[fallback_speed_list]` 構文、Celestica/Accton は `(num_lanes)` �
 - `sonic-buildimage/src/sonic-config-engine/portconfig.py` L186–208, L387–388, L461–465: 分岐・FEC 付与
 - `sonic-swss/orchagent/portsorch.cpp` L4026–4032, L858–863: ASIC バリデーション・Mellanox 分岐
 <!-- /platform -->
-<!-- glossary-links-injected: 17ab2ab6ed91 -->
+
+<!-- glossary-links-injected: f9445b5b4106 -->

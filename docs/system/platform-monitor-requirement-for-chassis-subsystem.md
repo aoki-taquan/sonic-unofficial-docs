@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-このドキュメントはシャーシ型 SONiC（Supervisor + Linecards + Fabric Cards）における **PMON 関連の必須要件と将来要件** を箇条書きで挙げたチェックリスト形式の [HLD](../reference/glossary.md#term-hld) である。具体実装は各サブ HLD（chassisd / psud / thermalctld / pcie-monitoring 等）に委ねられる[^1]。
+このドキュメントはシャーシ型 [SONiC](../reference/glossary.md#term-sonic)（Supervisor + Linecards + Fabric Cards）における **PMON 関連の必須要件と将来要件** を箇条書きで挙げたチェックリスト形式の [HLD](../reference/glossary.md#term-hld) である。具体実装は各サブ HLD（chassisd / psud / thermalctld / pcie-monitoring 等）に委ねられる[^1]。
 
 ## 動作仕様
 
@@ -57,7 +57,7 @@ related:
 | # | 要件 |
 |---|------|
 | 5 | クリティカルイベント全部に syslog。閾値はドキュメント化して Alert Orchestration に流す |
-| 6 | FC ASIC / LC ASIC の PCIe 検出失敗を検知して syslog（[pcie-monitoring-services-hld.md](https://github.com/sonic-net/SONiC/blob/master/doc/pcie-mon/pcie-monitoring-services-hld.md) 連動）|
+| 6 | FC [ASIC](../reference/glossary.md#term-asic) / LC ASIC の PCIe 検出失敗を検知して syslog（[pcie-monitoring-services-hld.md](https://github.com/sonic-net/SONiC/blob/master/doc/pcie-mon/pcie-monitoring-services-hld.md) 連動）|
 | 7 | HW Watchdog: 既存 SONiC 挙動踏襲（reboot 前に起動、reboot 後に SONiC が明示 disable）|
 
 #### chassisd と Chassis State DB
@@ -191,4 +191,4 @@ docker exec pmon supervisorctl status
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: afb862484b2b -->
+<!-- glossary-links-injected: ec18b66e3507 -->

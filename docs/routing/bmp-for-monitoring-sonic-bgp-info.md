@@ -43,7 +43,7 @@ related:
 
 ## 概要
 
-SONiC の [Redis](../reference/glossary.md#term-redis) [ROUTE_TABLE](../reference/glossary.md#term-route_table) には neighbor / nexthop しかなく、[BGP](../reference/glossary.md#term-bgp) の deeper view（capabilities、graceful_restart、AS path、in/out RIB、prefix counts など）が見えづらい[^1]。本 [HLD](../reference/glossary.md#term-hld) は **OpenBMP を fork した `openbmpd`** を新 container（bmp）に同梱し、**[FRR](../reference/glossary.md#term-frr) bgpd → BMP（RFC 7854）→ openbmpd → Redis BMP_STATE_DB** の経路で BGP 情報を構造化保存する設計。BGP listener は **[gNMI](../reference/glossary.md#term-gnmi) streaming "on change" subscription** で取れるようになる。
+[SONiC](../reference/glossary.md#term-sonic) の [Redis](../reference/glossary.md#term-redis) [ROUTE_TABLE](../reference/glossary.md#term-route_table) には neighbor / nexthop しかなく、[BGP](../reference/glossary.md#term-bgp) の deeper view（capabilities、graceful_restart、AS path、in/out RIB、prefix counts など）が見えづらい[^1]。本 [HLD](../reference/glossary.md#term-hld) は **OpenBMP を fork した `openbmpd`** を新 container（bmp）に同梱し、**[FRR](../reference/glossary.md#term-frr) bgpd → BMP（RFC 7854）→ openbmpd → Redis BMP_STATE_DB** の経路で BGP 情報を構造化保存する設計。BGP listener は **[gNMI](../reference/glossary.md#term-gnmi) streaming "on change" subscription** で取れるようになる。
 
 ## 動作仕様
 
@@ -80,7 +80,7 @@ bmp targets sonic-bmp
 
 ### Redis: BMP_STATE_DB
 
-専用 Redis instance を立て **既存 [STATE_DB](../reference/glossary.md#term-state_db) に I/O 負担をかけない**[^1]。multi-ASIC では ASIC index 単位に bmp container と DB が並ぶ。
+専用 Redis instance を立て **既存 [STATE_DB](../reference/glossary.md#term-state_db) に I/O 負担をかけない**[^1]。multi-[ASIC](../reference/glossary.md#term-asic) では ASIC index 単位に bmp container と DB が並ぶ。
 
 主要テーブル:
 
@@ -183,4 +183,4 @@ reasoning: bmp container 構成と 2 daemon の役割の根拠。
 - gNMI heartbeat (PR #1563) の取り込み状況確認
 -->
 
-<!-- glossary-links-injected: 4f41ac4825dc -->
+<!-- glossary-links-injected: ec18b66e3507 -->

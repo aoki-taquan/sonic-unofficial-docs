@@ -210,7 +210,7 @@ runtime 中はテーブル更新のたびに `modify_conf_file()` が呼ばれ�
 
 ### 主要な制約詳細
 
-**TACPLUS_SERVER 先行推奨 (依存 #1)**: `AAA|authentication.login = "tacacs+"` を先に書き込み `TACPLUS_SERVER` エントリを後から追加すると、AAA 書き込み時点で `servers_conf` が空になり `common-auth-sonic` は TACACS+ サーバなしで生成される（実質 `local` 相当）。`TACPLUS_SERVER` 追加後に再度 `modify_conf_file()` が呼ばれて正しい設定になるが、その間 TACACS+ 認証は機能しない（evidence: `hostcfgd:641-725`）。
+**TACPLUS_SERVER 先行推奨 (依存 #1)**: `AAA|authentication.login = "tacacs+"` を先に書き込み `TACPLUS_SERVER` エントリを後から追加すると、[AAA](../../reference/glossary.md#term-aaa) 書き込み時点で `servers_conf` が空になり `common-auth-sonic` は TACACS+ サーバなしで生成される（実質 `local` 相当）。`TACPLUS_SERVER` 追加後に再度 `modify_conf_file()` が呼ばれて正しい設定になるが、その間 TACACS+ 認証は機能しない（evidence: `hostcfgd:641-725`）。
 
 **passkey 先行必須 (依存 #2 / #5)**: `db_migrator.migrate_aaa()` は `TACPLUS|global.passkey` が空の場合に `AAA|authorization` を削除する。YANG must 制約により `AAA|authentication.login` に `tacacs+` を含む場合、passkey が存在しなければ CLI 書き込み自体が reject される（evidence: `db_migrator.py:869-900`, `sonic-system-aaa.yang:must`）。
 
@@ -227,7 +227,7 @@ runtime 中はテーブル更新のたびに `modify_conf_file()` が呼ばれ�
 
 ### 共依存テーブル群 — 起動時一括ロード
 
-`load_independent_config()` → `AaaCfg.load()` (hostcfgd:2221-2230) で 7 テーブルを一括ロードし、`modify_conf_file()` を **1 回**だけ呼んで PAM/NSS を確定する。
+`load_independent_config()` → `AaaCfg.load()` ([hostcfgd](../../reference/glossary.md#term-hostcfgd):2221-2230) で 7 テーブルを一括ロードし、`modify_conf_file()` を **1 回**だけ呼んで PAM/NSS を確定する。
 
 | テーブル | TACPLUS_SERVER への影響 | evidence |
 |---|---|---|
@@ -315,7 +315,7 @@ hostcfgd は常時起動し `TACPLUS_SERVER` テーブルを無条件購読す�
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。TACACS+ は SSH/コンソール認証のコントロールプレーン処理。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。TACACS+ は SSH/コンソール認証のコントロールプレーン処理。
 
 ### 段階 4: タイミング + 副作用
 
@@ -330,7 +330,7 @@ TACPLUS_SERVER / TACPLUS テーブルへの書き込みが発生するコード�
 
 ### CLI
 
-  - `config tacacs add/delete/set ...` — `config/aaa.py` が TACPLUS_SERVER を書き込む (sonic-utilities/config/aaa.py)
+  - `config tacacs add/delete/set ...` — `config/aaa.py` が TACPLUS_SERVER を書き込む ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/aaa.py)
 
 ### minigraph / sonic-cfggen
 
@@ -338,11 +338,11 @@ minigraph.py に TACPLUS_SERVER 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
-**db_migrator.py** が TACPLUS のマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+**db_migrator.py** が TACPLUS のマイグレーション処理を実装 ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/scripts/db_migrator.py)
 
 ### ビルド時デフォルト (build-time default)
 
@@ -393,7 +393,7 @@ YANG では `key_encrypt` フィールドが両テーブルに定義されデフ
 
 ### dead consumer: `src_intf`
 
-YANG: `TACPLUS|global.src_intf` (leafref union)。hostcfgd は `if 'src_ip' in tacplus_global` を参照するが、`src_intf` を IP アドレスに解決するコードがない (RADIUS には実装済み)。`src_intf` を設定しても PAM / NSS 設定に `source_ip=` は挿入されない。TACPLUS の送信元 interface 指定機能は実質的に動作しない。**YANG-実装 discrepancy**。
+YANG: `TACPLUS|global.src_intf` (leafref union)。hostcfgd は `if 'src_ip' in tacplus_global` を参照するが、`src_intf` を IP アドレスに解決するコードがない ([RADIUS](../../reference/glossary.md#term-radius) には実装済み)。`src_intf` を設定しても PAM / NSS 設定に `source_ip=` は挿入されない。TACPLUS の送信元 interface 指定機能は実質的に動作しない。**YANG-実装 discrepancy**。
 
 ### `priority` 未設定時の KeyError リスク
 
@@ -479,11 +479,11 @@ CONFIG_DB `TACPLUS_SERVER` / `TACPLUS|global` テーブルの変更に伴って 
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `AaaCfg` クラス内に `Producer` / `Table` / `hset` / `Notification` の呼び出しが 0 件。`modify_conf_file()` (hostcfgd:641-870) を `Producer`/`set(`/`hset` で grep して 0 ヒット |
-| STATE_DB | なし | `state_db_conn` は `FipsCfg` (hostcfgd:1792) と `RestartWaiter` (hostcfgd:2160) のみが保持。`AaaCfg` は `state_db_conn` を保持しない |
-| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。AAA / TACACS+ はコントロールプレーン処理のため統計テーブルも存在しない |
-| ASIC_DB / FLEX_COUNTER_DB | なし | SAI 非経由 (runtime-trace 段階 3 参照)。`TACPLUS_SERVER` を購読する orchagent は存在しない |
-| LOGLEVEL_DB | なし | hostcfgd 全体に LOGLEVEL_DB 参照なし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `AaaCfg` クラス内に `Producer` / `Table` / `hset` / `Notification` の呼び出しが 0 件。`modify_conf_file()` (hostcfgd:641-870) を `Producer`/`set(`/`hset` で grep して 0 ヒット |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `state_db_conn` は `FipsCfg` (hostcfgd:1792) と `RestartWaiter` (hostcfgd:2160) のみが保持。`AaaCfg` は `state_db_conn` を保持しない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `hostcfgd` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 参照なし。[AAA](../../reference/glossary.md#term-aaa) / TACACS+ はコントロールプレーン処理のため統計テーブルも存在しない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由 (runtime-trace 段階 3 参照)。`TACPLUS_SERVER` を購読する [orchagent](../../reference/glossary.md#term-orchagent) は存在しない |
+| [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) | なし | hostcfgd 全体に [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) 参照なし |
 
 ### 実際の副作用 (ファイル書き換え・プロセスシグナル)
 
@@ -505,14 +505,14 @@ CONFIG_DB `TACPLUS_SERVER` / `TACPLUS|global` テーブルの変更に伴って 
 
 ### Redis 購読方式
 
-`TACPLUS_SERVER` および `TACPLUS`（global）テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:<TABLE>|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は**使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+`TACPLUS_SERVER` および `TACPLUS`（global）テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **[Redis](../../reference/glossary.md#term-redis) keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:<TABLE>|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）は**使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
 
 | 購読者 | 購読 API | 購読テーブル | ハンドラ |
 |--------|---------|--------------|---------|
 | `hostcfgd` (`AaaCfg` 経由) | `ConfigDBConnector.subscribe()` | `TACPLUS_SERVER` | `tacacs_server_handler` → `tacacs_server_update` |
 | `hostcfgd` (`AaaCfg` 経由) | 同上 | `TACPLUS` | `tacacs_global_handler` → `tacacs_global_update` |
 
-`hostcfgd` 以外で `TACPLUS_SERVER` を CONFIG_DB から購読するプロセスは存在しない（orchagent / syncd / bgpd 等で `TACPLUS_SERVER` を grep して 0 ヒット）。PAM モジュール（`pam_tacplus`）は Redis を購読せず、`/etc/pam.d/common-auth-sonic` を認証時にファイルから読む。
+`hostcfgd` 以外で `TACPLUS_SERVER` を CONFIG_DB から購読するプロセスは存在しない（[orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) / bgpd 等で `TACPLUS_SERVER` を grep して 0 ヒット）。PAM モジュール（`pam_tacplus`）は [Redis](../../reference/glossary.md#term-redis) を購読せず、`/etc/pam.d/common-auth-sonic` を認証時にファイルから読む。
 
 ### keyspace 通知 → ハンドラ呼び出しの流れ
 
@@ -534,7 +534,7 @@ make_callback() で (key=<ip>, op=SET, data=HGETALL結果) を生成
 ```
 
 - keyspace 通知のペイロードは操作名（`hset`/`del` 等）のみ。フィールド値は `HGETALL` で取得する。
-- `op` は `data is None ? DEL : SET` の 2 値判定（`make_callback()` — hostcfgd:2458-2466）。`HDEL`/`HSET` の Redis 操作種別自体は区別しない。
+- `op` は `data is None ? DEL : SET` の 2 値判定（`make_callback()` — hostcfgd:2458-2466）。`HDEL`/`HSET` の [Redis](../../reference/glossary.md#term-redis) 操作種別自体は区別しない。
 - DEL 時は `data={}` が渡るため `tacacs_server_update()` の `data == {}` 分岐でサーバーエントリを削除する（hostcfgd:474-476）。
 
 ### 起動時スナップショット
@@ -556,7 +556,7 @@ make_callback() で (key=<ip>, op=SET, data=HGETALL結果) を生成
 
 ### 結論
 
-**プラットフォーム差なし**。TACPLUS_SERVER 処理は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・SmartSwitch DPU・ベンダー固有 PAM モジュールに依存しない。
+**プラットフォーム差なし**。TACPLUS_SERVER 処理は host 単位で適用され、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)・ベンダー固有 PAM モジュールに依存しない。
 
 ### 根拠
 
@@ -566,11 +566,11 @@ make_callback() で (key=<ip>, op=SET, data=HGETALL結果) を生成
 
 #### 2. VOQ chassis / line card
 
-`hostcfgd` ソース全体を `chassis`, `supervisor`, `linecard` で検索してもゼロヒット。VOQ chassis の各 line card / supervisor は独立した host `hostcfgd` を持ち、それぞれが自身の host CONFIG_DB の `TACPLUS_SERVER` テーブルを処理する。chassis 全体での集中適用機構は存在しない。オペレータが各 host に同一の TACACS+ サーバ設定を流す運用が前提。
+`hostcfgd` ソース全体を `chassis`, `supervisor`, `linecard` で検索してもゼロヒット。[VOQ](../../reference/glossary.md#term-voq) chassis の各 line card / supervisor は独立した host `hostcfgd` を持ち、それぞれが自身の host CONFIG_DB の `TACPLUS_SERVER` テーブルを処理する。chassis 全体での集中適用機構は存在しない。オペレータが各 host に同一の TACACS+ サーバ設定を流す運用が前提。
 
 #### 3. SmartSwitch / DPU
 
-`AaaCfg` クラスに `has_per_dpu_scope` や `num_dpus` を参照する箇所はない。`DEVICE_METADATA.localhost.subtype` は `AaaCfg` の処理で参照されない。SmartSwitch 固有の TACACS+ 処理分岐は存在しない。
+`AaaCfg` クラスに `has_per_dpu_scope` や `num_dpus` を参照する箇所はない。`DEVICE_METADATA.localhost.subtype` は `AaaCfg` の処理で参照されない。[SmartSwitch](../../reference/glossary.md#term-smartswitch) 固有の TACACS+ 処理分岐は存在しない。
 
 #### 4. ビルド時インストールにプラットフォーム固有条件なし
 
@@ -587,4 +587,4 @@ make_callback() で (key=<ip>, op=SET, data=HGETALL結果) を生成
 > **Evidence**: `hostcfgd:2182-2185` (is_multi_npu / AaaCfg 初期化)、`hostcfgd:641-816` (modify_conf_file)、`sonic_debian_extension.j2:317-335` (インストールブロック)、`tacplus_nss.conf.j2` (テンプレート全行)、`common-auth-sonic.j2` (テンプレート全行); 詳細分析 `meta/_intermediate/cdb-flow/tacplus-server-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: e0332a023fdb -->
+<!-- glossary-links-injected: 30e1ce753e5d -->

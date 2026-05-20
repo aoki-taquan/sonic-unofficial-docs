@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-Multi-ASIC SONiC では、システム共通の DB が **host 上の "global database" container** に居て、ASIC 毎の DB は **各 ASIC namespace 内の database container** に居る。PMON の各 daemon は元々シングル ASIC 想定で書かれているため、**どの table をどちらの DB に書くか** を切り分ける必要がある。本 [HLD](../reference/glossary.md#term-hld) はその切り分け方針を定める[^1]。
+[Multi-ASIC](../reference/glossary.md#term-multi-asic) [SONiC](../reference/glossary.md#term-sonic) では、システム共通の DB が **host 上の "global database" container** に居て、[ASIC](../reference/glossary.md#term-asic) 毎の DB は **各 ASIC namespace 内の database container** に居る。PMON の各 daemon は元々シングル ASIC 想定で書かれているため、**どの table をどちらの DB に書くか** を切り分ける必要がある。本 [HLD](../reference/glossary.md#term-hld) はその切り分け方針を定める[^1]。
 
 PMON 自体は **host 上に 1 個** のまま。daemon を namespace 別に複製するのではなく、**daemon 内部で namespace を選び分ける** 設計を取る[^1]。
 
@@ -196,4 +196,4 @@ docker exec pmon supervisorctl status
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f5c7d9a7109a -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

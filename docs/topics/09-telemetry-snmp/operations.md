@@ -37,7 +37,7 @@ related:
 
 # 運用
 
-障害調査では「どこまで生きているか」「いつから壊れたか」「保全は取れたか」の順で見ます。SONiC は調べる対象によって CLI が分かれているので、調査順をルーチン化しておくと迷いません。
+障害調査では「どこまで生きているか」「いつから壊れたか」「保全は取れたか」の順で見ます。[SONiC](../../reference/glossary.md#term-sonic) は調べる対象によって CLI が分かれているので、調査順をルーチン化しておくと迷いません。
 
 ## 起動直後の確認
 
@@ -220,4 +220,4 @@ community / v3 user は CONFIG_DB の `SNMP_COMMUNITY` / `SNMP_USER` です。�
 - [kdump remote SSH](../../system/kdump-remote-ssh.md)
 - [Dump utility](../../internals/dump-utility-for-easy-debugging.md)
 
-<!-- glossary-links-injected: 86d533e3fc0d -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

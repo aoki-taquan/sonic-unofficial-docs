@@ -151,7 +151,7 @@ show syslog
 |----------|--------------------------|------|
 | `SYSLOG_SERVER` を先に投入 → `SYSLOG_CONFIG` を書き込む | **1 回** | 推奨パターン |
 | `SYSLOG_CONFIG` を先に書き込む → `SYSLOG_SERVER` を後から追加 | **2 回** | 最終状態は同じだが再起動が増える |
-| 同一値を再書き込み | **0 回** | キャッシュ比較でスキップ (hostcfgd:1725) |
+| 同一値を再書き込み | **0 回** | キャッシュ比較でスキップ ([hostcfgd](../../reference/glossary.md#term-hostcfgd):1725) |
 
 **推奨書込み順序**:
 
@@ -248,7 +248,7 @@ YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` �
 | 定数 / フォールバック | 値 | 用途 | ソース |
 |---|---|---|---|
 | `format` フォールバック | `'standard'` | `gconf.get('format', 'standard')` — SYSLOG_CONFIG\|GLOBAL 欠落・`format` 未設定時の最終フォールバック（YANG default と二重防御） | `rsyslog.conf.j2` L51 |
-| `welf_firewall_name` フォールバック | `hostname` (DEVICE_METADATA 由来) | `gconf.get('welf_firewall_name', hostname)` — `format=welf` かつ `welf_firewall_name` 未設定時にデバイスホスト名を WELF `fw=` フィールドへ埋め込む | `rsyslog.conf.j2` L52 |
+| `welf_firewall_name` フォールバック | `hostname` ([DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 由来) | `gconf.get('welf_firewall_name', hostname)` — `format=welf` かつ `welf_firewall_name` 未設定時にデバイスホスト名を WELF `fw=` フィールドへ埋め込む | `rsyslog.conf.j2` L52 |
 | `severity` フォールバック (per-server) | `'*'` (全 severity) | `conf.get('severity', gconf.get('severity', '*'))` — per-server および GLOBAL severity ともに未設定の場合 | `rsyslog.conf.j2` L92 |
 | `port` フォールバック (per-server) | `514` | SYSLOG_SERVER エントリの `port` 未設定時のデフォルト転送ポート | `rsyslog.conf.j2` L89 |
 | `protocol` フォールバック (per-server) | `'udp'` | SYSLOG_SERVER エントリの `protocol` 未設定時 | `rsyslog.conf.j2` L90 |
@@ -295,11 +295,11 @@ YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` �
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `RSyslogCfg` クラス内 (hostcfgd:1695-1743) に `ProducerStateTable` / `Table.set()` / `hset` の呼び出しが 0 件 |
-| STATE_DB | なし | `hostcfgd` の `STATE_DB` 参照は `FipsCfg` (L1759-1821) と起動時 `RestartWaiter` のみ。`RSyslogCfg` は `state_db_conn` を保持しない |
-| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。syslog はコントロールプレーンのロギング機能で統計テーブルも存在しない |
-| ASIC_DB / FLEX_COUNTER_DB | なし | SAI 非経由。rsyslog の設定変更は ASIC に影響しない |
-| LOGLEVEL_DB | なし | `hostcfgd` が LOGLEVEL_DB を書くのは起動時の自身のログレベル登録のみ |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `RSyslogCfg` クラス内 (hostcfgd:1695-1743) に `ProducerStateTable` / `Table.set()` / `hset` の呼び出しが 0 件 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `hostcfgd` の `STATE_DB` 参照は `FipsCfg` (L1759-1821) と起動時 `RestartWaiter` のみ。`RSyslogCfg` は `state_db_conn` を保持しない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `hostcfgd` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 参照なし。syslog はコントロールプレーンのロギング機能で統計テーブルも存在しない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由。rsyslog の設定変更は [ASIC](../../reference/glossary.md#term-asic) に影響しない |
+| [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) | なし | `hostcfgd` が [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) を書くのは起動時の自身のログレベル登録のみ |
 
 **DB 外の副作用** (OS レベル):
 
@@ -315,7 +315,7 @@ YANG `must "(../format != 'standard')"` 制約により、`welf_firewall_name` �
 
 ### Redis 購読方式
 
-`SYSLOG_CONFIG` への変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:<TABLE>|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+`SYSLOG_CONFIG` への変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **[Redis](../../reference/glossary.md#term-redis) keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:<TABLE>|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
 
 | 購読者 | 購読 API | 購読テーブル | ハンドラ |
 |--------|---------|--------------|---------|
@@ -356,19 +356,19 @@ make_callback() で (key, op, data) を生成
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: `SYSLOG_CONFIG|GLOBAL` の各フィールド (`format` / `severity` / `rate_limit_interval` / `rate_limit_burst` / `welf_firewall_name`) の処理ロジックに ASIC 種別・multi-asic 構成・chassis 構成・ベンダー固有の分岐はない。
+**プラットフォーム差なし**: `SYSLOG_CONFIG|GLOBAL` の各フィールド (`format` / `severity` / `rate_limit_interval` / `rate_limit_burst` / `welf_firewall_name`) の処理ロジックに [ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic 構成・chassis 構成・ベンダー固有の分岐はない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `SYSLOG_CONFIG` は SAI 非経由。`hostcfgd RSyslogCfg` クラス (L1695-1743) 全体に `platform` / `asic` / `vendor` 参照なし |
-| multi-asic (`NUM_ASIC > 1`) | 受信 IP のみ変化、設定処理は同一 | `rsyslog-config.sh` が Multi-ASIC で `docker0` IP を選択するが、`SYSLOG_CONFIG|GLOBAL` フィールドの処理経路 (`RSyslogCfg.update_rsyslog_config`) には影響しない。`is_multi_npu` フラグは `HostConfigDaemon.__init__` で設定されるが `RSyslogCfg` には渡されない |
-| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | `SYSLOG_CONFIG` は host scope。各 line card host の `hostcfgd` が独立に `rsyslog.conf` を再生成 |
-| SmartSwitch / DPU | 影響なし | `hostcfgd` / `rsyslog.conf.j2` / `rsyslog-config.sh` のいずれにも SmartSwitch / DPU 固有の分岐なし |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `SYSLOG_CONFIG` は [SAI](../../reference/glossary.md#term-sai) 非経由。`hostcfgd RSyslogCfg` クラス (L1695-1743) 全体に `platform` / `asic` / `vendor` 参照なし |
+| multi-asic (`NUM_ASIC > 1`) | 受信 IP のみ変化、設定処理は同一 | `rsyslog-config.sh` が [Multi-ASIC](../../reference/glossary.md#term-multi-asic) で `docker0` IP を選択するが、`SYSLOG_CONFIG|GLOBAL` フィールドの処理経路 (`RSyslogCfg.update_rsyslog_config`) には影響しない。`is_multi_npu` フラグは `HostConfigDaemon.__init__` で設定されるが `RSyslogCfg` には渡されない |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | `SYSLOG_CONFIG` は host scope。各 line card host の `hostcfgd` が独立に `rsyslog.conf` を再生成 |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) / [DPU](../../reference/glossary.md#term-dpu) | 影響なし | `hostcfgd` / `rsyslog.conf.j2` / `rsyslog-config.sh` のいずれにも [SmartSwitch](../../reference/glossary.md#term-smartswitch) / [DPU](../../reference/glossary.md#term-dpu) 固有の分岐なし |
 | テンプレート内分岐 (`rsyslog.conf.j2`) | プラットフォーム条件なし | L51-52 (`format` / `welf_firewall_name`) / L92 (`severity`) に `platform` / `chassis` / `namespace` 条件なし |
 
-**補足 — Multi-ASIC での受信 IP 変化について**:
+**補足 — [Multi-ASIC](../../reference/glossary.md#term-multi-asic) での受信 IP 変化について**:
 
-Multi-ASIC 構成では `rsyslog-config.sh` が `udp_server_ip` に `docker0` の IP を採用する（シングル NPU では `lo` アドレス）。この変化は rsyslog の**受信側**設定（どの IP でコンテナからのログを受け取るか）であり、`SYSLOG_CONFIG|GLOBAL` の `format` / `severity` / `rate_limit_*` を処理する経路とは独立している。
+[Multi-ASIC](../../reference/glossary.md#term-multi-asic) 構成では `rsyslog-config.sh` が `udp_server_ip` に `docker0` の IP を採用する（シングル [NPU](../../reference/glossary.md#term-npu) では `lo` アドレス）。この変化は rsyslog の**受信側**設定（どの IP でコンテナからのログを受け取るか）であり、`SYSLOG_CONFIG|GLOBAL` の `format` / `severity` / `rate_limit_*` を処理する経路とは独立している。
 
 詳細根拠は `meta/_intermediate/cdb-flow/syslog-config-platform.md` を参照。
 <!-- /platform -->
@@ -410,12 +410,12 @@ YANG default 宣言 (`format=standard` / `severity=notice`) を補完する形�
 | `rate_limit_interval` | なし | **未指定 (rsyslog ディレクティブ非出力 → `imuxsock` 既定で実効 rate limit 無効)** | `rsyslog.conf.j2` L17, L22 `is not none` ガード |
 | `rate_limit_burst` | なし | **未指定 (同上、rsyslog `imuxsock` 既定値)** | `rsyslog.conf.j2` L18, L22 `is not none` ガード |
 | `format` | `standard` | **`standard`** (二重防御) | YANG `default standard` + `rsyslog.conf.j2` L51 `gconf.get('format', 'standard')` |
-| `welf_firewall_name` | なし | **`{{ hostname }}`** (DEVICE_METADATA 由来) | `rsyslog.conf.j2` L52 `gconf.get('welf_firewall_name', hostname)` |
+| `welf_firewall_name` | なし | **`{{ hostname }}`** ([DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 由来) | `rsyslog.conf.j2` L52 `gconf.get('welf_firewall_name', hostname)` |
 | `severity` | `notice` | **`notice`** (YANG default) / `*` (テーブル全欠落時の per-server fallback) | YANG `default notice` + `rsyslog.conf.j2` L92 `gconf.get('severity', '*')` |
 
 ### `format` の詳細
 
-YANG が `default standard` を宣言しているため、CLI / sonic-cfggen / YANG-aware 書き込み経路では `format` 欠落時に `standard` が自動付与される。`rsyslog.conf.j2` L51 はこの YANG default をバイパスする経路（直接 redis-cli 書き込み、`SYSLOG_CONFIG|GLOBAL` 行欠落）に備えた二重防御で、`gconf.get('format', 'standard')` で `'standard'` を最終フォールバックとする。
+YANG が `default standard` を宣言しているため、CLI / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / YANG-aware 書き込み経路では `format` 欠落時に `standard` が自動付与される。`rsyslog.conf.j2` L51 はこの YANG default をバイパスする経路（直接 redis-cli 書き込み、`SYSLOG_CONFIG|GLOBAL` 行欠落）に備えた二重防御で、`gconf.get('format', 'standard')` で `'standard'` を最終フォールバックとする。
 
 ### `severity` の詳細
 
@@ -427,7 +427,7 @@ YANG default `notice` は `SYSLOG_CONFIG.GLOBAL.severity` に対するもの。�
 
 ### `SYSLOG_CONFIG_FEATURE` への local fallback（コンテナ側）
 
-`SYSLOG_CONFIG` (GLOBAL) はコンテナ内 rsyslog では参照されない（`rsyslog-container.conf.j2` は `SYSLOG_CONFIG_FEATURE` のみ参照）。コンテナ側 rate limit のハードコードフォールバックは `interval=300` / `burst=20000`（テンプレート L27 の `default()` フィルタ）。ただし `containercfgd.py` L143-144 が `data.get(..., '0')` で空 dict 経由でも `'0'` を渡すため、ハードコード fallback `300/20000` が発動するのは sonic-cfggen をスタンドアロン呼び出した特殊ケースに限られる。
+`SYSLOG_CONFIG` (GLOBAL) はコンテナ内 rsyslog では参照されない（`rsyslog-container.conf.j2` は `SYSLOG_CONFIG_FEATURE` のみ参照）。コンテナ側 rate limit のハードコードフォールバックは `interval=300` / `burst=20000`（テンプレート L27 の `default()` フィルタ）。ただし `containercfgd.py` L143-144 が `data.get(..., '0')` で空 dict 経由でも `'0'` を渡すため、ハードコード fallback `300/20000` が発動するのは [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) をスタンドアロン呼び出した特殊ケースに限られる。
 
 > **スキャン証跡**: `sonic-syslog.yang` L156-191、`rsyslog.conf.j2` L16-22 / L51-52 / L92、`rsyslog-container.conf.j2` L16-27、`containercfgd.py` L98-160、`hostcfgd` L1695-1743 を精読。詳細は `meta/_intermediate/cdb-flow/syslog-config-defaults.md`。
 
@@ -446,7 +446,7 @@ YANG default `notice` は `SYSLOG_CONFIG.GLOBAL.severity` に対するもの。�
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。rsyslog がネットワーク経由でリモート syslog サーバへ転送。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。rsyslog がネットワーク経由でリモート syslog サーバへ転送。
 
 ### 段階 4: タイミング + 副作用
 
@@ -460,7 +460,7 @@ SYSLOG_CONFIG テーブルへの書き込みが発生するコード経路を網
 
 ### CLI
 
-  - `config syslog rate-limit ...` / `config syslog format ...` — `config/syslog.py` が SYSLOG_CONFIG を書き込む (sonic-utilities/config/syslog.py)
+  - `config syslog rate-limit ...` / `config syslog format ...` — `config/syslog.py` が SYSLOG_CONFIG を書き込む ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/syslog.py)
 
 ### minigraph / sonic-cfggen
 
@@ -468,7 +468,7 @@ minigraph.py に SYSLOG_CONFIG 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -487,4 +487,4 @@ db_migrator.py での SYSLOG_CONFIG マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: f29534787f37 -->
+<!-- glossary-links-injected: f9445b5b4106 -->

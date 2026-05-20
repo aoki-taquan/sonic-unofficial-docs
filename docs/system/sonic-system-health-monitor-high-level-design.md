@@ -34,7 +34,7 @@ related:
 
 ## 1. 何を集約しているか
 
-SONiC の **「system は健全か」** を一元判定する monitor[^1]。3 系統を [STATE_DB](../reference/glossary.md#term-state_db) に集約し、`show system-health` / syslog / system status LED に出す。
+[SONiC](../reference/glossary.md#term-sonic) の **「system は健全か」** を一元判定する monitor[^1]。3 系統を [STATE_DB](../reference/glossary.md#term-state_db) に集約し、`show system-health` / syslog / system status LED に出す。
 
 ```mermaid
 flowchart LR
@@ -70,7 +70,7 @@ flowchart LR
 - fan speed が minimum 未満
 - fan direction が他と不一致（`N/A` や none は無視）
 - PSU 電圧範囲外、温度閾値超え、bad status
-- ASIC 温度閾値超え
+- [ASIC](../reference/glossary.md#term-asic) 温度閾値超え
 
 <!-- evidence:
 source: sonic-net/SONiC/doc/system_health_monitoring/system-health-HLD.md#L19-L52 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
@@ -171,4 +171,4 @@ docker exec pmon cat /usr/share/sonic/device/*/system_health_monitoring_config.j
 
 [^1]: `sonic-net/SONiC` `doc/system_health_monitoring/system-health-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

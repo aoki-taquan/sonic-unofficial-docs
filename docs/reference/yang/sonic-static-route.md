@@ -29,7 +29,7 @@ related:
 - import: `ietf-inet-types`
 - top container: `sonic-static-route`
 
-STATIC ROUTE yang Module for SONiC OS[^1]
+STATIC ROUTE yang Module for [SONiC](../../reference/glossary.md#term-sonic) OS[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -155,4 +155,4 @@ module: sonic-static-route
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-static-route.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->
