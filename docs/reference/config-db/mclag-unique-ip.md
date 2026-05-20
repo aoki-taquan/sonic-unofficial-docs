@@ -46,24 +46,24 @@ related:
 
 ## 概要
 
-MC-[LAG](../../reference/glossary.md#term-lag) (Multi-Chassis Link Aggregation) ピア間で [VLAN](../../reference/glossary.md#term-vlan) インターフェースに**異なる IP アドレス**を持たせる対象 VLAN を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。
+MC-[LAG](../../reference/glossary.md#term-lag) (Multi-Chassis Link Aggregation) ピア間で [VLAN](../../reference/glossary.md#term-vlan) インターフェースに**異なる IP アドレス**を持たせる対象 [VLAN](../../reference/glossary.md#term-vlan) を [CONFIG_DB](../../reference/glossary.md#term-config_db) に保持するテーブル[^1]。
 
-デフォルトでは MCLAG ピア ToR は同一 VLAN IF に同じ IP を共有する。`MCLAG_UNIQUE_IP` にエントリを登録することで、指定 VLAN IF に対してそれぞれ異なる IP アドレスを設定することを許可する。`mclagsyncd` (`docker-iccpd` 内) がこのテーブルを購読し、iccpd へ通知する。
+デフォルトでは [MCLAG](../../reference/glossary.md#term-mclag) ピア ToR は同一 [VLAN](../../reference/glossary.md#term-vlan) IF に同じ IP を共有する。`MCLAG_UNIQUE_IP` にエントリを登録することで、指定 VLAN IF に対してそれぞれ異なる IP アドレスを設定することを許可する。`mclagsyncd` (`docker-iccpd` 内) がこのテーブルを購読し、iccpd へ通知する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>MCLAG_UNIQUE_IP")]
-  SY["mclagsyncd"]
-  CDB --> SY
-  IC["iccpd (TCP IPC)"]
-  SY --> IC
+  CDB[("CONFIG_DB<br/>MCLAG_DOMAIN")]
+  DM["MlagOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_fdb_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から mclagsyncd への購読経路。mclagsyncd は MCLAG_DOMAIN の初回 SET 後に MCLAG_UNIQUE_IP の購読を開始し、iccpd へ TCP IPC で通知する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -81,7 +81,7 @@ MCLAG_UNIQUE_IP|<if_name>
 | `if_name` (key) | string パターン `Vlan<id>` | — | unique-ip を許可する VLAN インターフェース名 |
 | `unique_ip` | enum `enable` | (エントリ不在 = 無効) | unique-ip 有効化フラグ。無効化時はエントリ削除で表現する |
 
-YANG コメントによれば、`if_name` は本来 `VLAN.name` への leafref にしたいが libyang back-links の制約で plain string パターン (`Vlan([0-9]{1,3}|[1-3][0-9]{3}|[4][0][0-8][0-9]|[4][0][9][0-4])`) になっている（`sonic-mclag.yang:144-152`）。
+[YANG](../../reference/glossary.md#term-yang) コメントによれば、`if_name` は本来 `VLAN.name` への leafref にしたいが libyang back-links の制約で plain string パターン (`Vlan([0-9]{1,3}|[1-3][0-9]{3}|[4][0][0-8][0-9]|[4][0][9][0-4])`) になっている（`sonic-mclag.yang:144-152`）。
 
 ## 購読者
 
@@ -124,7 +124,7 @@ YANG コメントによれば、`if_name` は本来 `VLAN.name` への leafref �
 ### よくある誤設定
 
 - MCLAG_DOMAIN が存在しない状態で書くと YANG `must` 制約違反。先に MCLAG_DOMAIN を設定する。
-- VRF バインドまたは IP アドレスが設定済みの VLAN IF に対して CLI `config mclag unique-ip add` を実行すると拒否される。先に IP/VRF を削除してから設定する。
+- [VRF](../../reference/glossary.md#term-vrf) バインドまたは IP アドレスが設定済みの VLAN IF に対して CLI `config mclag unique-ip add` を実行すると拒否される。先に IP/[VRF](../../reference/glossary.md#term-vrf) を削除してから設定する。
 - VLAN IF が `Vlan` プレフィックスを持たない場合は YANG パターン制約違反。
 
 ### 確認コマンド
@@ -142,7 +142,7 @@ show mclag unique-ip
 
 ### 設定順序（追加）
 
-1. **VLAN インターフェースに IP アドレス・VRF バインドがない状態にする**
+1. **VLAN インターフェースに IP アドレス・[VRF](../../reference/glossary.md#term-vrf) バインドがない状態にする**
    - CLI `config mclag unique-ip add` は対象 VLAN IF に IP アドレスまたは非デフォルト VRF バインドが存在する場合に `ctx.fail()` で中断する。
    - IP/VRF を先に削除してから MCLAG_UNIQUE_IP を設定し、その後に IP/VRF を再設定する順序が必要。
    - YANG 側の back-link 制約は現在コメントアウトされているため `sonic-db-cli` 直接書込みでは回避できるが非推奨。
@@ -210,7 +210,7 @@ show mclag unique-ip
 
 ### setPortIsolate() との関係（間接的影響）
 
-MCLAG_UNIQUE_IP 処理自体は `setPortIsolate()` を呼ばないが、UNIQUE_IP を使用する環境では MCLAG ポート isolation も設定されることが多い。`setPortIsolate()` (`mclaglink.cpp:190-378`) はプラットフォーム別に以下の分岐を持つ（MCLAG_UNIQUE_IP テーブル処理とは独立）:
+MCLAG_UNIQUE_IP 処理自体は `setPortIsolate()` を呼ばないが、UNIQUE_IP を使用する環境では [MCLAG](../../reference/glossary.md#term-mclag) ポート isolation も設定されることが多い。`setPortIsolate()` (`mclaglink.cpp:190-378`) はプラットフォーム別に以下の分岐を持つ（MCLAG_UNIQUE_IP テーブル処理とは独立）:
 
 ```cpp
 // mclaglink.h:54-59
@@ -227,7 +227,7 @@ MCLAG_UNIQUE_IP 処理自体は `setPortIsolate()` を呼ばないが、UNIQUE_I
 | `broadcom` / `barefoot` / `centec` / `clounix` / `marvell-prestera` / `marvell-teralynx` | `APPL_DB ISOLATION_GROUP_TABLE\|MCLAG_ISO_GRP` (TYPE=bridge-port) | MEMBERS から `Ethernet` 系を除外 |
 | `mellanox` / `vs` / その他未定義 | `APPL_DB ACL_TABLE_TABLE\|mclag` + `ACL_RULE_TABLE\|mclag:mclag` (type=L3, PACKET_ACTION=DROP) | OUT_PORTS から `PortChannel` 系を除外 |
 
-MCLAG_UNIQUE_IP の ConfigDB エントリ自体は全プラットフォームで同一スキーマだが、ピア間 isolation に ACL を使う `mellanox` 等ではその ACL リソースが 1 テーブル消費される点は付随的な差異として認識しておくこと。
+MCLAG_UNIQUE_IP の ConfigDB エントリ自体は全プラットフォームで同一スキーマだが、ピア間 isolation に [ACL](../../reference/glossary.md#term-acl) を使う `mellanox` 等ではその [ACL](../../reference/glossary.md#term-acl) リソースが 1 テーブル消費される点は付随的な差異として認識しておくこと。
 
 ### multi-ASIC / VoQ chassis
 
@@ -237,11 +237,11 @@ MCLAG_UNIQUE_IP の ConfigDB エントリ自体は全プラットフォームで
 
 | 観点 | プラットフォーム差 |
 |---|---|
-| `mclagsyncdSendMclagUniqueIpCfg()` (CONFIG_DB → TCP IPC) | **差なし** (platform 識別コード 0 件) |
+| `mclagsyncdSendMclagUniqueIpCfg()` ([CONFIG_DB](../../reference/glossary.md#term-config_db) → TCP IPC) | **差なし** (platform 識別コード 0 件) |
 | `iccp_mclagsyncd_mclag_unique_ip_cfg_handler()` (iccpd 側) | **差なし** (platform 識別コード 0 件) |
 | `local_if_is_l3_mode()` (L3 モード判定) | **差なし** (カーネル状態判定のみ) |
-| `setIntfMac()` (APPL_DB INTF_TABLE 書込) | **差なし** (platform 分岐なし) |
-| `setPortIsolate()` (port isolation — UNIQUE_IP とは独立) | `broadcom`/`barefoot`/`centec`/`clounix`/`marvell-*` → `ISOLATION_GROUP_TABLE`、`mellanox`/その他 → ACL fallback |
+| `setIntfMac()` ([APPL_DB](../../reference/glossary.md#term-appl_db) INTF_TABLE 書込) | **差なし** (platform 分岐なし) |
+| `setPortIsolate()` (port isolation — UNIQUE_IP とは独立) | `broadcom`/`barefoot`/`centec`/`clounix`/`marvell-*` → `ISOLATION_GROUP_TABLE`、`mellanox`/その他 → [ACL](../../reference/glossary.md#term-acl) fallback |
 | multi-ASIC / VoQ | 動作保証なし (single-ASIC 前提設計) |
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-platform.md`
@@ -266,11 +266,11 @@ MCLAG_UNIQUE_IP を逆参照するテーブルは YANG モデル上存在しな�
 
 ### STATE_DB 暗黙接続
 
-`mclagsyncd` が MCLAG_DOMAIN 初回 SET 後に `MCLAG_UNIQUE_IP` の購読と同時に STATE_DB `VLAN_MEMBER_TABLE` も購読開始する。これはスキーマ制約ではなくデーモン内部の実装上の関連。
+`mclagsyncd` が MCLAG_DOMAIN 初回 SET 後に `MCLAG_UNIQUE_IP` の購読と同時に [STATE_DB](../../reference/glossary.md#term-state_db) `VLAN_MEMBER_TABLE` も購読開始する。これはスキーマ制約ではなくデーモン内部の実装上の関連。
 
 | 参照先 | 種別 | 用途 | evidence |
 |---|---|---|---|
-| STATE_DB `VLAN_MEMBER_TABLE` | SubscriberStateTable（READ） | mclagsyncd が VLAN メンバーシップを監視し iccpd へ FDB 情報を提供 | `mclaglink.cpp:915-934` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) `VLAN_MEMBER_TABLE` | SubscriberStateTable（READ） | mclagsyncd が VLAN メンバーシップを監視し iccpd へ [FDB](../../reference/glossary.md#term-fdb) 情報を提供 | `mclaglink.cpp:915-934` |
 
 > `if_name` の `VLAN` leafref はコメントアウト中（`sonic-mclag.yang:146-152`）。libyang back-links 問題が解消されれば `VLAN_LIST.name` への参照が有効化される見込み。
 
@@ -307,7 +307,7 @@ CLI `config mclag unique-ip add/del` 段で以下のチェックに引っかか�
 
 ### STATE_DB / ERROR_TABLE への記録
 
-`mclagsyncd` は STATE_DB / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。確認コマンド:
+`mclagsyncd` は [STATE_DB](../../reference/glossary.md#term-state_db) / ERROR_TABLE への書き込みを行わない。失敗はすべて syslog (`SWSS_LOG_ERROR`) のみ。確認コマンド:
 
 ```bash
 docker exec iccpd cat /var/log/syslog | grep -i "mclag unique ip"
@@ -386,7 +386,7 @@ docker exec iccpd tail -f /var/log/syslog
 
 ### APPL_DB INTF_TABLE — mac_addr 更新
 
-`MCLAG_UNIQUE_IP` SET/DEL により **STANDBY ノードかつ VLAN IF が L3 モード**（IP アドレス設定済み）の場合に、mclagsyncd が APPL_DB `INTF_TABLE` に MAC アドレスを書き込む。
+`MCLAG_UNIQUE_IP` SET/DEL により **STANDBY ノードかつ VLAN IF が L3 モード**（IP アドレス設定済み）の場合に、mclagsyncd が [APPL_DB](../../reference/glossary.md#term-appl_db) `INTF_TABLE` に MAC アドレスを書き込む。
 
 | キー | フィールド | 書込トリガー | evidence |
 |---|---|---|---|
@@ -419,11 +419,11 @@ CONFIG_DB MCLAG_UNIQUE_IP SET
 
 ### ASIC_DB は読取専用
 
-`mclagsyncd` は FDB ポート解決のために ASIC_DB を読取専用で参照するが、`MCLAG_UNIQUE_IP` 処理パスで直接参照することはない。
+`mclagsyncd` は [FDB](../../reference/glossary.md#term-fdb) ポート解決のために [ASIC_DB](../../reference/glossary.md#term-asic_db) を読取専用で参照するが、`MCLAG_UNIQUE_IP` 処理パスで直接参照することはない。
 
 ### ピア間 ICCP 通信
 
-`iccp_mclagsyncd_mclag_unique_ip_cfg_handler()` は `syn_local_neigh_mac_info_to_peer()` を呼び出してピア iccpd へネイバー / MAC 情報を ICCP プロトコルで同期するが、これは iccpd ↔ iccpd 間の TCP 通信であり SONiC Redis DB への直接書込みではない。
+`iccp_mclagsyncd_mclag_unique_ip_cfg_handler()` は `syn_local_neigh_mac_info_to_peer()` を呼び出してピア iccpd へネイバー / MAC 情報を ICCP プロトコルで同期するが、これは iccpd ↔ iccpd 間の TCP 通信であり SONiC [Redis](../../reference/glossary.md#term-redis) DB への直接書込みではない。
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-side-effects.md`
 <!-- /side-effects -->
@@ -448,7 +448,7 @@ if (p_mclag_unique_ip_cfg_tbl) {
 }
 ```
 
-swss-common の `SubscriberStateTable` 実装は以下を Redis に発行する:
+swss-common の `SubscriberStateTable` 実装は以下を [Redis](../../reference/glossary.md#term-redis) に発行する:
 
 ```
 PSUBSCRIBE __keyspace@4__:MCLAG_UNIQUE_IP|*
@@ -484,7 +484,7 @@ TCP 定数: `MCLAG_DEFAULT_IP = 0x7f000006`（127.0.0.6）、`MCLAG_DEFAULT_PORT
 
 ### 逆方向: iccpd → mclagsyncd → APPL_DB
 
-STANDBY ノードかつ L3 モードの場合、iccpd が `MCLAG_MSG_TYPE_SET_INTF_MAC` を返送し、mclagsyncd の `setIntfMac()` → APPL_DB `INTF_TABLE|<vlan_if>` に `mac_addr` を書き込む（`mclaglink.cpp:435-460`）。この経路の詳細は Phase F 参照。
+STANDBY ノードかつ L3 モードの場合、iccpd が `MCLAG_MSG_TYPE_SET_INTF_MAC` を返送し、mclagsyncd の `setIntfMac()` → [APPL_DB](../../reference/glossary.md#term-appl_db) `INTF_TABLE|<vlan_if>` に `mac_addr` を書き込む（`mclaglink.cpp:435-460`）。この経路の詳細は Phase F 参照。
 
 ### 購読解除（MCLAG_DOMAIN DEL 時）
 
@@ -499,3 +499,5 @@ STANDBY ノードかつ L3 モードの場合、iccpd が `MCLAG_MSG_TYPE_SET_IN
 
 > 中間調査ノート: `meta/_intermediate/cdb-flow/mclag-unique-ip-pubsub.md`
 <!-- /pubsub -->
+
+<!-- glossary-links-injected: 65275754a584 -->

@@ -186,7 +186,7 @@ DEL 受信時に `processWorkItem()` は以下を順に評価する (qosorch.cpp
 
 ### 段階 1 — Consumer 登録
 
-`QosOrch` (orchagent 直接 CFG 購読) が CONFIG_DB の `DSCP_TO_TC_MAP` テーブルを購読する。
+`QosOrch` (orchagent 直接 CFG 購読) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `DSCP_TO_TC_MAP` テーブルを購読する。
 
 `DSCP_TO_TC_MAP` の key はマップ名 (例: `AZURE`)。DSCP 値 (0-63) → TC (0-7) のマッピング。
 
@@ -212,7 +212,7 @@ DEL 受信時に `processWorkItem()` は以下を順に評価する (qosorch.cpp
 
 `QosOrch` は `orchdaemon.cpp:367-384` で `qos_tables` ベクタの一員として `CFG_DSCP_TO_TC_MAP_TABLE_NAME` を指定され、`new QosOrch(m_configDb, qos_tables)` に渡される。基底 `Orch(db, tableNames)` が `Orch::addConsumer()` を呼び、CONFIG_DB ID の分岐により **`swss::SubscriberStateTable`** が選択される（`orch.cpp:1186-1196`）。
 
-`SubscriberStateTable` は Redis keyspace 通知 `__keyspace@<dbId>__:DSCP_TO_TC_MAP|*` を **`PSUBSCRIBE`** で購読し、通知受信後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（ハードコード、`orchagent -b` の `gBatchSize` 影響なし）。
+`SubscriberStateTable` は [Redis](../../reference/glossary.md#term-redis) keyspace 通知 `__keyspace@<dbId>__:DSCP_TO_TC_MAP|*` を **`PSUBSCRIBE`** で購読し、通知受信後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（ハードコード、`orchagent -b` の `gBatchSize` 影響なし）。
 
 ### ハンドラ登録とディスパッチ
 
@@ -464,8 +464,8 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|------------------|-----------------|------|
-| `sai_qos_map_api->create_qos_map(SAI_QOS_MAP_TYPE_DSCP_TO_TC, ...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` | 新規マップ作成 (qosorch.cpp:265-276) |
-| `sai_qos_map_api->set_qos_map_attribute(...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` field=`SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | 既存マップ更新時 (qosorch.cpp:207) |
+| `sai_qos_map_api->create_qos_map(SAI_QOS_MAP_TYPE_DSCP_TO_TC, ...)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) ([syncd](../../reference/glossary.md#term-syncd) 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` | 新規マップ作成 (qosorch.cpp:265-276) |
+| `sai_qos_map_api->set_qos_map_attribute(...)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) ([syncd](../../reference/glossary.md#term-syncd) 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` field=`SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | 既存マップ更新時 (qosorch.cpp:207) |
 
 ### SET — PORT_QOS_MAP によるポートバインド
 
@@ -473,7 +473,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|------------------|-----------------|------|
-| `sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP, oid)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `<port_oid>` field=`SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | 参照先 DSCP_TO_TC_MAP が SAI 解決済みの各ポート (qosorch.cpp:2086,2193) |
+| `sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP, oid)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) ([syncd](../../reference/glossary.md#term-syncd) 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `<port_oid>` field=`SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | 参照先 DSCP_TO_TC_MAP が SAI 解決済みの各ポート (qosorch.cpp:2086,2193) |
 
 ### SET — PORT_QOS_MAP|global によるスイッチレベル適用
 
@@ -512,10 +512,10 @@ DSCP_TO_TC_MAP は `TUNNEL_DECAP_TABLE` の `decap_dscp_to_tc_map` フィール�
 | ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_PORT` field=`SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP` | set_port_attribute (syncd 経由) | set SAI_NULL_OBJECT_ID (PORT_QOS_MAP DEL 時) |
 | ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_SWITCH` field=`SAI_SWITCH_ATTR_QOS_DSCP_TO_TC_MAP` | set_switch_attribute (syncd 経由, global あり) | SAI_NULL_OBJECT_ID (global DEL 時) |
 | ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL` field=`SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` | create_tunnel (syncd 経由, 非 null 時) | — |
-| APPL_DB | — | なし | なし |
-| STATE_DB | — | なし | なし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | — | なし | なし |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | — | なし | なし |
 | APPL_STATE_DB | — | なし | なし |
-| COUNTERS_DB | — | なし | なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | — | なし | なし |
 
 > **Evidence**: `sonic-swss/orchagent/qosorch.cpp:61,181-186,207,265-276,289-293,1956-1975,1993,2086,2193`; `orchagent/tunneldecaporch.cpp:831-834,1084`
 <!-- /side-effects -->
@@ -579,4 +579,4 @@ YANG 定義は `tc_type: uint8 range "0..15"` だが、実際の ASIC 対応は�
 > **Evidence**: `qosorch.cpp:1955-1975` (capability check); `db_migrator.py:700-715` (Broadcom 限定自動生成); `qos_config.j2:437-447` (AZURE_UPLINK 条件分岐); `device/mellanox/.../qos.json.j2:23,160-170` (`different_dscp_to_tc_map`)
 <!-- /platform -->
 
-<!-- glossary-links-injected: 9e94f614fc2c -->
+<!-- glossary-links-injected: 1e2db98c8c8b -->

@@ -138,7 +138,7 @@ sairedis library 側で async / sync モードが選べ、SONiC master はデフ
 
 ## orchagent が ASIC_DB に接続する仕組み
 
-orchagent は `DBConnector` で APPL_DB を直接読むが、ASIC_DB には **直接書かない**。代わりに `sairedis` クライアントライブラリ（`libsairedis`）が間に入り、SAI API 呼び出しを ASIC_DB の `ASIC_STATE:*` key に変換してから publish する（issue #466 の解説より）。
+orchagent は `DBConnector` で [APPL_DB](../../reference/glossary.md#term-appl_db) を直接読むが、ASIC_DB には **直接書かない**。代わりに `sairedis` クライアントライブラリ（`libsairedis`）が間に入り、SAI API 呼び出しを ASIC_DB の `ASIC_STATE:*` key に変換してから publish する（issue #466 の解説より）。
 
 ```
 orchagent
@@ -187,4 +187,4 @@ error: 'sai_query_attribute_capability' method is missing from libsai.so
 - [dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）](../../internals/dump-utility-for-easy-debugging.md)
 - [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](../../platform/dump-on-sai-failure.md)
 
-<!-- glossary-links-injected: 242280e0a265 -->
+<!-- glossary-links-injected: 9cc90e2e6da0 -->

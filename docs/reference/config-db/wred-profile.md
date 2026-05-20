@@ -189,7 +189,7 @@ CONFIG_DB に `weight` フィールドは存在しない。`addQosItem()` は SA
 
 **`*_min_threshold` / `*_max_threshold` のデフォルトなし**
 
-YANG に `default` 宣言がなく、orchagent も省略時のフォールバックを設定しない。フィールド省略時は SAI に対応属性が渡されず、ベンダー SAI 実装のデフォルト値に依存する。実用上は `qos_config.j2` の `AZURE_LOSSLESS` テンプレート（min=1 MiB / max=2 MiB）か、プラットフォーム固有の `generate_wred_profiles` マクロで設定される。
+YANG に `default` 宣言がなく、[orchagent](../../reference/glossary.md#term-orchagent) も省略時のフォールバックを設定しない。フィールド省略時は SAI に対応属性が渡されず、ベンダー SAI 実装のデフォルト値に依存する。実用上は `qos_config.j2` の `AZURE_LOSSLESS` テンプレート（min=1 MiB / max=2 MiB）か、プラットフォーム固有の `generate_wred_profiles` マクロで設定される。
 
 <!-- /defaults -->
 
@@ -205,7 +205,7 @@ YANG に `default` 宣言がなく、orchagent も省略時のフォールバッ
 | `green_drop_probability` 等 | YANG `default` | `100` (%) (フィールド省略時) | `sonic-wred-profile.yang` |
 | `WRED_PROFILE` エントリ全体 | `qos_config.j2` の静的テンプレート | `AZURE_LOSSLESS` プロファイル (`ecn=ecn_all`, 各閾値固定値) が自動生成 | `qos_config.j2:489-506` |
 | `generate_wred_profiles` あり | ベンダー固有 j2 テンプレート定義 | プラットフォーム固有の WRED_PROFILE を生成 (標準の `AZURE_LOSSLESS` を置換) | `qos_config.j2:486-487` |
-| `wred_profile` (QUEUE 側) | `qos_config.j2` QUEUE セクション | RoCE キュー (queue 3, 4 等) に `wred_profile=AZURE_LOSSLESS` を自動設定 | `qos_config.j2:514-660` |
+| `wred_profile` (QUEUE 側) | `qos_config.j2` QUEUE セクション | [RoCE](../../reference/glossary.md#term-roce) キュー (queue 3, 4 等) に `wred_profile=AZURE_LOSSLESS` を自動設定 | `qos_config.j2:514-660` |
 
 **フォーマット変換 (db_migrator.py)**:
 
@@ -258,14 +258,14 @@ WRED_PROFILE は `WredMapHandler::convertFieldValuesToAttributes()` がフィー
 
 CONFIG_DB の `WRED_PROFILE` は `orchdaemon.cpp:375` の `qos_tables` ベクタ経由で `QosOrch` に登録される。`Orch::addConsumer()` が CONFIG_DB を検出し **`swss::SubscriberStateTable`** を選択する。
 
-- 購読方式: Redis **keyspace 通知** (`__keyspace@<dbId>__:WRED_PROFILE|*` への `PSUBSCRIBE`)
+- 購読方式: [Redis](../../reference/glossary.md#term-redis) **keyspace 通知** (`__keyspace@<dbId>__:WRED_PROFILE|*` への `PSUBSCRIBE`)
 - 通知到着時に `HGETALL` で値を再取得し `(key, op, fvs)` タプルとして `pops()` で返す
 - バッチサイズ: `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`、ハードコード）
-- `orchagent -b` オプションの影響なし（APPL_DB 側 `ConsumerStateTable` のみに作用）
+- `orchagent -b` オプションの影響なし（[APPL_DB](../../reference/glossary.md#term-appl_db) 側 `ConsumerStateTable` のみに作用）
 
 ### 書き込み側 (publisher)
 
-CLI `config qos reload`（`sonic-cfggen` + `qos_config.j2`）または firstboot 時のテンプレート展開が `swss::Table::set()` / `HSET` を発行。明示的 `PUBLISH` は行われず Redis keyspace 通知で購読者に伝達。
+CLI `config qos reload`（`sonic-cfggen` + `qos_config.j2`）または firstboot 時のテンプレート展開が `swss::Table::set()` / `HSET` を発行。明示的 `PUBLISH` は行われず [Redis](../../reference/glossary.md#term-redis) keyspace 通知で購読者に伝達。
 
 ### ディスパッチ経路
 
@@ -290,7 +290,7 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 
 ### APPL_DB / STATE_DB 書き込み
 
-なし。`WRED_PROFILE` は CONFIG_DB → `QosOrch` → SAI の直接経路で完結し、APPL_DB への中継も STATE_DB への反映も行わない。
+なし。`WRED_PROFILE` は CONFIG_DB → `QosOrch` → SAI の直接経路で完結し、[APPL_DB](../../reference/glossary.md#term-appl_db) への中継も [STATE_DB](../../reference/glossary.md#term-state_db) への反映も行わない。
 
 | 観点 | 値 |
 |---|---|
@@ -300,7 +300,7 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 | ハンドラ | `QosOrch::handleWredProfileTable()` → `WredMapHandler` |
 | SAI API | `sai_wred_api->create_wred()` / `set_wred_attribute()` / `remove_wred()` |
 | channel PUBLISH | 使わない |
-| APPL_DB 中継 | なし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) 中継 | なし |
 | TTL | 未使用 |
 
 <!-- /pubsub -->
@@ -317,7 +317,7 @@ WRED_PROFILE の処理において、プラットフォーム識別文字列（`
 | 条件 | bind 対象 |
 |------|----------|
 | `gMySwitchType == "voq"` | `getPortVoQIds()` で取得した VoQ ID |
-| それ以外（通常スイッチ / multi-asic / DPU 等） | `port.m_queue_ids[queue_ind]`（物理キュー） |
+| それ以外（通常スイッチ / multi-asic / [DPU](../../reference/glossary.md#term-dpu) 等） | `port.m_queue_ids[queue_ind]`（物理キュー） |
 
 VoQ chassis ではローカル ASIC のポートか否かも判定される。非ローカルポートへの WRED bind は暗黙的にスキップされる（`qosorch.cpp:1790-1800`）。
 
@@ -340,7 +340,7 @@ VoQ 環境で `QUEUE` テーブルを書く場合は `hostname|asicN|EthernetX|q
 
 ### 差異 4: SAI capability 照会なし — ASIC 非対応は SAI エラー時のみ判明
 
-WRED の各 SAI 属性（`SAI_WRED_ATTR_ECN_MARK_MODE`、`SAI_WRED_ATTR_*_{ENABLE/MIN_THRESHOLD/MAX_THRESHOLD/DROP_PROBABILITY}`、`SAI_WRED_ATTR_WEIGHT`）は能力照会なしで直接 `sai_wred_api->create_wred()` / `set_wred_attribute()` に渡される。ASIC が非対応の場合 SAI がエラーを返し、orchagent はエントリを破棄する（ログ: `"Failed to create wred profile: %d"`）。対応可否は各ベンダーの `libsai` 実装に依存。
+WRED の各 SAI 属性（`SAI_WRED_ATTR_ECN_MARK_MODE`、`SAI_WRED_ATTR_*_{ENABLE/MIN_THRESHOLD/MAX_THRESHOLD/DROP_PROBABILITY}`、`SAI_WRED_ATTR_WEIGHT`）は能力照会なしで直接 `sai_wred_api->create_wred()` / `set_wred_attribute()` に渡される。ASIC が非対応の場合 SAI がエラーを返し、[orchagent](../../reference/glossary.md#term-orchagent) はエントリを破棄する（ログ: `"Failed to create wred profile: %d"`）。対応可否は各ベンダーの `libsai` 実装に依存。
 
 ### 差異 5: プラットフォーム別 WRED テンプレート（build-time）
 
@@ -395,11 +395,11 @@ runtime 更新時は `set_wred_attribute()` が属性ループを途中で中断
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`WRED_PROFILE` の SET/DEL を受けた `QosOrch` (`WredMapHandler`) は、SAI 経由で ASIC_DB に書き込む。STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB への直接書込はない。
+`WRED_PROFILE` の SET/DEL を受けた `QosOrch` (`WredMapHandler`) は、SAI 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) に書き込む。[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への直接書込はない。
 
 ### ASIC_DB 書込み (SAI/syncd 経由)
 
-| タイミング | SAI API | ASIC_DB への反映 |
+| タイミング | SAI API | [ASIC_DB](../../reference/glossary.md#term-asic_db) への反映 |
 |---|---|---|
 | SET → 新規 (`addQosItem()`) | `sai_wred_api->create_wred(&sai_object, gSwitchId, ...)` | `ASIC_STATE:SAI_OBJECT_TYPE_WRED:<oid>` 生成 |
 | SET → 既存更新 (`modifyQosItem()`) | `sai_wred_api->set_wred_attribute(sai_object, &attr)` | `ASIC_STATE:SAI_OBJECT_TYPE_WRED:<oid>` フィールド更新 |
@@ -424,7 +424,7 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_WRED:*'
 sonic-db-cli ASIC_DB hget 'ASIC_STATE:SAI_OBJECT_TYPE_QUEUE:<queue_oid>' SAI_QUEUE_ATTR_WRED_PROFILE_ID
 ```
 
-> **証跡**: `create_wred()` L855、`set_wred_attribute()` L774、`remove_wred()` L868、`set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` L1735-1738。`qosorch.cpp` 全 WRED 処理経路読了。STATE_DB / COUNTERS_DB への書込なし確認済み。
+> **証跡**: `create_wred()` L855、`set_wred_attribute()` L774、`remove_wred()` L868、`set_queue_attribute(SAI_QUEUE_ATTR_WRED_PROFILE_ID)` L1735-1738。`qosorch.cpp` 全 WRED 処理経路読了。[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込なし確認済み。
 <!-- /side-effects -->
 
 <!-- constants -->
@@ -582,7 +582,7 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 
 ### REST / gNMI
 
-なし。`sonic-mgmt-common/translib/` に WRED_PROFILE 対応の App が存在しない。OpenConfig QoS YANG モデルへの translib 実装が未完のため、REST/gNMI 経由での直接書き込みは現時点では非サポート。
+なし。`sonic-mgmt-common/translib/` に WRED_PROFILE 対応の App が存在しない。OpenConfig [QoS](../../reference/glossary.md#term-qos) YANG モデルへの translib 実装が未完のため、REST/[gNMI](../../reference/glossary.md#term-gnmi) 経由での直接書き込みは現時点では非サポート。
 
 ### hard-coded デフォルト
 
@@ -625,7 +625,7 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 
 ### build-time 静的参照 (qos_config.j2)
 
-`qos_config.j2:514-660` の QUEUE セクションで RoCE キュー (queue 3, 4 等) に `"wred_profile": "AZURE_LOSSLESS"` を静的設定する。runtime の `resolveFieldRefValue()` 経由ではなく、firstboot / `config qos reload` 時のテンプレート展開で CONFIG_DB に書き込まれる。
+`qos_config.j2:514-660` の QUEUE セクションで [RoCE](../../reference/glossary.md#term-roce) キュー (queue 3, 4 等) に `"wred_profile": "AZURE_LOSSLESS"` を静的設定する。runtime の `resolveFieldRefValue()` 経由ではなく、firstboot / `config qos reload` 時のテンプレート展開で CONFIG_DB に書き込まれる。
 
 <!-- /cross-refs -->
 
@@ -634,7 +634,7 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 
 ### 段階 1: Consumer 登録
 
-`orchdaemon.cpp:375` で `CFG_WRED_PROFILE_TABLE_NAME` (`"WRED_PROFILE"`) を QoS tables list に追加し、`gQosOrch = new QosOrch(m_configDb, qos_tables)` (`orchdaemon.cpp:384`) で `CONFIG_DB` の `WRED_PROFILE` テーブルを購読。`QosOrch` は `m_orchList` に登録され (`orchdaemon.cpp:500`)、メインループで `doTask()` → `handleWredProfileTable(consumer, tuple)` (`qosorch.cpp:877`) に委譲。他コンシューマなし。ただし `QUEUE.wred_profile` で名前参照されるため、`QosOrch::handleQueueTable()` が `task_need_retry` を発行して WRED_PROFILE の先行作成を待つ (`qosorch.cpp:1864-1870`)。
+`orchdaemon.cpp:375` で `CFG_WRED_PROFILE_TABLE_NAME` (`"WRED_PROFILE"`) を [QoS](../../reference/glossary.md#term-qos) tables list に追加し、`gQosOrch = new QosOrch(m_configDb, qos_tables)` (`orchdaemon.cpp:384`) で `CONFIG_DB` の `WRED_PROFILE` テーブルを購読。`QosOrch` は `m_orchList` に登録され (`orchdaemon.cpp:500`)、メインループで `doTask()` → `handleWredProfileTable(consumer, tuple)` (`qosorch.cpp:877`) に委譲。他コンシューマなし。ただし `QUEUE.wred_profile` で名前参照されるため、`QosOrch::handleQueueTable()` が `task_need_retry` を発行して WRED_PROFILE の先行作成を待つ (`qosorch.cpp:1864-1870`)。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -659,7 +659,7 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 - **runtime 変更 (SET)**: `modifyQosItem()` → `set_wred_attribute()` で差分適用。閾値変更は 2 フェーズ適用あり。`ecn` / `wred_*_enable` も mutable。
 - **DEL**: `sai_wred_api->remove_wred()` 後に参照エントリを削除。QUEUE から先に unbind しないと SAI エラーになる可能性。
 - **VoQ スイッチ**: `gMySwitchType == "voq"` の場合、`applyWredProfileToQueue()` が VoQ ID を使用 (`qosorch.cpp:1709-1730`)。
-- **AZURE_LOSSLESS 自動生成**: 起動時に `qos_config.j2` が `WRED_PROFILE|AZURE_LOSSLESS` を CONFIG_DB に書き込み (`qos_config.j2:489-506`)。`ecn=ecn_all`、RoCE キュー (queue 3, 4) に自動 bind。
+- **AZURE_LOSSLESS 自動生成**: 起動時に `qos_config.j2` が `WRED_PROFILE|AZURE_LOSSLESS` を CONFIG_DB に書き込み (`qos_config.j2:489-506`)。`ecn=ecn_all`、[RoCE](../../reference/glossary.md#term-roce) キュー (queue 3, 4) に自動 bind。
 - **db_migrator**: 旧 DB の `wred_profile` フィールド値 `|AZURE_LOSSLESS|` 形式を `AZURE_LOSSLESS` に変換 (`db_migrator.py:574-585`)。
 
 <!-- /runtime-trace -->
@@ -691,4 +691,4 @@ WRED_PROFILE テーブル自体は変更しないが、参照側 QUEUE テーブ
 
 <!-- /ordering -->
 
-<!-- glossary-links-injected: 7c1942297ce7 -->
+<!-- glossary-links-injected: 69ebec87307c -->

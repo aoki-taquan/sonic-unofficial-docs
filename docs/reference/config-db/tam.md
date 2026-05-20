@@ -29,12 +29,12 @@ related:
 
 ## 概要
 
-Telemetry and Monitoring (TAM) および In-band Flow Analyzer (IFA) に関する CONFIG_DB エントリ群。4 つのテーブルで構成される。
+Telemetry and Monitoring ([TAM](../../reference/glossary.md#term-tam)) および In-band Flow Analyzer (IFA) に関する CONFIG_DB エントリ群。4 つのテーブルで構成される。
 
-- **TAM_DEVICE_TABLE**: デバイス固有の TAM ID（`deviceid`）を保持する。
+- **TAM_DEVICE_TABLE**: デバイス固有の [TAM](../../reference/glossary.md#term-tam) ID（`deviceid`）を保持する。
 - **TAM_COLLECTOR_TABLE**: telemetry データの送信先コレクタ（IP アドレス・ポート）を定義する。
 - **TAM_INT_IFA_FEATURE_TABLE**: IFA 機能の有効/無効フラグを保持する。
-- **TAM_INT_IFA_FLOW_TABLE**: ACL ルールに紐付いた IFA フローを定義する。
+- **TAM_INT_IFA_FLOW_TABLE**: [ACL](../../reference/glossary.md#term-acl) ルールに紐付いた IFA フローを定義する。
 
 <!-- defaults -->
 ### コード由来デフォルト
@@ -64,7 +64,7 @@ singleton エントリ。key は固定値 `device`。
 
 | フィールド | 型 | 既定 | 説明 |
 |-----------|----|------|------|
-| `deviceid` | uint16 | **0** | TAM デバイス識別子。`0` は未設定を意味する。 |
+| `deviceid` | uint16 | **0** | [TAM](../../reference/glossary.md#term-tam) デバイス識別子。`0` は未設定を意味する。 |
 
 `deviceid` は SAI_TAM_INT_ATTR_DEVICE_ID に渡される（`portsorch.cpp`）。
 
@@ -91,11 +91,11 @@ IFA 機能の全体的な有効/無効フラグ。singleton。key は固定値 `
 
 ## TAM_INT_IFA_FLOW_TABLE
 
-特定の ACL ルールに IFA フロー設定を紐付ける。
+特定の [ACL](../../reference/glossary.md#term-acl) ルールに IFA フロー設定を紐付ける。
 
 | フィールド | 型 | 既定 | 必須 | 説明 |
 |-----------|----|------|------|------|
-| `acl-table-name` | leafref → `ACL_TABLE.aclname` | - | yes | 対象 ACL テーブル名。 |
+| `acl-table-name` | leafref → `ACL_TABLE.aclname` | - | yes | 対象 [ACL](../../reference/glossary.md#term-acl) テーブル名。 |
 | `acl-rule-name` | leafref → `ACL_RULE.rulename` | - | yes | 対象 ACL ルール名（`acl-table-name` と対で解決）。 |
 | `sampling-rate` | uint16 (1..10000) | - | no | 1/N パケットサンプリングレート。省略時はサンプリングなし。 |
 | `collector-name` | string (1..32) | - | no | `TAM_COLLECTOR_TABLE` のエントリ名を参照する（string 型、leafref ではない）。 |
@@ -118,8 +118,8 @@ IFA 機能の全体的な有効/無効フラグ。singleton。key は固定値 `
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): `sonic-tam`
-- [YANG](../../reference/glossary.md#term-yang): `sonic-ifa`
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-tam`](../yang/sonic-tam.md)
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-ifa`](../yang/sonic-ifa.md)
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): [`acl-table`](acl-table.md)
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): [`acl-rule`](acl-rule.md)
 
@@ -127,14 +127,11 @@ IFA 機能の全体的な有効/無効フラグ。singleton。key は固定値 `
 
 ## 引用元
 
-<!-- footnote anchor seeds -->
-出典: [^1] [^2] [^4]
-
 [^1]: YANG 定義 (TAM): `sonic-tam.yang`. <https://github.com/sonic-net/sonic-mgmt-common/blob/HEAD/cvl/testdata/schema/sonic-tam.yang>
 
 [^2]: YANG 定義 (IFA): `sonic-ifa.yang`. <https://github.com/sonic-net/sonic-mgmt-common/blob/HEAD/cvl/testdata/schema/sonic-ifa.yang>
 
-[^3]: SAI 属性参照: `portsorch.cpp:11593-11609`. <https://github.com/sonic-net/sonic-swss/blob/HEAD/orchagent/portsorch.cpp#L11593>
+[^3]: [SAI](../../reference/glossary.md#term-sai) 属性参照: `portsorch.cpp:11593-11609`. <https://github.com/sonic-net/sonic-swss/blob/HEAD/orchagent/portsorch.cpp#L11593>
 
 [^4]: High Frequency Telemetry TAM_COLLECTOR: `hftelorch.cpp:183-188`. <https://github.com/sonic-net/sonic-swss/blob/HEAD/orchagent/high_frequency_telemetry/hftelorch.cpp#L183>
 
@@ -226,7 +223,7 @@ sonic-db-cli CONFIG_DB hgetall 'TAM_INT_IFA_FLOW_TABLE|flow1'
 ### 1. TAM_COLLECTOR_TABLE → TAM_INT_IFA_FLOW_TABLE
 
 `TAM_INT_IFA_FLOW_TABLE` の `collector-name` フィールドは YANG 上 string 型だが、
-CVL（sonic-mgmt-common）が `TAM_COLLECTOR_TABLE` のエントリ存在を検証する
+CVL（[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common）が `TAM_COLLECTOR_TABLE` のエントリ存在を検証する
 （`cvl_leafref_test.go` 参照）。
 コレクタ名が `TAM_COLLECTOR_TABLE` に存在しない状態で IFA フローを書き込むと
 CVL バリデーションが失敗する。
@@ -257,11 +254,11 @@ ADD と逆順で削除する。`TAM_INT_IFA_FLOW_TABLE` のエントリを削除
 
 ### 5. orchagent 側の挙動
 
-コミュニティ版 orchagent には `TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` /
+コミュニティ版 [orchagent](../../reference/glossary.md#term-orchagent) には `TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` /
 `TAM_INT_IFA_*` を直接購読するハンドラが存在しない。
 上記の順序制約は主に Management フレームワーク（GNMI/REST）経由での CVL 検証で発生する。
 `sonic-db-cli` で直接書き込む場合は YANG 制約チェックが走らないため、
-順序違反してもリジェクトされない（ただし IFA 機能は orchagent 非実装のため SAI 反映もなし）。
+順序違反してもリジェクトされない（ただし IFA 機能は [orchagent](../../reference/glossary.md#term-orchagent) 非実装のため [SAI](../../reference/glossary.md#term-sai) 反映もなし）。
 
 <!-- /ordering -->
 
@@ -271,7 +268,7 @@ ADD と逆順で削除する。`TAM_INT_IFA_FLOW_TABLE` のエントリを削除
 > 調査証跡: `meta/_intermediate/cdb-flow/tam-cross-refs.md`
 
 `TAM_INT_IFA_FLOW_TABLE` の各フィールドは YANG leafref および CVL must 制約によって
-以下のテーブルのエントリを**参照**する。CVL (sonic-mgmt-common) が GNMI/REST 経由の
+以下のテーブルのエントリを**参照**する。CVL ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common) が GNMI/REST 経由の
 設定適用時にこれらの制約を強制する。
 
 | 参照元フィールド | 参照先テーブル | 参照先キー形式 | 制約種別 | 根拠 |
@@ -301,8 +298,8 @@ ADD と逆順で削除する。`TAM_INT_IFA_FLOW_TABLE` のエントリを削除
 > 調査証跡: `meta/_intermediate/cdb-flow/tam-failure.md`
 
 TAM テーブル群の失敗経路は **2 つのレイヤ** に分かれる。(1) Management Framework
-経由での設定時に CVL が検出する YANG 制約違反、(2) orchagent（portsorch / HFTelOrch）
-が SAI 操作を行う際のランタイム失敗。コミュニティ版 orchagent には
+経由での設定時に CVL が検出する YANG 制約違反、(2) [orchagent](../../reference/glossary.md#term-orchagent)（portsorch / HFTelOrch）
+が [SAI](../../reference/glossary.md#term-sai) 操作を行う際のランタイム失敗。コミュニティ版 orchagent には
 `TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_*` を直接 CONFIG_DB から
 購読するハンドラが存在しないため、`sonic-db-cli` による直接書き込みは CVL をバイパスし
 SAI への反映も起こらない。
@@ -351,7 +348,7 @@ SAI への反映も起こらない。
 
 ### STATE_DB / ERROR_TABLE への記録
 
-TAM テーブル群に対応する STATE_DB への書き込みはなし。失敗情報は syslog のみに出力される。CVL エラーは GNMI/REST レスポンスのエラーボディとして呼び出し元に返される。
+TAM テーブル群に対応する [STATE_DB](../../reference/glossary.md#term-state_db) への書き込みはなし。失敗情報は syslog のみに出力される。CVL エラーは GNMI/REST レスポンスのエラーボディとして呼び出し元に返される。
 
 ```bash
 # orchagent ログ確認（swss コンテナ内）
@@ -387,7 +384,7 @@ TAM テーブル群に関わる定数は YANG スキーマ由来のバリデー�
 
 ### portsorch Path Tracing TAM のランタイム定数
 
-`portsorch.cpp:createPtTam()` は `TAM_DEVICE_TABLE.deviceid` を CONFIG_DB から**読まず**、SAI TAM INT オブジェクトに以下の固定値を使用する。
+`portsorch.cpp:createPtTam()` は `TAM_DEVICE_TABLE.deviceid` を CONFIG_DB から**読まず**、SAI TAM [INT](../../reference/glossary.md#term-int) オブジェクトに以下の固定値を使用する。
 
 | SAI 属性 | 固定値 | 宣言箇所 |
 |---------|--------|---------|
@@ -424,11 +421,11 @@ TAM テーブル群（`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_
 
 | 副次 DB | テーブル/キー形式 | 書込内容 | 根拠 |
 |---|---|---|---|
-| STATE_DB | `HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE\|<profile_name>\|<group_type>` | プロファイルグループが SAI 側で ready になった時点で `stream_status` / `session_type=ipfix` / `session_config`（テンプレートバイト列）を SET。グループ DEL 時はキーを DEL | `hftelorch.cpp:308, 432, 557`; 定数: `schema.h:509` |
-| ASIC_DB | syncd 経由 SAI オブジェクト | `portsorch.cpp` の `createPtTam()` / `setPortPtTam()` が SAI TAM オブジェクトを作成し syncd 経由で ASIC_DB に反映（`portsorch.cpp:11554-11650`）。ただし `portsorch` は `TAM_DEVICE_TABLE` を CONFIG_DB から購読せず、Path Tracing TAM の設定変更は DEVICE_TABLE 操作と独立している | `portsorch.cpp:11401-11480` |
-| APPL_DB | なし | TAM テーブル購読者から APPL_DB への書込みなし（`ProducerStateTable` / `ResponsePublisher` 参照: 0 件） | — |
-| COUNTERS_DB | なし | `countersyncd`（Rust）は STATE_DB の `HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE` 変化を受けて COUNTERS_DB に書込むが、これは TAM テーブルへの直接書込みではなく STATE_DB 変化のリアクション | `countersyncd/src/actor/swss.rs:11, 42, 152` |
-| FLEX_COUNTER_DB / LOGLEVEL_DB | なし | 参照なし | — |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE\|<profile_name>\|<group_type>` | プロファイルグループが SAI 側で ready になった時点で `stream_status` / `session_type=ipfix` / `session_config`（テンプレートバイト列）を SET。グループ DEL 時はキーを DEL | `hftelorch.cpp:308, 432, 557`; 定数: `schema.h:509` |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | [syncd](../../reference/glossary.md#term-syncd) 経由 SAI オブジェクト | `portsorch.cpp` の `createPtTam()` / `setPortPtTam()` が SAI TAM オブジェクトを作成し [syncd](../../reference/glossary.md#term-syncd) 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) に反映（`portsorch.cpp:11554-11650`）。ただし `portsorch` は `TAM_DEVICE_TABLE` を CONFIG_DB から購読せず、Path Tracing TAM の設定変更は DEVICE_TABLE 操作と独立している | `portsorch.cpp:11401-11480` |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | TAM テーブル購読者から [APPL_DB](../../reference/glossary.md#term-appl_db) への書込みなし（`ProducerStateTable` / `ResponsePublisher` 参照: 0 件） | — |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `countersyncd`（Rust）は [STATE_DB](../../reference/glossary.md#term-state_db) の `HIGH_FREQUENCY_TELEMETRY_SESSION_TABLE` 変化を受けて [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に書込むが、これは TAM テーブルへの直接書込みではなく STATE_DB 変化のリアクション | `countersyncd/src/actor/swss.rs:11, 42, 152` |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) | なし | 参照なし | — |
 
 ### HFTelOrch STATE_DB 書込の詳細
 
@@ -461,7 +458,7 @@ TAM 4 テーブル（`TAM_DEVICE_TABLE` / `TAM_COLLECTOR_TABLE` / `TAM_INT_IFA_F
 | 購読クラス | 該当なし |
 | keyspace 通知 | 使用しない（書き手・リスナーともに orchagent 側になし） |
 | `ProducerStateTable` / channel PUBLISH | 使用なし |
-| アクセス方式 | CVL（sonic-mgmt-common / Management Framework）がオンデマンド polling で HGETALL 読み出し（GNMI/REST リクエスト時のみ） |
+| アクセス方式 | CVL（[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common / Management Framework）がオンデマンド polling で HGETALL 読み出し（GNMI/REST リクエスト時のみ） |
 | バッチサイズ | 概念なし（polling 読み取りのみ） |
 | TTL | 未設定（CONFIG_DB は永続前提） |
 
@@ -528,3 +525,5 @@ CVL（sonic-mgmt-common / Management Framework）によるバリデーション�
 | CVL バリデーション（Management Framework） | なし | プラットフォーム非依存（常に有効） |
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: 4871112f5213 -->

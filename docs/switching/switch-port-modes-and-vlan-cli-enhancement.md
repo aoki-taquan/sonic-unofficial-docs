@@ -249,7 +249,7 @@ sudo config vlan member add 100 PortChannel001
 
 ### `config vlan member add` が `VLAN_TABLE|members` にも書き込む（#323）
 
-`config vlan member add` コマンドは `VLAN_MEMBER_TABLE`（正規のテーブル）に加えて、後方互換用の `VLAN_TABLE|members@` フィールドにも書き込む。タグ付きメンバーとして追加したつもりでも、このフィールドには影響する。sonic-utilities PR#768 で修正済み（古いバージョンではバグが残存する可能性あり）。
+`config vlan member add` コマンドは `VLAN_MEMBER_TABLE`（正規のテーブル）に加えて、後方互換用の `VLAN_TABLE|members@` フィールドにも書き込む。タグ付きメンバーとして追加したつもりでも、このフィールドには影響する。[sonic-utilities](../reference/glossary.md#term-sonic-utilities) PR#768 で修正済み（古いバージョンではバグが残存する可能性あり）。
 
 - 参照: [sonic-net/SONiC#323](https://github.com/sonic-net/SONiC/issues/323)
 
@@ -259,13 +259,11 @@ VLAN からポートを削除すると、ポートがデフォルト VLAN に残
 
 - 参照: [sonic-net/sonic-buildimage#2658](https://github.com/sonic-net/sonic-buildimage/issues/2658)
 
-
 ### VLAN に既に割り当てられているインターフェースにルーターインターフェースを割り当てようとすると orchagent （sonic-buildimage#2684）
 
 VLAN に既に割り当てられているインターフェースにルーターインターフェースを割り当てようとすると orchagent がコアダンプする既知の問題。VLAN メンバーから削除してからルーターIF設定を行うこと
 
 - 参照: [sonic-net/sonic-buildimage#2684](https://github.com/sonic-net/sonic-buildimage/issues/2684)
-
 
 ### タグ付き VLAN メンバーに対して PVID が誤って設定される問題（sonic-buildimage#5928）
 
@@ -464,4 +462,4 @@ show interfaces status  # PR #3788 取込後は switchport mode 列が出る
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4da1da4a7ec6 -->
+<!-- glossary-links-injected: f960e6599a3c -->

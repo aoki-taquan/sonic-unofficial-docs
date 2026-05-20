@@ -179,7 +179,7 @@ redis-cli -n 4 SET CONFIG_DB_INITIALIZED true
 # その後 config load_minigraph を再実行
 ```
 
-**根本原因の予防:** minigraph.xml 内の hostname は **全箇所で一致**させる必要がある。1 箇所だけ変更するとパース時に `KeyError` が発生する。
+**根本原因の予防:** [minigraph.xml](../reference/glossary.md#term-minigraph.xml) 内の hostname は **全箇所で一致**させる必要がある。1 箇所だけ変更するとパース時に `KeyError` が発生する。
 
 - 参照: [sonic-net/SONiC#145](https://github.com/sonic-net/SONiC/issues/145)
 
@@ -283,4 +283,4 @@ diff /etc/sonic/config_db.json <(show runningconfiguration all)
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 45bbcbc484eb -->

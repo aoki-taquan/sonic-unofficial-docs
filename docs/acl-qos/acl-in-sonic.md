@@ -183,20 +183,17 @@ MIRRORV6 ACL では `IPV6_NEXT_HEADER` キーがサポートされていない�
 
 - 参照: [sonic-net/sonic-buildimage#4570](https://github.com/sonic-net/sonic-buildimage/issues/4570)
 
-
 ### aclshow ユーティリティがコントロールプレーン ACL のカウンターを表示しない制約（sonic-buildimage#5015）
 
 aclshow ユーティリティがコントロールプレーン ACL のカウンターを表示しない制約。iptables ベースの COPP ACL は `iptables -L -n -v` で確認すること
 
 - 参照: [sonic-net/sonic-buildimage#5015](https://github.com/sonic-net/sonic-buildimage/issues/5015)
 
-
 ### COPP に ~350 個のルールを設定すると iptables への適用に 10 分以上かかる制約（sonic-buildimage#5275）
 
 COPP に ~350 個のルールを設定すると iptables への適用に 10 分以上かかる制約。大量の COPP ルールは起動時間に大きく影響するため、ルール数を最小化すること
 
 - 参照: [sonic-net/sonic-buildimage#5275](https://github.com/sonic-net/sonic-buildimage/issues/5275)
-
 
 ### warm reboot 後にミラーリングルールの適用が失敗する問題（sonic-buildimage#5497）
 
@@ -228,7 +225,7 @@ warm reboot 後にミラーリングルールの適用が失敗する問題。�
 - **bind 対象の単位**: `ports` で port または LAG を指定する。VLAN / subinterface 単位の bind は type とプラットフォーム依存で、HLD は port / LAG を主とする。
 - **Flex Counter 連動**: counter 取得には `FLEX_COUNTER_TABLE` で `ACL` を `enable` にする必要がある。無効時は `aclshow` / `show acl rule` のカウンタが 0 のままになる。
 - **ACL_TABLE の再 bind タイミング**: LAG 解体 / 再構成や Mux active/standby 切替時の rebind 中は短時間 ASIC 上のルールが消える可能性があり、実時間保証はない。
-- **`SAI_STATUS_INSUFFICIENT_RESOURCES` 時のリトライ優先度** ([sonic-swss#4406](https://github.com/sonic-net/sonic-swss/issues/4406)): `handleSai` が SAI_STATUS_INSUFFICIENT_RESOURCES を受け取った際に ACL ACE のリトライキューが蓄積し、ルートプログラミングよりも優先されてしまう問題がある。高負荷時に ACL エントリの追加が失敗し続ける環境では、orchagent が本来のルート更新より ACL リトライを繰り返すことでルート収束が遅延する可能性がある。
+- **`SAI_STATUS_INSUFFICIENT_RESOURCES` 時のリトライ優先度** ([sonic-swss#4406](https://github.com/sonic-net/sonic-swss/issues/4406)): `handleSai` が SAI_STATUS_INSUFFICIENT_RESOURCES を受け取った際に ACL ACE のリトライキューが蓄積し、ルートプログラミングよりも優先されてしまう問題がある。高負荷時に ACL エントリの追加が失敗し続ける環境では、[orchagent](../reference/glossary.md#term-orchagent) が本来のルート更新より ACL リトライを繰り返すことでルート収束が遅延する可能性がある。
 - **`TABLE_TYPE_MIRRORV6` の IN_PORTS 非サポート** ([sonic-swss#2204](https://github.com/sonic-net/sonic-swss/issues/2204)): `MIRRORV6` テーブルタイプでは `IN_PORTS` マッチフィールドが実装されていない。IPv6 ミラーセッションで入力ポートを限定したい場合は `MIRRORV6` が使えない制約がある。
 
 ## 引用元
@@ -242,4 +239,4 @@ warm reboot 後にミラーリングルールの適用が失敗する問題。�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: e2892b76fd9a -->

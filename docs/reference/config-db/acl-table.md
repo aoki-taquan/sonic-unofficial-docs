@@ -105,11 +105,11 @@ ACL_TABLE|<table_name>
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-`AclOrch` は `Orch` 基底クラス経由で `ACL_TABLE` を購読する。CONFIG_DB 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、Redis の **keyspace 通知** (`__keyspace@<dbId>__:ACL_TABLE:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
+`AclOrch` は `Orch` 基底クラス経由で `ACL_TABLE` を購読する。CONFIG_DB 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、[Redis](../../reference/glossary.md#term-redis) の **keyspace 通知** (`__keyspace@<dbId>__:ACL_TABLE:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
 
 | 項目 | 値 |
 |------|-----|
-| 購読クラス | `SubscriberStateTable` (CONFIG_DB / STATE_DB / CHASSIS_APP_DB 分岐) |
+| 購読クラス | `SubscriberStateTable` (CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) / CHASSIS_APP_DB 分岐) |
 | keyspace パターン | `__keyspace@4__:ACL_TABLE:*` (CONFIG_DB dbId=4) |
 | key 区切り | `ACL_TABLE\|<table-name>` (TableNameSeparator 既定 `\|`) |
 | POP_BATCH_SIZE | `TableConsumable::DEFAULT_POP_BATCH_SIZE` = **128** (`sonic-swss-common/common/table.h:164`) |
@@ -118,7 +118,7 @@ ACL_TABLE|<table_name>
 | TTL | 未設定 (CONFIG_DB は永続前提) |
 | ディスパッチ | `Consumer::execute()` → `AclOrch::doTask(Consumer&)` → `consumer.getTableName()` 分岐 → `doAclTableTask(consumer)` |
 
-参考: APPL_DB 側の `APP_ACL_TABLE` は同じ `AclOrch` インスタンスが扱うが、`Orch::addConsumer()` の `else` 分岐で `ConsumerStateTable` + `gBatchSize` が使われる点で CONFIG_DB 側と異なる。
+参考: [APPL_DB](../../reference/glossary.md#term-appl_db) 側の `APP_ACL_TABLE` は同じ `AclOrch` インスタンスが扱うが、`Orch::addConsumer()` の `else` 分岐で `ConsumerStateTable` + `gBatchSize` が使われる点で CONFIG_DB 側と異なる。
 
 <!-- evidence: sonic-net/sonic-swss/orchagent/aclorch.cpp:4197L (AclOrch::AclOrch via Orch(connectors)) -->
 <!-- evidence: sonic-net/sonic-swss/orchagent/orch.cpp:1186L (Orch::addConsumer DB 種別分岐) -->
@@ -152,11 +152,11 @@ ACL_TABLE|<table_name>
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
-ACL_TABLE の処理失敗は `doAclTableTask()` 内の `bAllAttributesOk` フラグと `validate()` の結果で分岐し、STATE_DB の `ACL_TABLE|<table_name>` テーブルに `status` フィールドで記録される。
+ACL_TABLE の処理失敗は `doAclTableTask()` 内の `bAllAttributesOk` フラグと `validate()` の結果で分岐し、[STATE_DB](../../reference/glossary.md#term-state_db) の `ACL_TABLE|<table_name>` テーブルに `status` フィールドで記録される。
 
 ### SET 時の失敗パターン
 
-| 失敗ケース | 発生箇所 | 挙動 | STATE_DB status | retry |
+| 失敗ケース | 発生箇所 | 挙動 | [STATE_DB](../../reference/glossary.md#term-state_db) status | retry |
 |---|---|---|---|---|
 | `type` 空文字 | `processAclTableType()` L5823-5826 | `bAllAttributesOk=false` → erase | `"Inactive"` | なし |
 | 不明な属性名 | `doAclTableTask()` L5415-5419 | `bAllAttributesOk=false` → break → erase | `"Inactive"` | なし |
@@ -193,7 +193,7 @@ DEL 受信
 
 確認コマンド: `sonic-db-cli STATE_DB hgetall 'ACL_TABLE|<table_name>'`
 
-エラーはすべて `SWSS_LOG_ERROR` でサイログ出力される。`ERROR_TABLE` への書き込みはなし。CONFIG_DB のエントリは失敗後も残る（orchagent は書き戻さない）。
+エラーはすべて `SWSS_LOG_ERROR` でサイログ出力される。`ERROR_TABLE` への書き込みはなし。CONFIG_DB のエントリは失敗後も残る（[orchagent](../../reference/glossary.md#term-orchagent) は書き戻さない）。
 
 > **証跡**: `doAclTableTask()` L5361-5518 全行精読、`AclTable::validate()` L2725-2769、`processAclTableType()` L5819-5831、`processAclTableStage()` L5838-5853、`processAclTablePorts()` L5776-5807、`removeAclTable()` L4829-4910、`setAclTableStatus()` L6088-6093。
 <!-- /failure -->
@@ -203,7 +203,7 @@ DEL 受信
 
 ### `type` 値別挙動
 
-YANG 定義 4 値 (sonic-acl.yang:59-65): `MIRROR/MIRRORV6/L3/L3V6`。
+[YANG](../../reference/glossary.md#term-yang) 定義 4 値 (sonic-acl.yang:59-65): `MIRROR/MIRRORV6/L3/L3V6`。
 実装定義マクロ (acltable.h:26-42): `TABLE_TYPE_L3` / `TABLE_TYPE_L3V6` / `TABLE_TYPE_L3V4V6` / `TABLE_TYPE_MIRROR` / `TABLE_TYPE_MIRRORV6` / `TABLE_TYPE_MIRROR_DSCP` / `TABLE_TYPE_PFCWD` / `TABLE_TYPE_CTRLPLANE` / `TABLE_TYPE_MCLAG` / `TABLE_TYPE_MUX` / `TABLE_TYPE_DROP` / `TABLE_TYPE_MARK_META` / `TABLE_TYPE_MARK_META_V6` / `TABLE_TYPE_EGR_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCPV6`。`processAclTableType()` は type 空文字のみ reject、それ以外はそのまま通す (aclorch.cpp:5821-5833)。
 
 | 値 | 動作 | ASIC 確認 | evidence |
@@ -336,7 +336,7 @@ C++ の `AclTable` クラスは `stage = ACL_STAGE_INGRESS` でメンバを初�
 
 ### `policy_desc` の詳細
 
-`config acl add table` 実行時に `-d` を省略すると `policy_desc` に `table_name` 文字列が設定される。REST/minigraph/直接書き込みでは `policy_desc` は任意で、省略時は orchagent の `AclTable::description` が空文字列デフォルト。orchagent は `description` を SAI 属性として渡さないため SAI ハードウェアに影響なし（ログ・`show` 表示のみ）。
+`config acl add table` 実行時に `-d` を省略すると `policy_desc` に `table_name` 文字列が設定される。REST/minigraph/直接書き込みでは `policy_desc` は任意で、省略時は [orchagent](../../reference/glossary.md#term-orchagent) の `AclTable::description` が空文字列デフォルト。[orchagent](../../reference/glossary.md#term-orchagent) は `description` を SAI 属性として渡さないため SAI ハードウェアに影響なし（ログ・`show` 表示のみ）。
 
 ### 内部自動付与 action/match (YANG 外)
 
@@ -443,7 +443,7 @@ XML `<AclInterface>` 要素から `ACL_TABLE` エントリを生成し CONFIG_DB
 `sonic-mgmt-common/translib/acl_app.go:95-300`
 
 - REST path: `PATCH /openconfig-acl:acl/acl-sets/acl-set/{name}/{type}`
-- gNMI path: `/openconfig-acl:acl/acl-sets/acl-set[name=...][type=...]`
+- [gNMI](../../reference/glossary.md#term-gnmi) path: `/openconfig-acl:acl/acl-sets/acl-set[name=...][type=...]`
 - `AclApp.processCreate()` → `processCommon()` → `d.SetEntry(app.aclTs, ...)` で CONFIG_DB の ACL_TABLE に書き込み
 - OpenConfig type → SONiC type マッピング: `ACL_IPV4` → `L3`、`ACL_IPV6` → `L3V6` など
 
@@ -521,7 +521,7 @@ DEL ACL_TABLE_TYPE|<type_name>           # ユーザ定義 type を削除する�
 
 ### 段階 1: Consumer 登録
 
-`orchdaemon.cpp:408-419` で `CONFIG_DB / ACL_TABLE` (`"ACL_TABLE"`)、`CONFIG_DB / ACL_TABLE_TYPE`、`CONFIG_DB / ACL_RULE` および対応する `APP_DB` 版の計 6 本の `TableConnector` を作成し `AclOrch` コンストラクタに渡す。`AclOrch` は `gOrchDaemon->orchList` に登録され、メインループで `doTask()` (`aclorch.cpp:4272`) が呼ばれる。`table_name` が `CFG_ACL_TABLE_TABLE_NAME` または `APP_ACL_TABLE_TABLE_NAME` に一致すると `doAclTableTask()` に委譲される。追加コンシューマ: `NatMgr` (`cfgmgr/natmgrd.cpp:119`) が `ACL_TABLE` を購読して NAT 設定に連動。
+`orchdaemon.cpp:408-419` で `CONFIG_DB / ACL_TABLE` (`"ACL_TABLE"`)、`CONFIG_DB / ACL_TABLE_TYPE`、`CONFIG_DB / ACL_RULE` および対応する `APP_DB` 版の計 6 本の `TableConnector` を作成し `AclOrch` コンストラクタに渡す。`AclOrch` は `gOrchDaemon->orchList` に登録され、メインループで `doTask()` (`aclorch.cpp:4272`) が呼ばれる。`table_name` が `CFG_ACL_TABLE_TABLE_NAME` または `APP_ACL_TABLE_TABLE_NAME` に一致すると `doAclTableTask()` に委譲される。追加コンシューマ: `NatMgr` (`cfgmgr/natmgrd.cpp:119`) が `ACL_TABLE` を購読して [NAT](../../reference/glossary.md#term-nat) 設定に連動。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -531,7 +531,7 @@ DEL ACL_TABLE_TYPE|<type_name>           # ユーザ定義 type を削除する�
 |---|---|---|
 | `type` | `processAclTableType()` → `AclTableType` オブジェクト | 空文字は reject、`UNDERLAY_SET_DSCP` → 内部で `MARK_META` に変換 |
 | `stage` | `processAclTableStage()` → `STAGE_INGRESS` / `STAGE_EGRESS` | 不正値は erase |
-| `ports` | `processAclTablePorts()` → PORT OID 解決 | SAI bind point (port/LAG/VLAN) に変換 |
+| `ports` | `processAclTablePorts()` → PORT OID 解決 | SAI bind point (port/[LAG](../../reference/glossary.md#term-lag)/[VLAN](../../reference/glossary.md#term-vlan)) に変換 |
 | `services` | `continue` で無視 | CTRLPLANE ACL 専用フィールド |
 
 ### 段階 3: APPL → SAI
@@ -544,7 +544,7 @@ DEL ACL_TABLE_TYPE|<type_name>           # ユーザ定義 type を削除する�
 - **runtime 変更 (SET)**: 既存 table 検出時は `updateAclTable()` → ポート bind/unbind を差分適用 (`aclorch.cpp:5446-5520`)。`type` / `stage` は作成後変更不可 (create-only 属性)。
 - **warm-restart**: `AclOrch` は `onWarmBootEnd()` を実装しない。orchagent 全体の `warmRestoreAndSyncUp()` (`orchdaemon.cpp:872`) でリカバリ。
 - **DEL**: バインドを外した後 `sai_acl_api->remove_acl_table()` を呼ぶ。配下に ACL_RULE が残ると SAI エラー。
-- **CRM 連携**: 作成/削除時に `gCrmOrch->incCrmAclUsedCounter()` / `decCrmAclUsedCounter()` (`aclorch.cpp:2855`)。
+- **[CRM](../../reference/glossary.md#term-crm) 連携**: 作成/削除時に `gCrmOrch->incCrmAclUsedCounter()` / `decCrmAclUsedCounter()` (`aclorch.cpp:2855`)。
 
 <!-- /runtime-trace -->
 
@@ -663,7 +663,7 @@ STATE_DB テーブル名: `STATE_ACL_TABLE_TABLE_NAME = "ACL_TABLE_TABLE"` (`sch
 | SAI 属性定数 | 設定値 | ソース |
 |---|---|---|
 | `SAI_ACL_TABLE_ATTR_ACL_STAGE` | `SAI_ACL_STAGE_INGRESS` / `SAI_ACL_STAGE_EGRESS` | `aclorch.cpp:2842` |
-| `SAI_ACL_TABLE_ATTR_ACL_BIND_POINT_TYPE_LIST` | バインドポイントリスト (PORT/LAG 等) | `aclorch.cpp:2823` |
+| `SAI_ACL_TABLE_ATTR_ACL_BIND_POINT_TYPE_LIST` | バインドポイントリスト (PORT/[LAG](../../reference/glossary.md#term-lag) 等) | `aclorch.cpp:2823` |
 | `SAI_ACL_TABLE_ATTR_ACL_ACTION_TYPE_LIST` | 許可アクションリスト | `aclorch.cpp:2835` |
 | `SAI_ACL_TABLE_ATTR_FIELD_*` | マッチフィールド群 (自動付与含む) | `aclorch.cpp:2614-2650` |
 | `SAI_ACL_TABLE_ATTR_FIELD_ACL_RANGE_TYPE` | L4 ポート範囲 match (BRCM EGRESS では省略) | `aclorch.cpp:603,2614` |
@@ -757,7 +757,7 @@ ACL_RULE の `PRIORITY` フィールド (`aclorch.h:25`: `#define RULE_PRIORITY 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`ACL_TABLE` の SET/DEL を受けた `AclOrch` は CONFIG_DB のほか STATE_DB と COUNTERS_DB に以下を書き込む。
+`ACL_TABLE` の SET/DEL を受けた `AclOrch` は CONFIG_DB のほか STATE_DB と [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に以下を書き込む。
 
 ### STATE_DB 書込み
 
@@ -783,18 +783,18 @@ sonic-db-cli STATE_DB hgetall 'ACL_STAGE_CAPABILITY_TABLE|INGRESS'
 
 ### COUNTERS_DB 書込み
 
-ACL_TABLE 自体は COUNTERS_DB に直接書き込まない。ただし ACL_TABLE に紐づく **ACL_RULE** の作成/削除時に以下が連動する。
+ACL_TABLE 自体は [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に直接書き込まない。ただし ACL_TABLE に紐づく **ACL_RULE** の作成/削除時に以下が連動する。
 
 | タイミング | テーブル | キー | 内容 |
 |---|---|---|---|
 | ACL_RULE 作成 (`registerFlexCounter()`) | `ACL_COUNTER_RULE_MAP` | `<table_name>:<rule_name>` | SAI counter OID 文字列 |
 | ACL_RULE 削除 (`deregisterFlexCounter()`) | `ACL_COUNTER_RULE_MAP` | `<table_name>:<rule_name>` | エントリ削除 |
-| ACL テーブル作成 | CRM カウンタ (`COUNTERS_DB`) | — | `incCrmAclUsedCounter(CRM_ACL_TABLE)` (`aclorch.cpp:2855`) |
-| ACL テーブル削除 | CRM カウンタ (`COUNTERS_DB`) | — | `decCrmAclUsedCounter(CRM_ACL_TABLE)` (`aclorch.cpp:4877`) |
+| ACL テーブル作成 | [CRM](../../reference/glossary.md#term-crm) カウンタ (`COUNTERS_DB`) | — | `incCrmAclUsedCounter(CRM_ACL_TABLE)` (`aclorch.cpp:2855`) |
+| ACL テーブル削除 | [CRM](../../reference/glossary.md#term-crm) カウンタ (`COUNTERS_DB`) | — | `decCrmAclUsedCounter(CRM_ACL_TABLE)` (`aclorch.cpp:4877`) |
 | ACL_RULE 作成 | CRM カウンタ (`COUNTERS_DB`) | テーブル OID 配下 | `incCrmAclTableUsedCounter(CRM_ACL_ENTRY)` + `CRM_ACL_COUNTER` |
 | ACL_RULE 削除 | CRM カウンタ (`COUNTERS_DB`) | テーブル OID 配下 | `decCrmAclTableUsedCounter(CRM_ACL_ENTRY)` + `CRM_ACL_COUNTER` |
 
-FlexCounter 連動: ACL_RULE 作成時に `FLEX_COUNTER_DB / ACL_STAT_COUNTER` グループへ counter OID を登録し、FlexCounter デーモンが定期的に SAI カウンタをポーリングして `COUNTERS_DB / COUNTERS` に統計値を書き込む。
+[FlexCounter](../../reference/glossary.md#term-flexcounter) 連動: ACL_RULE 作成時に `FLEX_COUNTER_DB / ACL_STAT_COUNTER` グループへ counter OID を登録し、[FlexCounter](../../reference/glossary.md#term-flexcounter) デーモンが定期的に SAI カウンタをポーリングして `COUNTERS_DB / COUNTERS` に統計値を書き込む。
 
 ```bash
 sonic-db-cli COUNTERS_DB hgetall ACL_COUNTER_RULE_MAP
@@ -803,4 +803,4 @@ sonic-db-cli COUNTERS_DB hgetall ACL_COUNTER_RULE_MAP
 > **証跡**: `setAclTableStatus()` L6088-6098、`removeAllAclTableStatus()` L6119-6125、`putAclActionCapabilityInDB()` L4056-4101、`registerFlexCounter()` L6020-6042、`deregisterFlexCounter()` L6044-6048、`incCrmAclUsedCounter()` L2855、`decCrmAclUsedCounter()` L4877。全行精読 + `schema.h:418,514` 確認。
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 9f69b0796e2c -->
+<!-- glossary-links-injected: df32ca8fe4b1 -->

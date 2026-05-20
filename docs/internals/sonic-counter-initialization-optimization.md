@@ -150,7 +150,7 @@ sequenceDiagram
 
 ### PFC とキューカウンターが負の値を示す問題（sonic-buildimage#5206）
 
-PFC とキューカウンターが負の値を示す問題。カウンターのオーバーフローまたは初期化前の読み取りが原因。`sonic-clear` で初期化してから再度確認すること
+[PFC](../reference/glossary.md#term-pfc) とキューカウンターが負の値を示す問題。カウンターのオーバーフローまたは初期化前の読み取りが原因。`sonic-clear` で初期化してから再度確認すること
 
 - 参照: [sonic-net/sonic-buildimage#5206](https://github.com/sonic-net/sonic-buildimage/issues/5206)
 
@@ -166,4 +166,4 @@ PFC とキューカウンターが負の値を示す問題。カウンターの�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 14c16f9ace85 -->
+<!-- glossary-links-injected: a09c09b48079 -->

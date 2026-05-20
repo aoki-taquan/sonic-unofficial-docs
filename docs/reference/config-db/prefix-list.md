@@ -82,11 +82,11 @@ PREFIX_LIST|<prefix_type>|<ip-prefix>
 <!-- cross-refs -->
 ## 暗黙参照（被参照テーブル）
 
-PREFIX_LIST テーブルは、以下のテーブル／コンポーネントから **間接的に** 参照される。YANG レベルでの外部キー制約は存在しないが、bgpcfgd ランタイムを介した暗黙的なシンボル依存がある。
+PREFIX_LIST テーブルは、以下のテーブル／コンポーネントから **間接的に** 参照される。YANG レベルでの外部キー制約は存在しないが、[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) ランタイムを介した暗黙的なシンボル依存がある。
 
 ### ROUTE_MAP（FRR ポリシ テンプレート経由）
 
-bgpcfgd が PREFIX_LIST エントリを `ip prefix-list` / `ipv6 prefix-list` に展開し、その名前が FRR route-map の `match ip address prefix-list` 句で参照される。
+[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が PREFIX_LIST エントリを `ip prefix-list` / `ipv6 prefix-list` に展開し、その名前が FRR route-map の `match ip address prefix-list` 句で参照される。
 
 | 参照元テンプレート | 参照される prefix-list 名 | 用途 |
 |---|---|---|
@@ -101,7 +101,7 @@ bgpcfgd が PREFIX_LIST エントリを `ip prefix-list` / `ipv6 prefix-list` �
 
 ### BGP_NEIGHBOR / BGP_PEER_GROUP（ピア設定テンプレート経由）
 
-`bgpd.main.conf.j2` の BGP neighbor 設定は `redistribute connected route-map V4_CONNECTED_ROUTES` / `V6_CONNECTED_ROUTES` を参照し、これらの route-map は `prefix-list V4_P2P_IP` / `V6_P2P_IP` に依存する。PREFIX_LIST テーブルが `ANCHOR_PREFIX` / `SUPPRESS_PREFIX` を提供し、対応するピアへの経路広報フィルタ (`TO_BGP_PEER_V4/V6`) を構成する。YANG 上の直接 leafref は存在しないため、シンボル参照はランタイム時のみ解決される。
+`bgpd.main.conf.j2` の [BGP](../../reference/glossary.md#term-bgp) neighbor 設定は `redistribute connected route-map V4_CONNECTED_ROUTES` / `V6_CONNECTED_ROUTES` を参照し、これらの route-map は `prefix-list V4_P2P_IP` / `V6_P2P_IP` に依存する。PREFIX_LIST テーブルが `ANCHOR_PREFIX` / `SUPPRESS_PREFIX` を提供し、対応するピアへの経路広報フィルタ (`TO_BGP_PEER_V4/V6`) を構成する。YANG 上の直接 leafref は存在しないため、シンボル参照はランタイム時のみ解決される。
 
 **証跡**: `bgpd.main.conf.j2` L200, L203; `managers_prefix_list.py` `PrefixListMgr.generate_prefix_list_config()`.
 
@@ -200,7 +200,7 @@ bgpcfgd は platform 非依存で常時起動し `PrefixListMgr` を無条件登
 | `PrefixListMgr` | `netaddr.IPNetwork()` 解析失敗 | `log_warn` + return True (エントリスキップ) | `managers_prefix_list.py` |
 | `PrefixListMgr` | `ANCHOR_PREFIX` + SpineRouter 以外 | `log_warn` + スキップ | `managers_prefix_list.py` |
 
-> **スキャン証跡**: `managers_prefix_list.py` 全体読了。CONFIG_DB 内フィールド間の自動派生なし（Phase 6 は FRR テキスト変換のみ）。
+> **スキャン証跡**: `managers_prefix_list.py` 全体読了。[CONFIG_DB](../../reference/glossary.md#term-config_db) 内フィールド間の自動派生なし（Phase 6 は FRR テキスト変換のみ）。
 
 <!-- /handler-branching -->
 
@@ -250,7 +250,7 @@ bgpcfgd が PrefixListMgr 経由で FRR に送出するテンプレートコマ�
 
 ### 段階 3: APPL → SAI
 
-- FRR がプレフィックスリストをルートフィルタとして使用。SAI 経由なし (コントロールプレーン処理)。
+- FRR がプレフィックスリストをルートフィルタとして使用。[SAI](../../reference/glossary.md#term-sai) 経由なし (コントロールプレーン処理)。
 
 ### 段階 4: タイミング + 副作用
 
@@ -265,7 +265,7 @@ PREFIX_LIST テーブルへの書き込みが発生するコード経路を網�
 
 ### CLI
 
-  - `config bgp prefix-list ...` — `config/bgp_cli.py` が PREFIX_LIST テーブルを書き込む (sonic-utilities/config/bgp_cli.py)
+  - `config bgp prefix-list ...` — `config/bgp_cli.py` が PREFIX_LIST テーブルを書き込む ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/bgp_cli.py)
 
 ### minigraph / sonic-cfggen
 
@@ -273,7 +273,7 @@ minigraph.py に PREFIX_LIST 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -285,7 +285,7 @@ db_migrator.py での PREFIX_LIST マイグレーションなし
 
 ### ハードコードデフォルト / ランタイム注入
 
-**sonic-bgpcfgd** `managers_prefix_list.py` が PREFIX_LIST テーブルを監視し FRR bgpd に反映 (sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_prefix_list.py)
+**sonic-bgpcfgd** `managers_prefix_list.py` が PREFIX_LIST テーブルを監視し FRR bgpd に反映 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-bgpcfgd/bgpcfgd/managers_prefix_list.py)
 
 ### 死活・デッドコード
 
@@ -359,7 +359,7 @@ db_migrator.py での PREFIX_LIST マイグレーションなし
 
 ### FRR vtysh コマンド経路
 
-`PrefixListMgr` は CONFIG_DB への直接書き戻しを行わず、**FRR bgpd** に対して `vtysh` 経由でコマンドを発行する（APP_DB / STATE_DB への書き込みなし）。
+`PrefixListMgr` は CONFIG_DB への直接書き戻しを行わず、**FRR bgpd** に対して `vtysh` 経由でコマンドを発行する（APP_DB / [STATE_DB](../../reference/glossary.md#term-state_db) への書き込みなし）。
 
 #### ANCHOR_PREFIX (`add_radian.conf.j2`)
 
@@ -398,7 +398,7 @@ exit
 |--------|------------|------|
 | FRR bgpd (vtysh) | set_handler / del_handler 実行直後 | `ip`/`ipv6 prefix-list` + `aggregate-address` (ANCHOR) または `prefix-list` のみ (SUPPRESS) |
 | APP_DB | なし | — |
-| STATE_DB | なし | — |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | — |
 | Linux カーネル | BGP UPDATE 経由 | ルート撤退 / 追加（間接） |
 
 <!-- /side-effects -->
@@ -523,8 +523,8 @@ ANCHOR_PREFIX の場合は IPv4/IPv6 とも prefix list 名は `ANCHOR_CONTRIBUT
 | `ANCHOR_PREFIX` | SpineRouter/UpstreamLC、UpperSpineRouter | `log_warn` + スキップ (FRR 設定生成なし) |
 | `SUPPRESS_PREFIX` | 全デバイス | 制限なし |
 
-ASIC ベンダー差・アーキテクチャ差・SmartSwitch 専用ロジックはなし。PREFIX_LIST はコントロールプレーン (FRR bgpd) のみで処理され SAI を経由しないため、ASIC 依存性ゼロ。
+ASIC ベンダー差・アーキテクチャ差・[SmartSwitch](../../reference/glossary.md#term-smartswitch) 専用ロジックはなし。PREFIX_LIST はコントロールプレーン (FRR bgpd) のみで処理され [SAI](../../reference/glossary.md#term-sai) を経由しないため、ASIC 依存性ゼロ。
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 62ecddfa9dc4 -->
+<!-- glossary-links-injected: 5ae8fdcacc91 -->

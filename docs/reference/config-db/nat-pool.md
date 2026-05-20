@@ -45,14 +45,14 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>NAT_POOL")]
+  CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
   DM["natmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>NAT_DNAT_POOL_TABLE")]
+  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
   DM --> APPDB
-  SYNCD["orchagent / NatOrch"]
+  SYNCD["syncd"]
   APPDB --> SYNCD
-  SAI["SAI<br/>sai_nat_api"]
+  SAI["SAI<br/>sai_switch_api"]
   SYNCD --> SAI
 ```
 
@@ -66,7 +66,7 @@ flowchart LR
 NAT_POOL|<pool_name>
 ```
 
-`pool_name` は 1..32 文字、`[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})` パターン (YANG 制約)。
+`pool_name` は 1..32 文字、`[a-zA-Z0-9]{1}([-a-zA-Z0-9_]{0,31})` パターン ([YANG](../../reference/glossary.md#term-yang) 制約)。
 
 ## 主要フィールド
 
@@ -78,7 +78,7 @@ NAT_POOL|<pool_name>
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG default 以外の実装レベルの fallback。`natmgr.cpp doNatPoolTask` L6482–6866、`config/nat.py add_pool` L673–772 を調査。
+[YANG](../../reference/glossary.md#term-yang) default 以外の実装レベルの fallback。`natmgr.cpp doNatPoolTask` L6482–6866、`config/nat.py add_pool` L673–772 を調査。
 
 | フィールド / 条件 | 検出種別 | 挙動 | ソース |
 |---|---|---|---|
@@ -149,9 +149,9 @@ show nat config pools
 
 ### よくある誤設定
 
-- `nat_ip` に 0.0.0.0 やループバック (127.x.x.x) を指定 → natmgrd が silent drop
-- `nat_ip` 範囲で low >= high を指定 (例: `10.0.0.10-10.0.0.1`) → natmgrd が silent drop
-- `nat_port` で 0 を指定 → natmgrd が silent drop (YANG は 0 を許容するが実装で拒否)
+- `nat_ip` に 0.0.0.0 やループバック (127.x.x.x) を指定 → [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) が silent drop
+- `nat_ip` 範囲で low >= high を指定 (例: `10.0.0.10-10.0.0.1`) → [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) が silent drop
+- `nat_port` で 0 を指定 → [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) が silent drop (YANG は 0 を許容するが実装で拒否)
 - `nat_ip` が既存 `STATIC_NAT` エントリの global_ip と重複 → natmgrd が silent drop
 
 ### 確認コマンド
@@ -171,7 +171,7 @@ show nat translations
 
 - **pool 名が 32 文字超 → silent drop**: `"Invalid pool name length - %zu, skipping %s"` をログしてエントリを消費 (`natmgr.cpp:6563-6568`)。
 - **重複エントリ (同じ key / value) → silent drop**: `"Duplicate Pool and it's values, skipping %s"` をログして消費 (`natmgr.cpp:6786-6789`)。
-- **pool 更新時の binding 自動再適用**: pool の `nat_ip` / `nat_port` を変更した場合、binding に紐づく iptables ルールが一旦削除され新しい pool 情報で再生成される。この間 dynamic NAT セッションが確立できない空白期間が生じる可能性がある。
+- **pool 更新時の binding 自動再適用**: pool の `nat_ip` / `nat_port` を変更した場合、binding に紐づく iptables ルールが一旦削除され新しい pool 情報で再生成される。この間 dynamic [NAT](../../reference/glossary.md#term-nat) セッションが確立できない空白期間が生じる可能性がある。
 - **DEL 時の CONFIG_DB binding 残留**: pool を削除すると binding に紐づく iptables / APPL_DB エントリは自動削除されるが、CONFIG_DB の `NAT_BINDINGS` エントリは残存する (dangling binding)。次に同名 pool が追加されると自動的に再接続される。
 
 <!-- /cdb-exceptions -->
@@ -186,7 +186,7 @@ show nat translations
 | `nat_ip` | 単一 IP (例: `10.0.0.1`) | 1-address pool として処理。`ipv4_addr_high = ntohl(ipv4_addr_low)` |
 | `nat_ip` | IP 範囲 (例: `10.0.0.1-10.0.0.10`) | low から high までの全アドレスが pool に含まれる |
 | `nat_port` | 省略 または `"NULL"` | `port_range = ""` → iptables に port 制限なし (full-cone MASQUERADE) |
-| `nat_port` | 範囲 (例: `1024-65535`) | 指定範囲のみに dynamic NAT を許可 |
+| `nat_port` | 範囲 (例: `1024-65535`) | 指定範囲のみに dynamic [NAT](../../reference/glossary.md#term-nat) を許可 |
 | `nat_port` | 単一ポート (例: `8080`) | low のみ検証して受理。iptables では単一ポート指定として扱われる |
 | pool エントリ数 | 17件目以上 | YANG `max-elements 16` でバリデーション拒否 |
 
@@ -320,7 +320,7 @@ DEL NAT_POOL|<name>        # pool を後に削除
 | natmgr → NAT_BINDINGS | `doNatPoolTask()` — `isPoolMappedtoBinding()` | `NAT_BINDINGS` (CONFIG_DB) | `NAT_BINDINGS\|<name>` | pool 追加・更新時に参照している binding を自動検出して `addDynamicNatRule()` を再呼び出し。binding 側から見た pool の後続再評価トリガ | `natmgr.cpp:6815-6822`, `natmgr.cpp:182-200` |
 | NAT_BINDINGS → NAT_POOL | YANG leafref (`nat_pool` フィールド) | `NAT_POOL` (CONFIG_DB) | `NAT_POOL\|<name>` | YANG バリデーション参照整合性。`nat_pool` に指定した名前が `NAT_POOL` に存在しなければ YANG レベルで拒否される | `sonic-nat.yang:271` |
 | natmgr → STATIC_NAT | `doNatPoolTask()` — `m_staticNatEntry` 走査 | `STATIC_NAT` (CONFIG_DB) | `STATIC_NAT\|<ip>` | pool の `nat_ip` 範囲が `STATIC_NAT` の global IP と重複する場合は silent drop (`isOverlap` チェック) | `natmgr.cpp:6748-6775` |
-| natmgr → APP_NAT_DNAT_POOL_TABLE | `setDnatPoolfromNatPool()` | `NAT_DNAT_POOL_TABLE` (APPL_DB) | `NAT_DNAT_POOL_TABLE\|<ip>` | pool の各 IP を APPL_DB に書き込み NatOrch に伝達。NatOrch が SAI `SAI_NAT_TYPE_DESTINATION_NAT_POOL` エントリを作成 | `natmgr.cpp:2276-2277`, `natorch.cpp:2968-3031` |
+| natmgr → APP_NAT_DNAT_POOL_TABLE | `setDnatPoolfromNatPool()` | `NAT_DNAT_POOL_TABLE` (APPL_DB) | `NAT_DNAT_POOL_TABLE\|<ip>` | pool の各 IP を APPL_DB に書き込み NatOrch に伝達。NatOrch が [SAI](../../reference/glossary.md#term-sai) `SAI_NAT_TYPE_DESTINATION_NAT_POOL` エントリを作成 | `natmgr.cpp:2276-2277`, `natorch.cpp:2968-3031` |
 
 ### 解決タイミング
 
@@ -369,12 +369,12 @@ DEL NAT_POOL|<name>        # pool を後に削除
 ### ログ・ERROR_TABLE
 
 - すべてのエラーは `SWSS_LOG_ERROR` で syslog (`/var/log/swss/natmgr.log`) に出力される。
-- STATE_DB / `ERROR_TABLE` への書き込みは**行われない**。NAT_POOL の処理失敗は syslog のみで確認可能。
+- [STATE_DB](../../reference/glossary.md#term-state_db) / `ERROR_TABLE` への書き込みは**行われない**。NAT_POOL の処理失敗は syslog のみで確認可能。
 - `sonic-db-cli CONFIG_DB hgetall 'NAT_POOL|<name>'` でエントリ残存の確認は可能だが、natmgrd キャッシュ (`m_natPoolInfo`) の状態は外部から確認するコマンドがない。
 
 ### retry 挙動
 
-`doNatPoolTask()` は失敗時に**一切保留しない**。iptables / APPL_DB / SAI 設定スキップ（NAT 無効・インタフェース未準備）の場合のみ erase せず次のイベントで自然に再処理されるが、バリデーション失敗は全件 erase 破棄となる。再適用するには `config nat add pool` でエントリを再投入する必要がある。
+`doNatPoolTask()` は失敗時に**一切保留しない**。iptables / APPL_DB / [SAI](../../reference/glossary.md#term-sai) 設定スキップ（NAT 無効・インタフェース未準備）の場合のみ erase せず次のイベントで自然に再処理されるが、バリデーション失敗は全件 erase 破棄となる。再適用するには `config nat add pool` でエントリを再投入する必要がある。
 
 > **証跡**: `NatMgr::doNatPoolTask()` L6482–6866 (`sonic-swss/cfgmgr/natmgr.cpp`).
 <!-- /failure -->
@@ -439,7 +439,7 @@ NatOrch 初期化時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を照会して `
 
 `NAT_POOL` エントリが処理されると、`natmgrd` → `orchagent / NatOrch` の経路で以下の副次書込が発生する。ソース: `sonic-swss/cfgmgr/natmgr.cpp`[^F1]、`sonic-swss/orchagent/natorch.cpp`[^F2]。
 
-**書込が発生する前提条件**: `isNatEnabled()` が true、かつ pool に紐づく `NAT_BINDINGS` エントリが存在し、L3 インタフェース readiness を満たしている場合のみ。いずれかを満たさない場合、以下の APPL_DB / ASIC_DB 書込はすべてスキップされる。
+**書込が発生する前提条件**: `isNatEnabled()` が true、かつ pool に紐づく `NAT_BINDINGS` エントリが存在し、L3 インタフェース readiness を満たしている場合のみ。いずれかを満たさない場合、以下の APPL_DB / [ASIC_DB](../../reference/glossary.md#term-asic_db) 書込はすべてスキップされる。
 
 ### APPL_DB — NAT_DNAT_POOL_TABLE
 
@@ -473,11 +473,11 @@ ref-count は内部マップ `m_natDnatPoolInfo[destIp]` で管理される。�
 
 NatOrch の初期化時に SAI `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を照会し、取得値を `COUNTERS_GLOBAL_NAT|Values` の `MAX_NAT_ENTRIES` フィールドとして一度だけ書込む (`natorch.cpp:127`, `natorch.cpp:135`)。
 
-NAT pool エントリ追加・削除に直接連動した COUNTERS_DB 更新はない。DNAT エントリ数カウンタ (`DNAT_ENTRIES`) は `addHwDnatPoolEntry()` では更新されず、pool 経由で確立した SNAT/DNAT セッション数カウンタは NatOrch のヒットビットタイマー (5 秒周期) で更新される。
+NAT pool エントリ追加・削除に直接連動した [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 更新はない。DNAT エントリ数カウンタ (`DNAT_ENTRIES`) は `addHwDnatPoolEntry()` では更新されず、pool 経由で確立した SNAT/DNAT セッション数カウンタは NatOrch のヒットビットタイマー (5 秒周期) で更新される。
 
 ### STATE_DB — 書込なし
 
-`NatMgr` および `NatOrch` は STATE_DB への書込を行わない。`STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_INTERFACE_TABLE` は L3 インタフェース readiness ガード用の**読み取り専用**アクセスのみ。
+`NatMgr` および `NatOrch` は [STATE_DB](../../reference/glossary.md#term-state_db) への書込を行わない。`STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_INTERFACE_TABLE` は L3 インタフェース readiness ガード用の**読み取り専用**アクセスのみ。
 
 [^F1]: natmgr APPL_DB 書込実装: `sonic-swss/cfgmgr/natmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/natmgr.cpp>
 [^F2]: NatOrch ASIC 書込実装: `sonic-swss/orchagent/natorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/natorch.cpp>
@@ -494,7 +494,7 @@ NAT pool エントリ追加・削除に直接連動した COUNTERS_DB 更新は�
 
 ### 層 1: natmgrd — CONFIG_DB → APPL_DB
 
-`natmgrd` は `NatMgr` を通じて CONFIG_DB の `NAT_POOL` テーブルを **`SubscriberStateTable`** (Redis keyspace PSUBSCRIBE) で購読する (`natmgrd.cpp:112`)。
+`natmgrd` は `NatMgr` を通じて CONFIG_DB の `NAT_POOL` テーブルを **`SubscriberStateTable`** ([Redis](../../reference/glossary.md#term-redis) keyspace PSUBSCRIBE) で購読する (`natmgrd.cpp:112`)。
 
 ```
 PSUBSCRIBE __keyspace@4__:NAT_POOL|*
@@ -518,18 +518,18 @@ natmgrd が `ProducerStateTable::set("NAT_DNAT_POOL_TABLE", ...)` を呼ぶと `
 
 | チャンネル名 | DB | 方向 | 用途 |
 |---|---|---|---|
-| `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | natmgrd → NatOrch | natmgrd 終了時に `NAT_DNAT_POOL_TABLE` を含む全 NAT エントリの Redis/ASIC クリーンアップを依頼 (`natmgrd.cpp:86`) |
+| `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | natmgrd → NatOrch | natmgrd 終了時に `NAT_DNAT_POOL_TABLE` を含む全 NAT エントリの [Redis](../../reference/glossary.md#term-redis)/ASIC クリーンアップを依頼 (`natmgrd.cpp:86`) |
 | `FLUSHNATENTRIES` | APPL_DB | CLI → natmgrd | `show nat translate flush` による conntrack 全フラッシュ。pool 経由の dynamic session も削除される (`natmgrd.cpp:152`) |
 
 ### 経路サマリ
 
 | ステップ | 実装 | ソース |
 |---------|------|--------|
-| CLI → CONFIG_DB | `config nat add pool` が `CONFIG_DB HSET NAT_POOL|<name>` を発行 | sonic-utilities/config/nat.py |
+| CLI → CONFIG_DB | `config nat add pool` が `CONFIG_DB HSET NAT_POOL|<name>` を発行 | [sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/nat.py |
 | CONFIG_DB → natmgrd | `SubscriberStateTable` PSUBSCRIBE `__keyspace@4__:NAT_POOL|*` | subscriberstatetable.cpp |
 | natmgrd ディスパッチ | `doNatPoolTask(consumer)` | natmgr.cpp:8163 |
 | natmgrd → APPL_DB | `ProducerStateTable::set("NAT_DNAT_POOL_TABLE", destIp, ...)` (ref-count 付き) | natmgr.cpp:1520 |
-| APPL_DB → NatOrch | `ConsumerStateTable("NAT_DNAT_POOL_TABLE")` + orchagent 統合ループ | orchdaemon.cpp:457 |
+| APPL_DB → NatOrch | `ConsumerStateTable("NAT_DNAT_POOL_TABLE")` + [orchagent](../../reference/glossary.md#term-orchagent) 統合ループ | orchdaemon.cpp:457 |
 | NatOrch → SAI | `sai_nat_api->create_nat_entry(SAI_NAT_TYPE_DESTINATION_NAT_POOL)` | natorch.cpp:1805 |
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/nat-pool-pubsub.md`
@@ -607,3 +607,5 @@ status = sai_nat_api->create_nat_entry(&dnat_pool_entry, attr_count, nat_entry_a
 - [Topics: NAT / DHCP Relay / Time-DNS Services](../../topics/16-nat-dhcp-dns/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 9a77ce320a89 -->

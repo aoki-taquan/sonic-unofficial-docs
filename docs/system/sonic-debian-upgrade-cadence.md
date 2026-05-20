@@ -146,7 +146,7 @@ __fortify_panic: dx010_cpld ...
 
 **回避策**: community の PR（DontBreakAlex 作）で VLA サイズを +1 することで修正済み。コンパイル済みイメージ待ちの場合は 202405 を継続使用する。
 
-**参照**: sonic-net/sonic-buildimage#26885（Bug, Triaged, Critical severity）
+**参照**: sonic-net/[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)#26885（Bug, Triaged, Critical severity）
 
 ---
 
@@ -216,4 +216,4 @@ show version
 - 廃止された Debian バージョンと release ノート整合確認
 -->
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: 75921d013977 -->

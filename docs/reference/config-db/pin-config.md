@@ -30,7 +30,7 @@ related:
 `p4rt` コンテナ（`docker-sonic-p4rt`）が起動時に [CONFIG_DB](../../reference/glossary.md#term-config_db) を一回読み込み、
 gRPC ポート・TLS 証明書・認可ポリシー・genetlink 設定などを `p4rt` バイナリの起動引数に変換する。
 
-専用 YANG モデルは存在しない。スキーマ強制は `p4rt.sh` 内の `jq` 参照のみで実装される。
+専用 [YANG](../../reference/glossary.md#term-yang) モデルは存在しない。スキーマ強制は `p4rt.sh` 内の `jq` 参照のみで実装される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -67,7 +67,7 @@ P4RT|p4rt_app    # P4Runtime gRPC アプリ設定
 | フィールド | 型 | 説明 |
 |-----------|----|------|
 | `port` | string (数字) | P4Runtime gRPC 待受 TCP ポート |
-| `use_genetlink` | boolean string | Linux Generic Netlink (genetlink) 経由のパケット I/O を使用するか |
+| `use_genetlink` | boolean string | Linux Generic [Netlink](../../reference/glossary.md#term-netlink) (genetlink) 経由のパケット I/O を使用するか |
 | `use_port_ids` | boolean string | ポート識別に SONiC port ID を使用するか（デフォルト: ifindex） |
 | `save_forwarding_config_file` | string (パス) | P4Runtime forwarding config を保存するファイルパス |
 | `authz_policy` | string (パス) | 認可ポリシー JSON ファイルパス |
@@ -80,14 +80,14 @@ P4RT|p4rt_app    # P4Runtime gRPC アプリ設定
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `DEVICE_METADATA` (`x509` サブキー — TLS fallback)
-- YANG モデル: なし（P4RT 専用 YANG 未定義）
+- [YANG](../../reference/glossary.md#term-yang) モデル: なし（P4RT 専用 [YANG](../../reference/glossary.md#term-yang) 未定義）
 - 関連 CLI: なし（config load / 手動 DB 書き込み）
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- HLD: [PINS（P4 Integrated Network Stack）](../../management/pins-hld.md)
+- [HLD](../../reference/glossary.md#term-hld): [PINS（P4 Integrated Network Stack）](../../management/pins-hld.md)
 
 <!-- ref-triangle:end -->
 
@@ -165,7 +165,7 @@ systemctl status p4rt
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-- **起動時のみ参照**: `p4rt` コンテナは起動時に一回だけ CONFIG_DB を読み込む。設定変更は `systemctl restart p4rt` まで反映されない。
+- **起動時のみ参照**: `p4rt` コンテナは起動時に一回だけ [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み込む。設定変更は `systemctl restart p4rt` まで反映されない。
 - **YANG モデルなし**: スキーマ検証がない。不明フィールドは `jq` が `// empty` として無視し、対応するバイナリ引数が渡されない。
 - **`server_crt` / `server_key` 片方のみ**: 両方揃わないと `--use_insecure_server_credentials` にフォールバックする（証明書エラーではなく insecure 起動）。
 - **`authz_policy` 未設定**: 認可ポリシーなし（全 P4RT クライアントが管理者相当で接続可能）。
@@ -183,12 +183,12 @@ systemctl status p4rt
 ### 段階 2: CFG → バイナリ引数変換
 
 - `p4rt.sh` が各フィールドを `jq -r '.field // empty'` で取得し、非空の場合のみ `p4rt` バイナリの引数に追加。
-- APP_DB / STATE_DB への書き込みなし。
+- APP_DB / [STATE_DB](../../reference/glossary.md#term-state_db) への書き込みなし。
 
 ### 段階 3: p4rt バイナリ起動
 
 - `exec /usr/local/bin/p4rt ${P4RT_ARGS}` で P4Runtime gRPC サーバが起動。
-- SAI 経由で ASIC の P4 パイプラインを制御。
+- [SAI](../../reference/glossary.md#term-sai) 経由で ASIC の P4 パイプラインを制御。
 
 ### 段階 4: タイミング + 副作用
 
@@ -210,7 +210,7 @@ systemctl status p4rt
 
 ### REST / gNMI
 
-- なし（YANG モデル未定義のため REST/gNMI トランスフォーマーなし）
+- なし（YANG モデル未定義のため REST/[gNMI](../../reference/glossary.md#term-gnmi) トランスフォーマーなし）
 
 ### db_migrator
 
@@ -269,14 +269,14 @@ P4RT テーブルには専用 YANG モデルが存在しない。全デフォル
 
 ### P4RT|p4rt_app
 
-| フィールド | HLD 記述値 | 未設定時の動作 | 設定元 |
+| フィールド | [HLD](../../reference/glossary.md#term-hld) 記述値 | 未設定時の動作 | 設定元 |
 |-----------|-----------|--------------|--------|
 | `port` | `"9559"` | `--p4rt_grpc_port` 引数なし → バイナリ内デフォルト `9559` | `p4rt.sh` L66-69; `p4rt_app_hld.md` L184 |
 | `use_genetlink` | `"false"` | `--use_genetlink` 引数なし → バイナリ内デフォルト `false` | `p4rt.sh` L72-75; `p4rt_app_hld.md` L185 |
 | `use_port_ids` | `"false"` | `--use_port_ids` 引数なし → バイナリ内デフォルト `false` | `p4rt.sh` L78-81; `p4rt_app_hld.md` L186 |
 | `save_forwarding_config_file` | `/etc/sonic/p4rt_forwarding_config.pb.txt` | 引数なし → 転送設定ファイルへの保存なし | `p4rt.sh` L84-87 |
 | `authz_policy` | `/keys/authorization_policy.json` | 引数なし → 認可ポリシー無効（全クライアントフルアクセス） | `p4rt.sh` L60-63 |
-| `p4rt_unix_socket` | (HLD 未記載) | 引数なし → UNIX socket リスナーなし | `p4rt.sh` L90-97 |
+| `p4rt_unix_socket` | ([HLD](../../reference/glossary.md#term-hld) 未記載) | 引数なし → UNIX socket リスナーなし | `p4rt.sh` L90-97 |
 
 ### P4RT|certs
 
@@ -357,7 +357,7 @@ P4RT テーブルには専用 YANG モデルが存在しないため leafref は
 
 ソース: `sonic-net/sonic-buildimage/dockers/docker-sonic-p4rt/p4rt.sh` (コミット `9ea932ec`)
 
-`p4rt` テーブルは orchagent ではなく `p4rt.sh` スクリプトが起動時単回読込みするため、失敗は「サイレントフォールバック」または「起動中断」の二択になる。
+`p4rt` テーブルは [orchagent](../../reference/glossary.md#term-orchagent) ではなく `p4rt.sh` スクリプトが起動時単回読込みするため、失敗は「サイレントフォールバック」または「起動中断」の二択になる。
 
 <!-- evidence: meta/_intermediate/cdb-flow/pin-config-failure.md -->
 
@@ -418,10 +418,10 @@ CONFIG_DB `P4RT` テーブルを読み込む `p4rt.sh` は DB への書き戻し
 
 | 副次 DB | 書込有無 | 根拠 |
 |---------|---------|------|
-| APPL_DB | なし | `p4rt.sh` に `sonic-db-cli` / `ProducerStateTable` 等の DB 書込コードなし |
-| STATE_DB | なし | 同上 |
-| COUNTERS_DB | なし | 同上 |
-| ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB | なし | SAI 非経由（Linux コンテナ起動スクリプト） |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `p4rt.sh` に `sonic-db-cli` / `ProducerStateTable` 等の DB 書込コードなし |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | 同上 |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | 同上 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由（Linux コンテナ起動スクリプト） |
 
 ### ファイルシステムへの副次書き換え（DB 外）
 
@@ -432,7 +432,7 @@ CONFIG_DB `P4RT` テーブルを読み込む `p4rt.sh` は DB への書き戻し
 
 ### p4rt バイナリが管理する APPL_DB 書込（間接）
 
-`p4rt` バイナリ自体は gRPC 経由で受信した P4Runtime リクエストを APPL_DB `P4RT_*` テーブルへ書き込む。ただしこれは CONFIG_DB `P4RT` テーブルの読込に伴う直接の副次書込ではなく、外部コントローラからの gRPC リクエストドリブンの書込であるため、`p4rt.sh` の副次 DB 書込とは区別する。
+`p4rt` バイナリ自体は gRPC 経由で受信した P4Runtime リクエストを [APPL_DB](../../reference/glossary.md#term-appl_db) `P4RT_*` テーブルへ書き込む。ただしこれは CONFIG_DB `P4RT` テーブルの読込に伴う直接の副次書込ではなく、外部コントローラからの gRPC リクエストドリブンの書込であるため、`p4rt.sh` の副次 DB 書込とは区別する。
 
 <!-- /side-effects -->
 
@@ -443,7 +443,7 @@ CONFIG_DB `P4RT` テーブルを読み込む `p4rt.sh` は DB への書き戻し
 
 <!-- evidence: meta/_intermediate/cdb-flow/pin-config-pubsub.md -->
 
-`P4RT` テーブルは **SubscriberStateTable・ConsumerStateTable・ProducerStateTable のいずれも使用しない**。
+`P4RT` テーブルは **SubscriberStateTable・[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)・[ProducerStateTable](../../reference/glossary.md#term-producerstatetable) のいずれも使用しない**。
 `p4rt.sh` がコンテナ起動時に `sonic-cfggen -d -t p4rt_vars.j2` を**一回だけ**呼び出して CONFIG_DB をスナップショット取得し、
 各フィールドを `p4rt` バイナリの起動引数に変換する。CONFIG_DB の変更イベントを watch する仕組みは存在しない。
 
@@ -464,9 +464,9 @@ p4rt.sh
 | 区間 | 方式 | 備考 |
 |------|------|------|
 | CONFIG_DB → p4rt.sh | `sonic-cfggen -d` 一括読み込み（シングルショット） | イベント駆動なし |
-| p4rt バイナリ → APPL_DB `P4RT_*` | gRPC リクエスト起点の直接書き込み | CONFIG_DB `P4RT` テーブルとは独立 |
+| p4rt バイナリ → [APPL_DB](../../reference/glossary.md#term-appl_db) `P4RT_*` | gRPC リクエスト起点の直接書き込み | CONFIG_DB `P4RT` テーブルとは独立 |
 
-**SubscriberStateTable / ConsumerStateTable / ProducerStateTable の使用: なし**
+**SubscriberStateTable / [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) / [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) の使用: なし**
 
 ### 変更反映タイミング
 
@@ -492,8 +492,8 @@ CONFIG_DB `P4RT` テーブルへの変更は `p4rt` コンテナ稼働中には�
 |---------|------|----------|
 | `hwsku` / `type` / `platform` (DEVICE_METADATA) の参照 | `p4rt.sh` は `DEVICE_METADATA["x509"]` のみ参照（TLS fallback 用）。`hwsku` / `type` / `platform` フィールドはゼロ参照 | `p4rt_vars.j2:L4`; `p4rt.sh:L38–56` |
 | multi-asic 構成 | `SONIC_ASIC_ID` / `SONIC_ASIC_COUNT` 等の multi-asic 環境変数を `p4rt.sh` は参照しない。`docker-sonic-p4rt` は host namespace で 1 コンテナのみ起動 | `p4rt.sh:L1–99`; `supervisord.conf:[program:p4rt]` |
-| SAI / ASIC capability | 経路なし。CONFIG_DB `P4RT` テーブルの読み込みとバイナリ起動引数変換は host Linux プロセス管理レイヤで完結。SAI は P4 orch が APPL_DB 経由で間接利用するが、CONFIG_DB `P4RT` 読込処理とは独立 | `p4rt.sh:L99` (`exec /usr/local/bin/p4rt`) |
-| VOQ chassis / line card 分散 | PINS は現行 HLD で単一 ASIC 向けを想定。`p4rt.sh` は単一コンテナ単一バイナリ起動のみ実装。chassis 集中適用機構なし | `p4rt_app_hld.md`; `supervisord.conf` |
+| [SAI](../../reference/glossary.md#term-sai) / ASIC capability | 経路なし。CONFIG_DB `P4RT` テーブルの読み込みとバイナリ起動引数変換は host Linux プロセス管理レイヤで完結。SAI は P4 orch が APPL_DB 経由で間接利用するが、CONFIG_DB `P4RT` 読込処理とは独立 | `p4rt.sh:L99` (`exec /usr/local/bin/p4rt`) |
+| [VOQ](../../reference/glossary.md#term-voq) chassis / line card 分散 | [PINS](../../reference/glossary.md#term-pins) は現行 HLD で単一 ASIC 向けを想定。`p4rt.sh` は単一コンテナ単一バイナリ起動のみ実装。chassis 集中適用機構なし | `p4rt_app_hld.md`; `supervisord.conf` |
 | ベンダー固有分岐 | `p4rt.sh` に `broadcom` / `mellanox` / `nvidia` 等のベンダー識別コードなし | `p4rt.sh:L1–99` 全行精読 |
 
 !!! note "プラットフォーム差なしの根拠"
@@ -503,3 +503,5 @@ CONFIG_DB `P4RT` テーブルへの変更は `p4rt` コンテナ稼働中には�
 <!-- /platform -->
 
 <!-- glossary-links-injected -->
+
+<!-- glossary-links-injected: 28ea8d60e421 -->

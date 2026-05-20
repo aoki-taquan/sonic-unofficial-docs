@@ -168,13 +168,13 @@ show ip interfaces
 |----|------|
 | `drop` | `SAI_PACKET_ACTION_DROP`：ingress → 同 IF 宛パケットを破棄 |
 | `forward` | `SAI_PACKET_ACTION_FORWARD`：通常転送 |
-| 未設定 | SAI プラットフォームデフォルト動作 |
+| 未設定 | [SAI](../../reference/glossary.md#term-sai) プラットフォームデフォルト動作 |
 
 ### `scope`（IP プレフィクスロウ）
 
 | 値 | 挙動 |
 |----|------|
-| `global` | グローバルスコープアドレス（intfmgrd が APP_DB に `scope=global` を書く） |
+| `global` | グローバルスコープアドレス（[intfmgrd](../../reference/glossary.md#term-intfmgrd) が APP_DB に `scope=global` を書く） |
 | `local` | ローカルスコープアドレス |
 
 <!-- /value-behavior -->
@@ -208,14 +208,14 @@ show ip interfaces
 | 箇所 | 条件 | 挙動 |
 |------|------|------|
 | `intfmgr.cpp:833-836` | `isIntfStateOk(alias)` が false（STATE_PORT_TABLE に `state=ok` 未登録） | `SWSS_LOG_DEBUG("Interface is not ready, skipping %s")` → `return false`、`m_toSync` 残留・1000 ms 後に再試行 |
-| `intfsorch.cpp:905-924` | `gPortsOrch->getPort(alias, port)` が false（PortsOrch 未登録） | `it++; continue` → `m_toSync` 残留・再試行。PORT が PortsOrch に登録されるまで SAI 処理不可 |
+| `intfsorch.cpp:905-924` | `gPortsOrch->getPort(alias, port)` が false（PortsOrch 未登録） | `it++; continue` → `m_toSync` 残留・再試行。PORT が PortsOrch に登録されるまで [SAI](../../reference/glossary.md#term-sai) 処理不可 |
 
 ### VRF 未解決 → retry または即座スキップ
 
 | 箇所 | 条件 | 挙動 |
 |------|------|------|
 | `intfmgr.cpp:839-842` | `vrf_name` 指定時に `isIntfStateOk(vrf_name)` が false | `SWSS_LOG_DEBUG("VRF is not ready, skipping %s")` → `return false`、retry |
-| `intfsorch.cpp:826-829` | `m_vrfOrch->isVRFexists(vrf_name)` が false（orchagent 内 VRF 未生成） | `it++; continue` → retry |
+| `intfsorch.cpp:826-829` | `m_vrfOrch->isVRFexists(vrf_name)` が false（[orchagent](../../reference/glossary.md#term-orchagent) 内 VRF 未生成） | `it++; continue` → retry |
 | `intfmgr.cpp:846-849` | 既存 VRF バインド済みのまま別 VRF を指定（`isIntfChangeVrf()` が true） | `SWSS_LOG_ERROR("%s can not change to %s directly, skipping")` → エントリ消去（設定スキップ）。unbind → rebind の 2 ステップが必要 |
 | `intfsorch.cpp:860` | Loopback 系で VRF 変更時に IP アドレスが残存 | `SWSS_LOG_ERROR("Failed to set interface '%s' to VRF ID '%d' because it has IP addresses associated with it.")` → VRF 変更スキップ |
 
@@ -223,7 +223,7 @@ show ip interfaces
 
 | 箇所 | 条件 | 挙動 |
 |------|------|------|
-| `intfmgr.cpp:1132` | IPv4 link-local（169.254.x.x）を IP プレフィクスとして設定 | APP_DB への書き込みをスキップ（ログなし）→ orchagent / SAI に届かない（silent drop） |
+| `intfmgr.cpp:1132` | IPv4 link-local（169.254.x.x）を IP プレフィクスとして設定 | APP_DB への書き込みをスキップ（ログなし）→ [orchagent](../../reference/glossary.md#term-orchagent) / SAI に届かない（silent drop） |
 | `intfsorch.cpp:571-580` | 同 VRF 内の既存プレフィクスとサブネットオーバーラップ | `SWSS_LOG_NOTICE("Router interface %s IP %s overlaps with %s.")` → `setIntf` が `return false`、重複エントリ削除まで retry |
 | `intfsorch.cpp:740` | `mac_addr` フィールドの MAC アドレスパース失敗 | `SWSS_LOG_ERROR("Invalid mac argument %s to %s()")` → `continue`（エントリ消去、設定スキップ） |
 | `intfsorch.cpp:756` | `nat_zone` フィールドに数値以外または範囲外の値 | `SWSS_LOG_ERROR("Invalid argument %s for nat zone")` → `continue`（エントリ消去、nat_zone 設定スキップ） |
@@ -242,7 +242,7 @@ show ip interfaces
 
 - `intfmgrd` の main ループはタイムアウト 1000 ms で `Select::select()` を呼ぶ
 - `doIntfGeneralTask` / `doIntfAddrTask` が `false` を返した場合、エントリは `m_toSync` に残留
-- PORT / VRF が STATE_DB に `state=ok` を書いた瞬間、`doPortTableTask` がキューを再処理
+- PORT / VRF が [STATE_DB](../../reference/glossary.md#term-state_db) に `state=ok` を書いた瞬間、`doPortTableTask` がキューを再処理
 
 <!-- /failure -->
 
@@ -251,7 +251,7 @@ show ip interfaces
 
 ### 段階 1 — Consumer 登録
 
-`intfmgrd` → `IntfsOrch` (APPL_DB 経由) が CONFIG_DB の `INTERFACE` テーブルを購読する。
+`intfmgrd` → `IntfsOrch` ([APPL_DB](../../reference/glossary.md#term-appl_db) 経由) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `INTERFACE` テーブルを購読する。
 
 `INTERFACE` の key は `<intf_name>|<ip_prefix>` または `<intf_name>` (intf 属性のみ)。physical port の L3 設定。
 
@@ -265,9 +265,9 @@ show ip interfaces
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB 変化を `intfmgrd` が検知後 `APP_INTF_TABLE` に書き込み。`IntfsOrch` が APPL_DB を購読して SAI router interface を作成/更新。IP address 追加は即時反映。
+**適用タイミング**: [CONFIG_DB](../../reference/glossary.md#term-config_db) 変化を `intfmgrd` が検知後 `APP_INTF_TABLE` に書き込み。`IntfsOrch` が [APPL_DB](../../reference/glossary.md#term-appl_db) を購読して SAI router interface を作成/更新。IP address 追加は即時反映。
 
-**副作用**: IP address 追加は ARP/NDP 送信を開始。IP address 削除は関連する ARP エントリと neighbor を削除。MTU 変更は PMTUD に影響。
+**副作用**: IP address 追加は [ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) 送信を開始。IP address 削除は関連する [ARP](../../reference/glossary.md#term-arp) エントリと neighbor を削除。MTU 変更は PMTUD に影響。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -284,7 +284,7 @@ show ip interfaces
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- sonic-mgmt-common OpenConfig interfaces 経由 (xfmr_intf.go)
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common OpenConfig interfaces 経由 (xfmr_intf.go)
 
 ### db_migrator
 - なし
@@ -304,7 +304,7 @@ show ip interfaces
 
 ### Producer/Consumer ペア
 
-CONFIG_DB から SAI までの全通信は Redis の **keyspace notification** と **ProducerStateTable/ConsumerStateTable** パターンで構成される。
+CONFIG_DB から SAI までの全通信は [Redis](../../reference/glossary.md#term-redis) の **keyspace notification** と **[ProducerStateTable](../../reference/glossary.md#term-producerstatetable)/[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** パターンで構成される。
 
 #### CONFIG_DB → intfmgrd
 
@@ -313,13 +313,13 @@ CONFIG_DB から SAI までの全通信は Redis の **keyspace notification** �
 | テーブル | 用途 |
 |---------|------|
 | `INTERFACE` | 物理 L3 IF 属性・IP プレフィクス |
-| `VLAN_INTERFACE` | VLAN L3 IF |
-| `LAG_INTERFACE` | PortChannel L3 IF |
+| `VLAN_INTERFACE` | [VLAN](../../reference/glossary.md#term-vlan) L3 IF |
+| `LAG_INTERFACE` | [PortChannel](../../reference/glossary.md#term-portchannel) L3 IF |
 | `LOOPBACK_INTERFACE` | Loopback IF |
 | `VLAN_SUB_INTERFACE` | サブインタフェース |
-| `VOQ_INBAND_INTERFACE` | VOQ inband IF |
+| `VOQ_INBAND_INTERFACE` | [VOQ](../../reference/glossary.md#term-voq) inband IF |
 
-`SubscriberStateTable` は Redis の **keyspace notification** を用いる。
+`SubscriberStateTable` は [Redis](../../reference/glossary.md#term-redis) の **keyspace notification** を用いる。
 
 ```
 PSUBSCRIBE __keyspace@{db_id}__:INTERFACE|*
@@ -327,7 +327,7 @@ PSUBSCRIBE __keyspace@{db_id}__:INTERFACE|*
 
 イベント (`hset` / `hdel` / `del`) 受信 → `readData()` がバッファに蓄積 → `pops()` でキーを取り出し `TABLE.get(key)` で現在値取得 → `Consumer::doTask()` 呼び出し。
 
-また、PORT / LAG の状態変化を検知するために STATE_DB の `STATE_PORT_TABLE` と `STATE_LAG_TABLE` も別途 `SubscriberStateTable` で購読する（親ポートの admin_status・MTU 変化をサブインタフェースに伝播）。
+また、PORT / [LAG](../../reference/glossary.md#term-lag) の状態変化を検知するために [STATE_DB](../../reference/glossary.md#term-state_db) の `STATE_PORT_TABLE` と `STATE_LAG_TABLE` も別途 `SubscriberStateTable` で購読する（親ポートの admin_status・MTU 変化をサブインタフェースに伝播）。
 
 #### intfmgrd → APPL_DB
 
@@ -355,7 +355,7 @@ SUBSCRIBE APP_INTF_TABLE_CHANNEL@0
 
 ### STATE_DB への書き込み (hset / TTL)
 
-`intfmgrd` は以下のタイミングで STATE_DB (`STATE_INTERFACE_TABLE`) に書き込む。TTL は使用しない。
+`intfmgrd` は以下のタイミングで [STATE_DB](../../reference/glossary.md#term-state_db) (`STATE_INTERFACE_TABLE`) に書き込む。TTL は使用しない。
 
 | タイミング | 操作 |
 |-----------|------|
@@ -379,7 +379,7 @@ if (TIMEOUT) { intfmgr.doTask(); }   // 未処理タスクを全 consumer で再
 
 ### cross-namespace 通信 (VOQ / Chassis)
 
-VOQ システム (`isChassisDbInUse()` が真) では `CHASSIS_APP_DB` の `SYSTEM_INTERFACE_TABLE` も `SubscriberStateTable` で購読し、リモートシステムポートの IF 情報を受信する。通常の単体スイッチでは使用されない。
+[VOQ](../../reference/glossary.md#term-voq) システム (`isChassisDbInUse()` が真) では `CHASSIS_APP_DB` の `SYSTEM_INTERFACE_TABLE` も `SubscriberStateTable` で購読し、リモートシステムポートの IF 情報を受信する。通常の単体スイッチでは使用されない。
 
 ### 通信フロー全体図
 
@@ -421,10 +421,10 @@ STATE_DB[STATE_PORT_TABLE / STATE_LAG_TABLE]
 | フィールド | YANG default | 実装上の暗黙デフォルト / fallback | 備考 |
 |-----------|-------------|----------------------------------|------|
 | `nat_zone` | `"0"` | C++ 初期値 `0`、SAI default `0` — YANG と一致 | `gIsNatSupported==false` の場合 SAI 未設定 (プラットフォーム依存) |
-| `mpls` | なし | 省略時 → Linux `sysctl input=0`、SAI RIF 作成時に `ADMIN_MPLS_STATE` 属性を省略 (SAI default = disabled) | 不正値 → `SWSS_LOG_ERROR` + `return false`、エントリがキューに残り retry |
+| `mpls` | なし | 省略時 → Linux `sysctl input=0`、SAI [RIF](../../reference/glossary.md#term-rif) 作成時に `ADMIN_MPLS_STATE` 属性を省略 (SAI default = disabled) | 不正値 → `SWSS_LOG_ERROR` + `return false`、エントリがキューに残り retry |
 | `ipv6_use_link_local_only` | `disable` | 省略時は何もしない (APP_DB に書かない) | IF 削除時に `m_ipv6LinkLocalModeList` と link-local neigh を自動 reset。warm reboot 後は in-memory リストが空に戻るため再 replay なし |
 | `mac_addr` | なし | 省略時 → intfmgr が `"00:00:00:00:00:00"` を APP_DB に書き込み、orchagent が switch global MAC (`gMacAddress`) を SAI に設定 — **CONFIG_DB の空値と SAI 実際値が乖離** | silent substitution: APP_DB 上は `00:00:00:00:00:00`、SAI では switch MAC |
-| `loopback_action` | なし | 省略時 → SAI RIF 作成時に `LOOPBACK_PACKET_ACTION` 属性を省略 → SAI プラットフォームデフォルト動作 | 不正値 → `SWSS_LOG_WARN` + 設定スキップ (silent drop of setting) |
+| `loopback_action` | なし | 省略時 → SAI [RIF](../../reference/glossary.md#term-rif) 作成時に `LOOPBACK_PACKET_ACTION` 属性を省略 → SAI プラットフォームデフォルト動作 | 不正値 → `SWSS_LOG_WARN` + 設定スキップ (silent drop of setting) |
 | `vrf_name` / `vnet_name` | なし | 省略時 → グローバル VRF (`gVirtualRouterId`) | VRF 直接変更不可: `SWSS_LOG_ERROR` → 2 ステップ (unbind → rebind) 必須 |
 
 ### IP プレフィクスロウ
@@ -455,7 +455,7 @@ STATE_DB[STATE_PORT_TABLE / STATE_LAG_TABLE]
 ## 書込み順依存 (Phase B)
 
 > 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/orchagent/intfsorch.cpp`
-> 調査日: 2026-05-16 (VLAN/LAG 先行・kernel netlink 順序を追記)
+> 調査日: 2026-05-16 ([VLAN](../../reference/glossary.md#term-vlan)/[LAG](../../reference/glossary.md#term-lag) 先行・kernel netlink 順序を追記)
 
 ### 他テーブル先行必須
 
@@ -463,10 +463,10 @@ STATE_DB[STATE_PORT_TABLE / STATE_LAG_TABLE]
 
 | 先行テーブル / 条件 | 確認先 STATE_DB テーブル | 依存の内容 | コード根拠 |
 |-------------------|------------------------|-----------|-----------|
-| `PORT` + portmgrd が `state=ok` を書く | `STATE_PORT_TABLE` | `isIntfStateOk(alias)` が false → `INTERFACE` SET をスキップ・retry | `intfmgr.cpp:686-695` |
-| `PORTCHANNEL` (LAG) + lagmgrd が ready を書く | `STATE_LAG_TABLE` | `isIntfStateOk(alias)` が false → `LAG_INTERFACE` SET をスキップ | `intfmgr.cpp:661-667` |
-| `VLAN` + vlanmgrd が ready を書く | `STATE_VLAN_TABLE` | `isIntfStateOk(alias)` が false → `VLAN_INTERFACE` SET をスキップ | `intfmgr.cpp:653-660` |
-| `VRF` + vrfmgrd が ready を書く | `STATE_VRF_TABLE` | `isIntfStateOk(vrf_name)` が false → `vrf_name` 付き SET をスキップ | `intfmgr.cpp:839-842` |
+| `PORT` + [portmgrd](../../reference/glossary.md#term-portmgrd) が `state=ok` を書く | `STATE_PORT_TABLE` | `isIntfStateOk(alias)` が false → `INTERFACE` SET をスキップ・retry | `intfmgr.cpp:686-695` |
+| `PORTCHANNEL` ([LAG](../../reference/glossary.md#term-lag)) + lagmgrd が ready を書く | `STATE_LAG_TABLE` | `isIntfStateOk(alias)` が false → `LAG_INTERFACE` SET をスキップ | `intfmgr.cpp:661-667` |
+| `VLAN` + [vlanmgrd](../../reference/glossary.md#term-vlanmgrd) が ready を書く | `STATE_VLAN_TABLE` | `isIntfStateOk(alias)` が false → `VLAN_INTERFACE` SET をスキップ | `intfmgr.cpp:653-660` |
+| `VRF` + [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) が ready を書く | `STATE_VRF_TABLE` | `isIntfStateOk(vrf_name)` が false → `vrf_name` 付き SET をスキップ | `intfmgr.cpp:839-842` |
 | `INTERFACE|<port>` (L3 enable 行) が STATE_INTERFACE_TABLE に存在 | `STATE_INTERFACE_TABLE` | `isIntfCreated(alias)` が false → IP プレフィクスロウの SET をスキップ | `intfmgr.cpp:1115` |
 | orchagent 側: `VRF` オブジェクトが orchagent 内に存在 | — | `m_vrfOrch->isVRFexists(vrf_name)` が false → APP_DB 側の処理もスキップ | `intfsorch.cpp:826-830` |
 | orchagent 側: `gPortsOrch->allPortsReady()` | — | 全ポート ready 前は INTERFACE の SAI 処理全体をブロック | `intfsorch.cpp L665` |
@@ -515,11 +515,11 @@ STATE_DB[STATE_PORT_TABLE / STATE_LAG_TABLE]
 
 ### Notification 順序
 
-`intfmgrd` は起動時に `SubscriberStateTable` で `STATE_PORT_TABLE`（pri=100）・`STATE_LAG_TABLE`（pri=200）を購読する。portmgrd / lagmgrd が `state=ok` を STATE_DB に書いた瞬間、intfmgrd の `doPortTableTask` がトリガされ、キューに積まれていた `INTERFACE` / `LAG_INTERFACE` エントリが再処理される。VLAN IF は vlanmgrd → `STATE_VLAN_TABLE` の通知で同様に再処理される。このため、**CONFIG_DB に書いた時点ではなく STATE_DB 通知のタイミングで実際の適用が始まる**。
+`intfmgrd` は起動時に `SubscriberStateTable` で `STATE_PORT_TABLE`（pri=100）・`STATE_LAG_TABLE`（pri=200）を購読する。[portmgrd](../../reference/glossary.md#term-portmgrd) / lagmgrd が `state=ok` を STATE_DB に書いた瞬間、[intfmgrd](../../reference/glossary.md#term-intfmgrd) の `doPortTableTask` がトリガされ、キューに積まれていた `INTERFACE` / `LAG_INTERFACE` エントリが再処理される。VLAN IF は [vlanmgrd](../../reference/glossary.md#term-vlanmgrd) → `STATE_VLAN_TABLE` の通知で同様に再処理される。このため、**CONFIG_DB に書いた時点ではなく STATE_DB 通知のタイミングで実際の適用が始まる**。
 
 ### warm-reboot 影響
 
-- warm-start 時、intfmgrd は `buildIntfReplayList()` で CONFIG_DB の `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` キーを収集し、カーネルへ replay する。replay リストが空になると即 `RECONCILED` に遷移する（reconciliation ロジックなし）。
+- warm-start 時、[intfmgrd](../../reference/glossary.md#term-intfmgrd) は `buildIntfReplayList()` で CONFIG_DB の `INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` キーを収集し、カーネルへ replay する。replay リストが空になると即 `RECONCILED` に遷移する（reconciliation ロジックなし）。
 - `m_ipv6LinkLocalModeList` は in-memory の `std::set` であり、warm-reboot 後は空に戻る。CONFIG_DB の `ipv6_use_link_local_only: enable` エントリが replay されて再 SET されるまで link-local モードは失われる。
 - cold restart では `flushLoopbackIntfs()` で Loopback インタフェースをカーネルから全削除してから再作成する。INTERFACE は PORT STATE_DB ready 待ちから通常の順序依存で処理される。
 
@@ -533,7 +533,7 @@ STATE_DB[STATE_PORT_TABLE / STATE_LAG_TABLE]
 
 ### `nat_zone` — SAI capability query による有効/無効
 
-`gIsNatSupported` フラグが `false` の ASIC では `nat_zone` フィールドを設定しても SAI に渡されない。起動時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を取得し、返り値が `0` なら NAT 非対応と判断する。
+`gIsNatSupported` フラグが `false` の ASIC では `nat_zone` フィールドを設定しても SAI に渡されない。起動時に `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` を取得し、返り値が `0` なら [NAT](../../reference/glossary.md#term-nat) 非対応と判断する。
 
 ```cpp
 // main.cpp:936-947
@@ -595,7 +595,7 @@ if (port.m_type == Port::VLAN) {
 | Mellanox/NVIDIA | XML ファイル (`sai_<chip>.xml`) | `SAI_INIT_CONFIG_FILE` で指定 |
 | Broadcom (Arista 等) | `config.bcm` ファイル | `SAI_INIT_CONFIG_FILE` で指定 |
 
-RIF (Router Interface) 数上限・ECMP メンバ数はこれらの初期化ファイルで決定される。`INTERFACE` テーブルで大量の L3 IF を作成する場合は ASIC ごとの制限に注意が必要。
+[RIF](../../reference/glossary.md#term-rif) (Router Interface) 数上限・[ECMP](../../reference/glossary.md#term-ecmp) メンバ数はこれらの初期化ファイルで決定される。`INTERFACE` テーブルで大量の L3 IF を作成する場合は ASIC ごとの制限に注意が必要。
 
 ### VOQ Chassis — システムインタフェース同期差
 
@@ -613,7 +613,7 @@ voqSyncDelIntf(port.m_alias);  // CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE から�
 
 `voqSyncAddIntf` はローカルポート（`SAI_SYSTEM_PORT_TYPE_REMOTE` でないもの）のみを同期する。リモートポートの IF は `CHASSIS_APP_DB::SYSTEM_INTERFACE_TABLE` を購読して受信し、`gNeighOrch->ifChangeInformRemoteNextHop` でネクストホップ状態を更新する。
 
-VOQ 構成での追加動作:
+[VOQ](../../reference/glossary.md#term-voq) 構成での追加動作:
 
 | 構成 | 追加動作 |
 |------|---------|
@@ -625,7 +625,7 @@ VOQ 構成での追加動作:
 
 ### SmartSwitch DPU — 現時点でのコード差なし
 
-`sonic-swss/orchagent/intfsorch.cpp` および `cfgmgr/intfmgr.cpp` には SmartSwitch / DPU 固有の条件分岐は存在しない（2026-05-16 時点）。DPU 上の `INTERFACE` テーブル処理は通常の物理ポートと同一経路をたどる。SmartSwitch 固有のインタフェース管理は `dpuorch` / `midplaneorch` に委譲されており、本テーブルには影響しない。
+`sonic-swss/orchagent/intfsorch.cpp` および `cfgmgr/intfmgr.cpp` には [SmartSwitch](../../reference/glossary.md#term-smartswitch) / [DPU](../../reference/glossary.md#term-dpu) 固有の条件分岐は存在しない（2026-05-16 時点）。[DPU](../../reference/glossary.md#term-dpu) 上の `INTERFACE` テーブル処理は通常の物理ポートと同一経路をたどる。[SmartSwitch](../../reference/glossary.md#term-smartswitch) 固有のインタフェース管理は `dpuorch` / `midplaneorch` に委譲されており、本テーブルには影響しない。
 
 <!-- /platform -->
 
@@ -638,13 +638,13 @@ INTERFACE テーブルへの SET/DEL が引き起こす、CONFIG_DB 以外の DB
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|------------------|-----------------|------|
-| `INTF_TABLE.set(<name>, data)` | APPL_DB / `INTF_TABLE` | `<name>` | 常時 (`intfmgrd`) |
+| `INTF_TABLE.set(<name>, data)` | [APPL_DB](../../reference/glossary.md#term-appl_db) / `INTF_TABLE` | `<name>` | 常時 (`intfmgrd`) |
 | `INTERFACE_TABLE.hset(<name>, "vrf", vrf_name)` | STATE_DB / `INTERFACE_TABLE` | `<name>` field=`vrf` | 常時 (`intfmgrd`) |
 | `PORT_TABLE.set(<name>, {state:ok})` | STATE_DB / `PORT_TABLE` | `<name>` | サブ IF かつ Ethernet 系 (`intfmgrd`) |
-| `LAG_TABLE.set(<name>, {state:ok})` | STATE_DB / `LAG_TABLE` | `<name>` | サブ IF かつ PortChannel 系 (`intfmgrd`) |
-| `COUNTERS_RIF_NAME_MAP.set("", {<alias>:<oid>})` | COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | `""` field=`<alias>` | RIF 作成後タイマーで (`IntfsOrch`) |
-| `COUNTERS_RIF_TYPE_MAP.set("", {<oid>:<type>})` | COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | `""` field=`<oid>` | RIF 作成後タイマーで (`IntfsOrch`) |
-| FlexCounter エントリ登録 | FLEX_COUNTER_DB / `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | RIF 作成時 (`IntfsOrch`) |
+| `LAG_TABLE.set(<name>, {state:ok})` | STATE_DB / `LAG_TABLE` | `<name>` | サブ IF かつ [PortChannel](../../reference/glossary.md#term-portchannel) 系 (`intfmgrd`) |
+| `COUNTERS_RIF_NAME_MAP.set("", {<alias>:<oid>})` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_RIF_NAME_MAP` | `""` field=`<alias>` | RIF 作成後タイマーで (`IntfsOrch`) |
+| `COUNTERS_RIF_TYPE_MAP.set("", {<oid>:<type>})` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / `COUNTERS_RIF_TYPE_MAP` | `""` field=`<oid>` | RIF 作成後タイマーで (`IntfsOrch`) |
+| [FlexCounter](../../reference/glossary.md#term-flexcounter) エントリ登録 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `RIF_STAT_COUNTER_FLEX_COUNTER_GROUP:<oid>` | `<oid>` | RIF 作成時 (`IntfsOrch`) |
 | `SYSTEM_INTERFACE_TABLE.set(<sys_alias>, {oper_status})` | CHASSIS_APP_DB / `SYSTEM_INTERFACE_TABLE` | `<system_port_alias>` | VoQ システムかつ Local IF |
 
 SAI 呼び出し (`ASIC_DB` に反映):
@@ -661,8 +661,8 @@ SAI 呼び出し (`ASIC_DB` に反映):
 |------|------------------|-----------------|------|
 | `INTF_TABLE.set(<name>:<ip_prefix>, {scope,family})` | APPL_DB / `INTF_TABLE` | `<name>:<ip_prefix>` | IPv4 link-local 以外 (`intfmgrd`) |
 | `INTERFACE_TABLE.hset("<name>|<ip_prefix>", "state", "ok")` | STATE_DB / `INTERFACE_TABLE` | `<name>|<ip_prefix>` | IPv4 link-local 以外 (`intfmgrd`) |
-| CRM カウンタ increment | COUNTERS_DB / CRM | — | 常時 (`IntfsOrch`) |
-| FlexCounter misc route 登録 | FLEX_COUNTER_DB | — | 常時 (`IntfsOrch`) |
+| [CRM](../../reference/glossary.md#term-crm) カウンタ increment | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [CRM](../../reference/glossary.md#term-crm) | — | 常時 (`IntfsOrch`) |
+| [FlexCounter](../../reference/glossary.md#term-flexcounter) misc route 登録 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | — | 常時 (`IntfsOrch`) |
 
 SAI 呼び出し:
 
@@ -676,10 +676,10 @@ SAI 呼び出し:
 | `INTF_TABLE.del(<name>)` | APPL_DB / `INTF_TABLE` | `<name>` | 常時 (`intfmgrd`) |
 | `INTERFACE_TABLE.del(<name>)` | STATE_DB / `INTERFACE_TABLE` | `<name>` | 常時 (`intfmgrd`) |
 | `PORT_TABLE.del(<name>)` | STATE_DB / `PORT_TABLE` | `<name>` | サブ IF かつ Ethernet 系 |
-| `LAG_TABLE.del(<name>)` | STATE_DB / `LAG_TABLE` | `<name>` | サブ IF かつ PortChannel 系 |
+| `LAG_TABLE.del(<name>)` | STATE_DB / `LAG_TABLE` | `<name>` | サブ IF かつ [PortChannel](../../reference/glossary.md#term-portchannel) 系 |
 | `COUNTERS_RIF_NAME_MAP.hdel("", <alias>)` | COUNTERS_DB / `COUNTERS_RIF_NAME_MAP` | — | RIF 削除時 (`IntfsOrch`) |
 | `COUNTERS_RIF_TYPE_MAP.hdel("", <oid>)` | COUNTERS_DB / `COUNTERS_RIF_TYPE_MAP` | — | RIF 削除時 (`IntfsOrch`) |
-| FlexCounter エントリ削除 | FLEX_COUNTER_DB | `<oid>` | RIF 削除時 (`IntfsOrch`) |
+| [FlexCounter](../../reference/glossary.md#term-flexcounter) エントリ削除 | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `<oid>` | RIF 削除時 (`IntfsOrch`) |
 | `SYSTEM_INTERFACE_TABLE.del(<sys_alias>)` | CHASSIS_APP_DB / `SYSTEM_INTERFACE_TABLE` | `<system_port_alias>` | VoQ システムかつ Local IF |
 
 SAI 呼び出し:
@@ -692,7 +692,7 @@ SAI 呼び出し:
 |------|------------------|------|------|
 | `INTF_TABLE.del(<name>:<ip_prefix>)` | APPL_DB / `INTF_TABLE` | `<name>:<ip_prefix>` | IPv4 link-local 以外 (`intfmgrd`) |
 | `INTERFACE_TABLE.del("<name>|<ip_prefix>")` | STATE_DB / `INTERFACE_TABLE` | `<name>|<ip_prefix>` | IPv4 link-local 以外 (`intfmgrd`) |
-| CRM カウンタ decrement | COUNTERS_DB / CRM | — | 常時 (`IntfsOrch`) |
+| [CRM](../../reference/glossary.md#term-crm) カウンタ decrement | COUNTERS_DB / CRM | — | 常時 (`IntfsOrch`) |
 | FlexCounter misc route 削除 | FLEX_COUNTER_DB | — | 常時 (`IntfsOrch`) |
 
 SAI 呼び出し:
@@ -712,7 +712,7 @@ YANG leafref を超えた他テーブル・他 DB・プラットフォームフ�
 |--------|-----------|------|------|-----------|
 | `STATE_PORT_TABLE` | STATE_DB | READ | SET 時 readiness ガード。ポートが state=ok でなければ処理をキューに戻し再試行 | `intfmgr.cpp` L686 |
 | `STATE_LAG_TABLE` | STATE_DB | READ | PortChannel プレフィクスのとき LAG readiness を確認 | `intfmgr.cpp` L663 |
-| `STATE_VRF_TABLE` | STATE_DB | READ | `vrf_name` / `vnet_name` 指定時に VRF/VNET が ready か確認 | `intfmgr.cpp` L671-680 |
+| `STATE_VRF_TABLE` | STATE_DB | READ | `vrf_name` / `vnet_name` 指定時に VRF/[VNET](../../reference/glossary.md#term-vnet) が ready か確認 | `intfmgr.cpp` L671-680 |
 | `DEVICE_METADATA|localhost.switch_type` | CONFIG_DB | READ | `intfmgrd` 起動時 1 回。`voq` のとき IPv6 アドレス追加に `metric 256` を付与 | `intfmgr.cpp` L71-75 |
 | `NAT_GLOBAL` → `gIsNatSupported` | CONFIG_DB | READ | orchagent 起動時にグローバルフラグ化。`gIsNatSupported==true` のとき SAI RIF 作成時に `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` を設定する | `intfsorch.cpp` L1287-1294 |
 | `DEVICE_METADATA|localhost.mac` → `gMacAddress` | CONFIG_DB | READ | orchagent 起動時にグローバル変数化。ポート固有 `mac_addr` 未指定時に SAI `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS` のフォールバック値として使用 | `intfsorch.cpp` L1205 |
@@ -758,4 +758,4 @@ YANG leafref を超えた他テーブル・他 DB・プラットフォームフ�
 
 <!-- /constants -->
 
-<!-- glossary-links-injected: 8c01908c2492 -->
+<!-- glossary-links-injected: 841e6cdca746 -->

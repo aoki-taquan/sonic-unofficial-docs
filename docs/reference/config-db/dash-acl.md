@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-DASH (Disaggregated APIs for SONiC Hosts) データプレーンの ACL ポリシーを定義する 4 テーブル群。ENI (仮想 NIC) 単位にインバウンド / アウトバウンド方向・ステージ番号ごとに ACL グループを割り当て、グループ内のルールリストでパケットを ALLOW / DENY する。`DashAclOrch` / `DashAclGroupMgr` が APP_DB エントリを protobuf でデコードし、DASH SAI API 経由で DPU ハードウェアへ書き込む。
+[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for SONiC Hosts) データプレーンの [ACL](../../reference/glossary.md#term-acl) ポリシーを定義する 4 テーブル群。[ENI](../../reference/glossary.md#term-eni) (仮想 NIC) 単位にインバウンド / アウトバウンド方向・ステージ番号ごとに [ACL](../../reference/glossary.md#term-acl) グループを割り当て、グループ内のルールリストでパケットを ALLOW / DENY する。`DashAclOrch` / `DashAclGroupMgr` が APP_DB エントリを protobuf でデコードし、[DASH](../../reference/glossary.md#term-dash) [SAI](../../reference/glossary.md#term-sai) API 経由で [DPU](../../reference/glossary.md#term-dpu) ハードウェアへ書き込む。
 
 !!! warning "YANG 未定義"
     4 テーブルはすべて YANG モジュールで未定義。スキーマの正本は `sonic-swss/orchagent/dash/dashaclorch.{h,cpp}` および `dashaclgroupmgr.{h,cpp}`。
@@ -61,7 +61,7 @@ flowchart LR
 
 ### DASH_ACL_IN_TABLE
 
-ENI のインバウンド方向に ACL グループをバインドする。
+[ENI](../../reference/glossary.md#term-eni) のインバウンド方向に [ACL](../../reference/glossary.md#term-acl) グループをバインドする。
 
 ```text
 DASH_ACL_IN_TABLE:<eni>:<stage>
@@ -76,7 +76,7 @@ DASH_ACL_IN_TABLE:<eni>:<stage>
 
 ### DASH_ACL_OUT_TABLE
 
-ENI のアウトバウンド方向に ACL グループをバインドする。フィールド構造は `DASH_ACL_IN_TABLE` と同一。
+[ENI](../../reference/glossary.md#term-eni) のアウトバウンド方向に ACL グループをバインドする。フィールド構造は `DASH_ACL_IN_TABLE` と同一。
 
 ```text
 DASH_ACL_OUT_TABLE:<eni>:<stage>
@@ -98,8 +98,8 @@ DASH_ACL_GROUP_TABLE:<group_id>
 | フィールド | 型 | 必須 | 説明 |
 |----------|----|------|------|
 | `ip_version` | enum `ipv4`/`ipv6` | **必須** | グループが扱う IP アドレスファミリ。省略・不正値は作成失敗 |
-| `guid` | string | 省略可 | 管理用 GUID。orchagent は参照しない |
-| `version` | string | 省略可 | 管理用バージョン文字列。orchagent は参照しない |
+| `guid` | string | 省略可 | 管理用 GUID。[orchagent](../../reference/glossary.md#term-orchagent) は参照しない |
+| `version` | string | 省略可 | 管理用バージョン文字列。[orchagent](../../reference/glossary.md#term-orchagent) は参照しない |
 
 !!! warning "更新不可"
     一度作成した `DASH_ACL_GROUP_TABLE` エントリの属性は更新できない（`taskUpdateDashAclGroup` が `task_failed` を返す）。変更が必要な場合は削除して再作成する。
@@ -127,15 +127,15 @@ DASH_ACL_RULE_TABLE:<group_id>:<rule_num>
 
 ## 購読者
 
-- `orchagent` `DashAclOrch`: DASH_ACL_*_TABLE を subscribe し `DashAclGroupMgr` 経由で SAI へ反映
+- `orchagent` `DashAclOrch`: DASH_ACL_*_TABLE を subscribe し `DashAclGroupMgr` 経由で [SAI](../../reference/glossary.md#term-sai) へ反映
 - `DashAclGroupMgr`: グループ・ルールの CRUD、ENI へのバインド/アンバインドを管理
 - `DashTagMgr`: `src_tag` / `dst_tag` の展開とタグ更新時のグループ再構築を担当
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 APP_DB: `DASH_PREFIX_TAG_TABLE`、`DASH_ENI_TABLE`
-- 関連 CLI: なし（SDN コントローラ / gNMI 経由投入が主体）
-- 関連 YANG: なし
+- 関連 CLI: なし（SDN コントローラ / [gNMI](../../reference/glossary.md#term-gnmi) 経由投入が主体）
+- 関連 [YANG](../../reference/glossary.md#term-yang): なし
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
@@ -158,7 +158,7 @@ DASH_ACL_RULE_TABLE:<group_id>:<rule_num>
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
-YANG 未定義テーブルのため、全デフォルトはコード実装が正本。
+[YANG](../../reference/glossary.md#term-yang) 未定義テーブルのため、全デフォルトはコード実装が正本。
 
 ### field × 種別 一覧
 
@@ -175,7 +175,7 @@ YANG 未定義テーブルのため、全デフォルトはコード実装が正
 
 ### `action` × `terminating` SAI マッピング
 
-| `action` | `terminating` | SAI 値 | 動作 |
+| `action` | `terminating` | [SAI](../../reference/glossary.md#term-sai) 値 | 動作 |
 |----------|--------------|--------|------|
 | `allow` | `true` | `SAI_DASH_ACL_RULE_ACTION_PERMIT` | 許可して終了 |
 | `allow` | `false` (省略デフォルト) | `SAI_DASH_ACL_RULE_ACTION_PERMIT_AND_CONTINUE` | 許可して次ステージへ |
@@ -207,7 +207,7 @@ const static vector<sai_u16_range_t> all_ports = {
 
 ### `src_addr` / `dst_addr` 省略時の any IP 生成
 
-`src_tag` / `dst_tag` も未指定の場合、orchagent がグループの `ip_version` を参照してゼロ初期化プレフィックスを 1 件生成する:
+`src_tag` / `dst_tag` も未指定の場合、[orchagent](../../reference/glossary.md#term-orchagent) がグループの `ip_version` を参照してゼロ初期化プレフィックスを 1 件生成する:
 
 ```cpp
 auto any_ip = [](const auto& g) {
@@ -225,7 +225,7 @@ auto any_ip = [](const auto& g) {
 
 ### 投入の必須順序
 
-DASH ACL オブジェクトには厳密なコード由来の依存関係があり、SDN コントローラは以下の順序でエントリを投入しなければならない。
+[DASH](../../reference/glossary.md#term-dash) ACL オブジェクトには厳密なコード由来の依存関係があり、SDN コントローラは以下の順序でエントリを投入しなければならない。
 
 ```
 [前提] DASH_ENI_TABLE が DashOrch で先に作成済み
@@ -267,7 +267,7 @@ DASH ACL オブジェクトには厳密なコード由来の依存関係があ�
 
 - `priority` 値を SAI 属性 `SAI_DASH_ACL_RULE_ATTR_PRIORITY` としてそのまま渡す。
 - **値が小さいほど優先度が高い**（`0` = 最高優先度）。
-- orchagent はルールのソートを行わない。優先度評価は DPU ハードウェア側で処理される。
+- orchagent はルールのソートを行わない。優先度評価は [DPU](../../reference/glossary.md#term-dpu) ハードウェア側で処理される。
 
 ### タグ更新時の非リフレッシュ動作
 
@@ -291,7 +291,7 @@ DASH ACL オブジェクトには厳密なコード由来の依存関係があ�
 
 `DashAclOrch` は `ZmqOrch` を継承し `gDirectory.set()` のみで登録される（`m_orchList` には非登録）。
 
-`warmRestoreAndSyncUp()` の 3 イテレーションループは `m_orchList` に対して実行されるため、**DASH ACL orch は warm-reboot の自動リプレイ対象外**となる。DASH ACL エントリのリストアは SDN コントローラ（gNMI 側）がエントリを再投入することで実現する設計であり、orchagent 自体による状態保存・リプレイ機構は実装されていない（ステートレス warm-reboot）。
+`warmRestoreAndSyncUp()` の 3 イテレーションループは `m_orchList` に対して実行されるため、**DASH ACL orch は warm-reboot の自動リプレイ対象外**となる。DASH ACL エントリのリストアは SDN コントローラ（[gNMI](../../reference/glossary.md#term-gnmi) 側）がエントリを再投入することで実現する設計であり、orchagent 自体による状態保存・リプレイ機構は実装されていない（ステートレス warm-reboot）。
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-ordering.md`
 <!-- /ordering -->
@@ -301,7 +301,7 @@ DASH ACL オブジェクトには厳密なコード由来の依存関係があ�
 
 <!-- evidence: meta/_intermediate/cdb-flow/dash-acl-cross-refs.md -->
 
-各テーブルが SAI 書き込み時に参照する外部テーブル・リソース。YANG leafref は存在しないため、すべて実装レベルの暗黙参照。
+各テーブルが SAI 書き込み時に参照する外部テーブル・リソース。[YANG](../../reference/glossary.md#term-yang) leafref は存在しないため、すべて実装レベルの暗黙参照。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
@@ -441,7 +441,7 @@ DEL 操作で ACL エントリが `m_dash_acl_in/out_table` に存在しない�
 
 ### CRM リソースタイプの対応
 
-| `ip_version` | グループ CRM タイプ | ルール CRM タイプ |
+| `ip_version` | グループ [CRM](../../reference/glossary.md#term-crm) タイプ | ルール [CRM](../../reference/glossary.md#term-crm) タイプ |
 |---|---|---|
 | `SAI_IP_ADDR_FAMILY_IPV4` | `CRM_DASH_IPV4_ACL_GROUP` | `CRM_DASH_IPV4_ACL_RULE` |
 | `SAI_IP_ADDR_FAMILY_IPV6` | `CRM_DASH_IPV6_ACL_GROUP` | `CRM_DASH_IPV6_ACL_RULE` |
@@ -470,9 +470,9 @@ DEL 操作で ACL エントリが `m_dash_acl_in/out_table` に存在しない�
 
 ### ASIC_DB 書込み（SAI 経由）
 
-DASH ACL 系の SAI 呼び出しは `sai_dash_acl_api` と `sai_dash_eni_api` を通じて syncd → ASIC_DB に反映される。
+DASH ACL 系の SAI 呼び出しは `sai_dash_acl_api` と `sai_dash_eni_api` を通じて [syncd](../../reference/glossary.md#term-syncd) → [ASIC_DB](../../reference/glossary.md#term-asic_db) に反映される。
 
-| 操作 | SAI API | ASIC_DB への反映 |
+| 操作 | SAI API | [ASIC_DB](../../reference/glossary.md#term-asic_db) への反映 |
 |------|---------|-----------------|
 | `DASH_ACL_GROUP_TABLE` SET 成功 | `create_dash_acl_group` | `ASIC_STATE:SAI_OBJECT_TYPE_DASH_ACL_GROUP:<oid>` 生成 |
 | `DASH_ACL_GROUP_TABLE` DEL 成功 | `remove_dash_acl_group` | 対応 OID エントリ削除 |
@@ -484,15 +484,15 @@ DASH ACL 系の SAI 呼び出しは `sai_dash_acl_api` と `sai_dash_eni_api` �
 
 ### STATE_DB 書込み
 
-**DASH ACL テーブルは STATE_DB に一切書き込まない。**
+**DASH ACL テーブルは [STATE_DB](../../reference/glossary.md#term-state_db) に一切書き込まない。**
 
 通常の `ACL_TABLE` が `STATE_ACL_TABLE_TABLE_NAME` へステータスを書き込むのに対し、`DashAclOrch` / `DashAclGroupMgr` にはその実装が存在しない。コンストラクタ引数の `app_state_db` は受け取るが本体では使用されず、メンバーにも格納されない。
 
 ### CRM カウンタ（COUNTERS_DB 経由）
 
-`gCrmOrch->incCrmDashAclUsedCounter` / `decCrmDashAclUsedCounter` で COUNTERS_DB の DASH ACL 使用カウンタを更新する。
+`gCrmOrch->incCrmDashAclUsedCounter` / `decCrmDashAclUsedCounter` で [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の DASH ACL 使用カウンタを更新する。
 
-| タイミング | 操作 | CRM リソースタイプ |
+| タイミング | 操作 | [CRM](../../reference/glossary.md#term-crm) リソースタイプ |
 |-----------|------|------------------|
 | グループ作成成功 | `incCrmDashAclUsedCounter(GROUP, oid)` | `CRM_DASH_IPV4_ACL_GROUP` or `CRM_DASH_IPV6_ACL_GROUP` |
 | グループ削除成功 | `decCrmDashAclUsedCounter(GROUP, oid)` | 同上（ルールカウンタも一括リセット） |
@@ -521,16 +521,16 @@ DASH ACL 系の SAI 呼び出しは `sai_dash_acl_api` と `sai_dash_eni_api` �
 
 ### APP_DB / FlexCounter
 
-`m_dash_acl_rules_table`（`APP_DASH_ACL_RULE_TABLE_NAME` 向け `Table` オブジェクト）はメンバーとして保持されるが、コード中で読み書きは行われていない（デッドフィールド）。APP_DB への書き戻しはなし。FlexCounter も未登録のため `FLEX_COUNTER_DB` への書込みも発生しない。
+`m_dash_acl_rules_table`（`APP_DASH_ACL_RULE_TABLE_NAME` 向け `Table` オブジェクト）はメンバーとして保持されるが、コード中で読み書きは行われていない（デッドフィールド）。APP_DB への書き戻しはなし。[FlexCounter](../../reference/glossary.md#term-flexcounter) も未登録のため `FLEX_COUNTER_DB` への書込みも発生しない。
 
 ### 副次書込みまとめ
 
 | DB | 書込み | 備考 |
 |----|--------|------|
-| ASIC_DB | あり（syncd 経由） | SAI DASH ACL / ENI 属性 |
-| STATE_DB | **なし** | DASH ACL 固有ステータステーブル未実装 |
-| COUNTERS_DB | あり（CRM カウンタ） | `CRM_DASH_IPV{4,6}_ACL_{GROUP,RULE}` |
-| FLEX_COUNTER_DB | **なし** | FlexCounter 未登録 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | あり（[syncd](../../reference/glossary.md#term-syncd) 経由） | SAI DASH ACL / ENI 属性 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | **なし** | DASH ACL 固有ステータステーブル未実装 |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | あり（CRM カウンタ） | `CRM_DASH_IPV{4,6}_ACL_{GROUP,RULE}` |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | **なし** | [FlexCounter](../../reference/glossary.md#term-flexcounter) 未登録 |
 | APP_DB | **なし** | 購読のみ、書き戻しなし |
 
 - 中間トレース: `meta/_intermediate/cdb-flow/dash-acl-side-effects.md`
@@ -546,7 +546,7 @@ DASH ACL 系の SAI 呼び出しは `sai_dash_acl_api` と `sai_dash_eni_api` �
 | 系統 | 条件 | Executor 型 | 購読 API |
 |------|------|------------|---------|
 | ZMQ 有効 | `ORCH_NORTHBOND_DASH_ZMQ_ENABLED = true`（デフォルト） | `ZmqConsumer`（`ZmqConsumerStateTable` ベース） | ZMQ PUSH/PULL ソケット受信 |
-| ZMQ 無効 | `ORCH_NORTHBOND_DASH_ZMQ_ENABLED = false` | `Consumer`（`ConsumerStateTable` ベース） | Redis channel PUBLISH/SUBSCRIBE |
+| ZMQ 無効 | `ORCH_NORTHBOND_DASH_ZMQ_ENABLED = false` | `Consumer`（`ConsumerStateTable` ベース） | [Redis](../../reference/glossary.md#term-redis) channel PUBLISH/SUBSCRIBE |
 
 **購読テーブル** (`orchdaemon.cpp:1371-1377`):
 
@@ -593,7 +593,7 @@ Consumer.execute() → addToSync() → drain()
 DashAclOrch::doTask(ConsumerBase&)
 ```
 
-ZMQ 無効時は通常の `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）経由となる。Redis keyspace 通知ではなく channel ベースのため、SET / DEL 操作が APP_DB に書き込まれると即座に通知が届く。
+ZMQ 無効時は通常の `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）経由となる。[Redis](../../reference/glossary.md#term-redis) keyspace 通知ではなく channel ベースのため、SET / DEL 操作が APP_DB に書き込まれると即座に通知が届く。
 
 ### orchList 登録
 
@@ -614,7 +614,7 @@ ZMQ 無効時は通常の `ConsumerStateTable`（channel ベース PUBLISH/SUBSC
 | `"dpu"` | 生成される。DASH_ACL_* テーブルを処理 |
 | `"switch"` / `"voq"` / `"fabric"` / `"chassis-packet"` | 生成されない。DASH_ACL_* テーブルは完全に無視される |
 
-SmartSwitch 構成の DPU カード、または DPU 単体動作デバイスのみが対象。通常のスイッチ (`gMySwitchType="switch"`) 環境で DASH_ACL_* テーブルを投入しても orchagent は何も処理しない。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成の [DPU](../../reference/glossary.md#term-dpu) カード、または DPU 単体動作デバイスのみが対象。通常のスイッチ (`gMySwitchType="switch"`) 環境で DASH_ACL_* テーブルを投入しても orchagent は何も処理しない。
 
 DASH ACL コード内にプラットフォーム文字列照会（`MLNX_PLATFORM_SUBSTRING` 等）は**存在しない**。ベンダー別の動作差は SAI 実装差として ASIC 側に委譲される。
 
@@ -661,3 +661,5 @@ ACL グループ・ルールの作成削除ごとに CRM カウンタが更新�
 
 > **Evidence**: `main.cpp:990-994`（`gMySwitchType` 分岐）、`orchdaemon.cpp:1378`（`DashAclOrch` 生成）、`dashaclgroupmgr.cpp:94-128`（`getSaiStage` 静的マップ）、`dashaclgroupmgr.cpp:174-176, 213-216, 374-376`（CRM カウンタ）、`dashaclorch.cpp:43-70`（ステージ文字列変換）、`crmorch.h:49-52`（CRM リソース型定義）；詳細分析 `meta/_intermediate/cdb-flow/dash-acl-platform.md`
 <!-- /platform -->
+
+<!-- glossary-links-injected: 61004cb9d751 -->

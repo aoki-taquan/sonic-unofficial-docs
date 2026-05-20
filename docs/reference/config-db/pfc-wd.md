@@ -198,29 +198,28 @@ show pfcwd stats
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / PfcWdOrch** (`sonic-swss/orchagent/pfcwdorch.cpp`): `PFC_WD` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / PfcWdOrch** (`sonic-swss/orchagent/pfcwdorch.cpp`): `PFC_WD` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- PfcWdOrch が各ポートの PFC Watchdog ポーリング間隔 (`detection_time`, `restoration_time`) と action (`drop`, `forward`, `alert`) を解析。
+- PfcWdOrch が各ポートの [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) ポーリング間隔 (`detection_time`, `restoration_time`) と action (`drop`, `forward`, `alert`) を解析。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI
 
-- PfcWdOrch が SAI `sai_port_api` / `sai_queue_api` を使用して PFC deadlock 検出と自動回復を設定。
+- PfcWdOrch が [SAI](../../reference/glossary.md#term-sai) `sai_port_api` / `sai_queue_api` を使用して PFC deadlock 検出と自動回復を設定。
 - action=drop: デッドロック検知時に該当キューの PFC フレームを drop。
 
 ### 段階 4: タイミング + 副作用
 
 - `detection_time` ms 以内に PFC デッドロードを検知し、`restoration_time` ms 後に自動復旧。
 - 副作用: action=drop 時にトラフィックが一時的に DROP。lossless クラスのパケットロスが生じる可能性。
-- STATE_DB `PFC_WD_TABLE` でデッドロック検知状態を確認可能。
+- [STATE_DB](../../reference/glossary.md#term-state_db) `PFC_WD_TABLE` でデッドロック検知状態を確認可能。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -230,7 +229,7 @@ PFC_WD テーブルへの書き込みが発生するコード経路を網羅的�
 
 ### CLI
 
-  - `pfcwd start/stop/interval ...` — `pfcwd/main.py` が `set_entry('PFC_WD', ...)` を呼ぶ (sonic-utilities/pfcwd/main.py)
+  - `pfcwd start/stop/interval ...` — `pfcwd/main.py` が `set_entry('PFC_WD', ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/pfcwd/main.py)
 
 ### minigraph / sonic-cfggen
 
@@ -238,11 +237,11 @@ minigraph.py に PFC_WD 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
-**db_migrator.py** が PFC_WD に対してマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+**db_migrator.py** が PFC_WD に対してマイグレーション処理を実装 ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/scripts/db_migrator.py)
 
 ### ビルド時デフォルト (build-time default)
 
@@ -313,7 +312,7 @@ PFC_WD|<port> 投入 → SAI queue/port 属性設定 + flex counter 登録
 
 ### `action` — ハードコードデフォルト `drop`
 
-`createEntry()` 冒頭 (`pfcwdorch.cpp:190`) で `PFC_WD_ACTION_DROP` に初期化。`pfcwd start` で `--action` を省略した場合、フィールド自体が CONFIG_DB に書かれないが orchagent 側で `drop` を補完する。YANG に `default` 文なし。
+`createEntry()` 冒頭 (`pfcwdorch.cpp:190`) で `PFC_WD_ACTION_DROP` に初期化。`pfcwd start` で `--action` を省略した場合、フィールド自体が [CONFIG_DB](../../reference/glossary.md#term-config_db) に書かれないが [orchagent](../../reference/glossary.md#term-orchagent) 側で `drop` を補完する。YANG に `default` 文なし。
 
 ### `pfc_stat_history` — ハードコードデフォルト `disable`
 
@@ -321,7 +320,7 @@ PFC_WD|<port> 投入 → SAI queue/port 属性設定 + flex counter 登録
 
 ### `restoration_time` — CLI 算出デフォルト `2 × detection_time`
 
-`pfcwd start` で `--restoration-time` を省略すると `main.py:334` が `2 × detection_time` を算出して書き込む。直接 redis-cli で `restoration_time` なしで書いた場合、orchagent は `restorationTime=0` のまま処理し COUNTERS_DB に空文字列を書く（= 無限待機相当）。
+`pfcwd start` で `--restoration-time` を省略すると `main.py:334` が `2 × detection_time` を算出して書き込む。直接 redis-cli で `restoration_time` なしで書いた場合、orchagent は `restorationTime=0` のまま処理し [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に空文字列を書く（= 無限待機相当）。
 
 ### `POLL_INTERVAL` — 初期内部値 100 ms
 
@@ -360,8 +359,8 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 |---|---|---|
 | `platform == MLNX_PLATFORM_SUBSTRING` または `VS` | `PfcWdSwOrch<PfcWdZeroBufferHandler, PfcWdLossyHandler>` を登録。SAI_PORT_STAT_PFC_*_PAUSE_DURATION_US 使用 | `orchdaemon.cpp:635-672` |
 | `platform == MRVL_TL` / `MRVL_PRST` / `CLX` / `NPS` | 同 ZeroBufferHandler / LossyHandler だが SAI_PORT_STAT_PFC_*_PAUSE_DURATION (ms 単位) を使用 | `orchdaemon.cpp:674-720` |
-| `platform == BFN_PLATFORM_SUBSTRING` | `PfcWdSwOrch<PfcWdAclHandler, PfcWdLossyHandler>` を登録 (ACL ベースの復旧) | `orchdaemon.cpp:722-731` |
-| `platform == BRCM_PLATFORM_SUBSTRING` | `PfcWdSwOrch` で Broadcom 専用 SAI 統計 + `PfcWdDlrHandler` 等を使用 | `orchdaemon.cpp:733-803` |
+| `platform == BFN_PLATFORM_SUBSTRING` | `PfcWdSwOrch<PfcWdAclHandler, PfcWdLossyHandler>` を登録 ([ACL](../../reference/glossary.md#term-acl) ベースの復旧) | `orchdaemon.cpp:722-731` |
+| `platform == BRCM_PLATFORM_SUBSTRING` | `PfcWdSwOrch` で Broadcom 専用 [SAI](../../reference/glossary.md#term-sai) 統計 + `PfcWdDlrHandler` 等を使用 | `orchdaemon.cpp:733-803` |
 | それ以外の platform | `PFC_WD` ハンドラは登録されない (PFC-WD 機能無効) | `orchdaemon.cpp:635-803` |
 
 ### グレップカバレッジ
@@ -423,7 +422,7 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`PFC_WD` エントリが CONFIG_DB に書かれると `PfcWdOrch` が以下のテーブルを暗黙的に参照する。
+`PFC_WD` エントリが [CONFIG_DB](../../reference/glossary.md#term-config_db) に書かれると `PfcWdOrch` が以下のテーブルを暗黙的に参照する。
 `ifname` → `PORT` は YANG leafref として明示されているが、`PORT_QOS_MAP` 経由の PFC bitmask 参照は実装コードのみに現れる暗黙依存。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
@@ -433,8 +432,8 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 | `PORT_QOS_MAP\|<port>.pfcwd_sw_enable` | PFC bitmask 読み取り（暗黙） | per-port エントリ処理時。`qosorch` が `setPortPfcWatchdogStatus()` で書き込んだ値を `getPortPfcWatchdogStatus()` で読む | `pfcwdorch.cpp:533-555`; `qosorch.cpp:2136-2155,2224` |
 | `DEVICE_METADATA\|localhost.default_pfcwd_status` | 読み取り（CLI 経由） | `pfcwd start_default` 実行時のみ。orchagent は直接参照しない | `pfcwd/main.py:409` |
 | `DEVICE_NEIGHBOR`（逆参照） | active_ports 取得（CLI 経由） | `pfcwd start_default` が対象ポート一覧を取得するため参照 | `pfcwd/main.py:415` |
-| APPL_DB `PFC_WD_TABLE_INSTORM`（書き込み先） | 書き込み | storm 検出時に warm-reboot 用 storm 状態を記録 | `pfcwdorch.cpp:688,998-1058` |
-| FLEX_COUNTER_DB `PFC_WD` グループ（書き込み先） | 書き込み | per-port エントリ登録時に port / queue の FlexCounter エントリを登録 | `pfcwdorch.cpp:560,587,593`; `pfcwdorch.h:16` |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) `PFC_WD_TABLE_INSTORM`（書き込み先） | 書き込み | storm 検出時に warm-reboot 用 storm 状態を記録 | `pfcwdorch.cpp:688,998-1058` |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) `PFC_WD` グループ（書き込み先） | 書き込み | per-port エントリ登録時に port / queue の [FlexCounter](../../reference/glossary.md#term-flexcounter) エントリを登録 | `pfcwdorch.cpp:560,587,593`; `pfcwdorch.h:16` |
 
 !!! note "PORT_QOS_MAP PFC 有効化の暗黙依存"
     `PORT_QOS_MAP|<port>` に `pfcwd_sw_enable` を設定することで `QosOrch` が `setPortPfcWatchdogStatus()` を呼び lossless TC bitmask を設定する。
@@ -517,7 +516,7 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 | `PFC_WD_RESTORATION_TIME` | `"restoration_time"` | 復帰時間フィールド名 |
 | `PFC_STAT_HISTORY` | `"pfc_stat_history"` | 統計履歴フィールド名 |
 | `BIG_RED_SWITCH_FIELD` | `"BIG_RED_SWITCH"` | BRS フィールド名（YANG 外） |
-| `PFC_WD_IN_STORM` | `"storm"` | APPL_DB ストーム状態値 |
+| `PFC_WD_IN_STORM` | `"storm"` | [APPL_DB](../../reference/glossary.md#term-appl_db) ストーム状態値 |
 
 ### 数値定数（`pfcwdorch.cpp:22-29`）
 
@@ -584,7 +583,7 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 
 ### PFC_WD SET (per-port) — FLEX_COUNTER_DB PFC_WD グループ登録
 
-`m_pfcwdFlexCounterManager->setCounterIdList()` で syncd への PFC ポーリング指示を投入する:
+`m_pfcwdFlexCounterManager->setCounterIdList()` で [syncd](../../reference/glossary.md#term-syncd) への PFC ポーリング指示を投入する:
 
 | 対象オブジェクト | 登録内容 | 書込箇所 |
 |----------------|---------|---------|
@@ -606,7 +605,7 @@ Broadcom プラットフォームで `checkPfcDlrInitEnable()` が true の場�
 
 | 副次効果 | 書込箇所 |
 |---------|---------|
-| `m_pfcwdFlexCounterManager->updateGroupPollingInterval()` — FLEX_COUNTER_DB PFC_WD グループのポーリング間隔を更新 | `pfcwdorch.cpp:356` |
+| `m_pfcwdFlexCounterManager->updateGroupPollingInterval()` — [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) PFC_WD グループのポーリング間隔を更新 | `pfcwdorch.cpp:356` |
 
 ### storm 検出時 — APPL_DB / COUNTERS_DB ランタイム書込
 
@@ -614,8 +613,8 @@ Broadcom プラットフォームで `checkPfcDlrInitEnable()` が true の場�
 
 | DB | テーブル / キー | 書込内容 | 書込箇所 |
 |----|---------------|---------|---------|
-| APPL_DB | `PFC_WD_TABLE_INSTORM\|<port-alias>` | `hset <queue_index> "storm"` (warm-reboot 用 storm 状態記録) | `pfcwdorch.cpp:1000,1017,1034` |
-| COUNTERS_DB | `COUNTERS:<queue_oid>` | デッドロック検出カウンタ・状態フラグ更新 | `pfcwdorch.cpp:996,1013,1030` |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | `PFC_WD_TABLE_INSTORM\|<port-alias>` | `hset <queue_index> "storm"` (warm-reboot 用 storm 状態記録) | `pfcwdorch.cpp:1000,1017,1034` |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS:<queue_oid>` | デッドロック検出カウンタ・状態フラグ更新 | `pfcwdorch.cpp:996,1013,1030` |
 
 storm 復帰時 (pfcwdorch.cpp:1043-1059):
 
@@ -629,9 +628,9 @@ storm 復帰時 (pfcwdorch.cpp:1043-1059):
 
 | 対象 DB / テーブル | 操作 | 書込箇所 |
 |-----------------|------|---------|
-| FLEX_COUNTER_DB PORT OID | `clearCounterIdList` | `pfcwdorch.cpp:652` |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) PORT OID | `clearCounterIdList` | `pfcwdorch.cpp:652` |
 | FLEX_COUNTER_DB QUEUE OID × lossless TC 数 | `clearCounterIdList` | `pfcwdorch.cpp:657` |
-| COUNTERS_DB `COUNTERS:<queue_oid>` | `hdel` (PFC_WD 設定フィールド群を削除) | `pfcwdorch.cpp:668` |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) `COUNTERS:<queue_oid>` | `hdel` (PFC_WD 設定フィールド群を削除) | `pfcwdorch.cpp:668` |
 
 <!-- /side-effects -->
 
@@ -710,6 +709,8 @@ PFC_WD の platform 差は community SONiC の中でも特に重大なカテゴ�
 
 ### multi-asic / VoQ / DASH — PFC_WD への影響なし
 
-`pfcwdorch.cpp` に `gMySwitchType`・`gFabricPortsOrch`・`IS_MULTI_NPU` 参照はゼロ。multi-asic 構成では各 ASIC namespace の orchagent が独立して `PFC_WD` テーブルを購読するが、コードパスは同一。VoQ chassis・DASH 環境でも PFC_WD の動作ロジックは変化しない。
+`pfcwdorch.cpp` に `gMySwitchType`・`gFabricPortsOrch`・`IS_MULTI_NPU` 参照はゼロ。multi-asic 構成では各 ASIC namespace の orchagent が独立して `PFC_WD` テーブルを購読するが、コードパスは同一。VoQ chassis・[DASH](../../reference/glossary.md#term-dash) 環境でも PFC_WD の動作ロジックは変化しない。
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: b7376d4b8e9e -->

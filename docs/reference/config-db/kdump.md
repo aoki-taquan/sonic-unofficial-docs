@@ -140,7 +140,7 @@ show kdump config
 |------|------|
 | `enabled` 変更は即時反映されない | grub エントリ変更のため次回 reboot 後に有効化。現行カーネルへの影響なし |
 | `memory` の値が小さすぎる | DB には書けるが kdump kernel 起動失敗（コード上のバリデーションなし、YANG 経由時のみ検証） |
-| `num_dumps` が 0 以下 | CLI は `int` として受け取るが下限チェックなし。hostcfgd が `kdump-config` にそのまま渡すため動作は実装依存 |
+| `num_dumps` が 0 以下 | CLI は `int` として受け取るが下限チェックなし。[hostcfgd](../../reference/glossary.md#term-hostcfgd) が `kdump-config` にそのまま渡すため動作は実装依存 |
 | SSH key の不正フォーマット | `is_valid_ssh_key()` で検証 → エラーメッセージ出力して DB 書き込み中断 |
 | remote 未 enable 状態で remote サーバ設定 | `"Remote feature is not enabled. Please enable the remote feature first."` を表示して中断 |
 | SSH path の不正フォーマット | `is_valid_ssh_path()` で検証 → エラーメッセージ出力して DB 書き込み中断 |
@@ -156,7 +156,7 @@ show kdump config
 
 | 失敗条件 | 挙動 |
 |---------|------|
-| `memory` 値が小さすぎる（例: `32M`）でリブート | kdump カーネルがロードされず `/sys/kernel/kexec_crash_size = 0`。`show kdump status` は `Not Ready` を表示。CONFIG_DB の値は変更されない |
+| `memory` 値が小さすぎる（例: `32M`）でリブート | kdump カーネルがロードされず `/sys/kernel/kexec_crash_size = 0`。`show kdump status` は `Not Ready` を表示。[CONFIG_DB](../../reference/glossary.md#term-config_db) の値は変更されない |
 | 物理メモリ不足で crashkernel 確保不可 | 同上。エラーログはカーネルブート時にのみ出力。`sonic-kdump-config` スクリプトは `get_crash_kernel_size()` で `"0"` を返して例外を呑み込む（`sonic-kdump-config:94-99`） |
 | `locate_image()` が `-1` 返却（イメージ名不一致） | `lines[-1]`（最終行）を誤って更新。クラッシュなしだが無効エントリが書き込まれる（`sonic-kdump-config:655-683`） |
 
@@ -164,7 +164,7 @@ show kdump config
 
 | 失敗条件 | 挙動 |
 |---------|------|
-| `/etc/default/kdump-tools` の `USE_KDUMP` 書き換え失敗 | `print_err("Error while writing USE_KDUMP into ...")` → `sys.exit(1)`。CONFIG_DB の巻き戻しなし（`sonic-kdump-config:483-496`） |
+| `/etc/default/kdump-tools` の `USE_KDUMP` 書き換え失敗 | `print_err("Error while writing USE_KDUMP into ...")` → `sys.exit(1)`。[CONFIG_DB](../../reference/glossary.md#term-config_db) の巻き戻しなし（`sonic-kdump-config:483-496`） |
 | `kdump-config unload` が非ゼロ終了 | `print_err("Error Unable to unload the Kdump kernel ...")` → `sys.exit(1)` |
 | `kdump-config load` が非ゼロ終了 | `print_err("Error: Unable to reload kdump configuration")` → `sys.exit(1)`（`sonic-kdump-config:713-716`） |
 | リモート設定時 `kdump-config set-remote` 失敗 | `print_err("Error: Unable to set remote crash dump configuration")` → `sys.exit(1)` |
@@ -192,11 +192,11 @@ show kdump config
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — `kdump-tools` の設定ファイルを更新)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — `kdump-tools` の設定ファイルを更新)
 
 ### 段階 4 — タイミングと副作用
 
@@ -380,7 +380,7 @@ evidence: `sonic-utilities/scripts/sonic-kdump-config` `kdump_enable()` L640-715
 
 ### systemd kdump.service 起動順序
 
-hostcfgd の `load()` は `wait_till_system_init_done()` 完了後に `kdumpCfg.load(kdump)` を呼ぶ。これにより kdump の初期化はシステム基盤サービスが stable になった後に実施される。
+[hostcfgd](../../reference/glossary.md#term-hostcfgd) の `load()` は `wait_till_system_init_done()` 完了後に `kdumpCfg.load(kdump)` を呼ぶ。これにより kdump の初期化はシステム基盤サービスが stable になった後に実施される。
 
 ```
 systemd target: sonic.target
@@ -420,7 +420,7 @@ evidence: `sonic-host-services/scripts/hostcfgd` L2160-2280、L2393-2395、L2468
 | 依存関係 | 詳細 |
 |---------|------|
 | **crashkernel 予約はリブート必須** | `enabled=true` を DB に書いても現行カーネルでは kdump が動作しない。grub/U-Boot へのパラメータ追記 → リブート → kexec_load が完了して初めて有効化 |
-| **/proc/cmdline 先読みによる DB 上書き** | hostcfgd 起動時に `init_kdump_config_from_cmdline()` が `/proc/cmdline` を参照し、`crashkernel=` が既に存在する場合は CONFIG_DB を `enabled=true` に強制上書きする。これが完了する前に `kdump_update()` が呼ばれると `update_config_from_proc_cmdline` フラグにより最初の更新がスキップされる |
+| **/proc/cmdline 先読みによる DB 上書き** | [hostcfgd](../../reference/glossary.md#term-hostcfgd) 起動時に `init_kdump_config_from_cmdline()` が `/proc/cmdline` を参照し、`crashkernel=` が既に存在する場合は CONFIG_DB を `enabled=true` に強制上書きする。これが完了する前に `kdump_update()` が呼ばれると `update_config_from_proc_cmdline` フラグにより最初の更新がスキップされる |
 | **system init 完了待機** | `load()` は `wait_till_system_init_done()` 後に実行される。kdump が依存するファイルシステム (`/host/grub/grub.cfg` 等) が安定してからでないと `kdump_enable()` が失敗する |
 | **ssh_string / ssh_path の適用タイミング** | `/etc/default/kdump-tools` への SSH 設定書き込みは即時だが、実際のリモートダンプ有効化は次回リブート後のカーネルロード時 |
 
@@ -460,7 +460,7 @@ CONFIG_DB に値が未設定の場合、hostcfgd は `"user@localhost"` / `"/a/b
 CLI `add_ssh_path` は `os.path.exists()` で実在チェックするが、sonic-kdump-config `write_ssh_path()` はパターン検証のみで存在チェックなし。DB 直接書き込みや hostcfgd フォールバック（`"/a/b/c"`）経由では存在しないパスが `/etc/default/kdump-tools` に書き込まれる。
 
 **dead consumer (YANG `num_dumps` 範囲制約)**:
-YANG は `range "1 .. 9"` を定義するが、CLI `config kdump num_dumps` は `type=int` のみで範囲チェックなし。0 や 10 以上の値も DB に書き込み可能。sonic-yang-mgmt を経由する REST/gNMI 経由時のみ YANG 範囲検証が有効。
+YANG は `range "1 .. 9"` を定義するが、CLI `config kdump num_dumps` は `type=int` のみで範囲チェックなし。0 や 10 以上の値も DB に書き込み可能。sonic-yang-mgmt を経由する REST/[gNMI](../../reference/glossary.md#term-gnmi) 経由時のみ YANG 範囲検証が有効。
 
 <!-- /defaults -->
 
@@ -633,4 +633,4 @@ KDUMP (CONFIG_DB) 変更
 
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: b5626ca1f0f9 -->
+<!-- glossary-links-injected: 81cb712f4c0e -->

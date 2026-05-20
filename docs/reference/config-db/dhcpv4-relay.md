@@ -60,13 +60,13 @@ DHCPV4_RELAY|<name>
 | `link_selection` | `mode-status` | - | `disable` | RFC 3527 Link selection sub-option |
 | `server_id_override` | `mode-status` | - | `disable` | RFC 5107 server-id override |
 | `vrf_selection` | `mode-status` | - | `disable` | RFC 6607 [VRF](../../reference/glossary.md#term-vrf) selection |
-| `agent_relay_mode` | `relay-agent-mode` | - | `forward_untouched` (YANG) / discard (実装) | 既存 Option82 を持つパケットの処理モード。**注意**: YANG default `"forward_untouched"` はコードで認識されず discard になる |
+| `agent_relay_mode` | `relay-agent-mode` | - | `forward_untouched` ([YANG](../../reference/glossary.md#term-yang)) / discard (実装) | 既存 Option82 を持つパケットの処理モード。**注意**: YANG default `"forward_untouched"` はコードで認識されず discard になる |
 | `max_hop_count` | uint8 (1..16) | - | `4` (YANG) / `16` (C++ struct) | ホップ数上限。YANG-実装間で default 値が乖離 |
 
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`sonic-dhcpv4-relay` (`DHCPMgr`) は CONFIG_DB の複数テーブルを同時購読する。`DHCPV4_RELAY` の SET イベント受信時点でこれらが揃っていないと、設定の欠落や誤った VRF での中間状態が発生する。
+`sonic-dhcpv4-relay` (`DHCPMgr`) は [CONFIG_DB](../../reference/glossary.md#term-config_db) の複数テーブルを同時購読する。`DHCPV4_RELAY` の SET イベント受信時点でこれらが揃っていないと、設定の欠落や誤った VRF での中間状態が発生する。
 
 ### 他テーブル先行必須
 
@@ -192,7 +192,7 @@ SET DHCPV4_RELAY|<vlan>  dhcpv4_servers=<ip,...>  [server_vrf=<vrf>]  [source_in
 <!-- cross-refs -->
 ## 暗黙参照 — `sonic-dhcpv4-relay` が読み出す関連 CONFIG_DB テーブル (Phase C)
 
-`dhcp4relay_mgr` スレッドは `DHCPV4_RELAY` 単体ではなく、9 テーブル + STATE_DB 2 テーブルを同時購読し (`SubscriberStateTable`)、さらに処理中に `VLAN_INTERFACE` / `VLAN` / `MID_PLANE_BRIDGE` を direct read (`Table::hget`) する。relay の正常動作には以下の依存テーブルが先行して存在する必要がある。
+`dhcp4relay_mgr` スレッドは `DHCPV4_RELAY` 単体ではなく、9 テーブル + [STATE_DB](../../reference/glossary.md#term-state_db) 2 テーブルを同時購読し (`SubscriberStateTable`)、さらに処理中に `VLAN_INTERFACE` / `VLAN` / `MID_PLANE_BRIDGE` を direct read (`Table::hget`) する。relay の正常動作には以下の依存テーブルが先行して存在する必要がある。
 
 ### CONFIG_DB — subscribe (SubscriberStateTable) で常時監視
 
@@ -200,14 +200,14 @@ SET DHCPV4_RELAY|<vlan>  dhcpv4_servers=<ip,...>  [server_vrf=<vrf>]  [source_in
 |---|---|---|---|
 | `VLAN` | subscribe + direct read | DHCPV4_RELAY SET 処理時に `vlanid` フィールドで VLAN 存在を確認。未登録 VLAN の relay config は skip | dhcp4relay_mgr.cpp:64,735-796 |
 | `VLAN_MEMBER` | subscribe | VLAN メンバ変化 → `prepare_vlan_sockets()` / `prepare_relay_interface_config()` を再実行。client_sock を再生成 | dhcp4relay_mgr.cpp:62,163 |
-| `DEVICE_METADATA` | subscribe | `subtype` (DualToR / SmartSwitch) / `hostname` / `mac` / `deployment_id` の変化を監視。DualToR 判定は link_selection / source_interface 強制上書きに直結 | dhcp4relay_mgr.cpp:61,159 |
+| `DEVICE_METADATA` | subscribe | `subtype` (DualToR / [SmartSwitch](../../reference/glossary.md#term-smartswitch)) / `hostname` / `mac` / `deployment_id` の変化を監視。DualToR 判定は link_selection / source_interface 強制上書きに直結 | dhcp4relay_mgr.cpp:61,159 |
 | `FEATURE` | subscribe | `dhcp_server.state = enabled` になると `DHCPV4_RELAY` watch を停止して `delete_all_relay_configs()` を呼ぶ。以降の DHCPV4_RELAY 変更は全て無視 | dhcp4relay_mgr.cpp:63,169,495-539 |
 | `INTERFACE` | subscribe | 物理ポート / SVI の IP イベント → `prepare_relay_interface_config()` で giaddr / src IP を更新 | dhcp4relay_mgr.cpp:58,140 |
 | `LOOPBACK_INTERFACE` | subscribe | Loopback IP イベント → `source_interface` が Loopback のとき src IP 解決に使用 | dhcp4relay_mgr.cpp:59,143 |
-| `PORTCHANNEL_INTERFACE` | subscribe | PortChannel IP イベント → src IP 解決 | dhcp4relay_mgr.cpp:60,145 |
-| `DHCP_SERVER_IPV4` | subscribe (条件付き) | `dhcp_server` 機能 ON 時のみ購読。relay 転送先 IP を STATE_DB 経由で取得 | dhcp4relay_mgr.cpp:65,150-155 |
-| `DPUS` | subscribe | SmartSwitch: DPU 構成変化 → midplane socket を再設定 | dhcp4relay_mgr.cpp:68,178 |
-| `PORT` | subscribe | PortChannel メンバの物理ポート更新 → relay socket / interface mapping を更新 | dhcp4relay_mgr.cpp:67,175 |
+| `PORTCHANNEL_INTERFACE` | subscribe | [PortChannel](../../reference/glossary.md#term-portchannel) IP イベント → src IP 解決 | dhcp4relay_mgr.cpp:60,145 |
+| `DHCP_SERVER_IPV4` | subscribe (条件付き) | `dhcp_server` 機能 ON 時のみ購読。relay 転送先 IP を [STATE_DB](../../reference/glossary.md#term-state_db) 経由で取得 | dhcp4relay_mgr.cpp:65,150-155 |
+| `DPUS` | subscribe | [SmartSwitch](../../reference/glossary.md#term-smartswitch): [DPU](../../reference/glossary.md#term-dpu) 構成変化 → midplane socket を再設定 | dhcp4relay_mgr.cpp:68,178 |
+| `PORT` | subscribe | [PortChannel](../../reference/glossary.md#term-portchannel) メンバの物理ポート更新 → relay socket / interface mapping を更新 | dhcp4relay_mgr.cpp:67,175 |
 
 ### CONFIG_DB — direct read (Table::hget) でイベント処理中に参照
 
@@ -215,13 +215,13 @@ SET DHCPV4_RELAY|<vlan>  dhcpv4_servers=<ip,...>  [server_vrf=<vrf>]  [source_in
 |---|---|---|---|
 | `VLAN_INTERFACE` | DHCPV4_RELAY SET 処理時・VLAN_MEMBER UPDATE 時 | `server_vrf` 未設定なら `VLAN_INTERFACE[vlan].vrf_name` を読んで `relay_msg->vrf` を決定。空なら `"default"` を使用 | dhcp4relay_mgr.cpp:424-430, dhcp4relay.cpp:888-892 |
 | `DHCPV4_RELAY` | VLAN_INTERFACE_UPDATE 受信時 | `SERVER_VRF_FIELD` を self-read して `server_vrf` が空の場合のみ VRF ソケットを更新 | dhcp4relay.cpp:1378-1390 |
-| `MID_PLANE_BRIDGE` | DEVICE_METADATA subtype=SmartSwitch のとき | `GLOBAL.bridge` フィールドで midplane bridge 名を取得 | dhcp4relay_mgr.cpp:201,244 |
+| `MID_PLANE_BRIDGE` | DEVICE_METADATA subtype=[SmartSwitch](../../reference/glossary.md#term-smartswitch) のとき | `GLOBAL.bridge` フィールドで midplane bridge 名を取得 | dhcp4relay_mgr.cpp:201,244 |
 
 ### STATE_DB — subscribe で監視
 
 | テーブル | 参照箇所 | 用途 | evidence |
 |---|---|---|---|
-| `DHCP_SERVER_IPV4_SERVER_IP` | `dhcp_server` モード有効時のみ | dhcp_server コンテナが STATE_DB に公開したサーバ IP を relay の転送先として使用 | dhcp4relay_mgr.cpp:66,763 |
+| `DHCP_SERVER_IPV4_SERVER_IP` | `dhcp_server` モード有効時のみ | dhcp_server コンテナが [STATE_DB](../../reference/glossary.md#term-state_db) に公開したサーバ IP を relay の転送先として使用 | dhcp4relay_mgr.cpp:66,763 |
 | `INTERFACE_TABLE` | socket bind 失敗時の再試行 | IP アドレスの active 状態を監視してソケット bind を再試行 | dhcp4relay_mgr.cpp:69 |
 
 ### 依存サマリ
@@ -270,7 +270,7 @@ SET DHCPV4_RELAY|<vlan>  dhcpv4_servers=<ip,...>  [server_vrf=<vrf>]  [source_in
 
 `HOP_LIMIT` (= 4) はパケット受信時の hop count チェックに使用する閾値で、超過パケットを drop する。
 `MAX_HOP_COUNT` (= 16) は `relay_config` struct の `max_hop_count` フィールドの C++ デフォルト初期値。
-`DHCPV4_RELAY.max_hop_count` フィールドが CONFIG_DB から読み込めた場合はその値で上書きされる（YANG range 1..16）。
+`DHCPV4_RELAY.max_hop_count` フィールドが [CONFIG_DB](../../reference/glossary.md#term-config_db) から読み込めた場合はその値で上書きされる（YANG range 1..16）。
 DB 未設定時・`stoi()` 例外時はいずれも `MAX_HOP_COUNT = 16` のまま継続する。
 
 ### 定数の外部変更可否
@@ -359,9 +359,9 @@ syslog(LOG_WARNING, "[DHCPV4_RELAY] Dropping server reply for %s: VLAN socket no
 | `COUNTERS_DB` | `COUNTERS_DHCPV4` | `<Vlan>` + `\|` + `RX` または `TX` | `Discover`, `Offer`, `Request`, `Decline`, `Acknowledge`, `NegativeAcknowledge`, `Release`, `Inform`, `Unknown`, `Malformed`, `Dropped` | 30 秒おきに専用スレッドが `db_update_loop()` を実行 |
 
 - `dhcp_cntr_table.start_db_updates()` が `loop_relay()` の起動直後に呼ばれ、専用スレッドが `DHCPCounter_table::db_update_loop()` を 30 秒おきに実行する (`dhcp4relay.cpp:1571`, `dhcp4relay_stats.h:12: DHCP_RELAY_DB_UPDATE_TIMER_VAL = 30`)。
-- スレッドは `COUNTERS_DB` に `swss::Table("COUNTERS_DHCPV4")` を開き、各 VLAN × 方向 (RX/TX) × メッセージタイプのカウンタを累積値で書き込む。既存の Redis 値を読み出してローカルのデルタ値を加算してから書き戻すため、再起動をまたいでも値が単調増加する。
+- スレッドは `COUNTERS_DB` に `swss::Table("COUNTERS_DHCPV4")` を開き、各 VLAN × 方向 (RX/TX) × メッセージタイプのカウンタを累積値で書き込む。既存の [Redis](../../reference/glossary.md#term-redis) 値を読み出してローカルのデルタ値を加算してから書き戻すため、再起動をまたいでも値が単調増加する。
 - カウンタは RX 側 (`relay_client_packet_handler()`) と TX 側 (`relay_server_packet_handler()`) で `dhcp_cntr_table.increment_counter()` を呼び出してメモリ上のキャッシュに積み上げられ、30 秒ごとに一括して DB に反映される。
-- VLAN の追加時に `initialize_interface(vlan)` が呼ばれてキャッシュエントリが 0 初期化される。VLAN の削除時は `remove_interface(vlan)` でキャッシュが消去されるが、COUNTERS_DB 上の過去のカウンタエントリは自動削除されない (`dhcp4relay.cpp:842-846`)。
+- VLAN の追加時に `initialize_interface(vlan)` が呼ばれてキャッシュエントリが 0 初期化される。VLAN の削除時は `remove_interface(vlan)` でキャッシュが消去されるが、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) 上の過去のカウンタエントリは自動削除されない (`dhcp4relay.cpp:842-846`)。
 
 ### 書き込み量の見積もり
 
@@ -374,13 +374,13 @@ COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|TX  {Discover: N, Offer: N, ..., Dropped: N}
 
 ### CONFIG_DB / APPL_DB / STATE_DB への副次書き込み
 
-`sonic-dhcpv4-relay` は CONFIG_DB・APPL_DB・STATE_DB への書き込みは行わない。STATE_DB は `DHCP_SERVER_IPV4_SERVER_IP` と `INTERFACE_TABLE` を subscribe して読み出すのみ。
+`sonic-dhcpv4-relay` は CONFIG_DB・[APPL_DB](../../reference/glossary.md#term-appl_db)・STATE_DB への書き込みは行わない。STATE_DB は `DHCP_SERVER_IPV4_SERVER_IP` と `INTERFACE_TABLE` を subscribe して読み出すのみ。
 
 ### APPL_DB 経由パス
 
-なし。`DHCPV4_RELAY` は APPL_DB 中継なし、SAI 非経由の Linux カーネル relay であるため、orchagent への通知は発生しない。
+なし。`DHCPV4_RELAY` は [APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし、[SAI](../../reference/glossary.md#term-sai) 非経由の Linux カーネル relay であるため、[orchagent](../../reference/glossary.md#term-orchagent) への通知は発生しない。
 
-> **スキャン証跡**: `dhcp4relay_stats.cpp` 全行読了。`dhcp4relay.cpp:86-87, 591-828, 1570-1571` 読了。`dhcp4relay_stats.h:12` 読了。`dhcp4relay_mgr.cpp:56-90, 510-518, 762-771` 読了。副次書き込み先は `COUNTERS_DB.COUNTERS_DHCPV4` のみ確認。CONFIG_DB / APPL_DB への書き込みなし。
+> **スキャン証跡**: `dhcp4relay_stats.cpp` 全行読了。`dhcp4relay.cpp:86-87, 591-828, 1570-1571` 読了。`dhcp4relay_stats.h:12` 読了。`dhcp4relay_mgr.cpp:56-90, 510-518, 762-771` 読了。副次書き込み先は `COUNTERS_DB.COUNTERS_DHCPV4` のみ確認。CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みなし。
 <!-- /side-effects -->
 
 <!-- pubsub -->
@@ -417,7 +417,7 @@ COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|TX  {Discover: N, Offer: N, ..., Dropped: N}
 ### APPL_DB・STATE_DB への通知
 
 `dhcprelayd` は APPL_DB・STATE_DB への書き込みを行わない。
-`DHCPV4_RELAY` は orchagent 非経由（Linux カーネルレイヤの中継）のため、SAI 通知は発生しない。
+`DHCPV4_RELAY` は [orchagent](../../reference/glossary.md#term-orchagent) 非経由（Linux カーネルレイヤの中継）のため、[SAI](../../reference/glossary.md#term-sai) 通知は発生しない。
 
 > **Evidence**: `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/common/dhcp_db_monitor.py:20-411, 442-485`; `sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcprelayd/dhcprelayd.py:44-128`
 <!-- /pubsub -->
@@ -425,15 +425,15 @@ COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|TX  {Discover: N, Offer: N, ..., Dropped: N}
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`sonic-dhcpv4-relay` (`DHCPMgr`) は `DEVICE_METADATA.subtype` を購読し、プラットフォーム種別に応じて中継動作を自動変更する。ASIC 種別・multi-ASIC・VOQ chassis の差は SAI 非経由のため発生しない。
+`sonic-dhcpv4-relay` (`DHCPMgr`) は `DEVICE_METADATA.subtype` を購読し、プラットフォーム種別に応じて中継動作を自動変更する。ASIC 種別・multi-ASIC・[VOQ](../../reference/glossary.md#term-voq) chassis の差は [SAI](../../reference/glossary.md#term-sai) 非経由のため発生しない。
 
 | プラットフォーム | 差異 | 根拠 |
 |-----------------|------|------|
 | **DualToR** (`subtype = "DualToR"`) | `source_interface` を `"Loopback0"` に強制上書き（`DHCPV4_RELAY` フィールド値を無視）; `link_selection` を設定値に関わらず自動 enable | `dhcp4relay.cpp:263-267` (source_interface 強制), `dhcp4relay.cpp:521` (`is_dualTor \|\| link_selection_opt == "enable"`) |
-| **SmartSwitch** (`subtype = "SmartSwitch"`) | OPTION82 SUBOPT_REMOTE_ID にホスト MAC ではなく midplane bridge (`MID_PLANE_BRIDGE\|GLOBAL.bridge`) の MAC を使用; DPU インタフェース (`dpu*`) からのパケットを midplane bridge VLAN にマッピング | `dhcp4relay.cpp:509-517` (Remote-ID MAC 切替), `dhcp4relay.cpp:1001-1003` (DPU→midplane bridge マッピング) |
+| **SmartSwitch** (`subtype = "SmartSwitch"`) | OPTION82 SUBOPT_REMOTE_ID にホスト MAC ではなく midplane bridge (`MID_PLANE_BRIDGE\|GLOBAL.bridge`) の MAC を使用; [DPU](../../reference/glossary.md#term-dpu) インタフェース (`dpu*`) からのパケットを midplane bridge VLAN にマッピング | `dhcp4relay.cpp:509-517` (Remote-ID MAC 切替), `dhcp4relay.cpp:1001-1003` ([DPU](../../reference/glossary.md#term-dpu)→midplane bridge マッピング) |
 | ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | SAI 非経由 — Linux カーネルの UDP 中継のみ |
 | multi-ASIC / namespace | 影響なし | CPU-side relay; namespace ループなし |
-| VOQ chassis | 影響なし | `DHCPMgr` は host CONFIG_DB のみ購読 |
+| [VOQ](../../reference/glossary.md#term-voq) chassis | 影響なし | `DHCPMgr` は host CONFIG_DB のみ購読 |
 
 ### DualToR: source_interface 強制上書きの詳細
 
@@ -609,4 +609,4 @@ show dhcprelay_helper ipv4
 - なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 9aad8bf0c717 -->
+<!-- glossary-links-injected: 92fe7e64c171 -->

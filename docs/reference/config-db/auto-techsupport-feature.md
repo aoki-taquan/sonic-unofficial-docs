@@ -139,8 +139,8 @@ GLOBAL 側にある `max_techsupport_limit` / `max_core_limit` / `since` はこ�
 | **`generate_dump` lock 失敗 (`EXT_LOCKFAIL=2`)** | 別 techsupport が同時実行中 | なし | NOTICE "Another instance of techsupport running, aborting this" | `auto_techsupport_helper.py:240-241` |
 | **`generate_dump` retry 要求 (`EXT_RETRY=4`)** | `show techsupport` が内部リトライ要求 | **最大 2 回 再帰** | 上限超過で ERR "MAX_RETRY_LIMIT ... exceeded" | `auto_techsupport_helper.py:242-247`, `:84` (`MAX_RETRY_LIMIT=2`) |
 | **`generate_dump` その他 rc != 0** | subprocess 失敗、kill 等 | なし | ERR "show techsupport failed with exit code N" | `auto_techsupport_helper.py:248-249` |
-| dump 名 parse 失敗 | stdout に `sonic_dump_.*tar.*` パターン無し | なし | ERR "stdout ... doesn't have the dump name"。STATE_DB に書かれない | `auto_techsupport_helper.py:225-229`, `:251-253` |
-| `write_to_state_db` 途中切断 | Redis 切断 | なし | partial fields で STATE_DB に残存。`get_ts_map` の `int(creation_time)` 失敗で entry skip | `auto_techsupport_helper.py:303-310`, `:268-272` |
+| dump 名 parse 失敗 | stdout に `sonic_dump_.*tar.*` パターン無し | なし | ERR "stdout ... doesn't have the dump name"。[STATE_DB](../../reference/glossary.md#term-state_db) に書かれない | `auto_techsupport_helper.py:225-229`, `:251-253` |
+| `write_to_state_db` 途中切断 | [Redis](../../reference/glossary.md#term-redis) 切断 | なし | partial fields で [STATE_DB](../../reference/glossary.md#term-state_db) に残存。`get_ts_map` の `int(creation_time)` 失敗で entry skip | `auto_techsupport_helper.py:303-310`, `:268-272` |
 
 ### 再帰 retry 経路 (唯一の retry)
 
@@ -158,7 +158,7 @@ invoke_ts_cmd(db, num_retry=0)
 ### 部分適用・冪等性
 
 - `cleanup_process` は incremental unlink。途中で `OSError` が出ても他ファイル削除は続行 → 部分削除が残存。
-- `write_to_state_db` は field ごとに `db.set` を呼ぶ。途中で Redis 接続切れが起きると `AUTO_TECHSUPPORT_DUMP_INFO|<name>` が partial fields のまま残る (timestamp あり / container 無し等)。これにより `get_ts_map` 内の `int(creation_time)` 変換失敗で entry が skip され、rate-limit 計算から漏れる。
+- `write_to_state_db` は field ごとに `db.set` を呼ぶ。途中で [Redis](../../reference/glossary.md#term-redis) 接続切れが起きると `AUTO_TECHSUPPORT_DUMP_INFO|<name>` が partial fields のまま残る (timestamp あり / container 無し等)。これにより `get_ts_map` 内の `int(creation_time)` 変換失敗で entry が skip され、rate-limit 計算から漏れる。
 - `coredump_gen_handler` の `handle_core_dump_creation_event` と `handle_coredump_cleanup` は独立。前者が early return しても cleanup は実行される。
 
 ### 重要な特性
@@ -166,7 +166,7 @@ invoke_ts_cmd(db, num_retry=0)
 - **silent fallback の連鎖**: `rate_limit_interval` が "" / 非数値だと cooloff = 0 になり、core dump 連発時に techsupport が暴走する (運用上 `rate_limit_interval=0` 明示設定と区別がつかない)。
 - **disabled = cleanup 無効**: `AUTO_TECHSUPPORT|GLOBAL.state = disabled` だと core / techsupport 両方の cleanup もスキップされ、disk full に至る危険がある。
 - **container 名一致は前方一致ではなく完全一致**: `coredump_gen_handler.py:54` の `FEATURE.format(self.container)` は完全一致 `HGET` を行う。`trim_masic_suffix` で末尾数字を削った後の名前と一致しなければ即 skip。
-- **uncaught 例外**: `coredump_gen_handler.py` / `techsupport_cleanup.py` には top-level `try/except` がなく、`subprocess_exec` や Redis 接続で raise が起きるとプロセス異常終了。syslog に Python traceback が出るが、`coredump-compress` 側に rc が戻らないため kernel 側からは silent failure。
+- **uncaught 例外**: `coredump_gen_handler.py` / `techsupport_cleanup.py` には top-level `try/except` がなく、`subprocess_exec` や [Redis](../../reference/glossary.md#term-redis) 接続で raise が起きるとプロセス異常終了。syslog に Python traceback が出るが、`coredump-compress` 側に rc が戻らないため kernel 側からは silent failure。
 
 > **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:1-82`; `sonic-utilities/scripts/techsupport_cleanup.py:1-59`; `sonic-utilities/utilities_common/auto_techsupport_helper.py:84,115-124,170-193,232-256,285-301,317-331`; 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-feature-failure.md`
 <!-- /failure -->
@@ -176,7 +176,7 @@ invoke_ts_cmd(db, num_retry=0)
 
 <!-- evidence: meta/_intermediate/cdb-flow/auto-techsupport-feature-side.md -->
 
-`AUTO_TECHSUPPORT_FEATURE` テーブル本体には常駐 subscriber が存在せず、書込みは「core dump 発生 → `coredump_gen_handler` 起動」「techsupport rotate → `techsupport_cleanup` 起動」のイベント駆動経路でのみ発生する。両 script (`sonic-utilities/scripts/coredump_gen_handler.py` / `techsupport_cleanup.py` / 共通実装 `utilities_common/auto_techsupport_helper.py`) を走査した結果、CONFIG_DB / APPL_DB / COUNTERS_DB / ASIC_DB への書込みは無く、副次書込は **STATE_DB の `AUTO_TECHSUPPORT_DUMP_INFO` のみ** に閉じる。
+`AUTO_TECHSUPPORT_FEATURE` テーブル本体には常駐 subscriber が存在せず、書込みは「core dump 発生 → `coredump_gen_handler` 起動」「techsupport rotate → `techsupport_cleanup` 起動」のイベント駆動経路でのみ発生する。両 script (`sonic-utilities/scripts/coredump_gen_handler.py` / `techsupport_cleanup.py` / 共通実装 `utilities_common/auto_techsupport_helper.py`) を走査した結果、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への書込みは無く、副次書込は **[STATE_DB](../../reference/glossary.md#term-state_db) の `AUTO_TECHSUPPORT_DUMP_INFO` のみ** に閉じる。
 
 ### 副次 DB 書込一覧
 
@@ -193,8 +193,8 @@ invoke_ts_cmd(db, num_retry=0)
 | DB / 経路 | 状態 | 根拠 |
 |-----------|------|------|
 | CONFIG_DB | **read-only** (本 script 経路) | `coredump_gen_handler.py` / `techsupport_cleanup.py` ともに `db.get(CFG_DB, ...)` のみ。`AUTO_TECHSUPPORT\|GLOBAL` / `AUTO_TECHSUPPORT_FEATURE\|<feat>` を参照するが書き戻さない |
-| APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB / ASIC_DB | 書込なし | 両 script は `db.connect(CFG_DB)` と `db.connect(STATE_DB)` のみ呼び出し、他 DB に接続しない (`coredump_gen_handler.py:69-71`, `techsupport_cleanup.py:52-54`) |
-| SAI / syncd | 経由しない | techsupport 収集は OS レベル diagnostic (kernel core, syslog, show コマンド出力) に閉じる。ASIC 触らず |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) | 書込なし | 両 script は `db.connect(CFG_DB)` と `db.connect(STATE_DB)` のみ呼び出し、他 DB に接続しない (`coredump_gen_handler.py:69-71`, `techsupport_cleanup.py:52-54`) |
+| [SAI](../../reference/glossary.md#term-sai) / [syncd](../../reference/glossary.md#term-syncd) | 経由しない | techsupport 収集は OS レベル diagnostic (kernel core, syslog, show コマンド出力) に閉じる。ASIC 触らず |
 | Notification / Pub-Sub (`NotificationProducer` / `ProducerStateTable` / `publish`) | 使用なし | grep で 0 ヒット。`SonicV2Connector` の素の `set` / `delete` のみ。Redis keyspace 通知は発火可能だが本 script 由来の購読クライアントは無い |
 
 ### 特性
@@ -247,7 +247,6 @@ ls -lh /var/dump/
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -259,11 +258,11 @@ ls -lh /var/dump/
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — syslog 監視・techsupport 生成をトリガー)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — syslog 監視・techsupport 生成をトリガー)
 
 ### 段階 4 — タイミングと副作用
 
@@ -293,7 +292,7 @@ ls -lh /var/dump/
 - なし
 
 ### ビルド時デフォルト (init_cfg / j2 テンプレート)
-- `init_cfg.json.j2` の `AUTO_TECHSUPPORT_FEATURE` セクションでデフォルト feature リスト (bgp, swss, syncd 等) が注入される
+- `init_cfg.json.j2` の `AUTO_TECHSUPPORT_FEATURE` セクションでデフォルト feature リスト (bgp, swss, [syncd](../../reference/glossary.md#term-syncd) 等) が注入される
 
 ### ハードコードデフォルト
 - なし
@@ -383,15 +382,15 @@ YANG 宣言デフォルトに加え、Python コードが持つ fallback を per
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: AUTO_TECHSUPPORT_FEATURE は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・SmartSwitch DPU・ベンダーに依らない。
+**プラットフォーム差なし**: AUTO_TECHSUPPORT_FEATURE は host 単位で適用され、ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)・ベンダーに依らない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium / Cisco) | 影響なし | SAI 非経由 (runtime-trace 段階 3 参照)。`coredump_gen_handler.py` (82 行) / `techsupport_cleanup.py` (59 行) を `platform\|asic\|chassis\|namespace\|vendor` で grep して 0 ヒット |
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium / Cisco) | 影響なし | [SAI](../../reference/glossary.md#term-sai) 非経由 (runtime-trace 段階 3 参照)。`coredump_gen_handler.py` (82 行) / `techsupport_cleanup.py` (59 行) を `platform\|asic\|chassis\|namespace\|vendor` で grep して 0 ヒット |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `SonicV2Connector(use_unix_socket_path=True)` で host CONFIG_DB のみ参照、`asicN` namespace を iterate しない。container 名の asic suffix (`swss0`/`syncd1` 等) は `trim_masic_suffix()` で末尾数字を剥がした後に CONFIG_DB key を HGET する (`coredump_gen_handler.py:52`) |
-| VOQ chassis (supervisor + line card) | 各 host で独立適用 | chassisdb (REDIS_CHASSIS_SERVER) 非参照。各 line card host で独立にローカル CONFIG_DB を見てローカル `/var/dump/` に techsupport を生成。chassis 全体集中機構なし |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line card) | 各 host で独立適用 | chassisdb (REDIS_CHASSIS_SERVER) 非参照。各 line card host で独立にローカル CONFIG_DB を見てローカル `/var/dump/` に techsupport を生成。chassis 全体集中機構なし |
 | namespace (asic0..asicN) | 影響なし | `coredump_gen_handler.py` / `techsupport_cleanup.py` / `auto_techsupport_helper.py` のいずれにも namespace 引数なし。すべて host namespace の `unix:///var/run/redis/redis.sock` に接続 |
-| SmartSwitch DPU | 影響なし | `coredump_gen_handler.py` / `auto_techsupport_helper.py` を `DPU\|smartswitch\|dpu` で grep して 0 ヒット。DPU container で core dump が発生しても host の `AUTO_TECHSUPPORT_FEATURE|<container>` を同一経路で評価するため、schema / handler ロジックに変化なし |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | 影響なし | `coredump_gen_handler.py` / `auto_techsupport_helper.py` を `DPU\|smartswitch\|dpu` で grep して 0 ヒット。[DPU](../../reference/glossary.md#term-dpu) container で core dump が発生しても host の `AUTO_TECHSUPPORT_FEATURE|<container>` を同一経路で評価するため、schema / handler ロジックに変化なし |
 | container suffix (`trim_masic_suffix`) | 吸収済み | `coredump_gen_handler.py:52` が `trim_masic_suffix(container_name)` を呼び、末尾の連続する数字を除去 (`swss0`→`swss`, `syncd1`→`syncd`)。これにより multi-asic / masic 環境で asic suffix 付きの docker 名も suffix なしの `AUTO_TECHSUPPORT_FEATURE` key と一致する |
 | ベンダー固有 hook | なし | `AUTO_TECHSUPPORT_FEATURE` schema / handler に vendor 分岐なし。`generate_dump` 内の `show platform summary` 等 vendor 依存コマンドは別 entity (本テーブル field 解釈には影響しない) |
 | init_cfg / build template | 分岐なし | `init_cfg.json.j2` の AUTO_TECHSUPPORT_FEATURE ブロックは `{% for feature in FEATURE %}` のみで platform 条件式なし |
@@ -594,9 +593,9 @@ per-feature `rate_limit_interval` の経過判定は CONFIG_DB 値だけでは�
 
 - **`hostcfgd` / `featured` daemon**: `<!-- pubsub -->` 解析の通り、`AUTO_TECHSUPPORT_FEATURE` を `subscribe()` する常駐プロセスは存在しない。`hostcfgd` register_callbacks に AUTO_TECHSUPPORT 系の購読呼び出しなし、`featured` も `FEATURE` のみ購読し本テーブルには触らない。
 - **`DEVICE_METADATA`**: `coredump_gen_handler.py` / `techsupport_cleanup.py` / `memory_threshold_check.py` / `auto_techsupport_helper.py` を `DEVICE_METADATA` で grep して 0 ヒット。multi-asic 判定や hostname 解決は本パイプラインに存在しない。
-- **`CORE_DUMP_NAME_TO_CONTAINER_MAP`**: 現行 sonic-utilities master のコード上に該当 CONFIG_DB / STATE_DB テーブルは存在しない (`grep -rn "CORE_DUMP_NAME_TO_CONTAINER" .cache/sonic-sources/` で 0 ヒット)。kernel `core_pattern` → `coredump-compress %e %t %p %P` でユーザ空間に渡される `args.container` がコンテナ名→`FEATURE` key への暗黙マッピングを果たしており、DB レベルのテーブルとしては具現化されていない。
+- **`CORE_DUMP_NAME_TO_CONTAINER_MAP`**: 現行 [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) master のコード上に該当 CONFIG_DB / STATE_DB テーブルは存在しない (`grep -rn "CORE_DUMP_NAME_TO_CONTAINER" .cache/sonic-sources/` で 0 ヒット)。kernel `core_pattern` → `coredump-compress %e %t %p %P` でユーザ空間に渡される `args.container` がコンテナ名→`FEATURE` key への暗黙マッピングを果たしており、DB レベルのテーブルとしては具現化されていない。
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/auto-techsupport-feature-cross-refs.md` を参照。
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 48d5f456ebb6 -->
+<!-- glossary-links-injected: 92f616021a79 -->

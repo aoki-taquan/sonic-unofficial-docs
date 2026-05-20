@@ -37,11 +37,11 @@ related:
 
 ## 概要
 
-SmartSwitch は SONiC NPU と複数の DPU (Data Processing Unit) を搭載した複合スイッチ筐体。
-NPU-DPU 間はミッドプレーンブリッジ (`bridge-midplane`) を介して L2 接続され、DPU への IPv4 割り当ては
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) は SONiC [NPU](../../reference/glossary.md#term-npu) と複数の [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) を搭載した複合スイッチ筐体。
+[NPU](../../reference/glossary.md#term-npu)-[DPU](../../reference/glossary.md#term-dpu) 間はミッドプレーンブリッジ (`bridge-midplane`) を介して L2 接続され、[DPU](../../reference/glossary.md#term-dpu) への IPv4 割り当ては
 DHCP サーバ (`dhcp_server` feature) が `DHCP_SERVER_IPV4_PORT` テーブルを参照してポートごとに固定 IP を払い出す。
 
-SmartSwitch 機能が有効化されるかどうかは `DEVICE_METADATA|localhost.subtype == "SmartSwitch"` で判定される。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) 機能が有効化されるかどうかは `DEVICE_METADATA|localhost.subtype == "SmartSwitch"` で判定される。
 
 ---
 
@@ -59,8 +59,8 @@ MID_PLANE_BRIDGE|GLOBAL
 
 | フィールド | 型 | 必須 | 説明 |
 |-----------|------|------|------|
-| `bridge` | string (`"bridge-midplane"` のみ) | - | ミッドプレーンブリッジ名。YANG の `pattern` 制約で `"bridge-midplane"` 固定 |
-| `ip_prefix` | IPv4 prefix | - | ブリッジの IP プレフィックス。`bridge` が存在する場合は YANG `must` 制約で必須 |
+| `bridge` | string (`"bridge-midplane"` のみ) | - | ミッドプレーンブリッジ名。[YANG](../../reference/glossary.md#term-yang) の `pattern` 制約で `"bridge-midplane"` 固定 |
+| `ip_prefix` | IPv4 prefix | - | ブリッジの IP プレフィックス。`bridge` が存在する場合は [YANG](../../reference/glossary.md#term-yang) `must` 制約で必須 |
 
 !!! note "`bridge` フィールドの取りうる値"
     YANG (`sonic-smart-switch.yang:63-69`) の `type string { pattern "bridge-midplane"; }` により、
@@ -95,7 +95,7 @@ MID_PLANE_BRIDGE|GLOBAL
 DHCP_SERVER_IPV4_PORT|<dhcp_interface>|<port>
 ```
 
-- `<dhcp_interface>`: `DHCP_SERVER_IPV4` のキー（SmartSwitch の場合 `"bridge-midplane"`）
+- `<dhcp_interface>`: `DHCP_SERVER_IPV4` のキー（[SmartSwitch](../../reference/glossary.md#term-smartswitch) の場合 `"bridge-midplane"`）
 - `<port>`: DPU ミッドプレーンインターフェース名（`dpu0`, `dpu1`, ...）
 
 ### フィールド一覧
@@ -138,7 +138,7 @@ SmartSwitch では `ips` が使用され、各 DPU に `169.254.200.<dpu_id+1>` 
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`dhcpservd` の `generate()` と `dhcprelayd` の `refresh_dhcrelay()` はイベントごとに CONFIG_DB を全量スナップショットし Kea / dhcrelay 設定を再生成する。このため書き込み順序が初回起動時の設定完全性に影響する。
+`dhcpservd` の `generate()` と `dhcprelayd` の `refresh_dhcrelay()` はイベントごとに [CONFIG_DB](../../reference/glossary.md#term-config_db) を全量スナップショットし Kea / dhcrelay 設定を再生成する。このため書き込み順序が初回起動時の設定完全性に影響する。
 
 ### 検出された順序依存
 
@@ -146,7 +146,7 @@ SmartSwitch では `ips` が使用され、各 DPU に `169.254.200.<dpu_id+1>` 
 |---|----------|------|--------|
 | 1 | `DEVICE_METADATA\|localhost.subtype = "SmartSwitch"` → `MID_PLANE_BRIDGE` / `DHCP_SERVER_IPV4_PORT` 処理 | 先行必須（欠如時 SmartSwitch 経路が完全スキップ） | `MidPlaneTableEventChecker` 変更で `dhcpservd` が再生成トリガー |
 | 2 | `MID_PLANE_BRIDGE\|GLOBAL.bridge` と `ip_prefix` の同時書き込み | 必須（片方欠如で SmartSwitch サブネット生成がスキップ） | YANG `must` 制約が CLI 経由の不整合書き込みを拒否 |
-| 3 | `DPUS\|<dpu_name>` → `DHCP_SERVER_IPV4_PORT\|bridge-midplane\|<dpu>` | 先行必須（YANG leafref 制約） | CLI / sonic-cfggen は YANG バリデーションで reject |
+| 3 | `DPUS\|<dpu_name>` → `DHCP_SERVER_IPV4_PORT\|bridge-midplane\|<dpu>` | 先行必須（YANG leafref 制約） | CLI / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) は YANG バリデーションで reject |
 | 4 | `MID_PLANE_BRIDGE\|GLOBAL` + `DHCP_SERVER_IPV4\|bridge-midplane` → `dhcprelayd` midplane 認識 | 同時または先行推奨 | `MidPlaneTableEventChecker` で変更後に自動再評価 |
 | 5 | 全 SmartSwitch テーブル → `FEATURE\|dhcp_server.state=enabled` | 推奨先行（初回起動時の設定欠落回避） | 後から Feature 有効化しても `MidPlaneTableEventChecker` で自動再生成 |
 
@@ -166,7 +166,7 @@ SmartSwitch では `ips` が使用され、各 DPU に `169.254.200.<dpu_id+1>` 
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`MID_PLANE_BRIDGE` および `DHCP_SERVER_IPV4_PORT` は CONFIG_DB の複数テーブルを YANG leafref
+`MID_PLANE_BRIDGE` および `DHCP_SERVER_IPV4_PORT` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の複数テーブルを YANG leafref
 またはコード側の implicit 参照で依存する。
 
 | 参照元テーブル | 参照元フィールド | 参照先テーブル | 参照先フィールド | 参照種別 | 参照箇所 |
@@ -359,14 +359,14 @@ dhcrelay プロセスが起動直後にゾンビ状態になった場合、`LOG_
 強制終了し `sys.exit(1)` する。`dhcprelayd` コンテナが再起動する。
 
 **dhcp_server IP タイムアウト** (`dhcprelayd.py:375-385`):  
-STATE_DB の `DHCP_SERVER_IPV4_SERVER_IP|eth0.ip` を 10 回（合計 100 秒）リトライして
+[STATE_DB](../../reference/glossary.md#term-state_db) の `DHCP_SERVER_IPV4_SERVER_IP|eth0.ip` を 10 回（合計 100 秒）リトライして
 取得できない場合、`LOG_ERR` を出力して `sys.exit(1)` する。コンテナが再起動する。
 
 ### 5. dhcp_lease — lease ファイル不在
 
 **lease ファイル不在** (`dhcp_lease.py:116-121`):  
 Kea の lease ファイル（デフォルト `/var/lib/kea/kea-lease.csv`）が存在しない場合、
-`LOG_ERR` を出力して例外を再送出する。STATE_DB の `DHCP_SERVER_IPV4_LEASE` テーブルは更新されない。
+`LOG_ERR` を出力して例外を再送出する。[STATE_DB](../../reference/glossary.md#term-state_db) の `DHCP_SERVER_IPV4_LEASE` テーブルは更新されない。
 
 ### 障害影響まとめ
 
@@ -397,7 +397,7 @@ Kea の lease ファイル（デフォルト `/var/lib/kea/kea-lease.csv`）が�
 |---|---|---|
 | `"bridge-midplane"` | `config_samples.py:88`; YANG `pattern` (`sonic-smart-switch.yang:65`) | ミッドプレーンブリッジ名。YANG pattern 制約により唯一有効な値 |
 | `"169.254.200.254/24"` | `config_samples.py:93` | `MID_PLANE_BRIDGE.GLOBAL.ip_prefix` の実装値。サブネットプレフィックス `169.254.200` は `config_samples.py:85` で定数化 |
-| `"169.254.200.254"` | `config_samples.py:86` | NPU 側ブリッジ IP（`mpbr_prefix + ".254"`）。`DHCP_SERVER_IPV4.bridge-midplane.gateway` に設定 |
+| `"169.254.200.254"` | `config_samples.py:86` | [NPU](../../reference/glossary.md#term-npu) 側ブリッジ IP（`mpbr_prefix + ".254"`）。`DHCP_SERVER_IPV4.bridge-midplane.gateway` に設定 |
 
 ### `DHCP_SERVER_IPV4_PORT` — DPU IP アドレス計算式
 
@@ -432,7 +432,7 @@ NPU ブリッジ IP (`169.254.200.254`) は最大値 `.8`（`dpu7`）と衝突�
 
 | 定数名 | 値 | 意味 |
 |---|---|---|
-| `MID_PLANE_BRIDGE_SUBNET_ID` | `10000` | kea-dhcp4 の subnet ID（VLAN 番号転用の代わりに固定値を使用） |
+| `MID_PLANE_BRIDGE_SUBNET_ID` | `10000` | kea-dhcp4 の subnet ID（[VLAN](../../reference/glossary.md#term-vlan) 番号転用の代わりに固定値を使用） |
 | `SMART_SWITCH_CHECKER` | `["DpusTableEventChecker", "MidPlaneTableEventChecker"]` | SmartSwitch 環境で追加購読するイベントチェッカー |
 
 ### YANG pattern 制約（ハードコード範囲）
@@ -457,7 +457,7 @@ NPU ブリッジ IP (`169.254.200.254`) は最大値 `.8`（`dpu7`）と衝突�
 
 ### STATE_DB: DHCP_SERVER_IPV4_LEASE（SmartSwitch 専用キー形式）
 
-kea-dhcp4 が DPU へ IP アドレスをリース割り当てするたびに SIGUSR1 で dhcpservd に通知し、`KeaDhcp4LeaseHandler` が `/var/lib/kea/kea-lease.csv` を読み取って STATE_DB に書き込む。SmartSwitch では `Vlan<id>` の代わりに `bridge-midplane` をプレフィックスに使用する。
+kea-dhcp4 が DPU へ IP アドレスをリース割り当てするたびに SIGUSR1 で dhcpservd に通知し、`KeaDhcp4LeaseHandler` が `/var/lib/kea/kea-lease.csv` を読み取って [STATE_DB](../../reference/glossary.md#term-state_db) に書き込む。SmartSwitch では `Vlan<id>` の代わりに `bridge-midplane` をプレフィックスに使用する。
 
 **key 形式**:
 
@@ -493,7 +493,7 @@ dhcpservd 起動時に 1 回のみ実行。dhcp_server コンテナの `eth0` IP
 
 `DpusTableEventChecker` / `MidPlaneTableEventChecker` が変更を検知するたびに `dump_dhcp4_config()` が `/etc/kea/kea-dhcp4.conf` を上書きして kea-dhcp4 に SIGHUP を送信する。SmartSwitch 固有の差異:
 
-- `subnet_id` に VLAN 番号の代わり固定値 `MID_PLANE_BRIDGE_SUBNET_ID = 10000` を使用
+- `subnet_id` に [VLAN](../../reference/glossary.md#term-vlan) 番号の代わり固定値 `MID_PLANE_BRIDGE_SUBNET_ID = 10000` を使用
 - `bridge-midplane` が `subnet4` の対象ネットワークとして追加される
 
 > **Evidence**: `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py:51-68`; `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:97-100,251`
@@ -528,8 +528,8 @@ data['FEATURE'] = {
 
 | CONFIG_DB テーブル | Producer | Consumer / 購読方式 | select タイムアウト |
 |---|---|---|---|
-| `MID_PLANE_BRIDGE\|GLOBAL` | sonic-cfggen / config_samples.py | `dhcpservd` — `MidPlaneTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
-| `MID_PLANE_BRIDGE\|GLOBAL` | sonic-cfggen / config_samples.py | `dhcprelayd` — `MidPlaneTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
+| `MID_PLANE_BRIDGE\|GLOBAL` | [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / config_samples.py | `dhcpservd` — `MidPlaneTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
+| `MID_PLANE_BRIDGE\|GLOBAL` | [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / config_samples.py | `dhcprelayd` — `MidPlaneTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
 | `DPUS\|dpu*` | sonic-cfggen / config_samples.py | `dhcpservd` — `DpusTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
 | `DHCP_SERVER_IPV4_PORT\|bridge-midplane\|dpu*` | sonic-cfggen / config_samples.py | `dhcpservd` — `DhcpPortTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
 
@@ -673,7 +673,7 @@ YANG / CONFIG_DB フィールドではなく、ファイルシステム上のプ
 | プラットフォーム API | 役割 |
 |---|---|
 | `module.get_midplane_ip()` | DPU の midplane IP アドレスを返す |
-| `module.is_midplane_reachable()` | midplane 到達可能性を返す（ping / ARP 等） |
+| `module.is_midplane_reachable()` | midplane 到達可能性を返す（ping / [ARP](../../reference/glossary.md#term-arp) 等） |
 
 書き込み先:
 
@@ -698,7 +698,7 @@ SmartSwitch 環境では `CHASSIS_MODULE` のキーは `"DPU"` プレフィッ�
 |---|---|---|
 | ミッドプレーン初期化 | `chassis.init_midplane_switch()` | `bridge-midplane` カーネル IF 作成。CONFIG_DB 非経由 |
 | DPU midplane IP 取得 | `module.get_midplane_ip()` | プラットフォーム実装。CONFIG_DB 非経由 |
-| midplane 到達性確認 | `module.is_midplane_reachable()` | プラットフォーム実装（ping / ARP 等） |
+| midplane 到達性確認 | `module.is_midplane_reachable()` | プラットフォーム実装（ping / [ARP](../../reference/glossary.md#term-arp) 等） |
 | DPU 再起動タイムアウト | `/usr/share/sonic/platform/platform.json` | `dpu_reboot_timeout` キー（YANG 非経由） |
 | DPU 再起動原因の永続化 | `/host/reboot-cause/module/<dpu>/` | ファイルシステム直接書き込み |
 | SmartSwitch / DPU 判定 | `chassis.is_smartswitch()` / `chassis.is_dpu()` | プラットフォームオーバーライド必須 |
@@ -717,3 +717,5 @@ SmartSwitch 環境では `CHASSIS_MODULE` のキーは `"DPU"` プレフィッ�
 
 - [SmartSwitch IP アドレス割り当て設計](../../system/smart-switch-ip-address-assignment.md)
 - [SmartSwitch データベース設計](../../architecture/smart-switch-database-design.md)
+
+<!-- glossary-links-injected: 2087de3b8bba -->

@@ -13,7 +13,7 @@ last_verified: 2026-05-20
 
 ## 概要
 
-`sonic-swss-common` は Redis への接続情報を `database_config.json` から読み取る設計に移行しており、かつての `DEFAULT_UNIXSOCKET` による接続方式は廃止予定（または廃止済み）である。
+`sonic-swss-common` は [Redis](../reference/glossary.md#term-redis) への接続情報を `database_config.json` から読み取る設計に移行しており、かつての `DEFAULT_UNIXSOCKET` による接続方式は廃止予定（または廃止済み）である。
 
 ## database_config.json の役割
 
@@ -106,3 +106,5 @@ export SONIC_DB_CONFIG_FILE=/path/to/database_config.json
 
 - [swss-common DB リンク順序制約](swss-common-db-link-ordering.md)
 - GitHub Issue: [sonic-net/sonic-swss-common#322](https://github.com/sonic-net/sonic-swss-common/issues/322)
+
+<!-- glossary-links-injected: 0f594312e2b7 -->

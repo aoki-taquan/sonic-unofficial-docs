@@ -369,7 +369,6 @@ reasoning: VxlanOrch / VnetOrch / VnetRouteOrch の責務分担と peer_list 経
 
 - 参照: [sonic-net/sonic-buildimage#5795](https://github.com/sonic-net/sonic-buildimage/issues/5795)
 
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

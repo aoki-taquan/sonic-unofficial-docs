@@ -137,7 +137,7 @@ show mux config
 | フィールド | 値 | 挙動 |
 |-----------|-----|------|
 | `state` | `auto` (default) | ICMP prober の判断で active/standby を自動決定。フェイルオーバも自動 |
-| `state` | `active` | 当該 ToR を強制 active。linkmgrd が MUX を active 側に固定 |
+| `state` | `active` | 当該 ToR を強制 active。linkmgrd が [MUX](../../reference/glossary.md#term-mux) を active 側に固定 |
 | `state` | `standby` | 当該 ToR を強制 standby。トラフィックをピア ToR 経由に迂回 |
 | `state` | `manual` | 自動フェイルオーバ無効。現在の active/standby 状態を維持 |
 | `state` | `detach` | active-active 専用。NIC から ToR を論理的に切り離し。active-standby では WARN + 無視 |
@@ -149,7 +149,6 @@ show mux config
 | `neighbor_mode` | `prefix-route` | サーバ IP を prefix-based route として処理。動的変更は muxorch で WARN (再起動が必要) |
 
 <!-- /value-behavior -->
-
 
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
@@ -166,12 +165,12 @@ show mux config
 
 ### 段階 3: APPL → SAI
 
-- orchagent / MuxOrch が APP_DB `MUX_CABLE_TABLE` を購読し、SAI neighbor/nexthop を操作して active/standby トラフィックパスを制御。
-- SAI: `sai_neighbor_api` でネクストホップの有効・無効を切替。
+- [orchagent](../../reference/glossary.md#term-orchagent) / MuxOrch が APP_DB `MUX_CABLE_TABLE` を購読し、[SAI](../../reference/glossary.md#term-sai) neighbor/nexthop を操作して active/standby トラフィックパスを制御。
+- [SAI](../../reference/glossary.md#term-sai): `sai_neighbor_api` でネクストホップの有効・無効を切替。
 
 ### 段階 4: タイミング + 副作用
 
-- state=auto 時: linkmgrd がリンクプローバ (ICMP/ARP) 結果に基づき自動切替。レイテンシは数百 ms。
+- state=auto 時: linkmgrd がリンクプローバ (ICMP/[ARP](../../reference/glossary.md#term-arp)) 結果に基づき自動切替。レイテンシは数百 ms。
 - state=manual 時: CLI `show mux status` / `config mux mode` で即時切替。
 - 副作用: active→standby 切替時にトラフィックが一時的に 0.1〜数秒断する可能性。
 
@@ -183,7 +182,7 @@ MUX_CABLE テーブルへの書き込みが発生するコード経路を網羅�
 
 ### CLI
 
-  - `config muxcable mode ...` / `config muxcable prbs ...` — `config/muxcable.py` が `set_entry('MUX_CABLE', port, fvs)` を呼ぶ (sonic-utilities/config/muxcable.py:278)
+  - `config muxcable mode ...` / `config muxcable prbs ...` — `config/muxcable.py` が `set_entry('MUX_CABLE', port, fvs)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/muxcable.py:278)
 
 ### minigraph / sonic-cfggen
 
@@ -191,7 +190,7 @@ minigraph.py に MUX_CABLE 生成なし — 通常 minigraph から配信され�
 
 ### REST / gNMI
 
-sonic-mgmt-common の MUX_CABLE トランスフォーマーなし
+[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common の MUX_CABLE トランスフォーマーなし
 
 ### db_migrator
 
@@ -247,7 +246,7 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 
 | Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
-| `MuxOrch` | `doTask()` | `cable_type` が未知の enum 値 | YANG ガード: CONFIG_DB への書き込み時点で拒否 | `sonic-net/sonic-buildimage/src/sonic-yang-models` |
+| `MuxOrch` | `doTask()` | `cable_type` が未知の enum 値 | YANG ガード: [CONFIG_DB](../../reference/glossary.md#term-config_db) への書き込み時点で拒否 | `sonic-net/sonic-buildimage/src/sonic-yang-models` |
 | `MuxOrch` | `doTask()` | `state` が `active`/`standby`/`unknown` 以外 | YANG ガード: 書き込み拒否 | `sonic-net/sonic-buildimage/src/sonic-yang-models` |
 | `MuxOrch` | `addOperation()` | エントリが存在しない (`!gPortsOrch->getPort()`) | linkmgrd が MUX_CABLE エントリを無視 (ポート未登録) | `sonic-swss/orchagent/muxorch.cpp:457-460` |
 | `MuxOrch` | `addOperation()` | `server_ipv4` が未設定 | スキップ (IPv4 アドレスは必須) | `sonic-swss/orchagent/muxorch.cpp` |
@@ -305,7 +304,7 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 
 ### SOC IP の扱い
 
-`soc_ipv4` / `soc_ipv6` は orchagent の `skip_neighbors` リストに追加される。当該 IP は通常の ARP/NDP neighbor エントリとして処理されず、active-active 構成で SoC (Smart Cable on-chip) へのルートが二重登録されないよう抑制される (`muxorch.cpp:2218-2228`)。
+`soc_ipv4` / `soc_ipv6` は [orchagent](../../reference/glossary.md#term-orchagent) の `skip_neighbors` リストに追加される。当該 IP は通常の [ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) neighbor エントリとして処理されず、active-active 構成で SoC (Smart Cable on-chip) へのルートが二重登録されないよう抑制される (`muxorch.cpp:2218-2228`)。
 
 ### HW state 定数
 
@@ -319,17 +318,17 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 | 定数 | 値 | 用途 |
 |------|----|------|
 | `MUX_TUNNEL` | `"MuxTunnel0"` | active-standby 切替時のトンネルエンドポイント名 |
-| `MUX_ACL_TABLE_NAME` | `INGRESS_TABLE_DROP` | standby 時のパケットドロップ用 ACL テーブル |
-| `MUX_ACL_RULE_NAME` | `"mux_acl_rule"` | 当該 ACL ルール名 |
+| `MUX_ACL_TABLE_NAME` | `INGRESS_TABLE_DROP` | standby 時のパケットドロップ用 [ACL](../../reference/glossary.md#term-acl) テーブル |
+| `MUX_ACL_RULE_NAME` | `"mux_acl_rule"` | 当該 [ACL](../../reference/glossary.md#term-acl) ルール名 |
 
 ### DB テーブル名定数
 
 | 定数 | 値 | DB |
 |------|----|----|
-| `APP_MUX_CABLE_TABLE_NAME` | `"MUX_CABLE_TABLE"` | APPL_DB |
-| `APP_HW_MUX_CABLE_TABLE_NAME` | `"HW_MUX_CABLE_TABLE"` | APPL_DB |
-| `STATE_MUX_CABLE_TABLE_NAME` | `"MUX_CABLE_TABLE"` | STATE_DB |
-| `STATE_MUX_METRICS_TABLE_NAME` | `"MUX_METRICS_TABLE"` | STATE_DB |
+| `APP_MUX_CABLE_TABLE_NAME` | `"MUX_CABLE_TABLE"` | [APPL_DB](../../reference/glossary.md#term-appl_db) |
+| `APP_HW_MUX_CABLE_TABLE_NAME` | `"HW_MUX_CABLE_TABLE"` | [APPL_DB](../../reference/glossary.md#term-appl_db) |
+| `STATE_MUX_CABLE_TABLE_NAME` | `"MUX_CABLE_TABLE"` | [STATE_DB](../../reference/glossary.md#term-state_db) |
+| `STATE_MUX_METRICS_TABLE_NAME` | `"MUX_METRICS_TABLE"` | [STATE_DB](../../reference/glossary.md#term-state_db) |
 
 ### metrics タイムスタンプ精度
 
@@ -352,7 +351,7 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 | `cable_type` | `active-standby` | 欠落時も `"active-standby"` に fallback (DbInterface.cpp:827) | 乖離なし |
 | `prober_type` | `software` | `hw_offload_capable=false` または欠落 → 常に `"software"` に強制 (DbInterface.cpp:880-881) | プラットフォーム依存 silent 降格 |
 | `neighbor_mode` | `host-route` | SAI が `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` 非対応 → `"prefix-route"` を指定しても silent に `host-route` 動作 (muxorch.cpp:2240) | プラットフォーム依存 silent 無視 |
-| `server_ipv4` | — (optional) | 欠落時に `request.getAttrIpPrefix()` が `std::out_of_range` 例外 → orchagent 障害 (muxorch.cpp:2206) | **YANG optional vs 実装 mandatory** |
+| `server_ipv4` | — (optional) | 欠落時に `request.getAttrIpPrefix()` が `std::out_of_range` 例外 → [orchagent](../../reference/glossary.md#term-orchagent) 障害 (muxorch.cpp:2206) | **YANG optional vs 実装 mandatory** |
 | `server_ipv6` | — (optional) | 同上 (muxorch.cpp:2207) | **YANG optional vs 実装 mandatory** |
 | `soc_ipv4` | — (optional) | 欠落 → no-op。`skip_neighbors` への追加をスキップ | 乖離なし |
 | `soc_ipv6` | — (optional) | 欠落 → no-op | 乖離なし |
@@ -378,13 +377,13 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 | テーブル | 参照方法 | 参照箇所 | 用途 |
 |---|---|---|---|
 | `PORT` | `gPortsOrch->getPort(mux_name_, port)` | muxorch.cpp:468, 493 | MUX ポートの SAI oid 取得。欠落時は処理スキップ |
-| `PORT` | `gPortsOrch->getAllPorts()` | muxorch.cpp:1490 | ACL テーブルバインド時に全 PHY/LAG を列挙 |
+| `PORT` | `gPortsOrch->getAllPorts()` | muxorch.cpp:1490 | [ACL](../../reference/glossary.md#term-acl) テーブルバインド時に全 PHY/[LAG](../../reference/glossary.md#term-lag) を列挙 |
 | `NEIGHBOR_TABLE` (APPL_DB) | `gNeighOrch->getMuxNeighborsForPort()` | muxorch.cpp:2290 | MUX ポート設定前に学習済みネイバーを一括取得し MUX ネイバーに変換 |
 | `NEIGHBOR_TABLE` (APPL_DB) | `gNeighOrch->getNeighborEntry()` | muxorch.cpp:1619, 2462 | ネクストホップ更新時に MAC / alias を照合 |
 | `TUNNEL` | `decap_orch_->getDstIpAddresses("MuxTunnel0")` | muxorch.cpp:2348 | PEER_SWITCH 処理時に MuxTunnel0 の dst_ip を取得して P2P tunnel を生成。未作成時は処理を延期 |
 | `TUNNEL` | `decap_orch_->getDscpMode("MuxTunnel0")` | muxorch.cpp:2359 | MuxTunnel0 の dscp_mode を読み取り SAI encap 属性に反映 |
-| `TUNNEL` | `decap_orch_->getQosMapId("MuxTunnel0", ...)` | muxorch.cpp:2367, 2374 | TC→DSCP / TC→Queue QoS マップ OID を取得 |
-| `VLAN` | `gPortsOrch->getAllVlans()` | muxorch.cpp:1861 | FDB 更新後に VLAN 上の既存ネイバーを MUX ネイバーへ変換する際 VLAN 一覧を取得 |
+| `TUNNEL` | `decap_orch_->getQosMapId("MuxTunnel0", ...)` | muxorch.cpp:2367, 2374 | TC→[DSCP](../../reference/glossary.md#term-dscp) / TC→Queue [QoS](../../reference/glossary.md#term-qos) マップ OID を取得 |
+| `VLAN` | `gPortsOrch->getAllVlans()` | muxorch.cpp:1861 | [FDB](../../reference/glossary.md#term-fdb) 更新後に [VLAN](../../reference/glossary.md#term-vlan) 上の既存ネイバーを MUX ネイバーへ変換する際 [VLAN](../../reference/glossary.md#term-vlan) 一覧を取得 |
 
 > - `PORT` は leafref 先でもある。`MUX_CABLE|<ifname>` の `<ifname>` は `PORT.name` への YANG leafref であり、MuxOrch はポート未登録時に処理を保留する。
 > - `NEIGHBOR_TABLE` は MuxOrch が直接 subscribe しない。NeighOrch が APPL_DB の `NEIGH_TABLE` を管理し、`updateNeighbor()` コールバック経由で MuxOrch に通知される。
@@ -451,7 +450,7 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 
 ### SmartSwitch DPU 差
 
-- `soc_ipv4` / `soc_ipv6` は SmartSwitch の SoC (DPU: Data Processing Unit) に対応するフィールド。
+- `soc_ipv4` / `soc_ipv6` は [SmartSwitch](../../reference/glossary.md#term-smartswitch) の SoC ([DPU](../../reference/glossary.md#term-dpu): Data Processing Unit) に対応するフィールド。
 - SoC IP は `addSkipNeighbors()` で登録され、通常の neighbor → tunnel NH 切替から除外される (muxorch.cpp:2281)。
 - DELETE 時は `removeSkipNeighbors()` でクリア (muxorch.cpp:2327)。
 - `prefix_nbrs_supported_` が `false` の ASIC では `neighbor_mode=prefix-route` を指定しても silent に `host-route` 動作となる (muxorch.cpp:2240)。起動時ログ: `"MuxOrch: prefix_nbrs_supported_ = %s"` (muxorch.cpp:2193)。
@@ -477,7 +476,7 @@ CONFIG_DB `MUX_CABLE` エントリの処理に伴い `orchagent` / `MuxOrch` / `
 
 | 書込先 DB | テーブル名 | キー形式 | フィールド | トリガー | 書込クラス |
 |-----------|-----------|---------|-----------|---------|-----------|
-| STATE_DB | `MUX_CABLE_TABLE` | `MUX_CABLE_TABLE\|<ifname>` | `neighbor_mode` = `host-route` / `prefix-route` | CONFIG_DB SET → MuxCable 新規生成時 | `MuxOrch::handleMuxCfg()` (muxorch.cpp:2285) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `MUX_CABLE_TABLE` | `MUX_CABLE_TABLE\|<ifname>` | `neighbor_mode` = `host-route` / `prefix-route` | CONFIG_DB SET → MuxCable 新規生成時 | `MuxOrch::handleMuxCfg()` (muxorch.cpp:2285) |
 | STATE_DB | `MUX_CABLE_TABLE` | `MUX_CABLE_TABLE\|<ifname>` | `state` = `active` / `standby` / `unknown` / `error` | APPL_DB HW 状態通知受信時 | `MuxStateOrch::updateMuxState()` (muxorch.cpp:2640) |
 | APPL_DB | `HW_MUX_CABLE_TABLE` | `HW_MUX_CABLE_TABLE\|<ifname>` | `state` = `active` / `standby` | active / standby 遷移完了時 | `MuxCableOrch::updateMuxState()` (muxorch.cpp:2513) |
 | STATE_DB | `MUX_METRICS_TABLE` | `MUX_METRICS_TABLE\|<ifname>` | `orch_switch_{active\|standby}_{start\|end}` = タイムスタンプ | 切替開始・完了時（性能計測用） | `MuxCableOrch::updateMuxMetricState()` (muxorch.cpp:2544) |
@@ -540,7 +539,7 @@ MUX_CABLE テーブル周辺の Pub/Sub・通知経路を `muxorch.cpp` / `orchd
 ### CONFIG_DB → MuxOrch (SubscriberStateTable)
 
 `orchdaemon` が起動時に `MuxOrch` を構築し、`CFG_MUX_CABLE_TABLE_NAME`（`"MUX_CABLE"`）と `CFG_PEER_SWITCH_TABLE_NAME` を `SubscriberStateTable` で購読する。
-Redis の keyspace notification に基づき、`HSET`/`DEL` を検知して `doTask()` → `handleMuxCfg()` を呼ぶ。
+[Redis](../../reference/glossary.md#term-redis) の keyspace notification に基づき、`HSET`/`DEL` を検知して `doTask()` → `handleMuxCfg()` を呼ぶ。
 明示的な `PUBLISH` は行わず、CONFIG_DB への書き込みのみがトリガとなる。
 
 ```cpp
@@ -633,7 +632,7 @@ flowchart TD
 
 ### SmartSwitch DPU 差
 
-- `soc_ipv4` / `soc_ipv6` は SmartSwitch の SoC (DPU: Data Processing Unit) に対応するフィールド。
+- `soc_ipv4` / `soc_ipv6` は [SmartSwitch](../../reference/glossary.md#term-smartswitch) の SoC ([DPU](../../reference/glossary.md#term-dpu): Data Processing Unit) に対応するフィールド。
 - SoC IP は `addSkipNeighbors()` で登録され、通常の neighbor → tunnel NH 切替から除外される (muxorch.cpp:2281)。
 - DELETE 時は `removeSkipNeighbors()` でクリア (muxorch.cpp:2327)。
 - `prefix_nbrs_supported_` が `false` の ASIC では `neighbor_mode=prefix-route` を指定しても silent に `host-route` 動作となる (muxorch.cpp:2240)。起動時ログ: `"MuxOrch: prefix_nbrs_supported_ = %s"` (muxorch.cpp:2193)。
@@ -646,3 +645,5 @@ flowchart TD
 | 非対応 | `false` | `MuxNbrHandler` (host-route) に強制降格（ログのみ） |
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: f9445b5b4106 -->

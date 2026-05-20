@@ -54,6 +54,8 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`MCLAG_DOMAIN`](../config-db/mclag-domain.md)
+- [`MCLAG_INTERFACE`](../config-db/mclag-interface.md)
+- [`MCLAG_UNIQUE_IP`](../config-db/mclag-unique-ip.md)
 
 ### 関連 CLI
 

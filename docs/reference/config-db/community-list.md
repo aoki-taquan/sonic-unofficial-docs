@@ -39,7 +39,7 @@ hard: 0
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SNMP_COMMUNITY")]
-  DM["snmp-config / snmpd.conf.j2"]
+  DM["snmp-config"]
   CDB --> DM
 ```
 
@@ -105,7 +105,7 @@ SNMP_COMMUNITY|<community_name>
 
 ### よくある誤設定
 
-- `public` / `private` をデフォルトのまま使用すると外部から SNMP アクセスが可能。本番では必ず変更する。
+- `public` / `private` をデフォルトのまま使用すると外部から [SNMP](../../reference/glossary.md#term-snmp) アクセスが可能。本番では必ず変更する。
 - community 名が 4 文字未満だと YANG バリデーションエラー。
 
 ### 確認コマンド
@@ -124,7 +124,7 @@ show snmp community
 | `TYPE` | `RO` | `snmpd.conf` に `rocommunity <name>` / `rocommunity6 <name>` が生成される。読み取り専用アクセスのみ許可。 |
 | `TYPE` | `RW` | `snmpd.conf` に `rwcommunity <name>` / `rwcommunity6 <name>` が生成される。読み取り・書き込みアクセスを許可。 |
 | `TYPE` | 未設定（省略） | テンプレートは `TYPE` の存在を前提にチェックするため、`TYPE` がない場合は `if SNMP_COMMUNITY[community]['TYPE'] == 'RO'` / `== 'RW'` のどちらにも一致せず、コミュニティ行が生成されない（サイレントスキップ）。 |
-| テーブル全体 | エントリなし | テンプレートの `{% if SNMP_COMMUNITY is defined %}` が偽となり、コミュニティ行を一切出力しない。結果として全 SNMP v1/v2c アクセスが拒否される。 |
+| テーブル全体 | エントリなし | テンプレートの `{% if SNMP_COMMUNITY is defined %}` が偽となり、コミュニティ行を一切出力しない。結果として全 [SNMP](../../reference/glossary.md#term-snmp) v1/v2c アクセスが拒否される。 |
 
 <!-- /value-behavior -->
 
@@ -182,7 +182,7 @@ show snmp community
 
 ### 3. 複数 community を一括 SET してから snmpd を 1 回再起動
 
-CONFIG_DB への SET/DEL は即時反映されず、`docker-snmp` コンテナ再起動（`systemctl restart snmp.service`）後にテンプレートが再生成される。CLI を使うと SET ごとに自動再起動が走るため非効率。direct DB 書込みで複数 community を一括投入する場合はすべての SET を完了してから 1 回の再起動を行うことで snmpd.conf が最終状態を一括生成できる（`config/main.py:4395-4401`）。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) への SET/DEL は即時反映されず、`docker-snmp` コンテナ再起動（`systemctl restart snmp.service`）後にテンプレートが再生成される。CLI を使うと SET ごとに自動再起動が走るため非効率。direct DB 書込みで複数 community を一括投入する場合はすべての SET を完了してから 1 回の再起動を行うことで snmpd.conf が最終状態を一括生成できる（`config/main.py:4395-4401`）。
 
 ### 4. snmp_yml_to_configdb.py の注入順序（RO 単数 → RO 複数 → RW 単数 → RW 複数）
 
@@ -237,10 +237,10 @@ YANG leafref および実装スキャンにより確認した参照関係。詳�
 | # | 失敗条件 | 症状 | ログ | 緩和策 |
 |---|---------|------|------|--------|
 | 1 | `/etc/sonic/snmp.yml` 不在 | `snmp_yml_to_configdb.py` が `sys.exit(1)` で終了、テーブル注入なし | `log_info: snmp.yml does not exist` | snmp.yml を配置してコンテナ再起動 |
-| 2 | `snmp.yml` に `snmp_location` 未定義 | community 書き込み後に `sys.exit(1)`（community は書き込まれる、SNMP テーブルへの LOCATION 注入は行われない） | `log_info: snmp_location does not exist` | snmp.yml に `snmp_location` を追加して再起動 |
+| 2 | `snmp.yml` に `snmp_location` 未定義 | community 書き込み後に `sys.exit(1)`（community は書き込まれる、[SNMP](../../reference/glossary.md#term-snmp) テーブルへの LOCATION 注入は行われない） | `log_info: snmp_location does not exist` | snmp.yml に `snmp_location` を追加して再起動 |
 | 3 | `TYPE` を小文字（`ro`/`rw`）で直接 DB 書き込み | `snmpd.conf.j2` の大文字比較に不一致、community 行が生成されない（サイレントスキップ） | なし | `sonic-db-cli` で `TYPE: RO`（大文字）に上書き → snmpd 再起動 |
 | 4 | `TYPE` フィールド欠如（キーなし） | Jinja2 が `KeyError` または `Undefined` 比較で当該エントリをスキップ、community 行不生成 | なし | `set_entry` で `TYPE` を再設定 → snmpd 再起動 |
-| 5 | ConfigDB（Redis）接続失敗 | `snmp_yml_to_configdb.py` が uncaught exception で終了、テーブル注入なし | OS レベルのスタックトレース | Redis / swsscommon を確認後に再試行 |
+| 5 | ConfigDB（[Redis](../../reference/glossary.md#term-redis)）接続失敗 | `snmp_yml_to_configdb.py` が uncaught exception で終了、テーブル注入なし | OS レベルのスタックトレース | [Redis](../../reference/glossary.md#term-redis) / swsscommon を確認後に再試行 |
 | 6 | YANG バリデーション失敗（CLI 経由） | `config snmp community add` がエラーを出力して中断、DB 書き込みなし | CLI に表示 | community 名を YANG 制約（4〜32 文字、禁止文字なし）に合わせて修正 |
 | 7 | snmpd 設定変更後に再起動なし | 変更が snmpd に反映されない（古い community が有効のまま） | なし | `systemctl restart snmp.service` を手動実行 |
 
@@ -324,9 +324,9 @@ CLI (`config snmp community add/del/replace`) は DB 書き込み完了直後に
 |--------|------|------|----------|
 | `/etc/snmp/snmpd.conf` | 再生成（コンテナ起動時） | `rocommunity` / `rwcommunity` / `rocommunity6` / `rwcommunity6` 行更新 | `snmpd.conf.j2 L48-64` |
 | `snmp.service` | 再起動（CLI 経由のみ） | 古い community 無効化・新規 community 有効化 | `config/main.py L4397-4401` |
-| STATE_DB | なし | — | スキャン 0 件 |
-| APPL_DB | なし | — | スキャン 0 件 |
-| SAI / kernel FIB | なし | — | SNMP は統計読み取りのみ |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | — | スキャン 0 件 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | — | スキャン 0 件 |
+| [SAI](../../reference/glossary.md#term-sai) / kernel FIB | なし | — | SNMP は統計読み取りのみ |
 
 <!-- /side-effects -->
 
@@ -367,13 +367,13 @@ CLI 経由では DB 書き込み後に `systemctl restart snmp.service` が自�
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: `SNMP_COMMUNITY` は ASIC 種別・multi-asic / VOQ chassis 構成・ベンダーに依らない。`docker-snmp` コンテナが host CONFIG_DB を一括読み取りするのみで、SAI 経由操作が存在しないため ASIC 差異が入り込む余地がない。
+**プラットフォーム差なし**: `SNMP_COMMUNITY` は ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダーに依らない。`docker-snmp` コンテナが host CONFIG_DB を一括読み取りするのみで、[SAI](../../reference/glossary.md#term-sai) 経由操作が存在しないため ASIC 差異が入り込む余地がない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | SNMP_COMMUNITY は SAI 非経由。`snmpd.conf.j2` の community 処理ブロック (L48-64) にプラットフォーム条件なし (`platform`/`asic`/`vendor` grep 0 ヒット) |
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | SNMP_COMMUNITY は [SAI](../../reference/glossary.md#term-sai) 非経由。`snmpd.conf.j2` の community 処理ブロック (L48-64) にプラットフォーム条件なし (`platform`/`asic`/`vendor` grep 0 ヒット) |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `snmp_yml_to_configdb.py` は `ConfigDBConnector()` 引数なし（host CONFIG_DB のみ接続）。`asicN` namespace を iterate しない。SNMP_COMMUNITY は host 単位で一元管理 |
-| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | `docker-snmp` は per-host コンテナ。SNMP_COMMUNITY テーブルは各 host の CONFIG_DB に独立して存在し、chassis 全体を統一する集中管理機構はない |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | `docker-snmp` は per-host コンテナ。SNMP_COMMUNITY テーブルは各 host の CONFIG_DB に独立して存在し、chassis 全体を統一する集中管理機構はない |
 | ベンダー固有 hook | なし | `snmpd.conf.j2` にベンダー分岐なし。`sonic-snmp.yang` にもプラットフォーム条件なし |
 | テンプレート内分岐 | プラットフォーム条件なし | `snmpd.conf.j2` 全体を `platform\|asic\|chassis\|namespace\|vendor` で grep して SNMP_COMMUNITY ブロックへの影響は 0 ヒット。agentAddress のみ `SNMP_AGENT_ADDRESS_CONFIG` に応じて差異があるが SNMP_COMMUNITY 自体には波及しない |
 
@@ -420,7 +420,7 @@ SNMP_COMMUNITY テーブルへの書き込みが発生するコード経路を�
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし（OpenConfig SNMP モデルは本テーブルをサポートしていない）
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（OpenConfig SNMP モデルは本テーブルをサポートしていない）
 
 ### db_migrator
 
@@ -466,3 +466,5 @@ REST/gNMI 書き込み経路なし（OpenConfig SNMP モデルは本テーブル
 <!-- /handler-branching -->
 
 <!-- glossary-links-injected: placeholder -->
+
+<!-- glossary-links-injected: 351eaace0304 -->

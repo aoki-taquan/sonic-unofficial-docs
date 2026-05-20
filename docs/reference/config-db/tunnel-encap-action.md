@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-P4RT controller が **APPL_DB の `P4RT_TABLE:FIXED_NEXTHOP_TABLE`** に書き込む nexthop エントリ。[orchagent](../../reference/glossary.md#term-orchagent) の `NextHopManager` がこれを購読し、[SAI](../../reference/glossary.md#term-sai) `sai_next_hop_api->create_next_hops()` を呼び出してハードウェアに nexthop を設定する[^1]。
+P4RT controller が **[APPL_DB](../../reference/glossary.md#term-appl_db) の `P4RT_TABLE:FIXED_NEXTHOP_TABLE`** に書き込む nexthop エントリ。[orchagent](../../reference/glossary.md#term-orchagent) の `NextHopManager` がこれを購読し、[SAI](../../reference/glossary.md#term-sai) `sai_next_hop_api->create_next_hops()` を呼び出してハードウェアに nexthop を設定する[^1]。
 
 本ページは `FIXED_NEXTHOP_TABLE` 全体ではなく、**GRE IP-in-IP encap トンネルを使う `set_p2p_tunnel_encap_nexthop` アクション**にフォーカスする。他アクション (`set_ip_nexthop` / `set_nexthop` 等) は対象外。
 
@@ -100,7 +100,7 @@ APPL_DB:   P4RT_TABLE:FIXED_NEXTHOP_TABLE:<json_key>
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
 | 1 | `FIXED_TUNNEL_TABLE` (GRE トンネル本体) → `FIXED_NEXTHOP_TABLE` `set_p2p_tunnel_encap_nexthop` | **先行必須**（欠如時 `SWSS_RC_NOT_FOUND`） | P4RT controller がトンネル作成後に nexthop を書く順守 |
-| 2 | GRE トンネル配下の RIF・neighbor → `FIXED_NEXTHOP_TABLE` | **先行必須**（BRCM SAI 要件: `next_hop_manager.cpp:144-158`） | RIF / neighbor は P4Orch 内で GRE より先順位に処理される |
+| 2 | GRE トンネル配下の [RIF](../../reference/glossary.md#term-rif)・neighbor → `FIXED_NEXTHOP_TABLE` | **先行必須**（BRCM [SAI](../../reference/glossary.md#term-sai) 要件: `next_hop_manager.cpp:144-158`） | [RIF](../../reference/glossary.md#term-rif) / neighbor は P4Orch 内で GRE より先順位に処理される |
 | 3 | `FIXED_NEXTHOP_TABLE` エントリ → WCMP / Route 下流 | 先行必須（下流が nexthop OID を参照） | WCMP / Route は P4Orch 内で nexthop より後順位 |
 | 4 | DEL 時: WCMP / Route → `FIXED_NEXTHOP_TABLE` | **先行必須**（`ref_count > 0` は `SWSS_RC_INVALID_PARAM`） | 上流の参照を先に削除してから nexthop DEL |
 | 5 | GRE Tunnel ID 変更 UPDATE | **禁止**（`INVALID_PARAM` エラー） | 変更は DEL → SET の順で実施 |
@@ -113,7 +113,7 @@ P4Orch 内部の `m_p4ManagerAddPrecedence` が以下の順でマネージャを
 RIF (2位) → Neighbor (3位) → GRE Tunnel (4位) → NextHop (5位) → WCMP (6位) → Route
 ```
 
-P4RT controller が単一 WriteRequest でこれらを混在させた場合でも P4Orch がこの順に処理する。ただし `FIXED_TUNNEL_TABLE` 自体の依存（RIF / neighbor）が未作成の場合は GRE Tunnel SET が失敗し、後続の NextHop SET もキャンセルされる。
+P4RT controller が単一 WriteRequest でこれらを混在させた場合でも P4Orch がこの順に処理する。ただし `FIXED_TUNNEL_TABLE` 自体の依存（[RIF](../../reference/glossary.md#term-rif) / neighbor）が未作成の場合は GRE Tunnel SET が失敗し、後続の NextHop SET もキャンセルされる。
 
 ### Bulk SAI のキャンセル伝搬
 
@@ -124,7 +124,7 @@ P4RT controller が単一 WriteRequest でこれらを混在させた場合で�
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`set_p2p_tunnel_encap_nexthop` エントリが APPL_DB に書かれると `NextHopManager` が以下のテーブル・リソースを暗黙的に参照する。YANG 未定義テーブルのため、すべての依存はコードのみに現れる。
+`set_p2p_tunnel_encap_nexthop` エントリが [APPL_DB](../../reference/glossary.md#term-appl_db) に書かれると `NextHopManager` が以下のテーブル・リソースを暗黙的に参照する。[YANG](../../reference/glossary.md#term-yang) 未定義テーブルのため、すべての依存はコードのみに現れる。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 不在時の挙動 | evidence |
 |--------------------------|---------|------|------------|----------|
@@ -225,7 +225,7 @@ P4RT controller が単一 WriteRequest でこれらを混在させた場合で�
 | `APP_P4RT_TABLE_NAME` | `"P4RT_TABLE"` |
 | `APP_P4RT_NEXTHOP_TABLE_NAME` | `"FIXED_NEXTHOP_TABLE"` |
 
-完全な APPL_DB キーは `P4RT_TABLE:FIXED_NEXTHOP_TABLE:<json_key>` (`schema.h` L59, L63)[^2]。
+完全な [APPL_DB](../../reference/glossary.md#term-appl_db) キーは `P4RT_TABLE:FIXED_NEXTHOP_TABLE:<json_key>` (`schema.h` L59, L63)[^2]。
 
 ### SAI 定数 (`next_hop_manager.cpp`, `next_hop_manager.h`)
 
@@ -258,7 +258,7 @@ P4RT controller が単一 WriteRequest でこれらを混在させた場合で�
 |--------|------|------|----------|
 | P4OidMapper — GRE Tunnel の ref_count インクリメント | `SAI_OBJECT_TYPE_TUNNEL` | `increaseRefCount(TUNNEL, tunnel_key)` → トンネル DEL がブロックされる | `next_hop_manager.cpp:541-545` |
 | P4OidMapper — Neighbor の ref_count インクリメント | `SAI_OBJECT_TYPE_NEIGHBOR_ENTRY` | `increaseRefCount(NEIGHBOR_ENTRY, neighbor_key)` → Neighbor DEL がブロックされる | `next_hop_manager.cpp:554-557` |
-| CRM カウンタのインクリメント | `CrmOrch::CRM_IPV4_NEXTHOP` / `CRM_IPV6_NEXTHOP` | `gCrmOrch->incCrmResUsedCounter()` → `show crm resources nexthop` の使用量が増加 | `next_hop_manager.cpp:558-562` |
+| [CRM](../../reference/glossary.md#term-crm) カウンタのインクリメント | `CrmOrch::CRM_IPV4_NEXTHOP` / `CRM_IPV6_NEXTHOP` | `gCrmOrch->incCrmResUsedCounter()` → `show crm resources nexthop` の使用量が増加 | `next_hop_manager.cpp:558-562` |
 | P4OidMapper — nexthop OID の登録 | `SAI_OBJECT_TYPE_NEXT_HOP` | `setOID(NEXT_HOP, next_hop_key, oid)` → 下流 (WCMP / Route) が nexthop OID を参照可能になる | `next_hop_manager.cpp:568-569` |
 
 ### DEL 成功時の副作用
@@ -267,7 +267,7 @@ P4RT controller が単一 WriteRequest でこれらを混在させた場合で�
 |--------|------|------|----------|
 | P4OidMapper — GRE Tunnel の ref_count デクリメント | `SAI_OBJECT_TYPE_TUNNEL` | `decreaseRefCount(TUNNEL, tunnel_key)` → ref_count が 0 になるとトンネル DEL が可能になる | `next_hop_manager.cpp:613-616` |
 | P4OidMapper — Neighbor の ref_count デクリメント | `SAI_OBJECT_TYPE_NEIGHBOR_ENTRY` | `decreaseRefCount(NEIGHBOR_ENTRY, neighbor_key)` — DEL 時は GRE Tunnel から router_interface_id を再解決 | `next_hop_manager.cpp:625-635` |
-| CRM カウンタのデクリメント | `CrmOrch::CRM_IPV4_NEXTHOP` / `CRM_IPV6_NEXTHOP` | `gCrmOrch->decCrmResUsedCounter()` → `show crm resources nexthop` の使用量が減少 | `next_hop_manager.cpp:636-640` |
+| [CRM](../../reference/glossary.md#term-crm) カウンタのデクリメント | `CrmOrch::CRM_IPV4_NEXTHOP` / `CRM_IPV6_NEXTHOP` | `gCrmOrch->decCrmResUsedCounter()` → `show crm resources nexthop` の使用量が減少 | `next_hop_manager.cpp:636-640` |
 | P4OidMapper — nexthop OID の削除 | `SAI_OBJECT_TYPE_NEXT_HOP` | `eraseOID(NEXT_HOP, next_hop_key)` → 下流 (WCMP / Route) からの OID 参照が無効化 | `next_hop_manager.cpp:643` |
 
 ### 波及の連鎖
@@ -278,7 +278,7 @@ nexthop を作成すると GRE Tunnel の ref_count が増加し、nexthop を�
 削除順: (WCMP / Route) → FIXED_NEXTHOP_TABLE (nexthop DEL) → FIXED_TUNNEL_TABLE (tunnel DEL) → Neighbor → RIF
 ```
 
-nexthop DEL が成功するまで、CRM カウンタは nexthop 1 件分の消費として計上され続ける。CRM しきい値超過アラートは nexthop が解放されるまでクリアされない。
+nexthop DEL が成功するまで、[CRM](../../reference/glossary.md#term-crm) カウンタは nexthop 1 件分の消費として計上され続ける。CRM しきい値超過アラートは nexthop が解放されるまでクリアされない。
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-action-side.md`
 
@@ -289,7 +289,7 @@ nexthop DEL が成功するまで、CRM カウンタは nexthop 1 件分の消�
 
 ### 購読方式 — ZMQ ベース
 
-`NextHopManager` は `P4Orch`（`ZmqOrch` サブクラス）に属するマネージャ。`FIXED_NEXTHOP_TABLE` を含む `P4RT_TABLE` への書き込みは P4RT gRPC サーバが **ZMQ IPC** 経由で orchagent に送信する（Redis ProducerStateTable channel や keyspace 通知は使わない）。
+`NextHopManager` は `P4Orch`（`ZmqOrch` サブクラス）に属するマネージャ。`FIXED_NEXTHOP_TABLE` を含む `P4RT_TABLE` への書き込みは P4RT gRPC サーバが **ZMQ IPC** 経由で [orchagent](../../reference/glossary.md#term-orchagent) に送信する（[Redis](../../reference/glossary.md#term-redis) [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) channel や keyspace 通知は使わない）。
 
 ```cpp
 // orchdaemon.cpp:847-849
@@ -312,7 +312,7 @@ const std::string m_p4OrchZmqServerEp = "ipc:///zmq_swss/p4orch_zmq_swss_ep";
 | # | 宛先 | 内容 | 条件 |
 |---|------|------|------|
 | 1 | ZMQ 応答 (`ZmqServer::sendMsg`) | gRPC WriteResponse として P4RT サーバに返却 | 常時（`m_zmqServer != nullptr`） |
-| 2 | Redis Notification Channel | `APPL_DB_P4RT_TABLE_RESPONSE_CHANNEL` に `PUBLISH` | 常時 (`NotificationProducer::send()`) |
+| 2 | [Redis](../../reference/glossary.md#term-redis) Notification Channel | `APPL_DB_P4RT_TABLE_RESPONSE_CHANNEL` に `PUBLISH` | 常時 (`NotificationProducer::send()`) |
 | 3 | `APPL_STATE_DB:P4RT_TABLE:FIXED_NEXTHOP_TABLE:<key>` | SET 成功時: intent フィールドを state として書き込み。DEL 成功時: エントリ削除 | `status.ok()` 時のみ |
 
 ```
@@ -345,7 +345,7 @@ DEL 成功時は当該エントリが APPL_STATE_DB から削除される。
 
 ### COUNTERS_DB / FLEX_COUNTER_DB
 
-`next_hop_manager.cpp` は `gCrmOrch->incCrmResUsedCounter(CRM_IPV4_NEXTHOP)` / `decCrmResUsedCounter(CRM_IPV6_NEXTHOP)` を呼び出す（`:559-561, :637-639`）。これは CRM 内部使用量カウンタへの反映であり、**COUNTERS_DB・FLEX_COUNTER_DB への書き込みは発生しない**。
+`next_hop_manager.cpp` は `gCrmOrch->incCrmResUsedCounter(CRM_IPV4_NEXTHOP)` / `decCrmResUsedCounter(CRM_IPV6_NEXTHOP)` を呼び出す（`:559-561, :637-639`）。これは CRM 内部使用量カウンタへの反映であり、**[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書き込みは発生しない**。
 
 ### サービス再起動トリガー
 
@@ -452,15 +452,15 @@ SET 成功時に `gCrmOrch->incCrmResUsedCounter()` が呼ばれる（`next_hop_
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`TUNNEL_ENCAP_TABLE`](tunnel-encap-table.md)（GRE トンネルオブジェクト本体）
-- 関連 YANG: なし
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`TUNNEL_ENCAP_TABLE`](tunnel-encap-table.md)（GRE トンネルオブジェクト本体）
+- 関連 [YANG](../../reference/glossary.md#term-yang): なし
 - 関連 CLI: なし（P4RT controller が直接 APPL_DB に書き込む）
 
 <!-- ref-triangle:start -->
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`TUNNEL_ENCAP_TABLE`](tunnel-encap-table.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`TUNNEL_ENCAP_TABLE`](tunnel-encap-table.md)
 
 <!-- ref-triangle:end -->
 
@@ -469,3 +469,5 @@ SET 成功時に `gCrmOrch->incCrmResUsedCounter()` が呼ばれる（`next_hop_
 [^1]: NextHopManager 実装: `orchagent/p4orch/next_hop_manager.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/next_hop_manager.cpp>
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L63>
 [^3]: SAI 属性設定: `next_hop_manager.cpp` `prepareSaiAttrs()`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/next_hop_manager.cpp#L201-L261>
+
+<!-- glossary-links-injected: 1ac8ae5180dc -->

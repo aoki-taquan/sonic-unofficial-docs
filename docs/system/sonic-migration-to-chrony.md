@@ -136,7 +136,7 @@ chronyc sources       # 同期確認
 
 恒久的な修正は `chrony-config.sh` に DHCP 取得後に再設定するフックを追加するか、`networkd`/`dhclient` の post-up hook で `chronyc online` を呼ぶこと。
 
-**参照**: sonic-net/sonic-buildimage#25863（Triaged、202511 で再現確認）
+**参照**: sonic-net/[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)#25863（Triaged、202511 で再現確認）
 
 ---
 
@@ -198,4 +198,4 @@ systemctl status chrony
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f960e6599a3c -->
+<!-- glossary-links-injected: 75921d013977 -->

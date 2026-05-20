@@ -184,13 +184,13 @@ show ip bgp vrf Vnet1 summary
 
 制約の全容（3 層）:
 
-1. **YANG スキーマ**: `sonic-bgp-neighbor.yang` の `BGP_NEIGHBOR_LIST` は `inet:ip-address` 型のキーを使用。`frrcfgd` が使う `BGP_NEIGHBOR_LIST` は union 型（Port / PortChannel / Vlan pattern を含む）だが `bgpcfgd` 側は未対応
+1. **[YANG](../reference/glossary.md#term-yang) スキーマ**: `sonic-bgp-neighbor.yang` の `BGP_NEIGHBOR_LIST` は `inet:ip-address` 型のキーを使用。`frrcfgd` が使う `BGP_NEIGHBOR_LIST` は union 型（Port / [PortChannel](../reference/glossary.md#term-portchannel) / Vlan pattern を含む）だが `bgpcfgd` 側は未対応
 2. **bgpcfgd の `add_peer()`**: IP アドレス前提のコードパスのみ。インタフェース名が渡されても `neighbor <intf> interface` FRR 構文を生成しない
 3. **Jinja2 template**: `general/instance.conf.j2` 等が `| ipv4` / `| ipv6` フィルタで分岐するため、インタフェース名だと両方とも `False` になりアドレスファミリブロックがスキップされる
 
 **回避策**: `frrcfgd` 経由または `vtysh` で直接 FRR 設定を投入する（FRR 自体は unnumbered BGP をサポート済み）。
 
-**参照**: sonic-net/sonic-buildimage#26960（Bug, Triaged、修正 PR 検討中）
+**参照**: sonic-net/[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)#26960（Bug, Triaged、修正 PR 検討中）
 
 ---
 
@@ -251,4 +251,4 @@ docker exec bgp vtysh -c 'show bgp neighbors' | head
 
 [^1]: `sonic-net/SONiC` `doc/BGP/Bgpcfgd-dyn-peer-modification-support.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: f2b208f4ed9e -->
+<!-- glossary-links-injected: 193ac213e3ad -->

@@ -146,7 +146,6 @@ vtysh -c 'show ip prefix-list'
 
 [^2]: YANG 定義: `sonic-routing-policy-sets.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-routing-policy-sets.yang>
 
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -156,7 +155,7 @@ frrcfgd の `PrefixSetMgr` が `ip_prefix` の形式（`:` を含むか否か）
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
-frrcfgd は常時起動し `PrefixSetMgr` を無条件登録する。sonic-mgmt-framework が非インストールの場合は frrcfgd 自体が存在しない（`PREFIX_SET` を消費するプロセスなし）。
+frrcfgd は常時起動し `PrefixSetMgr` を無条件登録する。[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework が非インストールの場合は frrcfgd 自体が存在しない（`PREFIX_SET` を消費するプロセスなし）。
 
 <!-- /derivation -->
 
@@ -169,7 +168,7 @@ frrcfgd は常時起動し `PrefixSetMgr` を無条件登録する。sonic-mgmt-
 | `PrefixSetMgr` | `ip_prefix` に `.` 含む (IPv4) | `ip prefix-list` コマンド生成 | frrcfgd prefix_set manager |
 | `PrefixSetMgr` | del_handler | FRR に `no ip prefix-list` 発行 | frrcfgd prefix_set manager |
 
-> **スキャン証跡**: PREFIX_SET は BGP 汎用ルーティングポリシーセット用。frrcfgd 経由で FRR に設定。CONFIG_DB 内の自動派生なし。
+> **スキャン証跡**: PREFIX_SET は [BGP](../../reference/glossary.md#term-bgp) 汎用ルーティングポリシーセット用。frrcfgd 経由で FRR に設定。CONFIG_DB 内の自動派生なし。
 
 <!-- /handler-branching -->
 
@@ -205,16 +204,16 @@ YANG モードで投入する経路（sonic-yang-mgmt / [sonic-cfggen](../../ref
 
 ### 段階 1: Consumer 登録
 
-- **bgpcfgd** または **sonic-cfggen**: `PREFIX_SET` テーブルを `ConfigDBConnector` で購読。
+- **[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)** または **[sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)**: `PREFIX_SET` テーブルを `ConfigDBConnector` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- bgpcfgd が FRR の prefix-list 設定を生成して vtysh 経由で反映。
+- [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が FRR の prefix-list 設定を生成して vtysh 経由で反映。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI
 
-- FRR がプレフィックスセットをポリシーマッチ条件として使用。SAI 経由なし。
+- FRR がプレフィックスセットをポリシーマッチ条件として使用。[SAI](../../reference/glossary.md#term-sai) 経由なし。
 
 ### 段階 4: タイミング + 副作用
 
@@ -236,7 +235,7 @@ minigraph.py に PREFIX_SET 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -248,7 +247,7 @@ db_migrator.py での PREFIX_SET マイグレーションなし
 
 ### ハードコードデフォルト / ランタイム注入
 
-**frrcfgd** `frrcfgd.py` が PREFIX_SET テーブルを監視し FRR 設定に反映 (sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:83, 2228)
+**frrcfgd** `frrcfgd.py` が PREFIX_SET テーブルを監視し FRR 設定に反映 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py:83, 2228)
 
 ### 死活・デッドコード
 
@@ -286,7 +285,7 @@ runtime で既存 `PREFIX_SET|<name>` に SET イベントが届いても `mode`
 | `PREFIX_SET` | `['bgpd']` | bgpd のみ |
 | `PREFIX` | `['zebra', 'bgpd', 'ospfd', 'pimd']` | 複数デーモン同時 |
 
-`PREFIX` エントリの DEL は zebra / ospfd / pimd にも `no ip prefix-list` を発行するため、ルーティングポリシーへの波及が広い。
+`PREFIX` エントリの DEL は [zebra](../../reference/glossary.md#term-zebra) / ospfd / pimd にも `no ip prefix-list` を発行するため、ルーティングポリシーへの波及が広い。
 
 ### 起動時の読み込み順（自然保証）
 
@@ -307,7 +306,7 @@ YANG leafref および frrcfgd 実装スキャンにより確認した参照先�
 | `PREFIX` (`PREFIX_LIST` / `PREFIX_NOSEQ_LIST`) | leafref ターゲット（被参照） | `set_name` | PREFIX_SET が先行必須。未作成時 YANG バリデーションでロード拒否 |
 | [`ROUTE_MAP`](route-map.md) | 逆参照（ROUTE_MAP が PREFIX_SET を leafref） | `match_prefix_set`, `match_next_hop_set` | PREFIX_SET 未作成時 frrcfgd が AF 解決失敗 → FRR コマンド未発行（silent drop）。`frrcfgd.py:2669-2676` |
 | [`ROUTE_MAP`](route-map.md) | 逆参照（YANG のみ、実装なし） | `match_ipv6_prefix_set` | sonic-route-map.yang には leafref あり、frrcfgd の `route_map_key_map` に未実装 → dead field |
-| [`BGP_NEIGHBOR_AF`](bgp-neighbor-af.md) | 逆参照（BGP ネイバーが PREFIX_SET を leafref） | `prefix_list_in`, `prefix_list_out` | frrcfgd が `neighbor {} prefix-list {} in/out` として [FRR](../../reference/glossary.md#term-frr) に発行。`frrcfgd.py:1918-1919` |
+| [`BGP_NEIGHBOR_AF`](bgp-neighbor-af.md) | 逆参照（[BGP](../../reference/glossary.md#term-bgp) ネイバーが PREFIX_SET を leafref） | `prefix_list_in`, `prefix_list_out` | frrcfgd が `neighbor {} prefix-list {} in/out` として [FRR](../../reference/glossary.md#term-frr) に発行。`frrcfgd.py:1918-1919` |
 | [`BGP_PEER_GROUP_AF`](bgp-peer-group-af.md) | 逆参照（BGP peer group が PREFIX_SET を leafref） | `prefix_list_in`, `prefix_list_out` | BGP_NEIGHBOR_AF と同一 handler 経路 |
 
 !!! note "match_ipv6_prefix_set は dead field"
@@ -319,7 +318,7 @@ YANG leafref および frrcfgd 実装スキャンにより確認した参照先�
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
-frrcfgd は PREFIX_SET / PREFIX の変換失敗をすべて **syslog LOG_ERR + `continue`** で処理する。retry・rollback（DEL 失敗時のみ例外）・STATE_DB 記録はない。
+frrcfgd は PREFIX_SET / PREFIX の変換失敗をすべて **syslog LOG_ERR + `continue`** で処理する。retry・rollback（DEL 失敗時のみ例外）・[STATE_DB](../../reference/glossary.md#term-state_db) 記録はない。
 
 ### 1. `mode` フィールド欠落 → LOG_ERR + silent drop
 
@@ -394,7 +393,7 @@ frrcfgd 起動時に FRR Unix socket (`/run/frr/<daemon>.vty`) への接続を *
 
 ### STATE_DB / ERROR_TABLE
 
-frrcfgd は PREFIX_SET / PREFIX の失敗を STATE_DB や ERROR_TABLE に**記録しない**。障害検知は syslog のみ。
+frrcfgd は PREFIX_SET / PREFIX の失敗を [STATE_DB](../../reference/glossary.md#term-state_db) や ERROR_TABLE に**記録しない**。障害検知は syslog のみ。
 
 ```bash
 journalctl -u frr-mgmt-framework | grep -E 'prefix-set|prefix-list'
@@ -468,7 +467,7 @@ PREFIX_SET / PREFIX の変更は frrcfgd 経由で FRR に即時反映され、�
 
 ### 2. PREFIX メンバ変更 → 複数 FRR デーモンへ同時発行
 
-`PREFIX_LIST` / `PREFIX_NOSEQ_LIST` の ADD / DEL は TABLE_DAEMON 定義（frrcfgd.py:87）に従い **bgpd / zebra / ospfd / pimd の 4 デーモンすべて**に vtysh コマンドを発行する。
+`PREFIX_LIST` / `PREFIX_NOSEQ_LIST` の ADD / DEL は TABLE_DAEMON 定義（frrcfgd.py:87）に従い **bgpd / [zebra](../../reference/glossary.md#term-zebra) / ospfd / pimd の 4 デーモンすべて**に vtysh コマンドを発行する。
 
 | FRR デーモン | 影響 |
 |------------|------|
@@ -490,7 +489,7 @@ frrcfgd は FRR への prefix-list 変更後に明示的な `clear ip bgp` コ�
 
 ### 4. CONFIG_DB / STATE_DB / APPL_DB への副作用なし
 
-PREFIX_SET / PREFIX の変更は CONFIG_DB 内他テーブル・APPL_DB・STATE_DB・COUNTERS_DB を直接書き換えない。すべての副作用は FRR vtysh コマンド経由の FRR 内部状態変更のみ。
+PREFIX_SET / PREFIX の変更は CONFIG_DB 内他テーブル・[APPL_DB](../../reference/glossary.md#term-appl_db)・[STATE_DB](../../reference/glossary.md#term-state_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db) を直接書き換えない。すべての副作用は FRR vtysh コマンド経由の FRR 内部状態変更のみ。
 
 <!-- evidence: frrcfgd.py:83,87,2931,2945,2960,2974-2981 -->
 
@@ -504,7 +503,7 @@ PREFIX_SET / PREFIX テーブルを購読するデーモンは **frrcfgd** の�
 
 ### frrcfgd (sonic-frr-mgmt-framework)
 
-`frrcfgd.py` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用し、Redis keyspace イベント (`__keyspace@<dbid>__:*`) を `psubscribe` で監視する。`subscribe_all()` が `table_handler_list` 内の `PREFIX_SET` / `PREFIX` エントリを登録し、共通ハンドラ `bgp_table_handler_common` が変更通知を受け取る。
+`frrcfgd.py` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用し、[Redis](../../reference/glossary.md#term-redis) keyspace イベント (`__keyspace@<dbid>__:*`) を `psubscribe` で監視する。`subscribe_all()` が `table_handler_list` 内の `PREFIX_SET` / `PREFIX` エントリを登録し、共通ハンドラ `bgp_table_handler_common` が変更通知を受け取る。
 
 ```python
 # frrcfgd.py L2298-2299
@@ -544,11 +543,11 @@ CONFIG_DB PREFIX_SET / PREFIX
 > 調査対象: `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`, `templates/bgpd/bgpd.conf.db.pref_list.j2`, `sonic-device_metadata.yang`
 > 調査日: 2026-05-19
 
-**プラットフォーム固有差異なし**: PREFIX_SET は FRR (`bgpd` / `zebra`) 制御プレーン上の prefix-list であり SAI 非経由。ASIC 種別（Broadcom / Mellanox / Marvell / Innovium / VPP）・VOQ chassis / chassis-packet・multi-asic namespace・ベンダー image_config のいずれにも分岐コードは存在しない。
+**プラットフォーム固有差異なし**: PREFIX_SET は FRR (`bgpd` / `zebra`) 制御プレーン上の prefix-list であり [SAI](../../reference/glossary.md#term-sai) 非経由。ASIC 種別（Broadcom / Mellanox / Marvell / Innovium / VPP）・[VOQ](../../reference/glossary.md#term-voq) chassis / chassis-packet・multi-asic namespace・ベンダー image_config のいずれにも分岐コードは存在しない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 | 影響なし | SAI 非経由 (FRR 内部 prefix-list)。orchagent / syncd 経由なし |
+| ASIC 種別 | 影響なし | [SAI](../../reference/glossary.md#term-sai) 非経由 (FRR 内部 prefix-list)。[orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) 経由なし |
 | multi-asic (`asicN` namespace) | 各 namespace 独立・同一ロジック | `frrcfgd` は per-namespace 起動。PREFIX_SET / PREFIX ハンドラ (`frrcfgd.py:2894-2995`) に namespace 分岐なし |
 | `switch_type` (voq / chassis-packet) | 影響なし | `frrcfgd.py` の PREFIX ハンドラ部を `platform\|asic\|switch_type\|chassis\|sub_role\|namespace` で grep して 0 ヒット |
 | `sub_role` (FrontEnd / BackEnd) | 影響なし | 同上で参照 0 |
@@ -571,7 +570,7 @@ PREFIX テーブルのエントリ処理では `PREFIX_SET.mode` の AF に応�
 
 | AF | daemons 引数 | vtysh コマンド |
 |----|------------|---------------|
-| `IPv4` (AF_INET) | `None`（テーブルデフォルト: zebra・bgpd・ospfd・pimd） | `ip prefix-list ...` |
+| `IPv4` (AF_INET) | `None`（テーブルデフォルト: [zebra](../../reference/glossary.md#term-zebra)・bgpd・ospfd・pimd） | `ip prefix-list ...` |
 | `IPv6` (AF_INET6) | `['bgpd', 'zebra']`（ospfd・pimd は除外） | `ipv6 prefix-list ...` |
 
 根拠: `frrcfgd.py:2931-2936`
@@ -579,4 +578,4 @@ PREFIX テーブルのエントリ処理では `PREFIX_SET.mode` の AF に応�
 > 詳細根拠は `meta/_intermediate/cdb-flow/prefix-set-platform.md` を参照
 <!-- /platform -->
 
-<!-- glossary-links-injected: 88e792f23f63 -->
+<!-- glossary-links-injected: 731de8c709a4 -->

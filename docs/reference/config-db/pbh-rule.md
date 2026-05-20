@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-`PBH_RULE` は [Policy Based Hashing (PBH)](pbh.md) のルールエントリを定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。`PBH_TABLE` 配下に配置され、packet の match 条件 (GRE key / EtherType / IP protocol / IPv6 next-header / L4 dst port / inner EtherType) と priority、適用する `PBH_HASH` プロファイルを保持する[^1]。`PbhOrch` が `SAI ACL entry` として展開し、マッチしたパケットに指定の ECMP / [LAG](../../reference/glossary.md#term-lag) hash profile を適用する。
+`PBH_RULE` は [Policy Based Hashing (PBH)](pbh.md) のルールエントリを定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。`PBH_TABLE` 配下に配置され、packet の match 条件 (GRE key / EtherType / IP protocol / IPv6 next-header / L4 dst port / inner EtherType) と priority、適用する `PBH_HASH` プロファイルを保持する[^1]。`PbhOrch` が `SAI ACL entry` として展開し、マッチしたパケットに指定の [ECMP](../../reference/glossary.md#term-ecmp) / [LAG](../../reference/glossary.md#term-lag) hash profile を適用する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -57,7 +57,7 @@ flowchart LR
 
 <!-- evidence: sonic-swss/orchagent/pbhorch.cpp:1539-1550 (deployPbhTasks), pbhmgr.cpp:81-113 (validateDependencies), pbhorch.cpp:941-946, 1288-1303 -->
 
-`PBH_RULE` の SAI 反映は複数の外部状態（PortsOrch 初期化、`PBH_TABLE`、`PBH_HASH`）に依存する。違反時の挙動はすべて自動 retry（自動回復）で、エントリは削除されない。
+`PBH_RULE` の [SAI](../../reference/glossary.md#term-sai) 反映は複数の外部状態（PortsOrch 初期化、`PBH_TABLE`、`PBH_HASH`）に依存する。違反時の挙動はすべて自動 retry（自動回復）で、エントリは削除されない。
 
 ### 依存 1: PortsOrch 初期化（必須先行・グローバル）
 
@@ -67,7 +67,7 @@ PortsOrch::allPortsReady() == true  先行
 PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD のどの SET も処理開始
 ```
 
-`PbhOrch::doTask()` (`pbhorch.cpp:1808`) は `this->portsOrch->allPortsReady()` が false の間は即 return。PBH 関連の全 CONFIG_DB エントリは PortsOrch の `PORT` 初期化完了を待つ。
+`PbhOrch::doTask()` (`pbhorch.cpp:1808`) は `this->portsOrch->allPortsReady()` が false の間は即 return。PBH 関連の全 [CONFIG_DB](../../reference/glossary.md#term-config_db) エントリは PortsOrch の `PORT` 初期化完了を待つ。
 
 **違反時**: 書込み自体は CONFIG_DB に残り、PortsOrch 完了後の最初のイベントループで一括処理（自動回復）。
 
@@ -124,7 +124,7 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 
 ### 依存 7: Mellanox — UPDATE 内部順序（hash / packet_action 変更時）
 
-`updatePbhRule()` (`pbhorch.cpp:839-863`): `ASIC_VENDOR=mellanox` かつ変更フィールドに `hash` または `packet_action` が含まれる場合、`AclRulePbh::disableAction()` で既存 ACL action を先に無効化してから `updateAclRule()` を呼ぶ。`disableAction()` 失敗時は UPDATE 自体が `return false`。GENERIC platform では不要。
+`updatePbhRule()` (`pbhorch.cpp:839-863`): `ASIC_VENDOR=mellanox` かつ変更フィールドに `hash` または `packet_action` が含まれる場合、`AclRulePbh::disableAction()` で既存 [ACL](../../reference/glossary.md#term-acl) action を先に無効化してから `updateAclRule()` を呼ぶ。`disableAction()` 失敗時は UPDATE 自体が `return false`。GENERIC platform では不要。
 
 ### 順序依存サマリ
 
@@ -143,17 +143,17 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`PBH_RULE` は CONFIG_DB の **読み手（consumer）専用**テーブルで、`PbhOrch` が書き込む STATE_DB / APPL_DB エントリは存在しない。ここでの暗黙参照は、SAI 反映の前提となる他テーブル・他 Orch への依存を指す。
+`PBH_RULE` は CONFIG_DB の **読み手（consumer）専用**テーブルで、`PbhOrch` が書き込む [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) エントリは存在しない。ここでの暗黙参照は、[SAI](../../reference/glossary.md#term-sai) 反映の前提となる他テーブル・他 Orch への依存を指す。
 
 <!-- evidence: pbhorch.cpp:90-95 (constructor), pbhorch.cpp:633 (addAclRule), pbhorch.cpp:1808 (allPortsReady), pbhmgr.cpp:83-135 (validateDependencies / incRefCount) -->
 
-| 参照先テーブル / リソース | YANG leafref | 実行時依存 | 非充足時の挙動 |
+| 参照先テーブル / リソース | [YANG](../../reference/glossary.md#term-yang) leafref | 実行時依存 | 非充足時の挙動 |
 |--------------------------|:------------:|----------|--------------|
 | `PBH_TABLE` (CONFIG_DB) | ✅ | `validateDependencies(rule)` が `tableMap.find(rule.table)` で存在確認（`pbhmgr.cpp:83-88`）。成功後 `incRefCount` が `PBH_TABLE` の refCount を +1 | retry loop — TABLE 作成後に自動回復 |
 | `PBH_HASH` (CONFIG_DB) | ✅ | `validateDependencies(rule)` が `hashMap.find(rule.hash.value)` で存在確認（`pbhmgr.cpp:88-94`）。成功後 `incRefCount` が `PBH_HASH` の refCount を +1 | retry loop — HASH 作成後に自動回復 |
 | `AclOrch`（Orch 間依存） | ✗ | `createPbhRule()` が `this->aclOrch->addAclRule(pbhRule, rule.table)` を呼ぶ（`pbhorch.cpp:633`）。`updatePbhRule()` は `getAclRule()` + `updateAclRule()`、`removePbhRule()` は `removeAclRule()` を呼ぶ | ERROR ログ + `return false` → retry loop |
 | `PortsOrch`（グローバルゲート） | ✗ | `PbhOrch::doTask()` (`pbhorch.cpp:1808`) が `portsOrch->allPortsReady()` を確認。false の間は PBH 全テーブルの処理がブロック | 全 PBH 処理ブロック — PortsOrch 完了後に自動回復 |
-| SAI ACL API（間接） | ✗ | `AclOrch::addAclRule()` 内で `sai_acl_api->create_acl_entry()` を呼ぶ。SAI 失敗は `addAclRule()` → `createPbhRule()` → retry loop として伝播 | ERROR ログ + retry loop |
+| SAI [ACL](../../reference/glossary.md#term-acl) API（間接） | ✗ | `AclOrch::addAclRule()` 内で `sai_acl_api->create_acl_entry()` を呼ぶ。SAI 失敗は `addAclRule()` → `createPbhRule()` → retry loop として伝播 | ERROR ログ + retry loop |
 
 !!! note "DEL 方向の逆参照"
     `PBH_TABLE` および `PBH_HASH` が `PBH_RULE` の生存中に DEL されても、refCount > 0 のため `hasDependencies()` (`pbhmgr.cpp:75-78`) が削除を保留する。`PBH_RULE` を先に DEL して `decRefCount` を呼ぶことで refCount が 0 に戻り、`PBH_TABLE` / `PBH_HASH` の削除が可能になる（Phase B 依存 5 も参照）。
@@ -252,7 +252,7 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 
 ### 失敗時の SAI 状態サマリ
 
-| 失敗シナリオ | CONFIG_DB | SAI ACL entry | orchagent 状態 |
+| 失敗シナリオ | CONFIG_DB | SAI ACL entry | [orchagent](../../reference/glossary.md#term-orchagent) 状態 |
 |---|---|---|---|
 | parse / validation 失敗（必須フィールド欠損等） | 残存 | 未作成 | 継続（ERROR ログ、retry） |
 | SAI create 失敗（重複・API エラー） | 残存 | 未作成 | 継続（ERROR ログ、retry） |
@@ -268,7 +268,7 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 <!-- evidence: meta/_intermediate/cdb-flow/pbh-rule-constants.md -->
 <!-- source: sonic-swss/orchagent/pbh/pbhschema.h, pbhmgr.cpp, pbhrule.cpp, pbhcap.cpp -->
 
-`PBH_RULE` 処理に関係するハードコード定数の一覧。いずれも CONFIG_DB / YANG では設定変更不可か、実装側のみで定義される値である。
+`PBH_RULE` 処理に関係するハードコード定数の一覧。いずれも CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) では設定変更不可か、実装側のみで定義される値である。
 
 ### match フィールドの暗黙 mask 値
 
@@ -289,8 +289,8 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 
 | 定数 | 値 | 用途 |
 |------|----|------|
-| `PBH_RULE_PACKET_ACTION_SET_ECMP_HASH` | `"SET_ECMP_HASH"` | `packet_action` の ECMP ハッシュ適用値 |
-| `PBH_RULE_PACKET_ACTION_SET_LAG_HASH` | `"SET_LAG_HASH"` | `packet_action` の LAG ハッシュ適用値 |
+| `PBH_RULE_PACKET_ACTION_SET_ECMP_HASH` | `"SET_ECMP_HASH"` | `packet_action` の [ECMP](../../reference/glossary.md#term-ecmp) ハッシュ適用値 |
+| `PBH_RULE_PACKET_ACTION_SET_LAG_HASH` | `"SET_LAG_HASH"` | `packet_action` の [LAG](../../reference/glossary.md#term-lag) ハッシュ適用値 |
 | `PBH_RULE_FLOW_COUNTER_ENABLED` | `"ENABLED"` | `flow_counter` 有効化値 |
 | `PBH_RULE_FLOW_COUNTER_DISABLED` | `"DISABLED"` | `flow_counter` 無効化値（デフォルト） |
 
@@ -349,14 +349,14 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 
 ### FLEX_COUNTER_DB / `ACL_STAT_COUNTER` (flow_counter=ENABLED 時のみ)
 
-`registerFlexCounter()` が `m_flex_counter_manager.setCounterIdList(oid, CounterType::ACL_COUNTER, attrs)` を呼び、FLEX_COUNTER_DB にポーリング設定を書き込む。
+`registerFlexCounter()` が `m_flex_counter_manager.setCounterIdList(oid, CounterType::ACL_COUNTER, attrs)` を呼び、[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) にポーリング設定を書き込む。
 
 | トリガ | 操作 | キー | フィールド | evidence |
 |--------|------|------|-----------|---------|
 | `flow_counter=ENABLED` で SET 成功 | `set` | `ACL_STAT_COUNTER:<counter_oid>` | `ACL_COUNTER_ATTR_ID_LIST=<attrs>` | `aclorch.cpp:6040` |
 | DEL 成功（`flow_counter=ENABLED` だったルール） | `del` | `ACL_STAT_COUNTER:<counter_oid>` | — | `aclorch.cpp:6048` |
 
-定数: `ACL_COUNTER_FLEX_COUNTER_GROUP = "ACL_STAT_COUNTER"` (`aclorch.h:116`)。FLEX_COUNTER_DB = 5 (`schema.h:18`)。
+定数: `ACL_COUNTER_FLEX_COUNTER_GROUP = "ACL_STAT_COUNTER"` (`aclorch.h:116`)。[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) = 5 (`schema.h:18`)。
 
 !!! note "flow_counter=DISABLED（デフォルト）の場合"
     `flow_counter` 省略時のデフォルトは `DISABLED` (`pbhmgr.cpp:1012-1023`)。`createCounter=false` のため `registerFlexCounter()` は呼ばれず、COUNTERS_DB および FLEX_COUNTER_DB への書き込みは発生しない。
@@ -365,17 +365,17 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 
 `setAclRuleStatus()` は `AclOrch::doTask()` の汎用 `ACL_RULE` / `APP_ACL_RULE` 処理経路 (`aclorch.cpp:5668-5726`) からのみ呼ばれる。`PBH_RULE` は `PbhOrch` の独立した処理経路を使い (`createPbhRule()` が `addAclRule()` を直接呼ぶ; `pbhorch.cpp:633`)、`setAclRuleStatus()` は呼ばれない。
 
-→ **STATE_DB への `ACL_RULE_TABLE` 書き込みは発生しない**。`show pbh rule` の状態確認は PbhOrch 内部キャッシュ (`pbhHlpr`) を参照する。
+→ **[STATE_DB](../../reference/glossary.md#term-state_db) への `ACL_RULE_TABLE` 書き込みは発生しない**。`show pbh rule` の状態確認は PbhOrch 内部キャッシュ (`pbhHlpr`) を参照する。
 
 ### 副次書込サマリ
 
 | DB | テーブル名 | 条件 | 操作 | evidence |
 |-----|---------|------|------|---------|
-| COUNTERS_DB | `ACL_COUNTER_RULE_MAP` | `flow_counter=ENABLED` のみ | `hset` / `hdel` | `aclorch.cpp:6041,6047` |
-| FLEX_COUNTER_DB | `ACL_STAT_COUNTER` | `flow_counter=ENABLED` のみ | `set` / `del` | `aclorch.cpp:6040,6048` |
-| STATE_DB | `ACL_RULE_TABLE` | — | **書き込みなし** | `pbhorch.cpp:633` |
-| APPL_DB | — | — | **書き込みなし** | — |
-| ASIC_DB | — | SAI 経由のみ | `syncd` が書き込む（orchagent 直接書込なし） | — |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `ACL_COUNTER_RULE_MAP` | `flow_counter=ENABLED` のみ | `hset` / `hdel` | `aclorch.cpp:6041,6047` |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `ACL_STAT_COUNTER` | `flow_counter=ENABLED` のみ | `set` / `del` | `aclorch.cpp:6040,6048` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `ACL_RULE_TABLE` | — | **書き込みなし** | `pbhorch.cpp:633` |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | — | — | **書き込みなし** | — |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | — | SAI 経由のみ | `syncd` が書き込む（[orchagent](../../reference/glossary.md#term-orchagent) 直接書込なし） | — |
 
 <!-- /side-effects -->
 
@@ -390,7 +390,7 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 `PbhOrch` は `Orch(connectorList)` でベースクラスに 4 テーブル
 （`CFG_PBH_TABLE_TABLE_NAME` / `CFG_PBH_RULE_TABLE_NAME` / `CFG_PBH_HASH_TABLE_NAME` / `CFG_PBH_HASH_FIELD_TABLE_NAME`）
 の `TableConnector` リストを渡す（`orchdaemon.cpp:552-565`）。
-`Orch::addConsumer()` が CONFIG_DB を検出して **`swss::SubscriberStateTable`**（Redis keyspace 通知ベース）を割り当てる（`orch.cpp:1186-1196`）。
+`Orch::addConsumer()` が CONFIG_DB を検出して **`swss::SubscriberStateTable`**（[Redis](../../reference/glossary.md#term-redis) keyspace 通知ベース）を割り当てる（`orch.cpp:1186-1196`）。
 
 ```cpp
 // orch.cpp:1186-1196
@@ -407,7 +407,7 @@ void Orch::addConsumer(DBConnector *db, string tableName, int pri)
 |--------|---------|--------------|-----------|
 | `orchagent` (`PbhOrch`) | `swss::SubscriberStateTable` | `PBH_RULE` | `DEFAULT_POP_BATCH_SIZE = 128`（ハードコード、`table.h:164`） |
 
-APPL_DB で使われる `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）とは異なり、CONFIG_DB テーブルは keyspace 通知（`__keyspace@4__:PBH_RULE|<table>|<rule>` への `PSUBSCRIBE`）で変更を検知する。`gBatchSize`（`orchagent -b <n>` で上書き可）は CONFIG_DB 側には**適用されない**。
+[APPL_DB](../../reference/glossary.md#term-appl_db) で使われる `ConsumerStateTable`（channel ベース PUBLISH/SUBSCRIBE）とは異なり、CONFIG_DB テーブルは keyspace 通知（`__keyspace@4__:PBH_RULE|<table>|<rule>` への `PSUBSCRIBE`）で変更を検知する。`gBatchSize`（`orchagent -b <n>` で上書き可）は CONFIG_DB 側には**適用されない**。
 
 ### イベント受信フロー
 
@@ -430,9 +430,9 @@ createPbhRule() → AclOrch::addAclRule() → SAI: sai_acl_api->create_acl_entry
 | 読み取り元 | 参照 DB / テーブル | 用途 |
 |-----------|----------------|------|
 | `show pbh rule` | CONFIG_DB `PBH_RULE`（直読み） | 設定値の表示 (`cfgdb_pipe.get_table()`) |
-| `show pbh statistics` | CONFIG_DB `PBH_RULE` + COUNTERS_DB `ACL_COUNTER_RULE_MAP` + `COUNTERS:<oid>` | `flow_counter=ENABLED` ルールのパケット / バイト数表示 |
+| `show pbh statistics` | CONFIG_DB `PBH_RULE` + [COUNTERS_DB](../../reference/glossary.md#term-counters_db) `ACL_COUNTER_RULE_MAP` + `COUNTERS:<oid>` | `flow_counter=ENABLED` ルールのパケット / バイト数表示 |
 
-`show pbh rule` は orchagent の処理を経由せず CONFIG_DB を直接参照するため、SAI 反映状態とは独立して最新の設定を表示する。`show pbh statistics` の `ACL_COUNTER_RULE_MAP` は `AclOrch::registerFlexCounter()` が `flow_counter=ENABLED` の SET 成功時に書き込む（Phase F 参照）。
+`show pbh rule` は [orchagent](../../reference/glossary.md#term-orchagent) の処理を経由せず CONFIG_DB を直接参照するため、SAI 反映状態とは独立して最新の設定を表示する。`show pbh statistics` の `ACL_COUNTER_RULE_MAP` は `AclOrch::registerFlexCounter()` が `flow_counter=ENABLED` の SET 成功時に書き込む（Phase F 参照）。
 
 ### TTL / バックプレッシャー
 
@@ -492,7 +492,7 @@ Mellanox プラットフォームでは `updatePbhRule()` (`pbhorch.cpp:839-863`
   AclOrch::updateAclRule()      ← SAI update
 ```
 
-`disableAction()` は SAI ACL entry の action フィールドを一時的にクリアして Mellanox ASIC の制約（action が SET されている状態での ECMP/LAG hash 変更が不可）を回避する。失敗した場合は UPDATE 全体が `return false` となり retry loop に入る。
+`disableAction()` は SAI ACL entry の action フィールドを一時的にクリアして Mellanox ASIC の制約（action が SET されている状態での [ECMP](../../reference/glossary.md#term-ecmp)/[LAG](../../reference/glossary.md#term-lag) hash 変更が不可）を回避する。失敗した場合は UPDATE 全体が `return false` となり retry loop に入る。
 
 **generic プラットフォームでは `disableAction()` を呼ばない**。条件分岐は `this->pbhCap.getAsicVendor() == PbhAsicVendor::MELLANOX` で制御される。
 
@@ -567,3 +567,5 @@ PBH_RULE|<table_name>|<rule_name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-pbh.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-pbh.yang>
+
+<!-- glossary-links-injected: 78dcd3c82940 -->

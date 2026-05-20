@@ -56,8 +56,8 @@ flowchart LR
 
 | テーブル | DB | 目的 |
 |---|---|---|
-| `CFG_MACSEC_PROFILE_TABLE_NAME` ("MACSEC_PROFILE") | CONFIG_DB | MKA プロファイル設定 (CAK/CKN/cipher_suite/policy 等) |
-| `CFG_PORT_TABLE_NAME` ("PORT") | CONFIG_DB | ポートの `macsec` フィールドでプロファイル名参照 |
+| `CFG_MACSEC_PROFILE_TABLE_NAME` ("MACSEC_PROFILE") | [CONFIG_DB](../../reference/glossary.md#term-config_db) | MKA プロファイル設定 (CAK/CKN/cipher_suite/policy 等) |
+| `CFG_PORT_TABLE_NAME` ("PORT") | [CONFIG_DB](../../reference/glossary.md#term-config_db) | ポートの `macsec` フィールドでプロファイル名参照 |
 
 `doTask()` の TaskMap:
 
@@ -82,9 +82,9 @@ flowchart LR
 
 ### APP_DB Publish → MACsecOrch → SAI
 
-`wpa_supplicant` の MKA 完了後、APP_DB の MACsec テーブルに書き込まれ `MACsecOrch` が SAI `sai_macsec_api` を呼び出す。
+`wpa_supplicant` の MKA 完了後、APP_DB の MACsec テーブルに書き込まれ `MACsecOrch` が [SAI](../../reference/glossary.md#term-sai) `sai_macsec_api` を呼び出す。
 
-| SAI API | 操作 |
+| [SAI](../../reference/glossary.md#term-sai) API | 操作 |
 |---|---|
 | `create_macsec()` / `remove_macsec()` | ingress/egress MACsec オブジェクト |
 | `create_macsec_port()` / `remove_macsec_port()` | ポート MACsec |
@@ -198,7 +198,7 @@ CONFIG_DB:PORT.macsec  ──名前参照──▶  CONFIG_DB:MACSEC_PROFILE
 
 ### MACSEC_SC への間接参照
 
-`configureMACsec()` が `wpa_supplicant` を通じて MKA セッションを確立後、`macsecorch` が APPL_DB 経由で SAI MACsec SC (Secure Channel) オブジェクトを生成する。`send_sci` / `policy` / `cipher_suite` の各フィールドが SC の動作モードに直接影響する。
+`configureMACsec()` が `wpa_supplicant` を通じて MKA セッションを確立後、`macsecorch` が [APPL_DB](../../reference/glossary.md#term-appl_db) 経由で [SAI](../../reference/glossary.md#term-sai) MACsec SC (Secure Channel) オブジェクトを生成する。`send_sci` / `policy` / `cipher_suite` の各フィールドが SC の動作モードに直接影響する。
 
 ### wpa_supplicant 連携
 
@@ -216,7 +216,7 @@ CONFIG_DB:PORT.macsec  ──名前参照──▶  CONFIG_DB:MACSEC_PROFILE
 | `replay_window` | `macsec_replay_window`（`enable_replay_protect=true` 時のみ） |
 | `policy` | `macsec_integ_only`（`integrity_only` → 1） |
 
-詳細分析: `meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md`
+詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-cross-refs.md)
 <!-- /cross-refs -->
 
 ## 引用元
@@ -301,7 +301,7 @@ show macsec
 `PORT.macsec` フィールドが設定されると `MACsecMgr::enableMACsec()` が呼ばれるが、起動にはふたつの前提条件をすべて満たす必要がある。
 
 1. **MACSEC_PROFILE が先に存在すること** — `m_profiles.find(profile_name)` が見つからない場合は `task_need_retry` を返し、プロファイルが登録されるまで再試行し続ける。
-2. **PORT が STATE_DB で ready 状態であること** — `isPortStateOk(port_name)` が `STATE_PORT_TABLE_NAME` を参照し、`state == "ok"` かつ `netdev_oper_status == "up"` でなければ同様に `task_need_retry`。
+2. **PORT が [STATE_DB](../../reference/glossary.md#term-state_db) で ready 状態であること** — `isPortStateOk(port_name)` が `STATE_PORT_TABLE_NAME` を参照し、`state == "ok"` かつ `netdev_oper_status == "up"` でなければ同様に `task_need_retry`。
 
 ```
 CONFIG_DB に MACSEC_PROFILE|<name> が存在
@@ -344,7 +344,7 @@ configureMACsec() — wpa_cli 経由でインターフェース追加・MKA 設�
 ```
 
 - SC が存在しない状態で `taskUpdateEgressSA` / `taskUpdateIngressSA` を呼ぶと `task_need_retry` → SC 作成まで待機。
-- SA 削除時に当該 SC の SA が 0 件になると、ACL エントリアクションを "MACsec flow" から "packet action" に戻す（逆順クリーンアップ）。
+- SA 削除時に当該 SC の SA が 0 件になると、[ACL](../../reference/glossary.md#term-acl) エントリアクションを "MACsec flow" から "packet action" に戻す（逆順クリーンアップ）。
 - Egress SA は `encoding_an` フィールドが一致する AN のみ作成し、不一致は `task_need_retry`。
 - Ingress SA は `active = true` で作成、`active = false` で削除するトリガ型制御。
 
@@ -404,7 +404,7 @@ configureMACsec() — wpa_cli 経由でインターフェース追加・MKA 設�
 
 ### STATE_DB / syslog への記録
 
-- SAI POST 失敗のみ STATE_DB に記録される（`MACSEC_POST|switch` エントリ）
+- SAI POST 失敗のみ [STATE_DB](../../reference/glossary.md#term-state_db) に記録される（`MACSEC_POST|switch` エントリ）
 - その他の失敗は `syslog`（`SWSS_LOG_WARN` / `SWSS_LOG_ERROR`）への出力のみ
 - CONFIG_DB のエントリは失敗後も残る
 
@@ -423,7 +423,7 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 
 ### 段階 1 — Consumer 登録
 
-`macsecmgrd` → `MACsecOrch` (APPL_DB 経由) が CONFIG_DB の `MACSEC_PROFILE` テーブルを購読する。
+`macsecmgrd` → `MACsecOrch` ([APPL_DB](../../reference/glossary.md#term-appl_db) 経由) が CONFIG_DB の `MACSEC_PROFILE` テーブルを購読する。
 
 `MACSEC_PROFILE` の key はプロファイル名。`primary_cak` / `fallback_cak` / `cipher_suite` 等のキー情報を保持。
 
@@ -437,7 +437,7 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB 変化を `macsecmgrd` が検知後 APPL_DB に書き込み。`MACsecOrch` が SAI MACsec オブジェクトを作成/更新。キーロールオーバーは非同期。
+**適用タイミング**: CONFIG_DB 変化を `macsecmgrd` が検知後 [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込み。`MACsecOrch` が SAI MACsec オブジェクトを作成/更新。キーロールオーバーは非同期。
 
 **副作用**: MACsec プロファイル変更は該当ポートの MACsec セキュリティアソシエーションを再生成。切り替え中に brief traffic interrupt が発生する可能性がある。
 <!-- /runtime-trace -->
@@ -478,9 +478,9 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 | 参照先 | 参照種別 | 具体的な利用箇所 | evidence |
 |--------|----------|-----------------|----------|
 | `PORT.<ifname>.macsec` (CONFIG_DB) | 読み取り（トリガー） | `enableMACsec()` が `CFG_PORT_TABLE` SET イベントを受け `get_value(port_attr, "macsec", profile_name)` でプロファイル名を取得。空または未設定なら `disableMACsec()` へフォールバック。 | `sonic-swss/cfgmgr/macsecmgr.cpp:298,480-484` |
-| `PORT_TABLE.<ifname>` (STATE_DB) | 読み取り（起動ゲート） | `isPortStateOk()` が STATE_DB `PORT_TABLE` から `state == "ok"` かつ `netdev_oper_status == "up"` を確認。満たされない間は `task_need_retry` が続く。 | `sonic-swss/cfgmgr/macsecmgr.cpp:614-631` |
+| `PORT_TABLE.<ifname>` ([STATE_DB](../../reference/glossary.md#term-state_db)) | 読み取り（起動ゲート） | `isPortStateOk()` が STATE_DB `PORT_TABLE` から `state == "ok"` かつ `netdev_oper_status == "up"` を確認。満たされない間は `task_need_retry` が続く。 | `sonic-swss/cfgmgr/macsecmgr.cpp:614-631` |
 | `MACSEC_EGRESS_SC` / `MACSEC_INGRESS_SC` (APPL_DB) | 受信（非同期） | `MACsecOrch::doTask()` が `APP_MACSEC_EGRESS_SC_TABLE_NAME` / `APP_MACSEC_INGRESS_SC_TABLE_NAME` を購読。キー形式 `<port>:<sci>`。SC エントリ到達時に SAI `sai_macsec_api` でセキュリティチャネルを確立する。 | `sonic-swss/orchagent/macsecorch.cpp:872-882` |
-| `PORT_TABLE.<ifname>.pfc_encryption_mode` (APPL_DB) | 読み取り（PFC ACL） | `createMACsecACLTable()` が `m_applPortTable.get(port_name, values)` で APPL_DB PORT エントリの `pfc_encryption_mode` を読み取り PFC ACL エントリを生成。フィールド不在時はデフォルト値使用。 | `sonic-swss/orchagent/macsecorch.cpp:2709-2715` |
+| `PORT_TABLE.<ifname>.pfc_encryption_mode` (APPL_DB) | 読み取り（[PFC](../../reference/glossary.md#term-pfc) [ACL](../../reference/glossary.md#term-acl)） | `createMACsecACLTable()` が `m_applPortTable.get(port_name, values)` で APPL_DB PORT エントリの `pfc_encryption_mode` を読み取り [PFC](../../reference/glossary.md#term-pfc) [ACL](../../reference/glossary.md#term-acl) エントリを生成。フィールド不在時はデフォルト値使用。 | `sonic-swss/orchagent/macsecorch.cpp:2709-2715` |
 
 ### 依存関係サマリ
 
@@ -553,7 +553,7 @@ enableMACsec()
   └─ disableMACsec() 呼出し（ポートを非暗号化状態へ復元）
 ```
 
-詳細分析: `meta/_intermediate/cdb-flow/macsec-profile-failure.md`
+詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-failure.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-failure.md)
 <!-- /failure -->
 
 <!-- pubsub -->
@@ -578,7 +578,7 @@ enableMACsec()
 
 ### APPL_DB MACSEC 経路
 
-`macsecmgrd` は APPL_DB に直接書き込まない。wpa_supplicant が MKA/SAK を確立した後、`MACsecOrch`（orchagent）が下記 APPL_DB テーブルを Subscribe して SAI に変換する。
+`macsecmgrd` は APPL_DB に直接書き込まない。wpa_supplicant が MKA/SAK を確立した後、`MACsecOrch`（[orchagent](../../reference/glossary.md#term-orchagent)）が下記 APPL_DB テーブルを Subscribe して SAI に変換する。
 
 | APPL_DB テーブル | 役割 |
 |----------------|------|
@@ -608,7 +608,7 @@ macsecmgrd::enableMACsec()
        sai_macsec_api → ASIC/HW
 ```
 
-詳細分析: `meta/_intermediate/cdb-flow/macsec-profile-pubsub.md`
+詳細分析: [`meta/_intermediate/cdb-flow/macsec-profile-pubsub.md`](../../../../meta/_intermediate/cdb-flow/macsec-profile-pubsub.md)
 <!-- /pubsub -->
 
 <!-- side-effects -->
@@ -632,7 +632,7 @@ macsecmgrd::enableMACsec()
 
 ### ASIC_DB（SAI 経由）
 
-`macsecorch.cpp` が `sai_macsec_api` を呼び出し、syncd 経由で ASIC_DB に反映される。
+`macsecorch.cpp` が `sai_macsec_api` を呼び出し、[syncd](../../reference/glossary.md#term-syncd) 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) に反映される。
 
 | SAI API 呼び出し | 主な属性 | タイミング |
 |-----------------|----------|------------|
@@ -703,7 +703,7 @@ macsecmgrd::enableMACsec()
 | `EAPOL_ETHER_TYPE` | `0x888E` | EAPOL フレーム識別用 EtherType (ACL バイパス) | `orchagent/macsecorch.cpp:25` |
 | `PAUSE_ETHER_TYPE` | `0x8808` | PAUSE フレーム識別用 EtherType (ACL バイパス) | `orchagent/macsecorch.cpp:26` |
 | `AVAILABLE_ACL_PRIORITIES_LIMITATION` | `32` | MACsec ACL に使用可能な優先度数の上限 | `orchagent/macsecorch.cpp:24` |
-| `PFC_MODE_DEFAULT` | `"bypass"` | PFC フレームの MACsec 処理デフォルトモード | `orchagent/macsecorch.cpp:32` |
+| `PFC_MODE_DEFAULT` | `"bypass"` | [PFC](../../reference/glossary.md#term-pfc) フレームの MACsec 処理デフォルトモード | `orchagent/macsecorch.cpp:32` |
 
 ### PFC mode 文字列定数
 
@@ -726,9 +726,9 @@ MACsec の SAI オブジェクト操作対象は、ポートに Gearbox PHY が�
 | 条件 | MACsec オブジェクト対象 | カウンタ管理 |
 |------|------------------------|-------------|
 | `gearbox_phy_t.macsec_supported == true` | PHY 側の line-side port (`port.m_line_side_id`) と PHY の switch ID を使用 | `m_gb_macsec_sa_stat_manager` / `m_gb_macsec_flow_stat_manager` / `m_gb_macsec_counters_map` |
-| PHY なし、または `macsec_supported == false` | NPU 側の port (`port.m_port_id`) とグローバル switch ID (`gSwitchId`) を使用 | `m_macsec_sa_stat_manager` / `m_macsec_flow_stat_manager` / `m_macsec_counters_map` |
+| PHY なし、または `macsec_supported == false` | [NPU](../../reference/glossary.md#term-npu) 側の port (`port.m_port_id`) とグローバル switch ID (`gSwitchId`) を使用 | `m_macsec_sa_stat_manager` / `m_macsec_flow_stat_manager` / `m_macsec_counters_map` |
 
-PHY が接続されていても `macsec_supported` が `false` の場合、`MACsecOrch` は NPU 側へフォールバックし、ログに `"backend=NPU (phy marked unsupported)"` を出力する。
+PHY が接続されていても `macsec_supported` が `false` の場合、`MACsecOrch` は [NPU](../../reference/glossary.md#term-npu) 側へフォールバックし、ログに `"backend=NPU (phy marked unsupported)"` を出力する。
 
 **コード証跡** (`macsecorch.cpp:363, 409, 2539, 2547, 2555, 2563`):
 ```cpp
@@ -801,4 +801,4 @@ attr.value.booldata = true;
 - master ブランチ以外のバックポート差異はスコープ外
 <!-- /platform -->
 
-<!-- glossary-links-injected: b5626ca1f0f9 -->
+<!-- glossary-links-injected: cff110ea7ef9 -->

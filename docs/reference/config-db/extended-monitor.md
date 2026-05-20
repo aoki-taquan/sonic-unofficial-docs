@@ -38,7 +38,7 @@ SONiC の Event and Alarm Framework は `eventd` デーモンが中心となっ�
 1. **EVENT テーブル保持上限** (`/etc/eventd.json`) — イベント履歴の最大レコード数と保持日数
 2. **イベントプロファイル** (`/etc/evprofile/default.json`) — イベント種別ごとの severity と有効/無効フラグ
 
-を記述する。これらのパラメータは CONFIG_DB テーブルではなく、ファイルベース設定として管理される。
+を記述する。これらのパラメータは [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルではなく、ファイルベース設定として管理される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -123,7 +123,7 @@ eventd は起動時に `/etc/evprofile/default.json` を読み込み、`static_e
 
 ## EVENT_DB のテーブル構造
 
-EVENT テーブルと ALARM テーブルは CONFIG_DB ではなく EVENT_DB (Redis DB index 19) に格納される[^2]。
+EVENT テーブルと ALARM テーブルは [CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく EVENT_DB ([Redis](../../reference/glossary.md#term-redis) DB index 19) に格納される[^2]。
 
 ### EVENT テーブルエントリ
 
@@ -160,15 +160,15 @@ Critical/Major アラームあり → Red、Minor/Warning のみ → Amber、ア
 
 ## 関連 YANG
 
-イベントの型定義 (producer 側スキーマ) は以下の YANG で管理される。CONFIG_DB スキーマではなく、イベントペイロードの構造定義。
+イベントの型定義 (producer 側スキーマ) は以下の [YANG](../../reference/glossary.md#term-yang) で管理される。[CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマではなく、イベントペイロードの構造定義。
 
-| YANG モジュール | 対象 |
+| [YANG](../../reference/glossary.md#term-yang) モジュール | 対象 |
 |---------------|------|
 | `sonic-events-common` | 共通 grouping (timestamp, usage/limit) および severity extension |
 | `sonic-events-host` | disk-usage, memory-usage, cpu-usage, event-sshd, event-disk 等 |
 | `sonic-events-swss` | swss コンテナ発行イベント |
-| `sonic-events-syncd` | syncd 発行イベント |
-| `sonic-events-bgp` | BGP イベント |
+| `sonic-events-syncd` | [syncd](../../reference/glossary.md#term-syncd) 発行イベント |
+| `sonic-events-bgp` | [BGP](../../reference/glossary.md#term-bgp) イベント |
 | `sonic-events-dhcp-relay` | DHCP relay イベント |
 
 <!-- ordering -->
@@ -183,7 +183,7 @@ Critical/Major アラームあり → Red、Minor/Warning のみ → Amber、ア
 | 1 | ZMQ コンテキスト生成 (`zmq_ctx_new`) | **最先行** | 以降の全サービスが zctx に依存する |
 | 2 | `eventd_proxy::init()` — XSUB/XPUB/CAPTURE ソケットのバインド | proxy init 完了を待つ (`m_init_done` ポーリング) | publisher/subscriber が接続を試みる前に XSUB/XPUB エンドポイントが Listen 状態でなければならない (`eventd.cpp:680`) |
 | 3 | `event_service::init_server` — 制御チャネル初期化 | proxy init 完了後 | 制御チャネルはプロキシのバックエンドを利用する |
-| 4 | `stats_collector::start()` — COUNTERS_DB 接続 + collector/writer スレッド起動 | proxy init 完了後 | collector スレッドが subscriber を作成してすべてのイベントを受信し始める |
+| 4 | `stats_collector::start()` — [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 接続 + collector/writer スレッド起動 | proxy init 完了後 | collector スレッドが subscriber を作成してすべてのイベントを受信し始める |
 | 5 | `capture_service` 作成 + `INIT_CAPTURE` — SUB ソケット接続 | stats 起動後 | capture サービスは stats_instance を参照してカウンタをインクリメントする (`eventd.cpp:694`) |
 | 6 | `START_CAPTURE` — キャプチャ開始 | `INIT_CAPTURE` 完了確認後 (`m_cap_run` ポーリング) | NEED_INIT → INIT_CAPTURE → START_CAPTURE の単方向遷移のみ許可; `(ctrl - m_ctrl) == 1` のアサーションで強制 (`eventd.cpp:557`) |
 
@@ -204,20 +204,20 @@ Critical/Major アラームあり → Red、Minor/Warning のみ → Amber、ア
 
 ### `evprofile` 読み込みと event 処理の依存
 
-`/etc/evprofile/default.json` はプロセス起動時に `static_event_map` として読み込まれる。この読み込みが完了する前に `event_publish()` が呼ばれると、イベントプロファイルが未登録のまま処理が走る可能性がある。ファイルが存在しない場合はイベントプロファイルなしで動作し、すべてのイベントが `enable=true` 扱いとなる（HLD section 3.1.2 による）。
+`/etc/evprofile/default.json` はプロセス起動時に `static_event_map` として読み込まれる。この読み込みが完了する前に `event_publish()` が呼ばれると、イベントプロファイルが未登録のまま処理が走る可能性がある。ファイルが存在しない場合はイベントプロファイルなしで動作し、すべてのイベントが `enable=true` 扱いとなる（[HLD](../../reference/glossary.md#term-hld) section 3.1.2 による）。
 
 <!-- /ordering -->
 
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-HLD および `eventd.cpp` の定数から導出する[^1][^3]。
+[HLD](../../reference/glossary.md#term-hld) および `eventd.cpp` の定数から導出する[^1][^3]。
 
 ### `/etc/eventd.json` — EVENT テーブル保持上限
 
 | フィールド | コード由来デフォルト | 根拠 |
 |-----------|-------------------|------|
-| `no-of-records` | **40000** | HLD section 3.1.7; `"The size of Event Table is 40k records"` |
+| `no-of-records` | **40000** | [HLD](../../reference/glossary.md#term-hld) section 3.1.7; `"The size of Event Table is 40k records"` |
 | `no-of-days` | **30** | HLD section 3.1.7; `"or 30 days worth of events"` |
 
 ### `/etc/evprofile/default.json` — イベントプロファイル
@@ -267,7 +267,7 @@ HLD および `eventd.cpp` の定数から導出する[^1][^3]。
 | 3 | `/etc/evprofile/default.json` 読込み (`static_event_map` 構築) → EVENT_DB への書込み開始 | 強制先行 | プロファイル未読込み状態でイベントを受信しても `enable` 判定できず処理不可 |
 | 4 | `capture_service::INIT_CAPTURE` → `START_CAPTURE` → 任意の `EVENT_CACHE_INIT` 要求 | 状態遷移 (1 ステップずつ) | `set_control()` は `(ctrl - m_ctrl) == 1` を検証し、ステップ飛ばしは `goto out` でエラー |
 | 5 | `EVENT_CACHE_STOP` (+ `read_cache()`) → `EVENT_CACHE_READ` | **強制先行** | `capture != NULL` の間は `EVENT_CACHE_READ` が `resp=-1` を返す。telemetry が `CACHE_STOP` を送らない限りキャッシュが読めない |
-| 6 | `stats_collector::start()` → COUNTERS_DB への統計書込み | 強制先行 | writer スレッドが `COUNTERS_DB` に接続してから初めて `COUNTERS_EVENTS_TABLE` へ書込みが始まる。接続失敗時は `run_eventd_service()` が終了 |
+| 6 | `stats_collector::start()` → [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への統計書込み | 強制先行 | writer スレッドが `COUNTERS_DB` に接続してから初めて `COUNTERS_EVENTS_TABLE` へ書込みが始まる。接続失敗時は `run_eventd_service()` が終了 |
 | 7 | イベント受信 (heartbeat 以外) → `hb_cntr` リセット | 即時 | イベント受信があると heartbeat カウンタがリセットされ、ハートビート発行間隔が延長する。heartbeat と通常イベントの到着順は非決定的 |
 
 ### 主要な制約詳細
@@ -285,7 +285,7 @@ HLD および `eventd.cpp` の定数から導出する[^1][^3]。
 <!-- cross-refs -->
 ## 暗黙参照 — `eventd` が読み書きする関連 DB・ファイル (Phase C)
 
-`eventd` はファイルシステム上の設定ファイルと複数の Redis DB にまたがって依存を持つ。以下にその全体像を示す。
+`eventd` はファイルシステム上の設定ファイルと複数の [Redis](../../reference/glossary.md#term-redis) DB にまたがって依存を持つ。以下にその全体像を示す。
 
 ### ファイル参照
 
@@ -336,7 +336,7 @@ HLD および `eventd.cpp` の定数から導出する[^1][^3]。
 | 2 | `get_config_data(CACHE_MAX_CNT)` が 0 以下を返す | `run_eventd_service():675` | プロセス終了。`/etc/sonic/init_cfg.json` 内の `cache_max_cnt` が不正値の場合に発生 | 設定ファイルを修正して eventd 再起動 |
 | 3 | `eventd_proxy::init()` 失敗 — ZMQ ポート bind 失敗 | `run_eventd_service():680`、`eventd_proxy::run():78-93` | proxy スレッドが `m_init_result=1; m_init_done=true` をセットし `init()` が失敗を返す → プロセス終了 | ポート競合（5570/5571/5573）を解消して再起動 |
 | 4 | `event_service::init_server()` 失敗 | `run_eventd_service():682` | プロセス終了 | eventd 再起動 |
-| 5 | `stats_collector::start()` — COUNTERS_DB 接続失敗 | `stats_collector::start():184` | `RET_ON_ERR` で start() が失敗を返し、呼び出し元がプロセス終了 | Redis サービス起動後に eventd 再起動 |
+| 5 | `stats_collector::start()` — [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 接続失敗 | `stats_collector::start():184` | `RET_ON_ERR` で start() が失敗を返し、呼び出し元がプロセス終了 | [Redis](../../reference/glossary.md#term-redis) サービス起動後に eventd 再起動 |
 
 ### キャプチャサービスの失敗パターン（non-fatal）
 
@@ -371,7 +371,7 @@ HLD および `eventd.cpp` の定数から導出する[^1][^3]。
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`eventd` および `events_common.h` / `eventd.cpp` / `eventd.h` 内に存在する、CONFIG_DB / YANG で管理されない固定値の一覧。`/etc/eventd.json` や `/etc/evprofile/default.json` で上書きできないプロセス内部定数を中心に示す。
+`eventd` および `events_common.h` / `eventd.cpp` / `eventd.h` 内に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されない固定値の一覧。`/etc/eventd.json` や `/etc/evprofile/default.json` で上書きできないプロセス内部定数を中心に示す。
 
 ### イベントキャッシュ・サイズ定数
 
@@ -444,7 +444,7 @@ EventDB service (`eventd` 内の event_consumer + alarm_consumer) が `/etc/evpr
 | `CONFIG_DB` | — | なし | eventd はファイル直接読み。CONFIG_DB アクセスなし |
 | `APPL_DB` | — | なし | 書込みパスなし |
 | `STATE_DB` | — | なし | 書込みパスなし |
-| `ASIC_DB` | — | なし | SAI 非経由 |
+| `ASIC_DB` | — | なし | [SAI](../../reference/glossary.md#term-sai) 非経由 |
 
 ### ALARM_STATS → pmon LED 制御（副次購読）
 
@@ -507,7 +507,7 @@ systemctl restart eventd
 
 ### APPL_DB / SAI 中継
 
-なし。拡張監視設定 (`eventd.json` / `evprofile`) は `eventd` 内部で完結し、APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない。EVENT_DB と COUNTERS_DB への書き込みは `eventd` が直接行う（Phase F 参照）。
+なし。拡張監視設定 (`eventd.json` / `evprofile`) は `eventd` 内部で完結し、[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への伝播も [SAI](../../reference/glossary.md#term-sai) 書き込みも発生しない。EVENT_DB と COUNTERS_DB への書き込みは `eventd` が直接行う（Phase F 参照）。
 
 > **Evidence**: `eventd.cpp:172-225` (stats_collector::start); `eventd.cpp:656-704` (run_eventd_service 起動シーケンス); `eventd.cpp:244` (内部サブスクライバー); HLD section 3.1.2, 3.1.3, 3.1.8
 <!-- /pubsub -->
@@ -521,7 +521,7 @@ systemctl restart eventd
 
 ### SAI・プラットフォーム依存なし（全 ASIC 共通）
 
-`eventd` は SAI API を呼び出さず、`getenv("platform")` 参照もなく、`#ifdef` によるプラットフォーム分岐も存在しない。ZMQ ブローカーとして Redis DB（EVENT_DB / COUNTERS_DB）への書き込みのみを行う純粋なユーザー空間デーモンであるため、**ASIC ベンダー・ハードウェア世代・スイッチチップの種類によって挙動は変わらない**[^4]。
+`eventd` は [SAI](../../reference/glossary.md#term-sai) API を呼び出さず、`getenv("platform")` 参照もなく、`#ifdef` によるプラットフォーム分岐も存在しない。ZMQ ブローカーとして Redis DB（EVENT_DB / COUNTERS_DB）への書き込みのみを行う純粋なユーザー空間デーモンであるため、**ASIC ベンダー・ハードウェア世代・スイッチチップの種類によって挙動は変わらない**[^4]。
 
 | プラットフォーム要素 | eventd の依存 |
 |---------------------|--------------|
@@ -532,11 +532,11 @@ systemctl restart eventd
 
 ### VM・仮想環境での注意事項
 
-VM テストベッド（`sonic-vs`）でも `eventd` は同一バイナリで動作する。ただし ZMQ ソケットに接続するプロデューサー（`syncd`・`bgp`・`dhcp_relay` 等）の有無がイベント流量に影響する。VM では syncd が SAI イベントを生成しないため、`syncd_events_info.json` で定義されたイベントが発行されない。
+VM テストベッド（`sonic-vs`）でも `eventd` は同一バイナリで動作する。ただし ZMQ ソケットに接続するプロデューサー（`syncd`・`bgp`・`dhcp_relay` 等）の有無がイベント流量に影響する。VM では [syncd](../../reference/glossary.md#term-syncd) が SAI イベントを生成しないため、`syncd_events_info.json` で定義されたイベントが発行されない。
 
 | 環境 | 影響 |
 |------|------|
-| 物理スイッチ | syncd/orchagent が SAI イベントを発行 → EVENT_DB に記録 |
+| 物理スイッチ | [syncd](../../reference/glossary.md#term-syncd)/[orchagent](../../reference/glossary.md#term-orchagent) が SAI イベントを発行 → EVENT_DB に記録 |
 | sonic-vs（VM） | syncd が SAI イベントを発行しない → 該当イベント 0 件 |
 | どちらの環境でも同じ | ZMQ ブローカー・evprofile ロード・COUNTERS_DB 書き込みの動作 |
 
@@ -571,3 +571,5 @@ VM テストベッド（`sonic-vs`）でも `eventd` は同一バイナリで動
 - [イベントパブリッシャー設定](event-publisher.md)
 - [SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブル](suppress-asic-sdk-health-event.md)
 - [CONFIG_DB index](index.md)
+
+<!-- glossary-links-injected: cd4aea9a0354 -->

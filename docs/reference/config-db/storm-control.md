@@ -32,18 +32,34 @@ related:
 ## 概要
 
 BUM (Broadcast / Unknown-unicast / Unknown-multicast) storm control は `PORT_STORM_CONTROL` テーブルで設定される。
-`orchagent` の `PolicerOrch::handlePortStormControlTable()` が CONFIG_DB を購読し、SAI policer を作成・適用する。
+`orchagent` の `PolicerOrch::handlePortStormControlTable()` が [CONFIG_DB](../../reference/glossary.md#term-config_db) を購読し、[SAI](../../reference/glossary.md#term-sai) policer を作成・適用する。
 
-YANG と実装の間には複数の乖離 (discrepancy) とハードコード挙動が存在する。以下に詳細を示す。
+[YANG](../../reference/glossary.md#term-yang) と実装の間には複数の乖離 (discrepancy) とハードコード挙動が存在する。以下に詳細を示す。
 
 <!-- defaults -->
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>PORT_STORM_CONTROL")]
+  DM["PolicerOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_policer_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## 暗黙デフォルトとハードコード挙動
 
 <!-- evidence: meta/_intermediate/cdb-flow/storm-control-defaults.md -->
 
 ### 1. kbps — YANG optional だが実装は mandatory
 
-YANG (`sonic-storm-control.yang`) の `kbps` leaf に `default` 文および `mandatory true` 宣言はない (YANG 上は optional)。
+[YANG](../../reference/glossary.md#term-yang) (`sonic-storm-control.yang`) の `kbps` leaf に `default` 文および `mandatory true` 宣言はない ([YANG](../../reference/glossary.md#term-yang) 上は optional)。
 
 しかし `orchagent/policerorch.cpp:194-200` では:
 
@@ -65,9 +81,9 @@ if (!cir)
 
 ### 2. SAI policer ハードコード固定属性 (YANG / CLI 非公開)
 
-YANG および CLI には存在しないが、orchagent が **常に固定値** で SAI policer を作成する属性:
+YANG および CLI には存在しないが、[orchagent](../../reference/glossary.md#term-orchagent) が **常に固定値** で [SAI](../../reference/glossary.md#term-sai) policer を作成する属性:
 
-| SAI 属性 | 固定値 | 変更可否 |
+| [SAI](../../reference/glossary.md#term-sai) 属性 | 固定値 | 変更可否 |
 |---|---|---|
 | `SAI_POLICER_ATTR_METER_TYPE` | `BYTES` | 不可 (ハードコード) |
 | `SAI_POLICER_ATTR_MODE` | `STORM_CONTROL` | 不可 (ハードコード) |
@@ -108,7 +124,7 @@ kbps = int(int(bps) / int(1000) * 8)
 
 ### 4. update 時 remove-then-reapply による瞬間的 storm control 解除
 
-既存エントリを更新する際の orchagent フロー (`policerorch.cpp:273-288`):
+既存エントリを更新する際の [orchagent](../../reference/glossary.md#term-orchagent) フロー (`policerorch.cpp:273-288`):
 
 1. `port_attr.value.oid = SAI_NULL_OBJECT_ID` で storm control を **一時解除**
 2. CIR のみ `set_policer_attribute` で更新 (METER_TYPE / MODE / RED_ACTION は更新対象外)
@@ -144,7 +160,7 @@ if (!gPortsOrch->allPortsReady())
 }
 ```
 
-全ポートの初期化完了前に CONFIG_DB に書き込まれたエントリは `doTask()` が即座リターンするため **処理が遅延される** (silent defer、エラーなし・syslog なし)。
+全ポートの初期化完了前に [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込まれたエントリは `doTask()` が即座リターンするため **処理が遅延される** (silent defer、エラーなし・syslog なし)。
 
 証跡: `policerorch.cpp:379-382`
 
@@ -161,7 +177,7 @@ if (!gPortsOrch->allPortsReady())
 
 `task_success` が返されるためエントリは `consumer.m_toSync` から erase される。**リトライなし**。
 
-LAG (`PortChannel`) や VLAN を誤って指定した場合も同様に syslog error のみで黙って破棄される。
+[LAG](../../reference/glossary.md#term-lag) (`PortChannel`) や [VLAN](../../reference/glossary.md#term-vlan) を誤って指定した場合も同様に syslog error のみで黙って破棄される。
 
 証跡: `policerorch.cpp:131-144`
 
@@ -178,7 +194,7 @@ return supported
 
 CLI (`config interface storm-control add`) は `STATE_DB:BUM_STORM_CAPABILITY|<storm_type>` の `supported` フィールドを確認し、非対応プラットフォームでは書き込みをスキップする。
 
-しかし **orchagent 側には同様のチェックが存在しない**。`sonic-db-cli` 等で直接 CONFIG_DB に書き込んだ場合、capability 非対応プラットフォームでも orchagent が SAI call を試みる (SAI エラーで失敗する可能性あり)。
+しかし **[orchagent](../../reference/glossary.md#term-orchagent) 側には同様のチェックが存在しない**。`sonic-db-cli` 等で直接 [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込んだ場合、capability 非対応プラットフォームでも orchagent が SAI call を試みる (SAI エラーで失敗する可能性あり)。
 
 !!! note "プラットフォーム依存"
     BUM storm control の SAI 対応はプラットフォーム (ASIC) 依存。CLI を経由せず直接 DB 書き込みを行う場合は `BUM_STORM_CAPABILITY` を事前確認すること。
@@ -257,7 +273,7 @@ def add_storm_config(self, port, storm_type, kbps):
 | # | 依存関係 | 方向 | 緩和策 |
 |---|---|---|---|
 | 1 | `PORT` (PortsOrch allPortsReady) → `PORT_STORM_CONTROL` | **先行必須** (全ポート初期化完了前は doTask が即 return) | 起動後は自動処理; 手動適用時は起動完了を確認 |
-| 2 | `PORT_STORM_CONTROL` キー内ポート名が `Ethernet` で始まること | **先行必須** (PortChannel / VLAN は silent drop) | LAG メンバーポートに直接設定すること |
+| 2 | `PORT_STORM_CONTROL` キー内ポート名が `Ethernet` で始まること | **先行必須** ([PortChannel](../../reference/glossary.md#term-portchannel) / [VLAN](../../reference/glossary.md#term-vlan) は silent drop) | [LAG](../../reference/glossary.md#term-lag) メンバーポートに直接設定すること |
 | 3 | 対象 `PORT` エントリが CONFIG_DB に存在すること | **先行必須** (`getPort()` 失敗 → task_success erase、リトライなし) | PORT を先に設定してから STORM_CONTROL を書き込む |
 | 4 | 3 種 (broadcast / unknown-unicast / unknown-multicast) は相互独立 | 順不同で設定可 | — |
 | 5 | kbps 値を更新する場合: 旧 policer の NULL → CIR 更新 → reapply の順序 | orchagent 内部固定順序 | — (orchagent 自動制御) |
@@ -289,7 +305,7 @@ if (!gPortsOrch->getPort(interface_name, port))
 `task_success` が返されるため `consumer.m_toSync` からエントリが erase される。**リトライなし**。syslog ERROR は出力されるがオペレータ通知手段は限定的。
 
 **Ethernet 以外 silent drop (依存 #2)**:
-`policerorch.cpp:131-135` で ETHERNET_PREFIX チェックを行う。`PortChannel`・VLAN インタフェースは `task_success` で erase される (silent drop)。HLD では「physical interfaces のみ対応」と明記されているが、orchagent 側には YANG/CLI バリデーションへの依存がなく、直接 DB 書き込みの場合は同様に drop される。
+`policerorch.cpp:131-135` で ETHERNET_PREFIX チェックを行う。`PortChannel`・[VLAN](../../reference/glossary.md#term-vlan) インタフェースは `task_success` で erase される (silent drop)。[HLD](../../reference/glossary.md#term-hld) では「physical interfaces のみ対応」と明記されているが、orchagent 側には YANG/CLI バリデーションへの依存がなく、直接 DB 書き込みの場合は同様に drop される。
 
 証跡: `sonic-swss/orchagent/policerorch.cpp:131-143, 379-382`
 
@@ -344,11 +360,11 @@ PolicerOrch::handlePortStormControlTable()
 - **方向**: CLI (`config/main.py:806-813`) が書き込み前に確認
 - **参照元**: `is_storm_control_supported()` in `config/main.py:806-813`
 - **意味**: CLI が storm control 設定前に ASIC の BUM storm control サポートを確認する。orchagent 側には同等チェックが存在せず、DB に直接書き込んだ場合は SAI 呼び出しが試みられ、非対応時は SAI エラーで記録される（silent な SAI failure）。
-- **非対称性**: CLI → STATE_DB 確認 → スキップ可能。orchagent → 非確認 → SAI fail-through。
+- **非対称性**: CLI → [STATE_DB](../../reference/glossary.md#term-state_db) 確認 → スキップ可能。orchagent → 非確認 → SAI fail-through。
 
 ### 4. ASIC_DB / SAI（policer と port 属性の書き込み先）
 
-`handlePortStormControlTable()` が呼び出す SAI API と ASIC_DB への波及:
+`handlePortStormControlTable()` が呼び出す SAI API と [ASIC_DB](../../reference/glossary.md#term-asic_db) への波及:
 
 | SAI API | 操作 | コード箇所 |
 |---------|------|----------|
@@ -357,7 +373,7 @@ PolicerOrch::handlePortStormControlTable()
 | `sai_port_api->set_port_attribute()` | ポートへの policer OID アタッチ / NULL デタッチ | `policerorch.cpp:206-214, 283-286, 326-347` |
 | `sai_policer_api->remove_policer()` | policer オブジェクト削除 | `policerorch.cpp:293-304, 349-361` |
 
-いずれも syncd 経由で ASIC_DB に反映され、物理 ASIC へのプログラムが行われる。
+いずれも [syncd](../../reference/glossary.md#term-syncd) 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) に反映され、物理 ASIC へのプログラムが行われる。
 
 ### 参照関係サマリ
 
@@ -445,7 +461,7 @@ storm control エントリ処理で使用されるフィールド名・storm_typ
 #define ETHERNET_PREFIX "Ethernet"
 ```
 
-`strncmp(interface_name.c_str(), ETHERNET_PREFIX, strlen(ETHERNET_PREFIX))` で非 Ethernet インターフェースを検出し、`SWSS_LOG_ERROR` 後 `task_success` で即時スキップする (`policerorch.cpp:132-136`)。LAG / VLAN / PortChannel 等には storm control を適用できない。
+`strncmp(interface_name.c_str(), ETHERNET_PREFIX, strlen(ETHERNET_PREFIX))` で非 Ethernet インターフェースを検出し、`SWSS_LOG_ERROR` 後 `task_success` で即時スキップする (`policerorch.cpp:132-136`)。[LAG](../../reference/glossary.md#term-lag) / VLAN / [PortChannel](../../reference/glossary.md#term-portchannel) 等には storm control を適用できない。
 
 ### policer 名生成パターン (`policerorch.cpp:146`)
 
@@ -499,7 +515,7 @@ attr.value.u64 = (stoul(value) * 1000 / 8);
 > 調査証跡: `meta/_intermediate/cdb-flow/storm-control-side-effects.md`
 > ソース: `sonic-swss/orchagent/policerorch.cpp`
 
-`PolicerOrch::handlePortStormControlTable()` は CONFIG_DB `PORT_STORM_CONTROL` の SET / DEL を処理するが、**STATE_DB・APPL_DB・COUNTERS_DB への明示的な書込みは一切存在しない**。副次変化は ASIC_DB（SAI API 経由）と PolicerOrch 内部状態の 2 系統のみ。
+`PolicerOrch::handlePortStormControlTable()` は CONFIG_DB `PORT_STORM_CONTROL` の SET / DEL を処理するが、**[STATE_DB](../../reference/glossary.md#term-state_db)・[APPL_DB](../../reference/glossary.md#term-appl_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への明示的な書込みは一切存在しない**。副次変化は [ASIC_DB](../../reference/glossary.md#term-asic_db)（SAI API 経由）と PolicerOrch 内部状態の 2 系統のみ。
 
 ### ASIC_DB（SAI API 経由）
 
@@ -515,7 +531,7 @@ attr.value.u64 = (stoul(value) * 1000 / 8);
 
 ### PolicerOrch 内部 map（プロセス内状態）
 
-STATE_DB ではなく PolicerOrch プロセス内の map が更新される。他の Orch や外部ツールから直接観測不可。
+[STATE_DB](../../reference/glossary.md#term-state_db) ではなく PolicerOrch プロセス内の map が更新される。他の Orch や外部ツールから直接観測不可。
 
 | map | 操作 | タイミング |
 |-----|------|-----------|
@@ -639,16 +655,15 @@ storm control の CONFIG_DB 参照は `namespace` 単位で独立している。
 
 ## 引用元
 
-<!-- footnote anchor seeds -->
-出典: [^1] [^2] [^3] [^4]
-
 [^1]: YANG 定義: `sonic-storm-control.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-storm-control.yang>
 [^2]: PolicerOrch 実装: `policerorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/policerorch.cpp>
 [^3]: CLI 実装: `config/main.py`. <https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py>
-[^4]: BUM Storm Control HLD: `bum_storm_control_hld.md`. <https://github.com/sonic-net/SONiC/blob/master/doc/bum_storm_control/bum_storm_control_hld.md>
+[^4]: BUM Storm Control [HLD](../../reference/glossary.md#term-hld): `bum_storm_control_hld.md`. <https://github.com/sonic-net/SONiC/blob/master/doc/bum_storm_control/bum_storm_control_hld.md>
 
 ## 関連ページ
 
 - [PORT_STORM_CONTROL テーブル (概要)](port-storm-control.md)
 - [CONFIG_DB: PORT](port.md)
 - [CONFIG_DB: POLICER](policer.md)
+
+<!-- glossary-links-injected: f9445b5b4106 -->

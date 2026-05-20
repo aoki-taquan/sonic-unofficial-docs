@@ -88,9 +88,6 @@ SCHEDULER|<name>
 
 ## 引用元
 
-<!-- footnote anchor seeds -->
-出典: [^4]
-
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-scheduler.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-scheduler.yang>
 
 <!-- topics-back-ref -->
@@ -163,7 +160,7 @@ show queue counters
 | 失敗条件 | 検出箇所 | 結果 | ログ出力 |
 |---|---|---|---|
 | `type` が `DWRR`/`WRR`/`STRICT` 以外の不正値 | `handleSchedulerTable()` L1394 | `task_invalid_entry`。エントリ全体を破棄、[SAI](../../reference/glossary.md#term-sai) 非反映 | `SWSS_LOG_ERROR("Unknown scheduler type value:%s")` |
-| `meter_type` が `packets`/`bytes` 以外の不正値 | `handleSchedulerTable()` L1407 | `scheduler_meter_map.at()` が `std::out_of_range` 例外をスロー → **orchagent クラッシュ** | uncaught exception |
+| `meter_type` が `packets`/`bytes` 以外の不正値 | `handleSchedulerTable()` L1407 | `scheduler_meter_map.at()` が `std::out_of_range` 例外をスロー → **[orchagent](../../reference/glossary.md#term-orchagent) クラッシュ** | uncaught exception |
 | 未知フィールド（例: `priority`）を含む SET | `handleSchedulerTable()` L1434 | `task_invalid_entry`。`type`/`weight`/`meter_type` 等を含む全フィールドが SAI 未反映 | `SWSS_LOG_ERROR("Unknown field:%s")` |
 | `weight` に YANG `range "1..100"` 違反の値 | `handleSchedulerTable()` L1401–1404 | `(uint8_t)stoi()` で暗黙キャスト・切り捨て。バリデーションなし、異常値が SAI に渡る | なし |
 | SAI `create_scheduler()` 失敗（新規作成時） | `handleSchedulerTable()` L1460–1467 | `handleSaiCreateStatus()` 返り値に従う。`task_success` 以外なら失敗ステータスを返す | `SWSS_LOG_ERROR("Failed to create scheduler profile [%s:%s], rv:%d")` |
@@ -182,7 +179,7 @@ show queue counters
 ### 補足
 
 - **`priority` フィールドの全破棄**: YANG に `leaf priority` が定義されているが qosorch に対応分岐なし。`priority` を含む SET は **全フィールドが** SAI 未反映になる（partial 適用なし）。
-- **`meter_type` クラッシュリスク**: `scheduler_meter_map.at()` は `"packets"`/`"bytes"` 以外で `std::out_of_range` をスロー。orchagent プロセスごとクラッシュするため、直接 `sonic-db-cli` 書き込み時は要注意。
+- **`meter_type` クラッシュリスク**: `scheduler_meter_map.at()` は `"packets"`/`"bytes"` 以外で `std::out_of_range` をスロー。[orchagent](../../reference/glossary.md#term-orchagent) プロセスごとクラッシュするため、直接 `sonic-db-cli` 書き込み時は要注意。
 - **`m_pendingRemove` による SET/DEL シリアライズ**: QUEUE 参照がある SCHEDULER に DEL → SET を発行しても DEL がリトライし続け SET も保留される。QUEUE 参照を解除 → DEL 完了 → SET の順を守ること。
 
 <!-- /failure -->
@@ -222,7 +219,7 @@ QosOrch は常時登録し `SCHEDULER` テーブルを無条件購読する。`S
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / QosOrch**: `SCHEDULER` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / QosOrch**: `SCHEDULER` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -247,7 +244,7 @@ SCHEDULER テーブルへの書き込みが発生するコード経路を網羅�
 
 ### CLI
 
-  - `config qos reload` — sonic-cfggen が `files/build_templates/qos_config.j2` を展開し SCHEDULER エントリを生成 (sonic-buildimage/files/build_templates/qos_config.j2)
+  - `config qos reload` — [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) が `files/build_templates/qos_config.j2` を展開し SCHEDULER エントリを生成 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/files/build_templates/qos_config.j2)
 
 ### minigraph / sonic-cfggen
 
@@ -255,7 +252,7 @@ minigraph.py に SCHEDULER 直接生成なし — `qos_config.j2` テンプレ�
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -415,12 +412,12 @@ SCHEDULER|<name> を DEL
 
 > **調査根拠**: `sonic-swss/orchagent/qosorch.cpp` `handleSchedulerTable()` / `applySchedulerToQueueSchedulerGroup()` / `handleQueueTable()` 精読 (2026-05-16)
 
-APPL_DB / STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB への直接書き込みは **一切なし**。
-副次 DB 書き込みは SAI API 経由の ASIC_DB のみ。
+[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への直接書き込みは **一切なし**。
+副次 DB 書き込みは SAI API 経由の [ASIC_DB](../../reference/glossary.md#term-asic_db) のみ。
 
 ### ASIC_DB 書き込み
 
-| ASIC_DB テーブル | 属性 | トリガ | evidence |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) テーブル | 属性 | トリガ | evidence |
 |----------------|------|--------|---------|
 | `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<oid>` | スケジューラ全属性 (type / weight / meter_type / cir / cbs / pir / pbs) | `handleSchedulerTable` SET で `sai_scheduler_api->create_scheduler()` または `set_scheduler_attribute()` | `qosorch.cpp:L1460, L1446` |
 | `ASIC_STATE:SAI_OBJECT_TYPE_SCHEDULER:<oid>` | — (削除) | `handleSchedulerTable` DEL で `sai_scheduler_api->remove_scheduler()` | `qosorch.cpp:L1490` |
@@ -451,7 +448,7 @@ SCHEDULER SET
 
 `QosOrch` は `SCHEDULER` テーブルを **`swss::SubscriberStateTable`** で購読する。
 
-`Orch::addConsumer()` は接続先 DB の ID で購読方式を自動選択する (`orch.cpp:1186-1196`)。`QosOrch` は `m_configDb`（CONFIG_DB、dbId=4）に接続するため、`CONFIG_DB || STATE_DB || CHASSIS_APP_DB` の分岐に入り `SubscriberStateTable` が割り当てられる。APPL_DB の `ConsumerStateTable` とは異なる方式で、Redis keyspace 通知は使わない。
+`Orch::addConsumer()` は接続先 DB の ID で購読方式を自動選択する (`orch.cpp:1186-1196`)。`QosOrch` は `m_configDb`（CONFIG_DB、dbId=4）に接続するため、`CONFIG_DB || STATE_DB || CHASSIS_APP_DB` の分岐に入り `SubscriberStateTable` が割り当てられる。[APPL_DB](../../reference/glossary.md#term-appl_db) の `ConsumerStateTable` とは異なる方式で、[Redis](../../reference/glossary.md#term-redis) keyspace 通知は使わない。
 
 ```cpp
 // sonic-swss/orchagent/orch.cpp:1186-1196
@@ -479,7 +476,7 @@ vector<string> qos_tables = {
 gQosOrch = new QosOrch(m_configDb, qos_tables);
 ```
 
-`QosOrch` は `Orch(db, tableNames)` を継承し、コンストラクタが `tableNames` をイテレートして各テーブルに `addConsumer()` を呼ぶ。`SCHEDULER` を含む全 QoS テーブルが一括登録される。
+`QosOrch` は `Orch(db, tableNames)` を継承し、コンストラクタが `tableNames` をイテレートして各テーブルに `addConsumer()` を呼ぶ。`SCHEDULER` を含む全 [QoS](../../reference/glossary.md#term-qos) テーブルが一括登録される。
 
 ### 購読テーブル一覧
 
@@ -531,11 +528,11 @@ QosOrch::doTask(Consumer&)            (qosorch.cpp:2254)
 | リモートシステムポート (`SAI_SYSTEM_PORT_TYPE_REMOTE`) | `applySchedulerToQueueSchedulerGroup` が即時 `true` を返して SAI 書き込みをスキップ。SCHEDULER オブジェクト自体は作成済みだが、リモートポートのキューには bind されない |
 | ローカルシステムポート | `port.m_system_port_info.local_port_oid` でローカル物理ポートを解決し、`m_queue_ids[queue_ind]` からキュー OID を取得。標準パスと同じ SAI 処理を実行 |
 
-**QUEUE キー形式の違い**: VOQ モードでは `QUEUE` テーブルのキーが 4 トークン（`<hostname>|<ASIC_NAME>|<port>|<index_range>`）必須。SCHEDULER 自体の挙動は変わらないが、QUEUE からの参照が成立するための前提条件が異なる。
+**QUEUE キー形式の違い**: [VOQ](../../reference/glossary.md#term-voq) モードでは `QUEUE` テーブルのキーが 4 トークン（`<hostname>|<ASIC_NAME>|<port>|<index_range>`）必須。SCHEDULER 自体の挙動は変わらないが、QUEUE からの参照が成立するための前提条件が異なる。
 
 ### SmartSwitch / DPU
 
-`qosorch.cpp` に SmartSwitch / DPU 固有の分岐は**存在しない**。NPU / DPU 問わず同一コードパスを辿る。
+`qosorch.cpp` に [SmartSwitch](../../reference/glossary.md#term-smartswitch) / [DPU](../../reference/glossary.md#term-dpu) 固有の分岐は**存在しない**。[NPU](../../reference/glossary.md#term-npu) / [DPU](../../reference/glossary.md#term-dpu) 問わず同一コードパスを辿る。
 
 ### ベンダー ASIC 差異（SAI 抽象化）
 
@@ -552,4 +549,4 @@ QosOrch::doTask(Consumer&)            (qosorch.cpp:2254)
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 96667c52d98d -->
+<!-- glossary-links-injected: 6a6d0d560200 -->

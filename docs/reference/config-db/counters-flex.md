@@ -28,9 +28,9 @@ related:
 
 ## 概要
 
-[orchagent](../../reference/glossary.md#term-orchagent) は `FLEX_COUNTER_TABLE` のグループ設定（`FLEX_COUNTER_STATUS = enable`）を受信すると、ハードウェアオブジェクト（ポート・キュー・PG 等）ごとに **`FLEX_COUNTER_DB`** へ per-OID エントリを書き込む[^1]。このエントリに含まれる `PORT_COUNTER_ID_LIST`、`QUEUE_COUNTER_ID_LIST` などが **個別カウンタフィールド** であり、`syncd` の `FlexCounter` モジュールが参照してどの SAI stat を収集するかを決定する。
+[orchagent](../../reference/glossary.md#term-orchagent) は `FLEX_COUNTER_TABLE` のグループ設定（`FLEX_COUNTER_STATUS = enable`）を受信すると、ハードウェアオブジェクト（ポート・キュー・PG 等）ごとに **`FLEX_COUNTER_DB`** へ per-OID エントリを書き込む[^1]。このエントリに含まれる `PORT_COUNTER_ID_LIST`、`QUEUE_COUNTER_ID_LIST` などが **個別カウンタフィールド** であり、`syncd` の `FlexCounter` モジュールが参照してどの [SAI](../../reference/glossary.md#term-sai) stat を収集するかを決定する。
 
-これらのフィールドは CONFIG_DB 経由でユーザーが設定する手段はなく、orchagent が内部的にハードコードした stat リストから自動生成する。
+これらのフィールドは [CONFIG_DB](../../reference/glossary.md#term-config_db) 経由でユーザーが設定する手段はなく、[orchagent](../../reference/glossary.md#term-orchagent) が内部的にハードコードした stat リストから自動生成する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -38,18 +38,14 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  OA["orchagent<br/>(FlexCounterOrch / PortsOrch)"]
-  FCB[("FLEX_COUNTER_DB<br/>FLEX_COUNTER_TABLE:<group>:<oid>")]
-  SD["syncd<br/>(FlexCounter)"]
+  DM["syncd"]
+  CDB --> DM
   SAI["SAI<br/>sai_*_stats"]
-  CDB --> OA
-  OA --> FCB
-  FCB --> SD
-  SD --> SAI
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB からの設定が orchagent を経て FLEX_COUNTER_DB に書き込まれ、syncd が SAI bulk counter API で収集する流れ。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## FLEX_COUNTER_DB エントリ構造
@@ -61,7 +57,7 @@ FLEX_COUNTER_TABLE|<group>|<oid>
 
 グループ名と対応するフィールド名:
 
-| グループ | FLEX_COUNTER_DB フィールド |
+| グループ | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) フィールド |
 |---------|--------------------------|
 | `PORT` | `PORT_COUNTER_ID_LIST` |
 | `PORT_BUFFER_DROP` | `PORT_COUNTER_ID_LIST` (別 stat セット) |
@@ -89,9 +85,9 @@ FLEX_COUNTER_TABLE|<group>|<oid>
 
 `portsorch.cpp:242-381` の `port_stat_ids[]` で定義。`FLEX_COUNTER_STATUS = enable`（PORT グループ）受信時に `generatePortCounterMap()` が呼ばれ、PHY ポート全台に一括設定される。
 
-**主要 SAI stat（抜粋）:**
+**主要 [SAI](../../reference/glossary.md#term-sai) stat（抜粋）:**
 
-| SAI stat | 意味 |
+| [SAI](../../reference/glossary.md#term-sai) stat | 意味 |
 |---------|------|
 | `SAI_PORT_STAT_IF_IN_OCTETS` | 受信バイト数 |
 | `SAI_PORT_STAT_IF_IN_UCAST_PKTS` | 受信ユニキャストパケット数 |
@@ -111,7 +107,7 @@ FLEX_COUNTER_TABLE|<group>|<oid>
 
 | 種類 | 内容 |
 |------|------|
-| PHY ポートのみ | `m_type != Port::PHY` のポート（LAG, VLAN, CPU）はスキップ。FLEX_COUNTER_DB にエントリ書き込みなし |
+| PHY ポートのみ | `m_type != Port::PHY` のポート（[LAG](../../reference/glossary.md#term-lag), [VLAN](../../reference/glossary.md#term-vlan), CPU）はスキップ。[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) にエントリ書き込みなし |
 | 一度きり生成 | `m_isPortCounterMapGenerated` フラグ。再度 `enable` を書いても no-op。`disable` 後に `enable` し直した場合も再生成されない |
 | gearbox 時の別リスト | gearbox enabled 環境では `gbport_stat_ids[]` が別途登録される（portsorch.cpp:9110-9125） |
 
@@ -155,12 +151,12 @@ VoQ 対応時は `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が追加される�
 
 ### WRED_ECN_PORT / WRED_ECN_QUEUE のハードコード stat
 
-**WRED port** (`wred_port_stat_ids[]` portsorch.cpp:421-427):
+**[WRED](../../reference/glossary.md#term-wred) port** (`wred_port_stat_ids[]` portsorch.cpp:421-427):
 
 | SAI stat | 意味 |
 |---------|------|
-| `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` | 緑 WRED ドロップ |
-| `SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS` | 黄 WRED ドロップ |
+| `SAI_PORT_STAT_GREEN_WRED_DROPPED_PACKETS` | 緑 [WRED](../../reference/glossary.md#term-wred) ドロップ |
+| `SAI_PORT_STAT_YELLOW_WRED_DROPPED_PACKETS` | 黄 [WRED](../../reference/glossary.md#term-wred) ドロップ |
 | `SAI_PORT_STAT_RED_WRED_DROPPED_PACKETS` | 赤 WRED ドロップ |
 | `SAI_PORT_STAT_WRED_DROPPED_PACKETS` | WRED ドロップ合計 |
 
@@ -180,8 +176,8 @@ VoQ 対応時は `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が追加される�
 
 | 種類 | 内容 |
 |------|------|
-| 書き込み先は FLEX_COUNTER_DB | CONFIG_DB ではなく `FLEX_COUNTER_DB`（DB 番号 5）の `FLEX_COUNTER_TABLE:<group>:<oid>` に書き込まれる |
-| ユーザー設定不可 | YANG 定義なし、CONFIG_DB 経由での変更手段なし |
+| 書き込み先は [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | [CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく `FLEX_COUNTER_DB`（DB 番号 5）の `FLEX_COUNTER_TABLE:<group>:<oid>` に書き込まれる |
+| ユーザー設定不可 | [YANG](../../reference/glossary.md#term-yang) 定義なし、[CONFIG_DB](../../reference/glossary.md#term-config_db) 経由での変更手段なし |
 | グループ初期 polling interval | FlexCounterManager コンストラクタ引数で PORT: 1000ms、QUEUE: 10000ms、PORT_BUFFER_DROP: 60000ms がハードコード設定される。CONFIG_DB の `POLL_INTERVAL` で後から上書き可能 |
 | schema.h 定数 | フィールド名は `sonic-swss-common/common/schema.h` で `PORT_COUNTER_ID_LIST`、`QUEUE_COUNTER_ID_LIST` 等として定義 |
 
@@ -211,7 +207,7 @@ VoQ 対応時は `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が追加される�
 
 ### enable 時の先行必須条件（グループ別）
 
-`FLEX_COUNTER_STATUS = enable` を受信した際に orchagent が呼び出す generate 関数と、
+`FLEX_COUNTER_STATUS = enable` を受信した際に [orchagent](../../reference/glossary.md#term-orchagent) が呼び出す generate 関数と、
 それが必要とする先行テーブル:
 
 | グループキー | generate 関数 | 先行必須テーブル / 条件 |
@@ -268,7 +264,7 @@ disable 受信時に FLEX_COUNTER_DB の per-OID エントリを **削除する�
 4. 上記以外 → `SWSS_LOG_NOTICE("Unsupported field")` で無視・破棄
 
 `POLL_INTERVAL` と `FLEX_COUNTER_STATUS` を同一トランザクションで書いた場合、
-`POLL_INTERVAL` が先に syncd へ伝達されてから enable が実行される。
+`POLL_INTERVAL` が先に [syncd](../../reference/glossary.md#term-syncd) へ伝達されてから enable が実行される。
 
 ### gearbox 環境での追加書き込み
 
@@ -283,7 +279,7 @@ disable 受信時に FLEX_COUNTER_DB の per-OID エントリを **削除する�
 
 > 調査証跡: `meta/_intermediate/cdb-flow/counters-flex-cross-refs.md`
 
-`FlexCounterOrch` は YANG leafref として定義されていない以下のテーブル・グローバル Orch を暗黙参照して、個別カウンタフィールドの生成範囲を決定する。
+`FlexCounterOrch` は [YANG](../../reference/glossary.md#term-yang) leafref として定義されていない以下のテーブル・グローバル Orch を暗黙参照して、個別カウンタフィールドの生成範囲を決定する。
 
 | 参照先 | DB | 参照タイミング | YANG leafref | 実装上の必須度 | 証拠 |
 |---|---|---|---|---|---|
@@ -291,12 +287,12 @@ disable 受信時に FLEX_COUNTER_DB の per-OID エントリを **削除する�
 | `APP_BUFFER_QUEUE_TABLE` (APP_DB) | APP_DB | QUEUE/QUEUE_WATERMARK/WRED_ECN_QUEUE enable 時 | なし | `create_only_config_db_buffers=true` 時必須 | flexcounterorch.cpp:554 |
 | `APP_BUFFER_PG_TABLE` (APP_DB) | APP_DB | PG_DROP/PG_WATERMARK enable 時 | なし | `create_only_config_db_buffers=true` 時必須 | flexcounterorch.cpp:623 |
 | `gPortsOrch`（PORT_TABLE/APP_DB） | APP_DB | 全 PORT 系グループ enable 時 | なし | allPortsReady 待ち必須 | flexcounterorch.cpp:164-167 |
-| `gIntfsOrch`（INTF_TABLE/APP_DB） | APP_DB | RIF enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:283 |
+| `gIntfsOrch`（INTF_TABLE/APP_DB） | APP_DB | [RIF](../../reference/glossary.md#term-rif) enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:283 |
 | `gBufferOrch`（BUFFER_POOL_TABLE/APP_DB） | APP_DB | BUFFER_POOL_WATERMARK enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:287 |
 | `gCoppOrch`（COPP_TABLE/APP_DB） | APP_DB | FLOW_CNT_TRAP enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:313-315 |
 | `gSwitchOrch` | — | SWITCH enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:370 |
 | `vxlan_tunnel_orch`（gDirectory） | — | TUNNEL enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:295 |
-| `dash_orch`/`dash_ha_orch`（gDirectory） | — | ENI/DASH_METER/HA_SET enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:301-309 |
+| `dash_orch`/`dash_ha_orch`（gDirectory） | — | [ENI](../../reference/glossary.md#term-eni)/DASH_METER/HA_SET enable 時 | なし | null 時はスキップ | flexcounterorch.cpp:301-309 |
 
 ### create_only_config_db_buffers によるフィルタリング
 
@@ -328,7 +324,7 @@ disable 受信時に FLEX_COUNTER_DB の per-OID エントリを **削除する�
 | **保留 (m_toSync 残留)** | `allPortsReady() = false` / Warm Start 60 秒タイマー中 | エントリを `m_toSync` に保持し次 `doTask()` 呼び出しで自動再試行。上限なし |
 | **即削除** | 不正 flex counter グループキー（`flexCounterGroupMap` 未登録） | `SWSS_LOG_NOTICE "Invalid flex counter group input, <key>"` 出力後エントリ削除。retry なし |
 | **silent skip** | 未サポートフィールド (`POLL_INTERVAL`/`FLEX_COUNTER_STATUS` 以外) | `SWSS_LOG_NOTICE "Unsupported field <field>"` 出力のみ。エントリは削除されず他フィールドの処理は継続 |
-| **プロセスクラッシュ** | Redis 接続断（`setCounterIdList` 内部の `RedisReply` 例外） | 未 catch のため orchagent クラッシュ。supervisor が再起動するまで全カウンタ収集停止 |
+| **プロセスクラッシュ** | [Redis](../../reference/glossary.md#term-redis) 接続断（`setCounterIdList` 内部の `RedisReply` 例外） | 未 catch のため orchagent クラッシュ。supervisor が再起動するまで全カウンタ収集停止 |
 
 ### 不正グループキーの即削除
 
@@ -472,13 +468,13 @@ CONFIG_DB の `FLEX_COUNTER_TABLE|<group>` キー名と、FLEX_COUNTER_DB で使
 | `COUNTERS_DB` | `COUNTERS_PORT_NAME_MAP` | `<alias>` → `<oid>` のエイリアスマップ。`PORT` enable 時に更新 | `portsorch.cpp:4118` `m_counterNameMapUpdater->setCounterNameMap()` |
 | `COUNTERS_DB` | `COUNTERS_QUEUE_NAME_MAP` | `<Ethernet0:0>` → `<oid>` のキューエイリアスマップ。`QUEUE` / `QUEUE_WATERMARK` / `WRED_ECN_QUEUE` enable 時に更新 | `portsorch.cpp:8524,8749` |
 | `COUNTERS_DB` | `COUNTERS_PG_NAME_MAP` | `<Ethernet0:0>` → `<oid>` の PG エイリアスマップ。`PG_DROP` / `PG_WATERMARK` enable 時に更新 | `portsorch.cpp:8882,8937` |
-| `COUNTERS_DB` | `COUNTERS_RIF_NAME_MAP` / `COUNTERS_RIF_TYPE_MAP` | `<alias>` → `<oid>` / `<oid>` → `<type>` の RIF エイリアス・タイプマップ。`RIF` enable 時にタイマー経由で更新 | `intfsorch.cpp:1527-1545` `addRifToFlexCounter()` |
+| `COUNTERS_DB` | `COUNTERS_RIF_NAME_MAP` / `COUNTERS_RIF_TYPE_MAP` | `<alias>` → `<oid>` / `<oid>` → `<type>` の [RIF](../../reference/glossary.md#term-rif) エイリアス・タイプマップ。`RIF` enable 時にタイマー経由で更新 | `intfsorch.cpp:1527-1545` `addRifToFlexCounter()` |
 
 ### FLEX_COUNTER_DB フラッシュ（`flushCounters()`）
 
 `FLEX_COUNTER_STATUS` フィールドを処理した直後、`gPortsOrch->flushCounters()` が呼ばれ
 （`flexcounterorch.cpp:375-378`）、`counter_managers` 全体に対して `flush()` を実行する。
-バッファ済みの FLEX_COUNTER_DB 書き込みが即時 Redis へ送信されるため、enable / disable
+バッファ済みの FLEX_COUNTER_DB 書き込みが即時 [Redis](../../reference/glossary.md#term-redis) へ送信されるため、enable / disable
 後の FLEX_COUNTER_DB は中間状態にならない。
 
 ### 各 Orch への連鎖呼び出し
@@ -492,7 +488,7 @@ CONFIG_DB の `FLEX_COUNTER_TABLE|<group>` キー名と、FLEX_COUNTER_DB で使
 | `SRV6` | `gSrv6Orch->setCountersState(true)` → SRV6_COUNTER_ID_LIST 書込 | `setCountersState(false)` → 削除 |
 | `SWITCH` | `gSwitchOrch->generateSwitchCounterIdList()` → SWITCH_COUNTER_ID_LIST 書込 | — (disable 処理なし) |
 | `BUFFER_POOL_WATERMARK` | `gBufferOrch->generateBufferPoolWatermarkCounterIdList()` → バッファプール OID を FLEX_COUNTER_DB 書込 | — |
-| `ENI` / `DASH_METER` / `HA_SET` | `dash_orch->handleFCStatusUpdate(true)` 等 → DASH 系カウンタ書込 | `handleFCStatusUpdate(false)` → 削除 |
+| `ENI` / `DASH_METER` / `HA_SET` | `dash_orch->handleFCStatusUpdate(true)` 等 → [DASH](../../reference/glossary.md#term-dash) 系カウンタ書込 | `handleFCStatusUpdate(false)` → 削除 |
 
 evidence: `flexcounterorch.cpp:287-340`
 
@@ -514,8 +510,8 @@ evidence: `flexcounterorch.cpp:287-340`
 
 | モード | 書き込み API | 通知方式 |
 |--------|------------|---------|
-| Traditional (`gTraditionalFlexCounter = true`) | `ProducerTable::set()` (`saihelper.cpp:1047`) | `_KEY_SET` + `PUBLISH FLEX_COUNTER_TABLE_CHANNEL` で syncd が即時起床 |
-| 非 Traditional（デフォルト） | `SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER` 属性経由 (`saihelper.cpp:1055-1063`) | ASIC チャンネル経由で syncd へ伝達。FLEX_COUNTER_DB への直接 PUBLISH は行わない |
+| Traditional (`gTraditionalFlexCounter = true`) | `ProducerTable::set()` (`saihelper.cpp:1047`) | `_KEY_SET` + `PUBLISH FLEX_COUNTER_TABLE_CHANNEL` で [syncd](../../reference/glossary.md#term-syncd) が即時起床 |
+| 非 Traditional（デフォルト） | `SAI_REDIS_SWITCH_ATTR_FLEX_COUNTER` 属性経由 (`saihelper.cpp:1055-1063`) | ASIC チャンネル経由で [syncd](../../reference/glossary.md#term-syncd) へ伝達。FLEX_COUNTER_DB への直接 PUBLISH は行わない |
 
 !!! note "Traditional モードと FLEX_COUNTER_TABLE の可視性"
     Traditional モードでは `gFlexCounterTable = ProducerTable(FLEX_COUNTER_DB, FLEX_COUNTER_TABLE)` が使われ (`saihelper.cpp:324`)、per-OID エントリが FLEX_COUNTER_DB 上で可視になる。非 Traditional モードでは FLEX_COUNTER_DB にエントリが書き込まれないため、`redis-cli -n 5 HGETALL "FLEX_COUNTER_TABLE:PORT_STAT_COUNTER:oid:..."` で確認できない。
@@ -551,9 +547,9 @@ consumer 側はすべて on-demand polling で読み出す必要がある。
 | 区間 | 方式 | チャンネル |
 |------|------|-----------|
 | orchagent → FLEX_COUNTER_DB (traditional) | `ProducerTable` | `FLEX_COUNTER_TABLE_CHANNEL`（`syncd` が消費） |
-| orchagent → syncd (非 traditional) | SAI Redis Attribute / ASIC channel | — |
-| syncd FlexCounter → COUNTERS_DB | `swss::Table::set()` (plain HSET) | **なし（PUBLISH 非発行）** |
-| CLI / SNMP / gNMI ← COUNTERS_DB | on-demand polling (`HGETALL`) / gNMI STREAM subscription | — |
+| orchagent → syncd (非 traditional) | SAI [Redis](../../reference/glossary.md#term-redis) Attribute / ASIC channel | — |
+| syncd [FlexCounter](../../reference/glossary.md#term-flexcounter) → [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `swss::Table::set()` (plain HSET) | **なし（PUBLISH 非発行）** |
+| CLI / [SNMP](../../reference/glossary.md#term-snmp) / [gNMI](../../reference/glossary.md#term-gnmi) ← [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | on-demand polling (`HGETALL`) / [gNMI](../../reference/glossary.md#term-gnmi) STREAM subscription | — |
 
 !!! warning "COUNTERS_DB は push 通知なし"
     COUNTERS_DB へのカウンタ書き込みは通知なし（plain HSET）のため、`counterpoll show` で STATUS が `enable` に見えても、ポーリング間隔が経過するまで COUNTERS_DB の値は更新されない。
@@ -585,13 +581,13 @@ if (isMlnxPlatform() &&
 }
 ```
 
-Mellanox Spectrum では `SAI_PORT_STAT_DROPPED_TRIM_PACKETS` をネイティブに返せない世代がある。条件が成立すると `nvda_port_trim_drop.lua` (`portsorch.cpp:802`) が `PORT_STAT` FlexCounter グループへ追加され、`TRIM_PACKETS` と `TX_TRIM_PACKETS` から `DROPPED_TRIM_PACKETS` 相当値を Lua 側で計算して `COUNTERS_DB` に書き込む。非 Mellanox プラットフォームでは Lua プラグインは追加されない。
+Mellanox Spectrum では `SAI_PORT_STAT_DROPPED_TRIM_PACKETS` をネイティブに返せない世代がある。条件が成立すると `nvda_port_trim_drop.lua` (`portsorch.cpp:802`) が `PORT_STAT` [FlexCounter](../../reference/glossary.md#term-flexcounter) グループへ追加され、`TRIM_PACKETS` と `TX_TRIM_PACKETS` から `DROPPED_TRIM_PACKETS` 相当値を Lua 側で計算して `COUNTERS_DB` に書き込む。非 Mellanox プラットフォームでは Lua プラグインは追加されない。
 
 ### SAI Capability クエリによる WRED stat — プラットフォーム依存
 
 `initCounterCapabilities()` (`portsorch.cpp:1850`) が orchagent 起動時に `sai_query_stats_capability` で ASIC がサポートする stat を問い合わせ、結果を `STATE_DB` へ書き込む。
 
-| STATE_DB テーブル | キー | 意味 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) テーブル | キー | 意味 |
 |---|---|---|
 | `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` | `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` 対応有無 |
 | `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER` | `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` 対応有無 |
@@ -609,8 +605,8 @@ Mellanox Spectrum では `SAI_PORT_STAT_DROPPED_TRIM_PACKETS` をネイティブ
 `m_gearboxEnabled = true` の環境（Marvell Gearbox 等を外付けするプラットフォーム）では:
 
 - `gbport_stat_ids[]` (`portsorch.cpp:344-383`) が gearbox system 側・line 側ポートにそれぞれ設定される
-- 書き込み先が通常の `COUNTERS_DB` ではなく専用の `m_gb_counter_db` (Gearbox COUNTERS_DB) になる
-- `port_rates.lua` が gearbox FlexCounter グループに追加登録される (`portsorch.cpp:822-834`)
+- 書き込み先が通常の `COUNTERS_DB` ではなく専用の `m_gb_counter_db` (Gearbox [COUNTERS_DB](../../reference/glossary.md#term-counters_db)) になる
+- `port_rates.lua` が gearbox [FlexCounter](../../reference/glossary.md#term-flexcounter) グループに追加登録される (`portsorch.cpp:822-834`)
 
 `gbport_stat_ids[]` は通常の `port_stat_ids[]` のサブセットであり FEC 統計を含む（gearbox ポートでの FEC 計測が主目的）。
 
@@ -647,3 +643,5 @@ Mellanox Spectrum では `SAI_PORT_STAT_DROPPED_TRIM_PACKETS` をネイティブ
 - [Topics: Telemetry / SNMP / Observability](../../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: da3fe3f7edd8 -->

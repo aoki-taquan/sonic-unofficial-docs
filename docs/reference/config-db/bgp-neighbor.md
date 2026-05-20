@@ -156,7 +156,7 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 
 ### `peer_type` (`bgp_peer_type`、最重要 enum)
 
-| 値 | bgpcfgd テンプレディレクトリ | 主な差異 |
+| 値 | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) テンプレディレクトリ | 主な差異 |
 |----|----------------------------|---------|
 | `internal` | `bgpd/templates/internal/` | timers 3/10、`send-community` 自動付与、BackEnd/chassis-packet で `next-hop-self force` |
 | `external` / 未指定 (`general`) | `bgpd/templates/general/` | timers 60/180、ToRRouter で `allowas-in 1`、SpineRouter UpstreamLC で `table-map` |
@@ -167,7 +167,7 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 
 ### `admin_status`
 
-| 値 | bgpcfgd 動作 | FRR コマンド |
+| 値 | bgpcfgd 動作 | [FRR](../../reference/glossary.md#term-frr) コマンド |
 |----|-------------|-------------|
 | `up` | `apply_admin_status("no shutdown")` | `no neighbor <addr> shutdown` |
 | `down` | `apply_admin_status("shutdown")` | `neighbor <addr> shutdown` |
@@ -187,10 +187,9 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 | `peer_group_name` に未存在 peer-group を参照 (frrcfgd) | `invalid peer-group %s was referenced` を LOG_ERR → continue | `frrcfgd.py` L2828 |
 | interface 型 neighbor の作成失敗 | `failed to create neighbor of interface %s for VRF %s` を LOG_ERR → continue | `frrcfgd.py` L2810 |
 | `admin_status` が `'up'`/`'down'` 以外 | `wrong attribute value` を LOG_ERR → drop | `managers_bgp.py` `change_admin_status()` |
-| `local_asn` が未設定の VRF | frrcfgd が LOG_DEBUG して skip | `frrcfgd.py` L2660 |
+| `local_asn` が未設定の [VRF](../../reference/glossary.md#term-vrf) | frrcfgd が LOG_DEBUG して skip | `frrcfgd.py` L2660 |
 | Jinja2 テンプレートレンダリング失敗 | `log_err` して `return True` (再試行なし) | `managers_bgp.py` `add_peer()` |
 <!-- /cdb-exceptions -->
-
 
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
@@ -207,7 +206,7 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 
 ### 段階 3 — APPL→SAI
 
-なし (FRR BGP ネイバー管理)
+なし (FRR [BGP](../../reference/glossary.md#term-bgp) ネイバー管理)
 
 ### 段階 4 — タイミングと副作用
 
@@ -230,7 +229,7 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- sonic-mgmt-common OpenConfig BGP neighbor 経由
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common OpenConfig BGP neighbor 経由
 
 ### db_migrator
 - なし
@@ -244,7 +243,6 @@ vtysh -c 'show bgp neighbor 10.0.0.1'
 ### ランタイム注入 (デーモン自動書き込み)
 - `bgpcfgd` が FRR running-config を CONFIG_DB と同期
 <!-- /entry-points -->
-
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
@@ -301,7 +299,7 @@ BGP_NEIGHBOR の処理において YANG の leafref 定義を超えて実装上�
 | `BGP_DEVICE_GLOBAL\|STATE\|tsa_enabled` | 読み取り（常時） | peer-group テンプレート生成時に TSA routemap を動的付与 | `managers_bgp.py` L122; `BGPPeerGroupMgr.update_pg()` |
 | `BGP_DEVICE_GLOBAL\|STATE\|idf_isolation_state` | 読み取り（常時） | peer-group テンプレート生成時に IDF isolation routemap を付与 | `managers_bgp.py` L123; `BGPPeerGroupMgr.update_pg()` |
 | `BGP_BBR\|all\|status` | 読み取り（常時） | Jinja2 テンプレートへ `CONFIG_DB__BGP_BBR` として渡し、BBR 設定を制御 | `managers_bgp.py` L206 |
-| `BGP_GLOBALS\|<vrf>\|local_asn` | 読み取り（frrcfgd パス） | `frr_mgmt_framework_config=true` のとき。VRF の ASN 解決に必須 | `frrcfgd.py` L2175–2178, L2450–2453 |
+| `BGP_GLOBALS\|<vrf>\|local_asn` | 読み取り（frrcfgd パス） | `frr_mgmt_framework_config=true` のとき。[VRF](../../reference/glossary.md#term-vrf) の ASN 解決に必須 | `frrcfgd.py` L2175–2178, L2450–2453 |
 | `BGP_PEER_GROUP\|<vrf>\|<pg_name>` | 存在確認（frrcfgd パス） | `peer_group_name` 指定時。存在しなければ `LOG_ERR` + drop | `frrcfgd.py` L2826–2830 |
 | `PORT\|<name>` / `PORTCHANNEL\|<name>` | 存在確認（interface 型 neighbor） | `neighbor` フィールドが IP でなくインタフェース名の場合 | YANG leafref; `frrcfgd.py` L2807 |
 | `INTERFACE`（ローカルアドレス一覧） | 読み取り（ガード） | `local_addr` 設定時。該当 IP が現存インタフェースになければ待機 | `managers_bgp.py` L124–125, `get_local_interface()` |
@@ -380,7 +378,7 @@ YANG には `default` 文が一切ない。フィールドごとのランタイ�
 | bgpcfgd `general` テンプレート (CONFIG_DB 値が 60/180 のとき) | FRR デフォルトに委任 | FRR デフォルトに委任 | `general/instance.conf.j2:7-10` |
 | bgpcfgd `internal` テンプレート | **3** (強制) | **10** (強制) | `internal/instance.conf.j2:6` |
 | bgpcfgd `voq_chassis` テンプレート | **2** (強制) | **7** (強制) | `voq_chassis/instance.conf.j2:13` |
-| frrcfgd 経路 (REST/gNMI) | CONFIG_DB 値をそのまま送出 | 同左 | `frrcfgd.py:1874` |
+| frrcfgd 経路 (REST/[gNMI](../../reference/glossary.md#term-gnmi)) | CONFIG_DB 値をそのまま送出 | 同左 | `frrcfgd.py:1874` |
 
 > **discrepancy**: `peer_type=internal` では CONFIG_DB の `keepalive`/`holdtime` 値は無視される。
 
@@ -485,7 +483,7 @@ warm-reboot 時、`WARM_RESTART.bgp.bgp_eoiu = "true"` が設定されている�
 | 6 | `BGP_PEER_GROUP\|<vrf>\|<pg>` 先行 | frrcfgd 経路 / peer_group_name 使用時 | LOG_ERR / neighbor 未作成 |
 | 7 | DEL → SET 短時間繰り返し | 全経路 | BGP session 一時断（connect retry 10 秒） |
 | 8 | bgpd running → bgpcfgd 起動 | 起動時（supervisord） | bgpcfgd は bgpd 起動前に FRR 操作不可 |
-| 9 | warm-restart EOR 待機 | warm-reboot 時 | fpmsyncd が経路 reconcile を最大 120 秒保留 |
+| 9 | warm-restart EOR 待機 | warm-reboot 時 | [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が経路 reconcile を最大 120 秒保留 |
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-ordering.md`
 <!-- /ordering -->
@@ -528,7 +526,7 @@ deps 変化 (Loopback0 / neigmeta / bgp_asn) → on_deps_change() → replay →
 
 ### STATE_DB と FRR の一貫性
 
-`update_state_db()` (STATE_DB: `BGP_PEER_CONFIGURED_TABLE`) はコマンド発行 **成功後のみ** 呼ばれる。STATE_DB 更新自体が失敗した場合は `LOG_ERR` を出すが FRR 操作は既に `cfg_mgr.push()` 済みのため **FRR と STATE_DB の乖離が生じうる**。`ERROR_TABLE` への記録はなし。
+`update_state_db()` ([STATE_DB](../../reference/glossary.md#term-state_db): `BGP_PEER_CONFIGURED_TABLE`) はコマンド発行 **成功後のみ** 呼ばれる。[STATE_DB](../../reference/glossary.md#term-state_db) 更新自体が失敗した場合は `LOG_ERR` を出すが FRR 操作は既に `cfg_mgr.push()` 済みのため **FRR と [STATE_DB](../../reference/glossary.md#term-state_db) の乖離が生じうる**。`ERROR_TABLE` への記録はなし。
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-failure.md`
 <!-- /failure -->
@@ -537,7 +535,7 @@ deps 変化 (Loopback0 / neigmeta / bgp_asn) → on_deps_change() → replay →
 
 ### 購読方式: SubscriberStateTable + keyspace PSUBSCRIBE
 
-`bgpcfgd` は `swsscommon.SubscriberStateTable` を用いて `BGP_NEIGHBOR` テーブルを購読する。`ConfigDBConnector.subscribe()` ではなく、**Redis keyspace notification の PSUBSCRIBE** で実装されている。
+`bgpcfgd` は `swsscommon.SubscriberStateTable` を用いて `BGP_NEIGHBOR` テーブルを購読する。`ConfigDBConnector.subscribe()` ではなく、**[Redis](../../reference/glossary.md#term-redis) keyspace notification の PSUBSCRIBE** で実装されている。
 
 購読チャンネルパターン (`subscriberstatetable.cpp:20-24`):
 
@@ -581,7 +579,7 @@ CONFIG_DB への HSET / HDEL / DEL
 
 ### ProducerStateTable との関係
 
-CONFIG_DB への書き込みが ProducerStateTable 経由の場合、書き込み側は `BGP_NEIGHBOR_CHANNEL@<db_id>` を PUBLISH する (table.h `getChannelName()`)。ConsumerStateTable はそのチャンネルを SUBSCRIBE するが、bgpcfgd の SubscriberStateTable は **keyspace notification** を使うため、書き込み元が ProducerStateTable か直接 HSET かを問わずイベントを受信できる。APPL_DB・STATE_DB は BGP_NEIGHBOR のパスには介在しない。
+CONFIG_DB への書き込みが [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 経由の場合、書き込み側は `BGP_NEIGHBOR_CHANNEL@<db_id>` を PUBLISH する (table.h `getChannelName()`)。[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) はそのチャンネルを SUBSCRIBE するが、bgpcfgd の SubscriberStateTable は **keyspace notification** を使うため、書き込み元が [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) か直接 HSET かを問わずイベントを受信できる。[APPL_DB](../../reference/glossary.md#term-appl_db)・STATE_DB は BGP_NEIGHBOR のパスには介在しない。
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-pubsub.md`
 <!-- /pubsub -->
@@ -589,13 +587,13 @@ CONFIG_DB への書き込みが ProducerStateTable 経由の場合、書き込�
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`BGPPeerMgrBase` は CONFIG_DB `BGP_NEIGHBOR` の変化を FRR に反映した後、STATE_DB の `BGP_PEER_CONFIGURED_TABLE` にも書き込む。APPL_DB / ASIC_DB への書込はない。
+`BGPPeerMgrBase` は CONFIG_DB `BGP_NEIGHBOR` の変化を FRR に反映した後、STATE_DB の `BGP_PEER_CONFIGURED_TABLE` にも書き込む。[APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への書込はない。
 
 ### 書込先テーブル
 
 | 副次書込先 DB | テーブル名 | key 形式 |
 |------------|----------|---------|
-| STATE_DB | `BGP_PEER_CONFIGURED_TABLE` | `<neighbor>` (default VRF) / `<vrf>\|<neighbor>` (named VRF) |
+| STATE_DB | `BGP_PEER_CONFIGURED_TABLE` | `<neighbor>` (default [VRF](../../reference/glossary.md#term-vrf)) / `<vrf>\|<neighbor>` (named VRF) |
 
 ### 呼び出し経路
 
@@ -619,7 +617,7 @@ CONFIG_DB への書き込みが ProducerStateTable 経由の場合、書き込�
 <!-- platform -->
 ## プラットフォーム / SAI 差分
 
-BGP_NEIGHBOR は FRR (`bgpd`) 止まりで SAI に直接は到達しないが、`DEVICE_METADATA` の `switch_type`・`sub_role`・`type` によって Jinja2 テンプレートが切り替わり、FRR に発行されるコマンドが大きく異なる。
+BGP_NEIGHBOR は FRR (`bgpd`) 止まりで [SAI](../../reference/glossary.md#term-sai) に直接は到達しないが、`DEVICE_METADATA` の `switch_type`・`sub_role`・`type` によって Jinja2 テンプレートが切り替わり、FRR に発行されるコマンドが大きく異なる。
 
 ### テーブル振り分け (switch_type による)
 
@@ -671,8 +669,8 @@ BGP_NEIGHBOR は FRR (`bgpd`) 止まりで SAI に直接は到達しないが、
 
 ### SAI への間接影響
 
-- **next-hop-self force** (BackEnd / chassis-packet): BGP 経路の nexthop が書き換えられ、orchagent の nexthop resolution が変わる
-- **addpath-tx-all-paths** (VoQ): 複数経路が APPL_DB に書き込まれ、SAI の ECMP グループ構成が異なる
+- **next-hop-self force** (BackEnd / chassis-packet): BGP 経路の nexthop が書き換えられ、[orchagent](../../reference/glossary.md#term-orchagent) の nexthop resolution が変わる
+- **addpath-tx-all-paths** (VoQ): 複数経路が [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込まれ、[SAI](../../reference/glossary.md#term-sai) の [ECMP](../../reference/glossary.md#term-ecmp) グループ構成が異なる
 - **table-map SELECTIVE_ROUTE_DOWNLOAD** (UpstreamLC): FIB への再配布経路が選別される
 
 ### ChassisAppDbMgr (is_chassis 限定)
@@ -683,4 +681,5 @@ BGP_NEIGHBOR は FRR (`bgpd`) 止まりで SAI に直接は到達しないが、
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/bgp-neighbor-platform.md`
 <!-- /platform -->
-<!-- glossary-links-injected: 9133f44230c2 -->
+
+<!-- glossary-links-injected: 5d3183af9ba3 -->

@@ -130,8 +130,8 @@ vtysh -c 'show bgp listen range'
 
 | 型 | 動作 |
 |----|------|
-| `VRF.name` への leafref | VRF コンテキストで `bgp listen range <prefix> peer-group <name>` を生成 |
-| `VNET.name` への leafref | VNET 対応 VRF で同様のコマンドを生成 |
+| `VRF.name` への leafref | [VRF](../../reference/glossary.md#term-vrf) コンテキストで `bgp listen range <prefix> peer-group <name>` を生成 |
+| `VNET.name` への leafref | [VNET](../../reference/glossary.md#term-vnet) 対応 VRF で同様のコマンドを生成 |
 
 ### `ip_range` (leaf-list)
 
@@ -147,10 +147,10 @@ vtysh -c 'show bgp listen range'
 | 条件 | 挙動 | ソース |
 |------|------|--------|
 | `deployment_id` が DEVICE_METADATA に未設定で `peer_asn` も未設定 | Jinja2 で `UndefinedError` / `KeyError` → `log_err` + `return True` (drop) | `dynamic/instance.conf.j2`, `managers_bgp.py` |
-| `ip_range` が空または未設定 | `bgp listen range <empty>` が vtysh に送られ FRR エラー | `dynamic/instance.conf.j2` |
+| `ip_range` が空または未設定 | `bgp listen range <empty>` が vtysh に送られ [FRR](../../reference/glossary.md#term-frr) エラー | `dynamic/instance.conf.j2` |
 | `ip_range` 更新時の既存 range 取得失敗 | `LOG_ERR` して空リスト返却 → 全 range を新規追加として処理 | `managers_bgp.py` `get_existing_ip_ranges()` |
 | `src_address` 未設定 | Loopback1 の IPv4 アドレスで補完。Loopback1 が未設定の場合 Jinja2 エラー → drop | `dynamic/instance.conf.j2` |
-| FRR 10.1 以降: listen range 削除失敗後も peer-group 削除を続行 | range 削除の `log_err` 後、peer-group 削除を試みる → FRR 側エラーの可能性 | `managers_bgp.py` `del_handler()` |
+| [FRR](../../reference/glossary.md#term-frr) 10.1 以降: listen range 削除失敗後も peer-group 削除を続行 | range 削除の `log_err` 後、peer-group 削除を試みる → [FRR](../../reference/glossary.md#term-frr) 側エラーの可能性 | `managers_bgp.py` `del_handler()` |
 <!-- /cdb-exceptions -->
 
 
@@ -159,7 +159,7 @@ vtysh -c 'show bgp listen range'
 
 ### 段階 1 — Consumer 登録
 
-`bgpcfgd` が CONFIG_DB の `BGP_PEER_RANGE` テーブルを購読する。
+`bgpcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_PEER_RANGE` テーブルを購読する。
 
 `BGP_PEER_RANGE` は `<vrf>|<prefix>` の key 構造。dynamic neighbor 機能。
 
@@ -169,13 +169,13 @@ vtysh -c 'show bgp listen range'
 
 ### 段階 3 — APPL→SAI
 
-なし (FRR BGP dynamic peer 設定)
+なし (FRR [BGP](../../reference/glossary.md#term-bgp) dynamic peer 設定)
 
 ### 段階 4 — タイミングと副作用
 
 **適用タイミング**: 変化検知後 FRR に `bgp listen range <prefix> peer-group <pg>` を発行。指定プレフィクスからの接続を dynamic に受け入れ開始。
 
-**副作用**: 指定プレフィクス内からの BGP 接続が自動的に対象 peer-group として処理される。既存の static ネイバーとは独立。
+**副作用**: 指定プレフィクス内からの [BGP](../../reference/glossary.md#term-bgp) 接続が自動的に対象 peer-group として処理される。既存の static ネイバーとは独立。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -226,7 +226,7 @@ vtysh -c 'show bgp listen range'
 ### grep カバレッジ
 
 - minigraph.py L2275: BGP_PEER_RANGE 代入
-- bgpcfgd/main.py L90: 条件なし登録
+- [bgpcfgd](../../reference/glossary.md#term-bgpcfgd)/main.py L90: 条件なし登録
 <!-- /derivation -->
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
@@ -261,7 +261,7 @@ vtysh -c 'show bgp listen range'
 
 ### 結論
 
-`BGP_PEER_RANGE` は peer_type="dynamic" の固定ロールであり、FRR 経路（bgpcfgd + dynamic テンプレート）は全 SONiC プラットフォームで同一動作をする。switch_type / sub_role による挙動変化はない。
+`BGP_PEER_RANGE` は peer_type="dynamic" の固定ロールであり、FRR 経路（[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) + dynamic テンプレート）は全 SONiC プラットフォームで同一動作をする。switch_type / sub_role による挙動変化はない。
 <!-- /platform -->
 
 <!-- ordering -->
@@ -271,7 +271,7 @@ vtysh -c 'show bgp listen range'
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | `BGP_GLOBALS.<vrf>.local_asn` → `BGP_PEER_RANGE` | 先行必須（欠如時 silent drop） | bgpcfgd は deps ガードで再試行待ち、frrcfgd は `continue` でスキップ（リトライなし） |
+| 1 | `BGP_GLOBALS.<vrf>.local_asn` → `BGP_PEER_RANGE` | 先行必須（欠如時 silent drop） | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は deps ガードで再試行待ち、frrcfgd は `continue` でスキップ（リトライなし） |
 | 2 | `BGP_PEER_GROUP` → listen range 設定（frrcfgd 経路） | 自動 defer（逆順は後付け再適用） | `__apply_dep_vrf_table` で peer-group 作成後に自動再適用 |
 | 3 | `no bgp listen range` → peer-group 削除（FRR 10.1+） | 強制順序（bgpcfgd が自動処理） | 外部直接操作時は `no bgp listen range` を先に発行すること |
 | 4 | `DEVICE_METADATA.localhost.bgp_asn` → `BGP_PEER_RANGE` | 先行必須（deps guard） | 起動時は DEVICE_METADATA が先に読み込まれる前提 |
@@ -311,7 +311,7 @@ FRR 10.1 以降は peer-group に listen range が紐付いている場合、pee
 
 ### COUNTERS_DB / APPL_DB 書込
 
-**なし**。`bgpcfgd` は FRR vtysh 経由の直接制御アーキテクチャのため `APPL_DB` を介在させない。`COUNTERS_DB` への参照も存在しない。`frrcfgd.py`（`BGP_GLOBALS_LISTEN_PREFIX` 経路）も同様に STATE_DB / COUNTERS_DB / APPL_DB への書込は行わない。
+**なし**。`bgpcfgd` は FRR vtysh 経由の直接制御アーキテクチャのため `APPL_DB` を介在させない。`COUNTERS_DB` への参照も存在しない。`frrcfgd.py`（`BGP_GLOBALS_LISTEN_PREFIX` 経路）も同様に [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) への書込は行わない。
 
 ```
 BGP_PEER_RANGE SET/DEL
@@ -363,7 +363,7 @@ YANG は `peer_asn` を optional としているが、この fallback の存在�
 
 ### 書き込み経路依存乖離（gNMI bypass）
 
-`sonic-gnmi` の `bypass.go` で `BGP_PEER_RANGE` は `AllowedTables` に登録されており、gNMI Set 時に DBUS/GCU 検証をバイパスして CONFIG_DB 直接書き込みが可能。ただし Cisco-8102/8101/8223 HwSku のみに制限される。
+`sonic-gnmi` の `bypass.go` で `BGP_PEER_RANGE` は `AllowedTables` に登録されており、[gNMI](../../reference/glossary.md#term-gnmi) Set 時に DBUS/[GCU](../../reference/glossary.md#term-gcu) 検証をバイパスして CONFIG_DB 直接書き込みが可能。ただし Cisco-8102/8101/8223 [HwSku](../../reference/glossary.md#term-hwsku) のみに制限される。
 
 > **ソース**: `dockers/docker-fpm-frr/frr/bgpd/templates/dynamic/instance.conf.j2`, `bgpcfgd/managers_bgp.py` L358-386, `files/image_config/constants/constants.yml`, `sonic-gnmi/pkg/bypass/bypass.go` L29
 
@@ -490,7 +490,7 @@ YANG は `peer_asn` を optional としているが、この fallback の存在�
 
 ### bgpcfgd 経路: SubscriberStateTable + Runner (同期 Select ループ)
 
-`bgpcfgd` は `swsscommon.SubscriberStateTable` を利用した Redis keyspace 通知モデルを採用する。
+`bgpcfgd` は `swsscommon.SubscriberStateTable` を利用した [Redis](../../reference/glossary.md#term-redis) keyspace 通知モデルを採用する。
 
 | ステップ | コードポイント | 内容 |
 |---|---|---|
@@ -526,4 +526,5 @@ CONFIG_DB: BGP_PEER_RANGE (Redis keyspace イベント)
 
 **二重管理構造**: `bgpcfgd` の `BGP_PEER_RANGE` 経路と `frrcfgd` の `BGP_GLOBALS_LISTEN_PREFIX` 経路は別テーブルを購読するが、FRR への `bgp listen range` コマンド生成という同等機能を持つ。実運用では `bgpcfgd` が主経路として機能する。
 <!-- /pubsub -->
-<!-- glossary-links-injected: 9543a3643673 -->
+
+<!-- glossary-links-injected: d35a50e01459 -->

@@ -133,7 +133,7 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 ### 概要
 
 YANG `default` 文が存在するフィールドは 2 つのみ (`max_ebgp_paths=1`, `max_ibgp_paths=1`)。
-それ以外のフィールドはすべて optional で、DB に値がなければ FRR コマンドが発行されず、FRR 自身の初期値が使われる。
+それ以外のフィールドはすべて optional で、DB に値がなければ [FRR](../../reference/glossary.md#term-frr) コマンドが発行されず、FRR 自身の初期値が使われる。
 
 重要な点として、`frrcfgd` は **組み合わせ制約 (comb_attr_list)** を持つ:
 
@@ -218,7 +218,7 @@ vtysh -c 'show bgp l2vpn evpn summary'
 | 値 | FRR コマンド | 備考 |
 |----|-------------|------|
 | `rfc8365-compatible` | `autort rfc8365-compatible` | `frrcfgd` `hdl_enum_conversion` が `_` → `-` 変換して発行 |
-| *(未設定)* | コマンドなし | EVPN route-target は手動設定が必要 |
+| *(未設定)* | コマンドなし | [EVPN](../../reference/glossary.md#term-evpn) route-target は手動設定が必要 |
 
 ### `afi_safi` (key フィールド、挙動分岐)
 
@@ -282,14 +282,14 @@ vtysh -c 'show bgp l2vpn evpn summary'
 対象テーブル: `BGP_GLOBALS_AF`
 
 ### CLI
-- `vtysh` 経由 address-family コマンド群 (bgpcfgd が CONFIG_DB へ書き戻し)
+- `vtysh` 経由 address-family コマンド群 ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が CONFIG_DB へ書き戻し)
   - ソース: `sonic-frr bgpcfgd`
 
 ### minigraph / sonic-cfggen
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- sonic-mgmt-common OpenConfig BGP 経由
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common OpenConfig BGP 経由
 
 ### db_migrator
 - なし
@@ -341,7 +341,7 @@ vtysh -c 'show bgp l2vpn evpn summary'
 
 **結論: プラットフォーム差なし。**
 
-`BGP_GLOBALS_AF` の購読・適用は `frrcfgd.BGPConfigDaemon.bgp_af_handler` (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`) 一本に集約され、最終 sink は FRR (`bgpd`) の vtysh コマンドである。SAI / ASIC SDK / platform driver には到達しない純制御プレーン経路のため、ASIC 種別・hwsku・multi-asic / VOQ chassis 等の物理構成差で挙動が変わらない。
+`BGP_GLOBALS_AF` の購読・適用は `frrcfgd.BGPConfigDaemon.bgp_af_handler` (`sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py`) 一本に集約され、最終 sink は FRR (`bgpd`) の vtysh コマンドである。[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) / platform driver には到達しない純制御プレーン経路のため、ASIC 種別・hwsku・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 等の物理構成差で挙動が変わらない。
 
 ### 根拠サマリ
 
@@ -350,10 +350,10 @@ vtysh -c 'show bgp l2vpn evpn summary'
 | `bgpcfgd/` 配下の `BGP_GLOBALS_AF` 参照 | 0 件 (`grep -rn 'BGP_GLOBALS_AF' src/sonic-bgpcfgd/bgpcfgd/`) |
 | `frrcfgd.py` の `platform` / `hwsku` / `asic_type` 参照 | 0 件 |
 | `DEVICE_METADATA` 参照キー | `bgp_asn` と `docker_routing_config_mode` のみ (L2162-2168)。構成判別キーは未参照 |
-| multi-asic / VOQ chassis | 各 `asicN` namespace で同一コードが独立に動作。frrcfgd 自身に namespace 分岐なし |
+| multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis | 各 `asicN` namespace で同一コードが独立に動作。frrcfgd 自身に namespace 分岐なし |
 | 最終 sink | FRR vtysh (`address-family <afi> <safi>` 配下の `maximum-paths` / `distance bgp` / `bgp dampening` / `autort` / `advertise-all-vni` 等) |
 
-`max_ebgp_paths` / `max_ibgp_paths` の YANG 上限 (1..256) は制御プレーン上の multipath 計算上限であり、ASIC の ECMP group 容量との突き合わせは本テーブル外 (別経路で扱う)。
+`max_ebgp_paths` / `max_ibgp_paths` の YANG 上限 (1..256) は制御プレーン上の multipath 計算上限であり、ASIC の [ECMP](../../reference/glossary.md#term-ecmp) group 容量との突き合わせは本テーブル外 (別経路で扱う)。
 
 詳細根拠: `meta/_intermediate/cdb-flow/bgp-globals-af-platform.md`。
 <!-- /platform -->
@@ -452,15 +452,15 @@ address-family <af> <safi>
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`frrcfgd.py` の `bgp_af_handler` → `bgp_table_handler_common` → `__update_bgp` 呼び出しチェーンを全行スキャンした結果、**STATE_DB・COUNTERS_DB・APPL_DB への副次書込は存在しない**。
+`frrcfgd.py` の `bgp_af_handler` → `bgp_table_handler_common` → `__update_bgp` 呼び出しチェーンを全行スキャンした結果、**[STATE_DB](../../reference/glossary.md#term-state_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[APPL_DB](../../reference/glossary.md#term-appl_db) への副次書込は存在しない**。
 
 | 副次書込先 | 有無 | 根拠 |
 |-----------|------|------|
-| STATE_DB | なし | `frrcfgd.py` 全体で `STATE_DB` / `state_db` の記述ゼロ件 |
-| COUNTERS_DB | なし | 同上 (`COUNTERS_DB` / `counters_db` ゼロ件) |
-| APPL_DB | なし | 同上 (`APPL_DB` / `appl_db` ゼロ件) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `frrcfgd.py` 全体で `STATE_DB` / `state_db` の記述ゼロ件 |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | 同上 (`COUNTERS_DB` / `counters_db` ゼロ件) |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | 同上 (`APPL_DB` / `appl_db` ゼロ件) |
 
-`bgp_af_handler` が行う唯一の外部書込は **FRR vtysh への設定投入**のみ。`key_map.run_command()` が `configure terminal` → `router bgp <asn> vrf <vrf>` → `address-family <af> <ip_type>` の vtysh コマンド列を発行し、FRR running-config（BGP デーモン内部状態）を変更する。CONFIG_DB 以外の Redis DB には一切書き込まない。
+`bgp_af_handler` が行う唯一の外部書込は **FRR vtysh への設定投入**のみ。`key_map.run_command()` が `configure terminal` → `router bgp <asn> vrf <vrf>` → `address-family <af> <ip_type>` の vtysh コマンド列を発行し、FRR running-config（BGP デーモン内部状態）を変更する。CONFIG_DB 以外の [Redis](../../reference/glossary.md#term-redis) DB には一切書き込まない。
 
 > **スキャン証跡**: `frrcfgd.py` L2771-2782（BGP_GLOBALS_AF 分岐）/ L3910-3933（common handler）/ L3938-3940（bgp_af_handler）読了。中間ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-side.md`
 <!-- /side-effects -->
@@ -499,11 +499,11 @@ address-family <af> <safi>
 
 ### 購読方式: Redis keyspace 通知 (`ExtConfigDBConnector`)
 
-`BGP_GLOBALS_AF` の唯一の購読者は `frrcfgd` (`sonic-frr-mgmt-framework`) である。`frrcfgd` は `swsscommon.ConfigDBConnector` を継承した独自クラス `ExtConfigDBConnector` を使い、CONFIG_DB 全体に対して Redis **keyspace 通知** (`PSUBSCRIBE __keyspace@<dbId>__:*`) を張る。
+`BGP_GLOBALS_AF` の唯一の購読者は `frrcfgd` (`sonic-frr-mgmt-framework`) である。`frrcfgd` は `swsscommon.ConfigDBConnector` を継承した独自クラス `ExtConfigDBConnector` を使い、CONFIG_DB 全体に対して [Redis](../../reference/glossary.md#term-redis) **keyspace 通知** (`PSUBSCRIBE __keyspace@<dbId>__:*`) を張る。
 
 | 購読者 | 購読 API | 通信方式 | ハンドラ |
 |--------|---------|---------|---------|
-| `frrcfgd` | `ExtConfigDBConnector.subscribe(table, hdlr)` + `listen()` | Redis keyspace 通知 (`psubscribe`) | `bgp_af_handler` |
+| `frrcfgd` | `ExtConfigDBConnector.subscribe(table, hdlr)` + `listen()` | [Redis](../../reference/glossary.md#term-redis) keyspace 通知 (`psubscribe`) | `bgp_af_handler` |
 
 `bgpcfgd` は `BGP_GLOBALS_AF` を購読しない。`orchagent` / `syncd` も本テーブルを読まず、FRR `bgpd` のソフト処理経路で完結する。
 
@@ -565,7 +565,7 @@ DEL (`data is None`) では `del_table=True` が設定され AF 設定全体を 
 | `advertise-all-vni` コマンド | `{no:no-prefix}advertise-all-vni` | 全 VNI 広告を有効化 (l2vpn_evpn AF、boolean) | `frrcfgd.py:1846` |
 | `advertise-svi-ip` コマンド | `{no:no-prefix}advertise-svi-ip` | SVI IP を VTEP 広告 (boolean) | `frrcfgd.py:1847` |
 | `advertise-default-gw` コマンド | `{no:no-prefix}advertise-default-gw` | デフォルト GW 広告 (boolean) | `frrcfgd.py:1848` |
-| `advertise ipv4/ipv6 unicast` コマンド | `{no:no-prefix}advertise ipv4/ipv6 unicast` | unicast prefix を EVPN へ広告 (boolean) | `frrcfgd.py:1849-1850` |
+| `advertise ipv4/ipv6 unicast` コマンド | `{no:no-prefix}advertise ipv4/ipv6 unicast` | unicast prefix を [EVPN](../../reference/glossary.md#term-evpn) へ広告 (boolean) | `frrcfgd.py:1849-1850` |
 | `default-originate ipv4/ipv6` コマンド | `{no:no-prefix}default-originate ipv4/ipv6` | default route の originate (boolean) | `frrcfgd.py:1851-1852` |
 | `autort` コマンド | `{no:no-prefix}autort {}` | RFC8365 互換 RT 自動生成 (`hdl_enum_conversion` で `_` → `-` 変換) | `frrcfgd.py:1853` |
 | `flooding` コマンド | `{no:no-prefix}flooding {}` | BUM flooding モード設定 | `frrcfgd.py:1854` |
@@ -613,4 +613,4 @@ DEL (`data is None`) では `del_table=True` が設定され AF 設定全体を 
 > **スキャン証跡**: `frrcfgd.py` L82 / L813 / L1389-1396 / L1824-1864 / L2107 / L2136-2140 / L2297 / L2771-2782 / L3938-3941 を確認。FRR コマンド literal 27 件 + vtysh prefix 3 件 + AF 文字列 3 件 + FRR デフォルト値 6 件 + enum 変換 1 件 + comb_attr_list 2 件 = 計 42 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-constants.md`
 <!-- /constants -->
 
-<!-- glossary-links-injected: 803f36c2634d -->
+<!-- glossary-links-injected: ab9cccd2712f -->

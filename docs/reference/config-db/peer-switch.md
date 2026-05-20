@@ -78,15 +78,15 @@ PEER_SWITCH|<peer_switch>
 
 | フィールド | YANG default | コード実装デフォルト | 備考 |
 |-----------|------------|-----------------|------|
-| `peer_switch` (key) | なし | なし | エントリ 0 件で `is_dualtor = false` (neighsyncd:69)、link-local IPv4 neighbor フィルタが無効化される |
+| `peer_switch` (key) | なし | なし | エントリ 0 件で `is_dualtor = false` ([neighsyncd](../../reference/glossary.md#term-neighsyncd):69)、link-local IPv4 neighbor フィルタが無効化される |
 | `address_ipv4` | なし | `0x0` (0.0.0.0) — MuxOrch 内部変数 `mux_peer_switch_` の初期値 | 未設定時は MUX_CABLE 処理が defer / cached neighbor 更新がスキップされる |
 
 ### 注意点
 
 - **書き込み順依存**: `muxorch.cpp:2271` — `PEER_SWITCH` が先に投入されていないと `MUX_CABLE` エントリが `return false` で pending になる
-- **DELETE 未実装**: `muxorch.cpp:2387` — DEL_COMMAND ハンドラが "Not Implemented" のみで `mux_peer_switch_` をリセットしない。エントリ削除後も orchagent は旧 peer IP を保持し続ける
-- **tunnelmgrd は起動時 1 回読み込みのみ**: `tunnelmgr.cpp:115-131` — コンストラクタ内で `m_peerIp` を設定後、実行中の変更は反映されない (再起動が必要)
-- **YANG-実装 discrepancy**: `address_ipv4` に `mandatory true` がないが、省略すると `tunnel_packet_handler.py` が `KeyError`、tunnelmgrd が tunnel 未設定のまま動作する (実質 mandatory)
+- **DELETE 未実装**: `muxorch.cpp:2387` — DEL_COMMAND ハンドラが "Not Implemented" のみで `mux_peer_switch_` をリセットしない。エントリ削除後も [orchagent](../../reference/glossary.md#term-orchagent) は旧 peer IP を保持し続ける
+- **[tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) は起動時 1 回読み込みのみ**: `tunnelmgr.cpp:115-131` — コンストラクタ内で `m_peerIp` を設定後、実行中の変更は反映されない (再起動が必要)
+- **YANG-実装 discrepancy**: `address_ipv4` に `mandatory true` がないが、省略すると `tunnel_packet_handler.py` が `KeyError`、[tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) が tunnel 未設定のまま動作する (実質 mandatory)
 
 <!-- /defaults -->
 
@@ -97,8 +97,8 @@ PEER_SWITCH|<peer_switch>
 
 | フィールド | 値 / 範囲 | 挙動 |
 |-----------|----------|------|
-| `address_ipv4` | 有効な IPv4 アドレス | linkmgrd が peer への到達確認 (ICMP) に使用 |
-| `address_ipv4` | 未設定 | linkmgrd は peer 到達確認不可、MUX 切り替え不可 |
+| `address_ipv4` | 有効な IPv4 アドレス | [linkmgrd](../../reference/glossary.md#term-linkmgrd) が peer への到達確認 (ICMP) に使用 |
+| `address_ipv4` | 未設定 | [linkmgrd](../../reference/glossary.md#term-linkmgrd) は peer 到達確認不可、[MUX](../../reference/glossary.md#term-mux) 切り替え不可 |
 | エントリ数 | 0 件 | Dual-ToR 機能が無効扱い (linkmgrd 初期化警告) |
 | エントリ数 | 1 件 | 正常。Dual-ToR 構成として認識 |
 | エントリ数 | 2 件以上 | YANG max-elements 1 により reject |
@@ -119,7 +119,7 @@ PEER_SWITCH|<peer_switch>
 
 ### consumer 例外動作
 - `linkmgrd` はこのテーブルを起動時に 1 回読み込む。実行中の動的変更は反映されない可能性があり、再起動が必要。
-- `address_ipv4` 未設定の場合、linkmgrd はピアへの到達確認ができず MUX 切り替え不可。
+- `address_ipv4` 未設定の場合、linkmgrd はピアへの到達確認ができず [MUX](../../reference/glossary.md#term-mux) 切り替え不可。
 - エントリ 0 件の場合、DualToR 機能が無効扱いになる (linkmgrd 初期化ログで警告)。
 
 <!-- /cdb-exceptions -->
@@ -139,8 +139,8 @@ PEER_SWITCH|<peer_switch>
 | 参照対象 | 参照箇所 | 用途 |
 |---|---|---|
 | `TUNNEL` MuxTunnel0 — `dst_ip` | `muxorch.cpp:2348-2353` | `decap_orch_->getDstIpAddresses(MUX_TUNNEL)` — 未取得なら pending |
-| `TUNNEL` MuxTunnel0 — `dscp_mode` | `muxorch.cpp:2359` | `decap_orch_->getDscpMode(MUX_TUNNEL)` — encap トンネルの DSCP モード |
-| `TUNNEL` MuxTunnel0 — `tc_to_dscp_map_id` | `muxorch.cpp:2367` | `decap_orch_->getQosMapId(...)` — encap 用 QoS マップ |
+| `TUNNEL` MuxTunnel0 — `dscp_mode` | `muxorch.cpp:2359` | `decap_orch_->getDscpMode(MUX_TUNNEL)` — encap トンネルの [DSCP](../../reference/glossary.md#term-dscp) モード |
+| `TUNNEL` MuxTunnel0 — `tc_to_dscp_map_id` | `muxorch.cpp:2367` | `decap_orch_->getQosMapId(...)` — encap 用 [QoS](../../reference/glossary.md#term-qos) マップ |
 | `TUNNEL` MuxTunnel0 — `tc_to_queue_map_id` | `muxorch.cpp:2374` | `decap_orch_->getQosMapId(...)` — encap 用キューマップ |
 
 ### MUX_CABLE — 暗黙の前提依存
@@ -157,7 +157,7 @@ PEER_SWITCH|<peer_switch>
 
 | 参照対象 | 参照箇所 | 用途 |
 |---|---|---|
-| `MUX_TUNNEL` nexthop (SAI) | `muxorch.cpp:2445-2447` | `getNextHopTunnelId(MUX_TUNNEL, mux_peer_switch_)` — SAI_NULL_OBJECT_ID なら tunnel route 生成スキップ |
+| `MUX_TUNNEL` nexthop ([SAI](../../reference/glossary.md#term-sai)) | `muxorch.cpp:2445-2447` | `getNextHopTunnelId(MUX_TUNNEL, mux_peer_switch_)` — SAI_NULL_OBJECT_ID なら tunnel route 生成スキップ |
 
 <!-- /cross-refs -->
 
@@ -200,14 +200,13 @@ show mux status
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
 - **linkmgrd**: `PEER_SWITCH` テーブルを `ConfigDBConnector` で購読してピアスイッチ IP を認識。
-- **orchagent / MuxOrch**: ピア情報を参照して dual-ToR フェイルオーバーロジックを制御。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / MuxOrch**: ピア情報を参照して dual-ToR フェイルオーバーロジックを制御。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -216,7 +215,7 @@ show mux status
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。mux ケーブル切替は MUX_CABLE テーブル経由で間接的に SAI に反映。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。mux ケーブル切替は MUX_CABLE テーブル経由で間接的に SAI に反映。
 
 ### 段階 4: タイミング + 副作用
 
@@ -235,11 +234,11 @@ PEER_SWITCH テーブルへの書き込みが発生するコード経路を網�
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** が `results['PEER_SWITCH']` にデュアルトール構成のピア情報を投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+**minigraph.py** が `results['PEER_SWITCH']` にデュアルトール構成のピア情報を投入 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py)
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -311,15 +310,15 @@ minigraph.py の `get_tunnel_entries()` 関数が `peer_switch_ip` を受け取�
 | 定数 | 値 | 定義箇所 | 用途 |
 |------|-----|---------|------|
 | `MUX_TUNNEL` | `"MuxTunnel0"` | `tunneldecaporch.h:21` | Dual-ToR トンネルの固定名。`handlePeerSwitch()` が `decap_orch_->getDstIpAddresses(MUX_TUNNEL)` でトンネル設定を取得し、`getNextHopTunnelId(MUX_TUNNEL, mux_peer_switch_)` で next-hop を生成する (`muxorch.cpp:2348`, `2445`) |
-| `CFG_PEER_SWITCH_TABLE_NAME` | `"PEER_SWITCH"` | swsscommon (参照: `orchdaemon.cpp:469`) | MuxOrch が購読する CONFIG_DB テーブル名。handler_map_ への登録キー |
-| `MUX_ACL_TABLE_NAME` | `INGRESS_TABLE_DROP` | `muxorch.cpp:48` | MUX 用 ingress ACL テーブル名（マクロ展開） |
-| `MUX_ACL_RULE_NAME` | `"mux_acl_rule"` | `muxorch.cpp:49` | MUX 用 ACL ルール名 |
+| `CFG_PEER_SWITCH_TABLE_NAME` | `"PEER_SWITCH"` | swsscommon (参照: `orchdaemon.cpp:469`) | MuxOrch が購読する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル名。handler_map_ への登録キー |
+| `MUX_ACL_TABLE_NAME` | `INGRESS_TABLE_DROP` | `muxorch.cpp:48` | [MUX](../../reference/glossary.md#term-mux) 用 ingress [ACL](../../reference/glossary.md#term-acl) テーブル名（マクロ展開） |
+| `MUX_ACL_RULE_NAME` | `"mux_acl_rule"` | `muxorch.cpp:49` | MUX 用 [ACL](../../reference/glossary.md#term-acl) ルール名 |
 | `MUX_HW_STATE_UNKNOWN` | `"unknown"` | `muxorch.cpp:50` | HW 状態文字列（未確定時） |
 | `MUX_HW_STATE_ERROR` | `"error"` | `muxorch.cpp:51` | HW 状態文字列（エラー時） |
 
 ### Dual-ToR 識別子
 
-`CFG_PEER_SWITCH_TABLE_NAME`（= `"PEER_SWITCH"`）のエントリが CONFIG_DB に 1 件以上存在すること自体が Dual-ToR 構成の識別子として機能する。`neighsyncd.cpp:69` はエントリ数 0 を `is_dualtor = false` と判定し、link-local IPv4 neighbor フィルタを無効化する。
+`CFG_PEER_SWITCH_TABLE_NAME`（= `"PEER_SWITCH"`）のエントリが [CONFIG_DB](../../reference/glossary.md#term-config_db) に 1 件以上存在すること自体が Dual-ToR 構成の識別子として機能する。`neighsyncd.cpp:69` はエントリ数 0 を `is_dualtor = false` と判定し、link-local IPv4 neighbor フィルタを無効化する。
 
 ### mux_peer_switch_ 内部初期値
 
@@ -377,7 +376,7 @@ CONFIG_DB  PEER_SWITCH|<hostname>  SET
 ### DEL 時 (未実装)
 
 `handlePeerSwitch()` DEL パス (`muxorch.cpp:2387`) は `SWSS_LOG_NOTICE "Not Implemented"` のみ。
-SAI tunnel 削除・`mux_peer_switch_` リセットは行われない。orchagent 再起動が必要。
+SAI tunnel 削除・`mux_peer_switch_` リセットは行われない。[orchagent](../../reference/glossary.md#term-orchagent) 再起動が必要。
 
 ### linkmgrd の独立購読
 
@@ -406,7 +405,7 @@ SAI tunnel 削除・`mux_peer_switch_` リセットは行われない。orchagen
 
 ### SmartSwitch DPU
 
-`DEVICE_METADATA.localhost.subtype == "SmartSwitch"` の場合、`orchdaemon.cpp:613` で `DashEniFwdOrch` を追加起動するが、`MuxOrch` は条件外で無条件に起動する（orchdaemon.cpp:471）。ただし SmartSwitch トポロジでは Dual-ToR のピアリンク定義（`GeminiPeeringLink` 等）を持たないため minigraph が PEER_SWITCH を生成しない。CONFIG_DB に PEER_SWITCH エントリが存在せず、`handlePeerSwitch()` は呼ばれない。
+`DEVICE_METADATA.localhost.subtype == "SmartSwitch"` の場合、`orchdaemon.cpp:613` で `DashEniFwdOrch` を追加起動するが、`MuxOrch` は条件外で無条件に起動する（orchdaemon.cpp:471）。ただし [SmartSwitch](../../reference/glossary.md#term-smartswitch) トポロジでは Dual-ToR のピアリンク定義（`GeminiPeeringLink` 等）を持たないため minigraph が PEER_SWITCH を生成しない。CONFIG_DB に PEER_SWITCH エントリが存在せず、`handlePeerSwitch()` は呼ばれない。
 
 ### muxorch.cpp 内に platform 分岐なし
 
@@ -543,11 +542,11 @@ CONFIG_DB に存在していることが望ましい。
 ### STATE_DB 書込
 
 PEER_SWITCH SET により `mux_peer_switch_` が確定した後、続く MUX_CABLE SET 処理 (`handleMuxCfg()`) が
-STATE_DB `MUX_CABLE_TABLE` へ `neighbor_mode` フィールドを書き込む。
+[STATE_DB](../../reference/glossary.md#term-state_db) `MUX_CABLE_TABLE` へ `neighbor_mode` フィールドを書き込む。
 
 | 書込先 DB | テーブル | キー | フィールド | 値 | トリガー |
 |----------|---------|------|-----------|---|--------|
-| STATE_DB | `MUX_CABLE_TABLE` | `<port_name>` | `neighbor_mode` | `"host-route"` または `"prefix-route"` | MUX_CABLE SET（PEER_SWITCH 確定後） |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `MUX_CABLE_TABLE` | `<port_name>` | `neighbor_mode` | `"host-route"` または `"prefix-route"` | MUX_CABLE SET（PEER_SWITCH 確定後） |
 
 ```cpp
 // muxorch.cpp:2285
@@ -555,7 +554,7 @@ state_mux_cable_table_->hset(port_name, "neighbor_mode", neighbor_mode_str);
 ```
 
 PEER_SWITCH が未設定の場合、`mux_peer_switch_.isZero()` が true となり `handleMuxCfg()` が
-`return false` でリトライ待機するため、この STATE_DB 書込は発生しない。
+`return false` でリトライ待機するため、この [STATE_DB](../../reference/glossary.md#term-state_db) 書込は発生しない。
 
 ### TUNNEL_DECAP 連動
 
@@ -564,9 +563,9 @@ PEER_SWITCH が未設定の場合、`mux_peer_switch_.isZero()` が true とな�
 | 取得値 | メソッド | 用途 |
 |-------|---------|------|
 | `dst_ips` (MuxTunnel0 の decap dst IP) | `getDstIpAddresses(MUX_TUNNEL)` | P2P トンネルの ENCAP_SRC_IP |
-| `dscp_mode_name` | `getDscpMode(MUX_TUNNEL)` | トンネル DSCP モード設定 |
-| `tc_to_dscp_map_id` | `getQosMapId(MUX_TUNNEL, ...)` | QoS TC→DSCP マッピング |
-| `tc_to_queue_map_id` | `getQosMapId(MUX_TUNNEL, ...)` | QoS TC→Queue マッピング |
+| `dscp_mode_name` | `getDscpMode(MUX_TUNNEL)` | トンネル [DSCP](../../reference/glossary.md#term-dscp) モード設定 |
+| `tc_to_dscp_map_id` | `getQosMapId(MUX_TUNNEL, ...)` | [QoS](../../reference/glossary.md#term-qos) TC→[DSCP](../../reference/glossary.md#term-dscp) マッピング |
+| `tc_to_queue_map_id` | `getQosMapId(MUX_TUNNEL, ...)` | [QoS](../../reference/glossary.md#term-qos) TC→Queue マッピング |
 
 `TUNNEL_DECAP` が未処理（`getDstIpAddresses()` が空を返す）の場合、`handlePeerSwitch()` は
 `return false` でリトライ待機する。PEER_SWITCH 処理は TUNNEL_DECAP 処理完了に依存する。
@@ -575,7 +574,7 @@ PEER_SWITCH が未設定の場合、`mux_peer_switch_.isZero()` が true とな�
 
 `handlePeerSwitch()` SET パスで `create_tunnel()` を呼び出し、以下の SAI オブジェクトが生成される:
 
-1. **overlay loopback RIF**: `sai_router_intfs_api->create_router_interface()` — `SAI_ROUTER_INTERFACE_TYPE_LOOPBACK`
+1. **overlay loopback [RIF](../../reference/glossary.md#term-rif)**: `sai_router_intfs_api->create_router_interface()` — `SAI_ROUTER_INTERFACE_TYPE_LOOPBACK`
 2. **IP-in-IP P2P トンネル**: `sai_tunnel_api->create_tunnel()` — `SAI_TUNNEL_TYPE_IPINIP` / `SAI_TUNNEL_PEER_MODE_P2P`
    - ENCAP_SRC_IP = `TUNNEL.src_ip`（MuxTunnel0 の dst_ip から取得）
    - ENCAP_DST_IP = `PEER_SWITCH.address_ipv4`
@@ -585,3 +584,5 @@ PEER_SWITCH が未設定の場合、`mux_peer_switch_.isZero()` が true とな�
     SAI トンネルオブジェクトは orchagent 再起動まで残存する。
 
 <!-- /side-effects -->
+
+<!-- glossary-links-injected: 1ec5d309adeb -->

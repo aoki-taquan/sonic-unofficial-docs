@@ -36,18 +36,18 @@ related:
 
 ## 概要
 
-SmartSwitch は NPU（スイッチ本体）に DPU（Data Processing Unit）を搭載した SONiC プラットフォームである。[CONFIG_DB](../../reference/glossary.md#term-config_db) には DPU の接続・アドレス・HA（High Availability）設定を保持する複数テーブルが存在する[^1]。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) は [NPU](../../reference/glossary.md#term-npu)（スイッチ本体）に [DPU](../../reference/glossary.md#term-dpu)（Data Processing Unit）を搭載した SONiC プラットフォームである。[CONFIG_DB](../../reference/glossary.md#term-config_db) には [DPU](../../reference/glossary.md#term-dpu) の接続・アドレス・HA（High Availability）設定を保持する複数テーブルが存在する[^1]。
 
 テーブル一覧:
 
 | テーブル | 役割 |
 |---------|------|
-| `MID_PLANE_BRIDGE` | NPU〜DPU 間ミッドプレーンブリッジの IP 設定 |
+| `MID_PLANE_BRIDGE` | [NPU](../../reference/glossary.md#term-npu)〜[DPU](../../reference/glossary.md#term-dpu) 間ミッドプレーンブリッジの IP 設定 |
 | `DPUS` | DPU 名とミッドプレーンインターフェースのマッピング |
 | `DPU` | 各 DPU の詳細設定（アドレス・サービスポート等）|
-| `REMOTE_DPU` | ピア SmartSwitch 上のリモート DPU 情報 |
+| `REMOTE_DPU` | ピア [SmartSwitch](../../reference/glossary.md#term-smartswitch) 上のリモート DPU 情報 |
 | `VDPU` | 複数 DPU を束ねる仮想 DPU 定義 |
-| `DASH_HA_GLOBAL_CONFIG` | DPU 間 HA データパス・BFD のグローバル設定 |
+| `DASH_HA_GLOBAL_CONFIG` | DPU 間 HA データパス・[BFD](../../reference/glossary.md#term-bfd) のグローバル設定 |
 
 <!-- cdb-mermaid -->
 ### データフロー
@@ -85,7 +85,7 @@ MID_PLANE_BRIDGE|GLOBAL
 
 | フィールド | 型 | 範囲 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
-| `bridge` | string | `bridge-midplane` のみ | `"bridge-midplane"` | ミッドプレーンブリッジ名（YANG で固定）|
+| `bridge` | string | `bridge-midplane` のみ | `"bridge-midplane"` | ミッドプレーンブリッジ名（[YANG](../../reference/glossary.md#term-yang) で固定）|
 | `ip_prefix` | IPv4 prefix | 任意 | `"169.254.200.254/24"` | ブリッジの IPv4 プレフィックス |
 
 ---
@@ -123,7 +123,7 @@ DPU|<dpu_name>
 | フィールド | 型 | 範囲 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
 | `state` | `admin_status` | `up` / `down` | なし | DPU の管理状態 |
-| `local_port` | `interface_name` | — | なし | NPU 側の物理ポート名 |
+| `local_port` | `interface_name` | — | なし | [NPU](../../reference/glossary.md#term-npu) 側の物理ポート名 |
 | `vip_ipv4` | IPv4 address | — | なし | VIP IPv4（minigraph 由来）|
 | `vip_ipv6` | IPv6 address | — | なし | VIP IPv6（minigraph 由来）|
 | `pa_ipv4` | IPv4 address | — | なし | PA IPv4（minigraph 由来）|
@@ -131,7 +131,7 @@ DPU|<dpu_name>
 | `midplane_ipv4` | IPv4 address | — | `169.254.200.(dpu_id+1)` | ミッドプレーン IPv4（platform 計算値）|
 | `dpu_id` | string | `[0-7]` | なし | DPU ID（minigraph 由来）|
 | `vdpu_id` | string | 1..255 文字 | なし | 所属 VDPU の guid（minigraph 由来）|
-| `gnmi_port` | port-number | 1..65535 | なし（実例: `50052`）| gNMI サービスの TCP ポート |
+| `gnmi_port` | port-number | 1..65535 | なし（実例: `50052`）| [gNMI](../../reference/glossary.md#term-gnmi) サービスの TCP ポート |
 | `orchagent_zmq_port` | port-number | 1..65535 | なし（実例: `50`）| ZMQ サービスの TCP ポート |
 | `swbus_port` | port-number | 1..65535 | なし（実例: `23607`）| swbus サービスの TCP ポート |
 
@@ -145,7 +145,7 @@ DPU|<dpu_name>
 REMOTE_DPU|<dpu_name>
 ```
 
-ピア SmartSwitch 上の DPU を表す。`<dpu_name>` は `[a-zA-Z0-9_-]+[0-9]+` パターン。
+ピア [SmartSwitch](../../reference/glossary.md#term-smartswitch) 上の DPU を表す。`<dpu_name>` は `[a-zA-Z0-9_-]+[0-9]+` パターン。
 
 ### フィールド
 
@@ -193,17 +193,17 @@ DASH_HA_GLOBAL_CONFIG|global
 
 | フィールド | 型 | 実例値 | 説明 |
 |-----------|----|--------|------|
-| `vnet_name` | leafref (VNET) | — | **deprecated**。`dpu_vnet` を使用すること |
-| `dpu_vnet` | leafref (VNET) | — | VNET トンネルルートで使用する vnet 名 |
-| `dpu_vlan` | string 1..255 | — | DPU VLAN 識別子 |
+| `vnet_name` | leafref ([VNET](../../reference/glossary.md#term-vnet)) | — | **deprecated**。`dpu_vnet` を使用すること |
+| `dpu_vnet` | leafref ([VNET](../../reference/glossary.md#term-vnet)) | — | [VNET](../../reference/glossary.md#term-vnet) トンネルルートで使用する vnet 名 |
+| `dpu_vlan` | string 1..255 | — | DPU [VLAN](../../reference/glossary.md#term-vlan) 識別子 |
 | `cp_data_channel_port` | port-number | `11362` | コントロールプレーンデータチャネルポート（バルク同期用）|
 | `dp_channel_dst_port` | port-number | `11368` | DPU 間データプレーンチャネルのトンネル宛先ポート |
 | `dp_channel_src_port_min` | port-number | `49152` | データプレーンチャネルの最小送信元ポート |
 | `dp_channel_src_port_max` | port-number | `53247` | データプレーンチャネルの最大送信元ポート |
 | `dp_channel_probe_interval_ms` | uint32 | `100` | DPU 間データパスプローブ送信間隔（ミリ秒）|
 | `dp_channel_probe_fail_threshold` | uint32 | `3` | データプレーンチャネル断判定に必要な連続失敗回数 |
-| `dpu_bfd_probe_interval_in_ms` | uint32 | `100` | DPU BFD プローブ送信間隔（ミリ秒）|
-| `dpu_bfd_probe_multiplier` | uint32 | `3` | DPU BFD プローブ失敗判定の乗数 |
+| `dpu_bfd_probe_interval_in_ms` | uint32 | `100` | DPU [BFD](../../reference/glossary.md#term-bfd) プローブ送信間隔（ミリ秒）|
+| `dpu_bfd_probe_multiplier` | uint32 | `3` | DPU [BFD](../../reference/glossary.md#term-bfd) プローブ失敗判定の乗数 |
 
 ---
 
@@ -226,9 +226,9 @@ data['MID_PLANE_BRIDGE'] = {
 }
 ```
 
-- `bridge` は YANG パターン制約 (`pattern "bridge-midplane"`) により他の値を設定不可
+- `bridge` は [YANG](../../reference/glossary.md#term-yang) パターン制約 (`pattern "bridge-midplane"`) により他の値を設定不可
 - `ip_prefix` の `169.254.200.254/24` は link-local ではなく APIPA 近接帯の固定アドレスブロック
-- YANG の `must "(current()/../ip_prefix)"` 制約により、`ip_prefix` なしの `bridge` 設定は YANG バリデーション違反
+- [YANG](../../reference/glossary.md#term-yang) の `must "(current()/../ip_prefix)"` 制約により、`ip_prefix` なしの `bridge` 設定は YANG バリデーション違反
 
 ### DPUS — midplane_interface は dpu_name と同値
 
@@ -306,7 +306,7 @@ leaf vnet_name {
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`dhcp_cfggen` (`dhcpservd`) は `generate()` 呼び出しごとに CONFIG_DB を全量読み直してミッドプレーン DHCP 設定を再生成する。このため書き込み順序がミッドプレーンブリッジの DHCP 払い出し動作に直結する。
+`dhcp_cfggen` (`dhcpservd`) は `generate()` 呼び出しごとに [CONFIG_DB](../../reference/glossary.md#term-config_db) を全量読み直してミッドプレーン DHCP 設定を再生成する。このため書き込み順序がミッドプレーンブリッジの DHCP 払い出し動作に直結する。
 
 ### 他テーブル先行必須
 
@@ -361,7 +361,7 @@ SET DASH_HA_GLOBAL_CONFIG|global  dpu_vnet=<vnet_name>  ...
 
 | 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
 |---|---|---|---|---|---|
-| `DEVICE_METADATA\|localhost` (`subtype`) | CONFIG_DB | 読み取り (`is_smart_switch()` 判定) | なし | 必須（`"SmartSwitch"` でない場合 `MID_PLANE_BRIDGE`/`DPUS` を完全スキップ）| `dhcp_cfggen.py:65-67`; `utils.py:153-161` |
+| `DEVICE_METADATA\|localhost` (`subtype`) | [CONFIG_DB](../../reference/glossary.md#term-config_db) | 読み取り (`is_smart_switch()` 判定) | なし | 必須（`"SmartSwitch"` でない場合 `MID_PLANE_BRIDGE`/`DPUS` を完全スキップ）| `dhcp_cfggen.py:65-67`; `utils.py:153-161` |
 | `DHCP_SERVER_IPV4\|bridge-midplane` | CONFIG_DB | 書き込み (初期設定で自動生成) | なし | 派生（`config_samples.py` が `DPUS` エントリから自動生成）| `config_samples.py:133-143` |
 | `DHCP_SERVER_IPV4_PORT\|bridge-midplane\|<dpu>` | CONFIG_DB | 書き込み (初期設定で自動生成) | なし | 派生（`DPUS` の `midplane_interface` から DPU ごとに生成）| `config_samples.py:105-109` |
 | `FEATURE\|dhcp_server` | CONFIG_DB | 書き込み (初期設定で有効化) | なし | 派生（`DPUS` が存在する場合のみ生成）| `config_samples.py:113-131` |
@@ -380,7 +380,7 @@ SET DASH_HA_GLOBAL_CONFIG|global  dpu_vnet=<vnet_name>  ...
 
 | 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
 |---|---|---|---|---|---|
-| `VNET\|<name>` | CONFIG_DB | 読み取り (`dpu_vnet` / `vnet_name` の存在確認) | **あり** (`leafref`) | 条件付き必須（DASH HA 設定時。不在で YANG バリデーション違反）| `sonic-smart-switch.yang:292-303` |
+| `VNET\|<name>` | CONFIG_DB | 読み取り (`dpu_vnet` / `vnet_name` の存在確認) | **あり** (`leafref`) | 条件付き必須（[DASH](../../reference/glossary.md#term-dash) HA 設定時。不在で YANG バリデーション違反）| `sonic-smart-switch.yang:292-303` |
 
 #### VNET — YANG leafref による強制参照
 
@@ -402,7 +402,7 @@ SET DASH_HA_GLOBAL_CONFIG|global  dpu_vnet=<vnet_name>  ...
 
 ### SAI 参照
 
-`MID_PLANE_BRIDGE` / `DPUS` / `DPU` / `REMOTE_DPU` / `VDPU` はいずれも SAI を直接操作しない。`DASH_HA_GLOBAL_CONFIG` は `dashhaorch` (orchagent) 経由で DASH SAI に設定を渡すが、orchagent の SAI 呼び出し詳細は DASH 固有実装に依存する。
+`MID_PLANE_BRIDGE` / `DPUS` / `DPU` / `REMOTE_DPU` / `VDPU` はいずれも [SAI](../../reference/glossary.md#term-sai) を直接操作しない。`DASH_HA_GLOBAL_CONFIG` は `dashhaorch` ([orchagent](../../reference/glossary.md#term-orchagent)) 経由で [DASH](../../reference/glossary.md#term-dash) [SAI](../../reference/glossary.md#term-sai) に設定を渡すが、[orchagent](../../reference/glossary.md#term-orchagent) の [SAI](../../reference/glossary.md#term-sai) 呼び出し詳細は [DASH](../../reference/glossary.md#term-dash) 固有実装に依存する。
 <!-- /cross-refs -->
 
 <!-- failure -->
@@ -512,8 +512,8 @@ dhcp_ip = '{}.{}'.format(mpbr_prefix, dpu_id + 1)    # "169.254.200.<dpu_id+1>"
 
 | フィールド | 実例値 | 由来 |
 |---|---|---|
-| `cp_data_channel_port` | `11362` | DASH HA HLD 規定値 |
-| `dp_channel_dst_port` | `11368` | DASH HA HLD 規定値 |
+| `cp_data_channel_port` | `11362` | DASH HA [HLD](../../reference/glossary.md#term-hld) 規定値 |
+| `dp_channel_dst_port` | `11368` | DASH HA [HLD](../../reference/glossary.md#term-hld) 規定値 |
 | `dp_channel_src_port_min` | `49152` | Linux エフェメラルポート開始値（`ip_local_port_range` 下限） |
 | `dp_channel_src_port_max` | `53247` | `49152 + 4095`（4096 ポート幅） |
 | `dp_channel_probe_interval_ms` | `100` | BFD 推奨最小値（RFC 5880 準拠） |
@@ -535,7 +535,7 @@ dhcp_ip = '{}.{}'.format(mpbr_prefix, dpu_id + 1)    # "169.254.200.<dpu_id+1>"
 
 ### CHASSIS_MODULE 書き込み → DPU ハードウェア電源を非同期制御
 
-`CHASSIS_MODULE|DPU*` への SET (admin_status=up/down) は `SmartSwitchConfigManagerTask` が受け取り、別スレッドで `set_admin_state_gracefully()` を呼び出す (`chassisd:255-256`)。CONFIG_DB 書き込み完了直後には STATE_DB の `oper_status` はまだ変化しない（非同期）。DEL 操作も `admin_state = MODULE_ADMIN_DOWN` として扱われ DPU がシャットダウンする (`chassisd:1224`)。
+`CHASSIS_MODULE|DPU*` への SET (admin_status=up/down) は `SmartSwitchConfigManagerTask` が受け取り、別スレッドで `set_admin_state_gracefully()` を呼び出す (`chassisd:255-256`)。CONFIG_DB 書き込み完了直後には [STATE_DB](../../reference/glossary.md#term-state_db) の `oper_status` はまだ変化しない（非同期）。DEL 操作も `admin_state = MODULE_ADMIN_DOWN` として扱われ DPU がシャットダウンする (`chassisd:1224`)。
 
 ### midplane 切断 → CP_STATE / DP_STATE が連鎖的に down へ
 
@@ -570,10 +570,10 @@ dhcp_ip = '{}.{}'.format(mpbr_prefix, dpu_id + 1)    # "169.254.200.<dpu_id+1>"
 | CONFIG_DB テーブル | Producer | Consumer / 購読方式 | select タイムアウト |
 |---|---|---|---|
 | `CHASSIS_MODULE\|DPU*` | sonic-gnmi / CLI | `SmartSwitchConfigManagerTask` — `SubscriberStateTable` | 1000 ms |
-| `MID_PLANE_BRIDGE\|GLOBAL` | sonic-cfggen / config_samples.py | `dhcpservd` — `MidPlaneTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
-| `DPUS\|dpu*` | sonic-cfggen / config_samples.py | `dhcpservd` — `DpusTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
-| `DASH_HA_GLOBAL_CONFIG` | ネットワークコントローラ (gNMI) | `hamgrd` — `SubscriberStateTable` | — |
-| `DPU`, `VDPU` | ネットワークコントローラ (gNMI) | NPU `orchagent` / `hamgrd` — `SubscriberStateTable` | — |
+| `MID_PLANE_BRIDGE\|GLOBAL` | [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / config_samples.py | `dhcpservd` — `MidPlaneTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
+| `DPUS\|dpu*` | [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / config_samples.py | `dhcpservd` — `DpusTableEventChecker`（`SubscriberStateTable` 内包） | 5000 ms |
+| `DASH_HA_GLOBAL_CONFIG` | ネットワークコントローラ ([gNMI](../../reference/glossary.md#term-gnmi)) | `hamgrd` — `SubscriberStateTable` | — |
+| `DPU`, `VDPU` | ネットワークコントローラ ([gNMI](../../reference/glossary.md#term-gnmi)) | NPU `orchagent` / `hamgrd` — `SubscriberStateTable` | — |
 | `REMOTE_DPU` | ネットワークコントローラ (gNMI) | `hamgrd` — `SubscriberStateTable` | — |
 
 ### CHASSIS_MODULE → chassisd
@@ -583,7 +583,7 @@ dhcp_ip = '{}.{}'.format(mpbr_prefix, dpu_id + 1)    # "169.254.200.<dpu_id+1>"
 - op=`SET` のとき: `fvp` から `admin_status` を取得し `up` なら `MODULE_ADMIN_UP`、それ以外は `MODULE_ADMIN_DOWN` として `module_config_update()` を呼び出す
 - op=`DEL` のとき: 無条件で `MODULE_ADMIN_DOWN` を渡す（DEL = シャットダウン扱い）
 
-`module_config_update()` 内では別スレッドで `set_admin_state_gracefully()` が呼ばれるため、CONFIG_DB 書き込み完了時点では STATE_DB の `oper_status` はまだ変化しない（完全非同期）。
+`module_config_update()` 内では別スレッドで `set_admin_state_gracefully()` が呼ばれるため、CONFIG_DB 書き込み完了時点では [STATE_DB](../../reference/glossary.md#term-state_db) の `oper_status` はまだ変化しない（完全非同期）。
 
 ### MID_PLANE_BRIDGE / DPUS → dhcpservd
 
@@ -596,7 +596,7 @@ dhcp_ip = '{}.{}'.format(mpbr_prefix, dpu_id + 1)    # "169.254.200.<dpu_id+1>"
 
 ### DASH_HA_GLOBAL_CONFIG → hamgrd
 
-HLD mermaid 図 (`smart-switch-ha-detailed-design.md:175`) では `NPU_DASH_HA_GLOBAL_CONFIG --> |SubscribeStateTable| NPU_HAMGRD` と明示されている。`hamgrd` はこのイベントを受けて HA グローバル設定を DPU 側の `DASH_HA_SET_TABLE` / `DASH_HA_SCOPE_TABLE` へ ZMQ 経由で伝播する。
+[HLD](../../reference/glossary.md#term-hld) mermaid 図 (`smart-switch-ha-detailed-design.md:175`) では `NPU_DASH_HA_GLOBAL_CONFIG --> |SubscribeStateTable| NPU_HAMGRD` と明示されている。`hamgrd` はこのイベントを受けて HA グローバル設定を DPU 側の `DASH_HA_SET_TABLE` / `DASH_HA_SCOPE_TABLE` へ ZMQ 経由で伝播する。
 
 ### データフロー図
 
@@ -705,7 +705,7 @@ Mellanox 実装では、ミッドプレーンインターフェース名を `/us
 |--------------|------------|---------|
 | `dhcp_server` | `MID_PLANE_BRIDGE`, `DPUS` | ミッドプレーンブリッジ上の DHCP サービス設定 |
 | `chassisd` | `CHASSIS_MODULE` | DPU の admin state 制御（CHASSIS_MODULE テーブル経由）|
-| `dashhaorch` (orchagent) | `DASH_HA_GLOBAL_CONFIG` | DASH HA データパス設定を SAI に反映 |
+| `dashhaorch` ([orchagent](../../reference/glossary.md#term-orchagent)) | `DASH_HA_GLOBAL_CONFIG` | DASH HA データパス設定を SAI に反映 |
 | `sonic-gnmi` | `DPU` | DPU gNMI エンドポイント接続 |
 
 ## 関連 CONFIG_DB / YANG
@@ -726,3 +726,5 @@ Mellanox 実装では、ミッドプレーンインターフェース名を `/us
 ## 引用元
 
 [^1]: YANG 定義: `sonic-smart-switch.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-smart-switch.yang>
+
+<!-- glossary-links-injected: e925d7048c4d -->

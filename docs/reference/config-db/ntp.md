@@ -45,9 +45,23 @@ related:
     - sonic-ntp
 ---
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>NTP")]
+  DM["ntp-config"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 # NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F) + 通信メカニズム (Phase G) + プラットフォーム差 (Phase H)
 
-> このページは `NTP` / `NTP_SERVER` / `NTP_KEY` 3 テーブルを横断して、YANG 定義・`init_cfg.json.j2`・`chrony.conf.j2` テンプレート・`hostcfgd` ハンドラの全行精読から得た**暗黙デフォルト**・**乖離**・**dead field**・**silent drop** を記録する。各テーブルの詳細は [`NTP (global)`](./ntp-global.md)・[`NTP_SERVER`](./ntp-server.md)・[`NTP_KEY`](./ntp-key.md) を参照。
+> このページは `NTP` / `NTP_SERVER` / `NTP_KEY` 3 テーブルを横断して、[YANG](../../reference/glossary.md#term-yang) 定義・`init_cfg.json.j2`・`chrony.conf.j2` テンプレート・`hostcfgd` ハンドラの全行精読から得た**暗黙デフォルト**・**乖離**・**dead field**・**silent drop** を記録する。各テーブルの詳細は [`NTP (global)`](./ntp-global.md)・[`NTP_SERVER`](./ntp-server.md)・[`NTP_KEY`](./ntp-key.md) を参照。
 
 <!-- defaults -->
 ## コード由来デフォルト分析
@@ -64,11 +78,11 @@ related:
 
 ### NTP|global フィールド
 
-| フィールド | YANG default | init_cfg.json.j2 | 有効デフォルト | 分類 |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | init_cfg.json.j2 | 有効デフォルト | 分類 |
 |-----------|-------------|-------------------|--------------|------|
 | `authentication` | `disabled` | `"disabled"` | `disabled` | 一致 |
 | `dhcp` | `enabled` | `"enabled"` | `enabled` | 一致 |
-| `server_role` | `enabled` | **`"disabled"`** | **`disabled`** | **YANG-実装乖離** |
+| `server_role` | `enabled` | **`"disabled"`** | **`disabled`** | **[YANG](../../reference/glossary.md#term-yang)-実装乖離** |
 | `src_intf` | なし (任意) | `"eth0"` | `"eth0"` | build-time ハードコード |
 | `vrf` | なし (任意) | `"default"` | `"default"` | build-time ハードコード |
 | `admin_state` | `enabled` | `"enabled"` | `enabled` | 一致 |
@@ -77,7 +91,7 @@ related:
 
 `sonic-ntp.yang` L155 は `default enabled` を宣言するが、`init_cfg.json.j2` L214 は `"server_role": "disabled"` を明示的に書き込む[^1]。
 
-さらに `chrony.conf.j2` L57-63 は SmartSwitch (`DEVICE_METADATA.localhost.subtype == 'SmartSwitch'` かつ `type != 'SmartSwitchDPU'`) のときのみ `server_role` の値を参照する:
+さらに `chrony.conf.j2` L57-63 は [SmartSwitch](../../reference/glossary.md#term-smartswitch) (`DEVICE_METADATA.localhost.subtype == 'SmartSwitch'` かつ `type != 'SmartSwitchDPU'`) のときのみ `server_role` の値を参照する:
 
 ```jinja2
 {% if device_metadata.subtype == 'SmartSwitch' and device_metadata.type != 'SmartSwitchDPU' -%}
@@ -88,7 +102,7 @@ binddevice bridge-midplane
 {% endif -%}
 ```
 
-**非 SmartSwitch では `server_role` は dead field** — フィールド値にかかわらず `chrony.conf` への影響はない。SmartSwitch では `dhcp == 'enabled'` (default) でも `allow` が追加されるため、`server_role=disabled` でも SmartSwitch は NTP server として動作する。
+**非 [SmartSwitch](../../reference/glossary.md#term-smartswitch) では `server_role` は dead field** — フィールド値にかかわらず `chrony.conf` への影響はない。[SmartSwitch](../../reference/glossary.md#term-smartswitch) では `dhcp == 'enabled'` (default) でも `allow` が追加されるため、`server_role=disabled` でも SmartSwitch は NTP server として動作する。
 
 #### `src_intf` — YANG は任意、init_cfg が `"eth0"` を注入
 
@@ -100,17 +114,17 @@ YANG 上は任意の leaf-list だが、`init_cfg.json.j2` が `"eth0"` を常�
 - `PortChannel*` → `PORTCHANNEL_INTERFACE`
 - `Vlan*` → `VLAN_INTERFACE`
 
-`src_intf` が leaf-list (複数値) でも `global.src_intf` が文字列として取り出される点に注意。hostcfgd `handle_ntp_source_intf_chg` は `src_intf` を `;` 区切りで split して比較する[^2]。
+`src_intf` が leaf-list (複数値) でも `global.src_intf` が文字列として取り出される点に注意。[hostcfgd](../../reference/glossary.md#term-hostcfgd) `handle_ntp_source_intf_chg` は `src_intf` を `;` 区切りで split して比較する[^2]。
 
 #### `vrf` — YANG は任意、init_cfg が `"default"` を注入
 
 `init_cfg.json.j2` が `"vrf": "default"` を設定。`chronyd-starter.sh` はランタイムに:
 
 1. `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled` が `"true"` かを確認
-2. true なら `NTP|global.vrf` を読み、`"default"` なら default VRF で起動、それ以外 (mgmt) なら `ip vrf exec mgmt chronyd`
-3. false なら常に default VRF で起動
+2. true なら `NTP|global.vrf` を読み、`"default"` なら default [VRF](../../reference/glossary.md#term-vrf) で起動、それ以外 (mgmt) なら `ip vrf exec mgmt chronyd`
+3. false なら常に default [VRF](../../reference/glossary.md#term-vrf) で起動
 
-YANG `must` 制約は DB 書き込み時のみ評価されるが、`chronyd-starter.sh` はランタイムに MGMT_VRF_CONFIG を再確認する。MGMT VRF を無効化したまま `vrf=mgmt` が DB に残ると chronyd は mgmt VRF で起動しようとして失敗する可能性がある(**経路依存乖離**)。
+YANG `must` 制約は DB 書き込み時のみ評価されるが、`chronyd-starter.sh` はランタイムに MGMT_VRF_CONFIG を再確認する。MGMT [VRF](../../reference/glossary.md#term-vrf) を無効化したまま `vrf=mgmt` が DB に残ると chronyd は mgmt VRF で起動しようとして失敗する可能性がある(**経路依存乖離**)。
 
 ---
 
@@ -211,14 +225,14 @@ YANG `must` 制約は DB 書き込み時のみ評価されるが、`chronyd-star
 | 失敗条件 | 検出箇所 | 結果 | evidence |
 |---|---|---|---|
 | `systemctl restart chrony` 失敗 (`handle_ntp_source_intf_chg`) | `hostcfgd:1324-1328` | `LOG_ERR` → `return`（キャッシュ更新なし・再試行なし） | `hostcfgd:1326-1329` |
-| `systemctl restart chrony` 失敗 (`ntp_global_update`) | `hostcfgd:1356-1361` | `LOG_ERR` → `return`（キャッシュ更新なし — CONFIG_DB 変更は適用済みだがキャッシュが旧値のまま残存） | `hostcfgd:1358-1361` |
+| `systemctl restart chrony` 失敗 (`ntp_global_update`) | `hostcfgd:1356-1361` | `LOG_ERR` → `return`（キャッシュ更新なし — [CONFIG_DB](../../reference/glossary.md#term-config_db) 変更は適用済みだがキャッシュが旧値のまま残存） | `hostcfgd:1358-1361` |
 | `systemctl restart chrony` 失敗 (`ntp_srv_key_update`) | `hostcfgd:1397-1402` | `LOG_ERR` → `return`（キャッシュ更新なし → 次イベントで再処理保証） | `hostcfgd:1399-1402` |
 | `src_intf` に対応するサーバが未設定 | `hostcfgd:1315-1316` | `return`（no-op、サーバ登録後に反映） | `hostcfgd:1315-1316` |
 | `systemctl stop/start chrony` 失敗（MGMT_VRF_CONFIG 変更時） | `hostcfgd:1659-1665` | `CalledProcessError` → `LOG_ERR` → `return`（mgmt_vrf_enabled キャッシュ未更新） | `hostcfgd:1663-1666` |
 
 #### キャッシュ不整合リスク（ntp_global_update）
 
-`ntp_global_update` は `systemctl restart chrony` 失敗時にキャッシュを更新しない（L1364 の `self.cache[key] = data` は `return` で到達しない）。CONFIG_DB の値は既に変更済みのため、次回同フィールドに同一値が書かれた場合にキャッシュ差分なしと誤判定し no-op になる可能性がある（**経路依存不整合**）。
+`ntp_global_update` は `systemctl restart chrony` 失敗時にキャッシュを更新しない（L1364 の `self.cache[key] = data` は `return` で到達しない）。[CONFIG_DB](../../reference/glossary.md#term-config_db) の値は既に変更済みのため、次回同フィールドに同一値が書かれた場合にキャッシュ差分なしと誤判定し no-op になる可能性がある（**経路依存不整合**）。
 
 ### テンプレート失敗経路（サイレント動作）
 
@@ -242,10 +256,10 @@ YANG `must` 制約は DB 書き込み時のみ評価されるが、`chronyd-star
 
 ### 失敗の可観測性
 
-NTP 処理系は **STATE_DB への NTP ステータス書き込みを持たない**。失敗検知は以下のみで行う:
+NTP 処理系は **[STATE_DB](../../reference/glossary.md#term-state_db) への NTP ステータス書き込みを持たない**。失敗検知は以下のみで行う:
 
 - `journalctl -u chrony` — chrony サービスの起動失敗
-- `grep 'NtpCfg.*Failed' /var/log/syslog` — hostcfgd の `LOG_ERR` 出力
+- `grep 'NtpCfg.*Failed' /var/log/syslog` — [hostcfgd](../../reference/glossary.md#term-hostcfgd) の `LOG_ERR` 出力
 - `chronyc tracking` / `chronyc sources` — 実際の同期状態確認
 
 <!-- /failure -->
@@ -306,13 +320,13 @@ DEL の逆順序: `NTP_SERVER` の `key` フィールドをクリアまたは `N
 
 ### MGMT_VRF_CONFIG — VRF 選択ランタイム読み出し
 
-`chronyd-starter.sh` はサービス起動時に `sonic-db-cli` 経由で CONFIG_DB を直接読み出す。
+`chronyd-starter.sh` はサービス起動時に `sonic-db-cli` 経由で [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接読み出す。
 
 | テーブル | 参照フィールド | 参照タイミング | 用途 | evidence |
 |---|---|---|---|---|
 | `MGMT_VRF_CONFIG` | `vrf_global.mgmtVrfEnabled` | chrony サービス起動時 (ExecStartPre) | `"true"` ならば `NTP\|global.vrf` に応じて VRF を選択。`"false"` なら常に default VRF で起動 | `chronyd-starter.sh:3-16` |
 
-`hostcfgd` は `MGMT_VRF_CONFIG` 変更を `mgmt_vrf_handler` で購読し、`MgmtIfaceCfg.update_mgmt_vrf()` が `systemctl stop chrony` → `systemctl start chrony` を発火する (hostcfgd:2352,2496,1655-1669)。NTP 設定変更がなくても管理 VRF 切替で chrony が再起動されるため、**`MGMT_VRF_CONFIG` は NTP に対して間接的な制御テーブルとして機能する**。
+`hostcfgd` は `MGMT_VRF_CONFIG` 変更を `mgmt_vrf_handler` で購読し、`MgmtIfaceCfg.update_mgmt_vrf()` が `systemctl stop chrony` → `systemctl start chrony` を発火する ([hostcfgd](../../reference/glossary.md#term-hostcfgd):2352,2496,1655-1669)。NTP 設定変更がなくても管理 VRF 切替で chrony が再起動されるため、**`MGMT_VRF_CONFIG` は NTP に対して間接的な制御テーブルとして機能する**。
 
 > 依存方向の注意: `NTP.vrf=mgmt` は `MGMT_VRF_CONFIG.mgmtVrfEnabled=true` が先行している状態でのみ YANG `must` を通過できる (sonic-ntp.yang:127-129)。逆に `mgmtVrfEnabled` を `false` に戻す前に `NTP.vrf` を `default` に戻さないと、`chronyd-starter.sh` が mgmt VRF で起動を試みてサービス障害になる（書込み順依存は Phase B `<!-- ordering -->` 参照）。
 
@@ -443,7 +457,7 @@ CONFIG_DB の NTP テーブルにキーファイルパスを変更するフィ�
 
 ### APPL_DB / STATE_DB への副次書込
 
-**0 件。** NTP 処理系は APPL_DB / STATE_DB への書込を一切行わない。NTP 同期ステータスは STATE_DB に記録されず、`chronyc tracking` / `chronyc sources` コマンドによる直接観測のみ。
+**0 件。** NTP 処理系は [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) への書込を一切行わない。NTP 同期ステータスは [STATE_DB](../../reference/glossary.md#term-state_db) に記録されず、`chronyc tracking` / `chronyc sources` コマンドによる直接観測のみ。
 
 ### ファイル書込: `/etc/chrony/chrony.conf`
 
@@ -550,7 +564,7 @@ def start(self):
     self.config_db.listen(init_data_handler=self.load)  # hostcfgd:2527-2528
 ```
 
-`config_db.listen()` は swsscommon の SubscriberStateTable を介した Redis Keyspace 通知ポーリングループ。
+`config_db.listen()` は swsscommon の SubscriberStateTable を介した [Redis](../../reference/glossary.md#term-redis) Keyspace 通知ポーリングループ。
 `init_data_handler=self.load` によりループ開始前に `NtpCfg.load()` でスナップショット一括取得し
 ブート時のキャッシュを初期化する。<!-- evidence: hostcfgd:1285-1310,2255-2272 -->
 
@@ -585,12 +599,12 @@ binddevice bridge-midplane
 | プラットフォーム | `allow`+`binddevice bridge-midplane` 追加条件 |
 |----------------|----------------------------------------------|
 | 通常スイッチ (T0/T1 等) | **追加されない**（dead block） |
-| SmartSwitch NPU | `server_role=enabled` **または** `dhcp=enabled` のとき |
-| SmartSwitch DPU | **追加されない**（`type == 'SmartSwitchDPU'` で除外） |
+| SmartSwitch [NPU](../../reference/glossary.md#term-npu) | `server_role=enabled` **または** `dhcp=enabled` のとき |
+| SmartSwitch [DPU](../../reference/glossary.md#term-dpu) | **追加されない**（`type == 'SmartSwitchDPU'` で除外） |
 
-`dhcp` デフォルトが `enabled` であるため（`init_cfg.json.j2` L212）、SmartSwitch NPU では **`server_role` 値に関わらず** NTP server として動作する。非 SmartSwitch では `NTP.server_role` は完全な dead field。
+`dhcp` デフォルトが `enabled` であるため（`init_cfg.json.j2` L212）、SmartSwitch [NPU](../../reference/glossary.md#term-npu) では **`server_role` 値に関わらず** NTP server として動作する。非 SmartSwitch では `NTP.server_role` は完全な dead field。
 
-`binddevice bridge-midplane` は NPU-DPU 間ブリッジインタフェース。DPU は NPU をアップストリーム NTP サーバとして参照する構成が前提。DPU 側では `NTP_SERVER` に NPU の bridge-midplane IP を手動で追加する必要がある。
+`binddevice bridge-midplane` は [NPU](../../reference/glossary.md#term-npu)-[DPU](../../reference/glossary.md#term-dpu) 間ブリッジインタフェース。[DPU](../../reference/glossary.md#term-dpu) は NPU をアップストリーム NTP サーバとして参照する構成が前提。DPU 側では `NTP_SERVER` に NPU の bridge-midplane IP を手動で追加する必要がある。
 
 ### MGMT_VRF — chronyd-starter.sh によるランタイム VRF 選択
 
@@ -648,3 +662,5 @@ binddevice bridge-midplane
 [^4]: `chrony-config.sh:9-10`: `sonic-cfggen -d -t /usr/share/sonic/templates/chrony.conf.j2 >/etc/chrony/chrony.conf` および `sonic-cfggen -d -t /usr/share/sonic/templates/chrony.keys.j2 >/etc/chrony/chrony.keys`。`override.conf:9` の `ExecStartPre=!/usr/bin/chrony-config.sh` で chrony サービス起動前に実行される。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/files/image_config/chrony/chrony-config.sh>
 
 [^5]: `chrony-config.sh:11`: `chmod o-r /etc/chrony/chrony.keys` — 鍵ファイルへの world-read アクセスを禁止。`chrony.keys.j2:7-18` が `NTP_KEY` テーブルから鍵 ID・タイプ・Base64 デコード済み値を書き込む。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/files/image_config/chrony/chrony.keys.j2>
+
+<!-- glossary-links-injected: 301dd3bf0e04 -->

@@ -78,14 +78,14 @@ YANG に `default` 節は存在しない。以下はすべてコード実装か�
 
 | フィールド / 条件 | 暗黙挙動 | 種別 | evidence |
 |-----------------|---------|------|---------|
-| `profile_list` 不在 | APPL_DB に書かない（エントリなし） | dead field なし | `buffermgr.cpp:doBufferTableTask` |
+| `profile_list` 不在 | [APPL_DB](../../reference/glossary.md#term-appl_db) に書かない（エントリなし） | dead field なし | `buffermgr.cpp:doBufferTableTask` |
 | 参照 `BUFFER_PROFILE` が未ロード | `task_need_retry` でキューに残す（silent retry） | silent fallback | `buffermgrdyn.cpp:3282-3285` |
 | `m_bufferPoolReady == false` | APPL_DB 書き込みを保留 (`m_bufferObjectsPending=true`) | 暗黙 pending | `buffermgrdyn.cpp:3408-3414` |
 | admin-down ポート | ユーザー設定 `profile_list` を **zero profile list に silent 置換** して APPL_DB へ書き込む | silent substitution | `buffermgrdyn.cpp:3418-3438` |
 | zero profile が存在しないプール | WARN ログのみ、当該プールをスキップ（部分置換） | partial silent drop | `buffermgrdyn.cpp:1185-1188` |
 | egress 方向プロファイルを `profile_list` に設定 (dynamic) | `task_failed`、エントリ消去 | 方向不一致エラー | `buffermgrdyn.cpp:3289-3296` |
-| `packet_discard_action=trim` プロファイルを `profile_list` に設定 | orchagent が `task_failed` を返す（ingress trim 禁止） | ハードコード禁止 | `bufferorch.cpp:1725-1731` |
-| bulk SAI 部分失敗 | `SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR` で続行、失敗ポートは `task_need_retry` 再投入 | partial failure | `bufferorch.cpp:1823-1844` |
+| `packet_discard_action=trim` プロファイルを `profile_list` に設定 | [orchagent](../../reference/glossary.md#term-orchagent) が `task_failed` を返す（ingress trim 禁止） | ハードコード禁止 | `bufferorch.cpp:1725-1731` |
+| bulk [SAI](../../reference/glossary.md#term-sai) 部分失敗 | `SAI_BULK_OP_ERROR_MODE_IGNORE_ERROR` で続行、失敗ポートは `task_need_retry` 再投入 | partial failure | `bufferorch.cpp:1823-1844` |
 | プロファイルリスト変更なし | SAI 呼び出しをスキップ（idempotent） | silent skip | `bufferorch.cpp:1695-1699` |
 | キー内ポート名空文字 | `task_invalid_entry`、エントリ消去 | silent drop | `buffermgrdyn.cpp:3509-3513` |
 | カンマ区切りポートリスト | 各ポートに展開して順次処理。途中 retry で残りをスキップ | 暗黙展開 + partial retry | `buffermgrdyn.cpp:3527-3548` |
@@ -103,7 +103,7 @@ YANG に `default` 節は存在しない。以下はすべてコード実装か�
 
 | # | 先行必須テーブル / 条件 | 違反時の挙動 | evidence |
 |---|----------------------|------------|---------|
-| 1 | `BUFFER_PROFILE` エントリが先行（参照プロファイルが `m_bufferProfileLookup` / orchagent に認識済み） | `task_need_retry`（silent retry、ログに残る） | `buffermgrdyn.cpp:3282-3285`, `bufferorch.cpp:1683-1688` |
+| 1 | `BUFFER_PROFILE` エントリが先行（参照プロファイルが `m_bufferProfileLookup` / [orchagent](../../reference/glossary.md#term-orchagent) に認識済み） | `task_need_retry`（silent retry、ログに残る） | `buffermgrdyn.cpp:3282-3285`, `bufferorch.cpp:1683-1688` |
 | 2 | `BUFFER_POOL` エントリが先行（`m_bufferPoolReady == true`） | APPL_DB 書き込み pending（`m_bufferObjectsPending=true`）、BUFFER_POOL 完了後自動再処理 | `buffermgrdyn.cpp:3408-3414` |
 | 3 | `PORT` エントリが先行（PortsOrch にポート認識済み） | `task_invalid_entry`（エントリ消去、永続エラー） | `bufferorch.cpp:1762-1765` |
 
@@ -190,7 +190,6 @@ show buffer pool
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -212,7 +211,7 @@ show buffer pool
 
 **適用タイミング**: CONFIG_DB 変化を `buffermgrd` が検知後 APPL_DB に書き込み。`BufferOrch` が SAI port attribute を更新。
 
-**副作用**: 対象ポートの ingress バッファ割り当てが変更される。PFC や lossless traffic に影響する可能性がある。
+**副作用**: 対象ポートの ingress バッファ割り当てが変更される。[PFC](../../reference/glossary.md#term-pfc) や lossless traffic に影響する可能性がある。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -242,7 +241,6 @@ show buffer pool
 ### ランタイム注入 (デーモン自動書き込み)
 - Dynamic buffer model: `buffermgrd` がポートごとに書き込み
 <!-- /entry-points -->
-
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
@@ -281,7 +279,7 @@ show buffer pool
 
 `buffermgrd`（dynamic モード）は `swsscommon` の `Orch` 基底クラスを通じて、
 `TableConnector(&cfgDb, CFG_BUFFER_PORT_INGRESS_PROFILE_LIST_NAME)` で登録された
-`SubscriberStateTable` により CONFIG_DB を購読する。内部では Redis **keyspace 通知**
+`SubscriberStateTable` により CONFIG_DB を購読する。内部では [Redis](../../reference/glossary.md#term-redis) **keyspace 通知**
 （`__keyspace@<dbId>__:BUFFER_PORT_INGRESS_PROFILE_LIST|*` への PSUBSCRIBE）を使い、
 `HSET` / `DEL` による変更を `KeyOpFieldsValuesTuple` として受信する。
 
@@ -296,8 +294,8 @@ BufferMgrDynamic::BufferMgrDynamic(..., const vector<TableConnector> &tables, ..
 ### CONFIG_DB → APPL_DB 転送 — `ProducerStateTable`
 
 APPL_DB への書き込みは `ProducerStateTable` を使用する。
-`ProducerStateTable.set()` は **HSET + PUBLISH を原子的に実行**（Redis MULTI/EXEC）し、
-orchagent の `ConsumerStateTable` にリアルタイム通知を届ける。
+`ProducerStateTable.set()` は **HSET + PUBLISH を原子的に実行**（[Redis](../../reference/glossary.md#term-redis) MULTI/EXEC）し、
+[orchagent](../../reference/glossary.md#term-orchagent) の `ConsumerStateTable` にリアルタイム通知を届ける。
 
 ```cpp
 // buffermgrdyn.cpp:47
@@ -446,11 +444,11 @@ evidence: `buffermgrdyn.cpp:3387-3450`, `buffermgr.cpp:476-480`
 
 ### VOQ Chassis
 
-`processIngressBufferProfileList()` / `processIngressBufferProfileListBulk()` 内に `gMySwitchType == "voq"` 分岐は存在しない。VOQ chassis でも同一コードパスが実行される。
+`processIngressBufferProfileList()` / `processIngressBufferProfileListBulk()` 内に `gMySwitchType == "voq"` 分岐は存在しない。[VOQ](../../reference/glossary.md#term-voq) chassis でも同一コードパスが実行される。
 
-VOQ 固有のキー拡張（`tokens.size() == 4` 形式のシステムポートキー）は BUFFER_QUEUE ハンドラにのみ適用され、BUFFER_PORT_INGRESS_PROFILE_LIST には影響しない。
+[VOQ](../../reference/glossary.md#term-voq) 固有のキー拡張（`tokens.size() == 4` 形式のシステムポートキー）は BUFFER_QUEUE ハンドラにのみ適用され、BUFFER_PORT_INGRESS_PROFILE_LIST には影響しない。
 
-唯一の間接的影響: `bufferorch.cpp:2079-2094` の `doTask()` で、VOQ chassis は `isInitDone()`（非 VOQ は `isConfigDone()`）を使うため処理開始タイミングがやや早くなる。
+唯一の間接的影響: `bufferorch.cpp:2079-2094` の `doTask()` で、[VOQ](../../reference/glossary.md#term-voq) chassis は `isInitDone()`（非 VOQ は `isConfigDone()`）を使うため処理開始タイミングがやや早くなる。
 
 evidence: `bufferorch.cpp:1660-1774`（`processIngressBufferProfileList`: voq 分岐なし）、`bufferorch.cpp:116-140`（`initVoqBufferReadyList`: BUFFER_QUEUE のみ対象）
 
@@ -504,12 +502,12 @@ evidence: `bufferorch.cpp:1660-1774`（`processIngressBufferProfileList`: voq �
 
 | 対象 DB | 書込有無 | 根拠 |
 |--------|---------|------|
-| STATE_DB | **なし** | `buffermgrdyn.cpp` は `m_stateBufferPoolTable` / `m_stateBufferProfileTable` に書くが、これらは BUFFER_POOL / BUFFER_PROFILE ハンドラ内のみ。ingress profile list 処理パス (`handleBufferObjectTables` → `handleSingleBufferPortProfileListEntry`) に STATE_DB 書込なし。 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | **なし** | `buffermgrdyn.cpp` は `m_stateBufferPoolTable` / `m_stateBufferProfileTable` に書くが、これらは BUFFER_POOL / BUFFER_PROFILE ハンドラ内のみ。ingress profile list 処理パス (`handleBufferObjectTables` → `handleSingleBufferPortProfileListEntry`) に [STATE_DB](../../reference/glossary.md#term-state_db) 書込なし。 |
 | APPL_STATE_DB | **なし** | `m_applStateBufferPoolTable` / `m_applStateBufferProfileTable` の接続はあるが、ingress profile list ハンドラから書込コードは呼ばれない。(`buffermgrdyn.cpp:43-51`) |
-| COUNTERS_DB | **なし** | `bufferorch.cpp:55-56,546` の `m_counterNameMapUpdater` は BUFFER_POOL の set/del 時にのみ呼ばれる。`processIngressBufferProfileList` / `processIngressBufferProfileListBulk` からは呼ばれない。 |
-| FLEX_COUNTER_DB | **なし** | `bufferorch.cpp:247,337,344` の FLEX_COUNTER 操作は buffer pool watermark カウンタ専用。ingress profile list ハンドラは `sai_port_api->set_ports_attribute` (bulk SAI) を呼ぶのみで FLEX_COUNTER_DB には触れない。 |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | **なし** | `bufferorch.cpp:55-56,546` の `m_counterNameMapUpdater` は BUFFER_POOL の set/del 時にのみ呼ばれる。`processIngressBufferProfileList` / `processIngressBufferProfileListBulk` からは呼ばれない。 |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | **なし** | `bufferorch.cpp:247,337,344` の FLEX_COUNTER 操作は buffer pool watermark カウンタ専用。ingress profile list ハンドラは `sai_port_api->set_ports_attribute` (bulk SAI) を呼ぶのみで [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) には触れない。 |
 
-> **evidence**: `buffermgrdyn.cpp:313,361,887,920`（STATE_DB 書込は BUFFER_POOL/PROFILE ハンドラ内）、`bufferorch.cpp:1663-1848`（`processIngressBufferProfileList` / `processIngressBufferProfileListBulk` — DB 書込なし、SAI のみ）
+> **evidence**: `buffermgrdyn.cpp:313,361,887,920`（[STATE_DB](../../reference/glossary.md#term-state_db) 書込は BUFFER_POOL/PROFILE ハンドラ内）、`bufferorch.cpp:1663-1848`（`processIngressBufferProfileList` / `processIngressBufferProfileListBulk` — DB 書込なし、SAI のみ）
 <!-- /side-effects -->
 
 <!-- cross-refs -->
@@ -532,4 +530,5 @@ evidence: `bufferorch.cpp:1660-1774`（`processIngressBufferProfileList`: voq �
 - admin-down ポートでは `m_portInfoLookup[port].state == PORT_ADMIN_DOWN` を検出し、通常 profile_list の代わりに zero profile list を APPL_DB に書き込む（`buffermgrdyn.cpp:3418-3438`）。
 - 詳細スキャン記録: `meta/_intermediate/cdb-flow/buffer-port-ingress-profile-list-cross-refs.md`
 <!-- /cross-refs -->
-<!-- glossary-links-injected: 021ae16e7b9c -->
+
+<!-- glossary-links-injected: 7e045f0ebc94 -->

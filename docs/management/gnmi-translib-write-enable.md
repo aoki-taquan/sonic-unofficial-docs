@@ -14,7 +14,7 @@ last_verified: 2026-05-20
 
 ## 概要
 
-gNMI SET リクエストを実行すると、次のようなエラーが返される場合がある。
+[gNMI](../reference/glossary.md#term-gnmi) SET リクエストを実行すると、次のようなエラーが返される場合がある。
 
 ```
 Translib write is disabled
@@ -26,7 +26,7 @@ Translib write is disabled
 setEntry: DoCVL for UPDATE
 ```
 
-これらのエラーは、sonic-buildimage のビルド時に **Translib 書き込みが無効化された状態**でビルドされていることが原因である。
+これらのエラーは、[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) のビルド時に **Translib 書き込みが無効化された状態**でビルドされていることが原因である。
 
 ## 原因
 
@@ -75,3 +75,5 @@ gnmi_set \
 - [gNMI ストリーミングテレメトリの落とし穴](gnmi-streaming-telemetry-pitfalls.md)
 - GitHub Issue: [sonic-net/sonic-gnmi#333](https://github.com/sonic-net/sonic-gnmi/issues/333)
 - GitHub Issue: [sonic-net/sonic-gnmi#20](https://github.com/sonic-net/sonic-gnmi/issues/20)
+
+<!-- glossary-links-injected: 14dd34b693fb -->

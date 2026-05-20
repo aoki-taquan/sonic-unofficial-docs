@@ -13,14 +13,14 @@ last_verified: 2026-05-20
 
 ## 概要
 
-`sonic-snmpagent` が実装する RFC1213-MIB の `ifTable` には、**フロントパネルインターフェース**と **LAG（ポートチャネル）インターフェース**のみが含まれる。管理インターフェース（eth0）・ループバックインターフェース・VLAN インターフェースは含まれない。
+`sonic-snmpagent` が実装する RFC1213-MIB の `ifTable` には、**フロントパネルインターフェース**と **[LAG](../reference/glossary.md#term-lag)（ポートチャネル）インターフェース**のみが含まれる。管理インターフェース（eth0）・ループバックインターフェース・[VLAN](../reference/glossary.md#term-vlan) インターフェースは含まれない。
 
 ## サポートされるインターフェース
 
 | インターフェース種別 | ifTable に含まれるか |
 |---------------------|---------------------|
 | フロントパネルポート（Ethernet0, Ethernet4, ...） | **含まれる** |
-| LAG / PortChannel（PortChannel0001, ...） | **含まれる** |
+| LAG / [PortChannel](../reference/glossary.md#term-portchannel)（PortChannel0001, ...） | **含まれる** |
 | 管理インターフェース（eth0, Management0） | **含まれない** |
 | ループバック（Loopback0, ...） | **含まれない** |
 | VLAN（Vlan100, ...） | **含まれない** |
@@ -35,7 +35,7 @@ RFC1213-MIB（MIB-II）の `ifTable` はネットワーク機器の全インタ�
 
 ### 監視ツールでの注意点
 
-SNMP ポーリングで帯域使用量や統計を収集する際：
+[SNMP](../reference/glossary.md#term-snmp) ポーリングで帯域使用量や統計を収集する際：
 
 - `eth0` の IN/OUT バイト数は `ifTable` からは取得できない
 - 代替として Linux の `/proc/net/dev` 経由の情報を利用するか、別途 SNMP OID を実装する必要がある
@@ -65,3 +65,5 @@ redis-cli -n 4 hgetall "MGMT_PORT|eth0"
 ## 関連
 
 - GitHub Issue: [sonic-net/sonic-snmpagent#83](https://github.com/sonic-net/sonic-snmpagent/issues/83)
+
+<!-- glossary-links-injected: 1bb2312a6ed4 -->

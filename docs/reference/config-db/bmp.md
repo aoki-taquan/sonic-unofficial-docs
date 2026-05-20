@@ -125,7 +125,7 @@ show bmp
 | 不明なフィールドが設定される | `common_config.get('bgp_neighbor_table', 'false')` 等のデフォルト補完で `false` 扱い。スキーマ外フィールドは silently ignored | `bmpcfgd.py` L41-43 |
 | `"True"` / `"TRUE"` / `"1"` 等の値 | `is_true()` は `str(val).lower() == 'true'` のみ受理。`"true"` 小文字のみ有効 | `bmpcfgd.py` L28 |
 | 設定変更ごとに openbmpd を再起動 | stop → BMP_STATE_DB クリア → start の順序。`supervisorctl` 失敗時は例外 catch なし → bmpcfgd クラッシュの可能性 | `bmpcfgd.py` L46-49 |
-| CONFIG_DB 接続不可 | `retry_on=True` で無限リトライ (CONFIG_DB 起動まで待機) | `bmpcfgd.py` L78 |
+| [CONFIG_DB](../../reference/glossary.md#term-config_db) 接続不可 | `retry_on=True` で無限リトライ (CONFIG_DB 起動まで待機) | `bmpcfgd.py` L78 |
 <!-- /cdb-exceptions -->
 
 
@@ -140,11 +140,11 @@ show bmp
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由で BMP 設定)
+なし ([FRR](../../reference/glossary.md#term-frr) vtysh 経由で BMP 設定)
 
 ### 段階 3 — APPL→SAI
 
-なし (BMP は FRR の BGP モニタリングプロトコル、SAI 非経由)
+なし (BMP は [FRR](../../reference/glossary.md#term-frr) の BGP モニタリングプロトコル、[SAI](../../reference/glossary.md#term-sai) 非経由)
 
 ### 段階 4 — タイミングと副作用
 
@@ -225,10 +225,10 @@ show bmp
 | 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
 |---|---|---|---|---|
 | `supervisorctl stop openbmpd` が非ゼロ終了 / openbmpd が存在しない | `stop_bmp()` | `subprocess.call()` は returncode を無視。openbmpd が停止しないまま後続の `reset_bmp_table()` が実行され、動作中プロセスと BMP_STATE_DB 削除が競合する | syslog LOG_NOTICE のみ | `bmpcfgd.py:56-58` |
-| `BMP_STATE_DB` 接続失敗（Redis 未起動 / ポート閉塞） | `BMPCfgDaemon.__init__()` | `SonicV2Connector.connect()` が例外 raise → デーモン起動失敗・supervisord が再起動を試みる | スタックトレースが syslog へ（未捕捉） | `bmpcfgd.py:75-76` |
-| `reset_bmp_table()` の `delete_all_by_pattern()` 失敗（Redis 接続断） | `reset_bmp_table()` | 例外が `load()` まで伝播（catch なし）→ bmpcfgd クラッシュ。BMP_STATE_DB の一部パターンのみ削除された中途状態が残る | スタックトレースが syslog へ（未捕捉） | `bmpcfgd.py:61-65` |
+| `BMP_STATE_DB` 接続失敗（[Redis](../../reference/glossary.md#term-redis) 未起動 / ポート閉塞） | `BMPCfgDaemon.__init__()` | `SonicV2Connector.connect()` が例外 raise → デーモン起動失敗・supervisord が再起動を試みる | スタックトレースが syslog へ（未捕捉） | `bmpcfgd.py:75-76` |
+| `reset_bmp_table()` の `delete_all_by_pattern()` 失敗（[Redis](../../reference/glossary.md#term-redis) 接続断） | `reset_bmp_table()` | 例外が `load()` まで伝播（catch なし）→ bmpcfgd クラッシュ。BMP_STATE_DB の一部パターンのみ削除された中途状態が残る | スタックトレースが syslog へ（未捕捉） | `bmpcfgd.py:61-65` |
 | `supervisorctl start openbmpd` が非ゼロ終了（バイナリ欠如 / supervisord 未起動） | `start_bmp()` | `subprocess.call()` は returncode を無視。openbmpd が起動しないまま処理続行。BMP データが collector に届かない | syslog LOG_NOTICE のみ | `bmpcfgd.py:68-70` |
-| `CONFIG_DB` 接続失敗（起動直後 Redis 未準備） | `BMPCfgDaemon.__init__()` | `retry_on=True` により無限リトライ。Redis が起動するまでブロック。デーモン起動は完了しない（停止はしない） | swsscommon 内部ログ（接続試行ごと） | `bmpcfgd.py:77-78` |
+| `CONFIG_DB` 接続失敗（起動直後 [Redis](../../reference/glossary.md#term-redis) 未準備） | `BMPCfgDaemon.__init__()` | `retry_on=True` により無限リトライ。Redis が起動するまでブロック。デーモン起動は完了しない（停止はしない） | swsscommon 内部ログ（接続試行ごと） | `bmpcfgd.py:77-78` |
 | `"True"` / `"TRUE"` / `"1"` などの非小文字 `true` 値が CONFIG_DB に書き込まれた場合 | `is_true()` | `str(val).lower() == 'true'` は小文字 `"true"` のみ受理。`"True"` 等はすべて `False` 扱い → フィールドが無効化されたように見える（silent） | なし | `bmpcfgd.py:27-28, 41-43` |
 | `BMP\|table` エントリが CONFIG_DB に存在しない状態で `load()` が呼ばれる | `load()` L39-43 | 全フィールドが `'false'` fallback → openbmpd を stop → reset → start（全テーブルダンプ無効で再起動）。YANG default の `bgp_neighbor_table=true` は反映されない | syslog LOG_NOTICE（設定値 `False, False, False`） | `bmpcfgd.py:39-44` |
 
@@ -251,7 +251,7 @@ show bmp
 
 ### STATE_DB / COUNTERS_DB への書込
 
-**なし。** `bmpcfgd.py` は STATE_DB・COUNTERS_DB へ接続・書込を行わない。
+**なし。** `bmpcfgd.py` は [STATE_DB](../../reference/glossary.md#term-state_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db) へ接続・書込を行わない。
 `frrcfgd.py` 内に "bmp" / "BMP" の参照はゼロ（確認: `frrcfgd.py` 全行 grep）。
 `bgpcfgd/managers_*.py` にも BMP 関連コードは存在しない。
 
@@ -293,7 +293,7 @@ def register_callbacks(self):
 ```
 
 - `ConfigDBConnector.listen()` が内部で Redis の **keyspace 通知** (`__keyspace@4__:BMP|*` の PSUBSCRIBE) を購読する。channel ベースの `ConsumerStateTable` 形式は使用しない。
-- CONFIG_DB への書き込み側（`config bmp` CLI / sonic-cfggen）は `HSET` のみを実行し、明示的な `PUBLISH` は行わない。Redis keyspace notification 機能が変更を通知する。
+- CONFIG_DB への書き込み側（`config bmp` CLI / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)）は `HSET` のみを実行し、明示的な `PUBLISH` は行わない。Redis keyspace notification 機能が変更を通知する。
 
 ### 起動時スナップショット
 
@@ -497,8 +497,8 @@ FRR テンプレートおよびデーモンコードに埋め込まれた定数�
 | ビルドフラグ `INCLUDE_SYSTEM_BMP` | `rules/config` でデフォルト `y`。プラットフォーム別 `.mk` による上書きなし | `sonic-buildimage/rules/config:163`、`platform/*/` 全 `.mk` 0 ヒット |
 | `bmpcfgd.py` の ASIC / namespace 分岐 | `device_info` / `is_multi_npu()` / `asic_id` / `namespace` への参照が全 98 行で 0 ヒット | `sonic-bmpcfgd/bmpcfgd/bmpcfgd.py` 全行 |
 | `frrcfgd.py` との関係 | `frrcfgd.py` 内に "bmp" / "BMP" 文字列が 0 ヒット。BMP は `frrcfgd` 経由なし | `sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` |
-| `docker-sonic-bmp` コンテナ | ベースは `docker-config-engine-bookworm` のみ。SAI / ASIC SDK 依存なし | `dockers/docker-sonic-bmp/Dockerfile.j2` |
-| SAI 経由の有無 | BMP は TCP レベルのアプリケーション層プロトコル。SAI / ASIC 非依存 | アーキテクチャ上自明 |
+| `docker-sonic-bmp` コンテナ | ベースは `docker-config-engine-bookworm` のみ。[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) 依存なし | `dockers/docker-sonic-bmp/Dockerfile.j2` |
+| [SAI](../../reference/glossary.md#term-sai) 経由の有無 | BMP は TCP レベルのアプリケーション層プロトコル。SAI / ASIC 非依存 | アーキテクチャ上自明 |
 
 multi-asic 構成でも `bmpcfgd` は host CONFIG_DB の `BMP` テーブルのみを購読し、`asicN` namespace への接続は実装されていない。
 <!-- /platform -->
@@ -522,7 +522,7 @@ multi-asic 構成でも `bmpcfgd` は host CONFIG_DB の `BMP` テーブルの�
 
 `bmpcfgd.py` は `BGP_NEIGHBOR` テーブルを直接購読しないが、`bgp_neighbor_table=true` の場合 openbmpd が `BGP_NEIGHBOR` の peer リストを BMP ダンプ対象として利用する。peer の追加・削除は `BGP_NEIGHBOR` テーブルの変更によって FRR bgpd → openbmpd に反映される。
 
-- ソース: `sonic-bgpcfgd/main.py` L87（`CFG_BGP_NEIGHBOR_TABLE_NAME` を bgpcfgd が処理）
+- ソース: `sonic-bgpcfgd/main.py` L87（`CFG_BGP_NEIGHBOR_TABLE_NAME` を [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が処理）
 
 ### CONFIG_DB.DEVICE_METADATA.bgp_asn（FRR テンプレート経由）
 
@@ -549,4 +549,4 @@ multi-asic 構成でも `bmpcfgd` は host CONFIG_DB の `BMP` テーブルの�
 
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 9e5a57a09d49 -->
+<!-- glossary-links-injected: cf2715cc523e -->

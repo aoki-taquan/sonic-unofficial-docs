@@ -35,8 +35,24 @@ related:
 `APPL_DB FIXED_MIRROR_SESSION_TABLE` は [P4RT](../../reference/glossary.md#term-p4rt) ランタイムが書き込む ERSPAN ミラーセッション定義テーブル。
 `p4orch` 内の `MirrorSessionManager` が [APPL_DB](../../reference/glossary.md#term-appl_db) を購読し、[SAI](../../reference/glossary.md#term-sai) MIRROR_SESSION オブジェクトに変換する[^1]。
 
-通常の CONFIG_DB `MIRROR_SESSION` テーブルとは独立したパスであり、P4RT 経由のプログラムにのみ利用される。
+通常の [CONFIG_DB](../../reference/glossary.md#term-config_db) `MIRROR_SESSION` テーブルとは独立したパスであり、P4RT 経由のプログラムにのみ利用される。
 セッションタイプは常に **ERSPAN (Enhanced Remote SPAN)** に固定され、GRE トンネルパラメータをすべて明示的に指定する必要がある。
+
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>MIRROR_SESSION")]
+  DM["MirrorOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_mirror_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
 
 ## key 構造
 
@@ -57,15 +73,15 @@ key は JSON 形式でエンコードされる。`<id>` は P4RT テーブルの
 | `param/src_mac` | mac-address | yes | - | ERSPAN 外側イーサネットの送信元 MAC |
 | `param/dst_mac` | mac-address | yes | - | ERSPAN 外側イーサネットの宛先 MAC |
 | `param/ttl` | hex uint8 | yes | - | ERSPAN 外側 IP の TTL (16 進数文字列) |
-| `param/tos` | hex uint8 | yes | - | ERSPAN 外側 IP の TOS (DSCP+ECN, 16 進数文字列) |
+| `param/tos` | hex uint8 | yes | - | ERSPAN 外側 IP の TOS ([DSCP](../../reference/glossary.md#term-dscp)+ECN, 16 進数文字列) |
 
 全フィールドが必須。1 つでも欠けると `processAddRequest()` が `SWSS_RC_INVALID_PARAM` を返しセッションは作成されない[^2]。
 
 ## 制約
 
-- `param/port` は物理ポート (`Port::Type::PHY`) のみ有効。VLAN / PortChannel は拒否される[^3]。
+- `param/port` は物理ポート (`Port::Type::PHY`) のみ有効。[VLAN](../../reference/glossary.md#term-vlan) / [PortChannel](../../reference/glossary.md#term-portchannel) は拒否される[^3]。
 - `action` は `mirror_as_ipv4_erspan` のみ有効。他の値は `SWSS_RC_INVALID_PARAM`[^4]。
-- APPL_DB のキー形式は JSON エンコード。パース失敗時は `SWSS_RC_INVALID_PARAM`[^4]。
+- [APPL_DB](../../reference/glossary.md#term-appl_db) のキー形式は JSON エンコード。パース失敗時は `SWSS_RC_INVALID_PARAM`[^4]。
 - 更新時は個別フィールドを部分的に送信できる (`has_*` フラグで管理)。
 
 <!-- defaults -->
@@ -86,12 +102,12 @@ key は JSON 形式でエンコードされる。`<id>` は P4RT テーブルの
 
 **IP ヘッダバージョン固定 = 4 — IPv6 ERSPAN 非対応**:
 `prepareSaiAttrs()` では `SAI_MIRROR_SESSION_ATTR_IPHDR_VERSION` に定数 `MIRROR_SESSION_DEFAULT_IP_HDR_VER = 4` を設定する。
-`src_ip` / `dst_ip` に IPv6 アドレスを渡しても、SAI には IPv4 ヘッダバージョンが設定されるため動作しない。
+`src_ip` / `dst_ip` に IPv6 アドレスを渡しても、[SAI](../../reference/glossary.md#term-sai) には IPv4 ヘッダバージョンが設定されるため動作しない。
 P4RT ERSPAN は IPv4 outer ヘッダのみサポート。
 
 **GRE type ハードコード = 0x88be — 設定変更不可**:
 `prepareSaiAttrs()` は `SAI_MIRROR_SESSION_ATTR_GRE_PROTOCOL_TYPE` に定数 `GRE_PROTOCOL_ERSPAN = 0x88be` をハードコードする。
-APP_DB に gre_type フィールドは存在せず変更できない。CONFIG_DB `MIRROR_SESSION.gre_type` (Mellanox で `0x8949`) のような platform 分岐もない。
+APP_DB に gre_type フィールドは存在せず変更できない。[CONFIG_DB](../../reference/glossary.md#term-config_db) `MIRROR_SESSION.gre_type` (Mellanox で `0x8949`) のような platform 分岐もない。
 
 **TOS と TTL は hex 文字列 — 0 は有効な値だが省略不可**:
 `deserializeP4MirrorSessionAppDbEntry()` は TOS / TTL を `std::stoul(value, 0, 16)` で 16 進数としてパースする。
@@ -104,7 +120,7 @@ APP_DB に gre_type フィールドは存在せず変更できない。CONFIG_DB
 
 <!-- evidence: sonic-swss/orchagent/p4orch/mirror_session_manager.h L20-21 / mirror_session_manager.cpp prepareSaiAttrs() L142-188, deserialize L281-313 / sonic-swss-common/common/schema.h L70 / orchagent/mirrororch.cpp L29, L40-45, L57-77 -->
 
-`FIXED_MIRROR_SESSION_TABLE` を処理する `MirrorSessionManager` は、SAI MIRROR_SESSION 属性のうち **session type / encap type / IP ヘッダバージョン / GRE protocol type / action 識別子 / TOS・TTL のパース基数** を C++ 定数としてハードコードしており、APP_DB / CONFIG_DB / 環境変数いずれからも上書きできない。CONFIG_DB 経路 (`MirrorOrch`) と異なり、Mellanox 等の platform 分岐も持たない。
+`FIXED_MIRROR_SESSION_TABLE` を処理する `MirrorSessionManager` は、[SAI](../../reference/glossary.md#term-sai) MIRROR_SESSION 属性のうち **session type / encap type / IP ヘッダバージョン / GRE protocol type / action 識別子 / TOS・TTL のパース基数** を C++ 定数としてハードコードしており、APP_DB / [CONFIG_DB](../../reference/glossary.md#term-config_db) / 環境変数いずれからも上書きできない。CONFIG_DB 経路 (`MirrorOrch`) と異なり、Mellanox 等の platform 分岐も持たない。
 
 ### 上書き不可な定数一覧 (P4RT 経路)
 
@@ -123,7 +139,7 @@ APP_DB に gre_type フィールドは存在せず変更できない。CONFIG_DB
 | 経路 | Mellanox (`platform=mellanox*`) | その他のプラットフォーム | 上書き手段 |
 |------|--------------------------------|----------------------|----------|
 | CONFIG_DB `MIRROR_SESSION` (`MirrorOrch`) | **`0x8949`** (`mirrororch.cpp:65-68`) | **`0x88be`** (`mirrororch.cpp:69-72`) | CLI で `gre_type` 明示指定すれば任意値で上書き可 |
-| APPL_DB `FIXED_MIRROR_SESSION_TABLE` (P4RT) | **`0x88be` (固定)** | **`0x88be` (固定)** | **上書き不可** (APP_DB に `gre_type` フィールドなし、platform 分岐コードなし) |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) `FIXED_MIRROR_SESSION_TABLE` (P4RT) | **`0x88be` (固定)** | **`0x88be` (固定)** | **上書き不可** (APP_DB に `gre_type` フィールドなし、platform 分岐コードなし) |
 
 → Mellanox Spectrum 上で P4RT 経由 ERSPAN を使うと SAI に `0x88be` が渡り、CONFIG_DB 経路で期待される `0x8949` と乖離する。詳細は本ページ「プラットフォーム差 (Phase H)」と `meta/_intermediate/cdb-flow/appl-mirror-platform.md` を参照。
 
@@ -131,18 +147,18 @@ APP_DB に gre_type フィールドは存在せず変更できない。CONFIG_DB
 
 CONFIG_DB 経路は `MIRROR_SESSION_POLICER = "policer"` (`mirrororch.cpp:29`) フィールドで `PolicerOrch::getPolicerOid()` を解決し `SAI_MIRROR_SESSION_ATTR_POLICER` を設定する (`mirrororch.cpp:1052-1064`)。一方 P4RT 経路の `P4MirrorSessionAppDbEntry` (`p4orch_util.h:253-279`) は ttl / tos / src_ip / dst_ip / src_mac / dst_mac / port のみを保持し、policer フィールド名や `SAI_MIRROR_SESSION_ATTR_POLICER` 設定は**コード上に存在しない**。
 
-→ P4RT 経由でのレートリミット (policer attach) は**サポート外**。QoS 制御が必要な場合は ACL meter (`acl_rule_manager.cpp::getMeterSaiAttrs`) 側で行う設計。
+→ P4RT 経由でのレートリミット (policer attach) は**サポート外**。[QoS](../../reference/glossary.md#term-qos) 制御が必要な場合は [ACL](../../reference/glossary.md#term-acl) meter (`acl_rule_manager.cpp::getMeterSaiAttrs`) 側で行う設計。
 
 ### UDP port 定数は不在
 
-`FIXED_MIRROR_SESSION_TABLE` の出力は ERSPAN over GRE (`SAI_ERSPAN_ENCAPSULATION_TYPE_MIRROR_L3_GRE_TUNNEL` 固定) であり、UDP encap (VXLAN/SFLOW 等) は対象外。`mirror_session_manager.{h,cpp}` 内に UDP destination port のハードコード定数 (例: 4789 / 6343) は**存在しない**。
+`FIXED_MIRROR_SESSION_TABLE` の出力は ERSPAN over GRE (`SAI_ERSPAN_ENCAPSULATION_TYPE_MIRROR_L3_GRE_TUNNEL` 固定) であり、UDP encap ([VXLAN](../../reference/glossary.md#term-vxlan)/SFLOW 等) は対象外。`mirror_session_manager.{h,cpp}` 内に UDP destination port のハードコード定数 (例: 4789 / 6343) は**存在しない**。
 
 ### DSCP 既定値は P4RT 側では効かない
 
-| 経路 | DSCP デフォルト | 入力フィールド | 備考 |
+| 経路 | [DSCP](../../reference/glossary.md#term-dscp) デフォルト | 入力フィールド | 備考 |
 |------|---------------|--------------|------|
 | CONFIG_DB `MIRROR_SESSION` (`MirrorOrch`) | **`8`** (CS1、`MirrorEntry::dscp(8)`, `mirrororch.cpp:59`) | `dscp` (省略可) | 範囲は `MIRROR_SESSION_DSCP_MIN..MAX = 0..63` (`mirrororch.cpp:40-42`)。`SAI_MIRROR_SESSION_ATTR_TOS = dscp << MIRROR_SESSION_DSCP_SHIFT` (`mirrororch.cpp:1016`) |
-| APPL_DB `FIXED_MIRROR_SESSION_TABLE` (P4RT) | (struct 初期値 `tos=0` だが**必須**) | `param/tos` (16 進文字列、TOS バイト全体 = DSCP+ECN) | `has_tos=false` のまま ADD すると `SWSS_RC_INVALID_PARAM`。デフォルトは実質適用されない |
+| APPL_DB `FIXED_MIRROR_SESSION_TABLE` (P4RT) | (struct 初期値 `tos=0` だが**必須**) | `param/tos` (16 進文字列、TOS バイト全体 = [DSCP](../../reference/glossary.md#term-dscp)+ECN) | `has_tos=false` のまま ADD すると `SWSS_RC_INVALID_PARAM`。デフォルトは実質適用されない |
 
 → P4RT 経路では DSCP の概念が表に出ず、TOS バイト全体を P4RT controller が組み立てて hex 文字列で渡す責務を負う。
 
@@ -200,7 +216,7 @@ CONFIG_DB 側 `MirrorOrch::doTask()` は `gPortsOrch->allPortsReady()` が false
 
 `prepareSaiAttrs()` は `port.m_type != Port::Type::PHY` の場合 `SWSS_RC_INVALID_PARAM` を即返す。port の type は同一 alias で変動しないため、後から PHY に切り替わる遷移は存在しない。
 
-→ 順序依存ではなく**設計時の制約**。LAG/VLAN を `param/port` に指定したエントリは何度再送しても受理されない。
+→ 順序依存ではなく**設計時の制約**。[LAG](../../reference/glossary.md#term-lag)/[VLAN](../../reference/glossary.md#term-vlan) を `param/port` に指定したエントリは何度再送しても受理されない。
 
 ### 3. drain() の head-of-line blocking — エラー発生で同一 drain 内の以降エントリが滞留
 
@@ -236,7 +252,7 @@ case SAI_ACL_ENTRY_ATTR_ACTION_MIRROR_EGRESS: {
 }
 ```
 
-P4RT ACL の `AclRuleManager` は mirror アクション処理で `m_p4OidMapper->getOID(SAI_OBJECT_TYPE_MIRROR_SESSION, ...)` を呼び、未登録なら `SWSS_RC_NOT_FOUND` で即失敗する。CONFIG_DB 側 `AclRuleMirror::create()` は `SUBJECT_TYPE_MIRROR_SESSION_CHANGE` 通知（`mirrororch.cpp:1095-1096, 1110-1111`）で後から activate される pending 機構を持つが、**p4orch の `AclRuleManager` には同等の遅延 activate 機構がない**。
+P4RT [ACL](../../reference/glossary.md#term-acl) の `AclRuleManager` は mirror アクション処理で `m_p4OidMapper->getOID(SAI_OBJECT_TYPE_MIRROR_SESSION, ...)` を呼び、未登録なら `SWSS_RC_NOT_FOUND` で即失敗する。CONFIG_DB 側 `AclRuleMirror::create()` は `SUBJECT_TYPE_MIRROR_SESSION_CHANGE` 通知（`mirrororch.cpp:1095-1096, 1110-1111`）で後から activate される pending 機構を持つが、**p4orch の `AclRuleManager` には同等の遅延 activate 機構がない**。
 
 → 順序依存: P4RT クライアントは「`FIXED_MIRROR_SESSION_TABLE` SET → publish 成功確認 → `ACL_*_TABLE` SET（mirror action 付き）」の順で発行すること。
 
@@ -252,7 +268,7 @@ P4RT ACL の `AclRuleManager` は mirror アクション処理で `m_p4OidMapper
 
 CONFIG_DB 側 `MirrorOrch::createEntry()` (`mirrororch.cpp:432-443`) は `MIRROR_SESSION_POLICER` フィールドに対して `m_policerOrch->policerExists()` をチェックし、未登録なら `task_need_retry` で **POLICER 先行を強制する**が、FIXED_MIRROR_SESSION_TABLE 経路ではこの依存は**ない**。
 
-→ 含意: P4RT で QoS 制御が必要な場合は ACL_RULE の meter (`getMeterSaiAttrs`, `acl_rule_manager.cpp:124-`) 側で行う設計。MIRROR_SESSION への policer attach は P4RT 経路では対象外。
+→ 含意: P4RT で [QoS](../../reference/glossary.md#term-qos) 制御が必要な場合は ACL_RULE の meter (`getMeterSaiAttrs`, `acl_rule_manager.cpp:124-`) 側で行う設計。MIRROR_SESSION への policer attach は P4RT 経路では対象外。
 
 ### 7. routeOrch / neighbor / fdb 動的解決は不在（ERSPAN 固定、dst_mac 直接指定）
 
@@ -267,11 +283,11 @@ P4RT 経路は `param/dst_mac` を **APPL_DB の必須フィールドとして�
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
 | 1 | PORT 初期化 → `FIXED_MIRROR_SESSION_TABLE` SET (`param/port`) | 強制先行（fail-fast、リトライなし） | P4RT クライアント側で再送 |
-| 2 | port は PHY 型 | 設計時制約（LAG/VLAN 不可） | 設計時に PHY を選定 |
+| 2 | port は PHY 型 | 設計時制約（[LAG](../../reference/glossary.md#term-lag)/[VLAN](../../reference/glossary.md#term-vlan) 不可） | 設計時に PHY を選定 |
 | 3 | drain() head-of-line blocking | バッチ内順序注意 | エラー発生ロットは個別再送 |
 | 4 | `FIXED_MIRROR_SESSION_TABLE` SET 完了 → ACL_RULE (mirror action) | 強制先行（pending 機構なし） | クライアントが SET 順序を保証 |
 | 5 | 新 port PortsOrch 登録済み → UPDATE 発行 | 強制先行 | 新 port 作成後に UPDATE |
-| 6 | policer 先行依存は**不在** | (CONFIG_DB との差異) | QoS 制御は ACL meter で |
+| 6 | policer 先行依存は**不在** | (CONFIG_DB との差異) | [QoS](../../reference/glossary.md#term-qos) 制御は [ACL](../../reference/glossary.md#term-acl) meter で |
 | 7 | route/neighbor/fdb 動的解決は**不在** | (CONFIG_DB との差異) | クライアント側で `dst_mac` 再解決 |
 
 詳細スキャンノート: `meta/_intermediate/cdb-flow/appl-mirror-ordering.md`
@@ -296,7 +312,7 @@ P4RT 経路は `param/dst_mac` を **APPL_DB の必須フィールドとして�
 | **ingress/egress mirror ASIC capability** | bind 前に `SwitchOrch::isPortIngressMirrorSupported()` / `isPortEgressMirrorSupported()` で fail-fast | チェックなし (P4RT はポート bind を行わない) | `mirrororch.cpp:816-826` |
 | **SAI mirror_session リソース枯渇チェック** | ADD 前に `sai_object_type_get_availability(SAI_OBJECT_TYPE_MIRROR_SESSION)` を呼ぶ | チェックなし (SAI create 失敗で初めて検出) | `mirrororch.cpp:357-379` |
 | **SAI_MIRROR_SESSION_ATTR_TC サポート差** | `queue=0` のとき TC 属性を付加しない (TC 非対応 ASIC への配慮) | TC 属性そのものを APP_DB スキーマに持たず、常に SAI デフォルト | `mirrororch.cpp:931-938` |
-| **Policer 連携** | `policer` フィールドで `PolicerOrch::getPolicerOid()` を解決し `SAI_MIRROR_SESSION_ATTR_POLICER` に設定 | **policer フィールド非対応** (連携不可) | `mirrororch.cpp:1052-1064` / `p4orch_util.h::P4MirrorSessionAppDbEntry` |
+| **[Policer](../../reference/glossary.md#term-policer) 連携** | `policer` フィールドで `PolicerOrch::getPolicerOid()` を解決し `SAI_MIRROR_SESSION_ATTR_POLICER` に設定 | **policer フィールド非対応** (連携不可) | `mirrororch.cpp:1052-1064` / `p4orch_util.h::P4MirrorSessionAppDbEntry` |
 
 ### プラットフォーム別 GRE type の取り扱い
 
@@ -312,12 +328,12 @@ P4RT 経路は `param/dst_mac` を **APPL_DB の必須フィールドとして�
 | `DEVICE_METADATA.localhost.switch_type` | CONFIG_DB ERSPAN monitor_port | CONFIG_DB ERSPAN DST_MAC | P4RT FIXED_MIRROR_SESSION |
 |---|---|---|---|
 | `voq` (分散シャーシ — Cisco 8000 等) | **recirc port** に強制差し替え | **`gMacAddress`** (router MAC) | 差し替えなし。`switch_type=voq` で実用可否は未定義 |
-| `switch` (一般スタンドアロン) | `neighborInfo.portId` (ARP/NDP 解決) | `neighborInfo.mac` | `param/port` / `param/dst_mac` をそのまま使用 |
+| `switch` (一般スタンドアロン) | `neighborInfo.portId` ([ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) 解決) | `neighborInfo.mac` | `param/port` / `param/dst_mac` をそのまま使用 |
 
 ### Multi-ASIC (namespace) サポート
 
-`MirrorSessionManager` 自体に multi-asic 固有の分岐コードはない。multi-asic シャーシ (Broadcom DNX / Cisco 8000) では asic namespace ごとに orchagent と APPL_DB インスタンスが起動するため、P4RT controller 側で asic を選択して APPL_DB に書き込む必要がある。
-namespace 間の整合性 (例: 同一 `mirror_session_id` を複数 asic に作成するか) は orchagent / SAI レベルでは強制されず、上位 P4RT controller の責務となる[^5]。
+`MirrorSessionManager` 自体に multi-asic 固有の分岐コードはない。multi-asic シャーシ (Broadcom DNX / Cisco 8000) では asic namespace ごとに [orchagent](../../reference/glossary.md#term-orchagent) と APPL_DB インスタンスが起動するため、P4RT controller 側で asic を選択して APPL_DB に書き込む必要がある。
+namespace 間の整合性 (例: 同一 `mirror_session_id` を複数 asic に作成するか) は [orchagent](../../reference/glossary.md#term-orchagent) / SAI レベルでは強制されず、上位 P4RT controller の責務となる[^5]。
 
 ### 既知の discrepancy (重要)
 
@@ -335,7 +351,7 @@ namespace 間の整合性 (例: 同一 `mirror_session_id` を複数 asic に作
 
 <!-- evidence: sonic-swss/orchagent/p4orch/p4orch.h L46 / p4orch.cpp L36-43, L80, L126-200 / orchagent/orchdaemon.cpp L848-849 / p4orch/mirror_session_manager.cpp L82, L111 -->
 
-`FIXED_MIRROR_SESSION_TABLE` は **通常の redis ConsumerStateTable / keyspace 通知パスではなく、専用 ZMQ チャネル経由で配送される**。
+`FIXED_MIRROR_SESSION_TABLE` は **通常の redis [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) / keyspace 通知パスではなく、専用 ZMQ チャネル経由で配送される**。
 これは CONFIG_DB `MIRROR_SESSION` を購読する `MirrorOrch`（`orchagent/mirrororch.cpp` — 通常の `Orch` + `ConsumerStateTable`）とは根本的に異なる通信モデルである[^pubsub-1]。
 
 ### 転送経路
@@ -352,7 +368,7 @@ namespace 間の整合性 (例: 同一 `mirror_session_id` を複数 asic に作
 
 - `Consumer` / `ConsumerStateTable` の redis SUBSCRIBE / keyspace 通知は **使わない**。トリガは redis イベントではなく ZMQ フレーム受信である。
 - そのため `redis-cli psubscribe '__keyspace@*__:FIXED_MIRROR_SESSION_TABLE*'` 等での観測はできない。
-- P4RT クライアントは ZMQ ソケットに対して書き込み、orchagent 側 `ZmqServer` がキューに積み、`P4Orch::doTask` が同期的にドレインする。
+- P4RT クライアントは ZMQ ソケットに対して書き込み、[orchagent](../../reference/glossary.md#term-orchagent) 側 `ZmqServer` がキューに積み、`P4Orch::doTask` が同期的にドレインする。
 - APPL_DB への書き込みは `ResponsePublisher` 経由で行われるが、これは下流リーダのための副作用であり、購読のトリガではない。
 
 ### コンストラクタの構造的証拠
@@ -385,7 +401,7 @@ P4Orch::P4Orch(swss::DBConnector* db, std::vector<std::string> tableNames,
 
 ### APPL_STATE_DB — ResponsePublisher 経由のレスポンス
 
-`MirrorSessionManager` 自身は STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB に直接書込まない。唯一の副次書込は親 `P4Orch` が保持する `ResponsePublisher m_publisher` 経由の APPL_STATE_DB 応答テーブルへの publish である。
+`MirrorSessionManager` 自身は [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に直接書込まない。唯一の副次書込は親 `P4Orch` が保持する `ResponsePublisher m_publisher` 経由の APPL_STATE_DB 応答テーブルへの publish である。
 
 ```cpp
 // orchagent/p4orch/p4orch.cpp:38-43 (P4Orch constructor)
@@ -413,7 +429,7 @@ m_publisher->publish(APP_P4RT_TABLE_NAME, kfvKey(key_op_fvs_tuple),
 
 `mirror_session_manager.h` および `mirror_session_manager.cpp` には `STATE_DB` / `COUNTERS_DB` / `FLEX_COUNTER_DB` を扱う `DBConnector` / `Table` / `FlexCounterManager` メンバが**一切存在しない**。CONFIG_DB 経路 `MirrorOrch` が書く `STATE_DB MIRROR_SESSION_TABLE.status` (`"active"` / `"inactive"`) は P4RT 経路では発火しない。
 
-mirror session 単位の SAI カウンタは P4RT / CONFIG_DB の**どちらの経路でも** COUNTERS_DB / FLEX_COUNTER_DB に登録されない (mirror 連携カウンタは `ACL_*_TABLE` 側の ACL_COUNTER 経路で扱う)。
+mirror session 単位の SAI カウンタは P4RT / CONFIG_DB の**どちらの経路でも** [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に登録されない (mirror 連携カウンタは `ACL_*_TABLE` 側の ACL_COUNTER 経路で扱う)。
 
 ### 副次効果としての非 DB 内部状態更新 (参考)
 
@@ -426,10 +442,10 @@ DB 書込ではないが、`MirrorSessionManager` ハンドラは以下のプロ
 
 | 副次 DB | CONFIG_DB `MIRROR_SESSION` (`MirrorOrch`) | APPL_DB `FIXED_MIRROR_SESSION_TABLE` (P4RT) |
 |---|---|---|
-| STATE_DB `MIRROR_SESSION_TABLE` | `status` を `"active"` / `"inactive"` で更新 | **書込みなし** |
+| [STATE_DB](../../reference/glossary.md#term-state_db) `MIRROR_SESSION_TABLE` | `status` を `"active"` / `"inactive"` で更新 | **書込みなし** |
 | APPL_STATE_DB レスポンス | 書込みなし | **`ResponsePublisher` で `ReturnCode` を publish** |
-| COUNTERS_DB | 書込みなし (session 単位カウンタなし) | 書込みなし |
-| FLEX_COUNTER_DB | 書込みなし | 書込みなし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | 書込みなし (session 単位カウンタなし) | 書込みなし |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | 書込みなし | 書込みなし |
 
 ### 副次効果の確認コマンド
 
@@ -441,12 +457,11 @@ sonic-db-cli APPL_STATE_DB keys 'FIXED_MIRROR_SESSION_TABLE*'
 sonic-db-cli STATE_DB keys 'MIRROR_SESSION_TABLE*'
 ```
 
-> **証跡**: `P4Orch::m_publisher` 宣言 `orchagent/p4orch/p4orch.cpp:36-43`、`m_publisher->publish(...)` 呼出 `orchagent/p4orch/mirror_session_manager.cpp:82, 111`、STATE_DB / COUNTERS_DB Table メンバ不在 `orchagent/p4orch/mirror_session_manager.h` 全体、CONFIG_DB 経路 `STATE_DB MIRROR_SESSION_TABLE.status` 書込は `orchagent/mirrororch.cpp` 側の `MirrorOrch::setSessionState()` 経路。詳細分析: `meta/_intermediate/cdb-flow/appl-mirror-side.md`
+> **証跡**: `P4Orch::m_publisher` 宣言 `orchagent/p4orch/p4orch.cpp:36-43`、`m_publisher->publish(...)` 呼出 `orchagent/p4orch/mirror_session_manager.cpp:82, 111`、[STATE_DB](../../reference/glossary.md#term-state_db) / COUNTERS_DB Table メンバ不在 `orchagent/p4orch/mirror_session_manager.h` 全体、CONFIG_DB 経路 `STATE_DB MIRROR_SESSION_TABLE.status` 書込は `orchagent/mirrororch.cpp` 側の `MirrorOrch::setSessionState()` 経路。詳細分析: `meta/_intermediate/cdb-flow/appl-mirror-side.md`
 
 [^side-1]: `MirrorSessionManager` クラス定義 (`orchagent/p4orch/mirror_session_manager.h`) には STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB を扱う `Table` / `DBConnector` メンバが存在せず、`mirror_session_manager.cpp` も該当 API 呼出を行わない。唯一の副次 DB 書込は親 `P4Orch::m_publisher` (`ResponsePublisher`) 経由の APPL_STATE_DB 応答。<https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L82>
 
 <!-- /side-effects -->
-
 
 <!-- failure -->
 ## 失敗挙動 (Phase D)
@@ -468,7 +483,7 @@ CONFIG_DB 側 `MirrorOrch` (`orchagent/mirrororch.cpp`) と比較すると、P4R
 | 5 | `param/src_mac` / `dst_mac` パース失敗 | 同 L255-279 | `SWSS_RC_INVALID_PARAM` | なし |
 | 6 | `param/ttl` / `tos` パース失敗 (`std::stoul(value, 0, 16)` 例外) | 同 L281-305 | `SWSS_RC_INVALID_PARAM` | なし |
 | 7 | **`param/port` が PortsOrch 未登録**（port readiness 不足） | `deserializeP4MirrorSessionAppDbEntry()` L213-218、`prepareSaiAttrs()` L122-129 | `SWSS_RC_NOT_FOUND`。drain `break`。CONFIG_DB 側 `allPortsReady()` ガード相当が**存在しない**ため即失敗確定 | **なし** (P4RT クライアントが再送)。`m_toSync` 滞留は P4RT 経路では起きない |
-| 8 | `param/port` が非 PHY (LAG / VLAN) | 同 L219-225、L130-136 | `SWSS_RC_INVALID_PARAM` | なし (設計時制約。alias で port 種別固定) |
+| 8 | `param/port` が非 PHY ([LAG](../../reference/glossary.md#term-lag) / VLAN) | 同 L219-225、L130-136 | `SWSS_RC_INVALID_PARAM` | なし (設計時制約。alias で port 種別固定) |
 | 9 | ADD 時の必須フィールド不足 (`has_*` のいずれか false) | `processAddRequest()` L344-360 | `SWSS_RC_INVALID_PARAM`。`createMirrorSession()` 未呼出 | なし |
 | 10 | ADD 時に OID マッパに同 key 既存 (内部不整合) | `createMirrorSession()` L370-375 | `RETURN_INTERNAL_ERROR_AND_RAISE_CRITICAL`。**CRITICAL state 通知** | なし (criticald 経由で orchagent restart) |
 | 11 | **SAI `create_mirror_session()` 失敗** | `createMirrorSession()` L381-384 | `CHECK_ERROR_AND_LOG_AND_RETURN` で `SWSS_LOG_ERROR` + ReturnCode 変換 return。ref count / OID マッパ / 内部テーブルは未更新 | **なし** (Orch 共通 `handleSaiCreateStatus` の `task_need_retry` 経路は使われない) |
@@ -491,8 +506,8 @@ CONFIG_DB 側 `MirrorOrch` (`orchagent/mirrororch.cpp`) と比較すると、P4R
 |---|---|---|
 | `allPortsReady()` 前置 | あり (`mirrororch.cpp:1567-1574`、PORT 初期化完了まで `doTask()` 全体スキップ) | **なし** (即 `SWSS_RC_NOT_FOUND`) |
 | `task_need_retry` による `m_toSync` 残置 | あり (一時 SAI エラー等は次周回再試行) | **なし** (drain で `break`、未実行は publisher 通知のみ) |
-| NEXTHOP/NEIGH/FDB 解決待ち retry | あり (`mirrororch.cpp:160-198, 760-808`、`SUBJECT_TYPE_*_CHANGE` observer で `updateSession()`) | **なし** (`dst_mac` 直接受領の fail-fast) |
-| Policer 未準備時の `task_need_retry` | あり (`mirrororch.cpp:432-443`、POLICER 先行強制) | **なし** (policer フィールド自体が APPL_DB に無い) |
+| NEXTHOP/NEIGH/[FDB](../../reference/glossary.md#term-fdb) 解決待ち retry | あり (`mirrororch.cpp:160-198, 760-808`、`SUBJECT_TYPE_*_CHANGE` observer で `updateSession()`) | **なし** (`dst_mac` 直接受領の fail-fast) |
+| [Policer](../../reference/glossary.md#term-policer) 未準備時の `task_need_retry` | あり (`mirrororch.cpp:432-443`、POLICER 先行強制) | **なし** (policer フィールド自体が APPL_DB に無い) |
 | SAI mirror_session リソース availability チェック | あり (`mirrororch.cpp:357-379`、ADD 前に `sai_object_type_get_availability`) | **なし** (SAI create 失敗で初めて検出) |
 | ingress/egress mirror ASIC capability チェック | あり (`mirrororch.cpp:816-826`、`SwitchOrch::isPortIngressMirrorSupported()` で fail-fast) | **なし** (P4RT は session 単体作成のみ、bind は ACL_RULE 側) |
 
@@ -551,7 +566,7 @@ redis-cli -n 1 KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_MIRROR_SESSION*'
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`FIXED_MIRROR_SESSION_TABLE` は P4RT 専用 APPL_DB テーブルで YANG モデルを持たない。以下はすべて実装レベルの暗黙参照。
+`FIXED_MIRROR_SESSION_TABLE` は P4RT 専用 APPL_DB テーブルで [YANG](../../reference/glossary.md#term-yang) モデルを持たない。以下はすべて実装レベルの暗黙参照。
 CONFIG_DB 側 `MIRROR_SESSION` (`MirrorOrch`) との **差異 (= P4RT 経路に存在しない依存)** を負の evidence として明示する。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
@@ -580,7 +595,7 @@ CONFIG_DB 側 `MIRROR_SESSION` (`MirrorOrch`) との **差異 (= P4RT 経路に�
 ## 購読者
 
 - `p4orch` 内の `MirrorSessionManager` (`orchagent/p4orch/mirror_session_manager.cpp`)。`P4Orch::doTask(ConsumerBase&)` から ZMQ 経由で配送される
-- CONFIG_DB `MIRROR_SESSION` テーブルの `MirrorOrch` とは独立した別経路（redis ConsumerStateTable ベース）
+- CONFIG_DB `MIRROR_SESSION` テーブルの `MirrorOrch` とは独立した別経路（redis [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) ベース）
 
 ## 関連リファレンス
 
@@ -603,3 +618,5 @@ sonic-db-cli APPL_DB hgetall 'FIXED_MIRROR_SESSION_TABLE|{"match/mirror_session_
 [^4]: `deserializeP4MirrorSessionAppDbEntry()`: `orchagent/p4orch/mirror_session_manager.cpp` L190-323. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L190-L323>
 [^5]: `MirrorEntry::MirrorEntry()` での GRE type platform 分岐: `orchagent/mirrororch.cpp` L57-77. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/mirrororch.cpp#L57-L77>
 [^6]: `MirrorSessionManager::drain()` と `prepareSaiAttrs()` の書込み順依存: `orchagent/p4orch/mirror_session_manager.cpp` L62-188. CONFIG_DB 経路の `MirrorOrch::doTask()` (`orchagent/mirrororch.cpp` L1567-1611) と動的解決機構 (L160-198, L760-808) との対比は `meta/_intermediate/cdb-flow/appl-mirror-ordering.md` を参照。 <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/mirror_session_manager.cpp#L62-L188>
+
+<!-- glossary-links-injected: d7d3e3e098f4 -->

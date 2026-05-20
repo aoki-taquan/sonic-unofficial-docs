@@ -140,12 +140,12 @@ CONFIG_DB `BGP_ALLOWED_PREFIXES` テーブルの変更に伴って `bgpcfgd` の
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `managers_allow_list.py` を `Producer`/`Table(`/`hset`/`publish`/`Notification`/`APPL_DB` で grep して 0 ヒット。出力経路は `self.cfg_mgr.push_list(cmds)` (`managers_allow_list.py:176, 209`) と `self.cfg_mgr.restart_peer_groups(peer_groups)` (`managers_allow_list.py:178, 211`) のみ |
-| STATE_DB | なし | `managers_allow_list.py` 全体に `STATE_DB` / `state_db` 参照なし。`self.cfg_mgr` (FRR ConfigMgr) のみで `state_db_conn` を保持しない |
-| COUNTERS_DB | なし | `managers_allow_list.py` 全体に `COUNTERS_DB` 参照なし。ALLOW_LIST は BGP UPDATE 経路フィルタのため統計テーブルも存在しない |
-| その他 (ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由 (段階 3 トレース参照、BGP UPDATE フィルタは FRR ユーザ空間で完結)。`sonic-swss/` で `BGP_ALLOWED_PREFIXES` を grep して 0 ヒット (購読 mgrd/orchagent なし) |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `managers_allow_list.py` を `Producer`/`Table(`/`hset`/`publish`/`Notification`/`APPL_DB` で grep して 0 ヒット。出力経路は `self.cfg_mgr.push_list(cmds)` (`managers_allow_list.py:176, 209`) と `self.cfg_mgr.restart_peer_groups(peer_groups)` (`managers_allow_list.py:178, 211`) のみ |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `managers_allow_list.py` 全体に `STATE_DB` / `state_db` 参照なし。`self.cfg_mgr` (FRR ConfigMgr) のみで `state_db_conn` を保持しない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `managers_allow_list.py` 全体に `COUNTERS_DB` 参照なし。ALLOW_LIST は [BGP](../../reference/glossary.md#term-bgp) UPDATE 経路フィルタのため統計テーブルも存在しない |
+| その他 ([ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db)) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由 (段階 3 トレース参照、[BGP](../../reference/glossary.md#term-bgp) UPDATE フィルタは FRR ユーザ空間で完結)。`sonic-swss/` で `BGP_ALLOWED_PREFIXES` を grep して 0 ヒット (購読 mgrd/[orchagent](../../reference/glossary.md#term-orchagent) なし) |
 
-主購読者 `BGPAllowListMgr.set_handler()` / `del_handler()` の副作用は `__update_policy()` / `__remove_policy()` 内の `cfg_mgr.push_list()` 呼出による FRR vtysh への route-map / prefix-list / community-list 投入 (`managers_allow_list.py:167-176, 200-207`) と、`__find_peer_group()` で逆引きした peer-group に対する `restart_peer_groups()` (BGP soft clear) のみ。Redis (CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB) を経由しない。
+主購読者 `BGPAllowListMgr.set_handler()` / `del_handler()` の副作用は `__update_policy()` / `__remove_policy()` 内の `cfg_mgr.push_list()` 呼出による FRR vtysh への route-map / prefix-list / community-list 投入 (`managers_allow_list.py:167-176, 200-207`) と、`__find_peer_group()` で逆引きした peer-group に対する `restart_peer_groups()` (BGP soft clear) のみ。[Redis](../../reference/glossary.md#term-redis) (CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db)) を経由しない。
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-allowed-prefixes-side.md` を参照。
 <!-- /side-effects -->
@@ -282,12 +282,12 @@ CONFIG_DB から変更不可。
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**ASIC・ベンダー依存はないが、`switch_type` と `type/subtype` で FRR route-map 生成テンプレートが分岐する**。テーブル処理ロジック自体 (`managers_allow_list.py`) はプラットフォーム非依存だが、ALLOW_LIST がぶら下がる `FROM_BGP_PEER_V4/V6` ポリシーの末尾処理が VOQ chassis (chassis-packet) で差し替わり、追加の DEFAULT prefix-list ブロックは UpstreamLC な SpineRouter でのみ生成される。
+**ASIC・ベンダー依存はないが、`switch_type` と `type/subtype` で FRR route-map 生成テンプレートが分岐する**。テーブル処理ロジック自体 (`managers_allow_list.py`) はプラットフォーム非依存だが、ALLOW_LIST がぶら下がる `FROM_BGP_PEER_V4/V6` ポリシーの末尾処理が [VOQ](../../reference/glossary.md#term-voq) chassis (chassis-packet) で差し替わり、追加の DEFAULT prefix-list ブロックは UpstreamLC な SpineRouter でのみ生成される。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
 | ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | BGP_ALLOWED_PREFIXES → FRR prefix-list / route-map → BGP UPDATE フィルタは [FRR](../../reference/glossary.md#term-frr) ユーザ空間で完結、[SAI](../../reference/glossary.md#term-sai) 非経由 |
-| HwSku | 影響なし | `managers_allow_list.py` および `policies.conf.j2` を `hwsku` で grep して 0 ヒット |
+| [HwSku](../../reference/glossary.md#term-hwsku) | 影響なし | `managers_allow_list.py` および `policies.conf.j2` を `hwsku` で grep して 0 ヒット |
 | multi-asic (`is_multi_npu` true) | 実質影響なし | 各 `asicN` namespace の `bgpcfgd` プロセスが同一バイナリで独立に処理。テーブル処理に差は出ない |
 | `switch_type == 'chassis-packet'` | **分岐あり** | `policies.conf.j2:48,71` で `route-map FROM_BGP_PEER_V4/V6 permit 13` の `set tag` が `route_do_not_send_appdb_tag` → `route_eligible_for_fallback_to_default_tag` に切り替わる (chassis-packet LC では fallback default 用にマーク) |
 | `type=='SpineRouter' and subtype=='UpstreamLC'` | **分岐あり** | route-map permit 12/13 (DEFAULT_IPV4/V6 マッチ + tag/community 付与) は UpstreamLC な SpineRouter でのみ生成 (`policies.conf.j2:41,64`)。それ以外のロールでは ALLOW_LIST 不一致経路は `permit 11 → permit 100` で素通り |
@@ -385,7 +385,6 @@ vtysh -c 'show running-config bgp'
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -448,7 +447,7 @@ vtysh -c 'show running-config bgp'
 
 | 先行テーブル / 条件 | 依存の内容 | コード根拠 |
 |-------------------|-----------|-----------|
-| `constants.yml` (`bgp.allow_list.enabled`, `drop_community`, `default_action`, `default_pl_rules`, `prefix_match_tag`) | `BGPAllowListMgr.__init__` 時点で `self.enabled` / `self.prefix_match_tag` / `constants_v4/v6` が確定。constants 変更は bgpcfgd 再起動まで反映されない | `managers_allow_list.py:45-47, 699-734, 652-664` |
+| `constants.yml` (`bgp.allow_list.enabled`, `drop_community`, `default_action`, `default_pl_rules`, `prefix_match_tag`) | `BGPAllowListMgr.__init__` 時点で `self.enabled` / `self.prefix_match_tag` / `constants_v4/v6` が確定。constants 変更は [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) 再起動まで反映されない | `managers_allow_list.py:45-47, 699-734, 652-664` |
 | `DEVICE_METADATA|localhost.{type, subtype, switch_type}` | `policies.conf.j2` のレンダ条件 (`SpineRouter`+`UpstreamLC` 限定の `permit 12/13`、`chassis-packet` で `set tag` 値が分岐)。bgpcfgd 起動前に確定が必要 | `policies.conf.j2:40-54, 63-77` |
 | `policies.conf.j2` 起動時レンダ | `route-map FROM_BGP_PEER_V4/V6 permit 10 call ALLOW_LIST_DEPLOYMENT_ID_0_V4/V6`、`bgp community-list standard allow_list_default_community`、deployment_id=0 の `permit 65535` は **template 起動時に一度だけ** 生成。これより前に `BGP_ALLOWED_PREFIXES` を SET しても prefix-list が peer に紐付かない | `policies.conf.j2:17-32, 34-38, 57-61` |
 | `BGP_NEIGHBOR` / `BGP_PEER_RANGE` (peer-group 定義) | `__update_policy` 末尾の `__find_peer_group()` が vtysh running-config を grep して deployment_id に紐づく peer-group を抽出 → `restart_peer_groups()` で soft-clear。peer-group 未存在のままだと soft-clear 空振りで**フィルタが有効化されない** | `managers_allow_list.py:177-178, 595-697` |
@@ -547,7 +546,7 @@ vtysh -c 'show running-config bgp'
 
 ### 購読方式
 
-`bgpcfgd` は `swss::SubscriberStateTable` を 1 本の `swsscommon.Select` ループで束ねる**集中 dispatcher** 構成。テーブルごとに subscriber を 1 つ作り、`Runner.run()` が `select(1000ms)` → `subscriber.pop()` → 各 Manager の `handler(key, op, fvs)` に振り分ける。`BGP_ALLOWED_PREFIXES` は `main.py:94` で `BGPAllowListMgr(common_objs, "CONFIG_DB", "BGP_ALLOWED_PREFIXES")` として登録され、`Runner.add_manager` が `SubscriberStateTable(CONFIG_DB_conn, "BGP_ALLOWED_PREFIXES")` を生成して `swsscommon.Select` に追加する (`runner.py:47-52`)。`ConsumerStateTable` / `NotificationConsumer` / `ProducerStateTable` は使用せず、APPL_DB / STATE_DB 中継もない。
+`bgpcfgd` は `swss::SubscriberStateTable` を 1 本の `swsscommon.Select` ループで束ねる**集中 dispatcher** 構成。テーブルごとに subscriber を 1 つ作り、`Runner.run()` が `select(1000ms)` → `subscriber.pop()` → 各 Manager の `handler(key, op, fvs)` に振り分ける。`BGP_ALLOWED_PREFIXES` は `main.py:94` で `BGPAllowListMgr(common_objs, "CONFIG_DB", "BGP_ALLOWED_PREFIXES")` として登録され、`Runner.add_manager` が `SubscriberStateTable(CONFIG_DB_conn, "BGP_ALLOWED_PREFIXES")` を生成して `swsscommon.Select` に追加する (`runner.py:47-52`)。`ConsumerStateTable` / `NotificationConsumer` / `ProducerStateTable` は使用せず、[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) 中継もない。
 
 ### dispatch チェーン
 
@@ -565,7 +564,7 @@ vtysh -c 'show running-config bgp'
 
 | 項目 | 値 |
 |------|-----|
-| Redis DB 番号 | 4 (`SonicDBConfig.getDbId("CONFIG_DB")`) |
+| [Redis](../../reference/glossary.md#term-redis) DB 番号 | 4 (`SonicDBConfig.getDbId("CONFIG_DB")`) |
 | PSUBSCRIBE パターン | `__keyspace@4__:BGP_ALLOWED_PREFIXES\|*` (libswsscommon の `SubscriberStateTable` が内部で張る) |
 | Select timeout | 1000 ms (`runner.py:21` `SELECT_TIMEOUT = 1000`) |
 | 起動時スナップショット | あり — `SubscriberStateTable` 生成時に既存キーを内部キューに enqueue (swsscommon 標準挙動)。`bgpcfgd` 側に明示の全量 fetch は無い |
@@ -612,4 +611,4 @@ CONFIG_DB write から FRR 反映まで通常**≤ 1 秒** (Select timeout = 100
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_allow_list.py:38 -->
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 43ff039eae38 -->
+<!-- glossary-links-injected: 6df21cca5fe5 -->

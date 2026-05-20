@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-[`DEVICE_NEIGHBOR`](./device-neighbor.md) テーブルは **直接接続される隣接機器と自スイッチポートの対応表** として CONFIG_DB に永続化される。  
+[`DEVICE_NEIGHBOR`](./device-neighbor.md) テーブルは **直接接続される隣接機器と自スイッチポートの対応表** として [CONFIG_DB](../../reference/glossary.md#term-config_db) に永続化される。  
 設定テーブルとしての役割に加え、複数のランタイム daemon が DEVICE_NEIGHBOR の **key 集合**（= ローカルポート名の集合）を「外部ポート一覧」として動的に参照する。このページでは、各 consumer がどのようなコード由来デフォルト・副作用を持つかを整理する。
 
 <!-- cdb-mermaid -->
@@ -44,7 +44,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>DEVICE_NEIGHBOR")]
-  DM["pfcwd / ecnconfig<br/>show interfaces / bgpcfgd"]
+  DM["lldpmgrd"]
   CDB --> DM
 ```
 
@@ -131,18 +131,18 @@ if len(self.ports_key) == 0:
 
 現行実装での lldpmgrd が subscribe するテーブルは次の 3 つのみ:
 
-- `APP_PORT_TABLE_NAME` (APPL_DB) — port oper_status 変化
-- `CFG_MGMT_INTERFACE_TABLE_NAME` (CONFIG_DB) — 管理 IP 変化
+- `APP_PORT_TABLE_NAME` ([APPL_DB](../../reference/glossary.md#term-appl_db)) — port oper_status 変化
+- `CFG_MGMT_INTERFACE_TABLE_NAME` ([CONFIG_DB](../../reference/glossary.md#term-config_db)) — 管理 IP 変化
 - `CFG_DEVICE_METADATA_TABLE_NAME` (CONFIG_DB) — hostname 変化
 
 DEVICE_NEIGHBOR は**まったく購読されていない**。lldpmgrd の動作に DEVICE_NEIGHBOR の内容は現状影響しない。
 
 ### bgpcfgd — DEVICE_NEIGHBOR_METADATA 依存待機
 
-bgpcfgd (`managers_bgp.py:139-140,219-224`) は DEVICE_NEIGHBOR 本体ではなく **DEVICE_NEIGHBOR_METADATA** を依存テーブルとして登録する。
+[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) (`managers_bgp.py:139-140,219-224`) は DEVICE_NEIGHBOR 本体ではなく **DEVICE_NEIGHBOR_METADATA** を依存テーブルとして登録する。
 
 - `check_neig_meta = True` の場合のみ `CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME` を deps に追加
-- BGP neighbor の `set_handler` で `data['name']` が DEVICE_NEIGHBOR_METADATA に不在の場合 → `return False`（延期）
+- [BGP](../../reference/glossary.md#term-bgp) neighbor の `set_handler` で `data['name']` が DEVICE_NEIGHBOR_METADATA に不在の場合 → `return False`（延期）
 - テーブル到着後に directory メカニズムが自動再処理
 
 <!-- ordering -->
@@ -156,7 +156,7 @@ DEVICE_NEIGHBOR テーブルは **consumer が起動時に一括読み出し（`
 |---|----------|------|--------|
 | 1 | DEVICE_NEIGHBOR 書込み → `pfcwd start_default` 実行 | **強制先行**（起動時スナップショット） | pfcwd は起動時に `get_table` でスナップショット取得。後から追加されたエントリは反映されない |
 | 2 | DEVICE_NEIGHBOR 書込み → `ecnconfig` 起動 | **強制先行**（起動時スナップショット） | 空テーブル状態で ecnconfig が起動すると Exception が発生し、操作が不可能になる |
-| 3 | DEVICE_NEIGHBOR 書込み → DEVICE_NEIGHBOR_METADATA 書込み → `bgpcfgd` BGP peer 処理 | **2 段前提**（check_neig_meta 有効時） | bgpcfgd は `data['name']` が DEVICE_NEIGHBOR_METADATA に存在するまで `return False` でハンドラを延期し続ける（managers_bgp.py:219-224） |
+| 3 | DEVICE_NEIGHBOR 書込み → DEVICE_NEIGHBOR_METADATA 書込み → `bgpcfgd` [BGP](../../reference/glossary.md#term-bgp) peer 処理 | **2 段前提**（check_neig_meta 有効時） | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は `data['name']` が DEVICE_NEIGHBOR_METADATA に存在するまで `return False` でハンドラを延期し続ける（managers_bgp.py:219-224） |
 | 4 | DEVICE_NEIGHBOR_METADATA `type='server'` 書込み → `pfcwd get_server_facing_ports` 実行 | **強制先行** | DEVICE_NEIGHBOR に行が存在しても DEVICE_NEIGHBOR_METADATA に `type='server'` がなければ VLAN_MEMBER フォールバックへ移行する |
 | 5 | DEVICE_NEIGHBOR 書込み → `show interfaces neighbor expected` 実行 | 任意（表示のみ） | テーブルが None の場合は "not present" を表示して即 return。runtime への影響なし |
 
@@ -166,7 +166,7 @@ DEVICE_NEIGHBOR テーブルは **consumer が起動時に一括読み出し（`
 
 **ecnconfig の起動前条件 (依存 #2)**: `ecnconfig` (`scripts/ecnconfig:282-287`) は DEVICE_NEIGHBOR が空の場合に `Exception("No active ports detected in table 'DEVICE_NEIGHBOR'")` を raise して停止する。このため、DEVICE_NEIGHBOR の書込みが完了する前に ecnconfig コマンドを実行すると、コマンド自体が失敗する。multi-ASIC 環境では `SYSTEM_PORT_TABLE` を代替として使用するためこの制約は生じない。
 
-**bgpcfgd の 2 段前提 (依存 #3)**: bgpcfgd の `BGPPeerMgrBase` は `check_neig_meta` が有効な場合、`deps` に `CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME` を追加する。BGP neighbor の `set_handler` 内で `data['name']`（= DEVICE_NEIGHBOR の `name` フィールド値）が DEVICE_NEIGHBOR_METADATA に存在しない場合、`return False` を返してハンドラを延期する。DEVICE_NEIGHBOR_METADATA が書き込まれるまで BGP セッション確立処理が進まない。DEVICE_NEIGHBOR 書込み → DEVICE_NEIGHBOR_METADATA 書込み の 2 段順序が必要（evidence: `managers_bgp.py:118-150,219-224`）。
+**[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) の 2 段前提 (依存 #3)**: bgpcfgd の `BGPPeerMgrBase` は `check_neig_meta` が有効な場合、`deps` に `CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME` を追加する。[BGP](../../reference/glossary.md#term-bgp) neighbor の `set_handler` 内で `data['name']`（= DEVICE_NEIGHBOR の `name` フィールド値）が DEVICE_NEIGHBOR_METADATA に存在しない場合、`return False` を返してハンドラを延期する。DEVICE_NEIGHBOR_METADATA が書き込まれるまで BGP セッション確立処理が進まない。DEVICE_NEIGHBOR 書込み → DEVICE_NEIGHBOR_METADATA 書込み の 2 段順序が必要（evidence: `managers_bgp.py:118-150,219-224`）。
 
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:282-287`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-150,219-224`
 <!-- /ordering -->
@@ -181,7 +181,7 @@ DEVICE_NEIGHBOR は **consumer が `get_table` で一括読み出しする**参�
 | `DEVICE_NEIGHBOR_METADATA\|<name>` (CONFIG_DB) | key 転写 + フィールド参照 | 常時。pfcwd は `candidates[port]['name']` をキーとして DEVICE_NEIGHBOR_METADATA の `type` を照合。bgpcfgd は `data['name']` が DEVICE_NEIGHBOR_METADATA に存在するかチェック | `pfcwd/main.py:98-104`, `managers_bgp.py:220-224` |
 | `VLAN_MEMBER` (CONFIG_DB) | フォールバック参照 | `pfcwd get_server_facing_ports` でサーバー向けポートが 0 件の場合にのみ参照。DEVICE_NEIGHBOR がすべて非 `server` 型か空の場合に適用 | `pfcwd/main.py:106-107` |
 | `PORT` (CONFIG_DB) | バックプレーンポート列挙 | `pfcwd start_default` が `get_bp_ports()` を通じて `PORT` テーブルを読み、`role='Int'` かつ `admin_status='up'` のポートを `active_ports` に追加 | `pfcwd/main.py:111-119,413-416` |
-| `DEVICE_METADATA\|localhost` (CONFIG_DB) | フィールド参照 | `pfcwd start_default` が `default_pfcwd_status` フィールドを読み、`'enable'` でない場合は `pfcwd start_default` が即 return（DEVICE_NEIGHBOR を読んでも PFC WD を設定しない） | `pfcwd/main.py:408-419` |
+| `DEVICE_METADATA\|localhost` (CONFIG_DB) | フィールド参照 | `pfcwd start_default` が `default_pfcwd_status` フィールドを読み、`'enable'` でない場合は `pfcwd start_default` が即 return（DEVICE_NEIGHBOR を読んでも [PFC](../../reference/glossary.md#term-pfc) WD を設定しない） | `pfcwd/main.py:408-419` |
 
 !!! note "DEVICE_NEIGHBOR は「ポート集合の源泉」"
     各 consumer は DEVICE_NEIGHBOR のキー集合（= 外部ポート名一覧）を取得した後、そのポート名を使って他テーブル（DEVICE_NEIGHBOR_METADATA・PORT）を参照する。DEVICE_NEIGHBOR 自体のフィールド（`name` 以外）を直接利用する consumer はほとんどなく、キーのみを利用するパターンが支配的。
@@ -195,7 +195,7 @@ DEVICE_NEIGHBOR は **consumer が `get_table` で一括読み出しする**参�
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
-DEVICE_NEIGHBOR は CONFIG_DB の読み取り専用テーブルとして機能し、各 consumer が起動時にスナップショット取得（`get_table`）する。orchagent のような retry/ack ループは存在しないため、失敗は「consumer の動作停止」「サイレントな縮退」「処理延期」のいずれかで現れる。
+DEVICE_NEIGHBOR は CONFIG_DB の読み取り専用テーブルとして機能し、各 consumer が起動時にスナップショット取得（`get_table`）する。[orchagent](../../reference/glossary.md#term-orchagent) のような retry/ack ループは存在しないため、失敗は「consumer の動作停止」「サイレントな縮退」「処理延期」のいずれかで現れる。
 
 ### consumer 別失敗パターン
 
@@ -224,11 +224,11 @@ DEVICE_NEIGHBOR は CONFIG_DB の読み取り専用テーブルとして機能�
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-DEVICE_NEIGHBOR テーブルの consumer（主に `pfcwd`・`ecnconfig`）が内部で使用するハードコード定数を整理する。これらの定数は YANG / CONFIG_DB に設定項目として存在せず、コードに直接埋め込まれている。
+DEVICE_NEIGHBOR テーブルの consumer（主に `pfcwd`・`ecnconfig`）が内部で使用するハードコード定数を整理する。これらの定数は [YANG](../../reference/glossary.md#term-yang) / CONFIG_DB に設定項目として存在せず、コードに直接埋め込まれている。
 
 ### pfcwd — `start_default` で適用されるデフォルト値
 
-`pfcwd start_default` (`pfcwd/main.py:36-41,421-434`) は DEVICE_NEIGHBOR のキー集合（外部ポート一覧）を取得した後、以下のハードコード定数を用いて各ポートの PFC Watchdog パラメータを自動計算する。
+`pfcwd start_default` (`pfcwd/main.py:36-41,421-434`) は DEVICE_NEIGHBOR のキー集合（外部ポート一覧）を取得した後、以下のハードコード定数を用いて各ポートの [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) パラメータを自動計算する。
 
 | 定数名 | 値 | 用途 | 参照箇所 |
 |--------|-----|------|---------|
@@ -237,8 +237,8 @@ DEVICE_NEIGHBOR テーブルの consumer（主に `pfcwd`・`ecnconfig`）が内
 | `MAX_POLL_INTERVAL_TIME` | `1000` (ms) | `pfc_wd_poll_interval_time` の上限。超過時は 1000 ms にクランプ | `pfcwd/main.py:36,427-428` |
 | `DEFAULT_DETECTION_TIME` | `200` (ms) | `detection_time = DEFAULT_DETECTION_TIME * multiply` | `pfcwd/main.py:37,431` |
 | `DEFAULT_RESTORATION_TIME` | `200` (ms) | `restoration_time = DEFAULT_RESTORATION_TIME * multiply` | `pfcwd/main.py:38,432` |
-| `DEFAULT_ACTION` | `'drop'` | PFC ストーム検出時のデフォルトアクション（drop / forward / alert から選択） | `pfcwd/main.py:41,433` |
-| `DEFAULT_PFC_HISTORY_STATUS` | `"disable"` | PFC 統計履歴機能のデフォルト無効化 | `pfcwd/main.py:42,434` |
+| `DEFAULT_ACTION` | `'drop'` | [PFC](../../reference/glossary.md#term-pfc) ストーム検出時のデフォルトアクション（drop / forward / alert から選択） | `pfcwd/main.py:41,433` |
+| `DEFAULT_PFC_HISTORY_STATUS` | `"disable"` | [PFC](../../reference/glossary.md#term-pfc) 統計履歴機能のデフォルト無効化 | `pfcwd/main.py:42,434` |
 
 !!! note "スケーリングロジック"
     `multiply = max(1, (port_num-1)//32+1)` は ポート数 `port_num`（`PORT` テーブルのキー数）を 32 単位で切り上げる。例: ポート 1〜32 では multiply=1、33〜64 では multiply=2。`detection_time`・`restoration_time`・`POLL_INTERVAL` がこの乗数でスケールする（`pfcwd/main.py:424-432`）。DEVICE_NEIGHBOR のエントリ数ではなく **PORT テーブルのキー数**がスケールの基準である点に注意。
@@ -352,13 +352,13 @@ DEVICE_NEIGHBOR テーブルへの SET/DEL が直接引き起こす CONFIG_DB �
 
 ### `ecnconfig` — DB 書込なし（読取専用）
 
-`ecnconfig` は DEVICE_NEIGHBOR を起動時に読み取ってポートスコープを決定するが、DEVICE_NEIGHBOR への SET/DEL によって他 DB への書込は発生しない。`ecnconfig` が書き込む対象は CONFIG_DB の `DEVICE_NEIGHBOR` ではなく `TC_TO_QUEUE_MAP` / `DSCP_TO_TC_MAP` 等の QoS テーブルであり、DEVICE_NEIGHBOR はポート選択フィルタとして使われるのみ。
+`ecnconfig` は DEVICE_NEIGHBOR を起動時に読み取ってポートスコープを決定するが、DEVICE_NEIGHBOR への SET/DEL によって他 DB への書込は発生しない。`ecnconfig` が書き込む対象は CONFIG_DB の `DEVICE_NEIGHBOR` ではなく `TC_TO_QUEUE_MAP` / `DSCP_TO_TC_MAP` 等の [QoS](../../reference/glossary.md#term-qos) テーブルであり、DEVICE_NEIGHBOR はポート選択フィルタとして使われるのみ。
 
 > evidence: `sonic-utilities` `scripts/ecnconfig:282-293`
 
 ### `bgpcfgd` — DB 書込なし（CONFIG_DB 読取 + BGP セッション処理）
 
-`bgpcfgd` は `DEVICE_NEIGHBOR_METADATA` を通じて間接的に DEVICE_NEIGHBOR の内容を参照するが、DEVICE_NEIGHBOR への SET/DEL によって他 DB への直接書込は発生しない。BGP セッション確立（FRR への Zebra 通知）はプロセス間通信で行われ、DB 書込の形をとらない。
+`bgpcfgd` は `DEVICE_NEIGHBOR_METADATA` を通じて間接的に DEVICE_NEIGHBOR の内容を参照するが、DEVICE_NEIGHBOR への SET/DEL によって他 DB への直接書込は発生しない。BGP セッション確立（[FRR](../../reference/glossary.md#term-frr) への Zebra 通知）はプロセス間通信で行われ、DB 書込の形をとらない。
 
 > evidence: `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-150,219-224`
 
@@ -401,7 +401,7 @@ DEVICE_NEIGHBOR テーブルへの SET/DEL が直接引き起こす CONFIG_DB �
 #       Config DB and update LLDP config upon changes.
 ```
 
-現時点で DEVICE_NEIGHBOR への subscribe は実装されていない。lldpmgrd が購読するのは `APP_PORT_TABLE_NAME`（APPL_DB）・`CFG_MGMT_INTERFACE_TABLE_NAME`・`CFG_DEVICE_METADATA_TABLE_NAME`（CONFIG_DB）の 3 テーブルのみ。
+現時点で DEVICE_NEIGHBOR への subscribe は実装されていない。lldpmgrd が購読するのは `APP_PORT_TABLE_NAME`（[APPL_DB](../../reference/glossary.md#term-appl_db)）・`CFG_MGMT_INTERFACE_TABLE_NAME`・`CFG_DEVICE_METADATA_TABLE_NAME`（CONFIG_DB）の 3 テーブルのみ。
 
 ### bgpcfgd — DEVICE_NEIGHBOR_METADATA を購読（DEVICE_NEIGHBOR 本体は対象外）
 
@@ -409,7 +409,7 @@ DEVICE_NEIGHBOR テーブルへの SET/DEL が直接引き起こす CONFIG_DB �
 
 ### keyspace 通知の実効的な受信者なし
 
-DEVICE_NEIGHBOR は CONFIG_DB に保存される永続テーブルであり TTL なし。Redis への `HSET` 操作は keyspace 通知を発行するが、それを受信する継続的 subscriber は現行実装に存在しない。このため **DEVICE_NEIGHBOR への変更はリアルタイムでは伝搬されない**。各 consumer は起動時または実行時の一回限りのスナップショットで動作し、ランタイムの変更は consumer 再起動（または pfcwd start_default / ecnconfig の再実行）まで反映されない。
+DEVICE_NEIGHBOR は CONFIG_DB に保存される永続テーブルであり TTL なし。[Redis](../../reference/glossary.md#term-redis) への `HSET` 操作は keyspace 通知を発行するが、それを受信する継続的 subscriber は現行実装に存在しない。このため **DEVICE_NEIGHBOR への変更はリアルタイムでは伝搬されない**。各 consumer は起動時または実行時の一回限りのスナップショットで動作し、ランタイムの変更は consumer 再起動（または pfcwd start_default / ecnconfig の再実行）まで反映されない。
 
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:282-293`; `show/interfaces/__init__.py:310-320`; `sonic-buildimage` `dockers/docker-lldp/lldpmgrd:12-14`; `src/sonic-bgpcfgd/bgpcfgd/runner.py:21,49-52`; `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:139-140,219-224`; 中間調査 `meta/_intermediate/cdb-flow/deviceop-state-pubsub.md`
 <!-- /pubsub -->
@@ -510,7 +510,7 @@ multi-ASIC 環境では各ネームスペース（`asic0` / `asic1` / ...）に�
 
 ### フィールド別コード由来挙動
 
-| フィールド | YANG default | コード由来挙動 | カテゴリ |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード由来挙動 | カテゴリ |
 |-----------|-------------|----------------|---------|
 | `peer_name` (key) | なし（必須） | pfcwd / ecnconfig が key 集合を外部ポート一覧として使用。空テーブル → pfcwd: 外部ポートなし / ecnconfig: Exception | 複合必須制約 |
 | `name` | なし | bgpcfgd: DEVICE_NEIGHBOR_METADATA に不在 → `return False` 延期。lldpmgrd は参照しない（dead consumer） | 前提条件依存 + dead consumer |
@@ -559,7 +559,7 @@ pfcwd は空テーブルをサイレントに処理（外部ポートなしと�
 ### 典型値
 
 - DEVICE_NEIGHBOR が空の場合、`ecnconfig` コマンドは `Exception("No active ports detected...")` で停止する。
-- pfcwd は DEVICE_NEIGHBOR が空でも動作するが、外部ポートに対する PFC Watchdog が有効化されない。
+- pfcwd は DEVICE_NEIGHBOR が空でも動作するが、外部ポートに対する [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) が有効化されない。
 - `show interfaces neighbor expected` は DEVICE_NEIGHBOR と DEVICE_NEIGHBOR_METADATA の両テーブルが存在することを前提とする。
 
 ### よくある誤設定
@@ -582,7 +582,7 @@ pfcwd show ports
 | consumer | 条件 | 挙動 |
 |---|---|---|
 | ecnconfig (非 multi-ASIC) | DEVICE_NEIGHBOR テーブルが空 | `Exception("No active ports detected in table 'DEVICE_NEIGHBOR'")` を raise して停止（ecnconfig:287） |
-| pfcwd start_default | DEVICE_NEIGHBOR テーブルが空 | 外部ポートを空リストとして処理し、バックプレーンポートのみで PFC Watchdog を設定（pfcwd/main.py:413-416） |
+| pfcwd start_default | DEVICE_NEIGHBOR テーブルが空 | 外部ポートを空リストとして処理し、バックプレーンポートのみで [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) を設定（pfcwd/main.py:413-416） |
 | pfcwd get_server_facing_ports | DEVICE_NEIGHBOR に `name` フィールド欠落エントリあり | `KeyError` が発生し pfcwd の起動シーケンスが中断する（pfcwd/main.py:102） |
 | pfcwd get_server_facing_ports | DEVICE_NEIGHBOR_METADATA に `type=='server'` エントリがない | VLAN_MEMBER をフォールバックとして使用（pfcwd/main.py:106-107） |
 | show interfaces neighbor expected | DEVICE_NEIGHBOR が None | `"DEVICE_NEIGHBOR information is not present."` を表示して即 return（show/interfaces/__init__.py:317-319） |
@@ -591,3 +591,5 @@ pfcwd show ports
 
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:282-287`; `show/interfaces/__init__.py:317-319,346-348`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:221-223`
 <!-- /cdb-exceptions -->
+
+<!-- glossary-links-injected: 84c709a9728b -->

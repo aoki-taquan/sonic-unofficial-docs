@@ -28,10 +28,10 @@ related:
 
 ## 概要
 
-`APPL_DB:LABEL_ROUTE_TABLE` は MPLS **incoming-label ルート**（inseg エントリ）を保持するテーブル。
-`fpmsyncd` がカーネルの netlink メッセージ（`RTM_NEWROUTE` / `RTM_DELROUTE`、アドレスファミリ MPLS）を
+`APPL_DB:LABEL_ROUTE_TABLE` は [MPLS](../../reference/glossary.md#term-mpls) **incoming-label ルート**（inseg エントリ）を保持するテーブル。
+`fpmsyncd` がカーネルの netlink メッセージ（`RTM_NEWROUTE` / `RTM_DELROUTE`、アドレスファミリ [MPLS](../../reference/glossary.md#term-mpls)）を
 受信すると `LabelRouteTableFieldValueTupleWrapper` を通じて書き込む。
-`routeorch` の `doLabelTask()` がこのテーブルを購読し、SAI `inseg_entry` を作成・更新・削除する。
+`routeorch` の `doLabelTask()` がこのテーブルを購読し、[SAI](../../reference/glossary.md#term-sai) `inseg_entry` を作成・更新・削除する。
 
 <!-- cdb-mermaid -->
 ### データフロー
@@ -60,20 +60,20 @@ LABEL_ROUTE_TABLE|<incoming-label>
 LABEL_ROUTE_TABLE|<vrf-name>:<incoming-label>
 ```
 
-- `<incoming-label>`: 受信 MPLS ラベル値（uint32）
-- `<vrf-name>`: VRF 名（非デフォルト VRF の場合。現在 fpmsyncd は非デフォルト VRF の MPLS ルートを `SWSS_LOG_INFO` のみ出力してスキップする）
+- `<incoming-label>`: 受信 [MPLS](../../reference/glossary.md#term-mpls) ラベル値（uint32）
+- `<vrf-name>`: [VRF](../../reference/glossary.md#term-vrf) 名（非デフォルト [VRF](../../reference/glossary.md#term-vrf) の場合。現在 [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) は非デフォルト [VRF](../../reference/glossary.md#term-vrf) の MPLS ルートを `SWSS_LOG_INFO` のみ出力してスキップする）
 
 ## フィールド
 
 | フィールド | 型 | デフォルト | 説明 |
 |-----------|----|-----------|------|
-| `nexthop` | string | `""` (省略) | outgoing ゲートウェイ IP アドレスのカンマ区切りリスト。ECMP 時は複数エントリをカンマで並べる |
+| `nexthop` | string | `""` (省略) | outgoing ゲートウェイ IP アドレスのカンマ区切りリスト。[ECMP](../../reference/glossary.md#term-ecmp) 時は複数エントリをカンマで並べる |
 | `ifname` | string | `""` (省略) | 出力インタフェース名のカンマ区切りリスト。`nexthop` と要素数を一致させる必要がある |
 | `mpls_nh` | string | `""` (省略) | outgoing MPLS ラベル操作のカンマ区切りリスト。`push<N>` / `swap<N>` / `na`（IP 転送）の形式 |
-| `mpls_pop` | string | `""` (省略、fpmsyncd は常に `"1"` を書く) | 受信ラベルを pop する段数。SAI `SAI_INSEG_ENTRY_ATTR_NUM_OF_POP` にマップされる |
+| `mpls_pop` | string | `""` (省略、[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) は常に `"1"` を書く) | 受信ラベルを pop する段数。[SAI](../../reference/glossary.md#term-sai) `SAI_INSEG_ENTRY_ATTR_NUM_OF_POP` にマップされる |
 | `blackhole` | boolean string | `"false"` (省略) | `"true"` のとき `SAI_PACKET_ACTION_DROP` を設定するブラックホールルート |
 | `protocol` | string | `""` (省略) | ルート起源プロトコル名。Linux rt_protos 由来（例: `"bgp"`, `"zebra"`, `"static"`）。省略時は routeorch が無視 |
-| `weight` | string | `""` (省略) | ECMP ネクストホップ重みのカンマ区切りリスト。省略時は均等分散 |
+| `weight` | string | `""` (省略) | [ECMP](../../reference/glossary.md#term-ecmp) ネクストホップ重みのカンマ区切りリスト。省略時は均等分散 |
 | `nexthop_group` | string | `""` (省略) | NhgOrch が管理する NHG インデックス。指定時は `nexthop`/`ifname` と排他 |
 
 <!-- defaults -->
@@ -186,9 +186,9 @@ if (alsv.size() == 0 && !blackhole)
 
 ## 制約・注意事項
 
-- 非デフォルト VRF の MPLS ルートは現在 fpmsyncd がスキップする（`SWSS_LOG_INFO` のみ）
+- 非デフォルト VRF の MPLS ルートは現在 [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) がスキップする（`SWSS_LOG_INFO` のみ）
 - `nexthop_group` と `nexthop`/`ifname` の同時指定はエラー (`SWSS_LOG_ERROR`)
-- `mpls_pop` は SAI の `SAI_INSEG_ENTRY_ATTR_NUM_OF_POP` に直接マップ。0 の場合はラベル pop なし
+- `mpls_pop` は [SAI](../../reference/glossary.md#term-sai) の `SAI_INSEG_ENTRY_ATTR_NUM_OF_POP` に直接マップ。0 の場合はラベル pop なし
 - `mpls_nh` の `push<N>` は SAI_OUTSEG_TYPE_PUSH、`swap<N>` は SAI_OUTSEG_TYPE_SWAP として解釈される
 
 ## 購読者
@@ -202,15 +202,15 @@ if (alsv.size() == 0 && !blackhole)
 <!-- side-effects -->
 ## 副次 DB 書込
 
-APPL_DB `LABEL_ROUTE_TABLE` の SET / DEL に対して、`routeorch::doLabelTask()`
+[APPL_DB](../../reference/glossary.md#term-appl_db) `LABEL_ROUTE_TABLE` の SET / DEL に対して、`routeorch::doLabelTask()`
 (`orchagent/mplsrouteorch.cpp`) および `nhgorch` の MPLS NH 経路 (`isLabeled()` 分岐) は
-**STATE_DB / COUNTERS_DB / APPL_STATE_DB への副次書き込みを一切行わない**。
+**[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / APPL_STATE_DB への副次書き込みを一切行わない**。
 副作用は SAI `inseg_entry` および MPLS NH (SAI `next_hop`) オブジェクトの ASIC 反映に閉じる。
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| STATE_DB | なし | `mplsrouteorch.cpp` / `nhgorch.cpp` に `m_stateDb` / `STATE_DB` 参照なし。`routeorch.cpp:294` の `m_stateDefaultRouteTb->set()` は IPv4/IPv6 デフォルトルート (`APP_ROUTE_TABLE_NAME`) 経路でのみ呼ばれ、`doTask` (`routeorch.cpp:618`) は `APP_LABEL_ROUTE_TABLE_NAME` のとき `doLabelTask` 呼出後 `return;` するため MPLS 経路には波及しない |
-| COUNTERS_DB | なし | `mplsrouteorch.cpp` / `nhgorch.cpp` に `FlexCounter` / `COUNTERS_DB` 参照なし。SAI `inseg_entry` 用カウンタは未統合 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `mplsrouteorch.cpp` / `nhgorch.cpp` に `m_stateDb` / `STATE_DB` 参照なし。`routeorch.cpp:294` の `m_stateDefaultRouteTb->set()` は IPv4/IPv6 デフォルトルート (`APP_ROUTE_TABLE_NAME`) 経路でのみ呼ばれ、`doTask` (`routeorch.cpp:618`) は `APP_LABEL_ROUTE_TABLE_NAME` のとき `doLabelTask` 呼出後 `return;` するため MPLS 経路には波及しない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `mplsrouteorch.cpp` / `nhgorch.cpp` に `FlexCounter` / `COUNTERS_DB` 参照なし。SAI `inseg_entry` 用カウンタは未統合 |
 | APPL_STATE_DB | なし | `routeorch.cpp:3201` の `m_publisher.publish(APP_ROUTE_TABLE_NAME, ...)` は `ROUTE_TABLE` キー固定で、`LABEL_ROUTE_TABLE` に対する APPL_STATE_DB ミラーは存在しない |
 
 詳細な走査ログは `meta/_intermediate/cdb-flow/appl-mpls-route-side.md` を参照。
@@ -219,16 +219,16 @@ APPL_DB `LABEL_ROUTE_TABLE` の SET / DEL に対して、`routeorch::doLabelTask
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`mplsrouteorch.cpp` / `nhgorch.cpp` / `routeorch.cpp` / `saihelper.cpp` / `crmorch.cpp` の MPLS 経路を全文走査した結果、APPL_DB `LABEL_ROUTE_TABLE` の orchagent 処理はコミュニティ master 上で **コード上プラットフォーム非依存**である。実質的な差は SAI ベンダー実装側（`inseg_entry` サポートの有無、`sai_object_type_get_availability` の精度）に閉じ、CONFIG_DB / APPL_DB スキーマ・キー構造には現れない。
+`mplsrouteorch.cpp` / `nhgorch.cpp` / `routeorch.cpp` / `saihelper.cpp` / `crmorch.cpp` の MPLS 経路を全文走査した結果、[APPL_DB](../../reference/glossary.md#term-appl_db) `LABEL_ROUTE_TABLE` の [orchagent](../../reference/glossary.md#term-orchagent) 処理はコミュニティ master 上で **コード上プラットフォーム非依存**である。実質的な差は SAI ベンダー実装側（`inseg_entry` サポートの有無、`sai_object_type_get_availability` の精度）に閉じ、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) スキーマ・キー構造には現れない。
 
 | 観点 | 差の有無 | 根拠 | ソース |
 |---|---|---|---|
 | SAI MPLS inseg_entry capability の runtime 問い合わせ | **なし** | `sai_query_attribute_capability` / `sai_object_type_query` for INSEG が `mplsrouteorch.cpp` / `nhgorch.cpp` に 0 件。`SAI_API_MPLS` は `saihelper.cpp:220` で起動時に一括 `sai_api_query()` され、runtime での有効/無効判定パスは存在しない | `saihelper.cpp:220,284` |
-| inseg_entry 非サポート ASIC での挙動 | **差あり (SAI 層)** | `gLabelRouteBulker.create_entry()` が `SAI_STATUS_NOT_SUPPORTED` を返した場合、`handleSaiSetStatus(SAI_API_MPLS, status)` に委譲され retry 永続。CONFIG_DB によるガード・無効化スイッチは実装なし | `mplsrouteorch.cpp:742,781,794,835` |
+| inseg_entry 非サポート ASIC での挙動 | **差あり (SAI 層)** | `gLabelRouteBulker.create_entry()` が `SAI_STATUS_NOT_SUPPORTED` を返した場合、`handleSaiSetStatus(SAI_API_MPLS, status)` に委譲され retry 永続。[CONFIG_DB](../../reference/glossary.md#term-config_db) によるガード・無効化スイッチは実装なし | `mplsrouteorch.cpp:742,781,794,835` |
 | `SAI_SWITCH_ATTR_AVAILABLE_*` による MPLS 上限取得 | **なし** | `CRM_MPLS_INSEG` / `CRM_MPLS_NEXTHOP` は `crmResSaiAvailAttrMap` に**エントリなし**。`sai_object_type_get_availability(SAI_OBJECT_TYPE_INSEG_ENTRY, ...)` 汎用パスで取得するため、精度はベンダー SAI 実装に依存 | `crmorch.cpp:113,801,854` |
 | switch type voq/chassis/fabric 分岐 (MPLS inseg 直接) | **なし** | `mplsrouteorch.cpp` / `nhgorch.cpp` に `gMySwitchType` / `voq` / `chassis` / `fabric` 参照 0 件 | — |
-| voq による NHG 上限クランプの副次的影響 | **差あり (間接)** | voq 環境では `routeorch.cpp:109` で `maxEcmpGroupSize` が 128 にクランプされ、`doLabelTask` の NHG 上限チェック (`mplsrouteorch.cpp:310-316`) に波及。MPLS ECMP NHG の最大メンバー数が 128 に制限される | `routeorch.cpp:109`, `mplsrouteorch.cpp:310-316` |
-| VOQ Chassis inter-ASIC MPLS 転送 | **なし (orchagent 外)** | 各ラインカードが独立した `swss` コンテナを持ち `doLabelTask` を独立実行。inter-ASIC MPLS forwarding は SAI / ASIC ファブリック層の責務で orchagent には可視でない | — |
+| voq による NHG 上限クランプの副次的影響 | **差あり (間接)** | voq 環境では `routeorch.cpp:109` で `maxEcmpGroupSize` が 128 にクランプされ、`doLabelTask` の NHG 上限チェック (`mplsrouteorch.cpp:310-316`) に波及。MPLS [ECMP](../../reference/glossary.md#term-ecmp) NHG の最大メンバー数が 128 に制限される | `routeorch.cpp:109`, `mplsrouteorch.cpp:310-316` |
+| [VOQ](../../reference/glossary.md#term-voq) Chassis inter-ASIC MPLS 転送 | **なし ([orchagent](../../reference/glossary.md#term-orchagent) 外)** | 各ラインカードが独立した `swss` コンテナを持ち `doLabelTask` を独立実行。inter-ASIC MPLS forwarding は SAI / ASIC ファブリック層の責務で [orchagent](../../reference/glossary.md#term-orchagent) には可視でない | — |
 | multi-asic namespace 特殊化 | **なし** | `mplsrouteorch.cpp` / `nhgorch.cpp` / `onLabelRouteMsg()` に `namespace` / `asic_id` 参照 0 件。各 asic-namespace は独立 swss コンテナで同一ロジックを実行 | — |
 | VRF 制限 (プラットフォーム非依存) | **あり** | `fpmsyncd/routesync.cpp:2674-2681` で非デフォルト VRF (`master_index != 0`) は `SWSS_LOG_INFO("Unsupported Non-default VRF")` のみでスキップ。ASIC タイプとは無関係な fpmsyncd 全体の制約 | `routesync.cpp:2674-2681` |
 
@@ -241,23 +241,23 @@ APPL_DB `LABEL_ROUTE_TABLE` の SET / DEL に対して、`routeorch::doLabelTask
 > **調査根拠**: `mplsrouteorch.cpp`, `nhgorch.cpp`, `routeorch.cpp` の MPLS 経路を全行精読 (2026-05-15)
 > 詳細証跡: `meta/_intermediate/cdb-flow/appl-mpls-route-cross-refs.md`
 
-`APPL_DB:LABEL_ROUTE_TABLE` は YANG モデルを持たないが、`routeorch::doLabelTask()` および `NhgOrch` の MPLS NH 分岐 (`isLabeled()`) を介して以下のオブジェクト/テーブルを実行時に暗黙参照する。
+`APPL_DB:LABEL_ROUTE_TABLE` は [YANG](../../reference/glossary.md#term-yang) モデルを持たないが、`routeorch::doLabelTask()` および `NhgOrch` の MPLS NH 分岐 (`isLabeled()`) を介して以下のオブジェクト/テーブルを実行時に暗黙参照する。
 
-| 参照先 | DB / Orch | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
+| 参照先 | DB / Orch | 参照方向 | [YANG](../../reference/glossary.md#term-yang) leafref | 実装上の必須度 | 証拠 |
 |---|---|---|---|---|---|
 | NextHop (IP / MPLS) | NeighOrch → SAI `next_hop` | 実行時参照 | なし | 必須 | mplsrouteorch.cpp:514-540, nhgorch.cpp:544-585 |
-| NEIGH (ARP/NDP) | APPL_DB `NEIGH_TABLE` / kernel | 解決前提・未解決時は retry | なし | 必須 (非 intf NH) | mplsrouteorch.cpp:520, 538, 559 |
+| NEIGH ([ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp)) | APPL_DB `NEIGH_TABLE` / kernel | 解決前提・未解決時は retry | なし | 必須 (非 intf NH) | mplsrouteorch.cpp:520, 538, 559 |
 | INTF (Router Interface) | IntfsOrch → SAI `router_interface` | 実行時参照 | なし | 必須 (intf NH) | mplsrouteorch.cpp:503, 707; nhgorch.cpp:542 |
 | NHG (NhgOrch / CbfNhgOrch) | APPL_DB `NEXT_HOP_GROUP_TABLE` | 実行時参照 (`nexthop_group` 指定時) | なし | 条件付き必須 | mplsrouteorch.cpp:157-170, 256-267, 483-490 |
 | VRF | VrfOrch (`CONFIG_DB:VRF`) | 実行時参照 (`Vrf<name>:` キー時) | なし | 条件付き必須 | mplsrouteorch.cpp:107-118, 474, 957 |
 
 ### NEXTHOP / NEIGH — neighbor 解決連動の retry
 
-`addLabelRoute()` は非 intf NH について `m_neighOrch->hasNextHop()` / `getNextHopId()` で SAI NH OID を引き、未存在かつ MPLS NH の場合は IP neighbor 解決済みなら `m_neighOrch->addNextHop(ctx)` で MPLS NH を新規生成する (`mplsrouteorch.cpp:514-527`)。ARP/NDP 未解決時は `resolveNeighbor()` を発火して `return false`（retry サイクル）。NHG メンバ生成 (`nhgorch.cpp:563-585`) も同じパターンで NeighOrch 経由で解決を待つ。
+`addLabelRoute()` は非 intf NH について `m_neighOrch->hasNextHop()` / `getNextHopId()` で SAI NH OID を引き、未存在かつ MPLS NH の場合は IP neighbor 解決済みなら `m_neighOrch->addNextHop(ctx)` で MPLS NH を新規生成する (`mplsrouteorch.cpp:514-527`)。[ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) 未解決時は `resolveNeighbor()` を発火して `return false`（retry サイクル）。NHG メンバ生成 (`nhgorch.cpp:563-585`) も同じパターンで NeighOrch 経由で解決を待つ。
 
 ### INTF — directly connected NH の前提
 
-`nexthop.isIntfNextHop()` の場合は `m_intfsOrch->getRouterIntfsId(nexthop.alias)` で RIF OID を取得し、`SAI_NULL_OBJECT_ID` のときは retry (`mplsrouteorch.cpp:503-510, 707-723`)。RIF が出来上がるまで inseg は ASIC に反映されない。
+`nexthop.isIntfNextHop()` の場合は `m_intfsOrch->getRouterIntfsId(nexthop.alias)` で [RIF](../../reference/glossary.md#term-rif) OID を取得し、`SAI_NULL_OBJECT_ID` のときは retry (`mplsrouteorch.cpp:503-510, 707-723`)。[RIF](../../reference/glossary.md#term-rif) が出来上がるまで inseg は ASIC に反映されない。
 
 ### NHG — NhgOrch / CbfNhgOrch 二段参照
 
@@ -265,7 +265,7 @@ APPL_DB `LABEL_ROUTE_TABLE` の SET / DEL に対して、`routeorch::doLabelTask
 
 ### VRF — `<vrf-name>:<label>` プレフィックス
 
-キーが `VRF_PREFIX`（`"Vrf"`）で始まるとき `m_vrfOrch->isVRFexists()` + `getVRFid()` で SAI VRF OID を取得 (`mplsrouteorch.cpp:107-118`)。**現状 fpmsyncd は非デフォルト VRF の MPLS ルートを生成しない** (`routesync.cpp:2674-2681`) ため、本暗黙参照は手動 APPL_DB 書込・サードパーティ FPM クライアント経由でのみ顕在化する。
+キーが `VRF_PREFIX`（`"Vrf"`）で始まるとき `m_vrfOrch->isVRFexists()` + `getVRFid()` で SAI VRF OID を取得 (`mplsrouteorch.cpp:107-118`)。**現状 fpmsyncd は非デフォルト VRF の MPLS ルートを生成しない** (`routesync.cpp:2674-2681`) ため、本暗黙参照は手動 APPL_DB 書込・サードパーティ [FPM](../../reference/glossary.md#term-fpm) クライアント経由でのみ顕在化する。
 
 ### SAI 参照
 
@@ -274,7 +274,7 @@ APPL_DB `LABEL_ROUTE_TABLE` の SET / DEL に対して、`routeorch::doLabelTask
 
 ### YANG leafref
 
-APPL_DB は YANG 非対応のため leafref は **存在しない**。本セクションの参照はすべて C++ 実装上の暗黙依存。
+APPL_DB は [YANG](../../reference/glossary.md#term-yang) 非対応のため leafref は **存在しない**。本セクションの参照はすべて C++ 実装上の暗黙依存。
 
 <!-- /cross-refs -->
 
@@ -292,7 +292,7 @@ APPL_DB は YANG 非対応のため leafref は **存在しない**。本セク�
 | `op` が `SET_COMMAND` / `DEL_COMMAND` 以外 | `doLabelTask()` L327-330 | LOG_ERROR | LOG_ERROR ("Unknown operation type %s") | `mplsrouteorch.cpp:329` |
 | `nexthop_group` 指定だが NhgOrch に該当 NHG なし (doLabelTask) | `doLabelTask()` L256-267 | LOG_ERROR・`++it` で **retry** | LOG_ERROR ("Next hop group %s does not exist") | `mplsrouteorch.cpp:262-266` |
 | `nexthop_group` 指定で NHG が `addLabelRoute` 内で消失 | `addLabelRoute()` L481-490 `catch(out_of_range)` | `return false` → **retry** | LOG_WARN ("Next hop group key %s does not exist") | `mplsrouteorch.cpp:486-490` |
-| 単一 NH が intf NH で RIF 未作成 | `addLabelRoute()` L502-510 | `return false` → **retry** | LOG_INFO ("Failed to get next hop %s for %u") | `mplsrouteorch.cpp:505-510` |
+| 単一 NH が intf NH で [RIF](../../reference/glossary.md#term-rif) 未作成 | `addLabelRoute()` L502-510 | `return false` → **retry** | LOG_INFO ("Failed to get next hop %s for %u") | `mplsrouteorch.cpp:505-510` |
 | 単一 NH の IP neighbor 未解決 | `addLabelRoute()` L534-540 | `resolveNeighbor()` 発火後 `return false` → **retry** | LOG_INFO ("Failed to get next hop %s for %u") | `mplsrouteorch.cpp:536-540` |
 | MPLS NH の `addNextHop()` 失敗 | `addLabelRoute()` L523-531 | `return false` → **retry** | (NeighOrch 側) | `mplsrouteorch.cpp:528-531` |
 | ECMP NHG (`getSize() > 1`) で `addNextHopGroup` 失敗 | `addLabelRoute()` L550-583 | 未解決メンバごとに `resolveNeighbor()` 発火・`addTempLabelRoute()` で一時ルート登録・`return false` → **retry** | LOG_INFO ("Failed to get next hop ... resolving neighbor") | `mplsrouteorch.cpp:550-583` |
@@ -328,7 +328,7 @@ APPL_DB は YANG 非対応のため leafref は **存在しない**。本セク�
 
 - **retry vs drop**: `doLabelTask` のループは `addLabelRoute` / `removeLabelRoute` が `true` を返したときのみ `m_toSync.erase(it)`。`false` 戻り値は `++it` で次サイクル **retry**。入力バリデーション失敗 (両方指定・ifname 空) のみ即 erase される。
 - **bulker による非同期確定**: `addLabelRoute` 正常パスの末尾も `return false` (L664)。これは bulker 登録のみの段階で、確定は `addLabelRoutePost` が `m_syncdLabelRoutes` 反映と `gCrmOrch->incCrmResUsedCounter(CRM_MPLS_INSEG)` 実行で行う。
-- **neighbor 解決連動**: retry 経路の多くは `m_neighOrch->resolveNeighbor()` を呼ぶため空回りせず、ARP/NDP 解決後の次サイクルで成功する。
+- **neighbor 解決連動**: retry 経路の多くは `m_neighOrch->resolveNeighbor()` を呼ぶため空回りせず、[ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) 解決後の次サイクルで成功する。
 - **一時ルート**: ECMP NHG が一部メンバ未解決で作成不能な場合、`addTempLabelRoute()` で解決済み単独 NH を指す一時 inseg を登録し、全メンバ解決後の retry サイクルで本来の NHG に置換される。
 - **`handleSaiSetStatus` / `handleSaiRemoveStatus`** は SAI ステータスから `task_success` / `task_need_retry` / `task_failed` を導出する OrchAgent 共通ハンドラで、MPLS では `SAI_API_MPLS` を渡す。
 
@@ -417,7 +417,7 @@ MPLS 経路は `CRM_MPLS_INSEG` と `CRM_MPLS_NEXTHOP` の 2 リソースに連�
 
 ### CRM threshold / counter 文字列キー
 
-CONFIG_DB `CRM` / COUNTERS_DB `CRM:STATS` のフィールド名はすべてハードコード文字列（`crmorch.cpp`）:
+[CONFIG_DB](../../reference/glossary.md#term-config_db) `CRM` / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) `CRM:STATS` のフィールド名はすべてハードコード文字列（`crmorch.cpp`）:
 
 | 文字列 | 行 | 用途 |
 |---|---|---|
@@ -597,7 +597,7 @@ if (next_hop_id == SAI_NULL_OBJECT_ID)
    SET ループを途中で抜けて bulker flush へ進み、NHG 解放を促す。
 4. **`gLabelRouteBulker.flush()`** (`mplsrouteorch.cpp:335`) — SET / DEL を一括 ASIC 反映。
 5. **post-process ループ** (`mplsrouteorch.cpp:340-406`): `addLabelRoutePost` / `removeLabelRoutePost`
-   を呼び、`m_syncdLabelRoutes` 更新と CRM (`CRM_MPLS_INSEG`) 反映を行う。失敗時は `it_prev++` で再評価。
+   を呼び、`m_syncdLabelRoutes` 更新と [CRM](../../reference/glossary.md#term-crm) (`CRM_MPLS_INSEG`) 反映を行う。失敗時は `it_prev++` で再評価。
 6. **NHG ref-count 整理** (`mplsrouteorch.cpp:408-415`): `m_bulkNhgReducedRefCnt` 巡回で参照数 0 の NHG を
    `removeNextHopGroup`。
 
@@ -607,7 +607,7 @@ bulker 内重複検出: 同 doLabelTask 内で同 label を 2 回 create しよ�
 注: IP route 版にある `m_publisher.flush()` (APPL_STATE_DB 通知) は **MPLS では存在しない**
 (`mplsrouteorch.cpp` 内 `m_publisher` 参照 0 件)。Phase B Side-effects と整合。
 
-→ タイミング依存: 同一 doLabelTask バッチ内の順序は固定。ConsumerStateTable 側で SET/DEL が
+→ タイミング依存: 同一 doLabelTask バッチ内の順序は固定。[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) 側で SET/DEL が
 merge されるため、バッチ間では最後の op のみが orchagent に届く。
 
 ### 9. nhgorch 側: MPLS NH の遅延作成 (`isLabeled()` 分岐)
@@ -659,7 +659,7 @@ IP route 版にある `SAI_STATUS_ITEM_NOT_FOUND` 専用補正 (DualToR tunnel r
 `mplsrouteorch.cpp` / `nhgorch.cpp` 内に `warm` / `reconcile` / `WarmStart` の文字列は 0 件。warm reboot
 時の MPLS 経路順序は **fpmsyncd 側 + 通常起動順序** に依存する:
 
-- fpmsyncd は `WarmStartHelper::checkAndStart()` で warm-restart モードに入り、FRR 再接続後に
+- fpmsyncd は `WarmStartHelper::checkAndStart()` で warm-restart モードに入り、[FRR](../../reference/glossary.md#term-frr) 再接続後に
   再 push される経路を restoration timer / eoiuHoldTimer 満了まで集約する (`fpmsyncd.cpp:153-172`、
   IP route と共通)。
 - ただし `WarmStartHelper` 系の差分計算は **IP route テーブル前提**で組まれており、`onLabelRouteMsg()`
@@ -721,7 +721,7 @@ if (db->getDbId() == APPL_DB || db->getDbId() == DPU_APPL_DB)
 }
 ```
 
-`zmqServer` は `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` feature の状態で決まり、**デフォルト無効**（`get_feature_status(..., false)`、`orchdaemon.cpp:334`）。したがって標準構成では **`swss::ConsumerStateTable`**（APPL_DB channel ベース PUBLISH/SUBSCRIBE）で購読される。CONFIG_DB / STATE_DB に使う `SubscriberStateTable`（keyspace 通知 `__keyspace@<dbId>__:*`）は **APPL_DB 経路では使用しない**。
+`zmqServer` は `ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` feature の状態で決まり、**デフォルト無効**（`get_feature_status(..., false)`、`orchdaemon.cpp:334`）。したがって標準構成では **`swss::ConsumerStateTable`**（APPL_DB channel ベース PUBLISH/SUBSCRIBE）で購読される。CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) に使う `SubscriberStateTable`（keyspace 通知 `__keyspace@<dbId>__:*`）は **APPL_DB 経路では使用しない**。
 
 | 購読者 | 購読 API | 購読テーブル | バッチ | 優先度 |
 |---|---|---|---|---|
@@ -747,7 +747,7 @@ SAI: sai_mpls_api->create_inseg_entry / set_inseg_entry_attribute / remove_inseg
 
 - `SELECT_TIMEOUT = 1000 ms` (`orchdaemon.cpp:22-23`)。channel PUBLISH 発生時は即時 wake up し、未受信時も 1 秒ごとに retry / bulker drain が回る。
 - `RouteOrch::doTask` は `APP_LABEL_ROUTE_TABLE_NAME` を検出すると `doLabelTask(consumer); return;` するため、IP route 用の `m_publisher.flush()` (`routeorch.cpp:1231`) には到達しない。
-- 同一 select サイクル内で複数 `LABEL_ROUTE_TABLE|<label>` の `SET` / `DEL` が発生しても `ConsumerStateTable` 側で **同一 key は最後の op のみに集約**される (`routeorch.cpp:1088-1090` のコメント "consolidated by ConsumerStateTable" と整合)。
+- 同一 select サイクル内で複数 `LABEL_ROUTE_TABLE|<label>` の `SET` / `DEL` が発生しても `ConsumerStateTable` 側で **同一 key は最後の op のみに集約**される (`routeorch.cpp:1088-1090` のコメント "consolidated by [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)" と整合)。
 
 ### ResponsePublisher (APPL_STATE_DB) は不在
 
@@ -765,7 +765,9 @@ SAI: sai_mpls_api->create_inseg_entry / set_inseg_entry_attribute / remove_inseg
 
 ### ZMQ 経路（feature 有効時のみ）
 
-`ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` feature が有効なら `ZmqConsumerStateTable` が `LABEL_ROUTE_TABLE` を ZMQ TCP socket 経由（Redis をバイパス）で受信する。ハンドラ (`doLabelTask`) は共通で、APPL_DB 上のデータも `dbPersistence` 引数に従って永続化される。デフォルトでは無効なので、標準フローは Redis channel PUBLISH 経路。
+`ORCH_NORTHBOND_ROUTE_ZMQ_ENABLED` feature が有効なら `ZmqConsumerStateTable` が `LABEL_ROUTE_TABLE` を ZMQ TCP socket 経由（[Redis](../../reference/glossary.md#term-redis) をバイパス）で受信する。ハンドラ (`doLabelTask`) は共通で、APPL_DB 上のデータも `dbPersistence` 引数に従って永続化される。デフォルトでは無効なので、標準フローは [Redis](../../reference/glossary.md#term-redis) channel PUBLISH 経路。
 
 > **Evidence**: `sonic-swss/orchagent/orchdaemon.cpp:22-23, 315-337` (`SELECT_TIMEOUT` / `route_tables` / ZMQ feature 切替 / `RouteOrch` 生成)、`sonic-swss/orchagent/routeorch.cpp:40-58, 614-619, 1088-1090, 1231, 3185-3201` (`ZmqOrch` 継承コンストラクタ / `doTask` 分岐 / `publishRouteState` は IP route 固定)、`sonic-swss/orchagent/zmqorch.cpp:41-72` (`ZmqOrch::addConsumer` の DB ID / `zmqServer` 分岐)、`sonic-swss/orchagent/mplsrouteorch.cpp:34-417` (`doLabelTask` / bulker / `m_publisher` 参照 0 件)、`sonic-swss/orchagent/main.cpp:59-60, 459, 478` (`DEFAULT_BATCH_SIZE = 128` / `-b` オプション)、`sonic-swss/fpmsyncd/routesync.cpp:2674-2732` (`onLabelRouteMsg` の `ProducerStateTable::set`)、`sonic-swss-common/common/schema.h:48` (`APP_LABEL_ROUTE_TABLE_NAME`); 詳細分析 `meta/_intermediate/cdb-flow/appl-mpls-route-pubsub.md`
 <!-- /pubsub -->
+
+<!-- glossary-links-injected: cc456bd55716 -->

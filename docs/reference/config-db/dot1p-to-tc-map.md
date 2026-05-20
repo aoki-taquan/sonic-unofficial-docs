@@ -153,7 +153,6 @@ show qos map dot1p-tc
 > **Evidence**: [sonic-swss](../../reference/glossary.md#term-sonic-swss) `orchagent/qosorch.cpp:124-201`
 <!-- /cdb-exceptions -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -215,7 +214,7 @@ show qos map dot1p-tc
 |--------|------|
 | プラットフォーム依存 | `qos_config.j2` は `type in backend_device_types AND storage_device == 'true'` のストレージバックエンドプラットフォームでのみ `DOT1P_TO_TC_MAP\|AZURE` を注入する。それ以外のプラットフォームにはビルド時デフォルトなし |
 | ハードコード固定値 | ストレージバックエンド時のデフォルト: `{"0":"1","1":"0","2":"2","3":"3","4":"4","5":"5","6":"6","7":"7"}` |
-| 大文字小文字制約 | YANG pattern は混在大文字小文字を許容するが、Redis キーは大文字小文字区別あり。`AZURE` と `Azure` は別エントリ |
+| 大文字小文字制約 | YANG pattern は混在大文字小文字を許容するが、[Redis](../../reference/glossary.md#term-redis) キーは大文字小文字区別あり。`AZURE` と `Azure` は別エントリ |
 
 ### `dot1p` (エントリキー)
 
@@ -241,7 +240,7 @@ show qos map dot1p-tc
 | 書込み順依存 | DEL pending 中に SET が到着すると `task_need_retry` を返して SET を遅延させる（qosorch.cpp:136-139） |
 | partial failure | SET 時は全エントリを一括で SAI に送信（per-entry パッチなし）。1 エントリの不正でも他の有効エントリが反映される（SAI 側は全エントリを受け取る） |
 | 暗黙 reset+restore | エントリを削除する唯一の方法は有効エントリを除いたマップ全体を再 SET すること（DEL は名前単位でマップ全体を削除） |
-| CONFIG_DB 直接購読 | APPL_DB 中継なし。`QosOrch` が CONFIG_DB を直接購読し即座に SAI へ反映 |
+| CONFIG_DB 直接購読 | [APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし。`QosOrch` が CONFIG_DB を直接購読し即座に SAI へ反映 |
 
 > **Evidence**: `sonic-swss/orchagent/qosorch.cpp:360-397`, `sonic-buildimage/files/build_templates/qos_config.j2:240-253`, `sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-types.yang.j2:338-346`, `sonic-buildimage/src/sonic-yang-models/tests/yang_model_tests/tests_config/qosmaps.json`
 <!-- /defaults -->
@@ -323,7 +322,7 @@ show qos map dot1p-tc
 - **フィールド変換失敗のサイレント脱落**: `convertFieldValuesToAttributes()` は変換失敗エントリを `continue` でスキップし `return true` を維持する。そのため `processWorkItem()` には成功として返り、呼び出し元にエラーが伝播しない。CONFIG_DB には全エントリが記録されるが SAI には有効エントリのみ反映される（書き込み vs 実行時の乖離）。
 - **`task_invalid_entry`** はエントリを m_toSync から破棄し再試行しない。YANG バリデーション通過後の不正データが入った場合のみ発生する。
 - **`task_need_retry`** はエントリを m_toSync に残留させ次の `doTask()` で再評価する。自動回復するが完了タイミングは不確定。
-- QosOrch は失敗時に STATE_DB / ERROR_TABLE への書き込みを行わない。ASIC_DB への反映確認は `sonic-db-cli ASIC_DB hgetall 'ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:*'` で行う。
+- QosOrch は失敗時に [STATE_DB](../../reference/glossary.md#term-state_db) / ERROR_TABLE への書き込みを行わない。[ASIC_DB](../../reference/glossary.md#term-asic_db) への反映確認は `sonic-db-cli ASIC_DB hgetall 'ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP:*'` で行う。
 
 <!-- /failure -->
 
@@ -382,8 +381,8 @@ show qos map dot1p-tc
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|------------------|-----------------|------|
-| `sai_qos_map_api->create_qos_map(SAI_QOS_MAP_TYPE_DOT1P_TO_TC, ...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` | 新規マップ作成 (`qosorch.cpp:399-416`) |
-| `sai_qos_map_api->set_qos_map_attribute(oid, SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST, ...)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` field=`SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | 既存マップ更新 (`qosorch.cpp:207`) |
+| `sai_qos_map_api->create_qos_map(SAI_QOS_MAP_TYPE_DOT1P_TO_TC, ...)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) ([syncd](../../reference/glossary.md#term-syncd) 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` | 新規マップ作成 (`qosorch.cpp:399-416`) |
+| `sai_qos_map_api->set_qos_map_attribute(oid, SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST, ...)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) ([syncd](../../reference/glossary.md#term-syncd) 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | `<qos_map_oid>` field=`SAI_QOS_MAP_ATTR_MAP_TO_VALUE_LIST` | 既存マップ更新 (`qosorch.cpp:207`) |
 
 ### SET — PORT_QOS_MAP によるポートバインド
 
@@ -391,7 +390,7 @@ show qos map dot1p-tc
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|------------------|-----------------|------|
-| `sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP, oid)` | ASIC_DB (syncd 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `<port_oid>` field=`SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` | 参照先 DOT1P_TO_TC_MAP が SAI 解決済みの各ポート (`qosorch.cpp:2086,2193`) |
+| `sai_port_api->set_port_attribute(SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP, oid)` | ASIC_DB ([syncd](../../reference/glossary.md#term-syncd) 経由) / `ASIC_STATE:SAI_OBJECT_TYPE_PORT` | `<port_oid>` field=`SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` | 参照先 DOT1P_TO_TC_MAP が SAI 解決済みの各ポート (`qosorch.cpp:2086,2193`) |
 
 ### スイッチレベル適用: なし
 
@@ -411,10 +410,10 @@ show qos map dot1p-tc
 | ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_QOS_MAP` | create / update (syncd 経由) | remove (syncd 経由, 非参照時のみ) |
 | ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_PORT` field=`SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` | set_port_attribute (syncd 経由, PORT_QOS_MAP SET 時) | set SAI_NULL_OBJECT_ID (PORT_QOS_MAP DEL 時) |
 | ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_SWITCH` | なし（スイッチレベル未実装） | なし |
-| APPL_DB | — | なし | なし |
-| STATE_DB | — | なし | なし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | — | なし | なし |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | — | なし | なし |
 | APPL_STATE_DB | — | なし | なし |
-| COUNTERS_DB | — | なし | なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | — | なし | なし |
 
 > **Evidence**: `sonic-swss/orchagent/qosorch.cpp:63,181-186,207,399-416,2012,2086,2193`
 <!-- /side-effects -->
@@ -428,7 +427,7 @@ show qos map dot1p-tc
 
 `QosOrch` は `orchdaemon.cpp:367-384` で `qos_tables` ベクタの一員として `CFG_DOT1P_TO_TC_MAP_TABLE_NAME` を指定され、`new QosOrch(m_configDb, qos_tables)` に渡される。基底 `Orch(db, tableNames)` が `Orch::addConsumer()` を呼び、CONFIG_DB ID の分岐により **`swss::SubscriberStateTable`** が選択される（`orch.cpp:1186-1190`）。
 
-`SubscriberStateTable` は Redis keyspace 通知 `__keyspace@<dbId>__:DOT1P_TO_TC_MAP|*` を **`PSUBSCRIBE`** で購読し、通知受信後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（ハードコード、`orchagent -b` の `gBatchSize` 影響なし）。
+`SubscriberStateTable` は [Redis](../../reference/glossary.md#term-redis) keyspace 通知 `__keyspace@<dbId>__:DOT1P_TO_TC_MAP|*` を **`PSUBSCRIBE`** で購読し、通知受信後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（ハードコード、`orchagent -b` の `gBatchSize` 影響なし）。
 
 ### ハンドラ登録とディスパッチ
 
@@ -458,7 +457,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 | select タイムアウト | 1000 ms |
 | SAI 呼び出し | `sai_qos_map_api->create_qos_map()` / `set_qos_map_attribute()` / `remove_qos_map()` |
 | リトライ方式 | `m_toSync` 残留（キャッシュなし） |
-| APPL_DB 中継 | なし（CONFIG_DB → orchagent 直結） |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) 中継 | なし（CONFIG_DB → orchagent 直結） |
 | channel PUBLISH | 使わない |
 | TTL | 未使用（CONFIG_DB 永続） |
 
@@ -514,4 +513,4 @@ TC 8..15 を設定した場合、YANG バリデーションは通過するが SA
 > **Evidence**: `qosorch.cpp:1979-2054` (handleGlobalQosMap — DOT1P 非対象確認); `qos_config.j2:164,240-253` (ストレージバックエンド条件); `qos_config.j2:435` (PORT_QOS_MAP への dot1p_to_tc_map 割り当て); `db_migrator.py:575-577` (ABNF 参照削除)
 <!-- /platform -->
 
-<!-- glossary-links-injected: b1003b21c66f -->
+<!-- glossary-links-injected: ee0f0c62dd51 -->

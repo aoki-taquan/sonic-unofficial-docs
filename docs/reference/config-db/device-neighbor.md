@@ -143,7 +143,7 @@ show lldp neighbors
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`DEVICE_NEIGHBOR` には orchagent / SAI 経路の依存はない。書込み順が問題になるのは **minigraph.py によるテーブル生成時** と、**pfcwd / ecnconfig がテーブルを参照するタイミング** の 2 箇所である。
+`DEVICE_NEIGHBOR` には [orchagent](../../reference/glossary.md#term-orchagent) / [SAI](../../reference/glossary.md#term-sai) 経路の依存はない。書込み順が問題になるのは **minigraph.py によるテーブル生成時** と、**pfcwd / ecnconfig がテーブルを参照するタイミング** の 2 箇所である。
 
 ### minigraph による生成順序
 
@@ -152,7 +152,7 @@ show lldp neighbors
 | ステップ | 処理内容 | evidence |
 |--------|---------|---------|
 | 1 | `get_port_config()` で `port_config.ini` を読み込み `ports` dict を構築 | `minigraph.py:2064` |
-| 2 | minigraph.xml 解析で隣接情報 `neighbors` dict を構築 | `minigraph.py:649,741,766` |
+| 2 | [minigraph.xml](../../reference/glossary.md#term-minigraph.xml) 解析で隣接情報 `neighbors` dict を構築 | `minigraph.py:649,741,766` |
 | 3 | `ports` に存在しない key を `neighbors` から削除（Warning 出力） | `minigraph.py:2631-2636` |
 | 4 | `results['DEVICE_NEIGHBOR'] = neighbors` を確定 | `minigraph.py:2637` |
 | 5 | `results['DEVICE_NEIGHBOR_METADATA']` を `neighbors.values()` から派生生成 | `minigraph.py:2638-2641` |
@@ -163,7 +163,7 @@ show lldp neighbors
 
 ### pfcwd start_default の依存
 
-`pfcwd start_default`（`pfcwd/main.py:413`）は起動時に `get_table('DEVICE_NEIGHBOR').keys()` を外部ポート一覧として取得する。**DEVICE_NEIGHBOR が空の状態で `pfcwd start_default` を実行すると外部ポートが 0 件となり、PFC Watchdog が外部ポートに対して有効化されない**（silent misconfiguration）。
+`pfcwd start_default`（`pfcwd/main.py:413`）は起動時に `get_table('DEVICE_NEIGHBOR').keys()` を外部ポート一覧として取得する。**DEVICE_NEIGHBOR が空の状態で `pfcwd start_default` を実行すると外部ポートが 0 件となり、[PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) が外部ポートに対して有効化されない**（silent misconfiguration）。
 
 推奨書込み順:
 
@@ -180,7 +180,7 @@ show lldp neighbors
 
 ### bgpcfgd の間接依存
 
-`bgpcfgd`（`managers_bgp.py:219-224`）は `BGP_NEIGHBOR` の SET 処理時に `DEVICE_NEIGHBOR_METADATA` を参照し、`data['name']`（DEVICE_NEIGHBOR の `name` フィールドと一致する値）が DEVICE_NEIGHBOR_METADATA に存在しない場合は `return False` でピア追加を保留する。DEVICE_NEIGHBOR_METADATA の内容は DEVICE_NEIGHBOR の `name` 集合から派生するため、DEVICE_NEIGHBOR が正しく書き込まれていないと BGP セッション確立が silent に失敗する。
+`bgpcfgd`（`managers_bgp.py:219-224`）は `BGP_NEIGHBOR` の SET 処理時に `DEVICE_NEIGHBOR_METADATA` を参照し、`data['name']`（DEVICE_NEIGHBOR の `name` フィールドと一致する値）が DEVICE_NEIGHBOR_METADATA に存在しない場合は `return False` でピア追加を保留する。DEVICE_NEIGHBOR_METADATA の内容は DEVICE_NEIGHBOR の `name` 集合から派生するため、DEVICE_NEIGHBOR が正しく書き込まれていないと [BGP](../../reference/glossary.md#term-bgp) セッション確立が silent に失敗する。
 
 > **Evidence**: `sonic-buildimage` `src/sonic-config-engine/minigraph.py:2064,2631-2641`; `sonic-utilities` `pfcwd/main.py:413-416`; `scripts/ecnconfig:282-287`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:219-224`
 <!-- /ordering -->
@@ -194,9 +194,9 @@ show lldp neighbors
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | evidence |
 |--------------------------|---------|------|----------|
-| `PORT`（CONFIG_DB） | `local_port` leafref による書き込み時バリデーション | YANG バリデーション有効時。存在しないポート名は reject | `sonic-device_neighbor.yang:52-55` |
+| `PORT`（[CONFIG_DB](../../reference/glossary.md#term-config_db)） | `local_port` leafref による書き込み時バリデーション | YANG バリデーション有効時。存在しないポート名は reject | `sonic-device_neighbor.yang:52-55` |
 | `port_config.ini`（ファイルシステム） | minigraph 生成時のフィルタ参照（ポート名の存在確認） | `sonic-cfggen -m` 実行時。対応ポートなしのエントリは Warning 出力後に削除 | `minigraph.py:2631-2636` |
-| `DEVICE_NEIGHBOR_METADATA`（CONFIG_DB） | `name` フィールド経由の間接結合。bgpcfgd での BGP neighbor 追加前の存在チェック | BGP neighbor 追加時。`name` が METADATA に未登録なら `return False`（silent 失敗） | `managers_bgp.py:219-224`, `minigraph.py:2638-2641` |
+| `DEVICE_NEIGHBOR_METADATA`（[CONFIG_DB](../../reference/glossary.md#term-config_db)） | `name` フィールド経由の間接結合。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) での BGP neighbor 追加前の存在チェック | BGP neighbor 追加時。`name` が METADATA に未登録なら `return False`（silent 失敗） | `managers_bgp.py:219-224`, `minigraph.py:2638-2641` |
 | `VLAN_MEMBER`（CONFIG_DB） | pfcwd が DEVICE_NEIGHBOR 空時の fallback として参照 | `get_server_facing_ports()` で DEVICE_NEIGHBOR が空の場合のみ | `pfcwd/main.py:104-105` |
 
 ### `local_port` YANG leafref
@@ -215,7 +215,7 @@ YANG バリデーション時に `PORT_LIST.name` に存在しないポート名
 
 ### minigraph の port_config.ini フィルタ
 
-`sonic-cfggen -m` が minigraph.xml を処理する際、`port_config.ini` に存在しないインターフェイス名を `DEVICE_NEIGHBOR` から削除する（`minigraph.py:2631-2636`）。DEVICE_NEIGHBOR のキー空間は常に PORT テーブルのキー空間のサブセットとなる。
+`sonic-cfggen -m` が [minigraph.xml](../../reference/glossary.md#term-minigraph.xml) を処理する際、`port_config.ini` に存在しないインターフェイス名を `DEVICE_NEIGHBOR` から削除する（`minigraph.py:2631-2636`）。DEVICE_NEIGHBOR のキー空間は常に PORT テーブルのキー空間のサブセットとなる。
 
 ### DEVICE_NEIGHBOR_METADATA との暗黙結合
 
@@ -240,11 +240,11 @@ YANG バリデーション時に `PORT_LIST.name` に存在しないポート名
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — neighbor topology 情報)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — neighbor topology 情報)
 
 ### 段階 4 — タイミングと副作用
 
@@ -271,7 +271,7 @@ YANG バリデーション時に `PORT_LIST.name` に存在しないポート名
 - なし
 
 ### ビルド時デフォルト (init_cfg / j2 テンプレート)
-- `sonic-cfggen -m` で minigraph.xml を処理して隣接デバイス情報を生成
+- `sonic-cfggen -m` で [minigraph.xml](../../reference/glossary.md#term-minigraph.xml) を処理して隣接デバイス情報を生成
 
 ### ハードコードデフォルト
 - なし
@@ -300,13 +300,13 @@ DEVICE_NEIGHBOR テーブル内の `mgmt_addr` を参照する consumer はコ�
 | YANG | 制約 |
 |------|------|
 | buildimage `sonic-device_neighbor.yang` | `string(1..255)` — 任意文字列 |
-| sonic-mgmt-common `sonic-device-neighbor.yang` | `enum { ToRRouter; LeafRouter; }` — 2値のみ |
+| [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common `sonic-device-neighbor.yang` | `enum { ToRRouter; LeafRouter; }` — 2値のみ |
 
-buildimage 側では任意文字列が通るが、sonic-mgmt-common (gNMI/REST パス) 経由では `ToRRouter`/`LeafRouter` 以外を設定すると reject される。
+buildimage 側では任意文字列が通るが、[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common ([gNMI](../../reference/glossary.md#term-gnmi)/REST パス) 経由では `ToRRouter`/`LeafRouter` 以外を設定すると reject される。
 
 ### `port` — YANG-実装 discrepancy
 
-buildimage YANG では `port` は自由文字列 (`string(1..255)`)。sonic-mgmt-common YANG では `PORT_LIST.ifname` への leafref となっており、隣接側ポート名まで自ポートの PORT テーブルで検証される設計になっているが、buildimage 実装では未適用。
+buildimage YANG では `port` は自由文字列 (`string(1..255)`)。[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common YANG では `PORT_LIST.ifname` への leafref となっており、隣接側ポート名まで自ポートの PORT テーブルで検証される設計になっているが、buildimage 実装では未適用。
 
 ### `local_port` テーブルが空の場合の副作用
 
@@ -340,7 +340,7 @@ minigraph.py が生成するエントリは常に `{'name': <隣接ホスト名>
 
 | # | 失敗条件 | コンポーネント | 結果 | ログ / メッセージ | evidence |
 |---|----------|--------------|------|-----------------|---------|
-| 1 | `local_port` に `PORT_LIST.name` に存在しないポート名を指定 | YANG バリデーション | SET reject（YANG leafref 違反） | pyang / sonic-cfggen エラー | `sonic-device_neighbor.yang:52-56` |
+| 1 | `local_port` に `PORT_LIST.name` に存在しないポート名を指定 | YANG バリデーション | SET reject（YANG leafref 違反） | pyang / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) エラー | `sonic-device_neighbor.yang:52-56` |
 | 2 | minigraph.xml に `port_config.ini` に存在しないインターフェイスが隣接情報として含まれる | `minigraph.py` parse_xml | 当該エントリを `del neighbors[nghbr]` で削除（silent skip）、DB に書き込まれない | stderr `"Warning: ignore interface '%s' in DEVICE_NEIGHBOR as it is not in the port_config.ini"` | `minigraph.py:2631-2636` |
 | 3 | `name` フィールドが `DEVICE_NEIGHBOR_METADATA` に未登録 | `bgpcfgd` (`managers_bgp.py`) | BGP ピア追加を `return False` で中断（silent failure）、BGP セッション未確立 | `log_info("DEVICE_NEIGHBOR_METADATA is not ready for neighbor...")` | `managers_bgp.py:221-223` |
 
@@ -356,13 +356,13 @@ minigraph.py が生成するエントリは常に `{'name': <隣接ホスト名>
 
 | # | 失敗条件 / 操作 | コンポーネント | 結果 | evidence |
 |---|----------------|--------------|------|---------|
-| 7 | DEVICE_NEIGHBOR エントリを DEL → `pfcwd start_default` 再実行 | `pfcwd` | 削除済みエントリが外部ポート一覧から除外され、次回 `pfcwd start_default` で PFC Watchdog が有効化されない | `pfcwd/main.py:413` |
-| 8 | DEVICE_NEIGHBOR エントリを DEL → bgpcfgd への影響 | `bgpcfgd` | bgpcfgd は DEVICE_NEIGHBOR を直接 subscribe しない。BGP セッションは DEVICE_NEIGHBOR_METADATA を参照するため、DEVICE_NEIGHBOR 削除単体では即時影響なし | `managers_bgp.py:219-224` |
+| 7 | DEVICE_NEIGHBOR エントリを DEL → `pfcwd start_default` 再実行 | `pfcwd` | 削除済みエントリが外部ポート一覧から除外され、次回 `pfcwd start_default` で [PFC](../../reference/glossary.md#term-pfc) Watchdog が有効化されない | `pfcwd/main.py:413` |
+| 8 | DEVICE_NEIGHBOR エントリを DEL → [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) への影響 | `bgpcfgd` | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は DEVICE_NEIGHBOR を直接 subscribe しない。BGP セッションは DEVICE_NEIGHBOR_METADATA を参照するため、DEVICE_NEIGHBOR 削除単体では即時影響なし | `managers_bgp.py:219-224` |
 
 ### 補足
 
-- **leafref reject (依存 #1)**: `sonic-cfggen` や `sonic-yang` 経由でのバリデーション実行時のみ発生。Redis 直接書き込み (`redis-cli hset`) の場合は leafref チェックが行われないため通過する。本番環境では `sonic-cfggen` 経由での投入が標準。
-- **silent misconfiguration (依存 #5)**: `pfcwd start_default` は DEVICE_NEIGHBOR が空でも Exception を出さずに継続する（ecnconfig と異なり非 fatal）。結果として外部ポートに対する PFC Watchdog が無効化された状態が構成される。`show pfcwd config` で確認しないと検出できない。
+- **leafref reject (依存 #1)**: `sonic-cfggen` や `sonic-yang` 経由でのバリデーション実行時のみ発生。[Redis](../../reference/glossary.md#term-redis) 直接書き込み (`redis-cli hset`) の場合は leafref チェックが行われないため通過する。本番環境では `sonic-cfggen` 経由での投入が標準。
+- **silent misconfiguration (依存 #5)**: `pfcwd start_default` は DEVICE_NEIGHBOR が空でも Exception を出さずに継続する（ecnconfig と異なり非 fatal）。結果として外部ポートに対する [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) が無効化された状態が構成される。`show pfcwd config` で確認しないと検出できない。
 - **bgpcfgd の check_neig_meta フラグ (依存 #3)**: `check_neig_meta = True` の場合のみ DEVICE_NEIGHBOR_METADATA の存在チェックを行う。フラグの初期値は `True`（通常構成）。`return False` 後は bgpcfgd が次のイベントループで再試行するため、DEVICE_NEIGHBOR_METADATA が後から書き込まれれば自動復旧する。
 <!-- /failure -->
 
@@ -452,7 +452,7 @@ port['description'] = "%s:%s" % (neighbors[port_name]['name'], neighbors[port_na
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`DEVICE_NEIGHBOR` テーブルは **書かれる側（producer のみ）** であり、orchagent / SAI 経路の書き手を持たない。副次書込が発生するのは、DEVICE_NEIGHBOR を**参照した後に別テーブルへ書き込む CLI ツール**（pfcwd / ecnconfig）と、**bgpcfgd が BGP セッション確立後に STATE_DB へ書き込む**場面の 2 種類に分類される。
+`DEVICE_NEIGHBOR` テーブルは **書かれる側（producer のみ）** であり、[orchagent](../../reference/glossary.md#term-orchagent) / [SAI](../../reference/glossary.md#term-sai) 経路の書き手を持たない。副次書込が発生するのは、DEVICE_NEIGHBOR を**参照した後に別テーブルへ書き込む CLI ツール**（pfcwd / ecnconfig）と、**bgpcfgd が BGP セッション確立後に [STATE_DB](../../reference/glossary.md#term-state_db) へ書き込む**場面の 2 種類に分類される。
 
 ### DB 書込サマリ
 
@@ -460,10 +460,10 @@ port['description'] = "%s:%s" % (neighbors[port_name]['name'], neighbors[port_na
 |--------|---------|------------|----------------|------|
 | CONFIG_DB `PFC_WD` | あり | `PFC_WD\|<port>`, `PFC_WD\|GLOBAL` | `pfcwd start_default` | `pfcwd/main.py:292-300,442-444` |
 | CONFIG_DB `QUEUE` | あり | `QUEUE\|<port>\|<queue>` | `ecnconfig -s enable/disable` | `ecnconfig:325-336` |
-| STATE_DB `BGP_PEER_CONFIGURED` | あり | `BGP_PEER_CONFIGURED\|<nbr>` | `bgpcfgd managers_bgp.py` | `managers_bgp.py:286-295` |
-| APPL_DB | なし | — | — | DEVICE_NEIGHBOR を参照するコンポーネントは APPL_DB に書かない |
-| COUNTERS_DB | なし | — | — | 同上 |
-| ASIC_DB | なし | — | — | SAI 非経由。DEVICE_NEIGHBOR は topology 情報のみ |
+| [STATE_DB](../../reference/glossary.md#term-state_db) `BGP_PEER_CONFIGURED` | あり | `BGP_PEER_CONFIGURED\|<nbr>` | `bgpcfgd managers_bgp.py` | `managers_bgp.py:286-295` |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | — | — | DEVICE_NEIGHBOR を参照するコンポーネントは [APPL_DB](../../reference/glossary.md#term-appl_db) に書かない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | — | — | 同上 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | なし | — | — | SAI 非経由。DEVICE_NEIGHBOR は topology 情報のみ |
 
 ### pfcwd → CONFIG_DB PFC_WD 書込
 
@@ -473,7 +473,7 @@ port['description'] = "%s:%s" % (neighbors[port_name]['name'], neighbors[port_na
 2. 各ポートに対して `verify_pfc_enable_status_per_port()` を呼び出し、`PFC_WD|<port>` エントリを `set_entry()` または `mod_entry()` で書き込む（`pfcwd/main.py:295-300`）
 3. `PFC_WD|GLOBAL` に `POLL_INTERVAL` を書き込む（`pfcwd/main.py:442-444`）
 
-DEVICE_NEIGHBOR が空の場合、ステップ 1 で外部ポートが 0 件となり、ステップ 2 の書込みが全スキップされる。**PFC_WD が書き込まれないため、PFC Watchdog は外部ポートに対して有効化されない**（silent misconfiguration）。
+DEVICE_NEIGHBOR が空の場合、ステップ 1 で外部ポートが 0 件となり、ステップ 2 の書込みが全スキップされる。**PFC_WD が書き込まれないため、[PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) は外部ポートに対して有効化されない**（silent misconfiguration）。
 
 ### ecnconfig → CONFIG_DB QUEUE 書込
 
@@ -492,7 +492,7 @@ DEVICE_NEIGHBOR が空の場合は `gen_ports_key()` 内で `Exception("No activ
 
 ### bgpcfgd → STATE_DB BGP_PEER_CONFIGURED 書込
 
-`bgpcfgd` は DEVICE_NEIGHBOR を直接 subscribe しないが、BGP_NEIGHBOR の SET 処理時に DEVICE_NEIGHBOR_METADATA（DEVICE_NEIGHBOR の `name` 集合から派生）を参照した後、ピア追加に成功すると STATE_DB `BGP_PEER_CONFIGURED_TABLE` へ書き込む（`managers_bgp.py:285-295`）。
+`bgpcfgd` は DEVICE_NEIGHBOR を直接 subscribe しないが、BGP_NEIGHBOR の SET 処理時に DEVICE_NEIGHBOR_METADATA（DEVICE_NEIGHBOR の `name` 集合から派生）を参照した後、ピア追加に成功すると [STATE_DB](../../reference/glossary.md#term-state_db) `BGP_PEER_CONFIGURED_TABLE` へ書き込む（`managers_bgp.py:285-295`）。
 
 DEVICE_NEIGHBOR が正しく書き込まれていない場合、`DEVICE_NEIGHBOR_METADATA` の内容が不完全となり、bgpcfgd の STATE_DB 書込みが silent に保留される。
 
@@ -568,7 +568,7 @@ CONFIG_DB DEVICE_NEIGHBOR|<peer_name> (SET/DEL)
 > 詳細証跡: `meta/_intermediate/cdb-flow/device-neighbor-platform.md`
 > スキャン範囲: `sonic-buildimage/src/sonic-config-engine/minigraph.py` 全行（重点: 599-839, 1719-1782, 2064-2120, 2186-2193, 2631-2641）
 
-`DEVICE_NEIGHBOR` は orchagent / SAI を経由しないため `getenv("platform")` による ASIC 種別分岐は存在しない。プラットフォーム差が生じるのは **minigraph.py によるテーブル生成時** のトポロジ種別（multi-ASIC pizza box / VoQ chassis / DualToR）に起因する差異のみである。
+`DEVICE_NEIGHBOR` は [orchagent](../../reference/glossary.md#term-orchagent) / SAI を経由しないため `getenv("platform")` による ASIC 種別分岐は存在しない。プラットフォーム差が生じるのは **minigraph.py によるテーブル生成時** のトポロジ種別（multi-ASIC pizza box / VoQ chassis / DualToR）に起因する差異のみである。
 
 ### 非 multi-ASIC（pizza box）— 通常パス
 
@@ -598,7 +598,7 @@ CONFIG_DB DEVICE_NEIGHBOR|<peer_name> (SET/DEL)
 `parse_png()` の通常パスで DEVICE_NEIGHBOR が生成される（変更なし）。DualToR 固有の差異:
 
 - `PEER_SWITCH` テーブルが生成され `DEVICE_METADATA.localhost.subtype = 'DualToR'` が設定される（`minigraph.py:2188-2189`）が、DEVICE_NEIGHBOR の内容は変わらない。
-- MUX ケーブル接続（`LogicalLink` タイプ）は `mux_cable_ports` dict を経由して `MUX_CABLE` テーブルへ書き込まれる（`minigraph.py:2617`）。DEVICE_NEIGHBOR には影響しない。
+- [MUX](../../reference/glossary.md#term-mux) ケーブル接続（`LogicalLink` タイプ）は `mux_cable_ports` dict を経由して `MUX_CABLE` テーブルへ書き込まれる（`minigraph.py:2617`）。DEVICE_NEIGHBOR には影響しない。
 - DEVICE_NEIGHBOR_METADATA は非 multi-ASIC の全デバイス登録パスが適用され、peer switch（対向 ToR）も含まれる。
 
 ### プラットフォーム差サマリ
@@ -613,4 +613,4 @@ CONFIG_DB DEVICE_NEIGHBOR|<peer_name> (SET/DEL)
 > **Evidence**: `sonic-buildimage` `src/sonic-config-engine/minigraph.py:85-88,178-179,599-724,727-778,779-839,1719-1782,2064-2120,2186-2193,2277,2616-2622,2631-2641`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 2c4f81fa98e5 -->
+<!-- glossary-links-injected: 8e5a180b3e1a -->

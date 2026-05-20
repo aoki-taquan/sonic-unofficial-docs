@@ -201,20 +201,20 @@ staticroutemgrd は常時起動し `STATIC_ROUTE` テーブルを無条件購読
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / StaticRouteOrch** または **bgpcfgd**: `STATIC_ROUTE` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / StaticRouteOrch** または **[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)**: `STATIC_ROUTE` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- orchagent が APP_DB `ROUTE_TABLE` / `INTF_TABLE` を更新してルートを RouteOrch に渡す。
+- [orchagent](../../reference/glossary.md#term-orchagent) が APP_DB `ROUTE_TABLE` / `INTF_TABLE` を更新してルートを RouteOrch に渡す。
 
 ### 段階 3: APPL → SAI
 
 - RouteOrch が `sai_route_api->create_route_entry()` でスタティックルートをハードウェアに書き込む。
-- nexthop の ARP 解決が必要な場合は NeighOrch と連携。
+- nexthop の [ARP](../../reference/glossary.md#term-arp) 解決が必要な場合は NeighOrch と連携。
 
 ### 段階 4: タイミング + 副作用
 
-- nexthop が到達可能であれば数十 ms 以内に SAI に反映。
+- nexthop が到達可能であれば数十 ms 以内に [SAI](../../reference/glossary.md#term-sai) に反映。
 - 副作用: `blackhole` nexthop 設定時はパケットが静かに DROP される。
 
 <!-- /runtime-trace -->
@@ -225,7 +225,7 @@ STATIC_ROUTE テーブルへの書き込みが発生するコード経路を網�
 
 ### CLI
 
-  - `config route add/del ...` — `config/main.py` が `set_entry('STATIC_ROUTE', key, route)` を呼ぶ (sonic-utilities/config/main.py:7886–7973)
+  - `config route add/del ...` — `config/main.py` が `set_entry('STATIC_ROUTE', key, route)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py:7886–7973)
 
 ### minigraph / sonic-cfggen
 
@@ -233,7 +233,7 @@ minigraph.py に STATIC_ROUTE 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -245,7 +245,7 @@ db_migrator.py での STATIC_ROUTE マイグレーションなし
 
 ### ハードコードデフォルト / ランタイム注入
 
-**sonic-bgpcfgd** `static_rt_timer.py` が STATIC_ROUTE を監視し staticd に広告 (sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/static_rt_timer.py); **frrcfgd** も STATIC_ROUTE を監視
+**sonic-[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)** `static_rt_timer.py` が STATIC_ROUTE を監視し staticd に広告 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-bgpcfgd/bgpcfgd/static_rt_timer.py); **frrcfgd** も STATIC_ROUTE を監視
 
 ### 死活・デッドコード
 
@@ -265,9 +265,9 @@ db_migrator.py での STATIC_ROUTE マイグレーションなし
 | 4 | VRF 未解決（APPL_DB key の `:` 区切りが 1 要素以下） | `StaticRouteMgr.split_key()` → `log_debug` + `raise ValueError` | `set_handler()` / `del_handler()` が例外で中断。当該経路は FRR に設定されない | なし |
 | 5 | vtysh への設定書き込み失敗（FRR デーモン未起動等） | `FRR.write()` → `log_err('can\'t push configuration from file ...')` | コマンドリストは破棄。FRR 設定に反映されない。retcode != 0 を返す | なし |
 | 6 | FRR デーモン起動タイムアウト | `FRR.wait_for_daemons()` → `raise RuntimeError` | bgpcfgd プロセスが起動失敗。`systemctl restart bgp` が必要 | なし |
-| 7 | fpmsyncd: VRF ifindex からの名前解決失敗 | `routesync.cpp` → `SWSS_LOG_ERROR("Fail to get the VRF name (ifindex %u)")` + `return` | 当該 netlink メッセージを破棄。APP_DB に反映されない | なし |
-| 8 | fpmsyncd: VRF 名が `Vrf` プレフィクスで始まらない | `routesync.cpp` → `SWSS_LOG_ERROR("Invalid VRF name %s")` + `return` | 同上。APP_DB に反映されない | なし |
-| 9 | fpmsyncd: RTN_BLACKHOLE / RTN_UNREACHABLE / RTN_PROHIBIT 型ルート受信 | `routesync.cpp` → `SWSS_LOG_ERROR("RTN_BLACKHOLE route not expected")` + `return` | static blackhole は FRR → fpmsyncd ではなく bgpcfgd 経路で処理すべき。fpmsyncd 側は破棄 | なし |
+| 7 | [fpmsyncd](../../reference/glossary.md#term-fpmsyncd): VRF ifindex からの名前解決失敗 | `routesync.cpp` → `SWSS_LOG_ERROR("Fail to get the VRF name (ifindex %u)")` + `return` | 当該 netlink メッセージを破棄。APP_DB に反映されない | なし |
+| 8 | [fpmsyncd](../../reference/glossary.md#term-fpmsyncd): VRF 名が `Vrf` プレフィクスで始まらない | `routesync.cpp` → `SWSS_LOG_ERROR("Invalid VRF name %s")` + `return` | 同上。APP_DB に反映されない | なし |
+| 9 | [fpmsyncd](../../reference/glossary.md#term-fpmsyncd): RTN_BLACKHOLE / RTN_UNREACHABLE / RTN_PROHIBIT 型ルート受信 | `routesync.cpp` → `SWSS_LOG_ERROR("RTN_BLACKHOLE route not expected")` + `return` | static blackhole は FRR → fpmsyncd ではなく bgpcfgd 経路で処理すべき。fpmsyncd 側は破棄 | なし |
 | 10 | BGP ASN 未設定時の redistribute static 保留 | `set_handler()` → `vrf_pending_redistribution.add(vrf)` | redistribute static コマンドを保留。`on_bgp_asn_change()` 呼び出しまで BGP 広告が行われない | 自動回復 (ASN 設定後) |
 
 ### IpNextHopSet 構築例外の詳細
@@ -335,7 +335,7 @@ self.selector.addSelectable(subscriber)
 self.callbacks[db][table_name].append(manager.handler)
 ```
 
-Redis からのイベント到着時、`runner.py` は `subscriber.pop()` でキー・オペレーション・フィールド値を取得し、`StaticRouteMgr.handler(key, op, fvs)` を呼ぶ。
+[Redis](../../reference/glossary.md#term-redis) からのイベント到着時、`runner.py` は `subscriber.pop()` でキー・オペレーション・フィールド値を取得し、`StaticRouteMgr.handler(key, op, fvs)` を呼ぶ。
 
 ### set_handler → vtysh 経路
 
@@ -438,14 +438,14 @@ exit
 ### kernel FIB 反映
 
 FRR `staticd` が vtysh コマンドを受け取り、`zebra` → `netlink` 経由で kernel FIB を更新する。
-nexthop の ARP 解決が必要な場合は ARP/ND 解決完了後に FIB 挿入される。
+nexthop の [ARP](../../reference/glossary.md#term-arp) 解決が必要な場合は [ARP](../../reference/glossary.md#term-arp)/ND 解決完了後に FIB 挿入される。
 `ip route show` / `ip -6 route show` で確認可能。
 
 ### STATE_DB
 
-`StaticRouteMgr` は STATE_DB への直接書込を行わない。
+`StaticRouteMgr` は [STATE_DB](../../reference/glossary.md#term-state_db) への直接書込を行わない。
 BFD 連携時は `staticroutebfd` が APPL_DB `STATIC_ROUTE_TABLE` を更新し、
-`bfdmon` が STATE_DB `BFD_SESSION_TABLE` を管理する。
+`bfdmon` が [STATE_DB](../../reference/glossary.md#term-state_db) `BFD_SESSION_TABLE` を管理する。
 
 ### APPL_DB 管理 (StaticRouteTimer)
 
@@ -476,10 +476,10 @@ BFD 連携時は `staticroutebfd` が APPL_DB `STATIC_ROUTE_TABLE` を更新し�
 
 ### VRF 先行原則 (fpmsyncd)
 
-`fpmsyncd` の `RouteSync::onMsg` は Netlink メッセージ受信時に次の順序で VRF を解決する。
+`fpmsyncd` の `RouteSync::onMsg` は [Netlink](../../reference/glossary.md#term-netlink) メッセージ受信時に次の順序で VRF を解決する。
 
 1. **VRF インデックス取得**: `rtnl_route_get_table()` でルートテーブル ID を取得。テーブル ID が 0 以外の場合、`getIfName()` でデバイス名に変換。
-2. **VNET / VRF 振り分け**: デバイス名が `VNET_PREFIX` で始まる場合は `onVnetRouteMsg`、それ以外は `onRouteMsg` に渡す。デフォルト VRF (table_id = 0) は `vrf = NULL` で `onRouteMsg` を呼ぶ。
+2. **[VNET](../../reference/glossary.md#term-vnet) / VRF 振り分け**: デバイス名が `VNET_PREFIX` で始まる場合は `onVnetRouteMsg`、それ以外は `onRouteMsg` に渡す。デフォルト VRF (table_id = 0) は `vrf = NULL` で `onRouteMsg` を呼ぶ。
 3. **VRF 名検証**: `onRouteMsg` 内で VRF 名が `VRF_PREFIX`（`"Vrf"`）または `MGMT_VRF_PREFIX`（`"mgmt"`）で始まるか検証。mgmt VRF はスキップ、それ以外の不正 VRF は `SWSS_LOG_ERROR` でドロップ。
 4. **key 組み立て**: `<vrf_name>:<prefix>` 形式で `destipprefix` を構築してから `APP_ROUTE_TABLE_NAME` に書き込む。
 
@@ -487,7 +487,7 @@ BFD 連携時は `staticroutebfd` が APPL_DB `STATIC_ROUTE_TABLE` を更新し�
 
 ### kernel FIB 反映順序 (fpmsyncd)
 
-FRR の zebra が Netlink RTM_NEWROUTE / RTM_DELROUTE を送出し、fpmsyncd がそれを受信して APPL_DB へ書き込む流れにおける順序制約。
+FRR の [zebra](../../reference/glossary.md#term-zebra) が [Netlink](../../reference/glossary.md#term-netlink) RTM_NEWROUTE / RTM_DELROUTE を送出し、fpmsyncd がそれを受信して APPL_DB へ書き込む流れにおける順序制約。
 
 1. **RTM_DELROUTE 優先処理**: `onRouteMsg` は `nlmsg_type == RTM_DELROUTE` を先に評価して即 `delWithWarmRestart` を呼び出す。ADD 処理よりも DELETE が先に評価される。
 2. **RTN_BLACKHOLE ショートパス**: route type が `RTN_BLACKHOLE` の場合、nexthop 解決を省略して `blackhole = "true"` フィールドだけを APPL_DB に書き込む。
@@ -567,7 +567,7 @@ STATIC_ROUTE テーブルは以下の CONFIG_DB テーブルへ暗黙的に依�
 |--------------|-------|-----------|
 | `VRF` | bgpcfgd `StaticRouteMgr` | key の `<vrf>` 部分を FRR コマンド `router bgp <asn> vrf <vrf>` に直接展開。VRF 存在確認は FRR 任せ |
 | `INTERFACE` / `LOOPBACK_INTERFACE` / `VLAN_INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_SUB_INTERFACE` | bgpcfgd `InterfaceMgr`（`main.py` 購読）| bgpcfgd が同一プロセス内で購読。StaticRouteMgr は `ifname` フィールドをそのまま FRR に渡し、IF 存在確認はしない |
-| `VRF`（カーネル IF 名） | fpmsyncd `routesync` | Netlink route の `rta_table` を `getIfName` でカーネル VRF デバイス名 (`Vrf...`) に変換して APP_DB key に付与 |
+| `VRF`（カーネル IF 名） | fpmsyncd `routesync` | [Netlink](../../reference/glossary.md#term-netlink) route の `rta_table` を `getIfName` でカーネル VRF デバイス名 (`Vrf...`) に変換して APP_DB key に付与 |
 | `INTERFACE`（カーネル IF 名） | fpmsyncd `routesync` | nexthop の `rtnh_ifindex` を `getIfName` で IF 名に変換して APP_DB `ROUTE_TABLE` の `ifname` フィールドにセット |
 
 詳細エビデンス: `meta/_intermediate/cdb-flow/static-route-cross-refs.md`
@@ -578,18 +578,18 @@ STATIC_ROUTE テーブルは以下の CONFIG_DB テーブルへ暗黙的に依�
 
 ### VOQ Chassis
 
-`bgpcfgd` 起動時に `device_info.is_chassis()` が `True` の場合、`ChassisAppDbMgr` が追加登録され、Supervisor の TSA (Traffic Shift Away) 状態変化を `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL` から購読する[^3]。これにより Line Card 全体の BGP が isolate/unisolate される。`STATIC_ROUTE` テーブルの処理ロジック自体は VOQ 構成でも共通。VOQ Chassis 固有の BGP peer は `BGP_VOQ_CHASSIS_NEIGHBOR` で別管理されており、静的経路の nexthop 到達性に間接的に影響しうる。
+`bgpcfgd` 起動時に `device_info.is_chassis()` が `True` の場合、`ChassisAppDbMgr` が追加登録され、Supervisor の TSA (Traffic Shift Away) 状態変化を `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL` から購読する[^3]。これにより Line Card 全体の BGP が isolate/unisolate される。`STATIC_ROUTE` テーブルの処理ロジック自体は [VOQ](../../reference/glossary.md#term-voq) 構成でも共通。[VOQ](../../reference/glossary.md#term-voq) Chassis 固有の BGP peer は `BGP_VOQ_CHASSIS_NEIGHBOR` で別管理されており、静的経路の nexthop 到達性に間接的に影響しうる。
 
 ### SmartSwitch DPU
 
-`switch_type == "dpu"` の場合、`bfdmon` が BFD プローブ状態を `STATE_DB.DPU_BFD_PROBE_STATE` ではなく `DPU_STATE_DB.DASH_BFD_PROBE_STATE` から取得する[^4]。`bfd=true` を持つ `STATIC_ROUTE` エントリの BFD 監視経路が異なる DB を参照する点に注意。CONFIG_DB 書き込みおよび FRR への静的経路反映ロジックは DPU 固有差分なし。
+`switch_type == "dpu"` の場合、`bfdmon` が BFD プローブ状態を `STATE_DB.DPU_BFD_PROBE_STATE` ではなく `DPU_STATE_DB.DASH_BFD_PROBE_STATE` から取得する[^4]。`bfd=true` を持つ `STATIC_ROUTE` エントリの BFD 監視経路が異なる DB を参照する点に注意。CONFIG_DB 書き込みおよび FRR への静的経路反映ロジックは [DPU](../../reference/glossary.md#term-dpu) 固有差分なし。
 
 ### FRR バージョン差
 
 `bgpcfgd` レイヤに FRR バージョン検出・分岐コードは存在しない。`vtysh` へ渡すコマンド文字列（`ip route` / `ipv6 route` 形式）は固定であり、FRR バージョンによる挙動差は bgpcfgd レベルでは吸収されている。
 
 [^3]: bgpcfgd main.py チャーシス分岐: <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/main.py>
-[^4]: bfdmon DPU 分岐: <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bfdmon/bfdmon.py>
+[^4]: bfdmon [DPU](../../reference/glossary.md#term-dpu) 分岐: <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bfdmon/bfdmon.py>
 
 <!-- /platform -->
 
@@ -637,4 +637,4 @@ redistribute static コマンドは `["ipv4", "ipv6"]` の両 AF に対して発
 
 <!-- /constants -->
 
-<!-- glossary-links-injected: 21a1d1474543 -->
+<!-- glossary-links-injected: 55cdd588f0ac -->

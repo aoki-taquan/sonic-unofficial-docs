@@ -49,36 +49,29 @@ related:
 
 ## 概要
 
-[portsorch](../../reference/glossary.md#term-portsorch)（[orchagent](../../reference/glossary.md#term-orchagent) 内）および `bufferorch`・`watermarkorch` が [SAI](../../reference/glossary.md#term-sai) の flex counter 機構を通じて Queue / Priority Group (PG) / Buffer Pool ごとに収集するバッファ統計カウンタ群[^1]。
+[portsorch](../../reference/glossary.md#term-portsorch)（[orchagent](../../reference/glossary.md#term-orchagent) 内）および `bufferorch`・`watermarkorch` が [SAI](../../reference/glossary.md#term-sai) の flex counter 機構を通じて Queue / Priority Group (PG) / [Buffer Pool](../../reference/glossary.md#term-buffer-pool) ごとに収集するバッファ統計カウンタ群[^1]。
 
 - **Queue カウンタ**: パケット数・バイト数・ドロップ数を `COUNTERS:<oid>` に格納
 - **Queue ウォーターマーク**: 共有バッファ最大占有量 (bytes) を `COUNTERS/<PERIODIC/PERSISTENT/USER_WATERMARKS:<oid>` に格納
 - **PG ウォーターマーク**: shared / xoff headroom の最大占有量を同テーブルに格納
 - **PG ドロップカウンタ**: PG ごとのドロップパケット数を `COUNTERS:<oid>` に格納
 - **Port バッファドロップ**: ポート単位 in/out バッファドロップ数を `COUNTERS:<oid>` に格納
-- **Buffer Pool ウォーターマーク**: プール単位の最大占有量を `USER/PERSISTENT/PERIODIC_WATERMARKS:<oid>` に格納
+- **[Buffer Pool](../../reference/glossary.md#term-buffer-pool) ウォーターマーク**: プール単位の最大占有量を `USER/PERSISTENT/PERIODIC_WATERMARKS:<oid>` に格納
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CFG[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  ORC["portsorch<br/>bufferorch<br/>watermarkorch"]
-  syncd["syncd<br/>FlexCounter"]
-  HW["SAI / ASIC"]
-  CNTDB[("COUNTERS_DB<br/>COUNTERS/WATERMARKS")]
-  CFG --> ORC
-  ORC --> syncd
-  syncd --> HW
-  HW --> syncd
-  syncd --> CNTDB
-  syncd -- "Lua plugin" --> CNTDB
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    `FLEX_COUNTER_TABLE|QUEUE_WATERMARK` / `PG_WATERMARK` / `PORT_BUFFER_DROP` 等が `enable` になると、portsorch / bufferorch が SAI カウンタ ID リストを syncd へ投入し、syncd が定周期でポーリングして COUNTERS_DB を更新する。ウォーターマークは Lua plugin が max 集計して PERIODIC/PERSISTENT/USER_WATERMARKS テーブルへ書き込む。
-
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -129,7 +122,7 @@ COUNTERS_DB / PERIODIC_WATERMARKS:<oid>  (Hash — Buffer Pool ウォーター�
 
 ### Queue カウンタ (`QUEUE_STAT_COUNTER` グループ)[^2]
 
-| SAI フィールド | 意味 |
+| [SAI](../../reference/glossary.md#term-sai) フィールド | 意味 |
 |---------------|------|
 | `SAI_QUEUE_STAT_PACKETS` | 送信パケット数 |
 | `SAI_QUEUE_STAT_BYTES` | 送信バイト数 |
@@ -141,16 +134,16 @@ COUNTERS_DB / PERIODIC_WATERMARKS:<oid>  (Hash — Buffer Pool ウォーター�
 
 VoQ (Virtual Output Queue) 環境では追加で:
 
-| SAI フィールド | 意味 |
+| [SAI](../../reference/glossary.md#term-sai) フィールド | 意味 |
 |---------------|------|
 | `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` | Credit Watchdog 削除パケット数 |
 
-WRED 対応 ASIC の場合 (`WRED_ECN_QUEUE_STAT_COUNTER` グループ):
+[WRED](../../reference/glossary.md#term-wred) 対応 ASIC の場合 (`WRED_ECN_QUEUE_STAT_COUNTER` グループ):
 
 | SAI フィールド | 意味 |
 |---------------|------|
-| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | WRED ECN マークパケット数 |
-| `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | WRED ECN マークバイト数 |
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | [WRED](../../reference/glossary.md#term-wred) ECN マークパケット数 |
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | [WRED](../../reference/glossary.md#term-wred) ECN マークバイト数 |
 | `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` | WRED ドロップパケット数 |
 | `SAI_QUEUE_STAT_WRED_DROPPED_BYTES` | WRED ドロップバイト数 |
 
@@ -189,7 +182,7 @@ WRED 対応 ASIC の場合 (`WRED_ECN_QUEUE_STAT_COUNTER` グループ):
 
 ## ウォーターマーク Lua plugin の動作
 
-`watermark_pg.lua` / `watermark_queue.lua` / `watermark_bufferpool.lua` が syncd の flex counter エンジンから定周期で呼び出され、`COUNTERS:<oid>` の瞬時値と各ウォーターマークテーブルの既存値を比較して `max()` を書き込む[^3]。
+`watermark_pg.lua` / `watermark_queue.lua` / `watermark_bufferpool.lua` が [syncd](../../reference/glossary.md#term-syncd) の flex counter エンジンから定周期で呼び出され、`COUNTERS:<oid>` の瞬時値と各ウォーターマークテーブルの既存値を比較して `max()` を書き込む[^3]。
 
 | テーブル | 意味 | クリア方法 |
 |---------|------|----------|
@@ -204,18 +197,18 @@ WRED 対応 ASIC の場合 (`WRED_ECN_QUEUE_STAT_COUNTER` グループ):
 | 経路 | 対象テーブル | 詳細 |
 |------|------------|------|
 | portsorch 初期化 | `COUNTERS_QUEUE_NAME_MAP`, `COUNTERS_PG_NAME_MAP` | 名前→OID マッピング書き込み |
-| syncd FlexCounter (QUEUE_STAT) | `COUNTERS:<oid>` | Queue 統計を 10000ms ごとにポーリング |
-| syncd FlexCounter (PG_DROP) | `COUNTERS:<oid>` | PG ドロップを 10000ms ごとにポーリング |
-| syncd FlexCounter (PORT_BUFFER_DROP) | `COUNTERS:<oid>` | Port バッファドロップを 60000ms ごとにポーリング |
+| [syncd](../../reference/glossary.md#term-syncd) [FlexCounter](../../reference/glossary.md#term-flexcounter) (QUEUE_STAT) | `COUNTERS:<oid>` | Queue 統計を 10000ms ごとにポーリング |
+| [syncd](../../reference/glossary.md#term-syncd) [FlexCounter](../../reference/glossary.md#term-flexcounter) (PG_DROP) | `COUNTERS:<oid>` | PG ドロップを 10000ms ごとにポーリング |
+| syncd [FlexCounter](../../reference/glossary.md#term-flexcounter) (PORT_BUFFER_DROP) | `COUNTERS:<oid>` | Port バッファドロップを 60000ms ごとにポーリング |
 | syncd + Lua (QUEUE_WATERMARK) | `*_WATERMARKS:<oid>` | Queue WM を 60000ms ごとに max 集計 |
 | syncd + Lua (PG_WATERMARK) | `*_WATERMARKS:<oid>` | PG WM を 60000ms ごとに max 集計 |
-| bufferorch + Lua (BUFFER_POOL_WATERMARK) | `*_WATERMARKS:<oid>` | Buffer Pool WM を 60000ms ごとに max 集計 |
+| bufferorch + Lua (BUFFER_POOL_WATERMARK) | `*_WATERMARKS:<oid>` | [Buffer Pool](../../reference/glossary.md#term-buffer-pool) WM を 60000ms ごとに max 集計 |
 | watermarkorch timer | `PERIODIC_WATERMARKS` | 120s 周期でゼロリセット |
 
 ## 関連 CONFIG_DB / CLI
 
-- CONFIG_DB: `FLEX_COUNTER_TABLE` — グループ別有効化と間隔設定
-- CONFIG_DB: `BUFFER_POOL`, `BUFFER_PG`, `BUFFER_QUEUE` — バッファ設定
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `FLEX_COUNTER_TABLE` — グループ別有効化と間隔設定
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `BUFFER_POOL`, `BUFFER_PG`, `BUFFER_QUEUE` — バッファ設定
 - CLI: `show queue counters`, `show priority-group watermark`, `show buffer pool watermark`
 - CLI: `counterpoll queue enable/disable`, `counterpoll pg-watermark enable/disable`
 - CLI: `sonic-clear queue counters`, `sonic-clear priority-group drop counters`
@@ -260,13 +253,13 @@ WRED 対応 ASIC の場合 (`WRED_ECN_QUEUE_STAT_COUNTER` グループ):
 
 ### 定周期クリアのデフォルト間隔
 
-`WatermarkOrch` のテレメトリタイマー初期値は `DEFAULT_TELEMETRY_INTERVAL = 120` 秒 (`watermarkorch.cpp:9`) にハードコードされている。`WATERMARK_TABLE|TELEMETRY_INTERVAL` で上書き可能だが、CONFIG_DB 未設定の場合は **120 秒**が実効値になる[^7]。
+`WatermarkOrch` のテレメトリタイマー初期値は `DEFAULT_TELEMETRY_INTERVAL = 120` 秒 (`watermarkorch.cpp:9`) にハードコードされている。`WATERMARK_TABLE|TELEMETRY_INTERVAL` で上書き可能だが、[CONFIG_DB](../../reference/glossary.md#term-config_db) 未設定の場合は **120 秒**が実効値になる[^7]。
 
 | 種類 | 詳細 |
 |------|------|
 | ハードコードデフォルト | `DEFAULT_TELEMETRY_INTERVAL = 120` (watermarkorch.cpp:9) |
 | 上書き方法 | `CONFIG_DB` `WATERMARK_TABLE|TELEMETRY_INTERVAL: {interval: <秒>}` |
-| 乖離 | YANG / CLI に `default` 宣言なし。counterpoll では "120" と表示するが orchagent ハードコード由来 |
+| 乖離 | [YANG](../../reference/glossary.md#term-yang) / CLI に `default` 宣言なし。counterpoll では "120" と表示するが [orchagent](../../reference/glossary.md#term-orchagent) ハードコード由来 |
 
 ### ウォーターマーク Lua plugin の暗黙 max 初期値
 
@@ -344,7 +337,7 @@ buffer pool
     └── buffer pq table
 ```
 
-`doTask(Consumer)` 先頭のガード (`bufferorch.cpp:2090-2099`) により、非 VOQ 構成では `gPortsOrch->isConfigDone()` が `true` になるまで全バッファタスクが早期 return する。
+`doTask(Consumer)` 先頭のガード (`bufferorch.cpp:2090-2099`) により、非 [VOQ](../../reference/glossary.md#term-voq) 構成では `gPortsOrch->isConfigDone()` が `true` になるまで全バッファタスクが早期 return する。
 
 ### BUFFER_POOL_WATERMARK カウンタ登録の 2 段階起動
 
@@ -397,17 +390,17 @@ buffer pool
 
 > 調査証跡: `meta/_intermediate/cdb-flow/counter-buffer-cross-refs.md`
 
-以下はすべて実装レベルの暗黙参照（YANG leafref なし）。
+以下はすべて実装レベルの暗黙参照（[YANG](../../reference/glossary.md#term-yang) leafref なし）。
 
 | 参照元処理 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
 |-----------|--------------|--------------|---------|------|
 | `generateBufferPoolWatermarkCounterIdList()` のトリガー | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|BUFFER_POOL_WATERMARK` | `FlexCounterOrch::doTask()` が `FLEX_COUNTER_STATUS=enable` を検知し `gBufferOrch->generateBufferPoolWatermarkCounterIdList()` を呼び出す。`disable` では `clearBufferPoolWatermarkCounterIdList()` が呼ばれ各プール OID の `COUNTER_ID_LIST` を削除 | `flexcounterorch.cpp:287-289` |
-| `createPortBufferQueueCounters()` の FlexCounter 登録判断 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|QUEUE` | `getQueueCountersState()=true`（`FLEX_COUNTER_STATUS=enable`）のときのみ SAI カウンタを FLEX_COUNTER_DB に登録。`false` の場合は `COUNTERS_QUEUE_NAME_MAP` へのマッピングのみ | `portsorch.cpp:8731`, `flexcounterorch.cpp:453` |
-| `createPortBufferPgCounters()` の PG_DROP 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|PG_DROP` | `getPgCountersState()=true` のときのみ PG ドロップカウンタを FLEX_COUNTER_DB に登録 | `portsorch.cpp:8925-8927` |
+| `createPortBufferQueueCounters()` の FlexCounter 登録判断 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|QUEUE` | `getQueueCountersState()=true`（`FLEX_COUNTER_STATUS=enable`）のときのみ SAI カウンタを [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に登録。`false` の場合は `COUNTERS_QUEUE_NAME_MAP` へのマッピングのみ | `portsorch.cpp:8731`, `flexcounterorch.cpp:453` |
+| `createPortBufferPgCounters()` の PG_DROP 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|PG_DROP` | `getPgCountersState()=true` のときのみ PG ドロップカウンタを [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に登録 | `portsorch.cpp:8925-8927` |
 | `createPortBufferQueueCounters()` の Watermark 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` | `getQueueWatermarkCountersState()=true` のときのみ Queue Watermark を登録 | `portsorch.cpp:8736-8738` |
 | `createPortBufferPgCounters()` の PG_WATERMARK 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|PG_WATERMARK` | `getPgWatermarkCountersState()=true` のときのみ PG Watermark を登録 | `portsorch.cpp:8930-8933` |
 | `getQueueConfigurations()` / `getPgConfigurations()` のモード分岐 | `DEVICE_METADATA` | `DEVICE_METADATA\|localhost` フィールド `create_only_config_db_buffers` | 起動時に 1 回読込み `m_createOnlyConfigDbBuffers` にキャッシュ。`true` → 非ゼロプロファイル付き Queue / PG のみ FlexCounter 対象。`false`（デフォルト）または VoQ → 全対象。実行時変更は `handleDeviceMetadataTable()` で反映されるが**既登録カウンタへの遡及なし** | `flexcounterorch.cpp:110-124`, `flexcounterorch.cpp:508-513` |
-| `generateBufferPoolWatermarkCounterIdList()` の OID 取得元 | `APP_DB:BUFFER_POOL_TABLE` | `APP_BUFFER_POOL_TABLE\|<pool_name>` | `BufferOrch::processBufferPool()` が SAI `create_buffer_pool` 後に OID を `m_buffer_type_maps` に蓄積。`generateBufferPoolWatermarkCounterIdList()` が全プール OID をイテレートして `COUNTER_ID_LIST` を FLEX_COUNTER_DB に push する | `bufferorch.cpp:316-344`, `bufferorch.cpp:540-547` |
+| `generateBufferPoolWatermarkCounterIdList()` の OID 取得元 | `APP_DB:BUFFER_POOL_TABLE` | `APP_BUFFER_POOL_TABLE\|<pool_name>` | `BufferOrch::processBufferPool()` が SAI `create_buffer_pool` 後に OID を `m_buffer_type_maps` に蓄積。`generateBufferPoolWatermarkCounterIdList()` が全プール OID をイテレートして `COUNTER_ID_LIST` を [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に push する | `bufferorch.cpp:316-344`, `bufferorch.cpp:540-547` |
 | `COUNTERS_DB:COUNTERS_BUFFER_POOL_NAME_MAP` への書き込み | `APP_DB:BUFFER_POOL_TABLE` | `APP_BUFFER_POOL_TABLE\|<pool_name>` | `processBufferPool()` で SAI create 成功直後に `m_counterNameMapUpdater->setCounterNameMap()` で書き込み。Queue / PG と異なり `FLEX_COUNTER_STATUS` に依存せず即時書き込まれる | `bufferorch.cpp:542-547` |
 | 全バッファカウンタグループの enable 処理 | `APP_DB:PORT_TABLE` | `PORT_TABLE\|PortInitDone` | `allPortsReady()` が `false` の間 `FlexCounterOrch::doTask()` は先頭で `return`。BUFFER_POOL_WATERMARK / QUEUE / PG の enable イベントはすべて PortInitDone 後まで保留される | `flexcounterorch.cpp:164-169` |
 
@@ -600,7 +593,7 @@ CONFIG_DB の BUFFER_POOL / BUFFER_PROFILE テーブルのフィールド名と�
 | `buffer_static_th_field_name` | `"static_th"` |
 | `buffer_headroom_type_field_name` | `"headroom_type"` |
 
-これらは `bufferorch.cpp` の `processBufferPool()` / `processBufferProfile()` 内で `fvField()` 比較に使われる。YANG で定義された名前と 1:1 対応しているが、**コード側で独立定義**されており、YANG 変更がコードに自動反映されない。
+これらは `bufferorch.cpp` の `processBufferPool()` / `processBufferProfile()` 内で `fvField()` 比較に使われる。[YANG](../../reference/glossary.md#term-yang) で定義された名前と 1:1 対応しているが、**コード側で独立定義**されており、YANG 変更がコードに自動反映されない。
 
 <!-- /constants -->
 
@@ -609,8 +602,8 @@ CONFIG_DB の BUFFER_POOL / BUFFER_PROFILE テーブルのフィールド名と�
 
 <!-- evidence: meta/_intermediate/cdb-flow/counter-buffer-side.md -->
 
-バッファカウンタに関連する処理が COUNTERS_DB / APPL_STATE_DB / syncd FLEX_COUNTER_TABLE へ
-行う副次書き込みの全体像。YANG / HLD には明示されていない。
+バッファカウンタに関連する処理が [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / APPL_STATE_DB / syncd FLEX_COUNTER_TABLE へ
+行う副次書き込みの全体像。YANG / [HLD](../../reference/glossary.md#term-hld) には明示されていない。
 
 ### COUNTERS_DB — 名前 → OID マップ登録
 
@@ -643,8 +636,8 @@ bufferorch は `ResponsePublisher` (宛先: `APPL_STATE_DB`) を保持してお�
 |------|---------|------------|
 | Buffer Pool CREATE (xoff あり) | `APPL_STATE_DB / BUFFER_POOL_TABLE \| <name>` | `{xoff: <bytes>}` — shared headroom 適用結果 |
 | Buffer Pool DELETE | `APPL_STATE_DB / BUFFER_POOL_TABLE \| <name>` | 空 fvs (エントリ削除) |
-| Buffer Profile SET (lossless) | `APPL_STATE_DB / BUFFER_PROFILE_TABLE \| <name>` | 変更結果フィールド群 |
-| Buffer Profile DELETE | `APPL_STATE_DB / BUFFER_PROFILE_TABLE \| <name>` | 空 fvs (エントリ削除) |
+| [Buffer Profile](../../reference/glossary.md#term-buffer-profile) SET (lossless) | `APPL_STATE_DB / BUFFER_PROFILE_TABLE \| <name>` | 変更結果フィールド群 |
+| [Buffer Profile](../../reference/glossary.md#term-buffer-profile) DELETE | `APPL_STATE_DB / BUFFER_PROFILE_TABLE \| <name>` | 空 fvs (エントリ削除) |
 
 `xoff` フィールドのない通常の ingress/egress プールは APPL_STATE_DB に書き込まれない。
 
@@ -676,7 +669,7 @@ Gearbox PHY が有効な環境では、`COUNTERS_PORT_NAME_MAP` が
 <!-- evidence: meta/_intermediate/cdb-flow/counter-buffer-pubsub.md -->
 
 バッファ / ウォーターマークカウンタ周辺で使われる通知経路は 3 種類存在する。
-すべて HLD には明示されていない。
+すべて [HLD](../../reference/glossary.md#term-hld) には明示されていない。
 
 ### 1. CONFIG_DB → watermarkorch / flexcounterorch — SubscriberStateTable
 
@@ -710,10 +703,10 @@ Gearbox PHY が有効な環境では、`COUNTERS_PORT_NAME_MAP` が
 
 ### 2. APPL_DB → watermarkorch — Redis PUBLISH/SUBSCRIBE (NotificationConsumer)
 
-`WatermarkOrch` は初期化時に `swss::NotificationConsumer` を APPL_DB の
+`WatermarkOrch` は初期化時に `swss::NotificationConsumer` を [APPL_DB](../../reference/glossary.md#term-appl_db) の
 `WATERMARK_CLEAR_REQUEST` チャネルに登録する（watermarkorch.cpp:35-39）。
 
-送信者は `watermarkstat` CLI（sonic-utilities/scripts/watermarkstat:323-325）:
+送信者は `watermarkstat` CLI（[sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/scripts/watermarkstat:323-325）:
 
 ```
 watermarkstat --clear --type pg_shared
@@ -731,8 +724,8 @@ op / data の組み合わせと対象テーブル:
 | `PERSISTENT` | `PG_HEADROOM` / `PG_SHARED` / `Q_SHARED_*` / `BUFFER_POOL` / `HEADROOM_POOL` | `PERSISTENT_WATERMARKS` |
 | `USER` | 同上 | `USER_WATERMARKS` |
 
-**これは CONFIG_DB の keyspace 通知とは別の Redis PUBLISH/SUBSCRIBE 機構**であり、
-TTL なし・永続コネクション・fan-out なしの 1:1 通知。HLD への記述は存在しない。
+**これは CONFIG_DB の keyspace 通知とは別の [Redis](../../reference/glossary.md#term-redis) PUBLISH/SUBSCRIBE 機構**であり、
+TTL なし・永続コネクション・fan-out なしの 1:1 通知。[HLD](../../reference/glossary.md#term-hld) への記述は存在しない。
 
 ### 3. SelectableTimer — PERIODIC_WATERMARKS 定期リセット
 
@@ -776,7 +769,7 @@ TTL なし・永続コネクション・fan-out なしの 1:1 通知。HLD へ�
 
 ### DPU (Data Processing Unit) 環境
 
-`bufferorch.cpp:64-67` で `gMySwitchType != "dpu"` のガードがあり、DPU では `initBufferConstants()` (xoff / shared headroom 計算) がスキップされる。結果として DPU に不要な xoff バッファ定数は SAI へ投入されない。`portsorch.cpp:987,1043,1056` にも DPU 環境でスキップされる初期化フローが複数存在する。
+`bufferorch.cpp:64-67` で `gMySwitchType != "dpu"` のガードがあり、[DPU](../../reference/glossary.md#term-dpu) では `initBufferConstants()` (xoff / shared headroom 計算) がスキップされる。結果として [DPU](../../reference/glossary.md#term-dpu) に不要な xoff バッファ定数は SAI へ投入されない。`portsorch.cpp:987,1043,1056` にも [DPU](../../reference/glossary.md#term-dpu) 環境でスキップされる初期化フローが複数存在する。
 
 ### Fabric ポート環境 (シャーシ)
 
@@ -788,10 +781,10 @@ WRED 統計 (`SAI_QUEUE_STAT_WRED_*`) は `sai_query_stats_capability()` (portso
 
 ### `create_only_config_db_buffers` (Dynamic Buffer Model)
 
-`DEVICE_METADATA|localhost` の `create_only_config_db_buffers: "true"` が設定された Dynamic Buffer Model 環境 (mlnx 等) では:
+`DEVICE_METADATA|localhost` の `create_only_config_db_buffers: "true"` が設定された Dynamic [Buffer Model](../../reference/glossary.md#term-buffer-model) 環境 (mlnx 等) では:
 
 - Queue カウンタ: BUFFER_QUEUE テーブルに記載された (port, queue index) のみ登録される
-- PG カウンタ: BUFFER_PG テーブルに記載された (port, pg index) のみ登録される
+- PG カウンタ: [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) テーブルに記載された (port, pg index) のみ登録される
 - `false` または VoQ システムの場合は全 Queue / 全 PG が対象
 
 この設定は runtime の `DEVICE_METADATA` テーブル変更で更新可能だが (flexcounterorch.cpp:508-520)、既登録のカウンタ ID リストは自動再構成されない。
@@ -830,8 +823,10 @@ WRED 統計 (`SAI_QUEUE_STAT_WRED_*`) は `sai_query_stats_capability()` (portso
 [^14]: ポーリング間隔二重定義: `sonic-swss/orchagent/portsorch.cpp:88-93`, `portsorch.h:38-41`, `bufferorch.h:16`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.cpp#L88>
 [^15]: FLEX_COUNTER_DELAY_SEC: `sonic-swss/orchagent/flexcounterorch.cpp:44`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44>
 [^16]: FLEX_COUNTER_TABLE キー定数: `sonic-swss/orchagent/flexcounterorch.cpp:46-64`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L46>
-[^17]: COUNTERS_DB フィールド名定数: `sonic-swss-common/common/schema.h:225-333`. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h#L225>
+[^17]: [COUNTERS_DB](../../reference/glossary.md#term-counters_db) フィールド名定数: `sonic-swss-common/common/schema.h:225-333`. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h#L225>
 [^18]: bufferorch.h フィールド名文字列: `sonic-swss/orchagent/bufferorch.h:18-35`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.h#L18>
 [^19]: Buffer Pool 名前マップ即時登録: `sonic-swss/orchagent/bufferorch.cpp:546,586`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.cpp#L546>
 [^20]: APPL_STATE_DB ResponsePublisher: `sonic-swss/orchagent/bufferorch.cpp:555,589,832,880`, `orchagent/orch.h:382`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.cpp#L555>
 [^21]: FLEX_COUNTER_TABLE Buffer Pool WM 登録: `sonic-swss/orchagent/bufferorch.cpp:247,333-358`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/bufferorch.cpp#L247>
+
+<!-- glossary-links-injected: 6f7d024ed5a3 -->

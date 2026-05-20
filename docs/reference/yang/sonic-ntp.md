@@ -62,6 +62,7 @@ flowchart LR
 
 ### 対応 CONFIG_DB
 
+- [`NTP`](../config-db/ntp.md)
 - [`NTP_SERVER`](../config-db/ntp-server.md)
 - [`NTP_KEY`](../config-db/ntp-key.md)
 

@@ -182,17 +182,17 @@ show feature status
 
 ### 段階 1 — Consumer 登録
 
-`hostcfgd` の `FeatureHandler` + `containercfgd` + `coppmgrd` + `dhcprelayd` が CONFIG_DB の `FEATURE` テーブルを購読する。
+`hostcfgd` の `FeatureHandler` + `containercfgd` + `coppmgrd` + `dhcprelayd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `FEATURE` テーブルを購読する。
 
 `FEATURE` の key はフィーチャー名 (例: `bgp`, `swss`, `lldp`)。`always_enabled` フィーチャーは disable 不可。
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — Docker コンテナの起動/停止制御)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — Docker コンテナの起動/停止制御)
 
 ### 段階 4 — タイミングと副作用
 
@@ -285,7 +285,7 @@ has_per_asic_scope=True → <feature>@0.service, @1.service, ... (ASIC ごと)
 has_per_dpu_scope=True  → <feature>@dpu0.service, @dpu1.service, ... (DPU ごと)
 ```
 
-インスタンス `.service` ファイルは `systemd-sonic-generator` がブート時に `/run/systemd/generator/` 配下に動的生成する。SmartSwitch NPU 環境では `database@dpu<N>.service` に `Requires=systemd-networkd-wait-online@bridge-midplane.service` が追加される（`systemd-sonic-generator.cpp:985-996`）。
+インスタンス `.service` ファイルは `systemd-sonic-generator` がブート時に `/run/systemd/generator/` 配下に動的生成する。[SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) 環境では `database@dpu<N>.service` に `Requires=systemd-networkd-wait-online@bridge-midplane.service` が追加される（`systemd-sonic-generator.cpp:985-996`）。
 
 ### 書き込み優先順序
 
@@ -349,7 +349,7 @@ has_per_dpu_scope=True  → <feature>@dpu0.service, @dpu1.service, ... (DPU ご�
 
 ### enable / disable 失敗 → "failed" + CONFIG_DB resync
 
-`enable_feature()` / `disable_feature()` 内で `run_cmd(..., raise_exception=True)` が例外を投げると `set_feature_state(feature, "failed")` が STATE_DB に書き込まれ、`handler()` は `update_feature_state()` の `False` 返却を受けて `resync_feature_state()` を呼び出す（`featured:212-217`）。`resync_feature_state()` は CONFIG_DB の `state` フィールドを変更前の cached 値に書き戻す（`always_enabled`/`always_disabled` またはテンプレート値の場合のみ書き戻し実施、それ以外はユーザ設定を保持）。
+`enable_feature()` / `disable_feature()` 内で `run_cmd(..., raise_exception=True)` が例外を投げると `set_feature_state(feature, "failed")` が [STATE_DB](../../reference/glossary.md#term-state_db) に書き込まれ、`handler()` は `update_feature_state()` の `False` 返却を受けて `resync_feature_state()` を呼び出す（`featured:212-217`）。`resync_feature_state()` は CONFIG_DB の `state` フィールドを変更前の cached 値に書き戻す（`always_enabled`/`always_disabled` またはテンプレート値の場合のみ書き戻し実施、それ以外はユーザ設定を保持）。
 
 > **注意**: `systemctl enable` のみ `raise_exception=False` で失敗を無視する（`/run` 配下の生成サービスファイルへの enable 制限への対処）。
 
@@ -368,13 +368,13 @@ disable 処理は `stop → disable → mask` の順で逐次実行され、最�
 - CONFIG_DB の `FEATURE|<name>` に `has_timer` フィールドが存在する（廃止フィールド）
 - `state` フィールドの Jinja2 render 結果が `enabled`/`disabled`/`always_enabled`/`always_disabled` 以外
 
-`handler()` は try/except なしで `Feature()` を呼ぶため、例外がイベントループに伝播してデーモン全体がクラッシュする可能性がある。STATE_DB への書き込みはなし。
+`handler()` は try/except なしで `Feature()` を呼ぶため、例外がイベントループに伝播してデーモン全体がクラッシュする可能性がある。[STATE_DB](../../reference/glossary.md#term-state_db) への書き込みはなし。
 
 復旧手順: 不正フィールドを DB から削除後、`systemctl restart featured`。
 
 ### FEATURE_EXCLUSION_LIST によるサイレントスキップ
 
-`telemetry` / `frr_bmp` は `enable_feature()` / `disable_feature()` の冒頭で即 return する（`featured:469-471, 517-519`）。CONFIG_DB の state 変更が systemd に適用されない。STATE_DB は更新される（"enabled"/"disabled" が記録されるが systemd 操作はゼロ）。
+`telemetry` / `frr_bmp` は `enable_feature()` / `disable_feature()` の冒頭で即 return する（`featured:469-471, 517-519`）。CONFIG_DB の state 変更が systemd に適用されない。[STATE_DB](../../reference/glossary.md#term-state_db) は更新される（"enabled"/"disabled" が記録されるが systemd 操作はゼロ）。
 
 ### multi-asic scope 失敗 → DB 乖離
 
@@ -601,14 +601,14 @@ feature_handler.handler(key="bgp", op=SET, data={state:enabled,...})
 |------|--------------|------|
 | single-asic または `has_global_scope = True` | `<feature>` | `not is_multi_npu` または `has_global_scope` |
 | multi-asic + `has_per_asic_scope = True` | `<feature>@0`, `<feature>@1`, ... | `is_multi_npu == True` かつ `has_per_asic_scope` |
-| SmartSwitch + `has_per_dpu_scope = True` | `<feature>@dpu0`, `<feature>@dpu1`, ... | `num_dpus > 0` |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) + `has_per_dpu_scope = True` | `<feature>@dpu0`, `<feature>@dpu1`, ... | `num_dpus > 0` |
 | multi-asic + global_scope = False + per_asic = False | インスタンスなし | ホストインスタンスが省略される |
 
 single-asic では `is_multi_npu == False` のため、`has_global_scope` の値に関わらず常にホストインスタンス `[feature.name]` が生成される。
 
 ### 3. SmartSwitch / DPU (`has_per_dpu_scope`)
 
-`num_dpus = device_info.get_num_dpus()` (`featured:148`) で DPU 数を取得。SmartSwitch 構成 (`num_dpus > 0`) では `has_per_dpu_scope = True` の feature が DPU ごとのインスタンスを生成する。
+`num_dpus = device_info.get_num_dpus()` (`featured:148`) で [DPU](../../reference/glossary.md#term-dpu) 数を取得。[SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成 (`num_dpus > 0`) では `has_per_dpu_scope = True` の feature が [DPU](../../reference/glossary.md#term-dpu) ごとのインスタンスを生成する。
 
 - `has_per_dpu_scope` は `sonic_package_manager` の非設定可能フィールド管理外 (`feature.py:228-237`) であり、manifest ではなく CONFIG_DB 値をそのまま参照する。
 - 標準 `init_cfg.json.j2` には `has_per_dpu_scope = True` の feature エントリは存在しない。SmartSwitch 固有 feature はプラットフォーム固有パッケージが別途登録する。
@@ -624,7 +624,7 @@ else:
     restart_field_str = "always" if "enabled" in feature_config.auto_restart else "no"
 ```
 
-**背景**: SpineRouter (VOQ chassis) では `syncd` が `swss` 依存として連動起動/停止するため、クリティカルプロセスクラッシュ時に二重停止が発生する。また VOQ chassis では早期 `syncd` 再起動がトラフィック断を引き起こす。このため SpineRouter では `config feature autorestart syncd enabled` を実行しても systemd `Restart=always` には変わらない。
+**背景**: SpineRouter ([VOQ](../../reference/glossary.md#term-voq) chassis) では `syncd` が `swss` 依存として連動起動/停止するため、クリティカルプロセスクラッシュ時に二重停止が発生する。また [VOQ](../../reference/glossary.md#term-voq) chassis では早期 `syncd` 再起動がトラフィック断を引き起こす。このため SpineRouter では `config feature autorestart syncd enabled` を実行しても systemd `Restart=always` には変わらない。
 
 ### 5. init_cfg.json.j2 ビルド時プラットフォーム条件
 
@@ -647,4 +647,4 @@ else:
 > **Evidence**: `sonic-host-services/scripts/featured:142,148,151-162,312-355,373-380,408-415,570-591`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:67-130`; 詳細分析 `meta/_intermediate/cdb-flow/feature-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 92d0997ed33c -->
+<!-- glossary-links-injected: 12145a3bfbd4 -->

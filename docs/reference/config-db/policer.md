@@ -313,13 +313,12 @@ show policer
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / PolicerOrch** (`sonic-swss/orchagent/policerorch.cpp`): `POLICER` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / PolicerOrch** (`sonic-swss/orchagent/policerorch.cpp`): `POLICER` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -333,7 +332,7 @@ show policer
 
 ### 段階 4: タイミング + 副作用
 
-- POLICER オブジェクト作成後、MIRROR_SESSION や ACL から参照されることで有効化。
+- POLICER オブジェクト作成後、MIRROR_SESSION や [ACL](../../reference/glossary.md#term-acl) から参照されることで有効化。
 - 副作用: policer 削除時に MirrorOrch/AclOrch が参照している場合、削除は失敗 (`policer is still referenced`)。
 
 <!-- /runtime-trace -->
@@ -352,7 +351,7 @@ minigraph.py に POLICER 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -441,7 +440,7 @@ SAI が未対応モードを拒否した場合、`create_policer()` が `SAI_STA
 
 #### インターフェース種別制限 (orch レベル)
 
-`handlePortStormControlTable()` は `"Ethernet"` プレフィックスのインターフェースのみ対応する (`policerorch.cpp:131-137`)。PortChannel / Vlan 等は `task_success` で無視される:
+`handlePortStormControlTable()` は `"Ethernet"` プレフィックスのインターフェースのみ対応する (`policerorch.cpp:131-137`)。[PortChannel](../../reference/glossary.md#term-portchannel) / Vlan 等は `task_success` で無視される:
 
 | インターフェース種別 | 結果 |
 |---------------------|------|
@@ -468,9 +467,9 @@ storm-control UPDATE パスでは `CIR` のみ SAI に渡し、`CBS` は更新�
 |-------------|-----------------|------|
 | 通常ノード (`OrchDaemon`) | 登録あり | POLICER + PORT_STORM_CONTROL 両テーブルを購読 |
 | Fabric カード (`FabricOrchDaemon`) | **登録なし** | `FabricOrchDaemon::init()` には policer 登録コードが存在しない (`orchdaemon.cpp:1292-1312`) |
-| SmartSwitch DPU (`DpuOrchDaemon`) | 登録あり | `OrchDaemon::init()` を継承するため policer は機能する |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) (`DpuOrchDaemon`) | 登録あり | `OrchDaemon::init()` を継承するため policer は機能する |
 
-VOQ Chassis の Fabric カード上では policer および storm-control は**動作しない**。
+[VOQ](../../reference/glossary.md#term-voq) Chassis の Fabric カード上では policer および storm-control は**動作しない**。
 
 <!-- /platform -->
 
@@ -635,13 +634,13 @@ void Orch::addConsumer(DBConnector *db, string tableName, int pri)
 }
 ```
 
-`SubscriberStateTable` は Redis **keyspace 通知** (`__keyspace@<dbId>__:POLICER|*` への `PSUBSCRIBE`) を購読し、通知受信後に `HGETALL` で値を再取得してから `pops()` で `(key, op, fvs)` タプル列を返す。バッチサイズは `DEFAULT_POP_BATCH_SIZE = 128`。
+`SubscriberStateTable` は [Redis](../../reference/glossary.md#term-redis) **keyspace 通知** (`__keyspace@<dbId>__:POLICER|*` への `PSUBSCRIBE`) を購読し、通知受信後に `HGETALL` で値を再取得してから `pops()` で `(key, op, fvs)` タプル列を返す。バッチサイズは `DEFAULT_POP_BATCH_SIZE = 128`。
 
 ### Producer/Consumer ペア
 
 | 区間 | 方式 | チャンネル / API |
 |------|------|----------------|
-| CLI / sonic-cfggen → CONFIG_DB `POLICER` | `HSET` (素の Redis write) | PUBLISH 発行なし; Redis keyspace 通知が自動発火 |
+| CLI / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) → CONFIG_DB `POLICER` | `HSET` (素の [Redis](../../reference/glossary.md#term-redis) write) | PUBLISH 発行なし; [Redis](../../reference/glossary.md#term-redis) keyspace 通知が自動発火 |
 | CONFIG_DB `POLICER` → `PolicerOrch` | `SubscriberStateTable` (`PSUBSCRIBE __keyspace@...`) | `__keyspace@<configDbId>__:POLICER|*` |
 | CONFIG_DB `PORT_STORM_CONTROL` → `PolicerOrch` | `SubscriberStateTable` | `__keyspace@<configDbId>__:PORT_STORM_CONTROL|*` |
 | `PolicerOrch` → SAI | `sai_policer_api->create/set/remove_policer()` | 直接 C API 呼び出し; DB 書込みなし |
@@ -697,7 +696,7 @@ APP_DB への書き込みは行われない。`PolicerOrch` は生成した SAI 
 
 ### ASIC_DB
 
-| 操作 | SAI API | ASIC_DB エントリ | 発生条件 |
+| 操作 | SAI API | [ASIC_DB](../../reference/glossary.md#term-asic_db) エントリ | 発生条件 |
 |------|---------|-----------------|---------|
 | policer 作成 | `sai_policer_api->create_policer()` | `ASIC_STATE:SAI_OBJECT_TYPE_POLICER:<oid>` | POLICER SET (新規) / PORT_STORM_CONTROL SET (新規) |
 | policer 属性更新 | `sai_policer_api->set_policer_attribute()` | 同上 | POLICER SET (update) — CIR/CBS/PIR/PBS のみ |
@@ -716,14 +715,16 @@ evidence: `policerorch.cpp:204-215`, `policerorch.cpp:322-340`
 
 ### COUNTERS_DB
 
-`policerorch.cpp` は COUNTERS_DB に書き込まない。
+`policerorch.cpp` は [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に書き込まない。
 
-policer 統計 (`SAI_POLICER_STAT_GREEN/YELLOW/RED_PACKETS/BYTES`) は **P4 ACL ルールに紐付いた policer のみ** P4 ACL rule manager が収集し COUNTERS_DB へ書き込む。標準 `POLICER` テーブル由来の policer には COUNTERS_DB 統計書込なし。
+policer 統計 (`SAI_POLICER_STAT_GREEN/YELLOW/RED_PACKETS/BYTES`) は **P4 ACL ルールに紐付いた policer のみ** P4 ACL rule manager が収集し [COUNTERS_DB](../../reference/glossary.md#term-counters_db) へ書き込む。標準 `POLICER` テーブル由来の policer には [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 統計書込なし。
 
 evidence: `p4orch/acl_rule_manager.cpp:762-804`
 
 ### CRM カウンタ
 
-`crmorch.cpp` に `SAI_OBJECT_TYPE_POLICER` への参照はゼロ件。PolicerOrch は CRM カウンタを更新しない。policer オブジェクトは CRM リソース管理の対象外。
+`crmorch.cpp` に `SAI_OBJECT_TYPE_POLICER` への参照はゼロ件。PolicerOrch は [CRM](../../reference/glossary.md#term-crm) カウンタを更新しない。policer オブジェクトは [CRM](../../reference/glossary.md#term-crm) リソース管理の対象外。
 
 <!-- /side-effects -->
+
+<!-- glossary-links-injected: 09d906734655 -->

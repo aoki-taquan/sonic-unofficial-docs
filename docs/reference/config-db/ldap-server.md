@@ -69,13 +69,13 @@ key の `<hostname>` は `inet:host` (FQDN または IPv4/IPv6 アドレス)。
 <!-- defaults -->
 ## フィールドデフォルト
 
-デフォルト値は 2 層で決まる: (1) **YANG schema `default` 宣言**（CONFIG_DB に書き込む時点で適用）、(2) **`ldap.py` LdapCfg クラス属性**（hostcfgd が `nslcd.conf` を生成する際の fallback）。
+デフォルト値は 2 層で決まる: (1) **YANG schema `default` 宣言**（CONFIG_DB に書き込む時点で適用）、(2) **`ldap.py` LdapCfg クラス属性**（[hostcfgd](../../reference/glossary.md#term-hostcfgd) が `nslcd.conf` を生成する際の fallback）。
 
 ### LDAP_SERVER エントリ
 
 | フィールド | YANG default | LdapCfg fallback | 備考 |
 |-----------|-------------|-----------------|------|
-| `priority` | **1** | — | CLI `--priority` 省略時に YANG が適用。hostcfgd の priority ソートに必須 |
+| `priority` | **1** | — | CLI `--priority` 省略時に YANG が適用。[hostcfgd](../../reference/glossary.md#term-hostcfgd) の priority ソートに必須 |
 
 ### LDAP\|global
 
@@ -90,7 +90,7 @@ key の `<hostname>` は `inet:host` (FQDN または IPv4/IPv6 アドレス)。
 | `base_dn` | なし | `BASE = 'ou=users,dc=example,dc=com'` | 未設定のまま nslcd が起動されることはない (`is_ldap_config_complete` ガード)[^3] |
 | `scope` | (YANG にフィールドなし) | `SCOPE = "sub"` | CONFIG_DB から設定不可。nslcd.conf は常に `scope sub` |
 
-> **注**: `hostcfgd` の `ldap_global_default = {}` は空 dict。TACACS/RADIUS と異なり LDAP は hostcfgd 層での追加デフォルト注入を行わない。YANG default と LdapCfg fallback のみが有効。
+> **注**: `hostcfgd` の `ldap_global_default = {}` は空 dict。TACACS/RADIUS と異なり LDAP は [hostcfgd](../../reference/glossary.md#term-hostcfgd) 層での追加デフォルト注入を行わない。YANG default と LdapCfg fallback のみが有効。
 
 <!-- /defaults -->
 
@@ -209,7 +209,6 @@ sudo cat /etc/nslcd.conf
 
 <!-- /cdb-exceptions -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -221,11 +220,11 @@ sudo cat /etc/nslcd.conf
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — `nslcd` / LDAP クライアント設定を更新)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — `nslcd` / LDAP クライアント設定を更新)
 
 ### 段階 4 — タイミングと副作用
 
@@ -276,7 +275,7 @@ sudo cat /etc/nslcd.conf
 | 2 | `LDAP_SERVER` → `LDAP\|global` → `AAA` の順で書き込む | 推奨（中間 nslcd 停止回避） | 逆順でも最終的に自動復旧するが nslcd 停止期間が生じる |
 | 3 | `LDAP_SERVER` の `priority` 重複 → フェイルオーバ順序不定 | 運用上の注意 | priority 値の一意性を運用ルールで担保 |
 | 4 | `LDAP\|global` 未設定時の `LDAP_SERVER` 単体 → `LdapCfg` fallback 値（`example.com` 等）が使われる | 設計上の前提 | `LDAP_SERVER` 追加前に `LDAP\|global` を設定済みにする |
-| 5 | load フェーズ内は AAA バッチで一括処理 → 中間状態なし | 自動保証（対策不要） | `AaaCfg.load()` が全テーブルを読んだ後に `modify_conf_file()` を 1 回のみ呼ぶ |
+| 5 | load フェーズ内は [AAA](../../reference/glossary.md#term-aaa) バッチで一括処理 → 中間状態なし | 自動保証（対策不要） | `AaaCfg.load()` が全テーブルを読んだ後に `modify_conf_file()` を 1 回のみ呼ぶ |
 
 ### 主要な制約詳細
 
@@ -284,7 +283,7 @@ sudo cat /etc/nslcd.conf
 
 **mergeWith による前提 (依存 #4)**: `modify_conf_file()` は `server = ldap_global.copy(); server.update(self.ldap_servers[addr])` で各サーバ設定を構築する。`LDAP|global` が未設定の場合は `LdapCfg` のクラス属性 fallback（`BASE = 'ou=users,dc=example,dc=com'` など）が使われるため、`LDAP_SERVER` のみ先に書いた状態では nslcd 設定が example.com のデフォルト値になる（evidence: `hostcfgd:650-651`, `hostcfgd:706-713`, `ldap.py:8-18`）。
 
-**priority ソートの安定性 (依存 #3)**: `ldapsrvs_conf` は `sorted(..., key=lambda t: int(t['priority']), reverse=True)` で降順ソートされる。Python の `sorted()` は安定ソートだが、同一 priority 値の場合は CONFIG_DB からの取得順（Redis 依存）になるため書き込み順が保証されない（evidence: `hostcfgd:706-713`）。
+**priority ソートの安定性 (依存 #3)**: `ldapsrvs_conf` は `sorted(..., key=lambda t: int(t['priority']), reverse=True)` で降順ソートされる。Python の `sorted()` は安定ソートだが、同一 priority 値の場合は CONFIG_DB からの取得順（[Redis](../../reference/glossary.md#term-redis) 依存）になるため書き込み順が保証されない（evidence: `hostcfgd:706-713`）。
 
 <!-- /ordering -->
 
@@ -304,7 +303,7 @@ sudo cat /etc/nslcd.conf
 
 ### AAA|authentication — LDAP 有効化ゲート
 
-`is_ldap_config_complete()` は `'ldap' in self.authentication.get('login', "")` を条件の一つとして評価する (`hostcfgd:441`)。`AAA|authentication.login` に `ldap` が含まれない場合、`LDAP_SERVER` と `LDAP|global` が完全に設定済みであっても `handle_nslcd_service(False)` が呼ばれ nslcd を stop & mask する。**`config aaa authentication login ldap` を実行して AAA テーブルを更新するまで LDAP 認証は機能しない**。
+`is_ldap_config_complete()` は `'ldap' in self.authentication.get('login', "")` を条件の一つとして評価する (`hostcfgd:441`)。`AAA|authentication.login` に `ldap` が含まれない場合、`LDAP_SERVER` と `LDAP|global` が完全に設定済みであっても `handle_nslcd_service(False)` が呼ばれ nslcd を stop & mask する。**`config aaa authentication login ldap` を実行して [AAA](../../reference/glossary.md#term-aaa) テーブルを更新するまで LDAP 認証は機能しない**。
 
 ### LDAP|global — nslcd.conf 生成の前提
 
@@ -316,7 +315,7 @@ hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得
 
 ### SAI 参照
 
-なし。LDAP 認証は nslcd / PAM のユーザー空間で完結し、APPL_DB 中継も SAI への書き込みも一切ない。
+なし。LDAP 認証は nslcd / PAM のユーザー空間で完結し、[APPL_DB](../../reference/glossary.md#term-appl_db) 中継も [SAI](../../reference/glossary.md#term-sai) への書き込みも一切ない。
 
 <!-- /cross-refs -->
 
@@ -381,7 +380,7 @@ hostcfgd は起動時から `LDAP` / `LDAP_SERVER` テーブルを常時購読�
 
 ### AAA|authentication — LDAP 有効化ゲート
 
-`is_ldap_config_complete()` は `'ldap' in self.authentication.get('login', "")` を条件の一つとして評価する (`hostcfgd:441`)。`AAA|authentication.login` に `ldap` が含まれない場合、`LDAP_SERVER` と `LDAP|global` が完全に設定済みであっても `handle_nslcd_service(False)` が呼ばれ nslcd を stop & mask する。**`config aaa authentication login ldap` を実行して AAA テーブルを更新するまで LDAP 認証は機能しない**。
+`is_ldap_config_complete()` は `'ldap' in self.authentication.get('login', "")` を条件の一つとして評価する (`hostcfgd:441`)。`AAA|authentication.login` に `ldap` が含まれない場合、`LDAP_SERVER` と `LDAP|global` が完全に設定済みであっても `handle_nslcd_service(False)` が呼ばれ nslcd を stop & mask する。**`config aaa authentication login ldap` を実行して [AAA](../../reference/glossary.md#term-aaa) テーブルを更新するまで LDAP 認証は機能しない**。
 
 ### LDAP|global — nslcd.conf 生成の前提
 
@@ -393,7 +392,7 @@ hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得
 
 ### SAI 参照
 
-なし。LDAP 認証は nslcd / PAM のユーザー空間で完結し、APPL_DB 中継も SAI への書き込みも一切ない。
+なし。LDAP 認証は nslcd / PAM のユーザー空間で完結し、[APPL_DB](../../reference/glossary.md#term-appl_db) 中継も [SAI](../../reference/glossary.md#term-sai) への書き込みも一切ない。
 
 <!-- /cross-refs -->
 
@@ -501,9 +500,9 @@ CONFIG_DB `LDAP_SERVER` / `LDAP|global` テーブルの変更に伴って `hostc
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
 | APPL_DB | なし | `ldap_server_update` / `ldap_global_update` 内に Producer/Table の書込呼出が 0 件 (`sonic-host-services/scripts/hostcfgd:547-564` を `set(`/`hset`/`Producer`/`Notification` で grep して 0 ヒット) |
-| STATE_DB | なし | `hostcfgd` の `STATE_DB` 参照は `FipsCfg` (`hostcfgd:1792`) と `RestartWaiter` 用 (`hostcfgd:2160-2163`) のみ。`AaaCfg` は `state_db_conn` を保持しない |
-| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし。LDAP は認証経路のため統計テーブルも存在しない |
-| その他 (ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB) | なし | SAI 非経由（実コンテナ動作トレース参照）。`LDAP_SERVER` テーブルを購読する mgrd/orchagent は `sonic-swss/` に存在しない |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `hostcfgd` の `STATE_DB` 参照は `FipsCfg` (`hostcfgd:1792`) と `RestartWaiter` 用 (`hostcfgd:2160-2163`) のみ。`AaaCfg` は `state_db_conn` を保持しない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `hostcfgd` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 参照なし。LDAP は認証経路のため統計テーブルも存在しない |
+| その他 ([ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db)) | なし | SAI 非経由（実コンテナ動作トレース参照）。`LDAP_SERVER` テーブルを購読する mgrd/[orchagent](../../reference/glossary.md#term-orchagent) は `sonic-swss/` に存在しない |
 
 ### Linux ホスト OS 副作用（ファイル書換とサービス再起動）
 
@@ -533,14 +532,14 @@ CONFIG_DB `LDAP_SERVER` / `LDAP|global` テーブルの変更に伴って `hostc
 
 ### Redis 購読方式
 
-`LDAP_SERVER` / `LDAP|global` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:<TABLE>|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は**使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+`LDAP_SERVER` / `LDAP|global` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **[Redis](../../reference/glossary.md#term-redis) keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:<TABLE>|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は**使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
 
 | 購読者 | 購読 API | 購読テーブル | ハンドラ |
 |--------|---------|--------------|---------|
 | `hostcfgd` (`AaaCfg` 経由) | `ConfigDBConnector.subscribe()` | `LDAP` | `ldap_global_handler` → `ldap_global_update` |
 | `hostcfgd` (`AaaCfg` 経由) | 同上 | `LDAP_SERVER` | `ldap_server_handler` → `ldap_server_update` |
 
-`hostcfgd` 以外で `LDAP_SERVER` テーブルを購読するプロセスは存在しない（`pam_ldap` / `nslcd` は設定ファイルを起動時に読むのみで Redis を購読しない）。
+`hostcfgd` 以外で `LDAP_SERVER` テーブルを購読するプロセスは存在しない（`pam_ldap` / `nslcd` は設定ファイルを起動時に読むのみで [Redis](../../reference/glossary.md#term-redis) を購読しない）。
 
 ### keyspace 通知 → ハンドラ呼び出しの流れ
 
@@ -570,7 +569,7 @@ ldap_server_handler(key="10.0.0.1", op=SET, data={priority:"1"})
 | `__keyspace@4__:LDAP_SERVER\|<ip>` | `hset` | `ldap_server_handler("<ip>", SET, {priority:"1",...})` |
 | `__keyspace@4__:LDAP_SERVER\|<ip>` | `del` | `ldap_server_handler("<ip>", DEL, {})` |
 
-dbId は CONFIG_DB の通常値 4 (sonic-swss-common の `database_config.json` 既定)。
+dbId は CONFIG_DB の通常値 4 ([sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) の `database_config.json` 既定)。
 
 ### サービス再起動トリガー
 
@@ -580,7 +579,7 @@ dbId は CONFIG_DB の通常値 4 (sonic-swss-common の `database_config.json` 
 | `LDAP_SERVER` / `LDAP\|global` / `AAA` 変更で `is_ldap_config_complete()` が False | `systemctl stop/mask nslcd` | `handle_nslcd_service(False)` — hostcfgd:246-251 |
 | `nslcd.conf` / `ldap.conf` 書き換え | デーモン restart あり (`nslcd` は設定をロード時のみ読む) | `modify_conf_file()` → `handle_nslcd_service()` |
 
-> **ConsumerStateTable / NotificationProducer 非使用の確認**: `LDAP_SERVER` は `swsscommon.ConsumerStateTable` の購読者なし。`NotificationProducer` で LDAP 関連通知を出す箇所も SONiC ソース内になし。APPL_DB/STATE_DB の中継・通知パスを持たない。
+> **[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) / NotificationProducer 非使用の確認**: `LDAP_SERVER` は `swsscommon.ConsumerStateTable` の購読者なし。`NotificationProducer` で LDAP 関連通知を出す箇所も SONiC ソース内になし。APPL_DB/[STATE_DB](../../reference/glossary.md#term-state_db) の中継・通知パスを持たない。
 
 <!-- /pubsub -->
 
@@ -591,7 +590,7 @@ dbId は CONFIG_DB の通常値 4 (sonic-swss-common の `database_config.json` 
 
 ### 結論
 
-**プラットフォーム差なし**。LDAP_SERVER 処理は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・SmartSwitch DPU・ベンダー固有 PAM モジュールに依存しない。
+**プラットフォーム差なし**。LDAP_SERVER 処理は host 単位で適用され、ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)・ベンダー固有 PAM モジュールに依存しない。
 
 ### 根拠
 
@@ -601,11 +600,11 @@ dbId は CONFIG_DB の通常値 4 (sonic-swss-common の `database_config.json` 
 
 #### 2. VOQ chassis / line card
 
-`hostcfgd` ソース全体を `chassis`, `supervisor`, `linecard` で検索してもゼロヒット。VOQ chassis の各 line card / supervisor は独立した host `hostcfgd` を持ち、それぞれが自身の host CONFIG_DB の LDAP_SERVER テーブルを処理する。chassis 全体での集中適用機構は存在しない。オペレータが各 host に同一の LDAP_SERVER 設定を流す運用が前提。
+`hostcfgd` ソース全体を `chassis`, `supervisor`, `linecard` で検索してもゼロヒット。[VOQ](../../reference/glossary.md#term-voq) chassis の各 line card / supervisor は独立した host `hostcfgd` を持ち、それぞれが自身の host CONFIG_DB の LDAP_SERVER テーブルを処理する。chassis 全体での集中適用機構は存在しない。オペレータが各 host に同一の LDAP_SERVER 設定を流す運用が前提。
 
 #### 3. SmartSwitch / DPU
 
-`AaaCfg` クラスに `has_per_dpu_scope` や `num_dpus` を参照する箇所はない。SmartSwitch 固有の LDAP 処理分岐は存在しない。
+`AaaCfg` クラスに `has_per_dpu_scope` や `num_dpus` を参照する箇所はない。[SmartSwitch](../../reference/glossary.md#term-smartswitch) 固有の LDAP 処理分岐は存在しない。
 
 #### 4. ビルド時 platform 条件分岐なし
 
@@ -617,9 +616,9 @@ dbId は CONFIG_DB の通常値 4 (sonic-swss-common の `database_config.json` 
 
 #### 6. MGMT_VRF は LDAP に影響しない
 
-LDAP_SERVER / LDAP|global テーブルには RADIUS の `vrf` フィールドに相当するフィールドが YANG で定義されていない。`mgmt_vrf_handler` は `MgmtIfaceCfg.update_mgmt_vrf()` のみを呼び、`AaaCfg.modify_conf_file()` は呼ばれない。nslcd の VRF バインドはシステムレベルでの対応が必要だが、hostcfgd はこれを自動化しない（`hostcfgd:2352-2353`）。
+LDAP_SERVER / LDAP|global テーブルには RADIUS の `vrf` フィールドに相当するフィールドが YANG で定義されていない。`mgmt_vrf_handler` は `MgmtIfaceCfg.update_mgmt_vrf()` のみを呼び、`AaaCfg.modify_conf_file()` は呼ばれない。nslcd の [VRF](../../reference/glossary.md#term-vrf) バインドはシステムレベルでの対応が必要だが、hostcfgd はこれを自動化しない（`hostcfgd:2352-2353`）。
 
 > 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 32758c44ab11 -->
+<!-- glossary-links-injected: 841e6cdca746 -->

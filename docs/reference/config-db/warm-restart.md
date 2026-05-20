@@ -85,17 +85,17 @@ WARM_RESTART|<module>
 | フィールド | 値 | 実挙動 |
 |-----------|-----|--------|
 | `module` | `bgp` | `bgp_eoiu` / `bgp_timer` が有効。`bgpcfgd` が vtysh の `bgp graceful-restart restart-time <val>` に変換 |
-| `module` | `teamd` | `teamsyncd_timer` が有効。`teamd` が LAG 再収束タイムアウトとして使用 |
-| `module` | `swss` | `neighsyncd_timer` が有効。`neighsyncd` が ARP/NDP reconciliation 待ちに使用 |
+| `module` | `teamd` | `teamsyncd_timer` が有効。`teamd` が [LAG](../../reference/glossary.md#term-lag) 再収束タイムアウトとして使用 |
+| `module` | `swss` | `neighsyncd_timer` が有効。`neighsyncd` が [ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) reconciliation 待ちに使用 |
 | `module` | `system` | システム全体の warm-restart 制御。個別タイマフィールドなし |
 | `module` | その他 | YANG バリデーションで reject |
-| `bgp_eoiu` | `true` | BGP End-of-Initial-Update シグナルを待って再収束完了と判定 |
+| `bgp_eoiu` | `true` | [BGP](../../reference/glossary.md#term-bgp) End-of-Initial-Update シグナルを待って再収束完了と判定 |
 | `bgp_eoiu` | `false` | EOIU なしで再収束完了と判定 |
 | `bgp_timer` | `1`〜`3600` (秒) | BGP graceful-restart のタイムアウト。典型値 300 秒 |
 | `bgp_timer` | module≠bgp | YANG `must` 違反で reject |
-| `teamsyncd_timer` | `1`〜`3600` (秒) | LAG 再収束タイムアウト |
-| `teamsyncd_timer` | module≠teamd | YANG `must` 違反で reject |
-| `neighsyncd_timer` | `1`〜`9999` (秒) | ARP/NDP reconciliation 待ちタイムアウト。典型値 110 秒 |
+| `teamsyncd_timer` | `1`〜`3600` (秒) | [LAG](../../reference/glossary.md#term-lag) 再収束タイムアウト |
+| `teamsyncd_timer` | module≠[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) | YANG `must` 違反で reject |
+| `neighsyncd_timer` | `1`〜`9999` (秒) | ARP/[NDP](../../reference/glossary.md#term-ndp) reconciliation 待ちタイムアウト。典型値 110 秒 |
 | `neighsyncd_timer` | module≠swss | YANG `must` 違反で reject |
 
 !!! note "enable フィールドについて"
@@ -157,30 +157,29 @@ show warm_restart state
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **各サービス (swss, syncd, bgp 等)**: 起動時に `WARM_RESTART` テーブルを `ConfigDBConnector` で読み込む。
+- **各サービス (swss, [syncd](../../reference/glossary.md#term-syncd), bgp 等)**: 起動時に `WARM_RESTART` テーブルを `ConfigDBConnector` で読み込む。
 - **system_halt_app** / **warmboot-finalizer**: warm restart フロー全体を管理。
 
 ### 段階 2: CFG → APPL 翻訳
 
 - 各サービスが `WARM_RESTART` テーブルの `enable` / `neighsyncd_timer` 等を読み込み、warm restart モードで起動するかを決定。
-- STATE_DB `WARM_RESTART_TABLE` に現在の warm restart 状態を書き込む。
+- [STATE_DB](../../reference/glossary.md#term-state_db) `WARM_RESTART_TABLE` に現在の warm restart 状態を書き込む。
 
 ### 段階 3: APPL → SAI
 
-- SAI: warm restart 時は syncd が `SAI_SWITCH_ATTR_WARM_BOOT_WRITE/READ_FILE` を使用して ASIC 状態を保存・復元する。
-- swss / orchagent は warm restart 完了後に APP_DB を再生して SAI との整合を確認する。
+- [SAI](../../reference/glossary.md#term-sai): warm restart 時は [syncd](../../reference/glossary.md#term-syncd) が `SAI_SWITCH_ATTR_WARM_BOOT_WRITE/READ_FILE` を使用して ASIC 状態を保存・復元する。
+- swss / [orchagent](../../reference/glossary.md#term-orchagent) は warm restart 完了後に APP_DB を再生して [SAI](../../reference/glossary.md#term-sai) との整合を確認する。
 
 ### 段階 4: タイミング + 副作用
 
 - warm restart の完了時間はサービス数・ルート数に依存。数十秒〜数分。
 - 副作用: warm restart が失敗するとコールドリスタートにフォールバックし、トラフィックが完全断になる。
-- STATE_DB `WARM_RESTART_TABLE` で各サービスの進捗を確認可能。
+- [STATE_DB](../../reference/glossary.md#term-state_db) `WARM_RESTART_TABLE` で各サービスの進捗を確認可能。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -190,7 +189,7 @@ WARM_RESTART テーブルへの書き込みが発生するコード経路を網�
 
 ### CLI
 
-  - `config warm_restart enable/disable/neighsyncd_timer/bgp_timer/teamsyncd_timer ...` — `config/main.py` が `mod_entry('WARM_RESTART', 'swss'/'bgp'/'teamd', ...)` を呼ぶ (sonic-utilities/config/main.py:4032–4094)
+  - `config warm_restart enable/disable/neighsyncd_timer/bgp_timer/teamsyncd_timer ...` — `config/main.py` が `mod_entry('WARM_RESTART', 'swss'/'bgp'/'teamd', ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py:4032–4094)
 
 ### minigraph / sonic-cfggen
 
@@ -198,11 +197,11 @@ minigraph.py に WARM_RESTART 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
-**db_migrator.py** が WARM_RESTART のマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+**db_migrator.py** が WARM_RESTART のマイグレーション処理を実装 ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/scripts/db_migrator.py)
 
 ### ビルド時デフォルト (build-time default)
 
@@ -242,7 +241,7 @@ YANG に `default` 節が存在しないため、フィールド未設定時の�
 
 ### `enable` フィールドは CONFIG_DB に存在しない
 
-`config warm_restart enable` は **CONFIG_DB ではなく STATE_DB の `WARM_RESTART_ENABLE_TABLE`** に書き込む。
+`config warm_restart enable` は **CONFIG_DB ではなく [STATE_DB](../../reference/glossary.md#term-state_db) の `WARM_RESTART_ENABLE_TABLE`** に書き込む。
 `bgp.sh` / `teamd.sh` / `swss.sh` / `WarmStart::checkWarmStart()` はすべて STATE_DB を参照する。
 
 ### fast-reboot による副作用
@@ -311,7 +310,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 10. WarmStart::setWarmStartState("orchagent", RECONCILED)
 ```
 
-> **ポイント**: `gMirrorOrch` は他 Orch がすべて処理を終えた後に初めて doTask() される (`orchdaemon.cpp:1140-1145`)。warm start 中に MirrorOrch を早期実行すると、依存する route/neighbor が未確立のまま ACL ルールが適用される危険があるため。
+> **ポイント**: `gMirrorOrch` は他 Orch がすべて処理を終えた後に初めて doTask() される (`orchdaemon.cpp:1140-1145`)。warm start 中に MirrorOrch を早期実行すると、依存する route/neighbor が未確立のまま [ACL](../../reference/glossary.md#term-acl) ルールが適用される危険があるため。
 
 ### STATE_DB 経由の enable フラグ依存
 
@@ -357,7 +356,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 |---|---|---|---|
 | `STATE_DB WARM_RESTART_ENABLE_TABLE\|system.enable` も `\|<docker>.enable` も `"true"` 以外（未設定・disabled 含む） | `m_enabled = false` → `hset(app_name, "restore_count", "0")` → `return false`（コールドスタート） | なし（設計上の正常経路） | `warm_restart.cpp:88-107` |
 | warm start 有効だが `STATE_DB WARM_RESTART_TABLE\|<app>.restore_count` が空（DB フラッシュ済み等） | `m_enabled = false`, `m_systemWarmRebootEnabled = false` → `return false`（コールドスタートフォールバック） | `SWSS_LOG_WARN "%s doing warm start, but restore_count not found in stateDB %s table, fall back to cold start"` | `warm_restart.cpp:111-121` |
-| CONFIG_DB / STATE_DB 接続失敗（Redis 不到達） | `initialize()` の `DBConnector` コンストラクタで例外 → プロセス abort | 各アプリ側クラッシュハンドラ依存 | `warm_restart.cpp:44-60` |
+| CONFIG_DB / STATE_DB 接続失敗（[Redis](../../reference/glossary.md#term-redis) 不到達） | `initialize()` の `DBConnector` コンストラクタで例外 → プロセス abort | 各アプリ側クラッシュハンドラ依存 | `warm_restart.cpp:44-60` |
 
 ### B. `getWarmStartTimer()` 内のフォールバック (warm_restart.cpp:149-172)
 
@@ -375,7 +374,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 | 失敗条件 | 結果 | ログ | evidence |
 |---|---|---|---|
 | `warmRestoreValidation()` で未処理タスクが残存 | NOTICE ログのみ、abort せず reconciliation 継続 | `SWSS_LOG_NOTICE "Unfinished tasks..."` | `orchdaemon.cpp:1150-1152` |
-| `syncd_apply_view()` 失敗 | orchagent プロセス abort → systemd 再起動 | `SWSS_LOG_ERROR` + exit | `orchdaemon.cpp:1154-1157` |
+| `syncd_apply_view()` 失敗 | [orchagent](../../reference/glossary.md#term-orchagent) プロセス abort → systemd 再起動 | `SWSS_LOG_ERROR` + exit | `orchdaemon.cpp:1154-1157` |
 
 ### D. 失敗パターンサマリ
 
@@ -384,8 +383,8 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 | 1 | warm restart enable 未設定 / STATE_DB enable=false | `checkWarmStart()` が `false` → コールドスタート | なし（設計上の正常経路） |
 | 2 | `restore_count` 未存在（DB フラッシュ後等） | WARN ログ → コールドスタートフォールバック | コールドスタートで自己回復 |
 | 3 | タイマー未設定 / 無効値 | `getWarmStartTimer()` が `0` → ハードコードデフォルト使用 | なし（デフォルト値で継続） |
-| 4 | Redis DB 接続失敗 | `initialize()` 例外 → プロセス abort | systemd autorestart により自己回復 |
-| 5 | `syncd_apply_view()` 失敗 | orchagent abort | systemd autorestart により自己回復 |
+| 4 | [Redis](../../reference/glossary.md#term-redis) DB 接続失敗 | `initialize()` 例外 → プロセス abort | systemd autorestart により自己回復 |
+| 5 | `syncd_apply_view()` 失敗 | [orchagent](../../reference/glossary.md#term-orchagent) abort | systemd autorestart により自己回復 |
 
 !!! note "設定変更の反映タイミング"
     `WARM_RESTART` テーブルの読み取りは各プロセスの**起動時一回**のみ。
@@ -450,7 +449,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 <!-- side-effects -->
 ## 副作用・波及効果 (Phase F)
 
-`WARM_RESTART` テーブルは直接 ASIC に波及しない設定テーブルだが、プロセス起動時の読み取りを通じて **STATE_DB への複数の書き込み** を副次的に発生させる。APPL_DB、ERROR_TABLE への書き込みはない。
+`WARM_RESTART` テーブルは直接 ASIC に波及しない設定テーブルだが、プロセス起動時の読み取りを通じて **STATE_DB への複数の書き込み** を副次的に発生させる。[APPL_DB](../../reference/glossary.md#term-appl_db)、ERROR_TABLE への書き込みはない。
 
 ### STATE_DB への副次書き込み
 
@@ -486,9 +485,9 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 
 | DB | 書き込み | 備考 |
 |---|---|---|
-| APPL_DB | **なし** | `WARM_RESTART` は CONFIG_DB → 各プロセス直接読み取り経路であり APPL_DB を経由しない |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | **なし** | `WARM_RESTART` は CONFIG_DB → 各プロセス直接読み取り経路であり [APPL_DB](../../reference/glossary.md#term-appl_db) を経由しない |
 | ERROR_TABLE | **なし** | 失敗はログのみ（syslog）または例外によるプロセス abort |
-| ASIC_DB | 間接のみ | orchagent の warm restore 完了後に `syncd_apply_view()` 経由で間接的に ASIC_DB が更新されるが、`WARM_RESTART` テーブル自体が直接 SAI/ASIC に書き込むことはない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | 間接のみ | orchagent の warm restore 完了後に `syncd_apply_view()` 経由で間接的に [ASIC_DB](../../reference/glossary.md#term-asic_db) が更新されるが、`WARM_RESTART` テーブル自体が直接 [SAI](../../reference/glossary.md#term-sai)/ASIC に書き込むことはない |
 
 > **Evidence**: `sonic-swss-common/common/warm_restart.cpp:113,125,133,227,247`; `sonic-swss/orchagent/orchdaemon.cpp:1099,1170,1204`; `sonic-swss/cfgmgr/vlanmgr.cpp:59,61`; `sonic-swss/cfgmgr/intfmgr.cpp:289,292`; `sonic-swss/fpmsyncd/bgp_eoiu_marker.py:85-87,94-95`; `sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh:175`
 
@@ -510,7 +509,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 warmStart.m_cfgWarmRestartTable->hget(docker_name, timer_name, timer_value_str);
 ```
 
-`hget()` は Redis の `HGET` コマンドを同期実行するポーリング型アクセスであり、
+`hget()` は [Redis](../../reference/glossary.md#term-redis) の `HGET` コマンドを同期実行するポーリング型アクセスであり、
 `PSUBSCRIBE` や channel-based `PUBLISH/SUBSCRIBE` は一切使用しない。
 
 ### イベント駆動通知なし
@@ -549,13 +548,13 @@ Redis チャネルへの明示的 `PUBLISH` を発行しない。
 <!-- platform -->
 ## プラットフォーム / SAI Capability 差異 (Phase H)
 
-**`WARM_RESTART` テーブルの読み書きロジック自体はプラットフォーム非依存**。`warm_restart.cpp` には ASIC 種別・multi-asic・VOQ chassis に関する条件分岐が存在しない。
+**`WARM_RESTART` テーブルの読み書きロジック自体はプラットフォーム非依存**。`warm_restart.cpp` には ASIC 種別・multi-asic・[VOQ](../../reference/glossary.md#term-voq) chassis に関する条件分岐が存在しない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
 | ASIC 種別 (Broadcom / Mellanox / Marvell / Cisco 等) | 影響なし | `WarmStart::initialize()` / `getWarmStartTimer()` / `setWarmStartState()` は SAI を呼ばず CONFIG_DB / STATE_DB への `hget()` / `hset()` のみ。`warm_restart.cpp` に `platform` / ASIC 型チェックなし |
 | multi-asic (`NUM_ASIC > 1`) | 各 asic-namespace で独立動作 | `WarmStart::initialize()` が `DBConnector("CONFIG_DB", ...)` を namespace 指定なしで接続 (`warm_restart.cpp:51`)。各 `swss@asicN` コンテナ内で実行されるため、そのコンテナの namespace CONFIG_DB を参照する。`WARM_RESTART` テーブルは asic-namespace ごとに独立し chassis-wide 同期なし |
-| VOQ chassis (supervisor + line cards) | 各 host で独立適用 | `WARM_RESTART` は host / container scope。chassis 集中管理機構なし（`CHASSIS_APP_DB` に `WARM_RESTART` 系テーブルなし） |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立適用 | `WARM_RESTART` は host / container scope。chassis 集中管理機構なし（`CHASSIS_APP_DB` に `WARM_RESTART` 系テーブルなし） |
 | VS / VPP プラットフォーム | テーブル読み書きは正常 | `hget()` / `hset()` は VS でも動作する。ただしデータプレーンが存在しないため warm restart による「再収束」に実動作上の意味はない |
 
 ### finalize-warmboot.sh の ASIC 別差異
@@ -589,4 +588,4 @@ done
 <!-- evidence: sonic-buildimage/files/image_config/warmboot-finalizer/finalize-warmboot.sh L194-202 (finalize_global — mellanox CPU governor) -->
 <!-- /platform -->
 
-<!-- glossary-links-injected: ddc022697593 -->
+<!-- glossary-links-injected: 4a3c4472b289 -->

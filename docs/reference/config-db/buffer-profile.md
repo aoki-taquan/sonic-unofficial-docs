@@ -72,7 +72,7 @@ BUFFER_PROFILE|<name>
 
 ### 検出種類と調査根拠
 
-全フィールドを `handleBufferProfileTable()` (buffermgrdyn.cpp L2671-2886)、`updateBufferProfileToDb()` (L890-922)、`processBufferProfile()` (bufferorch.cpp L600-880)、CLI `update_profile()` (sonic-utilities/config/main.py L8556-8632) の全行精読により調査した。
+全フィールドを `handleBufferProfileTable()` (buffermgrdyn.cpp L2671-2886)、`updateBufferProfileToDb()` (L890-922)、`processBufferProfile()` (bufferorch.cpp L600-880)、CLI `update_profile()` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py L8556-8632) の全行精読により調査した。
 
 ### フィールド別暗黙デフォルト
 
@@ -81,8 +81,8 @@ BUFFER_PROFILE|<name>
 | `pool` | なし (mandatory) | CLI 経由のみ: 未指定時 `ingress_lossless_pool` を使用 | 書き込み経路依存乖離・ハードコード |
 | `size` | なし (mandatory) | CLI 経由: `xon+xoff` (SHP 無効) or `xon` (SHP 有効) で自動計算。dynamic model: 速度・ケーブル長から自動計算 | 書き込み経路依存乖離 |
 | `dynamic_th` | なし | CLI 経由のみ: 未指定時 `DEFAULT_LOSSLESS_BUFFER_PARAMETER.default_dynamic_th` から自動補完 | 書き込み経路依存乖離・silent fallback |
-| `xon` | `0` | lossless=false プロファイルでは APPL_DB/SAI に出力されない (silent drop) | YANG vs 実装 discrepancy |
-| `xon_offset` | `0` | 空文字列の場合は APPL_DB 出力スキップ (lossless=true でも) | YANG vs 実装 discrepancy |
+| `xon` | `0` | lossless=false プロファイルでは [APPL_DB](../../reference/glossary.md#term-appl_db)/[SAI](../../reference/glossary.md#term-sai) に出力されない (silent drop) | YANG vs 実装 discrepancy |
+| `xon_offset` | `0` | 空文字列の場合は [APPL_DB](../../reference/glossary.md#term-appl_db) 出力スキップ (lossless=true でも) | YANG vs 実装 discrepancy |
 | `xoff` | `0` | lossless=false では APPL_DB/SAI に出力されない。`xoff` フィールドの存在が `lossless=true` のトリガー | dead field (lossless=false 時) |
 | `headroom_type` | `static` | YANG と一致。`dynamic` 指定時は `lossless=true` + `direction=BUFFER_INGRESS` を強制セット | 副作用あり |
 | `packet_discard_action` | なし | 省略時 APPL_DB/SAI に出力されない。SAI 実装依存の DROP が適用 (ASIC vendor 固有) | ハードコード固定値 (SAI 側) |
@@ -93,7 +93,7 @@ BUFFER_PROFILE|<name>
 - **CLI** (`config buffer profile add`): `pool` 未指定 → `ingress_lossless_pool`。`dynamic_th` 未指定 → `DEFAULT_LOSSLESS_BUFFER_PARAMETER` から補完。`size` 未指定 → `xon+xoff` or `xon` で計算。
 - **minigraph / buffers_config.j2**: platform/SKU/topology 別テンプレートで全フィールドを明示指定。補完ロジックなし。
 - **buffermgrd (dynamic model)**: `pg_lossless_<speed>_<cable>_profile` を自動生成・書き込み。`headroom_type=dynamic` 強制。
-- **REST / gNMI**: 対応なし (`sonic-mgmt-common` に BUFFER_PROFILE transformer 未実装)。
+- **REST / [gNMI](../../reference/glossary.md#term-gnmi)**: 対応なし (`sonic-mgmt-common` に BUFFER_PROFILE transformer 未実装)。
 
 ### create-only フィールド (更新不可)
 
@@ -184,13 +184,12 @@ show buffer profile
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`buffermgrd` / `buffermgrdyn` → `BufferOrch` (APPL_DB 経由) が CONFIG_DB の `BUFFER_PROFILE` テーブルを購読する。
+`buffermgrd` / `buffermgrdyn` → `BufferOrch` (APPL_DB 経由) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BUFFER_PROFILE` テーブルを購読する。
 
 動的バッファ管理 (`buffermgrdyn`) では cable length や speed から自動計算して上書きする。
 
@@ -204,7 +203,7 @@ show buffer profile
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB 変化を `buffermgrd(yn)` が検知後 APPL_DB に書き込み。`BufferOrch` が SAI buffer profile オブジェクトを作成/更新。既存参照 (PG/Queue) は再バインドされる。
+**適用タイミング**: [CONFIG_DB](../../reference/glossary.md#term-config_db) 変化を `buffermgrd(yn)` が検知後 APPL_DB に書き込み。`BufferOrch` が SAI buffer profile オブジェクトを作成/更新。既存参照 (PG/Queue) は再バインドされる。
 
 **副作用**: プロファイル変更はそれを参照するすべての PG/Queue に即座に影響。`xoff` 変更は PFC pause frame 送信タイミングに影響。
 <!-- /runtime-trace -->
@@ -216,12 +215,12 @@ show buffer profile
 
 ### STATE_DB `BUFFER_PROFILE_TABLE` (副次書込 A)
 
-`buffermgrdyn` の `updateBufferProfileToDb()` は APPL_DB への書込と **同時に** STATE_DB の `BUFFER_PROFILE_TABLE` にも同一 fvVector を書込む。
+`buffermgrdyn` の `updateBufferProfileToDb()` は APPL_DB への書込と **同時に** [STATE_DB](../../reference/glossary.md#term-state_db) の `BUFFER_PROFILE_TABLE` にも同一 fvVector を書込む。
 
 | 操作 | 対象 DB / テーブル | 条件 | evidence |
 |------|------------------|------|----------|
-| `m_stateBufferProfileTable.set(name, fvVector)` | STATE_DB / `BUFFER_PROFILE_TABLE` | `updateBufferProfileToDb()` 内 — `m_bufferPoolReady==true` のとき即時書込 | `buffermgrdyn.cpp:920` |
-| `m_stateBufferProfileTable.set(key, fvs)` | STATE_DB / `BUFFER_PROFILE_TABLE` | warm reboot 時のゼロプロファイル初期化ロード | `buffermgrdyn.cpp:361` |
+| `m_stateBufferProfileTable.set(name, fvVector)` | [STATE_DB](../../reference/glossary.md#term-state_db) / `BUFFER_PROFILE_TABLE` | `updateBufferProfileToDb()` 内 — `m_bufferPoolReady==true` のとき即時書込 | `buffermgrdyn.cpp:920` |
+| `m_stateBufferProfileTable.set(key, fvs)` | [STATE_DB](../../reference/glossary.md#term-state_db) / `BUFFER_PROFILE_TABLE` | warm reboot 時のゼロプロファイル初期化ロード | `buffermgrdyn.cpp:361` |
 | `m_stateBufferProfileTable.del(name)` | STATE_DB / `BUFFER_PROFILE_TABLE` | `releaseProfile()` — APPL_DB 削除と同時 | `buffermgrdyn.cpp:1049` |
 | `m_stateBufferProfileTable.del(zeroProfileName)` | STATE_DB / `BUFFER_PROFILE_TABLE` | ゼロプロファイルアンロード（全ポート admin-up 後） | `buffermgrdyn.cpp:421` |
 
@@ -281,7 +280,6 @@ COUNTERS_DB `COUNTERS_BUFFER_POOL_NAME_MAP` および FLEX_COUNTER_DB への書�
 - Dynamic buffer model: `buffermgrd` が速度・ケーブル長に基づいて Lossless プロファイルを自動計算・書き込み
 <!-- /entry-points -->
 
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -336,7 +334,7 @@ void Orch::addConsumer(DBConnector *db, string tableName, int pri)
 }
 ```
 
-CONFIG_DB は DB ID チェックにマッチするため **`SubscriberStateTable`** が選択される。Redis の **keyspace 通知**（`__keyspace@4__:BUFFER_PROFILE|*` の `PSUBSCRIBE`）を購読し、変更検知後に `HGETALL` で値を再取得する。static buffer model（`BufferMgr`）も同様に `SubscriberStateTable` で購読される（`buffermgr.cpp:21-22`）。
+CONFIG_DB は DB ID チェックにマッチするため **`SubscriberStateTable`** が選択される。[Redis](../../reference/glossary.md#term-redis) の **keyspace 通知**（`__keyspace@4__:BUFFER_PROFILE|*` の `PSUBSCRIBE`）を購読し、変更検知後に `HGETALL` で値を再取得する。static buffer model（`BufferMgr`）も同様に `SubscriberStateTable` で購読される（`buffermgr.cpp:21-22`）。
 
 ### 2. buffermgrdyn → APPL_DB: ProducerStateTable
 
@@ -347,7 +345,7 @@ CONFIG_DB は DB ID チェックにマッチするため **`SubscriberStateTable
 m_applBufferProfileTable(applDb, APP_BUFFER_PROFILE_TABLE_NAME),  // ProducerStateTable
 ```
 
-`ProducerStateTable.set()` は Redis の `LPUSH <TABLE>_KEY_SET` + `HSET` によるチャネルベース通知を行う（`buffermgrdyn.cpp:890-922`）。**例外**: `headroom_type=dynamic` かつポート未参照のプロファイルは APPL_DB への書き込みが保留される（`buffermgrdyn.cpp:2820`）。
+`ProducerStateTable.set()` は [Redis](../../reference/glossary.md#term-redis) の `LPUSH <TABLE>_KEY_SET` + `HSET` によるチャネルベース通知を行う（`buffermgrdyn.cpp:890-922`）。**例外**: `headroom_type=dynamic` かつポート未参照のプロファイルは APPL_DB への書き込みが保留される（`buffermgrdyn.cpp:2820`）。
 
 ### 3. APPL_DB → bufferorch: ConsumerStateTable
 
@@ -365,7 +363,7 @@ m_publisher.publish(APP_BUFFER_PROFILE_TABLE_NAME, object_name, fvs, ReturnCode(
 m_publisher.publish(APP_BUFFER_PROFILE_TABLE_NAME, object_name, fvs, ReturnCode(SAI_STATUS_SUCCESS), true);
 ```
 
-`m_publisher` は `Orch` 基底クラスの `ResponsePublisher{"APPL_STATE_DB"}`（`orch.h:382`）。`publish()` は Redis channel への PUBLISH と APPL_STATE_DB への `HSET`/`DEL` の両方を実行する（`response_publisher.h:44-50`）。
+`m_publisher` は `Orch` 基底クラスの `ResponsePublisher{"APPL_STATE_DB"}`（`orch.h:382`）。`publish()` は [Redis](../../reference/glossary.md#term-redis) channel への PUBLISH と APPL_STATE_DB への `HSET`/`DEL` の両方を実行する（`response_publisher.h:44-50`）。
 
 ### 5. データフロー全体
 
@@ -529,10 +527,10 @@ SN5xxx: 8-lane かつ speed != "800000" → xon 2倍 → profile 名に "_8lane"
 `gMySwitchType == "voq"` 時:
 
 - `doTask()` 入口のポート初期化チェックが `isInitDone()` に変わる (`bufferorch.cpp` L2079-2086)
-- `BUFFER_PROFILE` テーブルの `processBufferProfile()` には VOQ 固有分岐なし
-- キー形式・フィールド処理・SAI buffer profile 生成経路は non-VOQ と同一
+- `BUFFER_PROFILE` テーブルの `processBufferProfile()` には [VOQ](../../reference/glossary.md#term-voq) 固有分岐なし
+- キー形式・フィールド処理・SAI buffer profile 生成経路は non-[VOQ](../../reference/glossary.md#term-voq) と同一
 
-VOQ chassis での主な差分は `BUFFER_QUEUE` 処理（system port ベースの queue id 解決、flex counter 登録）に集中する。
+[VOQ](../../reference/glossary.md#term-voq) chassis での主な差分は `BUFFER_QUEUE` 処理（system port ベースの queue id 解決、flex counter 登録）に集中する。
 
 ### まとめ
 
@@ -672,7 +670,7 @@ pool mode と profile の `threshold_mode` の不一致（例: dynamic pool に 
 | YANG leafref | `pool` → `BUFFER_POOL.name` | 常時 | — | YANG バリデーション。`pool` 指定が BUFFER_POOL に存在しない場合はスキーマエラー | YANG 定義 |
 | 内部 lookup (`m_bufferPoolLookup`) | 読み取り | dynamic model 常時 | `mode`（dynamic/static）、`direction`（ingress/egress） | pool 未登録 → `task_need_retry`。pool の `mode` と profile の threshold_mode 不一致 → `task_failed` | `buffermgrdyn.cpp:2707-2736` |
 | `m_bufferPoolReady` フラグ | 読み取り | dynamic model 常時 | — | `false` のとき APPL_DB への書き込みをサイレントデファー。pool 到着後 `handlePendingBufferObjects()` が一括適用 | `buffermgrdyn.cpp:892-896` |
-| APPL_DB 参照解決 (`resolveFieldRefValue`) | 読み取り | orchagent 常時 | `pool` → SAI pool OID | not_resolved → `task_need_retry`（プール到着待ち） | `bufferorch.cpp:641-652` |
+| APPL_DB 参照解決 (`resolveFieldRefValue`) | 読み取り | [orchagent](../../reference/glossary.md#term-orchagent) 常時 | `pool` → SAI pool OID | not_resolved → `task_need_retry`（プール到着待ち） | `bufferorch.cpp:641-652` |
 | lossless + direction チェック | 読み取り | `lossless=true` 時 | `direction` | pool の direction が ingress でない → `task_failed` | `buffermgrdyn.cpp:2807-2814` |
 
 ### 2. PORT (CONFIG_DB — dynamic headroom 計算)
@@ -712,4 +710,5 @@ BUFFER_PROFILE
 
 詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-profile-cross-refs.md` を参照。
 <!-- /cross-refs -->
-<!-- glossary-links-injected: 22dbf67b9d97 -->
+
+<!-- glossary-links-injected: 25c864da36a0 -->

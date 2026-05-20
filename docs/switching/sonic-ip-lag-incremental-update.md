@@ -145,7 +145,7 @@ config interface PortChannel0001 mtu 9216
 
 ### teamd が netdev 再作成後に LAG を再構築できない（#40）
 
-`swss` / `teamd` Docker の再起動後、`teamd` が LAG (PortChannel) を再作成できないケースがある。`teamsyncd` が Docker 再起動時にクラッシュする別問題も報告されている。
+`swss` / `teamd` Docker の再起動後、`teamd` が LAG ([PortChannel](../reference/glossary.md#term-portchannel)) を再作成できないケースがある。`teamsyncd` が Docker 再起動時にクラッシュする別問題も報告されている。
 
 **回避策:** `--no-ports` オプション（ポートなしで起動）を使用して teamd を起動し、後から `teamdctl` でポートを追加:
 
@@ -159,7 +159,7 @@ teamdctl PortChannel1 port add Ethernet4
 
 ### PortChannel メンバーポートの MAC アドレス不一致による ARP 不完全（#87）
 
-PortChannel のメンバーポートの一つが他のポートと異なる MAC アドレスを持つ場合（SAI ホストインターフェースの MAC 割り当てバグ）、ARP エントリが不完全状態（flags = 0x0）になり通信ができなくなる。
+PortChannel のメンバーポートの一つが他のポートと異なる MAC アドレスを持つ場合（SAI ホストインターフェースの MAC 割り当てバグ）、[ARP](../reference/glossary.md#term-arp) エントリが不完全状態（flags = 0x0）になり通信ができなくなる。
 
 **デバッグ方法:**
 
@@ -215,7 +215,7 @@ warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG フラッ�
 
 ### PortChannel のメンバーとして設定されているインターフェースをブレークアウトしようとするとエラーになる制約（sonic-buildimage#6630）
 
-PortChannel のメンバーとして設定されているインターフェースをブレークアウトしようとするとエラーになる制約。DPB 実行前に PortChannel メンバーを削除すること
+PortChannel のメンバーとして設定されているインターフェースをブレークアウトしようとするとエラーになる制約。[DPB](../reference/glossary.md#term-dpb) 実行前に PortChannel メンバーを削除すること
 
 - 参照: [sonic-net/sonic-buildimage#6630](https://github.com/sonic-net/sonic-buildimage/issues/6630)
 
@@ -272,4 +272,4 @@ show interfaces portchannel
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c3ce919a1b54 -->
+<!-- glossary-links-injected: 2f664c9182a3 -->

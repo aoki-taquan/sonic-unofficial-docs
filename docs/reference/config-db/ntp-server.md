@@ -69,7 +69,7 @@ NTP_SERVER|<server_address>
 - `association_type`: テンプレート `{% set association_type = config.association_type | d('server') -%}` により DB キー不在時は `server` ディレクティブとして書き込まれる (`sonic-buildimage/files/image_config/chrony/chrony.conf.j2:26`)。YANG `default server` と同値だが Jinja2 側でも独立してフォールバックを担保。
 - `resolve_as`: テンプレート `{% set resolve_as = config.resolve_as | d(server) -%}` で DB キー不在時はループ変数 `server` (= NTP_SERVER テーブル key = ユーザが入力したサーバアドレス) をそのまま採用 (`chrony.conf.j2:27`)。さらに `association_type == 'pool'` の場合は `resolve_as` の値に関わらず `resolve_as = server` で上書きされ、pool は常に FQDN のまま使われる (`chrony.conf.j2:49-51`)。
 - `iburst`: テンプレートは `{% if config.iburst %}` で **truthy 判定のみ**を行い `| d(...)` を持たない (`chrony.conf.j2:37-39`)。DB キー不在なら `iburst` オプション付与なし。一方 `'on'` でも `'off'` でも文字列非空であれば `iburst` が付与されるテンプレート上の癖がある。実運用では minigraph.py が起動時に `iburst: 'on'` を一斉投入し (`sonic-buildimage/src/sonic-config-engine/minigraph.py:2646`)、YANG `default on` も合わさるため、実害は出にくい。
-- `minpoll` / `maxpoll`: **CONFIG_DB モデル未実装**。`chrony.conf.j2` にも `sonic-ntp.yang` `NTP_SERVER_LIST` にも該当 leaf が存在せず、chrony 側のデフォルト (`minpoll 6 / maxpoll 10` ≒ 64〜1024 秒) がそのまま使われる。SONiC からは制御不可。
+- `minpoll` / `maxpoll`: **[CONFIG_DB](../../reference/glossary.md#term-config_db) モデル未実装**。`chrony.conf.j2` にも `sonic-ntp.yang` `NTP_SERVER_LIST` にも該当 leaf が存在せず、chrony 側のデフォルト (`minpoll 6 / maxpoll 10` ≒ 64〜1024 秒) がそのまま使われる。SONiC からは制御不可。
 - `version`: テンプレートは `{% if config.version %}` で truthy 判定のみ。DB キー不在なら `version` オプション付与なし → chrony 側のデフォルト (NTPv4)。YANG `default 4` で DB 投入時には 4 が埋まる前提。
 - `admin_state`: テンプレートは `for server in NTP_SERVER if NTP_SERVER[server].admin_state != 'disabled'` (`chrony.conf.j2:20`)。DB キー不在なら `!= 'disabled'` が真と評価され、エントリは chrony.conf に含まれる (= 有効扱い)。YANG `default enabled` と同等の運用効果。
 - `key`: テンプレートは `global.authentication == 'enabled'` かつ `config.key` が truthy の場合のみ `key <id>` を付与 (`chrony.conf.j2:30-34`)。DB に `key` があっても NTP 認証が disabled なら chrony.conf には書かれない。
@@ -103,7 +103,7 @@ DEL の逆順序: `NTP_SERVER|<server>.key` フィールドをクリア（また
 
 ### ブート時の書込みシーケンス
 
-minigraph.py L2646 が `NTP_SERVER` エントリ全台に `{iburst: 'on'}` を一括投入する。その後 `hostcfgd.load()` がスナップショットを取得するが `load()` は chrony を再起動しない（ブート時は chrony の起動設定ファイルから読まれる）。ブート後の最初の CONFIG_DB 変更イベントで初めて chrony restart が発火する。
+minigraph.py L2646 が `NTP_SERVER` エントリ全台に `{iburst: 'on'}` を一括投入する。その後 `hostcfgd.load()` がスナップショットを取得するが `load()` は chrony を再起動しない（ブート時は chrony の起動設定ファイルから読まれる）。ブート後の最初の [CONFIG_DB](../../reference/glossary.md#term-config_db) 変更イベントで初めて chrony restart が発火する。
 
 ### YANG max-elements=10 による書込み上限
 
@@ -132,8 +132,8 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 | `NTP` (global) | `src_intf` | `hostcfgd` `handle_ntp_source_intf_chg` / `chrony.conf.j2` 生成時 | `src_intf` に指定したインタフェース IP を `bindacqaddress` ディレクティブに変換。`NTP_SERVER` が空の間は `src_intf` 変更イベントが no-op | `hostcfgd:1315-1316`; `chrony.conf.j2:87-107` |
 | `MGMT_INTERFACE` | (key, prefix) | `chrony.conf.j2` テンプレート生成時 | `src_intf == 'eth0'` のとき `bindacqaddress` 用 IPv4/IPv6 アドレスを解決 | `chrony.conf.j2:91-92` |
 | `INTERFACE` / `LOOPBACK_INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` | (key, prefix) | `chrony.conf.j2` テンプレート生成時 | `src_intf` が `Ethernet*` / `Loopback*` / `PortChannel*` / `Vlan*` のとき対応テーブルから IP を解決 | `chrony.conf.j2:93-107` |
-| `DEVICE_METADATA` | `localhost.subtype` / `localhost.type` | `chrony.conf.j2` テンプレート生成時 | SmartSwitch 判定。`subtype=SmartSwitch` かつ `type!=SmartSwitchDPU` のとき `NTP.server_role` / `NTP.dhcp` を参照して `allow` + `binddevice bridge-midplane` を追加 | `chrony.conf.j2:57-63` |
-| `MGMT_VRF_CONFIG` | `vrf_global.mgmtVrfEnabled` | chrony サービス起動時 (`chronyd-starter.sh`) | `"true"` なら `NTP.vrf` に応じて mgmt VRF または default VRF で起動。NTP_SERVER の変更で chrony が再起動されるたびに間接的に参照される | `chronyd-starter.sh:3-16` |
+| `DEVICE_METADATA` | `localhost.subtype` / `localhost.type` | `chrony.conf.j2` テンプレート生成時 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) 判定。`subtype=SmartSwitch` かつ `type!=SmartSwitchDPU` のとき `NTP.server_role` / `NTP.dhcp` を参照して `allow` + `binddevice bridge-midplane` を追加 | `chrony.conf.j2:57-63` |
+| `MGMT_VRF_CONFIG` | `vrf_global.mgmtVrfEnabled` | chrony サービス起動時 (`chronyd-starter.sh`) | `"true"` なら `NTP.vrf` に応じて mgmt [VRF](../../reference/glossary.md#term-vrf) または default [VRF](../../reference/glossary.md#term-vrf) で起動。NTP_SERVER の変更で chrony が再起動されるたびに間接的に参照される | `chronyd-starter.sh:3-16` |
 
 !!! note "NTP_SERVER の変更は常に全テーブルを合算処理"
     `hostcfgd` の `ntp_srv_key_handler` は `NTP_SERVER` 変更時に `NTP_KEY` テーブル全体も同時に取得して chrony を再起動する。このため `NTP_SERVER` 単独の変更であっても `NTP_KEY` の現在値が `chrony.conf` / `chrony.keys` の生成に反映される。
@@ -172,10 +172,10 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 
 ### 失敗の可観測性
 
-`NTP_SERVER` 処理は CONFIG_DB → テンプレート → `systemctl restart chrony` で完結し、**STATE_DB / APPL_DB への書き込みは一切行われない**。失敗検知は以下のみ:
+`NTP_SERVER` 処理は CONFIG_DB → テンプレート → `systemctl restart chrony` で完結し、**[STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みは一切行われない**。失敗検知は以下のみ:
 
 - `journalctl -u chrony` — chrony サービスの起動失敗ログ
-- `/var/log/syslog` の `NtpCfg: Failed to restart chrony service` — hostcfgd の LOG_ERR
+- `/var/log/syslog` の `NtpCfg: Failed to restart chrony service` — [hostcfgd](../../reference/glossary.md#term-hostcfgd) の LOG_ERR
 - `chronyc sources` / `chronyc tracking` — 実際の同期状態確認
 
 <!-- /failure -->
@@ -235,7 +235,7 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 
 | 定数 | 値 | 定義箇所 | 用途 |
 |------|-----|---------|------|
-| NTP サービスポート | **UDP 123** | `caclmgrd:98` (`"dst_ports": ["123"]`) | iptables ACL ルール生成の宛先ポート。CONFIG_DB から変更不可 |
+| NTP サービスポート | **UDP 123** | `caclmgrd:98` (`"dst_ports": ["123"]`) | iptables [ACL](../../reference/glossary.md#term-acl) ルール生成の宛先ポート。CONFIG_DB から変更不可 |
 | プロトコル | **`udp`** | `caclmgrd:97` | NTP パケットフィルタのプロトコル固定値 |
 | `multi_asic_ns_to_host_fwd` | **`False`** | `caclmgrd:99` | multi-ASIC 環境での名前空間→ホスト転送なし |
 
@@ -269,11 +269,11 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 
 | DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | **なし** | `NtpCfg.ntp_srv_key_update()` に ProducerTable / Table.set() 呼び出しが 0 件 (`hostcfgd:1366-1406`) |
-| STATE_DB | **なし** | `NtpCfg` クラスは `state_db_conn` を保持せず STATE_DB に一切アクセスしない (`hostcfgd:1272-1407`) |
-| COUNTERS_DB | **なし** | NTP はデータプレーン統計を持たない。`hostcfgd` 全体に COUNTERS_DB 書き込みなし |
-| ASIC_DB | **なし** | SAI 非経由。NTP は CPU 側でのみ処理され、ASIC プログラムは発生しない |
-| FLEX_COUNTER_DB | **なし** | FlexCounter 不使用 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | **なし** | `NtpCfg.ntp_srv_key_update()` に ProducerTable / Table.set() 呼び出しが 0 件 (`hostcfgd:1366-1406`) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | **なし** | `NtpCfg` クラスは `state_db_conn` を保持せず [STATE_DB](../../reference/glossary.md#term-state_db) に一切アクセスしない (`hostcfgd:1272-1407`) |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | **なし** | NTP はデータプレーン統計を持たない。`hostcfgd` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書き込みなし |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | **なし** | [SAI](../../reference/glossary.md#term-sai) 非経由。NTP は CPU 側でのみ処理され、ASIC プログラムは発生しない |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | **なし** | [FlexCounter](../../reference/glossary.md#term-flexcounter) 不使用 |
 
 ### ホスト OS への副次作用
 
@@ -291,7 +291,7 @@ YANG `max-elements 10` により `NTP_SERVER` エントリは最大 10 件に制
 
 `ntp_srv_key_update()` は `systemctl restart chrony` が成功した場合のみ `self.cache['servers']` / `self.cache['keys']` を更新する (`hostcfgd:1404-1406`)。chrony 再起動失敗時はキャッシュが古い状態のままとなり、次回の `NTP_SERVER` / `NTP_KEY` 変更イベントで差分が残るため自動再処理が保証される設計となっている。
 
-> **コード証跡**: `hostcfgd:1272-1407` (`NtpCfg` クラス全体)、`caclmgrd:96-100` (NTP ACL サービス定義)。全行精読で STATE_DB / APPL_DB / COUNTERS_DB への書き込みが 0 件であることを確認。
+> **コード証跡**: `hostcfgd:1272-1407` (`NtpCfg` クラス全体)、`caclmgrd:96-100` (NTP [ACL](../../reference/glossary.md#term-acl) サービス定義)。全行精読で STATE_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書き込みが 0 件であることを確認。
 
 <!-- /side-effects -->
 
@@ -315,7 +315,7 @@ self.config_db.subscribe(swsscommon.CFG_NTP_KEY_TABLE_NAME,
 
 | 購読元 DB | テーブル名 | 購読クラス | ハンドラ | 発行元 |
 |---|---|---|---|---|
-| CONFIG_DB (DB 4) | `NTP_SERVER` (`CFG_NTP_SERVER_TABLE_NAME`) | `SubscriberStateTable` (Redis keyspace 通知) | `ntp_srv_key_handler` → `ntp_srv_key_update()` | `config ntp add/del` CLI / `minigraph.py` |
+| CONFIG_DB (DB 4) | `NTP_SERVER` (`CFG_NTP_SERVER_TABLE_NAME`) | `SubscriberStateTable` ([Redis](../../reference/glossary.md#term-redis) keyspace 通知) | `ntp_srv_key_handler` → `ntp_srv_key_update()` | `config ntp add/del` CLI / `minigraph.py` |
 | CONFIG_DB (DB 4) | `NTP_KEY` (`CFG_NTP_KEY_TABLE_NAME`) | `SubscriberStateTable` | `ntp_srv_key_handler` → `ntp_srv_key_update()` | `config ntp authentication-key` CLI |
 
 `NTP_SERVER` と `NTP_KEY` は**共通ハンドラ** (`ntp_srv_key_handler`) に集約されており、どちらが変化しても同一の処理パスを辿る。`NTP` (global) は別ハンドラ (`ntp_global_handler`) が担当する。
@@ -346,7 +346,7 @@ if self.cache['servers'] == ntp_servers and self.cache['keys'] == ntp_keys:
 
 ### SIGHUP の扱い
 
-hostcfgd は `SIGHUP` を受け取っても何もしない (`hostcfgd:111-112`)。NTP 設定変更は必ず `systemctl restart chrony`（フルリスタート）であり、設定のホットリロード (SIGHUP) は採用されていない。
+[hostcfgd](../../reference/glossary.md#term-hostcfgd) は `SIGHUP` を受け取っても何もしない (`hostcfgd:111-112`)。NTP 設定変更は必ず `systemctl restart chrony`（フルリスタート）であり、設定のホットリロード (SIGHUP) は採用されていない。
 
 ### pub/sub ループ起動方式
 
@@ -356,11 +356,11 @@ def start(self):
     self.config_db.listen(init_data_handler=self.load)
 ```
 
-`ConfigDBConnector.listen()` が内部で Redis keyspace 通知の PSUBSCRIBE を開始する。keyspace パターン: `__keyspace@4__:NTP_SERVER|*`。`init_data_handler=self.load` により、ループ開始前に `NtpCfg.load()` がスナップショットをキャッシュに適用する（起動時の chrony 再起動はトリガーしない）。
+`ConfigDBConnector.listen()` が内部で [Redis](../../reference/glossary.md#term-redis) keyspace 通知の PSUBSCRIBE を開始する。keyspace パターン: `__keyspace@4__:NTP_SERVER|*`。`init_data_handler=self.load` により、ループ開始前に `NtpCfg.load()` がスナップショットをキャッシュに適用する（起動時の chrony 再起動はトリガーしない）。
 
 ### 他購読者
 
-NTP_SERVER を購読するプロセスは `hostcfgd` のみ。orchagent・syncd・mgrd 等 `sonic-swss/` 配下のプロセスは NTP_SERVER を購読しない。APPL_DB / STATE_DB への書き込みもない。
+NTP_SERVER を購読するプロセスは `hostcfgd` のみ。[orchagent](../../reference/glossary.md#term-orchagent)・[syncd](../../reference/glossary.md#term-syncd)・mgrd 等 `sonic-swss/` 配下のプロセスは NTP_SERVER を購読しない。APPL_DB / STATE_DB への書き込みもない。
 
 <!-- /pubsub -->
 
@@ -467,13 +467,12 @@ chronyc sources
 enum: `association_type`=server/pool、`iburst`=on/off、`admin_state`=enabled/disabled、`trusted`=yes/no。変更は `systemctl restart chrony` をトリガー。
 <!-- /value-behavior -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **hostcfgd**: `NTP_SERVER` テーブルを `ConfigDBConnector` で購読。
+- **[hostcfgd](../../reference/glossary.md#term-hostcfgd)**: `NTP_SERVER` テーブルを `ConfigDBConnector` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -482,12 +481,12 @@ enum: `association_type`=server/pool、`iburst`=on/off、`admin_state`=enabled/d
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。ntpd が指定サーバへ UDP 123 番で到達可能であることが前提。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。ntpd が指定サーバへ UDP 123 番で到達可能であることが前提。
 
 ### 段階 4: タイミング + 副作用
 
 - サーバ変更後 ntpd 再起動まで数秒。新サーバとの初期同期に数分かかる場合あり。
-- 副作用: mgmt VRF を使用する場合は `ip vrf exec mgmt ntpq` で状態確認が必要。
+- 副作用: mgmt [VRF](../../reference/glossary.md#term-vrf) を使用する場合は `ip vrf exec mgmt ntpq` で状態確認が必要。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -497,15 +496,15 @@ NTP_SERVER テーブルへの書き込みが発生するコード経路を網羅
 
 ### CLI
 
-  - `config ntp add/del <ip>` — `config/main.py` が `set_entry('NTP_SERVER', ntp_ip_address, ...)` を呼ぶ (sonic-utilities/config/main.py:9008, 9027)
+  - `config ntp add/del <ip>` — `config/main.py` が `set_entry('NTP_SERVER', ntp_ip_address, ...)` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py:9008, 9027)
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** が `results['NTP_SERVER']` に iburst=on でサーバ一覧を投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py:2646)
+**minigraph.py** が `results['NTP_SERVER']` に iburst=on でサーバ一覧を投入 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py:2646)
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -540,7 +539,7 @@ minigraph.py は NTP サーバ全台に対して `iburst: on` を自動設定す
 
 ### Phase 7: 条件付き登録
 
-`NTP_SERVER` は orchagent では処理されない。`hostcfgd` が `NTP_SERVER` を購読し ntp.conf を再生成する (`hostcfgd:1308`)。条件付き platform 登録なし。YANG `max-elements 10` により 11 件目以降は拒否。
+`NTP_SERVER` は [orchagent](../../reference/glossary.md#term-orchagent) では処理されない。`hostcfgd` が `NTP_SERVER` を購読し ntp.conf を再生成する (`hostcfgd:1308`)。条件付き platform 登録なし。YANG `max-elements 10` により 11 件目以降は拒否。
 
 ### グレップカバレッジ
 
@@ -579,16 +578,16 @@ minigraph.py は NTP サーバ全台に対して `iburst: on` を自動設定す
 | 条件フィールド | 値 |
 |---|---|
 | `DEVICE_METADATA['localhost']['subtype']` | `"SmartSwitch"` |
-| `DEVICE_METADATA['localhost']['type']` | `"SmartSwitchDPU"` 以外（NPU ノード） |
+| `DEVICE_METADATA['localhost']['type']` | `"SmartSwitchDPU"` 以外（[NPU](../../reference/glossary.md#term-npu) ノード） |
 
-NPU ノードに該当する場合、`chrony.conf` に以下が追記される:
+[NPU](../../reference/glossary.md#term-npu) ノードに該当する場合、`chrony.conf` に以下が追記される:
 
 ```
 allow
 binddevice bridge-midplane
 ```
 
-`allow` は全クライアントからの NTP 問い合わせを許可し、`binddevice bridge-midplane` は NTP サーバのリスンインタフェースを内部ブリッジ `bridge-midplane` に限定する。DPU ノード（`type == SmartSwitchDPU`）では上記ブロックは生成されず、NTP クライアントとしてのみ動作する。
+`allow` は全クライアントからの NTP 問い合わせを許可し、`binddevice bridge-midplane` は NTP サーバのリスンインタフェースを内部ブリッジ `bridge-midplane` に限定する。[DPU](../../reference/glossary.md#term-dpu) ノード（`type == SmartSwitchDPU`）では上記ブロックは生成されず、NTP クライアントとしてのみ動作する。
 
 **evidence**: `sonic-buildimage/files/image_config/chrony/chrony.conf.j2:58-62`
 
@@ -629,10 +628,12 @@ mgmt VRF で chronyd を起動する場合、NTP パケットは Linux の mgmt 
 | 観点 | プラットフォーム差 |
 |---|---|
 | `hostcfgd` NTP_SERVER 処理 (`ntp_srv_key_update`) | **差なし**（`getenv("platform")` 参照なし） |
-| `chrony.conf` NTP サーバ有効化 | SmartSwitch NPU ノードのみ `allow + binddevice bridge-midplane` を追記 |
+| `chrony.conf` NTP サーバ有効化 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) ノードのみ `allow + binddevice bridge-midplane` を追記 |
 | `chronyd` 起動 VRF | mgmt VRF 有効かつ `NTP.vrf != "default"` の場合に `ip vrf exec mgmt` 経由で起動 |
 | `bindacqaddress` 出力 | mgmt VRF モードでは抑制。それ以外は `src_intf` 種別でテーブルを切り替え |
 | multi-ASIC / VoQ chassis | NTP_SERVER テーブル処理への直接影響なし（管理インタフェース経由） |
 
 > **スキャン証跡**: `sonic-buildimage/files/image_config/chrony/chrony.conf.j2` 全行スキャン、`chronyd-starter.sh` 全行スキャン、`hostcfgd:1278-1410` 確認。`getenv("platform")` 参照なし — 誤読なし。
 <!-- /platform -->
+
+<!-- glossary-links-injected: e88359461acf -->

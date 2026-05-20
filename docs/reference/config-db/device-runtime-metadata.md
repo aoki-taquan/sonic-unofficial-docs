@@ -78,7 +78,7 @@ DEVICE_RUNTIME_METADATA|MACSEC_SUPPORTED
 
 <!-- evidence: sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py / sonic-buildimage/files/build_templates/init_cfg.json.j2 / sonic-host-services/scripts/featured -->
 
-`DEVICE_RUNTIME_METADATA` は **CONFIG_DB に永続化されない仮想テーブル** で、`sonic_py_common.device_info.get_device_runtime_metadata()` が起動時にプラットフォーム検出結果から自動生成する (`device_info.py:735-747`)。ユーザー設定経路 (CLI / minigraph / db_migrator / YANG transformer) は存在しないため、全フィールドが **コード由来デフォルト** となる。
+`DEVICE_RUNTIME_METADATA` は **CONFIG_DB に永続化されない仮想テーブル** で、`sonic_py_common.device_info.get_device_runtime_metadata()` が起動時にプラットフォーム検出結果から自動生成する (`device_info.py:735-747`)。ユーザー設定経路 (CLI / minigraph / db_migrator / [YANG](../../reference/glossary.md#term-yang) transformer) は存在しないため、全フィールドが **コード由来デフォルト** となる。
 
 ### サブキー存在条件のデフォルト
 
@@ -94,14 +94,14 @@ DEVICE_RUNTIME_METADATA|MACSEC_SUPPORTED
 |----------------------|---------------------|-------------|------|
 | `CHASSIS_METADATA.module_type` | `'linecard'` (`supervisor=1` が `platform_env.conf` に無い場合) / `'supervisor'` (ある場合) | `'supervisor' if is_supervisor() else 'linecard'` | `device_info.py:738`, `is_supervisor()` L699-712 |
 | `CHASSIS_METADATA.chassis_type` | `'packet'` (`switch_type` が `voq`/`fabric` 以外、または `chassisdb.conf` 不在) / `'voq'` (両条件成立) | `'voq' if is_voq_chassis() else 'packet'` | `device_info.py:739`, `is_voq_chassis()` L630-634 |
-| `ETHERNET_PORTS_PRESENT` | `False` (`get_path_to_port_config_file()` が None を返す = supervisor / fabric card 等) / `True` (port_config.ini 検出時) | `bool(get_path_to_port_config_file(hwsku=None, asic="0" if is_multi_npu() else None))` | `device_info.py:741` |
+| `ETHERNET_PORTS_PRESENT` | `False` (`get_path_to_port_config_file()` が None を返す = supervisor / fabric card 等) / `True` ([port_config.ini](../../reference/glossary.md#term-port-config-ini) 検出時) | `bool(get_path_to_port_config_file(hwsku=None, asic="0" if is_multi_npu() else None))` | `device_info.py:741` |
 | `MACSEC_SUPPORTED` | `False` (`platform_env.conf` 未配置 / `macsec_enabled` 行なし / `macsec_enabled=0`) / `True` (`macsec_enabled=1`) | `bool(is_macsec_supported())` | `device_info.py:742`, `is_macsec_supported()` L714-732 |
 
 ### platform 自動検出のフォールバック挙動
 
 - **`platform_env.conf` が存在しないプラットフォーム** → `is_supervisor()=False`, `is_macsec_supported()=0`。結果として `MACSEC_SUPPORTED=False`、(chassis 環境の場合) `module_type='linecard'` がデフォルトになる (`device_info.py:700-702, 720-721`)。
 - **`switch_type` 未設定** (`get_platform_info().get('switch_type')` が空) → `is_voq_chassis()=False`, `is_packet_chassis()=False` → 仮想 chassis でなければ `is_chassis()=False` → `CHASSIS_METADATA` キー自体が生成されない。
-- **multi-NPU プラットフォーム** → `get_path_to_port_config_file()` 呼び出し時に `asic="0"` を指定して ASIC#0 名前空間の port_config.ini を確認する (`device_info.py:741`)。
+- **multi-[NPU](../../reference/glossary.md#term-npu) プラットフォーム** → `get_path_to_port_config_file()` 呼び出し時に `asic="0"` を指定して ASIC#0 名前空間の port_config.ini を確認する (`device_info.py:741`)。
 
 ### init_cfg.json.j2 が参照するデフォルト経路
 
@@ -201,7 +201,6 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 > **Evidence**: [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `files/build_templates/init_cfg.json.j2:67,75,90,106-107`; `src/sonic-py-common/sonic_py_common/device_info.py:720-747`
 <!-- /cdb-exceptions -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -213,11 +212,11 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — ランタイムメタデータ)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — ランタイムメタデータ)
 
 ### 段階 4 — タイミングと副作用
 
@@ -389,7 +388,7 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 
 ### マルチ NPU での ASIC 番号ハードコード
 
-`ETHERNET_PORTS_PRESENT` の判定で multi-NPU 環境では常に ASIC `"0"` のポート設定ファイルを確認する:
+`ETHERNET_PORTS_PRESENT` の判定で multi-[NPU](../../reference/glossary.md#term-npu) 環境では常に ASIC `"0"` のポート設定ファイルを確認する:
 
 ```python
 get_path_to_port_config_file(hwsku=None, asic="0" if is_multi_npu() else None)
@@ -429,7 +428,7 @@ ASIC 番号の起点 `"0"` がハードコードされており、ASIC 1 以降�
 
 ### APPL_DB / ASIC_DB / COUNTERS_DB — 書込なし
 
-`featured` / `sysmonitor.py` はいずれも SAI 非経由であり、APPL_DB / ASIC_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き込みは一切発生しない。
+`featured` / `sysmonitor.py` はいずれも [SAI](../../reference/glossary.md#term-sai) 非経由であり、[APPL_DB](../../reference/glossary.md#term-appl_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書き込みは一切発生しない。
 <!-- /side-effects -->
 
 <!-- pubsub -->
@@ -438,13 +437,13 @@ ASIC 番号の起点 `"0"` がハードコードされており、ASIC 1 以降�
 > **調査根拠**: `sonic-host-services/scripts/featured:137-145,193-196`; `sonic-buildimage/src/system-health/health_checker/sysmonitor.py:217-226`; `sonic-buildimage/files/build_templates/init_cfg.json.j2:67,75,90,106-107` 精読 (2026-05-19)
 > 詳細証跡: `meta/_intermediate/cdb-flow/device-runtime-metadata-pubsub.md`
 
-`DEVICE_RUNTIME_METADATA` は Redis に永続化されない **仮想テーブル** であり、`device_info.get_device_runtime_metadata()` 呼び出しによってインメモリで生成される。このため Redis keyspace notification (`PSUBSCRIBE`) や `SubscriberStateTable` / `ConsumerStateTable` による subscribe は **一切存在しない**。
+`DEVICE_RUNTIME_METADATA` は [Redis](../../reference/glossary.md#term-redis) に永続化されない **仮想テーブル** であり、`device_info.get_device_runtime_metadata()` 呼び出しによってインメモリで生成される。このため [Redis](../../reference/glossary.md#term-redis) keyspace notification (`PSUBSCRIBE`) や `SubscriberStateTable` / `ConsumerStateTable` による subscribe は **一切存在しない**。
 
 ### Redis pub/sub の不在
 
 | 購読方式 | 採用有無 | 理由 |
 |---------|---------|------|
-| `SubscriberStateTable` (C++ swss) | なし | テーブルが Redis に存在しないため不可 |
+| `SubscriberStateTable` (C++ swss) | なし | テーブルが [Redis](../../reference/glossary.md#term-redis) に存在しないため不可 |
 | `ConsumerStateTable` / `Orch` | なし | 同上 |
 | `ConfigDBConnector.subscribe()` (Python) | なし | 同上 |
 | keyspace 通知 (PSUBSCRIBE) | なし | Redis に書き込まれないためイベントが発生しない |
@@ -481,8 +480,8 @@ ASIC 番号の起点 `"0"` がハードコードされており、ASIC 1 以降�
 | プラットフォーム種別 | 判定条件 | `CHASSIS_METADATA` | `chassis_type` | `module_type` |
 |---|---|---|---|---|
 | 標準 ToR / leaf (非シャーシ) | `is_chassis()=False` | **生成されない** | — | — |
-| VOQ chassis (linecard) | `switch_type=voq` + `chassisdb.conf` 存在 + `supervisor=1` なし | あり | `'voq'` | `'linecard'` |
-| VOQ chassis (supervisor) | `switch_type=voq` + `chassisdb.conf` 存在 + `platform_env.conf` に `supervisor=1` | あり | `'voq'` | `'supervisor'` |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (linecard) | `switch_type=voq` + `chassisdb.conf` 存在 + `supervisor=1` なし | あり | `'voq'` | `'linecard'` |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor) | `switch_type=voq` + `chassisdb.conf` 存在 + `platform_env.conf` に `supervisor=1` | あり | `'voq'` | `'supervisor'` |
 | Packet chassis | `switch_type=chassis-packet` | あり | `'packet'` | `supervisor=1` 有無で決定 |
 | Virtual chassis (VS) | `asic_type=vs` (`sonic_version.yml`) + `switch_type` が `dummy-sup`/`voq`/`chassis-packet` のいずれか | あり | `'voq'` or `'packet'` | VS 内 `supervisor=1` 有無 |
 | Disaggregated chassis | `switch_type=voq` + `disaggregated_chassis=1` in `platform_env.conf` | **生成されない** | — | — |
@@ -497,11 +496,11 @@ ASIC 番号の起点 `"0"` がハードコードされており、ASIC 1 以降�
 |---|---|---|
 | 通常 ToR / Leaf / Spine | `True` | hwsku ディレクトリ配下に `port_config.ini` が存在する |
 | Supervisor カード (chassis) | `False` | supervisor の hwsku には `port_config.ini` が存在しない |
-| Fabric カード (VOQ chassis) | `False` | fabric カードはデータプレーンポートを持たず `port_config.ini` 不在 |
+| Fabric カード ([VOQ](../../reference/glossary.md#term-voq) chassis) | `False` | fabric カードはデータプレーンポートを持たず `port_config.ini` 不在 |
 | Multi-ASIC プラットフォーム | ASIC #0 の `port_config.ini` 存否に依存 | `asic="0"` をハードコードして検索 (`device_info.py:741`) |
 | VS (Virtual Switch) テスト | `True` (通常) | VS プラットフォームのテスト hwsku に `port_config.ini` が付属する |
 
-Multi-NPU 環境では常に ASIC `"0"` のポート設定ファイルを確認する。ASIC 1 以降は確認しない (`device_info.py:741`)。
+Multi-[NPU](../../reference/glossary.md#term-npu) 環境では常に ASIC `"0"` のポート設定ファイルを確認する。ASIC 1 以降は確認しない (`device_info.py:741`)。
 
 ### `MACSEC_SUPPORTED` — `platform_env.conf` 依存
 
@@ -515,9 +514,9 @@ MACsec 対応の宣言は `platform_env.conf` の `macsec_enabled=1` 行のみ�
 
 ### SmartSwitch / DPU — 影響なし
 
-`is_smartswitch()` / `is_dpu()` は `platform.json` の `DPUS` / `DPU` キーを参照するが (`device_info.py:679-694`)、`get_device_runtime_metadata()` はこれらの関数を呼び出さない。SmartSwitch NPU 側も DPU カード側も、非シャーシ構成であれば `CHASSIS_METADATA` は生成されず `ETHERNET_PORTS_PRESENT` / `MACSEC_SUPPORTED` のみが返される (`device_info.py:735-747`)。
+`is_smartswitch()` / `is_dpu()` は `platform.json` の `DPUS` / `DPU` キーを参照するが (`device_info.py:679-694`)、`get_device_runtime_metadata()` はこれらの関数を呼び出さない。[SmartSwitch](../../reference/glossary.md#term-smartswitch) NPU 側も [DPU](../../reference/glossary.md#term-dpu) カード側も、非シャーシ構成であれば `CHASSIS_METADATA` は生成されず `ETHERNET_PORTS_PRESENT` / `MACSEC_SUPPORTED` のみが返される (`device_info.py:735-747`)。
 
 > **Evidence**: `device_info.py:630-668` (`is_voq_chassis` / `is_packet_chassis` / `is_virtual_chassis` / `is_chassis`)、`device_info.py:699-732` (`is_supervisor` / `is_macsec_supported`)、`device_info.py:735-747` (`get_device_runtime_metadata`)
 <!-- /platform -->
 
-<!-- glossary-links-injected: e33fec70e206 -->
+<!-- glossary-links-injected: 66eb21e0af0e -->

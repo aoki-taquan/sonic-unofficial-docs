@@ -107,7 +107,7 @@ BUFFER_QUEUE|<hostname>|<asic_name>|<port>|<qindex>
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG (`sonic-buffer-queue.yang`) の `profile` leafref には明示的な default がない。実体の「未指定時挙動」はビルド時テンプレート (`buffers_config.j2`) と orchagent ランタイムロジック (`bufferorch.cpp`) に分散している。
+YANG (`sonic-buffer-queue.yang`) の `profile` leafref には明示的な default がない。実体の「未指定時挙動」はビルド時テンプレート (`buffers_config.j2`) と [orchagent](../../reference/glossary.md#term-orchagent) ランタイムロジック (`bufferorch.cpp`) に分散している。
 
 ### ビルド時テンプレート由来 (非 VOQ — `PORT_ACTIVE` 各ポート)
 
@@ -133,14 +133,14 @@ YANG (`sonic-buffer-queue.yang`) の `profile` leafref には明示的な defaul
 
 | 条件 | 挙動 | evidence |
 |---|---|---|
-| `profile` フィールド参照が解決不能 (`ref_resolve_status::not_resolved`) | `task_need_retry` を返し SAI 未書き込み（既存値維持） | `bufferorch.cpp:966-970` |
+| `profile` フィールド参照が解決不能 (`ref_resolve_status::not_resolved`) | `task_need_retry` を返し [SAI](../../reference/glossary.md#term-sai) 未書き込み（既存値維持） | `bufferorch.cpp:966-970` |
 | `BUFFER_QUEUE` エントリ削除時 / `profile` 取得不能時 | SAI に `SAI_NULL_OBJECT_ID` をセット（queue buffer profile を解放） | `bufferorch.cpp:1005` |
 | profile 名に `_zero_` を含む | flex counter 追加・削除をスキップ（traffic なし扱い、デフォルト適用自体は通常通り） | `bufferorch.cpp:995, 1017` |
 
 ### 補足
 
 - 上記テンプレート fallback は、プラットフォーム側 `buffers_defaults_*.j2` で `defs.generate_queue_buffers` / `defs.generate_queue_buffers_with_extra_lossless_queues` 等のマクロが定義されていない場合にのみ適用される (`buffers_config.j2:298-306` の `{% elif %}` チェーン)。Mellanox dynamic buffer SKU や t1-lag 等の主要プラットフォームは独自マクロを持つため、上記 3 レンジ固定 mapping は使用されない。
-- orchagent には「`profile` が未指定なら自動で `egress_lossy_profile` を当てる」といったランタイムフォールバックは**存在しない**。ビルド時テンプレートで埋まらなかった queue は SAI 側で NULL profile (= 動的バッファ割当なし) となる。
+- [orchagent](../../reference/glossary.md#term-orchagent) には「`profile` が未指定なら自動で `egress_lossy_profile` を当てる」といったランタイムフォールバックは**存在しない**。ビルド時テンプレートで埋まらなかった queue は SAI 側で NULL profile (= 動的バッファ割当なし) となる。
 - scheduler 既定 (`QUEUE.scheduler`) は `BUFFER_QUEUE` テーブルのフィールドではなく `QUEUE` テーブル側で割当される。BUFFER_QUEUE スコープ外のため本ページでは扱わない。
 
 詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-defaults.md` を参照。
@@ -154,9 +154,9 @@ BUFFER_QUEUE エントリを正しく適用するには、以下の依存テー�
 
 | 依存テーブル | 理由 | 違反時の挙動 | evidence |
 |---|---|---|---|
-| `BUFFER_POOL` | `buffermgrd`（動的）が `updateBufferObjectToDb()` 冒頭で `m_bufferPoolReady` フラグを確認。プール未登録なら APPL_DB 書き込みを保留し `m_bufferObjectsPending = true` をセット。 | APPL_DB への転送がデファーされる（サイレント保留） | `buffermgrdyn.cpp:933-936` |
+| `BUFFER_POOL` | `buffermgrd`（動的）が `updateBufferObjectToDb()` 冒頭で `m_bufferPoolReady` フラグを確認。プール未登録なら [APPL_DB](../../reference/glossary.md#term-appl_db) 書き込みを保留し `m_bufferObjectsPending = true` をセット。 | APPL_DB への転送がデファーされる（サイレント保留） | `buffermgrdyn.cpp:933-936` |
 | `BUFFER_PROFILE` | `buffermgrd`（動的）が `checkBufferProfileDirection()` で `m_bufferProfileLookup` を検索。未登録なら `task_need_retry` を返し処理を延期。 | `task_need_retry` → Consumer が再試行 | `buffermgrdyn.cpp:3282-3286` |
-| `BUFFER_PROFILE` | `orchagent` `BufferOrch` が `resolveFieldRefValue()` で APPL_DB 上のプロファイル参照を解決。未登録なら `task_need_retry`。 | `task_need_retry` → orchagent が再試行 | `bufferorch.cpp:961-970` |
+| `BUFFER_PROFILE` | `orchagent` `BufferOrch` が `resolveFieldRefValue()` で APPL_DB 上のプロファイル参照を解決。未登録なら `task_need_retry`。 | `task_need_retry` → [orchagent](../../reference/glossary.md#term-orchagent) が再試行 | `bufferorch.cpp:961-970` |
 | `PORT` | `buffermgrd`（動的）が `m_portInfoLookup[port]` を参照。`PORT_ADMIN_DOWN` 時は admin-up 後に APPL_DB 書き込み。`max_queues` 未通知ポートは reserved buffer 処理が保留。 | admin-up 待ちまたは保留 | `buffermgrdyn.cpp:3344-3350` |
 | `PORT` | `orchagent` が `gPortsOrch->getPort()` でポートを取得。未登録なら `task_invalid_entry` を返す。 | `task_invalid_entry` → エントリ破棄 | `bufferorch.cpp:1033-1038` |
 
@@ -223,13 +223,12 @@ show buffer queue
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`buffermgrd` → `BufferOrch` (APPL_DB 経由) が CONFIG_DB の `BUFFER_QUEUE` テーブルを購読する。
+`buffermgrd` → `BufferOrch` (APPL_DB 経由) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BUFFER_QUEUE` テーブルを購読する。
 
 `BUFFER_QUEUE` の key は `<port>|<queue_range>` (例: `Ethernet0|0-2`)。
 
@@ -243,7 +242,7 @@ show buffer queue
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB 変化を `buffermgrd` が検知後 APPL_DB に書き込み。`BufferOrch` が SAI queue buffer attribute を更新。
+**適用タイミング**: [CONFIG_DB](../../reference/glossary.md#term-config_db) 変化を `buffermgrd` が検知後 APPL_DB に書き込み。`BufferOrch` が SAI queue buffer attribute を更新。
 
 **副作用**: 対象キューの egress バッファ割り当てが変更される。キューの動作中変更は一時的な traffic 影響を伴う可能性がある。
 <!-- /runtime-trace -->
@@ -268,7 +267,7 @@ show buffer queue
 - なし
 
 ### ビルド時デフォルト (init_cfg / j2 テンプレート)
-- `qos_config.j2` から QoS マッピングと共に生成
+- `qos_config.j2` から [QoS](../../reference/glossary.md#term-qos) マッピングと共に生成
 
 ### ハードコードデフォルト
 - なし
@@ -276,7 +275,6 @@ show buffer queue
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
-
 
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
@@ -328,7 +326,7 @@ YANG leafref（`profile → BUFFER_PROFILE.name`、`port → PORT.name`）以外
 | `BufferMgrDynamic` | `handleBufferObjectTables()` | キー形式 `port:ids` が不正 | `task_invalid_entry` 返却（`keyWithIds=true` のためキュー番号必須） | `sonic-swss/cfgmgr/buffermgrdyn.cpp:3521` |
 | `BufferMgrDynamic` | `handleBufferObjectTables()` | カンマ区切りポートリスト（複数ポート） | ポートごとにシングルポートハンドラを繰り返し呼び出し | `sonic-swss/cfgmgr/buffermgrdyn.cpp:3536-3547` |
 
-> **スキャン証跡**: `handleBufferQueueTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_QUEUE_TABLE_NAME, true)` に委譲（`keyWithIds=true`）。BUFFER_PG と同一パスを共有。2 件分岐抽出。
+> **スキャン証跡**: `handleBufferQueueTable` は `handleBufferObjectTables(tuple, CFG_BUFFER_QUEUE_TABLE_NAME, true)` に委譲（`keyWithIds=true`）。[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) と同一パスを共有。2 件分岐抽出。
 <!-- /handler-branching -->
 
 <!-- pubsub -->
@@ -362,7 +360,7 @@ CONFIG_DB (BUFFER_QUEUE)
 
 ### APPL_DB 購読 (orchagent BufferOrch)
 
-`BufferOrch` は `Orch(applDb, tableNames)` 基底クラス経由で APPL_DB の `APP_BUFFER_QUEUE_TABLE` を **ConsumerStateTable** として購読する。
+`BufferOrch` は `Orch(applDb, tableNames)` 基底クラス経由で APPL_DB の `APP_BUFFER_QUEUE_TABLE` を **[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** として購読する。
 `orchdaemon.cpp:386-394` にて `vector<string> buffer_tables` に `APP_BUFFER_QUEUE_TABLE_NAME` を含めて `BufferOrch` コンストラクタへ渡す。
 
 `doTask(Consumer&)` (`bufferorch.cpp:2075`) が `processQueue` / `processQueueBulk` をディスパッチし、
@@ -370,12 +368,12 @@ CONFIG_DB (BUFFER_QUEUE)
 
 | デーモン | DB | テーブル | 方式 | evidence |
 |---|---|---|---|---|
-| `orchagent` (BufferOrch) | APPL_DB | `APP_BUFFER_QUEUE_TABLE` | ConsumerStateTable | `orchdaemon.cpp:389` |
+| `orchagent` (BufferOrch) | APPL_DB | `APP_BUFFER_QUEUE_TABLE` | [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) | `orchdaemon.cpp:389` |
 
 ### ASIC_DB notification
 
-BUFFER_QUEUE フローで bufferorch が ASIC_DB 通知を直接購読する仕組みは存在しない。
-SAI への書き込みは syncd が ASIC_DB に転送し、結果は SAI return code で受け取る通常フロー。
+BUFFER_QUEUE フローで bufferorch が [ASIC_DB](../../reference/glossary.md#term-asic_db) 通知を直接購読する仕組みは存在しない。
+SAI への書き込みは [syncd](../../reference/glossary.md#term-syncd) が [ASIC_DB](../../reference/glossary.md#term-asic_db) に転送し、結果は SAI return code で受け取る通常フロー。
 （BUFFER_POOL_WATERMARK に対する `SubscriberStateTable` は存在するが BUFFER_QUEUE とは無関係: `bufferorch.cpp:290`）
 
 詳細スキャンノートは `meta/_intermediate/cdb-flow/buffer-queue-pubsub.md` を参照。
@@ -435,14 +433,14 @@ queue buffer profile は `sai_queue_api->set_queues_attribute()` bulk API で反
 
 | 定数 | 値 | 意味 |
 |---|---|---|
-| `BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | `"60000"` | buffer pool watermark の FlexCounter polling 間隔（ms = 60 秒）(`bufferorch.h:16`) |
-| `BUFFER_POOL_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"BUFFER_POOL_WATERMARK_STAT_COUNTER"` | FlexCounter グループ名 (`bufferorch.h:15`) |
+| `BUFFER_POOL_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | `"60000"` | buffer pool watermark の [FlexCounter](../../reference/glossary.md#term-flexcounter) polling 間隔（ms = 60 秒）(`bufferorch.h:16`) |
+| `BUFFER_POOL_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"BUFFER_POOL_WATERMARK_STAT_COUNTER"` | [FlexCounter](../../reference/glossary.md#term-flexcounter) グループ名 (`bufferorch.h:15`) |
 
 ### `_zero_` profile 判定文字列
 
 - 文字列リテラル: `"_zero_"` (ハードコード)
 - `buffer_profile_name.find("_zero_") == std::string::npos` で zero profile 判定 (`bufferorch.cpp:995, 1017, 1400, 1421`)
-- zero profile 時は FlexCounter の queue counter 追加・削除をスキップ
+- zero profile 時は [FlexCounter](../../reference/glossary.md#term-flexcounter) の queue counter 追加・削除をスキップ
 - zero profile 情報の JSON フィールド名 (buffermgrdyn.cpp):
 
 | JSON フィールド | 用途 | evidence |
@@ -486,7 +484,7 @@ pause quanta テーブル (IEEE 802.3 31B.3.7 準拠、ハードコード):
 | 1000 (1G) | 2 | 128 |
 | 100 (100M) | 1 | 64 |
 
-xoff（PFC pause 起動閾値）の繰り上げ粒度: **1024 バイト** (`math.ceil(xoff_value / 1024) * 1024`)。
+xoff（[PFC](../../reference/glossary.md#term-pfc) pause 起動閾値）の繰り上げ粒度: **1024 バイト** (`math.ceil(xoff_value / 1024) * 1024`)。
 
 詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-constants.md` を参照。
 <!-- /constants -->
@@ -543,9 +541,9 @@ xoff（PFC pause 起動閾値）の繰り上げ粒度: **1024 バイト** (`math
 
 ### COUNTERS_DB — キューカウンタマップ
 
-`BufferOrch::processQueuePost()` が SAI 呼び出し成功後に `gPortsOrch->createPortBufferQueueCounters()` / `removePortBufferQueueCounters()` を呼び出し、COUNTERS_DB 内の以下のマップを更新する（非 VOQ スイッチかつ `isCreateOnlyConfigDbBuffers()` が true の場合のみ）。
+`BufferOrch::processQueuePost()` が SAI 呼び出し成功後に `gPortsOrch->createPortBufferQueueCounters()` / `removePortBufferQueueCounters()` を呼び出し、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) 内の以下のマップを更新する（非 VOQ スイッチかつ `isCreateOnlyConfigDbBuffers()` が true の場合のみ）。
 
-| COUNTERS_DB テーブル | 操作 | 内容 | evidence |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) テーブル | 操作 | 内容 | evidence |
 |---|---|---|---|
 | `COUNTERS_QUEUE_NAME_MAP` | SET / DEL | `"<port>:<queueIndex>"` → SAI queue OID のマッピング追加・削除 | `portsorch.cpp:8749, 8789` |
 | `COUNTERS_QUEUE_PORT_MAP` | SET / DEL | SAI queue OID → SAI port OID のマッピング追加・削除 | `portsorch.cpp:8750, 8790` |
@@ -556,9 +554,9 @@ xoff（PFC pause 起動閾値）の繰り上げ粒度: **1024 バイト** (`math
 
 ### FLEX_COUNTER_DB — queue stat / watermark / WRED カウンタ登録
 
-同 `createPortBufferQueueCounters()` が FlexCounterOrch 状態に応じて以下のエントリを FLEX_COUNTER_DB に追加・削除する。
+同 `createPortBufferQueueCounters()` が FlexCounterOrch 状態に応じて以下のエントリを [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に追加・削除する。
 
-| FLEX_COUNTER_DB グループ | 操作 | トリガー条件 | evidence |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) グループ | 操作 | トリガー条件 | evidence |
 |---|---|---|---|
 | `QUEUE_STAT_COUNTER` | SET (add) / DEL | `getQueueCountersState() == true` かつ SET 操作でカウンタ未存在 | `portsorch.cpp:8730-8732` |
 | `QUEUE_WATERMARK_STAT_COUNTER` | SET (add) / DEL | `getQueueWatermarkCountersState() == true` | `portsorch.cpp:8734-8736` |
@@ -566,7 +564,7 @@ xoff（PFC pause 起動閾値）の繰り上げ粒度: **1024 バイト** (`math
 
 ### VOQ 例外
 
-`gMySwitchType == "voq"` の場合、`flexcounterorch` が全 VOQ の queue カウンタを一括登録するため、上記 COUNTERS_DB / FLEX_COUNTER_DB 書き込みは **スキップ** される。
+`gMySwitchType == "voq"` の場合、`flexcounterorch` が全 VOQ の queue カウンタを一括登録するため、上記 [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) 書き込みは **スキップ** される。
 
 > `bufferorch.cpp:1134-1136`: *"For VOQ chassis, flexcounterorch adds the Queue Counters for all egress and VOQ queues ... irrespective of BUFFER_QUEUE configuration."*
 
@@ -583,7 +581,7 @@ profile 名に `_zero_` を含む場合 (`counter_needs_to_add = false`)、カ�
 ### Dynamic / Static バッファモデル
 
 `buffermgrdyn`（Dynamic モード専用）は `BUFFER_QUEUE` の `profile` フィールドをそのまま APPL_DB に転送する。
-BUFFER_PG と異なり egress キューのヘッドルーム自動計算は行わない。キューのプロファイル割り当てはビルド時テンプレートで決定済みのため、Dynamic/Static どちらのモードも実運用上の queue buffer 割り当て内容は同等となる。
+[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) と異なり egress キューのヘッドルーム自動計算は行わない。キューのプロファイル割り当てはビルド時テンプレートで決定済みのため、Dynamic/Static どちらのモードも実運用上の queue buffer 割り当て内容は同等となる。
 
 #### Dynamic モード固有 — admin-down 時の zero profile 回収 (`buffermgrdyn.cpp:285-289, 1286-1381`)
 
@@ -602,7 +600,7 @@ Static モードデーモン (`buffermgr`) はこの `reclaimReservedBufferForPo
 
 | ベンダー値 | 追加取得情報 | BUFFER_QUEUE への影響 |
 |-----------|------------|----------------------|
-| `"mellanox"` | `DEVICE_METADATA.localhost.platform` からモデル番号 4 桁 (`sn****`) を抽出し `m_model_number` に保存 | なし（BUFFER_PG headroom 計算専用）|
+| `"mellanox"` | `DEVICE_METADATA.localhost.platform` からモデル番号 4 桁 (`sn****`) を抽出し `m_model_number` に保存 | なし（[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) headroom 計算専用）|
 | その他 (`"broadcom"` 等) | なし | なし |
 | 未設定 (`""`) | なし | なし |
 
@@ -630,4 +628,5 @@ YANG の qindex 正規表現は `(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?` で **0〜1
 
 詳細な調査メモは `meta/_intermediate/cdb-flow/buffer-queue-platform.md` を参照。
 <!-- /platform -->
-<!-- glossary-links-injected: efbc9015e957 -->
+
+<!-- glossary-links-injected: 571dabcf0bb2 -->

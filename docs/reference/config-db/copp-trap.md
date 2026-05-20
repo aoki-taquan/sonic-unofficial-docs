@@ -78,12 +78,12 @@ COPP_TRAP|<name>
 
 | フィールド | 値 | 挙動 |
 |-----------|-----|------|
-| `always_enabled` | `true` | `coppmgr` が feature の有効/無効に関わらず trap を APPL_DB に書き込む（`coppmgr.cpp:90`）。`config feature state <feature> disabled` を実行しても trap はアクティブのまま。BGP / LLDP など必須プロトコルに使用。 |
+| `always_enabled` | `true` | `coppmgr` が feature の有効/無効に関わらず trap を [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込む（`coppmgr.cpp:90`）。`config feature state <feature> disabled` を実行しても trap はアクティブのまま。[BGP](../../reference/glossary.md#term-bgp) / [LLDP](../../reference/glossary.md#term-lldp) など必須プロトコルに使用。 |
 | `always_enabled` | `false` / 未設定 | feature が enabled のときのみ trap をインストール。feature が disabled になると trap が削除される。 |
-| `trap_ids` | 有効な trap_id（例: `bgp`） | `CoppOrch` が `trap_id_map` で SAI hostif trap type に変換してインストール。 |
+| `trap_ids` | 有効な trap_id（例: `bgp`） | `CoppOrch` が `trap_id_map` で [SAI](../../reference/glossary.md#term-sai) hostif trap type に変換してインストール。 |
 | `trap_ids` | 未知の trap_id | `CoppOrch` の `trap_id_map.at()` が例外を投げ、当該エントリ全体が適用されない（サイレント失敗）。 |
 | `trap_ids` | プラットフォーム SAI 非対応の trap_id | `isTrapIdSupported()=false` で個別 trap がスキップ（NOTICE ログのみ）（`copporch.cpp:408-413`）。他の trap_id は継続適用。 |
-| `trap_ids` | `snat_miss` / `dnat_miss` | NAT 非対応スイッチ（`gIsNatSupported=false`）ではスキップ（NOTICE ログ）（`copporch.cpp:400-406`）。 |
+| `trap_ids` | `snat_miss` / `dnat_miss` | [NAT](../../reference/glossary.md#term-nat) 非対応スイッチ（`gIsNatSupported=false`）ではスキップ（NOTICE ログ）（`copporch.cpp:400-406`）。 |
 <!-- /value-behavior -->
 
 ## 購読者
@@ -139,13 +139,12 @@ show copp config
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`coppmgrd` → `CoppOrch` (APPL_DB 経由) が CONFIG_DB の `COPP_TRAP` テーブルを購読する。
+`coppmgrd` → `CoppOrch` (APPL_DB 経由) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `COPP_TRAP` テーブルを購読する。
 
 `COPP_TRAP` の key はトラップ名 (例: `bgp`, `arp_req`, `lldp`)。`COPP_GROUP` を `trap_group` フィールドで参照。
 
@@ -155,7 +154,7 @@ show copp config
 
 ### 段階 3 — APPL→SAI
 
-`sai_hostif_api` — `sai_create_hostif_trap` でトラップ (BGP/ARP/OSPF 等) を作成/更新
+`sai_hostif_api` — `sai_create_hostif_trap` でトラップ ([BGP](../../reference/glossary.md#term-bgp)/[ARP](../../reference/glossary.md#term-arp)/OSPF 等) を作成/更新
 
 ### 段階 4 — タイミングと副作用
 
@@ -192,7 +191,6 @@ show copp config
 - なし
 <!-- /entry-points -->
 
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -219,7 +217,7 @@ show copp config
 | Manager / Handler | メソッド | 分岐条件 | 効果 | evidence |
 |---|---|---|---|---|
 | `CoppOrch` | `doTask()` | `table_name == CFG_COPP_TRAP_TABLE_NAME`（COPP_TRAP テーブル） | `processCoppTrap()` を呼び出し（COPP_GROUP と別パス） | `sonic-swss/orchagent/copporch.cpp:880-935` |
-| `CoppOrch` | `processCoppTrap()` | `trap_id` が `snat_miss` / `dnat_miss` かつ NAT が無効 | SAI ホストインターフェーストラップ作成をスキップ | `sonic-swss/orchagent/copporch.cpp:401-404` |
+| `CoppOrch` | `processCoppTrap()` | `trap_id` が `snat_miss` / `dnat_miss` かつ [NAT](../../reference/glossary.md#term-nat) が無効 | SAI ホストインターフェーストラップ作成をスキップ | `sonic-swss/orchagent/copporch.cpp:401-404` |
 | `CoppOrch` | `processCoppTrap()` | `trap_group` が `m_trap_group_map` に未存在 | `task_need_retry`（グループ未作成ガード） | `sonic-swss/orchagent/copporch.cpp:584` |
 | `CoppOrch` | `processCoppTrap()` | `op == DEL_COMMAND` | SAI トラップを削除しグループからアンバインド | `sonic-swss/orchagent/copporch.cpp:1102` |
 
@@ -349,7 +347,7 @@ show copp config
 | `trap_group` | [`COPP_GROUP`](./copp-group.md) | `COPP_GROUP\|<name>` | グループ未登録の場合 `coppmgr` は APPL_DB 書き込みを保留。`CoppOrch` は `task_need_retry` を返して再試行 | `coppmgr.cpp:62-79`, `copporch.cpp:584` |
 | `trap_ids` (各 trap_id) | [`FEATURE`](./feature.md) | `FEATURE\|<feature-name>` | feature の `state=disabled` の場合、対応 trap_id を APPL_DB から除外（`always_enabled=false` のみ対象） | `coppmgr.cpp:173-191` |
 | `always_enabled` | [`FEATURE`](./feature.md) | `FEATURE\|<feature-name>` | `true` の場合は feature state に関わらず常時インストール。未設定は `false` 扱い | `coppmgr.cpp:90` |
-| `trap_group` (間接、queue4_group3 指定時) | [`DEVICE_METADATA`](./device-metadata.md) | `DEVICE_METADATA\|localhost` | `copp_cfg.j2` が `DEVICE_METADATA.localhost.type` に `'Mgmt'` を含む場合、COPP_GROUP `queue4_group3` の policer cir/cbs を 300 pps に設定（通常は 100 pps）。ビルド時 sonic-cfggen 展開時のみ評価 | `copp_cfg.j2:37-43` |
+| `trap_group` (間接、queue4_group3 指定時) | [`DEVICE_METADATA`](./device-metadata.md) | `DEVICE_METADATA\|localhost` | `copp_cfg.j2` が `DEVICE_METADATA.localhost.type` に `'Mgmt'` を含む場合、COPP_GROUP `queue4_group3` の policer cir/cbs を 300 pps に設定（通常は 100 pps）。ビルド時 [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) 展開時のみ評価 | `copp_cfg.j2:37-43` |
 | `trap_ids` (SAI 適用時) | SAI HOSTIF オブジェクト | SAI OID（非 CONFIG_DB） | `CoppOrch` が `sai_hostif_api->create_hostif_trap()` / `create_hostif_trap_group()` で SAI HOSTIF_TRAP・HOSTIF_TRAP_GROUP を生成。Genetlink 型の `trap_group` では `create_hostif()` で netdev ソケットも作成しトラップ受信チャネルに紐付ける | `copporch.cpp:661-678`, `copporch.cpp:780-792` |
 
 ### 解決タイミング
@@ -385,7 +383,7 @@ show copp config
 | ポリサー作成失敗 (`trapGroupUpdatePolicer()` = false) | `task_failed` → `"Processing copp task item failed, exiting."` → ループ中断 | `copporch.cpp:796-800, 920-923` |
 | Genetlink hostif 重複作成 | ERROR ログ → `task_failed` → ループ中断 | `copporch.cpp:835-840` |
 | `trapGroupProcessTrapIdChange()` 失敗 | `task_failed` → ループ中断 | `copporch.cpp:853-856` |
-| NAT 非対応時の `snat_miss`/`dnat_miss` | NOTICE ログ → 当該 trap_id のみ `continue` スキップ（他は継続） | `copporch.cpp:401-406` |
+| [NAT](../../reference/glossary.md#term-nat) 非対応時の `snat_miss`/`dnat_miss` | NOTICE ログ → 当該 trap_id のみ `continue` スキップ（他は継続） | `copporch.cpp:401-406` |
 | SAI 非対応 trap_id (`isTrapIdSupported()=false`) | NOTICE ログ → 当該 trap_id のみスキップ（他は継続） | `copporch.cpp:408-413` |
 
 ### DEL 処理
@@ -415,7 +413,7 @@ show copp config
 
 ### CONFIG_DB → CoppMgr (SubscriberStateTable / keyspace notification)
 
-`coppmgrd` は `Orch` 基底クラス経由で CONFIG_DB の `COPP_TRAP`・`COPP_GROUP`・`FEATURE` テーブルに対して `SubscriberStateTable` を登録し、Redis keyspace notification を PSUBSCRIBE する。
+`coppmgrd` は `Orch` 基底クラス経由で CONFIG_DB の `COPP_TRAP`・`COPP_GROUP`・`FEATURE` テーブルに対して `SubscriberStateTable` を登録し、[Redis](../../reference/glossary.md#term-redis) keyspace notification を PSUBSCRIBE する。
 
 ```
 PSUBSCRIBE __keyspace@4__:COPP_TRAP|*
@@ -437,13 +435,13 @@ CoppMgr は `ProducerStateTable m_appCoppTable`（`coppmgr.h:71`）を通じて 
 
 1. `SADD COPP_TABLE_KEY_SET <group>` — 変更キーをセットに追加
 2. `HSET _COPP_TABLE:<group> trap_ids <value> ...` — 一時 hash に値を書き込む
-3. `PUBLISH COPP_TABLE_CHANNEL@0 G` — orchagent を wake-up する通知を送信
+3. `PUBLISH COPP_TABLE_CHANNEL@0 G` — [orchagent](../../reference/glossary.md#term-orchagent) を wake-up する通知を送信
 
 **変換ポイント**: CONFIG_DB は 1 trap/key (`COPP_TRAP|<name>`) だが、APPL_DB は 1 group/key (`COPP_TABLE|<group>`) に再集計される。CoppMgr がこの変換を担う。
 
 ### APPL_DB → CoppOrch (ConsumerStateTable / SUBSCRIBE)
 
-orchagent の `CoppOrch` は `ConsumerStateTable` で `COPP_TABLE_CHANNEL@0` を SUBSCRIBE し、`consumer_state_table_pops.lua` でバッチ取り出しを行う:
+[orchagent](../../reference/glossary.md#term-orchagent) の `CoppOrch` は `ConsumerStateTable` で `COPP_TABLE_CHANNEL@0` を SUBSCRIBE し、`consumer_state_table_pops.lua` でバッチ取り出しを行う:
 
 ```
 SUBSCRIBE COPP_TABLE_CHANNEL@0
@@ -464,7 +462,7 @@ SUBSCRIBE COPP_TABLE_CHANNEL@0
 
 ### TTL
 
-APPL_DB・STATE_DB への書き込みはいずれも TTL なし (`DEFAULT_DB_TTL = -1`)。
+APPL_DB・[STATE_DB](../../reference/glossary.md#term-state_db) への書き込みはいずれも TTL なし (`DEFAULT_DB_TTL = -1`)。
 
 ### 通信フロー全体図
 
@@ -576,4 +574,4 @@ Broadcom 等その他プラットフォームでは priority=1 をデフォル�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 7a3847939b09 -->
+<!-- glossary-links-injected: ab1515757c31 -->

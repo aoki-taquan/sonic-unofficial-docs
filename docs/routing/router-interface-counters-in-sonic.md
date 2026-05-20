@@ -236,7 +236,7 @@ counterpoll rif interval 3000
 
 ### VLAN サブインターフェース（dot1q tagged）での ARP 学習問題（#109）
 
-Mellanox プラットフォームで VLAN サブインターフェース（dot1q tagged）を使用した場合、ARP が学習されないケースが報告されている。L3 VLAN インターフェースが ASIC に正しく同期されていないことが原因と考えられる。
+Mellanox プラットフォームで VLAN サブインターフェース（dot1q tagged）を使用した場合、[ARP](../reference/glossary.md#term-arp) が学習されないケースが報告されている。L3 VLAN インターフェースが ASIC に正しく同期されていないことが原因と考えられる。
 
 **デバッグ方法:**
 
@@ -260,4 +260,4 @@ grep -i error /var/log/swss/sairedis.rec | tail -20
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 21d98f8b47d2 -->
+<!-- glossary-links-injected: 27ed3fd12050 -->

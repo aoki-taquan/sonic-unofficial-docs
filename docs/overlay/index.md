@@ -11,11 +11,11 @@ last_verified: 2026-05-13
 
 ## この章の趣旨
 
-物理 underlay の上に仮想ネットワーク（テナント / マルチサイト / DPU offload）を構築するための SONiC 機能群を扱う。具体的には以下:
+物理 underlay の上に仮想ネットワーク（テナント / マルチサイト / [DPU](../reference/glossary.md#term-dpu) offload）を構築するための SONiC 機能群を扱う。具体的には以下:
 
-- **VXLAN / VNet**: VxlanOrch / VnetOrch / VRF mapper を中心とした L2VPN / L3VPN overlay
-- **Dual ToR**: y-cable / linkmgrd / IPinIP tunnel による HA、active-active 構成も含む
-- **DASH / SmartSwitch**: NPU + DPU 構成での ENI / ACL / connection offload
+- **VXLAN / VNet**: VxlanOrch / VnetOrch / [VRF](../reference/glossary.md#term-vrf) mapper を中心とした L2VPN / L3VPN overlay
+- **Dual ToR**: y-cable / [linkmgrd](../reference/glossary.md#term-linkmgrd) / [IPinIP](../reference/glossary.md#term-ipinip) tunnel による HA、active-active 構成も含む
+- **DASH / SmartSwitch**: [NPU](../reference/glossary.md#term-npu) + DPU 構成での [ENI](../reference/glossary.md#term-eni) / [ACL](../reference/glossary.md#term-acl) / connection offload
 - **NVGRE**: nvgreorch + decap mapper の legacy overlay
 
 ## この章の読み方
@@ -35,9 +35,9 @@ last_verified: 2026-05-13
 
 ## 扱わない範囲
 
-- L3 underlay の経路設計そのもの（BGP / ECMP / VRF route leak は [routing](../routing/index.md) 章）
+- L3 underlay の経路設計そのもの（[BGP](../reference/glossary.md#term-bgp) / [ECMP](../reference/glossary.md#term-ecmp) / VRF route leak は [routing](../routing/index.md) 章）
 - SmartSwitch ハードウェア依存層（DPU カード固有の bring-up は [platform](../platform/index.md) 章）
-- DASH の上位 API スキーマ詳細（[reference](../reference/index.md) 章の CONFIG_DB / YANG リファレンスを参照）
+- DASH の上位 API スキーマ詳細（[reference](../reference/index.md) 章の [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) リファレンスを参照）
 - ベンダー版 SONiC の overlay 実装差分（コミュニティ版 `master` のみ扱う）
 ## 検証状況
 - ページ数: 9
@@ -60,4 +60,4 @@ last_verified: 2026-05-13
 | [VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）](vxlan-sonic.md) | Code-verified |
 | [トンネルトラフィックの DSCP / TC リマップ（Dual-ToR PFC デッドロック回避）](dscp-remapping-for-tunnel-traffic.md) | Discrepancy-found |
 
-<!-- glossary-links-injected: 9751825192ec -->
+<!-- glossary-links-injected: a33e47022552 -->

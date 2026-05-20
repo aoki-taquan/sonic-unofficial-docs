@@ -27,7 +27,7 @@ SONiC ホストを Kubernetes worker としてマスターに参加させるた�
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`ctrmgrd` は `KUBERNETES_MASTER` テーブルを直接 CONFIG_DB から購読し、`ip` / `disable` / `insecure` の変化に応じて kubelet join / reset を実行する。Kubernetes join はネットワーク到達が前提であるため、テーブル内フィールドの書込み順と、`STATE_DB:KUBERNETES_MASTER|SERVER` の初期状態が join タイミングを左右する。
+`ctrmgrd` は `KUBERNETES_MASTER` テーブルを直接 [CONFIG_DB](../../reference/glossary.md#term-config_db) から購読し、`ip` / `disable` / `insecure` の変化に応じて kubelet join / reset を実行する。Kubernetes join はネットワーク到達が前提であるため、テーブル内フィールドの書込み順と、`STATE_DB:KUBERNETES_MASTER|SERVER` の初期状態が join タイミングを左右する。
 
 ### 検出された順序依存
 
@@ -37,13 +37,13 @@ SONiC ホストを Kubernetes worker としてマスターに参加させるた�
 | 2 | `STATE_DB:KUBERNETES_MASTER\|SERVER.update_time` 有無 → `JOIN_LATENCY` 適用分岐 | 起動時評価（初回起動時は 10 秒遅延） | 初回起動時は `JOIN_LATENCY`（デフォルト 10 秒）を見込む |
 | 3 | `ip` の書込み + `disable=false` → `do_join()` 実行 | **強制先行**（`ip` が空または `disable=true` の間は `do_reset()` を繰り返す） | `ip` を最後に書くか、`ip` と `disable=false` を同時に保証する |
 | 4 | JOIN_RETRY 中の `ip` 変更 → 旧タイマー残留 | 非自明（実害小） | `on_config_update()` が即時 `handle_update()` を呼んで最新 ip で join するため実質無害 |
-| 5 | `STATE_DB:KUBERNETES_MASTER\|SERVER.connected=true` 確認 → `FEATURE.set_owner=kube` | **推奨先行**（join 未完了のまま kube モード移行するとサービスが応答なし状態になる） | STATE_DB を polling して `connected=true` を確認後に FEATURE を変更する |
+| 5 | `STATE_DB:KUBERNETES_MASTER\|SERVER.connected=true` 確認 → `FEATURE.set_owner=kube` | **推奨先行**（join 未完了のまま kube モード移行するとサービスが応答なし状態になる） | [STATE_DB](../../reference/glossary.md#term-state_db) を polling して `connected=true` を確認後に FEATURE を変更する |
 
 ### 主要な制約詳細
 
 **JOIN_LATENCY による初回起動遅延 (依存 #2)**: `RemoteServerHandler.__init__()` は起動時に `STATE_DB:KUBERNETES_MASTER|SERVER.update_time` を読む。値が空（初回起動）の場合、`JOIN_LATENCY` 秒後（デフォルト 10 秒）に timer で `handle_update()` を登録し、それまでは `pending = True` として join を抑制する。`KUBERNETES_MASTER` への書込みが起動後即座に行われても、この latency 期間中は kubelet join が行われない（evidence: `ctrmgrd.py:339-356`）。
 
-**`ip` の有無による `do_join()` / `do_reset()` 分岐 (依存 #3)**: `handle_update()` は `disable != "false"` または `ip` が空文字の場合に `kube_reset_master(True)` を呼び `connected = "false"` を STATE_DB に書く。`ip` が設定された後に CONFIG_DB 変化が `on_config_update()` 経由で検知され、初めて `do_join()` が実行される。このため `ip` を後から書き込む運用では、それまでの間 STATE_DB は `connected = "false"` のままである（evidence: `ctrmgrd.py:392-413`）。
+**`ip` の有無による `do_join()` / `do_reset()` 分岐 (依存 #3)**: `handle_update()` は `disable != "false"` または `ip` が空文字の場合に `kube_reset_master(True)` を呼び `connected = "false"` を [STATE_DB](../../reference/glossary.md#term-state_db) に書く。`ip` が設定された後に CONFIG_DB 変化が `on_config_update()` 経由で検知され、初めて `do_join()` が実行される。このため `ip` を後から書き込む運用では、それまでの間 [STATE_DB](../../reference/glossary.md#term-state_db) は `connected = "false"` のままである（evidence: `ctrmgrd.py:392-413`）。
 
 **`FEATURE.set_owner=kube` との連動 (依存 #5)**: `FeatureTransition.on_config_update()` は `CONFIG_DB:FEATURE` を購読し、`set_owner` が `kube` になった feature を systemd restart する。この移行は `KUBERNETES_MASTER` の接続状態とは独立してトリガーされるため、kubelet join 完了前に `FEATURE.set_owner=kube` を書くと、対象コンテナが K8s からのデプロイを待ち続けてサービスが起動しない状態になる（evidence: `ctrmgrd.py:467-511`）。
 
@@ -234,9 +234,9 @@ SELECT_TIMEOUT = 1000  # ms
 | STATE_DB | `KUBE_LABELS\|SET` | `sonic_version`, `hwsku`, `deployment_type`, `worker.sonic/platform` | `set_node_labels()` → `mod_db_entry()` | `do_join()` 成功直後 (`kube_join_master` 戻り値 0) | `ctrmgrd.py:306-307, 440` |
 | STATE_DB | `KUBE_LABELS\|SET` | `<feat>_enabled` (`"true"` / `"false"`) | `FeatureTransitionHandler.handle_update()` → `mod_db_entry()` | `CONFIG_DB:FEATURE.<feat>.set_owner` 変化時 | `ctrmgrd.py:505-506` |
 | STATE_DB | `FEATURE\|<feat>` | `restart` (`"true"`) | `restart_systemd_service()` → `mod_db_entry()` | サービス再起動が必要と判断された場合 (`set_owner` 変化 + 条件成立) | `ctrmgrd.py:157-158` |
-| APPL_DB | — | なし | — | — | `ctrmgrd` は APPL_DB への `ProducerStateTable` 等を保有しない |
-| ASIC_DB / FLEX_COUNTER_DB | — | なし | — | — | SAI 非経由。Kubernetes 制御は SAI を通らない |
-| COUNTERS_DB | — | なし | — | — | `ctrmgrd` に COUNTERS_DB 参照は存在しない |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | — | なし | — | — | `ctrmgrd` は [APPL_DB](../../reference/glossary.md#term-appl_db) への `ProducerStateTable` 等を保有しない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | — | なし | — | — | [SAI](../../reference/glossary.md#term-sai) 非経由。Kubernetes 制御は [SAI](../../reference/glossary.md#term-sai) を通らない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | — | なし | — | — | `ctrmgrd` に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 参照は存在しない |
 
 ### STATE_DB:KUBERNETES_MASTER|SERVER への書込詳細
 
@@ -270,7 +270,7 @@ SELECT_TIMEOUT = 1000  # ms
 > 調査対象: `sonic-buildimage/src/sonic-ctrmgrd/ctrmgr/ctrmgrd.py` L204-217, L249-288, L329-359, L466-475, L640-646
 > 調査日: 2026-05-19
 
-`ctrmgrd` は `MainServer.register_handler()` を通じて全テーブルを `swsscommon.SubscriberStateTable` で購読する (ctrmgrd.py:204-217)。`KUBERNETES_MASTER` への書き込みは Redis keyspace 通知として配信される。APPL_DB 中継・ProducerStateTable・ConsumerStateTable は使用しない。
+`ctrmgrd` は `MainServer.register_handler()` を通じて全テーブルを `swsscommon.SubscriberStateTable` で購読する (ctrmgrd.py:204-217)。`KUBERNETES_MASTER` への書き込みは [Redis](../../reference/glossary.md#term-redis) keyspace 通知として配信される。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継・[ProducerStateTable](../../reference/glossary.md#term-producerstatetable)・[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) は使用しない。
 
 ### 購読チャンネル一覧
 
@@ -285,7 +285,7 @@ SELECT_TIMEOUT = 1000  # ms
 
 `RemoteServerHandler.__init__()` (ctrmgrd.py:333-334) が `server.register_handler(CONFIG_DB_NAME, SERVER_TABLE, self.on_config_update)` を呼び出す。`MainServer.register_handler()` (ctrmgrd.py:204-217) は `SubscriberStateTable` を生成して `selector.addSelectable()` に登録する。
 
-- Redis keyspace 通知: `PSUBSCRIBE __keyspace@4__:KUBERNETES_MASTER|*`
+- [Redis](../../reference/glossary.md#term-redis) keyspace 通知: `PSUBSCRIBE __keyspace@4__:KUBERNETES_MASTER|*`
 - 受信キー: `SERVER`（単一エントリ）
 - ハンドラ: `on_config_update()` → `handle_update()` → `do_join()` / `do_reset()`
 - **起動時スナップショット**: `SubscriberStateTable` は購読開始前の既存エントリを buffer に流し込む。加えて ctrmgrd.py:335-336 が `get_db_entry()` で初期値を明示読み出しするため、起動時の既存設定は必ず反映される。
@@ -365,8 +365,8 @@ labels["worker.sonic/platform"] = platform if platform is not None else ""
 ctrmgrd.service は host namespace 固定の単一インスタンスとして動作し (`ctrmgrd.service:10`)、`SubscriberStateTable` は host namespace の `CONFIG_DB` / `STATE_DB` のみを購読する。multi-asic 環境でも:
 
 - ctrmgrd インスタンスは host に 1 個のみ
-- `asic0..N` の各 Redis には `KUBERNETES_MASTER` テーブルは存在しない
-- VOQ chassis の line card / supervisor も host 個別の `CONFIG_DB` を持ち、chassis 全体の集中制御経路はない
+- `asic0..N` の各 [Redis](../../reference/glossary.md#term-redis) には `KUBERNETES_MASTER` テーブルは存在しない
+- [VOQ](../../reference/glossary.md#term-voq) chassis の line card / supervisor も host 個別の `CONFIG_DB` を持ち、chassis 全体の集中制御経路はない
 
 詳細解析: `meta/_intermediate/cdb-flow/kubernetes-master-platform.md`
 
@@ -505,7 +505,6 @@ show kube server config
 
 <!-- /cdb-exceptions -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -521,7 +520,7 @@ show kube server config
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — Kubernetes master 接続設定)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — Kubernetes master 接続設定)
 
 ### 段階 4 — タイミングと副作用
 
@@ -559,4 +558,4 @@ show kube server config
 - `kubemgrd` が Kubernetes 接続状態を CONFIG_DB と同期
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 48d5f456ebb6 -->
+<!-- glossary-links-injected: 2848bcf1df7c -->

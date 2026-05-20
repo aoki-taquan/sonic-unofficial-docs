@@ -24,11 +24,11 @@ related:
 
 ## 概要
 
-DASH (Disaggregated APIs for SONiC Hosts) のインバウンドルーティングエントリ (Inbound Routing Rule) を保持するテーブル[^1]。
+[DASH](../../reference/glossary.md#term-dash) (Disaggregated APIs for SONiC Hosts) のインバウンドルーティングエントリ (Inbound Routing Rule) を保持するテーブル[^1]。
 
-外部から DASH スイッチへ流入するパケット (インバウンド方向) が VXLAN トンネルのデカプセルを受けるルールを定義する。エントリは ENI・VNI・SIP プレフィックス (または PREFIX TAG)・優先度の 4 要素で一意に識別され、PA 検証の要否と VNET マッピングを制御する。
+外部から [DASH](../../reference/glossary.md#term-dash) スイッチへ流入するパケット (インバウンド方向) が [VXLAN](../../reference/glossary.md#term-vxlan) トンネルのデカプセルを受けるルールを定義する。エントリは [ENI](../../reference/glossary.md#term-eni)・VNI・SIP プレフィックス (または PREFIX TAG)・優先度の 4 要素で一意に識別され、PA 検証の要否と [VNET](../../reference/glossary.md#term-vnet) マッピングを制御する。
 
-`DashRouteOrch::doTaskRouteRuleTable()` (`sonic-swss/orchagent/dash/dashrouteorch.cpp`) が ZMQ 経由で受信した Protobuf メッセージを解釈し、SAI の `sai_dash_inbound_routing_api` を通じてデータプレーンに `sai_inbound_routing_entry_t` を作成する。
+`DashRouteOrch::doTaskRouteRuleTable()` (`sonic-swss/orchagent/dash/dashrouteorch.cpp`) が ZMQ 経由で受信した Protobuf メッセージを解釈し、[SAI](../../reference/glossary.md#term-sai) の `sai_dash_inbound_routing_api` を通じてデータプレーンに `sai_inbound_routing_entry_t` を作成する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -53,12 +53,12 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<prefix>[:<priority>]
 
 | セグメント | 型 | 説明 |
 |-----------|----|----|
-| `<eni>` | string | ENI の MAC アドレス文字列 (例: `F4939FEFC47E`)。`DASH_ENI_TABLE` のキーと対応 |
-| `<vni>` | uint32 | VXLAN VNI。インバウンドパケットのアウターヘッダ VNI に一致するか検査する |
+| `<eni>` | string | [ENI](../../reference/glossary.md#term-eni) の MAC アドレス文字列 (例: `F4939FEFC47E`)。`DASH_ENI_TABLE` のキーと対応 |
+| `<vni>` | uint32 | [VXLAN](../../reference/glossary.md#term-vxlan) VNI。インバウンドパケットのアウターヘッダ VNI に一致するか検査する |
 | `<prefix>` | string | SIP プレフィックス (CIDR 形式) または `DASH_PREFIX_TAG_TABLE` のタグ名 |
 | `<priority>` | uint32 | ルール優先度 (省略可能)。省略時は `0` にフォールバック。低い値ほど高優先 |
 
-`<priority>` フィールドは旧フォーマット互換のため省略可能。orchagent は `<prefix>` の末尾セグメントが数字のみか検査し、数字でなければ全体を `<prefix>` として扱い `priority=0` に fallback する (`dashrouteorch.cpp:605-623`)。
+`<priority>` フィールドは旧フォーマット互換のため省略可能。[orchagent](../../reference/glossary.md#term-orchagent) は `<prefix>` の末尾セグメントが数字のみか検査し、数字でなければ全体を `<prefix>` として扱い `priority=0` に fallback する (`dashrouteorch.cpp:605-623`)。
 
 ## フィールド
 
@@ -67,26 +67,26 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<prefix>[:<priority>]
 | `action_type` | routing_type enum | 任意 | — | 非推奨 (deprecated)。`ROUTING_TYPE_*` を指定する旧フィールド。新規実装では key の priority フィールドを使う |
 | `priority` | uint32 | 任意 | `0` | 非推奨 (deprecated)。優先度は key のセグメントに移動済み |
 | `protocol` | uint32 | 任意 | `0` (any) | マッチするプロトコル番号。`0` はプロトコルを問わずすべてにマッチ |
-| `vnet` | string | 任意 | 未設定 | PA 検証やマッピングに使用する VNET 名 (`DASH_VNET_TABLE` の key) |
-| `pa_validation` | bool | 任意 | `false` | `true` 時: SAI に `TUNNEL_DECAP_PA_VALIDATE` を渡し PA 検証を行う。`false` 時: `TUNNEL_DECAP` のみ |
+| `vnet` | string | 任意 | 未設定 | PA 検証やマッピングに使用する [VNET](../../reference/glossary.md#term-vnet) 名 (`DASH_VNET_TABLE` の key) |
+| `pa_validation` | bool | 任意 | `false` | `true` 時: [SAI](../../reference/glossary.md#term-sai) に `TUNNEL_DECAP_PA_VALIDATE` を渡し PA 検証を行う。`false` 時: `TUNNEL_DECAP` のみ |
 | `metering_class_or` | uint32 | 任意 | 未設定 | メータリングクラス `or` ビット (`SAI_INBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_OR`) |
 | `metering_class_and` | uint32 | 任意 | 未設定 | メータリングクラス `and` ビット (`SAI_INBOUND_ROUTING_ENTRY_ATTR_METER_CLASS_AND`) |
-| `region` | string | 任意 | 未設定 | 任意のリージョン ID。ベンダー最適化向け文字列。orchagent の現行コードには処理なし |
+| `region` | string | 任意 | 未設定 | 任意のリージョン ID。ベンダー最適化向け文字列。[orchagent](../../reference/glossary.md#term-orchagent) の現行コードには処理なし |
 
 ## 制約
 
-- ENI (`DASH_ENI_TABLE`) が未登録の場合、`addInboundRouting` が `false` を返しリトライ
+- [ENI](../../reference/glossary.md#term-eni) (`DASH_ENI_TABLE`) が未登録の場合、`addInboundRouting` が `false` を返しリトライ
 - `vnet` を指定した場合、`DASH_VNET_TABLE` に登録済みでなければリトライ (`gVnetNameToId` に未登録)
 - `sip` / `sip_mask` は key の `<prefix>` を `IpPrefix` パースして得る。不正 CIDR は例外
 
 ## 購読者
 
-- `DashRouteOrch` (`sonic-swss/orchagent/dash/dashrouteorch.cpp`): インバウンドルーティングエントリを受信し、`sai_dash_inbound_routing_api->create_inbound_routing_entry()` でデータプレーンにエントリを作成する。CRM リソースカウンタ (`CRM_DASH_IPV4_INBOUND_ROUTING` / `CRM_DASH_IPV6_INBOUND_ROUTING`) のインクリメントも担う
+- `DashRouteOrch` (`sonic-swss/orchagent/dash/dashrouteorch.cpp`): インバウンドルーティングエントリを受信し、`sai_dash_inbound_routing_api->create_inbound_routing_entry()` でデータプレーンにエントリを作成する。[CRM](../../reference/glossary.md#term-crm) リソースカウンタ (`CRM_DASH_IPV4_INBOUND_ROUTING` / `CRM_DASH_IPV6_INBOUND_ROUTING`) のインクリメントも担う
 
 ## 関連 CONFIG_DB
 
 - [`DASH_ENI_TABLE`](dash-eni.md): ENI エントリ。`eni_id` を `sai_inbound_routing_entry_t` に渡す
-- [`DASH_VNET_TABLE`](dash-vnet.md): `vnet` フィールドで参照する VNET (PA 検証・マッピング)
+- [`DASH_VNET_TABLE`](dash-vnet.md): `vnet` フィールドで参照する [VNET](../../reference/glossary.md#term-vnet) (PA 検証・マッピング)
 - [`DASH_PREFIX_TAG_TABLE`](dash-acl.md): `<prefix>` にタグ名を使用する場合の参照先
 - [`DASH_ROUTE_TABLE`](route.md): アウトバウンドルーティング (対となるテーブル)
 
@@ -98,7 +98,7 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<prefix>[:<priority>]
 | ENI が `DASH_ENI_TABLE` に未登録 | `dash_orch_->getEni()` が `nullptr` → `addInboundRouting` が `false` → リトライ |
 | `vnet` 指定時に `DASH_VNET_TABLE` 未登録 | `gVnetNameToId.find()` miss → リトライ |
 | protobuf メッセージが不正 | `parsePbMessage()` 失敗 → エントリを consumer から削除 (リトライなし) |
-| key に `<priority>` がない (旧フォーマット) | orchagent が末尾セグメントを数字判定し、数字でなければ `priority=0` で処理を続行 |
+| key に `<priority>` がない (旧フォーマット) | [orchagent](../../reference/glossary.md#term-orchagent) が末尾セグメントを数字判定し、数字でなければ `priority=0` で処理を続行 |
 | 同一キーのエントリが既存 | `SAI_STATUS_ITEM_ALREADY_EXISTS` → `addInboundRoutingPost` が `false` を返し bulker 再試行 |
 | `pa_validation` 未設定 | proto3 bool デフォルト `false` → `SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP` を設定 |
 <!-- /cdb-exceptions -->
@@ -106,21 +106,21 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<prefix>[:<priority>]
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG / proto3 デフォルト以外の実装由来 fallback。`DashRouteOrch::addInboundRouting()` (`dashrouteorch.cpp:421-477`) の SAI 属性組み立てロジックから導出。
+[YANG](../../reference/glossary.md#term-yang) / proto3 デフォルト以外の実装由来 fallback。`DashRouteOrch::addInboundRouting()` (`dashrouteorch.cpp:421-477`) の [SAI](../../reference/glossary.md#term-sai) 属性組み立てロジックから導出。
 
 | フィールド | コード由来デフォルト | fallback 源 |
 |-----------|-------------------|------------|
 | `priority` (key) | `0` | key にセグメントがない旧フォーマット互換 — dashrouteorch.cpp:605 `priority = 0;`; 末尾が全数字でなければ prefix 全体をプレフィックスとみなし priority=0 |
-| `protocol` | `0` (any) | proto3 uint32 デフォルト; HLD:613 "0 (any)" |
+| `protocol` | `0` (any) | proto3 uint32 デフォルト; [HLD](../../reference/glossary.md#term-hld):613 "0 (any)" |
 | `pa_validation` | `false` → `SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP` | proto3 bool デフォルト=false → 三項演算子で `TUNNEL_DECAP` が選択される — dashrouteorch.cpp:450 |
 | `vnet` | SAI 未設定 (属性 push なし) | `has_vnet()` false → `SAI_INBOUND_ROUTING_ENTRY_ATTR_SRC_VNET_ID` を push しない — dashrouteorch.cpp:453-458 |
 | `metering_class_or` | SAI 未設定 | `has_metering_class_or()` false → push しない — dashrouteorch.cpp:460-464 |
 | `metering_class_and` | SAI 未設定 | `has_metering_class_and()` false → push しない — dashrouteorch.cpp:466-470 |
-| `region` | SAI 未設定 | dashrouteorch.cpp に `region` を処理するコード未確認 (HLD に記載あり) |
+| `region` | SAI 未設定 | dashrouteorch.cpp に `region` を処理するコード未確認 ([HLD](../../reference/glossary.md#term-hld) に記載あり) |
 
 ### 補足
 
-- **`pa_validation` の HLD/コード乖離**: HLD (dash-sonic-hld.md:615) は "Default is set to true" と記載しているが、proto3 の `bool` フィールドのデフォルトは `false` であり、コントローラが明示的に `pa_validation=true` を送らない限り orchagent は `TUNNEL_DECAP` (PA 検証なし) で動作する。discrepancy として記録する。
+- **`pa_validation` の [HLD](../../reference/glossary.md#term-hld)/コード乖離**: HLD (dash-sonic-hld.md:615) は "Default is set to true" と記載しているが、proto3 の `bool` フィールドのデフォルトは `false` であり、コントローラが明示的に `pa_validation=true` を送らない限り orchagent は `TUNNEL_DECAP` (PA 検証なし) で動作する。discrepancy として記録する。
 
 - **`priority` の二重表現**: priority はキーの最終セグメントと protobuf `RouteRule.priority` フィールドの両方に存在する。orchagent はキーセグメントを正として使用し (`ctxt.priority` に代入)、protobuf フィールドは `DashDumpPlugin` の `return_fields` 参照のみに使われる。
 
@@ -168,8 +168,8 @@ DashRouteOrch が DASH_ROUTE_RULE_TABLE エントリを処理 → SAI 反映
 
 | テーブル / リソース | DB | 参照タイミング | 条件 | evidence |
 |---|---|---|---|---|
-| `DASH_ENI_TABLE` | APPL_DB (ZMQ) | `addInboundRouting()` 呼び出し時 | **常時必須** — ENI 未登録なら `return false` でリトライ | `dashrouteorch.cpp:425-428` |
-| `DASH_VNET_TABLE` (`gVnetNameToId`) | APPL_DB (ZMQ) | `addInboundRouting()` 呼び出し時 | `vnet` フィールドが protobuf に存在する場合のみ — 未登録なら `return false` でリトライ | `dashrouteorch.cpp:430-433` |
+| `DASH_ENI_TABLE` | [APPL_DB](../../reference/glossary.md#term-appl_db) (ZMQ) | `addInboundRouting()` 呼び出し時 | **常時必須** — ENI 未登録なら `return false` でリトライ | `dashrouteorch.cpp:425-428` |
+| `DASH_VNET_TABLE` (`gVnetNameToId`) | [APPL_DB](../../reference/glossary.md#term-appl_db) (ZMQ) | `addInboundRouting()` 呼び出し時 | `vnet` フィールドが protobuf に存在する場合のみ — 未登録なら `return false` でリトライ | `dashrouteorch.cpp:430-433` |
 
 **`DASH_ENI_TABLE` の補足**: `dash_orch_->getEni(ctxt.eni)` は `DashOrch` が管理する ENI マップを内部参照する。`addInboundRoutingPost()` でも `eni_id` を再取得し `sai_inbound_routing_entry_t.eni_id` に代入する (`dashrouteorch.cpp:521`)。
 
@@ -181,7 +181,7 @@ DashRouteOrch が DASH_ROUTE_RULE_TABLE エントリを処理 → SAI 反映
 |---|---|---|---|---|
 | `DASH_ROUTE_RULE_TABLE` (result) | APPL_STATE_DB | SAI 成功/失敗後 | `result`, `err_str` | `dashrouteorch.cpp:644,705` |
 
-`dash_route_rule_result_table_` (`app_state_db` 上の `DASH_ROUTE_RULE_TABLE`) に SAI プログラミング結果を書き戻す。コントローラ側や DPU HA コンポーネントがプログラミング完了を確認するために使用する。SET 成功 → `writeResultToDB`、DEL 成功 → `removeResultFromDB` が呼ばれる (`dashrouteorch.cpp:644,656,705,712`)。
+`dash_route_rule_result_table_` (`app_state_db` 上の `DASH_ROUTE_RULE_TABLE`) に SAI プログラミング結果を書き戻す。コントローラ側や [DPU](../../reference/glossary.md#term-dpu) HA コンポーネントがプログラミング完了を確認するために使用する。SET 成功 → `writeResultToDB`、DEL 成功 → `removeResultFromDB` が呼ばれる (`dashrouteorch.cpp:644,656,705,712`)。
 
 ### 副作用: CRM リソースカウンタ
 
@@ -190,7 +190,7 @@ DashRouteOrch が DASH_ROUTE_RULE_TABLE エントリを処理 → SAI 反映
 | `CRM_DASH_IPV4_INBOUND_ROUTING` | inc / dec | `addInboundRoutingPost()` 成功 / `removeInboundRoutingPost()` 成功 | `dashrouteorch.cpp:507,546` |
 | `CRM_DASH_IPV6_INBOUND_ROUTING` | inc / dec | 同上 (`sip.isV4()` が false の場合) | `dashrouteorch.cpp:507,546` |
 
-SIP アドレスファミリ（IPv4 / IPv6）に応じて異なる CRM カウンタを更新する。`CrmOrch` がリソース上限監視に使用する。
+SIP アドレスファミリ（IPv4 / IPv6）に応じて異なる [CRM](../../reference/glossary.md#term-crm) カウンタを更新する。`CrmOrch` がリソース上限監視に使用する。
 
 Evidence: `dashrouteorch.cpp` 全体スキャン; 詳細スキャンノートは `meta/_intermediate/cdb-flow/route-rule-cross-refs.md` を参照。
 <!-- /cross-refs -->
@@ -200,7 +200,7 @@ Evidence: `dashrouteorch.cpp` 全体スキャン; 詳細スキャンノートは
 
 <!-- evidence: meta/_intermediate/cdb-flow/route-rule-constants.md -->
 
-`DashRouteOrch` が `DASH_ROUTE_RULE_TABLE` 処理時に使用する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `orchagent/dash/dashrouteorch.cpp`・`orchagent/dash/dashorch.h`・`common/schema.h`・`orchagent/crmorch.h`。
+`DashRouteOrch` が `DASH_ROUTE_RULE_TABLE` 処理時に使用する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。出典は `orchagent/dash/dashrouteorch.cpp`・`orchagent/dash/dashorch.h`・`common/schema.h`・`orchagent/crmorch.h`。
 
 ### 結果コード定数 (`dashorch.h`)
 
@@ -219,7 +219,7 @@ Evidence: `dashrouteorch.cpp` 全体スキャン; 詳細スキャンノートは
 
 | 定数名 | 分岐条件 | 用途 | evidence |
 |--------|----------|------|---------|
-| `CRM_DASH_IPV4_INBOUND_ROUTING` | `ctxt.sip.isV4() == true` | IPv4 SIP を持つ inbound routing エントリの CRM リソースカウンタ (inc/dec) | `crmorch.h:41`; `dashrouteorch.cpp:507, 546` |
+| `CRM_DASH_IPV4_INBOUND_ROUTING` | `ctxt.sip.isV4() == true` | IPv4 SIP を持つ inbound routing エントリの [CRM](../../reference/glossary.md#term-crm) リソースカウンタ (inc/dec) | `crmorch.h:41`; `dashrouteorch.cpp:507, 546` |
 | `CRM_DASH_IPV6_INBOUND_ROUTING` | `ctxt.sip.isV4() == false` | IPv6 SIP を持つ inbound routing エントリの CRM リソースカウンタ (inc/dec) | `crmorch.h:42`; `dashrouteorch.cpp:507, 546` |
 
 ### SAI アクション定数
@@ -334,7 +334,7 @@ it = consumer.m_toSync.erase(it);
 
 ### CRM リソースカウンタ (COUNTERS_DB への間接書込)
 
-`addInboundRoutingPost()` / `removeInboundRoutingPost()` 成功時に `gCrmOrch->incCrmResUsedCounter()` / `decCrmResUsedCounter()` を呼び出す。カウンタは `CrmOrch` がメモリ上で保持し、定期的に COUNTERS_DB へフラッシュする（直接書込ではない）。
+`addInboundRoutingPost()` / `removeInboundRoutingPost()` 成功時に `gCrmOrch->incCrmResUsedCounter()` / `decCrmResUsedCounter()` を呼び出す。カウンタは `CrmOrch` がメモリ上で保持し、定期的に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) へフラッシュする（直接書込ではない）。
 
 | 操作 | 条件 | カウンタ | evidence |
 |------|------|---------|---------|
@@ -345,10 +345,10 @@ it = consumer.m_toSync.erase(it);
 
 ### 副次書込なし
 
-- **CONFIG_DB**: 書き込みなし
-- **STATE_DB**: 書き込みなし（DASH は APPL_STATE_DB を使用）
-- **FLEX_COUNTER_DB**: 書き込みなし（ACL と異なりカウンタポーリング設定なし）
-- **ASIC_DB**: SAI → syncd 経由（`DashRouteOrch` の直接書込なし）
+- **[CONFIG_DB](../../reference/glossary.md#term-config_db)**: 書き込みなし
+- **[STATE_DB](../../reference/glossary.md#term-state_db)**: 書き込みなし（[DASH](../../reference/glossary.md#term-dash) は APPL_STATE_DB を使用）
+- **[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)**: 書き込みなし（[ACL](../../reference/glossary.md#term-acl) と異なりカウンタポーリング設定なし）
+- **[ASIC_DB](../../reference/glossary.md#term-asic_db)**: SAI → [syncd](../../reference/glossary.md#term-syncd) 経由（`DashRouteOrch` の直接書込なし）
 
 <!-- /side-effects -->
 
@@ -387,7 +387,7 @@ m_zmqServer.registerMessageHandler(m_db->getDbName(), tableName, this);
 
 #### dbPersistence フラグ
 
-`ZmqOrch` のデフォルト `dbPersistence = true` のため `AsyncDBUpdater` が有効。ZMQ 経由で受信したメッセージは APPL_DB にも非同期で書き込まれる（Redis keyspace を通じた参照も可能になる）。
+`ZmqOrch` のデフォルト `dbPersistence = true` のため `AsyncDBUpdater` が有効。ZMQ 経由で受信したメッセージは [APPL_DB](../../reference/glossary.md#term-appl_db) にも非同期で書き込まれる（[Redis](../../reference/glossary.md#term-redis) keyspace を通じた参照も可能になる）。
 
 #### ZMQ エンドポイント
 
@@ -445,7 +445,7 @@ flowchart LR
 
 ### DPU ノード専用テーブル
 
-`DASH_ROUTE_RULE_TABLE` は **`gMySwitchType == "dpu"` のノードでのみ有効** である。`DashRouteOrch` は `DpuOrchDaemon::init()` 内でのみインスタンス化されるため、通常の T0/T1/T2 スイッチや VOQ chassis では Consumer が存在せず、テーブルへの書き込みは無視される (`orchagent/main.cpp:990-994`; `orchagent/orchdaemon.cpp:1322-1370`)。
+`DASH_ROUTE_RULE_TABLE` は **`gMySwitchType == "dpu"` のノードでのみ有効** である。`DashRouteOrch` は `DpuOrchDaemon::init()` 内でのみインスタンス化されるため、通常の T0/T1/T2 スイッチや [VOQ](../../reference/glossary.md#term-voq) chassis では Consumer が存在せず、テーブルへの書き込みは無視される (`orchagent/main.cpp:990-994`; `orchagent/orchdaemon.cpp:1322-1370`)。
 
 ```
 // main.cpp:990-994
@@ -463,10 +463,10 @@ if (gMySwitchType == "dpu")
 
 | プラットフォーム | `DashRouteOrch` の有無 | 処理 |
 |---|---|---|
-| DPU ノード (`switch_type=dpu`) | あり | `sai_dash_inbound_routing_api` 経由で SAI に反映 |
+| [DPU](../../reference/glossary.md#term-dpu) ノード (`switch_type=dpu`) | あり | `sai_dash_inbound_routing_api` 経由で SAI に反映 |
 | 標準 T0/T1/T2 (`switch_type=switch`) | なし | テーブルを購読しない (Consumer 未生成) |
-| VOQ chassis (`switch_type=voq`) | なし | 同上 |
-| SmartSwitch NPU 側 | なし (DPU 側のみ) | NPU 側 orchagent は `DpuOrchDaemon` を使わない |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (`switch_type=voq`) | なし | 同上 |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) 側 | なし ([DPU](../../reference/glossary.md#term-dpu) 側のみ) | [NPU](../../reference/glossary.md#term-npu) 側 orchagent は `DpuOrchDaemon` を使わない |
 | multi-asic | 各 DPU namespace | DPU namespace ごとに独立した `DpuOrchDaemon` が動作 |
 
 <!-- evidence: sonic-net/sonic-swss/orchagent/main.cpp:990-994 (gMySwitchType == "dpu" → DpuOrchDaemon) -->
@@ -475,3 +475,5 @@ if (gMySwitchType == "dpu")
 <!-- /platform -->
 
 [^1]: sonic-net/SONiC `doc/dash/dash-sonic-hld.md` §3.2.10 "ROUTE RULE TABLE - INBOUND" (ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
+
+<!-- glossary-links-injected: 57468d8b5592 -->

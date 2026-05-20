@@ -116,7 +116,7 @@ config nat add static basic 10.0.0.1 100.64.1.1
 
 - **DNAT_POOL 未作成時の DNAT_MISS trap 未発火** ([sonic-swss#1234](https://github.com/sonic-net/sonic-swss/issues/1234)): NatOrch は DNAT_POOL オブジェクトが存在しない状態で DNAT_MISS trap のプログラミングを試みると失敗する。Dynamic DNAT 設定で `config nat add pool` の前に binding を作成した場合などに発生する。正しい手順は pool → binding の順で設定すること。
 - **ICMP dynamic NAPT での Identifier 追跡** ([sonic-swss#1351](https://github.com/sonic-net/sonic-swss/issues/1351)): Dynamic NAPT では ICMP パケットの送信元 IP + ICMP Identifier フィールドを用いて NAT テーブルを構築する。TCP ハンドシェイクは不要だが、ICMP echo request 送信前に conntrack エントリが存在しない場合、reply パケットが転送されないことがある。ICMP での動作を確認する場合は事前に `conntrack -L` でエントリが作成されているか確認すること。
-- **`snat_entry_threshold_type` 属性エラー** ([sonic-swss#1574](https://github.com/sonic-net/sonic-swss/issues/1574)): CRM で snat/dnat entry のしきい値監視機能が追加された際、一時的に `Unknown attribute snat_entry_threshold_type` エラーが orchagent に記録される問題があった。現行 master では修正済みだが、古いイメージを使用している環境では同様のエラーが出ることがある。
+- **`snat_entry_threshold_type` 属性エラー** ([sonic-swss#1574](https://github.com/sonic-net/sonic-swss/issues/1574)): CRM で snat/dnat entry のしきい値監視機能が追加された際、一時的に `Unknown attribute snat_entry_threshold_type` エラーが [orchagent](../reference/glossary.md#term-orchagent) に記録される問題があった。現行 master では修正済みだが、古いイメージを使用している環境では同様のエラーが出ることがある。
 
 ## 干渉する機能
 
@@ -167,4 +167,4 @@ redis-cli -n 0 keys 'NAT_TABLE:*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: e2892b76fd9a -->

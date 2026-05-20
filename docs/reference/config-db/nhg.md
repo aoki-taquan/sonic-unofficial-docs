@@ -29,26 +29,22 @@ related:
 
 `NEXTHOP_GROUP_TABLE` は **APPL\_DB** に置かれる [ECMP](../../reference/glossary.md#term-ecmp) nexthop group テーブルである[^1]。`schema.h` では `APP_NEXTHOP_GROUP_TABLE_NAME "NEXTHOP_GROUP_TABLE"` と定義されており、`APP_` プレフィックスの通り CONFIG\_DB ではなく APPL\_DB に属する。
 
-`fpmsyncd` (`routesync.cpp`) が FRR/Zebra から kernel netlink 経由で受信した ECMP ルートを変換して書き込む。`NhgOrch` が APPL\_DB を購読し、[SAI](../../reference/glossary.md#term-sai) の `sai_next_hop_group_api` を使って next hop group を作成・更新する。
+`fpmsyncd` (`routesync.cpp`) が [FRR](../../reference/glossary.md#term-frr)/Zebra から kernel netlink 経由で受信した [ECMP](../../reference/glossary.md#term-ecmp) ルートを変換して書き込む。`NhgOrch` が APPL\_DB を購読し、[SAI](../../reference/glossary.md#term-sai) の `sai_next_hop_group_api` を使って next hop group を作成・更新する。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  FRR["FRR / Zebra"]
-  FS["fpmsyncd\n(routesync)"]
-  ADB[("APPL_DB\nNEXTHOP_GROUP_TABLE")]
-  NH["NhgOrch\n(orchagent)"]
-  SAI["SAI\nsai_next_hop_group_api"]
-  FRR -->|netlink| FS
-  FS --> ADB
-  ADB --> NH
-  NH --> SAI
+  CDB[("CONFIG_DB<br/>FG_NHG")]
+  DM["FgNhgOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_next_hop_group_api"]
+  DM --> SAI
 ```
 
-!!! note "注意"
-    `NEXTHOP_GROUP_TABLE` は CONFIG\_DB ではなく **APPL\_DB** に存在する。本ページは参照の便宜上 `docs/reference/config-db/` 以下に配置しているが、書き込み元は CLI・minigraph ではなく `fpmsyncd` (ルーティングデーモン連携) である。
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -63,16 +59,16 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 
 | フィールド | 型 | 必須 | 説明 |
 |-----------|-----|------|------|
-| `nexthop` | comma-separated IP addresses | yes | ECMP メンバーのゲートウェイ IP アドレス一覧 |
+| `nexthop` | comma-separated IP addresses | yes | [ECMP](../../reference/glossary.md#term-ecmp) メンバーのゲートウェイ IP アドレス一覧 |
 | `ifname` | comma-separated interface names | yes | 各 nexthop に対応する出力インタフェース名一覧 |
 | `weight` | comma-separated integers | no | ECMP メンバーごとの重み (UCMP 用、省略時は均等分散) |
-| `mpls_nh` | comma-separated MPLS labels or `na` | no | MPLS ラベルスタック (`na` = MPLS なし) |
-| `seg_src` | comma-separated IPv6 addresses | SRv6 時 yes | SRv6 ソースアドレス。存在時に SRv6 モードに自動切替 |
+| `mpls_nh` | comma-separated [MPLS](../../reference/glossary.md#term-mpls) labels or `na` | no | [MPLS](../../reference/glossary.md#term-mpls) ラベルスタック (`na` = [MPLS](../../reference/glossary.md#term-mpls) なし) |
+| `seg_src` | comma-separated IPv6 addresses | [SRv6](../../reference/glossary.md#term-srv6) 時 yes | [SRv6](../../reference/glossary.md#term-srv6) ソースアドレス。存在時に [SRv6](../../reference/glossary.md#term-srv6) モードに自動切替 |
 | `nexthop_group` | comma-separated NHG index names | 再帰 NHG 時 yes | 再帰 NHG モード: メンバー NHG のインデックス名一覧 |
 
 ## 購読者
 
-- `NhgOrch`: APPL\_DB の `NEXTHOP_GROUP_TABLE` を購読。SET で SAI next hop group を作成または更新、DEL で削除 (参照カウント 0 のとき)。
+- `NhgOrch`: APPL\_DB の `NEXTHOP_GROUP_TABLE` を購読。SET で [SAI](../../reference/glossary.md#term-sai) next hop group を作成または更新、DEL で削除 (参照カウント 0 のとき)。
 
 ## 関連テーブル
 
@@ -95,7 +91,7 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
-> **注意**: `NEXTHOP_GROUP_TABLE` は **APPL\_DB** テーブルである。`APP_NEXTHOP_GROUP_TABLE_NAME` として `schema.h` で定義され、`fpmsyncd` (`routesync.cpp`) が FRR/Zebra から受信した netlink ECMP ルートを変換して書き込む。`NhgOrch` が APPL\_DB を購読して SAI next hop group を作成する。CONFIG\_DB には存在しない。
+> **注意**: `NEXTHOP_GROUP_TABLE` は **APPL\_DB** テーブルである。`APP_NEXTHOP_GROUP_TABLE_NAME` として `schema.h` で定義され、`fpmsyncd` (`routesync.cpp`) が [FRR](../../reference/glossary.md#term-frr)/Zebra から受信した netlink ECMP ルートを変換して書き込む。`NhgOrch` が APPL\_DB を購読して [SAI](../../reference/glossary.md#term-sai) next hop group を作成する。CONFIG\_DB には存在しない。
 
 | フィールド | 省略/未設定時の実装動作 | コードロケーション |
 |-----------|----------------------|------------------|
@@ -116,7 +112,7 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 ### 既知の注意点
 
 - `overlay_nh` フラグは `nhgorch.cpp` L67 で `false` に初期化されるが、APPL\_DB のフィールドとして明示的にセットするパスは現実装にない。再帰 NHG のメンバーから派生する場合のみ使用される。
-- `NEXTHOP_GROUP_TABLE` には YANG モデルが存在しない (APPL\_DB テーブルのため)。バリデーションはすべて orchagent 側の実装ロジックに依存する。
+- `NEXTHOP_GROUP_TABLE` には [YANG](../../reference/glossary.md#term-yang) モデルが存在しない (APPL\_DB テーブルのため)。バリデーションはすべて [orchagent](../../reference/glossary.md#term-orchagent) 側の実装ロジックに依存する。
 - 再帰 NHG のメンバーが recursive または temporary な NHG であった場合は `SWSS_LOG_ERROR` → エントリ即破棄。2 段ネストの再帰 NHG は許可されない。
 
 <!-- /defaults -->
@@ -136,7 +132,7 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 | 2 | `NEXTHOP_GROUP_TABLE` 書込み → `ROUTE_TABLE` `nexthop_group` 参照 | 推奨先行 | 逆転時は `RouteOrch` が NHG 解決まで待機して自動解消 |
 | 3 | `ROUTE_TABLE` 参照クリア → `NEXTHOP_GROUP_TABLE` DEL | **強制先行** | `ref_count > 0` の間 DEL はブロック・自動 retry |
 | 4 | DEL と後続 SET が競合 → DEL をスキップ | 自動調停 | `m_toSync` キューで DEL を skip して最終 SET を適用 |
-| 5 | `NeighOrch` ARP/NDP 解決 → `NhgOrch` SAI メンバー追加 | 非同期（イベント駆動） | `invalidateNextHop` / `validateNextHop` で自動的に同期 |
+| 5 | `NeighOrch` [ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) 解決 → `NhgOrch` SAI メンバー追加 | 非同期（イベント駆動） | `invalidateNextHop` / `validateNextHop` で自動的に同期 |
 | 6 | NHG 数上限 → temporary NHG → full ECMP 昇格 | 非同期（リソース依存） | リソース解放後の次 `doTask()` 呼び出し時に自動昇格 |
 
 ### 主要な制約詳細
@@ -145,7 +141,7 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 
 **DEL 前の参照クリア（依存 #3）**: `NEXTHOP_GROUP_TABLE` の DEL_COMMAND は `nhg_it->second.ref_count > 0` の間 `success = false` でブロックされ、`m_toSync` に残留する (`nhgorch.cpp:L413-417`)。`ROUTE_TABLE` からの参照が残っている限り NHG は削除されない。`fpmsyncd` は `ROUTE_TABLE` の `nexthop_group` 参照を解消してから `NEXTHOP_GROUP_TABLE` の DEL を送信する必要がある。参照が解消された次の `doTask()` イテレーションで自動的に削除される。
 
-**NeighOrch 連動による SAI メンバー追加（依存 #5）**: `NEXTHOP_GROUP_TABLE` に NHG エントリが書き込まれた時点では SAI メンバーは追加されていない場合がある。`NeighOrch` が ARP/NDP 解決を通知して `NhgOrch::validateNextHop()` が呼ばれた時点で SAI `create_next_hop_group_member()` が実行される (`nhgorch.cpp:L466-487`)。逆にインタフェース DOWN 等で `invalidateNextHop()` が呼ばれると SAI メンバーが削除されるが NHG オブジェクト自体は保持される。
+**NeighOrch 連動による SAI メンバー追加（依存 #5）**: `NEXTHOP_GROUP_TABLE` に NHG エントリが書き込まれた時点では SAI メンバーは追加されていない場合がある。`NeighOrch` が [ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) 解決を通知して `NhgOrch::validateNextHop()` が呼ばれた時点で SAI `create_next_hop_group_member()` が実行される (`nhgorch.cpp:L466-487`)。逆にインタフェース DOWN 等で `invalidateNextHop()` が呼ばれると SAI メンバーが削除されるが NHG オブジェクト自体は保持される。
 
 <!-- /ordering -->
 
@@ -160,10 +156,10 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 | `ROUTE_TABLE` (APPL\_DB) | 逆参照 — `nexthop_group` フィールドでキーを参照 | `ROUTE_TABLE` エントリが `nexthop_group` フィールドで NHG キーを参照している間は NHG DEL がブロックされる (`ref_count > 0`) | `nhgorch.cpp` L413-417; `routeorch.cpp` L1368-1391 (`incRefCount` / `decRefCount`) |
 | `CLASS_BASED_NEXT_HOP_GROUP_TABLE` (APPL\_DB) | 逆参照 — CBF NHG がメンバー NHG として参照 | CBF NHG (`CbfNhgOrch`) が `nexthop_group` フィールドで本テーブルのエントリキーをメンバーとして参照 | `cbfnhgorch.cpp` `doTask()` メンバー解決ロジック |
 | `FC_TO_NHG_INDEX_MAP_TABLE` (APPL\_DB) | 間接参照 — CBF NHG 経由 | CBF NHG の `selection_map` が FC → NHG インデックスマップを参照 | `nhgmaporch.cpp` |
-| `NeighOrch` 内部テーブル (`m_neighborTable`) | 読み取り — ARP/NDP 解決状態 | `NextHopGroupMember::getNhId()` が `gNeighOrch->hasNextHop()` / `getNextHopId()` を参照して SAI NH ID を取得 | `nhgorch.cpp` L529-585 |
+| `NeighOrch` 内部テーブル (`m_neighborTable`) | 読み取り — [ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) 解決状態 | `NextHopGroupMember::getNhId()` が `gNeighOrch->hasNextHop()` / `getNextHopId()` を参照して SAI NH ID を取得 | `nhgorch.cpp` L529-585 |
 | `PortsOrch::allPortsReady()` | 起動順序ガード | `allPortsReady()` が false の間は `doTask()` が即 return。全ポート初期化完了まで NHG 処理を行わない | `nhgorch.cpp` L41-44 |
 | `RouteOrch` ECMP カウンタ (`getNhgCount()` / `getMaxNhgCount()`) | リソース上限チェック | `RouteOrch::getNhgCount() + NextHopGroup::getSyncedCount() >= RouteOrch::getMaxNhgCount()` で NHG 数上限を判定。上限時は temporary NHG にフォールバック | `nhgorch.cpp` L252; `routeorch.cpp` L86-90 |
-| `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` | SAI クエリ → 上限値決定 | orchagent 起動時 (`RouteOrch` init) に ASIC からクエリ。失敗時は `DEFAULT_NUMBER_OF_ECMP_GROUPS=128` をフォールバック | `routeorch.cpp` L37, L67-90 |
+| `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` | SAI クエリ → 上限値決定 | [orchagent](../../reference/glossary.md#term-orchagent) 起動時 (`RouteOrch` init) に ASIC からクエリ。失敗時は `DEFAULT_NUMBER_OF_ECMP_GROUPS=128` をフォールバック | `routeorch.cpp` L37, L67-90 |
 | `CrmOrch` (`gCrmOrch`) | リソース使用量追跡 | NHG 作成時 `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` / 削除時 `decCrmResUsedCounter` | `nhgorch.cpp` L795 |
 | `FG_NHG` (CONFIG\_DB) / `FgNhgOrch` | 独立経路 — 参照なし | Fine-Grained ECMP (`FgNhgOrch`) は `FG_NHG*` テーブルを直接処理し、`NhgOrch` とは独立。本テーブル (`NEXTHOP_GROUP_TABLE`) との直接依存はない | `fgnhgorch.cpp` 分離実装 |
 
@@ -184,7 +180,7 @@ NEXTHOP_GROUP_TABLE|<nhg_id>
 gNhgOrch = new NhgOrch(m_applDb, APP_NEXTHOP_GROUP_TABLE_NAME);
 ```
 
-基底クラス `NhgOrchCommon → Orch` が **`ConsumerStateTable`** として購読し、orchagent のメインループ (`Select::select()`) に組み込まれる。Redis の `ConsumerStateTable` プロトコル（`PUBLISH` チャネル + keyspace 通知）により変更イベントが `doTask()` に配信される。
+基底クラス `NhgOrchCommon → Orch` が **`ConsumerStateTable`** として購読し、[orchagent](../../reference/glossary.md#term-orchagent) のメインループ (`Select::select()`) に組み込まれる。[Redis](../../reference/glossary.md#term-redis) の `ConsumerStateTable` プロトコル（`PUBLISH` チャネル + keyspace 通知）により変更イベントが `doTask()` に配信される。
 
 > **注意**: `NEXTHOP_GROUP_TABLE` は APPL\_DB テーブルのため CONFIG\_DB Subscribe は使用しない。書き込み元は `fpmsyncd` (`routesync.cpp`) であり、CLI・minigraph は関与しない。
 
@@ -302,7 +298,7 @@ SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時は�
 
 <!-- evidence: meta/_intermediate/cdb-flow/nhg-constants.md -->
 
-`NEXTHOP_GROUP_TABLE` / `NhgOrch` / `RouteOrch` に存在する、CONFIG\_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/routeorch.cpp`、`nexthopkey.h`、`orch.h`。
+`NEXTHOP_GROUP_TABLE` / `NhgOrch` / `RouteOrch` に存在する、CONFIG\_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/routeorch.cpp`、`nexthopkey.h`、`orch.h`。
 
 ### ECMP グループ数上限
 
@@ -336,18 +332,18 @@ SRv6 NHG はこの暫定措置を持たないため、リソース枯渇時は�
 
 <!-- evidence: meta/_intermediate/cdb-flow/nhg-side-effects.md -->
 
-`NhgOrch` は `NEXTHOP_GROUP_TABLE` の SET / DEL 処理において、**STATE\_DB・APPL\_DB・FLEX\_COUNTER\_DB への直接書込みは一切行わない**。副次変化は ASIC\_DB（SAI API 経由）と COUNTERS\_DB（CRM カウンタ）の 2 系統のみ。
+`NhgOrch` は `NEXTHOP_GROUP_TABLE` の SET / DEL 処理において、**STATE\_DB・APPL\_DB・FLEX\_COUNTER\_DB への直接書込みは一切行わない**。副次変化は ASIC\_DB（SAI API 経由）と COUNTERS\_DB（[CRM](../../reference/glossary.md#term-crm) カウンタ）の 2 系統のみ。
 
 ### COUNTERS\_DB — CRM カウンタ
 
-| 操作 | CRM リソース | 変化 | コードロケーション |
+| 操作 | [CRM](../../reference/glossary.md#term-crm) リソース | 変化 | コードロケーション |
 |------|-------------|------|------------------|
 | NHG SAI グループ作成成功 | `CRM_NEXTHOP_GROUP` | +1 | `nhgorch.cpp:795` |
 | NHG SAI グループ削除成功 | `CRM_NEXTHOP_GROUP` | −1 | `nhgbase.h` `NhgCommon::remove()` |
 | NHG メンバー SAI エントリ作成成功 | `CRM_NEXTHOP_GROUP_MEMBER` | +1 (メンバー数分) | `nhgbase.h` `NhgMemberBase::sync()` |
 | NHG メンバー SAI エントリ削除成功 | `CRM_NEXTHOP_GROUP_MEMBER` | −1 (メンバー数分) | `nhgbase.h` `NhgMemberBase::remove()` |
 
-CRM カウンタの更新は `gCrmOrch->incCrmResUsedCounter()` / `decCrmResUsedCounter()` 経由であり、`COUNTERS_DB:CRM_STATS_NEXTHOP_GROUP_USED` / `CRM_STATS_NEXTHOP_GROUP_MEMBER_USED` に反映される。
+[CRM](../../reference/glossary.md#term-crm) カウンタの更新は `gCrmOrch->incCrmResUsedCounter()` / `decCrmResUsedCounter()` 経由であり、`COUNTERS_DB:CRM_STATS_NEXTHOP_GROUP_USED` / `CRM_STATS_NEXTHOP_GROUP_MEMBER_USED` に反映される。
 
 ### 内部 ref\_count（プロセス内メモリ、DB 非書込み）
 
@@ -401,3 +397,5 @@ if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))  // "mellanox"
 <!-- /platform -->
 
 <!-- glossary-links-injected: nhg-2026-0515 -->
+
+<!-- glossary-links-injected: b8f6e68b15ec -->

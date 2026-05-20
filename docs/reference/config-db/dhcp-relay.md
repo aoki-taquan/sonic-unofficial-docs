@@ -168,11 +168,11 @@ show dhcprelay_helper ipv4
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — Linux カーネルの L4 DHCP relay)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — Linux カーネルの L4 DHCP relay)
 
 ### 段階 4 — タイミングと副作用
 
@@ -194,7 +194,7 @@ show dhcprelay_helper ipv4
 | フィールド = `"false"` | Option 79 無効（cpp:169 で明示 override） |
 | フィールド = `"true"` | Option 79 有効（デフォルトと同じ） |
 
-**YANG-実装 discrepancy**: YANG モデルは `rfc6939_support` を `DHCP_RELAY|<vlan>` の flat field として定義するが、C++ daemon は `dhcpv6_option|rfc6939_support`（フィールド名にパイプを含む Redis hash key）を読む（cpp:169）。YANG 経由で `rfc6939_support = "false"` を書き込んでも daemon は読まず **silent drop** — 常にハードコードデフォルト `true` で動作する。CLI テスト mock は `dhcpv6_option|rfc6939_support` 形式を使用（`mock_config.py` 参照）。
+**YANG-実装 discrepancy**: YANG モデルは `rfc6939_support` を `DHCP_RELAY|<vlan>` の flat field として定義するが、C++ daemon は `dhcpv6_option|rfc6939_support`（フィールド名にパイプを含む [Redis](../../reference/glossary.md#term-redis) hash key）を読む（cpp:169）。YANG 経由で `rfc6939_support = "false"` を書き込んでも daemon は読まず **silent drop** — 常にハードコードデフォルト `true` で動作する。CLI テスト mock は `dhcpv6_option|rfc6939_support` 形式を使用（`mock_config.py` 参照）。
 
 ### `interface_id` — プラットフォーム依存デフォルト + YANG-実装 discrepancy
 
@@ -257,8 +257,8 @@ show dhcprelay_helper ipv4
 
 | 定数 | 値 | 証拠 | 意味 |
 |-----|-----|------|------|
-| STATE_DB ポーリング間隔 | `1` 秒 | wait_for_intf.sh.j2:18 | `INTERFACE_TABLE\|<intf>\|state == ok` ポーリング間隔 |
-| インタフェース ready 後の追加待機 | `10` 秒 | wait_for_intf.sh.j2:51 | STATE_DB ok 確認後の固定 `sleep 10` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) ポーリング間隔 | `1` 秒 | wait_for_intf.sh.j2:18 | `INTERFACE_TABLE\|<intf>\|state == ok` ポーリング間隔 |
+| インタフェース ready 後の追加待機 | `10` 秒 | wait_for_intf.sh.j2:51 | [STATE_DB](../../reference/glossary.md#term-state_db) ok 確認後の固定 `sleep 10` |
 
 ### 定数の外部変更可否
 
@@ -301,7 +301,7 @@ show dhcprelay_helper ipv4
 
 ### 購読方式
 
-`dhcp6relay` は `swss::SubscriberStateTable` を通じて CONFIG_DB の `DHCP_RELAY` テーブルを購読する。内部実装は Redis の **keyspace notification (PSUBSCRIBE)** であり、ConsumerStateTable / NotificationConsumer は使用しない。TTL/keyspace expire 通知も使用しない。
+`dhcp6relay` は `swss::SubscriberStateTable` を通じて CONFIG_DB の `DHCP_RELAY` テーブルを購読する。内部実装は [Redis](../../reference/glossary.md#term-redis) の **keyspace notification (PSUBSCRIBE)** であり、[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) / NotificationConsumer は使用しない。TTL/keyspace expire 通知も使用しない。
 
 ### 通信シーケンス
 
@@ -363,7 +363,7 @@ ipHelpersTable.pops(entries)
 | `DhcpServerTableIntfEnablementEventChecker` | `DHCP_SERVER_IPV4` | dhcp_server 有効時のみ | DHCP_SERVER_IPV4 の `state` フィールド変更検知 |
 | `VlanTableEventChecker` | `VLAN` | dhcp_server 有効かつ VLAN DHCP インタフェース存在時 | VLAN メンバ追加/削除検知 |
 | `VlanIntfTableEventChecker` | `VLAN_INTERFACE` | dhcp_server 有効かつ VLAN DHCP インタフェース存在時 | VLAN に IPv4 アドレス追加/削除検知 |
-| `MidPlaneTableEventChecker` | `MID_PLANE_BRIDGE` | SmartSwitch 環境かつ mid-plane DHCP インタフェース存在時 | MID_PLANE_BRIDGE の bridge フィールド変更検知 |
+| `MidPlaneTableEventChecker` | `MID_PLANE_BRIDGE` | [SmartSwitch](../../reference/glossary.md#term-smartswitch) 環境かつ mid-plane DHCP インタフェース存在時 | MID_PLANE_BRIDGE の bridge フィールド変更検知 |
 
 #### 通信シーケンス
 
@@ -425,7 +425,7 @@ refresh_dhcrelay(force_kill)
 | Checker 起動時有効 | `DhcpServerFeatureStateChecker` のみ | start() で初期化 |
 | dhcp_server 有効時に追加 | `DhcpServerTableIntfEnablementEventChecker` | _proceed_with_check_res() |
 | VLAN あり時に追加 | `VlanTableEventChecker`, `VlanIntfTableEventChecker` | refresh_dhcrelay() |
-| SmartSwitch 時に追加 | `MidPlaneTableEventChecker` | refresh_dhcrelay() |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) 時に追加 | `MidPlaneTableEventChecker` | refresh_dhcrelay() |
 | FEATURE / DHCP_SERVER チェッカー | 無効化対象外 (常時維持) | dhcprelayd.py:107-108 |
 
 #### dhcprelayd と dhcp6relay の購読方式比較
@@ -457,7 +457,7 @@ refresh_dhcrelay(force_kill)
 | `dhcpv6_servers` 追加順 | — | CLI `add` は末尾 append (`dhcp_servers.append`) | 追加順が dhcp6relay の upstream スキャン順（`ordered-by user`）に直結。後から追加したサーバは優先度が低い |
 | `dhcpv6_servers` 全削除 DEL | dhcp_relay サービス再起動 | DEL 後に再起動しないと vlans マップがメモリ上に残留 | dhcp6relay プロセスはリレーを継続する（DEL は未反映）。再起動でのみリセット |
 | `rfc6939_support` / `interface_id` | 起動時の `DEVICE_METADATA.subtype` / `-u` 引数 | サービス起動前に確定（boot 時）。変更は再起動が必要 | DualToR 環境では `-u Loopback0` 引数で `dual_tor_sock=true` → `interface_id` デフォルト `true`。非 DualToR はデフォルト `false` |
-| 全フィールド（boot 時） | STATE_DB `INTERFACE_TABLE\|<vlan>\|<prefix>\|state == ok` | `wait_for_intf.sh` が STATE_DB をポーリングし、インタフェース up 確認後さらに 10 秒待機してから dhcp6relay を起動 | VLAN インタフェースが STATE_DB に `ok` 状態で現れる前に dhcp_relay コンテナを起動しても dhcp6relay は起動しない |
+| 全フィールド（boot 時） | [STATE_DB](../../reference/glossary.md#term-state_db) `INTERFACE_TABLE\|<vlan>\|<prefix>\|state == ok` | `wait_for_intf.sh` が STATE_DB をポーリングし、インタフェース up 確認後さらに 10 秒待機してから dhcp6relay を起動 | VLAN インタフェースが STATE_DB に `ok` 状態で現れる前に dhcp_relay コンテナを起動しても dhcp6relay は起動しない |
 
 ### isc-dhcp-relay (`dhcrelay`) (IPv4) — 順序依存マトリクス
 
@@ -539,7 +539,7 @@ main.cpp:38          loop_relay(vlans)  ← 取り込んだ vlans でリレー�
 
 ### 概要
 
-`dhcp6relay` は orchagent/SAI を経由せず Linux カーネルの UDP relay (L4) として動作するため、SAI error / task_need_retry / task_failed の概念は存在しない。失敗は大きく「起動時致命エラー (exit)」「パケット単位の silent drop」「設定変更の無視」の 3 類型に分類される。
+`dhcp6relay` は [orchagent](../../reference/glossary.md#term-orchagent)/[SAI](../../reference/glossary.md#term-sai) を経由せず Linux カーネルの UDP relay (L4) として動作するため、[SAI](../../reference/glossary.md#term-sai) error / task_need_retry / task_failed の概念は存在しない。失敗は大きく「起動時致命エラー (exit)」「パケット単位の silent drop」「設定変更の無視」の 3 類型に分類される。
 
 ### 起動時致命エラー (exit)
 
@@ -702,7 +702,7 @@ VLAN 単位の server listen event 生成失敗は **プロセスを停止させ
 | 種別 | 主体 | 対象 |
 |------|------|------|
 | STATE_DB 書き込み | `dhcp6relay` (sonic-dhcp-relay) | `DHCPv6_COUNTER_TABLE\|<vlan>` |
-| プロセス起動・停止 | `dhcprelayd` (sonic-buildimage) | `dhcrelay` / `dhcpmon` subprocess |
+| プロセス起動・停止 | `dhcprelayd` ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)) | `dhcrelay` / `dhcpmon` subprocess |
 | supervisord プログラム制御 | `dhcprelayd` | `isc-dhcpv4-relay-*` / `dhcpmon-*` |
 
 ### 1. STATE_DB への書き込み (`dhcp6relay`)
@@ -787,11 +787,11 @@ res = subprocess.run(cmds, check=True)
 
 | DB | 理由 |
 |----|------|
-| APPL_DB | 書き込みなし（dhcp6relay・dhcprelayd ともに非使用） |
-| ASIC_DB / SAI | dhcrelay は L4 UDP relay。SAI/ASIC 非経由 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | 書き込みなし（dhcp6relay・dhcprelayd ともに非使用） |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / SAI | dhcrelay は L4 UDP relay。SAI/ASIC 非経由 |
 | ERROR_TABLE (STATE_DB) | dhcp6relay は ERROR_TABLE を使用しない |
 
-> **Evidence**: `relay.cpp:18, 264-304, 1342-1401`（STATE_DB カウンタ書込）、`dhcprelayd.py:209-225`（supervisorctl）、`dhcprelayd.py:290-313`（dhcrelay subprocess）、`dhcprelayd.py:343-373`（プロセス終了）、`dhcprelayd.py:376-384`（STATE_DB 読み取り）、`start.sh:6-9`（COUNTERS_DB クリア）
+> **Evidence**: `relay.cpp:18, 264-304, 1342-1401`（STATE_DB カウンタ書込）、`dhcprelayd.py:209-225`（supervisorctl）、`dhcprelayd.py:290-313`（dhcrelay subprocess）、`dhcprelayd.py:343-373`（プロセス終了）、`dhcprelayd.py:376-384`（STATE_DB 読み取り）、`start.sh:6-9`（[COUNTERS_DB](../../reference/glossary.md#term-counters_db) クリア）
 <!-- /side-effects -->
 
 <!-- cross-refs -->
@@ -841,14 +841,14 @@ DualToR 環境でのみ、クライアントパケット受信時に `STATE_DB::
 
 ### 1. SmartSwitch DPU — mid-plane bridge 対応
 
-`DEVICE_METADATA.localhost.subtype == "SmartSwitch"` の場合、`dhcprelayd` は `VLAN` テーブルに加え `MID_PLANE_BRIDGE` テーブルも監視し、DPU 向けの IPv4 DHCP リレーを有効化する。
+`DEVICE_METADATA.localhost.subtype == "SmartSwitch"` の場合、`dhcprelayd` は `VLAN` テーブルに加え `MID_PLANE_BRIDGE` テーブルも監視し、[DPU](../../reference/glossary.md#term-dpu) 向けの IPv4 DHCP リレーを有効化する。
 
-| 項目 | 通常スイッチ | SmartSwitch (DPU) |
+| 項目 | 通常スイッチ | [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([DPU](../../reference/glossary.md#term-dpu)) |
 |------|------------|-------------------|
 | リレー対象インタフェース | VLAN テーブルのみ | VLAN + `MID_PLANE_BRIDGE.GLOBAL.bridge`（例: `bridge-midplane`） |
 | イベント監視 | `VlanTableEventChecker` / `VlanIntfTableEventChecker` | 上記に加え `MidPlaneTableEventChecker` を動的有効化 |
 | dhcp_server 無効化時 | VLAN 系 checker を解除 | `MID_PLANE_CHECKER` も解除対象に追加 |
-| DPU への IP 割当 | N/A | `DHCP_SERVER_IPV4_PORT\|bridge-midplane\|dpu0` 等で個別 IP を割当 |
+| [DPU](../../reference/glossary.md#term-dpu) への IP 割当 | N/A | `DHCP_SERVER_IPV4_PORT\|bridge-midplane\|dpu0` 等で個別 IP を割当 |
 
 `DHCP_RELAY` テーブル（DHCPv6 設定）自体は引き続き VLAN ベースで動作し、mid-plane bridge 経路とは独立している。
 
@@ -895,4 +895,4 @@ DHCPv4 と DHCPv6 では relay の設定テーブル・プロセス・ランタ�
 | IPv4 vs IPv6 | relay プロセス・テーブル・ランタイム変更可否が異なる | プロトコル種別 | `dhcpv4-relay.agents.j2`, `dhcpv6-relay.agents.j2` |
 <!-- /platform -->
 
-<!-- glossary-links-injected: 11715e560dc6 -->
+<!-- glossary-links-injected: 459cbe4aca50 -->

@@ -155,7 +155,6 @@ systemctl status telemetry
 ```
 <!-- /ops-hint -->
 
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -199,7 +198,7 @@ telemetry サービスが有効の場合のみ `TELEMETRY` テーブルを消費
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。gNMI サーバが DATA_DB / STATE_DB を購読してデータを提供。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。gNMI サーバが DATA_DB / [STATE_DB](../../reference/glossary.md#term-state_db) を購読してデータを提供。
 
 ### 段階 4: タイミング + 副作用
 
@@ -217,7 +216,7 @@ TELEMETRY テーブルへの書き込みが発生するコード経路を網羅�
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** が TELEMETRY エントリを生成 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+**minigraph.py** が TELEMETRY エントリを生成 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py)
 
 ### REST / gNMI
 
@@ -287,7 +286,7 @@ syncd.service ──────┘
 sonic.target ──────────────────────────────→  After=sonic.target
 ```
 
-`database.service` (Redis / [CONFIG_DB](../../reference/glossary.md#term-config_db)) が Ready になった後に telemetry が起動するため、CONFIG_DB が未起動の状態で `TELEMETRY` テーブルを読もうとすることはない。
+`database.service` ([Redis](../../reference/glossary.md#term-redis) / [CONFIG_DB](../../reference/glossary.md#term-config_db)) が Ready になった後に telemetry が起動するため、CONFIG_DB が未起動の状態で `TELEMETRY` テーブルを読もうとすることはない。
 
 > evidence: `files/build_templates/telemetry.service.j2:3-4`
 
@@ -332,7 +331,7 @@ systemctl restart telemetry
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
 | 1 | `FEATURE\|telemetry.state=enabled` → telemetry コンテナ起動 | 先行必須（未設定は 10s ポーリング） | minigraph フローでは自動保証 |
-| 2 | `database.service` ready → telemetry.service 起動 | systemd `After=` 強制 | Redis 未起動での起動は不可 |
+| 2 | `database.service` ready → telemetry.service 起動 | systemd `After=` 強制 | [Redis](../../reference/glossary.md#term-redis) 未起動での起動は不可 |
 | 3 | `start.sh` 終了 → `telemetry.sh` 実行 | supervisord `dependent_startup` 強制 | FEATURE チェック完了が保証される |
 | 4 | `TELEMETRY` 全設定書き込み → `telemetry.sh` 実行（一括読み込み） | 起動時一括読み込みのため先行必須 | runtime 変更は `systemctl restart telemetry` で反映 |
 | 5 | TLS 証明書ファイル配置 → `server_crt`/`server_key`/`ca_crt` 設定 | ファイル存在確認が先行必須 | 空の場合は `--insecure` フォールバック |
@@ -353,7 +352,7 @@ systemctl restart telemetry
 | `FEATURE\|telemetry.state` | CONFIG_DB | 読み取り (コンテナ起動制御) | 常時 | `docker-telemetry-entry.sh:40` |
 | `DEVICE_METADATA\|localhost.x509` | CONFIG_DB | 読み取り (legacy 証明書フォールバック) | `TELEMETRY\|certs` 未設定時 | `telemetry_vars.j2:4`, `telemetry.sh:66-80` |
 | `GNMI_CLIENT_CERT\|*` | CONFIG_DB | 読み取り (証明書 fingerprint チェック) | `user_auth=cert` 設定時 | `telemetry.sh:147-148` |
-| `DEVICE_METADATA\|localhost.chassis_serial_number` | STATE_DB | 書き込み (シリアル番号更新) | watchdog オプション有効時 | `telemetry.sh:10-13` |
+| `DEVICE_METADATA\|localhost.chassis_serial_number` | [STATE_DB](../../reference/glossary.md#term-state_db) | 書き込み (シリアル番号更新) | watchdog オプション有効時 | `telemetry.sh:10-13` |
 | CONFIG_DB Journal | CONFIG_DB | 書き込み (gNMI Set 変更ログ) | `save_on_set=true` 時 | `server.go:647-649` |
 
 ### FEATURE|telemetry — コンテナ起動前提
@@ -370,7 +369,7 @@ systemctl restart telemetry
 
 ### SAI 参照
 
-なし。telemetry (gnmi_server) は CONFIG_DB / STATE_DB / DATA_DB を gRPC/gNMI 経由でクライアントに公開するが、SAI/ASIC に直接アクセスしない。
+なし。telemetry (gnmi_server) は CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) / DATA_DB を gRPC/gNMI 経由でクライアントに公開するが、[SAI](../../reference/glossary.md#term-sai)/ASIC に直接アクセスしない。
 
 <!-- /cross-refs -->
 
@@ -459,7 +458,7 @@ Saving startup config failed: <err>
 | 証明書ファイル不在 | `supervisorctl status` → EXITED | なし | ファイル配置 → `docker restart telemetry` |
 | 証明書内容不正 | ログ: `could not load server key pair` | ✅ ファイル上書きで自動回復 | — |
 | ポート競合 | `WARNING: Failed to open listener port` | なし (UDS のみで縮退動作) | ポート解放 → `docker restart telemetry` |
-| save_on_set dbus 失敗 | ログのみ (`log.V(0)`) | なし | hostcfgd / dbus 確認 |
+| save_on_set dbus 失敗 | ログのみ (`log.V(0)`) | なし | [hostcfgd](../../reference/glossary.md#term-hostcfgd) / dbus 確認 |
 
 > **Evidence**: `dockers/docker-sonic-telemetry/supervisord.conf:50-62`; `telemetry.sh:83-130`; `gnmi_server/server.go:315-327,400-418,593-649,1054-1061`; `telemetry/telemetry.go:463-470`; 詳細 `meta/_intermediate/cdb-flow/telemetry-failure.md`
 <!-- /failure -->
@@ -558,7 +557,7 @@ Saving startup config failed: <err>
 
 ### APPL_DB / COUNTERS_DB — 書込なし
 
-`gnmi_server` および `telemetry.sh` は APPL_DB / COUNTERS_DB への直接書込を行わない。内部メトリクス（Get/Set/Subscribe カウンタ）はプロセス内共有メモリで管理され DB には書込まれない。
+`gnmi_server` および `telemetry.sh` は [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への直接書込を行わない。内部メトリクス（Get/Set/Subscribe カウンタ）はプロセス内共有メモリで管理され DB には書込まれない。
 
 > evidence: `common_utils/context.go:147-180`; `common_utils/shareMem.go`
 
@@ -569,8 +568,8 @@ Saving startup config failed: <err>
 | ファイル書込 (symlink) | `/keys/server_cert.lnk`, `/keys/server_key.lnk`, `/keys/ca_cert.lnk` | TLS 設定あり（起動時一回） |
 | ファイル書込 | `/etc/sonic/config_db.json` | `save_on_set=true` かつ gNMI Set RPC 成功 |
 | STATE_DB 書込 | `DEVICE_METADATA\|localhost.chassis_serial_number` | watchdog オプション有効時のみ |
-| APPL_DB 書込 | なし | — |
-| COUNTERS_DB 書込 | なし | — |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) 書込 | なし | — |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書込 | なし | — |
 
 > **詳細**: `meta/_intermediate/cdb-flow/telemetry-side-effects.md`
 <!-- /side-effects -->
@@ -580,13 +579,13 @@ Saving startup config failed: <err>
 
 ### Redis 購読方式
 
-`TELEMETRY` テーブルに対する **継続的な Redis pub/sub 購読は存在しない**。`hostcfgd` / `swsscommon.SubscriberStateTable` / `ConfigDBConnector.subscribe()` / `listen()` は一切使用しない。
+`TELEMETRY` テーブルに対する **継続的な [Redis](../../reference/glossary.md#term-redis) pub/sub 購読は存在しない**。`hostcfgd` / `swsscommon.SubscriberStateTable` / `ConfigDBConnector.subscribe()` / `listen()` は一切使用しない。
 
 `telemetry` コンテナは起動時に `sonic-cfggen -d -t telemetry_vars.j2` を一回実行して `TELEMETRY|certs` / `TELEMETRY|gnmi` を JSON でスナップショット取得し、その値を `telemetry` バイナリへのコマンドライン引数に変換して起動する。起動後は CONFIG_DB を参照しない。
 
 | テーブル | 購読方式 | 購読者 | タイミング |
 |---------|---------|--------|-----------|
-| `TELEMETRY` | **なし**（起動時スナップショットのみ） | `telemetry.sh` (sonic-cfggen) | コンテナ起動時 1 回 |
+| `TELEMETRY` | **なし**（起動時スナップショットのみ） | `telemetry.sh` ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)) | コンテナ起動時 1 回 |
 | `GNMI_CLIENT_CERT` | ポイント読み取り (HGETALL) | `gnmi_server` (認証時) | gNMI 接続ごと |
 
 ### keyspace 通知 → ハンドラ呼び出しの流れ
@@ -618,17 +617,17 @@ HSET "TELEMETRY|gnmi" port 50052
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: `TELEMETRY` テーブルの設定・処理において、ASIC 種別・multi-asic・VOQ chassis 構成・ベンダー固有挙動は検出されなかった。
+**プラットフォーム差なし**: `TELEMETRY` テーブルの設定・処理において、ASIC 種別・multi-asic・[VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダー固有挙動は検出されなかった。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `gnmi_server` は SAI / ASIC_DB に直接アクセスしない。CONFIG_DB / STATE_DB / DATA_DB / COUNTERS_DB を Redis プロトコルで読み取るのみ (`telemetry.sh`, `server.go` に ASIC 種別参照なし) |
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `gnmi_server` は [SAI](../../reference/glossary.md#term-sai) / [ASIC_DB](../../reference/glossary.md#term-asic_db) に直接アクセスしない。CONFIG_DB / STATE_DB / DATA_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を Redis プロトコルで読み取るのみ (`telemetry.sh`, `server.go` に ASIC 種別参照なし) |
 | multi-asic (`is_multi_npu() == True`) | 影響なし | `TELEMETRY` テーブルは host namespace CONFIG_DB (db 4) の 1 エントリ。ASIC namespace 数に依存しない。gNMI クライアントが購読するデータパスは namespace 指定で各 ASIC を参照できるが、`TELEMETRY` 設定内容は変わらない (`server.go` に namespace 参照なし) |
-| VOQ chassis (supervisor + line cards) | 各ラインカードで独立適用 | `TELEMETRY` テーブルはラインカードごとの host CONFIG_DB に独立して存在する。`telemetry.sh` / `server.go` に VOQ 固有コードなし |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各ラインカードで独立適用 | `TELEMETRY` テーブルはラインカードごとの host CONFIG_DB に独立して存在する。`telemetry.sh` / `server.go` に [VOQ](../../reference/glossary.md#term-voq) 固有コードなし |
 | ベンダー固有設定 | なし | `docker-sonic-telemetry/Dockerfile.j2` に platform 条件分岐なし。`telemetry_vars.j2` は `TELEMETRY` / `DEVICE_METADATA` のみ参照 |
 | k8s 起動 (launch_by=k8s) | hwsku シンボリックリンク生成のみ | `docker-telemetry-entry.sh` Part 1 は `/usr/share/sonic/platform` symlink を生成するが `TELEMETRY` テーブル処理とは無関係 |
 
 詳細根拠は `meta/_intermediate/cdb-flow/telemetry-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 55d2351240af -->

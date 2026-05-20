@@ -38,24 +38,15 @@ related:
 
 ```mermaid
 flowchart LR
-  CFG[("CONFIG_DB<br/>FLEX_COUNTER_TABLE|QUEUE")]
-  ORC["portsorch<br/>(orchagent)"]
-  SYNCD["syncd<br/>FlexCounter"]
-  HW["SAI<br/>sai_queue_api"]
-  CNTDB[("COUNTERS_DB<br/>COUNTERS:&lt;oid&gt;")]
-  CLI["queuestat"]
-
-  CFG -- FLEX_COUNTER_STATUS=enable --> ORC
-  ORC -- COUNTER_ID_LIST --> SYNCD
-  SYNCD -- sai_get_queue_stats --> HW
-  HW -- 実カウンタ値 --> SYNCD
-  SYNCD --> CNTDB
-  CNTDB --> CLI
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB の `FLEX_COUNTER_TABLE|QUEUE` が `enable` になると portsorch が SAI カウンタ ID リストを syncd へ投入。syncd が 10 秒ごと（コードデフォルト）にポーリングして `COUNTERS:<oid>` を更新する。
-
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -109,7 +100,7 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 
 ### ウォーターマーク（QUEUE_WATERMARK_STAT_COUNTER グループ）
 
-`FLEX_COUNTER_TABLE|QUEUE_WATERMARK` が `enable` のときに収集。`StatsMode::READ_AND_CLEAR`（ポーリングごとに SAI 側ウォーターマークレジスタをリセット）。ソース: `portsorch.cpp:405-408` の `queueWatermarkStatIds`[^2]。
+`FLEX_COUNTER_TABLE|QUEUE_WATERMARK` が `enable` のときに収集。`StatsMode::READ_AND_CLEAR`（ポーリングごとに [SAI](../../reference/glossary.md#term-sai) 側ウォーターマークレジスタをリセット）。ソース: `portsorch.cpp:405-408` の `queueWatermarkStatIds`[^2]。
 
 | COUNTERS:<oid> フィールド | 説明 |
 |--------------------------|------|
@@ -117,18 +108,18 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 
 ### WRED/ECN カウンタ（WRED_ECN_QUEUE_STAT_COUNTER グループ）
 
-`FLEX_COUNTER_TABLE|WRED_ECN_QUEUE` が `enable` かつ SAI が WRED ケイパビリティをサポートする場合のみ収集[^3]。ソース: `portsorch.cpp:429-435` の `wred_queue_stat_ids`。
+`FLEX_COUNTER_TABLE|WRED_ECN_QUEUE` が `enable` かつ [SAI](../../reference/glossary.md#term-sai) が [WRED](../../reference/glossary.md#term-wred) ケイパビリティをサポートする場合のみ収集[^3]。ソース: `portsorch.cpp:429-435` の `wred_queue_stat_ids`。
 
 | COUNTERS:<oid> フィールド | 説明 |
 |--------------------------|------|
-| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | WRED ECN マーキングパケット数 |
-| `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | WRED ECN マーキングバイト数 |
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | [WRED](../../reference/glossary.md#term-wred) ECN マーキングパケット数 |
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | [WRED](../../reference/glossary.md#term-wred) ECN マーキングバイト数 |
 | `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` | WRED ドロップパケット数 |
 | `SAI_QUEUE_STAT_WRED_DROPPED_BYTES` | WRED ドロップバイト数 |
 
 ## FlexCounter グループとポーリング間隔
 
-| FlexCounter グループ名 | CONFIG_DB キー | StatsMode | コードデフォルトポーリング間隔 |
+| [FlexCounter](../../reference/glossary.md#term-flexcounter) グループ名 | [CONFIG_DB](../../reference/glossary.md#term-config_db) キー | StatsMode | コードデフォルトポーリング間隔 |
 |--------------------|--------------|-----------|--------------------------|
 | `QUEUE_STAT_COUNTER` | `FLEX_COUNTER_TABLE\|QUEUE` | READ | 10000 ms |
 | `QUEUE_WATERMARK_STAT_COUNTER` | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` | READ_AND_CLEAR | 60000 ms |
@@ -145,7 +136,7 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 
 ### カウンタフィールドセットはコードハードコード
 
-`queue_stat_ids`（portsorch.cpp:389-398）はソースコードに静的配列として定義される。YANG モデル・CONFIG_DB・`FLEX_COUNTER_TABLE` のいずれからも変更不可[^4]。ハードウェアが当該カウンタをサポートしない場合、`queuestat` の表示では `N/A` となる。
+`queue_stat_ids`（portsorch.cpp:389-398）はソースコードに静的配列として定義される。[YANG](../../reference/glossary.md#term-yang) モデル・[CONFIG_DB](../../reference/glossary.md#term-config_db)・`FLEX_COUNTER_TABLE` のいずれからも変更不可[^4]。ハードウェアが当該カウンタをサポートしない場合、`queuestat` の表示では `N/A` となる。
 
 ### Packet Trimming フィールドは常時 queue_stat_ids に含まれる
 
@@ -153,7 +144,7 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 
 ### ポーリング間隔のコードデフォルト
 
-`FLEX_COUNTER_TABLE|QUEUE` に `POLL_INTERVAL` が未設定の場合、portsorch がコードにハードコードされた初期値を syncd に投入する[^4]。
+`FLEX_COUNTER_TABLE|QUEUE` に `POLL_INTERVAL` が未設定の場合、portsorch がコードにハードコードされた初期値を [syncd](../../reference/glossary.md#term-syncd) に投入する[^4]。
 
 | グループ | ハードコード定数（portsorch.cpp:90-91） | 値 |
 |--------|--------------------------------------|-----|
@@ -167,7 +158,7 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 
 ### ウォーターマークは READ_AND_CLEAR で動作
 
-`QUEUE_WATERMARK_STAT_COUNTER` グループは `StatsMode::READ_AND_CLEAR`（portsorch.cpp:735）で初期化される。syncd がポーリングするたびに SAI 側のウォーターマークレジスタがクリアされる。これは `watermarkstat` が PERIODIC / PERSISTENT / USER の 3 テーブルに分岐する基盤動作であり、異常ではない。
+`QUEUE_WATERMARK_STAT_COUNTER` グループは `StatsMode::READ_AND_CLEAR`（portsorch.cpp:735）で初期化される。[syncd](../../reference/glossary.md#term-syncd) がポーリングするたびに SAI 側のウォーターマークレジスタがクリアされる。これは `watermarkstat` が PERIODIC / PERSISTENT / USER の 3 テーブルに分岐する基盤動作であり、異常ではない。
 
 ### VoQ システムでは voq_stat_ids が自動合算
 
@@ -175,11 +166,11 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 
 ### isQueueMapGenerated 冪等ガード
 
-`generateQueueMap()`（`COUNTERS_QUEUE_NAME_MAP` 等のマッピング書き込み）は `m_isQueueMapGenerated` フラグで一度だけ実行される（portsorch.cpp:8393-8396）。orchagent 再起動時に `COUNTERS_DB` のマッピングが重複書きされることはない。
+`generateQueueMap()`（`COUNTERS_QUEUE_NAME_MAP` 等のマッピング書き込み）は `m_isQueueMapGenerated` フラグで一度だけ実行される（portsorch.cpp:8393-8396）。[orchagent](../../reference/glossary.md#term-orchagent) 再起動時に `COUNTERS_DB` のマッピングが重複書きされることはない。
 
 ### FLEX_COUNTER_STATUS 未設定時の挙動
 
-`FLEX_COUNTER_TABLE|QUEUE` の `FLEX_COUNTER_STATUS` が `enable` になるまで、syncd は SAI ポーリングを行わない。カウンタ値は `0` のまま（または初期化前）。ポートが allPortsReady 前の場合、`enable` 受信後も FlexCounter への登録は遅延し、全ポート ready 後に一括適用される。
+`FLEX_COUNTER_TABLE|QUEUE` の `FLEX_COUNTER_STATUS` が `enable` になるまで、[syncd](../../reference/glossary.md#term-syncd) は SAI ポーリングを行わない。カウンタ値は `0` のまま（または初期化前）。ポートが allPortsReady 前の場合、`enable` 受信後も [FlexCounter](../../reference/glossary.md#term-flexcounter) への登録は遅延し、全ポート ready 後に一括適用される。
 
 <!-- /defaults -->
 
@@ -191,11 +182,11 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 
 ### 1. SAI OID フェッチが先行必須
 
-`PortsOrch::initializePorts()`（`portsorch.cpp:6583-6598`）が `initializeQueuesBulk()` で SAI から各ポートの Queue OID リスト（`SAI_PORT_ATTR_QOS_QUEUE_LIST`）を取得して `port.m_queue_ids` へキャッシュするまで、`generateQueueMap()` / `generateQueueMapPerPort()` は OID が空のまま動作してマッピングを書き込まない[^5]。`FlexCounterOrch::doTask()` は `gPortsOrch->allPortsReady()` が `false` の間 `return` する（`flexcounterorch.cpp:164-167`）ため、`FLEX_COUNTER_TABLE|QUEUE = enable` を orchagent 起動前に書き込んでいても、全ポート ready 後まで `generateQueueMap()` 呼び出しは自動的に遅延する。
+`PortsOrch::initializePorts()`（`portsorch.cpp:6583-6598`）が `initializeQueuesBulk()` で SAI から各ポートの Queue OID リスト（`SAI_PORT_ATTR_QOS_QUEUE_LIST`）を取得して `port.m_queue_ids` へキャッシュするまで、`generateQueueMap()` / `generateQueueMapPerPort()` は OID が空のまま動作してマッピングを書き込まない[^5]。`FlexCounterOrch::doTask()` は `gPortsOrch->allPortsReady()` が `false` の間 `return` する（`flexcounterorch.cpp:164-167`）ため、`FLEX_COUNTER_TABLE|QUEUE = enable` を [orchagent](../../reference/glossary.md#term-orchagent) 起動前に書き込んでいても、全ポート ready 後まで `generateQueueMap()` 呼び出しは自動的に遅延する。
 
 ### 2. Warm-reboot 時の 60 秒遅延
 
-`FlexCounterOrch` コンストラクタ（`flexcounterorch.cpp:127-136`）は warm-reboot 時に `FLEX_COUNTER_DELAY_SEC = 60` 秒のタイマーを設定し、`doTask()` 先頭の `if (!m_delayTimerExpired) return;`（`flexcounterorch.cpp:156-158`）で全 FlexCounter 処理をブロックする。cold boot では即 `m_delayTimerExpired = true` になり遅延なし。warm-reboot 中に `FLEX_COUNTER_TABLE|QUEUE = enable` を書き込んでも最大 60 秒間 `COUNTERS:<oid>` の更新が停止する[^5]。
+`FlexCounterOrch` コンストラクタ（`flexcounterorch.cpp:127-136`）は warm-reboot 時に `FLEX_COUNTER_DELAY_SEC = 60` 秒のタイマーを設定し、`doTask()` 先頭の `if (!m_delayTimerExpired) return;`（`flexcounterorch.cpp:156-158`）で全 [FlexCounter](../../reference/glossary.md#term-flexcounter) 処理をブロックする。cold boot では即 `m_delayTimerExpired = true` になり遅延なし。warm-reboot 中に `FLEX_COUNTER_TABLE|QUEUE = enable` を書き込んでも最大 60 秒間 `COUNTERS:<oid>` の更新が停止する[^5]。
 
 ### 3. `BUFFER_QUEUE` と `FLEX_COUNTER_TABLE|QUEUE = enable` の順序
 
@@ -224,19 +215,19 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-YANG leafref を超えた他テーブル・他 DB・プラットフォームファイルへの実装上の依存関係。
+[YANG](../../reference/glossary.md#term-yang) leafref を超えた他テーブル・他 DB・プラットフォームファイルへの実装上の依存関係。
 
 | 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
 |--------|-----------|------|------|-----------|
-| `FLEX_COUNTER_TABLE\|QUEUE` | CONFIG_DB | READ | `FLEX_COUNTER_STATUS = enable` を受信した時点で `addQueueFlexCounters()` を呼び SAI カウンタ登録を開始。`disable` で `clearQueueFlexCounters()` を呼びカウンタ登録を解除 | `flexcounterorch.cpp:247-252` |
+| `FLEX_COUNTER_TABLE\|QUEUE` | [CONFIG_DB](../../reference/glossary.md#term-config_db) | READ | `FLEX_COUNTER_STATUS = enable` を受信した時点で `addQueueFlexCounters()` を呼び SAI カウンタ登録を開始。`disable` で `clearQueueFlexCounters()` を呼びカウンタ登録を解除 | `flexcounterorch.cpp:247-252` |
 | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` | CONFIG_DB | READ | `enable` 受信時に `addQueueWatermarkFlexCounters()` を呼び `QUEUE_WATERMARK_STAT_COUNTER` グループを開始。`disable` で解除 | `flexcounterorch.cpp:258-264` |
 | `FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE` | CONFIG_DB | READ | `enable` 受信時に `addWredQueueFlexCounters(getQueueConfigurations())` を呼び WRED カウンタ登録を開始。SAI ケイパビリティ未サポートポートは silent にスキップ | `flexcounterorch.cpp:276-281` |
 | `BUFFER_QUEUE` | CONFIG_DB | READ | `create_only_config_db_buffers = true` の場合、`getQueueConfigurations()` が `BUFFER_QUEUE` に非ゼロプロファイルが設定されたキューのみを対象にする。`false`（デフォルト）では全キューを対象 | `flexcounterorch.cpp:544-554` |
 | `DEVICE_METADATA\|localhost` | CONFIG_DB | READ | 起動時に `create_only_config_db_buffers` を 1 回読み込み `m_createOnlyConfigDbBuffers` にキャッシュ。`handleDeviceMetadataTable()` が動的更新を購読 | `flexcounterorch.cpp:106-124, 488-521` |
-| `COUNTERS_QUEUE_NAME_MAP` | COUNTERS_DB | WRITE | `generateQueueMap()` が `<port_alias>:<queue_index>` → SAI OID マッピングを書き込む。`m_isQueueMapGenerated` フラグで冪等保護（初回のみ） | `portsorch.cpp:8391-8443` |
-| `COUNTERS_QUEUE_PORT_MAP` | COUNTERS_DB | WRITE | `<queue_oid>` → `<port_oid>` の逆引きマップ。`generateQueueMapPerPort()` で書き込まれ、`queuestat` がキューをポートに紐付ける際に参照 | `portsorch.cpp:778-782` |
-| `COUNTERS_QUEUE_INDEX_MAP` | COUNTERS_DB | WRITE | `<queue_oid>` → `<queue_index>` の逆引きマップ。`generateQueueMapPerPort()` で書き込まれ、`queuestat` が表示列の並べ替えに使用 | `portsorch.cpp:780-781` |
-| `COUNTERS_QUEUE_TYPE_MAP` | COUNTERS_DB | WRITE | `<queue_oid>` → `SAI_QUEUE_TYPE_*` の逆引きマップ。UC / MC / ALL / VOQ の判別に使用 | `portsorch.cpp:781-782` |
+| `COUNTERS_QUEUE_NAME_MAP` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | WRITE | `generateQueueMap()` が `<port_alias>:<queue_index>` → SAI OID マッピングを書き込む。`m_isQueueMapGenerated` フラグで冪等保護（初回のみ） | `portsorch.cpp:8391-8443` |
+| `COUNTERS_QUEUE_PORT_MAP` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | WRITE | `<queue_oid>` → `<port_oid>` の逆引きマップ。`generateQueueMapPerPort()` で書き込まれ、`queuestat` がキューをポートに紐付ける際に参照 | `portsorch.cpp:778-782` |
+| `COUNTERS_QUEUE_INDEX_MAP` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | WRITE | `<queue_oid>` → `<queue_index>` の逆引きマップ。`generateQueueMapPerPort()` で書き込まれ、`queuestat` が表示列の並べ替えに使用 | `portsorch.cpp:780-781` |
+| `COUNTERS_QUEUE_TYPE_MAP` | COUNTERS_DB | WRITE | `<queue_oid>` → `SAI_QUEUE_TYPE_*` の逆引きマップ。UC / MC / ALL / [VOQ](../../reference/glossary.md#term-voq) の判別に使用 | `portsorch.cpp:781-782` |
 | SAI `SAI_PORT_ATTR_QOS_QUEUE_LIST` | SAI（ハードウェア） | READ | `initializeQueuesBulk()` が各ポートの Queue OID リストを SAI から取得して `port.m_queue_ids` へキャッシュ。このフェッチが完了するまで `generateQueueMap()` はマッピングを書き込まない | `portsorch.cpp:6583-6598` |
 
 ### 補足
@@ -298,7 +289,7 @@ catch (const runtime_error& e) {
 
 `initCounterCapabilities()` (`portsorch.cpp:1882-1921`):
 
-| 失敗条件 | 挙動 | STATE_DB / COUNTERS_DB への影響 |
+| 失敗条件 | 挙動 | [STATE_DB](../../reference/glossary.md#term-state_db) / COUNTERS_DB への影響 |
 |---|---|---|
 | `sai_query_stats_capability()` → `SAI_STATUS_BUFFER_OVERFLOW` → リサイズ後再クエリも失敗 | `SWSS_LOG_NOTICE("Queue stat capability get failed: ...")` | `QUEUE_COUNTER_CAPABILITIES|WRED_*` 全フラグが `"false"` のまま。WRED フィールドは `COUNTERS:<oid>` に追加されない |
 | `sai_query_stats_capability()` が `SUCCESS` 以外 (初回) | 同上 | 同上 |
@@ -346,7 +337,7 @@ catch(const std::system_error& e) {
 | `QUEUE_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"QUEUE_WATERMARK_STAT_COUNTER"` | `portsorch.h:35` | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` |
 | `WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"WRED_ECN_QUEUE_STAT_COUNTER"` | `portsorch.h:42` | `FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE` |
 
-これらの文字列は FLEX_COUNTER_DB および syncd 内部で FlexCounter グループを識別する。CONFIG_DB から変更不可。
+これらの文字列は [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) および syncd 内部で FlexCounter グループを識別する。CONFIG_DB から変更不可。
 
 ### ポーリング間隔定数 (portsorch.cpp)
 
@@ -396,8 +387,8 @@ catch(const std::system_error& e) {
 
 | 操作 | 対象 DB / テーブル | キー | 条件 |
 |------|-----------------|------|------|
-| SET `isSupported=false` | STATE_DB / `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` | orchagent 起動時 `initCounterCapabilities()` 冒頭で無条件初期化[^f1] |
-| SET `isSupported=false` | STATE_DB / `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER` | 同上[^f1] |
+| SET `isSupported=false` | [STATE_DB](../../reference/glossary.md#term-state_db) / `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` | orchagent 起動時 `initCounterCapabilities()` 冒頭で無条件初期化[^f1] |
+| SET `isSupported=false` | [STATE_DB](../../reference/glossary.md#term-state_db) / `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER` | 同上[^f1] |
 | SET `isSupported=false` | STATE_DB / `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_WRED_DROPPED_PKT_COUNTER` | 同上[^f1] |
 | SET `isSupported=false` | STATE_DB / `QUEUE_COUNTER_CAPABILITIES` | `WRED_ECN_QUEUE_WRED_DROPPED_BYTE_COUNTER` | 同上[^f1] |
 | SET `isSupported=true` | STATE_DB / `QUEUE_COUNTER_CAPABILITIES` | 上記各キー | SAI `sai_query_stats_capability()` でプラットフォームが当該統計をサポートしていると報告した場合のみ上書き[^f1] |
@@ -419,11 +410,11 @@ VoQ モード (`gMySwitchType == "voq"`) では `COUNTERS_QUEUE_NAME_MAP` の代
 
 ### FLEX_COUNTER_TABLE|QUEUE が enable — FLEX_COUNTER_DB への COUNTER_ID_LIST 書込み
 
-`addQueueFlexCountersPerPortPerQueueIndex()` が `queue_stat_manager.setCounterIdList()` を呼ぶと、swss FlexCounterManager が FLEX_COUNTER_DB の `FLEX_COUNTER_TABLE|QUEUE_STAT_COUNTER:<queue_oid>` ハッシュへ `COUNTER_ID_LIST` フィールドを書き込む:
+`addQueueFlexCountersPerPortPerQueueIndex()` が `queue_stat_manager.setCounterIdList()` を呼ぶと、swss FlexCounterManager が [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) の `FLEX_COUNTER_TABLE|QUEUE_STAT_COUNTER:<queue_oid>` ハッシュへ `COUNTER_ID_LIST` フィールドを書き込む:
 
 | 操作 | 対象 DB / テーブル | キー | フィールド | 条件 |
 |------|-----------------|------|------------|------|
-| SET | FLEX_COUNTER_DB / `FLEX_COUNTER_TABLE` | `QUEUE_STAT_COUNTER:<queue_oid>` | `COUNTER_ID_LIST=SAI_QUEUE_STAT_PACKETS,...` | `FLEX_COUNTER_TABLE\|QUEUE = enable` 後に全対象キューで実行[^f2] |
+| SET | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / `FLEX_COUNTER_TABLE` | `QUEUE_STAT_COUNTER:<queue_oid>` | `COUNTER_ID_LIST=SAI_QUEUE_STAT_PACKETS,...` | `FLEX_COUNTER_TABLE\|QUEUE = enable` 後に全対象キューで実行[^f2] |
 | SET | FLEX_COUNTER_DB / `FLEX_COUNTER_TABLE` | `QUEUE_WATERMARK_STAT_COUNTER:<queue_oid>` | `COUNTER_ID_LIST=SAI_QUEUE_STAT_SHARED_WATERMARK_BYTES` | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK = enable` 後[^f2] |
 | SET | FLEX_COUNTER_DB / `FLEX_COUNTER_TABLE` | `WRED_ECN_QUEUE_STAT_COUNTER:<queue_oid>` | `COUNTER_ID_LIST=SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS,...` | `FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE = enable` 後かつ SAI ケイパビリティ確認済みキューのみ[^f2] |
 
@@ -501,7 +492,7 @@ FLEX_COUNTER_DB / FLEX_COUNTER_TABLE|QUEUE_STAT_COUNTER:<queue_oid>
   COUNTER_ID_LIST = "SAI_QUEUE_STAT_PACKETS,SAI_QUEUE_STAT_BYTES,...(7 フィールド)"
 ```
 
-syncd は FLEX_COUNTER_DB のこのエントリを監視し、ポーリング間隔（デフォルト 10000 ms）ごとに `sai_queue_api->get_queue_stats()` を呼んで `COUNTERS_DB / COUNTERS:<queue_oid>` を更新する。**syncd の書き込みはポーリングスレッド内の `Table::set()` であり、Redis の keyspace notification が有効であれば外部から購読可能**だが、`queuestat` は notification を使わず直接 `hget` で最新値を読む。
+syncd は FLEX_COUNTER_DB のこのエントリを監視し、ポーリング間隔（デフォルト 10000 ms）ごとに `sai_queue_api->get_queue_stats()` を呼んで `COUNTERS_DB / COUNTERS:<queue_oid>` を更新する。**syncd の書き込みはポーリングスレッド内の `Table::set()` であり、[Redis](../../reference/glossary.md#term-redis) の keyspace notification が有効であれば外部から購読可能**だが、`queuestat` は notification を使わず直接 `hget` で最新値を読む。
 
 ### queuestat の読み取り方式
 
@@ -557,7 +548,7 @@ QUEUE カウンタの有効化ロジックは `gMySwitchType` によって分岐
 | switch_type | 挙動 |
 |-------------|------|
 | `"switch"` (通常スイッチ) | `FLEX_COUNTER_TABLE\|QUEUE = enable` 受信後に `getQueueConfigurations()` が `BUFFER_QUEUE` 設定を参照してカウンタ対象キューを決定。`counterpoll queue enable/disable` で制御可能 |
-| `"voq"` | **2 系統**のキューカウンタが動作する。①物理ポートの egress queue: `gMySwitchType == "voq"` 条件で `FLEX_COUNTER_TABLE|QUEUE` の有効化とは無関係に `addQueueFlexCountersPerPortPerQueueIndex()` を常時呼ぶ（`portsorch.cpp:8504-8510`）。② VOQ (Virtual Output Queue): `m_port_voq_ids` から OID を取得し `voq_stat_ids`（`SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` を含む）を合算。VOQ カウンタはバッファプロファイル設定を必要とせず常時有効（`portsorch.cpp:8483-8500`） |
+| `"voq"` | **2 系統**のキューカウンタが動作する。①物理ポートの egress queue: `gMySwitchType == "voq"` 条件で `FLEX_COUNTER_TABLE|QUEUE` の有効化とは無関係に `addQueueFlexCountersPerPortPerQueueIndex()` を常時呼ぶ（`portsorch.cpp:8504-8510`）。② [VOQ](../../reference/glossary.md#term-voq) (Virtual Output Queue): `m_port_voq_ids` から OID を取得し `voq_stat_ids`（`SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` を含む）を合算。[VOQ](../../reference/glossary.md#term-voq) カウンタはバッファプロファイル設定を必要とせず常時有効（`portsorch.cpp:8483-8500`） |
 | `"fabric"` | `FabricPortsOrch` が管理し、`FlexCounterOrch::doTask()` は `gFabricPortsOrch->allPortsReady()` を確認する。通常の QUEUE カウンタ（`COUNTERS_QUEUE_NAME_MAP` 等）は生成されない |
 | `"dpu"` | `m_queue_ids` が初期化されないプラットフォームが存在する（`portsorch.cpp:6454`）。この場合 `createPortBufferQueueCounters()` は `m_host_tx_queue` 用の 1 エントリのみ生成し、通常の QUEUE FlexCounter は登録されない |
 
@@ -609,3 +600,5 @@ VOQ モードでは `COUNTERS_QUEUE_NAME_MAP` のキー形式が通常と異な�
 [^4]: portsorch.h:34-42 および portsorch.cpp:90-91 — FlexCounter グループ名定数とハードコードポーリング間隔定義。<https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/portsorch.h#L34>
 
 [^5]: `sonic-swss/orchagent/portsorch.cpp:6583-6598,8391-8443,8700-8755` / `sonic-swss/orchagent/flexcounterorch.cpp:127-136,156-167,247-252,544-554` — 書込み順序依存・タイミング依存の実装根拠。<https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp>
+
+<!-- glossary-links-injected: 841e6cdca746 -->

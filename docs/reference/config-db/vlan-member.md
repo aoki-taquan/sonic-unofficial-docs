@@ -96,15 +96,15 @@ VLAN_MEMBER|<vlan_name>|<port>
 | 不明な `operation type` | `doVlanMemberTask` L709 | `SWSS_LOG_ERROR("Unknown operation type %s")` |
 | consumer pipe 内の重複キー | `processUntaggedVlanMembers` L584 | `SWSS_LOG_WARN("Duplicate key %s found in table:%s")` |
 
-破棄後は CONFIG_DB 側に誤エントリが残留するが `vlanmgrd` は再通知しない（silent drop）。
+破棄後は [CONFIG_DB](../../reference/glossary.md#term-config_db) 側に誤エントリが残留するが `vlanmgrd` は再通知しない（silent drop）。
 
 ### 2. 遅延リトライ (iterator increment のみ)
 
 | 失敗条件 | 検出箇所 | ログ出力 |
 |---------|---------|---------|
-| PORT/LAG が `STATE_DB` に未登録 (`isMemberStateOk()` が false) | `doVlanMemberTask` L642-645 | `SWSS_LOG_DEBUG("%s not ready, delaying")` |
+| PORT/[LAG](../../reference/glossary.md#term-lag) が `STATE_DB` に未登録 (`isMemberStateOk()` が false) | `doVlanMemberTask` L642-645 | `SWSS_LOG_DEBUG("%s not ready, delaying")` |
 | VLAN が `STATE_VLAN_TABLE` に未登録 (`isVlanStateOk()` が false) | `doVlanMemberTask` L642-645 | `SWSS_LOG_DEBUG("%s not ready, delaying")` |
-| PortChannel の `addHostVlanMember()` が `false` を返す (LAG 削除レース) | `doVlanMemberTask` L683-686 | `SWSS_LOG_INFO("Netdevice for %s not ready, delaying")` |
+| [PortChannel](../../reference/glossary.md#term-portchannel) の `addHostVlanMember()` が `false` を返す (LAG 削除レース) | `doVlanMemberTask` L683-686 | `SWSS_LOG_INFO("Netdevice for %s not ready, delaying")` |
 | PAC 経路でポート/VLAN が未 ready | `doVlanPacVlanMemberTask` L866-870 | `SWSS_LOG_DEBUG("%s not ready, delaying")` |
 
 条件が解消され次第（ポート初期化完了・VLAN 作成完了）自動的に再試行される。
@@ -113,10 +113,10 @@ VLAN_MEMBER|<vlan_name>|<port>
 
 | 失敗ケース | コード | 挙動 |
 |---------|------|------|
-| PortChannel の `bridge vlan add` 失敗 | `addHostVlanMember` L258-265 | `return false` → 呼び出し元で `it++` retry（LAG 削除レース想定） |
+| [PortChannel](../../reference/glossary.md#term-portchannel) の `bridge vlan add` 失敗 | `addHostVlanMember` L258-265 | `return false` → 呼び出し元で `it++` retry（LAG 削除レース想定） |
 | Ethernet の `bridge vlan add` 失敗（2 回目） | `addHostVlanMember` L267-269 | 例外再スロー → `vlanmgrd` クラッシュ → supervisor 再起動 |
-| `sai_vlan_api->create_vlan_member()` 失敗 (orchagent) | `portsorch.cpp` `handleSaiCreateStatus` | retryable なら `it++`、非 retryable なら `erase(it)` |
-| orchagent 側の PORT/VLAN 未解決 | `portsorch.cpp` `getPort()` 失敗 | `it++; continue;` で保留 |
+| `sai_vlan_api->create_vlan_member()` 失敗 ([orchagent](../../reference/glossary.md#term-orchagent)) | `portsorch.cpp` `handleSaiCreateStatus` | retryable なら `it++`、非 retryable なら `erase(it)` |
+| [orchagent](../../reference/glossary.md#term-orchagent) 側の PORT/VLAN 未解決 | `portsorch.cpp` `getPort()` 失敗 | `it++; continue;` で保留 |
 
 PortChannel は bridge コマンド失敗を `return false` で吸収しリトライするが、Ethernet はハードエラー扱いで `vlanmgrd` 再起動となる非対称設計。
 
@@ -151,7 +151,7 @@ PortChannel は bridge コマンド失敗を `return false` で吸収しリト�
 
 ### SAI VLAN_MEMBER 属性 (portsorch.cpp)
 
-`sai_vlan_api->create_vlan_member()` 呼び出し時に設定される SAI 属性。
+`sai_vlan_api->create_vlan_member()` 呼び出し時に設定される [SAI](../../reference/glossary.md#term-sai) 属性。
 
 | SAI 属性 | 値 / 用途 |
 |---------|---------|
@@ -161,7 +161,7 @@ PortChannel は bridge コマンド失敗を `return false` で吸収しリト�
 
 ### tagging_mode → SAI 列挙値マッピング (portsorch.cpp:7540–7547)
 
-| CONFIG_DB 値 | SAI 定数 |
+| [CONFIG_DB](../../reference/glossary.md#term-config_db) 値 | SAI 定数 |
 |------------|---------|
 | `"untagged"` | `SAI_VLAN_TAGGING_MODE_UNTAGGED` |
 | `"tagged"` | `SAI_VLAN_TAGGING_MODE_TAGGED` |
@@ -184,7 +184,7 @@ SAI 側の初期値は `SAI_VLAN_TAGGING_MODE_TAGGED` (portsorch.cpp:7540)。マ
 
 `priority_tagged` は YANG typedef (`sonic-types.yang`) に列挙されておりコードでも受理されるが、CLI (`config/vlan.py:407`) は `"untagged"` / `"tagged"` のみを書き込み、`priority_tagged` を設定する CLI 経路は存在しない。
 
-加えて、`priority_tagged` と `untagged` は Linux bridge レベルでは同一コマンド (`bridge vlan add ... pvid untagged`) が使われる (vlanmgr.cpp:238) が、orchagent は SAI では `SAI_VLAN_TAGGING_MODE_PRIORITY_TAGGED` として区別する。Linux ホスト転送と ASIC 転送で動作が乖離する。
+加えて、`priority_tagged` と `untagged` は Linux bridge レベルでは同一コマンド (`bridge vlan add ... pvid untagged`) が使われる (vlanmgr.cpp:238) が、[orchagent](../../reference/glossary.md#term-orchagent) は SAI では `SAI_VLAN_TAGGING_MODE_PRIORITY_TAGGED` として区別する。Linux ホスト転送と ASIC 転送で動作が乖離する。
 
 ### APP_DB フィールド欠落伝播
 
@@ -206,18 +206,18 @@ vlanmgr.cpp:672 は CONFIG_DB の raw フィールド列をそのまま APP_DB �
 | # | 依存関係 | 方向 | 違反時挙動 |
 |---|----------|------|-----------|
 | 1 | `VLAN` SET 完了 → `VLAN_MEMBER` SET (STATE_VLAN_TABLE ready 待ち) | **強制先行** | 自動リトライ待機（エラーなし） |
-| 2 | `PORT` STATE_DB ready → `VLAN_MEMBER` SET（物理ポート） | **強制先行** | 自動リトライ待機（エラーなし） |
-| 3 | `PORTCHANNEL` STATE_DB ready → `VLAN_MEMBER` SET（LAG） | **強制先行** | 自動リトライ待機（エラーなし） |
+| 2 | `PORT` [STATE_DB](../../reference/glossary.md#term-state_db) ready → `VLAN_MEMBER` SET（物理ポート） | **強制先行** | 自動リトライ待機（エラーなし） |
+| 3 | `PORTCHANNEL` [STATE_DB](../../reference/glossary.md#term-state_db) ready → `VLAN_MEMBER` SET（LAG） | **強制先行** | 自動リトライ待機（エラーなし） |
 | 4 | `VLAN_MEMBER` DEL 完了 → `VLAN` DEL | **必須（逆順 NG）** | VLAN_MEMBER が孤立・保留永続 |
 | 5 | `INTERFACE` (L3) と `VLAN_MEMBER` は同一 port で排他 | 双方向排他 | `addBridgePort` 拒否、追加不可 |
 
 ### 主要な制約詳細
 
-**VLAN 先行必須 (依存 #1)**: `VLAN_MEMBER|Vlan<N>|<port>` の SET 前に `VLAN|Vlan<N>` が vlanmgrd に処理され STATE_DB `VLAN_TABLE|Vlan<N>` に `state=ok` が立っていること。`isVlanStateOk()` (vlanmgr.cpp:517-531) が false の間、該当 VLAN_MEMBER タスクは `it++` で保留される（`SWSS_LOG_DEBUG("%s not ready, delaying")`）。APPL_DB には書かれず外部から無反応に見える（evidence: vlanmgr.cpp:517-531, 641-647）。
+**VLAN 先行必須 (依存 #1)**: `VLAN_MEMBER|Vlan<N>|<port>` の SET 前に `VLAN|Vlan<N>` が [vlanmgrd](../../reference/glossary.md#term-vlanmgrd) に処理され STATE_DB `VLAN_TABLE|Vlan<N>` に `state=ok` が立っていること。`isVlanStateOk()` (vlanmgr.cpp:517-531) が false の間、該当 VLAN_MEMBER タスクは `it++` で保留される（`SWSS_LOG_DEBUG("%s not ready, delaying")`）。[APPL_DB](../../reference/glossary.md#term-appl_db) には書かれず外部から無反応に見える（evidence: vlanmgr.cpp:517-531, 641-647）。
 
-**PORT/PORTCHANNEL 先行必須 (依存 #2/3)**: `isMemberStateOk()` (vlanmgr.cpp:491-514) が確認する内容: 物理ポートは `STATE_PORT_TABLE|<port>` エントリの存在かつ `state` フィールドが存在すること、PortChannel は `STATE_LAG_TABLE|<lag>` エントリの存在。portmgrd / lagmgrd が ready を書くまで VLAN_MEMBER は保留（evidence: vlanmgr.cpp:491-514, 641-647）。
+**PORT/PORTCHANNEL 先行必須 (依存 #2/3)**: `isMemberStateOk()` (vlanmgr.cpp:491-514) が確認する内容: 物理ポートは `STATE_PORT_TABLE|<port>` エントリの存在かつ `state` フィールドが存在すること、PortChannel は `STATE_LAG_TABLE|<lag>` エントリの存在。[portmgrd](../../reference/glossary.md#term-portmgrd) / lagmgrd が ready を書くまで VLAN_MEMBER は保留（evidence: vlanmgr.cpp:491-514, 641-647）。
 
-**SAI vlan_member 生成順序 (portsorch)**: `portsorch::doVlanMemberTask()` は APPL_DB `VLAN_MEMBER_TABLE` を受けて `addBridgePort(port) && addVlanMember(vlan, port, tagging_mode)` の短絡評価で処理する。bridge port 作成成功後に `sai_vlan_api->create_vlan_member()` が呼ばれる（SAI 属性順: `SAI_VLAN_MEMBER_ATTR_VLAN_ID` → `SAI_VLAN_MEMBER_ATTR_BRIDGE_PORT_ID` → `SAI_VLAN_MEMBER_ATTR_VLAN_TAGGING_MODE`）。その前に `getPort(vlan_alias)` と `getPort(port_alias)` で VLAN・PORT が `m_portList` に存在することを確認しており、未登録なら `it++` 保留（evidence: portsorch.cpp:5895-5940, 7531-7553）。
+**SAI vlan_member 生成順序 (portsorch)**: `portsorch::doVlanMemberTask()` は [APPL_DB](../../reference/glossary.md#term-appl_db) `VLAN_MEMBER_TABLE` を受けて `addBridgePort(port) && addVlanMember(vlan, port, tagging_mode)` の短絡評価で処理する。bridge port 作成成功後に `sai_vlan_api->create_vlan_member()` が呼ばれる（SAI 属性順: `SAI_VLAN_MEMBER_ATTR_VLAN_ID` → `SAI_VLAN_MEMBER_ATTR_BRIDGE_PORT_ID` → `SAI_VLAN_MEMBER_ATTR_VLAN_TAGGING_MODE`）。その前に `getPort(vlan_alias)` と `getPort(port_alias)` で VLAN・PORT が `m_portList` に存在することを確認しており、未登録なら `it++` 保留（evidence: portsorch.cpp:5895-5940, 7531-7553）。
 
 **DEL 逆順必須 (依存 #4)**: `doVlanTask()` DEL (vlanmgr.cpp:456-471) は VLAN_MEMBER の残存チェックを行わずに `m_stateVlanTable.del()` を即実行する。VLAN を先に DEL すると STATE_DB から `Vlan<N>` が消え、残存 VLAN_MEMBER は `isVlanStateOk()` が永遠に false になり孤立保留状態となる。削除は `VLAN_MEMBER` → `VLAN` の順が必須。portsorch 側の DEL は VLAN_MEMBER 削除後に `bridge port ref_count == 0` であれば `removeBridgePort()` を実行する（VLAN_MEMBER 先・bridge port 後の逆順、evidence: portsorch.cpp:5949-5958）。
 
@@ -334,7 +334,6 @@ show vlan brief
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -354,20 +353,20 @@ show vlan brief
 ### 段階 4: タイミング + 副作用
 
 - VLAN テーブルと PORT テーブルが両方処理済みであることが前提。
-- 副作用: ポートを VLAN から削除すると、そのポートの MAC エントリが FDB から自動削除される。
+- 副作用: ポートを VLAN から削除すると、そのポートの MAC エントリが [FDB](../../reference/glossary.md#term-fdb) から自動削除される。
 
 <!-- /runtime-trace -->
 <!-- pubsub -->
 ## 通信メカニズム — Redis Pub/Sub
 
-`VLAN_MEMBER` テーブルは **ConsumerStateTable** (Redis PUBLISH/SUBSCRIBE チャンネルベース) を用いて購読される。`SubscriberStateTable` (keyspace PSUBSCRIBE) は使用しない。
+`VLAN_MEMBER` テーブルは **[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** ([Redis](../../reference/glossary.md#term-redis) PUBLISH/SUBSCRIBE チャンネルベース) を用いて購読される。`SubscriberStateTable` (keyspace PSUBSCRIBE) は使用しない。
 
 ### 購読経路
 
-| 購読者 | 購読テーブル | Redis チャンネル | 処理ハンドラ |
+| 購読者 | 購読テーブル | [Redis](../../reference/glossary.md#term-redis) チャンネル | 処理ハンドラ |
 |--------|------------|-----------------|-------------|
 | `vlanmgrd` | CONFIG_DB `VLAN_MEMBER` | `VLAN_MEMBER_CHANNEL@<cfgDbId>` | `doVlanMemberTask()` |
-| `orchagent` (VlanOrch) | APPL_DB `APP_VLAN_MEMBER_TABLE` | `APP_VLAN_MEMBER_TABLE_CHANNEL@<appDbId>` | VlanOrch::doTask() |
+| `orchagent` (VlanOrch) | [APPL_DB](../../reference/glossary.md#term-appl_db) `APP_VLAN_MEMBER_TABLE` | `APP_VLAN_MEMBER_TABLE_CHANNEL@<appDbId>` | VlanOrch::doTask() |
 
 ### CONFIG_DB → vlanmgrd → APPL_DB → orchagent → SAI の全体フロー
 
@@ -410,11 +409,11 @@ PAC 経路では `tagging_mode = "untagged"` が固定で注入され、APP_DB �
 
 | 特性 | 値 |
 |------|----|
-| 通知プリミティブ | Redis PUBLISH/SUBSCRIBE (`ConsumerStateTable`) |
+| 通知プリミティブ | [Redis](../../reference/glossary.md#term-redis) PUBLISH/SUBSCRIBE (`ConsumerStateTable`) |
 | PUBLISH ペイロード | 固定文字列 `"G"` |
 | keyspace notification | 不使用 |
 | バッチサイズ | `gBatchSize` (デフォルト 128) |
-| Select タイムアウト | 1000ms (vlanmgrd.cpp:22) |
+| Select タイムアウト | 1000ms ([vlanmgrd](../../reference/glossary.md#term-vlanmgrd).cpp:22) |
 | タイムアウト時動作 | `vlanmgr.doTask()` で retry (ポート/VLAN 未準備待ち) |
 | warm-restart 対応 | `m_vlanMemberReplay` で STATE_DB 既存エントリをスキップ |
 | Linux bridge 操作 | `bridge vlan add/del` + `ip link set master/nomaster` |
@@ -454,7 +453,7 @@ LAG の場合は `catch(runtime_error)` でキャッチし `return false` → �
 
 ### SAI 失敗（orchagent 側）
 
-orchagent の `VlanOrch` が `sai_vlan_api->create_vlan_member()` を呼び出す際に SAI エラーが返った場合、orchagent は `SWSS_LOG_ERROR` を出力してそのエントリをドロップする（retry なし）。STATE_DB の `VLAN_MEMBER` エントリは `state=ok` にならず、vlanmgrd が次回の consumer loop で未完了エントリを再処理しようとするが、SAI 側がエラーを返し続ける場合は永続的に未設定となる。
+orchagent の `VlanOrch` が `sai_vlan_api->create_vlan_member()` を呼び出す際に SAI エラーが返った場合、orchagent は `SWSS_LOG_ERROR` を出力してそのエントリをドロップする（retry なし）。STATE_DB の `VLAN_MEMBER` エントリは `state=ok` にならず、[vlanmgrd](../../reference/glossary.md#term-vlanmgrd) が次回の consumer loop で未完了エントリを再処理しようとするが、SAI 側がエラーを返し続ける場合は永続的に未設定となる。
 
 ### tagging_mode 不正値
 
@@ -484,14 +483,14 @@ APPL_DB に書き込まれるフィールド: CONFIG_DB の raw フィールド�
 
 ### PortsOrch::addVlanMember / removeVlanMember による書込み (orchagent/portsorch.cpp)
 
-APPL_DB `VLAN_MEMBER_TABLE` を PortsOrch が購読し SAI 呼び出しを行い、syncd 経由で ASIC_DB へ書き込まれる。
+APPL_DB `VLAN_MEMBER_TABLE` を PortsOrch が購読し SAI 呼び出しを行い、[syncd](../../reference/glossary.md#term-syncd) 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) へ書き込まれる。
 
 | 操作 | 対象 DB / テーブル | キー / フィールド | 条件 |
 |------|-----------------|-----------------|------|
-| SET: `sai_vlan_api->create_vlan_member(...)` | ASIC_DB / `ASIC_STATE:SAI_OBJECT_TYPE_VLAN_MEMBER:<oid>` | `SAI_VLAN_MEMBER_ATTR_VLAN_ID`, `SAI_VLAN_MEMBER_ATTR_BRIDGE_PORT_ID`, `SAI_VLAN_MEMBER_ATTR_VLAN_TAGGING_MODE` | 常時[^se2] |
-| SET: `setPortPvid(port, vlan_id)` (SAI_PORT_ATTR_PORT_VLAN_ID) | ASIC_DB (SAI 経由) | ポート OID | `tagging_mode == "untagged"` かつ非 TUNNEL の場合[^se2] |
+| SET: `sai_vlan_api->create_vlan_member(...)` | [ASIC_DB](../../reference/glossary.md#term-asic_db) / `ASIC_STATE:SAI_OBJECT_TYPE_VLAN_MEMBER:<oid>` | `SAI_VLAN_MEMBER_ATTR_VLAN_ID`, `SAI_VLAN_MEMBER_ATTR_BRIDGE_PORT_ID`, `SAI_VLAN_MEMBER_ATTR_VLAN_TAGGING_MODE` | 常時[^se2] |
+| SET: `setPortPvid(port, vlan_id)` (SAI_PORT_ATTR_PORT_VLAN_ID) | [ASIC_DB](../../reference/glossary.md#term-asic_db) (SAI 経由) | ポート OID | `tagging_mode == "untagged"` かつ非 TUNNEL の場合[^se2] |
 | DEL: `sai_vlan_api->remove_vlan_member(vlan_member_id)` | ASIC_DB / `ASIC_STATE:SAI_OBJECT_TYPE_VLAN_MEMBER:<oid>` 削除 | `<oid>` | 常時[^se2] |
-| DEL (FDB 連鎖): FDB エントリ自動削除 | ASIC_DB / FDB エントリ | — | ポートが VLAN から除去された際 fdborch が `SUBJECT_TYPE_VLAN_MEMBER_CHANGE` を受信して削除[^se3] |
+| DEL ([FDB](../../reference/glossary.md#term-fdb) 連鎖): [FDB](../../reference/glossary.md#term-fdb) エントリ自動削除 | ASIC_DB / FDB エントリ | — | ポートが VLAN から除去された際 fdborch が `SUBJECT_TYPE_VLAN_MEMBER_CHANGE` を受信して削除[^se3] |
 
 ### カーネル操作 (DB 外)
 
@@ -503,7 +502,7 @@ APPL_DB `VLAN_MEMBER_TABLE` を PortsOrch が購読し SAI 呼び出しを行い
 
 ### COUNTERS_DB
 
-VLAN_MEMBER SET/DEL 単体では **COUNTERS_DB への書込みはない**。
+VLAN_MEMBER SET/DEL 単体では **[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込みはない**。
 
 ### 副作用サマリ
 
@@ -511,10 +510,10 @@ VLAN_MEMBER SET/DEL 単体では **COUNTERS_DB への書込みはない**。
 |-----|---------|---------|-----|-----|
 | APPL_DB | `VLAN_MEMBER_TABLE` | `Vlan<id>\|<port>` | 書込 (vlanmgrd) | 削除 (vlanmgrd) |
 | STATE_DB | `VLAN_MEMBER_TABLE` | `Vlan<id>\|<port>` | `{state: ok}` 書込 (vlanmgrd) | 削除 (vlanmgrd) |
-| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_VLAN_MEMBER:<oid>` | OID | syncd 経由で作成 | syncd 経由で削除 |
+| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_VLAN_MEMBER:<oid>` | OID | [syncd](../../reference/glossary.md#term-syncd) 経由で作成 | [syncd](../../reference/glossary.md#term-syncd) 経由で削除 |
 | ASIC_DB | ポート属性 `SAI_PORT_ATTR_PORT_VLAN_ID` | ポート OID | `untagged` 時に PVID 書込 | — |
 | ASIC_DB | FDB エントリ | — | — | ポート削除時に自動削除 (fdborch) |
-| COUNTERS_DB | — | — | 書込なし | 書込なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | — | — | 書込なし | 書込なし |
 
 [^se1]: `sonic-swss/cfgmgr/vlanmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp>
 [^se2]: `sonic-swss/orchagent/portsorch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/portsorch.cpp>
@@ -528,15 +527,15 @@ VLAN_MEMBER テーブルへの書き込みが発生するコード経路を網�
 
 ### CLI
 
-  - `config vlan member add/del ...` — `config/vlan.py` が `set_entry('VLAN_MEMBER', (vlan, port), {'tagging_mode': ...})` を呼ぶ (sonic-utilities/config/vlan.py:407, 451)
+  - `config vlan member add/del ...` — `config/vlan.py` が `set_entry('VLAN_MEMBER', (vlan, port), {'tagging_mode': ...})` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/vlan.py:407, 451)
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** が VLAN_MEMBER を生成し投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py)
+**minigraph.py** が VLAN_MEMBER を生成し投入 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py)
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -560,11 +559,11 @@ db_migrator.py での VLAN_MEMBER マイグレーションなし
 
 ### EVPN `end_point_ip` — `SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` 非対応 ASIC でメンバ追加失敗
 
-APP_DB `VLAN_MEMBER_TABLE` エントリに `end_point_ip` が付与される EVPN VXLAN BUM flooding 構成では、`addVlanMember()` (portsorch.cpp:7517-7521) が起動時照会した flood control capability に `SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` が含まれない場合 `"Flood group with end point ip is not supported"` を返して即時失敗する。VS SAI は `ALL` / `NONE` / `L2MC_GROUP` の 3 種のみ返すため、**VS 環境では `end_point_ip` を持つ VLAN_MEMBER は常に設定不可**。Broadcom TD3/TH 系は多くの場合 `COMBINED` をサポートする。CONFIG_DB の VLAN_MEMBER テーブル自体は `end_point_ip` フィールドを持たない（YANG 外・VxlanOrch が APP_DB に動的注入）。
+APP_DB `VLAN_MEMBER_TABLE` エントリに `end_point_ip` が付与される [EVPN](../../reference/glossary.md#term-evpn) [VXLAN](../../reference/glossary.md#term-vxlan) BUM flooding 構成では、`addVlanMember()` (portsorch.cpp:7517-7521) が起動時照会した flood control capability に `SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` が含まれない場合 `"Flood group with end point ip is not supported"` を返して即時失敗する。VS SAI は `ALL` / `NONE` / `L2MC_GROUP` の 3 種のみ返すため、**VS 環境では `end_point_ip` を持つ VLAN_MEMBER は常に設定不可**。Broadcom TD3/TH 系は多くの場合 `COMBINED` をサポートする。CONFIG_DB の VLAN_MEMBER テーブル自体は `end_point_ip` フィールドを持たない（YANG 外・VxlanOrch が APP_DB に動的注入）。
 
 ### TUNNEL ポートへの PVID 設定スキップ
 
-`tagging_mode=untagged` で VLAN_MEMBER に追加されるポートが `Port::TUNNEL` 型（VXLAN トンネルポート）の場合、`setPortPvid()` による SAI PVID 設定を**スキップ**する (portsorch.cpp:7568-7575)。`removeVlanMember()` 時も同条件でスキップ (portsorch.cpp:7905-7912)。TUNNEL ポートに PVID の概念が適用されないための処置。VXLAN EVPN 構成では `tagging_mode=untagged` を設定しても SAI 側で PVID は変更されない。
+`tagging_mode=untagged` で VLAN_MEMBER に追加されるポートが `Port::TUNNEL` 型（[VXLAN](../../reference/glossary.md#term-vxlan) トンネルポート）の場合、`setPortPvid()` による SAI PVID 設定を**スキップ**する (portsorch.cpp:7568-7575)。`removeVlanMember()` 時も同条件でスキップ (portsorch.cpp:7905-7912)。TUNNEL ポートに PVID の概念が適用されないための処置。[VXLAN](../../reference/glossary.md#term-vxlan) [EVPN](../../reference/glossary.md#term-evpn) 構成では `tagging_mode=untagged` を設定しても SAI 側で PVID は変更されない。
 
 ### Storage Backend T0 — minigraph 経由で全メンバを強制 `tagged`
 
@@ -572,11 +571,11 @@ APP_DB `VLAN_MEMBER_TABLE` エントリに `end_point_ip` が付与される EVP
 
 ### SmartSwitch DPU — SAI 1Q Bridge 初期化省略
 
-`gMySwitchType == "dpu"` 時、orchagent は SAI デフォルト 1Q Bridge/VLAN の取得・デフォルトメンバ削除・FDB event notify 設定をすべてスキップする (portsorch.cpp:987-1066)。一方 vlanmgrd は `gMySwitchType` を参照せず DPU 上でも Linux kernel bridge を通常通り作成する。結果として DPU では kernel bridge は存在するが SAI VLAN 初期状態が通常と異なり、VLAN_MEMBER を CONFIG_DB に書いても SAI 側の VLAN member 作成が不完全になる可能性がある。SmartSwitch NPU 側の VLAN_MEMBER 操作は通常通り動作する。
+`gMySwitchType == "dpu"` 時、orchagent は SAI デフォルト 1Q Bridge/VLAN の取得・デフォルトメンバ削除・FDB event notify 設定をすべてスキップする (portsorch.cpp:987-1066)。一方 vlanmgrd は `gMySwitchType` を参照せず [DPU](../../reference/glossary.md#term-dpu) 上でも Linux kernel bridge を通常通り作成する。結果として [DPU](../../reference/glossary.md#term-dpu) では kernel bridge は存在するが SAI VLAN 初期状態が通常と異なり、VLAN_MEMBER を CONFIG_DB に書いても SAI 側の VLAN member 作成が不完全になる可能性がある。[SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) 側の VLAN_MEMBER 操作は通常通り動作する。
 
 ### VOQ Chassis — VLAN_MEMBER への直接影響なし
 
-VOQ Chassis の Inband インタフェースに `Vlan` タイプが定義されているが "not used, adding to be future proof" の状態 (minigraph.py:906)。vlanmgr.cpp / portsorch.cpp の `addVlanMember()` / `removeVlanMember()` に VOQ 固有分岐はなく、通常の物理 T0 と同一の処理経路を通る。
+[VOQ](../../reference/glossary.md#term-voq) Chassis の Inband インタフェースに `Vlan` タイプが定義されているが "not used, adding to be future proof" の状態 (minigraph.py:906)。vlanmgr.cpp / portsorch.cpp の `addVlanMember()` / `removeVlanMember()` に [VOQ](../../reference/glossary.md#term-voq) 固有分岐はなく、通常の物理 T0 と同一の処理経路を通る。
 
 ### Multi-ASIC — CLI で `--namespace` 必須
 
@@ -584,4 +583,4 @@ Multi-ASIC 環境では `config vlan member add/del` に `--namespace` が必須
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: eff92f9fe9ff -->

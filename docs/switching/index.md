@@ -13,12 +13,12 @@ last_verified: 2026-05-13
 
 L2 / link layer の制御面を扱う。具体的には:
 
-- **VLAN / Switchport モード**: access / trunk / routed、VLAN range、OpenConfig YANG 対応
-- **LAG (PortChannel)**: teammgrd、LACP、warm-reboot 中の retry、分散 VOQ シャシでの system LAG
+- **VLAN / Switchport モード**: access / trunk / routed、VLAN range、OpenConfig [YANG](../reference/glossary.md#term-yang) 対応
+- **LAG ([PortChannel](../reference/glossary.md#term-portchannel))**: teammgrd、[LACP](../reference/glossary.md#term-lacp)、warm-reboot 中の retry、分散 [VOQ](../reference/glossary.md#term-voq) シャシでの system LAG
 - **MCLAG / ICCP**: dynamic config、unique IP、isolation group
 - **MSTP**: Multiple Spanning Tree Protocol on SONiC
 - **MACsec**: wpa_supplicant 連携、Gearbox PHY 上の backend 選択、FIPS POST
-- **L2 forwarding**: FDB flush / aging、static MAC、リンクイベントダンピング、Wake-on-LAN
+- **L2 forwarding**: [FDB](../reference/glossary.md#term-fdb) flush / aging、static MAC、リンクイベントダンピング、Wake-on-LAN
 
 ## この章の読み方
 目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
@@ -38,10 +38,10 @@ L2 / link layer の制御面を扱う。具体的には:
 
 ## 扱わない範囲
 
-- L3 機能（IP routing / BGP / VRF）は [routing](../routing/index.md) 章
-- L2 over IP (VXLAN / NVGRE / VNet) は [overlay](../overlay/index.md) 章
-- ACL / QoS / buffer / scheduler は [acl-qos](../acl-qos/index.md) 章
-- PortChannel / VLAN の **CLI コマンド一覧** や **CONFIG_DB テーブル定義** は [reference](../reference/index.md) 章
+- L3 機能（IP routing / [BGP](../reference/glossary.md#term-bgp) / [VRF](../reference/glossary.md#term-vrf)）は [routing](../routing/index.md) 章
+- L2 over IP ([VXLAN](../reference/glossary.md#term-vxlan) / NVGRE / VNet) は [overlay](../overlay/index.md) 章
+- [ACL](../reference/glossary.md#term-acl) / [QoS](../reference/glossary.md#term-qos) / buffer / scheduler は [acl-qos](../acl-qos/index.md) 章
+- PortChannel / VLAN の **CLI コマンド一覧** や **[CONFIG_DB](../reference/glossary.md#term-config_db) テーブル定義** は [reference](../reference/index.md) 章
 ## 検証状況
 - ページ数: 19
 - 分布: Code-verified: 12 / Discrepancy-found: 4 / HLD-only: 3
@@ -81,4 +81,4 @@ L2 / link layer の制御面を扱う。具体的には:
 | [リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）](link-event-damping-hld.md) | Discrepancy-found |
 | [分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）](lag-on-distributed-voq-system.md) | HLD-only |
 
-<!-- glossary-links-injected: 95e3a922d639 -->
+<!-- glossary-links-injected: ced6bb784b29 -->

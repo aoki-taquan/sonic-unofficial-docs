@@ -25,18 +25,32 @@ hard: 0
 
 ## 概要
 
-`TELEMETRY_CLIENT` テーブルの `Subscription` および `DestinationGroup` エントリ、ならびに `Global` セクションのフィールド仕様を、YANG 定義とコード実装の両面から詳細に記述する。
+`TELEMETRY_CLIENT` テーブルの `Subscription` および `DestinationGroup` エントリ、ならびに `Global` セクションのフィールド仕様を、[YANG](../../reference/glossary.md#term-yang) 定義とコード実装の両面から詳細に記述する。
 
 概要・key 構造の全体像は [`TELEMETRY_CLIENT テーブル`](telemetry-client.md) を参照。本ページは **コード由来デフォルト・実装乖離 (discrepancy)** に焦点を当てる。
 
 <!-- defaults -->
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>TELEMETRY_CLIENT")]
+  DM["telemetry"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## 暗黙デフォルトとコード由来挙動
 
 <!-- evidence: meta/_intermediate/cdb-flow/subscription-config-defaults.md -->
 
 ### 1. `report_interval` — YANG・実装ともに 5000 ms
 
-**YANG 定義** (`sonic-telemetry_client.yang:134`):
+**[YANG](../../reference/glossary.md#term-yang) 定義** (`sonic-telemetry_client.yang:134`):
 
 ```yang
 leaf report_interval {
@@ -56,7 +70,7 @@ cs := clientSubscription{
 }
 ```
 
-YANG と実装が一致。`report_interval` を CONFIG_DB に書かない場合、dial-out クライアントは **5000 ms (5 秒) 周期** で報告する。
+YANG と実装が一致。`report_interval` を [CONFIG_DB](../../reference/glossary.md#term-config_db) に書かない場合、dial-out クライアントは **5000 ms (5 秒) 周期** で報告する。
 
 ---
 
@@ -247,7 +261,7 @@ docker logs gnmi 2>&1 | grep -i "subscription\|dialout\|clientSubscription"
 <!-- evidence: meta/_intermediate/cdb-flow/subscription-config-ordering.md -->
 
 `DialOutRun()` / `processTelemetryClientConfig()` (`sonic-gnmi/dialout/dialout_client/dialout_client.go`) における
-CONFIG_DB エントリ処理の順序依存を以下に示す。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) エントリ処理の順序依存を以下に示す。
 
 ### 検出された順序依存
 
@@ -274,7 +288,7 @@ if !ok {
 ```
 
 このため `TELEMETRY_CLIENT|DestinationGroup_<name>` は必ず `TELEMETRY_CLIENT|Subscription_<name>` より
-先に CONFIG_DB に存在している必要がある。
+先に [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在している必要がある。
 
 **Global 変更による全接続リセット (依存 #2)**:
 `Global` の任意フィールドを変更すると、`processTelemetryClientConfig()` は `destGrpNameMap` の
@@ -315,8 +329,8 @@ Global エントリが省略された構成では収束トリガーが発生し�
 | 参照先 | 参照機構 | 条件 | evidence |
 |--------|---------|------|---------|
 | `/var/run/redis/sonic-db/database_config.json` | `sdcfg.GetDbId/GetDbSock/GetDbTcpAddr` — CONFIG_DB 接続確立に必須 | 常時 | `sonic_db_config/db_config.go:14`, `dialout_client.go:650-674` |
-| `path_target` 指定の Redis DB (`APPL_DB` / `CONFIG_DB` / `COUNTERS_DB` / `STATE_DB` 等) | `sdc.NewDbClient` → `database_config.json` 経由でDB接続 | `Subscription_<name>` に有効な `path_target` が設定されている場合 | `dialout_client.go:199-200`, `sonic_data_client/db_client.go:186-207` |
-| `paths` フィールドで指定するテーブルの実データ | `populateAllDbtablePath` が `paths` を実 Redis テーブルキーへ展開 | Subscription が接続済みかつ `paths` 非空の場合 | `sonic_data_client/db_client.go:204` |
+| `path_target` 指定の [Redis](../../reference/glossary.md#term-redis) DB (`APPL_DB` / `CONFIG_DB` / `COUNTERS_DB` / `STATE_DB` 等) | `sdc.NewDbClient` → `database_config.json` 経由でDB接続 | `Subscription_<name>` に有効な `path_target` が設定されている場合 | `dialout_client.go:199-200`, `sonic_data_client/db_client.go:186-207` |
+| `paths` フィールドで指定するテーブルの実データ | `populateAllDbtablePath` が `paths` を実 [Redis](../../reference/glossary.md#term-redis) テーブルキーへ展開 | Subscription が接続済みかつ `paths` 非空の場合 | `sonic_data_client/db_client.go:204` |
 | 外部 gRPC コレクタ (`dst_addr` の `host:port`) | TCP/gRPC ネットワーク接続 | `DestinationGroup_<name>` に有効な `dst_addr` が設定されている場合 | `dialout_client.go:531-543` |
 
 ### path_target による暗黙参照 DB の選択
@@ -325,7 +339,7 @@ Global エントリが省略された構成では収束トリガーが発生し�
 
 | `path_target` 値 | 使用クライアント | 暗黙参照 DB |
 |-----------------|----------------|------------|
-| `"OTHERS"` | `sdc.NewNonDbClient` | Redis DB 非経由（ファイルシステム等） |
+| `"OTHERS"` | `sdc.NewNonDbClient` | [Redis](../../reference/glossary.md#term-redis) DB 非経由（ファイルシステム等） |
 | `"OC_YANG"` | `sdc.NewTranslClient` | `database_config.json` 経由で適切な DB |
 | `APPL_DB` / `CONFIG_DB` / `COUNTERS_DB` / `STATE_DB` | `sdc.NewDbClient` | `database_config.json` で対応する Redis DB |
 
@@ -337,7 +351,7 @@ YANG (`sonic-telemetry_client.yang`) は `path_target` を enum として定義 
 | 参照元 | 参照機構 | 効果 |
 |--------|---------|------|
 | `dialout_client.go` (`DialOutRun`) | `PSubscribe("__keyspace@N__:TELEMETRY_CLIENT|*")` で CONFIG_DB キースペース通知を購読 | `hset` / `hdel` 発生時に `processTelemetryClientConfig` が呼ばれ、クライアント起動・停止・更新が行われる |
-| `sonic-mgmt-framework` (gNMI/REST) | YANG `sonic-telemetry_client` モジュール経由でフィールド書き込み | CONFIG_DB への HSET が `DialOutRun` イベントループで拾われる |
+| `sonic-mgmt-framework` ([gNMI](../../reference/glossary.md#term-gnmi)/REST) | YANG `sonic-telemetry_client` モジュール経由でフィールド書き込み | CONFIG_DB への HSET が `DialOutRun` イベントループで拾われる |
 
 !!! note "TELEMETRY テーブルとの関係"
     `TELEMETRY` テーブル（dial-in gnmi-server 設定）と `TELEMETRY_CLIENT` テーブル（dial-out）は同一 CONFIG_DB に存在するが、`dialout_client.go` は `TELEMETRY` テーブルを直接読まない。両者は設計上の姉妹テーブルであり、接続方向（in/out）のみが異なる。
@@ -470,10 +484,10 @@ CONFIG_DB `TELEMETRY_CLIENT` テーブルの変更に伴って `dialout_client.g
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `redisDb.HGetAll` / `PSubscribe` / `Keys` 以外の Redis 操作なし (`dialout_client.go` 全行走査) |
-| STATE_DB | なし | `dialout_client.go` に `STATE_DB` 接続・参照なし |
-| COUNTERS_DB | なし | `dialout_client.go` に `COUNTERS_DB` 参照なし。テレメトリ統計は外部コレクタ側で集計 |
-| ASIC_DB / FLEX_COUNTER_DB | なし | dialout は SAI 非経由。orchagent との連携なし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `redisDb.HGetAll` / `PSubscribe` / `Keys` 以外の Redis 操作なし (`dialout_client.go` 全行走査) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `dialout_client.go` に `STATE_DB` 接続・参照なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `dialout_client.go` に `COUNTERS_DB` 参照なし。テレメトリ統計は外部コレクタ側で集計 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | dialout は [SAI](../../reference/glossary.md#term-sai) 非経由。[orchagent](../../reference/glossary.md#term-orchagent) との連携なし |
 
 `dialout_client.go` が CONFIG_DB に行う操作は以下の読み取りのみ (`dialout_client.go:471,690,707`):
 
@@ -525,7 +539,7 @@ __keyspace@<CONFIG_DB_ID>__:TELEMETRY_CLIENT|*
 |----|-------|---------|-------------------|
 | CONFIG_DB | 動的取得 (通常 4) | `TELEMETRY_CLIENT\|*` | `__keyspace@<ID>__:TELEMETRY_CLIENT\|*` |
 
-他の DB（APPL_DB / STATE_DB / COUNTERS_DB）への通知購読は存在しない。
+他の DB（[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db)）への通知購読は存在しない。
 
 <!-- /pubsub -->
 
@@ -568,16 +582,13 @@ Supervisor Card 上のホスト CONFIG_DB の `TELEMETRY_CLIENT` のみが有効
 
 ## 関連リファレンス
 
-- [YANG](../../reference/glossary.md#term-yang): `sonic-telemetry_client`
+- [YANG](../../reference/glossary.md#term-yang): [`sonic-telemetry_client`](../yang/sonic-telemetry_client.md)
 - [CONFIG_DB: TELEMETRY_CLIENT](telemetry-client.md) (テーブル全体の概要)
 - [CONFIG_DB: TELEMETRY](telemetry.md) (dial-in 側設定)
 
 <!-- ref-triangle:end -->
 
 ## 引用元
-
-<!-- footnote anchor seeds -->
-出典: [^1]
 
 [^1]: YANG 定義: `sonic-telemetry_client.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-telemetry_client.yang>
 
@@ -589,3 +600,5 @@ Supervisor Card 上のホスト CONFIG_DB の `TELEMETRY_CLIENT` のみが有効
 - [CONFIG_DB: TELEMETRY](telemetry.md)
 
 <!-- glossary-links-injected: subscription-config -->
+
+<!-- glossary-links-injected: 661e7b29f7eb -->

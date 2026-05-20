@@ -83,8 +83,8 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER|<name>
 |-----------|-----|------|
 | `default_dynamic_th` | `-8..7` の整数 | alpha = 2^(dynamic_th)。`buffermgrdyn` が dynamic lossless `BUFFER_PROFILE` を自動生成する際の既定 threshold。値が大きいほど shared buffer をより多く使用（例: `-3` = alpha 1/8（保守的）、`0` = alpha 1、`3` = alpha 8（積極的））。個別 `BUFFER_PROFILE.dynamic_th` の設定がある場合はそちらが優先。 |
 | `default_dynamic_th` | 範囲外（`< -8` または `> 7`） | YANG validator が拒否。 |
-| `over_subscribe_ratio` | `0` または未設定 | Shared Headroom Pool (SHP) を無効化。ロスレスバッファのヘッドルームはポート単位で独立して予約される。 |
-| `over_subscribe_ratio` | `1` 以上 | SHP を有効化。`buffermgrdyn` が `BUFFER_POOL.xoff`（SHP サイズ）を参照してプロファイルを生成。`BUFFER_POOL.xoff` が未設定の場合、SAI への反映で retry ループが発生する（`buffermgrdyn.cpp:2025-2031`）。 |
+| `over_subscribe_ratio` | `0` または未設定 | Shared [Headroom](../../reference/glossary.md#term-headroom) Pool (SHP) を無効化。ロスレスバッファのヘッドルームはポート単位で独立して予約される。 |
+| `over_subscribe_ratio` | `1` 以上 | SHP を有効化。`buffermgrdyn` が `BUFFER_POOL.xoff`（SHP サイズ）を参照してプロファイルを生成。`BUFFER_POOL.xoff` が未設定の場合、[SAI](../../reference/glossary.md#term-sai) への反映で retry ループが発生する（`buffermgrdyn.cpp:2025-2031`）。 |
 <!-- /value-behavior -->
 
 ## 購読者
@@ -141,13 +141,12 @@ show buffer profile
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`buffermgrdyn` (動的バッファ管理デーモン) が CONFIG_DB の `DEFAULT_LOSSLESS_BUFFER_PARAMETER` テーブルを購読する。
+`buffermgrdyn` (動的バッファ管理デーモン) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `DEFAULT_LOSSLESS_BUFFER_PARAMETER` テーブルを購読する。
 
 `DEFAULT_LOSSLESS_BUFFER_PARAMETER` は静的バッファモード (`buffermgrd`) では使用されない。
 
@@ -157,11 +156,11 @@ show buffer profile
 
 ### 段階 3 — APPL→SAI
 
-なし (直接 SAI 呼び出しなし — 計算結果が `BUFFER_PROFILE` に反映されて SAI に到達)
+なし (直接 [SAI](../../reference/glossary.md#term-sai) 呼び出しなし — 計算結果が `BUFFER_PROFILE` に反映されて [SAI](../../reference/glossary.md#term-sai) に到達)
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB 変化を `buffermgrdyn` が検知後、すべての lossless バッファプロファイルを再計算。再計算された値が `APPL_DB` の `BUFFER_PROFILE_TABLE` に書き込まれ `BufferOrch` が SAI を更新。
+**適用タイミング**: [CONFIG_DB](../../reference/glossary.md#term-config_db) 変化を `buffermgrdyn` が検知後、すべての lossless バッファプロファイルを再計算。再計算された値が `APPL_DB` の `BUFFER_PROFILE_TABLE` に書き込まれ `BufferOrch` が SAI を更新。
 
 **副作用**: パラメータ変更はすべての lossless ポートのバッファプロファイルを再生成する。一時的な traffic 影響が発生する可能性。
 <!-- /runtime-trace -->
@@ -192,7 +191,6 @@ show buffer profile
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
-
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
@@ -248,18 +246,18 @@ show buffer profile
 - **条件**: `over_subscribe_ratio` が 0 → 非ゼロへ遷移し かつ `m_portInitDone=true`（ポート初期化完了後）
 - **参照元**: `buffermgrdyn.cpp:2043`（`isSharedHeadroomPoolEnabledInSai()` 内）
 - **意味**:
-  - Shared Headroom Pool (SHP) を有効化しようとする際、`m_applStateBufferPoolTable.hget(INGRESS_LOSSLESS_PG_POOL_NAME, "xoff", xoff)` で SAI への反映済みを確認する。
+  - Shared [Headroom](../../reference/glossary.md#term-headroom) Pool (SHP) を有効化しようとする際、`m_applStateBufferPoolTable.hget(INGRESS_LOSSLESS_PG_POOL_NAME, "xoff", xoff)` で SAI への反映済みを確認する。
   - APPL_STATE_DB の `xoff` が空またはゼロであれば `isSharedHeadroomPoolEnabledInSai()` が `false` を返し `task_need_retry`。SAI 側の書き込み完了を待つ間接的な同期フロー。
 
 ### 3. BUFFER_PROFILE (APPL_DB — 内部キャッシュ経由)
 
-- **参照先テーブル**: `BUFFER_PROFILE_TABLE`（APPL_DB、`m_bufferProfileLookup` キャッシュ経由）
+- **参照先テーブル**: `BUFFER_PROFILE_TABLE`（[APPL_DB](../../reference/glossary.md#term-appl_db)、`m_bufferProfileLookup` キャッシュ経由）
 - **参照方向**: 全件読み取り + 再計算後書き込み
 - **条件**: `default_dynamic_th` 変更時、または `over_subscribe_ratio` の変化による SHP 有効/無効切替時
 - **参照元**: `buffermgrdyn.cpp:1657-1694`（`refreshSharedHeadroomPool()` 内のプロファイル再計算ループ）
 - **意味**:
   - `m_bufferProfileLookup` を全走査し、`static_configured=false`（動的生成）の lossless `BUFFER_PROFILE` をすべて再計算する。
-  - 再計算した値は `doUpdateBufferProfileForSize()` → `m_applBufferProfileTable` 経由で APPL_DB の `BUFFER_PROFILE_TABLE` に書き込まれる。
+  - 再計算した値は `doUpdateBufferProfileForSize()` → `m_applBufferProfileTable` 経由で [APPL_DB](../../reference/glossary.md#term-appl_db) の `BUFFER_PROFILE_TABLE` に書き込まれる。
   - この書き込みが `BufferOrch` に通知され、最終的に SAI が更新される（CONFIG_DB 変更が SAI に伝播する経路）。
 
 ### 参照関係サマリ
@@ -294,7 +292,7 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 
 **`ingress_lossless_pool` 先行制約（依存 #1)**: `handleDefaultLossLessBufferParam()` は SET 処理の冒頭で `m_bufferPoolLookup.find(INGRESS_LOSSLESS_PG_POOL_NAME)` を実行し、pool が見つからない場合は `task_need_retry` を返す。このため、`DEFAULT_LOSSLESS_BUFFER_PARAMETER` を CONFIG_DB に書いても、`BUFFER_POOL|ingress_lossless_pool` が `handleBufferPoolTable()` 経由でキャッシュに登録されるまで実際の処理は保留される（evidence: `buffermgrdyn.cpp:1985-1988`）。
 
-**`m_defaultThreshold` 空状態での命名競合（依存 #2)**: `m_defaultThreshold` が未設定（空文字列）の状態で lossless BUFFER_PROFILE を生成すると、プロファイル名に `_th<value>` サフィックスが付加される命名パスを辿る。後から `DEFAULT_LOSSLESS_BUFFER_PARAMETER` の `default_dynamic_th` が設定されると、`m_defaultThreshold` の値次第でプロファイル名が変わり、既存の APPL_DB エントリと内部キャッシュ `m_bufferProfileLookup` の名前が一致しなくなる可能性がある（evidence: `buffermgrdyn.cpp:494-496`）。
+**`m_defaultThreshold` 空状態での命名競合（依存 #2)**: `m_defaultThreshold` が未設定（空文字列）の状態で lossless BUFFER_PROFILE を生成すると、プロファイル名に `_th<value>` サフィックスが付加される命名パスを辿る。後から `DEFAULT_LOSSLESS_BUFFER_PARAMETER` の `default_dynamic_th` が設定されると、`m_defaultThreshold` の値次第でプロファイル名が変わり、既存の [APPL_DB](../../reference/glossary.md#term-appl_db) エントリと内部キャッシュ `m_bufferProfileLookup` の名前が一致しなくなる可能性がある（evidence: `buffermgrdyn.cpp:494-496`）。
 
 **SHP 有効化の SAI 確認（依存 #3)**: ポート初期化完了後（`m_portInitDone=true`）に SHP を無効→有効へ遷移させる場合（`over_subscribe_ratio` を 0 から非ゼロに変更）、`isSharedHeadroomPoolEnabledInSai()` が `APPL_DB` の `BUFFER_POOL_TABLE|ingress_lossless_pool` の `xoff` フィールドを確認する。SAI への反映が完了していなければ `task_need_retry` を返す（evidence: `buffermgrdyn.cpp:2019-2025`, `buffermgrdyn.cpp:2035-2046`）。
 
@@ -315,7 +313,7 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 | `task_failed` | エントリ erase → ループ継続（残タスクも処理） | `SWSS_LOG_ERROR "Failed to process table update"` | `buffermgrdyn.cpp:3593-3596` |
 | `task_invalid_entry` | エントリ erase → ループ継続 | `SWSS_LOG_ERROR "Failed to process invalid entry, drop it"` | `buffermgrdyn.cpp:3601-3604` |
 
-> `buffermgrdyn` の `task_failed` はエントリを drop するが doTask 全体を打ち切らない点に注意。orchagent 等の他ディスパッチャと挙動が異なる。
+> `buffermgrdyn` の `task_failed` はエントリを drop するが doTask 全体を打ち切らない点に注意。[orchagent](../../reference/glossary.md#term-orchagent) 等の他ディスパッチャと挙動が異なる。
 
 ### handleDefaultLossLessBufferParam — 失敗・retry 経路 (L1978-2033)
 
@@ -410,7 +408,7 @@ DEFAULT_LOSSLESS_BUFFER_PARAMETER (CONFIG_DB)
 
 ### SHP 無効化時の xoff リセット
 
-SHP (Shared Headroom Pool) が無効化された際、`refreshSharedHeadroomPool()` は ingress_lossless_pool の `xoff` を文字列 `"0"` にハードコードして APPL_DB を更新する (buffermgrdyn.cpp L1701)。ゼロバッファプール生成時の xoff 初期値も `"0"` でハードコード (buffermgrdyn.cpp L773)。
+SHP (Shared [Headroom](../../reference/glossary.md#term-headroom) Pool) が無効化された際、`refreshSharedHeadroomPool()` は ingress_lossless_pool の `xoff` を文字列 `"0"` にハードコードして APPL_DB を更新する (buffermgrdyn.cpp L1701)。ゼロバッファプール生成時の xoff 初期値も `"0"` でハードコード (buffermgrdyn.cpp L773)。
 
 詳細な定数一覧は `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-constants.md` を参照。
 <!-- /constants -->
@@ -419,7 +417,7 @@ SHP (Shared Headroom Pool) が無効化された際、`refreshSharedHeadroomPool
 
 ソース: `sonic-swss/cfgmgr/buffermgrdyn.cpp`
 
-`DEFAULT_LOSSLESS_BUFFER_PARAMETER` の SET/DEL 処理は CONFIG_DB への直接書込を行わないが、`buffermgrdyn` が副次的に APPL_DB・STATE_DB の複数テーブルを更新する。
+`DEFAULT_LOSSLESS_BUFFER_PARAMETER` の SET/DEL 処理は CONFIG_DB への直接書込を行わないが、`buffermgrdyn` が副次的に APPL_DB・[STATE_DB](../../reference/glossary.md#term-state_db) の複数テーブルを更新する。
 
 ### APPL_DB `BUFFER_PROFILE_TABLE` (副次書込 A — 動的プロファイル再生成)
 
@@ -428,7 +426,7 @@ SHP (Shared Headroom Pool) が無効化された際、`refreshSharedHeadroomPool
 | 操作 | 対象 DB / テーブル | 条件 | evidence |
 |------|------------------|------|----------|
 | `m_applBufferProfileTable.set(name, fvVector)` | APPL_DB / `BUFFER_PROFILE_TABLE` | `default_dynamic_th` 変更または SHP 有効/無効切替時に動的プロファイル全件再計算 | `buffermgrdyn.cpp:919` |
-| `m_stateBufferProfileTable.set(name, fvVector)` | STATE_DB / `BUFFER_PROFILE_TABLE` | APPL_DB 書込と同時に STATE_DB にも書込（`updateBufferProfileToDb()` 内） | `buffermgrdyn.cpp:920` |
+| `m_stateBufferProfileTable.set(name, fvVector)` | [STATE_DB](../../reference/glossary.md#term-state_db) / `BUFFER_PROFILE_TABLE` | APPL_DB 書込と同時に [STATE_DB](../../reference/glossary.md#term-state_db) にも書込（`updateBufferProfileToDb()` 内） | `buffermgrdyn.cpp:920` |
 
 書込フィールド: `xon`, `xoff`（lossless のみ）, `xon_offset`（あれば）, `size`, `pool`, `dynamic_th`（または `static_th`）。
 
@@ -560,4 +558,5 @@ m_overSubscribeRatio 更新 → refreshSharedHeadroomPool()
 
 詳細根拠は `meta/_intermediate/cdb-flow/default-lossless-buffer-parameter-platform.md` を参照。
 <!-- /platform -->
-<!-- glossary-links-injected: b5626ca1f0f9 -->
+
+<!-- glossary-links-injected: c21f0a247f96 -->

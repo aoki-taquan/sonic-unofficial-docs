@@ -42,9 +42,29 @@ related:
 
 テーブル名定数は `sonic-swss-common/common/schema.h` に定義される[^schema]。
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>BUFFER_POOL")]
+  DM["buffermgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_BUFFER_POOL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_buffer_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## テーブル一覧
 
-| APPL_DB テーブル名 | 定数名 | 対応 CONFIG_DB テーブル |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) テーブル名 | 定数名 | 対応 [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル |
 |-------------------|--------|------------------------|
 | `BUFFER_POOL_TABLE` | `APP_BUFFER_POOL_TABLE_NAME` | `BUFFER_POOL` |
 | `BUFFER_PROFILE_TABLE` | `APP_BUFFER_PROFILE_TABLE_NAME` | `BUFFER_PROFILE` |
@@ -90,7 +110,7 @@ VoQ スイッチ環境では `BUFFER_PG_TABLE` / `BUFFER_QUEUE_TABLE` のキー�
 | `type` | enum `ingress`/`egress` | 常に書き込み | プールの方向。`both` は `BUFFER_EGRESS` に折り畳まれる（後述） |
 | `mode` | enum `static`/`dynamic` | 常に書き込み | 閾値モード |
 | `size` | uint64 (bytes) | dynamic_size 条件成立時スキップ | プールサイズ。Lua plugin が後から書き込む場合がある |
-| `xoff` | uint64 (bytes) | SHP 未設定時省略 | Shared Headroom Pool サイズ |
+| `xoff` | uint64 (bytes) | SHP 未設定時省略 | Shared [Headroom](../../reference/glossary.md#term-headroom) Pool サイズ |
 
 ### BUFFER_PROFILE_TABLE
 
@@ -103,7 +123,7 @@ VoQ スイッチ環境では `BUFFER_PG_TABLE` / `BUFFER_QUEUE_TABLE` のキー�
 | `xoff` | uint64 (bytes) | lossy profile は省略 | XOFF 閾値 |
 | `dynamic_th` | int8 | `static_th` と排他 | dynamic threshold (alpha 値) |
 | `static_th` | uint64 (bytes) | `dynamic_th` と排他 | static threshold |
-| `headroom_type` | string | CONFIG_DB からの転写時のみ | bufferorch で無視（SAI 非反映） |
+| `headroom_type` | string | [CONFIG_DB](../../reference/glossary.md#term-config_db) からの転写時のみ | bufferorch で無視（[SAI](../../reference/glossary.md#term-sai) 非反映） |
 | `packet_discard_action` | string `drop`/`trim` | 値が空のとき省略 | パケット廃棄アクション |
 
 ### BUFFER_PG_TABLE / BUFFER_QUEUE_TABLE
@@ -120,7 +140,7 @@ VoQ スイッチ環境では `BUFFER_PG_TABLE` / `BUFFER_QUEUE_TABLE` のキー�
 
 ## 購読者
 
-- **`buffermgrdyn`** (`docker-swss`): dynamic buffer model 時に CONFIG_DB を変換して APPL_DB に書き込む
+- **`buffermgrdyn`** (`docker-swss`): dynamic buffer model 時に CONFIG_DB を変換して [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込む
 - **`buffermgr`** (`docker-swss`): static buffer model 時（pass-through に近い）
 - **`BufferOrch`** (`orchagent`): APPL_DB を購読して SAI に反映
 
@@ -173,7 +193,7 @@ else {
 }
 ```
 
-`headroom_type` は `else` 分岐に落ちて `LOG_ERROR` + skip される。CONFIG_DB / YANG には定義があるが SAI 経路では完全に無視される。
+`headroom_type` は `else` 分岐に落ちて `LOG_ERROR` + skip される。CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) には定義があるが SAI 経路では完全に無視される。
 
 ### `dynamic_th` / `static_th` — threshold type が create-only (乖離)
 
@@ -227,9 +247,9 @@ threshold_mode が未設定のとき、ingress_lossless_pool の `mode` フィ�
 | 経路 | チェック | 行 |
 |---|---|---|
 | `gMySwitchType == "voq"` | `gPortsOrch->isInitDone()` が false なら return | `bufferorch.cpp:2079-2085` |
-| non-VOQ | `gPortsOrch->isConfigDone()` が false なら return | `bufferorch.cpp:2087-2091` |
+| non-[VOQ](../../reference/glossary.md#term-voq) | `gPortsOrch->isConfigDone()` が false なら return | `bufferorch.cpp:2087-2091` |
 
-VOQ では system port が `init` フェーズで揃う設計に合わせて `isInitDone()` を使う。non-VOQ は `PORT_CONFIG_DONE` 受信時点で進む。
+[VOQ](../../reference/glossary.md#term-voq) では system port が `init` フェーズで揃う設計に合わせて `isInitDone()` を使う。non-[VOQ](../../reference/glossary.md#term-voq) は `PORT_CONFIG_DONE` 受信時点で進む。
 
 ### 2. orchagent 内の固定 drain 順 (Pool → Profile → 残り)
 
@@ -283,15 +303,15 @@ buffer pool
 - `isPortReady(port_name)` (L254-275) は当該ポートの全 PG/Queue が true になった時点で `true` を返す。
 - PortsOrch は `isPortReady()` を見て後段のポート初期化 (`SAI_PORT_ATTR_ADMIN_STATE` 等) を進める。
 
-→ **BUFFER_PG / BUFFER_QUEUE の SAI bind 完了がポート Admin-up の前提**。dynamic buffer model の admin down ポートは buffermgrd からの明示削除通知で ready 扱いになる (L97-98 コメント参照)。
+→ **[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) / BUFFER_QUEUE の SAI bind 完了がポート Admin-up の前提**。dynamic buffer model の admin down ポートは buffermgrd からの明示削除通知で ready 扱いになる (L97-98 コメント参照)。
 
 ### 6. warm reboot の初期 ready 充填
 
-`WarmStart::isWarmStart()` (L111) が true のとき、`initBufferReadyList()` は **APPL_DB 側**のキーから初期化する (L113-125)。warm reboot 後は buffermgrd が orchagent より遅れて起動するため、APPL_DB スナップショットが完成している前提で admin down ポートぶんが ready 扱いに自動的になる (L100-107 コメント)。cold start では CONFIG_DB 側 (L129-141) を走査する。
+`WarmStart::isWarmStart()` (L111) が true のとき、`initBufferReadyList()` は **APPL_DB 側**のキーから初期化する (L113-125)。warm reboot 後は buffermgrd が [orchagent](../../reference/glossary.md#term-orchagent) より遅れて起動するため、APPL_DB スナップショットが完成している前提で admin down ポートぶんが ready 扱いに自動的になる (L100-107 コメント)。cold start では CONFIG_DB 側 (L129-141) を走査する。
 
 ### 7. flex counter group の遅延初期化
 
-- ctor で `initFlexCounterGroupTable()` (L232-252) が FLEX_COUNTER_DB に group / Lua sha を 1 回だけ登録。
+- ctor で `initFlexCounterGroupTable()` (L232-252) が [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に group / Lua sha を 1 回だけ登録。
 - `generateBufferPoolWatermarkCounterIdList()` (L286-362) は FlexCounterOrch が `FLEX_COUNTER_STATUS=enable` を受信したときに呼ばれる遅延初期化で、その時点で登録済みの全 BUFFER_POOL に対し flex counter polling を開始する (`m_isBufferPoolWatermarkCounterIdListGenerated` で多重実行ガード)。
 - 順序依存: **`BUFFER_POOL` SAI create → FlexCounterOrch enable** の順なら watermark counter が登録される。逆順 (pool 未登録で enable 受信) の場合、後続の `processBufferPool()` SET 経路では個別の `startFlexCounterPolling()` は呼ばれないため、watermark を載せるには FlexCounterOrch の enable 再送が必要。
 
@@ -395,7 +415,7 @@ handler ごと・行番号付きの完全な失敗・retry 分岐マトリクス
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`BufferOrch` は APPL_DB の `BUFFER_*_TABLE` を購読して SAI に反映するのが主目的だが、**STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB** にも副次的に書き込む。SET/DEL ハンドラとは別経路で発火するものを含めて以下に整理する[^buforch]。
+`BufferOrch` は APPL_DB の `BUFFER_*_TABLE` を購読して SAI に反映するのが主目的だが、**[STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)** にも副次的に書き込む。SET/DEL ハンドラとは別経路で発火するものを含めて以下に整理する[^buforch]。
 
 ### STATE_DB
 
@@ -403,7 +423,7 @@ handler ごと・行番号付きの完全な失敗・retry 分岐マトリクス
 |------|----------------|-----------|--------|----------|
 | set | `BUFFER_MAX_PARAM_TABLE\|global` (定数 `STATE_BUFFER_MAXIMUM_VALUE_TABLE`) | `mmu_size` (bytes; `SAI_SWITCH_ATTR_MAX_BUFFER_SIZE` × 1024) | `BufferOrch` ctor の `getMMUSize()` で起動時 1 回のみ | `bufferorch.cpp:53-62, 206-230` |
 
-> SET/DEL ハンドラ自体は STATE_DB に書込まない。STATE_DB は MMU 全体サイズの公開専用。
+> SET/DEL ハンドラ自体は [STATE_DB](../../reference/glossary.md#term-state_db) に書込まない。[STATE_DB](../../reference/glossary.md#term-state_db) は MMU 全体サイズの公開専用。
 
 ### COUNTERS_DB
 
@@ -414,7 +434,7 @@ handler ごと・行番号付きの完全な失敗・retry 分岐マトリクス
 | HSET | `COUNTERS_BUFFER_POOL_NAME_MAP` | field=`<pool_name>` value=`<sai_object_id>` | `processBufferPool()` の SET で SAI `create_buffer_pool()` 成功直後 | `bufferorch.cpp:546` |
 | HDEL | `COUNTERS_BUFFER_POOL_NAME_MAP` | field=`<pool_name>` | `processBufferPool()` の DEL で `remove_buffer_pool()` 成功後 | `bufferorch.cpp:586` |
 
-BUFFER_PROFILE / PG / Queue / PROFILE_LIST には pool 相当の name map 書込みはない (PG/Queue の name map は PortsOrch 側で管理)。ただし `processQueue()` / `processPriorityGroup()` は profile attach/detach 成功直後に `FlexCounterOrch::isCreateOnlyConfigDbBuffers()` が true のとき `gPortsOrch->createPortBufferQueueCounters()` / `createPortBufferPgCounters()` (or remove 系) を呼び、PortsOrch 経由で COUNTERS_DB の `COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_PG_NAME_MAP` と FLEX_COUNTER_DB の queue/PG group を更新する (`bufferorch.cpp:1138-1152, 1513-1525`)。VOQ スイッチ (`gMySwitchType == "voq"`) ではこの経路はスキップされ FlexCounterOrch 側で一括登録される。
+BUFFER_PROFILE / PG / Queue / PROFILE_LIST には pool 相当の name map 書込みはない (PG/Queue の name map は PortsOrch 側で管理)。ただし `processQueue()` / `processPriorityGroup()` は profile attach/detach 成功直後に `FlexCounterOrch::isCreateOnlyConfigDbBuffers()` が true のとき `gPortsOrch->createPortBufferQueueCounters()` / `createPortBufferPgCounters()` (or remove 系) を呼び、PortsOrch 経由で [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の `COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_PG_NAME_MAP` と [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) の queue/PG group を更新する (`bufferorch.cpp:1138-1152, 1513-1525`)。VOQ スイッチ (`gMySwitchType == "voq"`) ではこの経路はスキップされ FlexCounterOrch 側で一括登録される。
 
 ### FLEX_COUNTER_DB
 
@@ -444,9 +464,9 @@ BUFFER_PROFILE / PG / Queue / PROFILE_LIST には pool 相当の name map 書込
 ### 副次書込の発火順序 (BUFFER_POOL 新規 SET の例)
 
 1. APPL_DB から `BUFFER_POOL_TABLE|<name>` SET を consume
-2. `sai_buffer_api->create_buffer_pool()` → ASIC_DB
+2. `sai_buffer_api->create_buffer_pool()` → [ASIC_DB](../../reference/glossary.md#term-asic_db)
 3. in-memory map (`m_buffer_type_maps[APP_BUFFER_POOL_TABLE_NAME]`) を更新
-4. **COUNTERS_DB** `COUNTERS_BUFFER_POOL_NAME_MAP` に `<name>` → `<oid>` HSET
+4. **[COUNTERS_DB](../../reference/glossary.md#term-counters_db)** `COUNTERS_BUFFER_POOL_NAME_MAP` に `<name>` → `<oid>` HSET
 5. (xoff 非空時) **APPL_STATE_DB** ResponsePublisher に publish
 6. (FlexCounterOrch から後段で呼出時) **FLEX_COUNTER_DB** の `FLEX_COUNTER_TABLE` に per-pool エントリを登録
 
@@ -617,14 +637,14 @@ TTL / expire: なし
 
 行番号付き完全マトリクス・PUBLISH チャネル列挙・warm reboot 経路は中間メモを参照: `meta/_intermediate/cdb-flow/appl-buffer-pubsub.md`。
 
-> **証跡**: `bufferorch.cpp:53` (`Orch(applDb, tableNames)`) → `orch.cpp:97-103, 1186-1196` (APPL_DB → ConsumerStateTable 分岐) → `bufferorch.cpp:2040-2073` (drain 順)、`m_publisher.publish` × 4 hit、`buffermgrdyn.h:208/214` + `buffermgr.h:48/50` (ProducerStateTable 型確認) を全件確認。
+> **証跡**: `bufferorch.cpp:53` (`Orch(applDb, tableNames)`) → `orch.cpp:97-103, 1186-1196` (APPL_DB → [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) 分岐) → `bufferorch.cpp:2040-2073` (drain 順)、`m_publisher.publish` × 4 hit、`buffermgrdyn.h:208/214` + `buffermgr.h:48/50` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 型確認) を全件確認。
 
 <!-- /pubsub -->
 
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`BufferOrch` は単一バイナリで動作するが、(a) `gMySwitchType == "voq"` の chassis VOQ 経路、(b) SAI capability の動的判定、(c) ベンダ buffer pool Lua plugin、の 3 点でプラットフォーム差が生まれる[^buforch]。BUFFER_PG / BUFFER_QUEUE の **PG/queue index → SAI oid マッピング自体は `portsorch` 側に閉じている** ため、Broadcom / Mellanox の物理マップ差は bufferorch には現れない。
+`BufferOrch` は単一バイナリで動作するが、(a) `gMySwitchType == "voq"` の chassis VOQ 経路、(b) SAI capability の動的判定、(c) ベンダ buffer pool Lua plugin、の 3 点でプラットフォーム差が生まれる[^buforch]。[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) / BUFFER_QUEUE の **PG/queue index → SAI oid マッピング自体は `portsorch` 側に閉じている** ため、Broadcom / Mellanox の物理マップ差は bufferorch には現れない。
 
 ### 1. VOQ chassis (Cisco 8000 系) の経路差
 
@@ -670,7 +690,7 @@ bufferorch は PG / queue の SAI oid を **`portsorch` が `SAI_PORT_ATTR_INGRE
 
 ### 5. multi-asic namespace
 
-multi-asic non-VOQ (T2 chassis BGP-only 等) では `BUFFER_*` は各 `asicX` namespace の独立 bufferorch インスタンスで処理される。VOQ chassis では `gMyHostName` / `gMyAsicName` と key の先頭 2 トークンを比較し (L1062-1064)、自 ASIC 配下を `local_port = true` として SAI bind、他 ASIC ぶんは ready list 管理のみ。
+multi-asic non-VOQ (T2 chassis [BGP](../../reference/glossary.md#term-bgp)-only 等) では `BUFFER_*` は各 `asicX` namespace の独立 bufferorch インスタンスで処理される。VOQ chassis では `gMyHostName` / `gMyAsicName` と key の先頭 2 トークンを比較し (L1062-1064)、自 ASIC 配下を `local_port = true` として SAI bind、他 ASIC ぶんは ready list 管理のみ。
 
 ### 詳細
 
@@ -685,7 +705,7 @@ multi-asic non-VOQ (T2 chassis BGP-only 等) では `BUFFER_*` は各 `asicX` na
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`bufferorch.cpp` / `bufferorch.h` / `buffer/bufferschema.h` に固定された文字列・列挙値定数の一覧。フィールド名・列挙値文字列はすべて C++ ヘッダで `const string` として定義されており、CLI / YANG / API いずれの層でも同じ綴りを要求する。
+`bufferorch.cpp` / `bufferorch.h` / `buffer/bufferschema.h` に固定された文字列・列挙値定数の一覧。フィールド名・列挙値文字列はすべて C++ ヘッダで `const string` として定義されており、CLI / [YANG](../../reference/glossary.md#term-yang) / API いずれの層でも同じ綴りを要求する。
 
 ### フィールド名定数 (`bufferorch.h`)
 
@@ -843,3 +863,5 @@ APPL_DB の `BUFFER_*_TABLE` 群を `BufferOrch` が処理する際に SAI OID �
 [^buforch]: `bufferorch.cpp` — `processBufferPool()` / `processBufferProfile()` / `processPriorityGroup()` / `processQueue()`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/bufferorch.cpp>
 
 [^schema]: `sonic-swss-common/common/schema.h` — `APP_BUFFER_*_TABLE_NAME` 定数. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
+
+<!-- glossary-links-injected: 01f594772796 -->

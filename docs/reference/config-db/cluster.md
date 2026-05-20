@@ -36,7 +36,23 @@ SONiC の [CONFIG_DB](../../reference/glossary.md#term-config_db) には独立�
 | `DEVICE_METADATA` | `localhost` | `cluster` | 自ノードの所属クラスタ名 |
 | `DEVICE_NEIGHBOR_METADATA` | `<device_hostname>` | `cluster` | 隣接デバイスの所属クラスタ名 |
 
-クラスタ名は **minigraph XML の `<ClusterName>` 要素**から派生し、`sonic-cfggen` / `minigraph.py` がデバイス起動時に CONFIG_DB へ書き込む。典型値は `"AAA00PrdStr00"` のようなデータセンター内の論理グループ識別子。
+クラスタ名は **minigraph XML の `<ClusterName>` 要素**から派生し、`sonic-cfggen` / `minigraph.py` がデバイス起動時に [CONFIG_DB](../../reference/glossary.md#term-config_db) へ書き込む。典型値は `"AAA00PrdStr00"` のようなデータセンター内の論理グループ識別子。
+
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>DEVICE_METADATA")]
+  DM["SwitchOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_switch_api"]
+  DM --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
 
 ## key 構造
 
@@ -130,7 +146,7 @@ leaf cluster {
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
 | 1 | `DEVICE_NEIGHBOR_METADATA.cluster` パース → `DEVICE_METADATA.cluster` 書き込み | minigraph パース内で同一呼び出し（通常は問題なし） | `sonic-cfggen` が原子的に処理 |
-| 2 | `cluster` フィールド → bgpcfgd | **依存なし** | bgpcfgd は `cluster` フィールドを参照しない |
+| 2 | `cluster` フィールド → [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) | **依存なし** | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は `cluster` フィールドを参照しない |
 | 3 | `DEVICE_METADATA` 全体書き込み → `swss_vars.j2` 展開 | 書き込み後に展開 | `cluster` 不在時は空文字列フォールバック |
 | 4 | minigraph 再適用で `cluster` 削除 | **自動削除なし** | 手動 `sonic-db-cli CONFIG_DB hdel 'DEVICE_METADATA\|localhost' cluster` が必要 |
 
@@ -138,7 +154,7 @@ leaf cluster {
 
 **minigraph 再適用で cluster が残存する問題 (依存 #4)**: `sonic-cfggen -m minigraph.xml --write-to-db` を再実行した際、`<ClusterName>` タグが存在しない場合、`if cluster:` (truthy check) により `DEVICE_METADATA|localhost.cluster` の書き込み自体がスキップされる。既存の `cluster` フィールドは削除されないため、古いクラスタ名が DB に残存する。クリアするには `sonic-db-cli CONFIG_DB hdel 'DEVICE_METADATA|localhost' cluster` を手動実行すること（evidence: `minigraph.py:2170-2172`）。
 
-**CHASSIS_APP_DB との非連携**: `cluster` フィールドは CONFIG_DB (`DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA`) にのみ存在し、CHASSIS_APP_DB との直接連携はない。VOQ 構成における `SYSTEM_NEIGH` 等とも独立している。
+**CHASSIS_APP_DB との非連携**: `cluster` フィールドは [CONFIG_DB](../../reference/glossary.md#term-config_db) (`DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA`) にのみ存在し、CHASSIS_APP_DB との直接連携はない。[VOQ](../../reference/glossary.md#term-voq) 構成における `SYSTEM_NEIGH` 等とも独立している。
 
 <!-- /ordering -->
 
@@ -342,7 +358,7 @@ XML に `<ClusterName></ClusterName>` (空タグ) が存在する場合、`node.
 
 - YANG モデル (`sonic-device_metadata.yang`, `sonic-device_neighbor_metadata.yang`) に `default` 値なし
 - `type string` のみで値制約なし
-- ランタイム消費デーモン (orchagent / bgpcfgd / hostcfgd 等) は `cluster` フィールドを参照しないため、ランタイム側のハードコード定数は存在しない
+- ランタイム消費デーモン ([orchagent](../../reference/glossary.md#term-orchagent) / [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) / [hostcfgd](../../reference/glossary.md#term-hostcfgd) 等) は `cluster` フィールドを参照しないため、ランタイム側のハードコード定数は存在しない
 
 <!-- /constants -->
 
@@ -357,11 +373,11 @@ XML に `<ClusterName></ClusterName>` (空タグ) が存在する場合、`node.
 
 | 対象 DB | 副次書き込みの有無 | 根拠 |
 |---------|-----------------|------|
-| APPL_DB | **なし** | portmgrd / neighsyncd / bgpcfgd は `cluster` フィールドを参照しない |
-| STATE_DB | **なし** | `cluster` 値に依存する STATE_DB 書き込み経路が存在しない |
-| COUNTERS_DB | **なし** | SAI と無関係なフィールドのため |
-| FLEX_COUNTER_DB | **なし** | 同上 |
-| ASIC_DB | **なし** | 同上 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | **なし** | [portmgrd](../../reference/glossary.md#term-portmgrd) / [neighsyncd](../../reference/glossary.md#term-neighsyncd) / bgpcfgd は `cluster` フィールドを参照しない |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | **なし** | `cluster` 値に依存する [STATE_DB](../../reference/glossary.md#term-state_db) 書き込み経路が存在しない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | **なし** | [SAI](../../reference/glossary.md#term-sai) と無関係なフィールドのため |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | **なし** | 同上 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | **なし** | 同上 |
 
 ### 根拠詳細
 
@@ -379,7 +395,7 @@ Phase C (cross-refs) 調査でコードベース全体を grep した結果、�
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-> 調査対象: `sonic-buildimage/src/sonic-config-engine/minigraph.py`、`sonic-swss/cfgmgr/buffermgr.cpp`、`sonic-swss/cfgmgr/buffermgrdyn.cpp`、`sonic-swss` orchagent 全体 grep
+> 調査対象: `sonic-buildimage/src/sonic-config-engine/minigraph.py`、`sonic-swss/cfgmgr/buffermgr.cpp`、`sonic-swss/cfgmgr/buffermgrdyn.cpp`、`sonic-swss` [orchagent](../../reference/glossary.md#term-orchagent) 全体 grep
 > 調査日: 2026-05-18; 詳細分析 `meta/_intermediate/cdb-flow/cluster-pubsub.md`
 
 `cluster` フィールドの通信構造は **Producer 1 名・Consumer 0 名** という極めてシンプルな形態。
@@ -388,8 +404,8 @@ Phase C (cross-refs) 調査でコードベース全体を grep した結果、�
 
 | 区間 | 方式 | チャンネル/パターン |
 |------|------|-------------------|
-| `sonic-cfggen` / `minigraph.py` → CONFIG_DB[DEVICE_METADATA\|localhost] | Redis `HSET` 直接書き込み（起動時 1 回） | — |
-| `sonic-cfggen` / `minigraph.py` → CONFIG_DB[DEVICE_NEIGHBOR_METADATA\|<dev>] | Redis `HSET` 直接書き込み（起動時 1 回） | — |
+| `sonic-cfggen` / `minigraph.py` → CONFIG_DB[DEVICE_METADATA\|localhost] | [Redis](../../reference/glossary.md#term-redis) `HSET` 直接書き込み（起動時 1 回） | — |
+| `sonic-cfggen` / `minigraph.py` → CONFIG_DB[DEVICE_NEIGHBOR_METADATA\|<dev>] | [Redis](../../reference/glossary.md#term-redis) `HSET` 直接書き込み（起動時 1 回） | — |
 | CONFIG_DB[DEVICE_METADATA] → ランタイムデーモン | **なし** | — |
 | CONFIG_DB[DEVICE_NEIGHBOR_METADATA] → ランタイムデーモン | **なし** | — |
 
@@ -397,7 +413,7 @@ Phase C (cross-refs) 調査でコードベース全体を grep した結果、�
 
 ### Producer 詳細: sonic-cfggen / minigraph.py
 
-`minigraph.py` は minigraph XML を解析し、起動時に Redis `HSET` で CONFIG_DB へ直接書き込む。`ProducerStateTable` を経由しないため、対応する `ConsumerStateTable` も存在しない。
+`minigraph.py` は minigraph XML を解析し、起動時に [Redis](../../reference/glossary.md#term-redis) `HSET` で CONFIG_DB へ直接書き込む。`ProducerStateTable` を経由しないため、対応する `ConsumerStateTable` も存在しない。
 
 ```
 minigraph XML (<ClusterName>) → minigraph.py parse_device()
@@ -407,12 +423,12 @@ minigraph XML (<ClusterName>) → minigraph.py parse_device()
 
 ### 購読なし（write-only フィールド）の理由
 
-`cluster` はデータセンター内のネットワーク論理グループ識別子であり、SONiC ランタイムの転送・バッファ・ACL 処理には影響しない。SONiC のデーモン群は自ノードの `cluster` 名を参照して動作を変える設計を持たないため、`SubscriberStateTable` / `ConsumerStateTable` によるリアルタイム通知チャンネルが存在しない。
+`cluster` はデータセンター内のネットワーク論理グループ識別子であり、SONiC ランタイムの転送・バッファ・[ACL](../../reference/glossary.md#term-acl) 処理には影響しない。SONiC のデーモン群は自ノードの `cluster` 名を参照して動作を変える設計を持たないため、`SubscriberStateTable` / `ConsumerStateTable` によるリアルタイム通知チャンネルが存在しない。
 
 !!! note "keyspace 通知は発火するが受信者なし"
     `sonic-cfggen` が `HSET "DEVICE_METADATA|localhost" cluster <name>` を実行すると Redis keyspace 通知 (`__keyspace@4__:DEVICE_METADATA|localhost`) は発火する。しかし、この通知を `cluster` フィールドとして処理するデーモンが存在しないため、通知は実質的に無効。
 
-> **Evidence**: `minigraph.py:2170-2172, 662-668, 806-811` (書き込み); `buffermgr.cpp:373-408` (`doBufferMetaTask` — `buffer_model` のみ参照、`cluster` は無視); `buffermgrdyn.cpp:87` (`hget platform` のみ); sonic-swss 全体 grep 結果: `"cluster"` ヒット 1 件はコメント行のみ
+> **Evidence**: `minigraph.py:2170-2172, 662-668, 806-811` (書き込み); `buffermgr.cpp:373-408` (`doBufferMetaTask` — `buffer_model` のみ参照、`cluster` は無視); `buffermgrdyn.cpp:87` (`hget platform` のみ); [sonic-swss](../../reference/glossary.md#term-sonic-swss) 全体 grep 結果: `"cluster"` ヒット 1 件はコメント行のみ
 <!-- /pubsub -->
 
 <!-- platform -->
@@ -422,7 +438,7 @@ minigraph XML (<ClusterName>) → minigraph.py parse_device()
 
 ### SAI 非経由フィールド
 
-`cluster` は CONFIG_DB (`DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA`) にのみ書き込まれ、SAI・ASIC を経由しない。ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium 等) による差異はない。
+`cluster` は CONFIG_DB (`DEVICE_METADATA` / `DEVICE_NEIGHBOR_METADATA`) にのみ書き込まれ、[SAI](../../reference/glossary.md#term-sai)・ASIC を経由しない。ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium 等) による差異はない。
 
 ### シングル ASIC vs マルチ ASIC
 
@@ -438,7 +454,7 @@ minigraph XML (<ClusterName>) → minigraph.py parse_device()
 
 ### VOQ / switch_type 依存
 
-`cluster` フィールドの処理パスに `gMySwitchType` / `is_voq_mode()` / `is_chassis_device()` 等の switch_type 条件分岐は存在しない。VOQ chassis 構成でも各 host が独立して `DEVICE_METADATA|localhost` に自ノードの cluster 名を書き込む。
+`cluster` フィールドの処理パスに `gMySwitchType` / `is_voq_mode()` / `is_chassis_device()` 等の switch_type 条件分岐は存在しない。[VOQ](../../reference/glossary.md#term-voq) chassis 構成でも各 host が独立して `DEVICE_METADATA|localhost` に自ノードの cluster 名を書き込む。
 
 ### supervisor / linecard 構成
 
@@ -448,10 +464,11 @@ minigraph XML (<ClusterName>) → minigraph.py parse_device()
 
 | 観点 | 差異 |
 |------|------|
-| ASIC ベンダー | なし（SAI 非経由） |
+| ASIC ベンダー | なし（[SAI](../../reference/glossary.md#term-sai) 非経由） |
 | シングル vs マルチ ASIC | ロジック同一。書き込み関数が異なるが条件・値は変わらない |
-| VOQ chassis | なし（`switch_type` 条件分岐なし） |
+| [VOQ](../../reference/glossary.md#term-voq) chassis | なし（`switch_type` 条件分岐なし） |
 | supervisor / linecard | host 単位で独立適用 |
 
 <!-- /platform -->
 
+<!-- glossary-links-injected: ab5ce810f103 -->

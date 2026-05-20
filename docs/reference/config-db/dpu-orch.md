@@ -53,45 +53,37 @@ related:
 
 ## 概要
 
-SmartSwitch の DPU (Data Processing Unit) 上で動作する orchagent は `DpuOrchDaemon` として起動する。通常の NPU orchagent (`OrchDaemon`) とは異なり、`DPU_APPL_DB` / `DPU_APPL_STATE_DB` を購読して DASH ワークロードを処理する[^1]。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) の [DPU](../../reference/glossary.md#term-dpu) (Data Processing Unit) 上で動作する [orchagent](../../reference/glossary.md#term-orchagent) は `DpuOrchDaemon` として起動する。通常の [NPU](../../reference/glossary.md#term-npu) [orchagent](../../reference/glossary.md#term-orchagent) (`OrchDaemon`) とは異なり、`DPU_APPL_DB` / `DPU_APPL_STATE_DB` を購読して [DASH](../../reference/glossary.md#term-dash) ワークロードを処理する[^1]。
 
-`DpuOrchDaemon` が選択される唯一の条件は `CONFIG_DB DEVICE_METADATA|localhost.switch_type = "dpu"`。その他の DPU 固有動作は同フィールドの `orch_northbond_dash_zmq_enabled` で制御される。
+`DpuOrchDaemon` が選択される唯一の条件は `CONFIG_DB DEVICE_METADATA|localhost.switch_type = "dpu"`。その他の [DPU](../../reference/glossary.md#term-dpu) 固有動作は同フィールドの `orch_northbond_dash_zmq_enabled` で制御される。
 
-本ページは DPU orchagent に直接関係する `DEVICE_METADATA|localhost` フィールドに絞ったリファレンスである。`DEVICE_METADATA` 全体のリファレンスは [device-metadata.md](device-metadata.md) を参照。
+本ページは [DPU](../../reference/glossary.md#term-dpu) [orchagent](../../reference/glossary.md#term-orchagent) に直接関係する `DEVICE_METADATA|localhost` フィールドに絞ったリファレンスである。`DEVICE_METADATA` 全体のリファレンスは [device-metadata.md](device-metadata.md) を参照。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>DEVICE_METADATA|localhost")]
-  Main["orchagent<br/>main.cpp<br/>getCfgSwitchType()"]
-  Daemon["DpuOrchDaemon"]
-  DASH_DB[("DPU_APPL_DB<br/>DASH テーブル群")]
-  ZMQ["ZMQ チャネル<br/>(gNMI → orchagent)"]
-  SAI["SAI / ASIC<br/>(DPU 側)"]
-
-  CDB -->|switch_type=dpu| Main
-  Main --> Daemon
-  CDB -->|orch_northbond_dash_zmq_enabled| Daemon
-  ZMQ -->|DASH イベント| Daemon
-  DASH_DB --> Daemon
-  Daemon --> SAI
+  CDB[("CONFIG_DB<br/>DEVICE_METADATA")]
+  DM["SwitchOrch"]
+  CDB --> DM
+  SAI["SAI<br/>sai_switch_api"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    `switch_type` の読み取りは orchagent 起動時に一度のみ。`orch_northbond_dash_zmq_enabled` は DpuOrchDaemon::init() でも一度読み取られ、ZMQ サーバの有無が決定する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## フィールド
 
 対象テーブル: `DEVICE_METADATA|localhost`
 
-| フィールド | 型 | YANG default | コード由来デフォルト | 説明 |
+| フィールド | 型 | [YANG](../../reference/glossary.md#term-yang) default | コード由来デフォルト | 説明 |
 |-----------|----|--------------|--------------------|------|
 | `switch_type` | enum string | なし | `"switch"` (コード fallback) | orchagent デーモン種別を決定。`"dpu"` を指定すると `DpuOrchDaemon` が選択される |
-| `orch_northbond_dash_zmq_enabled` | boolean | `"true"` | `true` (get_feature_status fallback) | gNMI サービスが DASH イベントを ZMQ チャネルで orchagent に送信するか否か |
-| `orch_northbond_route_zmq_enabled` | boolean | `"false"` | `false` (get_feature_status fallback) | fpmsyncd が ROUTE イベントを ZMQ チャネルで送信するか否か (DPU 上では通常不使用) |
+| `orch_northbond_dash_zmq_enabled` | boolean | `"true"` | `true` (get_feature_status fallback) | [gNMI](../../reference/glossary.md#term-gnmi) サービスが [DASH](../../reference/glossary.md#term-dash) イベントを ZMQ チャネルで orchagent に送信するか否か |
+| `orch_northbond_route_zmq_enabled` | boolean | `"false"` | `false` (get_feature_status fallback) | [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が ROUTE イベントを ZMQ チャネルで送信するか否か (DPU 上では通常不使用) |
 
 ## フィールド詳細
 
@@ -114,13 +106,13 @@ if (gMySwitchType == "dpu")
 }
 ```
 
-`switch_type` が存在しない場合は `"switch"` (= 通常 NPU モード) にフォールバックされ、`DpuOrchDaemon` は選択されない。
+`switch_type` が存在しない場合は `"switch"` (= 通常 [NPU](../../reference/glossary.md#term-npu) モード) にフォールバックされ、`DpuOrchDaemon` は選択されない。
 
 `switch_type = "dpu"` のとき `orchagent.sh` が付与する追加引数:
 
 | 引数 | 値 | 効果 |
 |------|----|------|
-| `-b` (pop batch size) | `65536` | 通常 NPU の `1024` より大幅に増加。DPU の高ボリューム処理に対応 |
+| `-b` (pop batch size) | `65536` | 通常 [NPU](../../reference/glossary.md#term-npu) の `1024` より大幅に増加。DPU の高ボリューム処理に対応 |
 | `-z zmq_sync` | 固定 | `synchronous_mode` フィールド値によらず ZMQ sync mode を強制 |
 | `-k` (ZMQ max bulk limit) | `65536` | ZMQ バルク送信上限 |
 
@@ -141,7 +133,7 @@ DEVICE_METADATA|localhost
   orch_northbond_dash_zmq_enabled = "true"   # or "false"
 ```
 
-`DpuOrchDaemon::init()` が起動時に一度読み取り、ZMQ サーバを DASH orch に渡すかどうかを決定する[^2]:
+`DpuOrchDaemon::init()` が起動時に一度読み取り、ZMQ サーバを [DASH](../../reference/glossary.md#term-dash) orch に渡すかどうかを決定する[^2]:
 
 ```cpp
 // orchdaemon.cpp:1329-1333
@@ -158,9 +150,9 @@ if (get_feature_status(ORCH_NORTHBOND_DASH_ZMQ_ENABLED, true))
 
 | 値 | ZMQ サーバ割り当て | DASH イベント送信経路 |
 |----|-------------------|-------------------|
-| `"true"` (YANG default) | あり (`m_zmqServer` を渡す) | gNMI → ZMQ → DashOrch |
-| `"false"` | なし (`nullptr`) | APPL_DB ProducerStateTable 経由のみ |
-| 欠如 | あり (コード default = `true`) | gNMI → ZMQ → DashOrch |
+| `"true"` ([YANG](../../reference/glossary.md#term-yang) default) | あり (`m_zmqServer` を渡す) | [gNMI](../../reference/glossary.md#term-gnmi) → ZMQ → DashOrch |
+| `"false"` | なし (`nullptr`) | [APPL_DB](../../reference/glossary.md#term-appl_db) [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 経由のみ |
+| 欠如 | あり (コード default = `true`) | [gNMI](../../reference/glossary.md#term-gnmi) → ZMQ → DashOrch |
 
 ### `orch_northbond_route_zmq_enabled`
 
@@ -169,18 +161,18 @@ DEVICE_METADATA|localhost
   orch_northbond_route_zmq_enabled = "false"   # YANG default
 ```
 
-YANG default は `"false"`。DPU 上では RouteOrch が `OrchDaemon::init()` 経由で初期化されるが、通常 DPU では Route イベントを ZMQ 経由で送信しない構成が想定される。
+[YANG](../../reference/glossary.md#term-yang) default は `"false"`。DPU 上では RouteOrch が `OrchDaemon::init()` 経由で初期化されるが、通常 DPU では Route イベントを ZMQ 経由で送信しない構成が想定される。
 
 ## 購読者
 
 - `orchagent` (`DpuOrchDaemon`): 起動時に `switch_type` を読み取って DpuOrchDaemon として動作; `orch_northbond_dash_zmq_enabled` を読み取って DASH ZMQ を有効化
 - `orchagent.sh`: `switch_type` を `sonic-db-cli` で読み取り、`-b 65536 -z zmq_sync -k 65536` を orchagent 起動引数に付与
-- `bfdmon.py` (`sonic-buildimage`): `switch_type = "dpu"` のとき BFD モニタリングをスキップ
+- `bfdmon.py` (`sonic-buildimage`): `switch_type = "dpu"` のとき [BFD](../../reference/glossary.md#term-bfd) モニタリングをスキップ
 - `enable_counters.py` (`sonic-buildimage`): `switch_type = "dpu"` のときカウンタ設定を分岐
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: [`DEVICE_METADATA`](device-metadata.md), [`DPU`/`REMOTE_DPU`/`VDPU`/`ENI`](dpu-eni.md)
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DEVICE_METADATA`](device-metadata.md), [`DPU`/`REMOTE_DPU`/`VDPU`/`ENI`](dpu-eni.md)
 - 関連 YANG: `sonic-device_metadata`
 
 <!-- defaults -->
@@ -200,7 +192,7 @@ DPU orchagent が参照する `DEVICE_METADATA|localhost` フィールドのデ�
 
 - **`orch_northbond_dash_zmq_enabled`**: YANG default `"true"` はコードの default_value `true` と一致する。フィールドが存在しない環境でも ZMQ が有効になる。DPU orchagent が ZMQ なしで動作するには明示的に `"false"` を設定する必要がある。
 
-- **ZMQ sync mode**: `switch_type = "dpu"` のとき `orchagent.sh` は `-z zmq_sync` を無条件付与する。これは `synchronous_mode` フィールドの値に関係なく ZMQ sync mode が強制されることを意味する。この挙動はシェルスクリプトレベルで決定されるため CONFIG_DB のフィールドで上書きできない。
+- **ZMQ sync mode**: `switch_type = "dpu"` のとき `orchagent.sh` は `-z zmq_sync` を無条件付与する。これは `synchronous_mode` フィールドの値に関係なく ZMQ sync mode が強制されることを意味する。この挙動はシェルスクリプトレベルで決定されるため [CONFIG_DB](../../reference/glossary.md#term-config_db) のフィールドで上書きできない。
 <!-- /defaults -->
 
 <!-- ordering -->
@@ -212,7 +204,7 @@ DPU orchagent が参照する `DEVICE_METADATA|localhost` フィールドのデ�
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | `getCfgSwitchType()` による `switch_type` 読み取り → SAI switch 初期化 | **強制先行** | `switch_type` は `sai_api_initialize()` 呼出し前に確定する必要がある。起動後の変更不可 |
+| 1 | `getCfgSwitchType()` による `switch_type` 読み取り → [SAI](../../reference/glossary.md#term-sai) switch 初期化 | **強制先行** | `switch_type` は `sai_api_initialize()` 呼出し前に確定する必要がある。起動後の変更不可 |
 | 2 | `switch_type = "dpu"` 確定 → `DPU_APPL_DB` / `DPU_APPL_STATE_DB` 接続 | **強制先行** | `dpu_app_db`・`dpu_app_state_db` は DpuOrchDaemon コンストラクタ呼出し前に生成される (`main.cpp:990-994`) |
 | 3 | `OrchDaemon::init()` 完了 → `DpuOrchDaemon::init()` 内 DASH Orch 群初期化 | **強制先行** | `DpuOrchDaemon::init()` の冒頭で `OrchDaemon::init()` を呼ぶ (`orchdaemon.cpp:1324`); 基底ランタイムが確立してから DASH Orch を追加する |
 | 4 | `orch_northbond_dash_zmq_enabled` 読み取り → `dash_zmq_server` ポインタ確定 → 各 DASH Orch コンストラクタ | **強制先行** | `get_feature_status()` の結果が `nullptr` か `m_zmqServer` かを決定し、その値が DashVnetOrch・DashOrch・DashAclOrch 等全 DASH Orch コンストラクタに渡される (`orchdaemon.cpp:1327-1406`) |
@@ -220,7 +212,7 @@ DPU orchagent が参照する `DEVICE_METADATA|localhost` フィールドのデ�
 
 ### 主要な制約詳細
 
-**`switch_type` 読み取りの一回性 (依存 #1)**: `getCfgSwitchType()` は `main()` の SAI 初期化前に一度だけ呼ばれ (`main.cpp:658`)、結果はグローバル変数 `gMySwitchType` に保持される。以降 orchagent プロセスが再起動するまで変更されない。CONFIG_DB 上で `switch_type` を変更しても orchagent には反映されず、有効化には orchagent の再起動が必要。
+**`switch_type` 読み取りの一回性 (依存 #1)**: `getCfgSwitchType()` は `main()` の [SAI](../../reference/glossary.md#term-sai) 初期化前に一度だけ呼ばれ (`main.cpp:658`)、結果はグローバル変数 `gMySwitchType` に保持される。以降 orchagent プロセスが再起動するまで変更されない。[CONFIG_DB](../../reference/glossary.md#term-config_db) 上で `switch_type` を変更しても orchagent には反映されず、有効化には orchagent の再起動が必要。
 
 **DpuOrchDaemon::init() 内の DASH Orch 初期化順序 (依存 #3, #4)**: `init()` は以下の順序で DASH Orch を生成・登録する:
 
@@ -248,7 +240,7 @@ addOrchList(各 Orch)  ← イベントループへの登録
 
 ### DPU_APPL_DB 購読テーブル (DpuOrchDaemon::init() 実行時)
 
-DASH Orch 群はすべて `DPU_APPL_DB`（SmartSwitch 上の DPU 側 APPL DB）から ProducerStateTable / ZMQ 経由でイベントを受信する[^1]。
+DASH Orch 群はすべて `DPU_APPL_DB`（[SmartSwitch](../../reference/glossary.md#term-smartswitch) 上の DPU 側 APPL DB）から [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) / ZMQ 経由でイベントを受信する[^1]。
 
 | DASH Orch | 購読テーブル | evidence |
 |-----------|------------|----------|
@@ -262,11 +254,11 @@ DASH Orch 群はすべて `DPU_APPL_DB`（SmartSwitch 上の DPU 側 APPL DB）�
 | `DashPortMapOrch` | `DASH_OUTBOUND_PORT_MAP_TABLE`, `DASH_OUTBOUND_PORT_MAP_RANGE_TABLE` | orchdaemon.cpp:1396-1399 |
 | `DashHaFlowOrch` | `DASH_FLOW_SYNC_SESSION_TABLE`, `DASH_FLOW_DUMP_FILTER_TABLE` | orchdaemon.cpp:1403-1406 |
 
-> `DPU_APPL_DB` は通常の `APPL_DB` とは独立した Redis DB インスタンスであり、SmartSwitch NPU 側からは `DPU_APPL_DB` という名前で接続する。DPU 側デーモン（`dashd` など）が書き込み側となり、`DpuOrchDaemon` が読み取り側となる。
+> `DPU_APPL_DB` は通常の `APPL_DB` とは独立した [Redis](../../reference/glossary.md#term-redis) DB インスタンスであり、[SmartSwitch](../../reference/glossary.md#term-smartswitch) NPU 側からは `DPU_APPL_DB` という名前で接続する。DPU 側デーモン（`dashd` など）が書き込み側となり、`DpuOrchDaemon` が読み取り側となる。
 
 ### DPU_APPL_STATE_DB 書込み (実行時)
 
-全 DASH Orch コンストラクタに `m_dpu_appstateDb` が渡される。各 DASH Orch は SAI API 呼出し完了後に `DPU_APPL_STATE_DB` へ結果ステータスを書き込む。`DPU_APPL_STATE_DB` への書込みは DASH Orch 群の責務であり、DpuOrchDaemon 自体は直接書き込まない。
+全 DASH Orch コンストラクタに `m_dpu_appstateDb` が渡される。各 DASH Orch は [SAI](../../reference/glossary.md#term-sai) API 呼出し完了後に `DPU_APPL_STATE_DB` へ結果ステータスを書き込む。`DPU_APPL_STATE_DB` への書込みは DASH Orch 群の責務であり、DpuOrchDaemon 自体は直接書き込まない。
 
 ### APPL_DB|BFD_SESSION の間接参照 (DashHaOrch)
 
@@ -283,6 +275,28 @@ excerpt: |
   DashHaOrch *dash_ha_orch = new DashHaOrch(m_dpu_appDb, dash_ha_tables, dash_orch, gBfdOrch, m_dpu_appstateDb, dash_zmq_server);
 reasoning: DashHaOrch が gBfdOrch を受け取ることで、BFD セッション状態を HA スコープ制御に利用する。gBfdOrch は OrchDaemon::init() (orchdaemon.cpp:243) で生成される BfdOrch の参照であり、APPL_DB BFD_SESSION テーブルを間接的に読み取る。
 -->
+
+<!-- evidence-rendered:start -->
+??? note "📋 検証エビデンス: sonic-net/sonic-swss/orchagent/orchdaemon.cpp#L1354-L1359"
+
+    **出典**:
+
+    `sonic-net/sonic-swss/orchagent/orchdaemon.cpp#L1354-L1359`
+
+    **抜粋**:
+
+    ```text
+    vector<string> dash_ha_tables = {
+        APP_DASH_HA_SET_TABLE_NAME,
+        APP_DASH_HA_SCOPE_TABLE_NAME,
+        APP_BFD_SESSION_TABLE_NAME
+    };
+    DashHaOrch *dash_ha_orch = new DashHaOrch(m_dpu_appDb, dash_ha_tables, dash_orch, gBfdOrch, m_dpu_appstateDb, dash_zmq_server);
+    ```
+
+    **判断根拠**: DashHaOrch が gBfdOrch を受け取ることで、BFD セッション状態を HA スコープ制御に利用する。gBfdOrch は OrchDaemon::init() (orchdaemon.cpp:243) で生成される BfdOrch の参照であり、APPL_DB BFD_SESSION テーブルを間接的に読み取る。
+
+<!-- evidence-rendered:end -->
 
 `gBfdOrch` は `OrchDaemon::init()`（基底クラス初期化）内で生成されるため (`orchdaemon.cpp:243`)、`DpuOrchDaemon::init()` が先頭で `OrchDaemon::init()` を呼ぶ依存順序（Phase B 依存 #3）と連動している。
 
@@ -317,7 +331,7 @@ reasoning: DashHaOrch が gBfdOrch を受け取ることで、BFD セッショ�
 
 ### B. `DPU_APPL_DB` / `DPU_APPL_STATE_DB` 接続失敗
 
-`switch_type = "dpu"` のとき `main.cpp:992-993` で `DBConnector("DPU_APPL_DB", ...)` / `DBConnector("DPU_APPL_STATE_DB", ...)` を生成する。`DBConnector` コンストラクタは Redis 接続失敗時に例外を送出するため、`main()` がキャッチせずに orchagent が abort し、systemd により再起動される。
+`switch_type = "dpu"` のとき `main.cpp:992-993` で `DBConnector("DPU_APPL_DB", ...)` / `DBConnector("DPU_APPL_STATE_DB", ...)` を生成する。`DBConnector` コンストラクタは [Redis](../../reference/glossary.md#term-redis) 接続失敗時に例外を送出するため、`main()` がキャッチせずに orchagent が abort し、systemd により再起動される。
 
 ### C. `DpuOrchDaemon::init()` 失敗 → `exit(EXIT_FAILURE)`
 
@@ -421,8 +435,8 @@ SmartSwitch DPU として動作させるためには `switch_type = "dpu"` が�
 | `DashOrch` | `DASH_APPLIANCE_TABLE` | `result` | `addAppliance()` / `removeAppliance()` 後 | `dashorch.cpp:419` |
 | `DashOrch` | `DASH_ROUTING_TYPE_TABLE` | `result` | routing type SET/DEL 後 | `dashorch.cpp:517` |
 | `DashOrch` | `DASH_ENI_TABLE` | `result` | `addEni()` / `removeEni()` 後 | `dashorch.cpp:1077` |
-| `DashOrch` | `DASH_QOS_TABLE` | `result` | QoS SET/DEL 後 | `dashorch.cpp:1159` |
-| `DashOrch` | `DASH_ENI_ROUTE_TABLE` | `result` | ENI route SET/DEL 後 | `dashorch.cpp:1312` |
+| `DashOrch` | `DASH_QOS_TABLE` | `result` | [QoS](../../reference/glossary.md#term-qos) SET/DEL 後 | `dashorch.cpp:1159` |
+| `DashOrch` | `DASH_ENI_ROUTE_TABLE` | `result` | [ENI](../../reference/glossary.md#term-eni) route SET/DEL 後 | `dashorch.cpp:1312` |
 | `DashHaOrch` | `DASH_HA_SET_TABLE` | `result` | HA set SET/DEL 後 | `dashhaorch.cpp:447` |
 | `DashHaOrch` | `DASH_HA_SCOPE_TABLE` | `result` | HA scope SET/DEL 後 | `dashhaorch.cpp:985` |
 | `DashRouteOrch` | `DASH_ROUTE_TABLE` | `result` | route SET/DEL 後 | `dashrouteorch.cpp:342,403` |
@@ -444,7 +458,7 @@ SmartSwitch DPU として動作させるためには `switch_type = "dpu"` が�
 
 ### DashHaFlowOrch — DPU_STATE_DB への例外的書込
 
-`DashHaFlowOrch` は `app_state_db`（`DPU_APPL_STATE_DB`）を受け取るが使用しない。代わりに自コンストラクタ内で独立して `DBConnector("DPU_STATE_DB", ...)` を生成し (`dashhafloworch.cpp:766`)、フロー同期セッション状態を `DPU_STATE_DB` の `DASH_FLOW_SYNC_SESSION_STATE_TABLE` へ書き込む (`dashhafloworch.cpp:247,307`)。これは `DPU_APPL_STATE_DB` とは別個の Redis インスタンスへの書込みである。
+`DashHaFlowOrch` は `app_state_db`（`DPU_APPL_STATE_DB`）を受け取るが使用しない。代わりに自コンストラクタ内で独立して `DBConnector("DPU_STATE_DB", ...)` を生成し (`dashhafloworch.cpp:766`)、フロー同期セッション状態を `DPU_STATE_DB` の `DASH_FLOW_SYNC_SESSION_STATE_TABLE` へ書き込む (`dashhafloworch.cpp:247,307`)。これは `DPU_APPL_STATE_DB` とは別個の [Redis](../../reference/glossary.md#term-redis) インスタンスへの書込みである。
 
 | DASH Orch | 書込 DB | テーブル | フィールド | 書込トリガ |
 |-----------|--------|---------|-----------|-----------|
@@ -613,7 +627,7 @@ NPU 側の `OrchDaemon::init()` 内で `subtype = "SmartSwitch"` のとき `Dash
 {% endif %}
 ```
 
-`switch_type = "dpu"` のとき `SWITCH_TABLE:switch` への ECMP hash seed・LAG hash seed・FDB aging time・ordered_ecmp の設定が生成されない。DPU の SAI は標準 NPU の ECMP / FDB エージング機能を持たないためである。
+`switch_type = "dpu"` のとき `SWITCH_TABLE:switch` への [ECMP](../../reference/glossary.md#term-ecmp) hash seed・[LAG](../../reference/glossary.md#term-lag) hash seed・[FDB](../../reference/glossary.md#term-fdb) aging time・ordered_ecmp の設定が生成されない。DPU の SAI は標準 NPU の [ECMP](../../reference/glossary.md#term-ecmp) / [FDB](../../reference/glossary.md#term-fdb) エージング機能を持たないためである。
 
 ### `switch_type = "dpu"` 分岐: ipinip.json.j2 — IP-in-IP デカプ設定スキップ
 
@@ -648,17 +662,14 @@ if platform_info.get('switch_type') == 'dpu':
 | `platform` | `pensando` | MAC 取得: `int_mnic0` → `eth0-midplane` | `orchagent.sh:88-91` |
 | `subtype` | `SmartSwitch` | ZMQ `-q tcp://eth0-midplane`（midplane UP 時） | `orchagent.sh:107-113` |
 | `subtype` | `SmartSwitch` | `DashEniFwdOrch` を NPU 側 `OrchDaemon` に追加 | `orchdaemon.cpp:613-618` |
-| `switch_type` | `dpu` | ECMP/FDB 設定スキップ (`switch.json.j2`) | `switch.json.j2:35` |
+| `switch_type` | `dpu` | [ECMP](../../reference/glossary.md#term-ecmp)/[FDB](../../reference/glossary.md#term-fdb) 設定スキップ (`switch.json.j2`) | `switch.json.j2:35` |
 | `switch_type` | `dpu` | IP-in-IP デカプ設定スキップ (`ipinip.json.j2`) | `ipinip.json.j2:1` |
-| `switch_type` | `dpu` | ENI / DASH_METER FLEX カウンタ有効化 | `enable_counters.py:43` |
+| `switch_type` | `dpu` | [ENI](../../reference/glossary.md#term-eni) / DASH_METER FLEX カウンタ有効化 | `enable_counters.py:43` |
 
 > **参照**: 詳細スキャン証跡は `meta/_intermediate/cdb-flow/dpu-orch-platform.md` を参照。
 <!-- /platform -->
 
 ## 引用元
-
-<!-- footnote anchor seeds -->
-出典: [^3] [^4]
 
 [^1]: DpuOrchDaemon クラス定義と起動条件: `sonic-swss/orchagent/orchdaemon.h:150-158`, `sonic-swss/orchagent/orchdaemon.cpp:1313-1419`, `sonic-swss/orchagent/main.cpp:981-994`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/orchdaemon.cpp>
 
@@ -669,3 +680,5 @@ if platform_info.get('switch_type') == 'dpu':
 [^4]: orchagent.sh DPU 固有引数: `sonic-buildimage/dockers/docker-orchagent/orchagent.sh:22-42`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/orchagent.sh>
 
 [^5]: ZmqOrch / ZmqConsumerStateTable 実装: `sonic-swss/orchagent/zmqorch.cpp:59-80`, `sonic-swss-common/common/zmqconsumerstatetable.cpp:20-47`, `sonic-swss/lib/orch_zmq_config.cpp:35-80`, `sonic-swss/orchagent/main.cpp:646-654, 1032-1037`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/zmqorch.cpp>
+
+<!-- glossary-links-injected: 72d4095c354e -->

@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-`VRF_TABLE` は [APPL_DB](../../reference/glossary.md#term-appl_db) 上に存在する VRF エントリテーブル。`vrfmgrd` が CONFIG_DB `VRF` テーブルを購読し、Linux VRF デバイス (`ip vrf add`) を作成した後に `APP_VRF_TABLE_NAME = "VRF_TABLE"` へ pass-through 書き込みを行う[^vrfmgr]。`orchagent` 内の `VRFOrch` がこのテーブルを購読し、`sai_virtual_router_api->create_virtual_router()` を通じてハードウェア VRF (SAI Virtual Router) を生成する[^vrforch]。テーブル名定数は `schema.h:80` で `APP_VRF_TABLE_NAME = "VRF_TABLE"` と定義される[^schema]。
+`VRF_TABLE` は [APPL_DB](../../reference/glossary.md#term-appl_db) 上に存在する [VRF](../../reference/glossary.md#term-vrf) エントリテーブル。`vrfmgrd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) `VRF` テーブルを購読し、Linux [VRF](../../reference/glossary.md#term-vrf) デバイス (`ip vrf add`) を作成した後に `APP_VRF_TABLE_NAME = "VRF_TABLE"` へ pass-through 書き込みを行う[^vrfmgr]。`orchagent` 内の `VRFOrch` がこのテーブルを購読し、`sai_virtual_router_api->create_virtual_router()` を通じてハードウェア [VRF](../../reference/glossary.md#term-vrf) ([SAI](../../reference/glossary.md#term-sai) Virtual Router) を生成する[^vrforch]。テーブル名定数は `schema.h:80` で `APP_VRF_TABLE_NAME = "VRF_TABLE"` と定義される[^schema]。
 
 ## key 構造
 
@@ -41,22 +41,22 @@ related:
 VRF_TABLE|<vrfName>
 ```
 
-`<vrfName>` は CONFIG_DB の `VRF` key と同一。YANG `sonic-vrf.yang` のパターン制約 `Vrf[a-zA-Z0-9_-]+` を満たす文字列（例: `VrfRed`）および `mgmt` が書き込まれる。
+`<vrfName>` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `VRF` key と同一。[YANG](../../reference/glossary.md#term-yang) `sonic-vrf.yang` のパターン制約 `Vrf[a-zA-Z0-9_-]+` を満たす文字列（例: `VrfRed`）および `mgmt` が書き込まれる。
 
 ## フィールド一覧
 
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
-| `fallback` | boolean | - | CONFIG_DB から pass-through。orchagent で **silent drop** (dead field) |
+| `fallback` | boolean | - | [CONFIG_DB](../../reference/glossary.md#term-config_db) から pass-through。[orchagent](../../reference/glossary.md#term-orchagent) で **silent drop** (dead field) |
 | `vni` | uint32 | - | L3 VNI マッピング。`0` = なし |
-| `v4` | boolean | - | IPv4 admin state (YANG 未定義・VNET 経由のみ) |
-| `v6` | boolean | - | IPv6 admin state (YANG 未定義・VNET 経由のみ) |
+| `v4` | boolean | - | IPv4 admin state ([YANG](../../reference/glossary.md#term-yang) 未定義・[VNET](../../reference/glossary.md#term-vnet) 経由のみ) |
+| `v6` | boolean | - | IPv6 admin state ([YANG](../../reference/glossary.md#term-yang) 未定義・[VNET](../../reference/glossary.md#term-vnet) 経由のみ) |
 | `src_mac` | MAC address | - | Virtual Router の送信元 MAC (YANG 未定義) |
 | `ttl_action` | packet action | - | TTL=1 パケットの処理 (YANG 未定義) |
 | `ip_opt_action` | packet action | - | IP オプション付きパケットの処理 (YANG 未定義) |
 | `l3_mc_action` | packet action | - | L3 マルチキャスト unknown の処理 (YANG 未定義) |
-| `mgmtVrfEnabled` | boolean | - | orchagent で **explicit ignore** |
-| `in_band_mgmt_enabled` | boolean | - | orchagent で **explicit ignore** |
+| `mgmtVrfEnabled` | boolean | - | [orchagent](../../reference/glossary.md#term-orchagent) で **explicit ignore** |
+| `in_band_mgmt_enabled` | boolean | - | [orchagent](../../reference/glossary.md#term-orchagent) で **explicit ignore** |
 
 ## 書き込み主体
 
@@ -72,20 +72,18 @@ VRF_TABLE|<vrfName>
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>VRF")]
-  VRFMGRD["vrfmgrd"]
-  CDB --> VRFMGRD
-  APPDB[("APPL_DB<br/>VRF_TABLE")]
-  VRFMGRD --> APPDB
-  VRFORCH["orchagent<br/>VRFOrch"]
-  APPDB --> VRFORCH
+  DM["vrfmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VRF_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
   SAI["SAI<br/>sai_virtual_router_api"]
-  VRFORCH --> SAI
-  STATEDB[("STATE_DB<br/>VRF_OBJECT_TABLE")]
-  VRFORCH --> STATEDB
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB → APPL_DB → SAI の典型経路。vrfmgrd が APPL_DB 書き込み主体。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 <!-- pubsub -->
@@ -96,7 +94,7 @@ flowchart LR
 
 ### 購読方式: `ConsumerStateTable` + `gBatchSize`
 
-`VRFOrch` は `orchdaemon.cpp:283` で `new VRFOrch(m_applDb, APP_VRF_TABLE_NAME, m_stateDb, STATE_VRF_OBJECT_TABLE_NAME)` として生成される。`Orch` 基底の `addConsumer()` は DB id を見て購読 Executor を選び分け、APPL_DB の場合は `ConsumerStateTable` 経路を取る (`orch.cpp:1186-1195`):
+`VRFOrch` は `orchdaemon.cpp:283` で `new VRFOrch(m_applDb, APP_VRF_TABLE_NAME, m_stateDb, STATE_VRF_OBJECT_TABLE_NAME)` として生成される。`Orch` 基底の `addConsumer()` は DB id を見て購読 Executor を選び分け、[APPL_DB](../../reference/glossary.md#term-appl_db) の場合は `ConsumerStateTable` 経路を取る (`orch.cpp:1186-1195`):
 
 ```cpp
 if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == CHASSIS_APP_DB) {
@@ -107,11 +105,11 @@ if (db->getDbId() == CONFIG_DB || db->getDbId() == STATE_DB || db->getDbId() == 
 }
 ```
 
-`VRF_TABLE` は APPL_DB 上のテーブルなので **`ConsumerStateTable` 側**が使われる（CONFIG_DB の `SubscriberStateTable` 経路ではない）点に注意。バッチサイズ `gBatchSize` は `orch.cpp:17` の `int gBatchSize = 0;` で定義された orchagent プロセス global で、0 のときは内部既定が適用される。
+`VRF_TABLE` は [APPL_DB](../../reference/glossary.md#term-appl_db) 上のテーブルなので **`ConsumerStateTable` 側**が使われる（CONFIG_DB の `SubscriberStateTable` 経路ではない）点に注意。バッチサイズ `gBatchSize` は `orch.cpp:17` の `int gBatchSize = 0;` で定義された orchagent プロセス global で、0 のときは内部既定が適用される。
 
 ### Orch2 inheritance と Request パーサ
 
-`vrforch.h:49` 時点で `class VRFOrch : public Orch2`。`Orch2` は `doTask(Consumer&)` を override し、`request_parser.h` の `Request` で field/value を型付きパースして `addOperation(const Request&)` / `delOperation(const Request&)` へ dispatch する。Phase 6 で抽出した SAI 属性マッピング (`v4` / `v6` / `src_mac` / `vni` ほか) はすべてこの `addOperation` から呼ばれる。
+`vrforch.h:49` 時点で `class VRFOrch : public Orch2`。`Orch2` は `doTask(Consumer&)` を override し、`request_parser.h` の `Request` で field/value を型付きパースして `addOperation(const Request&)` / `delOperation(const Request&)` へ dispatch する。Phase 6 で抽出した [SAI](../../reference/glossary.md#term-sai) 属性マッピング (`v4` / `v6` / `src_mac` / `vni` ほか) はすべてこの `addOperation` から呼ばれる。
 
 ### `VxlanTunnelOrch` との `gDirectory` 同期
 
@@ -174,7 +172,7 @@ if (vni != 0)
 
 ### `v4` / `v6` — SAI デフォルト依存 (YANG 未定義)
 
-フィールドが存在する場合は `SAI_VIRTUAL_ROUTER_ATTR_ADMIN_V4_STATE` / `ADMIN_V6_STATE` に変換されるが、CONFIG_DB `sonic-vrf.yang` に定義がなく通常の `config vrf add` では書き込まれない。省略時は SAI attrs に追加されないため SAI/ASIC 実装のデフォルト値が使用される。VNET テーブル経由で直接書き込む場合にのみ機能する残存コード。
+フィールドが存在する場合は `SAI_VIRTUAL_ROUTER_ATTR_ADMIN_V4_STATE` / `ADMIN_V6_STATE` に変換されるが、CONFIG_DB `sonic-vrf.yang` に定義がなく通常の `config vrf add` では書き込まれない。省略時は [SAI](../../reference/glossary.md#term-sai) attrs に追加されないため SAI/ASIC 実装のデフォルト値が使用される。[VNET](../../reference/glossary.md#term-vnet) テーブル経由で直接書き込む場合にのみ機能する残存コード。
 
 ### `src_mac` — 省略時はスイッチ MAC を SAI が使用 (YANG 未定義)
 
@@ -192,7 +190,7 @@ if (vni != 0)
 
 ### `mgmtVrfEnabled` / `in_band_mgmt_enabled` — explicit ignore
 
-`VRFOrch` はこれらのフィールドを明示的に読み飛ばす。SAI 属性への変換も STATE_DB への書き込みも行わない。
+`VRFOrch` はこれらのフィールドを明示的に読み飛ばす。SAI 属性への変換も [STATE_DB](../../reference/glossary.md#term-state_db) への書き込みも行わない。
 
 ```cpp
 // vrforch.cpp:74-78
@@ -208,7 +206,7 @@ else if ((name == "mgmtVrfEnabled") || (name == "in_band_mgmt_enabled"))
 `vrforch.h:34` で `{ "fallback", REQ_T_BOOL }` として宣言されているが、`VRFOrch::addOperation` のすべての if/else チェーンに `"fallback"` の分岐が存在しない。結果として `else` ブランチに落ち `SWSS_LOG_ERROR("Logic error: Unknown attribute: %s")` が出力されてフィールドが破棄される。
 
 - `vrfmgrd` は `fallback` を pass-through するため APP_DB には届く
-- `VRFOrch` がそれを silent drop → **SAI・Linux カーネル・FRR のいずれにも影響しない**
+- `VRFOrch` がそれを silent drop → **SAI・Linux カーネル・[FRR](../../reference/glossary.md#term-frr) のいずれにも影響しない**
 - `fallback=true` を CONFIG_DB に設定してもデフォルト VRF へのフォールバックは機能しない
 - これは **dead field** であり YANG `default false` のみが有効な設定状態
 
@@ -229,7 +227,7 @@ else if ((name == "mgmtVrfEnabled") || (name == "in_band_mgmt_enabled"))
 |---|---|---|
 | `MGMT_VRF_CONFIG` の Linux mgmt VRF 作成 (`hostcfgd` 側) | `vrfmgrd::setLink` は `vrfName == "mgmt"` の場合 `ip link add` を呼ばず `MGMT_VRF_TABLE_ID = 6000` を予約するだけ。`hostcfgd` が先に Linux mgmt VRF を作っていない状態で書くと SAI Virtual Router は作成されるが Linux 側 netdev と不整合になる | `vrfmgr.cpp:13-16, 73-84, 164-201` |
 | `VXLAN_EVPN_NVO` (`vni != 0` の場合) | `updateVrfVNIMap` が `EvpnNvoOrch::getEVPNVtep()` を必須で参照。VTEP 未作成だと `false` 返却で `addOperation` 失敗、SAI VR は create 済みなのに `STATE_VRF_OBJECT_TABLE` と VNI map が抜ける半作成状態が残る | `vrforch.cpp:225-230` |
-| `VXLAN_TUNNEL_MAP` (VLAN-VNI map) (`vni != 0` の場合) | `VxlanTunnelOrch::getVlanMappedToVni(vni)` が 0 のとき `updateL3VniStatus` が呼ばれず L3 VNI は半設定状態のまま保留される | `vrforch.cpp:233-241` |
+| `VXLAN_TUNNEL_MAP` ([VLAN](../../reference/glossary.md#term-vlan)-VNI map) (`vni != 0` の場合) | `VxlanTunnelOrch::getVlanMappedToVni(vni)` が 0 のとき `updateL3VniStatus` が呼ばれず L3 VNI は半設定状態のまま保留される | `vrforch.cpp:233-241` |
 
 !!! warning "mgmt VRF は二系統の同期が必要"
     `mgmt` VRF は `hostcfgd` (Linux mgmt VRF netdev) と `vrfmgrd` (`MGMT_VRF_CONFIG` 経由で APPL_DB `VRF_TABLE|mgmt`) の **二系統** で構成される。`vrfmgrd::doTask` は `mgmtVrfEnabled == true` かつ `in_band_mgmt_enabled == true` の両条件が揃わない限り `op` を `DEL_COMMAND` に書き換える (`vrfmgr.cpp:228-271`)。orchagent 側 `VRFOrch::addOperation` も `mgmtVrfEnabled` / `in_band_mgmt_enabled` フィールドを explicit ignore する (`vrforch.cpp:74-78`) ため、これらフィールドは SAI には絶対に到達しない。
@@ -256,7 +254,7 @@ else if ((name == "mgmtVrfEnabled") || (name == "in_band_mgmt_enabled"))
 | 順序制約 | 理由 | ソース |
 |---|---|---|
 | インタフェース / ルート → VRF の順 | `vrf_table_[vrf_name].ref_count > 0` の間 `delOperation` は `return false`（リトライキュー残置）。`STATE_VRF_OBJECT_TABLE|<vrf>` が消えず、`vrfmgrd::delLink` の Linux netdev 削除も走らない | `vrforch.cpp:169-170`、`vrfmgr.cpp:312-360` |
-| SAI remove → STATE_DB DEL → vrfmgrd delLink | `VRFOrch::delOperation` は最後に `m_stateVrfObjectTable.del` を呼ぶ (`vrforch.cpp:193`)。`vrfmgrd` 側は `isVrfObjExist()` が `false` を返すまで Linux netdev 削除を遅延（コメント `Delay delLink until vrf object deleted in orchagent`） | `vrforch.cpp:172-193`、`vrfmgr.cpp:312-360` |
+| SAI remove → [STATE_DB](../../reference/glossary.md#term-state_db) DEL → [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) delLink | `VRFOrch::delOperation` は最後に `m_stateVrfObjectTable.del` を呼ぶ (`vrforch.cpp:193`)。`vrfmgrd` 側は `isVrfObjExist()` が `false` を返すまで Linux netdev 削除を遅延（コメント `Delay delLink until vrf object deleted in orchagent`） | `vrforch.cpp:172-193`、`vrfmgr.cpp:312-360` |
 | `mgmt` VRF は Linux netdev 削除なし | `vrfmgr.cpp:73-76, 146-152` で `vrfName == "mgmt"` のとき table id だけ recycle し、`ip link del` は呼ばない | `vrfmgr.cpp:73-76, 146-152` |
 
 ### 起動時シーケンス（典型）
@@ -275,7 +273,7 @@ vrfmgrd が CONFIG_DB VRF / MGMT_VRF_CONFIG を受信
 VRFOrch が SAI Virtual Router create → updateVrfVNIMap → STATE_VRF_OBJECT_TABLE|<vrf>=ok
 ```
 
-実運用では `config vrf add Vrfxxx` が `VRF` テーブルのみを書く（VNI 未設定）ため、EVPN VTEP / VLAN-VNI map 依存は L3 VNI 機能を使う場合のみ。
+実運用では `config vrf add Vrfxxx` が `VRF` テーブルのみを書く（VNI 未設定）ため、[EVPN](../../reference/glossary.md#term-evpn) VTEP / [VLAN](../../reference/glossary.md#term-vlan)-VNI map 依存は L3 VNI 機能を使う場合のみ。
 
 <!-- /ordering -->
 
@@ -294,7 +292,7 @@ VRFOrch が SAI Virtual Router create → updateVrfVNIMap → STATE_VRF_OBJECT_T
 | `task_failed` | `true` | `return true` → エントリ削除 | default (`handleSaiFailure` 経由で crash dump 要求) |
 | `task_success` | (想定外で WARN) | 分岐前に通過 | `ITEM_ALREADY_EXISTS` / `ITEM_NOT_FOUND` 等 |
 
-`VRFOrch` 自身は `ERROR_TABLE` / STATE_DB に失敗状態を書き戻さない。失敗時 `STATE_VRF_OBJECT_TABLE|<vrfName>` は更新されず、`vrfmgrd::isVrfObjExist()` がキー存在のみを見るため、**失敗中の VRF は STATE 上「存在しない」と扱われる**。
+`VRFOrch` 自身は `ERROR_TABLE` / [STATE_DB](../../reference/glossary.md#term-state_db) に失敗状態を書き戻さない。失敗時 `STATE_VRF_OBJECT_TABLE|<vrfName>` は更新されず、`vrfmgrd::isVrfObjExist()` がキー存在のみを見るため、**失敗中の VRF は STATE 上「存在しない」と扱われる**。
 
 ### 失敗パターン一覧
 
@@ -304,7 +302,7 @@ VRFOrch が SAI Virtual Router create → updateVrfVNIMap → STATE_VRF_OBJECT_T
 | **SAI `create_virtual_router()` 失敗 (resource 系)** | INSUFFICIENT_RESOURCES / TABLE_FULL / NO_MEMORY / NV_STORAGE_FULL | `SWSS_LOG_ERROR "Failed to create virtual router"` | `return false` → 永久 retry |
 | **SAI `create_virtual_router()` 失敗 (NOT_SUPPORTED 等)** | default ブランチ | `handleSaiFailure` で crash dump 要求 | `return true` → エントリ削除・no retry |
 | **SAI `create_virtual_router()` の `ITEM_ALREADY_EXISTS` 系** | 既存 router_id 衝突 | `SWSS_LOG_NOTICE "Returning success"` | `task_success` 扱いで通過。**`router_id` が未初期化のまま `vrf_table_[vrf_name].vrf_id = router_id` を実行する潜在不具合**。VRFOrch に明示 fallback 無し |
-| **EVPN VTEP 不在 (`vni>0` 時)** | `VXLAN_EVPN_NVO` 未投入で `vni!=0` 書込 | `SWSS_LOG_NOTICE "updateVrfVNIMap unable to find EVPN VTEP"` (ERROR 無し) | `updateVrfVNIMap` が `false` → `addOperation` も `false` → 永久 retry。**SAI Virtual Router は手前で create 済み**だが `STATE_VRF_OBJECT_TABLE` `state=ok` と `vrf_vni_map_table_` は未投入。`EvpnNvoOrch` 側の明示的再 kick は無く `doTask()` ループ任せ → 運用上は **silent skip** に見える |
+| **[EVPN](../../reference/glossary.md#term-evpn) VTEP 不在 (`vni>0` 時)** | `VXLAN_EVPN_NVO` 未投入で `vni!=0` 書込 | `SWSS_LOG_NOTICE "updateVrfVNIMap unable to find EVPN VTEP"` (ERROR 無し) | `updateVrfVNIMap` が `false` → `addOperation` も `false` → 永久 retry。**SAI Virtual Router は手前で create 済み**だが `STATE_VRF_OBJECT_TABLE` `state=ok` と `vrf_vni_map_table_` は未投入。`EvpnNvoOrch` 側の明示的再 kick は無く `doTask()` ループ任せ → 運用上は **silent skip** に見える |
 | **SAI `set_virtual_router_attribute()` 部分失敗 (update パス)** | 複数 attrs の途中で SAI 失敗 | `SWSS_LOG_ERROR "Failed to update virtual router attribute"` | resource 系のみ `return false` で retry。**先行 attr の SAI 書込は rollback されず部分適用が残る**。retry 時はループ先頭から再投入 (idempotent な属性のみ安全) |
 | **SAI `remove_virtual_router()` default 失敗** | default ブランチ | `handleSaiFailure` | `return true` でエントリ削除されるが `vrf_table_.erase()` 前に抜ける → **内部 map に VRF が残置 (リーク)** |
 | **SAI `remove_virtual_router()` の `OBJECT_IN_USE`** | SAI 側参照残 | `handleSaiRemoveStatus` で `task_need_retry` | `return false` → retry |
@@ -357,24 +355,24 @@ APPL_DB `VRF_TABLE` への SET/DEL は、`orchagent` 内の `VRFOrch` (`vrforch.
 
 | DB | テーブル | 用途 |
 |---|---|---|
-| COUNTERS_DB | `COUNTERS_ROUTE_NAME_MAP` (`mPrefixToCounterTable`) | route prefix → counter OID マップ |
-| COUNTERS_DB | `COUNTERS_ROUTE_TO_PATTERN_MAP` (`mPrefixToPatternTable`) | route prefix → 適用パターン名マップ |
-| FLEX_COUNTER_DB | `ROUTE_FLOW_COUNTER_FLEX_COUNTER_GROUP` (`mRouteFlowCounterMgr`) | poller group / interval 登録 |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_ROUTE_NAME_MAP` (`mPrefixToCounterTable`) | route prefix → counter OID マップ |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_ROUTE_TO_PATTERN_MAP` (`mPrefixToPatternTable`) | route prefix → 適用パターン名マップ |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `ROUTE_FLOW_COUNTER_FLEX_COUNTER_GROUP` (`mRouteFlowCounterMgr`) | poller group / interval 登録 |
 
 ただし `FlowCounterRouteOrch::onAddVR` (`flowcounterrouteorch.cpp:401-432`) は
 
 1. `mRouteFlowCounterSupported == false` の場合は即 return（プラットフォーム側 capability で決まる）、
 2. CONFIG_DB `FLOW_COUNTER_ROUTE_PATTERN_TABLE` に当該 `vrf_name` を含む `RoutePattern` が登録済みの場合に限り `createRouteFlowCounterByPattern()` を呼ぶ、
 
-という二重ガードで保護されており、通常運用（ROUTE フローカウンタ機能未使用）では VRF_TABLE への SET/DEL は COUNTERS_DB / FLEX_COUNTER_DB に**何も書かない**。
+という二重ガードで保護されており、通常運用（ROUTE フローカウンタ機能未使用）では VRF_TABLE への SET/DEL は [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に**何も書かない**。
 
 ### その他 DB
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
 | APPL_DB (他テーブルへの fan-out) | なし | `VRFOrch` は `Orch2(appDb, appTableName, ...)` で `APP_VRF_TABLE_NAME` を購読するのみ。`appDb` への producer hand を持たない (`vrforch.h:52-56`) |
-| ASIC_DB (VRFOrch 直接) | なし | `sai_virtual_router_api->create_virtual_router()` 呼出により syncd 経由で ASIC_DB に流れるのは SAI 通常経路。`VRFOrch` 自身は ASIC_DB Table ハンドルを保持しない |
-| LOGLEVEL_DB | なし | `vrforch.cpp` 全文に LOGLEVEL_DB 参照 0 件 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) (VRFOrch 直接) | なし | `sai_virtual_router_api->create_virtual_router()` 呼出により [syncd](../../reference/glossary.md#term-syncd) 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) に流れるのは SAI 通常経路。`VRFOrch` 自身は [ASIC_DB](../../reference/glossary.md#term-asic_db) Table ハンドルを保持しない |
+| [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) | なし | `vrforch.cpp` 全文に [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) 参照 0 件 |
 | Notification channel | なし | `vrforch.cpp` に `NotificationProducer` / `publish()` の呼出なし |
 
 ### VNET_TABLE 経路について
@@ -387,7 +385,7 @@ APPL_DB `VRF_TABLE` への SET/DEL は、`orchagent` 内の `VRFOrch` (`vrforch.
 <!-- platform -->
 ## プラットフォーム / SAI Capability 差異 (Phase H)
 
-APPL_DB `VRF_TABLE` のスキーマ自体はプラットフォーム共通だが、`VRFOrch::addOperation` が SAI Virtual Router に渡す拡張属性 4 種 (`src_mac` / `ttl_action` / `ip_opt_action` / `l3_mc_action`) は SAI 任意属性であり、ASIC SAI 実装と VS/VPP シムで挙動が異なる。さらに `vni != 0` の L3 VNI マッピングは EVPN VTEP 事前作成を必須とする。
+APPL_DB `VRF_TABLE` のスキーマ自体はプラットフォーム共通だが、`VRFOrch::addOperation` が SAI Virtual Router に渡す拡張属性 4 種 (`src_mac` / `ttl_action` / `ip_opt_action` / `l3_mc_action`) は SAI 任意属性であり、ASIC SAI 実装と VS/VPP シムで挙動が異なる。さらに `vni != 0` の L3 VNI マッピングは [EVPN](../../reference/glossary.md#term-evpn) VTEP 事前作成を必須とする。
 
 ### VRF / VNET capability 4 属性
 
@@ -438,7 +436,7 @@ if(!evpn_vtep_ptr)
 }
 ```
 
-VTEP 未設定で `vni > 0` の VRF エントリを APPL_DB に書くと VRFOrch は failure 復路で抜け、`STATE_VRF_OBJECT_TABLE|<vrfName>` の `state=ok` 書き込みも `vrf_vni_map_table_[vrf_name] = vni` も発生しない。さらに `VxlanTunnelOrch::getVlanMappedToVni(vni)` が 0 を返す場合（VLAN-VNI map 未投入）、`updateL3VniStatus()` は呼ばれず L3 VNI は半設定状態となる。
+VTEP 未設定で `vni > 0` の VRF エントリを APPL_DB に書くと VRFOrch は failure 復路で抜け、`STATE_VRF_OBJECT_TABLE|<vrfName>` の `state=ok` 書き込みも `vrf_vni_map_table_[vrf_name] = vni` も発生しない。さらに `VxlanTunnelOrch::getVlanMappedToVni(vni)` が 0 を返す場合（[VLAN](../../reference/glossary.md#term-vlan)-VNI map 未投入）、`updateL3VniStatus()` は呼ばれず L3 VNI は半設定状態となる。
 
 ### プラットフォーム影響まとめ
 
@@ -467,8 +465,8 @@ APPL_DB `VRF_TABLE` は YANG 未モデル化のオペレーショナルテーブ
 | `VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` (CONFIG_DB) / `VxlanTunnelOrch` | `getVlanMappedToVni(vni)` で VLAN を取得。`0` なら L3 VNI 半設定状態。後続で `VXLAN_TUNNEL_MAP` 投入時に `updateL3VniVlan()` で VE UP まで進む | `vni != 0` のとき | `vrforch.cpp:206, 233–240, 278` |
 | `*_INTERFACE` 系 (CONFIG_DB) / `IntfsOrch` | `IntfsOrch` が `m_vrfOrch->increaseVrfRefCount(vrf_id)` を呼び `ref_count` を増減 | インタフェースの `vrf_name` が当該 VRF を指すとき | `intfsorch.cpp:504, 848, 855` |
 | `ROUTE_TABLE` (APPL_DB) / `RouteOrch` | ルート登録時に `increaseVrfRefCount()` | 常時（学習・静的ルート問わず） | `routeorch.cpp:2013` |
-| `LABEL_ROUTE_TABLE` / `FG_NHG` / SRv6 / `TWAMP_SESSION` / P4Orch 系 | 各 Orch が `increaseVrfRefCount()` を呼ぶ | 該当機能の VRF 参照エントリ存在時 | `mplsrouteorch.cpp:474`, `fgnhgorch.cpp:1326`, `srv6orch.cpp:1639`, `twamporch.cpp:429`, `p4orch/router_interface_manager.cpp:355`, `p4orch/route_manager.cpp:700`, `p4orch/acl_rule_manager.cpp:1851, 2067`, `p4orch/ip_multicast_manager.cpp:775` |
-| `BGP_NEIGHBOR` / `BGP_GLOBALS` / `BGP_GLOBALS_AF` (CONFIG_DB) | 直接の DB 参照は無く、BGP セッションが学習したルートが FRR → `fpmsyncd` → APPL_DB `ROUTE_TABLE` → `RouteOrch` 経路で `ref_count` を増やす（間接参照） | 当該 VRF で BGP セッションが UP しルート学習中 | `routeorch.cpp:2013` 経路に集約。EVPN タイプ 5 経由の L3 VNI 学習ルートも同様 |
+| `LABEL_ROUTE_TABLE` / `FG_NHG` / [SRv6](../../reference/glossary.md#term-srv6) / `TWAMP_SESSION` / P4Orch 系 | 各 Orch が `increaseVrfRefCount()` を呼ぶ | 該当機能の VRF 参照エントリ存在時 | `mplsrouteorch.cpp:474`, `fgnhgorch.cpp:1326`, `srv6orch.cpp:1639`, `twamporch.cpp:429`, `p4orch/router_interface_manager.cpp:355`, `p4orch/route_manager.cpp:700`, `p4orch/acl_rule_manager.cpp:1851, 2067`, `p4orch/ip_multicast_manager.cpp:775` |
+| `BGP_NEIGHBOR` / `BGP_GLOBALS` / `BGP_GLOBALS_AF` (CONFIG_DB) | 直接の DB 参照は無く、[BGP](../../reference/glossary.md#term-bgp) セッションが学習したルートが [FRR](../../reference/glossary.md#term-frr) → `fpmsyncd` → APPL_DB `ROUTE_TABLE` → `RouteOrch` 経路で `ref_count` を増やす（間接参照） | 当該 VRF で [BGP](../../reference/glossary.md#term-bgp) セッションが UP しルート学習中 | `routeorch.cpp:2013` 経路に集約。EVPN タイプ 5 経由の L3 VNI 学習ルートも同様 |
 | `VRF_OBJECT_TABLE` (STATE_DB) | `VRFOrch` が書き手、`vrfmgrd::isVrfObjExist()` が読み手。Linux VRF デバイス削除タイミングを制御 | 作成・更新成功時に `state=ok` 書込み、削除時に `del` | `vrforch.cpp:120, 150, 193` |
 | `FlowCounterRouteOrch` (`gFlowCounterRouteOrch`) | VR 作成 / 削除のたびに `onAddVR(router_id)` / `onRemoveVR(router_id)` を通知 | 常時 | `vrforch.cpp:25, 110, 184` |
 | SAI `gVirtualRouterId`（default VRF） | orchagent 起動時に確保されるデフォルト VR。`VRFOrch` を経由しない | 起動時 1 回 | APPL_DB `VRF_TABLE|default` は通常存在しない |
@@ -495,7 +493,7 @@ APPL_DB `VRF_TABLE` は YANG 未モデル化のオペレーショナルテーブ
 |---|---|---|
 | `VRF_TABLE_START` | `1001` | data-plane VRF の Linux `ip route table` ID 開始値 (`vrfmgr.cpp:12`) |
 | `VRF_TABLE_END` | `5097` | 同終端 (半開区間、`for (i = START; i < END; i++)`、`vrfmgr.cpp:28`) |
-| `TABLE_LOCAL_PREF` | `1001` | vrfmgrd 起動時に `ip rule add pref 1001 table local` を実行する固定 priority (`vrfmgr.cpp:14, 103-104`) |
+| `TABLE_LOCAL_PREF` | `1001` | [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) 起動時に `ip rule add pref 1001 table local` を実行する固定 priority (`vrfmgr.cpp:14, 103-104`) |
 | `MGMT_VRF_TABLE_ID` | `6000` | `mgmt` VRF 専用予約 table_id。data-plane プールと完全分離 (`vrfmgr.cpp:15, 180`) |
 
 - **同時に存在できる data-plane VRF の上限 = `5097 - 1001 = 4096` 個**。これ以上 `config vrf add` を試みると `VrfMgr::getFreeTable()` が `0` を返し (`vrfmgr.cpp:118-121`)、`setLink()` が `false` を返してエントリ作成が失敗する。CONFIG_DB / YANG 側にこの上限の表現はない。
@@ -533,7 +531,7 @@ APPL_DB `VRF_TABLE` は YANG 未モデル化のオペレーショナルテーブ
 | `TABLE_LOCAL_PREF=1001` | 不可 (起動時に `ip rule` を実行するのみ。手動 `ip rule` 書換で一時変更は可能だが再起動で復元) |
 | `MGMT_VRF_TABLE_ID=6000` | 不可 |
 | `MGMT_VRF="mgmt"` | 不可 (VRF 名 rename 不能) |
-| STATE フィールド `"state"="ok"` | 不可 (orchagent と vrfmgrd の双方で同じ literal) |
+| STATE フィールド `"state"="ok"` | 不可 (orchagent と [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) の双方で同じ literal) |
 
 詳細な grep 履歴と派生事実は `meta/_intermediate/cdb-flow/appl-vrf-constants.md` を参照。
 <!-- /constants -->
@@ -544,3 +542,5 @@ APPL_DB `VRF_TABLE` は YANG 未モデル化のオペレーショナルテーブ
 - [STATE_DB VRF テーブル](./state-vrf.md)
 - [APPL_DB ROUTE_TABLE](./appl-db-route.md)
 - [HLD: VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
+
+<!-- glossary-links-injected: 0c51907d2986 -->

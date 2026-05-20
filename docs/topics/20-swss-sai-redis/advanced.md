@@ -113,11 +113,11 @@ warm reboot 実行時、一部の queue に「zero buffer profile」が attach �
 performObjectSetTransition: object OID:xxx attribute list is empty in temp view
 ```
 
-PR #906 で修正済み（sonic-sairedis master）。古い image でこの症状が出た場合は cold reboot で回復し、image を更新する。
+PR #906 で修正済み（[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) master）。古い image でこの症状が出た場合は cold reboot で回復し、image を更新する。
 
 ### warm reboot 後の FlexCounter による新 VID の処理失敗
 
-warm reboot の `init view` フェーズ（`apply_view` 前）では、FlexCounter がまだ ASIC state を完全に認識していない。buffer pool など新たに作成された VID を持つ object が FlexCounter の `processFlexCounterEvent` で処理されようとすると、VID→RID マッピングが未確立で counter 取得に失敗する（issue #862、sonic-swss PR #1987 で修正済）。
+warm reboot の `init view` フェーズ（`apply_view` 前）では、[FlexCounter](../../reference/glossary.md#term-flexcounter) がまだ ASIC state を完全に認識していない。buffer pool など新たに作成された VID を持つ object が FlexCounter の `processFlexCounterEvent` で処理されようとすると、VID→RID マッピングが未確立で counter 取得に失敗する（issue #862、[sonic-swss](../../reference/glossary.md#term-sonic-swss) PR #1987 で修正済）。
 
 現行 master では `apply_view` 完了後に FlexCounter の VID 再登録が行われるため通常は問題ない。古い image でこの症状が出た場合（syslog に `processFlexCounterEvent` のエラーが連続して現れる）は、image を更新する。
 
@@ -181,4 +181,4 @@ syncd: SET on ACL_ENTRY with counter RID that belongs to another entry
 - [11 Reboot: warm reboot と view switching](../11-reboot/index.md)
 - [21 Lab / Developer: dev container 内での swss/sai 開発](../21-lab-vs-developer/index.md)
 
-<!-- glossary-links-injected: edbcf324be25 -->
+<!-- glossary-links-injected: 951589504f6e -->

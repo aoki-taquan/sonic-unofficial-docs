@@ -52,30 +52,22 @@ related:
 
 ## 概要
 
-[SONiC](../../reference/glossary.md#term-sonic) の `portsorch`（[orchagent](../../reference/glossary.md#term-orchagent) 内）は、ポートの Queue（送信キュー）と Priority Group（優先度グループ、PG）ごとの [SAI](../../reference/glossary.md#term-sai) ハードウェアカウンタを [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に収集する[^1]。このページではカウンタ収集に使われる Redis テーブル群・フィールド一覧・FlexCounter グループのコード由来デフォルトを解説する。
+[SONiC](../../reference/glossary.md#term-sonic) の `portsorch`（[orchagent](../../reference/glossary.md#term-orchagent) 内）は、ポートの Queue（送信キュー）と Priority Group（優先度グループ、PG）ごとの [SAI](../../reference/glossary.md#term-sai) ハードウェアカウンタを [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に収集する[^1]。このページではカウンタ収集に使われる [Redis](../../reference/glossary.md#term-redis) テーブル群・フィールド一覧・[FlexCounter](../../reference/glossary.md#term-flexcounter) グループのコード由来デフォルトを解説する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CFG[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  OA["portsorch<br/>(orchagent)"]
-  SYNCD["syncd<br/>FlexCounter"]
-  SAI["SAI<br/>sai_queue_api"]
-  CDB[("COUNTERS_DB<br/>COUNTERS:&lt;OID&gt;")]
-  CLI["queuestat / pg-drop<br/>watermarkstat"]
-
-  CFG -- FLEX_COUNTER_STATUS=enable --> OA
-  OA -- COUNTER_ID_LIST --> SYNCD
-  SYNCD -- sai_get_queue_stats --> SAI
-  SAI -- 実カウンタ値 --> SYNCD
-  SYNCD --> CDB
-  CDB --> CLI
+  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
+  DM["syncd"]
+  CDB --> DM
+  SAI["SAI<br/>sai_*_stats"]
+  DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB の `FLEX_COUNTER_TABLE` でポーリングを有効化し、orchagent が `COUNTER_ID_LIST` を syncd に投入することでカウンタ収集が開始する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ---
@@ -86,8 +78,8 @@ flowchart LR
 
 | テーブル名 | 内容 | 書き込み主体 |
 |-----------|------|------------|
-| `COUNTERS:<OID>` | 各 Queue / PG の SAI カウンタ値（field=value） | syncd FlexCounter |
-| `COUNTERS_QUEUE_NAME_MAP` | `<port>:<queue_index>` → SAI OID のハッシュ | portsorch |
+| `COUNTERS:<OID>` | 各 Queue / PG の [SAI](../../reference/glossary.md#term-sai) カウンタ値（field=value） | [syncd](../../reference/glossary.md#term-syncd) [FlexCounter](../../reference/glossary.md#term-flexcounter) |
+| `COUNTERS_QUEUE_NAME_MAP` | `<port>:<queue_index>` → [SAI](../../reference/glossary.md#term-sai) OID のハッシュ | portsorch |
 | `COUNTERS_VOQ_NAME_MAP` | VoQ 用 `<sysport>:<index>` → SAI OID | portsorch（VoQ モードのみ） |
 | `COUNTERS_QUEUE_PORT_MAP` | Queue OID → ポート OID のハッシュ | portsorch |
 | `COUNTERS_QUEUE_INDEX_MAP` | Queue OID → キューインデックス（0 始まり） | portsorch |
@@ -148,14 +140,14 @@ VoQ モードでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKE
 
 ### WRED/ECN Queue カウンタ（WRED_ECN_QUEUE グループ）
 
-`FLEX_COUNTER_TABLE|WRED_ECN_QUEUE` が `enable` かつ SAI が WRED ケイパビリティをサポートする場合のみ収集[^3]。
+`FLEX_COUNTER_TABLE|WRED_ECN_QUEUE` が `enable` かつ SAI が [WRED](../../reference/glossary.md#term-wred) ケイパビリティをサポートする場合のみ収集[^3]。
 
 | フィールド | 説明 |
 |---------|------|
 | `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | ECN マーキングパケット数 |
 | `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | ECN マーキングバイト数 |
-| `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` | WRED ドロップパケット数 |
-| `SAI_QUEUE_STAT_WRED_DROPPED_BYTES` | WRED ドロップバイト数 |
+| `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` | [WRED](../../reference/glossary.md#term-wred) ドロップパケット数 |
+| `SAI_QUEUE_STAT_WRED_DROPPED_BYTES` | [WRED](../../reference/glossary.md#term-wred) ドロップバイト数 |
 
 ### PG ドロップカウンタ（PG_DROP グループ）
 
@@ -178,9 +170,9 @@ VoQ モードでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKE
 
 ## FlexCounter グループとハードコードデフォルト
 
-各グループは `portsorch.h` / `portsorch.cpp` にコード直書きの FlexCounter グループ名とポーリング間隔を持つ[^4]。
+各グループは `portsorch.h` / `portsorch.cpp` にコード直書きの [FlexCounter](../../reference/glossary.md#term-flexcounter) グループ名とポーリング間隔を持つ[^4]。
 
-| FlexCounter グループ名 | CONFIG_DB キー | StatsMode | コードデフォルトポーリング間隔 | counterpoll CLI 上書き可否 |
+| FlexCounter グループ名 | [CONFIG_DB](../../reference/glossary.md#term-config_db) キー | StatsMode | コードデフォルトポーリング間隔 | counterpoll CLI 上書き可否 |
 |--------------------|--------------|-----------|--------------------------|--------------------------|
 | `QUEUE_STAT_COUNTER` | `FLEX_COUNTER_TABLE\|QUEUE` | READ | 10000 ms | 可（`counterpoll queue interval`） |
 | `QUEUE_WATERMARK_STAT_COUNTER` | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` | READ_AND_CLEAR | 60000 ms | 可 |
@@ -202,11 +194,11 @@ VoQ モードでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKE
 
 ### allPortsReady 前の自動ブロック
 
-`FlexCounterOrch::doTask()` (`flexcounterorch.cpp:164-167`) は `gPortsOrch->allPortsReady()` が false の間 `return` する。`FLEX_COUNTER_TABLE|QUEUE|FLEX_COUNTER_STATUS = enable` を orchagent 起動前に CONFIG_DB へ書き込んでも、`initializeQueuesBulk()` によるポート SAI OID フェッチ（`SAI_PORT_ATTR_QOS_QUEUE_LIST`）が完了するまで `generateQueueMap()` は実行されない。COUNTERS_DB へのマッピング書き込みは allPortsReady 後に自動的に一括実行される。
+`FlexCounterOrch::doTask()` (`flexcounterorch.cpp:164-167`) は `gPortsOrch->allPortsReady()` が false の間 `return` する。`FLEX_COUNTER_TABLE|QUEUE|FLEX_COUNTER_STATUS = enable` を [orchagent](../../reference/glossary.md#term-orchagent) 起動前に [CONFIG_DB](../../reference/glossary.md#term-config_db) へ書き込んでも、`initializeQueuesBulk()` によるポート SAI OID フェッチ（`SAI_PORT_ATTR_QOS_QUEUE_LIST`）が完了するまで `generateQueueMap()` は実行されない。[COUNTERS_DB](../../reference/glossary.md#term-counters_db) へのマッピング書き込みは allPortsReady 後に自動的に一括実行される。
 
 ### Warm-reboot 60 秒遅延
 
-Warm-reboot 時のみ `m_delayTimerExpired` フラグが false のままタイマーが起動し（`FLEX_COUNTER_DELAY_SEC = 60`、`flexcounterorch.cpp:44`）、60 秒間すべての FlexCounter 処理をブロックする。Cold boot ではこの遅延はなく即時処理される。Warm-reboot 中に `FLEX_COUNTER_TABLE|QUEUE = enable` を書き込んでも最大 60 秒間 `generateQueueMap()` が呼ばれず、COUNTERS_DB のキュー統計が更新されない期間が生じる。
+Warm-reboot 時のみ `m_delayTimerExpired` フラグが false のままタイマーが起動し（`FLEX_COUNTER_DELAY_SEC = 60`、`flexcounterorch.cpp:44`）、60 秒間すべての FlexCounter 処理をブロックする。Cold boot ではこの遅延はなく即時処理される。Warm-reboot 中に `FLEX_COUNTER_TABLE|QUEUE = enable` を書き込んでも最大 60 秒間 `generateQueueMap()` が呼ばれず、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) のキュー統計が更新されない期間が生じる。
 
 ### `BUFFER_QUEUE` と `FLEX_COUNTER_TABLE|QUEUE` の書込み順序
 
@@ -214,11 +206,11 @@ Warm-reboot 時のみ `m_delayTimerExpired` フラグが false のままタイ�
 
 - **BUFFER_QUEUE 先・FLEX_COUNTER_TABLE 後**: `BUFFER_QUEUE` 書込み時はカウンタ未登録（`getQueueCountersState()` が false）。後から `FLEX_COUNTER_TABLE|QUEUE = enable` を書くと `addQueueFlexCounters(getQueueConfigurations())` で非ゼロプロファイル付き BUFFER_QUEUE を対象にカウンタが一括登録される。
 - **FLEX_COUNTER_TABLE 先・BUFFER_QUEUE 後**: `BUFFER_QUEUE` 書込み時に `getQueueCountersState()` が `true` のため `createPortBufferQueueCounters()` 内で即時カウンタ登録される。
-- どちらの順序でも最終状態（FLEX_COUNTER_DB のカウンタ登録）は同じになる。
+- どちらの順序でも最終状態（[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) のカウンタ登録）は同じになる。
 
 ### `m_isQueueMapGenerated` 冪等保護
 
-`generateQueueMap()` (`portsorch.cpp:8391`) は `m_isQueueMapGenerated` フラグで保護されており、一度だけ実行される。`FLEX_COUNTER_TABLE|QUEUE` と `FLEX_COUNTER_TABLE|QUEUE_WATERMARK` を個別に `enable` にしても、2 回目の `generateQueueMap()` 呼び出しは即 `return` する。実際のマッピング生成は最初の enable 処理時のみ。Warm-reboot や orchagent 再起動後はフラグがリセットされ再実行される。
+`generateQueueMap()` (`portsorch.cpp:8391`) は `m_isQueueMapGenerated` フラグで保護されており、一度だけ実行される。`FLEX_COUNTER_TABLE|QUEUE` と `FLEX_COUNTER_TABLE|QUEUE_WATERMARK` を個別に `enable` にしても、2 回目の `generateQueueMap()` 呼び出しは即 `return` する。実際のマッピング生成は最初の enable 処理時のみ。Warm-reboot や [orchagent](../../reference/glossary.md#term-orchagent) 再起動後はフラグがリセットされ再実行される。
 
 ### `DEVICE_METADATA.create_only_config_db_buffers` の影響
 
@@ -242,24 +234,24 @@ Warm-reboot 時のみ `m_delayTimerExpired` フラグが false のままタイ�
      sonic-swss/orchagent/flexcounterorch.cpp (getQueueConfigurations, getPgConfigurations,
      getQueueCountersState, getPgCountersState, handleDeviceMetadataTable) -->
 
-`FlexCounterOrch` / `PortsOrch` がキュー・PG カウンタを処理する際に暗黙的に参照する他テーブルを示す。YANG の leafref として定義されたものはなく、コードのみで表現された依存関係である。
+`FlexCounterOrch` / `PortsOrch` がキュー・PG カウンタを処理する際に暗黙的に参照する他テーブルを示す。[YANG](../../reference/glossary.md#term-yang) の leafref として定義されたものはなく、コードのみで表現された依存関係である。
 
 | 参照元処理 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
 |---|---|---|---|---|
-| `createPortBufferQueueCounters()` の FlexCounter 登録判断 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|QUEUE` | `getQueueCountersState()=true`（`FLEX_COUNTER_STATUS=enable`）のときのみ SAI カウンタを FLEX_COUNTER_DB に登録。`false` の場合は COUNTERS_QUEUE_NAME_MAP へのマッピングのみ書込み | `portsorch.cpp:8731`, `flexcounterorch.cpp:453` |
+| `createPortBufferQueueCounters()` の FlexCounter 登録判断 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|QUEUE` | `getQueueCountersState()=true`（`FLEX_COUNTER_STATUS=enable`）のときのみ SAI カウンタを [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に登録。`false` の場合は COUNTERS_QUEUE_NAME_MAP へのマッピングのみ書込み | `portsorch.cpp:8731`, `flexcounterorch.cpp:453` |
 | `createPortBufferQueueCounters()` の Watermark 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|QUEUE_WATERMARK` | `getQueueWatermarkCountersState()=true` の場合のみ Watermark FlexCounter を登録 | `portsorch.cpp:8736-8738` |
 | `createPortBufferQueueCounters()` の WRED 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|WRED_ECN_QUEUE` | `getWredQueueCountersState()=true` の場合のみ WRED FlexCounter を登録 | `portsorch.cpp:8741-8745` |
 | `createPortBufferPgCounters()` の PG_DROP 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|PG_DROP` | `getPgCountersState()=true` の場合のみ PG ドロップカウンタを登録 | `portsorch.cpp:8925-8927` |
 | `createPortBufferPgCounters()` の PG_WATERMARK 登録 | [`FLEX_COUNTER_TABLE`](flex-counter-table.md) | `FLEX_COUNTER_TABLE\|PG_WATERMARK` | `getPgWatermarkCountersState()=true` の場合のみ PG Watermark カウンタを登録 | `portsorch.cpp:8930-8933` |
 | `getQueueConfigurations()` のキュー範囲決定 | [`BUFFER_QUEUE`](buffer-queue.md) | `BUFFER_QUEUE\|<port>:<queue_range>` | `create_only_config_db_buffers=true` の場合、非ゼロプロファイルを持つキューのみ FlexCounter 登録対象。`false`（デフォルト）または VoQ モードでは全キューを対象 | `flexcounterorch.cpp:545-554` |
 | `getPgConfigurations()` の PG 範囲決定 | [`BUFFER_PG`](buffer-pg.md) | `BUFFER_PG\|<port>:<pg_range>` | `create_only_config_db_buffers=true` の場合、非ゼロプロファイルを持つ PG のみ FlexCounter 登録対象 | `flexcounterorch.cpp:620-623` |
-| `getQueueConfigurations()` / `getPgConfigurations()` のモード分岐 | `DEVICE_METADATA` | `DEVICE_METADATA\|localhost` フィールド `create_only_config_db_buffers` | バッファモード切替フラグ。`true` → BUFFER_QUEUE / BUFFER_PG 限定。`false`（デフォルト）→ 全対象。実行時変更は `handleDeviceMetadataTable()` で反映されるが既登録カウンタは変更されない | `flexcounterorch.cpp:110-124`, `flexcounterorch.cpp:508-513` |
+| `getQueueConfigurations()` / `getPgConfigurations()` のモード分岐 | `DEVICE_METADATA` | `DEVICE_METADATA\|localhost` フィールド `create_only_config_db_buffers` | バッファモード切替フラグ。`true` → BUFFER_QUEUE / [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) 限定。`false`（デフォルト）→ 全対象。実行時変更は `handleDeviceMetadataTable()` で反映されるが既登録カウンタは変更されない | `flexcounterorch.cpp:110-124`, `flexcounterorch.cpp:508-513` |
 | `generateQueueMap()` の前提 | `PORT` | `APP_PORT_TABLE\|<port_name>` | `allPortsReady()` が false の間 `FlexCounterOrch::doTask()` は即 return。ポートの SAI OID（`port.m_queue_ids`）が確定しないと `generateQueueMap()` のループが 0 回で終わる | `portsorch.cpp:6583-6598`, `flexcounterorch.cpp:164-167` |
 
 ### 解決タイミング
 
 - **FLEX_COUNTER_TABLE**: `FlexCounterOrch::doTask()` が即時評価。`enable` 書込み時点でカウンタ登録処理が実行される（allPortsReady 後）。
-- **BUFFER_QUEUE / BUFFER_PG**: `getQueueConfigurations()` / `getPgConfigurations()` が呼ばれるたびに `gBufferOrch->getBufferObjectsWithNonZeroProfile()` で動的に再取得される（`create_only_config_db_buffers=true` 時のみ）。
+- **BUFFER_QUEUE / [BUFFER_PG](../../reference/glossary.md#term-buffer-pg)**: `getQueueConfigurations()` / `getPgConfigurations()` が呼ばれるたびに `gBufferOrch->getBufferObjectsWithNonZeroProfile()` で動的に再取得される（`create_only_config_db_buffers=true` 時のみ）。
 - **DEVICE_METADATA**: コンストラクタで 1 回読込み + `handleDeviceMetadataTable()` で動的更新。既登録カウンタへの遡及適用はなく、orchagent 再起動が必要。
 - **PORT**: `allPortsReady()` による自動待機。portsorch が全ポート初期化完了後に `FlexCounterOrch` のキュー処理がアンブロックされる。
 <!-- /cross-refs -->
@@ -275,8 +267,8 @@ Warm-reboot 時のみ `m_delayTimerExpired` フラグが false のままタイ�
 
 | パターン | 代表的なトリガー | 挙動 |
 |---|---|---|
-| **orchagent クラッシュ** | `initializeQueuesBulk()` SAI エラー、Redis 接続断、未対応 Queue type | 例外 throw → supervisor 再起動 |
-| **silent スキップ** | 不正 BUFFER_QUEUE / BUFFER_PG キー形式、WRED 能力チェック失敗、`getQueueTypeAndIndex()` SAI 一時エラー | 当該エントリのみ除外、他処理は継続 |
+| **orchagent クラッシュ** | `initializeQueuesBulk()` SAI エラー、[Redis](../../reference/glossary.md#term-redis) 接続断、未対応 Queue type | 例外 throw → supervisor 再起動 |
+| **silent スキップ** | 不正 BUFFER_QUEUE / [BUFFER_PG](../../reference/glossary.md#term-buffer-pg) キー形式、WRED 能力チェック失敗、`getQueueTypeAndIndex()` SAI 一時エラー | 当該エントリのみ除外、他処理は継続 |
 | **保留（自動再開）** | `allPortsReady()` が false、Warm-reboot 60 秒遅延 | doTask() が即 return し m_toSync を保持、条件成立後に自動処理 |
 
 ### `initializeQueuesBulk()` — SAI エラーで orchagent クラッシュ
@@ -298,7 +290,7 @@ supervisor による orchagent 自動再起動後に再試行される。SAI ド
 
 ### 不正な BUFFER_QUEUE / BUFFER_PG キー形式 — silent スキップ
 
-`getQueueConfigurations()` / `getPgConfigurations()` は `<port>:<queue_range>` 形式を期待する (`flexcounterorch.cpp:561`, `630`)。コロン区切りが 2 トークンでない場合、または queue/pg インデックスが数値でない / 範囲外の場合は `SWSS_LOG_ERROR` を出力して当該エントリをスキップする。当該 Queue / PG は FLEX_COUNTER_DB に登録されず、queuestat / pg-drop で列が欠落する。他エントリの処理は継続するため、全体への影響はない。
+`getQueueConfigurations()` / `getPgConfigurations()` は `<port>:<queue_range>` 形式を期待する (`flexcounterorch.cpp:561`, `630`)。コロン区切りが 2 トークンでない場合、または queue/pg インデックスが数値でない / 範囲外の場合は `SWSS_LOG_ERROR` を出力して当該エントリをスキップする。当該 Queue / PG は [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に登録されず、queuestat / pg-drop で列が欠落する。他エントリの処理は継続するため、全体への影響はない。
 
 ### 不正な FLEX_COUNTER_TABLE グループキー — 即削除
 
@@ -308,7 +300,7 @@ supervisor による orchagent 自動再起動後に再試行される。SAI ド
 
 `FlexCounterOrch::doTask()` は以下の条件で即 `return` し、キュー・PG FlexCounter の登録処理をすべて保留する:
 
-- `gPortsOrch->allPortsReady()` が false（`flexcounterorch.cpp:164-167`）: portsyncd 異常終了等で PortInitDone が届かない場合、保留状態が永続する。orchagent 再起動が必要。
+- `gPortsOrch->allPortsReady()` が false（`flexcounterorch.cpp:164-167`）: [portsyncd](../../reference/glossary.md#term-portsyncd) 異常終了等で PortInitDone が届かない場合、保留状態が永続する。orchagent 再起動が必要。
 - Warm-reboot 時の `m_delayTimerExpired = false`（`flexcounterorch.cpp:155-158`）: `FLEX_COUNTER_DELAY_SEC = 60` 秒のタイマー満了まで全処理がブロックされる。起動後 60 秒間はキュー / PG カウンタの更新が停止する。
 
 ### WRED 能力チェック — silent 非登録
@@ -319,7 +311,7 @@ ASIC が WRED/ECN 統計をサポートしない環境では `FLEX_COUNTER_TABLE
 
 ### Redis 接続断 — orchagent クラッシュ
 
-`queue_stat_manager.setCounterIdList()` / `pg_stat_manager.setCounterIdList()` は FLEX_COUNTER_DB への Redis 書き込みを行う。Redis 接続断等で `RedisReply` 例外が発生した場合は orchagent 全体がクラッシュする（明示的な catch なし）。全カウンタ収集が停止し、supervisor 再起動後に復旧する。
+`queue_stat_manager.setCounterIdList()` / `pg_stat_manager.setCounterIdList()` は FLEX_COUNTER_DB への [Redis](../../reference/glossary.md#term-redis) 書き込みを行う。Redis 接続断等で `RedisReply` 例外が発生した場合は orchagent 全体がクラッシュする（明示的な catch なし）。全カウンタ収集が停止し、supervisor 再起動後に復旧する。
 
 <!-- /failure -->
 
@@ -341,7 +333,7 @@ ASIC が WRED/ECN 統計をサポートしない環境では `FLEX_COUNTER_TABLE
 | `PG_DROP_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PG_DROP_STAT_COUNTER"` | `portsorch.h:37` |
 | `WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"WRED_ECN_QUEUE_STAT_COUNTER"` | `portsorch.h:42`, `flexcounterorch.cpp:42` |
 
-これらのグループ名は CONFIG_DB / YANG から変更できない。`counterpoll show` の GROUP 列に表示される文字列と一致する。
+これらのグループ名は [CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) から変更できない。`counterpoll show` の GROUP 列に表示される文字列と一致する。
 
 ### ポーリング間隔デフォルト値
 
@@ -352,7 +344,7 @@ ASIC が WRED/ECN 統計をサポートしない環境では `FLEX_COUNTER_TABLE
 | `PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `60000` ms | PG_WATERMARK_STAT_COUNTER | READ_AND_CLEAR | `portsorch.cpp:92` |
 | `PG_DROP_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | PG_DROP_STAT_COUNTER | READ | `portsorch.cpp:93` |
 
-WRED_ECN_QUEUE グループは `QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS`（10000 ms）を共用する（`portsorch.cpp:739`）。CONFIG_DB の `FLEX_COUNTER_TABLE|<GROUP>|POLL_INTERVAL` で上書き可能だが、orchagent 起動時の初期値は上記定数から設定される。`READ_AND_CLEAR` モード（QUEUE_WATERMARK / PG_WATERMARK）では、syncd がポーリングするたびにハードウェアのウォーターマークレジスタがクリアされる。
+WRED_ECN_QUEUE グループは `QUEUE_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS`（10000 ms）を共用する（`portsorch.cpp:739`）。CONFIG_DB の `FLEX_COUNTER_TABLE|<GROUP>|POLL_INTERVAL` で上書き可能だが、orchagent 起動時の初期値は上記定数から設定される。`READ_AND_CLEAR` モード（QUEUE_WATERMARK / PG_WATERMARK）では、[syncd](../../reference/glossary.md#term-syncd) がポーリングするたびにハードウェアのウォーターマークレジスタがクリアされる。
 
 ### Warm-reboot 遅延定数
 
@@ -364,7 +356,7 @@ Cold boot では `m_delayTimerExpired = true` に即初期化され（`flexcount
 
 ### SAI カウンタ ID 静的配列
 
-これらの配列はソースコードに固定されており、CONFIG_DB / YANG から変更不可。ハードウェアが非サポートの場合は SAI が `0` を返すか `SAI_STATUS_NOT_SUPPORTED` でスキップされる。
+これらの配列はソースコードに固定されており、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) から変更不可。ハードウェアが非サポートの場合は SAI が `0` を返すか `SAI_STATUS_NOT_SUPPORTED` でスキップされる。
 
 | 配列名 | フィールド（SAI stat ID） | グループ | 定義行 |
 |------|------------------------|---------|------|
@@ -392,7 +384,7 @@ Cold boot では `m_delayTimerExpired = true` に即初期化され（`flexcount
 | `USER_WATERMARKS_TABLE` | `"USER_WATERMARKS"` | 270 |
 | `STATE_QUEUE_COUNTER_CAPABILITIES_NAME` | `"QUEUE_COUNTER_CAPABILITIES"` | 528 |
 
-`PERIODIC_WATERMARKS` / `PERSISTENT_WATERMARKS` / `USER_WATERMARKS` テーブルへの振り分けは syncd 側の Lua スクリプト（`watermark_stat.lua`）が処理する。`QUEUE_COUNTER_CAPABILITIES` は STATE_DB に書き込まれ、WRED/ECN サポート状況を外部公開する。
+`PERIODIC_WATERMARKS` / `PERSISTENT_WATERMARKS` / `USER_WATERMARKS` テーブルへの振り分けは [syncd](../../reference/glossary.md#term-syncd) 側の Lua スクリプト（`watermark_stat.lua`）が処理する。`QUEUE_COUNTER_CAPABILITIES` は [STATE_DB](../../reference/glossary.md#term-state_db) に書き込まれ、WRED/ECN サポート状況を外部公開する。
 
 <!-- /constants -->
 
@@ -425,7 +417,7 @@ generateQueueMap() / createPortBufferQueueCounters()
 
 Queue / PG マッピング書き込み関数は COUNTERS_DB 更新と同時に `CounterCheckOrch::getInstance().addPort(port)` を呼んで当該ポートを MC フレーム監視リストに登録する[^6]。`BUFFER_QUEUE` / `BUFFER_PG` を DEL すると `CounterCheckOrch::removePort(port)` で監視リストから除外される。
 
-`CounterCheckOrch` は 5 分間隔のタイマーで `mcCounterCheck()` と `pfcFrameCounterCheck()` を実行し、COUNTERS_DB から SAI カウンタを読み取ってロスレスキューへの Multicast フレーム到着や PFC 異常を `SWSS_LOG_WARN` で報告する。**この監視は `FLEX_COUNTER_TABLE` の enable/disable 状態とは独立して動作する**（FlexCounter ポーリングではなく orchagent が直接 `sai_get_queue_stats` を呼ぶ）。
+`CounterCheckOrch` は 5 分間隔のタイマーで `mcCounterCheck()` と `pfcFrameCounterCheck()` を実行し、COUNTERS_DB から SAI カウンタを読み取ってロスレスキューへの Multicast フレーム到着や [PFC](../../reference/glossary.md#term-pfc) 異常を `SWSS_LOG_WARN` で報告する。**この監視は `FLEX_COUNTER_TABLE` の enable/disable 状態とは独立して動作する**（FlexCounter ポーリングではなく orchagent が直接 `sai_get_queue_stats` を呼ぶ）。
 
 ### QUEUE_WATERMARK / PG_WATERMARK の READ_AND_CLEAR 副作用
 
@@ -435,7 +427,7 @@ Queue / PG マッピング書き込み関数は COUNTERS_DB 更新と同時に `
 
 ### WRED 能力チェック → STATE_DB への QUEUE_COUNTER_CAPABILITIES 書き込み
 
-`checkWredCapability()` が WRED/ECN サポートを確認した後、`QUEUE_COUNTER_CAPABILITIES` テーブルが STATE_DB に書き込まれ、外部ツール・オーケストレータが WRED サポート状況を参照可能になる。ASIC が WRED をサポートしない場合はこのエントリが存在しない。外部ツールは `key not found` を「未サポート」として扱う必要がある。
+`checkWredCapability()` が WRED/ECN サポートを確認した後、`QUEUE_COUNTER_CAPABILITIES` テーブルが [STATE_DB](../../reference/glossary.md#term-state_db) に書き込まれ、外部ツール・オーケストレータが WRED サポート状況を参照可能になる。ASIC が WRED をサポートしない場合はこのエントリが存在しない。外部ツールは `key not found` を「未サポート」として扱う必要がある。
 
 <!-- /side-effects -->
 
@@ -483,7 +475,7 @@ Queue / PG マッピング書き込み関数は COUNTERS_DB 更新と同時に `
 
 ### WatermarkOrch の二経路通信
 
-`orchdaemon.cpp:432-437` にて `WatermarkOrch` が `WATERMARK_TABLE` と `FLEX_COUNTER_TABLE` を購読する（`SubscriberStateTable`）。さらにコンストラクタ (`watermarkorch.cpp:35-38`) にて APPL_DB の `WATERMARK_CLEAR_REQUEST` チャンネルを `NotificationConsumer` で購読する。
+`orchdaemon.cpp:432-437` にて `WatermarkOrch` が `WATERMARK_TABLE` と `FLEX_COUNTER_TABLE` を購読する（`SubscriberStateTable`）。さらにコンストラクタ (`watermarkorch.cpp:35-38`) にて [APPL_DB](../../reference/glossary.md#term-appl_db) の `WATERMARK_CLEAR_REQUEST` チャンネルを `NotificationConsumer` で購読する。
 
 **クリア要求フロー**（`watermarkstat -c` 実行時）:
 
@@ -557,9 +549,9 @@ CLI: queuestat / watermarkstat / pg-drop
 
 ### DPU モード — キュー / PG 初期化を完全スキップ
 
-`gMySwitchType == "dpu"` の場合、`initializePorts()` (`portsorch.cpp:6589`) は `initializeQueuesBulk()` / `initializePriorityGroupsBulk()` / `initializeSchedulerGroupsBulk()` を呼ばない。`m_queue_ids` が未初期化となるため `generateQueueMap()` のループが 0 回で終わり、`COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_PG_NAME_MAP` は書き込まれない。通常の queuestat / pg-drop / watermarkstat は DPU では機能しない。
+`gMySwitchType == "dpu"` の場合、`initializePorts()` (`portsorch.cpp:6589`) は `initializeQueuesBulk()` / `initializePriorityGroupsBulk()` / `initializeSchedulerGroupsBulk()` を呼ばない。`m_queue_ids` が未初期化となるため `generateQueueMap()` のループが 0 回で終わり、`COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_PG_NAME_MAP` は書き込まれない。通常の queuestat / pg-drop / watermarkstat は [DPU](../../reference/glossary.md#term-dpu) では機能しない。
 
-DPU モードで唯一登録されるキューカウンタはホスト TX キューのみ。`m_host_tx_queue_configured` が true かつ `m_queue_ids.size() > m_host_tx_queue`（`portsorch.cpp:6454-6458`）が成立する場合に限り `createPortBufferQueueCounters()` が呼ばれる。それ以外のキューに対する FlexCounter 登録は行われない。
+[DPU](../../reference/glossary.md#term-dpu) モードで唯一登録されるキューカウンタはホスト TX キューのみ。`m_host_tx_queue_configured` が true かつ `m_queue_ids.size() > m_host_tx_queue`（`portsorch.cpp:6454-6458`）が成立する場合に限り `createPortBufferQueueCounters()` が呼ばれる。それ以外のキューに対する FlexCounter 登録は行われない。
 
 ### VoQ モード — カウンタ常時有効・専用テーブル
 
@@ -586,14 +578,14 @@ Queue 側の trim 統計（`SAI_QUEUE_STAT_TRIM_PACKETS`、`SAI_QUEUE_STAT_DROPP
 
 ### PFC Watchdog とキュー統計のプラットフォーム別分岐
 
-PFC Watchdog（`PfcWdSwOrch`）は `orchdaemon.cpp:635-843` にてプラットフォームごとに異なるキュー統計・ハンドラクラスでインスタンス化される。これらは `FLEX_COUNTER_TABLE` 経路とは独立した専用 FlexCounter グループを使う。
+[PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog)（`PfcWdSwOrch`）は `orchdaemon.cpp:635-843` にてプラットフォームごとに異なるキュー統計・ハンドラクラスでインスタンス化される。これらは `FLEX_COUNTER_TABLE` 経路とは独立した専用 FlexCounter グループを使う。
 
-| `platform` 値 | PFC port stat に含む追加カウンタ | Queue stat | ハンドラ |
+| `platform` 値 | [PFC](../../reference/glossary.md#term-pfc) port stat に含む追加カウンタ | Queue stat | ハンドラ |
 |---|---|---|---|
 | `"mellanox"` / `"vs"` | `PFC_N_RX_PAUSE_DURATION_US` (0-7), `PFC_N_RX_PKTS` (0-7) | `PACKETS`, `CURR_OCCUPANCY_BYTES` | ZeroBuffer / Lossy |
-| `"broadcom"` | `PFC_N_RX_PKTS` (0-7), `PFC_N_ON2OFF_RX_PKTS` (0-7) | `PACKETS`, `CURR_OCCUPANCY_BYTES` | DLR / ACL（`PFC_DLR_INIT_ENABLE` 環境変数で切替可） |
+| `"broadcom"` | `PFC_N_RX_PKTS` (0-7), `PFC_N_ON2OFF_RX_PKTS` (0-7) | `PACKETS`, `CURR_OCCUPANCY_BYTES` | DLR / [ACL](../../reference/glossary.md#term-acl)（`PFC_DLR_INIT_ENABLE` 環境変数で切替可） |
 | `"marvell-teralynx"` / `"marvell-prestera"` / `"clounix"` / `"nephos"` | `PFC_N_RX_PAUSE_DURATION` (0-7), `PFC_N_RX_PKTS` (0-7) | `PACKETS`, `CURR_OCCUPANCY_BYTES` | ZeroBuffer / Lossy |
-| `"barefoot"` | `PFC_N_RX_PAUSE_DURATION` (0-7), `PFC_N_RX_PKTS` (0-7) | `PACKETS`, `CURR_OCCUPANCY_BYTES` | ACL / Lossy |
+| `"barefoot"` | `PFC_N_RX_PAUSE_DURATION` (0-7), `PFC_N_RX_PKTS` (0-7) | `PACKETS`, `CURR_OCCUPANCY_BYTES` | [ACL](../../reference/glossary.md#term-acl) / Lossy |
 | `"cisco-8000"` | `PFC_N_RX_PKTS` (0-7), `PFC_N_TX_PKTS` (0-7) | `PACKETS` のみ | SaiDlrInit / ActionHandler |
 | その他 / 未設定 | — | — | PfcWd orch インスタンス化なし |
 
@@ -604,7 +596,7 @@ Broadcom の `PFC_DLR_INIT_ENABLE` 環境変数は `gSwitchOrch->checkPfcDlrInit
 `initCounterCapabilities(gSwitchId)` (`portsorch.cpp:1107`) は orchagent 起動時に 1 回だけ実行される。プラットフォーム種別を問わず同じ API（`sai_query_stats_capability`）を使うが、WRED/ECN の SAI サポート有無は ASIC ごとに異なる:
 
 - `SAI_STATUS_BUFFER_OVERFLOW` が返った場合はバッファを確保して再呼び出しする 2 段取得方式
-- 成功時は `WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` / `_BYTE_COUNTER` / `WRED_DROPPED_PKT_COUNTER` / `_BYTE_COUNTER` の各フィールドを `isSupported: true/false` で STATE_DB の `QUEUE_COUNTER_CAPABILITIES` テーブルに書き込む
+- 成功時は `WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` / `_BYTE_COUNTER` / `WRED_DROPPED_PKT_COUNTER` / `_BYTE_COUNTER` の各フィールドを `isSupported: true/false` で [STATE_DB](../../reference/glossary.md#term-state_db) の `QUEUE_COUNTER_CAPABILITIES` テーブルに書き込む
 - 能力問合せ失敗時は全フィールドが `isSupported: false`（初期化値）のまま残る
 
 この STATE_DB エントリは外部ツール・オーケストレータが WRED サポート状況を確認するためのものであり、FlexCounter の実際の登録可否は `isPortStatSupported()` による別経路で判断される。
@@ -700,3 +692,5 @@ sonic-db-cli COUNTERS_DB hgetall "COUNTERS:<OID>"
 [^5]: counternameupdater.cpp:21-34 および hftelorch.cpp:106-170 — `CounterNameMapUpdater::setCounterNameMap()` 内での `gHFTOrch->locallyNotify()` 同期呼び出し。`SUPPORT_COUNTER_TABLES` に `COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_PG_NAME_MAP` が含まれる (`hftelorch.cpp:25-30`)。<https://github.com/sonic-net/sonic-swss/blob/master/orchagent/high_frequency_telemetry/counternameupdater.cpp>
 
 [^6]: portsorch.cpp:8525, 8754, 8819, 8886, 8941, 9099 — Queue / PG マッピング書き込み・削除関数での `CounterCheckOrch::getInstance().addPort()` / `removePort()` 呼び出し。`countercheckorch.cpp:43-50` の 5 分タイマーで `mcCounterCheck()` と `pfcFrameCounterCheck()` を実行。
+
+<!-- glossary-links-injected: 0edb7d21faa7 -->

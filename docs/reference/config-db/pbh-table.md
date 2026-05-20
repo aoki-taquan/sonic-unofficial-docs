@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-`PBH_TABLE` は [Policy Based Hashing (PBH)](pbh.md) で「どの interface 群に hash policy を適用するか」を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。`PbhOrch` が SAI [ACL](../../reference/glossary.md#term-acl) テーブル (`ACL_STAGE_INGRESS`) として展開し、各 `PBH_RULE` がこのテーブル内のエントリとして bind される[^1]。
+`PBH_TABLE` は [Policy Based Hashing (PBH)](pbh.md) で「どの interface 群に hash policy を適用するか」を定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。`PbhOrch` が [SAI](../../reference/glossary.md#term-sai) [ACL](../../reference/glossary.md#term-acl) テーブル (`ACL_STAGE_INGRESS`) として展開し、各 `PBH_RULE` がこのテーブル内のエントリとして bind される[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -75,7 +75,7 @@ PortsOrch::allPortsReady() == true  先行
 PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD の全 SET 処理開始
 ```
 
-`PbhOrch::doTask()` (`pbhorch.cpp:1808`) は `this->portsOrch->allPortsReady()` が false の間は即 return する。CONFIG_DB に書き込まれたエントリは PortsOrch 完了後の最初のイベントループで一括処理される（自動回復）。
+`PbhOrch::doTask()` (`pbhorch.cpp:1808`) は `this->portsOrch->allPortsReady()` が false の間は即 return する。[CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込まれたエントリは PortsOrch 完了後の最初のイベントループで一括処理される（自動回復）。
 
 ### 依存 2: interface_list の PORT / PORTCHANNEL 解決
 
@@ -107,7 +107,7 @@ PBH_TABLE|<table_name>  DEL
 7. pbhHlpr.addPbhTable(table)     → 内部キャッシュ登録
 ```
 
-各ステップ失敗時は `SWSS_LOG_ERROR` + `return false`。エントリは CONFIG_DB に残るが SAI には反映されない。
+各ステップ失敗時は `SWSS_LOG_ERROR` + `return false`。エントリは CONFIG_DB に残るが [SAI](../../reference/glossary.md#term-sai) には反映されない。
 
 ### 順序依存サマリ
 
@@ -125,14 +125,14 @@ PBH_TABLE|<table_name>  DEL
 
 <!-- evidence: meta/_intermediate/cdb-flow/pbh-table-cross-refs.md -->
 
-`PBH_TABLE` は CONFIG_DB の他テーブルを**直接読まない**が、`interface_list` の解決で `PORT` / `PORTCHANNEL` に暗黙依存し、SAI 操作で `AclOrch` に依存する。
+`PBH_TABLE` は CONFIG_DB の他テーブルを**直接読まない**が、`interface_list` の解決で `PORT` / `PORTCHANNEL` に暗黙依存し、[SAI](../../reference/glossary.md#term-sai) 操作で `AclOrch` に依存する。
 
 ### このテーブルが参照する側
 
-| 参照先テーブル / リソース | YANG leafref | 実行時依存 | 未充足時の挙動 |
+| 参照先テーブル / リソース | [YANG](../../reference/glossary.md#term-yang) leafref | 実行時依存 | 未充足時の挙動 |
 |---|:---:|:---:|---|
 | `PORT\|<name>` (CONFIG_DB) | ✅ `sonic-pbh.yang:245-247` | `validateAddPorts()` → `gPortsOrch->getPort()` (`aclorch.cpp:2698`) | `pendingPortSet` 保留 → `SUBJECT_TYPE_PORT_CHANGE` 通知で自動回復 |
-| `PORTCHANNEL\|<name>` (CONFIG_DB) | ✅ `sonic-pbh.yang:248-251` | `validateAddPorts()` → `gPortsOrch->getPort()` LAG パス (`aclorch.cpp:106`) | 同上（PORT_CHANGE 通知で自動回復） |
+| `PORTCHANNEL\|<name>` (CONFIG_DB) | ✅ `sonic-pbh.yang:248-251` | `validateAddPorts()` → `gPortsOrch->getPort()` [LAG](../../reference/glossary.md#term-lag) パス (`aclorch.cpp:106`) | 同上（PORT_CHANGE 通知で自動回復） |
 | PortsOrch（グローバルゲート） | ✗ | `allPortsReady()` ゲート (`pbhorch.cpp:1808`) | 全 PBH テーブル処理がブロック（`allPortsReady()` true 後に自動回復） |
 | AclOrch（Orch 間） | ✗ | `addAclTable()` / `updateAclTable()` / `removeAclTable()` | SWSS_LOG_ERROR + `return false`（CONFIG_DB エントリ残存・再試行なし） |
 
@@ -140,7 +140,7 @@ PBH_TABLE|<table_name>  DEL
 
 | 参照元テーブル | 参照フィールド | 参照タイミング | evidence |
 |---|---|---|---|
-| `PBH_RULE\|<table_name>\|<rule_name>` | `table_name` (YANG leafref) | PBH_RULE SET 時。`validateDependencies()` が `tableMap.find(rule.table)` を確認し、未存在なら `return false` → retry loop | `pbhmgr.cpp:83-88`, `pbhorch.cpp:929-968` |
+| `PBH_RULE\|<table_name>\|<rule_name>` | `table_name` ([YANG](../../reference/glossary.md#term-yang) leafref) | PBH_RULE SET 時。`validateDependencies()` が `tableMap.find(rule.table)` を確認し、未存在なら `return false` → retry loop | `pbhmgr.cpp:83-88`, `pbhorch.cpp:929-968` |
 
 !!! note "APP_DB / STATE_DB への書き出しはない"
     `PbhOrch` は `PBH_TABLE` の処理結果を STATE_DB / APPL_DB に書き出さない。ステータステーブルは未実装であり、`PBH_TABLE` は CONFIG_DB の consumer 専用テーブルとして機能する。
@@ -150,7 +150,7 @@ PBH_TABLE|<table_name>  DEL
 <!-- failure -->
 ## 失敗・リトライ挙動 (Phase D)
 
-`PBH_TABLE` の処理失敗は `pbhmgr.cpp` の `parsePbhTable()` / `validatePbhTable()` と `pbhorch.cpp` の `deployPbhTableSetupTasks()` / `deployPbhTableRemoveTasks()` で発生する。`ACL_TABLE` とは異なり STATE_DB へのステータス書き込みはなく、失敗はすべて syslog (`SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE`) のみで通知される。詳細スキャンノートは `meta/_intermediate/cdb-flow/pbh-table-failure.md` を参照。
+`PBH_TABLE` の処理失敗は `pbhmgr.cpp` の `parsePbhTable()` / `validatePbhTable()` と `pbhorch.cpp` の `deployPbhTableSetupTasks()` / `deployPbhTableRemoveTasks()` で発生する。`ACL_TABLE` とは異なり [STATE_DB](../../reference/glossary.md#term-state_db) へのステータス書き込みはなく、失敗はすべて syslog (`SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE`) のみで通知される。詳細スキャンノートは `meta/_intermediate/cdb-flow/pbh-table-failure.md` を参照。
 
 ### SET 時の失敗パターン
 
@@ -158,7 +158,7 @@ PBH_TABLE|<table_name>  DEL
 |---|---|---|---|---|
 | 1 | `interface_list` / `description` 未設定（必須フィールド欠損） | `validatePbhTable()` `pbhmgr.cpp:968,974` | `SWSS_LOG_ERROR("Validation error: missing mandatory field(...)")` | なし — `pendingSetupMap` 未追加。再 SET が必要 |
 | 2 | 不明フィールド | `parsePbhTable()` `pbhmgr.cpp:487` | `SWSS_LOG_WARN("Unknown field(%s): skipping ...")` | N/A（スキップして処理続行） |
-| 3 | SAI ACL テーブル作成失敗 (`aclOrch->addAclTable()`) | `createPbhTable()` `pbhorch.cpp:288` | `SWSS_LOG_ERROR("Failed to create PBH table(%s) in SAI")` | なし — `deployPbhTableSetupTasks()` で `map.erase(it)`。原因解消後に再 SET |
+| 3 | SAI [ACL](../../reference/glossary.md#term-acl) テーブル作成失敗 (`aclOrch->addAclTable()`) | `createPbhTable()` `pbhorch.cpp:288` | `SWSS_LOG_ERROR("Failed to create PBH table(%s) in SAI")` | なし — `deployPbhTableSetupTasks()` で `map.erase(it)`。原因解消後に再 SET |
 | 4 | 内部キャッシュ追加失敗 (`pbhHlpr.addPbhTable()`) | `createPbhTable()` `pbhorch.cpp:294` | `SWSS_LOG_ERROR("Failed to add PBH table(%s) to internal cache")` | なし — 同上 |
 | 5 | タスク重複競合 (`pbhTaskExists()` == true) | `doTask()` `pbhorch.cpp:1579` | `SWSS_LOG_WARN("Unable to process PBH table(%s): task already exists: adding a retry")` | あり — 次イベントループで自動再試行 |
 | 6 | オブジェクト重複（`getPbhTable()` 成功で SET） | `createPbhTable()` `pbhorch.cpp:237` | `SWSS_LOG_ERROR("...object already exists")` | なし |
@@ -168,7 +168,7 @@ PBH_TABLE|<table_name>  DEL
 | # | 失敗ケース | 発生箇所 | ログ | retry |
 |---|---|---|---|---|
 | 7 | 依存 `PBH_RULE` が存在（refCount > 0） | `deployPbhTableRemoveTasks()` `pbhorch.cpp:461` | `SWSS_LOG_NOTICE("Unable to remove PBH table(%s): object has dependencies: adding a retry")` | あり — `PBH_RULE` DEL 後に `hasDependencies()` が false になり自動回復 |
-| 8 | SAI ACL テーブル削除失敗 (`removePbhTable()`) | `deployPbhTableRemoveTasks()` `pbhorch.cpp:468` | `SWSS_LOG_ERROR("Failed to remove PBH table(%s): ASIC and CONFIG DB are diverged")` | なし — erase。原因解消後に再 DEL |
+| 8 | SAI [ACL](../../reference/glossary.md#term-acl) テーブル削除失敗 (`removePbhTable()`) | `deployPbhTableRemoveTasks()` `pbhorch.cpp:468` | `SWSS_LOG_ERROR("Failed to remove PBH table(%s): ASIC and CONFIG DB are diverged")` | なし — erase。原因解消後に再 DEL |
 | 9 | DEL 対象が内部キャッシュ不在 | `deployPbhTableRemoveTasks()` `pbhorch.cpp:454` | `SWSS_LOG_ERROR("Failed to remove PBH table(%s): object doesn't exist")` | なし — erase |
 
 ### 失敗の伝播経路
@@ -188,8 +188,8 @@ PBH_TABLE が SAI に未反映のまま
 
 ### 注意点
 
-- `PbhOrch` は STATE_DB に PBH_TABLE のステータスを書き込まない。失敗確認は `/var/log/syslog` の `SWSS_LOG_ERROR` を参照すること。
-- SET 失敗後も CONFIG_DB のエントリは残る。orchagent は CONFIG_DB に書き戻さない。
+- `PbhOrch` は [STATE_DB](../../reference/glossary.md#term-state_db) に PBH_TABLE のステータスを書き込まない。失敗確認は `/var/log/syslog` の `SWSS_LOG_ERROR` を参照すること。
+- SET 失敗後も CONFIG_DB のエントリは残る。[orchagent](../../reference/glossary.md#term-orchagent) は CONFIG_DB に書き戻さない。
 - SAI 失敗（ケース 3）は retry なしで "ASIC and CONFIG DB are diverged" 状態になる。`config reload` または個別の DEL → SET が回復手順。
 
 <!-- /failure -->
@@ -228,7 +228,7 @@ CLI プラグイン (`config/plugins/pbh.py`) で定義される CONFIG_DB テ�
 | 定数名 | 意味 |
 |--------|------|
 | `SAI_ACL_BIND_POINT_TYPE_PORT` | PBH ACL テーブルを物理ポートにバインド可能 |
-| `SAI_ACL_BIND_POINT_TYPE_LAG` | PBH ACL テーブルを LAG にバインド可能 |
+| `SAI_ACL_BIND_POINT_TYPE_LAG` | PBH ACL テーブルを [LAG](../../reference/glossary.md#term-lag) にバインド可能 |
 
 ### 4. SAI ACL マッチフィールド定数 (pbhorch.cpp:246–251)
 
@@ -256,7 +256,7 @@ CLI プラグイン (`config/plugins/pbh.py`) で定義される CONFIG_DB テ�
 
 > 証跡: `meta/_intermediate/cdb-flow/pbh-table-side-effects.md`
 
-`PBH_TABLE` の SET/DEL 処理は **STATE_DB / APPL_DB への直接書き込みを行わない**。副次的な状態変更は以下に限られる。
+`PBH_TABLE` の SET/DEL 処理は **[STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) への直接書き込みを行わない**。副次的な状態変更は以下に限られる。
 
 ### SAI ACL テーブルオブジェクト (ASIC 副作用)
 
@@ -266,15 +266,15 @@ CLI プラグイン (`config/plugins/pbh.py`) で定義される CONFIG_DB テ�
 | SET（更新） | `sai_acl_api->set_acl_table_attribute` | `aclOrch->updateAclTable(table.name, pbhTable)` (`pbhorch.cpp:359`) | `updatePbhTable()` 内 |
 | DEL | `sai_acl_api->remove_acl_table` | `aclOrch->removeAclTable(table.name)` (`pbhorch.cpp:388`) | `removePbhTable()` 内、内部キャッシュ削除前 |
 
-SAI の変更は CONFIG_DB / APPL_DB / STATE_DB には反映されない。ステータスを確認する専用 DB テーブルは実装されていない。
+SAI の変更は CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / STATE_DB には反映されない。ステータスを確認する専用 DB テーブルは実装されていない。
 
 ### AclOrch 内 pendingPortSet (インメモリ)
 
-`validateAddPorts()` (`aclorch.cpp:2698`) が `interface_list` のポートを PortsOrch に問い合わせ、未登録ポートは `AclTable::pendingPortSet` に蓄積する。これは orchagent プロセス内メモリのみで DB 書き込みは発生しない。`SUBJECT_TYPE_PORT_CHANGE` 通知を受けると `pendingPortSet` のポートが自動的に再バインドされる (`aclorch.cpp:2884-2889`)。
+`validateAddPorts()` (`aclorch.cpp:2698`) が `interface_list` のポートを PortsOrch に問い合わせ、未登録ポートは `AclTable::pendingPortSet` に蓄積する。これは [orchagent](../../reference/glossary.md#term-orchagent) プロセス内メモリのみで DB 書き込みは発生しない。`SUBJECT_TYPE_PORT_CHANGE` 通知を受けると `pendingPortSet` のポートが自動的に再バインドされる (`aclorch.cpp:2884-2889`)。
 
 ### pbhHlpr 内部 refCount (インメモリ)
 
-`PBH_RULE` の作成時に `pbhHlpr.incRefCount(rule)` が `tableMap[rule.table].refCount` を +1 し、`PBH_RULE` の削除時に `decRefCount(rule)` が -1 する (`pbhmgr.cpp:114-135`, `163-183`)。この refCount は DB に書き出されず orchagent 内メモリにのみ存在する。`PBH_TABLE` の DEL は `hasDependencies()` が `refCount > 0` の間ブロックされる。
+`PBH_RULE` の作成時に `pbhHlpr.incRefCount(rule)` が `tableMap[rule.table].refCount` を +1 し、`PBH_RULE` の削除時に `decRefCount(rule)` が -1 する (`pbhmgr.cpp:114-135`, `163-183`)。この refCount は DB に書き出されず [orchagent](../../reference/glossary.md#term-orchagent) 内メモリにのみ存在する。`PBH_TABLE` の DEL は `hasDependencies()` が `refCount > 0` の間ブロックされる。
 
 !!! note "STATE_DB ステータステーブルなし"
     `PbhOrch` は `PBH_TABLE` の処理結果を STATE_DB / APPL_DB に書き出さない。失敗・成功の確認は `/var/log/syslog` の `SWSS_LOG_ERROR` / `SWSS_LOG_NOTICE` のみ。
@@ -350,7 +350,7 @@ CONFIG_DB PBH_RULE|<table>|<rule>  (SET/DEL)
        └─ doPbhRuleTask() → AclOrch::addAclRule() / removeAclRule()
 ```
 
-APPL_DB への中継はなく、STATE_DB への書き込みもない。CLI (`config pbh table ...`) が CONFIG_DB に直接 `hset`/`hdel` し、orchagent が `SubscriberStateTable` で変化を受け取って SAI API を呼び出す。
+[APPL_DB](../../reference/glossary.md#term-appl_db) への中継はなく、STATE_DB への書き込みもない。CLI (`config pbh table ...`) が CONFIG_DB に直接 `hset`/`hdel` し、orchagent が `SubscriberStateTable` で変化を受け取って SAI API を呼び出す。
 
 <!-- /pubsub -->
 
@@ -459,3 +459,5 @@ PBH_TABLE|<table_name>
 ## 引用元
 
 [^1]: YANG 定義: `sonic-pbh.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-pbh.yang>
+
+<!-- glossary-links-injected: ef36624845e3 -->

@@ -32,31 +32,24 @@ related:
 
 ## 概要
 
-`LLDP_ENTRY_TABLE` は **lldp-syncd** が [lldpd](../../reference/glossary.md#term-lldp) の受信 PDU 情報を **APPL_DB** に書き込む、実質的な LLDP neighbor cache テーブル[^1]。CONFIG_DB への書き込みは存在せず、外部からの直接書き込みも行わない。
+`LLDP_ENTRY_TABLE` は **lldp-[syncd](../../reference/glossary.md#term-syncd)** が [lldpd](../../reference/glossary.md#term-lldp) の受信 PDU 情報を **[APPL_DB](../../reference/glossary.md#term-appl_db)** に書き込む、実質的な [LLDP](../../reference/glossary.md#term-lldp) neighbor cache テーブル[^1]。[CONFIG_DB](../../reference/glossary.md#term-config_db) への書き込みは存在せず、外部からの直接書き込みも行わない。
 
 隣接ノードごとに 1 エントリが作成され、chassis ID / port ID / システム名 / 管理アドレス / 能力 TLV などが格納される。
 
-`LLDP_LOC_CHASSIS` は自ノードのローカル LLDP 情報を保持する単一エントリテーブルで、同様に APPL_DB に存在する[^2]。
+`LLDP_LOC_CHASSIS` は自ノードのローカル [LLDP](../../reference/glossary.md#term-lldp) 情報を保持する単一エントリテーブルで、同様に [APPL_DB](../../reference/glossary.md#term-appl_db) に存在する[^2]。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  LLD["lldpd (open-lldp)"]
-  SYN["lldp-syncd"]
-  ADB[("APPL_DB<br/>LLDP_ENTRY_TABLE<br/>LLDP_LOC_CHASSIS")]
-  SNMP["sonic-snmpagent<br/>(LLDP-MIB)"]
-  REST["sonic-mgmt-common<br/>(OpenConfig LLDP)"]
-
-  LLD -->|"LLDP PDU 受信"| SYN
-  SYN -->|"hset"| ADB
-  ADB -->|"hgetall"| SNMP
-  ADB -->|"GetTable"| REST
+  CDB[("CONFIG_DB<br/>LLDP")]
+  DM["lldpmgrd"]
+  CDB --> DM
 ```
 
 !!! note "凡例"
-    APPL_DB への書き込みは lldp-syncd のみ。CONFIG_DB 経路なし。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -82,8 +75,8 @@ LLDP_LOC_CHASSIS               # ローカル chassis 情報 (単一エントリ
 | `lldp_rem_sys_cap_supported` | string | `"28 00"` | 対応 capability ビットマスク (hex) |
 | `lldp_rem_sys_cap_enabled` | string | `"28 00"` | 有効 capability ビットマスク (hex) |
 | `lldp_rem_man_addr` | string | `"10.250.2.55"` | 管理アドレス。複数の場合カンマ区切り (IPv4, IPv6) |
-| `lldp_rem_time_mark` | string (int) | `"1765"` | SNMP TimeMark (sysUpTime の 10ms 単位) |
-| `lldp_rem_index` | string (int) | `"1"` | LLDP-MIB lldpRemIndex |
+| `lldp_rem_time_mark` | string (int) | `"1765"` | [SNMP](../../reference/glossary.md#term-snmp) TimeMark (sysUpTime の 10ms 単位) |
+| `lldp_rem_index` | string (int) | `"1"` | [LLDP](../../reference/glossary.md#term-lldp)-MIB lldpRemIndex |
 
 ## フィールド (`LLDP_LOC_CHASSIS`)
 
@@ -99,13 +92,13 @@ LLDP_LOC_CHASSIS               # ローカル chassis 情報 (単一エントリ
 
 ## 購読者
 
-- `sonic-snmpagent` (`ieee802_1ab.py`) — LLDP-MIB (IEEE 802.1AB) を SNMP で提供
-- `sonic-mgmt-common` (`lldp_app.go`) — OpenConfig LLDP を REST / gNMI で提供
+- `sonic-snmpagent` (`ieee802_1ab.py`) — LLDP-MIB (IEEE 802.1AB) を [SNMP](../../reference/glossary.md#term-snmp) で提供
+- `sonic-mgmt-common` (`lldp_app.go`) — OpenConfig LLDP を REST / [gNMI](../../reference/glossary.md#term-gnmi) で提供
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: `LLDP`, `LLDP_PORT`, `PORT`
-- 関連 YANG: `sonic-lldp` (CONFIG_DB 定義), OpenConfig LLDP
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `LLDP`, `LLDP_PORT`, `PORT`
+- 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-lldp` ([CONFIG_DB](../../reference/glossary.md#term-config_db) 定義), OpenConfig LLDP
 - 関連 CLI: `show lldp table`, `show lldp neighbors`
 
 <!-- ref-triangle:start -->
@@ -121,7 +114,7 @@ LLDP_LOC_CHASSIS               # ローカル chassis 情報 (単一エントリ
 
 ## 引用元
 
-[^1]: sonic-snmpagent `mibs/__init__.py` — `lldp_entry_table()` 関数が `'LLDP_ENTRY_TABLE:' + if_name` (APPL_DB) を返す。<https://github.com/sonic-net/sonic-snmpagent/blob/329f1cc/src/sonic_ax_impl/mibs/__init__.py>
+[^1]: sonic-snmpagent `mibs/__init__.py` — `lldp_entry_table()` 関数が `'LLDP_ENTRY_TABLE:' + if_name` ([APPL_DB](../../reference/glossary.md#term-appl_db)) を返す。<https://github.com/sonic-net/sonic-snmpagent/blob/329f1cc/src/sonic_ax_impl/mibs/__init__.py>
 [^2]: sonic-snmpagent `tests/mock_tables/appl_db.json` — LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS のフィールドセットを確認。<https://github.com/sonic-net/sonic-snmpagent/blob/329f1cc/tests/mock_tables/appl_db.json>
 
 ## 関連ページ
@@ -163,7 +156,7 @@ show lldp neighbors Ethernet0
 
 | 値 | 意味 | 挙動 |
 |----|------|------|
-| `"4"` | MAC Address | 最多。lldpd デフォルト。SNMP MIB の chassisIdSubtype=macAddress(4) |
+| `"4"` | MAC Address | 最多。lldpd デフォルト。[SNMP](../../reference/glossary.md#term-snmp) MIB の chassisIdSubtype=macAddress(4) |
 | `"5"` | Network Address | IP ベースの chassis ID |
 | `"7"` | Locally Assigned | ベンダー独自値。`show lldp` で文字列表示 |
 
@@ -201,7 +194,7 @@ show lldp neighbors Ethernet0
 | `lldp_rem_man_addr` が空文字列 | `sonic-snmpagent` の `update_rem_if_mgmt()` が early return。そのポートの Management Address SNMP MIB エントリが欠落する |
 | `lldp_rem_sys_cap_*` フィールド欠落 | `KeyError` をキャッチし、警告ログ (`0 - b'LLDP_ENTRY_TABLE' missing attribute`) のみ出力。MIB エントリは 0 として返す |
 | `lldp_rem_time_mark` が欠落 | `lldp_rem_time_mark` は SNMP TimeMark として使用。欠落時は int 変換に失敗し AttributeError、当該エントリの SNMP 応答が欠落する可能性 |
-| lldpd が TTL 切れエントリを削除 | `lldpd` が TTL 超過時に lldp-syncd へ削除通知を送る。lldp-syncd が APPL_DB の当該エントリを削除。SONiC コード側では TTL 管理を行わない |
+| lldpd が TTL 切れエントリを削除 | `lldpd` が TTL 超過時に lldp-[syncd](../../reference/glossary.md#term-syncd) へ削除通知を送る。lldp-[syncd](../../reference/glossary.md#term-syncd) が APPL_DB の当該エントリを削除。SONiC コード側では TTL 管理を行わない |
 | ポートが down になった場合 | lldpd がエントリを削除 → lldp-syncd が APPL_DB から削除。`show lldp table` からエントリが消える |
 
 <!-- /cdb-exceptions -->
@@ -221,7 +214,7 @@ show lldp neighbors Ethernet0
 
 `sonic-snmpagent` は SNMP walk 時に `APPL_DB:LLDP_ENTRY_TABLE:*` を `hgetall` で読み出し、LLDP-MIB (lldpRemTable, lldpRemManAddrTable) として SNMP エージェントに返す。
 
-`sonic-mgmt-common lldp_app.go` は `processGet` 時に `GetTable(neighTs)` で全エントリを取得し、OpenConfig LLDP YANG モデルにマッピングして REST / gNMI レスポンスを生成する。
+`sonic-mgmt-common lldp_app.go` は `processGet` 時に `GetTable(neighTs)` で全エントリを取得し、OpenConfig LLDP [YANG](../../reference/glossary.md#term-yang) モデルにマッピングして REST / [gNMI](../../reference/glossary.md#term-gnmi) レスポンスを生成する。
 
 ### 段階 4 — タイミングと副作用
 
@@ -299,7 +292,7 @@ APPL_DB: LLDP_ENTRY_TABLE|<ifname> 存在
 ## 暗黙参照テーブル (Phase C)
 
 `LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` (APPL_DB) の書き手・読み手が参照する他テーブルおよびリソースを整理する。
-本テーブルは lldp-syncd が **producer only** として書き込み、sonic-snmpagent / sonic-mgmt-common (lldp_app.go) が読み手として参照する。
+本テーブルは lldp-syncd が **producer only** として書き込み、sonic-snmpagent / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common (lldp_app.go) が読み手として参照する。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
@@ -328,21 +321,21 @@ APPL_DB: LLDP_ENTRY_TABLE|<ifname> 存在
 
 ### 構造的前提
 
-`LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` は **lldp-syncd** が唯一の書き手。外部 (CLI / REST / gNMI) からの書き込みは設計上不可能。失敗経路は (1) lldp-syncd の書き込み失敗、(2) 下流 Consumer (sonic-snmpagent / lldp_app.go) の読み取り時エラーの 2 種類に分類される。
+`LLDP_ENTRY_TABLE` / `LLDP_LOC_CHASSIS` は **lldp-syncd** が唯一の書き手。外部 (CLI / REST / [gNMI](../../reference/glossary.md#term-gnmi)) からの書き込みは設計上不可能。失敗経路は (1) lldp-syncd の書き込み失敗、(2) 下流 Consumer (sonic-snmpagent / lldp_app.go) の読み取り時エラーの 2 種類に分類される。
 
 ### SET 処理（lldp-syncd 書き込み）における失敗経路
 
-| 失敗条件 | 検出箇所 | 結果 | STATE_DB 記録 | evidence |
+| 失敗条件 | 検出箇所 | 結果 | [STATE_DB](../../reference/glossary.md#term-state_db) 記録 | evidence |
 |---------|---------|------|--------------|---------|
 | lldp-syncd プロセス停止 | supervisord | supervisord が自動再起動。再起動後 lldpctl 全スキャンで再書き込み | なし | `supervisord.conf.j2: autostart=true` |
 | lldpd ソケット未応答 | lldp-syncd 起動時 `waitfor_lldp_ready.sh` | lldp-syncd 起動待機（UNIX ソケット ready まで待機）。タイムアウト時は supervisord が lldp-syncd を停止 | なし | `supervisord.conf.j2: dependent_startup_wait_for=lldp-ready:exited` |
-| APPL_DB 接続失敗 | lldp-syncd 起動時 | lldp-syncd が起動失敗 → supervisord が再起動 | なし | sonic-swss-common DB 接続例外 |
+| APPL_DB 接続失敗 | lldp-syncd 起動時 | lldp-syncd が起動失敗 → supervisord が再起動 | なし | [sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common) DB 接続例外 |
 | TTL 超過による隣接エントリ消滅 | lldpd TTL タイマー | lldpd が lldp-syncd に削除通知。lldp-syncd が `APPL_DB:LLDP_ENTRY_TABLE|<ifname>` を `DEL`。SNMP walk から当該エントリが消える | なし | lldpd 内部ロジック (hold time = hello × multiplier) |
 | ポートリンクダウン | lldpd イベント | lldpd が隣接エントリを削除 → lldp-syncd が APPL_DB から削除。`show lldp table` から消える | なし | lldpd リンク変化イベント |
 
 ### GET 処理（Consumer 読み取り）における失敗経路
 
-| 失敗条件 | 検出箇所 | 結果 | STATE_DB 記録 | evidence |
+| 失敗条件 | 検出箇所 | 結果 | [STATE_DB](../../reference/glossary.md#term-state_db) 記録 | evidence |
 |---------|---------|------|--------------|---------|
 | `lldp_rem_man_addr` が空文字列 | `LLDPRemManAddrUpdater.update_rem_if_mgmt()` | `return` して early exit。当該ポートの Management Address SNMP MIB エントリが欠落 | なし | `ieee802_1ab.py:523-525` |
 | `lldp_rem_man_addr` フィールド欠落 | `update_rem_if_mgmt()` | `'lldp_rem_man_addr' not in lldp_kvs` チェック → `return`。SNMP Management Address テーブルからエントリが消える | なし | `ieee802_1ab.py:517` |
@@ -366,7 +359,7 @@ APPL_DB: LLDP_ENTRY_TABLE|<ifname> 存在
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`lldpmgrd` / `lldpd.conf.j2` / `supervisord.conf.j2` / `sonic-snmpagent` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+`lldpmgrd` / `lldpd.conf.j2` / `supervisord.conf.j2` / `sonic-snmpagent` 内に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 出典は `sonic-buildimage/dockers/docker-lldp/lldpmgrd`、`lldpd.conf.j2`、`supervisord.conf.j2`、`sonic-snmpagent/src/sonic_ax_impl/mibs/ieee802_1ab.py`。
 
 ### lldpmgrd タイムアウト / リトライ定数
@@ -376,7 +369,7 @@ APPL_DB: LLDP_ENTRY_TABLE|<ifname> 存在
 | `PORT_INIT_TIMEOUT` | `300` 秒 | PortInitDone / PortConfigDone を受信しないまま経過した場合に lldpd を強制 resume するタイムアウト (lldpmgrd L33) |
 | `FAILED_CMD_TIMEOUT` | `6` 秒 | lldpcli コマンド失敗後の次回リトライまでのバックオフ最小間隔 (lldpmgrd L34) |
 | `RETRY_LIMIT` | `5` 回 | lldpcli コマンド失敗時の最大リトライ回数。超過すると当該ポートの LLDP 設定を断念 (lldpmgrd L35) |
-| `SELECT_TIMEOUT_MS` | `10000` ms | Redis Pub/Sub select() のポーリング間隔。CONFIG_DB / APPL_DB 変化を 10 秒以内に検出 (lldpmgrd L291) |
+| `SELECT_TIMEOUT_MS` | `10000` ms | [Redis](../../reference/glossary.md#term-redis) Pub/Sub select() のポーリング間隔。CONFIG_DB / APPL_DB 変化を 10 秒以内に検出 (lldpmgrd L291) |
 
 ### lldpd.conf.j2 のハードコード設定
 
@@ -432,10 +425,10 @@ priority 値は supervisord の dependent_startup 起動順序制御に使用。
 
 | 副次書込先 | 有無 | 根拠 |
 |-----------|-----|------|
-| STATE_DB | なし | `lldpmgrd` は STATE_DB `PORT_TABLE` を読み取るのみ（`is_port_up()` 経由）。Consumer (snmpagent / lldp_app.go) は書き込みなし |
-| COUNTERS_DB | なし | lldp 系コンポーネント全体で COUNTERS_DB 書込コードなし。障害ログは syslog (`SWSS_LOG_*`) のみ |
-| FLEX_COUNTER_DB | なし | lldp は SAI / orchagent とは独立した経路 (lldpd ← lldpcli) であり、flex-counter 機構を使用しない |
-| ASIC_DB | なし | lldp は SAI 非経由。lldpd が OS netdev / lldpcli を直接操作するため ASIC_DB に書き込まない |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `lldpmgrd` は STATE_DB `PORT_TABLE` を読み取るのみ（`is_port_up()` 経由）。Consumer (snmpagent / lldp_app.go) は書き込みなし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | lldp 系コンポーネント全体で [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書込コードなし。障害ログは syslog (`SWSS_LOG_*`) のみ |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | lldp は [SAI](../../reference/glossary.md#term-sai) / [orchagent](../../reference/glossary.md#term-orchagent) とは独立した経路 (lldpd ← lldpcli) であり、flex-counter 機構を使用しない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | なし | lldp は [SAI](../../reference/glossary.md#term-sai) 非経由。lldpd が OS netdev / lldpcli を直接操作するため [ASIC_DB](../../reference/glossary.md#term-asic_db) に書き込まない |
 | CONFIG_DB | なし | `lldp-syncd` / `lldpmgrd` は CONFIG_DB を読み取るのみ。書き込みパスは設計上存在しない |
 | EVENT_DB | なし | eventd との連携なし |
 
@@ -463,7 +456,7 @@ priority 値は supervisord の dependent_startup 起動順序制御に使用。
 
 | Consumer | 購読 API | 購読パターン / DB | 用途 |
 |---------|---------|----------------|------|
-| `sonic-snmpagent` `LocPortUpdater` | Redis keyspace `psubscribe` | `__keyspace@{APPL_DB}__:LLDP_ENTRY_TABLE:*` | インタフェース設定変化を検知してローカルポートキャッシュを更新 |
+| `sonic-snmpagent` `LocPortUpdater` | [Redis](../../reference/glossary.md#term-redis) keyspace `psubscribe` | `__keyspace@{APPL_DB}__:LLDP_ENTRY_TABLE:*` | インタフェース設定変化を検知してローカルポートキャッシュを更新 |
 | `sonic-snmpagent` `LLDPRemManAddrUpdater` | 同上 (keyspace psubscribe) | `__keyspace@{APPL_DB}__:LLDP_ENTRY_TABLE:*` | 管理アドレス (`lldp_rem_man_addr`) の変化を検知して SNMP OID キャッシュを更新 |
 | `sonic-snmpagent` `LLDPRemTableUpdater` | **ポーリング** (`update_data()`) | `LLDP_ENTRY_TABLE:*` (hgetall) | SNMP walk ごとに全エントリを再取得。リアルタイム購読ではない |
 | `sonic-snmpagent` `LLDPLocalSystemDataUpdater` | **ポーリング** (`reinit_data()`) | `LLDP_LOC_CHASSIS` (dbs_get_all) | 1 分ごとに `reinit_data()` で再取得。ローカル chassis 情報はほぼ静的のため polling で十分 |
@@ -472,7 +465,7 @@ priority 値は supervisord の dependent_startup 起動順序制御に使用。
 
 ### keyspace 通知の流れ
 
-`sonic-snmpagent` の `LocPortUpdater` / `LLDPRemManAddrUpdater` は Redis keyspace 通知 (`__keyspace@<dbId>__:LLDP_ENTRY_TABLE:*`) を `psubscribe` でパターン購読する。
+`sonic-snmpagent` の `LocPortUpdater` / `LLDPRemManAddrUpdater` は [Redis](../../reference/glossary.md#term-redis) keyspace 通知 (`__keyspace@<dbId>__:LLDP_ENTRY_TABLE:*`) を `psubscribe` でパターン購読する。
 
 ```python
 # mibs/__init__.py:497-501
@@ -520,13 +513,13 @@ LLDP テーブルへの書き込み自体はサービス再起動を伴わない
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | **影響なし** | LLDP は SAI 非経由。`lldpd` が OS netdev を直接操作するため ASIC ベンダーに依存しない |
+| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | **影響なし** | LLDP は [SAI](../../reference/glossary.md#term-sai) 非経由。`lldpd` が OS netdev を直接操作するため ASIC ベンダーに依存しない |
 | multi-asic (namespace_id あり) | **影響あり** | lldpd が `Ethernet[0-9]*` のみ監視（`eth0` 除外）。各 ASIC namespace で独立した lldp コンテナが起動し、それぞれ独自の `LLDP_ENTRY_TABLE` を書き込む (`supervisord.conf.j2:52-56`) |
 | multi-asic — eth0 LLDP 設定 | **生成されない** | `lldpd.conf.j2:15` の `{% if not namespace_id %}` ガードにより、namespace 環境では eth0 の `portidsubtype local` が設定されない |
 | multi-asic — SNMP OID 重複 | **ワークアラウンド適用** | 同一 ifIndex が複数 namespace の timeMark で重複しないよう `time_mark = 0` をハードコード固定 (`ieee802_1ab.py:449-455`) |
 | multi-asic — sonic-snmpagent | **Namespace API 対応済み** | `Namespace.init_namespace_dbs()` / `get_sync_d_from_all_namespace()` で全 namespace の APPL_DB を横断取得 (`ieee802_1ab.py:118, 157, 182`) |
 | multi-asic — inband / recirc / backplane ポート | **LLDP 対象外** | `lldpmgrd` がこれらプレフィックスのポートをスキップするため `LLDP_ENTRY_TABLE` のキーとして現れない (`lldpmgrd:143-145`) |
-| VOQ chassis (supervisor + line cards) | 各 host で独立動作 | LLDP テーブルは host/namespace スコープ。集中管理機構なし |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立動作 | LLDP テーブルは host/namespace スコープ。集中管理機構なし |
 | VS (virtual switch / KVM) | **動作制限あり** | VS 環境では NIC が LLDP PDU を pass-through しないことが多く、`LLDP_ENTRY_TABLE` が空になる場合がある。sonic-snmpagent テストでは mock_tables を使用 |
 
 ### multi-asic 構成での LLDP_ENTRY_TABLE スコープ
@@ -567,3 +560,5 @@ capability 情報は別途 `lldpCapTableMap` (bool map) として管理され、
 <!-- /defaults -->
 
 <!-- glossary-links-injected: lldp-state-v1 -->
+
+<!-- glossary-links-injected: da081ece9670 -->

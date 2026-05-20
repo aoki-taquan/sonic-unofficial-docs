@@ -25,9 +25,29 @@ related:
 
 ## 概要
 
-PortChannel ([LAG](../../reference/glossary.md#term-lag)) のランタイム状態を STATE_DB に保持するテーブル[^1]。`sonic-swss` の `teamsyncd` が Linux カーネルの netlink NEWLINK イベントを受信したときに主フィールドを書き込み、`tlm_teamd` が `teamdctl` の JSON dump を定期的に解析して補助フィールドを追記する。このテーブルは観測専用（書き込みは teamsyncd / tlm_teamd のみ）であり、`intfmgrd`・`vlanmgr`・`nbrmgrd`・`stpmgrd` が LAG の準備完了チェックに参照する。
+[PortChannel](../../reference/glossary.md#term-portchannel) ([LAG](../../reference/glossary.md#term-lag)) のランタイム状態を [STATE_DB](../../reference/glossary.md#term-state_db) に保持するテーブル[^1]。`sonic-swss` の `teamsyncd` が Linux カーネルの netlink NEWLINK イベントを受信したときに主フィールドを書き込み、`tlm_teamd` が `teamdctl` の JSON dump を定期的に解析して補助フィールドを追記する。このテーブルは観測専用（書き込みは teamsyncd / tlm_teamd のみ）であり、`intfmgrd`・`vlanmgr`・`nbrmgrd`・`stpmgrd` が [LAG](../../reference/glossary.md#term-lag) の準備完了チェックに参照する。
 
-CONFIG_DB の [`PORTCHANNEL`](portchannel.md) テーブルとは別テーブルであり、こちらは設定ではなく実行時状態を格納する。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の [`PORTCHANNEL`](portchannel.md) テーブルとは別テーブルであり、こちらは設定ではなく実行時状態を格納する。
+
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>PORTCHANNEL")]
+  DM["teammgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_LAG_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_lag_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
 
 ## key 構造
 
@@ -35,7 +55,7 @@ CONFIG_DB の [`PORTCHANNEL`](portchannel.md) テーブルとは別テーブル�
 LAG_TABLE|<lag_name>
 ```
 
-- `<lag_name>`: LAG インタフェース名。形式は `PortChannel<0-9999>`（例: `PortChannel0001`）
+- `<lag_name>`: [LAG](../../reference/glossary.md#term-lag) インタフェース名。形式は `PortChannel<0-9999>`（例: `PortChannel0001`）
 - テーブル名定数: `STATE_LAG_TABLE_NAME = "LAG_TABLE"` (`sonic-swss-common/common/schema.h:422`)
 
 ## フィールド
@@ -57,11 +77,11 @@ LAG_TABLE|<lag_name>
 
 | フィールド (JSON パス) | 型 | 説明 |
 |-----------------------|----|------|
-| `setup.kernel_team_mode_name` | string | teamd が使用する runner モード名（例: `"lacp"`） |
-| `setup.pid` | integer string | teamd プロセスの PID |
+| `setup.kernel_team_mode_name` | string | [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) が使用する runner モード名（例: `"lacp"`） |
+| `setup.pid` | integer string | [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) プロセスの PID |
 | `runner.active` | boolean string | LAG がアクティブ（ポート集約中）かどうか |
-| `runner.fallback` | boolean string | LACP fallback が有効か (`PORTCHANNEL.fallback` を反映) |
-| `runner.fast_rate` | boolean string | LACP fast rate が有効か (`PORTCHANNEL.fast_rate` を反映) |
+| `runner.fallback` | boolean string | [LACP](../../reference/glossary.md#term-lacp) fallback が有効か (`PORTCHANNEL.fallback` を反映) |
+| `runner.fast_rate` | boolean string | [LACP](../../reference/glossary.md#term-lacp) fast rate が有効か (`PORTCHANNEL.fast_rate` を反映) |
 | `team_device.ifinfo.dev_addr` | string | LAG の MAC アドレス |
 | `team_device.ifinfo.ifindex` | integer string | LAG の ifindex |
 
@@ -78,7 +98,7 @@ stateDiagram-v2
 
 | `state` 値 | 意味 |
 |-----------|------|
-| `"ok"` | LAG が teamsyncd に認識されており、teamd 初期化成功 |
+| `"ok"` | LAG が teamsyncd に認識されており、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) 初期化成功 |
 | (エントリなし) | LAG が削除または teamd 初期化に失敗した状態 |
 
 エラー状態（`"error"` 等）は存在しない。失敗時は `SWSS_LOG_ERROR` を出力してエントリを書き込まない。
@@ -89,26 +109,26 @@ stateDiagram-v2
 2. **LAG 更新時** (同上): `admin_state` / `oper_state` / `mtu` が変化したときも `addLag()` を呼び出してフィールドを更新する。
 3. **LAG 削除時** (`teamsync.cpp:L228-259`): `RTM_DELLINK` イベントで `removeLag()` を呼び出し、`m_stateLagTable.del(lagName)` でエントリを削除する。
 4. **Warm restart** (`teamsync.cpp:L84-98`): warm restart 時は直接書き込まず `m_stateLagTablePreserved` に一時保存し、タイムアウト後に `applyState()` で一括書き込む。
-5. **tlm_teamd 定期更新** (`tlm_teamd/main.cpp`): `teamdctl` で LAG の JSON dump を取得し、`ValuesStore::update()` で tlm_teamd フィールドを STATE_DB に反映する。
+5. **tlm_teamd 定期更新** (`tlm_teamd/main.cpp`): `teamdctl` で LAG の JSON dump を取得し、`ValuesStore::update()` で tlm_teamd フィールドを [STATE_DB](../../reference/glossary.md#term-state_db) に反映する。
 
 ## 購読者
 
 - `intfmgrd` (`cfgmgr/intfmgr.cpp:L38,L51`): LAG インタフェース設定前に `isLagStateOk()` でエントリ存在確認
-- `vlanmgrd` (`cfgmgr/vlanmgr.cpp:L497`): LAG を VLAN メンバに追加する前に LAG state を確認
+- `vlanmgrd` (`cfgmgr/vlanmgr.cpp:L497`): LAG を [VLAN](../../reference/glossary.md#term-vlan) メンバに追加する前に LAG state を確認
 - `nbrmgrd` (`cfgmgr/nbrmgr.cpp:L47`): 隣接エントリ処理前に LAG state を確認
 - `stpmgrd` (`cfgmgr/stpmgr.cpp:L1296`): STP ポート処理前に LAG state を確認
 - `tlm_teamd` (`tlm_teamd/main.cpp:L98`): `SubscriberStateTable` で変化を監視し teamdctl dump を同期
 
 ## 関連 CONFIG_DB / CLI
 
-- 設定元: [`PORTCHANNEL`](portchannel.md) (CONFIG_DB)
-- メンバ管理: [`PORTCHANNEL_MEMBER`](portchannel-member.md) (CONFIG_DB)
+- 設定元: [`PORTCHANNEL`](portchannel.md) ([CONFIG_DB](../../reference/glossary.md#term-config_db))
+- メンバ管理: [`PORTCHANNEL_MEMBER`](portchannel-member.md) ([CONFIG_DB](../../reference/glossary.md#term-config_db))
 - 確認コマンド: `show interfaces portchannel`、`teamdctl <lag_name> state`
 
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-STATE_DB `LAG_TABLE` に対応する YANG schema は存在しない。すべてのフィールドとデフォルト値は `teamsync.cpp` および `values_store.h` のコードレベルで定義される。
+[STATE_DB](../../reference/glossary.md#term-state_db) `LAG_TABLE` に対応する [YANG](../../reference/glossary.md#term-yang) schema は存在しない。すべてのフィールドとデフォルト値は `teamsync.cpp` および `values_store.h` のコードレベルで定義される。
 
 <!-- evidence: meta/_intermediate/cdb-flow/portchannel-state-defaults.md -->
 
@@ -118,7 +138,7 @@ STATE_DB `LAG_TABLE` に対応する YANG schema は存在しない。すべて�
 | `oper_status` | カーネル IFF_LOWER_UP フラグから実測 | `rtnl_link_get_flags(link) & IFF_LOWER_UP` — `teamsync.cpp:L116,L152` | 固定デフォルトなし。LAG メンバが集約されると `"up"` になる |
 | `mtu` | カーネル実測 MTU 値の文字列 | `rtnl_link_get_mtu(link)` — `teamsync.cpp:L140,L153` | カーネル側初期値は `portmgr.h` の `DEFAULT_MTU_STR = "9100"` だが STATE_DB は実測値を反映 |
 | `state` | `"ok"` | `FieldValueTuple s("state", "ok")` — `teamsync.cpp:L175` | 常に `"ok"` のみ。teamd 初期化失敗時はエントリ自体を書かない |
-| `setup.kernel_team_mode_name` | `"lacp"` (LACP モード時) | `teamdctl` JSON `setup.kernel_team_mode_name` — `values_store.h:L49` | teamd が使用する runner モード。CONFIG_DB 設定次第 |
+| `setup.kernel_team_mode_name` | `"lacp"` ([LACP](../../reference/glossary.md#term-lacp) モード時) | `teamdctl` JSON `setup.kernel_team_mode_name` — `values_store.h:L49` | teamd が使用する runner モード。CONFIG_DB 設定次第 |
 | `setup.pid` | teamd の実プロセス PID | `teamdctl` JSON `setup.pid` — `values_store.h:L50` | 固定値なし。teamd spawn ごとに変化 |
 | `runner.active` | `"false"` → ポート集約後 `"true"` | `teamdctl` JSON `runner.active` — `values_store.h:L51` | LACP ネゴシエーション完了後に `"true"` へ遷移 |
 | `runner.fallback` | `"false"` (未設定時) | `teamdctl` JSON `runner.fallback` — `values_store.h:L52` | CONFIG_DB `PORTCHANNEL.fallback = true` のときのみ `"true"` |
@@ -131,7 +151,7 @@ STATE_DB `LAG_TABLE` に対応する YANG schema は存在しない。すべて�
 - `admin_status` / `oper_status` / `mtu` はカーネルの netlink 実測値であり、コードレベルの固定デフォルトは存在しない。システム起動直後の LAG の典型的な初期値は `admin_status = "down"`、`oper_status = "down"`、`mtu = "9100"`（`portmgr.h` の `DEFAULT_MTU_STR` がカーネル側に設定されるため）。
 - `state = "ok"` は teamd 初期化成功を示す唯一の値であり、エラー状態は STATE_DB に書かれない。`teamdctl` 接続失敗時は `SWSS_LOG_ERROR` を記録し STATE_DB への書き込みをスキップする (`teamsync.cpp:L208-213`)。
 - tlm_teamd フィールド（`setup.*`、`runner.*`、`team_device.*`）は `teamdctl` の JSON dump に完全に依存する。tlm_teamd が dump 取得に失敗しても LAG_TABLE エントリは `teamsync.cpp` 書き込み分が残留する（`values_store.cpp:L284-291` で LAG_TABLE のエントリは削除しない設計）。
-- YANG schema が存在しないため、フィールドの型・範囲はすべてコードレベルで実施される。
+- [YANG](../../reference/glossary.md#term-yang) schema が存在しないため、フィールドの型・範囲はすべてコードレベルで実施される。
 <!-- /defaults -->
 
 <!-- ordering -->
@@ -202,7 +222,7 @@ PORTCHANNEL を先に削除した場合、LAG_TABLE エントリが残存した�
 > 調査日: 2026-05-18
 > 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-cross-refs.md`
 
-YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上の依存関係。STATE_DB テーブルであるため「何が書き込むか」と「何が読むか」の両方向を示す。
+[YANG](../../reference/glossary.md#term-yang) leafref を超えた他テーブル・他 DB・プロセスへの実装上の依存関係。STATE_DB テーブルであるため「何が書き込むか」と「何が読むか」の両方向を示す。
 
 | 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
 |--------|-----------|------|------|-----------|
@@ -214,7 +234,7 @@ YANG leafref を超えた他テーブル・他 DB・プロセスへの実装上�
 | `vlanmgrd` — `isMemberStateOk()` | STATE_DB | READ by consumer | `VLAN_MEMBER` への LAG 追加前に `m_stateLagTable.get(alias)` で確認。エントリなしは保留 | `vlanmgr.cpp:30,497` |
 | `stpmgrd` — `isLagStateOk()` | STATE_DB | READ by consumer | STP ポート処理前に `m_stateLagTable.get(alias)` で確認。エントリなしは保留 | `stpmgr.cpp:32,1296` |
 | `nbrmgrd` | STATE_DB | READ by consumer | 隣接エントリ処理前に LAG 状態を確認する | `nbrmgr.cpp:47` |
-| `natmgrd` — NAT ポートマッピング | STATE_DB | READ by consumer | NAT インタフェースとして LAG を使用する場合に `m_stateLagTable.get(port)` で確認 | `natmgr.cpp:38,111` |
+| `natmgrd` — [NAT](../../reference/glossary.md#term-nat) ポートマッピング | STATE_DB | READ by consumer | [NAT](../../reference/glossary.md#term-nat) インタフェースとして LAG を使用する場合に `m_stateLagTable.get(port)` で確認 | `natmgr.cpp:38,111` |
 
 !!! note "補足"
     - **書き込みは teamsyncd と tlm_teamd のみ**。orchagent / portsorch は APP_DB の `APP_LAG_TABLE` を購読して SAI に反映するため、STATE_DB の LAG_TABLE を直接読まない。
@@ -370,7 +390,7 @@ STATE_DB `LAG_TABLE` への書き込みをトリガーとして、他テーブ�
 
 ### SubscriberStateTable の仕組み（共通基盤）
 
-`SubscriberStateTable` はコンストラクタ内で Redis keyspace notification を PSUBSCRIBE し、テーブル変化を push 通知として受け取る (`subscriberstatetable.cpp:L20-24`)。`LAG_TABLE` に対するパターン:
+`SubscriberStateTable` はコンストラクタ内で [Redis](../../reference/glossary.md#term-redis) keyspace notification を PSUBSCRIBE し、テーブル変化を push 通知として受け取る (`subscriberstatetable.cpp:L20-24`)。`LAG_TABLE` に対するパターン:
 
 ```
 __keyspace@6__:LAG_TABLE|*
@@ -439,13 +459,13 @@ teamsyncd: m_stateLagTable.del(lagName)  [teamsync.cpp:L255]
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-STATE_DB `LAG_TABLE` への書き込みは Linux netlink (`RTM_NEWLINK` / `RTM_DELLINK`) と `teamdctl` UNIX ソケット経由の JSON dump に依存する。いずれも SAI を経由しないカーネル・ユーザー空間の仕組みであるため、プラットフォーム（ASIC ベンダー）差異は生じない。
+STATE_DB `LAG_TABLE` への書き込みは Linux netlink (`RTM_NEWLINK` / `RTM_DELLINK`) と `teamdctl` UNIX ソケット経由の JSON dump に依存する。いずれも [SAI](../../reference/glossary.md#term-sai) を経由しないカーネル・ユーザー空間の仕組みであるため、プラットフォーム（ASIC ベンダー）差異は生じない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `teamsyncd` は `libteam` + netlink のみを使用し SAI API を呼ばない。`teamsyncd.cpp` に SAI インクルードなし。フィールド値・書き込みタイミング・テーブル構造はすべての ASIC で同一 |
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `teamsyncd` は `libteam` + netlink のみを使用し [SAI](../../reference/glossary.md#term-sai) API を呼ばない。`teamsyncd.cpp` に [SAI](../../reference/glossary.md#term-sai) インクルードなし。フィールド値・書き込みタイミング・テーブル構造はすべての ASIC で同一 |
 | multi-asic (namespace 分離構成) | 各 namespace で独立動作・差異なし | `teamsyncd` / `tlm_teamd` / `teammgrd` はいずれも `DBConnector("STATE_DB", 0)` を無引数で開く (`teamsyncd.cpp:L31-32`, `teammgrd.cpp:L48-50`, `tlm_teamd/main.cpp:L91`)。multi-asic 環境では各 namespace に独立インスタンスが起動し、同一ロジックで自 namespace の `LAG_TABLE` に書き込む |
-| VOQ chassis (Virtual Output Queue) | 影響なし | VOQ chassis 固有の `SYSTEM_LAG_TABLE` / `SYSTEM_LAG_ID_TABLE` (`orchagent/lagids.lua`) は APPL_DB / CHASSIS_APP_DB 上のテーブルであり `STATE_DB::LAG_TABLE` とは別物。`teamsyncd` は VOQ 特有コードパスを持たず Linux netlink イベントに純粋に従う |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (Virtual Output Queue) | 影響なし | [VOQ](../../reference/glossary.md#term-voq) chassis 固有の `SYSTEM_LAG_TABLE` / `SYSTEM_LAG_ID_TABLE` (`orchagent/lagids.lua`) は [APPL_DB](../../reference/glossary.md#term-appl_db) / CHASSIS_APP_DB 上のテーブルであり `STATE_DB::LAG_TABLE` とは別物。`teamsyncd` は [VOQ](../../reference/glossary.md#term-voq) 特有コードパスを持たず Linux netlink イベントに純粋に従う |
 | warm restart タイマー | プラットフォーム非依存 | `WarmStart::getWarmStartTimer(TEAMSYNCD_APP_NAME, "teamd")` でタイマー取得し、未設定時は `DEFAULT_WR_PENDING_TIMEOUT = 70` 秒を使用 (`teamsync.h:L16`)。タイマー値はプラットフォームではなく mgmt 設定に依存 |
 
 詳細根拠は `meta/_intermediate/cdb-flow/portchannel-state-platform.md` を参照。
@@ -464,3 +484,5 @@ sonic-db-cli STATE_DB hgetall 'LAG_TABLE|PortChannel0001'
 show interfaces portchannel
 teamdctl PortChannel0001 state
 ```
+
+<!-- glossary-links-injected: 005ce4070a50 -->

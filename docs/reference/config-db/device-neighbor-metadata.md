@@ -99,7 +99,7 @@ DEVICE_NEIGHBOR_METADATA|<name>
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | `DEVICE_NEIGHBOR_METADATA` ロード → BGP ピア `set_handler` 実行許可（`use_neighbors_meta=True` 時） | **強制先行** | bgpcfgd の directory メカニズムがテーブル到着後に自動再試行 |
+| 1 | `DEVICE_NEIGHBOR_METADATA` ロード → BGP ピア `set_handler` 実行許可（`use_neighbors_meta=True` 時） | **強制先行** | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) の directory メカニズムがテーブル到着後に自動再試行 |
 | 2 | 個別 `DEVICE_NEIGHBOR_METADATA` エントリ存在 → 対応 BGP ピア設定の適用 | **強制先行** | `return False` で再キュー、エントリ到着後に再処理 |
 | 3 | `DEVICE_NEIGHBOR` ロード → `DEVICE_NEIGHBOR_METADATA` 参照（pfcwd） | 実質的直列（同一 `sonic-cfggen` 実行内） | 欠落時は `VLAN_MEMBER` フォールバック |
 | 4 | single / multi-ASIC 環境差 → 収録エントリ集合の違い | 環境依存（書込み前提条件） | multi-ASIC では間接隣接デバイスのメタが欠落する前提で consumer を設計 |
@@ -108,7 +108,7 @@ DEVICE_NEIGHBOR_METADATA|<name>
 
 **bgpcfgd 全件ブロック (依存 #1)**: `BGPPeerMgrBase.__init__()` (`managers_bgp.py:128-140`) は `constants.bgp.use_neighbors_meta == True` の場合のみ `CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME` を `deps` に追加する。directory メカニズムはこの宣言を元に「DEVICE_NEIGHBOR_METADATA が到着するまで BGP ピア `set_handler` を実行しない」制御を行う。minigraph 書込み完了前に bgpcfgd が起動している環境では、BGP セッションは DEVICE_NEIGHBOR_METADATA 到着まで**全件ブロック**される（evidence: `managers_bgp.py:128-131,138-140`）。
 
-**個別エントリ不在での延期 (依存 #2)**: `BGPPeerMgrBase.set_handler()` (`managers_bgp.py:218-224`) は `data['name']` が `neigmeta` に存在しない場合に `log_info("DEVICE_NEIGHBOR_METADATA is not ready for neighbor ...")` を出力して `return False`（再試行待ち）を返す。BGP_NEIGHBOR エントリが先に CONFIG_DB に書き込まれても、対応する DEVICE_NEIGHBOR_METADATA エントリが存在しない限り BGP セッション設定は適用されない（evidence: `managers_bgp.py:218-224`）。
+**個別エントリ不在での延期 (依存 #2)**: `BGPPeerMgrBase.set_handler()` (`managers_bgp.py:218-224`) は `data['name']` が `neigmeta` に存在しない場合に `log_info("DEVICE_NEIGHBOR_METADATA is not ready for neighbor ...")` を出力して `return False`（再試行待ち）を返す。BGP_NEIGHBOR エントリが先に [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込まれても、対応する DEVICE_NEIGHBOR_METADATA エントリが存在しない限り BGP セッション設定は適用されない（evidence: `managers_bgp.py:218-224`）。
 
 **pfcwd の直列参照 (依存 #3)**: `get_server_facing_ports()` (`pfcwd/main.py:97-108`) は DEVICE_NEIGHBOR の各エントリの `name` を使って DEVICE_NEIGHBOR_METADATA の `type` を参照する。DEVICE_NEIGHBOR_METADATA 側に対応エントリがない場合、サーバー向けポートとして列挙されず、VLAN_MEMBER フォールバックに移行する。minigraph は両テーブルを同一実行内で生成するため通常は同時到着するが、テーブル単位の書込み順は `hset` 操作順に依存する（evidence: `pfcwd/main.py:97-108`）。
 
@@ -119,15 +119,15 @@ DEVICE_NEIGHBOR_METADATA|<name>
 
 `DEVICE_NEIGHBOR_METADATA` の consumer はいずれも **`DEVICE_NEIGHBOR` テーブルと組み合わせて**参照する。
 `DEVICE_NEIGHBOR[port].name` をキーとして本テーブルの `type` / `hwsku` / `lo_addr` / `mgmt_addr` 等を取得し、
-トポロジ認識・バッファ設定・BGP セッション設定・PFC watchdog 等に利用する。
+トポロジ認識・バッファ設定・BGP セッション設定・[PFC](../../reference/glossary.md#term-pfc) watchdog 等に利用する。
 
 <!-- evidence: meta/_intermediate/cdb-flow/device-neighbor-metadata-cross-refs.md -->
 
 | 依存方向 | 参照元 | 参照先テーブル | 参照フィールド | 用途 | 証跡 |
 |---------|--------|--------------|--------------|------|------|
 | 読み手 (BGP) | `bgpcfgd BGPPeerMgrBase.set_handler` | `CONFIG_DB BGP_NEIGHBOR` (キー), `CONFIG_DB DEVICE_METADATA\|localhost` | `type`, `hwsku`, `deployment_id` | BGP セッション Jinja2 テンプレートへの渡し — `kwargs['CONFIG_DB__DEVICE_NEIGHBOR_METADATA']` として全 meta を転送 | `managers_bgp.py:218-224` |
-| 読み手 (バッファ設定) | `buffers_config.j2` (sonic-cfggen テンプレート) | `CONFIG_DB DEVICE_NEIGHBOR` (ポート→name), `CONFIG_DB DEVICE_METADATA\|localhost` (type/subtype), `CONFIG_DB SYSTEM_DEFAULTS` (tunnel_qos_remap 条件) | `type` | `switch_role + '_' + neighbor_role` の組み合わせでケーブル長を決定; LeafRouter/DualToR + ToRRouter/LeafRouter 条件で extra queues ポートリストを構築 | `buffers_config.j2:81-82,209-210` |
-| 読み手 (QoS 設定) | `qos_config.j2` (sonic-cfggen テンプレート) | `CONFIG_DB DEVICE_NEIGHBOR`, `CONFIG_DB DEVICE_METADATA\|localhost` | `type` | アクティブポートを `PORT_UPLINK` / `PORT_DOWNLINK` に分類 (LeafRouter ↔ ToRRouter/SpineRouter, ToRRouter ↔ LeafRouter) | `qos_config.j2:107-108,150-151` |
+| 読み手 (バッファ設定) | `buffers_config.j2` ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) テンプレート) | `CONFIG_DB DEVICE_NEIGHBOR` (ポート→name), `CONFIG_DB DEVICE_METADATA\|localhost` (type/subtype), `CONFIG_DB SYSTEM_DEFAULTS` (tunnel_qos_remap 条件) | `type` | `switch_role + '_' + neighbor_role` の組み合わせでケーブル長を決定; LeafRouter/DualToR + ToRRouter/LeafRouter 条件で extra queues ポートリストを構築 | `buffers_config.j2:81-82,209-210` |
+| 読み手 ([QoS](../../reference/glossary.md#term-qos) 設定) | `qos_config.j2` ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) テンプレート) | `CONFIG_DB DEVICE_NEIGHBOR`, `CONFIG_DB DEVICE_METADATA\|localhost` | `type` | アクティブポートを `PORT_UPLINK` / `PORT_DOWNLINK` に分類 (LeafRouter ↔ ToRRouter/SpineRouter, ToRRouter ↔ LeafRouter) | `qos_config.j2:107-108,150-151` |
 | 読み手 (pfcwd) | `pfcwd get_server_facing_ports()` | `CONFIG_DB DEVICE_NEIGHBOR` (ポート→name) | `type` | `type.lower() == 'server'` でサーバー向けポートを判定; 欠落時は `CONFIG_DB VLAN_MEMBER` フォールバック | `pfcwd/main.py:97-108` |
 | 読み手 (CLI) | `show interfaces neighbor expected` | `CONFIG_DB DEVICE_NEIGHBOR` | `lo_addr`, `mgmt_addr`, `type` 等 | 隣接デバイス情報の表示 (`show interfaces neighbor expected`) | `show/interfaces/__init__.py:315-340` |
 | 読み手 (db_migrator) | `update_edgezone_aggregator_config()` | `CONFIG_DB DEVICE_NEIGHBOR`, `CONFIG_DB CABLE_LENGTH` | `type` | `type == 'EdgeZoneAggregator'` のデバイスに接続するポートを特定し CABLE_LENGTH を 40m に更新 | `db_migrator.py:765-790` |
@@ -136,7 +136,7 @@ DEVICE_NEIGHBOR_METADATA|<name>
 
 全 consumer が `DEVICE_NEIGHBOR[port].name` をルックアップキーとして使用する。
 このため `DEVICE_NEIGHBOR` と `DEVICE_NEIGHBOR_METADATA` のホスト名が一致していることが前提となり、
-いずれか一方が欠落するか名前がズレた場合、バッファ長・QoS ポートリスト・BGP セッション・pfcwd の動作がすべて影響を受ける。
+いずれか一方が欠落するか名前がズレた場合、バッファ長・[QoS](../../reference/glossary.md#term-qos) ポートリスト・BGP セッション・pfcwd の動作がすべて影響を受ける。
 
 !!! note "`type` フィールドがトポロジ認識の鍵"
     `buffers_config.j2` / `qos_config.j2` は `type` 値に基づいてポートをアップリンク/ダウンリンクに分類し、
@@ -150,7 +150,7 @@ DEVICE_NEIGHBOR_METADATA|<name>
 
 > 根拠: `sonic-utilities/pfcwd/main.py`; `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py`; `sonic-utilities/scripts/db_migrator.py`
 
-`DEVICE_NEIGHBOR_METADATA` は **CONFIG_DB への書き込みのみ** であり、orchagent のような明示的な task_failed / task_need_retry は持たない。失敗は consumer 側（bgpcfgd / pfcwd / db_migrator 等）で検出・処理される。
+`DEVICE_NEIGHBOR_METADATA` は **[CONFIG_DB](../../reference/glossary.md#term-config_db) への書き込みのみ** であり、[orchagent](../../reference/glossary.md#term-orchagent) のような明示的な task_failed / task_need_retry は持たない。失敗は consumer 側（bgpcfgd / pfcwd / db_migrator 等）で検出・処理される。
 
 ### 失敗パス一覧
 
@@ -267,15 +267,15 @@ DEVICE_NEIGHBOR_METADATA にサーバー向けポートが 0 件の場合、`get
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`DEVICE_NEIGHBOR_METADATA` はオーケストレータを経由しない（SAI 非到達）ため、本テーブルの **直接的な** 副次書き込みはない。ただし consumer として本テーブルを参照するプロセスが他の DB テーブルへ波及書き込みを行う。
+`DEVICE_NEIGHBOR_METADATA` はオーケストレータを経由しない（[SAI](../../reference/glossary.md#term-sai) 非到達）ため、本テーブルの **直接的な** 副次書き込みはない。ただし consumer として本テーブルを参照するプロセスが他の DB テーブルへ波及書き込みを行う。
 
 ### bgpcfgd → STATE_DB BGP_PEER_CONFIGURED_TABLE 書き込み
 
-`BGPPeerMgrBase.add_peer()` (`managers_bgp.py:172-243`) は DEVICE_NEIGHBOR_METADATA の内容を `kwargs['CONFIG_DB__DEVICE_NEIGHBOR_METADATA']` として Jinja2 テンプレートに渡して BGP ピア設定を FRR に適用する。テンプレート展開成功後に `update_state_db(vrf, nbr, data, "SET")` (`managers_bgp.py:239`) を呼び出す。
+`BGPPeerMgrBase.add_peer()` (`managers_bgp.py:172-243`) は DEVICE_NEIGHBOR_METADATA の内容を `kwargs['CONFIG_DB__DEVICE_NEIGHBOR_METADATA']` として Jinja2 テンプレートに渡して BGP ピア設定を [FRR](../../reference/glossary.md#term-frr) に適用する。テンプレート展開成功後に `update_state_db(vrf, nbr, data, "SET")` (`managers_bgp.py:239`) を呼び出す。
 
 | 副次 DB | テーブル / キー | フィールド | 書込内容 | 根拠 |
 |---------|---------------|---------|---------|------|
-| STATE_DB | `BGP_PEER_CONFIGURED_TABLE\|<nbr>` （デフォルト VRF）または `BGP_PEER_CONFIGURED_TABLE\|<vrf>\|<nbr>` | BGP_NEIGHBOR データ全フィールド | BGP ピア設定内容（sorted items）| `managers_bgp.py:287-290` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `BGP_PEER_CONFIGURED_TABLE\|<nbr>` （デフォルト [VRF](../../reference/glossary.md#term-vrf)）または `BGP_PEER_CONFIGURED_TABLE\|<vrf>\|<nbr>` | BGP_NEIGHBOR データ全フィールド | BGP ピア設定内容（sorted items）| `managers_bgp.py:287-290` |
 
 **条件**: `constants.bgp.use_neighbors_meta == True` かつ DEVICE_NEIGHBOR_METADATA に対応エントリが存在し、テンプレート展開が成功した場合のみ。`use_neighbors_meta == False` の環境ではこの副次書き込みは発生しない。
 
@@ -293,7 +293,7 @@ DEVICE_NEIGHBOR_METADATA にサーバー向けポートが 0 件の場合、`get
 
 ### sonic-cfggen テンプレートによる波及（minigraph 再生成時）
 
-`buffers_config.j2` / `qos_config.j2` は `sonic-cfggen` 実行時に DEVICE_NEIGHBOR_METADATA の `type` フィールドを参照して ポートロール（uplink/downlink）とケーブル長を決定し、CONFIG_DB の CABLE_LENGTH / QoS テーブルへ出力する。これは `sonic-cfggen -m <minigraph.xml>` 実行時にのみ発生する（実行時の Consumer 書き込みではない）。
+`buffers_config.j2` / `qos_config.j2` は `sonic-cfggen` 実行時に DEVICE_NEIGHBOR_METADATA の `type` フィールドを参照して ポートロール（uplink/downlink）とケーブル長を決定し、CONFIG_DB の CABLE_LENGTH / [QoS](../../reference/glossary.md#term-qos) テーブルへ出力する。これは `sonic-cfggen -m <minigraph.xml>` 実行時にのみ発生する（実行時の Consumer 書き込みではない）。
 
 | 副次 DB | テーブル / キー | 書込内容 | 根拠 |
 |---------|---------------|---------|------|
@@ -304,12 +304,12 @@ DEVICE_NEIGHBOR_METADATA にサーバー向けポートが 0 件の場合、`get
 
 | ケース | 理由 |
 |--------|------|
-| `use_neighbors_meta == False` | bgpcfgd が DEVICE_NEIGHBOR_METADATA を依存として登録しない → STATE_DB BGP_PEER_CONFIGURED_TABLE への書き込みなし |
+| `use_neighbors_meta == False` | bgpcfgd が DEVICE_NEIGHBOR_METADATA を依存として登録しない → [STATE_DB](../../reference/glossary.md#term-state_db) BGP_PEER_CONFIGURED_TABLE への書き込みなし |
 | EdgeZoneAggregator エントリなし | `update_edgezone_aggregator_config()` が早期 return → CABLE_LENGTH 変更なし |
 | CABLE_LENGTH テーブルに不均一値なし | db_migrator が冪等判定で終了 → CABLE_LENGTH 変更なし |
-| APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB | 本テーブルは orchagent に到達しないため SAI レイヤの副次書き込みなし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | 本テーブルは [orchagent](../../reference/glossary.md#term-orchagent) に到達しないため [SAI](../../reference/glossary.md#term-sai) レイヤの副次書き込みなし |
 
-> **スキャン証跡**: `managers_bgp.py` L128-243, L271-300 読了。`db_migrator.py` L757-799 読了。`buffers_config.j2` L76-130 読了。`qos_config.j2` L103-154 読了。副次書き込み先は STATE_DB (`BGP_PEER_CONFIGURED_TABLE`) と CONFIG_DB (`CABLE_LENGTH|AZURE`) の 2 テーブル。詳細は `meta/_intermediate/cdb-flow/device-neighbor-metadata-side-effects.md` 参照。
+> **スキャン証跡**: `managers_bgp.py` L128-243, L271-300 読了。`db_migrator.py` L757-799 読了。`buffers_config.j2` L76-130 読了。`qos_config.j2` L103-154 読了。副次書き込み先は [STATE_DB](../../reference/glossary.md#term-state_db) (`BGP_PEER_CONFIGURED_TABLE`) と CONFIG_DB (`CABLE_LENGTH|AZURE`) の 2 テーブル。詳細は `meta/_intermediate/cdb-flow/device-neighbor-metadata-side-effects.md` 参照。
 <!-- /side-effects -->
 
 <!-- pubsub -->
@@ -408,7 +408,6 @@ show lldp table
 > **Evidence**: [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:140,220-224`; [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `pfcwd/main.py:102`
 <!-- /cdb-exceptions -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -420,17 +419,17 @@ show lldp table
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — LLDP / neighbor テーブルのメタデータとして参照)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — [LLDP](../../reference/glossary.md#term-lldp) / neighbor テーブルのメタデータとして参照)
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB に書き込まれると即時に参照可能。lldpmgrd が LLDP neighbor との照合に使用。
+**適用タイミング**: CONFIG_DB に書き込まれると即時に参照可能。lldpmgrd が [LLDP](../../reference/glossary.md#term-lldp) neighbor との照合に使用。
 
-**副作用**: neighbor metadata の変更は LLDP 情報の表示 / 解釈に影響。ネットワーク動作への直接影響なし。
+**副作用**: neighbor metadata の変更は [LLDP](../../reference/glossary.md#term-lldp) 情報の表示 / 解釈に影響。ネットワーク動作への直接影響なし。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -451,7 +450,7 @@ show lldp table
 - なし
 
 ### ビルド時デフォルト (init_cfg / j2 テンプレート)
-- `sonic-cfggen -m` で minigraph.xml を処理して生成。`device_metadata.py` の `parse_device_desc_xml()` が各NeighborDevice のメタを読み出す
+- `sonic-cfggen -m` で [minigraph.xml](../../reference/glossary.md#term-minigraph.xml) を処理して生成。`device_metadata.py` の `parse_device_desc_xml()` が各NeighborDevice のメタを読み出す
 
 ### ハードコードデフォルト
 - なし
@@ -584,4 +583,4 @@ bgpcfgd の `BGPPeerMgrBase` は `constants.bgp.use_neighbors_meta == True` の�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 6a290c48f0ce -->
+<!-- glossary-links-injected: 1a5b6692d41e -->

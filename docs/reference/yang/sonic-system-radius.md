@@ -54,6 +54,7 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`RADIUS`](../config-db/radius.md)
+- [`RADIUS_SERVER`](../config-db/radius-server.md)
 
 ### 関連 HLD
 

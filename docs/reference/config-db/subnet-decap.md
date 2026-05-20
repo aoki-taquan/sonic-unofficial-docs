@@ -151,7 +151,6 @@ sonic-db-cli CONFIG_DB keys 'SUBNET_DECAP|*'
 
 [^2]: tunneldecaporch 実装: `sonic-swss/orchagent/tunneldecaporch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/tunneldecaporch.cpp>
 
-
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A)
 
@@ -162,7 +161,7 @@ sonic-db-cli CONFIG_DB keys 'SUBNET_DECAP|*'
 | `status` | `disable` | `false` (C++ bool、構造体初期化値) | YANG/実装一致。DEL_COMMAND 受信時も `false` にリセット[^3] |
 | `src_ip` | なし (mandatory) | `""` 空文字列 | **YANG-実装 discrepancy**: 片方のみ未設定は silent 受理。両方未設定時のみエラー[^3] |
 | `src_ip_v6` | なし (mandatory) | `""` 空文字列 | 同上。`src_ip` 未設定でも `src_ip_v6` だけで受理される[^3] |
-| `tunnel` | (YANG に存在しない) | `"IPINIP_SUBNET"` **ハードコード** | CONFIG_DB から設定不可の隠し値。`tunneldecaporch.h` メンバ初期化[^3] |
+| `tunnel` | (YANG に存在しない) | `"IPINIP_SUBNET"` **ハードコード** | [CONFIG_DB](../../reference/glossary.md#term-config_db) から設定不可の隠し値。`tunneldecaporch.h` メンバ初期化[^3] |
 | `tunnel_v6` | (YANG に存在しない) | `"IPINIP_SUBNET_V6"` **ハードコード** | 同上[^3] |
 | `dscp_mode` (APP_DB へ) | (YANG に存在しない) | Broadcom T1: `"pipe"` / Broadcom 非T1: `"uniform"` / 他: `"pipe"` | **プラットフォーム依存**。`ipinip.json.j2` がビルド時に決定[^4] |
 | `ecn_mode` (APP_DB へ) | (YANG に存在しない) | `"copy_from_outer"` | `ipinip.json.j2` にハードコード[^4] |
@@ -173,19 +172,19 @@ sonic-db-cli CONFIG_DB keys 'SUBNET_DECAP|*'
 `status = disable` の状態で `src_ip` / `src_ip_v6` を変更すると:
 
 - `subnetDecapConfig.src_ip` / `src_ip_v6` は更新される
-- 既存の SAI tunnel term entry の送信元 IP は更新 **されない**（`setIpAttribute()` は `enable == true` 時のみ呼ばれる）
+- 既存の [SAI](../../reference/glossary.md#term-sai) tunnel term entry の送信元 IP は更新 **されない**（`setIpAttribute()` は `enable == true` 時のみ呼ばれる）
 
 `enable` 後に `src_ip` を再設定すると SAI が更新される。先に `src_ip` を変えてから `enable` しても SAI 更新は走らない。
 
 ### YANG mandatory vs 実装の乖離
 
 YANG は `src_ip` と `src_ip_v6` 両方を `mandatory true` とするが、実装の検査は「両方とも空の場合のみエラー」。
-片方のみ設定した場合は YANG バリデーションを通過すれば orchagent もエラーにしない。
+片方のみ設定した場合は YANG バリデーションを通過すれば [orchagent](../../reference/glossary.md#term-orchagent) もエラーにしない。
 `sonic-cfggen` 経由の書き込みでは YANG validate が走るが、`sonic-db-cli` で直接書いた場合は実装側 validate のみ。
 
 ### シングルトン制約
 
-`subnetDecapConfig` は orchagent 内でシングルトン保持。`SUBNET_DECAP|*` に複数エントリを書いた場合、最後に処理された SET_COMMAND で上書きされる（処理順序依存）。
+`subnetDecapConfig` は [orchagent](../../reference/glossary.md#term-orchagent) 内でシングルトン保持。`SUBNET_DECAP|*` に複数エントリを書いた場合、最後に処理された SET_COMMAND で上書きされる（処理順序依存）。
 
 [^3]: `tunneldecaporch.h` + `tunneldecaporch.cpp:566-699`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/tunneldecaporch.cpp>
 [^4]: `dockers/docker-orchagent/ipinip.json.j2`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/ipinip.json.j2>
@@ -197,11 +196,11 @@ YANG は `src_ip` と `src_ip_v6` 両方を `mandatory true` とするが、実�
 
 ### Phase 6: 自動派生
 
-tunnelmgrd が `SUBNET_DECAP` エントリの存在に基づいて IP-in-IP デカプセルトンネルを自動作成する。Config-DB 内フィールド間の自動付与なし。YANG の `must` 制約による論理チェックのみ。
+[tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) が `SUBNET_DECAP` エントリの存在に基づいて IP-in-IP デカプセルトンネルを自動作成する。Config-DB 内フィールド間の自動付与なし。YANG の `must` 制約による論理チェックのみ。
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
-tunnelmgrd は常時起動し `SUBNET_DECAP` テーブルを無条件購読する。`DEVICE_METADATA.subtype==DualToR` 構成で主に使用される。`ip_prefix_list` が空の場合はエラーログ + スキップ。
+[tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) は常時起動し `SUBNET_DECAP` テーブルを無条件購読する。`DEVICE_METADATA.subtype==DualToR` 構成で主に使用される。`ip_prefix_list` が空の場合はエラーログ + スキップ。
 
 <!-- /derivation -->
 
@@ -214,7 +213,7 @@ tunnelmgrd は常時起動し `SUBNET_DECAP` テーブルを無条件購読す�
 | `tunnelmgrd` | `SUBNET_DECAP` エントリ削除 | 対応トンネル削除 | `tunnelmgrd` |
 | `tunnelmgrd` | `ip_prefix_list` が空 | ログエラー + スキップ | `tunnelmgrd` |
 
-> **スキャン証跡**: `SUBNET_DECAP` は主に DualToR 構成で使われる。tunnelmgrd 経由でサブネット decap トンネルを管理。Config-DB 内の自動付与なし（該当なし）。
+> **スキャン証跡**: `SUBNET_DECAP` は主に DualToR 構成で使われる。[tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) 経由でサブネット decap トンネルを管理。Config-DB 内の自動付与なし（該当なし）。
 
 <!-- /handler-branching -->
 
@@ -223,7 +222,7 @@ tunnelmgrd は常時起動し `SUBNET_DECAP` テーブルを無条件購読す�
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / SubnetDecapOrch**: `SUBNET_DECAP` テーブルを `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / SubnetDecapOrch**: `SUBNET_DECAP` テーブルを `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
@@ -236,7 +235,7 @@ tunnelmgrd は常時起動し `SUBNET_DECAP` テーブルを無条件購読す�
 ### 段階 4: タイミング + 副作用
 
 - 設定反映は orchagent 処理後数 ms 以内。
-- 副作用: サブネット範囲の重複があると ACL リソース競合が発生する可能性。
+- 副作用: サブネット範囲の重複があると [ACL](../../reference/glossary.md#term-acl) リソース競合が発生する可能性。
 
 <!-- /runtime-trace -->
 
@@ -343,11 +342,11 @@ routeorch / vnetorch が **ランタイムで動的生成** する。
 | `TUNNEL_DECAP_TABLE:IPINIP_SUBNET_V6` | APP_DB | 読み取り (IPv6 tunnel オブジェクト存在確認) | なし | **実質必須** | `tunneldecaporch.cpp:393` |
 | `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:*` | APP_DB | 読み取り (MP2MP vlan/vip term) | なし | 必須 | `tunneldecaporch.cpp:350-540` |
 | `LOOPBACK_INTERFACE` | CONFIG_DB | 読み取り (`ipinip.json.j2` がビルド時参照) | なし | 実質必須 | `ipinip.json.j2:28-32` |
-| `VLAN_INTERFACE` | CONFIG_DB | 読み取り (`ipinip.json.j2` が vlan term 生成に使用) | なし | VLAN subnet decap 必須 | `ipinip.json.j2:47-51` |
-| `DEVICE_METADATA.localhost.switch_type` | CONFIG_DB | 読み取り (`ipinip.json.j2` が DPU で全設定をスキップ) | なし | platform 依存 | `ipinip.json.j2:1` |
+| `VLAN_INTERFACE` | CONFIG_DB | 読み取り (`ipinip.json.j2` が vlan term 生成に使用) | なし | [VLAN](../../reference/glossary.md#term-vlan) subnet decap 必須 | `ipinip.json.j2:47-51` |
+| `DEVICE_METADATA.localhost.switch_type` | CONFIG_DB | 読み取り (`ipinip.json.j2` が [DPU](../../reference/glossary.md#term-dpu) で全設定をスキップ) | なし | platform 依存 | `ipinip.json.j2:1` |
 | `DEVICE_METADATA.localhost.type` | CONFIG_DB | 読み取り (Broadcom T1 判定で dscp_mode 切り替え) | なし | platform 依存 | `ipinip.json.j2:13-14` |
-| `STATE_TUNNEL_DECAP_TABLE` | STATE_DB | 書き込み (tunnel 状態を STATE_DB へ記録) | なし | 情報提供 | `tunneldecaporch.cpp:34, 287` |
-| `STATE_TUNNEL_DECAP_TERM_TABLE` | STATE_DB | 書き込み (term 状態を STATE_DB へ記録) | なし | 情報提供 | `tunneldecaporch.cpp:35` |
+| `STATE_TUNNEL_DECAP_TABLE` | [STATE_DB](../../reference/glossary.md#term-state_db) | 書き込み (tunnel 状態を [STATE_DB](../../reference/glossary.md#term-state_db) へ記録) | なし | 情報提供 | `tunneldecaporch.cpp:34, 287` |
+| `STATE_TUNNEL_DECAP_TERM_TABLE` | [STATE_DB](../../reference/glossary.md#term-state_db) | 書き込み (term 状態を STATE_DB へ記録) | なし | 情報提供 | `tunneldecaporch.cpp:35` |
 
 ### TUNNEL_DECAP_TABLE:IPINIP_SUBNET — 実質的な必須前提条件
 
@@ -359,7 +358,7 @@ routeorch / vnetorch が **ランタイムで動的生成** する。
 
 ### VLAN_INTERFACE — ビルド時 vlan term 生成の前提
 
-`ipinip.json.j2` は `VLAN_INTERFACE` から IPv4/IPv6 プレフィックスを取得し `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:<prefix>` (MP2MP, vlan) を APP_DB へ注入する。VLAN_INTERFACE が存在しなければ vlan 型の decap term が生成されず、VLAN サブネット内からの IPinIP トラフィックが decap されない（`ipinip.json.j2:47-51`）。
+`ipinip.json.j2` は `VLAN_INTERFACE` から IPv4/IPv6 プレフィックスを取得し `TUNNEL_DECAP_TERM_TABLE:IPINIP_SUBNET:<prefix>` (MP2MP, vlan) を APP_DB へ注入する。VLAN_INTERFACE が存在しなければ vlan 型の decap term が生成されず、[VLAN](../../reference/glossary.md#term-vlan) サブネット内からの [IPinIP](../../reference/glossary.md#term-ipinip) トラフィックが decap されない（`ipinip.json.j2:47-51`）。
 
 ### ASIC_VENDOR / DSCP_TO_TC_MAP — dscp_mode 自動決定
 
@@ -429,7 +428,7 @@ tunnel が存在しない場合 (#11) や `src_ip` が未設定の場合 (#12) �
 #define OVERLAY_RIF_DEFAULT_MTU 9100
 ```
 
-decap トンネルのオーバーレイ RIF 作成時に固定値 `9100` バイトが設定される（`tunneldecaporch.cpp:749-750`）。`SUBNET_DECAP` テーブルに MTU フィールドは存在せず、CONFIG_DB からの変更手段がない。
+decap トンネルのオーバーレイ [RIF](../../reference/glossary.md#term-rif) 作成時に固定値 `9100` バイトが設定される（`tunneldecaporch.cpp:749-750`）。`SUBNET_DECAP` テーブルに MTU フィールドは存在せず、CONFIG_DB からの変更手段がない。
 
 ### トンネル名（`tunneldecaporch.h:97-103`）
 
@@ -480,7 +479,7 @@ DualToR の Mux トンネル識別に使われる定数。`TunnelDecapOrch` が�
 <!-- evidence: meta/_intermediate/cdb-flow/subnet-decap-side-effects.md -->
 <!-- source: sonic-swss/orchagent/tunneldecaporch.cpp, routeorch.cpp, vnetorch.cpp -->
 
-CONFIG_DB `SUBNET_DECAP` テーブルの変更に伴って `TunnelDecapOrch` が副次的に書き込む DB エントリは以下のとおり。ASIC_DB への `sai_tunnel_api` 呼び出し（主作用）はこの表から除外する。
+CONFIG_DB `SUBNET_DECAP` テーブルの変更に伴って `TunnelDecapOrch` が副次的に書き込む DB エントリは以下のとおり。[ASIC_DB](../../reference/glossary.md#term-asic_db) への `sai_tunnel_api` 呼び出し（主作用）はこの表から除外する。
 
 ### STATE_DB への直接書込
 
@@ -506,7 +505,7 @@ CONFIG_DB `SUBNET_DECAP` テーブルの変更に伴って `TunnelDecapOrch` が
 
 ### APPL_DB / COUNTERS_DB への書込
 
-`TunnelDecapOrch` 自身は APPL_DB・COUNTERS_DB への直接書込を行わない。ASIC_DB への反映は SAI (`sai_tunnel_api`) 経由で orchagent フレームワークが管理する。FLEX_COUNTER_DB / APPL_STATE_DB / LOGLEVEL_DB / CONFIG_DB への書込みも検出されなかった。
+`TunnelDecapOrch` 自身は [APPL_DB](../../reference/glossary.md#term-appl_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への直接書込を行わない。[ASIC_DB](../../reference/glossary.md#term-asic_db) への反映は SAI (`sai_tunnel_api`) 経由で orchagent フレームワークが管理する。[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / APPL_STATE_DB / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) / CONFIG_DB への書込みも検出されなかった。
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/subnet-decap-side-effects.md` を参照。
 <!-- /side-effects -->
@@ -516,9 +515,9 @@ CONFIG_DB `SUBNET_DECAP` テーブルの変更に伴って `TunnelDecapOrch` が
 
 ### Redis 購読方式
 
-CONFIG_DB の `SUBNET_DECAP` への変更通知は、`TunnelDecapOrch` が **`swss::SubscriberStateTable`** (Redis keyspace 通知ベース) で購読する。コンストラクタ (`tunneldecaporch.cpp:39`) が直接 `new SubscriberStateTable(configDb, CFG_SUBNET_DECAP_TABLE_NAME, TableConsumable::DEFAULT_POP_BATCH_SIZE, 0)` を生成し、`Orch::addExecutor()` に渡す (`tunneldecaporch.cpp:48`)。
+CONFIG_DB の `SUBNET_DECAP` への変更通知は、`TunnelDecapOrch` が **`swss::SubscriberStateTable`** ([Redis](../../reference/glossary.md#term-redis) keyspace 通知ベース) で購読する。コンストラクタ (`tunneldecaporch.cpp:39`) が直接 `new SubscriberStateTable(configDb, CFG_SUBNET_DECAP_TABLE_NAME, TableConsumable::DEFAULT_POP_BATCH_SIZE, 0)` を生成し、`Orch::addExecutor()` に渡す (`tunneldecaporch.cpp:48`)。
 
-`Orch::addConsumer()` の CONFIG_DB / STATE_DB 分岐 (`orch.cpp:1186-1196`) と同様に、`SubscriberStateTable` は keyspace パターン `__keyspace@<dbId>__:SUBNET_DECAP|*` に `PSUBSCRIBE` する。書き込み側 (`sonic-cfggen` / `sonic-db-cli` / gNMI) は `HSET` のみ行い、明示的な `PUBLISH` は発行しない。
+`Orch::addConsumer()` の CONFIG_DB / STATE_DB 分岐 (`orch.cpp:1186-1196`) と同様に、`SubscriberStateTable` は keyspace パターン `__keyspace@<dbId>__:SUBNET_DECAP|*` に `PSUBSCRIBE` する。書き込み側 (`sonic-cfggen` / `sonic-db-cli` / [gNMI](../../reference/glossary.md#term-gnmi)) は `HSET` のみ行い、明示的な `PUBLISH` は発行しない。
 
 ```cpp
 // tunneldecaporch.cpp:39-48
@@ -584,7 +583,7 @@ TunnelDecapOrch::doSubnetDecapTask(consumer)
 
 ### DPU デバイス — 設定が一切生成されない
 
-`DEVICE_METADATA.localhost.switch_type == "dpu"` の場合、`ipinip.json.j2` は空リスト `[]` を出力する (`ipinip.json.j2:1-2`)。SUBNET_DECAP を含む **TUNNEL_DECAP_TABLE / TUNNEL_DECAP_TERM_TABLE のエントリはすべて生成されない**。DPU 環境でのサブネットデカプセルは本テンプレートの対象外。
+`DEVICE_METADATA.localhost.switch_type == "dpu"` の場合、`ipinip.json.j2` は空リスト `[]` を出力する (`ipinip.json.j2:1-2`)。SUBNET_DECAP を含む **TUNNEL_DECAP_TABLE / TUNNEL_DECAP_TERM_TABLE のエントリはすべて生成されない**。[DPU](../../reference/glossary.md#term-dpu) 環境でのサブネットデカプセルは本テンプレートの対象外。
 
 ### dscp_mode — Broadcom / 非 Broadcom 分岐
 
@@ -593,7 +592,7 @@ TunnelDecapOrch::doSubnetDecapTask(consumer)
 | Broadcom T1 (`LeafRouter` を含む `type`) | `"pipe"` | なし |
 | Broadcom 非 T1 | `"uniform"` | なし |
 | 非 Broadcom（`DSCP_TO_TC_MAP.AZURE` が存在） | `"pipe"` | `decap_dscp_to_tc_map: "AZURE"` |
-| 非 Broadcom（AZURE QoS マップなし） | `"pipe"` | なし |
+| 非 Broadcom（AZURE [QoS](../../reference/glossary.md#term-qos) マップなし） | `"pipe"` | なし |
 
 判定は `ASIC_VENDOR` 変数の `"broadcom"` 前方一致と `DEVICE_METADATA.localhost.type` の `LeafRouter` 含有で行われる (`ipinip.json.j2:5-14`)。`ecn_mode: "copy_from_outer"` / `ttl_mode: "pipe"` は全プラットフォームで共通。
 
@@ -603,7 +602,7 @@ TunnelDecapOrch::doSubnetDecapTask(consumer)
 
 ### 大規模トポロジー (>128 routed interfaces) — エントリ範囲の縮小
 
-ルーティングインタフェース総数（IPv4 + IPv6）が 128 超の場合、SAI `TABLE_FULL` 回避のために Loopback / VLAN アドレスのみを使用し、物理・PortChannel プレフィクスは除外される (`ipinip.json.j2:70-73`)。
+ルーティングインタフェース総数（IPv4 + IPv6）が 128 超の場合、SAI `TABLE_FULL` 回避のために Loopback / [VLAN](../../reference/glossary.md#term-vlan) アドレスのみを使用し、物理・[PortChannel](../../reference/glossary.md#term-portchannel) プレフィクスは除外される (`ipinip.json.j2:70-73`)。
 
 ### sub_role によるループバックアドレス選択
 
@@ -636,7 +635,7 @@ minigraph.py に SUBNET_DECAP 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -644,7 +643,7 @@ db_migrator.py での SUBNET_DECAP マイグレーションなし
 
 ### ビルド時デフォルト (build-time default)
 
-**`dockers/docker-orchagent/ipinip.json.j2`** が SUBNET_DECAP テーブルのデフォルト値をビルド時に生成 (sonic-buildimage/dockers/docker-orchagent/ipinip.json.j2)
+**`dockers/docker-orchagent/ipinip.json.j2`** が SUBNET_DECAP テーブルのデフォルト値をビルド時に生成 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/dockers/docker-orchagent/ipinip.json.j2)
 
 ### ハードコードデフォルト / ランタイム注入
 

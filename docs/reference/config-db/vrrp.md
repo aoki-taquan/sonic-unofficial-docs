@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-[VRRP](../../reference/glossary.md#term-vrrp) (Virtual Router Redundancy Protocol) の CONFIG_DB スキーマ[^1]。FRR (`vrrpd`) を使用して VRRPv2 (IPv4 のみ) / VRRPv3 (IPv4・IPv6) を実装する。Linux の macvlan デバイス機能で仮想 MAC アドレスを付与し、仮想 IP (VIP) を管理する。
+[VRRP](../../reference/glossary.md#term-vrrp) (Virtual Router Redundancy Protocol) の [CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマ[^1]。[FRR](../../reference/glossary.md#term-frr) (`vrrpd`) を使用して VRRPv2 (IPv4 のみ) / VRRPv3 (IPv4・IPv6) を実装する。Linux の macvlan デバイス機能で仮想 MAC アドレスを付与し、仮想 IP (VIP) を管理する。
 
 4 つのテーブルで構成される:
 
@@ -43,23 +43,20 @@ related:
 | `VRRP_TRACK` | IPv4 VRRP インスタンスのアップリンク追跡 |
 | `VRRP6_TRACK` | IPv6 VRRP インスタンスのアップリンク追跡 |
 
-Consumer: `macvlanmgrd` (CONFIG_DB を subscribe → Linux macvlan デバイス作成 → APPL_DB 更新 → vrrpd 設定)
+Consumer: `macvlanmgrd` ([CONFIG_DB](../../reference/glossary.md#term-config_db) を subscribe → Linux macvlan デバイス作成 → [APPL_DB](../../reference/glossary.md#term-appl_db) 更新 → vrrpd 設定)
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>VRRP / VRRP6")]
-  DM["macvlanmgrd"]
-  APPL[("APPL_DB<br/>VRRP_TABLE")]
-  FRR["vrrpd (FRR)"]
-  CDB --> DM --> APPL
-  DM --> FRR
+  CDB[("CONFIG_DB<br/>VRRP")]
+  DM["vrrpcfgd"]
+  CDB --> DM
 ```
 
 !!! note "凡例"
-    CONFIG_DB から FRR/APPL_DB までの典型経路。macvlanmgrd が macvlan デバイスを Linux カーネルに作成し、APPL_DB に VMAC 情報を書き込む。vrrpd (FRR) が VRRP 状態機械を実行する。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -106,15 +103,15 @@ RFC 5798 に基づき以下の仮想 MAC が使用される:
 |------|------|------|
 | システム全体の VRRP インスタンス数 | 254 | `config/main.py:6912-6913` |
 | インターフェースあたりの VRRP インスタンス数 | 16 | `config/main.py:6921-6924` |
-| インスタンスあたりの VIP 数 | 4 | YANG `max-elements 4` |
+| インスタンスあたりの VIP 数 | 4 | [YANG](../../reference/glossary.md#term-yang) `max-elements 4` |
 | インスタンスあたりのトラック インターフェース数 | 8 | `config/main.py:7034-7038` |
-| YANG `max-elements` (VRRP_LIST / VRRP6_LIST) | 128 | `sonic-vrrp.yang` |
+| [YANG](../../reference/glossary.md#term-yang) `max-elements` (VRRP_LIST / VRRP6_LIST) | 128 | `sonic-vrrp.yang` |
 
 ## 購読者
 
-- `macvlanmgrd`: CONFIG_DB の `VRRP` / `VRRP6` テーブルを subscribe し、macvlan デバイスを Linux カーネルに作成。APPL_DB の `VRRP_TABLE` に VMAC 情報を書き込む。vtysh 経由で vrrpd に設定を投入する
-- `vrrpsyncd`: Linux カーネルの macvlan インターフェース状態変化を listen し、APPL_DB の `INTF_TABLE` を更新する
-- `intforch`: APPL_DB の `INTF_TABLE` を受けて VIP と仮想 MAC エントリを ASIC_DB に書き込む
+- `macvlanmgrd`: CONFIG_DB の `VRRP` / `VRRP6` テーブルを subscribe し、macvlan デバイスを Linux カーネルに作成。[APPL_DB](../../reference/glossary.md#term-appl_db) の `VRRP_TABLE` に VMAC 情報を書き込む。vtysh 経由で vrrpd に設定を投入する
+- `vrrpsyncd`: Linux カーネルの macvlan インターフェース状態変化を listen し、[APPL_DB](../../reference/glossary.md#term-appl_db) の `INTF_TABLE` を更新する
+- `intforch`: APPL_DB の `INTF_TABLE` を受けて VIP と仮想 MAC エントリを [ASIC_DB](../../reference/glossary.md#term-asic_db) に書き込む
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -127,7 +124,7 @@ RFC 5798 に基づき以下の仮想 MAC が使用される:
 
 | 条件 | 挙動 |
 |------|------|
-| `version = "2"` で IPv6 VIP を設定 | FRR が VRRPv2 は IPv6 非対応として reject |
+| `version = "2"` で IPv6 VIP を設定 | [FRR](../../reference/glossary.md#term-frr) が VRRPv2 は IPv6 非対応として reject |
 | VIP が親インターフェースの実 IP と同一 | VRRP Owner (priority=255) として動作。プリエンプション無効でも Master を維持 |
 | `pre_empt = "False"` | バックアップが優先度が高くても Master へ昇格しない（Owner は例外） |
 | macvlanmgrd 未起動時の CONFIG_DB 書き込み | macvlanmgrd 起動後に購読キューをリプレイして適用。macvlan デバイス作成は起動後 |
@@ -192,7 +189,7 @@ RFC 5798 に基づき以下の仮想 MAC が使用される:
 
 ### YANG leafref (VRRP / VRRP6 — `ifname` フィールド)
 
-`VRRP_LIST.ifname` / `VRRP6_LIST.ifname` は union leafref で以下 4 テーブルのいずれかを参照。`sonic-yang-mgmt` / gNMI 経路でバリデーション。
+`VRRP_LIST.ifname` / `VRRP6_LIST.ifname` は union leafref で以下 4 テーブルのいずれかを参照。`sonic-yang-mgmt` / [gNMI](../../reference/glossary.md#term-gnmi) 経路でバリデーション。
 
 | 参照先テーブル | フィールド | 条件 | evidence |
 |---|---|---|---|
@@ -238,7 +235,7 @@ YANG バリデーションとは独立して CLI が `get_table()` で存在確�
 <!-- failure -->
 ## 失敗挙動 (Phase D)
 
-`VRRP` / `VRRP6` / `VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは CLI (`sonic-utilities/config/main.py`) 経路と YANG/gNMI 直書き経路で異なる失敗分岐を持つ。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-failure.md)。
+`VRRP` / `VRRP6` / `VRRP_TRACK` / `VRRP6_TRACK` テーブルへの書き込みは CLI (`sonic-utilities/config/main.py`) 経路と YANG/[gNMI](../../reference/glossary.md#term-gnmi) 直書き経路で異なる失敗分岐を持つ。詳細スキャンノート: [`meta/_intermediate/cdb-flow/vrrp-failure.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/vrrp-failure.md)。
 
 ### CLI 経路の失敗パターン
 
@@ -280,9 +277,9 @@ YANG バリデーションとは独立して CLI が `get_table()` で存在確�
 
 | 条件 | 挙動 | 備考 |
 |---|---|---|
-| macvlanmgrd 未起動時の CONFIG_DB 書き込み | エントリは購読キューに滞留し、macvlanmgrd 起動後にリプレイされて macvlan デバイスが作成される | HLD `Modules Design and Flows` セクション |
-| Linux カーネルが 5.1 未満 | macvlan デバイスの protodown がサポートされないため VRRP 状態機械が正常動作しない | HLD `Operating environment` (L199-200) |
-| vtysh コマンド失敗 (FRR 側) | macvlanmgrd の vtysh 投入失敗時の明示的ロールバック仕様は HLD に記述なし。CONFIG_DB / APPL_DB は書き込み済みのまま | HLD 記述範囲外 |
+| macvlanmgrd 未起動時の CONFIG_DB 書き込み | エントリは購読キューに滞留し、macvlanmgrd 起動後にリプレイされて macvlan デバイスが作成される | [HLD](../../reference/glossary.md#term-hld) `Modules Design and Flows` セクション |
+| Linux カーネルが 5.1 未満 | macvlan デバイスの protodown がサポートされないため VRRP 状態機械が正常動作しない | [HLD](../../reference/glossary.md#term-hld) `Operating environment` (L199-200) |
+| vtysh コマンド失敗 ([FRR](../../reference/glossary.md#term-frr) 側) | macvlanmgrd の vtysh 投入失敗時の明示的ロールバック仕様は [HLD](../../reference/glossary.md#term-hld) に記述なし。CONFIG_DB / APPL_DB は書き込み済みのまま | HLD 記述範囲外 |
 
 ### Warmboot 非対応
 
@@ -376,12 +373,12 @@ HLD `Warmboot and Fastboot Design Impact` セクション (L622-628) の記述:
 
 ### intforch (vrrporch) — ASIC_DB への書込 (APPL_DB → ASIC_DB)
 
-`vrrporch` は APPL_DB.VRRP_TABLE を購読し、SAI API 経由で ASIC_DB に仮想 RIF と VIP ルートを書き込む。
+`vrrporch` は APPL_DB.VRRP_TABLE を購読し、[SAI](../../reference/glossary.md#term-sai) API 経由で [ASIC_DB](../../reference/glossary.md#term-asic_db) に仮想 [RIF](../../reference/glossary.md#term-rif) と VIP ルートを書き込む。
 
 | 操作 | 対象 DB / テーブル | 内容 | トリガ | evidence |
 |------|------------------|------|--------|---------|
-| 仮想 RIF 作成 | ASIC_DB / `ASIC_STATE:SAI_OBJECT_TYPE_ROUTER_INTERFACE:<oid>` | `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL=true`, `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS=<vmac>` | APPL_DB.VRRP_TABLE SET | HLD L438-459, SAI API セクション |
-| VIP ルート追加 | ASIC_DB / `ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY` | VIP の /32 or /128 ルートを CPU trap / 仮想 RIF に向ける | APPL_DB.VRRP_TABLE SET | HLD L235 |
+| 仮想 [RIF](../../reference/glossary.md#term-rif) 作成 | [ASIC_DB](../../reference/glossary.md#term-asic_db) / `ASIC_STATE:SAI_OBJECT_TYPE_ROUTER_INTERFACE:<oid>` | `SAI_ROUTER_INTERFACE_ATTR_IS_VIRTUAL=true`, `SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS=<vmac>` | APPL_DB.VRRP_TABLE SET | HLD L438-459, [SAI](../../reference/glossary.md#term-sai) API セクション |
+| VIP ルート追加 | ASIC_DB / `ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY` | VIP の /32 or /128 ルートを CPU trap / 仮想 [RIF](../../reference/glossary.md#term-rif) に向ける | APPL_DB.VRRP_TABLE SET | HLD L235 |
 | 仮想 RIF 削除 | ASIC_DB | RIF OID を削除 | APPL_DB.VRRP_TABLE DEL | HLD L235 |
 
 ### VRRP_TRACK の副次書込
@@ -390,9 +387,9 @@ HLD `Warmboot and Fastboot Design Impact` セクション (L622-628) の記述:
 
 ### 副次書込なし
 
-- **STATE_DB**: VRRP 状態は STATE_DB に記録されない。Master/Backup 状態は APPL_DB.VRRP_TABLE の有無と macvlan デバイスの protodown 状態で管理。
-- **FLEX_COUNTER_DB**: VRRP インスタンスに対する FlexCounter 登録はなし。
-- **COUNTERS_DB**: VRRP 専用カウンタマップの登録はなし（ACL/RIF カウンタとは独立）。
+- **[STATE_DB](../../reference/glossary.md#term-state_db)**: VRRP 状態は [STATE_DB](../../reference/glossary.md#term-state_db) に記録されない。Master/Backup 状態は APPL_DB.VRRP_TABLE の有無と macvlan デバイスの protodown 状態で管理。
+- **[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)**: VRRP インスタンスに対する [FlexCounter](../../reference/glossary.md#term-flexcounter) 登録はなし。
+- **[COUNTERS_DB](../../reference/glossary.md#term-counters_db)**: VRRP 専用カウンタマップの登録はなし（[ACL](../../reference/glossary.md#term-acl)/RIF カウンタとは独立）。
 
 <!-- /side-effects -->
 
@@ -405,9 +402,9 @@ HLD `Warmboot and Fastboot Design Impact` セクション (L622-628) の記述:
 
 | コンポーネント | コンテナ | 購読元 | 購読 API | 書き込み先 |
 |---|---|---|---|---|
-| `macvlanmgrd` | BGP | CONFIG_DB `VRRP` / `VRRP6` / `VRRP_TRACK` | `SubscriberStateTable` (keyspace) | Linux カーネル (netlink) / APPL_DB (vtysh) |
+| `macvlanmgrd` | [BGP](../../reference/glossary.md#term-bgp) | CONFIG_DB `VRRP` / `VRRP6` / `VRRP_TRACK` | `SubscriberStateTable` (keyspace) | Linux カーネル (netlink) / APPL_DB (vtysh) |
 | `vrrpsyncd` | SWSS | Linux macvlan デバイス (netlink) | netlink socket | APPL_DB `VRRP_TABLE` (`ProducerStateTable`) |
-| `vrrporch` | SWSS (orchagent) | APPL_DB `VRRP_TABLE` | `ConsumerStateTable` | ASIC_DB (SAI API) |
+| `vrrporch` | SWSS ([orchagent](../../reference/glossary.md#term-orchagent)) | APPL_DB `VRRP_TABLE` | `ConsumerStateTable` | ASIC_DB ([SAI](../../reference/glossary.md#term-sai) API) |
 
 ### 通知フロー
 
@@ -426,7 +423,7 @@ vrrporch ConsumerStateTable 受信 → SAI API → syncd → ASIC_DB
 
 ### macvlanmgrd — CONFIG_DB SubscriberStateTable
 
-`macvlanmgrd` は BGP コンテナ内で動作し、CONFIG_DB の以下テーブルを `SubscriberStateTable` で購読する。keyspace notification の PSUBSCRIBE パターンはテーブルごとに `__keyspace@4__:<TABLE>|*` となる。
+`macvlanmgrd` は [BGP](../../reference/glossary.md#term-bgp) コンテナ内で動作し、CONFIG_DB の以下テーブルを `SubscriberStateTable` で購読する。keyspace notification の PSUBSCRIBE パターンはテーブルごとに `__keyspace@4__:<TABLE>|*` となる。
 
 | 購読テーブル | PSUBSCRIBE パターン |
 |---|---|
@@ -439,7 +436,7 @@ vrrporch ConsumerStateTable 受信 → SAI API → syncd → ASIC_DB
 
 ### vrrpsyncd — netlink 購読 (DB 購読ではない)
 
-`vrrpsyncd` は SWSS コンテナ内で動作し、Redis keyspace notification ではなく **Linux netlink** で macvlan デバイスの IP add/del イベントを監視する。macvlanmgrd が `ip addr add <vip> dev Vrrp4-<intf>-<vrid>` を実行すると netlink 通知が発火し、vrrpsyncd が APPL_DB の `VRRP_TABLE` に書き込む（HLD L229-232）。
+`vrrpsyncd` は SWSS コンテナ内で動作し、[Redis](../../reference/glossary.md#term-redis) keyspace notification ではなく **Linux netlink** で macvlan デバイスの IP add/del イベントを監視する。macvlanmgrd が `ip addr add <vip> dev Vrrp4-<intf>-<vrid>` を実行すると netlink 通知が発火し、vrrpsyncd が APPL_DB の `VRRP_TABLE` に書き込む（HLD L229-232）。
 
 | イベント | 書き込み操作 | APPL_DB キー |
 |---|---|---|
@@ -448,7 +445,7 @@ vrrporch ConsumerStateTable 受信 → SAI API → syncd → ASIC_DB
 
 ### vrrporch — APPL_DB ConsumerStateTable
 
-`vrrporch` (orchagent 内) は APPL_DB `VRRP_TABLE` を `ConsumerStateTable` で購読する。orchagent の標準 select ループ (`SELECT_TIMEOUT = 1000` ms) で駆動され、`VRRP_TABLE_CHANNEL@0` への PUBLISH を受信すると SAI API 経由で ASIC_DB に仮想 RIF と VIP ルートを書き込む（HLD L234-235, ASIC_DB Changes セクション L438-459）。
+`vrrporch` ([orchagent](../../reference/glossary.md#term-orchagent) 内) は APPL_DB `VRRP_TABLE` を `ConsumerStateTable` で購読する。[orchagent](../../reference/glossary.md#term-orchagent) の標準 select ループ (`SELECT_TIMEOUT = 1000` ms) で駆動され、`VRRP_TABLE_CHANNEL@0` への PUBLISH を受信すると SAI API 経由で ASIC_DB に仮想 RIF と VIP ルートを書き込む（HLD L234-235, ASIC_DB Changes セクション L438-459）。
 
 > **Evidence**: HLD L219-235 (Container セクション)、HLD L460-492 (Modules Design and Flows)、HLD L407-436 (APPL_DB Changes)
 <!-- /pubsub -->
@@ -484,14 +481,14 @@ VRRP コントロールパケットの受信は `copporch.cpp` で登録され�
 
 ### Multi-ASIC / VOQ / DPU — 未定義
 
-VRRP_Adaptation_HLD には multi-asic・VOQ chassis・DPU に関する記述がない。VRRP は Linux macvlan デバイスと FRR `vrrpd` を用いた Linux ネットワークスタック上の機能であるため、ASIC 種別・マルチ ASIC 構成への直接依存は最小となる。
+VRRP_Adaptation_HLD には multi-asic・[VOQ](../../reference/glossary.md#term-voq) chassis・[DPU](../../reference/glossary.md#term-dpu) に関する記述がない。VRRP は Linux macvlan デバイスと FRR `vrrpd` を用いた Linux ネットワークスタック上の機能であるため、ASIC 種別・マルチ ASIC 構成への直接依存は最小となる。
 
 | 構成 | 状況 |
 |------|------|
 | 通常シングル ASIC | 正常動作（設計対象） |
 | Multi-ASIC (`is_multi_npu=True`) | HLD で非対応。`macvlanmgrd` はホスト CONFIG_DB のみを参照し、`asicN` namespace を走査しない |
-| VOQ chassis | HLD で未定義 |
-| DPU (`gMySwitchType = "dpu"`) | HLD で未定義 |
+| [VOQ](../../reference/glossary.md#term-voq) chassis | HLD で未定義 |
+| [DPU](../../reference/glossary.md#term-dpu) (`gMySwitchType = "dpu"`) | HLD で未定義 |
 
 <!-- /platform -->
 
@@ -529,3 +526,5 @@ sonic-db-cli CONFIG_DB keys 'VRRP_TRACK|*'
 <!-- /ops-hint -->
 
 <!-- glossary-links-injected: vrrp-phase-b -->
+
+<!-- glossary-links-injected: ca090795a117 -->

@@ -148,7 +148,7 @@ dump state copp all                            # CONFIG_FILE も含む
 
 ### orchagent が `transfer_attributes: src vs dst attr id don't m（sonic-buildimage#3832）
 
-orchagent が `transfer_attributes: src vs dst attr id don't match` でクラッシュする問題。syncd と orchagent の互換性を確認すること
+orchagent が `transfer_attributes: src vs dst attr id don't match` でクラッシュする問題。[syncd](../reference/glossary.md#term-syncd) と orchagent の互換性を確認すること
 
 - 参照: [sonic-net/sonic-buildimage#3832](https://github.com/sonic-net/sonic-buildimage/issues/3832)
 
@@ -253,7 +253,7 @@ Z9264/201911-170 での warm-reboot 中に orchagent と Python プロセスが�
 
 ### `SAI_SWITCH_ATTR_AVAILABLE_IPMC_ENTRY` 属性がサポートされていない SAI 実装で（sonic-buildimage#6563）
 
-`SAI_SWITCH_ATTR_AVAILABLE_IPMC_ENTRY` 属性がサポートされていない SAI 実装でエラーが発生する問題。CRM での IPMC エントリ監視が利用できないプラットフォームがある
+`SAI_SWITCH_ATTR_AVAILABLE_IPMC_ENTRY` 属性がサポートされていない SAI 実装でエラーが発生する問題。[CRM](../reference/glossary.md#term-crm) での IPMC エントリ監視が利用できないプラットフォームがある
 
 - 参照: [sonic-net/sonic-buildimage#6563](https://github.com/sonic-net/sonic-buildimage/issues/6563)
 
@@ -276,4 +276,4 @@ syncd が master RPC イメージでクラッシュする問題。RPC ビルド�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 3c16455a710d -->
+<!-- glossary-links-injected: f5123b3043d1 -->

@@ -42,11 +42,11 @@ related:
 ## 概要
 
 `APPL_DB PORT_TABLE` は物理ポートの実効設定と運用状態を保持する [APPL_DB](../../reference/glossary.md#term-appl_db) テーブル。
-CONFIG_DB `PORT` テーブルとは別物であり、以下の 3 つのプロセスが書き込む[^1][^2][^3]:
+[CONFIG_DB](../../reference/glossary.md#term-config_db) `PORT` テーブルとは別物であり、以下の 3 つのプロセスが書き込む[^1][^2][^3]:
 
-1. **portsyncd** — 起動時に CONFIG_DB `PORT` テーブルの全フィールドを APPL_DB に転写する
-2. **portmgrd** — CONFIG_DB の変更を監視し、`admin_status` / `mtu` の変更を APPL_DB に反映する。初回書き込み時はコード由来のデフォルト値を補完する
-3. **orchagent (PortsOrch)** — SAI から通知を受けた `oper_status` / `flap_count` / `last_up_time` / `last_down_time` を書き戻す
+1. **[portsyncd](../../reference/glossary.md#term-portsyncd)** — 起動時に [CONFIG_DB](../../reference/glossary.md#term-config_db) `PORT` テーブルの全フィールドを [APPL_DB](../../reference/glossary.md#term-appl_db) に転写する
+2. **[portmgrd](../../reference/glossary.md#term-portmgrd)** — [CONFIG_DB](../../reference/glossary.md#term-config_db) の変更を監視し、`admin_status` / `mtu` の変更を [APPL_DB](../../reference/glossary.md#term-appl_db) に反映する。初回書き込み時はコード由来のデフォルト値を補完する
+3. **[orchagent](../../reference/glossary.md#term-orchagent) (PortsOrch)** — [SAI](../../reference/glossary.md#term-sai) から通知を受けた `oper_status` / `flap_count` / `last_up_time` / `last_down_time` を書き戻す
 
 ```mermaid
 flowchart LR
@@ -63,6 +63,26 @@ flowchart LR
   ORCH --> APPDB
 ```
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>PORT")]
+  DM["portmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_PORT_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_port_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## key 構造
 
 ```text
@@ -75,8 +95,8 @@ PORT_TABLE:<port_name>
 
 | フィールド | 型 | 書き込み元 | デフォルト | 説明 |
 |-----------|----|-----------|-----------|------|
-| `admin_status` | `up`/`down` | portsyncd / portmgrd | `"down"` ※1 | 管理状態 |
-| `mtu` | uint (68..9216) | portsyncd / portmgrd | `"9100"` ※2 | MTU [byte] |
+| `admin_status` | `up`/`down` | [portsyncd](../../reference/glossary.md#term-portsyncd) / [portmgrd](../../reference/glossary.md#term-portmgrd) | `"down"` ※1 | 管理状態 |
+| `mtu` | uint (68..9216) | [portsyncd](../../reference/glossary.md#term-portsyncd) / [portmgrd](../../reference/glossary.md#term-portmgrd) | `"9100"` ※2 | MTU [byte] |
 | `speed` | uint [Mbps] | portsyncd | CONFIG_DB の値 | ポート速度 |
 | `lanes` | string | portsyncd | CONFIG_DB の値 | ハードウェアレーン番号 |
 | `alias` | string | portsyncd | CONFIG_DB の値 | ポート別名 |
@@ -87,11 +107,11 @@ PORT_TABLE:<port_name>
 | `link_training` | `on`/`off` | portsyncd | CONFIG_DB の値 | リンクトレーニング |
 | `adv_speeds` | uint list | portsyncd | CONFIG_DB の値 | 広告速度 |
 | `interface_type` | string | portsyncd | CONFIG_DB の値 | インタフェースタイプ |
-| `pfc_asym` | `on`/`off` | portsyncd | CONFIG_DB の値 | 非対称 PFC |
+| `pfc_asym` | `on`/`off` | portsyncd | CONFIG_DB の値 | 非対称 [PFC](../../reference/glossary.md#term-pfc) |
 | `tpid` | hex string | portsyncd | CONFIG_DB の値 | TPID |
 | `subport` | uint | portsyncd | CONFIG_DB の値 | breakout サブポート番号 |
-| `oper_status` | `up`/`down` | orchagent | `"down"` ※3 | 実効運用状態 |
-| `flap_count` | uint64 | orchagent | (フラップ発生後) | ポートフラップ累積回数 |
+| `oper_status` | `up`/`down` | [orchagent](../../reference/glossary.md#term-orchagent) | `"down"` ※3 | 実効運用状態 |
+| `flap_count` | uint64 | [orchagent](../../reference/glossary.md#term-orchagent) | (フラップ発生後) | ポートフラップ累積回数 |
 | `last_down_time` | string (UTC) | orchagent | (フラップ発生後) | 最後に DOWN した時刻 |
 | `last_up_time` | string (UTC) | orchagent | (フラップ発生後) | 最後に UP した時刻 |
 | `system_oper_status` | `up`/`down` | orchagent | (Gearbox 環境のみ) | Gearbox system side oper status |
@@ -101,14 +121,14 @@ PORT_TABLE:<port_name>
 
 ## 購読者
 
-- **orchagent (PortsOrch)**: `PORT_TABLE` を `SubscriberStateTable` / `Table` で読み取り、SAI に反映する。PortsOrch は `PORT_TABLE` の oper_status / flap_count を書き戻す唯一のプロセス
-- **linkmgrd**: `mux_cable` フラグを含むポートを検索するために読み込む
+- **orchagent (PortsOrch)**: `PORT_TABLE` を `SubscriberStateTable` / `Table` で読み取り、[SAI](../../reference/glossary.md#term-sai) に反映する。PortsOrch は `PORT_TABLE` の oper_status / flap_count を書き戻す唯一のプロセス
+- **[linkmgrd](../../reference/glossary.md#term-linkmgrd)**: `mux_cable` フラグを含むポートを検索するために読み込む
 - 各種 orchs: IntfsOrch / BufferOrch 等が PORT_TABLE の `oper_status` 変化を受けて副次処理を実行
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
-> **注記**: YANG `default` 指定がない APPL_DB フィールドでも、portmgrd / orchagent がコード内でデフォルト値を注入する。以下は実装精読から検出した暗黙デフォルトと挙動。
+> **注記**: [YANG](../../reference/glossary.md#term-yang) `default` 指定がない APPL_DB フィールドでも、portmgrd / orchagent がコード内でデフォルト値を注入する。以下は実装精読から検出した暗黙デフォルトと挙動。
 
 ### admin_status
 
@@ -123,7 +143,7 @@ PORT_TABLE:<port_name>
 
 - **portmgr.h:15** `#define DEFAULT_MTU_STR "9100"` でハードコード
 - portmgrd 初回 SET 時に CONFIG_DB に `mtu` フィールドがなければ **"9100"** を APPL_DB に注入 (`portmgr.cpp:176`)
-- port.h には `DEFAULT_MTU 1492` という別の定数も存在する。これは orchagent 内部の Port struct の初期値であり (`port.h:194`)、SAI デフォルト MTU (1514) から ethernet header/FCS 22 bytes を引いた値。APPL_DB に書かれる portmgrd のデフォルト `9100` とは別物であり混同に注意
+- port.h には `DEFAULT_MTU 1492` という別の定数も存在する。これは orchagent 内部の Port struct の初期値であり (`port.h:194`)、[SAI](../../reference/glossary.md#term-sai) デフォルト MTU (1514) から ethernet header/FCS 22 bytes を引いた値。APPL_DB に書かれる portmgrd のデフォルト `9100` とは別物であり混同に注意
 - portmgrd が SAI に渡す際には `mtu` 値に 22 bytes を加算する (ethernet header + FCS 対応、portsorch 内)
 
 **暗黙デフォルト**: `"9100"` (portmgrd fallback; CONFIG_DB に mtu フィールドがない場合)
@@ -163,8 +183,8 @@ PORT_TABLE:<port_name>
 ### speed / fec / lanes 等 (portsyncd パススルー)
 
 - portsyncd は CONFIG_DB PORT テーブルの全フィールドを APPL_DB にそのままコピーする (`portsyncd.cpp:196-208`)
-- `speed` / `fec` / `lanes` / `alias` 等のデフォルト値は CONFIG_DB 側 (sonic-port.yang / port_config.ini) が決定する
-- orchagent の `updateDbPortOperSpeed()` / `updateDbPortOperFec()` は **STATE_DB** (m_portStateTable) に書くため APPL_DB の値は変わらない
+- `speed` / `fec` / `lanes` / `alias` 等のデフォルト値は CONFIG_DB 側 (sonic-port.yang / [port_config.ini](../../reference/glossary.md#term-port-config-ini)) が決定する
+- orchagent の `updateDbPortOperSpeed()` / `updateDbPortOperFec()` は **[STATE_DB](../../reference/glossary.md#term-state_db)** (m_portStateTable) に書くため APPL_DB の値は変わらない
 
 **暗黙デフォルト**: CONFIG_DB の値をそのままパススルー
 
@@ -173,14 +193,14 @@ PORT_TABLE:<port_name>
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`APPL_DB PORT_TABLE` の **フィールド集合と書き込み挙動** は 3 つの軸でプラットフォーム/構成依存する: (1) SAI `sai_query_attribute_capability` の結果、(2) `device.metadata` の `switch_type` (`gMySwitchType`)、(3) `platform` 環境変数の Mellanox 判定。`speed` / `fec` 等のフィールド値そのものは portsyncd パススルーなので CONFIG_DB と同じだが、**SAI 適用可否・STATE_DB 派生値・追加フィールド有無** が差分として現れる。
+`APPL_DB PORT_TABLE` の **フィールド集合と書き込み挙動** は 3 つの軸でプラットフォーム/構成依存する: (1) SAI `sai_query_attribute_capability` の結果、(2) `device.metadata` の `switch_type` (`gMySwitchType`)、(3) `platform` 環境変数の Mellanox 判定。`speed` / `fec` 等のフィールド値そのものは portsyncd パススルーなので CONFIG_DB と同じだが、**SAI 適用可否・[STATE_DB](../../reference/glossary.md#term-state_db) 派生値・追加フィールド有無** が差分として現れる。
 
 ### 識別キー
 
 | 識別 | 取得元 | 値の例 |
 |------|--------|--------|
-| `gMySwitchType` | `device.metadata` の `switch_type` (`portsorch.cpp:69`) | `"switch"` (既定) / `"voq"` (VOQ chassis) / `"dpu"` (SmartSwitch DPU) |
-| `gMyAsicName` | namespace 名 (`portsorch.cpp:72`) | `"asic0"` `"asic1"` 等 (multi-asic / VOQ) |
+| `gMySwitchType` | `device.metadata` の `switch_type` (`portsorch.cpp:69`) | `"switch"` (既定) / `"voq"` ([VOQ](../../reference/glossary.md#term-voq) chassis) / `"dpu"` ([SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)) |
+| `gMyAsicName` | namespace 名 (`portsorch.cpp:72`) | `"asic0"` `"asic1"` 等 (multi-asic / [VOQ](../../reference/glossary.md#term-voq)) |
 | `platform` env | `getenv("platform")` (`portsorch.cpp:691`) | `"mellanox"` 部分一致で `isMlnxPlatform()` true |
 | Gearbox 有無 | `gearbox_config.json` の有無 (`isGearboxEnabled()`) | line-side PHY 搭載 ASIC のみ true |
 
@@ -189,7 +209,7 @@ PORT_TABLE:<port_name>
 | capability | 取得 | 結果 false 時の効果 | evidence |
 |---|---|---|---|
 | `SAI_PORT_ATTR_AUTO_NEG_FEC_MODE_OVERRIDE` | `sai_query_attribute_capability` (`portsorch.cpp:989-1000`) | `fec_override_sup = false` → autoneg fec override 反映なし | `portsorch.cpp:987, 989` |
-| `SAI_PORT_ATTR_OPER_PORT_FEC_MODE` | `sai_query_attribute_capability` (`portsorch.cpp:1001-1010`) | `oper_fec_sup = false` → STATE_DB に `oper_fec` 書かれず | `portsorch.cpp:1001` |
+| `SAI_PORT_ATTR_OPER_PORT_FEC_MODE` | `sai_query_attribute_capability` (`portsorch.cpp:1001-1010`) | `oper_fec_sup = false` → [STATE_DB](../../reference/glossary.md#term-state_db) に `oper_fec` 書かれず | `portsorch.cpp:1001` |
 | `SAI_PORT_ATTR_SUPPORTED_SPEED` | `get_port_attribute` (`portsorch.cpp:3122-3158`) | `supported_speeds = ""` → STATE_DB 空 / speed バリデーション skip ("Unable to validate speed ... Not supported by platform" WARN) | `portsorch.cpp:3146` |
 | `SAI_PORT_ATTR_SUPPORTED_FEC_MODE` | `get_port_attribute` (`portsorch.cpp:3225-3265`) | `m_portSupportedFecModes[...].supported = false` → `isFecModeSupported()` 常に true (FEC バリデーション無効化) | `portsorch.cpp:3245-3260` |
 | `SAI_PORT_ATTR_SUPPORTED_AUTO_NEG_MODE` | `get_port_attribute` (`portsorch.cpp:3179-3196`) | `port.m_cap_an = 1` フォールバック (互換性維持コメントあり) | `portsorch.cpp:3189-3191` |
@@ -197,11 +217,11 @@ PORT_TABLE:<port_name>
 
 ### `gMySwitchType` 別挙動
 
-| 軸 | `switch` (既定) | `voq` (VOQ chassis) | `dpu` |
+| 軸 | `switch` (既定) | `voq` ([VOQ](../../reference/glossary.md#term-voq) chassis) | `dpu` |
 |----|----------------|---------------------|-------|
 | FEC override / oper FEC capability 照会 | yes | yes | **no** (`portsorch.cpp:987`) |
 | `initializePortBufferMaximumParameters` | yes | yes | **no** (`portsorch.cpp:6449`) |
-| default VLAN / bridge port 削除 | no | **yes** (`portsorch.cpp:1496-1499`) | no |
+| default [VLAN](../../reference/glossary.md#term-vlan) / bridge port 削除 | no | **yes** (`portsorch.cpp:1496-1499`) | no |
 | `system_lag_alias = host\|asic\|lag` キー形式 | no | **yes** (`portsorch.cpp:7972`) | no |
 | `voqSyncAddLag` / `voqSyncDelLag` / `voqSyncLagMember` | no | **yes** (`portsorch.cpp:8039, 8116, 8213, 8261`) | no |
 | `SYSTEM_PORT_ATTR_QOS_NUMBER_OF_VOQS` 取得 | no | **yes** (`portsorch.cpp:6543-6580`) | no |
@@ -210,11 +230,11 @@ PORT_TABLE:<port_name>
 
 ### multi-asic / VOQ chassis での APPL_DB 配置
 
-`APPL_DB PORT_TABLE` は **各 asic namespace の独立した APPL_DB** に書かれる。chassis 全体で port を一覧する集約テーブルは APPL_DB には存在しない（必要なら `CHASSIS_APP_DB` を別経路で参照）。VOQ chassis のみ `system_lag` / `SYSTEM_PORT` を経由して asic 間 LAG / 状態同期が走り、LAG alias key が `"<hostname>|<asicname>|<lag>"` 形式に変わる。
+`APPL_DB PORT_TABLE` は **各 asic namespace の独立した APPL_DB** に書かれる。chassis 全体で port を一覧する集約テーブルは APPL_DB には存在しない（必要なら `CHASSIS_APP_DB` を別経路で参照）。VOQ chassis のみ `system_lag` / `SYSTEM_PORT` を経由して asic 間 [LAG](../../reference/glossary.md#term-lag) / 状態同期が走り、[LAG](../../reference/glossary.md#term-lag) alias key が `"<hostname>|<asicname>|<lag>"` 形式に変わる。
 
 ### Mellanox 固有分岐
 
-`isMlnxPlatform()` (`portsorch.cpp:689-704`) は `getenv("platform")` を `"mellanox"` で `strstr` 判定。`portsorch.cpp:6362-6379` のコメント「distribution-only mode is not supported on Mellanox platform」に従い、LAG member の collection / distribution toggle 順序を強制する。`PORT_TABLE` 自体のフィールド集合は不変だが、LAG メンバー化時の APPL_DB 遷移順序が変わる。
+`isMlnxPlatform()` (`portsorch.cpp:689-704`) は `getenv("platform")` を `"mellanox"` で `strstr` 判定。`portsorch.cpp:6362-6379` のコメント「distribution-only mode is not supported on Mellanox platform」に従い、[LAG](../../reference/glossary.md#term-lag) member の collection / distribution toggle 順序を強制する。`PORT_TABLE` 自体のフィールド集合は不変だが、LAG メンバー化時の APPL_DB 遷移順序が変わる。
 
 ### Gearbox 専用フィールド
 
@@ -237,7 +257,7 @@ PORT_TABLE:<port_name>
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-> **注記**: APPL_DB `PORT_TABLE` の各フィールドの許容値・デフォルト・範囲は、コード内のマップや `#define` でハードコードされている。YANG / sonic-port.yang の制約と一致するものもあれば、コード固有のもの (gearbox 用の縮小 enum 等) もある。詳細表と参照行は [`meta/_intermediate/cdb-flow/appl-port-table-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-constants.md) を参照。
+> **注記**: APPL_DB `PORT_TABLE` の各フィールドの許容値・デフォルト・範囲は、コード内のマップや `#define` でハードコードされている。[YANG](../../reference/glossary.md#term-yang) / sonic-port.yang の制約と一致するものもあれば、コード固有のもの (gearbox 用の縮小 enum 等) もある。詳細表と参照行は [`meta/_intermediate/cdb-flow/appl-port-table-constants.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-constants.md) を参照。
 
 ### admin_status / oper_status
 
@@ -284,7 +304,7 @@ PORT_TABLE:<port_name>
   - `Int` = 内部ポート
   - `Inb` = inband ポート (CPU 経由)
   - `Rec` = recirculation ポート
-  - `Dpc` = SmartSwitch DPU Connect Port
+  - `Dpc` = [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) Connect Port
 - `porthlpr.cpp:116-123` `portRoleMap` で 5 値以外を拒否
 
 ### Port::Type (APPL_DB には書かれない内部分類)
@@ -298,7 +318,7 @@ PORT_TABLE:<port_name>
 - `orchagent/port/porthlpr.cpp:28-29`:
   - `GB_LINE_PREFIX = "gb_line_"`
   - `GB_SYSTEM_PREFIX = "gb_system_"`
-- Gearbox port 用の STATE_DB / COUNTERS_DB エントリ名に付与される
+- Gearbox port 用の STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) エントリ名に付与される
 
 <!-- /constants -->
 
@@ -314,12 +334,12 @@ PORT_TABLE:<port_name>
 | STATE_DB | `PORT_TABLE:<alias>` | `supported_speeds`, `supported_fecs`, `host_tx_ready`, `speed`, `fec`, `rmt_adv_speeds`, `link_training_status`, `phy_ctrl_unreliable_los` | ポート初期化、admin/AN/LT 更新、SAI からの oper 通知 |
 | STATE_DB | `BUFFER_MAX_PARAM_TABLE:<alias>` | `max_headroom_size`, `max_priority_groups`, `max_queues` | ポート初期化 (`addPort`) / 削除 (`deInitPort`) |
 | APPL_DB | `PORT_TABLE:<alias>` (自テーブル書き戻し) | `oper_status`, `flap_count`, `last_up_time`, `last_down_time`, `system_oper_status`, `line_oper_status` | SAI port_oper_status_notification 受信時、warmboot 初期化、Gearbox port poll |
-| COUNTERS_DB | `COUNTERS_PORT_NAME_MAP` / `COUNTERS_LAG_NAME_MAP` / `COUNTERS_SYSTEM_PORT_NAME_MAP` | `<alias> → <port OID>` マップ | `initializePort()`, `addLag()`, voq sysport 初期化 |
-| COUNTERS_DB | `COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_QUEUE_PORT_MAP` / `COUNTERS_QUEUE_INDEX_MAP` / `COUNTERS_QUEUE_TYPE_MAP` | queue OID → 名前 / port / index / type | `generateQueueMapPerPort()` |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_PORT_NAME_MAP` / `COUNTERS_LAG_NAME_MAP` / `COUNTERS_SYSTEM_PORT_NAME_MAP` | `<alias> → <port OID>` マップ | `initializePort()`, `addLag()`, voq sysport 初期化 |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_QUEUE_NAME_MAP` / `COUNTERS_QUEUE_PORT_MAP` / `COUNTERS_QUEUE_INDEX_MAP` / `COUNTERS_QUEUE_TYPE_MAP` | queue OID → 名前 / port / index / type | `generateQueueMapPerPort()` |
 | COUNTERS_DB | `COUNTERS_PG_NAME_MAP` / `COUNTERS_PG_PORT_MAP` / `COUNTERS_PG_INDEX_MAP` | priority group OID → 名前 / port / index | `generatePriorityGroupMapPerPort()` |
 | COUNTERS_DB (gb) | `COUNTERS_PORT_NAME_MAP` (`COUNTERS_GB_DB`) | `<alias>_system` / `<alias>_line` → gb port OID | Gearbox 初期化 (Gearbox 環境のみ) |
-| FLEX_COUNTER_DB | `PORT_STAT_COUNTER:<oid>` / `PORT_BUFFER_DROP_STAT:<oid>` / `PORT_SERDES_STAT_COUNTER:<serdes_oid>` / `QUEUE_STAT_COUNTER:<oid>` / `QUEUE_WATERMARK_STAT_COUNTER:<oid>` / `PG_WATERMARK_STAT_COUNTER:<oid>` / `PG_DROP_STAT_COUNTER:<oid>` / `WRED_ECN_QUEUE_STAT_COUNTER:<oid>` | flex counter ポーリング登録 (`COUNTER_ID_LIST` 等) | `FlexCounterOrch` で各 counter group が有効な場合、ポート / queue / PG 初期化時 |
-| ASIC_DB | `ASIC_STATE:SAI_OBJECT_TYPE_PORT:<oid>` 等 | port / lag / queue / PG のオブジェクト属性 | SAI 呼び出し経由で syncd が書き込む (chain) |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `PORT_STAT_COUNTER:<oid>` / `PORT_BUFFER_DROP_STAT:<oid>` / `PORT_SERDES_STAT_COUNTER:<serdes_oid>` / `QUEUE_STAT_COUNTER:<oid>` / `QUEUE_WATERMARK_STAT_COUNTER:<oid>` / `PG_WATERMARK_STAT_COUNTER:<oid>` / `PG_DROP_STAT_COUNTER:<oid>` / `WRED_ECN_QUEUE_STAT_COUNTER:<oid>` | flex counter ポーリング登録 (`COUNTER_ID_LIST` 等) | `FlexCounterOrch` で各 counter group が有効な場合、ポート / queue / PG 初期化時 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | `ASIC_STATE:SAI_OBJECT_TYPE_PORT:<oid>` 等 | port / lag / queue / PG のオブジェクト属性 | SAI 呼び出し経由で [syncd](../../reference/glossary.md#term-syncd) が書き込む (chain) |
 
 ### 主要な書込関数
 
@@ -332,12 +352,12 @@ PORT_TABLE:<port_name>
 - **`initializePort()` / `deInitPort()`** (`portsorch.cpp:4118, 4312`): COUNTERS_DB `COUNTERS_PORT_NAME_MAP` の登録／解除
 - **`addLag()` / `removeLag()`** (`portsorch.cpp:8022, 8095`): COUNTERS_DB `COUNTERS_LAG_NAME_MAP` の登録／解除
 - **`generateQueueMapPerPort()` / `generatePriorityGroupMapPerPort()`** (`portsorch.cpp:8749-8752, 8882-8884`): COUNTERS_DB の queue / PG マップ登録
-- **`addQueueFlexCounters*` / `addPriorityGroupFlexCounters*` / `addWredQueueFlexCounters*`** (`portsorch.cpp:8730-8745, 8924-8938`): FLEX_COUNTER_DB へのポーリング登録
+- **`addQueueFlexCounters*` / `addPriorityGroupFlexCounters*` / `addWredQueueFlexCounters*`** (`portsorch.cpp:8730-8745, 8924-8938`): [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) へのポーリング登録
 
 ### スコープ外（書き込まない DB）
 
-- **CONFIG_DB**: PortsOrch は APPL_DB consumer であり、CONFIG_DB へは書き込まない（CONFIG_DB 側は portmgrd / sonic-cfggen / db_migrator が書き込む）
-- **ASIC_DB**: orchagent は SAI API を呼ぶだけで、ASIC_DB への直接書込は syncd が行う（SAI → syncd → ASIC_DB のチェーン）
+- **CONFIG_DB**: PortsOrch は APPL_DB consumer であり、CONFIG_DB へは書き込まない（CONFIG_DB 側は portmgrd / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / db_migrator が書き込む）
+- **[ASIC_DB](../../reference/glossary.md#term-asic_db)**: orchagent は SAI API を呼ぶだけで、[ASIC_DB](../../reference/glossary.md#term-asic_db) への直接書込は [syncd](../../reference/glossary.md#term-syncd) が行う（SAI → [syncd](../../reference/glossary.md#term-syncd) → ASIC_DB のチェーン）
 
 <!-- /side-effects -->
 
@@ -371,7 +391,7 @@ PortsOrch 側の挙動:
 
 `portsorch.cpp:4779-4789`: 各ポートの本設定 (autoneg / speed / FEC / MTU / TPID / serdes / admin_status) に進む前に `gBufferOrch->isPortReady(alias)` を確認し、false なら `m_pendingPortSet.emplace(alias)` で保留する。BufferOrch 側 (`bufferorch.cpp:254-275`) は `BUFFER_PG` / `BUFFER_QUEUE` の SAI bind 完了で `m_ready_list[port]=true` に更新する。
 
-→ **BUFFER_PG / BUFFER_QUEUE の SAI bind 完了 → PortsOrch のポート属性適用** の順序が硬い前提。違反時は当該ポートだけ `m_pendingPortSet` に積まれ続け、`isInitDone()` も false のまま後段全 orch が止まる。
+→ **[BUFFER_PG](../../reference/glossary.md#term-buffer-pg) / BUFFER_QUEUE の SAI bind 完了 → PortsOrch のポート属性適用** の順序が硬い前提。違反時は当該ポートだけ `m_pendingPortSet` に積まれ続け、`isInitDone()` も false のまま後段全 orch が止まる。
 
 ### 3. speed / FEC / autoneg / interface_type / adv_speeds の admin-down 前置
 
@@ -461,7 +481,7 @@ APPL_DB の `PORT_TABLE` を `PortsOrch` が処理する際に、SAI OID 解決�
 |--------|---------|------|----------------|
 | Port struct `port.m_queue_ids[]` (SAI `SAI_PORT_ATTR_QOS_QUEUE_LIST` 経由) | port 内 queue OID リストの解決 | `generateQueueMapPerPort()` 実行時、COUNTERS_DB queue マップ構築前提 | `portsorch.cpp` L3626 (`getQueueTypeAndIndex`), L8391-8446 |
 | Port struct `port.m_priority_group_ids[]` (SAI `SAI_PORT_ATTR_PRIORITY_GROUP_LIST` 経由) | PG OID リストの解決 | `generatePriorityGroupMapPerPort()` 実行時 | `portsorch.cpp` L8858-8884 |
-| FLEX_COUNTER_DB — `QUEUE_STAT_COUNTER` / `QUEUE_WATERMARK_STAT_COUNTER` / `PG_WATERMARK_STAT_COUNTER` / `PG_DROP_STAT_COUNTER` | flex counter 動的登録 | VoQ スイッチまたは該当 counter 群が有効な場合 | `portsorch.cpp` L4213-4242, L8505-8515, L872-892 |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) — `QUEUE_STAT_COUNTER` / `QUEUE_WATERMARK_STAT_COUNTER` / `PG_WATERMARK_STAT_COUNTER` / `PG_DROP_STAT_COUNTER` | flex counter 動的登録 | VoQ スイッチまたは該当 counter 群が有効な場合 | `portsorch.cpp` L4213-4242, L8505-8515, L872-892 |
 
 ### `_GEARBOX_TABLE` (APPL_DB internal)
 
@@ -537,7 +557,7 @@ SET が失敗してもデータ面の運用表示は最新値を反映する。
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-> **注記**: APPL_DB `PORT_TABLE` は `PortsOrch` が **`ConsumerStateTable`** で購読する（CONFIG_DB / STATE_DB のような keyspace 通知ベースの `SubscriberStateTable` ではない）。producer の `portsyncd` / `portmgrd` が `ProducerStateTable` で KEY_SET に key を push し、Lua スクリプトが Redis `PUBLISH` を叩く。詳細・行番号は [`meta/_intermediate/cdb-flow/appl-port-table-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-pubsub.md) を参照[^pubsub]。
+> **注記**: APPL_DB `PORT_TABLE` は `PortsOrch` が **`ConsumerStateTable`** で購読する（CONFIG_DB / STATE_DB のような keyspace 通知ベースの `SubscriberStateTable` ではない）。producer の `portsyncd` / `portmgrd` が `ProducerStateTable` で KEY_SET に key を push し、Lua スクリプトが [Redis](../../reference/glossary.md#term-redis) `PUBLISH` を叩く。詳細・行番号は [`meta/_intermediate/cdb-flow/appl-port-table-pubsub.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/appl-port-table-pubsub.md) を参照[^pubsub]。
 
 ### 購読 API 種別と batch 設定
 
@@ -545,7 +565,7 @@ SET が失敗してもデータ面の運用表示は最新値を反映する。
 |------|----|----------|
 | consumer 種別 | `ConsumerStateTable` (channel + KEY_SET ベース) | `orch.cpp:1185-1196` の `Orch::addConsumer()` で APPL_DB は else 側分岐 |
 | pop batch サイズ | `gBatchSize` (default **128**、`orchagent -b <N>` で可変、`0` で 30000 cap) | `main.cpp:95-105, 459, 478` / `orch.cpp:17, 913` |
-| Redis channel | `getChannelName(<APPL_DB id>)` — **DB 単位 1 channel** (テーブル単位ではない) | `producerstatetable.cpp:104-108` Lua `PUBLISH KEYS[1] ARGV[1]` |
+| [Redis](../../reference/glossary.md#term-redis) channel | `getChannelName(<APPL_DB id>)` — **DB 単位 1 channel** (テーブル単位ではない) | `producerstatetable.cpp:104-108` Lua `PUBLISH KEYS[1] ARGV[1]` |
 | 通知 payload | 固定文字列 `"G"` (差分は SPOP `_PORT_TABLE_KEY_SET` + HGETALL で取得) | 同上 |
 | TTL | なし (APPL_DB は永続) | — |
 | `PORT_TABLE` の priority | **45** (`portsorch_base_pri (=40) + 5`) | `orchdaemon.cpp:215-218` |
@@ -611,7 +631,7 @@ m_portTable->hset(port.m_alias, "oper_status", "down");
 m_portTable->hset(port.m_alias, "flap_count", flapCount);
 ```
 
-`Table::hset` は `_PORT_TABLE_KEY_SET` を更新せず Redis の `PUBLISH` も発火しないため、orchagent 自身の `ConsumerStateTable` はこれらを検出しない。これは「自分の通知を自分で拾うループ」を回避する設計。逆に `portsyncd` / `portmgrd` の書き込みは `ProducerStateTable::set()` 経由で KEY_SET 投入 + PUBLISH を伴うため、orchagent consumer が次の `select()` cycle で即時拾う。
+`Table::hset` は `_PORT_TABLE_KEY_SET` を更新せず [Redis](../../reference/glossary.md#term-redis) の `PUBLISH` も発火しないため、orchagent 自身の `ConsumerStateTable` はこれらを検出しない。これは「自分の通知を自分で拾うループ」を回避する設計。逆に `portsyncd` / `portmgrd` の書き込みは `ProducerStateTable::set()` 経由で KEY_SET 投入 + PUBLISH を伴うため、orchagent consumer が次の `select()` cycle で即時拾う。
 
 ### warm-restart 時の `addExistingData()`
 
@@ -626,7 +646,7 @@ m_portTable->hset(port.m_alias, "flap_count", flapCount);
 
 これらは `PORT_TABLE` 本体とは別 consumer。`PortsOrch::doTask(Consumer&)` (`portsorch.cpp:6498-6520`) で `table_name` 別に分岐ディスパッチされる。
 
-[^pubsub]: orchagent portsorch.cpp (Phase G 通信メカニズム): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp> および orch.cpp `Orch::addConsumer`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orch.cpp> / sonic-swss-common: <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/producerstatetable.cpp>
+[^pubsub]: orchagent portsorch.cpp (Phase G 通信メカニズム): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp> および orch.cpp `Orch::addConsumer`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orch.cpp> / [sonic-swss-common](../../reference/glossary.md#term-sonic-swss-common): <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/producerstatetable.cpp>
 
 <!-- /pubsub -->
 
@@ -634,7 +654,7 @@ m_portTable->hset(port.m_alias, "flap_count", flapCount);
 
 | 側面 | CONFIG_DB PORT | APPL_DB PORT_TABLE |
 |------|---------------|-------------------|
-| 書き込み元 | CLI / sonic-cfggen / db_migrator | portsyncd / portmgrd / orchagent |
+| 書き込み元 | CLI / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / db_migrator | portsyncd / portmgrd / orchagent |
 | 主な用途 | 設定の永続化 | orchagent への設定伝達 + 運用状態の公開 |
 | oper_status | なし | あり (orchagent が SAI から書き戻す) |
 | flap_count | なし | あり (orchagent が書き込む) |
@@ -666,3 +686,5 @@ sonic-db-cli CONFIG_DB hget 'PORT|Ethernet0' admin_status
 [^3]: orchagent portsorch.cpp: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp>
 [^4]: orchagent portsorch.cpp (副次 DB 書込): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp> および <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
 [^5]: orchagent portsorch.cpp `doPortTask()` / `setPort*` 系失敗分岐 (Phase D): <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/portsorch.cpp> および `handleSaiSetStatus()`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/saihelper.cpp>
+
+<!-- glossary-links-injected: ed1765ad1ba0 -->

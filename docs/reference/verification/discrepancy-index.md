@@ -11,7 +11,7 @@ last_verified: 2026-05-13
 
     SONiC コミュニティ master の HLD は **設計提案リポジトリ** であり、現行コードと一致しているとは限りません。本ページは「HLD だけ読んで誤解しがちな機能」を一望できる USP ページです。読み手は、まず後述の **monitor subtype 別セクション** で該当機能の乖離タイプ（未実装 / 部分実装 / 進化置換 / 廃止）を把握し、そこから個別ページへ降りて `last_verified` と「実装との乖離」セクションの裏取り根拠を確認してください。area 横断で探す場合は末尾の **area 別索引** から辿れます。
 
-`verification: discrepancy-found` が付いた全 **102** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
+`verification: discrepancy-found` が付いた全 **107** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
 
 ## サマリ
 
@@ -19,8 +19,8 @@ last_verified: 2026-05-13
 
 | monitor | 件数 | 意味 |
 |---------|-----:|------|
-| [`not_implemented`](#monitor-not-implemented) | 11 | 未実装 |
-| [`partially_implemented`](#monitor-partially-implemented) | 59 | 部分実装 |
+| [`not_implemented`](#monitor-not-implemented) | 15 | 未実装 |
+| [`partially_implemented`](#monitor-partially-implemented) | 60 | 部分実装 |
 | [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 29 | HLD と乖離した形で実装/進化 |
 | [`deprecated`](#monitor-deprecated) | 3 | deprecated（廃止予定 / 撤去済み） |
 
@@ -34,7 +34,7 @@ last_verified: 2026-05-13
 | [`management`](#area-management) | 16 |
 | [`overlay`](#area-overlay) | 1 |
 | [`platform`](#area-platform) | 12 |
-| [`reference`](#area-reference) | 1 |
+| [`reference`](#area-reference) | 6 |
 | [`routing`](#area-routing) | 8 |
 | [`switching`](#area-switching) | 8 |
 | [`system`](#area-system) | 19 |
@@ -43,7 +43,7 @@ last_verified: 2026-05-13
 
 各 subtype を material 組み込みの色付き admonition でラップしています。色は重要度ではなく **読み手が誤読する危険度** の目安です（赤=実装ゼロ、黄=一部のみ、青=設計と別物、灰=廃止）。
 
-### `not_implemented` — 未実装 (11 件) { #monitor-not-implemented }
+### `not_implemented` — 未実装 (15 件) { #monitor-not-implemented }
 
 !!! danger "未実装"
 
@@ -84,6 +84,26 @@ last_verified: 2026-05-13
   
   `sonic-platform-common` を grep した結果、本 HLD が前提とする `CmisEnhancedLpoApi` / `CmisEnhancedLpoCodes` / `CmisEnhancedLpoMemMap` クラス、`xcvr_api_factory.py` での Arista 系 vendor 分岐、Page 01h Byte 195 = 0x4C の enhanced LPO 検出ロジック、`LPOTxHostInputVMA*` / `LPORxInputOMA*` フィールドのいずれも HEAD に取り込まれていない（`grep -rn "CmisEnhancedLpoApi\|LPOTxHostInputVMA\|enhanced_lpo" .cache/sonic-sources/sonic-platform-common/` でヒット 0）。…
 
+- [DOT1P_TO_PG_MAP テーブル（非実在）](../../reference/config-db/dot1p-to-pg-map.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
+  
+  `DOT1P_TO_PG_MAP` は名称としては想定可能だが、SONiC CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。dot1p → Priority Group マッピングは `DOT1P_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
+
+- [DSCP_TO_PG_MAP テーブル（非実在）](../../reference/config-db/dscp-to-pg-map.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-15`
+  
+  `DSCP_TO_PG_MAP` は名称としては想定可能だが、SONiC CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。DSCP → Priority Group マッピングは `DSCP_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
+
+- [HARDWARE テーブル](../../reference/config-db/hardware.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
+  
+  `HARDWARE|ACCESS_LIST` テーブルの主要な乖離は **community [sonic-swss](../../reference/glossary.md#term-sonic-swss)/[orchagent](../../reference/glossary.md#term-orchagent) がこのテーブルを購読していない**点である。
+
+- [SECURITY_PROFILES / PKI テーブル](../../reference/config-db/pki-trusted-certs.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
+  
+  本テーブルは `sonic-mgmt-common` CVL testdata の [YANG](../../reference/glossary.md#term-yang) にのみ存在し、`sonic-buildimage` の主要 [YANG](../../reference/glossary.md#term-yang) モデルにはマージされていない。[CONFIG_DB](../../reference/glossary.md#term-config_db) に `SECURITY_PROFILES` を書き込んでも、これを購読する handler/daemon が community master には存在せず、gNSI Certz 実装も本テーブルを参照しない。
+
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../../routing/bfd-hw-offload-for-bgp-session.md)  
   area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
@@ -104,7 +124,7 @@ last_verified: 2026-05-13
   
   per-page queue で既出の通り提案 HLD は未採用。再走査でも:
 
-### `partially_implemented` — 部分実装 (59 件) { #monitor-partially-implemented }
+### `partially_implemented` — 部分実装 (60 件) { #monitor-partially-implemented }
 
 !!! warning "部分実装"
 
@@ -259,6 +279,11 @@ last_verified: 2026-05-13
   area: `platform` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
   - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。公式 HLD（2020-12 Rev 1）のみを根拠としており、現行 master の VoQ 拡張・SAI 実装・recycle port セットアップは本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](../../reference/config-db/errordb.md)  
+  area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-15`
+  
+  ERROR_DB は `sonic-net/SONiC` の error_handling HLD で定義されているが、community master の SWSS / OrchAgent には ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE を populate するコードパスが実装されていない。SWSS_RC_* enum や `status_code_util.h` のヘルパーは導入済みで、`fpmsyncd` 側の購読インタフェース (ErrorListener) も部品としては存在するが、書き手側 (OrchAgent から SAI 失敗時の ERROR_DB 書込) は HLD どおりには動作しない。
 
 - [config muxcable サブコマンド](../../reference/cli/config-muxcable.md)  
   area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
@@ -838,6 +863,31 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
 ### reference { #area-reference }
+
+- [DOT1P_TO_PG_MAP テーブル（非実在）](../../reference/config-db/dot1p-to-pg-map.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
+  
+  `DOT1P_TO_PG_MAP` は名称としては想定可能だが、SONiC CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。dot1p → Priority Group マッピングは `DOT1P_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
+
+- [DSCP_TO_PG_MAP テーブル（非実在）](../../reference/config-db/dscp-to-pg-map.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-15`
+  
+  `DSCP_TO_PG_MAP` は名称としては想定可能だが、SONiC CONFIG_DB / YANG / OrchAgent のいずれにも実装されていない。DSCP → Priority Group マッピングは `DSCP_TO_TC_MAP` と `TC_TO_PRIORITY_GROUP_MAP` の 2 段で構成する設計であり、本テーブルを単独で定義しても OrchAgent は購読しない。
+
+- [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](../../reference/config-db/errordb.md)  
+  area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-15`
+  
+  ERROR_DB は `sonic-net/SONiC` の error_handling HLD で定義されているが、community master の SWSS / OrchAgent には ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE を populate するコードパスが実装されていない。SWSS_RC_* enum や `status_code_util.h` のヘルパーは導入済みで、`fpmsyncd` 側の購読インタフェース (ErrorListener) も部品としては存在するが、書き手側 (OrchAgent から SAI 失敗時の ERROR_DB 書込) は HLD どおりには動作しない。
+
+- [HARDWARE テーブル](../../reference/config-db/hardware.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
+  
+  `HARDWARE|ACCESS_LIST` テーブルの主要な乖離は **community [sonic-swss](../../reference/glossary.md#term-sonic-swss)/[orchagent](../../reference/glossary.md#term-orchagent) がこのテーブルを購読していない**点である。
+
+- [SECURITY_PROFILES / PKI テーブル](../../reference/config-db/pki-trusted-certs.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
+  
+  本テーブルは `sonic-mgmt-common` CVL testdata の [YANG](../../reference/glossary.md#term-yang) にのみ存在し、`sonic-buildimage` の主要 [YANG](../../reference/glossary.md#term-yang) モデルにはマージされていない。[CONFIG_DB](../../reference/glossary.md#term-config_db) に `SECURITY_PROFILES` を書き込んでも、これを購読する handler/daemon が community master には存在せず、gNSI Certz 実装も本テーブルを参照しない。
 
 - [config muxcable サブコマンド](../../reference/cli/config-muxcable.md)  
   area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`

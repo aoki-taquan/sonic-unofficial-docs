@@ -165,17 +165,16 @@ show tunnel
 ```
 <!-- /ops-hint -->
 
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
 ### Phase 6: 自動派生
 
-tunnelmgrd が `tunnel_type` の値から Linux トンネルインターフェース種別を自動決定する。`IPINIP` → `ipip` / `sit` トンネル、`GRE` → `gre` トンネル。`dscp_mode` の値から encapsulation モードを自動設定する。
+[tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) が `tunnel_type` の値から Linux トンネルインターフェース種別を自動決定する。`IPINIP` → `ipip` / `sit` トンネル、`GRE` → `gre` トンネル。`dscp_mode` の値から encapsulation モードを自動設定する。
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
-tunnelmgrd は常時起動し `TUNNEL` テーブルを無条件購読する。`src_ip` が `LOOPBACK_INTERFACE` に存在しない場合はトンネル local endpoint が解決不能でエラーとなる。VXLAN トンネルの場合は `VXLAN_TUNNEL` テーブルが別途使用される。
+[tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) は常時起動し `TUNNEL` テーブルを無条件購読する。`src_ip` が `LOOPBACK_INTERFACE` に存在しない場合はトンネル local endpoint が解決不能でエラーとなる。[VXLAN](../../reference/glossary.md#term-vxlan) トンネルの場合は `VXLAN_TUNNEL` テーブルが別途使用される。
 
 <!-- /derivation -->
 
@@ -188,7 +187,7 @@ tunnelmgrd は常時起動し `TUNNEL` テーブルを無条件購読する。`s
 | `tunnelmgrd` | `tunnel_type==GRE` | Linux gre トンネル IF 作成 | `tunnelmgrd` |
 | `tunnelmgrd` | `dscp_mode==pipe` | pipe encapsulation モード設定 | `tunnelmgrd` |
 | `tunnelmgrd` | `dscp_mode==uniform` | uniform encapsulation モード設定 | `tunnelmgrd` |
-| `tunnelmgrd` | `vrfname` フィールドあり | 指定 VRF にトンネル IF を配置 | `tunnelmgrd` |
+| `tunnelmgrd` | `vrfname` フィールドあり | 指定 [VRF](../../reference/glossary.md#term-vrf) にトンネル IF を配置 | `tunnelmgrd` |
 | `tunnelmgrd` | `src_ip` が解決できない | ログエラー + リトライ待ち | `tunnelmgrd` |
 | `tunnelmgrd` | del_handler | Linux トンネル IF を削除 | `tunnelmgrd` |
 
@@ -215,7 +214,7 @@ tunnelmgrd は常時起動し `TUNNEL` テーブルを無条件購読する。`s
 ### 段階 4: タイミング + 副作用
 
 - 設定反映は orchagent 処理後数 ms 以内。
-- 副作用: アンダーレイルートが存在しないと ECMP nexthop 解決ができずトンネルが inactive。
+- 副作用: アンダーレイルートが存在しないと [ECMP](../../reference/glossary.md#term-ecmp) nexthop 解決ができずトンネルが inactive。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -233,11 +232,11 @@ minigraph.py に TUNNEL 直接生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
-**db_migrator.py** が TUNNEL テーブルのマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+**db_migrator.py** が TUNNEL テーブルのマイグレーション処理を実装 ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/scripts/db_migrator.py)
 
 ### ビルド時デフォルト (build-time default)
 
@@ -274,8 +273,8 @@ TUNNEL テーブルはレガシー汎用トンネルテーブル; 現行は VXLA
 
 | SAI ステップ | SAI API 呼び出し | 依存リソース |
 |------------|----------------|------------|
-| 1. Overlay RIF 作成 | `sai_router_intfs_api->create_router_interface()` | `gVirtualRouterId` (デフォルト VRF) が orchagent 起動時に設定済み必須 |
-| 2. トンネル属性設定 | tunnel_attrs に `TYPE`, `OVERLAY_INTERFACE`, `UNDERLAY_INTERFACE`, `DECAP_ECN_MODE`, `DECAP_TTL_MODE`, `DECAP_DSCP_MODE` を push | ステップ 1 の overlay RIF OID が必要 |
+| 1. Overlay [RIF](../../reference/glossary.md#term-rif) 作成 | `sai_router_intfs_api->create_router_interface()` | `gVirtualRouterId` (デフォルト [VRF](../../reference/glossary.md#term-vrf)) が orchagent 起動時に設定済み必須 |
+| 2. トンネル属性設定 | tunnel_attrs に `TYPE`, `OVERLAY_INTERFACE`, `UNDERLAY_INTERFACE`, `DECAP_ECN_MODE`, `DECAP_TTL_MODE`, `DECAP_DSCP_MODE` を push | ステップ 1 の overlay [RIF](../../reference/glossary.md#term-rif) OID が必要 |
 | 3. DSCP_TO_TC_MAP 付与 (任意) | `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` を push | `dscp_to_tc_map_id != SAI_NULL_OBJECT_ID` の場合のみ。ステップ 3/4 で OID が解決済みであること |
 | 4. TC_TO_PG_MAP 付与 (任意) | `SAI_TUNNEL_ATTR_DECAP_QOS_TC_TO_PRIORITY_GROUP_MAP` を push | `tc_to_pg_map_id != SAI_NULL_OBJECT_ID` の場合のみ |
 | 5. トンネル作成 | `sai_tunnel_api->create_tunnel()` | ステップ 1-4 が完了後に一括送信 |
@@ -366,8 +365,8 @@ DEL PEER_SWITCH|*      # TUNNEL DEL の後
 | 既存トンネルへの `encap_ecn_mode` 変更 (SAI create-only) | L193-198 | LOG_NOTICE → `valid=false` → **SET 全体無効化** | なし。DEL → 再 SET が必要 |
 | `encap_ecn_mode` が `standard` 以外 | L187-191 | LOG_ERROR → `valid=false` → タスク消費 | なし |
 | 未知フィールド名 | L277-279 | LOG_ERROR → `valid=false` → タスク消費 | なし |
-| QoS map が未作成 (`decap_dscp_to_tc_map` 等) | L217-266 | LOG_NOTICE → `task_need_retry` → `it++` でタスクキュー残留 | **自動リトライ** (QoS map 作成後に再処理) |
-| `addDecapTunnel()` 失敗 (SAI create_tunnel 失敗) | L313 | LOG_ERROR → タスク消費。SAI エラー詳細は syncd ログで確認 | なし |
+| [QoS](../../reference/glossary.md#term-qos) map が未作成 (`decap_dscp_to_tc_map` 等) | L217-266 | LOG_NOTICE → `task_need_retry` → `it++` でタスクキュー残留 | **自動リトライ** ([QoS](../../reference/glossary.md#term-qos) map 作成後に再処理) |
+| `addDecapTunnel()` 失敗 (SAI create_tunnel 失敗) | L313 | LOG_ERROR → タスク消費。SAI エラー詳細は [syncd](../../reference/glossary.md#term-syncd) ログで確認 | なし |
 
 ### tunneldecaporch — DEL 失敗経路
 
@@ -389,8 +388,8 @@ DEL PEER_SWITCH|*      # TUNNEL DEL の後
 | `m_peerIp` 空 (PEER_SWITCH 未設定) | PEER_SWITCH 設定後に TUNNEL 再 SET | 手動 |
 | `ip tunnel add` 失敗 (kernel エラー) | 根本原因解決後 `tunnelmgrd` 自動リトライ | 自動リトライ |
 | `ecn_mode` / `encap_ecn_mode` 変更 | `TUNNEL` DEL → 再 SET | 手動 |
-| QoS map 未作成 | QoS map SET 後 orchagent が自動再処理 | 自動 |
-| SAI `create_tunnel` 失敗 | syncd ログ確認後 再 SET | 手動 |
+| [QoS](../../reference/glossary.md#term-qos) map 未作成 | QoS map SET 後 orchagent が自動再処理 | 自動 |
+| SAI `create_tunnel` 失敗 | [syncd](../../reference/glossary.md#term-syncd) ログ確認後 再 SET | 手動 |
 | DEL 対象不存在 | 操作なし (確認のみ) | — |
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-failure.md`
@@ -487,7 +486,7 @@ Orch::addExecutor(new Consumer(cfgSubnetDecapSubTable, this, CFG_SUBNET_DECAP_TA
 | `TUNNEL_DECAP_TERM_TABLE` | APPL_DB | `ConsumerStateTable` (Orch 基底) | `doDecapTunnelTermTask()` |
 | `SUBNET_DECAP_TABLE` | CONFIG_DB | `SubscriberStateTable` + `addExecutor` | `doSubnetDecapTask()` |
 
-CONFIG_DB の `TUNNEL` テーブルは **orchagent が直接購読しない**。`tunnelmgrd` が CONFIG_DB→APPL_DB へ変換し、orchagent は APPL_DB 側を ConsumerStateTable で受け取る二段構成。
+CONFIG_DB の `TUNNEL` テーブルは **orchagent が直接購読しない**。`tunnelmgrd` が CONFIG_DB→APPL_DB へ変換し、orchagent は APPL_DB 側を [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) で受け取る二段構成。
 
 ### Observer パターン — PortsOrch ゲート
 
@@ -516,7 +515,7 @@ task_process_status handle_status = handleSaiCreateStatus(SAI_API_TUNNEL, status
 
 ### STATE_DB 書き戻し (Observer 逆方向)
 
-SAI `create_tunnel()` 成功後、`stateTunnelDecapTable` (STATE_DB `STATE_TUNNEL_DECAP_TABLE`) と `stateTunnelDecapTermTable` へエントリを書き戻す（`tunneldecaporch.cpp` L287 付近）。これが orchagent → STATE_DB 方向の出力パス。
+SAI `create_tunnel()` 成功後、`stateTunnelDecapTable` ([STATE_DB](../../reference/glossary.md#term-state_db) `STATE_TUNNEL_DECAP_TABLE`) と `stateTunnelDecapTermTable` へエントリを書き戻す（`tunneldecaporch.cpp` L287 付近）。これが orchagent → [STATE_DB](../../reference/glossary.md#term-state_db) 方向の出力パス。
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-pubsub.md`
 
@@ -580,7 +579,7 @@ Overlay loopback ルータインターフェースの MTU は `OVERLAY_RIF_DEFAU
 |---|---|---|---|
 | 全プラットフォーム共通 | `ecn_mode`, `encap_ecn_mode` | SAI create-only。既存トンネルへの変更 SET で SET 全体無効化 | `tunneldecaporch.cpp` L179, L195 |
 | SAI spec 202012 未満 | `decap_dscp_to_tc_map` 等 4 フィールド | QoS リマッピング SAI 属性が非サポートとなる可能性あり | SAI spec (202205 対象) |
-| 全プラットフォーム共通 | overlay RIF MTU | 固定値 9100 を SAI に送信。CONFIG_DB 変更不可 | `tunneldecaporch.cpp` L14, L750 |
+| 全プラットフォーム共通 | overlay [RIF](../../reference/glossary.md#term-rif) MTU | 固定値 9100 を SAI に送信。CONFIG_DB 変更不可 | `tunneldecaporch.cpp` L14, L750 |
 | 全プラットフォーム共通 | `ttl_mode`, `dscp_mode` | 既存トンネルへの変更は `set_tunnel_attribute()` 経由で可能。SAI 実装依存で失敗することもある | `tunneldecaporch.cpp` L1050 |
 | Dual-ToR 環境のみ | `encap_tc_to_dscp_map`, `encap_tc_to_queue_map` | MuxOrch 経由で SAI push。tunneldecaporch は内部キャッシュ保持のみ | `tunneldecaporch.cpp` L257, L272; `muxorch.cpp` L2367, L2374 |
 | 非対応 SAI 実装 | P2P/P2MP/MP2MP decap term | SAI create_tunnel_term_table_entry 失敗でリトライなし | `tunneldecaporch.cpp` L979 |
@@ -589,4 +588,4 @@ Overlay loopback ルータインターフェースの MTU は `OVERLAY_RIF_DEFAU
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: ae9e20070353 -->
+<!-- glossary-links-injected: a0274ed8db07 -->

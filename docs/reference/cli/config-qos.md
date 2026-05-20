@@ -164,7 +164,7 @@ flowchart LR
 
 - `config qos reload` は既存 buffer profile を一旦消すため、瞬断・パケロスが出る可能性。
 - `--no-dynamic-buffer` 機種で dynamic buffer 設定を投入しても無視される。
-- **`config reload <file>` でパイプ文字を含む QoS マップ参照が YANG 検証エラーになる** (issue [#4107](https://github.com/sonic-net/sonic-utilities/issues/4107)): `PORT_QOS_MAP` の `dot1p_to_tc_map` / `dscp_to_tc_map` 等に `"DOT1P_TO_TC_MAP|ROCE"` のようにパイプ文字 (`|`) を含む参照値があると、`config reload -y <explicit-file>` の YANG 検証で `Value does not satisfy the constraint` エラーが出て中断する。ファイル指定なしの `config reload -y` は検証コードパスが異なり発生しない。回避策: (1) `config reload -y` (引数なし) を使う、または (2) 参照値をパイプなしの名称に変更する。
+- **`config reload <file>` でパイプ文字を含む QoS マップ参照が [YANG](../../reference/glossary.md#term-yang) 検証エラーになる** (issue [#4107](https://github.com/sonic-net/sonic-utilities/issues/4107)): `PORT_QOS_MAP` の `dot1p_to_tc_map` / `dscp_to_tc_map` 等に `"DOT1P_TO_TC_MAP|ROCE"` のようにパイプ文字 (`|`) を含む参照値があると、`config reload -y <explicit-file>` の [YANG](../../reference/glossary.md#term-yang) 検証で `Value does not satisfy the constraint` エラーが出て中断する。ファイル指定なしの `config reload -y` は検証コードパスが異なり発生しない。回避策: (1) `config reload -y` (引数なし) を使う、または (2) 参照値をパイプなしの名称に変更する。
 
 ### 関連する show / debug
 
@@ -186,4 +186,4 @@ show queue counters
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

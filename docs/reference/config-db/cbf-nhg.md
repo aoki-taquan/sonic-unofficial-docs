@@ -24,9 +24,9 @@ related:
 
 ## 概要
 
-Class Based Forwarding (CBF) 用のクラスベース次ホップグループを [APPL_DB](../../reference/glossary.md#term-appl_db) に保持するテーブル[^1]。`sonic-swss` の `CbfNhgOrch` が APPL_DB の `CLASS_BASED_NEXT_HOP_GROUP_TABLE` を購読し、SAI の `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` グループを作成・削除する。
+Class Based Forwarding (CBF) 用のクラスベース次ホップグループを [APPL_DB](../../reference/glossary.md#term-appl_db) に保持するテーブル[^1]。`sonic-swss` の `CbfNhgOrch` が [APPL_DB](../../reference/glossary.md#term-appl_db) の `CLASS_BASED_NEXT_HOP_GROUP_TABLE` を購読し、[SAI](../../reference/glossary.md#term-sai) の `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` グループを作成・削除する。
 
-CBF は DSCP/EXP 値から決定した Forwarding Class (FC) 値に基づいて、同じ宛先に対して複数の NHG のうちの 1 つへパケットをステアリングする機能[^2]。CBF NHG は通常 NHG (NEXT_HOP_GROUP) をメンバーとして持ち、`selection_map` によって FC 値と NHG メンバー (インデックス) の対応を定義する。
+CBF は [DSCP](../../reference/glossary.md#term-dscp)/EXP 値から決定した Forwarding Class (FC) 値に基づいて、同じ宛先に対して複数の NHG のうちの 1 つへパケットをステアリングする機能[^2]。CBF NHG は通常 NHG (NEXT_HOP_GROUP) をメンバーとして持ち、`selection_map` によって FC 値と NHG メンバー (インデックス) の対応を定義する。
 
 !!! note "fpmsyncd との関係"
     HLD Rev 0.2 の Restrictions 節に記載のとおり、標準の `fpmsyncd` はこのテーブルを書き込まない。本テーブルを利用するには修正版 fpmsyncd またはカスタムアプリケーションが APPL_DB に直接書き込む必要がある。
@@ -71,14 +71,14 @@ CLASS_BASED_NEXT_HOP_GROUP_TABLE|<name>
 
 - `members` は空にできない。空文字列を指定するとエラーログを出力してエントリを破棄する (`cbfnhgorch.cpp:223-227`)
 - `members` 内のエントリは一意でなければならない。重複するとエラーログを出力してエントリを破棄する (`cbfnhgorch.cpp:231-235`)
-- `selection_map` に指定した名前が `FC_TO_NHG_INDEX_MAP_TABLE` に存在しなければならない。存在しない場合は SAI 作成失敗 (`cbfnhgorch.cpp:321-325`)
+- `selection_map` に指定した名前が `FC_TO_NHG_INDEX_MAP_TABLE` に存在しなければならない。存在しない場合は [SAI](../../reference/glossary.md#term-sai) 作成失敗 (`cbfnhgorch.cpp:321-325`)
 - `selection_map` 内で参照される最大 NHG インデックス < `members` の数でなければならない (`cbfnhgorch.cpp:327-331`)
 - 各メンバー NHG は `NEXT_HOP_GROUP_TABLE` に存在し、かつ sync 済みでなければならない。未 sync の場合は一時 NHG として扱い再試行される (`cbfnhgorch.cpp:644-660`)
 - グループ総数は `gRouteOrch->getMaxNhgCount()` を超過できない (`cbfnhgorch.cpp:100`)
 
 ## SAI 属性マッピング
 
-| フィールド / 属性 | SAI 属性 | ソース |
+| フィールド / 属性 | [SAI](../../reference/glossary.md#term-sai) 属性 | ソース |
 |---|---|---|
 | グループ型 (固定値) | `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` | `cbfnhgorch.cpp:301-303` |
 | `members` の数 | `SAI_NEXT_HOP_GROUP_ATTR_CONFIGURED_SIZE` | `cbfnhgorch.cpp:306-309` |
@@ -88,12 +88,12 @@ CLASS_BASED_NEXT_HOP_GROUP_TABLE|<name>
 
 ## 購読者
 
-- `CbfNhgOrch` (`sonic-swss/orchagent/cbf/cbfnhgorch.cpp`): APPL_DB `CLASS_BASED_NEXT_HOP_GROUP_TABLE` を購読して SAI CBF NHG を作成・更新・削除
+- `CbfNhgOrch` (`sonic-swss/orchagent/cbf/cbfnhgorch.cpp`): [APPL_DB](../../reference/glossary.md#term-appl_db) `CLASS_BASED_NEXT_HOP_GROUP_TABLE` を購読して SAI CBF NHG を作成・更新・削除
 
 ## 関連 CONFIG_DB / CLI
 
 - 関連 APPL_DB: `NEXT_HOP_GROUP_TABLE` (members として参照)、`FC_TO_NHG_INDEX_MAP_TABLE` (selection_map として参照)
-- 関連 CONFIG_DB: `DSCP_TO_FC_MAP`、`EXP_TO_FC_MAP`
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `DSCP_TO_FC_MAP`、`EXP_TO_FC_MAP`
 - CLI: なし (標準 CLI 未実装; カスタムアプリが APPL_DB に直接書き込む)
 
 <!-- cdb-exceptions -->
@@ -203,14 +203,14 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 | `APPL_DB NEXT_HOP_GROUP_TABLE\|<name>` (members として参照) | 必須前提参照（読取り） | `members` に列挙した各 NHG キーが `NhgOrch` 内で synced であること。未 sync の場合 `syncMembers()` が `false` を返してタスクを保留する。メンバー変更時に `incNhgRefCount` / `decNhgRefCount` で参照カウントを管理する | `cbfnhgorch.cpp:644-662`, `cbfnhgorch.cpp:758`, `cbfnhgorch.cpp:808` |
 | `APPL_DB FC_TO_NHG_INDEX_MAP_TABLE\|<name>` (selection_map として参照) | 必須前提参照（読取り） | `selection_map` フィールドで指定したキーが `NhgMapOrch` に登録済みであること。`getMapId()` が `SAI_NULL_OBJECT_ID` を返す場合、`CbfNhg::sync()` は即 `false` を返してタスクを保留する。sync 成功後に `incRefCount()` / `decRefCount()` で参照カウントを管理する | `cbfnhgorch.cpp:319-325`, `cbfnhgorch.cpp:354`, `cbfnhgorch.cpp:396` |
 | `RouteOrch::getMaxNhgCount()` / `getNhgCount()` (NHG 上限管理) | グローバルカウンタ参照（読取り） | 新規作成時に `getNhgCount() + NhgBase::getSyncedCount() >= getMaxNhgCount()` が真の場合、作成を保留して次タスクループへ回す。CbfNhgOrch は RouteOrch のカウンタ値を参照するが RouteOrch エントリを直接書き換えない | `cbfnhgorch.cpp:100-103` |
-| `CrmOrch` (`CRM_NEXTHOP_GROUP`) | CRM カウンタ更新（書込み） | SAI NHG 作成成功後に `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` を呼ぶ。DEL 時の `decCrmResUsedCounter` は `NhgBase` 基底クラスが担当する | `cbfnhgorch.cpp:358` |
+| `CrmOrch` (`CRM_NEXTHOP_GROUP`) | [CRM](../../reference/glossary.md#term-crm) カウンタ更新（書込み） | SAI NHG 作成成功後に `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` を呼ぶ。DEL 時の `decCrmResUsedCounter` は `NhgBase` 基底クラスが担当する | `cbfnhgorch.cpp:358` |
 | `CLASS_BASED_NEXT_HOP_GROUP_TABLE` ← 逆参照（被参照は現状なし） | 逆参照なし | 本テーブルのエントリを他 Orch が leafref / 参照カウント経由で依存するケースは現時点でコードに存在しない。削除時の参照ガードは `refCount` 管理を介して実装されているが、参照元は外部 Orch ではなく内部テーブル管理のみ | — |
 
 ### 解決タイミング
 
 - **NEXT_HOP_GROUP_TABLE 依存**: `syncMembers()` が各メンバーの `NhgOrch::hasNhg()` および `NhgBase::isSynced()` を確認する。未解決のメンバーがある場合は `false` を返し、次の doTask 呼び出し時に再評価される（`cbfnhgorch.cpp:644-662`）。
 - **FC_TO_NHG_INDEX_MAP_TABLE 依存**: `CbfNhg::sync()` が `gNhgMapOrch->getMapId()` を即時確認する。未解決の場合は `sync()` が `false` を返してタスクが `m_toSync` に残留し、NhgMapOrch が selection_map を登録した後の次ループで再評価される（`cbfnhgorch.cpp:319-325`）。
-- **CRM カウンタ更新**: SAI `create_next_hop_group` 成功直後に同期更新される（`cbfnhgorch.cpp:358`）。
+- **[CRM](../../reference/glossary.md#term-crm) カウンタ更新**: SAI `create_next_hop_group` 成功直後に同期更新される（`cbfnhgorch.cpp:358`）。
 
 ### orchList 上の依存 Orch との相対位置
 
@@ -250,7 +250,7 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 ### ログ・ERROR_TABLE
 
 - すべてのエラーは `SWSS_LOG_ERROR` / `SWSS_LOG_WARN` で syslog (`/var/log/swss/swss.rec` または `orchagent.log`) に出力される。
-- `ERROR_TABLE` (STATE_DB) への書き込みは **行われない**。CBF NHG は STATE_DB ステータスを持たないため、失敗の可視化は syslog のみで行う。
+- `ERROR_TABLE` ([STATE_DB](../../reference/glossary.md#term-state_db)) への書き込みは **行われない**。CBF NHG は [STATE_DB](../../reference/glossary.md#term-state_db) ステータスを持たないため、失敗の可視化は syslog のみで行う。
 - `sonic-db-cli APPL_DB hgetall 'CLASS_BASED_NEXT_HOP_GROUP_TABLE:<name>'` でエントリの残存確認は可能だが、sync 状態の確認コマンドは標準では提供されていない。
 
 ### retry 停止・回復手順
@@ -265,7 +265,7 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`CbfNhgOrch` / `CbfNhg` / `CbfNhgMember` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/cbf/cbfnhgorch.cpp` および `sonic-swss/orchagent/cbf/cbfnhgorch.h`。
+`CbfNhgOrch` / `CbfNhg` / `CbfNhgMember` に存在する、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/cbf/cbfnhgorch.cpp` および `sonic-swss/orchagent/cbf/cbfnhgorch.h`。
 
 ### SAI 属性固定値
 
@@ -307,10 +307,10 @@ m_orchList = { ..., gNhgMapOrch, gNhgOrch, gCbfNhgOrch, ... }
 | 副次 DB / リソース | 書込有無 | 根拠 |
 |---|---|---|
 | APPL_DB (他テーブル) | なし | `CbfNhgOrch` は `CLASS_BASED_NEXT_HOP_GROUP_TABLE` を読むのみ。他 APPL_DB テーブルへの直接書込なし |
-| STATE_DB | なし | `cbfnhgorch.cpp` に `state_db` / `StateDBConnector` の参照なし。CBF NHG はステータスエントリを持たない |
-| ASIC_DB | SAI 経由で間接書込 | `sai_next_hop_group_api->create_next_hop_group()` / `create_next_hop_group_member()` が SAI Redis 実装を通じて ASIC_DB を更新する |
-| COUNTERS_DB | CRM 経由で間接反映 | `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` (`cbfnhgorch.cpp:358`) が `CRM_NEXTHOP_GROUP` インメモリカウンタを更新し、CrmOrch が定期的に `COUNTERS_DB COUNTERS:CRM_STATS` へ反映する |
-| FLEX_COUNTER_DB | なし | CBF NHG に対する Flex カウンタ設定は存在しない |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `cbfnhgorch.cpp` に `state_db` / `StateDBConnector` の参照なし。CBF NHG はステータスエントリを持たない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | SAI 経由で間接書込 | `sai_next_hop_group_api->create_next_hop_group()` / `create_next_hop_group_member()` が SAI [Redis](../../reference/glossary.md#term-redis) 実装を通じて [ASIC_DB](../../reference/glossary.md#term-asic_db) を更新する |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | [CRM](../../reference/glossary.md#term-crm) 経由で間接反映 | `gCrmOrch->incCrmResUsedCounter(CRM_NEXTHOP_GROUP)` (`cbfnhgorch.cpp:358`) が `CRM_NEXTHOP_GROUP` インメモリカウンタを更新し、CrmOrch が定期的に `COUNTERS_DB COUNTERS:CRM_STATS` へ反映する |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | CBF NHG に対する Flex カウンタ設定は存在しない |
 
 ### NhgMapOrch 参照カウント更新
 
@@ -484,7 +484,7 @@ sonic-db-cli APPL_DB hgetall 'CLASS_BASED_NEXT_HOP_GROUP_TABLE:CbfNhg1'
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG schema が存在しないため、デフォルトはコード (`cbfnhgorch.cpp`) の初期化から派生する。
+[YANG](../../reference/glossary.md#term-yang) schema が存在しないため、デフォルトはコード (`cbfnhgorch.cpp`) の初期化から派生する。
 
 | フィールド | コード由来デフォルト | fallback 源 | 備考 |
 |-----------|-------------------|------------|------|
@@ -494,7 +494,9 @@ YANG schema が存在しないため、デフォルトはコード (`cbfnhgorch.
 ### 補足
 
 - 両フィールドともコードの初期値は空文字列だが、空文字列ではエラーパスに入るため実質必須。
-- YANG schema (sonic-cbf-nhg.yang 等) は現時点 (2026-05) で sonic-buildimage の yang-models ディレクトリに存在しない。
+- [YANG](../../reference/glossary.md#term-yang) schema (sonic-cbf-nhg.yang 等) は現時点 (2026-05) で [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) の yang-models ディレクトリに存在しない。
 - member の 0-based index は宣言順に自動付与 (`CbfNhg::CbfNhg()` コンストラクタ) され、外部から指定するフィールドではない。
 - `SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX` は `CREATE_ONLY` 属性のため、member 順序変更時は全 member を remove → 再 sync する仕様 (`cbfnhgorch.cpp:509-516`)。
 <!-- /defaults -->
+
+<!-- glossary-links-injected: d3e390c4f883 -->

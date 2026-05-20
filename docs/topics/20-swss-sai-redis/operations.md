@@ -189,7 +189,7 @@ admin@sonic:~$ redis-cli -n 0 LLEN "_*"
 
 ## saidump のスケール限界
 
-`saidump` は ASIC_DB の全 key を Redis の Lua スクリプト（`Table::dump()`）で一括取得するため、40K route 規模になると数分以上かかる場合がある。Lua スクリプトの実行は Redis のシングルスレッドをブロックするため、dump 中は他の redis 操作も遅延する（issue #918）。
+`saidump` は ASIC_DB の全 key を [Redis](../../reference/glossary.md#term-redis) の Lua スクリプト（`Table::dump()`）で一括取得するため、40K route 規模になると数分以上かかる場合がある。Lua スクリプトの実行は Redis のシングルスレッドをブロックするため、dump 中は他の redis 操作も遅延する（issue #918）。
 
 回避策:
 - dump 対象を絞る: `redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_ROUTE*" | wc -l` で規模を確認してから採取。
@@ -212,7 +212,7 @@ applyView: condition current view switches: 0 != temporary view switches: 1
 
 ## cold boot 中の FDB event による orchagent crash
 
-cold boot 時に、port が admin UP 状態でフォワーディングが始まる前に FDB エントリが学習されると、orchagent (portsorch) の初期化シーケンスで問題が発生する（issue #1267、SONiC 202205 で報告）：
+cold boot 時に、port が admin UP 状態でフォワーディングが始まる前に [FDB](../../reference/glossary.md#term-fdb) エントリが学習されると、orchagent (portsorch) の初期化シーケンスで問題が発生する（issue #1267、SONiC 202205 で報告）：
 
 1. FDB 学習が default port bridge ID の参照カウントをインクリメント
 2. `removeDefaultBridgePorts` が参照カウント > 0 で `SAI_STATUS_OBJECT_IN_USE` を返す
@@ -256,4 +256,4 @@ ERR syncd#saidump: :- dumpFromRedisRdbJson: JSON parsing error: unexpected end o
 - [Build / Packaging 章](../19-build-packaging/index.md)（FEATURE / [hostcfgd](../../reference/glossary.md#term-hostcfgd) との関係）
 - [SRv6 / MPLS 章](../17-srv6-mpls/operations.md)（SAI 失敗の実例）
 
-<!-- glossary-links-injected: f2f28aee324f -->
+<!-- glossary-links-injected: 16a3bb018bc2 -->

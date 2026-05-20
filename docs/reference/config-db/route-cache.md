@@ -37,9 +37,9 @@ related:
 
 ## 概要
 
-`APPL_STATE_DB` の `ROUTE_TABLE` は、`orchagent` の `RouteOrch` が SAI 経路プログラミング完了後に書き込む**経路オフロードキャッシュ**。APPL_DB の `ROUTE_TABLE`（fpmsyncd が書き込む経路要求テーブル）と **テーブル名・キー構造が同一** だが、格納先 DB が異なる（DB インデックス 0 vs 14）[^schema]。
+`APPL_STATE_DB` の `ROUTE_TABLE` は、`orchagent` の `RouteOrch` が [SAI](../../reference/glossary.md#term-sai) 経路プログラミング完了後に書き込む**経路オフロードキャッシュ**。[APPL_DB](../../reference/glossary.md#term-appl_db) の `ROUTE_TABLE`（[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が書き込む経路要求テーブル）と **テーブル名・キー構造が同一** だが、格納先 DB が異なる（DB インデックス 0 vs 14）[^schema]。
 
-`fpmsyncd` がこのテーブルを `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 経由で購読し、SAI プログラミング成功を確認した後に FRR zebra へ **offload 通知**（RTM_NEWROUTE）を送出する。Route suppression 機能（APPL_DB suppress-pending）が有効な場合に本フローが活性化する。
+`fpmsyncd` がこのテーブルを `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 経由で購読し、[SAI](../../reference/glossary.md#term-sai) プログラミング成功を確認した後に [FRR](../../reference/glossary.md#term-frr) [zebra](../../reference/glossary.md#term-zebra) へ **offload 通知**（RTM_NEWROUTE）を送出する。Route suppression 機能（[APPL_DB](../../reference/glossary.md#term-appl_db) suppress-pending）が有効な場合に本フローが活性化する。
 
 !!! note "ROUTE_TABLE が存在する DB は 3 つ"
     同名テーブルが `APPL_DB`・`STATE_DB`・`APPL_STATE_DB` の 3 箇所に存在する。  
@@ -77,12 +77,12 @@ ROUTE_TABLE:<prefix>
 ROUTE_TABLE:<vrf_name>:<prefix>
 ```
 
-APPL_DB の `ROUTE_TABLE` キーと完全に同一。SAI プログラミングに成功した経路のみエントリが存在する。
+[APPL_DB](../../reference/glossary.md#term-appl_db) の `ROUTE_TABLE` キーと完全に同一。[SAI](../../reference/glossary.md#term-sai) プログラミングに成功した経路のみエントリが存在する。
 
 | key 要素 | 説明 |
 |---------|------|
 | `<prefix>` | IPv4 / IPv6 プレフィクス（例: `10.0.0.0/24`、`2001:db8::/32`） |
-| `<vrf_name>:` | VRF-aware 経路。VRF 名 + `:` のプレフィクス |
+| `<vrf_name>:` | [VRF](../../reference/glossary.md#term-vrf)-aware 経路。[VRF](../../reference/glossary.md#term-vrf) 名 + `:` のプレフィクス |
 
 ## フィールド一覧
 
@@ -150,7 +150,7 @@ if (m_enable_db_write_and_notify &&
 
 ## fpmsyncd による購読 — `onRouteResponse()`
 
-ソース: `fpmsyncd/routesync.cpp` lines 3165–3265[^fpmsyncd]
+ソース: `fpmsyncd/routesync.cpp` lines 3165–3265[^[fpmsyncd](../../reference/glossary.md#term-fpmsyncd)]
 
 `fpmsyncd` は `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` を `NotificationConsumer` で購読し、通知を `onRouteResponse()` に渡す。
 
@@ -165,7 +165,7 @@ const auto routeResponseChannelName = std::string("APPL_DB_") + APP_ROUTE_TABLE_
 2. `err_str != "SWSS_RC_SUCCESS"` → 失敗扱い、offload 通知スキップ
 3. `protocol` フィールド不在 → DEL 操作とみなして offload 通知スキップ
 4. `protocol == ""` → offload 通知スキップ（プロトコル不明経路）
-5. 上記を通過した場合 → `sendOffloadReply()` で FRR zebra に RTM_NEWROUTE を送信
+5. 上記を通過した場合 → `sendOffloadReply()` で [FRR](../../reference/glossary.md#term-frr) [zebra](../../reference/glossary.md#term-zebra) に RTM_NEWROUTE を送信
 
 ```cpp
 // routesync.cpp:3195-3206
@@ -184,7 +184,7 @@ for (const auto& fieldValue: fieldValues)
 
 ## Warm Restart 時の動作
 
-Warm restart 完了後、`fpmsyncd::onWarmStartEnd()` が呼ばれる際に `markRoutesOffloaded()` が実行される[^fpmsyncd]:
+Warm restart 完了後、`fpmsyncd::onWarmStartEnd()` が呼ばれる際に `markRoutesOffloaded()` が実行される[^[fpmsyncd](../../reference/glossary.md#term-fpmsyncd)]:
 
 ```cpp
 void RouteSync::markRoutesOffloaded(swss::DBConnector& db)
@@ -193,21 +193,21 @@ void RouteSync::markRoutesOffloaded(swss::DBConnector& db)
 }
 ```
 
-APPL_STATE_DB の全 ROUTE_TABLE エントリを読み取り、zebra に offload 通知を一括送信する。これにより warm restart 後に FRR が持つ経路の offload フラグが復元される。
+APPL_STATE_DB の全 [ROUTE_TABLE](../../reference/glossary.md#term-route_table) エントリを読み取り、[zebra](../../reference/glossary.md#term-zebra) に offload 通知を一括送信する。これにより warm restart 後に [FRR](../../reference/glossary.md#term-frr) が持つ経路の offload フラグが復元される。
 
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
 <!-- evidence: meta/_intermediate/cdb-flow/route-cache-ordering.md -->
 
-`RouteOrch::publishRouteState()` が `ResponsePublisher` 経由で APPL_STATE_DB ROUTE_TABLE へ書き込む際の順序依存を示す。
+`RouteOrch::publishRouteState()` が `ResponsePublisher` 経由で APPL_STATE_DB [ROUTE_TABLE](../../reference/glossary.md#term-route_table) へ書き込む際の順序依存を示す。
 
 ### 検出された順序依存
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | APPL_DB ROUTE_TABLE → SAI 成功 → APPL_STATE_DB 書き込み | 強制先行（SAI 失敗時はエントリ不在） | SAI 失敗経路は APPL_STATE_DB に存在しない点に注意 |
-| 2 | VRF SAI 登録 → VRF 経路の APPL_STATE_DB 書き込み | 強制先行（isVRFexists false → 後回し） | VRF を先に作成 |
+| 1 | APPL_DB [ROUTE_TABLE](../../reference/glossary.md#term-route_table) → SAI 成功 → APPL_STATE_DB 書き込み | 強制先行（SAI 失敗時はエントリ不在） | SAI 失敗経路は APPL_STATE_DB に存在しない点に注意 |
+| 2 | [VRF](../../reference/glossary.md#term-vrf) SAI 登録 → VRF 経路の APPL_STATE_DB 書き込み | 強制先行（isVRFexists false → 後回し） | VRF を先に作成 |
 | 3 | doTask() flush() → APPL_STATE_DB 書き込みのまとめ到着 | バッチ境界（同サイクル内変更はまとめて送出） | consumer は同一バッチ変更の個別到着順を仮定しないこと |
 | 4 | suppress-fib-pending 有効 → fpmsyncd が RESPONSE_CHANNEL 購読 | 機能有効時のみ | 無効時は APPL_STATE_DB 書き込みは発生するが offload 通知は行われない |
 | 5 | Warm Restart: APPL_STATE_DB 既存 → onWarmStartEnd → offload 通知 | 後払い（通常フローとは逆順） | warm restart 完了後に offload フラグ復元が自動実行される |
@@ -227,7 +227,7 @@ if (m_enable_db_write_and_notify &&
 
 **VRF 経路の先行制約（依存 #2）**: key が `Vrf<name>:<prefix>` 形式の場合、RouteOrch は `m_vrfOrch->isVRFexists(vrf_name)` を確認し、VRF SAI オブジェクトが未登録の間は処理を `it++; continue` で後回しにする（routeorch.cpp:L711-714）。VRF が存在しなければ SAI プログラミング自体が行われず、APPL_STATE_DB への書き込みも発生しない。
 
-**バッファリングと flush（依存 #3）**: `RouteOrch` は `m_publisher.setBuffered(true)` で RESPONSE_CHANNEL + APPL_STATE_DB 書き込みをバッファリングし、`doTask()` 末尾の `m_publisher.flush()` で一括送出する（routeorch.cpp:L57, L1231）。同一 `doTask()` サイクル内で処理された複数経路の状態変更は、flush 時にまとめて Redis パイプラインに投入される。consumer は同一バッチ内の書き込みが個別到着順を保証しないことを前提とする必要がある。
+**バッファリングと flush（依存 #3）**: `RouteOrch` は `m_publisher.setBuffered(true)` で RESPONSE_CHANNEL + APPL_STATE_DB 書き込みをバッファリングし、`doTask()` 末尾の `m_publisher.flush()` で一括送出する（routeorch.cpp:L57, L1231）。同一 `doTask()` サイクル内で処理された複数経路の状態変更は、flush 時にまとめて [Redis](../../reference/glossary.md#term-redis) パイプラインに投入される。consumer は同一バッチ内の書き込みが個別到着順を保証しないことを前提とする必要がある。
 
 **suppression 有効時のみ fpmsyncd が購読（依存 #4）**: APPL_STATE_DB への書き込みは `suppress-fib-pending` 設定に関わらず発生するが、fpmsyncd がその結果を `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 経由で受け取って FRR zebra へ offload 通知を送るのは `suppress-fib-pending = enabled` の場合のみ。suppression 無効時は APPL_STATE_DB への書き込みが発生しても FRR の offload フラグは更新されない（fpmsyncd.cpp:L113-118、routesync.cpp:L3174）。
 
@@ -240,7 +240,7 @@ if (m_enable_db_write_and_notify &&
 
 <!-- evidence: meta/_intermediate/cdb-flow/route-cache-cross-refs.md -->
 
-APPL_STATE_DB `ROUTE_TABLE` は YANG 未定義のオペレーショナルテーブルで、`RouteOrch` が**書き手 (producer)**、`fpmsyncd` と `route_check.py` が**読み手 (consumer)** となる。以下は `ResponsePublisher`・`routeorch.cpp`・`fpmsyncd.cpp`・`routesync.cpp`・`route_check.py` を横断したコード調査で検出した暗黙参照の一覧。
+APPL_STATE_DB `ROUTE_TABLE` は [YANG](../../reference/glossary.md#term-yang) 未定義のオペレーショナルテーブルで、`RouteOrch` が**書き手 (producer)**、`fpmsyncd` と `route_check.py` が**読み手 (consumer)** となる。以下は `ResponsePublisher`・`routeorch.cpp`・`fpmsyncd.cpp`・`routesync.cpp`・`route_check.py` を横断したコード調査で検出した暗黙参照の一覧。
 
 ### 1. APPL_DB ROUTE_TABLE（書き込みトリガ兼キー源泉）
 
@@ -251,15 +251,15 @@ APPL_STATE_DB `ROUTE_TABLE` は YANG 未定義のオペレーショナルテー�
 
 ### 2. CONFIG_DB VRF（VRF 経路の先行依存）
 
-- **参照先**: CONFIG_DB `VRF` テーブル（`VRFOrch` 管理）
+- **参照先**: [CONFIG_DB](../../reference/glossary.md#term-config_db) `VRF` テーブル（`VRFOrch` 管理）
 - **方向**: 読み取り（`m_vrfOrch->isVRFexists(vrf_name)`）
 - **参照元**: `routeorch.cpp:706-716`（`Vrf<name>:` プレフィックスキーの解決）
 - **意味**: key が `Vrf<name>:<prefix>` 形式の VRF 経路を処理する際、VRF SAI オブジェクトが未登録の場合は `it++; continue` で後回しになり APPL_STATE_DB への書き込みは行われない。VRF が存在しない間は当該 VRF の経路エントリは APPL_STATE_DB に出現しない。
-- **ブロッキング**: VRF SAI 未登録時は対象 VRF 経路の APPL_STATE_DB エントリが書かれない。VRF を先に CONFIG_DB で作成・処理完了させること。
+- **ブロッキング**: VRF SAI 未登録時は対象 VRF 経路の APPL_STATE_DB エントリが書かれない。VRF を先に [CONFIG_DB](../../reference/glossary.md#term-config_db) で作成・処理完了させること。
 
 ### 3. CONFIG_DB DEVICE_METADATA|localhost.suppress-fib-pending（suppression 機能スイッチ）
 
-- **参照先**: CONFIG_DB `DEVICE_METADATA|localhost` の `suppress-fib-pending` フィールド
+- **参照先**: [CONFIG_DB](../../reference/glossary.md#term-config_db) `DEVICE_METADATA|localhost` の `suppress-fib-pending` フィールド
 - **方向**: 読み取り（起動時）＋動的変更監視（`SubscriberStateTable` 購読）
 - **参照元**: `fpmsyncd.cpp:82-83`（`deviceMetadataTable`）、`fpmsyncd.cpp:113`（起動時読み取り）、`fpmsyncd.cpp:278-297`（動的変更追従）
 - **意味**: fpmsyncd が `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` を購読して FRR zebra へ offload 通知を送るかどうかを制御する。`"enabled"` の場合のみ `NotificationConsumer` を生成し suppression を有効化する。APPL_STATE_DB への書き込み自体は suppression 設定に関わらず RouteOrch が行う。runtime に無効化された場合は `markRoutesOffloaded()` で全経路の offload フラグを一括復元する。
@@ -462,9 +462,9 @@ SAI 失敗経路は FRR zebra への offload 通知が行われず、FRR 側で 
 | マクロ | 値 | 行 | 用途 |
 |--------|-----|-----|------|
 | `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | `routeorch.cpp:37` | `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` 取得失敗時の `m_maxNextHopGroupCount` フォールバック値 |
-| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | `routeorch.cpp:38` | Mellanox プラットフォーム補正の除数（SAI 戻り値をこの値で割って実効 ECMP グループ数を算出） |
+| `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | `routeorch.cpp:38` | Mellanox プラットフォーム補正の除数（SAI 戻り値をこの値で割って実効 [ECMP](../../reference/glossary.md#term-ecmp) グループ数を算出） |
 
-算出値は STATE_DB `SWITCH_CAPABILITY` の `MAX_NEXTHOP_GROUP_COUNT` として公開される（`routeorch.cpp:90`）。
+算出値は [STATE_DB](../../reference/glossary.md#term-state_db) `SWITCH_CAPABILITY` の `MAX_NEXTHOP_GROUP_COUNT` として公開される（`routeorch.cpp:90`）。
 
 ### ResponsePublisher 動作フラグ（`routeorch.cpp`）
 
@@ -476,7 +476,7 @@ m_publisher.m_directDbWrite = true;
 
 | フラグ | 値 | 効果 |
 |--------|-----|------|
-| `setBuffered(true)` | `true` | APPL_STATE_DB 書き込みと RESPONSE_CHANNEL 通知を `doTask()` 末尾の `flush()` まで Redis パイプラインにバッファリングする |
+| `setBuffered(true)` | `true` | APPL_STATE_DB 書き込みと RESPONSE_CHANNEL 通知を `doTask()` 末尾の `flush()` まで [Redis](../../reference/glossary.md#term-redis) パイプラインにバッファリングする |
 | `m_directDbWrite` | `true` | 既存エントリとのマージや NULL フィルタリングをスキップして `applStateTable.set()` を直接実行（フルオーバーライト） |
 
 ### エラー文字列プレフィクス（`response_publisher.cpp`）
@@ -499,7 +499,7 @@ constexpr char *kSaiComponent = "[SAI] ";
 
 | 定数 | 値 | 単位 | 行 | 用途 |
 |------|-----|------|-----|------|
-| `FLUSH_TIMEOUT` | `500` | ミリ秒 | `fpmsyncd.cpp:25` | FPM 受信後のバッファフラッシュ待機上限。idle 時間がこの値を超えるとフラッシュ実行 |
+| `FLUSH_TIMEOUT` | `500` | ミリ秒 | `fpmsyncd.cpp:25` | [FPM](../../reference/glossary.md#term-fpm) 受信後のバッファフラッシュ待機上限。idle 時間がこの値を超えるとフラッシュ実行 |
 | `SMALL_TRAFFIC` | `500` | メッセージ数 | `fpmsyncd.cpp:28` | フラッシュ判定閾値。pending が `500` 件以下なら idle >= FLUSH_TIMEOUT 待ちを適用 |
 | `DEFAULT_ROUTING_RESTART_INTERVAL` | `120` | 秒 | `fpmsyncd.cpp:46` | warm restart タイマーのデフォルトインターバル（DEVICE_METADATA 設定がない場合） |
 | `DEFAULT_EOIU_HOLD_INTERVAL` | `3` | 秒 | `fpmsyncd.cpp:51` | EOIU（End of Initial Update）受信後の hold インターバル |
@@ -556,7 +556,7 @@ fieldValues.emplace_back("err_str", "SWSS_RC_SUCCESS");
 
 <!-- evidence: meta/_intermediate/cdb-flow/route-cache-side-effects.md -->
 
-APPL_STATE_DB `ROUTE_TABLE` への書き込みは、orchagent の内部処理で終結せず、`fpmsyncd` を経由して FRR zebra への外向き副作用を持つ。また `route_check.py` による recovery パスも存在する。
+APPL_STATE_DB `ROUTE_TABLE` への書き込みは、[orchagent](../../reference/glossary.md#term-orchagent) の内部処理で終結せず、`fpmsyncd` を経由して FRR zebra への外向き副作用を持つ。また `route_check.py` による recovery パスも存在する。
 
 ### 連鎖変更マップ
 
@@ -610,13 +610,13 @@ void RouteSync::onWarmStartEnd(swss::DBConnector& applStateDb)
 }
 ```
 
-- **タイミング**: orchagent warm restart 完了後に 1 回のみ自動実行
-- **効果**: orchagent 再起動後も FRR が保持している全経路の offload フラグが復元される
+- **タイミング**: [orchagent](../../reference/glossary.md#term-orchagent) warm restart 完了後に 1 回のみ自動実行
+- **効果**: [orchagent](../../reference/glossary.md#term-orchagent) 再起動後も FRR が保持している全経路の offload フラグが復元される
 - **注入値**: `err_str = "SWSS_RC_SUCCESS"` リテラル固定（`routesync.cpp:3285`）
 
 ### 3. route_check.py による recovery 注入
 
-`route_check.py` は APPL_STATE_DB `ROUTE_TABLE` を読み出して FRR・ASIC_DB の経路整合を検証し、offload フラグ未設定経路を検出した場合に `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` へ `SWSS_RC_SUCCESS` を注入する。
+`route_check.py` は APPL_STATE_DB `ROUTE_TABLE` を読み出して FRR・[ASIC_DB](../../reference/glossary.md#term-asic_db) の経路整合を検証し、offload フラグ未設定経路を検出した場合に `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` へ `SWSS_RC_SUCCESS` を注入する。
 
 ```python
 # route_check.py:767-771
@@ -634,8 +634,8 @@ for prefix in routes:
 
 | 副作用先 | トリガ | 書き手 | 条件 |
 |---------|-------|--------|------|
-| FPM → FRR zebra（RTM_F_OFFLOAD） | RESPONSE_CHANNEL 受信 | fpmsyncd RouteSync::sendOffloadReply() | suppress-fib-pending=enabled 時のみ |
-| FPM → FRR zebra（RTM_F_OFFLOAD）一括 | Warm Restart 完了 | fpmsyncd RouteSync::markRoutesOffloaded() | suppress-fib-pending=enabled かつ warm restart 時 |
+| [FPM](../../reference/glossary.md#term-fpm) → FRR zebra（RTM_F_OFFLOAD） | RESPONSE_CHANNEL 受信 | fpmsyncd RouteSync::sendOffloadReply() | suppress-fib-pending=enabled 時のみ |
+| [FPM](../../reference/glossary.md#term-fpm) → FRR zebra（RTM_F_OFFLOAD）一括 | Warm Restart 完了 | fpmsyncd RouteSync::markRoutesOffloaded() | suppress-fib-pending=enabled かつ warm restart 時 |
 | `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 注入 | route_check.py 実行 | route_check.py NotificationProducer | FRR offload フラグ未設定経路検出時 |
 
 <!-- /side-effects -->
@@ -647,7 +647,7 @@ for prefix in routes:
 
 ### 書き込み側: ResponsePublisher の通知チャネル
 
-`RouteOrch::publishRouteState()` は `ResponsePublisher::publish()` を呼び出し、2 段階でデータを Redis に送出する（`orchagent/response_publisher.cpp:L96-133`）[^respub]:
+`RouteOrch::publishRouteState()` は `ResponsePublisher::publish()` を呼び出し、2 段階でデータを [Redis](../../reference/glossary.md#term-redis) に送出する（`orchagent/response_publisher.cpp:L96-133`）[^respub]:
 
 1. **通知チャネルへの PUBLISH**: `NotificationProducer` を用いて `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` チャネルへ `PUBLISH` コマンドを発行する。`err_str`・`protocol` 等のフィールドを含むメッセージが subscriber（fpmsyncd）へ即座にプッシュされる。
 2. **APPL_STATE_DB への書き込み**: SAI 成功 + SET 操作の場合に限り `writeToDB()` で `APPL_STATE_DB ROUTE_TABLE` ハッシュを更新する。
@@ -737,7 +737,7 @@ if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))
 
 - `MLNX_PLATFORM_SUBSTRING = "mellanox"` (`orch.h:L42`)
 - `DEFAULT_MAX_ECMP_GROUP_SIZE = 32` (`routeorch.cpp:L38`)
-- Mellanox ASIC は `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` を「ECMP サイズ=1 前提の最大グループ数」として返すため、SONiC は /32 して実効 ECMP グループ数を算出する
+- Mellanox ASIC は `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` を「[ECMP](../../reference/glossary.md#term-ecmp) サイズ=1 前提の最大グループ数」として返すため、SONiC は /32 して実効 [ECMP](../../reference/glossary.md#term-ecmp) グループ数を算出する
 - 結果: 有効 ECMP グループ上限が他プラットフォームより 1/32 になり、ECMP 経路が上限に達すると SAI プログラミングが失敗し APPL_STATE_DB へのエントリ書き込みが発生しない
 
 #### VOQ chassis: ECMP メンバー数を 128 に制限
@@ -755,7 +755,7 @@ if (gMySwitchType == "voq" && maxEcmpGroupSize >= 128)
 }
 ```
 
-VOQ chassis 環境では 1 つの ECMP グループで 128 を超えるメンバーを持つ経路は SAI 制限に抵触する可能性があり、当該経路の APPL_STATE_DB ROUTE_TABLE エントリが生成されない場合がある。
+[VOQ](../../reference/glossary.md#term-voq) chassis 環境では 1 つの ECMP グループで 128 を超えるメンバーを持つ経路は SAI 制限に抵触する可能性があり、当該経路の APPL_STATE_DB ROUTE_TABLE エントリが生成されない場合がある。
 
 ### プラットフォーム差サマリ
 
@@ -763,8 +763,8 @@ VOQ chassis 環境では 1 つの ECMP グループで 128 を超えるメンバ
 |-----------------|------------------------|----------------------------------------|
 | 標準 T0/T1/T2   | 変更なし                | 変更なし                               |
 | Mellanox        | 変更なし                | ECMP グループ上限を /32 補正（初期化時のみ） |
-| VOQ chassis     | 変更なし                | ECMP メンバー数を 128 に制限（SAI 設定） |
-| SmartSwitch     | 変更なし                | 変更なし                               |
+| [VOQ](../../reference/glossary.md#term-voq) chassis     | 変更なし                | ECMP メンバー数を 128 に制限（SAI 設定） |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch)     | 変更なし                | 変更なし                               |
 | multi-asic      | 変更なし                | 各 ASIC namespace 独立、処理自体は同一  |
 
 <!-- /platform -->
@@ -805,7 +805,7 @@ APPL_STATE_DB> hgetall ROUTE_TABLE:192.168.0.0/16
 ## 関連ページ
 
 - [`ROUTE_TABLE (APPL_DB)`](appl-db-route.md) — fpmsyncd が書き込む経路要求テーブル
-- [`ROUTE_TABLE (STATE_DB / APPL_STATE_DB)`](route-state.md) — STATE_DB のデフォルト経路状態テーブルも含む統合ページ
+- [`ROUTE_TABLE (STATE_DB / APPL_STATE_DB)`](route-state.md) — [STATE_DB](../../reference/glossary.md#term-state_db) のデフォルト経路状態テーブルも含む統合ページ
 - [`STATIC_ROUTE`](static-route.md) — CONFIG_DB の静的経路設定
 
 ## 引用元
@@ -814,3 +814,5 @@ APPL_STATE_DB> hgetall ROUTE_TABLE:192.168.0.0/16
 [^respub]: ResponsePublisher publish 実装: `orchagent/response_publisher.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp#L96>
 [^fpmsyncd]: fpmsyncd onRouteResponse / markRoutesOffloaded 実装: `fpmsyncd/routesync.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp#L3165>
 [^schema]: テーブル名・DB インデックス定数: `common/schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L27>
+
+<!-- glossary-links-injected: aafbf5726e6e -->

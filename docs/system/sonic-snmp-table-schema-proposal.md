@@ -170,14 +170,14 @@ sonic-cfggen -a '{
 
 ### SNMP 起動時の初期化遅延による `MIBUpdater` 例外（#225, #118）
 
-SNMP エージェントが `COUNTERS_QUEUE_NAME_MAP` または `COUNTERS_PORT_NAME_MAP` が Redis (COUNTERS_DB) に存在しない状態で起動すると、`MIBUpdater.start()` で例外が発生し、IF-MIB のデータが取得できなくなる。
+SNMP エージェントが `COUNTERS_QUEUE_NAME_MAP` または `COUNTERS_PORT_NAME_MAP` が [Redis](../reference/glossary.md#term-redis) ([COUNTERS_DB](../reference/glossary.md#term-counters_db)) に存在しない状態で起動すると、`MIBUpdater.start()` で例外が発生し、IF-MIB のデータが取得できなくなる。
 
 ```
 ERROR: MIBUpdater.start() caught an unexpected exception during update_data()
 Key 'b'COUNTERS_PORT_NAME_MAP'' unavailable in database 'COUNTERS_DB'
 ```
 
-原因は初期化タイミングの競合（portsyncd の起動が SNMP より遅い場合に発生）。
+原因は初期化タイミングの競合（[portsyncd](../reference/glossary.md#term-portsyncd) の起動が SNMP より遅い場合に発生）。
 
 **回避策:**
 
@@ -219,4 +219,4 @@ docker exec snmp supervisorctl status snmpd
 
 [^1]: `sonic-net/SONiC` `doc/snmp/snmp-schema-addition.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 601f13437a09 -->
+<!-- glossary-links-injected: b51c6da52a8e -->

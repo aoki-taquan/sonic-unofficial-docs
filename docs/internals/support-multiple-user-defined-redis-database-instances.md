@@ -188,20 +188,18 @@ sudo systemctl restart database
 
 ### SAI_STATUS_TABLE_FULL エラーで orchagent がシャットダウンする問題（sonic-buildimage#2125）
 
-SAI_STATUS_TABLE_FULL エラーで orchagent がシャットダウンする問題。SAI テーブルの容量制限に達した場合、orchagent は自動シャットダウンする設計。HW ごとのテーブル容量を事前確認すること
+SAI_STATUS_TABLE_FULL エラーで [orchagent](../reference/glossary.md#term-orchagent) がシャットダウンする問題。SAI テーブルの容量制限に達した場合、orchagent は自動シャットダウンする設計。HW ごとのテーブル容量を事前確認すること
 
 - 参照: [sonic-net/sonic-buildimage#2125](https://github.com/sonic-net/sonic-buildimage/issues/2125)
 
-
 ### ARP テーブルが上限に近い状態だと `show interfaces` の一部インターフェースが表示されない問題（sonic-buildimage#5031）
 
-ARP テーブルが上限に近い状態だと `show interfaces` の一部インターフェースが表示されない問題。`net.ipv4.neigh.default.gc_thresh3` を確認し必要に応じて拡張すること
+[ARP](../reference/glossary.md#term-arp) テーブルが上限に近い状態だと `show interfaces` の一部インターフェースが表示されない問題。`net.ipv4.neigh.default.gc_thresh3` を確認し必要に応じて拡張すること
 
 - 参照: [sonic-net/sonic-buildimage#5031](https://github.com/sonic-net/sonic-buildimage/issues/5031)
-
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/database/multi_database_instances.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 97b2a564f840 -->
+<!-- glossary-links-injected: 4f49ca43f02f -->

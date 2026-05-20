@@ -37,10 +37,9 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>RADIUS_SERVER")]
+  CDB[("CONFIG_DB<br/>RADIUS")]
   DM["hostcfgd"]
-  PAM["/etc/pam_radius_auth.d/<br/><ip>_<port>.conf"]
-  CDB --> DM --> PAM
+  CDB --> DM
 ```
 
 !!! note "凡例"
@@ -53,7 +52,7 @@ flowchart LR
 RADIUS_SERVER|<ip_or_hostname>
 ```
 
-`<ip_or_hostname>` は YANG の `inet:host` 型。IPv4 / IPv6 アドレスまたはドメイン名。
+`<ip_or_hostname>` は [YANG](../../reference/glossary.md#term-yang) の `inet:host` 型。IPv4 / IPv6 アドレスまたはドメイン名。
 
 ## フィールド
 
@@ -65,7 +64,7 @@ RADIUS_SERVER|<ip_or_hostname>
 | `priority` | uint8 (1..64) | `1` (CLI 経由) | サーバ選択優先度。降順でソートされる |
 | `timeout` | uint16 (1..60 秒) | `5` | サーバ固有の応答待ちタイムアウト |
 | `retransmit` | uint8 (0..10) | `3` | サーバ固有の再送回数 |
-| `vrf` | enum `mgmt`/`default` | なし (デフォルト VRF) | 接続に使用する VRF |
+| `vrf` | enum `mgmt`/`default` | なし (デフォルト [VRF](../../reference/glossary.md#term-vrf)) | 接続に使用する [VRF](../../reference/glossary.md#term-vrf) |
 | `src_intf` | union leafref | なし | 送信元インタフェース |
 
 ## 制約
@@ -78,7 +77,7 @@ RADIUS_SERVER|<ip_or_hostname>
 
 ## 購読者
 
-- `hostcfgd` (`sonic-host-services` の AAA ハンドラ): [CONFIG_DB](../../reference/glossary.md#term-config_db) → `/etc/pam_radius_auth.d/<ip>_<port>.conf` を生成し PAM に反映
+- `hostcfgd` (`sonic-host-services` の [AAA](../../reference/glossary.md#term-aaa) ハンドラ): [CONFIG_DB](../../reference/glossary.md#term-config_db) → `/etc/pam_radius_auth.d/<ip>_<port>.conf` を生成し PAM に反映
 - `AAA.authentication.login` が `radius` を含むとき、PAM 経由でログイン認証時に参照される
 
 ## 関連 CONFIG_DB / YANG / CLI
@@ -116,9 +115,9 @@ RADIUS_SERVER|<ip_or_hostname>
 
 ### よくある誤設定
 
-- `passkey` 未設定のまま登録 → hostcfgd が空文字列で pam_radius_auth.conf を生成 → 認証は常に失敗
+- `passkey` 未設定のまま登録 → [hostcfgd](../../reference/glossary.md#term-hostcfgd) が空文字列で pam_radius_auth.conf を生成 → 認証は常に失敗
 - `src_intf` と `src_ip` を同時指定 → `src_intf` が優先され `src_ip` は無視される (syslog に警告)
-- `retransmit: 0` を直接 CONFIG_DB に書き込むと YANG は valid (0..10) だが CLI 経由では設定不可能
+- `retransmit: 0` を直接 [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込むと YANG は valid (0..10) だが CLI 経由では設定不可能
 
 ### 確認コマンド
 
@@ -141,7 +140,7 @@ show radius
 ### `priority` 値別挙動
 | 値 | 挙動 |
 |----|------|
-| 1..64 | YANG 有効範囲。hostcfgd は降順ソート (`reverse=True`) でサーバリストを並べる。 |
+| 1..64 | YANG 有効範囲。[hostcfgd](../../reference/glossary.md#term-hostcfgd) は降順ソート (`reverse=True`) でサーバリストを並べる。 |
 | 0 | YANG 違反だが hostcfgd の `radius_global_default['priority']` は 0 を持つ。直接 DB 書き込みで設定された場合、最低優先度として動作。 |
 
 ### `vrf` 値別挙動
@@ -149,7 +148,7 @@ show radius
 |----|------|
 | `mgmt` | pam_radius_auth.conf に `vrf=mgmt` 行を追記。 |
 | `default` | pam_radius_auth.conf に `vrf=default` 行を追記。 |
-| 未設定 | vrf 行なし → OS デフォルト VRF で接続。 |
+| 未設定 | vrf 行なし → OS デフォルト [VRF](../../reference/glossary.md#term-vrf) で接続。 |
 
 ### `src_intf` 値別挙動
 | 値 | 挙動 |
@@ -423,7 +422,7 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。RADIUS は SSH/コンソール認証のコントロールプレーン処理。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。RADIUS は SSH/コンソール認証のコントロールプレーン処理。
 
 ### 段階 4: タイミング + 副作用
 
@@ -446,7 +445,7 @@ minigraph.py に RADIUS_SERVER テーブル生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -476,7 +475,7 @@ db_migrator.py での RADIUS_SERVER マイグレーションなし
 | `RADIUS` | `radius_global_handler` | `hostcfgd` L2473: `self.config_db.subscribe('RADIUS', make_callback(self.radius_global_handler))` | `hostcfgd:2473` |
 | `LOOPBACK_INTERFACE` | `lpbk_handler` → `handle_radius_source_intf_ip_chg` | `hostcfgd` L2483 — `src_intf` が Loopback の場合にトリガー | `hostcfgd:2483,500-509` |
 | `MGMT_INTERFACE` | `mgmt_intf_handler` → `handle_radius_source_intf_ip_chg` | `hostcfgd` L2485 — `src_intf` が eth0/mgmt の場合にトリガー | `hostcfgd:2485,500-509` |
-| `VLAN_INTERFACE` | `vlan_intf_handler` → `handle_radius_source_intf_ip_chg` | `hostcfgd` L2486 — `src_intf` が VLAN インタフェースの場合にトリガー | `hostcfgd:2486,500-509` |
+| `VLAN_INTERFACE` | `vlan_intf_handler` → `handle_radius_source_intf_ip_chg` | `hostcfgd` L2486 — `src_intf` が [VLAN](../../reference/glossary.md#term-vlan) インタフェースの場合にトリガー | `hostcfgd:2486,500-509` |
 | `DEVICE_METADATA` | `hostname_update` 経由 | `hostcfgd` L2492 — ホスト名変更時に NAS-Identifier を更新して `modify_conf_file()` 再実行 | `hostcfgd:566-574` |
 
 ### PAM 再生成経路
@@ -536,9 +535,9 @@ CONFIG_DB LOOPBACK_INTERFACE / MGMT_INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INT
 |---|---|---|---|
 | [`MGMT_INTERFACE`](mgmt-interface.md) | `get_interface_ip("eth0")` | `RADIUS|global` に `nas_ip` 未設定の場合、eth0 管理 IP を `nas_ip` として自動補完 | hostcfgd:600,671-674 |
 | `INTERFACE` | `get_interface_ip("Eth...")` | `RADIUS_SERVER.src_intf` が物理ポートのとき src_ip を解決 | hostcfgd:586,694 |
-| `VLAN_INTERFACE` | `get_interface_ip("Vlan...")` | `src_intf` が VLAN のとき | hostcfgd:593 |
-| `VLAN_SUB_INTERFACE` | `get_interface_ip` 分岐 | `src_intf` が VLAN sub-interface のとき | hostcfgd:588 |
-| `PORTCHANNEL_INTERFACE` | `get_interface_ip("Po...")` | `src_intf` が PortChannel のとき | hostcfgd:591 |
+| `VLAN_INTERFACE` | `get_interface_ip("Vlan...")` | `src_intf` が [VLAN](../../reference/glossary.md#term-vlan) のとき | hostcfgd:593 |
+| `VLAN_SUB_INTERFACE` | `get_interface_ip` 分岐 | `src_intf` が [VLAN](../../reference/glossary.md#term-vlan) sub-interface のとき | hostcfgd:588 |
+| `PORTCHANNEL_INTERFACE` | `get_interface_ip("Po...")` | `src_intf` が [PortChannel](../../reference/glossary.md#term-portchannel) のとき | hostcfgd:591 |
 | `LOOPBACK_INTERFACE` | `get_interface_ip("Loopback...")` | `src_intf` が Loopback のとき | hostcfgd:595 |
 | [`DEVICE_METADATA`](device-metadata.md) (`localhost.hostname`) | `get_hostname()` | `RADIUS|global` に `nas_id` 未設定の場合、ホスト名を `nas_id` として自動補完 | hostcfgd:566-577,675-678 |
 
@@ -561,7 +560,7 @@ CONFIG_DB LOOPBACK_INTERFACE / MGMT_INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INT
 
 ### 結論
 
-**プラットフォーム差なし**。RADIUS_SERVER 処理は host 単位で適用され、ASIC 種別・multi-asic / VOQ chassis 構成・ベンダー固有 PAM モジュールに依存しない。
+**プラットフォーム差なし**。RADIUS_SERVER 処理は host 単位で適用され、ASIC 種別・multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis 構成・ベンダー固有 PAM モジュールに依存しない。
 
 ### 根拠
 
@@ -581,7 +580,7 @@ CONFIG_DB LOOPBACK_INTERFACE / MGMT_INTERFACE / VLAN_INTERFACE / PORTCHANNEL_INT
 
 #### 4. VOQ chassis / line card
 
-VOQ chassis の各 line card / supervisor は独立した host `hostcfgd` を持ち、それぞれが自身の host CONFIG_DB の RADIUS_SERVER テーブルを処理する。chassis 全体での集中適用機構は存在しない。オペレータが各 host に同一の RADIUS_SERVER 設定を流す運用が前提。
+[VOQ](../../reference/glossary.md#term-voq) chassis の各 line card / supervisor は独立した host `hostcfgd` を持ち、それぞれが自身の host CONFIG_DB の RADIUS_SERVER テーブルを処理する。chassis 全体での集中適用機構は存在しない。オペレータが各 host に同一の RADIUS_SERVER 設定を流す運用が前提。
 
 #### 5. `NAS-IP-Address` の自動補完は eth0 固定
 
@@ -590,3 +589,5 @@ VOQ chassis の各 line card / supervisor は独立した host `hostcfgd` を持
 <!-- /platform -->
 
 <!-- glossary-links-injected: radius-server-2026-05-14 -->
+
+<!-- glossary-links-injected: 505310f6ce22 -->

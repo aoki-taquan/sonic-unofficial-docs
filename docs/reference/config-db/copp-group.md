@@ -62,7 +62,7 @@ flowchart LR
 `orchagent` 内の `CoppOrch` が `APP_DB COPP_TABLE` を Consumer として購読し、`processCoppTrapGroup()` でSAI API を呼び出す。
 
 - **クラス**: `CoppOrch(DBConnector* db, string tableName) : Orch(db, tableName)` — APP_DB `COPP_TABLE` を登録。<!-- evidence: copporch.cpp L191-192 -->
-- **SAI API 呼び出し一覧**:
+- **[SAI](../../reference/glossary.md#term-sai) API 呼び出し一覧**:
 
 | 操作 | SAI API | 条件 |
 |------|---------|------|
@@ -145,7 +145,7 @@ COPP_GROUP|<name>
 | `mode` | `storm` | Storm Control。`cir` のみ使用。`yellow_action` は無効。SAI `SAI_POLICER_MODE_STORM_CONTROL`。 |
 | `meter_type` | `packets` | `cir`/`pir` の単位が pps（パケット/秒）。SAI `SAI_METER_TYPE_PACKETS`。 |
 | `meter_type` | `bytes` | `cir`/`pir` の単位が bps（バイト/秒）。SAI `SAI_METER_TYPE_BYTES`。 |
-| `color` | `aware` | 入力 DSCP/color を引き継いで多段ポリシングが可能。SAI `SAI_POLICER_COLOR_SOURCE_AWARE`。 |
+| `color` | `aware` | 入力 [DSCP](../../reference/glossary.md#term-dscp)/color を引き継いで多段ポリシングが可能。SAI `SAI_POLICER_COLOR_SOURCE_AWARE`。 |
 | `color` | `blind` | すべてのパケットを green として扱う。SAI `SAI_POLICER_COLOR_SOURCE_BLIND`。 |
 | `trap_action` / `*_action` | `drop` | CPU に送らずに廃棄。SAI `SAI_PACKET_ACTION_DROP`。 |
 | `trap_action` / `*_action` | `forward` | 通常転送。CPU にコピーしない。SAI `SAI_PACKET_ACTION_FORWARD`。 |
@@ -208,13 +208,12 @@ show copp config
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`coppmgrd` → `CoppOrch` (APPL_DB 経由) が CONFIG_DB の `COPP_GROUP` テーブルを購読する。
+`coppmgrd` → `CoppOrch` ([APPL_DB](../../reference/glossary.md#term-appl_db) 経由) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `COPP_GROUP` テーブルを購読する。
 
 `COPP_GROUP` の key はグループ名 (例: `default`, `queue4_group1`)。policer の `cir`/`cbs` を含む。
 
@@ -260,7 +259,6 @@ show copp config
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
-
 
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
@@ -320,7 +318,7 @@ show copp config
 
 ### VOQ / Chassis 差
 
-`copporch.cpp` に VOQ chassis 固有のコードパスは存在しない。CoPP は CPU 宛トラフィックに適用されるため、VOQ スイッチファブリックの転送パスとは独立しており、linecard / system port による追加分岐はない。
+`copporch.cpp` に [VOQ](../../reference/glossary.md#term-voq) chassis 固有のコードパスは存在しない。[CoPP](../../reference/glossary.md#term-copp) は CPU 宛トラフィックに適用されるため、[VOQ](../../reference/glossary.md#term-voq) スイッチファブリックの転送パスとは独立しており、linecard / system port による追加分岐はない。
 <!-- /platform -->
 
 <!-- side-effects -->
@@ -332,17 +330,17 @@ CONFIG_DB `COPP_GROUP` への変更が連鎖して書き込まれる副次テー
 |---|---|---|---|---|---|
 | APPL_DB | `COPP_TABLE` | set | `COPP_TABLE\|<group-name>` | queue, trap_action, meter_type, mode, cir/cbs/pir/pbs, trap_ids 等 | `coppmgr.cpp:152` |
 | APPL_DB | `COPP_TABLE` | del | `COPP_TABLE\|<group-name>` | (全削除) | `coppmgr.cpp:126,288,891` |
-| STATE_DB | `COPP_GROUP_TABLE` | set/del | `COPP_GROUP_TABLE\|<group-name>` | `state=ok` | `coppmgr.cpp:424-436` |
-| STATE_DB | `COPP_TRAP_TABLE` | set/del | `COPP_TRAP_TABLE\|<trap-name>` | `state=ok` (coppmgr) / `hw_status=ok` (copporch) | `coppmgr.cpp:439-451`, `copporch.cpp:236` |
-| STATE_DB | `COPP_TRAP_CAPABILITY_TABLE` | set | `COPP_TRAP_CAPABILITY_TABLE\|traps` | `trap_ids=<comma-list>` | `copporch.cpp:296-299` |
-| ASIC_DB | `VIDTORID` (syncd 経由) | set | SAI OID | hostif_trap_group / policer OID | `copporch.cpp:780` |
-| COUNTERS_DB | `COUNTERS_TRAP_NAME_MAP` | set/hdel | `""` (hash field = trap_name) | counter_oid | `copporch.cpp:1452-1495` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `COPP_GROUP_TABLE` | set/del | `COPP_GROUP_TABLE\|<group-name>` | `state=ok` | `coppmgr.cpp:424-436` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `COPP_TRAP_TABLE` | set/del | `COPP_TRAP_TABLE\|<trap-name>` | `state=ok` (coppmgr) / `hw_status=ok` (copporch) | `coppmgr.cpp:439-451`, `copporch.cpp:236` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `COPP_TRAP_CAPABILITY_TABLE` | set | `COPP_TRAP_CAPABILITY_TABLE\|traps` | `trap_ids=<comma-list>` | `copporch.cpp:296-299` |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | `VIDTORID` ([syncd](../../reference/glossary.md#term-syncd) 経由) | set | SAI OID | hostif_trap_group / policer OID | `copporch.cpp:780` |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_TRAP_NAME_MAP` | set/hdel | `""` (hash field = trap_name) | counter_oid | `copporch.cpp:1452-1495` |
 
 **フロー概要**:
 1. `coppmgr` が CONFIG_DB `COPP_GROUP` 変化を検知 → APPL_DB `COPP_TABLE` に書込 + STATE_DB `COPP_GROUP_TABLE` に `state=ok` を記録
-2. `CoppOrch` (orchagent) が APPL_DB `COPP_TABLE` を購読 → SAI `sai_hostif_api->create_hostif_trap_group()` / `set_hostif_trap_group_attribute()` を呼出
+2. `CoppOrch` ([orchagent](../../reference/glossary.md#term-orchagent)) が APPL_DB `COPP_TABLE` を購読 → SAI `sai_hostif_api->create_hostif_trap_group()` / `set_hostif_trap_group_attribute()` を呼出
 3. `CoppOrch` 起動時に SAI ケーパビリティを問い合わせ → STATE_DB `COPP_TRAP_CAPABILITY_TABLE` に対応 trap_ids を一括記録
-4. トラップにカウンタをバインド → COUNTERS_DB `COUNTERS_TRAP_NAME_MAP` を更新
+4. トラップにカウンタをバインド → [COUNTERS_DB](../../reference/glossary.md#term-counters_db) `COUNTERS_TRAP_NAME_MAP` を更新
 <!-- /side-effects -->
 
 <!-- defaults -->
@@ -431,7 +429,7 @@ mergeConfig(COPP_GROUP)  # L372: GROUP をマージ — checkTrapGroupPending() 
 | 6 | `DEL` で `default` グループ削除試行 | `task_ignore` | WARN ログのみ。erase して続行 | — |
 | 7 | 未知 op type | `task_invalid_entry` | エラーログ。erase して次エントリへ | なし |
 | 8 | `out_of_range` / `exception` | `doCoppTask()` catch → `task_invalid_entry` | エラーログ。erase して次エントリへ | なし |
-| 9 | `copp_cfg.json` ファイル未検出 | `CoppMgr::parseInitFile()` | デフォルト CoPP ポリシーが適用されない | — |
+| 9 | `copp_cfg.json` ファイル未検出 | `CoppMgr::parseInitFile()` | デフォルト [CoPP](../../reference/glossary.md#term-copp) ポリシーが適用されない | — |
 
 ### task_failed 後の挙動
 
@@ -468,9 +466,9 @@ journalctl -u swss | grep -i copp
 | `default_trap_group` | `"default"` | デフォルトグループ名リテラル。DEL 拒否判定に使用 | `copporch.cpp:184` |
 | `default_trap_ids` | `{SAI_HOSTIF_TRAP_TYPE_TTL_ERROR}` | 起動時に強制登録される trap ID リスト | `copporch.cpp:185-187` |
 | TTL_ERROR `trap_priority` | `1` | `initDefaultTrapIds()` で SAI に設定するハードコード優先度。Mellanox/Marvell ではスキップ | `copporch.cpp:357` |
-| `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | HostIF trap FlexCounter ポーリング間隔 (10 秒) | `copporch.cpp:189` |
-| `FLEX_COUNTER_UPD_INTERVAL` | `1` 秒 | FlexCounter 更新タイマー間隔 | `copporch.cpp:37` |
-| `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` | `"HOSTIF_TRAP_FLOW_COUNTER"` | FlexCounter グループ名 (COUNTERS_DB キー) | `copporch.h:23` |
+| `HOSTIF_TRAP_COUNTER_POLLING_INTERVAL_MS` | `10000` ms | HostIF trap [FlexCounter](../../reference/glossary.md#term-flexcounter) ポーリング間隔 (10 秒) | `copporch.cpp:189` |
+| `FLEX_COUNTER_UPD_INTERVAL` | `1` 秒 | [FlexCounter](../../reference/glossary.md#term-flexcounter) 更新タイマー間隔 | `copporch.cpp:37` |
+| `HOSTIF_TRAP_COUNTER_FLEX_COUNTER_GROUP` | `"HOSTIF_TRAP_FLOW_COUNTER"` | [FlexCounter](../../reference/glossary.md#term-flexcounter) グループ名 ([COUNTERS_DB](../../reference/glossary.md#term-counters_db) キー) | `copporch.h:23` |
 
 ### プラットフォーム判定文字列 (orch.h)
 
@@ -532,7 +530,7 @@ journalctl -u swss | grep -i copp
 ユーザーが CONFIG_DB から DEL した場合も、init cfg に同名キーがあれば init 値で
 自動復元される（実質「DEL = init リセット」）。`coppmgr.cpp:898-921`
 
-- 既定グループ例: `default`、`queue4_group1`（BGP/LLDP）、`queue2_group1`（sflow/genetlink）
+- 既定グループ例: `default`、`queue4_group1`（[BGP](../../reference/glossary.md#term-bgp)/[LLDP](../../reference/glossary.md#term-lldp)）、`queue2_group1`（sflow/genetlink）
 - `default` グループは `CoppOrch` 側でも削除を `task_ignore` で拒否する二重防護
 <!-- /cross-refs -->
 
@@ -577,7 +575,7 @@ init_cfg に同名キーがある場合は DEL 後も `m_appCoppTable.set()` で
 
 ### SAI — Genetlink HOSTIF (genetlink_name/genetlink_mcgrp_name フィールドがある場合)
 
-`queue2_group1`（sflow/`sample_packet`）など genetlink 型グループに限り、カーネル Netlink ソケットが作成される。
+`queue2_group1`（sflow/`sample_packet`）など genetlink 型グループに限り、カーネル [Netlink](../../reference/glossary.md#term-netlink) ソケットが作成される。
 
 | 操作 | SAI API 呼び出し | 証跡 |
 |------|----------------|------|
@@ -603,4 +601,4 @@ sonic-db-cli COUNTERS_DB hgetall COUNTERS_TRAP_NAME_MAP
 ```
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 87fa713c3c5e -->
+<!-- glossary-links-injected: 4175e24580be -->

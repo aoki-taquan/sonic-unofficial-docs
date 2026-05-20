@@ -88,9 +88,9 @@ PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>|<pfc_priority>
 
 | フィールド | 値 | QosOrch 挙動 |
 |-----------|---|-------------|
-| `pfc_priority` | `0`..`7` (文字列) | SAI SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP に key として登録 |
+| `pfc_priority` | `0`..`7` (文字列) | [SAI](../../reference/glossary.md#term-sai) SAI_QOS_MAP_TYPE_PFC_PRIORITY_TO_PRIORITY_GROUP に key として登録 |
 | `pfc_priority` | 空文字 | YANG pattern では許容するが QosOrch は数値変換失敗でエラー |
-| `pg` | `0`..`7` (文字列) | 対応する ingress priority group として SAI に反映 |
+| `pg` | `0`..`7` (文字列) | 対応する ingress priority group として [SAI](../../reference/glossary.md#term-sai) に反映 |
 | `pg` | 空文字 | 同上 (QosOrch で変換失敗) |
 
 *enum なし — pfc_priority / pg ともに pattern [0-7]? の string 型。name は 1..32 文字の任意文字列。*
@@ -112,7 +112,7 @@ PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|<name>|<pfc_priority>
 
 ### 投入トリガー
 
-`config qos reload` 実行時に `sonic-cfggen` が `qos_config.j2` を展開し CONFIG_DB へ書き込む。`asic_type` が `mellanox` / `barefoot` 以外（例: broadcom, vs）では **PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブルは生成されない**。ただし `QosOrch` は ASIC 種別に関わらずテーブルを購読するため、CONFIG_DB に entry がなければ SAI 呼び出しも発生しない。
+`config qos reload` 実行時に `sonic-cfggen` が `qos_config.j2` を展開し [CONFIG_DB](../../reference/glossary.md#term-config_db) へ書き込む。`asic_type` が `mellanox` / `barefoot` 以外（例: broadcom, vs）では **PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブルは生成されない**。ただし `QosOrch` は ASIC 種別に関わらずテーブルを購読するため、CONFIG_DB に entry がなければ SAI 呼び出しも発生しない。
 
 ### priority 0-7 のうち 3 と 4 だけの理由
 
@@ -177,18 +177,17 @@ show priority-group persistent-watermark
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / QosOrch** (`sonic-swss/orchagent/qosorch.cpp`): `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` を `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / QosOrch** (`sonic-swss/orchagent/qosorch.cpp`): `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` を `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
 - QosOrch がマップエントリを解析し SAI priority group map として作成。
-- APP_DB への書き込みなし (orchagent → SAI 直接)。
+- APP_DB への書き込みなし ([orchagent](../../reference/glossary.md#term-orchagent) → SAI 直接)。
 
 ### 段階 3: APPL → SAI
 
@@ -198,7 +197,7 @@ show priority-group persistent-watermark
 ### 段階 4: タイミング + 副作用
 
 - マップ作成後、PORT_QOS_MAP での参照が更新されると即時ポートに適用される。
-- 副作用: PFC しきい値設定 (BUFFER_PG) と組み合わせて動作するため、両方の設定が揃う必要がある。
+- 副作用: PFC しきい値設定 ([BUFFER_PG](../../reference/glossary.md#term-buffer-pg)) と組み合わせて動作するため、両方の設定が揃う必要がある。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -208,7 +207,7 @@ PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブルへの書き込みが発生する
 
 ### CLI
 
-  - `config qos reload` — sonic-cfggen が `files/build_templates/qos_config.j2` を展開し PFC_PRIORITY_TO_PRIORITY_GROUP_MAP エントリを生成 (sonic-buildimage/files/build_templates/qos_config.j2)
+  - `config qos reload` — [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) が `files/build_templates/qos_config.j2` を展開し PFC_PRIORITY_TO_PRIORITY_GROUP_MAP エントリを生成 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/files/build_templates/qos_config.j2)
 
 ### minigraph / sonic-cfggen
 
@@ -216,7 +215,7 @@ minigraph.py に直接生成なし — `qos_config.j2` テンプレート経由
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -305,7 +304,6 @@ config qos reload
 ```
 
 <!-- /ordering -->
-
 
 <!-- cross-refs -->
 ## 暗黙参照 (Phase C)
@@ -447,8 +445,8 @@ YANG バリデーションをバイパスして 8 以上を書き込んだ場合
 | 同上エントリの erase | DEL 成功 | `qosorch.cpp:194` |
 | `m_pendingRemove = true` — 後続 SET を `task_need_retry` に | DEL 時に参照が残っている | `qosorch.cpp:185` |
 
-- **STATE_DB への書き込みなし** — `QosOrch` は PFC_PRIORITY_TO_PRIORITY_GROUP_MAP の処理で STATE_DB / APPL_DB へ書き込まない。CONFIG_DB → SAI 直結。
-- **APPL_DB への書き込みなし** — `APP_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_NAME` 定数 (`schema.h`) は存在するが master の orchagent は使用しない。
+- **[STATE_DB](../../reference/glossary.md#term-state_db) への書き込みなし** — `QosOrch` は PFC_PRIORITY_TO_PRIORITY_GROUP_MAP の処理で [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) へ書き込まない。CONFIG_DB → SAI 直結。
+- **[APPL_DB](../../reference/glossary.md#term-appl_db) への書き込みなし** — `APP_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_NAME` 定数 (`schema.h`) は存在するが master の [orchagent](../../reference/glossary.md#term-orchagent) は使用しない。
 
 ### PORT_QOS_MAP 経由の間接副作用
 
@@ -480,7 +478,7 @@ DEL 試行時に参照が残っている場合、`m_pendingRemove = true` がセ
 
 CONFIG_DB の `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP` は `orchdaemon.cpp:367-384` の `qos_tables` ベクタの一員として `CFG_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP_TABLE_NAME` を指定され、`new QosOrch(m_configDb, qos_tables)` に渡される。基底 `Orch::addConsumer()` が CONFIG_DB ID を検出し **`swss::SubscriberStateTable`** を選択する（`orch.cpp:1186-1196`）。
 
-`SubscriberStateTable` は Redis keyspace 通知 `__keyspace@<dbId>__:PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|*` を **`PSUBSCRIBE`** で購読し、通知受信後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`、ハードコード、`orchagent -b` 影響なし）。
+`SubscriberStateTable` は [Redis](../../reference/glossary.md#term-redis) keyspace 通知 `__keyspace@<dbId>__:PFC_PRIORITY_TO_PRIORITY_GROUP_MAP|*` を **`PSUBSCRIBE`** で購読し、通知受信後に `HGETALL` で値を再取得して `(key, op, fvs)` タプルを返す。バッチサイズは `TableConsumable::DEFAULT_POP_BATCH_SIZE = 128`（`table.h:164`、ハードコード、`orchagent -b` 影響なし）。
 
 ### ハンドラ登録とディスパッチ
 
@@ -560,3 +558,5 @@ Mellanox DualToR 構成 (`port_names_list_extra_queues` が非空) では `AZURE
 
 <!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-platform.md -->
 <!-- /platform -->
+
+<!-- glossary-links-injected: 60ee6110a22f -->

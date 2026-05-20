@@ -74,9 +74,9 @@ related:
 |---|---|---|
 | concept | ✅ 完成 (158 行) | meta |
 | setup | ✅ 完成 (272 行) | meta |
-| operations | ✅ 完成 (170 行) | meta |
-| internals | ✅ 完成 (124 行) | meta |
-| advanced | ✅ 完成 (104 行) | meta |
+| operations | ✅ 完成 (227 行) | meta |
+| internals | ✅ 完成 (163 行) | meta |
+| advanced | ✅ 完成 (155 行) | meta |
 
 <!-- /chapter-progress -->
 

@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-SONiC は Redis を複数データベースに分割して使用し、その構成を `/var/run/redis/sonic-db/database_config.json` で管理する[^1]。このファイルには **Redis インスタンス定義** (接続先 hostname/port/UNIX ソケット) と **データベース定義** (DB ID・セパレータ・所属インスタンス) が含まれる。
+SONiC は [Redis](../../reference/glossary.md#term-redis) を複数データベースに分割して使用し、その構成を `/var/run/redis/sonic-db/database_config.json` で管理する[^1]。このファイルには **[Redis](../../reference/glossary.md#term-redis) インスタンス定義** (接続先 hostname/port/UNIX ソケット) と **データベース定義** (DB ID・セパレータ・所属インスタンス) が含まれる。
 
 `SonicDBConfig` クラス (`sonic-swss-common`) がこの JSON を解析し、すべての DB 接続を仲介する。アプリケーションは `SonicDBConfig::getDbId()` / `getDbSock()` / `getSeparator()` 等の API を通じて DB 情報を取得する[^2]。
 
@@ -125,7 +125,7 @@ SONiC は Redis を複数データベースに分割して使用し、その構�
 <!-- ordering -->
 ## 初期化順序依存 (Phase B)
 
-`database_config.json` は CONFIG_DB テーブルではなく、Redis インスタンスと DB ID マッピングを定義するインフラ層ファイルである。ここでの「書込み順依存」は、ファイル生成 → Redis 起動 → アプリ接続 の厳密なシーケンスに関するものである。
+`database_config.json` は [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルではなく、[Redis](../../reference/glossary.md#term-redis) インスタンスと DB ID マッピングを定義するインフラ層ファイルである。ここでの「書込み順依存」は、ファイル生成 → Redis 起動 → アプリ接続 の厳密なシーケンスに関するものである。
 
 ### 起動シーケンス
 
@@ -160,7 +160,7 @@ docker-database コンテナ起動
 
 **二重初期化禁止 (依存 #2)**: `SonicDBConfig::initialize()` は `m_init` が真のとき `runtime_error("SonicDBConfig already initialized")` を投げる。アプリがカスタムパスで初期化した後にデフォルト自動初期化が走ることはない（evidence: `dbconnector.cpp:193-194`）。
 
-**グローバル設定未初期化でのクラッシュ (依存 #5)**: マルチ ASIC / SmartSwitch 環境で namespace を指定した API (`getDbId(..., netns)` 等) を `initializeGlobalConfig()` 前に呼ぶと、`SWSS_LOG_THROW` で即座にプロセスが終了する。これはプログラミングエラーを早期に露出させる設計判断（evidence: `dbconnector.cpp:259-261`）。
+**グローバル設定未初期化でのクラッシュ (依存 #5)**: マルチ ASIC / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 環境で namespace を指定した API (`getDbId(..., netns)` 等) を `initializeGlobalConfig()` 前に呼ぶと、`SWSS_LOG_THROW` で即座にプロセスが終了する。これはプログラミングエラーを早期に露出させる設計判断（evidence: `dbconnector.cpp:259-261`）。
 
 **database_config.json 生成後の変更は非対応**: `SonicDBConfig` は起動時に一度ファイルを読み込んだあとは再読み込みを行わない。Redis ポートや DB ID を変更する場合はコンテナ再起動が必要（`reset()` + `initialize()` の明示的な再実行、または再起動）。
 
@@ -173,17 +173,17 @@ docker-database コンテナ起動
 <!-- cross-refs -->
 ## 暗黙参照リソース (Phase C)
 
-`database_config.json` は CONFIG_DB テーブルではなくインフラ層ファイルであるため、
-他 CONFIG_DB テーブルへの leafref は存在しない。
+`database_config.json` は [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルではなくインフラ層ファイルであるため、
+他 [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブルへの leafref は存在しない。
 ただし `docker-database-init.sh` の起動ロジックおよび `SonicDBConfig` の初期化 API は
 以下のファイル・設定を暗黙的に参照する。
 
 | 参照先リソース | 参照タイミング | 依存内容 | 証跡 |
 |--------------|--------------|---------|------|
 | `/etc/sonic/database_config.json` (オーバーライドファイル) | `docker-database` コンテナ起動時 | 存在する場合はテンプレートレンダリングをスキップしてそのままコピー。存在しない場合のみ `database_config.json.j2` を使用 | `docker-database-init.sh:55-61` |
-| `/etc/sonic/enable_multidb` (フラグファイル) | `docker-database` コンテナ起動時 | 存在すると `multi_database_config.json.j2` を使用。複数 ASIC / SmartSwitch 構成を切り替えるスイッチ | `docker-database-init.sh:58-61` |
+| `/etc/sonic/enable_multidb` (フラグファイル) | `docker-database` コンテナ起動時 | 存在すると `multi_database_config.json.j2` を使用。複数 ASIC / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成を切り替えるスイッチ | `docker-database-init.sh:58-61` |
 | `/usr/share/sonic/platform/chassisdb.conf` | `docker-database` コンテナ起動時 | `source` で読み込み、`start_chassis_db` / `chassis_db_address` / `chassis_db_port` を取得。`start_chassis_db=1` 時のみ `CHASSIS_APP_DB` エントリを最終設定に含める | `docker-database-init.sh:77-78`, `docker-database-init.sh:124-127` |
-| `/var/run/redis/sonic-db/database_global.json` | `SonicDBConfig::initializeGlobalConfig()` 呼び出し時 | マルチ ASIC / SmartSwitch 環境で namespace 付き API 使用前に必須。未初期化で namespace 付き API を呼ぶと `SWSS_LOG_THROW` で即クラッシュ | `dbconnector.cpp:228-231` |
+| `/var/run/redis/sonic-db/database_global.json` | `SonicDBConfig::initializeGlobalConfig()` 呼び出し時 | マルチ ASIC / [SmartSwitch](../../reference/glossary.md#term-smartswitch) 環境で namespace 付き API 使用前に必須。未初期化で namespace 付き API を呼ぶと `SWSS_LOG_THROW` で即クラッシュ | `dbconnector.cpp:228-231` |
 | `/etc/sonic/database_global.json` (グローバルオーバーライド) | `docker-database` コンテナ起動時 (マルチ ASIC / SmartSwitch のみ) | 存在する場合はテンプレートレンダリングをスキップしてそのままコピー | `docker-database-init.sh:106-109` |
 | `NAMESPACE_COUNT` / `NUM_DPU` 環境変数 | `docker-database` コンテナ起動時 | `NAMESPACE_COUNT > 1` または `NUM_DPU > 1` の場合のみ `database_global.json` を生成 | `docker-database-init.sh:104-110` |
 
@@ -300,8 +300,8 @@ docker-database コンテナ起動
 | `SonicDBConfig::DEFAULT_SONIC_DB_GLOBAL_CONFIG_FILE` | `/var/run/redis/sonic-db/database_global.json` | `dbconnector.h:91` |
 | `RedisContext::DEFAULT_UNIXSOCKET` | `/var/run/redis/redis.sock` | `dbconnector.h:169,206` |
 | `redis_port` (デフォルト) | `6379` | `docker-database-init.sh:20` |
-| `redis_port` (DPU インスタンス) | `6381 + DPU_ID` | `docker-database-init.sh:28` |
-| `REMOTE_DB_PORT` (DPU リモート) | `6380 + d` | `docker-database-init.sh:40` |
+| `redis_port` ([DPU](../../reference/glossary.md#term-dpu) インスタンス) | `6381 + DPU_ID` | `docker-database-init.sh:28` |
+| `REMOTE_DB_PORT` ([DPU](../../reference/glossary.md#term-dpu) リモート) | `6380 + d` | `docker-database-init.sh:40` |
 | `BMP_DB_PORT` | `6400` | `docker-database-init.sh:49` |
 | `REDIS_DIR` | `/var/run/redis${NAMESPACE_ID}` | `docker-database-init.sh:51` |
 | `KEY_DEL_CHUNK_SIZE` | `128` | `dbconnector.cpp:23` (Redis キー一括削除サイズ) |
@@ -321,10 +321,10 @@ docker-database コンテナ起動
 | 副次 DB | 書込有無 | 根拠 |
 |---------|---------|------|
 | CONFIG_DB | なし | `database_config.json` 自体が CONFIG_DB に格納されず、`SonicDBConfig` は CONFIG_DB へ書き込まない (`dbconnector.cpp` 全体でDB書込呼出ゼロ) |
-| APPL_DB | なし | `SonicDBConfig` は参照専用クラス。`parseDatabaseConfig()` / `initialize()` 内に Producer・Table・hset・set 呼出なし (`dbconnector.cpp:27-204`) |
-| STATE_DB | なし | `SonicDBConfig` は STATE_DB への接続を一切保持しない。起動完了通知を STATE_DB に書き込む仕組みも存在しない |
-| ASIC_DB / COUNTERS_DB / FLEX_COUNTER_DB | なし | SAI 非経由。`database_config.json` の変更は orchagent / syncd に伝播しない。SAI ドライバ側の DB ID も `schema.h` マクロで静的に固定 |
-| LOGLEVEL_DB | なし | `SonicDBConfig` の動作はログレベル DB を購読・書込しない |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `SonicDBConfig` は参照専用クラス。`parseDatabaseConfig()` / `initialize()` 内に Producer・Table・hset・set 呼出なし (`dbconnector.cpp:27-204`) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `SonicDBConfig` は [STATE_DB](../../reference/glossary.md#term-state_db) への接続を一切保持しない。起動完了通知を [STATE_DB](../../reference/glossary.md#term-state_db) に書き込む仕組みも存在しない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由。`database_config.json` の変更は [orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) に伝播しない。[SAI](../../reference/glossary.md#term-sai) ドライバ側の DB ID も `schema.h` マクロで静的に固定 |
+| [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) | なし | `SonicDBConfig` の動作はログレベル DB を購読・書込しない |
 
 ### `reset()` 実行時の副次効果
 
@@ -393,7 +393,7 @@ supervisord が Redis インスタンスを再起動
 | `DATABASE_TYPE` | 起動文脈 | 生成内容 | 特殊処理 |
 |-----------------|---------|---------|---------|
 | `""` (未設定) | 通常ノード / multi-ASIC host namespace | `database_config.json.j2` | 標準構成 |
-| `dpudb` | SmartSwitch NPU から見た DPU 用 DB | `database_config.json.j2` (DPU エントリ付き) | `host_ip=169.254.200.254`、`redis_port=6381+DPU_ID` |
+| `dpudb` | SmartSwitch [NPU](../../reference/glossary.md#term-npu) から見た [DPU](../../reference/glossary.md#term-dpu) 用 DB | `database_config.json.j2` (DPU エントリ付き) | `host_ip=169.254.200.254`、`redis_port=6381+DPU_ID` |
 | `bmcdb` | BMC 搭載ノード | `database_config.json.j2` | BMP DB エントリ除外 |
 | `chassisdb` | VoQ Chassis Supervisor 専用 DB コンテナ | supervisord config のみ生成して `exit 0` | `update_chassisdb_config -k` で chassis 専用設定を保持 |
 
@@ -426,7 +426,7 @@ VoQ ラインカードでは Redis の **protected mode が無効化** される
 | 構成 | `database_config.json` の差異 | `database_global.json` 生成 |
 |------|------------------------------|---------------------------|
 | single-ASIC (T0/T1) | 標準テンプレート | なし |
-| multi-ASIC (複数 NPU) | host namespace: 標準 + global。asicN namespace: 標準のみ | host namespace のみ生成 |
+| multi-ASIC (複数 [NPU](../../reference/glossary.md#term-npu)) | host namespace: 標準 + global。asicN namespace: 標準のみ | host namespace のみ生成 |
 | VoQ Chassis (line card) | chassis エントリ除外 / protected mode 無効 | なし (line card は NAMESPACE_COUNT 非対象) |
 | VoQ Chassis (supervisor) | `chassisdb` 専用経路 (`exit 0`) | なし |
 | SmartSwitch (DPU) | `dpudb` エントリ付き / ポート `6381+DPU_ID` | `NUM_DPU > 1` 時に host 側で生成 |
@@ -438,7 +438,7 @@ VoQ ラインカードでは Redis の **protected mode が無効化** される
 
 `separator` はキー文字列でテーブル名と行キーを区切る文字:
 
-- `":"` — `TABLE_NAME:ROW_KEY` 形式 (APPL_DB 系、COUNTERS_DB 系)
+- `":"` — `TABLE_NAME:ROW_KEY` 形式 ([APPL_DB](../../reference/glossary.md#term-appl_db) 系、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) 系)
 - `"|"` — `TABLE_NAME|ROW_KEY` 形式 (CONFIG_DB、STATE_DB 系)
 
 `SonicDBConfig::getSeparator()` で DB 名または DB ID から取得できる[^2]。
@@ -480,9 +480,6 @@ docker-database-init.sh
 
 ## 引用元
 
-<!-- footnote anchor seeds -->
-出典: [^3] [^4]
-
 [^1]: `sonic-net/sonic-swss-common` `common/database_config.json` — 配布デフォルト JSON。<https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/database_config.json>
 
 [^2]: `sonic-net/sonic-swss-common` `common/dbconnector.h` / `dbconnector.cpp` — `SonicDBConfig` クラス、`DEFAULT_SONIC_DB_CONFIG_FILE` 定数、`parseDatabaseConfig()` 実装。<https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/dbconnector.h>
@@ -490,3 +487,5 @@ docker-database-init.sh
 [^3]: `sonic-net/sonic-buildimage` `dockers/docker-database/database_config.json.j2` — 実環境 Jinja2 テンプレート。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/dockers/docker-database/database_config.json.j2>
 
 [^4]: `sonic-net/sonic-buildimage` `dockers/docker-database/docker-database-init.sh` — docker-database 起動スクリプト、ファイル生成ロジック。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/dockers/docker-database/docker-database-init.sh>
+
+<!-- glossary-links-injected: dbd9c95a9d8a -->

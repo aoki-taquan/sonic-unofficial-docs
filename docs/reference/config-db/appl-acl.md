@@ -41,15 +41,15 @@ related:
 
 ## 概要
 
-APPL_DB には CONFIG_DB の ACL テーブル群に対応する 3 本のテーブルが存在する[^1]:
+[APPL_DB](../../reference/glossary.md#term-appl_db) には [CONFIG_DB](../../reference/glossary.md#term-config_db) の [ACL](../../reference/glossary.md#term-acl) テーブル群に対応する 3 本のテーブルが存在する[^1]:
 
-| APPL_DB テーブル名 | スキーマ定数 | 主な書き込み元 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) テーブル名 | スキーマ定数 | 主な書き込み元 |
 |---|---|---|
 | `ACL_TABLE_TABLE` | `APP_ACL_TABLE_TABLE_NAME` (schema.h:94) | vnetorch, mclagsyncd, dashenifwdorch |
 | `ACL_TABLE_TYPE_TABLE` | `APP_ACL_TABLE_TYPE_TABLE_NAME` (schema.h:95) | vnetorch, dashenifwdorch |
 | `ACL_RULE_TABLE` | `APP_ACL_RULE_TABLE_NAME` (schema.h:96) | vnetorch, mclagsyncd |
 
-CONFIG_DB の `ACL_TABLE` / `ACL_TABLE_TYPE` / `ACL_RULE` と同一のハンドラ (`AclOrch::doTask()`) が処理する。フィールド名・許容値は CONFIG_DB 版と同一。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) の `ACL_TABLE` / `ACL_TABLE_TYPE` / `ACL_RULE` と同一のハンドラ (`AclOrch::doTask()`) が処理する。フィールド名・許容値は [CONFIG_DB](../../reference/glossary.md#term-config_db) 版と同一。
 
 !!! warning "YANG 未定義"
     3 テーブルとも `sonic-yang-models` に該当 YANG モジュールが存在しない。スキーマの正本は `sonic-swss/orchagent/aclorch.{h,cpp}` および `acltable.h`。
@@ -70,6 +70,26 @@ flowchart LR
 
 ---
 
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>ACL_TABLE")]
+  DM["AclOrch"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_ACL_TABLE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_acl_api"]
+  SYNCD --> SAI
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
+
 ## ACL_TABLE_TABLE
 
 ### key 構造
@@ -86,7 +106,7 @@ ACL_TABLE_TABLE|<table_name>
 | `TYPE` | `ACL_TABLE_TYPE` | string | テーブルタイプ |
 | `STAGE` | `ACL_TABLE_STAGE` | enum | `INGRESS` / `EGRESS` / `PRE_INGRESS` |
 | `PORTS` | `ACL_TABLE_PORTS` | カンマ区切り string | バインドポート |
-| `SERVICES` | `ACL_TABLE_SERVICES` | string | (コントロールプレーン ACL 用、読み捨て) |
+| `SERVICES` | `ACL_TABLE_SERVICES` | string | (コントロールプレーン [ACL](../../reference/glossary.md#term-acl) 用、読み捨て) |
 
 ### 書き込み例
 
@@ -108,7 +128,7 @@ FieldValueTuple type_attr("type", "L3");
 FieldValueTuple port_attr("ports", isolate_src_port);
 p_acl_table_tbl->set(acl_name, acl_attrs);
 ```
-mclagsyncd は `stage` を未指定 → orchagent の C++ struct default `INGRESS` が適用される。
+mclagsyncd は `stage` を未指定 → [orchagent](../../reference/glossary.md#term-orchagent) の C++ struct default `INGRESS` が適用される。
 
 ---
 
@@ -188,11 +208,11 @@ p_acl_rule_tbl->set(acl_rule_name, acl_rule_attrs);
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
-YANG スキーマに `default` 宣言がない（全テーブル YANG 未定義）状態で、C++ struct 初期化・書き込みプロセスのハードコード値・orchagent の自動補完によって実質的に適用されるデフォルト値。
+[YANG](../../reference/glossary.md#term-yang) スキーマに `default` 宣言がない（全テーブル [YANG](../../reference/glossary.md#term-yang) 未定義）状態で、C++ struct 初期化・書き込みプロセスのハードコード値・[orchagent](../../reference/glossary.md#term-orchagent) の自動補完によって実質的に適用されるデフォルト値。
 
 ### ACL_TABLE_TABLE フィールドデフォルト
 
-| フィールド | YANG default | コード由来デフォルト | 発生源 |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | コード由来デフォルト | 発生源 |
 |---|---|---|---|
 | `POLICY_DESC` | なし | `""` (C++ string 初期値) / 書き込み側固定文字列 | `AclTable::description` (C++ string default); vnetorch.cpp:3791, mclaglink.cpp:327, dashenifwdorch.cpp:637 |
 | `TYPE` | なし | **なし** (必須) | `processAclTableType()` 空文字 reject (aclorch.cpp:5823) |
@@ -208,11 +228,11 @@ C++ の `AclTable` クラスは `stage = ACL_STAGE_INGRESS` でメンバを初�
 acl_stage_type_t stage = ACL_STAGE_INGRESS;
 ```
 
-`STAGE` フィールドが APPL_DB エントリに存在しない場合、`processAclTableStage()` が呼ばれず INGRESS がそのまま有効になる。mclagsyncd は `stage` フィールドを書き込まないため、この C++ default に依存している。
+`STAGE` フィールドが [APPL_DB](../../reference/glossary.md#term-appl_db) エントリに存在しない場合、`processAclTableStage()` が呼ばれず INGRESS がそのまま有効になる。mclagsyncd は `stage` フィールドを書き込まないため、この C++ default に依存している。
 
 #### `TYPE` の詳細
 
-`processAclTableType()` は空文字のみ reject する (`aclorch.cpp:5823`)。`TYPE` フィールド自体が省略されると `bAllAttributesOk = false` となり、エントリが erase されて SAI テーブルは作成されない。実質的に必須フィールド。
+`processAclTableType()` は空文字のみ reject する (`aclorch.cpp:5823`)。`TYPE` フィールド自体が省略されると `bAllAttributesOk = false` となり、エントリが erase されて [SAI](../../reference/glossary.md#term-sai) テーブルは作成されない。実質的に必須フィールド。
 
 ---
 
@@ -224,7 +244,7 @@ acl_stage_type_t stage = ACL_STAGE_INGRESS;
 | `ACTIONS` | なし | **なし** (必須) | 同上 |
 | `BIND_POINTS` | なし | **なし** (必須) | 同上 |
 
-3 フィールドとも省略時はカスタム ACL table type が不完全として扱われ、対応する ACL_TABLE_TABLE エントリが pending 状態になる。
+3 フィールドとも省略時はカスタム [ACL](../../reference/glossary.md#term-acl) table type が不完全として扱われ、対応する ACL_TABLE_TABLE エントリが pending 状態になる。
 
 ---
 
@@ -247,7 +267,7 @@ if (!(value >= m_minPriority && value <= m_maxPriority))
     return false;
 ```
 
-`PRIORITY` を省略すると `m_priority = 0` のまま。`m_minPriority` / `m_maxPriority` は起動時 SAI capability query で取得 (`aclorch.cpp:3695`) され、0 が range 外なら `setPriority()` が `false` を返す。ただし `validateAddPriority()` が呼ばれなければ (= フィールドが存在しなければ) チェックをスキップするため、0 priority のまま SAI に投入される可能性がある。
+`PRIORITY` を省略すると `m_priority = 0` のまま。`m_minPriority` / `m_maxPriority` は起動時 [SAI](../../reference/glossary.md#term-sai) capability query で取得 (`aclorch.cpp:3695`) され、0 が range 外なら `setPriority()` が `false` を返す。ただし `validateAddPriority()` が呼ばれなければ (= フィールドが存在しなければ) チェックをスキップするため、0 priority のまま [SAI](../../reference/glossary.md#term-sai) に投入される可能性がある。
 
 #### TCP_FLAGS → IP_PROTOCOL 自動補完
 
@@ -262,7 +282,7 @@ if (bHasTCPFlag && !bHasIPProtocol)
 }
 ```
 
-`TCP_FLAGS` match フィールドが存在し `IP_PROTOCOL` / `NEXT_HEADER` が未指定の場合、orchagent が SAI エントリ作成前に `IP_PROTOCOL = 6` (IPv4) または `NEXT_HEADER = 6` (IPv6) を自動付与する。この補完は CONFIG_DB / APPL_DB ルール両方に適用される。
+`TCP_FLAGS` match フィールドが存在し `IP_PROTOCOL` / `NEXT_HEADER` が未指定の場合、[orchagent](../../reference/glossary.md#term-orchagent) が SAI エントリ作成前に `IP_PROTOCOL = 6` (IPv4) または `NEXT_HEADER = 6` (IPv6) を自動付与する。この補完は CONFIG_DB / APPL_DB ルール両方に適用される。
 
 ---
 
@@ -304,7 +324,7 @@ if (bHasTCPFlag && !bHasIPProtocol)
 
 ### 主要な制約詳細
 
-**`allPortsReady()` 先行必須 (#1)**: `doTask()` L4276–4279 で `gPortsOrch->allPortsReady()` が false の間、関数冒頭で `return`。APPL_DB の全 ACL イベントが `Consumer::m_toSync` に積まれたまま保留される。ログ出力・STATE_DB 書込みともなし。
+**`allPortsReady()` 先行必須 (#1)**: `doTask()` L4276–4279 で `gPortsOrch->allPortsReady()` が false の間、関数冒頭で `return`。APPL_DB の全 ACL イベントが `Consumer::m_toSync` に積まれたまま保留される。ログ出力・[STATE_DB](../../reference/glossary.md#term-state_db) 書込みともなし。
 
 **ACL_TABLE_TYPE → ACL_TABLE 待機 (#2)**: `doAclTableTask()` L5432–5436 で `getAclTableType(tableTypeName)` が `nullptr` の場合（カスタム type 未登録）、`it++; continue;` で無制限再試行。組込み type（`L3`, `L3V6`, `MIRROR` 等）は起動時に `initAclTableTypes()` で登録済みのため待機不要。vnetorch が使う `VNET_TUNNEL_TERM_ACL_TABLE_TYPE` 等のカスタム type は ACL_TABLE_TYPE_TABLE への先行 SET が必要。
 
@@ -312,7 +332,7 @@ if (bHasTCPFlag && !bHasIPProtocol)
 
 **ACL_TABLE → ACL_RULE 親子順序 (#5)**: `doAclRuleTask()` L5548–5564 で `getTableById(table_id)` が `SAI_NULL_OBJECT_ID` を返す間（対応 ACL_TABLE が SAI 未登録）、`it++; continue;` で無制限待機。書き込み元プロセスが ACL_RULE_TABLE を先に投入しても自動待機で吸収される。
 
-**retry cache 経由の非自明な順序 (#6)**: SAI リソース枯渇 (`isSaiStatusResourceFull()` が真) で `addAclRule()` が失敗した場合、`APP_ACL_RULE_TABLE_NAME` の RetryCache にパークして `"Pending creation"` を STATE_DB に書く。同テーブル内の別ルールが `removeAclRule()` 成功すると `notifyRetry()` L5714–5721 が再キューし、成功時に `"Active"` へ上書きされる。**ACL_TABLE_TABLE / ACL_TABLE_TYPE_TABLE は RetryCache 対象外**（evidence: `aclorch.cpp:4221–4222`）。
+**retry cache 経由の非自明な順序 (#6)**: SAI リソース枯渇 (`isSaiStatusResourceFull()` が真) で `addAclRule()` が失敗した場合、`APP_ACL_RULE_TABLE_NAME` の RetryCache にパークして `"Pending creation"` を [STATE_DB](../../reference/glossary.md#term-state_db) に書く。同テーブル内の別ルールが `removeAclRule()` 成功すると `notifyRetry()` L5714–5721 が再キューし、成功時に `"Active"` へ上書きされる。**ACL_TABLE_TABLE / ACL_TABLE_TYPE_TABLE は RetryCache 対象外**（evidence: `aclorch.cpp:4221–4222`）。
 
 **ACL_TABLE_TYPE_TABLE の分割 SET 非サポート (#8)**: `doAclTableTypeTask()` L5742–5772 では 1 回の SET で MATCHES / ACTIONS / BIND_POINTS の 3 フィールドが揃っている前提で処理する。部分フィールドで SET した場合は type オブジェクトが不完全となり廃棄される（関連 ACL_TABLE は #2 の無制限待機に入る）。
 
@@ -348,7 +368,7 @@ if (!gPortsOrch->allPortsReady())
 }
 ```
 
-起動直後 / port 構成変更直後に vnetorch・mclagsyncd・dashenifwdorch が APPL_DB へ書き込んだエントリは、`Consumer::m_toSync` に滞留し**暗黙 retry**される（erase されない・ログ出力なし・STATE_DB 書き込みなし）。
+起動直後 / port 構成変更直後に vnetorch・mclagsyncd・dashenifwdorch が APPL_DB へ書き込んだエントリは、`Consumer::m_toSync` に滞留し**暗黙 retry**される（erase されない・ログ出力なし・[STATE_DB](../../reference/glossary.md#term-state_db) 書き込みなし）。
 
 **(2) `APP_ACL_RULE_TABLE` 用 RetryCache** (`aclorch.cpp:4221-4222`):
 
@@ -622,7 +642,7 @@ APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` は `A
 |---|---|---|---|---|
 | **ASIC action capability** (`isAclActionSupported`) | ASIC (SAI 動的照会) | vnetorch の `REDIRECT_ACTION` / dashenifwdorch の REDIRECT 系 | SAI が action 未実装の ASIC では `validateAddAction()` が false → rule INACTIVE | `aclorch.cpp:1681-1688, 3987-4042, 5237-5246` |
 | **ACL 優先度範囲** (`m_minPriority` / `m_maxPriority`) | ASIC (起動時 SAI 取得) | 全書込み元 | 範囲外の `PRIORITY` で `setPriority()` false → rule INACTIVE | `aclorch.cpp:3687-3699, 1654-1661` |
-| **SmartSwitch DPU 分岐** (`gMySwitchType == "dpu"`) | SmartSwitch DPU 側 orchagent | dashenifwdorch (DPU 側) のみ | DPU 側では priority 範囲取得と `queryAclActionCapability()` を **スキップ** → `m_minPriority = m_maxPriority = 0` のまま動作、action capability 未検証 | `aclorch.cpp:3686-3710` |
+| **[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 分岐** (`gMySwitchType == "dpu"`) | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 側 orchagent | dashenifwdorch ([DPU](../../reference/glossary.md#term-dpu) 側) のみ | DPU 側では priority 範囲取得と `queryAclActionCapability()` を **スキップ** → `m_minPriority = m_maxPriority = 0` のまま動作、action capability 未検証 | `aclorch.cpp:3686-3710` |
 | **multi-asic namespace** | 構成 | 全書込み元 (namespace 毎に独立 orchagent) | 各 ASIC の SAI capability / 優先度範囲が異なれば、同一 APPL_DB エントリでも namespace ごとに異なる挙動 | 構成上の派生 (`aclorch.cpp` 自体は namespace 非対応) |
 
 ### APPL_DB 経路では発火しない差分
@@ -633,7 +653,7 @@ CONFIG_DB 版で列挙される MIRROR V6 / `isCombinedMirrorV6Table` / `L3V4V6`
 |---|---|---|---|
 | `vnetorch` | `VNET_TUNNEL_TERM` (custom type) | `MATCH_DST_IP` / `MATCH_TUNNEL_TERM` / `ACTION_REDIRECT_ACTION` | ASIC capability (REDIRECT support) のみ |
 | `mclagsyncd` | `L3` | `IP_TYPE=ANY` / `OUT_PORTS` / `PACKET_ACTION=DROP` | 実質なし (全 ASIC で DROP 対応) |
-| `dashenifwdorch` | (ENI fwd custom) | REDIRECT 系 | ASIC capability + DPU 分岐 |
+| `dashenifwdorch` | ([ENI](../../reference/glossary.md#term-eni) fwd custom) | REDIRECT 系 | ASIC capability + DPU 分岐 |
 
 !!! warning "SmartSwitch DPU 側で APPL_DB ACL を書く場合"
     `gMySwitchType == "dpu"` の orchagent では `AclOrch::init()` が
@@ -649,7 +669,7 @@ CONFIG_DB 版で列挙される MIRROR V6 / `isCombinedMirrorV6Table` / `L3V4V6`
     INACTIVE になる ASIC とそうでない ASIC が混在し得る。確認は各 namespace の
     `sonic-db-cli -n asicN STATE_DB hgetall 'ACL_TABLE_TABLE|<name>'` で行う。
 
-詳細な platform 識別文字列 (`BRCM_PLATFORM_SUBSTRING` 等) / capability 表 / プラットフォーム別サマリは CONFIG_DB 版 [`ACL_RULE`](acl-rule.md) を参照。
+詳細な platform 識別文字列 (`BRCM_PLATFORM_SUBSTRING` 等) / capability 表 / プラットフォーム別サマリは CONFIG_DB 版 [`ACL_RULE`](acl-rule.md#プラットフォーム差-phase-h) を参照。
 
 > **証跡**: `AclOrch::init()` priority 範囲取得 `aclorch.cpp:3687-3699`、DPU 分岐 `aclorch.cpp:3686-3710`、`isAclActionSupported()` `aclorch.cpp:5237-5246`、`validateAddAction()` `aclorch.cpp:1681-1688`、`queryAclActionCapability()` `aclorch.cpp:3987-4042`、`setPriority()` 範囲チェック `aclorch.cpp:1654-1661`、書き込み元仕様 `vnetorch.cpp:3775-3837` / `mclaglink.cpp:325-373` / `dashenifwdorch.cpp:619-643`。詳細分析 `meta/_intermediate/cdb-flow/appl-acl-platform.md`
 <!-- /platform -->
@@ -765,7 +785,7 @@ vnetorch の `9998` は SAI から取得した `m_minPriority` / `m_maxPriority`
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` への SET / DEL は、`AclOrch::doTask()` を経由して **STATE_DB / COUNTERS_DB / FLEX_COUNTER_DB** に副次書込みを発火させる。CONFIG_DB 経路と同一の `AclOrch` インスタンスで処理されるため、副次書込みのメカニズムは CONFIG_DB 版と共通。本節は APPL_DB 経路で実発火するもののみを列挙する。
+APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` への SET / DEL は、`AclOrch::doTask()` を経由して **STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)** に副次書込みを発火させる。CONFIG_DB 経路と同一の `AclOrch` インスタンスで処理されるため、副次書込みのメカニズムは CONFIG_DB 版と共通。本節は APPL_DB 経路で実発火するもののみを列挙する。
 
 ### STATE_DB
 
@@ -846,7 +866,7 @@ m_countersDb.hdel(COUNTERS_ACL_COUNTER_RULE_MAP, ruleIdentifier);
 | ルール削除 (`removeAclRule` / DEL) | aclorch.cpp:5019, 5157, 3001, 3095 |
 | 既存ルール更新で counter 削除 | aclorch.cpp:1519 |
 
-各書込み元 (`vnetorch` / `mclagsyncd` / `dashenifwdorch`) は明示的に `RULE_COUNTER=false` を指定しないため、`m_createCounter=true` の経路に乗り COUNTERS_DB 登録が既定で発火する。
+各書込み元 (`vnetorch` / `mclagsyncd` / `dashenifwdorch`) は明示的に `RULE_COUNTER=false` を指定しないため、`m_createCounter=true` の経路に乗り [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 登録が既定で発火する。
 
 ### FLEX_COUNTER_DB
 
@@ -877,15 +897,15 @@ m_flex_counter_manager.clearCounterIdList(rule.getCounterOid());
 - key: `ACL_STAT_COUNTER:<sai_counter_oid>` (グループ名 + `:` + serialize OID)
 - field: SAI counter attribute ID 列 (`PACKETS`, `BYTES` 等を `sai_metadata_get_attr_metadata` + `sai_serialize_attr_id` で文字列化, `aclorch.cpp:6030-6038`)
 
-APPL_DB の新規ルール作成 / 削除と **COUNTERS_DB と同タイミング** で FLEX_COUNTER_DB エントリも追加 / 削除される。`FLEX_COUNTER_GROUP_TABLE|ACL_STAT_COUNTER` (polling interval 等) はコンストラクタ時の 1 回のみ書込まれ、APPL_DB SET/DEL では発火しない。
+APPL_DB の新規ルール作成 / 削除と **[COUNTERS_DB](../../reference/glossary.md#term-counters_db) と同タイミング** で [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) エントリも追加 / 削除される。`FLEX_COUNTER_GROUP_TABLE|ACL_STAT_COUNTER` (polling interval 等) はコンストラクタ時の 1 回のみ書込まれ、APPL_DB SET/DEL では発火しない。
 
 ### 書込み元プロセス別の副次効果
 
-| 書込み元 | 主要 type | STATE_DB | COUNTERS_DB | FLEX_COUNTER_DB |
+| 書込み元 | 主要 type | STATE_DB | COUNTERS_DB | [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) |
 |---|---|---|---|---|
 | `vnetorch` (VNET_TUNNEL_TERM_*) | カスタム `VNET_TUNNEL_TERM` | ACL_TABLE_TABLE + ACL_RULE_TABLE status | ACL_COUNTER_RULE_MAP に登録 | ACL_STAT_COUNTER に counter OID 登録 |
 | `mclagsyncd` (mclag egress port isolate) | `L3` | 同上 | 同上 | 同上 |
-| `dashenifwdorch` (ENI fwd) | カスタム (ENI fwd) | 同上 | DPU 側で INACTIVE 化される場合は未発火 | 同上 |
+| `dashenifwdorch` ([ENI](../../reference/glossary.md#term-eni) fwd) | カスタム ([ENI](../../reference/glossary.md#term-eni) fwd) | 同上 | DPU 側で INACTIVE 化される場合は未発火 | 同上 |
 
 !!! warning "DPU 側の副次効果欠落"
     `gMySwitchType == "dpu"` の orchagent では `m_minPriority = m_maxPriority = 0` のため (`aclorch.cpp:3686-3710`)、`PRIORITY != 0` の APPL_DB ルールは `setPriority()` が false を返し rule が INACTIVE になる。この場合 STATE_DB には `"Inactive"` が書込まれるが、`createCounter()` まで到達しないため **COUNTERS_DB / FLEX_COUNTER_DB は更新されない**。
@@ -919,7 +939,7 @@ APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` は 3 
 | 参照先 | 参照方向 | 条件 | 参照元 evidence |
 |--------|---------|------|----------------|
 | `PORT\|EthernetN` | OID 解決（`SAI_ACL_BIND_POINT_TYPE_PORT`） | `PORTS` フィールドに物理ポート名を指定したとき | `aclorch.cpp` L5776-5807 (`processAclTablePorts()`)、L6056-6083 (`getAclBindPortId()`) |
-| `PORTCHANNEL\|PortChannelN` | OID 解決（`SAI_ACL_BIND_POINT_TYPE_LAG`） | `PORTS` に LAG 名を指定したとき | `aclorch.cpp` L6073-6075、L103-107 (`aclBindPointTypeLookup`) |
+| `PORTCHANNEL\|PortChannelN` | OID 解決（`SAI_ACL_BIND_POINT_TYPE_LAG`） | `PORTS` に [LAG](../../reference/glossary.md#term-lag) 名を指定したとき | `aclorch.cpp` L6073-6075、L103-107 (`aclBindPointTypeLookup`) |
 | `ACL_TABLE_TYPE_TABLE\|<type>` | type 定義 lookup（必須先行） | `TYPE` がカスタム型のとき (`vnetorch` の `VNET_TUNNEL_TERM_ACL_TABLE_TYPE` 等)。事前定義型 (`L3`/`MIRROR` 等) は不要 | `aclorch.cpp` L5380-5388、L5432 (`getAclTableType()`) |
 | `PORT` 全体（PortsOrch 初期化完了） | ブロッキング | 常時。`allPortsReady() == false` の間は APPL_DB エントリ全てが早期 return で保留 | `aclorch.cpp` L4276-4279 |
 
@@ -928,7 +948,7 @@ APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` は 3 
 | 参照先 | 参照方向 | 条件 | 参照元 evidence |
 |--------|---------|------|----------------|
 | `ACL_TABLE_TABLE\|<table>`（または CONFIG_DB `ACL_TABLE\|<table>`） | SAI OID 解決（必須） | 常時。未作成なら `it++` で無限ポーリング再試行 | `aclorch.cpp` L5548-5566 (`doAclRuleTask()` 親 table ガード) |
-| `PORT\|<name>` / `PORTCHANNEL\|<name>` | OID 解決 | match の `IN_PORTS` / `OUT_PORT` / `OUT_PORTS`、または `REDIRECT_ACTION` 値が PORT/LAG 名と一致するとき | `aclorch.cpp` L961-1034 (match 系)、L2085-2099 (`getRedirectObjectId()` ステップ 1) |
+| `PORT\|<name>` / `PORTCHANNEL\|<name>` | OID 解決 | match の `IN_PORTS` / `OUT_PORT` / `OUT_PORTS`、または `REDIRECT_ACTION` 値が PORT/[LAG](../../reference/glossary.md#term-lag) 名と一致するとき | `aclorch.cpp` L961-1034 (match 系)、L2085-2099 (`getRedirectObjectId()` ステップ 1) |
 | `NEIGH`（NeighOrch） | next-hop OID + refcount | `REDIRECT_ACTION` 値が `<ip>@<intf>` 形式の next-hop のとき (`vnetorch` の VIP→NH redirect が該当) | `aclorch.cpp` L2102-2116 (`getRedirectObjectId()` ステップ 2) |
 | TunnelNhop（TunnelOrch） | OID 解決 | `REDIRECT_ACTION` 値がトンネル next-hop 形式のとき | `aclorch.cpp` L2118-2136 (ステップ 3) |
 | `ROUTE_TABLE`（RouteOrch 管理の NH group） | OID + refcount、不在時自動生成 | `REDIRECT_ACTION` 値が NH group 形式のとき | `aclorch.cpp` L2138-2157 (ステップ 4) |
@@ -971,3 +991,5 @@ APPL_DB の `ACL_TABLE_TABLE` / `ACL_TABLE_TYPE_TABLE` / `ACL_RULE_TABLE` は 3 
 ## 引用元
 
 [^1]: テーブル名定数は `sonic-swss-common/common/schema.h` (sha `158de8d3`) L94-96 より。フィールド名は `sonic-swss/orchagent/acltable.h` (sha `43055961`) L12-20 より。書き込みロジックは `vnetorch.cpp` L3775-3837、`mclaglink.cpp` L325-373、`dashenifwdorch.cpp` L619-643、デフォルト挙動は `aclorch.h` L543、`aclorch.cpp` L905, 5413, 5633, 5823 より。
+
+<!-- glossary-links-injected: a6cc59cbe7fc -->

@@ -144,7 +144,7 @@ sudo ip rule del from <重複IP> lookup mgmt
 
 ただしこのルールを削除すると mgmt VRF 発のトラフィックが正しく mgmt へルーティングされない場合がある。根本的には同一 IP を mgmt と data の双方に設定しないことが推奨される。
 
-**参照**: sonic-net/sonic-buildimage#26904（Bug, 202511 で再現確認）
+**参照**: sonic-net/[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)#26904（Bug, 202511 で再現確認）
 
 ## 6. 制限事項
 
@@ -192,4 +192,4 @@ ip route show vrf mgmt
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/sonic_stretch_management_vrf_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 3b086e661688 -->
+<!-- glossary-links-injected: 75921d013977 -->

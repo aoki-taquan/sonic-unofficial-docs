@@ -93,18 +93,18 @@ CREDENTIALS|CERT|<profileID>
 
 ## 購読者
 
-- `gnsi_certz.go` (`sonic-gnmi`): 証明書バンドル更新時に STATE_DB へ書き込む
+- `gnsi_certz.go` (`sonic-gnmi`): 証明書バンドル更新時に [STATE_DB](../../reference/glossary.md#term-state_db) へ書き込む
 
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`GNMI`](gnmi.md) (`GNMI|certs` で証明書パスを設定), [`TELEMETRY`](telemetry.md)
 - 関連 CLI: なし (gNSI Certz は gRPC `certz.Rotate` RPC 経由で設定)
-- 関連 YANG: なし (community master には対応 YANG 未定義)
+- 関連 [YANG](../../reference/glossary.md#term-yang): なし (community master には対応 [YANG](../../reference/glossary.md#term-yang) 未定義)
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-- **STATE_DB 書き込みのみ**: 本テーブルは gNSI Certz が STATE_DB に書き込む。CONFIG_DB には書き込まない。`sonic-cfggen` / `config reload` の対象外
+- **[STATE_DB](../../reference/glossary.md#term-state_db) 書き込みのみ**: 本テーブルは gNSI Certz が STATE_DB に書き込む。[CONFIG_DB](../../reference/glossary.md#term-config_db) には書き込まない。`sonic-cfggen` / `config reload` の対象外
 - **同時 Rotate 禁止**: `certzMu.TryLock()` による排他制御。並行 `certz.Rotate` RPC は `codes.Aborted: "concurrent certz.Rotate RPCs are not allowed"` で拒否される
 - **`created_on` 疑似ナノ秒**: 格納値は `strconv.FormatUint(entity.CreatedOn, 10) + "000000000"` で生成される 19 桁以上の文字列。bootstrap では `time.Now().UnixNano()` (ナノ秒) をそのまま + `"000000000"` サフィックスを付加するため、実際の精度は秒未満まで記録される
 - **CRL ディレクトリ管理**: `certificate_revocation_list_bundle` は DB フィールドのみでなく、`CertCRLConfig` ディレクトリ (デフォルト `/mtls/crl`) にもファイルとして保存される
@@ -114,7 +114,7 @@ CREDENTIALS|CERT|<profileID>
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`CREDENTIALS|CERT` は **STATE_DB** テーブルであり、`gnsi_certz.go` が gNSI Certz RPC の処理結果として書き込む。CONFIG_DB の書き込み順ではなく、**gRPC Rotate RPC の呼び出し順序・フラグ設定・systemd 起動順序**が STATE_DB の整合性に影響する。
+`CREDENTIALS|CERT` は **STATE_DB** テーブルであり、`gnsi_certz.go` が gNSI Certz RPC の処理結果として書き込む。[CONFIG_DB](../../reference/glossary.md#term-config_db) の書き込み順ではなく、**gRPC Rotate RPC の呼び出し順序・フラグ設定・systemd 起動順序**が STATE_DB の整合性に影響する。
 
 ### 検出された順序依存
 
@@ -146,8 +146,8 @@ CREDENTIALS|CERT|<profileID>
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | evidence |
 |--------------------------|---------|------|----------|
-| `STATE_DB` (Redis インスタンス) | 書き出し専用 (`HSET`) | 常時 — `writeCredentialsMetadataToDB()` がすべての freshness フィールドを書き込む | `common_utils/notification_producer.go:16`; `gnsi_certz.go:1037-1058` |
-| `database.service` (systemd) | 起動順序依存 (先行必須) | gnmi.service 起動前に STATE_DB (Redis) が必要。未起動なら `writeEntityFreshness()` でエラー | `gnmi.service.j2:3-4` (`After=database.service`) |
+| `STATE_DB` ([Redis](../../reference/glossary.md#term-redis) インスタンス) | 書き出し専用 (`HSET`) | 常時 — `writeCredentialsMetadataToDB()` がすべての freshness フィールドを書き込む | `common_utils/notification_producer.go:16`; `gnsi_certz.go:1037-1058` |
+| `database.service` (systemd) | 起動順序依存 (先行必須) | gnmi.service 起動前に STATE_DB ([Redis](../../reference/glossary.md#term-redis)) が必要。未起動なら `writeEntityFreshness()` でエラー | `gnmi.service.j2:3-4` (`After=database.service`) |
 | ファイルシステム — `CertzMetaFile` (`/keys/grpc-version.json`) | 読み取り (JSON プロファイル永続化) | 起動時 `loadCertzMetadata()` でプロファイルを読み込む。ファイル不在時は `bootstrapDefaultProfile()` でゼロ初期化 | `gnsi_certz.go:126,727` |
 | ファイルシステム — `CertCRLConfig` ディレクトリ (`/mtls/crl`) | 読み書き (CRL バンドルファイル) | CRL Rotate 時に `activateEntity()` がファイルを書き込む。未設定時は Rotate が `codes.Aborted` を返す | `gnsi_certz.go:144-151,204,405-407` |
 | TLS シンボリックリンク (`SrvCertLnk` / `CaCertLnk` 等) | 書き出し (Rotate 確定時に更新) | `finalizeProfile()` が証明書シンボリックリンクを新パスへ切り替える。gnmi サーバの TLS 再ロードに影響 | `gnmi_server/server.go:429,452` |
@@ -159,7 +159,7 @@ CREDENTIALS|CERT|<profileID>
 
 **ファイルシステムが真の外部依存**: 証明書パス (`SrvCertLnk` / `CaCertLnk` / `SrvKeyLnk`) は telemetry バイナリの CLI フラグで指定され、gnmi コンテナ起動時に確定する。CONFIG_DB を介した動的変更は不可能であり、変更には再起動が必要。
 
-**`GNMI|certs` 設定との分離**: `GNMI` テーブルは gnmi サーバのリスニングポート・VRF・証明書パス等を保持するが、`gnsi_certz.go` は `GNMI` テーブルを読まない。Certz Rotate で証明書ファイルを更新しても gnmi サーバが TLS 証明書を再ロードするタイミングは `server.go` の実装依存であり、`GNMI` テーブルへの書き戻しは発生しない。
+**`GNMI|certs` 設定との分離**: `GNMI` テーブルは gnmi サーバのリスニングポート・[VRF](../../reference/glossary.md#term-vrf)・証明書パス等を保持するが、`gnsi_certz.go` は `GNMI` テーブルを読まない。Certz Rotate で証明書ファイルを更新しても gnmi サーバが TLS 証明書を再ロードするタイミングは `server.go` の実装依存であり、`GNMI` テーブルへの書き戻しは発生しない。
 
 詳細根拠は `meta/_intermediate/cdb-flow/certs-cross-refs.md` を参照。
 <!-- /cross-refs -->
@@ -201,7 +201,7 @@ CREDENTIALS|CERT|<profileID>
 
 | 失敗条件 | 結果 | evidence |
 |---------|------|----------|
-| Redis 接続失敗 (`GetRedisDBClient` エラー) | エラーログのみ。STATE_DB 未更新（証明書ファイルは更新済みの可能性あり） | `gnsi_certz.go:1041-1044` |
+| [Redis](../../reference/glossary.md#term-redis) 接続失敗 (`GetRedisDBClient` エラー) | エラーログのみ。STATE_DB 未更新（証明書ファイルは更新済みの可能性あり） | `gnsi_certz.go:1041-1044` |
 | `sc.HSet()` 失敗 | エラーログ ("Cannot write credentials metadata to the DB.") のみ。処理継続 | `gnsi_certz.go:1051-1055` |
 | 起動時 `loadCertzMetadata()` 失敗 | ログのみ。`bootstrapDefaultProfile()` で初期値を生成してフォールバック | `gnsi_certz.go:126-131` |
 
@@ -222,7 +222,7 @@ CREDENTIALS|CERT|<profileID>
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`gnsi_certz.go` および `common_utils/notification_producer.go` 内に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+`gnsi_certz.go` および `common_utils/notification_producer.go` 内に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 
 ### STATE_DB テーブル識別定数
 
@@ -283,9 +283,9 @@ CREDENTIALS|CERT|<profileID>
 |--------|---------|------|----------|
 | STATE_DB | あり（主体） | `CREDENTIALS\|CERT\|<profileID>` — `writeCredentialsMetadataToDB()` が `HSet` | `gnsi_certz.go:1050-1052` |
 | CONFIG_DB | なし | 接続・書き込み処理ゼロ | — |
-| APPL_DB | なし | 接続・書き込み処理ゼロ | — |
-| ASIC_DB | なし | 接続・書き込み処理ゼロ | — |
-| FLEX_COUNTER_DB / COUNTERS_DB / LOGLEVEL_DB | なし | 接続・書き込み処理ゼロ | — |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | 接続・書き込み処理ゼロ | — |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | なし | 接続・書き込み処理ゼロ | — |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) | なし | 接続・書き込み処理ゼロ | — |
 | ファイルシステム (TLS symlink) | あり | `SrvCertLnk` / `SrvKeyLnk` / `CaCertLnk` を atomically 更新 | `gnsi_certz.go:925-990` |
 | ファイルシステム (CRL ディレクトリ) | あり | `CertCRLConfig/<profileID>/` に PEM ファイル群を書き込み | `gnsi_certz.go:531-534` |
 | ファイルシステム (AuthPolicy `.bak`) | あり | Rotate 中に `.bak` 作成 / Finalize 時に削除 | `gnsi_certz.go:537-540,678` |
@@ -312,7 +312,7 @@ Rotate 成功後に gnmi サーバを再起動しなくても新証明書が有�
 
 ### 購読側: sonic-mgmt-common — gNMI OnChange 購読
 
-`Subscribe_grpc_server_xfmr` (`xfmr_system.go:426-466`) が gNMI Subscribe RPC を受け取ったときの購読先を定義する:
+`Subscribe_grpc_server_xfmr` (`xfmr_system.go:426-466`) が [gNMI](../../reference/glossary.md#term-gnmi) Subscribe RPC を受け取ったときの購読先を定義する:
 
 | 購読先 | DB | テーブル | キー | 購読モード |
 |--------|----|---------|------|-----------|
@@ -320,7 +320,7 @@ Rotate 成功後に gnmi サーバを再起動しなくても新証明書が有�
 | STATE_DB | 6 | `CREDENTIALS` | `PATHZ_POLICY\|ACTIVE` | OnChange |
 
 購読対象キーは **`CERT|gnxi` のみ** (`GNXI_ID = "gnxi"` ハードコード)。
-`gnxi` 以外のプロファイル ID は gNMI 経由では購読されない。
+`gnxi` 以外のプロファイル ID は [gNMI](../../reference/glossary.md#term-gnmi) 経由では購読されない。
 
 ### データ変換: DbToYang_grpc_server_xfmr
 
@@ -342,7 +342,7 @@ OnChange 通知受信後、`DbToYang_grpc_server_xfmr` (`xfmr_system.go:540-590`
 |------|------|------|
 | `gnsi_certz.go` → STATE_DB | 直接 `HSET` | 明示的 PUBLISH なし |
 | STATE_DB → translib | Redis keyspace notification (`__keyspace@6__`) | SONiC デフォルト設定で有効 |
-| translib → gNMI クライアント | gNMI `SubscribeResponse` (OnChange) | 変更検出ごとにプッシュ |
+| translib → [gNMI](../../reference/glossary.md#term-gnmi) クライアント | gNMI `SubscribeResponse` (OnChange) | 変更検出ごとにプッシュ |
 
 詳細スキャン結果は `meta/_intermediate/cdb-flow/certs-pubsub.md` を参照。
 <!-- /pubsub -->
@@ -350,13 +350,13 @@ OnChange 通知受信後、`DbToYang_grpc_server_xfmr` (`xfmr_system.go:540-590`
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**: `CREDENTIALS|CERT` は gNSI Certz が STATE_DB へ直接 HSet するテーブルであり、ASIC 種別・multi-asic・VOQ chassis・ベンダー固有設定のいずれにも依存しない。
+**プラットフォーム差なし**: `CREDENTIALS|CERT` は gNSI Certz が STATE_DB へ直接 HSet するテーブルであり、ASIC 種別・multi-asic・[VOQ](../../reference/glossary.md#term-voq) chassis・ベンダー固有設定のいずれにも依存しない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `CREDENTIALS|CERT` は SAI 非経由。`gnsi_certz.go` は gRPC → STATE_DB の直接書き込みのみ。`gnsi_certz.go` 内に ASIC 種別分岐 0 ヒット |
+| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | `CREDENTIALS|CERT` は [SAI](../../reference/glossary.md#term-sai) 非経由。`gnsi_certz.go` は gRPC → STATE_DB の直接書き込みのみ。`gnsi_certz.go` 内に ASIC 種別分岐 0 ヒット |
 | multi-asic (`is_multi_npu`) | 影響なし | `writeCredentialsMetadataToDB()` は global STATE_DB (`dbName="STATE_DB"`) を直接 HSet。namespace iteration なし (`gnsi_certz.go:1037-1058`) |
-| VOQ chassis (supervisor + line cards) | 影響なし | gNSI Certz は host 単位の gRPC サービス。chassis 集中管理機構を持たず、各 host の `telemetry` プロセスが独立に稼働 |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 影響なし | gNSI Certz は host 単位の gRPC サービス。chassis 集中管理機構を持たず、各 host の `telemetry` プロセスが独立に稼働 |
 | ベンダー固有実装 | なし | community master の `sonic-gnmi` は標準 Go TLS / gRPC のみ使用。`gnsi_certz.go` / `telemetry.go` にベンダー条件分岐なし |
 | CRL ディレクトリパス (`--cert_crl_dir`) | 実行時設定依存 | デフォルト `/mtls/crl` は platform 条件分岐ではなく CLI フラグで変更可能。platform 固有の自動切替はない |
 
@@ -462,3 +462,5 @@ CRL バンドルが有効化されていない場合 (`CertCRLConfig == ""`): Ro
 
 [^1]: `sonic-gnmi` `gnmi_server/gnsi_certz.go` — gNSI Certz 実装。defaultProfile, bootstrapDefaultProfile, writeEntityFreshness, writeCredentialsMetadataToDB
 [^2]: `sonic-gnmi` `telemetry/telemetry.go` — CLI フラグデフォルトと CertzMetaFile パス設定ロジック
+
+<!-- glossary-links-injected: 84bd0e203a51 -->

@@ -185,7 +185,7 @@ redis-cli -n 4 keys 'MACSEC_PROFILE|*'
 
 ### MACsec ポートと LAG の組み合わせ制約（#790）
 
-MACsec を LAG と組み合わせる場合には以下の制約がある。
+MACsec を [LAG](../reference/glossary.md#term-lag) と組み合わせる場合には以下の制約がある。
 
 1. **ハイブリッド LAG 非サポート（初期フェーズ）**: MACsec 有効ポートと無効ポートを同一 LAG に混在させることは初期実装では未サポート
 2. **LAG インターフェースへの MACsec 適用**: `MACSEC_PROFILE` を LAG インターフェースに設定した場合、SONiC 内部でメンバーポートに変換する実装が必要。これは ACL の LAG 適用と同様のアプローチ（SAI が iterate しメンバーポートに適用）
@@ -210,4 +210,4 @@ MACsec を LAG と組み合わせる場合には以下の制約がある。
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: b3479c2e563c -->
+<!-- glossary-links-injected: 0d35a6e72048 -->

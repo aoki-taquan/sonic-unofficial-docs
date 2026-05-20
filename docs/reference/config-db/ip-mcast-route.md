@@ -39,12 +39,12 @@ SONiC の P4RT サブシステムは IP マルチキャスト転送を 2 種類�
 | テーブル | 役割 |
 |---------|------|
 | `REPLICATION_IP_MULTICAST_TABLE` | マルチキャストグループ ID → レプリカ (出力ポート + インスタンス) の多対多マッピング |
-| `FIXED_IPV4_MULTICAST_TABLE` | VRF + IPv4 マルチキャスト宛先 → グループ ID のルート |
-| `FIXED_IPV6_MULTICAST_TABLE` | VRF + IPv6 マルチキャスト宛先 → グループ ID のルート |
+| `FIXED_IPV4_MULTICAST_TABLE` | [VRF](../../reference/glossary.md#term-vrf) + IPv4 マルチキャスト宛先 → グループ ID のルート |
+| `FIXED_IPV6_MULTICAST_TABLE` | [VRF](../../reference/glossary.md#term-vrf) + IPv6 マルチキャスト宛先 → グループ ID のルート |
 
-これらはすべて **APP_DB** テーブルであり、P4RT-app (`p4rt`) がコントロールプレーンの指示を受けて書き込む。CONFIG_DB には専用テーブルは存在しない。
+これらはすべて **APP_DB** テーブルであり、P4RT-app (`p4rt`) がコントロールプレーンの指示を受けて書き込む。[CONFIG_DB](../../reference/glossary.md#term-config_db) には専用テーブルは存在しない。
 
-orchagent の `L3MulticastManager` が `REPLICATION_IP_MULTICAST_TABLE` を消費して SAI `IPMC_GROUP` / `IPMC_GROUP_MEMBER` を作成し、`IpMulticastManager` が `FIXED_IPV4/IPV6_MULTICAST_TABLE` を消費して SAI `IPMC_ENTRY` を作成する[^1]。
+[orchagent](../../reference/glossary.md#term-orchagent) の `L3MulticastManager` が `REPLICATION_IP_MULTICAST_TABLE` を消費して [SAI](../../reference/glossary.md#term-sai) `IPMC_GROUP` / `IPMC_GROUP_MEMBER` を作成し、`IpMulticastManager` が `FIXED_IPV4/IPV6_MULTICAST_TABLE` を消費して [SAI](../../reference/glossary.md#term-sai) `IPMC_ENTRY` を作成する[^1]。
 
 <!-- cdb-mermaid -->
 ### データフロー
@@ -92,7 +92,7 @@ P4RT:FIXED_IPV6_MULTICAST_TABLE:{"match/vrf_id":"<vrf>","match/ipv6_dst":"<ip>"}
 | `replicas` | JSON 配列 | 必須 | 出力レプリカのリスト。各要素は `{"multicast_replica_port":"EthernetX","multicast_replica_instance":"0x0"}` |
 | `backups` | JSON 配列の配列 | 任意 | フォールバックレプリカ。primary と同じ長さが必要 |
 | `multicast_metadata` | string | 任意 | コントローラ定義メタデータ |
-| `controller_metadata` | string | 任意 | コントローラ内部追跡用 (SAI には転送されない) |
+| `controller_metadata` | string | 任意 | コントローラ内部追跡用 ([SAI](../../reference/glossary.md#term-sai) には転送されない) |
 
 ## フィールド — FIXED_IPV4/IPV6_MULTICAST_TABLE
 
@@ -110,7 +110,7 @@ P4RT:FIXED_IPV6_MULTICAST_TABLE:{"match/vrf_id":"<vrf>","match/ipv6_dst":"<ip>"}
 | 状況 | 挙動 | コード根拠 |
 |------|------|-----------|
 | フィールドなし / 空配列 | `SWSS_RC_INVALID_PARAM` でエラー | `l3_multicast_manager.cpp:L990-993` `if (entry.replicas.empty())` |
-| 有効な配列 | 各レプリカの RIF 存在確認後、active replicas を選択 | `l3_multicast_manager.cpp:L1060-1090` `setActiveReplicas()` |
+| 有効な配列 | 各レプリカの [RIF](../../reference/glossary.md#term-rif) 存在確認後、active replicas を選択 | `l3_multicast_manager.cpp:L1060-1090` `setActiveReplicas()` |
 
 `replicas` はプロトコル上の必須フィールドであり、デフォルト値は存在しない。
 
@@ -121,7 +121,7 @@ P4RT:FIXED_IPV6_MULTICAST_TABLE:{"match/vrf_id":"<vrf>","match/ipv6_dst":"<ip>"}
 | フィールドなし | `backup_replicas` が空 → バックアップなし扱い | `l3_multicast_manager.cpp:L788-792` (空なら長さチェックをスキップ) |
 | 指定あり | primary と同じ長さが必要。不一致時は `SWSS_RC_INVALID_PARAM` | `l3_multicast_manager.cpp:L788-793` |
 
-フォールバック選択: `setActiveReplicas()` は primary RIF が UP なら primary を採用、ダウン時は backup リストを順に試み、全滅なら primary[0] を強制選択する。
+フォールバック選択: `setActiveReplicas()` は primary [RIF](../../reference/glossary.md#term-rif) が UP なら primary を採用、ダウン時は backup リストを順に試み、全滅なら primary[0] を強制選択する。
 
 ### `multicast_metadata` (REPLICATION_IP_MULTICAST_TABLE)
 
@@ -184,7 +184,7 @@ P4RT フレームワークは依存オブジェクトが未存在の場合に即
 |---|-----------------|---------|---------------|
 | 1 | `FIXED_IPV4/IPV6_MULTICAST_TABLE` | `REPLICATION_IP_MULTICAST_TABLE` (同一 `multicast_group_id`) | 即時 `SWSS_RC_NOT_FOUND`・エントリ破棄 |
 | 2 | `REPLICATION_IP_MULTICAST_TABLE` | `MULTICAST_ROUTER_INTERFACE_TABLE` (全 replica の `(port, instance)`) | 即時 `SWSS_RC_NOT_FOUND`・エントリ破棄 |
-| 3 | `FIXED_IPV4/IPV6_MULTICAST_TABLE` | VRF (VrfOrch) — 非空 `vrf_id` のみ | 即時 `SWSS_RC_NOT_FOUND`・エントリ破棄 |
+| 3 | `FIXED_IPV4/IPV6_MULTICAST_TABLE` | [VRF](../../reference/glossary.md#term-vrf) (VrfOrch) — 非空 `vrf_id` のみ | 即時 `SWSS_RC_NOT_FOUND`・エントリ破棄 |
 
 ### 依存 1: FIXED テーブル → REPLICATION_IP_MULTICAST_TABLE
 
@@ -243,7 +243,7 @@ IpMulticastManager 内で管理されており、参照が残っているグル�
 > 根拠: `ip_multicast_manager.cpp:L477-481,L509-514,L775,L886`、`l3_multicast_manager.cpp:L1002-1008,L2196`、`vrforch.h:L58-119`、`orchdaemon.cpp:L283`、`schema.h:L73-80`
 > evidence: `meta/_intermediate/cdb-flow/ip-mcast-route-cross-refs.md`
 
-これらテーブルは APP_DB 上の P4RT ネームスペースに存在するため **YANG leafref は定義されていない**。ただしコード上の実行時参照として以下の暗黙依存が存在する。
+これらテーブルは APP_DB 上の P4RT ネームスペースに存在するため **[YANG](../../reference/glossary.md#term-yang) leafref は定義されていない**。ただしコード上の実行時参照として以下の暗黙依存が存在する。
 
 | 参照元 | 参照先 (DB:テーブル:キー) | 参照方法 | 未存在時の挙動 |
 |--------|--------------------------|---------|---------------|
@@ -257,7 +257,7 @@ IpMulticastManager 内で管理されており、参照が残っているグル�
 
 ### CONFIG_DB への直接依存なし
 
-`ip_multicast_manager.cpp` / `l3_multicast_manager.cpp` はいずれも CONFIG_DB を直接 subscribe / get しない。CONFIG_DB 依存は VRFOrch および P4Orch 上位レイヤが間接処理する。
+`ip_multicast_manager.cpp` / `l3_multicast_manager.cpp` はいずれも [CONFIG_DB](../../reference/glossary.md#term-config_db) を直接 subscribe / get しない。[CONFIG_DB](../../reference/glossary.md#term-config_db) 依存は VRFOrch および P4Orch 上位レイヤが間接処理する。
 <!-- /cross-refs -->
 
 <!-- failure -->
@@ -278,7 +278,7 @@ P4RT フレームワークの失敗モデルは**バッチ内一括適用**で�
 | 3 | バリデーション失敗 (`validateIpMulticastEntry`) | `ip_multicast_manager.cpp:L154-163` | `SWSS_RC_NOT_FOUND` / `SWSS_RC_INVALID_PARAM` | なし | ERROR |
 | 4 | multicast group OID が P4OidMapper 未登録 (CREATE) | `ip_multicast_manager.cpp:L748-755` | `SWSS_RC_NOT_FOUND` | なし | — |
 | 5 | SAI `create_ipmc_entry` 失敗 | `ip_multicast_manager.cpp:L761-764` | SAI ステータスコード | なし | — |
-| 6 | SAI `create_rpf_group` / RIF 作成失敗 (初回エントリ追加時) | `ip_multicast_manager.cpp:L661-665` | SAI ステータスコード | なし | ERROR |
+| 6 | SAI `create_rpf_group` / [RIF](../../reference/glossary.md#term-rif) 作成失敗 (初回エントリ追加時) | `ip_multicast_manager.cpp:L661-665` | SAI ステータスコード | なし | ERROR |
 | 7 | 内部キャッシュに存在しないエントリの UPDATE | `ip_multicast_manager.cpp:L794-798` | `SWSS_RC_INTERNAL` | なし | — |
 | 8 | multicast group OID が P4OidMapper 未登録 (UPDATE) | `ip_multicast_manager.cpp:L817-820` | `SWSS_RC_NOT_FOUND` | なし | — |
 | 9 | SAI `set_ipmc_entry_attribute` 失敗 (UPDATE) | `ip_multicast_manager.cpp:L827-830` | SAI ステータスコード | なし | — |
@@ -336,10 +336,10 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 
 ### STATE_DB / ERROR_TABLE への影響
 
-- P4RT マネージャは STATE_DB を直接操作しない
+- P4RT マネージャは [STATE_DB](../../reference/glossary.md#term-state_db) を直接操作しない
 - 失敗は `m_publisher->publish()` で `APP_P4RT_TABLE_NAME` にステータスコードとして書き戻される（コントローラが確認可能）
 - CONFIG_DB は本テーブルに対して無関係（直接 subscribe / get なし）
-- Pattern 11（RPF group 削除失敗）では全 IPMC エントリが正常削除済みでも RPF group が残存する可能性があり、その場合は orchagent 再起動が必要
+- Pattern 11（RPF group 削除失敗）では全 IPMC エントリが正常削除済みでも RPF group が残存する可能性があり、その場合は [orchagent](../../reference/glossary.md#term-orchagent) 再起動が必要
 
 <!-- /failure -->
 
@@ -349,7 +349,7 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 > 根拠: `ip_multicast_manager.cpp:L45,L61,L376,L596,L704,L712,L719`、`l3_multicast_manager.cpp:L53-56,L167,L189,L641,L1415-1416`
 > evidence: `meta/_intermediate/cdb-flow/ip-mcast-route-constants.md`
 
-以下の定数はいずれもコード中にハードコードされており、CONFIG_DB フィールド・YANG スキーマ・環境変数による上書きは不可能。
+以下の定数はいずれもコード中にハードコードされており、CONFIG_DB フィールド・[YANG](../../reference/glossary.md#term-yang) スキーマ・環境変数による上書きは不可能。
 
 ### ip_multicast_manager.cpp 内定数
 
@@ -374,7 +374,7 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 ### 設計上の含意
 
 - `kLinkLocalIpv4Address` / `kNeighborMacAddress` は SAI 構造体の「必須フィールドを埋めるプレースホルダ」であり、これらの値が実際のパケット転送ロジックに影響することはない
-- `kDefaultMyMacAddressMask` がオールゼロであるため、SAI my-mac ACL エントリは全 MAC に対してワイルドカードマッチを行う
+- `kDefaultMyMacAddressMask` がオールゼロであるため、SAI my-mac [ACL](../../reference/glossary.md#term-acl) エントリは全 MAC に対してワイルドカードマッチを行う
 - `SAI_IPMC_ENTRY_TYPE_XG` 固定により、このテーブルは ASM (Any-Source Multicast) のみをサポートする。SSM を必要とする場合は別実装が必要
 <!-- /constants -->
 
@@ -384,7 +384,7 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 > 詳細証跡: `meta/_intermediate/cdb-flow/ip-mcast-route-side-effects.md`
 > 調査対象: `sonic-swss/orchagent/p4orch/ip_multicast_manager.cpp`, `sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp`
 
-`REPLICATION_IP_MULTICAST_TABLE` / `FIXED_IPV4_MULTICAST_TABLE` / `FIXED_IPV6_MULTICAST_TABLE` への SET/DEL が引き起こす CONFIG_DB 以外への書き込みを示す。STATE_DB / APPL_DB への直接書き込みは存在しない。
+`REPLICATION_IP_MULTICAST_TABLE` / `FIXED_IPV4_MULTICAST_TABLE` / `FIXED_IPV6_MULTICAST_TABLE` への SET/DEL が引き起こす CONFIG_DB 以外への書き込みを示す。[STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) への直接書き込みは存在しない。
 
 ### SAI / ASIC_STATE 書込み
 
@@ -401,9 +401,9 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 
 ### CRM カウンタ更新 (FIXED テーブルのみ)
 
-`gCrmOrch` 経由で orchagent 内部の CRM (Critical Resource Monitor) カウンタを更新する。COUNTERS_DB への書き込みは CRM ポーリングタイマで非同期に反映される。
+`gCrmOrch` 経由で [orchagent](../../reference/glossary.md#term-orchagent) 内部の [CRM](../../reference/glossary.md#term-crm) (Critical Resource Monitor) カウンタを更新する。[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書き込みは [CRM](../../reference/glossary.md#term-crm) ポーリングタイマで非同期に反映される。
 
-| 操作 | CRM リソースタイプ | コード根拠 |
+| 操作 | [CRM](../../reference/glossary.md#term-crm) リソースタイプ | コード根拠 |
 |------|-----------------|-----------|
 | `FIXED_IPV4/IPV6_MULTICAST_TABLE` SET 成功 | `CRM_IPMC_ENTRY` + 1 | `ip_multicast_manager.cpp:L774` `gCrmOrch->incCrmResUsedCounter()` |
 | `FIXED_IPV4/IPV6_MULTICAST_TABLE` DEL 成功 | `CRM_IPMC_ENTRY` - 1 | `ip_multicast_manager.cpp:L885` `gCrmOrch->decCrmResUsedCounter()` |
@@ -412,7 +412,7 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 
 ### VRF 参照カウント更新 (FIXED テーブルのみ)
 
-`vrf_id` が非空の場合、`VRFOrch` インプロセスカウンタを更新する。Redis への書き込みはなし。
+`vrf_id` が非空の場合、`VRFOrch` インプロセスカウンタを更新する。[Redis](../../reference/glossary.md#term-redis) への書き込みはなし。
 
 | 操作 | VRF 操作 | コード根拠 |
 |------|---------|-----------|
@@ -425,7 +425,7 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 
 ### STATE_DB / FLEX_COUNTER_DB への書き込み — なし
 
-`ip_multicast_manager.cpp` / `l3_multicast_manager.cpp` ともに STATE_DB・FLEX_COUNTER_DB への直接書き込みは存在しない。
+`ip_multicast_manager.cpp` / `l3_multicast_manager.cpp` ともに [STATE_DB](../../reference/glossary.md#term-state_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への直接書き込みは存在しない。
 
 <!-- /side-effects -->
 
@@ -434,7 +434,7 @@ ReturnCode IpMulticastManager::deleteDefaultRpfGroup() {
 
 <!-- evidence: sonic-swss/orchagent/p4orch/p4orch.cpp:36-43,51-54,72-79 / orchdaemon.cpp:847-849 / orchdaemon.h:121 / ip_multicast_manager.cpp:84-93,132,147,159,185,230 / l3_multicast_manager.cpp:310-318,329-332,375,433,476,530 -->
 
-`FIXED_IPV4_MULTICAST_TABLE` / `FIXED_IPV6_MULTICAST_TABLE` / `FIXED_MULTICAST_ROUTER_INTERFACE_TABLE` / `REPLICATION_IP_MULTICAST_TABLE` はいずれも **通常の redis ConsumerStateTable / keyspace 通知パスを使わず、専用 ZMQ チャネル経由で配送される**。これは CONFIG_DB の `MIRROR_SESSION` 等を購読する通常の `Orch` + `ConsumerStateTable` 経路とは根本的に異なる通信モデルである。
+`FIXED_IPV4_MULTICAST_TABLE` / `FIXED_IPV6_MULTICAST_TABLE` / `FIXED_MULTICAST_ROUTER_INTERFACE_TABLE` / `REPLICATION_IP_MULTICAST_TABLE` はいずれも **通常の redis [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) / keyspace 通知パスを使わず、専用 ZMQ チャネル経由で配送される**。これは CONFIG_DB の `MIRROR_SESSION` 等を購読する通常の `Orch` + `ConsumerStateTable` 経路とは根本的に異なる通信モデルである。
 
 ### 転送経路
 
@@ -523,7 +523,7 @@ gP4Orch = new P4Orch(m_applDb, p4rt_tables, m_p4OrchZmqServer, vrf_orch, gCoppOr
 
 ### multi-asic / VOQ chassis での挙動
 
-`init_cfg.json.j2:83` の feature タプル `("p4rt", "disabled", false, "enabled")` の第 3 要素 `false` が `has_per_asic_scope=False` を示す。multi-asic 環境でも `p4rt` コンテナは host namespace に **1 個のみ** 起動し、`asic0..N` の Redis には展開されない。ZMQ エンドポイント `"ipc:///zmq_swss/p4orch_zmq_swss_ep"` も host 固定 (`orchdaemon.h:121`)。
+`init_cfg.json.j2:83` の feature タプル `("p4rt", "disabled", false, "enabled")` の第 3 要素 `false` が `has_per_asic_scope=False` を示す。multi-asic 環境でも `p4rt` コンテナは host namespace に **1 個のみ** 起動し、`asic0..N` の [Redis](../../reference/glossary.md#term-redis) には展開されない。ZMQ エンドポイント `"ipc:///zmq_swss/p4orch_zmq_swss_ep"` も host 固定 (`orchdaemon.h:121`)。
 
 ### FabricOrchDaemon での非対応
 
@@ -554,3 +554,5 @@ gP4Orch = new P4Orch(m_applDb, p4rt_tables, m_p4OrchZmqServer, vrf_orch, gCoppOr
 [^1]: L3MulticastManager / IpMulticastManager: `sonic-net/sonic-swss` `orchagent/p4orch/l3_multicast_manager.cpp` / `ip_multicast_manager.cpp`
 [^2]: SAI 固定属性: `ip_multicast_manager.cpp:L54-79` `prepareIpmcSaiAttrs()` および `L699-721` `prepareSaiIpmcEntry()`
 [^3]: RPF group ライフサイクル: `ip_multicast_manager.cpp:L647-697` `createDefaultRpfGroup()` / `L687-697` `deleteDefaultRpfGroup()`
+
+<!-- glossary-links-injected: 7dd8990fd499 -->

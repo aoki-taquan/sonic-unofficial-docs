@@ -27,11 +27,11 @@ related:
 
 ## 概要
 
-[NAT](../../reference/glossary.md#term-nat) 機能の実行時カウンタは `COUNTERS_DB` 上の 5 つのテーブルに書き込まれる。`orchagent/NatOrch` が SAI NAT API から 5 秒周期でパケット数・バイト数を取得し更新する。`show nat statistics` はこれらのテーブルを読み取る。
+[NAT](../../reference/glossary.md#term-nat) 機能の実行時カウンタは `COUNTERS_DB` 上の 5 つのテーブルに書き込まれる。`orchagent/NatOrch` が [SAI](../../reference/glossary.md#term-sai) [NAT](../../reference/glossary.md#term-nat) API から 5 秒周期でパケット数・バイト数を取得し更新する。`show nat statistics` はこれらのテーブルを読み取る。
 
 | テーブル | キー形式 | 用途 |
 |---------|---------|------|
-| `COUNTERS_NAT` | `<external_ip>` | 単体 NAT (SNAT/DNAT) エントリのカウンタ |
+| `COUNTERS_NAT` | `<external_ip>` | 単体 [NAT](../../reference/glossary.md#term-nat) (SNAT/DNAT) エントリのカウンタ |
 | `COUNTERS_NAPT` | `<proto>:<ip>:<port>` | 単体 NAPT エントリのカウンタ |
 | `COUNTERS_TWICE_NAT` | `<src_ip>:<dst_ip>` | Twice NAT エントリのカウンタ |
 | `COUNTERS_TWICE_NAPT` | `<proto>:<src_ip>:<src_port>:<dst_ip>:<dst_port>` | Twice NAPT エントリのカウンタ |
@@ -42,26 +42,19 @@ related:
 
 ```mermaid
 flowchart LR
-  SAI["SAI<br/>sai_nat_api"]
-  ORCH["orchagent / NatOrch<br/>(5s タイマ)"]
-  SAI -- "hit bits + counters" --> ORCH
-  COUNTERS_NAT[("COUNTERS_DB<br/>COUNTERS_NAT")]
-  COUNTERS_NAPT[("COUNTERS_DB<br/>COUNTERS_NAPT")]
-  COUNTERS_TWICE_NAT[("COUNTERS_DB<br/>COUNTERS_TWICE_NAT")]
-  COUNTERS_GLOBAL[("COUNTERS_DB<br/>COUNTERS_GLOBAL_NAT")]
-  ORCH --> COUNTERS_NAT
-  ORCH --> COUNTERS_NAPT
-  ORCH --> COUNTERS_TWICE_NAT
-  ORCH --> COUNTERS_GLOBAL
-  CLI["show nat statistics"]
-  COUNTERS_NAT --> CLI
-  COUNTERS_NAPT --> CLI
-  COUNTERS_TWICE_NAT --> CLI
-  COUNTERS_GLOBAL --> CLI
+  CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
+  DM["natmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_switch_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    COUNTERS_TWICE_NAPT は COUNTERS_TWICE_NAT と同構造。図では省略。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -82,8 +75,8 @@ COUNTERS_DB:COUNTERS_GLOBAL_NAT|Values
 
 | フィールド | 型 | 初期値 | 説明 |
 |-----------|-----|--------|------|
-| `NAT_TRANSLATIONS_PKTS` | uint64 (文字列) | `"0"` | SAI から取得したパケット数。エントリ登録直後に `0` で初期化される |
-| `NAT_TRANSLATIONS_BYTES` | uint64 (文字列) | `"0"` | SAI から取得したバイト数。エントリ登録直後に `0` で初期化される |
+| `NAT_TRANSLATIONS_PKTS` | uint64 (文字列) | `"0"` | [SAI](../../reference/glossary.md#term-sai) から取得したパケット数。エントリ登録直後に `0` で初期化される |
+| `NAT_TRANSLATIONS_BYTES` | uint64 (文字列) | `"0"` | [SAI](../../reference/glossary.md#term-sai) から取得したバイト数。エントリ登録直後に `0` で初期化される |
 
 - **書き込み元**: `NatOrch::updateNatCounters()` / `updateNaptCounters()` / `updateTwiceNatCounters()` / `updateTwiceNaptCounters()` (`natorch.cpp:4049-4135`)
 - **削除**: エントリ削除時に `deleteNatCounters()` 等で対応エントリを削除
@@ -95,7 +88,7 @@ COUNTERS_DB:COUNTERS_GLOBAL_NAT|Values
 
 #### 起動時のみ書き込まれるフィールド
 
-NatOrch コンストラクタ初回実行時に一度だけ書き込まれる。その後の CONFIG_DB 変更では更新されない。
+NatOrch コンストラクタ初回実行時に一度だけ書き込まれる。その後の [CONFIG_DB](../../reference/glossary.md#term-config_db) 変更では更新されない。
 
 | フィールド | 型 | 初期値 | 説明 |
 |-----------|-----|--------|------|
@@ -123,7 +116,7 @@ NatOrch コンストラクタ初回実行時に一度だけ書き込まれる。
 
 - COUNTERS カウンタは `NAT_HITBIT_N_CNTRS_QUERY_PERIOD = 5` 秒周期で更新される。リアルタイム値ではない。
 - `MAX_NAT_ENTRIES = 0` の場合、`gIsNatSupported = false` となり NAT 機能全体が無効化される。
-- `COUNTERS_GLOBAL_NAT|Values` の `TIMEOUT` / `TCP_TIMEOUT` / `UDP_TIMEOUT` は起動時の初期値のみ書き込まれ、CONFIG_DB 変更では更新されない。
+- `COUNTERS_GLOBAL_NAT|Values` の `TIMEOUT` / `TCP_TIMEOUT` / `UDP_TIMEOUT` は起動時の初期値のみ書き込まれ、[CONFIG_DB](../../reference/glossary.md#term-config_db) 変更では更新されない。
 
 ## 購読者
 
@@ -182,7 +175,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 
 ### カウンタリセット
 
-`sonic-clear nat statistics` でカウンタをリセットできる。内部では `FLUSHNATSTATISTICS` 通知を APPL_DB に送信し、`NatOrch` が SAI API でカウンタをクリアする。
+`sonic-clear nat statistics` でカウンタをリセットできる。内部では `FLUSHNATSTATISTICS` 通知を [APPL_DB](../../reference/glossary.md#term-appl_db) に送信し、`NatOrch` が SAI API でカウンタをクリアする。
 <!-- /ops-hint -->
 
 <!-- cdb-exceptions -->
@@ -191,7 +184,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 <!-- evidence: sonic-swss/orchagent/natorch.cpp NatOrch::NatOrch() / updateNatCounters / checkIfNatEntryIsActive -->
 
 - **`MAX_NAT_ENTRIES=0` → NAT 無効化**: NatOrch コンストラクタで `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` 取得が失敗または 0 → `maxAllowedSNatEntries=0` のまま書き込み → `gIsNatSupported=false` → `enableNatFeature()` 冒頭で即 return (`natorch.cpp:2541-2544`)。
-- **TIMEOUT 系フィールドの静止**: `COUNTERS_GLOBAL_NAT|Values` の `TIMEOUT` / `TCP_TIMEOUT` / `UDP_TIMEOUT` は NatOrch 起動時の一度のみ書き込まれる。その後 `config nat set timeout <N>` 等で CONFIG_DB を変更しても COUNTERS_DB には反映されない。実際の運用タイムアウトは `show nat config globalvalues` で確認すること。
+- **TIMEOUT 系フィールドの静止**: `COUNTERS_GLOBAL_NAT|Values` の `TIMEOUT` / `TCP_TIMEOUT` / `UDP_TIMEOUT` は NatOrch 起動時の一度のみ書き込まれる。その後 `config nat set timeout <N>` 等で CONFIG_DB を変更しても [COUNTERS_DB](../../reference/glossary.md#term-counters_db) には反映されない。実際の運用タイムアウトは `show nat config globalvalues` で確認すること。
 - **Static エントリのカウンタ更新**: `entry_type="static"` のエントリもカウンタ取得対象。`checkIfNatEntryIsActive()` が static エントリを常に `active=1` として扱うためエージアウトされず、カウンタは継続して更新される (`natorch.cpp:4160-4163`)。
 - **カウンタ更新の非同期性**: `NAT_TRANSLATIONS_PKTS` / `NAT_TRANSLATIONS_BYTES` は最大 5 秒遅延する。フロー完了直後に参照してもゼロのままの場合がある。
 
@@ -216,7 +209,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`NatOrch` は SAI エントリ登録成功後にカウンタを 0 で初期化し、その後 5 秒周期のタイマで SAI から実値を取得して COUNTERS_DB を更新する。この 2 段階構造により、エントリ追加直後とカウンタ更新開始後で COUNTERS_DB の内容が変化する。
+`NatOrch` は SAI エントリ登録成功後にカウンタを 0 で初期化し、その後 5 秒周期のタイマで SAI から実値を取得して [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を更新する。この 2 段階構造により、エントリ追加直後とカウンタ更新開始後で [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の内容が変化する。
 
 ### 検出された順序依存
 
@@ -224,7 +217,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 |---|----------|------|--------|
 | 1 | SAI NAT エントリ登録成功 → `COUNTERS_NAT*\|<key>` 初期値 (`0`) 書込み | **強制先行**（SAI 登録失敗時はカウンタエントリ不在） | `addHwSnatEntry()` / `addHwDnatEntry()` 末尾で `updateNatCounters(…,0,0)` を呼ぶ |
 | 2 | `NAT_GLOBAL_TABLE.admin_mode = "enabled"` → SAI NAT エントリ登録 → カウンタ初期化 | **強制先行**（enable 前は SAI 操作なし、カウンタ不在） | `isNatEnabled() == false` 時は `addNatEntry()` がキャッシュ保持のみで SAI 呼ばず、カウンタも書かない |
-| 3 | `COUNTERS_GLOBAL_NAT\|Values` 初期書込み → orchagent 起動完了 | **起動時 1 回限り**（コンストラクタ内） | 以降の CONFIG_DB 変更では `TIMEOUT` / `TCP_TIMEOUT` / `UDP_TIMEOUT` フィールドは更新されない |
+| 3 | `COUNTERS_GLOBAL_NAT\|Values` 初期書込み → [orchagent](../../reference/glossary.md#term-orchagent) 起動完了 | **起動時 1 回限り**（コンストラクタ内） | 以降の CONFIG_DB 変更では `TIMEOUT` / `TCP_TIMEOUT` / `UDP_TIMEOUT` フィールドは更新されない |
 | 4 | カウンタ初期値書込み (`0`) → 5 秒タイマ起動 → SAI ポーリング → 実値反映 | 非同期（最大 5 秒遅延） | エントリ追加直後に `COUNTERS_NAT*` を参照しても `"0"` のままの場合がある |
 | 5 | `clearAllNatEntries()` / `disableNatFeature()` → `deleteNatCounters()` → カウンタエントリ削除 | 即時（disable と同一タスク内） | `admin_mode = "disabled"` でカウンタエントリが削除される。re-enable で再登録 |
 | 6 | `FLUSHNATSTATISTICS` 通知 → SAI `reset_nat_entry_attribute` → カウンタ 0 リセット → 次回タイマで再取得 | 通知受信後即時（SAI 呼び出し） | `sonic-clear nat statistics` が内部でこの通知を送信。次の 5 秒周期まで COUNTERS_DB は `"0"` |
@@ -242,11 +235,11 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`COUNTERS_DB` NAT カウンタテーブル群は `NatOrch` が**書き手専用 (producer only)** として書き込む。カウンタエントリの生成・更新・削除は以下の CONFIG_DB / APPL_DB / SAI リソースへの依存によって決まる。
+`COUNTERS_DB` NAT カウンタテーブル群は `NatOrch` が**書き手専用 (producer only)** として書き込む。カウンタエントリの生成・更新・削除は以下の CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / SAI リソースへの依存によって決まる。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
-| `NAT_GLOBAL_TABLE\|Values.admin_mode` (APPL_DB) | トリガ：`"enabled"` 時に `enableNatFeature()` → SAI 一括登録 → カウンタ初期化 | 常時。`admin_mode="disabled"` の間は `COUNTERS_NAT*` エントリが存在しない | `natorch.cpp:2534-2582` (`enableNatFeature`), `natorch.cpp:2617-2680` (`doNatGlobalTableTask`) |
+| `NAT_GLOBAL_TABLE\|Values.admin_mode` ([APPL_DB](../../reference/glossary.md#term-appl_db)) | トリガ：`"enabled"` 時に `enableNatFeature()` → SAI 一括登録 → カウンタ初期化 | 常時。`admin_mode="disabled"` の間は `COUNTERS_NAT*` エントリが存在しない | `natorch.cpp:2534-2582` (`enableNatFeature`), `natorch.cpp:2617-2680` (`doNatGlobalTableTask`) |
 | `APP_NAT_TABLE\|<global_ip>` / `APP_NAPT_TABLE\|<proto>:<ip>:<port>` (APPL_DB) | SET → `addHwSnatEntry()` / `addHwDnatEntry()` 成功 → `updateNatCounters(…,0,0)` | SAI 登録成功時のみカウンタエントリ生成 | `natorch.cpp:789` (`addSnatEntry`), `natorch.cpp:873` (`addNaptEntry`), `natorch.cpp:4049-4061` (`updateNatCounters`) |
 | `APP_NAT_TWICE_TABLE\|<src_ip>:<dst_ip>` / `APP_NAPT_TWICE_TABLE\|…` (APPL_DB) | SET → `addHwTwiceNatEntry()` 成功 → `updateTwiceNatCounters(…,0,0)` | SAI 登録成功時のみ `COUNTERS_TWICE_NAT*` エントリ生成 | `natorch.cpp:1343-1430` (`addHwTwiceNatEntry`), `natorch.cpp:4108-4135` (`updateTwiceNatCounters`) |
 | `FLUSHNATSTATISTICS` 通知 (APPL_DB) | 受信 → SAI `reset_nat_entry_attribute` → カウンタ 0 リセット | `sonic-clear nat statistics` 発行時 | `natorch.cpp:3271-3303` (`clearCounters`), コンストラクタ `NotificationConsumer("FLUSHNATSTATISTICS")` |
@@ -263,7 +256,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG 定義外の COUNTERS_DB 実行時テーブルのためコード hardcode 値のみ。
+[YANG](../../reference/glossary.md#term-yang) 定義外の COUNTERS_DB 実行時テーブルのためコード hardcode 値のみ。
 
 | フィールド | テーブル | 初期値 | ソース |
 |-----------|---------|--------|--------|
@@ -310,7 +303,7 @@ YANG 定義外の COUNTERS_DB 実行時テーブルのためコード hardcode �
 
 ### 主要な制約詳細
 
-**コンストラクタ → COUNTERS_GLOBAL_NAT の強制先行 (依存 #1)**: `NatOrch::NatOrch()` 末尾で `sai_switch_api->get_switch_attribute(SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY)` を実行し、結果を `maxAllowedSNatEntries` に格納した後 `m_countersGlobalNatTable.set("Values", values)` で `MAX_NAT_ENTRIES` / `TIMEOUT` / `UDP_TIMEOUT` / `TCP_TIMEOUT` を一括書き込む。この書き込みは orchagent 初期化フェーズで 1 回だけ行われ、以後の CONFIG_DB 変更では更新されない (`natorch.cpp:111-134`)。
+**コンストラクタ → COUNTERS_GLOBAL_NAT の強制先行 (依存 #1)**: `NatOrch::NatOrch()` 末尾で `sai_switch_api->get_switch_attribute(SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY)` を実行し、結果を `maxAllowedSNatEntries` に格納した後 `m_countersGlobalNatTable.set("Values", values)` で `MAX_NAT_ENTRIES` / `TIMEOUT` / `UDP_TIMEOUT` / `TCP_TIMEOUT` を一括書き込む。この書き込みは [orchagent](../../reference/glossary.md#term-orchagent) 初期化フェーズで 1 回だけ行われ、以後の CONFIG_DB 変更では更新されない (`natorch.cpp:111-134`)。
 
 **NAT 未サポートプラットフォームでのカウンタ停止 (依存 #2)**: `gIsNatSupported` は `switchorch.cpp` が SAI switch 属性 `SAI_SWITCH_ATTR_NAT_ZONE_COUNTER_OBJECT_SUPPORT` を確認して設定するグローバル変数。`false` の場合 `enableNatFeature()` が冒頭で return し (`natorch.cpp:2541-2543`)、タイマーが起動しない。結果として `COUNTERS_NAT` 等のテーブルはエントリ追加時の `update*Counters(0,0)` のみで書かれ、以後 5 秒周期更新を受けない。
 
@@ -358,7 +351,7 @@ YANG 定義外の COUNTERS_DB 実行時テーブルのためコード hardcode �
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`NatOrch` が COUNTERS_DB NAT カウンタテーブル群を書き込む際に使用する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/natorch.h` および `sonic-swss/orchagent/natorch.cpp`。
+`NatOrch` が COUNTERS_DB NAT カウンタテーブル群を書き込む際に使用する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。出典は `sonic-swss/orchagent/natorch.h` および `sonic-swss/orchagent/natorch.cpp`。
 
 ### カウンタ更新タイマー周期定数
 
@@ -448,7 +441,7 @@ NatOrch が消費する APPL_DB テーブルの優先度（小さい値 = 高優
 > 調査対象: `sonic-swss/orchagent/natorch.cpp`, `sonic-swss/cfgmgr/natmgr.cpp`, `sonic-swss/orchagent/orchdaemon.cpp`
 > 詳細証跡: `meta/_intermediate/cdb-flow/nat-pubsub.md`
 
-`COUNTERS_DB` NAT カウンタテーブル群は `NatOrch` のみが書き手となる特殊なランタイムステータスレジスタである。通常の CONFIG_DB → APPL_DB → orchagent パスとは異なり、**SAI タイマーポーリング**と**APPL_DB 非同期通知チャンネル**の 2 つの経路で COUNTERS_DB が更新される。
+`COUNTERS_DB` NAT カウンタテーブル群は `NatOrch` のみが書き手となる特殊なランタイムステータスレジスタである。通常の CONFIG_DB → APPL_DB → [orchagent](../../reference/glossary.md#term-orchagent) パスとは異なり、**SAI タイマーポーリング**と**APPL_DB 非同期通知チャンネル**の 2 つの経路で COUNTERS_DB が更新される。
 
 ### 書き込み経路の全体像
 
@@ -493,7 +486,7 @@ PSUBSCRIBE __keyspace@4__:NAT_BINDINGS|*
 
 ### 層 2: APPL_DB → NatOrch (ConsumerStateTable)
 
-`orchdaemon.cpp:457-462` で `NatOrch` を生成し、APPL_DB 上の以下のテーブルを **ConsumerStateTable** で購読する:
+`orchdaemon.cpp:457-462` で `NatOrch` を生成し、APPL_DB 上の以下のテーブルを **[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)** で購読する:
 
 | APPL_DB テーブル | 優先度 | COUNTERS_DB への影響 |
 |-----------------|--------|----------------------|
@@ -508,7 +501,7 @@ PSUBSCRIBE __keyspace@4__:NAT_BINDINGS|*
 
 ### 層 3: SAI タイマーポーリング → COUNTERS_DB
 
-COUNTERS_DB への実測値書き込みは `SelectableTimer` 経由で行われる。これは通常の Redis pub/sub ではなく、`swss::Select` の fd ポーリング機構を使う:
+COUNTERS_DB への実測値書き込みは `SelectableTimer` 経由で行われる。これは通常の [Redis](../../reference/glossary.md#term-redis) pub/sub ではなく、`swss::Select` の fd ポーリング機構を使う:
 
 ```
 orchagent メインループ (Select::select)
@@ -527,22 +520,22 @@ NAT データパスには `NotificationConsumer / NotificationProducer` によ�
 
 | チャンネル名 | DB | 方向 | 送信者 | 受信者 | COUNTERS_DB への影響 |
 |---|---|---|---|---|---|
-| `SETTIMEOUTNAT` | APPL_DB | NatOrch → natmgrd | `NatOrch::setTimeoutNotifier` (`natorch.cpp:137`) | `natmgrd.cpp:149` `timeoutNotificationsConsumer` | 直接影響なし (conntrack タイムアウトのみ) |
-| `FLUSHNATENTRIES` | APPL_DB | CLI → natmgrd | `sonic-clear nat translations` | `natmgrd.cpp:152` `flushNotificationsConsumer` | natmgrd が APPL_DB エントリを削除 → NatOrch が `deleteNatCounters()` を呼ぶ → COUNTERS_DB キー消滅 |
+| `SETTIMEOUTNAT` | APPL_DB | NatOrch → [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) | `NatOrch::setTimeoutNotifier` (`natorch.cpp:137`) | `natmgrd.cpp:149` `timeoutNotificationsConsumer` | 直接影響なし (conntrack タイムアウトのみ) |
+| `FLUSHNATENTRIES` | APPL_DB | CLI → [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) | `sonic-clear nat translations` | `natmgrd.cpp:152` `flushNotificationsConsumer` | [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) が APPL_DB エントリを削除 → NatOrch が `deleteNatCounters()` を呼ぶ → COUNTERS_DB キー消滅 |
 | `FLUSHNATSTATISTICS` | APPL_DB | CLI → NatOrch | `sonic-clear nat statistics` | `natorch.cpp:84-86` `m_flushNotificationsConsumer` | `clearCounters()` → SAI `reset_nat_entry_attribute` → `COUNTERS_NAT*` フィールドを `"0"` にリセット |
 | `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | natmgrd → NatOrch | natmgrd 停止シグナル時 | `natorch.cpp:89-91` `m_cleanupNotificationConsumer` | `cleanupAppDbEntries()` → 全 NAT エントリ削除 → 全 `COUNTERS_NAT*` キー消滅 |
 
 ### COUNTERS_GLOBAL_NAT の書き込みタイミング
 
-`COUNTERS_GLOBAL_NAT|Values` の各フィールドは Redis pub/sub によらず直接 `m_countersGlobalNatTable.set()` で書き込まれる:
+`COUNTERS_GLOBAL_NAT|Values` の各フィールドは [Redis](../../reference/glossary.md#term-redis) pub/sub によらず直接 `m_countersGlobalNatTable.set()` で書き込まれる:
 
 | フィールド | 書き込みタイミング | トリガ |
 |---|---|---|
 | `MAX_NAT_ENTRIES` / `TIMEOUT` / `UDP_TIMEOUT` / `TCP_TIMEOUT` | NatOrch コンストラクタ (1 回のみ) | orchagent 起動 |
-| `STATIC_NAT_ENTRIES` 等のエントリ数カウンタ | `addHwSnatEntry()` / `removeHwSnatEntry()` 成功時 | APPL_DB ConsumerStateTable イベント |
+| `STATIC_NAT_ENTRIES` 等のエントリ数カウンタ | `addHwSnatEntry()` / `removeHwSnatEntry()` 成功時 | APPL_DB [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) イベント |
 | `SNAT_ENTRIES` / `DNAT_ENTRIES` | SAI エントリ追加/削除ごとに即時 | 同上 |
 
-> **Evidence**: `natorch.cpp:84-91` (NotificationConsumer 登録), `natorch.cpp:137` (NotificationProducer), `natorch.cpp:3095-3117` (SelectableTimer doTask), `orchdaemon.cpp:457-462` (ConsumerStateTable 優先度), `natmgr.cpp:43-49` (ProducerStateTable 群), `natmgrd.cpp:109-121` (SubscriberStateTable 購読テーブル一覧), `natorch.cpp:4450-4490` (NotificationConsumer doTask); 詳細分析 `meta/_intermediate/cdb-flow/nat-pubsub.md`
+> **Evidence**: `natorch.cpp:84-91` (NotificationConsumer 登録), `natorch.cpp:137` (NotificationProducer), `natorch.cpp:3095-3117` (SelectableTimer doTask), `orchdaemon.cpp:457-462` ([ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) 優先度), `natmgr.cpp:43-49` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable) 群), `natmgrd.cpp:109-121` (SubscriberStateTable 購読テーブル一覧), `natorch.cpp:4450-4490` (NotificationConsumer doTask); 詳細分析 `meta/_intermediate/cdb-flow/nat-pubsub.md`
 
 <!-- /pubsub -->
 
@@ -597,3 +590,5 @@ SNAT / NAPT / Twice NAT エントリおよび `COUNTERS_GLOBAL_NAT` の書き込
 > **Evidence**: `natorch.cpp:144-149` (gNhTrackingSupported 設定), `main.cpp:936-948` (gIsNatSupported 設定), `natorch.cpp:2541-2544` (gIsNatSupported ガード), `natorch.cpp:1923,1959` (gNhTrackingSupported 分岐); 詳細分析 `meta/_intermediate/cdb-flow/nat-app-platform.md`
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: 3c54856380ca -->

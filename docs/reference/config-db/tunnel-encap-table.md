@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-P4RT controller が **APPL_DB の `P4RT_TABLE:FIXED_TUNNEL_TABLE`** に書き込む GRE IP-in-IP encap トンネルエントリ。[orchagent](../../reference/glossary.md#term-orchagent) の `GreTunnelManager` がこれを購読し、[SAI](../../reference/glossary.md#term-sai) `sai_tunnel_api->create_tunnels()` を呼び出してハードウェアに GRE トンネルを設定する[^1]。
+P4RT controller が **[APPL_DB](../../reference/glossary.md#term-appl_db) の `P4RT_TABLE:FIXED_TUNNEL_TABLE`** に書き込む GRE IP-in-IP encap トンネルエントリ。[orchagent](../../reference/glossary.md#term-orchagent) の `GreTunnelManager` がこれを購読し、[SAI](../../reference/glossary.md#term-sai) `sai_tunnel_api->create_tunnels()` を呼び出してハードウェアに GRE トンネルを設定する[^1]。
 
 テーブル名定数は `schema.h` の `APP_P4RT_TUNNEL_TABLE_NAME = "FIXED_TUNNEL_TABLE"`[^2]。
 
@@ -67,7 +67,7 @@ APPL_DB:   P4RT_TABLE:FIXED_TUNNEL_TABLE:<json_key>
 |-----------|----|------|------|
 | `match/tunnel_id` (key) | string | ✅ | トンネル識別子 |
 | `action` | string `mark_for_p2p_tunnel_encap` | ✅ | アクション種別（固定値のみ受け入れ） |
-| `param/router_interface_id` | string | ✅ | アンダーレイ RIF ID |
+| `param/router_interface_id` | string | ✅ | アンダーレイ [RIF](../../reference/glossary.md#term-rif) ID |
 | `param/encap_src_ip` | IPv4/IPv6 アドレス | ✅ | GRE encap 送信元 IP |
 | `param/encap_dst_ip` | IPv4/IPv6 アドレス | ✅ | GRE encap 宛先 IP（neighbor_id を兼ねる） |
 | `controller_metadata` | string | - | コントローラメタデータ（無視される） |
@@ -88,14 +88,14 @@ APPL_DB:   P4RT_TABLE:FIXED_TUNNEL_TABLE:<json_key>
 
 以下のデフォルト値は DB フィールドとして公開されず、`gre_tunnel_manager.cpp` 内でハードコードまたは暗黙的に設定される。
 
-| フィールド / SAI 属性 | デフォルト / 実挙動 | 根拠 |
+| フィールド / [SAI](../../reference/glossary.md#term-sai) 属性 | デフォルト / 実挙動 | 根拠 |
 |----------------------|--------------------|------|
 | `action` | `mark_for_p2p_tunnel_encap` 固定 | `p4orch_util.h:111` `kTunnelAction` |
 | `encap_src_ip` parse 初期値 | `0.0.0.0` (省略時は `INVALID_PARAM` エラー) | `gre_tunnel_manager.cpp:326` |
 | `encap_dst_ip` parse 初期値 | `0.0.0.0` (省略時は `INVALID_PARAM` エラー) | `gre_tunnel_manager.cpp:327` |
 | `SAI_TUNNEL_ATTR_TYPE` | `SAI_TUNNEL_TYPE_IPINIP_GRE` ハードコード | `gre_tunnel_manager.cpp:42` |
 | `SAI_TUNNEL_ATTR_PEER_MODE` | `SAI_TUNNEL_PEER_MODE_P2P` ハードコード | `gre_tunnel_manager.cpp:46` |
-| `SAI_TUNNEL_ATTR_OVERLAY_INTERFACE` | `gUnderlayIfId` (グローバルループバック RIF を代用) | `gre_tunnel_manager.cpp:420` |
+| `SAI_TUNNEL_ATTR_OVERLAY_INTERFACE` | `gUnderlayIfId` (グローバルループバック [RIF](../../reference/glossary.md#term-rif) を代用) | `gre_tunnel_manager.cpp:420` |
 | `neighbor_id` | `encap_dst_ip` と同値 (BRCM SAI 要件) | `gre_tunnel_manager.h:44`, `gre_tunnel_manager.cpp:406` |
 | Update (SET on existing) | `SWSS_RC_UNIMPLEMENTED` エラー | `gre_tunnel_manager.cpp:280` |
 | `controller_metadata` | 無視 (ホワイトリスト外スキップ) | `gre_tunnel_manager.cpp:371-375` |
@@ -106,7 +106,7 @@ APPL_DB:   P4RT_TABLE:FIXED_TUNNEL_TABLE:<json_key>
 
 **SAI ピアモード (`SAI_TUNNEL_PEER_MODE_P2P`)**: `action` 名の `mark_for_p2p_tunnel_encap` が示す通り、P4 GRE encap トンネルは常に P2P モードで動作する[^3]。
 
-**`overlay_if_oid` = `gUnderlayIfId`**: SAI `SAI_TUNNEL_ATTR_OVERLAY_INTERFACE` は必須属性だが、専用オーバーレイ RIF を作成せずグローバルアンダーレイ RIF を代用する。コード内に `TODO: Remove when SAI_TUNNEL_ATTR_OVERLAY_INTERFACE is not mandatory` と明記されており将来修正予定[^4]。
+**`overlay_if_oid` = `gUnderlayIfId`**: SAI `SAI_TUNNEL_ATTR_OVERLAY_INTERFACE` は必須属性だが、専用オーバーレイ [RIF](../../reference/glossary.md#term-rif) を作成せずグローバルアンダーレイ RIF を代用する。コード内に `TODO: Remove when SAI_TUNNEL_ATTR_OVERLAY_INTERFACE is not mandatory` と明記されており将来修正予定[^4]。
 
 **`neighbor_id` = `encap_dst_ip`**: BRCM SAI の実装要件から `neighbor_id` は `encap_dst_ip` と同値に固定される。GRE トンネルを作成する前に、該当 neighbor エントリが存在している必要がある[^4]。
 
@@ -114,9 +114,9 @@ APPL_DB:   P4RT_TABLE:FIXED_TUNNEL_TABLE:<json_key>
 
 ## 関連 CONFIG_DB / YANG / CLI
 
-- 関連 CONFIG_DB: なし（P4RT は CONFIG_DB を経由しない）
-- 関連 YANG: なし
-- 関連 CLI: なし（P4RT controller が直接 APPL_DB に書き込む）
+- 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): なし（P4RT は [CONFIG_DB](../../reference/glossary.md#term-config_db) を経由しない）
+- 関連 [YANG](../../reference/glossary.md#term-yang): なし
+- 関連 CLI: なし（P4RT controller が直接 [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込む）
 
 <!-- ordering -->
 ## 処理順序・依存関係・Warm-reboot 挙動
@@ -159,7 +159,7 @@ DEL 操作では `m_p4OidMapper->getRefCount(SAI_OBJECT_TYPE_TUNNEL, ...)` で�
 3. `P4Orch::drain()` を呼び出し — `m_p4ManagerAddPrecedence` 順に各マネージャの `drain()` を実行
 4. 完了後 `setEnableDbWriteAndNotify(true)` に復帰
 
-GRE tunnel は warm-reboot 後に P4RT controller が APPL_DB に再書き込みを行い、orchagent が SAI 状態を再作成する。重複 SET (既存エントリへの再設定) は `SWSS_RC_UNIMPLEMENTED` を返すため、controller は DEL → SET で再構築する必要がある（`gre_tunnel_manager.cpp:278-281`）。
+GRE tunnel は warm-reboot 後に P4RT controller が [APPL_DB](../../reference/glossary.md#term-appl_db) に再書き込みを行い、[orchagent](../../reference/glossary.md#term-orchagent) が SAI 状態を再作成する。重複 SET (既存エントリへの再設定) は `SWSS_RC_UNIMPLEMENTED` を返すため、controller は DEL → SET で再構築する必要がある（`gre_tunnel_manager.cpp:278-281`）。
 
 ### Bulk SAI 呼び出しモード
 
@@ -317,7 +317,7 @@ GRE Tunnel を SET すると RIF / Neighbor の ref_count が増加し、Tunnel 
 
 ### 購読方式 — ZMQ ベース
 
-`P4Orch` は標準 `Orch` サブクラスではなく **`ZmqOrch`** サブクラスとして実装される。`FIXED_TUNNEL_TABLE` を含む `P4RT_TABLE` の書き込みは P4RT gRPC サーバが **ZMQ IPC** 経由で orchagent に送信する（Redis ProducerStateTable channel や keyspace 通知は使わない）。
+`P4Orch` は標準 `Orch` サブクラスではなく **`ZmqOrch`** サブクラスとして実装される。`FIXED_TUNNEL_TABLE` を含む `P4RT_TABLE` の書き込みは P4RT gRPC サーバが **ZMQ IPC** 経由で orchagent に送信する（[Redis](../../reference/glossary.md#term-redis) [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) channel や keyspace 通知は使わない）。
 
 ```cpp
 // orchdaemon.cpp:847-849
@@ -342,7 +342,7 @@ P4RT gRPC サーバ（`p4rt` コンテナ内）は `ipc:///zmq_swss/p4orch_zmq_s
 | # | 宛先 | 内容 | 条件 |
 |---|------|------|------|
 | 1 | ZMQ 応答 (`ZmqServer::sendMsg`) | gRPC WriteResponse として P4RT サーバに返却 | 常時（`m_zmqServer != nullptr`） |
-| 2 | Redis Notification Channel | `APPL_DB_P4RT_TABLE_RESPONSE_CHANNEL` に `PUBLISH` | 常時 (`NotificationProducer::send()`) |
+| 2 | [Redis](../../reference/glossary.md#term-redis) Notification Channel | `APPL_DB_P4RT_TABLE_RESPONSE_CHANNEL` に `PUBLISH` | 常時 (`NotificationProducer::send()`) |
 | 3 | `APPL_STATE_DB:P4RT_TABLE:FIXED_TUNNEL_TABLE:<key>` | SET 成功時: intent フィールドを state として書き込み。DEL 成功時: エントリ削除 | `status.ok()` 時のみ |
 
 ```
@@ -367,7 +367,7 @@ DEL 成功時は当該エントリが APPL_STATE_DB から削除される。
 
 ### COUNTERS_DB / FLEX_COUNTER_DB
 
-`gre_tunnel_manager.cpp` は `crmorch.h` をインクルードするが `gCrmOrch->incCrmResUsedCounter()` を呼び出していない。GRE tunnel エントリは **CRM カウンタ・COUNTERS_DB・FLEX_COUNTER_DB のいずれにも書き込まない**。
+`gre_tunnel_manager.cpp` は `crmorch.h` をインクルードするが `gCrmOrch->incCrmResUsedCounter()` を呼び出していない。GRE tunnel エントリは **[CRM](../../reference/glossary.md#term-crm) カウンタ・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) のいずれにも書き込まない**。
 
 ### サービス再起動トリガー
 
@@ -439,3 +439,5 @@ entries[i].overlay_if_oid = gUnderlayIfId;
 [^3]: SAI 属性設定: `gre_tunnel_manager.cpp` `prepareSaiAttrs()`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L37-L65>
 [^4]: `createGreTunnels()` overlay_if / neighbor_id: `gre_tunnel_manager.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L400-L425>
 [^5]: P4Orch マネージャ ADD 優先順位 (`m_p4ManagerAddPrecedence`): `p4orch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/p4orch.cpp#L88-L102>
+
+<!-- glossary-links-injected: d78a46c9b875 -->
