@@ -5,7 +5,8 @@ tags: [swss-common, database, configuration, redis, internal]
 description: database_config.json が必須となった経緯と DEFAULT_UNIXSOCKET 廃止、非標準環境での注意点。
 source_issues:
   - https://github.com/sonic-net/sonic-swss-common/issues/322
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # swss-common データベース設定（database_config.json）

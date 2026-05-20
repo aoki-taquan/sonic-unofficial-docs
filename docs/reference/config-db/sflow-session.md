@@ -92,9 +92,7 @@ SFLOW_SESSION|all      # 全ポートへのグローバル既定
 
 [^1]: [YANG](../../reference/glossary.md#term-yang) 定義: `sonic-sflow.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-sflow.yang>
 
-[^2]: sflowmgrd 実装: `sonic-swss/cfgmgr/sflowmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp>
 
-[^3]: sfloworch 実装: `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/sfloworch.cpp>
 
 <!-- topics-back-ref -->
 ## 関連 Topics

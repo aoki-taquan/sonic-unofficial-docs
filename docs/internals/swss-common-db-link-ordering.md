@@ -5,7 +5,8 @@ tags: [swss-common, database, api, producer-state-table, internal]
 description: linkToDbNative を linkToDb より先に呼ばなければならない順序制約の理由とクラッシュパターン。
 source_issues:
   - https://github.com/sonic-net/sonic-swss-common/issues/507
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # swss-common DB リンク順序制約（linkToDbNative / linkToDb）

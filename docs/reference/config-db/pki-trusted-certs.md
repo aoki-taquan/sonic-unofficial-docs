@@ -528,3 +528,7 @@ gNSI Certz (`gnsi_certz.go`) はプロファイル管理に CONFIG_DB を使用�
 
 [^1]: `sonic-mgmt-common` `cvl/testdata/schema/sonic-pki.yang` + `sonic-security-global.yang` — YANG スキーマ定義と CVL leafref テスト
 [^2]: `sonic-gnmi` `gnmi_server/gnsi_certz.go` — gNSI Certz 実装。defaultProfile, bootstrapDefaultProfile, writeEntityFreshness
+
+## 実装との乖離
+
+本テーブルは HLD では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。

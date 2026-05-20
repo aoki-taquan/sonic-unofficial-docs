@@ -127,13 +127,10 @@ IFA 機能の全体的な有効/無効フラグ。singleton。key は固定値 `
 
 ## 引用元
 
-[^1]: YANG 定義 (TAM): `sonic-tam.yang`. <https://github.com/sonic-net/sonic-mgmt-common/blob/HEAD/cvl/testdata/schema/sonic-tam.yang>
 
-[^2]: YANG 定義 (IFA): `sonic-ifa.yang`. <https://github.com/sonic-net/sonic-mgmt-common/blob/HEAD/cvl/testdata/schema/sonic-ifa.yang>
 
 [^3]: SAI 属性参照: `portsorch.cpp:11593-11609`. <https://github.com/sonic-net/sonic-swss/blob/HEAD/orchagent/portsorch.cpp#L11593>
 
-[^4]: High Frequency Telemetry TAM_COLLECTOR: `hftelorch.cpp:183-188`. <https://github.com/sonic-net/sonic-swss/blob/HEAD/orchagent/high_frequency_telemetry/hftelorch.cpp#L183>
 
 [^5]: CVL must テスト (TAM_COLLECTOR ipaddress-type 不一致): `cvl_must_test.go:443-467`. <https://github.com/sonic-net/sonic-mgmt-common/blob/HEAD/cvl/cvl_must_test.go#L443>
 

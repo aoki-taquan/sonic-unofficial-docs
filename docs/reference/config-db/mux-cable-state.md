@@ -120,8 +120,6 @@ ycabled が gRPC 経由でハードウェア (Y-Cable / SoC) から取得した 
 
 ## 引用元
 
-[^1]: `muxorch.cpp` MuxStateOrch / MuxOrch — STATE_DB MUX_CABLE_TABLE 書き込みロジック. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/muxorch.cpp>
-[^2]: `y_cable_helper.py` put_init_values_for_grpc_states — HW_MUX_CABLE_TABLE 初期化. <https://github.com/sonic-net/sonic-platform-daemons/blob/master/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py>
 
 <!-- topics-back-ref -->
 ## 関連 Topics

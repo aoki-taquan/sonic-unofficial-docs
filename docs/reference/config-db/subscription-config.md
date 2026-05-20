@@ -576,7 +576,6 @@ Supervisor Card 上のホスト CONFIG_DB の `TELEMETRY_CLIENT` のみが有効
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-telemetry_client.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-telemetry_client.yang>
 
 [^2]: Go 実装: `dialout_client.go`. <https://github.com/sonic-net/sonic-gnmi/blob/eb635b7679b260c3fd0786a6d0734fc8e82c9a22/dialout/dialout_client/dialout_client.go>
 

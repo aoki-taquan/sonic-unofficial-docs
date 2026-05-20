@@ -639,10 +639,6 @@ storm control の CONFIG_DB 参照は `namespace` 単位で独立している。
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-storm-control.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-storm-control.yang>
-[^2]: PolicerOrch 実装: `policerorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/policerorch.cpp>
-[^3]: CLI 実装: `config/main.py`. <https://github.com/sonic-net/sonic-utilities/blob/master/config/main.py>
-[^4]: BUM Storm Control HLD: `bum_storm_control_hld.md`. <https://github.com/sonic-net/SONiC/blob/master/doc/bum_storm_control/bum_storm_control_hld.md>
 
 ## 関連ページ
 

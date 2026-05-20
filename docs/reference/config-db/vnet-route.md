@@ -134,7 +134,6 @@ VNET スコープの VXLAN トンネル encapsulation 経路。
 
 ## 引用元
 
-[^1]: YANG 定義: `sonic-vnet.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-vnet.yang>
 
 <!-- ops-hint -->
 ## 運用ヒント

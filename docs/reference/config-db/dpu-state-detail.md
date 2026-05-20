@@ -658,7 +658,3 @@ DPU reboot タイムアウトはベンダーが `platform_env.conf` で調整可
 
 ## 引用元
 
-[^1]: `chassisd` ソース: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` —
-    フィールド名定数 (line 108-111)、`update_dpu_state()` (line 864-891)、
-    `DpuStateUpdater` クラス (line 1234-1320)、`set_initial_dpu_admin_state()` (line 1364-1405)。
-    `show dpu` CLI: `sonic-utilities/show/system_health.py:show_dpu_state()` (line 172-222)。

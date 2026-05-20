@@ -651,9 +651,6 @@ STATE_DB 書き込み: なし
 NotificationConsumer: なし（カウンタ配信に使用せず）
 ```
 
-[^17]: FlexCounterOrch RIF enable ブランチ: `sonic-swss/orchagent/flexcounterorch.cpp:283-286`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L283>
-[^18]: IntfsOrch doTask(SelectableTimer) / addRifToFlexCounter: `sonic-swss/orchagent/intfsorch.cpp:1598-1637`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1598>
-[^19]: intfstat COUNTERS_DB 直接読み出し: `sonic-utilities/scripts/intfstat:81-82,96,109,123`. <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bd/scripts/intfstat#L81>
 <!-- /pubsub -->
 
 <!-- platform -->
@@ -739,7 +736,6 @@ VoQ シャーシ環境 (`gMySwitchType == "voq"` かつ `isChassisDbInUse()`) �
 [^9]: SAI create_router_interface エラーハンドリング: `sonic-swss/orchagent/intfsorch.cpp:1297-1305`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1297>
 [^10]: rif_rates.lua ロード失敗の catch: `sonic-swss/orchagent/intfsorch.cpp:86-94`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L86>
 [^11]: gTraditionalFlexCounter モードでの VIDTORID 待機ループ: `sonic-swss/orchagent/intfsorch.cpp:1627-1636`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1627>
-[^12]: FlexCounter グループ識別子定数: `sonic-swss/orchagent/intfsorch.h:19-21`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.h#L19>
 [^13]: addRifToFlexCounter 3 DB 書き込み: `sonic-swss/orchagent/intfsorch.cpp:1537-1551`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1537>
 [^14]: removeRifFromFlexCounter 削除シーケンス: `sonic-swss/orchagent/intfsorch.cpp:1559-1566`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1559>
 [^15]: ref_count ブロック: `sonic-swss/orchagent/intfsorch.cpp:1327-1330`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1327>

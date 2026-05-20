@@ -86,6 +86,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: AsterNOS (ベンダー版)
 - **説明**: Asterfusion による SONiC ベースの商用 NOS。本ドキュメントのスコープ外。
 
+### ASIC {#term-asic}
+
+- **略称**: ASIC (Application Specific Integrated Circuit)
+- **日本語訳**: 特定用途向け集積回路
+- **説明**: SONiC が制御するスイッチング ASIC / NPU の総称。SAI 経由で `syncd` が抽象化したコマンドを ASIC SDK に渡す。
+
+
 ## B
 
 ### BFD {#term-bfd}
@@ -205,6 +212,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: `sonic-swss-common` が提供する Redis 上のキー値ストリームを消費する C++ クラス。orchagent や `*mgrd` が APPL_DB / CONFIG_DB の変更通知を購読する基盤。対となる ProducerStateTable と組で使う。
 - **関連**: [ProducerStateTable](#term-producerstatetable)、[sonic-swss-common](#term-sonic-swss-common)
 
+### CBF {#term-cbf}
+
+- **略称**: CBF (Class-Based Forwarding)
+- **日本語訳**: クラスベース転送
+- **説明**: DSCP/TC を Forwarding Class (FC) にマッピングし、FC 単位で next-hop / queue 選択を分岐させる QoS 拡張。`DSCP_TO_FC_MAP` / `EXP_TO_FC_MAP` で構成。
+
+
 ## D
 
 ### DASH {#term-dash}
@@ -261,6 +275,19 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: 重み付きラウンドロビンに「赤字 (deficit)」カウンタを加え、可変長パケットでも重み比に近い帯域配分を実現するスケジューリングアルゴリズム。SONiC では `SCHEDULER` テーブルの `type=DWRR` と `weight` で設定し、SAI Scheduler `SAI_SCHEDULING_TYPE_DWRR` に対応する。
 - **関連**: [WRR](#term-wrr)、[Scheduler](#term-scheduler)、[Strict Priority](#term-strict-priority)
 
+### DEVICE_METADATA {#term-device_metadata}
+
+- **略称**: DEVICE_METADATA
+- **日本語訳**: デバイスメタデータ
+- **説明**: CONFIG_DB の最上位テーブル。`localhost` キーにホスト名・hwsku・mac・type・platform 等のシステム識別情報を保持し、ほぼ全コンポーネントが参照する。
+
+### dot1x {#term-dot1x}
+
+- **略称**: dot1x (IEEE 802.1X)
+- **日本語訳**: ポート認証 802.1X
+- **説明**: ポートベース認証 (IEEE 802.1X)。CONFIG_DB の `DOT1X_PORT_AUTH` テーブルと hostapd 系で構成。RADIUS と連動する。
+
+
 ## E
 
 ### ECMP {#term-ecmp}
@@ -311,6 +338,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: EVPN マルチホーミング
 - **説明**: 1 つの CE を複数 PE に冗長接続する EVPN 拡張 (RFC 7432 Section 5)。Ethernet Segment (ES) / DF election / split-horizon label 等を用い、MCLAG の代替手段として FRR で実装される。
 - **関連**: [EVPN](#term-evpn)、[MCLAG](#term-mclag)
+
+### EXP {#term-exp}
+
+- **略称**: EXP (MPLS Traffic Class / Experimental bits)
+- **日本語訳**: MPLS EXP ビット
+- **説明**: MPLS ラベルの 3-bit Traffic Class フィールド (旧称 EXP)。SONiC では `EXP_TO_FC_MAP` 等で内部 FC/TC にマップする。
+
 
 ## F
 
@@ -372,6 +406,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: FRRouting
 - **説明**: SONiC が採用するルーティングスタック。`bgpd` / `zebra` / `staticd` 等を含む。`docker-fpm-frr` コンテナ内で動く。
 - **関連**: [BGP トピック](../topics/02-bgp/index.md)
+
+### Forwarding Database {#term-forwarding-database}
+
+- **略称**: Forwarding Database (FDB)
+- **日本語訳**: 転送データベース
+- **説明**: MAC アドレスと出力ポートの対応表。FDB の同義語。詳細は [FDB](#term-fdb) を参照。
+
 
 ## G
 
@@ -478,6 +519,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: IP パケットを別の IP ヘッダでカプセル化する手法 (RFC 2003)。SONiC では Dual-ToR の active-standby 構成で standby ToR から active ToR にトラフィックを流すために使われる。
 - **関連**: [MUX](#term-mux)、[linkmgrd](#term-linkmgrd)
 
+### intfsorch {#term-intfsorch}
+
+- **略称**: intfsorch
+- **日本語訳**: L3 インタフェース orchestrator
+- **説明**: `orchagent` 内部の L3 インタフェース処理サブ orchestrator。INTF_TABLE を購読し、SAI Router Interface (RIF) を作成する。
+
+
 ## L
 
 ### LOGLEVEL_DB {#term-loglevel_db}
@@ -568,6 +616,31 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: MUX
 - **日本語訳**: MUX (Dual-ToR セレクタ)
 - **説明**: Dual-ToR 構成でサーバ側 NIC を Active 側 ToR に向けるための Y ケーブル / smartNIC スイッチング機構。
+
+### MAC {#term-mac}
+
+- **略称**: MAC (Media Access Control) Address
+- **日本語訳**: MAC アドレス
+- **説明**: L2 ハードウェアアドレス。SONiC では FDB / VXLAN FDB / ARP 等で扱い、`DEVICE_METADATA.localhost.mac` がスイッチ自身の base MAC を保持する。
+
+### MACsec {#term-macsec}
+
+- **略称**: MACsec (IEEE 802.1AE)
+- **日本語訳**: MAC 層暗号化
+- **説明**: L2 リンク暗号化規格。SONiC では `macsecmgrd` が CONFIG_DB の `MACSEC_PORT` / `MACSEC_PROFILE` を購読し、SAI MACsec オブジェクト経由で ASIC を構成する。
+
+### Multi-ASIC {#term-multi-asic}
+
+- **略称**: Multi-ASIC
+- **日本語訳**: マルチ ASIC 構成
+- **説明**: 1 台の SONiC デバイスに複数の ASIC (namespace) を搭載するシャーシ/モジュラ構成。`asic0` / `asic1` 等の namespace を持ち、CLI には `-n <ns>` オプションが追加される。
+
+### muxorch {#term-muxorch}
+
+- **略称**: muxorch
+- **日本語訳**: Active-Standby MUX orchestrator
+- **説明**: Dual-ToR (Active-Standby MUX) を扱う orchagent サブ orchestrator。`MUX_CABLE` テーブルを購読し、SAI tunnel / next-hop の active 側切替を行う。
+
 
 ## N
 
@@ -733,6 +806,25 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: トラフィックレートを計測し、設定上限を超えたパケットを即座に廃棄またはマーキングする QoS 動作 (RFC 2697 srTCM / RFC 2698 trTCM 等)。Shaping と異なりキューイングせず即時判定するため、低遅延が必要なエッジ制御や CoPP に向く。SONiC では Policer オブジェクトで実装する。
 - **関連**: [Policer](#term-policer)、[Shaping](#term-shaping)、[Token Bucket](#term-token-bucket)
 
+### P4RT {#term-p4rt}
+
+- **略称**: P4RT (P4Runtime)
+- **日本語訳**: P4 ランタイム
+- **説明**: P4 ターゲットを制御する gRPC ベースの API。SONiC では PINS で導入され、`p4rt` コンテナが APPL_DB / SAI と仲介する。
+
+### portsorch {#term-portsorch}
+
+- **略称**: portsorch
+- **日本語訳**: Port orchestrator
+- **説明**: `orchagent` 内部のポート/LAG/PortChannel 管理サブ orchestrator。`PORT_TABLE` / `LAG_TABLE` を購読し、SAI Port/LAG オブジェクトを管理する。
+
+### Priority Group {#term-priority-group}
+
+- **略称**: Priority Group (PG)
+- **日本語訳**: プライオリティグループ
+- **説明**: 入力側のクラス分け単位 (Ingress PG)。詳細は [PG (Priority Group)](#term-pg) を参照。
+
+
 ## Q
 
 ### QoS {#term-qos}
@@ -774,6 +866,19 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: ROUTE_TABLE
 - **日本語訳**: ルートテーブル (APPL_DB)
 - **説明**: APPL_DB 上のルート受け皿。`fpmsyncd` が書き、`RouteOrch` が購読して SAI Route Entry に変換する。
+
+### RADIUS {#term-radius}
+
+- **略称**: RADIUS (Remote Authentication Dial-In User Service)
+- **日本語訳**: RADIUS
+- **説明**: ネットワーク機器の認証/認可/アカウンティング (AAA) を提供する RFC 2865 ベースのプロトコル。CONFIG_DB の `RADIUS` / `RADIUS_SERVER` テーブルを `hostcfgd` が処理する。
+
+### ROUTE_MAP {#term-route_map}
+
+- **略称**: ROUTE_MAP
+- **日本語訳**: ルートマップ
+- **説明**: BGP/IGP の経路フィルタ/属性書き換えポリシ。CONFIG_DB の `ROUTE_MAP` / `ROUTE_MAP_SET` を `bgpcfgd` が vtysh コマンドへ変換し FRR に投入する。
+
 
 ## S
 
@@ -948,6 +1053,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: システムログ
 - **説明**: SONiC の各デーモン / コンテナが出力する標準ログ収集機構。ホスト側 `rsyslog` がコンテナログを集約し、デフォルトでは `/var/log/syslog` に出力する。Runbook では障害切り分けの一次資料として参照される。`config syslog server add <ip>` で外部コレクタへの転送設定が可能。
 
+### SONiC {#term-sonic}
+
+- **略称**: SONiC (Software for Open Networking in the Cloud)
+- **日本語訳**: SONiC
+- **説明**: Linux ベースのオープンソース NOS。本ドキュメントが対象とするコミュニティ版 master ブランチ。詳細は [プロジェクトトップ](../../index.md) を参照。
+
+
 ## T
 
 ### TAM {#term-tam}
@@ -1011,6 +1123,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: トンネル管理デーモン
 - **説明**: CONFIG_DB の `TUNNEL` / `MUX_TUNNEL` 等を購読し APPL_DB に変換する SwSS デーモン。
 
+### ToR {#term-tor}
+
+- **略称**: ToR (Top of Rack)
+- **日本語訳**: ToR スイッチ
+- **説明**: ラック上部に配置されるアクセススイッチの慣用呼称。SONiC では Dual-ToR (Active-Standby MUX) のような構成上のロールとしても用いられる。
+
+
 ## V
 
 ### VOQ {#term-voq}
@@ -1070,6 +1189,25 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: vxlanmgrd
 - **日本語訳**: VXLAN 管理デーモン
 - **説明**: CONFIG_DB の `VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` 等を購読し APPL_DB に流し、Linux 側 VXLAN デバイスも作成。
+
+### VRRP {#term-vrrp}
+
+- **略称**: VRRP (Virtual Router Redundancy Protocol)
+- **日本語訳**: VRRP (RFC 5798)
+- **説明**: デフォルトゲートウェイ冗長化プロトコル。SONiC では `VRRP` / `VRRP6` テーブルを FRR `vrrpd` 経由で扱う。
+
+### VTEP {#term-vtep}
+
+- **略称**: VTEP (VXLAN Tunnel Endpoint)
+- **日本語訳**: VXLAN トンネル端点
+- **説明**: VXLAN カプセル化/デカプセル化を行う端点。SONiC では `VXLAN_TUNNEL` テーブルに source IP を設定して構成する。
+
+### vtysh {#term-vtysh}
+
+- **略称**: vtysh
+- **日本語訳**: FRR 統合シェル
+- **説明**: FRR (zebra/bgpd/ospfd 等) を統合操作する CLI シェル。SONiC では `bgpcfgd` が CONFIG_DB 変更を vtysh コマンドへ変換して投入する。
+
 
 ## W
 

@@ -482,8 +482,6 @@ if (fdbData.origin == FDB_ORIGIN_VXLAN_ADVERTIZED)
 - **warm-restart 中のバッファリング**: `fdbsyncd` の warm-restart 中（`DEFAULT_FDBSYNC_WARMSTART_TIMER = 120 秒`）は APP_DB への直接書き込みが抑制され、キャッシュに蓄積される。完了後に `reconciliation` フェーズで差分のみを反映する。
 - **DIP トンネル未サポートモード**: `isDipTunnelsSupported() == false` の場合、`remote_vtep` が空でも EVPN NVO の source VTEP を使ってトンネルポートを解決する（`fdborch.cpp:847-854`）。
 
-[^exc1]: `sonic-swss/fdbsyncd/fdbsync.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/fdbsyncd/fdbsync.cpp>
-[^exc2]: `sonic-swss/orchagent/fdborch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/fdborch.cpp>
 
 <!-- ref-triangle:start -->
 

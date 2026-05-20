@@ -25,6 +25,7 @@ related:
     - PORT_QOS_MAP
   cli:
     - config qos
+monitor: partially_implemented
 ---
 
 # DSCP_TO_PG_MAP テーブル
@@ -522,3 +523,7 @@ CONFIG_DB への初期投入は `qos_config.j2` テンプレートが担う。�
 - [CONFIG_DB: DSCP_TO_TC_MAP](dscp-to-tc-map.md)
 - [CONFIG_DB: TC_TO_PRIORITY_GROUP_MAP](tc-to-priority-group-map.md)
 - [CONFIG_DB: PORT_QOS_MAP](port-qos-map.md)
+
+## 実装との乖離
+
+本テーブルは HLD では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。

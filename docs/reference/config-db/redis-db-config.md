@@ -484,6 +484,4 @@ docker-database-init.sh
 
 [^2]: `sonic-net/sonic-swss-common` `common/dbconnector.h` / `dbconnector.cpp` — `SonicDBConfig` クラス、`DEFAULT_SONIC_DB_CONFIG_FILE` 定数、`parseDatabaseConfig()` 実装。<https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/dbconnector.h>
 
-[^3]: `sonic-net/sonic-buildimage` `dockers/docker-database/database_config.json.j2` — 実環境 Jinja2 テンプレート。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/dockers/docker-database/database_config.json.j2>
 
-[^4]: `sonic-net/sonic-buildimage` `dockers/docker-database/docker-database-init.sh` — docker-database 起動スクリプト、ファイル生成ロジック。<https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/dockers/docker-database/docker-database-init.sh>

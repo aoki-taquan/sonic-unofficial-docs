@@ -635,3 +635,7 @@ grep -r "SWSS_RC_" /usr/include/swss/
 sonic-db-cli ERROR_DB keys '*'
 ```
 <!-- /ops-hint -->
+
+## 実装との乖離
+
+本テーブルは HLD では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。

@@ -238,7 +238,7 @@ if (stpMstInstTask == false)
 
 !!! note "キー解析の注意"
     `doStpMstInstTask()` は `key.substr(13)` で `"MST_INSTANCE|"` プレフィックス（13文字）を除去してインスタンス ID を取得する。
-    MST 有効化時に書き込まれるキー `MST_INSTANCE:INSTANCE0`（コロン区切り）と、stpmgrd が期待するキー `MST_INSTANCE|0`（パイプ区切り）の形式が異なる点は [discrepancy #5](#発見された-discrepancy--暗黙デフォルト-サマリー) に記録済み。
+    MST 有効化時に書き込まれるキー `MST_INSTANCE:INSTANCE0`（コロン区切り）と、stpmgrd が期待するキー `MST_INSTANCE|0`（パイプ区切り）の形式が異なる点は discrepancy #5 に記録済み。
 
 ### STP_MST_PORT の起動ガード
 
@@ -727,7 +727,6 @@ CONFIG_DB 以外の永続ストレージ（STATE_DB / APPL_DB / ASIC_DB）への
 
 ## 引用元
 
-[^1]: STP CLI 実装: `config/stp.py`. <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py>
 
 ## 関連ページ
 

@@ -574,7 +574,6 @@ SAI 仕様上の create-only 属性であるため ASIC ベンダーによらず
 
 ## 引用元
 
-[^1]: schema.h 定数定義: <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L488-L489>
 
 [^2]: `setDecapTunnelStatus()` 実装: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/tunneldecaporch.cpp#L1521-L1531>
 

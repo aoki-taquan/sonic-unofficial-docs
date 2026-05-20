@@ -661,8 +661,6 @@ if platform_info.get('switch_type') == 'dpu':
 
 [^2]: ZMQ 機能フラグ実装: `sonic-swss/lib/orch_zmq_config.h:21`, `sonic-swss/lib/orch_zmq_config.cpp:81-103`. <https://github.com/sonic-net/sonic-swss/blob/master/lib/orch_zmq_config.cpp>
 
-[^3]: YANG 定義: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang:217-224, 340-350`. <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-device_metadata.yang>
 
-[^4]: orchagent.sh DPU 固有引数: `sonic-buildimage/dockers/docker-orchagent/orchagent.sh:22-42`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-orchagent/orchagent.sh>
 
 [^5]: ZmqOrch / ZmqConsumerStateTable 実装: `sonic-swss/orchagent/zmqorch.cpp:59-80`, `sonic-swss-common/common/zmqconsumerstatetable.cpp:20-47`, `sonic-swss/lib/orch_zmq_config.cpp:35-80`, `sonic-swss/orchagent/main.cpp:646-654, 1032-1037`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/zmqorch.cpp>

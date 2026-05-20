@@ -250,7 +250,6 @@ REST/gNMI 書き込み経路なし
 
 > **スキャン証跡**: `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh` の起動スクリプトより抽出。YANG `sonic-restapi.yang` には `default` 文なし。コード由来デフォルトのみ。
 
-[^3]: `sonic-buildimage/dockers/docker-sonic-mgmt-framework/rest-server.sh`. <https://github.com/sonic-net/sonic-buildimage/blob/master/dockers/docker-sonic-mgmt-framework/rest-server.sh>
 
 <!-- /defaults -->
 

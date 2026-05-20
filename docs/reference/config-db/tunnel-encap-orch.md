@@ -432,6 +432,5 @@ sai_query_attribute_enum_values_capability(
 
 [^1]: VxlanTunnelOrch 実装: `orchagent/vxlanorch.cpp`, `orchagent/vxlanorch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp>
 [^2]: orchdaemon 初期化順序 (`orchdaemon.cpp:350-590`), VxlanMgr::doTask() (`cfgmgr/vxlanmgr.cpp:213-262`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
-[^3]: VxlanTunnel::createTunnelHw() ロールバック (`vxlanorch.cpp:895-940`), VxlanTunnelMapOrch::addOperation() 依存チェック (`vxlanorch.cpp:2012-2090`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L895>
 [^4]: VxlanTunnel ctor/dtor/addRemoveStateTableEntry (`vxlanorch.cpp:537,545,1913`), addTunnelToFlexCounter (`vxlanorch.cpp:911,1342`), addVlanMappedToVni (`vxlanorch.cpp:2120`, `vxlanorch.h:354`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp>
 [^5]: `VxlanTunnelOrch` コンストラクタ SAI capability query (`vxlanorch.cpp:1256–1278`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1256>

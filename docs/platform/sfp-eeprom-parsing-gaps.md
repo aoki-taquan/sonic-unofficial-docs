@@ -5,7 +5,8 @@ tags: [sfp, eeprom, platform-common, xcvrd, api]
 description: SfpUtilBase クラスに実装されていない get/set 関数が残存する問題と、xcvrd 経由アクセスへの設計方針。
 source_issues:
   - https://github.com/sonic-net/sonic-platform-common/issues/179
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # SfpUtilBase の EEPROM 解析欠損

@@ -701,15 +701,6 @@ static const unordered_set<string> supported {
 
 ## 引用元
 
-[^1]: ICCP CSM 実装: `iccp_csm.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/iccp_csm.c>
-[^2]: MCLAG リンクハンドラ: `mlacp_link_handler.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mlacp_link_handler.c>
-[^3]: MCLAG FSM: `mlacp_fsm.c`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/src/mlacp_fsm.c>
-[^4]: ICCP CSM ヘッダ: `iccp_csm.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/iccp_csm.h>
-[^5]: ICCP メッセージフォーマット: `msg_format.h`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/iccpd/include/msg_format.h>
-[^6]: STP YANG モデル: `sonic-spanning-tree.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-spanning-tree.yang>
-[^7]: MCLAG YANG モデル: `sonic-mclag.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-mclag.yang>
-[^8]: mclagsyncd メインループ: `mclagsyncd.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclagsyncd.cpp>
-[^9]: mclagsyncd リンク実装: `mclaglink.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/mclagsyncd/mclaglink.cpp>
 
 ## 関連ページ
 

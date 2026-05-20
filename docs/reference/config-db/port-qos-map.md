@@ -58,8 +58,8 @@ PORT_QOS_MAP|<PORT.name>
 |-----------|----|------|
 | `tc_to_pg_map` | leafref `TC_TO_PRIORITY_GROUP_MAP.name` | traffic class から ingress priority group への map |
 | `tc_to_queue_map` | leafref `TC_TO_QUEUE_MAP.name` | traffic class から egress queue への map |
-| `pfc_enable` | string pattern `([0-7](,[0-7])*)?` | [PFC](../../reference/glossary.md#term-pfc) を有効にする queue / priority のカンマ区切り。空文字は全無効 |
-| `pfcwd_sw_enable` | string pattern `([0-7](,[0-7])*)?` | software PFC watchdog を有効にする queue のカンマ区切り |
+| `pfc_enable` | string pattern `([0-7],)*[0-7]?` | [PFC](../../reference/glossary.md#term-pfc) を有効にする queue / priority のカンマ区切り。空文字は全無効 |
+| `pfcwd_sw_enable` | string pattern `([0-7],)*[0-7]?` | software PFC watchdog を有効にする queue のカンマ区切り |
 | `pfc_to_queue_map` | leafref `MAP_PFC_PRIORITY_TO_QUEUE.name` | PFC priority から egress queue への map |
 | `pfc_to_pg_map` | leafref `PFC_PRIORITY_TO_PRIORITY_GROUP_MAP.name` | PFC priority から priority group への map |
 | `dscp_to_tc_map` | leafref `DSCP_TO_TC_MAP.name` | [DSCP](../../reference/glossary.md#term-dscp) から traffic class への map |
@@ -173,7 +173,7 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 | 存在しない map 名 | `Object with name:%s not found.` SWSS_LOG_ERROR、適用中断 |
 | 未設定 (optional) | その map は binding しない |
 
-*enum なし — pfc_enable / pfcwd_sw_enable は ([0-7](,[0-7])*)? の string pattern。map 系は leafref。*
+*enum なし — pfc_enable / pfcwd_sw_enable は `([0-7],)*[0-7]?` の string pattern。map 系は leafref。*
 
 <!-- /value-behavior -->
 

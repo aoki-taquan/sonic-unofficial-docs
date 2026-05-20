@@ -5,7 +5,8 @@ tags: [ssh, host-services, authentication, sshd, security]
 description: SONiC デバイスへの SSH 接続で Too many authentication failures が発生する原因と対処法。
 source_issues:
   - https://github.com/sonic-net/sonic-host-services/issues/134
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # SSH 接続時の「Too many authentication failures」エラー

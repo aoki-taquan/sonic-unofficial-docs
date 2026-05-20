@@ -372,7 +372,7 @@ VNI 付き VRF の追加時に `gPortsOrch->updateL3VniStatus(vlan_id, true)` �
 
 > 調査証跡: `meta/_intermediate/cdb-flow/vrf-orch-pubsub.md`
 
-`APPL_DB VRF_TABLE` を書くのは `vrfmgrd` の `ProducerStateTable` であり、消費するのは `VRFOrch` の `ConsumerStateTable`。CONFIG_DB → vrfmgrd の経路は [CONFIG_DB VRF テーブル](./vrf.md#通信メカニズム-phase-g) を参照。ここでは APPL_DB → VRFOrch の経路に絞る。
+`APPL_DB VRF_TABLE` を書くのは `vrfmgrd` の `ProducerStateTable` であり、消費するのは `VRFOrch` の `ConsumerStateTable`。CONFIG_DB → vrfmgrd の経路は [CONFIG_DB VRF テーブル](./vrf.md) を参照。ここでは APPL_DB → VRFOrch の経路に絞る。
 
 ### vrfmgrd → APPL_DB（ProducerStateTable）
 
@@ -533,7 +533,3 @@ vrfmgrd コンストラクタは `WarmStart::isWarmStart()` で以下のよう�
 
 ## 引用元
 
-[^1]: `sonic-swss/orchagent/vrforch.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/vrforch.cpp>
-[^2]: `sonic-swss/orchagent/vrforch.h` <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/vrforch.h>
-[^3]: `sonic-swss/cfgmgr/vrfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vrfmgr.cpp>
-[^4]: `sonic-swss-common/common/schema.h` <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>

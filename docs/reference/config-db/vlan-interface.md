@@ -797,7 +797,6 @@ CONFIG_DB: VLAN_INTERFACE|Vlan100|10.0.0.1/24
            └─ STATE_DB: STATE_INTERFACE_TABLE|Vlan100|10.0.0.1/24  {state: "ok"}
 ```
 
-[^fdb1]: `sonic-swss/cfgmgr/intfmgr.cpp` <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/intfmgr.cpp>
 
 <!-- /secondary-db-writes -->
 
