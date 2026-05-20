@@ -191,8 +191,8 @@ sudo config portchannel member add PortChannel0001 Ethernet4
 ### よくある引数の組み合わせ
 
 ```bash
-# 静的 LAG（LACP 無効）
-sudo config portchannel add PortChannel0002 --static true
+# fast-rate を有効化（PortChannel add は --min-links / --fallback / --fast-rate のみ。--static オプションは存在しない）
+sudo config portchannel add PortChannel0002 --fast-rate true
 
 # fallback / min-links 指定
 sudo config portchannel add PortChannel0003 --fallback true --min-links 2

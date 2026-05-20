@@ -91,6 +91,12 @@ PORT|<name>
 | `tx_power` | decimal64 | - | - | 400G ZR 向け目標出力 [dBm] |
 | `laser_freq` | int32 | - | - | 400G ZR 向け目標レーザ周波数 [GHz] |
 | `fast_linkup` | boolean | - | `false` | fast link-up |
+| `link_event_damping_algorithm` | string `aied` / `disabled` | - | `disabled` | リンクイベントダンピングアルゴリズム選択（`porthlpr.cpp` L1345-L1373）|
+| `max_suppress_time` | uint32 [秒] | - | - | ダンピング最大抑制時間 |
+| `decay_half_life` | uint32 [秒] | - | - | ペナルティ半減期 |
+| `suppress_threshold` | uint32 | - | - | 抑制開始の累積ペナルティしきい値 |
+| `reuse_threshold` | uint32 | - | - | 抑制解除しきい値 |
+| `flap_penalty` | uint32 | - | - | フラップ 1 回あたりの加算ペナルティ |
 
 ## 制約
 

@@ -316,7 +316,7 @@ sonic-cfggen -d -v 'BGP_GLOBALS'
 <!-- topics-back-ref -->
 ## 関連 Topics
 
-- [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+- [Topics: BGP と FRR 制御プレーン](../topics/02-bgp/index.md)
 
 <!-- /topics-back-ref -->
 

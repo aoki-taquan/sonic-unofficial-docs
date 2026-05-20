@@ -68,7 +68,7 @@ flowchart LR
 
 | コンポーネント | 主実体 | 責務 |
 | --- | --- | --- |
-| `dhcprelay` (`dockers/docker-dhcp-relay`) | `isc-dhcp-relay` + `dhcpmon` | DHCPv4 / DHCPv6 relay。`dhcpmon` がカウンタを `STATE_DB` に書く |
+| `dhcprelay` (`dockers/docker-dhcp-relay`) | `isc-dhcp-relay` + `dhcpmon` | DHCPv4 / DHCPv6 relay。`dhcpmon` がカウンタを `COUNTERS_DB` (`DHCPV4_COUNTER_TABLE` / `DHCPV6_COUNTER_TABLE`) に書く |
 | `dhcp_server_ipv4` (`src/sonic-dhcp-server`) | `kea-dhcp4` based | フル DHCP server。`DHCP_SERVER_IPV4*` 系テーブルから設定生成、lease を [Redis](../../reference/glossary.md#term-redis) に書く |
 | `dhcp6relay` | isc-dhcp-relay -6 | DHCPv6 relay |
 
@@ -101,8 +101,9 @@ APPL_DB:
   NAT_TABLE, NAPT_TABLE, NAT_TWICE_TABLE, NAPT_TWICE_TABLE
 STATE_DB:
   NAT_TABLE, NAPT_TABLE, NAT_RESTORE_TABLE,
-  DHCP_SERVER_IPV4_LEASE,
-  DHCPv4_COUNTERS_TABLE, DHCPv6_COUNTERS_TABLE
+  DHCP_SERVER_IPV4_LEASE
+COUNTERS_DB:
+  DHCPV4_COUNTER_TABLE, DHCPV6_COUNTER_TABLE
 ASIC_DB:
   NAT_ENTRY
 ```
@@ -111,7 +112,7 @@ ASIC_DB:
 
 - NAT: 通常の [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) / SubscriberStateTable のみ。
 - `natsyncd` は `conntrack-tools` の netlink を直接 listen し、Redis に書く片方向経路。conntrack 自体が pub/sub ではない点に注意。
-- DHCP: `dhcpmon` が pcap または syslog をパースする実装で、Redis 経由ではなく直接 counter を [STATE_DB](../../reference/glossary.md#term-state_db) に書く。
+- DHCP: `dhcpmon` が pcap または syslog をパースする実装で、Redis 経由ではなく直接 counter を `COUNTERS_DB` の `DHCPV4_COUNTER_TABLE` / `DHCPV6_COUNTER_TABLE` に書く。
 - DNS: pub/sub 経路はありません。
 
 ## 既知の実装上の制約
@@ -135,7 +136,7 @@ flowchart LR
   KERNEL --> RELAY[dhcprelayd / kea]
   RELAY -->|unicast to server_vip| EGRESS[egress port]
   RELAY -->|stats| DHCPMON[dhcpmon NFLOG]
-  DHCPMON --> STATE[(STATE_DB<br/>DHCP_COUNTER_TABLE)]
+  DHCPMON --> STATE[(COUNTERS_DB<br/>DHCPV4_COUNTER_TABLE / DHCPV6_COUNTER_TABLE)]
 ```
 
 `CoPP` の trap group `dhcp` / `dhcpv6` がデフォルトで設定され、レート制限は `COPP_TABLE` の `cir`/`cbs` で調整されます。dhcpmon の counter は NFLOG ベースで参考値扱いが妥当です。

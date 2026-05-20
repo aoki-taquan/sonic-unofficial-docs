@@ -101,13 +101,16 @@ excerpt: |
 
 ```mermaid
 flowchart LR
-  CLI["show buffer_pool"]
-  CDB0[("CONFIG_DB<br/>BUFFER_POOL")]
-  CDB0 --> CLI
+  CLI["show buffer_pool / headroom-pool"]
+  WS["watermarkstat<br/>(-t buffer_pool / headroom_pool, -p)"]
+  CDB0[("COUNTERS_DB<br/>USER_WATERMARKS / PERSISTENT_WATERMARKS")]
+  CLI --> WS
+  CDB0 --> WS
+  WS --> CLI
 ```
 
 !!! note "凡例"
-    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+    show 系 (COUNTERS_DB → watermarkstat → CLI) のミニ図。CONFIG_DB の `BUFFER_POOL` は読まず、watermark カウンタを COUNTERS_DB から取得する。
 <!-- /cli-mermaid -->
 
 <!-- ref-triangle:start -->
