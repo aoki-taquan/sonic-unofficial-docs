@@ -59,11 +59,7 @@ related:
 
     ---
 
-<<<<<<< HEAD
-    現場で「動かない」を解く Runbook 27 件 + 実装と HLD の乖離 107 件の一覧。
-=======
     現場で「動かない」を解く Runbook 27 件 + 実装と HLD の乖離 115 件の一覧。
->>>>>>> origin/main
 
     [Runbook 一覧](reference/runbooks/index.md)
 
@@ -71,11 +67,7 @@ related:
 
 ## 品質指標 (最新スナップショット)
 
-<<<<<<< HEAD
-- 全 **1089** ページ (code-verified 734 + runbook-verified 27 + discrepancy-found 107 + reference/meta)
-=======
 - 全 **1089** ページ (code-verified 737 + runbook-verified 27 + discrepancy-found 115 + reference/meta)
->>>>>>> origin/main
 - mermaid 構文エラー 0、broken link 0、frontmatter 違反 0
 - サンプリング監査 round 50: **4.972 / 5**
 - 本文 `hld-only` ページ 0 件

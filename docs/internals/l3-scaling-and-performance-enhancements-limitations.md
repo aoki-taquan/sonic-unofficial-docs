@@ -139,11 +139,7 @@ RouteOrch::RouteOrch(DBConnector *db, vector<table_name_with_pri_t> &tableNames,
 !!! tip "読み手向け"
     - **本機能を実運用で使う場合**: 取り込み済の部分のみ運用可能。欠落部分の利用は不可なので本文「実装との乖離」を確認した上で適用範囲を限定する
     - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
-<<<<<<< HEAD
-    - **代替手段 / 関連 reference**: 本ページの frontmatter `related` から [COPP_GROUP](../reference/config-db/copp-group.md) / [COPP_TRAP](../reference/config-db/copp-trap.md) / [VNET](../reference/config-db/vnet.md) / [NEIGH](../reference/config-db/neigh.md) / [INTERFACE](../reference/config-db/interface.md) / [VLAN_INTERFACE](../reference/config-db/vlan-interface.md) / [VNET_ROUTE_TUNNEL](../reference/config-db/vnet-route-tunnel.md) と CLI `show arp` / `show ndp` / `config vnet`、YANG `sonic-copp` / `sonic-vnet` を辿る
-=======
     - **代替手段 / 関連 reference**: frontmatter `related` に列挙の [COPP_GROUP](../reference/config-db/copp-group.md) / [COPP_TRAP](../reference/config-db/copp-trap.md) / [VNET](../reference/config-db/vnet.md) / [NEIGH](../reference/config-db/neigh.md) / [VLAN_INTERFACE](../reference/config-db/vlan-interface.md) / [INTERFACE](../reference/config-db/interface.md) / [VNET_ROUTE_TUNNEL](../reference/config-db/vnet-route.md)、CLI `show arp` / `show ndp` / `config vnet`、YANG `sonic-copp` / `sonic-vnet` を参照。索引は [Reference 索引](../reference/index.md)
->>>>>>> origin/main
 
 !!! note "本ドキュメントの追跡"
     - monitor: `partially_implemented` / last_verified: `2026-05-11`
