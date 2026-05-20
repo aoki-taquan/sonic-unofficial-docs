@@ -141,9 +141,9 @@ related:
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../../system/sonic-libsairedis-api-idempotence-support.md)
 - [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](../../system/sonic-snmp-table-schema-proposal.md)
 - [ASIC 内部温度センサのポーリング（ASIC_SENSORS / ASIC_TEMPERATURE_INFO）](../../system/asic-thermal-monitoring-high-level-design.md)
-- [gNMI Master Arbitration（election ID と SetRequest 拡張）](../../management/gnmi-master-arbitration-hld.md)
 - [gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ）](../../management/gnsi-hld-operations.md)
 - [pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）](../../system/platform-monitor-enhancement-design.md)
+- [Redis Client Manager（RCM: connection pool / transactional client）](../../management/redis-client-manager-rcm-hld.md)
 
 **関連トラブルシュート 5 件**
 
