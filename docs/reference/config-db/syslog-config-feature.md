@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-`SYSLOG_CONFIG.GLOBAL` の rate-limit を `FEATURE` (docker) ごとに上書きするテーブル[^1]。`hostcfgd` が読み出し、対象 docker のコンテナ内 rsyslog 設定 (例 `/etc/rsyslog.d/`) を再生成する。
+`SYSLOG_CONFIG.GLOBAL` の rate-limit を `FEATURE` (docker) ごとに上書きするテーブル[^1]。`containercfgd` (`SyslogHandler`) が読み出し、対象 docker のコンテナ内 rsyslog 設定 (例 `/etc/rsyslog.d/`) を再生成する。`hostcfgd` は本テーブルを購読しない（Phase G 参照）。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -86,7 +86,7 @@ YANG `default` 文を持たないフィールドについて、`containercfgd` (
 
 ## 購読者
 
-- `hostcfgd` (`sonic-host-services` の syslog handler): [CONFIG_DB](../../reference/glossary.md#term-config_db) → 当該 docker の rsyslog 設定再生成
+- `containercfgd` (`sonic-containercfgd` の `SyslogHandler`): [CONFIG_DB](../../reference/glossary.md#term-config_db) → 当該 docker コンテナ内の rsyslog 設定を再生成（`hostcfgd` は本テーブルを購読しない）
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -434,11 +434,11 @@ docker exec swss cat /etc/rsyslog.d/*.conf
 
 ### Phase 6: 自動派生
 
-[hostcfgd](../../reference/glossary.md#term-hostcfgd) が `SYSLOG_CONFIG_FEATURE` の per-feature rate limit 設定を読み、未設定の場合は `SYSLOG_CONFIG` グローバル値を継承させる（フォールバック自動派生）。`rate_limit_interval` / `rate_limit_burst` が設定されている feature のみ個別 rsyslog conf ファイルが生成される。
+`containercfgd` が `SYSLOG_CONFIG_FEATURE` の per-feature rate limit 設定を読み、未設定の場合は `SYSLOG_CONFIG` グローバル値を継承させる（フォールバック自動派生）。`rate_limit_interval` / `rate_limit_burst` が設定されている feature のみ個別 rsyslog conf ファイルが生成される。
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
-[hostcfgd](../../reference/glossary.md#term-hostcfgd) は常時起動し `SYSLOG_CONFIG_FEATURE` テーブルを無条件購読する。Feature が `FEATURE` テーブルに登録されていない場合は per-feature syslog 設定が参照されない。
+`containercfgd` は対象コンテナ内で常駐し `SYSLOG_CONFIG_FEATURE` テーブルを無条件購読する。Feature が `FEATURE` テーブルに登録されていない場合は per-feature syslog 設定が参照されない。
 
 <!-- /derivation -->
 
@@ -447,10 +447,10 @@ docker exec swss cat /etc/rsyslog.d/*.conf
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
-| `hostcfgd` | `rate_limit_interval` フィールドあり | feature 別 rsyslog rate limit 設定を生成 | `hostcfgd.py` |
-| `hostcfgd` | `rate_limit_burst` フィールドあり | feature 別 rsyslog burst 設定を生成 | `hostcfgd.py` |
-| `hostcfgd` | フィールド未設定 | グローバル `SYSLOG_CONFIG` の値にフォールバック | `hostcfgd.py` |
-| `hostcfgd` | エントリ削除 | feature 別 conf ファイルを削除して rsyslog reload | `hostcfgd.py` |
+| `containercfgd` (`SyslogHandler`) | `rate_limit_interval` フィールドあり | feature 別 rsyslog rate limit 設定を生成 | `containercfgd.py` |
+| `containercfgd` (`SyslogHandler`) | `rate_limit_burst` フィールドあり | feature 別 rsyslog burst 設定を生成 | `containercfgd.py` |
+| `containercfgd` (`SyslogHandler`) | フィールド未設定 | グローバル `SYSLOG_CONFIG` の値にフォールバック | `containercfgd.py` |
+| `containercfgd` (`SyslogHandler`) | エントリ削除 | feature 別 conf ファイルを削除して rsyslog reload | `containercfgd.py` |
 
 > **スキャン証跡**: `SYSLOG_CONFIG_FEATURE` は per-feature の syslog rate limit 設定。未設定時は `SYSLOG_CONFIG` グローバル値への暗黙的なフォールバックが Phase 6 派生相当。
 
@@ -461,11 +461,11 @@ docker exec swss cat /etc/rsyslog.d/*.conf
 
 ### 段階 1: Consumer 登録
 
-- **[hostcfgd](../../reference/glossary.md#term-hostcfgd)**: `SYSLOG_CONFIG_FEATURE` テーブルを `ConfigDBConnector` で購読。
+- **containercfgd** (`SyslogHandler`): `SYSLOG_CONFIG_FEATURE` テーブルを `ConfigDBConnector` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- hostcfgd がコンテナ別 syslog 設定 (ログレベル, フィルタ等) を `/etc/rsyslog.d/` に書き込み rsyslog を再起動。
+- `containercfgd` がコンテナ別 syslog 設定 (ログレベル, フィルタ等) を `/etc/rsyslog.d/` に書き込み rsyslog を再起動。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI
@@ -525,7 +525,7 @@ db_migrator.py での SYSLOG_CONFIG_FEATURE マイグレーションなし
 | 1 | `FEATURE\|<service>` → `SYSLOG_CONFIG_FEATURE\|<service>` | YANG leafref 強制先行 | **強**（書込み拒否） | `sonic-syslog.yang` `leaf service` leafref |
 | 2 | containercfgd 起動 → `init_data_handler` で初期スナップショット適用 | 起動前存在が推奨 | **弱**（後書きでも `handle_config` で反映） | `containercfgd.py` L52-61 |
 | 3 | 削除時: `SYSLOG_CONFIG_FEATURE\|<service>` DEL → `FEATURE\|<service>` DEL | 先行推奨 | **弱**（強制なし） | YANG leafref は DEL 後に解消 |
-| 4 | `SYSLOG_CONFIG` と `SYSLOG_CONFIG_FEATURE` は独立購読チェーン | 直接依存なし | N/A | hostcfgd vs containercfgd |
+| 4 | `SYSLOG_CONFIG` と `SYSLOG_CONFIG_FEATURE` は独立購読チェーン | 直接依存なし | N/A | [hostcfgd](../../reference/glossary.md#term-hostcfgd) vs containercfgd |
 
 ### 主要な制約詳細
 
@@ -550,4 +550,4 @@ CONFIG_DB に接続し、`listen(init_data_handler=self.init_data_handler)` を�
 
 <!-- /ordering -->
 
-<!-- glossary-links-injected: 7d8077d983a4 -->
+<!-- glossary-links-injected: 3d010c83e5f1 -->

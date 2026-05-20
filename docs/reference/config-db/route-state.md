@@ -17,7 +17,6 @@ sources:
     ref: 158de8d3463ff4b841653f6d57190bb142b80d9c
 related:
   config_db:
-    - ROUTE
     - STATIC_ROUTE
   cli:
     - show ip route
@@ -41,22 +40,23 @@ related:
     STATE_DB / APPL_STATE_DB の `ROUTE_TABLE` はどちらも **読み取り専用の状態情報**。経路の追加・削除は APPL_DB の `ROUTE_TABLE` または CONFIG_DB の `STATIC_ROUTE` で行う。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  APPDB[("APPL_DB\nROUTE_TABLE")]
-  OA["RouteOrch\norchagent"]
-  SAI["SAI\nsai_route_api"]
-  STATEDB[("STATE_DB\nROUTE_TABLE\nstate=ok/na")]
-  APPLSTATE[("APPL_STATE_DB\nROUTE_TABLE\nprotocol + err_str")]
-
-  APPDB -->|"subscribe"| OA
-  OA -->|"updateDefRouteState()"| STATEDB
-  OA -->|"SAI call"| SAI
-  OA -->|"publishRouteState()"| APPLSTATE
+  CDB[("CONFIG_DB<br/>STATIC_ROUTE")]
+  DM["fpmsyncd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_ROUTE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_route_api"]
+  SYNCD --> SAI
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ---

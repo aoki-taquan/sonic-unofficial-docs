@@ -344,7 +344,7 @@ docker-snmp コンテナは supervisord が以下の依存順序でプログラ�
 
 | 条件 | 動作 |
 |------|------|
-| `/etc/sonic/snmp.yml` に `snmp_location` なし | `sys.exit(1)` → `start.sh` 失敗 → `snmpd` 未起動 |
+| `/etc/sonic/snmp.yml` に `snmp_location` なし | `snmp_yml_to_configdb.py` が `sys.exit(1)` で終了するが、`start.sh` は終了コードを無視して処理を継続。`SNMP|LOCATION` は CONFIG_DB に登録されず `sysLocation public` (ハードコード) が `snmpd.conf` に出力される (Phase D 参照) |
 | CONFIG_DB に `SNMP|LOCATION` が既に存在する | yml からの書き込みをスキップ（**既存エントリが優先**） |
 | `SNMP|CONTACT` | `snmp_yml_to_configdb.py` は一切書き込まない。CLI 経由のみ |
 

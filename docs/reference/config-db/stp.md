@@ -311,6 +311,10 @@ stpmgrd 側の `STP_DEFAULT_MAX_INSTANCES = 255` (`stpmgr.h:38`) と整合して
 
 ## 引用元
 
+[^1]: STP CLI 実装: `config/stp.py`. <https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/config/stp.py>
+[^2]: STP Manager 実装: `stpmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.cpp>
+[^3]: STP Manager ヘッダ: `stpmgr.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/stpmgr.h>
+
 <!-- ordering -->
 ## 処理順序・依存関係・warm-reboot 挙動
 
@@ -688,7 +692,7 @@ PVST モード切替時に `stpmgr` が `ebtables` をシステムコールで�
 |---------|-----|---------------|--------|
 | `STP_TABLE\|GLOBAL.max_stp_inst` | STATE_DB | [orchagent](../../reference/glossary.md#term-orchagent) 起動時 1 回のみ | `stpmgr.cpp:1391` — PVST インスタンス数上限として使用 |
 
-CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。[SAI](../../reference/glossary.md#term-sai) 取得失敗時は `255` を書き込む。
+CONFIG_DB の STP 設定変更によるこのキーの再書込みはない。[SAI](../../reference/glossary.md#term-sai) 取得失敗時は `StpOrch::updateMaxStpInstance()` が呼ばれず `STP_TABLE|GLOBAL` エントリは作成されない。`stpmgrd` 側は 60 秒タイムアウト後にフォールバック値 `STP_DEFAULT_MAX_INSTANCES = 255` を内部的に使用する（`stpmgr.cpp:1381-1413` の `getStpMaxInstances()`）。
 
 ### CONFIG_DB / APP_DB への直接書込みなし
 

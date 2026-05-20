@@ -15,7 +15,7 @@ sources:
 related:
   config_db:
     - ROUTE_REDISTRIBUTE
-    - ROUTE_MAP
+    - ROUTE_MAP_SET
     - VRF
   yang:
     - sonic-route-common
@@ -395,7 +395,7 @@ flowchart LR
 
 ## 関連 CONFIG_DB / YANG
 
-- 関連 CONFIG_DB: `VRF`、`ROUTE_MAP`
+- 関連 CONFIG_DB: `VRF`、`ROUTE_MAP_SET`（YANG leafref の参照先；`ROUTE_MAP` は statement 定義テーブル）
 - 関連 YANG: `sonic-route-common`、`sonic-route-map`、`sonic-vrf`
 
 ## 引用元
