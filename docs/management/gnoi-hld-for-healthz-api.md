@@ -222,19 +222,7 @@ gnoi_client healthz acknowledge \
 
 ```bash
 # Healthz API でサブシステム状態取得
-gnoic -a 127.0.0.1:8080 --skip-verify healthz get --path '/components/component[name=PSU1]'
-redis-cli -n 6 hgetall 'PSU_INFO|PSU 1'
-docker logs gnmi 2>&1 | tail -30
-```
-
-### コマンド例: gNOI Healthz 確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# Healthz API でサブシステム状態取得
-gnoic -a 127.0.0.1:8080 --skip-verify healthz get --path '/components/component[name=PSU1]'
+gnoic -a 127.0.0.1:9339 --skip-verify healthz get --path '/components/component[name=PSU1]'
 redis-cli -n 6 hgetall 'PSU_INFO|PSU 1'
 docker logs gnmi 2>&1 | tail -30
 ```

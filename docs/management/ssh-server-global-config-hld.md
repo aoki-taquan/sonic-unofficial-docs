@@ -38,7 +38,7 @@ SONiC の SSH サーバは Debian 標準 `sshd` をそのまま使う構成で�
 
 | ポリシー | 説明 | 値域 | 既定 (Debian 由来) |
 |---------|------|------|--------------------|
-| `authentication_retries` | パスワード入力リトライ上限 | 3..100 | 6 |
+| `authentication_retries` | パスワード入力リトライ上限 | 1..100 | 6 |
 | `login_timeout` | ログイン未完了 timeout | 1..600 (秒) | 120 |
 | `ports` | sshd 待受ポート（複数指定可、カンマ区切り） | 1..65536 | 22 |
 | `inactivity_timeout` | アイドルセッションの自動切断 | 0..35000 (分、0 = 無効) | 15 |
@@ -144,7 +144,7 @@ reasoning: 設定 → sshd_config 更新 → service 再起動 という反映�
 
 | Table | Key | フィールド | 説明 |
 |-------|-----|-----------|------|
-| `SSH_SERVER` | `POLICIES` | `authentication_retries` | 3..100（既定 6）|
+| `SSH_SERVER` | `POLICIES` | `authentication_retries` | 1..100（既定 6）|
 | | | `login_timeout` | 1..600 秒（既定 120）|
 | | | `ports` | 文字列。`"22"` または `"22,2222"` 等 |
 | | | `inactivity_timeout` | 0..35000 分（既定 15、0=無効）|

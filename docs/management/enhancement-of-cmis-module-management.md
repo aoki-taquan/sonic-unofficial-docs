@@ -13,19 +13,9 @@ sources:
 related:
   config_db:
   - PORT
-  - CRM
-  - ACL_RULE
-  - ACL_TABLE
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DPU
   cli:
   - show interfaces
   - show platform
-  - show techsupport
-  - show version
-  - show acl
-  - config acl
   yang:
   - sonic-port
   - sonic-cable-length

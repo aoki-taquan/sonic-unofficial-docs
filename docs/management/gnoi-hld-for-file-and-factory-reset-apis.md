@@ -178,20 +178,8 @@ gnoi_client factory_reset start --factory_os=false --zero_fill=false --retain_ce
 
 ```bash
 # gNOI File.Get / FactoryReset を gnoic で叩く
-gnoic -a 127.0.0.1:8080 --skip-verify file stat --file /etc/sonic/config_db.json
-gnoic -a 127.0.0.1:8080 --skip-verify factory-reset start --factory-os --zero-fill
-docker logs gnmi 2>&1 | tail -30
-```
-
-### コマンド例: gNOI File / FactoryReset 確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# gNOI File.Get / FactoryReset を gnoic で叩く
-gnoic -a 127.0.0.1:8080 --skip-verify file stat --file /etc/sonic/config_db.json
-gnoic -a 127.0.0.1:8080 --skip-verify factory-reset start --factory-os --zero-fill
+gnoic -a 127.0.0.1:9339 --skip-verify file stat --file /etc/sonic/config_db.json
+gnoic -a 127.0.0.1:9339 --skip-verify factory-reset start --factory-os --zero-fill
 docker logs gnmi 2>&1 | tail -30
 ```
 

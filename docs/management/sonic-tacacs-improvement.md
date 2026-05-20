@@ -164,8 +164,10 @@ Bad responses: 1
 確認コマンド例:
 
 ```bash
-# TACACS+ 認証状態確認
+# TACACS+ サーバ設定確認
 show tacacs
+# TACACS+ counter（reject / timeout / bad responses）
+show tacacs+ counter
 show aaa
 redis-cli -n 4 hgetall 'TACPLUS|global'
 journalctl -u hostcfgd | grep -i tacacs | tail

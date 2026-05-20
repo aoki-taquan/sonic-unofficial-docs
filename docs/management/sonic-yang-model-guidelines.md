@@ -5,7 +5,7 @@ description: SONiC YANG モデル記述ガイドライン（ABNF.json → sonic-
 area: management
 verification: discrepancy-found
 last_verified: 2026-05-11
-monitor: partially_implemented
+monitor: evolved_beyond_hld
 sources:
 - repo: sonic-net/SONiC
   path: doc/mgmt/SONiC_YANG_Model_Guidelines.md
@@ -278,8 +278,9 @@ docker exec mgmt-framework sonic-cfggen -d --print-data | \
 ## 実装フェーズ境界
 
 !!! info "Phase 別の実装済 / 未実装 サマリ"
-    本ページは `monitor: partially_implemented` で、HLD で示された一連の機能
-    が **段階的に取り込まれている** 状態を扱う。フェーズ毎の実装境界を
+    本ページは `monitor: evolved_beyond_hld` で、HLD はおおむね取り込まれて
+    いるが実装側でフィールド名・パス名・責務分担が進化／変更されている
+    状態を扱う。フェーズ毎の実装境界を
     1 枚の表に集約する (詳細は本ページ上部の `diff` admonition および
     [discrepancy-index](../reference/verification/discrepancy-index.md) を参照)。
 
