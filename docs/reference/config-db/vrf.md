@@ -89,7 +89,7 @@ VRF|<name>
 | `vni` | `1`〜`16777215` | EVPN L3 VNI マッピングを設定。`vrfmgrd` が VXLAN_TUNNEL_MAP に `evpn_map_<vni>_<vrf>` エントリを作成 (vrfmgr.cpp:510) |
 | `vni` | 重複 VNI | `vrfmgrd` が `"vni %d is already mapped to vrf %s"` でエラーして破棄 (vrfmgr.cpp:441) |
 | `vni` | 既存 VRF の VNI 変更 | `"vrf %s is already mapped to vni %d"` でエラー。一旦 `vni=0` にしてから再設定必要 (vrfmgr.cpp:461) |
-| `name` | `Vrf` で始まる | 有効。[sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / orchagent が VRF として認識 |
+| `name` | `Vrf` で始まる | 有効。[sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) / [orchagent](../../reference/glossary.md#term-orchagent) が VRF として認識 |
 | `name` | `Vrf` で始まらない | YANG `"Invalid VRF name"` エラーで reject |
 
 <!-- /value-behavior -->
@@ -161,7 +161,7 @@ ip vrf show
 
 ### 段階 2: CFG → APPL 翻訳
 
-- vrfmgrd が `ip vrf add <name>` でカーネル VRF デバイスを作成し APP_DB `VRF_TABLE` に書き込む。
+- [vrfmgrd](../../reference/glossary.md#term-vrfmgrd) が `ip vrf add <name>` でカーネル VRF デバイスを作成し APP_DB `VRF_TABLE` に書き込む。
 
 ### 段階 3: APPL → SAI
 
@@ -170,7 +170,7 @@ ip vrf show
 
 ### 段階 4: タイミング + 副作用
 
-- カーネル VRF 作成 (vrfmgrd) と SAI VRF 作成 (VrfOrch) はほぼ同時。
+- カーネル VRF 作成 ([vrfmgrd](../../reference/glossary.md#term-vrfmgrd)) と SAI VRF 作成 (VrfOrch) はほぼ同時。
 - 副作用: VRF 削除時は所属インタフェース・ルートを先に削除しないと `VRF is in use` エラー。
 
 <!-- /runtime-trace -->
@@ -216,7 +216,7 @@ db_migrator.py での VRF マイグレーションなし
 
 ### fallback — dead field (silent drop at orchagent)
 
-`fallback` は YANG で `default false` として定義されており、vrfmgrd は `kfvFieldsValues(t)` をそのまま APP_DB へ pass-through する (`vrfmgr.cpp:303`)。しかし `orchagent/vrforch.cpp` の `addOperation` には `"fallback"` のハンドラが存在せず、`SWSS_LOG_ERROR("Logic error: Unknown attribute")` が出てフィールドが silent drop される。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)/FRR テンプレートでも `fallback` を参照するコードは存在しない。**実質的に dead field であり、`true` に設定しても Linux カーネル・SAI・FRR のいずれにも影響しない。**
+`fallback` は YANG で `default false` として定義されており、vrfmgrd は `kfvFieldsValues(t)` をそのまま APP_DB へ pass-through する (`vrfmgr.cpp:303`)。しかし `orchagent/vrforch.cpp` の `addOperation` には `"fallback"` のハンドラが存在せず、`SWSS_LOG_ERROR("Logic error: Unknown attribute")` が出てフィールドが silent drop される。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)/[FRR](../../reference/glossary.md#term-frr) テンプレートでも `fallback` を参照するコードは存在しない。**実質的に dead field であり、`true` に設定しても Linux カーネル・SAI・[FRR](../../reference/glossary.md#term-frr) のいずれにも影響しない。**
 
 - `vrforch.h:34`: `{ "fallback", REQ_T_BOOL }` — 宣言のみ
 - `vrforch.cpp` addOperation: `"fallback"` の分岐なし → else branch で `SWSS_LOG_ERROR` → フィールド破棄
@@ -261,7 +261,7 @@ vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割�
 | 2 | `VXLAN_TUNNEL_MAP` ([VLAN](../../reference/glossary.md#term-vlan)-VNI エントリ) | `VRF.vni` の前提条件。CLI が存在確認 (main.py:7759) |
 | 3 | **`VRF\|<name>`** | Linux VRF デバイス作成。vrfmgrd が [STATE_DB](../../reference/glossary.md#term-state_db) に `state=ok` を書く (vrfmgr.cpp:289) |
 | 4 | `VRF\|<name>.vni` (mod_entry) | VRF 作成後かつ VXLAN_TUNNEL_MAP 確認後に設定 (main.py:7774) |
-| 5 | `*_INTERFACE\|<port>` (vrf_name 指定) | [intfmgrd](../../reference/glossary.md#term-intfmgrd) が `isIntfStateOk(vrf_name)` で VRF の STATE_DB ready を確認してから処理 (intfmgr.cpp:839) |
+| 5 | `*_INTERFACE\|<port>` (vrf_name 指定) | [intfmgrd](../../reference/glossary.md#term-intfmgrd) が `isIntfStateOk(vrf_name)` で VRF の [STATE_DB](../../reference/glossary.md#term-state_db) ready を確認してから処理 (intfmgr.cpp:839) |
 | 6 | `BGP_GLOBALS\|<vrf_name>` | Linux VRF デバイス作成後が推奨。逆順でも FRR 側で retry されるがタイムアウト依存になる |
 
 ### DELETE 順序
@@ -284,7 +284,7 @@ vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割�
 3. `vrf_table_[vrf_name].vrf_id = router_id; ref_count = 0` — 内部テーブル登録 (vrforch.cpp:107–108)
 4. `gFlowCounterRouteOrch->onAddVR(router_id)` — フローカウンタ登録 (vrforch.cpp:110)
 5. `vni != 0` の場合 `updateVrfVNIMap()` → EVPN [VTEP](../../reference/glossary.md#term-vtep) 存在確認 → `vrf_vni_map_table_` 更新 (vrforch.cpp:111–118)
-6. `m_stateVrfObjectTable.hset(vrf_name, "state", "ok")` — STATE_DB に SAI VR 完了を通知 (vrforch.cpp:120)
+6. `m_stateVrfObjectTable.hset(vrf_name, "state", "ok")` — [STATE_DB](../../reference/glossary.md#term-state_db) に SAI VR 完了を通知 (vrforch.cpp:120)
 
 **依存**: SAI VR 作成が完了し STATE_DB `VRF_OBJECT_TABLE|<name>` に `state=ok` が書かれるまで、`intfsorch` は `isVRFexists()` をブロックとして使用し、ROUTE/NEIGHBOR の処理は SAI VR OID (`vrf_id`) が確立するまで待機する。
 
@@ -301,9 +301,9 @@ vrfmgrd は VRF ごとに Linux ルーティングテーブル ID を自動割�
 | `routeorch.cpp:2013` | ROUTE 追加 | — |
 | `routeorch.cpp:2773,2993` | — | ROUTE 削除 |
 | `mplsrouteorch.cpp:474` | [MPLS](../../reference/glossary.md#term-mpls) ROUTE 追加 | — |
-| `mplsrouteorch.cpp:957` | — | MPLS ROUTE 削除 |
+| `mplsrouteorch.cpp:957` | — | [MPLS](../../reference/glossary.md#term-mpls) ROUTE 削除 |
 | `srv6orch.cpp:1639` | [SRv6](../../reference/glossary.md#term-srv6) SID 追加 | — |
-| `srv6orch.cpp:1683` | — | SRv6 SID 削除 |
+| `srv6orch.cpp:1683` | — | [SRv6](../../reference/glossary.md#term-srv6) SID 削除 |
 | `fgnhgorch.cpp:1326` | FG-NHG 追加 | — |
 | `fgnhgorch.cpp:1612` | — | FG-NHG 削除 |
 
@@ -311,13 +311,13 @@ NEIGHBOR（neigh エントリ）は VRF の ref_count を直接操作しない�
 
 **CREATE 順序依存**: ROUTE を追加する前に VRF が SAI VR として確立済みである必要がある（routeorch は VRF OID を `m_vrfOrch->getVRFid(vrf_name)` で参照する）。VRF が未確立の場合は routeorch がキューに残す。
 
-**DELETE 順序依存**: VRF DEL 前に ROUTE・INTERFACE・MPLS ROUTE・SRv6 SID・FG-NHG を先にすべて削除して ref_count を 0 にする必要がある。NEIGHBOR エントリは ref_count に影響しないが、インタフェースを削除すると関連 NEIGHBOR も消える。
+**DELETE 順序依存**: VRF DEL 前に ROUTE・INTERFACE・[MPLS](../../reference/glossary.md#term-mpls) ROUTE・[SRv6](../../reference/glossary.md#term-srv6) SID・FG-NHG を先にすべて削除して ref_count を 0 にする必要がある。NEIGHBOR エントリは ref_count に影響しないが、インタフェースを削除すると関連 NEIGHBOR も消える。
 
 ### 重要な挙動
 
 - **ref_count ガード**: `VRF|<name>` DEL は orchagent 内で `vrf_table_[name].ref_count == 0` になるまで `delOperation` が `return false` を返し続ける (vrforch.cpp:169)。所属インタフェース・ルート・MPLS ルート・SRv6 SID をすべて削除してから VRF を DEL すること。
 - **STATE_DB ready 待機**: `*_INTERFACE` への `vrf_name` 指定は、vrfmgrd が `STATE_DB.VRF_TABLE|<name>` に `state=ok` を書くまで Consumer キューで待機する。逆順でも最終収束するが、VRF 作成が完了するまでインタフェース設定は適用されない。
-- **mgmt VRF 特例**: `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled=true` による mgmt VRF は hostcfgd の初期化済みを前提とし、Linux VRF デバイス `ip link add` をスキップする (vrfmgr.cpp:176-183)。通常の `VRF` テーブル書込みとは別経路。
+- **mgmt VRF 特例**: `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled=true` による mgmt VRF は [hostcfgd](../../reference/glossary.md#term-hostcfgd) の初期化済みを前提とし、Linux VRF デバイス `ip link add` をスキップする (vrfmgr.cpp:176-183)。通常の `VRF` テーブル書込みとは別経路。
 - **VNI 変更制限**: 既に VNI が設定されている VRF に別 VNI を上書きすることは不可。一旦 `vni=0` に SET してから新 VNI を SET する必要がある (vrfmgr.cpp:459-463)。
 - **SAI VR 削除シーケンス**: `delOperation` で `ref_count == 0` 確認後 `remove_virtual_router` → `vrf_table_.erase` → `delVrfVNIMap` → `m_stateVrfObjectTable.del()` の順に実行される (vrforch.cpp:173–193)。STATE_DB `VRF_OBJECT_TABLE` 消去が vrfmgrd の Linux VRF デバイス削除トリガになる。
 
@@ -352,12 +352,12 @@ NEIGHBOR（neigh エントリ）は VRF の ref_count を直接操作しない�
 
 | 被参照テーブル | leafref フィールド | orphan 時の影響 |
 |--------------|------------------|---------------|
-| `INTERFACE` | `vrf_name` | intfmgrd / [intfsorch](../../reference/glossary.md#term-intfsorch) が VRF not found エラー |
+| `INTERFACE` | `vrf_name` | [intfmgrd](../../reference/glossary.md#term-intfmgrd) / [intfsorch](../../reference/glossary.md#term-intfsorch) が VRF not found エラー |
 | `VLAN_INTERFACE` | `vrf_name` | 同上 |
 | `PORTCHANNEL_INTERFACE` | `vrf_name` | 同上 |
 | `LOOPBACK_INTERFACE` | `vrf_name` | 同上 |
 | `VLAN_SUB_INTERFACE` | `vrf_name` | 同上 |
-| `BGP_GLOBALS` | key `<vrf_name>` | bgpcfgd が `"non-default VRF {} was not configured"` エラー |
+| `BGP_GLOBALS` | key `<vrf_name>` | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が `"non-default VRF {} was not configured"` エラー |
 
 ### key 埋め込み参照（leafref 非強制）
 
@@ -373,11 +373,11 @@ NEIGHBOR（neigh エントリ）は VRF の ref_count を直接操作しない�
 
 ### `EvpnNvoOrch` / `VXLAN_EVPN_NVO` — VNI マッピング前提条件（vrforch.cpp 由来）
 
-`VRFOrch::updateVrfVNIMap` は VNI 非ゼロ設定時に `gDirectory.get<EvpnNvoOrch*>()->getEVPNVtep()` を呼び出し、EVPN VTEP が未設定の場合 `return false` でエントリを破棄する（`vrforch.cpp:225-229`）。`VXLAN_EVPN_NVO` テーブルに有効な NVO エントリが存在しない限り `VRF.vni` の設定は orchagent 側で無効化される。CONFIG_DB の `VRF` テーブルには `vni` フィールドしか見えないが、実際には `VXLAN_EVPN_NVO` への暗黙依存がある。
+`VRFOrch::updateVrfVNIMap` は VNI 非ゼロ設定時に `gDirectory.get<EvpnNvoOrch*>()->getEVPNVtep()` を呼び出し、EVPN [VTEP](../../reference/glossary.md#term-vtep) が未設定の場合 `return false` でエントリを破棄する（`vrforch.cpp:225-229`）。`VXLAN_EVPN_NVO` テーブルに有効な NVO エントリが存在しない限り `VRF.vni` の設定は orchagent 側で無効化される。CONFIG_DB の `VRF` テーブルには `vni` フィールドしか見えないが、実際には `VXLAN_EVPN_NVO` への暗黙依存がある。
 
 ### `VxlanTunnelOrch` / `PortsOrch` — VLAN-VNI マッピングと kernel netns L3 VNI（vrforch.cpp 由来）
 
-VNI マッピング設定時、`VRFOrch::updateVrfVNIMap` は `gDirectory.get<VxlanTunnelOrch*>()->getVlanMappedToVni(vni)` で対応 VLAN ID を取得し（`vrforch.cpp:233`）、VLAN が存在する場合は `gPortsOrch->updateL3VniStatus(vlan_id, true)` で Linux カーネルの VLAN インタフェース（VE）を L3 VNI として有効化する（`vrforch.cpp:239`）。削除時は `updateL3VniStatus(vlan_id, false)` で無効化（`vrforch.cpp:267`）。`VLAN_INTERFACE` テーブルおよびカーネルの netns 状態が `VRF.vni` 設定の副作用として変化するが、CONFIG_DB の `VRF` テーブルには一切現れない暗黙の連携。
+VNI マッピング設定時、`VRFOrch::updateVrfVNIMap` は `gDirectory.get<VxlanTunnelOrch*>()->getVlanMappedToVni(vni)` で対応 [VLAN](../../reference/glossary.md#term-vlan) ID を取得し（`vrforch.cpp:233`）、[VLAN](../../reference/glossary.md#term-vlan) が存在する場合は `gPortsOrch->updateL3VniStatus(vlan_id, true)` で Linux カーネルの VLAN インタフェース（VE）を L3 VNI として有効化する（`vrforch.cpp:239`）。削除時は `updateL3VniStatus(vlan_id, false)` で無効化（`vrforch.cpp:267`）。`VLAN_INTERFACE` テーブルおよびカーネルの netns 状態が `VRF.vni` 設定の副作用として変化するが、CONFIG_DB の `VRF` テーブルには一切現れない暗黙の連携。
 
 <!-- /cross-refs -->
 
@@ -527,7 +527,7 @@ YANG `sonic-vrf.yang` も `pattern "Vrf[a-zA-Z0-9_-]+"` で同値を強制して
 
 ### orchagent (vrforch.cpp) — SAI virtual_router_attr マッピング
 
-`VRFOrch::addOperation` は APP_DB フィールドを以下の SAI 属性にマッピングする（`vrforch.cpp:38-84`）。これらは CONFIG_DB `VRF` テーブルフィールドには存在せず、VNET テーブル経由の APP_DB 直接書込み時のみ機能する。
+`VRFOrch::addOperation` は APP_DB フィールドを以下の SAI 属性にマッピングする（`vrforch.cpp:38-84`）。これらは CONFIG_DB `VRF` テーブルフィールドには存在せず、[VNET](../../reference/glossary.md#term-vnet) テーブル経由の APP_DB 直接書込み時のみ機能する。
 
 | APP_DB フィールド | SAI 属性 | SAI 値型 | ソース |
 |-----------------|---------|---------|--------|
@@ -562,11 +562,11 @@ CONFIG_DB から SAI までの全通信は [Redis](../../reference/glossary.md#t
 | テーブル | 用途 |
 |---------|------|
 | `VRF` | VRF インスタンス作成・削除 |
-| `VNET` | VNET (VRF ベース仮想ネットワーク) |
+| `VNET` | [VNET](../../reference/glossary.md#term-vnet) (VRF ベース仮想ネットワーク) |
 | `VXLAN_EVPN_NVO` | EVPN NVO トンネル設定 |
 | `MGMT_VRF_CONFIG` | mgmt VRF 有効化制御 |
 
-`SubscriberStateTable` は Redis keyspace notification を使用する（`subscriberstatetable.cpp:20-24`）。
+`SubscriberStateTable` は [Redis](../../reference/glossary.md#term-redis) keyspace notification を使用する（`subscriberstatetable.cpp:20-24`）。
 
 ```
 PSUBSCRIBE __keyspace@4__:VRF|*
@@ -574,7 +574,7 @@ PSUBSCRIBE __keyspace@4__:VRF|*
 
 イベント受信フロー:
 
-1. CONFIG_DB への `hset` / `hdel` / `del` を Redis が検知し keyspace 通知を発行
+1. CONFIG_DB への `hset` / `hdel` / `del` を [Redis](../../reference/glossary.md#term-redis) が検知し keyspace 通知を発行
 2. `Select::select()` が fd を wake-up（タイムアウト 1000 ms）
 3. `readData()` が `redisGetReply()` でイベントをバッファへ蓄積
 4. `pops()` がイベントから key を抽出し `TABLE.get(key)` で現在値取得
@@ -584,7 +584,7 @@ PSUBSCRIBE __keyspace@4__:VRF|*
 
 #### vrfmgrd → APPL_DB
 
-処理完了後、`ProducerStateTable` で APPL_DB に書き込む（`vrfmgr.h:46`）。
+処理完了後、`ProducerStateTable` で [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込む（`vrfmgr.h:46`）。
 
 | Producer | 書き込み先 | 用途 |
 |---------|-----------|------|
@@ -609,7 +609,7 @@ VRFOrch *vrf_orch = new VRFOrch(m_applDb, APP_VRF_TABLE_NAME,
                                  m_stateDb, STATE_VRF_OBJECT_TABLE_NAME);
 ```
 
-`VRFOrch` が `Orch2(appDb, APP_VRF_TABLE_NAME, request_)` を通じて `ConsumerStateTable` を使用する（`orch.cpp:1194`）。APPL_DB（db_id=0）への通知を購読:
+`VRFOrch` が `Orch2(appDb, APP_VRF_TABLE_NAME, request_)` を通じて `ConsumerStateTable` を使用する（`orch.cpp:1194`）。[APPL_DB](../../reference/glossary.md#term-appl_db)（db_id=0）への通知を購読:
 
 ```
 SUBSCRIBE VRF_TABLE_CHANNEL@0
@@ -699,7 +699,7 @@ SAI (ハードウェア VRF)
 | `m_stateVrfObjectTable.hset(name, "state", "ok")` | STATE_DB / `VRF_OBJECT_TABLE` | `<name>` field=`state` | SAI create/set 成功後 (vrforch.cpp:120, 150) |
 | `m_stateVrfObjectTable.del(name)` | STATE_DB / `VRF_OBJECT_TABLE` | `<name>` | SAI remove 成功後 (vrforch.cpp:193) |
 
-SAI 副作用 ([ASIC_DB](../../reference/glossary.md#term-asic_db) 経由): `create_virtual_router` / `remove_virtual_router` / `set_virtual_router_attribute`。VNI 設定時は `VxlanTunnelOrch` を経由して ASIC_DB に VXLAN エントリが反映される。
+SAI 副作用 ([ASIC_DB](../../reference/glossary.md#term-asic_db) 経由): `create_virtual_router` / `remove_virtual_router` / `set_virtual_router_attribute`。VNI 設定時は `VxlanTunnelOrch` を経由して [ASIC_DB](../../reference/glossary.md#term-asic_db) に [VXLAN](../../reference/glossary.md#term-vxlan) エントリが反映される。
 
 ### VRFOrch — orchagent 内部副次操作（DB 外）
 
@@ -710,13 +710,13 @@ SAI 副作用 ([ASIC_DB](../../reference/glossary.md#term-asic_db) 経由): `cre
 | `gPortsOrch->updateL3VniStatus(vlan_id, true)` | VLAN VE インタフェース UP | VNI マッピング追加時、VLAN-VNI マップが既存の場合 (vrforch.cpp:239) |
 | `gPortsOrch->updateL3VniStatus(vlan_id, false)` | VLAN VE インタフェース DOWN | VNI マッピング削除時、VLAN-VNI マップが存在する場合 (vrforch.cpp:267) |
 
-`updateL3VniStatus` は VLAN の VE（Virtual Ethernet）インタフェースの UP/DOWN を制御し、L3 VNI の有効化/無効化と連動する。VTEP・VLAN-VNI マッピングが存在しない場合は実行されない。
+`updateL3VniStatus` は VLAN の VE（Virtual Ethernet）インタフェースの UP/DOWN を制御し、L3 VNI の有効化/無効化と連動する。[VTEP](../../reference/glossary.md#term-vtep)・VLAN-VNI マッピングが存在しない場合は実行されない。
 
 ### STATE_DB テーブル役割まとめ
 
 | STATE_DB テーブル | 書込みプロセス | 削除プロセス | 役割 |
 |-----------------|-------------|------------|------|
-| `VRF_TABLE\|<name>` (`state=ok`) | vrfmgrd | vrfmgrd | intfmgrd の VRF readiness ガード |
+| `VRF_TABLE\|<name>` (`state=ok`) | vrfmgrd | vrfmgrd | [intfmgrd](../../reference/glossary.md#term-intfmgrd) の VRF readiness ガード |
 | `VRF_OBJECT_TABLE\|<name>` (`state=ok`) | VRFOrch | VRFOrch | vrfmgrd DEL の遅延同期ゲート |
 
 ### 確認コマンド
@@ -745,7 +745,7 @@ sonic-db-cli APPL_DB hgetall 'VXLAN_VRF_TABLE:vtep1:evpn_map_10001_VrfRed'
 
 ### VNET 経由 SAI Virtual Router 属性 — ASIC ベンダー依存
 
-orchagent は `v4`/`v6`/`src_mac`/`ttl_action`/`ip_opt_action`/`l3_mc_action` を SAI VR 属性に変換できるが、これらは CONFIG_DB `VRF` テーブルフィールドには存在せず、VNET テーブル経由の APP_DB 直接書込み時のみ機能する残存コード（`vrforch.cpp:38-84`）。`SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS` 等の対応は ASIC ベンダーにより異なる。SAI capability query は実施されておらず、非サポート ASIC に渡した場合の挙動はベンダー SAI 実装依存。
+orchagent は `v4`/`v6`/`src_mac`/`ttl_action`/`ip_opt_action`/`l3_mc_action` を SAI VR 属性に変換できるが、これらは CONFIG_DB `VRF` テーブルフィールドには存在せず、VNET テーブル経由の APP_DB 直接書込み時のみ機能する残存コード（`vrforch.cpp:38-84`）。`SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS` 等の対応は [ASIC](../../reference/glossary.md#term-asic) ベンダーにより異なる。SAI capability query は実施されておらず、非サポート [ASIC](../../reference/glossary.md#term-asic) に渡した場合の挙動はベンダー SAI 実装依存。
 
 ### `fallback` フィールド — 全 ASIC で silent drop
 
@@ -753,7 +753,7 @@ YANG に定義された `fallback` フィールドは `vrfmgrd` が APPL_DB へ 
 
 ### VS / VPP SAI — Linux + VPP の二重 VRF 管理
 
-VPP（Vector Packet Processing）SAI バックエンドを使う VS プラットフォームでは、SAI VR create が VPP API `ip_vrf_add()` を呼び出し、[ECMP](../../reference/glossary.md#term-ecmp) フローハッシュも設定する（`SwitchVppRif.cpp:1403-1414`）。標準 VS（`SwitchStateBase`）では SAI OID 割り当てのみ。実 ASIC（Broadcom / Mellanox / Marvell 等）では SAI VR create はハードウェアへの ASIC_DB 操作のみであり、Linux VRF デバイス管理は別プロセス（vrfmgrd）が担う。
+VPP（Vector Packet Processing）SAI バックエンドを使う VS プラットフォームでは、SAI VR create が VPP API `ip_vrf_add()` を呼び出し、[ECMP](../../reference/glossary.md#term-ecmp) フローハッシュも設定する（`SwitchVppRif.cpp:1403-1414`）。標準 VS（`SwitchStateBase`）では SAI OID 割り当てのみ。実 ASIC（Broadcom / Mellanox / Marvell 等）では SAI VR create はハードウェアへの [ASIC_DB](../../reference/glossary.md#term-asic_db) 操作のみであり、Linux VRF デバイス管理は別プロセス（vrfmgrd）が担う。
 
 ### EVPN L3 VNI (`vni` フィールド) — VTEP 設定必須
 
@@ -761,4 +761,4 @@ VPP（Vector Packet Processing）SAI バックエンドを使う VS プラット
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 36796e2b8c7f -->
+<!-- glossary-links-injected: 20fb70e54aff -->

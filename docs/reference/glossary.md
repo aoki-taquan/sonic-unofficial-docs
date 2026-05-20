@@ -1478,9 +1478,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [サイトマップ](../_meta/sitemap.md) (6)
 - [DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）](../routing/dhcp-relay-per-interface-counter.md) (2)
+- [Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md) (2)
 - [NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md) (2)
 - [DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）](../acl-qos/dhcp-dos-mitigation-in-sonic.md) (1)
-- [ターミナルサーバの ttyUSB 安定 symlink を作る udev rules 設計](../architecture/1-udev-rules-design-for-terminal-server.md) (1)
 
 ### [DPU](#term-dpu)
 
@@ -1940,7 +1940,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [orchagent](#term-orchagent)
 
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (218)
-- [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (98)
+- [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (100)
 - [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (70)
 - [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (66)
 - [DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)](config-db/dpu-orch.md) (65)
@@ -2382,7 +2382,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [vrfmgrd](#term-vrfmgrd)
 
 - [VRF ステートテーブル（STATE_DB）](config-db/state-vrf.md) (52)
-- [VRF テーブル](config-db/vrf.md) (51)
+- [VRF テーブル](config-db/vrf.md) (52)
 - [APPL_DB VRF_TABLE (VRFOrch)](config-db/vrf-orch.md) (47)
 - [APPL_DB VRF_TABLE テーブル](config-db/appl-vrf.md) (31)
 - [MGMT_VRF_CONFIG テーブル](config-db/mgmt-vrf-config.md) (17)
