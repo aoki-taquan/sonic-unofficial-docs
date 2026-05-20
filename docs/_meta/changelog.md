@@ -23,6 +23,7 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-20 #4758 docs: doc-review fixes (batch 004)
 - 2026-05-20 #4762 docs: doc-review fixes (batch 036)
 - 2026-05-20 #4771 docs: doc-review fixes (batch 032)
 - 2026-05-20 #4756 docs: doc-review fixes (batch 038)
@@ -522,5 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3564 docs(config-db): add Phase F side-effects block to nhg (NEXTHOP_GROUP_TABLE)
 - 2026-05-19 #3562 docs(config-db): add Phase G pubsub block to scheduler-orch
 - 2026-05-19 #3561 docs(config-db): add Phase H platform block to passw-hardening
-- 2026-05-19 #3560 docs(config-db): add Phase F side-effects block to queue-state
 
