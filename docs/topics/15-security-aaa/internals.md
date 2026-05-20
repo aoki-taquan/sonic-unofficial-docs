@@ -11,20 +11,13 @@ sources:
 - docs/switching/sonic-sai-post-support-for-macsec.md
 related:
   cli:
-  - config aaa
-  - show aaa
-  - show acl
-  - config acl
+  - config macsec
+  - show macsec
   config_db:
-  - AAA
-  - RADIUS
-  - COPP_GROUP
-  - COPP_TRAP
-  - ACL_RULE
-  - ACL_TABLE
-  - TACPLUS
+  - MACSEC_PROFILE
+  - MACSEC_INTERFACE
   yang:
-  - sonic-copp
+  - sonic-macsec
 ---
 
 # 内部実装
