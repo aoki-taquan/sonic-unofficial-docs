@@ -33,7 +33,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified / 採否不明な提案"
+!!! warning "裏取りステータス: discrepancy-found / 採否不明な提案"
     本 HLD は 2020 年 Martin Bélanger（Rev 0.4）の **設計討議文書**。AAA / PAM / NSS の本質的問題提起と提案で、現行 master が本提案を全面採用しているかは要確認。`priority=high`。
 
 # AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）
@@ -149,20 +149,6 @@ HLD は提案中心のため、[CONFIG_DB](../reference/glossary.md#term-config_
 ### コマンド例: AAA 設定確認
 
 下記コマンドで関連する CONFIG_DB / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# AAA 設定と認証経路の確認
-show aaa
-redis-cli -n 4 hgetall 'AAA|authentication'
-redis-cli -n 4 keys 'TACPLUS_SERVER|*'
-# PAM 経路
-sudo cat /etc/pam.d/common-auth-sonic
-```
-
-### コマンド例: AAA 設定確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash
