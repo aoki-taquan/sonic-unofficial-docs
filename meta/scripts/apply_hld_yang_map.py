@@ -11,6 +11,7 @@ For each entry in the map:
 Usage: meta/scripts/apply_hld_yang_map.py [--dry-run]
 """
 from __future__ import annotations
+
 import json
 import sys
 from pathlib import Path

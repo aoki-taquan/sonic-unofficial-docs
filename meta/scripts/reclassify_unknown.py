@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Reclassify unknown HLDs by sniffing first 300 lines of body."""
-import json, os, re, glob, shutil, sys
+import glob
+import json
+import os
+import re
 from collections import Counter
 
 ROOT = "/home/coder/sonic-unofficial-docs"
@@ -273,7 +276,7 @@ def classify_entry(entry, backlog_entry=None):
                         break
                     lines.append(line)
                 body = "".join(lines)
-        except Exception as e:
+        except Exception:
             body = ""
     # Combine title + path + body for sniffing
     haystack = f"{title}\n{path}\n{body}"

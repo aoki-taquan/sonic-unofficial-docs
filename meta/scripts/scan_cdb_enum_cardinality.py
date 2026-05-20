@@ -23,6 +23,7 @@ The script is content-only: it does not require Python YAML, only re/pathlib.
 """
 
 from __future__ import annotations
+
 import json
 import re
 import sys

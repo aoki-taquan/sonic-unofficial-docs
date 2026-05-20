@@ -63,7 +63,6 @@ from pathlib import Path
 
 import yaml
 
-
 # Wider scan list — aggressive mode benefits from these.
 DEFAULT_TARGET_DIRS = [
     "docs/reference/runbooks",

@@ -112,7 +112,7 @@ def collect() -> list[dict[str, object]]:
 def render_report(suspects: list[dict[str, object]]) -> str:
     if not suspects:
         return "No suspects found.\n"
-    lines = [f"# verification self-consistency report\n",
+    lines = ["# verification self-consistency report\n",
              f"Total suspects: {len(suspects)}\n",
              "| Path | verification | hits |",
              "|---|---|---|"]

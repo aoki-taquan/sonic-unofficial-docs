@@ -31,7 +31,6 @@ from pathlib import Path
 
 import yaml
 
-
 FM_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 
 

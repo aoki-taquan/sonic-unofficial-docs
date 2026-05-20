@@ -10,7 +10,6 @@ Does NOT modify the v1 hld.json or any backlog files.
 from __future__ import annotations
 
 import json
-import os
 import re
 import subprocess
 import sys

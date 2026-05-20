@@ -1,0 +1,114 @@
+# typos (crate-ci/typos) 設定。
+# https://github.com/crate-ci/typos
+#
+# scope: docs/ と meta/ の md / 限定的に py。SONiC 固有用語が大量にあるため
+# default 辞書では誤検知が出やすい。default-extend-identifiers で除外する。
+
+[default]
+# ファイル全体スキャン。バイナリは自動 skip される。
+extend-ignore-re = [
+    # SHA / hash 値 (6+ 桁 hex)。短い fragment 引用 (4ba9612 等) もスキップ。
+    "\\b[0-9a-fA-F]{6,}\\b",
+    # @<short-sha> パターン
+    "@[0-9a-fA-F]{4,}",
+    # mermaid 内の ascii art / arrow
+    "-->",
+    # コードフェンス内の生コード（行単位ではなく block 単位検出が望ましいが、簡易版）
+    "`[^`]+`",
+]
+
+[default.extend-words]
+# SONiC エコシステム用語。typo 検知対象外。
+sonic = "sonic"
+SONiC = "SONiC"
+syncd = "syncd"
+sairedis = "sairedis"
+orchagent = "orchagent"
+swss = "swss"
+bgpcfgd = "bgpcfgd"
+frrcfgd = "frrcfgd"
+vrfmgr = "vrfmgr"
+vrfmgrd = "vrfmgrd"
+vxlanmgrd = "vxlanmgrd"
+nbrmgrd = "nbrmgrd"
+intfmgrd = "intfmgrd"
+portsorch = "portsorch"
+fpmsyncd = "fpmsyncd"
+teamsyncd = "teamsyncd"
+natsyncd = "natsyncd"
+xcvrd = "xcvrd"
+linkmgrd = "linkmgrd"
+ycabled = "ycabled"
+chassisd = "chassisd"
+hostcfgd = "hostcfgd"
+containercfgd = "containercfgd"
+pmon = "pmon"
+gbsyncd = "gbsyncd"
+stpmgrd = "stpmgrd"
+macsecmgr = "macsecmgr"
+hamgrd = "hamgrd"
+
+# 上流 SONiC コードに実在する typo を忠実に引用するため除外。
+# 直すべきは上流側で、本ドキュメントは追従するだけ。
+Notifiction = "Notifiction"
+notifiction = "notifiction"
+
+# SONiC のフィールド名・パラメータ名 (典型的に short form)
+grat_arp = "grat_arp"
+grat = "grat"
+gratuitous = "gratuitous"
+
+# 略語 / 名詞
+nhg = "nhg"
+nhgs = "nhgs"
+fdb = "fdb"
+mux = "mux"
+voq = "voq"
+acl = "acl"
+vlan = "vlan"
+vxlan = "vxlan"
+vrrp = "vrrp"
+nat = "nat"
+pbh = "pbh"
+copp = "copp"
+crm = "crm"
+qos = "qos"
+sai = "sai"
+yang = "yang"
+gnmi = "gnmi"
+gnoi = "gnoi"
+gnsi = "gnsi"
+dash = "dash"
+dpu = "dpu"
+eni = "eni"
+srv6 = "srv6"
+bgp = "bgp"
+ospf = "ospf"
+isis = "isis"
+mpls = "mpls"
+bfd = "bfd"
+
+# Cuban / 紛らわしい英単語
+nd = "nd"
+ND = "ND"      # neighbor discovery
+fe = "fe"
+FE = "FE"
+ot = "ot"      # OT may appear in tables
+OT = "OT"
+
+[files]
+extend-exclude = [
+    ".cache/",
+    ".venv/",
+    "site/",
+    ".claude/",
+    "node_modules/",
+    "*.svg",
+    "*.png",
+    "*.jpg",
+    "*.pdf",
+    "meta/built-html-report.md",
+    "meta/built-links-report.md",
+    "meta/discrepancy-related-yang-report.md",
+    "meta/frontmatter-lint-report*.md",
+]

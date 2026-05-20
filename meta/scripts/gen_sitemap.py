@@ -101,7 +101,7 @@ def shorten(s: str, n: int = DESC_MAX) -> str:
 def md_link(path: Path, label: str) -> str:
     rel = path.relative_to(DOCS_DIR).as_posix()
     # docs/_meta/sitemap.md からの相対リンク
-    out_rel = OUTPUT.parent.relative_to(DOCS_DIR).as_posix()  # "_meta"
+    OUTPUT.parent.relative_to(DOCS_DIR).as_posix()  # "_meta"
     # 親（docs/）に上がってから path へ
     target = "../" + rel
     return f"[{label}]({target})"
@@ -208,8 +208,8 @@ def render() -> tuple[str, int]:
         "",
         "# サイトマップ",
         "",
-        f"このページは `docs/**/*.md` を mkdocs nav 順 (`.pages` 準拠) で階層列挙した"
-        f"インデックスです。`meta/scripts/gen_sitemap.py` で自動生成されます。",
+        "このページは `docs/**/*.md` を mkdocs nav 順 (`.pages` 準拠) で階層列挙した"
+        "インデックスです。`meta/scripts/gen_sitemap.py` で自動生成されます。",
         "",
         f"全 **{total}** ページ。各エントリは "
         "`タイトル — [verification badge] description (短縮)` の形式で並びます。",
