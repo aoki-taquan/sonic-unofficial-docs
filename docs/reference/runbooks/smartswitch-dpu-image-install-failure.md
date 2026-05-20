@@ -68,7 +68,7 @@ sonic-installer list
 ### 3. chassisd ログ
 
 ```bash
-docker logs chassisd 2>&1 | grep -iE "DPU0|install" | tail -50
+docker logs pmon 2>&1 | grep -iE "chassisd|DPU0|install" | tail -50
 ```
 
 ### 4. DPU 側 disk
