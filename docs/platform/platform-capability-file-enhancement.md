@@ -166,8 +166,6 @@ reasoning: capabilities フィールドの仕様（controllable + 属性別 colo
 
     **判断根拠**: capabilities フィールドの仕様（controllable + 属性別 colors / minimum / maximum）と既定値 true の根拠。
 
-    **補足**: HLD 原文は単数形 `"color"` と記述するが、`sonic-buildimage/device/` 配下の実 `platform.json` で広く採用されている JSON キー名は複数形 `"colors"` であり、本ページ本文・スキーマ例は実装慣行に合わせて `colors` で統一している。
-
 <!-- evidence-rendered:end -->
 
 ### 想定ユースケース
