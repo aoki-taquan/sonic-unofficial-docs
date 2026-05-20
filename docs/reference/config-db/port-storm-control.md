@@ -80,7 +80,7 @@ PORT_STORM_CONTROL|<ifname>|<storm_type>
 
 キーの第 2 トークンとして受け付ける有効値と SAI 属性のマッピング (`policerorch.cpp:31-33`):
 
-| CONFIG_DB 値 | C++ 変数 | SAI 属性 |
+| [CONFIG_DB](../../reference/glossary.md#term-config_db) 値 | C++ 変数 | SAI 属性 |
 |---|---|---|
 | `broadcast` | `storm_broadcast` | `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` |
 | `unknown-unicast` | `storm_unknown_unicast` | `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` |
@@ -98,7 +98,7 @@ storm control 用 SAI policer 作成時に常にハードコードされる属�
 | `SAI_POLICER_ATTR_MODE` | `SAI_POLICER_MODE_STORM_CONTROL` | `/*Policer mode hardcoded to STORM_CONTROL*/` |
 | `SAI_POLICER_ATTR_RED_PACKET_ACTION` | `SAI_PACKET_ACTION_DROP` | `/*Red Packet Action hardcoded to DROP*/` |
 
-CONFIG_DB / YANG / CLI からの変更手段はない。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG / CLI からの変更手段はない。
 
 ### policer 命名規則
 
@@ -115,13 +115,13 @@ CONFIG_DB / YANG / CLI からの変更手段はない。
 
 ### kbps — YANG デフォルトなし・コード上必須
 
-YANG の `kbps` leaf に `default` 文は存在しない。`mandatory true` 宣言もないため YANG 上は optional に見えるが、orchagent (`handlePortStormControlTable`) は `kbps` が欠如した場合に `task_failed` を返す。エントリは破棄され `SWSS_LOG_ERROR "Failed to create storm control policer %s, missing mandatory fields"` が記録される。
+YANG の `kbps` leaf に `default` 文は存在しない。`mandatory true` 宣言もないため YANG 上は optional に見えるが、[orchagent](../../reference/glossary.md#term-orchagent) (`handlePortStormControlTable`) は `kbps` が欠如した場合に `task_failed` を返す。エントリは破棄され `SWSS_LOG_ERROR "Failed to create storm control policer %s, missing mandatory fields"` が記録される。
 
 証跡: `sonic-swss/orchagent/policerorch.cpp:195-200`
 
 ### SAI policer ハードコード属性 (YANG / CLI 非公開)
 
-YANG および CLI には存在しないが、orchagent が **常に固定値** で SAI policer を作成する属性:
+YANG および CLI には存在しないが、[orchagent](../../reference/glossary.md#term-orchagent) が **常に固定値** で SAI policer を作成する属性:
 
 | SAI 属性 | 固定値 | 変更可否 |
 |---|---|---|
@@ -148,7 +148,7 @@ kbps は通常大きな値のため実用上の影響は限定的だが、低レ
 
 ### update 時 remove-then-reapply による瞬間的 storm control 解除
 
-既存エントリを更新する際、orchagent は:
+既存エントリを更新する際、[orchagent](../../reference/glossary.md#term-orchagent) は:
 1. ポートの SAI 属性を `SAI_NULL_OBJECT_ID` に設定 (storm control 一時解除)
 2. CIR のみ更新 (METER_TYPE / MODE / RED_ACTION は不変)
 3. 新 policer oid を再 attach
@@ -210,7 +210,7 @@ YANG にも CLI にも CBS・Green packet action・Yellow packet action は公�
 | 値 | 挙動 |
 |----|------|
 | 物理ポート (PORT.name) | 正常: storm control policer を attach |
-| LAG / VLAN など非物理 IF | `Unsupported / Invalid interface %s` SWSS_LOG_ERROR |
+| [LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) など非物理 IF | `Unsupported / Invalid interface %s` SWSS_LOG_ERROR |
 | 存在しないポート | `Failed to apply storm-control %s to port %s. Port not found` SWSS_LOG_ERROR |
 
 *enum なし — storm_type はキーの一部として broadcast/unknown-unicast/unknown-multicast を pattern 制約。kbps は uint64。*
@@ -284,7 +284,6 @@ show storm-control all
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -305,7 +304,7 @@ show storm-control all
 ### 段階 4: タイミング + 副作用
 
 - 設定は即時 SAI に反映。既存フラッディングトラフィックへの影響は ms 単位。
-- 副作用: レートを低く設定しすぎると正常な broadcast (ARP 等) も制限される。
+- 副作用: レートを低く設定しすぎると正常な broadcast ([ARP](../../reference/glossary.md#term-arp) 等) も制限される。
 
 <!-- /runtime-trace -->
 
@@ -314,7 +313,7 @@ show storm-control all
 
 ### Producer/Consumer ペア
 
-PORT_STORM_CONTROL テーブルは CONFIG_DB → SAI の **直接経路**をとる。APPL_DB への中継は行わない。
+PORT_STORM_CONTROL テーブルは CONFIG_DB → SAI の **直接経路**をとる。[APPL_DB](../../reference/glossary.md#term-appl_db) への中継は行わない。
 
 | 区間 | 方式 | チャンネル/パターン |
 |------|------|--------------------|
@@ -374,7 +373,7 @@ PORT_STORM_CONTROL テーブルへの書き込みが発生するコード経路�
 
 ### CLI
 
-  - `config storm-control ...` — `config/main.py` と `scripts/storm_control.py` が `set_entry()` を呼ぶ (sonic-utilities/config/main.py, scripts/storm_control.py)
+  - `config storm-control ...` — `config/main.py` と `scripts/storm_control.py` が `set_entry()` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/main.py, scripts/storm_control.py)
 
 ### minigraph / sonic-cfggen
 
@@ -382,7 +381,7 @@ minigraph.py に PORT_STORM_CONTROL 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -449,9 +448,9 @@ minigraph.py および init_cfg.json.j2 からの `PORT_STORM_CONTROL` 自動派
 
 ### SAI capability チェックなし — orchagent は直接 push
 
-`PolicerOrch::handlePortStormControlTable()` は `sai_query_attribute_capability()` を呼ばない。storm control policer は ASIC capability の事前確認なしに SAI へ push される。
+`PolicerOrch::handlePortStormControlTable()` は `sai_query_attribute_capability()` を呼ばない。storm control policer は [ASIC](../../reference/glossary.md#term-asic) capability の事前確認なしに SAI へ push される。
 
-ASIC が storm control をサポートしない場合、`sai_policer_api->create_policer()` または `sai_port_api->set_port_attribute()` が `SAI_STATUS_NOT_SUPPORTED` 等を返し、orchagent が `SWSS_LOG_ERROR` を記録して `task_need_retry` または `task_failed` を返す (SAI エラー任せ)。
+[ASIC](../../reference/glossary.md#term-asic) が storm control をサポートしない場合、`sai_policer_api->create_policer()` または `sai_port_api->set_port_attribute()` が `SAI_STATUS_NOT_SUPPORTED` 等を返し、orchagent が `SWSS_LOG_ERROR` を記録して `task_need_retry` または `task_failed` を返す (SAI エラー任せ)。
 
 証跡: `policerorch.cpp:226-313`
 
@@ -464,7 +463,7 @@ ASIC が storm control をサポートしない場合、`sai_policer_api->create
 | CLI (`config storm-control add`) | `is_storm_control_supported()` が `STATE_DB` を参照し、`supported == 0` なら CONFIG_DB 書き込みをスキップ | `sonic-utilities/config/main.py:806-824` |
 | orchagent (PolicerOrch) | `BUM_STORM_CAPABILITY` を `TableConnector` で定義しているが、`handlePortStormControlTable()` 内でその値を参照する分岐は存在しない | `orchdaemon.cpp:401`, `policerorch.cpp` |
 
-つまり、直接 CONFIG_DB に書き込んだ場合は capability 非対応 ASIC でも orchagent が処理を試み、SAI エラーで失敗する可能性がある。
+つまり、直接 CONFIG_DB に書き込んだ場合は capability 非対応 [ASIC](../../reference/glossary.md#term-asic) でも orchagent が処理を試み、SAI エラーで失敗する可能性がある。
 
 ### プラットフォーム依存挙動のまとめ
 
@@ -530,7 +529,7 @@ policer 名は `_<interface_name>_<storm_type>` 形式で自動生成される�
 
 ### 非 Ethernet インタフェース → silent drop
 
-インタフェース名が `"Ethernet"` プレフィックスを持たない場合（LAG / VLAN / PortChannel 等）、`SWSS_LOG_ERROR "%s: Unsupported / Invalid interface %s"` を出力して **`task_success` を返す**。  
+インタフェース名が `"Ethernet"` プレフィックスを持たない場合（[LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) / [PortChannel](../../reference/glossary.md#term-portchannel) 等）、`SWSS_LOG_ERROR "%s: Unsupported / Invalid interface %s"` を出力して **`task_success` を返す**。  
 同様に erase → silent drop（リトライなし）。YANG leafref は物理ポートのみ許可するが、直接 DB 書き込み時は到達しうる。
 
 証跡: `policerorch.cpp:131-137`
@@ -579,9 +578,9 @@ CONFIG_DB `PORT_STORM_CONTROL` への変更が連鎖して書き込まれる副�
 
 | 副次 DB | オブジェクト / テーブル | 操作 | 条件 | evidence |
 |---|---|---|---|---|
-| ASIC_DB (syncd 経由) | SAI policer (`SAI_OBJECT_TYPE_POLICER`) | create | SET かつ新規 (未登録) | `policerorch.cpp:226` |
-| ASIC_DB (syncd 経由) | SAI policer — CIR 属性 | set_attribute | SET かつ既存 (更新) | `policerorch.cpp:257` |
-| ASIC_DB (syncd 経由) | SAI PORT 属性 `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` | set_port_attribute | storm_type=broadcast | `policerorch.cpp:278, 291` |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) ([syncd](../../reference/glossary.md#term-syncd) 経由) | SAI policer (`SAI_OBJECT_TYPE_POLICER`) | create | SET かつ新規 (未登録) | `policerorch.cpp:226` |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) ([syncd](../../reference/glossary.md#term-syncd) 経由) | SAI policer — CIR 属性 | set_attribute | SET かつ既存 (更新) | `policerorch.cpp:257` |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) ([syncd](../../reference/glossary.md#term-syncd) 経由) | SAI PORT 属性 `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` | set_port_attribute | storm_type=broadcast | `policerorch.cpp:278, 291` |
 | ASIC_DB (syncd 経由) | SAI PORT 属性 `SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID` | set_port_attribute | storm_type=unknown-unicast | `policerorch.cpp:278, 291` |
 | ASIC_DB (syncd 経由) | SAI PORT 属性 `SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID` | set_port_attribute | storm_type=unknown-multicast | `policerorch.cpp:278, 291` |
 | ASIC_DB (syncd 経由) | SAI policer | remove | DEL | `policerorch.cpp:355` |
@@ -591,5 +590,7 @@ CONFIG_DB `PORT_STORM_CONTROL` への変更が連鎖して書き込まれる副�
 1. `PolicerOrch::handlePortStormControlTable()` が `sai_policer_api->create_policer()` で SAI policer を作成 (syncd が ASIC_DB へ反映)
 2. 作成した policer OID を `sai_port_api->set_port_attribute(SAI_PORT_ATTR_*_STORM_CONTROL_POLICER_ID)` でポートに attach
 3. update 時は先に `SAI_NULL_OBJECT_ID` で一時解除 → CIR 更新 → 再 attach の 3 ステップ
-4. APPL_DB / STATE_DB / COUNTERS_DB への書込は **なし**。CRM カウンタ更新も **なし**
+4. [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込は **なし**。[CRM](../../reference/glossary.md#term-crm) カウンタ更新も **なし**
 <!-- /side-effects -->
+
+<!-- glossary-links-injected: 33f9c0c82ff8 -->

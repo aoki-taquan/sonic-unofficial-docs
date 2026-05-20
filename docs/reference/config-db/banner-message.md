@@ -52,7 +52,7 @@ BANNER_MESSAGE|global
 
 ### 購読方式
 
-`hostcfgd` は `swsscommon.ConfigDBConnector` の `subscribe(table, callback)` でハンドラを登録する方式を採用する。`swsscommon.SubscriberStateTable` / `ConsumerStateTable` / `NotificationConsumer` を**直接は使わず**、`ConfigDBConnector.listen()` が内部で Redis keyspace 通知 (`__keyspace@4__:BANNER_MESSAGE|*` の PSUBSCRIBE) を購読してテーブル名一致のコールバックへディスパッチする。`BANNER_MESSAGE` テーブルの購読者は `hostcfgd.BannerCfg` ただ 1 つ。APPL_DB 中継・SAI 経由・NotificationProducer 経由は一切ない。
+`hostcfgd` は `swsscommon.ConfigDBConnector` の `subscribe(table, callback)` でハンドラを登録する方式を採用する。`swsscommon.SubscriberStateTable` / `ConsumerStateTable` / `NotificationConsumer` を**直接は使わず**、`ConfigDBConnector.listen()` が内部で [Redis](../../reference/glossary.md#term-redis) keyspace 通知 (`__keyspace@4__:BANNER_MESSAGE|*` の PSUBSCRIBE) を購読してテーブル名一致のコールバックへディスパッチする。`BANNER_MESSAGE` テーブルの購読者は `hostcfgd.BannerCfg` ただ 1 つ。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継・[SAI](../../reference/glossary.md#term-sai) 経由・NotificationProducer 経由は一切ない。
 
 ### 購読登録 (register_callbacks)
 
@@ -63,17 +63,17 @@ self.config_db.subscribe(swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME,
                          make_callback(self.banner_handler))
 ```
 
-`swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME` は C++ 側で定義された `"BANNER_MESSAGE"` 定数。channel ベースの `PUBLISH/SUBSCRIBE` は使わず、CONFIG_DB の `HSET` を契機とする Redis keyspace notification (`notify-keyspace-events`) で通知される。TTL は設定されない (永続前提)。
+`swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME` は C++ 側で定義された `"BANNER_MESSAGE"` 定数。channel ベースの `PUBLISH/SUBSCRIBE` は使わず、[CONFIG_DB](../../reference/glossary.md#term-config_db) の `HSET` を契機とする [Redis](../../reference/glossary.md#term-redis) keyspace notification (`notify-keyspace-events`) で通知される。TTL は設定されない (永続前提)。
 
 ### ハンドラ動作
 
 | 入口 | 動作 | 副作用 |
 |------|------|--------|
-| `banner_handler(key, op, data)` (hostcfgd:2442) | `op` は無視、`(key, data)` を `BannerCfg.banner_message()` に転送 | LOG_INFO `'BANNER_MESSAGE table handler...'` |
-| `BannerCfg.banner_message(key, data)` (hostcfgd:2084) | `data` 内 1 フィールドでもキャッシュと差分あれば `systemctl restart banner-config` 発行 → 成功時のみキャッシュ更新 | `banner-config.service` (oneshot) を ExecStart |
+| `banner_handler(key, op, data)` ([hostcfgd](../../reference/glossary.md#term-hostcfgd):2442) | `op` は無視、`(key, data)` を `BannerCfg.banner_message()` に転送 | LOG_INFO `'BANNER_MESSAGE table handler...'` |
+| `BannerCfg.banner_message(key, data)` ([hostcfgd](../../reference/glossary.md#term-hostcfgd):2084) | `data` 内 1 フィールドでもキャッシュと差分あれば `systemctl restart banner-config` 発行 → 成功時のみキャッシュ更新 | `banner-config.service` (oneshot) を ExecStart |
 | `banner-config.service` 起動 | `/usr/bin/banner-config.sh` 実行 | `/etc/issue.net` → `/etc/issue` → `/etc/motd` → `/etc/logout_message` を順次 `echo -e ... >` 上書き |
 
-差分判定は早期 break (`for k,v in data.items(): if v != self.cache.get(k): update_required=True; break`) で、complete equality ではなく 1 つでも違えば restart 発行。`run_cmd` 失敗時はキャッシュ未更新のため、次回 CONFIG_DB 変化 (同値でも) で自動再試行される。
+差分判定は早期 break (`for k,v in data.items(): if v != self.cache.get(k): update_required=True; break`) で、complete equality ではなく 1 つでも違えば restart 発行。`run_cmd` 失敗時はキャッシュ未更新のため、次回 [CONFIG_DB](../../reference/glossary.md#term-config_db) 変化 (同値でも) で自動再試行される。
 
 ### 通信シーケンス
 
@@ -102,14 +102,14 @@ config banner motd "..." (CLI)
 
 | 項目 | 値 |
 |------|-----|
-| 購読 API | `ConfigDBConnector.subscribe('BANNER_MESSAGE', callback)` (hostcfgd:2519-2521) |
-| 通知方式 | Redis keyspace notification (内部で PSUBSCRIBE `__keyspace@4__:BANNER_MESSAGE\|*`) |
+| 購読 API | `ConfigDBConnector.subscribe('BANNER_MESSAGE', callback)` ([hostcfgd](../../reference/glossary.md#term-hostcfgd):2519-2521) |
+| 通知方式 | [Redis](../../reference/glossary.md#term-redis) keyspace notification (内部で PSUBSCRIBE `__keyspace@4__:BANNER_MESSAGE\|*`) |
 | 通知種別 | `hset` / `del` (HMSET も hset 通知) — op 種別は区別せず `data is None` で `SET` / `DEL` を識別 |
 | dbId | 4 (CONFIG_DB) |
 | Select timeout | `ConfigDBConnector.listen()` 内部 (明示タイムアウトなし、Redis subscribe ブロッキング) |
 | 起動時スナップショット | `BannerCfg.load()` で state/login/motd/logout 4 フィールドを順次 `banner_message()` に渡す (hostcfgd:2079-2082) — 最大 4 回 `systemctl restart banner-config` が連続発行され得る |
 | 実行時変更反映 | 差分判定 → 1 フィールドでも差分があれば 1 回 restart。CLI で 4 フィールドを個別変更すると最大 4 回 restart |
-| ConsumerStateTable / NotificationProducer | 未使用 (`BANNER_MESSAGE` テーブルに対する他購読者・通知 producer なし) |
+| [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) / NotificationProducer | 未使用 (`BANNER_MESSAGE` テーブルに対する他購読者・通知 producer なし) |
 | TTL | なし (CONFIG_DB は永続前提) |
 
 ### 反映タイミング
@@ -124,20 +124,20 @@ CONFIG_DB 書込み → keyspace 通知到達 → `banner_handler` 呼び出し 
 |-----------|----|------|------|
 | `state`  | `admin_mode` (enabled/disabled) | `disabled` | バナー機能の有効化フラグ |
 | `login`  | string | `Debian GNU/Linux 11` | ログインプロンプト前に表示 |
-| `motd`   | string | SONiC アスキーアート + 警告文 | ログイン直後に表示 |
+| `motd`   | string | [SONiC](../../reference/glossary.md#term-sonic) アスキーアート + 警告文 | ログイン直後に表示 |
 | `logout` | string | `""` | ログアウト時に表示 |
 
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-YANG `default` 文はプロビジョニング時 (sonic-cfggen が `init_cfg.json.j2` を展開して DB に書く段階) に適用される。
+YANG `default` 文はプロビジョニング時 ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) が `init_cfg.json.j2` を展開して DB に書く段階) に適用される。
 以下は **DB エントリ自体がない場合** のランタイム fallback を per-field で示す。
 
 | フィールド | YANG default | init_cfg.json.j2 | コード fallback (DB なし) |
 |-----------|-------------|-----------------|--------------------------|
 | `state`   | `disabled`  | `"disabled"`    | `hostcfgd` `.get("state", {})` → `{}` → `banner-config.sh` で `STATE=` (空文字列) → バナー無効と同等 |
 | `login`   | `"Debian GNU/Linux 11"` | `"Debian GNU/Linux 11"` | `.get("login", {})` → `{}` → `state=disabled` 時 no-op、`state=enabled` 時 `LOGIN=` (空文字列) → `/etc/issue` / `/etc/issue.net` 空白化 |
-| `motd`    | SONiC ASCII アート + 警告文 (多行) | 同一内容 | `.get("motd", {})` → `{}` → `state=enabled` 時 `MOTD=` → `/etc/motd` 空白化 |
+| `motd`    | [SONiC](../../reference/glossary.md#term-sonic) ASCII アート + 警告文 (多行) | 同一内容 | `.get("motd", {})` → `{}` → `state=enabled` 時 `MOTD=` → `/etc/motd` 空白化 |
 | `logout`  | `""` (空文字列) | `""` | `.get("logout", {})` → `{}` → `state=enabled` 時 `LOGOUT=` → `/etc/logout_message` 空白化 |
 
 **コード根拠**:
@@ -153,7 +153,7 @@ YANG `default` 文はプロビジョニング時 (sonic-cfggen が `init_cfg.jso
 
 ソース: `sonic-net/sonic-host-services/scripts/hostcfgd` (`BannerCfg`) + `sonic-net/sonic-buildimage/files/image_config/bannerconfig/banner-config.sh`
 
-`BANNER_MESSAGE` は SAI 非経由のシングルトンテーブルで、書込側は **hostcfgd `BannerCfg`** (CONFIG_DB → `systemctl restart banner-config`) と **`banner-config.sh`** (`sonic-db-cli` で値取得 → `echo -e ... > /etc/issue` 等 4 ファイルを上書き) の 2 段構成。失敗経路は両層で評価する。
+`BANNER_MESSAGE` は [SAI](../../reference/glossary.md#term-sai) 非経由のシングルトンテーブルで、書込側は **hostcfgd `BannerCfg`** (CONFIG_DB → `systemctl restart banner-config`) と **`banner-config.sh`** (`sonic-db-cli` で値取得 → `echo -e ... > /etc/issue` 等 4 ファイルを上書き) の 2 段構成。失敗経路は両層で評価する。
 
 ### hostcfgd 側 (`BannerCfg.handler()` / `BannerCfg.load()`)
 
@@ -212,7 +212,7 @@ YANG `default` 文はプロビジョニング時 (sonic-cfggen が `init_cfg.jso
 | LOGIN_BANNER_PATH | `/etc/issue` | コンソール (getty) ログインプロンプト前に表示される Linux 標準 issue ファイル | banner-config.sh:13 |
 | LOGIN_NET_BANNER_PATH | `/etc/issue.net` | sshd `Banner /etc/issue.net` ディレクティブ経由で SSH ログイン前に表示される | banner-config.sh:12 |
 | MOTD_PATH | `/etc/motd` | PAM `pam_motd.so` がログイン成功直後に cat する標準 MOTD ファイル | banner-config.sh:14 |
-| LOGOUT_BANNER_PATH | `/etc/logout_message` | SONiC 独自パス。`~/.bash_logout` 等から参照する想定 (Debian 標準ではない) | banner-config.sh:15 |
+| LOGOUT_BANNER_PATH | `/etc/logout_message` | [SONiC](../../reference/glossary.md#term-sonic) 独自パス。`~/.bash_logout` 等から参照する想定 (Debian 標準ではない) | banner-config.sh:15 |
 
 > **注意**: `/etc/logout_message` は Debian / Linux 標準にないファイル名で、SONiC が独自に導入したもの。実際に logout 時に cat されるかは shell プロファイル設定 (`/etc/skel/.bash_logout` 等) に依存する。
 
@@ -242,7 +242,7 @@ YANG `default` 文はプロビジョニング時 (sonic-cfggen が `init_cfg.jso
 | Type | `oneshot` | 起動して終了するワンショット (デーモン化しない) | banner-config.service:9 |
 | RemainAfterExit | `no` | 終了後 inactive に戻る | banner-config.service:10 |
 | BindsTo | `database.service`, `sonic.target` | database 停止時に自動停止 | banner-config.service:5-6 |
-| Requires/After | `config-setup.service` | config-setup 完了後に起動 | banner-config.service:3-4 |
+| Requires/After | `config-setup.service` | [config-setup](../../reference/glossary.md#term-config-setup) 完了後に起動 | banner-config.service:3-4 |
 
 ### hostcfgd 内ハードコード文字列
 
@@ -400,7 +400,7 @@ hostcfgd.load()  ─── 順次呼び出し ───
 | 推奨 | `SSH_SERVER` を `BANNER_MESSAGE` より先に確定 | hostcfgd:2265 (`sshscfg.load`) → 2274 (`bannermsgcfg.load`) の load 順 |
 | 注意 | 4 フィールド同時更新は最大 4 回 `systemctl restart banner-config` を引き起こす | `BannerCfg.load()` は state/login/motd/logout を 1 行ずつ `banner_message()` に渡し、変化があるたびに restart (hostcfgd:2079-2082 + 2111) |
 | 不要 | sshd の再起動・reload | sshd は新規接続ごとに `/etc/issue.net` を読み直す。`BannerCfg` も sshd / PAM に一切タッチしない (hostcfgd:2044-2119) |
-| 不要 | PAM 設定ファイルの事前書換え | `pam_motd.so` は Debian イメージビルド時に既定で組み込み済み。Banner と AAA/PASSW_HARDENING の PAM 経路は独立 |
+| 不要 | PAM 設定ファイルの事前書換え | `pam_motd.so` は Debian イメージビルド時に既定で組み込み済み。Banner と [AAA](../../reference/glossary.md#term-aaa)/PASSW_HARDENING の PAM 経路は独立 |
 
 ### タイミング制約
 
@@ -452,7 +452,6 @@ show banner
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -464,11 +463,11 @@ show banner
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — `/etc/issue` / `/etc/issue.net` / sshd banner ファイルを書き換え)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — `/etc/issue` / `/etc/issue.net` / sshd banner ファイルを書き換え)
 
 ### 段階 4 — タイミングと副作用
 
@@ -512,7 +511,7 @@ show banner
 
 **結論: プラットフォーム差なし**（multi-asic / chassis / ベンダー固有 banner すべて該当なし）。
 
-`BANNER_MESSAGE` はホスト名前空間限定のシングルトンテーブルで、購読者である `hostcfgd` `BannerCfg` と `banner-config.sh` はいずれも Linux ホスト上のテキストファイル (`/etc/issue` / `/etc/issue.net` / `/etc/motd` / `/etc/logout_message`) を書き換えるだけで、SAI / ASIC / chassis ハードウェアには一切タッチしない。
+`BANNER_MESSAGE` はホスト名前空間限定のシングルトンテーブルで、購読者である `hostcfgd` `BannerCfg` と `banner-config.sh` はいずれも Linux ホスト上のテキストファイル (`/etc/issue` / `/etc/issue.net` / `/etc/motd` / `/etc/logout_message`) を書き換えるだけで、SAI / [ASIC](../../reference/glossary.md#term-asic) / chassis ハードウェアには一切タッチしない。
 
 ### 根拠（コード単位）
 
@@ -520,10 +519,10 @@ show banner
 |------|---------|------|
 | multi-asic (namespace 分岐) | なし | `hostcfgd` `BannerCfg` クラス (`sonic-host-services/scripts/hostcfgd:2044-2114`) 全体に `namespace` / `asic_id` / `multi_asic` の参照・分岐なし。グローバル CONFIG_DB のみ参照 |
 | chassis (VoQ / packet-chassis) | なし | `banner-config.sh` は `sonic-db-cli CONFIG_DB HGET 'BANNER_MESSAGE|global' ...` を 4 回呼ぶだけ。`linecard` / `supervisor` / `database-chassis` 分岐なし (`sonic-buildimage/files/image_config/bannerconfig/banner-config.sh:1-18`) |
-| ASIC ベンダー固有 (Broadcom/Mellanox/Marvell/…) | なし | SAI 非経由。Linux ファイル書き換えのみ。`platform/*/` 配下に `banner` 関連オーバーライドファイルなし |
+| [ASIC](../../reference/glossary.md#term-asic) ベンダー固有 (Broadcom/Mellanox/Marvell/…) | なし | SAI 非経由。Linux ファイル書き換えのみ。`platform/*/` 配下に `banner` 関連オーバーライドファイルなし |
 | ビルド時 platform 条件 | なし | `sonic_debian_extension.j2:652-654` で全プラットフォーム共通 (platform 別 `if` の外) に `banner-config.service` / `banner-config.sh` をコピー |
 | systemd template (`@.service`) | なし | `banner-config.service` は単一 unit。`[Install] WantedBy=sonic.target` 固定 (`sonic-buildimage/files/image_config/bannerconfig/banner-config.service:1-14`) |
-| HLD 上の platform 言及 | なし | `SONiC/doc/banner/banner_hld.md` 全文に `asic` / `chassis` / `namespace` / `vendor` の言及なし |
+| [HLD](../../reference/glossary.md#term-hld) 上の platform 言及 | なし | `SONiC/doc/banner/banner_hld.md` 全文に `asic` / `chassis` / `namespace` / `vendor` の言及なし |
 
 ### 補足
 
@@ -534,9 +533,9 @@ show banner
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-**結論: 副次 Redis DB (APPL_DB / STATE_DB / COUNTERS_DB / その他) への書込は一切なし**。
+**結論: 副次 Redis DB ([APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / その他) への書込は一切なし**。
 
-`BANNER_MESSAGE` テーブルの変更時に発生する副作用は、Redis 上の他 DB ではなく **Linux ホスト OS のテキストファイル 4 つ** および **systemd unit 1 つの再起動** に閉じる。状態可視化用の STATE_DB エントリ (例: `BANNER_STATUS|*`) も存在しないため、適用結果の観測は `cat /etc/issue` 等のファイル参照と `systemctl status banner-config` のみで行う。
+`BANNER_MESSAGE` テーブルの変更時に発生する副作用は、Redis 上の他 DB ではなく **Linux ホスト OS のテキストファイル 4 つ** および **systemd unit 1 つの再起動** に閉じる。状態可視化用の [STATE_DB](../../reference/glossary.md#term-state_db) エントリ (例: `BANNER_STATUS|*`) も存在しないため、適用結果の観測は `cat /etc/issue` 等のファイル参照と `systemctl status banner-config` のみで行う。
 
 ### 副次書込スキャン結果
 
@@ -547,8 +546,8 @@ show banner
 | CONFIG_DB 購読登録 | `hostcfgd:2519-2521` | **なし** | `config_db.subscribe(swsscommon.CFG_BANNER_MESSAGE_TABLE_NAME, ...)` の購読のみ |
 | `banner-config.sh` Redis 操作 | `sonic-buildimage/files/image_config/bannerconfig/banner-config.sh:1-18` | **なし** | `sonic-db-cli CONFIG_DB HGET` を 4 回呼ぶのみ (読み出し)。`HSET` / `SET` / `PUBLISH` 不在 |
 | `banner-config.service` 依存 | `banner-config.service:1-14` | **なし** | `BindsTo=database.service` は Redis 起動順序の確保のみ |
-| sonic-swss mgrd / orchagent | `sonic-swss/` 全体 | **なし** | `BANNER_MESSAGE` を購読する mgrd / orchagent 不在 |
-| sonic-utilities CLI 書込 | `sonic-utilities/config/main.py:10019,10030,10041,10052` | **なし** | `config_db.mod_entry('BANNER_MESSAGE', 'global', ...)` で CONFIG_DB のみ更新 |
+| [sonic-swss](../../reference/glossary.md#term-sonic-swss) mgrd / [orchagent](../../reference/glossary.md#term-orchagent) | `sonic-swss/` 全体 | **なし** | `BANNER_MESSAGE` を購読する mgrd / [orchagent](../../reference/glossary.md#term-orchagent) 不在 |
+| [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) CLI 書込 | `sonic-utilities/config/main.py:10019,10030,10041,10052` | **なし** | `config_db.mod_entry('BANNER_MESSAGE', 'global', ...)` で CONFIG_DB のみ更新 |
 
 ### 実際に発生する副作用 (Redis 外)
 
@@ -563,11 +562,11 @@ show banner
 
 ### 観測手段が限定される影響
 
-- STATE_DB に `BANNER_STATUS|*` 相当のエントリが存在しないため、`sonic-db-cli STATE_DB ...` 経由では banner 適用結果を取得できない
+- [STATE_DB](../../reference/glossary.md#term-state_db) に `BANNER_STATUS|*` 相当のエントリが存在しないため、`sonic-db-cli STATE_DB ...` 経由では banner 適用結果を取得できない
 - 適用済みかどうかの確認は **ホスト OS ファイル参照** または **systemd journal (`journalctl -u banner-config`)** に閉じる
 - 比較として `FipsCfg` (`hostcfgd:1759-1821`) は `STATE_DB` の `FIPS_STATS|state` を `hset` で公開するが、`BannerCfg` には同等のパターンが意図的に実装されていない
 
 詳細な走査コマンドと grep ヒット一覧は `meta/_intermediate/cdb-flow/banner-message-side.md` を参照。
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: b5626ca1f0f9 -->
+<!-- glossary-links-injected: d2191ccfe0bd -->

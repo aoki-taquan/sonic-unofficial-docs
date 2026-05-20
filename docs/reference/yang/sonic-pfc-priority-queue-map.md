@@ -24,7 +24,7 @@ related:
 - import: なし
 - top container: `sonic-pfc-priority-queue-map`
 
-PFC_PRIORITY_TO_QUEUE_MAP yang Module for SONiC OS. [PFC](../../reference/glossary.md#term-pfc) 優先度 (0-7) を egress queue index にマッピングする。[^1]
+PFC_PRIORITY_TO_QUEUE_MAP yang Module for [SONiC](../../reference/glossary.md#term-sonic) OS. [PFC](../../reference/glossary.md#term-pfc) 優先度 (0-7) を egress queue index にマッピングする。[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -116,4 +116,4 @@ module: sonic-pfc-priority-queue-map
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-pfc-priority-queue-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

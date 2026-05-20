@@ -16,7 +16,7 @@ related:
 
 ## 想定シナリオ
 
-既に SONiC を運用している読者を想定しています。日々の確認、設定変更、障害調査、[CONFIG_DB](../reference/glossary.md#term-config_db) の意味確認、show techsupport やログ・ヘルスチェックの使い方を素早く引くための導線です。
+既に [SONiC](../reference/glossary.md#term-sonic) を運用している読者を想定しています。日々の確認、設定変更、障害調査、[CONFIG_DB](../reference/glossary.md#term-config_db) の意味確認、show techsupport やログ・ヘルスチェックの使い方を素早く引くための導線です。
 
 ## 推奨 reading path
 
@@ -55,4 +55,4 @@ related:
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 12f8ddbcfb3b -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

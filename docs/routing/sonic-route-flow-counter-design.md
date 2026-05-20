@@ -47,7 +47,7 @@ related:
 
 ## なぜこの機能が必要か
 
-prefix パターンに一致する route について、ASIC 上の **Generic Counter** を [ECMP](../reference/glossary.md#term-ecmp) NHG / route entry に bind し、hit / byte を CLI で確認できるようにする[^1]。Trap Flow Counter / [FDB](../reference/glossary.md#term-fdb) Flow Counter と同系列の Flex Counter インフラ上に、route 用の **Route Pattern Orch** を新設する設計。
+prefix パターンに一致する route について、[ASIC](../reference/glossary.md#term-asic) 上の **Generic Counter** を [ECMP](../reference/glossary.md#term-ecmp) NHG / route entry に bind し、hit / byte を CLI で確認できるようにする[^1]。Trap Flow Counter / [FDB](../reference/glossary.md#term-fdb) Flow Counter と同系列の Flex Counter インフラ上に、route 用の **Route Pattern Orch** を新設する設計。
 
 Phase 1 スコープ:
 
@@ -146,4 +146,4 @@ show flowcnt-route stats
 
 [^1]: `sonic-net/SONiC` `doc/flow_counters/routes_flow_counters.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: f28bb438d6e7 -->
+<!-- glossary-links-injected: c006405759d8 -->

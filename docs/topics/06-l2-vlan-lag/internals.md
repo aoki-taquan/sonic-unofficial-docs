@@ -90,7 +90,7 @@ ASIC_DB:
   LAG, LAG_MEMBER, VLAN, VLAN_MEMBER, BRIDGE_PORT, FDB_ENTRY, STP
 ```
 
-`FdbOrch` は ASIC からの notification (`SAI_FDB_EVENT_LEARNED / AGED / FLUSHED`) を [Redis](../../reference/glossary.md#term-redis) pub/sub 経由で受け、APPL_DB.FDB_TABLE を更新します。MC-LAG の remote FDB は iccpd が `MCLAG_REMOTE_FDB_TABLE` に書き、`FdbOrch` がそれを static 同等として SAI に投入します。
+`FdbOrch` は [ASIC](../../reference/glossary.md#term-asic) からの notification (`SAI_FDB_EVENT_LEARNED / AGED / FLUSHED`) を [Redis](../../reference/glossary.md#term-redis) pub/sub 経由で受け、APPL_DB.FDB_TABLE を更新します。MC-LAG の remote FDB は iccpd が `MCLAG_REMOTE_FDB_TABLE` に書き、`FdbOrch` がそれを static 同等として SAI に投入します。
 
 ## ZMQ / Redis pub/sub
 
@@ -100,7 +100,7 @@ ASIC_DB:
 
 ## 既知の実装上の制約
 
-- VLAN ID は SONiC では `Vlan<id>` の文字列キーで扱われ、`VLAN_MEMBER|Vlan100|Ethernet0` のように `|` 区切り。`vlanmgrd` 内で id の桁違いやスペースが入ると silent に skip されることが過去 issue で報告されています。
+- VLAN ID は [SONiC](../../reference/glossary.md#term-sonic) では `Vlan<id>` の文字列キーで扱われ、`VLAN_MEMBER|Vlan100|Ethernet0` のように `|` 区切り。`vlanmgrd` 内で id の桁違いやスペースが入ると silent に skip されることが過去 issue で報告されています。
 - MC-LAG（iccpd ベース）と [EVPN-MH](../../reference/glossary.md#term-evpn-mh)（EVPN multi-homing、[FRR](../../reference/glossary.md#term-frr) ベース）は別実装で、同じスイッチで両立する設計にはなっていません。
 - FDB MAC move は ASIC 通知遅延と orchagent 内のリオーダリングで一時的に同じ MAC が複数ポート所属に見えることがあります。`FdbOrch::handleFdbNotification` が `SAI_FDB_EVENT_MOVE` を扱いますが、ASIC が MOVE ではなく LEARNED + DELETE を別タイミングで上げる場合に瞬間的に重複が出ます。
 - LAG member の dynamic add/remove は SAI 側で `EGRESS_DISABLE` を切り替えるだけの実装と、`LAG_MEMBER` を作り直す実装があり、ベンダで挙動が違います。`PortsOrch::setLagMemberEgressDisable` 経路を取れない ASIC では一瞬パケットロスが入ります。
@@ -149,4 +149,4 @@ ASIC からの FDB 通知は `ASIC_DB` の notification channel（Redis pub/sub�
 - [LAG on distributed VOQ system](../../switching/lag-on-distributed-voq-system.md)
 - [SONiC IP LAG incremental update](../../switching/sonic-ip-lag-incremental-update.md)
 
-<!-- glossary-links-injected: 9700865c43d3 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

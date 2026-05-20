@@ -35,10 +35,10 @@ related:
 
 ## 1. HLD レベルの制限事項
 
-- **[HLD](../reference/glossary.md#term-hld) は 2019 年改訂**。kernel sysctl 値や [CoPP](../reference/glossary.md#term-copp) 値はその後の SONiC で更に調整されている可能性[^1]
+- **[HLD](../reference/glossary.md#term-hld) は 2019 年改訂**。kernel sysctl 値や [CoPP](../reference/glossary.md#term-copp) 値はその後の [SONiC](../reference/glossary.md#term-sonic) で更に調整されている可能性[^1]
 - `gc_thresh3` を上げると **kernel メモリ使用量** が増える。低スペック CPU 機では注意
 - CoPP の [ARP](../reference/glossary.md#term-arp)/ND 上限を 8000 pps に上げると **CPU 負荷増**。他の trap との合算で CPU 飽和に注意
-- sairedis bulk API は **ASIC 側 bulk 未対応の場合 [syncd](../reference/glossary.md#term-syncd) 内で逐次処理** されるため、改善幅は [Redis](../reference/glossary.md#term-redis) message 削減分に留まる
+- sairedis bulk API は **[ASIC](../reference/glossary.md#term-asic) 側 bulk 未対応の場合 [syncd](../reference/glossary.md#term-syncd) 内で逐次処理** されるため、改善幅は [Redis](../reference/glossary.md#term-redis) message 削減分に留まる
 - `RouteOrch` の 1 秒 timer flush は **大量経路投入時のみ効果**。少量更新では遅延がむしろ増える可能性
 - `fpmsyncd` の [VNET](../reference/glossary.md#term-vnet) 判定スキップは **VNET 利用時の挙動変更ではない**（`rt_table != 0` の経路には従来通り lookup）
 - HLD は AS7712 (Tomahawk) で測定。他 ASIC では **異なる timing** になる
@@ -147,4 +147,4 @@ RouteOrch::RouteOrch(DBConnector *db, vector<table_name_with_pri_t> &tableNames,
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: be197a56d725 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

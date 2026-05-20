@@ -43,7 +43,7 @@ related:
 
 ## FEATURE.delayed と PortInitDone
 
-config reload や起動直後では、`port` が ASIC 上に存在するまで他 daemon が動いても意味がないことがある。`FEATURE.<container>.delayed` を真にした container は、`PortInitDone` を待ってから起動される。[BGP](../../reference/glossary.md#term-bgp) のように「port 不在で route を流す」と害が大きい機能では、これを使って起動順を制御する。
+config reload や起動直後では、`port` が [ASIC](../../reference/glossary.md#term-asic) 上に存在するまで他 daemon が動いても意味がないことがある。`FEATURE.<container>.delayed` を真にした container は、`PortInitDone` を待ってから起動される。[BGP](../../reference/glossary.md#term-bgp) のように「port 不在で route を流す」と害が大きい機能では、これを使って起動順を制御する。
 
 設計の前提は [config reload の event-driven 化（FEATURE.delayed + PortInitDone）](../../management/config-reload-enhancement.md) を読む。
 
@@ -55,7 +55,7 @@ warm reboot では、再起動前の状態と再起動後の意図の差分だ�
 
 ## FEATURE 制御と startup の関係
 
-`FEATURE` テーブルの auto-restart、state、has_per_asic_scope、has_global_scope 等は、container の起動と多インスタンス展開を一括制御する。Multi-ASIC では `has_per_asic_scope` が真の container は ASIC 数だけ並走する。startup 順、依存、Multi-ASIC 展開を一緒に変えたいときに見るのはこの 1 表である。詳細は [FEATURE テーブルによるオプショナル機能の有効/無効制御](../../system/sonic-optional-feature-control-enhancement.md) を読む。
+`FEATURE` テーブルの auto-restart、state、has_per_asic_scope、has_global_scope 等は、container の起動と多インスタンス展開を一括制御する。[Multi-ASIC](../../reference/glossary.md#term-multi-asic) では `has_per_asic_scope` が真の container は ASIC 数だけ並走する。startup 順、依存、Multi-ASIC 展開を一緒に変えたいときに見るのはこの 1 表である。詳細は [FEATURE テーブルによるオプショナル機能の有効/無効制御](../../system/sonic-optional-feature-control-enhancement.md) を読む。
 
 ## 関連ページ
 
@@ -113,11 +113,11 @@ warm reboot 実行時、一部の queue に「zero buffer profile」が attach �
 performObjectSetTransition: object OID:xxx attribute list is empty in temp view
 ```
 
-PR #906 で修正済み（sonic-sairedis master）。古い image でこの症状が出た場合は cold reboot で回復し、image を更新する。
+PR #906 で修正済み（[sonic-sairedis](../../reference/glossary.md#term-sonic-sairedis) master）。古い image でこの症状が出た場合は cold reboot で回復し、image を更新する。
 
 ### warm reboot 後の FlexCounter による新 VID の処理失敗
 
-warm reboot の `init view` フェーズ（`apply_view` 前）では、FlexCounter がまだ ASIC state を完全に認識していない。buffer pool など新たに作成された VID を持つ object が FlexCounter の `processFlexCounterEvent` で処理されようとすると、VID→RID マッピングが未確立で counter 取得に失敗する（issue #862、sonic-swss PR #1987 で修正済）。
+warm reboot の `init view` フェーズ（`apply_view` 前）では、[FlexCounter](../../reference/glossary.md#term-flexcounter) がまだ ASIC state を完全に認識していない。buffer pool など新たに作成された VID を持つ object が FlexCounter の `processFlexCounterEvent` で処理されようとすると、VID→RID マッピングが未確立で counter 取得に失敗する（issue #862、[sonic-swss](../../reference/glossary.md#term-sonic-swss) PR #1987 で修正済）。
 
 現行 master では `apply_view` 完了後に FlexCounter の VID 再登録が行われるため通常は問題ない。古い image でこの症状が出た場合（syslog に `processFlexCounterEvent` のエラーが連続して現れる）は、image を更新する。
 
@@ -181,4 +181,4 @@ syncd: SET on ACL_ENTRY with counter RID that belongs to another entry
 - [11 Reboot: warm reboot と view switching](../11-reboot/index.md)
 - [21 Lab / Developer: dev container 内での swss/sai 開発](../21-lab-vs-developer/index.md)
 
-<!-- glossary-links-injected: edbcf324be25 -->
+<!-- glossary-links-injected: 9ffe0f19a975 -->

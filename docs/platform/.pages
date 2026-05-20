@@ -48,3 +48,7 @@ nav:
   - sonic-fw-utility.md
   - sonic-sfp-refactoring.md
   - sonictpidsettinghld1.md
+  - sfp-eeprom-parsing-gaps.md
+  - sfp-sff8472-rx-power-calibration.md
+  - thermalctld-speed-tolerance-api-change.md
+  - xcvrd-cmis-mediainterface-crash.md

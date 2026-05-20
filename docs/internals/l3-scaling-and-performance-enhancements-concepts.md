@@ -32,7 +32,7 @@ related:
 
 ## 1. なぜスケールと性能を別個に扱うか
 
-旧 SONiC は [ARP](../reference/glossary.md#term-arp)/ND ~2400 entry が上限で、route programming も `1 経路 = 1 sairedis call` でレイテンシが大きかった[^1]。これを改善するには **kernel cache 拡大** と **app→ASIC データパス bulk 化** の 2 つを同時にやる必要がある。スケールと性能をそれぞれ独立軸として目標値を設定したのが本 [HLD](../reference/glossary.md#term-hld) のスタンス。
+旧 [SONiC](../reference/glossary.md#term-sonic) は [ARP](../reference/glossary.md#term-arp)/ND ~2400 entry が上限で、route programming も `1 経路 = 1 sairedis call` でレイテンシが大きかった[^1]。これを改善するには **kernel cache 拡大** と **app→[ASIC](../reference/glossary.md#term-asic) データパス bulk 化** の 2 つを同時にやる必要がある。スケールと性能をそれぞれ独立軸として目標値を設定したのが本 [HLD](../reference/glossary.md#term-hld) のスタンス。
 
 ## 2. スケール目標
 
@@ -113,4 +113,4 @@ related:
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 2f323c022692 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

@@ -32,7 +32,7 @@ related:
 
 ## なぜ必要か
 
-SONiC は従来 [CONFIG_DB](../reference/glossary.md#term-config_db) / CLI で集約広告（`aggregate-address`）を設定できず、[FRR](../reference/glossary.md#term-frr) を直接編集する必要があった。さらに **BBR (Bounce Back Routing) が無効** な状態で集約だけ入れると、contributing route 不到達によるパケットドロップが起こる。本機能は CONFIG_DB に `BGP_AGGREGATE_ADDRESS` を新設し、**BBR 状態に応じて集約広告を条件付きで生成** する[^1]。状態は [STATE_DB](../reference/glossary.md#term-state_db) に `active` / `inactive` で反映される。
+[SONiC](../reference/glossary.md#term-sonic) は従来 [CONFIG_DB](../reference/glossary.md#term-config_db) / CLI で集約広告（`aggregate-address`）を設定できず、[FRR](../reference/glossary.md#term-frr) を直接編集する必要があった。さらに **BBR (Bounce Back Routing) が無効** な状態で集約だけ入れると、contributing route 不到達によるパケットドロップが起こる。本機能は CONFIG_DB に `BGP_AGGREGATE_ADDRESS` を新設し、**BBR 状態に応じて集約広告を条件付きで生成** する[^1]。状態は [STATE_DB](../reference/glossary.md#term-state_db) に `active` / `inactive` で反映される。
 
 ## CONFIG_DB スキーマ
 
@@ -106,4 +106,4 @@ docker exec bgp vtysh -c 'show running-config' | grep aggregate
 
 [^1]: `sonic-net/SONiC` `doc/BGP/BGP-route-aggregation-with-bbr-awareness.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: bb11c45ee9f5 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

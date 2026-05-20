@@ -48,7 +48,7 @@ related:
 
 ## なぜ必要か
 
-IPv6 link-local (`fe80::/64` + EUI-64 ベース interface ID) を SONiC が扱えるようにする拡張。中核ユースケースは **[BGP](../reference/glossary.md#term-bgp) unnumbered**（インタフェース指定で対向 link-local を ND 検出）。IPv4 経路の next-hop に IPv6 link-local を入れる **RFC 5549** もサポート[^1]。
+IPv6 link-local (`fe80::/64` + EUI-64 ベース interface ID) を [SONiC](../reference/glossary.md#term-sonic) が扱えるようにする拡張。中核ユースケースは **[BGP](../reference/glossary.md#term-bgp) unnumbered**（インタフェース指定で対向 link-local を ND 検出）。IPv4 経路の next-hop に IPv6 link-local を入れる **RFC 5549** もサポート[^1]。
 
 主要要素は 3 つ。
 
@@ -78,7 +78,7 @@ IPv6 link-local (`fe80::/64` + EUI-64 ベース interface ID) を SONiC が扱�
 
 ### IP2ME と fe80::/10 ルート
 
-`IntfOrch` は link-local 有効時に 2 つを ASIC に program[^1]:
+`IntfOrch` は link-local 有効時に 2 つを [ASIC](../reference/glossary.md#term-asic) に program[^1]:
 
 - インタフェース link-local への **/128 IP2ME**（CPU パント、同 link-local 複数 IF でも [SAI](../reference/glossary.md#term-sai) 上は 1 つ）
 - [VRF](../reference/glossary.md#term-vrf) ごとの **`fe80::/10` サブネットルート**（CPU コピー、個別 prefix 大量積み防止）
@@ -211,4 +211,4 @@ ip -6 addr show scope link
 
 [^1]: `sonic-net/SONiC` `doc/ipv6/ipv6_link_local.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 3935300e9c2a -->
+<!-- glossary-links-injected: ec18b66e3507 -->

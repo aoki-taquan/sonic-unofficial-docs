@@ -11,14 +11,14 @@ last_verified: 2026-05-13
 
 ## この章の趣旨
 
-機能 HLD ではなく、SONiC 全体の **内部基盤** を扱う。具体的には:
+機能 HLD ではなく、[SONiC](../reference/glossary.md#term-sonic) 全体の **内部基盤** を扱う。具体的には:
 
-- **Redis DB スキーマ・分割**: APPL_DB / STATE_DB / multi-namespace / 複数インスタンス分散
+- **Redis DB スキーマ・分割**: [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) / multi-namespace / 複数インスタンス分散
 - **SwSS / orchagent コア**: producer/consumer state table、ZMQ、view switching
-- **FlexCounter / カウンタ集約**: counter init 最適化、VOQ aggregate、レート計算
-- **P4Orch / 派生 orchestrator**: P4Runtime 連携、PINS まわりの実装
+- **[FlexCounter](../reference/glossary.md#term-flexcounter) / カウンタ集約**: counter init 最適化、[VOQ](../reference/glossary.md#term-voq) aggregate、レート計算
+- **P4Orch / 派生 orchestrator**: P4Runtime 連携、[PINS](../reference/glossary.md#term-pins) まわりの実装
 
-機能（VLAN / VXLAN / BGP 等）の HLD は各機能章を読み、本章は「その機能を支えている共通レイヤがどう書かれているか」を確認するときに参照する。
+機能（[VLAN](../reference/glossary.md#term-vlan) / [VXLAN](../reference/glossary.md#term-vxlan) / [BGP](../reference/glossary.md#term-bgp) 等）の HLD は各機能章を読み、本章は「その機能を支えている共通レイヤがどう書かれているか」を確認するときに参照する。
 
 ## この章の読み方
 まず全体像や実装単位のページを読み、必要に応じて関連する機能別章またはリファレンス章に移動する。
@@ -40,10 +40,10 @@ last_verified: 2026-05-13
 
 ## 扱わない範囲
 
-- 機能 HLD（VLAN / BGP / ACL 等の設計）は各機能章
-- CONFIG_DB の **テーブル別リファレンス** は [reference](../reference/index.md) 章
-- YANG モジュール / CLI コマンドの一覧も [reference](../reference/index.md) 章
-- ベンダー実装に依存する SAI 拡張は対象外（コミュニティ `master` の sairedis / sai-redis-vs に閉じる）
+- 機能 HLD（VLAN / BGP / [ACL](../reference/glossary.md#term-acl) 等の設計）は各機能章
+- [CONFIG_DB](../reference/glossary.md#term-config_db) の **テーブル別リファレンス** は [reference](../reference/index.md) 章
+- [YANG](../reference/glossary.md#term-yang) モジュール / CLI コマンドの一覧も [reference](../reference/index.md) 章
+- ベンダー実装に依存する [SAI](../reference/glossary.md#term-sai) 拡張は対象外（コミュニティ `master` の sairedis / sai-redis-vs に閉じる）
 ## 検証状況
 - ページ数: 18（split-hub 1 + split-child 4 + standalone 13）
 - 分布: Code-verified: 10 / Discrepancy-found: 6 / Community-report: 2
@@ -83,4 +83,4 @@ last_verified: 2026-05-13
 | [バイト/パケットレートとポート使用率（RATES テーブル + EMA）](byte-packet-rates-port-utilization-in-sonic.md) | Code-verified |
 | [複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）](support-multiple-user-defined-redis-database-instances.md) | Code-verified |
 
-<!-- glossary-links-injected: 90f82b1c14c0 -->
+<!-- glossary-links-injected: 4a5eb5b30e9a -->

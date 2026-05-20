@@ -55,7 +55,7 @@ related:
 
 ## 概要
 
-SONiC 201908 リリース時に行われた **L3 のスケール拡大と性能改善** をまとめた [HLD](../reference/glossary.md#term-hld)[^1]。スケールでは **[ARP](../reference/glossary.md#term-arp)/ND エントリ数** と **route 数 / [ECMP](../reference/glossary.md#term-ecmp) 構成** を引き上げ、性能では **route programming 時間** と **show コマンド応答時間** を短縮する。CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) への新規追加は **無し**[^1]。
+[SONiC](../reference/glossary.md#term-sonic) 201908 リリース時に行われた **L3 のスケール拡大と性能改善** をまとめた [HLD](../reference/glossary.md#term-hld)[^1]。スケールでは **[ARP](../reference/glossary.md#term-arp)/ND エントリ数** と **route 数 / [ECMP](../reference/glossary.md#term-ecmp) 構成** を引き上げ、性能では **route programming 時間** と **show コマンド応答時間** を短縮する。CLI / [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) への新規追加は **無し**[^1]。
 
 スケール目標[^1]:
 
@@ -120,7 +120,7 @@ burst 時の add/remove ループで entry が満杯にならない問題を解�
 
 - `RouteOrch` は 64 件まとめて bulk API に渡す
 - meta_sai layer は内部で個別オブジェクトを作るが、**Redis に流れる message は 1 件** に集約
-- ASIC 側は **bulk route create を実装していない** ため `syncd` は 1 件ずつ処理する → 純粋な節約は **Redis message 数の削減**
+- [ASIC](../reference/glossary.md#term-asic) 側は **bulk route create を実装していない** ため `syncd` は 1 件ずつ処理する → 純粋な節約は **Redis message 数の削減**
 
 `RouteOrch` に **新 timer** を追加し、未送信のバッチを **1 秒ごとに flush**[^1]。
 
@@ -375,4 +375,4 @@ sudo grep -i "bulk" /var/log/swss/sairedis.rec | tail
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: ad4074e0b684 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

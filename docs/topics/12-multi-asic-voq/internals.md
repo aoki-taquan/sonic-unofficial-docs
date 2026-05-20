@@ -32,7 +32,7 @@ related:
 
 # 内部実装
 
-Multi-ASIC / [VOQ](../../reference/glossary.md#term-voq) chassis の内部実装は「namespace で分けられた [Redis](../../reference/glossary.md#term-redis) / [orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) インスタンス」と「chassis 全体を束ねる chassis_db / database-chassis container」の二重構造で動きます。論理スイッチ単位の Redis インスタンスと、シャーシ全体で共有する Redis インスタンスを混同しないことが重要です。
+[Multi-ASIC](../../reference/glossary.md#term-multi-asic) / [VOQ](../../reference/glossary.md#term-voq) chassis の内部実装は「namespace で分けられた [Redis](../../reference/glossary.md#term-redis) / [orchagent](../../reference/glossary.md#term-orchagent) / [syncd](../../reference/glossary.md#term-syncd) インスタンス」と「chassis 全体を束ねる chassis_db / database-chassis container」の二重構造で動きます。論理スイッチ単位の Redis インスタンスと、シャーシ全体で共有する Redis インスタンスを混同しないことが重要です。
 
 ## データフロー
 
@@ -71,7 +71,7 @@ flowchart TB
 | `orchagent` per-asic | `SwitchOrch` で `SAI_SWITCH_ATTR_TYPE = VOQ` を指定 | system port、fabric port、inband interface を作成 |
 | `FabricPortsOrch` (`orchagent/fabricportsorch.cpp`) | fabric link 監視 | fabric 側 link の up/down と link mon |
 | `VoqOrch` / `SystemPortOrch` | `SystemNeighOrch`、`SystemLagOrch` 等 | system port を chassis 全体で広報、neighbor / [LAG](../../reference/glossary.md#term-lag) を chassis 規模で同期 |
-| `chassisd` / `chassis_db` | chassis init scripts | 全 ASIC の system port を `CHASSIS_APP_DB:SYSTEM_PORT_TABLE` に登録 |
+| `chassisd` / `chassis_db` | chassis init scripts | 全 [ASIC](../../reference/glossary.md#term-asic) の system port を `CHASSIS_APP_DB:SYSTEM_PORT_TABLE` に登録 |
 | `bgpcfgd` per-asic | per-namespace [FRR](../../reference/glossary.md#term-frr) | 各 ASIC が独自の [BGP](../../reference/glossary.md#term-bgp) プロセスを持つ |
 
 ## SAI 属性使用一覧
@@ -109,7 +109,7 @@ Chassis global:
 ## ZMQ / Redis pub/sub
 
 - chassis 内通信は **Redis pub/sub のみ**で、inband (cpu) や fabric 専用回線を経由した IP 接続上で chassis_db redis サーバに接続します。
-- ZMQ は VOQ chassis では使われていません（一部の SONiC chassis variant では検討された経緯はあるが master では Redis のみ）。
+- ZMQ は VOQ chassis では使われていません（一部の [SONiC](../../reference/glossary.md#term-sonic) chassis variant では検討された経緯はあるが master では Redis のみ）。
 - `database-chassis` の redis は `0.0.0.0` で listen し、IPSec / TLS を使わない平文通信が前提。シャーシ内通信路（midplane）が信頼境界です。
 
 ## 既知の実装上の制約
@@ -168,4 +168,4 @@ VOQ chassis では各 ASIC namespace で独立した FRR が動き、ASIC 間は
 - [Aggregate VOQ counters in SONiC](../../internals/aggregate-voq-counters-in-sonic.md)
 - [BGP setup for VOQ chassis](../../routing/bgp-setup-for-voq-chassis.md)
 
-<!-- glossary-links-injected: 9b407a291b41 -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

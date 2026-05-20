@@ -72,7 +72,7 @@ sudo journalctl -u lldp --since "1 hour ago" | tail
 4. **中継機の [LLDP](../../reference/glossary.md#term-lldp) BPDU フィルタ** — DAC 直結ではなく Hub / Tap 経由で frame が間引かれる
 5. **port admin down/up の運用スクリプト** — 監視スクリプトが [LLDP](../../reference/glossary.md#term-lldp)-MED の都合で port toggle している
 
-SONiC の LLDP は専用 `docker-lldp` コンテナ内で `lldpd` を実行し、`lldp_syncd` が隣接情報を [APPL_DB](../../reference/glossary.md#term-appl_db) に書き出す構成のため、container の再起動や supervisord の異常もコントロールプレーン側 flap の原因になる[^1]。
+[SONiC](../../reference/glossary.md#term-sonic) の LLDP は専用 `docker-lldp` コンテナ内で `lldpd` を実行し、`lldp_syncd` が隣接情報を [APPL_DB](../../reference/glossary.md#term-appl_db) に書き出す構成のため、container の再起動や supervisord の異常もコントロールプレーン側 flap の原因になる[^1]。
 
 [^1]: `sonic-net/sonic-buildimage` `dockers/docker-lldp/` 配下の `Dockerfile`・`supervisord.conf`・`lldp_syncd.py`。`lldpd` 本体と `lldp_syncd` が別プロセスで動作し、いずれかが落ちると `show lldp table` の隣接が消える。
 
@@ -83,4 +83,4 @@ SONiC の LLDP は専用 `docker-lldp` コンテナ内で `lldpd` を実行し�
 - [container-memory-limit-exceeded.md](container-memory-limit-exceeded.md)
 - [../cli/show-lldp.md](../cli/show-lldp.md)
 
-<!-- glossary-links-injected: 0124332555fc -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

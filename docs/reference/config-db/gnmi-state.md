@@ -29,9 +29,9 @@ related:
 
 ## 概要
 
-`TELEMETRY_CONNECTIONS` は [STATE_DB](../../reference/glossary.md#term-state_db) 上の Redis Hash テーブル。`telemetry` デーモン (gNMI サーバ) が Subscribe RPC のアクティブな接続を管理・可視化するために使用する[^1]。
+`TELEMETRY_CONNECTIONS` は [STATE_DB](../../reference/glossary.md#term-state_db) 上の [Redis](../../reference/glossary.md#term-redis) Hash テーブル。`telemetry` デーモン ([gNMI](../../reference/glossary.md#term-gnmi) サーバ) が Subscribe RPC のアクティブな接続を管理・可視化するために使用する[^1]。
 
-このテーブルは **CONFIG_DB からは一切参照されない** 書き込み専用のランタイム状態テーブルである。gNMI サーバが起動するたびに既存エントリは全削除され、接続の開始・終了に合わせてエントリが追加・削除される。
+このテーブルは **[CONFIG_DB](../../reference/glossary.md#term-config_db) からは一切参照されない** 書き込み専用のランタイム状態テーブルである。[gNMI](../../reference/glossary.md#term-gnmi) サーバが起動するたびに既存エントリは全削除され、接続の開始・終了に合わせてエントリが追加・削除される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -57,7 +57,7 @@ flowchart LR
 TELEMETRY_CONNECTIONS   (Redis Hash — シングルキー)
 ```
 
-Redis Hash 内の **フィールド名** が接続識別子 (connection key)、**値** が接続状態文字列。
+[Redis](../../reference/glossary.md#term-redis) Hash 内の **フィールド名** が接続識別子 (connection key)、**値** が接続状態文字列。
 
 ### connection key のフォーマット
 
@@ -75,7 +75,7 @@ Redis Hash 内の **フィールド名** が接続識別子 (connection key)、*
 
 ## フィールド
 
-| フィールド (Redis Hash field) | 型 | 値 | 説明 |
+| フィールド ([Redis](../../reference/glossary.md#term-redis) Hash field) | 型 | 値 | 説明 |
 |-------------------------------|----|----|------|
 | `<connection_key>` | string | `"active"` (固定) | アクティブな Subscribe RPC 接続の存在を示す |
 
@@ -92,8 +92,8 @@ Redis Hash 内の **フィールド名** が接続識別子 (connection key)、*
 ## 制約
 
 - `connection_key` の最大長は実装上制限されていない (正規表現マッチ + `|` + RFC3339 タイムスタンプ)
-- Redis クライアント (`rclient`) が nil の場合、`HSet` / `HDel` は silent no-op となる — gNMI サーバはエラーなく継続動作する
-- `threshold` (CONFIG_DB `GNMI|gnmi.threshold`) を超えた接続は `Add()` で拒否され STATE_DB への書き込みも発生しない
+- Redis クライアント (`rclient`) が nil の場合、`HSet` / `HDel` は silent no-op となる — [gNMI](../../reference/glossary.md#term-gnmi) サーバはエラーなく継続動作する
+- `threshold` ([CONFIG_DB](../../reference/glossary.md#term-config_db) `GNMI|gnmi.threshold`) を超えた接続は `Add()` で拒否され [STATE_DB](../../reference/glossary.md#term-state_db) への書き込みも発生しない
 
 ## 購読者
 
@@ -104,7 +104,7 @@ Redis Hash 内の **フィールド名** が接続識別子 (connection key)、*
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`GNMI`](gnmi.md) (`threshold` フィールドが接続上限に影響)
 - 関連 CLI: `show gnmi`
-- 関連 YANG: なし (STATE_DB テーブルは YANG 未定義)
+- 関連 [YANG](../../reference/glossary.md#term-yang): なし ([STATE_DB](../../reference/glossary.md#term-state_db) テーブルは [YANG](../../reference/glossary.md#term-yang) 未定義)
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
@@ -121,7 +121,7 @@ Redis Hash 内の **フィールド名** が接続識別子 (connection key)、*
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`TELEMETRY_CONNECTIONS` は `telemetry` デーモン (`sonic-gnmi`) が直接 STATE_DB に HSet / HDel する単純な構造であり、orchagent 経由の間接書き込みは一切行われない。しかし以下の順序依存が存在する。
+`TELEMETRY_CONNECTIONS` は `telemetry` デーモン (`sonic-gnmi`) が直接 STATE_DB に HSet / HDel する単純な構造であり、[orchagent](../../reference/glossary.md#term-orchagent) 経由の間接書き込みは一切行われない。しかし以下の順序依存が存在する。
 
 ### 検出された順序依存
 
@@ -161,11 +161,11 @@ Redis Hash 内の **フィールド名** が接続識別子 (connection key)、*
 
 ### consumer（読み取り側）
 
-`TELEMETRY_CONNECTIONS` テーブルは書き込み専用のランタイム状態であり、標準的な orchagent / translib パイプラインからは参照されない。既知の読み取りパスは以下のみ:
+`TELEMETRY_CONNECTIONS` テーブルは書き込み専用のランタイム状態であり、標準的な [orchagent](../../reference/glossary.md#term-orchagent) / translib パイプラインからは参照されない。既知の読み取りパスは以下のみ:
 
 | 読み取り元 | 参照方法 | 目的 |
 |-----------|---------|------|
-| `show gnmi` (sonic-utilities 側の実装) | `HGetAll(TELEMETRY_CONNECTIONS)` | アクティブな Subscribe RPC 接続一覧の表示 |
+| `show gnmi` ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities) 側の実装) | `HGetAll(TELEMETRY_CONNECTIONS)` | アクティブな Subscribe RPC 接続一覧の表示 |
 | `gnmi_server/server_test.go` (テストコード) | `HGetAll(TELEMETRY_CONNECTIONS)` | 接続登録・削除の単体テスト検証 |
 
 !!! note "CONFIG_DB への書き戻しは発生しない"
@@ -276,7 +276,7 @@ Redis Hash 内の **フィールド名** が接続識別子 (connection key)、*
 | 接続登録時の固定値 | `"active"` | `connection_manager.go:116` — `HSet(..., key, "active")` |
 | 起動時初期状態 | 全エントリ削除 | `connection_manager.go:52-60` — `PrepareRedis()` の `HGetAll` → 全 `HDel` |
 
-**乖離なし**: 値は常にハードコード `"active"` 固定。CONFIG_DB / YANG デフォルトとの乖離は存在しない。
+**乖離なし**: 値は常にハードコード `"active"` 固定。CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) デフォルトとの乖離は存在しない。
 
 ---
 
@@ -330,10 +330,10 @@ connection key 末尾に付加される RFC3339 タイムスタンプは `time.N
 | 副次 DB / リソース | テーブル / キー | 書込内容 | 有無 |
 |---|---|---|---|
 | CONFIG_DB | 任意テーブル | `TELEMETRY_CONNECTIONS` の変化に起因する書戻し | **なし** |
-| APPL_DB | 任意テーブル | orchagent 等への通知 | **なし** |
-| ASIC_DB | 任意テーブル | SAI 操作のトリガ | **なし** |
-| COUNTERS_DB | 任意テーブル | カウンタ更新 | **なし** |
-| FLEX_COUNTER_DB | 任意テーブル | 参照なし | **なし** |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | 任意テーブル | [orchagent](../../reference/glossary.md#term-orchagent) 等への通知 | **なし** |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | 任意テーブル | [SAI](../../reference/glossary.md#term-sai) 操作のトリガ | **なし** |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | 任意テーブル | カウンタ更新 | **なし** |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | 任意テーブル | 参照なし | **なし** |
 | ファイルシステム | 任意パス | 設定ファイル書込 | **なし** |
 | SysV IPC 共有メモリ | key=`7749` | gNMI 操作カウンタ (`InitCounters` / `IncCounter`) | `telemetry` デーモン **起動時** に初期化。TELEMETRY_CONNECTIONS への書込とは独立 (`common_utils/shareMem.go`) |
 
@@ -343,12 +343,12 @@ connection key 末尾に付加される RFC3339 タイムスタンプは `time.N
 
 | Consumer | 操作 | 目的 |
 |---|---|---|
-| `show gnmi`（sonic-utilities） | `HGetAll(TELEMETRY_CONNECTIONS)` | アクティブな Subscribe RPC 接続一覧の表示 |
+| `show gnmi`（[sonic-utilities](../../reference/glossary.md#term-sonic-utilities)） | `HGetAll(TELEMETRY_CONNECTIONS)` | アクティブな Subscribe RPC 接続一覧の表示 |
 | `gnmi_server/server_test.go` | `HGetAll(TELEMETRY_CONNECTIONS)` | 接続登録・削除の単体テスト検証 |
 
 ### 設計上の特性
 
-このテーブルは **可視化専用** のランタイム状態であり、制御フローには含まれない。`telemetry` デーモンが HSet / HDel を行っても、orchagent・syncd・その他デーモンは何ら反応しない。CONFIG_DB への書き戻しも発生しない。
+このテーブルは **可視化専用** のランタイム状態であり、制御フローには含まれない。`telemetry` デーモンが HSet / HDel を行っても、orchagent・[syncd](../../reference/glossary.md#term-syncd)・その他デーモンは何ら反応しない。CONFIG_DB への書き戻しも発生しない。
 
 <!-- evidence:
   connection_manager.go:16,52,116,127 — TELEMETRY_CONNECTIONS HSet/HDel のみ。他 DB 書込なし
@@ -368,12 +368,12 @@ connection key 末尾に付加される RFC3339 タイムスタンプは `time.N
 | 区間 | 方式 | チャンネル / パターン |
 |------|------|--------------------|
 | `telemetry` デーモン → STATE_DB | `go-redis HSet/HDel` 直接呼び出し | `TELEMETRY_CONNECTIONS`（Redis Hash、TTL なし、keyspace 通知登録なし） |
-| STATE_DB → `show gnmi`（sonic-utilities） | `go-redis HGetAll` 直接呼び出し | `TELEMETRY_CONNECTIONS` の全フィールドを一括取得 |
+| STATE_DB → `show gnmi`（[sonic-utilities](../../reference/glossary.md#term-sonic-utilities)） | `go-redis HGetAll` 直接呼び出し | `TELEMETRY_CONNECTIONS` の全フィールドを一括取得 |
 | STATE_DB → テストコード | `go-redis HGetAll` 直接呼び出し | `gnmi_server/server_test.go` の単体テスト検証 |
 
 ### STATE_DB への書き込みフロー
 
-`telemetry` デーモンは `gnmi_server/connection_manager.go` 内の `ConnectionManager` が STATE_DB への Redis クライアント (`rclient`) を **起動時** に初期化し、以降は RPC ハンドラスレッドから直接 `HSet` / `HDel` を発行する。orchagent・translib・syncd などの中間プロセスは介在しない。
+`telemetry` デーモンは `gnmi_server/connection_manager.go` 内の `ConnectionManager` が STATE_DB への Redis クライアント (`rclient`) を **起動時** に初期化し、以降は RPC ハンドラスレッドから直接 `HSet` / `HDel` を発行する。orchagent・translib・[syncd](../../reference/glossary.md#term-syncd) などの中間プロセスは介在しない。
 
 ```
 telemetry デーモン
@@ -412,13 +412,13 @@ telemetry デーモン
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`TELEMETRY_CONNECTIONS` テーブルへの書き込みロジックは `gnmi_server/connection_manager.go` 内に完結しており、ASIC 種別・`DEVICE_METADATA` の `platform` / `hwsku` フィールド・サードパーティ SAI 実装に**依存しない**。STATE_DB への HSet / HDel は Redis TCP 接続経由でのみ行われ、スイッチ ASIC とは直接関係しない。
+`TELEMETRY_CONNECTIONS` テーブルへの書き込みロジックは `gnmi_server/connection_manager.go` 内に完結しており、[ASIC](../../reference/glossary.md#term-asic) 種別・`DEVICE_METADATA` の `platform` / `hwsku` フィールド・サードパーティ [SAI](../../reference/glossary.md#term-sai) 実装に**依存しない**。STATE_DB への HSet / HDel は Redis TCP 接続経由でのみ行われ、スイッチ [ASIC](../../reference/glossary.md#term-asic) とは直接関係しない。
 
 ### A. 設計上プラットフォーム非依存な点
 
 | 項目 | 詳細 | evidence |
 |------|------|----------|
-| ASIC 種別 | `connection_manager.go` は ASIC / SAI API を参照しない。broadcom / mellanox / barefoot / cisco-8000 等で挙動に差はない | `connection_manager.go` 全体 — `sai_*` 系 import なし |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 | `connection_manager.go` は ASIC / [SAI](../../reference/glossary.md#term-sai) API を参照しない。broadcom / mellanox / barefoot / cisco-8000 等で挙動に差はない | `connection_manager.go` 全体 — `sai_*` 系 import なし |
 | `platform` / `hwsku` 文字列 | `DEVICE_METADATA|localhost` の `platform` / `hwsku` を参照しない。プラットフォーム分岐コードなし | `connection_manager.go` — `DEVICE_METADATA` 参照なし |
 | connection key フォーマット | peer IP:port + gNMI query + RFC3339 タイムスタンプで構成。ASIC に依存しない | `connection_manager.go:94-108` — `createKey()` |
 | `"active"` 固定値 | 全プラットフォームで HSet 値は `"active"` のみ | `connection_manager.go:116` |
@@ -432,7 +432,7 @@ telemetry デーモン
 |------|------|------|
 | シングル ASIC（通常構成） | デフォルト名前空間の STATE_DB に書き込む。動作に問題なし | なし |
 | multi-ASIC（`asic0` / `asic1` / ... 並存） | **デフォルト名前空間の STATE_DB にのみ書き込む**。各 ASIC 名前空間の STATE_DB には `TELEMETRY_CONNECTIONS` が存在しない | `show gnmi` はデフォルト名前空間のみ参照するため、表示上は一貫している |
-| SmartSwitch DPU 構成 | NPU 側の `telemetry` デーモンがデフォルト名前空間 STATE_DB を使用する。DPU namespace には `TELEMETRY_CONNECTIONS` なし | DPU 側の gNMI 接続はこのテーブルに記録されない場合がある |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 構成 | [NPU](../../reference/glossary.md#term-npu) 側の `telemetry` デーモンがデフォルト名前空間 STATE_DB を使用する。[DPU](../../reference/glossary.md#term-dpu) namespace には `TELEMETRY_CONNECTIONS` なし | [DPU](../../reference/glossary.md#term-dpu) 側の gNMI 接続はこのテーブルに記録されない場合がある |
 
 !!! note "multi-ASIC で `TELEMETRY_CONNECTIONS` は 1 インスタンスのみ"
     multi-ASIC 環境で `telemetry` デーモンは通常 1 プロセスのみ起動し、デフォルト名前空間の STATE_DB を使う。`AclOrch` 等の各 ASIC 名前空間に対応した複数インスタンス起動モデルとは異なる。
@@ -448,10 +448,12 @@ Virtual Switch (`platform = "vs"`) 環境では Redis が通常通り起動し�
 | broadcom / mellanox / barefoot / cisco-8000 等 | 全プラットフォーム共通 (`"active"` 固定値) | ASIC 種別による差異なし |
 | vs (Virtual Switch) | 実 ASIC と同一動作 | SAI 非依存のため差異なし |
 | multi-ASIC | デフォルト名前空間 STATE_DB のみ使用 | ASIC 名前空間ごとの書き込みなし |
-| SmartSwitch DPU | NPU 側 `telemetry` のみ書き込み | DPU namespace STATE_DB には非対応 |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) DPU | [NPU](../../reference/glossary.md#term-npu) 側 `telemetry` のみ書き込み | DPU namespace STATE_DB には非対応 |
 
 > **Evidence**: `gnmi_server/connection_manager.go:32-50` (`PrepareRedis()` — `GetDbDefaultNamespace()` → デフォルト namespace の STATE_DB アドレス取得)、`connection_manager.go:44` (`Network: "tcp"` 固定)、`connection_manager.go:116` (`"active"` リテラル)、`sonic_db_config/db_config.go:28-30` (`GetDbDefaultNamespace()` は常に `SONIC_DEFAULT_NAMESPACE`（空文字列）を返す)。`platform` / `hwsku` / SAI 参照なし — `connection_manager.go` 全行調査済み。
 
 <!-- /platform -->
 
 [^1]: `sonic-gnmi` `gnmi_server/connection_manager.go:16` — `const table = "TELEMETRY_CONNECTIONS"`、`PrepareRedis()` / `Add()` / `Remove()` で STATE_DB を読み書き
+
+<!-- glossary-links-injected: 88586396feb0 -->

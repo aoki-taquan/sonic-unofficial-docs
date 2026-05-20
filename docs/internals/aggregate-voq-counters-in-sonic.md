@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-distributed [VOQ](../reference/glossary.md#term-voq) アーキテクチャでは、ある **出力 VOQ** に対応する VOQ が **システム内のすべての ASIC** に存在する[^1]。各 ASIC の VOQ stats は独立した FSI に乗っており、ユーザは見たい 1 ポートのキュー深度や drop を把握するために **ASIC 単位の出力を手で足し合わせる** 必要があった。
+distributed [VOQ](../reference/glossary.md#term-voq) アーキテクチャでは、ある **出力 VOQ** に対応する VOQ が **システム内のすべての [ASIC](../reference/glossary.md#term-asic)** に存在する[^1]。各 ASIC の VOQ stats は独立した FSI に乗っており、ユーザは見たい 1 ポートのキュー深度や drop を把握するために **ASIC 単位の出力を手で足し合わせる** 必要があった。
 
 この [HLD](../reference/glossary.md#term-hld) は chassis 系のシステムにおいて **supervisor から各 linecard / ASIC の [Redis](../reference/glossary.md#term-redis) に直接接続** し、`show queue counters --voq` で **VOQ 単位に sum を取った aggregate ビュー** を返せるようにする変更を定義している[^1]。アーキテクチャ自体は変えず、Redis を midplane IP 経由でも待ち受けさせる「アクセス経路の追加」と、それを使う CLI 改修だけで構成される[^1]。
 
@@ -199,4 +199,4 @@ HLD が明示している制限[^1]:
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 82f91cfcd8af -->
+<!-- glossary-links-injected: c006405759d8 -->

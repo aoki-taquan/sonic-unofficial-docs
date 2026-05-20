@@ -28,7 +28,7 @@ related:
 
 # アーキテクチャ
 
-SONiC の内部実装を 1 枚で押さえるなら、左から CLI / [gNMI](../../reference/glossary.md#term-gnmi) / 制御プレーン daemon、中央に [Redis](../../reference/glossary.md#term-redis) DB 群、右に [syncd](../../reference/glossary.md#term-syncd) と [SAI](../../reference/glossary.md#term-sai)/ASIC を置く絵になる。各機能章で `*Orch`、`*syncd`、`*mgrd` のように出てくる名前は、この絵のどこに座るかで役割が決まる。
+[SONiC](../../reference/glossary.md#term-sonic) の内部実装を 1 枚で押さえるなら、左から CLI / [gNMI](../../reference/glossary.md#term-gnmi) / 制御プレーン daemon、中央に [Redis](../../reference/glossary.md#term-redis) DB 群、右に [syncd](../../reference/glossary.md#term-syncd) と [SAI](../../reference/glossary.md#term-sai)/[ASIC](../../reference/glossary.md#term-asic) を置く絵になる。各機能章で `*Orch`、`*syncd`、`*mgrd` のように出てくる名前は、この絵のどこに座るかで役割が決まる。
 
 ```mermaid
 flowchart LR
@@ -114,4 +114,4 @@ syncd は ASIC_DB を消費し、SAI API を呼ぶ唯一の場所である。ベ
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../../platform/hld-for-handling-sai-failures.md)
 - [Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）](../../architecture/error-handling-framework-in-sonic.md)
 
-<!-- glossary-links-injected: 2bb5520a87fa -->
+<!-- glossary-links-injected: ec18b66e3507 -->

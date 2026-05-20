@@ -45,7 +45,7 @@ related:
 
 # gNMI / gNOI / OpenConfig / YANG
 
-この章は、SONiC の「モデル駆動管理」を、リクエストが入る入口から ConfigDB に到達するまでの順で読み直すための入口である。既存ページは [HLD](../../reference/glossary.md#term-hld) 単位で書かれており、Translib、Transformer、[gNMI](../../reference/glossary.md#term-gnmi) server、[gNOI](../../reference/glossary.md#term-gnoi) service が別の文書に分かれている。運用者・開発者が最初に知りたい境界は、どのプロトコル/モデルが何を直接いじっているか、という一点に集約される。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) の「モデル駆動管理」を、リクエストが入る入口から ConfigDB に到達するまでの順で読み直すための入口である。既存ページは [HLD](../../reference/glossary.md#term-hld) 単位で書かれており、Translib、Transformer、[gNMI](../../reference/glossary.md#term-gnmi) server、[gNOI](../../reference/glossary.md#term-gnoi) service が別の文書に分かれている。運用者・開発者が最初に知りたい境界は、どのプロトコル/モデルが何を直接いじっているか、という一点に集約される。
 
 主な問いは次の 4 つ。
 
@@ -131,4 +131,4 @@ related:
 - [Security / AAA / FIPS / Hardening](../15-security-aaa/index.md)
 - [リファレンス横断索引](../22-reference-index/index.md)
 
-<!-- glossary-links-injected: fe633285d204 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->
