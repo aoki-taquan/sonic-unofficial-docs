@@ -596,7 +596,6 @@ STATE_DB 書込み時の `state` 文字列 (`session_state_lookup`):
 > **スキャン証跡**: `bfdorch.cpp` L1-60, L33-54, L340-475, L505-530, L580-655, L780-800 を読了。マクロ 8 件、SAI 列挙文字列マップ 4+4=8 件、初期値リテラル 5 件を抽出。中間ファイル: `meta/_intermediate/cdb-flow/bfd-orch-constants.md`
 <!-- /constants -->
 
-
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
