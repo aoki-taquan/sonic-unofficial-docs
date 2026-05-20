@@ -11,7 +11,7 @@ sources:
     ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-    - CFG_TWAMP_SESSION_TABLE
+    - TWAMP_SESSION
   cli:
     - config twamp-light
     - show twamp-light
@@ -45,19 +45,19 @@ Phase 1 で扱う 2 役:
 
 ```mermaid
 flowchart LR
-    USER[(CONFIG_DB\nCFG_TWAMP_SESSION_TABLE)] --> ORCH[twamp orch]
+    USER[(CONFIG_DB\nTWAMP_SESSION)] --> ORCH[twamp orch]
     ORCH -->|capability query| STATE[(STATE_DB\nSTATE_SWITCH_CAPABILITY_TABLE)]
     ORCH --> SAI[(SAI TWAMP)]
     SAI -->|stats| CDB[(COUNTERS_DB)]
     SAI -->|session-sender event| ORCH
-    ORCH --> STATE2[(STATE_DB\nSTATE_TWAMP_SESSION_TABLE)]
+    ORCH --> STATE2[(STATE_DB\nTWAMP_SESSION_TABLE)]
     CDB --> CLI[show twamp-light ...]
 ```
 
 ### CONFIG_DB
 
 ```text
-CFG_TWAMP_SESSION_TABLE|<name>:
+TWAMP_SESSION|<name>:
   mode             = SENDER | REFLECTOR
   src_ip / dst_ip
   src_udp_port / dst_udp_port
@@ -71,7 +71,7 @@ CFG_TWAMP_SESSION_TABLE|<name>:
 
 ### STATE_DB / COUNTERS_DB
 
-- `STATE_TWAMP_SESSION_TABLE|<name>`: 状態（active / completed / error）、`tx_packets` / `rx_packets` / latency / jitter
+- `TWAMP_SESSION_TABLE|<name>`: 状態（active / completed / error）、`tx_packets` / `rx_packets` / latency / jitter
 - `STATE_SWITCH_CAPABILITY_TABLE`: ASIC TWAMP support flag、CLI が事前 check[^1]
 - [COUNTERS_DB](../reference/glossary.md#term-counters_db): session 単位で `tx_pkts` / `rx_pkts` / `latency_*` / `jitter_*` polling[^1]
 

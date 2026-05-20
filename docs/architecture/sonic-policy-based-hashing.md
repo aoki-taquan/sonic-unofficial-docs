@@ -161,21 +161,9 @@ show pbh table / rule / hash / hash-field
 
 ```bash
 # Policy hash table とルールの確認
-show hash
-redis-cli -n 4 keys 'HASH|*'
-redis-cli -n 4 hgetall 'HASH|policy1'
-```
-
-### コマンド例: Policy based hashing 確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# Policy hash table とルールの確認
-show hash
-redis-cli -n 4 keys 'HASH|*'
-redis-cli -n 4 hgetall 'HASH|policy1'
+show pbh hash
+redis-cli -n 4 keys 'PBH_HASH|*'
+redis-cli -n 4 hgetall 'PBH_HASH|policy1'
 ```
 
 ## 裏取り済み実装位置 (2026-05-11)

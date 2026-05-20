@@ -19,7 +19,7 @@ related:
   - DPU
   - SNMP_COMMUNITY
   cli:
-  - show platform fanstatus
+  - show platform fan
   - show platform psustatus
   - show platform
   - config snmp

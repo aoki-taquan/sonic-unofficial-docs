@@ -13,27 +13,11 @@ related:
   config_db:
   - FLEX_COUNTER_TABLE
   - COPP_TRAP
-  - LLDP
-  - BGP_NEIGHBOR
-  - BGP_GLOBALS
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
   cli:
   - counterpoll
   - show flowcnt trap
   - show flowcnt
-  - show arp
-  - config bgp
-  - show bgp
-  - show lldp
-  yang:
-  - sonic-bgp-global
-  - sonic-bgp-neighbor
-  - sonic-bgp-peergroup
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
-  - sonic-bgp-peerrange
-  - sonic-bgp-bbr
+  yang: []
 ---
 
 <!-- topics-tip -->
