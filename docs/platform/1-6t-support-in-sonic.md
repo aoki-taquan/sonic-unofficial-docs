@@ -126,14 +126,14 @@ else
 end
 ```
 
-これは Frame Loss Ratio 計算で **シンボル時間** を求めるための係数。レーン 200G PAM4 の symbol rate が 106.25 Gsym/s で実効ビットレートが 212.5 Gb/s となるため、Lua 側でも反映する必要がある[^1]。
+これは Frame Loss Ratio 計算で **シンボル時間** を求めるための係数。`serdes` 変数はレーン実効ビットレート (bit/s) を保持する（100G NRZ では 106.25 Gb/s、200G PAM4 では 212.5 Gb/s）。物理 baud rate は 200G PAM4 でも 106.25 Gbaud だが、Lua 側のテーブルは bit/s で揃えるため `212.5e+9` を入れる必要がある[^1]。
 
 ```mermaid
 flowchart LR
     PORT[CONFIG_DB.PORT.speed] -->|<= 1600000?| PO[PortsOrch porthlpr]
     PO -->|valid| AOR[ASIC config]
     PO --> COUNTERS[port_rates.lua]
-    COUNTERS -->|lane 200000 → 212.5GBd| FLR[FLR 計算]
+    COUNTERS -->|lane 200000 → 212.5 Gb/s| FLR[FLR 計算]
 ```
 
 ### sonic-utilities

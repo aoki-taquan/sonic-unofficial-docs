@@ -178,7 +178,7 @@ config dhcp_server ipv4 range add pool1 10.10.0.100 10.10.0.200
 config dhcp_server ipv4 ip bind Vlan10 Ethernet4 --range pool1
 ```
 
-各サブコマンドの正確な引数は [config dhcp_server CLI](../../reference/cli/config-dhcp-relay.md) と各 [DHCP_SERVER_IPV4 系 CONFIG_DB ページ](../../reference/config-db/dhcp-server-ipv4.md) を参照してください。relay は同 VLAN で kea へ向くよう自動的に dhcprelayd が config を書き換えます。
+`config dhcp_server` サブコマンド群は現時点で専用 CLI リファレンスページが整備されておらず、ソースコード (`sonic-utilities/config/plugins/dhcp_server.py`) と [DHCP_SERVER_IPV4 系 CONFIG_DB ページ](../../reference/config-db/dhcp-server-ipv4.md) を参照してください。relay 側のコマンドは [config dhcp_relay CLI](../../reference/cli/config-dhcp-relay.md) を参照。relay は同 VLAN で kea へ向くよう自動的に dhcprelayd が config を書き換えます。
 
 CONFIG_DB は次のようになります。
 

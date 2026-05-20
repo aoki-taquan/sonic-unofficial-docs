@@ -297,9 +297,9 @@ show lldp table
 
 ### 段階 1 — Consumer 登録
 
-`lldpmgrd` が CONFIG_DB の `LLDP` テーブルを購読する。
-
-`LLDP` の key は `GLOBAL` (単一エントリ)。system description / hello timer 等のグローバルパラメータ。
+`lldpmgrd` は CONFIG_DB の `LLDP` / `LLDP_PORT` テーブルを**直接購読しない**（構造的 no-op）。
+実際に購読するのは APPL_DB: PORT_TABLE、CONFIG_DB: DEVICE_METADATA、CONFIG_DB: MGMT_INTERFACE の 3 テーブル。
+`LLDP|GLOBAL` への書き込みは lldpd に到達しない（各フィールドの dead field 詳細は `<!-- defaults -->` ブロック参照）。
 
 ### 段階 2 — CFG→APPL 翻訳
 

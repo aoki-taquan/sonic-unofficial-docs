@@ -301,7 +301,7 @@ getSoCIpAddress()    # soc_ipv4 を全ポート読み込み
 
 | 定数マクロ | 値 | 用途 |
 |-----------|-----|------|
-| `MUX_ACL_TABLE_NAME` | `INGRESS_TABLE_DROP` | ポートアイソレーション時に使用する [ACL](../../reference/glossary.md#term-acl) テーブル名 |
+| `MUX_ACL_TABLE_NAME` | `"IngressTableDrop"` | ポートアイソレーション時に使用する [ACL](../../reference/glossary.md#term-acl) テーブル名（マクロ `INGRESS_TABLE_DROP` 経由で展開、`aclorch.h:111`） |
 | `MUX_ACL_RULE_NAME` | `"mux_acl_rule"` | ポートアイソレーション時に使用する [ACL](../../reference/glossary.md#term-acl) ルール名 |
 | `MUX_HW_STATE_UNKNOWN` | `"unknown"` | HW mux 状態が不明の際に `STATE_DB:HW_MUX_CABLE_TABLE` に書き込む値 |
 | `MUX_HW_STATE_ERROR` | `"error"` | HW mux 操作失敗時に `STATE_DB:HW_MUX_CABLE_TABLE` に書き込む値 |
