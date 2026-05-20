@@ -173,7 +173,7 @@ GCU が標準で吐く例外メッセージはユーザに分かりにくいた�
 
 | Table | Key | フィールド | 説明 |
 |-------|-----|-----------|------|
-| `DEVICE_METADATA` | `localhost` | `yang_config_validation` | `enable` / `disable`。デフォルトは enable 相当 |
+| `DEVICE_METADATA` | `localhost` | `yang_config_validation` | `enable` / `disable`。デフォルトは `disable` |
 
 ### 関連する CLI
 

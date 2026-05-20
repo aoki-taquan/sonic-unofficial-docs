@@ -1287,7 +1287,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [AAA](#term-aaa)
 
 - [AAA テーブル](config-db/aaa.md) (50)
-- [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../management/aaa-improvements.md) (27)
+- [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../management/aaa-improvements.md) (24)
 - [sonic-system-aaa YANG](yang/sonic-system-aaa.md) (24)
 - [LDAP_SERVER テーブル](config-db/ldap-server.md) (22)
 - [TACPLUS_SERVER テーブル](config-db/tacplus-server.md) (22)
@@ -1412,8 +1412,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [config_db.json](#term-config_db.json)
 
-- [gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）](../management/gnoi-hld-for-file-and-factory-reset-apis.md) (12)
 - [CONFIG_DB の永続化が失敗する](runbooks/config-db-persistence-failure.md) (12)
+- [gNOI File.Remove と FactoryReset.Start（gNMI/UMF + DBUS host service）](../management/gnoi-hld-for-file-and-factory-reset-apis.md) (11)
 - [multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）](../platform/db-design-for-multi-asic-scenarios.md) (11)
 - [reset-factory（keep-basic / keep-all-config / only-config）](../architecture/reset-factory-design.md) (9)
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP](../management/sonic-nos-configuration-methods.md) (8)
@@ -1807,7 +1807,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [LLDP](#term-lldp)
 
 - [LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル (APPL_DB)](config-db/lldp-state.md) (119)
-- [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (101)
+- [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (102)
 - [LLDP_PORT テーブル](config-db/lldp-port.md) (86)
 - [sonic-lldp YANG](yang/sonic-lldp.md) (35)
 - [サイトマップ](../_meta/sitemap.md) (20)
@@ -1887,9 +1887,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [NAT](#term-nat)
 
 - [NAT_BINDINGS テーブル](config-db/nat-bindings.md) (331)
-- [NAT_GLOBAL / NAT_POOL テーブル](config-db/nat.md) (316)
+- [NAT_GLOBAL / NAT_POOL テーブル](config-db/nat.md) (318)
+- [NAT_RESTORE_TABLE / COUNTERS_NAT テーブル](config-db/nat-state.md) (301)
 - [COUNTERS_DB NAT カウンタテーブル群](config-db/nat-counters.md) (300)
-- [NAT_RESTORE_TABLE / COUNTERS_NAT テーブル](config-db/nat-state.md) (293)
 - [NAT_POOL テーブル](config-db/nat-pool.md) (248)
 
 ### [natmgrd / natsyncd](#term-natmgrd-natsyncd)
@@ -2073,7 +2073,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [Redis](#term-redis)
 
 - [TELEMETRY_CONNECTIONS テーブル (STATE_DB)](config-db/gnmi-state.md) (75)
-- [Redis Client Manager（RCM: connection pool / transactional client）](../management/redis-client-manager-rcm-hld.md) (39)
+- [Redis Client Manager（RCM: connection pool / transactional client）](../management/redis-client-manager-rcm-hld.md) (40)
 - [サイトマップ](../_meta/sitemap.md) (32)
 - [Redis DB 設定 (database_config.json)](config-db/redis-db-config.md) (24)
 - [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (22)
@@ -2409,7 +2409,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VRRP_TRACK テーブル](config-db/vrrp-track.md) (124)
 - [VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking）](../routing/virtual-router-redundancy-protocol-adaptation-hld.md) (36)
 - [サイトマップ](../_meta/sitemap.md) (13)
-- [config interface サブコマンド](cli/config-interface.md) (11)
+- [config interface サブコマンド](cli/config-interface.md) (12)
 
 ### [VTEP](#term-vtep)
 

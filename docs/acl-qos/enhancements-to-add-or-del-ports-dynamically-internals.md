@@ -56,7 +56,7 @@ related:
 - Debug counters: port ingress / egress drops（`DEBUG_COUNTER` table）— **追加要**
 - [PFC](../reference/glossary.md#term-pfc) watchdog counters — **追加要**
 
-これら counter は従来 init 完了後に **全ポートまとめて作成** されていた。動的化すれば未存在ポートに対する誤登録が消える[^1]。実装は [sonic-swss](../reference/glossary.md#term-sonic-swss) #2019 で対応中。
+これら counter は従来 init 完了後に **全ポートまとめて作成** されていた。動的化すれば未存在ポートに対する誤登録が消える[^1]。実装は [sonic-swss](../reference/glossary.md#term-sonic-swss) #2019 で対応済み（MERGED 2022-04）。
 
 ## 3. buffermgrd の改修と race condition
 
