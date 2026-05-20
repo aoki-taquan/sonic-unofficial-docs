@@ -168,7 +168,7 @@ vendor 実装に依存。sysfs（`/sys/bus/i2c/.../qsfpN_eeprom`）または ven
 - PR#760 を 202511 から revert する
 - `DomInfoUpdateTask` から `is_port_in_cmis_initialization_process` チェックを除去する
 
-**参照**: sonic-net/sonic-buildimage#26355（Bug, Triaged, High severity、202511 で再現確認）
+**参照**: sonic-net/[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)#26355（Bug, Triaged, High severity、202511 で再現確認）
 
 ## 制限事項
 
@@ -180,7 +180,7 @@ vendor 実装に依存。sysfs（`/sys/bus/i2c/.../qsfpN_eeprom`）または ven
 
 ### thermalctld のトランシーバー温度二重ポーリング（修正済み）
 
-`thermalctld` が xcvrd 経由で Redis (`TRANSCEIVER_DOM_SENSOR`) に公開済みのトランシーバー温度・閾値データを、さらに I2C 経由で直接読み直す二重ポーリングが実装されていた。これにより不要な I2C アクセスが発生しパフォーマンスを低下させていた。
+`thermalctld` が xcvrd 経由で [Redis](../reference/glossary.md#term-redis) (`TRANSCEIVER_DOM_SENSOR`) に公開済みのトランシーバー温度・閾値データを、さらに I2C 経由で直接読み直す二重ポーリングが実装されていた。これにより不要な I2C アクセスが発生しパフォーマンスを低下させていた。
 
 - `sonic-platform-daemons` PR#808 にて `TemperatureUpdater` から SFP 列挙と Redis 経由トランシーバー温度読み取りを削除し修正済み
 - `show platform temperature` コマンドへの影響はなし（xcvrd 側が引き続きデータを公開するため）
@@ -261,4 +261,4 @@ HLD の中核（xcvrd デーモン + 60s 周期 DOM ポーリング + CMIS 拡�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1d579f83f1e2 -->
+<!-- glossary-links-injected: 1d3bc93024e6 -->

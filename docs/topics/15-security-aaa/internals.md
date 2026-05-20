@@ -29,11 +29,11 @@ related:
 
 # 内部実装
 
-ここではデータプレーン側のセキュリティ、特に MACsec / MKA とその ASIC・Gearbox 側の境界、起動時の [SAI](../../reference/glossary.md#term-sai) POST を扱います。control plane の [AAA](../../reference/glossary.md#term-aaa) 系は [アーキテクチャ](architecture.md) で完結しており、本ページではリンクの暗号と完全性に話を限定します。
+ここではデータプレーン側のセキュリティ、特に [MACsec](../../reference/glossary.md#term-macsec) / MKA とその [ASIC](../../reference/glossary.md#term-asic)・Gearbox 側の境界、起動時の [SAI](../../reference/glossary.md#term-sai) POST を扱います。control plane の [AAA](../../reference/glossary.md#term-aaa) 系は [アーキテクチャ](architecture.md) で完結しており、本ページではリンクの暗号と完全性に話を限定します。
 
 ## MACsec の control / data plane 境界
 
-MACsec はリンク単位の L2 暗号化規格で、SONiC では大きく二つの世界に分けて実装されています。
+MACsec はリンク単位の L2 暗号化規格で、[SONiC](../../reference/glossary.md#term-sonic) では大きく二つの世界に分けて実装されています。
 
 - Control plane: MKA（MACsec Key Agreement）と SAK 配布。ホスト側の `wpa_supplicant` ベースのプロセスが担当し、`macsecmgr` が `CONFIG_DB` と仲介します。
 - Data plane: SAI MACsec object（SC、SA、フィルタ）と、ASIC または Gearbox PHY 上の暗号エンジン。
@@ -66,7 +66,7 @@ platform 側の信頼チェーン（OpenSSL FIPS、secure boot、secure upgrade�
 
 ## データフロー（AAA / management security 側）
 
-MACsec 以外の AAA（TACACS+ / RADIUS / PAM / NSS / SSH）の制御パスも合わせて整理します。
+MACsec 以外の AAA（TACACS+ / [RADIUS](../../reference/glossary.md#term-radius) / PAM / NSS / SSH）の制御パスも合わせて整理します。
 
 ```mermaid
 flowchart LR
@@ -157,4 +157,4 @@ flowchart LR
 
 順序と authz policy は `CONFIG_DB:AAA` テーブルから `hostcfgd` が `/etc/pam.d/common-auth-sonic` 等を render することで反映されます。`gnmi` や REST API の認証は PAM を経由しない別経路（gNSI authz、token-based）であり、TACACS+ の `command` authorization は host CLI のみに効きます。
 
-<!-- glossary-links-injected: 4cd22b04b1d1 -->
+<!-- glossary-links-injected: ae6c3c279b05 -->

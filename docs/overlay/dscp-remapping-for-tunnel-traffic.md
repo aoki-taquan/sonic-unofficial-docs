@@ -265,7 +265,7 @@ docker exec swss saidump | grep -A2 -E 'TUNNEL|DECAP_DSCP_TO_TC|ENCAP_TC_TO_DSCP
 ## トラブルシュート
 
 - decap 後の DSCP が期待通り再書き換えされない場合、`DSCP_TO_TC_MAP` と `TC_TO_DSCP_MAP` の TUNNEL 適用 (`config qos remap` / `TUNNEL` テーブル) を確認する。
-- ASIC が DSCP 透過 (`SAI_TUNNEL_DECAP_TTL_MODE_PIPE_MODEL` の挙動差) の場合、`saidump` で `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` が NULL でないか確認する。
+- [ASIC](../reference/glossary.md#term-asic) が DSCP 透過 (`SAI_TUNNEL_DECAP_TTL_MODE_PIPE_MODEL` の挙動差) の場合、`saidump` で `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` が NULL でないか確認する。
 - VxLAN / IPinIP 共存環境では tunnel 種別ごとに別 map を要する場合があり、orchagent ログ (`grep -i tunnel /var/log/swss/swss.rec`) で適用順序を追う。
 
 ## 引用元
@@ -298,4 +298,4 @@ docker exec swss saidump | grep -A2 -E 'TUNNEL|DECAP_DSCP_TO_TC|ENCAP_TC_TO_DSCP
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: c006405759d8 -->

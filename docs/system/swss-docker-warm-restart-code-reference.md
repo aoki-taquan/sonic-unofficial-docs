@@ -224,7 +224,7 @@ docker logs swss 2>&1 | grep -iE 'warm|restoration|reconcile' | tail -40
 
 - reconciliation がタイムアウトする場合、`config warm_restart bgp_timer` / `neighsyncd_timer` を延長して再試行する。デフォルトは [BGP](../reference/glossary.md#term-bgp) 600s / [neighsyncd](../reference/glossary.md#term-neighsyncd) 60s。
 - `STATE_DB` の `WARM_RESTART_TABLE|<app>` が `reconciled` に遷移しないアプリケーションを特定し、該当 syncd のログを優先確認。
-- 同一ホスト上で swss と syncd の warm-restart タイミングがずれると ASIC 上の stale エントリが残る。`docker exec syncd ls /var/warmboot/` の checkpoint ファイル mtime で順序を確認。
+- 同一ホスト上で swss と syncd の warm-restart タイミングがずれると [ASIC](../reference/glossary.md#term-asic) 上の stale エントリが残る。`docker exec syncd ls /var/warmboot/` の checkpoint ファイル mtime で順序を確認。
 
 ## 引用元
 
@@ -303,4 +303,4 @@ sudo systemctl restart swss   # warm restart 状態をクリアしてフル再�
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: c85711a7b21a -->
+<!-- glossary-links-injected: c006405759d8 -->

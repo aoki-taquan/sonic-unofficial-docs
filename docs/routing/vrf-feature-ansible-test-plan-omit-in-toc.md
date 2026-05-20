@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-`vrf-vs-test-plan` が SwSS 内部の DB 反映を見るのに対し、本プランは **実 SONiC スイッチ上で [VRF](../reference/glossary.md#term-vrf) 機能を E2E 検証** する。`t0` トポロジ前提で、[PortChannel](../reference/glossary.md#term-portchannel) / [VLAN](../reference/glossary.md#term-vlan) を 2 つの VRF (`Vrf1` / `Vrf2`) に分け、neighbor / route 学習、[ACL](../reference/glossary.md#term-acl) redirect、loopback、warm-reboot を網羅する[^1]。
+`vrf-vs-test-plan` が SwSS 内部の DB 反映を見るのに対し、本プランは **実 [SONiC](../reference/glossary.md#term-sonic) スイッチ上で [VRF](../reference/glossary.md#term-vrf) 機能を E2E 検証** する。`t0` トポロジ前提で、[PortChannel](../reference/glossary.md#term-portchannel) / [VLAN](../reference/glossary.md#term-vlan) を 2 つの VRF (`Vrf1` / `Vrf2`) に分け、neighbor / route 学習、[ACL](../reference/glossary.md#term-acl) redirect、loopback、warm-reboot を網羅する[^1]。
 
 ## 動作仕様
 
@@ -127,4 +127,4 @@ VRF 跨ぎリダイレクトでは **outgoing interface も明示** が必要[^1
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 3ad5f2c8e7bc -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

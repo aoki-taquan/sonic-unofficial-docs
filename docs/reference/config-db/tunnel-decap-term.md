@@ -91,11 +91,11 @@ STATE_DB:  TUNNEL_DECAP_TERM_TABLE|<tunnel_name>|<dst_ip_prefix>
 | 条件 | デフォルト値 | 由来 |
 |------|------------|------|
 | フィールド省略時 | `P2MP` | `tunneldecaporch.cpp` L361: `TunnelTermType term_type = TUNNEL_TERM_TYPE_P2MP;` |
-| CONFIG_DB `TUNNEL` に `src_ip` あり | `P2P` (tunnelmgrd が書き込む) | `tunnelmgr.cpp` L283 |
-| CONFIG_DB `TUNNEL` に `src_ip` なし | `P2MP` (tunnelmgrd が書き込む) | `tunnelmgr.cpp` L287 |
+| [CONFIG_DB](../../reference/glossary.md#term-config_db) `TUNNEL` に `src_ip` あり | `P2P` ([tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) が書き込む) | `tunnelmgr.cpp` L283 |
+| CONFIG_DB `TUNNEL` に `src_ip` なし | `P2MP` ([tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) が書き込む) | `tunnelmgr.cpp` L287 |
 | subnet decap term | `MP2MP` (ipinip.json.j2 が書き込む) | `ipinip.json.j2` L117, L183 |
 
-`tunnelmgrd` は常に `term_type` を明示的に書き込むため、省略されるケースは直接 APPL_DB を操作する場合のみ。
+`tunnelmgrd` は常に `term_type` を明示的に書き込むため、省略されるケースは直接 [APPL_DB](../../reference/glossary.md#term-appl_db) を操作する場合のみ。
 
 ### src_ip
 
@@ -106,23 +106,23 @@ STATE_DB:  TUNNEL_DECAP_TERM_TABLE|<tunnel_name>|<dst_ip_prefix>
 | `MP2MP` subnet decap term | `subnetDecapConfig.src_ip` / `src_ip_v6` から自動注入 | `tunneldecaporch.cpp` L478-500 |
 | `MP2MP` non-subnet term | 必須（省略不可） | `tunneldecaporch.cpp` L461-464 |
 
-`P2MP` では `src_ip` が省略されるため、SAI `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_SRC_IP` は設定されない (tunneldecaporch.cpp L948-959)。
+`P2MP` では `src_ip` が省略されるため、[SAI](../../reference/glossary.md#term-sai) `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_SRC_IP` は設定されない (tunneldecaporch.cpp L948-959)。
 
 ### subnet_type
 
 | 条件 | デフォルト値 | 由来 |
 |------|------------|------|
 | 通常 P2P/P2MP term | 省略（フィールドなし） | `tunnelmgr.cpp` で書き込まない |
-| VLAN subnet decap | `"vlan"` | `ipinip.json.j2` L119, L185 |
+| [VLAN](../../reference/glossary.md#term-vlan) subnet decap | `"vlan"` | `ipinip.json.j2` L119, L185 |
 | VIP subnet decap | `"vip"` | `tunneldecaporch.cpp` L428-432 (有効値として定義) |
 
-`subnet_type` は SAI 属性に直接マップされない。orchagent の内部ステート (`TunnelTermEntry.subnet_type`) と STATE_DB に記録される用途のみ。
+`subnet_type` は SAI 属性に直接マップされない。[orchagent](../../reference/glossary.md#term-orchagent) の内部ステート (`TunnelTermEntry.subnet_type`) と [STATE_DB](../../reference/glossary.md#term-state_db) に記録される用途のみ。
 
 ### SAI 固定デフォルト (常にハードコード)
 
 | SAI 属性 | 値 | 由来 |
 |----------|-----|------|
-| `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_VR_ID` | `gVirtualRouterId` (デフォルト VRF) | `tunneldecaporch.cpp` L921-923 |
+| `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_VR_ID` | `gVirtualRouterId` (デフォルト [VRF](../../reference/glossary.md#term-vrf)) | `tunneldecaporch.cpp` L921-923 |
 | `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_TUNNEL_TYPE` | `SAI_TUNNEL_TYPE_IPINIP` | `tunneldecaporch.cpp` L940-942 |
 | `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_ACTION_TUNNEL_ID` | 対応するトンネルの OID | `tunneldecaporch.cpp` L944-946 |
 
@@ -177,7 +177,7 @@ DEL 時: `removeDecapTunnel()` は TERM エントリを自動削除しない。T
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`tunneldecaporch` / `routeorch` / `vnetorch` が TUNNEL_DECAP_TERM_TABLE の処理に際してコードレベルで参照・操作するテーブル一覧（YANG leafref 非対象、APPL_DB テーブルのため）。
+`tunneldecaporch` / `routeorch` / `vnetorch` が TUNNEL_DECAP_TERM_TABLE の処理に際してコードレベルで参照・操作するテーブル一覧（[YANG](../../reference/glossary.md#term-yang) leafref 非対象、[APPL_DB](../../reference/glossary.md#term-appl_db) テーブルのため）。
 
 | 参照先 | 方向 | 機構 | 条件 |
 |--------|------|------|------|
@@ -223,7 +223,7 @@ DEL 時: `removeDecapTunnel()` は TERM エントリを自動削除しない。T
 
 | 失敗条件 | ログ / 動作 | リトライ |
 |---------|-----------|--------|
-| 親トンネルが存在しない (`tunnel_exists==false`) | `LOG_NOTICE("Tunnel for decap term <key> doesn't exist, removed from unhandled list.")` → `unhandledDecapTerms` から削除。ASIC_DB 操作なし | なし |
+| 親トンネルが存在しない (`tunnel_exists==false`) | `LOG_NOTICE("Tunnel for decap term <key> doesn't exist, removed from unhandled list.")` → `unhandledDecapTerms` から削除。[ASIC_DB](../../reference/glossary.md#term-asic_db) 操作なし | なし |
 | DEL 対象 term entry が orchagent キャッシュに存在しない | `LOG_ERROR("Tunnel decap term entry <dst_ip> does not exist.")` → `false` 返却、DEL 失敗 | なし |
 | SAI `remove_tunnel_term_table_entry()` 失敗 | `LOG_ERROR("Failed to remove tunnel table entry: <oid>")` → `handleSaiRemoveStatus()` 経由で処理 | 条件次第 |
 
@@ -246,7 +246,7 @@ TUNNEL_DECAP_TERM_TABLE のフィールドで上書きできない、または�
 
 | 定数 / グローバル変数 | 値 | 定義場所 | 用途 |
 |---|---|---|---|
-| `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_VR_ID` → `gVirtualRouterId` | デフォルト VRF OID（起動時に switch から取得） | `tunneldecaporch.cpp` L921-923 | 全 term entry に強制付与。VRF 選択はフィールドで変更不可 |
+| `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_VR_ID` → `gVirtualRouterId` | デフォルト [VRF](../../reference/glossary.md#term-vrf) OID（起動時に switch から取得） | `tunneldecaporch.cpp` L921-923 | 全 term entry に強制付与。[VRF](../../reference/glossary.md#term-vrf) 選択はフィールドで変更不可 |
 | `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_TUNNEL_TYPE` → `SAI_TUNNEL_TYPE_IPINIP` | 固定 enum 値 | `tunneldecaporch.cpp` L940-942 | トンネルタイプは常に IPINIP。フィールドで変更不可 |
 | `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_ACTION_TUNNEL_ID` → 親トンネル OID | 実行時 OID | `tunneldecaporch.cpp` L944-946 | `tunnelTable[tunnel_name].tunnel_id` から自動取得。直接指定不可 |
 
@@ -269,11 +269,11 @@ TUNNEL_DECAP_TERM_TABLE のフィールドで上書きできない、または�
 | `src_ip` | `P2P` または `MP2MP` の場合のみ `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_SRC_IP` に設定。`P2MP` では設定されない | `tunneldecaporch.cpp` L948-959 |
 | src_ip マスク部 | `MP2MP` のみ `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_SRC_IP_MASK` | `tunneldecaporch.cpp` L968-970 |
 | dst_ip マスク部 | `MP2MP` のみ `SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_DST_IP_MASK` | `tunneldecaporch.cpp` L972-974 |
-| `subnet_type` | SAI には一切渡さない。orchagent 内部ステートと STATE_DB のみ | `tunneldecaporch.cpp` L426-434 |
+| `subnet_type` | SAI には一切渡さない。orchagent 内部ステートと [STATE_DB](../../reference/glossary.md#term-state_db) のみ | `tunneldecaporch.cpp` L426-434 |
 
 ### 有効 subnet_type 値（コードハードコード）
 
-`subnet_type` の許可値は `"vlan"` と `"vip"` のみ (L428-434)。YANG 定義は存在せず、コードに直書きされている。
+`subnet_type` の許可値は `"vlan"` と `"vip"` のみ (L428-434)。[YANG](../../reference/glossary.md#term-yang) 定義は存在せず、コードに直書きされている。
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-term-constants.md`
 
@@ -288,16 +288,16 @@ TUNNEL_DECAP_TERM_TABLE エントリの SET / DEL が引き起こす、当該テ
 
 | 副作用 | 対象 | 詳細 | evidence |
 |--------|------|------|----------|
-| SAI term entry 作成 | ASIC_DB → syncd → ASIC | `sai_tunnel_api->create_tunnel_term_table_entry()` 呼び出し | `tunneldecaporch.cpp` L979 |
+| SAI term entry 作成 | [ASIC_DB](../../reference/glossary.md#term-asic_db) → [syncd](../../reference/glossary.md#term-syncd) → [ASIC](../../reference/glossary.md#term-asic) | `sai_tunnel_api->create_tunnel_term_table_entry()` 呼び出し | `tunneldecaporch.cpp` L979 |
 | 親トンネル ref_count +1 | `tunnelTable[name].ref_count` (in-memory) | `increaseTunnelRefCount()` — ref_count が 1 以上の間は親トンネル DEL が抑制される | `tunneldecaporch.cpp` L997, `tunneldecaporch.h` L157-160 |
 | in-memory キャッシュ登録 | `tunnel.tunnel_term_info[dst_ip]` | `TunnelTermEntry` 構造体を追加。後続 DEL / 参照管理の根拠データ | `tunneldecaporch.cpp` L990-996 |
-| STATE_DB 書き込み | `STATE_TUNNEL_DECAP_TERM_TABLE:<tunnel_name>|<dst_ip>` | `setDecapTunnelTermStatus()` — `term_type`・`src_ip`（非空時）・`subnet_type`（非空時）を書き込む | `tunneldecaporch.cpp` L998, L1539-1561 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) 書き込み | `STATE_TUNNEL_DECAP_TERM_TABLE:<tunnel_name>|<dst_ip>` | `setDecapTunnelTermStatus()` — `term_type`・`src_ip`（非空時）・`subnet_type`（非空時）を書き込む | `tunneldecaporch.cpp` L998, L1539-1561 |
 
 ### DEL 成功時
 
 | 副作用 | 対象 | 詳細 | evidence |
 |--------|------|------|----------|
-| SAI term entry 削除 | ASIC_DB → syncd → ASIC | `sai_tunnel_api->remove_tunnel_term_table_entry()` 呼び出し | `tunneldecaporch.cpp` L1248 |
+| SAI term entry 削除 | [ASIC_DB](../../reference/glossary.md#term-asic_db) → [syncd](../../reference/glossary.md#term-syncd) → [ASIC](../../reference/glossary.md#term-asic) | `sai_tunnel_api->remove_tunnel_term_table_entry()` 呼び出し | `tunneldecaporch.cpp` L1248 |
 | 親トンネル ref_count -1 | `tunnelTable[name].ref_count` (in-memory) | `decreaseTunnelRefCount()` | `tunneldecaporch.cpp` L1260, `tunneldecaporch.h` L161-163 |
 | 親トンネルの自動削除（条件付き） | `TUNNEL_DECAP_TABLE` の SAI エントリ | ref_count が 0 になった場合、`RemoveTunnelIfNotReferenced()` → `removeDecapTunnel()` でカスケード削除 | `tunneldecaporch.cpp` L531, L1569-1576 |
 | STATE_DB エントリ削除 | `STATE_TUNNEL_DECAP_TERM_TABLE:<tunnel_name>|<dst_ip>` | `removeDecapTunnelTermStatus()` | `tunneldecaporch.cpp` L1261, L1563-1567 |
@@ -326,7 +326,7 @@ TUNNEL_DECAP_TERM_TABLE に関わる全 Publisher/Subscriber ペアを実装か�
 | `tunnelmgrd` (`m_appIpInIpTunnelDecapTermTable`) | `ProducerStateTable` | CONFIG_DB `TUNNEL` SET/DEL イベント受信後、APPL_DB `APP_TUNNEL_DECAP_TERM_TABLE` (および `APP_TUNNEL_DECAP_TABLE`) と同時に書き込む | `tunnelmgr.cpp` L111, L276-309 |
 | `RouteOrch` (`m_appTunnelDecapTermProducer`) | `ProducerStateTable` | VIP subnet decap ルート追加時に `subnet_type=vip` の `MP2MP` term を書き込む | `routeorch.cpp` L53, L3220-3251 |
 | `VNetRouteOrch` (`app_tunnel_decap_term_producer_`) | `ProducerStateTable` | VNet VIP ルート追加時に同様の `MP2MP` term を書き込む | `vnetorch.cpp` L734, L1563-1594 |
-| `swssconfig` + `ipinip.json.j2` | Redis MULTI/EXEC | 起動時にテンプレート展開済み JSON から一括書き込み | `sonic-buildimage: dockers/docker-orchagent/ipinip.json.j2` |
+| `swssconfig` + `ipinip.json.j2` | [Redis](../../reference/glossary.md#term-redis) MULTI/EXEC | 起動時にテンプレート展開済み JSON から一括書き込み | `sonic-buildimage: dockers/docker-orchagent/ipinip.json.j2` |
 
 `ProducerStateTable` は Lua スクリプトで `SADD KEY_SET` + `HSET _<table>:<key>` + `PUBLISH <table>_CHANNEL@0 G` をアトミックに実行する。
 
@@ -350,7 +350,7 @@ SUBSCRIBE APP_TUNNEL_DECAP_TERM_TABLE_CHANNEL@0
 new SubscriberStateTable(configDb, CFG_SUBNET_DECAP_TABLE_NAME, ...)
 ```
 
-Redis keyspace notification (`__keyspace@{db_id}__:SUBNET_DECAP|*`) を受信し、`doSubnetDecapTask()` を呼び出す。コンストラクタ内で初期 `pops()` を実行し、起動前に書き込まれていた `SUBNET_DECAP` エントリもキャッチアップする。
+[Redis](../../reference/glossary.md#term-redis) keyspace notification (`__keyspace@{db_id}__:SUBNET_DECAP|*`) を受信し、`doSubnetDecapTask()` を呼び出す。コンストラクタ内で初期 `pops()` を実行し、起動前に書き込まれていた `SUBNET_DECAP` エントリもキャッチアップする。
 
 ### STATE_DB への書き込み (Table 直接)
 
@@ -379,18 +379,18 @@ RouteOrch / VNetRouteOrch
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-TUNNEL_DECAP_TERM_TABLE エントリを **処理する `tunneldecaporch`** にはプラットフォーム差なし。差異は **書き込み側**（`ipinip.json.j2` テンプレート）で生じ、`switch_type`・ASIC ベンダー・デバイスタイプ・ルーティング IF 数の組み合わせによって生成エントリ数が変わる。
+TUNNEL_DECAP_TERM_TABLE エントリを **処理する `tunneldecaporch`** にはプラットフォーム差なし。差異は **書き込み側**（`ipinip.json.j2` テンプレート）で生じ、`switch_type`・[ASIC](../../reference/glossary.md#term-asic) ベンダー・デバイスタイプ・ルーティング IF 数の組み合わせによって生成エントリ数が変わる。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| `switch_type == "dpu"` | TERM エントリ生成なし（JSON `[]`） | `ipinip.json.j2` L1: DPU では IP-in-IP decap を使用しない設計 |
+| `switch_type == "dpu"` | TERM エントリ生成なし（JSON `[]`） | `ipinip.json.j2` L1: [DPU](../../reference/glossary.md#term-dpu) では IP-in-IP decap を使用しない設計 |
 | BackEnd デバイスタイプ（`storage_device` メタデータなし） | TERM エントリ生成なし | `ipinip.json.j2` L67-76: `BackEndToRRouter` / `BackEndLeafRouter` / `BackEndSpineRouter` かつ `storage_device` 未設定時はアドレスリストをリセット |
-| ルーティング IF 数 > 128 | 生成対象を Loopback + VLAN アドレスに限定 | `ipinip.json.j2` L79-83: SAI が `TABLE_FULL` を返す恐れがあるため制限（コメント明記） |
+| ルーティング IF 数 > 128 | 生成対象を Loopback + [VLAN](../../reference/glossary.md#term-vlan) アドレスに限定 | `ipinip.json.j2` L79-83: SAI が `TABLE_FULL` を返す恐れがあるため制限（コメント明記） |
 | Broadcom T1 (LeafRouter) | 親 TUNNEL の `dscp_mode=pipe`。TERM フィールドへの影響なし | `ipinip.json.j2` L97-108 |
 | Broadcom 非 T1 (ToR / Spine) | 親 TUNNEL の `dscp_mode=uniform`。TERM フィールドへの影響なし | `ipinip.json.j2` L100 |
-| 非 Broadcom + AZURE QoS マップ | 親 TUNNEL に `decap_dscp_to_tc_map=AZURE`。TERM フィールドへの影響なし | `ipinip.json.j2` L104-107 |
+| 非 Broadcom + AZURE [QoS](../../reference/glossary.md#term-qos) マップ | 親 TUNNEL に `decap_dscp_to_tc_map=AZURE`。TERM フィールドへの影響なし | `ipinip.json.j2` L104-107 |
 | src_ip / dst_ip IP バージョン不一致（v4/v6 混在） | `addDecapTunnelTermEntry()` が `false` を返し SAI 呼び出しスキップ | `tunneldecaporch.cpp` L950-954: 全 ASIC 共通のソフトウェアチェック |
-| multi-asic / VOQ chassis | 各 asic-namespace の orchagent が独立処理。ロジック差なし | orchagent は namespace ごとに分離起動 |
+| multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis | 各 asic-namespace の orchagent が独立処理。ロジック差なし | orchagent は namespace ごとに分離起動 |
 | Dual-ToR (MuxTunnel0) | MuxTunnel0 向け term エントリが追加されるが処理ロジックは通常 term と同一 | `tunneldecaporch.h` L21; `muxorch.cpp` 呼び出し |
 
 詳細根拠は `meta/_intermediate/cdb-flow/tunnel-decap-term-platform.md` を参照。
@@ -449,5 +449,7 @@ CONFIG_DB `TUNNEL` テーブルを購読し、`src_ip` の有無から自動的�
 
 ## 引用元
 
-[^1]: tunnelmgrd 実装: `tunnelmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/tunnelmgr.cpp>
+[^1]: [tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) 実装: `tunnelmgr.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/tunnelmgr.cpp>
 [^2]: テーブル名定数: `schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L50>
+
+<!-- glossary-links-injected: 8b572e7ecef7 -->

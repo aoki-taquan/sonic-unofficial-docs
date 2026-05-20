@@ -124,6 +124,6 @@ sudo cat /usr/share/sonic/device/*/*/platform.json | jq '.interfaces["Ethernet0"
 本ページの根拠は引用元 [^1][^2] を参照。
 
 [^1]: sonic-net/sonic-platform-daemons @ 4305596 — xcvrd / DOM 監視
-[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — portsorch
+[^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — [portsorch](../../reference/glossary.md#term-portsorch)
 
-<!-- glossary-links-injected: ffe7f349ef8a -->
+<!-- glossary-links-injected: 889740d66e5f -->

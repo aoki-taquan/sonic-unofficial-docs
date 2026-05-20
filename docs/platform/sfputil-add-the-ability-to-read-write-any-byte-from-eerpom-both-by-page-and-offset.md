@@ -101,7 +101,7 @@ Recommendation: The cable is not supported.
 
 これは Mellanox スイッチのファームウェアがベンダーロック（特定ブランドの光モジュールのみ許可）を実装している場合に発生する。
 
-**解決策:** Mellanox サポートに連絡し、ベンダー制限を解除したファームウェアを取得する（非公開ファームウェア。サポート契約が必要）。ONYX 時代は `fae cable-stamping-unlock` コマンドが存在したが、SONiC での同等コマンドは未実装。
+**解決策:** Mellanox サポートに連絡し、ベンダー制限を解除したファームウェアを取得する（非公開ファームウェア。サポート契約が必要）。ONYX 時代は `fae cable-stamping-unlock` コマンドが存在したが、[SONiC](../reference/glossary.md#term-sonic) での同等コマンドは未実装。
 
 ```bash
 # トランシーバーの状態確認
@@ -136,3 +136,5 @@ show interfaces transceiver eeprom Ethernet<N>
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/sfputil/read_write_eeprom_by_page.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/sfputil/read_write_eeprom_by_page.md)
+
+<!-- glossary-links-injected: 8ba32e5aa69d -->

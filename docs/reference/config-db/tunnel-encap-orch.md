@@ -36,25 +36,31 @@ related:
 
 `orchagent` の `VxlanTunnelOrch` / `VxlanTunnel` クラスが [CONFIG_DB](../../reference/glossary.md#term-config_db) の `VXLAN_TUNNEL`・`VXLAN_TUNNEL_MAP`・`VXLAN_EVPN_NVO` テーブルを受け取り、[SAI](../../reference/glossary.md#term-sai) `sai_tunnel_api->create_tunnel()` を呼び出してハードウェアに [VXLAN](../../reference/glossary.md#term-vxlan) encap トンネルを設定する実装詳細を解説するページ。
 
-本ページは `VXLAN_TUNNEL` テーブルのフィールド仕様ではなく、**orchagent 側が付与する encap 関連のコード由来デフォルト**にフォーカスする[^1]。テーブル仕様は [`VXLAN_TUNNEL`](vxlan-tunnel.md) を参照。
+本ページは `VXLAN_TUNNEL` テーブルのフィールド仕様ではなく、**[orchagent](../../reference/glossary.md#term-orchagent) 側が付与する encap 関連のコード由来デフォルト**にフォーカスする[^1]。テーブル仕様は [`VXLAN_TUNNEL`](vxlan-tunnel.md) を参照。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB\nVXLAN_TUNNEL\nVXLAN_TUNNEL_MAP\nVXLAN_EVPN_NVO")]
-  VTO["VxlanTunnelOrch\n(orchagent)"]
-  SAI["SAI\nsai_tunnel_api\ncreate_tunnel()"]
-  CDB --> VTO
-  VTO --> SAI
+  CDB[("CONFIG_DB<br/>VXLAN_TUNNEL")]
+  DM["vxlanmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VXLAN_TUNNEL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_tunnel_api"]
+  SYNCD --> SAI
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## encap トンネル生成タイミング
 
-`VXLAN_TUNNEL` エントリの追加 (`VxlanTunnelOrch::addOperation`) では SAI トンネルオブジェクトを作成しない。オブジェクト作成は以下のいずれかが発生したときに遅延される[^1]。
+`VXLAN_TUNNEL` エントリの追加 (`VxlanTunnelOrch::addOperation`) では [SAI](../../reference/glossary.md#term-sai) トンネルオブジェクトを作成しない。オブジェクト作成は以下のいずれかが発生したときに遅延される[^1]。
 
 | トリガー | 呼び出し元 |
 |---------|-----------|
@@ -68,14 +74,14 @@ encap mapper の生成方式は `tunnel_map_use_t` 列挙型で制御される[^
 
 | モード | 説明 | 使用場面 |
 |-------|------|---------|
-| `TUNNEL_MAP_USE_DEDICATED_ENCAP_DECAP` | encap / decap それぞれ専用 mapper を作成 | L3VNI (VRF) / Bridge VNI |
-| `TUNNEL_MAP_USE_COMMON_ENCAP_DECAP` | src VTEP の encap / decap mapper を共有 | EVPN DIP トンネル |
-| `TUNNEL_MAP_USE_COMMON_DECAP_DEDICATED_ENCAP` | decap は共有、encap は専用 | EVPN 混在構成 |
+| `TUNNEL_MAP_USE_DEDICATED_ENCAP_DECAP` | encap / decap それぞれ専用 mapper を作成 | L3VNI ([VRF](../../reference/glossary.md#term-vrf)) / Bridge VNI |
+| `TUNNEL_MAP_USE_COMMON_ENCAP_DECAP` | src [VTEP](../../reference/glossary.md#term-vtep) の encap / decap mapper を共有 | [EVPN](../../reference/glossary.md#term-evpn) DIP トンネル |
+| `TUNNEL_MAP_USE_COMMON_DECAP_DEDICATED_ENCAP` | decap は共有、encap は専用 | [EVPN](../../reference/glossary.md#term-evpn) 混在構成 |
 | `TUNNEL_MAP_USE_DECAP_ONLY` | decap のみ（encap mapper なし） | 特殊用途 |
 
 ## encap mapper タイプ対応
 
-encap 方向の mapper タイプは以下の対応に従って SAI に設定される[^1]。
+encap 方向の mapper タイプは以下の対応に従って [SAI](../../reference/glossary.md#term-sai) に設定される[^1]。
 
 | `tunnel_map_type_t` | encap `MAP_T` (SAI) |
 |--------------------|---------------------|
@@ -86,7 +92,7 @@ encap 方向の mapper タイプは以下の対応に従って SAI に設定さ�
 <!-- ordering -->
 ## 処理順序・依存関係
 
-VXLAN_TUNNEL エントリは CONFIG_DB → vxlanmgr (cfgmgrd) → APPL_DB → orchagent の順に処理される[^2]。
+VXLAN_TUNNEL エントリは [CONFIG_DB](../../reference/glossary.md#term-config_db) → vxlanmgr (cfgmgrd) → [APPL_DB](../../reference/glossary.md#term-appl_db) → [orchagent](../../reference/glossary.md#term-orchagent) の順に処理される[^2]。
 
 ```mermaid
 flowchart TD
@@ -110,7 +116,7 @@ flowchart TD
 | 依存 | 理由 |
 |-----|------|
 | `VXLAN_TUNNEL` エントリが先に存在すること | `VXLAN_TUNNEL_MAP` 追加時に `findTunnel()` を呼ぶ。存在しなければ処理失敗 (`vxlanorch.cpp:2030`) |
-| `gUnderlayIfId` が初期化済みであること | SAI `create_tunnel()` でアンダーレイ RIF として参照 (`main.cpp:967`, `vxlanorch.cpp:907`) |
+| `gUnderlayIfId` が初期化済みであること | SAI `create_tunnel()` でアンダーレイ [RIF](../../reference/glossary.md#term-rif) として参照 (`main.cpp:967`, `vxlanorch.cpp:907`) |
 | `VxlanTunnelOrch` が `gDirectory` に登録済みであること | `VxlanTunnelMapOrch` / `VxlanVrfMapOrch` が `gDirectory.get<VxlanTunnelOrch*>()` で参照 (`orchdaemon.cpp:351,353,355`) |
 
 **orchdaemon 登録順序** (`orchdaemon.cpp:350-355`):
@@ -132,11 +138,11 @@ CONFIG_DB フィールドとして公開されずコード内で暗黙的に参�
 
 | 参照先 | 参照方向 | 条件 | 参照元 evidence |
 |--------|---------|------|----------------|
-| `gUnderlayIfId`（グローバル underlay RIF） | 読み取り（`SAI_TUNNEL_ATTR_UNDERLAY_INTERFACE`） | `VXLAN_TUNNEL_MAP` または `VRF_MAP` 追加時の `createTunnelHw()` 呼び出し。`main.cpp:967` で初期化されていない場合は SAI create_tunnel 失敗 | `vxlanorch.cpp:907` |
+| `gUnderlayIfId`（グローバル underlay [RIF](../../reference/glossary.md#term-rif)） | 読み取り（`SAI_TUNNEL_ATTR_UNDERLAY_INTERFACE`） | `VXLAN_TUNNEL_MAP` または `VRF_MAP` 追加時の `createTunnelHw()` 呼び出し。`main.cpp:967` で初期化されていない場合は SAI create_tunnel 失敗 | `vxlanorch.cpp:907` |
 | `VxlanTunnelOrch`（via `gDirectory`） | 読み取り（`findTunnel()` / `getDecapMapId()` 等） | `VxlanTunnelMapOrch::addOperation` / `VxlanVrfMapOrch::addOperation` が親トンネルオブジェクトを取得するとき。`VXLAN_TUNNEL` が先に存在しない場合は処理失敗 | `vxlanorch.cpp:2046, 2260` |
-| `VRFOrch`（via `gDirectory`） | 読み取り（`isL3VniVlan(vni_id)`） | `VxlanTunnelMapOrch::addOperation` で L3VNI 判定時。VRF が存在しない場合は `isL3Vni = false` として処理される（エラーではなく条件分岐） | `vxlanorch.cpp:2095` |
-| `EvpnNvoOrch`（via `gDirectory`） | 読み取り・通知 | `addTunnelUser()` / `delTunnelUser()` / `deleteTunnelPort()` が EVPN DIP トンネルを操作するとき | `vxlanorch.cpp:1678, 1733, 1795` |
-| `STATE_VXLAN_TUNNEL_TABLE`（STATE_DB） | 書き込み | トンネル作成時（`operstatus=down`, `src_ip`, `dst_ip`, `tnl_src`）および oper-status 変化時 | `vxlanorch.cpp:1910, 1943, 1953` |
+| `VRFOrch`（via `gDirectory`） | 読み取り（`isL3VniVlan(vni_id)`） | `VxlanTunnelMapOrch::addOperation` で L3VNI 判定時。[VRF](../../reference/glossary.md#term-vrf) が存在しない場合は `isL3Vni = false` として処理される（エラーではなく条件分岐） | `vxlanorch.cpp:2095` |
+| `EvpnNvoOrch`（via `gDirectory`） | 読み取り・通知 | `addTunnelUser()` / `delTunnelUser()` / `deleteTunnelPort()` が [EVPN](../../reference/glossary.md#term-evpn) DIP トンネルを操作するとき | `vxlanorch.cpp:1678, 1733, 1795` |
+| `STATE_VXLAN_TUNNEL_TABLE`（[STATE_DB](../../reference/glossary.md#term-state_db)） | 書き込み | トンネル作成時（`operstatus=down`, `src_ip`, `dst_ip`, `tnl_src`）および oper-status 変化時 | `vxlanorch.cpp:1910, 1943, 1953` |
 
 !!! note "orchdaemon 登録順序が前提"
     `VxlanTunnelMapOrch` / `VxlanVrfMapOrch` は `gDirectory.get<VxlanTunnelOrch*>()` で
@@ -162,18 +168,18 @@ CONFIG_DB フィールドとして公開されずコード内で暗黙的に参�
 |----------------------|--------------------|------|
 | `SAI_TUNNEL_ATTR_TYPE` | `SAI_TUNNEL_TYPE_VXLAN` ハードコード | `vxlanorch.cpp:303-304` |
 | `SAI_TUNNEL_ATTR_ENCAP_TTL_MODE` | `encap_ttl != 0` の場合 `SAI_TUNNEL_TTL_MODE_PIPE_MODEL` を設定。`encap_ttl == 0` の場合は属性を SAI に渡さない → プラットフォーム依存 | `vxlanorch.cpp:385-393` |
-| `SAI_TUNNEL_ATTR_ENCAP_TTL_VAL` | デフォルト引数 `DEFAULT_TUNNEL_ENCAP_TTL = 255` (YANG 未定義フィールド)。`encap_ttl` 省略呼び出しでは 255 が SAI に設定される | `vxlanorch.h:49`, `vxlanorch.h:207`, `vxlanorch.cpp:392` |
+| `SAI_TUNNEL_ATTR_ENCAP_TTL_VAL` | デフォルト引数 `DEFAULT_TUNNEL_ENCAP_TTL = 255` ([YANG](../../reference/glossary.md#term-yang) 未定義フィールド)。`encap_ttl` 省略呼び出しでは 255 が SAI に設定される | `vxlanorch.h:49`, `vxlanorch.h:207`, `vxlanorch.cpp:392` |
 | `SAI_TUNNEL_ATTR_PEER_MODE` | CLI 作成 (`TNL_CREATION_SRC_CLI`) は常に `SAI_TUNNEL_PEER_MODE_P2MP`。EVPN DIP トンネル (`TNL_CREATION_SRC_EVPN`) は `SAI_TUNNEL_PEER_MODE_P2P` | `vxlanorch.cpp:358-369`, `vxlanorch.cpp:903` |
 | `SAI_TUNNEL_ATTR_DECAP_TTL_MODE` | `ttl_mode` 省略時 (`VxlanTunnelTTLMode::NOT_SET`) は属性を SAI に渡さない → プラットフォーム依存デフォルト | `vxlanorch.cpp:372-383` |
-| `SAI_TUNNEL_ATTR_UNDERLAY_INTERFACE` | `gUnderlayIfId`（グローバルアンダーレイ RIF）固定 | `vxlanorch.cpp:307-309` |
+| `SAI_TUNNEL_ATTR_UNDERLAY_INTERFACE` | `gUnderlayIfId`（グローバルアンダーレイ [RIF](../../reference/glossary.md#term-rif)）固定 | `vxlanorch.cpp:307-309` |
 | encap mapper 共有/専用 | `TUNNEL_MAP_USE_DEDICATED_ENCAP_DECAP` (L3VNI/Bridge) / `TUNNEL_MAP_USE_COMMON_ENCAP_DECAP` (EVPN DIP) — DB に設定フィールドなし | `vxlanorch.cpp:1491`, `vxlanorch.cpp:1169` |
-| SAI tunnel 生成タイミング | `VXLAN_TUNNEL` 追加時は SAI 呼び出しなし。`VXLAN_TUNNEL_MAP` / VRF map 追加時に遅延生成 | `vxlanorch.cpp:2063-2070`, `vxlanorch.cpp:2292-2297` |
+| SAI tunnel 生成タイミング | `VXLAN_TUNNEL` 追加時は SAI 呼び出しなし。`VXLAN_TUNNEL_MAP` / [VRF](../../reference/glossary.md#term-vrf) map 追加時に遅延生成 | `vxlanorch.cpp:2063-2070`, `vxlanorch.cpp:2292-2297` |
 
 ### 詳細: `encap_ttl` デフォルトの実際のパス
 
 `DEFAULT_TUNNEL_ENCAP_TTL = 255` は `vxlanorch.h:49` に定義されている。
 `createTunnelHw` のシグネチャ (`vxlanorch.h:207`) でデフォルト引数として宣言されるが、
-CONFIG_DB / YANG に対応フィールドは存在しない。
+CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) に対応フィールドは存在しない。
 
 `VxlanTunnelMapOrch::addOperation` および `VxlanVrfMapOrch::addOperation` では
 `createTunnelHw(mapper_list, TUNNEL_MAP_USE_DEDICATED_ENCAP_DECAP)` と `encap_ttl` を省略して呼ぶため、
@@ -204,7 +210,7 @@ CLI (`config vxlan add`) で作成されたトンネルは `TNL_CREATION_SRC_CLI
 |-----------|------|---------|----------|
 | `sai_tunnel_api->create_tunnel()` 失敗 | `deleteMapperHw()` で mapper をロールバック後 `active_=false`、`createTunnelHw()` が `false` 返却 → `VxlanTunnelMapOrch::addOperation` が `return false` してキュー保留 | 自動リトライ | `vxlanorch.cpp:908-920` |
 | `create_tunnel_termination()` 失敗 (`with_term=true`) | `remove_tunnel()` + `deleteMapperHw()` で完全ロールバック後 `active_=false` | 自動リトライ | `vxlanorch.cpp:925-934` |
-| `VXLAN_TUNNEL_MAP` 追加時に対象 VLAN が未存在 | `SWSS_LOG_WARN` + `return false` → キュー保留。VLAN 作成後に自動収束 | 自動リトライ | `vxlanorch.cpp:2030-2033` |
+| `VXLAN_TUNNEL_MAP` 追加時に対象 [VLAN](../../reference/glossary.md#term-vlan) が未存在 | `SWSS_LOG_WARN` + `return false` → キュー保留。[VLAN](../../reference/glossary.md#term-vlan) 作成後に自動収束 | 自動リトライ | `vxlanorch.cpp:2030-2033` |
 | `VXLAN_TUNNEL_MAP` 追加時に `VXLAN_TUNNEL` 未存在 | `SWSS_LOG_WARN` + `return false` → キュー保留。`VXLAN_TUNNEL` 投入後に自動収束 | 自動リトライ | `vxlanorch.cpp:2047-2050` |
 | `del_tnl_hw_pending` フラグが立っている間の操作 | `SWSS_LOG_WARN` + `return false` → 保留。HW 削除完了後に自動収束 | 自動リトライ | `vxlanorch.cpp:2057-2060` |
 
@@ -229,11 +235,11 @@ CONFIG_DB フィールドとして公開されず `vxlanorch.h` / `vxlanorch.cpp
 
 | 定数 / 値 | SAI 属性 | 定義場所 | 備考 |
 |-----------|---------|---------|------|
-| `SAI_TUNNEL_TYPE_VXLAN` | `SAI_TUNNEL_ATTR_TYPE` | `vxlanorch.cpp:304` | トンネルタイプは常に VXLAN 固定。IP-in-IP 等への変更不可 |
+| `SAI_TUNNEL_TYPE_VXLAN` | `SAI_TUNNEL_ATTR_TYPE` | `vxlanorch.cpp:304` | トンネルタイプは常に [VXLAN](../../reference/glossary.md#term-vxlan) 固定。IP-in-IP 等への変更不可 |
 | `SAI_TUNNEL_PEER_MODE_P2MP` | `SAI_TUNNEL_ATTR_PEER_MODE` | `vxlanorch.cpp:368` | CLI 作成 (`TNL_CREATION_SRC_CLI`) のトンネルは常に P2MP。`dst_ip` を指定しても変わらない |
 | `SAI_TUNNEL_PEER_MODE_P2P` | `SAI_TUNNEL_ATTR_PEER_MODE` | `vxlanorch.cpp:359` | EVPN DIP トンネル (`TNL_CREATION_SRC_EVPN`) のみ P2P |
 | `SAI_TUNNEL_TTL_MODE_PIPE_MODEL` | `SAI_TUNNEL_ATTR_ENCAP_TTL_MODE` | `vxlanorch.cpp:388` | `encap_ttl != 0` 時に自動設定。フィールドで選択不可 |
-| `gUnderlayIfId` | `SAI_TUNNEL_ATTR_UNDERLAY_INTERFACE` | `vxlanorch.cpp:307-309` | orchagent 起動時に `main.cpp` で設定されるグローバル RIF を固定使用 |
+| `gUnderlayIfId` | `SAI_TUNNEL_ATTR_UNDERLAY_INTERFACE` | `vxlanorch.cpp:307-309` | [orchagent](../../reference/glossary.md#term-orchagent) 起動時に `main.cpp` で設定されるグローバル RIF を固定使用 |
 
 ### encap TTL・VNI 境界値
 
@@ -247,8 +253,8 @@ CONFIG_DB フィールドとして公開されず `vxlanorch.h` / `vxlanorch.cpp
 | 定数名 | 値 | 定義場所 | 用途 |
 |--------|----|---------|------|
 | `TUNNEL_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"TUNNEL_STAT_COUNTER"` | `vxlanorch.h:39` | FlexCounterManager に登録するカウンタグループ名 |
-| `TUNNEL_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` | `vxlanorch.h:40` | FlexCounter ポーリング間隔 (ms)。10 秒固定。CONFIG_DB から変更不可 |
-| `FLEX_COUNTER_UPD_INTERVAL` | `1` | `vxlanorch.cpp:36` | FlexCounter 更新タイマー秒数（1 秒固定） |
+| `TUNNEL_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `10000` | `vxlanorch.h:40` | [FlexCounter](../../reference/glossary.md#term-flexcounter) ポーリング間隔 (ms)。10 秒固定。CONFIG_DB から変更不可 |
+| `FLEX_COUNTER_UPD_INTERVAL` | `1` | `vxlanorch.cpp:36` | [FlexCounter](../../reference/glossary.md#term-flexcounter) 更新タイマー秒数（1 秒固定） |
 
 ### mapper モード定数
 
@@ -258,7 +264,7 @@ CONFIG_DB フィールドとして公開されず `vxlanorch.h` / `vxlanorch.cpp
 |----|------------|---------|
 | `TUNNEL_MAP_USE_DEDICATED_ENCAP_DECAP` | L3VNI / Bridge VNI の MAP 追加時 | `vxlanorch.cpp:2067` |
 | `TUNNEL_MAP_USE_COMMON_ENCAP_DECAP` | EVPN DIP トンネル (`addTunnelUser`) | `vxlanorch.cpp:1169` |
-| `TUNNEL_MAP_USE_DECAP_ONLY` | VLAN MAP で L3VNI フラグなし（decap のみ許可） | `vxlanorch.cpp:2060-2066` のコメント |
+| `TUNNEL_MAP_USE_DECAP_ONLY` | [VLAN](../../reference/glossary.md#term-vlan) MAP で L3VNI フラグなし（decap のみ許可） | `vxlanorch.cpp:2060-2066` のコメント |
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-orch-ordering.md`
 
@@ -271,11 +277,11 @@ CONFIG_DB フィールドとして公開されず `vxlanorch.h` / `vxlanorch.cpp
 
 | 副次 DB | テーブル / キー | トリガ | タイミング |
 |---------|--------------|--------|----------|
-| STATE_DB | `VXLAN_TUNNEL_TABLE\|<tunnel_name>` (`src_ip`, `dst_ip`, `tnl_src`, `operstatus=down`) | EVPN 作成トンネルのコンストラクタ → `addRemoveStateTableEntry(add=true)` (`vxlanorch.cpp:537`) | `createTunnelHw()` / コンストラクタと同期 |
-| STATE_DB | `VXLAN_TUNNEL_TABLE\|<tunnel_name>` (`operstatus`: `up`/`down`) | SAI ポートステータス変化 → `updateDbTunnelOperStatus()` (`vxlanorch.cpp:1893`) | アンダーレイ経路確立時に非同期 |
-| COUNTERS_DB | `COUNTERS_TUNNEL_NAME_MAP` / `COUNTERS_TUNNEL_TYPE_MAP` | `addTunnelToFlexCounter()` → `doTask(SelectableTimer)` (`vxlanorch.cpp:1322-1335`) | SAI create_tunnel 成功後、最大 1 秒遅延 |
-| FLEX_COUNTER_DB | FlexCounter エントリ | `tunnel_stat_manager->setCounterIdList()` | COUNTERS_DB 書込と同タイミング |
-| APPL_DB | なし | 書戻しなし | — |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `VXLAN_TUNNEL_TABLE\|<tunnel_name>` (`src_ip`, `dst_ip`, `tnl_src`, `operstatus=down`) | EVPN 作成トンネルのコンストラクタ → `addRemoveStateTableEntry(add=true)` (`vxlanorch.cpp:537`) | `createTunnelHw()` / コンストラクタと同期 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `VXLAN_TUNNEL_TABLE\|<tunnel_name>` (`operstatus`: `up`/`down`) | SAI ポートステータス変化 → `updateDbTunnelOperStatus()` (`vxlanorch.cpp:1893`) | アンダーレイ経路確立時に非同期 |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | `COUNTERS_TUNNEL_NAME_MAP` / `COUNTERS_TUNNEL_TYPE_MAP` | `addTunnelToFlexCounter()` → `doTask(SelectableTimer)` (`vxlanorch.cpp:1322-1335`) | SAI create_tunnel 成功後、最大 1 秒遅延 |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | [FlexCounter](../../reference/glossary.md#term-flexcounter) エントリ | `tunnel_stat_manager->setCounterIdList()` | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書込と同タイミング |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | 書戻しなし | — |
 | CONFIG_DB | なし | 読取専用 | — |
 
 ### 詳細: STATE_DB 書込対象
@@ -297,7 +303,7 @@ VxlanTunnel dtor
 ### 詳細: FlexCounter 登録フロー
 
 SAI `create_tunnel()` 成功 (`vxlanorch.cpp:911`) → `addTunnelToFlexCounter(oid, name)` →
-`m_pendingAddToFlexCntr[oid] = name` に追加。実際の COUNTERS_DB 書込は
+`m_pendingAddToFlexCntr[oid] = name` に追加。実際の [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書込は
 `FLEX_COUNTER_UPD_INTERVAL=1` 秒タイマー発火時に行われる。
 対象は SAI tunnel_id OID（ブリッジポート OID ではない）。
 
@@ -317,7 +323,7 @@ SAI `create_tunnel()` 成功 (`vxlanorch.cpp:911`) → `addTunnelToFlexCounter(o
 
 ### Consumer 登録経路 — 二段階パイプライン
 
-`VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` / `VXLAN_EVPN_NVO` の変更は **vxlanmgrd → orchagent** の 2 段階で処理される。
+`VXLAN_TUNNEL` / `VXLAN_TUNNEL_MAP` / `VXLAN_EVPN_NVO` の変更は **[vxlanmgrd](../../reference/glossary.md#term-vxlanmgrd) → orchagent** の 2 段階で処理される。
 
 ```cpp
 // vxlanmgrd.cpp:44-58
@@ -339,7 +345,7 @@ EvpnNvoOrch* evpn_nvo_orch =
     new EvpnNvoOrch(m_applDb, APP_VXLAN_EVPN_NVO_TABLE_NAME);
 ```
 
-`vxlanmgrd` は `SubscriberStateTable`（Redis keyspace notification ベース）で CONFIG_DB を購読する。`orchagent` 側の各 Orch は `ConsumerStateTable`（Redis PUBLISH/SUBSCRIBE channel ベース）で APPL_DB を購読する。
+`vxlanmgrd` は `SubscriberStateTable`（[Redis](../../reference/glossary.md#term-redis) keyspace notification ベース）で CONFIG_DB を購読する。`orchagent` 側の各 Orch は `ConsumerStateTable`（[Redis](../../reference/glossary.md#term-redis) PUBLISH/SUBSCRIBE channel ベース）で [APPL_DB](../../reference/glossary.md#term-appl_db) を購読する。
 
 ### 購読テーブルと API 種別
 
@@ -359,7 +365,7 @@ EvpnNvoOrch* evpn_nvo_orch =
 
 | 呼び出し元 | 呼び出し先 | 契機 | evidence |
 |-----------|-----------|------|---------|
-| `VxlanTunnelOrch` | `EvpnNvoOrch` | `addTunnelUser()` / `delTunnelUser()` 時にリモート VTEP エンドポイント処理 | `vxlanorch.cpp:1678,1733,1795` |
+| `VxlanTunnelOrch` | `EvpnNvoOrch` | `addTunnelUser()` / `delTunnelUser()` 時にリモート [VTEP](../../reference/glossary.md#term-vtep) エンドポイント処理 | `vxlanorch.cpp:1678,1733,1795` |
 | `VxlanTunnelMapOrch` | `VxlanTunnelOrch` | `addOperation()` 時にトンネル存在確認 + tunnel OID 取得 | `vxlanorch.cpp:2046` |
 | `VxlanVrfMapOrch` | `VxlanTunnelOrch` + `VxlanTunnelMapOrch` | VRF-VNI マッピング生成時 | `vxlanorch.cpp:2260-2261` |
 
@@ -369,7 +375,7 @@ EvpnNvoOrch* evpn_nvo_orch =
 
 ### STATE_DB 書き戻し（Observer 逆方向）
 
-`m_stateVxlanTable`（`STATE_DB:VXLAN_TUNNEL_TABLE`）への書き込みは `Table` 型（非 ProducerStateTable）のため Redis `hset`/`del` を直接発行する。NotificationProducer / Consumer 型のチャンネル通知は使用しない。
+`m_stateVxlanTable`（`STATE_DB:VXLAN_TUNNEL_TABLE`）への書き込みは `Table` 型（非 [ProducerStateTable](../../reference/glossary.md#term-producerstatetable)）のため [Redis](../../reference/glossary.md#term-redis) `hset`/`del` を直接発行する。NotificationProducer / Consumer 型のチャンネル通知は使用しない。
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-encap-orch-pubsub.md`
 
@@ -390,7 +396,7 @@ sai_query_attribute_enum_values_capability(
 
 この結果により `is_dip_tunnel_supported` フラグが確定し、EVPN トンネルアーキテクチャ全体が変化する。
 
-| 条件 | `isDipTunnelsSupported()` | EVPN DIP トンネルポート (`Port_EVPN_*`) | SRC VTEP ポート (`Port_SRC_VTEP_*`) |
+| 条件 | `isDipTunnelsSupported()` | EVPN DIP トンネルポート (`Port_EVPN_*`) | SRC [VTEP](../../reference/glossary.md#term-vtep) ポート (`Port_SRC_VTEP_*`) |
 |-----|--------------------------|----------------------------------------|--------------------------------------|
 | SAI が `SAI_TUNNEL_PEER_MODE_P2P` を返す | `true` | リモート VTEP ごとに個別生成 | 生成されない |
 | SAI が P2P を返さない (P2MP のみ対応) | `false` | 生成されない | `VXLAN_TUNNEL_MAP` 追加時に 1 つだけ生成、全リモート VTEP を共用 |
@@ -433,6 +439,7 @@ sai_query_attribute_enum_values_capability(
 
 [^1]: VxlanTunnelOrch 実装: `orchagent/vxlanorch.cpp`, `orchagent/vxlanorch.h`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp>
 [^2]: orchdaemon 初期化順序 (`orchdaemon.cpp:350-590`), VxlanMgr::doTask() (`cfgmgr/vxlanmgr.cpp:213-262`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
-[^3]: VxlanTunnel::createTunnelHw() ロールバック (`vxlanorch.cpp:895-940`), VxlanTunnelMapOrch::addOperation() 依存チェック (`vxlanorch.cpp:2012-2090`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L895>
 [^4]: VxlanTunnel ctor/dtor/addRemoveStateTableEntry (`vxlanorch.cpp:537,545,1913`), addTunnelToFlexCounter (`vxlanorch.cpp:911,1342`), addVlanMappedToVni (`vxlanorch.cpp:2120`, `vxlanorch.h:354`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp>
 [^5]: `VxlanTunnelOrch` コンストラクタ SAI capability query (`vxlanorch.cpp:1256–1278`). <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/vxlanorch.cpp#L1256>
+
+<!-- glossary-links-injected: 8f2e82546175 -->

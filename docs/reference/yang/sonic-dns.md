@@ -28,7 +28,7 @@ related:
 - import: `ietf-inet-types`
 - top container: `sonic-dns`
 
-Domain Name System (DNS) resolver configuration [YANG](../../reference/glossary.md#term-yang) module for SONiC OS.[^1]
+Domain Name System (DNS) resolver configuration [YANG](../../reference/glossary.md#term-yang) module for [SONiC](../../reference/glossary.md#term-sonic) OS.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -148,4 +148,4 @@ show dns nameserver
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1b9a4e23d40f -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

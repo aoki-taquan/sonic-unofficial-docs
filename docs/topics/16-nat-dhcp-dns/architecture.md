@@ -61,7 +61,7 @@ flowchart LR
   SAI --> ASIC[(ASIC_DB)]
 ```
 
-要点は、static NAT は CONFIG_DB → iptables + SAI の経路、dynamic NAT は kernel が学習した conntrack を natsyncd が拾って SAI にも push する経路、という二段構成です。CPU を抜けるフローと ASIC ハードウェアパスのフローで挙動が分かれるため、counter 確認も別パスで見ます。
+要点は、static NAT は CONFIG_DB → iptables + SAI の経路、dynamic NAT は kernel が学習した conntrack を natsyncd が拾って SAI にも push する経路、という二段構成です。CPU を抜けるフローと [ASIC](../../reference/glossary.md#term-asic) ハードウェアパスのフローで挙動が分かれるため、counter 確認も別パスで見ます。
 
 ## docker-dhcp-relay と dhcrelay / dhcpmon / dhcprelayd
 
@@ -90,7 +90,7 @@ per-interface counter は VLAN / [PortChannel](../../reference/glossary.md#term-
 
 ## giaddr 固定（secondary subnet 対応）
 
-VLAN_INTERFACE に secondary IPv4 を付けると、デフォルトの `dhcrelay` は最初に見つけたアドレスを giaddr にしてしまい、server 側 pool 選択がブレます。SONiC は ISC dhcrelay にパッチ（`-pg`）を当てて、primary subnet の gateway を明示するようテンプレート（`dhcpv4-relay.agents.j2`）で `VLAN_INTERFACE | get_primary_addr` を回しています。`config interface ip add --secondary` で書き込む `secondary: "true"` フラグが起点です。詳細は [giaddr 固定ページ](../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md)を参照してください。
+VLAN_INTERFACE に secondary IPv4 を付けると、デフォルトの `dhcrelay` は最初に見つけたアドレスを giaddr にしてしまい、server 側 pool 選択がブレます。[SONiC](../../reference/glossary.md#term-sonic) は ISC dhcrelay にパッチ（`-pg`）を当てて、primary subnet の gateway を明示するようテンプレート（`dhcpv4-relay.agents.j2`）で `VLAN_INTERFACE | get_primary_addr` を回しています。`config interface ip add --secondary` で書き込む `secondary: "true"` フラグが起点です。詳細は [giaddr 固定ページ](../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md)を参照してください。
 
 ## docker-dhcp-server と kea-dhcp4
 
@@ -126,4 +126,4 @@ DHCP DoS 緩和は SAI / [CoPP](../../reference/glossary.md#term-copp) ではな
 - [ポートベース IPv4 DHCP Server](../../management/ipv4-port-based-dhcp-server-in-sonic.md)
 - [DHCPv4 Relay giaddr 固定](../../management/dhcp-relay-v4-specify-gaaddr-as-primary-interface-s-gateway-explicitly.md)
 
-<!-- glossary-links-injected: cd2e0a4b6527 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

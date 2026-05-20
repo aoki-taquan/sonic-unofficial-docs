@@ -6,14 +6,15 @@ description: gNMI SET リクエストが失敗する場合の原因と、Transli
 source_issues:
   - https://github.com/sonic-net/sonic-gnmi/issues/333
   - https://github.com/sonic-net/sonic-gnmi/issues/20
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # gNMI SET / Translib 書き込み有効化
 
 ## 概要
 
-gNMI SET リクエストを実行すると、次のようなエラーが返される場合がある。
+[gNMI](../reference/glossary.md#term-gnmi) SET リクエストを実行すると、次のようなエラーが返される場合がある。
 
 ```
 Translib write is disabled
@@ -25,11 +26,11 @@ Translib write is disabled
 setEntry: DoCVL for UPDATE
 ```
 
-これらのエラーは、sonic-buildimage のビルド時に **Translib 書き込みが無効化された状態**でビルドされていることが原因である。
+これらのエラーは、[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) のビルド時に **Translib 書き込みが無効化された状態**でビルドされていることが原因である。
 
 ## 原因
 
-SONiC の gNMI サーバー（`sonic-gnmi`）は、デフォルトでは Translib の書き込み操作を無効にしてコンパイルされる。これは意図的なセキュリティ上の選択であり、設定変更操作を明示的に許可する場合のみ有効化できる。
+[SONiC](../reference/glossary.md#term-sonic) の gNMI サーバー（`sonic-gnmi`）は、デフォルトでは Translib の書き込み操作を無効にしてコンパイルされる。これは意図的なセキュリティ上の選択であり、設定変更操作を明示的に許可する場合のみ有効化できる。
 
 ## 解決方法
 
@@ -74,3 +75,5 @@ gnmi_set \
 - [gNMI ストリーミングテレメトリの落とし穴](gnmi-streaming-telemetry-pitfalls.md)
 - GitHub Issue: [sonic-net/sonic-gnmi#333](https://github.com/sonic-net/sonic-gnmi/issues/333)
 - GitHub Issue: [sonic-net/sonic-gnmi#20](https://github.com/sonic-net/sonic-gnmi/issues/20)
+
+<!-- glossary-links-injected: 1260314c6f20 -->

@@ -5,18 +5,19 @@ tags: [swss-common, database, configuration, redis, internal]
 description: database_config.json が必須となった経緯と DEFAULT_UNIXSOCKET 廃止、非標準環境での注意点。
 source_issues:
   - https://github.com/sonic-net/sonic-swss-common/issues/322
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # swss-common データベース設定（database_config.json）
 
 ## 概要
 
-`sonic-swss-common` は Redis への接続情報を `database_config.json` から読み取る設計に移行しており、かつての `DEFAULT_UNIXSOCKET` による接続方式は廃止予定（または廃止済み）である。
+`sonic-swss-common` は [Redis](../reference/glossary.md#term-redis) への接続情報を `database_config.json` から読み取る設計に移行しており、かつての `DEFAULT_UNIXSOCKET` による接続方式は廃止予定（または廃止済み）である。
 
 ## database_config.json の役割
 
-`database_config.json` は `swss-common` が使用する Redis データベースの接続設定を定義するファイルである。標準的な SONiC イメージでは `/var/run/redis/sonic-db/database_config.json` に配置される。
+`database_config.json` は `swss-common` が使用する Redis データベースの接続設定を定義するファイルである。標準的な [SONiC](../reference/glossary.md#term-sonic) イメージでは `/var/run/redis/sonic-db/database_config.json` に配置される。
 
 ```json
 {
@@ -105,3 +106,5 @@ export SONIC_DB_CONFIG_FILE=/path/to/database_config.json
 
 - [swss-common DB リンク順序制約](swss-common-db-link-ordering.md)
 - GitHub Issue: [sonic-net/sonic-swss-common#322](https://github.com/sonic-net/sonic-swss-common/issues/322)
+
+<!-- glossary-links-injected: 3605a1b8842c -->

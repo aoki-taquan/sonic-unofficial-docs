@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-IEEE 802.3 の auto-negotiation はリンクの両端で **複数の speed / interface type を同時に提示** し、ネゴで最良の組合せを選ぶ仕組み。SONiC 既存の port 設定は `speed` と `autoneg` モードしか持たず、advertise 内容を細かく制御できなかった。本機能はそれを補う[^1]。
+IEEE 802.3 の auto-negotiation はリンクの両端で **複数の speed / interface type を同時に提示** し、ネゴで最良の組合せを選ぶ仕組み。[SONiC](../reference/glossary.md#term-sonic) 既存の port 設定は `speed` と `autoneg` モードしか持たず、advertise 内容を細かく制御できなかった。本機能はそれを補う[^1]。
 
 対象 medium[^1]:
 
@@ -96,7 +96,7 @@ key = PORT|<port_name>
 
 CLI バリデーション[^1]:
 
-- speed list は ASIC サポート速度内
+- speed list は [ASIC](../reference/glossary.md#term-asic) サポート速度内
 - interface type は `saiport.h` の enum 内
 
 ### orchagent 側の制御フロー
@@ -239,4 +239,4 @@ redis-cli -n 0 HGETALL "PORT_TABLE:Ethernet0" | grep -E 'autoneg|adv_|interface_
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9a441a703260 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

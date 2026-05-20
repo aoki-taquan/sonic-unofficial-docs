@@ -34,11 +34,11 @@ related:
 
 # Warm path の内部構造
 
-warm reboot / warm restart の中心は、停止前に「復元に必要な状態」を固定し、起動後に「旧状態と新状態の差分」を安全に吸収することです。SONiC ではこの役割が systemd/service orchestration、[Redis](../../reference/glossary.md#term-redis) DB backup、[orchagent](../../reference/glossary.md#term-orchagent)/[syncd](../../reference/glossary.md#term-syncd)、[SAI](../../reference/glossary.md#term-sai)、libsairedis、[ProducerStateTable](../../reference/glossary.md#term-producerstatetable) の複数層に分かれています。
+warm reboot / warm restart の中心は、停止前に「復元に必要な状態」を固定し、起動後に「旧状態と新状態の差分」を安全に吸収することです。[SONiC](../../reference/glossary.md#term-sonic) ではこの役割が systemd/service orchestration、[Redis](../../reference/glossary.md#term-redis) DB backup、[orchagent](../../reference/glossary.md#term-orchagent)/[syncd](../../reference/glossary.md#term-syncd)、[SAI](../../reference/glossary.md#term-sai)、libsairedis、[ProducerStateTable](../../reference/glossary.md#term-producerstatetable) の複数層に分かれています。
 
 ## warm shutdown で作る前提
 
-system-wide warmboot の going down path は、単に service を止めるだけではありません。上位 service に warm shutdown を通知し、application DB や ASIC state を保存し、syncd / SAI が warm shutdown として ASIC に伝えられる状態を作ります。この順序が崩れると、起動後に「ASIC 上には object が残っているが、SONiC 側の期待 state と一致しない」状況になります。
+system-wide warmboot の going down path は、単に service を止めるだけではありません。上位 service に warm shutdown を通知し、application DB や [ASIC](../../reference/glossary.md#term-asic) state を保存し、syncd / SAI が warm shutdown として ASIC に伝えられる状態を作ります。この順序が崩れると、起動後に「ASIC 上には object が残っているが、SONiC 側の期待 state と一致しない」状況になります。
 
 ```mermaid
 sequenceDiagram
@@ -87,4 +87,4 @@ warm path で守ろうとする主な状態は、ASIC 上の forwarding object�
 - [libsairedis API idempotence](../../system/sonic-libsairedis-api-idempotence-support.md)
 - [Warm Reboot 開発フェーズと OID 復元戦略](../../system/what-are-the-development-phases-and-scope-for-warm-reboot.md)
 
-<!-- glossary-links-injected: 5bbc49c2ae85 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

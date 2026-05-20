@@ -5,7 +5,8 @@ tags: [sfp, eeprom, platform-common, xcvrd, api]
 description: SfpUtilBase クラスに実装されていない get/set 関数が残存する問題と、xcvrd 経由アクセスへの設計方針。
 source_issues:
   - https://github.com/sonic-net/sonic-platform-common/issues/179
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # SfpUtilBase の EEPROM 解析欠損
@@ -33,7 +34,7 @@ verification: community-report
 理由：
 - `xcvrd` はポート初期化やトランシーバー状態変化イベントのハンドリングを担当するデーモンである
 - 直接操作と `xcvrd` 経由操作が競合すると、状態の不整合が生じる可能性がある
-- マルチ ASIC 環境では、`xcvrd` がポートとトランシーバーのマッピングを管理しており、直接操作ではこのコンテキストが失われる
+- マルチ [ASIC](../reference/glossary.md#term-asic) 環境では、`xcvrd` がポートとトランシーバーのマッピングを管理しており、直接操作ではこのコンテキストが失われる
 
 ### xcvrd と SfpUtil の役割分担
 
@@ -62,3 +63,5 @@ EEPROM / ハードウェアレジスタ
 - [xcvrd クラッシュ（MediaInterfaceIDApp 未定義）](xcvrd-cmis-mediainterface-crash.md)
 - [SFF-8472 Rx パワーキャリブレーション問題](sfp-sff8472-rx-power-calibration.md)
 - GitHub Issue: [sonic-net/sonic-platform-common#179](https://github.com/sonic-net/sonic-platform-common/issues/179)
+
+<!-- glossary-links-injected: c006405759d8 -->
