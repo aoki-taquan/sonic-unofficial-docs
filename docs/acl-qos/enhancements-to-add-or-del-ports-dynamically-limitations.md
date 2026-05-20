@@ -96,7 +96,7 @@ $ grep -rn "addBufferRefCount\|m_portBufferRef\|port_ref_count" \
 
 ### 関連 GitHub Issue / PR
 
-- [sonic-swss #1112: \[DPB portsyncd/[portmgrd](../reference/glossary.md#term-portmgrd)/portorch\] Support dynamic port add/deletion without dependencies (merged)](https://github.com/sonic-net/sonic-swss/pull/1112) — 動的 port add/del のコア実装（[DPB](../reference/glossary.md#term-dpb): Dynamic Port Breakout の派生）。HLD が想定する第二段階（ref-count）はこの PR には含まれない。
+- [sonic-swss #1112: \[DPB portsyncd/[portmgrd](../reference/glossary.md#term-portmgrd)/portorch\] Support dynamic port add/deletion without dependencies (merged)](https://github.com/sonic-net/[sonic-swss](../reference/glossary.md#term-sonic-swss)/pull/1112) — 動的 port add/del のコア実装（[DPB](../reference/glossary.md#term-dpb): Dynamic Port Breakout の派生）。HLD が想定する第二段階（ref-count）はこの PR には含まれない。
 - HLD 内で言及されていた PR #2022（port buffer ref counter）は CLOSED で未マージのまま。後継 PR も提案されておらず、機能ギャップは継続。
 
 ### 検証日
@@ -125,4 +125,4 @@ $ grep -rn "addBufferRefCount\|m_portBufferRef\|port_ref_count" \
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 1fe559aeba2e -->
