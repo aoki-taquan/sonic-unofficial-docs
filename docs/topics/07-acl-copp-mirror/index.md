@@ -62,16 +62,9 @@ related:
   - COPP_GROUP
   - ACL_TABLE
   - MIRROR_SESSION
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_PEER_GROUP_AF
   yang:
-  - sonic-bgp-bbr
-  - sonic-bgp-global
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
   - sonic-copp
-  - sonic-bgp-aggregate-address
+  - sonic-mirror-session
 ---
 
 # ACL / CoPP / Mirror / Packet Action

@@ -26,7 +26,6 @@ related:
   - config vrf
   - config bgp
   config_db:
-  - TUNNEL_DECAP_TABLE
   - VNET
   - VXLAN_TUNNEL_MAP
   - TUNNEL

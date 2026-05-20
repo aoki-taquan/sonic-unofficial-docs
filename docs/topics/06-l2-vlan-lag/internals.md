@@ -90,7 +90,7 @@ ASIC_DB:
   LAG, LAG_MEMBER, VLAN, VLAN_MEMBER, BRIDGE_PORT, FDB_ENTRY, STP
 ```
 
-`FdbOrch` は ASIC からの notification (`SAI_FDB_EVENT_LEARNED / AGED / FLUSHED`) を [Redis](../../reference/glossary.md#term-redis) pub/sub 経由で受け、APPL_DB.FDB_TABLE を更新します。MC-LAG の remote FDB は iccpd が `MCLAG_REMOTE_FDB_TABLE` に書き、`FdbOrch` がそれを static 同等として SAI に投入します。
+`FdbOrch` は ASIC からの notification (`SAI_FDB_EVENT_LEARNED / AGED / FLUSHED`) を [Redis](../../reference/glossary.md#term-redis) pub/sub 経由で受け、APPL_DB.FDB_TABLE を更新します。MC-LAG の remote FDB は iccpd / mclagsyncd が `APP_MCLAG_FDB_TABLE` (APPL_DB) に書き、`FdbOrch` がそれを static 同等として SAI に投入します。投入後は STATE_DB の `MCLAG_REMOTE_FDB_TABLE` に記録されます。
 
 ## ZMQ / Redis pub/sub
 
@@ -113,7 +113,7 @@ iccpd は peer 2 台間で ICCP セッションを張り、以下の状態を同
 | 状態 | 同期内容 | 反映先 |
 | --- | --- | --- |
 | LAG member status | local / remote の port-channel member 健全性 | `MCLAG_LOCAL_INTF_TABLE`、`MCLAG_REMOTE_INTF_TABLE` |
-| FDB | learned MAC | `MCLAG_REMOTE_FDB_TABLE` → FdbOrch |
+| FDB | learned MAC | `APP_MCLAG_FDB_TABLE` (APPL_DB) → FdbOrch |
 | [ARP](../../reference/glossary.md#term-arp) / ND | neighbor entry | `MCLAG_NEIGH_TABLE` → NeighOrch |
 | IPv4/IPv6 route | route leak（オプション） | APPL_DB 経由 |
 

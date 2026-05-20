@@ -50,7 +50,7 @@ flowchart LR
     MGR --> FRR[FRR<br/>staticd / bgpd / zebra]
     FRR -->|FPM netlink| FPMSYNCD[fpmsyncd]
     FPMSYNCD --> RT[(APPL_DB<br/>ROUTE_TABLE)]
-    FPMSYNCD --> NHGT[(APPL_DB<br/>NEXT_HOP_GROUP_TABLE)]
+    FPMSYNCD --> NHGT[(APPL_DB<br/>NEXTHOP_GROUP_TABLE)]
     RT --> ROUTEORCH[RouteOrch]
     NHGT --> NHGORCH[NhgOrch]
     ROUTEORCH --> INTFS[IntfsOrch / NeighOrch / VRFOrch]

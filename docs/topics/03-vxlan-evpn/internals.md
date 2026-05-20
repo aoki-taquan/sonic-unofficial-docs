@@ -35,7 +35,7 @@ related:
 
 # 内部実装
 
-[VXLAN](../../reference/glossary.md#term-vxlan) / [EVPN](../../reference/glossary.md#term-evpn) / [VNET](../../reference/glossary.md#term-vnet) の内部実装は「[FRR](../../reference/glossary.md#term-frr) (bgpd) が EVPN type-2/type-5 を学習し、[zebra](../../reference/glossary.md#term-zebra) が kernel/[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) に渡し、[orchagent](../../reference/glossary.md#term-orchagent) が VxlanOrch / VNetOrch / VRFOrch / NeighOrch を通じて [SAI](../../reference/glossary.md#term-sai) tunnel 系オブジェクトを [ASIC_DB](../../reference/glossary.md#term-asic_db) に投入する」という縦の流れと「外部 controller が VNET_TUNNEL / VNET_ROUTE_TUNNEL を直接 [APPL_DB](../../reference/glossary.md#term-appl_db) に書く」という横の流れに分かれます。[HLD](../../reference/glossary.md#term-hld) の章をまたいで読むときは、この二経路をまず分離します。
+[VXLAN](../../reference/glossary.md#term-vxlan) / [EVPN](../../reference/glossary.md#term-evpn) / [VNET](../../reference/glossary.md#term-vnet) の内部実装は「[FRR](../../reference/glossary.md#term-frr) (bgpd) が EVPN type-2/type-5 を学習し、[zebra](../../reference/glossary.md#term-zebra) が kernel/[fpmsyncd](../../reference/glossary.md#term-fpmsyncd) に渡し、[orchagent](../../reference/glossary.md#term-orchagent) が VxlanOrch / VNetOrch / VRFOrch / NeighOrch を通じて [SAI](../../reference/glossary.md#term-sai) tunnel 系オブジェクトを [ASIC_DB](../../reference/glossary.md#term-asic_db) に投入する」という縦の流れと「外部 controller が VNET / VNET_ROUTE_TUNNEL を直接 [APPL_DB](../../reference/glossary.md#term-appl_db) に書く」という横の流れに分かれます。[HLD](../../reference/glossary.md#term-hld) の章をまたいで読むときは、この二経路をまず分離します。
 
 ## データフロー
 
@@ -53,7 +53,7 @@ flowchart LR
   end
   subgraph redis[Redis]
     CFG[(CONFIG_DB<br/>VXLAN_TUNNEL / VNET)]
-    APP[(APPL_DB<br/>VNET_TUNNEL_TABLE / VNET_ROUTE_TUNNEL_TABLE)]
+    APP[(APPL_DB<br/>VNET_TABLE / VNET_ROUTE_TUNNEL_TABLE)]
     ASIC[(ASIC_DB<br/>SAI_OBJECT_TYPE_TUNNEL)]
   end
   BGPD --> ZEBRA --> FPMSYNCD --> APP
@@ -103,7 +103,7 @@ CONFIG_DB:
   BGP_NEIGHBOR (l2vpn evpn AF)  ─> bgpcfgd → FRR
 
 APPL_DB:
-  VNET_TUNNEL_TABLE / VNET_ROUTE_TABLE / VNET_ROUTE_TUNNEL_TABLE ─> VNetOrch / VNetRouteOrch
+  VNET_TABLE / VNET_ROUTE_TABLE / VNET_ROUTE_TUNNEL_TABLE ─> VNetOrch / VNetRouteOrch
   EVPN_REMOTE_VNI_TABLE ─> EvpnRemoteVnipOrch
   NEIGH_TABLE (type-2) ─> NeighOrch
 
