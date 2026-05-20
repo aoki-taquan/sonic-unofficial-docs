@@ -12,20 +12,11 @@ sources:
 related:
   config_db:
   - TELEMETRY_CLIENT
-  - NAT
-  - SNMP
   - TELEMETRY
-  - SNMP_AGENT_ADDRESS_CONFIG
   - GNMI
-  - SNMP_COMMUNITY
-  cli:
-  - config snmp
-  - show nat
-  - config nat
-  - show snmpagentaddress
+  cli: []
   yang:
-  - sonic-snmp
-  - sonic-nat
+  - sonic-telemetry_client
 ---
 
 <!-- topics-tip -->
