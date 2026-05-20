@@ -13,17 +13,10 @@ sources:
 related:
   config_db:
   - TELEMETRY_CLIENT
-  - NAT
   - TELEMETRY
   - GNMI
-  - STATIC_NAT
-  - STATIC_NAPT
-  - NAT_POOL
-  cli:
-  - show nat
-  - config nat
-  yang:
-  - sonic-nat
+  cli: []
+  yang: []
 ---
 
 <!-- topics-tip -->

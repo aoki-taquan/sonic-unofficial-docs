@@ -56,7 +56,7 @@ stateDiagram-v2
     ENFORCED --> NONE : enforce=false + warm/fast-reboot
 ```
 
-- **None Enforce**: `/etc/fips/fips_enabled` を runtime で 1/0 にし、SymCrypt engine を有効/無効化。対応サービス（sshd / telemetry / restapi）の **再起動が必要**[^1]
+- **None Enforce**: `/etc/fips/fips_enable`（実装名。HLD は `fips_enabled`）を runtime で 1/0 にし、SymCrypt engine を有効/無効化。対応サービス（sshd / telemetry / restapi）の **再起動が必要**[^1]
 - **Enforce**: kernel cmdline に依存。切替は **warm/fast-reboot 必須**[^1]
 - `enforce=true` なら `enable` は無視される。`enable` は enforce 前の中間モード兼ロールバック弁[^1]
 

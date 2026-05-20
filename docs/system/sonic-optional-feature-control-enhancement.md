@@ -143,6 +143,11 @@ show feature
 config feature disable telemetry
 ```
 
+!!! warning "実装との差分（HLD 仕様 vs 現行 master）"
+    - CLI: HLD は `config feature enable|disable <name>` を提案するが、現行実装は **`config feature state <name> enabled|disabled`**（本ページ L172 のコマンド例も実装版）
+    - フィールド名: HLD は `FEATURE.status=enabled` だが、現行 CONFIG_DB は **`state`** フィールド（`docs/reference/config-db/feature.md` L54 参照）
+    - L33 / L42 / L75 / L113 / L114 / L127 / L137 / L143 / L161 の HLD 表記は **未採用の初版設計** として残置
+
 ## 制限事項
 
 - **本 HLD は 2019 年の初版**。現行 master の FEATURE テーブルは `auto_restart` / `delayed` / `has_global_scope` / `set_owner` 等の追加フィールドを持ち、`hostcfgd` の挙動も拡張されている

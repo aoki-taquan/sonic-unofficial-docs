@@ -11,20 +11,9 @@ sources:
   path: doc/pmon/pmon_multiasic_design.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - SNMP
-  - VOQ_INBAND_INTERFACE
-  - SNMP_AGENT_ADDRESS_CONFIG
-  - PORT
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DPU
-  cli:
-  - config snmp
-  - show snmpagentaddress
-  yang:
-  - sonic-snmp
-  - sonic-port
+  config_db: []
+  cli: []
+  yang: []
 ---
 
 <!-- topics-tip -->
