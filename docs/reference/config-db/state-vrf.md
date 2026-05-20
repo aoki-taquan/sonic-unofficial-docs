@@ -41,12 +41,12 @@ related:
 
 ## 概要
 
-[SONiC](../../reference/glossary.md#term-sonic) の [VRF](../../reference/glossary.md#term-vrf) 削除処理は `vrfmgrd`（Linux VRF デバイス管理）と `orchagent/VRFOrch`（[SAI](../../reference/glossary.md#term-sai) VR オブジェクト管理）が非同期に動作するため、両者の完了を同期するための sentinel として [STATE_DB](../../reference/glossary.md#term-state_db) に 2 つのテーブルが使われる。
+[SONiC](../../reference/glossary.md#term-sonic) の [VRF](../../reference/glossary.md#term-vrf) 削除処理は `vrfmgrd`（Linux [VRF](../../reference/glossary.md#term-vrf) デバイス管理）と `orchagent/VRFOrch`（[SAI](../../reference/glossary.md#term-sai) VR オブジェクト管理）が非同期に動作するため、両者の完了を同期するための sentinel として [STATE_DB](../../reference/glossary.md#term-state_db) に 2 つのテーブルが使われる。
 
 | DB | テーブル名 | 書込み主体 | 意味 |
 |----|-----------|-----------|------|
-| [STATE_DB](../../reference/glossary.md#term-state_db) | `VRF_TABLE\|<name>` | `vrfmgrd` | Linux VRF デバイスが作成済み + APP_DB に書き込み済み |
-| [STATE_DB](../../reference/glossary.md#term-state_db) | `VRF_OBJECT_TABLE\|<name>` | `VRFOrch` ([orchagent](../../reference/glossary.md#term-orchagent)) | SAI VR (Virtual Router) オブジェクトが作成済み |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `VRF_TABLE\|<name>` | `vrfmgrd` | Linux [VRF](../../reference/glossary.md#term-vrf) デバイスが作成済み + APP_DB に書き込み済み |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `VRF_OBJECT_TABLE\|<name>` | `VRFOrch` ([orchagent](../../reference/glossary.md#term-orchagent)) | [SAI](../../reference/glossary.md#term-sai) VR (Virtual Router) オブジェクトが作成済み |
 
 [CONFIG_DB](../../reference/glossary.md#term-config_db) の設定フィールドを保持する [`VRF` テーブル](vrf.md) とは別物。このページで説明するテーブルは読み取り専用の状態情報。
 
@@ -89,7 +89,7 @@ VRF_TABLE|<name>
 ### 書き込みタイミング
 
 - **SET**: [CONFIG_DB](../../reference/glossary.md#term-config_db) `VRF` への SET 操作受信後、`setLink()` を呼んで Linux VRF デバイスを作成し、APP_DB `VRF_TABLE` に書き込んだあとに `m_stateVrfTable.set(vrfName, {{"state","ok"}})` を実行 (vrfmgr.cpp:289)
-- **DEL**: VRFOrch が SAI VR を削除して `VRF_OBJECT_TABLE|<name>` を消したことを `isVrfObjExist()` で確認してから `m_stateVrfTable.del(vrfName)` を実行 (vrfmgr.cpp:339)
+- **DEL**: VRFOrch が [SAI](../../reference/glossary.md#term-sai) VR を削除して `VRF_OBJECT_TABLE|<name>` を消したことを `isVrfObjExist()` で確認してから `m_stateVrfTable.del(vrfName)` を実行 (vrfmgr.cpp:339)
 
 ### consumer
 
@@ -248,7 +248,7 @@ vrfmgrd: STATE_DB VRF_TABLE|<name> DEL
 | 後続プロセス | 参照テーブル | 待機条件 | ソース |
 |-------------|------------|---------|--------|
 | `intfmgrd` | `VRF_TABLE` | VRF バインドの前提として存在確認。なければ `m_toSync` に残留 | intfmgr.cpp:671, 680 |
-| `vxlanmgr` | `VRF_TABLE` | VXLAN VRF マッピング設定前に `isVrfStateOk()` で確認 | vxlanmgr.cpp:744 |
+| `vxlanmgr` | `VRF_TABLE` | [VXLAN](../../reference/glossary.md#term-vxlan) VRF マッピング設定前に `isVrfStateOk()` で確認 | vxlanmgr.cpp:744 |
 | `vrfmgrd` 自身 | `VRF_OBJECT_TABLE` | DEL 時に orchagent の SAI 削除完了を待機 | vrfmgr.cpp:331, 342 |
 
 <!-- /ordering -->
@@ -259,7 +259,7 @@ vrfmgrd: STATE_DB VRF_TABLE|<name> DEL
 > 調査日 2026-05-18。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`, `sonic-swss/cfgmgr/intfmgr.cpp`, `sonic-swss/cfgmgr/vxlanmgr.cpp`, `sonic-swss/orchagent/vrforch.cpp`
 > 中間調査: `meta/_intermediate/cdb-flow/state-vrf-cross-refs.md`
 
-本ページの 2 テーブルはいずれも **YANG 未モデル化のオペレーショナルテーブル**。
+本ページの 2 テーブルはいずれも **[YANG](../../reference/glossary.md#term-yang) 未モデル化のオペレーショナルテーブル**。
 `VRF_TABLE` の書き手は `vrfmgrd`、`VRF_OBJECT_TABLE` の書き手は `VRFOrch` のみである。
 以下の暗黙参照は、各テーブルの生成トリガ・読み手・依存関係を示す。
 
@@ -268,7 +268,7 @@ vrfmgrd: STATE_DB VRF_TABLE|<name> DEL
 | 読み手プロセス | 参照方法 | 待機条件 | evidence |
 |-------------|---------|---------|---------|
 | `intfmgrd` | `m_stateVrfTable.get(alias, temp)` | `*_INTERFACE.vrf_name` が設定されているとき VRF が STATE_DB に存在するまで VRF バインドを `m_toSync` に保留 | `intfmgr.cpp:671, 680` |
-| `vxlanmgr` | `isVrfStateOk()` → `m_stateVrfTable.get(vrfName, temp)` | `VNET` テーブルで VRF が指定されているとき、VRF_TABLE にエントリが現れるまで VXLAN マッピング設定を保留 | `vxlanmgr.cpp:328, 744` |
+| `vxlanmgr` | `isVrfStateOk()` → `m_stateVrfTable.get(vrfName, temp)` | `VNET` テーブルで VRF が指定されているとき、VRF_TABLE にエントリが現れるまで [VXLAN](../../reference/glossary.md#term-vxlan) マッピング設定を保留 | `vxlanmgr.cpp:328, 744` |
 
 ### `VRF_OBJECT_TABLE` の読み手（削除同期 consumer）
 
@@ -333,7 +333,7 @@ vrfmgrd: STATE_DB VRF_TABLE|<name> DEL
 > 調査日 2026-05-18。ソース: `sonic-swss/cfgmgr/vrfmgr.cpp`
 > 中間調査: `meta/_intermediate/cdb-flow/state-vrf-constants.md`
 
-`vrfmgrd` に存在する、CONFIG_DB / YANG で管理されないハードコード定数の一覧。
+`vrfmgrd` に存在する、CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されないハードコード定数の一覧。
 
 ### ルーティングテーブル ID 管理定数 (vrfmgr.cpp)
 
@@ -457,7 +457,7 @@ consumer 側（on-demand polling、doTask() イテレーション内）
 
 ### fabric ASIC では vrfmgrd が起動しない
 
-`docker-orchagent/supervisord.conf.j2:247-262` の Jinja 条件により、fabric ASIC スロット（linecard の SAI ファブリック側プロセス）では `vrfmgrd` が起動しない:
+`docker-orchagent/supervisord.conf.j2:247-262` の Jinja 条件により、fabric [ASIC](../../reference/glossary.md#term-asic) スロット（linecard の SAI ファブリック側プロセス）では `vrfmgrd` が起動しない:
 
 ```jinja
 {% if is_fabric_asic == 0 %}
@@ -469,7 +469,7 @@ consumer 側（on-demand polling、doTask() イテレーション内）
 | 構成 | `STATE_DB:VRF_TABLE` | `STATE_DB:VRF_OBJECT_TABLE` |
 |------|----------------------|-----------------------------|
 | 通常 NIC/[NPU](../../reference/glossary.md#term-npu) スロット (`is_fabric_asic == 0`) | `vrfmgrd` により書き込まれる | `VRFOrch` により書き込まれる |
-| fabric ASIC スロット (`is_fabric_asic == 1`) | **書き込まれない**（`vrfmgrd` 非起動） | **書き込まれない**（APP_DB にトリガなし） |
+| fabric [ASIC](../../reference/glossary.md#term-asic) スロット (`is_fabric_asic == 1`) | **書き込まれない**（`vrfmgrd` 非起動） | **書き込まれない**（APP_DB にトリガなし） |
 
 `orchagent` 自体は fabric ASIC でも起動するが、APP_DB の `APP_VRF_TABLE_NAME` エントリが存在しないため `VRFOrch::addOperation()` が呼ばれず `VRF_OBJECT_TABLE` は空のまま。
 
@@ -506,7 +506,7 @@ VRF 名が `"mgmt"` の場合、コードが特殊扱いするためテーブル
 
 - **orchagent クラッシュ後の stale エントリ**: orchagent が VRF 削除の途中で落ちた場合、`VRF_OBJECT_TABLE|<name>` が残留し vrfmgrd の削除ループが永続的にブロックされる。再起動 (warm start なし) で解消。
 - **VRF_TABLE の DEL タイミング**: `isVrfObjExist()` が false になった瞬間に `m_stateVrfTable.del()` と `delLink()` が連続して実行される。この間に `intfmgrd` や `vxlanmgr` が `VRF_TABLE` を参照すると "VRF not ready" として処理を遅延させる可能性がある。
-- **[VNET](../../reference/glossary.md#term-vnet) テーブル経由の VRF**: VNET (`m_appVnetTableProducer`) への書き込みも `m_stateVrfTable.set()` を呼ぶ (vrfmgr.cpp:308)。VNET VRF の場合、`VRF_TABLE` は存在するが `VRF_OBJECT_TABLE` は存在しない（VNETOrch は `VRF_OBJECT_TABLE` を書かない）。
+- **[VNET](../../reference/glossary.md#term-vnet) テーブル経由の VRF**: [VNET](../../reference/glossary.md#term-vnet) (`m_appVnetTableProducer`) への書き込みも `m_stateVrfTable.set()` を呼ぶ (vrfmgr.cpp:308)。[VNET](../../reference/glossary.md#term-vnet) VRF の場合、`VRF_TABLE` は存在するが `VRF_OBJECT_TABLE` は存在しない（VNETOrch は `VRF_OBJECT_TABLE` を書かない）。
 
 <!-- /cdb-exceptions -->
 
@@ -534,4 +534,4 @@ sonic-db-cli STATE_DB hgetall 'VRF_OBJECT_TABLE|VrfRed'
 - CLI: [`config vrf`](../cli/config-vrf.md)
 - [HLD](../../reference/glossary.md#term-hld): [VRF サポート設計](../../routing/sonic-vrf-support-design-spec-draft.md)
 
-<!-- glossary-links-injected: 5d4e69b1e1f4 -->
+<!-- glossary-links-injected: 4ccf5e65d440 -->

@@ -42,7 +42,7 @@ related:
 [SONiC](../../reference/glossary.md#term-sonic) の [BGP](../../reference/glossary.md#term-bgp) ランタイム状態は 2 つの [Redis](../../reference/glossary.md#term-redis) DB にまたがって格納される。
 
 - **[STATE_DB](../../reference/glossary.md#term-state_db)** — `BGP_STATE_TABLE`（EOIU マーカー）・`BGP_PEER_CONFIGURED_TABLE`（[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) によるピア確認状態）
-- **BMP_STATE_DB** — `BGP_NEIGHBOR_TABLE`・`BGP_RIB_IN_TABLE`・`BGP_RIB_OUT_TABLE`（BMP コンテナが [FRR](../../reference/glossary.md#term-frr)/bgpd から収集する BGP モニタリングデータ）
+- **BMP_STATE_DB** — `BGP_NEIGHBOR_TABLE`・`BGP_RIB_IN_TABLE`・`BGP_RIB_OUT_TABLE`（BMP コンテナが [FRR](../../reference/glossary.md#term-frr)/bgpd から収集する [BGP](../../reference/glossary.md#term-bgp) モニタリングデータ）
 
 いずれも **読み取り専用** の観測テーブルであり、[CONFIG_DB](../../reference/glossary.md#term-config_db) への書き戻しは行われない[^1]。
 
@@ -68,7 +68,7 @@ flowchart LR
 
 ### 目的
 
-Warm Restart 時に `bgp` docker の `bgp_eoiu_marker` プロセスが書き込む **EOIU（End-Of-Initial-Update）マーカー**[^2]。`fpmsyncd` がこのフラグを監視し、全 BGP ピアのルート収束完了を確認してから RIB 再構成（reconciliation）を開始する。Warm Restart が無効の場合は書き込まれない。
+Warm Restart 時に `bgp` docker の `bgp_eoiu_marker` プロセスが書き込む **EOIU（End-Of-Initial-Update）マーカー**[^2]。`fpmsyncd` がこのフラグを監視し、全 [BGP](../../reference/glossary.md#term-bgp) ピアのルート収束完了を確認してから RIB 再構成（reconciliation）を開始する。Warm Restart が無効の場合は書き込まれない。
 
 [^2]: `sonic-swss/fpmsyncd/bgp_eoiu_marker.py` L4-17 (ファイルヘッダコメント)
 
@@ -125,7 +125,7 @@ BGP_PEER_CONFIGURED_TABLE|<vrf>|<peer_name>
 BGP_PEER_CONFIGURED_TABLE|<peer_name>          # default VRF の場合
 ```
 
-- `<vrf>`: [VRF](../../reference/glossary.md#term-vrf) / [VNET](../../reference/glossary.md#term-vnet) 名。`"default"` VRF では省略
+- `<vrf>`: [VRF](../../reference/glossary.md#term-vrf) / [VNET](../../reference/glossary.md#term-vnet) 名。`"default"` [VRF](../../reference/glossary.md#term-vrf) では省略
 - `<peer_name>`: ピア IP アドレス（静的）またはピアグループ名（動的）
 
 ソース: `bgpcfgd/managers_bgp.py` L280-283
@@ -160,7 +160,7 @@ BGP_PEER_CONFIGURED_TABLE|<peer_name>          # default VRF の場合
 
 ### 目的
 
-BGP Monitoring Protocol (BMP)[^6] が FRR/bgpd から収集した **BGP ネイバー属性**（capability、ポート番号、AS 情報など）を格納するテーブル。`bmp` docker 内の `openbmpd` が BGP OPEN メッセージを解析して書き込む。
+BGP Monitoring Protocol (BMP)[^6] が [FRR](../../reference/glossary.md#term-frr)/bgpd から収集した **BGP ネイバー属性**（capability、ポート番号、AS 情報など）を格納するテーブル。`bmp` docker 内の `openbmpd` が BGP OPEN メッセージを解析して書き込む。
 
 [^6]: RFC 7854; `SONiC/doc/bmp/bmp.md`
 
@@ -185,7 +185,7 @@ BGP_NEIGHBOR_TABLE|<peer_ip>
 | `sent_cap` | string | `"MPBGP (1) : afi=1 ..."` | 送信 BGP capabilities（OPEN メッセージから） |
 | `recv_cap` | string | `"MPBGP (1) : afi=1 ..."` | 受信 BGP capabilities（OPEN メッセージから） |
 
-デフォルト値なし。FRR が BGP OPEN メッセージを送受信したタイミングで `openbmpd` が書き込む。
+デフォルト値なし。[FRR](../../reference/glossary.md#term-frr) が BGP OPEN メッセージを送受信したタイミングで `openbmpd` が書き込む。
 
 ソース: `SONiC/doc/bmp/bmp.md` L141-166（`redis-cli HGETALL` 実例）; `sonic-utilities/show/main.py` L2550-2573
 
@@ -335,8 +335,8 @@ BMP（BGP Monitoring Protocol）テーブルは `openbmpd` が FRR bgpd から B
 | 参照先テーブル / コンポーネント | 参照方向 | 条件 | evidence |
 |--------------------------------|---------|------|---------|
 | `BMP` (CONFIG_DB, `BMP_TABLE`) | `bmpcfgd` が `config_db.subscribe(BMP_TABLE, ...)` で購読。各フィールド (`bgp_neighbor_table` / `bgp_rib_in_table` / `bgp_rib_out_table`) が `"false"` の場合は `delete_all_by_pattern` でテーブルを全削除する | 常時 | bmpcfgd.py:82–86 |
-| FRR bgpd BMP ソケット | `openbmpd` が bgpd の BMP ポートに TCP 接続。BGP OPEN メッセージ受信後にのみ `BGP_NEIGHBOR_TABLE` エントリが生成される | bgpd との接続が確立しない間はエントリが生成されない | SONiC/doc/bmp/bmp.md L141–166 |
-| FRR bgpd UPDATE メッセージ | `openbmpd` が BGP UPDATE を解析して `BGP_RIB_IN_TABLE` / `BGP_RIB_OUT_TABLE` を書く | BGP OPEN 完了後に受信・送信する UPDATE のみ対象 | SONiC/doc/bmp/bmp.md L286–306 |
+| FRR bgpd BMP ソケット | `openbmpd` が bgpd の BMP ポートに TCP 接続。BGP OPEN メッセージ受信後にのみ `BGP_NEIGHBOR_TABLE` エントリが生成される | bgpd との接続が確立しない間はエントリが生成されない | [SONiC](../../reference/glossary.md#term-sonic)/doc/bmp/bmp.md L141–166 |
+| FRR bgpd UPDATE メッセージ | `openbmpd` が BGP UPDATE を解析して `BGP_RIB_IN_TABLE` / `BGP_RIB_OUT_TABLE` を書く | BGP OPEN 完了後に受信・送信する UPDATE のみ対象 | [SONiC](../../reference/glossary.md#term-sonic)/doc/bmp/bmp.md L286–306 |
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/state-bgp-cross-refs.md`
 <!-- /cross-refs -->
@@ -509,7 +509,7 @@ DEL イベントでは `state_peer_table.delete(key)` (managers_bgp.py:294) を�
 
 ### bmpcfgd / openbmpd — BMP_STATE_DB テーブルの書込み
 
-`BGP_NEIGHBOR_TABLE` / `BGP_RIB_IN_TABLE` / `BGP_RIB_OUT_TABLE` は `openbmpd` (OpeNBMP) が FRR と **BMP (RFC 7854) セッション**を直接確立し、受信した BGP OPEN / UPDATE メッセージを解析して `BMP_STATE_DB` へ書き込む。Redis pub/sub を経由しない独立経路。
+`BGP_NEIGHBOR_TABLE` / `BGP_RIB_IN_TABLE` / `BGP_RIB_OUT_TABLE` は `openbmpd` (OpeNBMP) が FRR と **BMP (RFC 7854) セッション**を直接確立し、受信した BGP OPEN / UPDATE メッセージを解析して `BMP_STATE_DB` へ書き込む。[Redis](../../reference/glossary.md#term-redis) pub/sub を経由しない独立経路。
 
 `bmpcfgd` は CONFIG_DB `BMP` テーブルを `ConfigDBConnector.subscribe()` + `listen()` (keyspace 通知) で購読し、フィールド変更時に `openbmpd` 停止 → `delete_all_by_pattern` → 再起動 を実行する (bmpcfgd.py:58–70, 82–89)。
 
@@ -535,15 +535,15 @@ Warm Restart の有効化は CONFIG_DB `WARM_RESTART` テーブルで制御さ�
 
 ### BGP_PEER_CONFIGURED_TABLE — VOQ Chassis 分岐
 
-`bgpcfgd` は起動時に `device_info.is_chassis()` を評価し、VOQ Chassis 環境の場合のみ `ChassisAppDbMgr` を追加登録する (main.py L112–114)。`ChassisAppDbMgr` は Supervisor の TSA（Traffic Shift Away）状態を `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL.tsa_enabled` から購読し、変化時に `DeviceGlobalCfgMgr.isolate_unisolate_device()` を呼び出して全 BGP ピアの isolate/unisolate を FRR へ投入する。
+`bgpcfgd` は起動時に `device_info.is_chassis()` を評価し、[VOQ](../../reference/glossary.md#term-voq) Chassis 環境の場合のみ `ChassisAppDbMgr` を追加登録する (main.py L112–114)。`ChassisAppDbMgr` は Supervisor の TSA（Traffic Shift Away）状態を `CHASSIS_APP_DB.BGP_DEVICE_GLOBAL.tsa_enabled` から購読し、変化時に `DeviceGlobalCfgMgr.isolate_unisolate_device()` を呼び出して全 BGP ピアの isolate/unisolate を FRR へ投入する。
 
-また VOQ Chassis 向けの `BGP_VOQ_CHASSIS_NEIGHBOR` テーブルも常時 `BGPPeerMgrBase` に登録されており (main.py L91)、そのエントリは非 VOQ 環境と同じ `update_state_db()` 経由で `BGP_PEER_CONFIGURED_TABLE` に書き込まれる。非 VOQ 環境ではこのテーブルにエントリが存在しないため実質的に無効。
+また [VOQ](../../reference/glossary.md#term-voq) Chassis 向けの `BGP_VOQ_CHASSIS_NEIGHBOR` テーブルも常時 `BGPPeerMgrBase` に登録されており (main.py L91)、そのエントリは非 VOQ 環境と同じ `update_state_db()` 経由で `BGP_PEER_CONFIGURED_TABLE` に書き込まれる。非 VOQ 環境ではこのテーブルにエントリが存在しないため実質的に無効。
 
 `BGPPeerMgrBase.update_state_db()` 自体には `switch_type` / `sub_role` / `is_chassis()` による条件分岐が**一切存在しない**。書き込み内容・キー形式・フィールドはすべてのプラットフォームで共通。
 
 ### software_bfd フィーチャーゲート
 
-`SYSTEM_DEFAULTS.software_bfd.status == "enabled"` の場合のみ `BfdMgr` が起動し、`STATE_DB.BFD_SOFTWARE_SESSION_TABLE` を購読して BGP ピアの admin_status を連動制御する (main.py L117–120)。この機能が有効な場合、[BFD](../../reference/glossary.md#term-bfd) セッション切断に伴う `neighbor <peer> shutdown` が FRR へ投入され、その後 `BGP_PEER_CONFIGURED_TABLE` の admin_status フィールドが更新される。software_bfd 無効時は BGP ピアの BFD 状態連動シャットダウンは FRR の内部 BFD 実装に委ねられ、`BGP_PEER_CONFIGURED_TABLE` への副次書き込みは発生しない。
+`SYSTEM_DEFAULTS.software_bfd.status == "enabled"` の場合のみ `BfdMgr` が起動し、`STATE_DB.BFD_SOFTWARE_SESSION_TABLE` を購読して BGP ピアの admin_status を連動制御する (main.py L117–120)。この機能が有効な場合、[BFD](../../reference/glossary.md#term-bfd) セッション切断に伴う `neighbor <peer> shutdown` が FRR へ投入され、その後 `BGP_PEER_CONFIGURED_TABLE` の admin_status フィールドが更新される。software_bfd 無効時は BGP ピアの [BFD](../../reference/glossary.md#term-bfd) 状態連動シャットダウンは FRR の内部 [BFD](../../reference/glossary.md#term-bfd) 実装に委ねられ、`BGP_PEER_CONFIGURED_TABLE` への副次書き込みは発生しない。
 
 ### BMP テーブル — プラットフォーム差分なし
 
@@ -551,7 +551,7 @@ Warm Restart の有効化は CONFIG_DB `WARM_RESTART` テーブルで制御さ�
 
 ### マルチ ASIC 環境
 
-`bgpcfgd` 本体に multi-[ASIC](../../reference/glossary.md#term-asic) 対応コードは存在しない。multi-ASIC 環境では各 ASIC namespace ごとに独立した bgpcfgd インスタンスが起動するため、`BGP_PEER_CONFIGURED_TABLE` は各 namespace の STATE_DB に個別に書き込まれる。`fpmsyncd` および `bgp_eoiu_marker` も namespace ごとに独立して動作する。[SNMP](../../reference/glossary.md#term-snmp) サブエージェント（sonic-snmpagent）は全 namespace の STATE_DB を横断収集するが、これは consumer 側の動作であり書き込み挙動には影響しない。
+`bgpcfgd` 本体に multi-[ASIC](../../reference/glossary.md#term-asic) 対応コードは存在しない。multi-[ASIC](../../reference/glossary.md#term-asic) 環境では各 [ASIC](../../reference/glossary.md#term-asic) namespace ごとに独立した bgpcfgd インスタンスが起動するため、`BGP_PEER_CONFIGURED_TABLE` は各 namespace の STATE_DB に個別に書き込まれる。`fpmsyncd` および `bgp_eoiu_marker` も namespace ごとに独立して動作する。[SNMP](../../reference/glossary.md#term-snmp) サブエージェント（sonic-snmpagent）は全 namespace の STATE_DB を横断収集するが、これは consumer 側の動作であり書き込み挙動には影響しない。
 <!-- /platform -->
 
-<!-- glossary-links-injected: f711fd91a0a7 -->
+<!-- glossary-links-injected: d4c539905a5e -->

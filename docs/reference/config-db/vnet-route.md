@@ -92,11 +92,11 @@ VNET スコープの VXLAN トンネル encapsulation 経路。
 | `mac_address` | `mac-address-list` | no | encapsulated パケットの inner destination MAC（endpoint と 1:1 対応） |
 | `vni` | `vnid-list` | no | encapsulated パケットに使う VNI（省略時は VNET 本体 VNI） |
 | `consistent_hashing_buckets` | uint16 | no | consistent hashing のバケット数（[orchagent](../../reference/glossary.md#term-orchagent) 未読取 / dead field） |
-| `metric` | uint8 | no | 経路分類用 metric。経路動作に影響しない（YANG コメント） |
+| `metric` | uint8 | no | 経路分類用 metric。経路動作に影響しない（[YANG](../../reference/glossary.md#term-yang) コメント） |
 
 ## 制約
 
-- `<vnet_name>` は既存 `VNET` エントリへの leafref（YANG 強制）。
+- `<vnet_name>` は既存 `VNET` エントリへの leafref（[YANG](../../reference/glossary.md#term-yang) 強制）。
 - `nexthop`（VNET_ROUTE）および `endpoint`（VNET_ROUTE_TUNNEL）は mandatory。
 - `mac_address` と `endpoint` はエントリ数が一致する必要がある（orchagent が不一致を検出してエラー）。
 - `vni` リストが 2 件以上の場合は `endpoint` と同数でなければならない。
@@ -248,7 +248,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`VNET_ROUTE` / `VNET_ROUTE_TUNNEL` の CONFIG_DB エントリは `VNetCfgRouteOrch` が即座に APPL_DB へ passthrough するが、APPL_DB 側の `VNetRouteOrch` が SAI に反映する段階で複数の順序依存が存在する。
+`VNET_ROUTE` / `VNET_ROUTE_TUNNEL` の CONFIG_DB エントリは `VNetCfgRouteOrch` が即座に APPL_DB へ passthrough するが、APPL_DB 側の `VNetRouteOrch` が [SAI](../../reference/glossary.md#term-sai) に反映する段階で複数の順序依存が存在する。
 
 ### 検出された順序依存
 
@@ -263,7 +263,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 
 **VNET 未存在による処理保留 (依存 #2)**: `VNetRouteOrch::doRouteTask<VNetVrfObject>()` は冒頭で `vnet_orch_->isVnetExists(vnet)` を確認し、偽の場合は SET 操作に対して `return false` を返す（vnetorch.cpp:1158-1163, 1492-1497）。これにより APPL_DB エントリは `m_toSync` に保留され、次の orchagent イテレーションで再試行される。DEL 操作は VNET 未存在でも `return true`（スキップ扱い）。
 
-**peer VNET による追加待機 (依存 #3)**: `VNET` テーブルに `peer_list` が設定されている場合、`doRouteTask()` は peer VNET 全件について `isVnetExists(peer)` を確認する（vnetorch.cpp:1175-1183, 1508-1516）。1 件でも未生成の peer があると `"Peer VNET %s not yet created"` を SWSS_LOG_INFO に記録し `return false` で再キューする。peer 数が多い構成では経路の SAI 反映が大幅に遅延する可能性がある。
+**peer VNET による追加待機 (依存 #3)**: `VNET` テーブルに `peer_list` が設定されている場合、`doRouteTask()` は peer VNET 全件について `isVnetExists(peer)` を確認する（vnetorch.cpp:1175-1183, 1508-1516）。1 件でも未生成の peer があると `"Peer VNET %s not yet created"` を SWSS_LOG_INFO に記録し `return false` で再キューする。peer 数が多い構成では経路の [SAI](../../reference/glossary.md#term-sai) 反映が大幅に遅延する可能性がある。
 
 **VXLAN_TUNNEL の先行必須 (依存 #1)**: `VNetOrch::addOperation()` は `vxlan_orch->isTunnelExists(tunnel)` で参照 VXLAN トンネルの存在を確認し、存在しない場合 `"Vxlan tunnel '%s' doesn't exist"` を記録して `return false` を返す（vnetorch.cpp:497-503）。したがって `VXLAN_TUNNEL` → `VNET` → `VNET_ROUTE*` という 3 段の順序制約が生じる。
 
@@ -292,7 +292,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 | `VNET` (CONFIG_DB) / `VNetOrch` | `isVnetExists(vnet)` で存在確認 | 常時 | `vnetorch.cpp:1682-1687, 1735` |
 | peer `VNET` エントリ群 | peer 全件 `isVnetExists` 確認 | `VNET.peer_list` が設定されているとき | `vnetorch.cpp:1735` |
 | `VxlanTunnelOrch` | `createNextHopTunnel(tun_name, ip, mac, vni)` で tunnel nexthop OID を生成・取得。`removeNextHopTunnel()` で解放 | 常時（remote endpoint ごと） | `vnetorch.cpp:313-335` |
-| `BfdOrch` (`gBfdOrch`) | `createBfdSession()` で BFD セッションを生成。`gBfdOrch->attach(this)` で状態変化通知を受信 | `endpoint_monitor` フィールド指定時 | `vnetorch.cpp:46, 751, 2046, 2300` |
+| `BfdOrch` (`gBfdOrch`) | `createBfdSession()` で [BFD](../../reference/glossary.md#term-bfd) セッションを生成。`gBfdOrch->attach(this)` で状態変化通知を受信 | `endpoint_monitor` フィールド指定時 | `vnetorch.cpp:46, 751, 2046, 2300` |
 | SAI `sai_next_hop_group_api` | nexthop group / nexthop group member の create / remove | ECMP endpoint（複数）のとき | `vnetorch.cpp:808, 821, 849, 901, 921` |
 | SAI `sai_route_api` | `create_route_entry()` / `remove_route_entry()` | 常時 | `vnetorch.cpp:651, 689` |
 | `CrmOrch` (`gCrmOrch`) | `inc/decCrmResUsedCounter(CRM_NEXTHOP_GROUP / CRM_NEXTHOP_GROUP_MEMBER)` | nexthop group / member の create / remove ごと | `vnetorch.cpp:821, 861, 917, 929, 2801, 2885` |
@@ -404,24 +404,24 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 | `APP_VNET_RT_TABLE_NAME` | `"VNET_ROUTE_TABLE"` | APPL_DB passthrough 先テーブル名 | schema.h:82 |
 | `APP_VNET_RT_TUNNEL_TABLE_NAME` | `"VNET_ROUTE_TUNNEL_TABLE"` | APPL_DB passthrough 先トンネル経路テーブル名 | schema.h:83 |
 | `STATE_VNET_RT_TUNNEL_TABLE_NAME` | `"VNET_ROUTE_TUNNEL_TABLE"` | [STATE_DB](../../reference/glossary.md#term-state_db) トンネル経路状態テーブル名 | schema.h:495 |
-| `STATE_ADVERTISE_NETWORK_TABLE_NAME` | `"ADVERTISE_NETWORK_TABLE"` | STATE_DB BGP prefix 広告通知テーブル名 | schema.h:496 |
-| `APP_BFD_SESSION_TABLE_NAME` | `"BFD_SESSION_TABLE"` | APPL_DB BFD セッション書き込み先 | schema.h:120 |
+| `STATE_ADVERTISE_NETWORK_TABLE_NAME` | `"ADVERTISE_NETWORK_TABLE"` | STATE_DB [BGP](../../reference/glossary.md#term-bgp) prefix 広告通知テーブル名 | schema.h:496 |
+| `APP_BFD_SESSION_TABLE_NAME` | `"BFD_SESSION_TABLE"` | APPL_DB [BFD](../../reference/glossary.md#term-bfd) セッション書き込み先 | schema.h:120 |
 
 ### リソース上限定数
 
 | マクロ名 | 値 | 用途 | ソース |
 |---------|-----|------|--------|
 | `VNET_TUNNEL_SIZE` | `40960` | VNET トンネル nexthop の最大数（SAI nexthop pool サイズ） | vnetorch.h:21 |
-| `VNET_ROUTE_FULL_MASK_OFFSET_MAX` | `3000` | `/32` 経路に割り当てる VRF オフセットの最大値 | vnetorch.h:22 |
+| `VNET_ROUTE_FULL_MASK_OFFSET_MAX` | `3000` | `/32` 経路に割り当てる [VRF](../../reference/glossary.md#term-vrf) オフセットの最大値 | vnetorch.h:22 |
 | `VNET_NEIGHBOR_MAX` | `0xffff` (65535) | VNET ネイバーテーブルの最大エントリ数 | vnetorch.h:23 |
-| `VNET_BITMAP_SIZE` | `32` | VNET bitmap（VRF ID 管理用）のサイズ | vnetorch.h:20 |
+| `VNET_BITMAP_SIZE` | `32` | VNET bitmap（[VRF](../../reference/glossary.md#term-vrf) ID 管理用）のサイズ | vnetorch.h:20 |
 
 ### encapsulation 定数
 
 | マクロ名 | 値 | 用途 | ソース |
 |---------|-----|------|--------|
 | `VXLAN_ENCAP_TTL` | `128` | VXLAN encapsulation で設定する TTL 値 | vnetorch.h:24 |
-| `VNET_BITMAP_RIF_MTU` | `9100` | VNET bitmap モードで生成する RIF の MTU（bytes） | vnetorch.h:25 |
+| `VNET_BITMAP_RIF_MTU` | `9100` | VNET bitmap モードで生成する [RIF](../../reference/glossary.md#term-rif) の MTU（bytes） | vnetorch.h:25 |
 
 ### monitoring タイプ定数
 
@@ -491,7 +491,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし（�
 
 親 `VNET` エントリに `advertise_prefix=true` が設定されている場合、`VNetRouteOrch::setBgpNetwork()` が STATE_DB に書き込む（vnetorch.cpp:2645-2651）。
 
-- **SET**: `state=active` フィールドを書き込む。`fpmsyncd` / `bgpcfgd` が購読して BGP へ経路広告を通知する
+- **SET**: `state=active` フィールドを書き込む。`fpmsyncd` / `bgpcfgd` が購読して [BGP](../../reference/glossary.md#term-bgp) へ経路広告を通知する
 - **DEL**: 経路削除時にエントリを削除し、BGP 広告を取り消す
 - **条件**: VNET_ROUTE および VNET_ROUTE_TUNNEL どちらも発生しうる（親 VNET 設定次第）
 
@@ -616,4 +616,4 @@ BRIDGE モードは無効。
 > **スキャン証跡**: `vnetorch.cpp:804,841,2778`（Ordered ECMP NHG type・SEQUENCE_ID 分岐）、`switchorch.cpp:467-501`（`setSwitchNonSaiAttributes` — `ordered_ecmp` 属性処理）、`switchorch.h:68`（`checkOrderedEcmpEnable`）、`vnetorch.h:63-67`（`VNET_EXEC` enum）、`orchdaemon.cpp:276`（VRF モード固定）。詳細は `meta/_intermediate/cdb-flow/vnet-route-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: 9a4764772eb3 -->
+<!-- glossary-links-injected: 9ea391060461 -->
