@@ -173,8 +173,8 @@ show nat translations
 | `nat_timeout` | 600 (default) | 非 TCP/UDP NAT セッションを 600秒でタイムアウト |
 | `nat_tcp_timeout` | 86400 (default) | TCP セッションを 24時間でタイムアウト |
 | `nat_udp_timeout` | 300 (default) | UDP セッションを 5分でタイムアウト |
-| `nat_type` (BINDINGS) | `snat` | 送信元 IP を変換 (内→外方向) |
-| `nat_type` (BINDINGS) | `dnat` (default) | 宛先 IP を変換 (外→内方向) |
+| `nat_type` (BINDINGS) | `snat` (default) | 送信元 IP を変換 (内→外方向)。YANG `default snat` (`sonic-nat.yang L280`)、`natmgr.cpp:7056` で `SNAT_NAT_TYPE` にフォールバック |
+| `nat_type` (BINDINGS) | `dnat` | 宛先 IP を変換 (外→内方向)。なお `natmgr.cpp:6986` は `snat` 以外を ERROR で拒否する実装ギャップあり (本ページ Phase A 参照) |
 | `twice_nat_id` | 1..9999 | 同 ID の snat/dnat エントリをペアとして twice NAT 処理 |
 | NAT_POOL エントリ数 | 17件目以上 | YANG max-elements=16 でバリデーション拒否 |
 

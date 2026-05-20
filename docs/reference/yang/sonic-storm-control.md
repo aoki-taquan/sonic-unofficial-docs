@@ -80,7 +80,7 @@ module: sonic-storm-control
 |------|------|----|------|-----------|----------------------|------|
 | `ifname` | `sonic-storm-control/PORT_STORM_CONTROL/PORT_STORM_CONTROL_LIST/ifname` | `leafref` | yes |  | /prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name | Physical port on which storm control is applied |
 | `storm_type` | `sonic-storm-control/PORT_STORM_CONTROL/PORT_STORM_CONTROL_LIST/storm_type` | `enumeration` | yes |  | broadcast, unknown-unicast, unknown-multicast | Type of BUM traffic to rate-limit |
-| `kbps` | `sonic-storm-control/PORT_STORM_CONTROL/PORT_STORM_CONTROL_LIST/kbps` | `uint64` |  |  |  | Rate limit in kilobits per second |
+| `kbps` | `sonic-storm-control/PORT_STORM_CONTROL/PORT_STORM_CONTROL_LIST/kbps` | `uint64` |  |  | `0..100000000` | Rate limit in kilobits per second |
 
 ## leafref / 依存
 
