@@ -36948,7 +36948,7 @@
 <li><strong>SAI 非対応 trap_id → ignore</strong>: <code>isTrapIdSupported()</code> が false の場合 <code>SWSS_LOG_NOTICE("Ignoring the trap_id: %s, since not supported by vendor SAI")</code> を出力してスキップ。ベンダー SAI が実装していない trap は適用されない。<!-- evidence: copporch.cpp L408-413 --></li>
 <li><strong>COPP_GROUP 未到着時の trap_group 参照 → 書き込み保留</strong>: <code>trap_group</code> に指定したグループが pending の場合、<code>coppmgr</code> は APPL_DB への書き込みを保留し COPP_GROUP 到着後に再処理する。<!-- evidence: coppmgr.cpp L62-81 checkTrapGroupPending --></li>
 <li><strong>feature 無効な trap_id → COPP_TABLE から除外</strong>: feature が off の trap_id は <code>isTrapIdDisabled()</code> で除外される。trap_group の trap_ids が空になった場合は APPL_DB エントリを削除。<!-- evidence: coppmgr.cpp L173-191 isTrapIdDisabled --></li>
-<li><strong>task_failed → プロセス終了</strong>: <code>CoppOrch</code> は <code>task_failed</code> が返った場合プロセスを終了する。<!-- evidence: copporch.cpp L922 --></li>
+<li><strong>task_failed → doTask ループ中断</strong>: <code>CoppOrch</code> は <code>task_failed</code> が返った場合 <code>doTask()</code> ループを即時 return して中断する（プロセス自体は継続）。<!-- evidence: copporch.cpp L920-923 --></li>
 </ul>
 <!-- value-behavior -->
 <h2 id="_6">値依存挙動マトリクス<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>

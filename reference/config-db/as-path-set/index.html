@@ -37586,8 +37586,7 @@
 <!-- runtime-trace -->
 <h2 id="_22">実コンテナ動作トレース<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>bgpcfgd</code> (<code>sonic-bgpcfgd</code>) が CONFIG_DB の <code>AS_PATH_SET</code> テーブルを購読する。</p>
-<p><code>bgpcfgd</code> は <code>ConfigDBConnector.listen()</code> で <code>BGP_PEER_RANGE</code>/<code>BGP_GLOBALS</code> 等と合わせて購読。</p>
+<p><code>frrcfgd</code> (<code>sonic-frr-mgmt-framework</code>) が <code>ConfigDBConnector</code> の keyspace 通知で CONFIG_DB の <code>AS_PATH_SET</code> テーブルを購読する。<code>bgpcfgd</code> は <code>AS_PATH_SET</code> を購読しない（<code>DEVICE_METADATA</code> を別経路で購読し <code>localhost.t2_group_asns</code> から固定名 <code>T2_GROUP_ASNS</code> の access-list を生成する）。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (FRR vtysh コマンドで直接 BGP デーモンに注入)</p>
 <h3 id="3-applsai">段階 3 — APPL→SAI<a class="headerlink" href="#3-applsai" title="Permanent link">&para;</a></h3>

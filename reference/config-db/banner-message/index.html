@@ -37660,7 +37660,7 @@
 <h2 id="_28">実コンテナ動作トレース<a class="headerlink" href="#_28" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
 <p><code>hostcfgd</code> の <code>BannerMessageHandler</code> が CONFIG_DB の <code>BANNER_MESSAGE</code> テーブルを購読する。</p>
-<p><code>BANNER_MESSAGE</code> テーブルの key は <code>login</code> / <code>logout</code> / <code>motd</code>。</p>
+<p><code>BANNER_MESSAGE</code> テーブルはシングルトン（key <code>global</code>）で、フィールド <code>state</code> / <code>login</code> / <code>motd</code> / <code>logout</code> を持つ。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継なし)</p>
 <h3 id="3-applsai">段階 3 — APPL→SAI<a class="headerlink" href="#3-applsai" title="Permanent link">&para;</a></h3>

@@ -37203,8 +37203,7 @@
 <!-- runtime-trace -->
 <h2 id="_22">実コンテナ動作トレース<a class="headerlink" href="#_22" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>auto_techsupport_handler</code> (<code>sonic-host-services</code>) が CONFIG_DB の <code>AUTO_TECHSUPPORT_FEATURE</code> テーブルを購読する。</p>
-<p><code>auto_techsupport_handler</code> は <code>hostcfgd</code> 内部のサブハンドラとして動作。</p>
+<p>本テーブルに対する常駐 subscriber は存在しない（<code>sonic-host-services/scripts/hostcfgd</code> の grep で <code>AUTO_TECHSUPPORT_FEATURE</code> 0 hit）。実装は <a href="../../glossary/#term-hostcfgd">hostcfgd</a> と独立した kernel <code>core_pattern</code> → <code>coredump-compress</code> → <code>coredump_gen_handler.py</code> のパイプラインで、必要なフィールドは一発起動スクリプトが同期 HGET で取得する。詳細は Phase G を参照。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継なし)</p>
 <h3 id="3-applsai">段階 3 — APPL→SAI<a class="headerlink" href="#3-applsai" title="Permanent link">&para;</a></h3>
@@ -37956,7 +37955,7 @@
 <p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/auto-techsupport-feature-cross-refs.md</code> を参照。</p>
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: 4a3c4472b289 -->
+<!-- glossary-links-injected: 9bd150521228 -->
 
 <div class="footnote">
 <hr />

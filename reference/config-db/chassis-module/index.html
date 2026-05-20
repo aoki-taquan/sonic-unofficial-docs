@@ -37221,7 +37221,7 @@
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">admin_status</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">fvp</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;admin_status&#39;</span><span class="p">)</span>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">admin_state</span> <span class="o">=</span> <span class="n">MODULE_ADMIN_UP</span> <span class="k">if</span> <span class="n">admin_status</span> <span class="o">==</span> <span class="s1">&#39;up&#39;</span> <span class="k">else</span> <span class="n">MODULE_ADMIN_DOWN</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s1">&#39;DEL&#39;</span><span class="p">:</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">admin_state</span> <span class="o">=</span> <span class="n">MODULE_ADMIN_UP</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">admin_state</span> <span class="o">=</span> <span class="n">MODULE_ADMIN_DOWN</span>
 </span></code></pre></div>
 <p>SmartSwitch では <code>fvp</code> の <code>admin_status</code> 値を直接参照して up/down を判定する。</p>
 <p><code>ConfigManagerTask</code> は <code>ProcessTaskBase</code> を継承し<strong>別プロセス</strong>で動作。メインループ (10 秒 poll) とは分離されている。</p>
@@ -37292,7 +37292,7 @@
 
 <h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-chassis-module</code></li>
+<li><a href="../../glossary/#term-yang">YANG</a>: <code>sonic-chassis-module</code>（リファレンスページ未作成）</li>
 <li>CLI: <code>config chassis_modules shutdown &lt;name&gt;</code> / <code>config chassis_modules startup &lt;name&gt;</code></li>
 <li>CLI: <code>show chassis modules status</code></li>
 </ul>

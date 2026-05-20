@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="APPL_DB MCLAG/ICCP 関連テーブル — mclagsyncd が iccpd からの IPC メッセージを受けて APPL_DB に書き込む MCLAG_FDB_TABLE・ISOLATION_GROUP_TABLE・LAG_TABLE・PORT_TABLE・INTF_TABLE の各フィールドとコード由来デフォルト。">
+        <meta name="description" content="APPL_DB MCLAG/ICCP 関連テーブル — mclagsyncd が iccpd からの IPC メッセージを受けて APPL_DB に書き込む MCLAG_FDB_TABLE・ISOLATION_GROUP_TABLE・ACL_TABLE_TABLE・ACL_RULE_TABLE・LAG_TABLE・PORT_TABLE・INTF_TABLE の各フィールドとコード由来デフォルト。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="APPL_DB MCLAG/ICCP 関連テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="APPL_DB MCLAG/ICCP 関連テーブル — mclagsyncd が iccpd からの IPC メッセージを受けて APPL_DB に書き込む MCLAG_FDB_TABLE・ISOLATION_GROUP_TABLE・LAG_TABLE・PORT_TABLE・INTF_TABLE の各フィールドとコード由来デフォルト。" />
+<meta property="og:description" content="APPL_DB MCLAG/ICCP 関連テーブル — mclagsyncd が iccpd からの IPC メッセージを受けて APPL_DB に書き込む MCLAG_FDB_TABLE・ISOLATION_GROUP_TABLE・ACL_TABLE_TABLE・ACL_RULE_TABLE・LAG_TABLE・PORT_TABLE・INTF_TABLE の各フィールドとコード由来デフォルト。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/appl-mclag.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/appl-mclag/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="APPL_DB MCLAG/ICCP 関連テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="APPL_DB MCLAG/ICCP 関連テーブル — mclagsyncd が iccpd からの IPC メッセージを受けて APPL_DB に書き込む MCLAG_FDB_TABLE・ISOLATION_GROUP_TABLE・LAG_TABLE・PORT_TABLE・INTF_TABLE の各フィールドとコード由来デフォルト。" />
+<meta property="twitter:description" content="APPL_DB MCLAG/ICCP 関連テーブル — mclagsyncd が iccpd からの IPC メッセージを受けて APPL_DB に書き込む MCLAG_FDB_TABLE・ISOLATION_GROUP_TABLE・ACL_TABLE_TABLE・ACL_RULE_TABLE・LAG_TABLE・PORT_TABLE・INTF_TABLE の各フィールドとコード由来デフォルト。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/appl-mclag.png" />
 </head>
   
@@ -36682,7 +36682,7 @@
 <h1 id="appl_db-mclagiccp">APPL_DB MCLAG/ICCP 関連テーブル<a class="headerlink" href="#appl_db-mclagiccp" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>MC-<a href="../../glossary/#term-lag">LAG</a> (Multi-Chassis Link Aggregation) の実行時状態は <code>mclagsyncd</code> が管理する<sup id="fnref:link"><a class="footnote-ref" href="#fn:link">1</a></sup>。<code>mclagsyncd</code> は <code>iccpd</code>（ICCP デーモン）から Unix ソケット経由で IPC メッセージを受信し、<code>ProducerStateTable</code> 経由で <a href="../../glossary/#term-appl_db">APPL_DB</a> に書き込む。</p>
-<p>書き込まれるテーブルは 5 種類<sup id="fnref:schema"><a class="footnote-ref" href="#fn:schema">2</a></sup>:</p>
+<p>書き込まれるテーブルは 6 テーブル（非対応プラットフォームでは ACL フォールバックを含む）<sup id="fnref:schema"><a class="footnote-ref" href="#fn:schema">2</a></sup>:</p>
 <table>
 <thead>
 <tr>

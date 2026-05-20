@@ -37594,8 +37594,7 @@ Phase E は <strong>DB / YANG / init_cfg のいずれからも変更不可能な
 <!-- runtime-trace -->
 <h2 id="_14">実コンテナ動作トレース<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>auto_techsupport_handler</code> (<code>sonic-host-services</code>) が CONFIG_DB の <code>AUTO_TECHSUPPORT</code> テーブルを購読する。</p>
-<p>global テーブル (single key <code>GLOBAL</code>) と feature テーブルを同一ハンドラが購読。</p>
+<p>本テーブルに対する常駐 subscriber は存在しない（<code>sonic-host-services</code> 全体で <code>AUTO_TECHSUPPORT</code> の grep 0 hit）。実装は <a href="../../glossary/#term-hostcfgd">hostcfgd</a> と独立した kernel <code>core_pattern</code> → <code>coredump-compress</code> → <code>coredump_gen_handler.py</code> のパイプラインで、必要なフィールドは一発起動スクリプトが同期 HGET で取得する。詳細は Phase G を参照。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継なし)</p>
 <h3 id="3-applsai">段階 3 — APPL→SAI<a class="headerlink" href="#3-applsai" title="Permanent link">&para;</a></h3>
@@ -38459,7 +38458,7 @@ masic suffix を除去してから (<code>swss0</code> → <code>swss</code>) <c
 </span></code></pre></div>
 <!-- /ordering -->
 
-<!-- glossary-links-injected: 6be040445d2f -->
+<!-- glossary-links-injected: 9bd150521228 -->
 
 <div class="footnote">
 <hr />

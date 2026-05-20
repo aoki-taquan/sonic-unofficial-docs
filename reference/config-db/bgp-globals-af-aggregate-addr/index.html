@@ -36919,7 +36919,7 @@
 <!-- runtime-trace -->
 <h2 id="_18">実コンテナ動作トレース<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>bgpcfgd</code> が CONFIG_DB の <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> テーブルを購読する。</p>
+<p><code>frrcfgd</code> (<code>sonic-frr-mgmt-framework</code>) が CONFIG_DB の <code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> テーブルを購読する。<code>bgpcfgd</code> は本テーブルを購読せず、別テーブル <code>BGP_AGGREGATE_ADDRESS</code> を使う。</p>
 <p><code>BGP_GLOBALS_AF_AGGREGATE_ADDR</code> は <code>&lt;vrf&gt;|&lt;af&gt;|&lt;prefix&gt;</code> の key 構造。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (FRR vtysh 経由)</p>

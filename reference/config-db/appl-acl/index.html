@@ -37551,7 +37551,7 @@ mclagsyncd は <code>stage</code> を未指定 → <a href="../../glossary/#term
 </span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>  ├─ removeAclTable() 失敗                       → &quot;Pending removal&quot;  (it++, retry)
 </span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>  └─ removeAclTable() 成功                       → STATE_DB エントリ削除
 </span></code></pre></div>
-<p>確認: <code>sonic-db-cli STATE_DB hgetall 'ACL_TABLE|&lt;table_name&gt;'</code></p>
+<p>確認: <code>sonic-db-cli STATE_DB hgetall 'ACL_TABLE_TABLE|&lt;table_name&gt;'</code></p>
 <p>エラーは <code>SWSS_LOG_ERROR</code> で syslog 出力。<code>ERROR_TABLE</code> への書き込みはなし。APPL_DB のエントリは失敗後も残り、書き込んだプロセス（vnetorch / mclagsyncd / dashenifwdorch）側が再 SET / DEL するまで orchagent からは復旧手段がない。</p>
 <blockquote>
 <p><strong>証跡</strong>: <code>AclOrch::doTask()</code> L4272-4299、<code>createRetryCache</code> 呼び出し L4221-4222、<code>doAclTableTask()</code> L5361-5518、<code>doAclRuleTask()</code> L5550-5710、<code>doAclTableTypeTask()</code> L5720-5770、<code>AclTable::validate()</code> L2725-2769、<code>processAclTableType()</code> L5819-5831、<code>processAclTableStage()</code> L5838-5853、<code>processAclTablePorts()</code> L5776-5807、<code>setAclTableStatus()</code> L6088-6093、<code>Orch::createRetryCache()</code> (<code>orch.cpp:149-152</code>)、<code>ConsumerBase::addToRetry()</code> (<code>orch.cpp:169-178</code>)。</p>

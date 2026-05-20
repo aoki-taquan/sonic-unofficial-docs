@@ -37459,7 +37459,7 @@
 </ul>
 <h3 id="_11">範囲外 (誤解されやすい隣接)<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>STATIC_ROUTE</code> (CONFIG_DB) → <code>staticrouteorch</code> 経由で別途 APPL_DB <code>ROUTE_TABLE</code> に書く側 (<code>fpmsyncd</code> 経由でないパス) であり、<code>routeorch</code> から見れば本テーブルの同じ key 空間に流れ込むだけで cross-table 参照ではない。</li>
+<li><code>STATIC_ROUTE</code> (CONFIG_DB) → <code>bgpcfgd</code> の <code>StaticRouteMgr</code> または <code>staticrouteorch</code> 経由で別途 APPL_DB <code>ROUTE_TABLE</code> に書く側 (<code>fpmsyncd</code> 経由でないパス) であり、<code>routeorch</code> から見れば本テーブルの同じ key 空間に流れ込むだけで cross-table 参照ではない。詳細は <code>static-route.md</code> を参照。</li>
 <li><code>ROUTE_TABLE</code> (STATE_DB) — <code>0.0.0.0/0</code> / <code>::/0</code> のデフォルトルート到達性のみが書き込まれる side-effect であり、<code>routeorch</code> の読み取り対象ではない (Phase F 参照)。</li>
 </ul>
 <p>詳細スキャン手順と行番号一覧は <code>meta/_intermediate/cdb-flow/app-route-cross-refs.md</code> を参照。</p>

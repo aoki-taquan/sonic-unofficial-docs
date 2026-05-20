@@ -37213,7 +37213,7 @@ orchagent 再起動時も <code>coppmgrd</code> は同一キーへの上書き s
 </tr>
 <tr>
 <td><code>default_supported_trap_ids</code> フォールバックリスト</td>
-<td>44 エントリ (<code>stp</code>～<code>bfdv6_micro</code>、<code>neighbor_miss</code> <strong>除外</strong>)</td>
+<td>42 エントリ (<code>stp</code>～<code>bfdv6_micro</code>、<code>neighbor_miss</code> <strong>除外</strong>)</td>
 <td>SAI capability クエリ失敗時に <code>COPP_TRAP_CAPABILITY_TABLE|traps.trap_ids</code> へ書き込まれるリスト。<code>neighbor_miss</code> は意図的に除外（コメント: "This list is intended to remain static and should not be updated with new traps."）</td>
 <td><code>copporch.cpp</code> L106-151</td>
 </tr>

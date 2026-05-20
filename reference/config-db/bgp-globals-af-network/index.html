@@ -36953,8 +36953,8 @@
 <!-- runtime-trace -->
 <h2 id="_17">実コンテナ動作トレース<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>bgpcfgd</code> が CONFIG_DB の <code>BGP_GLOBALS_AF_NETWORK</code> テーブルを購読する。</p>
-<p><code>BGP_GLOBALS_AF_NETWORK</code> は <code>&lt;vrf&gt;|&lt;prefix&gt;</code> の key 構造。</p>
+<p><code>frrcfgd</code> が CONFIG_DB の <code>BGP_GLOBALS_AF_NETWORK</code> テーブルを購読する。</p>
+<p><code>BGP_GLOBALS_AF_NETWORK</code> は <code>&lt;vrf&gt;|&lt;afi_safi&gt;|&lt;ip_prefix&gt;</code> の key 構造。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (FRR vtysh 経由)</p>
 <h3 id="3-applsai">段階 3 — APPL→SAI<a class="headerlink" href="#3-applsai" title="Permanent link">&para;</a></h3>

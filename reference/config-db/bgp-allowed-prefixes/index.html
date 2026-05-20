@@ -37496,8 +37496,8 @@
 <h2 id="_15">運用ヒント<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <h3 id="_16">典型値<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
 <ul>
-<li>key 形式: <code>BGP_ALLOWED_PREFIXES|&lt;vrf&gt;|&lt;peer&gt;|&lt;af&gt;</code>。</li>
-<li>ToR 配下の特定 prefix 集合のみを許可する利用が多い。<code>prefixes</code> は CSV または list。</li>
+<li>key 形式: <code>BGP_ALLOWED_PREFIXES|&lt;deployment&gt;|&lt;id&gt;[|&lt;neighbor&gt;|&lt;neighbor_type&gt;][|&lt;community&gt;]</code>（<code>&lt;deployment&gt;</code> は固定文字列 <code>DEPLOYMENT_ID</code>、<code>&lt;neighbor&gt;</code> は固定文字列 <code>NEIGHBOR_TYPE</code>）。最小構成例: <code>BGP_ALLOWED_PREFIXES|DEPLOYMENT_ID|0</code>。</li>
+<li>ToR 配下の特定 prefix 集合のみを許可する利用が多い。許可 prefix は <code>prefixes_v4</code> / <code>prefixes_v6</code> フィールドに CSV または list で指定する。</li>
 </ul>
 <h3 id="_17">よくある誤設定<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <ul>

@@ -37183,7 +37183,7 @@
 <!-- runtime-trace -->
 <h2 id="_15">実コンテナ動作トレース<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>bgpcfgd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>COMMUNITY_SET</code> テーブルを購読する。</p>
+<p><code>frrcfgd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>COMMUNITY_SET</code> テーブルを購読する（<code>bgpcfgd</code> は直接購読しない）。</p>
 <p><code>COMMUNITY_SET</code> は <a href="../../glossary/#term-sonic">SONiC</a> の route policy 管理用 (OpenConfig 準拠)。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (FRR <a href="../../glossary/#term-vtysh">vtysh</a> 経由で community-list を設定)</p>

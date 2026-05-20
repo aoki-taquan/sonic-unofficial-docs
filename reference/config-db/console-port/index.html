@@ -37489,7 +37489,7 @@
 <!-- runtime-trace -->
 <h2 id="_18">実コンテナ動作トレース<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>hostcfgd</code> (console port 管理) / <code>conserver</code> (コンソールサーバ) が CONFIG_DB の <code>CONSOLE_PORT</code> テーブルを購読する。</p>
+<p>CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。<code>consutil</code> が CLI 呼び出しのたびに CONFIG_DB を直接読み取る（Subscribe なし）。<code>conserver</code> は <a href="../../glossary/#term-sonic">SONiC</a> デフォルト環境では存在しない。</p>
 <p><code>CONSOLE_PORT</code> の key は <code>&lt;port_num&gt;</code> (例: <code>1</code>)。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継なし)</p>
@@ -37631,7 +37631,7 @@
 <p><strong>db_migrator の前提条件 (依存 #4)</strong>: <code>migrate_console_switch()</code> は <code>self.configDB.get_entry('CONSOLE_SWITCH', 'console_mgmt')</code> で現在の DB 値を取得し、空の場合（<code>if not console_mgmt</code>）のみ <code>set_entry</code> を実行する。このため、マイグレーション前に <code>config console enable</code> / <code>disable</code> コマンドを手動実行してキーが存在する場合、移行元 <code>config_src_data</code> の値は書き込まれない（evidence: <code>db_migrator.py:659–666</code>）。</p>
 <!-- /ordering -->
 
-<!-- glossary-links-injected: f80e1683d058 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->
 
 <div class="footnote">
 <hr />

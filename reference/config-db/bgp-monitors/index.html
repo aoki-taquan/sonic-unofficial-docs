@@ -37143,14 +37143,14 @@
 <h2 id="_15">実コンテナ動作トレース<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
 <p><code>bgpcfgd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>BGP_MONITORS</code> テーブルを購読する。</p>
-<p><code>BGP_MONITORS</code> は BMP target server を定義。<code>bmpcfgd</code> との連携もある。</p>
+<p><code>BGP_MONITORS</code> は BMP (BGP Monitoring Protocol) target server ではなく、BGP モニター用の特殊隣接（route-monitor）を定義するテーブル。BMP target server とは無関係。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (<a href="../../glossary/#term-frr">FRR</a> <a href="../../glossary/#term-vtysh">vtysh</a> 経由)</p>
 <h3 id="3-applsai">段階 3 — APPL→SAI<a class="headerlink" href="#3-applsai" title="Permanent link">&para;</a></h3>
-<p>なし (BMP / FRR モニタリング設定)</p>
+<p>なし (FRR neighbor 設定のみ)</p>
 <h3 id="4">段階 4 — タイミングと副作用<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
-<p><strong>適用タイミング</strong>: 変化検知後 FRR に BGP モニタリング設定を注入。BMP セッションは設定適用後に確立を試みる。</p>
-<p><strong>副作用</strong>: BMP サーバへの接続が開始/停止される。既存 BGP セッションには影響なし。</p>
+<p><strong>適用タイミング</strong>: 変化検知後、<code>bgpcfgd</code> が monitors テンプレートを展開して FRR <code>bgpd</code> に route-monitor neighbor 設定を投入する。</p>
+<p><strong>副作用</strong>: route-monitor BGP セッションが開始/停止される。BMP（BGP Monitoring Protocol）とは無関係。</p>
 <!-- /runtime-trace -->
 
 <!-- side-effects -->
