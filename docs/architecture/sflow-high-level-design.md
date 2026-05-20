@@ -152,9 +152,9 @@ config sflow interface sample-rate Ethernet0 10000
 
 ## トラブルシューティング
 
-- collector に届かない → `show sflow` で admin / collector reachability、`hsflowd` ログを確認。DUT 側で `tcpdump -i eth0 udp port 6343` でパケット送出を確認する
-- sample_rate が想定と違う → port speed 変更直後の追従、`sample-rate` 明示設定の有無を確認。サンプルが増えない場合は ASIC 側のサンプリング機能が [NPU](../reference/glossary.md#term-npu) 制限（per-port / per-switch の最大 rate）で頭打ちになっている可能性があり、`saidump | grep SAMPLEPACKET` を確認
-- agent_id が更新されない → `Loopback0` 等の interface 状態と `config sflow agent-id` を確認。sFlow agent IP は management interface ではなく Loopback を使うのが一般的で、`config sflow agent-id` で固定推奨
+- collector に届かない → `show sflow` で admin / collector reachability、`hsflowd` ログを確認。詳しくは DUT 側で `tcpdump -i eth0 udp port 6343` でパケット送出を確認する。
+- sample_rate が想定と違う → port speed 変更直後の追従、`sample-rate` 明示設定の有無を確認。サンプル件数が増えない場合、ASIC 側でサンプリング機能が [NPU](../reference/glossary.md#term-npu) 制限で頭打ち (per-port や per-switch の最大 rate) になっている可能性があるため、`saidump | grep SAMPLEPACKET` を確認。
+- agent_id が更新されない → `Loopback0` 等の interface 状態と `config sflow agent-id` を確認。sFlow agent IP は management interface ではなく Loopback を使うべき設計が一般的（`config sflow agent-id` で固定推奨）。
 
 <!-- diff-admonition -->
 !!! diff "HLD と実装の差分"
