@@ -121,12 +121,12 @@ Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC �
 **関連する HLD 7 件**
 
 - [単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）](../../platform/single-asic-voq-fixed-system-sonic.md)
-- [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)
-- [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)
 - [Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）](../../architecture/error-handling-framework-in-sonic.md)
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../../platform/hld-for-handling-sai-failures.md)
 - [VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）](../../platform/fabric-port-support-on-sonic.md)
 - [Multi-ASIC Single JSON Configuration（Golden Config に namespace layer）](../../platform/multi-asic-single-json-configuration-design.md)
+- [multi-ASIC 用 Golden Config 単一 JSON フォーマット（localhost / asic0 / asic1 ...）](../../platform/db-design-for-multi-asic-scenarios.md)
+- [SONiC on Multi-ASIC platforms（namespace / per-asic Redis / sonic-net）](../../platform/1-sonic-on-multi-asic-platforms.md)
 
 **関連トラブルシュート 5 件**
 

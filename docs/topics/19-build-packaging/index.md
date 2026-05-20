@@ -95,10 +95,10 @@ related:
 - [SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動）](../../system/sonic-feature-quality-definition.md)
 - [Alpine 仮想 SONiC（ALViS / KNE デプロイ）](../../architecture/alpine-high-level-design.md)
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../../system/sonic-libsairedis-api-idempotence-support.md)
-- [Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB notification）](../../architecture/error-handling-framework-in-sonic-internals.md)
 - [Port Profile Init（SAI bulk port API による fast-boot 高速化）](../../architecture/port-profile-init-hld.md)
 - [SONiC-VS のビルドと libvirt 起動手順](../../architecture/steps-to-bring-up-sonic-vs.md)
 - [SWSS docker の Warm Restart 実装メモ（開発時リファレンス）](../../system/swss-docker-warm-restart-code-reference.md)
+- [SmartSwitch HA - DPU-Scope-DPU-Driven 構成](../../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md)
 
 **関連トラブルシュート 5 件**
 

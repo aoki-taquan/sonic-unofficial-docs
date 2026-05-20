@@ -123,8 +123,8 @@ related:
 - [Dataplane Telemetry（DTel / INT / Postcard / Drop / Queue Report）](../../system/dataplane-telemetry-in-sonic.md)
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../../system/sonic-libsairedis-api-idempotence-support.md)
 - [FRR 用 sysctl チューニングのデフォルト](../../system/useful-sysctl-settings.md)
-- [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)
-- [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)
+- [Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）](../../architecture/error-handling-framework-in-sonic.md)
+- [SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携）](../../system/sonic-bmc-platform-management-monitoring.md)
 
 **関連トラブルシュート 5 件**
 

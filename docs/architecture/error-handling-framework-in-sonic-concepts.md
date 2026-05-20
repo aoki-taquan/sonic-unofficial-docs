@@ -55,7 +55,7 @@ flowchart LR
 
 ## 5. Error code の抽象化
 
-app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで **SWSS error code を定義し SAI error code にマップ** する[^1]。下表は HLD で定義された基本セット 8 種だが、実装の `sonic-swss-common/common/status_code_util.h L11-L25` enum には追加 7 種（`SWSS_RC_DEADLINE_EXCEEDED` / `SWSS_RC_PERMISSION_DENIED` / `SWSS_RC_INTERNAL` / `SWSS_RC_UNIMPLEMENTED` / `SWSS_RC_NOT_EXECUTED` / `SWSS_RC_FAILED_PRECONDITION` / `SWSS_RC_UNKNOWN`）も追加されており、合計 15 種が定義されている。詳細は limitations ページの「3. 行番号付きエビデンス」を参照。
+app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで **SWSS error code を定義し SAI error code にマップ** する[^1]。下表は [HLD](../reference/glossary.md#term-hld) で定義された基本セット 8 種だが、実装の `sonic-swss-common/common/status_code_util.h L11-L25` enum には追加 7 種（`SWSS_RC_DEADLINE_EXCEEDED` / `SWSS_RC_PERMISSION_DENIED` / `SWSS_RC_INTERNAL` / `SWSS_RC_UNIMPLEMENTED` / `SWSS_RC_NOT_EXECUTED` / `SWSS_RC_FAILED_PRECONDITION` / `SWSS_RC_UNKNOWN`）も追加されており、合計 15 種が定義されている。詳細は limitations ページの「3. 行番号付きエビデンス」を参照。
 
 | SWSS code | SAI status |
 |-----------|-----------|
@@ -117,4 +117,4 @@ app は SAI 直接呼出しをしないため、SWSS 共通ライブラリで **
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 167700005048 -->

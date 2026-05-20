@@ -112,12 +112,12 @@ related:
 **関連する HLD 7 件**
 
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../../system/sonic-libsairedis-api-idempotence-support.md)
-- [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)
 - [SONiC NOS の設定手段一覧（CLI / sonic-cfggen / config_db.json / RESTCONF / gNMI / ZTP / vtysh / redis / apply-patch）](../../management/sonic-nos-configuration-methods.md)
 - [Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）](../../management/send-to-ingress-hld.md)
 - [FRR 用 sysctl チューニングのデフォルト](../../system/useful-sysctl-settings.md)
 - [Warmboot Manager（shutdown orchestration / reconciliation 統一）](../../system/warmboot-manager-hld.md)
-- [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)
+- [P4Runtime PacketIO（generic netlink + send_to_ingress）](../../management/packetio.md)
+- [Port Profile Init（SAI bulk port API による fast-boot 高速化）](../../architecture/port-profile-init-hld.md)
 
 **関連トラブルシュート 5 件**
 

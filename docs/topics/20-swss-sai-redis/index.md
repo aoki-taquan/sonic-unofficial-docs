@@ -94,13 +94,13 @@ related:
 
 **関連する HLD 7 件**
 
-- [Error Handling Framework 概念（ERROR_DB / SWSS_RC / 報告のみの責務）](../../architecture/error-handling-framework-in-sonic-concepts.md)
-- [Error Handling Framework 制限事項と HLD との乖離（コア機構未実装 / CRM 代替）](../../architecture/error-handling-framework-in-sonic-limitations.md)
 - [Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）](../../architecture/error-handling-framework-in-sonic.md)
 - [swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）](../../internals/swss-schema.md)
 - [Alpine 仮想 SONiC（ALViS / KNE デプロイ）](../../architecture/alpine-high-level-design.md)
-- [Error Handling Framework 内部実装（OrchAgent producer / ErrorListener / ASIC_DB notification）](../../architecture/error-handling-framework-in-sonic-internals.md)
 - [flex counter 初期化最適化（pending_sai_objects + バッチ bulk_get_stats）](../../internals/sonic-counter-initialization-optimization.md)
+- [dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）](../../internals/dump-utility-for-easy-debugging.md)
+- [P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）](../../internals/p4-orchagent.md)
+- [Port Profile Init（SAI bulk port API による fast-boot 高速化）](../../architecture/port-profile-init-hld.md)
 
 **関連トラブルシュート 5 件**
 

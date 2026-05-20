@@ -1477,10 +1477,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [DHCP Relay](#term-dhcp-relay)
 
 - [サイトマップ](../_meta/sitemap.md) (6)
+- [DHCPv4 Relay Agent（dhcpmon / dhcrelay / option-82 / circuit-id）](../architecture/dhcpv4-relay-agent.md) (2)
 - [DHCP Relay per-interface counter（dhcpmon マルチスレッド + COUNTERS_DB 永続化）](../routing/dhcp-relay-per-interface-counter.md) (2)
 - [Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md) (2)
 - [NAT / DHCP Relay / Time-DNS Services](../topics/16-nat-dhcp-dns/index.md) (2)
-- [DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）](../acl-qos/dhcp-dos-mitigation-in-sonic.md) (1)
 
 ### [DPU](#term-dpu)
 
