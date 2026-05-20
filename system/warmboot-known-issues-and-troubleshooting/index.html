@@ -14,10 +14,10 @@
         <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/warmboot-known-issues-and-troubleshooting/">
       
       
-        <link rel="prev" href="../useful-sysctl-settings/">
+        <link rel="prev" href="../ssh-authentication-failures/">
       
       
-        <link rel="next" href="../warmboot-manager-hld/">
+        <link rel="next" href="../yang-model-issues-and-validation/">
       
       
         
@@ -12832,6 +12832,16 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -14877,6 +14887,342 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../buildimage-build-system-known-issues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC ビルドシステム既知問題
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dynamic-port-breakout-known-issues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    動的ポートブレイクアウト（DPB）既知問題と YANG モデル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssh-authentication-failures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH 接続時の「Too many authentication failures」エラー
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ウォームブート既知問題とトラブルシューティング
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ウォームブート既知問題とトラブルシューティング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-syncd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. syncd ウォームスタートエラー
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. syncd ウォームスタートエラー">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-1-invalid-sai_api_t-passed-to-sai_api_query-6723" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-1. Invalid sai_api_t passed to sai_api_query (#6723)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-2-syncd-translatevidtorid-failures-for-buffer-pools-6726" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-2. syncd translateVidToRid failures for buffer pools (#6726)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-3-syncd-apply_view-hostif_trap_group-7071-7094" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-3. syncd APPLY_VIEW エラー: hostif_trap_group (#7071, #7094)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-lag-6773" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. LAG フラップ (#6773)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-ssh-7127" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SSH セッション切断によるウォームブート失敗 (#7127)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-fast-reboot-7140" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. fast-reboot ダウンタイム超過 (#7140)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-7518" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. イメージダウングレード失敗 (#7518)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-reboot-cause-12512" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. reboot-cause の誤表示 (#12512)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-202012-fast-reboot-orchagent-9899" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. [202012] fast-reboot orchagent タイムアウト (#9899)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        トラブルシューティングチェックリスト
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../yang-model-issues-and-validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YANG モデル既知問題と検証
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -14895,6 +15241,12 @@
       
         
           
+        
+      
+        
+      
+        
+      
         
       
         
@@ -16361,6 +16713,90 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnmi-streaming-telemetry-pitfalls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI ストリーミングテレメトリの落とし穴
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnmi-translib-write-enable/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI SET / Translib 書き込み有効化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/snmp-interface-scope/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP エージェントがサポートするインターフェーススコープ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -16379,6 +16815,14 @@
       
         
           
+        
+      
+        
+      
+        
+      
+        
+      
         
       
         
@@ -17845,6 +18289,118 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sfp-eeprom-parsing-gaps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SfpUtilBase の EEPROM 解析欠損
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sfp-sff8472-rx-power-calibration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFF-8472 外部キャリブレーション SFP の Rx パワー変換誤り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/thermalctld-speed-tolerance-api-change/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    thermalctld の speed_tolerance API 廃止と移行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/xcvrd-cmis-mediainterface-crash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -17863,6 +18419,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -18386,6 +18946,62 @@
     
   
     コンテナ health-check（k8s readiness probe）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../internals/swss-common-database-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    swss-common データベース設定（database_config.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../internals/swss-common-db-link-ordering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
   
 
     
@@ -25707,7 +26323,7 @@
   <span class="md-ellipsis">
     
   
-    Event publisher
+    イベントパブリッシャー設定 (init_cfg events)
   
 
     
@@ -34745,17 +35361,17 @@
 </div>
 <h1 id="_1">ウォームブート既知問題とトラブルシューティング<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <h2 id="_2">概要<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>SONiC のウォームブート（warm-reboot）・高速リブート（fast-reboot）は複数の
+<p><a href="../../reference/glossary/#term-sonic">SONiC</a> のウォームブート（warm-reboot）・高速リブート（fast-reboot）は複数の
 サブシステムが協調する複雑なシーケンスを持つ。本ページは
-sonic-buildimage issue tracker (#6723 〜 #12512 の範囲) に記録された
+<a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> issue tracker (#6723 〜 #12512 の範囲) に記録された
 実環境での既知問題と対処法をまとめる。</p>
 <hr />
 <h2 id="1-syncd">1. syncd ウォームスタートエラー<a class="headerlink" href="#1-syncd" title="Permanent link">&para;</a></h2>
 <h3 id="1-1-invalid-sai_api_t-passed-to-sai_api_query-6723">1-1. <code>Invalid sai_api_t passed to sai_api_query</code> (#6723)<a class="headerlink" href="#1-1-invalid-sai_api_t-passed-to-sai_api_query-6723" title="Permanent link">&para;</a></h3>
-<p><strong>現象</strong>: ウォームブート中に syncd が以下のエラーを出力する。</p>
+<p><strong>現象</strong>: ウォームブート中に <a href="../../reference/glossary/#term-syncd">syncd</a> が以下のエラーを出力する。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SAI_API_UNSPECIFIED:sai_api_initialize: Invalid sai_api_t passed to sai_api_query
 </span></code></pre></div>
-<p><strong>原因</strong>: 新しい SAI バージョン移行時に旧 <code>sai_api_t</code> 値が
+<p><strong>原因</strong>: 新しい <a href="../../reference/glossary/#term-sai">SAI</a> バージョン移行時に旧 <code>sai_api_t</code> 値が
 <code>sai_api_query()</code> に渡されるケース。</p>
 <p><strong>影響</strong>: 単体では crash や warmboot 失敗は発生しない。
 syncd の init は正常に完了し、warmboot シーケンスは継続する。
@@ -34767,7 +35383,7 @@ SAI バージョンを syncd と整合させることで解消する。</p>
 <p><strong>現象</strong>: ウォームブート後の統計収集時に以下のエラー。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>syncd: translateVidToRid: failed to translate VID &lt;oid&gt; to RID
 </span></code></pre></div>
-<p><strong>原因</strong>: syncd がウォームブート後の新 ASIC VIEW への変換を
+<p><strong>原因</strong>: syncd がウォームブート後の新 <a href="../../reference/glossary/#term-asic">ASIC</a> VIEW への変換を
 まだ完了していない段階で統計クエリが走ることで、
 ingress/egress buffer pool OID が一時的に無効になる。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>syncd: executeOperationsOnAsic: operations to execute on ASIC: 56
@@ -34783,18 +35399,18 @@ Buffer pool OID の VIDTORID マップが再構築されれば自動解消する
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>syncd: APPLY_VIEW error: brcm_sai_remove_hostif_trap_group in use
 </span></code></pre></div>
 <p><strong>原因</strong>: BRCM SAI の特定バージョン（4.3.3.x）でのバグ。
-hostif_trap_group が ACL エントリから参照されたまま削除しようとする。</p>
+hostif_trap_group が <a href="../../reference/glossary/#term-acl">ACL</a> エントリから参照されたまま削除しようとする。</p>
 <p><strong>対処</strong>:
 - SAI バージョンを <code>4.3.0.13-1</code> 以前（またはバグ修正版）に変更
 - <code>4.3.3.1</code> および <code>4.3.3.1-1</code> でこの問題が確認されている</p>
 <hr />
 <h2 id="2-lag-6773">2. LAG フラップ (#6773)<a class="headerlink" href="#2-lag-6773" title="Permanent link">&para;</a></h2>
-<p><strong>現象</strong>: ウォームブート後（特に 2 回目以降）に PortChannel が数回 flap する。</p>
+<p><strong>現象</strong>: ウォームブート後（特に 2 回目以降）に <a href="../../reference/glossary/#term-portchannel">PortChannel</a> が数回 flap する。</p>
 <p><strong>対象プラットフォーム</strong>: Broadcom TD3 ベースプラットフォーム、202012 ブランチを含む。</p>
 <p><strong>パターン</strong>:
-- 1 回目のウォームブート: LAG フラップなし
+- 1 回目のウォームブート: <a href="../../reference/glossary/#term-lag">LAG</a> フラップなし
 - <strong>2 回目以降</strong>: LAG が数回 flap してから安定</p>
-<p><strong>原因</strong>: orchagent がウォームブート後に
+<p><strong>原因</strong>: <a href="../../reference/glossary/#term-orchagent">orchagent</a> がウォームブート後に
 PortChannel メンバーの再学習タイミングで競合が発生する。</p>
 <p><strong>対処</strong>: 2 回目以降のウォームブート後に LAG が安定するまで待機（通常 30 秒以内）。
 本番環境では連続ウォームブート間に十分なインターバルを設ける。</p>
@@ -34904,6 +35520,7 @@ master ブランチでインストールされたパッケージが
 <li><a href="../sonic-swss-docker-warm-restart/">swss Docker ウォームリスタート</a></li>
 <li><a href="../multi-asic-warm-reboot/">multi-ASIC ウォームリブート</a></li>
 </ul>
+<!-- glossary-links-injected: 3b39e50988ab -->
 
 
 

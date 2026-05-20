@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC NOS（sonic-net/SONiC）の日本語非公式ドキュメント">
+        <meta name="description" content="eventd が読み込む ZMQ エンドポイント・ハートビート・キャッシュ上限などのイベントフレームワーク設定。CONFIG_DB テーブルではなく /etc/sonic/init_cfg.json の events キーで管理される。">
       
       
       
@@ -27,7 +27,7 @@
     
     
       
-        <title>Event publisher - SONiC 非公式ドキュメント</title>
+        <title>イベントパブリッシャー設定 (init_cfg events) - SONiC 非公式ドキュメント</title>
       
     
     
@@ -63,16 +63,16 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Event publisher - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SONiC NOS（sonic-net/SONiC）の日本語非公式ドキュメント" />
+<meta property="og:title" content="イベントパブリッシャー設定 (init_cfg events) - SONiC 非公式ドキュメント" />
+<meta property="og:description" content="eventd が読み込む ZMQ エンドポイント・ハートビート・キャッシュ上限などのイベントフレームワーク設定。CONFIG_DB テーブルではなく /etc/sonic/init_cfg.json の events キーで管理される。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/event-publisher.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/event-publisher/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="Event publisher - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SONiC NOS（sonic-net/SONiC）の日本語非公式ドキュメント" />
+<meta property="twitter:title" content="イベントパブリッシャー設定 (init_cfg events) - SONiC 非公式ドキュメント" />
+<meta property="twitter:description" content="eventd が読み込む ZMQ エンドポイント・ハートビート・キャッシュ上限などのイベントフレームワーク設定。CONFIG_DB テーブルではなく /etc/sonic/init_cfg.json の events キーで管理される。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/event-publisher.png" />
 </head>
   
@@ -127,7 +127,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Event publisher
+              イベントパブリッシャー設定 (init_cfg events)
             
           </span>
         </div>
@@ -12827,6 +12827,16 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -14869,6 +14879,146 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system/buildimage-build-system-known-issues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC ビルドシステム既知問題
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system/dynamic-port-breakout-known-issues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    動的ポートブレイクアウト（DPB）既知問題と YANG モデル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system/ssh-authentication-failures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH 接続時の「Too many authentication failures」エラー
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system/warmboot-known-issues-and-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ウォームブート既知問題とトラブルシューティング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../system/yang-model-issues-and-validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YANG モデル既知問題と検証
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -14887,6 +15037,12 @@
       
         
           
+        
+      
+        
+      
+        
+      
         
       
         
@@ -16353,6 +16509,90 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../management/gnmi-streaming-telemetry-pitfalls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI ストリーミングテレメトリの落とし穴
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../management/gnmi-translib-write-enable/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI SET / Translib 書き込み有効化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../management/snmp-interface-scope/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP エージェントがサポートするインターフェーススコープ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -16371,6 +16611,14 @@
       
         
           
+        
+      
+        
+      
+        
+      
+        
+      
         
       
         
@@ -17837,6 +18085,118 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../platform/sfp-eeprom-parsing-gaps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SfpUtilBase の EEPROM 解析欠損
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../platform/sfp-sff8472-rx-power-calibration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFF-8472 外部キャリブレーション SFP の Rx パワー変換誤り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../platform/thermalctld-speed-tolerance-api-change/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    thermalctld の speed_tolerance API 廃止と移行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../platform/xcvrd-cmis-mediainterface-crash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -17855,6 +18215,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -18378,6 +18742,62 @@
     
   
     コンテナ health-check（k8s readiness probe）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../internals/swss-common-database-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    swss-common データベース設定（database_config.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../internals/swss-common-db-link-ordering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
   
 
     
@@ -25721,7 +26141,7 @@
   <span class="md-ellipsis">
     
   
-    Event publisher
+    イベントパブリッシャー設定 (init_cfg events)
   
 
     
@@ -25739,7 +26159,7 @@
   <span class="md-ellipsis">
     
   
-    Event publisher
+    イベントパブリッシャー設定 (init_cfg events)
   
 
     
@@ -35539,27 +35959,9 @@
   
 
 
-<hr />
-<p>title: イベントパブリッシャー設定 (init_cfg events)
-description: "eventd が読み込む ZMQ エンドポイント・ハートビート・キャッシュ上限などのイベントフレームワーク設定。CONFIG_DB テーブルではなく /etc/sonic/init_cfg.json の "events" キーで管理される。"
-area: reference
-verification: code-verified
-last_verified: 2026-05-14
-sources:
-  - repo: sonic-net/sonic-swss-common
-    path: common/events_common.cpp
-    ref: master
-  - repo: sonic-net/sonic-buildimage
-    path: src/sonic-eventd/src/eventd.cpp
-    ref: master
-related:
-  config_db: []
-  cli: []
-  yang: []</p>
-<hr />
 <h1 id="init_cfg-events">イベントパブリッシャー設定 (init_cfg events)<a class="headerlink" href="#init_cfg-events" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の Event and Alarm Framework は <code>eventd</code> デーモンが中心となり、ZeroMQ (ZMQ) メッセージバスを介して全コンテナ・プロセスからのイベントを収集・配信する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>eventd</code> は起動時に <code>/etc/sonic/init_cfg.json</code> の <code>"events"</code> キーを読み込み、ZMQ エンドポイントアドレス・キャッシュ上限・統計更新間隔を取得する。</p>
+<p><a href="../../glossary/#term-sonic">SONiC</a> の Event and Alarm Framework は <code>eventd</code> デーモンが中心となり、ZeroMQ (ZMQ) メッセージバスを介して全コンテナ・プロセスからのイベントを収集・配信する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>eventd</code> は起動時に <code>/etc/sonic/init_cfg.json</code> の <code>"events"</code> キーを読み込み、ZMQ エンドポイントアドレス・キャッシュ上限・統計更新間隔を取得する。</p>
 <p>これらのパラメータは従来の <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブルではなく、ファイルベース設定として管理される点が他テーブルと異なる。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -35632,7 +36034,7 @@ related:
 <td><code>stats_upd_secs</code></td>
 <td>string (数値)</td>
 <td><code>"5"</code></td>
-<td>COUNTERS_DB への統計書き込み間隔 (秒)</td>
+<td><a href="../../glossary/#term-counters_db">COUNTERS_DB</a> への統計書き込み間隔 (秒)</td>
 </tr>
 <tr>
 <td><code>cache_max_cnt</code></td>
@@ -35715,18 +36117,18 @@ related:
 <h2 id="_7">購読者・利用者<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>eventd</code> (<code>docker-eventd</code>): 全パラメータを消費し ZMQ プロキシ・capture service・stats collector を管理</li>
-<li><code>events_init_publisher()</code> 呼び出し元 (swss / syncd / bgp / dhcp-relay 等の全コンテナ): <code>xsub_path</code> に接続してイベントを発行</li>
+<li><code>events_init_publisher()</code> 呼び出し元 (swss / <a href="../../glossary/#term-syncd">syncd</a> / bgp / dhcp-relay 等の全コンテナ): <code>xsub_path</code> に接続してイベントを発行</li>
 <li><code>events_init_subscriber()</code> 呼び出し元 (telemetry コンテナ等): <code>xpub_path</code> に接続してイベントを受信</li>
-<li><code>sonic-gnmi</code> (<code>events_client.go</code>): <code>xpub_path</code> 経由でイベントストリームを gNMI クライアントに転送</li>
+<li><code>sonic-gnmi</code> (<code>events_client.go</code>): <code>xpub_path</code> 経由でイベントストリームを <a href="../../glossary/#term-gnmi">gNMI</a> クライアントに転送</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
-<li>直接の CONFIG_DB テーブルなし (ファイル設定のみ)</li>
-<li>関連 HLD: <code>SONiC/doc/event-alarm-framework/event-alarm-framework.md</code>、<code>events-producer.md</code></li>
+<li>直接の <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブルなし (ファイル設定のみ)</li>
+<li>関連 <a href="../../glossary/#term-hld">HLD</a>: <code>SONiC/doc/event-alarm-framework/event-alarm-framework.md</code>、<code>events-producer.md</code></li>
 </ul>
 <!-- ordering -->
 <h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
-<p><code>init_cfg.json</code> はファイルベース設定であり、通常の CONFIG_DB テーブルとは異なる読み込みメカニズムを持つ。
+<p><code>init_cfg.json</code> はファイルベース設定であり、通常の <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブルとは異なる読み込みメカニズムを持つ。
 <code>get_config(key)</code> (<code>events_common.cpp:74-83</code>) は lazy 初期化パターンを採用しており、
 最初の <code>get_config()</code> 呼び出し時に <code>read_init_config(INIT_CFG_PATH)</code> を一度だけ実行する。</p>
 <h3 id="eventd"><code>eventd</code> 内部起動順序<a class="headerlink" href="#eventd" title="Permanent link">&para;</a></h3>
@@ -35778,7 +36180,7 @@ related:
 </tbody>
 </table>
 <h3 id="_9">主要な制約詳細<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
-<p><strong><code>init_cfg.json</code> の先行書き込み (依存 #1)</strong>: <code>eventd</code> が起動すると <code>run_eventd_service()</code> の最初の <code>get_config_data()</code> 呼び出しで <code>cfg_data</code> が確定し、以後変更できない。<code>docker restart eventd</code> でのみ再読み込みされる。SONiC の <code>config reload</code> は <code>init_cfg.json</code> の再書き込みを含まないため、手動で <code>init_cfg.json</code> を編集した後は <code>systemctl restart eventd</code> が必要。</p>
+<p><strong><code>init_cfg.json</code> の先行書き込み (依存 #1)</strong>: <code>eventd</code> が起動すると <code>run_eventd_service()</code> の最初の <code>get_config_data()</code> 呼び出しで <code>cfg_data</code> が確定し、以後変更できない。<code>docker restart eventd</code> でのみ再読み込みされる。<a href="../../glossary/#term-sonic">SONiC</a> の <code>config reload</code> は <code>init_cfg.json</code> の再書き込みを含まないため、手動で <code>init_cfg.json</code> を編集した後は <code>systemctl restart eventd</code> が必要。</p>
 <p><strong>ZMQ メッセージ消失リスク (依存 #2)</strong>: <code>zmq_connect()</code> は ZMQ 設計上 lazy であり、eventd bind 完了前でも呼び出し自体はエラーにならない。しかし <code>eventd_proxy</code> が XSUB にバインドされるまでに publish されたメッセージは ZMQ の内部キューに保持されず消失する。<code>docker-eventd</code> は他コンテナより先に起動するよう systemd の After= 依存関係で制御される。</p>
 <p><strong>telemetry キャッシュハンドシェイク (依存 #3)</strong>: <code>capture_service</code> は <code>eventd</code> 起動直後に <code>START_CAPTURE</code> 状態になり、telemetry コンテナが <code>event_service</code> REQ/REP (:5572) 経由で <code>EVENT_CACHE_STOP_SUBCRIBER</code> を送るまでイベントを蓄積する。telemetry コンテナが eventd より先に起動した場合は接続待ちとなり、キャッシュ収集が遅延する可能性がある。</p>
 <!-- /ordering -->
@@ -35809,11 +36211,11 @@ related:
 <td><code>events_common.h:129</code>, <code>events_common.cpp:38-83</code></td>
 </tr>
 <tr>
-<td>eventd → COUNTERS_DB</td>
+<td>eventd → <a href="../../glossary/#term-counters_db">COUNTERS_DB</a></td>
 <td><code>stats_collector::start()</code> — <code>m_counters_db</code> 接続</td>
 <td><code>COUNTERS_DB</code> (DB index 2)</td>
 <td><code>COUNTERS_EVENTS\|published</code>, <code>COUNTERS_EVENTS\|missed_to_cache</code></td>
-<td><code>stats_upd_secs</code> 間隔でパブリッシュ数・キャッシュ未達数を COUNTERS_DB へ書き込む。COUNTERS_DB 接続失敗は <code>RET_ON_ERR</code> でサービス異常終了</td>
+<td><code>stats_upd_secs</code> 間隔でパブリッシュ数・キャッシュ未達数を <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> へ書き込む。COUNTERS_DB 接続失敗は <code>RET_ON_ERR</code> でサービス異常終了</td>
 <td><code>eventd.cpp:178-210</code></td>
 </tr>
 <tr>
@@ -35821,7 +36223,7 @@ related:
 <td><code>events_init_publisher()</code> — ZMQ connect</td>
 <td>ZMQ XSUB <code>:5570</code> (<code>xsub_path</code>)</td>
 <td>N/A (ZMQ socket)</td>
-<td>swss / syncd / bgp / dhcp-relay 等が <code>events_init_publisher()</code> でこのエンドポイントに接続してイベントを発行する。<code>xsub_path</code> 変更時は全コンテナ再起動が必要</td>
+<td>swss / <a href="../../glossary/#term-syncd">syncd</a> / bgp / dhcp-relay 等が <code>events_init_publisher()</code> でこのエンドポイントに接続してイベントを発行する。<code>xsub_path</code> 変更時は全コンテナ再起動が必要</td>
 <td><code>events_common.cpp:80-81</code>, <code>eventd.cpp:80-81</code></td>
 </tr>
 <tr>
@@ -36006,7 +36408,7 @@ capture サービスが NULL のままサービスが継続する (<code>eventd.
 
 <!-- defaults -->
 <h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
-<p>YANG definition が存在しないため、デフォルト値はすべて <code>events_common.cpp</code> の <code>cfg_default</code> マップおよび <code>eventd.cpp</code> の定数から導出される<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+<p><a href="../../glossary/#term-yang">YANG</a> definition が存在しないため、デフォルト値はすべて <code>events_common.cpp</code> の <code>cfg_default</code> マップおよび <code>eventd.cpp</code> の定数から導出される<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -36064,7 +36466,7 @@ capture サービスが NULL のままサービスが継続する (<code>eventd.
 
 <!-- constants -->
 <h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
-<p><code>eventd</code> および <code>events_common</code> に存在する、<code>init_cfg.json</code> / YANG では管理されないハードコード定数の一覧。
+<p><code>eventd</code> および <code>events_common</code> に存在する、<code>init_cfg.json</code> / <a href="../../glossary/#term-yang">YANG</a> では管理されないハードコード定数の一覧。
 出典は <code>sonic-buildimage/src/sonic-eventd/src/eventd.cpp</code>、<code>eventd.h</code>、<code>events_common.h</code>。</p>
 <h3 id="_13">キャッシュ・バッファサイズ定数<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <table>
@@ -36256,17 +36658,17 @@ capture サービスが NULL のままサービスが継続する (<code>eventd.
 <tr>
 <td><code>APPL_DB</code></td>
 <td>なし</td>
-<td><code>eventd</code> は APPL_DB への書き込みパスを持たない</td>
+<td><code>eventd</code> は <a href="../../glossary/#term-appl_db">APPL_DB</a> への書き込みパスを持たない</td>
 </tr>
 <tr>
 <td><code>STATE_DB</code></td>
 <td>なし</td>
-<td><code>eventd</code> は STATE_DB への書き込みパスを持たない</td>
+<td><code>eventd</code> は <a href="../../glossary/#term-state_db">STATE_DB</a> への書き込みパスを持たない</td>
 </tr>
 <tr>
 <td><code>ASIC_DB</code></td>
 <td>なし</td>
-<td>SAI 非経由のため ASIC_DB 書込なし</td>
+<td><a href="../../glossary/#term-sai">SAI</a> 非経由のため <a href="../../glossary/#term-asic_db">ASIC_DB</a> 書込なし</td>
 </tr>
 <tr>
 <td><code>FLEX_COUNTER_DB</code></td>
@@ -36319,7 +36721,7 @@ capture サービスが NULL のままサービスが継続する (<code>eventd.
 詳細証跡: <code>meta/_intermediate/cdb-flow/event-publisher-pubsub.md</code></p>
 </blockquote>
 <h3 id="zmq-pubsub">購読方式: なし (ファイル起動時読み込みのみ — ZMQ が内部 pub/sub メカニズム)<a class="headerlink" href="#zmq-pubsub" title="Permanent link">&para;</a></h3>
-<p><code>init_cfg.json</code> の <code>"events"</code> 設定を <strong>Redis keyspace 通知で購読するプロセスは存在しない</strong>。
+<p><code>init_cfg.json</code> の <code>"events"</code> 設定を <strong><a href="../../glossary/#term-redis">Redis</a> keyspace 通知で購読するプロセスは存在しない</strong>。
 <code>eventd</code> は起動時に <code>read_init_config(INIT_CFG_PATH)</code> (<code>events_common.cpp:38-83</code>) でファイルを直接読み込む。
 <code>SubscriberStateTable</code> / <code>ConsumerStateTable</code> / <code>ConfigDBConnector.subscribe()</code> はいずれも使用しない。</p>
 <p>代わりに <code>eventd</code> 自体が <strong>ZeroMQ (ZMQ) ブローカー</strong>として動作し、全コンテナ間のイベント転送に ZMQ を使用する。</p>
@@ -36349,7 +36751,7 @@ capture サービスが NULL のままサービスが継続する (<code>eventd.
 <td>サブスクライバー（telemetry 等）</td>
 <td>ZMQ XPUB <code>zmq_connect</code></td>
 <td><code>:5571</code> (<code>xpub_path</code>)</td>
-<td><code>events_init_subscriber()</code> で接続。<code>sonic-gnmi</code> も直接接続してイベントストリームを gNMI に転送</td>
+<td><code>events_init_subscriber()</code> で接続。<code>sonic-gnmi</code> も直接接続してイベントストリームを <a href="../../glossary/#term-gnmi">gNMI</a> に転送</td>
 </tr>
 <tr>
 <td>telemetry → eventd (キャッシュ制御)</td>
@@ -36378,7 +36780,7 @@ capture サービスが NULL のままサービスが継続する (<code>eventd.
 </tbody>
 </table>
 <h3 id="_17">変更の反映経路<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB を経由しないため、Redis keyspace notification は発火しない:</p>
+<p>CONFIG_DB を経由しないため、<a href="../../glossary/#term-redis">Redis</a> keyspace notification は発火しない:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>管理者: /etc/sonic/init_cfg.json を手動編集
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  ↓ (Redis への書き込みなし — ファイル直接編集)
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>systemctl restart eventd
@@ -36390,12 +36792,12 @@ capture サービスが NULL のままサービスが継続する (<code>eventd.
 手動での <code>init_cfg.json</code> 編集 + <code>systemctl restart eventd</code> が必要となる。</p>
 <h3 id="appl_db-sai">APPL_DB / SAI 中継<a class="headerlink" href="#appl_db-sai" title="Permanent link">&para;</a></h3>
 <p>なし。<code>init_cfg.json ["events"]</code> 設定は <code>eventd</code> の ZMQ フレームワーク起動パラメータとして機能し、
-APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない。</p>
+<a href="../../glossary/#term-appl_db">APPL_DB</a> / <a href="../../glossary/#term-state_db">STATE_DB</a> / <a href="../../glossary/#term-asic_db">ASIC_DB</a> への伝播も <a href="../../glossary/#term-sai">SAI</a> 書き込みも発生しない。</p>
 <!-- /pubsub -->
 
 <!-- platform -->
 <h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
-<p><strong>プラットフォーム差なし</strong>: <code>eventd</code> は ZMQ ブローカーおよびファイルベース設定 (<code>init_cfg.json</code>) のみで動作し、SAI / ASIC ベンダー依存コードを一切持たない。</p>
+<p><strong>プラットフォーム差なし</strong>: <code>eventd</code> は ZMQ ブローカーおよびファイルベース設定 (<code>init_cfg.json</code>) のみで動作し、<a href="../../glossary/#term-sai">SAI</a> / <a href="../../glossary/#term-asic">ASIC</a> ベンダー依存コードを一切持たない。</p>
 <table>
 <thead>
 <tr>
@@ -36406,9 +36808,9 @@ APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない�
 </thead>
 <tbody>
 <tr>
-<td>ASIC 種別 (Broadcom / Mellanox / Marvell / Cisco-8000 等)</td>
+<td><a href="../../glossary/#term-asic">ASIC</a> 種別 (Broadcom / Mellanox / Marvell / Cisco-8000 等)</td>
 <td>影響なし</td>
-<td><code>eventd.cpp</code> / <code>eventd.h</code> / <code>events_common.cpp</code> に <code>getenv("platform")</code> 参照・ASIC 種別分岐はゼロ。SAI API 呼び出しなし (<code>eventd.cpp</code> 全行確認)</td>
+<td><code>eventd.cpp</code> / <code>eventd.h</code> / <code>events_common.cpp</code> に <code>getenv("platform")</code> 参照・<a href="../../glossary/#term-asic">ASIC</a> 種別分岐はゼロ。SAI API 呼び出しなし (<code>eventd.cpp</code> 全行確認)</td>
 </tr>
 <tr>
 <td>multi-asic (<code>IS_MULTI_NPU</code>)</td>
@@ -36416,7 +36818,7 @@ APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない�
 <td><code>eventd</code> は単一コンテナとして host network namespace で動作する。<code>asicN</code> namespace への個別接続・ループ処理なし。<code>IS_MULTI_NPU</code> / <code>gMySwitchType</code> 参照もなし</td>
 </tr>
 <tr>
-<td>VOQ chassis (supervisor + line cards)</td>
+<td><a href="../../glossary/#term-voq">VOQ</a> chassis (supervisor + line cards)</td>
 <td>各ノードで独立動作</td>
 <td><code>eventd</code> は各ノードの <code>docker-eventd</code> コンテナとして独立起動する。ノード間でイベントを集約する仕組みは community master に存在しない</td>
 </tr>
@@ -36438,11 +36840,13 @@ APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない�
 <!-- /platform -->
 
 <h2 id="_18">引用元<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
+<!-- glossary-links-injected: c8f5e0aef983 -->
+
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p><code>SONiC/doc/event-alarm-framework/event-alarm-framework.md</code> — Event and Alarm Framework HLD. <a href="https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md">https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p><code>SONiC/doc/event-alarm-framework/event-alarm-framework.md</code> — Event and Alarm Framework <a href="../../glossary/#term-hld">HLD</a>. <a href="https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md">https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p><code>sonic-net/sonic-swss-common/common/events_common.cpp</code> — <code>cfg_default</code> マップ (xsub/xpub/req_rep/capture/stats_upd_secs/cache_max_cnt デフォルト値) および <code>read_init_config()</code> 実装. <a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/events_common.cpp">https://github.com/sonic-net/sonic-swss-common/blob/master/common/events_common.cpp</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
@@ -36458,6 +36862,9 @@ APPL_DB / STATE_DB / ASIC_DB への伝播も SAI 書き込みも発生しない�
 
 
 
+
+  
+  
 
 
 

@@ -14,10 +14,10 @@
         <link rel="canonical" href="https://aoki-taquan.github.io/sonic-unofficial-docs/system/yang-model-issues-and-validation/">
       
       
-        <link rel="prev" href="../what-are-the-development-phases-and-scope-for-warm-reboot/">
+        <link rel="prev" href="../warmboot-known-issues-and-troubleshooting/">
       
       
-        <link rel="next" href="../zero-touch-provisioning-ztp/">
+        <link rel="next" href="../../management/">
       
       
         
@@ -12832,6 +12832,16 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -14877,6 +14887,448 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../buildimage-build-system-known-issues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC ビルドシステム既知問題
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dynamic-port-breakout-known-issues/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    動的ポートブレイクアウト（DPB）既知問題と YANG モデル
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssh-authentication-failures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH 接続時の「Too many authentication failures」エラー
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../warmboot-known-issues-and-troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ウォームブート既知問題とトラブルシューティング
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YANG モデル既知問題と検証
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YANG モデル既知問題と検証
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        概要
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ビルド時エラー
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. ビルド時エラー">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-1-yang-modelssonic_yang_tree-7076" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-1. yang-models/sonic_yang_tree が存在しない (#7076)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-2-libyang-9312" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1-2. libyang バックリンク問題でビルド失敗 (#9312)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. パターン / 型定義の問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. パターン / 型定義の問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#2-1-sonic-scheduleryang-9611" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2-1. sonic-scheduler.yang パターン問題 (#9611)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-2-sonic-typesyang-acl-accept-9638" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2-2. sonic-types.yang の ACL ACCEPT 欠落 (#9638)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-3-acl-mirror_ingress_action-mirror_egress_action-9929" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2-3. ACL の MIRROR_INGRESS_ACTION / MIRROR_EGRESS_ACTION 欠落 (#9929)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-yang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. テーブル YANG モデル欠落
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. テーブル YANG モデル欠落">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3-1-bgp_peer_range-9794" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-1. BGP_PEER_RANGE テーブル (#9794)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-2-mirror_session-config_db-12397" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-2. MIRROR_SESSION と CONFIG_DB の不整合 (#12397)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-3-snmp-yang-12573" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3-3. SNMP 関連テーブルの YANG 欠落 (#12573)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 制約・バリデーション問題
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. 制約・バリデーション問題">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#4-1-tacplus-global-9746" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4-1. TACPLUS 空の global セクション (#9746)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-2-bgp-peer-range-ip-10376" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4-2. BGP peer-range 重複 IP チェック (#10376)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-3-vlan-vlan_interface-12256" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4-3. VLAN / VLAN_INTERFACE の制約欠落 (#12256)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-4-dot1p-tc-map-yang-mgmt-framework-10386" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4-4. dot1p-tc-map YANG と mgmt-framework (#10386)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-port-lanes-9623" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. PORT の lanes 一意性検証 (#9623)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-annotation-yang-xpath-10668" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Annotation YANG の xpath 解決エラー (#10668)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#yang_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        YANG モデル管理のベストプラクティス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        参照
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -14895,6 +15347,12 @@
       
         
           
+        
+      
+        
+      
+        
+      
         
       
         
@@ -16361,6 +16819,90 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnmi-streaming-telemetry-pitfalls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI ストリーミングテレメトリの落とし穴
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/gnmi-translib-write-enable/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gNMI SET / Translib 書き込み有効化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../management/snmp-interface-scope/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP エージェントがサポートするインターフェーススコープ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -16379,6 +16921,14 @@
       
         
           
+        
+      
+        
+      
+        
+      
+        
+      
         
       
         
@@ -17845,6 +18395,118 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sfp-eeprom-parsing-gaps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SfpUtilBase の EEPROM 解析欠損
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/sfp-sff8472-rx-power-calibration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SFF-8472 外部キャリブレーション SFP の Rx パワー変換誤り
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/thermalctld-speed-tolerance-api-change/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    thermalctld の speed_tolerance API 廃止と移行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../platform/xcvrd-cmis-mediainterface-crash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    xcvrd クラッシュ（MediaInterfaceIDApp 未定義）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -17863,6 +18525,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -18386,6 +19052,62 @@
     
   
     コンテナ health-check（k8s readiness probe）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../internals/swss-common-database-config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    swss-common データベース設定（database_config.json）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../internals/swss-common-db-link-ordering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    swss-common DB リンク順序制約（linkToDbNative / linkToDb）
   
 
     
@@ -25707,7 +26429,7 @@
   <span class="md-ellipsis">
     
   
-    Event publisher
+    イベントパブリッシャー設定 (init_cfg events)
   
 
     
@@ -34851,8 +35573,8 @@
 </div>
 <h1 id="yang">YANG モデル既知問題と検証<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>SONiC の YANG モデルは <code>sonic-buildimage/src/sonic-yang-models/yang-models/</code> 以下に格納され、
-CONFIG_DB の検証・管理フレームワーク（mgmt-framework）・DPB の依存解決に使用される。
+<p><a href="../../reference/glossary/#term-sonic">SONiC</a> の <a href="../../reference/glossary/#term-yang">YANG</a> モデルは <code>sonic-buildimage/src/sonic-yang-models/yang-models/</code> 以下に格納され、
+<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の検証・管理フレームワーク（mgmt-framework）・<a href="../../reference/glossary/#term-dpb">DPB</a> の依存解決に使用される。
 本ページは issue tracker で報告された YANG モデルの既知問題を整理する。</p>
 <hr />
 <h2 id="1">1. ビルド時エラー<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
@@ -34889,7 +35611,7 @@ CONFIG_DB の検証・管理フレームワーク（mgmt-framework）・DPB の�
 <h3 id="2-2-sonic-typesyang-acl-accept-9638">2-2. <code>sonic-types.yang</code> の ACL <code>ACCEPT</code> 欠落 (#9638)<a class="headerlink" href="#2-2-sonic-typesyang-acl-accept-9638" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>[yang-models] missing ACCEPT in sonic-types.yang which used in ACL
 </span></code></pre></div>
-<p><code>sonic-types.yang</code> の ACL アクション定義に <code>ACCEPT</code> が含まれておらず、
+<p><code>sonic-types.yang</code> の <a href="../../reference/glossary/#term-acl">ACL</a> アクション定義に <code>ACCEPT</code> が含まれておらず、
 <code>ACCEPT</code> を指定した ACL ルールが YANG 検証で拒否される。</p>
 <p><strong>対処</strong>: <code>sonic-acl.yang</code> と <code>sonic-types.yang</code> の最新版を確認。
 master では修正済みの可能性が高い。</p>
@@ -34905,7 +35627,7 @@ YANG モデルに定義されていないため、mgmt-framework 経由での設
 <h3 id="3-1-bgp_peer_range-9794">3-1. <code>BGP_PEER_RANGE</code> テーブル (#9794)<a class="headerlink" href="#3-1-bgp_peer_range-9794" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Need YANG for BGP_PEER_RANGE table
 </span></code></pre></div>
-<p>BGP 動的ピア（peer-range）のテーブルに YANG モデルがない。
+<p><a href="../../reference/glossary/#term-bgp">BGP</a> 動的ピア（peer-range）のテーブルに YANG モデルがない。
 DPB の依存チェックや CONFIG_DB 検証で「未検証テーブル」として警告になる。</p>
 <hr />
 <h3 id="3-2-mirror_session-config_db-12397">3-2. <code>MIRROR_SESSION</code> と CONFIG_DB の不整合 (#12397)<a class="headerlink" href="#3-2-mirror_session-config_db-12397" title="Permanent link">&para;</a></h3>
@@ -34927,7 +35649,7 @@ DPB の依存チェックや CONFIG_DB 検証で「未検証テーブル」と�
 <div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Need Yang for SNMP_AGENT_ADDRESS_CONFIG, SNMP_USER, SNMP_TRAP_CONFIG tables
 </span></code></pre></div>
 <p>これらのテーブルに YANG モデルが存在しないため、
-mgmt-framework 経由での SNMP 設定に制限がある。</p>
+mgmt-framework 経由での <a href="../../reference/glossary/#term-snmp">SNMP</a> 設定に制限がある。</p>
 <hr />
 <h2 id="4">4. 制約・バリデーション問題<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <h3 id="4-1-tacplus-global-9746">4-1. TACPLUS 空の <code>global</code> セクション (#9746)<a class="headerlink" href="#4-1-tacplus-global-9746" title="Permanent link">&para;</a></h3>
@@ -34948,7 +35670,7 @@ mgmt-framework 経由での SNMP 設定に制限がある。</p>
 <h3 id="4-3-vlan-vlan_interface-12256">4-3. VLAN / VLAN_INTERFACE の制約欠落 (#12256)<a class="headerlink" href="#4-3-vlan-vlan_interface-12256" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>[yang-models] Missing constraints in VLAN, VLAN_INTERFACE yang models
 </span></code></pre></div>
-<p>VLAN ID の範囲制約（1-4094）や
+<p><a href="../../reference/glossary/#term-vlan">VLAN</a> ID の範囲制約（1-4094）や
 VLAN インターフェースの必須フィールドチェックが
 YANG モデルに反映されていないケースがある。</p>
 <hr />
@@ -35022,6 +35744,7 @@ YANG バリデーションで拒否する拡張が追加された。</p>
 <li><a href="../dynamic-port-breakout-known-issues/">動的ポートブレイクアウト DPB 既知問題</a></li>
 <li><a href="../../reference/config-db/">CONFIG_DB リファレンス</a></li>
 </ul>
+<!-- glossary-links-injected: 7c25258ad0ca -->
 
 
 
