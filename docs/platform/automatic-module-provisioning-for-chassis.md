@@ -131,6 +131,9 @@ CHASSIS_MODULE_TABLE|LINE-CARD0
 
 `chassisd` が `get_oper_status()` をポーリングして [STATE_DB](../reference/glossary.md#term-state_db) に同期する責務を持つ。`sonic-provisiond` は STATE_DB を購読するだけ[^1]。
 
+!!! note "フィールド名の表記揺れ"
+    本ページの evidence ブロック（HLD 原文の verbatim 引用）では当該フィールドを `oper_state` と表記しているが、実装および本文中の説明では `oper_status` を採用している。`CHASSIS_MODULE_TABLE` 上の STATE_DB フィールド名は **`oper_status`** に統一されており、`oper_state` は HLD 起草時の旧称（または提案段階の仮称）と読み替えてよい。
+
 ### 新 API: `provision_module()`
 
 ```python

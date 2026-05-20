@@ -257,8 +257,8 @@ ICMP オフロード設定を確認する。
 
 ```bash
 # ICMP offload
-redis-cli -n 4 hgetall 'COPP_TABLE|trap.group.icmp'
-redis-cli -n 4 keys 'COPP_TRAP|*'
+redis-cli -n 0 hgetall 'COPP_TABLE|trap.group.icmp'  # COPP_TABLE は APPL_DB (db 0)
+redis-cli -n 4 keys 'COPP_TRAP|*'                     # COPP_TRAP / COPP_GROUP は CONFIG_DB (db 4)
 docker exec swss show copp 2>&1 | tail
 ```
 

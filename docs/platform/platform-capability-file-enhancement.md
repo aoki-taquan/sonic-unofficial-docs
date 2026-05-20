@@ -52,7 +52,7 @@ HLD 当時の用途[^1]:
 | キー | 型 | 意味 |
 |------|-----|------|
 | `controllable` | bool | NOS から制御可能なら `true`、不可なら `false`。既定 `true` |
-| status LED の `colors` | list of string | 取りうる LED 色のリスト |
+| status LED の `colors` | list of string | 取りうる LED 色のリスト（HLD 原文では単数形 `color` と表記されているが、実装側の `platform.json` 実例および本文以降のスキーマ例は複数形 `colors` を採用しているため、本ページでも `colors` で統一する） |
 | fan speed の `minimum` | number | 設定可能な fan speed の推奨最小値 |
 | fan speed の `maximum` | number | 設定可能な fan speed の推奨最大値 |
 

@@ -81,6 +81,9 @@ IEEE P802.3dj が定める **200 / 400 / 800 Gb/s と 1.6 Tb/s** のインター
 
 `106.25` 系（IEEE Clause 180 系）と `113.4375` 系（Clause 181 / 183）の **2 種類のシグナリングレート** が共存する点に注意[^1]。
 
+!!! warning "ID 128 の重複表示について"
+    本ページ内で SFF-8024 ID 128 が Host Electrical Interface（200GAUI-1）と SMF Media Interface（1.6TBASE-DR8-2）の両方に出現するが、これは **SFF-8024 が ID 空間を 2 つのフィールド（Host Electrical Interface ID と Media Interface ID）で独立に管理している** ためである。同一の数値 ID であっても列が異なれば別の意味（電気側のコネクタ規格 vs 媒体側のインタフェース規格）を指す。実装では Host Electrical Interface Code byte と Media Interface Code byte を別々にデコードする必要がある。
+
 ### sonic-platform-daemons (xcvrd)
 
 `xcvrd.py` の `get_interface_speed` に **`1.6T` 分岐を追加**。HLD の patch 抜粋[^1]:
