@@ -108,13 +108,13 @@ related:
 - [SONiC における FRR upgrade の手順とパッチ管理](../../routing/detailed-steps-to-upgrade-frr-in-sonic.md)
 - [IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）](../../routing/ipv6-link-local-enhancements.md)
 - [Fine Grained ECMP（FG_NHG / fgnhgorch）](../../routing/sonic-fine-grained-ecmp.md)
-- [SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）](../../routing/sonic-usid.md)
 - [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../../routing/srv6-vpn-hld.md)
+- [BGP PIC（Prefix Independent Convergence / NHG 階層）](../../routing/bgp-prefix-independent-convergence-architecture-document.md)
 
 **関連トラブルシュート 5 件**
 
 - [経路は RIB にあるが FIB / ASIC に降りない](../../reference/runbooks/route-not-installed-in-fib.md)
-- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [APPL_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
 - [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
 - [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
 - [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)

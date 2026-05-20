@@ -38,7 +38,7 @@ related:
 ## 症状
 
 - `show dash eni <eni>` で `oper_status=down` または `admin_state=down`
-- STATE_DB の `DASH_ENI_TABLE` の counter が更新されない
+- [STATE_DB](../../reference/glossary.md#term-state_db) の `DASH_ENI_TABLE` の counter が更新されない
 - VM → [DPU](../../reference/glossary.md#term-dpu) → outside の [VNET](../../reference/glossary.md#term-vnet) 通信が無応答
 
 ## 想定原因（優先度順）
@@ -132,4 +132,4 @@ show dash counter eni <eni>
 [^1]: sonic-net/sonic-dash-api @ master — dash_eni.proto
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — dashorch.cpp
 
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 6981be1a469d -->

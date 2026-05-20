@@ -157,10 +157,10 @@ related:
 
 **関連トラブルシュート 5 件**
 
+- [CONFIG_DB の永続化が失敗する](../../reference/runbooks/config-db-persistence-failure.md)
 - [PINS gRPC (P4Runtime) が応答しない](../../reference/runbooks/pins-grpc-unresponsive.md)
 - [minigraph 適用後に reload が完了しない / 起動が固まる](../../reference/runbooks/minigraph-reload-stuck.md)
 - [Multi-ASIC で namespace 間通信できない](../../reference/runbooks/multi-asic-namespace.md)
-- [CONFIG_DB の永続化が失敗する](../../reference/runbooks/config-db-persistence-failure.md)
 - [counter が更新されない (FLEX_COUNTER)](../../reference/runbooks/flex-counter-stuck.md)
 
 <!-- /next-reads -->

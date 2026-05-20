@@ -137,9 +137,9 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 
 - [DHCP Relay で IP が払い出されない](../../reference/runbooks/dhcp-relay.md)
 - [PINS gRPC (P4Runtime) が応答しない](../../reference/runbooks/pins-grpc-unresponsive.md)
-- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
-- [CONFIG_DB の永続化が失敗する](../../reference/runbooks/config-db-persistence-failure.md)
+- [APPL_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
 - [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
+- [ACL ルールが効かない / counter が増えない](../../reference/runbooks/acl-rule-no-hit.md)
 
 <!-- /next-reads -->
 

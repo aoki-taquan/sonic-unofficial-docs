@@ -124,7 +124,7 @@ DASH 系と SmartSwitch 系の既存 [HLD](../../reference/glossary.md#term-hld)
 
 **関連トラブルシュート 5 件**
 
-- [APP_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
+- [APPL_DB → ASIC_DB の反映が遅延・停止する](../../reference/runbooks/appdb-asicdb-sync-lag.md)
 - [orchagent が CPU 100% で詰まる](../../reference/runbooks/swss-orchagent-busy-loop.md)
 - [show techsupport の出力サイズが肥大化する](../../reference/runbooks/techsupport-size-bloat.md)
 - [Warm Reboot が失敗 / 通信断が長引く](../../reference/runbooks/warm-reboot-failure.md)

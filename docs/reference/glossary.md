@@ -1310,7 +1310,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (76)
 - [APPL_DB ACL テーブル群](config-db/appl-acl.md) (73)
 - [APPL_DB LAG_TABLE (portchannel ステータス)](config-db/portchannel-status.md) (66)
-- [サイトマップ](../_meta/sitemap.md) (56)
+- [サイトマップ](../_meta/sitemap.md) (57)
 - [FABRIC_MONITOR テーブル](config-db/fabric-monitor.md) (54)
 
 ### [ARP](#term-arp)
@@ -1940,7 +1940,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [orchagent](#term-orchagent)
 
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (218)
-- [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (109)
+- [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (98)
 - [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (70)
 - [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (66)
 - [DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)](config-db/dpu-orch.md) (65)
@@ -2188,7 +2188,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [LOGGER テーブル](config-db/log-config.md) (14)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (13)
 - [ALARM テーブル (EVENT_DB)](config-db/alarm-table.md) (10)
-- [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (10)
+- [Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）](../architecture/error-handling-framework-in-sonic.md) (9)
 
 ### [sonic-sairedis](#term-sonic-sairedis)
 
@@ -2381,8 +2381,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [vrfmgrd](#term-vrfmgrd)
 
-- [VRF テーブル](config-db/vrf.md) (54)
 - [VRF ステートテーブル（STATE_DB）](config-db/state-vrf.md) (52)
+- [VRF テーブル](config-db/vrf.md) (51)
 - [APPL_DB VRF_TABLE (VRFOrch)](config-db/vrf-orch.md) (47)
 - [APPL_DB VRF_TABLE テーブル](config-db/appl-vrf.md) (31)
 - [MGMT_VRF_CONFIG テーブル](config-db/mgmt-vrf-config.md) (17)
