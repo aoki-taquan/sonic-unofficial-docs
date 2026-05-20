@@ -168,9 +168,13 @@ excerpt: |
 
 ```mermaid
 flowchart LR
-  CLI["show flowcnt-trap"]
+  CLI1["show flowcnt-trap"]
+  CLI2["show flowcnt-route"]
   CDB0[("CONFIG_DB<br/>FLOW_COUNTER_ROUTE_PATTERN")]
-  CDB0 --> CLI
+  COUNTERS[("COUNTERS_DB<br/>flow counter stats")]
+  CDB0 --> CLI2
+  COUNTERS --> CLI1
+  COUNTERS --> CLI2
 ```
 
 !!! note "凡例"

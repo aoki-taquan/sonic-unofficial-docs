@@ -14,6 +14,7 @@ related:
     - DOT1P_TO_TC_MAP
     - DSCP_TO_TC_MAP
     - PORT_QOS_MAP
+    - TC_TO_QUEUE_MAP
   cli:
     - config qos
   yang:

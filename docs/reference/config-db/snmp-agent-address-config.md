@@ -212,11 +212,12 @@ sonic-snmpagent サービスが有効の場合のみ `SNMP_AGENT_ADDRESS_CONFIG`
 
 ### 段階 1: Consumer 登録
 
-- **[hostcfgd](../../reference/glossary.md#term-hostcfgd)**: `SNMP_AGENT_ADDRESS_CONFIG` テーブルを `ConfigDBConnector` で購読。
+- **常駐 Consumer なし**: `SNMP_AGENT_ADDRESS_CONFIG` をリアルタイム購読するプロセスは存在しない。`hostcfgd` は本テーブルを購読しない（pubsub / defaults / cross-refs セクション参照）。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- [hostcfgd](../../reference/glossary.md#term-hostcfgd) が SNMP エージェント (`snmpd`) のリッスンアドレス設定を `/etc/snmp/snmpd.conf` に書き込み再起動。
+- `docker-snmp` コンテナ起動時に Jinja2 テンプレート (`snmpd.conf.j2`) が CONFIG_DB を直接読み取り、`/etc/snmp/snmpd.conf` を生成する。
+- 設定変更を反映するには docker-snmp コンテナの再起動が必要 (リアルタイム反映ではない)。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI
@@ -240,7 +241,7 @@ SNMP_AGENT_ADDRESS_CONFIG テーブルへの書き込みが発生するコード
 
 ### minigraph / sonic-cfggen
 
-minigraph.py に SNMP_AGENT_ADDRESS_CONFIG 生成なし
+single-[ASIC](../../reference/glossary.md#term-asic) 環境では `minigraph.py` が `MGMT_INTERFACE` / `LOOPBACK_INTERFACE` を解析した後に `SNMP_AGENT_ADDRESS_CONFIG` を自動生成する (L2308-2322、port=`'161'`、vrf_name=`''` がハードコード)。multi-[ASIC](../../reference/glossary.md#term-asic) 環境では自動生成が行われず空辞書となる。
 
 ### REST / gNMI
 
@@ -340,7 +341,7 @@ multi-asic 環境 (`is_multi_asic() == True`) では両テーブルを解析せ�
 
 ### hostcfgd は非購読 (確認済み)
 
-`sonic-host-services/scripts/hostcfgd` を `SNMP_AGENT_ADDRESS` でフルテキスト検索した結果 0 件。`docker-snmp` は hostcfgd の subscribe/callback フローを使わず、テンプレート直接レンダリング方式を採る。
+`sonic-host-services/scripts/hostcfgd` を `SNMP_AGENT_ADDRESS` でフルテキスト検索した結果 0 件。`docker-snmp` は [hostcfgd](../../reference/glossary.md#term-hostcfgd) の subscribe/callback フローを使わず、テンプレート直接レンダリング方式を採る。
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/snmp-agent-address-cross-refs.md` を参照。
 <!-- /cross-refs -->
@@ -504,7 +505,7 @@ snmpd 起動 → 新しいアドレス/ポートで listen
 | 環境 | minigraph による自動生成 | snmpd のリッスン範囲 |
 |------|------------------------|-------------------|
 | **single-[ASIC](../../reference/glossary.md#term-asic)** | `MGMT_INTERFACE` + `LOOPBACK_INTERFACE` の全 IP を port=161、vrf='' で自動登録 | 管理 IP + Loopback0 IP のみ（明示的バインド） |
-| **multi-[ASIC](../../reference/glossary.md#term-asic) / chassis** | 空辞書（自動生成なし） | `udp:161` + `udp6:161` の全インタフェース fallback |
+| **multi-ASIC / chassis** | 空辞書（自動生成なし） | `udp:161` + `udp6:161` の全インタフェース fallback |
 
 `snmpd.conf.j2:16-17` のコメントがこの設計意図を明示している:
 
@@ -513,7 +514,7 @@ snmpd 起動 → 新しいアドレス/ポートで listen
 # Listen on managment and loopback0 ips for single asic platform
 ```
 
-multi-[ASIC](../../reference/glossary.md#term-asic) 環境では `SNMP_AGENT_ADDRESS_CONFIG` が空のため `snmpd.conf.j2` の else 分岐（L32-33）が適用され、全インタフェースで SNMP が公開される。セキュリティ要件がある場合は CLI で明示的にエントリを登録して絞り込む。
+multi-ASIC 環境では `SNMP_AGENT_ADDRESS_CONFIG` が空のため `snmpd.conf.j2` の else 分岐（L32-33）が適用され、全インタフェースで SNMP が公開される。セキュリティ要件がある場合は CLI で明示的にエントリを登録して絞り込む。
 
 ### chassis-packet (switch_type) の差異
 
@@ -553,4 +554,4 @@ if ip_addr.version == 6 and ip_addr.is_link_local:
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 497f5aedb4f4 -->
+<!-- glossary-links-injected: 03eb25788baf -->

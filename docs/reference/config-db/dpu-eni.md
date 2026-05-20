@@ -26,7 +26,6 @@ related:
     - DPU
     - REMOTE_DPU
     - VDPU
-    - ENI
     - DPUS
     - VIP_TABLE
   cli: []
@@ -234,8 +233,11 @@ DPUS|<dpu_name>
 
 ## 引用元
 
+[^1]: `sonic-swss/orchagent/dash/dashenifwdorch.h` (L62-89 テーブル名・フィールド名定数、L129-156 request_description). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.h>
 
+[^2]: `sonic-swss/orchagent/dash/dashenifwdorch.cpp` (L212-347 `DpuRegistry::populate()`, `processDpuTable()`, `processRemoteDpuTable()`, `processVdpuTable()`). <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/dash/dashenifwdorch.cpp>
 
+[^3]: `sonic-net/SONiC/doc/smart-switch/high-availability/eni-based-forwarding.md`. <https://github.com/sonic-net/SONiC/blob/master/doc/smart-switch/high-availability/eni-based-forwarding.md>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -329,34 +331,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
-
-`DashEniFwdOrch` は `APPL_DB:DASH_ENI_FORWARD_TABLE` の最初のエントリ受信時に `lazyInit()` を呼び出し、CONFIG_DB の `DPU` / `REMOTE_DPU` / `VDPU` テーブルをまとめて読み込む。この **遅延初期化 (lazy init)** 設計により、テーブル群は ENI エントリ到着前にすべて確定している必要がある。
-
-### 検出された順序依存
-
-| # | 依存関係 | 方向 | 緩和策 |
-|---|----------|------|--------|
-| 1 | `CONFIG_DB:DPU` / `REMOTE_DPU` 投入 → `APPL_DB:DASH_ENI_FORWARD_TABLE` 到着 | **強制先行** | ENI 到着前に DPU 系テーブルが確定していないと `DpuRegistry` に登録されず、ACL ルールが生成されない |
-| 2 | `CONFIG_DB:DPU` / `REMOTE_DPU` 処理完了 → `CONFIG_DB:VDPU` 投入 | **強制先行** | `processVdpuTable()` は `dpus_name_map_` を参照するため、DPU/REMOTE_DPU が先に処理されていなければ `SWSS_LOG_WARN("Invalid DPU ID")` でスキップ |
-| 3 | `NeighOrch` が LOCAL DPU の Neighbor を解決 → ENI ACL ルールのインストール | **強制先行** (LOCAL の場合) | Neighbor 未解決時は ACL ルール未生成のまま保留。`NeighborUpdate` を受信後に再試行 |
-| 4 | `CONFIG_DB:VIP_TABLE` 投入 → ENI ACL テーブル生成 | **強制先行** | `EniFwdCtxBase::getVip()` は `keys()` が空の場合 `SWSS_LOG_THROW` → [orchagent](../../reference/glossary.md#term-orchagent) クラッシュ |
-| 5 | `VNetOrch` への [VNET](../../reference/glossary.md#term-vnet) 登録 → CLUSTER ENI ACL ルール生成 | **強制先行** (CLUSTER の場合) | `findVnetVni()` / `findVnetTunnel()` が失敗すると CLUSTER ENI の redirect 先 (tunnel+VNI) が決定できない |
-| 6 | `gMySwitchSubType == "SmartSwitch"` 設定 → `DashEniFwdOrch` 生成 | **前提条件** | `orchdaemon.cpp:613` の条件分岐。SmartSwitch サブタイプでなければ Orch 自体が起動しない |
-
-### 主要な制約詳細
-
-**DPU → VDPU の強制先行順序 (依存 #2)**: `DpuRegistry::populate()` は内部で `processDpuTable()` → `processRemoteDpuTable()` → `processVdpuTable()` の固定順で実行される (`dashenifwdorch.cpp:218-221`)。`processVdpuTable()` が `dpus_name_map_` (DPU/REMOTE_DPU 処理時に構築) を参照するため、`populate()` 呼び出し時点で DPU/REMOTE_DPU が CONFIG_DB に存在しなければ VDPU は空の状態で確定する。`populate()` は `lazyInit()` 内で 1 回のみ呼ばれ再読み込みは行われない (`dashenifwdorch.cpp:131-146`)。
-
-**VIP_TABLE の先行必須 (依存 #4)**: `EniFwdCtxBase::addAclTable()` は `getVip()` を呼び出し、`VIP_TABLE` のキーを先頭要素として `IpPrefix` へ変換する。`VIP_TABLE` が空の場合 `SWSS_LOG_THROW("Invalid Config: VIP info not populated")` が発生し [orchagent](../../reference/glossary.md#term-orchagent) プロセスが終了する (`dashenifwdorch.cpp:502-505`)。
-
-**Neighbor 解決待ちの保留 (依存 #3)**: LOCAL DPU の場合、`initLocalEndpoints()` が `NeighOrch::resolveNeighbor()` を呼んで Neighbor 解決をトリガーする。Neighbor が未解決のまま ENI が到着した場合は ACL ルールが生成されず、`NeighborUpdate` (Neighbor Up 通知) を受信後に `handleNeighUpdate()` → ENI の再評価で ACL ルールがインストールされる (`dashenifwdorch.cpp:48-76`, `dashenifwdorch.h:227-237`)。
-
-**lazyInit の一回性 (依存 #1)**: `ctx_initialized_` フラグにより `lazyInit()` は初回 ENI 到着時にのみ実行される。それ以降に CONFIG_DB の DPU/REMOTE_DPU/VDPU を変更しても `DpuRegistry` には反映されない。SmartSwitch の DPU 構成変更は orchagent の再起動が必要。
-<!-- /ordering -->
-
-<!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存 (Phase B) — 詳細版
 
 `DashEniFwdOrch` は CONFIG_DB の `DPU` / `REMOTE_DPU` / `VDPU` と APPL_DB の `DASH_ENI_FORWARD_TABLE` を組み合わせて ACL ルールを生成する。テーブル間の処理順序と Neighbor 解決状態が ACL 生成タイミングを支配する。
 
@@ -377,7 +352,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 
 **Neighbor 未解決による ACL 生成保留 (依存 #3)**: `LocalEniNH::resolve()` (`dashenifwdinfo.cpp:18-38`) は `ctx->isNeighborResolved(nh)` が偽の場合、`EniAclRule` の state を `PENDING` のまま維持し `ctx->createAclRule()` を呼ばない。その後 `NeighOrch` から Neighbor Up 通知 (`SUBJECT_TYPE_NEIGH_CHANGE`) が届くと `DashEniFwdOrch::handleNeighUpdate()` → `EniInfo::update(NeighborUpdate)` → `fireAllRules()` の経路で再評価される。このため、DPU の PA への Neighbor が解決されるまで LOCAL ENI の ACL ルールは APPL_DB に書き込まれない。
 
-**VIP_TABLE の先行要件 (依存 #4)**: `RemoteEniNH::resolve()` (`dashenifwdinfo.cpp:40-62`) は ENI の vnet_name から VNI とトンネル名を取得した後、`ctx->getVip()` を呼び出す。`getVip()` は `VIP_TABLE` が空なら `SWSS_LOG_THROW` で orchagent プロセスを abort させる。SmartSwitch 起動シーケンスでは `VIP_TABLE` が ENI forwarding テーブルより先に CONFIG_DB に設定されていなければならない。
+**VIP_TABLE の先行要件 (依存 #4)**: `RemoteEniNH::resolve()` (`dashenifwdinfo.cpp:40-62`) は ENI の vnet_name から VNI とトンネル名を取得した後、`ctx->getVip()` を呼び出す。`getVip()` は `VIP_TABLE` が空なら `SWSS_LOG_THROW` で [orchagent](../../reference/glossary.md#term-orchagent) プロセスを abort させる。SmartSwitch 起動シーケンスでは `VIP_TABLE` が ENI forwarding テーブルより先に CONFIG_DB に設定されていなければならない。
 
 **acl_rule_count_ による ACL table 参照カウント (依存 #5, #6)**: `EniFwdCtxBase` は `acl_rule_count_` で ACL table の存在を管理する。最初の `createAclRule()` で table と table_type を APPL_DB に書き込み (`addAclTable()`)、最後の `deleteAclRule()` で両方を削除する (`deleteAclTable()`)。rule より table が先に書かれ、table より rule が先に消えることが内部カウンタで保証される (`dashenifwdorch.cpp:576-601`, `dashenifwdorch.cpp:603-650`)。
 
@@ -386,7 +361,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`DashEniFwdOrch` は CONFIG_DB の複数テーブルと他 orchagent を横断して参照する。以下はコード (`dashenifwdorch.h` / `dashenifwdorch.cpp` / `dashenifwdinfo.cpp`) から抽出した暗黙参照の一覧。
+`DashEniFwdOrch` は CONFIG_DB の複数テーブルと他 [orchagent](../../reference/glossary.md#term-orchagent) を横断して参照する。以下はコード (`dashenifwdorch.h` / `dashenifwdorch.cpp` / `dashenifwdinfo.cpp`) から抽出した暗黙参照の一覧。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
@@ -431,7 +406,7 @@ sonic-db-cli APPL_DB keys 'DASH_ENI_FORWARD_TABLE:*'
 | `vdpu_ids` または `primary_vdpu` フィールド欠落 | `EniInfo::create()` L285-288 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("Invalid DASH_ENI_FORWARD_TABLE request")` → `false` 返却。`eni_container_` に登録されず ACL ルールなし | 正しいフィールドで再 SET |
 | `primary_vdpu` が DpuRegistry に未登録 | `EniAclRule::processUpdate()` L104-108 | `SWSS_LOG_ERROR("No primary id in DPU Table")` → `update_type_t::INVALID` → `rule_state_t::FAILED` | orchagent 再起動（DpuRegistry は動的更新不可）|
 | LOCAL DPU の Neighbor 未解決 | `LocalEniNH::resolve()` L28-31 (`dashenifwdinfo.cpp`) | `endpoint_status_t::UNRESOLVED` → `rule_state_t::PENDING`。`ctx->createAclRule()` 非呼び出し | `NeighOrch` の Neighbor Up 通知受信で自動再評価 (`handleNeighUpdate()`) |
-| CLUSTER DPU の VNET トンネル名が未登録 | `RemoteEniNH::resolve()` L45-49 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("Couldn't find tunnel name for Vnet")` → `endpoint_status_t::UNRESOLVED` → `rule_state_t::PENDING` | VNetOrch に VNET エントリ登録後、ENI の再 SET で再評価 |
+| CLUSTER DPU の [VNET](../../reference/glossary.md#term-vnet) トンネル名が未登録 | `RemoteEniNH::resolve()` L45-49 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("Couldn't find tunnel name for Vnet")` → `endpoint_status_t::UNRESOLVED` → `rule_state_t::PENDING` | VNetOrch に VNET エントリ登録後、ENI の再 SET で再評価 |
 | CLUSTER DPU の VNET VNI が未登録 | `RemoteEniNH::resolve()` L52-57 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("Couldn't find VNI for Vnet")` → `endpoint_status_t::UNRESOLVED` → `rule_state_t::PENDING` | 上記と同様 |
 | `VIP_TABLE` が空 (CLUSTER 型 ENI の ACL ルール生成時) | `EniFwdCtxBase::getVip()` L499-503 (`dashenifwdorch.cpp`) | `SWSS_LOG_THROW("Invalid Config: VIP info not populated")` → **orchagent プロセス abort** | orchagent 再起動前に `VIP_TABLE` を CONFIG_DB に設定 |
 | `TUNNEL_TERM` ルール用のローカルエンドポイントなし | `EniAclRule::processUpdate()` L93-97 (`dashenifwdinfo.cpp`) | `SWSS_LOG_ERROR("No Local endpoint was found for Rule")` → `update_type_t::INVALID` → `rule_state_t::FAILED` | ENI の `vdpu_ids` に LOCAL DPU を含む VDPU を指定 |

@@ -135,8 +135,6 @@ sudo sonic-package-manager show <name> manifest
 systemctl list-units '*.service' | grep -i package
 ```
 
-
-
 ## 関連 Topics
 
 - [Topic 19 Build/Packaging - architecture](../topics/19-build-packaging/architecture.md)

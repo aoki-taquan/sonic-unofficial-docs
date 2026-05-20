@@ -271,9 +271,10 @@ assert(!entry.second.routeTable.empty());
 
 | Observer | 用途 |
 |---------|------|
-| `NeighOrch` | [ARP](../../reference/glossary.md#term-arp)/ND エントリの nexthop 変化追跡 |
 | `MirrorOrch` | ミラーセッションの宛先 IP 解決 |
-| `TunnelDecapOrch` | トンネル decap 処理の nexthop 解決 |
+| `NatOrch` | [NAT](../../reference/glossary.md#term-nat) エントリの nexthop 解決 |
+
+> 注: ソース精読の結果、`RouteOrch::attach()` を呼ぶ Orch は `MirrorOrch` と `NatOrch` のみ。`NeighOrch` は `routeorch.h` の `Subject` 継承を通じて別経路で通知を受け取るが、`attach(IpAddress)` 経由の NextHopObserver 登録は行わない。`TunnelDecapOrch` も `attach()` は呼ばない（後述の暗黙参照テーブル注記を参照）。
 
 ---
 
@@ -471,7 +472,7 @@ RouteOrch が `addRoute()` 内で `hasNhg()` / `hasNextHop()` を確認した時
 | `APPL_STATE_DB ROUTE_TABLE` | 書き込み先（SAI SET 成功時） | `publishRouteState()` が `protocol` / `err_str` を書き込む | `response_publisher.cpp` L93–148 |
 | `fpmsyncd` (`APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 消費) | Pub/Sub 通知送信先 | `suppress-fib-pending = enabled` かつ fpmsyncd 稼働中のみ | `fpmsyncd.cpp` L78, L116; `routesync.cpp` L3156–3190 |
 | `CONFIG_DB MIRROR_SESSION` | 間接参照（MirrorOrch が `attach()`/`detach()` のトリガ） | MirrorOrch がセッションエントリを処理するとき | `mirrororch.cpp` L517 (`attach`), L557 (`detach`) |
-| `CONFIG_DB NAT_ENTRY` / `NAT_TWICE_ENTRY` | 間接参照（NatOrch が `attach()`/`detach()` のトリガ） | NatOrch が DNAT / 双方向 NAT エントリを処理するとき | `natorch.cpp` L414, L458, L504, L591 (`attach`); L558, L646, L688, L732 (`detach`) |
+| `CONFIG_DB NAT_ENTRY` / `NAT_TWICE_ENTRY` | 間接参照（NatOrch が `attach()`/`detach()` のトリガ） | NatOrch が DNAT / 双方向 [NAT](../../reference/glossary.md#term-nat) エントリを処理するとき | `natorch.cpp` L414, L458, L504, L591 (`attach`); L558, L646, L688, L732 (`detach`) |
 | `APPL_DB ROUTE_TABLE` → `m_syncdRoutes`（RouteOrch 内部テーブル） | 内部依存（最長プレフィックスマッチの計算源） | `notifyNextHopChangeObservers()` が最長マッチを求めるとき | `routeorch.cpp` L1270–1340 |
 
 !!! note "`suppress-fib-pending` が欠如した場合の挙動"
@@ -740,7 +741,7 @@ Redis Pub/Sub はメッセージをバッファリングしないため、fpmsyn
 | Observer | `attach()` 箇所 | 監視 IP |
 |---------|----------------|---------|
 | `MirrorOrch` | `mirrororch.cpp` L517 | ミラーセッションの宛先 IP |
-| `NatOrch` | `natorch.cpp` L414, L458, L504, L591 | DNAT / 双方向 NAT の変換先 IP |
+| `NatOrch` | `natorch.cpp` L414, L458, L504, L591 | DNAT / 双方向 [NAT](../../reference/glossary.md#term-nat) の変換先 IP |
 | `NeighOrch` | ネイバー解決時 | ネイバーの IP アドレス |
 
 ### orchagent select ループとタイムアウト
@@ -803,8 +804,8 @@ RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字
 
 | Observer | `attach()` 箇所 |
 |---------|----------------|
-| `NeighOrch` | ネイバー解決時 |
 | `MirrorOrch` | ミラーセッション設定時 |
+| `NatOrch` | NAT エントリ登録時 (`natorch.cpp` L414, L458, L504, L591) |
 
 ## 関連リファレンス
 
@@ -820,6 +821,9 @@ RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字
 [^3]: ResponsePublisher 実装: `orchagent/response_publisher.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp>
 [^4]: fpmsyncd 実装: `fpmsyncd/fpmsyncd.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp>
 [^5]: orchdaemon 初期化: `orchagent/orchdaemon.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
+[^6]: routesync 実装: `fpmsyncd/routesync.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp>
+[^7]: MirrorOrch 実装: `orchagent/mirrororch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/mirrororch.cpp>
+[^8]: NatOrch 実装: `orchagent/natorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/natorch.cpp>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -861,4 +865,4 @@ APPL_STATE_DB ROUTE_TABLE:192.168.1.0/24
 - `protocol` が空文字列 → APPL_DB の `ROUTE_TABLE` エントリに `protocol` フィールドが存在しない（静的経路や一部の直接書き込みツールで発生する）。
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: e3c15dc9fa9a -->
+<!-- glossary-links-injected: d6cf63fda5d8 -->

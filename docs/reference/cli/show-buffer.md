@@ -14,9 +14,10 @@ related:
   cli:
   - show buffer
   yang:
+  - sonic-buffer-pool
+  - sonic-buffer-profile
   - sonic-buffer-pg
   - sonic-buffer-queue
-  - sonic-buffer-profile
 ---
 
 # show buffer サブコマンド
@@ -58,7 +59,7 @@ mmuconfig -l [-n <namespace>] [-vv]
 
 - CLI: [show buffer-pool](show-buffer-pool.md) / [show priority-group](show-priority-group.md) / [show queue](show-queue.md) / [config buffer](config-buffer.md)
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): [BUFFER_POOL](../config-db/buffer-pool.md) / [BUFFER_PROFILE](../config-db/buffer-profile.md) / [BUFFER_PG](../config-db/buffer-pg.md) / [BUFFER_QUEUE](../config-db/buffer-queue.md)
-- [YANG](../../reference/glossary.md#term-yang): [sonic-buffer-pool](../yang/sonic-buffer-pool.md) / [sonic-buffer-profile](../yang/sonic-buffer-profile.md)
+- [YANG](../../reference/glossary.md#term-yang): [sonic-buffer-pool](../yang/sonic-buffer-pool.md) / [sonic-buffer-profile](../yang/sonic-buffer-profile.md) / [sonic-buffer-pg](../yang/sonic-buffer-pg.md) / [sonic-buffer-queue](../yang/sonic-buffer-queue.md)
 - Topic: [QoS / Buffer](../../topics/08-qos-buffer/index.md)
 
 <!-- ref-triangle:end -->

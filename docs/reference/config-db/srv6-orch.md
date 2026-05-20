@@ -694,7 +694,7 @@ CrmOrch が定期的に COUNTERS_DB `CRM_STATS` テーブルへ書き出す（�
 |----------|----------------------|
 | `mySidVrfRequired()` | `end.t`, `end.dt4`, `end.dt6`, `end.dt46`, `udt4`, `udt6`, `udt46` |
 | `mySidNextHopRequired()` | `end.x`, `end.dx4`, `end.dx6`, `udx4`, `udx6`, `end.b6.encaps`, `end.b6.encaps.red`, `end.b6.insert`, `end.b6.insert.red`, `ua` |
-| `mySidTunnelRequired()` | `un` と `udt46` を除くすべての `u*` 系アクション |
+| `mySidTunnelRequired()` | `un` および `udt46` で `decap_dscp_mode` が CONFIG_DB に設定されている場合に true (`srv6orch.cpp:1417-1429`) |
 
 ### SAI 属性一覧
 

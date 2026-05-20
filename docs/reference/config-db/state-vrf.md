@@ -230,17 +230,17 @@ VRFOrch: STATE_DB VRF_OBJECT_TABLE|<name> SET {state=ok}
 CONFIG_DB VRF|<name> DEL
   ↓
 vrfmgrd: isVrfObjExist() → STATE_DB VRF_OBJECT_TABLE|<name> の存在確認
-  → false (orchagent 未完了): m_toSync キューに残して次の doTask() で再確認
-  → true  (orchagent 完了済み): 削除処理へ進む (vrfmgr.cpp:331)
-  ↓
-vrfmgrd: APP_DB APP_VRF_TABLE|<name> DEL
-vrfmgrd: STATE_DB VRF_TABLE|<name> DEL
+  → true  (orchagent 未完了 = エントリ残存): m_toSync キューに残して次の doTask() で再確認
+  → false (orchagent 完了済み = エントリ消滅): 削除処理へ進む (vrfmgr.cpp:331)
   ↓
 VRFOrch: SAI remove_virtual_router()
 VRFOrch: STATE_DB VRF_OBJECT_TABLE|<name> DEL
+  ↓
+vrfmgrd: APP_DB APP_VRF_TABLE|<name> DEL
+vrfmgrd: STATE_DB VRF_TABLE|<name> DEL
 ```
 
-`VRF_TABLE` の DEL は必ず `VRF_OBJECT_TABLE` の DEL より **先** になる。
+`VRF_OBJECT_TABLE` の DEL は必ず `VRF_TABLE` の DEL より **先** になる。
 これにより [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が VRF インタフェース名を参照できる期間を保証する (vrfmgr.cpp:316 コメント)。
 
 ### 後続プロセスの待機依存

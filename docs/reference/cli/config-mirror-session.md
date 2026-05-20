@@ -222,15 +222,15 @@ flowchart LR
 ### 典型的な使い方
 
 ```bash
-# 例 1: ERSPAN mirror session を作成
-sudo config mirror_session add mirror1 10.0.0.1 10.0.0.50 0x88be 0 100
+# 例 1: ERSPAN mirror session を作成 (src_ip / dst_ip / dscp / ttl / gre_type)
+sudo config mirror_session add mirror1 10.0.0.1 10.0.0.50 46 64 0x88be
 ```
 
 ### よくある引数の組み合わせ
 
 ```bash
-# SPAN (ローカル mirror)
-sudo config mirror_session add span1 --type span --dst-port Ethernet24 --source Ethernet0 --direction rx
+# SPAN (ローカル mirror) — `config mirror_session span add` サブグループを使う
+sudo config mirror_session span add span1 Ethernet24 Ethernet0 rx
 
 sudo config mirror_session remove mirror1
 ```

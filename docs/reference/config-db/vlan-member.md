@@ -339,11 +339,12 @@ show vlan brief
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / VlanOrch** (`sonic-swss/orchagent/vlanorch.cpp`): `VLAN_MEMBER` テーブルを `SubscriberStateTable` で購読。
+- **vlanmgrd** (`sonic-swss/cfgmgr/vlanmgr.cpp`): CONFIG_DB `VLAN_MEMBER` テーブルを `ConsumerStateTable` で購読。
+- **orchagent / VlanOrch** (`sonic-swss/orchagent/vlanorch.cpp`): APPL_DB `APP_VLAN_MEMBER_TABLE` を `ConsumerStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- VlanOrch がポートの VLAN 帰属 (`tagging_mode`) を解析。APP_DB への書き込みなし。
+- vlanmgrd が `addHostVlanMember()` で Linux bridge 操作を行った後、APPL_DB `VLAN_MEMBER_TABLE` (`APP_VLAN_MEMBER_TABLE_NAME`) に書き込む。orchagent は APPL_DB を経由して SAI に反映する（pubsub セクション参照）。
 
 ### 段階 3: APPL → SAI
 

@@ -209,6 +209,7 @@ vtysh -c "configure terminal"
 
 - [BGP_GLOBALS_AF](./bgp-globals-af.md)
 - [STATIC_ROUTE](./static-route.md)
+- [ROUTE_MAP_SET](./route-map-set.md)
 - [ROUTE_MAP](./route-map.md)
 
 <!-- ref-triangle:end -->

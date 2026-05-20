@@ -251,7 +251,7 @@ MIRROR_SESSION SET
 |---|---|---|---|
 | セッション名が既に存在 | `task_duplicated`（処理なし） | NOTICE "Failed to create session %s: object already exists" | `mirrororch.cpp:391-392` |
 | `queue` 値が `m_maxNumTC` 以上 | `task_invalid_entry` | ERROR "Failed to get valid queue %s" | `mirrororch.cpp:428-429` |
-| `policer` 名が PolicerOrch に未登録 | `task_need_retry`（POLICER 追加後に自動再試行） | ERROR "Failed to get policer %s" | `mirrororch.cpp:436-438` |
+| `policer` 名が PolicerOrch に未登録 | `task_need_retry`（ただし POLICER の SET は MirrorOrch をウェイクアップしないため事実上は MIRROR_SESSION を手動で再 SET する必要あり） | ERROR "Failed to get policer %s" | `mirrororch.cpp:436-438` |
 | `src_port` にポートが存在しない / PHY・LAG 以外 | `task_invalid_entry` | ERROR "Failed to locate Port/LAG %s" / "Not supported port type %d" | `mirrororch.cpp:447-449` |
 | `dst_port` が存在しない / PHY 以外 | `task_invalid_entry` | ERROR "Not supported port %s type %d" | `mirrororch.cpp:455-458` |
 | `direction` が RX/TX/BOTH 以外 | `task_invalid_entry` | ERROR "Failed to get valid direction %s" | `mirrororch.cpp:466-468` |

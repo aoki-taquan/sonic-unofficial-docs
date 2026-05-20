@@ -12,7 +12,7 @@ sources:
     path: sonic-xcvrd/xcvrd/xcvrd.py
     ref: 4ba9612cb7756651062d37f977e3df17d57f740d
 related:
-  config_db: [PORT, AUTONEG_PORT]
+  config_db: [PORT]
   cli: [show interface status, show interface transceiver eeprom, config interface autoneg]
   yang: [sonic-port]
 ---

@@ -25,9 +25,6 @@ related:
   config_db:
     - FLEX_COUNTER_TABLE
     - DEBUG_COUNTER
-    - counters-port
-    - counters-queue
-    - debug-counter
   cli:
     - portstat
     - counterpoll

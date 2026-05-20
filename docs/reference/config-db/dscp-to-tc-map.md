@@ -378,8 +378,8 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 
 | 定数名 | 値 | 定義箇所 | 説明 |
 |--------|----|---------|------|
-| `DSCP_MAX_VAL` | `63` | `qosorch.cpp:119` | DSCP 値の最大値。超過時 `task_failed` |
-| DSCP key 範囲 | `0`..`63` | 上記定数に基づく | 超過は `task_failed`（`stoi` 変換後に範囲チェック） |
+| `DSCP_MAX_VAL` | `63` | `qosorch.cpp:119` | `DscpToFcMapHandler` のみで参照される定数。`DscpToTcMapHandler` では使用されない |
+| DSCP key 範囲 | `0`..`63` | YANG / 仕様上の有効範囲 | `DscpToTcMapHandler` では範囲チェックなし。64..255 も `stoi` 成功すれば SAI に渡され ASIC が reject する |
 | TC value 範囲 (YANG) | `0`..`15` | `sonic-types.yang.j2:338` | YANG 定義上の上限 |
 | TC value 範囲 (実運用) | `0`..`7` | ASIC/SAI 制約 | 8 以上は SAI エラー → `task_failed` |
 
