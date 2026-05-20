@@ -257,7 +257,7 @@ show ip interfaces
 
 ### 段階 2 — CFG→APPL 翻訳
 
-`APP_INTF_TABLE` に書き込み (IP address 付き router interface)
+`INTF_TABLE` に書き込み (IP address 付き router interface)
 
 ### 段階 3 — APPL→SAI
 
@@ -265,7 +265,7 @@ show ip interfaces
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: [CONFIG_DB](../../reference/glossary.md#term-config_db) 変化を `intfmgrd` が検知後 `APP_INTF_TABLE` に書き込み。`IntfsOrch` が [APPL_DB](../../reference/glossary.md#term-appl_db) を購読して SAI router interface を作成/更新。IP address 追加は即時反映。
+**適用タイミング**: [CONFIG_DB](../../reference/glossary.md#term-config_db) 変化を `intfmgrd` が検知後 `INTF_TABLE` に書き込み。`IntfsOrch` が [APPL_DB](../../reference/glossary.md#term-appl_db) を購読して SAI router interface を作成/更新。IP address 追加は即時反映。
 
 **副作用**: IP address 追加は [ARP](../../reference/glossary.md#term-arp)/[NDP](../../reference/glossary.md#term-ndp) 送信を開始。IP address 削除は関連する [ARP](../../reference/glossary.md#term-arp) エントリと neighbor を削除。MTU 変更は PMTUD に影響。
 <!-- /runtime-trace -->
@@ -331,7 +331,7 @@ PSUBSCRIBE __keyspace@{db_id}__:INTERFACE|*
 
 #### intfmgrd → APPL_DB
 
-処理完了後、`ProducerStateTable m_appIntfTableProducer` で `APP_INTF_TABLE` に書き込む。
+処理完了後、`ProducerStateTable m_appIntfTableProducer` で `INTF_TABLE` (C++ マクロ `APP_INTF_TABLE_NAME`) に書き込む。
 
 | 項目 | 値 |
 |------|----|

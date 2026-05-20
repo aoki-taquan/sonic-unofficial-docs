@@ -246,7 +246,7 @@ show kdump config
 ### CLI
 - `config kdump enable/disable`
 - `config kdump memory <size>`
-- `config kdump num-dumps <n>`
+- `config kdump num_dumps <n>`
   - ソース: `sonic-utilities/config/kdump.py`
 
 ### minigraph / sonic-cfggen

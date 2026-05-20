@@ -23,6 +23,10 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-20 #4769 docs: doc-review fixes (batch 029)
+- 2026-05-20 #4744 docs: doc-review fixes (batch 031)
+- 2026-05-20 #4740 docs: doc-review fixes (batch 021)
+- 2026-05-20 #4736 docs: doc-review fixes (batch 030)
 - 2026-05-20 #4733 docs: doc-review fixes (batch 012)
 - 2026-05-20 #4737 docs: doc-review fixes (batch 028)
 - 2026-05-20 #4735 docs: doc-review fixes (batch 015)
@@ -519,8 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3542 docs(config-db): add Phase F side-effects block to extended-monitor
 - 2026-05-19 #3541 docs(config-db): add Phase C cross-refs block to hardware
 - 2026-05-19 #3540 docs(config-db): add Phase G pubsub block to route-cache
-- 2026-05-19 #3539 docs(config-db): add Phase E hardcoded-constants block to scheduler-orch
-- 2026-05-19 #3538 docs(config-db): add Phase H platform block to dpu-eni
-- 2026-05-19 #3537 docs(config-db): add Phase G pubsub block to event-publisher
-- 2026-05-19 #3536 docs(config-db): add Phase H platform block to nat-static
 

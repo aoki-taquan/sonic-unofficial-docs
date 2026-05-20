@@ -1739,7 +1739,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VLAN_SUB_INTERFACE テーブル](config-db/vlan-sub-interface.md) (164)
 - [VLAN_INTERFACE テーブル](config-db/vlan-interface.md) (146)
 - [PORTCHANNEL_INTERFACE テーブル](config-db/portchannel-interface.md) (138)
-- [INTERFACE テーブル](config-db/interface.md) (100)
+- [INTERFACE テーブル](config-db/interface.md) (101)
 - [MCLAG_INTERFACE テーブル](config-db/mclag-interface.md) (88)
 
 ### [intfmgrd](#term-intfmgrd)
@@ -1854,7 +1854,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [MAC](#term-mac)
 
-- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (202)
+- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (203)
 - [PORT (macsec フィールド)](config-db/macsec-port.md) (186)
 - [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (83)
 - [SAG テーブル](config-db/sag.md) (76)
@@ -1863,7 +1863,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [MACsec](#term-macsec)
 
 - [PORT (macsec フィールド)](config-db/macsec-port.md) (126)
-- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (118)
+- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (119)
 - [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (35)
 - [Gearbox PHY ごとの MACsec backend 決定（macsec_supported）](../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md) (27)
 - [MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）](../switching/macsec-sonic-high-level-design-document.md) (25)
