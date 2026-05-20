@@ -1766,7 +1766,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [intfsorch](#term-intfsorch)
 
-- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (83)
+- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (85)
 - [VLAN_INTERFACE テーブル](config-db/vlan-interface.md) (69)
 - [VLAN_SUB_INTERFACE テーブル](config-db/vlan-sub-interface.md) (55)
 - [COUNTERS_DB PortChannel/LAG カウンタ](config-db/counters-portchannel.md) (45)
@@ -1941,7 +1941,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (218)
 - [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (109)
-- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (74)
+- [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (76)
 - [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (66)
 - [DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)](config-db/dpu-orch.md) (65)
 
