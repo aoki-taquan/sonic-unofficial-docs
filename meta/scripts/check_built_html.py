@@ -22,7 +22,6 @@ CI 上では informational 用途で `|| true` で呼ばれる想定。スクリ
 from __future__ import annotations
 
 import argparse
-import re
 import sys
 from html.parser import HTMLParser
 from pathlib import Path

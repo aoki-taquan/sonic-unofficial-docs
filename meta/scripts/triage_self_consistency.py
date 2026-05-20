@@ -37,12 +37,12 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "meta" / "scripts"))
 
 from check_verification_self_consistency import (  # noqa: E402
+    DOCS_DIR,
     KEYWORD_PATTERNS,
     SUSPECT_VERIFICATIONS,
-    DOCS_DIR,
+    load_exceptions,
     parse_frontmatter,
     strip_noise,
-    load_exceptions,
 )
 
 FOOTNOTE_REF_RE = re.compile(r"\[\^[^\]]+\]")

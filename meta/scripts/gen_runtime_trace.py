@@ -12,7 +12,6 @@ Also writes meta/_intermediate/cdb-flow/<slug>-runtime-trace.md
 
 import json
 import os
-import re
 
 WT = "/home/coder/sonic-unofficial-docs"
 
@@ -554,7 +553,6 @@ def gen_intermediate_file(slug, data, block):
 """
 
 def main():
-    import json
 
     # Load tier_low[:60] slugs
     cardinality_path = os.path.join(WT, "meta/cdb-enum-cardinality.json")
@@ -615,7 +613,7 @@ def main():
         modified_pages.append(slug)
         print(f"OK: {slug}")
 
-    print(f"\nSummary:")
+    print("\nSummary:")
     print(f"  Modified: {len(modified_pages)}")
     print(f"  Skipped (already has block): {len(skipped_pages)}")
     print(f"  Missing pages: {len(missing_pages)}")

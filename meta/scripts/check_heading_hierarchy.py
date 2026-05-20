@@ -40,16 +40,13 @@ def extract_headings(text: str) -> list[tuple[int, int, str]]:
     out: list[tuple[int, int, str]] = []
     in_fence = False
     fence_marker = ""
-    in_frontmatter = False
     # Frontmatter only at very top.
     i = 0
     if lines and lines[0].strip() == "---":
-        in_frontmatter = True
         i = 1
         while i < len(lines):
             if lines[i].strip() == "---":
                 i += 1
-                in_frontmatter = False
                 break
             i += 1
     for idx in range(i, len(lines)):

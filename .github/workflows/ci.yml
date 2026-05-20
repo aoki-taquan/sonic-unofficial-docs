@@ -52,6 +52,19 @@ jobs:
           path: meta/built-html-report.md
           if-no-files-found: ignore
 
+  # タイポ検知 (crate-ci/typos)。設定は .typos.toml。
+  # SONiC エコシステム用語は extend-words で除外。初期は informational
+  # で運用、誤検知が落ち着いたら strict に切り替える。
+  typos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: typos check
+        uses: crate-ci/typos@master
+        with:
+          files: docs meta README.md CONTRIBUTING.md CLAUDE.md
+          config: .typos.toml
+
   # frontmatter linter (strict) + 全 drift / 各種 informational check。
   # 元は job を細かく分けて並走させていたが、setup-python の起動オーバヘッド
   # の方が大きく、step は ~10 秒 / job 並走による並列効果は小さいため、
@@ -74,6 +87,12 @@ jobs:
       # --- strict checks (exit != 0 で job を落とす) -------------------
       - name: Frontmatter linter v2 (strict)
         run: python3 meta/scripts/frontmatter_lint.py
+
+      # 不可視文字 / bidi 制御 / tag char (prompt-injection ベクター) 検出。
+      # 0 件キープが必須。理由・運用は meta/scripts/check_invisible_chars.py の
+      # docstring を参照。許可コメントで例外指定可能。
+      - name: Invisible chars / bidi controls (strict)
+        run: python3 meta/scripts/check_invisible_chars.py
 
       - name: Runbook verification status (strict)
         run: python3 meta/scripts/check_runbook_status.py --check
@@ -163,6 +182,14 @@ jobs:
         run: |
           pip install PyYAML
           python3 meta/scripts/enrich_chapter_index_related.py --check
+
+      # ruff: meta/scripts 配下の Python 品質 (strict)。
+      # 重い rule は外し、pyflakes (F) + isort (I) + bugbear 一部に絞り込み。
+      # 設定は pyproject.toml の [tool.ruff] 参照。
+      - name: Python lint (ruff, strict)
+        run: |
+          pip install ruff
+          ruff check meta/scripts/
 
       - name: Upload lint reports
         if: always()

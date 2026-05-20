@@ -114,21 +114,18 @@ def refresh_frontmatter(fm: str, head_by_repo: dict[str, str]) -> tuple[str, lis
     current_repo: str | None = None
     changes: list[tuple[str, str, str]] = []
     in_sources = False
-    sources_indent: int | None = None
 
     for line in lines:
         stripped = line.lstrip()
-        indent = len(line) - len(stripped)
+        len(line) - len(stripped)
         # Detect entering / leaving `sources:` block
         if re.match(r"^sources:\s*$", line):
             in_sources = True
-            sources_indent = indent
             out.append(line)
             continue
         if in_sources and stripped and not line.startswith(" ") and not line.startswith("\t"):
             # back to top-level field → out of sources
             in_sources = False
-            sources_indent = None
             current_repo = None
 
         if in_sources:

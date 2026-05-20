@@ -1,0 +1,38 @@
+# Python ツール設定 (ruff). リポジトリは Python project ではなく
+# meta/scripts/ にだけ Python が存在するため、最低限の lint 設定のみ。
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = [
+    ".venv",
+    ".cache",
+    "site",
+    ".claude",
+]
+
+[tool.ruff.lint]
+# 既存 meta/scripts を破壊せず、明らかな品質問題のみ拾う:
+# - F: pyflakes (unused import, undefined name)
+# - E9: syntax error
+# - W6: deprecated
+# - B: bugbear (mutable default arg, ...) 部分のみ
+# - I: import order (簡易)
+select = [
+    "F",      # pyflakes
+    "E9",     # SyntaxError
+    "W6",     # deprecated
+    "B006",   # mutable default arg
+    "B008",   # function call in default arg
+    "B904",   # raise ... from None
+    "I",      # isort
+]
+# script 内の `print()` 多用や long line は許容
+ignore = [
+    "E501",   # line too long (formatter が当てない方針)
+]
+
+[tool.ruff.lint.per-file-ignores]
+# 自動生成スクリプトは ad-hoc な書き方を許容
+"meta/scripts/gen_*.py" = ["I"]
+"meta/scripts/_*.py" = ["I", "F401"]
