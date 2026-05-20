@@ -35528,7 +35528,7 @@
 <ul>
 <li><strong>既存 ACL の <code>SNMP_ACL</code></strong>: 本機能とは独立に CONFIG_DB に存在する。SNMP デーモンの ACL 部分は本機能の対象外。</li>
 <li><strong><code>docker-snmp</code> 起動順</strong>: CONFIG_DB が先に上がっていることが前提。<code>hostcfgd</code> の起動依存は変更されない。</li>
-<li><strong>Watchdog / SNMP trap</strong>: trap は別途 <code>SNMP_TRAP_RECEIVER</code> テーブル等で管理（本 HLD のスコープ外）。</li>
+<li><strong>Watchdog / SNMP trap</strong>: trap は別途 <code>SNMP_TRAP_CONFIG</code> テーブル等で管理（本 HLD のスコープ外）。</li>
 </ul>
 <h2 id="_8">トラブルシューティング<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>

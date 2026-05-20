@@ -35462,7 +35462,7 @@
 </ul>
 <h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>breakout 可能なポート組合せは platform.json の <code>BRKOUT_CFG</code> に定義された範囲に限られ、<a href="../../reference/glossary/#term-hld">HLD</a> 記述よりも実機サポート範囲が狭い場合がある。</li>
+<li>breakout 可能なポート組合せは platform.json の <code>interfaces</code> キーに定義された範囲に限られ、<a href="../../reference/glossary/#term-hld">HLD</a> 記述よりも実機サポート範囲が狭い場合がある。</li>
 <li>breakout 実行時は対象ポートが一時的に down し、隣接機器の <a href="../../reference/glossary/#term-lldp">LLDP</a> / LAG メンバーシップが flap する点を運用で考慮する。</li>
 <li>動的 breakout 中に CONFIG_DB が中間状態となるため、並行して <code>config save</code> を実行すると不整合な config が保存される。</li>
 </ul>

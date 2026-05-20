@@ -35713,7 +35713,7 @@ reasoning: hostcfgd → banner-config → 4 ファイル書き出し、sshd 前�
 <h3 id="_12">コマンド例<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <p>Banner 設定の状態を確認する。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>banner
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BANNER_MESSAGE|global&#39;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BANNER_MESSAGE|MESSAGE&#39;</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>cat<span class="w"> </span>/etc/issue<span class="w"> </span>/etc/issue.net<span class="w"> </span>/etc/motd
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>config<span class="w"> </span>banner<span class="w"> </span>login<span class="w"> </span><span class="s1">&#39;WARNING: authorized only&#39;</span>
 </span></code></pre></div>

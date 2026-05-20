@@ -35627,7 +35627,7 @@ reasoning: available 取得経路と used 反映の責務分担の根拠。
 <p>SAI 拡張 CRM 属性が取得できるか確認する。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>crm<span class="w"> </span>show<span class="w"> </span>resources<span class="w"> </span>all
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>saictl<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show crm&#39;</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;CRM_TABLE:STATS&#39;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;CRM:STATS&#39;</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>grep<span class="w"> </span>-i<span class="w"> </span>CRM<span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
 </span></code></pre></div>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>

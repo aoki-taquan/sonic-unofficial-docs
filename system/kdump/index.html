@@ -35525,9 +35525,9 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition info">
-<p class="admonition-title">裏取りステータス: code-verified</p>
-<p><code>sonic-utilities/config/kdump.py</code> を master で確認、<code>sonic-buildimage/build_debian.sh</code> で <code>kdump</code> 関連処理も確認、<code>sonic-buildimage/files/image_config/kdump/kdump-tools</code> も存在。HLD 当時の主要要素は master 取り込み済み。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p><code>sonic-utilities/config/kdump.py</code> を master で確認、<code>sonic-buildimage/build_debian.sh</code> で <code>kdump</code> 関連処理も確認、<code>sonic-buildimage/files/image_config/kdump/kdump-tools</code> も存在。ただし kdump-tools 後続バージョン差分・kernel バージョン更新の影響は未確認のため discrepancy-found に降格 (2026-05-13)。詳細は末尾の裏取りメモを参照。</p>
 </div>
 <h1 id="kdumpkexec-kernel-crash-dump-makedumpfile">kdump（kexec ベース kernel crash dump / makedumpfile）<a class="headerlink" href="#kdumpkexec-kernel-crash-dump-makedumpfile" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
