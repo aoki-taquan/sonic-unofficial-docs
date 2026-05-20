@@ -15,7 +15,7 @@ related:
     - VXLAN_TUNNEL_MAP
     - VRF
     - VLAN
-    - EVPN_NVO
+    - VXLAN_EVPN_NVO
   cli:
     - config vxlan
     - show vxlan

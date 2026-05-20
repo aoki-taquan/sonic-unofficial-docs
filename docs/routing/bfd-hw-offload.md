@@ -13,7 +13,6 @@ related:
   config_db:
   - VRF
   - CRM
-  - BFD_SESSION_TABLE
   - MGMT_VRF_CONFIG
   - VXLAN_TUNNEL_MAP
   - SYSLOG_SERVER
@@ -75,7 +74,7 @@ flowchart LR
 セッションキーは [VRF](../reference/glossary.md#term-vrf)・インタフェース・宛先 IP の 3 つで一意化する[^1]。
 
 ```text
-BFD_SESSION:{vrf}:{ifname}:{ipaddr}
+BFD_SESSION_TABLE:{vrf}:{ifname}:{ipaddr}
     tx_interval   : interval ms (OPTIONAL)
     rx_interval   : interval ms (OPTIONAL)
     multiplier    : detect multiplier (OPTIONAL)

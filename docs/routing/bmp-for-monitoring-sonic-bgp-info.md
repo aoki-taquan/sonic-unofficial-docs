@@ -93,11 +93,13 @@ bmp targets sonic-bmp
 ### CONFIG_DB
 
 ```text
-BMP|table
-FEATURE|bmp:
+BMP|table:
   bgp_rib_in_table   = true | false
   bgp_neighbor_table = true | false
   bgp_rib_out_table  = true | false
+
+FEATURE|bmp:
+  state = enabled | disabled   # BMP コンテナの起動制御（BMP|table のフィールドとは別）
 ```
 
 CLI で table 単位の populate を on/off できる。

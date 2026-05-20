@@ -256,7 +256,7 @@ grep -i error /var/log/swss/sairedis.rec | tail -20
 <!-- topics-back-ref -->
 ## 関連 Topics
 
-- [Topics: SRv6 / MPLS / Path Tracing](../topics/17-srv6-mpls/index.md)
+- [Topics: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md)
 
 <!-- /topics-back-ref -->
 

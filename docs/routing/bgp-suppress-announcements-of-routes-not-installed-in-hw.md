@@ -42,7 +42,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: Code-verified"
-    `dplane_fpm_nl` 移行、`RTM_F_OFFLOAD` 通知、`fpmsyncd` の応答チャネル、consistency monitoring script の現行 master 取り込みは未裏取り。
+    `dplane_fpm_nl` 移行、`RTM_F_OFFLOAD` 通知、`fpmsyncd` の応答チャネル、`DEVICE_METADATA.localhost.suppress-fib-pending` による FRR 機能フックは裏取り済（本ページ末尾の「裏取りメモ」参照）。consistency monitoring script の現行 master 取り込みは追加調査余地あり。
 
 # BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）
 

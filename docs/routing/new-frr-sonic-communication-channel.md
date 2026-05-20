@@ -10,22 +10,10 @@ sources:
   path: doc/sonic-fpm-module/frr_sonic_communication_channel.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - SYSLOG_SERVER
-  - SYSLOG_CONFIG
-  - SYSLOG_CONFIG_FEATURE
-  - PORT
-  - PORTCHANNEL
-  - BREAKOUT_CFG
-  - INTERFACE
-  cli:
-  - show interfaces
-  - show ip
-  - config syslog
+  config_db: []
   yang:
   - sonic-srv6
   - sonic-system-defaults
-  - sonic-syslog
   _no_related_cli: true
 ---
 
