@@ -14,28 +14,21 @@ related:
   config_db:
   - ACL_TABLE
   - ACL_RULE
-  - VLAN
   - PORT
-  - VLAN_MEMBER
   - DSCP_TO_TC_MAP
-  - VLAN_SUB_INTERFACE
   cli:
   - config acl add table
   - config acl
-  - config vlan
   - show acl
-  - show vlan
   yang:
-  - sonic-vlan
   - sonic-dscp-tc-map
-  - sonic-vlan-sub-interface
   - sonic-port
   - sonic-crm
 ---
 
 <!-- topics-tip -->
 !!! tip "Topics で読み物として読む"
-    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md) を参照。
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified (2026-05-11)"

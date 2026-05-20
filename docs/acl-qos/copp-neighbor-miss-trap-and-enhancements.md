@@ -181,7 +181,7 @@ show copp configuration detailed --group queue1_group3
 # neighbor_miss trap と hw_status / capability を確認
 show copp configuration | grep -A2 neighbor_miss
 redis-cli -n 6 hgetall 'COPP_TRAP_CAPABILITY_TABLE|traps'
-redis-cli -n 6 hgetall 'COPP_TABLE|neighbor_miss'
+redis-cli -n 6 hgetall 'COPP_TRAP_TABLE|neighbor_miss'
 docker logs swss 2>&1 | grep -i copporch | tail
 ```
 

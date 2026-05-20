@@ -23,7 +23,6 @@ related:
   - config mirror_session
   - acl-loader
   - aclshow
-  - config mirror session
   - config bgp
   - show bgp
   yang:

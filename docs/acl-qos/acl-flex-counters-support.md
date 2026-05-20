@@ -41,7 +41,7 @@ ACL counter は当初 orchagent が 10 秒固定間隔で polling していた�
 
 - 大量 ACL rule で **orchagent の queue を空ける**
 - ユーザ設定 + `counterpoll` CLI で **enable/disable**
-- polling interval を **1〜1000 秒** で変更可能
+- polling interval を **1〜30 秒（1000〜30000 ms）** で変更可能（HLD 原文は「1〜1000 秒」だが現行実装は 1〜30 秒）
 
 ## SAI レベル
 
@@ -129,7 +129,7 @@ session フラップ間で counter 値が保たれる。
 |---------|------|
 | `counterpoll acl enable` | ACL counter polling を有効化 |
 | `counterpoll acl disable` | polling 無効化（ASIC の counter 自体は残る） |
-| `counterpoll acl interval <ms>` | polling 間隔（1〜1000 秒）を変更 |
+| `counterpoll acl interval <ms>` | polling 間隔（1〜30 秒 / 1000〜30000 ms）を変更 |
 | `aclshow [-a]` | rule ごとの packet / byte 表示 |
 | `sonic-clear acl` | counter クリア（ユーザごとの dump 差分方式） |
 

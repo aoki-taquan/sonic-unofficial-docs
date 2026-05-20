@@ -10,8 +10,6 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-  - ACL_RULE
-  - ACL_TABLE
   - DPU
   - CHASSIS_MODULE
   - MID_PLANE_BRIDGE

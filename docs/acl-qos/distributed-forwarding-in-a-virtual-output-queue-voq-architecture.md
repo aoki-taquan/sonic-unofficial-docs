@@ -110,8 +110,8 @@ chassis_db_address=<redis_chassis IP>
 ```json
 "redis_chassis": {
   "hostname": "redis_chassis.server",
-  "port": 6385,
-  "unix_socket_path": "/var/run/redis-chassis/redis_chassis.sock",
+  "port": 6380,
+  "unix_socket_path": "/var/run/redis/redis_chassis.sock",
   "unix_socket_perm": 777
 },
 "CHASSIS_APP_DB": { "id": 8, "separator": ":", "instance": "redis_chassis" }

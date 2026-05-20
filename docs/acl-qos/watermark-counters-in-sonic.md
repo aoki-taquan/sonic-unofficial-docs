@@ -200,7 +200,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
 # Watermark の polling 有効化と現在値
-counterpoll watermark show
+counterpoll show
 show queue persistent-watermark
 show priority-group persistent-watermark headroom
 ```

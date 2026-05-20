@@ -15,9 +15,7 @@ related:
   - PORT
   - ACL_RULE
   - ACL_TABLE
-  - PORT_STORM_CONTROL
   - PORT_QOS_MAP
-  - PORT_TABLE
   cli:
   - config mirror_session
   - show mirror_session

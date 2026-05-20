@@ -161,19 +161,19 @@ CLI 一覧:
 
 JSON 設定または `config acl` CLI で ACL ルールを定義した場合、**暗黙の default deny は存在しない**。明示的な forward ルールがある場合、それ以外のトラフィックは許可されてしまう。
 
-default deny を実現するには、**最低優先度（最大の PRIORITY 値）で catch-all の DROP ルール**を明示的に追加する必要がある。
+default deny を実現するには、**最低優先度（最小の PRIORITY 値）の catch-all DROP ルール**を明示的に追加する必要がある（SONiC では PRIORITY 値が小さいほど低優先度＝最後に評価される）。
 
 ```json
 "ACL_RULE": {
     "TABLE_NAME|CATCH_ALL": {
-        "PRIORITY": "10000",
+        "PRIORITY": "1",
         "IP_TYPE": "ipv4any",
         "PACKET_ACTION": "DROP"
     }
 }
 ```
 
-PRIORITY 値が大きいほど**低優先度**（最後に評価）となるため、catch-all を最大値に設定することで他のルールが先に評価される。IPv6 トラフィックに対しても別途 `IP_TYPE: ipv6any` のルールが必要。
+PRIORITY 値が**小さいほど低優先度**（最後に評価）となるため、catch-all を最小値（例: `1`、`acl_loader` の `min_priority`）に設定することで他のルールが先に評価される。`acl_loader` は先頭ルールほど大きい PRIORITY 値（`max_priority - rule_idx`）を割り当て、DEFAULT_RULE には `min_priority=1` を割り当てる。IPv6 トラフィックに対しても別途 `IP_TYPE: ipv6any` のルールが必要。
 
 - 参照: [sonic-net/SONiC#269](https://github.com/sonic-net/SONiC/issues/269)
 
