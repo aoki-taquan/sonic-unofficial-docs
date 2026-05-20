@@ -112,6 +112,7 @@ docker exec telemetry gnmi_cli -a 127.0.0.1:8080 -insecure \
 
 - [../../topics/09-telemetry-snmp/concept.md](../../topics/09-telemetry-snmp/concept.md)
 - [../config-db/telemetry.md](../config-db/telemetry.md)
+- [../config-db/telemetry-client.md](../config-db/telemetry-client.md)
 
 ## 引用元
 
