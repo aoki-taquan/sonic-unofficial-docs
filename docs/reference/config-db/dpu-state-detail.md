@@ -27,8 +27,8 @@ related:
 
 ## 概要
 
-`DPU_STATE` テーブル (`CHASSIS_STATE_DB`, Redis DB ID=13) の各フィールドについて、
-YANG `default` 文が存在しない STATE_DB テーブルにおける **コード由来のデフォルト値・fallback・更新タイミング** を
+`DPU_STATE` テーブル (`CHASSIS_STATE_DB`, [Redis](../../reference/glossary.md#term-redis) DB ID=13) の各フィールドについて、
+[YANG](../../reference/glossary.md#term-yang) `default` 文が存在しない [STATE_DB](../../reference/glossary.md#term-state_db) テーブルにおける **コード由来のデフォルト値・fallback・更新タイミング** を
 `chassisd` ソースコードから精査したページ。
 
 概要・key 構造・書き込み元クラスは [`DPU_STATE テーブル`](dpu-state.md) を参照。
@@ -39,12 +39,12 @@ YANG `default` 文が存在しない STATE_DB テーブルにおける **コー�
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-このテーブルは YANG `default` 文を持たない。以下はソースコードから読み取った
+このテーブルは [YANG](../../reference/glossary.md#term-yang) `default` 文を持たない。以下はソースコードから読み取った
 実効デフォルト / fallback の一覧。
 
 ### フィールド一覧と実効デフォルト
 
-| フィールド | YANG default | 実効デフォルト (コード由来) | 更新タイミング |
+| フィールド | [YANG](../../reference/glossary.md#term-yang) default | 実効デフォルト (コード由来) | 更新タイミング |
 |-----------|-------------|--------------------------|------------|
 | `dpu_midplane_link_state` | なし | `'down'` (platform API 未実装時の安全側) | midplane 変化検知 + 起動時 |
 | `dpu_midplane_link_reason` | なし | `""` (常に空文字列) | `update_dpu_state()` 呼び出し時 (常時) |
@@ -214,7 +214,7 @@ def _get_data_plane_state_common(self):
     return True
 ```
 
-CONFIG_DB `PORT` テーブルの**全ポートの `oper_status` が `'up'`** でなければ `False` → `'down'`。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) `PORT` テーブルの**全ポートの `oper_status` が `'up'`** でなければ `False` → `'down'`。
 
 !!! note "空ポートテーブルの場合"
     `PORT` テーブルが空の場合、`for` ループが回らず関数は `True` を返す → `dpu_data_plane_state = 'up'`。
@@ -294,7 +294,7 @@ else:                   oper_status = "Partial Online"
 |---|----------|------|--------|
 | 1 | midplane フィールド書込み → CP/DP フィールド書込み (down 時) | **強制先行** (`update_dpu_state` 内 `for` ループ順) | down パスでは midplane → CP → DP の順で個別 `hset` が発行されるため、中間状態で CP のみ `down`・DP がまだ前の値という状態が一瞬発生する |
 | 2 | `DpuStateUpdater.update_state()` — DP 評価 → CP 評価 | **順序固定** (コード上 DP が先) | 両方が変化した際、DP の hset が先に確定し、その後 CP の hset が続く。`show dpu` がこの間に読むと CP/DP が混在したステータスを返しうる |
-| 3 | `set_initial_dpu_admin_state()` → ポーリングループ開始 | **強制先行** | SmartSwitch デーモン起動時、初期書込みが完了してから main loop が始まる。ただし DpuChassisdDaemon では初期書込みなしで main loop に入る |
+| 3 | `set_initial_dpu_admin_state()` → ポーリングループ開始 | **強制先行** | [SmartSwitch](../../reference/glossary.md#term-smartswitch) デーモン起動時、初期書込みが完了してから main loop が始まる。ただし DpuChassisdDaemon では初期書込みなしで main loop に入る |
 | 4 | `deinit()` — DP down 書込み → CP down 書込み | **強制先行** | シャットダウン時も DP が先に `down` になり、その後 CP が `down` になる |
 | 5 | midplane up パス — midplane のみ更新、CP/DP は更新なし | **非対称** | `update_dpu_state(key, 'up')` は midplane 3 フィールドのみ書く。CP/DP state は `DpuStateUpdater` の独立ポーリングで後から更新される |
 
@@ -317,7 +317,7 @@ for field, value in updates.items():
 
 **up パスの非対称性 (依存 #5)**: `update_dpu_state(key, 'up')` は midplane 3 フィールドのみ更新し、CP/DP は変更しない (`chassisd:876-879`)。midplane が up になっても CP/DP state は `DpuStateUpdater` の次のポーリングサイクルまで前の値が残る。`show dpu` は `up_cnt` に基づいて `Partial Online` を一時的に返しうる。
 
-**DpuStateUpdater の DP→CP 順序 (依存 #2)**: `update_state()` は `get_dp_state()` → `hset(DP)` → `get_cp_state()` → `hset(CP)` の順で実行される (`chassisd:1303-1316`)。CP/DP が同タイミングで up→down や down→up に変化した場合でも、Redis への書込みは DP が常に先行する。
+**DpuStateUpdater の DP→CP 順序 (依存 #2)**: `update_state()` は `get_dp_state()` → `hset(DP)` → `get_cp_state()` → `hset(CP)` の順で実行される (`chassisd:1303-1316`)。CP/DP が同タイミングで up→down や down→up に変化した場合でも、[Redis](../../reference/glossary.md#term-redis) への書込みは DP が常に先行する。
 
 **deinit の DP→CP 順序 (依存 #4)**: `deinit()` (`chassisd:1318-1320`) は `_update_dp_dpu_state('down')` を先に発行し、時刻フィールドも DP side が先に書き込まれる。シャットダウンウィンドウ中に `dpu_data_plane_state='down'` / `dpu_control_plane_state` が旧値という中間状態が生じる。
 
@@ -333,7 +333,7 @@ for field, value in updates.items():
 |--------------------------|---------|--------------|------|----------|
 | `APPL_DB PORT_TABLE\|<port>.oper_status` | 読み取り | `dpu_data_plane_state` | platform API `get_dataplane_state()` が `NotImplementedError` の場合の fallback。全ポートが `'up'` なら DP state = `'up'` | `chassisd:1267-1275` (`_get_data_plane_state_common`) |
 | `STATE_DB SYSTEM_READY\|SYSTEM_STATE.Status` | 読み取り | `dpu_control_plane_state` | platform API `get_controlplane_state()` が `NotImplementedError` の場合の fallback。値が `'up'` なら CP state = `'up'` | `chassisd:1277-1284` (`_get_control_plane_state_common`) |
-| `CONFIG_DB PORT\|<port>` | キー列挙 | `dpu_data_plane_state` | `_get_data_plane_state_common()` が CONFIG_DB の `PORT` テーブルを走査してポート一覧を取得 | `chassisd:1268` (`self.config_db.get_table('PORT')`) |
+| `CONFIG_DB PORT\|<port>` | キー列挙 | `dpu_data_plane_state` | `_get_data_plane_state_common()` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `PORT` テーブルを走査してポート一覧を取得 | `chassisd:1268` (`self.config_db.get_table('PORT')`) |
 | Platform API `chassis.get_dataplane_state()` | platform 呼び出し | `dpu_data_plane_state` | 実装されている場合に優先。`NotImplementedError` 時は `APPL_DB PORT_TABLE` fallback へ | `chassisd:1249-1253` |
 | Platform API `chassis.get_controlplane_state()` | platform 呼び出し | `dpu_control_plane_state` | 実装されている場合に優先。`NotImplementedError` 時は `STATE_DB SYSTEM_READY` fallback へ | `chassisd:1254-1258` |
 | Platform API `chassis.get_module().get_oper_status()` | platform 呼び出し | `dpu_midplane_link_state` | 起動時 `set_initial_dpu_admin_state()` で `dpu_midplane_link_state` 初期値を決定 | `chassisd:1377` |
@@ -359,7 +359,7 @@ for field, value in updates.items():
 | 失敗ケース | 発生箇所 | 挙動 | DPU_STATE への影響 | recovery |
 |---|---|---|---|---|
 | `CHASSIS_STATE_DB` 接続失敗 (`db_connect` 例外) | `chassisd:870-872` | `except Exception` で `log_error` 出力、関数終了 | 書き込みなし（前の値が残存） | 次のポーリングサイクルで再接続・再書き込み |
-| `hset` 例外（Redis 障害等） | `chassisd:888` の `for` ループ | `except Exception` で `log_error` 出力 | **部分書き込みの可能性あり**（ループ途中で失敗した場合、先行フィールドのみ更新済み） | 次のポーリングサイクルで上書き |
+| `hset` 例外（[Redis](../../reference/glossary.md#term-redis) 障害等） | `chassisd:888` の `for` ループ | `except Exception` で `log_error` 出力 | **部分書き込みの可能性あり**（ループ途中で失敗した場合、先行フィールドのみ更新済み） | 次のポーリングサイクルで上書き |
 | `midplane_initialized == False` (midplane 初期化失敗) | `chassisd:717-719` | `log_error` 出力後、処理継続（`check_midplane_reachability()` は空振り） | midplane フィールド更新されず — `dpu_midplane_link_state` が起動時デフォルト `'down'` のまま | platform `init_midplane_switch()` が成功するまで復旧しない |
 | `is_midplane_reachable()` が `NotImplementedError` | `chassisd:1060-1062`（`try_get` 内） | `try_get` が default `False` を返す | `update_dpu_state(key, 'down')` が呼ばれる（安全側フォールバック） | platform API 実装後にデーモン再起動で解消 |
 | `get_dpu_midplane_state()` 例外 | `chassisd:898-905` | `except Exception` で `log_error`、`None` 返却 | `dpu_mp_state != 'up'` かつ `!= 'down'` → `midplane_access=False` 時に `update_dpu_state('down')` が呼ばれる | 次サイクルで再読み取り |
@@ -404,7 +404,7 @@ sonic-db-cli CHASSIS_STATE_DB hgetall 'DPU_STATE|DPU0'
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`chassisd` に埋め込まれた、CONFIG_DB / YANG で管理されない定数の一覧。
+`chassisd` に埋め込まれた、[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG で管理されない定数の一覧。
 出典は `sonic-platform-daemons/sonic-chassisd/scripts/chassisd`。
 
 ### タイマー・インターバル定数
@@ -419,7 +419,7 @@ sonic-db-cli CHASSIS_STATE_DB hgetall 'DPU_STATE|DPU0'
 
 | 定数名 | 値 | 用途 | ソース行 |
 |-------|----|------|---------|
-| `DEFAULT_DPU_REBOOT_TIMEOUT` | `360` 秒 | DPU リブートのデフォルトタイムアウト (`platform.json` で上書き可能) | chassisd:82 |
+| `DEFAULT_DPU_REBOOT_TIMEOUT` | `360` 秒 | [DPU](../../reference/glossary.md#term-dpu) リブートのデフォルトタイムアウト (`platform.json` で上書き可能) | chassisd:82 |
 | `MAX_DPU_REBOOT_DURATION` | `800` 秒 | 同一リブート原因の重複検知ウィンドウ上限 | chassisd:83 |
 | `DEFAULT_LINECARD_REBOOT_TIMEOUT` | `180` 秒 | ラインカードリブートのデフォルトタイムアウト | chassisd:81 |
 | `MAX_HISTORY_FILES` | `10` | リブート原因ファイルの保持上限数 (`/host/reboot-cause/module/` 以下) | chassisd:106 |
@@ -448,8 +448,8 @@ sonic-db-cli CHASSIS_STATE_DB hgetall 'DPU_STATE|DPU0'
 
 | 定数名 | 値 | 用途 | ソース行 |
 |-------|----|------|---------|
-| `PLATFORM_JSON_FILE` | `/usr/share/sonic/platform/platform.json` | DPU リブートタイムアウト上書き設定の読み取り先 | chassisd:85 |
-| `MODULE_REBOOT_CAUSE_DIR` | `/host/reboot-cause/module/` | DPU ごとのリブート原因ファイルを格納するディレクトリ | chassisd:105 |
+| `PLATFORM_JSON_FILE` | `/usr/share/sonic/platform/platform.json` | [DPU](../../reference/glossary.md#term-dpu) リブートタイムアウト上書き設定の読み取り先 | chassisd:85 |
+| `MODULE_REBOOT_CAUSE_DIR` | `/host/reboot-cause/module/` | [DPU](../../reference/glossary.md#term-dpu) ごとのリブート原因ファイルを格納するディレクトリ | chassisd:105 |
 <!-- /constants -->
 
 ---
@@ -468,7 +468,7 @@ sonic-db-cli CHASSIS_STATE_DB hgetall 'DPU_STATE|DPU0'
 | `DPU_STATE` 変化 (`SubscriberStateTable` 受信) | `DpuStateUpdater.update_state()` 再実行 → CP/DP state 再書込み | `CHASSIS_STATE_DB DPU_STATE` (自己) | `poll_dpu_state=False` モード限定、かつ状態変化時のみ |
 | `show dpu` CLI 呼び出し | なし (read-only 参照) | — | CLI 呼び出し時 |
 
-community SONiC において `DPU_STATE` の変化を受けて CONFIG_DB / STATE_DB / APPL_DB / COUNTERS_DB に新たなエントリを書き込む副次動作は確認されない。
+community [SONiC](../../reference/glossary.md#term-sonic) において `DPU_STATE` の変化を受けて CONFIG_DB / [STATE_DB](../../reference/glossary.md#term-state_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に新たなエントリを書き込む副次動作は確認されない。
 
 ### `DpuStateManagerTask` 自己フィードバックループ
 
@@ -506,7 +506,7 @@ if not "DPU_STATE" in key and not "REBOOT_CAUSE" in key:
 
 ### Producer/Consumer ペア
 
-`DPU_STATE` (`CHASSIS_STATE_DB`) は `chassisd` が直接書き込む状態専用テーブルである。APPL_DB / STATE_DB への中継は行わない。
+`DPU_STATE` (`CHASSIS_STATE_DB`) は `chassisd` が直接書き込む状態専用テーブルである。[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) への中継は行わない。
 
 | 区間 | 方式 | チャンネル / パターン |
 |------|------|----------------------|
@@ -585,7 +585,7 @@ NotificationProducer: なし
 
 ### 前提: SmartSwitch 専用ページ
 
-このページが記述するフィールドは SmartSwitch プラットフォーム上の DPU 側 `chassisd` (`DpuChassisdDaemon`) が書き込む。通常の SONiC スイッチ (非 SmartSwitch) では `DPU_STATE` テーブル自体が存在しないため、フィールドレベルの差分も適用外。
+このページが記述するフィールドは [SmartSwitch](../../reference/glossary.md#term-smartswitch) プラットフォーム上の DPU 側 `chassisd` (`DpuChassisdDaemon`) が書き込む。通常の [SONiC](../../reference/glossary.md#term-sonic) スイッチ (非 [SmartSwitch](../../reference/glossary.md#term-smartswitch)) では `DPU_STATE` テーブル自体が存在しないため、フィールドレベルの差分も適用外。
 
 ```python
 # chassisd:1574-1579
@@ -644,7 +644,7 @@ DPU reboot タイムアウトはベンダーが `platform_env.conf` で調整可
 |------|-------------------------------|------|
 | SmartSwitch DPU (platform API 実装あり) | `DpuChassisdDaemon` が platform API 直接呼び出し | 最小レイテンシで状態反映 |
 | SmartSwitch DPU (platform API 未実装) | DB fallback + `DpuStateManagerTask` subscribe | PORT_TABLE 空時の誤 `'up'` リスクあり |
-| VOQ chassis (supervisor / line card) | 書き込みなし | `CHASSIS_MODULE` テーブルが担当 |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor / line card) | 書き込みなし | `CHASSIS_MODULE` テーブルが担当 |
 | 通常スイッチ / multi-asic | 書き込みなし | `chassis.is_smartswitch()` == `False` のため `ChassisdDaemon` が起動 |
 <!-- /platform -->
 
@@ -658,7 +658,4 @@ DPU reboot タイムアウトはベンダーが `platform_env.conf` で調整可
 
 ## 引用元
 
-[^1]: `chassisd` ソース: `sonic-platform-daemons/sonic-chassisd/scripts/chassisd` —
-    フィールド名定数 (line 108-111)、`update_dpu_state()` (line 864-891)、
-    `DpuStateUpdater` クラス (line 1234-1320)、`set_initial_dpu_admin_state()` (line 1364-1405)。
-    `show dpu` CLI: `sonic-utilities/show/system_health.py:show_dpu_state()` (line 172-222)。
+<!-- glossary-links-injected: fb5ecb984b69 -->

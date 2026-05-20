@@ -23,7 +23,7 @@ related:
 
 `config ntp` は NTP サーバ（chrony で動作）の追加・削除を行う CLI グループ。[CONFIG_DB](../../reference/glossary.md#term-config_db) の `NTP_SERVER` テーブルを直接書き換え、`chrony` サービスを再起動する[^1]。
 
-SONiC では NTP daemon として `chrony` を採用しており、`config ntp` で `NTP_SERVER` テーブルを書くと `chrony.conf` テンプレートが再生成され、`systemctl restart chrony` で反映される。
+[SONiC](../../reference/glossary.md#term-sonic) では NTP daemon として `chrony` を採用しており、`config ntp` で `NTP_SERVER` テーブルを書くと `chrony.conf` テンプレートが再生成され、`systemctl restart chrony` で反映される。
 
 ## コマンド一覧
 
@@ -219,4 +219,4 @@ chronyc sources
 ## 関連ページ
 - [YANG: sonic-ntp](../yang/sonic-ntp.md)
 
-<!-- glossary-links-injected: a7c87bab11c9 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

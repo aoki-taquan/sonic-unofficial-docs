@@ -53,7 +53,7 @@ related:
 
 ## なぜ必要か
 
-[ACL](../reference/glossary.md#term-acl) は **ASIC ごとに ingress / egress stage で使えるアクションが異なる**。当初 SONiC は ACL_RULE スキーマで stage を区別せず、設定が ASIC で受理されるかは試行錯誤に依存していた[^1]。
+[ACL](../reference/glossary.md#term-acl) は **[ASIC](../reference/glossary.md#term-asic) ごとに ingress / egress stage で使えるアクションが異なる**。当初 [SONiC](../reference/glossary.md#term-sonic) は ACL_RULE スキーマで stage を区別せず、設定が ASIC で受理されるかは試行錯誤に依存していた[^1]。
 
 本 [HLD](../reference/glossary.md#term-hld) は 2 点を入れる[^1]:
 
@@ -214,4 +214,4 @@ master（2026-05 時点）での裏取り結果:
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f6b1500402fc -->
+<!-- glossary-links-injected: ec18b66e3507 -->

@@ -52,9 +52,9 @@ related:
 
 # P4 / PINS / Programmable Pipeline
 
-この章は、SONiC を **P4Runtime ベースの SDN コントローラから直接プログラムする** ための仕組み（[PINS](../../reference/glossary.md#term-pins): P4 Integrated Network Stack）をまとめて読むための入口です。PINS は SONiC の従来パス（[BGP](../../reference/glossary.md#term-bgp) / [FRR](../../reference/glossary.md#term-frr) / [orchagent](../../reference/glossary.md#term-orchagent) 群）を残したまま、opt-in の外部チャネルで forwarding を書き換える設計のため、関連コンポーネントが管理面、orchagent、CPU パケット注入と複数章にまたがります。ここでは読み手の質問順に並べ直し、既存ページへリンクで誘導します。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) を **P4Runtime ベースの SDN コントローラから直接プログラムする** ための仕組み（[PINS](../../reference/glossary.md#term-pins): P4 Integrated Network Stack）をまとめて読むための入口です。PINS は SONiC の従来パス（[BGP](../../reference/glossary.md#term-bgp) / [FRR](../../reference/glossary.md#term-frr) / [orchagent](../../reference/glossary.md#term-orchagent) 群）を残したまま、opt-in の外部チャネルで forwarding を書き換える設計のため、関連コンポーネントが管理面、orchagent、CPU パケット注入と複数章にまたがります。ここでは読み手の質問順に並べ直し、既存ページへリンクで誘導します。
 
-PINS の中心は 4 点です。コントローラと話す **P4RT App**（gRPC port 9559）、それを [SAI](../../reference/glossary.md#term-sai) に翻訳する **P4Orch**（orchagent 内の同期 manager 群）、Read を高速化する **table_entry_cache_（entity_cache_）**、CPU と ASIC の間でパケットを流す **PacketIO + send_to_ingress**。これらは [APPL_DB](../../reference/glossary.md#term-appl_db) / APPL_STATE_DB / SAI hostif / generic netlink といった既存の SONiC 部品の上に乗っています。
+PINS の中心は 4 点です。コントローラと話す **[P4RT](../../reference/glossary.md#term-p4rt) App**（gRPC port 9559）、それを [SAI](../../reference/glossary.md#term-sai) に翻訳する **P4Orch**（orchagent 内の同期 manager 群）、Read を高速化する **table_entry_cache_（entity_cache_）**、CPU と [ASIC](../../reference/glossary.md#term-asic) の間でパケットを流す **PacketIO + send_to_ingress**。これらは [APPL_DB](../../reference/glossary.md#term-appl_db) / APPL_STATE_DB / SAI hostif / generic netlink といった既存の SONiC 部品の上に乗っています。
 
 ## この章で答える質問
 
@@ -145,4 +145,4 @@ PINS の中心は 4 点です。コントローラと話す **P4RT App**（gRPC 
 - [SRv6 / MPLS / Path Tracing](../17-srv6-mpls/index.md)
 - [Build / Packaging / Application Extension](../19-build-packaging/index.md)
 
-<!-- glossary-links-injected: 9d7f47a8f2d1 -->
+<!-- glossary-links-injected: 4b7e3e133212 -->

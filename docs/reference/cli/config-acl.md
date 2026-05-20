@@ -151,7 +151,7 @@ excerpt: |
 ### よくある落とし穴
 
 - `config acl add table` で stage を間違えると aclorch が [SAI](../../reference/glossary.md#term-sai) でテーブルを作れず syslog にエラー。
-- `ports` を空にすると CONFIG_DB には載るが ASIC には降りない。
+- `ports` を空にすると CONFIG_DB には載るが [ASIC](../../reference/glossary.md#term-asic) には降りない。
 
 ### 関連する show / debug
 
@@ -235,4 +235,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 73668e28bc19 -->
+<!-- glossary-links-injected: c006405759d8 -->

@@ -39,7 +39,7 @@ related:
 
 ## 概要
 
-[VOQ](../reference/glossary.md#term-voq) ベースのシャシでは **入口 chip（ingress ASIC）** と **出口 chip（egress ASIC）** が異なることがあり、両 chip の rewrite 設定を協調プログラムする必要がある。**recirculation port (= recycle port)** は egress を ingress にループバックする特殊ポートで、これを使えば **egress chip の rewrite を協調設定する代わりに ingress 側で 1 度処理し直す** ことで chip 間 forwarding を達成できる[^1]。
+[VOQ](../reference/glossary.md#term-voq) ベースのシャシでは **入口 chip（ingress [ASIC](../reference/glossary.md#term-asic)）** と **出口 chip（egress ASIC）** が異なることがあり、両 chip の rewrite 設定を協調プログラムする必要がある。**recirculation port (= recycle port)** は egress を ingress にループバックする特殊ポートで、これを使えば **egress chip の rewrite を協調設定する代わりに ingress 側で 1 度処理し直す** ことで chip 間 forwarding を達成できる[^1]。
 
 利用ケース[^1]:
 
@@ -83,7 +83,7 @@ bridge / route いずれの場合も **対応する [FDB](../reference/glossary.
 
 ### Explicit recycle port
 
-統計（counter / error）を front panel port と同じく取得するため、**recycle port を SONiC から見える形にする**[^1]。[SAI](../reference/glossary.md#term-sai) 側は **既存の port API で create できれば追加変更なし**。
+統計（counter / error）を front panel port と同じく取得するため、**recycle port を [SONiC](../reference/glossary.md#term-sonic) から見える形にする**[^1]。[SAI](../reference/glossary.md#term-sai) 側は **既存の port API で create できれば追加変更なし**。
 
 ### 設定方法
 
@@ -239,4 +239,4 @@ done
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 2bce428c821d -->
+<!-- glossary-links-injected: ec18b66e3507 -->

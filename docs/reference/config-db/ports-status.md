@@ -33,7 +33,7 @@ related:
 | 書き込み主体 | トリガー | 書き込みフィールド |
 |------------|---------|-----------------|
 | `portsyncd/linksync` | カーネル netlink RTM_NEWLINK | `state`, `netdev_oper_status`, `admin_status`, `mtu` |
-| `orchagent` PortsOrch | SAI oper-status 通知 / 初期化 | `speed`, `fec`, `supported_speeds`, `supported_fecs`, `host_tx_ready`, `link_training_status`, `rmt_adv_speeds`, `phy_ctrl_unreliable_los` |
+| `orchagent` PortsOrch | [SAI](../../reference/glossary.md#term-sai) oper-status 通知 / 初期化 | `speed`, `fec`, `supported_speeds`, `supported_fecs`, `host_tx_ready`, `link_training_status`, `rmt_adv_speeds`, `phy_ctrl_unreliable_los` |
 
 !!! note "CONFIG_DB との関係"
     ポートの **設定** は `CONFIG_DB` の `PORT` テーブルで行う。このページのフィールドは設定が ASIC / カーネルに適用された結果として STATE_DB に書き戻された **oper 状態値**。直接編集しても portsyncd / PortsOrch が上書きする。
@@ -42,24 +42,23 @@ related:
     ポートの SAI oper-status (`up`/`down`) は `PortsOrch::updateDbPortOperStatus()` が **APP_DB** `PORT_TABLE` に書く（STATE_DB ではない）。`sonic-swss/orchagent/portsorch.cpp:3930` 参照。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  KERNEL["Linux Kernel<br/>netlink RTM_NEWLINK"]
-  LS["portsyncd<br/>linksync.cpp"]
-  SAI["SAI / ASIC<br/>oper-status 通知"]
-  ORCH["PortsOrch<br/>portsorch.cpp"]
-  STATE[("STATE_DB<br/>PORT_TABLE|Ethernet*")]
-  CLI["show interfaces status<br/>intfutil"]
-
-  KERNEL -->|"IFF_UP / IFF_RUNNING / mtu"| LS
-  SAI -->|"port oper-status UP/DOWN"| ORCH
-  LS --> STATE
-  ORCH --> STATE
-  STATE --> CLI
+  CDB[("CONFIG_DB<br/>PORT")]
+  DM["portmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_PORT_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_port_api"]
+  SYNCD --> SAI
 ```
 
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -79,9 +78,9 @@ PORT_TABLE|<name>
 | `admin_status` | `"up"` / `"down"` | `portsyncd/linksync` | カーネル `IFF_UP` フラグ値 | Linux netdev の admin 状態（`IFF_UP`） |
 | `mtu` | uint (文字列) | `portsyncd/linksync` | カーネル netdev mtu | `rtnl_link_get_mtu()` で取得したカーネル MTU 値 |
 | `host_tx_ready` | `"true"` / `"false"` | `PortsOrch` | `"false"` | ホスト側 TX が ready かどうか。ポート作成時に既存値がなければ `"false"` で初期化 |
-| `speed` | uint / `"N/A"` (文字列) | `PortsOrch` | `"N/A"` | oper 動作速度 [Mbps]。DOWN 時や SAI 取得失敗時は `"N/A"` |
+| `speed` | uint / `"N/A"` (文字列) | `PortsOrch` | `"N/A"` | oper 動作速度 [Mbps]。DOWN 時や [SAI](../../reference/glossary.md#term-sai) 取得失敗時は `"N/A"` |
 | `fec` | string / `"N/A"` | `PortsOrch` | `"N/A"` | oper FEC モード。詳細は [fec-state.md](fec-state.md) を参照 |
-| `supported_speeds` | string (CSV) | `PortsOrch` | SAI 取得値（空なら空文字） | プラットフォームがサポートする速度のカンマ区切りリスト（例: `"10000,25000,100000"`） |
+| `supported_speeds` | string (CSV) | `PortsOrch` | [SAI](../../reference/glossary.md#term-sai) 取得値（空なら空文字） | プラットフォームがサポートする速度のカンマ区切りリスト（例: `"10000,25000,100000"`） |
 | `supported_fecs` | string (CSV) / 不在 | `PortsOrch` | `"N/A"` (空集合) / フィールド不在 | サポート FEC モード。詳細は [fec-state.md](fec-state.md) を参照 |
 | `link_training_status` | string | `PortsOrch` | `"off"` | リンクトレーニング状態。LT 無効 / admin DOWN / 非サポートの場合 `"off"` |
 | `rmt_adv_speeds` | string / `"N/A"` | `PortsOrch` | `"N/A"` | リモート (対向) が広告する速度 (auto-neg 時のみ有効)。admin DOWN / 取得失敗で `"N/A"` |
@@ -102,16 +101,16 @@ bool admin = flags & IFF_UP;
 bool oper  = flags & IFF_RUNNING;
 ```
 
-- `admin_status` は CONFIG_DB `PORT.admin_status` を portmgrd が netdev に反映した結果と一致する（書込み主体は linksync であり portmgrd ではない）
+- `admin_status` は [CONFIG_DB](../../reference/glossary.md#term-config_db) `PORT.admin_status` を [portmgrd](../../reference/glossary.md#term-portmgrd) が netdev に反映した結果と一致する（書込み主体は linksync であり [portmgrd](../../reference/glossary.md#term-portmgrd) ではない）
 - `netdev_oper_status` は物理リンクの up/down を含む Linux の oper status
 
 ### `mtu`
 
-カーネル netdev の MTU を文字列化して書き込む。portmgrd がデフォルト `9100` を APP_DB に書き（`portmgr.h:15`、`portmgr.cpp:176`）、orchagent 経由で SAI に反映した後、SAI が kernel netdev を更新し、linksync が STATE_DB に書く。**SAI に渡す実際の値は `mtu + 22 bytes`（Ethernet ヘッダ 14 + FCS 4 + VLAN tag 4）**（MACsec ポートはさらに加算）。STATE_DB の `mtu` 値は SAI 適用後の **kernel 側の値**であり、SAI に渡した値（+22 の加算後）とは異なる点に注意。
+カーネル netdev の MTU を文字列化して書き込む。[portmgrd](../../reference/glossary.md#term-portmgrd) がデフォルト `9100` を APP_DB に書き（`portmgr.h:15`、`portmgr.cpp:176`）、[orchagent](../../reference/glossary.md#term-orchagent) 経由で SAI に反映した後、SAI が kernel netdev を更新し、linksync が [STATE_DB](../../reference/glossary.md#term-state_db) に書く。**SAI に渡す実際の値は `mtu + 22 bytes`（Ethernet ヘッダ 14 + FCS 4 + [VLAN](../../reference/glossary.md#term-vlan) tag 4）**（[MACsec](../../reference/glossary.md#term-macsec) ポートはさらに加算）。[STATE_DB](../../reference/glossary.md#term-state_db) の `mtu` 値は SAI 適用後の **kernel 側の値**であり、SAI に渡した値（+22 の加算後）とは異なる点に注意。
 
 ### `host_tx_ready`
 
-`PortsOrch::initHostTxReadyState()` がポート作成時に STATE_DB を確認し、`host_tx_ready` が空なら `"false"` を書き込む (`portsorch.cpp:2202`)。
+`PortsOrch::initHostTxReadyState()` がポート作成時に [STATE_DB](../../reference/glossary.md#term-state_db) を確認し、`host_tx_ready` が空なら `"false"` を書き込む (`portsorch.cpp:2202`)。
 
 その後の更新タイミング:
 
@@ -171,14 +170,14 @@ DOWN 時はフィールドが更新されない（stale 値が残留する）。
 | `speed` | DOWN 時は更新されない。最後に UP だった時の値が残留 |
 | `fec` | DOWN 時は更新されない。stale 値残留 |
 | `host_tx_ready` | admin DOWN 時は `"false"` に更新 |
-| `supported_speeds` | orchagent 再起動まで更新されない (lazy init) |
+| `supported_speeds` | [orchagent](../../reference/glossary.md#term-orchagent) 再起動まで更新されない (lazy init) |
 
 <!-- /value-behavior -->
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
-> **注記**: このページのフィールドは CONFIG_DB ではなく STATE_DB に存在し、YANG スキーマで定義されていない。以下はコード精読から導出した暗黙デフォルト。
+> **注記**: このページのフィールドは [CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく STATE_DB に存在し、[YANG](../../reference/glossary.md#term-yang) スキーマで定義されていない。以下はコード精読から導出した暗黙デフォルト。
 
 <!-- evidence: meta/_intermediate/cdb-flow/ports-status-defaults.md -->
 
@@ -198,7 +197,7 @@ DOWN 時はフィールドが更新されない（stale 値が残留する）。
 
 ### 検出した挙動乖離・注意点
 
-1. **`admin_status` の二重書き込み**: CONFIG_DB `PORT.admin_status` → portmgrd → APP_DB → orchagent → SAI → kernel netdev → linksync → STATE_DB `PORT_TABLE.admin_status` という経路。STATE_DB 値は最終的なカーネル状態を反映し、CONFIG_DB 値とは非同期に更新される。
+1. **`admin_status` の二重書き込み**: [CONFIG_DB](../../reference/glossary.md#term-config_db) `PORT.admin_status` → portmgrd → APP_DB → [orchagent](../../reference/glossary.md#term-orchagent) → SAI → kernel netdev → linksync → STATE_DB `PORT_TABLE.admin_status` という経路。STATE_DB 値は最終的なカーネル状態を反映し、CONFIG_DB 値とは非同期に更新される。
 
 2. **`oper_status` は STATE_DB にない**: SAI oper-status (`up`/`down`) は `PortsOrch::updateDbPortOperStatus()` が APP_DB `PORT_TABLE` に書く (`portsorch.cpp:3930`)。STATE_DB ではないため `sonic-db-cli STATE_DB hget 'PORT_TABLE|Ethernet0' oper_status` では取得できない。
 
@@ -218,9 +217,9 @@ DOWN 時はフィールドが更新されない（stale 値が残留する）。
 | # | 依存関係 | 方向 | 緩和策 / 備考 |
 |---|----------|------|--------------|
 | 1 | `portsyncd` PortInitDone publish → `PortsOrch` 書込み開始 | **強制先行** | `PortsOrch::doPortTask()` は `m_initDone=false` の間すべての設定処理をスキップ。`portsorch.cpp:4613-4622` |
-| 2 | `linksync` RTM_NEWLINK → `state="ok"` 書込み → portmgrd / teammgrd / intfmgrd アンロック | **強制先行** | 各デーモンの `isPortStateOk()` が `state` フィールドの存在を確認してから netdev 操作・IP 設定・LAG メンバー追加を実行。`portmgr.cpp:86-100`, `teammgr.cpp:67-80`, `intfmgr.cpp:686-695` |
+| 2 | `linksync` RTM_NEWLINK → `state="ok"` 書込み → portmgrd / teammgrd / [intfmgrd](../../reference/glossary.md#term-intfmgrd) アンロック | **強制先行** | 各デーモンの `isPortStateOk()` が `state` フィールドの存在を確認してから netdev 操作・IP 設定・[LAG](../../reference/glossary.md#term-lag) メンバー追加を実行。`portmgr.cpp:86-100`, `teammgr.cpp:67-80`, `intfmgr.cpp:686-695` |
 | 3 | SAI `create_port` 成功 → `supported_speeds` / `host_tx_ready` 書込み | **強制先行** | `initPortSupportedSpeeds()` と `initHostTxReadyState()` はポート作成直後に 1 回だけ呼ばれる。SAI 失敗時は書込み自体が発生しない。`portsorch.cpp:3090`, `portsorch.cpp:2181-2207` |
-| 4 | `gBufferOrch::isPortReady()` が true → `allPortsReady()` = true | **強制先行** | バッファプロファイル未適用ポートは `m_pendingPortSet` に留まり `allPortsReady()` が false を返し続けるため、VLAN / LAG タスクも待機する。`portsorch.cpp:4779-4788` |
+| 4 | `gBufferOrch::isPortReady()` が true → `allPortsReady()` = true | **強制先行** | バッファプロファイル未適用ポートは `m_pendingPortSet` に留まり `allPortsReady()` が false を返し続けるため、[VLAN](../../reference/glossary.md#term-vlan) / [LAG](../../reference/glossary.md#term-lag) タスクも待機する。`portsorch.cpp:4779-4788` |
 | 5 | warm start: PortConfigDone **かつ** PortInitDone 双方存在 → 既存データ再読込 | 原子条件 | 一方でも欠けると `cleanPortTable()` で APP_DB を全削除して cold start にフォールバックする。`portsorch.cpp:4357` |
 
 ### 主要な制約詳細
@@ -241,9 +240,9 @@ STATE_DB `PORT_TABLE` は `portsyncd/linksync` と `PortsOrch` が**書き手**�
 | 書込みトリガ（linksync） | `portsyncd/linksync` RTM_NEWLINK イベント | Linux Kernel netdev (`m_ifindexOidMap`) | `Ethernet<N>` | `m_ifindexOidMap` でポート名を解決してから `m_statePortTable.set()` を呼ぶ。マップに存在しないインタフェースは無視される | `linksync.cpp:147-160, 193-208` |
 | 書込みトリガ（PortsOrch） | `PortsOrch` SAI oper-status 通知 / init | `APPL_DB PORT_TABLE` (PortConfigDone / PortInitDone フラグ) | `PORT_TABLE:PortConfigDone`, `PORT_TABLE:PortInitDone` | warm start 判定のため `m_portTable->hget("PortConfigDone", "count")` と `m_portTable->get("PortInitDone")` を確認。両フラグが揃わないと既存データ再読込を行い、欠落時は `cleanPortTable()` で cold start へフォールバック | `portsorch.cpp:4345-4386` |
 | 読み出し（portmgrd） | `PortMgr::isPortStateOk()` | STATE_DB `PORT_TABLE` （本テーブル） | `PORT_TABLE\|<alias>` | `m_statePortTable.get(alias, temp)` で `state` フィールドの存在を確認。`state` がなければ netdev 設定操作（admin_status / mtu 設定）を次周回に延期する | `portmgr.cpp:86-100` |
-| 読み出し（teammgrd） | `TeamMgr::isPortStateOk()` | STATE_DB `PORT_TABLE` （本テーブル） | `PORT_TABLE\|<alias>` | LAG メンバー追加前に各メンバーポートの `state` フィールドを確認。`"ok"` でなければ `doPortChannelMemberTask()` の SET 処理を中断する | `teammgr.cpp:67-80, 357` |
-| 読み出し（intfmgrd） | `IntfMgr::isPortStateOk()` (STATE_PORT_TABLE_NAME 購読) | STATE_DB `PORT_TABLE` （本テーブル） | `PORT_TABLE\|<alias>` | L3 インタフェース設定（IP アドレス付与 / VRF 割当）前に `state` フィールドを確認。intfmgrd は STATE_PORT_TABLE_NAME も subscribe し、`state="ok"` 通知を受信してから設定を適用する | `intfmgr.cpp:37,46-47,686-695` |
-| 逆参照（PortsOrch → APP_DB） | `PortsOrch::updateDbPortOperStatus()` | `APPL_DB PORT_TABLE` | `PORT_TABLE:<alias>` | SAI oper-status 変化時に `oper_status` フィールドを **APPL_DB** に書き込む（STATE_DB ではない）。STATE_DB `PORT_TABLE` の `netdev_oper_status` とは独立した別フィールド | `portsorch.cpp:3916-3930` |
+| 読み出し（teammgrd） | `TeamMgr::isPortStateOk()` | STATE_DB `PORT_TABLE` （本テーブル） | `PORT_TABLE\|<alias>` | [LAG](../../reference/glossary.md#term-lag) メンバー追加前に各メンバーポートの `state` フィールドを確認。`"ok"` でなければ `doPortChannelMemberTask()` の SET 処理を中断する | `teammgr.cpp:67-80, 357` |
+| 読み出し（[intfmgrd](../../reference/glossary.md#term-intfmgrd)） | `IntfMgr::isPortStateOk()` (STATE_PORT_TABLE_NAME 購読) | STATE_DB `PORT_TABLE` （本テーブル） | `PORT_TABLE\|<alias>` | L3 インタフェース設定（IP アドレス付与 / [VRF](../../reference/glossary.md#term-vrf) 割当）前に `state` フィールドを確認。[intfmgrd](../../reference/glossary.md#term-intfmgrd) は STATE_PORT_TABLE_NAME も subscribe し、`state="ok"` 通知を受信してから設定を適用する | `intfmgr.cpp:37,46-47,686-695` |
+| 逆参照（PortsOrch → APP_DB） | `PortsOrch::updateDbPortOperStatus()` | `APPL_DB PORT_TABLE` | `PORT_TABLE:<alias>` | SAI oper-status 変化時に `oper_status` フィールドを **[APPL_DB](../../reference/glossary.md#term-appl_db)** に書き込む（STATE_DB ではない）。STATE_DB `PORT_TABLE` の `netdev_oper_status` とは独立した別フィールド | `portsorch.cpp:3916-3930` |
 
 ### 読み出し側の依存まとめ
 
@@ -298,7 +297,7 @@ sudo grep -iE "host_tx_ready|supported_speed|oper speed|oper fec" /var/log/swss/
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`portsyncd/linksync` と `PortsOrch` が STATE_DB `PORT_TABLE` に書き込む際に使用する、コード上で固定された文字列定数・列挙値マッピングを列挙する。これらは YANG スキーマや CONFIG_DB 設定では変更できない。
+`portsyncd/linksync` と `PortsOrch` が STATE_DB `PORT_TABLE` に書き込む際に使用する、コード上で固定された文字列定数・列挙値マッピングを列挙する。これらは [YANG](../../reference/glossary.md#term-yang) スキーマや CONFIG_DB 設定では変更できない。
 
 > 中間調査ファイル: `meta/_intermediate/cdb-flow/ports-status-constants.md`
 
@@ -326,7 +325,7 @@ sudo grep -iE "host_tx_ready|supported_speed|oper speed|oper fec" /var/log/swss/
 
 ### `link_training_status` SAI 列挙型マッピング定数
 
-`portsorch.cpp` ファイルスコープの `static map` として定義されたハードコード定数。YANG / CONFIG_DB での変更不可。
+`portsorch.cpp` ファイルスコープの `static map` として定義されたハードコード定数。[YANG](../../reference/glossary.md#term-yang) / CONFIG_DB での変更不可。
 
 ```cpp
 // portsorch.cpp:180-192
@@ -367,7 +366,7 @@ static map<sai_port_link_training_rx_status_t, string> link_training_rx_status_m
 
 | トリガーフィールド | 受信デーモン | 動作 | 出力先 |
 |-----------------|------------|------|--------|
-| `state = "ok"` (SET) | `teammgrd` | `isPortStateOk(member)` が true を返し、保留中の `PORTCHANNEL_MEMBER` SET に対して `addLagMember()` を実行（teamd プロセスにポートを追加する `teamdctl` 呼び出し）する | teamd プロセス（カーネル LAG メンバー追加）[^f2] |
+| `state = "ok"` (SET) | `teammgrd` | `isPortStateOk(member)` が true を返し、保留中の `PORTCHANNEL_MEMBER` SET に対して `addLagMember()` を実行（[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) プロセスにポートを追加する `teamdctl` 呼び出し）する | [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) プロセス（カーネル LAG メンバー追加）[^f2] |
 | `state` フィールド消滅 (DEL) | `teammgrd` | `isPortStateOk()` が false を返し、LAG メンバー追加を次周回まで延期する | なし |
 
 `teammgr.cpp:67-80, 357` で確認。STATE_DB `PORT_TABLE_NAME` は `teammgrd` の起動時に `TableConnector` 経由で `SubscriberStateTable` として購読登録されている（`teammgrd.cpp:57-63`）。
@@ -376,7 +375,7 @@ static map<sai_port_link_training_rx_status_t, string> link_training_rx_status_m
 
 | トリガーフィールド | 受信デーモン | 動作 | 出力先 |
 |-----------------|------------|------|--------|
-| `state = "ok"` (SET) | `intfmgrd` | `doPortTableTask()` が保留中の `INTF_TABLE` SET (IP アドレス / VRF 設定) を適用し、`ip addr add` 等を実行する。また `APPL_DB INTF_TABLE` に設定を書き込む | `APPL_DB INTF_TABLE` (ProducerStateTable)、カーネル netdev[^f3] |
+| `state = "ok"` (SET) | `intfmgrd` | `doPortTableTask()` が保留中の `INTF_TABLE` SET (IP アドレス / [VRF](../../reference/glossary.md#term-vrf) 設定) を適用し、`ip addr add` 等を実行する。また `APPL_DB INTF_TABLE` に設定を書き込む | `APPL_DB INTF_TABLE` ([ProducerStateTable](../../reference/glossary.md#term-producerstatetable))、カーネル netdev[^f3] |
 | `state = "ok"` (SET) でかつ LAG | `intfmgrd` | `STATE_LAG_TABLE_NAME` の同様のチェックも行われ、LAG インタフェース設定を適用する | 同上 |
 
 `intfmgr.cpp:1183, 686-695` で確認。intfmgrd は `STATE_PORT_TABLE_NAME` と `STATE_LAG_TABLE_NAME` の両方を `Consumer` として購読しており（`intfmgr.cpp:46-47`）、どちらの `state = "ok"` 受信でも対応する設定を適用する。
@@ -385,7 +384,7 @@ static map<sai_port_link_training_rx_status_t, string> link_training_rx_status_m
 
 | トリガーフィールド | 受信デーモン | 動作 | 出力先 |
 |-----------------|------------|------|--------|
-| `speed` (SET) | `sflowmgrd` / `SflowMgr` | `sflowProcessOperSpeed()` が oper speed を読み取り、sFlow サンプリングレートを再計算する。rate が変化した場合は `m_appSflowSessionTable.set(alias, fvs)` で APPL_DB を更新する | `APPL_DB SFLOW_SESSION_TABLE`[^f4] |
+| `speed` (SET) | `sflowmgrd` / `SflowMgr` | `sflowProcessOperSpeed()` が oper speed を読み取り、sFlow サンプリングレートを再計算する。rate が変化した場合は `m_appSflowSessionTable.set(alias, fvs)` で [APPL_DB](../../reference/glossary.md#term-appl_db) を更新する | `APPL_DB SFLOW_SESSION_TABLE`[^f4] |
 
 `sflowmgr.cpp:167-211, 414-418` で確認。`sflowmgrd` は `STATE_PORT_TABLE_NAME` を `TableConnector` で購読しており（`sflowmgrd.cpp:32-38`）、`speed` フィールドの変化を受けてサンプリングレートを oper speed ベースで更新する。
 
@@ -403,10 +402,10 @@ static map<sai_port_link_training_rx_status_t, string> link_training_rx_status_m
 
 | デーモン | 用途 |
 |----------|------|
-| `natmgr` | NAT 設定適用前のポート状態確認（`m_statePortTable.get()`） |
-| `macsecmgr` | MACsec 設定前のポート状態確認（`m_statePortTable.get()`） |
+| `natmgr` | [NAT](../../reference/glossary.md#term-nat) 設定適用前のポート状態確認（`m_statePortTable.get()`） |
+| `macsecmgr` | [MACsec](../../reference/glossary.md#term-macsec) 設定前のポート状態確認（`m_statePortTable.get()`） |
 | `nbrmgr` | 近隣テーブル設定前のポート状態確認 |
-| `vlanmgr` | VLAN メンバー追加前のポート状態確認（`m_statePortTable.get()`） |
+| `vlanmgr` | [VLAN](../../reference/glossary.md#term-vlan) メンバー追加前のポート状態確認（`m_statePortTable.get()`） |
 
 [^f1]: `sonic-swss/cfgmgr/portmgr.cpp` — `isPortStateOk()`, `setPortAdminStatus()`, `setPortMtu()`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/portmgr.cpp>
 [^f2]: `sonic-swss/cfgmgr/teammgr.cpp` — `isPortStateOk()`, `doLagMemberTask()`: <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/cfgmgr/teammgr.cpp>
@@ -418,7 +417,7 @@ static map<sai_port_link_training_rx_status_t, string> link_training_rx_status_m
 <!-- pubsub -->
 ## Redis 通知メカニズム (Phase G)
 
-STATE_DB `PORT_TABLE` は `portsyncd/linksync` と `PortsOrch` が `Table` 型（直接 HSET / DEL）で書き込む。書き込みごとに Redis keyspace notification が発行され、購読側デーモンのイベントループに到達する。
+STATE_DB `PORT_TABLE` は `portsyncd/linksync` と `PortsOrch` が `Table` 型（直接 HSET / DEL）で書き込む。書き込みごとに [Redis](../../reference/glossary.md#term-redis) keyspace notification が発行され、購読側デーモンのイベントループに到達する。
 
 > 中間調査詳細: `meta/_intermediate/cdb-flow/ports-status-pubsub.md`
 
@@ -426,10 +425,10 @@ STATE_DB `PORT_TABLE` は `portsyncd/linksync` と `PortsOrch` が `Table` 型�
 
 | 書き込み主体 | DB クラス | 書き込み方式 |
 |------------|---------|------------|
-| `portsyncd/linksync` | `Table m_statePortTable` | Redis HSET / DEL を直接呼ぶ。ProducerStateTable ではない |
+| `portsyncd/linksync` | `Table m_statePortTable` | [Redis](../../reference/glossary.md#term-redis) HSET / DEL を直接呼ぶ。[ProducerStateTable](../../reference/glossary.md#term-producerstatetable) ではない |
 | `PortsOrch` | `Table m_portStateTable` | 同上 |
 
-`Table` 型の書き込みは `__keyspace@6__:PORT_TABLE|<name>` チャネルへの Redis keyspace notification を生成する。`SubscriberStateTable` を使う購読側はこの通知を PSUBSCRIBE で受信する。
+`Table` 型の書き込みは `__keyspace@6__:PORT_TABLE|<name>` チャネルへの [Redis](../../reference/glossary.md#term-redis) keyspace notification を生成する。`SubscriberStateTable` を使う購読側はこの通知を PSUBSCRIBE で受信する。
 
 ### 購読デーモンと SELECT_TIMEOUT
 
@@ -474,9 +473,9 @@ priority = 100 を指定しているため、他の Consumer (priority = 0) よ�
 
 | 影響箇所 | 差異内容 | 証跡 |
 |---------|---------|------|
-| `linksync` 起動時の旧インタフェース比較ロジック | DPU では `g_switchType == "dpu"` のとき `m_ifindexOldNameMap` 構築ループを skip して即 `return`。RTM_NEWLINK/DELLINK 自体は正常に処理されるため `state` / `admin_status` / `mtu` 書き込みに変化なし | `linksync.cpp:74-78` |
-| `initializePortBufferMaximumParameters()` | DPU ではスキップ (`gMySwitchType != "dpu"` ガード)。バッファ最大値の STATE_DB 書き込みは発生しない | `portsorch.cpp:6449` |
-| PG / queue / scheduler 一括初期化 | DPU ではスキップ。`m_queue_ids` が初期化されないため `host_tx_queue` 関連 flex counter 設定も抑制される | `portsorch.cpp:6589` |
+| `linksync` 起動時の旧インタフェース比較ロジック | [DPU](../../reference/glossary.md#term-dpu) では `g_switchType == "dpu"` のとき `m_ifindexOldNameMap` 構築ループを skip して即 `return`。RTM_NEWLINK/DELLINK 自体は正常に処理されるため `state` / `admin_status` / `mtu` 書き込みに変化なし | `linksync.cpp:74-78` |
+| `initializePortBufferMaximumParameters()` | [DPU](../../reference/glossary.md#term-dpu) ではスキップ (`gMySwitchType != "dpu"` ガード)。バッファ最大値の STATE_DB 書き込みは発生しない | `portsorch.cpp:6449` |
+| PG / queue / scheduler 一括初期化 | [DPU](../../reference/glossary.md#term-dpu) ではスキップ。`m_queue_ids` が初期化されないため `host_tx_queue` 関連 flex counter 設定も抑制される | `portsorch.cpp:6589` |
 | `fec_override_sup` / `oper_fec_sup` クエリ | `gMySwitchType != "dpu"` ガード内で実行されるため、DPU では両フラグが `false` のまま。`fec` フィールドは常に `"N/A"`、`supported_fecs` に `"auto"` が含まれない | `portsorch.cpp:987-1010` |
 
 ### fec / supported_fecs の SAI capability 依存
@@ -511,7 +510,7 @@ admin UP 設定時の host_tx_ready 確定ロジック:
 
 ### プラットフォーム差のないフィールド
 
-`state`, `netdev_oper_status`, `admin_status`, `mtu` は linksync が netlink イベントから直接書き込むため、ASIC ベンダー・switch_type・Gearbox 有無を問わず同一のロジックで書かれる。`link_training_status`, `rmt_adv_speeds`, `phy_ctrl_unreliable_los`, `supported_speeds` の書き込み関数にも `platform` 環境変数参照・`gMySwitchType` 分岐は存在しない（SAI の capability 不備がフォールバック値 `"N/A"` や空文字列に現れる）。
+`state`, `netdev_oper_status`, `admin_status`, `mtu` は linksync が netlink イベントから直接書き込むため、[ASIC](../../reference/glossary.md#term-asic) ベンダー・switch_type・Gearbox 有無を問わず同一のロジックで書かれる。`link_training_status`, `rmt_adv_speeds`, `phy_ctrl_unreliable_los`, `supported_speeds` の書き込み関数にも `platform` 環境変数参照・`gMySwitchType` 分岐は存在しない（SAI の capability 不備がフォールバック値 `"N/A"` や空文字列に現れる）。
 
 <!-- /platform -->
 
@@ -530,3 +529,5 @@ admin UP 設定時の host_tx_ready 確定ロジック:
 - STATE_DB FEC 詳細: [`fec-state.md`](fec-state.md) — `fec` / `supported_fecs` の詳細
 - CLI: `show interfaces status` — admin / oper status の一覧表示
 - CLI: `sonic-db-cli STATE_DB hgetall 'PORT_TABLE|Ethernet0'` — 全フィールドの確認
+
+<!-- glossary-links-injected: af5a849cae09 -->

@@ -42,7 +42,7 @@ related:
 
 # Reboot family の選び方
 
-SONiC の reboot は、単に「速い順」に並べるよりも、どの状態を保持し、どこで整合性を取り直すかで見ると判断しやすくなります。通常の cold reboot は最も単純で、OS と container をすべて落として再起動します。fast reboot は kernel 切替を短縮し、warm reboot は data plane を可能な限り維持しながら control plane を戻します。express reboot はさらに特定プラットフォーム向けにデータプレーン断を短くする設計です。
+[SONiC](../../reference/glossary.md#term-sonic) の reboot は、単に「速い順」に並べるよりも、どの状態を保持し、どこで整合性を取り直すかで見ると判断しやすくなります。通常の cold reboot は最も単純で、OS と container をすべて落として再起動します。fast reboot は kernel 切替を短縮し、warm reboot は data plane を可能な限り維持しながら control plane を戻します。express reboot はさらに特定プラットフォーム向けにデータプレーン断を短くする設計です。
 
 ## Reboot family は何を解決するか
 
@@ -63,7 +63,7 @@ Reboot 系の機能は **management plane と control plane の境界** に座�
 - 入口は CLI (`reboot` / `fast-reboot` / `warm-reboot` / `config warm_restart ...`)、[gNOI](../../reference/glossary.md#term-gnoi) (`Reboot` RPC)、Ansible 等の自動化経路。
 - 中間で `pre-shutdown`、`warm shutdown`、DB backup（`/host/warmboot/`）、kexec の準備が走ります。
 - 起動時には reboot type を `STATE_DB` / `/proc/cmdline` から判別し、[syncd](../../reference/glossary.md#term-syncd) / [orchagent](../../reference/glossary.md#term-orchagent) / [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) / [neighsyncd](../../reference/glossary.md#term-neighsyncd) / [teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) などが各々 warm / fast モードで起動し、最終的に reboot finalizer が「整合性が取れた」と判定して終了します。
-- データプレーン状態の維持は [SAI](../../reference/glossary.md#term-sai) の warm boot サポートと ASIC firmware の協力が前提です。
+- データプレーン状態の維持は [SAI](../../reference/glossary.md#term-sai) の warm boot サポートと [ASIC](../../reference/glossary.md#term-asic) firmware の協力が前提です。
 - BGP / [LACP](../../reference/glossary.md#term-lacp) / IGMP などの control plane プロトコルは [Graceful Restart](../../reference/glossary.md#term-graceful-restart) や warm restart 拡張で peer 側にも見えないように落ちます。
 
 つまり Reboot は「**OS 全体の lifecycle イベントとして system 全コンポーネントを一斉に協調させる**」サブシステムです。1 コンポーネントでも warm 対応が抜けると warm reboot は不成立になります。
@@ -178,4 +178,4 @@ warm reboot と「container restart + warm restart 機能」は混同しやす�
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: ad4074e0b684 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

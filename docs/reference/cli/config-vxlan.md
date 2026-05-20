@@ -28,15 +28,15 @@ related:
 
 ## 概要
 
-`config vxlan` は [VXLAN](../../reference/glossary.md#term-vxlan) VTEP (`VXLAN_TUNNEL`)、[EVPN](../../reference/glossary.md#term-evpn) NVO (`VXLAN_EVPN_NVO`)、および [VLAN](../../reference/glossary.md#term-vlan)-VNI マッピング (`VXLAN_TUNNEL_MAP`) を管理する。`config/vxlan.py` に分離されており、`config/main.py` 末尾の `config.add_command(vxlan.vxlan)` で登録される構造[^1]。
+`config vxlan` は [VXLAN](../../reference/glossary.md#term-vxlan) [VTEP](../../reference/glossary.md#term-vtep) (`VXLAN_TUNNEL`)、[EVPN](../../reference/glossary.md#term-evpn) NVO (`VXLAN_EVPN_NVO`)、および [VLAN](../../reference/glossary.md#term-vlan)-VNI マッピング (`VXLAN_TUNNEL_MAP`) を管理する。`config/vxlan.py` に分離されており、`config/main.py` 末尾の `config.add_command(vxlan.vxlan)` で登録される構造[^1]。
 
-VTEP **1 デバイスにつき 1 つだけ**しか作れない（`vxlan add` 時に既存件数 > 0 でエラー）。[EVPN](../../reference/glossary.md#term-evpn) NVO も 1 つだけ。
+[VTEP](../../reference/glossary.md#term-vtep) **1 デバイスにつき 1 つだけ**しか作れない（`vxlan add` 時に既存件数 > 0 でエラー）。[EVPN](../../reference/glossary.md#term-evpn) NVO も 1 つだけ。
 
 ## コマンド一覧
 
 | コマンド | 用途 |
 |---------|------|
-| `config vxlan add <vxlan_name> <src_ip>` | VTEP を作成 |
+| `config vxlan add <vxlan_name> <src_ip>` | [VTEP](../../reference/glossary.md#term-vtep) を作成 |
 | `config vxlan del <vxlan_name>` | VTEP を削除 |
 | `config vxlan evpn_nvo add <nvo_name> <vxlan_name>` | [EVPN](../../reference/glossary.md#term-evpn) NVO を作成 |
 | `config vxlan evpn_nvo del <nvo_name>` | EVPN NVO を削除 |
@@ -259,4 +259,4 @@ show vxlan name <tunnel>
 - [CONFIG_DB: VXLAN_TUNNEL_MAP](../config-db/vxlan-tunnel-map.md)
 - [YANG: sonic-vxlan](../yang/sonic-vxlan.md)
 
-<!-- glossary-links-injected: 30b3c32e2ff3 -->
+<!-- glossary-links-injected: 764ef78dbc78 -->

@@ -87,7 +87,7 @@ reclaim は port の admin down や split port の枝の片側など、「物理
 
 ## Buffer drop counter の系列
 
-[Port buffer drop counters in SONiC](../../acl-qos/port-buffer-drop-counters-in-sonic.md) は、SAI の port-level buffer drop 統計を SONiC でどう公開するかを定義しています。具体的には次のような系列が `COUNTERS_DB:PORT_STAT` 配下に並びます。
+[Port buffer drop counters in SONiC](../../acl-qos/port-buffer-drop-counters-in-sonic.md) は、SAI の port-level buffer drop 統計を [SONiC](../../reference/glossary.md#term-sonic) でどう公開するかを定義しています。具体的には次のような系列が `COUNTERS_DB:PORT_STAT` 配下に並びます。
 
 - `SAI_PORT_STAT_IN_DROPPED_PKTS` — ingress buffer 起因の総 drop。
 - `SAI_PORT_STAT_PFC_*_RX_PKTS` / `..._TX_PKTS` — PFC frame カウント。
@@ -166,7 +166,7 @@ ASIC_DB:
 ## ZMQ / Redis pub/sub
 
 - ZMQ は使わない。すべて [Redis](../../reference/glossary.md#term-redis) pub/sub と `flexcounter` の polling 経路。
-- PFC watchdog の検出は ASIC からの notification ではなく、`flexcounter` 経由の queue stat polling で stuck queue を検知する仕組み。
+- PFC watchdog の検出は [ASIC](../../reference/glossary.md#term-asic) からの notification ではなく、`flexcounter` 経由の queue stat polling で stuck queue を検知する仕組み。
 
 ## 既知の実装上の制約
 
@@ -176,4 +176,4 @@ ASIC_DB:
 - PFC watchdog は queue 単位の statistical detection で、瞬間的な burst にも反応する設計。`detection_time` / `restoration_time` のチューニングが必要。
 - WRED / ECN の閾値は ASIC で粒度（cell vs byte）が違い、`SAI_WRED_ATTR_*` の単位解釈が SDK ベンダごとに分かれる。
 
-<!-- glossary-links-injected: 1af9c6208afc -->
+<!-- glossary-links-injected: ec18b66e3507 -->

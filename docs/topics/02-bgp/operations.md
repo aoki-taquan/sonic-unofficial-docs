@@ -35,7 +35,7 @@ related:
 
 # 運用
 
-[BGP](../../reference/glossary.md#term-bgp) の運用確認は、neighbor の状態確認だけでは足りない。route が [FRR](../../reference/glossary.md#term-frr) で選ばれているか、SONiC に渡っているか、ASIC に入ったか、外部監視に見えているかを分けて確認する。
+[BGP](../../reference/glossary.md#term-bgp) の運用確認は、neighbor の状態確認だけでは足りない。route が [FRR](../../reference/glossary.md#term-frr) で選ばれているか、[SONiC](../../reference/glossary.md#term-sonic) に渡っているか、[ASIC](../../reference/glossary.md#term-asic) に入ったか、外部監視に見えているかを分けて確認する。
 
 ## 状態確認の入口
 
@@ -62,7 +62,7 @@ FIB 未導入時は次の順に狭める。
 
 ## BMP は何を見る機能か
 
-BMP は BGP の Adj-RIB-In/Out や peer state を外部 collector に送るための監視機構である。SONiC では BMP_STATE_DB と FRR 側の BMP 有効化が関わる。Multi-ASIC や [gNMI](../../reference/glossary.md#term-gnmi) Streaming との接点もあるため、単なる `show bgp` の置き換えではなく、継続監視用の出口として読む。
+BMP は BGP の Adj-RIB-In/Out や peer state を外部 collector に送るための監視機構である。SONiC では BMP_STATE_DB と FRR 側の BMP 有効化が関わる。[Multi-ASIC](../../reference/glossary.md#term-multi-asic) や [gNMI](../../reference/glossary.md#term-gnmi) Streaming との接点もあるため、単なる `show bgp` の置き換えではなく、継続監視用の出口として読む。
 
 ## CiscoBgp4MIB はなぜ STATE_DB 経由か
 
@@ -214,4 +214,4 @@ BGP neighbor is 10.0.0.1, remote AS 65200, local AS 65100, external link
 - [BGP Route Install Error Handling](../../routing/bgp-route-install-error-handling.md)
 - [BGP Suppress FIB Pending](../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw.md)
 
-<!-- glossary-links-injected: 7acc9f6ac4b3 -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

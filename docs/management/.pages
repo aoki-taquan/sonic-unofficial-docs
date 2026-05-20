@@ -48,3 +48,6 @@ nav:
   - design-doc.md
   - enhancement-of-cmis-module-management.md
   - sonic-cli-auto-generation-tool.md
+  - gnmi-streaming-telemetry-pitfalls.md
+  - gnmi-translib-write-enable.md
+  - snmp-interface-scope.md

@@ -27,9 +27,9 @@ related:
 
 ## 概要
 
-SONiC の `debug` および `undebug` コマンドは、`config` / `show` とは別の独立した Click root として実装される (`debug = debug.main:cli`、`undebug = undebug.main:cli`)[^1]。
+[SONiC](../../reference/glossary.md#term-sonic) の `debug` および `undebug` コマンドは、`config` / `show` とは別の独立した Click root として実装される (`debug = debug.main:cli`、`undebug = undebug.main:cli`)[^1]。
 
-対象は主に **[FRR](../../reference/glossary.md#term-frr) ([BGP](../../reference/glossary.md#term-bgp) / [zebra](../../reference/glossary.md#term-zebra))** と **STP (`stpctl`)** の動的デバッグスイッチで、いずれも実体は `vtysh` または `stpctl` のラッパー。[CONFIG_DB](../../reference/glossary.md#term-config_db) は触らず、対象プロセスの runtime ログレベルや trace を切り替えるだけ。`undebug` は `debug` のミラーで、各 `debug ...` コマンドに対応する `no debug ...` を vtysh に投げる。
+対象は主に **[FRR](../../reference/glossary.md#term-frr) ([BGP](../../reference/glossary.md#term-bgp) / [zebra](../../reference/glossary.md#term-zebra))** と **STP (`stpctl`)** の動的デバッグスイッチで、いずれも実体は `vtysh` または `stpctl` のラッパー。[CONFIG_DB](../../reference/glossary.md#term-config_db) は触らず、対象プロセスの runtime ログレベルや trace を切り替えるだけ。`undebug` は `debug` のミラーで、各 `debug ...` コマンドに対応する `no debug ...` を [vtysh](../../reference/glossary.md#term-vtysh) に投げる。
 
 `debug.main` は **import 時に `sudo vtysh -c 'show version'` を実行して [FRR](../../reference/glossary.md#term-frr) か Quagga かを判定**し、コマンドツリーを動的に切り替える点が特徴的[^2]。本ドキュメントでは現役の [FRR](../../reference/glossary.md#term-frr) ブランチを中心に記述する。
 
@@ -37,7 +37,7 @@ SONiC の `debug` および `undebug` コマンドは、`config` / `show` とは
 
 ### `debug bgp` (FRR)
 
-| コマンド | vtysh 経由で実行されるコマンド |
+| コマンド | [vtysh](../../reference/glossary.md#term-vtysh) 経由で実行されるコマンド |
 |---------|--------------------------------|
 | `debug bgp allow-martians` | `debug bgp allow-martians` |
 | `debug bgp as4 [segment]` | `debug bgp as4 [segment]` |
@@ -54,7 +54,7 @@ prefix 引数は `^[A-Za-z0-9.:/]*$` の正規表現でバリデートされ、�
 
 ### `debug zebra` (FRR)
 
-| コマンド | vtysh コマンド |
+| コマンド | [vtysh](../../reference/glossary.md#term-vtysh) コマンド |
 |---------|----------------|
 | `debug zebra dplane [detailed]` | `debug zebra dplane [detailed]` |
 | `debug zebra events` | `debug zebra events` |
@@ -101,7 +101,7 @@ current の `debug.main` ツリーには `bgp` / `zebra` / `spanning_tree` の�
 
 - `debug.main` の **import 時に `subprocess.check_output(['sudo', 'vtysh', '-c', 'show version'])` が走る**。これは tab 補完のような副次的な呼び出しでも実行されるため、bgp コンテナが起動していない環境で `debug` コマンドの help を見るだけでもエラーで終了する場合がある。
 - `debug` の効果は **プロセス再起動で消える**。永続化したい場合は FRR 側 (`/etc/frr/frr.conf` 内 `debug ...` 行) に書く運用となる。
-- Quagga ブランチ (legacy) のコマンド集合は FRR ブランチと部分的に異なる (`debug bgp filters` / `fsm` などは Quagga のみ)。`vtysh -c 'show version'` で判定するため、現役 SONiC では FRR 経路のみが効く。
+- Quagga ブランチ (legacy) のコマンド集合は FRR ブランチと部分的に異なる (`debug bgp filters` / `fsm` などは Quagga のみ)。`vtysh -c 'show version'` で判定するため、現役 [SONiC](../../reference/glossary.md#term-sonic) では FRR 経路のみが効く。
 
 <!-- cli-mermaid -->
 ### データフロー (手動作成)
@@ -135,4 +135,4 @@ flowchart LR
 
 [^3]: prefix バリデーション (`debug/main.py` L30 + L60-L63 etc.)。
 
-<!-- glossary-links-injected: 31afda1b3222 -->
+<!-- glossary-links-injected: 4184f5fdb3c1 -->

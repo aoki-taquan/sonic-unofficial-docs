@@ -92,7 +92,7 @@ DEBUG_DROP_MONITOR|CONFIG          # global setting (container)
 
 | フィールド | YANG default | 実行時 fallback | 種別 | evidence |
 |---|---|---|---|---|
-| `alias` | なし | **無視** (SAI・FlexCounter に不伝播) | dead field | `debugcounterorch.cpp:726-758` |
+| `alias` | なし | **無視** (SAI・[FlexCounter](../../reference/glossary.md#term-flexcounter) に不伝播) | dead field | `debugcounterorch.cpp:726-758` |
 | `desc` | なし | **無視** (同上) | dead field | `debugcounterorch.cpp:726-758` |
 | `group` | なし | **無視** (同上) | dead field | `debugcounterorch.cpp:726-758` |
 | `drop_monitor_status` | `"disabled"` | `false` (C++ メンバ初期値) | YANG default = 実装整合 | `debugcounterorch.h:102` |
@@ -103,8 +103,8 @@ DEBUG_DROP_MONITOR|CONFIG          # global setting (container)
 
 ### 補足: ハードコード固定値・プラットフォーム依存
 
-- **FlexCounter polling interval**: `60000` ms ハードコード（`debugcounterorch.h:21` `DEBUG_DROP_MONITOR_FLEX_COUNTER_POLLING_INTERVAL_MS`）。`window` の精度はこの値に依存。
-- **PHY ポートのみ対象**: `PORT_DEBUG` カウンタは `Port::Type::PHY` のみ追跡。LAG・VLAN・CPU ポートは silent skip（`debugcounterorch.cpp:639`）。
+- **[FlexCounter](../../reference/glossary.md#term-flexcounter) polling interval**: `60000` ms ハードコード（`debugcounterorch.h:21` `DEBUG_DROP_MONITOR_FLEX_COUNTER_POLLING_INTERVAL_MS`）。`window` の精度はこの値に依存。
+- **PHY ポートのみ対象**: `PORT_DEBUG` カウンタは `Port::Type::PHY` のみ追跡。[LAG](../../reference/glossary.md#term-lag)・[VLAN](../../reference/glossary.md#term-vlan)・CPU ポートは silent skip（`debugcounterorch.cpp:639`）。
 - **SAI 非サポート環境**: `sai_query_attribute_enum_values_capability` が失敗すると `supported_counter_types` が空になり、全カウンタ作成が `task_failed`（`drop_counter.cpp:380-384`）。
 - **drop_reason 未設定の counter**: SAI オブジェクトを作成せず `free_drop_counters` に保留。`task_success` を返すが SAI 上にカウンタは存在しない（partial pending）（`debugcounterorch.cpp:393-394`）。
 <!-- /defaults -->
@@ -166,13 +166,12 @@ show dropcounters configuration
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`DebugCounterOrch` (orchagent 直接 CFG 購読) が CONFIG_DB の `DEBUG_COUNTER` テーブルを購読する。
+`DebugCounterOrch` ([orchagent](../../reference/glossary.md#term-orchagent) 直接 CFG 購読) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `DEBUG_COUNTER` テーブルを購読する。
 
 `DEBUG_COUNTER` と `DEBUG_COUNTER_DROP_REASON` は対で使用。drop reason リストで集計対象を指定。
 
@@ -205,7 +204,7 @@ show dropcounters configuration
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -220,7 +219,6 @@ show dropcounters configuration
 - なし
 <!-- /entry-points -->
 
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -228,7 +226,7 @@ show dropcounters configuration
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
-| 派生なし（DEBUG_COUNTER は CLI / sonic-mgmt-common 経由でのみ書き込まれる） | — | — |
+| 派生なし（DEBUG_COUNTER は CLI / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common 経由でのみ書き込まれる） | — | — |
 
 ### Phase 7: 条件付き module/manager 登録
 
@@ -288,12 +286,12 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`DEBUG_COUNTER` / `DEBUG_COUNTER_DROP_REASON` は **YANG leafref を PORT / FLEX_COUNTER_DB / STATE_DB / COUNTERS_DB に対して持たない**。以下はすべて実装レベルの暗黙参照。
+`DEBUG_COUNTER` / `DEBUG_COUNTER_DROP_REASON` は **YANG leafref を PORT / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に対して持たない**。以下はすべて実装レベルの暗黙参照。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
-| `PORT` (CONFIG_DB / PortsOrch) | 読み取り（ポート一覧取得 + 変更イベント購読） | `PORT_INGRESS_DROPS` / `PORT_EGRESS_DROPS` 型カウンタ作成時。`gPortsOrch->getAllPorts()` で `Port::Type::PHY` のみ FlexCounter 登録対象に選択。ポート追加/削除で `installDebugFlexCounters()` / `uninstallDebugFlexCounters()` が自動呼び出し。 | `debugcounterorch.cpp:16,39,71,92,106,629,682` |
-| `FLEX_COUNTER_DB FLEX_COUNTER_GROUP_TABLE` (`DEBUG_COUNTER` グループ) | 書き込み（orchagent → syncd 経路） | `DebugCounterOrch` コンストラクタで初期化。カウンタ作成/削除時に `flex_counter_manager.addFlexCounterStat()` / `removeFlexCounterStat()` で stat を登録・解除。 | `debugcounterorch.cpp:25-29,625,644; debugcounterorch.h:19` |
+| `PORT` (CONFIG_DB / PortsOrch) | 読み取り（ポート一覧取得 + 変更イベント購読） | `PORT_INGRESS_DROPS` / `PORT_EGRESS_DROPS` 型カウンタ作成時。`gPortsOrch->getAllPorts()` で `Port::Type::PHY` のみ [FlexCounter](../../reference/glossary.md#term-flexcounter) 登録対象に選択。ポート追加/削除で `installDebugFlexCounters()` / `uninstallDebugFlexCounters()` が自動呼び出し。 | `debugcounterorch.cpp:16,39,71,92,106,629,682` |
+| `FLEX_COUNTER_DB FLEX_COUNTER_GROUP_TABLE` (`DEBUG_COUNTER` グループ) | 書き込み（orchagent → [syncd](../../reference/glossary.md#term-syncd) 経路） | `DebugCounterOrch` コンストラクタで初期化。カウンタ作成/削除時に `flex_counter_manager.addFlexCounterStat()` / `removeFlexCounterStat()` で stat を登録・解除。 | `debugcounterorch.cpp:25-29,625,644; debugcounterorch.h:19` |
 | `FLEX_COUNTER_DB FLEX_COUNTER_GROUP_TABLE` (`DEBUG_MONITOR_COUNTER` グループ) | 書き込み（drop monitor Lua 用） | コンストラクタで `setFlexCounterGroupParameter(DEBUG_DROP_MONITOR_FLEX_COUNTER_GROUP, ...)` を呼び、drop_monitor.lua を Lua プラグインとして登録。`drop_monitor_status=enabled` 時に `startFlexCounterPolling()` でポーリング開始。 | `debugcounterorch.cpp:55-59,241,651,710; debugcounterorch.h:20-21` |
 | `STATE_DB DEBUG_COUNTER_CAPABILITIES` | 書き込み（自身が情報源） | 起動時 1 回 `publishDropCounterCapabilities()` が SAI に `sai_query_attribute_enum_values_capability` を投げ、サポートされているカウンタ種別・drop reason 一覧を書き込む。 | `debugcounterorch.cpp:31,314-361` |
 | `COUNTERS_DB COUNTERS_DEBUG_NAME_PORT_STAT_MAP` | 書き込み（counter_name → port stat OID マップ） | PORT_DEBUG 型カウンタ作成時に `m_counterNameToPortStatMap->set()` で書き込む。`drop_monitor.lua` がポーリング時にこのマップを参照する。 | `debugcounterorch.cpp:33; drop_monitor.lua:18-19` |
@@ -361,8 +359,8 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 ### 部分適用の注意
 
 - `task_failed` は**システム状態を変更しない**（公式コメント: `debugcounterorch.cpp:128-130`）。
-- `task_success`（pending）の場合、`free_drop_counters` / `free_drop_reasons` に保留される。`show dropcounters` / COUNTERS_DB への反映は `reconcileFreeDropCounters()` が正常完了するまで行われない。
-- STATE_DB / ERROR_TABLE への失敗記録は行わない。失敗の確認は `journalctl -u swss` または orchagent ログを参照。
+- `task_success`（pending）の場合、`free_drop_counters` / `free_drop_reasons` に保留される。`show dropcounters` / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への反映は `reconcileFreeDropCounters()` が正常完了するまで行われない。
+- [STATE_DB](../../reference/glossary.md#term-state_db) / ERROR_TABLE への失敗記録は行わない。失敗の確認は `journalctl -u swss` または orchagent ログを参照。
 
 <!-- /failure -->
 
@@ -401,7 +399,7 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 
 | 定数名 | 値 | 用途 |
 |---|---|---|
-| `DEBUG_COUNTER_FLEX_COUNTER_GROUP` | `"DEBUG_COUNTER"` | 通常 debug counter の FLEX_COUNTER_DB グループ名 |
+| `DEBUG_COUNTER_FLEX_COUNTER_GROUP` | `"DEBUG_COUNTER"` | 通常 debug counter の [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) グループ名 |
 | `DEBUG_DROP_MONITOR_FLEX_COUNTER_GROUP` | `"DEBUG_MONITOR_COUNTER"` | drop monitor 用グループ名 |
 | `DEBUG_DROP_MONITOR_FLEX_COUNTER_POLLING_INTERVAL_MS` | `"60000"` | drop monitor ポーリング間隔固定値 (60 秒) |
 
@@ -444,7 +442,7 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 | 操作 | SAI API | 条件 |
 |------|---------|------|
 | counter 作成 | `sai_debug_counter_api->create_debug_counter()` — `ASIC_DB ASIC_STATE:SAI_OBJECT_TYPE_DEBUG_COUNTER:<oid>` に書き込まれる | drop_reason が 1 件以上揃った時点で SAI オブジェクトを作成 |
-| counter 削除 | `sai_debug_counter_api->remove_debug_counter()` — ASIC_DB から対応エントリを削除 | `uninstallDebugCounter()` 実行時 |
+| counter 削除 | `sai_debug_counter_api->remove_debug_counter()` — [ASIC_DB](../../reference/glossary.md#term-asic_db) から対応エントリを削除 | `uninstallDebugCounter()` 実行時 |
 | drop_reason 追加/削除 | `sai_debug_counter_api->set_debug_counter_attribute()` — `SAI_DEBUG_COUNTER_ATTR_IN/OUT_DROP_REASON_LIST` を更新 | `addDropReason()` / `removeDropReason()` 成功時 |
 
 !!! note "COUNTERS_DB マップの役割"
@@ -459,16 +457,16 @@ counter が SAI 未作成（`free_drop_counters` 状態）のまま DEL する�
 
 ### Producer/Consumer ペア
 
-`DEBUG_COUNTER` / `DEBUG_COUNTER_DROP_REASON` / `DEBUG_DROP_MONITOR` は CONFIG_DB → SAI の **直接経路**をとる。APPL_DB への中継は行わない。
+`DEBUG_COUNTER` / `DEBUG_COUNTER_DROP_REASON` / `DEBUG_DROP_MONITOR` は CONFIG_DB → SAI の **直接経路**をとる。[APPL_DB](../../reference/glossary.md#term-appl_db) への中継は行わない。
 
 | 区間 | 方式 | チャンネル/パターン |
 |------|------|--------------------|
 | CONFIG_DB → DebugCounterOrch | `SubscriberStateTable` (Orch 基底クラス経由) | `__keyspace@{config_db_id}__:DEBUG_COUNTER\|*` 等 |
 | PortsOrch → DebugCounterOrch | Subject/Observer (`attach`/`update`) | `SUBJECT_TYPE_PORT_CHANGE` イベント |
 | DebugCounterOrch → SAI | SAI API 直接呼び出し | `sai_debug_counter_api->create/remove/set_debug_counter()` |
-| DebugCounterOrch → STATE_DB | `Table::set()` | `DEBUG_COUNTER_CAPABILITIES` テーブル（起動時 1 回） |
+| DebugCounterOrch → [STATE_DB](../../reference/glossary.md#term-state_db) | `Table::set()` | `DEBUG_COUNTER_CAPABILITIES` テーブル（起動時 1 回） |
 | DebugCounterOrch → COUNTERS_DB | `Table::set()` / `Table::hdel()` | `COUNTERS_DEBUG_NAME_PORT_STAT_MAP`, `COUNTERS_DEBUG_NAME_SWITCH_STAT_MAP` |
-| DebugCounterOrch → FLEX_COUNTER_DB | `FlexCounterManager` 経由 | `FLEX_COUNTER_TABLE`（`DEBUG_COUNTER` / `DEBUG_MONITOR_COUNTER` グループ） |
+| DebugCounterOrch → [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | `FlexCounterManager` 経由 | `FLEX_COUNTER_TABLE`（`DEBUG_COUNTER` / `DEBUG_MONITOR_COUNTER` グループ） |
 
 ### SubscriberStateTable の動作
 
@@ -536,9 +534,9 @@ PortsOrch.attach(DebugCounterOrch):
 
 | 制約 | 詳細 | evidence |
 |------|------|---------|
-| SAI `sai_query_attribute_enum_values_capability` 未実装 ASIC | `getSupportedCounterTypes()` が空集合を返し、すべての `installDebugCounter()` が `task_failed`。`DEBUG_COUNTER_CAPABILITIES` には type エントリが書き込まれない | `drop_counter.cpp:380-384` |
-| ハードウェアリソース共有 | 一部の ASIC では debug counter が ACL entry 等と hardware resource を共有するため、`sai_object_type_get_availability` の返り値がシステム負荷で動的に変動する。SAI create 失敗時は `task_failed` | `drop_counter.cpp:425-428` |
-| PORT_DEBUG 型 — PHY ポートのみ | `PORT_INGRESS_DROPS` / `PORT_EGRESS_DROPS` の FlexCounter エントリは `Port::Type::PHY` のポートのみ対象。LAG・VLAN・CPU ポートは silent skip（コード固定、プラットフォーム非依存） | `debugcounterorch.cpp:629-648` |
+| SAI `sai_query_attribute_enum_values_capability` 未実装 [ASIC](../../reference/glossary.md#term-asic) | `getSupportedCounterTypes()` が空集合を返し、すべての `installDebugCounter()` が `task_failed`。`DEBUG_COUNTER_CAPABILITIES` には type エントリが書き込まれない | `drop_counter.cpp:380-384` |
+| ハードウェアリソース共有 | 一部の [ASIC](../../reference/glossary.md#term-asic) では debug counter が [ACL](../../reference/glossary.md#term-acl) entry 等と hardware resource を共有するため、`sai_object_type_get_availability` の返り値がシステム負荷で動的に変動する。SAI create 失敗時は `task_failed` | `drop_counter.cpp:425-428` |
+| PORT_DEBUG 型 — PHY ポートのみ | `PORT_INGRESS_DROPS` / `PORT_EGRESS_DROPS` の FlexCounter エントリは `Port::Type::PHY` のポートのみ対象。[LAG](../../reference/glossary.md#term-lag)・[VLAN](../../reference/glossary.md#term-vlan)・CPU ポートは silent skip（コード固定、プラットフォーム非依存） | `debugcounterorch.cpp:629-648` |
 | VS (Virtual Switch) 環境 | SAI stub が capability クエリを実装していない場合は全 counter 作成不可。ただし swss テスト (`test_virtual_chassis.py`) では SAI stub に debug counter サポートが注入される | `drop_counter.cpp:380-384`; `tests/test_virtual_chassis.py:1306` |
 
 ### STATE_DB DEBUG_COUNTER_CAPABILITIES によるプラットフォーム差の公開
@@ -555,4 +553,4 @@ PortsOrch.attach(DebugCounterOrch):
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: d2c490dcfe8c -->
+<!-- glossary-links-injected: 488a0e9deabd -->

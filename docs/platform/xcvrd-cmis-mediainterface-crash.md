@@ -5,7 +5,8 @@ tags: [xcvrd, cmis, transceiver, crash, platform-common]
 description: CMIS アプリケーション広告リストに MediaInterfaceIDApp が定義されていない場合に xcvrd がクラッシュする問題と回避策。
 source_issues:
   - https://github.com/sonic-net/sonic-platform-common/issues/489
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # xcvrd クラッシュ（MediaInterfaceIDApp 未定義）

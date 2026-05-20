@@ -109,7 +109,7 @@ flowchart LR
 ### 典型的な利用シーン
 
 - [AAA](../../reference/glossary.md#term-aaa) login / authorization / accounting の現状確認。
-- TACACS+ / RADIUS との連携検証。
+- TACACS+ / [RADIUS](../../reference/glossary.md#term-radius) との連携検証。
 
 ### よくある落とし穴
 
@@ -135,4 +135,4 @@ show radius
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 5b719dba66a4 -->
+<!-- glossary-links-injected: df94ce4c9c04 -->

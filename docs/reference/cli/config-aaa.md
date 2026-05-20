@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-[AAA](../../reference/glossary.md#term-aaa) (Authentication / Authorization / Accounting) と、その下位プロトコル TACACS+ / RADIUS のサーバ設定を行う。**`aaa`・`tacacs`・`radius` の 3 つは独立した click グループ**で、`config/main.py` がそれぞれを `config.add_command(aaa.aaa)` `config.add_command(aaa.tacacs)` `config.add_command(aaa.radius)` の形で `config` 直下に登録する[^1]。すべて `config/aaa.py` に同居している。
+[AAA](../../reference/glossary.md#term-aaa) (Authentication / Authorization / Accounting) と、その下位プロトコル TACACS+ / [RADIUS](../../reference/glossary.md#term-radius) のサーバ設定を行う。**`aaa`・`tacacs`・`radius` の 3 つは独立した click グループ**で、`config/main.py` がそれぞれを `config.add_command(aaa.aaa)` `config.add_command(aaa.tacacs)` `config.add_command(aaa.radius)` の形で `config` 直下に登録する[^1]。すべて `config/aaa.py` に同居している。
 
 操作対象は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `AAA` / `TACPLUS` / `TACPLUS_SERVER` / `RADIUS` / `RADIUS_SERVER` テーブル。値の追加には `add_table_kv` (= `mod_entry`)、削除には `del_table_key` を使う。`set_entry` は `ValidatedConfigDBConnector` 経由で [YANG](../../reference/glossary.md#term-yang) 検証を伴う。
 
@@ -73,8 +73,8 @@ related:
 | `config radius sourceip <ip>` / `default sourceip` | source IP |
 | `config radius nasip <ip>` / `default nasip` | NAS-IP |
 | `config radius statistics <enable\|disable\|default>` | 統計収集の有効化 |
-| `config radius add <ip> [-r N] [-t SEC] [-k KEY] [-a TYPE] [-o PORT] [-p PRI] [-m] [-s INTF]` | RADIUS サーバ追加（最大 8 台） |
-| `config radius delete <ip>` | RADIUS サーバ削除 |
+| `config radius add <ip> [-r N] [-t SEC] [-k KEY] [-a TYPE] [-o PORT] [-p PRI] [-m] [-s INTF]` | [RADIUS](../../reference/glossary.md#term-radius) サーバ追加（最大 8 台） |
+| `config radius delete <ip>` | [RADIUS](../../reference/glossary.md#term-radius) サーバ削除 |
 
 ## 各コマンドの詳細
 
@@ -248,4 +248,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8d5a139c8eba -->
+<!-- glossary-links-injected: eb13b25f8314 -->

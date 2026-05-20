@@ -27,7 +27,7 @@ related:
 
 # アーキテクチャ
 
-ここでは「supervisor の Chassis DB」「各 ASIC namespace の [Redis](../../reference/glossary.md#term-redis)」「fabric を介した distributed forwarding」がどう組み合わさって 1 つの論理スイッチに見えるかを、データの流れ順に並べます。
+ここでは「supervisor の Chassis DB」「各 [ASIC](../../reference/glossary.md#term-asic) namespace の [Redis](../../reference/glossary.md#term-redis)」「fabric を介した distributed forwarding」がどう組み合わさって 1 つの論理スイッチに見えるかを、データの流れ順に並べます。
 
 ## DB レイヤの全景
 
@@ -103,7 +103,7 @@ aggregate VOQ counter の集約は [運用](operations.md) で扱います。
 
 ## Multi-Namespace Redis の制約
 
-`support-redis-databases-in-multiple-namespaces` HLD は、SONiC のプロセスがどうやって自身の namespace に属する Redis を見つけるかを定義します。`/var/run/redisN` のソケット、`database_config.json` の namespace 別エントリ、`SonicV2Connector(namespace=...)` の挙動などが規定されており、外部から触るスクリプトは「namespace を意識せずに書くと host の Redis にしか繋がらない」点に注意します。
+`support-redis-databases-in-multiple-namespaces` HLD は、[SONiC](../../reference/glossary.md#term-sonic) のプロセスがどうやって自身の namespace に属する Redis を見つけるかを定義します。`/var/run/redisN` のソケット、`database_config.json` の namespace 別エントリ、`SonicV2Connector(namespace=...)` の挙動などが規定されており、外部から触るスクリプトは「namespace を意識せずに書くと host の Redis にしか繋がらない」点に注意します。
 
 orchagent / sai_redis / [syncd](../../reference/glossary.md#term-syncd) は通常起動時に自分の namespace 用 Redis を読みますが、Chassis DB に書き込む処理だけは supervisor の Redis を明示参照します。
 
@@ -116,4 +116,4 @@ orchagent / sai_redis / [syncd](../../reference/glossary.md#term-syncd) は通�
 - [Redis Databases in Multiple Namespaces](../../internals/support-redis-databases-in-multiple-namespaces.md)
 - [DB Design for Multi-ASIC Scenarios](../../platform/db-design-for-multi-asic-scenarios.md)
 
-<!-- glossary-links-injected: 436756bf02d5 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

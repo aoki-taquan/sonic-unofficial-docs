@@ -44,10 +44,10 @@ show bfd summary [-n|--namespace <ns>]
 
 **オプション**:
 
-- `-n / --namespace` ... multi-ASIC 環境での namespace 指定（`multi_asic_namespace_validation_callback` で検証）
+- `-n / --namespace` ... multi-[ASIC](../../reference/glossary.md#term-asic) 環境での namespace 指定（`multi_asic_namespace_validation_callback` で検証）
 
 **動作**:
-multi-ASIC 環境では `multi_asic.get_namespace_list()` を全走査、それ以外は `DEFAULT_NAMESPACE` のみ。各 namespace の [STATE_DB](../../reference/glossary.md#term-state_db) から `BFD_SESSION_TABLE|*` の全キーを列挙し、`local_discriminator` が無い場合は `NA` を補って表示する[^2]。
+multi-[ASIC](../../reference/glossary.md#term-asic) 環境では `multi_asic.get_namespace_list()` を全走査、それ以外は `DEFAULT_NAMESPACE` のみ。各 namespace の [STATE_DB](../../reference/glossary.md#term-state_db) から `BFD_SESSION_TABLE|*` の全キーを列挙し、`local_discriminator` が無い場合は `NA` を補って表示する[^2]。
 
 **表示カラム**:
 
@@ -190,4 +190,4 @@ sonic-db-cli STATE_DB keys 'BFD_SESSION_TABLE|*'
 - [reference/CLI: show bgp](show-bgp.md)
 - [reference/CLI: show ip](show-ip.md)
 
-<!-- glossary-links-injected: ad591bd6c032 -->
+<!-- glossary-links-injected: e82be350a384 -->

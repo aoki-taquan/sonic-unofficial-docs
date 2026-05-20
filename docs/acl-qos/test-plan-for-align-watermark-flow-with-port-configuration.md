@@ -14,7 +14,6 @@ related:
   - FLEX_COUNTER_TABLE
   - PORT
   - QUEUE
-  - PORT_STORM_CONTROL
   - PORT_QOS_MAP
   - PORT_TABLE
   cli:
@@ -40,7 +39,7 @@ related:
 
 ## 概要
 
-SONiC の `counterpoll` CLI は **queue / watermark / pg-drop** の 3 種を個別に enable/disable できる。それぞれの enable 状態に応じて、`COUNTERS_DB` 上の補助マップ（QUEUE / PG マップ群）と `FLEX_COUNTER_DB` 上の counter group entry が **作成または削除されるべき** という前提で本テストプランは検証する[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の `counterpoll` CLI は **queue / watermark / pg-drop** の 3 種を個別に enable/disable できる。それぞれの enable 状態に応じて、`COUNTERS_DB` 上の補助マップ（QUEUE / PG マップ群）と `FLEX_COUNTER_DB` 上の counter group entry が **作成または削除されるべき** という前提で本テストプランは検証する[^1]。
 
 過去に **queue / pg-drop マップ生成のパフォーマンス改善**が入った直後のリグレッション防止が動機で、ポートバッファが設定されていないと統計が両 DB に現れないため、ポートバッファ設定が前提となる[^1]。
 
@@ -160,4 +159,4 @@ reasoning: 本テストの整合性判定基準を直接表化
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 2fb486a7acc8 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -25,7 +25,7 @@ related:
 
 `config portchannel` は [LACP](../../reference/glossary.md#term-lacp) ベースの Link Aggregation ([LAG](../../reference/glossary.md#term-lag)) を設定する。[LAG](../../reference/glossary.md#term-lag) 本体の作成・削除（`add` / `del`）、メンバー Ethernet ポートの追加・削除、`teamd` の retry-count パラメータ取得・設定の 3 グループ[^1]。
 
-[LACP](../../reference/glossary.md#term-lacp) の実体は **`teamd` (libteam)** で、SONiC の `teammgrd` が `PORTCHANNEL` テーブルを [APPL_DB](../../reference/glossary.md#term-appl_db) へ反映し、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) 設定ファイルを生成する。`config portchannel` は `PORTCHANNEL` / `PORTCHANNEL_MEMBER` テーブルを [CONFIG_DB](../../reference/glossary.md#term-config_db) に直接書き込む役割を担う。
+[LACP](../../reference/glossary.md#term-lacp) の実体は **`teamd` (libteam)** で、[SONiC](../../reference/glossary.md#term-sonic) の `teammgrd` が `PORTCHANNEL` テーブルを [APPL_DB](../../reference/glossary.md#term-appl_db) へ反映し、[teamd](../../reference/glossary.md#term-teamd-teamsyncd-teammgrd) 設定ファイルを生成する。`config portchannel` は `PORTCHANNEL` / `PORTCHANNEL_MEMBER` テーブルを [CONFIG_DB](../../reference/glossary.md#term-config_db) に直接書き込む役割を担う。
 
 ## コマンド一覧
 
@@ -144,7 +144,7 @@ excerpt: |
 ### `config portchannel retry-count get <portchannel_name>`
 
 **動作**:
-[CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく `teamdctl <portchannel_name> state item get runner.retry_count` を実行する。multi-ASIC 時は `-n asic<N>` を `teamdctl` に転送（`asic` プレフィックスは除去して数値のみを渡す）。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく `teamdctl <portchannel_name> state item get runner.retry_count` を実行する。multi-[ASIC](../../reference/glossary.md#term-asic) 時は `-n asic<N>` を `teamdctl` に転送（`asic` プレフィックスは除去して数値のみを渡す）。
 
 `runner.enable_retry_count_feature` が `false` の場合は機能未有効でエラー。
 
@@ -267,4 +267,4 @@ show runningconfiguration | grep -i portchannel
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 6e531ba7782c -->
+<!-- glossary-links-injected: ec18b66e3507 -->

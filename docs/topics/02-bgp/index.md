@@ -46,7 +46,7 @@ related:
 
 # BGP と FRR 制御プレーン
 
-この章は、SONiC の [BGP](../../reference/glossary.md#term-bgp) を「設定を書く場所」「[FRR](../../reference/glossary.md#term-frr) へ渡る経路」「ASIC に入るまでの経路」「運用中に見る場所」の順に読み直すための入口である。既存ページは [HLD](../../reference/glossary.md#term-hld) 単位で詳しいが、BGP を運用する人が最初に知りたい境界は HLD の境界ではない。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) の [BGP](../../reference/glossary.md#term-bgp) を「設定を書く場所」「[FRR](../../reference/glossary.md#term-frr) へ渡る経路」「[ASIC](../../reference/glossary.md#term-asic) に入るまでの経路」「運用中に見る場所」の順に読み直すための入口である。既存ページは [HLD](../../reference/glossary.md#term-hld) 単位で詳しいが、BGP を運用する人が最初に知りたい境界は HLD の境界ではない。
 
 主な問いは次の 4 つ。
 
@@ -132,4 +132,4 @@ related:
 - [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md)
 - [gNMI / gNOI / OpenConfig / YANG](../10-gnmi-openconfig/index.md)
 
-<!-- glossary-links-injected: 47f0c5df5b88 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

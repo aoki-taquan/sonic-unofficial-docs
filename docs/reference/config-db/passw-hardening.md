@@ -33,12 +33,8 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>PASSW_HARDENING")]
-  DM["hostcfgd<br/>PasswHardening"]
-  PAM["/etc/pam.d/common-password"]
-  LOGIN["/etc/login.defs"]
+  DM["hostcfgd"]
   CDB --> DM
-  DM --> PAM
-  DM --> LOGIN
 ```
 
 !!! note "凡例"
@@ -105,7 +101,7 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | `PASSW_HARDENING` は `wait_till_system_init_done()` 完了後に読み込まれる | 強制後行（PAM subsystem 確認後のみ） | hostcfgd が自動的に待機するため、オペレータ操作は不要 |
+| 1 | `PASSW_HARDENING` は `wait_till_system_init_done()` 完了後に読み込まれる | 強制後行（PAM subsystem 確認後のみ） | [hostcfgd](../../reference/glossary.md#term-hostcfgd) が自動的に待機するため、オペレータ操作は不要 |
 | 2 | CLI で `state` → 他フィールドの順に個別更新すると中間状態が発生する | 推奨順序あり（`state=enabled` を最後に設定） | `state=disabled` の間は PAM hardening が適用されないため、中間状態でも管理アクセスは維持される |
 | 3 | `expiration=0` を書く前に `state=enabled` を設定すると、次回のパスワード変更まで即時失効が強制される | 副作用に注意 | 変更前に `state=disabled` にしてから `expiration` を更新し、最後に `state=enabled` を設定すること |
 | 4 | `PASSW_HARDENING` と `AAA` は独立したクラスで別の PAM ファイルを管理 (`common-password` vs `common-auth`) | 相互依存なし | 順序制約なし |
@@ -119,7 +115,7 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 
 各フィールド更新のたびに `modify_passw_conf_file()` が呼ばれ、PAM ファイルが即時書き換えられる。CLI で 1 フィールドずつ設定すると中間状態のファイルが生成されるが、`state=disabled` の間は hardening が適用されないためユーザへの影響は最小化される（evidence: `hostcfgd:887-912`）。
 
-**hostcfgd 起動時の順序保証**: `load()` は `HostConfigDaemon.load()` から呼ばれ、`wait_till_system_init_done()` (`systemctl is-system-running --wait`) の完了後に実行される。PAM サブシステムが安定してから `PasswHardening.load()` が走るため、起動時の PAM ファイル書き換えは安全に行われる（evidence: `hostcfgd:2229-2270`）。
+**[hostcfgd](../../reference/glossary.md#term-hostcfgd) 起動時の順序保証**: `load()` は `HostConfigDaemon.load()` から呼ばれ、`wait_till_system_init_done()` (`systemctl is-system-running --wait`) の完了後に実行される。PAM サブシステムが安定してから `PasswHardening.load()` が走るため、起動時の PAM ファイル書き換えは安全に行われる（evidence: `hostcfgd:2229-2270`）。
 
 **login.defs の冪等性**: `is_passwd_aging_expire_update()` が `/etc/login.defs` の現在値と比較し、差分がある場合のみ `sed` / `chage` を実行する。冗長な SET イベントによる副作用は発生しない（evidence: `hostcfgd:988-1010`）。
 
@@ -128,7 +124,7 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 
-`PasswHardening` クラスは `config_db` インスタンスを保持せず（コンストラクタ引数なし）、CONFIG_DB の他テーブルへの暗黙参照は一切存在しない。YANG `sonic-passwh.yang` にも `must` / `when` / `leafref` 条件での他テーブル参照は定義されていない。
+`PasswHardening` クラスは `config_db` インスタンスを保持せず（コンストラクタ引数なし）、[CONFIG_DB](../../reference/glossary.md#term-config_db) の他テーブルへの暗黙参照は一切存在しない。YANG `sonic-passwh.yang` にも `must` / `when` / `leafref` 条件での他テーブル参照は定義されていない。
 
 `PasswHardening` が暗黙的に依存するのは OS ファイルシステム上のリソースのみである。
 
@@ -183,13 +179,13 @@ YANG `default` 文はプロビジョニング時 (`init_cfg.json.j2` 展開 → 
 
 <!-- evidence: meta/_intermediate/cdb-flow/passw-hardening-constants.md -->
 
-`PASSW_HARDENING` テーブルを処理する `hostcfgd` (`PasswHardening` クラス) が持つ、CONFIG_DB / YANG で管理されないハードコード定数の一覧。出典は `sonic-host-services/scripts/hostcfgd`。
+`PASSW_HARDENING` テーブルを処理する `hostcfgd` (`PasswHardening` クラス) が持つ、[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG で管理されないハードコード定数の一覧。出典は `sonic-host-services/scripts/hostcfgd`。
 
 ### Linux パスワードエージングデフォルト
 
 | 定数 | 値 | 用途 | ソース |
 |------|----|------|--------|
-| `LINUX_DEFAULT_PASS_MAX_DAYS` | `99999` | `state=disabled` 時または `passw_policies` が空の場合に `/etc/login.defs` の `PASS_MAX_DAYS` にリストアする値 (Debian 標準値) | hostcfgd L57 |
+| `LINUX_DEFAULT_PASS_MAX_DAYS` | `99999` | `state=disabled` 時または `passw_policies` が空の場合に `/etc/login.defs` の `PASS_MAX_DAYS` にリストアする値 (Debian 標準値) | [hostcfgd](../../reference/glossary.md#term-hostcfgd) L57 |
 | `LINUX_DEFAULT_PASS_WARN_AGE` | `7` | 同上、`PASS_WARN_AGE` のリストア値 (日数) | hostcfgd L58 |
 
 > **動作ロジック**: `set_passw_hardening_policies()` の冒頭で `curr_expiration = LINUX_DEFAULT_PASS_MAX_DAYS`、`curr_expiration_warning = LINUX_DEFAULT_PASS_WARN_AGE` が設定される。`state=enabled` の場合のみ `passw_policies` の値で上書きされ、それ以外は常にこのデフォルト値が `/etc/login.defs` に書き込まれる (hostcfgd L934-935)。
@@ -230,10 +226,10 @@ CONFIG_DB `PASSW_HARDENING` テーブルの変更に伴って `hostcfgd` の `Pa
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `PasswHardening` クラス内に `ProducerStateTable` / `Table.set` 呼出が 0 件 (`sonic-host-services/scripts/hostcfgd:873-1051` を `set(`/`hset`/`Producer`/`Notification` で grep して 0 ヒット) |
-| STATE_DB | なし | `hostcfgd` の `state_db_conn` は `FipsCfg` / `RestartWaiter` 専用。`PasswHardening` は STATE_DB に参照・書込を行わない |
-| COUNTERS_DB | なし | `hostcfgd` 全体に COUNTERS_DB 参照なし |
-| ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB | なし | SAI 非経由 (Linux host daemon)。ログ出力は `syslog()` 直呼び出しのみ |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `PasswHardening` クラス内に `ProducerStateTable` / `Table.set` 呼出が 0 件 (`sonic-host-services/scripts/hostcfgd:873-1051` を `set(`/`hset`/`Producer`/`Notification` で grep して 0 ヒット) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `hostcfgd` の `state_db_conn` は `FipsCfg` / `RestartWaiter` 専用。`PasswHardening` は [STATE_DB](../../reference/glossary.md#term-state_db) に参照・書込を行わない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `hostcfgd` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 参照なし |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由 (Linux host daemon)。ログ出力は `syslog()` 直呼び出しのみ |
 
 ### ファイルシステムへの副次書き換え（DB 外）
 
@@ -251,13 +247,13 @@ CONFIG_DB `PASSW_HARDENING` テーブルの変更に伴って `hostcfgd` の `Pa
 
 ### Redis 購読方式
 
-`PASSW_HARDENING` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **Redis keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:PASSW_HARDENING|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
+`PASSW_HARDENING` テーブルへの変更通知は、`hostcfgd` が **`ConfigDBConnector.subscribe()` + `listen()`** で登録する **[Redis](../../reference/glossary.md#term-redis) keyspace 通知 (PSUBSCRIBE `__keyspace@<dbId>__:PASSW_HARDENING|*`)** によって配信される。`swsscommon.SubscriberStateTable` や `ConsumerStateTable` (channel ベース PUBLISH/SUBSCRIBE) は **使用しない**。CONFIG_DB は永続前提のため TTL は設定されない。
 
 | 購読者 | 購読 API | 購読テーブル | ハンドラ |
 |--------|---------|--------------|---------|
 | `hostcfgd` (`PasswHardening` 経由) | `ConfigDBConnector.subscribe()` | `PASSW_HARDENING` | `passwh_handler` → `passw_policies_update` |
 
-`hostcfgd` 以外で `PASSW_HARDENING` テーブルを購読するプロセスは存在しない。PAM モジュール (`pam_pwquality.so` / `pam_pwhistory.so` / `pam_cracklib.so`) は `/etc/pam.d/common-password` を認証時に読むのみで Redis を購読しない。
+`hostcfgd` 以外で `PASSW_HARDENING` テーブルを購読するプロセスは存在しない。PAM モジュール (`pam_pwquality.so` / `pam_pwhistory.so` / `pam_cracklib.so`) は `/etc/pam.d/common-password` を認証時に読むのみで [Redis](../../reference/glossary.md#term-redis) を購読しない。
 
 ### keyspace 通知 → ハンドラ呼び出しの流れ
 
@@ -275,7 +271,7 @@ passwh_handler(key="POLICIES", op=SET, data={state:"enabled", ...})
 ```
 
 - keyspace 通知のペイロードは操作名 (`hset`/`del` 等) のみ。フィールド値は `HGETALL` で再取得する。
-- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の Redis 操作種別自体は区別しない。
+- `op` は `data is None ? DEL : SET` で 2 値判定。`HDEL` / `HSET` の [Redis](../../reference/glossary.md#term-redis) 操作種別自体は区別しない。
 - 起動時は `config_db.listen(init_data_handler=self.load)` (hostcfgd:2528) により、Subscribe ループ開始前に `PasswHardening.load()` が `init_data['PASSW_HARDENING']` を一括スナップショットで適用する。ただし `load()` は `wait_till_system_init_done()` 完了後に実行される点に注意。
 
 ### サービス再起動トリガー
@@ -296,14 +292,14 @@ passwh_handler(key="POLICIES", op=SET, data={state:"enabled", ...})
 
 ### プラットフォーム差なし
 
-`hostcfgd` の `PasswHardening` クラスは Linux PAM 設定ファイル (`/etc/pam.d/common-password`) と `/etc/login.defs` を書き換えるのみであり、ASIC 種別・`switch_type`・multi-asic 構成・chassis 構成に一切依存しない。`hostcfgd` コード全体に `getenv("platform")`・`gMySwitchType`・`mellanox` 等のプラットフォーム条件分岐は存在せず、全プラットフォームで同一の挙動となる。
+`hostcfgd` の `PasswHardening` クラスは Linux PAM 設定ファイル (`/etc/pam.d/common-password`) と `/etc/login.defs` を書き換えるのみであり、[ASIC](../../reference/glossary.md#term-asic) 種別・`switch_type`・multi-asic 構成・chassis 構成に一切依存しない。`hostcfgd` コード全体に `getenv("platform")`・`gMySwitchType`・`mellanox` 等のプラットフォーム条件分岐は存在せず、全プラットフォームで同一の挙動となる。
 
 | 構成 | 挙動 |
 |------|------|
 | 標準スイッチ (T0/T1/T2) | 変更なし |
-| Mellanox / Broadcom / その他 ASIC | 変更なし (PAM/login.defs 操作は ASIC 非依存) |
+| Mellanox / Broadcom / その他 [ASIC](../../reference/glossary.md#term-asic) | 変更なし (PAM/login.defs 操作は [ASIC](../../reference/glossary.md#term-asic) 非依存) |
 | multi-asic | 変更なし (hostcfgd は各 namespace を持たず、ホスト OS の PAM のみ管理) |
-| VOQ chassis / SmartSwitch | 変更なし |
+| [VOQ](../../reference/glossary.md#term-voq) chassis / [SmartSwitch](../../reference/glossary.md#term-smartswitch) | 変更なし |
 
 > **Evidence**: `sonic-host-services/scripts/hostcfgd:874-1043` (`PasswHardening` クラス全体にプラットフォーム条件分岐なし)、`hostcfgd:2244`、`hostcfgd:2477`
 
@@ -391,7 +387,6 @@ show passw-hardening policies
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -448,3 +443,5 @@ show passw-hardening policies
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
+
+<!-- glossary-links-injected: 87290c252d2d -->

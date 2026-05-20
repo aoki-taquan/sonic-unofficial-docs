@@ -100,7 +100,7 @@ DHCP_SERVER_IPV4|<name>
 | 存在する DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS.name | kea-dhcp4 設定にカスタムオプションを追加 |
 | 存在しない option 名 | YANG leafref 違反で reject |
 
-> DEVICE_METADATA.dhcp_server が未設定の場合、dhcpservd 自体が起動しないため state の設定は無効。
+> [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).dhcp_server が未設定の場合、dhcpservd 自体が起動しないため state の設定は無効。
 
 <!-- /value-behavior -->
 
@@ -177,21 +177,21 @@ show dhcp_server ipv4 info
 
 ### 段階 1 — Consumer 登録
 
-`dhcpservd` (`sonic-dhcp-server`) が CONFIG_DB の `DHCP_SERVER_IPV4` テーブルを購読する。
+`dhcpservd` (`sonic-dhcp-server`) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `DHCP_SERVER_IPV4` テーブルを購読する。
 
-`DHCP_SERVER_IPV4` は SONiC 独自の DHCP server 機能 (sonic-dhcp-server)。
+`DHCP_SERVER_IPV4` は [SONiC](../../reference/glossary.md#term-sonic) 独自の DHCP server 機能 (sonic-dhcp-server)。
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — Linux カーネルの DHCP サーバ機能)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — Linux カーネルの DHCP サーバ機能)
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: `dhcpservd` が CONFIG_DB の `DHCP_SERVER_IPV4` を購読。変化検知後 DHCP server 設定を更新。新規設定は次回 DHCP discover から有効。
+**適用タイミング**: `dhcpservd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `DHCP_SERVER_IPV4` を購読。変化検知後 DHCP server 設定を更新。新規設定は次回 DHCP discover から有効。
 
 **副作用**: subnet / pool 変更は新規 DHCP リクエストから適用。既存 lease には影響しない (lease 期限まで)。
 <!-- /runtime-trace -->
@@ -210,7 +210,7 @@ show dhcp_server ipv4 info
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -233,7 +233,7 @@ show dhcp_server ipv4 info
 
 ### 購読方式
 
-`dhcpservd` は `swss::SubscriberStateTable` を通じて CONFIG_DB の複数テーブルを購読する。`dhcp_db_monitor.py` が各テーブルに対応する `ConfigDbEventChecker` サブクラスを定義し、`DhcpServdDbMonitor` が `swsscommon.Select`（5000 ms タイムアウト）で束ねる。ConsumerStateTable / NotificationConsumer / ProducerStateTable は使用しない。APPL_DB 中継もなく、kea-dhcp4.conf ファイル経由で設定を反映する。
+`dhcpservd` は `swss::SubscriberStateTable` を通じて CONFIG_DB の複数テーブルを購読する。`dhcp_db_monitor.py` が各テーブルに対応する `ConfigDbEventChecker` サブクラスを定義し、`DhcpServdDbMonitor` が `swsscommon.Select`（5000 ms タイムアウト）で束ねる。[ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) / NotificationConsumer / [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) は使用しない。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継もなく、kea-dhcp4.conf ファイル経由で設定を反映する。
 
 ### 購読テーブルと発火条件
 
@@ -247,7 +247,7 @@ show dhcp_server ipv4 info
 | `VlanIntfTableEventChecker` | `VLAN_INTERFACE` | vlan 部分が enabled かつ IPv4 変更 |
 | `VlanMemberTableEventChecker` | `VLAN_MEMBER` | vlan 部分が enabled_dhcp_interfaces に含まれる |
 | `MidPlaneTableEventChecker` | `MID_PLANE_BRIDGE` | DEL、または bridge フィールドが enabled IF |
-| `DpusTableEventChecker` | `DPUS` | 常に発火（SmartSwitch DPU 変更） |
+| `DpusTableEventChecker` | `DPUS` | 常に発火（[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) 変更） |
 
 チェッカーは `dump_dhcp4_config()` が返す `enable_checker` set に応じて動的に enable/disable される。使われていない range/option を無駄に購読しない設計。
 
@@ -287,7 +287,7 @@ dhcpservd 起動
 | Select timeout | 5000 ms |
 | 起動時スナップショット | なし — `generate()` で CONFIG_DB を live 読み取り |
 | 実行時変更反映 | need_refresh=True → `dump_dhcp4_config()` 全量再生成 + SIGHUP |
-| STATE_DB 書き込み | `DHCP_SERVER_IPV4_SERVER_IP\|eth0` に eth0 IPv4 (起動時 1 回) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) 書き込み | `DHCP_SERVER_IPV4_SERVER_IP\|eth0` に eth0 IPv4 (起動時 1 回) |
 
 ### 反映タイミング
 
@@ -324,7 +324,7 @@ YANG は `mandatory true` だが、dhcp_cfggen が kea-dhcp4 の subnet を計�
 
 ### SmartSwitch 時の subnet ID ハードコード
 
-SmartSwitch 環境では kea-dhcp4 の subnet ID が `MID_PLANE_BRIDGE_SUBNET_ID = 10000` に固定される（`dhcp_cfggen.py:251, :19`）。通常 VLAN では VLAN 番号を整数変換して使用。
+[SmartSwitch](../../reference/glossary.md#term-smartswitch) 環境では kea-dhcp4 の subnet ID が `MID_PLANE_BRIDGE_SUBNET_ID = 10000` に固定される（`dhcp_cfggen.py:251, :19`）。通常 VLAN では VLAN 番号を整数変換して使用。
 
 ### 書込み順依存 (CLI add → enable)
 
@@ -384,7 +384,7 @@ CONFIG_DB 書込み → dhcpservd `Select()` (最大 5000 ms ポーリング) �
 
 dhcpservd は stateless（CONFIG_DB から毎回全量 generate）。再起動時に `start()` → `dump_dhcp4_config()` → SIGHUP を自動実行するため、CONFIG_DB が整合していれば再起動後も自動復元される。kea-lease.csv (`/var/lib/kea/kea-lease.csv`) は永続化されており既存リース情報は引き継がれる。
 
-> **Evidence**: sonic-buildimage `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:65-100,190-270,381-465`; `dhcpservd.py:39-68,89-100`; `common/dhcp_db_monitor.py:160-347`; `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py:54-106,250-313,356-444`
+> **Evidence**: [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:65-100,190-270,381-465`; `dhcpservd.py:39-68,89-100`; `common/dhcp_db_monitor.py:160-347`; `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py:54-106,250-313,356-444`
 <!-- /ordering -->
 
 <!-- cross-refs -->
@@ -426,7 +426,7 @@ CLI `config dhcp_server` グループ入口で `FEATURE|dhcp_server.state` を�
 
 ### SAI 参照
 
-なし。`dhcpservd` / `kea-dhcp4` は Linux ユーザー空間の DHCP サーバであり SAI/ASIC に一切触れない。APPL_DB 中継もない。
+なし。`dhcpservd` / `kea-dhcp4` は Linux ユーザー空間の DHCP サーバであり [SAI](../../reference/glossary.md#term-sai)/[ASIC](../../reference/glossary.md#term-asic) に一切触れない。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継もない。
 
 <!-- /cross-refs -->
 
@@ -480,7 +480,7 @@ CLI `config dhcp_server` グループ入口で `FEATURE|dhcp_server.state` を�
 
 複数 VLAN の DHCP_SERVER_IPV4 エントリのうち一部がスキップ条件を満たしても、他のエントリは正常に kea-dhcp4 設定へ組み込まれる。dhcp_cfggen の generate エラーは基本的にエントリ/オプション単位のスキップでプロセスを継続する。rollback はなく、スキップされたエントリは kea-dhcp4 設定に反映されないまま次回 generate まで維持される。
 
-> **Evidence**: sonic-buildimage `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:128-150,199-215,332-340,418-434,452-454`; `dhcpservd.py:70-112,127-133`; `dhcp_utilities/dhcprelayd/dhcprelayd.py:94-98`; `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py:54`
+> **Evidence**: [sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) `src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcp_cfggen.py:128-150,199-215,332-340,418-434,452-454`; `dhcpservd.py:70-112,127-133`; `dhcp_utilities/dhcprelayd/dhcprelayd.py:94-98`; `dockers/docker-dhcp-server/cli/config/plugins/dhcp_server.py:54`
 <!-- /failure -->
 
 <!-- side-effects -->
@@ -493,7 +493,7 @@ CONFIG_DB の `DHCP_SERVER_IPV4` を書き込むと、`dhcpservd` が以下の�
 
 ### STATE_DB: DHCP_SERVER_IPV4_LEASE
 
-kea-dhcp4 がリースイベント（割当・更新・解放）を `lease_update.sh` 経由で dhcpservd に SIGUSR1 通知する。`KeaDhcp4LeaseHandler._update_lease()` が `/var/lib/kea/kea-lease.csv` を読み取り、STATE_DB を更新する。
+kea-dhcp4 がリースイベント（割当・更新・解放）を `lease_update.sh` 経由で dhcpservd に SIGUSR1 通知する。`KeaDhcp4LeaseHandler._update_lease()` が `/var/lib/kea/kea-lease.csv` を読み取り、[STATE_DB](../../reference/glossary.md#term-state_db) を更新する。
 
 **key 形式**:
 
@@ -516,7 +516,7 @@ DHCP_SERVER_IPV4_LEASE|<midplane_bridge_name>|<mac_address> # SmartSwitch
 
 ### STATE_DB: DHCP_SERVER_IPV4_SERVER_IP
 
-dhcpservd 起動時（`start()` 内）に 1 回のみ実行。dhcp_server コンテナの `eth0` IPv4 アドレスを STATE_DB に書き込む。
+dhcpservd 起動時（`start()` 内）に 1 回のみ実行。dhcp_server コンテナの `eth0` IPv4 アドレスを [STATE_DB](../../reference/glossary.md#term-state_db) に書き込む。
 
 **key 形式**:
 
@@ -613,15 +613,15 @@ YANG 未定義の `binary` / `boolean` は直接 DB 書込みによる拡張型�
 
 `DEVICE_METADATA.localhost.subtype == "SmartSwitch"` を `is_smart_switch()` で判定し、以下が分岐する。
 
-| 項目 | 通常 SONiC | SmartSwitch |
+| 項目 | 通常 [SONiC](../../reference/glossary.md#term-sonic) | SmartSwitch |
 |---|---|---|
 | DHCP 対象インタフェース | `VLAN` / `VLAN_INTERFACE` ベース | 上記 + `MID_PLANE_BRIDGE.GLOBAL.bridge` (mid-plane bridge) |
-| DPU ポート扱い | なし | `DPUS.*.midplane_interface` を仮想ポートとして追加 |
+| [DPU](../../reference/glossary.md#term-dpu) ポート扱い | なし | `DPUS.*.midplane_interface` を仮想ポートとして追加 |
 | kea-dhcp4 subnet ID | VLAN 番号を整数変換 (例: `Vlan100` → `100`) | `MID_PLANE_BRIDGE_SUBNET_ID = 10000` 固定 |
 | 追加購読テーブル | なし | `DPUS`、`MID_PLANE_BRIDGE` (`SMART_SWITCH_CHECKER`) |
 | `DHCP_SERVER_IPV4` key 形式 | `DHCP_SERVER_IPV4\|Vlan<id>` | `DHCP_SERVER_IPV4\|<bridge名>` |
 
-SmartSwitch でも `MID_PLANE_BRIDGE.GLOBAL.bridge` / `ip_prefix` が未設定の場合、DPU 向け DHCP は無効化される（dhcpservd 自体は継続し、通常 VLAN の DHCP は機能する）。
+SmartSwitch でも `MID_PLANE_BRIDGE.GLOBAL.bridge` / `ip_prefix` が未設定の場合、[DPU](../../reference/glossary.md#term-dpu) 向け DHCP は無効化される（dhcpservd 自体は継続し、通常 VLAN の DHCP は機能する）。
 
 > **Evidence**: `dhcp_cfggen.py:19,23,67,76,84-98,251`; `common/utils.py:153-163`
 
@@ -636,4 +636,4 @@ SmartSwitch 固有の追加前提: `MID_PLANE_BRIDGE.GLOBAL.{bridge,ip_prefix}` 
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 75921d013977 -->
+<!-- glossary-links-injected: 1d5eb605afe1 -->

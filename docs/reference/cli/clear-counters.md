@@ -65,7 +65,7 @@ related:
 1. `sonic-clear counters` → `portstat -c` → `/tmp/portstat-<uid>` を現在の [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 値で上書き。
 2. `show interfaces counters` → [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の現在値 − スナップショットの差分を表示。
 
-スイッチ ASIC 側 [SAI](../../reference/glossary.md#term-sai) カウンタや [orchagent](../../reference/glossary.md#term-orchagent) のカウンタリングは触らないため、`sonic-clear counters` を打っても **[SAI](../../reference/glossary.md#term-sai) レイヤから見た累計値は残り続ける**。
+スイッチ [ASIC](../../reference/glossary.md#term-asic) 側 [SAI](../../reference/glossary.md#term-sai) カウンタや [orchagent](../../reference/glossary.md#term-orchagent) のカウンタリングは触らないため、`sonic-clear counters` を打っても **[SAI](../../reference/glossary.md#term-sai) レイヤから見た累計値は残り続ける**。
 
 ## `queuecounters` の VoQ 二段呼び出し
 
@@ -133,4 +133,4 @@ flowchart LR
 
 [^2]: `portstat` のスナップショット方式は `scripts/portstat` 参照（`COUNTER_TABLE_PREFIX` を読んで `STATS_TEMP_FILE` に保存）。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/scripts/portstat>
 
-<!-- glossary-links-injected: c463a977c0b8 -->
+<!-- glossary-links-injected: c006405759d8 -->

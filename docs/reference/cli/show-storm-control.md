@@ -60,7 +60,7 @@ show storm-control interface <interface>
 ```
 
 **動作**:
-multi-ASIC 環境では parent context から取得した `namespace` が有効か検証 (`multi_asic.get_namespace_list()` に含まれるか) し、不一致なら `-n/--namespace option required ...` でエラー終了。検証通過後 `display_storm_interface(interface)` を呼び出して該当 interface の全 storm type エントリを表示する。
+multi-[ASIC](../../reference/glossary.md#term-asic) 環境では parent context から取得した `namespace` が有効か検証 (`multi_asic.get_namespace_list()` に含まれるか) し、不一致なら `-n/--namespace option required ...` でエラー終了。検証通過後 `display_storm_interface(interface)` を呼び出して該当 interface の全 storm type エントリを表示する。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/main.py#L499-L533 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -149,4 +149,4 @@ flowchart LR
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: c006405759d8 -->

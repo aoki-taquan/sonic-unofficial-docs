@@ -15,9 +15,9 @@ related:
 
 ## 概要
 
-**[SAI](../reference/glossary.md#term-sai) (Switch Abstraction Interface)** は OCP が定義する ASIC 抽象 API で、SONiC は `libsairedis` + `syncd` を経由して SAI を叩き、`orchagent` がアプリケーション層との橋渡しをします。SAI は version ごとに新しい属性 / API が追加されるため、SONiC 側でも **capability 問い合わせ**（`sai_query_attribute_enum_values_capability` / `sai_query_stats_capability` / `sai_query_api_version`）や **失敗時のハンドリング**（`handleSai*Status` / `ERROR_DB` / dump 取得）が独立した [HLD](../reference/glossary.md#term-hld) として整備されています。
+**[SAI](../reference/glossary.md#term-sai) (Switch Abstraction Interface)** は OCP が定義する [ASIC](../reference/glossary.md#term-asic) 抽象 API で、[SONiC](../reference/glossary.md#term-sonic) は `libsairedis` + `syncd` を経由して SAI を叩き、`orchagent` がアプリケーション層との橋渡しをします。SAI は version ごとに新しい属性 / API が追加されるため、SONiC 側でも **capability 問い合わせ**（`sai_query_attribute_enum_values_capability` / `sai_query_stats_capability` / `sai_query_api_version`）や **失敗時のハンドリング**（`handleSai*Status` / `ERROR_DB` / dump 取得）が独立した [HLD](../reference/glossary.md#term-hld) として整備されています。
 
-このカテゴリは、SAI そのものを横断するページを集めます。**capability 問い合わせ系**（[ACL](../reference/glossary.md#term-acl) action / counter capability / API version check）・**failure handling**（dump-on-failure・virtual handleSaiStatus）・**SAI POST**（MACsec FIPS）・**Generic SAI Extension の [CRM](../reference/glossary.md#term-crm)**・**SAI bulk API 系**（Port Profile Init / Auto FEC）が中心です。
+このカテゴリは、SAI そのものを横断するページを集めます。**capability 問い合わせ系**（[ACL](../reference/glossary.md#term-acl) action / counter capability / API version check）・**failure handling**（dump-on-failure・virtual handleSaiStatus）・**SAI POST**（[MACsec](../reference/glossary.md#term-macsec) FIPS）・**Generic SAI Extension の [CRM](../reference/glossary.md#term-crm)**・**SAI bulk API 系**（Port Profile Init / Auto FEC）が中心です。
 
 SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応する実装が swss / sairedis / [syncd](../reference/glossary.md#term-syncd) / sonic-platform-common にまたがります。たとえば `egress mirroring + action capability check` は `aclorch` が SAI capability を見てフォールバックする実装で、`sai_query_stats_capability` は `counter caps` を `CounterCheck` 系から呼びます。
 
@@ -76,4 +76,4 @@ SAI 拡張の HLD は `sonic-net/SONiC` の `doc/` 配下に多く、対応す�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f1fdf27b05bc -->
+<!-- glossary-links-injected: 21ed5be09831 -->
