@@ -33,11 +33,11 @@ related:
 
 ## なぜ CoPP 全体ではダメなのか
 
-SONiC の従来挙動は **CoPP で DHCP をシステム全体 300 pps に絞る**。攻撃者が偽装 MAC で大量 DISCOVER を送ると、その共有上限を使い切り、同 [VLAN](../reference/glossary.md#term-vlan) の正規クライアントの DISCOVER までドロップされる[^1]。被害ドメインを局所化するため **ポート単位** に切り替える必要がある。
+[SONiC](../reference/glossary.md#term-sonic) の従来挙動は **CoPP で DHCP をシステム全体 300 pps に絞る**。攻撃者が偽装 MAC で大量 DISCOVER を送ると、その共有上限を使い切り、同 [VLAN](../reference/glossary.md#term-vlan) の正規クライアントの DISCOVER までドロップされる[^1]。被害ドメインを局所化するため **ポート単位** に切り替える必要がある。
 
 ## 何を投入すれば効くのか
 
-[SAI](../reference/glossary.md#term-sai) / ASIC オフロードではなく **Linux Traffic Control (tc) の ingress qdisc + filter** をホスト側で使う。`portmgrd` が `PORT.dhcp_rate_limit` を subscribe し、対応する `tc` コマンドをカーネルに投入する。SAI API の追加・変更は無い[^1]。
+[SAI](../reference/glossary.md#term-sai) / [ASIC](../reference/glossary.md#term-asic) オフロードではなく **Linux Traffic Control (tc) の ingress qdisc + filter** をホスト側で使う。`portmgrd` が `PORT.dhcp_rate_limit` を subscribe し、対応する `tc` コマンドをカーネルに投入する。SAI API の追加・変更は無い[^1]。
 
 ```mermaid
 flowchart LR
@@ -250,4 +250,4 @@ docker exec swss supervisorctl status | grep portmgrd
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1d898453d360 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

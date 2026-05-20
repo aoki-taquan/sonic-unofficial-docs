@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-`sonic-installer` は SONiC のイメージ管理（install / list / set-default / set-next-boot / remove / cleanup / verify-next-image）と、Docker コンテナ単位での upgrade / rollback を行う CLI ツール。click ベースで `sonic_installer/main.py` の `sonic_installer` group がトップ。**root 権限必須**（`os.geteuid() != 0` で sys.exit）。
+`sonic-installer` は [SONiC](../../reference/glossary.md#term-sonic) のイメージ管理（install / list / set-default / set-next-boot / remove / cleanup / verify-next-image）と、Docker コンテナ単位での upgrade / rollback を行う CLI ツール。click ベースで `sonic_installer/main.py` の `sonic_installer` group がトップ。**root 権限必須**（`os.geteuid() != 0` で sys.exit）。
 
 下層の `Bootloader` 抽象（`sonic_installer/bootloader/`）が ABOOT / GRUB / U-Boot 等のプラットフォーム固有処理を吸収する。`sonic-installer` はこの抽象 API を呼ぶだけで、プラットフォーム判別は `get_bootloader()` が担う[^1]。
 
@@ -58,7 +58,7 @@ related:
 
 - `-y, --yes` ... 確認プロンプトをスキップ
 - `-f, --force, --skip-secure-check` ... secure boot 種別違反を無視
-- `--skip-platform-check` ... 別プラットフォーム ASIC のイメージでも通す
+- `--skip-platform-check` ... 別プラットフォーム [ASIC](../../reference/glossary.md#term-asic) のイメージでも通す
 - `--skip_migration` ... 旧設定の新イメージへの migration を行わない
 - `--skip-package-migration` ... `sonic-package-manager` 管理パッケージの移行をスキップ
 - `--skip-setup-swap` ... インストール用 swap の作成をスキップ
@@ -239,7 +239,7 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- 新 SONiC イメージのインストール、boot image 切替、image 削除。
+- 新 [SONiC](../../reference/glossary.md#term-sonic) イメージのインストール、boot image 切替、image 削除。
 
 ### よくある落とし穴
 
@@ -255,4 +255,4 @@ show version
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: 7fcd30b4fb74 -->

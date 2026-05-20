@@ -38,7 +38,7 @@ related:
 
 - **gNMI dial-out (publish to collector)**: 通常の gNMI Subscribe は server-driven だが、規模が増えると collector 側で多数の subscription を維持するコストが高い。dial-out では target 側から collector に push する構成で、scale 上有利。`telemetry` docker と外部 collector の組合せが議題。
 - **OpenConfig wildcard subscribe**: `/interfaces/interface[name=*]/state/counters` のような wildcard query で per-port stream を一括取得する用途。Sample interval と server CPU 負荷のトレードオフがある。
-- **gNOI による OS upgrade**: `gnoi.os.Install` / `Activate` で SONiC イメージを集中投入する運用。warm/fast reboot との組み合わせで in-service upgrade を実現する。
+- **gNOI による OS upgrade**: `gnoi.os.Install` / `Activate` で [SONiC](../../reference/glossary.md#term-sonic) イメージを集中投入する運用。warm/fast reboot との組み合わせで in-service upgrade を実現する。
 - **gNSI による証明書 / authz の管理**: `gnsi.certz` / `gnsi.authz` で gNMI の TLS 証明書と RBAC ポリシーを動的に更新する。controller 側で証明書ローテーションを行うと SONiC 側はサービス停止なしで更新できる。
 - **Transformer の自前 callback 追加**: 既存 OpenConfig path に対応する [CONFIG_DB](../../reference/glossary.md#term-config_db) が無いとき、Go callback (transformer/xfmr) を書いて変換ルールを足す。プラグイン的に拡張できる。
 - **[SAI](../../reference/glossary.md#term-sai) [Redis](../../reference/glossary.md#term-redis) streaming (低レベル)**: gNMI 経由ではなく、`COUNTERS_DB` を直接 streaming する場合の挙動。debug 用途で `redis-cli psubscribe` でリアルタイム counter を見る。
@@ -130,4 +130,4 @@ OpenConfig path の SONiC 未対応領域に対しては、`sonic-mgmt-common` (
 - [11 Reboot / Upgrade](../11-reboot/index.md) — gNOI OS upgrade と組み合わせる前提
 - [15 Security / AAA](../15-security-aaa/index.md) — gNSI authz / certz の境界
 
-<!-- glossary-links-injected: 0e28d8bb3cdb -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

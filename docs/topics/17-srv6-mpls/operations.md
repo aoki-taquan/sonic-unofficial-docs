@@ -37,7 +37,7 @@ related:
 
 # 運用
 
-[SRv6](../../reference/glossary.md#term-srv6) / [MPLS](../../reference/glossary.md#term-mpls) / Path Tracing の運用確認は、「設定が [CONFIG_DB](../../reference/glossary.md#term-config_db) に正しく入ったか」「[FRR](../../reference/glossary.md#term-frr) / netlink 経由で APP_DB に渡ったか」「[SAI](../../reference/glossary.md#term-sai) / ASIC に programming されたか」の三段を順に追います。本ページは各機能の出口（show コマンド / DB / ログ）と、よく遭遇する異常パターン、その復旧手順を実例ベースで並べます。
+[SRv6](../../reference/glossary.md#term-srv6) / [MPLS](../../reference/glossary.md#term-mpls) / Path Tracing の運用確認は、「設定が [CONFIG_DB](../../reference/glossary.md#term-config_db) に正しく入ったか」「[FRR](../../reference/glossary.md#term-frr) / netlink 経由で APP_DB に渡ったか」「[SAI](../../reference/glossary.md#term-sai) / [ASIC](../../reference/glossary.md#term-asic) に programming されたか」の三段を順に追います。本ページは各機能の出口（show コマンド / DB / ログ）と、よく遭遇する異常パターン、その復旧手順を実例ベースで並べます。
 
 ## SRv6
 
@@ -100,7 +100,7 @@ APP_DB に乗っているのに [ASIC_DB](../../reference/glossary.md#term-asic_
 
 ### トラフィック観測
 
-MySID 単位の counter は phase 機能で、現状の SONiC master では IPv6 forwarding 全体の [RIF](../../reference/glossary.md#term-rif) counter で代用するのが現実的です。
+MySID 単位の counter は phase 機能で、現状の [SONiC](../../reference/glossary.md#term-sonic) master では IPv6 forwarding 全体の [RIF](../../reference/glossary.md#term-rif) counter で代用するのが現実的です。
 
 ```bash
 admin@sonic:~$ sonic-clear counters
@@ -238,4 +238,4 @@ SRv6 `H.Encaps.Red` と Path Tracing を併用するときは、外側 IPv6 の 
 - [VRF / ECMP 章](../04-vrf-ecmp/index.md)（next-hop / nexthop group の確認）
 - [SWSS / SAI / Redis 章](../20-swss-sai-redis/index.md)（共通の SAI 失敗観察）
 
-<!-- glossary-links-injected: a98eecda549c -->
+<!-- glossary-links-injected: ec18b66e3507 -->

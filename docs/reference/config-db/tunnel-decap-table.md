@@ -162,7 +162,6 @@ sonic-db-cli CONFIG_DB keys 'TUNNEL_DECAP_TABLE|*'
 ```
 <!-- /ops-hint -->
 
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -189,7 +188,7 @@ tunneldecaporch は常時登録し `TUNNEL_DECAP_TABLE` テーブルを無条件
 | `tunneldecaporch` | `src_ip` なし | P2MP term entry 作成 (any source) | `tunnelorch.cpp` |
 | `tunneldecaporch` | del_handler | SAI tunnel + term entry を削除 | `tunnelorch.cpp` |
 
-> **スキャン証跡**: `TUNNEL_DECAP_TABLE` は IP-in-IP/VXLAN デカプセルトンネルの termination 設定。`src_ip` の有無が P2P/P2MP を自動決定する点が主要 Phase 6 派生。
+> **スキャン証跡**: `TUNNEL_DECAP_TABLE` は IP-in-IP/[VXLAN](../../reference/glossary.md#term-vxlan) デカプセルトンネルの termination 設定。`src_ip` の有無が P2P/P2MP を自動決定する点が主要 Phase 6 派生。
 
 <!-- /handler-branching -->
 
@@ -198,12 +197,12 @@ tunneldecaporch は常時登録し `TUNNEL_DECAP_TABLE` テーブルを無条件
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / TunnelDecapOrch** (`sonic-swss/orchagent/tunneldecaporch.cpp`): `TUNNEL_DECAP_TABLE` を `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / TunnelDecapOrch** (`sonic-swss/orchagent/tunneldecaporch.cpp`): `TUNNEL_DECAP_TABLE` を `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
 - TunnelDecapOrch がトンネルタイプ (IPINIP) と内側/外側 IP 情報を解析。
-- APP_DB への書き込みなし (orchagent → SAI 直接)。
+- APP_DB への書き込みなし ([orchagent](../../reference/glossary.md#term-orchagent) → SAI 直接)。
 
 ### 段階 3: APPL → SAI
 
@@ -230,11 +229,11 @@ minigraph.py に TUNNEL_DECAP_TABLE 直接生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
-**db_migrator.py** が TUNNEL_DECAP_TABLE のマイグレーション処理を実装 (sonic-utilities/scripts/db_migrator.py)
+**db_migrator.py** が TUNNEL_DECAP_TABLE のマイグレーション処理を実装 ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/scripts/db_migrator.py)
 
 ### ビルド時デフォルト (build-time default)
 
@@ -258,7 +257,7 @@ REST/gNMI 書き込み経路なし
 
 | 定数 | 値 | 説明 |
 |------|----|------|
-| `OVERLAY_RIF_DEFAULT_MTU` | **9100** | デカプセル用オーバーレイ loopback RIF の MTU。フィールドとして公開されておらず変更不可 |
+| `OVERLAY_RIF_DEFAULT_MTU` | **9100** | デカプセル用オーバーレイ loopback [RIF](../../reference/glossary.md#term-rif) の MTU。フィールドとして公開されておらず変更不可 |
 | subnet decap tunnel 名 | `"IPINIP_SUBNET"` / `"IPINIP_SUBNET_V6"` | `SubnetDecapConfig` にハードコード。ユーザーが別名を指定しても subnet decap 機能は動作しない |
 
 ### フィールド省略時の暗黙デフォルト
@@ -266,14 +265,14 @@ REST/gNMI 書き込み経路なし
 | フィールド | 省略時の挙動 |
 |-----------|-------------|
 | `src_ip` | `nullptr` として扱い `SAI_TUNNEL_ATTR_ENCAP_SRC_IP` をスキップ。P2MP タームが自動選択される |
-| `decap_dscp_to_tc_map` | `SAI_NULL_OBJECT_ID` → SAI 属性をプッシュしない（QoS マップなし） |
+| `decap_dscp_to_tc_map` | `SAI_NULL_OBJECT_ID` → SAI 属性をプッシュしない（[QoS](../../reference/glossary.md#term-qos) マップなし） |
 | `decap_tc_to_pg_map` | 同上 |
 | `encap_ecn_mode` | 空文字列 → `SAI_TUNNEL_ATTR_ENCAP_ECN_MODE` をスキップ（SAI デフォルト依存） |
 | `term_type` (DECAP_TERM) | デフォルト `P2MP`（`TUNNEL_TERM_TYPE_P2MP`、`doDecapTunnelTermTask` 内変数初期値） |
 
 ### Dead-SAI フィールド（SAI に流れない）
 
-`encap_tc_to_dscp_map` と `encap_tc_to_queue_map` は `addDecapTunnel()` に渡されず SAI には設定されない。内部 `tunnelTable` に記録され、**`muxorch` が `getQosMapId()` 経由で読み出すためだけに使用**される。tunnel decap の QoS には影響しない。
+`encap_tc_to_dscp_map` と `encap_tc_to_queue_map` は `addDecapTunnel()` に渡されず SAI には設定されない。内部 `tunnelTable` に記録され、**`muxorch` が `getQosMapId()` 経由で読み出すためだけに使用**される。tunnel decap の [QoS](../../reference/glossary.md#term-qos) には影響しない。
 
 ### Create-Only 属性（更新時スキップ）
 
@@ -303,8 +302,8 @@ TUNNEL_DECAP_TABLE エントリを書き込む際に守るべき順序制約を�
 | 依存テーブル | 理由 | 緩和策 | evidence |
 |---|---|---|---|
 | PortsOrch 初期化完了 (`allPortsReady()`) | `doTask()` が false の間即 return — TUNNEL_DECAP_TABLE / DECAP_TERM_TABLE ともにキュー待機 | なし（自動待機） | `tunneldecaporch.cpp:L55-57` |
-| `CONFIG_DB TUNNEL` SET 済み | `tunnelmgrd` が TUNNEL を受け取って初めて APPL_DB へ投影。APPL_DB エントリは自動生成 | なし | `tunnelmgr.cpp:L263-293` |
-| `LOOPBACK_INTERFACE\|Loopback3` IP 設定 | tunnelmgrd がトンネル IF への IP 付与に Loopback3 の IP を参照。未設定時は IP 付与スキップ | Loopback3 後付けで遅延付与される | `tunnelmgr.cpp:L337-348` |
+| `CONFIG_DB TUNNEL` SET 済み | `tunnelmgrd` が TUNNEL を受け取って初めて [APPL_DB](../../reference/glossary.md#term-appl_db) へ投影。APPL_DB エントリは自動生成 | なし | `tunnelmgr.cpp:L263-293` |
+| `LOOPBACK_INTERFACE\|Loopback3` IP 設定 | [tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) がトンネル IF への IP 付与に Loopback3 の IP を参照。未設定時は IP 付与スキップ | Loopback3 後付けで遅延付与される | `tunnelmgr.cpp:L337-348` |
 
 ### TUNNEL_DECAP_TABLE と TUNNEL_DECAP_TERM_TABLE の依存
 
@@ -323,7 +322,7 @@ TUNNEL_DECAP_TABLE エントリを書き込む際に守るべき順序制約を�
 ### warm-restart / cold-restart 影響
 
 - `tunnelmgrd` は warm-restart 対応 (`replayDone` / `m_tunnelReplay`)。warm boot 時は APPL_DB への重複書き込みをスキップし orchagent クラッシュを防ぐ。
-- `tunneldecaporch` は warm-restart 非対応。cold restart 後に CONFIG_DB 再 replay → tunnelmgrd が APPL_DB 再投影 → orchagent が SAI 再設定、という自動再構築フローで収束する。
+- `tunneldecaporch` は warm-restart 非対応。cold restart 後に CONFIG_DB 再 replay → [tunnelmgrd](../../reference/glossary.md#term-tunnelmgrd) が APPL_DB 再投影 → orchagent が SAI 再設定、という自動再構築フローで収束する。
 
 !!! warning "src_ip の変更"
     既存トンネルの `src_ip` を変更する場合は `TUNNEL_DECAP_TABLE` エントリを必ず DEL してから SET し直すこと。SET のみでは `"cannot modify src ip for existing tunnel"` を LOG_ERROR してスキップされる (`tunneldecaporch.cpp`)。
@@ -338,9 +337,9 @@ YANG leafref は存在せず、すべて実装コードのみに現れる暗黙�
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
-| `gVirtualRouterId`（デフォルト VRF OID） | 読み取り（ハードコード） | TUNNEL_DECAP_TABLE SET 処理時、常時。overlay loopback RIF と tunnel term entry が常にデフォルト VRF に紐付く | `tunneldecaporch.cpp` L23, L742 (`SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID`), L922 (`SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_VR_ID`) |
+| `gVirtualRouterId`（デフォルト [VRF](../../reference/glossary.md#term-vrf) OID） | 読み取り（ハードコード） | TUNNEL_DECAP_TABLE SET 処理時、常時。overlay loopback [RIF](../../reference/glossary.md#term-rif) と tunnel term entry が常にデフォルト [VRF](../../reference/glossary.md#term-vrf) に紐付く | `tunneldecaporch.cpp` L23, L742 (`SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID`), L922 (`SAI_TUNNEL_TERM_TABLE_ENTRY_ATTR_VR_ID`) |
 | `DSCP_TO_TC_MAP\|<name>` | OID 解決（`gQosOrch->resolveTunnelQosMap`） | `decap_dscp_to_tc_map` フィールドに値を指定したとき。未作成 map は `task_need_retry` 無限待機 | `tunneldecaporch.cpp` L215-221; `qosorch.cpp` L113 |
-| `MUX_CABLE`（逆参照） | 下流が TUNNEL_DECAP_TABLE を読み取り | `MuxOrch` が MUX_CABLE SET 処理時に `TunnelDecapOrch::getQosMapId()` を呼び出し `encap_tc_to_dscp_map` / `encap_tc_to_queue_map` の OID を取得して MUX トンネル encap QoS を設定する | `tunneldecaporch.cpp` L103, L1450-1465; `muxorch.cpp` L2348-2377 |
+| `MUX_CABLE`（逆参照） | 下流が TUNNEL_DECAP_TABLE を読み取り | `MuxOrch` が MUX_CABLE SET 処理時に `TunnelDecapOrch::getQosMapId()` を呼び出し `encap_tc_to_dscp_map` / `encap_tc_to_queue_map` の OID を取得して MUX トンネル encap [QoS](../../reference/glossary.md#term-qos) を設定する | `tunneldecaporch.cpp` L103, L1450-1465; `muxorch.cpp` L2348-2377 |
 
 !!! note "デフォルト VRF への固定依存"
     `tunneldecaporch` は overlay RIF / tunnel term entry を常に `gVirtualRouterId`（デフォルト VRF）に紐付ける。
@@ -389,7 +388,7 @@ YANG leafref は存在せず、すべて実装コードのみに現れる暗黙�
 | 条件 | ログ / 動作 | evidence |
 |------|-----------|----------|
 | `sai_tunnel_api->create_tunnel()` 失敗 | `SWSS_LOG_ERROR("Failed to create tunnel")` → `handleSaiCreateStatus()` → 失敗時 `parseHandleSaiStatusFailure()` でエントリ再処理またはドロップ | `tunneldecaporch.cpp:L852-858` |
-| overlay RIF (`sai_router_intfs_api->create_router_interface()`) 失敗 | `SWSS_LOG_ERROR("Failed to create overlay router interface %d")` → `false` 返却、ASIC_DB 未書込み | `tunneldecaporch.cpp:L756` |
+| overlay RIF (`sai_router_intfs_api->create_router_interface()`) 失敗 | `SWSS_LOG_ERROR("Failed to create overlay router interface %d")` → `false` 返却、[ASIC_DB](../../reference/glossary.md#term-asic_db) 未書込み | `tunneldecaporch.cpp:L756` |
 | `sai_tunnel_api->create_tunnel_term_table_entry()` 失敗 | `SWSS_LOG_ERROR("Failed to create tunnel decap term entry %s.")` → `handleSaiCreateStatus()` 経由で再処理またはドロップ | `tunneldecaporch.cpp:L982-985` |
 | DEL 時 `sai_tunnel_api->remove_tunnel()` 失敗 | `SWSS_LOG_ERROR("Failed to remove tunnel: %" PRIu64)` → `handleSaiRemoveStatus()` 経由 | `tunneldecaporch.cpp:L1194-1198` |
 | DEL 時 overlay RIF `remove_router_interface()` 失敗 | `SWSS_LOG_ERROR("Failed to remove tunnel overlay interface: %" PRIu64)` → `handleSaiRemoveStatus()` 経由 | `tunneldecaporch.cpp:L1203` |
@@ -435,7 +434,7 @@ Overlay ループバック RIF は以下の SAI 属性を常時ハードコー�
 
 | SAI 属性 | 固定値 | 備考 |
 |----------|--------|------|
-| `SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID` | `gVirtualRouterId`（デフォルト VRF） | VRF 分離不可。VRF フィールドは存在しない |
+| `SAI_ROUTER_INTERFACE_ATTR_VIRTUAL_ROUTER_ID` | `gVirtualRouterId`（デフォルト [VRF](../../reference/glossary.md#term-vrf)） | VRF 分離不可。VRF フィールドは存在しない |
 | `SAI_ROUTER_INTERFACE_ATTR_TYPE` | `SAI_ROUTER_INTERFACE_TYPE_LOOPBACK` | 固定 LOOPBACK タイプ |
 | `SAI_ROUTER_INTERFACE_ATTR_MTU` | `9100`（`OVERLAY_RIF_DEFAULT_MTU`） | Jumbo frame 対応デフォルト |
 
@@ -545,7 +544,7 @@ task_process_status handle_status = handleSaiCreateStatus(SAI_API_TUNNEL, status
 
 ### STATE_DB 書き戻し（Observer 逆方向）
 
-SAI `create_tunnel()` / `create_tunnel_term_table_entry()` 成功後、`stateTunnelDecapTable` と `stateTunnelDecapTermTable` へ書き戻す。これらは `Table`（非 ProducerStateTable）のため Redis `hset`/`del` を直接発行する。NotificationProducer / Consumer 型のチャンネル通知は使用しない。
+SAI `create_tunnel()` / `create_tunnel_term_table_entry()` 成功後、`stateTunnelDecapTable` と `stateTunnelDecapTermTable` へ書き戻す。これらは `Table`（非 [ProducerStateTable](../../reference/glossary.md#term-producerstatetable)）のため [Redis](../../reference/glossary.md#term-redis) `hset`/`del` を直接発行する。NotificationProducer / Consumer 型のチャンネル通知は使用しない。
 
 > 詳細スキャンノート: `meta/_intermediate/cdb-flow/tunnel-decap-table-pubsub.md`
 
@@ -567,7 +566,7 @@ SAI `create_tunnel()` / `create_tunnel_term_table_entry()` 成功後、`stateTun
 
 ### OVERLAY_RIF_DEFAULT_MTU = 9100 — プラットフォーム非依存ハードコード
 
-オーバーレイ loopback RIF の MTU が `OVERLAY_RIF_DEFAULT_MTU = 9100` でハードコードされている (tunneldecaporch.cpp:14)。SAI プラットフォームのデフォルト MTU（通常 1500）に依存せず、VXLAN / IP-in-IP カプセルパケットの断片化を防ぐための固定値。プラットフォームを問わず適用される。
+オーバーレイ loopback RIF の MTU が `OVERLAY_RIF_DEFAULT_MTU = 9100` でハードコードされている (tunneldecaporch.cpp:14)。SAI プラットフォームのデフォルト MTU（通常 1500）に依存せず、[VXLAN](../../reference/glossary.md#term-vxlan) / IP-in-IP カプセルパケットの断片化を防ぐための固定値。プラットフォームを問わず適用される。
 
 ### subnet decap — ハードコードトンネル名制約
 
@@ -581,4 +580,4 @@ SAI `create_tunnel()` / `create_tunnel_term_table_entry()` 成功後、`stateTun
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 415c3a53ecc2 -->
+<!-- glossary-links-injected: da83a21dfcb6 -->

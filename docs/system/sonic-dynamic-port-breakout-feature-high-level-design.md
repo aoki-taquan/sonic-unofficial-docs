@@ -39,7 +39,7 @@ related:
 
 ## 1. 何をする機能か
 
-1 つの物理 cage（QSFP-DD 等）を **複数の論理 port に切り分ける / 1 つに戻す** 操作を、**reload 不要・稼働中の SONiC で** 行えるようにする[^1]。
+1 つの物理 cage（QSFP-DD 等）を **複数の論理 port に切り分ける / 1 つに戻す** 操作を、**reload 不要・稼働中の [SONiC](../reference/glossary.md#term-sonic) で** 行えるようにする[^1]。
 
 例: `100Gx1`（`Ethernet0`）→ `25Gx4`（`Ethernet0/1/2/3`）
 
@@ -101,7 +101,7 @@ flowchart LR
 ## 5. トラブルシューティング
 
 - **変更が拒否される** → `platform.json` の supported modes、依存設定の有無
-- **一部 port だけ up しない** → 物理 lane mapping、SI 設定、ASIC 側 lane 割当
+- **一部 port だけ up しない** → 物理 lane mapping、SI 設定、[ASIC](../reference/glossary.md#term-asic) 側 lane 割当
 - **関連設定が消えた** → 依存解決で削除済み。再投入が必要
 
 
@@ -138,4 +138,4 @@ show platform summary
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: b992c1d655cb -->
+<!-- glossary-links-injected: ec18b66e3507 -->

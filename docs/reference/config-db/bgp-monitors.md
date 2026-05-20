@@ -121,7 +121,7 @@ vtysh -c 'show bgp summary'
 
 ### `admin_status` (sonic-bgp-cmn-neigh 由来)
 
-| 値 | FRR コマンド | 備考 |
+| 値 | [FRR](../../reference/glossary.md#term-frr) コマンド | 備考 |
 |----|-------------|------|
 | `up` | `no neighbor <addr> shutdown` | `managers_bgp.py:334` |
 | `down` | `neighbor <addr> shutdown` | `managers_bgp.py:336` |
@@ -157,13 +157,13 @@ vtysh -c 'show bgp summary'
 
 ### 段階 1 — Consumer 登録
 
-`bgpcfgd` が CONFIG_DB の `BGP_MONITORS` テーブルを購読する。
+`bgpcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_MONITORS` テーブルを購読する。
 
 `BGP_MONITORS` は BMP (BGP Monitoring Protocol) target server ではなく、BGP モニター用の特殊隣接（route-monitor）を定義するテーブル。BMP target server とは無関係。
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由)
+なし ([FRR](../../reference/glossary.md#term-frr) [vtysh](../../reference/glossary.md#term-vtysh) 経由)
 
 ### 段階 3 — APPL→SAI
 
@@ -179,15 +179,15 @@ vtysh -c 'show bgp summary'
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`BGPPeerMgrBase` は `BGP_MONITORS` の SET/DEL 処理後に FRR (vtysh) への適用が成功するたびに **STATE_DB / `BGP_PEER_CONFIGURED_TABLE`** へ副次書き込みを行う。`update_state_db()` が各ハンドラから直接呼ばれる設計であり、APPL_DB / COUNTERS_DB / FLEX_COUNTER_DB への書き込みは発生しない。
+`BGPPeerMgrBase` は `BGP_MONITORS` の SET/DEL 処理後に FRR ([vtysh](../../reference/glossary.md#term-vtysh)) への適用が成功するたびに **[STATE_DB](../../reference/glossary.md#term-state_db) / `BGP_PEER_CONFIGURED_TABLE`** へ副次書き込みを行う。`update_state_db()` が各ハンドラから直接呼ばれる設計であり、[APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書き込みは発生しない。
 
 ### STATE_DB / `BGP_PEER_CONFIGURED_TABLE`
 
-key 形式: default VRF の場合 `<nbr_ip>`, non-default VRF の場合 `<vrf>|<nbr_ip>`。
+key 形式: default [VRF](../../reference/glossary.md#term-vrf) の場合 `<nbr_ip>`, non-default [VRF](../../reference/glossary.md#term-vrf) の場合 `<vrf>|<nbr_ip>`。
 
 | トリガ | 操作 | 格納内容 | evidence |
 |--------|------|---------|----------|
-| `add_peer()` が FRR 適用成功 (SET 新規) | `state_peer_table.set(key, data.items())` | CONFIG_DB から受け取ったフィールド一式をソート済みリストで格納 | `managers_bgp.py:239` |
+| `add_peer()` が FRR 適用成功 (SET 新規) | `state_peer_table.set(key, data.items())` | [CONFIG_DB](../../reference/glossary.md#term-config_db) から受け取ったフィールド一式をソート済みリストで格納 | `managers_bgp.py:239` |
 | `apply_admin_status()` が FRR 適用成功 (admin_status 更新) | `state_peer_table.set(key, data.items())` | 更新後の data を格納 | `managers_bgp.py:353` |
 | `change_ip_range()` が FRR 適用成功 (ip_range 更新) | `state_peer_table.set(key, data.items())` | 更新後の data を格納 | `managers_bgp.py:443` |
 | `del_handler()` が FRR 削除成功 (DEL) | `state_peer_table.delete(key)` | エントリ削除 | `managers_bgp.py:487` |
@@ -199,8 +199,8 @@ key 形式: default VRF の場合 `<nbr_ip>`, non-default VRF の場合 `<vrf>|<
 
 ### 副次書込なし
 
-- **APPL_DB**: `bgpcfgd` は CONFIG_DB → FRR (vtysh) の直接送信モデルを採用。APPL_DB 中間層は存在しない。
-- **COUNTERS_DB / FLEX_COUNTER_DB**: BGP peer カウンタは `bgpcfgd` ではなく FRR 統計として管理される。`managers_bgp.py` に COUNTERS_DB / FLEX_COUNTER_DB への書き込みは存在しない。
+- **[APPL_DB](../../reference/glossary.md#term-appl_db)**: `bgpcfgd` は CONFIG_DB → FRR ([vtysh](../../reference/glossary.md#term-vtysh)) の直接送信モデルを採用。[APPL_DB](../../reference/glossary.md#term-appl_db) 中間層は存在しない。
+- **[COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)**: BGP peer カウンタは `bgpcfgd` ではなく FRR 統計として管理される。`managers_bgp.py` に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書き込みは存在しない。
 
 <!-- /side-effects -->
 
@@ -217,7 +217,7 @@ key 形式: default VRF の場合 `<nbr_ip>`, non-default VRF の場合 `<vrf>|<
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -252,7 +252,7 @@ key 形式: default VRF の場合 `<nbr_ip>`, non-default VRF の場合 `<vrf>|<
 ### grep カバレッジ
 
 - minigraph.py L1423: BGP_MONITORS 生成（filter by name=='BGPMonitor'）
-- bgpcfgd/main.py L89: 条件なし登録
+- [bgpcfgd](../../reference/glossary.md#term-bgpcfgd)/main.py L89: 条件なし登録
 <!-- /derivation -->
 <!-- handler-branching -->
 ### Phase 8: Handler メソッド内分岐
@@ -290,14 +290,14 @@ key 形式: default VRF の場合 `<nbr_ip>`, non-default VRF の場合 `<vrf>|<
 |---|---|---|---|---|
 | `admin_status` 以外フィールド更新（既存ピア） | `update_peer()` L319-320 | `log_err` → drop（FRR 命令なし） | LOG_ERR: `"Peer '(<vrf>\|<nbr>)': Can't update the peer. Only 'admin_status' attribute is supported"` | `managers_bgp.py:319-320` |
 | `admin_status` が `'up'`/`'down'` 以外 | `change_admin_status()` L337-339 | `log_err` のみ・FRR 命令なし | LOG_ERR: `"Peer '<vrf>\|<nbr>': Can't update the peer. It has wrong attribute value attr['admin_status'] = '<val>'"` | `managers_bgp.py:337-339` |
-| `apply_admin_status()` で FRR push が `False` | `apply_admin_status()` L352-356 | `log_err` のみ・STATE_DB 更新なし | LOG_ERR: `"Can't set peer '<vrf>\|<nbr>' admin state to '<state>'."` | `managers_bgp.py:355-356` |
+| `apply_admin_status()` で FRR push が `False` | `apply_admin_status()` L352-356 | `log_err` のみ・[STATE_DB](../../reference/glossary.md#term-state_db) 更新なし | LOG_ERR: `"Can't set peer '<vrf>\|<nbr>' admin state to '<state>'."` | `managers_bgp.py:355-356` |
 
 ### 起動時（load_peers）における失敗経路
 
 | 失敗条件 | 検出箇所 | 結果 | ログ出力 | evidence |
 |---|---|---|---|---|
-| 起動時 `vtysh -c "show bgp vrfs json"` 非ゼロ終了 | `load_peers()` L577-584 | `log_crit` → `Exception` raise → bgpcfgd プロセス異常終了 | LOG_CRIT: `"Can't read bgp vrfs: <err>"` | `managers_bgp.py:583-584` |
-| 起動時 `vtysh -c "show bgp vrf <vrf> neighbors json"` 非ゼロ終了 | `load_peers()` L587-595 | `log_crit` → `Exception` raise → bgpcfgd プロセス異常終了 | LOG_CRIT: `"Can't read vrf '<vrf>' neighbors: <err>"` | `managers_bgp.py:594-595` |
+| 起動時 `vtysh -c "show bgp vrfs json"` 非ゼロ終了 | `load_peers()` L577-584 | `log_crit` → `Exception` raise → [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) プロセス異常終了 | LOG_CRIT: `"Can't read bgp vrfs: <err>"` | `managers_bgp.py:583-584` |
+| 起動時 `vtysh -c "show bgp vrf <vrf> neighbors json"` 非ゼロ終了 | `load_peers()` L587-595 | `log_crit` → `Exception` raise → [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) プロセス異常終了 | LOG_CRIT: `"Can't read vrf '<vrf>' neighbors: <err>"` | `managers_bgp.py:594-595` |
 
 ### frrcfgd（bgpd_client ソケット）における失敗経路
 
@@ -427,7 +427,7 @@ BGP_MONITORS (bgpcfgd)
 
 | FRR コマンド | 注入条件 | 証跡 |
 |------------|---------|------|
-| `neighbor <addr> remote-as <bgp_asn>` | 常時。`bgp_asn` は DEVICE_METADATA 由来 | `instance.conf.j2:4` |
+| `neighbor <addr> remote-as <bgp_asn>` | 常時。`bgp_asn` は [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 由来 | `instance.conf.j2:4` |
 | `neighbor <addr> peer-group BGPMON` | 常時 | `instance.conf.j2:5` |
 | `neighbor <addr> activate` (IPv4 + IPv6) | 常時 | `instance.conf.j2:7,9` |
 | `neighbor BGPMON update-source Loopback4096` | `switch_type=voq` または chassisdb.conf 存在時 | `peer-group.conf.j2:10` |
@@ -442,11 +442,11 @@ BGP_MONITORS (bgpcfgd)
 
 | フィールド | YANG 定義 | 実装挙動 | 乖離種別 |
 |-----------|---------|---------|---------|
-| `asn` | uint32、Optional | FRR の `remote-as` は DEVICE_METADATA の `bgp_asn` を使用。CONFIG_DB の `asn` は**参照されない** | **重大 discrepancy**: `asn` は dead field |
+| `asn` | uint32、Optional | FRR の `remote-as` は [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) の `bgp_asn` を使用。CONFIG_DB の `asn` は**参照されない** | **重大 discrepancy**: `asn` は dead field |
 | `admin_status` | Optional | 欠如時でも peer 追加続行 (`up` 相当) | soft — YANG は明示を推奨しない |
 | `local_addr` | Optional, inet:ip-address | 欠如時は warn のみ。`update-source` 未設定 | soft — YANG の optional と整合 |
 
-> **注意**: `BGP_MONITORS|<addr>|asn` を CONFIG_DB に設定しても、bgpcfgd は FRR peer の `remote-as` をローカル ASN (DEVICE_METADATA) から取得するため、そのフィールドは無視される。BGP_MONITORS の peer は常にローカル ASN に対してピアリングする設計（内部 route-monitor 用途）。
+> **注意**: `BGP_MONITORS|<addr>|asn` を CONFIG_DB に設定しても、bgpcfgd は FRR peer の `remote-as` をローカル ASN ([DEVICE_METADATA](../../reference/glossary.md#term-device_metadata)) から取得するため、そのフィールドは無視される。BGP_MONITORS の peer は常にローカル ASN に対してピアリングする設計（内部 route-monitor 用途）。
 
 <!-- /defaults -->
 
@@ -562,7 +562,7 @@ self.callbacks["CONFIG_DB"]["BGP_MONITORS"].append(manager.handler)
 
 ### frrcfgd との非重複
 
-`frrcfgd`（`sonic-frr-mgmt-framework`）の購読テーブルリスト (`frrcfgd.py:2293-2338`) に `BGP_MONITORS` は含まれない。`frrcfgd` は BGP_NEIGHBOR / BGP_PEER_GROUP 等の sonic-mgmt-framework 経由テーブルを担当し、`BGP_MONITORS` は `bgpcfgd` 専用。二重購読は発生しない。
+`frrcfgd`（`sonic-frr-mgmt-framework`）の購読テーブルリスト (`frrcfgd.py:2293-2338`) に `BGP_MONITORS` は含まれない。`frrcfgd` は BGP_NEIGHBOR / BGP_PEER_GROUP 等の [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework 経由テーブルを担当し、`BGP_MONITORS` は `bgpcfgd` 専用。二重購読は発生しない。
 
 ### 依存関係と再試行
 
@@ -570,4 +570,5 @@ self.callbacks["CONFIG_DB"]["BGP_MONITORS"].append(manager.handler)
 
 > 詳細解析: `meta/_intermediate/cdb-flow/bgp-monitors-pubsub.md`
 <!-- /pubsub -->
-<!-- glossary-links-injected: a1dd9e34d62e -->
+
+<!-- glossary-links-injected: 288b7830f4a0 -->

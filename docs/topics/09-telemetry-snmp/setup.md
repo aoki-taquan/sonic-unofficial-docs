@@ -101,7 +101,7 @@ SNMPv2-MIB::sysName.0 = STRING: sonic-tor-01
 
 ## シナリオ 2: sFlow を 2 collector に同時に送る
 
-flow ベースの可視化（NDR、Kentik など）と長期 packet sampling の両方を並行運用するパターン。SONiC の sFlow は global、collector、per-port の 3 段で構成され、collector は最大 2 つまで登録できます。
+flow ベースの可視化（NDR、Kentik など）と長期 packet sampling の両方を並行運用するパターン。[SONiC](../../reference/glossary.md#term-sonic) の sFlow は global、collector、per-port の 3 段で構成され、collector は最大 2 つまで登録できます。
 
 ```bash
 config sflow enable
@@ -282,4 +282,4 @@ total 24M
 - [sonic-syslog YANG](../../reference/yang/sonic-syslog.md)
 - [SNMP yml から CONFIG_DB への移行](../../system/snmp-migration-from-snmp-yml-to-configdb.md)
 
-<!-- glossary-links-injected: ee15e5ef29a6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

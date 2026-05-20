@@ -16,7 +16,7 @@ related:
 
 # 初めての方の必読 10 (Essentials)
 
-SONiC NOS（コミュニティ版・master）をこれから学ぶ読者向けに、本サイト 900 ページ超の中から **「最初に読めば SONiC の全体像が掴める」10 ページ** を順序立てて紹介します。[HLD](./reference/glossary.md#term-hld) 単位の網羅ではなく「学習導線」として並べ直しているため、上から順に読むと SONiC の設定・データ・制御プレーン・運用が一通り見えるようになります。
+[SONiC](./reference/glossary.md#term-sonic) NOS（コミュニティ版・master）をこれから学ぶ読者向けに、本サイト 900 ページ超の中から **「最初に読めば SONiC の全体像が掴める」10 ページ** を順序立てて紹介します。[HLD](./reference/glossary.md#term-hld) 単位の網羅ではなく「学習導線」として並べ直しているため、上から順に読むと SONiC の設定・データ・制御プレーン・運用が一通り見えるようになります。
 
 900 ページ全体を俯瞰したい方は [トップ index](index.md) と [読み手別ガイド (guides/)](guides/index.md) を、症状逆引きで Runbook を探したい方は [Runbooks 索引](reference/runbooks/index.md) を参照してください。
 
@@ -26,7 +26,7 @@ SONiC NOS（コミュニティ版・master）をこれから学ぶ読者向け�
 
 ### 1. [SONiC 全体像と設定基盤](topics/01-overview/index.md)
 
-「SONiC は Linux 上の Docker コンテナ群 + [Redis](./reference/glossary.md#term-redis) DB + [SAI](./reference/glossary.md#term-sai) で構成される NOS」という基本骨格を、設定がどこから入りどう ASIC に届くかという読み手目線で再構成した章扉。**最初の 10 分でここを読むと残り 9 ページの位置付けがすべて掴めます。**
+「SONiC は Linux 上の Docker コンテナ群 + [Redis](./reference/glossary.md#term-redis) DB + [SAI](./reference/glossary.md#term-sai) で構成される NOS」という基本骨格を、設定がどこから入りどう [ASIC](./reference/glossary.md#term-asic) に届くかという読み手目線で再構成した章扉。**最初の 10 分でここを読むと残り 9 ページの位置付けがすべて掴めます。**
 
 ### 2. [概念と読み始め方](topics/01-overview/concept.md)
 
@@ -111,4 +111,4 @@ cold/warm/fast/soft reboot の違い、image install、config の保持境界を
 
 本ページは curation ページであり、各機能の挙動や設定の正確性は **リンク先のページに引用元 commit SHA 付きで記載** されています。本ページ自体は `verification: meta` で SONiC 仕様の検証対象外です。
 
-<!-- glossary-links-injected: 13cd7656bd68 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

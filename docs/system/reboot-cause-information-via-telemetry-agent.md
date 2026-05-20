@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-SONiC の起動時に「直前の再起動原因」を判定し、JSON ファイルとして履歴保存し、最新分は [STATE_DB](../reference/glossary.md#term-state_db) にも反映する仕組み。`show reboot-cause` の最新表示に加えて `show reboot-cause history` で過去最大 10 エントリを表示できるようにする。テレメトリエージェント経由でも履歴を購読可能にする[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の起動時に「直前の再起動原因」を判定し、JSON ファイルとして履歴保存し、最新分は [STATE_DB](../reference/glossary.md#term-state_db) にも反映する仕組み。`show reboot-cause` の最新表示に加えて `show reboot-cause history` で過去最大 10 エントリを表示できるようにする。テレメトリエージェント経由でも履歴を購読可能にする[^1]。
 
 ## 動作仕様
 
@@ -174,4 +174,4 @@ cat /host/reboot-cause/reboot-cause.txt
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 658dfbdca882 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

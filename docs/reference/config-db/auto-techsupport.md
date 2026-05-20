@@ -107,7 +107,7 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 | `handle_coredump_cleanup` | `max_core_limit` が `float()` 変換不可または `0` | cleanup をスキップ（`core_usage = 0.0` にフォールバック、`if not core_usage` 節で早期 return） | `coredump_gen_handler.py:22-31` |
 | `invoke_ts_cmd` | `show techsupport` が `EXT_LOCKFAIL` (rc=2) で終了 | `"Another instance of techsupport running"` を syslog NOTICE に記録し、今回の起動を中断 | `auto_techsupport_helper.py:240` |
 | `invoke_ts_cmd` | `show techsupport` が `EXT_RETRY` (rc=4) で終了かつ再試行上限 (`MAX_RETRY_LIMIT=2`) 超過 | `"MAX_RETRY_LIMIT for show techsupport invocation exceeded"` を syslog ERR に記録 | `auto_techsupport_helper.py:243-245` |
-| `invoke_ts_cmd` | `show techsupport` が成功 (rc=0) だが stdout に dump 名が見つからない | `"no techsupport dump is found"` を syslog ERR に記録。STATE_DB への書き込みは行わない | `auto_techsupport_helper.py:249-251` |
+| `invoke_ts_cmd` | `show techsupport` が成功 (rc=0) だが stdout に dump 名が見つからない | `"no techsupport dump is found"` を syslog ERR に記録。[STATE_DB](../../reference/glossary.md#term-state_db) への書き込みは行わない | `auto_techsupport_helper.py:249-251` |
 
 > **Evidence**: `sonic-net/sonic-utilities/scripts/coredump_gen_handler.py:14-78`, `utilities_common/auto_techsupport_helper.py:232-254`
 <!-- /failure -->
@@ -175,7 +175,7 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-CONFIG_DB / YANG / init_cfg.json.j2 のいずれからも変更不可能な、コード内固定値。
+[CONFIG_DB](../../reference/glossary.md#term-config_db) / YANG / init_cfg.json.j2 のいずれからも変更不可能な、コード内固定値。
 `coredump_gen_handler.py` / `techsupport_cleanup.py` / 共有ライブラリ `auto_techsupport_helper.py` から抽出。
 
 ### ファイルシステムパス (`auto_techsupport_helper.py` L33-39)
@@ -262,7 +262,6 @@ show auto-techsupport global
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -272,11 +271,11 @@ show auto-techsupport global
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — global techsupport 設定)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — global techsupport 設定)
 
 ### 段階 4 — タイミングと副作用
 
@@ -300,7 +299,7 @@ show auto-techsupport global
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- なし (対応 OpenConfig/SONiC YANG transformer なし)
+- なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
 - なし
@@ -359,16 +358,16 @@ show auto-techsupport global
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-CONFIG_DB `AUTO_TECHSUPPORT` テーブルの変更を直接の入力とする host service スクリプト (`coredump_gen_handler.py` / `techsupport_cleanup.py`) は、techsupport ダンプ生成および掃除の過程で **STATE_DB** に副次的な書込を行う。CONFIG_DB / APPL_DB / COUNTERS_DB / ASIC_DB への書込は発生しない。
+CONFIG_DB `AUTO_TECHSUPPORT` テーブルの変更を直接の入力とする host service スクリプト (`coredump_gen_handler.py` / `techsupport_cleanup.py`) は、techsupport ダンプ生成および掃除の過程で **[STATE_DB](../../reference/glossary.md#term-state_db)** に副次的な書込を行う。CONFIG_DB / [APPL_DB](../../reference/glossary.md#term-appl_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) への書込は発生しない。
 
 | 副次 DB | 書込有無 | 書込キー / 操作 | 根拠 |
 |---|---|---|---|
-| STATE_DB | **あり** | `AUTO_TECHSUPPORT_DUMP_INFO\|<ts_dump_name>` (`hset` 相当) | `auto_techsupport_helper.py:302-310` (`write_to_state_db()` が `db.set(STATE_DB, key, TIMESTAMP, ...)`、`EVENT_TYPE`、event_data 各 key、`CONTAINER` を逐次書込) |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | **あり** | `AUTO_TECHSUPPORT_DUMP_INFO\|<ts_dump_name>` (`hset` 相当) | `auto_techsupport_helper.py:302-310` (`write_to_state_db()` が `db.set(STATE_DB, key, TIMESTAMP, ...)`、`EVENT_TYPE`、event_data 各 key、`CONTAINER` を逐次書込) |
 | STATE_DB | **あり (削除)** | `AUTO_TECHSUPPORT_DUMP_INFO\|<name>` の `db.delete` | `techsupport_cleanup.py:13-18` (`clean_state_db_entries()` が `cleanup_process()` で削除されたダンプファイル毎に STATE_DB エントリを削除) |
-| APPL_DB | なし | — | 両スクリプト・helper 内に APPL_DB 参照なし (`auto_techsupport_helper.py` / `coredump_gen_handler.py` / `techsupport_cleanup.py` の `import` および `db.set`/`db.delete`/`Producer` を grep して 0 ヒット) |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | — | 両スクリプト・helper 内に APPL_DB 参照なし (`auto_techsupport_helper.py` / `coredump_gen_handler.py` / `techsupport_cleanup.py` の `import` および `db.set`/`db.delete`/`Producer` を grep して 0 ヒット) |
 | CONFIG_DB | なし (読み取り専用) | — | `db.get(CFG_DB, AUTO_TS, ...)` / `db.get(CFG_DB, FEATURE.format(container), ...)` の **読み取り** のみで書込なし (`coredump_gen_handler.py:17,22,47,55` / `techsupport_cleanup.py:27,32` / `auto_techsupport_helper.py:315-321`) |
-| COUNTERS_DB | なし | — | techsupport ハンドラ群は SAI 非経由のため counter 系テーブルへの参照なし |
-| その他 (ASIC_DB / FLEX_COUNTER_DB / LOGLEVEL_DB) | なし | — | 段階 3 トレース参照: SAI 経路なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | — | techsupport ハンドラ群は [SAI](../../reference/glossary.md#term-sai) 非経由のため counter 系テーブルへの参照なし |
+| その他 ([ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db)) | なし | — | 段階 3 トレース参照: [SAI](../../reference/glossary.md#term-sai) 経路なし |
 
 ### STATE_DB `AUTO_TECHSUPPORT_DUMP_INFO` エントリの構造
 
@@ -392,15 +391,15 @@ CONFIG_DB `AUTO_TECHSUPPORT` テーブルの変更を直接の入力とする ho
 <!-- platform -->
 ## プラットフォーム差
 
-AUTO_TECHSUPPORT (GLOBAL) の挙動は ASIC ベンダー / VOQ chassis / namespace 構成に対して**ほぼ非依存**。実装上の配慮は multi-asic で container 名 (`swss0` / `syncd1` 等) を feature 名と照合する 1 箇所のみ。
+AUTO_TECHSUPPORT (GLOBAL) の挙動は [ASIC](../../reference/glossary.md#term-asic) ベンダー / [VOQ](../../reference/glossary.md#term-voq) chassis / namespace 構成に対して**ほぼ非依存**。実装上の配慮は multi-asic で container 名 (`swss0` / `syncd1` 等) を feature 名と照合する 1 箇所のみ。
 
 | 観点 | 影響 | 根拠 |
 |------|------|------|
-| ASIC ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco / DASH) | なし | SAI 非経由。consumer 4 ファイルに vendor 分岐 0 hit |
+| [ASIC](../../reference/glossary.md#term-asic) ベンダー (Broadcom / Mellanox / Marvell / Innovium / Cisco / [DASH](../../reference/glossary.md#term-dash)) | なし | SAI 非経由。consumer 4 ファイルに vendor 分岐 0 hit |
 | multi-asic (`is_multi_npu() == True`) | key 構造は不変。container 名のみ `startswith` で前方一致 | `sonic-utilities/scripts/memory_threshold_check.py:204` |
-| VOQ chassis (supervisor + line card) | 各 host で独立動作 | `chassisdb` (`REDIS_CHASSIS_SERVER`) 非参照、host ごとに local CONFIG_DB と `/var/dump/` を扱う |
+| [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line card) | 各 host で独立動作 | `chassisdb` (`REDIS_CHASSIS_SERVER`) 非参照、host ごとに local CONFIG_DB と `/var/dump/` を扱う |
 | namespace (asic0..asicN) | 影響なし | 全 consumer が `SonicV2Connector(use_unix_socket_path=True)` で host CONFIG_DB のみ接続 |
-| init_cfg / build template | 分岐なし | `enable_auto_tech_support` ビルド変数で `state` を切替えるのみ。ASIC/chassis 条件式なし |
+| init_cfg / build template | 分岐なし | `enable_auto_tech_support` ビルド変数で `state` を切替えるのみ。[ASIC](../../reference/glossary.md#term-asic)/chassis 条件式なし |
 
 !!! note "sonic-host-services/scripts/ に consumer なし"
     `grep -rli AUTO_TECHSUPPORT .cache/sonic-sources/sonic-host-services/` は 0 hit。実コンシューマは `sonic-utilities/scripts/{coredump_gen_handler,techsupport_cleanup,memory_threshold_check}.py` + `utilities_common/auto_techsupport_helper.py` に集約。
@@ -597,20 +596,19 @@ Phase F (`side-effects`) で書込先として扱っているのと同テーブ�
 
 `cleanup_process()` は `OSError` を `continue` で握り潰し、削除成功分のみ `removed_files` リストに append する。`clean_state_db_entries()` は成功分のみ STATE_DB から `db.delete` するため、削除失敗ファイルに対応する `AUTO_TECHSUPPORT_DUMP_INFO|<name>` は次回 cleanup まで残存する (`auto_techsupport_helper.py:188-197`, `techsupport_cleanup.py:13-18,43-44`)。`invoke_ts_cmd()` の再帰 retry は `EXT_RETRY` 3 回 (初回 + `MAX_RETRY_LIMIT=2`) で必ず打ち切られる。`write_to_state_db()` は `new_file` が truthy のときのみ呼ばれ、起動失敗時には STATE_DB entry が作られないため、次回 rate-limit 判定は失敗を「未起動」として扱う (rate-limit リセットされない)。
 
-> **Evidence**: sonic-utilities `scripts/coredump_gen_handler.py:17,22-30,47-48,55-57,73-74`; `scripts/techsupport_cleanup.py:23,27-30,33-43`; `utilities_common/auto_techsupport_helper.py:71,74-78,81-84,87-94,115-125,171-197,232-254,282-299,313-337`; 補助: `scripts/memory_threshold_check.py:11-12,36-37,104-108,154-156,177,232-235`
+> **Evidence**: [sonic-utilities](../../reference/glossary.md#term-sonic-utilities) `scripts/coredump_gen_handler.py:17,22-30,47-48,55-57,73-74`; `scripts/techsupport_cleanup.py:23,27-30,33-43`; `utilities_common/auto_techsupport_helper.py:71,74-78,81-84,87-94,115-125,171-197,232-254,282-299,313-337`; 補助: `scripts/memory_threshold_check.py:11-12,36-37,104-108,154-156,177,232-235`
 <!-- /failure -->
-
 
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
 ### Redis 購読方式
 
-`AUTO_TECHSUPPORT|GLOBAL` テーブルには **常駐 subscriber が存在しない**。`ConfigDBConnector.subscribe()` / `listen()` / `SubscriberStateTable` / Redis keyspace 通知 (`__keyspace@<dbId>__:AUTO_TECHSUPPORT*`) のいずれも本テーブルを観測しておらず、`hostcfgd` / `featured` などの常駐 daemon は本テーブルを参照しない (`sonic-host-services/` 全体で `AUTO_TECHSUPPORT` の grep 0 hit)。
+`AUTO_TECHSUPPORT|GLOBAL` テーブルには **常駐 subscriber が存在しない**。`ConfigDBConnector.subscribe()` / `listen()` / `SubscriberStateTable` / [Redis](../../reference/glossary.md#term-redis) keyspace 通知 (`__keyspace@<dbId>__:AUTO_TECHSUPPORT*`) のいずれも本テーブルを観測しておらず、`hostcfgd` / `featured` などの常駐 daemon は本テーブルを参照しない (`sonic-host-services/` 全体で `AUTO_TECHSUPPORT` の grep 0 hit)。
 
 代わりに、外部トリガー (kernel `core_pattern` パイプ / `monit` 周期実行) で起動される **一発実行スクリプト** が、必要なフィールドだけ同期 `HGET` または `HGETALL` で取得して終了する。設定変更は次回起動時に「結果的に」反映される (eventual reload)。
 
-| 消費者 | 起動方式 | DB アクセス API | Redis primitive |
+| 消費者 | 起動方式 | DB アクセス API | [Redis](../../reference/glossary.md#term-redis) primitive |
 |--------|---------|----------------|-----------------|
 | `coredump_gen_handler.py` | kernel `core_pattern` → `coredump-compress` (パイプ受け) | `SonicV2Connector.get()` | 単発 HGET |
 | `techsupport_cleanup.py` | `coredump_gen_handler` 後段フック / 周期実行 | `SonicV2Connector.get()` | 単発 HGET |
@@ -706,7 +704,7 @@ kernel.core_pipe_limit = 16
 
 ### 6. systemd-coredump との関係
 
-SONiC は **systemd-coredump を使用しない**。`kernel.core_pattern` をパイプ (`|`) で独自スクリプト (`coredump-compress`) に向けることで systemd-coredump の介在を排除している。`/etc/systemd/coredump.conf` は参照されない。
+[SONiC](../../reference/glossary.md#term-sonic) は **systemd-coredump を使用しない**。`kernel.core_pattern` をパイプ (`|`) で独自スクリプト (`coredump-compress`) に向けることで systemd-coredump の介在を排除している。`/etc/systemd/coredump.conf` は参照されない。
 
 ### 7. AUTO_TECHSUPPORT 連携まとめ
 
@@ -724,3 +722,4 @@ SONiC は **systemd-coredump を使用しない**。`kernel.core_pattern` をパ
 ```
 <!-- /ordering -->
 
+<!-- glossary-links-injected: 6be040445d2f -->

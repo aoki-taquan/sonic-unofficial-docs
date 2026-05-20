@@ -48,7 +48,7 @@ L3 の障害調査では、最初に route だけを見ても原因を絞れま�
 |------|----------------|----------|
 | Interface 状態 | `show ip interfaces`、`show interfaces status` | L3 interface の IP、admin/oper、VRF bind 前提。 |
 | [FRR](../../reference/glossary.md#term-frr) RIB | `show ip route` / `show ipv6 route` | FRR が route を選んでいるか。 |
-| ASIC FIB | `show ip fib` | FIB に入っているか。RIB にあり FIB にない場合は [orchagent](../../reference/glossary.md#term-orchagent) 側を見る。 |
+| [ASIC](../../reference/glossary.md#term-asic) FIB | `show ip fib` | FIB に入っているか。RIB にあり FIB にない場合は [orchagent](../../reference/glossary.md#term-orchagent) 側を見る。 |
 | [BGP](../../reference/glossary.md#term-bgp) VRF | `show ip bgp vrf <vrf> ...` | dynamic route の入力側。 |
 | RIF 統計 | `show interfaces counters rif` | RIF 単位の RX/TX packet / byte / error。 |
 | Route flow | `show flowcnt-route stats` | route pattern に一致する traffic counter。 |
@@ -224,4 +224,4 @@ Vlan1000   180,512 155.40 KB   120.3/s         0  120,330 110.11 KB    85.7/s   
 - [Route Flow Counter](../../routing/sonic-route-flow-counter-design.md)
 - [IP インタフェース ループバックアクション](../../architecture/sonic-ip-interface-loopback-action.md)
 
-<!-- glossary-links-injected: 78ce2cc4d22c -->
+<!-- glossary-links-injected: c006405759d8 -->

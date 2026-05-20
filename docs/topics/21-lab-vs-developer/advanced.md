@@ -36,7 +36,7 @@ related:
 
 ## DASH SONiC KVM
 
-[DASH](../../reference/glossary.md#term-dash)（Disaggregated API for SONiC Hosts）の DPU 検証を実機 [SmartSwitch](../../reference/glossary.md#term-smartswitch) なしで行うための環境です。データプレーンは BMv2、control plane は SONiC 側、というハイブリッド構成で、[ENI](../../reference/glossary.md#term-eni) / [ACL](../../reference/glossary.md#term-acl) / metering といった DASH HLD の核を仮想で踏むことができます。詳細は [DASH SONiC KVM](../../overlay/dash-sonic-kvm.md) を参照します。
+[DASH](../../reference/glossary.md#term-dash)（Disaggregated API for [SONiC](../../reference/glossary.md#term-sonic) Hosts）の DPU 検証を実機 [SmartSwitch](../../reference/glossary.md#term-smartswitch) なしで行うための環境です。データプレーンは BMv2、control plane は SONiC 側、というハイブリッド構成で、[ENI](../../reference/glossary.md#term-eni) / [ACL](../../reference/glossary.md#term-acl) / metering といった DASH HLD の核を仮想で踏むことができます。詳細は [DASH SONiC KVM](../../overlay/dash-sonic-kvm.md) を参照します。
 
 DASH 章本文の機能仕様と組で読むのが前提で、DPU の HW 機能（offload 性能、PPS など）はこの環境では測れません。
 
@@ -53,7 +53,7 @@ ALViS / KNE は、多数ノードを軽量にデプロイしたい場合の選�
 | 領域 | VS で困る理由 | 実機 / 別環境が要る |
 | --- | --- | --- |
 | optics / PHY / CMIS | 物理 transceiver がない | 実機 + 対象 optics |
-| buffer / [PFC](../../reference/glossary.md#term-pfc) / watermark / queue | [SAI](../../reference/glossary.md#term-sai) VS の capability 範囲外 | ASIC 実機、または ASIC simulator |
+| buffer / [PFC](../../reference/glossary.md#term-pfc) / watermark / queue | [SAI](../../reference/glossary.md#term-sai) VS の capability 範囲外 | [ASIC](../../reference/glossary.md#term-asic) 実機、または ASIC simulator |
 | thermal / PSU / fan / BMC / PCIe | platform docker が dummy | 実機 platform |
 | HW offload を伴う mux / [EVPN](../../reference/glossary.md#term-evpn) encap / DASH 高速 path | data plane が Linux / BMv2 | 対応 ASIC / DPU |
 | 微小遅延・micro-burst・線速 drop | Linux datapath 性能 | 専用テスト機材 |
@@ -143,4 +143,4 @@ virtual / 物理間で動作が乖離する代表領域は次のとおり。
 - KNE / ALViS 系の community 連携で SONiC-VS イメージ整備と config template 提供が議題化。
 - CI の Azure Pipelines / GitHub Actions 共通化議論が継続している。
 
-<!-- glossary-links-injected: 51399410ac24 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

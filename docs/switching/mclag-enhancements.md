@@ -138,7 +138,7 @@ show mclag intf-list
 
 - HLD は Rev 0.1 で日付欄空欄
 - ICCP は **2 台ピアまで**（3-way 以上は未対応）
-- isolation group は SAI 対応必須。未対応 ASIC では peer-link 経由のループ抑止は別手法
+- isolation group は SAI 対応必須。未対応 [ASIC](../reference/glossary.md#term-asic) では peer-link 経由のループ抑止は別手法
 - unique IP では active/active 両方が L3 で見える。OSPF cost / [BGP](../reference/glossary.md#term-bgp) を peer 間で揃える必要
 - 大量 static MAC sync は ICCP メッセージ量増、scalability 影響あり
 
@@ -146,7 +146,7 @@ show mclag intf-list
 
 ### L2 MC-LAG 環境での ICMPv6 RS/NS ループ（#1253）
 
-L2 MC-LAG 構成において、ICMPv6 Router Solicitation (type 133) や Neighbor Solicitation (type 135) パケットが peer-link を経由してループを形成する既知の問題がある。SONiC カーネルがこれらのパケットを処理する際に isolation group を迂回するためと考えられる。
+L2 MC-LAG 構成において、ICMPv6 Router Solicitation (type 133) や Neighbor Solicitation (type 135) パケットが peer-link を経由してループを形成する既知の問題がある。[SONiC](../reference/glossary.md#term-sonic) カーネルがこれらのパケットを処理する際に isolation group を迂回するためと考えられる。
 
 **回避策:**
 
@@ -161,7 +161,7 @@ sudo ebtables -A FORWARD -p 802_1Q --vlan-encap IPv6 -j DROP
 
 ## 干渉する機能
 
-iccpd / FdbOrch / PortsOrch / VRRP / OSPF / BGP（unique IP）/ [VXLAN](../reference/glossary.md#term-vxlan)・[EVPN](../reference/glossary.md#term-evpn) MH（別冗長機構）/ L3 [PortChannel](../reference/glossary.md#term-portchannel)・sub-interface。
+iccpd / FdbOrch / PortsOrch / [VRRP](../reference/glossary.md#term-vrrp) / OSPF / BGP（unique IP）/ [VXLAN](../reference/glossary.md#term-vxlan)・[EVPN](../reference/glossary.md#term-evpn) MH（別冗長機構）/ L3 [PortChannel](../reference/glossary.md#term-portchannel)・sub-interface。
 
 ## トラブルシューティング
 
@@ -189,4 +189,4 @@ redis-cli -n 0 HGETALL "ISOLATION_GROUP_TABLE:1"
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 26d6d1d39324 -->
+<!-- glossary-links-injected: f08c435ee15d -->

@@ -26,16 +26,16 @@ related:
 
 route-map 名を登録する YANG レジストリテーブル[^1]。`sonic-route-map.yang` の `ROUTE_MAP_SET` コンテナで定義されており、`ROUTE_MAP.call_route_map` や `BGP_NEIGHBOR_AF` / `BGP_PEER_GROUP_AF` 等の route-map 参照 leafref の整合性検証に使われる。
 
-**frrcfgd・bgpcfgd・orchagent のいずれも本テーブルを購読しない**。[FRR](../../reference/glossary.md#term-frr) への反映は行われず、純粋に [YANG](../../reference/glossary.md#term-yang) データモデル上の名前空間として機能する。
+**frrcfgd・[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)・[orchagent](../../reference/glossary.md#term-orchagent) のいずれも本テーブルを購読しない**。[FRR](../../reference/glossary.md#term-frr) への反映は行われず、純粋に [YANG](../../reference/glossary.md#term-yang) データモデル上の名前空間として機能する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>ROUTE_MAP_SET")]
-  NOTE["(購読者なし)"]
-  CDB --> NOTE
+  CDB[("CONFIG_DB<br/>ROUTE_MAP")]
+  DM["bgpcfgd"]
+  CDB --> DM
 ```
 
 !!! note "凡例"
@@ -58,7 +58,7 @@ ROUTE_MAP_SET|<name>
 
 ## 購読者
 
-なし。`frrcfgd`・`bgpcfgd`・orchagent のいずれも ROUTE_MAP_SET テーブルを購読しない（`frrcfgd.py` の `table_handler_list` および `tbl_to_key_map` に含まれないことを全行確認済み）。
+なし。`frrcfgd`・`bgpcfgd`・[orchagent](../../reference/glossary.md#term-orchagent) のいずれも ROUTE_MAP_SET テーブルを購読しない（`frrcfgd.py` の `table_handler_list` および `tbl_to_key_map` に含まれないことを全行確認済み）。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -71,9 +71,9 @@ ROUTE_MAP_SET|<name>
 
 | 条件 | 挙動 |
 |------|------|
-| ROUTE_MAP_SET への書き込み | frrcfgd はイベントを受信しない。FRR 反映なし |
-| ROUTE_MAP_SET が未作成で ROUTE_MAP を設定 | sonic-db-cli 直接書き込みは YANG 検証をバイパス。FRR への反映は ROUTE_MAP テーブルのみで決まる |
-| YANG strict mode (gNMI/NETCONF) でのみ | ROUTE_MAP.call_route_map が存在しない名前を参照するとリジェクトされる |
+| ROUTE_MAP_SET への書き込み | frrcfgd はイベントを受信しない。[FRR](../../reference/glossary.md#term-frr) 反映なし |
+| ROUTE_MAP_SET が未作成で [ROUTE_MAP](../../reference/glossary.md#term-route_map) を設定 | sonic-db-cli 直接書き込みは YANG 検証をバイパス。[FRR](../../reference/glossary.md#term-frr) への反映は [ROUTE_MAP](../../reference/glossary.md#term-route_map) テーブルのみで決まる |
+| YANG strict mode ([gNMI](../../reference/glossary.md#term-gnmi)/NETCONF) でのみ | [ROUTE_MAP](../../reference/glossary.md#term-route_map).call_route_map が存在しない名前を参照するとリジェクトされる |
 
 <!-- evidence: sonic-route-map.yang:125-134; frrcfgd.py:2293-2338 table_handler_list -->
 <!-- /cdb-exceptions -->
@@ -101,10 +101,10 @@ YANG に定義されているフィールドは `name`（key）のみ。デー�
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`ROUTE_MAP_SET` テーブルは frrcfgd・bgpcfgd・orchagent のいずれも購読しないため、
+`ROUTE_MAP_SET` テーブルは frrcfgd・[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)・[orchagent](../../reference/glossary.md#term-orchagent) のいずれも購読しないため、
 **FRR への反映という観点での書込み順序制約は存在しない**。
 
-ただし gNMI / NETCONF 等の YANG 検証が有効なパスでは、以下のテーブルのフィールドが
+ただし [gNMI](../../reference/glossary.md#term-gnmi) / NETCONF 等の YANG 検証が有効なパスでは、以下のテーブルのフィールドが
 `ROUTE_MAP_SET_LIST/name` を leafref で参照しているため、**参照元エントリを書く前に
 `ROUTE_MAP_SET|<name>` エントリが存在しなければ leafref 検証失敗**となる。
 
@@ -120,7 +120,7 @@ YANG に定義されているフィールドは `name`（key）のみ。デー�
 
 `sonic-db-cli` 直接投入は YANG 検証をバイパスするため、この順序制約は実質適用されない。
 DEL 時も同様で、`sonic-db-cli` であれば参照中の `ROUTE_MAP_SET` エントリを先に削除することは可能だが、
-gNMI/NETCONF では参照元の解除が先行必須となる。
+[gNMI](../../reference/glossary.md#term-gnmi)/NETCONF では参照元の解除が先行必須となる。
 
 > **スキャン証跡**: `sonic-route-map.yang:125-134,269-273`、`sonic-bgp-common.yang:354-413`、`sonic-bgp-global.yang:373,380,502,532`、`sonic-route-common.yang:60-66`。詳細は `meta/_intermediate/cdb-flow/route-map-set-ordering.md` を参照。
 <!-- /ordering -->
@@ -138,8 +138,8 @@ YANG leafref スキャン (`sonic-route-map.yang`, `sonic-bgp-common.yang`, `son
 | [`BGP_NEIGHBOR_AF`](./bgp-neighbor-af.md) | `route_map_in`, `route_map_out`, `default_rmap`, `unsuppress_map_name` | `sonic-bgp-common.yang:354-413` | frrcfgd が `neighbor {} route-map {} in/out` に変換 |
 | [`BGP_PEER_GROUP_AF`](./bgp-peer-group-af.md) | `route_map_in`, `route_map_out`, `default_rmap`, `unsuppress_map_name` | `sonic-bgp-common.yang:354-413` | BGP_NEIGHBOR_AF と同一 YANG grouping を共有 |
 | `BGP_GLOBALS_AF` | `import_vrf_route_map`, `route_download_filter` | `sonic-bgp-global.yang:371-382` | frrcfgd が `vrf import` / `table-map` コマンドに変換 |
-| `BGP_GLOBALS_AF_AGGREGATE_ADDR` | `policy` | `sonic-bgp-global.yang:500-505` | BGP aggregate-address に route-map を適用 |
-| `BGP_GLOBALS_AF_NETWORK` | `policy` | `sonic-bgp-global.yang:530-534` | BGP network コマンドに route-map を適用 |
+| `BGP_GLOBALS_AF_AGGREGATE_ADDR` | `policy` | `sonic-bgp-global.yang:500-505` | [BGP](../../reference/glossary.md#term-bgp) aggregate-address に route-map を適用 |
+| `BGP_GLOBALS_AF_NETWORK` | `policy` | `sonic-bgp-global.yang:530-534` | [BGP](../../reference/glossary.md#term-bgp) network コマンドに route-map を適用 |
 | `ROUTE_REDISTRIBUTE` | `route_map` (leaf-list) | `sonic-route-common.yang:60-66` | redistribute コマンドへの route-map 付与 |
 
 !!! note "frrcfgd の実行時チェックなし"
@@ -153,20 +153,20 @@ YANG leafref スキャン (`sonic-route-map.yang`, `sonic-bgp-common.yang`, `son
 > **調査根拠**: `sonic-route-map.yang:125-134,269-273`; `frrcfgd.py` 全文 grep (2026-05-18)
 > 詳細証跡: `meta/_intermediate/cdb-flow/route-map-set-failure.md`
 
-ROUTE_MAP_SET テーブルには **購読デーモンが存在しない**。frrcfgd・bgpcfgd・orchagent のいずれも本テーブルを購読しないため、「デーモンが書き込みを処理してエラーを返す」形式の失敗パスは存在しない。
+ROUTE_MAP_SET テーブルには **購読デーモンが存在しない**。frrcfgd・[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)・orchagent のいずれも本テーブルを購読しないため、「デーモンが書き込みを処理してエラーを返す」形式の失敗パスは存在しない。
 
 ### SET / DEL 失敗マトリクス
 
 | 操作 | 条件 | 動作 | 備考 |
 |------|------|------|------|
 | ROUTE_MAP_SET エントリ SET | gNMI / NETCONF 経由かつ ROUTE_MAP.call_route_map から参照中の name と重複 | YANG leafref 整合性違反として拒否 | sonic-db-cli 直接書き込みではバイパス |
-| ROUTE_MAP_SET エントリ DEL | gNMI / NETCONF 経由かつ ROUTE_MAP.call_route_map が参照中 | YANG leafref 参照先削除として拒否 | sonic-db-cli では拒否されず Redis から削除される |
+| ROUTE_MAP_SET エントリ DEL | gNMI / NETCONF 経由かつ ROUTE_MAP.call_route_map が参照中 | YANG leafref 参照先削除として拒否 | sonic-db-cli では拒否されず [Redis](../../reference/glossary.md#term-redis) から削除される |
 | ROUTE_MAP_SET エントリ SET | sonic-db-cli 直接書き込み | 常に成功（YANG 検証なし） | 購読デーモンがないため副作用なし |
-| 存在しない ROUTE_MAP_SET を参照する ROUTE_MAP の FRR 反映 | frrcfgd が call_route_map 値をそのまま vtysh に渡す | FRR が `% Unknown command` 等で拒否 → `LOG_ERR` + `continue` | frrcfgd の実行時チェックなし (`frrcfgd.py:1942`) |
+| 存在しない ROUTE_MAP_SET を参照する ROUTE_MAP の FRR 反映 | frrcfgd が call_route_map 値をそのまま [vtysh](../../reference/glossary.md#term-vtysh) に渡す | FRR が `% Unknown command` 等で拒否 → `LOG_ERR` + `continue` | frrcfgd の実行時チェックなし (`frrcfgd.py:1942`) |
 
 ### ステータス書き戻しなし
 
-ROUTE_MAP_SET への SET/DEL の成否は CONFIG_DB に書き戻されない。YANG 検証エラーは gNMI/NETCONF のレスポンスで返されるのみ。
+ROUTE_MAP_SET への SET/DEL の成否は [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き戻されない。YANG 検証エラーは gNMI/NETCONF のレスポンスで返されるのみ。
 
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-route-map.yang:125-134 (ROUTE_MAP_SET_LIST 定義、must 句なし) -->
 <!-- evidence: sonic-net/sonic-buildimage/src/sonic-yang-models/yang-models/sonic-route-map.yang:269-273 (call_route_map leafref) -->
@@ -187,7 +187,7 @@ ROUTE_MAP_SET テーブルは frrcfgd・bgpcfgd・orchagent のいずれも購�
 | `name` 型 | `string`（長さ制約なし、YANG デフォルト） | `sonic-route-map.yang:129` |
 | フィールド数 | key (`name`) のみ。データフィールドなし | `sonic-route-map.yang:126-133` |
 
-YANG の `string` 型にはデフォルトの長さ上限はなく、`sonic-route-map.yang` に `length` 制約も定義されていない。`sonic-db-cli` 直接投入では YANG 検証もバイパスされるため、name 文字列長の実質的な上限は Redis のキー長制限（512 MB）のみとなる。
+YANG の `string` 型にはデフォルトの長さ上限はなく、`sonic-route-map.yang` に `length` 制約も定義されていない。`sonic-db-cli` 直接投入では YANG 検証もバイパスされるため、name 文字列長の実質的な上限は [Redis](../../reference/glossary.md#term-redis) のキー長制限（512 MB）のみとなる。
 
 <!-- evidence: sonic-route-map.yang:125-134; frrcfgd.py table_handler_list L2293-2338 (ROUTE_MAP_SET 出現なし) -->
 <!-- /constants -->
@@ -198,20 +198,20 @@ YANG の `string` 型にはデフォルトの長さ上限はなく、`sonic-rout
 > **調査根拠**: `frrcfgd.py` 全文 grep (`ROUTE_MAP_SET` 出現なし); `bgpcfgd` ソース全文 grep (2026-05-19)
 > 詳細証跡: `meta/_intermediate/cdb-flow/route-map-set-side-effects.md`
 
-`ROUTE_MAP_SET` テーブルへの SET / DEL に伴う**副次 DB 書込は存在しない**。frrcfgd・bgpcfgd・orchagent のいずれも本テーブルを購読しないため、APPL_DB / STATE_DB / ASIC_DB / COUNTERS_DB への書込は構造的に発生しない。
+`ROUTE_MAP_SET` テーブルへの SET / DEL に伴う**副次 DB 書込は存在しない**。frrcfgd・bgpcfgd・orchagent のいずれも本テーブルを購読しないため、[APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [ASIC_DB](../../reference/glossary.md#term-asic_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込は構造的に発生しない。
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | frrcfgd / bgpcfgd が ROUTE_MAP_SET を購読しないため AppDB への転送は発生しない |
-| STATE_DB | なし | ROUTE_MAP_SET の処理コードが存在せず、status 書き戻しも存在しない |
-| ASIC_DB | なし | orchagent が ROUTE_MAP_SET を購読しないため SAI 経路を経由しない |
-| COUNTERS_DB | なし | routing エントリのためのカウンタテーブルは存在しない |
-| FLEX_COUNTER_DB | なし | カウンタ設定対象外 |
-| LOGLEVEL_DB | なし | ROUTE_MAP_SET 処理コードが存在しないため |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | frrcfgd / bgpcfgd が ROUTE_MAP_SET を購読しないため AppDB への転送は発生しない |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | ROUTE_MAP_SET の処理コードが存在せず、status 書き戻しも存在しない |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | なし | orchagent が ROUTE_MAP_SET を購読しないため [SAI](../../reference/glossary.md#term-sai) 経路を経由しない |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | routing エントリのためのカウンタテーブルは存在しない |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | カウンタ設定対象外 |
+| [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db) | なし | ROUTE_MAP_SET 処理コードが存在しないため |
 
 ### gNMI / NETCONF パスの副作用
 
-gNMI / NETCONF 経由で YANG 検証が有効な場合、leafref 整合性エラーは `google.rpc.Status` として RPC レスポンスに返される。これは DB 書込ではなく RPC 応答レベルの副作用であり、CONFIG_DB および他 DB への書込は発生しない。
+gNMI / NETCONF 経由で YANG 検証が有効な場合、leafref 整合性エラーは `google.rpc.Status` として RPC レスポンスに返される。これは DB 書込ではなく RPC 応答レベルの副作用であり、[CONFIG_DB](../../reference/glossary.md#term-config_db) および他 DB への書込は発生しない。
 
 <!-- evidence: frrcfgd.py table_handler_list L2293-2338 (ROUTE_MAP_SET 出現なし); bgpcfgd/ grep (出現なし); orchagent/ grep (出現なし) -->
 <!-- /side-effects -->
@@ -229,15 +229,15 @@ gNMI / NETCONF 経由で YANG 検証が有効な場合、leafref 整合性エラ
 | `frrcfgd` (`ExtConfigDBConnector`) | **なし** | `table_handler_list` (L2293-2338) に `ROUTE_MAP_SET` 出現なし。`ROUTE_MAP` のみ登録 |
 | `bgpcfgd` (`RouteMapMgr` 等) | **なし** | `bgpcfgd/` 全文 grep で `ROUTE_MAP_SET` 出現なし |
 | `orchagent` (各 Orch クラス) | **なし** | `orchagent/` 全文 grep で `ROUTE_MAP_SET` 出現なし |
-| `syncd` | **なし** | SAI 経路を経由しない。route-map は FRR 側で完結 |
+| `syncd` | **なし** | [SAI](../../reference/glossary.md#term-sai) 経路を経由しない。route-map は FRR 側で完結 |
 
 ### 購読なしの設計理由
 
-`ROUTE_MAP_SET` は YANG leafref 整合性検証のための**名前レジストリ**として設計されており、FRR や SAI への直接的な設定投入は意図されていない。実際の route-map 設定投入は `ROUTE_MAP|<name>|<seq>` テーブルへの書き込みによって `frrcfgd` が処理する。
+`ROUTE_MAP_SET` は YANG leafref 整合性検証のための**名前レジストリ**として設計されており、FRR や [SAI](../../reference/glossary.md#term-sai) への直接的な設定投入は意図されていない。実際の route-map 設定投入は `ROUTE_MAP|<name>|<seq>` テーブルへの書き込みによって `frrcfgd` が処理する。
 
 ### Redis keyspace イベントの扱い
 
-CONFIG_DB への `ROUTE_MAP_SET` SET/DEL 操作は Redis keyspace 通知
+CONFIG_DB への `ROUTE_MAP_SET` SET/DEL 操作は [Redis](../../reference/glossary.md#term-redis) keyspace 通知
 (`__keyspace@4__:ROUTE_MAP_SET|*`) を発行するが、**どのデーモンも購読していない**ためイベントは消費されない。
 
 ```text
@@ -258,15 +258,15 @@ CONFIG_DB hset 'ROUTE_MAP_SET|ALLOW' ''
 
 ### プラットフォーム非依存の設計
 
-`ROUTE_MAP_SET` は YANG leafref 整合性検証のための**純粋な名前レジストリ**であり、SAI API・ASIC Capability・プラットフォーム固有ビルドテンプレートのいずれにも依存しない。
+`ROUTE_MAP_SET` は YANG leafref 整合性検証のための**純粋な名前レジストリ**であり、SAI API・[ASIC](../../reference/glossary.md#term-asic) Capability・プラットフォーム固有ビルドテンプレートのいずれにも依存しない。
 
 | 観点 | 状況 |
 |------|------|
 | j2 テンプレートによるビルド時注入 | **なし**（`qos_config.j2` 等の全 j2 を grep しても `ROUTE_MAP_SET` 出現なし） |
 | SAI 呼び出し | **なし**（`orchagent/` 全体 grep で出現なし。FRR 側で完結） |
-| ASIC Capability チェック | **なし** |
+| [ASIC](../../reference/glossary.md#term-asic) Capability チェック | **なし** |
 | platform_config.json / device profile 注入 | **なし** |
-| multi-ASIC / VOQ chassis 分岐 | **なし** |
+| multi-[ASIC](../../reference/glossary.md#term-asic) / [VOQ](../../reference/glossary.md#term-voq) chassis 分岐 | **なし** |
 
 ### 結論
 
@@ -307,3 +307,5 @@ sonic-db-cli CONFIG_DB keys 'ROUTE_MAP|*'
 vtysh -c 'show route-map'
 ```
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 3963eb938463 -->

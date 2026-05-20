@@ -41,7 +41,7 @@ related:
 
 ## なぜ必要か
 
-SONiC の routing は **[FRR](../reference/glossary.md#term-frr)** に依存し、`zebra` daemon が経路を計算して内蔵 [FPM](../reference/glossary.md#term-fpm) (Forwarding Plane Manager) モジュール `dplane_fpm_nl` が **[Netlink](../reference/glossary.md#term-netlink) で SONiC に push**、`fpmsyncd` が受けて `APPL_DB` に書く[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の routing は **[FRR](../reference/glossary.md#term-frr)** に依存し、`zebra` daemon が経路を計算して内蔵 [FPM](../reference/glossary.md#term-fpm) (Forwarding Plane Manager) モジュール `dplane_fpm_nl` が **[Netlink](../reference/glossary.md#term-netlink) で SONiC に push**、`fpmsyncd` が受けて `APPL_DB` に書く[^1]。
 
 問題は `dplane_fpm_nl` が **kernel への Netlink をそのままコピー** することだ。kernel data model にしか属性が無いので、SONiC 固有属性は表現できない。例えば [SRv6](../reference/glossary.md#term-srv6) SID では SONiC は `block_len` / `node_len` / `func_len` / `arg_len` が要るが、`dplane_fpm_nl` の Netlink にはそれを乗せる枠が無い[^1]。
 
@@ -153,4 +153,4 @@ docker exec bgp vtysh -c 'show fpm status' 2>/dev/null | head
 - APPL_DB.SRV6_MY_SID_TABLE スキーマ取り込み確認
 -->
 
-<!-- glossary-links-injected: 45d35cd4cb64 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-`show version` は **SONiC のビルド情報、プラットフォーム情報、シャーシ情報、稼働時間、現在時刻**、および docker イメージ一覧をまとめて出力する。実装は `show/main.py:version()`[^1]。
+`show version` は **[SONiC](../../reference/glossary.md#term-sonic) のビルド情報、プラットフォーム情報、シャーシ情報、稼働時間、現在時刻**、および docker イメージ一覧をまとめて出力する。実装は `show/main.py:version()`[^1]。
 
 ## シグネチャ
 
@@ -126,4 +126,4 @@ ASIC: broadcom
 ```
 <!-- /usage-example -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -29,7 +29,7 @@ related:
 
 - `show ip bgp summary` で対向の State が `Active` / `Connect` / `Idle (Admin)` のままになる
 - Peer の確立後すぐ flap する (`Established` → `Idle`)
-- Container `bgp` 内では [FRR](../../reference/glossary.md#term-frr) (bgpd) が動作しているが、SONiC 側 `show` で peer が表示されない
+- Container `bgp` 内では [FRR](../../reference/glossary.md#term-frr) (bgpd) が動作しているが、[SONiC](../../reference/glossary.md#term-sonic) 側 `show` で peer が表示されない
 
 ## 確認コマンド
 
@@ -145,4 +145,4 @@ sudo grep -iE "bgp|bfd" /var/log/syslog | tail -100
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ 4305596 — bfdorch / [fpmsyncd](../../reference/glossary.md#term-fpmsyncd)
 [^3]: sonic-net/[sonic-utilities](../../reference/glossary.md#term-sonic-utilities) @ 39732bceb — show bgp 実装
 
-<!-- glossary-links-injected: 2e8c9c98e933 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -52,7 +52,7 @@ related:
 | `Port Tagging` | `VLAN_MEMBER[(vlan,port)]['tagging_mode']` を Ports と同順序で並べる |
 | `Proxy ARP` | `VLAN_INTERFACE[VlanX]['proxy_arp']`（無ければ `disabled`） |
 
-`tablefmt="grid"` で罫線つき表示。multi-ASIC では `-n` 未指定なら全 namespace を順に出力する。
+`tablefmt="grid"` で罫線つき表示。multi-[ASIC](../../reference/glossary.md#term-asic) では `-n` 未指定なら全 namespace を順に出力する。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/vlan.py#L119-L164 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -106,7 +106,7 @@ excerpt: |
 
 ## オプション・共通仕様
 
-- `-n|--namespace <ns>` ... multi-ASIC で特定 namespace のみ表示
+- `-n|--namespace <ns>` ... multi-[ASIC](../../reference/glossary.md#term-asic) で特定 namespace のみ表示
 - `--verbose`（`brief` のみ） ... 内部処理ログを stdout に出す（実装上は使用箇所が限定的）
 
 ## 関連する CONFIG_DB
@@ -143,7 +143,7 @@ excerpt: |
 
 ### よくある落とし穴
 
-- `show vlan brief` は CONFIG_DB ベース表示で、ASIC に未反映でも見えてしまう。実反映は `show interfaces status` や fdb で裏取り。
+- `show vlan brief` は CONFIG_DB ベース表示で、[ASIC](../../reference/glossary.md#term-asic) に未反映でも見えてしまう。実反映は `show interfaces status` や fdb で裏取り。
 - tagged / untagged の混在ミスは link ダウン要因。`tagging_mode` 列を必ず確認。
 
 ### 関連する show / debug
@@ -224,4 +224,4 @@ flowchart LR
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 811ff352b60e -->
+<!-- glossary-links-injected: 8df9850464d2 -->
