@@ -93,7 +93,7 @@ CRM|Config
 | `<resource>_threshold_type` | `percentage`（既定） | 閾値を使用率 % として解釈。`high_threshold > 100` または `low_threshold > 100` の場合 runtime_error を発生させ処理を中断（`crmorch.cpp:428-431`）。アラートは `used/total * 100 >= high_threshold` で発火。 |
 | `<resource>_threshold_type` | `used` | 閾値を「使用中エントリ数」の絶対値として解釈。[ASIC](../../reference/glossary.md#term-asic) の total 数に依存せず細かく制御可能。100 超でもエラーにならない。 |
 | `<resource>_threshold_type` | `free` | 閾値を「空きエントリ数」として解釈。アラートの超過/クリアの向きが percentage/used と逆（残り少なくなると EXCEEDED）。 |
-| `dash_*_threshold_type` | 任意 | `DEVICE_METADATA.switch_type = 'dpu'` のときのみ有効（YANG `when` 制約）。通常スイッチでは YANG validator が拒否。 |
+| `dash_*_threshold_type` | 任意 | `DEVICE_METADATA.localhost.switch_type = 'dpu'` のときのみ有効（YANG `when` 制約）。通常スイッチでは YANG validator が拒否。 |
 <!-- /value-behavior -->
 
 ## 購読者

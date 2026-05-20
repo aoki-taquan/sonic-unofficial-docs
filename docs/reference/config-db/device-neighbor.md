@@ -45,7 +45,7 @@ flowchart LR
 DEVICE_NEIGHBOR|<peer_name>
 ```
 
-- `<peer_name>`: 自由文字列（length 1..255）。通常は隣接機器のホスト名と同値だが、key 重複回避のための識別子として独立して使われる。
+- `<peer_name>`: 実態は**自スイッチのローカルポート名**（例: `Ethernet0`）。minigraph 経由の生成では `neighbors[port]` 形式で `port` がローカルポート名としてキーになる。隣接機器のホスト名は YANG の `name` フィールドに格納される。フィールド型は自由文字列（length 1..255）。
 
 ## フィールド
 

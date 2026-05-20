@@ -245,7 +245,7 @@ Warm start 時 `warmRestoreAndSyncUp()` は全 Orch の `bake()` で APP_DB の�
 |--------------------|---------|-----------------|----------------|
 | `DASH_ENI_ROUTE_TABLE` (`DashOrch::setEniRoute()`) | ENI OID 取得（`eni_entries_` 検索） | `false` → リトライ | `dashorch.cpp` L1186 |
 | `DASH_ACL_IN/OUT_TABLE` (`DashAclGroupMgr::bind()`) | ENI の `eni_id` (SAI OID) 取得 | nullptr → バインド失敗 | `dashaclgroupmgr.cpp` L457, L506 |
-| `DASH_INBOUND_ROUTING_TABLE` (`DashRouteOrch`) | ENI の `eni_id` 取得（Inbound routing entry 作成） | nullptr → リトライ | `dashrouteorch.cpp` L425, L439, L521 |
+| `DASH_ROUTE_RULE_TABLE` (`DashRouteOrch`) | ENI の `eni_id` 取得（Inbound routing entry 作成） | nullptr → リトライ | `dashrouteorch.cpp` L425, L439, L521 |
 | `DASH_HA_SET/SCOPE_TABLE` (`DashHaOrch`) | ENI エントリの存在確認・全テーブル参照 | nullptr チェック | `dashhaorch.cpp` L651, L662 |
 
 <!-- /cross-refs -->

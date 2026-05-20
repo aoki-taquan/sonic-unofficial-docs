@@ -27,6 +27,7 @@ related:
     - sonic-events-swss
     - sonic-events-syncd
     - sonic-events-bgp
+    - sonic-events-dhcp-relay
 ---
 
 # イベント/アラーム拡張監視設定 (extended-monitor)
