@@ -694,7 +694,7 @@ dash_route_orch->unbindRouteGroup(old_group_id);
 - [`DASH_ENI_TABLE`](dash-eni.md): ENI エントリ。`DASH_ROUTE_RULE_TABLE` の親
 - [`DASH_ENI_ROUTE_TABLE`](dash-eni.md): ENI をルートグループにバインドする
 - [`DASH_VNET_TABLE`](dash-vnet.md): VNET エントリ。`vnet` フィールドの参照先
-- [`DASH_VNET_MAPPING_TABLE`](dash-acl.md): CA-PA マッピング。`DASH_ROUTING_TYPE_TABLE` の `action_type` が `maprouting` / `staticencap` のとき参照
+- [`DASH_VNET_MAPPING_TABLE`](dash-vnet.md): CA-PA マッピング。`DASH_ROUTING_TYPE_TABLE` の `action_type` が `maprouting` / `staticencap` のとき参照
 
 ## 引用元
 

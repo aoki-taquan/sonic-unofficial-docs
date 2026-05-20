@@ -503,8 +503,8 @@ SAI API が呼び出されるのは、この routing type を参照する `DashV
 
 ## 関連リファレンス
 
-- CONFIG_DB: [`DASH_ROUTE_TABLE`](dash-route-table.md)（routing_type を leafref 参照）
-- CONFIG_DB: [`DASH_VNET_MAPPING_TABLE`](dash-vnet-mapping-table.md)（routing_type フィールドで本テーブルを参照）
+- CONFIG_DB: [`DASH_ROUTE_TABLE`](dash-routing-table.md)（routing_type を leafref 参照）
+- CONFIG_DB: [`DASH_VNET_MAPPING_TABLE`](dash-vnet.md)（routing_type フィールドで本テーブルを参照）
 
 <!-- ref-triangle:end -->
 
