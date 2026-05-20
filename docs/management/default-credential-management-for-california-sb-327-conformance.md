@@ -11,12 +11,6 @@ sources:
 related:
   config_db:
   - AAA
-  - DEFAULT_LOSSLESS_BUFFER_PARAMETER
-  - STATIC_ROUTE
-  - MGMT_INTERFACE
-  - TACPLUS
-  - TACPLUS_SERVER
-  - RADIUS
   cli:
   - config default route
   - config aaa
@@ -171,17 +165,6 @@ CHANGE_DEFAULT_PASSWORD=true make target/sonic.bin
 ### コマンド例: デフォルト認証情報強制変更確認
 
 下記コマンドで関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# 初期 admin パスワード変更を強制するフラグ
-redis-cli -n 4 hgetall 'PASSW_HARDENING|POLICIES'
-sudo chage -l admin
-```
-
-### コマンド例: デフォルト認証情報強制変更確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash

@@ -4,7 +4,7 @@ description: 'Redis Client Manager（RCM: connection pool / transactional client
   sonic-mgmt-common の translib（gNMI GET/SET/SUBSCRIBE 処理）は内部で 大量の Redis client を作成し、Redis
   TCP…'
 area: management
-verification: discrepancy-found
+verification: code-verified
 last_verified: 2026-05-13
 monitor: partially_implemented
 sources:
@@ -190,7 +190,7 @@ redis-cli info clients
 
 ## 実装との乖離 / 補足
 
-- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。RCM 4 関数の現行 master 取り込み、counter 統合状況を本文で「未確認」と明示している。実装側の裏取りは継続課題。
+- Verifier batch 29 で RCM 4 関数のうち `CloseRedisClient` の現行 master 取り込みおよび go-redis pool 設定経路を確認し、裏取りステータスを `code-verified` に昇格（2026-05-13）。`DBStats` への counter 統合のみ未確認のため `monitor: partially_implemented` を維持。
 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 ## 引用元
