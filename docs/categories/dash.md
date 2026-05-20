@@ -15,7 +15,7 @@ related:
 
 ## 概要
 
-**[DASH](../reference/glossary.md#term-dash) (Disaggregated APIs for SONiC Hosts)** は、SONiC [NPU](../reference/glossary.md#term-npu) と [DPU](../reference/glossary.md#term-dpu) / [SmartNIC](../reference/glossary.md#term-smartnic) を疎結合に連携させ、ステートフルな L4 [NAT](../reference/glossary.md#term-nat) / [ACL](../reference/glossary.md#term-acl) / フローテーブル処理を DPU 側にオフロードするアーキテクチャです。クラウド事業者の大規模 [VNET](../reference/glossary.md#term-vnet) ゲートウェイをコモディティ DPU でスケールさせる目的で生まれ、いまは [SmartSwitch](../reference/glossary.md#term-smartswitch) のフロー処理プレーン基盤としても採用されています。
+**[DASH](../reference/glossary.md#term-dash) (Disaggregated APIs for [SONiC](../reference/glossary.md#term-sonic) Hosts)** は、SONiC [NPU](../reference/glossary.md#term-npu) と [DPU](../reference/glossary.md#term-dpu) / [SmartNIC](../reference/glossary.md#term-smartnic) を疎結合に連携させ、ステートフルな L4 [NAT](../reference/glossary.md#term-nat) / [ACL](../reference/glossary.md#term-acl) / フローテーブル処理を DPU 側にオフロードするアーキテクチャです。クラウド事業者の大規模 [VNET](../reference/glossary.md#term-vnet) ゲートウェイをコモディティ DPU でスケールさせる目的で生まれ、いまは [SmartSwitch](../reference/glossary.md#term-smartswitch) のフロー処理プレーン基盤としても採用されています。
 
 このカテゴリは、area の壁を越えて DASH に関わる SONiC 側のページを横断で見られるようにします。具体的には **DASH 全体アーキテクチャ**（DPU / NPU の役割分担と Disaggregated API の定義）・**DASH ACL の拡張**（`DASH_PREFIX_TAG_TABLE` などのタグベース ACL）・**仮想 DPU 環境**（BMv2 ベースのソフト DPU を sonic-vs に統合して機能検証する SONiC-DASH KVM）が中心です。
 
@@ -63,4 +63,4 @@ DASH は実装が `sonic-dash-api` / `dash-pipeline` / `swss-common` に分散�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: b8635cf7f580 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

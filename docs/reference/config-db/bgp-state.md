@@ -31,14 +31,28 @@ related:
 
 ## 概要
 
-STATE_DB には BGP 隣接状態を保持する 2 つのテーブルが存在する。
+[STATE_DB](../../reference/glossary.md#term-state_db) には [BGP](../../reference/glossary.md#term-bgp) 隣接状態を保持する 2 つのテーブルが存在する。
 
 | テーブル名 | 書き込みデーモン | 主な利用者 |
 |-----------|----------------|-----------|
-| `NEIGH_STATE_TABLE` | `bgpmon` (bgp コンテナ内) | SNMP (CiscoBgp4MIB), テレメトリ |
+| `NEIGH_STATE_TABLE` | `bgpmon` (bgp コンテナ内) | [SNMP](../../reference/glossary.md#term-snmp) (CiscoBgp4MIB), テレメトリ |
 | `BGP_PEER_CONFIGURED_TABLE` | `bgpcfgd` の `BGPPeerMgrBase` | SDN コントローラ |
 
-`NEIGH_STATE_TABLE` は BGP セッションのライブ状態 (FRR `show bgp summary json` の出力) を表し、`BGP_PEER_CONFIGURED_TABLE` は bgpcfgd が CONFIG_DB のネイバー設定を FRR に投入済みであることを示す確認テーブルである。
+`NEIGH_STATE_TABLE` は [BGP](../../reference/glossary.md#term-bgp) セッションのライブ状態 ([FRR](../../reference/glossary.md#term-frr) `show bgp summary json` の出力) を表し、`BGP_PEER_CONFIGURED_TABLE` は [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が [CONFIG_DB](../../reference/glossary.md#term-config_db) のネイバー設定を [FRR](../../reference/glossary.md#term-frr) に投入済みであることを示す確認テーブルである。
+
+<!-- cdb-mermaid -->
+### データフロー (自動生成)
+
+```mermaid
+flowchart LR
+  CDB[("CONFIG_DB<br/>BGP_NEIGHBOR")]
+  DM["bgpcfgd"]
+  CDB --> DM
+```
+
+!!! note "凡例"
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+<!-- /cdb-mermaid -->
 
 ## テーブル 1: NEIGH_STATE_TABLE
 
@@ -48,7 +62,7 @@ STATE_DB には BGP 隣接状態を保持する 2 つのテーブルが存在す
 NEIGH_STATE_TABLE|<neighbor_ip>
 ```
 
-- `<neighbor_ip>`: BGP ネイバーの IP アドレス (IPv4 / IPv6)
+- `<neighbor_ip>`: [BGP](../../reference/glossary.md#term-bgp) ネイバーの IP アドレス (IPv4 / IPv6)
 
 bgpmon 起動時に `NEIGH_STATE_TABLE|*` のエントリがすべて削除され (bgpmon.py L51)、その後スキャン結果で再構築される。
 
@@ -56,12 +70,12 @@ bgpmon 起動時に `NEIGH_STATE_TABLE|*` のエントリがすべて削除さ�
 
 | フィールド | 型 | 値域 / 説明 |
 |-----------|----|------------|
-| `state` | enum string | FRR のセッション状態文字列 |
+| `state` | enum string | [FRR](../../reference/glossary.md#term-frr) のセッション状態文字列 |
 | `peerType` | enum string | `"i-BGP"` または `"e-BGP"` |
 
 `state` の値域 (snmp_ciscobgp4mib.md / bgp4.py の STATE_CODE 定義より):
 
-| `state` 値 | SNMP 整数値 | 意味 |
+| `state` 値 | [SNMP](../../reference/glossary.md#term-snmp) 整数値 | 意味 |
 |-----------|-----------|------|
 | `"Idle"` または `"Idle (Admin)"` | 1 | セッション停止中 |
 | `"Connect"` | 2 | TCP 接続試行中 |
@@ -82,11 +96,11 @@ bgpmon 起動時に `NEIGH_STATE_TABLE|*` のエントリがすべて削除さ�
 3. **ネイバー消失時**: エントリを DEL
 4. **bgpmon 起動時**: 全エントリを一括削除して再スキャン
 
-Redis Pipeline (`PIPE_BATCH_MAX_COUNT = 50`) でバッチ更新される (bgpmon.py L35)。
+[Redis](../../reference/glossary.md#term-redis) Pipeline (`PIPE_BATCH_MAX_COUNT = 50`) でバッチ更新される (bgpmon.py L35)。
 
 ### 購読者
 
-- **SNMP サブエージェント** (`sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py`): `NEIGH_STATE_TABLE|*` を読み取り CiscoBgp4MIB (cbgpPeer2State, OID `.1.3.6.1.4.1.9.9.187.1.2.5.1.3`) に変換。マルチ ASIC 構成では各 namespace の STATE_DB から収集。
+- **[SNMP](../../reference/glossary.md#term-snmp) サブエージェント** (`sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py`): `NEIGH_STATE_TABLE|*` を読み取り CiscoBgp4MIB (cbgpPeer2State, OID `.1.3.6.1.4.1.9.9.187.1.2.5.1.3`) に変換。マルチ [ASIC](../../reference/glossary.md#term-asic) 構成では各 namespace の [STATE_DB](../../reference/glossary.md#term-state_db) から収集。
 - テレメトリ / 将来拡張 (snmp_ciscobgp4mib.md L33)
 
 ---
@@ -99,12 +113,12 @@ Redis Pipeline (`PIPE_BATCH_MAX_COUNT = 50`) でバッチ更新される (bgpmon
 BGP_PEER_CONFIGURED_TABLE|<key>
 ```
 
-- 静的ピア: `<key>` = VRF が `"default"` の場合はネイバー IP、それ以外は `<vrf>|<neighbor_ip>`
+- 静的ピア: `<key>` = [VRF](../../reference/glossary.md#term-vrf) が `"default"` の場合はネイバー IP、それ以外は `<vrf>|<neighbor_ip>`
 - 動的ピア (BGP listen range): `<key>` = `<vrf/vnet-name>|<peer-name>`
 
 ### フィールド
 
-フィールドは CONFIG_DB のネイバー設定 (`BGP_NEIGHBOR` または `BGP_PEER_RANGE`) のキー・バリューペアをそのまま転写する。固定フィールド定義はなく、CONFIG_DB の内容に依存する。
+フィールドは [CONFIG_DB](../../reference/glossary.md#term-config_db) のネイバー設定 (`BGP_NEIGHBOR` または `BGP_PEER_RANGE`) のキー・バリューペアをそのまま転写する。固定フィールド定義はなく、[CONFIG_DB](../../reference/glossary.md#term-config_db) の内容に依存する。
 
 動的ピアの代表的フィールド (Bgpcfgd-dyn-peer-modification-support.md §2.2):
 
@@ -125,7 +139,7 @@ BGP_PEER_CONFIGURED_TABLE|<key>
 
 ### 利用者
 
-SDN コントローラが CONFIG_DB への設定投入後、このテーブルのエントリ存在を確認することで bgpcfgd による FRR 設定完了を検知する (Bgpcfgd-dyn-peer-modification-support.md §1.1)。
+SDN コントローラが CONFIG_DB への設定投入後、このテーブルのエントリ存在を確認することで [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) による FRR 設定完了を検知する (Bgpcfgd-dyn-peer-modification-support.md §1.1)。
 
 ---
 
@@ -148,7 +162,7 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 | `BGP_INTERNAL_NEIGHBOR` | `"internal"` (iBGP) | SET → エントリ追加、DEL → エントリ削除 | main.py:88 |
 | `BGP_MONITORS` | `"monitors"` | SET → エントリ追加、DEL → エントリ削除 | main.py:89 |
 | `BGP_PEER_RANGE` | `"dynamic"` (listen range) | SET → エントリ追加 (`ip_range` フィールド含む) | main.py:90 |
-| `BGP_VOQ_CHASSIS_NEIGHBOR` | `"voq_chassis"` | SET → エントリ追加 (VOQ シャーシ間 iBGP) | main.py:91 |
+| `BGP_VOQ_CHASSIS_NEIGHBOR` | `"voq_chassis"` | SET → エントリ追加 ([VOQ](../../reference/glossary.md#term-voq) シャーシ間 iBGP) | main.py:91 |
 | `BGP_SENTINELS` | `"sentinels"` | SET → エントリ追加 | main.py:91 |
 
 > テーブルごとに独立した `BGPPeerMgrBase` インスタンスが動作するため、`BGP_PEER_CONFIGURED_TABLE` には複数テーブル由来のエントリが混在する。フィールドセットはソーステーブルの内容そのままで固定スキーマはない (managers_bgp.py:289)。
@@ -172,7 +186,7 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 | 参照先 | 呼び出し箇所 | 用途 |
 |---|---|---|
 | `vtysh -c 'show bgp vrfs json'` | `load_peers()` — managers_bgp.py:577 | 起動時に FRR 登録済みピアセットを取得し `self.peers` を初期化 |
-| `vtysh -c 'show bgp vrf <vrf> neighbors json'` | `load_peers()` — managers_bgp.py:587 | VRF ごとのネイバー一覧を初期ロード |
+| `vtysh -c 'show bgp vrf <vrf> neighbors json'` | `load_peers()` — managers_bgp.py:587 | [VRF](../../reference/glossary.md#term-vrf) ごとのネイバー一覧を初期ロード |
 | `vtysh -c 'show bgp peer-group <name> json'` | `get_existing_ip_ranges()` — managers_bgp.py:398 | 動的ピアの ip_range 更新時に既存 range を取得 |
 | `cfg_mgr.push(cmd)` (FRR 設定書き込み) | `apply_op()` — managers_bgp.py:507 | FRR に `neighbor` コマンド投入。**投入後** に `update_state_db()` を呼び出す |
 
@@ -184,7 +198,7 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 
 ### 範囲外
 
-- **ASIC_DB BGP セッション state**: bgpcfgd / bgpmon は ASIC_DB を参照しない。ASIC_DB への BGP 関連書き込みは `routeorch` (SWSS) が担当し、本テーブル群とは独立した経路。
+- **[ASIC_DB](../../reference/glossary.md#term-asic_db) BGP セッション state**: [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) / bgpmon は [ASIC_DB](../../reference/glossary.md#term-asic_db) を参照しない。[ASIC_DB](../../reference/glossary.md#term-asic_db) への BGP 関連書き込みは `routeorch` (SWSS) が担当し、本テーブル群とは独立した経路。
 - **`BGP_PEER_GROUP`** (CONFIG_DB): 独立テーブルとして存在しない。peer-group 設定は `BGP_NEIGHBOR` 等の内容から Jinja2 テンプレートで生成され、FRR に直接投入される。
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/bgp-state-cross-refs.md` を参照。
@@ -193,13 +207,13 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`bgpmon` および `bgpcfgd BGPPeerMgrBase` が `NEIGH_STATE_TABLE` / `BGP_PEER_CONFIGURED_TABLE` へ書き込む際、STATE_DB 以外の副次 DB への波及は**存在しない**。
+`bgpmon` および `bgpcfgd BGPPeerMgrBase` が `NEIGH_STATE_TABLE` / `BGP_PEER_CONFIGURED_TABLE` へ書き込む際、[STATE_DB](../../reference/glossary.md#term-state_db) 以外の副次 DB への波及は**存在しない**。
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `bgpmon.py` / `managers_bgp.py` に `APPL_DB` への接続・書込呼出が 0 件 |
-| COUNTERS_DB | なし | 両ファイルに `COUNTERS_DB` 参照が 0 件。BGP セッション統計は FRR / `show bgp summary` で直接取得するため STATE_DB 内に統計テーブルは存在しない |
-| ASIC_DB / FLEX_COUNTER_DB | なし | BGP 経路情報の SAI 投入は `fpmsyncd` → `routeorch` の別経路であり `bgpmon` / `bgpcfgd` は SAI に直接アクセスしない |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `bgpmon.py` / `managers_bgp.py` に `APPL_DB` への接続・書込呼出が 0 件 |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | 両ファイルに `COUNTERS_DB` 参照が 0 件。BGP セッション統計は FRR / `show bgp summary` で直接取得するため STATE_DB 内に統計テーブルは存在しない |
+| ASIC_DB / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | BGP 経路情報の [SAI](../../reference/glossary.md#term-sai) 投入は `fpmsyncd` → `routeorch` の別経路であり `bgpmon` / `bgpcfgd` は [SAI](../../reference/glossary.md#term-sai) に直接アクセスしない |
 | EVENTS_DB | なし | 両ファイルに `EVENTS_DB` / `publish` / `notify` 参照が 0 件 |
 | CHASSIS_APP_DB | なし | マルチシャーシ向け参照なし |
 
@@ -250,13 +264,13 @@ SDN コントローラが CONFIG_DB への設定投入後、このテーブル�
 | `"SET"` | ネイバー追加 / 管理状態変更時に STATE_DB へ書き込む | `managers_bgp.py:239,288,353,443` |
 | `"DEL"` | ネイバー削除時に STATE_DB からエントリを消す | `managers_bgp.py:487,291` |
 
-VRF が `"default"` の場合は key = `nbr`、それ以外は `vrf + "|" + nbr` とするロジックも文字列リテラル `"default"` としてハードコードされている (`managers_bgp.py:280`)。
+[VRF](../../reference/glossary.md#term-vrf) が `"default"` の場合は key = `nbr`、それ以外は `vrf + "|" + nbr` とするロジックも文字列リテラル `"default"` としてハードコードされている (`managers_bgp.py:280`)。
 
 ### ポーリング・バッチ定数 (bgpmon.py)
 
 | 定数名 / 用途 | 値 | ソース |
 |-------------|----|----|
-| `PIPE_BATCH_MAX_COUNT` — Redis パイプラインのバッチ上限 | **50** | `bgpmon.py:35` |
+| `PIPE_BATCH_MAX_COUNT` — [Redis](../../reference/glossary.md#term-redis) パイプラインのバッチ上限 | **50** | `bgpmon.py:35` |
 | ポーリング sleep — bgpmon メインループの待機間隔 | **15** 秒 (`time.sleep(15)`) | `bgpmon.py:203` |
 | FRR ログ確認待機 — FRR 変化なし時の sleep | **1** 秒 (`time.sleep(1)`) | `bgpmon.py:109,115` |
 
@@ -265,7 +279,7 @@ VRF が `"default"` の場合は key = `nbr`、それ以外は `vrf + "|" + nbr`
 | 文字列値 | 用途 | ソース |
 |---------|------|--------|
 | `"/var/log/frr/frr.log"` | FRR ログファイルのタイムスタンプ監視 | `bgpmon.py:61` |
-| `"show bgp summary json"` | vtysh 経由で BGP ネイバー状態を取得するコマンド | `bgpmon.py:80` |
+| `"show bgp summary json"` | [vtysh](../../reference/glossary.md#term-vtysh) 経由で BGP ネイバー状態を取得するコマンド | `bgpmon.py:80` |
 <!-- /constants -->
 
 <!-- failure -->
@@ -310,7 +324,7 @@ VRF が `"default"` の場合は key = `nbr`、それ以外は `vrf + "|" + nbr`
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-STATE_DB `NEIGH_STATE_TABLE` および `BGP_PEER_CONFIGURED_TABLE` には対応する YANG schema が存在しない。値はすべてコードレベルで決定される。
+STATE_DB `NEIGH_STATE_TABLE` および `BGP_PEER_CONFIGURED_TABLE` には対応する [YANG](../../reference/glossary.md#term-yang) schema が存在しない。値はすべてコードレベルで決定される。
 
 ### NEIGH_STATE_TABLE
 
@@ -400,7 +414,7 @@ STATE_DB `BGP_PEER_CONFIGURED_TABLE` への書き込みは `BGPPeerMgrBase.updat
 
 ### マルチ ASIC 構成での動作（テーブル内容に変化なし）
 
-マルチ ASIC 構成では、bgpmon および bgpcfgd は各 ASIC コンテナ内で独立して動作し、
+マルチ [ASIC](../../reference/glossary.md#term-asic) 構成では、bgpmon および bgpcfgd は各 [ASIC](../../reference/glossary.md#term-asic) コンテナ内で独立して動作し、
 それぞれの namespace 内 STATE_DB に書き込む。テーブルのスキーマ・フィールドに変化はない。
 
 **SNMP 読み取り側**（`sonic-snmpagent/src/sonic_ax_impl/mibs/vendor/cisco/bgp4.py` L22, L29–30）
@@ -423,7 +437,7 @@ STATE_DB `BGP_PEER_CONFIGURED_TABLE` への書き込みは `BGPPeerMgrBase.updat
 
 ### BGP_PEER_CONFIGURED_TABLE — 書き込みのみ / 購読者なし
 
-`bgpcfgd` の `BGPPeerMgrBase.update_state_db()` (managers_bgp.py L271-303) が `swsscommon.Table` 経由で直接 STATE_DB へ HSET / DEL を発行する。`swsscommon.Table` は **ProducerStateTable ではない** ため、専用通知チャンネルへの PUBLISH は行わない。
+`bgpcfgd` の `BGPPeerMgrBase.update_state_db()` (managers_bgp.py L271-303) が `swsscommon.Table` 経由で直接 STATE_DB へ HSET / DEL を発行する。`swsscommon.Table` は **[ProducerStateTable](../../reference/glossary.md#term-producerstatetable) ではない** ため、専用通知チャンネルへの PUBLISH は行わない。
 
 ```
 bgpcfgd (BGPPeerMgrBase.update_state_db)
@@ -437,7 +451,7 @@ keyspace notification (`__keyspace@6__:BGP_PEER_CONFIGURED_TABLE|*`) は STATE_D
 #### 根拠
 
 - `managers_bgp.py` 内に `subscribe`・`psubscribe`・`keyspace`・`notify` を含む記述はゼロ件
-- HLD (`Bgpcfgd-dyn-peer-modification-support.md §1.1`) が「SDN コントローラはポーリングで確認する」設計を明示
+- [HLD](../../reference/glossary.md#term-hld) (`Bgpcfgd-dyn-peer-modification-support.md §1.1`) が「SDN コントローラはポーリングで確認する」設計を明示
 
 #### 消費パターン (ポーリング)
 
@@ -448,22 +462,12 @@ keyspace notification (`__keyspace@6__:BGP_PEER_CONFIGURED_TABLE|*`) は STATE_D
 
 ### NEIGH_STATE_TABLE — bgpmon ポーリング書き込み / SNMP 読み取り
 
-`bgpmon` が 15 秒周期で FRR から取得した状態を `NEIGH_STATE_TABLE` へ書き込む。SNMP サブエージェントは `NEIGH_STATE_TABLE|*` を **ポーリング読み取り** して CiscoBgp4MIB に変換する。Redis Pub-Sub / keyspace notification は使用しない。
+`bgpmon` が 15 秒周期で FRR から取得した状態を `NEIGH_STATE_TABLE` へ書き込む。SNMP サブエージェントは `NEIGH_STATE_TABLE|*` を **ポーリング読み取り** して CiscoBgp4MIB に変換する。[Redis](../../reference/glossary.md#term-redis) Pub-Sub / keyspace notification は使用しない。
 
 詳細は `meta/_intermediate/cdb-flow/bgp-state-pubsub.md` を参照。
 <!-- /pubsub -->
 
 ## 引用元
-
-[^1]: `sonic-buildimage/src/sonic-bgpcfgd/bgpmon/bgpmon.py` (L37-51 BgpStateGet.__init__, L70-76 update_new_peer_states, L154-189 update_neigh_states, L163,171 peerType 判定). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpmon/bgpmon.py>
-
-[^2]: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py` (L284-303 update_state_db). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py>
-
-[^3]: `sonic-net/SONiC/doc/snmp/snmp_ciscobgp4mib.md` (NEIGH_STATE_TABLE スキーマ定義, L27-32). <https://github.com/sonic-net/SONiC/blob/master/doc/snmp/snmp_ciscobgp4mib.md>
-
-[^4]: `sonic-net/SONiC/doc/BGP/Bgpcfgd-dyn-peer-modification-support.md` (BGP_PEER_CONFIGURED_TABLE スキーマ定義, §2.2). <https://github.com/sonic-net/SONiC/blob/master/doc/BGP/Bgpcfgd-dyn-peer-modification-support.md>
-
-[^5]: `sonic-swss-common/common/schema.h` (L437 STATE_BGP_TABLE_NAME, L511 STATE_BGP_PEER_CONFIGURED_TABLE_NAME). <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
 
 [^6]: `sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py` (L229–243 add_peer テンプレート失敗分岐, L271–304 update_state_db 例外処理, L446–492 del_handler 失敗・順序乖離, L494–508 apply_op 常時 True). <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py>
 
@@ -481,3 +485,5 @@ sonic-db-cli STATE_DB hgetall 'BGP_PEER_CONFIGURED_TABLE|10.0.0.1'
 # FRR から直接 BGP ネイバー状態を取得 (bgpmon の参照元と同じコマンド)
 vtysh -c 'show bgp summary json'
 ```
+
+<!-- glossary-links-injected: 0a08a7be444a -->

@@ -47,7 +47,7 @@ related:
 
 # 概念
 
-SONiC の observability は、用途ごとに別のサブシステムが担当します。読み解くときは「いま何が起きているか」「変化点をどう受け取るか」「障害時に何を残すか」の 3 つに分けると迷いません。
+[SONiC](../../reference/glossary.md#term-sonic) の observability は、用途ごとに別のサブシステムが担当します。読み解くときは「いま何が起きているか」「変化点をどう受け取るか」「障害時に何を残すか」の 3 つに分けると迷いません。
 
 ## Telemetry / SNMP 機能は何を解決するか
 
@@ -58,7 +58,7 @@ SONiC の observability は、用途ごとに別のサブシステムが担当�
 - 月次レポート用に既存の NMS スタックから IF-MIB を歩いて集めたい ([SNMP](../../reference/glossary.md#term-snmp))
 - 顧客トラフィックの一部をミラー先 collector に流して可視化したい (sFlow / DTel)
 - 「あの時間帯に何が起きていたか」を後追いするための包括 snapshot がほしい (`show techsupport`、core dump、kdump)
-- ASIC リソース（route、[ACL](../../reference/glossary.md#term-acl) entry、neighbor 等）が枯渇する前に検知したい ([CRM](../../reference/glossary.md#term-crm))
+- [ASIC](../../reference/glossary.md#term-asic) リソース（route、[ACL](../../reference/glossary.md#term-acl) entry、neighbor 等）が枯渇する前に検知したい ([CRM](../../reference/glossary.md#term-crm))
 
 ここで重要なのは、これらが**同じ「ポート counter」を扱っていても、入口とプロトコル、データ更新タイミングが全部違う**ということです。読む側はまず「何を答える経路か」で分類すると混乱しません。
 
@@ -183,4 +183,4 @@ flowchart TB
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 
-<!-- glossary-links-injected: ae40922103ac -->
+<!-- glossary-links-injected: ec18b66e3507 -->

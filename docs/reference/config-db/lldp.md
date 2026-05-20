@@ -103,8 +103,8 @@ grouping `lldp_mode_config` を `uses`:
 
 | 参照先テーブル | DB | handler | 用途 | evidence |
 |--------------|-----|---------|------|---------|
-| `PORT_TABLE` | APPL_DB | `lldp_process_port_table_event()` | `oper_status=up` 検知で `lldpcli configure ports <ifname>` 発行。`PortInitDone` / `PortConfigDone` キーで `lldpcli resume` を制御 | `lldpmgrd:301, 323-325` |
-| `MGMT_INTERFACE` | CONFIG_DB | `lldp_process_mgmt_info_change()` | 管理 IP (IPv4 優先、次点 IPv6) 変化を検知して `lldpcli configure system ip management pattern <ip>` を更新 | `lldpmgrd:305, 317-319` |
+| `PORT_TABLE` | [APPL_DB](../../reference/glossary.md#term-appl_db) | `lldp_process_port_table_event()` | `oper_status=up` 検知で `lldpcli configure ports <ifname>` 発行。`PortInitDone` / `PortConfigDone` キーで `lldpcli resume` を制御 | `lldpmgrd:301, 323-325` |
+| `MGMT_INTERFACE` | [CONFIG_DB](../../reference/glossary.md#term-config_db) | `lldp_process_mgmt_info_change()` | 管理 IP (IPv4 優先、次点 IPv6) 変化を検知して `lldpcli configure system ip management pattern <ip>` を更新 | `lldpmgrd:305, 317-319` |
 | `DEVICE_METADATA` | CONFIG_DB | `lldp_process_device_table_event()` | `localhost` キーの `chassis_hostname` / `hostname` を読み `lldpcli configure system hostname <name>` を更新 | `lldpmgrd:308, 320-322` |
 
 ### lldpmgrd — ランタイム読み出し (Table.get / getKeys)
@@ -112,7 +112,7 @@ grouping `lldp_mode_config` を `uses`:
 | 参照先テーブル | DB | フィールド | 用途 | evidence |
 |--------------|-----|----------|------|---------|
 | `PORT` | CONFIG_DB | `alias`, `description` | ポート ID (`portidsubtype local <alias>`) とポート説明を `lldpcli configure ports` コマンドに埋め込む | `lldpmgrd:75, 148-164` |
-| `PORT_TABLE` | STATE_DB | `netdev_oper_status` | `up` になるまで `lldpcli configure ports` をキューイング。`is_port_up()` が参照 | `lldpmgrd:78, 122-134` |
+| `PORT_TABLE` | [STATE_DB](../../reference/glossary.md#term-state_db) | `netdev_oper_status` | `up` になるまで `lldpcli configure ports` をキューイング。`is_port_up()` が参照 | `lldpmgrd:78, 122-134` |
 | `MGMT_INTERFACE` | CONFIG_DB | key (`<ifname>\|<prefix>`) | DEL イベント時に残存する管理 IP を再スキャンして最優先 IP を選択 | `lldpmgrd:76, 206-226` |
 
 ### lldpd.conf.j2 — コンテナ起動時テンプレート参照
@@ -141,10 +141,10 @@ grouping `lldp_mode_config` を `uses`:
 
 ### SET 処理における失敗経路
 
-| 失敗条件 | 検出箇所 | 結果 | STATE_DB 記録 | evidence |
+| 失敗条件 | 検出箇所 | 結果 | [STATE_DB](../../reference/glossary.md#term-state_db) 記録 | evidence |
 |---------|---------|------|--------------|---------|
 | `hostname` が空文字 / None | `update_hostname()` | WARNING ログ → `return`（lldpcli 未発行） | なし | `lldpmgrd:84-87` |
-| `lldpcli configure system hostname` 失敗 | `update_hostname()` | WARNING ログ → `self.hostname` 未更新。次回 DEVICE_METADATA イベントまで再試行なし | なし | `lldpmgrd:90-96` |
+| `lldpcli configure system hostname` 失敗 | `update_hostname()` | WARNING ログ → `self.hostname` 未更新。次回 [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) イベントまで再試行なし | なし | `lldpmgrd:90-96` |
 | `lldpcli configure system ip management pattern` 失敗 | `update_mgmt_addr()` | WARNING ログ → `self.mgmt_ip` 未更新。次回 MGMT_INTERFACE イベントまで再試行なし | なし | `lldpmgrd:109-114` |
 | ポートが `netdev_oper_status != up` | `process_pending_cmds()` | INFO ログ → コマンドをキューに残し 10 秒後に再チェック | なし | `lldpmgrd:176-179` |
 | `lldpcli configure ports <ifname>` 失敗（retry 中） | `process_pending_cmds()` | INFO ログ → `failed_count++`、6 秒後に再試行（最大 5 回） | なし | `lldpmgrd:197-200` |
@@ -158,7 +158,7 @@ grouping `lldp_mode_config` を `uses`:
 
 | 失敗種別 | retry | 上限 | 間隔 | recovery 条件 |
 |---------|-------|------|------|--------------|
-| hostname lldpcli 失敗 | なし | — | — | 次回 DEVICE_METADATA 変化 |
+| hostname lldpcli 失敗 | なし | — | — | 次回 [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 変化 |
 | mgmt IP lldpcli 失敗 | なし | — | — | 次回 MGMT_INTERFACE 変化 |
 | portidsubtype lldpcli 失敗 | あり | 5 回 | 6 秒 | 5 回超過で silent drop |
 | ポート down 待機 | 自動 | なし | 10 秒ループ | ポート up 検知 |
@@ -292,7 +292,6 @@ show lldp table
 
 <!-- /cdb-exceptions -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
@@ -304,11 +303,11 @@ show lldp table
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (APPL_DB 中継なし)
+なし ([APPL_DB](../../reference/glossary.md#term-appl_db) 中継なし)
 
 ### 段階 3 — APPL→SAI
 
-なし (SAI 非経由 — `lldpd` デーモンのグローバル設定)
+なし ([SAI](../../reference/glossary.md#term-sai) 非経由 — `lldpd` デーモンのグローバル設定)
 
 ### 段階 4 — タイミングと副作用
 
@@ -332,7 +331,7 @@ show lldp table
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- sonic-mgmt-common lldp_app.go 経由 (OpenConfig LLDP)
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common lldp_app.go 経由 (OpenConfig LLDP)
 
 ### db_migrator
 - なし
@@ -414,7 +413,7 @@ STATE_DB: PORT_TABLE|<ifname>.netdev_oper_status = "up"
 | 優先度 | ルール | 根拠 |
 |--------|--------|------|
 | 必須 | `PORT\|<ifname>` を先に書いてから `LLDP_PORT\|<ifname>` を書く | sonic-lldp.yang leafref 制約; lldpcli は存在しない linux netdev に対して失敗する |
-| 必須 | `DEVICE_METADATA\|localhost.hostname` を minigraph / sonic-cfggen で先に投入してから lldpd コンテナを起動する | lldpd.conf.j2 テンプレートが起動時に hostname を読む |
+| 必須 | `DEVICE_METADATA\|localhost.hostname` を minigraph / [sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) で先に投入してから lldpd コンテナを起動する | lldpd.conf.j2 テンプレートが起動時に hostname を読む |
 | 推奨 | `MGMT_INTERFACE` を LLDP 設定より先に書く | 管理 IP を含む Management Address TLV を正しく送出するため |
 | 推奨 | `LLDP\|GLOBAL` を `LLDP_PORT\|<ifname>` より先に書く | グローバル設定が先に lldpd に届くことで設定の階層が明確になる（違反しても即時障害は軽微） |
 | 注意 | `lldpcli` コマンドが RETRY_LIMIT=5 回失敗するとポートが pending から除去される | PORT イベントが再度来るまで再適用されない; 正しいポート設定を確認してから LLDP_PORT を書くこと |
@@ -422,7 +421,7 @@ STATE_DB: PORT_TABLE|<ifname>.netdev_oper_status = "up"
 ### タイミング制約
 
 - **lldpd コンテナ起動前の CONFIG_DB 書込みは問題ない**。lldpmgrd は起動後に CONFIG_DB を購読して追いつく。
-- **lldpcli resume 前は LLDP PDU が送出されない**。`PortInitDone` + `PortConfigDone` の両イベントが APPL_DB に届くまで（最大 300 秒）lldpd は pause 状態。
+- **lldpcli resume 前は LLDP PDU が送出されない**。`PortInitDone` + `PortConfigDone` の両イベントが [APPL_DB](../../reference/glossary.md#term-appl_db) に届くまで（最大 300 秒）lldpd は pause 状態。
 - **netdev が up になるまで LLDP_PORT のポートエイリアス設定は保留**される。ポートがリンクダウン状態で LLDP_PORT を書いても、リンクアップ後に自動適用される（RETRY_LIMIT 超過前に限る）。
 
 <!-- /ordering -->
@@ -439,7 +438,7 @@ STATE_DB: PORT_TABLE|<ifname>.netdev_oper_status = "up"
 | `PORT_INIT_TIMEOUT` | `300` 秒 | `lldpmgrd:33` | PortInitDone / PortConfigDone 待機上限。超過すると強制 `lldpcli resume` を実行し、未設定ポートの誤 portid 広告リスクがある |
 | `FAILED_CMD_TIMEOUT` | `6` 秒 | `lldpmgrd:34` | lldpcli 失敗時の再試行インターバル |
 | `RETRY_LIMIT` | `5` 回 | `lldpmgrd:35` | ポート設定 lldpcli の最大再試行回数。超過すると当該ポートの alias/description が lldpd に未反映のまま継続（silent drop） |
-| `SELECT_TIMEOUT_MS` | `10000` ms | `lldpmgrd:291` | Redis select ループのタイムアウト。`process_pending_cmds()` の実行周期（約 10 秒）を兼ねる |
+| `SELECT_TIMEOUT_MS` | `10000` ms | `lldpmgrd:291` | [Redis](../../reference/glossary.md#term-redis) select ループのタイムアウト。`process_pending_cmds()` の実行周期（約 10 秒）を兼ねる |
 | `REDIS_TIMEOUT_MS` | `0` | `lldpmgrd:50` | DBConnector タイムアウト (0 = ブロッキング) |
 
 ### lldpd.conf.j2 ハードコード設定
@@ -463,7 +462,7 @@ SONiC Software Version: SONiC.<build_version> - HwSku: <hwsku> - Distribution: D
 
 ### lldpd 組み込みデフォルト
 
-CONFIG_DB から制御できないが、SONiC の YANG `default` 文と偶然一致する lldpd 内部値。
+CONFIG_DB から制御できないが、[SONiC](../../reference/glossary.md#term-sonic) の YANG `default` 文と偶然一致する lldpd 内部値。
 
 | 設定 | 値 | 備考 |
 |-----|-----|------|
@@ -491,11 +490,11 @@ CONFIG_DB から制御できないが、SONiC の YANG `default` 文と偶然一
 | `CFG_MGMT_INTERFACE_TABLE_NAME` | CONFIG_DB | 管理 IP を読取 | `lldpmgrd:76,206-226` |
 | `APP_PORT_TABLE_NAME` | APPL_DB | `PortInitDone` / `PortConfigDone` イベントを購読 | `lldpmgrd:77,301,259-273` |
 
-lldpmgrd が行う唯一の外部副作用は **`lldpcli` サブプロセス呼び出し**（lldpd プロセスへのコマンド注入）。CONFIG_DB / APPL_DB / STATE_DB / COUNTERS_DB への書込みはゼロ。
+lldpmgrd が行う唯一の外部副作用は **`lldpcli` サブプロセス呼び出し**（lldpd プロセスへのコマンド注入）。CONFIG_DB / APPL_DB / STATE_DB / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込みはゼロ。
 
 ### lldp-syncd による APPL_DB 書込
 
-`docker-lldp` コンテナには `lldp-syncd` (`python3 -m lldp_syncd`) が常時稼働しており、lldpd の Unix ソケットをポーリングして **LLDP ネイバー情報を APPL_DB に反映する**（`supervisord.conf.j2` の依存起動順: lldpd → lldp-syncd → lldpmgrd）。
+`docker-lldp` コンテナには `lldp-syncd` (`python3 -m lldp_syncd`) が常時稼働しており、lldpd の Unix ソケットをポーリングして **LLDP ネイバー情報を APPL_DB に反映する**（`supervisord.conf.j2` の依存起動順: lldpd → lldp-[syncd](../../reference/glossary.md#term-syncd) → lldpmgrd）。
 
 | 書込先 | テーブル | 内容 | evidence |
 |--------|---------|------|---------|
@@ -505,7 +504,7 @@ lldpmgrd が行う唯一の外部副作用は **`lldpcli` サブプロセス呼�
 
 ### STATE_DB / COUNTERS_DB
 
-いずれのコンポーネントも STATE_DB や COUNTERS_DB への**書込みを行わない**。lldpmgrd は STATE_DB を読み取るのみ。LLDP 障害情報は syslog (`SWSS_LOG_ERROR` / `WARNING`) にのみ出力される。
+いずれのコンポーネントも STATE_DB や [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への**書込みを行わない**。lldpmgrd は STATE_DB を読み取るのみ。LLDP 障害情報は syslog (`SWSS_LOG_ERROR` / `WARNING`) にのみ出力される。
 
 <!-- /side-effects -->
 
@@ -520,7 +519,7 @@ lldpmgrd が行う唯一の外部副作用は **`lldpcli` サブプロセス呼�
 
 | Consumer | メカニズム | 対象テーブル | タイミング |
 |----------|-----------|-------------|----------|
-| `lldpmgrd` | `swsscommon.SubscriberStateTable` (Redis pub/sub ラッパー) | `APPL_DB: PORT_TABLE` | ランタイム常時購読。`PortInitDone` / `PortConfigDone` + ポート `oper_status` イベントを検知して `lldpcli` コマンドをキューから発行 |
+| `lldpmgrd` | `swsscommon.SubscriberStateTable` ([Redis](../../reference/glossary.md#term-redis) pub/sub ラッパー) | `APPL_DB: PORT_TABLE` | ランタイム常時購読。`PortInitDone` / `PortConfigDone` + ポート `oper_status` イベントを検知して `lldpcli` コマンドをキューから発行 |
 | `lldpmgrd` | `swsscommon.SubscriberStateTable` | `CONFIG_DB: DEVICE_METADATA` | ランタイム常時購読。`localhost.hostname` / `chassis_hostname` 変化を検知して `lldpcli configure system hostname` を発行 |
 | `lldpmgrd` | `swsscommon.SubscriberStateTable` | `CONFIG_DB: MGMT_INTERFACE` | ランタイム常時購読。管理 IP 変化を検知して `lldpcli configure system ip management pattern` を更新 |
 | `lldpd.conf.j2` | `sonic-cfggen -d`（one-shot 一括読み取り） | `DEVICE_METADATA`, `MGMT_INTERFACE`, `MGMT_PORT` | コンテナ起動時のみ。lldpd の初期設定ファイルを生成 |
@@ -552,8 +551,8 @@ sel.addSelectable(sst_device_confdb)
 
 | メカニズム | 使用有無 | 備考 |
 |-----------|---------|------|
-| `swsscommon.SubscriberStateTable` | 使用（3 テーブル） | APPL_DB PORT, CONFIG_DB DEVICE_METADATA, MGMT_INTERFACE |
-| Redis native keyspace notification (`psubscribe __keyspace@*__:*`) | 不使用 | lldpmgrd は swsscommon ラッパー経由のみ |
+| `swsscommon.SubscriberStateTable` | 使用（3 テーブル） | APPL_DB PORT, CONFIG_DB [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata), MGMT_INTERFACE |
+| [Redis](../../reference/glossary.md#term-redis) native keyspace notification (`psubscribe __keyspace@*__:*`) | 不使用 | lldpmgrd は swsscommon ラッパー経由のみ |
 | `LLDP` keyspace 購読 | なし | 設計上未購読。書き込んでも lldpd に反映されない |
 | `LLDP_PORT` keyspace 購読 | なし | 同上 |
 
@@ -567,14 +566,14 @@ sel.addSelectable(sst_device_confdb)
 
 ### ASIC 種別による影響
 
-LLDP は SAI 非経由（`lldpd` ユーザー空間デーモン）で動作するため、ASIC 種別（Broadcom / Mellanox / Marvell / Innovium 等）は **影響なし**。`sai.profile` や SAI capability query を参照するコードパスは存在しない。
+LLDP は [SAI](../../reference/glossary.md#term-sai) 非経由（`lldpd` ユーザー空間デーモン）で動作するため、[ASIC](../../reference/glossary.md#term-asic) 種別（Broadcom / Mellanox / Marvell / Innovium 等）は **影響なし**。`sai.profile` や [SAI](../../reference/glossary.md#term-sai) capability query を参照するコードパスは存在しない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| ASIC 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | LLDP は SAI 非経由。`lldpmgrd` / `lldpd` は ASIC を直接操作しない |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell 等) | 影響なし | LLDP は SAI 非経由。`lldpmgrd` / `lldpd` は [ASIC](../../reference/glossary.md#term-asic) を直接操作しない |
 | multi-asic (namespace あり) | **挙動差あり** | `supervisord.conf.j2` / `lldpd.conf.j2` に `namespace_id` 分岐が存在（下記参照） |
-| VOQ chassis | 部分的差異あり | `DEVICE_METADATA.chassis_hostname` 優先解決（下記参照） |
-| SmartSwitch | 調査対象外 | community master に SmartSwitch 固有 LLDP 分岐なし |
+| [VOQ](../../reference/glossary.md#term-voq) chassis | 部分的差異あり | `DEVICE_METADATA.chassis_hostname` 優先解決（下記参照） |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) | 調査対象外 | community master に [SmartSwitch](../../reference/glossary.md#term-smartswitch) 固有 LLDP 分岐なし |
 
 ### multi-asic (namespace) における挙動差
 
@@ -608,8 +607,8 @@ configure ports eth0 lldp portidsubtype local {{ mgmt_if.port_name }}
 hostname = device_dict.get("chassis_hostname") or device_dict.get("hostname")
 ```
 
-VOQ chassis 構成では `DEVICE_METADATA|localhost.chassis_hostname` が設定され、line card ホスト名ではなくシャーシ全体名が LLDP System Name TLV に載る。`hostname` のみの通常構成では `chassis_hostname` キーが存在しないため、この分岐は実質的に無効。
+[VOQ](../../reference/glossary.md#term-voq) chassis 構成では `DEVICE_METADATA|localhost.chassis_hostname` が設定され、line card ホスト名ではなくシャーシ全体名が LLDP System Name TLV に載る。`hostname` のみの通常構成では `chassis_hostname` キーが存在しないため、この分岐は実質的に無効。
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 9d2a20a8f03b -->
+<!-- glossary-links-injected: a76b0e2c7b9d -->

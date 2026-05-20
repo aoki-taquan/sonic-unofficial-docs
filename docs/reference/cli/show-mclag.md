@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-SONiC には `show mclag` という Click サブコマンドは存在しない。[MCLAG](../../reference/glossary.md#term-mclag) の状態確認は **`mclagdctl`** コマンド経由で行い、これは `iccpd` コンテナ内の Unix ソケット (`/var/run/iccpd/mclagdctl.sock`) に接続する `iccpd` 由来のユーティリティである[^1]。
+[SONiC](../../reference/glossary.md#term-sonic) には `show mclag` という Click サブコマンドは存在しない。[MCLAG](../../reference/glossary.md#term-mclag) の状態確認は **`mclagdctl`** コマンド経由で行い、これは `iccpd` コンテナ内の Unix ソケット (`/var/run/iccpd/mclagdctl.sock`) に接続する `iccpd` 由来のユーティリティである[^1]。
 
 ホスト側の `/usr/local/bin/mclagdctl` は `docker exec -i iccpd mclagdctl "$@"` を呼ぶだけのラッパーで、引数はそのままコンテナ内 `mclagdctl` に渡る[^2]。
 
@@ -45,7 +45,7 @@ SONiC には `show mclag` という Click サブコマンドは存在しない�
 | `mclagdctl -i <domain_id> dump debug counters` | デバッグカウンタ |
 | `mclagdctl -i <domain_id> config loglevel <level>` | iccpd のログレベル変更 |
 
-`-i <domain_id>` は省略可で、その場合は CLI が自動的に唯一の domain を選ぶ (現状 SONiC は 1 ノードあたり 1 MCLAG ドメインしか作成できない: `config mclag` 参照)。
+`-i <domain_id>` は省略可で、その場合は CLI が自動的に唯一の domain を選ぶ (現状 [SONiC](../../reference/glossary.md#term-sonic) は 1 ノードあたり 1 MCLAG ドメインしか作成できない: `config mclag` 参照)。
 
 ## 各コマンドの詳細
 
@@ -71,7 +71,7 @@ iccpd 内部のログレベル切替。値は iccpd の syslog 等でデバッ�
 
 ## 注意
 
-- `mclagdctl` は **`show mclag` ではない**。SONiC `show` Click ツリーには MCLAG 用サブコマンドが定義されていないため、CLI 補完や `show -h` には現れない。
+- `mclagdctl` は **`show mclag` ではない**。[SONiC](../../reference/glossary.md#term-sonic) `show` Click ツリーには MCLAG 用サブコマンドが定義されていないため、CLI 補完や `show -h` には現れない。
 - 出力はパース対象として安定したフォーマットではない (人間向け固定列)。スクリプトから扱う際はバージョン差異に注意。
 - ピアとの ICCP 接続が落ちている状態では `dump portlist peer` `dump arp` 等は最後に同期したスナップショットのままになる。
 
@@ -173,4 +173,4 @@ mclagdctl -i 1000 dump portlist peer
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 1eae39cb7469 -->
+<!-- glossary-links-injected: 97063dcb81c4 -->

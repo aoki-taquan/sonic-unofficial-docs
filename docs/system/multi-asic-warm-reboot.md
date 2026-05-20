@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-multi-ASIC platform では各 ASIC が **独自の swss / [syncd](../reference/glossary.md#term-syncd) / [FRR](../reference/glossary.md#term-frr) インスタンス** を持つ。warm reboot を成立させるには、**namespace を跨いだ協調 shutdown / boot** が必要[^1]。
+multi-[ASIC](../reference/glossary.md#term-asic) platform では各 ASIC が **独自の swss / [syncd](../reference/glossary.md#term-syncd) / [FRR](../reference/glossary.md#term-frr) インスタンス** を持つ。warm reboot を成立させるには、**namespace を跨いだ協調 shutdown / boot** が必要[^1]。
 
 ポイント:
 
@@ -139,4 +139,4 @@ sudo warm-reboot -v
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: c006405759d8 -->

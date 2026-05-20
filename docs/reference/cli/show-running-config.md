@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-SONiC で「現在の running config」を見るには CLI が **`show runningconfiguration`**（`show running-config` のエイリアスではない、空白なしの単一トークン）。本ページは同グループ配下のサブコマンドを網羅する。実装は `show/main.py` 内の `runningconfiguration` group[^1]。多くのサブコマンドは `sonic-cfggen -d --var-json <TABLE>` の薄いラッパで、[CONFIG_DB](../../reference/glossary.md#term-config_db) から JSON を取り出して表示する。`startupconfiguration bgp` も合わせて扱う。
+[SONiC](../../reference/glossary.md#term-sonic) で「現在の running config」を見るには CLI が **`show runningconfiguration`**（`show running-config` のエイリアスではない、空白なしの単一トークン）。本ページは同グループ配下のサブコマンドを網羅する。実装は `show/main.py` 内の `runningconfiguration` group[^1]。多くのサブコマンドは `sonic-cfggen -d --var-json <TABLE>` の薄いラッパで、[CONFIG_DB](../../reference/glossary.md#term-config_db) から JSON を取り出して表示する。`startupconfiguration bgp` も合わせて扱う。
 
 ## コマンド一覧
 
@@ -43,7 +43,7 @@ SONiC で「現在の running config」を見るには CLI が **`show runningco
 | `show runningconfiguration all` | host + 各 namespace の [CONFIG_DB](../../reference/glossary.md#term-config_db) JSON ダンプ + bgpraw | `get_config_json_by_namespace` + `vtysh -c "show running-config"` |
 | `show runningconfiguration acl` | ACL_RULE のみ | `sonic-cfggen -d --var-json ACL_RULE` |
 | `show runningconfiguration ports [<portname>]` | PORT テーブル | `sonic-cfggen -d --var-json PORT [--key NAME]` |
-| `show runningconfiguration bgp [-n NS]` | [FRR](../../reference/glossary.md#term-frr) の vtysh `show running-config` | `bgp_util.run_bgp_show_command` |
+| `show runningconfiguration bgp [-n NS]` | [FRR](../../reference/glossary.md#term-frr) の [vtysh](../../reference/glossary.md#term-vtysh) `show running-config` | `bgp_util.run_bgp_show_command` |
 | `show runningconfiguration interfaces [<ifname>]` | INTERFACE テーブル | `sonic-cfggen -d --var-json INTERFACE [--key NAME]` |
 | `show runningconfiguration ntp` | `/etc/chrony/chrony.conf` を grep | ファイルパース |
 | `show runningconfiguration snmp` | [SNMP](../../reference/glossary.md#term-snmp) / SNMP_COMMUNITY / SNMP_USER 全部 | `show_run_snmp` |
@@ -61,7 +61,7 @@ SONiC で「現在の running config」を見るには CLI が **`show runningco
 |---------|------|
 | `show startupconfiguration bgp` | bgp コンテナ内の `/etc/quagga/bgpd.conf` 等の **起動時にロードされた config** を `cat` する |
 
-実装は `docker ps | grep bgp | awk` から bgp コンテナ名を取り、`docker exec <bgp> cat /etc/quagga/bgpd.conf` 系を呼ぶ。multi-ASIC 対応で各 namespace から取得可能[^2]。
+実装は `docker ps | grep bgp | awk` から bgp コンテナ名を取り、`docker exec <bgp> cat /etc/quagga/bgpd.conf` 系を呼ぶ。multi-[ASIC](../../reference/glossary.md#term-asic) 対応で各 namespace から取得可能[^2]。
 
 ## 各コマンドの詳細
 
@@ -70,10 +70,10 @@ SONiC で「現在の running config」を見るには CLI が **`show runningco
 **動作**:
 
 1. `multi_asic.DEFAULT_NAMESPACE`（host）から `get_config_json_by_namespace` で CONFIG_DB JSON を取得。
-2. multi-ASIC では各 namespace 分も同様に取得し、加えて namespace ごとに `bgp_util.is_bgp_feature_state_enabled(ns)` が真なら `vtysh -c "show running-config"` の出力を `bgpraw` フィールドに添付。
+2. multi-[ASIC](../../reference/glossary.md#term-asic) では各 namespace 分も同様に取得し、加えて namespace ごとに `bgp_util.is_bgp_feature_state_enabled(ns)` が真なら `vtysh -c "show running-config"` の出力を `bgpraw` フィールドに添付。
 3. JSON を `json.dumps(..., indent=4)` で標準出力に書く。
 
-single-ASIC では `output['localhost']` のみを返し、`bgpraw` を host config に直接添付する形になる。
+single-[ASIC](../../reference/glossary.md#term-asic) では `output['localhost']` のみを返し、`bgpraw` を host config に直接添付する形になる。
 
 <!-- evidence:
 source: sonic-net/sonic-utilities/show/main.py#L1828-L1850 (sha: 39732bceb8bdefe706518ab40623bbbba6ff33b9)
@@ -144,7 +144,7 @@ multi-ASIC では `-n` を必ず単一 namespace 名のいずれかに合わせ�
 
 ## 注意
 
-- `show running-config`（`-` 区切り）は SONiC の click 上には存在しない。`config/main.py` ではなく **`show runningconfiguration`** を使う。
+- `show running-config`（`-` 区切り）は [SONiC](../../reference/glossary.md#term-sonic) の click 上には存在しない。`config/main.py` ではなく **`show runningconfiguration`** を使う。
 - `all` の出力は **JSON のみ**、テキスト config 形式ではない。
 - `ntp` / `syslog` は CONFIG_DB を見ず、生成済みの conf ファイルを直接 grep する。CONFIG_DB と乖離している場合は乖離が見える。
 
@@ -251,4 +251,4 @@ vtysh -c 'show running-config'
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 84ca04c9cab5 -->
+<!-- glossary-links-injected: 90eadcf82bb6 -->

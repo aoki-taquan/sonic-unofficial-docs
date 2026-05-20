@@ -27,7 +27,7 @@ related:
 
 ## 概要
 
-`show nat` は SONiC の [NAT](../../reference/glossary.md#term-nat) 機能の **動的な変換テーブル** および **静的な設定** を表示する CLI で、`show/nat.py` の `@click.group()` がエントリポイントとなる[^1]。
+`show nat` は [SONiC](../../reference/glossary.md#term-sonic) の [NAT](../../reference/glossary.md#term-nat) 機能の **動的な変換テーブル** および **静的な設定** を表示する CLI で、`show/nat.py` の `@click.group()` がエントリポイントとなる[^1]。
 
 実装は薄く、`natshow` / `natconfig` という C/Python の補助バイナリを `clicommon.run_command(...)` で呼び出すだけのラッパー。`natshow` は [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) を参照し、`natconfig` は [CONFIG_DB](../../reference/glossary.md#term-config_db) を整形して出すように分業されている。
 
@@ -55,7 +55,7 @@ related:
 
 ### `show nat translations [count]`
 
-サブコマンド無しで実行 (`@nat.group(invoke_without_command=True)`) すると `natshow -t` が呼ばれ、現在 ASIC に入っている変換 (static + 動的に学習されたもの) を表示する。`count` サブコマンド付きでは件数のみ。
+サブコマンド無しで実行 (`@nat.group(invoke_without_command=True)`) すると `natshow -t` が呼ばれ、現在 [ASIC](../../reference/glossary.md#term-asic) に入っている変換 (static + 動的に学習されたもの) を表示する。`count` サブコマンド付きでは件数のみ。
 
 ### `show nat config [<sub>]`
 
@@ -159,7 +159,7 @@ flowchart LR
 
 ### よくある落とし穴
 
-- `show nat translations` は ASIC 上限を超えた分は表示されない。
+- `show nat translations` は [ASIC](../../reference/glossary.md#term-asic) 上限を超えた分は表示されない。
 - `show nat statistics` は永続値ではなく、container 再起動でリセット。
 
 ### 関連する show / debug
@@ -171,4 +171,4 @@ show nat config
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 0a2da183a336 -->
+<!-- glossary-links-injected: 1288c04b3f8a -->

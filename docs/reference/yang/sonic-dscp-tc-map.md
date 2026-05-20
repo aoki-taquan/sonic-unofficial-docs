@@ -28,7 +28,7 @@ related:
 - import: `sonic-types`
 - top container: `sonic-dscp-tc-map`
 
-DSCP_TO_TC_MAP yang Module for SONiC OS[^1]
+DSCP_TO_TC_MAP yang Module for [SONiC](../../reference/glossary.md#term-sonic) OS[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -138,4 +138,4 @@ show qos map dscp-tc
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-dscp-tc-map.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 36ca10160326 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

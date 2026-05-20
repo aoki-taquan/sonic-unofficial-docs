@@ -133,28 +133,27 @@ show management_interface address
 enum: `admin_status` = `up`/`down`。
 <!-- /value-behavior -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **hostcfgd** (`sonic-host-services/scripts/hostcfgd`): `MGMT_PORT` テーブルを `ConfigDBConnector` で購読。
-- スレッド: hostcfgd メインループ内で `subscribe` コールバック登録。
+- **[hostcfgd](../../reference/glossary.md#term-hostcfgd)** (`sonic-host-services/scripts/hostcfgd`): `MGMT_PORT` テーブルを `ConfigDBConnector` で購読。
+- スレッド: [hostcfgd](../../reference/glossary.md#term-hostcfgd) メインループ内で `subscribe` コールバック登録。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- hostcfgd が `MGMT_PORT` エントリを受け取り、`/etc/network/interfaces.d/` 向け設定断片を `j2` テンプレートで生成。
+- [hostcfgd](../../reference/glossary.md#term-hostcfgd) が `MGMT_PORT` エントリを受け取り、`/etc/network/interfaces.d/` 向け設定断片を `j2` テンプレートで生成。
 - CFG→APP_DB への書き込みは行わない (カーネル直接設定)。
 
 ### 段階 3: APPL → SAI
 
-- SAI 経由なし。`ifconfig`/`ethtool` を syscall で直接発行して eth0 の speed/MTU/admin_status を設定。
+- [SAI](../../reference/glossary.md#term-sai) 経由なし。`ifconfig`/`ethtool` を syscall で直接発行して eth0 の speed/MTU/admin_status を設定。
 - 再起動時は `ifupdown2` が `/etc/network/interfaces` を読み込んでカーネル設定を復元。
 
 ### 段階 4: タイミング + 副作用
 
-- CONFIG_DB への書き込み後、hostcfgd コールバックは数秒以内にカーネル設定を反映する。
+- [CONFIG_DB](../../reference/glossary.md#term-config_db) への書き込み後、hostcfgd コールバックは数秒以内にカーネル設定を反映する。
 - サービス再起動 (`systemctl restart networking`) が必要な場合もある。
 - 副作用: eth0 admin down 時に SSH セッションが切断される可能性がある。
 
@@ -166,15 +165,15 @@ MGMT_PORT テーブルへの書き込みが発生するコード経路を網羅�
 
 ### CLI
 
-  - `config interface mgmt ...` — なし (管理ポートは通常 minigraph/sonic-cfggen で投入)
+  - `config interface mgmt ...` — なし (管理ポートは通常 minigraph/[sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) で投入)
 
 ### minigraph / sonic-cfggen
 
-**minigraph.py** `parse_device_desc_xml()` が管理インターフェース名と速度を抽出し `results['MGMT_PORT']` に投入 (sonic-buildimage/src/sonic-config-engine/minigraph.py:2281–2296)
+**minigraph.py** `parse_device_desc_xml()` が管理インターフェース名と速度を抽出し `results['MGMT_PORT']` に投入 ([sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage)/src/sonic-config-engine/minigraph.py:2281–2296)
 
 ### REST / gNMI
 
-sonic-mgmt-common の MGMT_PORT トランスフォーマーなし — REST/gNMI 書き込みは未実装
+[sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common の MGMT_PORT トランスフォーマーなし — REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込みは未実装
 
 ### db_migrator
 
@@ -208,7 +207,7 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 
 ### Phase 7: 条件付き登録
 
-`MGMT_PORT` は orchagent では処理されない。`portmgrd` 系が CONFIG_DB の変更を受けてカーネル管理ポートを設定する。条件付き platform 登録なし。
+`MGMT_PORT` は [orchagent](../../reference/glossary.md#term-orchagent) では処理されない。`portmgrd` 系が [CONFIG_DB](../../reference/glossary.md#term-config_db) の変更を受けてカーネル管理ポートを設定する。条件付き platform 登録なし。
 
 ### グレップカバレッジ
 
@@ -225,11 +224,11 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 
 | Handler | 処理内容 | 効果 | evidence |
 |---|---|---|---|
-| `mgmt_oper_status.py` | CONFIG_DB 全フィールドを STATE_DB へ同期 + `/sys/class/net/<port>/operstate` を読み oper_status を更新 | STATE_DB `MGMT_PORT_TABLE\|eth0` の更新 | `sonic-buildimage/files/image_config/monit/mgmt_oper_status.py:16-51` |
-| `lldpd.conf.j2` | `alias` フィールドを参照 | LLDP portidsubtype local に alias 値を設定 | `sonic-buildimage/dockers/docker-lldp/lldpd.conf.j2:17-18` |
-| `sonic-snmpagent` | `alias` フィールドを読み取り (`get('alias', if_name)`) | SNMP MIB インタフェーステーブルに alias を返却、未設定時は if_name (eth0) をフォールバック | `sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py:270` |
+| `mgmt_oper_status.py` | CONFIG_DB 全フィールドを [STATE_DB](../../reference/glossary.md#term-state_db) へ同期 + `/sys/class/net/<port>/operstate` を読み oper_status を更新 | [STATE_DB](../../reference/glossary.md#term-state_db) `MGMT_PORT_TABLE\|eth0` の更新 | `sonic-buildimage/files/image_config/monit/mgmt_oper_status.py:16-51` |
+| `lldpd.conf.j2` | `alias` フィールドを参照 | [LLDP](../../reference/glossary.md#term-lldp) portidsubtype local に alias 値を設定 | `sonic-buildimage/dockers/docker-lldp/lldpd.conf.j2:17-18` |
+| `sonic-snmpagent` | `alias` フィールドを読み取り (`get('alias', if_name)`) | [SNMP](../../reference/glossary.md#term-snmp) MIB インタフェーステーブルに alias を返却、未設定時は if_name (eth0) をフォールバック | `sonic-snmpagent/src/sonic_ax_impl/mibs/__init__.py:270` |
 
-> **スキャン証跡**: minigraph.py:2281-2296 確認。admin_status は常時 "up" で固定であることを確認 — 誤読なし。portmgrd.cpp:28 確認、CFG_PORT_TABLE_NAME="PORT" のみ購読。
+> **スキャン証跡**: minigraph.py:2281-2296 確認。admin_status は常時 "up" で固定であることを確認 — 誤読なし。[portmgrd](../../reference/glossary.md#term-portmgrd).cpp:28 確認、CFG_PORT_TABLE_NAME="PORT" のみ購読。
 
 <!-- /handler-branching -->
 
@@ -241,11 +240,11 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 | フィールド | 種別 | 暗黙デフォルト / 挙動 | ソース |
 |---|---|---|---|
 | `admin_status` | YANG default + ハードコード注入 | YANG default `up`。minigraph は常時 `"up"` を注入。フィールド省略時も YANG が `up` を返す | `sonic-mgmt_port.yang:74`, `minigraph.py:2294` |
-| `mtu` | dead write | YANG default `1500`。STATE_DB へは同期されるが `/etc/network/interfaces` に展開されず eth0 の実 MTU は変化しない | `sonic-mgmt_port.yang:68`, `interfaces.j2` (MGMT_PORT.mtu 参照なし) |
-| `speed` | dead write + プラットフォーム依存 | minigraph が HwSku の `ManagementInterface/Speed` 要素から取得した場合のみ書き込む。フィールドが存在しても ethtool による実際の速度変更は行われない | `minigraph.py:1683-1690, 2295-2296` |
+| `mtu` | dead write | YANG default `1500`。[STATE_DB](../../reference/glossary.md#term-state_db) へは同期されるが `/etc/network/interfaces` に展開されず eth0 の実 MTU は変化しない | `sonic-mgmt_port.yang:68`, `interfaces.j2` (MGMT_PORT.mtu 参照なし) |
+| `speed` | dead write + プラットフォーム依存 | minigraph が [HwSku](../../reference/glossary.md#term-hwsku) の `ManagementInterface/Speed` 要素から取得した場合のみ書き込む。フィールドが存在しても ethtool による実際の速度変更は行われない | `minigraph.py:1683-1690, 2295-2296` |
 | `autoneg` | dead field | YANG 定義あり、実装コンシューマなし。設定しても eth0 の autoneg は変化しない | `sonic-mgmt_port.yang:46-51` (コンシューマなし) |
 | `description` | dead field | YANG 定義あり、実装コンシューマなし | `sonic-mgmt_port.yang:57-60` (コンシューマなし) |
-| `alias` | implicit fallback | 省略時: SNMP MIB が `if_name` (例: `eth0`) をフォールバック返却。LLDP は portidsubtype を `mgmt_if.port_name` にフォールバック | `sonic-snmpagent/mibs/__init__.py:270`, `lldpd.conf.j2:19` |
+| `alias` | implicit fallback | 省略時: [SNMP](../../reference/glossary.md#term-snmp) MIB が `if_name` (例: `eth0`) をフォールバック返却。[LLDP](../../reference/glossary.md#term-lldp) は portidsubtype を `mgmt_if.port_name` にフォールバック | `sonic-snmpagent/mibs/__init__.py:270`, `lldpd.conf.j2:19` |
 
 ### YANG-実装 discrepancy
 
@@ -257,7 +256,7 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`MGMT_PORT` は orchagent / SAI を経由しない。Consumer は `mgmt_oper_status.py`（monit スクリプト）と `lldpd.conf.j2` のみであり、書込み順依存は CONFIG_DB → STATE_DB の一方向で完結する。
+`MGMT_PORT` は [orchagent](../../reference/glossary.md#term-orchagent) / [SAI](../../reference/glossary.md#term-sai) を経由しない。Consumer は `mgmt_oper_status.py`（monit スクリプト）と `lldpd.conf.j2` のみであり、書込み順依存は CONFIG_DB → STATE_DB の一方向で完結する。
 
 ### 検出された順序依存
 
@@ -265,14 +264,14 @@ MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実�
 |---|----------|------|--------|
 | 1 | CONFIG_DB 起動完了 → MGMT_PORT 書込み | 強制先行 | minigraph / 手動投入は CONFIG_DB 起動後のみ実行される |
 | 2 | MGMT_PORT エントリ存在 → STATE_DB `MGMT_PORT_TABLE` 更新 | **強制先行** | エントリが存在しない場合 `mgmt_oper_status.py` は STATE_DB を更新せず `LOG_DEBUG` で終了 (`mgmt_oper_status.py:17-19`) |
-| 3 | MGMT_PORT と MGMT_INTERFACE の同時書込み (minigraph 経由) | 同一関数内で同期 | REST/gNMI は MGMT_PORT を書き込まないため、非 minigraph 経路では各テーブルが個別に書き込まれる可能性がある |
-| 4 | orchagent / SAI 依存 | **なし** | `portmgrd.cpp:28` は `CFG_PORT_TABLE_NAME`（= `"PORT"`）のみ購読。MGMT_PORT は SAI 経由なし |
+| 3 | MGMT_PORT と MGMT_INTERFACE の同時書込み (minigraph 経由) | 同一関数内で同期 | REST/[gNMI](../../reference/glossary.md#term-gnmi) は MGMT_PORT を書き込まないため、非 minigraph 経路では各テーブルが個別に書き込まれる可能性がある |
+| 4 | [orchagent](../../reference/glossary.md#term-orchagent) / [SAI](../../reference/glossary.md#term-sai) 依存 | **なし** | `portmgrd.cpp:28` は `CFG_PORT_TABLE_NAME`（= `"PORT"`）のみ購読。MGMT_PORT は SAI 経由なし |
 
 ### 主要な制約詳細
 
-**MGMT_PORT エントリ不在時の STATE_DB 非更新 (依存 #2)**: `mgmt_oper_status.py` は冒頭で `db.keys(db.CONFIG_DB, 'MGMT_PORT|*')` を確認し、キーが存在しない場合は `syslog LOG_DEBUG` を出力して即座に `sys.exit(0)` する。このため CONFIG_DB に MGMT_PORT エントリが投入される前は `STATE_DB MGMT_PORT_TABLE` が空のままとなり、`show management_interface address` や SNMP MIB が旧ステータスを返す可能性がある (evidence: `mgmt_oper_status.py:16-19`)。
+**MGMT_PORT エントリ不在時の STATE_DB 非更新 (依存 #2)**: `mgmt_oper_status.py` は冒頭で `db.keys(db.CONFIG_DB, 'MGMT_PORT|*')` を確認し、キーが存在しない場合は `syslog LOG_DEBUG` を出力して即座に `sys.exit(0)` する。このため CONFIG_DB に MGMT_PORT エントリが投入される前は `STATE_DB MGMT_PORT_TABLE` が空のままとなり、`show management_interface address` や [SNMP](../../reference/glossary.md#term-snmp) MIB が旧ステータスを返す可能性がある (evidence: `mgmt_oper_status.py:16-19`)。
 
-**minigraph による MGMT_PORT + MGMT_INTERFACE のアトミック書込み (依存 #3)**: `minigraph.py:2281-2308` では `results['MGMT_PORT']`・`results['MGMT_INTERFACE']`・`results['MGMT_VRF_CONFIG']` を同一関数 `parse_device_desc_xml()` 内で生成し、`sonic-cfggen` が CONFIG_DB へ一括書込みする。この経路では 3 テーブルの書込み順はほぼ同時であり実用上の問題は生じない。一方、REST/gNMI 経路では MGMT_PORT トランスフォーマーが未実装であるため (`sonic-mgmt-common`)、MGMT_PORT への書込みは minigraph または手動 CLI のみとなっている。
+**minigraph による MGMT_PORT + MGMT_INTERFACE のアトミック書込み (依存 #3)**: `minigraph.py:2281-2308` では `results['MGMT_PORT']`・`results['MGMT_INTERFACE']`・`results['MGMT_VRF_CONFIG']` を同一関数 `parse_device_desc_xml()` 内で生成し、`sonic-cfggen` が CONFIG_DB へ一括書込みする。この経路では 3 テーブルの書込み順はほぼ同時であり実用上の問題は生じない。一方、REST/[gNMI](../../reference/glossary.md#term-gnmi) 経路では MGMT_PORT トランスフォーマーが未実装であるため (`sonic-mgmt-common`)、MGMT_PORT への書込みは minigraph または手動 CLI のみとなっている。
 
 <!-- /ordering -->
 
@@ -285,7 +284,7 @@ MGMT_PORT は orchagent / SAI を経由しない。他テーブル・他設定�
 
 | 参照元 | 参照先 DB / テーブル | 方向 | 契機 | 根拠コード |
 |--------|---------------------|------|------|-----------|
-| `lldpd.conf.j2` | `CONFIG_DB MGMT_PORT[name].alias` | READ | LLDP デーモン設定ファイル生成時。`alias` が存在すれば `configure ports eth0 lldp portidsubtype local <alias>` を生成。`alias` 未設定時は `mgmt_if.port_name`（`eth0`）をフォールバック使用 | `lldpd.conf.j2:17-20` |
+| `lldpd.conf.j2` | `CONFIG_DB MGMT_PORT[name].alias` | READ | [LLDP](../../reference/glossary.md#term-lldp) デーモン設定ファイル生成時。`alias` が存在すれば `configure ports eth0 lldp portidsubtype local <alias>` を生成。`alias` 未設定時は `mgmt_if.port_name`（`eth0`）をフォールバック使用 | `lldpd.conf.j2:17-20` |
 | `lldpd.conf.j2` | `CONFIG_DB MGMT_INTERFACE` (pfx_filter) | READ | `mgmt_if.port_name` を解決するために MGMT_INTERFACE を先読み。MGMT_INTERFACE が空の場合 LLDP 管理 IF ブロック自体が生成されない | `lldpd.conf.j2:2-12` |
 | `mgmt_oper_status.py` | `CONFIG_DB MGMT_PORT\|*` | READ | 管理ポートキーを列挙し `STATE_DB MGMT_PORT_TABLE\|<port>` へ全フィールドを同期。エントリ不在時は STATE_DB を更新せず終了 | `mgmt_oper_status.py:16-37` |
 | `sonic_ax_impl/mibs/__init__.py` | `CONFIG_DB MGMT_PORT\|*` | READ | SNMP MIB の `if_alias_map` 構築。`alias` フィールドを取得し、省略時は `if_name`（`eth0`）をフォールバック | `mibs/__init__.py:256-270` |
@@ -315,7 +314,7 @@ MGMT_PORT は orchagent / SAI を経由しない。他テーブル・他設定�
 | CONFIG_DB に `MGMT_PORT|*` キーが存在しない | `mgmt_oper_status.py:17` | STATE_DB 更新なし・`sys.exit(0)` で正常終了扱い | `LOG_DEBUG "No management interface found"` | `mgmt_oper_status.py:17-19` |
 | `mgmt_oper_status.py` 内でその他例外発生 | `mgmt_oper_status.py:49` | `STATE_DB MGMT_PORT_TABLE|<port>.oper_status = "unknown"` に上書き後 `sys.exit(1)` | `LOG_ERR "mgmt_oper_status exception : <e>"` | `mgmt_oper_status.py:49-51` |
 | `MGMT_INTERFACE` 変更後の `systemctl restart interfaces-config` 失敗 | `hostcfgd MgmtIfaceCfg.update_mgmt_iface():1638` | 早期 return。`self.iface_config_data` キャッシュ未更新。`/etc/network/interfaces` 再生成されず eth0 設定が古いまま残る | `LOG_ERR "Failed to restart management interface services"` | `hostcfgd:1638-1641` |
-| `MGMT_VRF_CONFIG` 変更後の VRF サービス再起動失敗（`chrony` stop / `interfaces-config` restart / `chrony` start）| `hostcfgd MgmtIfaceCfg.update_mgmt_vrf():1663` | 早期 return。`self.mgmt_vrf_enabled` キャッシュ未更新。VRF 状態が不整合のまま残る | `LOG_ERR "Failed to restart management vrf services"` | `hostcfgd:1663-1666` |
+| `MGMT_VRF_CONFIG` 変更後の [VRF](../../reference/glossary.md#term-vrf) サービス再起動失敗（`chrony` stop / `interfaces-config` restart / `chrony` start）| `hostcfgd MgmtIfaceCfg.update_mgmt_vrf():1663` | 早期 return。`self.mgmt_vrf_enabled` キャッシュ未更新。[VRF](../../reference/glossary.md#term-vrf) 状態が不整合のまま残る | `LOG_ERR "Failed to restart management vrf services"` | `hostcfgd:1663-1666` |
 | `mgmt_oper_status.py` が `/sys/class/net/<port>/operstate` を読めない (`subprocess` エラー) | `mgmt_oper_status.py:42-44` | 例外経路に fallback → `oper_status = "unknown"` が STATE_DB に書き込まれ `sys.exit(1)` | `LOG_ERR "mgmt_oper_status exception : ..."` | `mgmt_oper_status.py:49-51` |
 
 ### DEL 処理における失敗経路
@@ -363,15 +362,15 @@ MGMT_PORT は orchagent / SAI を経由しない。他テーブル・他設定�
 
 <!-- evidence: sonic-buildimage/files/image_config/monit/mgmt_oper_status.py / sonic-host-services/scripts/hostcfgd MgmtIfaceCfg / sonic-swss/cfgmgr/portmgrd.cpp -->
 
-`MGMT_PORT` エントリの SET/DEL に起因してコードが副次的に書き込む DB は **STATE_DB の `MGMT_PORT_TABLE`** のみ。APPL_DB・ASIC_DB・COUNTERS_DB・FLEX_COUNTER_DB への書込みは一切存在しない。
+`MGMT_PORT` エントリの SET/DEL に起因してコードが副次的に書き込む DB は **STATE_DB の `MGMT_PORT_TABLE`** のみ。[APPL_DB](../../reference/glossary.md#term-appl_db)・[ASIC_DB](../../reference/glossary.md#term-asic_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書込みは一切存在しない。
 
 | 副次 DB | テーブル | 書込条件 | ソース |
 |---------|---------|---------|--------|
 | STATE_DB | `MGMT_PORT_TABLE\|<port>` | `mgmt_oper_status.py` が monit 定期実行される都度（CONFIG_DB に `MGMT_PORT|*` エントリが存在する場合） | `mgmt_oper_status.py:30-34, 39-44` |
-| APPL_DB | なし | — | `MgmtIfaceCfg.update_mgmt_iface()` は `systemctl restart interfaces-config` のみ発行 |
-| ASIC_DB | なし | — | `portmgrd.cpp:28` は `CFG_PORT_TABLE_NAME`（= `"PORT"`）のみ購読。MGMT_PORT は SAI 非経由 |
-| COUNTERS_DB | なし | — | — |
-| FLEX_COUNTER_DB | なし | — | — |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | — | `MgmtIfaceCfg.update_mgmt_iface()` は `systemctl restart interfaces-config` のみ発行 |
+| [ASIC_DB](../../reference/glossary.md#term-asic_db) | なし | — | `portmgrd.cpp:28` は `CFG_PORT_TABLE_NAME`（= `"PORT"`）のみ購読。MGMT_PORT は SAI 非経由 |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | — | — |
+| [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | なし | — | — |
 
 ### STATE_DB への書込み詳細
 
@@ -439,7 +438,7 @@ mgmt_ports_keys = db.keys(db.CONFIG_DB, 'MGMT_PORT|*')
 
 | コンポーネント | 機構 | 対象フィールド | タイミング |
 |---|---|---|---|
-| `lldpd.conf.j2` | 起動時テンプレート展開（sonic-cfggen） | `alias` | docker lldp 起動時のみ |
+| `lldpd.conf.j2` | 起動時テンプレート展開（[sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)） | `alias` | docker lldp 起動時のみ |
 | `sonic-snmpagent` | SNMP GET 要求時の on-demand 読み取り | `alias` | SNMP polling 要求時 |
 | `mgmt_oper_status.py` | monit による定期 one-shot polling | 全フィールド → STATE_DB | monit 定期実行（数十秒間隔） |
 
@@ -471,7 +470,7 @@ CONFIG_DB MGMT_PORT|eth0 (SET/DEL)
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`MGMT_PORT` の処理は SAI を一切経由しないため、ASIC 種別によるプラットフォーム差はない。ただし `speed` フィールドの有無は **HwSku（platform）依存** であり、以下に示す観点でプラットフォーム間に動作差が生じる。詳細根拠は [`meta/_intermediate/cdb-flow/mgmt-port-platform.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/mgmt-port-platform.md) を参照。
+`MGMT_PORT` の処理は SAI を一切経由しないため、[ASIC](../../reference/glossary.md#term-asic) 種別によるプラットフォーム差はない。ただし `speed` フィールドの有無は **[HwSku](../../reference/glossary.md#term-hwsku)（platform）依存** であり、以下に示す観点でプラットフォーム間に動作差が生じる。詳細根拠は [`meta/_intermediate/cdb-flow/mgmt-port-platform.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/mgmt-port-platform.md) を参照。
 
 ### A. speed フィールドの有無 — HwSku 依存
 
@@ -485,14 +484,14 @@ if alias in port_speeds_default:
 
 | 状況 | `speed` フィールド | 典型例 |
 |---|---|---|
-| HwSku の ManagementInterface に Speed 定義あり | 挿入される（例: `"1000"`） | 多くの T0/T1 プラットフォーム |
+| [HwSku](../../reference/glossary.md#term-hwsku) の ManagementInterface に Speed 定義あり | 挿入される（例: `"1000"`） | 多くの T0/T1 プラットフォーム |
 | HwSku の ManagementInterface に Speed 定義なし | フィールド省略（CONFIG_DB に存在しない） | chassis linecard 等 (`test_chassis_cfggen.py:116` — `speed` なしを確認) |
 
 ### B. ASIC 種別 — 影響なし
 
 | 観点 | 結果 | 根拠 |
 |---|---|---|
-| ASIC 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | MGMT_PORT は SAI 非経由。eth0 は Linux netdev であり ASIC と独立 |
+| [ASIC](../../reference/glossary.md#term-asic) 種別 (Broadcom / Mellanox / Marvell / Innovium 等) | 影響なし | MGMT_PORT は SAI 非経由。eth0 は Linux netdev であり [ASIC](../../reference/glossary.md#term-asic) と独立 |
 | `portmgrd` の購読対象 | MGMT_PORT を**購読しない** | `portmgrd.cpp:28` — `CFG_PORT_TABLE_NAME`（= `"PORT"`）のみ購読 |
 
 ### C. multi-asic 構成 — host-scoped で影響なし
@@ -501,10 +500,12 @@ if alias in port_speeds_default:
 
 ### D. VOQ chassis (supervisor / line card) — 各 host 独立
 
-VOQ chassis 構成でも supervisor と各 line card が独立した eth0 を持ち、それぞれの host CONFIG_DB に MGMT_PORT エントリが置かれる。chassis 集中管理機構はなく、`admin_status="up"` のハードコード注入も各 host で同じ動作。
+[VOQ](../../reference/glossary.md#term-voq) chassis 構成でも supervisor と各 line card が独立した eth0 を持ち、それぞれの host CONFIG_DB に MGMT_PORT エントリが置かれる。chassis 集中管理機構はなく、`admin_status="up"` のハードコード注入も各 host で同じ動作。
 
 ### E. SmartSwitch DPU — MGMT_PORT 自体は通常通り
 
-`interfaces.j2` の DPU 条件分岐（DHCP フォールバック抑制）は `MGMT_INTERFACE` テーブルが空のときの話であり、`MGMT_PORT` テーブル自体の処理には影響しない。SmartSwitch DPU でも minigraph 由来の `MGMT_PORT` エントリは通常通り CONFIG_DB に投入される。
+`interfaces.j2` の [DPU](../../reference/glossary.md#term-dpu) 条件分岐（DHCP フォールバック抑制）は `MGMT_INTERFACE` テーブルが空のときの話であり、`MGMT_PORT` テーブル自体の処理には影響しない。[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) でも minigraph 由来の `MGMT_PORT` エントリは通常通り CONFIG_DB に投入される。
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: 50ba612caf81 -->

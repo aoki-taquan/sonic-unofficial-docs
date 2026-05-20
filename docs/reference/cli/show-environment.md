@@ -50,7 +50,7 @@ def environment(verbose):
 
 ## 関連 / 代替
 
-SONiC では **platform_daemons (`pmon` コンテナ)** が `STATE_DB` の `TEMPERATURE_INFO` / `FAN_INFO` / `PSU_INFO` 等にスイッチハードウェア側のセンサ値を集約しており、そちらは `show platform temperature` / `show platform fan` / `show platform psu` から閲覧できる。lm-sensors 単独の出力に出ないスイッチ ASIC 温度や前面ファントレイ情報はこちらで取得すること。
+[SONiC](../../reference/glossary.md#term-sonic) では **platform_daemons (`pmon` コンテナ)** が `STATE_DB` の `TEMPERATURE_INFO` / `FAN_INFO` / `PSU_INFO` 等にスイッチハードウェア側のセンサ値を集約しており、そちらは `show platform temperature` / `show platform fan` / `show platform psu` から閲覧できる。lm-sensors 単独の出力に出ないスイッチ [ASIC](../../reference/glossary.md#term-asic) 温度や前面ファントレイ情報はこちらで取得すること。
 
 ## CONFIG_DB との接点
 
@@ -98,4 +98,4 @@ CONFIG_DB / YANG への参照はなし (`sensors(1)` 経由で `/sys/class/hwmon
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 9dae6d74c08e -->
+<!-- glossary-links-injected: ec18b66e3507 -->

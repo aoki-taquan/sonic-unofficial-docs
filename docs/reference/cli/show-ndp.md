@@ -39,7 +39,7 @@ show ndp [<ip6address>] [-if <iface>] [-n <namespace>] [-d <display>] [--verbose
 |---|---|
 | `<ip6address>` (positional, optional) | 絞り込む IPv6 アドレス |
 | `-if`, `--iface` | インタフェース名フィルタ |
-| `-n`, `--namespace` | multi-ASIC 時の namespace |
+| `-n`, `--namespace` | multi-[ASIC](../../reference/glossary.md#term-asic) 時の namespace |
 | `-d`, `--display` | 表示スコープ (`all` / `frontend` など) |
 | `--verbose` | 起動コマンド文字列を echo |
 
@@ -124,4 +124,4 @@ sonic-db-cli APPL_DB keys 'NEIGH_TABLE:*'
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 9b9dce032e0d -->
+<!-- glossary-links-injected: c006405759d8 -->

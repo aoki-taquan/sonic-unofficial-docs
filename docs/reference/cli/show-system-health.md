@@ -109,7 +109,7 @@ excerpt: |
 | `sysready-status brief` | `sysreadyshow --brief` |
 | `sysready-status detail` | `sysreadyshow --detail` |
 
-`sysreadyshow` 自体は別スクリプトで、SONiC が boot 完了したかどうかを `STATE_DB` の `SYSTEM_READY|SYSTEM_STATE` から判定して人間可読に表示する。
+`sysreadyshow` 自体は別スクリプトで、[SONiC](../../reference/glossary.md#term-sonic) が boot 完了したかどうかを `STATE_DB` の `SYSTEM_READY|SYSTEM_STATE` から判定して人間可読に表示する。
 
 ### `show system-health dpu <module_name>`
 
@@ -216,4 +216,4 @@ show platform fan
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: 167700005048 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

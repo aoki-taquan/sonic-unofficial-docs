@@ -83,7 +83,7 @@ vendor が **Lua plugin 3 つ + JSON 2 つ** を提供する[^1]。
 | Lua plugin | 役割 |
 |--------|------|
 | headroom calc | speed/cable/MTU 変更で headroom 再計算 |
-| legality check | 計算結果が ASIC で実装可能か判定 |
+| legality check | 計算結果が [ASIC](../reference/glossary.md#term-asic) で実装可能か判定 |
 | pool calc | shared pool size 再計算 |
 
 ```mermaid
@@ -221,4 +221,4 @@ sudo grep -i 'buffermgrd' /var/log/syslog | tail -50
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: c006405759d8 -->

@@ -29,13 +29,13 @@ related:
 
 ## 概要
 
-SONiC には `ROUTE_TABLE` という名称のテーブルが **3 つの DB** に存在する。このページでは `orchagent` (`RouteOrch`) が書き込む **STATE_DB** と **APPL_STATE_DB** の 2 テーブルを扱う。
+[SONiC](../../reference/glossary.md#term-sonic) には `ROUTE_TABLE` という名称のテーブルが **3 つの DB** に存在する。このページでは `orchagent` (`RouteOrch`) が書き込む **[STATE_DB](../../reference/glossary.md#term-state_db)** と **APPL_STATE_DB** の 2 テーブルを扱う。
 
 | DB | 用途 | 書込み主体 |
 |----|------|-----------|
-| `APPL_DB` | fpmsyncd が FRR 経路を書き込む（[ROUTE_TABLE (APPL_DB)](route.md) 参照） | `fpmsyncd` |
+| `APPL_DB` | [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が [FRR](../../reference/glossary.md#term-frr) 経路を書き込む（[ROUTE_TABLE (APPL_DB)](route.md) 参照） | `fpmsyncd` |
 | **`STATE_DB`** | デフォルト経路 (0.0.0.0/0 / ::0/0) の存在状態のみを書き込む | `RouteOrch` |
-| **`APPL_STATE_DB`** | SAI への経路プログラミング結果（`protocol` + `err_str`）を書き込む | `RouteOrch` via `ResponsePublisher` |
+| **`APPL_STATE_DB`** | [SAI](../../reference/glossary.md#term-sai) への経路プログラミング結果（`protocol` + `err_str`）を書き込む | `RouteOrch` via `ResponsePublisher` |
 
 !!! warning "設定 DB ではない"
     STATE_DB / APPL_STATE_DB の `ROUTE_TABLE` はどちらも **読み取り専用の状態情報**。経路の追加・削除は APPL_DB の `ROUTE_TABLE` または CONFIG_DB の `STATIC_ROUTE` で行う。
@@ -70,7 +70,7 @@ ROUTE_TABLE|<prefix>
 ```
 
 `<prefix>` は IPv4 デフォルト経路（`0.0.0.0/0`）または IPv6 デフォルト経路（`::0/0` / `::/0`）のみ。  
-一般のユニキャスト経路は STATE_DB の ROUTE_TABLE には書き込まれない。
+一般のユニキャスト経路は [STATE_DB](../../reference/glossary.md#term-state_db) の [ROUTE_TABLE](../../reference/glossary.md#term-route_table) には書き込まれない。
 
 ### フィールド一覧
 
@@ -108,8 +108,8 @@ void RouteOrch::updateDefRouteState(string ip, bool add)
 
 | 条件 | `state` の値 |
 |------|-------------|
-| デフォルト経路を SAI に追加成功後 | `"ok"` |
-| デフォルト経路を SAI から削除後 | `"na"` |
+| デフォルト経路を [SAI](../../reference/glossary.md#term-sai) に追加成功後 | `"ok"` |
+| デフォルト経路を [SAI](../../reference/glossary.md#term-sai) から削除後 | `"na"` |
 | 一般ユニキャスト経路 | **エントリ自体が存在しない** |
 
 `"na"` は「フィールド不在」ではなく「デフォルト経路なし」という**明示的状態**である点に注意。フィールドが存在しない状態はデフォルト経路が一度もプログラムされていない初期状態のみ。
@@ -134,9 +134,9 @@ void RouteOrch::publishRouteState(const RouteBulkContext& ctx, const ReturnCode&
 
 - SET 操作時: `protocol` フィールドを `ctx.protocol` の値で書き込む
 - DEL 操作時: `fvs` が空 → `ResponsePublisher` がエントリ全体を APPL_STATE_DB から削除
-- `ctx.protocol` の初期値は `""` で、APPL_DB の `protocol` フィールドが存在する場合のみ上書きされる
+- `ctx.protocol` の初期値は `""` で、[APPL_DB](../../reference/glossary.md#term-appl_db) の `protocol` フィールドが存在する場合のみ上書きされる
 
-| APPL_DB の `protocol` フィールド | APPL_STATE_DB の `protocol` 値 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) の `protocol` フィールド | APPL_STATE_DB の `protocol` 値 |
 |---------------------------------|-------------------------------|
 | `"bgp"` 等が存在する | `"bgp"` 等（そのままコピー） |
 | フィールド不在 | `""` （空文字列） |
@@ -165,13 +165,13 @@ intent_attrs_copy.insert(intent_attrs_copy.begin(), err_str);
 
 > 証跡: `meta/_intermediate/cdb-flow/route-state-ordering.md`
 
-STATE_DB / APPL_STATE_DB への `ROUTE_TABLE` 書き込みは `RouteOrch` が SAI 操作を完了させた後に行われる。以下に強制先行条件と推奨順序を示す。
+[STATE_DB](../../reference/glossary.md#term-state_db) / APPL_STATE_DB への `ROUTE_TABLE` 書き込みは `RouteOrch` が SAI 操作を完了させた後に行われる。以下に強制先行条件と推奨順序を示す。
 
 ### 強制先行条件
 
 | 順序 | 先行リソース | 後続 | 違反時の挙動 | evidence |
 |------|-------------|------|-------------|---------|
-| 1 | `PORT` 初期化完了（`allPortsReady()`） | STATE_DB / APPL_STATE_DB への動的書き込み | `RouteOrch::doTask()` が即 `return`。APPL_DB の ROUTE_TABLE イベントを処理しないため書き込みも発生しない | `routeorch.cpp:609-611` |
+| 1 | `PORT` 初期化完了（`allPortsReady()`） | STATE_DB / APPL_STATE_DB への動的書き込み | `RouteOrch::doTask()` が即 `return`。[APPL_DB](../../reference/glossary.md#term-appl_db) の [ROUTE_TABLE](../../reference/glossary.md#term-route_table) イベントを処理しないため書き込みも発生しない | `routeorch.cpp:609-611` |
 | 2 | SAI `create_route_entry()` 成功 | `STATE_DB ROUTE_TABLE` への `state=ok` 書き込み | SAI 失敗時は `updateDefRouteState()` が呼ばれず STATE_DB が未更新のまま。デフォルト経路のみが対象 | `routeorch.cpp:2700-2703` |
 
 ### 推奨先行条件
@@ -213,7 +213,7 @@ swss::SubscriberStateTable stateDbRouteTable(stateDbPtr.get(), STATE_ROUTE_TABLE
 | `"ok"` | リンクプローバーを再起動 |
 | `"na"` | リンクプローバーを停止 |
 
-デュアルTOR (MUX) 環境でのみ意味を持つ。非 MUX 環境では subscriberは存在するが実際の状態遷移は発生しない[^cr1]。
+デュアルTOR ([MUX](../../reference/glossary.md#term-mux)) 環境でのみ意味を持つ。非 [MUX](../../reference/glossary.md#term-mux) 環境では subscriberは存在するが実際の状態遷移は発生しない[^cr1]。
 
 ### APPL_STATE_DB `ROUTE_TABLE` の読み取り主体
 
@@ -226,11 +226,11 @@ const auto routeResponseChannelName = std::string("APPL_DB_") + APP_ROUTE_TABLE_
 routeResponseChannel = std::make_unique<NotificationConsumer>(&applStateDb, routeResponseChannelName);
 ```
 
-受信した通知の `err_str=SWSS_RC_SUCCESS` かつ `protocol` フィールドあり（SET 操作）の場合、FRR zebra へ netlink `RTM_F_OFFLOAD` フラグを送信する[^cr2]。この動作は **BGP suppress feature** (`isSuppressionEnabled()`) が有効な場合のみ実際の経路制御に影響する。
+受信した通知の `err_str=SWSS_RC_SUCCESS` かつ `protocol` フィールドあり（SET 操作）の場合、[FRR](../../reference/glossary.md#term-frr) [zebra](../../reference/glossary.md#term-zebra) へ netlink `RTM_F_OFFLOAD` フラグを送信する[^cr2]。この動作は **[BGP](../../reference/glossary.md#term-bgp) suppress feature** (`isSuppressionEnabled()`) が有効な場合のみ実際の経路制御に影響する。
 
 #### route_check.py (自動修復)
 
-`route_check.py:767-773` が APPL_STATE_DB 未反映経路を検出した際、`NotificationProducer` で同チャンネルへ `SWSS_RC_SUCCESS` 応答を強制注入する[^cr3]。これにより orchagent が応答を送れなかった場合でも FRR zebra へ offload フラグが届く自動修復が行われる。
+`route_check.py:767-773` が APPL_STATE_DB 未反映経路を検出した際、`NotificationProducer` で同チャンネルへ `SWSS_RC_SUCCESS` 応答を強制注入する[^cr3]。これにより [orchagent](../../reference/glossary.md#term-orchagent) が応答を送れなかった場合でも [FRR](../../reference/glossary.md#term-frr) [zebra](../../reference/glossary.md#term-zebra) へ offload フラグが届く自動修復が行われる。
 
 ### 参照関係サマリ
 
@@ -240,8 +240,8 @@ routeResponseChannel = std::make_unique<NotificationConsumer>(&applStateDb, rout
 | APPL_STATE_DB `ROUTE_TABLE` (RESPONSE_CHANNEL) | `RouteOrch` (via `ResponsePublisher`) | `fpmsyncd` | FRR へ RTM_F_OFFLOAD 通知 |
 | APPL_STATE_DB `ROUTE_TABLE` (RESPONSE_CHANNEL) | `route_check.py` (注入) | `fpmsyncd` | 自動修復時の offload 強制送信 |
 
-[^cr1]: sonic-linkmgrd DbInterface: `src/DbInterface.cpp`. <https://github.com/sonic-net/sonic-linkmgrd/blob/master/src/DbInterface.cpp#L1835>
-[^cr2]: fpmsyncd RouteSync: `fpmsyncd/fpmsyncd.cpp`, `fpmsyncd/routesync.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L78>
+[^cr1]: sonic-[linkmgrd](../../reference/glossary.md#term-linkmgrd) DbInterface: `src/DbInterface.cpp`. <https://github.com/sonic-net/sonic-linkmgrd/blob/master/src/DbInterface.cpp#L1835>
+[^cr2]: [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) RouteSync: `fpmsyncd/fpmsyncd.cpp`, `fpmsyncd/routesync.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L78>
 [^cr3]: route_check.py 自動修復: `scripts/route_check.py`. <https://github.com/sonic-net/sonic-utilities/blob/master/scripts/route_check.py#L767>
 
 <!-- /cross-refs -->
@@ -375,7 +375,7 @@ STATE_DB / APPL_STATE_DB への `ROUTE_TABLE` 書き込みは、以下のコン�
 
 ### APPL_STATE_DB 書き込み → FIB suppression フィードバック（fpmsyncd）
 
-`publishRouteState()` が APPL_STATE_DB `ROUTE_TABLE` に書き込む際、`ResponsePublisher` が同時に `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` へ通知を送出する。`fpmsyncd` は `suppress-fib-pending=enabled` 設定時にこのチャンネルを購読し、SAI プログラミング結果を FRR の BGP FIB suppression 機能へフィードバックする[^4]。
+`publishRouteState()` が APPL_STATE_DB `ROUTE_TABLE` に書き込む際、`ResponsePublisher` が同時に `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` へ通知を送出する。`fpmsyncd` は `suppress-fib-pending=enabled` 設定時にこのチャンネルを購読し、SAI プログラミング結果を FRR の [BGP](../../reference/glossary.md#term-bgp) FIB suppression 機能へフィードバックする[^4]。
 
 ```
 APPL_STATE_DB ROUTE_TABLE 書込み (err_str=SWSS_RC_SUCCESS)
@@ -383,14 +383,14 @@ APPL_STATE_DB ROUTE_TABLE 書込み (err_str=SWSS_RC_SUCCESS)
     → fpmsyncd: FRR への suppress 解除
 ```
 
-- SAI 成功時: `err_str=SWSS_RC_SUCCESS` → FRR が経路を BGP ピアにアドバタイズ可能になる
+- SAI 成功時: `err_str=SWSS_RC_SUCCESS` → FRR が経路を [BGP](../../reference/glossary.md#term-bgp) ピアにアドバタイズ可能になる
 - SAI 失敗時: `err_str=[SAI] <エラー>` → FRR は経路を suppress 状態のまま保持し続ける
 
 この動作は `CONFIG_DB DEVICE_METADATA|localhost suppress-fib-pending=enabled` が設定されている場合のみ有効。
 
 ### APPL_STATE_DB 書き込みスキップ → route_check.py アラート
 
-orchagent が SAI 操作失敗等で APPL_STATE_DB への書き込みをスキップした場合、`route_check.py` が APPL_DB と APPL_STATE_DB の不整合を `missed_ROUTE_TABLE_routes` としてアラートを記録する[^4]。
+[orchagent](../../reference/glossary.md#term-orchagent) が SAI 操作失敗等で APPL_STATE_DB への書き込みをスキップした場合、`route_check.py` が APPL_DB と APPL_STATE_DB の不整合を `missed_ROUTE_TABLE_routes` としてアラートを記録する[^4]。
 
 ### STATE_DB `state` 書き込みのタイミングと NextHop Observer 通知
 
@@ -398,11 +398,11 @@ orchagent が SAI 操作失敗等で APPL_STATE_DB への書き込みをスキ�
 
 ### レスポンス通知のバッチ遅延
 
-RouteOrch は 1 回の `doTask()` イテレーションで複数 ROUTE_TABLE エントリをバルク処理し、全 SAI 操作完了後に `m_publisher.flush()` する（`routeorch.cpp:1227` コメント参照）。APPL_STATE_DB への書き込みとレスポンスチャンネル通知はイテレーション単位で遅延するため、短時間に大量の経路を書き込んだ場合は通知が数百ミリ秒単位で遅れることがある。
+RouteOrch は 1 回の `doTask()` イテレーションで複数 [ROUTE_TABLE](../../reference/glossary.md#term-route_table) エントリをバルク処理し、全 SAI 操作完了後に `m_publisher.flush()` する（`routeorch.cpp:1227` コメント参照）。APPL_STATE_DB への書き込みとレスポンスチャンネル通知はイテレーション単位で遅延するため、短時間に大量の経路を書き込んだ場合は通知が数百ミリ秒単位で遅れることがある。
 
 | 副作用 | トリガー | 有効条件 |
 |--------|----------|---------|
-| RESPONSE_CHANNEL 通知 → fpmsyncd FIB suppression アンロック | APPL_STATE_DB SET | `suppress-fib-pending=enabled` 時のみ |
+| RESPONSE_CHANNEL 通知 → [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) FIB suppression アンロック | APPL_STATE_DB SET | `suppress-fib-pending=enabled` 時のみ |
 | route_check.py `missed_ROUTE_TABLE_routes` アラート | APPL_STATE_DB 書き込みスキップ | 常時（route_check.py 実行時） |
 | NextHop Observer 通知（MirrorOrch / NatOrch 等） | updateDefRouteState() 直前 | デフォルト経路変更時のみ |
 | APPL_STATE_DB 通知のバッチ遅延 | doTask バルク flush | 常時 |
@@ -440,7 +440,7 @@ notificationProducer.send(status.codeStr(), key, intent_attrs_copy);
 
 ### STATE_DB — Table::set() + keyspace notification
 
-STATE_DB の `ROUTE_TABLE` は `ResponsePublisher` を経由せず `swss::Table::set()` で直接書き込む (`routeorch.cpp:294`)。アプリケーションレベルの通知チャンネルは存在せず、Redis の keyspace notification 機能（`__keyspace@6__:ROUTE_TABLE|<ip>`）を利用した `SubscriberStateTable` で購読される。
+STATE_DB の `ROUTE_TABLE` は `ResponsePublisher` を経由せず `swss::Table::set()` で直接書き込む (`routeorch.cpp:294`)。アプリケーションレベルの通知チャンネルは存在せず、[Redis](../../reference/glossary.md#term-redis) の keyspace notification 機能（`__keyspace@6__:ROUTE_TABLE|<ip>`）を利用した `SubscriberStateTable` で購読される。
 
 ### fpmsyncd による RESPONSE_CHANNEL 購読
 
@@ -459,7 +459,7 @@ sync.onRouteResponse(key, fieldValues);
 
 | 条件 | 動作 |
 |------|------|
-| `err_str == "SWSS_RC_SUCCESS"` かつ `protocol` フィールドあり (SET) | `sendOffloadReply()` → FRR zebra へ `RTM_F_OFFLOAD` 付き netlink 送信 |
+| `err_str == "SWSS_RC_SUCCESS"` かつ `protocol` フィールドあり (SET) | `sendOffloadReply()` → FRR [zebra](../../reference/glossary.md#term-zebra) へ `RTM_F_OFFLOAD` 付き netlink 送信 |
 | DEL 操作 (`protocol` フィールドなし) | 無視（suppress 継続には影響しない） |
 | SAI 失敗 (`err_str != "SWSS_RC_SUCCESS"`) | 無視（経路は suppress 状態を維持） |
 | `protocol` が空文字列 | 無視（FRR 管轄外の経路） |
@@ -476,7 +476,7 @@ sync.onRouteResponse(key, fieldValues);
 | チャンネル / テーブル | 購読方式 | 購読主体 | 有効条件 |
 |---------------------|---------|---------|---------|
 | `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` | `NotificationConsumer` | `fpmsyncd` | `suppress-fib-pending=enabled` 時のみ |
-| `STATE_DB ROUTE_TABLE` (keyspace) | `SubscriberStateTable` | `sonic-linkmgrd` | 常時（MUX 環境） |
+| `STATE_DB ROUTE_TABLE` (keyspace) | `SubscriberStateTable` | `sonic-linkmgrd` | 常時（[MUX](../../reference/glossary.md#term-mux) 環境） |
 
 [^p1]: fpmsyncd RESPONSE_CHANNEL 購読: `fpmsyncd/fpmsyncd.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp#L78>
 
@@ -501,7 +501,7 @@ if (platform && strstr(platform, MLNX_PLATFORM_SUBSTRING))  // "mellanox"
 }
 ```
 
-SAI が `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` として返す値は「ECMP サイズ 1 のときの最大値」であるため、実際の最大 ECMP グループ数（サイズ 32 前提）に補正している。STATE_DB / APPL_STATE_DB への書き込みパスに直接影響はないが、ECMP 収容上限の低下により大規模環境での経路プログラミング失敗率が変化しうる。
+SAI が `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` として返す値は「[ECMP](../../reference/glossary.md#term-ecmp) サイズ 1 のときの最大値」であるため、実際の最大 [ECMP](../../reference/glossary.md#term-ecmp) グループ数（サイズ 32 前提）に補正している。STATE_DB / APPL_STATE_DB への書き込みパスに直接影響はないが、[ECMP](../../reference/glossary.md#term-ecmp) 収容上限の低下により大規模環境での経路プログラミング失敗率が変化しうる。
 
 ### VoQ Chassis — ECMP メンバー上限 128 固定
 
@@ -509,18 +509,18 @@ SAI が `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` として返す値は「ECMP サ
 
 ### Route Flow Counter — SAI 能力のプラットフォーム依存
 
-`FlowCounterRouteOrch::initRouteFlowCounterCapability()` (`flowcounterrouteorch.cpp:166-180`) が orchagent 起動時に SAI へ `sai_object_type_get_availability(SAI_OBJECT_TYPE_COUNTER, ...)` を問い合わせ、結果を STATE_DB に書き込む:
+`FlowCounterRouteOrch::initRouteFlowCounterCapability()` (`flowcounterrouteorch.cpp:166-180`) が [orchagent](../../reference/glossary.md#term-orchagent) 起動時に SAI へ `sai_object_type_get_availability(SAI_OBJECT_TYPE_COUNTER, ...)` を問い合わせ、結果を STATE_DB に書き込む:
 
 | SAI 応答 | `STATE_DB FLOW_COUNTER_CAPABILITY_TABLE\|route` | 副次書き込みへの影響 |
 |---------|-----------------------------------------------|---------------------|
 | サポートあり | `support=true` | `COUNTERS_ROUTE_NAME_MAP` 等への書き込み **発生** |
 | サポートなし | `support=false` | 書き込み **発生しない** |
 
-`support=false` のプラットフォーム（ソフトウェア ASIC、一部ハードウェア ASIC）では、route-state.md の副作用セクションで述べた `COUNTERS_ROUTE_NAME_MAP` / `COUNTERS_ROUTE_TO_PATTERN_MAP` への副次書き込みが完全にスキップされる。
+`support=false` のプラットフォーム（ソフトウェア [ASIC](../../reference/glossary.md#term-asic)、一部ハードウェア [ASIC](../../reference/glossary.md#term-asic)）では、route-state.md の副作用セクションで述べた `COUNTERS_ROUTE_NAME_MAP` / `COUNTERS_ROUTE_TO_PATTERN_MAP` への副次書き込みが完全にスキップされる。
 
 ### SmartSwitch DPU / その他
 
-`updateDefRouteState()` および `publishRouteState()` は `gMySwitchType` を参照しない。DPU / T2 / 標準 NPU のいずれも同一コードパスで STATE_DB / APPL_STATE_DB を更新する。
+`updateDefRouteState()` および `publishRouteState()` は `gMySwitchType` を参照しない。[DPU](../../reference/glossary.md#term-dpu) / T2 / 標準 [NPU](../../reference/glossary.md#term-npu) のいずれも同一コードパスで STATE_DB / APPL_STATE_DB を更新する。
 
 ### プラットフォーム差分サマリ
 
@@ -528,8 +528,8 @@ SAI が `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` として返す値は「ECMP サ
 |-----------------|---------|--------------------------------------|
 | Mellanox | ECMP グループ最大数を 1/32 に補正 | なし（間接的に SAI 失敗率に影響する可能性） |
 | VoQ Chassis | ECMP メンバー上限 128 固定 | なし（同上） |
-| Flow Counter 非対応 ASIC | `FLOW_COUNTER_CAPABILITY_TABLE\|route support=false` | `COUNTERS_ROUTE_*_MAP` への副次書き込みが発生しない |
-| SmartSwitch DPU / 標準 NPU | 差分なし | なし |
+| Flow Counter 非対応 [ASIC](../../reference/glossary.md#term-asic) | `FLOW_COUNTER_CAPABILITY_TABLE\|route support=false` | `COUNTERS_ROUTE_*_MAP` への副次書き込みが発生しない |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) / 標準 [NPU](../../reference/glossary.md#term-npu) | 差分なし | なし |
 
 <!-- /platform -->
 
@@ -566,7 +566,7 @@ APPL_DB の `ROUTE_TABLE` と同一キー空間。orchagent が SAI プログラ
 ## 関連リファレンス
 
 - APPL_DB: [`ROUTE_TABLE (APPL_DB)`](route.md) — fpmsyncd が書き込む経路テーブル
-- CONFIG_DB: [`STATIC_ROUTE`](static-route.md) — 静的経路の設定元
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`STATIC_ROUTE`](static-route.md) — 静的経路の設定元
 
 ## 引用元
 
@@ -614,3 +614,5 @@ APPL_STATE_DB ROUTE_TABLE:10.1.0.0/24
 - STATE_DB の `state=na` が残る → デフォルト経路が FRR から削除されたが APPL_DB からも消えているか確認（`sonic-db-cli APPL_DB hgetall 'ROUTE_TABLE:0.0.0.0/0'`）
 - APPL_STATE_DB にエントリがない → SAI プログラミングに失敗している可能性。`/var/log/syslog` の orchagent ログで `err_str` を確認
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: 275148f26051 -->

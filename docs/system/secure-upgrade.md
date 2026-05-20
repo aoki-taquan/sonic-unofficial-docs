@@ -42,7 +42,7 @@ related:
 
 ## 概要
 
-Secure Upgrade (SU) は **SONiC image が build から install まで改竄されていないこと** を CMS (Cryptographic Message Syntax) 署名で保証する仕組み[^1]。Build 時に署名を行い、`sonic-installer install` または **ONIE 経由インストール** で署名検証を実施する。Phase 1 では **dev / prod** 2 種の署名スクリプトを切替可能にし、prod では vendor が `sign_image_${platform}.sh` を提供する形を採る。Secure Boot (UEFI) を併用することで OS 起動経路全体を信頼チェーンで結ぶ。
+Secure Upgrade (SU) は **[SONiC](../reference/glossary.md#term-sonic) image が build から install まで改竄されていないこと** を CMS (Cryptographic Message Syntax) 署名で保証する仕組み[^1]。Build 時に署名を行い、`sonic-installer install` または **ONIE 経由インストール** で署名検証を実施する。Phase 1 では **dev / prod** 2 種の署名スクリプトを切替可能にし、prod では vendor が `sign_image_${platform}.sh` を提供する形を採る。Secure Boot (UEFI) を併用することで OS 起動経路全体を信頼チェーンで結ぶ。
 
 ## 動作仕様
 
@@ -196,4 +196,4 @@ mokutil --sb-state
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

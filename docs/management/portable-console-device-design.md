@@ -42,7 +42,7 @@ related:
 
 ## 概要
 
-SONiC のホストにプラグインされる **USB 接続のポータブル console デバイス** に対して、ベンダー横断の抽象 API を定義する設計[^1]。ベンダーは `<vendor>-<model>.deb` パッケージで driver と udev rules を提供し、Python の Platform 層で `PortableConsoleDeviceBase` を継承した実装クラスを `/sonic_platform_common/sonic_console/<vendor>/console_<model>.py` に置く。
+[SONiC](../reference/glossary.md#term-sonic) のホストにプラグインされる **USB 接続のポータブル console デバイス** に対して、ベンダー横断の抽象 API を定義する設計[^1]。ベンダーは `<vendor>-<model>.deb` パッケージで driver と udev rules を提供し、Python の Platform 層で `PortableConsoleDeviceBase` を継承した実装クラスを `/sonic_platform_common/sonic_console/<vendor>/console_<model>.py` に置く。
 
 ## 動作仕様
 
@@ -248,3 +248,5 @@ ls -l /dev/ttyUSB* /dev/ttyS*
 - `sonic-console`
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 8ba32e5aa69d -->
