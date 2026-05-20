@@ -35502,7 +35502,7 @@
 </table>
 <p>kernel side が遅延し orchagent 側が先に更新されると、<code>fpmsyncd</code> が「該当 VRF table が kernel に無い」エラーで route を skip するケースが報告されています（VRF 作成直後の race）。</p>
 <h2 id="ecmp-hash">ECMP hash の制御<a class="headerlink" href="#ecmp-hash" title="Permanent link">&para;</a></h2>
-<p>ECMP のハッシュフィールドは <code>SwitchOrch</code> が起動時に <code>SWITCH_HASH</code> テーブル（<code>CONFIG_DB</code>）を読み、SAI に投入します。</p>
+<p>ECMP のハッシュフィールドは <code>SwitchOrch</code> が <code>CONFIG_DB:SWITCH_HASH</code> を購読し、変更を検知した時点で SAI に投入します。起動時に行うのは <code>querySwitchHashDefaults()</code> による SAI OID キャッシュのみで、<code>SWITCH_HASH|GLOBAL</code> の取り込みは <code>doCfgSwitchHashTableTask()</code> 経由の event-driven な経路です。</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="l l-Scalar l-Scalar-Plain">CONFIG_DB:SWITCH_HASH|GLOBAL</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ecmp_hash</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;SRC_IP,DST_IP,IP_PROTOCOL,L4_SRC_PORT,L4_DST_PORT,INNER_*&quot;</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">lag_hash</span><span class="p">:</span><span class="w">  </span><span class="s">&quot;...&quot;</span>

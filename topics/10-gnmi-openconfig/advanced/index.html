@@ -3737,50 +3737,6 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既知の制約と回避方法
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        将来計画 / ロードマップ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#rfc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 RFC / 仕様書
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#upstream" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        upstream 開発の最新動向
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         ハンドオフ
       
     </span>
@@ -3822,7 +3778,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         既知の制約と回避方法
@@ -3833,7 +3789,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         将来計画 / ロードマップ
@@ -3844,7 +3800,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#rfc_1" class="md-nav__link">
+  <a href="#rfc" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連 RFC / 仕様書
@@ -3855,7 +3811,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#upstream_1" class="md-nav__link">
+  <a href="#upstream" class="md-nav__link">
     <span class="md-ellipsis">
       
         upstream 開発の最新動向
@@ -3866,7 +3822,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35266,50 +35222,6 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既知の制約と回避方法
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        将来計画 / ロードマップ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#rfc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 RFC / 仕様書
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#upstream" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        upstream 開発の最新動向
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         ハンドオフ
       
     </span>
@@ -35351,7 +35263,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         既知の制約と回避方法
@@ -35362,7 +35274,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         将来計画 / ロードマップ
@@ -35373,7 +35285,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#rfc_1" class="md-nav__link">
+  <a href="#rfc" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連 RFC / 仕様書
@@ -35384,7 +35296,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#upstream_1" class="md-nav__link">
+  <a href="#upstream" class="md-nav__link">
     <span class="md-ellipsis">
       
         upstream 開発の最新動向
@@ -35395,7 +35307,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35441,18 +35353,34 @@
 <li><strong>Transformer の自前 callback 追加</strong>: 既存 OpenConfig path に対応する <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> が無いとき、Go callback (transformer/xfmr) を書いて変換ルールを足す。プラグイン的に拡張できる。</li>
 <li><strong><a href="../../../reference/glossary/#term-sai">SAI</a> <a href="../../../reference/glossary/#term-redis">Redis</a> streaming (低レベル)</strong>: gNMI 経由ではなく、<code>COUNTERS_DB</code> を直接 streaming する場合の挙動。debug 用途で <code>redis-cli psubscribe</code> でリアルタイム counter を見る。</li>
 </ul>
-<h2 id="_2">既知の制約と回避方法<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">ハンドオフ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> と、area <a href="../../../reference/glossary/#term-hld">HLD</a> の <a href="../../../management/sonic-gnmi-server-interface-design/">sonic-gnmi-server-interface-design</a>, <a href="../../../management/model-based-replace-delete-in-mgmt-framework-transformer/">model-based-replace-delete-in-mgmt-framework-transformer</a>, <a href="../../../management/openconfig-support-for-ethernet-interfaces/">openconfig-support-for-ethernet-interfaces</a> に集約されている。</li>
+<li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>show gnmi</code> / <code>config gnmi</code> 系、<a href="../../../reference/config-db/">reference/config_db/TELEMETRY</a> と、area HLD <a href="../../../management/gnmi-usage/">gnmi-usage</a> に集約されている。</li>
+<li><strong>本ページ</strong> では、上の基本パスを踏まえた上での「規模拡張」「認証境界」「新 RPC への追従」という運用観点の発展トピックだけを扱う。</li>
+</ul>
+<h2 id="dial-out-scale">dial-out と scale 設計の詳細<a class="headerlink" href="#dial-out-scale" title="Permanent link">&para;</a></h2>
+<p>gNMI dial-out (publish to collector) は server-driven Subscribe の補完で、target 側が active TCP connection を保ち、自分から push する。collector 側で session 数を減らせるため、数千台の fabric では運用負荷が下がる。SONiC の <code>telemetry</code> docker は dial-out 用の goroutine を spawn し、<code>DIALOUT_CLIENT</code> テーブルから dest list を読む。再接続 backoff、QoS <a href="../../../reference/glossary/#term-dscp">DSCP</a> marking、TCP keepalive はチューニング対象になる。collector 側 (<code>gnmic</code>, <code>gnxi</code>) の prometheus exporter と組み合わせると metrics pipeline が完成する。</p>
+<p>OpenConfig wildcard subscribe は <code>/interfaces/interface[name=*]/state/counters</code> のような path で per-port stream を一括取得するが、sample interval を 1s で全 port 投入すると server CPU が 100% に達する例がある。対策は (1) <code>STREAM</code> モードを <code>SAMPLE</code> に絞る、(2) heartbeat interval を 30s 以上に広げる、(3) collector を分割して target を pin する、の 3 通り。</p>
+<h2 id="gnoi-gnsi">gNOI / gNSI の運用境界<a class="headerlink" href="#gnoi-gnsi" title="Permanent link">&para;</a></h2>
+<p>gNOI OS の <code>Install</code> / <code>Activate</code> / <code>Verify</code> は SONiC の <code>sonic-installer</code> を内側で呼ぶ。<code>Install</code> は image を <code>/host/image-&lt;ver&gt;/</code> に展開、<code>Activate</code> は <code>next-boot</code> を切り替える。warm/fast reboot と組み合わせるなら、<code>Activate</code> 直後に gNOI System.Reboot を <code>WARM</code> mode で呼ぶ。失敗した場合の rollback は <code>Activate</code> で前 image を指定するだけで再起動を要するため、運用 runbook 側で plan B を持つ。</p>
+<p>gNSI <code>certz</code> は TLS 証明書を hot-swap する RPC で、<code>gnmi-server</code> が listen socket を rebuild せずに新 cert を採用する。controller 側で短命証明書 (24h) を回転させる構成が想定されている。<code>authz</code> は RBAC ポリシー (gRPC method × role × user) を JSON で push し、<code>mgmt-framework</code> の <a href="../../../reference/glossary/#term-aaa">AAA</a> 層に反映する。<code>pathz</code> は path 単位のアクセス制御で、SONiC では実装途中。</p>
+<h2 id="transformer-native-yang">Transformer 拡張と native YANG<a class="headerlink" href="#transformer-native-yang" title="Permanent link">&para;</a></h2>
+<p>OpenConfig path の SONiC 未対応領域に対しては、<code>sonic-mgmt-common</code> (Translib / Transformer) に Go callback (xfmr) を追加することで CONFIG_DB マッピングを足せる。<code>transformer/xfmr/*.go</code> の <code>init()</code> で <code>XlateFuncBind</code> に register する流れで、key xfmr / field xfmr / subtree xfmr の 3 種類がある。vendor augmented YANG は <code>sonic-mgmt-common/models/yang/extensions/</code> に置かれ、OpenConfig deviation よりも自由度が高い。</p>
+<h2 id="_3">既知の制約と回避方法<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>subscription scale limit</strong>: target あたりの concurrent stream 数には実用上の上限があり、過剰登録で telemetry docker が CPU 100% になる例がある。collector を複数にして load を分割する。</li>
 <li><strong>OpenConfig path と SONiC schema のミスマッチ</strong>: SONiC 固有機能 (Dual-ToR mux、warm-reboot state) は OpenConfig path に対応が無く、<code>sonic-mgmt-common</code> の vendor-augmented <a href="../../../reference/glossary/#term-yang">YANG</a> で表現される。</li>
-<li><strong>gNMI Set の atomicity</strong>: 単一 SetRequest 内の複数 update は SONiC 側で完全 atomic とは限らない。CONFIG_DB の partial commit で transient 状態が見える可能性。</li>
+<li><strong>gNMI Set の atomicity</strong>: 単一 SetRequest 内の複数 update は SONiC 側で完全 atomic とは限らない。CONFIG_DB の partial commit で transient 状態が見える可能性。<code>replace</code> 操作は <code>model-based-replace-delete-in-mgmt-framework-transformer</code> の HLD 通り、サブツリー単位での差し替えになり、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> 側で transient な flap を観察することがある。</li>
 <li><strong>証明書回転中の reconnect</strong>: controller が証明書を更新した後、client 側 dial を一度切る必要がある場合がある。gNSI による hot swap が対応していれば回避可能。</li>
+<li><strong>master arbitration</strong>: 複数 controller が同時に Set を出すと last-writer-wins になるため、<code>gnmi-master-arbitration</code> の <code>MasterArbitration</code> 拡張を有効化して election token を交換する。</li>
 </ul>
-<h2 id="_3">将来計画 / ロードマップ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_4">将来計画 / ロードマップ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li>gNxI suite (gNMI / gNOI / gNSI / gRIBI) は OpenConfig コミュニティで継続拡張中。SONiC 側は <code>sonic-gnmi</code> の依存ライブラリ更新で取り込む。</li>
-<li>gRIBI を経由した RIB 直接注入が議論されており、controller 側で経路を直接 push する用途で SDN ベース fabric の管理が変わる可能性。</li>
+<li>gRIBI を経由した RIB 直接注入が議論されており、controller 側で経路を直接 push する用途で SDN ベース fabric の管理が変わる可能性。SONiC では <code>gribi-server</code> の prototype が議論段階。</li>
 <li>OpenConfig の network-instance / <a href="../../../reference/glossary/#term-vrf">VRF</a> モデルの SONiC 対応は段階的で、未対応 path には vendor augment が並走する。</li>
+<li><code>save-on-set</code> (Set 直後に CONFIG_DB を <code>config_db.json</code> へ persist) は long-running deployment では default ON が望ましいが、scale 時の I/O コストがあり opt-in 設計が継続。</li>
 </ul>
 <h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35468,53 +35396,9 @@
 <li><code>sonic-gnmi</code> repo で gNSI authz と certz 取り込み、TLS 認証経路のリファクタが継続。</li>
 <li><code>sonic-mgmt-common</code> (Translib / Transformer) で OpenConfig path カバレッジ拡張 PR が頻繁。Routing / <a href="../../../reference/glossary/#term-bgp">BGP</a> / VRF / <a href="../../../reference/glossary/#term-qos">QoS</a> の path 追加が主軸。</li>
 <li>Telemetry docker の memory footprint 改善と subscription scale 上限緩和の PR が継続。collector 側 (gnmic、gnxi) も community 主導でツール成熟が進む。</li>
-</ul>
-<h2 id="_4">ハンドオフ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>概念とアーキテクチャ</strong>は本章の <a href="../concept/">concept</a> / <a href="../architecture/">architecture</a> と、area <a href="../../../reference/glossary/#term-hld">HLD</a> の <a href="../../../management/sonic-gnmi-server-interface-design/">sonic-gnmi-server-interface-design</a>, <a href="../../../management/model-based-replace-delete-in-mgmt-framework-transformer/">model-based-replace-delete-in-mgmt-framework-transformer</a>, <a href="../../../management/openconfig-support-for-ethernet-interfaces/">openconfig-support-for-ethernet-interfaces</a> に集約されている。</li>
-<li><strong>設定とリファレンス</strong>は <a href="../../../reference/cli/">reference/cli</a> の <code>show gnmi</code> / <code>config gnmi</code> 系、<a href="../../../reference/config-db/">reference/config_db/TELEMETRY</a> と、area HLD <a href="../../../management/gnmi-usage/">gnmi-usage</a> に集約されている。</li>
-<li><strong>本ページ</strong> では、上の基本パスを踏まえた上での「規模拡張」「認証境界」「新 RPC への追従」という運用観点の発展トピックだけを扱う。</li>
-</ul>
-<h2 id="dial-out-scale">dial-out と scale 設計の詳細<a class="headerlink" href="#dial-out-scale" title="Permanent link">&para;</a></h2>
-<p>gNMI dial-out (publish to collector) は server-driven Subscribe の補完で、target 側が active TCP connection を保ち、自分から push する。collector 側で session 数を減らせるため、数千台の fabric では運用負荷が下がる。SONiC の <code>telemetry</code> docker は dial-out 用の goroutine を spawn し、<code>DIALOUT_CLIENT</code> テーブルから dest list を読む。再接続 backoff、QoS <a href="../../../reference/glossary/#term-dscp">DSCP</a> marking、TCP keepalive はチューニング対象になる。collector 側 (<code>gnmic</code>, <code>gnxi</code>) の prometheus exporter と組み合わせると metrics pipeline が完成する。</p>
-<p>OpenConfig wildcard subscribe は <code>/interfaces/interface[name=*]/state/counters</code> のような path で per-port stream を一括取得するが、sample interval を 1s で全 port 投入すると server CPU が 100% に達する例がある。対策は (1) <code>STREAM</code> モードを <code>SAMPLE</code> に絞る、(2) heartbeat interval を 30s 以上に広げる、(3) collector を分割して target を pin する、の 3 通り。</p>
-<h2 id="gnoi-gnsi">gNOI / gNSI の運用境界<a class="headerlink" href="#gnoi-gnsi" title="Permanent link">&para;</a></h2>
-<p>gNOI OS の <code>Install</code> / <code>Activate</code> / <code>Verify</code> は SONiC の <code>sonic-installer</code> を内側で呼ぶ。<code>Install</code> は image を <code>/host/image-&lt;ver&gt;/</code> に展開、<code>Activate</code> は <code>next-boot</code> を切り替える。warm/fast reboot と組み合わせるなら、<code>Activate</code> 直後に gNOI System.Reboot を <code>WARM</code> mode で呼ぶ。失敗した場合の rollback は <code>Activate</code> で前 image を指定するだけで再起動を要するため、運用 runbook 側で plan B を持つ。</p>
-<p>gNSI <code>certz</code> は TLS 証明書を hot-swap する RPC で、<code>gnmi-server</code> が listen socket を rebuild せずに新 cert を採用する。controller 側で短命証明書 (24h) を回転させる構成が想定されている。<code>authz</code> は RBAC ポリシー (gRPC method × role × user) を JSON で push し、<code>mgmt-framework</code> の <a href="../../../reference/glossary/#term-aaa">AAA</a> 層に反映する。<code>pathz</code> は path 単位のアクセス制御で、SONiC では実装途中。</p>
-<h2 id="transformer-native-yang">Transformer 拡張と native YANG<a class="headerlink" href="#transformer-native-yang" title="Permanent link">&para;</a></h2>
-<p>OpenConfig path の SONiC 未対応領域に対しては、<code>sonic-mgmt-common</code> (Translib / Transformer) に Go callback (xfmr) を追加することで CONFIG_DB マッピングを足せる。<code>transformer/xfmr/*.go</code> の <code>init()</code> で <code>XlateFuncBind</code> に register する流れで、key xfmr / field xfmr / subtree xfmr の 3 種類がある。vendor augmented YANG は <code>sonic-mgmt-common/models/yang/extensions/</code> に置かれ、OpenConfig deviation よりも自由度が高い。</p>
-<h2 id="_5">既知の制約と回避方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>subscription scale limit</strong>: target あたりの concurrent stream 数には実用上の上限があり、過剰登録で telemetry docker が CPU 100% になる例がある。collector を複数にして load を分割する。</li>
-<li><strong>OpenConfig path と SONiC schema のミスマッチ</strong>: SONiC 固有機能 (Dual-ToR mux、warm-reboot state) は OpenConfig path に対応が無く、<code>sonic-mgmt-common</code> の vendor-augmented <a href="../../../reference/glossary/#term-yang">YANG</a> で表現される。</li>
-<li><strong>gNMI Set の atomicity</strong>: 単一 SetRequest 内の複数 update は SONiC 側で完全 atomic とは限らない。CONFIG_DB の partial commit で transient 状態が見える可能性。<code>replace</code> 操作は <code>model-based-replace-delete-in-mgmt-framework-transformer</code> の HLD 通り、サブツリー単位での差し替えになり、<a href="../../../reference/glossary/#term-orchagent">orchagent</a> 側で transient な flap を観察することがある。</li>
-<li><strong>証明書回転中の reconnect</strong>: controller が証明書を更新した後、client 側 dial を一度切る必要がある場合がある。gNSI による hot swap が対応していれば回避可能。</li>
-<li><strong>master arbitration</strong>: 複数 controller が同時に Set を出すと last-writer-wins になるため、<code>gnmi-master-arbitration</code> の <code>MasterArbitration</code> 拡張を有効化して election token を交換する。</li>
-</ul>
-<h2 id="_6">将来計画 / ロードマップ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<ul>
-<li>gNxI suite (gNMI / gNOI / gNSI / gRIBI) は OpenConfig コミュニティで継続拡張中。SONiC 側は <code>sonic-gnmi</code> の依存ライブラリ更新で取り込む。</li>
-<li>gRIBI を経由した RIB 直接注入が議論されており、controller 側で経路を直接 push する用途で SDN ベース fabric の管理が変わる可能性。SONiC では <code>gribi-server</code> の prototype が議論段階。</li>
-<li>OpenConfig の network-instance / <a href="../../../reference/glossary/#term-vrf">VRF</a> モデルの SONiC 対応は段階的で、未対応 path には vendor augment が並走する。</li>
-<li><code>save-on-set</code> (Set 直後に CONFIG_DB を <code>config_db.json</code> へ persist) は long-running deployment では default ON が望ましいが、scale 時の I/O コストがあり opt-in 設計が継続。</li>
-</ul>
-<h2 id="rfc_1">関連 RFC / 仕様書<a class="headerlink" href="#rfc_1" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc6020">RFC 6020</a> / <a href="https://datatracker.ietf.org/doc/html/rfc7950">RFC 7950</a> — YANG 1.0 / 1.1</li>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc8040">RFC 8040</a> — RESTCONF</li>
-<li><a href="https://datatracker.ietf.org/doc/html/rfc6241">RFC 6241</a> — NETCONF (gNMI と比較)</li>
-<li><a href="https://github.com/openconfig/reference/blob/master/rpc/gnmi/gnmi-specification.md">gNMI Specification</a></li>
-<li><a href="https://github.com/openconfig">gNOI / gNSI / gRIBI</a></li>
-<li><a href="https://github.com/openconfig/public">OpenConfig models</a></li>
-</ul>
-<h2 id="upstream_1">upstream 開発の最新動向<a class="headerlink" href="#upstream_1" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>sonic-gnmi</code> repo で gNSI authz と certz 取り込み、TLS 認証経路のリファクタが継続。</li>
-<li><code>sonic-mgmt-common</code> (Translib / Transformer) で OpenConfig path カバレッジ拡張 PR が頻繁。Routing / <a href="../../../reference/glossary/#term-bgp">BGP</a> / VRF / <a href="../../../reference/glossary/#term-qos">QoS</a> の path 追加が主軸。</li>
-<li>Telemetry docker の memory footprint 改善と subscription scale 上限緩和の PR が継続。collector 側 (gnmic、gnxi) も community 主導でツール成熟が進む。</li>
 <li><a href="../../../reference/glossary/#term-smartswitch">SmartSwitch</a> 向け gNMI feedback design (<code>smart-switch-gnmi-feedback-design</code>) が <a href="../../../reference/glossary/#term-dpu">DPU</a> 側 telemetry を含めて議論中。</li>
 </ul>
-<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../09-telemetry-snmp/">09 Telemetry / SNMP</a></li>
 <li><a href="../../11-reboot/">11 Reboot / Upgrade</a> — gNOI OS upgrade と組み合わせる前提</li>

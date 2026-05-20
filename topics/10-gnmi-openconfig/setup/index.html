@@ -3710,10 +3710,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#config_db-telemetry-table" class="md-nav__link">
+  <a href="#config_db-gnmi-table" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB / TELEMETRY 関連 table
+        CONFIG_DB / GNMI 関連 table
       
     </span>
   </a>
@@ -35385,10 +35385,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#config_db-telemetry-table" class="md-nav__link">
+  <a href="#config_db-gnmi-table" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CONFIG_DB / TELEMETRY 関連 table
+        CONFIG_DB / GNMI 関連 table
       
     </span>
   </a>
@@ -35449,15 +35449,15 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># DUT 側</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>telemetry
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>telemetry
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;TELEMETRY|gnmi&#39;</span><span class="w"> </span>port<span class="w"> </span><span class="m">50051</span><span class="w"> </span>client_auth<span class="w"> </span><span class="nb">true</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;TELEMETRY|certs&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;GNMI|gnmi&#39;</span><span class="w"> </span>port<span class="w"> </span><span class="m">8080</span><span class="w"> </span>client_auth<span class="w"> </span><span class="nb">true</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>HSET<span class="w"> </span><span class="s1">&#39;GNMI|certs&#39;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span>server_crt<span class="w"> </span>/etc/sonic/telemetry/dut.crt<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span>server_key<span class="w"> </span>/etc/sonic/telemetry/dut.key<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span>ca_crt<span class="w">     </span>/etc/sonic/telemetry/ca.crt
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>telemetry
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># client 側 (gNMI tools)</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>gnmi_capabilities<span class="w"> </span>-target_addr<span class="w"> </span>dut.example.com:50051<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>gnmi_capabilities<span class="w"> </span>-target_addr<span class="w"> </span>dut.example.com:8080<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span>-cert<span class="w"> </span>client.crt<span class="w"> </span>-key<span class="w"> </span>client.key<span class="w"> </span>-ca<span class="w"> </span>ca.crt
 </span></code></pre></div>
 <p>期待出力（一部）。</p>
@@ -35471,18 +35471,18 @@
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="nt">gNMI_version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0.7.0&quot;</span>
 </span></code></pre></div>
 <p>設定後の確認。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span>ss<span class="w"> </span>-tlnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">50051</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>LISTEN<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">128</span><span class="w"> </span>*:50051<span class="w"> </span>*:*<span class="w"> </span>users:<span class="o">((</span><span class="s2">&quot;telemetry&quot;</span>,pid<span class="o">=</span><span class="m">12345</span>,fd<span class="o">=</span><span class="m">7</span><span class="o">))</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span>ss<span class="w"> </span>-tlnp<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="m">8080</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>LISTEN<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">128</span><span class="w"> </span>*:8080<span class="w"> </span>*:*<span class="w"> </span>users:<span class="o">((</span><span class="s2">&quot;telemetry&quot;</span>,pid<span class="o">=</span><span class="m">12345</span>,fd<span class="o">=</span><span class="m">7</span><span class="o">))</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>$<span class="w"> </span>docker<span class="w"> </span>logs<span class="w"> </span>telemetry<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-3
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>INFO<span class="o">[</span><span class="m">2026</span>-05-11T03:14:21Z<span class="o">]</span><span class="w"> </span>Starting<span class="w"> </span>gNMI<span class="w"> </span>server<span class="w"> </span>on<span class="w"> </span>:50051
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>INFO<span class="o">[</span><span class="m">2026</span>-05-11T03:14:21Z<span class="o">]</span><span class="w"> </span>Starting<span class="w"> </span>gNMI<span class="w"> </span>server<span class="w"> </span>on<span class="w"> </span>:8080
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>INFO<span class="o">[</span><span class="m">2026</span>-05-11T03:14:21Z<span class="o">]</span><span class="w"> </span>Loaded<span class="w"> </span>server<span class="w"> </span>cert<span class="w"> </span>from<span class="w"> </span>/etc/sonic/telemetry/dut.crt
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>INFO<span class="o">[</span><span class="m">2026</span>-05-11T03:14:21Z<span class="o">]</span><span class="w"> </span>Loaded<span class="w"> </span>CA<span class="w"> </span>cert<span class="w"> </span>from<span class="w"> </span>/etc/sonic/telemetry/ca.crt
 </span></code></pre></div>
 <h2 id="2-openconfig-path-interface-get-set-subscribe">シナリオ 2: OpenConfig path で interface を Get / Set / Subscribe する<a class="headerlink" href="#2-openconfig-path-interface-get-set-subscribe" title="Permanent link">&para;</a></h2>
 <p><code>Ethernet0</code> の MTU / admin-status を OpenConfig path 経由で読み書きする例。SONiC では <code>Ethernet0</code> のような物理ポート命名がそのまま name キーとして使われる。</p>
 <p>Get:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gnmi_get<span class="w"> </span>-target_addr<span class="w"> </span>dut:50051<span class="w"> </span>-cert<span class="w"> </span>client.crt<span class="w"> </span>-key<span class="w"> </span>client.key<span class="w"> </span>-ca<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>gnmi_get<span class="w"> </span>-target_addr<span class="w"> </span>dut:8080<span class="w"> </span>-cert<span class="w"> </span>client.crt<span class="w"> </span>-key<span class="w"> </span>client.key<span class="w"> </span>-ca<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>-xpath<span class="w"> </span><span class="s1">&#39;/interfaces/interface[name=Ethernet0]/state&#39;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>-encoding<span class="w"> </span>JSON_IETF
 </span></code></pre></div>
@@ -35498,11 +35498,11 @@
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>Set (MTU 変更、replace モード):</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>gnmi_set<span class="w"> </span>-target_addr<span class="w"> </span>dut:50051<span class="w"> </span>-cert<span class="w"> </span>client.crt<span class="w"> </span>-key<span class="w"> </span>client.key<span class="w"> </span>-ca<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>gnmi_set<span class="w"> </span>-target_addr<span class="w"> </span>dut:8080<span class="w"> </span>-cert<span class="w"> </span>client.crt<span class="w"> </span>-key<span class="w"> </span>client.key<span class="w"> </span>-ca<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>-replace<span class="w"> </span><span class="s1">&#39;/interfaces/interface[name=Ethernet0]/config/mtu:::JSON_IETF:::9216&#39;</span>
 </span></code></pre></div>
 <p>Subscribe (ON_CHANGE で oper-status):</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>gnmi_cli<span class="w"> </span>-address<span class="w"> </span>dut:50051<span class="w"> </span>-tls<span class="w"> </span>-client_crt<span class="w"> </span>client.crt<span class="w"> </span>-client_key<span class="w"> </span>client.key<span class="w"> </span>-ca_crt<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>gnmi_cli<span class="w"> </span>-address<span class="w"> </span>dut:8080<span class="w"> </span>-tls<span class="w"> </span>-client_crt<span class="w"> </span>client.crt<span class="w"> </span>-client_key<span class="w"> </span>client.key<span class="w"> </span>-ca_crt<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span>-query_type<span class="w"> </span>s<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span>-query<span class="w"> </span><span class="s1">&#39;interfaces/interface[name=Ethernet0]/state/oper-status&#39;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span>-streaming_type<span class="w"> </span>ON_CHANGE
@@ -35525,7 +35525,7 @@
 </span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="s">}</span>
 </span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="s">JSON</span>
 </span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>
-</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>gnmi_set<span class="w"> </span>-target_addr<span class="w"> </span>dut:50051<span class="w"> </span>-cert<span class="w"> </span>client.crt<span class="w"> </span>-key<span class="w"> </span>client.key<span class="w"> </span>-ca<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>gnmi_set<span class="w"> </span>-target_addr<span class="w"> </span>dut:8080<span class="w"> </span>-cert<span class="w"> </span>client.crt<span class="w"> </span>-key<span class="w"> </span>client.key<span class="w"> </span>-ca<span class="w"> </span>ca.crt<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">  </span>-update<span class="w"> </span><span class="s1">&#39;/sonic-bgp-neighbor:sonic-bgp-neighbor/BGP_NEIGHBOR:::JSON_IETF:::@/tmp/bgp_nbr.json&#39;</span>
 </span></code></pre></div>
 <p>確認 (DUT 側)。</p>
@@ -35558,11 +35558,11 @@
 <p>機能章別の YANG モジュール一覧は <a href="../yang-reference/">YANG リファレンス</a> を参照する。</p>
 <h2 id="cli-gnmi">CLI と gNMI の混在<a class="headerlink" href="#cli-gnmi" title="Permanent link">&para;</a></h2>
 <p>CLI と gNMI を併用する運用では、同じノードを CLI で書いて gNMI で読むケースが多い。CLI が YANG から自動生成される機能領域では、両者の表現が一致するため <code>gnmi_get</code> の結果と <code>show</code> 出力を相互参照できる。自動生成範囲外の機能では、CLI が CONFIG_DB を直接更新するケースもあり、その場合 gNMI subscribe で「設定変更があった」と通知される。自動生成の仕組みは <a href="../../../management/sonic-cli-auto-generation-tool/">CLI auto-generation tool</a> を参照する。</p>
-<h2 id="config_db-telemetry-table">CONFIG_DB / TELEMETRY 関連 table<a class="headerlink" href="#config_db-telemetry-table" title="Permanent link">&para;</a></h2>
-<p>gNMI server の起動制御に使う table。</p>
+<h2 id="config_db-gnmi-table">CONFIG_DB / GNMI 関連 table<a class="headerlink" href="#config_db-gnmi-table" title="Permanent link">&para;</a></h2>
+<p>gNMI server の起動制御に使う table（旧 <code>TELEMETRY</code> は <code>db_migrator</code> の <code>migrate_gnmi()</code> で <code>GNMI</code> に移行済み）。</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;TELEMETRY&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">&quot;gnmi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="s2">&quot;50051&quot;</span><span class="p">,</span><span class="nt">&quot;client_auth&quot;</span><span class="p">:</span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="nt">&quot;log_level&quot;</span><span class="p">:</span><span class="s2">&quot;2&quot;</span><span class="p">},</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;GNMI&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">&quot;gnmi&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="s2">&quot;8080&quot;</span><span class="p">,</span><span class="nt">&quot;client_auth&quot;</span><span class="p">:</span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="nt">&quot;log_level&quot;</span><span class="p">:</span><span class="s2">&quot;2&quot;</span><span class="p">},</span>
 </span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="nt">&quot;certs&quot;</span><span class="p">:{</span><span class="nt">&quot;server_crt&quot;</span><span class="p">:</span><span class="s2">&quot;/etc/sonic/telemetry/dut.crt&quot;</span><span class="p">,</span>
 </span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">             </span><span class="nt">&quot;server_key&quot;</span><span class="p">:</span><span class="s2">&quot;/etc/sonic/telemetry/dut.key&quot;</span><span class="p">,</span>
 </span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">             </span><span class="nt">&quot;ca_crt&quot;</span><span class="p">:</span><span class="s2">&quot;/etc/sonic/telemetry/ca.crt&quot;</span><span class="p">}</span>

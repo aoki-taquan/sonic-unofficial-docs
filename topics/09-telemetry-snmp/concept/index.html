@@ -35435,7 +35435,7 @@
 <li><strong>gNMI</strong>: gRPC 上で <a href="../../../reference/glossary/#term-yang">YANG</a> path を Get / Set / Subscribe する Google の管理プロトコル。SONiC では <code>telemetry</code> コンテナの <code>gnmi-server</code> が実装。</li>
 <li><strong><a href="../../../reference/glossary/#term-gnoi">gNOI</a> / gNSI</strong>: gNMI と同じ gRPC スタック上で「操作系 (gNOI: reboot / file / OS install / cert install)」と「セキュリティ系 (gNSI: authz / pathz / credential)」を扱う仕様。</li>
 <li><strong>FlexCounter</strong>: <a href="../../../reference/glossary/#term-syncd">syncd</a> の counter polling 機構。port、queue、PG、ACL、route flow、trap flow など複数 group を別 interval で polling し、<code>COUNTERS_DB</code> に書きます。</li>
-<li><strong>CRM (Critical Resource Monitoring)</strong>: ACL entry、route、neighbor、nexthop group などの ASIC リソース使用量と閾値を watch する仕組み。STATE_DB と syslog に通知。</li>
+<li><strong>CRM (Critical Resource Monitoring)</strong>: ACL entry、route、neighbor、nexthop group などの ASIC リソース使用量と閾値を watch する仕組み。COUNTERS_DB に publish し、閾値超過は syslog に通知。</li>
 <li><strong>sFlow</strong>: パケットサンプリング + interface counter を <code>sFlow datagram</code> として外部 collector に UDP 送信するプロトコル。SONiC では <code>hsflowd</code> が担当。</li>
 <li><strong>DTel (Data plane Telemetry)</strong>: <a href="../../../reference/glossary/#term-int">INT</a> (In-band Network Telemetry) を ASIC が直接フレームに埋めて export。SONiC は ASIC 側の設定パスのみ。</li>
 <li><strong><a href="../../../reference/glossary/#term-syslog">Syslog</a> / Event</strong>: テキストログと構造化イベント。<code>syslog-ng</code> で集約し、外部 collector に転送。</li>
@@ -35459,11 +35459,11 @@
   STREAM --&gt; DB
   CRM --&gt; DB
   EV --&gt; TS[techsupport tarball]</code></pre>
-<p>CRM は ACL / route / neighbor / nexthop など ASIC 資源の使用量を STATE_DB に publish する固有の経路です。SAI generic counter 拡張版は CRM 自身の polling 負荷を別 group の flex counter に逃がしますが、読み手から見れば「資源の上限と消費」を答える機能という位置付けは変わりません。</p>
+<p>CRM は ACL / route / neighbor / nexthop など ASIC 資源の使用量を COUNTERS_DB に publish する固有の経路です。SAI generic counter 拡張版は CRM 自身の polling 負荷を別 group の flex counter に逃がしますが、読み手から見れば「資源の上限と消費」を答える機能という位置付けは変わりません。</p>
 <h2 id="flexcounter-crm-dtel-sflow-watermark">FlexCounter / CRM / DTel / sFlow / watermark の棲み分け<a class="headerlink" href="#flexcounter-crm-dtel-sflow-watermark" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>FlexCounter</strong>: <a href="../../../reference/glossary/#term-orchagent">orchagent</a> ではなく syncd の flex counter infra で各種 counter（port、queue、PG、ACL、route flow、trap flow など）を定期 polling し、COUNTERS_DB に書きます。<code>COUNTERS:</code> table の供給元です。</li>
-<li><strong>CRM</strong>: ACL entry、route、neighbor、nexthop group などの ASIC resource 使用量と閾値超過を監視し、STATE_DB と syslog に出します。FlexCounter の counter とは別目的です。</li>
+<li><strong>CRM</strong>: ACL entry、route、neighbor、nexthop group などの ASIC resource 使用量と閾値超過を監視し、COUNTERS_DB に publish して閾値超過は syslog に出します。FlexCounter の counter とは別目的です。</li>
 <li><strong>DTel</strong>: Inband Network Telemetry を ASIC が直接 export するもので、SONiC からは設定パスのみ通り、データは外部 collector へ流れます。</li>
 <li><strong>sFlow</strong>: hsflowd がサンプリングと counter を psample / kernel から取り、外部 collector に sFlow datagram を送ります。</li>
 <li><strong>Watermark</strong>: queue / PG / buffer の高水位を ASIC が保持し、SONiC が定期 snapshot します。詳細は <a href="../../../reference/glossary/#term-qos">QoS</a> 章で扱います。</li>

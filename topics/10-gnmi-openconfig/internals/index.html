@@ -35408,8 +35408,8 @@
 <td>SONiC 独自 YANG。CONFIG_DB との整合の根拠</td>
 </tr>
 <tr>
-<td><code>dialin</code> / <code>dialout</code> server</td>
-<td><code>telemetry/dialin.go</code> / <code>dialout.go</code></td>
+<td><code>dialin</code> (gNMI Subscribe) / <code>dialout</code> server</td>
+<td>dial-in は <code>gnmi_server/server.go</code> の Subscribe RPC が担当（独立した <code>dialin.go</code> は存在しない）。dial-out は <code>dialout/dialout_client/dialout_client.go</code> / <code>dialout/dialout_server/dialout_server.go</code></td>
 <td>dial-in (subscribe) と dial-out collector</td>
 </tr>
 <tr>
