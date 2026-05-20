@@ -35,10 +35,10 @@ flowchart LR
   CDB --> DM
   APPDB[("APP_DB<br/>APP_COPP_TABLE")]
   DM --> APPDB
-  OA["orchagent<br/>CoppOrch"]
-  APPDB --> OA
+  SYNCD["syncd"]
+  APPDB --> SYNCD
   SAI["SAI<br/>sai_hostif_api"]
-  OA --> SAI
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"

@@ -23,6 +23,15 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-20 #4743 docs: doc-review fixes (batch 037)
+- 2026-05-20 #4734 docs: doc-review fixes (batch 006)
+- 2026-05-20 #4732 docs: doc-review fixes (batch 008)
+- 2026-05-20 #4754 docs: doc-review fixes (batch 014)
+- 2026-05-20 #4745 docs: doc-review fixes (batch 010)
+- 2026-05-20 #4765 docs: doc-review fixes (batch 009)
+- 2026-05-20 #4738 docs: doc-review fixes (batch 034)
+- 2026-05-20 #4731 docs: doc-review fixes (batch 007)
+- 2026-05-20 #4728 docs: doc-review fixes (batch 000)
 - 2026-05-20 #4730 docs: doc-review fixes (batch 001)
 - 2026-05-20 #4729 docs: doc-review fixes (batch 003)
 - 2026-05-20 #4776 chore: minimal CI green fixes
@@ -509,18 +518,9 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3539 docs(config-db): add Phase E hardcoded-constants block to scheduler-orch
 - 2026-05-19 #3538 docs(config-db): add Phase H platform block to dpu-eni
 - 2026-05-19 #3537 docs(config-db): add Phase G pubsub block to event-publisher
-- 2026-05-19 #3528 docs(config-db): add Phase D failure-behavior block to deviceop-state
 - 2026-05-19 #3536 docs(config-db): add Phase H platform block to nat-static
 - 2026-05-19 #3534 docs(config-db): add Phase F side-effects block to device-neighbor
 - 2026-05-19 #3533 docs(config-db): add Phase H platform block to dscp-to-pg-map
 - 2026-05-19 #3532 docs(config-db): add Phase G pubsub block to state-flex-counter
 - 2026-05-19 #3531 docs(config-db): add Phase E hardcoded-constants block to queue-state
-- 2026-05-19 #3530 docs(config-db): add Phase F side-effects block to route-rule
-- 2026-05-19 #3529 docs(config-db): add Phase H platform block to copp-state
-- 2026-05-19 #3527 docs(config-db): add Phase E hardcoded-constants block to pin-config
-- 2026-05-19 #3526 docs(config-db): add Phase G pubsub block to state-bgp
-- 2026-05-19 #3525 docs(config-db): add Phase H platform block to pfcwd-state
-- 2026-05-19 #3524 docs(config-db): add Phase E hardcoded-constants block to extended-monitor
-- 2026-05-19 #3523 docs(config-db): add Phase F side-effects block to erspan
-- 2026-05-19 #3522 docs(config-db): add Phase H platform block to cbf-nhg
 

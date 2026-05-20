@@ -33,15 +33,10 @@ hard: 0
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>BREAKOUT_CFG")]
-  PORT[("CONFIG_DB<br/>PORT")]
-  CLI["config interface breakout (CLI)"]
-  PSY["portsyncd"]
-  APPL[("APPL_DB<br/>PORT_TABLE")]
-  OA["orchagent<br/>PortsOrch"]
+  DM["xcvrd"]
+  CDB --> DM
   SAI["SAI<br/>sai_port_api"]
-  CLI --> CDB
-  CLI --> PORT
-  PORT --> PSY --> APPL --> OA --> SAI
+  DM --> SAI
 ```
 
 !!! note "凡例"

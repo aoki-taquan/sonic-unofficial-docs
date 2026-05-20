@@ -128,7 +128,7 @@ vtysh -c 'show bgp neighbor <ip>'
 
 ### `send_community` (`bgp_community_type`)
 
-| 値 | FRR コマンド | 備考 |
+| 値 | [FRR](../../reference/glossary.md#term-frr) コマンド | 備考 |
 |----|-------------|------|
 | `standard` | `neighbor <X> send-community standard` | `hdl_send_com`: まず all 削除、次に指定値を追加 |
 | `extended` | `neighbor <X> send-community extended` | 同上 |
@@ -139,7 +139,7 @@ vtysh -c 'show bgp neighbor <ip>'
 
 ### `tx_add_paths` (`bgp_tx_add_paths_type`)
 
-| 値 | FRR コマンド |
+| 値 | [FRR](../../reference/glossary.md#term-frr) コマンド |
 |----|-------------|
 | `tx_all_paths` | `neighbor <X> addpath-tx-all-paths` |
 | `tx_best_path_per_as` | `neighbor <X> addpath-tx-bestpath-per-AS` |
@@ -180,21 +180,21 @@ vtysh -c 'show bgp neighbor <ip>'
 
 ### 段階 1 — Consumer 登録
 
-`frrcfgd` が CONFIG_DB の `BGP_NEIGHBOR_AF` テーブルを購読する。
+`frrcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_NEIGHBOR_AF` テーブルを購読する。
 
 `BGP_NEIGHBOR_AF` は `<vrf>|<neighbor>|<af>` の key 構造。
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由)
+なし (FRR [vtysh](../../reference/glossary.md#term-vtysh) 経由)
 
 ### 段階 3 — APPL→SAI
 
-なし (FRR BGP ネイバー AF 設定)
+なし (FRR [BGP](../../reference/glossary.md#term-bgp) ネイバー AF 設定)
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: 変化検知後 FRR にネイバー AF コマンドを発行。`activate`/`deactivate` は BGP session に影響する場合がある。
+**適用タイミング**: 変化検知後 FRR にネイバー AF コマンドを発行。`activate`/`deactivate` は [BGP](../../reference/glossary.md#term-bgp) session に影響する場合がある。
 
 **副作用**: ネイバーの AF 有効/無効化は該当 AF の route 交換を即座に停止/開始。policy 変更は soft-clear 後に有効。
 <!-- /runtime-trace -->
@@ -205,14 +205,14 @@ vtysh -c 'show bgp neighbor <ip>'
 対象テーブル: `BGP_NEIGHBOR_AF`
 
 ### CLI
-- `vtysh` 経由 neighbor address-family コマンド群 (bgpcfgd が CONFIG_DB へ書き戻し)
+- `vtysh` 経由 neighbor address-family コマンド群 ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が [CONFIG_DB](../../reference/glossary.md#term-config_db) へ書き戻し)
   - ソース: `sonic-frr bgpcfgd`
 
 ### minigraph / sonic-cfggen
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる
 
 ### REST / gNMI (sonic-mgmt-common)
-- sonic-mgmt-common OpenConfig BGP neighbor 経由
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common OpenConfig [BGP](../../reference/glossary.md#term-bgp) neighbor 経由
 
 ### db_migrator
 - なし
@@ -264,7 +264,7 @@ vtysh -c 'show bgp neighbor <ip>'
 
 > 詳細証跡: `meta/_intermediate/cdb-flow/bgp-neighbor-af-platform.md`
 
-**プラットフォーム差なし**。`BGP_NEIGHBOR_AF` の適用経路は `frrcfgd` → vtysh → FRR `bgpd`（ユーザ空間）で完結し、SAI / ASIC SDK を直接呼び出さない。
+**プラットフォーム差なし**。`BGP_NEIGHBOR_AF` の適用経路は `frrcfgd` → [vtysh](../../reference/glossary.md#term-vtysh) → FRR `bgpd`（ユーザ空間）で完結し、[SAI](../../reference/glossary.md#term-sai) / [ASIC SDK](../../reference/glossary.md#term-asic-sdk) を直接呼び出さない。
 
 ### 根拠
 
@@ -273,10 +273,10 @@ vtysh -c 'show bgp neighbor <ip>'
 | `frrcfgd.py` platform/asic キーワード grep | `platform` / `hwsku` / `asic_type` / `multi_npu` / `is_chassis` 等のキーワードが BGP_NEIGHBOR_AF 処理コードに **0 ヒット** |
 | `BGP_NEIGHBOR_AF` 購読登録 | `bgp_table_handler_common` (L2306) への登録は `if` ガードなし—無条件 |
 | `policies.conf.j2`（全バリアント） | `sentinels` / `monitors` / `dynamic` / `general` / `internal` / `voq_chassis` のいずれも `BGP_NEIGHBOR_AF` を参照せず。`internal` / `voq_chassis` の platform 分岐は route-map / community-list 生成に限定 |
-| multi-asic / VOQ chassis | 各 namespace の `frrcfgd` インスタンスが同一コードで処理。chassis 専用の AF マネージャなし |
+| multi-asic / [VOQ](../../reference/glossary.md#term-voq) chassis | 各 namespace の `frrcfgd` インスタンスが同一コードで処理。chassis 専用の AF マネージャなし |
 | ビルド時 platform オーバライド | `device/<vendor>/<platform>/` 配下に BGP_NEIGHBOR_AF を上書きするファイルなし |
 
-FRR `address-family` ブロック内の AF コマンド群（`activate` / `route-map` / `maximum-prefix` 等）は FRR ユーザ空間で完結するため、ASIC ベンダー（Broadcom / Mellanox / Marvell / Innovium / Barefoot）・物理形態（T0 / T1 / T2 / VOQ chassis）・single / multi-asic 構成のいずれでも挙動は同一。
+FRR `address-family` ブロック内の AF コマンド群（`activate` / `route-map` / `maximum-prefix` 等）は FRR ユーザ空間で完結するため、[ASIC](../../reference/glossary.md#term-asic) ベンダー（Broadcom / Mellanox / Marvell / Innovium / Barefoot）・物理形態（T0 / T1 / T2 / VOQ chassis）・single / multi-asic 構成のいずれでも挙動は同一。
 
 <!-- /platform -->
 
@@ -297,7 +297,7 @@ FRR `address-family` ブロック内の AF コマンド群（`activate` / `route
 | 順序 | 先行テーブル / 設定 | 後続 | 依存根拠 |
 |---|---|---|---|
 | 3 | `BGP_GLOBALS_AF.<vrf>\|<afi_safi>` | `BGP_NEIGHBOR_AF` | `frrcfgd.py:2297, 2847-2853` — `table_handler_list` 上 BGP_GLOBALS_AF (L2297) が BGP_NEIGHBOR_AF (L2306) より前。`bgp_af_handler` が BGP_GLOBALS_AF SET 完了後に `__apply_dep_vrf_table(vrf, 'BGP_NEIGHBOR_AF', key, af)` で後追い適用 |
-| 4 | `ROUTE_MAP` / `PREFIX_LIST` | `BGP_NEIGHBOR_AF` | `frrcfgd.py:2302` — `table_handler_list` 上 ROUTE_MAP (L2302) が BGP_NEIGHBOR_AF より前。`route_map_in` / `route_map_out` / `default_rmap` / `unsuppress_map_name` / `prefix_list_in` / `prefix_list_out` は FRR 名前空間で文字列参照。未定義名でも vtysh は通るが期待動作にならない |
+| 4 | `ROUTE_MAP` / `PREFIX_LIST` | `BGP_NEIGHBOR_AF` | `frrcfgd.py:2302` — `table_handler_list` 上 [ROUTE_MAP](../../reference/glossary.md#term-route_map) (L2302) が BGP_NEIGHBOR_AF より前。`route_map_in` / `route_map_out` / `default_rmap` / `unsuppress_map_name` / `prefix_list_in` / `prefix_list_out` は FRR 名前空間で文字列参照。未定義名でも [vtysh](../../reference/glossary.md#term-vtysh) は通るが期待動作にならない |
 
 ### FRR vtysh 投入順（frrcfgd が保証）
 
@@ -317,7 +317,7 @@ configure terminal
 
 | 依存 | 内容 | evidence |
 |---|---|---|
-| `BGP_NEIGHBOR` 先行必須 | `bgpcfgd/managers_bgp.py` は BGP_NEIGHBOR 単位で Jinja2 テンプレートを展開。AF 設定はテンプレート内に埋め込まれるため、`BGP_NEIGHBOR_AF` を単独で書いても bgpcfgd パスでは無視される | `managers_bgp.py:181-183, 229-243` |
+| `BGP_NEIGHBOR` 先行必須 | `bgpcfgd/managers_bgp.py` は BGP_NEIGHBOR 単位で Jinja2 テンプレートを展開。AF 設定はテンプレート内に埋め込まれるため、`BGP_NEIGHBOR_AF` を単独で書いても [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) パスでは無視される | `managers_bgp.py:181-183, 229-243` |
 
 <!-- /ordering -->
 
@@ -345,7 +345,7 @@ configure terminal
 |---|---|---|
 | `frrcfgd` (`BGPConfigDaemon`) | `bgp_table_handler_common` 購読 (`frrcfgd.py:91, 2306`) | CONFIG_DB の更新を FRR `address-family ... / neighbor <addr> ...` コマンド列へ変換 |
 | `frr-mgmt-framework` | running-config → CONFIG_DB 双方向同期 (`frrcfgd.py:2137`) | vtysh で投入された AF 設定を CONFIG_DB に書き戻す |
-| `sonic-mgmt-common` (gNMI/REST) | OpenConfig BGP neighbor afi-safis マッピング | northbound API 経由の neighbor AF 設定 |
+| `sonic-mgmt-common` ([gNMI](../../reference/glossary.md#term-gnmi)/REST) | OpenConfig BGP neighbor afi-safis マッピング | northbound API 経由の neighbor AF 設定 |
 
 ### 暗黙参照の特徴
 
@@ -389,7 +389,7 @@ configure terminal
 
 ### 書き込み経路依存の乖離
 
-| 乖離 | frrcfgd (REST/gNMI/CLI) | bgpcfgd Jinja2 テンプレートパス |
+| 乖離 | frrcfgd (REST/[gNMI](../../reference/glossary.md#term-gnmi)/CLI) | [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) Jinja2 テンプレートパス |
 |------|------------------------|--------------------------------|
 | `nexthop_self_force` の単独適用 | `nhself` なしで `next-hop-self force` コマンドが発行可能 | `nhself=true` が前提条件 (`nbr_af.j2:18-24`) |
 | `send_default_route=false` | `no neighbor X default-originate` を明示発行 | ブロックスキップのみ（`no` コマンド不発行） |
@@ -425,12 +425,12 @@ CONFIG_DB 変化通知
 
 | DB | テーブル | 書込有無 | 根拠 |
 |----|---------|---------|------|
-| STATE_DB | BGP_NEIGHBOR_TABLE 等 | **なし** | `frrcfgd.py` に STATE_DB import / write なし |
-| COUNTERS_DB | — | **なし** | 同上 |
-| APPL_DB | — | **なし** | 同上 |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | BGP_NEIGHBOR_TABLE 等 | **なし** | `frrcfgd.py` に [STATE_DB](../../reference/glossary.md#term-state_db) import / write なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | — | **なし** | 同上 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | — | **なし** | 同上 |
 | FRR (vtysh) | bgpd 内部ステート | **あり** | `frrcfgd.py:47-52` — vtysh 経由で bgpd へ AF 設定を投入 |
 
-BGP ネイバー AF の動的ステート（セッション状態・受信 prefix 数等）は FRR `bgpd` メモリ内にのみ保持される。`show bgp neighbor` / `show bgp summary` 等の vtysh コマンドで参照し、SONiC Redis DB への書き戻しは行われない。
+BGP ネイバー AF の動的ステート（セッション状態・受信 prefix 数等）は FRR `bgpd` メモリ内にのみ保持される。`show bgp neighbor` / `show bgp summary` 等の vtysh コマンドで参照し、[SONiC](../../reference/glossary.md#term-sonic) [Redis](../../reference/glossary.md#term-redis) DB への書き戻しは行われない。
 
 <!-- /side-effects -->
 
@@ -488,7 +488,7 @@ BGP ネイバー AF の動的ステート（セッション状態・受信 prefi
 | **vtysh コマンド失敗** (`key_map.run_command()` が `False` を返す) | `__update_bgp` L2872-2874 | `LOG_ERR` を出力し `continue` でスキップ。**リトライなし**。次回 CONFIG_DB 更新イベントが来るまで FRR への反映は行われない | `LOG_ERR: 'failed running BGP neighbor AF config command'` |
 | **vtysh/bgpd ソケット接続失敗** (FRR デーモン起動前) | `BgpdClientMgr.__create_frr_client` L186-200 | 2 秒インターバルで最大 100 回リトライ（合計最大 200 秒）。超過時は全ソケット close し `RuntimeError` → frrcfgd 起動失敗 | `LOG_ERR: 'failed to connect to frr daemon {}: {}'` / `'re-tried too many times, give up'` |
 | **`g_run_command` での vtysh 非ゼロ終了** | `g_run_command` L59-62 | `False` を返す (`ignore_fail=False` 時のみ `LOG_ERR`) | `LOG_ERR: 'command execution failure. Command: "{}"'` |
-| **ROUTE_MAP / PREFIX_LIST が FRR 未定義** | vtysh コマンド送信後、bgpd 内部解決 | frrcfgd レベルでは検出しない。vtysh 自体は成功扱いとなるが bgpd がポリシー適用時に参照解決失敗。**CONFIG_DB 側エラーは発生しない** | FRR `/var/log/frr/bgpd.log` 側にエラーが記録される可能性あり |
+| **[ROUTE_MAP](../../reference/glossary.md#term-route_map) / PREFIX_LIST が FRR 未定義** | vtysh コマンド送信後、bgpd 内部解決 | frrcfgd レベルでは検出しない。vtysh 自体は成功扱いとなるが bgpd がポリシー適用時に参照解決失敗。**CONFIG_DB 側エラーは発生しない** | FRR `/var/log/frr/bgpd.log` 側にエラーが記録される可能性あり |
 
 ### BGP_NEIGHBOR 未準備時のサイレントスキップ詳細
 
@@ -513,7 +513,7 @@ BGP ネイバー AF の動的ステート（セッション状態・受信 prefi
 
 ### Redis 購読方式
 
-`BGP_NEIGHBOR_AF` テーブルの変更通知は **`ExtConfigDBConnector`** (frrcfgd 専用サブクラス) が Redis keyspace notification を **`PSUBSCRIBE`** することで実装される。`swss-common` の `SubscriberStateTable` は使わず、hiredis 直結の Python `redis` ライブラリを利用する点が `orchagent` 系との大きな違いである。
+`BGP_NEIGHBOR_AF` テーブルの変更通知は **`ExtConfigDBConnector`** (frrcfgd 専用サブクラス) が [Redis](../../reference/glossary.md#term-redis) keyspace notification を **`PSUBSCRIBE`** することで実装される。`swss-common` の `SubscriberStateTable` は使わず、hiredis 直結の Python `redis` ライブラリを利用する点が `orchagent` 系との大きな違いである。
 
 ```python
 # frrcfgd.py:1538-1539
@@ -548,6 +548,7 @@ bgp_table_handler_common(table, key, data)  (frrcfgd.py:3895)
 |--------|---------|--------------|-------------|
 | `frrcfgd` (`BgpCfgd`) | `ExtConfigDBConnector` + `redis.pubsub().psubscribe()` | `__keyspace@4__:*` (CONFIG_DB 全キー) | `get_message(10s)` ポーリング |
 
-書き込み側 (CLI / `sonic-cfggen` / gNMI) は `swss::Table::set()` 経由で `HSET` のみ行い、明示的な `PUBLISH` は発行しない。CONFIG_DB のため TTL は使用されない。起動時は `config_mode == "unified"` の場合に `get_table('BGP_NEIGHBOR_AF')` で既存エントリを全件再生する（再起動耐性）。
+書き込み側 (CLI / `sonic-cfggen` / [gNMI](../../reference/glossary.md#term-gnmi)) は `swss::Table::set()` 経由で `HSET` のみ行い、明示的な `PUBLISH` は発行しない。CONFIG_DB のため TTL は使用されない。起動時は `config_mode == "unified"` の場合に `get_table('BGP_NEIGHBOR_AF')` で既存エントリを全件再生する（再起動耐性）。
 <!-- /pubsub -->
-<!-- glossary-links-injected: b5626ca1f0f9 -->
+
+<!-- glossary-links-injected: 8c9e626ce0bd -->

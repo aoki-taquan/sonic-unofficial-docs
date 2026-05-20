@@ -114,8 +114,8 @@ EXTENDED_COMMUNITY_SET|<name>
 
 | 参照元テーブル | フィールド | 参照タイミング | 効果 | evidence |
 |---|---|---|---|---|
-| `ROUTE_MAP` | `match_community` | ROUTE_MAP エントリ適用時（FRR bgpd） | フィールド値（コミュニティセット名）をそのまま FRR の `match community <name>` に展開。COMMUNITY_SET 自体の参照解決は FRR bgpd 内で行われる | `frrcfgd.py:1938` |
-| `ROUTE_MAP` | `set_community_ref` | ROUTE_MAP エントリ適用時（FRR bgpd） | `{:com-ref}` フォーマットで `daemon.comm_set_list` を lookup し、`COMMUNITY_SET` の `community_member` リストに解決する。COMMUNITY_SET が未登録または `is_configurable()` = false の場合、コマンドは生成されない | `frrcfgd.py:1953, L832-834` |
+| `ROUTE_MAP` | `match_community` | [ROUTE_MAP](../../reference/glossary.md#term-route_map) エントリ適用時（FRR bgpd） | フィールド値（コミュニティセット名）をそのまま FRR の `match community <name>` に展開。COMMUNITY_SET 自体の参照解決は FRR bgpd 内で行われる | `frrcfgd.py:1938` |
+| `ROUTE_MAP` | `set_community_ref` | [ROUTE_MAP](../../reference/glossary.md#term-route_map) エントリ適用時（FRR bgpd） | `{:com-ref}` フォーマットで `daemon.comm_set_list` を lookup し、`COMMUNITY_SET` の `community_member` リストに解決する。COMMUNITY_SET が未登録または `is_configurable()` = false の場合、コマンドは生成されない | `frrcfgd.py:1953, L832-834` |
 
 !!! note "match_community と set_community_ref の違い"
     `match_community` は COMMUNITY_SET 名を FRR にそのまま渡し、FRR 側の community-list 参照として機能する。  
@@ -160,23 +160,22 @@ vtysh -c 'show bgp community-list'
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## 実コンテナ動作トレース
 
 ### 段階 1 — Consumer 登録
 
-`frrcfgd` が CONFIG_DB の `COMMUNITY_SET` テーブルを購読する（`bgpcfgd` は直接購読しない）。
+`frrcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `COMMUNITY_SET` テーブルを購読する（`bgpcfgd` は直接購読しない）。
 
-`COMMUNITY_SET` は SONiC の route policy 管理用 (OpenConfig 準拠)。
+`COMMUNITY_SET` は [SONiC](../../reference/glossary.md#term-sonic) の route policy 管理用 (OpenConfig 準拠)。
 
 ### 段階 2 — CFG→APPL 翻訳
 
-なし (FRR vtysh 経由で community-list を設定)
+なし (FRR [vtysh](../../reference/glossary.md#term-vtysh) 経由で community-list を設定)
 
 ### 段階 3 — APPL→SAI
 
-なし (FRR BGP policy のみ)
+なし (FRR [BGP](../../reference/glossary.md#term-bgp) policy のみ)
 
 ### 段階 4 — タイミングと副作用
 
@@ -199,7 +198,7 @@ vtysh -c 'show bgp community-list'
 - なし
 
 ### REST / gNMI (sonic-mgmt-common)
-- sonic-mgmt-common OpenConfig routing policy 経由
+- [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common OpenConfig routing policy 経由
 
 ### db_migrator
 - なし
@@ -230,7 +229,7 @@ vtysh -c 'show bgp community-list'
 
 ### 主要な制約詳細
 
-**COMMUNITY_SET 先行必須 (依存 #1)**: `route_map_key_map` の `match_community` エントリは FRR へ `match community <name>` を送る。FRR 側で `bgp community-list <name>` が未定義の場合、route-map 評価は常に no-match となる。frrcfgd はこの整合性を検査しないため、COMMUNITY_SET を先に投入してから ROUTE_MAP を設定する必要がある（`frrcfgd.py:1938`）。
+**COMMUNITY_SET 先行必須 (依存 #1)**: `route_map_key_map` の `match_community` エントリは FRR へ `match community <name>` を送る。FRR 側で `bgp community-list <name>` が未定義の場合、route-map 評価は常に no-match となる。frrcfgd はこの整合性を検査しないため、COMMUNITY_SET を先に投入してから [ROUTE_MAP](../../reference/glossary.md#term-route_map) を設定する必要がある（`frrcfgd.py:1938`）。
 
 **is_configurable による原子的反映 (依存 #2)**: `CommunityList.is_configurable()` は `match_action`・`is_std`（set_type）・`mbr_list`（community_member）の 3 値がすべて非 None / 非空の場合のみ `True` を返す。`hdl_com_set` はこの条件チェックを経て `bgp community-list` コマンドを発行するため、フィールドが部分的に書き込まれた状態では FRR へ反映されない（`frrcfgd.py:1580-1582`, `frrcfgd.py:988-989`）。
 
@@ -247,7 +246,7 @@ vtysh -c 'show bgp community-list'
 
 | 条件 | 派生先 | evidence |
 |---|---|---|
-| 派生なし（COMMUNITY_SET は CLI または gNMI/OpenConfig 経由でのみ書き込まれる） | — | frrcfgd は読み取り専用消費 |
+| 派生なし（COMMUNITY_SET は CLI または [gNMI](../../reference/glossary.md#term-gnmi)/OpenConfig 経由でのみ書き込まれる） | — | frrcfgd は読み取り専用消費 |
 
 ### Phase 7: 条件付き module/manager 登録
 
@@ -274,11 +273,11 @@ vtysh -c 'show bgp community-list'
 <!-- pubsub -->
 ## CONFIG_DB 購読メカニズム (Phase G)
 
-COMMUNITY_SET テーブルは `frrcfgd` のみが購読する。bgpcfgd は COMMUNITY_SET を直接購読しない。
+COMMUNITY_SET テーブルは `frrcfgd` のみが購読する。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は COMMUNITY_SET を直接購読しない。
 
 ### frrcfgd (sonic-frr-mgmt-framework)
 
-`frrcfgd.py` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用し、Redis keyspace イベント (`__keyspace@<dbid>__:*`) を `psubscribe` で監視する。`subscribe_all()` が `table_handler_list` 内の `('COMMUNITY_SET', self.comm_set_handler)` および `('EXTENDED_COMMUNITY_SET', self.comm_set_handler)` を登録し、変更通知を受け取る。
+`frrcfgd.py` は `ExtConfigDBConnector`（`ConfigDBConnector` サブクラス）を使用し、[Redis](../../reference/glossary.md#term-redis) keyspace イベント (`__keyspace@<dbid>__:*`) を `psubscribe` で監視する。`subscribe_all()` が `table_handler_list` 内の `('COMMUNITY_SET', self.comm_set_handler)` および `('EXTENDED_COMMUNITY_SET', self.comm_set_handler)` を登録し、変更通知を受け取る。
 
 ```python
 # frrcfgd.py L2300-2301, 2359-2361
@@ -290,9 +289,9 @@ def subscribe_all(self):
         self.config_db.subscribe(table, hdlr)
 ```
 
-変更検知後、`comm_set_handler` が `bgp_table_handler_common` を経由して `hdl_com_set()` を呼び出し、FRR vtysh コマンドを生成・実行する。
+変更検知後、`comm_set_handler` が `bgp_table_handler_common` を経由して `hdl_com_set()` を呼び出し、FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドを生成・実行する。
 
-**vtysh 経路** (`hdl_com_set` L981-1006):
+**[vtysh](../../reference/glossary.md#term-vtysh) 経路** (`hdl_com_set` L981-1006):
 
 ```python
 # frrcfgd.py L981-1006
@@ -315,7 +314,7 @@ def hdl_com_set(daemon, cmd_str, op, st_idx, args, extended):
 
 ### bgpcfgd (sonic-bgpcfgd) — 非購読
 
-bgpcfgd は COMMUNITY_SET テーブルを購読しない。COMMUNITY_SET は FRR の BGP policy 設定であり、bgpcfgd のテンプレートエンジン (`bgpd.conf.db.comm_list.j2`) は CONFIG_DB の `COMMUNITY_SET` を初期設定時にのみ読み込む形式（`SubscriberStateTable` による動的購読は行わない）。
+[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) は COMMUNITY_SET テーブルを購読しない。COMMUNITY_SET は FRR の BGP policy 設定であり、[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) のテンプレートエンジン (`bgpd.conf.db.comm_list.j2`) は CONFIG_DB の `COMMUNITY_SET` を初期設定時にのみ読み込む形式（`SubscriberStateTable` による動的購読は行わない）。
 
 ### 購読フロー要約
 
@@ -424,8 +423,8 @@ EXTENDED_COMMUNITY_SET の `community_member` 値のプレフィックスとし�
 | DB | 操作 | 結論 |
 |---|---|---|
 | CONFIG_DB | なし | `frrcfgd` は `COMMUNITY_SET` を読取専用で消費。自テーブルへの逆書込なし |
-| STATE_DB | なし | community-list に対応する STATE_DB エントリは存在しない |
-| APPL_DB | なし | FRR BGP policy は APPL_DB を経由しない |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | community-list に対応する [STATE_DB](../../reference/glossary.md#term-state_db) エントリは存在しない |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | FRR BGP policy は [APPL_DB](../../reference/glossary.md#term-appl_db) を経由しない |
 
 ### 失敗時挙動
 
@@ -539,4 +538,5 @@ DB 更新ハンドラ全体を囲む `except Exception as e` ブロックが `sy
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ext-community-set-cross-refs.md` を参照。
 <!-- /cross-refs-extcomm -->
-<!-- glossary-links-injected: 3c93d6c0b6a4 -->
+
+<!-- glossary-links-injected: 74f3161d6627 -->

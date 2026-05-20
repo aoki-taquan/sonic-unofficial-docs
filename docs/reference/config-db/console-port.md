@@ -406,7 +406,7 @@ show console
 
 ### 段階 1 — Consumer 登録
 
-CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`consutil` が CLI 呼び出しのたびに CONFIG_DB を直接読み取る（Subscribe なし）。`conserver` は SONiC デフォルト環境では存在しない。
+CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`consutil` が CLI 呼び出しのたびに CONFIG_DB を直接読み取る（Subscribe なし）。`conserver` は [SONiC](../../reference/glossary.md#term-sonic) デフォルト環境では存在しない。
 
 `CONSOLE_PORT` の key は `<port_num>` (例: `1`)。
 
@@ -505,4 +505,4 @@ CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`
 **db_migrator の前提条件 (依存 #4)**: `migrate_console_switch()` は `self.configDB.get_entry('CONSOLE_SWITCH', 'console_mgmt')` で現在の DB 値を取得し、空の場合（`if not console_mgmt`）のみ `set_entry` を実行する。このため、マイグレーション前に `config console enable` / `disable` コマンドを手動実行してキーが存在する場合、移行元 `config_src_data` の値は書き込まれない（evidence: `db_migrator.py:659–666`）。
 <!-- /ordering -->
 
-<!-- glossary-links-injected: f80e1683d058 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->
