@@ -43,9 +43,9 @@ ROUTE_TABLE|Vrf<name>:<prefix>
 | key 要素 | 説明 |
 |---------|------|
 | `<prefix>` | IPv4 または IPv6 prefix（例 `10.0.0.0/24`、`2001:db8::/32`） |
-| `Vrf<name>:` | [VRF](../../reference/glossary.md#term-vrf)-aware 経路のプレフィクス。`Vrf` で始まる VRF デバイス名 + `:`。 |
+| `Vrf<name>:` | [VRF](../../reference/glossary.md#term-vrf)-aware 経路のプレフィクス。`Vrf` で始まる [VRF](../../reference/glossary.md#term-vrf) デバイス名 + `:`。 |
 
-VRF-aware 経路では VRF 名が key に埋め込まれる（コロン区切り）。`Vrf` プレフィクスを持たないインタフェース（eth0、docker0、eth1-midplane）宛ての経路は `fpmsyncd` が DEL に変換してスキップする[^rsync]。
+[VRF](../../reference/glossary.md#term-vrf)-aware 経路では VRF 名が key に埋め込まれる（コロン区切り）。`Vrf` プレフィクスを持たないインタフェース（eth0、docker0、eth1-midplane）宛ての経路は `fpmsyncd` が DEL に変換してスキップする[^rsync]。
 
 ## 主要フィールド
 
@@ -172,7 +172,7 @@ weight が全 nexthop で等しい（ECMP 均等）場合、`getNextHopWt()` が
 <!-- platform -->
 ## プラットフォーム / SAI Capability 差異 (Phase H)
 
-APPL_DB `ROUTE_TABLE` の書込・購読フロー自体はプラットフォーム共通だが、`routeorch` の起動時補正と `nhgorch` 経由で発行される SAI 呼び出しで以下 3 軸の差異が出る。`nhgorch.cpp` 自体には platform / switch_type の if 分岐は無く、`routeorch` が算出した上限値と SAI capability 経由で間接的に効く。
+APPL_DB `ROUTE_TABLE` の書込・購読フロー自体はプラットフォーム共通だが、`routeorch` の起動時補正と `nhgorch` 経由で発行される [SAI](../../reference/glossary.md#term-sai) 呼び出しで以下 3 軸の差異が出る。`nhgorch.cpp` 自体には platform / switch_type の if 分岐は無く、`routeorch` が算出した上限値と [SAI](../../reference/glossary.md#term-sai) capability 経由で間接的に効く。
 
 ### ECMP グループ数: Mellanox 限定の補正
 
@@ -922,4 +922,4 @@ Orch 層のリトライ機構で、依存リソース（NHG / NEIGH / VRF / RIF�
 
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 2a926555fc03 -->
+<!-- glossary-links-injected: 9f7d57d168bb -->
