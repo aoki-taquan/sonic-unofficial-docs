@@ -55,7 +55,7 @@ flowchart LR
 
 ## route と nexthop group を分ける理由
 
-大量 route では、各 route に nexthop list を埋め込むと APPL_DB と orchagent の処理量が膨らむ。`NEXT_HOP_GROUP_TABLE` に nexthop group を分離すると、route は group を参照し、group の作成・削除・参照カウントを NhgOrch 側で扱える。これは BGP PIC や [ECMP](../../reference/glossary.md#term-ecmp) 更新の土台にもなる。
+大量 route では、各 route に nexthop list を埋め込むと APPL_DB と orchagent の処理量が膨らむ。`NEXTHOP_GROUP_TABLE` に nexthop group を分離すると、route は group を参照し、group の作成・削除・参照カウントを NhgOrch 側で扱える。これは BGP PIC や [ECMP](../../reference/glossary.md#term-ecmp) 更新の土台にもなる。
 
 `fpmsyncd` NextHop Group 拡張は、FRR から受けた nexthop group を APPL_DB の `NEXTHOP_GROUP_TABLE` に出せるようにする。APPL_DB route と nexthop group の分離は [NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離](../../routing/routing-and-next-hop-table-enhancement.md)、FPM 受信側の拡張は [fpmsyncd NextHop Group 拡張](../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) を読む。
 

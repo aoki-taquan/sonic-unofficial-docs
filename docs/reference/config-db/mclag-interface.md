@@ -553,7 +553,7 @@ else if (temps == (Selectable *)mclag.getMclagIntfCfgTable()) {
 }
 ```
 
-`pops()` で取り出したエントリを `mclagsyncdSendMclagIfaceCfg()` に渡し、`MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_IFACE` メッセージとして TCP ソケット（`127.0.6.1:2626`）経由で `iccpd` に送信する。Select タイムアウトは指定なし（無限待機）。
+`pops()` で取り出したエントリを `mclagsyncdSendMclagIfaceCfg()` に渡し、`MCLAG_SYNCD_MSG_TYPE_CFG_MCLAG_IFACE` メッセージとして TCP ソケット（`127.0.0.6:2626`）経由で `iccpd` に送信する。Select タイムアウトは指定なし（無限待機）。
 
 ### mclagsyncd — 起動時全量 fetch
 
@@ -568,7 +568,7 @@ else if (temps == (Selectable *)mclag.getMclagIntfCfgTable()) {
 | 経路 | Consumer | プロトコル | 行き先 |
 |------|---------|-----------|--------|
 | CONFIG_DB → MlagOrch | orchagent Consumer (keyspace) | [Redis](../../reference/glossary.md#term-redis) keyspace notification | FdbOrch (Observer 通知) |
-| CONFIG_DB → mclagsyncd | SubscriberStateTable (動的登録) | [Redis](../../reference/glossary.md#term-redis) keyspace notification | iccpd (TCP IPC 127.0.6.1:2626) |
+| CONFIG_DB → mclagsyncd | SubscriberStateTable (動的登録) | [Redis](../../reference/glossary.md#term-redis) keyspace notification | iccpd (TCP IPC 127.0.0.6:2626) |
 | iccpd → mclagsyncd → STATE_DB | — | TCP IPC → swss Table::set | `MCLAG_LOCAL_INTF_TABLE` / `MCLAG_REMOTE_INTF_TABLE` |
 
 ### タイムアウト / リトライ

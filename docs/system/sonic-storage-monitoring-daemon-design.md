@@ -94,7 +94,7 @@ flowchart LR
 
 ```bash
 # storagemond と STORAGE_INFO の状態確認
-docker exec pmon supervisorctl status storagemond
+docker exec pmon supervisorctl status stormond  # 実装名は stormond（HLD では storagemond）
 sonic-db-cli STATE_DB keys "STORAGE_INFO|*"
 sonic-db-cli STATE_DB hgetall "STORAGE_INFO|sda"
 docker exec pmon which smartctl
