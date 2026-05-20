@@ -35,13 +35,8 @@ related:
   - POLICER
   - LLDP
   yang:
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
+  - sonic-mirror-session
+  - sonic-copp
 ---
 
 # 概念

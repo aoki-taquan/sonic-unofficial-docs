@@ -233,9 +233,9 @@ swssloglevel -d
 logger ごとの永続化された log level を確認する。
 
 ```bash
-show logging level
+swssloglevel -l SAI_LOG_LEVEL_INFO -c orchagent
+swssloglevel -d
 redis-cli -n 4 keys 'LOGGER|*'
-config logging level swss INFO --persistent
 grep -iE 'log[_ ]level' /var/log/syslog | tail
 ```
 

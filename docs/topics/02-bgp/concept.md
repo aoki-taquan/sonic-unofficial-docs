@@ -135,7 +135,7 @@ FRR upgrade は単なるパッケージ更新ではありません。SONiC で�
 | --- | --- |
 | neighbor の up/down | `show bgp summary`, FRR の `vtysh -c "show ip bgp summary"`, STATE_DB.NEIGH_STATE_TABLE |
 | 受信 / 送信経路数 | `show ip bgp summary`, `show bgp neighbor <peer>` |
-| ASIC FIB に入った経路 | `show ip route`, `redis-cli -n 1 keys 'ROUTE_TABLE:*'`, ASIC_DB |
+| ASIC FIB に入った経路 | `show ip route`, `redis-cli -n 0 keys 'ROUTE_TABLE:*'`（APPL_DB）, `redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:*'`（ASIC_DB） |
 | FPM 反映の停滞 | fpmsyncd ログ、APPL_DB [ROUTE_TABLE](../../reference/glossary.md#term-route_table) pending |
 
 `show ip route` は FRR 側を見ているのか SONiC 側を見ているのかが混ざりやすい点に注意します。確実な切り分けは「FRR の vty」と「[Redis](../../reference/glossary.md#term-redis) の APPL_DB / ASIC_DB」を別個に確認することです。
@@ -178,7 +178,7 @@ BGP まわりで最初に把握しておくべき CONFIG_DB は次のとおり�
 | --- | --- |
 | `BGP_NEIGHBOR` | 個別 neighbor（peer IP）の AS / hold time / shutdown / route-map など |
 | `BGP_PEER_RANGE` | unnumbered / dynamic peer の subnet 単位定義。leaf-spine ECMP fabric の主流 |
-| `BGP_GLOBAL` | router-id、ebgp/ibgp multipath、graceful-restart などのグローバル設定 |
+| `BGP_GLOBALS` | router-id、ebgp/ibgp multipath、graceful-restart などのグローバル設定 |
 | `BGP_ALLOWED_PREFIXES` / `PREFIX_LIST` | prefix-list と route-map の参照先 |
 | `BGP_AGGREGATE_ADDRESS` | 集約広告。`BGP_BBR` 連動による条件付き advertise が可能 |
 | `BGP_BBR` | Bounce Back Routing の enable/disable。集約広告と密結合 |
