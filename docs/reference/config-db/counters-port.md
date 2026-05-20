@@ -173,7 +173,7 @@ COUNTERS_DB / COUNTERS:<oid>           (Hash)
 | `SAI_PORT_STAT_DOT3_STATS_MULTIPLE_COLLISION_FRAMES` | マルチコリジョンフレーム |
 | `SAI_PORT_STAT_DOT3_STATS_SQE_TEST_ERRORS` | SQE テストエラー |
 | `SAI_PORT_STAT_DOT3_STATS_DEFERRED_TRANSMISSIONS` | 遅延送信 |
-| `SAI_PORT_STAT_DOT3_STATS_LATE_COLLISIONS` | レートコリジョン |
+| `SAI_PORT_STAT_DOT3_STATS_LATE_COLLISIONS` | レイトコリジョン（遅延衝突） |
 | `SAI_PORT_STAT_DOT3_STATS_EXCESSIVE_COLLISIONS` | 過剰コリジョン |
 | `SAI_PORT_STAT_DOT3_STATS_INTERNAL_MAC_TRANSMIT_ERRORS` | 内部 MAC 送信エラー |
 | `SAI_PORT_STAT_DOT3_STATS_CARRIER_SENSE_ERRORS` | キャリアセンスエラー |
@@ -252,7 +252,7 @@ syncd が `port_rates.lua` を定期実行して計算した派生レートを `
 | `PORT` (通常カウンタ) | `PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` (portsorch.cpp:87) | **1000 ms** |
 | `PORT` (rate プラグイン) | `PORT_RATE_FLEX_COUNTER_POLLING_INTERVAL_MS` (portsorch.h:41) | **1000 ms** |
 | `WRED_ECN_PORT` | `PORT_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` と同じ (portsorch.cpp:738) | **1000 ms** |
-| `PORT_BUFFER_DROP` | `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `counterpoll` CLI 許容下限 **30000 ms** |
+| `PORT_BUFFER_DROP` | `PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS` (portsorch.cpp:88) | **60000 ms**（`counterpoll` CLI 許容下限は 30000 ms） |
 | `PG_DROP` | `PG_DROP_FLEX_STAT_COUNTER_POLL_MSECS` (portsorch.h:40) | **10000 ms** |
 
 !!! warning "CLI ソフトデフォルトとの違い"

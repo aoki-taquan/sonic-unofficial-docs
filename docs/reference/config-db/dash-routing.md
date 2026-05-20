@@ -100,7 +100,7 @@ DASH_ROUTING_TYPE_TABLE:<routing_type>
 ### 制約
 
 - `action_type=staticencap` かつ `encap_type` が省略または不正値の場合は `SWSS_LOG_ERROR` が出力され、SAI 属性が不正になる
-- ルーティングタイプエントリが既存の場合は `SWSS_LOG_WARN` を出力して成功扱い (更新は上書き可能)
+- ルーティングタイプエントリが既存の場合は `SWSS_LOG_WARN` を出力して成功扱いとなるが、既存エントリは更新されない（更新は上書き不可。変更には DEL → SET が必要）
 
 ---
 

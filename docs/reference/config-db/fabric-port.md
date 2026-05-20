@@ -326,7 +326,7 @@ CONFIG_DB から設定不可なハードコード値（FABRIC_MONITOR テーブ�
 |--------|----|------|
 | `FABRIC_POLLING_INTERVAL_DEFAULT` | 30 秒 | ポート接続状態・リンク up/down のポーリング周期（`m_timer`） |
 | `FABRIC_DEBUG_POLLING_INTERVAL_DEFAULT` | 12 秒 | CRC/FEC エラーカウンタ収集・レート計算周期（`m_debugTimer`） |
-| `CHECK_TIME` | 120 秒 | `dnLkQueues` リンクダウン履歴の保持ウィンドウ幅 |
+| `CHECK_TIME` | 120 分 | `dnLkQueues` リンクダウン履歴の保持ウィンドウ幅（`std::chrono::minutes(CHECK_TIME)`） |
 
 これら 3 値はコンストラクタの `SelectableTimer` 初期化子（`fabricportsorch.cpp:87-88`）とポーリング内比較（`fabricportsorch.cpp:1350`）で直接使われ、外部からの変更手段が存在しない。
 
@@ -357,12 +357,13 @@ FlexCounter グループ名（`FABRIC_PORT_STAT_COUNTER` / `FABRIC_QUEUE_STAT_CO
 
 | マクロ | 値 | 対応 FABRIC_MONITOR フィールド |
 |--------|----|-------------------------------|
-| `FEC_ISOLATE_POLLS` | 2 | `monPollThreshIsolation` |
-| `FEC_UNISOLATE_POLLS` | 8 | `monPollThreshRecovery` |
 | `ISOLATION_POLLS_CFG` | 1 | `monPollThreshIsolation`（CRC 系） |
 | `RECOVERY_POLLS_CFG` | 8 | `monPollThreshRecovery`（CRC 系） |
 | `ERROR_RATE_CRC_CELLS_CFG` | 1 | `monErrThreshCrcCells` |
 | `ERROR_RATE_RX_CELLS_CFG` | 61,035,156 | `monErrThreshRxCells` |
+
+!!! warning "FEC 経路の上書き不可定数"
+    `FEC_ISOLATE_POLLS` (= 2) / `FEC_UNISOLATE_POLLS` (= 8) は `fabricportsorch.cpp:42-43` で独立変数 `fecIsolationPollsCfg` / `fecUnisolationPollsCfg` に代入される完全ハードコード値であり、CONFIG_DB の `FABRIC_MONITOR` フィールドからは上書きできない。CRC 経路の `monPollThreshIsolation` / `monPollThreshRecovery` とは別カウンタで動作するため、`monPollThresh*` を調整しても FEC 経路の isolate/unisolate 動作は変わらない。
 
 ### STATE_DB リセットデフォルト値（`fabricportsorch.h:62-68`）
 

@@ -291,7 +291,7 @@ CONFIG_DB の購読は step 4 以降にのみ有効となるため、`PAC_PORT_C
 | hostapdmgrd → | `HOSTAPD_GLOBAL_CONFIG_TABLE` | [`RADIUS_SERVER`](./radius-server.md) | `m_radiusServerInUse != ""` 確認後でないと hostapd が起動しない。RADIUS_SERVER 空なら `createConfFile()` は呼ばれない (`hostapdmgr.cpp:293`) |
 | hostapdmgrd → | `HOSTAPD_GLOBAL_CONFIG_TABLE` | [`RADIUS`](./radius.md) | global key / NAS 設定を hostapd.conf に統合 (`hostapdmgr.cpp:46`) |
 | hostapdmgrd → | `PAC_PORT_CONFIG_TABLE` | (自テーブル) | global enable 時に全ポートの `capabilities`/`control_mode`/`link_status` を参照して conf 生成可否を判断 (`hostapdmgr.cpp:169,199,293`) |
-| mabmgrd → | — | `MAB_PORT_CONFIG_TABLE` | MAB 有効化・認証タイプは mabmgrd が独立管理。PAC_PORT_CONFIG_TABLE とは別プロセス (`mabmgr.cpp:35`) |
+| mabmgrd → | — | `MAB_PORT_CONFIG` | MAB 有効化・認証タイプは mabmgrd が独立管理。PAC_PORT_CONFIG_TABLE とは別プロセス (`mabmgr.cpp:35`) |
 | fpinfra 依存 | `PAC_PORT_CONFIG_TABLE` | (プラットフォームインタフェース) | `fpGetIntIfNumFromHostIfName()` が失敗すると設定エントリがスキップされる。インタフェース存在がハードな前提条件 (`pacmgr.cpp:172`) |
 | YANG | — | — | SONiC YANG モデル未定義のため REST/gNMI 経路なし |
 

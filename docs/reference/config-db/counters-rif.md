@@ -744,5 +744,5 @@ VoQ シャーシ環境 (`gMySwitchType == "voq"` かつ `isChassisDbInUse()`) �
 [^14]: removeRifFromFlexCounter 削除シーケンス: `sonic-swss/orchagent/intfsorch.cpp:1559-1566`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1559>
 [^15]: ref_count ブロック: `sonic-swss/orchagent/intfsorch.cpp:1327-1330`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1327>
 [^16]: voqSyncAddIntf / voqSyncDelIntf: `sonic-swss/orchagent/intfsorch.cpp:1672-1748`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/intfsorch.cpp#L1672>
-[^13]: FLEX_COUNTER_DELAY_SEC 定数: `sonic-swss/orchagent/flexcounterorch.cpp:44`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44>
-[^14]: RIF_COUNTER_ID_LIST / RIF_PLUGIN_FIELD 定数: `sonic-swss-common/common/schema.h:302,330`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d/common/schema.h#L302>
+[^DELAY_SEC]: FLEX_COUNTER_DELAY_SEC 定数: `sonic-swss/orchagent/flexcounterorch.cpp:44`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp#L44>
+[^SCHEMA_CONST]: RIF_COUNTER_ID_LIST / RIF_PLUGIN_FIELD 定数: `sonic-swss-common/common/schema.h:302,330`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d/common/schema.h#L302>
