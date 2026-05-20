@@ -360,7 +360,7 @@ related:
 
 - syncd の `SAI_REDIS` ログや `saidump` 出力中の `SAI_*_ATTR_*` を本表で検索すれば、
   どの orch が書いた・どの CONFIG_DB に対応するかを当てやすい。
-- [ASIC_DB](../reference/glossary.md#term-asic_db) (`COUNTERS_DB` 上の [Redis](../reference/glossary.md#term-redis)) を `redis-cli -n 1 HGETALL ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x...`
+- [ASIC_DB](../reference/glossary.md#term-asic_db) ([Redis](../reference/glossary.md#term-redis) DB ID 1) を `redis-cli -n 1 HGETALL ASIC_STATE:SAI_OBJECT_TYPE_PORT:oid:0x...`
   すると、ここに並ぶ属性キーがそのまま値として現れる。
 - 完全な仕様（取得可否・型・デフォルト値・mandatory flag）は SAI ヘッダの doxygen コメントに記載。
   本表は「実装で実際に触られているかどうか」を補完するもの。

@@ -124,9 +124,11 @@ grep -lE '^verification: discrepancy-found' -r docs/ \
 
 # 3. lint
 for s in check_broken_links check_pages_integrity check_runbook_status \
-         check_monitor_consistency check_link_density check_citation_quality \
-         check_stale_verified check_discrepancy_related \
-         check_verification_self_consistency; do
+         check_runbook_structure check_monitor_consistency check_link_density \
+         check_citation_quality check_stale_verified check_discrepancy_related \
+         check_partial_boundary check_limitations_section \
+         check_troubleshoot_section check_ni_workaround_depth \
+         check_verification_self_consistency check_sources_freshness; do
   echo "=== $s ==="; python meta/scripts/$s.py --check 2>&1 | tail -3
 done
 

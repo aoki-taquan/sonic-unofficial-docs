@@ -58,7 +58,7 @@ flowchart TD
 show chassis modules status
 show chassis modules midplane-status
 sonic-db-cli STATE_DB hgetall "CHASSIS_MODULE_TABLE|DPU0"
-sonic-db-cli CHASSIS_STATE_DB hgetall "CHASSIS_MIDPLANE_TABLE|DPU0"
+sonic-db-cli STATE_DB hgetall "CHASSIS_MIDPLANE_TABLE|CHASSIS_MIDPLANE DPU0"
 ```
 
 ### 2. DPU 上の ENI 残
