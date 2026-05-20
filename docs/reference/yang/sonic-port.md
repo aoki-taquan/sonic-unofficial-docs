@@ -31,7 +31,7 @@ related:
 - import: `sonic-types`, `sonic-device_metadata`, `sonic-macsec`
 - top container: `sonic-port`
 
-PORT yang Module for SONiC OS[^1]
+PORT yang Module for [SONiC](../../reference/glossary.md#term-sonic) OS[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -121,8 +121,8 @@ module: sonic-port
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `name` | `sonic-port/PORT/PORT_LIST/name` | `string` | yes |  | length 1..128 | Physical port name (e.g., Ethernet0). |
-| `core_id` | `sonic-port/PORT/PORT_LIST/core_id` | `string` |  |  | length 1..16 | The ASIC core where the port belongs to. |
-| `core_port_id` | `sonic-port/PORT/PORT_LIST/core_port_id` | `string` |  |  | length 1..16 | The ASIC core port for this port. |
+| `core_id` | `sonic-port/PORT/PORT_LIST/core_id` | `string` |  |  | length 1..16 | The [ASIC](../../reference/glossary.md#term-asic) core where the port belongs to. |
+| `core_port_id` | `sonic-port/PORT/PORT_LIST/core_port_id` | `string` |  |  | length 1..16 | The [ASIC](../../reference/glossary.md#term-asic) core port for this port. |
 | `num_voq` | `sonic-port/PORT/PORT_LIST/num_voq` | `string` |  |  | length 1..16 | The number of virtual output queue supportted on this port. |
 | `alias` | `sonic-port/PORT/PORT_LIST/alias` | `string` |  |  | length 1..128 | Vendor-specific port alias or front-panel label. |
 | `lanes` | `sonic-port/PORT/PORT_LIST/lanes` | `string` | yes |  | length 1..128 | Number of hardware lanes for the port. This is mandatory for all devices except for chassis devices |
@@ -146,7 +146,7 @@ module: sonic-port
 | `pfc_asym` | `sonic-port/PORT/PORT_LIST/pfc_asym` | `string` |  |  | pattern `on|off` | Asymmetric priority flow control mode. |
 | `tpid` | `sonic-port/PORT/PORT_LIST/tpid` | `stypes:tpid_type` |  |  |  | This leaf describes the possible TPID value that can be configured       					to the specified port if the HW supports TPID configuration. The possible       					values are 0x8100, 0x9100, 0x9200,... |
 | `mux_cable` | `sonic-port/PORT/PORT_LIST/mux_cable` | `boolean` |  |  |  | Whether the port is connected to a mux cable for dual-ToR deployments. |
-| `macsec` | `sonic-port/PORT/PORT_LIST/macsec` | `leafref` |  |  | /macsec:sonic-macsec/macsec:MACSEC_PROFILE/macsec:MACSEC_PROFILE_LIST/macsec:name | MACsec profile name applied to the port. |
+| `macsec` | `sonic-port/PORT/PORT_LIST/macsec` | `leafref` |  |  | /macsec:sonic-macsec/macsec:MACSEC_PROFILE/macsec:MACSEC_PROFILE_LIST/macsec:name | [MACsec](../../reference/glossary.md#term-macsec) profile name applied to the port. |
 | `tx_power` | `sonic-port/PORT/PORT_LIST/tx_power` | `decimal64` |  |  |  | Target output power(dBm) for the 400G ZR transceiver |
 | `laser_freq` | `sonic-port/PORT/PORT_LIST/laser_freq` | `int32` |  |  |  | Target laser frequency(GHz) for the 400G ZR transceiver |
 | `fast_linkup` | `sonic-port/PORT/PORT_LIST/fast_linkup` | `boolean` |  | false |  | Enable or disable fast link-up on the port |
@@ -216,4 +216,4 @@ show interfaces status
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 02acfb62978e -->

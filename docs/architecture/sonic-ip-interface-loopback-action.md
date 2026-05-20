@@ -36,7 +36,7 @@ related:
 
 ## 概要
 
-ルータが受信したパケットをルーティングテーブルに従って転送した結果、**同じ [RIF](../reference/glossary.md#term-rif) (Router Interface) から出ていく** ケースが発生することがある。例: スパイン側にデフォルト経路を持っているリーフで、サーバから来たトラフィックが何らかの設定ミスでスパインに転送されず、同じインタフェースに出戻る、いわゆる *ASIC ループバック* / *bounce* 現象。[SAI](../reference/glossary.md#term-sai) のデフォルト挙動はそのまま **forward** で、これによってループや帯域の浪費が起こり得る[^1]。
+ルータが受信したパケットをルーティングテーブルに従って転送した結果、**同じ [RIF](../reference/glossary.md#term-rif) (Router Interface) から出ていく** ケースが発生することがある。例: スパイン側にデフォルト経路を持っているリーフで、サーバから来たトラフィックが何らかの設定ミスでスパインに転送されず、同じインタフェースに出戻る、いわゆる *[ASIC](../reference/glossary.md#term-asic) ループバック* / *bounce* 現象。[SAI](../reference/glossary.md#term-sai) のデフォルト挙動はそのまま **forward** で、これによってループや帯域の浪費が起こり得る[^1]。
 
 本機能は IP インタフェース単位で **`drop` / `forward`** を選択できるようにし、`drop` 設定時は ASIC レベルで出戻りパケットをハードウェアドロップする。`drop` でドロップされたパケットは **RIF カウンタの `TX_ERR`** に計上される[^1]。設定を持たない既存インタフェースは従来どおり SAI 既定の `forward` で振る舞う。
 
@@ -283,4 +283,4 @@ redis-cli -n 4 hgetall 'INTERFACE|Ethernet0'
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: c006405759d8 -->

@@ -39,27 +39,26 @@ related:
 
 `ipv6_use_link_local_only` フィールドは `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` テーブルの属性ロウに共通して存在し、対象インターフェースで IPv6 link-local アドレス自動生成 (EUI-64) を有効にする[^1]。
 
-有効化すると、手動でグローバル IPv6 アドレスを設定しない場合でも `FE80::/64` の link-local アドレスが自動生成される。BGP unnumbered ピアリング (RFC 5549) や ICMPv6 近隣探索 (NDP) を利用する IPv6 データセンターネットワークで使われる。
+有効化すると、手動でグローバル IPv6 アドレスを設定しない場合でも `FE80::/64` の link-local アドレスが自動生成される。[BGP](../../reference/glossary.md#term-bgp) unnumbered ピアリング (RFC 5549) や ICMPv6 近隣探索 ([NDP](../../reference/glossary.md#term-ndp)) を利用する IPv6 データセンターネットワークで使われる。
 
 <!-- cdb-mermaid -->
-### データフロー
+### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB\nINTERFACE|EthernetX\nipv6_use_link_local_only")]
-  intfmgr["intfmgrd\n(swss)"]
-  APPDB[("APP_DB\nINTF_TABLE")]
-  neighsyncd["neighsyncd\n(swss)"]
-  NEIGH[("APP_DB\nNEIGH_TABLE")]
-
-  CDB --> intfmgr
-  intfmgr --> APPDB
-  neighsyncd -->|"isLinkLocalEnabled()\ncheck"| CDB
-  APPDB -->|link-local neigh 追加| NEIGH
+  CDB[("CONFIG_DB<br/>INTERFACE")]
+  DM["intfmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_INTF_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_router_intf_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から APP_DB までの経路。SAI への転送は `ipv6_use_link_local_only` フィールド自体では発生しない (orchagent は本フィールドを SAI に転送しない)。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造
@@ -74,7 +73,7 @@ VLAN_INTERFACE|<name>               # 属性ロウ (VLAN)
 
 ## フィールド
 
-| フィールド | 型 | YANG default | 説明 |
+| フィールド | 型 | [YANG](../../reference/glossary.md#term-yang) default | 説明 |
 |-----------|----|-------------|------|
 | `ipv6_use_link_local_only` | `mode-status` (`enable`/`disable`) | `disable` | IPv6 link-local アドレス自動生成の on/off |
 
@@ -89,16 +88,16 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 
 | 状況 | 挙動 | コード根拠 |
 |------|------|-----------|
-| CONFIG_DB にフィールドなし (エントリ自体存在) | `intfmgr` は APP_DB に書かない (silent skip) | `intfmgr.cpp:L913` `if (!ipv6_link_local_mode.empty())` |
+| [CONFIG_DB](../../reference/glossary.md#term-config_db) にフィールドなし (エントリ自体存在) | `intfmgr` は APP_DB に書かない (silent skip) | `intfmgr.cpp:L913` `if (!ipv6_link_local_mode.empty())` |
 | CONFIG_DB にフィールドなし (エントリも存在しない) | `neighsync` は `m_cfgInterfaceTable.get()` が false → link-local neigh を無視 | `neighsync.cpp:L215-219` |
 | `"disable"` を明示設定し他属性なし | `mod_entry` でなく `set_entry(None)` → **エントリごと CONFIG_DB から削除** | `config/main.py:L9484` |
-| `"disable"` を明示設定し他属性あり (VRF/IP) | `mod_entry` で `"disable"` を書く (エントリは残る) | `config/main.py:L9482` |
+| `"disable"` を明示設定し他属性あり ([VRF](../../reference/glossary.md#term-vrf)/IP) | `mod_entry` で `"disable"` を書く (エントリは残る) | `config/main.py:L9482` |
 | `"enable"` 設定後 DEL_COMMAND | `m_ipv6LinkLocalModeList.erase()` + `delIpv6LinkLocalNeigh()` で link-local neigh 自動削除 | `intfmgr.cpp:L1081-1086` |
 | warm restart 後 | `m_ipv6LinkLocalModeList` がリセットされ CONFIG_DB replay で再 insert される | `intfmgr.cpp:L917` |
 
-**HLD との乖離**: HLD (doc/ipv6/ipv6_link_local.md) は APP_DB にも `"disable"` が書かれると示唆するが、実装ではフィールドが空の場合は APP_DB への書き込みをスキップする。
+**[HLD](../../reference/glossary.md#term-hld) との乖離**: [HLD](../../reference/glossary.md#term-hld) (doc/ipv6/ipv6_link_local.md) は APP_DB にも `"disable"` が書かれると示唆するが、実装ではフィールドが空の場合は APP_DB への書き込みをスキップする。
 
-**orchagent (dead consumer)**: IntfsOrch は APP_DB の `ipv6_use_link_local_only` フィールドを受け取っても SAI に転送しない。IPv6 link-local 自体は Linux カーネルの IPv6 スタックと intfmgr の sysctl 制御で実現するため、SAI 側の RIF 属性変更は不要。
+**[orchagent](../../reference/glossary.md#term-orchagent) (dead consumer)**: IntfsOrch は APP_DB の `ipv6_use_link_local_only` フィールドを受け取っても [SAI](../../reference/glossary.md#term-sai) に転送しない。IPv6 link-local 自体は Linux カーネルの IPv6 スタックと intfmgr の sysctl 制御で実現するため、[SAI](../../reference/glossary.md#term-sai) 側の [RIF](../../reference/glossary.md#term-rif) 属性変更は不要。
 
 **neighsync の silent drop パターン**:
 - `Ethernet` / `PortChannel` / `Vlan` で始まらないインターフェース名 (例: `eth0`, `lo`, `docker0`) → `isLinkLocalEnabled()` が即 `false` 返却
@@ -112,14 +111,14 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`intfmgrd` は CONFIG_DB の `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` テーブルを購読し、`ipv6_use_link_local_only` フィールドを APP_DB に転送する。この転送はインターフェースの STATE_DB 状態に依存するため、いくつかの順序依存が存在する。
+`intfmgrd` は CONFIG_DB の `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` テーブルを購読し、`ipv6_use_link_local_only` フィールドを APP_DB に転送する。この転送はインターフェースの [STATE_DB](../../reference/glossary.md#term-state_db) 状態に依存するため、いくつかの順序依存が存在する。
 
 ### 検出された順序依存
 
 | # | 依存関係 | 方向 | 緩和策 |
 |---|----------|------|--------|
-| 1 | STATE_DB インターフェース state OK → APP_DB 転送 | **強制先行**（未 OK 時は skip）| `intfmgrd` が自動再キューし、インターフェース UP 後に自然反映 |
-| 2 | VRF STATE_DB エントリ存在 → VRF バインド済みインターフェースへの設定 | 条件付き先行（VRF 未 ready 時は skip）| VRF 作成後に設定するか、自動再キューを利用 |
+| 1 | [STATE_DB](../../reference/glossary.md#term-state_db) インターフェース state OK → APP_DB 転送 | **強制先行**（未 OK 時は skip）| `intfmgrd` が自動再キューし、インターフェース UP 後に自然反映 |
+| 2 | [VRF](../../reference/glossary.md#term-vrf) [STATE_DB](../../reference/glossary.md#term-state_db) エントリ存在 → [VRF](../../reference/glossary.md#term-vrf) バインド済みインターフェースへの設定 | 条件付き先行（VRF 未 ready 時は skip）| VRF 作成後に設定するか、自動再キューを利用 |
 | 3 | CONFIG_DB 書込み → `neighsyncd` の neigh フィルタリング | CONFIG_DB が正 source（APP_DB 転送完了を待たない） | APP_DB 転送前でも `neighsyncd` は CONFIG_DB を直接参照する |
 | 4 | CONFIG_DB への `"disable"` 書込み → NEIGH_TABLE 即時削除 | 同期的（同一イベント処理内） | `"disable"` 後の link-local neigh は即時消えることを考慮 |
 
@@ -129,9 +128,9 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 
 **VRF バインド時の追加チェック (依存 #2)**: インターフェースが VRF に所属する場合、`intfmgr.cpp:L839-843` で VRF の `STATE_VRF_TABLE` エントリも確認する。VRF が未作成の状態で `ipv6_use_link_local_only` を設定しても APP_DB 転送がスキップされる。実運用では VRF 作成（`VRF|<name>` → `vrfmgrd` → STATE_VRF_TABLE）後にインターフェース属性を設定することが推奨される（evidence: `intfmgr.cpp:839-843`）。
 
-**neighsyncd の CONFIG_DB 直接参照 (依存 #3)**: `neighsync.cpp` の `isLinkLocalEnabled()` は APP_DB ではなく CONFIG_DB を直接参照する（`m_cfgInterfaceTable.get()` / `m_cfgVlanInterfaceTable.get()` / `m_cfgLagInterfaceTable.get()`）。このため `intfmgrd` による APP_DB 転送が完了していなくても、CONFIG_DB に `"enable"` が書かれた時点から link-local neigh の NEIGH_TABLE への書込みが始まる。CONFIG_DB が削除されると即座にフィルタアウトされる（evidence: `neighsync.cpp:193-239`）。
+**[neighsyncd](../../reference/glossary.md#term-neighsyncd) の CONFIG_DB 直接参照 (依存 #3)**: `neighsync.cpp` の `isLinkLocalEnabled()` は APP_DB ではなく CONFIG_DB を直接参照する（`m_cfgInterfaceTable.get()` / `m_cfgVlanInterfaceTable.get()` / `m_cfgLagInterfaceTable.get()`）。このため `intfmgrd` による APP_DB 転送が完了していなくても、CONFIG_DB に `"enable"` が書かれた時点から link-local neigh の NEIGH_TABLE への書込みが始まる。CONFIG_DB が削除されると即座にフィルタアウトされる（evidence: `neighsync.cpp:193-239`）。
 
-**disable 時の即時 neigh 削除 (依存 #4)**: `intfmgrd` が `"disable"` イベントを受け取ると、`m_ipv6LinkLocalModeList.erase(alias)` と `delIpv6LinkLocalNeigh(alias)` を同一処理内で同期的に実行する。この削除は CONFIG_DB イベント受信時に即時トリガーされる。`"disable"` 書込みと APP_DB NEIGH_TABLE 削除は実質的に同時であるため、運用変更時には接続中の BGP unnumbered セッションへの影響を考慮すること（evidence: `intfmgr.cpp:920-923`）。
+**disable 時の即時 neigh 削除 (依存 #4)**: `intfmgrd` が `"disable"` イベントを受け取ると、`m_ipv6LinkLocalModeList.erase(alias)` と `delIpv6LinkLocalNeigh(alias)` を同一処理内で同期的に実行する。この削除は CONFIG_DB イベント受信時に即時トリガーされる。`"disable"` 書込みと APP_DB NEIGH_TABLE 削除は実質的に同時であるため、運用変更時には接続中の [BGP](../../reference/glossary.md#term-bgp) unnumbered セッションへの影響を考慮すること（evidence: `intfmgr.cpp:920-923`）。
 
 <!-- /ordering -->
 
@@ -145,27 +144,27 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 | 種別 | 識別子 | 参照位置 | 役割 |
 |------|--------|----------|------|
 | CONFIG_DB | `INTERFACE` (属性ロウ) | `cfgmgr/intfmgr.cpp:817-820` | Ethernet 系の一次格納 |
-| CONFIG_DB | `PORTCHANNEL_INTERFACE` | 同上 (共通 parser) | PortChannel 系の一次格納 |
-| CONFIG_DB | `VLAN_INTERFACE` | 同上 (共通 parser) | VLAN 系の一次格納 |
+| CONFIG_DB | `PORTCHANNEL_INTERFACE` | 同上 (共通 parser) | [PortChannel](../../reference/glossary.md#term-portchannel) 系の一次格納 |
+| CONFIG_DB | `VLAN_INTERFACE` | 同上 (共通 parser) | [VLAN](../../reference/glossary.md#term-vlan) 系の一次格納 |
 | CONFIG_DB | `PORT` / `PORTCHANNEL` / `VLAN` | `show/main.py:1611-1623` | `show ipv6 link-local-mode` の母集合 |
 | STATE_DB | `PORT_TABLE` / `LAG_TABLE` / `VLAN_TABLE` | `intfmgr.cpp:833-837` (`isIntfStateOk`) | APP_DB 転送の gating (Phase B 既述) |
 | STATE_DB | `VRF_TABLE` | `intfmgr.cpp:839-843` | VRF バインド時の gating (Phase B 既述) |
-| APP_DB | `INTF_TABLE` | `intfmgr.cpp:926` (`fvTuple`) | `"enable"` 時に転送、ただし orchagent は dead consumer |
+| APP_DB | `INTF_TABLE` | `intfmgr.cpp:926` (`fvTuple`) | `"enable"` 時に転送、ただし [orchagent](../../reference/glossary.md#term-orchagent) は dead consumer |
 | APP_DB | `NEIGH_TABLE` | `neighsyncd/neighsync.cpp:227` | link-local neigh 登録時のフィルタキー |
 | daemon | `intfmgrd` | `cfgmgr/intfmgr.cpp` | CONFIG_DB → APP_DB 転送と `m_ipv6LinkLocalModeList` 管理 |
 | daemon | `neighsyncd` | `neighsync.cpp:193-239` | **CONFIG_DB を直接参照** (APP_DB 経由ではない) |
-| daemon | `orchagent` IntfsOrch | `orchagent/intfsorch.cpp` | APP_DB を購読するが本フィールドを SAI 転送しない (dead consumer) |
+| daemon | `orchagent` IntfsOrch | `orchagent/intfsorch.cpp` | APP_DB を購読するが本フィールドを [SAI](../../reference/glossary.md#term-sai) 転送しない (dead consumer) |
 | CLI (config) | `config interface ipv6 enable/disable use-link-local-only` | `config/main.py:L9462-L9484` | 個別 IF への書込み、テーブルは `get_interface_table_name()` で判別 |
-| CLI (config) | `config ipv6 enable/disable link-local` | `config/main.py` (`enable_ipv6_link_local_all` 系) | 全 IF 一括、VLAN/PortChannel member は除外 |
+| CLI (config) | `config ipv6 enable/disable link-local` | `config/main.py` (`enable_ipv6_link_local_all` 系) | 全 IF 一括、[VLAN](../../reference/glossary.md#term-vlan)/[PortChannel](../../reference/glossary.md#term-portchannel) member は除外 |
 | CLI (show) | `show ipv6 link-local-mode` | `show/main.py:1611-1630` | `PORT`/`PORTCHANNEL`/`VLAN` と INTERFACE 属性ロウの join 表示 |
 | YANG | `sonic-interface:INTERFACE_LIST/ipv6_use_link_local_only` | `sonic-interface.yang:95-99` | スキーマ宣言、`default disable` |
-| YANG | `sonic-portchannel-interface` / `sonic-vlan-interface` | 同様の leaf | PortChannel / VLAN 用 |
+| YANG | `sonic-portchannel-interface` / `sonic-vlan-interface` | 同様の leaf | [PortChannel](../../reference/glossary.md#term-portchannel) / [VLAN](../../reference/glossary.md#term-vlan) 用 |
 | YANG 型 | `sonic-types:mode-status` | `sonic-types.yang` | `enum enable` / `enum disable` |
 
 ### 整合性メモ
 
 - **三テーブル共有**: `INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` はフィールド名・型・semantics が完全に同一で、`intfmgr.cpp` の `doIntfGeneralTask()` が共通 parser で処理する。CLI レイヤだけが `get_interface_table_name(interface_name)` で書き分ける
-- **APP_DB は dead path**: `intfmgr` は `INTF_TABLE` に `ipv6_use_link_local_only` を転送するが、orchagent IntfsOrch は受信しても SAI に渡さない。実効的な依存先は `neighsyncd` であり、しかも `neighsyncd` は CONFIG_DB を直接参照するため APP_DB の値変更は実質的に観測者がいない
+- **APP_DB は dead path**: `intfmgr` は `INTF_TABLE` に `ipv6_use_link_local_only` を転送するが、[orchagent](../../reference/glossary.md#term-orchagent) IntfsOrch は受信しても SAI に渡さない。実効的な依存先は `neighsyncd` であり、しかも `neighsyncd` は CONFIG_DB を直接参照するため APP_DB の値変更は実質的に観測者がいない
 - **`show` 母集合の非対称**: `show ipv6 link-local-mode` は PORT / PORTCHANNEL / VLAN を全件走査し、INTERFACE 属性ロウが欠如するポートを `Disabled` 表示する。属性ロウ削除と `"disable"` 設定はランタイム上区別されない (Phase A の "disable は属性ロウ自体を削除する" 挙動と整合)
 - **YANG default と実装の役割分担**: YANG `default disable` はスキーマ宣言上の値で、`intfmgr` のフィールド欠如時 fallback (APP_DB に書かない) とは別レイヤ。YANG validation を通った絶対無設定状態でも `intfmgrd` は何もしない
 
@@ -194,13 +193,13 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 
 #### 1 & 2. インターフェース / VRF 未 ready による再キュー
 
-`intfmgr.cpp:832-843` の冒頭ゲートでは、インターフェース（`STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_VLAN_TABLE`）および VRF（`STATE_VRF_TABLE`）の両方が ready である必要がある。どちらかが未登録の場合 `return false` となり、swss ConsumerStateTable の再キューメカニズムで自動リトライされる。
+`intfmgr.cpp:832-843` の冒頭ゲートでは、インターフェース（`STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_VLAN_TABLE`）および VRF（`STATE_VRF_TABLE`）の両方が ready である必要がある。どちらかが未登録の場合 `return false` となり、swss [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) の再キューメカニズムで自動リトライされる。
 
 この挙動自体は意図的な設計だが、**`SWSS_LOG_DEBUG` レベル**のためデフォルト設定では出力されない。`ipv6_use_link_local_only=enable` を設定してもすぐに効果が現れない場合、インターフェース初期化遅延が原因である可能性がある。
 
 #### 3. `delIpv6LinkLocalNeigh()` — `ip neigh del` 失敗の無視
 
-`disable` イベント受信時、`intfmgrd` は `delIpv6LinkLocalNeigh()` を呼び出して APP_DB `NEIGH_TABLE` の link-local エントリを `ip neigh del` コマンド経由で削除する。しかし `swss::exec()` の戻り値をチェックしていないため (`intfmgr.cpp:733`)、コマンドが失敗してもカーネルの近傍キャッシュにエントリが残存する。残存した link-local neigh は NDP タイムアウト（通常数十秒〜数分）まで有効のままとなる。
+`disable` イベント受信時、`intfmgrd` は `delIpv6LinkLocalNeigh()` を呼び出して APP_DB `NEIGH_TABLE` の link-local エントリを `ip neigh del` コマンド経由で削除する。しかし `swss::exec()` の戻り値をチェックしていないため (`intfmgr.cpp:733`)、コマンドが失敗してもカーネルの近傍キャッシュにエントリが残存する。残存した link-local neigh は [NDP](../../reference/glossary.md#term-ndp) タイムアウト（通常数十秒〜数分）まで有効のままとなる。
 
 #### 4. `neighsyncd` の CONFIG_DB 参照失敗
 
@@ -295,19 +294,19 @@ STATE_DB への書込はインタフェース設定処理全体の一部であ�
 
 ### カーネル操作（DB 書込なし）
 
-disable 時に `delIpv6LinkLocalNeigh()` が呼ばれ、NEIGH_TABLE (APP_DB) から FE80::/64 スコープのネイバーエントリを検索し `ip neigh del` コマンドでカーネルの近隣テーブルから削除する（`intfmgr.cpp:712-738`）。DB への書込は行われないが、カーネル操作によって neighsyncd が NEIGH_TABLE を更新する可能性がある。
+disable 時に `delIpv6LinkLocalNeigh()` が呼ばれ、NEIGH_TABLE (APP_DB) から FE80::/64 スコープのネイバーエントリを検索し `ip neigh del` コマンドでカーネルの近隣テーブルから削除する（`intfmgr.cpp:712-738`）。DB への書込は行われないが、カーネル操作によって [neighsyncd](../../reference/glossary.md#term-neighsyncd) が NEIGH_TABLE を更新する可能性がある。
 
 ### ASIC_DB への影響
 
-APP_DB.INTF_TABLE の `ipv6_use_link_local_only` フィールドは IntfsOrch (orchagent) が購読するが、このフィールドは SAI API に転送しないため **ASIC_DB への書込は発生しない**（dead consumer、HLD なし）。
+APP_DB.INTF_TABLE の `ipv6_use_link_local_only` フィールドは IntfsOrch (orchagent) が購読するが、このフィールドは SAI API に転送しないため **[ASIC_DB](../../reference/glossary.md#term-asic_db) への書込は発生しない**（dead consumer、[HLD](../../reference/glossary.md#term-hld) なし）。
 
 ### 副次書込サマリ
 
 | 副次 DB | テーブル | トリガ | 書込主体 |
 |---------|---------|--------|---------|
-| APP_DB | `INTF_TABLE` | SET (enable / disable) | intfmgrd |
-| STATE_DB | `INTERFACE_TABLE` | SET 処理完了時 | intfmgrd |
-| カーネル | 近隣テーブル | disable 時 | intfmgrd (`ip neigh del`) |
+| APP_DB | `INTF_TABLE` | SET (enable / disable) | [intfmgrd](../../reference/glossary.md#term-intfmgrd) |
+| STATE_DB | `INTERFACE_TABLE` | SET 処理完了時 | [intfmgrd](../../reference/glossary.md#term-intfmgrd) |
+| カーネル | 近隣テーブル | disable 時 | [intfmgrd](../../reference/glossary.md#term-intfmgrd) (`ip neigh del`) |
 <!-- /side-effects -->
 
 <!-- pubsub -->
@@ -328,7 +327,7 @@ CFG_VLAN_SUB_INTF_TABLE_NAME,
 CFG_VOQ_INBAND_INTERFACE_TABLE_NAME,
 ```
 
-`IntfMgr` は `Orch(cfgDb, tableNames)` を継承するため、Orch 基底クラスが各テーブルを `ConsumerStateTable`（Redis keyspace notification）でラップして `Executor` に登録する。`ipv6_use_link_local_only` フィールドへの `HSET`/`DEL` が INTERFACE / PORTCHANNEL_INTERFACE / VLAN_INTERFACE テーブルで発生すると `doIntfGeneralTask()` が駆動される。明示的な `PUBLISH` コマンドは不要で、CONFIG_DB への書き込み自体がトリガとなる。
+`IntfMgr` は `Orch(cfgDb, tableNames)` を継承するため、Orch 基底クラスが各テーブルを `ConsumerStateTable`（[Redis](../../reference/glossary.md#term-redis) keyspace notification）でラップして `Executor` に登録する。`ipv6_use_link_local_only` フィールドへの `HSET`/`DEL` が INTERFACE / PORTCHANNEL_INTERFACE / VLAN_INTERFACE テーブルで発生すると `doIntfGeneralTask()` が駆動される。明示的な `PUBLISH` コマンドは不要で、CONFIG_DB への書き込み自体がトリガとなる。
 
 ### IntfMgr → APPL_DB (ProducerStateTable)
 
@@ -373,13 +372,13 @@ flowchart TD
 
 | Publisher | チャンネル種別 | テーブル | Subscriber | 備考 |
 |-----------|-------------|---------|------------|------|
-| CLI / minigraph | ConsumerStateTable (Orch 継承) | `CONFIG_DB INTERFACE\|<name>` 等 | IntfMgrd | `HSET` トリガ |
-| IntfMgrd | ProducerStateTable | `APPL_DB INTF_TABLE\|<name>` | IntfsOrch | dead consumer（SAI 転送なし） |
-| kernel netlink | rtnetlink `RTM_NEWNEIGH` | — | neighsyncd | DB pubsub 外 |
+| CLI / minigraph | [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) (Orch 継承) | `CONFIG_DB INTERFACE\|<name>` 等 | IntfMgrd | `HSET` トリガ |
+| IntfMgrd | [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) | `APPL_DB INTF_TABLE\|<name>` | IntfsOrch | dead consumer（SAI 転送なし） |
+| kernel netlink | rtnetlink `RTM_NEWNEIGH` | — | [neighsyncd](../../reference/glossary.md#term-neighsyncd) | DB pubsub 外 |
 | neighsyncd | Table::get（直接参照） | `CONFIG_DB INTERFACE / PORTCHANNEL_INTERFACE / VLAN_INTERFACE` | — | 購読チャンネルなし、同期参照 |
-| neighsyncd | ProducerStateTable | `APPL_DB NEIGH_TABLE\|<intf>:<ip>` | NeighOrch | link-local enabled 時のみ ADD |
+| neighsyncd | [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) | `APPL_DB NEIGH_TABLE\|<intf>:<ip>` | NeighOrch | link-local enabled 時のみ ADD |
 
-> `ipv6_use_link_local_only` の処理経路に Redis `PUBLISH` コマンドや `Notifier` 機構は使用されていない。すべてのトリガは ConsumerStateTable（keyspace notification）または netlink イベントによる。
+> `ipv6_use_link_local_only` の処理経路に [Redis](../../reference/glossary.md#term-redis) `PUBLISH` コマンドや `Notifier` 機構は使用されていない。すべてのトリガは [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable)（keyspace notification）または netlink イベントによる。
 
 <!-- /pubsub -->
 
@@ -390,17 +389,17 @@ flowchart TD
 
 ### intfmgrd は per-asic スコープではない (host 単一インスタンス)
 
-`intfmgrd.cpp` はシングルインスタンスで起動し、複数 ASIC 構成でも追加インスタンスを持たない。`INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` テーブルは host namespace の CONFIG_DB のみに存在し、`asic0..N` の Redis には複製されない。
+`intfmgrd.cpp` はシングルインスタンスで起動し、複数 [ASIC](../../reference/glossary.md#term-asic) 構成でも追加インスタンスを持たない。`INTERFACE` / `PORTCHANNEL_INTERFACE` / `VLAN_INTERFACE` テーブルは host namespace の CONFIG_DB のみに存在し、`asic0..N` の [Redis](../../reference/glossary.md#term-redis) には複製されない。
 
 | 構成 | 挙動 |
 |------|------|
 | single-asic | intfmgrd が 1 インスタンス、host CONFIG_DB を購読 |
-| multi-asic (VOQ chassis 含む) | intfmgrd は host 側で 1 インスタンスのみ起動。各 asic namespace の CONFIG_DB には `INTERFACE` テーブルが存在せず、per-asic intfmgrd インスタンスも起動しない |
-| Virtual Switch (VS) | 挙動は real ASIC と同一。sysctl は実行されるが Linux カーネルの動作に依存 |
+| multi-asic ([VOQ](../../reference/glossary.md#term-voq) chassis 含む) | intfmgrd は host 側で 1 インスタンスのみ起動。各 asic namespace の CONFIG_DB には `INTERFACE` テーブルが存在せず、per-asic intfmgrd インスタンスも起動しない |
+| Virtual Switch (VS) | 挙動は real [ASIC](../../reference/glossary.md#term-asic) と同一。sysctl は実行されるが Linux カーネルの動作に依存 |
 
 ### Linux sysctl 依存（カーネルドライバ不問）
 
-`enableIpv6Flag()` が実行する `net.ipv6.conf.<alias>.disable_ipv6 = 0` は Linux カーネルの IPv6 スタック制御であり、ASIC / SAI ドライバとは独立している。SAI API の呼び出しは一切なく、ASIC_DB への書込も発生しない（dead consumer の確認は Phase G 済み）。このため、Broadcom / Mellanox / Barefoot / Cisco など ASIC 種別を問わず動作は一定である。
+`enableIpv6Flag()` が実行する `net.ipv6.conf.<alias>.disable_ipv6 = 0` は Linux カーネルの IPv6 スタック制御であり、[ASIC](../../reference/glossary.md#term-asic) / SAI ドライバとは独立している。SAI API の呼び出しは一切なく、[ASIC_DB](../../reference/glossary.md#term-asic_db) への書込も発生しない（dead consumer の確認は Phase G 済み）。このため、Broadcom / Mellanox / Barefoot / Cisco など ASIC 種別を問わず動作は一定である。
 
 ### neighsyncd の動作もプラットフォーム不問
 
@@ -408,7 +407,7 @@ flowchart TD
 
 ### 差異が残る唯一の領域（インターフェース名種別）
 
-Phase E で示したインターフェース名プレフィクス (`Ethernet` / `PortChannel` / `Vlan`) によるテーブル振り分けは、特定 ASIC 機種固有ではなくインターフェース命名規則依存である。スマートスイッチ / DPU などで異なるプレフィクス名を持つインターフェース (`dpu0` 等) が登場した場合、`isLinkLocalEnabled()` が `false` を返して link-local neigh を無視するが、これはプラットフォーム分岐ではなく未サポートインターフェース種別として Phase D (#5) で既述。
+Phase E で示したインターフェース名プレフィクス (`Ethernet` / `PortChannel` / `Vlan`) によるテーブル振り分けは、特定 ASIC 機種固有ではなくインターフェース命名規則依存である。スマートスイッチ / [DPU](../../reference/glossary.md#term-dpu) などで異なるプレフィクス名を持つインターフェース (`dpu0` 等) が登場した場合、`isLinkLocalEnabled()` が `false` を返して link-local neigh を無視するが、これはプラットフォーム分岐ではなく未サポートインターフェース種別として Phase D (#5) で既述。
 <!-- /platform -->
 
 ## 購読者
@@ -466,3 +465,5 @@ show ipv6 link-local-mode
 ## 関連ページ
 - [CONFIG_DB index](index.md)
 - [INTERFACE テーブル](interface.md)
+
+<!-- glossary-links-injected: fefdf2960634 -->

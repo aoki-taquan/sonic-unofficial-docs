@@ -37,7 +37,7 @@ related:
 
 ## 概要
 
-[CRM](../reference/glossary.md#term-crm)（Critical Resource Monitoring）は SONiC で **ASIC リソースの利用状況** を [COUNTERS_DB](../reference/glossary.md#term-counters_db) に publish する仕組みで、[ACL](../reference/glossary.md#term-acl) / [FDB](../reference/glossary.md#term-fdb) / IP route / nexthop など主要リソースに対しては既に実装されている。
+[CRM](../reference/glossary.md#term-crm)（Critical Resource Monitoring）は [SONiC](../reference/glossary.md#term-sonic) で **[ASIC](../reference/glossary.md#term-asic) リソースの利用状況** を [COUNTERS_DB](../reference/glossary.md#term-counters_db) に publish する仕組みで、[ACL](../reference/glossary.md#term-acl) / [FDB](../reference/glossary.md#term-fdb) / IP route / nexthop など主要リソースに対しては既に実装されている。
 
 本 [HLD](../reference/glossary.md#term-hld) は **Generic [SAI](../reference/glossary.md#term-sai) Extension（汎用拡張）テーブル** に対しても CRM をサポートするための設計を定義する[^1]。Generic SAI Extension は **`SAI_OBJECT_TYPE_GENERIC_PROGRAMMABLE`** という抽象を介して、P4 由来の追加テーブル（例: `EXT_VIPV4_TABLE` など）を SAI 経由でハードに降ろすための機構。これらは標準 SAI オブジェクトの列に載っていないため、CRM の resource type も新しく作る必要がある[^1]。
 
@@ -228,4 +228,4 @@ grep -i CRM /var/log/syslog | tail
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 7546137af680 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

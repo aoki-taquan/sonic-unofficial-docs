@@ -44,7 +44,7 @@ related:
 
 `bgp-setup-for-voq-chassis` は、VOQ chassis 上の BGP セッション設計を扱います。要点:
 
-- BGP プロセスは line card の ASIC namespace ごとに起動します。
+- BGP プロセスは line card の [ASIC](../../reference/glossary.md#term-asic) namespace ごとに起動します。
 - chassis 内部の inband BGP（line card 間の同期用）と外向き BGP は別物として扱います。
 - system port を経由する route の next hop は、line card 跨ぎの場合に system port 経由のシグナリングが必要になります。
 
@@ -94,7 +94,7 @@ mirror / ACL の章本文は [07 ACL / CoPP / Mirror](../07-acl-copp-mirror/inde
 
 ## Multi-ASIC Warm Reboot
 
-`multi-asic-warm-reboot` は、Multi-ASIC SONiC の warm reboot 設計を扱います。VOQ chassis では line card 単位 / chassis 単位の両方が議論されます。
+`multi-asic-warm-reboot` は、[Multi-ASIC](../../reference/glossary.md#term-multi-asic) [SONiC](../../reference/glossary.md#term-sonic) の warm reboot 設計を扱います。VOQ chassis では line card 単位 / chassis 単位の両方が議論されます。
 
 - 各 ASIC namespace の [syncd](../../reference/glossary.md#term-syncd) / [orchagent](../../reference/glossary.md#term-orchagent) / bgpd は ASIC ごとに warm restart する。
 - supervisor 側は Chassis DB を温存したまま再起動する。
@@ -142,4 +142,4 @@ VOQ chassis 固有のテーマは、機能としては既存の章（BGP、LAG�
 - `sonic-swss` の `vrforch` / `routeorch` / `lagorch` で system port / system LAG 周りの race fix が散発的に入る。
 - VOQ chassis のテスト基盤 ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)) で multi-DUT scenario の coverage 拡張 PR が定期的にある。
 
-<!-- glossary-links-injected: 841aa1b3e937 -->
+<!-- glossary-links-injected: 5c9b3765d470 -->

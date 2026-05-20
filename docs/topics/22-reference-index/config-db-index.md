@@ -23,7 +23,7 @@ related:
 
 # CONFIG_DB 横断索引
 
-`docs/reference/config-db/` 配下の 76 ページを、Phase B の機能章ごとに table family で並べ直した索引である。[CONFIG_DB](../../reference/glossary.md#term-config_db) は SONiC の構成入力点であり、CLI / [YANG](../../reference/glossary.md#term-yang) / `config_db.json` の三者を裏で同一のスキーマでつないでいる。table 名から章を逆引きする場合も本ページを使う。
+`docs/reference/config-db/` 配下の 76 ページを、Phase B の機能章ごとに table family で並べ直した索引である。[CONFIG_DB](../../reference/glossary.md#term-config_db) は [SONiC](../../reference/glossary.md#term-sonic) の構成入力点であり、CLI / [YANG](../../reference/glossary.md#term-yang) / `config_db.json` の三者を裏で同一のスキーマでつないでいる。table 名から章を逆引きする場合も本ページを使う。
 
 ## 機能章別 table family
 
@@ -140,4 +140,4 @@ related:
 | FLEX_COUNTER_TABLE | 01 章 | 07 / 09 章 (counter 種別ごと) |
 | KDUMP | 01 章 | 11 章 (reboot lifecycle) |
 
-<!-- glossary-links-injected: 126b7f748e8f -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

@@ -41,7 +41,7 @@ related:
 
 ## 概要
 
-[SmartSwitch](../reference/glossary.md#term-smartswitch) では [NPU](../reference/glossary.md#term-npu) 1 台に複数 [DPU](../reference/glossary.md#term-dpu) が接続され、各 DPU は独立した SONiC instance だが Database / GNMI / HA など一部 service を **NPU に offload** している[^1]。本 [HLD](../reference/glossary.md#term-hld) は **[gNOI](../reference/glossary.md#term-gnoi) API 駆動で 1 台ずつ DPU を独立アップグレード** する手順を定義し、ネットワーク・他 DPU・NPU への影響を最小化する。前提として **DPU と NPU の SONiC Host Services / GNMI が健全** であること（不応答 DPU の復旧用途ではない）。
+[SmartSwitch](../reference/glossary.md#term-smartswitch) では [NPU](../reference/glossary.md#term-npu) 1 台に複数 [DPU](../reference/glossary.md#term-dpu) が接続され、各 DPU は独立した [SONiC](../reference/glossary.md#term-sonic) instance だが Database / GNMI / HA など一部 service を **NPU に offload** している[^1]。本 [HLD](../reference/glossary.md#term-hld) は **[gNOI](../reference/glossary.md#term-gnoi) API 駆動で 1 台ずつ DPU を独立アップグレード** する手順を定義し、ネットワーク・他 DPU・NPU への影響を最小化する。前提として **DPU と NPU の SONiC Host Services / GNMI が健全** であること（不応答 DPU の復旧用途ではない）。
 
 ## 動作仕様
 
@@ -186,4 +186,4 @@ docker exec database redis-cli -n 6 keys 'CHASSIS_MODULE_TABLE|*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 0f6974a3283c -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

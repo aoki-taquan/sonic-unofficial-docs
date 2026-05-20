@@ -61,7 +61,7 @@ related:
 
 # DASH と SmartSwitch
 
-この章は、SONiC で「[NPU](../../reference/glossary.md#term-npu) スイッチに [DPU](../../reference/glossary.md#term-dpu) をぶら下げ、その上で [DASH](../../reference/glossary.md#term-dash) オーバーレイを処理する」[SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成を読み解くための入口です。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) で「[NPU](../../reference/glossary.md#term-npu) スイッチに [DPU](../../reference/glossary.md#term-dpu) をぶら下げ、その上で [DASH](../../reference/glossary.md#term-dash) オーバーレイを処理する」[SmartSwitch](../../reference/glossary.md#term-smartswitch) 構成を読み解くための入口です。
 
 DASH 系と SmartSwitch 系の既存 [HLD](../../reference/glossary.md#term-hld) は、NPU 側 / DPU 側 / HA / 管理経路にまたがって分散しています。ここでは「NPU と DPU はどう役割を分けているのか」「コントローラから入れた設定はどの DB を通って DPU に届くのか」「HA フェイルオーバーや DPU の reboot / upgrade はどの daemon が動かすのか」という運用者・設計者の質問順に並べ直します。
 
@@ -79,7 +79,7 @@ DASH 系と SmartSwitch 系の既存 [HLD](../../reference/glossary.md#term-hld)
 2. [内部構造](internals.md): NPU-DPU DB アーキテクチャ、ENI ベース転送、DASH ACL タグ。
 3. [設定](setup.md): DPU IP 割当、gNMI フィードバック、DASH KVM での検証。
 4. [運用](operations.md): HA フェイルオーバー、PMON、reboot / shutdown / upgrade。
-5. [発展トピック](advanced.md): gNOI 系との関係、Multi-ASIC / [VOQ](../../reference/glossary.md#term-voq) との境界、管理章への橋渡し。
+5. [発展トピック](advanced.md): gNOI 系との関係、[Multi-ASIC](../../reference/glossary.md#term-multi-asic) / [VOQ](../../reference/glossary.md#term-voq) との境界、管理章への橋渡し。
 
 ## 関連ページ
 
@@ -151,4 +151,4 @@ DASH 系と SmartSwitch 系の既存 [HLD](../../reference/glossary.md#term-hld)
 - [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
 - [Multi-ASIC / VOQ Chassis](../12-multi-asic-voq/index.md)
 
-<!-- glossary-links-injected: 7409e80dd9a7 -->
+<!-- glossary-links-injected: 3abb11a5818e -->

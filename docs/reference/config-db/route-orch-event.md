@@ -46,11 +46,11 @@ related:
 
 ## 概要
 
-`orchagent` の `RouteOrch` は経路の SAI プログラミング完了時に **2 種類の通知** を送出する。
+`orchagent` の `RouteOrch` は経路の [SAI](../../reference/glossary.md#term-sai) プログラミング完了時に **2 種類の通知** を送出する。
 
 | 種別 | 機構 | 送信先 | 目的 |
 |------|------|--------|------|
-| **ResponsePublisher** | `publishRouteState()` | APPL_STATE_DB + `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` | fpmsyncd へのプログラミング結果フィードバック |
+| **ResponsePublisher** | `publishRouteState()` | APPL_STATE_DB + `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` | [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) へのプログラミング結果フィードバック |
 | **NextHopObserver** | `notifyNextHopChangeObservers()` | 内部 Observer（NeighOrch, MirrorOrch 等） | ルーティング変化のオーケストレーション内通知 |
 
 !!! info "関連ページ"
@@ -91,10 +91,10 @@ flowchart LR
 
 | 状況 | 行番号 |
 |------|--------|
-| `addRoute()` 内: SAI エラー時 | L923 |
+| `addRoute()` 内: [SAI](../../reference/glossary.md#term-sai) エラー時 | L923 |
 | `addRoute()` 内: 既存エントリと完全一致（再 publish） | L1050 |
 | `addRoute()` 内: 重複エントリ追加スキップ時 | L1090 |
-| `addRoutePost()` 末尾: SAI 操作完了後 | L2729 |
+| `addRoutePost()` 末尾: [SAI](../../reference/glossary.md#term-sai) 操作完了後 | L2729 |
 | `removeRoutePost()` 末尾: SAI 操作完了後 | L2970 |
 
 ### 送出フィールド
@@ -129,7 +129,7 @@ void RouteOrch::publishRouteState(const RouteBulkContext& ctx, const ReturnCode&
 protocol.clear();  // → ""
 ```
 
-APPL_DB の SET メッセージから `protocol` フィールドを読み取る (L785–788)[^1]:
+[APPL_DB](../../reference/glossary.md#term-appl_db) の SET メッセージから `protocol` フィールドを読み取る (L785–788)[^1]:
 
 ```cpp
 if (fvField(i) == "protocol" && fvValue(i) != "")
@@ -138,7 +138,7 @@ if (fvField(i) == "protocol" && fvValue(i) != "")
 }
 ```
 
-| APPL_DB の `protocol` フィールド | APPL_STATE_DB の `protocol` 値 |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) の `protocol` フィールド | APPL_STATE_DB の `protocol` 値 |
 |---------------------------------|-------------------------------|
 | `"bgp"` 等（空でない文字列） | そのままコピー |
 | 存在しない、または空文字列 | `""` （空文字列） |
@@ -189,7 +189,7 @@ m_publisher.setBuffered(true);
 m_publisher.m_directDbWrite = true;
 ```
 
-- `setBuffered(true)`: 通知は Redis パイプライン経由でバッファリング
+- `setBuffered(true)`: 通知は [Redis](../../reference/glossary.md#term-redis) パイプライン経由でバッファリング
 - `m_directDbWrite = true`: DB 書き込みはパイプライン経由（非スレッド）
 - `doTask()` の最後に必ず `flush()` が呼ばれる (routeorch.cpp L1231)[^1]:
 
@@ -220,7 +220,7 @@ struct NextHopUpdate
 
 | フィールド | 型 | 説明 |
 |-----------|-----|------|
-| `vrf_id` | `sai_object_id_t` | VRF の SAI オブジェクト ID |
+| `vrf_id` | `sai_object_id_t` | [VRF](../../reference/glossary.md#term-vrf) の SAI オブジェクト ID |
 | `destination` | `IpAddress` | Observer が追跡しているホスト IP アドレス |
 | `prefix` | `IpPrefix` | 現在の最長プレフィックスマッチ |
 | `nexthopGroup` | `NextHopGroupKey` | 新しい nexthop グループキー |
@@ -271,7 +271,7 @@ assert(!entry.second.routeTable.empty());
 
 | Observer | 用途 |
 |---------|------|
-| `NeighOrch` | ARP/ND エントリの nexthop 変化追跡 |
+| `NeighOrch` | [ARP](../../reference/glossary.md#term-arp)/ND エントリの nexthop 変化追跡 |
 | `MirrorOrch` | ミラーセッションの宛先 IP 解決 |
 | `TunnelDecapOrch` | トンネル decap 処理の nexthop 解決 |
 
@@ -290,23 +290,23 @@ assert(!entry.second.routeTable.empty());
 |---|----------|------|--------|
 | 1 | `PortsOrch::allPortsReady()` → `doTask()` 処理開始 | **強制先行** | 未完了時は全エントリ保留、ポート Ready 後に自動再処理 |
 | 2 | `NeighOrch` / `NhgOrch` `doTask()` → `RouteOrch::doTask()` | `m_orchList` 順序で担保 | 同バッチ内で nexthop 登録 → SAI プログラミングが完結 |
-| 3 | VRF の `VRFOrch` 登録 → VRF ルートの SAI プログラミング | **強制先行** | 未登録時はスキップ・自動リトライ |
+| 3 | [VRF](../../reference/glossary.md#term-vrf) の `VRFOrch` 登録 → [VRF](../../reference/glossary.md#term-vrf) ルートの SAI プログラミング | **強制先行** | 未登録時はスキップ・自動リトライ |
 | 4 | SAI バルクコミット → `notifyNextHopChangeObservers` → `publishRouteState` (ADD) | **固定順序** | Observer 通知が RESPONSE_CHANNEL 通知より常に先行 |
-| 5 | `doTask()` 全ルート処理 → `m_publisher.flush()` → fpmsyncd 受信 | バッチ単位 | 個別ルートの即時通知なし。最大 1s の遅延 |
-| 6 | `CONFIG_DB suppress-fib-pending = enabled` + fpmsyncd 起動 → RESPONSE_CHANNEL 購読 | **機能有効化依存** | 無効時 fpmsyncd は RESPONSE_CHANNEL を無視 |
+| 5 | `doTask()` 全ルート処理 → `m_publisher.flush()` → [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) 受信 | バッチ単位 | 個別ルートの即時通知なし。最大 1s の遅延 |
+| 6 | `CONFIG_DB suppress-fib-pending = enabled` + [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) 起動 → RESPONSE_CHANNEL 購読 | **機能有効化依存** | 無効時 fpmsyncd は RESPONSE_CHANNEL を無視 |
 | 7 | `publishRouteState` → `notifyNextHopChangeObservers` (DEL) | **固定順序（ADD と逆）** | DEL 時は ResponsePublisher が Observer より先行 |
 
 ### 主要な制約詳細
 
-**PortsOrch 先行必須 (依存 #1)**: `RouteOrch::doTask()` の冒頭 (routeorch.cpp:609) で `gPortsOrch->allPortsReady()` を確認し、false なら即 return する。ポート初期化が完了するまで APPL_DB に積まれた ROUTE_TABLE エントリは一切処理されず、`publishRouteState()` も `notifyNextHopChangeObservers()` も発火しない（evidence: `routeorch.cpp:605-612`）。
+**PortsOrch 先行必須 (依存 #1)**: `RouteOrch::doTask()` の冒頭 (routeorch.cpp:609) で `gPortsOrch->allPortsReady()` を確認し、false なら即 return する。ポート初期化が完了するまで [APPL_DB](../../reference/glossary.md#term-appl_db) に積まれた [ROUTE_TABLE](../../reference/glossary.md#term-route_table) エントリは一切処理されず、`publishRouteState()` も `notifyNextHopChangeObservers()` も発火しない（evidence: `routeorch.cpp:605-612`）。
 
 **orchList 処理順序 (依存 #2)**: orchdaemon.cpp の `m_orchList` は `gNeighOrch` → `gNhgOrch` → `gCbfNhgOrch` → `gFgNhgOrch` → `gRouteOrch` の順で `doTask()` を呼ぶ (orchdaemon.cpp:500)。これにより同一バッチサイクルで NeighOrch・NhgOrch が処理を完了してから RouteOrch が起動するため、`addRoute()` 内で `hasNhg()` / `hasNextHop()` を確認した時点で同バッチ内のエントリが既に登録済みになる（evidence: `orchdaemon.cpp:500`）。
 
 **ADD 時の固定発火順 (依存 #4)**: `addRoutePost()` の末尾 (routeorch.cpp:2724-2729) で、SAI バルクコミット完了後に `notifyNextHopChangeObservers()` → `publishRouteState()` の順が固定される。Observer（`MirrorOrch` / `NeighOrch` 等）は RESPONSE_CHANNEL 通知より常に先に nexthop 変化を受け取り、CASCADE する SAI 操作を開始する可能性がある（evidence: `routeorch.cpp:2724-2729`）。
 
-**flush はバッチ末尾のみ (依存 #5)**: `m_publisher.setBuffered(true)` のため、個々の `publishRouteState()` は Redis パイプラインにバッファされるだけで即時送出されない。`doTask()` 末尾の `m_publisher.flush()` (routeorch.cpp:1231) でまとめて送出されるため、fpmsyncd が RESPONSE_CHANNEL 通知を受け取るのはバッチ全体の完了後となる（evidence: `routeorch.cpp:57-58`, `routeorch.cpp:1231`）。
+**flush はバッチ末尾のみ (依存 #5)**: `m_publisher.setBuffered(true)` のため、個々の `publishRouteState()` は [Redis](../../reference/glossary.md#term-redis) パイプラインにバッファされるだけで即時送出されない。`doTask()` 末尾の `m_publisher.flush()` (routeorch.cpp:1231) でまとめて送出されるため、fpmsyncd が RESPONSE_CHANNEL 通知を受け取るのはバッチ全体の完了後となる（evidence: `routeorch.cpp:57-58`, `routeorch.cpp:1231`）。
 
-**suppress-fib-pending 設定依存 (依存 #6)**: `fpmsyncd` が RESPONSE_CHANNEL を購読するのは `CONFIG_DB DEVICE_METADATA|localhost.suppress-fib-pending = "enabled"` が設定されている場合のみ (fpmsyncd.cpp:116)。未設定だと orchagent 側が通知を送出しても fpmsyncd は受信しない（Redis Pub/Sub はバッファされないため通知は消失する）。`onRouteResponse()` 内でも `isSuppressionEnabled()` が false なら即 return する (routesync.cpp:3176-3180)（evidence: `fpmsyncd.cpp:113-117`, `routesync.cpp:3176-3180`）。
+**suppress-fib-pending 設定依存 (依存 #6)**: `fpmsyncd` が RESPONSE_CHANNEL を購読するのは `CONFIG_DB DEVICE_METADATA|localhost.suppress-fib-pending = "enabled"` が設定されている場合のみ (fpmsyncd.cpp:116)。未設定だと [orchagent](../../reference/glossary.md#term-orchagent) 側が通知を送出しても fpmsyncd は受信しない（[Redis](../../reference/glossary.md#term-redis) Pub/Sub はバッファされないため通知は消失する）。`onRouteResponse()` 内でも `isSuppressionEnabled()` が false なら即 return する (routesync.cpp:3176-3180)（evidence: `fpmsyncd.cpp:113-117`, `routesync.cpp:3176-3180`）。
 
 <!-- /ordering -->
 
@@ -463,11 +463,11 @@ RouteOrch が `addRoute()` 内で `hasNhg()` / `hasNextHop()` を確認した時
 
 <!-- evidence: meta/_intermediate/cdb-flow/route-orch-event-cross-refs.md -->
 
-全依存が実装レベルの暗黙参照（YANG 未定義テーブル）。
+全依存が実装レベルの暗黙参照（[YANG](../../reference/glossary.md#term-yang) 未定義テーブル）。
 
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
-| `CONFIG_DB DEVICE_METADATA\|localhost.suppress-fib-pending` | 読み取り（起動時 + 動的変更 Subscribe） | fpmsyncd 起動時・DEVICE_METADATA 変更通知受信時 | `fpmsyncd.cpp` L113–117, L278–302 |
+| `CONFIG_DB DEVICE_METADATA\|localhost.suppress-fib-pending` | 読み取り（起動時 + 動的変更 Subscribe） | fpmsyncd 起動時・[DEVICE_METADATA](../../reference/glossary.md#term-device_metadata) 変更通知受信時 | `fpmsyncd.cpp` L113–117, L278–302 |
 | `APPL_STATE_DB ROUTE_TABLE` | 書き込み先（SAI SET 成功時） | `publishRouteState()` が `protocol` / `err_str` を書き込む | `response_publisher.cpp` L93–148 |
 | `fpmsyncd` (`APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` 消費) | Pub/Sub 通知送信先 | `suppress-fib-pending = enabled` かつ fpmsyncd 稼働中のみ | `fpmsyncd.cpp` L78, L116; `routesync.cpp` L3156–3190 |
 | `CONFIG_DB MIRROR_SESSION` | 間接参照（MirrorOrch が `attach()`/`detach()` のトリガ） | MirrorOrch がセッションエントリを処理するとき | `mirrororch.cpp` L517 (`attach`), L557 (`detach`) |
@@ -532,15 +532,15 @@ if (status.ok()) { state_attrs = intent_attrs; }
 
 ### C. addRoutePost() false 返却 → リトライ（APPL_STATE_DB 非更新）
 
-以下の条件では `addRoutePost()` が `false` を返し、`m_toSync` にエントリが残留して次サイクルで再試行される。この間 APPL_STATE_DB は更新されず、`suppress-fib-pending` 使用時は FRR へのプログラミング完了通知が遅延する:
+以下の条件では `addRoutePost()` が `false` を返し、`m_toSync` にエントリが残留して次サイクルで再試行される。この間 APPL_STATE_DB は更新されず、`suppress-fib-pending` 使用時は [FRR](../../reference/glossary.md#term-frr) へのプログラミング完了通知が遅延する:
 
 | 失敗条件 | 行番号 | リトライ先行 |
 |----------|--------|-------------|
 | VRF が `m_syncdRoutes` に未登録 | L2396–2401 | VRF 登録後に自動再処理 |
 | NhgOrch / CbfNhgOrch に NHG 未登録 | L2411–2415 | NHG 登録後に自動再処理 |
-| 単一 NH の RIF が `SAI_NULL_OBJECT_ID` | L2431–2436 | IntfsOrch RIF 作成後に再処理 |
+| 単一 NH の [RIF](../../reference/glossary.md#term-rif) が `SAI_NULL_OBJECT_ID` | L2431–2436 | IntfsOrch [RIF](../../reference/glossary.md#term-rif) 作成後に再処理 |
 | `hasNextHop()` = false | L2440–2445 | NeighOrch 登録後に再処理 |
-| ECMP NHG 未登録（tmp_next_hop フォールバック後） | L2451–2458 | NHG 生成後に再処理 |
+| [ECMP](../../reference/glossary.md#term-ecmp) NHG 未登録（tmp_next_hop フォールバック後） | L2451–2458 | NHG 生成後に再処理 |
 
 ### D. SAI DEL 失敗 → APPL_STATE_DB から先に削除される矛盾
 
@@ -558,7 +558,7 @@ if (status != SAI_STATUS_SUCCESS) {
 publishRouteState(ctx);  // DEL を APPL_STATE_DB に書く
 ```
 
-| 条件 | APPL_STATE_DB | 実際の ASIC |
+| 条件 | APPL_STATE_DB | 実際の [ASIC](../../reference/glossary.md#term-asic) |
 |------|---------------|------------|
 | SAI DEL 失敗かつ `task_success` 扱い | エントリ削除（矛盾） | ルート残存 |
 | SAI DEL 失敗かつ `task_not_processed` など | 更新なし・リトライ | ルート残存 |
@@ -567,11 +567,11 @@ publishRouteState(ctx);  // DEL を APPL_STATE_DB に書く
 
 ### 失敗時の状態まとめ
 
-| 失敗シナリオ | APPL_STATE_DB | RESPONSE_CHANNEL | orchagent |
+| 失敗シナリオ | APPL_STATE_DB | RESPONSE_CHANNEL | [orchagent](../../reference/glossary.md#term-orchagent) |
 |---|---|---|---|
 | SAI ADD 失敗（`addRoutePost` false） | 更新なし | 通知なし | 継続・次サイクルでリトライ |
 | VRF / NH / NHG 未登録 | 更新なし | 通知なし | 継続・自動リトライ |
-| SAI DEL 失敗（task_success 扱い） | エントリ削除（ASIC と矛盾） | DEL 通知送出 | 継続 |
+| SAI DEL 失敗（task_success 扱い） | エントリ削除（[ASIC](../../reference/glossary.md#term-asic) と矛盾） | DEL 通知送出 | 継続 |
 | SAI DEL 失敗（task_not_processed） | 更新なし | 通知なし | 継続・リトライ |
 
 <!-- /failure -->
@@ -596,7 +596,7 @@ publishRouteState(ctx);  // DEL を APPL_STATE_DB に書く
 | `DEFAULT_NUMBER_OF_ECMP_GROUPS` | `128` | SAI `SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` の取得失敗時にフォールバックとして使用 |
 | `DEFAULT_MAX_ECMP_GROUP_SIZE` | `32` | Mellanox プラットフォーム (`MLNX_PLATFORM_SUBSTRING`) でのみ、SAI 取得値を `/ 32` して再計算する際の除数 |
 
-これらは ECMP グループ上限 `m_maxNextHopGroupCount` を決定し、上限超過時に `addRoute()` が ECMP NHG の作成を拒否するため、間接的に `publishRouteState()` が呼ばれない（リトライに入る）条件に影響する（evidence: `routeorch.cpp:60-88`）。
+これらは [ECMP](../../reference/glossary.md#term-ecmp) グループ上限 `m_maxNextHopGroupCount` を決定し、上限超過時に `addRoute()` が [ECMP](../../reference/glossary.md#term-ecmp) NHG の作成を拒否するため、間接的に `publishRouteState()` が呼ばれない（リトライに入る）条件に影響する（evidence: `routeorch.cpp:60-88`）。
 
 VoQ 環境では追加の上限が適用される:
 
@@ -624,7 +624,7 @@ const int routeorch_pri = 5;
 
 | 定数 | 値 | 影響 |
 |------|-----|-----|
-| `routeorch_pri` | `5` | RouteOrch Consumer の優先度。`portsorch_base_pri=40`・`fgnhgorch_pri=15` より低く、高負荷時に ROUTE_TABLE 処理が後回しになる |
+| `routeorch_pri` | `5` | RouteOrch Consumer の優先度。`portsorch_base_pri=40`・`fgnhgorch_pri=15` より低く、高負荷時に [ROUTE_TABLE](../../reference/glossary.md#term-route_table) 処理が後回しになる |
 | `SELECT_TIMEOUT` | `1000 ms` | OrchDaemon セレクトループのタイムアウト。`doTask()` が呼ばれない場合の最大追加遅延（通常は `doTask()` 内 `flush()` で解消） |
 | `DEFAULT_MAX_BULK_SIZE` | `1000` | `gRouteBulker` の最大エントリ数。1 バッチで最大 1000 経路を SAI へ一括コミットし、その後 `publishRouteState()` を発火する |
 
@@ -637,7 +637,7 @@ const auto routeResponseChannelName =
 // → "APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL"
 ```
 
-このチャンネル名はコードで動的生成されるが実質固定値。`suppress-fib-pending = enabled` 時のみ fpmsyncd が購読し、orchagent の `publishRouteState()` 通知を受け取る（evidence: `fpmsyncd.cpp:78, 116`）。
+このチャンネル名はコードで動的生成されるが実質固定値。`suppress-fib-pending = enabled` 時のみ fpmsyncd が購読し、[orchagent](../../reference/glossary.md#term-orchagent) の `publishRouteState()` 通知を受け取る（evidence: `fpmsyncd.cpp:78, 116`）。
 
 <!-- /constants -->
 
@@ -646,7 +646,7 @@ const auto routeResponseChannelName =
 
 > 証跡: `meta/_intermediate/cdb-flow/route-orch-event-side.md`
 
-`RouteOrch` の通知機構は CONFIG_DB 以外の以下の DB・テーブルへ書き込みを行う。
+`RouteOrch` の通知機構は [CONFIG_DB](../../reference/glossary.md#term-config_db) 以外の以下の DB・テーブルへ書き込みを行う。
 
 ### APPL_STATE_DB — ROUTE_TABLE (ResponsePublisher 経由)
 
@@ -661,7 +661,7 @@ SAI 失敗時は RESPONSE_CHANNEL 通知は送出されるが、APPL_STATE_DB �
 
 ### STATE_DB — ROUTE_TABLE (デフォルトルート状態)
 
-`updateDefRouteState()` が `m_stateDefaultRouteTb->set(ip, tuples)` を呼び出し、デフォルトルートの存在状態を STATE_DB へ記録する。
+`updateDefRouteState()` が `m_stateDefaultRouteTb->set(ip, tuples)` を呼び出し、デフォルトルートの存在状態を [STATE_DB](../../reference/glossary.md#term-state_db) へ記録する。
 
 | テーブル | キー形式 | フィールド | 値 | タイミング |
 |---|---|---|---|---|
@@ -764,7 +764,7 @@ Redis Pub/Sub はメッセージをバッファリングしないため、fpmsyn
 
 ### RouteOrch 初期化 — Mellanox / VOQ での差（通知機構自体には非影響）
 
-RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字列に `"mellanox"` が含まれる場合に ECMP グループ数上限を `/32` 補正し、VOQ chassis では ECMP メンバー数を 128 に制限する (`routeorch.cpp` L109–123)。これらは ECMP グループ管理パラメータの差であり、`publishRouteState()` / `notifyNextHopChangeObservers()` の動作自体には影響しない。
+RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字列に `"mellanox"` が含まれる場合に ECMP グループ数上限を `/32` 補正し、[VOQ](../../reference/glossary.md#term-voq) chassis では ECMP メンバー数を 128 に制限する (`routeorch.cpp` L109–123)。これらは ECMP グループ管理パラメータの差であり、`publishRouteState()` / `notifyNextHopChangeObservers()` の動作自体には影響しない。
 
 ### プラットフォーム差サマリ
 
@@ -772,8 +772,8 @@ RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字
 |-----------------|-------------------|-----------------|
 | 標準 T0/T1/T2 | 変更なし | 変更なし |
 | Mellanox | 変更なし | 変更なし |
-| VOQ chassis | 変更なし | 変更なし |
-| SmartSwitch (NPU 側) | 変更なし | 変更なし |
+| [VOQ](../../reference/glossary.md#term-voq) chassis | 変更なし | 変更なし |
+| [SmartSwitch](../../reference/glossary.md#term-smartswitch) ([NPU](../../reference/glossary.md#term-npu) 側) | 変更なし | 変更なし |
 | multi-asic | 変更なし (namespace 独立) | 変更なし |
 
 <!-- evidence: sonic-net/sonic-swss/orchagent/routeorch.cpp:83-87L (Mellanox ECMP グループ数補正) -->
@@ -796,7 +796,7 @@ RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字
 
 | プロセス | 参照 | 用途 |
 |---------|------|------|
-| `fpmsyncd` | `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` | SAI プログラミング結果を FRR へフィードバック |
+| `fpmsyncd` | `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` | SAI プログラミング結果を [FRR](../../reference/glossary.md#term-frr) へフィードバック |
 | `route_check.py` | `APPL_STATE_DB ROUTE_TABLE` | APPL_DB と APPL_STATE_DB の整合確認 |
 
 ### NextHopObserver 通知
@@ -809,8 +809,8 @@ RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字
 ## 関連リファレンス
 
 - APPL_DB: [`ROUTE_TABLE`](route.md)
-- STATE_DB / APPL_STATE_DB: [`ROUTE_TABLE (STATE_DB/APPL_STATE_DB)`](route-state.md)
-- CONFIG_DB: [`STATIC_ROUTE`](static-route.md)
+- [STATE_DB](../../reference/glossary.md#term-state_db) / APPL_STATE_DB: [`ROUTE_TABLE (STATE_DB/APPL_STATE_DB)`](route-state.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`STATIC_ROUTE`](static-route.md)
 - handler 分岐: [`ROUTE_TABLE handler 分岐`](route-handler.md)
 
 ## 引用元
@@ -820,9 +820,6 @@ RouteOrch コンストラクタ (`routeorch.cpp` L83–87) は `platform` 文字
 [^3]: ResponsePublisher 実装: `orchagent/response_publisher.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/response_publisher.cpp>
 [^4]: fpmsyncd 実装: `fpmsyncd/fpmsyncd.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/fpmsyncd.cpp>
 [^5]: orchdaemon 初期化: `orchagent/orchdaemon.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/orchdaemon.cpp>
-[^6]: routesync 実装: `fpmsyncd/routesync.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp>
-[^7]: MirrorOrch 実装: `orchagent/mirrororch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/mirrororch.cpp>
-[^8]: NatOrch 実装: `orchagent/natorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/natorch.cpp>
 
 <!-- ops-hint -->
 ## 運用ヒント
@@ -863,3 +860,5 @@ APPL_STATE_DB ROUTE_TABLE:192.168.1.0/24
 - APPL_STATE_DB にエントリが存在しない → SAI 失敗または DEL 操作後。`RESPONSE_CHANNEL` のログを確認する。
 - `protocol` が空文字列 → APPL_DB の `ROUTE_TABLE` エントリに `protocol` フィールドが存在しない（静的経路や一部の直接書き込みツールで発生する）。
 <!-- /ops-hint -->
+
+<!-- glossary-links-injected: e3c15dc9fa9a -->

@@ -28,7 +28,7 @@ related:
 
 # Upgrade lifecycle
 
-upgrade は reboot と同じではありません。upgrade は「どの image / package / container を次に使うか」を決める lifecycle で、reboot はその変更を有効化する transition です。SONiC では OS image、Docker image、Debian base、[FRR](../../reference/glossary.md#term-frr)、[DPU](../../reference/glossary.md#term-dpu) image などが別々の粒度で更新されます。
+upgrade は reboot と同じではありません。upgrade は「どの image / package / container を次に使うか」を決める lifecycle で、reboot はその変更を有効化する transition です。[SONiC](../../reference/glossary.md#term-sonic) では OS image、Docker image、Debian base、[FRR](../../reference/glossary.md#term-frr)、[DPU](../../reference/glossary.md#term-dpu) image などが別々の粒度で更新されます。
 
 ## image upgrade の基本線
 
@@ -71,4 +71,4 @@ secure upgrade は reboot を速くする機能ではなく、reboot 前に「�
 - [SONiC OS と Docker イメージのセマンティックバージョニング](../../system/sonic-os-sonic-docker-images-versioning.md)
 - [Smart Switch: DPU 独立アップグレード](../../system/independent-dpu-upgrade.md)
 
-<!-- glossary-links-injected: 35048036a2de -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

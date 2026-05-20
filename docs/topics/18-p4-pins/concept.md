@@ -41,7 +41,7 @@ related:
 
 # 概念
 
-[PINS](../../reference/glossary.md#term-pins) は SONiC に「外部の SDN コントローラが **P4Runtime gRPC** を経由して forwarding を直接書く」経路を opt-in で足す仕組みです。[BGP](../../reference/glossary.md#term-bgp) や [orchagent](../../reference/glossary.md#term-orchagent) といった従来の制御パスは残ったままで、コントローラが必要なテーブルだけを上書きする設計のため、`APPL_DB` の従来テーブル群と並んで `P4RT_TABLE` 系が増えると考えると掴みやすくなります。
+[PINS](../../reference/glossary.md#term-pins) は [SONiC](../../reference/glossary.md#term-sonic) に「外部の SDN コントローラが **P4Runtime gRPC** を経由して forwarding を直接書く」経路を opt-in で足す仕組みです。[BGP](../../reference/glossary.md#term-bgp) や [orchagent](../../reference/glossary.md#term-orchagent) といった従来の制御パスは残ったままで、コントローラが必要なテーブルだけを上書きする設計のため、`APPL_DB` の従来テーブル群と並んで `P4RT_TABLE` 系が増えると考えると掴みやすくなります。
 
 ## この章は何のためにあるか
 
@@ -58,7 +58,7 @@ related:
 ## 何を解決するか
 
 - **[SAI](../../reference/glossary.md#term-sai) 実装差の縮小**: P4 で pipeline を表現することで、ベンダ間 SAI 実装差を「P4Info に対する整合性」として明示化する。
-- **コントローラ駆動の forwarding**: hyperscaler の SDN コントローラ（例: ONF SD-Fabric、Google 内部コントローラ）が SONiC を SAI ASIC の汎用 backend として扱えるようにする。
+- **コントローラ駆動の forwarding**: hyperscaler の SDN コントローラ（例: ONF SD-Fabric、Google 内部コントローラ）が SONiC を SAI [ASIC](../../reference/glossary.md#term-asic) の汎用 backend として扱えるようにする。
 - **CRUD の確実性**: P4Runtime は CRUD を同期 API として規定する。orchagent の非同期書き込みでは応答に乗らなかった「ASIC に書き込まれた／失敗した」が、`APPL_STATE_DB` 経由でコントローラに正しく返る。
 
 ## SONiC 内での位置
@@ -77,7 +77,7 @@ flowchart LR
   end
 ```
 
-`P4Orch` は orchagent 内に組み込まれた sub-Orch ですが、他の sub-Orch と違って **SAI の応答を待ち**、結果を `APPL_STATE_DB` に書き戻します。これにより P4RT App はコントローラへ正確な結果を返せます。
+`P4Orch` は orchagent 内に組み込まれた sub-Orch ですが、他の sub-Orch と違って **SAI の応答を待ち**、結果を `APPL_STATE_DB` に書き戻します。これにより [P4RT](../../reference/glossary.md#term-p4rt) App はコントローラへ正確な結果を返せます。
 
 ## 用語の整理
 
@@ -179,4 +179,4 @@ PINS は SONiC の動作モードを切り替えるものではなく、**コン
 - [SWSS / SAI / Redis 内部実装](../20-swss-sai-redis/index.md)
 - [gNMI / gNOI / OpenConfig / YANG](../10-gnmi-openconfig/index.md)
 
-<!-- glossary-links-injected: e366b49e1b86 -->
+<!-- glossary-links-injected: 4b7e3e133212 -->

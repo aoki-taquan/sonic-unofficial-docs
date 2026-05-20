@@ -12,7 +12,7 @@ related:
 
 # リファレンス
 
-`docs/reference/` は SONiC NOS (community master) を運用 / 検証する際に **辞書として直接引く** 情報を集める章である。Topics 章 (`docs/topics/`) が「読み物」として導線を提供するのに対し、本章は **コマンド名 / テーブル名 / モジュール名 / 症状** から逆引きする使い方を想定している。
+`docs/reference/` は [SONiC](../reference/glossary.md#term-sonic) NOS (community master) を運用 / 検証する際に **辞書として直接引く** 情報を集める章である。Topics 章 (`docs/topics/`) が「読み物」として導線を提供するのに対し、本章は **コマンド名 / テーブル名 / モジュール名 / 症状** から逆引きする使い方を想定している。
 
 各 reference ページは原則 `verification: code-verified` で、`.cache/sonic-sources/` に shallow clone した master の固定 commit を一次情報として持つ。[HLD](../reference/glossary.md#term-hld) 由来の推測は本文に明示する。
 
@@ -185,4 +185,4 @@ discrepancy-found 自体は reference 内ではなく `docs/topics/` 配下に�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1f7c67d9cefa -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

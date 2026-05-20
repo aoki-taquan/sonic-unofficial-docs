@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-Linux kernel の **kexec** を使い、kernel panic 直後に **予約された別メモリ領域に展開済みの capture kernel** を起動して crash dump を `/var/crash/<timestamp>/` に保存する標準仕組みを SONiC に統合する [HLD](../reference/glossary.md#term-hld)[^1]。Debian の `kdump-tools` を SONiC host に同梱し、`makedumpfile` で不要 page を除外した圧縮 dump を作成する。CLI で memory 確保量と保持数を制御し、kernel 開発者が community に bug report する際の最小限の素材を取れるようにする。
+Linux kernel の **kexec** を使い、kernel panic 直後に **予約された別メモリ領域に展開済みの capture kernel** を起動して crash dump を `/var/crash/<timestamp>/` に保存する標準仕組みを [SONiC](../reference/glossary.md#term-sonic) に統合する [HLD](../reference/glossary.md#term-hld)[^1]。Debian の `kdump-tools` を SONiC host に同梱し、`makedumpfile` で不要 page を除外した圧縮 dump を作成する。CLI で memory 確保量と保持数を制御し、kernel 開発者が community に bug report する際の最小限の素材を取れるようにする。
 
 ## 動作仕様
 
@@ -202,7 +202,7 @@ cat /proc/cmdline | tr ' ' '\n' | grep crashkernel
 |-------|--------|--------|
 | Phase 1: kdump 有効化 / 設定保存 | 実装済（[CONFIG_DB](../reference/glossary.md#term-config_db) `KDUMP` テーブルと `config kdump` CLI） | — |
 | Phase 2: kdump-tools / kernel 統合 | HLD 想定（kdump-tools 旧版）は実装済 | 後続版 kdump-tools / 新 kernel への追従は未確認 / 未実装の可能性 |
-| Phase 3: マルチ ASIC / プラットフォーム固有 | — | BMC 連携や container-aware capture は未実装 |
+| Phase 3: マルチ [ASIC](../reference/glossary.md#term-asic) / プラットフォーム固有 | — | BMC 連携や container-aware capture は未実装 |
 
 ## 実装との乖離 / 補足
 
@@ -215,4 +215,4 @@ cat /proc/cmdline | tr ' ' '\n' | grep crashkernel
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 896d391185a9 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

@@ -54,7 +54,7 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 | フィールド | 型 | 必須 | 説明 |
 |-----------|----|------|------|
 | `tunnel_name` (key) | string (1..255) | — | NVGRE トンネル名 |
-| `src_ip` | inet:ip-address | yes | ソース VTEP IP |
+| `src_ip` | inet:ip-address | yes | ソース [VTEP](../../reference/glossary.md#term-vtep) IP |
 
 ## NVGRE_TUNNEL_MAP フィールド
 
@@ -84,16 +84,16 @@ NVGRE_TUNNEL_MAP|<tunnel_name>|<tunnel_map_name>
 
 ### NVGRE_TUNNEL フィールド
 
-| フィールド | 値 / 範囲 | orchagent 挙動 |
+| フィールド | 値 / 範囲 | [orchagent](../../reference/glossary.md#term-orchagent) 挙動 |
 |-----------|----------|---------------|
-| `src_ip` | 任意の有効 IP アドレス | SAI `sai_tunnel_api` でトンネル端点として設定 |
+| `src_ip` | 任意の有効 IP アドレス | [SAI](../../reference/glossary.md#term-sai) `sai_tunnel_api` でトンネル端点として設定 |
 | `src_ip` | フォーマット不正 / 未設定 | YANG validate 段階で reject |
 
 ### NVGRE_TUNNEL_MAP フィールド
 
-| フィールド | 値 / 範囲 | orchagent 挙動 |
+| フィールド | 値 / 範囲 | [orchagent](../../reference/glossary.md#term-orchagent) 挙動 |
 |-----------|----------|---------------|
-| `vlan_id` | 1..4094 | VLAN ID として SAI トンネルマップに登録 |
+| `vlan_id` | 1..4094 | [VLAN](../../reference/glossary.md#term-vlan) ID として SAI トンネルマップに登録 |
 | `vlan_id` | 範囲外 | WARN ログ後スキップ: `VLAN ID doesn't exist: %d` |
 | `vsid` | 0..16777214 | NVGRE VSID として SAI に反映 |
 | `vsid` | 範囲外 | WARN ログ後スキップ: `VSID is invalid: %d` |
@@ -139,9 +139,9 @@ const request_description_t nvgre_tunnel_request_description = {
 | SAI 属性 | 値 | 備考 |
 |---|---|---|
 | `SAI_TUNNEL_ATTR_TYPE` | `SAI_TUNNEL_TYPE_NVGRE` | テーブル名から確定 |
-| `SAI_TUNNEL_ATTR_UNDERLAY_INTERFACE` | `gUnderlayIfId` | 起動時のグローバル RIF |
+| `SAI_TUNNEL_ATTR_UNDERLAY_INTERFACE` | `gUnderlayIfId` | 起動時のグローバル [RIF](../../reference/glossary.md#term-rif) |
 | `SAI_TUNNEL_TERM_..._TYPE` | `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP` | NVGRE は P2MP 固定 |
-| `SAI_TUNNEL_TERM_..._VR_ID` | `gVirtualRouterId` | デフォルト VRF |
+| `SAI_TUNNEL_TERM_..._VR_ID` | `gVirtualRouterId` | デフォルト [VRF](../../reference/glossary.md#term-vrf) |
 | Encap/Decap mapper | `MAP_T_VLAN` / `MAP_T_BRIDGE` を常時両方作成 | `nvgreMapTypes` static |
 | VSID 上限 | `NVGRE_VSID_MAX_VALUE = 16777214` | `nvgreorch.cpp:7` |
 
@@ -182,7 +182,7 @@ DEL NVGRE_TUNNEL|<tunnel_name>                  # その後トンネルを削除
 |---|---|---|
 | `NVGRE_TUNNEL` SET → `NVGRE_TUNNEL_MAP` SET | 必須 | 逆順だと MAP エントリが**永続的に破棄**（retry なし） |
 | `VLAN` 登録完了 → `NVGRE_TUNNEL_MAP` SET | 必須 | 逆順だと MAP エントリが**永続的に破棄**（retry なし） |
-| `NVGRE_TUNNEL_MAP` DEL → `NVGRE_TUNNEL` DEL | 推奨 | 逆順でも orchagent は継続するが SAI エントリ孤立リスク |
+| `NVGRE_TUNNEL_MAP` DEL → `NVGRE_TUNNEL` DEL | 推奨 | 逆順でも [orchagent](../../reference/glossary.md#term-orchagent) は継続するが SAI エントリ孤立リスク |
 | allPortsReady | 不要 | NVGRE orch には allPortsReady ガードなし |
 
 > **スキャン証跡**: `nvgreorch.cpp:464-508` 全行精読、`orchdaemon.cpp:361-364` 登録順確認。
@@ -196,10 +196,10 @@ YANG leafref を超えた実装上の依存関係。ソース: `sonic-swss/orcha
 
 | 参照先 | DB / 場所 | 方向 | 契機 | 根拠コード |
 |--------|-----------|------|------|-----------|
-| `NVGRE_TUNNEL\|<tunnel_name>` | CONFIG_DB (orchagent 内部 map) | READ | `NvgreTunnelMapOrch::addOperation()` 冒頭で `isTunnelExists(tunnel_name)` を呼ぶ。親トンネルが未登録なら WARN + エントリ破棄（retry なし） | `nvgreorch.cpp:464-472` |
+| `NVGRE_TUNNEL\|<tunnel_name>` | [CONFIG_DB](../../reference/glossary.md#term-config_db) (orchagent 内部 map) | READ | `NvgreTunnelMapOrch::addOperation()` 冒頭で `isTunnelExists(tunnel_name)` を呼ぶ。親トンネルが未登録なら WARN + エントリ破棄（retry なし） | `nvgreorch.cpp:464-472` |
 | `VLAN\|Vlan<vlan_id>` | CONFIG_DB / PortsOrch 内部 map | READ | MAP 登録時に `gPortsOrch->getVlanByVlanId(vlan_id, port)` で VLAN の存在確認。VLAN 未登録なら `VLAN ID doesn't exist` WARN + エントリ破棄 | `nvgreorch.cpp:489-492` |
-| `gUnderlayIfId` | SAI グローバル（ルータ IF OID） | READ | `NvgreTunnel` 構築時に `sai_create_tunnel(..., gUnderlayIfId)` でアンダーレイ RIF として渡す。orchagent 起動時にグローバル初期化されたオブジェクト | `nvgreorch.cpp:312` |
-| `gVirtualRouterId` | SAI グローバル（デフォルト VR OID） | READ | `sai_create_tunnel_termination(..., gVirtualRouterId)` でトンネル終端のデフォルト VRF を指定 | `nvgreorch.cpp:313` |
+| `gUnderlayIfId` | SAI グローバル（ルータ IF OID） | READ | `NvgreTunnel` 構築時に `sai_create_tunnel(..., gUnderlayIfId)` でアンダーレイ [RIF](../../reference/glossary.md#term-rif) として渡す。orchagent 起動時にグローバル初期化されたオブジェクト | `nvgreorch.cpp:312` |
+| `gVirtualRouterId` | SAI グローバル（デフォルト VR OID） | READ | `sai_create_tunnel_termination(..., gVirtualRouterId)` でトンネル終端のデフォルト [VRF](../../reference/glossary.md#term-vrf) を指定 | `nvgreorch.cpp:313` |
 
 ### 依存解決タイミング
 
@@ -252,7 +252,7 @@ YANG leafref を超えた実装上の依存関係。ソース: `sonic-swss/orcha
 ### 典型値
 
 - key 形式: `NVGRE_TUNNEL|<name>` / `NVGRE_TUNNEL_MAP|<tunnel>|<map_entry>`。
-- `src_ip`: ローカル VTEP の loopback アドレス。
+- `src_ip`: ローカル [VTEP](../../reference/glossary.md#term-vtep) の loopback アドレス。
 - `vsid`: 24bit (0..16777214)、`vlan_id`: 1..4094。
 
 ### よくある誤設定
@@ -268,7 +268,6 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
@@ -279,7 +278,7 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 ### 段階 2: CFG → APPL 翻訳
 
 - TunnelDecapOrch がエントリを解析し APP_DB `TUNNEL_DECAP_TABLE` に書き込む (一部実装)。
-- 実装は VS/仮想 ASIC 向けが主体で、物理 ASIC サポートはベンダー依存。
+- 実装は VS/仮想 [ASIC](../../reference/glossary.md#term-asic) 向けが主体で、物理 [ASIC](../../reference/glossary.md#term-asic) サポートはベンダー依存。
 
 ### 段階 3: APPL → SAI
 
@@ -289,7 +288,7 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 ### 段階 4: タイミング + 副作用
 
 - トンネル作成は orchagent が処理を受け取った数 ms 以内。
-- 副作用: 対応する SAI サポートが必要。非サポート ASIC では task_failed となる。
+- 副作用: 対応する SAI サポートが必要。非サポート [ASIC](../../reference/glossary.md#term-asic) では task_failed となる。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -299,7 +298,7 @@ NVGRE_TUNNEL / NVGRE_TUNNEL_MAP テーブルへの書き込みが発生するコ
 
 ### CLI
 
-  - `config nvgre_tunnel add/del ...` — `config/plugins/nvgre_tunnel.py` が `set_entry()` を呼ぶ (sonic-utilities/config/plugins/nvgre_tunnel.py)
+  - `config nvgre_tunnel add/del ...` — `config/plugins/nvgre_tunnel.py` が `set_entry()` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/plugins/nvgre_tunnel.py)
 
 ### minigraph / sonic-cfggen
 
@@ -307,7 +306,7 @@ minigraph.py に NVGRE_TUNNEL 生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -404,7 +403,7 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 | MAP タイプセット | `{ MAP_T_VLAN, MAP_T_BRIDGE }` (固定 2 種) | `NvgreTunnel` 構築時に Encap + Decap 計 4 個のマッパーオブジェクトを常時作成。ユーザー設定で変更不可 | `nvgreorch.cpp:16-19` |
 | SAI トンネルタイプ | `SAI_TUNNEL_TYPE_NVGRE` | `sai_create_tunnel()` の type 引数として固定 | `nvgreorch.cpp:177` |
 | SAI termination タイプ | `SAI_TUNNEL_TERM_TABLE_ENTRY_TYPE_P2MP` | `sai_create_tunnel_termination()` の type 引数として固定 (NVGRE は常に P2MP) | `nvgreorch.cpp:241` |
-| `gUnderlayIfId` | orchagent 起動時に `main.cpp` が SAI 初期化で確定するグローバル RIF OID | `sai_create_tunnel()` の underlay RIF 引数として渡す | `nvgreorch.cpp:312` |
+| `gUnderlayIfId` | orchagent 起動時に `main.cpp` が SAI 初期化で確定するグローバル [RIF](../../reference/glossary.md#term-rif) OID | `sai_create_tunnel()` の underlay RIF 引数として渡す | `nvgreorch.cpp:312` |
 | `gVirtualRouterId` | orchagent 起動時に `main.cpp` が SAI 初期化で確定するデフォルト VR OID | `sai_create_tunnel_termination()` の VR OID 引数として渡す | `nvgreorch.cpp:313` |
 
 ### 補足
@@ -425,11 +424,11 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 
 ### ASIC_DB — SAI オブジェクト生成 (orchagent)
 
-`NvgreTunnelOrch` は CONFIG_DB の変化を直接 SAI API 呼び出しに変換し、ASIC_DB に SAI オブジェクトを作成する。syncd が ASIC_DB の変化を検知して実ハードウェアに反映する。
+`NvgreTunnelOrch` は CONFIG_DB の変化を直接 SAI API 呼び出しに変換し、[ASIC_DB](../../reference/glossary.md#term-asic_db) に SAI オブジェクトを作成する。[syncd](../../reference/glossary.md#term-syncd) が [ASIC_DB](../../reference/glossary.md#term-asic_db) の変化を検知して実ハードウェアに反映する。
 
 | 操作 | 書込先 DB | SAI API / テーブル | 生成オブジェクト | ソース |
 |---|---|---|---|---|
-| SET `NVGRE_TUNNEL` | ASIC_DB | `sai_tunnel_map_api->create_tunnel_map()` ×4 | `SAI_OBJECT_TYPE_TUNNEL_MAP` (VLAN/BRIDGE 各 2 個: encap + decap) | `nvgreorch.cpp:106-155` |
+| SET `NVGRE_TUNNEL` | [ASIC_DB](../../reference/glossary.md#term-asic_db) | `sai_tunnel_map_api->create_tunnel_map()` ×4 | `SAI_OBJECT_TYPE_TUNNEL_MAP` (VLAN/BRIDGE 各 2 個: encap + decap) | `nvgreorch.cpp:106-155` |
 | SET `NVGRE_TUNNEL` | ASIC_DB | `sai_tunnel_api->create_tunnel()` | `SAI_OBJECT_TYPE_TUNNEL` (type=NVGRE) | `nvgreorch.cpp:177-205` |
 | SET `NVGRE_TUNNEL` | ASIC_DB | `sai_tunnel_api->create_tunnel_term_table_entry()` | `SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY` (P2MP) | `nvgreorch.cpp:235-261` |
 | SET `NVGRE_TUNNEL_MAP` | ASIC_DB | `sai_tunnel_map_api->create_tunnel_map_entry()` | `SAI_OBJECT_TYPE_TUNNEL_MAP_ENTRY` (VLAN ↔ VSID) | `nvgreorch.cpp:415-441` |
@@ -438,17 +437,17 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 
 ### APPL_DB / STATE_DB への書込み
 
-`NvgreTunnelOrch` / `NvgreTunnelMapOrch` は APPL_DB や STATE_DB への書込みを行わない。
+`NvgreTunnelOrch` / `NvgreTunnelMapOrch` は [APPL_DB](../../reference/glossary.md#term-appl_db) や [STATE_DB](../../reference/glossary.md#term-state_db) への書込みを行わない。
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `nvgreorch.cpp` 全行に ProducerStateTable / AppTable 書込なし |
-| STATE_DB | なし | `nvgreorch.cpp` 全行に StateTable 書込なし |
-| COUNTERS_DB | なし | NVGRE トンネル統計は別経路（FlexCounter）で管理されるが nvgreorch.cpp は FLEX_COUNTER_DB に直接書込みなし |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `nvgreorch.cpp` 全行に [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) / AppTable 書込なし |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `nvgreorch.cpp` 全行に StateTable 書込なし |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | NVGRE トンネル統計は別経路（[FlexCounter](../../reference/glossary.md#term-flexcounter)）で管理されるが nvgreorch.cpp は [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) に直接書込みなし |
 
 ### FLEX_COUNTER_DB への書込み
 
-`NvgreTunnelOrch` は FlexCounter への登録を行わない（`nvgreorch.cpp` に `addFlexCounter` / `FLEX_COUNTER_DB` 参照なし）。NVGRE トンネルのトラフィック統計はハードウェアサポート依存であり、SONiC の FlexCounter フレームワーク経由では管理されない。
+`NvgreTunnelOrch` は [FlexCounter](../../reference/glossary.md#term-flexcounter) への登録を行わない（`nvgreorch.cpp` に `addFlexCounter` / `FLEX_COUNTER_DB` 参照なし）。NVGRE トンネルのトラフィック統計はハードウェアサポート依存であり、[SONiC](../../reference/glossary.md#term-sonic) の [FlexCounter](../../reference/glossary.md#term-flexcounter) フレームワーク経由では管理されない。
 
 詳細スキャン証跡: `meta/_intermediate/cdb-flow/nvgre-tunnel-side-effects.md`
 <!-- /side-effects -->
@@ -461,13 +460,13 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 
 ### 購読チャンネル一覧
 
-`NVGRE_TUNNEL` / `NVGRE_TUNNEL_MAP` は **CONFIG_DB 経路のみ**を持ち、APPL_DB 経由の購読チャンネルは存在しない。
+`NVGRE_TUNNEL` / `NVGRE_TUNNEL_MAP` は **CONFIG_DB 経路のみ**を持ち、[APPL_DB](../../reference/glossary.md#term-appl_db) 経由の購読チャンネルは存在しない。
 
 | 区間 | DB | テーブル名 | 購読クラス | 発行元 |
 |---|---|---|---|---|
 | CLI/CONFIG_DB → NvgreTunnelOrch | CONFIG_DB (dbId=4) | `NVGRE_TUNNEL` (`CFG_NVGRE_TUNNEL_TABLE_NAME`) | `SubscriberStateTable` | `config nvgre-tunnel add/del ...` (`sonic-utilities/config/plugins/nvgre_tunnel.py`) |
 | CLI/CONFIG_DB → NvgreTunnelMapOrch | CONFIG_DB (dbId=4) | `NVGRE_TUNNEL_MAP` (`CFG_NVGRE_TUNNEL_MAP_TABLE_NAME`) | `SubscriberStateTable` | 同上 |
-| NvgreTunnelOrch/MapOrch → syncd | ASIC_DB (syncd 経由) | — | SAI API 直接呼び出し | `sai_tunnel_api->create_tunnel()` / `create_tunnel_map_entry()` 等 |
+| NvgreTunnelOrch/MapOrch → [syncd](../../reference/glossary.md#term-syncd) | ASIC_DB ([syncd](../../reference/glossary.md#term-syncd) 経由) | — | SAI API 直接呼び出し | `sai_tunnel_api->create_tunnel()` / `create_tunnel_map_entry()` 等 |
 
 ### 登録経路
 
@@ -475,15 +474,15 @@ SAI 呼び出し (`sai_tunnel_api->create_tunnel_map / create_tunnel / create_tu
 
 ### SubscriberStateTable の動作
 
-Redis keyspace 通知 `PSUBSCRIBE __keyspace@4__:NVGRE_TUNNEL|*` / `__keyspace@4__:NVGRE_TUNNEL_MAP|*` を購読。CONFIG_DB への `HSET "NVGRE_TUNNEL|<name>" ...` が PUBLISH されると `Orch2::doTask(Consumer&)` が `addOperation()` / `delOperation()` を呼ぶ。
+[Redis](../../reference/glossary.md#term-redis) keyspace 通知 `PSUBSCRIBE __keyspace@4__:NVGRE_TUNNEL|*` / `__keyspace@4__:NVGRE_TUNNEL_MAP|*` を購読。CONFIG_DB への `HSET "NVGRE_TUNNEL|<name>" ...` が PUBLISH されると `Orch2::doTask(Consumer&)` が `addOperation()` / `delOperation()` を呼ぶ。
 
-keyspace 通知のペイロードは Redis 操作名のみ。フィールド値は通知後に `HGETALL` で別途取得する (`subscriberstatetable.cpp:95-`)。
+keyspace 通知のペイロードは [Redis](../../reference/glossary.md#term-redis) 操作名のみ。フィールド値は通知後に `HGETALL` で別途取得する (`subscriberstatetable.cpp:95-`)。
 
 **起動時スナップショット**: `SubscriberStateTable` ctor は PSUBSCRIBE 直後に既存エントリを `SET_COMMAND` として buffer に充填する (`subscriberstatetable.cpp:26-44`)。orchagent 再起動時に CONFIG_DB に残存する `NVGRE_TUNNEL|*` / `NVGRE_TUNNEL_MAP|*` エントリは遅延なく再配信され、`NvgreTunnelOrch` / `NvgreTunnelMapOrch` が再設定を実行する。
 
 ### ProducerStateTable は不使用
 
-CONFIG_DB 経路では `ProducerStateTable` を使用しない。CLI (`sonic-utilities/config/plugins/nvgre_tunnel.py`) は `ConfigDBConnector.set_entry()` → 直接 Redis `HSET` で書き込む。APPL_DB への中継テーブルは存在せず、`NVGRE_TUNNEL` / `NVGRE_TUNNEL_MAP` の変更は常に CONFIG_DB → `SubscriberStateTable` → NvgreTunnelOrch → SAI の経路を通る。
+CONFIG_DB 経路では `ProducerStateTable` を使用しない。CLI (`sonic-utilities/config/plugins/nvgre_tunnel.py`) は `ConfigDBConnector.set_entry()` → 直接 [Redis](../../reference/glossary.md#term-redis) `HSET` で書き込む。APPL_DB への中継テーブルは存在せず、`NVGRE_TUNNEL` / `NVGRE_TUNNEL_MAP` の変更は常に CONFIG_DB → `SubscriberStateTable` → NvgreTunnelOrch → SAI の経路を通る。
 
 ### orchList 内の位置
 
@@ -500,11 +499,11 @@ CONFIG_DB 経路では `ProducerStateTable` を使用しない。CLI (`sonic-uti
 
 ### プラットフォーム依存ゼロの証跡
 
-`nvgreorch.cpp` 全 582 行・`nvgreorch.h` 全行を `platform|broadcom|mellanox|barefoot|cisco|namespace|multi_asic` でスキャンしたがヒット 0 件。`orchdaemon.cpp:190` で `platform = getenv("platform")` を読み込むが、直後の NVGRE orch 生成 (L361-364) は `if (platform == ...)` の外側にある無条件ブロックである。L503 以降の platform 分岐（DTEL / FlexCounter / QoS 制御）は NVGRE に関与しない。
+`nvgreorch.cpp` 全 582 行・`nvgreorch.h` 全行を `platform|broadcom|mellanox|barefoot|cisco|namespace|multi_asic` でスキャンしたがヒット 0 件。`orchdaemon.cpp:190` で `platform = getenv("platform")` を読み込むが、直後の NVGRE orch 生成 (L361-364) は `if (platform == ...)` の外側にある無条件ブロックである。L503 以降の platform 分岐（DTEL / FlexCounter / [QoS](../../reference/glossary.md#term-qos) 制御）は NVGRE に関与しない。
 
 ### multi-asic / VOQ chassis
 
-multi-asic 構成では orchagent が `asic0`/`asic1`/... ごとに独立起動するが、各インスタンスが同じ無条件経路を通るため namespace 間で挙動差はない。NVGRE_TUNNEL テーブルは per-asic CONFIG_DB に書かれた分だけ各 orchagent が処理する。VOQ chassis でも特別なガードは存在しない。
+multi-asic 構成では orchagent が `asic0`/`asic1`/... ごとに独立起動するが、各インスタンスが同じ無条件経路を通るため namespace 間で挙動差はない。NVGRE_TUNNEL テーブルは per-asic CONFIG_DB に書かれた分だけ各 orchagent が処理する。[VOQ](../../reference/glossary.md#term-voq) chassis でも特別なガードは存在しない。
 
 ### SAI 実装依存性（プラットフォーム間の実質的な差）
 
@@ -534,3 +533,5 @@ multi-asic 構成では orchagent が `asic0`/`asic1`/... ごとに独立起動�
 > **スキャン証跡**: `nvgreorch.cpp:350-385` を全行読了、3 件分岐抽出。minigraph.py からの自動派生なしを確認 — 誤読なし。
 
 <!-- /handler-branching -->
+
+<!-- glossary-links-injected: ff34a209121d -->

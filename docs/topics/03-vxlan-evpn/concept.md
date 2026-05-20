@@ -48,7 +48,7 @@ related:
 
 # VXLAN / VNET / EVPN の概要
 
-SONiC の overlay 周りは、「[VXLAN](../../reference/glossary.md#term-vxlan)」「[VNET](../../reference/glossary.md#term-vnet)」「[EVPN](../../reference/glossary.md#term-evpn)」という 3 つの単語がほぼ同じ文脈で使われるのに役割が違うため、最初に分けて理解しないと混乱します。VXLAN は data plane の encapsulation、VNET は SONiC 内部の設定オブジェクト、EVPN はその上に乗る control plane です。
+[SONiC](../../reference/glossary.md#term-sonic) の overlay 周りは、「[VXLAN](../../reference/glossary.md#term-vxlan)」「[VNET](../../reference/glossary.md#term-vnet)」「[EVPN](../../reference/glossary.md#term-evpn)」という 3 つの単語がほぼ同じ文脈で使われるのに役割が違うため、最初に分けて理解しないと混乱します。VXLAN は data plane の encapsulation、VNET は SONiC 内部の設定オブジェクト、EVPN はその上に乗る control plane です。
 
 ## SONiC overlay は何の問題を解決するか
 
@@ -58,7 +58,7 @@ SONiC の overlay 周りは、「[VXLAN](../../reference/glossary.md#term-vxlan)
 - **VNET**: SONiC が tenant / [VRF](../../reference/glossary.md#term-vrf) / VNI を 1 つのオブジェクトとして扱うための設定単位。controller 直書きにも EVPN 学習にも使える。
 - **EVPN**: [BGP](../../reference/glossary.md#term-bgp) の AFI として MAC / IP / prefix の到達情報を配り、VXLAN tunnel を自動的に張る。
 
-「VXLAN を有効化する」と言うとき、実際には VTEP を作るだけの場合、[VLAN](../../reference/glossary.md#term-vlan)-VNI を作る場合、VNET route を作る場合、EVPN で経路を受ける場合があります。最初にどの層を触っているかを分けると、設定の迷子になりにくくなります。
+「VXLAN を有効化する」と言うとき、実際には [VTEP](../../reference/glossary.md#term-vtep) を作るだけの場合、[VLAN](../../reference/glossary.md#term-vlan)-VNI を作る場合、VNET route を作る場合、EVPN で経路を受ける場合があります。最初にどの層を触っているかを分けると、設定の迷子になりにくくなります。
 
 ## SONiC の中での位置
 
@@ -217,4 +217,4 @@ Type-2 が来ても bridge-port が作られていない場合は **vlan-vni map
 - [BGP と FRR 制御プレーン](../02-bgp/index.md)
 - [VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md)
 
-<!-- glossary-links-injected: 63ba01f3c414 -->
+<!-- glossary-links-injected: c5c8b661ae7e -->

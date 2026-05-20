@@ -36,7 +36,7 @@ related:
 
 ## なぜこの設計なのか
 
-データセンタ用途で **FIPS 140-3 適合** が要求される場合の、SONiC 上での有効化設計を規定する[^1]。設計の中核:
+データセンタ用途で **FIPS 140-3 適合** が要求される場合の、[SONiC](../reference/glossary.md#term-sonic) 上での有効化設計を規定する[^1]。設計の中核:
 
 - **runtime で有効化** 可能（再起動なしで control/management plane = sshd / telemetry / restapi を切替）
 - **enforce mode** は **kernel cmdline** に依存するため、切替に warm/fast-reboot が必須
@@ -203,4 +203,4 @@ cat /proc/cmdline | tr ' ' '\n' | grep fips
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 16f9ee1c5f80 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

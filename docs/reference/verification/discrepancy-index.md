@@ -11,7 +11,7 @@ last_verified: 2026-05-13
 
     SONiC コミュニティ master の HLD は **設計提案リポジトリ** であり、現行コードと一致しているとは限りません。本ページは「HLD だけ読んで誤解しがちな機能」を一望できる USP ページです。読み手は、まず後述の **monitor subtype 別セクション** で該当機能の乖離タイプ（未実装 / 部分実装 / 進化置換 / 廃止）を把握し、そこから個別ページへ降りて `last_verified` と「実装との乖離」セクションの裏取り根拠を確認してください。area 横断で探す場合は末尾の **area 別索引** から辿れます。
 
-`verification: discrepancy-found` が付いた全 **102** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
+`verification: discrepancy-found` が付いた全 **107** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
 
 ## サマリ
 
@@ -19,8 +19,8 @@ last_verified: 2026-05-13
 
 | monitor | 件数 | 意味 |
 |---------|-----:|------|
-| [`not_implemented`](#monitor-not-implemented) | 11 | 未実装 |
-| [`partially_implemented`](#monitor-partially-implemented) | 59 | 部分実装 |
+| [`not_implemented`](#monitor-not-implemented) | 13 | 未実装 |
+| [`partially_implemented`](#monitor-partially-implemented) | 62 | 部分実装 |
 | [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 29 | HLD と乖離した形で実装/進化 |
 | [`deprecated`](#monitor-deprecated) | 3 | deprecated（廃止予定 / 撤去済み） |
 
@@ -34,7 +34,7 @@ last_verified: 2026-05-13
 | [`management`](#area-management) | 16 |
 | [`overlay`](#area-overlay) | 1 |
 | [`platform`](#area-platform) | 12 |
-| [`reference`](#area-reference) | 1 |
+| [`reference`](#area-reference) | 6 |
 | [`routing`](#area-routing) | 8 |
 | [`switching`](#area-switching) | 8 |
 | [`system`](#area-system) | 19 |
@@ -43,7 +43,7 @@ last_verified: 2026-05-13
 
 各 subtype を material 組み込みの色付き admonition でラップしています。色は重要度ではなく **読み手が誤読する危険度** の目安です（赤=実装ゼロ、黄=一部のみ、青=設計と別物、灰=廃止）。
 
-### `not_implemented` — 未実装 (11 件) { #monitor-not-implemented }
+### `not_implemented` — 未実装 (13 件) { #monitor-not-implemented }
 
 !!! danger "未実装"
 
@@ -84,6 +84,16 @@ last_verified: 2026-05-13
   
   `sonic-platform-common` を grep した結果、本 HLD が前提とする `CmisEnhancedLpoApi` / `CmisEnhancedLpoCodes` / `CmisEnhancedLpoMemMap` クラス、`xcvr_api_factory.py` での Arista 系 vendor 分岐、Page 01h Byte 195 = 0x4C の enhanced LPO 検出ロジック、`LPOTxHostInputVMA*` / `LPORxInputOMA*` フィールドのいずれも HEAD に取り込まれていない（`grep -rn "CmisEnhancedLpoApi\|LPOTxHostInputVMA\|enhanced_lpo" .cache/sonic-sources/sonic-platform-common/` でヒット 0）。…
 
+- [HARDWARE テーブル](../../reference/config-db/hardware.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
+  
+  `HARDWARE|ACCESS_LIST` テーブルの主要な乖離は **community [sonic-swss](../../reference/glossary.md#term-sonic-swss)/[orchagent](../../reference/glossary.md#term-orchagent) がこのテーブルを購読していない**点である。
+
+- [SECURITY_PROFILES / PKI テーブル](../../reference/config-db/pki-trusted-certs.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
+  
+  本テーブルは [HLD](../../reference/glossary.md#term-hld) では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。
+
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../../routing/bfd-hw-offload-for-bgp-session.md)  
   area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
@@ -104,7 +114,7 @@ last_verified: 2026-05-13
   
   per-page queue で既出の通り提案 HLD は未採用。再走査でも:
 
-### `partially_implemented` — 部分実装 (59 件) { #monitor-partially-implemented }
+### `partially_implemented` — 部分実装 (62 件) { #monitor-partially-implemented }
 
 !!! warning "部分実装"
 
@@ -259,6 +269,21 @@ last_verified: 2026-05-13
   area: `platform` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
   - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。公式 HLD（2020-12 Rev 1）のみを根拠としており、現行 master の VoQ 拡張・SAI 実装・recycle port セットアップは本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [DOT1P_TO_PG_MAP テーブル（非実在）](../../reference/config-db/dot1p-to-pg-map.md)  
+  area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-14`
+  
+  本テーブルは [HLD](../../reference/glossary.md#term-hld) では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。
+
+- [DSCP_TO_PG_MAP テーブル（非実在）](../../reference/config-db/dscp-to-pg-map.md)  
+  area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-15`
+  
+  本テーブルは [HLD](../../reference/glossary.md#term-hld) では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。
+
+- [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](../../reference/config-db/errordb.md)  
+  area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-15`
+  
+  本テーブルは HLD では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。
 
 - [config muxcable サブコマンド](../../reference/cli/config-muxcable.md)  
   area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
@@ -838,6 +863,31 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
 ### reference { #area-reference }
+
+- [DOT1P_TO_PG_MAP テーブル（非実在）](../../reference/config-db/dot1p-to-pg-map.md)  
+  area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-14`
+  
+  本テーブルは [HLD](../../reference/glossary.md#term-hld) では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。
+
+- [DSCP_TO_PG_MAP テーブル（非実在）](../../reference/config-db/dscp-to-pg-map.md)  
+  area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-15`
+  
+  本テーブルは [HLD](../../reference/glossary.md#term-hld) では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。
+
+- [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](../../reference/config-db/errordb.md)  
+  area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-15`
+  
+  本テーブルは HLD では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。
+
+- [HARDWARE テーブル](../../reference/config-db/hardware.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
+  
+  `HARDWARE|ACCESS_LIST` テーブルの主要な乖離は **community [sonic-swss](../../reference/glossary.md#term-sonic-swss)/[orchagent](../../reference/glossary.md#term-orchagent) がこのテーブルを購読していない**点である。
+
+- [SECURITY_PROFILES / PKI テーブル](../../reference/config-db/pki-trusted-certs.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
+  
+  本テーブルは [HLD](../../reference/glossary.md#term-hld) では言及があるものの、実装側で完全な扱いがなされていない箇所が確認されている。詳細は本ページ本文の各節を参照。
 
 - [config muxcable サブコマンド](../../reference/cli/config-muxcable.md)  
   area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`

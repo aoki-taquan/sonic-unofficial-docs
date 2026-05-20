@@ -37,7 +37,7 @@ related:
 
 ## なぜ必要か
 
-SONiC の機能は **複数 DB**（[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) / [STATE_DB](../reference/glossary.md#term-state_db) / [COUNTERS_DB](../reference/glossary.md#term-counters_db) / 設定 JSON）に状態が分散する。設定が [orchagent](../reference/glossary.md#term-orchagent) → [SAI](../reference/glossary.md#term-sai) → ASIC まで伝播したかを見るには各 DB を個別に grep する必要があり、属人化していた[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の機能は **複数 DB**（[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) / [STATE_DB](../reference/glossary.md#term-state_db) / [COUNTERS_DB](../reference/glossary.md#term-counters_db) / 設定 JSON）に状態が分散する。設定が [orchagent](../reference/glossary.md#term-orchagent) → [SAI](../reference/glossary.md#term-sai) → [ASIC](../reference/glossary.md#term-asic) まで伝播したかを見るには各 DB を個別に grep する必要があり、属人化していた[^1]。
 
 `dump state <module> <id>` は、モジュール毎に「どの DB のどのキーを取れば良いか」を **プラグイン定義** で持ち、DB 横断で 1 view に集約する。
 
@@ -148,7 +148,7 @@ dump state copp all                            # CONFIG_FILE も含む
 
 ### orchagent が `transfer_attributes: src vs dst attr id don't m（sonic-buildimage#3832）
 
-orchagent が `transfer_attributes: src vs dst attr id don't match` でクラッシュする問題。syncd と orchagent の互換性を確認すること
+orchagent が `transfer_attributes: src vs dst attr id don't match` でクラッシュする問題。[syncd](../reference/glossary.md#term-syncd) と orchagent の互換性を確認すること
 
 - 参照: [sonic-net/sonic-buildimage#3832](https://github.com/sonic-net/sonic-buildimage/issues/3832)
 
@@ -253,7 +253,7 @@ Z9264/201911-170 での warm-reboot 中に orchagent と Python プロセスが�
 
 ### `SAI_SWITCH_ATTR_AVAILABLE_IPMC_ENTRY` 属性がサポートされていない SAI 実装で（sonic-buildimage#6563）
 
-`SAI_SWITCH_ATTR_AVAILABLE_IPMC_ENTRY` 属性がサポートされていない SAI 実装でエラーが発生する問題。CRM での IPMC エントリ監視が利用できないプラットフォームがある
+`SAI_SWITCH_ATTR_AVAILABLE_IPMC_ENTRY` 属性がサポートされていない SAI 実装でエラーが発生する問題。[CRM](../reference/glossary.md#term-crm) での IPMC エントリ監視が利用できないプラットフォームがある
 
 - 参照: [sonic-net/sonic-buildimage#6563](https://github.com/sonic-net/sonic-buildimage/issues/6563)
 
@@ -276,4 +276,4 @@ syncd が master RPC イメージでクラッシュする問題。RPC ビルド�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 3c16455a710d -->
+<!-- glossary-links-injected: 5dcfd4f70a30 -->

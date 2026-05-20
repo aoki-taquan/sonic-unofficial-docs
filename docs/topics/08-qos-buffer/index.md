@@ -87,7 +87,7 @@ related:
 
 # QoS / Buffer / PFC / Watermark
 
-この章は、SONiC の「ASIC のバッファをどう分けるか」「キューをどの順で出すか」「混んだら誰に止まってもらうか」「混み具合をどう測るか」を、読み手の質問順にまとめ直したものです。既存ページは buffer 計算、scheduler、[PFC](../../reference/glossary.md#term-pfc)、watermark、reclaim といった単独 [HLD](../../reference/glossary.md#term-hld) に分かれていて、互いの関係が見えづらいので、ここでは「設定 → 流れ → 観測」を一本の地図にします。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) の「[ASIC](../../reference/glossary.md#term-asic) のバッファをどう分けるか」「キューをどの順で出すか」「混んだら誰に止まってもらうか」「混み具合をどう測るか」を、読み手の質問順にまとめ直したものです。既存ページは buffer 計算、scheduler、[PFC](../../reference/glossary.md#term-pfc)、watermark、reclaim といった単独 [HLD](../../reference/glossary.md#term-hld) に分かれていて、互いの関係が見えづらいので、ここでは「設定 → 流れ → 観測」を一本の地図にします。
 
 `BUFFER_POOL` / `BUFFER_PROFILE` / `BUFFER_PG` / `BUFFER_QUEUE` / `QUEUE` / `SCHEDULER` / `WRED_PROFILE` / `DSCP_TO_TC_MAP` / `TC_TO_QUEUE_MAP` / `PORT_QOS_MAP` / `PFC_WD` といったテーブルは、最終的には [SAI](../../reference/glossary.md#term-sai) の buffer profile、queue、scheduler、PG オブジェクトに落ちます。PFC は受信側の輻輳通知、watermark / PFCWD はその記録と暴走停止です。同じ「輻輳」を別角度から見ているだけで、設定面は意外と直線的につながっています。
 
@@ -182,4 +182,4 @@ related:
 - [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
 - [Multi-ASIC / VOQ Chassis](../12-multi-asic-voq/index.md)
 
-<!-- glossary-links-injected: 4d8906fd5d56 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

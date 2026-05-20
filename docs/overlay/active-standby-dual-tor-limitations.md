@@ -54,7 +54,7 @@ related:
 - MuxOrch の neighbor handling 3 案のうちどれが採用されているか確認 — `createStandaloneTunnelRoute` / `removeStandaloneTunnelRoute` 案で確定
 - ycabled の I2C リトライ + MUX_FAIL 報告ロジック実装確認
 - 6.3.5.1 の Loopback0 宛 encap パケット listen + ping 駆動 service の所在確認
-- 6.3.5.2 の zero mac neighbor + tunnel route 自動 install の [neighsyncd](../reference/glossary.md#term-neighsyncd) / muxorch 実装確認
+- 6.3.5.2 の zero mac neighbor + tunnel route 自動 install の [neighsyncd](../reference/glossary.md#term-neighsyncd) / [muxorch](../reference/glossary.md#term-muxorch) 実装確認
 - arp_update の FAILED → INCOMPLETE 書き換えの取り込み確認
 - accept_untracked_na の kernel backport 状況確認
 
@@ -78,4 +78,4 @@ related:
 
 [^1]: `sonic-net/SONiC` `doc/dualtor/dualtor_active_standby_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 899526be8f4a -->
+<!-- glossary-links-injected: fa77d98b9e28 -->

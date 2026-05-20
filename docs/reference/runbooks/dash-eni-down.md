@@ -45,7 +45,7 @@ related:
 
 1. **MAC / underlay_ip 不整合**: [ENI](../../reference/glossary.md#term-eni) の `mac_address` / `underlay_ip` が [SmartSwitch](../../reference/glossary.md#term-smartswitch) の物理構成と合っていない
 2. **依存リソース未作成**: `DASH_VNET` / `DASH_APPLIANCE` が [ENI](../../reference/glossary.md#term-eni) より後に作られた / 削除された
-3. **[DPU](../../reference/glossary.md#term-dpu) 側 dataplane 異常**: [DPU](../../reference/glossary.md#term-dpu) 内 ASIC programming が失敗
+3. **[DPU](../../reference/glossary.md#term-dpu) 側 dataplane 異常**: [DPU](../../reference/glossary.md#term-dpu) 内 [ASIC](../../reference/glossary.md#term-asic) programming が失敗
 4. **License / capability mismatch**: model がサポートしない [ENI](../../reference/glossary.md#term-eni) count
 5. **route / mapping table 衝突**
 
@@ -132,4 +132,4 @@ show dash counter eni <eni>
 [^1]: sonic-net/sonic-dash-api @ master — dash_eni.proto
 [^2]: sonic-net/[sonic-swss](../../reference/glossary.md#term-sonic-swss) @ master — dashorch.cpp
 
-<!-- glossary-links-injected: d39f7c17ce76 -->
+<!-- glossary-links-injected: c006405759d8 -->
