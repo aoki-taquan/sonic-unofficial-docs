@@ -39,7 +39,7 @@ related:
 
 # 設定
 
-[gNMI](../../reference/glossary.md#term-gnmi) からの Get / Set / Subscribe は、対象の [YANG](../../reference/glossary.md#term-yang) path を OpenConfig / SONiC native のどちらで指定するかを最初に決める。ここでは代表機能 (interface, [VLAN](../../reference/glossary.md#term-vlan), [PortChannel](../../reference/glossary.md#term-portchannel), [BGP](../../reference/glossary.md#term-bgp)) について OpenConfig 側のマップを起点にする。実コマンド例と容量は [gNMI usage](../../management/gnmi-usage.md) にまとまっている。
+[gNMI](../../reference/glossary.md#term-gnmi) からの Get / Set / Subscribe は、対象の [YANG](../../reference/glossary.md#term-yang) path を OpenConfig / [SONiC](../../reference/glossary.md#term-sonic) native のどちらで指定するかを最初に決める。ここでは代表機能 (interface, [VLAN](../../reference/glossary.md#term-vlan), [PortChannel](../../reference/glossary.md#term-portchannel), [BGP](../../reference/glossary.md#term-bgp)) について OpenConfig 側のマップを起点にする。実コマンド例と容量は [gNMI usage](../../management/gnmi-usage.md) にまとまっている。
 
 ## シナリオ 1: gNMI server 立ち上げ
 
@@ -194,7 +194,7 @@ BGP は OpenConfig BGP と SONiC native BGP の両方が定義され、Managemen
 
 ## SONiC native YANG の役割
 
-OpenConfig がカバーしないフィールド (たとえば SONiC 固有の feature flag、ASIC 特有の counter、telemetry 設定、特定の hardware option) は SONiC native YANG から入る。Native YANG のモジュール命名と書き方は [SONiC YANG model guidelines](../../management/sonic-yang-model-guidelines.md) にまとまっている。
+OpenConfig がカバーしないフィールド (たとえば SONiC 固有の feature flag、[ASIC](../../reference/glossary.md#term-asic) 特有の counter、telemetry 設定、特定の hardware option) は SONiC native YANG から入る。Native YANG のモジュール命名と書き方は [SONiC YANG model guidelines](../../management/sonic-yang-model-guidelines.md) にまとまっている。
 
 機能章別の YANG モジュール一覧は [YANG リファレンス](yang-reference.md) を参照する。
 
@@ -243,4 +243,4 @@ gNMI server の起動制御に使う table。
 - [SONiC CLI auto-generation tool](../../management/sonic-cli-auto-generation-tool.md)
 - 同章の [concept](concept.md) / [architecture](architecture.md) / [operations](operations.md) / [yang-reference](yang-reference.md)
 
-<!-- glossary-links-injected: 617e688be241 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

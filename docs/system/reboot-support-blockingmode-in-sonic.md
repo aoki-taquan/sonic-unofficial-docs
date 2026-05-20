@@ -41,7 +41,7 @@ related:
 
 ## 概要
 
-SONiC の `reboot` スクリプトは内部で `systemctl reboot` を呼ぶが、これは **非同期** であり、戻り値が返るタイミングと systemd によるユーザーセッション kill のタイミングがレースする[^1]。結果、コンソール出力は次の 2 パターンがランダムに発生する:
+[SONiC](../reference/glossary.md#term-sonic) の `reboot` スクリプトは内部で `systemctl reboot` を呼ぶが、これは **非同期** であり、戻り値が返るタイミングと systemd によるユーザーセッション kill のタイミングがレースする[^1]。結果、コンソール出力は次の 2 パターンがランダムに発生する:
 
 - A: `systemctl reboot` 戻り後にユーザシェルがプロンプトを 1 行表示してから切断
 - B: シェルが先に kill されてプロンプト無しで切断
@@ -256,4 +256,4 @@ show system-health summary
 - fast-reboot / warm-reboot への blocking mode 適用可否
 -->
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

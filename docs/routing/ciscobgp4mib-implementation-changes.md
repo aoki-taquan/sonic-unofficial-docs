@@ -44,7 +44,7 @@ related:
 
 ## 読み手が知りたいこと
 
-- なぜマルチ ASIC で従来の [SNMP](../reference/glossary.md#term-snmp)→vtyソケット 直結方式が破綻するのか
+- なぜマルチ [ASIC](../reference/glossary.md#term-asic) で従来の [SNMP](../reference/glossary.md#term-snmp)→vtyソケット 直結方式が破綻するのか
 - 新方式（`bgpmon` + [STATE_DB](../reference/glossary.md#term-state_db)）はどこで動き、どう負荷を抑えているか
 - スキーマ（`NEIGH_STATE_TABLE`）に何が入るのか
 - 旧 Bgp4MIB（`1.3.6.1.2.1.15`）はマルチ ASIC で動くのか
@@ -180,4 +180,4 @@ docker exec snmp grep -i bgp4 /etc/snmp/snmpd.conf
 
 [^1]: `sonic-net/SONiC` `doc/snmp/snmp_ciscobgp4mib.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 148c5064300b -->
+<!-- glossary-links-injected: c006405759d8 -->

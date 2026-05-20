@@ -40,7 +40,7 @@ related:
 
 ## 概要
 
-SONiC の flex counter には **queue counter / PG-drop counter / watermark counter (queue / PG / buffer-pool)** が並列に存在する。これらは `counterpoll` CLI で個別に enable / disable される。一方、各 counter は **`COUNTERS_DB.COUNTERS_QUEUE_*_MAP`** や **`COUNTERS_DB.COUNTERS_PG_*_MAP`** といった「OID とポート / queue index / PG index の対応マップ」を必要とする。
+[SONiC](../reference/glossary.md#term-sonic) の flex counter には **queue counter / PG-drop counter / watermark counter (queue / PG / buffer-pool)** が並列に存在する。これらは `counterpoll` CLI で個別に enable / disable される。一方、各 counter は **`COUNTERS_DB.COUNTERS_QUEUE_*_MAP`** や **`COUNTERS_DB.COUNTERS_PG_*_MAP`** といった「OID とポート / queue index / PG index の対応マップ」を必要とする。
 
 本 [HLD](../reference/glossary.md#term-hld) は **「watermark を有効化したのに queue map が生成されない」** などの整合性バグを直すための修正設計を定める[^1]。
 
@@ -292,4 +292,4 @@ show priority-group watermark headroom
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: af011099fbeb -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

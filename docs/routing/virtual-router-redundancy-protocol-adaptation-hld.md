@@ -32,7 +32,7 @@ related:
 
 ## なぜ必要か
 
-VRRP (RFC 5798) は **複数ルータが 1 つの仮想ルータ (VIP + VMAC) を演じ**、Master 障害時に Backup が自動引き継ぐ L3 冗長プロトコル。[FRR](../reference/glossary.md#term-frr) には `vrrpd` 実装があり、本 [HLD](../reference/glossary.md#term-hld) はそれを SONiC に取り込む方法を定める[^1]。
+[VRRP](../reference/glossary.md#term-vrrp) (RFC 5798) は **複数ルータが 1 つの仮想ルータ (VIP + VMAC) を演じ**、Master 障害時に Backup が自動引き継ぐ L3 冗長プロトコル。[FRR](../reference/glossary.md#term-frr) には `vrrpd` 実装があり、本 [HLD](../reference/glossary.md#term-hld) はそれを [SONiC](../reference/glossary.md#term-sonic) に取り込む方法を定める[^1]。
 
 主な要件[^1]:
 
@@ -100,7 +100,7 @@ flowchart LR
 
 ### swss 側
 
-`vrrpd` 由来の routing decision (VMAC / VIP) が swss を通って ASIC へ降りる[^1]:
+`vrrpd` 由来の routing decision (VMAC / VIP) が swss を通って [ASIC](../reference/glossary.md#term-asic) へ降りる[^1]:
 
 - `INTF_TABLE` に VIP を secondary IP として登録
 - VMAC は L2 に install、ASIC の MAC table と route table へ反映
@@ -208,4 +208,4 @@ bridge fdb show | grep -i 5e:00:01
 
 [^1]: `sonic-net/SONiC` `doc/vrrp/VRRP_Adaptation_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 461c54e12955 -->
+<!-- glossary-links-injected: f08c435ee15d -->

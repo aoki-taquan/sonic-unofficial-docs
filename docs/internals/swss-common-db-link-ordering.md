@@ -5,7 +5,8 @@ tags: [swss-common, database, api, producer-state-table, internal]
 description: linkToDbNative を linkToDb より先に呼ばなければならない順序制約の理由とクラッシュパターン。
 source_issues:
   - https://github.com/sonic-net/sonic-swss-common/issues/507
-verification: community-report
+verification: issue-confirmed
+last_verified: 2026-05-20
 ---
 
 # swss-common DB リンク順序制約（linkToDbNative / linkToDb）
@@ -65,7 +66,7 @@ obj.linkToDbNative(db_native);  // クラッシュ: 前のスレッドが動い�
 
 ## 利用者への注意
 
-`swss-common` を使用する swss / orchagent や、カスタムエージェントを実装する際：
+`swss-common` を使用する swss / [orchagent](../reference/glossary.md#term-orchagent) や、カスタムエージェントを実装する際：
 
 - `linkToDbNative()` と `linkToDb()` を使用する場合は必ず `linkToDbNative()` を先に呼ぶ
 - `linkToDbNative()` を複数回呼ばない
@@ -75,3 +76,5 @@ obj.linkToDbNative(db_native);  // クラッシュ: 前のスレッドが動い�
 
 - [swss-common データベース設定](swss-common-database-config.md)
 - GitHub Issue: [sonic-net/sonic-swss-common#507](https://github.com/sonic-net/sonic-swss-common/issues/507)
+
+<!-- glossary-links-injected: e2892b76fd9a -->

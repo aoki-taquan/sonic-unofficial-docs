@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-従来 SONiC は IPv4 用 `L3` と IPv6 用 `L3V6` を **別々の [SAI](../reference/glossary.md#term-sai) [ACL](../reference/glossary.md#term-acl) テーブル** として作成していた。多くの ASIC では同一 [TCAM](../reference/glossary.md#term-tcam) テーブルで v4 / v6 両方を扱える（IPv6 アドレス用に確保された 128bit 幅に IPv4 32bit を相乗り可能）ため、TCAM の使い切りが起こり得た[^1]。
+従来 [SONiC](../reference/glossary.md#term-sonic) は IPv4 用 `L3` と IPv6 用 `L3V6` を **別々の [SAI](../reference/glossary.md#term-sai) [ACL](../reference/glossary.md#term-acl) テーブル** として作成していた。多くの [ASIC](../reference/glossary.md#term-asic) では同一 [TCAM](../reference/glossary.md#term-tcam) テーブルで v4 / v6 両方を扱える（IPv6 アドレス用に確保された 128bit 幅に IPv4 32bit を相乗り可能）ため、TCAM の使い切りが起こり得た[^1]。
 
 本 [HLD](../reference/glossary.md#term-hld) は **新規組み込みテーブル型 `L3V4V6`** を導入し、この最適化を operator が選択的に有効化できるようにする[^1]。`MIRROR` / `MIRRORV6` で過去に行ったコンパイル時マージ最適化（Option-A）と異なり、ユーザに見える ACL テーブルが 1 つで済む点が利点。
 
@@ -157,4 +157,4 @@ config acl add table -s ingress -p Ethernet0 DATAACL L3V4V6
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 4d9f23481e68 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

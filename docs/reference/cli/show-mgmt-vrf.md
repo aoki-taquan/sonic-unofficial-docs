@@ -97,7 +97,7 @@ excerpt: |
 
 ## 補足
 
-- 管理 VRF のルーティングテーブル ID は SONiC で **6000 固定**。`ip rule` の優先度で標準テーブル経路と分離されている
+- 管理 VRF のルーティングテーブル ID は [SONiC](../../reference/glossary.md#term-sonic) で **6000 固定**。`ip rule` の優先度で標準テーブル経路と分離されている
 - `is_mgmt_vrf_enabled` は `MGMT_VRF_CONFIG|vrf_global` の `mgmtVrfEnabled` を参照する
 - 管理 VRF の有効化・無効化は `config vrf add mgmt` / `config vrf del mgmt` 系コマンドで行う（本コマンドは表示のみ）
 
@@ -144,4 +144,4 @@ flowchart LR
 - [CONFIG_DB: MGMT_VRF_CONFIG](../config-db/mgmt-vrf-config.md)
 - [reference/CLI: show ip](show-ip.md)
 
-<!-- glossary-links-injected: daea650a90b0 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

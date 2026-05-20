@@ -104,7 +104,7 @@ VNET_TABLE:<vnet>
 | Command | 用途 |
 |---------|------|
 | `config vxlan <name> vlan <vid> vni <vni>` | VLAN ↔ VNI |
-| `config vxlan <name> src_if <intf>` | VTEP の source IF |
+| `config vxlan <name> src_if <intf>` | [VTEP](../reference/glossary.md#term-vtep) の source IF |
 | `config vxlan <name> vlan <vid> flood vtep <ip,...>` | HER 用 flood list |
 | `show vxlan <name>` | [VXLAN](../reference/glossary.md#term-vxlan) tunnel 情報 |
 | `show mac vxlan <name> <vni>` | VNI 別 learned MAC |
@@ -171,4 +171,4 @@ docker exec bgp vtysh -c 'show bgp l2vpn evpn summary'
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/Vxlan_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 23f2999cb556 -->
+<!-- glossary-links-injected: 0726817b0ba1 -->

@@ -50,7 +50,7 @@ related:
 
 ## 動的 buffer model の運用詳細
 
-動的 buffer model (`buffermgrd` が dynamic) では、`BUFFER_PROFILE` を手書きせず alpha (dynamic threshold) と pool size のみ指定する。alpha は ASIC の `SAI_BUFFER_PROFILE_ATTR_SHARED_DYNAMIC_TH` に直接マップされ、共有 pool 残量に応じて per-PG/queue の使用上限が自動調整される。alpha = 1/8 を基準に、congestion 多めの ToR では alpha を大きくして burst 吸収を優先し、tail-drop 厳しめの構成では小さくする。
+動的 buffer model (`buffermgrd` が dynamic) では、`BUFFER_PROFILE` を手書きせず alpha (dynamic threshold) と pool size のみ指定する。alpha は [ASIC](../../reference/glossary.md#term-asic) の `SAI_BUFFER_PROFILE_ATTR_SHARED_DYNAMIC_TH` に直接マップされ、共有 pool 残量に応じて per-PG/queue の使用上限が自動調整される。alpha = 1/8 を基準に、congestion 多めの ToR では alpha を大きくして burst 吸収を優先し、tail-drop 厳しめの構成では小さくする。
 
 ポートアップ / ダウン時には `buffermgrd` が `BUFFER_PG`, `BUFFER_QUEUE` を再計算し、`speed`, `cable-length` の変化を `pg_lossless_<speed>_<cable>_profile` という profile キーで参照する。pg-headroom 計算式は `headroom = 2 * (delay * BW + MTU)` ベース。手動上書きは原則しない。
 
@@ -79,7 +79,7 @@ related:
 
 - `align-watermark-flow-with-port-configuration` [HLD](../../reference/glossary.md#term-hld) が port lifecycle と watermark の整合を扱い、これを起点に counter の reset 周りが整理される方向。
 - Dynamic buffer model の telemetry 統合が長期テーマで、buffer pool の utilization を OpenConfig schema で export する話が継続。
-- SAI 側で `SAI_BUFFER_POOL_ATTR_XOFF_SIZE` や per-queue headroom counter の attribute が拡張されており、SONiC 側 schema 追随が見込まれる。
+- SAI 側で `SAI_BUFFER_POOL_ATTR_XOFF_SIZE` や per-queue headroom counter の attribute が拡張されており、[SONiC](../../reference/glossary.md#term-sonic) 側 schema 追随が見込まれる。
 
 ## 関連 RFC / 仕様書
 
@@ -136,4 +136,4 @@ related:
 - [Watermark Counters](../../acl-qos/watermark-counters-in-sonic.md)
 - [Tunnel DSCP remap](../../overlay/dscp-remapping-for-tunnel-traffic.md)
 
-<!-- glossary-links-injected: c7a6a719fb35 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

@@ -38,7 +38,7 @@ related:
 
 ## 概要
 
-[BFD](../reference/glossary.md#term-bfd)（Bidirectional Forwarding Detection）はリンク・ピア間の高速障害検出プロトコルである。SONiC では従来 [FRR](../reference/glossary.md#term-frr)（`bfdd`）でソフトウェア BFD を実装するが、本機能は **BFD セッションを ASIC 側にオフロードして CPU を介在させずに検知する** 経路を導入する[^1]。
+[BFD](../reference/glossary.md#term-bfd)（Bidirectional Forwarding Detection）はリンク・ピア間の高速障害検出プロトコルである。[SONiC](../reference/glossary.md#term-sonic) では従来 [FRR](../reference/glossary.md#term-frr)（`bfdd`）でソフトウェア BFD を実装するが、本機能は **BFD セッションを [ASIC](../reference/glossary.md#term-asic) 側にオフロードして CPU を介在させずに検知する** 経路を導入する[^1]。
 
 設計の主眼は以下のとおり。
 
@@ -263,4 +263,4 @@ docker exec bgp vtysh -c 'show bfd peers' | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 87dbd5422985 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

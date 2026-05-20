@@ -37,7 +37,7 @@ related:
 
 ## なぜ必要なのか
 
-SONiC Application Extension Infrastructure により **SONiC docker（= SONiC Package）と Base OS が独立配布** されるようになった[^1]。docker 同士・docker と OS の **互換性** をどう担保するかが課題で、SONiC docker 群に [semver.org](https://semver.org) を適用するガイドラインが本 [HLD](../reference/glossary.md#term-hld)。
+[SONiC](../reference/glossary.md#term-sonic) Application Extension Infrastructure により **SONiC docker（= SONiC Package）と Base OS が独立配布** されるようになった[^1]。docker 同士・docker と OS の **互換性** をどう担保するかが課題で、SONiC docker 群に [semver.org](https://semver.org) を適用するガイドラインが本 [HLD](../reference/glossary.md#term-hld)。
 
 主旨:
 
@@ -162,4 +162,4 @@ sonic-installer list
 
 [^1]: `sonic-net/SONiC` `doc/sonic-application-extension/sonic-versioning-strategy.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: ad4074e0b684 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

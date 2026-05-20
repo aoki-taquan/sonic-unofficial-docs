@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-types`
 - top container: `sonic-flex_counter`
 
-`syncd` の Flex Counter Manager が ASIC [SAI](../../reference/glossary.md#term-sai) カウンタをポーリングする際の有効/無効・ポーリング間隔・delay 起動を制御する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。カウンタ種別ごとに 1 つのコンテナを持ち、全コンテナで共通の `FLEX_COUNTER_STATUS` / `FLEX_COUNTER_DELAY_STATUS` / `POLL_INTERVAL` パターン（一部は `POLL_INTERVAL` を持たない）が繰り返される。加えてルート単位フローカウンタ用の `FLOW_COUNTER_ROUTE_PATTERN` を別コンテナで定義する。
+`syncd` の Flex Counter Manager が [ASIC](../../reference/glossary.md#term-asic) [SAI](../../reference/glossary.md#term-sai) カウンタをポーリングする際の有効/無効・ポーリング間隔・delay 起動を制御する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。カウンタ種別ごとに 1 つのコンテナを持ち、全コンテナで共通の `FLEX_COUNTER_STATUS` / `FLEX_COUNTER_DELAY_STATUS` / `POLL_INTERVAL` パターン（一部は `POLL_INTERVAL` を持たない）が繰り返される。加えてルート単位フローカウンタ用の `FLOW_COUNTER_ROUTE_PATTERN` を別コンテナで定義する。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -92,8 +92,8 @@ module: sonic-flex_counter
 | `DASH_METER` | [DASH](../../reference/glossary.md#term-dash) メーター統計 | ○ |
 | `HA_SET` | [DASH](../../reference/glossary.md#term-dash) HA セット統計 | ○ |
 | `PFCWD` | [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) | ○ |
-| `PG_DROP` | Priority Group ドロップ | ○ |
-| `PG_WATERMARK` | Priority Group ウォーターマーク | ○ |
+| `PG_DROP` | [Priority Group](../../reference/glossary.md#term-priority-group) ドロップ | ○ |
+| `PG_WATERMARK` | [Priority Group](../../reference/glossary.md#term-priority-group) ウォーターマーク | ○ |
 | `PORT` | ポート統計 | ○ |
 | `PORT_RATES` | ポートレート計算 | ○ |
 | `PORT_BUFFER_DROP` | ポートバッファドロップ | ○ |
@@ -198,4 +198,4 @@ counterpoll show
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-flex_counter.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 69034d0d8988 -->
