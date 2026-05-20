@@ -80,8 +80,8 @@ SNMP_USER|<user>
 
 HLD は次のファイル変更を要求している[^1]：
 
-- `sonic-buildimage/dockers/docker-snmp-v2/snmpd.conf.j2`: SNMP テーブル存在時は新パスを使い、無ければ旧パスにフォールバック（後方互換）
-- `sonic-buildimage/dockers/docker-snmp-v2/snmpd-config-updater`: 近く caclmgrd で代替されるため変更不要
+- `sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2`（HLD 原文は旧称 `docker-snmp-v2`）: SNMP テーブル存在時は新パスを使い、無ければ旧パスにフォールバック（後方互換）
+- `sonic-buildimage/dockers/docker-snmp/snmpd-config-updater`（HLD 原文は旧称 `docker-snmp-v2`）: 近く caclmgrd で代替されるため変更不要
 - `sonic-swss-common/common/schema.h`: `#define CFG_SNMP_TABLE_NAME "SNMP"` を追加
 - `sonic-swss/doc/swss-schema.md`: スキーマ定義を追加
 

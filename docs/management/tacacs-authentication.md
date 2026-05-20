@@ -131,7 +131,7 @@ key = "global"
 passkey   = 1*32VCHAR
 auth_type = pap|chap|mschap
 src_ip    = IPAddress
-timeout   = 1-99
+timeout   = 1-60
 ```
 
 ### `TACPLUS_SERVER`
@@ -142,7 +142,7 @@ tcp_port  = 1-65535
 passkey   = 1*32VCHAR
 auth_type = pap|chap|mschap
 priority  = 1-64
-timeout   = 1-99
+timeout   = 1-60
 ```
 
 `TACPLUS_SERVER` は global を **個別に上書き**[^1]。

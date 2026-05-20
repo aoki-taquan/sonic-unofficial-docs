@@ -22,7 +22,6 @@ related:
   - config aaa
   - config radius
   - show aaa
-  - show priority group
   - config vrf
   yang:
   - sonic-vrf

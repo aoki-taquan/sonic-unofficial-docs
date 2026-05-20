@@ -152,9 +152,9 @@ config sflow interface sample-rate Ethernet0 10000
 
 ## トラブルシューティング
 
-- collector に届かない → `show sflow` で admin / collector reachability、`hsflowd` ログを確認
-- sample_rate が想定と違う → port speed 変更直後の追従、`sample-rate` 明示設定の有無を確認
-- agent_id が更新されない → `Loopback0` 等の interface 状態と `config sflow agent-id` を確認
+- collector に届かない → `show sflow` で admin / collector reachability、`hsflowd` ログを確認。DUT 側で `tcpdump -i eth0 udp port 6343` でパケット送出を確認する
+- sample_rate が想定と違う → port speed 変更直後の追従、`sample-rate` 明示設定の有無を確認。サンプルが増えない場合は ASIC 側のサンプリング機能が [NPU](../reference/glossary.md#term-npu) 制限（per-port / per-switch の最大 rate）で頭打ちになっている可能性があり、`saidump | grep SAMPLEPACKET` を確認
+- agent_id が更新されない → `Loopback0` 等の interface 状態と `config sflow agent-id` を確認。sFlow agent IP は management interface ではなく Loopback を使うのが一般的で、`config sflow agent-id` で固定推奨
 
 <!-- diff-admonition -->
 !!! diff "HLD と実装の差分"
@@ -213,20 +213,6 @@ redis-cli -n 4 keys 'SFLOW_COLLECTOR|*'
 docker logs sflow 2>&1 | tail -50
 ```
 
-### コマンド例: sFlow 動作確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# sFlow agent / collector 設定と送信状況
-show sflow
-redis-cli -n 4 hgetall 'SFLOW|global'
-redis-cli -n 4 keys 'SFLOW_COLLECTOR|*'
-# hsflowd ログ
-docker logs sflow 2>&1 | tail -50
-```
-
 ## 確認コマンド
 
 ```bash
@@ -243,12 +229,6 @@ docker exec sflow cat /etc/hsflowd.conf
 # サンプル送出統計
 docker exec sflow hsflowd -d -F 2>&1 | head -40
 ```
-
-## トラブルシュート
-
-- コレクタにサンプルが届かない場合、まず DUT 側で `tcpdump -i eth0 udp port 6343` でパケット送出を確認する。
-- sampling rate を上げてもサンプルが増えない場合、ASIC 側でサンプリング機能が [NPU](../reference/glossary.md#term-npu) 制限で頭打ち (per-port や per-switch の最大 rate) になっている可能性。`saidump | grep SAMPLEPACKET` を確認。
-- sFlow agent IP が management interface ではなく Loopback を使うべき設計が一般的。`config sflow agent-id` で固定推奨。
 
 ## 引用元
 

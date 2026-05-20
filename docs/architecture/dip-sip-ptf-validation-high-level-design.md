@@ -322,7 +322,7 @@ docker images | grep -i ptf
 # PTF runner の起動例 (sonic-mgmt 配下)
 cd .cache/sonic-sources/sonic-mgmt/tests && \
   pytest --inventory=../ansible/veos --testbed=vms-kvm-t0 --testbed_file=../ansible/testbed.yaml \
-         dip_sip/test_dip_sip.py --collect-only
+         ipfwd/test_dip_sip.py --collect-only
 
 # DUT 側 ACL / mirror セッション (DIP/SIP 検査が依存する場合)
 show acl table

@@ -98,7 +98,7 @@ DPU_STATE|DPU<N>
 ### 起動時初期化 (`set_initial_dpu_admin_state`)
 
 ```python
-# chassisd:1387-1391
+# chassisd:1386-1391
 if operational_state == ModuleBase.MODULE_STATUS_ONLINE:
     op_state = 'up'
 else:
@@ -114,7 +114,7 @@ self.module_updater.update_dpu_state(dpu_state_key, op_state)
 
 | フィールド | YANG default | コード由来デフォルト | 備考 |
 |-----------|-------------|-------------------|------|
-| `dpu_midplane_link_state` | なし | 起動時は oper_status 依存; ポーリング時は midplane 到達性依存 | `chassisd:1387-1391`, `1102-1105` |
+| `dpu_midplane_link_state` | なし | 起動時は oper_status 依存; ポーリング時は midplane 到達性依存 | `chassisd:1386-1391`, `1102-1105` |
 | `dpu_midplane_link_reason` | なし | `""` (常に空) | `chassisd:878` — platform API 設計上の制約 |
 | `dpu_midplane_link_time` | なし | `get_formatted_time()` — `"%a %b %d %I:%M:%S %p UTC %Y"` | 例: `"Wed May 14 10:30:45 AM UTC 2026"` |
 | `dpu_control_plane_state` | なし | midplane `'down'` 設定時: `'down'`; DpuStateUpdater: `SYSTEM_READY.Status` 参照 | `chassisd:882-884`, `1277-1284` |
