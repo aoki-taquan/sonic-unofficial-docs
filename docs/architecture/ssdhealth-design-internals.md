@@ -83,10 +83,10 @@ flowchart LR
     TIMER[周期 timer] --> SSDMOND[ssdmond]
     SSDMOND --> SB[SsdBase.get_disk_health]
     SB -->|health < threshold| ALERT[syslog / SNMP trap]
-    SB -->|health OK| OK[STATE_DB 更新]
+    SB -->|health OK| OK[正常継続（HLD 外・実装依存）]
 ```
 
-> 現行 master では `ssdmond` は取り込まれていない。詳細は [ssdhealth-design-limitations.md](ssdhealth-design-limitations.md) を参照。
+> 現行 master では `ssdmond` は取り込まれていない。HLD 原文では STATE_DB 書き込みは定義されておらず、上記フローの「正常時の永続化先」は HLD 外・実装依存である。詳細は [ssdhealth-design-limitations.md](ssdhealth-design-limitations.md) を参照。
 
 ## 4. 関連ページへの導線
 

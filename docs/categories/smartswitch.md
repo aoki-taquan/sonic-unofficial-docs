@@ -38,7 +38,7 @@ SmartSwitch を学ぶ際は、まず NPU と DPU の境界（どこが [Redis](.
 
 ### management（gNMI 経路）
 
-- [SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）](../management/smart-switch-gnmi-feedback-design-omit-in-toc.md) (area: `management`, verification: `hld-only`)
+- [SmartSwitch gNMI フィードバック（DPU APPL_STATE_DB と version_id）](../management/smart-switch-gnmi-feedback-design-omit-in-toc.md) (area: `management`, verification: `discrepancy-found`)
 
 ### platform（PMON / graceful shutdown）
 
@@ -68,8 +68,7 @@ SmartSwitch を学ぶ際は、まず NPU と DPU の境界（どこが [Redis](.
 
 ## verification ステータス注意点
 
-- **hld-only**: `smart-switch-gnmi-feedback-design-omit-in-toc.md` — 実装側 PR が未マージで HLD 記述のまま
-- **discrepancy-found**: `smartswitch-high-availability-manager-daemon-hamgrd-design.md`, `smartswitch-dpu-graceful-shutdown.md` — 実コードと HLD で記述差異あり。各ページの末尾参照
+- **discrepancy-found**: `smart-switch-gnmi-feedback-design-omit-in-toc.md`, `smartswitch-high-availability-manager-daemon-hamgrd-design.md`, `smartswitch-dpu-graceful-shutdown.md` — 実コードと HLD で記述差異あり。各ページの末尾参照
 
 ## 関連カテゴリ
 

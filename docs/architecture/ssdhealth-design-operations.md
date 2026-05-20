@@ -86,7 +86,9 @@ sudo show platform ssdhealth
 sudo smartctl -a /dev/sda | head -40
 redis-cli -n 6 hgetall 'SSD_INFO|/dev/sda'
 
-# ssdhealth が書き込む STATE_DB
+# STATE_DB 上の SSD_INFO（注: ssdutil / ssdmond のどちらが書き込むかは HLD 内未定義。
+# 現行 master では ssdmond 未取り込みのため、`show platform ssdhealth` 実行時に
+# ssdutil が書き込む実装になっている可能性が高いが要コード照合）
 sonic-db-cli STATE_DB KEYS 'SSD_INFO|*'
 sonic-db-cli STATE_DB HGETALL 'SSD_INFO|/dev/sda'
 

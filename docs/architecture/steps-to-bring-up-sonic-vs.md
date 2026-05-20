@@ -190,18 +190,6 @@ show version
 show interfaces status
 ```
 
-### コマンド例: SONiC-VS bringup 確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# SONiC-VS コンテナの初期化と各 docker 起動状況
-docker ps --format 'table {{.Names}}\t{{.Status}}'
-show version
-show interfaces status
-```
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/test/Bring-up_Sonic-VS_on_Cloud_top.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

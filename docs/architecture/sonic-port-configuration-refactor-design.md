@@ -12,11 +12,6 @@ sources:
 related:
   config_db:
   - PORT
-  - PORT_STORM_CONTROL
-  - PORT_QOS_MAP
-  - PORT_TABLE
-  - PORTCHANNEL
-  - BREAKOUT_CFG
   cli:
   - show interfaces
   yang:
@@ -174,18 +169,6 @@ redis-cli -n 4 keys 'PORT|Ethernet*' | sort | head
 sudo grep -E 'portsorch' /var/log/syslog | tail -50
 ```
 
-### コマンド例: Port config refactor 確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# PORT エントリ反映と orchagent ログ
-show interfaces status
-redis-cli -n 4 keys 'PORT|Ethernet*' | sort | head
-sudo grep -E 'portsorch' /var/log/syslog | tail -50
-```
-
 ## 参考リンク
 
 - [YANG: sonic-port](../reference/yang/sonic-port.md)
@@ -213,16 +196,6 @@ sudo grep -E 'portsorch' /var/log/syslog | tail -50
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
 <!-- /topics-back-ref -->
-
-## 参考リンク
-
-本ページに関連する参照ドキュメント:
-
-- [`show interfaces` CLI リファレンス](../reference/cli/show-interfaces.md)
-- [`PORT` CONFIG_DB スキーマ](../reference/config-db/port.md)
-- [`PORT_STORM_CONTROL` CONFIG_DB スキーマ](../reference/config-db/port-storm-control.md)
-- [`PORT_QOS_MAP` CONFIG_DB スキーマ](../reference/config-db/port-qos-map.md)
-- [`PORTCHANNEL` CONFIG_DB スキーマ](../reference/config-db/portchannel.md)
 
 <!-- augmented-links: v1 -->
 
