@@ -101,7 +101,7 @@ APPL_DB:
   VRF_TABLE:<vrfname>            # vrforch 入力
   INTF_TABLE:<iface>             # 1-segment: vrf binding 行 (v4/v6/vrf_name)
   INTF_TABLE:<iface>:<prefix>    # 2-segment: IP 付与
-  ROUTE_TABLE:<vrf>|<prefix>     # default VRF は省略可
+  ROUTE_TABLE:<vrf>:<prefix>     # default VRF は省略可
 ```
 
 `INTF_TABLE` の **2-segment key** は interface の vrf binding と IP 付与を分離する[^1]。

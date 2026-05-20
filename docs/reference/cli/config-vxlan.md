@@ -133,7 +133,7 @@ excerpt: |
 
 ### `config vxlan map_range del <vxlan_name> <vlan_start> <vlan_end> <vni_start>`
 
-範囲内の各 (vlan, vni) について、**`is_vni_vrf_mapped` が真**（[VRF](../../reference/glossary.md#term-vrf) に VNI 紐付け済み）の行のみ削除する仕様[^2]。それ以外の行はスキップしてメッセージを出すだけ。
+範囲内の各 (vlan, vni) について、**[VRF](../../reference/glossary.md#term-vrf) に紐付いていない VNI のみ削除**し、[VRF](../../reference/glossary.md#term-vrf) にマップ済みの VNI はスキップ（保護）する仕様[^2]。完全に削除したい場合は先に `config vrf del_vrf_vni_map` で VRF-VNI マッピングを解除してから `map del` を使う。スキップされた行は print メッセージのみで警告扱い。
 
 ## 関連する CONFIG_DB
 
@@ -148,7 +148,7 @@ excerpt: |
 ## 注意点
 
 - VTEP / NVO は **デバイス 1 つあたり 1 つ限定**
-- `map_range del` は [VRF](../../reference/glossary.md#term-vrf) 紐付けがある VNI のみ削除する仕様で、削除されない行があっても警告は print のみ。完全削除には `map del` を使う
+- `map_range del` は **VRF 紐付けのない VNI のみ削除**し、VRF に紐付け済みの VNI はスキップ（保護）する。スキップされた行は print メッセージのみ。VRF 紐付け済み VNI を含めて削除するには先に `config vrf del_vrf_vni_map` を実行する
 
 <!-- cli-mermaid -->
 ### データフロー (自動生成)
@@ -209,8 +209,9 @@ sudo config vxlan map add vtep1 100 10100
 
 ```bash
 sudo config vxlan evpn_nvo add nvo1 vtep1
-sudo config vxlan map_range add vtep1 100 200 10100 10200
-sudo config vxlan remove vtep1
+# VLAN 100〜200 を VNI 10100〜10200 に連続マップ（引数は4つのみ）
+sudo config vxlan map_range add vtep1 100 200 10100
+sudo config vxlan del vtep1
 ```
 
 ### 期待される出力 (抜粋)
@@ -258,4 +259,4 @@ show vxlan name <tunnel>
 - [CONFIG_DB: VXLAN_TUNNEL_MAP](../config-db/vxlan-tunnel-map.md)
 - [YANG: sonic-vxlan](../yang/sonic-vxlan.md)
 
-<!-- glossary-links-injected: 764ef78dbc78 -->
+<!-- glossary-links-injected: 639b97382f4c -->
