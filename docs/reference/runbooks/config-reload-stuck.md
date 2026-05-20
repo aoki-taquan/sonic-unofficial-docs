@@ -78,7 +78,7 @@ sudo sonic-cfggen -j /etc/sonic/config_db.json --print-data > /dev/null && echo 
 1. **`config_db.json` の構文エラー / 必須 key 欠落** — `sonic-cfggen` が無限 retry に近い動きをする
 2. **依存関係のあるサービスが停止しきれない** — `database` container が PID 1 待ちで残る
 3. **`bgp.service` が [FRR](../../reference/glossary.md#term-frr) の old socket を握ったまま** — `/var/run/frr/*.pid` の残骸
-4. **[orchagent](../../reference/glossary.md#term-orchagent) の初期 sync 中に ASIC エラー** — `swss-orchagent-busy-loop.md` 参照
+4. **[orchagent](../../reference/glossary.md#term-orchagent) の初期 sync 中に [ASIC](../../reference/glossary.md#term-asic) エラー** — `swss-orchagent-busy-loop.md` 参照
 5. **[gNMI](../../reference/glossary.md#term-gnmi) / telemetry container の graceful stop timeout** — 既定 10 秒だが応答せず 5 分待ち
 6. **NTP 未同期で証明書時刻が未来** — gnmi/telemetry が起動失敗
 
@@ -100,4 +100,4 @@ sudo sonic-cfggen -j /etc/sonic/config_db.json --print-data > /dev/null && echo 
 - [config-db-persistence-failure.md](config-db-persistence-failure.md)
 - [minigraph-reload-stuck.md](minigraph-reload-stuck.md)
 
-<!-- glossary-links-injected: 1f4a6b7af56d -->
+<!-- glossary-links-injected: c006405759d8 -->

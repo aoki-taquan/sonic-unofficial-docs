@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-SONiC のユーザマニュアルは「日常運用と機能設定を一冊で把握する」ことを目的とした包括ガイド[^1]。このページでは、[HLD](../reference/glossary.md#term-hld) やリファレンスとマニュアルの **役割境界** を明確にし、利用者が次に読むべき場所を案内する。
+[SONiC](../reference/glossary.md#term-sonic) のユーザマニュアルは「日常運用と機能設定を一冊で把握する」ことを目的とした包括ガイド[^1]。このページでは、[HLD](../reference/glossary.md#term-hld) やリファレンスとマニュアルの **役割境界** を明確にし、利用者が次に読むべき場所を案内する。
 
 | 種類 | 何が書いてあるか | このサイトでの居場所 |
 |------|------------------|----------------------|
@@ -133,3 +133,5 @@ diff /etc/sonic/config_db.json <(show runningconfiguration all)
 - `sonic-cli`
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: 8ba32e5aa69d -->

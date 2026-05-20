@@ -49,7 +49,7 @@ related:
 | 目的 | 入口 | 詳細 |
 | --- | --- | --- |
 | 手作業で neighbor や global 設定を入れる | `config bgp ...` | [CLI: config bgp](../../reference/cli/config-bgp.md) |
-| 自動化で SONiC native schema を書く | CONFIG_DB | `BGP_GLOBALS`、`BGP_NEIGHBOR`、`BGP_PEER_GROUP` |
+| 自動化で [SONiC](../../reference/glossary.md#term-sonic) native schema を書く | CONFIG_DB | `BGP_GLOBALS`、`BGP_NEIGHBOR`、`BGP_PEER_GROUP` |
 | [gNMI](../../reference/glossary.md#term-gnmi)/REST/OpenConfig を使う | YANG/Management Framework | `sonic-bgp-*`、`sonic-route-map` |
 | policy を再利用する | route-map、prefix-list、prefix-set | CONFIG_DB と CLI reference |
 
@@ -86,7 +86,7 @@ sudo config bgp neighbor add 10.0.0.0 --peer-group SPINE
 sudo config bgp neighbor add 10.0.0.2 --peer-group SPINE
 ```
 
-引数や `--peer-group` などのオプション展開は SONiC バージョンによって差分がある。実コマンドは [CLI: config bgp](../../reference/cli/config-bgp.md) を正にすること。実機では vtysh 直叩きで FRR 側を触る運用も残っているが、CONFIG_DB と vtysh を混ぜると `frrcfgd` 再描画時に上書きが起きるので避ける。
+引数や `--peer-group` などのオプション展開は SONiC バージョンによって差分がある。実コマンドは [CLI: config bgp](../../reference/cli/config-bgp.md) を正にすること。実機では [vtysh](../../reference/glossary.md#term-vtysh) 直叩きで FRR 側を触る運用も残っているが、CONFIG_DB と vtysh を混ぜると `frrcfgd` 再描画時に上書きが起きるので避ける。
 
 ### CONFIG_DB JSON で投入する場合
 
@@ -269,4 +269,4 @@ CONFIG_DB の値は文字列であって boolean ではない (`"true"` / `"fals
 - [BBR 連動の BGP ルート集約](../../routing/bgp-route-aggregation-with-bbr-awareness.md)
 - [FRR-BGP Unified Mgmt Framework](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
 
-<!-- glossary-links-injected: 25d631d5e5c9 -->
+<!-- glossary-links-injected: 7ac8e66e1af3 -->

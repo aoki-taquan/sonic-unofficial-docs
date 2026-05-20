@@ -132,17 +132,17 @@ PBH_HASH_FIELD|<hash_field_name>
 
 ### PBH_RULE.packet_action
 
-| 値 | SAI 挙動 |
+| 値 | [SAI](../../reference/glossary.md#term-sai) 挙動 |
 |----|---------|
-| `SET_ECMP_HASH` (デフォルト) | マッチパケットに ECMP hash profile を適用 |
-| `SET_LAG_HASH` | マッチパケットに LAG hash profile を適用 |
+| `SET_ECMP_HASH` (デフォルト) | マッチパケットに [ECMP](../../reference/glossary.md#term-ecmp) hash profile を適用 |
+| `SET_LAG_HASH` | マッチパケットに [LAG](../../reference/glossary.md#term-lag) hash profile を適用 |
 
 ### PBH_RULE.flow_counter
 
 | 値 | 挙動 |
 |----|------|
 | `DISABLED` (デフォルト) | カウンタ無効 |
-| `ENABLED` | ACL の packet / byte カウンタを有効化 |
+| `ENABLED` | [ACL](../../reference/glossary.md#term-acl) の packet / byte カウンタを有効化 |
 
 ### PBH_HASH_FIELD.hash_field
 
@@ -174,7 +174,7 @@ ip_mask は IPv4 フィールドの場合 `.` 含む、IPv6 フィールドの�
 ### consumer (pbhorch) 例外動作
 - 重複 SET: `Failed to create PBH table(%s) in SAI: object already exists` → `return false`。
 - type / stage / ports / validate 失敗: 各 `SWSS_LOG_ERROR` + `return false`。
-- SAI 能力チェック失敗 (ADD/UPDATE/REMOVE 不対応): `unsupported capabilities` → `return false`。
+- [SAI](../../reference/glossary.md#term-sai) 能力チェック失敗 (ADD/UPDATE/REMOVE 不対応): `unsupported capabilities` → `return false`。
 - DEL で存在しない table: `object doesn't exist` → `return false`。
 - `packet_action` 未指定時 default: `SET_ECMP_HASH`。`flow_counter` 未指定時 default: `DISABLED`。
 
@@ -287,18 +287,17 @@ show pbh statistics
 ```
 <!-- /ops-hint -->
 
-
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
 ### 段階 1: Consumer 登録
 
-- **orchagent / PbhOrch** (`sonic-swss/orchagent/pbhorch.cpp`): `PBH_TABLE`, `PBH_RULE`, `PBH_HASH`, `PBH_HASH_FIELD` を `SubscriberStateTable` で購読。
+- **[orchagent](../../reference/glossary.md#term-orchagent) / PbhOrch** (`sonic-swss/orchagent/pbhorch.cpp`): `PBH_TABLE`, `PBH_RULE`, `PBH_HASH`, `PBH_HASH_FIELD` を `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
 - PbhOrch が各テーブルのエントリを内部データ構造に格納し、依存関係 (HASH_FIELD → HASH → TABLE → RULE) を解決。
-- APP_DB への書き込みなし (orchagent から直接 SAI)。
+- APP_DB への書き込みなし ([orchagent](../../reference/glossary.md#term-orchagent) から直接 SAI)。
 
 ### 段階 3: APPL → SAI
 
@@ -308,7 +307,7 @@ show pbh statistics
 ### 段階 4: タイミング + 副作用
 
 - 依存関係が揃ったエントリから順次 SAI に反映。HASH_FIELD → HASH → RULE の順で処理。
-- 副作用: PBH RULE が ACL テーブルと競合する場合 SAI が resource 不足エラーを返す可能性。
+- 副作用: PBH RULE が [ACL](../../reference/glossary.md#term-acl) テーブルと競合する場合 SAI が resource 不足エラーを返す可能性。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
@@ -318,7 +317,7 @@ PBH_TABLE / PBH_RULE / PBH_HASH / PBH_HASH_FIELD テーブルへの書き込み�
 
 ### CLI
 
-  - `config pbh table/rule/hash/hash-field add/del/update ...` — `config/plugins/pbh.py` が `set_entry()` を呼ぶ (sonic-utilities/config/plugins/pbh.py)
+  - `config pbh table/rule/hash/hash-field add/del/update ...` — `config/plugins/pbh.py` が `set_entry()` を呼ぶ ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/plugins/pbh.py)
 
 ### minigraph / sonic-cfggen
 
@@ -326,7 +325,7 @@ minigraph.py に PBH テーブル生成なし
 
 ### REST / gNMI
 
-REST/gNMI 書き込み経路なし
+REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### db_migrator
 
@@ -470,7 +469,7 @@ minigraph.py および init_cfg.json.j2 からの `PBH_TABLE` / `PBH_RULE` / `PB
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
-`PbhOrch` は `Orch` 基底クラス経由で `PBH_TABLE` / `PBH_RULE` / `PBH_HASH` / `PBH_HASH_FIELD` の 4 テーブルを購読する。すべて CONFIG_DB 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、Redis の **keyspace 通知** (`__keyspace@<dbId>__:<TABLE>:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
+`PbhOrch` は `Orch` 基底クラス経由で `PBH_TABLE` / `PBH_RULE` / `PBH_HASH` / `PBH_HASH_FIELD` の 4 テーブルを購読する。すべて CONFIG_DB 起源のため `Orch::addConsumer()` の DB 種別分岐で **`SubscriberStateTable`** が選ばれ、[Redis](../../reference/glossary.md#term-redis) の **keyspace 通知** (`__keyspace@<dbId>__:<TABLE>:*` の PSUBSCRIBE) を購読する。channel ベースの `PUBLISH` は使用しない。
 
 | 項目 | 値 |
 |------|-----|
@@ -509,7 +508,7 @@ config pbh → HSET CONFIG_DB PBH_RULE|<table>|<rule> ...
   → AclRulePbh::validate() + sai_acl_api->create_acl_entry()
 ```
 
-- APP_DB への書き込みなし (orchagent 直接 SAI)。
+- APP_DB への書き込みなし ([orchagent](../../reference/glossary.md#term-orchagent) 直接 SAI)。
 - `allPortsReady()` が false の場合、`PbhOrch::doTask()` は即 return して処理をスキップする。
 
 <!-- evidence: sonic-net/sonic-swss/orchagent/pbhorch.cpp:88-97 (PbhOrch::PbhOrch — Orch(connectorList)) -->
@@ -542,8 +541,8 @@ config pbh → HSET CONFIG_DB PBH_RULE|<table>|<rule> ...
 |----------|-----------|------|
 | `0x0800` | IPv4 | RFC 791 |
 | `0x86DD` | IPv6 | RFC 2460 |
-| `0x8847` | MPLS unicast | RFC 3032 |
-| `0x0806` | ARP | RFC 826 |
+| `0x8847` | [MPLS](../../reference/glossary.md#term-mpls) unicast | RFC 3032 |
+| `0x0806` | [ARP](../../reference/glossary.md#term-arp) | RFC 826 |
 
 `ether_type` mask は `pbhmgr.cpp:558` で `0xFFFF` に固定注入 (YANG 非記述)。
 
@@ -599,9 +598,9 @@ match field が 0 件、または action が 1 件以外の場合は `AclRulePbh
 
 ### ASIC_DB への書込
 
-PbhOrch → AclOrch → SAI API 経路で syncd が ASIC_DB にオブジェクトを書き込む。直接の ASIC_DB アクセスは syncd 経由。
+PbhOrch → AclOrch → SAI API 経路で [syncd](../../reference/glossary.md#term-syncd) が [ASIC_DB](../../reference/glossary.md#term-asic_db) にオブジェクトを書き込む。直接の [ASIC_DB](../../reference/glossary.md#term-asic_db) アクセスは [syncd](../../reference/glossary.md#term-syncd) 経由。
 
-| 操作 | SAI API | ASIC_DB オブジェクト型 | 契機 |
+| 操作 | SAI API | [ASIC_DB](../../reference/glossary.md#term-asic_db) オブジェクト型 | 契機 |
 |---|---|---|---|
 | PBH_TABLE ADD | `aclOrch->addAclTable()` → `sai_acl_api->create_acl_table()` | `SAI_OBJECT_TYPE_ACL_TABLE` | `PBH_TABLE` SET イベント |
 | PBH_RULE ADD | `aclOrch->addAclRule()` → `sai_acl_api->create_acl_entry()` | `SAI_OBJECT_TYPE_ACL_ENTRY` | `PBH_RULE` SET イベント (依存オブジェクト揃い次第) |
@@ -613,20 +612,20 @@ PbhOrch → AclOrch → SAI API 経路で syncd が ASIC_DB にオブジェク�
 
 ### COUNTERS_DB への書込
 
-`flow_counter=ENABLED` の PBH_RULE のみ、`AclOrch::registerFlexCounter()` を通じて COUNTERS_DB に書き込む。
+`flow_counter=ENABLED` の PBH_RULE のみ、`AclOrch::registerFlexCounter()` を通じて [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に書き込む。
 
-| COUNTERS_DB キー | 内容 | 書込タイミング |
+| [COUNTERS_DB](../../reference/glossary.md#term-counters_db) キー | 内容 | 書込タイミング |
 |---|---|---|
 | `ACL_COUNTER_RULE_MAP` | `"<table_name>|<rule_name>"` → `<acl_counter_oid>` | `flow_counter=ENABLED` の PBH_RULE が addAclRule → createCounter 成功後 |
-| FlexCounter 登録 | `CounterType::ACL_COUNTER` として packet / byte カウンタ属性を登録 | 同上 (`show pbh statistics` に表示) |
+| [FlexCounter](../../reference/glossary.md#term-flexcounter) 登録 | `CounterType::ACL_COUNTER` として packet / byte カウンタ属性を登録 | 同上 (`show pbh statistics` に表示) |
 
-DEL 時: `aclOrch->deregisterFlexCounter()` が `ACL_COUNTER_RULE_MAP` からエントリ削除 + FlexCounter 解除。
+DEL 時: `aclOrch->deregisterFlexCounter()` が `ACL_COUNTER_RULE_MAP` からエントリ削除 + [FlexCounter](../../reference/glossary.md#term-flexcounter) 解除。
 
 証跡: `aclorch.cpp:6041`（hset ACL_COUNTER_RULE_MAP）、`aclorch.cpp:6047`（hdel DEL 時）、`aclorch.cpp:6040`（flex_counter_manager 登録）
 
 ### flow_counter=DISABLED（デフォルト）時
 
-`AclRulePbh` は `createCounter=false` で構築 (`pbhorch.cpp:499`)。ACL_COUNTER SAI オブジェクトは作成されず、COUNTERS_DB への書込は発生しない。
+`AclRulePbh` は `createCounter=false` で構築 (`pbhorch.cpp:499`)。ACL_COUNTER SAI オブジェクトは作成されず、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込は発生しない。
 
 ### 副次書込サマリ
 
@@ -732,7 +731,7 @@ PBH_RULE → PBH_TABLE → PBH_HASH → PBH_HASH_FIELD
 
 現在サポートするベンダー:
 
-| `ASIC_VENDOR` 値 | ロードされるクラス | STATE_DB `PBH_CAPABILITIES_TABLE` へ書込 |
+| `ASIC_VENDOR` 値 | ロードされるクラス | [STATE_DB](../../reference/glossary.md#term-state_db) `PBH_CAPABILITIES_TABLE` へ書込 |
 |---|---|---|
 | `generic` (またはその他 / 未設定) | `PbhGenericFieldCapabilities` | あり (各フィールドの ADD/UPDATE/REMOVE 組み合わせ) |
 | `mellanox` | `PbhMellanoxFieldCapabilities` | あり (同上) |
@@ -786,7 +785,7 @@ GENERIC platform ではこの処理は行われず、直接 `updateAclRule()` �
 
 ### VOQ / chassis
 
-`sonic-swss/orchagent/pbh/` ディレクトリに VOQ chassis 固有コードは存在しない。`PbhOrch` は `orchdaemon.cpp` で unconditionally 生成されており、VOQ / non-VOQ の分岐なし。
+`sonic-swss/orchagent/pbh/` ディレクトリに [VOQ](../../reference/glossary.md#term-voq) chassis 固有コードは存在しない。`PbhOrch` は `orchdaemon.cpp` で unconditionally 生成されており、[VOQ](../../reference/glossary.md#term-voq) / non-[VOQ](../../reference/glossary.md#term-voq) の分岐なし。
 
 ### capability の STATE_DB 書き込み
 
@@ -798,3 +797,5 @@ sonic-db-cli STATE_DB hgetall 'PBH_CAPABILITIES_TABLE|hash'
 ```
 
 <!-- /platform -->
+
+<!-- glossary-links-injected: 33cbd4cf768b -->

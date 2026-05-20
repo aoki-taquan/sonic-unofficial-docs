@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-SONiC のテレメトリエージェント（[gNMI](../reference/glossary.md#term-gnmi) / [gNOI](../reference/glossary.md#term-gnoi) ストリーミング）から **プロセス毎の CPU/メモリ使用量** および **docker コンテナ毎のリソース消費** を購読できるようにする提案。新規デーモンが OS 上の `ps -eo` 出力と `docker stats --no-stream -a` の値を 2 分間隔で [STATE_DB](../reference/glossary.md#term-state_db) に書き、テレメトリエージェント側はそれを既存の購読チャネルで読み出す[^1]。
+[SONiC](../reference/glossary.md#term-sonic) のテレメトリエージェント（[gNMI](../reference/glossary.md#term-gnmi) / [gNOI](../reference/glossary.md#term-gnoi) ストリーミング）から **プロセス毎の CPU/メモリ使用量** および **docker コンテナ毎のリソース消費** を購読できるようにする提案。新規デーモンが OS 上の `ps -eo` 出力と `docker stats --no-stream -a` の値を 2 分間隔で [STATE_DB](../reference/glossary.md#term-state_db) に書き、テレメトリエージェント側はそれを既存の購読チャネルで読み出す[^1]。
 
 ## 動作仕様
 
@@ -165,4 +165,4 @@ docker stats --no-stream
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: bd7e9f303d6c -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

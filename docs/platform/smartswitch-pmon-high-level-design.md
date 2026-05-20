@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-「[SmartSwitch](../reference/glossary.md#term-smartswitch)」は **同一筐体内に Network ASIC（[NPU](../reference/glossary.md#term-npu)）と [DPU](../reference/glossary.md#term-dpu)（Data Processing Unit）を持つ platform**。pmon [HLD](../reference/glossary.md#term-hld) は **NPU 側で動く `pmon` daemon が、複数 DPU の health / inventory / firmware を観測する** 拡張[^1]を扱う。
+「[SmartSwitch](../reference/glossary.md#term-smartswitch)」は **同一筐体内に Network [ASIC](../reference/glossary.md#term-asic)（[NPU](../reference/glossary.md#term-npu)）と [DPU](../reference/glossary.md#term-dpu)（Data Processing Unit）を持つ platform**。pmon [HLD](../reference/glossary.md#term-hld) は **NPU 側で動く `pmon` daemon が、複数 DPU の health / inventory / firmware を観測する** 拡張[^1]を扱う。
 
 主目的:
 
@@ -82,7 +82,7 @@ flowchart LR
 
 ## 制限事項
 
-- **DPU は SAI 経由ではない**: NPU pmon の責務は監視 / 電源 / boot 制御。DPU 上の SONiC（DPU SONiC）固有の挙動は別 HLD
+- **DPU は SAI 経由ではない**: NPU pmon の責務は監視 / 電源 / boot 制御。DPU 上の [SONiC](../reference/glossary.md#term-sonic)（DPU SONiC）固有の挙動は別 HLD
 - **inband mgmt link が必須**: 専用 link が落ちると DPU 状態を把握できない（cached を使う）
 - **HA / smart-switch HA**: 高可用性の active-standby は別 HLD（HA manager hamgrd）に従う
 
@@ -131,4 +131,4 @@ docker exec database redis-cli -n 6 keys 'CHASSIS_MODULE_TABLE|*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9e37db60e0a1 -->
+<!-- glossary-links-injected: ec18b66e3507 -->

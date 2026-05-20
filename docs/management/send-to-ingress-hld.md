@@ -45,8 +45,8 @@ related:
 
 [PINS](../reference/glossary.md#term-pins)（P4 Integrated Network Stack）の Packet I/O では、TX 経路として 2 種類の送信モードが想定される[^1]:
 
-1. **Direct transmit**: 送信元アプリ（[LACP](../reference/glossary.md#term-lacp), P4RT 等）が送信先ポートを既に決めている場合。対応 netdev のソケットへ直接置く
-2. **Ingress pipeline inject**: 送信元アプリが「ASIC のルーティングに任せる」場合。**ASIC の ingress パイプラインに直接パケットを投入** し、[ECMP](../reference/glossary.md#term-ecmp) / WCMP の選択や帯域・キュー深さに応じた最適経路選択を ASIC に委ねる
+1. **Direct transmit**: 送信元アプリ（[LACP](../reference/glossary.md#term-lacp), [P4RT](../reference/glossary.md#term-p4rt) 等）が送信先ポートを既に決めている場合。対応 netdev のソケットへ直接置く
+2. **Ingress pipeline inject**: 送信元アプリが「[ASIC](../reference/glossary.md#term-asic) のルーティングに任せる」場合。**ASIC の ingress パイプラインに直接パケットを投入** し、[ECMP](../reference/glossary.md#term-ecmp) / WCMP の選択や帯域・キュー深さに応じた最適経路選択を ASIC に委ねる
 
 SDN コントローラがネットワーク全体を見てフローを書く構成や、ECMP のリアルタイム性を ASIC に判断させたい場合、後者が必要になる。テスト用途で「CPU 起点で ingress に通したパケットの ASIC ルーティングを観察する」場合にも使える。
 
@@ -195,7 +195,7 @@ ip link show send_to_ingress
 - **PINS Packet I/O HLD**: 本 HLD はその TX 経路を補完する位置づけ。Direct transmit と inject の選択はアプリ側に委ねられる
 - **`PortsMgr` / `PortsOrch`**: [CONFIG_DB](../reference/glossary.md#term-config_db) → [APPL_DB](../reference/glossary.md#term-appl_db) → SAI の標準フローに「`SEND_TO_INGRESS_PORT` 用の小経路」を足す
 - **CPU port / Trap / [CoPP](../reference/glossary.md#term-copp)**: ingress 注入時のパケットも CPU 起点と認識される可能性があり、CoPP との相互作用に注意（HLD では明記されていないが運用上の注意点）
-- **Multi-ASIC**: 各 ASIC ごとに独立な netdev が namespace 内に作られる
+- **[Multi-ASIC](../reference/glossary.md#term-multi-asic)**: 各 ASIC ごとに独立な netdev が namespace 内に作られる
 
 ## トラブルシューティング
 
@@ -244,3 +244,5 @@ docker logs swss 2>&1 | grep -i 'hostif' | tail
 - `SEND_TO_INGRESS_PORT`
 
 <!-- /ops-entry -->
+
+<!-- glossary-links-injected: fcff1faf86ea -->

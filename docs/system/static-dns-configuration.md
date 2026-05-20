@@ -25,7 +25,7 @@ related:
 
 ## 概要
 
-SONiC は管理インタフェース経由で **DHCP から DNS リゾルバ情報を動的に受け取る** のが既定挙動である。一方、ユーザが手動で `/etc/resolv.conf` を書いてもタイミングによっては DHCP の更新で上書きされてしまい、**静的 DNS が保護されない** という問題があった[^1]。
+[SONiC](../reference/glossary.md#term-sonic) は管理インタフェース経由で **DHCP から DNS リゾルバ情報を動的に受け取る** のが既定挙動である。一方、ユーザが手動で `/etc/resolv.conf` を書いてもタイミングによっては DHCP の更新で上書きされてしまい、**静的 DNS が保護されない** という問題があった[^1]。
 
 本機能は [CONFIG_DB](../reference/glossary.md#term-config_db) に `DNS_NAMESERVER` テーブルを追加し、CLI から永続的に静的 DNS を投入できるようにする。中継には Debian の `resolvconf` パッケージを使う。`resolvconf` は「複数の DNS 情報供給源を統合してアプリに通知する」フレームワークで、これに `mgmt-intf.static` という形でユーザ設定を流し込み、動的 DHCP 情報と静的設定の優先制御を行う設計である。
 
@@ -240,4 +240,4 @@ docker exec bgp cat /etc/resolv.conf
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8b572e7ecef7 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

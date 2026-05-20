@@ -35,7 +35,7 @@ related:
 
 ## 概要
 
-SONiC `syncd` の `FlexCounter` は、各オブジェクト（Port / Queue / Priority Group / [RIF](../reference/glossary.md#term-rif) / [Buffer Pool](../reference/glossary.md#term-buffer-pool)）について **「どの統計 ID が [SAI](../reference/glossary.md#term-sai) でサポートされているか」を `getStats()` を 1 ID ずつ叩いて確認** していた。Port だけでも数十個の counter ID をループで試すため、起動・fast-reboot 時のオーバーヘッドが大きい[^1]。
+[SONiC](../reference/glossary.md#term-sonic) `syncd` の `FlexCounter` は、各オブジェクト（Port / Queue / [Priority Group](../reference/glossary.md#term-priority-group) / [RIF](../reference/glossary.md#term-rif) / [Buffer Pool](../reference/glossary.md#term-buffer-pool)）について **「どの統計 ID が [SAI](../reference/glossary.md#term-sai) でサポートされているか」を `getStats()` を 1 ID ずつ叩いて確認** していた。Port だけでも数十個の counter ID をループで試すため、起動・fast-reboot 時のオーバーヘッドが大きい[^1]。
 
 本機能は SAI に追加された **`sai_query_stats_capability()`** API を使って **オブジェクトの全 counter capability を 1 コールで取得** するように `FlexCounter` を改修する。fast-reboot のような時間制約のあるパスで特に効果が大きい[^1]。
 
@@ -184,4 +184,4 @@ counterpoll show
 
 [^1]: `sonic-net/SONiC` `doc/Query_Stats_Capability/Query_Stats_Capability_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: f7696bbf835c -->
+<!-- glossary-links-injected: a841ffc67f6c -->

@@ -32,7 +32,7 @@ related:
 
 ## 概要
 
-Thermal Control 機能（FAN status / thermal status / thermal policy）に対する **functional テストプラン**[^1]。SONiC platform monitor (pmon) 配下で動く thermal control daemon を対象に、**FAN/温度の表示**と **policy 一致時のアクション実行**を検証する。テストは SONiC-mgmt の `tests/platform/test_platform_info.py` に追加される pytest として実装され、トポロジ非依存で全構成に適用可。
+Thermal Control 機能（FAN status / thermal status / thermal policy）に対する **functional テストプラン**[^1]。[SONiC](../reference/glossary.md#term-sonic) platform monitor (pmon) 配下で動く thermal control daemon を対象に、**FAN/温度の表示**と **policy 一致時のアクション実行**を検証する。テストは SONiC-mgmt の `tests/platform/test_platform_info.py` に追加される pytest として実装され、トポロジ非依存で全構成に適用可。
 
 ## 対象機能
 
@@ -195,4 +195,4 @@ redis-cli -n 6 keys 'FAN_INFO|*'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: da7e5aaf4d2c -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

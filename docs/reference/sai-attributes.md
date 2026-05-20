@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-SONiC [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossary.md#term-sai) (Switch Abstraction Interface) を介して ASIC に設定を投入する。本ページは
+[SONiC](../reference/glossary.md#term-sonic) [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossary.md#term-sai) (Switch Abstraction Interface) を介して [ASIC](../reference/glossary.md#term-asic) に設定を投入する。本ページは
 **[orchagent](../reference/glossary.md#term-orchagent) / syncd が実際に参照する SAI 属性のうち頻出のもの**を object_type 別にまとめた早見表。
 属性名・object_type・用途・関連 orchagent クラス / [CONFIG_DB](../reference/glossary.md#term-config_db) テーブル・関連ドキュメントを併記する。
 
@@ -89,7 +89,7 @@ SONiC [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossa
 | `SAI_PORT_ATTR_INGRESS_ACL` / `EGRESS_ACL` | ACL 表バインド | `AclOrch` |
 | `SAI_PORT_ATTR_INGRESS_MIRROR_SESSION` / `EGRESS_MIRROR_SESSION` | mirror バインド | `MirrorOrch` |
 | `SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE` / `EGRESS_SAMPLEPACKET_ENABLE` | sFlow | `SflowOrch` |
-| `SAI_PORT_ATTR_INGRESS_MACSEC_ACL` / `EGRESS_MACSEC_ACL` | MACsec ACL | `MACsecOrch` |
+| `SAI_PORT_ATTR_INGRESS_MACSEC_ACL` / `EGRESS_MACSEC_ACL` | [MACsec](../reference/glossary.md#term-macsec) ACL | `MACsecOrch` |
 | `SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID` / `MULTICAST_STORM_CONTROL_POLICER_ID` / `FLOOD_STORM_CONTROL_POLICER_ID` | storm control | `PfcWdOrch` 等 |
 | `SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP` / `DSCP_TO_TC_MAP` / `TC_TO_QUEUE_MAP` | [QoS](../reference/glossary.md#term-qos) マップ | `QosOrch` |
 | `SAI_PORT_ATTR_QOS_INGRESS_BUFFER_PROFILE_LIST` / `EGRESS_BUFFER_PROFILE_LIST` | バッファ | `BufferOrch` |
@@ -343,7 +343,7 @@ SONiC [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossa
 | `SAI_FDB_ENTRY_ATTR_BRIDGE_PORT_ID` | 学習先 BP | `FdbOrch` |
 | `SAI_FDB_ENTRY_ATTR_PACKET_ACTION` | FWD / DROP / TRAP | `FdbOrch` |
 | `SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE` | MAC move 許可 | `FdbOrch` |
-| `SAI_FDB_ENTRY_ATTR_ENDPOINT_IP` | EVPN remote VTEP | `FdbOrch` (EVPN) |
+| `SAI_FDB_ENTRY_ATTR_ENDPOINT_IP` | EVPN remote [VTEP](../reference/glossary.md#term-vtep) | `FdbOrch` (EVPN) |
 | `SAI_POLICER_ATTR_METER_TYPE` | BYTES / PACKETS | `CoppOrch`, `PolicerOrch` |
 | `SAI_POLICER_ATTR_MODE` | Sr_TCM / Tr_TCM / STORM | policer |
 | `SAI_POLICER_ATTR_COLOR_SOURCE` | BLIND / AWARE | policer |
@@ -371,4 +371,4 @@ SONiC [syncd](../reference/glossary.md#term-syncd) は [SAI](../reference/glossa
 - [sonic-net/sonic-swss `orchagent/`](https://github.com/sonic-net/sonic-swss/tree/master/orchagent) — `SAI_*_ATTR_*` の全件 grep より抽出
 - SAI ヘッダ本体: [sonic-net/SAI](https://github.com/sonic-net/SAI) の `inc/sai*.h`
 
-<!-- glossary-links-injected: 225b3753e8b5 -->
+<!-- glossary-links-injected: 86b69c729fae -->

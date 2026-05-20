@@ -43,7 +43,7 @@ related:
 
 Azure Netscan は **[IPinIP](../reference/glossary.md#term-ipinip) プローブ**（outer DIP=デバイス Loopback、inner DIP=Netscan 送信元）でネットワーク経路の blackhole を検知する。従来は host node 上の [VLAN](../reference/glossary.md#term-vlan) subnet IP までは可視化できなかった[^1]。
 
-本 [HLD](../reference/glossary.md#term-hld) は T0 SONiC に **VLAN subnet 全体**を IPinIP decap 対象にする `IPINIP_SUBNET` / `IPINIP_V6_SUBNET` を自動生成し、Netscan IPinIP probe を T0 が代理で受けて inner を Netscan に戻すことで **VLAN subnet IP の経路 blackhole を検知できる** ようにする。
+本 [HLD](../reference/glossary.md#term-hld) は T0 [SONiC](../reference/glossary.md#term-sonic) に **VLAN subnet 全体**を IPinIP decap 対象にする `IPINIP_SUBNET` / `IPINIP_V6_SUBNET` を自動生成し、Netscan IPinIP probe を T0 が代理で受けて inner を Netscan に戻すことで **VLAN subnet IP の経路 blackhole を検知できる** ようにする。
 
 ## 動作仕様
 
@@ -170,4 +170,4 @@ HLD と実装は一致。`SUBNET_DECAP` table、`MP2MP` term、自動生成さ�
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

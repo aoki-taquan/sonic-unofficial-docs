@@ -48,7 +48,7 @@ related:
 
 ## 概要
 
-SONiC は **モジュール構成** で、各機能はスクリプト・ユーティリティ・daemon・docker container として実装される。多くの起動スクリプトが Jinja2 テンプレート展開や Python / Bash の短命プロセスを起動するため、boot 時間の劣化を引き起こしやすい[^1]。
+[SONiC](../reference/glossary.md#term-sonic) は **モジュール構成** で、各機能はスクリプト・ユーティリティ・daemon・docker container として実装される。多くの起動スクリプトが Jinja2 テンプレート展開や Python / Bash の短命プロセスを起動するため、boot 時間の劣化を引き起こしやすい[^1]。
 
 本 [HLD](../reference/glossary.md#term-hld) は `systemd-bootchart` を SONiC に統合し、**boot プロセスの sampling profiling** を行う仕組みを定義する。出力は SVG で可視化される。
 
@@ -253,4 +253,4 @@ ls /host/boot-chart/
 - sonic-installer に bootchart 設定 migration が取り込まれたか（HLD Open Item）の現状確認
 -->
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

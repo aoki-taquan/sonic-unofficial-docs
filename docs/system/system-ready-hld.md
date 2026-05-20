@@ -24,7 +24,7 @@ related:
 
 ## なぜ必要か
 
-SONiC の起動は **非同期**。systemd の service が `active` でも、その内部の SWSS 系 daemon が [CONFIG_DB](../reference/glossary.md#term-config_db) を消化して ASIC に届くまで時間が掛かる。「**システムが本当に traffic を受けられる状態か**」を一発で判定する仕組みがなく、Monit 系の 1 分 poll では遅延・粒度が不足[^1]。
+[SONiC](../reference/glossary.md#term-sonic) の起動は **非同期**。systemd の service が `active` でも、その内部の SWSS 系 daemon が [CONFIG_DB](../reference/glossary.md#term-config_db) を消化して [ASIC](../reference/glossary.md#term-asic) に届くまで時間が掛かる。「**システムが本当に traffic を受けられる状態か**」を一発で判定する仕組みがなく、Monit 系の 1 分 poll では遅延・粒度が不足[^1]。
 
 System Ready は Python 製 daemon **`sysmonitor`** を追加し[^1]:
 
@@ -122,4 +122,4 @@ journalctl -u system-health 2>/dev/null
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 2116e7472e8b -->
+<!-- glossary-links-injected: ec18b66e3507 -->

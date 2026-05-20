@@ -31,7 +31,7 @@ related:
 
 ## 概要
 
-S3IP (Switch State 系の sysfs 仕様) は、platform hardware（温度・電圧・電流・FAN・PSU・xcvr・[FPGA](../reference/glossary.md#term-fpga)・CPLD・watchdog・slot・syseeprom・LED）の情報を **`/sys_switch/` 配下の決まったパスで公開する** 標準仕様[^1]。SONiC platform plugin が直接プラットフォーム driver を叩くのではなく **kernel が事前に sysfs を整える** ことで、vendor 別の plugin コードを薄くし、共通の platform monitor logic で扱えるようにする。本ページは仕様（path / 値域 / 型）の引き写しではなく、**カテゴリ毎に何が読めるか / どこが書ける（R/W）か** を整理する。
+S3IP (Switch State 系の sysfs 仕様) は、platform hardware（温度・電圧・電流・FAN・PSU・xcvr・[FPGA](../reference/glossary.md#term-fpga)・CPLD・watchdog・slot・syseeprom・LED）の情報を **`/sys_switch/` 配下の決まったパスで公開する** 標準仕様[^1]。[SONiC](../reference/glossary.md#term-sonic) platform plugin が直接プラットフォーム driver を叩くのではなく **kernel が事前に sysfs を整える** ことで、vendor 別の plugin コードを薄くし、共通の platform monitor logic で扱えるようにする。本ページは仕様（path / 値域 / 型）の引き写しではなく、**カテゴリ毎に何が読めるか / どこが書ける（R/W）か** を整理する。
 
 ## 動作仕様
 
@@ -158,4 +158,4 @@ reasoning: 仕様の path 規約と permission 表記の根拠。
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: d12a6eddadee -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

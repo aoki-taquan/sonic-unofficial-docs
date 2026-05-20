@@ -38,21 +38,21 @@ related:
 
 ## 概要
 
-`NAT_BINDINGS` は dynamic [NAT](../../reference/glossary.md#term-nat) のバインディングを定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。[ACL](../../reference/glossary.md#term-acl) テーブルと NAT pool を関連付け、対象トラフィックの動的 SNAT ルールを `natmgrd` 経由で kernel / ASIC に適用する[^1]。エントリ最大 16 件。
+`NAT_BINDINGS` は dynamic [NAT](../../reference/glossary.md#term-nat) のバインディングを定義する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル。[ACL](../../reference/glossary.md#term-acl) テーブルと [NAT](../../reference/glossary.md#term-nat) pool を関連付け、対象トラフィックの動的 SNAT ルールを `natmgrd` 経由で kernel / [ASIC](../../reference/glossary.md#term-asic) に適用する[^1]。エントリ最大 16 件。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>NAT_BINDINGS")]
+  CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
   DM["natmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>NAT pool/rule")]
+  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
   DM --> APPDB
-  SYNCD["orchagent / NatOrch"]
+  SYNCD["syncd"]
   APPDB --> SYNCD
-  SAI["SAI<br/>sai_nat_api"]
+  SAI["SAI<br/>sai_switch_api"]
   SYNCD --> SAI
 ```
 
@@ -72,20 +72,20 @@ NAT_BINDINGS|<binding_name>
 
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|----|------|-----------|------|
-| `nat_pool` | leafref → `NAT_POOL.name` | yes | — | バインディング対象の NAT pool 名 |
-| `access_list` | 文字列 (ACL 名, カンマ区切り可) | no | `""` (空) | 対象トラフィックを絞る ACL 名。省略時は全送信元が対象 |
+| `nat_pool` | leafref → `NAT_POOL.name` | yes | — | バインディング対象の [NAT](../../reference/glossary.md#term-nat) pool 名 |
+| `access_list` | 文字列 ([ACL](../../reference/glossary.md#term-acl) 名, カンマ区切り可) | no | `""` (空) | 対象トラフィックを絞る [ACL](../../reference/glossary.md#term-acl) 名。省略時は全送信元が対象 |
 | `nat_type` | enum `snat` / `dnat` | no | `"snat"` | NAT 種別。現時点で `dnat` は未サポート (CLI が拒否) |
 | `twice_nat_id` | uint16 1..9999 | no | `""` → Single NAT | Twice NAT 用 ID。省略時 Single NAT として動作 |
 
 <!-- defaults -->
 ### コード由来の暗黙デフォルト
 
-以下のデフォルトはコードレベルで確認済み（YANG / CLI / natmgr 三箇所一致）。
+以下のデフォルトはコードレベルで確認済み（[YANG](../../reference/glossary.md#term-yang) / CLI / natmgr 三箇所一致）。
 
 | フィールド | 暗黙デフォルト | 根拠コード |
 |-----------|--------------|-----------|
 | `access_list` | `""` (空文字列) | `config/nat.py:797` acl_name=None → `""` / `natmgr.cpp:6879` EMPTY_STRING 初期化 |
-| `nat_type` | `"snat"` | YANG `default snat` / `nat.py:821` / `natmgr.cpp:7056-7058` empty → SNAT_NAT_TYPE |
+| `nat_type` | `"snat"` | [YANG](../../reference/glossary.md#term-yang) `default snat` / `nat.py:821` / `natmgr.cpp:7056-7058` empty → SNAT_NAT_TYPE |
 | `twice_nat_id` | `""` → Single NAT | `nat.py:823-824` None → `"NULL"` → DB / `natmgr.cpp:6993-6996` `"NULL"` → EMPTY_STRING |
 
 **`nat_type` が空の場合の natmgr 動作**:
@@ -228,7 +228,7 @@ enum: `nat_type`=snat/dnat (有効値は snat のみ)。
 
 ### 段階 1: Consumer 登録
 
-- **natmgrd** (`sonic-swss/cfgmgr/natmgrd.cpp:113`): `CFG_NAT_BINDINGS_TABLE_NAME` を `SubscriberStateTable` で購読。
+- **[natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd)** (`sonic-swss/cfgmgr/natmgrd.cpp:113`): `CFG_NAT_BINDINGS_TABLE_NAME` を `SubscriberStateTable` で購読。
 
 ### 段階 2: CFG → キャッシュ + iptables
 
@@ -240,7 +240,7 @@ enum: `nat_type`=snat/dnat (有効値は snat のみ)。
 ### 段階 3: APPL → SAI
 
 - `natmgrd` が APP_DB の `NAT_DNAT_POOL_TABLE` / iptables 経由で動的 NAT エントリを管理。
-- `orchagent / NatOrch` が APP_DB エントリを消費して SAI NAT object を作成。
+- `orchagent / NatOrch` が APP_DB エントリを消費して [SAI](../../reference/glossary.md#term-sai) NAT object を作成。
 
 <!-- /runtime-trace -->
 
@@ -251,7 +251,7 @@ enum: `nat_type`=snat/dnat (有効値は snat のみ)。
 
 ### NAT_POOL が先行必須
 
-`natmgr.cpp:addDynamicNatRule()` は `NAT_BINDINGS` エントリ処理時に pool キャッシュ (`m_natPoolInfo[pool_name]`) を参照する。pool が未登録の場合は `"Pool is not yet enabled, skipping dynamic nat rules addition"` をログしてルール設定をスキップする。pool が後から登録された際に binding が自動再トリガーされるため**エントリは失われない**が、iptables/ASIC ルールは pool 登録完了まで反映されない。
+`natmgr.cpp:addDynamicNatRule()` は `NAT_BINDINGS` エントリ処理時に pool キャッシュ (`m_natPoolInfo[pool_name]`) を参照する。pool が未登録の場合は `"Pool is not yet enabled, skipping dynamic nat rules addition"` をログしてルール設定をスキップする。pool が後から登録された際に binding が自動再トリガーされるため**エントリは失われない**が、iptables/[ASIC](../../reference/glossary.md#term-asic) ルールは pool 登録完了まで反映されない。
 
 ```
 # 推奨順序
@@ -264,7 +264,7 @@ SET NAT_BINDINGS|<name>  nat_pool=<name>              # pool 登録後に bindin
 
 **natmgr 層**: `natmgr.cpp:addDynamicNatRule()` は `isNatEnabled()` が false の場合 `"NAT is not yet enabled"` をログしてスキップする (`natmgr.cpp:4632-4636`)。
 
-**NatOrch 層 (orchagent)**: `natorch.cpp:addNatEntry()` L1907-1913 でも同様に `isNatEnabled()` を確認し、false の場合は SAI 操作をスキップして警告をログする。
+**NatOrch 層 ([orchagent](../../reference/glossary.md#term-orchagent))**: `natorch.cpp:addNatEntry()` L1907-1913 でも同様に `isNatEnabled()` を確認し、false の場合は [SAI](../../reference/glossary.md#term-sai) 操作をスキップして警告をログする。
 
 ```cpp
 // natorch.cpp:1907-1913 (addNatEntry)
@@ -275,7 +275,7 @@ if (!isNatEnabled()) {
 }
 ```
 
-`admin_mode=enabled` が CONFIG_DB に書き込まれ natmgrd が APPL_DB に伝播し、`doNatGlobalTableTask()` が `enableNatFeature()` を呼び出すまで、NatOrch はすべての NAT SAI エントリ投入をスキップする。
+`admin_mode=enabled` が CONFIG_DB に書き込まれ [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) が [APPL_DB](../../reference/glossary.md#term-appl_db) に伝播し、`doNatGlobalTableTask()` が `enableNatFeature()` を呼び出すまで、NatOrch はすべての NAT SAI エントリ投入をスキップする。
 
 ### DNAT Pool → NAT エントリの SAI 投入順序 (natorch.cpp 固有)
 
@@ -291,7 +291,7 @@ DNAT pool entry (`SAI_NAT_TYPE_DESTINATION_NAT_POOL`) が DNAT entry (`SAI_NAT_T
 
 ### ACL_TABLE bind 順序
 
-`natmgr.cpp:addDynamicNatRule()` は `m_natBindingInfo[key].acls_name` に格納された ACL 名を参照して iptables ルール (`-m set --match-set <acl>`) を設定する。ACL_TABLE エントリそのものは natmgrd が直接検証しないが、ACL_TABLE が未定義のまま binding を設定すると iptables ルールに不整合な ACL 名が埋め込まれるため、ACL_TABLE の定義を先行させることを推奨する。
+`natmgr.cpp:addDynamicNatRule()` は `m_natBindingInfo[key].acls_name` に格納された ACL 名を参照して iptables ルール (`-m set --match-set <acl>`) を設定する。ACL_TABLE エントリそのものは [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) が直接検証しないが、ACL_TABLE が未定義のまま binding を設定すると iptables ルールに不整合な ACL 名が埋め込まれるため、ACL_TABLE の定義を先行させることを推奨する。
 
 ```
 # ACL bind を含む場合の推奨順序
@@ -372,12 +372,12 @@ if (status != SAI_STATUS_SUCCESS)
 ```
 
 - ログ: `SWSS_LOG_ERROR "Failed to create %s SNAT NAT entry..."` / `"Failed to create %s Twice NAT entry..."` / `"Failed to create %s SNAT NAPT entry..."` / `"Failed to create DNAT Pool entry with ip %s"`
-- 効果: `parseHandleSaiStatusFailure()` が abort / retry / erase を決定する。DNAT Pool 登録失敗時は対象 IP への DNAT トラフィックがハードウェアでドロップされる。STATE_DB への書き込みなし。
+- 効果: `parseHandleSaiStatusFailure()` が abort / retry / erase を決定する。DNAT Pool 登録失敗時は対象 IP への DNAT トラフィックがハードウェアでドロップされる。[STATE_DB](../../reference/glossary.md#term-state_db) への書き込みなし。
 - NAT feature 未有効化時は SAI 呼び出し前に `SWSS_LOG_WARN "NAT Feature is not yet enabled, skipped adding DNAT Pool entry with ip %s"` でスキップされる (`natorch.cpp:1789-1793`)。
 
 ### 失敗挙動サマリ
 
-| # | 条件 | コンポーネント | パターン | retry | STATE_DB 記録 |
+| # | 条件 | コンポーネント | パターン | retry | [STATE_DB](../../reference/glossary.md#term-state_db) 記録 |
 |---|---|---|---|---|---|
 | 1 | SNAT ハードウェア容量上限 (dynamic SNAT) | NatOrch | AGEOUT-SINGLE-NAT 通知 + ドロップ | なし | なし |
 | 2 | Twice NAT ハードウェア容量上限 (dynamic) | NatOrch | AGEOUT-TWICE-NAT 通知 + ドロップ | なし | なし |
@@ -385,7 +385,7 @@ if (status != SAI_STATUS_SUCCESS)
 | 4 | SAI Twice NAT create 失敗 | NatOrch | handleSaiCreateStatus | SAI 依存 | なし |
 | 5 | SAI SNAT NAPT create 失敗 | NatOrch | handleSaiCreateStatus | SAI 依存 | なし |
 | 6 | SAI DNAT Pool create 失敗 | NatOrch | handleSaiCreateStatus | SAI 依存 | なし |
-| 7 | SNAT 容量取得失敗 (orchagent 起動時) | NatOrch | maxAllowedSNatEntries=0 → 全 dynamic SNAT ドロップ | — | なし |
+| 7 | SNAT 容量取得失敗 ([orchagent](../../reference/glossary.md#term-orchagent) 起動時) | NatOrch | maxAllowedSNatEntries=0 → 全 dynamic SNAT ドロップ | — | なし |
 
 NatOrch は `ERROR_TABLE` への書き込みなし。syslog (`SWSS_LOG_ERROR` / `WARN` / `NOTICE` / `INFO`) のみ。
 <!-- /failure -->
@@ -428,10 +428,10 @@ if (platform && strstr(platform, BRCM_PLATFORM_SUBSTRING))
 
 | プラットフォーム | DNAT エントリの扱い |
 |----------------|-------------------|
-| Broadcom (`gNhTrackingSupported=true`) | `addDnatToNhCache()` でネクストホップ解決キャッシュに格納し、ARP/ルート解決後に `addHwDnatEntry()` を呼び出す |
+| Broadcom (`gNhTrackingSupported=true`) | `addDnatToNhCache()` でネクストホップ解決キャッシュに格納し、[ARP](../../reference/glossary.md#term-arp)/ルート解決後に `addHwDnatEntry()` を呼び出す |
 | 非 Broadcom (`gNhTrackingSupported=false`) | `addHwDnatEntry()` を即座に呼び出す |
 
-Broadcom では ネクストホップ未解決時に DNAT エントリを SAI に書き込まず、`NeighborOrch` / `RouteOrch` の通知 (`update()`) を受けてから遅延投入する。これにより Broadcom ASIC でのブラックホールルート問題を回避している。
+Broadcom では ネクストホップ未解決時に DNAT エントリを SAI に書き込まず、`NeighborOrch` / `RouteOrch` の通知 (`update()`) を受けてから遅延投入する。これにより Broadcom [ASIC](../../reference/glossary.md#term-asic) でのブラックホールルート問題を回避している。
 
 **`gNhTrackingSupported` が影響する主な処理**:
 
@@ -442,7 +442,7 @@ Broadcom では ネクストホップ未解決時に DNAT エントリを SAI �
 
 ### 非 Broadcom: 制限事項
 
-非 Broadcom ASIC では `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` が `0` または `SAI_STATUS_NOT_SUPPORTED` を返す実装が多く、その場合 `gIsNatSupported=false` となり NAT 機能全体が無効化される。現行の SONiC コミュニティ実装では **Broadcom ASIC のみが NAT ハードウェアオフロードを実運用レベルでサポートする**。
+非 Broadcom ASIC では `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` が `0` または `SAI_STATUS_NOT_SUPPORTED` を返す実装が多く、その場合 `gIsNatSupported=false` となり NAT 機能全体が無効化される。現行の [SONiC](../../reference/glossary.md#term-sonic) コミュニティ実装では **Broadcom ASIC のみが NAT ハードウェアオフロードを実運用レベルでサポートする**。
 
 ### まとめ
 
@@ -461,7 +461,7 @@ Broadcom では ネクストホップ未解決時に DNAT エントリを SAI �
 
 <!-- evidence: sonic-swss/orchagent/natorch.cpp, sonic-swss/orchagent/natorch.h -->
 
-`orchagent/natorch.cpp` の `NatOrch` が使用する主要ハードコード定数。`nat_type` フィールドの文字列値は APPL_DB 経由で orchagent に渡され、対応する SAI NAT タイプに変換される。
+`orchagent/natorch.cpp` の `NatOrch` が使用する主要ハードコード定数。`nat_type` フィールドの文字列値は APPL_DB 経由で [orchagent](../../reference/glossary.md#term-orchagent) に渡され、対応する SAI NAT タイプに変換される。
 
 ### `nat_type` enum 文字列値
 
@@ -562,7 +562,7 @@ udp_timeout = 300;  // NAT default udp timeout
 
 これらの値は初期化時に `COUNTERS_DB` の `NAT_TABLE|Values` キーへ書き込まれる[^E1]。
 
-[^E1]: `natorch.cpp:127-135` — `MAX_NAT_ENTRIES`, `TIMEOUT`, `UDP_TIMEOUT`, `TCP_TIMEOUT` を `m_countersGlobalNatTable.set("Values", values)` で COUNTERS_DB に反映。
+[^E1]: `natorch.cpp:127-135` — `MAX_NAT_ENTRIES`, `TIMEOUT`, `UDP_TIMEOUT`, `TCP_TIMEOUT` を `m_countersGlobalNatTable.set("Values", values)` で [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に反映。
 <!-- /constants -->
 
 <!-- cross-refs -->
@@ -581,7 +581,7 @@ udp_timeout = 300;  // NAT default udp timeout
 | NAT_BINDINGS → ACL_TABLE | `access_list` フィールド → ACL 名 | `ACL_TABLE` | `ACL_TABLE\|<table_id>` | `access_list` に指定した ACL が `type=L3, stage=INGRESS` で未登録の場合、iptables SNAT ルールがスキップされる。ACL 登録後に `doNatAclTableTask()` が自動再評価 | `natmgr.cpp:7750-7900`, `natmgrd.cpp:119` |
 | NAT_BINDINGS → ACL_RULE | `access_list` フィールド → ACL ルール | `ACL_RULE` | `ACL_RULE\|<table_id>\|<rule_id>` | ACL_RULE の追加・削除が NAT binding の iptables MASQUERADE / SNAT ルールを再評価・更新する | `natmgr.cpp:doNatAclRuleTask()`, `natmgrd.cpp:120` |
 | NatOrch → RouteOrch (BRCM 専用) | `addHwDnatEntry()` — `m_routeOrch->attach()` | RouteOrch (SUBJECT_TYPE_NEXTHOP_CHANGE) | — | DNAT エントリ追加時に translated IP の next-hop 変化を subscribe。BRCM プラットフォームのみ有効 | `natorch.cpp:414,458,504,591`, `natorch.cpp:144-148` |
-| NatOrch → NeighOrch (BRCM 専用) | `enableNatFeature()` — `m_neighOrch->attach()` | NeighOrch (SUBJECT_TYPE_NEIGH_CHANGE) | — | NAT 有効化時に全 neighbor の ARP 解決状態を subscribe し、DNAT translated IP の SAI エントリを neighbor 解決タイミングで差し替える | `natorch.cpp:2573,2610`, `natorch.cpp:259-302` |
+| NatOrch → NeighOrch (BRCM 専用) | `enableNatFeature()` — `m_neighOrch->attach()` | NeighOrch (SUBJECT_TYPE_NEIGH_CHANGE) | — | NAT 有効化時に全 neighbor の [ARP](../../reference/glossary.md#term-arp) 解決状態を subscribe し、DNAT translated IP の SAI エントリを neighbor 解決タイミングで差し替える | `natorch.cpp:2573,2610`, `natorch.cpp:259-302` |
 
 ### 解決タイミング
 
@@ -598,7 +598,7 @@ udp_timeout = 300;  // NAT default udp timeout
 
 ### CONFIG_DB 購読 — SubscriberStateTable
 
-`natmgrd` は起動時に `CFG_NAT_BINDINGS_TABLE_NAME` (`"NAT_BINDINGS"`) を含む 11 テーブルを `Orch::addConsumer()` 経由で登録する (`natmgrd.cpp:109-121`)。CONFIG_DB に対しては **`SubscriberStateTable`** が生成され、以下の Redis keyspace チャンネルを PSUBSCRIBE する:
+`natmgrd` は起動時に `CFG_NAT_BINDINGS_TABLE_NAME` (`"NAT_BINDINGS"`) を含む 11 テーブルを `Orch::addConsumer()` 経由で登録する (`natmgrd.cpp:109-121`)。CONFIG_DB に対しては **`SubscriberStateTable`** が生成され、以下の [Redis](../../reference/glossary.md#term-redis) keyspace チャンネルを PSUBSCRIBE する:
 
 ```
 PSUBSCRIBE __keyspace@4__:NAT_BINDINGS|*
@@ -673,7 +673,7 @@ status = sai_nat_api->create_nat_entry(&snat_entry, attr_count, nat_entry_attr);
 |---|---|---|---|
 | `SETTIMEOUTNAT` | APPL_DB | NatOrch → natmgrd | conntrack timeout 変更通知 (natorch.cpp:137 / natmgrd.cpp:149) |
 | `FLUSHNATENTRIES` | APPL_DB | 外部 CLI → natmgrd | conntrack エントリ全フラッシュ (natmgrd.cpp:152) |
-| `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | natmgrd → NatOrch | natmgrd 終了時の ASIC/Redis クリーンアップ (natmgrd.cpp:127 / natorch.cpp:89) |
+| `NAT_DB_CLEANUP_NOTIFICATION` | APPL_DB | natmgrd → NatOrch | natmgrd 終了時の ASIC/[Redis](../../reference/glossary.md#term-redis) クリーンアップ (natmgrd.cpp:127 / natorch.cpp:89) |
 
 <!-- /pubsub -->
 
@@ -684,7 +684,7 @@ status = sai_nat_api->create_nat_entry(&snat_entry, attr_count, nat_entry_attr);
 
 ### ASIC_DB — SAI nat_entry
 
-`NatOrch` が `sai_nat_api->create_nat_entry()` を呼び出して SAI NAT オブジェクトを ASIC_DB 経由で書込む。
+`NatOrch` が `sai_nat_api->create_nat_entry()` を呼び出して SAI NAT オブジェクトを [ASIC_DB](../../reference/glossary.md#term-asic_db) 経由で書込む。
 
 | 操作関数 | SAI nat_type | 適用条件 |
 |---------|-------------|---------|
@@ -715,9 +715,9 @@ SNAT エントリには `SAI_NAT_ENTRY_ATTR_SRC_IP`（変換後 pool IP）、`SA
 
 ### CRM カウンタ更新
 
-SAI エントリの追加/削除に連動して `gCrmOrch` が CRM リソースカウンタを増減する。
+SAI エントリの追加/削除に連動して `gCrmOrch` が [CRM](../../reference/glossary.md#term-crm) リソースカウンタを増減する。
 
-| 操作 | CRM リソース | ソース |
+| 操作 | [CRM](../../reference/glossary.md#term-crm) リソース | ソース |
 |------|------------|-------|
 | SNAT エントリ追加 | `incCrmResUsedCounter(CRM_SNAT_ENTRY)` | `natorch.cpp:1325` |
 | SNAT エントリ削除 | `decCrmResUsedCounter(CRM_SNAT_ENTRY)` | `natorch.cpp:1647` |
@@ -728,8 +728,10 @@ SAI エントリの追加/削除に連動して `gCrmOrch` が CRM リソース�
 
 ### STATE_DB — 書込なし
 
-`NatOrch` および `NatMgr` は STATE_DB への書込を行わない。`STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_VLAN_TABLE` / `STATE_INTERFACE_TABLE` は L3 インタフェース readiness ガード用の**読み取り専用**アクセスのみ。
+`NatOrch` および `NatMgr` は [STATE_DB](../../reference/glossary.md#term-state_db) への書込を行わない。`STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_VLAN_TABLE` / `STATE_INTERFACE_TABLE` は L3 インタフェース readiness ガード用の**読み取り専用**アクセスのみ。
 
 [^F1]: NatOrch ASIC 書込実装: `sonic-swss/orchagent/natorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/natorch.cpp>
 
 <!-- /side-effects -->
+
+<!-- glossary-links-injected: 56135235c3b1 -->

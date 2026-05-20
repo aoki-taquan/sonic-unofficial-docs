@@ -29,7 +29,7 @@ related:
 
 ## 概要
 
-Gearbox は ASIC 内部レーンとフロントポート速度を変換する **外付け PHY**（例: ASIC 4×10G → フロント 1×40G）。信号は ASIC↔gearbox（system-side）と gearbox↔transceiver（line-side）の **2 か所** で伝送されるので、pre-emphasis チューニング値（`pre1/pre2/pre3/main/post1/post2/post3`）も両側に独立に必要[^1]。
+Gearbox は [ASIC](../reference/glossary.md#term-asic) 内部レーンとフロントポート速度を変換する **外付け PHY**（例: ASIC 4×10G → フロント 1×40G）。信号は ASIC↔gearbox（system-side）と gearbox↔transceiver（line-side）の **2 か所** で伝送されるので、pre-emphasis チューニング値（`pre1/pre2/pre3/main/post1/post2/post3`）も両側に独立に必要[^1]。
 
 従来は **`gearbox_config.json` を手書き** して boot 時に決め打ち programming していたため、トランシーバ種別 / serdes lane speed / 媒体を変えるたびにファイル更新と再起動が必要だった。本機能は ASIC 側の動的チューニング（`media_settings.json` ベース）を gearbox にも拡張し、media 検出に応じて値を引き直すことを目的とする[^1]。
 
@@ -208,4 +208,4 @@ jq '.MEDIA_SETTINGS' /usr/share/sonic/device/$PLATFORM/media_settings.json | hea
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ef44d3c07b8f -->
+<!-- glossary-links-injected: c006405759d8 -->
