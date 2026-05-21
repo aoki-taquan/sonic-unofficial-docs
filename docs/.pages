@@ -5,8 +5,8 @@ nav:
       - about.md
       - guides
   - Topics: topics
+  - architecture
   - 機能別:
-      - architecture
       - routing
       - switching
       - overlay
@@ -14,7 +14,7 @@ nav:
       - system
       - management
       - platform
-      - internals
+  - internals
   - リファレンス:
       - reference
       - categories
