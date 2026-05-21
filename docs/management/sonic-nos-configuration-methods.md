@@ -185,7 +185,7 @@ redis-cli -n 4 SET CONFIG_DB_INITIALIZED true
 
 ### klish ベース `sonic-cli` の `/tmp/klish.fifo` エラー（#781）
 
-klish を使用する `sonic-cli` で設定コマンド実行時に `/tmp/klish.fifo` 関連のエラーが発生するケースがある。Python 2/3 混在環境でのスクリプトエンコーディング問題が原因の一つとして特定されている（buildimage#8506 で追跡中）。master でも未解決の場合あり。
+klish を使用する `sonic-cli` で設定コマンド実行時に `/tmp/klish.fifo` 関連のエラーが発生するケースがある。Python 2/3 混在環境でのスクリプトエンコーディング問題が原因の1つとして特定されている（buildimage#8506 で追跡中）。master でも未解決の場合あり。
 
 ```
 sonic-switch(conf-if-EthernetX)# description test

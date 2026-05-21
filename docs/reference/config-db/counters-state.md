@@ -34,7 +34,7 @@ related:
 
 ## 概要
 
-[orchagent](../../reference/glossary.md#term-orchagent) は起動時に [SAI](../../reference/glossary.md#term-sai) へカウンタ能力を問い合わせ、その結果を `STATE_DB` の 3 つのテーブルに書き込む[^1]。これらのテーブルは **読み取り専用** の能力情報であり、ユーザーが [CONFIG_DB](../../reference/glossary.md#term-config_db) から書き込む設定テーブルではない。
+[orchagent](../../reference/glossary.md#term-orchagent) は起動時に [SAI](../../reference/glossary.md#term-sai) へカウンタ能力を問い合わせ、その結果を `STATE_DB` の 3 つのテーブルに書き込む[^1]。これらのテーブルは **読み取り専用** の能力情報であり、ユーザが [CONFIG_DB](../../reference/glossary.md#term-config_db) から書き込む設定テーブルではない。
 
 | [STATE_DB](../../reference/glossary.md#term-state_db) テーブル | 書き込み元 | 参照先 |
 |-----------------|----------|--------|
@@ -293,7 +293,7 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
      sonic-swss/orchagent/debugcounterorch.cpp:315-363,
      sonic-swss/orchagent/debug_counter/drop_counter.cpp:298-446 -->
 
-これらの STATE_DB テーブルは orchagent 起動直後にコンストラクタ内で書き込まれる。SAI query 失敗はすべて **silent 継続** であり orchagent を停止させない。ユーザーへの影響はカウンタが `N/A` になるか、`show debug-counter capabilities` が空になるかのいずれかである。
+これらの STATE_DB テーブルは orchagent 起動直後にコンストラクタ内で書き込まれる。SAI query 失敗はすべて **silent 継続** であり orchagent を停止させない。ユーザへの影響はカウンタが `N/A` になるか、`show debug-counter capabilities` が空になるかのいずれかである。
 
 | # | 失敗箇所 | ログレベル | orchagent 継続 | STATE_DB への影響 | 診断コマンド |
 |---|---------|-----------|--------------|-----------------|------------|
@@ -306,7 +306,7 @@ sonic-db-cli STATE_DB keys 'DEBUG_COUNTER_CAPABILITIES|*'
 
 ### SAI_STATUS_BUFFER_OVERFLOW の特殊処理
 
-`sai_query_stats_capability()` が `SAI_STATUS_BUFFER_OVERFLOW` を返した場合、portsorch は必要なバッファを確保して **自動リトライ** する (portsorch.cpp:1883-1888, 1930-1934)。リトライ後も失敗した場合にのみ `SWSS_LOG_NOTICE` が出力される。リトライ自体は透過的に処理され、ユーザーへの影響はない。
+`sai_query_stats_capability()` が `SAI_STATUS_BUFFER_OVERFLOW` を返した場合、portsorch は必要なバッファを確保して **自動リトライ** する (portsorch.cpp:1883-1888, 1930-1934)。リトライ後も失敗した場合にのみ `SWSS_LOG_NOTICE` が出力される。リトライ自体は透過的に処理され、ユーザへの影響はない。
 
 ### DEBUG_COUNTER_CAPABILITIES のリソース枯渇警告
 

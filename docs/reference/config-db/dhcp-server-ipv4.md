@@ -320,7 +320,7 @@ YANG は `mandatory true` だが、dhcp_cfggen が kea-dhcp4 の subnet を計�
 
 ### dhcp_server_id (option 54) の自動注入
 
-`customized_options` に option ID `"54"` が含まれない場合、dhcp_cfggen は VLAN_INTERFACE の IPv4 アドレスを `always_send=true` で dhcp_server_id オプションとして自動注入する（`dhcp_cfggen.py:245-249`）。ユーザー定義で上書き可能。
+`customized_options` に option ID `"54"` が含まれない場合、dhcp_cfggen は VLAN_INTERFACE の IPv4 アドレスを `always_send=true` で dhcp_server_id オプションとして自動注入する（`dhcp_cfggen.py:245-249`）。ユーザ定義で上書き可能。
 
 ### SmartSwitch 時の subnet ID ハードコード
 
@@ -426,7 +426,7 @@ CLI `config dhcp_server` グループ入口で `FEATURE|dhcp_server.state` を�
 
 ### SAI 参照
 
-なし。`dhcpservd` / `kea-dhcp4` は Linux ユーザー空間の DHCP サーバであり [SAI](../../reference/glossary.md#term-sai)/[ASIC](../../reference/glossary.md#term-asic) に一切触れない。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継もない。
+なし。`dhcpservd` / `kea-dhcp4` は Linux ユーザ空間の DHCP サーバであり [SAI](../../reference/glossary.md#term-sai)/[ASIC](../../reference/glossary.md#term-asic) に一切触れない。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継もない。
 
 <!-- /cross-refs -->
 

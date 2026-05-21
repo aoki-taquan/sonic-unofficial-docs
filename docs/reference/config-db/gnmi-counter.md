@@ -132,7 +132,7 @@ flowchart LR
 
 | 種類 | 内容 |
 |------|------|
-| 初期値 | `NewServer()` 内で `InitCounters()` が呼ばれ、全 32 カウンタを `uint64(0)` にリセットして共有メモリに同期書き込み（`server.go:528`）。**サーバー再起動のたびに全カウンタが 0 にリセットされる** |
+| 初期値 | `NewServer()` 内で `InitCounters()` が呼ばれ、全 32 カウンタを `uint64(0)` にリセットして共有メモリに同期書き込み（`server.go:528`）。**サーバ再起動のたびに全カウンタが 0 にリセットされる** |
 | 永続化 | なし。SysV 共有メモリはカーネルが保持するが、OS 再起動・`ipcrm` で消去される。`telemetryd` 再起動でも `InitCounters` によりリセット |
 | warm-reboot | `telemetryd` が再起動するため `InitCounters` が走り全カウンタ 0 クリア。warm-reboot 前の統計値は消失する |
 
@@ -336,7 +336,7 @@ func IncCounter(cnt CounterType) {
 
 ### NewServer での初期化失敗
 
-`NewServer` (`server.go:528`) は `common_utils.InitCounters()` を呼ぶが、SHM 初期化が失敗しても `NewServer` はエラーを返さずサーバー起動を継続する。gRPC サービスは動作するがカウンタは共有メモリに書き込まれない。
+`NewServer` (`server.go:528`) は `common_utils.InitCounters()` を呼ぶが、SHM 初期化が失敗しても `NewServer` はエラーを返さずサーバ起動を継続する。gRPC サービスは動作するがカウンタは共有メモリに書き込まれない。
 
 ### gnmi_dump の終了コード
 
@@ -561,7 +561,7 @@ Broadcom / Mellanox / Marvell / Barefoot 系 HwSku ではバイパス条件を�
 
 ### SmartSwitch / DPU 環境
 
-`pkg/interceptors/setup.go` に DPU プロキシインターセプターが登録されており、gRPC メタデータ `x-sonic-target-type: dpu` があれば [NPU](../../reference/glossary.md#term-npu) 側の `telemetryd` が RPC を DPU 側 gNMI サーバーに転送する。
+`pkg/interceptors/setup.go` に DPU プロキシインターセプターが登録されており、gRPC メタデータ `x-sonic-target-type: dpu` があれば [NPU](../../reference/glossary.md#term-npu) 側の `telemetryd` が RPC を DPU 側 gNMI サーバに転送する。
 
 | 観点 | 挙動 |
 |------|------|

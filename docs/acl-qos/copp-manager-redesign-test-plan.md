@@ -51,7 +51,7 @@ related:
 
 再設計では以下のルールに整理し、本テストプランはその振る舞いを ptf32 / ptf64 / t1 / t2 トポロジで検証する[^1]:
 
-- feature が disabled 又は `FEATURE` に存在しない → install しない
+- feature が disabled または `FEATURE` に存在しない → install しない
 - ただし `COPP_TRAP|<name>` に **`always_enabled: true`** がある trap は `FEATURE` を参照せず常に install する
 - feature が enabled で対応 trap が `COPP_TRAP` にあれば install する
 - feature が disabled でも `always_enabled: true` なら install する

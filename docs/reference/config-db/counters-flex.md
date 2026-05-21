@@ -30,7 +30,7 @@ related:
 
 [orchagent](../../reference/glossary.md#term-orchagent) は `FLEX_COUNTER_TABLE` のグループ設定（`FLEX_COUNTER_STATUS = enable`）を受信すると、ハードウェアオブジェクト（ポート・キュー・PG 等）ごとに **`FLEX_COUNTER_DB`** へ per-OID エントリを書き込む[^1]。このエントリに含まれる `PORT_COUNTER_ID_LIST`、`QUEUE_COUNTER_ID_LIST` などが **個別カウンタフィールド** であり、`syncd` の `FlexCounter` モジュールが参照してどの [SAI](../../reference/glossary.md#term-sai) stat を収集するかを決定する。
 
-これらのフィールドは [CONFIG_DB](../../reference/glossary.md#term-config_db) 経由でユーザーが設定する手段はなく、[orchagent](../../reference/glossary.md#term-orchagent) が内部的にハードコードした stat リストから自動生成する。
+これらのフィールドは [CONFIG_DB](../../reference/glossary.md#term-config_db) 経由でユーザが設定する手段はなく、[orchagent](../../reference/glossary.md#term-orchagent) が内部的にハードコードした stat リストから自動生成する。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -101,7 +101,7 @@ FLEX_COUNTER_TABLE|<group>|<oid>
 | `SAI_PORT_STAT_ETHER_IN_PKTS_64_OCTETS` | フレームサイズ別受信 (64B) |
 | … | フレームサイズ bucket (65-127, 128-255, ..., 9217-16383) |
 
-合計 ~60 stat がハードコードリストに含まれる。ユーザーが個別追加・削除する手段はない。
+合計 ~60 stat がハードコードリストに含まれる。ユーザが個別追加・削除する手段はない。
 
 #### 特殊挙動
 
@@ -177,7 +177,7 @@ VoQ 対応時は `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKETS` が追加される�
 | 種類 | 内容 |
 |------|------|
 | 書き込み先は [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | [CONFIG_DB](../../reference/glossary.md#term-config_db) ではなく `FLEX_COUNTER_DB`（DB 番号 5）の `FLEX_COUNTER_TABLE:<group>:<oid>` に書き込まれる |
-| ユーザー設定不可 | [YANG](../../reference/glossary.md#term-yang) 定義なし、[CONFIG_DB](../../reference/glossary.md#term-config_db) 経由での変更手段なし |
+| ユーザ設定不可 | [YANG](../../reference/glossary.md#term-yang) 定義なし、[CONFIG_DB](../../reference/glossary.md#term-config_db) 経由での変更手段なし |
 | グループ初期 polling interval | FlexCounterManager コンストラクタ引数で PORT: 1000ms、QUEUE: 10000ms、PORT_BUFFER_DROP: 60000ms がハードコード設定される。CONFIG_DB の `POLL_INTERVAL` で後から上書き可能 |
 | schema.h 定数 | フィールド名は `sonic-swss-common/common/schema.h` で `PORT_COUNTER_ID_LIST`、`QUEUE_COUNTER_ID_LIST` 等として定義 |
 

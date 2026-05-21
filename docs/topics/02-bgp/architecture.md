@@ -51,7 +51,7 @@ flowchart LR
 
 古い理解では zebra の `dplane_fpm_nl` が kernel [Netlink](../../reference/glossary.md#term-netlink) 形式の経路情報を fpmsyncd に流す、と捉えればよかった。新しい設計では [SONiC](../../reference/glossary.md#term-sonic) 側で保守する `dplane_fpm_sonic` module を使い、SONiC 固有の属性や message type を追加できるようにする。[SRv6](../../reference/glossary.md#term-srv6) SID のように kernel data model だけでは表現できない属性を運ぶための基盤である。
 
-この変更はユーザーが BGP neighbor を設定する入口には直接見えない。しかし Suppress FIB Pending や SRv6 のように「FRR と SONiC の間で追加情報を往復させる」機能では前提になる。詳細は [新 FRR-SONiC 通信チャネル](../../routing/new-frr-sonic-communication-channel.md) を参照する。
+この変更はユーザが BGP neighbor を設定する入口には直接見えない。しかし Suppress FIB Pending や SRv6 のように「FRR と SONiC の間で追加情報を往復させる」機能では前提になる。詳細は [新 FRR-SONiC 通信チャネル](../../routing/new-frr-sonic-communication-channel.md) を参照する。
 
 ## route と nexthop group を分ける理由
 

@@ -103,7 +103,7 @@ flowchart LR
 
 - persistent-watermark は手動 clear するまでリセットされない。
 - PG が profile 紐付けされていないと watermark は 0 のまま。
-- **`sonic-clear priority-group drop counters` に root 権限が必要な問題** (issue [#4144](https://github.com/sonic-net/sonic-utilities/issues/4144)): `show priority-group drop counters` は admin 権限で動作するが、`sonic-clear priority-group drop counters` は root 権限を要求する。PG drop counter のキャッシュは UID 単位で管理されるため、root で clear しても admin ユーザーの表示に反映されない。回避策: `pg-drop -c clear` コマンドを使うと root 権限なしで clear できる（`show priority-group drop counters` の表示に正しく反映される）。
+- **`sonic-clear priority-group drop counters` に root 権限が必要な問題** (issue [#4144](https://github.com/sonic-net/sonic-utilities/issues/4144)): `show priority-group drop counters` は admin 権限で動作するが、`sonic-clear priority-group drop counters` は root 権限を要求する。PG drop counter のキャッシュは UID 単位で管理されるため、root で clear しても admin ユーザの表示に反映されない。回避策: `pg-drop -c clear` コマンドを使うと root 権限なしで clear できる（`show priority-group drop counters` の表示に正しく反映される）。
 
 ### 関連する show / debug
 

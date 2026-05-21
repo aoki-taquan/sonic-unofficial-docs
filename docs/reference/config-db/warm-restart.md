@@ -347,7 +347,7 @@ fast-reboot 後に `teamsyncd_timer` エントリが削除される副作用が�
 
 `WARM_RESTART` テーブルは `task_process_status` ベースの retry ループとは異なる経路で参照される。
 `WarmStart::checkWarmStart()` と `WarmStart::getWarmStartTimer()` が
-起動時に一回だけ CONFIG_DB から同期的に読み取る設計のため、
+起動時に1回だけ CONFIG_DB から同期的に読み取る設計のため、
 失敗は「コールドスタートへのフォールバック」または「ハードコードデフォルト使用」として現れる。
 
 ### A. `checkWarmStart()` 内のフォールバック (warm_restart.cpp:86-147)

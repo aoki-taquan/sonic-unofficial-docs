@@ -372,7 +372,7 @@ minigraph.py は `MGMT_VRF_CONFIG` を先行して格納後、`mgmt_intf`（MGMT
 
 ### SAI 参照
 
-なし。`SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` はいずれも snmpd（ユーザー空間デーモン）の設定のみに作用し、[SAI](../../reference/glossary.md#term-sai)・[ASIC](../../reference/glossary.md#term-asic)・[APPL_DB](../../reference/glossary.md#term-appl_db) には一切関与しない。
+なし。`SNMP_AGENT_ADDRESS_CONFIG` / `SNMP_USER` はいずれも snmpd（ユーザ空間デーモン）の設定のみに作用し、[SAI](../../reference/glossary.md#term-sai)・[ASIC](../../reference/glossary.md#term-asic)・[APPL_DB](../../reference/glossary.md#term-appl_db) には一切関与しない。
 
 <!-- /cross-refs -->
 

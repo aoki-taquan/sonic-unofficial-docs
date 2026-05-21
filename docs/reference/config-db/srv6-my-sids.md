@@ -222,7 +222,7 @@ SRV6_MY_SIDS のエントリが参照する外部リソースには refcount が
 
 - **ロケータより先に SID を削除しなかった場合**: `locators_del_handler()` はロケータ削除時に SID エントリを自動削除しない。SID が bgpcfgd キャッシュに残留し FRR 設定が不整合となる（`managers_srv6.py:106-115`）。
 - **VRF 削除前に SID が残存する場合**: VRFOrch refcount が正のまま VRF 削除がブロックされる（`srv6orch.cpp:1639, 1683`）。
-- **Neighbor 消失時の自動 [ASIC](../../reference/glossary.md#term-asic) 削除**: nexthop が消えると `updateNeighbor()` が MY_SID を [ASIC](../../reference/glossary.md#term-asic) から自動削除し `m_pendingSRv6MySIDEntries` に保留する（`srv6orch.cpp:1272-1342`）。Neighbor 再出現時に自動復元されるためユーザー介入は不要。
+- **Neighbor 消失時の自動 [ASIC](../../reference/glossary.md#term-asic) 削除**: nexthop が消えると `updateNeighbor()` が MY_SID を [ASIC](../../reference/glossary.md#term-asic) から自動削除し `m_pendingSRv6MySIDEntries` に保留する（`srv6orch.cpp:1272-1342`）。Neighbor 再出現時に自動復元されるためユーザ介入は不要。
 
 <!-- /failure -->
 

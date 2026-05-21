@@ -33,7 +33,7 @@ related:
 
 ## Login flow の全体像
 
-外部から SSH や serial console で入ってきたユーザーは、PAM の認証スタックを通り、NSS でユーザー情報の解決を受け、最終的に shell とその sudo 権限を得ます。SONiC は PAM / NSS のモジュールチェーンに TACACS+、[RADIUS](../../reference/glossary.md#term-radius)、LDAP のクライアントを差し込み、`CONFIG_DB` の `AAA` テーブルでそれらの順序を制御します。詳細フローは [AAA improvements](../../management/aaa-improvements.md) と [TACACS+ authentication](../../management/tacacs-authentication.md) に図解があります。
+外部から SSH や serial console で入ってきたユーザは、PAM の認証スタックを通り、NSS でユーザ情報の解決を受け、最終的に shell とその sudo 権限を得ます。SONiC は PAM / NSS のモジュールチェーンに TACACS+、[RADIUS](../../reference/glossary.md#term-radius)、LDAP のクライアントを差し込み、`CONFIG_DB` の `AAA` テーブルでそれらの順序を制御します。詳細フローは [AAA improvements](../../management/aaa-improvements.md) と [TACACS+ authentication](../../management/tacacs-authentication.md) に図解があります。
 
 ```mermaid
 flowchart LR
@@ -53,7 +53,7 @@ flowchart LR
 
 ## hostcfgd と CONFIG_DB から /etc への反映
 
-SSH の global config、serial console、banner、[AAA](../../reference/glossary.md#term-aaa) の設定は、ユーザーが直接 `/etc/ssh/sshd_config` などを編集する設計にはなっていません。`hostcfgd` が `CONFIG_DB` の該当テーブル（`SSH_SERVER`、`SERIAL_CONSOLE`、`BANNER_MESSAGE`、`AAA`、`TACPLUS`、`RADIUS`、`LDAP` など）を購読し、テンプレートからファイルを再生成して関連サービスを reload します。
+SSH の global config、serial console、banner、[AAA](../../reference/glossary.md#term-aaa) の設定は、ユーザが直接 `/etc/ssh/sshd_config` などを編集する設計にはなっていません。`hostcfgd` が `CONFIG_DB` の該当テーブル（`SSH_SERVER`、`SERIAL_CONSOLE`、`BANNER_MESSAGE`、`AAA`、`TACPLUS`、`RADIUS`、`LDAP` など）を購読し、テンプレートからファイルを再生成して関連サービスを reload します。
 
 ```mermaid
 flowchart LR

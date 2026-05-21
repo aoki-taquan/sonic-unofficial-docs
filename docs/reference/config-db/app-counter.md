@@ -53,7 +53,7 @@ related:
 [SONiC](../../reference/glossary.md#term-sonic) には 2 種類のアプリケーションレベルフローカウンタがある[^1]。
 
 1. **Trap flow counter** (`FLOW_CNT_TRAP`) — ホスト CPU に転送されるパケットを trap グループ（`COPP_TABLE` エントリ）単位でカウントする。copporch が [SAI](../../reference/glossary.md#term-sai) HOSTIF trap に generic counter を紐付け、`COUNTERS_DB` に `SAI_COUNTER_STAT_PACKETS` / `SAI_COUNTER_STAT_BYTES` を格納する。
-2. **Route flow counter** (`FLOW_CNT_ROUTE`) — ユーザー指定のプレフィックスパターンにマッチするルートのパケット・バイト数をカウントする。FlowCounterRouteOrch が [SAI](../../reference/glossary.md#term-sai) route entry に generic counter を紐付ける。
+2. **Route flow counter** (`FLOW_CNT_ROUTE`) — ユーザ指定のプレフィックスパターンにマッチするルートのパケット・バイト数をカウントする。FlowCounterRouteOrch が [SAI](../../reference/glossary.md#term-sai) route entry に generic counter を紐付ける。
 
 どちらも [CONFIG_DB](../../reference/glossary.md#term-config_db) の `FLEX_COUNTER_TABLE` でポーリングの enable/disable および間隔を制御し、`FLOW_COUNTER_ROUTE_PATTERN` でルートパターンを設定する。
 
@@ -188,7 +188,7 @@ FlowCounterRouteOrch は [COUNTERS_DB](../../reference/glossary.md#term-counters
 
 ### SAI generic counter の stat リスト（ハードコード）
 
-両グループとも FlowCounterHandler の `generic_counter_stat_ids[]` に定義された 2 stat のみを収集する[^4]。ユーザーが変更する手段はない。
+両グループとも FlowCounterHandler の `generic_counter_stat_ids[]` に定義された 2 stat のみを収集する[^4]。ユーザが変更する手段はない。
 
 | SAI stat | 意味 |
 |---------|------|
@@ -220,7 +220,7 @@ FlowCounterRouteOrch は [COUNTERS_DB](../../reference/glossary.md#term-counters
 
 ### capability publish → POLL 開始の順序保証
 
-`mRouteFlowCounterSupported` は **コンストラクタで 1 回だけセットされる**（`flowcounterrouteorch.cpp:39` から `initRouteFlowCounterCapability()` を呼ぶ）。再評価する手段は orchagent 再起動のみ。よって `FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` への `FLEX_COUNTER_STATUS=enable` が読まれる時点で capability は既に [STATE_DB](../../reference/glossary.md#term-state_db) に publish 済みであり、ユーザーは `show flowcnt-route capabilities` で **enable 投入前に** `support` を確認できる。
+`mRouteFlowCounterSupported` は **コンストラクタで 1 回だけセットされる**（`flowcounterrouteorch.cpp:39` から `initRouteFlowCounterCapability()` を呼ぶ）。再評価する手段は orchagent 再起動のみ。よって `FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE` への `FLEX_COUNTER_STATUS=enable` が読まれる時点で capability は既に [STATE_DB](../../reference/glossary.md#term-state_db) に publish 済みであり、ユーザは `show flowcnt-route capabilities` で **enable 投入前に** `support` を確認できる。
 
 `generateRouteFlowStats()` (`flowcounterrouteorch.cpp:181-194`) は capability=false で early return するため、SAI 非対応 [ASIC](../../reference/glossary.md#term-asic) で enable しても counter は生成されない（no-op）。
 
@@ -505,7 +505,7 @@ capability_table.set(FLOW_COUNTER_ROUTE_KEY, fvs);
 | Broadcom DNX / Marvell / Cisco silicon-one | SDK バージョン依存 | `show flowcnt-route capabilities` で要確認 |
 | **VS (libsaivs) / VPP (libsaivpp)** | **false** | SAI スタブが未実装応答 |
 
-ユーザー側からは `show flowcnt-route capabilities`（STATE_DB の `FLOW_COUNTER_CAPABILITY_TABLE` を読む）で `support: false` を確認できる。
+ユーザ側からは `show flowcnt-route capabilities`（STATE_DB の `FLOW_COUNTER_CAPABILITY_TABLE` を読む）で `support: false` を確認できる。
 
 ### Trap flow counter には capability ゲートなし
 
@@ -588,7 +588,7 @@ VS / VPP では `queryRouteFlowCounterCapability()` が `false` を返すため 
 | `Invalid flex counter group input` (未知 group key) | エントリ erase | **retry なし** |
 | `FLOW_CNT_ROUTE` の `enable` が SAI 非対応 | `mRouteFlowCounterSupported = false` | 一度 capability が false 確定すると **再 query なし** (orchagent 再起動が必要) |
 
-!!! warning "ユーザー視点の代表的な失敗症状"
+!!! warning "ユーザ視点の代表的な失敗症状"
     - **`FLEX_COUNTER_STATUS=enable` を書いたのにカウンタが現れない** — group key typo (`Invalid flex counter group input`)、SAI capability 不足、`max_match_count` 超過のいずれか。
     - **`max_match_count=0` を設定したのに 30 になっている** — Phase D で挙動として確定 (silent fallback)。
     - **VRF 作成直後に route flow counter が出ない** — 1 秒タイマーの再試行待ちで数秒のラグ。

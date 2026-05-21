@@ -313,7 +313,7 @@ show copp config
 ### `trap_ids`
 
 - **YANG default**: なし (`mandatory true`)
-- **実装上の挙動 [IF, AR]**: `coppmgr` は起動時に `/etc/sonic/copp_cfg.json`（`copp_cfg.j2` 由来）を読み込み `m_coppTrapInitCfg` に保持する。ユーザーが `COPP_TRAP|<name>` を CONFIG_DB から DELETE しても、init cfg に同名エントリが存在すれば init 値でトラップを自動再登録する（実質「ユーザー設定削除 = init 値リセット」）。<!-- evidence: coppmgr.cpp L773-805 -->
+- **実装上の挙動 [IF, AR]**: `coppmgr` は起動時に `/etc/sonic/copp_cfg.json`（`copp_cfg.j2` 由来）を読み込み `m_coppTrapInitCfg` に保持する。ユーザが `COPP_TRAP|<name>` を CONFIG_DB から DELETE しても、init cfg に同名エントリが存在すれば init 値でトラップを自動再登録する（実質「ユーザ設定削除 = init 値リセット」）。<!-- evidence: coppmgr.cpp L773-805 -->
 - **SET 時・不完全設定のスキップ [PD]**: `trap_ids` が空かつ `trap_group` も空の SET は incomplete configuration として処理スキップ（no-op）。<!-- evidence: coppmgr.cpp L609-615 -->
 
 ### `trap_group`
@@ -361,7 +361,7 @@ show copp config
 
 `coppmgr` は起動時に `/etc/sonic/copp_cfg.json`（`files/image_config/copp/copp_cfg.j2` の展開物）を
 読み込み、`COPP_TRAP` と `COPP_GROUP` の初期セットを `m_coppTrapInitCfg` / `m_coppGroupInitCfg` に保持する。
-ユーザーが CONFIG_DB から DEL した場合も、init cfg に同名キーがあれば init 値で自動復元される（実質「DEL = init リセット」）。`coppmgr.cpp:773-805`
+ユーザが CONFIG_DB から DEL した場合も、init cfg に同名キーがあれば init 値で自動復元される（実質「DEL = init リセット」）。`coppmgr.cpp:773-805`
 
 - 既定エントリ例: `bgp` → `trap_ids: bgp,bgpv6` / `trap_group: queue4_group1`
 - `always_enabled=true` の例: `lacp`、`arp`、`udld`、`ip2me`、`neighbor_miss`

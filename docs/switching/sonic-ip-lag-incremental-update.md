@@ -159,7 +159,7 @@ teamdctl PortChannel1 port add Ethernet4
 
 ### PortChannel メンバーポートの MAC アドレス不一致による ARP 不完全（#87）
 
-PortChannel のメンバーポートの一つが他のポートと異なる MAC アドレスを持つ場合（SAI ホストインターフェースの MAC 割り当てバグ）、[ARP](../reference/glossary.md#term-arp) エントリが不完全状態（flags = 0x0）になり通信ができなくなる。
+PortChannel のメンバーポートの1つが他のポートと異なる MAC アドレスを持つ場合（SAI ホストインターフェースの MAC 割り当てバグ）、[ARP](../reference/glossary.md#term-arp) エントリが不完全状態（flags = 0x0）になり通信ができなくなる。
 
 **デバッグ方法:**
 
@@ -208,7 +208,7 @@ PortChannel を削除後もインターフェースが PortChannel メンバー�
 
 ### warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG（sonic-buildimage#5761）
 
-warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG フラップを引き起こす問題。チームドライバーとカーネルバージョンの互換性を確認すること
+warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG フラップを引き起こす問題。チームドライバとカーネルバージョンの互換性を確認すること
 
 - 参照: [sonic-net/sonic-buildimage#5761](https://github.com/sonic-net/sonic-buildimage/issues/5761)
 

@@ -62,7 +62,7 @@ related:
 | `release` | string | 必須 (デフォルト `none`) | sonic_release ファイルが存在すればその内容、なければ `'none'` |
 | `build_date` | string | 必須 | ビルド日時 (UTC, `date -u` の出力形式) |
 | `build_number` | integer | 必須 (デフォルト `0`) | CI ビルド番号 (`BUILD_NUMBER` 変数、未設定時 `0`) |
-| `built_by` | string | 必須 | ビルドを実行したユーザー (`$USER@$BUILD_HOSTNAME`) |
+| `built_by` | string | 必須 | ビルドを実行したユーザ (`$USER@$BUILD_HOSTNAME`) |
 | `sonic_os_version` | string | 必須 | [SONiC](../../reference/glossary.md#term-sonic) OS バージョン番号。`SONIC_OS_VERSION` 変数 (デフォルト `13`) |
 | `secure_boot_image` | string | 必須 | `'yes'` または `'no'`。`SECURE_UPGRADE_MODE` が `dev` か `prod` のとき `'yes'` |
 | `asan` | string | 任意 | `'yes'` (ASAN 有効ビルド時のみ存在) |

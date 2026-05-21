@@ -176,7 +176,7 @@ redis-cli -n 0 HGETALL "ISOLATION_GROUP_TABLE:1"
 ## 関連 Topics
 
 - [06-l2-vlan-lag](../topics/06-l2-vlan-lag/index.md): L2 / LAG の全体像
-- [05-dual-tor](../topics/05-dual-tor/index.md): もう一つの ToR 冗長機構
+- [05-dual-tor](../topics/05-dual-tor/index.md): もう1つの ToR 冗長機構
 
 ## 引用元
 

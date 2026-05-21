@@ -111,13 +111,13 @@ STP ロール (`STP_ROLE_ACTIVE` / `STP_ROLE_STANDBY`) は ICCP セッション�
 
 3. **mclagsyncd が iccpd と接続済みであること (`sync_fd > 0`)**
    - `mlacp_link_set_iccp_role()` は `sys->sync_fd <= 0` のときロール通知をサイレントスキップする (`mlacp_link_handler.c:654-660`)。
-   - mclagsyncd は起動後に iccpd のサーバーソケットに接続し、完了してから `mclagsyncdFetchMclagConfigFromConfigdb()` を実行する (`mclagsyncd.cpp:51-58`)。
+   - mclagsyncd は起動後に iccpd のサーバソケットに接続し、完了してから `mclagsyncdFetchMclagConfigFromConfigdb()` を実行する (`mclagsyncd.cpp:51-58`)。
 
 #### 起動・処理順序
 
 | ステップ | 処理 | 依存 |
 |---------|------|------|
-| 1 | iccpd 起動・サーバーソケット listen | なし |
+| 1 | iccpd 起動・サーバソケット listen | なし |
 | 2 | mclagsyncd 起動 → iccpd ソケット接続 (`sync_fd` 確立) | iccpd が先に起動していること |
 | 3 | mclagsyncd が [CONFIG_DB](../../reference/glossary.md#term-config_db) から `MCLAG_DOMAIN` をフェッチして iccpd へ送信 | `sync_fd` 確立済み |
 | 4 | iccpd が `source_ip` / `peer_ip` を CSM に格納 | ステップ 3 完了 |
@@ -125,14 +125,14 @@ STP ロール (`STP_ROLE_ACTIVE` / `STP_ROLE_STANDBY`) は ICCP セッション�
 | 6 | `scheduler_check_csm_config()` → `iccp_csm_stp_role_count()` でロール決定 (1 回のみ) | ステップ 5 完了 |
 | 7 | `mlacp_link_set_iccp_role()` → mclagsyncd へ `MCLAG_MSG_TYPE_SET_ICCP_ROLE` 送信 | `sync_fd > 0` (ステップ 2 完了) |
 
-#### TCP クライアント/サーバー役の決定
+#### TCP クライアント/サーバ役の決定
 
 ICCP セッションの TCP 接続方向は `source_ip` と `peer_ip` の数値大小で決まる:
 
 | 条件 | 役割 | 動作 |
 |------|------|------|
 | `source_ip` < `peer_ip` | TCP クライアント | `session_client_conn_handler()` で相手に connect |
-| `source_ip` > `peer_ip` | TCP サーバー | `accept()` で待機 |
+| `source_ip` > `peer_ip` | TCP サーバ | `accept()` で待機 |
 | `source_ip` == `peer_ip` | 異常 | WARN ログのみ・セッション未確立 |
 
 `scheduler_prepare_session()` (`scheduler.c:682-700`) でこの判定を行う。TCP クライアント側ノードが接続を開始するため、**小さい IP のノードが先にセッション確立を試みる**。
@@ -228,7 +228,7 @@ ICCP セッションの TCP 接続方向は `source_ip` と `peer_ip` の数値�
 
 iccpd は `stpmgrd` と **直接通信しない**。ICCP プロトコルに定義される STP TLV
 (`TLV_T_MLACP_STP_INFO = 0x1037`) は現在の実装で未サポート（`mlacp_fsm.c:729-733`）。
-ピア間の STP 設定一貫性はユーザーが手動で維持する必要がある。
+ピア間の STP 設定一貫性はユーザが手動で維持する必要がある。
 
 証跡: `msg_format.h:103`, `mlacp_fsm.c:729-733`
 <!-- /cross-refs -->
@@ -379,7 +379,7 @@ static void mlacp_sync_recv_stpInfo(struct CSM* csm, struct Msg* msg)
 | `ICCP_DBG_CNTR_MSG_STP_SYNC_DATA` | 25 | STP 同期データ |
 | `ICCP_DBG_CNTR_MSG_STP_PO_PORT_MAP` | 26 | PortChannel ポートマップ |
 
-これらは将来の STP ピア間情報同期機能のプレースホルダであり、現在 [MCLAG](../../reference/glossary.md#term-mclag) 環境での STP 設定の一貫性はユーザーが手動で維持する必要がある。
+これらは将来の STP ピア間情報同期機能のプレースホルダであり、現在 [MCLAG](../../reference/glossary.md#term-mclag) 環境での STP 設定の一貫性はユーザが手動で維持する必要がある。
 
 証跡: `msg_format.h:103, 185-186`, `mlacp_fsm.c:729-733`, `mlacp_fsm.h:109-123`
 
@@ -451,7 +451,7 @@ STP/ICCP 連携において iccpd が STP ロールを正しく決定するた�
    - mclagsyncd は iccpd が listen 状態になった後に接続するため、iccpd を先に起動する。
    - evidence: `mlacp_link_handler.c:654-660`
 
-3. **クライアント/サーバー役は `source_ip` と `peer_ip` の大小比較で決定する**
+3. **クライアント/サーバ役は `source_ip` と `peer_ip` の大小比較で決定する**
    - `scheduler_prepare_session()` で `inet_addr(sender_ip) < inet_addr(peer_ip)` の場合のみ TCP client として connect を試みる。
    - `source_ip > peer_ip` のノードは TCP server として LISTEN で待つ。
    - `source_ip == peer_ip` の場合は WARN ログを出してスキップし、セッションが確立されない。

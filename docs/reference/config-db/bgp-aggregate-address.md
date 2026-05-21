@@ -405,7 +405,7 @@ log_err("ConfigMgr::commit(): can't push configuration from file='%s', rc='%d', 
 
 ### ROUTE_MAP 順序依存
 
-`frr-mgmt-framework` の `hdl_af_aggregate()` は `ROUTE_MAP` テーブルの存在検証を行わず、`{5:aggr-policy}` をそのまま `route-map <name>` に展開して bgpd に流し込む (`frrcfgd.py:928-930, 1313-1328`)。route-map 未定義のまま `BGP_GLOBALS_AF_AGGREGATE_ADDR` に `policy=<name>` を SET すると bgpd 側で構文エラーになるが、frr-mgmt-framework は ack 待ちのみで再投入トリガを持たない。**ROUTE_MAP を後から定義しても aggregate-address は自動再投入されない**ため、ユーザー側で aggregate-address エントリを SET し直す必要がある。
+`frr-mgmt-framework` の `hdl_af_aggregate()` は `ROUTE_MAP` テーブルの存在検証を行わず、`{5:aggr-policy}` をそのまま `route-map <name>` に展開して bgpd に流し込む (`frrcfgd.py:928-930, 1313-1328`)。route-map 未定義のまま `BGP_GLOBALS_AF_AGGREGATE_ADDR` に `policy=<name>` を SET すると bgpd 側で構文エラーになるが、frr-mgmt-framework は ack 待ちのみで再投入トリガを持たない。**ROUTE_MAP を後から定義しても aggregate-address は自動再投入されない**ため、ユーザ側で aggregate-address エントリを SET し直す必要がある。
 
 ### bgpd ソケット失敗時の retry 戦略
 

@@ -4,8 +4,9 @@
     "AI 生成文体に合わせて厳格 rule は緩める。prh は専用辞書ファイル",
     "(meta/prh-sonic.yml) で SONiC 用語・表記を統一する。",
     "",
-    "rule の strict / warning は CI の continue-on-error で吸収する想定。",
-    "初期は informational 運用。"
+    "strict 化のため、誤検知が多い rule (見出し末尾・table セル末尾・",
+    "コード断片を含む文の括弧対応・冗長表現の慣用句マッチ等) は無効化",
+    "して、prh と少数の高シグナル rule のみ強制する。"
   ],
   "rules": {
     "preset-ja-technical-writing": {
@@ -15,15 +16,17 @@
       "sentence-length": false,
       "max-comma": false,
       "max-kanji-continuous-len": false,
-      "ja-no-mixed-period": {
-        "allowPeriodMarks": [":", "："]
-      },
+      "ja-no-mixed-period": false,
       "no-mix-dearu-desumasu": false,
       "ja-no-weak-phrase": false,
       "ja-no-successive-word": false,
-      "ja-no-abusage": true,
-      "ja-no-redundant-expression": true,
-      "no-double-negative-ja": true
+      "ja-no-abusage": false,
+      "ja-no-redundant-expression": false,
+      "no-double-negative-ja": false,
+      "no-doubled-conjunction": false,
+      "no-doubled-conjunctive-particle-ga": false,
+      "no-unmatched-pair": false,
+      "arabic-kanji-numbers": false
     },
     "prh": {
       "rulePaths": ["./meta/prh-sonic.yml"]

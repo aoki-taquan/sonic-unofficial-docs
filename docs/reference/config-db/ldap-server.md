@@ -303,7 +303,7 @@ sudo cat /etc/nslcd.conf
 
 ### AAA|authentication — LDAP 有効化ゲート
 
-`is_ldap_config_complete()` は `'ldap' in self.authentication.get('login', "")` を条件の一つとして評価する (`hostcfgd:441`)。`AAA|authentication.login` に `ldap` が含まれない場合、`LDAP_SERVER` と `LDAP|global` が完全に設定済みであっても `handle_nslcd_service(False)` が呼ばれ nslcd を stop & mask する。**`config aaa authentication login ldap` を実行して [AAA](../../reference/glossary.md#term-aaa) テーブルを更新するまで LDAP 認証は機能しない**。
+`is_ldap_config_complete()` は `'ldap' in self.authentication.get('login', "")` を条件の1つとして評価する (`hostcfgd:441`)。`AAA|authentication.login` に `ldap` が含まれない場合、`LDAP_SERVER` と `LDAP|global` が完全に設定済みであっても `handle_nslcd_service(False)` が呼ばれ nslcd を stop & mask する。**`config aaa authentication login ldap` を実行して [AAA](../../reference/glossary.md#term-aaa) テーブルを更新するまで LDAP 認証は機能しない**。
 
 ### LDAP|global — nslcd.conf 生成の前提
 
@@ -315,7 +315,7 @@ hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得
 
 ### SAI 参照
 
-なし。LDAP 認証は nslcd / PAM のユーザー空間で完結し、[APPL_DB](../../reference/glossary.md#term-appl_db) 中継も [SAI](../../reference/glossary.md#term-sai) への書き込みも一切ない。
+なし。LDAP 認証は nslcd / PAM のユーザ空間で完結し、[APPL_DB](../../reference/glossary.md#term-appl_db) 中継も [SAI](../../reference/glossary.md#term-sai) への書き込みも一切ない。
 
 <!-- /cross-refs -->
 
@@ -380,7 +380,7 @@ hostcfgd は起動時から `LDAP` / `LDAP_SERVER` テーブルを常時購読�
 
 ### AAA|authentication — LDAP 有効化ゲート
 
-`is_ldap_config_complete()` は `'ldap' in self.authentication.get('login', "")` を条件の一つとして評価する (`hostcfgd:441`)。`AAA|authentication.login` に `ldap` が含まれない場合、`LDAP_SERVER` と `LDAP|global` が完全に設定済みであっても `handle_nslcd_service(False)` が呼ばれ nslcd を stop & mask する。**`config aaa authentication login ldap` を実行して [AAA](../../reference/glossary.md#term-aaa) テーブルを更新するまで LDAP 認証は機能しない**。
+`is_ldap_config_complete()` は `'ldap' in self.authentication.get('login', "")` を条件の1つとして評価する (`hostcfgd:441`)。`AAA|authentication.login` に `ldap` が含まれない場合、`LDAP_SERVER` と `LDAP|global` が完全に設定済みであっても `handle_nslcd_service(False)` が呼ばれ nslcd を stop & mask する。**`config aaa authentication login ldap` を実行して [AAA](../../reference/glossary.md#term-aaa) テーブルを更新するまで LDAP 認証は機能しない**。
 
 ### LDAP|global — nslcd.conf 生成の前提
 
@@ -392,7 +392,7 @@ hostcfgd 初期化時に `DEVICE_METADATA` から `localhost.hostname` を取得
 
 ### SAI 参照
 
-なし。LDAP 認証は nslcd / PAM のユーザー空間で完結し、[APPL_DB](../../reference/glossary.md#term-appl_db) 中継も [SAI](../../reference/glossary.md#term-sai) への書き込みも一切ない。
+なし。LDAP 認証は nslcd / PAM のユーザ空間で完結し、[APPL_DB](../../reference/glossary.md#term-appl_db) 中継も [SAI](../../reference/glossary.md#term-sai) への書き込みも一切ない。
 
 <!-- /cross-refs -->
 

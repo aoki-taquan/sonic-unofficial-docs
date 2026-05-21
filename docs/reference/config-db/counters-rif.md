@@ -185,7 +185,7 @@ COUNTERS_DB / RATES:<oid>              (Hash)
 
 `RIF_ALPHA` は alpha = 2/(N+1) で、N = ウィンドウ幅（秒）から導出される。デフォルト 10 秒ウィンドウで 1 秒スパイクの影響が約 10 秒で収束するよう設計されている（enable_counters.py:7-9 コメント）。
 
-ユーザーが `config rate smoothing-interval <interval> rif` を実行すると新しい alpha = 2.0/(interval+1) が計算され `RATES:RIF` に書き直される（config/main.py:9591-9598）。
+ユーザが `config rate smoothing-interval <interval> rif` を実行すると新しい alpha = 2.0/(interval+1) が計算され `RATES:RIF` に書き直される（config/main.py:9591-9598）。
 
 !!! warning "RIF_ALPHA 未定義時の挙動"
     `rif_rates.lua` は `RIF_ALPHA` が未定義の場合 `"Alpha is not defined"` をログに残して即 return する（rif_rates.lua:21-23）。`enable_counters.py` が実行されていない場合はレート計算が一切行われず `RATES:<oid>` が空のままになる。
@@ -456,7 +456,7 @@ warm-reboot 完了前に `FLEX_COUNTER_TABLE|RIF = enable` が届いても、`Fl
 | `DEFAULT_SMOOTH_INTERVAL` | `"10"` (秒) | `enable_counters.py:10` | `RATES:RIF` に書き込む `RIF_SMOOTH_INTERVAL` のデフォルト値。EMA ウィンドウ幅 |
 | `DEFAULT_ALPHA` | `"0.18"` | `enable_counters.py:11` | `RATES:RIF` に書き込む `RIF_ALPHA` のデフォルト値。= 2/(10+1) ≈ 0.1818…（小数点 2 桁丸め） |
 
-`RIF_ALPHA = 2 / (N + 1)` の関係で、`N = DEFAULT_SMOOTH_INTERVAL = 10` から算出される。ユーザーが `config rate smoothing-interval` で変更すると、新しい alpha が再計算されて `RATES:RIF` に上書きされる。
+`RIF_ALPHA = 2 / (N + 1)` の関係で、`N = DEFAULT_SMOOTH_INTERVAL = 10` から算出される。ユーザが `config rate smoothing-interval` で変更すると、新しい alpha が再計算されて `RATES:RIF` に上書きされる。
 
 ### SAI カウンタ ID 静的配列
 

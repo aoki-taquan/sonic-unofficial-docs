@@ -358,7 +358,7 @@ vrfmgrd: STATE_DB VRF_TABLE|<name> DEL
     `VRF_TABLE_END - VRF_TABLE_START = 4096` が同時に作成できる VRF の絶対上限。
     ID が枯渇した場合 (`getFreeTable()` が `0` を返す)、`vrfmgrd` は `SWSS_LOG_ERROR` を出力して処理を継続するが、Linux VRF デバイスは作成されない。枯渇閾値を変更するにはソースコードの再コンパイルが必要。
 
-!!! note "mgmt VRF テーブル ID はユーザー変更不可"
+!!! note "mgmt VRF テーブル ID はユーザ変更不可"
     `MGMT_VRF_TABLE_ID = 6000` はコードにハードコードされており、`m_freeTables` の管理範囲（1001–5096）とは独立している。
     mgmt VRF が有効な場合でも通常 VRF の ID 割り当て数は影響を受けない。
 

@@ -143,7 +143,7 @@ stateDiagram-v2
 | `runner.active` | `"false"` → ポート集約後 `"true"` | `teamdctl` JSON `runner.active` — `values_store.h:L51` | LACP ネゴシエーション完了後に `"true"` へ遷移 |
 | `runner.fallback` | `"false"` (未設定時) | `teamdctl` JSON `runner.fallback` — `values_store.h:L52` | CONFIG_DB `PORTCHANNEL.fallback = true` のときのみ `"true"` |
 | `runner.fast_rate` | `"false"` (未設定時) | `teamdctl` JSON `runner.fast_rate` — `values_store.h:L53` | CONFIG_DB `PORTCHANNEL.fast_rate = true` のときのみ `"true"` |
-| `team_device.ifinfo.dev_addr` | LAG 作成時の MAC アドレス | `teamdctl` JSON `team_device.ifinfo.dev_addr` — `values_store.h:L54` | 固定値なし。システム MAC またはユーザー指定値 |
+| `team_device.ifinfo.dev_addr` | LAG 作成時の MAC アドレス | `teamdctl` JSON `team_device.ifinfo.dev_addr` — `values_store.h:L54` | 固定値なし。システム MAC またはユーザ指定値 |
 | `team_device.ifinfo.ifindex` | LAG 作成時の ifindex | `teamdctl` JSON `team_device.ifinfo.ifindex` — `values_store.h:L55` | 固定値なし。カーネルが割り当てた整数値 |
 
 ### 補足
@@ -161,7 +161,7 @@ stateDiagram-v2
 > 調査日: 2026-05-18
 > 詳細調査ノート: `meta/_intermediate/cdb-flow/portchannel-state-ordering.md`
 
-このテーブルは STATE_DB の **書き込み専用**（teamsyncd / tlm_teamd のみが書き込む）であり、ユーザーが直接操作するものではない。`state=ok` エントリの有無が複数デーモンの readiness ガードとして機能するため、書き込み・削除の順序が後続処理の可否を決定する。
+このテーブルは STATE_DB の **書き込み専用**（teamsyncd / tlm_teamd のみが書き込む）であり、ユーザが直接操作するものではない。`state=ok` エントリの有無が複数デーモンの readiness ガードとして機能するため、書き込み・削除の順序が後続処理の可否を決定する。
 
 ### teamsyncd が LAG_TABLE に書き込むまでの事前条件
 
@@ -459,7 +459,7 @@ teamsyncd: m_stateLagTable.del(lagName)  [teamsync.cpp:L255]
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-STATE_DB `LAG_TABLE` への書き込みは Linux netlink (`RTM_NEWLINK` / `RTM_DELLINK`) と `teamdctl` UNIX ソケット経由の JSON dump に依存する。いずれも [SAI](../../reference/glossary.md#term-sai) を経由しないカーネル・ユーザー空間の仕組みであるため、プラットフォーム（[ASIC](../../reference/glossary.md#term-asic) ベンダー）差異は生じない。
+STATE_DB `LAG_TABLE` への書き込みは Linux netlink (`RTM_NEWLINK` / `RTM_DELLINK`) と `teamdctl` UNIX ソケット経由の JSON dump に依存する。いずれも [SAI](../../reference/glossary.md#term-sai) を経由しないカーネル・ユーザ空間の仕組みであるため、プラットフォーム（[ASIC](../../reference/glossary.md#term-asic) ベンダー）差異は生じない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|

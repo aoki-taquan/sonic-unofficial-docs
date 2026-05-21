@@ -68,7 +68,7 @@ flowchart LR
 ```
 
 !!! note "凡例"
-    `sonic-cfggen` が platform.json と minigraph から DPU 設定を生成して CONFIG_DB に書き込む。DHCP サーバーはミッドプレーンブリッジ経由で各 DPU に IP を払い出す。
+    `sonic-cfggen` が platform.json と minigraph から DPU 設定を生成して CONFIG_DB に書き込む。DHCP サーバはミッドプレーンブリッジ経由で各 DPU に IP を払い出す。
 <!-- /cdb-mermaid -->
 
 ---
@@ -255,7 +255,7 @@ return f"169.254.200.{int(self.dpu_id) + 1}"
 
 ゲートウェイ（NPU 側: `169.254.200.254`）と DPU 割り当て（`.1`〜`.8`）で同一 `/24` を共有する。この計算ロジックは Mellanox 固有であり、他ベンダー platform では異なる可能性がある。
 
-DHCP サーバーへの IP 払い出しも同一規則に従う:
+DHCP サーバへの IP 払い出しも同一規則に従う:
 
 ```python
 # config_samples.py:102-103

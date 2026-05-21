@@ -100,7 +100,7 @@ SAG 機能は `VLAN_INTERFACE` テーブルに `static_anycast_gateway` フィ�
 | 1 | `SAG\|GLOBAL.gateway_mac` 設定 → 各 `VLAN_INTERFACE\|Vlan<n>.static_anycast_gateway=true` | **推奨先行** | 逆順でも runtime 再評価で最終収束するが、間欠的に CPU MAC が使用される期間が生じる |
 | 2 | SAG MAC 変更: `del` → `add` の 2 ステップ | **強制順序** (CLI enforce) | 同時変更不可。既存 MAC の削除が先に必要 |
 | 3 | SAG disable (`VLAN_INTERFACE.static_anycast_gateway=false`) → `SAG\|GLOBAL` del | **推奨先行** | [RIF](../../reference/glossary.md#term-rif) MAC が CPU MAC に復旧してから GLOBAL エントリを削除するのが安全 |
-| 4 | SAG MAC 変更時の IPv6 link-local route: 旧 route del → 新 route add | **固定順序** ([orchagent](../../reference/glossary.md#term-orchagent) 内部) | RouteOrch API 呼び出しで保証。ユーザーが意識する必要なし |
+| 4 | SAG MAC 変更時の IPv6 link-local route: 旧 route del → 新 route add | **固定順序** ([orchagent](../../reference/glossary.md#term-orchagent) 内部) | RouteOrch API 呼び出しで保証。ユーザが意識する必要なし |
 
 ### 主要な制約詳細
 
@@ -108,7 +108,7 @@ SAG 機能は `VLAN_INTERFACE` テーブルに `static_anycast_gateway` フィ�
 
 **MAC 変更の 2 ステップ強制 (依存 #2)**: CLI `config static-anycast-gateway mac_address add <mac>` は既存の `gateway_mac` が存在する場合に reject する設計。MAC の更新は `del <old_mac>` → `add <new_mac>` の 2 回の CLI 操作が必要。この間、VLAN インターフェースは CPU MAC に一時回帰する可能性がある[^1]。
 
-**IPv6 link-local route の 2 段更新 (依存 #4)**: [HLD](../../reference/glossary.md#term-hld) に記載のとおり、MAC 変更時は旧 MAC 由来の IPv6 link-local to-me route をまず削除し、新 MAC 由来の route を追加する。この操作は `intfsorch` が `RouteOrch` の API を通じて実行し、ユーザーが意識する必要はない。ただし切替期間中は IPv6 通信が一時的に断となるリスクがある[^1]。
+**IPv6 link-local route の 2 段更新 (依存 #4)**: [HLD](../../reference/glossary.md#term-hld) に記載のとおり、MAC 変更時は旧 MAC 由来の IPv6 link-local to-me route をまず削除し、新 MAC 由来の route を追加する。この操作は `intfsorch` が `RouteOrch` の API を通じて実行し、ユーザが意識する必要はない。ただし切替期間中は IPv6 通信が一時的に断となるリスクがある[^1]。
 
 詳細は `meta/_intermediate/cdb-flow/sag-ordering.md` を参照。
 
@@ -190,7 +190,7 @@ APPL_DB: SAG_TABLE|GLOBAL (SET)
 
 ### 自己回復まとめ
 
-- **CLI バリデーション失敗**: DB への到達なし。ユーザーが修正して再実行。
+- **CLI バリデーション失敗**: DB への到達なし。ユーザが修正して再実行。
 - **GLOBAL 欠如での partial 設定**: runtime 再評価により最終収束。サービス断なし (システム MAC を使用)。
 - **[Redis](../../reference/glossary.md#term-redis) 例外**: swss コンテナ再起動 → CONFIG_DB 再投入 → 再収束。再起動中は SAG 設定が一時停止。
 - **SAI 失敗**: [orchagent](../../reference/glossary.md#term-orchagent) 再起動後に再試行。失敗中は対象 VLAN RIF に SAG MAC が未反映のまま。

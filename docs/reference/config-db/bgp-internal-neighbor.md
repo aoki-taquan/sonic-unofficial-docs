@@ -264,7 +264,7 @@ CONFIG_DB の `holdtime` / `keepalive` フィールドは **dead field**。テ�
 
 ### 5. bgpcfgd ハンドラ起動順（post_dependencies_init）
 
-`BGPPeerMgrBase` は `post_dependencies_init_complete = False` で初期化される（L101）。deps（DEVICE_METADATA, Loopback0, Loopback4096）が充足された後の最初の `set_handler` 呼び出し時に `post_dependencies_init()` が実行され、追加 loopback リストを拡張する（L181-182, L245-268）。この一回性初期化は最初の `add_peer()` 前に完了する。
+`BGPPeerMgrBase` は `post_dependencies_init_complete = False` で初期化される（L101）。deps（DEVICE_METADATA, Loopback0, Loopback4096）が充足された後の最初の `set_handler` 呼び出し時に `post_dependencies_init()` が実行され、追加 loopback リストを拡張する（L181-182, L245-268）。この1回性初期化は最初の `add_peer()` 前に完了する。
 
 ### 6. bgpd ソケット待ち（frrcfgd 起動時）
 
@@ -331,7 +331,7 @@ CONFIG_DB の `holdtime` / `keepalive` フィールドは **dead field**。テ�
 
 ### SAI 参照
 
-なし。`bgpcfgd` / `frrcfgd` は CONFIG_DB → FRR（ユーザー空間ルーティングデーモン）への経路であり、[SAI](../../reference/glossary.md#term-sai)/ASIC に直接触れない。[APPL_DB](../../reference/glossary.md#term-appl_db) への中継もない。
+なし。`bgpcfgd` / `frrcfgd` は CONFIG_DB → FRR（ユーザ空間ルーティングデーモン）への経路であり、[SAI](../../reference/glossary.md#term-sai)/ASIC に直接触れない。[APPL_DB](../../reference/glossary.md#term-appl_db) への中継もない。
 <!-- /cross-refs -->
 
 <!-- pubsub -->

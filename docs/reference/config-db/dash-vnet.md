@@ -257,7 +257,7 @@ DASH_VNET_MAPPING_TABLE → DASH_VNET → DASH_APPLIANCE
 ### PA validation action 固定値
 
 - `SAI_PA_VALIDATION_ENTRY_ACTION_PERMIT` が `addPaValidation()` で**常に**設定される（`dashvnetorch.cpp:474-475`）。
-- CONFIG_DB でユーザーが変更する手段は存在しない（PA validation は常に PERMIT 固定）。
+- CONFIG_DB でユーザが変更する手段は存在しない（PA validation は常に PERMIT 固定）。
 
 ### encap_type 初期値と変換
 

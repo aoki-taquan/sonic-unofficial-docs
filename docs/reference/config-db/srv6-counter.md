@@ -236,7 +236,7 @@ YANG に `default` なし。Srv6Orch コード内に `FLEX_COUNTER_DELAY_STATUS`
 
 ### `SRV6_COUNTER_ID_LIST` の固定 stat リスト
 
-`FlowCounterHandler::getGenericCounterStatIdList()` (`flow_counter_handler.cpp:43-48`) が `SAI_COUNTER_STAT_PACKETS` / `SAI_COUNTER_STAT_BYTES` の 2 stat のみを返す。この 2 stat は固定でユーザー変更不可。
+`FlowCounterHandler::getGenericCounterStatIdList()` (`flow_counter_handler.cpp:43-48`) が `SAI_COUNTER_STAT_PACKETS` / `SAI_COUNTER_STAT_BYTES` の 2 stat のみを返す。この 2 stat は固定でユーザ変更不可。
 
 ### プラットフォーム能力チェック（起動時一回限り）
 
@@ -546,7 +546,7 @@ NotificationConsumer: なし  /  ConsumerStateTable: なし  /  TTL/expire: な�
 両方 true かつクエリ成功 → `m_mysid_counters_supported = true`（カウンタ機能全体が有効化）。
 それ以外 → `m_mysid_counters_supported = false`（`SWSS_LOG_INFO("SRv6 counters are not supported on this platform")`）。
 
-**このフラグは再起動なしに変更不可**（起動時一回のみ評価）。
+**このフラグは再起動なしに変更不可**（起動時1回のみ評価）。
 
 ### m_mysid_counters_supported が false の場合の挙動
 

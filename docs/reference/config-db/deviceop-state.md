@@ -73,7 +73,7 @@ active_ports = natsorted(set(external_ports + bp_ports))
 | DEVICE_NEIGHBOR に 1 件以上のエントリあり | `external_ports` にそのキー（ポート名）が入る |
 | DEVICE_NEIGHBOR が空 | `external_ports = []` → バックプレーンポートのみが `active_ports` になる（外部ポートなし）|
 
-### pfcwd — サーバー向けポート判定
+### pfcwd — サーバ向けポート判定
 
 `get_server_facing_ports()` (`pfcwd/main.py:97-108`) は DEVICE_NEIGHBOR を起点に DEVICE_NEIGHBOR_METADATA の `type` を参照する。
 
@@ -87,8 +87,8 @@ if not server_facing_ports:
     server_facing_ports = [p[1] for p in db.get_table('VLAN_MEMBER')]
 ```
 
-- DEVICE_NEIGHBOR_METADATA に対応エントリが存在しない、または `type` が `'server'` でない場合はサーバー向けポートとして列挙されない
-- サーバー向けポートが **0 件** の場合、`VLAN_MEMBER` のポートにフォールバック
+- DEVICE_NEIGHBOR_METADATA に対応エントリが存在しない、または `type` が `'server'` でない場合はサーバ向けポートとして列挙されない
+- サーバ向けポートが **0 件** の場合、`VLAN_MEMBER` のポートにフォールバック
 
 ### ecnconfig — ポート一覧（非 multi-ASIC 環境）
 
@@ -179,7 +179,7 @@ DEVICE_NEIGHBOR は **consumer が `get_table` で一括読み出しする**参�
 | 参照先テーブル / リソース | 参照方向 | 条件 | 参照元 evidence |
 |--------------------------|---------|------|----------------|
 | `DEVICE_NEIGHBOR_METADATA\|<name>` (CONFIG_DB) | key 転写 + フィールド参照 | 常時。pfcwd は `candidates[port]['name']` をキーとして DEVICE_NEIGHBOR_METADATA の `type` を照合。bgpcfgd は `data['name']` が DEVICE_NEIGHBOR_METADATA に存在するかチェック | `pfcwd/main.py:98-104`, `managers_bgp.py:220-224` |
-| `VLAN_MEMBER` (CONFIG_DB) | フォールバック参照 | `pfcwd get_server_facing_ports` でサーバー向けポートが 0 件の場合にのみ参照。DEVICE_NEIGHBOR がすべて非 `server` 型か空の場合に適用 | `pfcwd/main.py:106-107` |
+| `VLAN_MEMBER` (CONFIG_DB) | フォールバック参照 | `pfcwd get_server_facing_ports` でサーバ向けポートが 0 件の場合にのみ参照。DEVICE_NEIGHBOR がすべて非 `server` 型か空の場合に適用 | `pfcwd/main.py:106-107` |
 | `PORT` (CONFIG_DB) | バックプレーンポート列挙 | `pfcwd start_default` が `get_bp_ports()` を通じて `PORT` テーブルを読み、`role='Int'` かつ `admin_status='up'` のポートを `active_ports` に追加 | `pfcwd/main.py:111-119,413-416` |
 | `DEVICE_METADATA\|localhost` (CONFIG_DB) | フィールド参照 | `pfcwd start_default` が `default_pfcwd_status` フィールドを読み、`'enable'` でない場合は `pfcwd start_default` が即 return（DEVICE_NEIGHBOR を読んでも [PFC](../../reference/glossary.md#term-pfc) WD を設定しない） | `pfcwd/main.py:408-419` |
 
@@ -187,7 +187,7 @@ DEVICE_NEIGHBOR は **consumer が `get_table` で一括読み出しする**参�
     各 consumer は DEVICE_NEIGHBOR のキー集合（= 外部ポート名一覧）を取得した後、そのポート名を使って他テーブル（DEVICE_NEIGHBOR_METADATA・PORT）を参照する。DEVICE_NEIGHBOR 自体のフィールド（`name` 以外）を直接利用する consumer はほとんどなく、キーのみを利用するパターンが支配的。
 
 !!! note "VLAN_MEMBER 参照は非自明なフォールバック"
-    `pfcwd get_server_facing_ports()` は DEVICE_NEIGHBOR + DEVICE_NEIGHBOR_METADATA を組み合わせてサーバー向けポートを決定しようとするが、該当ポートが 0 件の場合にのみ VLAN_MEMBER をフォールバックとして使う。このため VLAN 設定が pfcwd のポートスコープに予期せず影響することがある（evidence: `pfcwd/main.py:106-107`）。
+    `pfcwd get_server_facing_ports()` は DEVICE_NEIGHBOR + DEVICE_NEIGHBOR_METADATA を組み合わせてサーバ向けポートを決定しようとするが、該当ポートが 0 件の場合にのみ VLAN_MEMBER をフォールバックとして使う。このため VLAN 設定が pfcwd のポートスコープに予期せず影響することがある（evidence: `pfcwd/main.py:106-107`）。
 
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:97-119,405-424`; `sonic-buildimage` `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-154,219-224`
 <!-- /cross-refs -->
@@ -204,7 +204,7 @@ DEVICE_NEIGHBOR は CONFIG_DB の読み取り専用テーブルとして機能�
 | `ecnconfig` (非 multi-[ASIC](../../reference/glossary.md#term-asic)) | DEVICE_NEIGHBOR テーブルが空 | `scripts/ecnconfig:287` | `Exception("No active ports detected in table 'DEVICE_NEIGHBOR'")` を raise → コマンド異常終了 | なし（再実行が必要） |
 | `pfcwd start_default` | DEVICE_NEIGHBOR テーブルが空 | `pfcwd/main.py:412` | `external_ports = []` としてサイレント継続。バックプレーンポートのみが `active_ports` に入る | なし（`pfcwd start_default` 再実行で回復） |
 | `pfcwd get_server_facing_ports` | DEVICE_NEIGHBOR エントリの `name` フィールドが欠落 | `pfcwd/main.py:102` | `candidates[port]['name']` で `KeyError` → pfcwd 起動シーケンス中断 | なし（エントリ修正後に再実行） |
-| `pfcwd get_server_facing_ports` | DEVICE_NEIGHBOR_METADATA に `type='server'` エントリがない | `pfcwd/main.py:106-107` | サーバー向けポート 0 件 → `VLAN_MEMBER` フォールバックへ（非自明挙動） | なし（VLAN_MEMBER でフォールバック継続） |
+| `pfcwd get_server_facing_ports` | DEVICE_NEIGHBOR_METADATA に `type='server'` エントリがない | `pfcwd/main.py:106-107` | サーバ向けポート 0 件 → `VLAN_MEMBER` フォールバックへ（非自明挙動） | なし（VLAN_MEMBER でフォールバック継続） |
 | `bgpcfgd` (`check_neig_meta` 有効) | `data['name']` が DEVICE_NEIGHBOR_METADATA に不在 | `managers_bgp.py:220-223` | `log_info("DEVICE_NEIGHBOR_METADATA is not ready...")` → `return False`（ハンドラ延期） | DEVICE_NEIGHBOR_METADATA 書込み後に directory 機構が自動再処理 |
 | `show interfaces neighbor expected` | DEVICE_NEIGHBOR テーブルが None | `show/interfaces/__init__.py:317-319` | `"DEVICE_NEIGHBOR information is not present."` 表示して即 return | 表示のみ影響。runtime への副作用なし |
 
@@ -409,7 +409,7 @@ DEVICE_NEIGHBOR テーブルへの SET/DEL が直接引き起こす CONFIG_DB �
 
 ### keyspace 通知の実効的な受信者なし
 
-DEVICE_NEIGHBOR は CONFIG_DB に保存される永続テーブルであり TTL なし。[Redis](../../reference/glossary.md#term-redis) への `HSET` 操作は keyspace 通知を発行するが、それを受信する継続的 subscriber は現行実装に存在しない。このため **DEVICE_NEIGHBOR への変更はリアルタイムでは伝搬されない**。各 consumer は起動時または実行時の一回限りのスナップショットで動作し、ランタイムの変更は consumer 再起動（または pfcwd start_default / ecnconfig の再実行）まで反映されない。
+DEVICE_NEIGHBOR は CONFIG_DB に保存される永続テーブルであり TTL なし。[Redis](../../reference/glossary.md#term-redis) への `HSET` 操作は keyspace 通知を発行するが、それを受信する継続的 subscriber は現行実装に存在しない。このため **DEVICE_NEIGHBOR への変更はリアルタイムでは伝搬されない**。各 consumer は起動時または実行時の1回限りのスナップショットで動作し、ランタイムの変更は consumer 再起動（または pfcwd start_default / ecnconfig の再実行）まで反映されない。
 
 > **Evidence**: `sonic-utilities` `pfcwd/main.py:97-108,405-416`; `scripts/ecnconfig:282-293`; `show/interfaces/__init__.py:310-320`; `sonic-buildimage` `dockers/docker-lldp/lldpmgrd:12-14`; `src/sonic-bgpcfgd/bgpcfgd/runner.py:21,49-52`; `src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:139-140,219-224`; 中間調査 `meta/_intermediate/cdb-flow/deviceop-state-pubsub.md`
 <!-- /pubsub -->
@@ -497,9 +497,9 @@ multi-ASIC 環境では各ネームスペース（`asic0` / `asic1` / ...）に�
 | consumer | テーブル空時の挙動 | エラー種別 |
 |---------|-----------------|---------|
 | pfcwd start_default | `external_ports = []` → バックプレーンポートのみで active_ports 構成 | サイレント（動作継続） |
-| pfcwd get_server_facing_ports | サーバー向けポート 0 件 → VLAN_MEMBER にフォールバック | サイレント（フォールバック） |
+| pfcwd get_server_facing_ports | サーバ向けポート 0 件 → VLAN_MEMBER にフォールバック | サイレント（フォールバック） |
 | ecnconfig (非 multi-ASIC) | `Exception("No active ports detected...")` raise → 動作停止 | 例外 |
-| show interfaces neighbor expected | `"DEVICE_NEIGHBOR information is not present."` 表示して即 return | ユーザー表示のみ |
+| show interfaces neighbor expected | `"DEVICE_NEIGHBOR information is not present."` 表示して即 return | ユーザ表示のみ |
 | bgpcfgd | DEVICE_NEIGHBOR を直接参照しない | 影響なし |
 | lldpmgrd | DEVICE_NEIGHBOR を購読しない（TODO 状態） | 影響なし |
 

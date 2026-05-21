@@ -47,7 +47,7 @@ BGP_DEVICE_GLOBAL|STATE
 BGP_DEVICE_GLOBAL|CONFED
 ```
 
-二つの固定キーを持つ container 型。
+2つの固定キーを持つ container 型。
 
 ## STATE のフィールド
 

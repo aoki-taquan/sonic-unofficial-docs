@@ -120,7 +120,7 @@ SAI 非対応プラットフォームでは `COUNTERS_SRV6_NAME_MAP` が作成�
 
 1. `COUNTERS_SRV6_NAME_MAP` から全 MySID プレフィックス → OID マッピングを取得
 2. 各 OID の `COUNTERS:<oid>` から `SAI_COUNTER_STAT_PACKETS` / `SAI_COUNTER_STAT_BYTES` を取得
-3. ユーザーキャッシュに保存した前回値との差分を計算して表示
+3. ユーザキャッシュに保存した前回値との差分を計算して表示
 4. 差分が負の場合（カウンタリセット検出）: キャッシュを無効化して累積値を表示
 
 | コマンド | 説明 |
@@ -175,7 +175,7 @@ MySID エントリを追加してから OID が [FlexCounter](../../reference/gl
 > evidence: `meta/_intermediate/cdb-flow/srv6-state-ordering.md`
 
 [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が内部的に管理するため、
-ユーザーが直接書き込む必要はない。ただし以下の順序依存・タイミング依存が存在する。
+ユーザが直接書き込む必要はない。ただし以下の順序依存・タイミング依存が存在する。
 
 ### 検出された順序依存
 
@@ -184,7 +184,7 @@ MySID エントリを追加してから OID が [FlexCounter](../../reference/gl
 | 1 | SAI 能力チェックは [orchagent](../../reference/glossary.md#term-orchagent) 起動時一回限り (`initializeCounters`) | **強制先行**（後変更不可） | SAI 非対応なら [orchagent](../../reference/glossary.md#term-orchagent) 再起動しか解消手段なし |
 | 2 | `FLEX_COUNTER_TABLE\|SRV6 enable` と `SRV6_MY_SID_TABLE` エントリの書き込み順序 | どちらが先でも可 | 後から書いた側が既存エントリへカウンタを自動付与 |
 | 3 | `COUNTERS_SRV6_NAME_MAP` 書き込みは即時だが `COUNTERS:<oid>` 初回値は最大 11 秒遅延 | タイミング依存 | 設定直後に空でも正常（最大 1 秒 + 10 秒ポーリング待ち） |
-| 4 | MySID DEL → `COUNTERS_SRV6_NAME_MAP` 自動クリーンアップ | 自動（ユーザー操作不要） | `COUNTERS:<oid>` 残留値は `sonic-clear srv6stats` でリセット |
+| 4 | MySID DEL → `COUNTERS_SRV6_NAME_MAP` 自動クリーンアップ | 自動（ユーザ操作不要） | `COUNTERS:<oid>` 残留値は `sonic-clear srv6stats` でリセット |
 
 ### 主要な制約詳細
 
@@ -243,7 +243,7 @@ return mysid_addr + "/" + to_string(block_len + node_len + func_len)
 > 根拠: `srv6orch.cpp` `initializeCounters()` L120-142、`queryMySidCountersCapability()` L144-155、`addMySidCounter()` L184-210、`setMySidEntryCounter()` L236-248、`setCountersState()` L251-283、`createUpdateMysidEntry()` L1589-1614 全行精読。
 > evidence: `meta/_intermediate/cdb-flow/srv6-state-failure.md`
 
-COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が自動管理するため、ユーザーが直接失敗操作を行うテーブルではない。ただし以下のエラー経路がある。
+COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` は `Srv6Orch` が自動管理するため、ユーザが直接失敗操作を行うテーブルではない。ただし以下のエラー経路がある。
 
 ### 失敗経路一覧
 
@@ -296,11 +296,11 @@ MySID 追加から `COUNTERS:<oid>` 初回値が出現するまでの最大待�
 
 ### FLEX_COUNTER_TABLE キー固定
 
-ユーザーが操作する CONFIG_DB キーは `FLEX_COUNTER_TABLE|SRV6` (`flexcounterorch.cpp:64` の `SRV6_KEY = "SRV6"`) で、
+ユーザが操作する CONFIG_DB キーは `FLEX_COUNTER_TABLE|SRV6` (`flexcounterorch.cpp:64` の `SRV6_KEY = "SRV6"`) で、
 `FlexCounterOrch::doTask()` がこのキーを処理して `gSrv6Orch->setCountersState(enable)` を呼び出す。
 内部の FlexCounter group 名は `SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP = "SRV6_STAT_COUNTER"` (`srv6orch.h:30`) で、
 これは `CounterCheckOrch` に渡される識別子（FLEX_COUNTER_DB 上の group 名）であり、
-ユーザーが直接 CONFIG_DB で操作する対象ではない。
+ユーザが直接 CONFIG_DB で操作する対象ではない。
 
 ### ロケータビット長デフォルトとカウンタキー
 
@@ -317,7 +317,7 @@ MySID 追加から `COUNTERS:<oid>` 初回値が出現するまでの最大待�
 > 根拠: `srv6orch.cpp` `addMySidCounter()` L184-210、`removeMySidCounter()` L212-234、`setMySidEntryCounter()` L236-248、`setCountersState()` L251-283、`doTask(SelectableTimer)` L286-313、`createUpdateMysidEntry()` L1589-1614 全行精読。
 > evidence: `meta/_intermediate/cdb-flow/srv6-state-side-effects.md`
 
-COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザーが直接書き込むテーブルではない。`Srv6Orch` が `SRV6_MY_SIDS` ([CONFIG_DB](../../reference/glossary.md#term-config_db)) および `FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER` の変化を受けて、以下の副次書込みを実行する。
+COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザが直接書き込むテーブルではない。`Srv6Orch` が `SRV6_MY_SIDS` ([CONFIG_DB](../../reference/glossary.md#term-config_db)) および `FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER` の変化を受けて、以下の副次書込みを実行する。
 
 ### SRV6_MY_SIDS SET → COUNTERS_DB 書込み
 
@@ -413,7 +413,7 @@ COUNTERS_DB の `COUNTERS_SRV6_NAME_MAP` / `COUNTERS:<oid>` はユーザーが�
 | SAI が両方 true を返す | `true` | `COUNTERS_SRV6_NAME_MAP` が MySID 追加時に書かれる |
 | SAI が非 SUCCESS / どちらか false | `false` | `COUNTERS_SRV6_NAME_MAP` は一切書かれない。`show srv6 stats` は空 |
 
-このフラグは起動時一回限り確定し、実行中の変更手段はない（orchagent 再起動が必要）。
+このフラグは起動時1回限り確定し、実行中の変更手段はない（orchagent 再起動が必要）。
 
 ### 差異 2: gTraditionalFlexCounter モード（ASIC_DB 経由 VID 解決）
 

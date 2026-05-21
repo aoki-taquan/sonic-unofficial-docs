@@ -33,7 +33,7 @@ related:
 
 ## 概要
 
-`ACL_TABLE_TYPE` はユーザー定義の [ACL](../../reference/glossary.md#term-acl) テーブルタイプを格納する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。
+`ACL_TABLE_TYPE` はユーザ定義の [ACL](../../reference/glossary.md#term-acl) テーブルタイプを格納する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。
 `ACL_TABLE` の `type` フィールドから leafref で参照され、`orchagent` の `AclOrch` が
 `doAclTableTypeTask()` で読み取り、内部マップ `m_AclTableTypes` に保持する。
 [SAI](../../reference/glossary.md#term-sai) オブジェクトは作成されない（ソフトウェア定義のみ）。
@@ -481,7 +481,7 @@ vector<TableConnector> acl_table_connectors = {
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-`ACL_TABLE_TYPE` のプラットフォーム依存性は 2 つの経路で顕在化する: (1) `initDefaultTableTypes()` による **組み込み型の定義差**、(2) SAI capability クエリによる **アクション有効/無効の差**。ユーザー定義型（CONFIG_DB に書き込む型）は `AclTableTypeParser` が解析するが、記述できる match/action の有効性は実行時の [ASIC](../../reference/glossary.md#term-asic) capability に委ねられる。
+`ACL_TABLE_TYPE` のプラットフォーム依存性は 2 つの経路で顕在化する: (1) `initDefaultTableTypes()` による **組み込み型の定義差**、(2) SAI capability クエリによる **アクション有効/無効の差**。ユーザ定義型（CONFIG_DB に書き込む型）は `AclTableTypeParser` が解析するが、記述できる match/action の有効性は実行時の [ASIC](../../reference/glossary.md#term-asic) capability に委ねられる。
 
 ### プラットフォーム識別文字列 (orch.h:40-50)
 
@@ -510,14 +510,14 @@ vector<TableConnector> acl_table_connectors = {
 | `platform == "broadcom"` **かつ** `sub_platform == "broadcom-dnx"` | `PORT_TYPE_SWITCH` | `TC`, `OUT_PORT` |
 | その他すべて | `PORT_TYPE_PORT` | `TC` |
 
-broadcom-dnx では PFCWD テーブルが switch 単位バインドになり、CONFIG_DB の `ports` フィールドが無視される。ユーザー定義型で `PFCWD` 相当の type を書く場合、この差に注意が必要。
+broadcom-dnx では PFCWD テーブルが switch 単位バインドになり、CONFIG_DB の `ports` フィールドが無視される。ユーザ定義型で `PFCWD` 相当の type を書く場合、この差に注意が必要。
 
 !!! note "他の組み込み型はプラットフォーム不問"
     `L3` / `L3V6` / `L3V4V6` / `MIRROR` / `MIRRORV6` / `MIRROR_DSCP` / `MCLAG` / `MUX` / `DROP` / `MARK_META` / `MARK_META_V6` / `EGR_SET_DSCP` は platform 引数によらず固定の match/action で登録される (`aclorch.cpp:3730-3898`)。
 
-### SAI アクション capability によるユーザー定義型への影響
+### SAI アクション capability によるユーザ定義型への影響
 
-ユーザー定義 `ACL_TABLE_TYPE` の `ACTIONS` はパース時点では制限されない。ただし以下の状況で実行時にアクション有効性が決まる:
+ユーザ定義 `ACL_TABLE_TYPE` の `ACTIONS` はパース時点では制限されない。ただし以下の状況で実行時にアクション有効性が決まる:
 
 | capability | クエリ方法 | 失敗時の挙動 |
 |------------|-----------|-------------|
@@ -544,7 +544,7 @@ capability 結果は `STATE_DB` の `ACL_STAGE_CAPABILITY_TABLE|{INGRESS,EGRESS}
 | vs (virtual) | なし | **強制 true** (固定 range 1–7) | yes |
 | 未知 | なし | SAI 動的照会 | no |
 
-!!! warning "ユーザー定義 ACL_TABLE_TYPE の match/action の安全確認"
+!!! warning "ユーザ定義 ACL_TABLE_TYPE の match/action の安全確認"
     CONFIG_DB に `ACL_TABLE_TYPE` を書き込む際、ASIC がサポートしない match (`ACL_USER_META` 等) や action を `MATCHES` / `ACTIONS` に列挙しても `AclTableTypeParser` はエラーを返さない。実際の SAI 適用可否は `ACL_TABLE` を作成するときの `AclTable::createToDb()` 段で判明する。`STATE_DB ACL_STAGE_CAPABILITY_TABLE|INGRESS` の `action_list` で使用可能なアクションを事前確認すること。
 
 !!! note "range match の上限 (mellanox / clounix)"

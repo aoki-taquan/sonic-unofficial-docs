@@ -30,7 +30,7 @@ related:
 
 ## 概要
 
-[SONiC](../reference/glossary.md#term-sonic) の `reboot` スクリプトは内部で `systemctl reboot` を呼ぶが、これは **非同期** であり、戻り値が返るタイミングと systemd によるユーザーセッション kill のタイミングがレースする[^1]。結果、コンソール出力は次の 2 パターンがランダムに発生する:
+[SONiC](../reference/glossary.md#term-sonic) の `reboot` スクリプトは内部で `systemctl reboot` を呼ぶが、これは **非同期** であり、戻り値が返るタイミングと systemd によるユーザセッション kill のタイミングがレースする[^1]。結果、コンソール出力は次の 2 パターンがランダムに発生する:
 
 - A: `systemctl reboot` 戻り後にユーザシェルがプロンプトを 1 行表示してから切断
 - B: シェルが先に kill されてプロンプト無しで切断

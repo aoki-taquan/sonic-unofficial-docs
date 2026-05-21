@@ -38,7 +38,7 @@ related:
 
 | DB | 番号 | 役割 |
 |----|------|------|
-| `CONFIG_DB` | 4 | ユーザー設定（`FLEX_COUNTER_TABLE`）|
+| `CONFIG_DB` | 4 | ユーザ設定（`FLEX_COUNTER_TABLE`）|
 | `FLEX_COUNTER_DB` | 5 | [orchagent](../../reference/glossary.md#term-orchagent) → [syncd](../../reference/glossary.md#term-syncd) 制御信号（group 設定 + per-OID ID リスト）|
 | `COUNTERS_DB` | 2 | [syncd](../../reference/glossary.md#term-syncd) → 外部 読み取り専用の実カウンタ値 |
 
@@ -186,7 +186,7 @@ FLEX_COUNTER_DB レベルの bulk 設定:
 | 種類 | 内容 |
 |------|------|
 | 未設定時 fallback | orchagent は `"NULL"` 文字列を FLEX_COUNTER_DB に送信。syncd 側で chunk size 無限（上限なし）として扱われる |
-| 片方のみ設定 | 未設定側は `"NULL"` で自動補完（flexcounterorch.cpp:405）。ユーザーへの通知なし |
+| 片方のみ設定 | 未設定側は `"NULL"` で自動補完（flexcounterorch.cpp:405）。ユーザへの通知なし |
 | 両方省略 UPDATE | `m_groupsWithBulkChunkSize` から erase → `"NULL","NULL"` を送信してリセット |
 
 ### warm-reboot / fast-reboot との関係
@@ -349,7 +349,7 @@ SAI 失敗は `SWSS_LOG_ERROR` または `SWSS_LOG_WARN` で syslog に出力さ
      sonic-swss/orchagent/portsorch.h,
      sonic-swss-common/common/schema.h -->
 
-FLEX_COUNTER_DB の GROUP_TABLE / COUNTER_TABLE で使われるフィールド名・グループ名・タイムアウト値はすべてコード内定数で決まる。YANG スキーマや CONFIG_DB のキー名とは独立しており、ユーザーが直接変更することはできない。
+FLEX_COUNTER_DB の GROUP_TABLE / COUNTER_TABLE で使われるフィールド名・グループ名・タイムアウト値はすべてコード内定数で決まる。YANG スキーマや CONFIG_DB のキー名とは独立しており、ユーザが直接変更することはできない。
 
 ### FLEX_COUNTER_GROUP_TABLE フィールド名定数 (`sonic-swss-common/common/schema.h`)
 

@@ -566,7 +566,7 @@ sel.addSelectable(sst_device_confdb)
 
 ### ASIC 種別による影響
 
-LLDP は [SAI](../../reference/glossary.md#term-sai) 非経由（`lldpd` ユーザー空間デーモン）で動作するため、[ASIC](../../reference/glossary.md#term-asic) 種別（Broadcom / Mellanox / Marvell / Innovium 等）は **影響なし**。`sai.profile` や [SAI](../../reference/glossary.md#term-sai) capability query を参照するコードパスは存在しない。
+LLDP は [SAI](../../reference/glossary.md#term-sai) 非経由（`lldpd` ユーザ空間デーモン）で動作するため、[ASIC](../../reference/glossary.md#term-asic) 種別（Broadcom / Mellanox / Marvell / Innovium 等）は **影響なし**。`sai.profile` や [SAI](../../reference/glossary.md#term-sai) capability query を参照するコードパスは存在しない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|

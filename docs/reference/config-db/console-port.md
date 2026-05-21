@@ -26,7 +26,7 @@ hard: 0
 `CONSOLE_PORT` は各シリアルライン (1 行 = 1 物理ポート) のボーレート・接続先・エスケープ文字、
 `CONSOLE_SWITCH` は機能のオンオフとデフォルトエスケープ文字を保持する。
 
-`consutil` / `picocom` 経由でユーザーがコンソールセッションを張る際に参照される。
+`consutil` / `picocom` 経由でユーザがコンソールセッションを張る際に参照される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -89,7 +89,7 @@ CONSOLE_SWITCH|console_mgmt
 ### 特記事項
 
 - **`flow_control` 書き込み vs 実行時乖離**: minigraph 経由では integer `0`/`1` が格納されるが、consutil は文字列 `"1"` との比較を行うため、minigraph 由来のエントリは常に flow_control = False 判定になる。<!-- evidence: minigraph.py L616, consutil/lib.py L153 -->
-- **`escape_char` 大文字小文字制約**: YANG は `[a-z]` のみ許可するが CLI の `click.Choice` は大文字も受け入れ、`.lower()` で変換後に書き込む。ユーザーには大文字が受け付けられるように見えるが DB には小文字が格納される UX 乖離。<!-- evidence: config/console.py L65,L101,L82,L126,L282 -->
+- **`escape_char` 大文字小文字制約**: YANG は `[a-z]` のみ許可するが CLI の `click.Choice` は大文字も受け入れ、`.lower()` で変換後に書き込む。ユーザには大文字が受け付けられるように見えるが DB には小文字が格納される UX 乖離。<!-- evidence: config/console.py L65,L101,L82,L126,L282 -->
 - **デバイスパスのプラットフォーム依存**: `SysInfoProvider.DEVICE_PREFIX` はデフォルト `/dev/ttyUSB`。プラットフォームの `udevprefix.conf` が存在する場合は上書きされる。同一 line_num でもプラットフォームにより物理デバイスが変わる。<!-- evidence: consutil/lib.py L297,L301–307 -->
 - **`baud_rate` の minigraph パス**: XML `<Bandwidth>` タグから取得。タグ不在時の None チェックなし — AttributeError の潜在リスク。<!-- evidence: minigraph.py L615 -->
 <!-- /defaults -->

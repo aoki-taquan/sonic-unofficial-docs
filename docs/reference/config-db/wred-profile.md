@@ -336,7 +336,7 @@ VoQ 環境で `QUEUE` テーブルを書く場合は `hostname|asicN|EthernetX|q
 
 コメント (`qosorch.cpp:596-629`) に「一部ベンダー SAI では 1 回の SET ごとに min/max の整合性を検証するため、閾値の過渡的な逆転（旧 max < 新 min）がエラーになる」と記されている。対象ベンダーは明示されていない。
 
-この問題は **2 フェーズ属性適用**（`convertFieldValuesToAttributes()` の `deferred_attributes` 機構, L636-694）で吸収されており、ユーザー操作・CONFIG_DB 書き込み順序には依存しない。全プラットフォームでこの機構が有効。
+この問題は **2 フェーズ属性適用**（`convertFieldValuesToAttributes()` の `deferred_attributes` 機構, L636-694）で吸収されており、ユーザ操作・CONFIG_DB 書き込み順序には依存しない。全プラットフォームでこの機構が有効。
 
 ### 差異 4: SAI capability 照会なし — ASIC 非対応は SAI エラー時のみ判明
 
@@ -479,7 +479,7 @@ CONFIG_DB `ecn` フィールド文字列を SAI `SAI_WRED_ATTR_ECN_MARK_MODE` �
 
 ### weight デフォルト (qosorch.cpp:794-796)
 
-CONFIG_DB に `weight` フィールドは存在しない。`addQosItem()` は WRED オブジェクト作成時に常に `SAI_WRED_ATTR_WEIGHT = 0` を属性リスト先頭へ無条件挿入する（SAI WRED 必須属性を満たすための固定値、ユーザー設定不可）。
+CONFIG_DB に `weight` フィールドは存在しない。`addQosItem()` は WRED オブジェクト作成時に常に `SAI_WRED_ATTR_WEIGHT = 0` を属性リスト先頭へ無条件挿入する（SAI WRED 必須属性を満たすための固定値、ユーザ設定不可）。
 
 <!-- /constants -->
 

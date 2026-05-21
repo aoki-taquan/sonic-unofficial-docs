@@ -380,7 +380,7 @@ db_migrator.py での PBH マイグレーションなし
 | `l4_dst_port` | `0xFFFF` | `SAI_ACL_ENTRY_ATTR_FIELD_L4_DST_PORT` |
 | `inner_ether_type` | `0xFFFF` | `SAI_ACL_ENTRY_ATTR_FIELD_INNER_ETHER_TYPE` |
 
-`gre_key` のみ `value/mask` の 2 値をユーザーが明示指定する (YANG パターン `0x.../0x...`)。
+`gre_key` のみ `value/mask` の 2 値をユーザが明示指定する (YANG パターン `0x.../0x...`)。
 
 ### SAI implicit constraint (YANG 非記述)
 

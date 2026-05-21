@@ -177,7 +177,7 @@ SAI 側の初期値は `SAI_VLAN_TAGGING_MODE_TAGGED` (portsorch.cpp:7540)。マ
 | フィールド | 暗黙デフォルト | 根拠 | 検出種別 |
 |-----------|--------------|------|---------|
 | `tagging_mode` | `"untagged"` | vlanmgr.cpp:648 `string tagging_mode = "untagged"`、portsorch.cpp:5916 同じ初期化 | YANG `mandatory true` だが実装側は両 consumer が独立に fallback。cvl バイパス経路（warm-restart・直接注入）で乖離 |
-| `tagging_mode` (members@ 経路) | `"untagged"` ハードコード | vlanmgr.cpp:573 `processUntaggedVlanMembers()` | `VLAN` エントリの `members@` フィールド経由の minigraph 互換経路では常に `"untagged"` が注入されユーザー制御不可 |
+| `tagging_mode` (members@ 経路) | `"untagged"` ハードコード | vlanmgr.cpp:573 `processUntaggedVlanMembers()` | `VLAN` エントリの `members@` フィールド経由の minigraph 互換経路では常に `"untagged"` が注入されユーザ制御不可 |
 | `tagging_mode` (PAC 経路) | `"untagged"` ハードコード | vlanmgr.cpp:873 `doVlanPacVlanMemberTask()` | PAC 制御による VLAN_MEMBER は `tagging_mode = "untagged"` 固定 |
 
 ### priority_tagged の dead CLI 経路と bridge/SAI 乖離

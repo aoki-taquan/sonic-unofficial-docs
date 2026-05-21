@@ -272,7 +272,7 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 
 ### match フィールドの暗黙 mask 値
 
-`parsePbhRule()` (`pbhmgr.cpp`) は `ether_type` / `ip_protocol` / `ipv6_next_header` / `l4_dst_port` / `inner_ether_type` の mask を YANG 定義なしにコードでハードコードする。`gre_key` のみユーザーが `0x<value>/0x<mask>` 形式で明示指定する。
+`parsePbhRule()` (`pbhmgr.cpp`) は `ether_type` / `ip_protocol` / `ipv6_next_header` / `l4_dst_port` / `inner_ether_type` の mask を YANG 定義なしにコードでハードコードする。`gre_key` のみユーザが `0x<value>/0x<mask>` 形式で明示指定する。
 
 | フィールド | ハードコード mask | ソース |
 |-----------|----------------|--------|
