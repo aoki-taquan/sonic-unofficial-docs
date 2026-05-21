@@ -12,6 +12,8 @@ related:
   _no_related: true
 ---
 
+<!-- no-quality-banner -->
+
 # SONiC 非公式ドキュメント (日本語)
 
 [SONiC](./reference/glossary.md#term-sonic) NOS (community `master`) を AI が日本語で再構成した**非公式**ドキュメント。
