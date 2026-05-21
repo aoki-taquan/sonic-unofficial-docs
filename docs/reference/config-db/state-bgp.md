@@ -403,7 +403,7 @@ CONFIG_DB / [YANG](../../reference/glossary.md#term-yang) で管理されず、�
 | 定数 | 値 | 用途 | ソース |
 |------|----|------|--------|
 | `DEFAULT_ROUTING_RESTART_INTERVAL` | `120` 秒 | Warm Restart 全体タイムアウト。EOIU が検出されない場合のフォールバックとして reconciliation を開始する | fpmsyncd.cpp L46 |
-| `DEFAULT_EOIU_HOLD_INTERVAL` | `3` 秒 | IPv4・IPv6 の両 EOIU フラグが `"reached"` になった後、reconciliation を開始するまでのホールド待機時間。`WarmStart::getWarmStartTimer("eoiu_hold", "bgp")` にユーザー設定値があればそちらが優先される | fpmsyncd.cpp L51; L226–230 |
+| `DEFAULT_EOIU_HOLD_INTERVAL` | `3` 秒 | IPv4・IPv6 の両 EOIU フラグが `"reached"` になった後、reconciliation を開始するまでのホールド待機時間。`WarmStart::getWarmStartTimer("eoiu_hold", "bgp")` にユーザ設定値があればそちらが優先される | fpmsyncd.cpp L51; L226–230 |
 | `FLUSH_TIMEOUT` | `500` ms | ルートエントリのバッチフラッシュ間隔 | fpmsyncd.cpp L25–26 |
 | `SMALL_TRAFFIC` | `500` | フラッシュ判定の残キュー閾値。残エントリ数がこれ未満 かつ idle 時間が `FLUSH_TIMEOUT` を超えたらフラッシュする | fpmsyncd.cpp L28, L350 |
 

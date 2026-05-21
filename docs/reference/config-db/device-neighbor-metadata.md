@@ -110,7 +110,7 @@ DEVICE_NEIGHBOR_METADATA|<name>
 
 **個別エントリ不在での延期 (依存 #2)**: `BGPPeerMgrBase.set_handler()` (`managers_bgp.py:218-224`) は `data['name']` が `neigmeta` に存在しない場合に `log_info("DEVICE_NEIGHBOR_METADATA is not ready for neighbor ...")` を出力して `return False`（再試行待ち）を返す。BGP_NEIGHBOR エントリが先に [CONFIG_DB](../../reference/glossary.md#term-config_db) に書き込まれても、対応する DEVICE_NEIGHBOR_METADATA エントリが存在しない限り BGP セッション設定は適用されない（evidence: `managers_bgp.py:218-224`）。
 
-**pfcwd の直列参照 (依存 #3)**: `get_server_facing_ports()` (`pfcwd/main.py:97-108`) は DEVICE_NEIGHBOR の各エントリの `name` を使って DEVICE_NEIGHBOR_METADATA の `type` を参照する。DEVICE_NEIGHBOR_METADATA 側に対応エントリがない場合、サーバー向けポートとして列挙されず、VLAN_MEMBER フォールバックに移行する。minigraph は両テーブルを同一実行内で生成するため通常は同時到着するが、テーブル単位の書込み順は `hset` 操作順に依存する（evidence: `pfcwd/main.py:97-108`）。
+**pfcwd の直列参照 (依存 #3)**: `get_server_facing_ports()` (`pfcwd/main.py:97-108`) は DEVICE_NEIGHBOR の各エントリの `name` を使って DEVICE_NEIGHBOR_METADATA の `type` を参照する。DEVICE_NEIGHBOR_METADATA 側に対応エントリがない場合、サーバ向けポートとして列挙されず、VLAN_MEMBER フォールバックに移行する。minigraph は両テーブルを同一実行内で生成するため通常は同時到着するが、テーブル単位の書込み順は `hset` 操作順に依存する（evidence: `pfcwd/main.py:97-108`）。
 
 <!-- /ordering -->
 
@@ -128,7 +128,7 @@ DEVICE_NEIGHBOR_METADATA|<name>
 | 読み手 (BGP) | `bgpcfgd BGPPeerMgrBase.set_handler` | `CONFIG_DB BGP_NEIGHBOR` (キー), `CONFIG_DB DEVICE_METADATA\|localhost` | `type`, `hwsku`, `deployment_id` | BGP セッション Jinja2 テンプレートへの渡し — `kwargs['CONFIG_DB__DEVICE_NEIGHBOR_METADATA']` として全 meta を転送 | `managers_bgp.py:218-224` |
 | 読み手 (バッファ設定) | `buffers_config.j2` ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) テンプレート) | `CONFIG_DB DEVICE_NEIGHBOR` (ポート→name), `CONFIG_DB DEVICE_METADATA\|localhost` (type/subtype), `CONFIG_DB SYSTEM_DEFAULTS` (tunnel_qos_remap 条件) | `type` | `switch_role + '_' + neighbor_role` の組み合わせでケーブル長を決定; LeafRouter/DualToR + ToRRouter/LeafRouter 条件で extra queues ポートリストを構築 | `buffers_config.j2:81-82,209-210` |
 | 読み手 ([QoS](../../reference/glossary.md#term-qos) 設定) | `qos_config.j2` ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen) テンプレート) | `CONFIG_DB DEVICE_NEIGHBOR`, `CONFIG_DB DEVICE_METADATA\|localhost` | `type` | アクティブポートを `PORT_UPLINK` / `PORT_DOWNLINK` に分類 (LeafRouter ↔ ToRRouter/SpineRouter, ToRRouter ↔ LeafRouter) | `qos_config.j2:107-108,150-151` |
-| 読み手 (pfcwd) | `pfcwd get_server_facing_ports()` | `CONFIG_DB DEVICE_NEIGHBOR` (ポート→name) | `type` | `type.lower() == 'server'` でサーバー向けポートを判定; 欠落時は `CONFIG_DB VLAN_MEMBER` フォールバック | `pfcwd/main.py:97-108` |
+| 読み手 (pfcwd) | `pfcwd get_server_facing_ports()` | `CONFIG_DB DEVICE_NEIGHBOR` (ポート→name) | `type` | `type.lower() == 'server'` でサーバ向けポートを判定; 欠落時は `CONFIG_DB VLAN_MEMBER` フォールバック | `pfcwd/main.py:97-108` |
 | 読み手 (CLI) | `show interfaces neighbor expected` | `CONFIG_DB DEVICE_NEIGHBOR` | `lo_addr`, `mgmt_addr`, `type` 等 | 隣接デバイス情報の表示 (`show interfaces neighbor expected`) | `show/interfaces/__init__.py:315-340` |
 | 読み手 (db_migrator) | `update_edgezone_aggregator_config()` | `CONFIG_DB DEVICE_NEIGHBOR`, `CONFIG_DB CABLE_LENGTH` | `type` | `type == 'EdgeZoneAggregator'` のデバイスに接続するポートを特定し CABLE_LENGTH を 40m に更新 | `db_migrator.py:765-790` |
 
@@ -160,7 +160,7 @@ DEVICE_NEIGHBOR_METADATA|<name>
 | 2 | 個別エントリ `data['name']` が neigmeta に不在 | bgpcfgd `BGPPeerMgrBase.set_handler` | `log_info("DEVICE_NEIGHBOR_METADATA is not ready for neighbor ...")`, `return False` | あり（エントリ到着後に directory が再通知） |
 | 3 | `candidates[port]['name']` キー欠落（DEVICE_NEIGHBOR エントリに `name` フィールドなし） | pfcwd `get_server_facing_ports` | `KeyError` 例外発生 → pfcwd の起動シーケンスが中断 | なし（pfcwd プロセス再起動まで） |
 | 4 | `neighbor['type']` キー欠落（DEVICE_NEIGHBOR_METADATA エントリに `type` なし） | pfcwd `get_server_facing_ports` | `KeyError` 例外発生 → pfcwd の起動シーケンスが中断 | なし（pfcwd プロセス再起動まで） |
-| 5 | サーバー向けポートが 0 件（`type == 'server'` エントリなし） | pfcwd `get_server_facing_ports` | `VLAN_MEMBER` をフォールバックとして使用（サイレント） | N/A（フォールバックで継続） |
+| 5 | サーバ向けポートが 0 件（`type == 'server'` エントリなし） | pfcwd `get_server_facing_ports` | `VLAN_MEMBER` をフォールバックとして使用（サイレント） | N/A（フォールバックで継続） |
 | 6 | `DEVICE_NEIGHBOR_METADATA` テーブルが空または EdgeZoneAggregator 型なし | db_migrator `update_edgezone_aggregator_config` | 早期 return（CABLE_LENGTH 変更なし）、サイレント継続 | N/A（冪等） |
 | 7 | `type` フィールド値の大文字小文字不一致（`qos_config.j2`） | sonic-cfggen / `qos_config.j2` | `'ToRRouter' in neighbor_info.type` が `False` → アップリンク/ダウンリンク分類が行われない（サイレント） | なし（cfggen 再実行まで） |
 
@@ -201,7 +201,7 @@ pfcwd の起動シーケンス (`start_default`) が中断される。
     pfcwd の初回起動時に `KeyError` でプロセスが中断する。
     minigraph 経由では `type` が常に書き込まれるが、直接 DB 操作時は要注意。
 
-#### 5. サーバー向けポート 0 件 → VLAN_MEMBER フォールバック
+#### 5. サーバ向けポート 0 件 → VLAN_MEMBER フォールバック
 
 `type.lower() == 'server'` に合致するエントリが存在しない場合、
 `server_facing_ports` は空リストとなり、`VLAN_MEMBER` テーブルのポートで代替される。
@@ -234,13 +234,13 @@ pfcwd の起動シーケンス (`start_default`) が中断される。
 
 `slice_type` は上記条件を満たす場合に限り `"AZNG_Production"` という固定文字列で書き込まれる。条件不一致の場合は `None` のままで DEVICE_NEIGHBOR_METADATA へは追加されない（silent drop）。YANG 上は自由文字列だが実装は事実上二値（`"AZNG_Production"` or 欠落）。
 
-### pfcwd — サーバー判定文字列とフォールバック
+### pfcwd — サーバ判定文字列とフォールバック
 
 | 定数 | 値 | 用途 | ソース |
 |------|----|------|--------|
-| サーバー種別判定 | `'server'`（`.lower()` で大文字小文字非感受） | `type.lower() == 'server'` でサーバー向けポートを選別 | `pfcwd/main.py:104` |
+| サーバ種別判定 | `'server'`（`.lower()` で大文字小文字非感受） | `type.lower() == 'server'` でサーバ向けポートを選別 | `pfcwd/main.py:104` |
 
-DEVICE_NEIGHBOR_METADATA にサーバー向けポートが 0 件の場合、`get_server_facing_ports()` は自動的に `VLAN_MEMBER` テーブルのポートにフォールバックする（`pfcwd/main.py:106-107`）。この切り替えに明示的な定数はなく、空リスト判定のみ。
+DEVICE_NEIGHBOR_METADATA にサーバ向けポートが 0 件の場合、`get_server_facing_ports()` は自動的に `VLAN_MEMBER` テーブルのポートにフォールバックする（`pfcwd/main.py:106-107`）。この切り替えに明示的な定数はなく、空リスト判定のみ。
 
 ### db_migrator — EdgeZoneAggregator ケーブル長
 
@@ -344,7 +344,7 @@ self.selector.addSelectable(subscriber)
 
 ### pfcwd — スナップショット (HGETALL + HGET)
 
-`get_server_facing_ports(db)` (`pfcwd/main.py:97-107`) は DEVICE_NEIGHBOR テーブルを `get_table()` で一括取得後、エントリごとに `get_entry('DEVICE_NEIGHBOR_METADATA', name)` で該当メタデータを取得する。**継続的な subscribe は行わない**。pfcwd 起動時の一回限りの読み込みであり、その後 DEVICE_NEIGHBOR_METADATA が更新されても pfcwd は再読み込みしない。
+`get_server_facing_ports(db)` (`pfcwd/main.py:97-107`) は DEVICE_NEIGHBOR テーブルを `get_table()` で一括取得後、エントリごとに `get_entry('DEVICE_NEIGHBOR_METADATA', name)` で該当メタデータを取得する。**継続的な subscribe は行わない**。pfcwd 起動時の1回限りの読み込みであり、その後 DEVICE_NEIGHBOR_METADATA が更新されても pfcwd は再読み込みしない。
 
 ### タイムアウトとポーリング間隔
 

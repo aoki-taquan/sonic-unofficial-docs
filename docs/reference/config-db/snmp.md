@@ -463,7 +463,7 @@ v1/v2/v3 トラップ送信先を定義するテーブル。未定義の場合�
 
 ### SAI 参照
 
-なし。snmpd は純粋なユーザー空間デーモンで [SAI](../../reference/glossary.md#term-sai)/[ASIC](../../reference/glossary.md#term-asic) に一切触れない。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継もない。
+なし。snmpd は純粋なユーザ空間デーモンで [SAI](../../reference/glossary.md#term-sai)/[ASIC](../../reference/glossary.md#term-asic) に一切触れない。[APPL_DB](../../reference/glossary.md#term-appl_db) 中継もない。
 
 <!-- /cross-refs -->
 

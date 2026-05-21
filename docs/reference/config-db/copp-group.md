@@ -129,7 +129,7 @@ COPP_GROUP|<name>
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-- **NULL cfg → デフォルト設定のマージをスキップ**: ユーザー設定エントリのフィールドが `"NULL"` の場合、`coppmgr` の `mergeConfig()` はそのキー全体を init (デフォルト `copp.json`) からも除外する。<!-- evidence: coppmgr.cpp L222-224 mergeConfig -->
+- **NULL cfg → デフォルト設定のマージをスキップ**: ユーザ設定エントリのフィールドが `"NULL"` の場合、`coppmgr` の `mergeConfig()` はそのキー全体を init (デフォルト `copp.json`) からも除外する。<!-- evidence: coppmgr.cpp L222-224 mergeConfig -->
 - **重複エントリ → APPL_DB 更新スキップ**: `isDupEntry()` で APPL_DB の既存値と全フィールドが一致する場合、`m_appCoppTable.set()` を呼ばない。SAI の不要な呼び出しを回避。<!-- evidence: coppmgr.cpp L263-284 isDupEntry -->
 - **policer の meter / mode / color は変更不可**: 既存ポリサーへの `meter_type` / `mode` / `color_source` 変更を試みた場合 `SWSS_LOG_ERROR` を出力し当該属性の変更は**スキップ**される。他の属性の更新は続行。<!-- evidence: copporch.cpp L1331-1347 trapGroupUpdatePolicer -->
 - **未知フィールド → task_failed**: `parseTrapGroupAttribute()` で認識できないフィールドが来た場合 `SWSS_LOG_ERROR("Unknown copp field specified:%s")` を出力し処理失敗となる。<!-- evidence: copporch.cpp L1290-1292 -->
@@ -314,7 +314,7 @@ show copp config
 | Marvell Prestera | `"marvell-prestera"` を含む | **スキップ**（SAI 非対応） |
 | その他（Broadcom / VS 等） | 上記以外または未設定 | 設定する |
 
-デフォルトトラップ初期化時（`initDefaultTrapIds()`）とユーザー設定反映時（`parseTrapGroupAttribute()`）の両方で同じチェックが行われる。Mellanox / Marvell では CONFIG_DB に `trap_priority` を設定しても **無視される**（エラーログなし）。<!-- evidence: copporch.cpp L347-359, L1184-1194; orch.h L41-42 -->
+デフォルトトラップ初期化時（`initDefaultTrapIds()`）とユーザ設定反映時（`parseTrapGroupAttribute()`）の両方で同じチェックが行われる。Mellanox / Marvell では CONFIG_DB に `trap_priority` を設定しても **無視される**（エラーログなし）。<!-- evidence: copporch.cpp L347-359, L1184-1194; orch.h L41-42 -->
 
 ### VOQ / Chassis 差
 
@@ -372,11 +372,11 @@ YANG では `cir` のデフォルトは `0`。SAI 仕様では `SAI_POLICER_ATTR
 
 ### DEL 後の init cfg 自動復元
 
-`COPP_GROUP` エントリが DEL されても、`m_coppGroupInitCfg`（`copp_cfg.j2` 由来）に存在するキーは `coppmgr` によって自動的に init 値で再生成される。ユーザーが `sonic-db-cli CONFIG_DB del 'COPP_GROUP|queue4_group1'` を実行しても、`coppmgrd` の次回処理で init 値が APPL_DB に再書き込みされる。<!-- evidence: coppmgr.cpp L898-921 -->
+`COPP_GROUP` エントリが DEL されても、`m_coppGroupInitCfg`（`copp_cfg.j2` 由来）に存在するキーは `coppmgr` によって自動的に init 値で再生成される。ユーザが `sonic-db-cli CONFIG_DB del 'COPP_GROUP|queue4_group1'` を実行しても、`coppmgrd` の次回処理で init 値が APPL_DB に再書き込みされる。<!-- evidence: coppmgr.cpp L898-921 -->
 
 ### NULL cfg → 全フィールドの除外
 
-ユーザーが `COPP_GROUP|<name>` に `NULL` フィールドを設定すると、`mergeConfig()` はそのエントリ全体を merged_cfg から除外する。init cfg のデフォルト値もマージされず、APPL_DB への書き込みが行われない。<!-- evidence: coppmgr.cpp L218-224 -->
+ユーザが `COPP_GROUP|<name>` に `NULL` フィールドを設定すると、`mergeConfig()` はそのエントリ全体を merged_cfg から除外する。init cfg のデフォルト値もマージされず、APPL_DB への書き込みが行われない。<!-- evidence: coppmgr.cpp L218-224 -->
 
 ### SAI capability query 失敗 → `neighbor_miss` の silent drop
 
@@ -511,7 +511,7 @@ journalctl -u swss | grep -i copp
 | 逆参照（被参照） | `COPP_TRAP.trap_group` | `COPP_GROUP`（本テーブル） | `COPP_GROUP\|<name>` | COPP_GROUP が SAI 未登録の場合、COPP_TRAP の APPL_DB 書き込みが保留される。COPP_GROUP を DEL すると紐付く COPP_TRAP が pending 状態になる | `coppmgr.cpp:62-79`, `copporch.cpp:584` |
 | ビルド時依存 | `queue4_group3` の `cir`/`cbs` 初期値 | `DEVICE_METADATA` | `DEVICE_METADATA\|localhost` | `type` フィールドに `'Mgmt'` が含まれる場合 `cir=cbs=300` pps、それ以外は `100` pps。`sonic-cfggen` によるテンプレート展開時に解決（実行時依存なし） | `copp_cfg.j2:37-43` |
 | 間接依存（COPP_TRAP 経由） | `COPP_GROUP` に属する `COPP_TRAP` の `trap_ids` | `FEATURE` | `FEATURE\|<feature-name>` | feature `state=disabled` の場合、そのグループ宛ての trap_id が APPL_DB `COPP_TABLE\|<group>` から除外される。`queue2_group1`（sflow/`sample_packet`）が典型例 | `coppmgr.cpp:173-191` |
-| init 依存（自動復元） | `COPP_GROUP` (全エントリ) | `/etc/sonic/copp_cfg.json` | — | 起動時に init セットをロード。ユーザー DEL 後も init cfg に同名キーがあれば自動復元（実質「DEL = init リセット」）。`default` グループは DEL 自体が `task_ignore` で拒否 | `coppmgr.cpp:898-921`, `copporch.cpp:861-864` |
+| init 依存（自動復元） | `COPP_GROUP` (全エントリ) | `/etc/sonic/copp_cfg.json` | — | 起動時に init セットをロード。ユーザ DEL 後も init cfg に同名キーがあれば自動復元（実質「DEL = init リセット」）。`default` グループは DEL 自体が `task_ignore` で拒否 | `coppmgr.cpp:898-921`, `copporch.cpp:861-864` |
 
 ### 解決タイミング
 
@@ -527,7 +527,7 @@ journalctl -u swss | grep -i copp
 
 `coppmgr` は起動時に `/etc/sonic/copp_cfg.json`（`files/image_config/copp/copp_cfg.j2` の展開物）を
 読み込み、`COPP_GROUP` の初期セットを `m_coppGroupInitCfg` に保持する。
-ユーザーが CONFIG_DB から DEL した場合も、init cfg に同名キーがあれば init 値で
+ユーザが CONFIG_DB から DEL した場合も、init cfg に同名キーがあれば init 値で
 自動復元される（実質「DEL = init リセット」）。`coppmgr.cpp:898-921`
 
 - 既定グループ例: `default`、`queue4_group1`（[BGP](../../reference/glossary.md#term-bgp)/[LLDP](../../reference/glossary.md#term-lldp)）、`queue2_group1`（sflow/genetlink）

@@ -29,7 +29,7 @@ related:
 
 [CONFIG_DB](../../reference/glossary.md#term-config_db) の `FDB` テーブルは**静的 MAC アドレス エントリ**をプロビジョニングするテーブルである[^1]。キー形式 `FDB|<VlanName>|<MAC>` で [VLAN](../../reference/glossary.md#term-vlan) とMACアドレスを指定し、送出ポートとエントリ種別を保持する。
 
-動的に学習された MAC エントリは [APPL_DB](../../reference/glossary.md#term-appl_db) の `FDB_TABLE` に書かれる。[CONFIG_DB](../../reference/glossary.md#term-config_db) の `FDB` は静的エントリ（ユーザー手動設定や PAC/802.1X による設定）専用である。
+動的に学習された MAC エントリは [APPL_DB](../../reference/glossary.md#term-appl_db) の `FDB_TABLE` に書かれる。[CONFIG_DB](../../reference/glossary.md#term-config_db) の `FDB` は静的エントリ（ユーザ手動設定や PAC/802.1X による設定）専用である。
 
 <!-- defaults -->
 <!-- cdb-mermaid -->
@@ -125,7 +125,7 @@ string type = "dynamic";
 |------|----|------|
 | `FDB_ORIGIN_INVALID` | `0` | 初期値・無効 |
 | `FDB_ORIGIN_LEARN` | `1` | カーネル [FDB](../../reference/glossary.md#term-fdb) 学習（自動） |
-| `FDB_ORIGIN_PROVISIONED` | `2` | [swssconfig](../../reference/glossary.md#term-swssconfig) / ユーザー設定 |
+| `FDB_ORIGIN_PROVISIONED` | `2` | [swssconfig](../../reference/glossary.md#term-swssconfig) / ユーザ設定 |
 | `FDB_ORIGIN_VXLAN_ADVERTIZED` | `4` | [BGP](../../reference/glossary.md#term-bgp)-[EVPN](../../reference/glossary.md#term-evpn) VxLAN 広報 |
 | `FDB_ORIGIN_MCLAG_ADVERTIZED` | `8` | MCLAG ピア広報 |
 
@@ -212,7 +212,7 @@ FDB|<VlanName>|<MAC>
 
 ```mermaid
 flowchart LR
-  User["ユーザー / swssconfig"]
+  User["ユーザ / swssconfig"]
   CDB[("CONFIG_DB<br/>FDB")]
   APPDB[("APPL_DB<br/>FDB_TABLE")]
   FdbOrch["orchagent<br/>FdbOrch"]

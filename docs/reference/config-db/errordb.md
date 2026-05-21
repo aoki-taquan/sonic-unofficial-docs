@@ -334,7 +334,7 @@ ERROR_DB の `rc` フィールドに書き込まれる文字列値は `sonic-sws
 
 ### ERR_NOTIFY フラグ — HLD 設計定義 (未実装)
 
-HLD Section 3.3.2 の ErrorListener 登録シグネチャで使われる通知フラグ。正式なビット値は HLD に未定義であり、実装ヘッダーも master に存在しない。
+HLD Section 3.3.2 の ErrorListener 登録シグネチャで使われる通知フラグ。正式なビット値は HLD に未定義であり、実装ヘッダも master に存在しない。
 
 | フラグ | 意味 |
 |---|---|
@@ -467,7 +467,7 @@ s.addSelectable(&fpmErrorListener);
 | `ERR_NOTIFY_FAIL` | SAI 操作失敗時のみコールバックを受ける（デフォルト動作） |
 | `ERR_NOTIFY_POSITIVE_ACK` | SAI 操作成功時にもコールバックを受ける（オプション） |
 
-フラグの正式なビット値は HLD 未定義。master には `ERR_NOTIFY_*` 定数もヘッダーも存在しない（Phase E 参照）。
+フラグの正式なビット値は HLD 未定義。master には `ERR_NOTIFY_*` 定数もヘッダも存在しない（Phase E 参照）。
 
 ### 通知チャンネルの動作
 

@@ -153,7 +153,7 @@ HLD で新規 [CONFIG_DB](../reference/glossary.md#term-config_db) / CLI の言�
 
 ## トラブルシューティング
 
-- 大量 route 投入後に subscriber が古いデータを見る → pipeline 末尾の PUBLISH 一回化で modified key set が正しく回っているか確認
+- 大量 route 投入後に subscriber が古いデータを見る → pipeline 末尾の PUBLISH 1回化で modified key set が正しく回っているか確認
 - 500ms 体感ラグ → 500 未満バッチでは即時 flush のはずなので、skip 判定ロジック側の bug を疑う
 
 ### コマンド例

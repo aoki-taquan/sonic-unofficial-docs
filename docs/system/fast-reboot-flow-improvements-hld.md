@@ -237,7 +237,7 @@ In-band ポートに DHCP アドレスを割り当てられない問題。dhcp_r
 
 ### config reload -y でカーネル Oops が発生する問題（sonic-buildimage#5857）
 
-config reload -y でカーネル Oops が発生する問題。特定のカーネルバージョンと config reload の組み合わせで、ネットワークドライバーが不正アクセスを起こす
+config reload -y でカーネル Oops が発生する問題。特定のカーネルバージョンと config reload の組み合わせで、ネットワークドライバが不正アクセスを起こす
 
 - 参照: [sonic-net/sonic-buildimage#5857](https://github.com/sonic-net/sonic-buildimage/issues/5857)
 
@@ -247,9 +247,9 @@ config reload -y でカーネル Oops が発生する問題。特定のカーネ
 
 - 参照: [sonic-net/sonic-buildimage#6009](https://github.com/sonic-net/sonic-buildimage/issues/6009)
 
-### DHCP relay が不正な DHCP クライアントパケットを DHCP サーバーに転送する問題（sonic-buildimage#6052）
+### DHCP relay が不正な DHCP クライアントパケットを DHCP サーバに転送する問題（sonic-buildimage#6052）
 
-DHCP relay が不正な DHCP クライアントパケットを DHCP サーバーに転送する問題。クライアントの MAC アドレスと giaddr の整合性チェックが必要
+DHCP relay が不正な DHCP クライアントパケットを DHCP サーバに転送する問題。クライアントの MAC アドレスと giaddr の整合性チェックが必要
 
 - 参照: [sonic-net/sonic-buildimage#6052](https://github.com/sonic-net/sonic-buildimage/issues/6052)
 
@@ -271,9 +271,9 @@ reboot 時に Arista の早期プラットフォーム初期化スクリプト�
 
 - 参照: [sonic-net/sonic-buildimage#6172](https://github.com/sonic-net/sonic-buildimage/issues/6172)
 
-### warm reboot 中に IO エラーが発生しサーバーからのトラフィックドロップが発生する問題（sonic-buildimage#6240）
+### warm reboot 中に IO エラーが発生しサーバからのトラフィックドロップが発生する問題（sonic-buildimage#6240）
 
-warm reboot 中に IO エラーが発生しサーバーからのトラフィックドロップが発生する問題。warm reboot の移行時間を最小化し、サーバー側でも再送機構を有効化すること
+warm reboot 中に IO エラーが発生しサーバからのトラフィックドロップが発生する問題。warm reboot の移行時間を最小化し、サーバ側でも再送機構を有効化すること
 
 - 参照: [sonic-net/sonic-buildimage#6240](https://github.com/sonic-net/sonic-buildimage/issues/6240)
 
@@ -301,8 +301,8 @@ master→master warm reboot が pending tasks キューのため失敗する問�
 - vendor NOS 由来 dump の提供は別途プラットフォーム実装側
 - finalizer の flag を起点にする処理（flex counter 等）は HLD 例示。追加対象は要 case-by-case
 
-!!! warning "fast-reboot / warm-reboot を root ユーザーから直接実行しない (issue [#4371](https://github.com/sonic-net/sonic-utilities/issues/4371))"
-    `root` シェルから直接 `fast-reboot` や `warm-reboot` を実行すると `SUDO_USER` / `XDG_SESSION_CLASS` が未設定のため、`warmboot/dump.rdb` の生成や最終リブートアクションが誤動作する（無限ループになる場合や BIOS/GRUB を経由したフルリセットになる場合がある）。必ず `admin` ユーザーから `sudo fast-reboot` / `sudo warm-reboot` を実行すること。
+!!! warning "fast-reboot / warm-reboot を root ユーザから直接実行しない (issue [#4371](https://github.com/sonic-net/sonic-utilities/issues/4371))"
+    `root` シェルから直接 `fast-reboot` や `warm-reboot` を実行すると `SUDO_USER` / `XDG_SESSION_CLASS` が未設定のため、`warmboot/dump.rdb` の生成や最終リブートアクションが誤動作する（無限ループになる場合や BIOS/GRUB を経由したフルリセットになる場合がある）。必ず `admin` ユーザから `sudo fast-reboot` / `sudo warm-reboot` を実行すること。
 
 ## 干渉する機能
 

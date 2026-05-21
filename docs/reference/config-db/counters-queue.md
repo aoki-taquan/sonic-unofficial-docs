@@ -94,7 +94,7 @@ flowchart LR
 |--------------------|------|
 | `PERIODIC_WATERMARKS:<OID>` | 周期リセット型ウォーターマーク（counterpoll 周期ごとにクリア） |
 | `PERSISTENT_WATERMARKS:<OID>` | 永続型ウォーターマーク（手動 clear まで保持） |
-| `USER_WATERMARKS:<OID>` | ユーザークリア後からの累積（`watermarkstat -c` でリセット） |
+| `USER_WATERMARKS:<OID>` | ユーザクリア後からの累積（`watermarkstat -c` でリセット） |
 
 ---
 

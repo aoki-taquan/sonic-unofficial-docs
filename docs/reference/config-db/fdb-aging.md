@@ -79,7 +79,7 @@ SWITCH_TABLE:switch
 
 - **方向**: `create_switch` 完了 → `fdb_aging_time` SET
 - **強度**: hard（gSwitchId なし = [SAI](../../reference/glossary.md#term-sai) 呼び出し不可）
-- **緩和策**: orchagent が保証（ユーザー操作不要）
+- **緩和策**: orchagent が保証（ユーザ操作不要）
 - **evidence**: `switchorch.cpp:22-27`（extern gSwitchId 宣言）
 
 ### swssconfig 実行タイミング — orchagent メインループ開始後

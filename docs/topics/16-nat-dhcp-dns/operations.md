@@ -232,7 +232,7 @@ dhcpv6              queue1_group3    trap                       3       3      6
 | DHCP server config 再展開 | `docker exec docker-dhcp-server supervisorctl restart dhcpservd kea-dhcp4` | 払い出し中の lease は維持 |
 | conntrack 全 flush | `sudo conntrack -F` | 既存接続全断、最終手段 |
 
-破壊的になりやすいのは `clear nat translations` と `conntrack -F` で、両方ともユーザー通信を切ります。深夜帯または HA 片系で実施するのが定石です。
+破壊的になりやすいのは `clear nat translations` と `conntrack -F` で、両方ともユーザ通信を切ります。深夜帯または HA 片系で実施するのが定石です。
 
 ## 他章への誘導
 

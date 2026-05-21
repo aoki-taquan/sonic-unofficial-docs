@@ -78,7 +78,7 @@ DEVICE_RUNTIME_METADATA|MACSEC_SUPPORTED
 
 <!-- evidence: sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py / sonic-buildimage/files/build_templates/init_cfg.json.j2 / sonic-host-services/scripts/featured -->
 
-`DEVICE_RUNTIME_METADATA` は **CONFIG_DB に永続化されない仮想テーブル** で、`sonic_py_common.device_info.get_device_runtime_metadata()` が起動時にプラットフォーム検出結果から自動生成する (`device_info.py:735-747`)。ユーザー設定経路 (CLI / minigraph / db_migrator / [YANG](../../reference/glossary.md#term-yang) transformer) は存在しないため、全フィールドが **コード由来デフォルト** となる。
+`DEVICE_RUNTIME_METADATA` は **CONFIG_DB に永続化されない仮想テーブル** で、`sonic_py_common.device_info.get_device_runtime_metadata()` が起動時にプラットフォーム検出結果から自動生成する (`device_info.py:735-747`)。ユーザ設定経路 (CLI / minigraph / db_migrator / [YANG](../../reference/glossary.md#term-yang) transformer) は存在しないため、全フィールドが **コード由来デフォルト** となる。
 
 ### サブキー存在条件のデフォルト
 

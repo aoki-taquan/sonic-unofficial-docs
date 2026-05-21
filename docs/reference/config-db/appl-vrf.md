@@ -510,7 +510,7 @@ APPL_DB `VRF_TABLE` は YANG 未モデル化のオペレーショナルテーブ
 | `vrfmgr.cpp:176-183` | `VrfMgr::setLink()` で `mgmt` は `ip link add` を行わず、予約 `MGMT_VRF_TABLE_ID=6000` を `m_vrfTableMap` に登録するのみ |
 | `vrfmgr.cpp:262` | `MGMT_VRF_CONFIG_TABLE` event のキー（`vrf_global` 等）を無視して `vrfName = "mgmt"` で上書きし、APPL_DB には常に `VRF_TABLE\|mgmt` として書く |
 
-`mgmt` は YANG `sonic-vrf.yang` のキーパターン `Vrf[a-zA-Z0-9_-]+` には適合しないが、上記の特別経路により APPL_DB に書き込まれる**唯一の例外名**。ユーザーが `config vrf add mgmt` のような操作で再現することはできない。
+`mgmt` は YANG `sonic-vrf.yang` のキーパターン `Vrf[a-zA-Z0-9_-]+` には適合しないが、上記の特別経路により APPL_DB に書き込まれる**唯一の例外名**。ユーザが `config vrf add mgmt` のような操作で再現することはできない。
 
 ### orchagent 側の literal 定数
 

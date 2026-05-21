@@ -31,7 +31,7 @@ hard: 0
 
 [SONiC](../../reference/glossary.md#term-sonic) の [SRv6](../../reference/glossary.md#term-srv6) 制御面は 3 層構造をとる。
 
-1. **[CONFIG_DB](../../reference/glossary.md#term-config_db)** (`SRV6_MY_SIDS` / `SRV6_MY_LOCATORS`) — ユーザー設定の起点
+1. **[CONFIG_DB](../../reference/glossary.md#term-config_db)** (`SRV6_MY_SIDS` / `SRV6_MY_LOCATORS`) — ユーザ設定の起点
 2. **[APPL_DB](../../reference/glossary.md#term-appl_db)** (`SRV6_MY_SID_TABLE` / `SRV6_SID_LIST_TABLE`) — [FRR](../../reference/glossary.md#term-frr) → [SAI](../../reference/glossary.md#term-sai) のパイプライン中継点
 3. **[ASIC_DB](../../reference/glossary.md#term-asic_db)** — [SAI](../../reference/glossary.md#term-sai) が書き込むハードウェア状態
 
@@ -468,7 +468,7 @@ FRR 経由で登録されるすべての SID リストは実質 `type=encaps.red
 
 ## 関連テーブル
 
-- `SRV6_MY_SIDS` (CONFIG_DB) — ユーザー設定。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) / fpmsyncd 経由で本テーブルへ反映
+- `SRV6_MY_SIDS` (CONFIG_DB) — ユーザ設定。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) / fpmsyncd 経由で本テーブルへ反映
 - `SRV6_MY_LOCATORS` (CONFIG_DB) — ロケータ定義
 - `VRF` (CONFIG_DB) — `vrf` フィールドで参照する VRF エントリ
 

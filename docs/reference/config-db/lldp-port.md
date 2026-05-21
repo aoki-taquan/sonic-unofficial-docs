@@ -496,7 +496,7 @@ sel.addSelectable(sst_device_confdb)
 
 ### ASIC 種別による影響
 
-`LLDP_PORT` の処理は `lldpmgrd`（Python）+ `lldpd`（open-lldp フォーク）のユーザー空間スタックで完結し、[SAI](../../reference/glossary.md#term-sai) を経由しない。[ASIC](../../reference/glossary.md#term-asic) 種別（Broadcom / Mellanox / Marvell / Innovium 等）は `LLDP_PORT` の挙動に影響を与えない。
+`LLDP_PORT` の処理は `lldpmgrd`（Python）+ `lldpd`（open-lldp フォーク）のユーザ空間スタックで完結し、[SAI](../../reference/glossary.md#term-sai) を経由しない。[ASIC](../../reference/glossary.md#term-asic) 種別（Broadcom / Mellanox / Marvell / Innovium 等）は `LLDP_PORT` の挙動に影響を与えない。
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|

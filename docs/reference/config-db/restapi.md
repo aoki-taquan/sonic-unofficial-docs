@@ -169,7 +169,7 @@ restapi サービス ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
-| `restapi` 起動処理 | `client_auth==false` | ユーザー認証モード (`rest-server.sh` 内で boolean `false` を文字列 `"user"` に変換して TLS 設定) | restapi 設定処理 |
+| `restapi` 起動処理 | `client_auth==false` | ユーザ認証モード (`rest-server.sh` 内で boolean `false` を文字列 `"user"` に変換して TLS 設定) | restapi 設定処理 |
 | `restapi` 起動処理 | `client_auth==true` | クライアント証明書認証モード (`rest-server.sh` 内で boolean `true` を文字列 `"cert"` に変換) | restapi 設定処理 |
 | `restapi` 起動処理 | `log_level` 値により | ログ出力レベルを変更 | restapi 設定処理 |
 | `restapi` 起動処理 | `server_crt` / `server_key` あり | TLS を有効化して起動 | restapi 設定処理 |
@@ -241,7 +241,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 | フィールド | コード由来デフォルト | 根拠 |
 |-----------|---------------------|------|
-| `client_auth` | `"user"` | `CLIENT_AUTH=$(... jq -r '.client_auth // "user"')` — CONFIG_DB 未設定時にユーザー認証モードを強制 |
+| `client_auth` | `"user"` | `CLIENT_AUTH=$(... jq -r '.client_auth // "user"')` — CONFIG_DB 未設定時にユーザ認証モードを強制 |
 | `log_level` | （省略 = 引数なし = `trace` 相当の詳細ログ） | `LOG_LEVEL=$(... jq -r '.log_level // empty')` — 空の場合は `-v` 引数が付かず rest_server デフォルト (`trace`) が適用 |
 | `server_crt` / `server_key` | `/tmp/cert.pem` / `/tmp/key.pem`（自動生成） | 証明書パスが未設定の場合 `generate_cert --host="localhost,127.0.0.1"` で自己署名証明書を `/tmp/` に生成 |
 | `allow_insecure` (HTTP) | 無効 (`-enablehttp` フラグなし) | 起動引数に HTTP 許可フラグが含まれず、HTTPS のみで起動 |

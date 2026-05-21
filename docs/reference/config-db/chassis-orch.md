@@ -92,7 +92,7 @@ PASS_THROUGH_ROUTE_TABLE|<IP_prefix>
 
 ### `redistribute = "true"` の固定値
 
-APP_DB に書き込まれる `redistribute` は常に `"true"` のハードコード固定値である。ユーザー設定不可・[YANG](../../reference/glossary.md#term-yang) 未定義。
+APP_DB に書き込まれる `redistribute` は常に `"true"` のハードコード固定値である。ユーザ設定不可・[YANG](../../reference/glossary.md#term-yang) 未定義。
 
 ```cpp
 // orchagent/chassisorch.cpp:34
@@ -323,7 +323,7 @@ fvVector.emplace_back("source", "CHASSIS_ORCH");
 
 | フィールド | 固定値 | 行 | 備考 |
 |-----------|-------|----|------|
-| `redistribute` | `"true"` | `chassisorch.cpp:34` | ユーザー設定不可・[YANG](../../reference/glossary.md#term-yang) 未定義 |
+| `redistribute` | `"true"` | `chassisorch.cpp:34` | ユーザ設定不可・[YANG](../../reference/glossary.md#term-yang) 未定義 |
 | `source` | `"CHASSIS_ORCH"` | `chassisorch.cpp:38` | 書き込み主体の識別子 |
 
 `chassisorch.h` にフィールド名文字列定数は定義されておらず、すべてリテラルとしてソースに直書きされている。

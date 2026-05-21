@@ -143,7 +143,7 @@ show interfaces breakout
 | 対象 interface が BREAKOUT_CFG に未登録 | `{} interface is NOT present in BREAKOUT_CFG table of CONFIG DB` → Abort | `config/main.py` L5485 |
 | target mode が `platform.json` の interfaces に未定義 | `_validate_interface_mode()` 失敗 → Abort | `config/main.py` L5491 |
 | `del_intf_dict` が空 (削除対象ポートなし) | `del_intf_dict is None! No interfaces are there to be deleted` → Abort | `config/main.py` L5504 |
-| Yang モデルなしテーブルに削除対象ポートの依存がある | `breakout_warnUser_extraTables()` がユーザーへの警告・確認を要求 | `config/main.py` L239 |
+| Yang モデルなしテーブルに削除対象ポートの依存がある | `breakout_warnUser_extraTables()` がユーザへの警告・確認を要求 | `config/main.py` L239 |
 | BREAKOUT_CFG への `set_entry` で `ValueError` | `Invalid ConfigDB. Error: {}` → `ctx.fail()` | `config/main.py` L5553 |
 | `show interfaces breakout` で対象ポートが未登録 | 対象ポートを skip (エラーなし) | `show/interfaces/__init__.py` L228 |
 <!-- /cdb-exceptions -->
@@ -502,7 +502,7 @@ flex counter が有効な環境では、新子ポートのキュー OID マッ�
 <!-- cross-refs -->
 ## 暗黙参照 — DPB が読み出す関連 CONFIG_DB テーブル (Phase C)
 
-Dynamic Port Breakout (DPB) は `BREAKOUT_CFG` 単体ではなく、`CONFIG_DB` 内の関連テーブルを YANG leafref 解析で検出し、削除対象ポートに依存するエントリを **cascade 削除**（`--force-remove-dependencies` 時）またはユーザー警告対象として扱う。依存解決は `ConfigMgmtDPB._deletePorts()` 内の `SonicYang.find_data_dependencies()` が担う (`config_mgmt.py` L488-495)。
+Dynamic Port Breakout (DPB) は `BREAKOUT_CFG` 単体ではなく、`CONFIG_DB` 内の関連テーブルを YANG leafref 解析で検出し、削除対象ポートに依存するエントリを **cascade 削除**（`--force-remove-dependencies` 時）またはユーザ警告対象として扱う。依存解決は `ConfigMgmtDPB._deletePorts()` 内の `SonicYang.find_data_dependencies()` が担う (`config_mgmt.py` L488-495)。
 
 ### cascade 削除対象テーブル (YANG モデルあり、leafref 由来)
 
@@ -529,13 +529,13 @@ Dynamic Port Breakout (DPB) は `BREAKOUT_CFG` 単体ではなく、`CONFIG_DB` 
 
 > 依存の検出は `SonicYang.find_data_dependencies(xPathPort)` が YANG データツリーを走査して行う。leafref でない参照（`ACL_TABLE.ports` 等）はここでは検出されない。
 
-### ユーザー警告対象テーブル (YANG モデルなし — 自動削除不可)
+### ユーザ警告対象テーブル (YANG モデルなし — 自動削除不可)
 
-YANG モデルが存在しないテーブルは `tablesWithOutYang` に収集され、該当ポートのエントリを持つ場合に `breakout_warnUser_extraTables()` がユーザーへの確認プロンプトを表示する (`config/main.py` L239, L5539)。**自動削除はされない**ため、手動での事前整理が必要。
+YANG モデルが存在しないテーブルは `tablesWithOutYang` に収集され、該当ポートのエントリを持つ場合に `breakout_warnUser_extraTables()` がユーザへの確認プロンプトを表示する (`config/main.py` L239, L5539)。**自動削除はされない**ため、手動での事前整理が必要。
 
 | テーブル | DPB での挙動 | 手動対応例 |
 |---|---|---|
-| `ACL_TABLE` (`.ports` フィールドに対象ポートあり) | 警告表示 + 確認要求。削除はユーザー任せ | `config acl remove table <table>` |
+| `ACL_TABLE` (`.ports` フィールドに対象ポートあり) | 警告表示 + 確認要求。削除はユーザ任せ | `config acl remove table <table>` |
 | `ACL_RULE` | `ACL_TABLE` 依存エントリが警告対象に含まれることがある | `config acl remove rule` |
 | `MUX_CABLE` | 対象ポートにエントリがある場合に警告 | 手動削除 |
 

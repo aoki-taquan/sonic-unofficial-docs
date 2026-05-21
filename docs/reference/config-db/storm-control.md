@@ -470,7 +470,7 @@ const auto storm_policer_name = "_" + interface_name + "_" + storm_type;
 // 例: "_Ethernet0_broadcast"
 ```
 
-先頭の `"_"` は POLICER テーブルのユーザー定義 policer 名との衝突を避ける命名規則。`m_syncdPolicers` マップのキーとして使用される。
+先頭の `"_"` は POLICER テーブルのユーザ定義 policer 名との衝突を避ける命名規則。`m_syncdPolicers` マップのキーとして使用される。
 
 ### kbps → CIR 変換定数 (`policerorch.cpp:182`)
 

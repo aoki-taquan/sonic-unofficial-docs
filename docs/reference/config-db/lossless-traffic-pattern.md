@@ -387,7 +387,7 @@ orchagent / BufferOrch が古い headroom 値または未設定のまま SAI へ
 <!-- constants -->
 ## ハードコード定数 (Phase E)
 
-`LOSSLESS_TRAFFIC_PATTERN` の `mtu` と `small_packet_percentage` はユーザー設定値だが、
+`LOSSLESS_TRAFFIC_PATTERN` の `mtu` と `small_packet_percentage` はユーザ設定値だが、
 ヘッドルーム計算式内にはコードハードコードの物理定数・IEEE 規定値が多数存在し、
 それらが実際の計算結果を左右する。以下はベンダー別 Lua プラグイン
 (`buffer_headroom_mellanox.lua` / `buffer_headroom_barefoot.lua`) から抽出した定数一覧。

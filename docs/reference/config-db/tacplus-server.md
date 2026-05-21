@@ -277,11 +277,11 @@ error-message: "Authentication with 'tacacs+' is not allowed when passkey not ex
 
 ### Phase 6: 自動派生
 
-hostcfgd が `TACPLUS_SERVER.tcp_port` 未設定の場合にデフォルト `49` を補完し、`timeout` 未設定の場合にデフォルト `5` を補完する。`priority` フィールドの降順 (`sorted(..., reverse=True)`) でサーバーを PAM 設定に並べる。大きい値ほど PAM の先頭に記載され高優先度として扱われる。
+hostcfgd が `TACPLUS_SERVER.tcp_port` 未設定の場合にデフォルト `49` を補完し、`timeout` 未設定の場合にデフォルト `5` を補完する。`priority` フィールドの降順 (`sorted(..., reverse=True)`) でサーバを PAM 設定に並べる。大きい値ほど PAM の先頭に記載され高優先度として扱われる。
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
-hostcfgd は常時起動し `TACPLUS_SERVER` テーブルを無条件購読する。ただし `aaa.authentication.login` に `tacacs+` が含まれない場合、TACACS+ サーバー設定があっても PAM に反映されない。
+hostcfgd は常時起動し `TACPLUS_SERVER` テーブルを無条件購読する。ただし `aaa.authentication.login` に `tacacs+` が含まれない場合、TACACS+ サーバ設定があっても PAM に反映されない。
 
 <!-- /derivation -->
 
@@ -294,7 +294,7 @@ hostcfgd は常時起動し `TACPLUS_SERVER` テーブルを無条件購読す�
 | `hostcfgd` TACACS+ handler | `auth_type==pap` | PAM に pap 認証設定 | `hostcfgd.py` |
 | `hostcfgd` TACACS+ handler | `auth_type==chap` | PAM に chap 認証設定 | `hostcfgd.py` |
 | `hostcfgd` TACACS+ handler | `passkey` フィールドあり | `secret=<passkey>` を設定 | `hostcfgd.py` |
-| `hostcfgd` TACACS+ handler | `vrf_name` フィールドあり | VRF バインドで TACACS+ サーバーに接続 | `hostcfgd.py` |
+| `hostcfgd` TACACS+ handler | `vrf_name` フィールドあり | VRF バインドで TACACS+ サーバに接続 | `hostcfgd.py` |
 | `hostcfgd` TACACS+ handler | `src_ip` フィールドあり | ソース IP を指定して接続 | `hostcfgd.py` |
 
 > **スキャン証跡**: `TACPLUS_SERVER` は TACACS+ 認証の設定テーブル。`auth_type` の分岐と `priority` による順序付けが主要な Phase 8 ポイント。デフォルト値補完が Phase 6 相当。
@@ -366,7 +366,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 | フィールド | コード定数 | 値 | 適用タイミング |
 |-----------|----------|-----|-------------|
-| `timeout` | `TACPLUS_SERVER_TIMEOUT_DEFAULT` | `"5"` | `TACPLUS\|global` 未設定時に全サーバーへ fallback |
+| `timeout` | `TACPLUS_SERVER_TIMEOUT_DEFAULT` | `"5"` | `TACPLUS\|global` 未設定時に全サーバへ fallback |
 | `auth_type` | `TACPLUS_SERVER_AUTH_TYPE_DEFAULT` | `"pap"` | 同上 |
 | `passkey` | `TACPLUS_SERVER_PASSKEY_DEFAULT` | `""` (空文字) | 同上。空文字は pam_tacplus に渡され認証失敗の可能性あり（silent） |
 
@@ -385,7 +385,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 
 ### global → per-server 継承
 
-`modify_conf_file()` はサーバーごとに `tacplus_global.copy()` をベースとして per-server の値で上書きする。`TACPLUS|global.auth_type` / `timeout` / `passkey` が per-server の未設定フィールドに自動継承される。
+`modify_conf_file()` はサーバごとに `tacplus_global.copy()` をベースとして per-server の値で上書きする。`TACPLUS|global.auth_type` / `timeout` / `passkey` が per-server の未設定フィールドに自動継承される。
 
 ### dead field: `key_encrypt`
 
@@ -456,7 +456,7 @@ TACACS+ 標準 TCP ポートは **49** (IANA well-known)。
 
 ### 不正 `priority` による設定生成中断 (ValueError)
 
-`modify_conf_file()` はサーバーリストを `sorted(..., key=lambda t: int(t['priority']), reverse=True)` でソートする（`hostcfgd L665`）。`priority` フィールドに整数として解釈できない文字列が含まれる場合、`int()` が `ValueError` を送出し `modify_conf_file()` 全体が中断する。PAM 設定ファイル (`/etc/pam.d/common-auth-sonic`) および NSS 設定は更新されず、直前の状態のまま残る。例外はキャッチされず呼び出し元に伝播する（unhandled exception）。CLI (`config tacacs add`) は常に `priority=1` を書き込むため通常経路では発生しないが、`sonic-db-cli` 等による直接 DB 操作時に注意が必要。
+`modify_conf_file()` はサーバリストを `sorted(..., key=lambda t: int(t['priority']), reverse=True)` でソートする（`hostcfgd L665`）。`priority` フィールドに整数として解釈できない文字列が含まれる場合、`int()` が `ValueError` を送出し `modify_conf_file()` 全体が中断する。PAM 設定ファイル (`/etc/pam.d/common-auth-sonic`) および NSS 設定は更新されず、直前の状態のまま残る。例外はキャッチされず呼び出し元に伝播する（unhandled exception）。CLI (`config tacacs add`) は常に `priority=1` を書き込むため通常経路では発生しないが、`sonic-db-cli` 等による直接 DB 操作時に注意が必要。
 
 ### PAM 設定ファイル生成失敗
 
@@ -464,7 +464,7 @@ TACACS+ 標準 TCP ポートは **49** (IANA well-known)。
 
 ### 不正 `auth_type` による pam_tacplus 認証プロトコル失敗 (silent)
 
-hostcfgd は `auth_type` の値を検証せずテンプレートに直接渡す（`hostcfgd L725`）。PAM 設定行は `login={{ server.auth_type }}` として生成される（`common-auth-sonic.j2 L18`）。YANG 列挙 (`pap`/`chap`/`mschap`/`login`) 以外の文字列が設定されると、無効な `login=<値>` が PAM 行に書き込まれる。pam_tacplus はサーバーへの接続を試みるが認証プロトコルのネゴシエーションに失敗し認証拒否 (`auth_err`) となる。hostcfgd 側にはエラーログが出力されない（silent failure）。
+hostcfgd は `auth_type` の値を検証せずテンプレートに直接渡す（`hostcfgd L725`）。PAM 設定行は `login={{ server.auth_type }}` として生成される（`common-auth-sonic.j2 L18`）。YANG 列挙 (`pap`/`chap`/`mschap`/`login`) 以外の文字列が設定されると、無効な `login=<値>` が PAM 行に書き込まれる。pam_tacplus はサーバへの接続を試みるが認証プロトコルのネゴシエーションに失敗し認証拒否 (`auth_err`) となる。hostcfgd 側にはエラーログが出力されない（silent failure）。
 
 ### audisp-tacplus SIGHUP 失敗 (accounting への影響)
 
@@ -535,7 +535,7 @@ make_callback() で (key=<ip>, op=SET, data=HGETALL結果) を生成
 
 - keyspace 通知のペイロードは操作名（`hset`/`del` 等）のみ。フィールド値は `HGETALL` で取得する。
 - `op` は `data is None ? DEL : SET` の 2 値判定（`make_callback()` — hostcfgd:2458-2466）。`HDEL`/`HSET` の [Redis](../../reference/glossary.md#term-redis) 操作種別自体は区別しない。
-- DEL 時は `data={}` が渡るため `tacacs_server_update()` の `data == {}` 分岐でサーバーエントリを削除する（hostcfgd:474-476）。
+- DEL 時は `data={}` が渡るため `tacacs_server_update()` の `data == {}` 分岐でサーバエントリを削除する（hostcfgd:474-476）。
 
 ### 起動時スナップショット
 

@@ -42,9 +42,9 @@ related:
 
 ## 認証バックエンドの選び方
 
-[SONiC](../../reference/glossary.md#term-sonic) は local user に加えて TACACS+、[RADIUS](../../reference/glossary.md#term-radius)、LDAP の三つの外部バックエンドを持ちます。組み合わせは `config aaa` 系コマンドで設定し、最終的に `CONFIG_DB` の `AAA` テーブルと、各バックエンドのサーバー一覧テーブルに格納されます。
+[SONiC](../../reference/glossary.md#term-sonic) は local user に加えて TACACS+、[RADIUS](../../reference/glossary.md#term-radius)、LDAP の三つの外部バックエンドを持ちます。組み合わせは `config aaa` 系コマンドで設定し、最終的に `CONFIG_DB` の `AAA` テーブルと、各バックエンドのサーバ一覧テーブルに格納されます。
 
-| バックエンド | 用途 | 設定の入口 | サーバーリスト |
+| バックエンド | 用途 | 設定の入口 | サーバリスト |
 | --- | --- | --- | --- |
 | local | 緊急ログインの最後の砦 | `config aaa authentication login local` | 不要（`/etc/passwd` 等） |
 | TACACS+ | 商用機器標準、per-command 認可と accounting | `config tacacs ...` | [`TACPLUS_SERVER`](../../reference/config-db/tacplus-server.md) |
@@ -61,7 +61,7 @@ CLI の全体像は [config aaa](../../reference/cli/config-aaa.md) を、[YANG]
 
 ## login_method の順序
 
-`config aaa authentication login` で複数バックエンドを列挙できますが、運用上の鉄則は最後を必ず `local` で締めることです。外部サーバー全滅時のロックアウトを避けるためで、[AAA improvements](../../management/aaa-improvements.md) と [TACACS test plan](../../management/tacacs-test-plan.md) の失敗フォールバックシナリオで議論されています。
+`config aaa authentication login` で複数バックエンドを列挙できますが、運用上の鉄則は最後を必ず `local` で締めることです。外部サーバ全滅時のロックアウトを避けるためで、[AAA improvements](../../management/aaa-improvements.md) と [TACACS test plan](../../management/tacacs-test-plan.md) の失敗フォールバックシナリオで議論されています。
 
 ## SSH と serial console のポリシー
 
@@ -223,7 +223,7 @@ CONFIG_DB:
 | 症状 | 原因 | 対処 |
 |---|---|---|
 | 外部 AAA 設定後にコンソール / SSH からも入れない | `login_method` の末尾に `local` が無い | recovery USB / シリアル → ONIE rescue → `/etc/sonic/config_db.json` の `AAA` を直接修正 |
-| TACACS+ で認証が遅い（10s 超） | 1 台目がダウン、`timeout` が長い、`failthrough` 無効 | `config aaa authentication failthrough enable`、`timeout` を 2-3s に、サーバー priority を見直す |
+| TACACS+ で認証が遅い（10s 超） | 1 台目がダウン、`timeout` が長い、`failthrough` 無効 | `config aaa authentication failthrough enable`、`timeout` を 2-3s に、サーバ priority を見直す |
 | `show tacacs` で passkey が `*****` のまま投入が反映されない | `config tacacs add` のオプション順序を誤った | `-k` の値が空白を含む場合は引用、`config tacacs delete` してから再追加 |
 | LDAP bind が `Invalid credentials` | bind-dn か password の typo、または AD 側 sAMAccountName / userPrincipalName mismatch | `ldapsearch -x -D ... -W -b ...` で素のクエリを検証 |
 | SSH の cipher を絞った後 windows クライアントから繋がらない | クライアント側に modern cipher が無い | クライアント側を更新、または `ciphers` リストに `aes128-ctr` を一時的に追加 |
@@ -231,7 +231,7 @@ CONFIG_DB:
 ## 最小構成のチェックリスト
 
 1. 外部 AAA を入れる前に、`admin` 相当の local user のパスワードを十分長いものへ更新する。詳細は [運用](operations.md) で扱う [password hardening](../../architecture/pw-hardening-design.md) を参照。
-2. TACACS+ / RADIUS / LDAP のサーバーを最低 2 台登録し、`login_method` の末尾に `local` を残す。
+2. TACACS+ / RADIUS / LDAP のサーバを最低 2 台登録し、`login_method` の末尾に `local` を残す。
 3. SSH の `permit_root_login` を `no` 相当に倒し、`ciphers` / `kex` を必要なものだけに絞る。
 4. banner で「許可された運用者のみ」「アクセスは記録される」旨を明示し、法的要件を満たす。
 5. serial console の `inactivity_timeout` を有効にし、置き忘れセッションを切る。

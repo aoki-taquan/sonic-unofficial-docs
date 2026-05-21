@@ -105,9 +105,9 @@ FLEX_COUNTER_TABLE|PG_WATERMARK
 - [portsorch](../../reference/glossary.md#term-portsorch) init (`portsorch.cpp:872-876`) で `setFlexCounterGroupParameter()` → [syncd](../../reference/glossary.md#term-syncd) の `FLEX_COUNTER_GROUP_TABLE|PG_WATERMARK_STAT_COUNTER` にこの値を書き込み。
 - `counterpoll watermark interval <ms>` で上書き可能（[CONFIG_DB](../../reference/glossary.md#term-config_db) の `POLL_INTERVAL` フィールドに書き込まれ、[orchagent](../../reference/glossary.md#term-orchagent) が反映する）。
 
-### STATS_MODE は READ_AND_CLEAR（ユーザー変更不可）
+### STATS_MODE は READ_AND_CLEAR（ユーザ変更不可）
 
-PG ウォーターマーク [FlexCounter](../../reference/glossary.md#term-flexcounter) グループは `StatsMode::READ_AND_CLEAR` モードで動作する[^4]。これはユーザーが [CONFIG_DB](../../reference/glossary.md#term-config_db) から変更できるフィールドではなく、orchagent が `setFlexCounterGroupParameter()` 呼び出し時に固定で指定する。[SAI](../../reference/glossary.md#term-sai) からポーリングするたびにハードウェアのウォーターマークレジスタがリセットされる。`PERIODIC_WATERMARKS` / `PERSISTENT_WATERMARKS` / `USER_WATERMARKS` テーブルへの振り分けは syncd 側の Lua スクリプト（`pgWmSha`）が処理する。
+PG ウォーターマーク [FlexCounter](../../reference/glossary.md#term-flexcounter) グループは `StatsMode::READ_AND_CLEAR` モードで動作する[^4]。これはユーザが [CONFIG_DB](../../reference/glossary.md#term-config_db) から変更できるフィールドではなく、orchagent が `setFlexCounterGroupParameter()` 呼び出し時に固定で指定する。[SAI](../../reference/glossary.md#term-sai) からポーリングするたびにハードウェアのウォーターマークレジスタがリセットされる。`PERIODIC_WATERMARKS` / `PERSISTENT_WATERMARKS` / `USER_WATERMARKS` テーブルへの振り分けは syncd 側の Lua スクリプト（`pgWmSha`）が処理する。
 
 ### 収集 SAI カウンタはコードハードコード（変更不可）
 
@@ -242,7 +242,7 @@ static const vector<sai_ingress_priority_group_stat_t> ingressPriorityGroupWater
 | `PG_WATERMARK_FLEX_STAT_COUNTER_POLL_MSECS` | `"60000"` | `portsorch.h:39` | `setFlexCounterGroupParameter()` 呼び出し時に FLEX_COUNTER_DB へ書き込まれるデフォルトポーリング間隔文字列。`FLEX_COUNTER_TABLE|PG_WATERMARK` の `POLL_INTERVAL` フィールドで上書き可能。`portsorch.cpp:873` で参照される |
 | `PG_WATERMARK_STAT_FLEX_COUNTER_POLLING_INTERVAL_MS` | `60000` | `portsorch.cpp:92` | `pg_watermark_manager` コンストラクタ (`portsorch.cpp:736`) に渡す内部整数定数。上記 POLL_MSECS 文字列と値が一致することで設定の二重管理を実装している |
 | `PG_WATERMARK_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"PG_WATERMARK_STAT_COUNTER"` | `portsorch.h:36` | FLEX_COUNTER_DB の `FLEX_COUNTER_GROUP_TABLE` キーに使用されるグループ名。syncd がこのグループ名でポーリングスレッドを識別する |
-| `STATS_MODE_READ_AND_CLEAR` | `"READ_AND_CLEAR"` | `portsorch.cpp:872-876` 呼び出し引数 | `setFlexCounterGroupParameter()` 経由で `FLEX_COUNTER_GROUP_TABLE|PG_WATERMARK_STAT_COUNTER` の `STATS_MODE` フィールドに書き込まれる固定値。SAI からポーリングするたびにハードウェアのウォーターマークレジスタがクリアされる。ユーザーが変更するフィールドは CONFIG_DB に存在しない |
+| `STATS_MODE_READ_AND_CLEAR` | `"READ_AND_CLEAR"` | `portsorch.cpp:872-876` 呼び出し引数 | `setFlexCounterGroupParameter()` 経由で `FLEX_COUNTER_GROUP_TABLE|PG_WATERMARK_STAT_COUNTER` の `STATS_MODE` フィールドに書き込まれる固定値。SAI からポーリングするたびにハードウェアのウォーターマークレジスタがクリアされる。ユーザが変更するフィールドは CONFIG_DB に存在しない |
 | `DEFAULT_TELEMETRY_INTERVAL` | `120` 秒 | `watermarkorch.cpp:9` | `watermarkorch` が `m_telemetryTimer` を初期化する際のデフォルト周期。`WATERMARK_TABLE|TELEMETRY_INTERVAL` エントリの `interval` フィールドで上書き可能。変更単位は秒 |
 | `CLEAR_PG_HEADROOM_REQUEST` | `"PG_HEADROOM"` | `watermarkorch.cpp:11` | `WATERMARK_CLEAR_REQUEST` [APPL_DB](../../reference/glossary.md#term-appl_db) 通知チャネルへのリクエスト文字列。`watermarkcfg clear pg-headroom` CLI が発行する値と一致しなければクリア処理が発火しない |
 | `CLEAR_PG_SHARED_REQUEST` | `"PG_SHARED"` | `watermarkorch.cpp:12` | 同上。`watermarkcfg clear pg-shared` CLI が発行するリクエスト文字列 |
@@ -383,7 +383,7 @@ syncd FlexCounter スレッド: FLEX_COUNTER_DB を読んで SAI ポーリング
 
 | プラットフォーム種別 | 挙動 |
 |-----------------|------|
-| 通常スイッチ（non-mgmt） | `FLEX_COUNTER_STATUS` 未設定（`disable` 相当） — ユーザーが `counterpoll watermark enable` で有効化可能 |
+| 通常スイッチ（non-mgmt） | `FLEX_COUNTER_STATUS` 未設定（`disable` 相当） — ユーザが `counterpoll watermark enable` で有効化可能 |
 | 管理デバイス (mgmt_device) | minigraph が `FLEX_COUNTER_STATUS = "disable"` を明示設定 — `counterpoll watermark enable` で上書き可能だが設定再生成時に元に戻る |
 
 ### SAI カウンタサポート差 — ASIC 依存

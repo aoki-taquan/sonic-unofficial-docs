@@ -194,7 +194,7 @@ SNMP の ifMIB ifName が間違った値を返す問題。`show interfaces statu
 
 ### 最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題（sonic-buildimage#5759）
 
-最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題。プラットフォーム固有のドライバーと pmon の Python 3 互換性を確認すること
+最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題。プラットフォーム固有のドライバと pmon の Python 3 互換性を確認すること
 
 - 参照: [sonic-net/sonic-buildimage#5759](https://github.com/sonic-net/sonic-buildimage/issues/5759)
 

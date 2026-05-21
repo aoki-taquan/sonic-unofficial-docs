@@ -258,7 +258,7 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 | 定数 | 値 | 説明 |
 |------|----|------|
 | `OVERLAY_RIF_DEFAULT_MTU` | **9100** | デカプセル用オーバーレイ loopback [RIF](../../reference/glossary.md#term-rif) の MTU。フィールドとして公開されておらず変更不可 |
-| subnet decap tunnel 名 | `"IPINIP_SUBNET"` / `"IPINIP_SUBNET_V6"` | `SubnetDecapConfig` にハードコード。ユーザーが別名を指定しても subnet decap 機能は動作しない |
+| subnet decap tunnel 名 | `"IPINIP_SUBNET"` / `"IPINIP_SUBNET_V6"` | `SubnetDecapConfig` にハードコード。ユーザが別名を指定しても subnet decap 機能は動作しない |
 
 ### フィールド省略時の暗黙デフォルト
 

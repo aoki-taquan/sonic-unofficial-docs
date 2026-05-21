@@ -180,7 +180,7 @@ flowchart LR
 
 - **`port` 省略時**: `addFdbEntry()` でポート解決が失敗し、エントリが追加されない。エラーログ出力。
 - **`type` の assert チェック**: `fdborch.cpp:830` で無効な type 値はプロセスクラッシュを引き起こす。
-- **`dynamic_local`**: [MCLAG](../../reference/glossary.md#term-mclag) ピアから受信した MAC を aging 対象として扱うための内部値。ユーザーが直接設定することは想定されていない。
+- **`dynamic_local`**: [MCLAG](../../reference/glossary.md#term-mclag) ピアから受信した MAC を aging 対象として扱うための内部値。ユーザが直接設定することは想定されていない。
 - **FDB_ORIGIN と type の組み合わせ**: `{"static", FDB_ORIGIN_LEARN}` は無効な組み合わせとしてコメントされている (`fdborch.h:57`)。
 
 <!-- ordering -->

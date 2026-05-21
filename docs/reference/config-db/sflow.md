@@ -435,7 +435,7 @@ evidence: sfloworch.cpp:119–150 (`sflowAddPort`), sfloworch.cpp:161–195 (`sf
 | `admin_state` が `down` → `up` へ | `service hsflowd restart` | hsflowd プロセスを起動・再起動 |
 | `admin_state` が `up` → `down` へ | `service hsflowd stop` | hsflowd プロセスを停止 |
 
-evidence: sflowmgr.cpp:58–62。hsflowd は sFlow パケットをコレクタへ UDP 送信するユーザースペースデーモン。SAI 経路（ハードウェアサンプリング）とは独立して動作する。[^3]
+evidence: sflowmgr.cpp:58–62。hsflowd は sFlow パケットをコレクタへ UDP 送信するユーザスペースデーモン。SAI 経路（ハードウェアサンプリング）とは独立して動作する。[^3]
 
 [^3]: 副次書込調査: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp>
 
@@ -619,7 +619,7 @@ APP_SFLOW_TABLE  SET  →  APP_SFLOW_SESSION_TABLE  SET
 
 ### SFLOW_COLLECTOR — hsflowd が直接参照
 
-C++ レベルの `sflowmgr.cpp` / `sfloworch.cpp` に `SFLOW_COLLECTOR` を直接読み込むコードはない。`SFLOW_COLLECTOR` テーブルは **hsflowd** (ユーザー空間 sFlow エージェント) が CONFIG_DB から直接読み取り、コレクタ IP / ポート / [VRF](../../reference/glossary.md#term-vrf) を設定ファイルに反映する。`sflowmgrd` は hsflowd の起動トリガーに徹する。
+C++ レベルの `sflowmgr.cpp` / `sfloworch.cpp` に `SFLOW_COLLECTOR` を直接読み込むコードはない。`SFLOW_COLLECTOR` テーブルは **hsflowd** (ユーザ空間 sFlow エージェント) が CONFIG_DB から直接読み取り、コレクタ IP / ポート / [VRF](../../reference/glossary.md#term-vrf) を設定ファイルに反映する。`sflowmgrd` は hsflowd の起動トリガーに徹する。
 
 ### SAI 参照
 

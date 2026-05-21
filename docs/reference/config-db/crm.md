@@ -50,7 +50,7 @@ CRM|Config
 
 ## 主要フィールド
 
-各リソースに対し `<resource>_threshold_type` / `<resource>_high_threshold` / `<resource>_low_threshold` の三つ組が並ぶ。
+各リソースに対し `<resource>_threshold_type` / `<resource>_high_threshold` / `<resource>_low_threshold` の3つ組が並ぶ。
 
 | 系統 | リソース key prefix |
 |------|---------------------|

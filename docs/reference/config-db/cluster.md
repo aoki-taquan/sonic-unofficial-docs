@@ -306,7 +306,7 @@ minigraph XML に `<ClusterName>` タグが存在しない構成では、フィ�
 cluster = [devices[key] for key in devices if key.lower() == hostname.lower()][0].get('cluster', "")
 ```
 
-`devices` dict に `hostname` と大文字・小文字を無視して一致するキーが存在しない場合、リスト内包式の結果が空リストとなり `[0]` アクセスで `IndexError` が送出される。`parse_xml()` は例外を補足しないため `sonic-cfggen` が非ゼロ終了コードで終了し、CONFIG_DB への書き込みは一切行われない。ただし `devices` は `PngDec`/`MetadataDeclaration` から構築される際に自ノードが含まれるのが通常であり、実運用での発生条件は minigraph XML の `<Hostname>` と実際のホスト名が不一致のケースに限られる。
+`devices` dict に `hostname` と大文字・小文字を無視して一致するキーが存在しない場合、リスト内包式の結果が空リストとなり `[0]` アクセスで `IndexError` が送出される。`parse_xml()` は例外を捕捉しないため `sonic-cfggen` が非ゼロ終了コードで終了し、CONFIG_DB への書き込みは一切行われない。ただし `devices` は `PngDec`/`MetadataDeclaration` から構築される際に自ノードが含まれるのが通常であり、実運用での発生条件は minigraph XML の `<Hostname>` と実際のホスト名が不一致のケースに限られる。
 
 #### 2. 空タグ → `None` → silent スキップ
 

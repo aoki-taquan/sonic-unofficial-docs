@@ -65,7 +65,7 @@ SWITCH_HASH|GLOBAL
 
 `IN_PORT` / `DST_MAC` / `SRC_MAC` / `ETHERTYPE` / `VLAN_ID` / `IP_PROTOCOL` / `DST_IP` / `SRC_IP` / `L4_DST_PORT` / `L4_SRC_PORT` / `INNER_*` 同等 / `IPV6_FLOW_LABEL`
 
-`ordered-by user` が付くため、ユーザー設定順が保たれる (実装上はベンダーによっては順序を無視するが、[YANG](../../reference/glossary.md#term-yang) 上の意味は保存される)。
+`ordered-by user` が付くため、ユーザ設定順が保たれる (実装上はベンダーによっては順序を無視するが、[YANG](../../reference/glossary.md#term-yang) 上の意味は保存される)。
 
 ## 購読者
 

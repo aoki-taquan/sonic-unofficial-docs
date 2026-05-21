@@ -90,19 +90,19 @@ jobs:
 
   # textlint (日本語表記揺れ・技術文書スタイル)。設定は .textlintrc.json。
   # prh ルールは meta/prh-sonic.yml で SONiC 固有用語を統一。
-  # 初期は informational。既存ドキュメントの揺れが落ち着いたら strict 化。
+  # 既存違反を一括 fix し、誤検知の多い preset rule を無効化したうえで
+  # strict 化済み。残違反は CI を落とすので新規追加時は textlint --fix を
+  # 走らせること。
   textlint:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
       - run: npm install --no-audit --no-fund
-      - name: textlint (informational)
-        continue-on-error: true
-        run: npx textlint 'docs/**/*.md' || true
+      - name: textlint (strict)
+        run: npx textlint 'docs/**/*.md'
 
   # frontmatter linter (strict) + 全 drift / 各種 informational check。
   # 元は job を細かく分けて並走させていたが、setup-python の起動オーバヘッド

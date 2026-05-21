@@ -452,7 +452,7 @@ hostcfgd が `RADIUS` テーブルを読み、未設定フィールドに PAM �
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
-hostcfgd は常時起動し `RADIUS` テーブルを無条件購読する。ただし `aaa.authentication.login` に `radius` が含まれない場合、RADIUS サーバー設定があっても PAM に反映されない。
+hostcfgd は常時起動し `RADIUS` テーブルを無条件購読する。ただし `aaa.authentication.login` に `radius` が含まれない場合、RADIUS サーバ設定があっても PAM に反映されない。
 
 <!-- /derivation -->
 

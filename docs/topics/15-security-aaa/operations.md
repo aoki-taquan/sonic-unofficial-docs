@@ -57,7 +57,7 @@ TACPLUS_SERVER address 10.0.0.10
                      passkey  : *****
 ```
 
-`show aaa` の `login` フィールドが `local` のみだと TACACS+ が無効、`tacacs+,local` が標準的な「外部 AAA → ダウン時 local」設定です。`failthrough=True` は外部 AAA がユーザー不在を返したら次のメソッドに進む挙動で、`fallback=True` は外部 AAA そのものが到達不能な場合のフォールバック動作です。誤って `failthrough=False` にすると、外部 AAA で deny されたユーザーが local でも入れなくなります。
+`show aaa` の `login` フィールドが `local` のみだと TACACS+ が無効、`tacacs+,local` が標準的な「外部 AAA → ダウン時 local」設定です。`failthrough=True` は外部 AAA がユーザ不在を返したら次のメソッドに進む挙動で、`fallback=True` は外部 AAA そのものが到達不能な場合のフォールバック動作です。誤って `failthrough=False` にすると、外部 AAA で deny されたユーザが local でも入れなくなります。
 
 ## Password hardening
 
@@ -98,7 +98,7 @@ Maximum number of days between password change          : 90
 Number of days of warning before password expires       : 7
 ```
 
-ロックされたユーザーの解除は `sudo faillock --user <name> --reset` です。`chage -E -1` で account expiration を解除できます。本番作業前に手元のシリアル経由で local user に入れることを必ず確認してから外部 AAA を切替えます。
+ロックされたユーザの解除は `sudo faillock --user <name> --reset` です。`chage -E -1` で account expiration を解除できます。本番作業前に手元のシリアル経由で local user に入れることを必ず確認してから外部 AAA を切替えます。
 
 ## Default credential management
 
@@ -134,14 +134,14 @@ ZTP / image install 直後にこの flow を踏まずに password 変更を済�
 
 ## フォールバック確認
 
-外部 AAA を導入したら、必ず「サーバー全滅時に local で入れるか」を試験で確認します。[TACACS test plan](../../management/tacacs-test-plan.md) には、プライマリ TACACS+ ダウン時のフォールバックや、サーバー応答遅延時の挙動など、現場で詰まりやすい組み合わせが網羅されています。 [AAA improvements](../../management/aaa-improvements.md) には login flow の改善履歴があり、過去バージョンとの差分の根拠を当たれます。
+外部 AAA を導入したら、必ず「サーバ全滅時に local で入れるか」を試験で確認します。[TACACS test plan](../../management/tacacs-test-plan.md) には、プライマリ TACACS+ ダウン時のフォールバックや、サーバ応答遅延時の挙動など、現場で詰まりやすい組み合わせが網羅されています。 [AAA improvements](../../management/aaa-improvements.md) には login flow の改善履歴があり、過去バージョンとの差分の根拠を当たれます。
 
 ### フォールバック試験の最小手順
 
 1. TACACS+ server 1 台目を `iptables -A INPUT -p tcp --dport 49 -j DROP` でブロック → 2 台目に flip すること。
 2. 全 TACACS+ server をブロック → local user で入れること。
 3. local user の password を期限切れにし、login プロンプトで強制変更がかかること。
-4. `aaa authentication failthrough false` に切替えて、外部 AAA で deny されたユーザーが local でも入れないこと（意図した挙動）。
+4. `aaa authentication failthrough false` に切替えて、外部 AAA で deny されたユーザが local でも入れないこと（意図した挙動）。
 5. 試験終了後に必ず元設定へ戻すこと（戻し忘れ事故が一番多い）。
 
 タイムアウト値を緩めすぎると、TACACS+ server 全滅時のフォールバック開始が遅延します。`tcp_port` 到達確認 + `timeout=5` が一般的な落とし所です。
@@ -151,7 +151,7 @@ ZTP / image install 直後にこの flow を踏まずに password 変更を済�
 1. `sshd` のログ（`journalctl -u ssh`）で接続拒否か認証失敗かを切り分ける。
 2. PAM 経路を疑う場合、`/etc/pam.d/sshd` 等が `hostcfgd` 出力どおりかを比較する。
 3. NSS 経路を疑う場合、`getent passwd <user>` でバックエンドの解決状況を確認する。
-4. TACACS+ 経路は `/etc/tacplus_*` の中身と、サーバー到達性（management [VRF](../../reference/glossary.md#term-vrf) 経由含む）を確認する。
+4. TACACS+ 経路は `/etc/tacplus_*` の中身と、サーバ到達性（management [VRF](../../reference/glossary.md#term-vrf) 経由含む）を確認する。
 5. ロックアウトが疑われる場合は `pam_faillock` の状態と、シリアル経由の local ログインの可否を確認する。
 
 ### 典型ログとその意味
@@ -190,7 +190,7 @@ sshd[12345]: pam_faillock(sshd:auth): Consecutive login failures for user admin 
 |---|---|
 | TACACS+ server 追加 | `sudo config tacacs add 10.0.0.11 --priority 2` |
 | TACACS+ 一時無効化 | `sudo config aaa authentication login local` |
-| ユーザーのロック解除 | `sudo faillock --user <user> --reset` |
+| ユーザのロック解除 | `sudo faillock --user <user> --reset` |
 | password 強制リセット | `sudo passwd <user>` （root が必要） |
 | pam 設定再生成 | `sudo systemctl restart hostcfgd` |
 

@@ -27,7 +27,7 @@ related:
 ## 概要
 
 [PINS](../../reference/glossary.md#term-pins)（P4 Integrated Network Stack）の **P4Runtime gRPC サーバ設定**を保持するテーブル[^1]。
-`p4rt` コンテナ（`docker-sonic-p4rt`）が起動時に [CONFIG_DB](../../reference/glossary.md#term-config_db) を一回読み込み、
+`p4rt` コンテナ（`docker-sonic-p4rt`）が起動時に [CONFIG_DB](../../reference/glossary.md#term-config_db) を1回読み込み、
 gRPC ポート・TLS 証明書・認可ポリシー・genetlink 設定などを `p4rt` バイナリの起動引数に変換する。
 
 専用 [YANG](../../reference/glossary.md#term-yang) モデルは存在しない。スキーマ強制は `p4rt.sh` 内の `jq` 参照のみで実装される。
@@ -165,7 +165,7 @@ systemctl status p4rt
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動
 
-- **起動時のみ参照**: `p4rt` コンテナは起動時に一回だけ [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み込む。設定変更は `systemctl restart p4rt` まで反映されない。
+- **起動時のみ参照**: `p4rt` コンテナは起動時に1回だけ [CONFIG_DB](../../reference/glossary.md#term-config_db) を読み込む。設定変更は `systemctl restart p4rt` まで反映されない。
 - **YANG モデルなし**: スキーマ検証がない。不明フィールドは `jq` が `// empty` として無視し、対応するバイナリ引数が渡されない。
 - **`server_crt` / `server_key` 片方のみ**: 両方揃わないと `--use_insecure_server_credentials` にフォールバックする（証明書エラーではなく insecure 起動）。
 - **`authz_policy` 未設定**: 認可ポリシーなし（全 [P4RT](../../reference/glossary.md#term-p4rt) クライアントが管理者相当で接続可能）。
@@ -484,7 +484,7 @@ CONFIG_DB `P4RT` テーブルへの変更は `p4rt` コンテナ稼働中には�
 <!-- platform -->
 ## プラットフォーム差 (Phase H)
 
-**プラットフォーム差なし**。`P4RT` テーブルは `p4rt.sh` がコンテナ起動時に一回だけスナップショット読み込みする host-only 設定処理であり、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / chassis 構成・ハードウェアベンダーに依存しない。
+**プラットフォーム差なし**。`P4RT` テーブルは `p4rt.sh` がコンテナ起動時に1回だけスナップショット読み込みする host-only 設定処理であり、[ASIC](../../reference/glossary.md#term-asic) 種別・multi-asic / chassis 構成・ハードウェアベンダーに依存しない。
 
 ### 検証結果
 

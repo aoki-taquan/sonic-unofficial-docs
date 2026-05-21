@@ -30,7 +30,7 @@ setEntry: DoCVL for UPDATE
 
 ## 原因
 
-[SONiC](../reference/glossary.md#term-sonic) の gNMI サーバー（`sonic-gnmi`）は、デフォルトでは Translib の書き込み操作を無効にしてコンパイルされる。これは意図的なセキュリティ上の選択であり、設定変更操作を明示的に許可する場合のみ有効化できる。
+[SONiC](../reference/glossary.md#term-sonic) の gNMI サーバ（`sonic-gnmi`）は、デフォルトでは Translib の書き込み操作を無効にしてコンパイルされる。これは意図的なセキュリティ上の選択であり、設定変更操作を明示的に許可する場合のみ有効化できる。
 
 ## 解決方法
 
@@ -50,7 +50,7 @@ ENABLE_TRANSLIB_WRITE = y
 
 ### 確認方法
 
-gNMI サーバーが書き込み有効でビルドされているかを確認するには、SET リクエストを試みる。
+gNMI サーバが書き込み有効でビルドされているかを確認するには、SET リクエストを試みる。
 
 ```bash
 gnmi_set \

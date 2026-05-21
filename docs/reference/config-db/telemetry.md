@@ -127,7 +127,7 @@ TELEMETRY|gnmi         # gNMI サーバオプション
 
 <!-- evidence: sonic-gnmi/gnmi_server/server.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22 L381-643 -->
 
-- **起動時のみ参照**: `telemetry` コンテナは起動時に CONFIG_DB を一回読み込む。実行中の変更はコンテナ再起動（`systemctl restart telemetry`）なしには反映されない。
+- **起動時のみ参照**: `telemetry` コンテナは起動時に CONFIG_DB を1回読み込む。実行中の変更はコンテナ再起動（`systemctl restart telemetry`）なしには反映されない。
 - **ポート未設定でサーバ不起動**: `port` が 0 以下かつ `unix_socket` も未設定の場合、`"no listener configured: port must be > 0 or unix_socket must be set"` を返してサーバが起動しない。
 - **TCP / UDS リスナー失敗時の縮退動作**: TCP listen 失敗時は `"Failed to open listener port <port>: disabling TCP listener"` を Warningf し UDS のみで継続（その逆も同様）。両方失敗した場合はサーバ起動エラーになる。
 - **TLS 証明書の不整合**: `server_crt` / `server_key` のいずれか一方のみ設定されていると `"server certificate or key file path is empty"` を返す。証明書ファイルが存在しない場合も stat エラーを返してサーバが起動しない。
@@ -173,7 +173,7 @@ telemetry サービスが有効の場合のみ `TELEMETRY` テーブルを消費
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
-| `telemetry` | `server_crt` / `server_key` フィールドあり | TLS 有効で gNMI サーバー起動 | `telemetry` |
+| `telemetry` | `server_crt` / `server_key` フィールドあり | TLS 有効で gNMI サーバ起動 | `telemetry` |
 | `telemetry` | TLS 設定なし | 平文または insecure モードで起動 | `telemetry` |
 | `telemetry` | `client_auth==jwt` | JWT 認証ミドルウェアを有効化 | `telemetry` |
 | `telemetry` | `client_auth==cert` | クライアント証明書認証を有効化 | `telemetry` |
@@ -581,7 +581,7 @@ Saving startup config failed: <err>
 
 `TELEMETRY` テーブルに対する **継続的な [Redis](../../reference/glossary.md#term-redis) pub/sub 購読は存在しない**。`hostcfgd` / `swsscommon.SubscriberStateTable` / `ConfigDBConnector.subscribe()` / `listen()` は一切使用しない。
 
-`telemetry` コンテナは起動時に `sonic-cfggen -d -t telemetry_vars.j2` を一回実行して `TELEMETRY|certs` / `TELEMETRY|gnmi` を JSON でスナップショット取得し、その値を `telemetry` バイナリへのコマンドライン引数に変換して起動する。起動後は CONFIG_DB を参照しない。
+`telemetry` コンテナは起動時に `sonic-cfggen -d -t telemetry_vars.j2` を1回実行して `TELEMETRY|certs` / `TELEMETRY|gnmi` を JSON でスナップショット取得し、その値を `telemetry` バイナリへのコマンドライン引数に変換して起動する。起動後は CONFIG_DB を参照しない。
 
 | テーブル | 購読方式 | 購読者 | タイミング |
 |---------|---------|--------|-----------|

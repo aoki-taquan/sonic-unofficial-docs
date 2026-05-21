@@ -142,7 +142,7 @@ EVENT|<id>
 | `resource` | string | `""` | イベント発生源 (インタフェース名・IP アドレス等) |
 | `severity` | string | evprofile 由来 | イベント重大度 |
 | `revision` | uint64 | `0` | evprofile の `revision` と一致 |
-| `acknowledged` | boolean | `false` | ALARM テーブルのみ。ユーザー確認フラグ |
+| `acknowledged` | boolean | `false` | ALARM テーブルのみ。ユーザ確認フラグ |
 
 ### ALARM_STATS テーブル
 
@@ -522,7 +522,7 @@ systemctl restart eventd
 
 ### SAI・プラットフォーム依存なし（全 ASIC 共通）
 
-`eventd` は [SAI](../../reference/glossary.md#term-sai) API を呼び出さず、`getenv("platform")` 参照もなく、`#ifdef` によるプラットフォーム分岐も存在しない。ZMQ ブローカーとして Redis DB（EVENT_DB / COUNTERS_DB）への書き込みのみを行う純粋なユーザー空間デーモンであるため、**[ASIC](../../reference/glossary.md#term-asic) ベンダー・ハードウェア世代・スイッチチップの種類によって挙動は変わらない**[^4]。
+`eventd` は [SAI](../../reference/glossary.md#term-sai) API を呼び出さず、`getenv("platform")` 参照もなく、`#ifdef` によるプラットフォーム分岐も存在しない。ZMQ ブローカーとして Redis DB（EVENT_DB / COUNTERS_DB）への書き込みのみを行う純粋なユーザ空間デーモンであるため、**[ASIC](../../reference/glossary.md#term-asic) ベンダー・ハードウェア世代・スイッチチップの種類によって挙動は変わらない**[^4]。
 
 | プラットフォーム要素 | eventd の依存 |
 |---------------------|--------------|

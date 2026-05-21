@@ -313,7 +313,7 @@ SSH_CONFIG_NAMES = {
 
 | 定数名 | 値 | 用途 |
 |-------|----|------|
-| `SSH_CONFG` | `/etc/ssh/sshd_config` | SSH サーバー設定ファイル（読み書き） |
+| `SSH_CONFG` | `/etc/ssh/sshd_config` | SSH サーバ設定ファイル（読み書き） |
 | `SSH_CONFG_TMP` | `/etc/ssh/sshd_config.tmp` | 検証用一時ファイル |
 | `PAM_LIMITS_CONF_TEMPLATE` | `/usr/share/sonic/templates/pam_limits.j2` | PAM limits Jinja2 テンプレート |
 | `LIMITS_CONF_TEMPLATE` | `/usr/share/sonic/templates/limits.conf.j2` | limits.conf Jinja2 テンプレート |

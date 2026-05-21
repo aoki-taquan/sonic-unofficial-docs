@@ -485,7 +485,7 @@ stpmgrd 自身の warm-reboot reconcile フェーズは **事実上スタブ** �
 IPC 送信失敗後もエントリは `consumer.m_toSync.erase(it)` で消費され、**リトライなし・silent discard** となる。
 
 !!! warning "IPC 失敗は CONFIG_DB 書込み成功後に発生する"
-    `config spanning-tree` CLI は CONFIG_DB 書込みで正常終了するが、stpmgrd → stpd の IPC 送信が失敗した場合はエラーがユーザーに通知されない。BPDU 挙動や STP ポート状態が CONFIG_DB と乖離したまま syslog にのみ ERROR が記録される。
+    `config spanning-tree` CLI は CONFIG_DB 書込みで正常終了するが、stpmgrd → stpd の IPC 送信が失敗した場合はエラーがユーザに通知されない。BPDU 挙動や STP ポート状態が CONFIG_DB と乖離したまま syslog にのみ ERROR が記録される。
 
 ---
 

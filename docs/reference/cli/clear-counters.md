@@ -99,7 +99,7 @@ def queuecounters():
 ## 既知の動作・今後の変更予定
 
 !!! note "switch ingress drop monitoring はデフォルト無効 (issue [#3923](https://github.com/sonic-net/sonic-utilities/issues/3923))"
-    switch ingress drop のモニタリング（`sonic-clear dropcounters` で管理する drop counter のデフォルト有効化）は HLD PR#1912 で「デフォルト有効にすべき」と提案されているが、2026年5月時点では実装されていない。現在はユーザーが明示的に drop counter を設定・有効化する必要がある。
+    switch ingress drop のモニタリング（`sonic-clear dropcounters` で管理する drop counter のデフォルト有効化）は HLD PR#1912 で「デフォルト有効にすべき」と提案されているが、2026年5月時点では実装されていない。現在はユーザが明示的に drop counter を設定・有効化する必要がある。
 
 <!-- cli-mermaid -->
 ### データフロー (手動作成)

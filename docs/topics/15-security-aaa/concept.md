@@ -43,8 +43,8 @@ related:
 
 AAA（Authentication / Authorization / Accounting）は、SONiC では Linux の PAM/NSS を介して TACACS+ / RADIUS / LDAP / local の各バックエンドに振り分けられます。詳細な実装は [AAA improvements](../../management/aaa-improvements.md) に集約されており、login flow とフォールバック順序の改善が議論されています。
 
-- Authentication: ユーザーが本人であることの確認。`login_method` で複数のバックエンドを順序付けます。
-- Authorization: そのユーザーが実行できるコマンドの範囲。TACACS+ の per-command 認可や、local の sudoers でカバーされます。
+- Authentication: ユーザが本人であることの確認。`login_method` で複数のバックエンドを順序付けます。
+- Authorization: そのユーザが実行できるコマンドの範囲。TACACS+ の per-command 認可や、local の sudoers でカバーされます。
 - Accounting: 実行履歴のログ送信。主に TACACS+ で利用されます。
 
 local user の取り扱いは [password hardening 設計](../../architecture/pw-hardening-design.md) と [default credential management](../../management/default-credential-management-for-california-sb-327-conformance.md) で別途厳格化されています。これは初期パスワードや弱いパスワードの利用を防ぐためのもので、認証バックエンドの選択とは独立した層です。
@@ -160,7 +160,7 @@ sequenceDiagram
 | [VRF / management VRF](../04-vrf-ecmp/index.md) | 管理通信の経路隔離。AAA の到達経路に影響するが認証自体はこの章 |
 | [GNMI / OpenConfig](../10-gnmi-openconfig/index.md) | [gNMI](../../reference/glossary.md#term-gnmi) 側 client 認証は TLS + cert 中心で、本章の PAM とは独立した認証経路 |
 | [Reboot / Lifecycle](../11-reboot/index.md) | secure upgrade の手順は 11 章。「信頼チェーン」の理屈は本章 |
-| データ暗号化（IPSec / TLS） | SONiC でユーザーが直接設定する範囲では大きくない。MACsec はリンク単位の L2 暗号で別物 |
+| データ暗号化（IPSec / TLS） | SONiC でユーザが直接設定する範囲では大きくない。MACsec はリンク単位の L2 暗号で別物 |
 | Linux 一般の hardening（kernel / sysctl） | SONiC では SAI / [orchagent](../../reference/glossary.md#term-orchagent) のセキュリティが上に乗るためここで補強する |
 
 ### 読了後にできるようになること

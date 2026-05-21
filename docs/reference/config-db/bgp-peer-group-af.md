@@ -304,7 +304,7 @@ BGP_NEIGHBOR_AF と同一の `sonic-bgp-cmn-af` grouping を uses するため�
 
 - **`BGP_PEER_GROUP` の事前確認なし**: `BGP_PEER_GROUP_AF` 処理は peer-group の自動作成を行わない。`BGP_PEER_GROUP` が bgpd に先行登録されていない場合、AF コマンドは bgpd に拒否される（ #2 ）。
 - **[ROUTE_MAP](../../reference/glossary.md#term-route_map) の依存関係チェックなし**: frrcfgd は `route_map_in` / `route_map_out` 等の参照先 [ROUTE_MAP](../../reference/glossary.md#term-route_map) を事前検証しない。bgpd 投入後に初めてエラーが判明し、ROUTE_MAP が後から定義されても再投入されない（ #4 ）。
-- **運用中 retry ゼロ**: 全失敗パスで `continue` のみ。CONFIG_DB エントリを残したまま次イベントへ進む。整合性回復はユーザーによる再 SET が必要。
+- **運用中 retry ゼロ**: 全失敗パスで `continue` のみ。CONFIG_DB エントリを残したまま次イベントへ進む。整合性回復はユーザによる再 SET が必要。
 - **推奨書き込み順**: `BGP_GLOBALS` → `BGP_GLOBALS_AF` → `ROUTE_MAP` → `BGP_PEER_GROUP` → `BGP_PEER_GROUP_AF`
 <!-- /failure -->
 <!-- defaults -->

@@ -154,7 +154,7 @@ systemctl list-units '*.service' | grep -i package
 
 ### テレメトリサービスが SONiC バージョンアップグレード後に停止する問題（sonic-buildimage#5955）
 
-テレメトリサービスが SONiC バージョンアップグレード後に停止する問題。[gNMI](../reference/glossary.md#term-gnmi) サーバーの証明書やポート設定が新バージョンで変更されている場合がある
+テレメトリサービスが SONiC バージョンアップグレード後に停止する問題。[gNMI](../reference/glossary.md#term-gnmi) サーバの証明書やポート設定が新バージョンで変更されている場合がある
 
 - 参照: [sonic-net/sonic-buildimage#5955](https://github.com/sonic-net/sonic-buildimage/issues/5955)
 

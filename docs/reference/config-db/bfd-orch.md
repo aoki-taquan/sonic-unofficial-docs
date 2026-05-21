@@ -282,7 +282,7 @@ else
 
 ## 関連リファレンス
 
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BFD_SESSION`](bfd-session.md) — CONFIG_DB 側のユーザー設定テーブル
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`BFD_SESSION`](bfd-session.md) — CONFIG_DB 側のユーザ設定テーブル
 - CONFIG_DB: [`BGP_DEVICE_GLOBAL`](bgp-device-global.md) — `use_software_bfd` / TSA フラグ
 - STATE_DB: [`BFD_SESSION_TABLE`](bfd-state.md) — bfdorch が書き込むランタイム状態テーブル
 
@@ -530,7 +530,7 @@ APPL_DB `BFD_SESSION_TABLE` に対応する [YANG](../../reference/glossary.md#t
 
 ### 補足
 
-- **`return true` vs `return false`**: `true` は task を **consume** (再試行なし)、`false` は **retry 対象**。`local_addr` 未指定 / `dst_mac` 制約違反など「ユーザー設定上の誤り」は `true` (drop)、PORT/VRF 未準備など「依存リソースの一時的未到達」は `false` (retry) という設計。
+- **`return true` vs `return false`**: `true` は task を **consume** (再試行なし)、`false` は **retry 対象**。`local_addr` 未指定 / `dst_mac` 制約違反など「ユーザ設定上の誤り」は `true` (drop)、PORT/VRF 未準備など「依存リソースの一時的未到達」は `false` (retry) という設計。
 - **UDP src port retry**: `NUM_BFD_SRCPORT_RETRIES = 3`、ポート範囲 49152–65535。`update_port_number()` が `bfd_src_port()` で port を再生成して attrs を上書き (`bfdorch.cpp:577-606`)。
 - **capability 不在は再起動が必要**: `register_bfd_state_change_notification()` の評価は `BfdOrch` コンストラクタで 1 回のみ。capability 不在のまま swss 起動した場合、SAI 実装が後で更新されても **swss コンテナ再起動なしには hardware BFD は動かない**。
 - **`use_software_bfd` 経路では SAI 失敗は発生しない**: SAI API を呼ばず STATE_DB `SOFTWARE_BFD_SESSION_TABLE` に転記するのみ (`bfdorch.cpp:133-139, 182-188`)。失敗経路は事前検証 (`local_addr` 未指定など) のみに縮小される。

@@ -411,7 +411,7 @@ DBConnector PbhCapabilities::stateDb(PBH_STATE_DB_NAME, PBH_STATE_DB_TIMEOUT);
 Table PbhCapabilities::capTable(&stateDb, STATE_PBH_CAPABILITIES_TABLE_NAME);
 ```
 
-書き込み後に Redis サーバーが keyspace 通知 (`__keyspace@6__:PBH_CAPABILITIES|*`) を発火しうるが、それを購読するプロセスは現行実装に存在しない。
+書き込み後に Redis サーバが keyspace 通知 (`__keyspace@6__:PBH_CAPABILITIES|*`) を発火しうるが、それを購読するプロセスは現行実装に存在しない。
 
 ### 読み取り側 (sonic-utilities) の通信方式
 

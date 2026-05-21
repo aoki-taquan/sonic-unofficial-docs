@@ -581,7 +581,7 @@ DashAclOrch::doTask(ConsumerBase&)  ← テーブル名で分岐
   └─ DASH_ACL_RULE_TABLE  → taskUpdateDashAclRule
 ```
 
-`ZmqConsumer::execute()` はソケットイベント駆動で即座に wake up する（明示的な SELECT_TIMEOUT なし）。`ordered_queue = false`（デフォルト）のため `pops()` → `addToSync()` → `drain()` の一回し処理。
+`ZmqConsumer::execute()` はソケットイベント駆動で即座に wake up する（明示的な SELECT_TIMEOUT なし）。`ordered_queue = false`（デフォルト）のため `pops()` → `addToSync()` → `drain()` の1回し処理。
 
 ### ZMQ 無効時のデータフロー
 

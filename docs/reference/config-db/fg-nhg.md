@@ -419,7 +419,7 @@ FG_NHG|<name>          ← 最後に削除
     `bucket_size` が 0 の場合、`return true` でエントリが Consumer キューから外れる。設定エラーは syslog の `SWSS_LOG_ERROR` 以外に通知されないため見落としに注意。
 
 !!! note "nexthop 未解決は自動 retry"
-    neighOrch での nexthop 未解決は `return false` によりキューに残り、ARP/NDP 解決後に自動で再処理される。ユーザー操作不要。
+    neighOrch での nexthop 未解決は `return false` によりキューに残り、ARP/NDP 解決後に自動で再処理される。ユーザ操作不要。
 
 <!-- /failure -->
 

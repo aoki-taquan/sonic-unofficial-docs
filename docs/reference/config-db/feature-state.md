@@ -147,7 +147,7 @@ Kubernetes (`set_owner = kube`) 使用時の状態遷移:
 
 | プロセス | 参照フィールド | 用途 |
 |---------|-------------|------|
-| `show feature status` (`sonic-utilities`) | 全フィールド | ユーザー向け機能状態表示 |
+| `show feature status` (`sonic-utilities`) | 全フィールド | ユーザ向け機能状態表示 |
 | `container_checker` (`monit`) | `container_id` | 実行中コンテナの監視。`container_id` が非空 → 実行中と判定 |
 | `ctrmgrd` | `remote_state`, `current_owner`, `container_id`, `container_version` | Kubernetes 連携の状態管理 |
 | `container_startup.py` | `system_state`, `remote_state`, `container_version` | コンテナ起動判断 |

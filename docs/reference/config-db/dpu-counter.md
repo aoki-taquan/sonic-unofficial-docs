@@ -379,7 +379,7 @@ if (fc_status != prev_enabled)
 | `ENI_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"ENI_STAT_COUNTER"` | FLEX_COUNTER_DB のグループキー。CONFIG_DB キー `ENI` と FLEX_COUNTER_DB グループ名のマッピング | `dashorch.h:29` |
 | `METER_STAT_COUNTER_FLEX_COUNTER_GROUP` | `"METER_STAT_COUNTER"` | FLEX_COUNTER_DB のグループキー。CONFIG_DB キー `DASH_METER` と FLEX_COUNTER_DB グループ名のマッピング | `dashorch.h:32` |
 
-ユーザーが CONFIG_DB で指定する `ENI` / `DASH_METER` キーとは異なる内部文字列であり、YANG / CONFIG_DB でオーバーライド不可。
+ユーザが CONFIG_DB で指定する `ENI` / `DASH_METER` キーとは異なる内部文字列であり、YANG / CONFIG_DB でオーバーライド不可。
 
 ### ポーリングインターバルデフォルト値
 

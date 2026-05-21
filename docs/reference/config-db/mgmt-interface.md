@@ -130,13 +130,13 @@ MGMT_INTERFACE|<name>|<ip_prefix>
 
 `forced_mgmt_routes` が空リストの場合、`interfaces.j2` の for ループが何も出力しない (no-op)。
 
-### 暗黙の SYSLOG_SERVER ルート注入 (ユーザー不可視)
+### 暗黙の SYSLOG_SERVER ルート注入 (ユーザ不可視)
 
 `interfaces.j2` L101-113:
 - `SYSLOG_SERVER` が設定されていれば syslog サーバ IP への policy routing rule を mgmt table に追加
 - `SYSLOG_SERVER` が**未設定**の場合、`10.20.6.16/32` が **ハードコード**で mgmt VRF / default table に自動注入される
 
-この挙動は `forced_mgmt_routes` に記載されず、ユーザーには不可視。
+この挙動は `forced_mgmt_routes` に記載されず、ユーザには不可視。
 
 ### IPv6 デフォルトテーブル参照ルール
 
@@ -473,7 +473,7 @@ CONFIG_DB MGMT_INTERFACE|eth0|<ip_prefix> (SET/DEL)
 
 ### STATE_DB ゲートと二重ロック
 
-`doIntfAddrTask`（`intfmgr.cpp:1099`）は ip_prefix ロウを処理する前に二つのガードを通過する必要がある。
+`doIntfAddrTask`（`intfmgr.cpp:1099`）は ip_prefix ロウを処理する前に2つのガードを通過する必要がある。
 
 1. `isIntfStateOk(alias)`（`L1115`）: `STATE_PORT_TABLE[eth0].state` が存在するまで待機。`portmgrd` が eth0 を up 認識した後に書き込む。
 2. `isIntfCreated(alias)`（`L1115`、`L295`）: `STATE_INTERFACE_TABLE[eth0]` にエントリが存在するまで待機。`doIntfGeneralTask` 成功後に `L1054` で書き込まれる。
