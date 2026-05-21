@@ -1,6 +1,6 @@
 ---
 title: sonic-passwh YANG
-description: sonic-passwh YANG — Password hardening policy YANG module for SONiC OS. ローカルユーザーパスワードの複雑さ・有効期限・履歴ポリシーを定義する。
+description: sonic-passwh YANG — Password hardening policy YANG module for SONiC OS. ローカルユーザパスワードの複雑さ・有効期限・履歴ポリシーを定義する。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

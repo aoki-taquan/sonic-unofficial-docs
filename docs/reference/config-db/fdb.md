@@ -212,7 +212,7 @@ FDB|<VlanName>|<MAC>
 
 ```mermaid
 flowchart LR
-  User["ユーザー / swssconfig"]
+  User["ユーザ / swssconfig"]
   CDB[("CONFIG_DB<br/>FDB")]
   APPDB[("APPL_DB<br/>FDB_TABLE")]
   FdbOrch["orchagent<br/>FdbOrch"]
