@@ -15,6 +15,8 @@ extend-ignore-re = [
     "-->",
     # コードフェンス内の生コード（行単位ではなく block 単位検出が望ましいが、簡易版）
     "`[^`]+`",
+    # 末尾省略 (…) で word が途中で切られた表示 (auto-generated sitemap 等)。
+    "\\b[A-Za-z][A-Za-z]+…",
 ]
 
 [default.extend-words]
@@ -50,7 +52,6 @@ hamgrd = "hamgrd"
 
 # 上流 SONiC コードに実在する typo を忠実に引用するため除外。
 # 直すべきは上流側で、本ドキュメントは追従するだけ。
-Notifiction = "Notifiction"
 notifiction = "notifiction"
 
 # SONiC のフィールド名・パラメータ名 (典型的に short form)
@@ -88,13 +89,91 @@ isis = "isis"
 mpls = "mpls"
 bfd = "bfd"
 
-# Cuban / 紛らわしい英単語
-nd = "nd"
-ND = "ND"      # neighbor discovery
-fe = "fe"
-FE = "FE"
-ot = "ot"      # OT may appear in tables
-OT = "OT"
+# 紛らわしい英単語 (case 違いは crate-ci/typos 側で自動展開される)
+nd = "nd"          # ND = neighbor discovery
+fe = "fe"          # FE = front engine 等
+ot = "ot"          # OT = operational technology
+
+# SONiC / Networking 略語・ハードウェア用語。typo として誤検知される短い略語。
+# SerDes (Serializer/Deserializer)、SER (Single Error Recovery, BRCM Th3),
+# AER (Advanced Error Reporting, PCIe), AKE (Redis keyspace event flag),
+# BA (Behavior Aggregate / iteration code 等),
+# OER (Outer Extinction Ratio, optic), OIF (Optical Internetworking Forum),
+# PN (Part Number / packet number), fand (旧 HLD daemon 名), cacl (caclmgrd)。
+ser = "ser"        # SerDes / SER / ser2net
+aer = "aer"
+ake = "ake"
+ba = "ba"
+oer = "oer"
+oif = "oif"
+pn = "pn"
+hpe = "hpe"
+ist = "ist"
+issu = "issu"
+fand = "fand"
+cacl = "cacl"
+
+# 上流 SONiC コード / GitHub issue タイトル / 関数名に実在するスペル。
+# 直すべきは上流側で、本ドキュメントは追従するだけ。
+eerpom = "eerpom"
+indroduction = "indroduction"
+managment = "managment"
+ehancements = "ehancements"
+chasiss = "chasiss"
+parms = "parms"
+unsupport = "unsupport"
+subcriber = "subcriber"
+intialization = "intialization"
+connetions = "connetions"
+confg = "confg"
+releated = "releated"
+chage = "chage"               # Linux chage コマンド (実在 binary)
+neigbor = "neigbor"           # FRR 内ログ文字列
+notfiy = "notfiy"             # bufferorch.cpp 上流ログ
+pice = "pice"                 # sonic_pice (上流 dir 名)
+advertisor = "advertisor"     # 上流 helper 名
+extention = "extention"       # sonic-application-extention-hld.md 参照
+continous = "continous"       # 上流 issue タイトル
+occuring = "occuring"         # 上流 issue タイトル
+pasttime = "pasttime"         # natsyncd 変数名
+suppported = "suppported"     # frr コードコメント
+configur = "configur"         # backlog gen の prefix 部分文字列マッチ用
+deprecat = "deprecat"         # script 内の正規表現 prefix
+mis = "mis"                   # "mis-parsed" コメント
+ubernetes = "ubernetes"       # k(ubernetes|vm) regex
+infor = "infor"               # MCLAG infor_len フィールド名
+
+# GitHub issue タイトル / sitemap description の cell 幅切り出し残骸。
+complie = "complie"
+incorrent = "incorrent"
+happend = "happend"
+faile = "faile"
+refere = "refere"
+aliase = "aliase"
+doens = "doens"
+erro = "erro"
+actve = "actve"
+updatin = "updatin"
+assigne = "assigne"
+featur = "featur"
+requrement = "requrement"
+initizalize = "initizalize"
+initated = "initated"
+erros = "erros"
+trafic = "trafic"
+configurtions = "configurtions"
+updat = "updat"
+debia = "debia"
+loca = "loca"
+routin = "routin"
+fram = "fram"
+syste = "syste"
+contex = "contex"
+ove = "ove"
+interfac = "interfac"
+fo = "fo"
+serial = "serial"
+devic = "devic"
 
 [files]
 extend-exclude = [
@@ -111,4 +190,15 @@ extend-exclude = [
     "meta/built-links-report.md",
     "meta/discrepancy-related-yang-report.md",
     "meta/frontmatter-lint-report*.md",
+    # GitHub issue タイトル一覧テーブル。タイトル末尾が cell 幅で切られて
+    # truncated word が大量に出るため、ファイル単位で除外。
+    "meta/_intermediate/issues/_decisions/*.md",
+    # auto-generated sitemap。description 末尾が … で切られた word を含む。
+    "docs/_meta/sitemap.md",
+    # 上流 typo の意図的引用や iteration コード (BA-BD 等) が多い。
+    "meta/triage-self-consistency.md",
+    "meta/quality-criticism.md",
+    "meta/roadmap-v2.md",
+    "meta/quality-audit-51.md",
+    "meta/quality-audit-52.md",
 ]

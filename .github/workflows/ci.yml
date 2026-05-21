@@ -53,17 +53,14 @@ jobs:
           if-no-files-found: ignore
 
   # タイポ検知 (crate-ci/typos)。設定は .typos.toml。
-  # SONiC エコシステム用語は extend-words で除外。
-  # 初期は informational で運用（既存ドキュメントに既に多数の typo 蓄積あり、
-  # 段階的に修正していく）、件数が落ち着いたら strict に切り替える。
+  # SONiC エコシステム用語は extend-words / extend-ignore-re / extend-exclude
+  # で除外。既知 245 件の typo を整理して strict 化済み。
   typos:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-      - name: typos check (informational)
+      - name: typos check (strict)
         uses: crate-ci/typos@master
-        continue-on-error: true
         with:
           files: docs meta README.md CONTRIBUTING.md
           config: .typos.toml
