@@ -59,20 +59,27 @@ def parse_pages(pages_path: Path) -> tuple[list[str], bool]:
     nav = data.get("nav") or []
     entries: list[str] = []
     wildcard = False
-    for item in nav:
-        if isinstance(item, dict):
-            # awesome-pages allows `- Title: path.md`
-            for _, v in item.items():
-                if isinstance(v, str):
-                    if v.strip() == "...":
-                        wildcard = True
-                    else:
-                        entries.append(v.strip())
-        elif isinstance(item, str):
-            if item.strip() == "...":
-                wildcard = True
-            else:
-                entries.append(item.strip())
+
+    def walk(items: list) -> None:
+        nonlocal wildcard
+        for item in items:
+            if isinstance(item, dict):
+                # awesome-pages allows `- Title: path.md` or `- Title: [list...]`
+                for _, v in item.items():
+                    if isinstance(v, str):
+                        if v.strip() == "...":
+                            wildcard = True
+                        else:
+                            entries.append(v.strip())
+                    elif isinstance(v, list):
+                        walk(v)
+            elif isinstance(item, str):
+                if item.strip() == "...":
+                    wildcard = True
+                else:
+                    entries.append(item.strip())
+
+    walk(nav)
     return entries, wildcard
 
 
