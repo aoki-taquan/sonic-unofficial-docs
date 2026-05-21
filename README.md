@@ -1,5 +1,9 @@
 # sonic-unofficial-docs
 
+[![CI](https://github.com/aoki-taquan/sonic-unofficial-docs/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aoki-taquan/sonic-unofficial-docs/actions/workflows/ci.yml?query=branch%3Amain)
+[![Deploy](https://github.com/aoki-taquan/sonic-unofficial-docs/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/aoki-taquan/sonic-unofficial-docs/actions/workflows/deploy.yml?query=branch%3Amain)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+
 [SONiC NOS](https://github.com/sonic-net/SONiC) の日本語非公式ドキュメント。
 
 **公開サイト**: <https://aoki-taquan.github.io/sonic-unofficial-docs/>
@@ -28,7 +32,7 @@
 - 方針: 公式 HLD の翻訳ではなく **再構成**。HLD・実コード・issue を横断して、読み手が探す単位でページを書き直す
 - 一次情報の引用を必須とし、各ページに裏取りステータスのバッジを付与する
 
-詳しい運用ルールは [`CONTRIBUTING.md`](./CONTRIBUTING.md) を参照。
+詳しい運用ルールは [`CONTRIBUTING.md`](./CONTRIBUTING.md) を参照。リポジトリ管理者向けの branch protection 設定は [`meta/branch-protection.md`](./meta/branch-protection.md) を参照。
 
 ## 公開状態
 
