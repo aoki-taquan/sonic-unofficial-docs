@@ -1,17 +1,20 @@
 nav:
   - index.md
-  - getting-started.md
-  - about.md
-  - guides
-  - topics
-  - architecture
-  - routing
-  - switching
-  - overlay
-  - acl-qos
-  - system
-  - management
-  - platform
-  - internals
-  - reference
-  - categories
+  - はじめに:
+      - getting-started.md
+      - about.md
+      - guides
+  - Topics: topics
+  - 機能別:
+      - architecture
+      - routing
+      - switching
+      - overlay
+      - acl-qos
+      - system
+      - management
+      - platform
+      - internals
+  - リファレンス:
+      - reference
+      - categories

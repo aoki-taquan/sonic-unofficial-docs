@@ -145,7 +145,13 @@ def build_banner() -> str:
     return "\n".join(lines)
 
 
+OPT_OUT_MARKER = "<!-- no-quality-banner -->"
+
+
 def replace_banner(original: str, new_banner: str) -> str:
+    if OPT_OUT_MARKER in original:
+        # ページ側が明示的に「banner を載せない」と宣言している → no-op
+        return original
     if MARK_START not in original or MARK_END not in original:
         # 既存のレガシー admonition（`!!! success "最新の品質状態"` ブロック）を
         # 検出して置換する

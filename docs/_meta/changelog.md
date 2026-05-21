@@ -2,7 +2,7 @@
 title: 変更履歴
 description: "変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。"
 verification: meta
-last_verified: 2026-05-20
+last_verified: 2026-05-21
 tags:
   - changelog
   - meta
@@ -23,6 +23,12 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-21 #4781 chore: add CI badges to README + branch protection setup doc
+- 2026-05-21 #4780 chore: fix textlint/prh violations and flip textlint CI to strict
+- 2026-05-21 #4779 chore: fix typos and flip typos CI to strict
+- 2026-05-20 #4778 chore: add lychee + textlint+prh CI checks (Phase 2)
+- 2026-05-20 #4777 chore: add invisible-char / typos / ruff CI checks (Phase 1)
+- 2026-05-20 #4764 docs: doc-review fixes (batch 027)
 - 2026-05-20 #4758 docs: doc-review fixes (batch 004)
 - 2026-05-20 #4762 docs: doc-review fixes (batch 036)
 - 2026-05-20 #4771 docs: doc-review fixes (batch 032)
@@ -511,16 +517,10 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3575 docs(config-db): add Phase F side-effects block to heartbeat
 - 2026-05-19 #3574 docs(config-db): add Phase G pubsub block to state-vrf
 - 2026-05-19 #3573 docs(config-db): add Phase D failure-behavior block to pg-watermark
-- 2026-05-19 #3563 docs(config-db): add Phase E hardcoded-constants block to DEVICE_NEIGHBOR_METADATA
 - 2026-05-19 #3572 docs(config-db): add Phase F side-effects block to state-db-port
 - 2026-05-19 #3571 docs(config-db): add Phase H platform-diff block to portchannel-status
 - 2026-05-19 #3570 docs(config-db): add Phase E hardcoded-constants block to heartbeat
 - 2026-05-19 #3569 docs(config-db): add Phase H platform block to voq-inband-interface
 - 2026-05-19 #3568 docs(config-db): add Phase H platform block to nat-counters
 - 2026-05-19 #3567 docs(config-db): add Phase H platform block to dpu-state-detail
-- 2026-05-19 #3566 docs(config-db): add Phase F side-effects block to dhcpv4-relay
-- 2026-05-19 #3565 docs(config-db): add Phase D failure-behavior block to HARDWARE page
-- 2026-05-19 #3564 docs(config-db): add Phase F side-effects block to nhg (NEXTHOP_GROUP_TABLE)
-- 2026-05-19 #3562 docs(config-db): add Phase G pubsub block to scheduler-orch
-- 2026-05-19 #3561 docs(config-db): add Phase H platform block to passw-hardening
 
