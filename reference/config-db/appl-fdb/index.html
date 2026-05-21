@@ -36820,7 +36820,7 @@
 <ul>
 <li><strong><code>port</code> 省略時</strong>: <code>addFdbEntry()</code> でポート解決が失敗し、エントリが追加されない。エラーログ出力。</li>
 <li><strong><code>type</code> の assert チェック</strong>: <code>fdborch.cpp:830</code> で無効な type 値はプロセスクラッシュを引き起こす。</li>
-<li><strong><code>dynamic_local</code></strong>: <a href="../../glossary/#term-mclag">MCLAG</a> ピアから受信した MAC を aging 対象として扱うための内部値。ユーザーが直接設定することは想定されていない。</li>
+<li><strong><code>dynamic_local</code></strong>: <a href="../../glossary/#term-mclag">MCLAG</a> ピアから受信した MAC を aging 対象として扱うための内部値。ユーザが直接設定することは想定されていない。</li>
 <li><strong>FDB_ORIGIN と type の組み合わせ</strong>: <code>{"static", FDB_ORIGIN_LEARN}</code> は無効な組み合わせとしてコメントされている (<code>fdborch.h:57</code>)。</li>
 </ul>
 <!-- ordering -->

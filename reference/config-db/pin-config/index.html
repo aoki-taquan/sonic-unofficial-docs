@@ -36550,7 +36550,7 @@
 <h1 id="p4rt-pins-p4rt">P4RT テーブル（PINS p4rt 設定）<a class="headerlink" href="#p4rt-pins-p4rt" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><a href="../../glossary/#term-pins">PINS</a>（P4 Integrated Network Stack）の <strong>P4Runtime gRPC サーバ設定</strong>を保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
-<code>p4rt</code> コンテナ（<code>docker-sonic-p4rt</code>）が起動時に <a href="../../glossary/#term-config_db">CONFIG_DB</a> を一回読み込み、
+<code>p4rt</code> コンテナ（<code>docker-sonic-p4rt</code>）が起動時に <a href="../../glossary/#term-config_db">CONFIG_DB</a> を1回読み込み、
 gRPC ポート・TLS 証明書・認可ポリシー・genetlink 設定などを <code>p4rt</code> バイナリの起動引数に変換する。</p>
 <p>専用 <a href="../../glossary/#term-yang">YANG</a> モデルは存在しない。スキーマ強制は <code>p4rt.sh</code> 内の <code>jq</code> 参照のみで実装される。</p>
 <!-- cdb-mermaid -->
@@ -36770,7 +36770,7 @@ gRPC ポート・TLS 証明書・認可ポリシー・genetlink 設定などを 
 <!-- cdb-exceptions -->
 <h2 id="_11">例外条件・特殊挙動<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>起動時のみ参照</strong>: <code>p4rt</code> コンテナは起動時に一回だけ <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み込む。設定変更は <code>systemctl restart p4rt</code> まで反映されない。</li>
+<li><strong>起動時のみ参照</strong>: <code>p4rt</code> コンテナは起動時に1回だけ <a href="../../glossary/#term-config_db">CONFIG_DB</a> を読み込む。設定変更は <code>systemctl restart p4rt</code> まで反映されない。</li>
 <li><strong>YANG モデルなし</strong>: スキーマ検証がない。不明フィールドは <code>jq</code> が <code>// empty</code> として無視し、対応するバイナリ引数が渡されない。</li>
 <li><strong><code>server_crt</code> / <code>server_key</code> 片方のみ</strong>: 両方揃わないと <code>--use_insecure_server_credentials</code> にフォールバックする（証明書エラーではなく insecure 起動）。</li>
 <li><strong><code>authz_policy</code> 未設定</strong>: 認可ポリシーなし（全 <a href="../../glossary/#term-p4rt">P4RT</a> クライアントが管理者相当で接続可能）。</li>
@@ -37402,7 +37402,7 @@ CONFIG_DB の <code>P4RT</code> テーブルを直接参照する経路は存在
 
 <!-- platform -->
 <h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
-<p><strong>プラットフォーム差なし</strong>。<code>P4RT</code> テーブルは <code>p4rt.sh</code> がコンテナ起動時に一回だけスナップショット読み込みする host-only 設定処理であり、<a href="../../glossary/#term-asic">ASIC</a> 種別・multi-asic / chassis 構成・ハードウェアベンダーに依存しない。</p>
+<p><strong>プラットフォーム差なし</strong>。<code>P4RT</code> テーブルは <code>p4rt.sh</code> がコンテナ起動時に1回だけスナップショット読み込みする host-only 設定処理であり、<a href="../../glossary/#term-asic">ASIC</a> 種別・multi-asic / chassis 構成・ハードウェアベンダーに依存しない。</p>
 <h3 id="_23">検証結果<a class="headerlink" href="#_23" title="Permanent link">&para;</a></h3>
 <table>
 <thead>

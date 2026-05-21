@@ -37209,7 +37209,7 @@ ERROR_DB は warm reboot をまたいで永続しない（HLD Section 6）。Orc
 </table>
 <p><strong>フォールバック動作</strong>: <code>strToStatusCode()</code> は未知文字列を受けると <code>SWSS_RC_UNKNOWN</code> を返す (<code>status_code_util.h:74-80</code>)。つまり ERROR_DB の <code>rc</code> フィールドに上記以外の文字列が書き込まれた場合、読み出し側は <code>SWSS_RC_UNKNOWN</code> として扱う。</p>
 <h3 id="err_notify-hld">ERR_NOTIFY フラグ — HLD 設計定義 (未実装)<a class="headerlink" href="#err_notify-hld" title="Permanent link">&para;</a></h3>
-<p>HLD Section 3.3.2 の ErrorListener 登録シグネチャで使われる通知フラグ。正式なビット値は HLD に未定義であり、実装ヘッダーも master に存在しない。</p>
+<p>HLD Section 3.3.2 の ErrorListener 登録シグネチャで使われる通知フラグ。正式なビット値は HLD に未定義であり、実装ヘッダも master に存在しない。</p>
 <table>
 <thead>
 <tr>
@@ -37435,7 +37435,7 @@ ERROR_DB は warm reboot をまたいで永続しない（HLD Section 6）。Orc
 </tr>
 </tbody>
 </table>
-<p>フラグの正式なビット値は HLD 未定義。master には <code>ERR_NOTIFY_*</code> 定数もヘッダーも存在しない（Phase E 参照）。</p>
+<p>フラグの正式なビット値は HLD 未定義。master には <code>ERR_NOTIFY_*</code> 定数もヘッダも存在しない（Phase E 参照）。</p>
 <h3 id="_14">通知チャンネルの動作<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <p>OrchAgent は <code>HSET</code>（失敗エントリ書込）または <code>DEL</code>（成功通知 / DEL 失敗）後に <strong>ERROR_DB 専用チャンネル</strong>へ <code>PUBLISH</code> を送る。ErrorListener は subscribe 中のチャンネルで PUBLISH を受信し、登録フラグと照合してコールバックを起動する（HLD Section 3.3.1）。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>[失敗通知]

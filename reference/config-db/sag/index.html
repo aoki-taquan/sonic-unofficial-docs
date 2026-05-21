@@ -36299,14 +36299,14 @@
 <td>4</td>
 <td>SAG MAC 変更時の IPv6 link-local route: 旧 route del → 新 route add</td>
 <td><strong>固定順序</strong> (<a href="../../glossary/#term-orchagent">orchagent</a> 内部)</td>
-<td>RouteOrch API 呼び出しで保証。ユーザーが意識する必要なし</td>
+<td>RouteOrch API 呼び出しで保証。ユーザが意識する必要なし</td>
 </tr>
 </tbody>
 </table>
 <h3 id="_7">主要な制約詳細<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <p><strong>SAG GLOBAL 先行必須 (依存 #1)</strong>: VLAN インターフェースが <code>static_anycast_gateway=true</code> に設定された時点で <code>SAG|GLOBAL.gateway_mac</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> に存在しない場合、<code>intfmgrd</code> / <code>intfsorch</code> は SAG MAC を取得できず、システム CPU MAC がそのまま使用される。<code>SAG|GLOBAL</code> が後から追加されたタイミングで runtime 再評価が走り最終的には収束する。<a href="../../glossary/#term-hld">HLD</a> 記載のシーケンス図では SAG GLOBAL 設定を先行させることが前提となっている<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p><strong>MAC 変更の 2 ステップ強制 (依存 #2)</strong>: CLI <code>config static-anycast-gateway mac_address add &lt;mac&gt;</code> は既存の <code>gateway_mac</code> が存在する場合に reject する設計。MAC の更新は <code>del &lt;old_mac&gt;</code> → <code>add &lt;new_mac&gt;</code> の 2 回の CLI 操作が必要。この間、VLAN インターフェースは CPU MAC に一時回帰する可能性がある<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p><strong>IPv6 link-local route の 2 段更新 (依存 #4)</strong>: <a href="../../glossary/#term-hld">HLD</a> に記載のとおり、MAC 変更時は旧 MAC 由来の IPv6 link-local to-me route をまず削除し、新 MAC 由来の route を追加する。この操作は <code>intfsorch</code> が <code>RouteOrch</code> の API を通じて実行し、ユーザーが意識する必要はない。ただし切替期間中は IPv6 通信が一時的に断となるリスクがある<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><strong>IPv6 link-local route の 2 段更新 (依存 #4)</strong>: <a href="../../glossary/#term-hld">HLD</a> に記載のとおり、MAC 変更時は旧 MAC 由来の IPv6 link-local to-me route をまず削除し、新 MAC 由来の route を追加する。この操作は <code>intfsorch</code> が <code>RouteOrch</code> の API を通じて実行し、ユーザが意識する必要はない。ただし切替期間中は IPv6 通信が一時的に断となるリスクがある<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>詳細は <code>meta/_intermediate/cdb-flow/sag-ordering.md</code> を参照。</p>
 <!-- /ordering -->
 
@@ -36474,7 +36474,7 @@
 </table>
 <h3 id="_9">自己回復まとめ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>CLI バリデーション失敗</strong>: DB への到達なし。ユーザーが修正して再実行。</li>
+<li><strong>CLI バリデーション失敗</strong>: DB への到達なし。ユーザが修正して再実行。</li>
 <li><strong>GLOBAL 欠如での partial 設定</strong>: runtime 再評価により最終収束。サービス断なし (システム MAC を使用)。</li>
 <li><strong><a href="../../glossary/#term-redis">Redis</a> 例外</strong>: swss コンテナ再起動 → CONFIG_DB 再投入 → 再収束。再起動中は SAG 設定が一時停止。</li>
 <li><strong>SAI 失敗</strong>: <a href="../../glossary/#term-orchagent">orchagent</a> 再起動後に再試行。失敗中は対象 VLAN RIF に SAG MAC が未反映のまま。</li>

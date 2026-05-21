@@ -37469,9 +37469,9 @@
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
-<p>hostcfgd が <code>TACPLUS_SERVER.tcp_port</code> 未設定の場合にデフォルト <code>49</code> を補完し、<code>timeout</code> 未設定の場合にデフォルト <code>5</code> を補完する。<code>priority</code> フィールドの降順 (<code>sorted(..., reverse=True)</code>) でサーバーを PAM 設定に並べる。大きい値ほど PAM の先頭に記載され高優先度として扱われる。</p>
+<p>hostcfgd が <code>TACPLUS_SERVER.tcp_port</code> 未設定の場合にデフォルト <code>49</code> を補完し、<code>timeout</code> 未設定の場合にデフォルト <code>5</code> を補完する。<code>priority</code> フィールドの降順 (<code>sorted(..., reverse=True)</code>) でサーバを PAM 設定に並べる。大きい値ほど PAM の先頭に記載され高優先度として扱われる。</p>
 <h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
-<p>hostcfgd は常時起動し <code>TACPLUS_SERVER</code> テーブルを無条件購読する。ただし <code>aaa.authentication.login</code> に <code>tacacs+</code> が含まれない場合、TACACS+ サーバー設定があっても PAM に反映されない。</p>
+<p>hostcfgd は常時起動し <code>TACPLUS_SERVER</code> テーブルを無条件購読する。ただし <code>aaa.authentication.login</code> に <code>tacacs+</code> が含まれない場合、TACACS+ サーバ設定があっても PAM に反映されない。</p>
 <!-- /derivation -->
 
 <!-- handler-branching -->
@@ -37513,7 +37513,7 @@
 <tr>
 <td><code>hostcfgd</code> TACACS+ handler</td>
 <td><code>vrf_name</code> フィールドあり</td>
-<td>VRF バインドで TACACS+ サーバーに接続</td>
+<td>VRF バインドで TACACS+ サーバに接続</td>
 <td><code>hostcfgd.py</code></td>
 </tr>
 <tr>
@@ -37590,7 +37590,7 @@
 <td><code>timeout</code></td>
 <td><code>TACPLUS_SERVER_TIMEOUT_DEFAULT</code></td>
 <td><code>"5"</code></td>
-<td><code>TACPLUS\|global</code> 未設定時に全サーバーへ fallback</td>
+<td><code>TACPLUS\|global</code> 未設定時に全サーバへ fallback</td>
 </tr>
 <tr>
 <td><code>auth_type</code></td>
@@ -37632,7 +37632,7 @@
 </table>
 <p><code>auth_type</code>、<code>timeout</code>、<code>passkey</code>、<code>vrf</code> は CLI オプションが渡された場合のみ書き込まれる。</p>
 <h3 id="global-per-server">global → per-server 継承<a class="headerlink" href="#global-per-server" title="Permanent link">&para;</a></h3>
-<p><code>modify_conf_file()</code> はサーバーごとに <code>tacplus_global.copy()</code> をベースとして per-server の値で上書きする。<code>TACPLUS|global.auth_type</code> / <code>timeout</code> / <code>passkey</code> が per-server の未設定フィールドに自動継承される。</p>
+<p><code>modify_conf_file()</code> はサーバごとに <code>tacplus_global.copy()</code> をベースとして per-server の値で上書きする。<code>TACPLUS|global.auth_type</code> / <code>timeout</code> / <code>passkey</code> が per-server の未設定フィールドに自動継承される。</p>
 <h3 id="dead-field-key_encrypt">dead field: <code>key_encrypt</code><a class="headerlink" href="#dead-field-key_encrypt" title="Permanent link">&para;</a></h3>
 <p>YANG では <code>key_encrypt</code> フィールドが両テーブルに定義されデフォルト <code>false</code>。しかし hostcfgd の <code>modify_conf_file()</code> および全テンプレートで <code>key_encrypt</code> への参照がゼロ。passkey は CONFIG_DB 値をそのまま pam_tacplus に展開する。<code>key_encrypt=true</code> に設定しても暗号化/復号処理は行われず、暗号文が secret として渡り認証失敗になる。<strong>YANG-実装 discrepancy</strong>。</p>
 <h3 id="dead-consumer-src_intf">dead consumer: <code>src_intf</code><a class="headerlink" href="#dead-consumer-src_intf" title="Permanent link">&para;</a></h3>
@@ -37768,11 +37768,11 @@
 <!-- evidence: sonic-host-services/scripts/hostcfgd@c5bbbe8b07b96f078fa4b761316627404b01bd04 L665 L728-731 L483-493 L816, sonic-host-services/data/templates/common-auth-sonic.j2 L18 -->
 
 <h3 id="priority-valueerror">不正 <code>priority</code> による設定生成中断 (ValueError)<a class="headerlink" href="#priority-valueerror" title="Permanent link">&para;</a></h3>
-<p><code>modify_conf_file()</code> はサーバーリストを <code>sorted(..., key=lambda t: int(t['priority']), reverse=True)</code> でソートする（<code>hostcfgd L665</code>）。<code>priority</code> フィールドに整数として解釈できない文字列が含まれる場合、<code>int()</code> が <code>ValueError</code> を送出し <code>modify_conf_file()</code> 全体が中断する。PAM 設定ファイル (<code>/etc/pam.d/common-auth-sonic</code>) および NSS 設定は更新されず、直前の状態のまま残る。例外はキャッチされず呼び出し元に伝播する（unhandled exception）。CLI (<code>config tacacs add</code>) は常に <code>priority=1</code> を書き込むため通常経路では発生しないが、<code>sonic-db-cli</code> 等による直接 DB 操作時に注意が必要。</p>
+<p><code>modify_conf_file()</code> はサーバリストを <code>sorted(..., key=lambda t: int(t['priority']), reverse=True)</code> でソートする（<code>hostcfgd L665</code>）。<code>priority</code> フィールドに整数として解釈できない文字列が含まれる場合、<code>int()</code> が <code>ValueError</code> を送出し <code>modify_conf_file()</code> 全体が中断する。PAM 設定ファイル (<code>/etc/pam.d/common-auth-sonic</code>) および NSS 設定は更新されず、直前の状態のまま残る。例外はキャッチされず呼び出し元に伝播する（unhandled exception）。CLI (<code>config tacacs add</code>) は常に <code>priority=1</code> を書き込むため通常経路では発生しないが、<code>sonic-db-cli</code> 等による直接 DB 操作時に注意が必要。</p>
 <h3 id="pam">PAM 設定ファイル生成失敗<a class="headerlink" href="#pam" title="Permanent link">&para;</a></h3>
 <p><code>modify_conf_file()</code> は Jinja2 テンプレートをレンダリングし <code>/etc/pam.d/common-auth-sonic.tmp</code> に書き込んだ後 atomic rename する（<code>hostcfgd L728-731</code>）。ファイルシステムの権限不足・ディスクフル・テンプレートレンダリングエラー等が発生した場合、例外は <code>modify_conf_file()</code> 内でキャッチされず上位に伝播する。<code>generate_file_from_template()</code> 関数経由のパスでは <code>LOG_ERR: 'Failed generate_file_from_template error={e}'</code> が出力されるが、<code>modify_conf_file()</code> の直接 <code>open/write/rename</code> パスでは同等のキャッチがない。認証設定は前回生成済みファイルのまま残る。</p>
 <h3 id="auth_type-pam_tacplus-silent">不正 <code>auth_type</code> による pam_tacplus 認証プロトコル失敗 (silent)<a class="headerlink" href="#auth_type-pam_tacplus-silent" title="Permanent link">&para;</a></h3>
-<p>hostcfgd は <code>auth_type</code> の値を検証せずテンプレートに直接渡す（<code>hostcfgd L725</code>）。PAM 設定行は <code>login={{ server.auth_type }}</code> として生成される（<code>common-auth-sonic.j2 L18</code>）。YANG 列挙 (<code>pap</code>/<code>chap</code>/<code>mschap</code>/<code>login</code>) 以外の文字列が設定されると、無効な <code>login=&lt;値&gt;</code> が PAM 行に書き込まれる。pam_tacplus はサーバーへの接続を試みるが認証プロトコルのネゴシエーションに失敗し認証拒否 (<code>auth_err</code>) となる。hostcfgd 側にはエラーログが出力されない（silent failure）。</p>
+<p>hostcfgd は <code>auth_type</code> の値を検証せずテンプレートに直接渡す（<code>hostcfgd L725</code>）。PAM 設定行は <code>login={{ server.auth_type }}</code> として生成される（<code>common-auth-sonic.j2 L18</code>）。YANG 列挙 (<code>pap</code>/<code>chap</code>/<code>mschap</code>/<code>login</code>) 以外の文字列が設定されると、無効な <code>login=&lt;値&gt;</code> が PAM 行に書き込まれる。pam_tacplus はサーバへの接続を試みるが認証プロトコルのネゴシエーションに失敗し認証拒否 (<code>auth_err</code>) となる。hostcfgd 側にはエラーログが出力されない（silent failure）。</p>
 <h3 id="audisp-tacplus-sighup-accounting">audisp-tacplus SIGHUP 失敗 (accounting への影響)<a class="headerlink" href="#audisp-tacplus-sighup-accounting" title="Permanent link">&para;</a></h3>
 <p><code>notify_audisp_tacplus_reload_config()</code> は audisp-tacplus プロセスに SIGHUP を送信して accounting 設定を再読み込みさせる（<code>hostcfgd L483-493</code>）。PID ファイルが存在しないか <code>os.kill()</code> が失敗した場合は <code>LOG_WARNING: 'Send SIGHUP to audisp-tacplus failed with exception: {}'</code> を出力して継続する。PAM 認証設定自体は更新済みのため <strong>ログイン認証には影響しない</strong> が、TACACS+ accounting ログが古い設定で動作し続ける。audisp-tacplus が起動していない環境では常に発生する。</p>
 <!-- /failure -->
@@ -37913,7 +37913,7 @@
 <ul>
 <li>keyspace 通知のペイロードは操作名（<code>hset</code>/<code>del</code> 等）のみ。フィールド値は <code>HGETALL</code> で取得する。</li>
 <li><code>op</code> は <code>data is None ? DEL : SET</code> の 2 値判定（<code>make_callback()</code> — hostcfgd:2458-2466）。<code>HDEL</code>/<code>HSET</code> の <a href="../../glossary/#term-redis">Redis</a> 操作種別自体は区別しない。</li>
-<li>DEL 時は <code>data={}</code> が渡るため <code>tacacs_server_update()</code> の <code>data == {}</code> 分岐でサーバーエントリを削除する（hostcfgd:474-476）。</li>
+<li>DEL 時は <code>data={}</code> が渡るため <code>tacacs_server_update()</code> の <code>data == {}</code> 分岐でサーバエントリを削除する（hostcfgd:474-476）。</li>
 </ul>
 <h3 id="_19">起動時スナップショット<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <p><code>config_db.listen(init_data_handler=self.load)</code> (hostcfgd:2528) により、subscribe ループ開始前に <code>HostConfigDaemon.load()</code> → <code>load_independent_config()</code> が呼ばれ、<code>AaaCfg.load(aaa, tac_global_conf, tacplus_conf, ...)</code> (hostcfgd:399-417) が <code>init_data['TACPLUS_SERVER']</code> / <code>init_data['TACPLUS']</code> を一括スナップショットで適用する。各エントリは <code>tacacs_server_update(row, data, modify_conf=False)</code> でメモリに反映され、最後に <code>modify_conf_file()</code> を 1 回呼ぶ（hostcfgd:417）。</p>

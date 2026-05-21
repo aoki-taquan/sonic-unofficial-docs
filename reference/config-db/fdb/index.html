@@ -36392,7 +36392,7 @@
 <h1 id="fdb">FDB テーブル<a class="headerlink" href="#fdb" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>FDB</code> テーブルは<strong>静的 MAC アドレス エントリ</strong>をプロビジョニングするテーブルである<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。キー形式 <code>FDB|&lt;VlanName&gt;|&lt;MAC&gt;</code> で <a href="../../glossary/#term-vlan">VLAN</a> とMACアドレスを指定し、送出ポートとエントリ種別を保持する。</p>
-<p>動的に学習された MAC エントリは <a href="../../glossary/#term-appl_db">APPL_DB</a> の <code>FDB_TABLE</code> に書かれる。<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>FDB</code> は静的エントリ（ユーザー手動設定や PAC/802.1X による設定）専用である。</p>
+<p>動的に学習された MAC エントリは <a href="../../glossary/#term-appl_db">APPL_DB</a> の <code>FDB_TABLE</code> に書かれる。<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>FDB</code> は静的エントリ（ユーザ手動設定や PAC/802.1X による設定）専用である。</p>
 <!-- defaults -->
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -36564,7 +36564,7 @@
 <tr>
 <td><code>FDB_ORIGIN_PROVISIONED</code></td>
 <td><code>2</code></td>
-<td><a href="../../glossary/#term-swssconfig">swssconfig</a> / ユーザー設定</td>
+<td><a href="../../glossary/#term-swssconfig">swssconfig</a> / ユーザ設定</td>
 </tr>
 <tr>
 <td><code>FDB_ORIGIN_VXLAN_ADVERTIZED</code></td>
@@ -36697,7 +36697,7 @@
 </ul>
 <h2 id="_8">データフロー<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-  User["ユーザー / swssconfig"]
+  User["ユーザ / swssconfig"]
   CDB[("CONFIG_DB&lt;br/&gt;FDB")]
   APPDB[("APPL_DB&lt;br/&gt;FDB_TABLE")]
   FdbOrch["orchagent&lt;br/&gt;FdbOrch"]

@@ -37454,7 +37454,7 @@
 <p>VoQ 環境で <code>QUEUE</code> テーブルを書く場合は <code>hostname|asicN|EthernetX|queue_index</code> 形式を使用する必要がある。</p>
 <h3 id="3-sai-minmax-threshold">差異 3: 一部ベンダー SAI の min/max threshold 順序制約（対策済み）<a class="headerlink" href="#3-sai-minmax-threshold" title="Permanent link">&para;</a></h3>
 <p>コメント (<code>qosorch.cpp:596-629</code>) に「一部ベンダー SAI では 1 回の SET ごとに min/max の整合性を検証するため、閾値の過渡的な逆転（旧 max &lt; 新 min）がエラーになる」と記されている。対象ベンダーは明示されていない。</p>
-<p>この問題は <strong>2 フェーズ属性適用</strong>（<code>convertFieldValuesToAttributes()</code> の <code>deferred_attributes</code> 機構, L636-694）で吸収されており、ユーザー操作・CONFIG_DB 書き込み順序には依存しない。全プラットフォームでこの機構が有効。</p>
+<p>この問題は <strong>2 フェーズ属性適用</strong>（<code>convertFieldValuesToAttributes()</code> の <code>deferred_attributes</code> 機構, L636-694）で吸収されており、ユーザ操作・CONFIG_DB 書き込み順序には依存しない。全プラットフォームでこの機構が有効。</p>
 <h3 id="4-sai-capability-asic-sai">差異 4: SAI capability 照会なし — ASIC 非対応は SAI エラー時のみ判明<a class="headerlink" href="#4-sai-capability-asic-sai" title="Permanent link">&para;</a></h3>
 <p>WRED の各 SAI 属性（<code>SAI_WRED_ATTR_ECN_MARK_MODE</code>、<code>SAI_WRED_ATTR_*_{ENABLE/MIN_THRESHOLD/MAX_THRESHOLD/DROP_PROBABILITY}</code>、<code>SAI_WRED_ATTR_WEIGHT</code>）は能力照会なしで直接 <code>sai_wred_api-&gt;create_wred()</code> / <code>set_wred_attribute()</code> に渡される。<a href="../../glossary/#term-asic">ASIC</a> が非対応の場合 SAI がエラーを返し、<a href="../../glossary/#term-orchagent">orchagent</a> はエントリを破棄する（ログ: <code>"Failed to create wred profile: %d"</code>）。対応可否は各ベンダーの <code>libsai</code> 実装に依存。</p>
 <h3 id="5-wred-build-time">差異 5: プラットフォーム別 WRED テンプレート（build-time）<a class="headerlink" href="#5-wred-build-time" title="Permanent link">&para;</a></h3>
@@ -37783,7 +37783,7 @@ runtime 更新時は <code>set_wred_attribute()</code> が属性ループを途�
 </table>
 <p><strong>threshold</strong>: YANG・orchagent ともにデフォルト値なし。フィールド省略時は SAI ベンダー依存。<code>AZURE_LOSSLESS</code> テンプレートが min=1,048,576 bytes / max=2,097,152 bytes を設定。</p>
 <h3 id="weight-qosorchcpp794-796">weight デフォルト (qosorch.cpp:794-796)<a class="headerlink" href="#weight-qosorchcpp794-796" title="Permanent link">&para;</a></h3>
-<p>CONFIG_DB に <code>weight</code> フィールドは存在しない。<code>addQosItem()</code> は WRED オブジェクト作成時に常に <code>SAI_WRED_ATTR_WEIGHT = 0</code> を属性リスト先頭へ無条件挿入する（SAI WRED 必須属性を満たすための固定値、ユーザー設定不可）。</p>
+<p>CONFIG_DB に <code>weight</code> フィールドは存在しない。<code>addQosItem()</code> は WRED オブジェクト作成時に常に <code>SAI_WRED_ATTR_WEIGHT = 0</code> を属性リスト先頭へ無条件挿入する（SAI WRED 必須属性を満たすための固定値、ユーザ設定不可）。</p>
 <!-- /constants -->
 
 <!-- ref-triangle:start -->

@@ -36660,7 +36660,7 @@
 <p><a href="../../glossary/#term-sonic">SONiC</a> には 2 種類のアプリケーションレベルフローカウンタがある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <ol>
 <li><strong>Trap flow counter</strong> (<code>FLOW_CNT_TRAP</code>) — ホスト CPU に転送されるパケットを trap グループ（<code>COPP_TABLE</code> エントリ）単位でカウントする。copporch が <a href="../../glossary/#term-sai">SAI</a> HOSTIF trap に generic counter を紐付け、<code>COUNTERS_DB</code> に <code>SAI_COUNTER_STAT_PACKETS</code> / <code>SAI_COUNTER_STAT_BYTES</code> を格納する。</li>
-<li><strong>Route flow counter</strong> (<code>FLOW_CNT_ROUTE</code>) — ユーザー指定のプレフィックスパターンにマッチするルートのパケット・バイト数をカウントする。FlowCounterRouteOrch が <a href="../../glossary/#term-sai">SAI</a> route entry に generic counter を紐付ける。</li>
+<li><strong>Route flow counter</strong> (<code>FLOW_CNT_ROUTE</code>) — ユーザ指定のプレフィックスパターンにマッチするルートのパケット・バイト数をカウントする。FlowCounterRouteOrch が <a href="../../glossary/#term-sai">SAI</a> route entry に generic counter を紐付ける。</li>
 </ol>
 <p>どちらも <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>FLEX_COUNTER_TABLE</code> でポーリングの enable/disable および間隔を制御し、<code>FLOW_COUNTER_ROUTE_PATTERN</code> でルートパターンを設定する。</p>
 <!-- cdb-mermaid -->
@@ -36844,7 +36844,7 @@
 <h3 id="flex_counter_upd_interval-1">FLEX_COUNTER_UPD_INTERVAL = 1 秒の非同期タイマー<a class="headerlink" href="#flex_counter_upd_interval-1" title="Permanent link">&para;</a></h3>
 <p>FlowCounterRouteOrch は <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> への書き込みを 1 秒間隔のタイマーで非同期に処理する（<code>flowcounterrouteorch.cpp:21, 43-46</code>）。<code>FLOW_CNT_ROUTE</code> を <code>enable</code> にしてからカウンタが <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> に実際に現れるまで最大数秒のラグが生じる。</p>
 <h3 id="sai-generic-counter-stat">SAI generic counter の stat リスト（ハードコード）<a class="headerlink" href="#sai-generic-counter-stat" title="Permanent link">&para;</a></h3>
-<p>両グループとも FlowCounterHandler の <code>generic_counter_stat_ids[]</code> に定義された 2 stat のみを収集する<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。ユーザーが変更する手段はない。</p>
+<p>両グループとも FlowCounterHandler の <code>generic_counter_stat_ids[]</code> に定義された 2 stat のみを収集する<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。ユーザが変更する手段はない。</p>
 <table>
 <thead>
 <tr>
@@ -36903,7 +36903,7 @@
 </table>
 <p><code>flexcounterorch.cpp:311-323</code>（<code>FLOW_CNT_TRAP</code> enable 時）と <code>:324-336</code>（<code>FLOW_CNT_ROUTE</code> enable 時）は、いずれも先に生成された他 Orch の null チェック + capability ゲートで保護されている。<code>gFlowCounterRouteOrch-&gt;getRouteFlowCounterSupported()</code> が呼ばれた時点で <code>mRouteFlowCounterSupported</code> は確定済み (<code>flowcounterrouteorch.cpp:166-179</code> のコンストラクタ実行が完了済みのため)。</p>
 <h3 id="capability-publish-poll">capability publish → POLL 開始の順序保証<a class="headerlink" href="#capability-publish-poll" title="Permanent link">&para;</a></h3>
-<p><code>mRouteFlowCounterSupported</code> は <strong>コンストラクタで 1 回だけセットされる</strong>（<code>flowcounterrouteorch.cpp:39</code> から <code>initRouteFlowCounterCapability()</code> を呼ぶ）。再評価する手段は orchagent 再起動のみ。よって <code>FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE</code> への <code>FLEX_COUNTER_STATUS=enable</code> が読まれる時点で capability は既に <a href="../../glossary/#term-state_db">STATE_DB</a> に publish 済みであり、ユーザーは <code>show flowcnt-route capabilities</code> で <strong>enable 投入前に</strong> <code>support</code> を確認できる。</p>
+<p><code>mRouteFlowCounterSupported</code> は <strong>コンストラクタで 1 回だけセットされる</strong>（<code>flowcounterrouteorch.cpp:39</code> から <code>initRouteFlowCounterCapability()</code> を呼ぶ）。再評価する手段は orchagent 再起動のみ。よって <code>FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE</code> への <code>FLEX_COUNTER_STATUS=enable</code> が読まれる時点で capability は既に <a href="../../glossary/#term-state_db">STATE_DB</a> に publish 済みであり、ユーザは <code>show flowcnt-route capabilities</code> で <strong>enable 投入前に</strong> <code>support</code> を確認できる。</p>
 <p><code>generateRouteFlowStats()</code> (<code>flowcounterrouteorch.cpp:181-194</code>) は capability=false で early return するため、SAI 非対応 <a href="../../glossary/#term-asic">ASIC</a> で enable しても counter は生成されない（no-op）。</p>
 <h3 id="_8">設定書き込み順序（運用）<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p><code>FLOW_COUNTER_ROUTE_PATTERN</code> と <code>FLEX_COUNTER_TABLE|FLOW_CNT_ROUTE</code> は別 Consumer・別 Orch が処理するため、<strong>書き込み順は原理的に不問</strong>。</p>
@@ -37439,7 +37439,7 @@
 </tr>
 </tbody>
 </table>
-<p>ユーザー側からは <code>show flowcnt-route capabilities</code>（STATE_DB の <code>FLOW_COUNTER_CAPABILITY_TABLE</code> を読む）で <code>support: false</code> を確認できる。</p>
+<p>ユーザ側からは <code>show flowcnt-route capabilities</code>（STATE_DB の <code>FLOW_COUNTER_CAPABILITY_TABLE</code> を読む）で <code>support: false</code> を確認できる。</p>
 <h3 id="trap-flow-counter-capability">Trap flow counter には capability ゲートなし<a class="headerlink" href="#trap-flow-counter-capability" title="Permanent link">&para;</a></h3>
 <p><code>FLOW_CNT_TRAP</code> 側（<code>flexcounterorch.cpp:311-322</code>）には事前 capability チェックがない。SAI が <code>SAI_HOSTIF_TRAP_ATTR_COUNTER_ID</code> の set を <code>SAI_STATUS_NOT_SUPPORTED</code> で返した場合、copporch が個別 trap ごとに warn ログを残しつつ無視するのみで、<strong>STATE_DB <code>FLOW_COUNTER_CAPABILITY_TABLE</code> には trap 側のエントリは書かれない</strong>。事前判定の手段がないため、<code>COUNTERS_DB:COUNTERS:oid:*</code> に値が現れるかを実機で確認する必要がある。</p>
 <h3 id="multi-asic-voq-chassis">multi-asic / VOQ chassis<a class="headerlink" href="#multi-asic-voq-chassis" title="Permanent link">&para;</a></h3>
@@ -37660,7 +37660,7 @@
 </tbody>
 </table>
 <div class="admonition warning">
-<p class="admonition-title">ユーザー視点の代表的な失敗症状</p>
+<p class="admonition-title">ユーザ視点の代表的な失敗症状</p>
 <ul>
 <li><strong><code>FLEX_COUNTER_STATUS=enable</code> を書いたのにカウンタが現れない</strong> — group key typo (<code>Invalid flex counter group input</code>)、SAI capability 不足、<code>max_match_count</code> 超過のいずれか。</li>
 <li><strong><code>max_match_count=0</code> を設定したのに 30 になっている</strong> — Phase D で挙動として確定 (silent fallback)。</li>

@@ -35774,7 +35774,7 @@
 <li>参照: <a href="https://github.com/sonic-net/SONiC/issues/40">sonic-net/SONiC#40</a></li>
 </ul>
 <h3 id="portchannel-mac-arp-87">PortChannel メンバーポートの MAC アドレス不一致による ARP 不完全（#87）<a class="headerlink" href="#portchannel-mac-arp-87" title="Permanent link">&para;</a></h3>
-<p>PortChannel のメンバーポートの一つが他のポートと異なる MAC アドレスを持つ場合（SAI ホストインターフェースの MAC 割り当てバグ）、<a href="../../reference/glossary/#term-arp">ARP</a> エントリが不完全状態（flags = 0x0）になり通信ができなくなる。</p>
+<p>PortChannel のメンバーポートの1つが他のポートと異なる MAC アドレスを持つ場合（SAI ホストインターフェースの MAC 割り当てバグ）、<a href="../../reference/glossary/#term-arp">ARP</a> エントリが不完全状態（flags = 0x0）になり通信ができなくなる。</p>
 <p><strong>デバッグ方法:</strong></p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># 各 Ethernet ポートの MAC アドレスを確認（全て同一が正常）</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ip<span class="w"> </span>link<span class="w"> </span>show<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A1<span class="w"> </span>Ethernet<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>link/ether
@@ -35808,7 +35808,7 @@
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5347">sonic-net/sonic-buildimage#5347</a></li>
 </ul>
 <h3 id="warm-reboot-teamd-siocaddmultisiocdelmulti-ioctl-lagsonic-buildimage5761">warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG（sonic-buildimage#5761）<a class="headerlink" href="#warm-reboot-teamd-siocaddmultisiocdelmulti-ioctl-lagsonic-buildimage5761" title="Permanent link">&para;</a></h3>
-<p>warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG フラップを引き起こす問題。チームドライバーとカーネルバージョンの互換性を確認すること</p>
+<p>warm-reboot 中に teamd が SIOCADDMULTI/SIOCDELMULTI ioctl で LAG フラップを引き起こす問題。チームドライバとカーネルバージョンの互換性を確認すること</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5761">sonic-net/sonic-buildimage#5761</a></li>
 </ul>

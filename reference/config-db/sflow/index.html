@@ -37801,7 +37801,7 @@
 </tr>
 </tbody>
 </table>
-<p>evidence: sflowmgr.cpp:58–62。hsflowd は sFlow パケットをコレクタへ UDP 送信するユーザースペースデーモン。SAI 経路（ハードウェアサンプリング）とは独立して動作する。<sup id="fnref13:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
+<p>evidence: sflowmgr.cpp:58–62。hsflowd は sFlow パケットをコレクタへ UDP 送信するユーザスペースデーモン。SAI 経路（ハードウェアサンプリング）とは独立して動作する。<sup id="fnref13:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
 <!-- /side-effects -->
 <!-- constants -->
 <h2 id="phase-e">ハードコード定数 (Phase E)<a class="headerlink" href="#phase-e" title="Permanent link">&para;</a></h2>
@@ -38048,7 +38048,7 @@
 <h3 id="mgmt_vrf_config-collector_vrfmgmt-yang-must">MGMT_VRF_CONFIG — collector_vrf=mgmt の YANG must 制約<a class="headerlink" href="#mgmt_vrf_config-collector_vrfmgmt-yang-must" title="Permanent link">&para;</a></h3>
 <p><code>SFLOW_COLLECTOR.collector_vrf = 'mgmt'</code> を設定する場合、YANG <code>must</code> 制約が <code>MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled = 'true'</code> であることを要求する (sonic-sflow.yang)。この制約は実装コードではなく YANG バリデーション層で強制される。</p>
 <h3 id="sflow_collector-hsflowd">SFLOW_COLLECTOR — hsflowd が直接参照<a class="headerlink" href="#sflow_collector-hsflowd" title="Permanent link">&para;</a></h3>
-<p>C++ レベルの <code>sflowmgr.cpp</code> / <code>sfloworch.cpp</code> に <code>SFLOW_COLLECTOR</code> を直接読み込むコードはない。<code>SFLOW_COLLECTOR</code> テーブルは <strong>hsflowd</strong> (ユーザー空間 sFlow エージェント) が CONFIG_DB から直接読み取り、コレクタ IP / ポート / <a href="../../glossary/#term-vrf">VRF</a> を設定ファイルに反映する。<code>sflowmgrd</code> は hsflowd の起動トリガーに徹する。</p>
+<p>C++ レベルの <code>sflowmgr.cpp</code> / <code>sfloworch.cpp</code> に <code>SFLOW_COLLECTOR</code> を直接読み込むコードはない。<code>SFLOW_COLLECTOR</code> テーブルは <strong>hsflowd</strong> (ユーザ空間 sFlow エージェント) が CONFIG_DB から直接読み取り、コレクタ IP / ポート / <a href="../../glossary/#term-vrf">VRF</a> を設定ファイルに反映する。<code>sflowmgrd</code> は hsflowd の起動トリガーに徹する。</p>
 <h3 id="sai">SAI 参照<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
 <p><code>SflowOrch</code> が <code>sai_samplepacket_api</code> および <code>sai_port_api</code> を使用する。<code>SFLOW</code> / <code>SFLOW_SESSION</code> テーブルは間接的に <code>SAI_PORT_ATTR_INGRESS/EGRESS_SAMPLEPACKET_ENABLE</code> 属性に影響する。</p>
 <!-- /cross-refs -->

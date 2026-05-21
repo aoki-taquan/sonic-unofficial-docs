@@ -35521,7 +35521,7 @@
 </div>
 <h1 id="reboot-blocking-moderebootconf-b-v"><code>reboot</code> コマンドの blocking mode（<code>reboot.conf</code> / <code>-b</code> / <code>-v</code>）<a class="headerlink" href="#reboot-blocking-moderebootconf-b-v" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../reference/glossary/#term-sonic">SONiC</a> の <code>reboot</code> スクリプトは内部で <code>systemctl reboot</code> を呼ぶが、これは <strong>非同期</strong> であり、戻り値が返るタイミングと systemd によるユーザーセッション kill のタイミングがレースする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。結果、コンソール出力は次の 2 パターンがランダムに発生する:</p>
+<p><a href="../../reference/glossary/#term-sonic">SONiC</a> の <code>reboot</code> スクリプトは内部で <code>systemctl reboot</code> を呼ぶが、これは <strong>非同期</strong> であり、戻り値が返るタイミングと systemd によるユーザセッション kill のタイミングがレースする<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。結果、コンソール出力は次の 2 パターンがランダムに発生する:</p>
 <ul>
 <li>A: <code>systemctl reboot</code> 戻り後にユーザシェルがプロンプトを 1 行表示してから切断</li>
 <li>B: シェルが先に kill されてプロンプト無しで切断</li>

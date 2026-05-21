@@ -36704,7 +36704,7 @@
 <h3 id="flex_counter_delay_status"><code>FLEX_COUNTER_DELAY_STATUS</code> の暗黙デフォルト<a class="headerlink" href="#flex_counter_delay_status" title="Permanent link">&para;</a></h3>
 <p>YANG に <code>default</code> なし。Srv6Orch コード内に <code>FLEX_COUNTER_DELAY_STATUS</code> 参照なし。syncd 側でのみ参照される（fast-reboot 連携用）。通常起動では遅延なし（即時）。</p>
 <h3 id="srv6_counter_id_list-stat"><code>SRV6_COUNTER_ID_LIST</code> の固定 stat リスト<a class="headerlink" href="#srv6_counter_id_list-stat" title="Permanent link">&para;</a></h3>
-<p><code>FlowCounterHandler::getGenericCounterStatIdList()</code> (<code>flow_counter_handler.cpp:43-48</code>) が <code>SAI_COUNTER_STAT_PACKETS</code> / <code>SAI_COUNTER_STAT_BYTES</code> の 2 stat のみを返す。この 2 stat は固定でユーザー変更不可。</p>
+<p><code>FlowCounterHandler::getGenericCounterStatIdList()</code> (<code>flow_counter_handler.cpp:43-48</code>) が <code>SAI_COUNTER_STAT_PACKETS</code> / <code>SAI_COUNTER_STAT_BYTES</code> の 2 stat のみを返す。この 2 stat は固定でユーザ変更不可。</p>
 <h3 id="_14">プラットフォーム能力チェック（起動時一回限り）<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <p><code>Srv6Orch::initializeCounters()</code> → <code>queryMySidCountersCapability()</code> が起動時に一度だけ <code>sai_query_attribute_capability()</code> を呼び出す。失敗時はカウンタ機能全体が無効化され、CONFIG_DB への <code>enable</code> 書き込みは以降すべて無視される。再起動なしに状態を変えることはできない。</p>
 <h3 id="1">遅延登録メカニズム（1 秒タイマー）<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>
@@ -37306,7 +37306,7 @@
 </table>
 <p>両方 true かつクエリ成功 → <code>m_mysid_counters_supported = true</code>（カウンタ機能全体が有効化）。
 それ以外 → <code>m_mysid_counters_supported = false</code>（<code>SWSS_LOG_INFO("SRv6 counters are not supported on this platform")</code>）。</p>
-<p><strong>このフラグは再起動なしに変更不可</strong>（起動時一回のみ評価）。</p>
+<p><strong>このフラグは再起動なしに変更不可</strong>（起動時1回のみ評価）。</p>
 <h3 id="m_mysid_counters_supported-false">m_mysid_counters_supported が false の場合の挙動<a class="headerlink" href="#m_mysid_counters_supported-false" title="Permanent link">&para;</a></h3>
 <table>
 <thead>

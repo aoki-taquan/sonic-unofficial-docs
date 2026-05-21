@@ -36665,7 +36665,7 @@
 <td><code>acknowledged</code></td>
 <td>boolean</td>
 <td><code>false</code></td>
-<td>ALARM テーブルのみ。ユーザー確認フラグ</td>
+<td>ALARM テーブルのみ。ユーザ確認フラグ</td>
 </tr>
 </tbody>
 </table>
@@ -37717,7 +37717,7 @@ Critical/Major アラームあり → Red、Minor/Warning のみ → Amber、ア
      SONiC/doc/event-alarm-framework/event-alarm-framework.md -->
 
 <h3 id="sai-asic">SAI・プラットフォーム依存なし（全 ASIC 共通）<a class="headerlink" href="#sai-asic" title="Permanent link">&para;</a></h3>
-<p><code>eventd</code> は <a href="../../glossary/#term-sai">SAI</a> API を呼び出さず、<code>getenv("platform")</code> 参照もなく、<code>#ifdef</code> によるプラットフォーム分岐も存在しない。ZMQ ブローカーとして Redis DB（EVENT_DB / COUNTERS_DB）への書き込みのみを行う純粋なユーザー空間デーモンであるため、<strong><a href="../../glossary/#term-asic">ASIC</a> ベンダー・ハードウェア世代・スイッチチップの種類によって挙動は変わらない</strong><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">1</a></sup>。</p>
+<p><code>eventd</code> は <a href="../../glossary/#term-sai">SAI</a> API を呼び出さず、<code>getenv("platform")</code> 参照もなく、<code>#ifdef</code> によるプラットフォーム分岐も存在しない。ZMQ ブローカーとして Redis DB（EVENT_DB / COUNTERS_DB）への書き込みのみを行う純粋なユーザ空間デーモンであるため、<strong><a href="../../glossary/#term-asic">ASIC</a> ベンダー・ハードウェア世代・スイッチチップの種類によって挙動は変わらない</strong><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">1</a></sup>。</p>
 <table>
 <thead>
 <tr>

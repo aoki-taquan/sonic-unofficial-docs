@@ -36809,7 +36809,7 @@
 
 <ul>
 <li><strong>テーブル不在時の安全フォールバック</strong>: <code>config_samples.py</code> はテーブルが存在しない場合に空 dict を補完する。各機能コードもエントリ不在を "disabled" として扱い KeyError を起こさない。</li>
-<li><strong><code>tunnel_qos_remap</code> は起動時のみ参照</strong>: <code>muxorch</code> が起動時に <code>SYSTEM_DEFAULTS</code> を一回だけ読み取り <a href="../../glossary/#term-qos">QoS</a> remap の有効/無効を決定する。実行中に <a href="../../glossary/#term-config_db">CONFIG_DB</a> を書き換えてもサービス再起動なしには反映されない。</li>
+<li><strong><code>tunnel_qos_remap</code> は起動時のみ参照</strong>: <code>muxorch</code> が起動時に <code>SYSTEM_DEFAULTS</code> を1回だけ読み取り <a href="../../glossary/#term-qos">QoS</a> remap の有効/無効を決定する。実行中に <a href="../../glossary/#term-config_db">CONFIG_DB</a> を書き換えてもサービス再起動なしには反映されない。</li>
 <li><strong>enum 制約違反は YANG 層でブロック</strong>: <code>status</code> フィールドは <code>admin_mode</code> enum（<code>enabled</code>/<code>disabled</code>）で制約されており、不正値は <a href="../../glossary/#term-config_db">CONFIG_DB</a> への書き込み時に YANG バリデーション層で拒否される。</li>
 <li><strong>エントリ削除の副作用</strong>: 機能コードがエントリ不在をデフォルト（通常 disabled）として扱うため、エントリを DEL すると機能が暗黙的に無効化される。</li>
 </ul>

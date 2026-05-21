@@ -36445,7 +36445,7 @@
 
 <h2 id="_7">関連リファレンス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../bfd-session/"><code>BFD_SESSION</code></a> — CONFIG_DB 側のユーザー設定テーブル</li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a>: <a href="../bfd-session/"><code>BFD_SESSION</code></a> — CONFIG_DB 側のユーザ設定テーブル</li>
 <li>CONFIG_DB: <a href="../bgp-device-global/"><code>BGP_DEVICE_GLOBAL</code></a> — <code>use_software_bfd</code> / TSA フラグ</li>
 <li>STATE_DB: <a href="../bfd-state/"><code>BFD_SESSION_TABLE</code></a> — bfdorch が書き込むランタイム状態テーブル</li>
 </ul>
@@ -37095,7 +37095,7 @@
 </table>
 <h3 id="_12">補足<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong><code>return true</code> vs <code>return false</code></strong>: <code>true</code> は task を <strong>consume</strong> (再試行なし)、<code>false</code> は <strong>retry 対象</strong>。<code>local_addr</code> 未指定 / <code>dst_mac</code> 制約違反など「ユーザー設定上の誤り」は <code>true</code> (drop)、PORT/VRF 未準備など「依存リソースの一時的未到達」は <code>false</code> (retry) という設計。</li>
+<li><strong><code>return true</code> vs <code>return false</code></strong>: <code>true</code> は task を <strong>consume</strong> (再試行なし)、<code>false</code> は <strong>retry 対象</strong>。<code>local_addr</code> 未指定 / <code>dst_mac</code> 制約違反など「ユーザ設定上の誤り」は <code>true</code> (drop)、PORT/VRF 未準備など「依存リソースの一時的未到達」は <code>false</code> (retry) という設計。</li>
 <li><strong>UDP src port retry</strong>: <code>NUM_BFD_SRCPORT_RETRIES = 3</code>、ポート範囲 49152–65535。<code>update_port_number()</code> が <code>bfd_src_port()</code> で port を再生成して attrs を上書き (<code>bfdorch.cpp:577-606</code>)。</li>
 <li><strong>capability 不在は再起動が必要</strong>: <code>register_bfd_state_change_notification()</code> の評価は <code>BfdOrch</code> コンストラクタで 1 回のみ。capability 不在のまま swss 起動した場合、SAI 実装が後で更新されても <strong>swss コンテナ再起動なしには hardware BFD は動かない</strong>。</li>
 <li><strong><code>use_software_bfd</code> 経路では SAI 失敗は発生しない</strong>: SAI API を呼ばず STATE_DB <code>SOFTWARE_BFD_SESSION_TABLE</code> に転記するのみ (<code>bfdorch.cpp:133-139, 182-188</code>)。失敗経路は事前検証 (<code>local_addr</code> 未指定など) のみに縮小される。</li>

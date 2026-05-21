@@ -36843,7 +36843,7 @@
 </tbody>
 </table>
 <p><code>RIF_ALPHA</code> は alpha = 2/(N+1) で、N = ウィンドウ幅（秒）から導出される。デフォルト 10 秒ウィンドウで 1 秒スパイクの影響が約 10 秒で収束するよう設計されている（enable_counters.py:7-9 コメント）。</p>
-<p>ユーザーが <code>config rate smoothing-interval &lt;interval&gt; rif</code> を実行すると新しい alpha = 2.0/(interval+1) が計算され <code>RATES:RIF</code> に書き直される（config/main.py:9591-9598）。</p>
+<p>ユーザが <code>config rate smoothing-interval &lt;interval&gt; rif</code> を実行すると新しい alpha = 2.0/(interval+1) が計算され <code>RATES:RIF</code> に書き直される（config/main.py:9591-9598）。</p>
 <div class="admonition warning">
 <p class="admonition-title">RIF_ALPHA 未定義時の挙動</p>
 <p><code>rif_rates.lua</code> は <code>RIF_ALPHA</code> が未定義の場合 <code>"Alpha is not defined"</code> をログに残して即 return する（rif_rates.lua:21-23）。<code>enable_counters.py</code> が実行されていない場合はレート計算が一切行われず <code>RATES:&lt;oid&gt;</code> が空のままになる。</p>
@@ -37306,7 +37306,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>RIF_ALPHA = 2 / (N + 1)</code> の関係で、<code>N = DEFAULT_SMOOTH_INTERVAL = 10</code> から算出される。ユーザーが <code>config rate smoothing-interval</code> で変更すると、新しい alpha が再計算されて <code>RATES:RIF</code> に上書きされる。</p>
+<p><code>RIF_ALPHA = 2 / (N + 1)</code> の関係で、<code>N = DEFAULT_SMOOTH_INTERVAL = 10</code> から算出される。ユーザが <code>config rate smoothing-interval</code> で変更すると、新しい alpha が再計算されて <code>RATES:RIF</code> に上書きされる。</p>
 <h3 id="sai-id">SAI カウンタ ID 静的配列<a class="headerlink" href="#sai-id" title="Permanent link">&para;</a></h3>
 <p><code>intfsorch.cpp:49-59</code> に <code>rifStatIds[]</code> として次の 8 カウンタが列挙されており、<code>addRifToFlexCounter()</code> の実行時に全てが <code>RIF_COUNTER_ID_LIST</code> として <a href="../../glossary/#term-flex_counter_db">FLEX_COUNTER_DB</a> に登録される。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>SAI_ROUTER_INTERFACE_STAT_IN_PACKETS

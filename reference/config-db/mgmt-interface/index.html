@@ -22261,7 +22261,7 @@
   <a href="#syslog_server" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙の SYSLOG_SERVER ルート注入 (ユーザー不可視)
+        暗黙の SYSLOG_SERVER ルート注入 (ユーザ不可視)
       
     </span>
   </a>
@@ -36203,7 +36203,7 @@
   <a href="#syslog_server" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙の SYSLOG_SERVER ルート注入 (ユーザー不可視)
+        暗黙の SYSLOG_SERVER ルート注入 (ユーザ不可視)
       
     </span>
   </a>
@@ -37153,11 +37153,11 @@
 </table>
 <h3 id="forced_mgmt_routes-silent-drop"><code>forced_mgmt_routes</code> 省略 → silent drop (エラーなし)<a class="headerlink" href="#forced_mgmt_routes-silent-drop" title="Permanent link">&para;</a></h3>
 <p><code>forced_mgmt_routes</code> が空リストの場合、<code>interfaces.j2</code> の for ループが何も出力しない (no-op)。</p>
-<h3 id="syslog_server">暗黙の SYSLOG_SERVER ルート注入 (ユーザー不可視)<a class="headerlink" href="#syslog_server" title="Permanent link">&para;</a></h3>
+<h3 id="syslog_server">暗黙の SYSLOG_SERVER ルート注入 (ユーザ不可視)<a class="headerlink" href="#syslog_server" title="Permanent link">&para;</a></h3>
 <p><code>interfaces.j2</code> L101-113:
 - <code>SYSLOG_SERVER</code> が設定されていれば syslog サーバ IP への policy routing rule を mgmt table に追加
 - <code>SYSLOG_SERVER</code> が<strong>未設定</strong>の場合、<code>10.20.6.16/32</code> が <strong>ハードコード</strong>で mgmt VRF / default table に自動注入される</p>
-<p>この挙動は <code>forced_mgmt_routes</code> に記載されず、ユーザーには不可視。</p>
+<p>この挙動は <code>forced_mgmt_routes</code> に記載されず、ユーザには不可視。</p>
 <h3 id="ipv6">IPv6 デフォルトテーブル参照ルール<a class="headerlink" href="#ipv6" title="Permanent link">&para;</a></h3>
 <p><code>mgmtVrfEnabled=false</code> かつ IPv6 prefix を設定すると <code>ip -6 rule add pref 32767 lookup default</code> が自動追加される。</p>
 <h3 id="vrf_table"><code>vrf_table</code> の暗黙切り替え<a class="headerlink" href="#vrf_table" title="Permanent link">&para;</a></h3>
@@ -37670,7 +37670,7 @@
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>4. ip route add default via &lt;gw&gt; dev eth0      (gwaddr が有効な IPv4 の場合自動設定)
 </span></code></pre></div>
 <h3 id="state_db">STATE_DB ゲートと二重ロック<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h3>
-<p><code>doIntfAddrTask</code>（<code>intfmgr.cpp:1099</code>）は ip_prefix ロウを処理する前に二つのガードを通過する必要がある。</p>
+<p><code>doIntfAddrTask</code>（<code>intfmgr.cpp:1099</code>）は ip_prefix ロウを処理する前に2つのガードを通過する必要がある。</p>
 <ol>
 <li><code>isIntfStateOk(alias)</code>（<code>L1115</code>）: <code>STATE_PORT_TABLE[eth0].state</code> が存在するまで待機。<code>portmgrd</code> が eth0 を up 認識した後に書き込む。</li>
 <li><code>isIntfCreated(alias)</code>（<code>L1115</code>、<code>L295</code>）: <code>STATE_INTERFACE_TABLE[eth0]</code> にエントリが存在するまで待機。<code>doIntfGeneralTask</code> 成功後に <code>L1054</code> で書き込まれる。</li>

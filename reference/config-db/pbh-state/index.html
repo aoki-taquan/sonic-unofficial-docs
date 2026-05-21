@@ -37164,7 +37164,7 @@ Generic platform での期待値:</p>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">DBConnector</span><span class="w"> </span><span class="nf">PbhCapabilities::stateDb</span><span class="p">(</span><span class="n">PBH_STATE_DB_NAME</span><span class="p">,</span><span class="w"> </span><span class="n">PBH_STATE_DB_TIMEOUT</span><span class="p">);</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">Table</span><span class="w"> </span><span class="nf">PbhCapabilities::capTable</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stateDb</span><span class="p">,</span><span class="w"> </span><span class="n">STATE_PBH_CAPABILITIES_TABLE_NAME</span><span class="p">);</span>
 </span></code></pre></div>
-<p>書き込み後に Redis サーバーが keyspace 通知 (<code>__keyspace@6__:PBH_CAPABILITIES|*</code>) を発火しうるが、それを購読するプロセスは現行実装に存在しない。</p>
+<p>書き込み後に Redis サーバが keyspace 通知 (<code>__keyspace@6__:PBH_CAPABILITIES|*</code>) を発火しうるが、それを購読するプロセスは現行実装に存在しない。</p>
 <h3 id="sonic-utilities_2">読み取り側 (sonic-utilities) の通信方式<a class="headerlink" href="#sonic-utilities_2" title="Permanent link">&para;</a></h3>
 <p><code>config/plugins/pbh.py</code> の <code>pbh_capabilities_query()</code> は <code>db.get_all()</code> で <code>HGETALL</code> を実行する。これはコマンド実行時の<strong>ワンショットスナップショット</strong>であり、継続的な購読は行わない (<code>pbh.py:492–498</code>)。</p>
 <h3 id="_15">購読方式サマリ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>

@@ -37275,7 +37275,7 @@
 <h4 id="snmp_community">SNMP_COMMUNITY — テンプレートでの隣接展開<a class="headerlink" href="#snmp_community" title="Permanent link">&para;</a></h4>
 <p><code>snmpd.conf.j2</code> は <code>SNMP_COMMUNITY</code>（v1/v2c 設定、L48–64）と <code>SNMP_USER</code>（v3 設定、L66–77）を同一テンプレートで展開する。両テーブルの有無は独立して判定される (<code>{% if SNMP_COMMUNITY is defined %}</code> / <code>{% if SNMP_USER is defined %}</code>)。<code>SNMP_USER</code> を登録しても <code>SNMP_COMMUNITY</code> が未定義であれば SNMPv1/v2c はすべて拒否される（v3 のみアクセスには影響なし）。</p>
 <h3 id="sai">SAI 参照<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<p>なし。<code>SNMP_AGENT_ADDRESS_CONFIG</code> / <code>SNMP_USER</code> はいずれも snmpd（ユーザー空間デーモン）の設定のみに作用し、<a href="../../glossary/#term-sai">SAI</a>・<a href="../../glossary/#term-asic">ASIC</a>・<a href="../../glossary/#term-appl_db">APPL_DB</a> には一切関与しない。</p>
+<p>なし。<code>SNMP_AGENT_ADDRESS_CONFIG</code> / <code>SNMP_USER</code> はいずれも snmpd（ユーザ空間デーモン）の設定のみに作用し、<a href="../../glossary/#term-sai">SAI</a>・<a href="../../glossary/#term-asic">ASIC</a>・<a href="../../glossary/#term-appl_db">APPL_DB</a> には一切関与しない。</p>
 <!-- /cross-refs -->
 
 <!-- failure -->

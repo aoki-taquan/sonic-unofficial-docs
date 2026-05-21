@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="ACL_TABLE_TYPE テーブル — ユーザー定義 ACL テーブルタイプ（カスタム match フィールド / action / バインドポイント）を定義する CONFIG_DB テーブル。">
+        <meta name="description" content="ACL_TABLE_TYPE テーブル — ユーザ定義 ACL テーブルタイプ（カスタム match フィールド / action / バインドポイント）を定義する CONFIG_DB テーブル。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="ACL_TABLE_TYPE テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="ACL_TABLE_TYPE テーブル — ユーザー定義 ACL テーブルタイプ（カスタム match フィールド / action / バインドポイント）を定義する CONFIG_DB テーブル。" />
+<meta property="og:description" content="ACL_TABLE_TYPE テーブル — ユーザ定義 ACL テーブルタイプ（カスタム match フィールド / action / バインドポイント）を定義する CONFIG_DB テーブル。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/acl-table-type.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/acl-table-type/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="ACL_TABLE_TYPE テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="ACL_TABLE_TYPE テーブル — ユーザー定義 ACL テーブルタイプ（カスタム match フィールド / action / バインドポイント）を定義する CONFIG_DB テーブル。" />
+<meta property="twitter:description" content="ACL_TABLE_TYPE テーブル — ユーザ定義 ACL テーブルタイプ（カスタム match フィールド / action / バインドポイント）を定義する CONFIG_DB テーブル。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/acl-table-type.png" />
 </head>
   
@@ -24673,7 +24673,7 @@
   <a href="#sai-capability" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SAI アクション capability によるユーザー定義型への影響
+        SAI アクション capability によるユーザ定義型への影響
       
     </span>
   </a>
@@ -36157,7 +36157,7 @@
   <a href="#sai-capability" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SAI アクション capability によるユーザー定義型への影響
+        SAI アクション capability によるユーザ定義型への影響
       
     </span>
   </a>
@@ -36229,7 +36229,7 @@
 
 <h1 id="acl_table_type">ACL_TABLE_TYPE テーブル<a class="headerlink" href="#acl_table_type" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>ACL_TABLE_TYPE</code> はユーザー定義の <a href="../../glossary/#term-acl">ACL</a> テーブルタイプを格納する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
+<p><code>ACL_TABLE_TYPE</code> はユーザ定義の <a href="../../glossary/#term-acl">ACL</a> テーブルタイプを格納する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
 <code>ACL_TABLE</code> の <code>type</code> フィールドから leafref で参照され、<code>orchagent</code> の <code>AclOrch</code> が
 <code>doAclTableTypeTask()</code> で読み取り、内部マップ <code>m_AclTableTypes</code> に保持する。
 <a href="../../glossary/#term-sai">SAI</a> オブジェクトは作成されない（ソフトウェア定義のみ）。</p>
@@ -37141,7 +37141,7 @@ CONFIG_DB / <a href="../../glossary/#term-appl_db">APPL_DB</a> の他テーブ�
 <hr />
 <!-- platform -->
 <h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
-<p><code>ACL_TABLE_TYPE</code> のプラットフォーム依存性は 2 つの経路で顕在化する: (1) <code>initDefaultTableTypes()</code> による <strong>組み込み型の定義差</strong>、(2) SAI capability クエリによる <strong>アクション有効/無効の差</strong>。ユーザー定義型（CONFIG_DB に書き込む型）は <code>AclTableTypeParser</code> が解析するが、記述できる match/action の有効性は実行時の <a href="../../glossary/#term-asic">ASIC</a> capability に委ねられる。</p>
+<p><code>ACL_TABLE_TYPE</code> のプラットフォーム依存性は 2 つの経路で顕在化する: (1) <code>initDefaultTableTypes()</code> による <strong>組み込み型の定義差</strong>、(2) SAI capability クエリによる <strong>アクション有効/無効の差</strong>。ユーザ定義型（CONFIG_DB に書き込む型）は <code>AclTableTypeParser</code> が解析するが、記述できる match/action の有効性は実行時の <a href="../../glossary/#term-asic">ASIC</a> capability に委ねられる。</p>
 <h3 id="orchh40-50">プラットフォーム識別文字列 (orch.h:40-50)<a class="headerlink" href="#orchh40-50" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -37233,13 +37233,13 @@ CONFIG_DB / <a href="../../glossary/#term-appl_db">APPL_DB</a> の他テーブ�
 </tr>
 </tbody>
 </table>
-<p>broadcom-dnx では PFCWD テーブルが switch 単位バインドになり、CONFIG_DB の <code>ports</code> フィールドが無視される。ユーザー定義型で <code>PFCWD</code> 相当の type を書く場合、この差に注意が必要。</p>
+<p>broadcom-dnx では PFCWD テーブルが switch 単位バインドになり、CONFIG_DB の <code>ports</code> フィールドが無視される。ユーザ定義型で <code>PFCWD</code> 相当の type を書く場合、この差に注意が必要。</p>
 <div class="admonition note">
 <p class="admonition-title">他の組み込み型はプラットフォーム不問</p>
 <p><code>L3</code> / <code>L3V6</code> / <code>L3V4V6</code> / <code>MIRROR</code> / <code>MIRRORV6</code> / <code>MIRROR_DSCP</code> / <code>MCLAG</code> / <code>MUX</code> / <code>DROP</code> / <code>MARK_META</code> / <code>MARK_META_V6</code> / <code>EGR_SET_DSCP</code> は platform 引数によらず固定の match/action で登録される (<code>aclorch.cpp:3730-3898</code>)。</p>
 </div>
-<h3 id="sai-capability">SAI アクション capability によるユーザー定義型への影響<a class="headerlink" href="#sai-capability" title="Permanent link">&para;</a></h3>
-<p>ユーザー定義 <code>ACL_TABLE_TYPE</code> の <code>ACTIONS</code> はパース時点では制限されない。ただし以下の状況で実行時にアクション有効性が決まる:</p>
+<h3 id="sai-capability">SAI アクション capability によるユーザ定義型への影響<a class="headerlink" href="#sai-capability" title="Permanent link">&para;</a></h3>
+<p>ユーザ定義 <code>ACL_TABLE_TYPE</code> の <code>ACTIONS</code> はパース時点では制限されない。ただし以下の状況で実行時にアクション有効性が決まる:</p>
 <table>
 <thead>
 <tr>
@@ -37353,7 +37353,7 @@ CONFIG_DB / <a href="../../glossary/#term-appl_db">APPL_DB</a> の他テーブ�
 </tbody>
 </table>
 <div class="admonition warning">
-<p class="admonition-title">ユーザー定義 ACL_TABLE_TYPE の match/action の安全確認</p>
+<p class="admonition-title">ユーザ定義 ACL_TABLE_TYPE の match/action の安全確認</p>
 <p>CONFIG_DB に <code>ACL_TABLE_TYPE</code> を書き込む際、ASIC がサポートしない match (<code>ACL_USER_META</code> 等) や action を <code>MATCHES</code> / <code>ACTIONS</code> に列挙しても <code>AclTableTypeParser</code> はエラーを返さない。実際の SAI 適用可否は <code>ACL_TABLE</code> を作成するときの <code>AclTable::createToDb()</code> 段で判明する。<code>STATE_DB ACL_STAGE_CAPABILITY_TABLE|INGRESS</code> の <code>action_list</code> で使用可能なアクションを事前確認すること。</p>
 </div>
 <div class="admonition note">

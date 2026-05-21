@@ -36631,7 +36631,7 @@
 </span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>addOrchList(各 Orch)  ← イベントループへの登録
 </span></code></pre></div>
 <p>各 DASH Orch は <code>dash_zmq_server</code> ポインタを受け取った時点でその値が確定するため、<code>orch_northbond_dash_zmq_enabled</code> の変更は起動後には効果がない。</p>
-<p><strong><code>orchagent.sh</code> による引数付与と CONFIG_DB 読み取り (依存 #5)</strong>: <code>orchagent.sh</code> は <code>sonic-db-cli</code> で <code>switch_type</code> を読み取り (<code>-b 65536 -z zmq_sync -k 65536</code>) を orchagent プロセス起動引数として付与する。この読み取りはシェルスクリプト側で起動前に一回のみ実行されるため、orchagent プロセス起動後に CONFIG_DB の <code>switch_type</code> を変更しても引数は変わらない。</p>
+<p><strong><code>orchagent.sh</code> による引数付与と CONFIG_DB 読み取り (依存 #5)</strong>: <code>orchagent.sh</code> は <code>sonic-db-cli</code> で <code>switch_type</code> を読み取り (<code>-b 65536 -z zmq_sync -k 65536</code>) を orchagent プロセス起動引数として付与する。この読み取りはシェルスクリプト側で起動前に1回のみ実行されるため、orchagent プロセス起動後に CONFIG_DB の <code>switch_type</code> を変更しても引数は変わらない。</p>
 <!-- /ordering -->
 
 <!-- cross-refs -->

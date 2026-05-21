@@ -37734,7 +37734,7 @@
 </span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>  ├─ DASH_ACL_GROUP_TABLE → taskUpdateDashAclGroup / taskRemoveDashAclGroup
 </span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>  └─ DASH_ACL_RULE_TABLE  → taskUpdateDashAclRule
 </span></code></pre></div>
-<p><code>ZmqConsumer::execute()</code> はソケットイベント駆動で即座に wake up する（明示的な SELECT_TIMEOUT なし）。<code>ordered_queue = false</code>（デフォルト）のため <code>pops()</code> → <code>addToSync()</code> → <code>drain()</code> の一回し処理。</p>
+<p><code>ZmqConsumer::execute()</code> はソケットイベント駆動で即座に wake up する（明示的な SELECT_TIMEOUT なし）。<code>ordered_queue = false</code>（デフォルト）のため <code>pops()</code> → <code>addToSync()</code> → <code>drain()</code> の1回し処理。</p>
 <h3 id="zmq_2">ZMQ 無効時のデータフロー<a class="headerlink" href="#zmq_2" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>gNMI / SDN コントローラ
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>  ↓ ProducerStateTable → Redis PUBLISH (DPU_APPL_DB channel)

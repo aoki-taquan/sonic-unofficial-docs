@@ -35262,7 +35262,7 @@
 </span></code></pre></div>
 <p>これらのエラーは、<a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a> のビルド時に <strong>Translib 書き込みが無効化された状態</strong>でビルドされていることが原因である。</p>
 <h2 id="_2">原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p><a href="../../reference/glossary/#term-sonic">SONiC</a> の gNMI サーバー（<code>sonic-gnmi</code>）は、デフォルトでは Translib の書き込み操作を無効にしてコンパイルされる。これは意図的なセキュリティ上の選択であり、設定変更操作を明示的に許可する場合のみ有効化できる。</p>
+<p><a href="../../reference/glossary/#term-sonic">SONiC</a> の gNMI サーバ（<code>sonic-gnmi</code>）は、デフォルトでは Translib の書き込み操作を無効にしてコンパイルされる。これは意図的なセキュリティ上の選択であり、設定変更操作を明示的に許可する場合のみ有効化できる。</p>
 <h2 id="_3">解決方法<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="translib">ビルド時に Translib 書き込みを有効化する<a class="headerlink" href="#translib" title="Permanent link">&para;</a></h3>
 <p><code>sonic-buildimage</code> をビルドする際、以下のオプションを指定する。</p>
@@ -35272,7 +35272,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ENABLE_TRANSLIB_WRITE = y
 </span></code></pre></div>
 <h3 id="_4">確認方法<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>gNMI サーバーが書き込み有効でビルドされているかを確認するには、SET リクエストを試みる。</p>
+<p>gNMI サーバが書き込み有効でビルドされているかを確認するには、SET リクエストを試みる。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>gnmi_set<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>-xpath<span class="w"> </span>/openconfig-interfaces:interfaces/interface<span class="o">[</span><span class="nv">name</span><span class="o">=</span>Ethernet0<span class="o">]</span>/config/description<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span>-string_val<span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="w"> </span><span class="se">\</span>

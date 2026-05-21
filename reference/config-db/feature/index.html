@@ -36931,11 +36931,11 @@
 </tr>
 <tr>
 <td><code>always_enabled</code></td>
-<td>featured が有効化を強制。ユーザーからの <code>disabled</code> への変更を無効化（featured:248-256）</td>
+<td>featured が有効化を強制。ユーザからの <code>disabled</code> への変更を無効化（featured:248-256）</td>
 </tr>
 <tr>
 <td><code>always_disabled</code></td>
-<td>featured が無効化を強制。ユーザーからの <code>enabled</code> への変更を無効化</td>
+<td>featured が無効化を強制。ユーザからの <code>enabled</code> への変更を無効化</td>
 </tr>
 <tr>
 <td><code>None</code> / 未設定</td>
@@ -37452,7 +37452,7 @@
 <tr>
 <td><code>delayed</code></td>
 <td><code>false</code></td>
-<td>manifest から強制取得（ユーザー設定不可、<code>feature.py:234</code>）</td>
+<td>manifest から強制取得（ユーザ設定不可、<code>feature.py:234</code>）</td>
 <td>-</td>
 </tr>
 <tr>
@@ -37505,7 +37505,7 @@
 <p><strong><code>auto_restart</code> 欠落時の YANG 乖離</strong>: <code>Feature.__init__</code> は <code>feature_cfg.get('auto_restart', 'disabled')</code> を使用（<code>featured:82</code>）。YANG/init_cfg デフォルト <code>enabled</code> と逆。CONFIG_DB に <code>auto_restart</code> フィールドが存在しない場合 <code>Restart=no</code> が設定される。</p>
 </li>
 <li>
-<p><strong>SpineRouter での <code>auto_restart</code> ハードコード上書き</strong>: <code>syncd</code> / <code>gbsyncd</code> かつ <code>DEVICE_METADATA.localhost.type == 'SpineRouter'</code> のとき CONFIG_DB 値を無視して <code>Restart=no</code> を強制（<code>featured:375-380</code>）。ユーザーが <code>auto_restart: enabled</code> を設定しても無効。</p>
+<p><strong>SpineRouter での <code>auto_restart</code> ハードコード上書き</strong>: <code>syncd</code> / <code>gbsyncd</code> かつ <code>DEVICE_METADATA.localhost.type == 'SpineRouter'</code> のとき CONFIG_DB 値を無視して <code>Restart=no</code> を強制（<code>featured:375-380</code>）。ユーザが <code>auto_restart: enabled</code> を設定しても無効。</p>
 </li>
 <li>
 <p><strong><code>FEATURE_EXCLUSION_LIST</code> による silent skip</strong>: <code>telemetry</code> / <code>frr_bmp</code> は <code>enable_feature</code> / <code>disable_feature</code> をスキップ（<code>featured:135</code>）。CONFIG_DB の state 変更が systemd に適用されない。</p>
@@ -37517,7 +37517,7 @@
 <p><strong><code>state</code> の Jinja2 テンプレートと resync</strong>: <code>bgp</code>/<code>teamd</code>/<code>mux</code> の init_cfg 値は Jinja2 テンプレート文字列。<code>featured</code> 起動時に <code>render_all_feature_states()</code> がレンダリングして CONFIG_DB を上書き（<code>featured:687,219-240</code>）。</p>
 </li>
 <li>
-<p><strong><code>delayed</code> / <code>check_up_status</code> / <code>support_syslog_rate_limit</code> / <code>has_global_scope</code> / <code>has_per_asic_scope</code> はユーザー設定不可</strong>: sonic_package_manager の <code>get_non_configurable_feature_entries</code> が manifest 値で常に上書き（<code>feature.py:228-237</code>）。</p>
+<p><strong><code>delayed</code> / <code>check_up_status</code> / <code>support_syslog_rate_limit</code> / <code>has_global_scope</code> / <code>has_per_asic_scope</code> はユーザ設定不可</strong>: sonic_package_manager の <code>get_non_configurable_feature_entries</code> が manifest 値で常に上書き（<code>feature.py:228-237</code>）。</p>
 </li>
 <li>
 <p><strong><code>has_per_dpu_scope</code> は <code>get_non_configurable_feature_entries</code> 対象外</strong>: 他のスコープフィールドと異なり manifest 管理外（<code>feature.py:228-237</code>）。CONFIG_DB 値がそのまま使用される。</p>

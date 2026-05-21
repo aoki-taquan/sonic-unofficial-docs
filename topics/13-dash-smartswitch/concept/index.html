@@ -35590,7 +35590,7 @@
 <h2 id="_2">まず読み手の質問に答える<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">この機能はそもそも何か<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>DASH は「VM / コンテナ単位のオーバーレイ処理を、ホスト CPU ではなく専用ハードウェア（DPU や appliance）に下ろすための SONiC データプレーン API」です。SmartSwitch は「その DPU を 1 〜数台ぶら下げた物理スイッチを SONiC として制御する箱」です。前者がソフトウェア契約、後者が箱の話です。</p>
-<p>エンドユーザー視点では、「テナント単位の VNet ルーティング・ACL・metering・Service Tunnel をパブリッククラウド規模（数万 ENI 級）で 1 装置にまとめたい」というニーズに応えます。これを SONiC ノースバウンド API（gNMI / <a href="../../../reference/glossary/#term-redis">Redis</a>）で投入すると、ノースバウンド側は DPU を意識せず、SmartSwitch 内部の NPU/DPU 分担は SONiC 側が引き受けます。</p>
+<p>エンドユーザ視点では、「テナント単位の VNet ルーティング・ACL・metering・Service Tunnel をパブリッククラウド規模（数万 ENI 級）で 1 装置にまとめたい」というニーズに応えます。これを SONiC ノースバウンド API（gNMI / <a href="../../../reference/glossary/#term-redis">Redis</a>）で投入すると、ノースバウンド側は DPU を意識せず、SmartSwitch 内部の NPU/DPU 分担は SONiC 側が引き受けます。</p>
 <h3 id="_4">何を解決するか<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p>従来の VxLAN gateway や software ロードバランサで「テナント数が増えると CPU が詰まる / フロー数が増えると state table が破綻する」問題が起きていました。DASH は次のように分解して解決します。</p>
 <ul>

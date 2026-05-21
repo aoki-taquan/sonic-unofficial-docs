@@ -37120,7 +37120,7 @@
 <!-- evidence: sonic-gnmi/gnmi_server/server.go@eb635b7679b260c3fd0786a6d0734fc8e82c9a22 L381-643 -->
 
 <ul>
-<li><strong>起動時のみ参照</strong>: <code>telemetry</code> コンテナは起動時に CONFIG_DB を一回読み込む。実行中の変更はコンテナ再起動（<code>systemctl restart telemetry</code>）なしには反映されない。</li>
+<li><strong>起動時のみ参照</strong>: <code>telemetry</code> コンテナは起動時に CONFIG_DB を1回読み込む。実行中の変更はコンテナ再起動（<code>systemctl restart telemetry</code>）なしには反映されない。</li>
 <li><strong>ポート未設定でサーバ不起動</strong>: <code>port</code> が 0 以下かつ <code>unix_socket</code> も未設定の場合、<code>"no listener configured: port must be &gt; 0 or unix_socket must be set"</code> を返してサーバが起動しない。</li>
 <li><strong>TCP / UDS リスナー失敗時の縮退動作</strong>: TCP listen 失敗時は <code>"Failed to open listener port &lt;port&gt;: disabling TCP listener"</code> を Warningf し UDS のみで継続（その逆も同様）。両方失敗した場合はサーバ起動エラーになる。</li>
 <li><strong>TLS 証明書の不整合</strong>: <code>server_crt</code> / <code>server_key</code> のいずれか一方のみ設定されていると <code>"server certificate or key file path is empty"</code> を返す。証明書ファイルが存在しない場合も stat エラーを返してサーバが起動しない。</li>
@@ -37168,7 +37168,7 @@
 <tr>
 <td><code>telemetry</code></td>
 <td><code>server_crt</code> / <code>server_key</code> フィールドあり</td>
-<td>TLS 有効で gNMI サーバー起動</td>
+<td>TLS 有効で gNMI サーバ起動</td>
 <td><code>telemetry</code></td>
 </tr>
 <tr>
@@ -38013,7 +38013,7 @@ UnixSocket も未設定の場合は <code>"no listener configured: port must be 
 <h2 id="phase-g">通信メカニズム (Phase G)<a class="headerlink" href="#phase-g" title="Permanent link">&para;</a></h2>
 <h3 id="redis">Redis 購読方式<a class="headerlink" href="#redis" title="Permanent link">&para;</a></h3>
 <p><code>TELEMETRY</code> テーブルに対する <strong>継続的な <a href="../../glossary/#term-redis">Redis</a> pub/sub 購読は存在しない</strong>。<code>hostcfgd</code> / <code>swsscommon.SubscriberStateTable</code> / <code>ConfigDBConnector.subscribe()</code> / <code>listen()</code> は一切使用しない。</p>
-<p><code>telemetry</code> コンテナは起動時に <code>sonic-cfggen -d -t telemetry_vars.j2</code> を一回実行して <code>TELEMETRY|certs</code> / <code>TELEMETRY|gnmi</code> を JSON でスナップショット取得し、その値を <code>telemetry</code> バイナリへのコマンドライン引数に変換して起動する。起動後は CONFIG_DB を参照しない。</p>
+<p><code>telemetry</code> コンテナは起動時に <code>sonic-cfggen -d -t telemetry_vars.j2</code> を1回実行して <code>TELEMETRY|certs</code> / <code>TELEMETRY|gnmi</code> を JSON でスナップショット取得し、その値を <code>telemetry</code> バイナリへのコマンドライン引数に変換して起動する。起動後は CONFIG_DB を参照しない。</p>
 <table>
 <thead>
 <tr>

@@ -36949,7 +36949,7 @@
 <tr>
 <td><code>restapi</code> 起動処理</td>
 <td><code>client_auth==false</code></td>
-<td>ユーザー認証モード (<code>rest-server.sh</code> 内で boolean <code>false</code> を文字列 <code>"user"</code> に変換して TLS 設定)</td>
+<td>ユーザ認証モード (<code>rest-server.sh</code> 内で boolean <code>false</code> を文字列 <code>"user"</code> に変換して TLS 設定)</td>
 <td>restapi 設定処理</td>
 </tr>
 <tr>
@@ -37034,7 +37034,7 @@
 <tr>
 <td><code>client_auth</code></td>
 <td><code>"user"</code></td>
-<td><code>CLIENT_AUTH=$(... jq -r '.client_auth // "user"')</code> — CONFIG_DB 未設定時にユーザー認証モードを強制</td>
+<td><code>CLIENT_AUTH=$(... jq -r '.client_auth // "user"')</code> — CONFIG_DB 未設定時にユーザ認証モードを強制</td>
 </tr>
 <tr>
 <td><code>log_level</code></td>

@@ -37335,7 +37335,7 @@
 <ul>
 <li><strong><code>BGP_PEER_GROUP</code> の事前確認なし</strong>: <code>BGP_PEER_GROUP_AF</code> 処理は peer-group の自動作成を行わない。<code>BGP_PEER_GROUP</code> が bgpd に先行登録されていない場合、AF コマンドは bgpd に拒否される（ #2 ）。</li>
 <li><strong><a href="../../glossary/#term-route_map">ROUTE_MAP</a> の依存関係チェックなし</strong>: frrcfgd は <code>route_map_in</code> / <code>route_map_out</code> 等の参照先 <a href="../../glossary/#term-route_map">ROUTE_MAP</a> を事前検証しない。bgpd 投入後に初めてエラーが判明し、ROUTE_MAP が後から定義されても再投入されない（ #4 ）。</li>
-<li><strong>運用中 retry ゼロ</strong>: 全失敗パスで <code>continue</code> のみ。CONFIG_DB エントリを残したまま次イベントへ進む。整合性回復はユーザーによる再 SET が必要。</li>
+<li><strong>運用中 retry ゼロ</strong>: 全失敗パスで <code>continue</code> のみ。CONFIG_DB エントリを残したまま次イベントへ進む。整合性回復はユーザによる再 SET が必要。</li>
 <li><strong>推奨書き込み順</strong>: <code>BGP_GLOBALS</code> → <code>BGP_GLOBALS_AF</code> → <code>ROUTE_MAP</code> → <code>BGP_PEER_GROUP</code> → <code>BGP_PEER_GROUP_AF</code></li>
 </ul>
 <!-- /failure -->

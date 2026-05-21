@@ -35367,14 +35367,14 @@
 <h1 id="_1">設定<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>ここでは <a href="../../../reference/glossary/#term-aaa">AAA</a> バックエンドと管理面ポリシーの最小構成を、どの reference を引いて投入すればよいかという観点でまとめます。詳細な CLI / DB スキーマは個別 reference ページに既に存在するため、本ページはあくまで導線として機能します。</p>
 <h2 id="_2">認証バックエンドの選び方<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p><a href="../../../reference/glossary/#term-sonic">SONiC</a> は local user に加えて TACACS+、<a href="../../../reference/glossary/#term-radius">RADIUS</a>、LDAP の三つの外部バックエンドを持ちます。組み合わせは <code>config aaa</code> 系コマンドで設定し、最終的に <code>CONFIG_DB</code> の <code>AAA</code> テーブルと、各バックエンドのサーバー一覧テーブルに格納されます。</p>
+<p><a href="../../../reference/glossary/#term-sonic">SONiC</a> は local user に加えて TACACS+、<a href="../../../reference/glossary/#term-radius">RADIUS</a>、LDAP の三つの外部バックエンドを持ちます。組み合わせは <code>config aaa</code> 系コマンドで設定し、最終的に <code>CONFIG_DB</code> の <code>AAA</code> テーブルと、各バックエンドのサーバ一覧テーブルに格納されます。</p>
 <table>
 <thead>
 <tr>
 <th>バックエンド</th>
 <th>用途</th>
 <th>設定の入口</th>
-<th>サーバーリスト</th>
+<th>サーバリスト</th>
 </tr>
 </thead>
 <tbody>
@@ -35413,7 +35413,7 @@
 <li><a href="../../../management/hld-ldap/">LDAP HLD</a></li>
 </ul>
 <h2 id="login_method">login_method の順序<a class="headerlink" href="#login_method" title="Permanent link">&para;</a></h2>
-<p><code>config aaa authentication login</code> で複数バックエンドを列挙できますが、運用上の鉄則は最後を必ず <code>local</code> で締めることです。外部サーバー全滅時のロックアウトを避けるためで、<a href="../../../management/aaa-improvements/">AAA improvements</a> と <a href="../../../management/tacacs-test-plan/">TACACS test plan</a> の失敗フォールバックシナリオで議論されています。</p>
+<p><code>config aaa authentication login</code> で複数バックエンドを列挙できますが、運用上の鉄則は最後を必ず <code>local</code> で締めることです。外部サーバ全滅時のロックアウトを避けるためで、<a href="../../../management/aaa-improvements/">AAA improvements</a> と <a href="../../../management/tacacs-test-plan/">TACACS test plan</a> の失敗フォールバックシナリオで議論されています。</p>
 <h2 id="ssh-serial-console">SSH と serial console のポリシー<a class="headerlink" href="#ssh-serial-console" title="Permanent link">&para;</a></h2>
 <p>SSH の listen address、port、ciphers、login grace time、max auth tries などは <code>SSH_SERVER</code> テーブルにまとめ、<code>hostcfgd</code> 経由で <code>sshd_config</code> に展開されます。詳細フィールドと意図は <a href="../../../management/ssh-server-global-config-hld/">SSH server global config HLD</a> を参照してください。</p>
 <p>serial console 側は inactivity timeout、login banner との組み合わせ、root login の可否などを <code>SERIAL_CONSOLE</code> テーブルで制御します。設計意図は <a href="../../../management/serial-console-global-config-hld/">serial console global config HLD</a> にあります。</p>
@@ -35592,7 +35592,7 @@
 <tr>
 <td>TACACS+ で認証が遅い（10s 超）</td>
 <td>1 台目がダウン、<code>timeout</code> が長い、<code>failthrough</code> 無効</td>
-<td><code>config aaa authentication failthrough enable</code>、<code>timeout</code> を 2-3s に、サーバー priority を見直す</td>
+<td><code>config aaa authentication failthrough enable</code>、<code>timeout</code> を 2-3s に、サーバ priority を見直す</td>
 </tr>
 <tr>
 <td><code>show tacacs</code> で passkey が <code>*****</code> のまま投入が反映されない</td>
@@ -35614,7 +35614,7 @@
 <h2 id="_5">最小構成のチェックリスト<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ol>
 <li>外部 AAA を入れる前に、<code>admin</code> 相当の local user のパスワードを十分長いものへ更新する。詳細は <a href="../operations/">運用</a> で扱う <a href="../../../architecture/pw-hardening-design/">password hardening</a> を参照。</li>
-<li>TACACS+ / RADIUS / LDAP のサーバーを最低 2 台登録し、<code>login_method</code> の末尾に <code>local</code> を残す。</li>
+<li>TACACS+ / RADIUS / LDAP のサーバを最低 2 台登録し、<code>login_method</code> の末尾に <code>local</code> を残す。</li>
 <li>SSH の <code>permit_root_login</code> を <code>no</code> 相当に倒し、<code>ciphers</code> / <code>kex</code> を必要なものだけに絞る。</li>
 <li>banner で「許可された運用者のみ」「アクセスは記録される」旨を明示し、法的要件を満たす。</li>
 <li>serial console の <code>inactivity_timeout</code> を有効にし、置き忘れセッションを切る。</li>

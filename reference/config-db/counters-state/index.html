@@ -36295,7 +36295,7 @@
 
 <h1 id="state_db">STATE_DB カウンタ能力テーブル<a class="headerlink" href="#state_db" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-orchagent">orchagent</a> は起動時に <a href="../../glossary/#term-sai">SAI</a> へカウンタ能力を問い合わせ、その結果を <code>STATE_DB</code> の 3 つのテーブルに書き込む<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これらのテーブルは <strong>読み取り専用</strong> の能力情報であり、ユーザーが <a href="../../glossary/#term-config_db">CONFIG_DB</a> から書き込む設定テーブルではない。</p>
+<p><a href="../../glossary/#term-orchagent">orchagent</a> は起動時に <a href="../../glossary/#term-sai">SAI</a> へカウンタ能力を問い合わせ、その結果を <code>STATE_DB</code> の 3 つのテーブルに書き込む<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。これらのテーブルは <strong>読み取り専用</strong> の能力情報であり、ユーザが <a href="../../glossary/#term-config_db">CONFIG_DB</a> から書き込む設定テーブルではない。</p>
 <table>
 <thead>
 <tr>
@@ -36765,7 +36765,7 @@
      sonic-swss/orchagent/debugcounterorch.cpp:315-363,
      sonic-swss/orchagent/debug_counter/drop_counter.cpp:298-446 -->
 
-<p>これらの STATE_DB テーブルは orchagent 起動直後にコンストラクタ内で書き込まれる。SAI query 失敗はすべて <strong>silent 継続</strong> であり orchagent を停止させない。ユーザーへの影響はカウンタが <code>N/A</code> になるか、<code>show debug-counter capabilities</code> が空になるかのいずれかである。</p>
+<p>これらの STATE_DB テーブルは orchagent 起動直後にコンストラクタ内で書き込まれる。SAI query 失敗はすべて <strong>silent 継続</strong> であり orchagent を停止させない。ユーザへの影響はカウンタが <code>N/A</code> になるか、<code>show debug-counter capabilities</code> が空になるかのいずれかである。</p>
 <table>
 <thead>
 <tr>
@@ -36829,7 +36829,7 @@
 </tbody>
 </table>
 <h3 id="sai_status_buffer_overflow">SAI_STATUS_BUFFER_OVERFLOW の特殊処理<a class="headerlink" href="#sai_status_buffer_overflow" title="Permanent link">&para;</a></h3>
-<p><code>sai_query_stats_capability()</code> が <code>SAI_STATUS_BUFFER_OVERFLOW</code> を返した場合、portsorch は必要なバッファを確保して <strong>自動リトライ</strong> する (portsorch.cpp:1883-1888, 1930-1934)。リトライ後も失敗した場合にのみ <code>SWSS_LOG_NOTICE</code> が出力される。リトライ自体は透過的に処理され、ユーザーへの影響はない。</p>
+<p><code>sai_query_stats_capability()</code> が <code>SAI_STATUS_BUFFER_OVERFLOW</code> を返した場合、portsorch は必要なバッファを確保して <strong>自動リトライ</strong> する (portsorch.cpp:1883-1888, 1930-1934)。リトライ後も失敗した場合にのみ <code>SWSS_LOG_NOTICE</code> が出力される。リトライ自体は透過的に処理され、ユーザへの影響はない。</p>
 <h3 id="debug_counter_capabilities_2">DEBUG_COUNTER_CAPABILITIES のリソース枯渇警告<a class="headerlink" href="#debug_counter_capabilities_2" title="Permanent link">&para;</a></h3>
 <p>コードコメント (drop_counter.cpp:425-431) によると、プラットフォームの debug counter リソースは <a href="../../glossary/#term-asic">ASIC</a> の他オブジェクト（<a href="../../glossary/#term-acl">ACL</a> 等）とハードウェアリソースを共有する場合がある。<code>getSupportedDebugCounterAmounts()</code> が返す count は起動時以降に変化する可能性があるが、STATE_DB への再書き込みは行われない（コンストラクタ呼び出し時のスナップショットのみ）。</p>
 <!-- /failure -->

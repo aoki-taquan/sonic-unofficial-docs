@@ -25830,7 +25830,7 @@
   <a href="#pfcwd_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        pfcwd — サーバー向けポート判定
+        pfcwd — サーバ向けポート判定
       
     </span>
   </a>
@@ -35800,7 +35800,7 @@
   <a href="#pfcwd_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        pfcwd — サーバー向けポート判定
+        pfcwd — サーバ向けポート判定
       
     </span>
   </a>
@@ -36490,7 +36490,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="pfcwd_1">pfcwd — サーバー向けポート判定<a class="headerlink" href="#pfcwd_1" title="Permanent link">&para;</a></h3>
+<h3 id="pfcwd_1">pfcwd — サーバ向けポート判定<a class="headerlink" href="#pfcwd_1" title="Permanent link">&para;</a></h3>
 <p><code>get_server_facing_ports()</code> (<code>pfcwd/main.py:97-108</code>) は DEVICE_NEIGHBOR を起点に DEVICE_NEIGHBOR_METADATA の <code>type</code> を参照する。</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">candidates</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="s1">&#39;DEVICE_NEIGHBOR&#39;</span><span class="p">)</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
@@ -36501,8 +36501,8 @@
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">server_facing_ports</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="s1">&#39;VLAN_MEMBER&#39;</span><span class="p">)]</span>
 </span></code></pre></div>
 <ul>
-<li>DEVICE_NEIGHBOR_METADATA に対応エントリが存在しない、または <code>type</code> が <code>'server'</code> でない場合はサーバー向けポートとして列挙されない</li>
-<li>サーバー向けポートが <strong>0 件</strong> の場合、<code>VLAN_MEMBER</code> のポートにフォールバック</li>
+<li>DEVICE_NEIGHBOR_METADATA に対応エントリが存在しない、または <code>type</code> が <code>'server'</code> でない場合はサーバ向けポートとして列挙されない</li>
+<li>サーバ向けポートが <strong>0 件</strong> の場合、<code>VLAN_MEMBER</code> のポートにフォールバック</li>
 </ul>
 <h3 id="ecnconfig-multi-asic">ecnconfig — ポート一覧（非 multi-ASIC 環境）<a class="headerlink" href="#ecnconfig-multi-asic" title="Permanent link">&para;</a></h3>
 <p><code>ecnconfig</code> (<code>scripts/ecnconfig:282-287</code>) は非 multi-<a href="../../glossary/#term-asic">ASIC</a> 環境で DEVICE_NEIGHBOR を外部ポート一覧として使用する。</p>
@@ -36658,7 +36658,7 @@
 <tr>
 <td><code>VLAN_MEMBER</code> (CONFIG_DB)</td>
 <td>フォールバック参照</td>
-<td><code>pfcwd get_server_facing_ports</code> でサーバー向けポートが 0 件の場合にのみ参照。DEVICE_NEIGHBOR がすべて非 <code>server</code> 型か空の場合に適用</td>
+<td><code>pfcwd get_server_facing_ports</code> でサーバ向けポートが 0 件の場合にのみ参照。DEVICE_NEIGHBOR がすべて非 <code>server</code> 型か空の場合に適用</td>
 <td><code>pfcwd/main.py:106-107</code></td>
 </tr>
 <tr>
@@ -36681,7 +36681,7 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">VLAN_MEMBER 参照は非自明なフォールバック</p>
-<p><code>pfcwd get_server_facing_ports()</code> は DEVICE_NEIGHBOR + DEVICE_NEIGHBOR_METADATA を組み合わせてサーバー向けポートを決定しようとするが、該当ポートが 0 件の場合にのみ VLAN_MEMBER をフォールバックとして使う。このため VLAN 設定が pfcwd のポートスコープに予期せず影響することがある（evidence: <code>pfcwd/main.py:106-107</code>）。</p>
+<p><code>pfcwd get_server_facing_ports()</code> は DEVICE_NEIGHBOR + DEVICE_NEIGHBOR_METADATA を組み合わせてサーバ向けポートを決定しようとするが、該当ポートが 0 件の場合にのみ VLAN_MEMBER をフォールバックとして使う。このため VLAN 設定が pfcwd のポートスコープに予期せず影響することがある（evidence: <code>pfcwd/main.py:106-107</code>）。</p>
 </div>
 <blockquote>
 <p><strong>Evidence</strong>: <code>sonic-utilities</code> <code>pfcwd/main.py:97-119,405-424</code>; <code>sonic-buildimage</code> <code>src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:118-154,219-224</code></p>
@@ -36728,7 +36728,7 @@
 <td><code>pfcwd get_server_facing_ports</code></td>
 <td>DEVICE_NEIGHBOR_METADATA に <code>type='server'</code> エントリがない</td>
 <td><code>pfcwd/main.py:106-107</code></td>
-<td>サーバー向けポート 0 件 → <code>VLAN_MEMBER</code> フォールバックへ（非自明挙動）</td>
+<td>サーバ向けポート 0 件 → <code>VLAN_MEMBER</code> フォールバックへ（非自明挙動）</td>
 <td>なし（VLAN_MEMBER でフォールバック継続）</td>
 </tr>
 <tr>
@@ -37088,7 +37088,7 @@
 <h3 id="bgpcfgd-device_neighbor_metadata-device_neighbor">bgpcfgd — DEVICE_NEIGHBOR_METADATA を購読（DEVICE_NEIGHBOR 本体は対象外）<a class="headerlink" href="#bgpcfgd-device_neighbor_metadata-device_neighbor" title="Permanent link">&para;</a></h3>
 <p><code>bgpcfgd</code> の <code>BGPDataBaseMgr</code> は <code>CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME</code> を <code>SubscriberStateTable</code> で継続購読する（<code>runner.py:49-52</code>）。DEVICE_NEIGHBOR テーブル本体は購読対象ではない。DEVICE_NEIGHBOR の <code>name</code> フィールド値（デバイス名）は DEVICE_NEIGHBOR_METADATA 購読イベントの処理内で参照されるが、DEVICE_NEIGHBOR 自体の変化は bgpcfgd に通知されない（<code>managers_bgp.py:219-224</code>）。</p>
 <h3 id="keyspace">keyspace 通知の実効的な受信者なし<a class="headerlink" href="#keyspace" title="Permanent link">&para;</a></h3>
-<p>DEVICE_NEIGHBOR は CONFIG_DB に保存される永続テーブルであり TTL なし。<a href="../../glossary/#term-redis">Redis</a> への <code>HSET</code> 操作は keyspace 通知を発行するが、それを受信する継続的 subscriber は現行実装に存在しない。このため <strong>DEVICE_NEIGHBOR への変更はリアルタイムでは伝搬されない</strong>。各 consumer は起動時または実行時の一回限りのスナップショットで動作し、ランタイムの変更は consumer 再起動（または pfcwd start_default / ecnconfig の再実行）まで反映されない。</p>
+<p>DEVICE_NEIGHBOR は CONFIG_DB に保存される永続テーブルであり TTL なし。<a href="../../glossary/#term-redis">Redis</a> への <code>HSET</code> 操作は keyspace 通知を発行するが、それを受信する継続的 subscriber は現行実装に存在しない。このため <strong>DEVICE_NEIGHBOR への変更はリアルタイムでは伝搬されない</strong>。各 consumer は起動時または実行時の1回限りのスナップショットで動作し、ランタイムの変更は consumer 再起動（または pfcwd start_default / ecnconfig の再実行）まで反映されない。</p>
 <blockquote>
 <p><strong>Evidence</strong>: <code>sonic-utilities</code> <code>pfcwd/main.py:97-108,405-416</code>; <code>scripts/ecnconfig:282-293</code>; <code>show/interfaces/__init__.py:310-320</code>; <code>sonic-buildimage</code> <code>dockers/docker-lldp/lldpmgrd:12-14</code>; <code>src/sonic-bgpcfgd/bgpcfgd/runner.py:21,49-52</code>; <code>src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py:139-140,219-224</code>; 中間調査 <code>meta/_intermediate/cdb-flow/deviceop-state-pubsub.md</code></p>
 </blockquote>
@@ -37227,7 +37227,7 @@ multi-ASIC 環境では各ネームスペース（<code>asic0</code> / <code>asi
 </tr>
 <tr>
 <td>pfcwd get_server_facing_ports</td>
-<td>サーバー向けポート 0 件 → VLAN_MEMBER にフォールバック</td>
+<td>サーバ向けポート 0 件 → VLAN_MEMBER にフォールバック</td>
 <td>サイレント（フォールバック）</td>
 </tr>
 <tr>
@@ -37238,7 +37238,7 @@ multi-ASIC 環境では各ネームスペース（<code>asic0</code> / <code>asi
 <tr>
 <td>show interfaces neighbor expected</td>
 <td><code>"DEVICE_NEIGHBOR information is not present."</code> 表示して即 return</td>
-<td>ユーザー表示のみ</td>
+<td>ユーザ表示のみ</td>
 </tr>
 <tr>
 <td>bgpcfgd</td>

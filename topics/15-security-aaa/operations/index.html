@@ -35534,7 +35534,7 @@
 </span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">                     </span>auth_type:<span class="w"> </span>pap
 </span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">                     </span>passkey<span class="w">  </span>:<span class="w"> </span>*****
 </span></code></pre></div>
-<p><code>show aaa</code> の <code>login</code> フィールドが <code>local</code> のみだと TACACS+ が無効、<code>tacacs+,local</code> が標準的な「外部 AAA → ダウン時 local」設定です。<code>failthrough=True</code> は外部 AAA がユーザー不在を返したら次のメソッドに進む挙動で、<code>fallback=True</code> は外部 AAA そのものが到達不能な場合のフォールバック動作です。誤って <code>failthrough=False</code> にすると、外部 AAA で deny されたユーザーが local でも入れなくなります。</p>
+<p><code>show aaa</code> の <code>login</code> フィールドが <code>local</code> のみだと TACACS+ が無効、<code>tacacs+,local</code> が標準的な「外部 AAA → ダウン時 local」設定です。<code>failthrough=True</code> は外部 AAA がユーザ不在を返したら次のメソッドに進む挙動で、<code>fallback=True</code> は外部 AAA そのものが到達不能な場合のフォールバック動作です。誤って <code>failthrough=False</code> にすると、外部 AAA で deny されたユーザが local でも入れなくなります。</p>
 <h2 id="password-hardening">Password hardening<a class="headerlink" href="#password-hardening" title="Permanent link">&para;</a></h2>
 <p>local user のパスワードに対する最低長、強度、履歴、有効期限、ロックアウトなどのポリシーは <a href="../../../architecture/pw-hardening-design/">password hardening 設計</a> に集約されています。<a href="../../../reference/glossary/#term-sonic">SONiC</a> は Linux 標準の <code>pam_pwquality</code> / <code>pam_faillock</code> / <code>chage</code> を組み合わせ、<code>CONFIG_DB</code> 経由で設定をテンプレート展開します。</p>
 <p>運用観点では次を確認します。</p>
@@ -35569,7 +35569,7 @@
 </span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>Maximum<span class="w"> </span>number<span class="w"> </span>of<span class="w"> </span>days<span class="w"> </span>between<span class="w"> </span>password<span class="w"> </span>change<span class="w">          </span>:<span class="w"> </span><span class="m">90</span>
 </span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>Number<span class="w"> </span>of<span class="w"> </span>days<span class="w"> </span>of<span class="w"> </span>warning<span class="w"> </span>before<span class="w"> </span>password<span class="w"> </span>expires<span class="w">       </span>:<span class="w"> </span><span class="m">7</span>
 </span></code></pre></div>
-<p>ロックされたユーザーの解除は <code>sudo faillock --user &lt;name&gt; --reset</code> です。<code>chage -E -1</code> で account expiration を解除できます。本番作業前に手元のシリアル経由で local user に入れることを必ず確認してから外部 AAA を切替えます。</p>
+<p>ロックされたユーザの解除は <code>sudo faillock --user &lt;name&gt; --reset</code> です。<code>chage -E -1</code> で account expiration を解除できます。本番作業前に手元のシリアル経由で local user に入れることを必ず確認してから外部 AAA を切替えます。</p>
 <h2 id="default-credential-management">Default credential management<a class="headerlink" href="#default-credential-management" title="Permanent link">&para;</a></h2>
 <p>工場出荷時の <code>admin/YourPaSsWoRd</code> のような初期パスワードは、初回ログイン時に強制的に変更させる仕組みが <a href="../../../management/default-credential-management-for-california-sb-327-conformance/">default credential management</a> で導入されています。California SB-327 をはじめとする規制対応が主目的で、初期 image のリプレース運用や <a href="../../../reference/glossary/#term-ztp">ZTP</a> からの初回起動時に必ず通る経路です。</p>
 <h3 id="_3">初回ログインの典型シーケンス<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -35594,13 +35594,13 @@
 </ol>
 <p>リモートからの password reset 経路は明示的に提供されません。リモートで詰まった場合は OOB ネットワーク経由のシリアル、または現地オペレーターを呼ぶ前提です。</p>
 <h2 id="_5">フォールバック確認<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>外部 AAA を導入したら、必ず「サーバー全滅時に local で入れるか」を試験で確認します。<a href="../../../management/tacacs-test-plan/">TACACS test plan</a> には、プライマリ TACACS+ ダウン時のフォールバックや、サーバー応答遅延時の挙動など、現場で詰まりやすい組み合わせが網羅されています。 <a href="../../../management/aaa-improvements/">AAA improvements</a> には login flow の改善履歴があり、過去バージョンとの差分の根拠を当たれます。</p>
+<p>外部 AAA を導入したら、必ず「サーバ全滅時に local で入れるか」を試験で確認します。<a href="../../../management/tacacs-test-plan/">TACACS test plan</a> には、プライマリ TACACS+ ダウン時のフォールバックや、サーバ応答遅延時の挙動など、現場で詰まりやすい組み合わせが網羅されています。 <a href="../../../management/aaa-improvements/">AAA improvements</a> には login flow の改善履歴があり、過去バージョンとの差分の根拠を当たれます。</p>
 <h3 id="_6">フォールバック試験の最小手順<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <ol>
 <li>TACACS+ server 1 台目を <code>iptables -A INPUT -p tcp --dport 49 -j DROP</code> でブロック → 2 台目に flip すること。</li>
 <li>全 TACACS+ server をブロック → local user で入れること。</li>
 <li>local user の password を期限切れにし、login プロンプトで強制変更がかかること。</li>
-<li><code>aaa authentication failthrough false</code> に切替えて、外部 AAA で deny されたユーザーが local でも入れないこと（意図した挙動）。</li>
+<li><code>aaa authentication failthrough false</code> に切替えて、外部 AAA で deny されたユーザが local でも入れないこと（意図した挙動）。</li>
 <li>試験終了後に必ず元設定へ戻すこと（戻し忘れ事故が一番多い）。</li>
 </ol>
 <p>タイムアウト値を緩めすぎると、TACACS+ server 全滅時のフォールバック開始が遅延します。<code>tcp_port</code> 到達確認 + <code>timeout=5</code> が一般的な落とし所です。</p>
@@ -35609,7 +35609,7 @@
 <li><code>sshd</code> のログ（<code>journalctl -u ssh</code>）で接続拒否か認証失敗かを切り分ける。</li>
 <li>PAM 経路を疑う場合、<code>/etc/pam.d/sshd</code> 等が <code>hostcfgd</code> 出力どおりかを比較する。</li>
 <li>NSS 経路を疑う場合、<code>getent passwd &lt;user&gt;</code> でバックエンドの解決状況を確認する。</li>
-<li>TACACS+ 経路は <code>/etc/tacplus_*</code> の中身と、サーバー到達性（management <a href="../../../reference/glossary/#term-vrf">VRF</a> 経由含む）を確認する。</li>
+<li>TACACS+ 経路は <code>/etc/tacplus_*</code> の中身と、サーバ到達性（management <a href="../../../reference/glossary/#term-vrf">VRF</a> 経由含む）を確認する。</li>
 <li>ロックアウトが疑われる場合は <code>pam_faillock</code> の状態と、シリアル経由の local ログインの可否を確認する。</li>
 </ol>
 <h3 id="_8">典型ログとその意味<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
@@ -35684,7 +35684,7 @@
 <td><code>sudo config aaa authentication login local</code></td>
 </tr>
 <tr>
-<td>ユーザーのロック解除</td>
+<td>ユーザのロック解除</td>
 <td><code>sudo faillock --user &lt;user&gt; --reset</code></td>
 </tr>
 <tr>

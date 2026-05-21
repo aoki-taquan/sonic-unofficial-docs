@@ -37475,7 +37475,7 @@
 <h3 id="trap_ids"><code>trap_ids</code><a class="headerlink" href="#trap_ids" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>YANG default</strong>: なし (<code>mandatory true</code>)</li>
-<li><strong>実装上の挙動 [IF, AR]</strong>: <code>coppmgr</code> は起動時に <code>/etc/sonic/copp_cfg.json</code>（<code>copp_cfg.j2</code> 由来）を読み込み <code>m_coppTrapInitCfg</code> に保持する。ユーザーが <code>COPP_TRAP|&lt;name&gt;</code> を CONFIG_DB から DELETE しても、init cfg に同名エントリが存在すれば init 値でトラップを自動再登録する（実質「ユーザー設定削除 = init 値リセット」）。<!-- evidence: coppmgr.cpp L773-805 --></li>
+<li><strong>実装上の挙動 [IF, AR]</strong>: <code>coppmgr</code> は起動時に <code>/etc/sonic/copp_cfg.json</code>（<code>copp_cfg.j2</code> 由来）を読み込み <code>m_coppTrapInitCfg</code> に保持する。ユーザが <code>COPP_TRAP|&lt;name&gt;</code> を CONFIG_DB から DELETE しても、init cfg に同名エントリが存在すれば init 値でトラップを自動再登録する（実質「ユーザ設定削除 = init 値リセット」）。<!-- evidence: coppmgr.cpp L773-805 --></li>
 <li><strong>SET 時・不完全設定のスキップ [PD]</strong>: <code>trap_ids</code> が空かつ <code>trap_group</code> も空の SET は incomplete configuration として処理スキップ（no-op）。<!-- evidence: coppmgr.cpp L609-615 --></li>
 </ul>
 <h3 id="trap_group"><code>trap_group</code><a class="headerlink" href="#trap_group" title="Permanent link">&para;</a></h3>
@@ -37558,7 +37558,7 @@
 <h3 id="init_cfg">init_cfg 由来の暗黙初期化<a class="headerlink" href="#init_cfg" title="Permanent link">&para;</a></h3>
 <p><code>coppmgr</code> は起動時に <code>/etc/sonic/copp_cfg.json</code>（<code>files/image_config/copp/copp_cfg.j2</code> の展開物）を
 読み込み、<code>COPP_TRAP</code> と <code>COPP_GROUP</code> の初期セットを <code>m_coppTrapInitCfg</code> / <code>m_coppGroupInitCfg</code> に保持する。
-ユーザーが CONFIG_DB から DEL した場合も、init cfg に同名キーがあれば init 値で自動復元される（実質「DEL = init リセット」）。<code>coppmgr.cpp:773-805</code></p>
+ユーザが CONFIG_DB から DEL した場合も、init cfg に同名キーがあれば init 値で自動復元される（実質「DEL = init リセット」）。<code>coppmgr.cpp:773-805</code></p>
 <ul>
 <li>既定エントリ例: <code>bgp</code> → <code>trap_ids: bgp,bgpv6</code> / <code>trap_group: queue4_group1</code></li>
 <li><code>always_enabled=true</code> の例: <code>lacp</code>、<code>arp</code>、<code>udld</code>、<code>ip2me</code>、<code>neighbor_miss</code></li>

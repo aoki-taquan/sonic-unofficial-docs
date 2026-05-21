@@ -35332,7 +35332,7 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Authentication failed.
 </span></code></pre></div>
 <h2 id="_2">原因<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>OpenSSH クライアントは、接続時にローカルの SSH エージェントや <code>~/.ssh/</code> 以下に登録されている<strong>すべての秘密鍵</strong>を順番に試行する。秘密鍵の数が <code>MaxAuthTries</code>（sshd の設定値、デフォルト 6）を超えると、サーバーが接続を切断する。</p>
+<p>OpenSSH クライアントは、接続時にローカルの SSH エージェントや <code>~/.ssh/</code> 以下に登録されている<strong>すべての秘密鍵</strong>を順番に試行する。秘密鍵の数が <code>MaxAuthTries</code>（sshd の設定値、デフォルト 6）を超えると、サーバが接続を切断する。</p>
 <p>SONiC の <code>sshd</code> 設定では <code>MaxAuthTries</code> が比較的小さく設定されている場合があり、多数の SSH キーを管理しているクライアント環境で発生しやすい。</p>
 <h2 id="_3">対処方法<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="1">方法 1: 公開鍵認証を無効にして接続する<a class="headerlink" href="#1" title="Permanent link">&para;</a></h3>

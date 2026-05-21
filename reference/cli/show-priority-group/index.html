@@ -35491,7 +35491,7 @@
 <ul>
 <li>persistent-watermark は手動 clear するまでリセットされない。</li>
 <li>PG が profile 紐付けされていないと watermark は 0 のまま。</li>
-<li><strong><code>sonic-clear priority-group drop counters</code> に root 権限が必要な問題</strong> (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/4144">#4144</a>): <code>show priority-group drop counters</code> は admin 権限で動作するが、<code>sonic-clear priority-group drop counters</code> は root 権限を要求する。PG drop counter のキャッシュは UID 単位で管理されるため、root で clear しても admin ユーザーの表示に反映されない。回避策: <code>pg-drop -c clear</code> コマンドを使うと root 権限なしで clear できる（<code>show priority-group drop counters</code> の表示に正しく反映される）。</li>
+<li><strong><code>sonic-clear priority-group drop counters</code> に root 権限が必要な問題</strong> (issue <a href="https://github.com/sonic-net/sonic-utilities/issues/4144">#4144</a>): <code>show priority-group drop counters</code> は admin 権限で動作するが、<code>sonic-clear priority-group drop counters</code> は root 権限を要求する。PG drop counter のキャッシュは UID 単位で管理されるため、root で clear しても admin ユーザの表示に反映されない。回避策: <code>pg-drop -c clear</code> コマンドを使うと root 権限なしで clear できる（<code>show priority-group drop counters</code> の表示に正しく反映される）。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>show<span class="w"> </span>priority-group<span class="w"> </span>watermark<span class="w"> </span>headroom

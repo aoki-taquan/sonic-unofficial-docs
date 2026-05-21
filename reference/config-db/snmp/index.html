@@ -37907,7 +37907,7 @@ CONFIG_DB 変更後は <code>sudo systemctl restart snmp</code> (または <code
 <h3 id="device_metadatalocalhostswitch_type-snmp-subagent">DEVICE_METADATA.localhost.switch_type — snmp-subagent 起動モード<a class="headerlink" href="#device_metadatalocalhostswitch_type-snmp-subagent" title="Permanent link">&para;</a></h3>
 <p><code>supervisord.conf.j2</code> L53–57 でテンプレート展開される。<code>switch_type == 'chassis-packet'</code> の場合は <code>--enable_dynamic_frequency</code> フラグ付きで <code>sonic_ax_impl</code> を起動する。<code>DEVICE_METADATA.localhost</code> が CONFIG_DB に存在しない場合、テンプレート展開が KeyError で失敗し docker-snmp コンテナが起動しない。</p>
 <h3 id="sai">SAI 参照<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<p>なし。snmpd は純粋なユーザー空間デーモンで <a href="../../glossary/#term-sai">SAI</a>/<a href="../../glossary/#term-asic">ASIC</a> に一切触れない。<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継もない。</p>
+<p>なし。snmpd は純粋なユーザ空間デーモンで <a href="../../glossary/#term-sai">SAI</a>/<a href="../../glossary/#term-asic">ASIC</a> に一切触れない。<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継もない。</p>
 <!-- /cross-refs -->
 
 <!-- pubsub -->

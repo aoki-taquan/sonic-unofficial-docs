@@ -24088,7 +24088,7 @@
   <a href="#5-0-vlan_member" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. サーバー向けポート 0 件 → VLAN_MEMBER フォールバック
+        5. サーバ向けポート 0 件 → VLAN_MEMBER フォールバック
       
     </span>
   </a>
@@ -24143,7 +24143,7 @@
   <a href="#pfcwd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        pfcwd — サーバー判定文字列とフォールバック
+        pfcwd — サーバ判定文字列とフォールバック
       
     </span>
   </a>
@@ -36106,7 +36106,7 @@
   <a href="#5-0-vlan_member" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. サーバー向けポート 0 件 → VLAN_MEMBER フォールバック
+        5. サーバ向けポート 0 件 → VLAN_MEMBER フォールバック
       
     </span>
   </a>
@@ -36161,7 +36161,7 @@
   <a href="#pfcwd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        pfcwd — サーバー判定文字列とフォールバック
+        pfcwd — サーバ判定文字列とフォールバック
       
     </span>
   </a>
@@ -36924,7 +36924,7 @@
 <h3 id="_7">主要な制約詳細<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <p><strong>bgpcfgd 全件ブロック (依存 #1)</strong>: <code>BGPPeerMgrBase.__init__()</code> (<code>managers_bgp.py:128-140</code>) は <code>constants.bgp.use_neighbors_meta == True</code> の場合のみ <code>CFG_DEVICE_NEIGHBOR_METADATA_TABLE_NAME</code> を <code>deps</code> に追加する。directory メカニズムはこの宣言を元に「DEVICE_NEIGHBOR_METADATA が到着するまで BGP ピア <code>set_handler</code> を実行しない」制御を行う。minigraph 書込み完了前に bgpcfgd が起動している環境では、BGP セッションは DEVICE_NEIGHBOR_METADATA 到着まで<strong>全件ブロック</strong>される（evidence: <code>managers_bgp.py:128-131,138-140</code>）。</p>
 <p><strong>個別エントリ不在での延期 (依存 #2)</strong>: <code>BGPPeerMgrBase.set_handler()</code> (<code>managers_bgp.py:218-224</code>) は <code>data['name']</code> が <code>neigmeta</code> に存在しない場合に <code>log_info("DEVICE_NEIGHBOR_METADATA is not ready for neighbor ...")</code> を出力して <code>return False</code>（再試行待ち）を返す。BGP_NEIGHBOR エントリが先に <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書き込まれても、対応する DEVICE_NEIGHBOR_METADATA エントリが存在しない限り BGP セッション設定は適用されない（evidence: <code>managers_bgp.py:218-224</code>）。</p>
-<p><strong>pfcwd の直列参照 (依存 #3)</strong>: <code>get_server_facing_ports()</code> (<code>pfcwd/main.py:97-108</code>) は DEVICE_NEIGHBOR の各エントリの <code>name</code> を使って DEVICE_NEIGHBOR_METADATA の <code>type</code> を参照する。DEVICE_NEIGHBOR_METADATA 側に対応エントリがない場合、サーバー向けポートとして列挙されず、VLAN_MEMBER フォールバックに移行する。minigraph は両テーブルを同一実行内で生成するため通常は同時到着するが、テーブル単位の書込み順は <code>hset</code> 操作順に依存する（evidence: <code>pfcwd/main.py:97-108</code>）。</p>
+<p><strong>pfcwd の直列参照 (依存 #3)</strong>: <code>get_server_facing_ports()</code> (<code>pfcwd/main.py:97-108</code>) は DEVICE_NEIGHBOR の各エントリの <code>name</code> を使って DEVICE_NEIGHBOR_METADATA の <code>type</code> を参照する。DEVICE_NEIGHBOR_METADATA 側に対応エントリがない場合、サーバ向けポートとして列挙されず、VLAN_MEMBER フォールバックに移行する。minigraph は両テーブルを同一実行内で生成するため通常は同時到着するが、テーブル単位の書込み順は <code>hset</code> 操作順に依存する（evidence: <code>pfcwd/main.py:97-108</code>）。</p>
 <!-- /ordering -->
 
 <!-- cross-refs -->
@@ -36975,7 +36975,7 @@
 <td><code>pfcwd get_server_facing_ports()</code></td>
 <td><code>CONFIG_DB DEVICE_NEIGHBOR</code> (ポート→name)</td>
 <td><code>type</code></td>
-<td><code>type.lower() == 'server'</code> でサーバー向けポートを判定; 欠落時は <code>CONFIG_DB VLAN_MEMBER</code> フォールバック</td>
+<td><code>type.lower() == 'server'</code> でサーバ向けポートを判定; 欠落時は <code>CONFIG_DB VLAN_MEMBER</code> フォールバック</td>
 <td><code>pfcwd/main.py:97-108</code></td>
 </tr>
 <tr>
@@ -37056,7 +37056,7 @@
 </tr>
 <tr>
 <td>5</td>
-<td>サーバー向けポートが 0 件（<code>type == 'server'</code> エントリなし）</td>
+<td>サーバ向けポートが 0 件（<code>type == 'server'</code> エントリなし）</td>
 <td>pfcwd <code>get_server_facing_ports</code></td>
 <td><code>VLAN_MEMBER</code> をフォールバックとして使用（サイレント）</td>
 <td>N/A（フォールバックで継続）</td>
@@ -37106,7 +37106,7 @@ pfcwd の起動シーケンス (<code>start_default</code>) が中断される�
 pfcwd の初回起動時に <code>KeyError</code> でプロセスが中断する。
 minigraph 経由では <code>type</code> が常に書き込まれるが、直接 DB 操作時は要注意。</p>
 </div>
-<h4 id="5-0-vlan_member">5. サーバー向けポート 0 件 → VLAN_MEMBER フォールバック<a class="headerlink" href="#5-0-vlan_member" title="Permanent link">&para;</a></h4>
+<h4 id="5-0-vlan_member">5. サーバ向けポート 0 件 → VLAN_MEMBER フォールバック<a class="headerlink" href="#5-0-vlan_member" title="Permanent link">&para;</a></h4>
 <p><code>type.lower() == 'server'</code> に合致するエントリが存在しない場合、
 <code>server_facing_ports</code> は空リストとなり、<code>VLAN_MEMBER</code> テーブルのポートで代替される。
 これはサイレントなフォールバックで、ログ出力もエラーも発生しない
@@ -37176,7 +37176,7 @@ minigraph 経由では <code>type</code> が常に書き込まれるが、直接
 </tbody>
 </table>
 <p><code>slice_type</code> は上記条件を満たす場合に限り <code>"AZNG_Production"</code> という固定文字列で書き込まれる。条件不一致の場合は <code>None</code> のままで DEVICE_NEIGHBOR_METADATA へは追加されない（silent drop）。YANG 上は自由文字列だが実装は事実上二値（<code>"AZNG_Production"</code> or 欠落）。</p>
-<h3 id="pfcwd">pfcwd — サーバー判定文字列とフォールバック<a class="headerlink" href="#pfcwd" title="Permanent link">&para;</a></h3>
+<h3 id="pfcwd">pfcwd — サーバ判定文字列とフォールバック<a class="headerlink" href="#pfcwd" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -37188,14 +37188,14 @@ minigraph 経由では <code>type</code> が常に書き込まれるが、直接
 </thead>
 <tbody>
 <tr>
-<td>サーバー種別判定</td>
+<td>サーバ種別判定</td>
 <td><code>'server'</code>（<code>.lower()</code> で大文字小文字非感受）</td>
-<td><code>type.lower() == 'server'</code> でサーバー向けポートを選別</td>
+<td><code>type.lower() == 'server'</code> でサーバ向けポートを選別</td>
 <td><code>pfcwd/main.py:104</code></td>
 </tr>
 </tbody>
 </table>
-<p>DEVICE_NEIGHBOR_METADATA にサーバー向けポートが 0 件の場合、<code>get_server_facing_ports()</code> は自動的に <code>VLAN_MEMBER</code> テーブルのポートにフォールバックする（<code>pfcwd/main.py:106-107</code>）。この切り替えに明示的な定数はなく、空リスト判定のみ。</p>
+<p>DEVICE_NEIGHBOR_METADATA にサーバ向けポートが 0 件の場合、<code>get_server_facing_ports()</code> は自動的に <code>VLAN_MEMBER</code> テーブルのポートにフォールバックする（<code>pfcwd/main.py:106-107</code>）。この切り替えに明示的な定数はなく、空リスト判定のみ。</p>
 <h3 id="db_migrator-edgezoneaggregator">db_migrator — EdgeZoneAggregator ケーブル長<a class="headerlink" href="#db_migrator-edgezoneaggregator" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -37421,7 +37421,7 @@ minigraph 経由では <code>type</code> が常に書き込まれるが、直接
 <li><strong>受信後の処理</strong>: <code>BGPDataBaseMgr.set_handler()</code> が <code>directory.put()</code> でインメモリ <code>Directory</code> オブジェクトを更新する。その後 <code>cfg_manager.commit()</code> で <code>BGPPeerMgrBase</code> 等の依存 manager が <code>directory.get_slot()</code> で最新値を参照して BGP ピア設定を生成する (<code>managers_bgp.py:219-224</code>)</li>
 </ul>
 <h3 id="pfcwd-hgetall-hget">pfcwd — スナップショット (HGETALL + HGET)<a class="headerlink" href="#pfcwd-hgetall-hget" title="Permanent link">&para;</a></h3>
-<p><code>get_server_facing_ports(db)</code> (<code>pfcwd/main.py:97-107</code>) は DEVICE_NEIGHBOR テーブルを <code>get_table()</code> で一括取得後、エントリごとに <code>get_entry('DEVICE_NEIGHBOR_METADATA', name)</code> で該当メタデータを取得する。<strong>継続的な subscribe は行わない</strong>。pfcwd 起動時の一回限りの読み込みであり、その後 DEVICE_NEIGHBOR_METADATA が更新されても pfcwd は再読み込みしない。</p>
+<p><code>get_server_facing_ports(db)</code> (<code>pfcwd/main.py:97-107</code>) は DEVICE_NEIGHBOR テーブルを <code>get_table()</code> で一括取得後、エントリごとに <code>get_entry('DEVICE_NEIGHBOR_METADATA', name)</code> で該当メタデータを取得する。<strong>継続的な subscribe は行わない</strong>。pfcwd 起動時の1回限りの読み込みであり、その後 DEVICE_NEIGHBOR_METADATA が更新されても pfcwd は再読み込みしない。</p>
 <h3 id="_12">タイムアウトとポーリング間隔<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <p><code>bgpcfgd Runner</code> の <code>SELECT_TIMEOUT = 1000 ms</code> はイベント待機の最大時間であり、DEVICE_NEIGHBOR_METADATA への変更は keyspace 通知によって即時（≤ 1 秒以内）に <code>BGPDataBaseMgr</code> へ届く。<code>pfcwd</code> は subscribe しないためポーリング間隔は存在しない。</p>
 <blockquote>

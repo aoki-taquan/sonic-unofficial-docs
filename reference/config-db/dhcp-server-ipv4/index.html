@@ -37463,7 +37463,7 @@
 <h3 id="customized_optionsalways_send-db-absent-true"><code>customized_options.always_send</code> — DB absent 時は <code>true</code><a class="headerlink" href="#customized_optionsalways_send-db-absent-true" title="Permanent link">&para;</a></h3>
 <p><code>DHCP_SERVER_IPV4_CUSTOMIZED_OPTIONS</code> の <code>always_send</code> フィールドは YANG default <code>true</code>（<code>sonic-dhcp-server-ipv4.yang:168</code>）、dhcp_cfggen でも <code>config.get("always_send", "true")</code> でフォールバック（<code>dhcp_cfggen.py:151</code>）。</p>
 <h3 id="dhcp_server_id-option-54">dhcp_server_id (option 54) の自動注入<a class="headerlink" href="#dhcp_server_id-option-54" title="Permanent link">&para;</a></h3>
-<p><code>customized_options</code> に option ID <code>"54"</code> が含まれない場合、dhcp_cfggen は VLAN_INTERFACE の IPv4 アドレスを <code>always_send=true</code> で dhcp_server_id オプションとして自動注入する（<code>dhcp_cfggen.py:245-249</code>）。ユーザー定義で上書き可能。</p>
+<p><code>customized_options</code> に option ID <code>"54"</code> が含まれない場合、dhcp_cfggen は VLAN_INTERFACE の IPv4 アドレスを <code>always_send=true</code> で dhcp_server_id オプションとして自動注入する（<code>dhcp_cfggen.py:245-249</code>）。ユーザ定義で上書き可能。</p>
 <h3 id="smartswitch-subnet-id">SmartSwitch 時の subnet ID ハードコード<a class="headerlink" href="#smartswitch-subnet-id" title="Permanent link">&para;</a></h3>
 <p><a href="../../glossary/#term-smartswitch">SmartSwitch</a> 環境では kea-dhcp4 の subnet ID が <code>MID_PLANE_BRIDGE_SUBNET_ID = 10000</code> に固定される（<code>dhcp_cfggen.py:251, :19</code>）。通常 VLAN では VLAN 番号を整数変換して使用。</p>
 <h3 id="cli-add-enable">書込み順依存 (CLI add → enable)<a class="headerlink" href="#cli-add-enable" title="Permanent link">&para;</a></h3>
@@ -37647,7 +37647,7 @@
 <h3 id="dhcp_relay-vlan">DHCP_RELAY — 同一 VLAN での排他制約<a class="headerlink" href="#dhcp_relay-vlan" title="Permanent link">&para;</a></h3>
 <p><code>dhcprelayd.py:94-98</code> が <code>DHCP_SERVER_IPV4|&lt;vlan&gt;.state=enabled</code> を検出すると、その VLAN を <code>dhcrelay</code> 起動対象から除外する。DHCP_SERVER_IPV4 を有効化すると同一 VLAN の DHCP relay が自動的に無効化される。</p>
 <h3 id="sai">SAI 参照<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<p>なし。<code>dhcpservd</code> / <code>kea-dhcp4</code> は Linux ユーザー空間の DHCP サーバであり <a href="../../glossary/#term-sai">SAI</a>/<a href="../../glossary/#term-asic">ASIC</a> に一切触れない。<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継もない。</p>
+<p>なし。<code>dhcpservd</code> / <code>kea-dhcp4</code> は Linux ユーザ空間の DHCP サーバであり <a href="../../glossary/#term-sai">SAI</a>/<a href="../../glossary/#term-asic">ASIC</a> に一切触れない。<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継もない。</p>
 <!-- /cross-refs -->
 
 <!-- failure -->

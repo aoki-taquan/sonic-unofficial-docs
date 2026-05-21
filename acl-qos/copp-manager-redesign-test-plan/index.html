@@ -35414,7 +35414,7 @@
 <p><code>CoppMgr</code> は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> の <code>COPP_TRAP</code> と <code>FEATURE</code> を観測し、各 trap (<a href="../../reference/glossary/#term-bgp">BGP</a> / <a href="../../reference/glossary/#term-arp">ARP</a> / <a href="../../reference/glossary/#term-lacp">LACP</a> / UDLD / IP2ME 等) を <a href="../../reference/glossary/#term-sai">SAI</a> hostif trap として <strong>install / uninstall</strong> する。旧設計では「<code>FEATURE</code> に entry が無い → デフォルトで install する」フォールバックを持っていたため、sflow のように <strong>entry が削除された feature の trap が install されたままになる</strong> バグが発生していた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>再設計では以下のルールに整理し、本テストプランはその振る舞いを ptf32 / ptf64 / t1 / t2 トポロジで検証する<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>feature が disabled 又は <code>FEATURE</code> に存在しない → install しない</li>
+<li>feature が disabled または <code>FEATURE</code> に存在しない → install しない</li>
 <li>ただし <code>COPP_TRAP|&lt;name&gt;</code> に <strong><code>always_enabled: true</code></strong> がある trap は <code>FEATURE</code> を参照せず常に install する</li>
 <li>feature が enabled で対応 trap が <code>COPP_TRAP</code> にあれば install する</li>
 <li>feature が disabled でも <code>always_enabled: true</code> なら install する</li>

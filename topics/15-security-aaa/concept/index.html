@@ -35501,8 +35501,8 @@
 <h2 id="aaa">AAA の語彙<a class="headerlink" href="#aaa" title="Permanent link">&para;</a></h2>
 <p>AAA（Authentication / Authorization / Accounting）は、SONiC では Linux の PAM/NSS を介して TACACS+ / RADIUS / LDAP / local の各バックエンドに振り分けられます。詳細な実装は <a href="../../../management/aaa-improvements/">AAA improvements</a> に集約されており、login flow とフォールバック順序の改善が議論されています。</p>
 <ul>
-<li>Authentication: ユーザーが本人であることの確認。<code>login_method</code> で複数のバックエンドを順序付けます。</li>
-<li>Authorization: そのユーザーが実行できるコマンドの範囲。TACACS+ の per-command 認可や、local の sudoers でカバーされます。</li>
+<li>Authentication: ユーザが本人であることの確認。<code>login_method</code> で複数のバックエンドを順序付けます。</li>
+<li>Authorization: そのユーザが実行できるコマンドの範囲。TACACS+ の per-command 認可や、local の sudoers でカバーされます。</li>
 <li>Accounting: 実行履歴のログ送信。主に TACACS+ で利用されます。</li>
 </ul>
 <p>local user の取り扱いは <a href="../../../architecture/pw-hardening-design/">password hardening 設計</a> と <a href="../../../management/default-credential-management-for-california-sb-327-conformance/">default credential management</a> で別途厳格化されています。これは初期パスワードや弱いパスワードの利用を防ぐためのもので、認証バックエンドの選択とは独立した層です。</p>
@@ -35616,7 +35616,7 @@
 </tr>
 <tr>
 <td>データ暗号化（IPSec / TLS）</td>
-<td>SONiC でユーザーが直接設定する範囲では大きくない。MACsec はリンク単位の L2 暗号で別物</td>
+<td>SONiC でユーザが直接設定する範囲では大きくない。MACsec はリンク単位の L2 暗号で別物</td>
 </tr>
 <tr>
 <td>Linux 一般の hardening（kernel / sysctl）</td>

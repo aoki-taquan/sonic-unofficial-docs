@@ -29146,7 +29146,7 @@
   <a href="#tcp" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TCP クライアント/サーバー役の決定
+        TCP クライアント/サーバ役の決定
       
     </span>
   </a>
@@ -35790,7 +35790,7 @@
   <a href="#tcp" class="md-nav__link">
     <span class="md-ellipsis">
       
-        TCP クライアント/サーバー役の決定
+        TCP クライアント/サーバ役の決定
       
     </span>
   </a>
@@ -36464,7 +36464,7 @@ STP との連携は主に以下の 2 つの側面で存在する:</p>
 <p><strong>mclagsyncd が iccpd と接続済みであること (<code>sync_fd &gt; 0</code>)</strong></p>
 </li>
 <li><code>mlacp_link_set_iccp_role()</code> は <code>sys-&gt;sync_fd &lt;= 0</code> のときロール通知をサイレントスキップする (<code>mlacp_link_handler.c:654-660</code>)。</li>
-<li>mclagsyncd は起動後に iccpd のサーバーソケットに接続し、完了してから <code>mclagsyncdFetchMclagConfigFromConfigdb()</code> を実行する (<code>mclagsyncd.cpp:51-58</code>)。</li>
+<li>mclagsyncd は起動後に iccpd のサーバソケットに接続し、完了してから <code>mclagsyncdFetchMclagConfigFromConfigdb()</code> を実行する (<code>mclagsyncd.cpp:51-58</code>)。</li>
 </ol>
 <h4 id="_3">起動・処理順序<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
 <table>
@@ -36478,7 +36478,7 @@ STP との連携は主に以下の 2 つの側面で存在する:</p>
 <tbody>
 <tr>
 <td>1</td>
-<td>iccpd 起動・サーバーソケット listen</td>
+<td>iccpd 起動・サーバソケット listen</td>
 <td>なし</td>
 </tr>
 <tr>
@@ -36513,7 +36513,7 @@ STP との連携は主に以下の 2 つの側面で存在する:</p>
 </tr>
 </tbody>
 </table>
-<h4 id="tcp">TCP クライアント/サーバー役の決定<a class="headerlink" href="#tcp" title="Permanent link">&para;</a></h4>
+<h4 id="tcp">TCP クライアント/サーバ役の決定<a class="headerlink" href="#tcp" title="Permanent link">&para;</a></h4>
 <p>ICCP セッションの TCP 接続方向は <code>source_ip</code> と <code>peer_ip</code> の数値大小で決まる:</p>
 <table>
 <thead>
@@ -36531,7 +36531,7 @@ STP との連携は主に以下の 2 つの側面で存在する:</p>
 </tr>
 <tr>
 <td><code>source_ip</code> &gt; <code>peer_ip</code></td>
-<td>TCP サーバー</td>
+<td>TCP サーバ</td>
 <td><code>accept()</code> で待機</td>
 </tr>
 <tr>
@@ -36762,7 +36762,7 @@ STP との連携は主に以下の 2 つの側面で存在する:</p>
 <h3 id="iccpd-stp">iccpd ↔ STP デーモン間の直接インタフェース<a class="headerlink" href="#iccpd-stp" title="Permanent link">&para;</a></h3>
 <p>iccpd は <code>stpmgrd</code> と <strong>直接通信しない</strong>。ICCP プロトコルに定義される STP TLV
 (<code>TLV_T_MLACP_STP_INFO = 0x1037</code>) は現在の実装で未サポート（<code>mlacp_fsm.c:729-733</code>）。
-ピア間の STP 設定一貫性はユーザーが手動で維持する必要がある。</p>
+ピア間の STP 設定一貫性はユーザが手動で維持する必要がある。</p>
 <p>証跡: <code>msg_format.h:103</code>, <code>mlacp_fsm.c:729-733</code></p>
 <!-- /cross-refs -->
 
@@ -36992,7 +36992,7 @@ STP との連携は主に以下の 2 つの側面で存在する:</p>
 </tr>
 </tbody>
 </table>
-<p>これらは将来の STP ピア間情報同期機能のプレースホルダであり、現在 <a href="../../glossary/#term-mclag">MCLAG</a> 環境での STP 設定の一貫性はユーザーが手動で維持する必要がある。</p>
+<p>これらは将来の STP ピア間情報同期機能のプレースホルダであり、現在 <a href="../../glossary/#term-mclag">MCLAG</a> 環境での STP 設定の一貫性はユーザが手動で維持する必要がある。</p>
 <p>証跡: <code>msg_format.h:103, 185-186</code>, <code>mlacp_fsm.c:729-733</code>, <code>mlacp_fsm.h:109-123</code></p>
 <hr />
 <h3 id="6-mclag_domain-stp">6. MCLAG_DOMAIN フィールドと STP ロールの関係<a class="headerlink" href="#6-mclag_domain-stp" title="Permanent link">&para;</a></h3>
@@ -37170,7 +37170,7 @@ MST 有効化時に CLI が書き込む実際の値は <code>1</code> であり�
 <p>evidence: <code>mlacp_link_handler.c:654-660</code></p>
 </li>
 <li>
-<p><strong>クライアント/サーバー役は <code>source_ip</code> と <code>peer_ip</code> の大小比較で決定する</strong></p>
+<p><strong>クライアント/サーバ役は <code>source_ip</code> と <code>peer_ip</code> の大小比較で決定する</strong></p>
 </li>
 <li><code>scheduler_prepare_session()</code> で <code>inet_addr(sender_ip) &lt; inet_addr(peer_ip)</code> の場合のみ TCP client として connect を試みる。</li>
 <li><code>source_ip &gt; peer_ip</code> のノードは TCP server として LISTEN で待つ。</li>

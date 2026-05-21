@@ -37037,7 +37037,7 @@ fast-reboot 後に <code>teamsyncd_timer</code> エントリが削除される�
 <h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
 <p><code>WARM_RESTART</code> テーブルは <code>task_process_status</code> ベースの retry ループとは異なる経路で参照される。
 <code>WarmStart::checkWarmStart()</code> と <code>WarmStart::getWarmStartTimer()</code> が
-起動時に一回だけ CONFIG_DB から同期的に読み取る設計のため、
+起動時に1回だけ CONFIG_DB から同期的に読み取る設計のため、
 失敗は「コールドスタートへのフォールバック」または「ハードコードデフォルト使用」として現れる。</p>
 <h3 id="a-checkwarmstart-warm_restartcpp86-147">A. <code>checkWarmStart()</code> 内のフォールバック (warm_restart.cpp:86-147)<a class="headerlink" href="#a-checkwarmstart-warm_restartcpp86-147" title="Permanent link">&para;</a></h3>
 <table>

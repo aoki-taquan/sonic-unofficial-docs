@@ -35213,7 +35213,7 @@
 <h1 id="_1">アーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>ここでは login が成立するまでの経路と、<code>CONFIG_DB</code> から <code>/etc/</code> 配下のサービス設定ファイルへ反映が走る経路を、<a href="../../../reference/glossary/#term-sonic">SONiC</a> 固有部分に絞って示します。Linux 標準の PAM / NSS の挙動そのものは扱わず、SONiC が「どこで何を差し込んでいるか」に焦点を当てます。</p>
 <h2 id="login-flow">Login flow の全体像<a class="headerlink" href="#login-flow" title="Permanent link">&para;</a></h2>
-<p>外部から SSH や serial console で入ってきたユーザーは、PAM の認証スタックを通り、NSS でユーザー情報の解決を受け、最終的に shell とその sudo 権限を得ます。SONiC は PAM / NSS のモジュールチェーンに TACACS+、<a href="../../../reference/glossary/#term-radius">RADIUS</a>、LDAP のクライアントを差し込み、<code>CONFIG_DB</code> の <code>AAA</code> テーブルでそれらの順序を制御します。詳細フローは <a href="../../../management/aaa-improvements/">AAA improvements</a> と <a href="../../../management/tacacs-authentication/">TACACS+ authentication</a> に図解があります。</p>
+<p>外部から SSH や serial console で入ってきたユーザは、PAM の認証スタックを通り、NSS でユーザ情報の解決を受け、最終的に shell とその sudo 権限を得ます。SONiC は PAM / NSS のモジュールチェーンに TACACS+、<a href="../../../reference/glossary/#term-radius">RADIUS</a>、LDAP のクライアントを差し込み、<code>CONFIG_DB</code> の <code>AAA</code> テーブルでそれらの順序を制御します。詳細フローは <a href="../../../management/aaa-improvements/">AAA improvements</a> と <a href="../../../management/tacacs-authentication/">TACACS+ authentication</a> に図解があります。</p>
 <pre class="mermaid"><code>flowchart LR
   U["User SSH/serial"] --&gt; SSHD["sshd / login"]
   SSHD --&gt; PAM[PAM stack]
@@ -35227,7 +35227,7 @@
   ID --&gt; SHELL[shell + sudoers]</code></pre>
 <p><code>login_method</code> の順序、エラー時のフォールバック、<code>tacacs+</code> と <code>local</code> の組み合わせの注意点は <a href="../../../management/sonic-tacacs-improvement/">SONiC TACACS+ improvement</a> に集約されています。RADIUS と LDAP の細部はそれぞれ <a href="../../../management/radius-management-user-authentication/">RADIUS management user authentication</a>、<a href="../../../management/hld-ldap/">HLD LDAP</a> を参照してください。</p>
 <h2 id="hostcfgd-config_db-etc">hostcfgd と CONFIG_DB から /etc への反映<a class="headerlink" href="#hostcfgd-config_db-etc" title="Permanent link">&para;</a></h2>
-<p>SSH の global config、serial console、banner、<a href="../../../reference/glossary/#term-aaa">AAA</a> の設定は、ユーザーが直接 <code>/etc/ssh/sshd_config</code> などを編集する設計にはなっていません。<code>hostcfgd</code> が <code>CONFIG_DB</code> の該当テーブル（<code>SSH_SERVER</code>、<code>SERIAL_CONSOLE</code>、<code>BANNER_MESSAGE</code>、<code>AAA</code>、<code>TACPLUS</code>、<code>RADIUS</code>、<code>LDAP</code> など）を購読し、テンプレートからファイルを再生成して関連サービスを reload します。</p>
+<p>SSH の global config、serial console、banner、<a href="../../../reference/glossary/#term-aaa">AAA</a> の設定は、ユーザが直接 <code>/etc/ssh/sshd_config</code> などを編集する設計にはなっていません。<code>hostcfgd</code> が <code>CONFIG_DB</code> の該当テーブル（<code>SSH_SERVER</code>、<code>SERIAL_CONSOLE</code>、<code>BANNER_MESSAGE</code>、<code>AAA</code>、<code>TACPLUS</code>、<code>RADIUS</code>、<code>LDAP</code> など）を購読し、テンプレートからファイルを再生成して関連サービスを reload します。</p>
 <pre class="mermaid"><code>flowchart LR
   CFG[(CONFIG_DB)] --&gt; HOST[hostcfgd]
   HOST --&gt;|render| SSHCONF["/etc/ssh/sshd_config"]

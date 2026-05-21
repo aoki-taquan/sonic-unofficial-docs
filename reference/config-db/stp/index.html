@@ -37054,7 +37054,7 @@ STP ポート状態は stpd の内部状態に基づき継続される。</p>
 IPC 送信失敗後もエントリは <code>consumer.m_toSync.erase(it)</code> で消費され、<strong>リトライなし・silent discard</strong> となる。</p>
 <div class="admonition warning">
 <p class="admonition-title">IPC 失敗は CONFIG_DB 書込み成功後に発生する</p>
-<p><code>config spanning-tree</code> CLI は CONFIG_DB 書込みで正常終了するが、stpmgrd → stpd の IPC 送信が失敗した場合はエラーがユーザーに通知されない。BPDU 挙動や STP ポート状態が CONFIG_DB と乖離したまま syslog にのみ ERROR が記録される。</p>
+<p><code>config spanning-tree</code> CLI は CONFIG_DB 書込みで正常終了するが、stpmgrd → stpd の IPC 送信が失敗した場合はエラーがユーザに通知されない。BPDU 挙動や STP ポート状態が CONFIG_DB と乖離したまま syslog にのみ ERROR が記録される。</p>
 </div>
 <hr />
 <h3 id="c-pvst-allocl2instance">C. PVST インスタンス枯渇 (<code>allocL2Instance</code> 失敗)<a class="headerlink" href="#c-pvst-allocl2instance" title="Permanent link">&para;</a></h3>

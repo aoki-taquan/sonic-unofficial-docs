@@ -37025,7 +37025,7 @@
   HACFG --&gt; DASHHA</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
-<p><code>sonic-cfggen</code> が platform.json と minigraph から DPU 設定を生成して CONFIG_DB に書き込む。DHCP サーバーはミッドプレーンブリッジ経由で各 DPU に IP を払い出す。</p>
+<p><code>sonic-cfggen</code> が platform.json と minigraph から DPU 設定を生成して CONFIG_DB に書き込む。DHCP サーバはミッドプレーンブリッジ経由で各 DPU に IP を払い出す。</p>
 </div>
 <!-- /cdb-mermaid -->
 
@@ -37398,7 +37398,7 @@
 </span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># dpu_id=7 → 169.254.200.8</span>
 </span></code></pre></div>
 <p>ゲートウェイ（NPU 側: <code>169.254.200.254</code>）と DPU 割り当て（<code>.1</code>〜<code>.8</code>）で同一 <code>/24</code> を共有する。この計算ロジックは Mellanox 固有であり、他ベンダー platform では異なる可能性がある。</p>
-<p>DHCP サーバーへの IP 払い出しも同一規則に従う:</p>
+<p>DHCP サーバへの IP 払い出しも同一規則に従う:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># config_samples.py:102-103</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">dpu_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">midplane_interface</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;dpu&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">dhcp_server_ports</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ips&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mpbr_prefix</span><span class="p">,</span> <span class="n">dpu_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]}</span>

@@ -36072,7 +36072,7 @@ DEL 時も同様で、<code>sonic-db-cli</code> であれば参照中の <code>R
 </table>
 <div class="admonition note">
 <p class="admonition-title">frrcfgd の実行時チェックなし</p>
-<p>これらの参照は YANG レベルの leafref 整合性検証のみ機能する。frrcfgd は ROUTE_MAP_SET エントリの存在を実行時にチェックせず、name 文字列を FRR コマンドにそのまま渡す（<code>sonic-route-map.yang:269-273</code>; <code>frrcfgd.py:1942</code>）。<code>sonic-db-cli</code> 直接投入では YANG 検証もバイパスされるため、参照整合性は実質ユーザー責任となる。</p>
+<p>これらの参照は YANG レベルの leafref 整合性検証のみ機能する。frrcfgd は ROUTE_MAP_SET エントリの存在を実行時にチェックせず、name 文字列を FRR コマンドにそのまま渡す（<code>sonic-route-map.yang:269-273</code>; <code>frrcfgd.py:1942</code>）。<code>sonic-db-cli</code> 直接投入では YANG 検証もバイパスされるため、参照整合性は実質ユーザ責任となる。</p>
 </div>
 <!-- /cross-refs -->
 

@@ -36175,7 +36175,7 @@
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><a href="../../glossary/#term-sonic">SONiC</a> の <a href="../../glossary/#term-srv6">SRv6</a> 制御面は 3 層構造をとる。</p>
 <ol>
-<li><strong><a href="../../glossary/#term-config_db">CONFIG_DB</a></strong> (<code>SRV6_MY_SIDS</code> / <code>SRV6_MY_LOCATORS</code>) — ユーザー設定の起点</li>
+<li><strong><a href="../../glossary/#term-config_db">CONFIG_DB</a></strong> (<code>SRV6_MY_SIDS</code> / <code>SRV6_MY_LOCATORS</code>) — ユーザ設定の起点</li>
 <li><strong><a href="../../glossary/#term-appl_db">APPL_DB</a></strong> (<code>SRV6_MY_SID_TABLE</code> / <code>SRV6_SID_LIST_TABLE</code>) — <a href="../../glossary/#term-frr">FRR</a> → <a href="../../glossary/#term-sai">SAI</a> のパイプライン中継点</li>
 <li><strong><a href="../../glossary/#term-asic_db">ASIC_DB</a></strong> — <a href="../../glossary/#term-sai">SAI</a> が書き込むハードウェア状態</li>
 </ol>
@@ -36992,7 +36992,7 @@ FRR 経由で登録されるすべての SID リストは実質 <code>type=encap
 <hr />
 <h2 id="_8">関連テーブル<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>SRV6_MY_SIDS</code> (CONFIG_DB) — ユーザー設定。<a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> / fpmsyncd 経由で本テーブルへ反映</li>
+<li><code>SRV6_MY_SIDS</code> (CONFIG_DB) — ユーザ設定。<a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> / fpmsyncd 経由で本テーブルへ反映</li>
 <li><code>SRV6_MY_LOCATORS</code> (CONFIG_DB) — ロケータ定義</li>
 <li><code>VRF</code> (CONFIG_DB) — <code>vrf</code> フィールドで参照する VRF エントリ</li>
 </ul>

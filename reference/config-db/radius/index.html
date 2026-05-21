@@ -37696,7 +37696,7 @@
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
 <p>hostcfgd が <code>RADIUS</code> テーブルを読み、未設定フィールドに PAM のデフォルト値を補完する。<code>auth_type</code> 未設定 → <code>pap</code>、<code>auth_port</code> 未設定 → <code>1812</code>、<code>timeout</code> 未設定 → <code>5</code>、<code>retransmit</code> 未設定 → <code>3</code>。これらはデフォルト値による自動補完（Phase 6 相当）。</p>
 <h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
-<p>hostcfgd は常時起動し <code>RADIUS</code> テーブルを無条件購読する。ただし <code>aaa.authentication.login</code> に <code>radius</code> が含まれない場合、RADIUS サーバー設定があっても PAM に反映されない。</p>
+<p>hostcfgd は常時起動し <code>RADIUS</code> テーブルを無条件購読する。ただし <code>aaa.authentication.login</code> に <code>radius</code> が含まれない場合、RADIUS サーバ設定があっても PAM に反映されない。</p>
 <!-- /derivation -->
 
 <!-- handler-branching -->

@@ -36624,7 +36624,7 @@ SAI 実装の多くは <code>uniform</code> をデフォルトとするが <a hr
 <ul>
 <li><strong>ロケータより先に SID を削除しなかった場合</strong>: <code>locators_del_handler()</code> はロケータ削除時に SID エントリを自動削除しない。SID が bgpcfgd キャッシュに残留し FRR 設定が不整合となる（<code>managers_srv6.py:106-115</code>）。</li>
 <li><strong>VRF 削除前に SID が残存する場合</strong>: VRFOrch refcount が正のまま VRF 削除がブロックされる（<code>srv6orch.cpp:1639, 1683</code>）。</li>
-<li><strong>Neighbor 消失時の自動 <a href="../../glossary/#term-asic">ASIC</a> 削除</strong>: nexthop が消えると <code>updateNeighbor()</code> が MY_SID を <a href="../../glossary/#term-asic">ASIC</a> から自動削除し <code>m_pendingSRv6MySIDEntries</code> に保留する（<code>srv6orch.cpp:1272-1342</code>）。Neighbor 再出現時に自動復元されるためユーザー介入は不要。</li>
+<li><strong>Neighbor 消失時の自動 <a href="../../glossary/#term-asic">ASIC</a> 削除</strong>: nexthop が消えると <code>updateNeighbor()</code> が MY_SID を <a href="../../glossary/#term-asic">ASIC</a> から自動削除し <code>m_pendingSRv6MySIDEntries</code> に保留する（<code>srv6orch.cpp:1272-1342</code>）。Neighbor 再出現時に自動復元されるためユーザ介入は不要。</li>
 </ul>
 <!-- /failure -->
 

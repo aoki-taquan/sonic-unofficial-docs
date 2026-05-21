@@ -36991,7 +36991,7 @@
 </ul>
 <p><strong>順序依存</strong>: <code>LOOPBACK_INTERFACE|Loopback0|&lt;IPv4&gt;</code> および <code>LOOPBACK_INTERFACE|Loopback4096|&lt;IPv4&gt;</code> が <code>BGP_INTERNAL_NEIGHBOR</code> エントリより先行していること（マルチ ASIC 環境では minigraph が自動生成する）。</p>
 <h3 id="5-bgpcfgd-post_dependencies_init">5. bgpcfgd ハンドラ起動順（post_dependencies_init）<a class="headerlink" href="#5-bgpcfgd-post_dependencies_init" title="Permanent link">&para;</a></h3>
-<p><code>BGPPeerMgrBase</code> は <code>post_dependencies_init_complete = False</code> で初期化される（L101）。deps（DEVICE_METADATA, Loopback0, Loopback4096）が充足された後の最初の <code>set_handler</code> 呼び出し時に <code>post_dependencies_init()</code> が実行され、追加 loopback リストを拡張する（L181-182, L245-268）。この一回性初期化は最初の <code>add_peer()</code> 前に完了する。</p>
+<p><code>BGPPeerMgrBase</code> は <code>post_dependencies_init_complete = False</code> で初期化される（L101）。deps（DEVICE_METADATA, Loopback0, Loopback4096）が充足された後の最初の <code>set_handler</code> 呼び出し時に <code>post_dependencies_init()</code> が実行され、追加 loopback リストを拡張する（L181-182, L245-268）。この1回性初期化は最初の <code>add_peer()</code> 前に完了する。</p>
 <h3 id="6-bgpd-frrcfgd">6. bgpd ソケット待ち（frrcfgd 起動時）<a class="headerlink" href="#6-bgpd-frrcfgd" title="Permanent link">&para;</a></h3>
 <p><code>frrcfgd</code> は起動時に <code>/run/frr/bgpd.vty</code> 等の FRR デーモンソケットに接続するまで最大 100 回 × 2秒 = 200秒 リトライする（<code>frrcfgd.py</code> L183-200）。bgpd ソケットが存在しない間は、frrcfgd・bgpcfgd とも FRR への設定投入を開始できない。コンテナ起動直後の数秒間は CONFIG_DB にエントリが存在しても FRR への反映が遅延する。</p>
 <h3 id="_11">順序依存サマリ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
@@ -37177,7 +37177,7 @@
 <h3 id="route_map-bgp_peer_group-frrcfgd">ROUTE_MAP / BGP_PEER_GROUP — frrcfgd / テンプレートが自動生成<a class="headerlink" href="#route_map-bgp_peer_group-frrcfgd" title="Permanent link">&para;</a></h3>
 <p><code>FROM_BGP_INTERNAL_PEER_V4</code>、<code>TO_BGP_INTERNAL_PEER_V4</code>（および V6 版）は <code>policies.conf.j2</code> が FRR に直接生成するルートマップ。<code>INTERNAL_PEER_V4</code> / <code>INTERNAL_PEER_V6</code> は <code>peer-group.conf.j2</code> が生成するピアグループ。いずれも CONFIG_DB の <code>ROUTE_MAP</code> / <code>BGP_PEER_GROUP</code> テーブルへの YANG leafref はなく、テンプレート側がハードコードした名称で FRR に注入する。<code>frrcfgd.py</code> L81-90 で <code>BGP_GLOBALS</code>・<code>ROUTE_MAP</code>・<code>BGP_PEER_GROUP</code> は <code>bgpd</code> デーモン宛テーブルとして登録されており、frrcfgd 経由の設定と bgpcfgd テンプレート経由の設定が同一 FRR インスタンスに並存する。</p>
 <h3 id="sai">SAI 参照<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<p>なし。<code>bgpcfgd</code> / <code>frrcfgd</code> は CONFIG_DB → FRR（ユーザー空間ルーティングデーモン）への経路であり、<a href="../../glossary/#term-sai">SAI</a>/ASIC に直接触れない。<a href="../../glossary/#term-appl_db">APPL_DB</a> への中継もない。</p>
+<p>なし。<code>bgpcfgd</code> / <code>frrcfgd</code> は CONFIG_DB → FRR（ユーザ空間ルーティングデーモン）への経路であり、<a href="../../glossary/#term-sai">SAI</a>/ASIC に直接触れない。<a href="../../glossary/#term-appl_db">APPL_DB</a> への中継もない。</p>
 <!-- /cross-refs -->
 
 <!-- pubsub -->

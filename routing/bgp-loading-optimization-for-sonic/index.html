@@ -35479,7 +35479,7 @@ reasoning: pipeline size 50k と 500ms timer、PUBLISH 1 回化の根拠。
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>大量 route 投入後に subscriber が古いデータを見る → pipeline 末尾の PUBLISH 一回化で modified key set が正しく回っているか確認</li>
+<li>大量 route 投入後に subscriber が古いデータを見る → pipeline 末尾の PUBLISH 1回化で modified key set が正しく回っているか確認</li>
 <li>500ms 体感ラグ → 500 未満バッチでは即時 flush のはずなので、skip 判定ロジック側の bug を疑う</li>
 </ul>
 <h3 id="_8">コマンド例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>

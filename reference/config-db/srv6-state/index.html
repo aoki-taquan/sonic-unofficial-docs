@@ -36163,7 +36163,7 @@ SAI 非対応プラットフォームでは <code>COUNTERS_SRV6_NAME_MAP</code> 
 <ol>
 <li><code>COUNTERS_SRV6_NAME_MAP</code> から全 MySID プレフィックス → OID マッピングを取得</li>
 <li>各 OID の <code>COUNTERS:&lt;oid&gt;</code> から <code>SAI_COUNTER_STAT_PACKETS</code> / <code>SAI_COUNTER_STAT_BYTES</code> を取得</li>
-<li>ユーザーキャッシュに保存した前回値との差分を計算して表示</li>
+<li>ユーザキャッシュに保存した前回値との差分を計算して表示</li>
 <li>差分が負の場合（カウンタリセット検出）: キャッシュを無効化して累積値を表示</li>
 </ol>
 <table>
@@ -36250,7 +36250,7 @@ evidence: <code>meta/_intermediate/cdb-flow/srv6-state-defaults.md</code></p>
 evidence: <code>meta/_intermediate/cdb-flow/srv6-state-ordering.md</code></p>
 </blockquote>
 <p><a href="../../glossary/#term-counters_db">COUNTERS_DB</a> の <code>COUNTERS_SRV6_NAME_MAP</code> / <code>COUNTERS:&lt;oid&gt;</code> は <code>Srv6Orch</code> が内部的に管理するため、
-ユーザーが直接書き込む必要はない。ただし以下の順序依存・タイミング依存が存在する。</p>
+ユーザが直接書き込む必要はない。ただし以下の順序依存・タイミング依存が存在する。</p>
 <h3 id="_7">検出された順序依存<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -36283,7 +36283,7 @@ evidence: <code>meta/_intermediate/cdb-flow/srv6-state-ordering.md</code></p>
 <tr>
 <td>4</td>
 <td>MySID DEL → <code>COUNTERS_SRV6_NAME_MAP</code> 自動クリーンアップ</td>
-<td>自動（ユーザー操作不要）</td>
+<td>自動（ユーザ操作不要）</td>
 <td><code>COUNTERS:&lt;oid&gt;</code> 残留値は <code>sonic-clear srv6stats</code> でリセット</td>
 </tr>
 </tbody>
@@ -36363,7 +36363,7 @@ evidence: <code>meta/_intermediate/cdb-flow/srv6-state-cross-refs.md</code></p>
 <p>根拠: <code>srv6orch.cpp</code> <code>initializeCounters()</code> L120-142、<code>queryMySidCountersCapability()</code> L144-155、<code>addMySidCounter()</code> L184-210、<code>setMySidEntryCounter()</code> L236-248、<code>setCountersState()</code> L251-283、<code>createUpdateMysidEntry()</code> L1589-1614 全行精読。
 evidence: <code>meta/_intermediate/cdb-flow/srv6-state-failure.md</code></p>
 </blockquote>
-<p>COUNTERS_DB の <code>COUNTERS_SRV6_NAME_MAP</code> / <code>COUNTERS:&lt;oid&gt;</code> は <code>Srv6Orch</code> が自動管理するため、ユーザーが直接失敗操作を行うテーブルではない。ただし以下のエラー経路がある。</p>
+<p>COUNTERS_DB の <code>COUNTERS_SRV6_NAME_MAP</code> / <code>COUNTERS:&lt;oid&gt;</code> は <code>Srv6Orch</code> が自動管理するため、ユーザが直接失敗操作を行うテーブルではない。ただし以下のエラー経路がある。</p>
 <h3 id="_9">失敗経路一覧<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -36495,11 +36495,11 @@ evidence: <code>meta/_intermediate/cdb-flow/srv6-state-constants.md</code></p>
 <code>COUNTERS:&lt;oid&gt;</code> を書き込む。
 MySID 追加から <code>COUNTERS:&lt;oid&gt;</code> 初回値が出現するまでの最大待機時間は <strong>1 + 10 = 11 秒</strong>（<code>srv6orch.cpp:108,138</code>）。</p>
 <h3 id="flex_counter_table">FLEX_COUNTER_TABLE キー固定<a class="headerlink" href="#flex_counter_table" title="Permanent link">&para;</a></h3>
-<p>ユーザーが操作する CONFIG_DB キーは <code>FLEX_COUNTER_TABLE|SRV6</code> (<code>flexcounterorch.cpp:64</code> の <code>SRV6_KEY = "SRV6"</code>) で、
+<p>ユーザが操作する CONFIG_DB キーは <code>FLEX_COUNTER_TABLE|SRV6</code> (<code>flexcounterorch.cpp:64</code> の <code>SRV6_KEY = "SRV6"</code>) で、
 <code>FlexCounterOrch::doTask()</code> がこのキーを処理して <code>gSrv6Orch-&gt;setCountersState(enable)</code> を呼び出す。
 内部の FlexCounter group 名は <code>SRV6_STAT_COUNTER_FLEX_COUNTER_GROUP = "SRV6_STAT_COUNTER"</code> (<code>srv6orch.h:30</code>) で、
 これは <code>CounterCheckOrch</code> に渡される識別子（FLEX_COUNTER_DB 上の group 名）であり、
-ユーザーが直接 CONFIG_DB で操作する対象ではない。</p>
+ユーザが直接 CONFIG_DB で操作する対象ではない。</p>
 <h3 id="_10">ロケータビット長デフォルトとカウンタキー<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <p><code>getMySidCounterKey()</code> (<code>srv6orch.cpp:177-182</code>) は <code>block_len + node_len + func_len</code> の合計を
 カウンタキーの <code>/N</code> プレフィックス長として使用する。
@@ -36513,7 +36513,7 @@ MySID 追加から <code>COUNTERS:&lt;oid&gt;</code> 初回値が出現するま
 <p>根拠: <code>srv6orch.cpp</code> <code>addMySidCounter()</code> L184-210、<code>removeMySidCounter()</code> L212-234、<code>setMySidEntryCounter()</code> L236-248、<code>setCountersState()</code> L251-283、<code>doTask(SelectableTimer)</code> L286-313、<code>createUpdateMysidEntry()</code> L1589-1614 全行精読。
 evidence: <code>meta/_intermediate/cdb-flow/srv6-state-side-effects.md</code></p>
 </blockquote>
-<p>COUNTERS_DB の <code>COUNTERS_SRV6_NAME_MAP</code> / <code>COUNTERS:&lt;oid&gt;</code> はユーザーが直接書き込むテーブルではない。<code>Srv6Orch</code> が <code>SRV6_MY_SIDS</code> (<a href="../../glossary/#term-config_db">CONFIG_DB</a>) および <code>FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER</code> の変化を受けて、以下の副次書込みを実行する。</p>
+<p>COUNTERS_DB の <code>COUNTERS_SRV6_NAME_MAP</code> / <code>COUNTERS:&lt;oid&gt;</code> はユーザが直接書き込むテーブルではない。<code>Srv6Orch</code> が <code>SRV6_MY_SIDS</code> (<a href="../../glossary/#term-config_db">CONFIG_DB</a>) および <code>FLEX_COUNTER_TABLE|SRV6_STAT_COUNTER</code> の変化を受けて、以下の副次書込みを実行する。</p>
 <h3 id="srv6_my_sids-set-counters_db">SRV6_MY_SIDS SET → COUNTERS_DB 書込み<a class="headerlink" href="#srv6_my_sids-set-counters_db" title="Permanent link">&para;</a></h3>
 <p><code>createUpdateMysidEntry()</code> は <code>getMySidCountersSupported() &amp;&amp; getMySidCountersEnabled()</code> が両方真の場合に <code>addMySidCounter()</code> を呼び出す（<code>srv6orch.cpp:1591-1599</code>）。</p>
 <table>
@@ -36684,7 +36684,7 @@ evidence: <code>meta/_intermediate/cdb-flow/srv6-state-platform.md</code></p>
 </tr>
 </tbody>
 </table>
-<p>このフラグは起動時一回限り確定し、実行中の変更手段はない（orchagent 再起動が必要）。</p>
+<p>このフラグは起動時1回限り確定し、実行中の変更手段はない（orchagent 再起動が必要）。</p>
 <h3 id="2-gtraditionalflexcounter-asic_db-vid">差異 2: gTraditionalFlexCounter モード（ASIC_DB 経由 VID 解決）<a class="headerlink" href="#2-gtraditionalflexcounter-asic_db-vid" title="Permanent link">&para;</a></h3>
 <p>orchagent 起動引数 <code>-c traditional</code> (<code>main.cpp:529-531</code>) で <code>gTraditionalFlexCounter = true</code> になる。デフォルトは <code>false</code>。</p>
 <table>

@@ -37096,10 +37096,10 @@
 <!-- evidence: sonic-host-services/scripts/hostcfgd@c5bbbe8b07b96f078fa4b761316627404b01bd04 L2417-2415 -->
 
 <ul>
-<li><strong>SYSLOG_CONFIG と合算で再評価</strong>: <code>rsyslog_server_handler()</code> はエントリの追加/削除/変更のいずれでも <code>SYSLOG_CONFIG</code> と <code>SYSLOG_SERVER</code> 両テーブルを再取得し <code>rsyslog-config</code> サービスを再起動する。サーバー 1 台の変更でも全設定が再生成される点に注意。</li>
+<li><strong>SYSLOG_CONFIG と合算で再評価</strong>: <code>rsyslog_server_handler()</code> はエントリの追加/削除/変更のいずれでも <code>SYSLOG_CONFIG</code> と <code>SYSLOG_SERVER</code> 両テーブルを再取得し <code>rsyslog-config</code> サービスを再起動する。サーバ 1 台の変更でも全設定が再生成される点に注意。</li>
 <li><strong>全エントリ削除時の挙動</strong>: <code>SYSLOG_SERVER</code> エントリが 0 件になるとリモート転送設定が空のテンプレートが生成される。ローカルログは継続されるが rsyslog のリモート転送は停止する。</li>
 <li><strong>rsyslog 再起動失敗時は設定不反映</strong>: <code>systemctl restart rsyslog-config</code> が失敗すると <code>"RSyslogCfg: Failed to restart rsyslog service"</code> を LOG_ERR してキャッシュを更新せずに return する（次回テーブル変更時に再試行）。</li>
-<li><strong>IP バリデーションは YANG 層</strong>: key（サーバー IP / ホスト名）の構文チェックは <code>sonic-syslog.yang</code> の <code>inet:ip-address</code> / <code>inet:host</code> 型制約で行われ、<code>hostcfgd</code> 層での追加チェックはない。</li>
+<li><strong>IP バリデーションは YANG 層</strong>: key（サーバ IP / ホスト名）の構文チェックは <code>sonic-syslog.yang</code> の <code>inet:ip-address</code> / <code>inet:host</code> 型制約で行われ、<code>hostcfgd</code> 層での追加チェックはない。</li>
 </ul>
 <!-- /cdb-exceptions -->
 
@@ -37174,7 +37174,7 @@
 </tr>
 <tr>
 <td><code>hostcfgd</code></td>
-<td>サーバー削除</td>
+<td>サーバ削除</td>
 <td>対応 rsyslog 設定を削除して reload</td>
 <td><code>hostcfgd.py</code></td>
 </tr>
@@ -37769,7 +37769,7 @@
 </span></code></pre></div>
 <p><strong>YANG-実装 discrepancy</strong>: YANG の per-server <code>severity</code> leaf は <code>default</code> なしだが、テンプレートは <code>SYSLOG_CONFIG.GLOBAL.severity</code>（YANG default <code>notice</code>）を暗黙継承するため、<code>SYSLOG_CONFIG.GLOBAL</code> が存在する場合は per-server 未設定でも実質 <code>notice</code> として動作する。</p>
 <h3 id="_19">ハードコード固定値（設定不可）<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
-<p>以下の値は CONFIG_DB フィールドなし・YANG 未定義で <code>rsyslog.conf.j2</code> にハードコードされており、ユーザーは変更不可:</p>
+<p>以下の値は CONFIG_DB フィールドなし・YANG 未定義で <code>rsyslog.conf.j2</code> にハードコードされており、ユーザは変更不可:</p>
 <table>
 <thead>
 <tr>
@@ -37862,7 +37862,7 @@
 </tr>
 <tr>
 <td>4</td>
-<td>サーバー変更 or 削除 → <code>rsyslog-config.service</code> 再起動</td>
+<td>サーバ変更 or 削除 → <code>rsyslog-config.service</code> 再起動</td>
 <td>原子操作なし（再起動中は旧設定）</td>
 <td><code>RemainAfterExit=yes</code> で完了状態を保持</td>
 </tr>
@@ -37875,9 +37875,9 @@
 </tbody>
 </table>
 <h3 id="_21">主要な制約詳細<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
-<p><strong>VRF 先行必須（依存 #2/#3）</strong>: <code>vrf=mgmt</code> を使用する場合は <code>MGMT_VRF_CONFIG|mgmtVrfEnabled=true</code> を先に設定すること。YANG <code>must</code> 制約が DB 書き込み時に評価されるため、VRF 未設定のままサーバーエントリを追加しようとすると CLI/REST いずれからも reject される。VRF 名を leafref で参照する場合は <code>VRF</code> テーブルのエントリ作成が先行必須。</p>
+<p><strong>VRF 先行必須（依存 #2/#3）</strong>: <code>vrf=mgmt</code> を使用する場合は <code>MGMT_VRF_CONFIG|mgmtVrfEnabled=true</code> を先に設定すること。YANG <code>must</code> 制約が DB 書き込み時に評価されるため、VRF 未設定のままサーバエントリを追加しようとすると CLI/REST いずれからも reject される。VRF 名を leafref で参照する場合は <code>VRF</code> テーブルのエントリ作成が先行必須。</p>
 <p><strong>SYSLOG_CONFIG と SYSLOG_SERVER の結合再生成（依存 #1/#5）</strong>: <code>rsyslog_server_handler()</code> は <code>SYSLOG_SERVER</code> への変更（追加・削除・変更）をトリガーに <code>SYSLOG_CONFIG</code> テーブルも再取得してから <code>rsyslog-config.service</code> を再起動する。これは <code>severity</code> の 3 段階カスケード（per-server → GLOBAL → rsyslog デフォルト）を正しく計算するために両テーブルが必要なため。<code>SYSLOG_SERVER</code> を追加する前に <code>SYSLOG_CONFIG|GLOBAL</code> の設定（特に <code>severity</code>）を確定させることを推奨する。</p>
-<p><strong>再起動中の中間状態（依存 #4）</strong>: <code>rsyslog-config.service</code> 再起動中（<code>rsyslog.conf.j2</code> テンプレート展開 + <code>systemctl restart rsyslog</code>）の数秒間はリモート転送が停止する。複数サーバーを追加する場合は一括での <code>config reload</code> を利用することでサービス再起動回数を 1 回に抑制できる。</p>
+<p><strong>再起動中の中間状態（依存 #4）</strong>: <code>rsyslog-config.service</code> 再起動中（<code>rsyslog.conf.j2</code> テンプレート展開 + <code>systemctl restart rsyslog</code>）の数秒間はリモート転送が停止する。複数サーバを追加する場合は一括での <code>config reload</code> を利用することでサービス再起動回数を 1 回に抑制できる。</p>
 <!-- /ordering -->
 
 <!-- cross-refs -->

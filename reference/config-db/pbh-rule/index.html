@@ -36738,7 +36738,7 @@
 
 <p><code>PBH_RULE</code> 処理に関係するハードコード定数の一覧。いずれも CONFIG_DB / <a href="../../glossary/#term-yang">YANG</a> では設定変更不可か、実装側のみで定義される値である。</p>
 <h3 id="match-mask">match フィールドの暗黙 mask 値<a class="headerlink" href="#match-mask" title="Permanent link">&para;</a></h3>
-<p><code>parsePbhRule()</code> (<code>pbhmgr.cpp</code>) は <code>ether_type</code> / <code>ip_protocol</code> / <code>ipv6_next_header</code> / <code>l4_dst_port</code> / <code>inner_ether_type</code> の mask を YANG 定義なしにコードでハードコードする。<code>gre_key</code> のみユーザーが <code>0x&lt;value&gt;/0x&lt;mask&gt;</code> 形式で明示指定する。</p>
+<p><code>parsePbhRule()</code> (<code>pbhmgr.cpp</code>) は <code>ether_type</code> / <code>ip_protocol</code> / <code>ipv6_next_header</code> / <code>l4_dst_port</code> / <code>inner_ether_type</code> の mask を YANG 定義なしにコードでハードコードする。<code>gre_key</code> のみユーザが <code>0x&lt;value&gt;/0x&lt;mask&gt;</code> 形式で明示指定する。</p>
 <table>
 <thead>
 <tr>

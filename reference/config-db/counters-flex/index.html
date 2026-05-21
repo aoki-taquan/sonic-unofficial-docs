@@ -36294,7 +36294,7 @@
 <h1 id="flex_counter">FLEX_COUNTER 個別カウンタフィールド<a class="headerlink" href="#flex_counter" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><a href="../../glossary/#term-orchagent">orchagent</a> は <code>FLEX_COUNTER_TABLE</code> のグループ設定（<code>FLEX_COUNTER_STATUS = enable</code>）を受信すると、ハードウェアオブジェクト（ポート・キュー・PG 等）ごとに <strong><code>FLEX_COUNTER_DB</code></strong> へ per-OID エントリを書き込む<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。このエントリに含まれる <code>PORT_COUNTER_ID_LIST</code>、<code>QUEUE_COUNTER_ID_LIST</code> などが <strong>個別カウンタフィールド</strong> であり、<code>syncd</code> の <code>FlexCounter</code> モジュールが参照してどの <a href="../../glossary/#term-sai">SAI</a> stat を収集するかを決定する。</p>
-<p>これらのフィールドは <a href="../../glossary/#term-config_db">CONFIG_DB</a> 経由でユーザーが設定する手段はなく、<a href="../../glossary/#term-orchagent">orchagent</a> が内部的にハードコードした stat リストから自動生成する。</p>
+<p>これらのフィールドは <a href="../../glossary/#term-config_db">CONFIG_DB</a> 経由でユーザが設定する手段はなく、<a href="../../glossary/#term-orchagent">orchagent</a> が内部的にハードコードした stat リストから自動生成する。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -36446,7 +36446,7 @@
 </tr>
 </tbody>
 </table>
-<p>合計 ~60 stat がハードコードリストに含まれる。ユーザーが個別追加・削除する手段はない。</p>
+<p>合計 ~60 stat がハードコードリストに含まれる。ユーザが個別追加・削除する手段はない。</p>
 <h4 id="_3">特殊挙動<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
 <table>
 <thead>
@@ -36626,7 +36626,7 @@
 <td><a href="../../glossary/#term-config_db">CONFIG_DB</a> ではなく <code>FLEX_COUNTER_DB</code>（DB 番号 5）の <code>FLEX_COUNTER_TABLE:&lt;group&gt;:&lt;oid&gt;</code> に書き込まれる</td>
 </tr>
 <tr>
-<td>ユーザー設定不可</td>
+<td>ユーザ設定不可</td>
 <td><a href="../../glossary/#term-yang">YANG</a> 定義なし、<a href="../../glossary/#term-config_db">CONFIG_DB</a> 経由での変更手段なし</td>
 </tr>
 <tr>

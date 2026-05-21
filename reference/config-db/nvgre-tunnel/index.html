@@ -37124,7 +37124,7 @@
 <ul>
 <li><strong><code>NVGRE_TUNNEL</code> → <code>NVGRE_TUNNEL_MAP</code></strong>: <code>NvgreTunnelMapOrch</code> は親トンネルを <code>isTunnelExists()</code> でチェックするが、未登録時に retry キューへ戻さず即廃棄する。よって <code>NVGRE_TUNNEL</code> の SET が orchagent で処理完了してから <code>NVGRE_TUNNEL_MAP</code> を書き込む必要がある（ordering 参照）。</li>
 <li><strong><code>VLAN</code> 参照</strong>: <code>gPortsOrch-&gt;getVlanByVlanId()</code> は PortsOrch 内部の VLAN マップを参照する。<code>VLAN</code> テーブルの SET が PortsOrch により処理完了していない場合、MAP エントリは永続的に失われる。</li>
-<li><strong><code>gUnderlayIfId</code> / <code>gVirtualRouterId</code></strong>: orchagent 起動時に <code>main.cpp</code> が SAI を初期化して設定するグローバル値。これらは orchagent が稼動していれば常に有効であり、ユーザーが CONFIG_DB に書き込む前提条件にはならない。</li>
+<li><strong><code>gUnderlayIfId</code> / <code>gVirtualRouterId</code></strong>: orchagent 起動時に <code>main.cpp</code> が SAI を初期化して設定するグローバル値。これらは orchagent が稼動していれば常に有効であり、ユーザが CONFIG_DB に書き込む前提条件にはならない。</li>
 </ul>
 <!-- /cross-refs -->
 
@@ -37448,7 +37448,7 @@ SAI 呼び出し (<code>sai_tunnel_api-&gt;create_tunnel_map / create_tunnel / c
 <tr>
 <td>MAP タイプセット</td>
 <td><code>{ MAP_T_VLAN, MAP_T_BRIDGE }</code> (固定 2 種)</td>
-<td><code>NvgreTunnel</code> 構築時に Encap + Decap 計 4 個のマッパーオブジェクトを常時作成。ユーザー設定で変更不可</td>
+<td><code>NvgreTunnel</code> 構築時に Encap + Decap 計 4 個のマッパーオブジェクトを常時作成。ユーザ設定で変更不可</td>
 <td><code>nvgreorch.cpp:16-19</code></td>
 </tr>
 <tr>
@@ -37481,7 +37481,7 @@ SAI 呼び出し (<code>sai_tunnel_api-&gt;create_tunnel_map / create_tunnel / c
 <ul>
 <li><code>NVGRE_VSID_MAX_VALUE = 16777214</code> は YANG の <code>vsid</code> range (<code>0..16777214</code>) と一致しており、orchagent 側は YANG validate を通過した値をさらにコード上で再チェックする二段構えになっている。</li>
 <li>MAP タイプは <code>MAP_T_VLAN</code> と <code>MAP_T_BRIDGE</code> の 2 種が常に作成される。これは <code>nvgreMapTypes</code> static 定数で宣言されており、実行時に変更する手段はない。</li>
-<li><code>gUnderlayIfId</code> / <code>gVirtualRouterId</code> はユーザーが CONFIG_DB に書き込む前提条件にはならない（orchagent が稼動していれば常に有効）が、orchagent 未起動時は NVGRE トンネル設定を処理できない。</li>
+<li><code>gUnderlayIfId</code> / <code>gVirtualRouterId</code> はユーザが CONFIG_DB に書き込む前提条件にはならない（orchagent が稼動していれば常に有効）が、orchagent 未起動時は NVGRE トンネル設定を処理できない。</li>
 </ul>
 <!-- /constants -->
 

@@ -36207,7 +36207,7 @@
 <td><code>team_device.ifinfo.dev_addr</code></td>
 <td>LAG 作成時の MAC アドレス</td>
 <td><code>teamdctl</code> JSON <code>team_device.ifinfo.dev_addr</code> — <code>values_store.h:L54</code></td>
-<td>固定値なし。システム MAC またはユーザー指定値</td>
+<td>固定値なし。システム MAC またはユーザ指定値</td>
 </tr>
 <tr>
 <td><code>team_device.ifinfo.ifindex</code></td>
@@ -36233,7 +36233,7 @@
 調査日: 2026-05-18
 詳細調査ノート: <code>meta/_intermediate/cdb-flow/portchannel-state-ordering.md</code></p>
 </blockquote>
-<p>このテーブルは STATE_DB の <strong>書き込み専用</strong>（teamsyncd / tlm_teamd のみが書き込む）であり、ユーザーが直接操作するものではない。<code>state=ok</code> エントリの有無が複数デーモンの readiness ガードとして機能するため、書き込み・削除の順序が後続処理の可否を決定する。</p>
+<p>このテーブルは STATE_DB の <strong>書き込み専用</strong>（teamsyncd / tlm_teamd のみが書き込む）であり、ユーザが直接操作するものではない。<code>state=ok</code> エントリの有無が複数デーモンの readiness ガードとして機能するため、書き込み・削除の順序が後続処理の可否を決定する。</p>
 <h3 id="teamsyncd-lag_table">teamsyncd が LAG_TABLE に書き込むまでの事前条件<a class="headerlink" href="#teamsyncd-lag_table" title="Permanent link">&para;</a></h3>
 <p>LAG_TABLE への書き込みは以下の連鎖が完了することで発生する:</p>
 <table>
@@ -36823,7 +36823,7 @@
 
 <!-- platform -->
 <h2 id="phase-h">プラットフォーム差 (Phase H)<a class="headerlink" href="#phase-h" title="Permanent link">&para;</a></h2>
-<p>STATE_DB <code>LAG_TABLE</code> への書き込みは Linux netlink (<code>RTM_NEWLINK</code> / <code>RTM_DELLINK</code>) と <code>teamdctl</code> UNIX ソケット経由の JSON dump に依存する。いずれも <a href="../../glossary/#term-sai">SAI</a> を経由しないカーネル・ユーザー空間の仕組みであるため、プラットフォーム（<a href="../../glossary/#term-asic">ASIC</a> ベンダー）差異は生じない。</p>
+<p>STATE_DB <code>LAG_TABLE</code> への書き込みは Linux netlink (<code>RTM_NEWLINK</code> / <code>RTM_DELLINK</code>) と <code>teamdctl</code> UNIX ソケット経由の JSON dump に依存する。いずれも <a href="../../glossary/#term-sai">SAI</a> を経由しないカーネル・ユーザ空間の仕組みであるため、プラットフォーム（<a href="../../glossary/#term-asic">ASIC</a> ベンダー）差異は生じない。</p>
 <table>
 <thead>
 <tr>

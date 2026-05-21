@@ -27784,7 +27784,7 @@
   <a href="#stats_mode-read_and_clear" class="md-nav__link">
     <span class="md-ellipsis">
       
-        STATS_MODE は READ_AND_CLEAR（ユーザー変更不可）
+        STATS_MODE は READ_AND_CLEAR（ユーザ変更不可）
       
     </span>
   </a>
@@ -35639,7 +35639,7 @@
   <a href="#stats_mode-read_and_clear" class="md-nav__link">
     <span class="md-ellipsis">
       
-        STATS_MODE は READ_AND_CLEAR（ユーザー変更不可）
+        STATS_MODE は READ_AND_CLEAR（ユーザ変更不可）
       
     </span>
   </a>
@@ -36166,8 +36166,8 @@
 <li><a href="../../glossary/#term-portsorch">portsorch</a> init (<code>portsorch.cpp:872-876</code>) で <code>setFlexCounterGroupParameter()</code> → <a href="../../glossary/#term-syncd">syncd</a> の <code>FLEX_COUNTER_GROUP_TABLE|PG_WATERMARK_STAT_COUNTER</code> にこの値を書き込み。</li>
 <li><code>counterpoll watermark interval &lt;ms&gt;</code> で上書き可能（<a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>POLL_INTERVAL</code> フィールドに書き込まれ、<a href="../../glossary/#term-orchagent">orchagent</a> が反映する）。</li>
 </ul>
-<h3 id="stats_mode-read_and_clear">STATS_MODE は READ_AND_CLEAR（ユーザー変更不可）<a class="headerlink" href="#stats_mode-read_and_clear" title="Permanent link">&para;</a></h3>
-<p>PG ウォーターマーク <a href="../../glossary/#term-flexcounter">FlexCounter</a> グループは <code>StatsMode::READ_AND_CLEAR</code> モードで動作する<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。これはユーザーが <a href="../../glossary/#term-config_db">CONFIG_DB</a> から変更できるフィールドではなく、orchagent が <code>setFlexCounterGroupParameter()</code> 呼び出し時に固定で指定する。<a href="../../glossary/#term-sai">SAI</a> からポーリングするたびにハードウェアのウォーターマークレジスタがリセットされる。<code>PERIODIC_WATERMARKS</code> / <code>PERSISTENT_WATERMARKS</code> / <code>USER_WATERMARKS</code> テーブルへの振り分けは syncd 側の Lua スクリプト（<code>pgWmSha</code>）が処理する。</p>
+<h3 id="stats_mode-read_and_clear">STATS_MODE は READ_AND_CLEAR（ユーザ変更不可）<a class="headerlink" href="#stats_mode-read_and_clear" title="Permanent link">&para;</a></h3>
+<p>PG ウォーターマーク <a href="../../glossary/#term-flexcounter">FlexCounter</a> グループは <code>StatsMode::READ_AND_CLEAR</code> モードで動作する<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。これはユーザが <a href="../../glossary/#term-config_db">CONFIG_DB</a> から変更できるフィールドではなく、orchagent が <code>setFlexCounterGroupParameter()</code> 呼び出し時に固定で指定する。<a href="../../glossary/#term-sai">SAI</a> からポーリングするたびにハードウェアのウォーターマークレジスタがリセットされる。<code>PERIODIC_WATERMARKS</code> / <code>PERSISTENT_WATERMARKS</code> / <code>USER_WATERMARKS</code> テーブルへの振り分けは syncd 側の Lua スクリプト（<code>pgWmSha</code>）が処理する。</p>
 <h3 id="sai">収集 SAI カウンタはコードハードコード（変更不可）<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
 <p><code>portsorch.cpp:410-414</code> の静的配列 <code>ingressPriorityGroupWatermarkStatIds</code> が収集フィールドを決定する<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">sai_ingress_priority_group_stat_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ingressPriorityGroupWatermarkStatIds</span><span class="w"> </span><span class="o">=</span>
@@ -36445,7 +36445,7 @@
 <td><code>STATS_MODE_READ_AND_CLEAR</code></td>
 <td><code>"READ_AND_CLEAR"</code></td>
 <td><code>portsorch.cpp:872-876</code> 呼び出し引数</td>
-<td><code>setFlexCounterGroupParameter()</code> 経由で <code>FLEX_COUNTER_GROUP_TABLE|PG_WATERMARK_STAT_COUNTER</code> の <code>STATS_MODE</code> フィールドに書き込まれる固定値。SAI からポーリングするたびにハードウェアのウォーターマークレジスタがクリアされる。ユーザーが変更するフィールドは CONFIG_DB に存在しない</td>
+<td><code>setFlexCounterGroupParameter()</code> 経由で <code>FLEX_COUNTER_GROUP_TABLE|PG_WATERMARK_STAT_COUNTER</code> の <code>STATS_MODE</code> フィールドに書き込まれる固定値。SAI からポーリングするたびにハードウェアのウォーターマークレジスタがクリアされる。ユーザが変更するフィールドは CONFIG_DB に存在しない</td>
 </tr>
 <tr>
 <td><code>DEFAULT_TELEMETRY_INTERVAL</code></td>
@@ -36756,7 +36756,7 @@
 <tbody>
 <tr>
 <td>通常スイッチ（non-mgmt）</td>
-<td><code>FLEX_COUNTER_STATUS</code> 未設定（<code>disable</code> 相当） — ユーザーが <code>counterpoll watermark enable</code> で有効化可能</td>
+<td><code>FLEX_COUNTER_STATUS</code> 未設定（<code>disable</code> 相当） — ユーザが <code>counterpoll watermark enable</code> で有効化可能</td>
 </tr>
 <tr>
 <td>管理デバイス (mgmt_device)</td>

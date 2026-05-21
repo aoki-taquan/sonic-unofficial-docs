@@ -37522,13 +37522,13 @@
 </tbody>
 </table>
 <h3 id="aaaauthentication-ldap">AAA|authentication — LDAP 有効化ゲート<a class="headerlink" href="#aaaauthentication-ldap" title="Permanent link">&para;</a></h3>
-<p><code>is_ldap_config_complete()</code> は <code>'ldap' in self.authentication.get('login', "")</code> を条件の一つとして評価する (<code>hostcfgd:441</code>)。<code>AAA|authentication.login</code> に <code>ldap</code> が含まれない場合、<code>LDAP_SERVER</code> と <code>LDAP|global</code> が完全に設定済みであっても <code>handle_nslcd_service(False)</code> が呼ばれ nslcd を stop &amp; mask する。<strong><code>config aaa authentication login ldap</code> を実行して <a href="../../glossary/#term-aaa">AAA</a> テーブルを更新するまで LDAP 認証は機能しない</strong>。</p>
+<p><code>is_ldap_config_complete()</code> は <code>'ldap' in self.authentication.get('login', "")</code> を条件の1つとして評価する (<code>hostcfgd:441</code>)。<code>AAA|authentication.login</code> に <code>ldap</code> が含まれない場合、<code>LDAP_SERVER</code> と <code>LDAP|global</code> が完全に設定済みであっても <code>handle_nslcd_service(False)</code> が呼ばれ nslcd を stop &amp; mask する。<strong><code>config aaa authentication login ldap</code> を実行して <a href="../../glossary/#term-aaa">AAA</a> テーブルを更新するまで LDAP 認証は機能しない</strong>。</p>
 <h3 id="ldapglobal-nslcdconf">LDAP|global — nslcd.conf 生成の前提<a class="headerlink" href="#ldapglobal-nslcdconf" title="Permanent link">&para;</a></h3>
 <p><code>modify_conf_file()</code> は <code>server = ldap_global.copy(); server.update(self.ldap_servers[addr])</code> で各サーバのパラメータを合成し <code>nslcd.conf.j2</code> / <code>ldap.conf.j2</code> テンプレートに渡す (<code>hostcfgd:706-713</code>, <code>hostcfgd:854-863</code>)。<code>LDAP|global</code> が未設定の場合は <code>ldap_global == {}</code> → <code>is_ldap_config_complete()</code> が即 <code>False</code> を返す。推奨設定順序: <code>LDAP|global</code> → <code>LDAP_SERVER</code> → <code>AAA|authentication.login=ldap</code>。</p>
 <h3 id="device_metadatalocalhost-hostname">DEVICE_METADATA|localhost — hostname 取得<a class="headerlink" href="#device_metadatalocalhost-hostname" title="Permanent link">&para;</a></h3>
 <p>hostcfgd 初期化時に <code>DEVICE_METADATA</code> から <code>localhost.hostname</code> を取得し <code>self.hostname</code> に保持する (<code>hostcfgd:1422-1496</code>)。この値は <a href="../../glossary/#term-radius">RADIUS</a> の <code>nas_id</code> に使われるが LDAP の nslcd.conf 生成には直接関与しない。<code>DEVICE_METADATA|localhost</code> が未設定でも LDAP 認証は動作する。</p>
 <h3 id="sai">SAI 参照<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<p>なし。LDAP 認証は nslcd / PAM のユーザー空間で完結し、<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継も <a href="../../glossary/#term-sai">SAI</a> への書き込みも一切ない。</p>
+<p>なし。LDAP 認証は nslcd / PAM のユーザ空間で完結し、<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継も <a href="../../glossary/#term-sai">SAI</a> への書き込みも一切ない。</p>
 <!-- /cross-refs -->
 
 <!-- derivation -->
@@ -37662,13 +37662,13 @@
 </tbody>
 </table>
 <h3 id="aaaauthentication-ldap_1">AAA|authentication — LDAP 有効化ゲート<a class="headerlink" href="#aaaauthentication-ldap_1" title="Permanent link">&para;</a></h3>
-<p><code>is_ldap_config_complete()</code> は <code>'ldap' in self.authentication.get('login', "")</code> を条件の一つとして評価する (<code>hostcfgd:441</code>)。<code>AAA|authentication.login</code> に <code>ldap</code> が含まれない場合、<code>LDAP_SERVER</code> と <code>LDAP|global</code> が完全に設定済みであっても <code>handle_nslcd_service(False)</code> が呼ばれ nslcd を stop &amp; mask する。<strong><code>config aaa authentication login ldap</code> を実行して <a href="../../glossary/#term-aaa">AAA</a> テーブルを更新するまで LDAP 認証は機能しない</strong>。</p>
+<p><code>is_ldap_config_complete()</code> は <code>'ldap' in self.authentication.get('login', "")</code> を条件の1つとして評価する (<code>hostcfgd:441</code>)。<code>AAA|authentication.login</code> に <code>ldap</code> が含まれない場合、<code>LDAP_SERVER</code> と <code>LDAP|global</code> が完全に設定済みであっても <code>handle_nslcd_service(False)</code> が呼ばれ nslcd を stop &amp; mask する。<strong><code>config aaa authentication login ldap</code> を実行して <a href="../../glossary/#term-aaa">AAA</a> テーブルを更新するまで LDAP 認証は機能しない</strong>。</p>
 <h3 id="ldapglobal-nslcdconf_1">LDAP|global — nslcd.conf 生成の前提<a class="headerlink" href="#ldapglobal-nslcdconf_1" title="Permanent link">&para;</a></h3>
 <p><code>modify_conf_file()</code> は <code>server = ldap_global.copy(); server.update(self.ldap_servers[addr])</code> で各サーバのパラメータを合成し <code>nslcd.conf.j2</code> / <code>ldap.conf.j2</code> テンプレートに渡す (<code>hostcfgd:706-713</code>, <code>hostcfgd:854-863</code>)。<code>LDAP|global</code> が未設定の場合は <code>ldap_global == {}</code> → <code>is_ldap_config_complete()</code> が即 <code>False</code> を返す。推奨設定順序: <code>LDAP|global</code> → <code>LDAP_SERVER</code> → <code>AAA|authentication.login=ldap</code>。</p>
 <h3 id="device_metadatalocalhost-hostname_1">DEVICE_METADATA|localhost — hostname 取得<a class="headerlink" href="#device_metadatalocalhost-hostname_1" title="Permanent link">&para;</a></h3>
 <p>hostcfgd 初期化時に <code>DEVICE_METADATA</code> から <code>localhost.hostname</code> を取得し <code>self.hostname</code> に保持する (<code>hostcfgd:1422-1496</code>)。この値は RADIUS の <code>nas_id</code> に使われるが LDAP の nslcd.conf 生成には直接関与しない。<code>DEVICE_METADATA|localhost</code> が未設定でも LDAP 認証は動作する。</p>
 <h3 id="sai_1">SAI 参照<a class="headerlink" href="#sai_1" title="Permanent link">&para;</a></h3>
-<p>なし。LDAP 認証は nslcd / PAM のユーザー空間で完結し、<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継も <a href="../../glossary/#term-sai">SAI</a> への書き込みも一切ない。</p>
+<p>なし。LDAP 認証は nslcd / PAM のユーザ空間で完結し、<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継も <a href="../../glossary/#term-sai">SAI</a> への書き込みも一切ない。</p>
 <!-- /cross-refs -->
 
 <!-- failure -->

@@ -36664,7 +36664,7 @@
 <h2 id="phase-a">コード由来の暗黙デフォルト (Phase A)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
 <!-- evidence: sonic-buildimage/src/sonic-py-common/sonic_py_common/device_info.py / sonic-buildimage/files/build_templates/init_cfg.json.j2 / sonic-host-services/scripts/featured -->
 
-<p><code>DEVICE_RUNTIME_METADATA</code> は <strong>CONFIG_DB に永続化されない仮想テーブル</strong> で、<code>sonic_py_common.device_info.get_device_runtime_metadata()</code> が起動時にプラットフォーム検出結果から自動生成する (<code>device_info.py:735-747</code>)。ユーザー設定経路 (CLI / minigraph / db_migrator / <a href="../../glossary/#term-yang">YANG</a> transformer) は存在しないため、全フィールドが <strong>コード由来デフォルト</strong> となる。</p>
+<p><code>DEVICE_RUNTIME_METADATA</code> は <strong>CONFIG_DB に永続化されない仮想テーブル</strong> で、<code>sonic_py_common.device_info.get_device_runtime_metadata()</code> が起動時にプラットフォーム検出結果から自動生成する (<code>device_info.py:735-747</code>)。ユーザ設定経路 (CLI / minigraph / db_migrator / <a href="../../glossary/#term-yang">YANG</a> transformer) は存在しないため、全フィールドが <strong>コード由来デフォルト</strong> となる。</p>
 <h3 id="_4">サブキー存在条件のデフォルト<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>

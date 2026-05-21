@@ -37123,7 +37123,7 @@
 <!-- cdb-exceptions -->
 <h2 id="_5">例外条件・特殊挙動<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>NULL cfg → デフォルト設定のマージをスキップ</strong>: ユーザー設定エントリのフィールドが <code>"NULL"</code> の場合、<code>coppmgr</code> の <code>mergeConfig()</code> はそのキー全体を init (デフォルト <code>copp.json</code>) からも除外する。<!-- evidence: coppmgr.cpp L222-224 mergeConfig --></li>
+<li><strong>NULL cfg → デフォルト設定のマージをスキップ</strong>: ユーザ設定エントリのフィールドが <code>"NULL"</code> の場合、<code>coppmgr</code> の <code>mergeConfig()</code> はそのキー全体を init (デフォルト <code>copp.json</code>) からも除外する。<!-- evidence: coppmgr.cpp L222-224 mergeConfig --></li>
 <li><strong>重複エントリ → APPL_DB 更新スキップ</strong>: <code>isDupEntry()</code> で APPL_DB の既存値と全フィールドが一致する場合、<code>m_appCoppTable.set()</code> を呼ばない。SAI の不要な呼び出しを回避。<!-- evidence: coppmgr.cpp L263-284 isDupEntry --></li>
 <li><strong>policer の meter / mode / color は変更不可</strong>: 既存ポリサーへの <code>meter_type</code> / <code>mode</code> / <code>color_source</code> 変更を試みた場合 <code>SWSS_LOG_ERROR</code> を出力し当該属性の変更は<strong>スキップ</strong>される。他の属性の更新は続行。<!-- evidence: copporch.cpp L1331-1347 trapGroupUpdatePolicer --></li>
 <li><strong>未知フィールド → task_failed</strong>: <code>parseTrapGroupAttribute()</code> で認識できないフィールドが来た場合 <code>SWSS_LOG_ERROR("Unknown copp field specified:%s")</code> を出力し処理失敗となる。<!-- evidence: copporch.cpp L1290-1292 --></li>
@@ -37425,7 +37425,7 @@
 </tr>
 </tbody>
 </table>
-<p>デフォルトトラップ初期化時（<code>initDefaultTrapIds()</code>）とユーザー設定反映時（<code>parseTrapGroupAttribute()</code>）の両方で同じチェックが行われる。Mellanox / Marvell では CONFIG_DB に <code>trap_priority</code> を設定しても <strong>無視される</strong>（エラーログなし）。<!-- evidence: copporch.cpp L347-359, L1184-1194; orch.h L41-42 --></p>
+<p>デフォルトトラップ初期化時（<code>initDefaultTrapIds()</code>）とユーザ設定反映時（<code>parseTrapGroupAttribute()</code>）の両方で同じチェックが行われる。Mellanox / Marvell では CONFIG_DB に <code>trap_priority</code> を設定しても <strong>無視される</strong>（エラーログなし）。<!-- evidence: copporch.cpp L347-359, L1184-1194; orch.h L41-42 --></p>
 <h3 id="voq-chassis">VOQ / Chassis 差<a class="headerlink" href="#voq-chassis" title="Permanent link">&para;</a></h3>
 <p><code>copporch.cpp</code> に <a href="../../glossary/#term-voq">VOQ</a> chassis 固有のコードパスは存在しない。<a href="../../glossary/#term-copp">CoPP</a> は CPU 宛トラフィックに適用されるため、<a href="../../glossary/#term-voq">VOQ</a> スイッチファブリックの転送パスとは独立しており、linecard / system port による追加分岐はない。</p>
 <!-- /platform -->
@@ -37525,9 +37525,9 @@
 <h3 id="queue4_group3-circbs"><code>queue4_group3</code> の <code>cir</code>/<code>cbs</code> — デバイスタイプ分岐<a class="headerlink" href="#queue4_group3-circbs" title="Permanent link">&para;</a></h3>
 <p><code>copp_cfg.j2</code> の Jinja2 テンプレートで <code>DEVICE_METADATA['localhost']['type']</code> に <code>'Mgmt'</code> が含まれる場合、<code>queue4_group3</code>（lldp/dhcp_relay 担当）の <code>cir</code>/<code>cbs</code> は <code>300</code> pps、それ以外は <code>100</code> pps が適用される。プラットフォーム依存のデフォルト。<!-- evidence: copp_cfg.j2 L37-43 --></p>
 <h3 id="del-init-cfg">DEL 後の init cfg 自動復元<a class="headerlink" href="#del-init-cfg" title="Permanent link">&para;</a></h3>
-<p><code>COPP_GROUP</code> エントリが DEL されても、<code>m_coppGroupInitCfg</code>（<code>copp_cfg.j2</code> 由来）に存在するキーは <code>coppmgr</code> によって自動的に init 値で再生成される。ユーザーが <code>sonic-db-cli CONFIG_DB del 'COPP_GROUP|queue4_group1'</code> を実行しても、<code>coppmgrd</code> の次回処理で init 値が APPL_DB に再書き込みされる。<!-- evidence: coppmgr.cpp L898-921 --></p>
+<p><code>COPP_GROUP</code> エントリが DEL されても、<code>m_coppGroupInitCfg</code>（<code>copp_cfg.j2</code> 由来）に存在するキーは <code>coppmgr</code> によって自動的に init 値で再生成される。ユーザが <code>sonic-db-cli CONFIG_DB del 'COPP_GROUP|queue4_group1'</code> を実行しても、<code>coppmgrd</code> の次回処理で init 値が APPL_DB に再書き込みされる。<!-- evidence: coppmgr.cpp L898-921 --></p>
 <h3 id="null-cfg">NULL cfg → 全フィールドの除外<a class="headerlink" href="#null-cfg" title="Permanent link">&para;</a></h3>
-<p>ユーザーが <code>COPP_GROUP|&lt;name&gt;</code> に <code>NULL</code> フィールドを設定すると、<code>mergeConfig()</code> はそのエントリ全体を merged_cfg から除外する。init cfg のデフォルト値もマージされず、APPL_DB への書き込みが行われない。<!-- evidence: coppmgr.cpp L218-224 --></p>
+<p>ユーザが <code>COPP_GROUP|&lt;name&gt;</code> に <code>NULL</code> フィールドを設定すると、<code>mergeConfig()</code> はそのエントリ全体を merged_cfg から除外する。init cfg のデフォルト値もマージされず、APPL_DB への書き込みが行われない。<!-- evidence: coppmgr.cpp L218-224 --></p>
 <h3 id="sai-capability-query-neighbor_miss-silent-drop">SAI capability query 失敗 → <code>neighbor_miss</code> の silent drop<a class="headerlink" href="#sai-capability-query-neighbor_miss-silent-drop" title="Permanent link">&para;</a></h3>
 <p>SAI capability query（<code>sai_query_attribute_enum_values_capability</code>）が失敗した場合、<code>default_supported_trap_ids</code> の静的リストにフォールバックする。このリストには <code>neighbor_miss</code> が意図的に含まれていない（コメント: "This list is intended to remain static"）。古い SAI を使うプラットフォームでは <code>neighbor_miss</code> trap が silent drop される可能性がある。<!-- evidence: copporch.cpp L104-151, L263-270 --></p>
 <blockquote>
@@ -37869,7 +37869,7 @@
 <td><code>COPP_GROUP</code> (全エントリ)</td>
 <td><code>/etc/sonic/copp_cfg.json</code></td>
 <td>—</td>
-<td>起動時に init セットをロード。ユーザー DEL 後も init cfg に同名キーがあれば自動復元（実質「DEL = init リセット」）。<code>default</code> グループは DEL 自体が <code>task_ignore</code> で拒否</td>
+<td>起動時に init セットをロード。ユーザ DEL 後も init cfg に同名キーがあれば自動復元（実質「DEL = init リセット」）。<code>default</code> グループは DEL 自体が <code>task_ignore</code> で拒否</td>
 <td><code>coppmgr.cpp:898-921</code>, <code>copporch.cpp:861-864</code></td>
 </tr>
 </tbody>
@@ -37887,7 +37887,7 @@
 <h3 id="init_cfg">init_cfg 由来の暗黙初期化<a class="headerlink" href="#init_cfg" title="Permanent link">&para;</a></h3>
 <p><code>coppmgr</code> は起動時に <code>/etc/sonic/copp_cfg.json</code>（<code>files/image_config/copp/copp_cfg.j2</code> の展開物）を
 読み込み、<code>COPP_GROUP</code> の初期セットを <code>m_coppGroupInitCfg</code> に保持する。
-ユーザーが CONFIG_DB から DEL した場合も、init cfg に同名キーがあれば init 値で
+ユーザが CONFIG_DB から DEL した場合も、init cfg に同名キーがあれば init 値で
 自動復元される（実質「DEL = init リセット」）。<code>coppmgr.cpp:898-921</code></p>
 <ul>
 <li>既定グループ例: <code>default</code>、<code>queue4_group1</code>（<a href="../../glossary/#term-bgp">BGP</a>/<a href="../../glossary/#term-lldp">LLDP</a>）、<code>queue2_group1</code>（sflow/genetlink）</li>

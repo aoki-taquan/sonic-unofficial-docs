@@ -36578,7 +36578,7 @@
 <tbody>
 <tr>
 <td>初期値</td>
-<td><code>NewServer()</code> 内で <code>InitCounters()</code> が呼ばれ、全 32 カウンタを <code>uint64(0)</code> にリセットして共有メモリに同期書き込み（<code>server.go:528</code>）。<strong>サーバー再起動のたびに全カウンタが 0 にリセットされる</strong></td>
+<td><code>NewServer()</code> 内で <code>InitCounters()</code> が呼ばれ、全 32 カウンタを <code>uint64(0)</code> にリセットして共有メモリに同期書き込み（<code>server.go:528</code>）。<strong>サーバ再起動のたびに全カウンタが 0 にリセットされる</strong></td>
 </tr>
 <tr>
 <td>永続化</td>
@@ -36963,7 +36963,7 @@ excerpt: |
 </tbody>
 </table>
 <h3 id="newserver">NewServer での初期化失敗<a class="headerlink" href="#newserver" title="Permanent link">&para;</a></h3>
-<p><code>NewServer</code> (<code>server.go:528</code>) は <code>common_utils.InitCounters()</code> を呼ぶが、SHM 初期化が失敗しても <code>NewServer</code> はエラーを返さずサーバー起動を継続する。gRPC サービスは動作するがカウンタは共有メモリに書き込まれない。</p>
+<p><code>NewServer</code> (<code>server.go:528</code>) は <code>common_utils.InitCounters()</code> を呼ぶが、SHM 初期化が失敗しても <code>NewServer</code> はエラーを返さずサーバ起動を継続する。gRPC サービスは動作するがカウンタは共有メモリに書き込まれない。</p>
 <h3 id="gnmi_dump">gnmi_dump の終了コード<a class="headerlink" href="#gnmi_dump" title="Permanent link">&para;</a></h3>
 <p><code>gnmi_dump</code> (<code>gnmi_dump.go:20-24</code>) は <code>GetMemCounters</code> 失敗時に <code>fmt.Printf("Error: Fail to read counters, ...")</code> を標準出力に出力して <code>return</code> する。<strong>exit コードは 0</strong> のままであり、シェルスクリプトによる失敗検知には明示的な出力文字列チェックが必要。</p>
 <h3 id="state_db-config_db">STATE_DB / CONFIG_DB への影響<a class="headerlink" href="#state_db-config_db" title="Permanent link">&para;</a></h3>
@@ -37306,7 +37306,7 @@ Redis 接続は一切行わない。<code>telemetryd</code> が動作中かど�
 </table>
 <p>Broadcom / Mellanox / Marvell / Barefoot 系 HwSku ではバイパス条件を満たさないため <code>GNMI_SET_BYPASS</code> は <strong>常に 0</strong>。</p>
 <h3 id="smartswitch-dpu">SmartSwitch / DPU 環境<a class="headerlink" href="#smartswitch-dpu" title="Permanent link">&para;</a></h3>
-<p><code>pkg/interceptors/setup.go</code> に DPU プロキシインターセプターが登録されており、gRPC メタデータ <code>x-sonic-target-type: dpu</code> があれば <a href="../../glossary/#term-npu">NPU</a> 側の <code>telemetryd</code> が RPC を DPU 側 gNMI サーバーに転送する。</p>
+<p><code>pkg/interceptors/setup.go</code> に DPU プロキシインターセプターが登録されており、gRPC メタデータ <code>x-sonic-target-type: dpu</code> があれば <a href="../../glossary/#term-npu">NPU</a> 側の <code>telemetryd</code> が RPC を DPU 側 gNMI サーバに転送する。</p>
 <table>
 <thead>
 <tr>

@@ -25682,7 +25682,7 @@
   <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ユーザー警告対象テーブル (YANG モデルなし — 自動削除不可)
+        ユーザ警告対象テーブル (YANG モデルなし — 自動削除不可)
       
     </span>
   </a>
@@ -36791,7 +36791,7 @@
   <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ユーザー警告対象テーブル (YANG モデルなし — 自動削除不可)
+        ユーザ警告対象テーブル (YANG モデルなし — 自動削除不可)
       
     </span>
   </a>
@@ -37123,7 +37123,7 @@
 </tr>
 <tr>
 <td>Yang モデルなしテーブルに削除対象ポートの依存がある</td>
-<td><code>breakout_warnUser_extraTables()</code> がユーザーへの警告・確認を要求</td>
+<td><code>breakout_warnUser_extraTables()</code> がユーザへの警告・確認を要求</td>
 <td><code>config/main.py</code> L239</td>
 </tr>
 <tr>
@@ -37869,7 +37869,7 @@
 <!-- /side-effects -->
 <!-- cross-refs -->
 <h2 id="dpb-config_db-phase-c">暗黙参照 — DPB が読み出す関連 CONFIG_DB テーブル (Phase C)<a class="headerlink" href="#dpb-config_db-phase-c" title="Permanent link">&para;</a></h2>
-<p>Dynamic Port Breakout (DPB) は <code>BREAKOUT_CFG</code> 単体ではなく、<code>CONFIG_DB</code> 内の関連テーブルを YANG leafref 解析で検出し、削除対象ポートに依存するエントリを <strong>cascade 削除</strong>（<code>--force-remove-dependencies</code> 時）またはユーザー警告対象として扱う。依存解決は <code>ConfigMgmtDPB._deletePorts()</code> 内の <code>SonicYang.find_data_dependencies()</code> が担う (<code>config_mgmt.py</code> L488-495)。</p>
+<p>Dynamic Port Breakout (DPB) は <code>BREAKOUT_CFG</code> 単体ではなく、<code>CONFIG_DB</code> 内の関連テーブルを YANG leafref 解析で検出し、削除対象ポートに依存するエントリを <strong>cascade 削除</strong>（<code>--force-remove-dependencies</code> 時）またはユーザ警告対象として扱う。依存解決は <code>ConfigMgmtDPB._deletePorts()</code> 内の <code>SonicYang.find_data_dependencies()</code> が担う (<code>config_mgmt.py</code> L488-495)。</p>
 <h3 id="cascade-yang-leafref">cascade 削除対象テーブル (YANG モデルあり、leafref 由来)<a class="headerlink" href="#cascade-yang-leafref" title="Permanent link">&para;</a></h3>
 <p><code>force=False</code> 時は依存一覧を表示して中断。<code>force=True</code> (<code>--force-remove-dependencies</code>) 時に cascade 削除される。</p>
 <table>
@@ -37983,8 +37983,8 @@
 <blockquote>
 <p>依存の検出は <code>SonicYang.find_data_dependencies(xPathPort)</code> が YANG データツリーを走査して行う。leafref でない参照（<code>ACL_TABLE.ports</code> 等）はここでは検出されない。</p>
 </blockquote>
-<h3 id="yang">ユーザー警告対象テーブル (YANG モデルなし — 自動削除不可)<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<p>YANG モデルが存在しないテーブルは <code>tablesWithOutYang</code> に収集され、該当ポートのエントリを持つ場合に <code>breakout_warnUser_extraTables()</code> がユーザーへの確認プロンプトを表示する (<code>config/main.py</code> L239, L5539)。<strong>自動削除はされない</strong>ため、手動での事前整理が必要。</p>
+<h3 id="yang">ユーザ警告対象テーブル (YANG モデルなし — 自動削除不可)<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
+<p>YANG モデルが存在しないテーブルは <code>tablesWithOutYang</code> に収集され、該当ポートのエントリを持つ場合に <code>breakout_warnUser_extraTables()</code> がユーザへの確認プロンプトを表示する (<code>config/main.py</code> L239, L5539)。<strong>自動削除はされない</strong>ため、手動での事前整理が必要。</p>
 <table>
 <thead>
 <tr>
@@ -37996,7 +37996,7 @@
 <tbody>
 <tr>
 <td><code>ACL_TABLE</code> (<code>.ports</code> フィールドに対象ポートあり)</td>
-<td>警告表示 + 確認要求。削除はユーザー任せ</td>
+<td>警告表示 + 確認要求。削除はユーザ任せ</td>
 <td><code>config acl remove table &lt;table&gt;</code></td>
 </tr>
 <tr>
