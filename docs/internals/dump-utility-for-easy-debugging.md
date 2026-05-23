@@ -167,26 +167,6 @@ syncd の再起動が完了しない問題。syncd プロセスが SIGTERM を�
 - 参照: [sonic-net/sonic-buildimage#4127](https://github.com/sonic-net/sonic-buildimage/issues/4127)
 
 
-### DellEmc S5232 で orchagent がクラッシュする既知の問題 (201911 イメージ)（sonic-buildimage#4331）
-
-DellEmc S5232 で orchagent がクラッシュする既知の問題 (201911 イメージ)。Broadcom SAI の特定バージョンとの互換性問題
-
-- 参照: [sonic-net/sonic-buildimage#4331](https://github.com/sonic-net/sonic-buildimage/issues/4331)
-
-
-### DellEmc S5232 で master #238 イメージの orchagent クラッシュ問題（sonic-buildimage#4339）
-
-DellEmc S5232 で master #238 イメージの orchagent クラッシュ問題。libsaibcm バージョンアップ後に再現
-
-- 参照: [sonic-net/sonic-buildimage#4339](https://github.com/sonic-net/sonic-buildimage/issues/4339)
-
-
-### libsaibcm_3.7.3.3-3 への移行後に orchagent がクラッシュする問題（sonic-buildimage#4347）
-
-libsaibcm_3.7.3.3-3 への移行後に orchagent がクラッシュする問題。SAI ライブラリのバージョンと orchagent の互換性を確認すること
-
-- 参照: [sonic-net/sonic-buildimage#4347](https://github.com/sonic-net/sonic-buildimage/issues/4347)
-
 
 ### S6100 T0 での cold reboot 後に syncd クラッシュが発生する問題 (HEAD.253)（sonic-buildimage#4428）
 
@@ -201,12 +181,6 @@ S6100 T0 での cold reboot 後に syncd クラッシュが発生する問題 (H
 
 - 参照: [sonic-net/sonic-buildimage#4586](https://github.com/sonic-net/sonic-buildimage/issues/4586)
 
-
-### syncd が `libprotobuf.so.0` 不足で異常終了する問題（sonic-buildimage#4682）
-
-syncd が `libprotobuf.so.0` 不足で異常終了する問題。syncd docker イメージのビルド時に protobuf ライブラリが含まれていない場合に発生
-
-- 参照: [sonic-net/sonic-buildimage#4682](https://github.com/sonic-net/sonic-buildimage/issues/4682)
 
 
 ### 最新 SONiC イメージで orchagent が断続的にクラッシュする問題（sonic-buildimage#4907）
@@ -230,12 +204,6 @@ Z9264/201911-170 での warm-reboot 中に orchagent と Python プロセスが�
 - 参照: [sonic-net/sonic-buildimage#5704](https://github.com/sonic-net/sonic-buildimage/issues/5704)
 
 
-### サブインターフェース作成時に BRCM で swss と syncd が終了する問題（sonic-buildimage#6167）
-
-サブインターフェース作成時に BRCM で swss と syncd が終了する問題。サブインターフェースの SAI サポートがプラットフォームによって異なる
-
-- 参照: [sonic-net/sonic-buildimage#6167](https://github.com/sonic-net/sonic-buildimage/issues/6167)
-
 
 ### ブート時に syncd が共有ライブラリ不足で失敗する問題（sonic-buildimage#6253）
 
@@ -257,12 +225,6 @@ Z9264/201911-170 での warm-reboot 中に orchagent と Python プロセスが�
 
 - 参照: [sonic-net/sonic-buildimage#6563](https://github.com/sonic-net/sonic-buildimage/issues/6563)
 
-
-### syncd が master RPC イメージでクラッシュする問題（sonic-buildimage#6622）
-
-syncd が master RPC イメージでクラッシュする問題。RPC ビルドの syncd は通常のビルドとは異なるライブラリセットを使用する
-
-- 参照: [sonic-net/sonic-buildimage#6622](https://github.com/sonic-net/sonic-buildimage/issues/6622)
 
 
 ## 引用元

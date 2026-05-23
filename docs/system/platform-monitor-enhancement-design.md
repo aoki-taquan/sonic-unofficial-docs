@@ -168,12 +168,6 @@ BMC (Baseboard Management Controller) 経由でファン・センサー制御が
 
 - 参照: [sonic-net/sonic-buildimage#633](https://github.com/sonic-net/sonic-buildimage/issues/633)
 
-### LLDP の portidsubtype が "locally assigned" ではなく "mac address"（sonic-buildimage#1457）
-
-[LLDP](../reference/glossary.md#term-lldp) の portidsubtype が "locally assigned" ではなく "mac address" にセットされる問題。lldpd の設定で `configure lldp portidsubtype local` を明示指定することで回避可能
-
-- 参照: [sonic-net/sonic-buildimage#1457](https://github.com/sonic-net/sonic-buildimage/issues/1457)
-
 ### ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）
 
 ポートのステータス変更が [SONiC](../reference/glossary.md#term-sonic) に反映されない問題。xcvrd または [portsyncd](../reference/glossary.md#term-portsyncd) がポートの物理状態変更を正しく検知できていない場合に発生。`sudo systemctl restart pmon` で回復できることがある
@@ -185,12 +179,6 @@ BMC (Baseboard Management Controller) 経由でファン・センサー制御が
 最新ビルドで `show interface transceiver` コマンドが壊れている問題。xcvrd の Python 3 移行後にインターフェース取得ロジックが変更されたため、パッケージのバージョン整合性を確認すること
 
 - 参照: [sonic-net/sonic-buildimage#5001](https://github.com/sonic-net/sonic-buildimage/issues/5001)
-
-### SNMP の ifMIB ifName が間違った値を返す問題（sonic-buildimage#5592）
-
-SNMP の ifMIB ifName が間違った値を返す問題。`show interfaces status` の表示名と SNMP の ifName が一致しない場合、インターフェース名のマッピングを確認すること
-
-- 参照: [sonic-net/sonic-buildimage#5592](https://github.com/sonic-net/sonic-buildimage/issues/5592)
 
 ### 最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題（sonic-buildimage#5759）
 

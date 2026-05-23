@@ -121,12 +121,6 @@ monit サービスが設定した閾値を超えるとプロセスを強制終�
 - 参照: [sonic-net/sonic-buildimage#4019](https://github.com/sonic-net/sonic-buildimage/issues/4019)
 
 
-### SNMP subagent の MIBUpdater が `loc_chassis_data not subscript（sonic-buildimage#4230）
-
-[SNMP](../reference/glossary.md#term-snmp) subagent の MIBUpdater が `loc_chassis_data not subscriptable` 例外でクラッシュする問題。[LLDP](../reference/glossary.md#term-lldp) データが未取得の状態で MIB アップデートが実行されると発生
-
-- 参照: [sonic-net/sonic-buildimage#4230](https://github.com/sonic-net/sonic-buildimage/issues/4230)
-
 
 ### monit/snmp テストが master イメージで失敗する問題（sonic-buildimage#5502）
 
@@ -135,32 +129,8 @@ monit/snmp テストが master イメージで失敗する問題。monit が snm
 - 参照: [sonic-net/sonic-buildimage#5502](https://github.com/sonic-net/sonic-buildimage/issues/5502)
 
 
-### lldpmgrd が `test_iface_namingmode` テスト中にクラッシュする問題（sonic-buildimage#5697）
-
-lldpmgrd が `test_iface_namingmode` テスト中にクラッシュする問題。インターフェース名前空間の切り替え中に lldpmgrd が不正なインターフェース名を受け取る
-
-- 参照: [sonic-net/sonic-buildimage#5697](https://github.com/sonic-net/sonic-buildimage/issues/5697)
 
 
-### monit が bgpcfgd/bgpmon/lldpmgrd のステータスエラーを報告する問題（sonic-buildimage#5864）
-
-monit が [bgpcfgd](../reference/glossary.md#term-bgpcfgd)/bgpmon/lldpmgrd のステータスエラーを報告する問題。サービスが動作していても monit の監視設定と実際の状態が一致しないことがある
-
-- 参照: [sonic-net/sonic-buildimage#5864](https://github.com/sonic-net/sonic-buildimage/issues/5864)
-
-
-### teamd 再起動後に orchagent がエラーログを大量出力する問題（sonic-buildimage#5971）
-
-[teamd](../reference/glossary.md#term-teamd-teamsyncd-teammgrd) 再起動後に orchagent がエラーログを大量出力する問題。teamd が再起動されると [PortChannel](../reference/glossary.md#term-portchannel) メンバーの状態が一時的に不定になる
-
-- 参照: [sonic-net/sonic-buildimage#5971](https://github.com/sonic-net/sonic-buildimage/issues/5971)
-
-
-### `supervisorctl status` コマンドが exit code 3 を返す問題（sonic-buildimage#6028）
-
-`supervisorctl status` コマンドが exit code 3 を返す問題。すべてのサービスが RUNNING 状態であっても exit code 3 を返すことがある。スクリプトでは出力テキストを解析すること
-
-- 参照: [sonic-net/sonic-buildimage#6028](https://github.com/sonic-net/sonic-buildimage/issues/6028)
 
 
 ### Platform system health において ASIC キーが適切に処理されない問題（sonic-buildimage#6343）

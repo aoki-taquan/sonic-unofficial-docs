@@ -133,12 +133,6 @@ supervisord の AssertionError: start.sh が RUNNING 状態でないと判断さ
 
 - 参照: [sonic-net/sonic-buildimage#762](https://github.com/sonic-net/sonic-buildimage/issues/762)
 
-### dhcp_relay サービスが `systemctl stop swss` で停止するが、swss 再起動時に dhc（sonic-buildimage#2752）
-
-dhcp_relay サービスが `systemctl stop swss` で停止するが、swss 再起動時に dhcp_relay が自動的に再起動されない問題。手動で `systemctl restart dhcp_relay` が必要
-
-- 参照: [sonic-net/sonic-buildimage#2752](https://github.com/sonic-net/sonic-buildimage/issues/2752)
-
 ### warm-reboot 中に Redis が Lua スクリプト実行でビジー状態となりアプリがクラッシュする問題（sonic-buildimage#3008）
 
 warm-reboot 中に Redis が Lua スクリプト実行でビジー状態となりアプリがクラッシュする問題。warm-reboot 前に Redis のビジー状態を確認すること
@@ -205,12 +199,6 @@ fast-reboot 後に ARP エントリが復元されない問題。ARP エント�
 
 - 参照: [sonic-net/sonic-buildimage#5217](https://github.com/sonic-net/sonic-buildimage/issues/5217)
 
-### iccpd サービスが最新 SONiC mainline ビルドのイメージで実行されていない問題（sonic-buildimage#5310）
-
-iccpd サービスが最新 SONiC mainline ビルドのイメージで実行されていない問題。iccpd は MC-[LAG](../reference/glossary.md#term-lag) 機能に必要なサービスで、docker-teamd コンテナ内で動作する
-
-- 参照: [sonic-net/sonic-buildimage#5310](https://github.com/sonic-net/sonic-buildimage/issues/5310)
-
 ### warm-boot 実行中に断続的なエラーが発生する問題（sonic-buildimage#5439）
 
 warm-boot 実行中に断続的なエラーが発生する問題。`/var/log/warm-reboot` で確認し、失敗箇所を特定すること
@@ -229,12 +217,6 @@ config reload が断続的に失敗する問題: `Job for swss.service canceled`
 
 - 参照: [sonic-net/sonic-buildimage#5663](https://github.com/sonic-net/sonic-buildimage/issues/5663)
 
-### In-band ポートに DHCP アドレスを割り当てられない問題（sonic-buildimage#5732）
-
-In-band ポートに DHCP アドレスを割り当てられない問題。dhcp_relay が In-band インターフェースをサポートしていない制約
-
-- 参照: [sonic-net/sonic-buildimage#5732](https://github.com/sonic-net/sonic-buildimage/issues/5732)
-
 ### config reload -y でカーネル Oops が発生する問題（sonic-buildimage#5857）
 
 config reload -y でカーネル Oops が発生する問題。特定のカーネルバージョンと config reload の組み合わせで、ネットワークドライバが不正アクセスを起こす
@@ -246,12 +228,6 @@ config reload -y でカーネル Oops が発生する問題。特定のカーネ
 ブート時に `determine-reboot-cause` スクリプトが TypeError で失敗する問題。reboot-cause ファイルのフォーマットが新バージョンで変更された場合に発生
 
 - 参照: [sonic-net/sonic-buildimage#6009](https://github.com/sonic-net/sonic-buildimage/issues/6009)
-
-### DHCP relay が不正な DHCP クライアントパケットを DHCP サーバに転送する問題（sonic-buildimage#6052）
-
-DHCP relay が不正な DHCP クライアントパケットを DHCP サーバに転送する問題。クライアントの MAC アドレスと giaddr の整合性チェックが必要
-
-- 参照: [sonic-net/sonic-buildimage#6052](https://github.com/sonic-net/sonic-buildimage/issues/6052)
 
 ### warm reboot 後の syncd APPLY_VIEW 失敗が orchagent クラッシュを引き起こす問題（sonic-buildimage#6069）
 
