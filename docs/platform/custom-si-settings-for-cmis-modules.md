@@ -256,7 +256,7 @@ redis-cli -n 4 hgetall 'PORT|Ethernet0'
 
 <!-- /topics-back-ref -->
 
-## 参考リンク
+## 関連リファレンス
 
 本ページに関連する参照ドキュメント:
 

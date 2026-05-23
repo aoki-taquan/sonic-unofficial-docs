@@ -257,7 +257,7 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 
 <!-- /topics-back-ref -->
 
-## 参考リンク
+## 関連リファレンス
 
 本ページに関連する参照ドキュメント:
 
