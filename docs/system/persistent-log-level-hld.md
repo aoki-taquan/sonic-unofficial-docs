@@ -256,7 +256,7 @@ grep -iE 'log[_ ]level' /var/log/syslog | tail
 
 [^1]: `sonic-net/SONiC` `doc/logging/persistent_logger/persistent_loglevel.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-## 参考リンク
+## 関連ページ
 
 本ページに関連する参照ドキュメント:
 

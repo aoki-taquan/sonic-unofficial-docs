@@ -261,7 +261,7 @@ sysctl net.ipv4.tcp_l3mdev_accept
 
 [^1]: `sonic-net/sonic-frr` `doc/user/Useful_Sysctl_Settings.md` @ `799f47f215e4266063c4ebde0041a0c7dd2d11d0`
 
-## 参考リンク
+## 関連リファレンス
 
 本ページに関連する参照ドキュメント:
 
