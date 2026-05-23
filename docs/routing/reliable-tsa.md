@@ -245,13 +245,13 @@ show ip bgp summary | head
 -->
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## 関連 Topics (自動リンク)
 
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
 <!-- /topics-back-ref -->
 
-## 参考リンク
+## 外部参考リンク (自動リンク)
 
 本ページに関連する参照ドキュメント:
 

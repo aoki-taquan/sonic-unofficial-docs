@@ -252,13 +252,13 @@ ip route show default
 HLD の主張（orchagent が STATE_DB にデフォルトルート状態を書き、linkmgrd が購読してオプトインで mux 健全性に反映）は実装と整合。`code-verified` に昇格。
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## 関連 Topics (自動リンク)
 
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
 
-## 参考リンク
+## 外部参考リンク (自動リンク)
 
 本ページに関連する参照ドキュメント:
 

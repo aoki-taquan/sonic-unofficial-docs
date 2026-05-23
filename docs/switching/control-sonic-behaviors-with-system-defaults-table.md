@@ -248,7 +248,7 @@ redis-cli -n 4 keys 'SYSTEM_DEFAULTS|*'
 
 HLD と実装は一致。`code-verified` に昇格。
 
-## 参考リンク
+## 外部参考リンク (自動リンク)
 
 本ページに関連する参照ドキュメント:
 
