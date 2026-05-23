@@ -443,7 +443,7 @@ docker images | grep sonic
 - sonic-buildimage/rules/sairedis.mk に SAIREDIS_DPKG_TARGET=binary-syncd の指定なし; slave.mk:879 $(if $($*_DPKG_TARGET),...) 汎用機構経由
 -->
 
-## 参考リンク
+## 自動収集された参考リンク
 
 本ページに関連する参照ドキュメント:
 

@@ -234,7 +234,7 @@ redis-cli -n 6 keys 'CHASSIS_INFO|*'
 
 <!-- /topics-back-ref -->
 
-## 参考リンク
+## 自動収集された参考リンク
 
 本ページに関連する参照ドキュメント:
 

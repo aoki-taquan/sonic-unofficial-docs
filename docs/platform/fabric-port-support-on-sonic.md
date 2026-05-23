@@ -209,7 +209,7 @@ docker logs swss-fabric0 2>&1 | grep -i isolate    # 自動 isolate されたか
 [^1]: `sonic-net/SONiC` `doc/voq/fabric.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## Topics 索引
 
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 
