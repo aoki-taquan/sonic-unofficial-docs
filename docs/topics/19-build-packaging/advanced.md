@@ -91,7 +91,7 @@ base が debian なので CVE 通知は `debian-security` announce と SBOM の�
 - [Feature quality definition](../../system/sonic-feature-quality-definition.md)
 - [Disk writers analysis](../../system/analysis-of-disk-writers-in-sonic-devices.md)
 
-## 発展トピック
+## 追加の発展トピック
 
 - **再現可能ビルド (reproducible build)**: 同じソースから誰がビルドしても bit 一致を狙う取り組み。timestamp / build-id / dependency 順序などの非決定性を排除する。supply chain 監査の前提。
 - **SBOM (Software Bill of Materials)**: SONiC image を構成する OSS パッケージ一覧と版数を SPDX / CycloneDX で出力する。CVE 監視と運用評価に必須。

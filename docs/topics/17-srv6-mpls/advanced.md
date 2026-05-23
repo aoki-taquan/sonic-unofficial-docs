@@ -83,7 +83,7 @@ Path Tracing Midpoint は MCD を HbH-PT に書くだけで、収集側は Regio
 - [EVPN-VXLAN HLD](../../routing/evpn-vxlan-hld.md)
 - [FRR BGP 統一管理フレームワーク](../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md)
 
-## 発展トピック
+## 追加の発展トピック
 
 - **uSID (Micro SID)**: 単一 128-bit SID に複数の short SID を carry する圧縮方式 (`uSID`)。SRH の depth を抑えて [ASIC](../../reference/glossary.md#term-asic) リソースを節約する。
 - **TI-LFA (Topology-Independent Loop-Free Alternates)**: SR ベースで FRR (Fast Reroute) を実現する手法。SONiC で実装するには FRR 側と SAI 側双方の対応が必要。

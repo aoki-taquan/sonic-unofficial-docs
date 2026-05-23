@@ -109,7 +109,7 @@ reboot 系の章本文は [11 Reboot](../11-reboot/index.md) を参照し、VOQ 
 
 VOQ chassis 固有のテーマは、機能としては既存の章（BGP、LAG、Mirror、Reboot）に属しつつ、namespace 跨ぎ / line card 跨ぎ / Chassis DB との協調という観点を持ちます。各章本文で機能の中身を読み、本章の [概念](concept.md) と [アーキテクチャ](architecture.md) で「どこが namespace を超えるか」を意識すると、HLD を縦横に往復しやすくなります。
 
-## 発展トピック
+## 追加の発展トピック
 
 - **Fabric link telemetry**: VOQ chassis では fabric link 自体が監視対象。`FABRIC_PORT_TABLE` の counter / error / link state を telemetry agent から export し、cell drop の兆候を早期検出する。
 - **VOQ scheduling と credit loop**: ingress VOQ が egress credit を受けて送出する仕組みで、credit return が遅延すると HOL blocking が出る。[SAI](../../reference/glossary.md#term-sai) 側 `SAI_QUEUE_ATTR_PFC_DLR_INIT_TYPE` などで dead-lock 検出と復旧を行う。

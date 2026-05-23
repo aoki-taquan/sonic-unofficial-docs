@@ -79,7 +79,7 @@ DHCP DoS 緩和は、従来 CoPP のシステム全体 DHCP rate limit では単
 - [Port Access Control](../../acl-qos/port-access-control-in-sonic.md)
 - [DHCP DoS 緩和](../../acl-qos/dhcp-dos-mitigation-in-sonic.md)
 
-## 発展トピック
+## 追加の発展トピック
 
 - **ERSPAN Type-II / Type-III**: 通常 SPAN/Everflow に加え、GRE 経由で remote collector に届ける ERSPAN は SAI mirror session の `SAI_MIRROR_SESSION_ATTR_TYPE` で表現する。Type-III は timestamp と probabilistic sampling をサポートする。
 - **ACL counters の telemetry export**: `COUNTERS_DB` から ACL rule 単位のヒット数を [gNMI](../../reference/glossary.md#term-gnmi) / streaming telemetry で出す構成。Top talker / DoS 検出に直結する。

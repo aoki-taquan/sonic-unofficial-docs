@@ -69,7 +69,7 @@ dynamic add / delete を多用する運用 ([ZTP](../../reference/glossary.md#te
 - [SONiC port naming convention change](../../platform/sonic-port-naming-convention-change.md)
 - [enhancements to add or del ports dynamically](../../acl-qos/enhancements-to-add-or-del-ports-dynamically.md)
 
-## 発展トピック
+## 追加の発展トピック
 
 - **CMIS 5.x optics**: 400G/800G ZR / ZR+ など coherent optics の管理は CMIS で行い、[SONiC](../../reference/glossary.md#term-sonic) `xcvrd` が state machine を実装する。Application select、re-provisioning、firmware download などが要点。
 - **Optics firmware upgrade**: `gnoi.os.Install` の概念に近く、optics 内 firmware を host から書き換える。途中で reboot を挟まない hot upgrade 対応が [ASIC](../../reference/glossary.md#term-asic) / optics で異なる。

@@ -56,7 +56,7 @@ warm reboot では、再起動前の状態と再起動後の意図の差分だ�
 - [ProducerStateTable の view switching（warm reboot 用の差分適用）](../../switching/view-switching-in-producerstatetable.md)
 - [コンテナ health-check（k8s readiness probe）](../../internals/why-need-health-check.md)
 
-## 発展トピック
+## 追加の発展トピック
 
 - **[SAI](../../reference/glossary.md#term-sai) [Redis](../../reference/glossary.md#term-redis) pipe / batch**: SAI Redis (`libsairedis`) は [orchagent](../../reference/glossary.md#term-orchagent) からの SAI call を pipe batch で [syncd](../../reference/glossary.md#term-syncd) に渡す。大量更新時の bulk API が性能を支配する。
 - **[ASIC_DB](../../reference/glossary.md#term-asic_db) の sharding**: 単一 Redis インスタンスに全 SAI object が乗ると memory が膨れる。namespace 分割や Redis cluster 化が議題。
