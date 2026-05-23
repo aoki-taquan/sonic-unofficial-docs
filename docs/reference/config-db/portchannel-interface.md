@@ -770,7 +770,7 @@ RIF 削除時は上記エントリを `hdel` / `stopFlexCounterPolling` でク�
 <!-- /side-effects -->
 
 <!-- platform -->
-## プラットフォーム差 (Phase H)
+## プラットフォーム差 (Phase H) — 補足: カーネル依存
 
 `PORTCHANNEL_INTERFACE` テーブルを処理する `intfmgrd` (`cfgmgr/intfmgr.cpp`) および `IntfsOrch` (`orchagent/intfsorch.cpp`) には `getenv("platform")` 呼び出しも `#ifdef` プラットフォーム分岐も存在しない。SAI RIF 生成ロジックはすべてのプラットフォームで同一パスを通る。
 

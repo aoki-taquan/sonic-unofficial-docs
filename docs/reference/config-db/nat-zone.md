@@ -78,54 +78,6 @@ LOOPBACK_INTERFACE|<loopback_name>
 |-----------|----|--------|------|
 | `nat_zone` | uint8 (0..3) | `0` | インタフェースの [NAT](../../reference/glossary.md#term-nat) ゾーン ID。`0` = inside、`1` = outside (典型) |
 
-<!-- ordering -->
-## 書込み順依存 (Phase B)
-
-`nat_zone` フィールドは `natmgrd` (NatMgr) と `orchagent` (IntfsOrch) の 2 プロセスが独立して購読する。各プロセスは処理前に前提条件を満たすまで `m_toSync` にエントリを残して再試行する。
-
-### 検出された順序依存
-
-| # | 依存関係 | 方向 | 緩和策 |
-|---|----------|------|--------|
-| 1 | Port / [LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) の状態確立 → iptables mangle MARK 適用 | **強制先行**（Loopback 除く） | `isPortStateOk()` 失敗時は `it++` で自動再試行 |
-| 2 | [SAI](../../reference/glossary.md#term-sai) [RIF](../../reference/glossary.md#term-rif) 作成完了 → [SAI](../../reference/glossary.md#term-sai) `NAT_ZONE_ID` 属性設定 | **強制先行** | `doIntfTask()` 内で `m_toSync` 再周回 |
-| 3 | 旧 NAT ルール全削除 → ゾーン更新 → 新 NAT ルール追加 | **強制内部順序**（ゾーン変更時） | [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) 単一スレッドで順次実行 |
-| 4 | NatMgr (iptables 側) と IntfsOrch (SAI 側) の処理 | 独立（並行） | 互いを待たない |
-
-### 主要な制約詳細
-
-**ポート状態先行必須 — [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) 側 (依存 #1)**:
-`NatMgr::doNatZoneIntfTask()` は key サイズ 1 のエントリ（`nat_zone` フィールドが付くパス）を処理するとき、Loopback 以外では `isPortStateOk(port)` が true になるまで `it++; continue;` でリトライする (`natmgr.cpp:7484–7490`)。確認先は `STATE_PORT_TABLE` (Ethernet) / `STATE_VLAN_TABLE` (Vlan) / `STATE_LAG_TABLE` ([PortChannel](../../reference/glossary.md#term-portchannel)) である。ポートが未確立の場合 iptables mangle MARK ルールは設定されず、`m_natZoneInterfaceInfo` にも登録されない。
-
-```cpp
-// natmgr.cpp:7484-7490
-if ((strncmp(keys[0].c_str(), LOOPBACK_PREFIX, strlen(LOOPBACK_PREFIX))) and
-    (!isPortStateOk(port)))
-{
-    SWSS_LOG_INFO("Port is not ready, skipping %s", port.c_str());
-    it++;
-    continue;
-}
-```
-
-**SAI [RIF](../../reference/glossary.md#term-rif) 先行必須 — IntfsOrch 側 (依存 #2)**:
-`IntfsOrch::doIntfTask()` は SAI [RIF](../../reference/glossary.md#term-rif) の作成 (`setIntf()`) が完了するまで `nat_zone` の SAI 属性設定 (`setRouterIntfsNatZoneId()`) に到達しない (`intfsorch.cpp:974–986`)。RIF 未作成の場合、`doIntfTask()` 自体が `m_toSync` に残したまま `it++; continue;` で再周回する。
-
-**ゾーン変更時の強制内部順序 (依存 #3)**:
-`nat_zone` 値が変化した場合、[natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) は以下の順序で操作を実行する (`natmgr.cpp:7525–7566`)。
-
-1. 旧ゾーンの iptables mangle ルールを削除 (`DELETE`)
-2. Static NAT / NAPT iptables ルールを削除
-3. Dynamic NAT ルールを削除
-4. 内部キャッシュ `m_natZoneInterfaceInfo[port]` を新ゾーンで更新
-5. 新ゾーンの iptables mangle ルールを追加 (`ADD`)
-6. Static NAT / NAPT iptables ルールを再追加
-7. Dynamic NAT ルールを再追加
-
-この間（手順 1–4 完了後、手順 5 開始前）は NAT 変換が一時的に中断する。
-
-<!-- /ordering -->
-
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
@@ -184,31 +136,6 @@ if ((!nat_zone.empty()) and (port.m_nat_zone_id != nat_zone_id))
 `NatMgr::doNatZoneIntfTask` 内でローカル変数 `nat_zone_value = 1` として初期化されるが (`natmgr.cpp:7388`)、`NAT_ZONE` フィールドが DB に存在する場合は必ずその値で上書きされるため、この初期値が最終的な iptables mark に影響することはない。
 
 <!-- /defaults -->
-
-<!-- ordering -->
-## 書込み順依存 (Phase B)
-
-`nat_zone` フィールドの設定は、2 つのデーモン (`natmgrd` / `orchagent`) が独立して処理する。それぞれに異なる前提条件があり、条件未達の場合は自動再試行 (`it++; continue`) される。
-
-### 検出された順序依存
-
-| # | 先行必須条件 | 処理系 | 方向 | 緩和策 |
-|---|------------|--------|------|--------|
-| 1 | `PortsOrch::allPortsReady()` が true | [orchagent](../../reference/glossary.md#term-orchagent) (IntfsOrch) | **強制先行** | 全ポート初期化完了まで SAI 書き込みを全スキップ。完了後 `doTask()` が自動再実行 |
-| 2 | `isPortStateOk(port)` が true（非 Loopback ゾーンエントリ） | natmgrd | **強制先行** | STATE_PORT / [LAG](../../reference/glossary.md#term-lag) / [VLAN](../../reference/glossary.md#term-vlan) テーブルにエントリが現れるまで再キュー |
-| 3 | `isIntfStateOk(key)` が true（IP プレフィックス付きエントリ） | natmgrd | **強制先行** | STATE_INTERFACE_TABLE にエントリが現れるまで再キュー |
-| 4 | 旧 Static / Dynamic NAT ルール削除が先行（ゾーン変更時） | natmgrd | **内部順序（副作用）** | 削除 → 更新 → 再追加の順が固定。この間 NAT ルールが一時消失する |
-| 5 | `gIsNatSupported == true`（SAI capability クエリ） | [orchagent](../../reference/glossary.md#term-orchagent) (IntfsOrch) | **強制先行** | false の場合は SAI 書き込みを silent skip（`SWSS_LOG_NOTICE` のみ） |
-
-### 主要な制約詳細
-
-**PortsOrch 初期化完了ガード（依存 #1）**: `IntfsOrch::doTask()` の冒頭（`intfsorch.cpp:665-668`）で `gPortsOrch->allPortsReady()` が false なら即 return する。これは全 PORT_TABLE エントリが [orchagent](../../reference/glossary.md#term-orchagent) 内部で処理完了するまで、すべての INTERFACE テーブルイベント（`nat_zone` 含む）の SAI 反映をブロックする。ブロック中は `m_toSync` にイベントが蓄積され、`allPortsReady()` が true になった後の次回 `doTask()` で一括処理される。
-
-**ポート [STATE_DB](../../reference/glossary.md#term-state_db) ガード（依存 #2）**: `doNatZoneIntfTask` のゾーン単位エントリ（key サイズ 1）SET 処理時、Loopback 以外のインタフェースは `isPortStateOk(port)` が false なら `it++; continue` でキューに残す（`natmgr.cpp:7483-7487`）。`isPortStateOk()` は STATE_PORT_TABLE / STATE_LAG_TABLE / STATE_VLAN_TABLE を順番に参照し、対応エントリの存在を確認する。Loopback はこのガードを経由しない（iptables mangle も設定しない）。
-
-**ゾーン変更時の NAT ルール再構築順序（依存 #4）**: 既存の `nat_zone` と異なる値を受信した場合、natmgrd は内部で次の順序で処理する（`natmgr.cpp:7534-7566`）。①旧 mangle iptables ルールを DELETE → ②`removeStaticNatIptables()` / `removeStaticNaptIptables()` / `removeDynamicNatRules()` で旧 NAT ルールを削除 → ③`m_natZoneInterfaceInfo[port]` を新値に更新 → ④新 mangle iptables ルールを ADD → ⑤新 NAT ルールを追加。②〜④の間は NAT 変換が一時停止する。
-
-<!-- /ordering -->
 
 ## 制約
 
