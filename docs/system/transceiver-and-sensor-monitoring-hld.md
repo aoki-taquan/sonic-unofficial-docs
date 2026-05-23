@@ -176,7 +176,7 @@ vendor 実装に依存。sysfs（`/sys/bus/i2c/.../qsfpN_eeprom`）または ven
 - polling interval 60s は妥当性検証済みではない
 - error bitmap は high temperature / bad cable などで「block を意味するか単なる warning か」は HLD では明記されない
 
-## 既知の問題
+## 既知の問題（追加）
 
 ### thermalctld のトランシーバー温度二重ポーリング（修正済み）
 
