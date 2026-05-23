@@ -335,7 +335,7 @@ YANG default `md5` により、CONFIG_DB に正規化された値は常に non-e
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存 (Phase B) (補足)
 
 `NTP_KEY` は `NTP_SERVER.key` フィールドから leafref で参照される**被参照側**テーブルである。SET / DEL の両方向に順序制約があり、`hostcfgd` の合算再読み込みと組み合わさって下記の依存関係が生じる。
 

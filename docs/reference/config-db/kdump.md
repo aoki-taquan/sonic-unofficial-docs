@@ -597,40 +597,4 @@ KDUMP|config 変更 (CLI / DB 直接書き込み)
 
 <!-- /pubsub -->
 
-<!-- cross-refs -->
-## 暗黙参照 (Phase C)
-
-### DEVICE_METADATA への暗黙参照
-
-`KDUMP|config|enabled` のデフォルト値はビルド時プラットフォーム識別子 (`sonic_asic_platform`) で分岐する。
-`cisco-8000` プラットフォームでは `enabled: true` がデフォルトになり、他プラットフォームでは `false`。
-これは `DEVICE_METADATA|localhost|platform` に対応するビルド時設定であり、`init_cfg.json.j2` 経由で注入される。
-
-また `hostcfgd` 起動時に `/proc/cmdline` の `crashkernel=` パラメータを確認し、存在する場合は
-`KDUMP|config|enabled` と `KDUMP|config|memory` を CLI 設定より優先して自動上書きする
-(`sonic-host-services/scripts/hostcfgd:1179-1207`)。
-
-### FEATURE テーブルとの関係
-
-`KDUMP` テーブルは `FEATURE` テーブルの管理対象外。kdump は独立した Docker コンテナを持たず、
-`docker-config-engine` コンテナ内の `hostcfgd` が `KDUMP` テーブルを直接購読・処理する。
-`FEATURE|<name>` の `state` フィールドによる有効化フローは存在しない。
-
-```
-KDUMP (CONFIG_DB) 変更
-  → hostcfgd.kdump_handler()           # subscribe('KDUMP', ...)
-  → KdumpCfg.kdump_update()
-  → sonic-kdump-config (--enable/--disable/--memory/--num_dumps/--ssh_string/--ssh_path/--remote)
-  → /etc/default/kdump-tools 更新
-  → 次回システム再起動で反映
-```
-
-| 暗黙参照元 | 参照先 | 種別 |
-|-----------|--------|------|
-| `KDUMP|config|enabled` デフォルト | `DEVICE_METADATA|localhost|platform` (cisco-8000 判定) | ビルド時条件分岐 |
-| `KDUMP|config|enabled/memory` | `/proc/cmdline` の `crashkernel=` | 起動時自動上書き |
-| `KDUMP` 全フィールド | `hostcfgd` (docker-config-engine) | ランタイム購読 (FEATURE 非管理) |
-
-<!-- /cross-refs -->
-
 <!-- glossary-links-injected: 572b8e3657dc -->
