@@ -196,7 +196,7 @@ BRCM Th3 Z9332 で SER (Single Error Recovery) が注入されたメモリの修
 [^1]: `sonic-net/SONiC` `doc/crm/Critical-Resource-Monitoring-High-Level-Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## 関連 Topics (索引)
 
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 

@@ -279,13 +279,13 @@ config rate smoothing_interval port 5    # EMA N=5
 [^1]: `sonic-net/SONiC` `doc/rates-and-utilization/Rates_and_utilization_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## 関連 Topics (索引)
 
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
 <!-- /topics-back-ref -->
 
-## 参考リンク
+## 関連リファレンス
 
 本ページに関連する参照ドキュメント:
 
