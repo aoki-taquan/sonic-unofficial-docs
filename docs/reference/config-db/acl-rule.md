@@ -640,7 +640,7 @@ SAI_SWITCH_ATTR_ACL_ENTRY_MAXIMUM_PRIORITY  → 最大優先度
 <!-- /cross-refs -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数 (Phase E) (補足)
 
 YANG 未定義テーブルのため、全定数はソースコードが正本。以下は `aclorch.h` / `aclorch.cpp` / `acl_loader/main.py` / `acl_app.go` から抽出した硬直定数一覧。
 
@@ -694,7 +694,7 @@ SAI match field に投入される mask は CONFIG_DB には書かれず、C++ �
 <!-- /constants -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存 (Phase B) (補足)
 
 ACL_RULE を CONFIG_DB に書き込む際に守るべき順序制約を実装から導出した。
 

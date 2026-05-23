@@ -447,7 +447,7 @@ CONFIG_DB MGMT_INTERFACE|eth0|<ip_prefix> (SET/DEL)
 <!-- /failure -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存 (Phase B) (補足)
 
 > 調査対象: `sonic-swss/cfgmgr/intfmgr.cpp`
 > 調査日: 2026-05-16
@@ -585,7 +585,7 @@ eth0 の IP アドレスが変更される場合、`interfaces-config` サービ
 <!-- /side-effects -->
 
 <!-- phase-f -->
-## 副次 DB 書込 (Phase F)
+## 副次 DB 書込 (Phase F) (補足)
 
 `MGMT_INTERFACE` テーブルへの書込が発生すると、以下の副次処理が連鎖して行われる。
 

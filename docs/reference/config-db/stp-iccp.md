@@ -433,7 +433,7 @@ STP 設定テーブルの [YANG](../../reference/glossary.md#term-yang) 定義�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase B)
+## 書込み順序依存 (Phase B) (補足)
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-ordering.md -->
 

@@ -67,7 +67,7 @@ PacketIO の kernel 側（`genl_packet` filter 等）と、[SAI](../../reference
 - ACL / mirror / counter は [07. ACL / CoPP / Mirror / Packet Action](../07-acl-copp-mirror/index.md) と同じ部品を P4Orch 側でも使うため、`acl_table_manager` / `acl_rule_manager` / `mirror_session_manager` が共通点になる。
 - [ECMP](../../reference/glossary.md#term-ecmp) / next-hop の振る舞いは [04. VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md) で読んだものが P4Orch の `wcmp_manager` でも前提になる。
 
-## 発展トピック
+## 追加の発展トピック
 
 - **gRIBI と PINS の組合せ**: gRIBI で RIB を直接 push しつつ、P4Runtime で forwarding 細部を補完する組合せ。Google 系 SDN controller での標準パターン。
 - **P4 program upgrade**: pipeline 更新時の atomic swap。`SetForwardingPipelineConfig` の VERIFY / SAVE / COMMIT / RECONCILE_AND_COMMIT モードの違いを理解する。

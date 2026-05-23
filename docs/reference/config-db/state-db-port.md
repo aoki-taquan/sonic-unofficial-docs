@@ -296,7 +296,7 @@ autoneg が無効に設定された場合は `hdel` でフィールドを削除�
 <!-- /defaults -->
 
 <!-- constants -->
-## ハードコード定数 (Phase E)
+## ハードコード定数 (Phase E) (補足)
 
 > 証跡: `meta/_intermediate/cdb-flow/state-db-port-ordering.md`
 
