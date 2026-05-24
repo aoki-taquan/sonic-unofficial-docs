@@ -4,7 +4,7 @@ description: >
   sonic-buildimage のビルドシステムにおける既知の問題、
   Docker / chroot 環境の制限、プラットフォーム固有ビルドエラーを
   issue tracker から収集したリファレンス。
-area: architecture
+area: system
 verification: code-verified
 last_verified: 2026-05-13
 sources:
@@ -17,7 +17,6 @@ related:
   config_db: []
   cli: []
   yang: []
-hard: 0
 ---
 
 !!! success "裏取りステータス: code-verified"

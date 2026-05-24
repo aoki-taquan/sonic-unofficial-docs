@@ -300,7 +300,7 @@ tcpdump -i Ethernet10 ether proto 0x0842
     - **代替手段 / 関連 reference**: 本ページの frontmatter `related` が空のため、[Reference 索引](../reference/index.md) から関連テーブル / CLI / YANG を辿る
 
 !!! note "本ドキュメントの追跡"
-    - monitor: `evolved_beyond_hld` / last_verified: `2026-05-09`
+    - monitor: `partially_implemented` / last_verified: `2026-05-09`
     - 次回再裏取りトリガ: quarterly。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 
 <!-- /next-action -->
