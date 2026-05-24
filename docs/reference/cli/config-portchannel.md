@@ -211,14 +211,12 @@ Ethernet0 added to PortChannel0001
 ```mermaid
 flowchart LR
   CLI["config portchannel"]
-  SC["sonic-cfggen<br/>(config CLI のみ)"]
-  CLI --> SC
   CDB0[("CONFIG_DB<br/>PORTCHANNEL")]
-  SC --> CDB0
+  CLI --> CDB0
   DM0["teammgrd"]
   CDB0 --> DM0
   CDB1[("CONFIG_DB<br/>PORTCHANNEL_MEMBER")]
-  SC --> CDB1
+  CLI --> CDB1
   DM1["teammgrd"]
   CDB1 --> DM1
 ```
@@ -239,7 +237,7 @@ flowchart LR
 
 ### 典型的な利用シーン
 
-- LAG 新設、メンバ追加、`min-links` / `fallback` / `lacp_key` の設定。
+- LAG 新設、メンバ追加、`min-links` / `fallback` / `fast-rate` の設定（`lacp_key` は `auto` 固定でCLIから変更不可）。
 - MC-LAG 配下の LAG 設定の前段。
 
 ### よくある落とし穴
