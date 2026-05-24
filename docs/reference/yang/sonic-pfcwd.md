@@ -1,6 +1,6 @@
 ---
 title: sonic-pfcwd YANG
-description: "sonic-pfcwd YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-pfcwd.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
+description: "sonic-pfcwd YANG — PFC Watchdog (PFC WD) の検知・復旧タイマーとポーリング間隔を PORT ごとに設定する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -82,7 +82,7 @@ module: sonic-pfcwd
 
 ## leafref / 依存
 
-- なし（このモジュール内で直接 leafref を持つ leaf はない）
+- `sonic-pfcwd/PFC_WD/PFC_WD_LIST/ifname` → `/prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name`（union の一方。文字列 `"GLOBAL"` も許容）
 
 ## augment / deviation
 
