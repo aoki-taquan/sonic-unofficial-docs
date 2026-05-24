@@ -85,7 +85,7 @@ flowchart LR
 明示要求 (chronyc makestep / config maxchange) のときのみ step
 ```
 
-- 起動直後の **初期同期** で大きくズレている場合のみ step を許可するのが現実的（HLD には初期 step の取扱いが明示的議論される）
+- 起動直後の **初期同期** で大きくズレている場合のみ step を許可するのが現実的（HLD では初期 step の取り扱いが明示的に議論されている）
 - ユーザは `config ntp ...` 系 CLI（既存 NTP CLI）を chrony 用に翻訳する裏側処理に意識せず使える
 
 ### Hardware Clock 連携
