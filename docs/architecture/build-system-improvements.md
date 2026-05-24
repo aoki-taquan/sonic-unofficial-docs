@@ -10,17 +10,10 @@ sources:
   path: doc/sonic-build-system/build_system_improvements.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - SNMP
-  - SNMP_AGENT_ADDRESS_CONFIG
-  - SNMP_COMMUNITY
-  - SNMP_USER
-  - SNMP_TRAP_CONFIG
-  - MGMT_VRF_CONFIG
-  cli:
-  - config snmp
-  yang:
-  - sonic-snmp
+  config_db: []
+  cli: []
+  yang: []
+  _no_related: true
 ---
 
 <!-- topics-tip -->
@@ -187,7 +180,7 @@ reasoning: sairedis 2 度ビルドの問題と修正方針の根拠。
 |------|-------------|
 | 数ヶ月前（最適化前）| ~6h |
 | 現在（最適化 1〜4 適用）| ~2.5h |
-| `SONIC_USE_BUILD_KIT=y` 追加 | ~1.5h |
+| `SONIC_USE_DOCKER_BUILDKIT=y` 追加 | ~1.5h |
 
 linux kernel をスクラッチビルドした条件での値。
 
@@ -244,7 +237,7 @@ master ブランチのイメージは機能追加に伴いサイズが増大し�
 
 - 参照: [sonic-net/SONiC#1065](https://github.com/sonic-net/SONiC/issues/1065)
 
-### sonic-slave コンテナ内で debootstrap が proc マウントに失敗する場合、`docker ru（sonic-buildimage#27）
+### sonic-slave コンテナ内で debootstrap が proc マウントに失敗する場合（sonic-buildimage#27）
 
 sonic-slave コンテナ内で debootstrap が proc マウントに失敗する場合、`docker run --privileged` フラグが必須。通常の docker run では /proc マウントの権限不足でビルドが中断する
 
@@ -256,7 +249,7 @@ sonic-slave コンテナ内で debootstrap が proc マウントに失敗する�
 
 - 参照: [sonic-net/sonic-buildimage#1519](https://github.com/sonic-net/sonic-buildimage/issues/1519)
 
-### sonic-slave コンテナに入る方法: `docker run -v /var/run/docker.sock:/（sonic-buildimage#2029）
+### sonic-slave コンテナに入る方法（sonic-buildimage#2029）
 
 sonic-slave コンテナに入る方法: `docker run -v /var/run/docker.sock:/var/run/docker.sock --privileged -it sonic-slave bash`。`--privileged` フラグなしでは proc マウント等が失敗する
 
@@ -413,16 +406,6 @@ docker images | grep sonic
 - SONIC_USE_DOCKER_BUILDKIT フラグ自体は grep 0 件 -> HLD で提案された名前ではなく素の DOCKER_BUILDKIT 環境変数で運用
 - sonic-buildimage/rules/sairedis.mk に SAIREDIS_DPKG_TARGET=binary-syncd の指定なし; slave.mk:879 $(if $($*_DPKG_TARGET),...) 汎用機構経由
 -->
-
-## 自動収集された参考リンク
-
-本ページに関連する参照ドキュメント:
-
-- [`config snmp` CLI リファレンス](../reference/cli/config-snmp.md)
-- [`SNMP` CONFIG_DB スキーマ](../reference/config-db/snmp.md)
-- [`SNMP_AGENT_ADDRESS_CONFIG` CONFIG_DB スキーマ](../reference/config-db/snmp-agent-address-config.md)
-- [`MGMT_VRF_CONFIG` CONFIG_DB スキーマ](../reference/config-db/mgmt-vrf-config.md)
-- [`sonic-snmp` YANG モジュール](../reference/yang/sonic-snmp.md)
 
 <!-- augmented-links: v1 -->
 
