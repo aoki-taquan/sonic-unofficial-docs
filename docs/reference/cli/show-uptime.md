@@ -100,7 +100,7 @@ show uptime
 ### よくある引数の組み合わせ
 
 ```bash
-show uptime
+show uptime --verbose
 ```
 
 ### 期待される出力 (抜粋)

@@ -168,8 +168,6 @@ show mac
 
 ## 関連ページ
 - [HLD: Switchport モードと VLAN CLI 拡張](../../switching/switch-port-modes-and-vlan-cli-enhancement.md)
-- [CLI: config vlan](config-vlan.md)
-- [CONFIG_DB: VLAN](../config-db/vlan.md)
 
 <!-- usage-example -->
 ## 実行例
