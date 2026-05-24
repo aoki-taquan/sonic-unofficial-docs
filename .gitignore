@@ -36,3 +36,4 @@ CLAUDE.local.md
 
 # lychee cache
 /.lycheecache
+.fanout/
