@@ -176,12 +176,6 @@ show srv6 sid
 - Topics: [SRv6 / MPLS 概念](../topics/17-srv6-mpls/concept.md), [SRv6 / MPLS アーキテクチャ](../topics/17-srv6-mpls/architecture.md), [SRv6 / MPLS 内部実装](../topics/17-srv6-mpls/internals.md)
 - 関連 HLD: [SRv6 SID L3 Adjacency](srv6-sid-l3adj.md), [SRv6 over IPv6 HLD](segment-routing-over-ipv6-srv6-hld.md), [Static Configuration of SRv6](static-configuration-of-srv6-in-sonic-hld.md), [SONiC uSID](sonic-usid.md)
 
-## 制限事項
-
-- SRv6 VPN は ASIC SAI capability (`SAI_SWITCH_ATTR_SRV6_*`) に依存し、未対応 [NPU](../reference/glossary.md#term-npu) では機能しない。
-- locator / behavior (`End`, `End.DT4`, `End.DT6`, `End.DX4` 等) のサポート範囲は SAI 実装ベンダーごとに差があり、HLD の網羅範囲とは一致しない。
-- FRR と SAI 間の MSDP 等周辺プロトコル協調はまだ実験的で、商用配備例は限定的。
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/srv6/srv6_vpn.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
