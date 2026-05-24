@@ -130,11 +130,9 @@ config ntp del <ntp_ip_address>
 ```mermaid
 flowchart LR
   CLI["config ntp"]
-  SC["sonic-cfggen<br/>(config CLI のみ)"]
-  CLI --> SC
   CDB0[("CONFIG_DB<br/>NTP_SERVER")]
-  SC --> CDB0
-  DM0["ntp-config"]
+  CLI --> CDB0
+  DM0["ntp-config<br/>(chrony 再起動)"]
   CDB0 --> DM0
 ```
 
