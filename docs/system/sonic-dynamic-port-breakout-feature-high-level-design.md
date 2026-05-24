@@ -116,11 +116,6 @@ redis-cli -n 4 hgetall 'BREAKOUT_CFG|Ethernet0'
 show platform summary
 ```
 
-## 関連 Topics 章
-
-- [14-platform-port-optics](../topics/14-platform-port-optics/index.md): port profile / lane / media SI / CMIS との結線
-- [06-l2-vlan-lag](../topics/06-l2-vlan-lag/index.md): VLAN_MEMBER / PORT_CHANNEL_MEMBER の依存解決対象
-
 ## 制限事項
 
 - breakout 可能なポート組合せは platform.json の `interfaces` キーに定義された範囲に限られ、[HLD](../reference/glossary.md#term-hld) 記述よりも実機サポート範囲が狭い場合がある。
