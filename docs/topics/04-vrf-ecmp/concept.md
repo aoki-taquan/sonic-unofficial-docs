@@ -93,7 +93,7 @@ VRF の設計詳細は [VRF サポート](../../routing/sonic-vrf-support-design
 
 ## VRF は Linux と ASIC の両方に現れる
 
-SONiC の VRF は、Linux 上では VRF master device として、ASIC 側では SAI Virtual Router として扱われます。`vrfmgrd` は `CONFIG_DB.VRF` から Linux VRF を作り、`VRFOrch` は `APP_DB.VRF_TABLE` 側を受けて SAI Virtual Router を作ります。interface は `intfmgrd` / `IntfsOrch` を通って Linux と ASIC の両方に反映されます。
+SONiC の VRF は、Linux 上では VRF master device として、ASIC 側では SAI Virtual Router として扱われます。`vrfmgrd` は `CONFIG_DB.VRF` から Linux VRF を作り、`VRFOrch` は `APPL_DB.VRF_TABLE` 側を受けて SAI Virtual Router を作ります。interface は `intfmgrd` / `IntfsOrch` を通って Linux と ASIC の両方に反映されます。
 
 重要なのは、VRF は単なる CLI 上の名前ではなく、FRR、kernel、[orchagent](../../reference/glossary.md#term-orchagent)、SAI の共通キーになることです。non-default VRF の経路を調べるときは、常に「その route はどの VRF の route か」「next hop は同じ VRF か、`nexthop-vrf` で別 VRF を参照しているか」を確認します。
 
@@ -151,7 +151,7 @@ VRF 付き static route では key が `STATIC_ROUTE|<vrf>|<prefix>` になり�
 | VLAN | VLAN は L2 broadcast domain。L3 として使うには `VLAN_INTERFACE` で SVI 化して VRF に所属させる必要がある |
 | [VNET](../../reference/glossary.md#term-vnet) | [VXLAN](../../reference/glossary.md#term-vxlan) を前提にした overlay 用の仮想ネットワーク。data VRF と概念的に重なるが、tunnel と VNI を持つ |
 | Sub-interface | `Ethernet0.100` の形で 1q tag を L3 RIF として扱う。VLAN bridge domain には入らない |
-| ECMP vs WCMP vs FG-ECMP | ECMP は等分散、WCMP は重み付き、FG-ECMP は flowlet 単位の動的分散 |
+| ECMP vs WCMP vs FG-ECMP | ECMP は等分散、WCMP は重み付き、FG-ECMP は固定 bucket で flow 移動を抑制する安定分散 |
 | Mgmt VRF vs data VRF | 前者は eth0 専用で route export を想定しない、後者は forwarding を担う |
 
 ## 読み終わったあとにできるようになること
