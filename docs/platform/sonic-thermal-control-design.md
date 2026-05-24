@@ -194,7 +194,7 @@ ls /usr/share/sonic/device/$PLATFORM/thermal_policy.json 2>/dev/null
 [^1]: `sonic-net/SONiC` `doc/thermal-control/thermal-control-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## Topics 索引
 
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 

@@ -221,7 +221,7 @@ redis-cli -n 6 hgetall 'BUFFER_MAX_PARAM_TABLE|<port>'   # 最大 PG/queue が�
 [^1]: `sonic-net/SONiC` `doc/qos/reclaim-reserved-buffer-images/reclaim-reserved-buffer-sequence-flow.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## Topics 索引
 
 - [Topics: QoS / Buffer / PFC / Watermark](../topics/08-qos-buffer/index.md)
 
