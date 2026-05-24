@@ -197,7 +197,7 @@ sudo cat /etc/pam.d/common-auth-sonic
 - `/etc/pam.d/sshd` / `/etc/pam.d/login` への `@include common-auth-sonic` 切替: L748-L752 で `sed` 相当の置換を実装
 - 認証順序（PAM auth stack）と NSS 並べ替えは `failthrough` / `login` / `auth_type` 設定により AaaCfg が動的生成
 
-ただし HLD が掲げる「nss-mapper による remote_user 共有 / D-Bus 経由の RBAC 多重ロール」の発展拡張は、現行 master の `hostcfgd` 単体実装ではまだ統合されていない（`nss-mapper` という独立コンポーネントは検出できず、`remote_user` 共有は `tacplus_nss.conf` / `radius_nss.conf` 経由の素朴な実装）。本ページの主たる主張（PAM + NSS による AAA 統合の現状）は実コードと一致するため `code-verified` に昇格。
+ただし HLD が掲げる「nss-mapper による remote_user 共有 / D-Bus 経由の RBAC 多重ロール」の発展拡張は、現行 master の `hostcfgd` 単体実装ではまだ統合されていない（`nss-mapper` という独立コンポーネントは検出できず、`remote_user` 共有は `tacplus_nss.conf` / `radius_nss.conf` 経由の素朴な実装）。PAM + NSS 統合の基本部分は実コードと一致するが、RBAC 多重ロール / D-Bus NSS 等の中心提案は未実装のため、`verification: discrepancy-found` / `monitor: partially_implemented` を維持する。
 
 <!-- topics-back-ref -->
 ## 関連 Topics

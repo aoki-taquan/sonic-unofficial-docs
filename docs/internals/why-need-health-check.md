@@ -162,7 +162,6 @@ reasoning: スクリプトのパスと二段階チェック構成の根拠。
 
 ## 関連 reference
 
-- [Topics: Telemetry / SNMP](../topics/09-telemetry-snmp/index.md)
 - [Reference index](../reference/index.md)
 
 ## 引用元
