@@ -120,7 +120,7 @@ flowchart LR
 <!-- topics-back-ref -->
 ## 関連 Topics
 
-- [Topics: Lab / Virtual SONiC / Developer Entry](../topics/21-lab-vs-developer/index.md)
+- [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
 
 <!-- /topics-back-ref -->
 

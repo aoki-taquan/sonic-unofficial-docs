@@ -209,10 +209,6 @@ warm reboot 後にミラーリングルールの適用が失敗する問題。�
 - **ACL Flex Counters**: Phase 2 から導入
 - **port / LAG**: `ports` で bind。LAG 解体時の rebind は AclOrch 側ロジック
 
-## 関連トピック
-
-- [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)
-
 ## 関連ページ
 
 - [ACL Flex Counters Support](./acl-flex-counters-support.md)
