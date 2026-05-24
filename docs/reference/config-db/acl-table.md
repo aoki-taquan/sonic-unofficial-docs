@@ -203,7 +203,7 @@ DEL 受信
 
 ### `type` 値別挙動
 
-[YANG](../../reference/glossary.md#term-yang) 定義 4 値 (sonic-acl.yang:59-65): `MIRROR/MIRRORV6/L3/L3V6`。
+YANG 参照値 (sonic-acl.yang:59-65 ACL_RULE コンテナ内 type 列挙): `MIRROR/MIRRORV6/L3/L3V6`（ACL_TABLE コンテナは YANG 未定義だが ACL_RULE 側の type 列挙として言及あり）。
 実装定義マクロ (acltable.h:26-42): `TABLE_TYPE_L3` / `TABLE_TYPE_L3V6` / `TABLE_TYPE_L3V4V6` / `TABLE_TYPE_MIRROR` / `TABLE_TYPE_MIRRORV6` / `TABLE_TYPE_MIRROR_DSCP` / `TABLE_TYPE_PFCWD` / `TABLE_TYPE_CTRLPLANE` / `TABLE_TYPE_MCLAG` / `TABLE_TYPE_MUX` / `TABLE_TYPE_DROP` / `TABLE_TYPE_MARK_META` / `TABLE_TYPE_MARK_META_V6` / `TABLE_TYPE_EGR_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCPV6`。`processAclTableType()` は type 空文字のみ reject、それ以外はそのまま通す (aclorch.cpp:5821-5833)。
 
 | 値 | 動作 | [ASIC](../../reference/glossary.md#term-asic) 確認 | evidence |

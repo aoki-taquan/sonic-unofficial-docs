@@ -7,7 +7,7 @@ last_verified: 2026-05-15
 sources:
   - repo: sonic-net/SONiC
     path: doc/event-alarm-framework/event-alarm-framework.md
-    ref: 49bab5baddress-pr-review-comments
+    ref: master
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-eventd/src/eventd.h
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
