@@ -114,12 +114,21 @@ HLD では具体的な [CONFIG_DB](../reference/glossary.md#term-config_db) / CL
 
 ### 設定例
 
-```bash
-# ビルド時 (production)
-make SB_BUILD=production all
+!!! warning "HLD 記載の `SB_BUILD` 変数は現行 master に存在しない"
+    現行 master では `SECURE_UPGRADE_MODE` / `SECURE_UPGRADE_DEV_SIGNING_KEY` 等に置き換わっている。詳細は下記「HLD と実装の差分」節を参照。
 
-# ビルド時 (dev)
-make SB_BUILD=dev SB_DEV_KEY=/path/to/db.key SB_DEV_CERT=/path/to/db.crt all
+```bash
+# ビルド時 (production) ― 現行 master の正しい変数
+make SECURE_UPGRADE_MODE=prod \
+     SECURE_UPGRADE_PROD_SIGNING_TOOL=/path/to/vendor_sign.sh \
+     SECURE_UPGRADE_KERNEL_CAFILE=/path/to/ca-bundle.pem \
+     all
+
+# ビルド時 (dev) ― 現行 master の正しい変数
+make SECURE_UPGRADE_MODE=dev \
+     SECURE_UPGRADE_DEV_SIGNING_KEY=/path/to/db.key \
+     SECURE_UPGRADE_SIGNING_CERT=/path/to/db.crt \
+     all
 
 # UEFI Secure Boot 状態確認 (boot 後)
 mokutil --sb-state
