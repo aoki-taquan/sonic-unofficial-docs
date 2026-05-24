@@ -171,7 +171,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 ```bash
 # 各ポートの shutdown 状態と buffer profile 適用状況
 show interfaces status
-show buffer_pool
+show buffer pool
 redis-cli -n 4 keys 'BUFFER_PG|Ethernet*' | head
 # buffermgrd ログ
 sudo grep -i 'buffermgrd' /var/log/syslog | tail -30
