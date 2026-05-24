@@ -53,13 +53,17 @@ flowchart LR
 
 ### 対応 CONFIG_DB
 
+- [`LDAP`](../config-db/ldap.md)
 - [`LDAP_SERVER`](../config-db/ldap-server.md)
 
 ### 関連 HLD
 
 - [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)
-- [sonic-system-aaa YANG](../../reference/yang/sonic-system-aaa.md)
 - [発展トピック](../../topics/15-security-aaa/advanced.md)
+
+### 関連 YANG
+
+- [sonic-system-aaa YANG](../../reference/yang/sonic-system-aaa.md)
 
 <!-- /yang-xref -->
 

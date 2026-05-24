@@ -53,20 +53,24 @@ flowchart LR
 
 ### 対応 CONFIG_DB
 
+- [`TACPLUS`](../config-db/tacplus.md)
 - [`TACPLUS_SERVER`](../config-db/tacplus-server.md)
 
 ### 関連 HLD
 
 - [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)
-- [sonic-system-aaa YANG](../../reference/yang/sonic-system-aaa.md)
 - [発展トピック](../../topics/15-security-aaa/advanced.md)
+
+### 関連 YANG
+
+- [sonic-system-aaa YANG](../../reference/yang/sonic-system-aaa.md)
 
 <!-- /yang-xref -->
 
 ## typedef
 
 - `auth_type_enumeration`: `pap`, `chap`, `mschap`, `login`
-- `key_encrypt_type`: `boolean`, default `false`
+- `key_encrypt_type`: `boolean`（`true` = 暗号化済み鍵、`false` = 平文）
 
 ## ツリー
 
