@@ -220,7 +220,6 @@ docker exec bgp cat /etc/resolv.conf
 ## 関連 reference
 
 - [YANG: sonic-dns](../reference/yang/sonic-dns.md)
-- [Topics: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md)
 
 ## 制限事項
 

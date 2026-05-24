@@ -133,11 +133,8 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 
 `config warm_restart enable system` で `WARM_RESTART_TABLE` を有効化。docker 別の有効化や CLI 一覧は [`sonic-warm-reboot.md`](sonic-warm-reboot.md) を参照。
 
-## 5. 制限事項と干渉する機能
+## 5. 干渉する機能
 
-- 同 image 同士または version upgrade のみ対象、**downgrade は対象外**
-- すべての docker / SAI vendor が warm restart 実装している前提
-- `SONIC_BOOT_TYPE` 表記揺れ（`fast-reboot` vs `fast`）は将来変わる可能性
 - **fast-reboot**: 同基盤・同 kernel arg を共有
 - **Warmboot Manager**: 後発の shutdown orchestrator、共存設計
 - **[BGP](../reference/glossary.md#term-bgp) graceful restart / teamd 90s timer**: control plane downtime <90s に必須
@@ -162,6 +159,8 @@ docker logs syncd 2>&1 | grep -iE "warm|init view" | tail -50
 
 ## 制限事項
 
+- 同 image 同士または version upgrade のみ対象、**downgrade は対象外**。
+- すべての docker / SAI vendor が warm restart 実装している前提。`SONIC_BOOT_TYPE` 表記揺れ（`fast-reboot` vs `fast`）は将来変わる可能性がある。
 - system-wide warm-boot は全ての SONiC コンテナが warm-restart 対応であることを前提とし、サードパーティ追加コンテナがある環境では成立しない。
 - BGP / [LACP](../reference/glossary.md#term-lacp) / [BFD](../reference/glossary.md#term-bfd) の hold/keepalive タイマーは warm-restart 期間より十分長く設定する必要があり、デフォルト値で運用すると瞬断扱いとなる事がある。
 - [ASIC SDK](../reference/glossary.md#term-asic-sdk) が warm-boot 非対応のリビジョンでは fall-back で cold-boot 化されるため、ベンダー SDK バージョンとの整合確認が必須。
