@@ -256,12 +256,6 @@ sonic-slave コンテナ内で debootstrap が proc マウントに失敗する�
 
 - 参照: [sonic-net/sonic-buildimage#1519](https://github.com/sonic-net/sonic-buildimage/issues/1519)
 
-### interfaces-config.service が `sonic-cfggen -d` で応答待ちになりハングする問（sonic-buildimage#1873）
-
-interfaces-config.service が `sonic-cfggen -d` で応答待ちになりハングする問題。[Redis](../reference/glossary.md#term-redis) が起動していない状態で [sonic-cfggen](../reference/glossary.md#term-sonic-cfggen) がブロックするため、サービス依存関係の順序に注意
-
-- 参照: [sonic-net/sonic-buildimage#1873](https://github.com/sonic-net/sonic-buildimage/issues/1873)
-
 ### sonic-slave コンテナに入る方法: `docker run -v /var/run/docker.sock:/（sonic-buildimage#2029）
 
 sonic-slave コンテナに入る方法: `docker run -v /var/run/docker.sock:/var/run/docker.sock --privileged -it sonic-slave bash`。`--privileged` フラグなしでは proc マウント等が失敗する
@@ -273,12 +267,6 @@ sonic-slave コンテナに入る方法: `docker run -v /var/run/docker.sock:/va
 初期化スクリプトで `depmod -a` が実行されていない場合、`libkmod: ERROR` ログが出力される。カーネルモジュールの依存関係データベース更新が必要
 
 - 参照: [sonic-net/sonic-buildimage#2030](https://github.com/sonic-net/sonic-buildimage/issues/2030)
-
-### config reload 後にカーネルの loopback IP アドレスが残る既知のバグ（sonic-buildimage#2102）
-
-config reload 後にカーネルの loopback IP アドレスが残る既知のバグ。`config reload` は CONFIG_DB を更新するが、カーネルの古いルートエントリを削除しない。回避策: `ip addr flush dev lo` を手動実行
-
-- 参照: [sonic-net/sonic-buildimage#2102](https://github.com/sonic-net/sonic-buildimage/issues/2102)
 
 ### Linux カーネルビルド中に `failed to load plugin io.containerd.snapsho（sonic-buildimage#2614）
 
@@ -370,23 +358,6 @@ make コマンドラインからコードの最適化を無効化できない問
 
 - 参照: [sonic-net/sonic-buildimage#6413](https://github.com/sonic-net/sonic-buildimage/issues/6413)
 
-### config load_minigraph が "Redis BGSAVE already in progress" で（sonic-buildimage#6498）
-
-config load_minigraph が "Redis BGSAVE already in progress" で失敗する問題。前のセーブが完了してから実行すること
-
-- 参照: [sonic-net/sonic-buildimage#6498](https://github.com/sonic-net/sonic-buildimage/issues/6498)
-
-### DPB でインターフェースの設定セクションが適用済みと未適用で異なる問題（sonic-buildimage#6645）
-
-DPB でインターフェースの設定セクションが適用済みと未適用で異なる問題。DPB 後の設定反映状態は `show interfaces breakout` で確認すること
-
-- 参照: [sonic-net/sonic-buildimage#6645](https://github.com/sonic-net/sonic-buildimage/issues/6645)
-
-### DB migrator が新しい init_cfg.json/FEATURE テーブルの必須エントリを考慮しない問題（sonic-buildimage#6659）
-
-DB migrator が新しい init_cfg.json/FEATURE テーブルの必須エントリを考慮しない問題。バージョンアップグレード後は FEATURE テーブルの整合性を確認すること
-
-- 参照: [sonic-net/sonic-buildimage#6659](https://github.com/sonic-net/sonic-buildimage/issues/6659)
 
 ## 制限事項
 

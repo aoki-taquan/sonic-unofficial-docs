@@ -217,12 +217,6 @@ CONFIG_DB の BGP_PEER_RANGE 設定が FRR 設定に変換されない問題。s
 
 - 参照: [sonic-net/sonic-buildimage#4664](https://github.com/sonic-net/sonic-buildimage/issues/4664)
 
-### iptables が /32 ループバックアドレスへのアクセスをブロックする問題（sonic-buildimage#4797）
-
-iptables が /32 ループバックアドレスへのアクセスをブロックする問題。management VRF 有効時に iptables ルールが自動的に追加されるが、/32 アドレスに対するルールが不足していることがある
-
-- 参照: [sonic-net/sonic-buildimage#4797](https://github.com/sonic-net/sonic-buildimage/issues/4797)
-
 ### ospfclient が SONiC docker コンテナ内で起動できない問題（sonic-buildimage#4961）
 
 ospfclient が SONiC docker コンテナ内で起動できない問題。コンテナ内の FRR ソケットパスが `/var/run/frr` であることを明示的に指定すること
