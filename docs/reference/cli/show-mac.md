@@ -160,7 +160,7 @@ excerpt: |
 ```mermaid
 flowchart LR
   CLI["show mac"]
-  SRC0[("APP_DB<br/>FDB_TABLE / STATE_DB<br/>FDB_TABLE")]
+  SRC0[("APPL_DB<br/>FDB_TABLE / STATE_DB<br/>FDB_TABLE")]
   V0["fdbshow"]
   SRC0 --> V0 --> CLI
 ```
