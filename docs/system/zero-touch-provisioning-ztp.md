@@ -96,6 +96,9 @@ flowchart LR
 - **DHCP relay (v4/v6)**: ZTP は DHCP に強く依存。relay の設定不備が直撃
 - **fwutil / secure-upgrade / secure-boot**: firmware section / image 検証で連動
 - **[gNOI](../reference/glossary.md#term-gnoi) OS / file APIs**: 後発の運用 API と用途が一部重なる
+- ZTP は DHCP option 67 / 239 等のベンダー固有 option に依存し、上流 DHCP サーバの構成に大きく左右される。
+- 一度起動後に config を投入した装置で再度 ZTP を発動させるには `ztp enable` + factory reset が必要で、運用中の装置に誤発動しないよう注意。
+- ZTP スクリプトのダウンロード経路 (HTTP/HTTPS) で TLS 証明書検証が緩い実装がベンダー間で散見されるため、専用管理セグメントから配信する運用を推奨。
 
 ## 6. トラブルシューティング
 
@@ -116,12 +119,6 @@ ip -d link show eth0
 
 - [16-nat-dhcp-dns](../topics/16-nat-dhcp-dns/index.md): DHCP option / relay のスタックと ZTP の依存
 - [11-reboot](../topics/11-reboot/index.md): `reboot-on-success` / `reboot-on-failure` で起こる再起動
-
-## 制限事項
-
-- ZTP は DHCP option 67 / 239 等のベンダー固有 option に依存し、上流 DHCP サーバの構成に大きく左右される。
-- 一度起動後に config を投入した装置で再度 ZTP を発動させるには `ztp enable` + factory reset が必要で、運用中の装置に誤発動しないよう注意。
-- ZTP スクリプトのダウンロード経路 (HTTP/HTTPS) で TLS 証明書検証が緩い実装がベンダー間で散見されるため、専用管理セグメントから配信する運用を推奨。
 
 ## 引用元
 

@@ -67,8 +67,8 @@ show warm_restart config
 # name   enable  timer_name  timer_duration
 # swss   true    NULL        NULL
 
-# 2. upgrade docker
-sonic-installer upgrade_docker --cleanup_image swss swss_test_02 ./docker-orchagent-brcm_test_02.gz
+# 2. upgrade docker（旧コマンド名。現行は upgrade-docker が推奨、upgrade_docker は deprecation warning が出る）
+sonic-installer upgrade-docker --cleanup_image swss swss_test_02 ./docker-orchagent-brcm_test_02.gz
 
 # 3. restart container
 systemctl restart swss
