@@ -18,7 +18,7 @@ sources:
 related:
   cli:
   - show queue
-  - show buffer pool
+  - show buffer_pool
   - show pfc
   - show buffer
   - show interfaces
@@ -128,7 +128,7 @@ Ethernet24      drop               200                 200
 
 ## Buffer pool の枯渇を見つける
 
-`show buffer pool persistent-watermark` で、ingress / egress / lossless / lossy pool の peak バイトを見ます。
+`show buffer_pool persistent-watermark` で、ingress / egress / lossless / lossy pool の peak バイトを見ます。
 
 ```text
 admin@sonic:~$ show buffer_pool persistent-watermark
@@ -140,7 +140,7 @@ egress_lossless_pool          9876500
 egress_lossy_pool              780000
 ```
 
-pool size に近い値が peak で出ている場合、burst 時に shared pool が頭打ちになっていた可能性が高いです。`show buffer_pool` (現在値) と差を取り、常時忙しいのか瞬間 burst かを判別します。
+pool size に近い値が peak で出ている場合、burst 時に shared pool が頭打ちになっていた可能性が高いです。`show buffer_pool watermark` (現在値) と差を取り、常時忙しいのか瞬間 burst かを判別します。
 
 `BUFFER_POOL` テーブルの `size` と `xoff` (lossless のみ) が一次的なつまみで、`BUFFER_PROFILE` の `dynamic_th` / `static_th` がポートごとの shared 割当 ratio になります。
 
@@ -162,7 +162,7 @@ admin@sonic:~$ redis-cli -n 4 hgetall "BUFFER_PROFILE|pg_lossless_100000_5m_prof
 
 ## Watermark の見方と落とし穴
 
-Watermark は `show queue persistent-watermark`、`show priority-group persistent-watermark`、`show buffer pool persistent-watermark` の 3 系統と、それぞれの `clear` コマンドがあります。
+Watermark は `show queue persistent-watermark`、`show priority-group persistent-watermark`、`show buffer_pool persistent-watermark` の 3 系統と、それぞれの `clear` コマンドがあります。
 
 - `watermark` と `persistent-watermark` は別系統で、前者は短期、後者はクリアするまで保持。
 - 観測対象は「ConfigDB 上で有効なポート/queue/PG だけ」に限定されるように改善されており、port を削除した直後に幽霊オブジェクトの古い値が残らないようになっています（[align watermark flow with port configuration](../../acl-qos/align-watermark-flow-with-port-configuration-hld.md)）。
@@ -170,7 +170,7 @@ Watermark は `show queue persistent-watermark`、`show priority-group persisten
 
 ## `show buffer` 系の使い分け
 
-- `show buffer pool` — プールの使用量と peak。
+- `show buffer_pool` — プールの使用量と peak。
 - `show buffer profile` — どの profile があるか、サイズ・閾値・参照プール。
 - `show priority-group` — PG ごとの shared / headroom の使用と xoff/xon time。
 - `show queue` — queue ごとの bytes、packets、drops、WRED drop / ECN mark。
@@ -210,7 +210,7 @@ ACL_STAT                 5000                enable
 | 症状 | 入口 | 詳細 |
 |------|------|------|
 | 特定アプリだけ遅い | `show queue counters` | 該当 queue の drop / PFC |
-| 全体的に遅い・bursty | `show buffer pool persistent-watermark` | shared pool 枯渇 |
+| 全体的に遅い・bursty | `show buffer_pool persistent-watermark` | shared pool 枯渇 |
 | PFC が止まらない | `show pfc counters` + `show pfcwd stats` | Rx/Tx の向き、PFCWD |
 | ECN mark が立たない | `show queue counters` (WRED 系) | `WRED_PROFILE` 設定 |
 | 設定したのに反映されない | `redis-cli -n 4 hgetall BUFFER_PROFILE\|...` | CONFIG_DB と [STATE_DB](../../reference/glossary.md#term-state_db) |
