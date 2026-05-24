@@ -111,7 +111,7 @@ flowchart LR
   -id Vlan1000 -iu docker0 240.127.1.2
 ```
 
-dhcp_server コンテナ側 IP は `240.127.1.2`（`DHCP_SERER_IPV4_IP` テーブルで管理）[^1]。
+dhcp_server コンテナ側 IP は `240.127.1.2`（`DHCP_SERVER_IPV4_IP` テーブルで管理）[^1]。
 
 ### lease の STATE_DB 反映
 
