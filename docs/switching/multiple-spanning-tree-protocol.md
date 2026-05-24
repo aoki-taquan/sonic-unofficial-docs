@@ -195,11 +195,6 @@ MSTP が必要な場合は本 HLD（MSTP サポート）の実装を使用する
 - MSTI 数は SAI 依存
 - Warm Boot 中の BPDU タイマ整合性は実装側の対応を別途確認
 
-## 関連トピック
-
-- [Topics: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) — VLAN / FDB と STP の関係
-- [Topics: Reference Index](../topics/22-reference-index/index.md)
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/MSTP/MSTP.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
@@ -208,6 +203,7 @@ MSTP が必要な場合は本 HLD（MSTP サポート）の実装を使用する
 ## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+- [Topics: Reference Index](../topics/22-reference-index/index.md)
 
 <!-- /topics-back-ref -->
 

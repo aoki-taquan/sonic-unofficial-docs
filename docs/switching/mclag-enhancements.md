@@ -173,19 +173,15 @@ redis-cli -n 0 KEYS "APP_MCLAG_FDB_TABLE:*" | head
 redis-cli -n 0 HGETALL "ISOLATION_GROUP_TABLE:1"
 ```
 
-## 関連 Topics
-
-- [06-l2-vlan-lag](../topics/06-l2-vlan-lag/index.md): L2 / LAG の全体像
-- [05-dual-tor](../topics/05-dual-tor/index.md): もう1つの ToR 冗長機構
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mclag/MCLAG_Enhancements_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## 関連 Topics (自動リンク)
+## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+- [Topics: Dual ToR](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
 
