@@ -365,7 +365,7 @@ orchagent 再起動なしにはキャッシュが更新されない。FC 非対�
 <!-- /constants -->
 
 <!-- defaults -->
-## コード由来の暗黙デフォルト・制約
+## フィールド暗黙デフォルト (Phase A — コード由来)
 
 ### `fc` フィールド — YANG-実装 discrepancy
 
