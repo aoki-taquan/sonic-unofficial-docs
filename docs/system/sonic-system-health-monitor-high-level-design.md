@@ -5,18 +5,18 @@ area: system
 verification: code-verified
 last_verified: 2026-05-11
 sources:
-- repo: sonic-net/SONiC
-  path: doc/system_health_monitoring/system-health-HLD.md
-  ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
+  - repo: sonic-net/SONiC
+    path: doc/system_health_monitoring/system-health-HLD.md
+    ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-  - FEATURE
+    - FEATURE
   cli:
-  - show system-health
-  - show system-health monitor-list
+    - show system-health
+    - show system-health monitor-list
   yang:
-  - sonic-heartbeat
-  - sonic-feature
+    - sonic-heartbeat
+    - sonic-feature
 ---
 
 !!! success "裏取りステータス: code-verified"

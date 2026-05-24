@@ -119,7 +119,7 @@ stateDiagram-v2
 # warm reboot 前後の確認
 config warm_restart enable system
 warm-reboot
-show warm_restart status
+show warm_restart
 ls -la /host/warmboot/ | grep sai-warmboot.bin
 sonic-db-cli STATE_DB keys "WARM_RESTART_TABLE|*"
 ```
