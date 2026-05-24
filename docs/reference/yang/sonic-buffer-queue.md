@@ -82,12 +82,12 @@ module: sonic-buffer-queue
 |------|------|----|------|-----------|----------------------|------|
 | `port` | `sonic-buffer-queue/BUFFER_QUEUE/BUFFER_QUEUE_LIST/port` | `leafref` | yes |  | /prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name | Port on which the egress queue buffer is configured. |
 | `qindex` | `sonic-buffer-queue/BUFFER_QUEUE/BUFFER_QUEUE_LIST/qindex` | `string` | yes |  | pattern `(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?` | Egress queue index or range (e.g. 0-3) on the port. |
-| `profile` | `sonic-buffer-queue/BUFFER_QUEUE/BUFFER_QUEUE_LIST/profile` | `leafref` |  | 0 | /bpf:sonic-buffer-profile/bpf:BUFFER_PROFILE/bpf:BUFFER_PROFILE_LIST/bpf:name | Buffer profile applied to this egress queue. |
+| `profile` | `sonic-buffer-queue/BUFFER_QUEUE/BUFFER_QUEUE_LIST/profile` | `leafref` |  |  | /bpf:sonic-buffer-profile/bpf:BUFFER_PROFILE/bpf:BUFFER_PROFILE_LIST/bpf:name | Buffer profile applied to this egress queue. |
 | `hostname` | `sonic-buffer-queue/BUFFER_QUEUE/VOQ_BUFFER_QUEUE_LIST/hostname` | `stypes:hostname` | yes |  |  | [VOQ](../../reference/glossary.md#term-voq) chassis hostname owning this port. |
 | `asic_name` | `sonic-buffer-queue/BUFFER_QUEUE/VOQ_BUFFER_QUEUE_LIST/asic_name` | `stypes:asic_name` | yes |  |  | [ASIC](../../reference/glossary.md#term-asic) instance name within the [VOQ](../../reference/glossary.md#term-voq) chassis. |
 | `port` | `sonic-buffer-queue/BUFFER_QUEUE/VOQ_BUFFER_QUEUE_LIST/port` | `string` | yes |  | length 1..128 | Port name on the [VOQ](../../reference/glossary.md#term-voq) chassis linecard. |
 | `qindex` | `sonic-buffer-queue/BUFFER_QUEUE/VOQ_BUFFER_QUEUE_LIST/qindex` | `string` | yes |  | pattern `(1[0-5]|[0-9])((-)(1[0-5]|[0-9]))?` | Egress queue index or range (e.g. 0-3) on the port. |
-| `profile` | `sonic-buffer-queue/BUFFER_QUEUE/VOQ_BUFFER_QUEUE_LIST/profile` | `leafref` |  | 0 | /bpf:sonic-buffer-profile/bpf:BUFFER_PROFILE/bpf:BUFFER_PROFILE_LIST/bpf:name | Buffer profile applied to this egress queue. |
+| `profile` | `sonic-buffer-queue/BUFFER_QUEUE/VOQ_BUFFER_QUEUE_LIST/profile` | `leafref` |  |  | /bpf:sonic-buffer-profile/bpf:BUFFER_PROFILE/bpf:BUFFER_PROFILE_LIST/bpf:name | Buffer profile applied to this egress queue. |
 
 ## leafref / 依存
 

@@ -132,7 +132,7 @@ module: sonic-debug-counter
 
 ## 関連リファレンス
 
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DEBUG_COUNTER`](../config-db/debug-counter.md) / [`DEBUG_COUNTER_DROP_REASON`](../config-db/debug-counter.md) / `DEBUG_DROP_MONITOR`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`DEBUG_COUNTER`](../config-db/debug-counter.md) / [`DEBUG_COUNTER_DROP_REASON`](../config-db/debug-counter.md) / [`DEBUG_DROP_MONITOR`](../config-db/debug-counter.md)
 - CLI: `config debug-counter` / `show debug-counter`
 
 <!-- ref-triangle:end -->
