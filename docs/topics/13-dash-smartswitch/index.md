@@ -93,11 +93,11 @@ DASH 系と SmartSwitch 系の既存 [HLD](../../reference/glossary.md#term-hld)
 
 | ページ | 状態 | verification |
 |---|---|---|
-| concept | ✅ 完成 (169 行) | meta |
-| setup | ✅ 完成 (268 行) | meta |
-| operations | ✅ 完成 (236 行) | meta |
-| internals | ✅ 完成 (155 行) | meta |
-| advanced | ✅ 完成 (118 行) | meta |
+| concept | ✅ 完成 (213 行) | meta |
+| setup | ✅ 完成 (298 行) | meta |
+| operations | ✅ 完成 (266 行) | meta |
+| internals | ✅ 完成 (183 行) | meta |
+| advanced | ✅ 完成 (155 行) | meta |
 
 <!-- /chapter-progress -->
 
