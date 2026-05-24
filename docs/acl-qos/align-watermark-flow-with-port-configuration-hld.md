@@ -110,7 +110,9 @@ flexcounter の map 生成と stat 登録を **別関数に切り出す**[^1]:
 
 **現在の実装は counterpoll disable 時に flex counter table から stat を削除しない** 設計[^1]。本 HLD はこの挙動を維持し、enable 側のロジックのみ整える。
 
-### 7.1 旧フロー
+### 修正フロー詳細
+
+#### 7.1 旧フロー
 
 修正前は `counterpoll` のキー入力に対し以下の単純対応のみ存在した[^1]:
 
@@ -125,7 +127,7 @@ else if (key == PG_WATERMARK_KEY) {
 
 そのため `pg-drop` や（純粋な）`watermark` のキーには反応せず、map / stat の食い違いが生じた。
 
-### 7.2 修正後フロー
+#### 7.2 修正後フロー
 
 key ごとに **map 生成 + 個別 stat 追加関数** を呼び出す[^1]:
 
@@ -171,7 +173,7 @@ stateDiagram-v2
     PGMap --> Both : queue 系 enable
 ```
 
-### 7.3 watermark enable 時のポート追加
+#### 7.3 watermark enable 時のポート追加
 
 watermark counterpoll が **enabled の状態で port が追加** されたら、その port の watermark stat も追加する[^1]:
 
@@ -279,16 +281,6 @@ show priority-group watermark headroom
 
 <!-- /topics-back-ref -->
 
-
-## 追加参照リンク
-
-本ページに関連する参照ドキュメント:
-
-- [`show queue` CLI リファレンス](../reference/cli/show-queue.md)
-- [`FLEX_COUNTER_TABLE` CONFIG_DB スキーマ](../reference/config-db/flex-counter-table.md)
-- [`QUEUE` CONFIG_DB スキーマ](../reference/config-db/queue.md)
-- [`PORT` CONFIG_DB スキーマ](../reference/config-db/port.md)
-- [`MAP_PFC_PRIORITY_TO_QUEUE` CONFIG_DB スキーマ](../reference/config-db/map-pfc-priority-to-queue.md)
 
 <!-- augmented-links: v1 -->
 

@@ -13,23 +13,17 @@ related:
   config_db:
   - PFC_WD
   - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
-  - MGMT_INTERFACE
-  - MGMT_VRF_CONFIG
-  - MGMT_PORT
   - BUFFER_POOL
   - BUFFER_PROFILE
   cli:
   - show arp
   - show pfc
-  - config mgmt trio
-  - show mgmt vrf
   yang:
   - sonic-pfc-priority-queue-map
   - sonic-pfc-priority-priority-group-map
   - sonic-pfcwd
   - sonic-buffer-pool
   - sonic-buffer-profile
-  - sonic-crm
 ---
 
 <!-- topics-tip -->

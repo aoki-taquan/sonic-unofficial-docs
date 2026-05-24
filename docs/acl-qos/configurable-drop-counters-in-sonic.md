@@ -14,25 +14,15 @@ related:
   - DEBUG_COUNTER
   - DEBUG_COUNTER_DROP_REASON
   - CRM
-  - PFC_WD
-  - PFC_PRIORITY_TO_PRIORITY_GROUP_MAP
-  - BUFFER_POOL
-  - BUFFER_PROFILE
   cli:
   - config dropcounters install
   - show dropcounters counts
   - show dropcounters capabilities
   - clear
   - clear counters
-  - show pfc
   yang:
   - sonic-debug-counter
   - sonic-crm
-  - sonic-pfc-priority-priority-group-map
-  - sonic-pfc-priority-queue-map
-  - sonic-pfcwd
-  - sonic-buffer-pool
-  - sonic-buffer-profile
 ---
 
 <!-- topics-tip -->
