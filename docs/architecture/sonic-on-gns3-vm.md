@@ -156,19 +156,6 @@ show interfaces neighbor
 ip -br link | head
 ```
 
-### コマンド例: GNS3 VM 上の SONiC 動作確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# GNS3 上で起動した SONiC-VS の認識ポートと neighbor
-show interfaces status
-show interfaces neighbor
-# qemu / virtio NIC 接続状態
-ip -br link | head
-```
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-gns3/GNS3 VM for SONiC.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
