@@ -1,6 +1,6 @@
 ---
 title: sonic-interface YANG
-description: "sonic-interface YANG — Physical Ethernet interface L3 configuration including IP addressing, VRF binding, and NAT zones"
+description: "sonic-interface YANG — 物理 Ethernet インターフェイスの L3 設定（IP アドレス付与・VRF バインド・NAT ゾーン・MPLS 有効化など）を管理する YANG モジュール。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -24,7 +24,7 @@ related:
 - import: `ietf-yang-types`, `sonic-types`, `sonic-port`, `sonic-vrf`, `sonic-vnet`
 - top container: `sonic-interface`
 
-Physical Ethernet interface L3 configuration including IP addressing, [VRF](../../reference/glossary.md#term-vrf) binding, and [NAT](../../reference/glossary.md#term-nat) zones[^1]
+物理 Ethernet インターフェイスの L3 設定（IP アドレス付与・[VRF](../../reference/glossary.md#term-vrf) バインド・[NAT](../../reference/glossary.md#term-nat) ゾーン・MPLS 有効化など）を管理する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)

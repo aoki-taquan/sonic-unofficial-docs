@@ -1,6 +1,6 @@
 ---
 title: sonic-lldp YANG
-description: "sonic-lldp YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-lldp.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
+description: "sonic-lldp YANG — グローバル LLDP パラメータ（hello タイマ・システム名等）およびポート単位の LLDP 有効/無効・モードを管理する YANG モジュール。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-10
@@ -24,7 +24,7 @@ related:
 - import: `sonic-port`
 - top container: `sonic-lldp`
 
-[SONiC](../../reference/glossary.md#term-sonic) [LLDP](../../reference/glossary.md#term-lldp) yang model[^1]
+グローバル [LLDP](../../reference/glossary.md#term-lldp) パラメータ（hello タイマ・マルチプライヤ・システム名・TLV 抑制フラグ等）およびポート単位の LLDP 有効/無効・モードを管理する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。[lldpmgrd](../../reference/glossary.md#term-lldpmgrd) が本テーブルを購読し `lldpcli` へ設定を反映する。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -104,7 +104,11 @@ module: sonic-lldp
 | `system_description` | `sonic-lldp/LLDP/GLOBAL/system_description` | `string` |  |  |  | System description |
 | `supp_mgmt_address_tlv` | `sonic-lldp/LLDP/GLOBAL/supp_mgmt_address_tlv` | `boolean` |  | false |  | Suppress sending of Management Address TLV in [LLDP](../../reference/glossary.md#term-lldp) frames |
 | `supp_system_capabilities_tlv` | `sonic-lldp/LLDP/GLOBAL/supp_system_capabilities_tlv` | `boolean` |  | false |  | Suppress sending of System Capabilities TLV in LLDP frames |
+| `enabled` | `sonic-lldp/LLDP/GLOBAL/enabled` | `boolean` |  |  |  | Enable or Disable LLDP globally |
+| `mode` | `sonic-lldp/LLDP/GLOBAL/mode` | `enumeration` |  |  | rx, tx | LLDP Tx/Rx mode (global) |
 | `ifname` | `sonic-lldp/LLDP_PORT/LLDP_PORT_LIST/ifname` | `leafref` | yes |  | /prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name | Reference of port on which LLDP to be configured. |
+| `enabled` | `sonic-lldp/LLDP_PORT/LLDP_PORT_LIST/enabled` | `boolean` |  |  |  | Enable or Disable LLDP on this port |
+| `mode` | `sonic-lldp/LLDP_PORT/LLDP_PORT_LIST/mode` | `enumeration` |  |  | rx, tx | LLDP Tx/Rx mode (per-port) |
 
 ## leafref / 依存
 
