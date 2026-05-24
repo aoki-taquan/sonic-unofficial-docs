@@ -152,7 +152,7 @@ related:
 - [VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）](../../platform/fabric-port-support-on-sonic.md)
 - [FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）](../../platform/fec-flr-support-in-sonic-operations.md)
 - [新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）](../../platform/global-platform-specific-psuutil-class-instance.md)
-- [sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）](../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs.md)
+- [sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）](../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset.md)
 - [FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）](../../platform/fec-flr-support-in-sonic-concepts.md)
 
 **関連トラブルシュート 5 件**

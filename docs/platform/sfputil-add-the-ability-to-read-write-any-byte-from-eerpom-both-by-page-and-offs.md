@@ -25,6 +25,9 @@ related:
   - sonic-system-defaults
 ---
 
+!!! warning "このページはファイル名が誤って切り詰められた旧スラグです"
+    正式なページは [sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）](sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset.md) です。
+
 <!-- topics-tip -->
 !!! tip "Topics で読み物として読む"
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。

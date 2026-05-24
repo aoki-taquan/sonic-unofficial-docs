@@ -50,13 +50,15 @@ PR [sonic-net/sonic-platform-common#479](https://github.com/sonic-net/sonic-plat
 # SFP の DOM 情報を確認
 show interfaces transceiver detail Ethernet0
 
-# raw EEPROM データを確認（外部キャリブレーション判定: Byte 92 bit 4）
+# raw EEPROM データを確認（外部キャリブレーション判定: Byte 92 bit 4=1、内部: bit 3=1）
 sudo sfputil show eeprom -p Ethernet0
 ```
 
-Byte 92 の値（Status/Control）で：
-- Bit 4 = 0 → 内部キャリブレーション（Internal Calibration）
-- Bit 4 = 1 → 外部キャリブレーション（External Calibration）
+Byte 92（Diagnostic Monitoring Type）で：
+- Bit 4 = 1 → 外部キャリブレーション（Externally Calibrated）
+- Bit 3 = 1 → 内部キャリブレーション（Internally Calibrated）
+
+なお Bit 4 と Bit 3 は排他であり、「Bit 4=0 → 内部」ではなく Bit 3 の値で判定する点に注意。
 
 ## 注意事項
 
