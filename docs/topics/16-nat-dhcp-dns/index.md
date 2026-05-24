@@ -103,11 +103,12 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 
 | ページ | 状態 | verification |
 |---|---|---|
-| concept | ✅ 完成 (187 行) | meta |
-| setup | ✅ 完成 (225 行) | meta |
-| operations | ✅ 完成 (215 行) | meta |
-| internals | ✅ 完成 (128 行) | meta |
-| advanced | ✅ 完成 (120 行) | meta |
+| concept | ✅ 完成 (229 行) | meta |
+| setup | ✅ 完成 (263 行) | meta |
+| architecture | ✅ 完成 (129 行) | meta |
+| operations | ✅ 完成 (251 行) | meta |
+| internals | ✅ 完成 (153 行) | meta |
+| advanced | ✅ 完成 (154 行) | meta |
 
 <!-- /chapter-progress -->
 

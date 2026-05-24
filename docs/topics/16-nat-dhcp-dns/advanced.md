@@ -105,7 +105,7 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 - NAT64 / DNS64 の正式サポート議論が断続的にある。
 - DHCP relay の YANG モデル整備と Option 79 / Option 82 の細分化拡張。
 
-## 関連 RFC / 仕索書
+## 関連 RFC / 仕様書
 
 - [RFC 5357](https://datatracker.ietf.org/doc/html/rfc5357) — TWAMP / TWAMP-Light
 - [RFC 8186](https://datatracker.ietf.org/doc/html/rfc8186) — TWAMP-Light Reflector roles
