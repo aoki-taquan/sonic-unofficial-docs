@@ -243,7 +243,7 @@ sflowmgrd は常時起動し `SFLOW` / `SFLOW_SESSION` テーブルを無条件�
 
 ### 段階 1: Consumer 登録
 
-- **sflowmgrd** (`sonic-swss/cfgmgr/sflowmgr.cpp`): `SFLOW` / `SFLOW_SESSION` テーブルを `ConfigDBConnector` で購読。
+- **sflowmgrd** (`sonic-swss/cfgmgr/sflowmgr.cpp`): `SFLOW` / `SFLOW_SESSION` テーブルを `SubscriberStateTable` (keyspace 通知) で購読。
 
 ### 段階 2: CFG → APPL 翻訳
 
