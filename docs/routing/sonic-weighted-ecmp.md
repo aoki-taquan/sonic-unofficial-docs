@@ -38,7 +38,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! info "裏取りステータス: code-verified"
+!!! success "裏取りステータス: code-verified"
     `bgpcfgd/managers_device_global.py` で `wcmp_template = ... bgpd/wcmp/bgpd.wcmp.conf.j2`、`wcmp_enabled` キー処理、`configure_wcmp(data)` を master で確認。`docker-fpm-frr/frr/bgpd/wcmp/` テンプレートディレクトリも存在。
 
 # Weighted ECMP（WCMP）
