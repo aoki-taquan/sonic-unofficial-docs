@@ -56,7 +56,7 @@ related:
 
 MC-[LAG](../../reference/glossary.md#term-lag) (Multi-Chassis Link Aggregation) の実行時状態は `mclagsyncd` が管理する[^link]。`mclagsyncd` は `iccpd`（ICCP デーモン）から Unix ソケット経由で IPC メッセージを受信し、`ProducerStateTable` 経由で [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込む。
 
-書き込まれるテーブルは 6 テーブル（非対応プラットフォームでは ACL フォールバックを含む）[^schema]:
+書き込まれるテーブルは 7 テーブル（非対応プラットフォームでは ACL フォールバックを含む）[^schema]:
 
 | [APPL_DB](../../reference/glossary.md#term-appl_db) テーブル | 目的 |
 |----------------|------|

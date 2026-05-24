@@ -153,7 +153,7 @@ PORT_TABLE:<port_name>
 - orchagent (PortsOrch) がポート初期化時に `m_portTable->hset(port.m_alias, "oper_status", "down")` を書き込む (`portsorch.cpp:6643`)
 - SAI から port oper status 変化通知を受信したとき、`updateDbPortOperStatus()` が `"up"` または `"down"` に更新 (`portsorch.cpp:3928`)
 - warmboot 時は `m_portTable->get()` で既存値を読み戻し、`"up"` なら `SAI_PORT_OPER_STATUS_UP` として m_oper_status を初期化 (`portsorch.cpp:6617-6647`)
-- `SAI_PORT_OPER_STATUS_UNKNOWN` は `oper_status_strings` マップに定義されていないため、該当状態を受信すると `std::out_of_range` 例外が発生する可能性がある
+- `SAI_PORT_OPER_STATUS_UNKNOWN` は `oper_status_strings` マップに `"unknown"` として定義されている (`portsorch.h:48-55`)。逆向き `string_oper_status` も同 5 値を持つため warmboot 復元時も例外は発生しない
 
 **暗黙デフォルト**: `"down"` (orchagent がポート初期化時に書き込む値)
 

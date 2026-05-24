@@ -2,6 +2,7 @@
 title: LABEL_ROUTE_TABLE (APPL_DB)
 description: "APPL_DB LABEL_ROUTE_TABLE — MPLS incoming-label ルートエントリ。fpmsyncd がカーネル netlink から受信した MPLS inseg ルートを書き込み、routeorch が SAI inseg_entry に変換する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-15
 sources:
