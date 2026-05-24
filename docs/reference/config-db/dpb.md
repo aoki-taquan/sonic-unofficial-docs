@@ -47,10 +47,17 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>BREAKOUT_CFG")]
-  DM["xcvrd"]
-  CDB --> DM
+  CLI["config interface breakout<br/>(portconfig.py)"]
+  PORT[("CONFIG_DB<br/>PORT")]
+  portmgrd["portmgrd"]
+  APPL[("APPL_DB<br/>PORT_TABLE")]
   SAI["SAI<br/>sai_port_api"]
-  DM --> SAI
+
+  CDB --> CLI
+  CLI --> PORT
+  PORT --> portmgrd
+  portmgrd --> APPL
+  APPL --> SAI
 ```
 
 !!! note "凡例"
