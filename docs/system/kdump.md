@@ -209,10 +209,6 @@ cat /proc/cmdline | tr ' ' '\n' | grep crashkernel
 - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。HLD は 2019-12 v0.4。kdump-tools 後続バージョン差分・kernel バージョン更新の影響は本文で「未確認」と明示している。
 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
-## 関連 Topics
-
-- [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
-
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: ec18b66e3507 -->

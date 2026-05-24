@@ -120,19 +120,16 @@ config kdump remote enable
 cat /etc/default/kdump-tools
 ```
 
-## 関連 Topics
-
-- [11-reboot](../topics/11-reboot/index.md): リブート / クラッシュ周辺
-- [15-security-aaa](../topics/15-security-aaa/index.md): SSH 鍵管理の運用
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/kdump/kdump_Remote_SSH_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## Topics 一覧
+## 関連 Topics
 
+- [Topics: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md): リブート / クラッシュ周辺
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
+- [Topics: Security / AAA](../topics/15-security-aaa/index.md): SSH 鍵管理の運用
 
 <!-- /topics-back-ref -->
 
