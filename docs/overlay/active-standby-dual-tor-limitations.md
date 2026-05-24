@@ -53,8 +53,8 @@ related:
 - [linkmgrd](../reference/glossary.md#term-linkmgrd) の LinkProber / MuxState / LinkState / LinkManager 4 サブモジュールの現行実装確認 — 実装の構成は `link_prober/` / `mux_state/` / `link_manager/` の 3 ディレクトリ + `DbInterface.cpp` で概ね一致を確認済
 - MuxOrch の neighbor handling 3 案のうちどれが採用されているか確認 — `createStandaloneTunnelRoute` / `removeStandaloneTunnelRoute` 案で確定
 - ycabled の I2C リトライ + MUX_FAIL 報告ロジック実装確認
-- 6.3.5.1 の Loopback0 宛 encap パケット listen + ping 駆動 service の所在確認
-- 6.3.5.2 の zero mac neighbor + tunnel route 自動 install の [neighsyncd](../reference/glossary.md#term-neighsyncd) / [muxorch](../reference/glossary.md#term-muxorch) 実装確認
+- Loopback0 宛 encap パケット listen + ping 駆動 service の所在確認（HLD §6.3.5.1 相当）
+- zero mac neighbor + tunnel route 自動 install の [neighsyncd](../reference/glossary.md#term-neighsyncd) / [muxorch](../reference/glossary.md#term-muxorch) 実装確認（HLD §6.3.5.2 相当）
 - arp_update の FAILED → INCOMPLETE 書き換えの取り込み確認
 - accept_untracked_na の kernel backport 状況確認
 
@@ -64,7 +64,7 @@ related:
 - **`orchagent` (`MuxCfgOrch` / `MuxOrch` / `TunnelOrch`)**: [SAI](../reference/glossary.md#term-sai) 反映 + tunnel + [ACL](../reference/glossary.md#term-acl) drop
 - **`ycabled` (旧 `xcvrd`)**: I2C 経由の [MUX](../reference/glossary.md#term-mux) 制御
 - **`nbrmgrd` / `arp_update` / kernel sysctl**: proxy ARP / GARP / [NDP](../reference/glossary.md#term-ndp) / proxy_ndp / accept_untracked_na
-- **decap-after-tunnel CPU trap 対策の Python service**: 6.3.5.1 の neighbor miss 解消用
+- **decap-after-tunnel CPU trap 対策の Python service**: encap パケット受信時の neighbor miss 解消用（HLD §6.3.5.1 相当）
 - **`bgpd`**: 両 ToR が同じ [VLAN](../reference/glossary.md#term-vlan) を広告
 
 ## 関連ページ

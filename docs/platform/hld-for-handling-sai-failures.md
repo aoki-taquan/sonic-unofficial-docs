@@ -275,7 +275,7 @@ docker ps -a | grep swss
 sudo journalctl -u swss --since '-1d' | grep -iE 'restart|exit'
 ```
 
-## トラブルシュート
+## トラブルシューティング補足
 
 - SAI 失敗で orchagent が exit-loop に入る場合、`sairedis.rec` の最後の数十エントリを確認して再生原因の操作を特定する。
 - ベンダー SAI が NULL pointer dereference 等で syncd 自体を落とす場合、`/var/core/` の core dump を採取し SAI ベンダーへ提供。
