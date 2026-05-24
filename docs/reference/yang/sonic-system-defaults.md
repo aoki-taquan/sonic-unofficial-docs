@@ -21,6 +21,7 @@ related:
 
 - module: `sonic-system-defaults`
 - namespace: `http://github.com/Azure/system-defaults`
+- revision: なし（ソース YANG に revision ステートメント未定義）
 - import: `sonic-types`
 - top container: `sonic-system-defaults`
 
