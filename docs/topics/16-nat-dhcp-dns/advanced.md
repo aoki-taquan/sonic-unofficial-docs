@@ -84,7 +84,7 @@ terminal server は SONiC を「ネットワーク装置」ではなく「コン
 - [TWAMP Light HLD](../../system/twamp-light-hld.md)
 - [terminal server udev rules](../../architecture/1-udev-rules-design-for-terminal-server.md)
 
-## 発展トピック
+## 追加の発展トピック
 
 - **NAT64 / DNS64**: IPv6 専用 host から IPv4 to の通信を NAT64 + DNS64 で橋渡しする。SONiC NAT は主に IPv4 NAT に焦点が当たっており、NAT64 は ASIC capability と SAI 対応が前提。
 - **DHCPv4 / v6 server (in-box)**: 通常は relay 用途だが、lab / mgmt 用途で in-box DHCP server を動かす構成が議論される (`dnsmasq` ベース)。

@@ -81,7 +81,7 @@ SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産�
 - [Memory statistics 機能](../../system/memory-statistics-feature-in-sonic.md)
 - [Reboot cause を telemetry に](../../system/reboot-cause-information-via-telemetry-agent.md)
 
-## 発展トピック
+## 追加の発展トピック
 
 - **IPFIX / sFlow v5 統合**: 既存 sFlow に加え、IPFIX (RFC 7011) 出力を望むユースケースが増えており、export pipeline を統一する提案がある。
 - **DTel report の sampling**: 全 flow を export すると collector が飽和するため、watchlist と sampling rate の組合せで scale を制御する。queue / latency event のみ extract する mode も検討対象。

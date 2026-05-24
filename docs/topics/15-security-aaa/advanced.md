@@ -82,7 +82,7 @@ SONiC は機能を Docker コンテナに分割しており、各コンテナの
 - ライフサイクル: [Reboot / Upgrade / Lifecycle](../11-reboot/index.md)
 - 設定基盤: [SONiC 全体像と設定基盤](../01-overview/index.md)
 
-## 発展トピック
+## 追加の発展トピック
 
 - **gNSI による証明書 / authz 集中管理**: [gNMI](../../reference/glossary.md#term-gnmi) 接続の TLS 証明書、RBAC、Pathz による path レベル authz を controller から push する仕組み。手動 ssh と分離した運用と監査が可能になる。
 - **MACsec MKA scale**: MACsec を全 port に展開する場合、MKA セッション数と鍵更新コストが [ASIC](../../reference/glossary.md#term-asic) / CPU に効く。`MACSEC_PROFILE` の rekey interval 設計が要点。
