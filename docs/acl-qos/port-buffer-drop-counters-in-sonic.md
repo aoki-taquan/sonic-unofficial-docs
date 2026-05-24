@@ -152,15 +152,11 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 
 ```bash
 # buffer-drop counter の polling と現在値
-counterpoll port-buffer-drop show
+counterpoll show
 show queue counters
 # COUNTERS_DB の BUFFER_DROP 系キー
 redis-cli -n 2 keys '*BUFFER_DROP*' | head
 ```
-
-## 関連トピック
-
-- [Topics: QoS / Buffer](../topics/08-qos-buffer/index.md)
 
 ## 関連ページ
 

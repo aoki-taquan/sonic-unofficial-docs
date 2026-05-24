@@ -158,11 +158,6 @@ redis-cli -n 2 keys 'COUNTERS:oid:*' | head
 ```
 
 
-## 関連トピック
-
-- [Topics: QoS / Buffer](../topics/08-qos-buffer/index.md)
-- [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)
-
 ## 関連ページ
 
 - [Asymmetric PFC Test Plan](./asymmetric-pfc-test-plan.md)
