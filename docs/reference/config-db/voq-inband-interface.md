@@ -35,7 +35,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>VOQ_INBAND_INTERFACE")]
   DM["intfmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_DB")]
+  APPDB[("APP_DB<br/>INTF_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD
