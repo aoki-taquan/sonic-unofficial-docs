@@ -208,10 +208,10 @@ linkmgrd: BFD session for upstream peer 10.0.0.1 went down
 - `CONFIG_DB:MUX_CABLE|<port>` — `state`（auto / active / standby / manual）、`server_ipv4`、`server_ipv6`、`soc_ipv4`、`soc_ipv6`、`cable_type`。
 - `CONFIG_DB:MUX_LINKMGR|LINK_PROBER` — `interval_v4`、`interval_v6`、`positive_signal_count`、`negative_signal_count`、`prober_type`（software / hardware）。
 - `APPL_DB:MUX_CABLE_TABLE:<port>` — linkmgrd 出力の現在 state（active / standby / unknown）。
-- `STATE_DB:MUX_CABLE_TABLE\|<port>` — `state`、`peer_state`、`gRPC` connectivity。
-- `STATE_DB:HW_MUX_CABLE_TABLE\|<port>` — HW 実状態。
-- `STATE_DB:MUX_LINKMGR_TABLE\|<port>` — link prober の現在値。
-- `STATE_DB:LINK_PROBE_STATS\|<port>` — `pck_loss_count`、`pck_expected_count`、unknown event タイムスタンプ。
+- `STATE_DB:MUX_CABLE_TABLE|<port>` — `state`、`peer_state`、gRPC connectivity。
+- `STATE_DB:HW_MUX_CABLE_TABLE|<port>` — HW 実状態。
+- `STATE_DB:MUX_LINKMGR_TABLE|<port>` — link prober の現在値。
+- `STATE_DB:LINK_PROBE_STATS|<port>` — `pck_loss_count`、`pck_expected_count`、unknown event タイムスタンプ。
 - `APPL_DB:TUNNEL_ROUTE_TABLE:<port>` — server / soc 向け `/32` / `/128` の install 状態。
 - `APPL_DB:NEIGH_TABLE` — mux active 時に再 install される neighbor。
 - `COUNTERS_DB:COUNTERS_TUNNEL_NAME_MAP` — Dual-ToR tunnel encap counter。
