@@ -19,7 +19,6 @@ related:
   cli: []
   yang: []
   _no_related: true
-  _no_related: true
 ---
 
 # CONFIG_DB ↔ orchagent クラス対応表
@@ -184,7 +183,7 @@ QoS/Buffer 系は **orchagent が CONFIG_DB を直接 subscribe** する経路�
 
 | CONFIG_DB | subscribe 主体 | APPL_DB 中継 | SAI 経路 |
 |---|---|---|---|
-| `FLEX_COUNTER_TABLE` / `FLEX_COUNTER_TABLE` | `FlexCounterOrch` (直接 CFG) | — | `sai_counter_api` (group enable) |
+| `FLEX_COUNTER_TABLE` | `FlexCounterOrch` (直接 CFG) | — | `sai_counter_api` (group enable) |
 | `WATERMARK_TABLE` | `WatermarkOrch` (直接 CFG) | — | `sai_buffer_api` (clear) |
 | `DEBUG_COUNTER` | `DebugCounterOrch` (直接 CFG) | — | `sai_debug_counter_api` |
 | `DEBUG_COUNTER_DROP_REASON` | `DebugCounterOrch` (直接 CFG) | — | `sai_debug_counter_api` |
