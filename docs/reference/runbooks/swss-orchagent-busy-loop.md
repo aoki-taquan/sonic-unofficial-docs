@@ -76,9 +76,9 @@ flowchart TD
 docker exec swss top -b -n 1 | head -20
 ps -eLo pid,tid,pcpu,comm | grep orchagent | sort -k3 -n -r | head
 
-# 直近のループメッセージ
-sudo grep -E "doTask|retry" /var/log/swss/swss.rec 2>/dev/null | tail -40
+# 直近のループメッセージ (syslog / swss ログから確認)
 sudo grep -i orchagent /var/log/syslog | tail -100
+sudo grep -E "doTask|retry|SAI_STATUS" /var/log/swss/swss.log 2>/dev/null | tail -40
 
 # SAI 操作の頻度
 sudo tail -n 200 /var/log/swss/sairedis.rec

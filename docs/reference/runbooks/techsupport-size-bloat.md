@@ -85,7 +85,8 @@ sudo du -sh /var/core/ 2>/dev/null
 ### 4. ログレベル
 
 ```bash
-sonic-db-cli CONFIG_DB hgetall "LOGGER|*"
+sonic-db-cli CONFIG_DB keys "LOGGER|*"
+sonic-db-cli CONFIG_DB hgetall "LOGGER|<component>"
 docker exec bgp vtysh -c "show debugging"
 ```
 

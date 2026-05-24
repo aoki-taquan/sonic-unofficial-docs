@@ -4,8 +4,8 @@ description: 古い裏取りページ — last_verified が一定期間以上更
 verification: meta
 last_verified: 2026-05-11
 tags:
-- verification
-- stale
+  - verification
+  - stale
 related:
   cli: []
   config_db: []
