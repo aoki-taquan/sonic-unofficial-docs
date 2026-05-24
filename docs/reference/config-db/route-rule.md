@@ -88,7 +88,7 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<prefix>[:<priority>]
 - [`DASH_ENI_TABLE`](dash-eni.md): ENI エントリ。`eni_id` を `sai_inbound_routing_entry_t` に渡す
 - [`DASH_VNET_TABLE`](dash-vnet.md): `vnet` フィールドで参照する [VNET](../../reference/glossary.md#term-vnet) (PA 検証・マッピング)
 - [`DASH_PREFIX_TAG_TABLE`](dash-acl.md): `<prefix>` にタグ名を使用する場合の参照先
-- [`DASH_ROUTE_TABLE`](route.md): アウトバウンドルーティング (対となるテーブル)
+- [`DASH_ROUTE_TABLE`](dash-routing-table.md): アウトバウンドルーティング (対となるテーブル)
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動

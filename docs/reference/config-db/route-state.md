@@ -33,7 +33,7 @@ related:
 | DB | 用途 | 書込み主体 |
 |----|------|-----------|
 | `APPL_DB` | [fpmsyncd](../../reference/glossary.md#term-fpmsyncd) が [FRR](../../reference/glossary.md#term-frr) 経路を書き込む（[ROUTE_TABLE (APPL_DB)](route.md) 参照） | `fpmsyncd` |
-| **`STATE_DB`** | デフォルト経路 (0.0.0.0/0 / ::0/0) の存在状態のみを書き込む | `RouteOrch` |
+| **`STATE_DB`** | デフォルト経路 (0.0.0.0/0 / ::/0) の存在状態のみを書き込む | `RouteOrch` |
 | **`APPL_STATE_DB`** | [SAI](../../reference/glossary.md#term-sai) への経路プログラミング結果（`protocol` + `err_str`）を書き込む | `RouteOrch` via `ResponsePublisher` |
 
 !!! warning "設定 DB ではない"
@@ -69,7 +69,7 @@ flowchart LR
 ROUTE_TABLE|<prefix>
 ```
 
-`<prefix>` は IPv4 デフォルト経路（`0.0.0.0/0`）または IPv6 デフォルト経路（`::0/0` / `::/0`）のみ。  
+`<prefix>` は IPv4 デフォルト経路（`0.0.0.0/0`）または IPv6 デフォルト経路（`::/0`）のみ。  
 一般のユニキャスト経路は [STATE_DB](../../reference/glossary.md#term-state_db) の [ROUTE_TABLE](../../reference/glossary.md#term-route_table) には書き込まれない。
 
 ### フィールド一覧
