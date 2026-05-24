@@ -466,22 +466,25 @@ show vxlan vlanvnimap
 <!-- runtime-trace -->
 ## CDB → 実コンテナ動作トレース
 
-### 段階 1: Consumer 登録
+### 段階 1: Consumer 登録 (CONFIG_DB → vxlanmgrd)
 
-- **orchagent / VxlanOrch**: `VXLAN_TUNNEL_MAP` テーブルを `SubscriberStateTable` で購読。
+- **vxlanmgrd (VxlanMgr)**: CONFIG_DB の `VXLAN_TUNNEL_MAP` テーブルを `SubscriberStateTable` で購読 (`vxlanmgrd.cpp:46-51`)。
 
-### 段階 2: CFG → APPL 翻訳
+### 段階 2: CFG → APPL 翻訳 (vxlanmgrd)
 
-- VxlanOrch が VNI ↔ VLAN マッピングを解析。APP_DB への書き込みなし。
+- `doVxlanTunnelMapCreateTask()` が VLAN ID・VNI を解析し、カーネル VXLAN netdevice (`ip link add ... type vxlan`) を作成。
+- 成功後 `APP_VXLAN_TUNNEL_MAP_TABLE` に転記し、orchagent への通知トリガとなる (`vxlanmgr.cpp:592, 943`)。
 
-### 段階 3: APPL → SAI
+### 段階 3: APPL → SAI (orchagent)
 
-- VxlanOrch が `sai_tunnel_api->create_tunnel_map_entry()` で VNI ↔ VLAN のマッピングエントリをハードウェアに設定。
+- **orchagent / VxlanTunnelMapOrch**: `APP_VXLAN_TUNNEL_MAP_TABLE` を `ConsumerStateTable` で購読 (`orchdaemon.cpp:352`)。
+- `addOperation()` が VLAN / VXLAN_TUNNEL の存在を確認し、初回 MAP エントリ受信時に `createTunnelHw()` → `sai_tunnel_api->create_tunnel_map_entry()` でハードウェアに VNI ↔ VLAN マッピングを設定。
 
 ### 段階 4: タイミング + 副作用
 
-- VXLAN_TUNNEL と VLAN テーブルが処理済みであることが前提。
-- 副作用: VNI マッピング削除時は対応する EVPN MAC/IP ルートも連動して削除。
+- `VXLAN_TUNNEL` と `VLAN` テーブルが処理済みであることが前提 (未満足時は `return false` でリトライ)。
+- SET 副作用: `STATE_NEIGH_SUPPRESS_VLAN_TABLE` への `netdev` 書込み、カーネル netdevice 作成。
+- DEL 副作用: VNI マッピング削除時は対応する EVPN MAC/IP ルートも連動して削除。最後のエントリ削除で `deleteTunnelHw()` が走る。
 
 <!-- /runtime-trace -->
 <!-- entry-points -->
