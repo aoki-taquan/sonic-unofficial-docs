@@ -113,8 +113,8 @@ show syslog rate-limit-host
 ## トラブルシューティング
 
 ```bash
-redis-cli -n 4 HGETALL "SYSLOG_CONFIG|GLOBAL"
-redis-cli -n 4 KEYS "SYSLOG_CONFIG_FEATURE|*"
+sonic-db-cli CONFIG_DB hgetall "SYSLOG_CONFIG|GLOBAL"
+sonic-db-cli CONFIG_DB keys "SYSLOG_CONFIG_FEATURE|*"
 
 # container 内に反映されているか
 docker exec bgp grep -E "RateLimit" /etc/rsyslog.conf

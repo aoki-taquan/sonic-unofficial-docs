@@ -23,7 +23,7 @@ related:
   _no_related_cdb: true
 ---
 
-!!! warning "裏取りステータス: code-verified"
+!!! warning "裏取りステータス: discrepancy-found"
     storagemond の現行 master 実装、CLI 名・テーブル名の正確な値は未確認（`ssdhealth` 系の既存実装と類似）。
 
 !!! note "Verifier 注記（2026-05-10）"
