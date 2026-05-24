@@ -18,21 +18,12 @@ related:
   - show interfaces
   - config platform firmware
   - show platform
-  - config snmp
-  - config qos
-  - show acl
   config_db:
   - PORT
   - DEVICE_METADATA
-  - SNMP
   - BREAKOUT_CFG
-  - SNMP_AGENT_ADDRESS_CONFIG
-  - ACL_RULE
-  - ACL_TABLE
   yang:
   - sonic-port
-  - sonic-portchannel
-  - sonic-snmp
 ---
 
 # 設定
