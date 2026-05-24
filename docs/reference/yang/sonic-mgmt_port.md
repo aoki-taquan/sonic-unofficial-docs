@@ -78,7 +78,7 @@ module: sonic-mgmt_port
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
-| `name` | `sonic-mgmt_port/MGMT_PORT/MGMT_PORT_LIST/name` | `string` | yes |  | pattern `eth([1-3][0-9]{3}|[1-9][0-9]{2}|[1-9][0-9]|[0-9])` | マネジメントポート名 |
+| `name` | `sonic-mgmt_port/MGMT_PORT/MGMT_PORT_LIST/name` | `string` | yes |  | pattern `eth([1-3][0-9]{3}\|[1-9][0-9]{2}\|[1-9][0-9]\|[0-9])` (eth0〜eth3999) | マネジメントポート名 |
 | `speed` | `sonic-mgmt_port/MGMT_PORT/MGMT_PORT_LIST/speed` | `uint16` |  |  | `10` / `100` / `1000` | リンク速度（Mbps） |
 | `autoneg` | `sonic-mgmt_port/MGMT_PORT/MGMT_PORT_LIST/autoneg` | `string` |  |  | `on` / `off` | オートネゴシエーションの有効/無効 |
 | `alias` | `sonic-mgmt_port/MGMT_PORT/MGMT_PORT_LIST/alias` | `string` |  |  |  | 別名 |
