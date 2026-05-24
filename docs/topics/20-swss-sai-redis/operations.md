@@ -50,7 +50,7 @@ related:
 | 14 | APPL_STATE_DB | APPL_DB に書いた結果（成功 / 失敗） |
 
 !!! warning "ERROR_DB は未実装"
-    `ERROR_DB` は HLD 上の提案で `database_config.json` には登録されておらず、`sonic-swss-common/common/schema.h` にもテーブル define は存在しません。詳細は [error-handling-framework-in-sonic-limitations](../../architecture/error-handling-framework-in-sonic-limitations.md) を参照してください。以下の `redis-cli -n 13` ベースの ERROR_DB 確認手順はあくまで HLD ベースの参考例で、現状の master では機能しません。
+    `ERROR_DB` は HLD 上の提案で `database_config.json` には登録されておらず、`sonic-swss-common/common/schema.h` にもテーブル define は存在しません。詳細は [error-handling-framework-in-sonic-limitations](../../architecture/error-handling-framework-in-sonic-limitations.md) を参照してください。後述の ERROR_DB 確認手順はあくまで HLD ベースの参考例で、現状の master では機能しません。
 
 ```bash
 admin@sonic:~$ redis-cli -n 4 KEYS "*" | wc -l
