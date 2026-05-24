@@ -23,7 +23,6 @@ related:
   - show storm-control
   - config interface
   - config vlan
-  - show storm control
   - show vlan
   - show acl
   yang:

@@ -195,11 +195,6 @@ MACsec を [LAG](../reference/glossary.md#term-lag) と組み合わせる場合�
 - 参照: [sonic-net/SONiC#790](https://github.com/sonic-net/SONiC/issues/790)
 - [YANG](../reference/glossary.md#term-yang) モデル名は HLD では未明示（実装側で追加予定の `sonic-macsec` 系を想定）
 
-## 関連トピック
-
-- [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) — PFC バイパス ACL の運用観点
-- [Topics: Reference Index](../topics/22-reference-index/index.md)
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/macsec/MACsec_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
@@ -207,6 +202,8 @@ MACsec を [LAG](../reference/glossary.md#term-lag) と組み合わせる場合�
 <!-- topics-back-ref -->
 ## 関連 Topics
 
+- [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) — PFC バイパス ACL の運用観点
+- [Topics: Reference Index](../topics/22-reference-index/index.md)
 - [Topics: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md)
 
 <!-- /topics-back-ref -->

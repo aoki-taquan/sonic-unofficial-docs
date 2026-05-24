@@ -160,19 +160,15 @@ gnmic -a localhost:8080 --skip-verify -u admin -p YourPaSsWoRd \
 show interfaces portchannel
 ```
 
-## 関連 Topics
-
-- [10-gnmi-openconfig](../topics/10-gnmi-openconfig/index.md): gNMI / OpenConfig 全体像
-- [06-l2-vlan-lag](../topics/06-l2-vlan-lag/index.md): LAG 機能本体
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/OpenConfig_PortChannel_Interface.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## Topics 一覧
+## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
+- [Topics: gNMI / OpenConfig](../topics/10-gnmi-openconfig/index.md)
 
 <!-- /topics-back-ref -->
 
