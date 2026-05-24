@@ -30,7 +30,7 @@ related:
 - import: `ietf-inet-types`
 - top container: `sonic-bgp-aggregate-address`
 
-SONIC [BGP](../../reference/glossary.md#term-bgp) aggregate address configuration module.[^1]
+SONiC [BGP](../../reference/glossary.md#term-bgp) aggregate address configuration module.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
