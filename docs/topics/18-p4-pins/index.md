@@ -87,10 +87,11 @@ PINS の中心は 4 点です。コントローラと話す **[P4RT](../../refer
 | ページ | 状態 | verification |
 |---|---|---|
 | concept | ✅ 完成 (142 行) | meta |
+| architecture | ✅ 完成 (82 行) | meta |
 | setup | ✅ 完成 (288 行) | meta |
 | operations | ✅ 完成 (180 行) | meta |
 | internals | ✅ 完成 (134 行) | meta |
-| advanced | ✅ 完成 (105 行) | meta |
+| advanced | ✅ 完成 (132 行) | meta |
 
 <!-- /chapter-progress -->
 
