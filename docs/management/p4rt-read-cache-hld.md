@@ -169,7 +169,7 @@ PI 形式キャッシュのメモリ占有[^1]:
 # P4RT controller 接続/cache 状態
 docker ps | grep p4rt
 docker logs p4rt 2>&1 | tail
-redis-cli -n 4 hgetall 'P4RT_TABLE|*'
+redis-cli -n 0 keys 'P4RT_TABLE:*' | head
 ```
 
 ## 引用元
