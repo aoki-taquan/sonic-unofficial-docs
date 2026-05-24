@@ -24,7 +24,7 @@ related:
 
 - module: `sonic-feature`
 - namespace: `http://github.com/sonic-net/sonic-feature`
-- revision: ``
+- revision: （YANG ファイル内に revision ステートメントなし）
 - import: `sonic-types`
 - top container: `sonic-feature`
 
@@ -38,7 +38,7 @@ flowchart LR
   Y["sonic-feature"]
   C1[("CONFIG_DB<br/>FEATURE")]
   Y --> C1
-  D1["coppmgrd"]
+  D1["hostcfgd"]
   C1 --> D1
 ```
 
