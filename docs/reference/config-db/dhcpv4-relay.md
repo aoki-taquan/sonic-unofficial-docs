@@ -146,7 +146,7 @@ DB を YANG バリデーション外で書いた場合、`servers` が空のと�
 <!-- /defaults -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存 (Phase B) (補足)
 
 > **調査根拠**: `sonic-dhcp-relay/dhcp4relay/src/dhcp4relay_mgr.cpp` 全行精読 (2026-05-18)
 

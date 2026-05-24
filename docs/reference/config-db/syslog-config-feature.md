@@ -512,7 +512,7 @@ db_migrator.py での SYSLOG_CONFIG_FEATURE マイグレーションなし
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存 (Phase B) (補足)
 
 `SYSLOG_CONFIG_FEATURE` は per-container の syslog rate-limit 設定テーブルで、
 `containercfgd` (`sonic-buildimage/src/sonic-containercfgd/containercfgd/containercfgd.py`) が購読する。

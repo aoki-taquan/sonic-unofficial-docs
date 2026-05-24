@@ -609,41 +609,4 @@ flowchart TD
 
 <!-- /pubsub -->
 
-<!-- platform -->
-## プラットフォーム差分 (Phase H)
-
-<!-- evidence: sonic-swss/orchagent/muxorch.cpp:625-628,1094-1100,2192-2193,2218-2228,2240-2246,2281,2327 -->
-
-### Active-Standby vs Active-Active モデル差
-
-| 観点 | Active-Standby (default) | Active-Active |
-|------|--------------------------|---------------|
-| ACL drop rule | standby 遷移時に追加 | **skip** — `cable_type_ == ACTIVE_ACTIVE` 時に `aclHandler` を即 `return true` (muxorch.cpp:625-628) |
-| `soc_ipv4` / `soc_ipv6` | 無視 | `skip_neighbors` に追加し tunnel 経由を抑制 (muxorch.cpp:2218-2228) |
-| `state=detach` | linkmgrd が WARN → 無視 | NIC/ToR を論理的に切り離す active-active 専用機能 |
-| tunnel NH | standby 遷移で peer ToR への SAI tunnel NH を使用 | 両 ToR で tunnel NH 設定可能 |
-
-### xcvrd (hardware prober / gRPC) 実装差
-
-- `prober_type=hardware` では xcvrd が gRPC 経由でハードウェア MUX を制御する。
-- active-active 構成で `soc_ipv4`/`soc_ipv6` が設定されると、当該 IP は `skip_neighbors` セットに登録される。
-- `MuxNbrHandler::updateTunnelRoute()` 呼び出し時、skip_neighbor は tunnel route 更新をスキップ — xcvrd(gRPC) のトラフィックが NIC(SoC) へローカルフローするよう保護される (muxorch.cpp:1094-1100)。
-- `prober_type=software` (linkmgrd ICMP) との差: linkmgrd は APPL_DB 経由で state を切り替えるが、xcvrd は gRPC でハードウェア MUX を直接操作する別経路。
-
-### SmartSwitch DPU 差
-
-- `soc_ipv4` / `soc_ipv6` は [SmartSwitch](../../reference/glossary.md#term-smartswitch) の SoC ([DPU](../../reference/glossary.md#term-dpu): Data Processing Unit) に対応するフィールド。
-- SoC IP は `addSkipNeighbors()` で登録され、通常の neighbor → tunnel NH 切替から除外される (muxorch.cpp:2281)。
-- DELETE 時は `removeSkipNeighbors()` でクリア (muxorch.cpp:2327)。
-- `prefix_nbrs_supported_` が `false` の ASIC では `neighbor_mode=prefix-route` を指定しても silent に `host-route` 動作となる (muxorch.cpp:2240)。起動時ログ: `"MuxOrch: prefix_nbrs_supported_ = %s"` (muxorch.cpp:2193)。
-
-### neighbor_mode × ASIC サポート差
-
-| ASIC 能力 | `prefix_nbrs_supported_` | `neighbor_mode=prefix-route` 効果 |
-|-----------|--------------------------|-----------------------------------|
-| `SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` 対応 | `true` | `MuxPrefixBasedNbrHandler` 選択 |
-| 非対応 | `false` | `MuxNbrHandler` (host-route) に強制降格（ログのみ） |
-
-<!-- /platform -->
-
 <!-- glossary-links-injected: 26e09bfefeb5 -->
