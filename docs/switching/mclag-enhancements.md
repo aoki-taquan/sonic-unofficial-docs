@@ -183,7 +183,7 @@ redis-cli -n 0 HGETALL "ISOLATION_GROUP_TABLE:1"
 [^1]: `sonic-net/SONiC` `doc/mclag/MCLAG_Enhancements_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## 関連 Topics (自動リンク)
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
 

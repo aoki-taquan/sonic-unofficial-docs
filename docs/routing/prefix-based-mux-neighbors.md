@@ -208,13 +208,13 @@ redis-cli -n 4 keys 'MUX_CABLE|*'
 [^1]: `sonic-net/SONiC` `doc/dualtor/mux_neighbors_using_prefix_route.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## 関連 Topics (自動リンク)
 
 - [Topics: Dual-ToR と Mux 制御](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
 
-## 参考リンク
+## 外部参考リンク (自動リンク)
 
 本ページに関連する参照ドキュメント:
 

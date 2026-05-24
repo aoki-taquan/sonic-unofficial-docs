@@ -171,7 +171,7 @@ show vrf
 - [YANG: sonic-vrf](../reference/yang/sonic-vrf.md)
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## 関連 Topics (自動リンク)
 
 - [Topics: VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md)
 
