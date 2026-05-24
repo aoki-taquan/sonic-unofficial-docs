@@ -146,7 +146,7 @@ STATE_DB:
 ## 既知の実装上の制約
 
 - counter の polling interval は group 単位で、CONFIG_DB に書いてから ASIC_DB に反映されるまで一拍ある。高頻度（< 1s）の interval は ASIC 側 SDK の負荷が無視できない。
-- `RATES:` table は `portstat` 等の user-space ツールが計算するもので、Redis 上には rate のスナップショット保存しか無く、過去 N 秒の rate を gNMI から sample しても粒度は polling interval に律速される。
+- `RATES:` table は `portstat` 等の user-space ツールが計算するもので、Redis 上には rate のスナップショット保存しかなく、過去 N 秒の rate を gNMI から sample しても粒度は polling interval に律速される。
 - SNMP subagent は OID から Redis path への mapping を**ハードコード**しており、新 MIB の追加には subagent コード変更が必要。
 - auto-techsupport は dump サイズが /var/dump 上限を超えると古いものから削除し、保存し損ねるケースがある。
 - syslog の container 二段ホップは container 内 rsyslog が停止すると host 側に何も流れない silent 失敗が起きる。

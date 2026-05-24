@@ -36,7 +36,6 @@ related:
   - config buffer
   - show buffer
   - show buffer pool
-  - show arp
   config_db:
   - SCHEDULER
   - BUFFER_PROFILE

@@ -88,7 +88,7 @@ Telemetry / SNMP 系は基本的に **management plane** に属しますが、�
 ## 3 つの観測経路
 
 - **Polling 系**: SNMP、`show` コマンド、CLI 経由の counter 読み取り。スナップショットを欲しいときに使います。値は Redis（COUNTERS_DB / STATE_DB / [APPL_DB](../../reference/glossary.md#term-appl_db)）か直接 SAI / Linux に取りに行きます。
-- **Streaming 系**: gNMI telemetry、sFlow、DTel。ON_CHANGE か SAMPLE の subscribe を受けて push します。短い間隔で大量の集めるなら polling より向きます。
+- **Streaming 系**: gNMI telemetry、sFlow、DTel。ON_CHANGE か SAMPLE の subscribe を受けて push します。短い間隔で大量に集めるなら polling より向きます。
 - **証跡系**: syslog、event、core dump、kdump、auto-techsupport。障害が起きた瞬間の状態を残し、後から `show techsupport` の tarball や dump utility で取り出します。
 
 同じ「ポートの利用率」を見るのでも、SNMP では IF-MIB の counter、telemetry では `COUNTERS:Ethernet*` の path、CLI では `show interfaces counters` と入口が変わります。元データは多くの場合 `COUNTERS_DB` の同じ entry で、上に何を被せるかの違いです。

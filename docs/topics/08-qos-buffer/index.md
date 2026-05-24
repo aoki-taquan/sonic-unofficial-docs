@@ -116,7 +116,7 @@ related:
 - [Reclaim reserved buffer](../../acl-qos/reclaim-reserved-buffer.md)
 - [Dynamic headroom calculation](../../acl-qos/dynamically-headroom-calculation.md)
 - 上流章 [ACL / CoPP / Mirror](../07-acl-copp-mirror/index.md) — packet classification と action の前段。
-- 下流章 [Telemetry / SNMP / Observability](../../topics/index.md) — counter / watermark の収集ルート。
+- 下流章 [Telemetry / SNMP / Observability](../09-telemetry-snmp/index.md) — counter / watermark の収集ルート。
 
 <!-- chapter-progress -->
 ## 章構成と進捗
