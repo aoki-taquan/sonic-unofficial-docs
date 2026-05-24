@@ -17,7 +17,7 @@ related:
     - SSH_SERVER
     - DEVICE_METADATA
   cli:
-    - config ssh
+    - config ssh-server
   yang:
     - sonic-ssh-server
 ---
@@ -84,7 +84,7 @@ YANG `default` 宣言なし。DB に設定しない場合は sshd の組み込�
 ## 関連 CONFIG_DB / YANG / CLI
 
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): `DEVICE_METADATA`（hostname 参照）
-- 関連 CLI: `config ssh`
+- 関連 CLI: `config ssh-server`
 - 関連 [YANG](../../reference/glossary.md#term-yang): `sonic-ssh-server`
 
 <!-- ref-triangle:start -->
@@ -108,7 +108,7 @@ YANG `default` 宣言なし。DB に設定しない場合は sshd の組み込�
 | `inactivity_timeout` | `0` | `ClientAliveInterval 0`（不活動タイムアウト無効） |
 | `inactivity_timeout` | `15`（デフォルト） | `ClientAliveInterval 900`（秒）に変換。分→秒変換は [hostcfgd](../../reference/glossary.md#term-hostcfgd) 内部で実施 |
 | `max_sessions` | `0`（デフォルト） | PAM limits 設定を出力しない → セッション数無制限 |
-| `max_sessions` | `1`以上 | `/etc/security/limits.d/` に `maxlogins` として書き込み |
+| `max_sessions` | `1`以上 | `/etc/security/limits.conf` に `maxsyslogins` として書き込み |
 | `password_authentication` | `"false"` | `PasswordAuthentication no`（パスワード認証無効） |
 | `password_authentication` | `"true"` または未設定 | `PasswordAuthentication yes` |
 | `permit_root_login` | 未設定 | sshd 組み込みデフォルト `prohibit-password` が有効 |
@@ -175,7 +175,7 @@ hostcfgd は `SSH_SERVER` テーブルを常時購読（`config_db.subscribe('SS
 | `SshServer.set_policies()` | `key in ["max_sessions"]` | `continue`（sshd_config 非反映、PAM 側で処理） | `hostcfgd` L1144-1145 |
 | `SshServer.set_policies()` | `sshd -T` 失敗 | 一時ファイル削除、変更ロールバック | `hostcfgd` L1164-1168 |
 | `PamLimitsCfg` | `max_sessions == 0` | PAM limits 設定なし（無制限） | `hostcfgd` L1440-1441 |
-| `PamLimitsCfg` | `max_sessions > 0` | `maxlogins` を PAM limits に書き込み | `hostcfgd` L1440 |
+| `PamLimitsCfg` | `max_sessions > 0` | `maxsyslogins` を `/etc/security/limits.conf` に書き込み | `hostcfgd` L1440 |
 
 <!-- /handler-branching -->
 
@@ -437,7 +437,7 @@ CONFIG_DB `SSH_SERVER` テーブルの変更に伴って `hostcfgd` の `SshServ
 `PamLimitsCfg.update_config_file()` の副作用は以下に限られる:
 
 - `/etc/pam.d/pam-limits-conf` の Jinja2 テンプレート再生成
-- `/etc/security/limits.conf` の Jinja2 テンプレート再生成 (`max_sessions > 0` のとき `maxlogins` 設定を含む)
+- `/etc/security/limits.conf` の Jinja2 テンプレート再生成 (`max_sessions > 0` のとき `maxsyslogins` 設定を含む)
 
 詳細スキャン手順と grep 結果は `meta/_intermediate/cdb-flow/ssh-server-side.md` を参照。
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1175 (SshServer — DB 書込なし確認) -->
