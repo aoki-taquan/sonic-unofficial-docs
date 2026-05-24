@@ -56,7 +56,7 @@ flowchart LR
 
 - [`TC_TO_QUEUE_MAP`](../config-db/tc-to-queue-map.md)
 
-### 関連 HLD
+### 関連 YANG
 
 - [sonic-dscp-tc-map YANG](../../reference/yang/sonic-dscp-tc-map.md)
 
