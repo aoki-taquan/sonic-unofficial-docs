@@ -42,7 +42,7 @@ related:
 
 ## 2. discrepancy-found ページの monitor 別分布
 
-`verification: discrepancy-found` のページは合計 **74 件**（round 38 比 +12 件、round 46 比 +12 件、partial subtype 派生 split-child を主因に増加）。monitor 別内訳:
+`verification: discrepancy-found` のページは合計 **74 件**（round 38 比 +12 件、round 46 比 +12 件、partial subtype 派生 split-child を主因に増加）。現在の件数は [discrepancy-index](discrepancy-index.md) を参照（本スナップショットは 2026-05-12 round 48 時点の値）。monitor 別内訳:
 
 | monitor | 件数 | 性質 |
 |---------|------|------|
@@ -67,7 +67,7 @@ related:
 | `check_link_density.py` | **8** | warn | low-density 8 件（low/high とも閾値外）、890 ページ評価。high-density 0 件 |
 | `check_citation_quality.py` | **1** | warn | citation-deficient 1 件 |
 | `check_stale_verified.py` | 0 | warn | 90 日超 0 件 |
-| `check_discrepancy_related.py` | 0 | warn | discrepancy-found 74 件、空 related.yang 0（`--strict` モード） |
+| `check_discrepancy_related.py` | 0 | warn | discrepancy-found 74 件（2026-05-12 時点）、空 related.yang 0（`--strict` モード） |
 | `check_partial_boundary.py` | 0 | warn | partial-boundary suspects 0（round 38 strict 化以降 10 round 連続 0）|
 | `check_limitations_section.py` | **34** | info | 制限事項章が薄い HLD のリスト（split-child 派生 + 大型 HLD 内訳。round 46 比 -5 件 = wave-2 補完バッチで縮小）|
 | `check_troubleshoot_section.py` | **190** | info | トラブルシュート章が薄い HLD のリスト（round 46 比 -30 件 = wave-2 補完バッチ効果）|
