@@ -150,7 +150,7 @@ if (m_enable_db_write_and_notify &&
 
 ## fpmsyncd による購読 — `onRouteResponse()`
 
-ソース: `fpmsyncd/routesync.cpp` lines 3165–3265[^[fpmsyncd](../../reference/glossary.md#term-fpmsyncd)]
+ソース: `fpmsyncd/routesync.cpp` lines 3165–3265[^fpmsyncd]
 
 `fpmsyncd` は `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` を `NotificationConsumer` で購読し、通知を `onRouteResponse()` に渡す。
 
@@ -184,7 +184,7 @@ for (const auto& fieldValue: fieldValues)
 
 ## Warm Restart 時の動作
 
-Warm restart 完了後、`fpmsyncd::onWarmStartEnd()` が呼ばれる際に `markRoutesOffloaded()` が実行される[^[fpmsyncd](../../reference/glossary.md#term-fpmsyncd)]:
+Warm restart 完了後、`fpmsyncd::onWarmStartEnd()` が呼ばれる際に `markRoutesOffloaded()` が実行される[^fpmsyncd]:
 
 ```cpp
 void RouteSync::markRoutesOffloaded(swss::DBConnector& db)

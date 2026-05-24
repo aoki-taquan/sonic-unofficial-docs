@@ -2,6 +2,7 @@
 title: Redis DB 設定 (database_config.json)
 description: "SONiC の Redis インスタンス・データベース構成を定義する database_config.json のリファレンス。インスタンス定義・DB ID マッピング・セパレータ・デフォルト値を網羅する。"
 area: reference
+hard: 0
 verification: code-verified
 last_verified: 2026-05-14
 sources:
