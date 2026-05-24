@@ -43,13 +43,14 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>LLDP")]
-  DM["lldpmgrd"]
-  CDB --> DM
+  lldpd["lldpd (open-lldp)"]
+  syncd["lldp-syncd"]
+  APPL[("APPL_DB<br/>LLDP_ENTRY_TABLE")]
+  lldpd --> syncd --> APPL
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+    本テーブルは CONFIG_DB ではなく APPL_DB テーブル。lldpd が受信した LLDP PDU を lldp-syncd が APPL_DB に書き込む。外部からの書き込みは存在しない。
 <!-- /cdb-mermaid -->
 
 ## key 構造
