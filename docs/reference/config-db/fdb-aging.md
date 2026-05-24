@@ -15,6 +15,7 @@ sources:
 related:
   config_db:
     - DEVICE_METADATA
+    - SWITCH_TABLE
   cli:
     - show mac aging-time
 ---

@@ -442,8 +442,8 @@ if (gMySwitchType == "voq")
 
 <!-- /platform -->
 
-<!-- pubsub -->
-## 通信メカニズム (Phase G)
+<!-- pubsub-2 -->
+## 通信メカニズム補足 (Phase G — 詳細)
 
 > **調査根拠**: `fabricmgrd.cpp:14-72`; `fabricmgr.cpp:14-21`; `orchdaemon.cpp:604-610,1297-1303`; `fabricportsorch.cpp:80-133,1396-1400` 全行精読 (2026-05-19)
 
@@ -497,7 +497,7 @@ FabricPortsOrch orchdaemon select() loop
 ```
 
 詳細根拠は `meta/_intermediate/cdb-flow/fabric-monitor-pubsub.md` を参照。
-<!-- /pubsub -->
+<!-- /pubsub-2 -->
 
 ## 購読者
 
