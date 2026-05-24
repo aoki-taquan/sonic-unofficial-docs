@@ -60,7 +60,7 @@ flowchart LR
 
 - [`config banner`](../cli/config-banner.md)
 
-### 関連 HLD
+### 関連 YANG
 
 - [sonic-ssh-server YANG](../../reference/yang/sonic-ssh-server.md)
 

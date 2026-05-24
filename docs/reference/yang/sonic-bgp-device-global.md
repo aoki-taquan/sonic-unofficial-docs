@@ -123,11 +123,11 @@ module: sonic-bgp-device-global
 
 ### 典型的なデプロイ位置
 
-- BGP のデバイス全体パラメータ。`BGP_DEVICE_GLOBAL|STATE` を介して [FRR](../../reference/glossary.md#term-frr) の `bgp` グローバル設定 (TCP-AO 等) を制御する。
+- BGP のデバイス全体パラメータ。`BGP_DEVICE_GLOBAL|STATE` を介して TSA (Traffic Shift Away) / WCMP (Weighted ECMP) / IDF isolation 状態を制御し、`BGP_DEVICE_GLOBAL|CONFED` で confederation ASN・peers を設定する。変更は [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) / BgpGlobalStateOrch が [FRR](../../reference/glossary.md#term-frr) へ反映する。
 
 ### よくある落とし穴
 
-- `tcp_ao_enabled` を true にする場合は対向ルータ側との鍵設定整合を要する。leafref で keychain 名を参照する派生実装あり。
+- `idf_isolation_state` の enum 値 (`isolated_no_export` / `isolated_withdraw_all` / `unisolated`) はスペルが厳密。CLI 経由では検証されるが `sonic-db-cli` で直書きすると YANG バリデーションが効かないため任意文字列が混入しうる。
 
 ### 関連する config / show コマンド
 
