@@ -196,7 +196,7 @@ sudo config acl update full /etc/sonic/acl_rules.json
 sudo config acl update incremental /etc/sonic/acl_rules_delta.json
 
 # CtrlPlane ACL（SNMP/SSH 保護）
-sudo config acl add table SNMP_ACL CTRLPLANE -s ingress --services SNMP
+sudo config acl add table SNMP_ACL CTRLPLANE -s ingress
 ```
 
 ### 期待される出力 (抜粋)

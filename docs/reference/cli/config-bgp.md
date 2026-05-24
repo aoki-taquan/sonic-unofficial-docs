@@ -338,7 +338,7 @@ sudo config bgp device-global tsa enabled
 ### 期待される出力 (抜粋)
 
 ```text
-Starting up BGP session with neighbor 10.0.0.1 .....
+Shutting down BGP session with neighbor 10.0.0.1 .....
 ```
 <!-- /usage-example -->
 
