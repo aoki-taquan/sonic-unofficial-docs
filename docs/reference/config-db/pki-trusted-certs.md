@@ -378,7 +378,7 @@ const (
 
 | 定数 | 値 | 用途 | ソース |
 |------|-----|------|--------|
-| バックアップ拡張子 | `".bak"` | Rotate 失敗時ロールバック用 (symbolinc link restore) | `gnsi_certz.go:47` |
+| バックアップ拡張子 | `".bak"` | Rotate 失敗時ロールバック用 (symbolic link restore) | `gnsi_certz.go:47` |
 
 ### Integrity Manifest ファイルパス
 

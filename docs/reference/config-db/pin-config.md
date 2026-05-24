@@ -280,7 +280,7 @@ P4RT テーブルには専用 YANG モデルが存在しない。全デフォル
 
 ### P4RT|certs
 
-| フィールド | HLD 記述値 | 未設定時の動作 | 設定元 |
+| フィールド | [HLD](../../reference/glossary.md#term-hld) 記述値 | 未設定時の動作 | 設定元 |
 |-----------|-----------|--------------|--------|
 | `server_crt` | `/keys/server_cert.lnk` | 片方でも未設定 → insecure モード | `p4rt.sh` L22-27 |
 | `server_key` | `/keys/server_key.lnk` | 片方でも未設定 → insecure モード | `p4rt.sh` L22-27 |
