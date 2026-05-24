@@ -112,7 +112,7 @@ target file には **完全な config 全体** を渡す必要がある (`**WARN
 
 ## 注意
 
-- `config save` → ファイルを sort して書き戻すため、手書き JSON を `save` 経由で経由させると **キー順が変わる**。`git diff` で純粋な差分を見たい場合は注意。
+- `config save` → ファイルを sort して書き戻すため、手書き JSON を `save` 経由で適用させると **キー順が変わる**。`git diff` で純粋な差分を見たい場合は注意。
 - `config reload` は **CONFIG_DB を完全に置き換える**。`config save` していない一時的な設定変更は失われる。
 - `config replace` の `--format SONICYANG` 指定時は [YANG](../../reference/glossary.md#term-yang) モデルバリデーションが有効で、不適合な値は `--ignore-non-yang-tables` 等で個別に逃がす必要がある。
 - `config load` は merge なので、**削除した設定は CONFIG_DB に残る**。クリーンな状態にしたいなら必ず `config reload` を使う。
