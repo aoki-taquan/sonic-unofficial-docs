@@ -190,7 +190,7 @@ show ip bgp vrf Vnet1 summary
 
 **回避策**: `frrcfgd` 経由または `vtysh` で直接 FRR 設定を投入する（FRR 自体は unnumbered BGP をサポート済み）。
 
-**参照**: sonic-net/[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage)#26960（Bug, Triaged、修正 PR 検討中）
+**参照**: [sonic-net/sonic-buildimage#26960](https://github.com/sonic-net/sonic-buildimage/issues/26960)（Bug, Triaged、修正 PR 検討中）
 
 ---
 
