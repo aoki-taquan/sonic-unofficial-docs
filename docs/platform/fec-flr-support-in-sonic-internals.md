@@ -57,7 +57,7 @@ flowchart LR
 
 - `SAI_PORT_STAT_IF_IN_FEC_NOT_CORRECTABLE_FRAMES`
 - `SAI_PORT_STAT_IF_IN_FEC_CORRECTABLE_FRAMES`
-- `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S15`（RS-544 では 16 bin）
+- `SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S16`（RS-544 では S0〜S16 の 17 bin）
 
 未サポートの interface では個別 counter が **`not support`** を返し、`portstat -f` 上では `N/A` を表示[^1]。
 

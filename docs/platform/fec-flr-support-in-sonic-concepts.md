@@ -112,7 +112,7 @@ interval = port_stat POLL_INTERVAL * FLR_INTERVAL_FACTOR
 概念レベルでの読み手向け前提条件。実装側の詳細制限は [limitations](fec-flr-support-in-sonic-limitations.md) を参照。
 
 - **FLR は確率指標であって実観測ではない**: Predicted FLR は CER (Codeword Error Rate) と interleaving factor `X` から外挿される値。実トラフィックに直接観測される frame loss とは値域が一致しない。
-- **CER → FLR 変換は [ASIC](../reference/glossary.md#term-asic) ベンダ依存**: interleaving factor `X` はベンダ実装で異なる (典型 4 or 8)。ベンダ仕様を取らずに公開値だけで他機種と比較しない。
+- **CER → FLR 変換は [ASIC](../reference/glossary.md#term-asic) ベンダ依存**: interleaving factor `X` はポート速度・レーン数で決まり、HLD 定義では 1〜4 の範囲（100G×1lane が 1 or 2、400G 以上が 2 or 4）。ベンダ仕様を取らずに公開値だけで他機種と比較しない。
 - **計算周期は秒オーダ**: 短時間バースト (ms オーダ) の劣化は `FLR(O)` には反映されにくく、`FLR(P)` の経時変化として遅れて見える。リアルタイム障害検知用ではなく、劣化傾向検知用と理解する。
 - **低 BER 領域の `Accuracy` 低下**: errored codeword サンプル数が少ない健全リンクでは R² (Accuracy 列) が下がり、`FLR(P)` の絶対値の信頼性が落ちる。健全時の値はベースラインとしてのみ扱う。
 - **`FLR(P)` ≪ `FLR(O)` の領域は外挿が破綻**: Observed が立った時点で外挿モデルの仮定 (低 BER) を超えており、Predicted を運用判断に使うべきではない。
