@@ -60,6 +60,19 @@ related:
 
 ## 切り分け手順
 
+```mermaid
+flowchart TD
+    A[APPL_DB の更新が ASIC_DB に反映されない] --> B{APPL_DB にキーが存在する?}
+    B -- No --> B1[上流ルーティングデーモン / config ツールの出力確認]
+    B -- Yes --> C{orchagent が動いているか?}
+    C -- No --> C1[docker restart swss でリカバリ]
+    C -- Yes --> D{CRM リソース枯渇?}
+    D -- Yes --> D1[route summarization / リソース再見積もり]
+    D -- No --> E{syncd / SAI からエラー?}
+    E -- Yes --> E1[ベンダ SDK ログ / vendor support]
+    E -- No --> F[multi-asic namespace の反映確認]
+```
+
 ## 確認コマンド
 
 ### 1. DB 規模・差分

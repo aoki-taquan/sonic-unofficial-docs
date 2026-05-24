@@ -2,7 +2,7 @@
 title: ARP / Neighbor エントリが古い IP-MAC を保持し続ける
 description: "Runbook: ARP テーブルが stale な MAC を返し続けて traffic が黒穴化する場合の切り分け"
 area: reference
-verification: runbook-verified
+verification: hld-only
 last_verified: 2026-05-11
 tags: [runbook, arp, neighbor]
 sources:
