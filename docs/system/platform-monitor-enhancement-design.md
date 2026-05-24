@@ -162,7 +162,7 @@ reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
 
 ## 既知の問題
 
-### BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフ（sonic-buildimage#633）
+### BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフォーム（sonic-buildimage#633）
 
 BMC (Baseboard Management Controller) 経由でファン・センサー制御が可能なプラットフォームでは、platform API で BMC インターフェースを使う設計が必要
 
@@ -192,7 +192,7 @@ BMC (Baseboard Management Controller) 経由でファン・センサー制御が
 
 - 参照: [sonic-net/sonic-buildimage#5986](https://github.com/sonic-net/sonic-buildimage/issues/5986)
 
-### multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュす（sonic-buildimage#6097）
+### multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュする問題（sonic-buildimage#6097）
 
 multi-ASIC chassis で全 ASIC が BackEnd の場合に pmon xcvrd がクラッシュする問題。xcvrd は FrontEnd ASIC の存在を前提としており、全 BackEnd 構成では初期化に失敗する
 
