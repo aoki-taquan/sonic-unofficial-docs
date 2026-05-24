@@ -314,7 +314,7 @@ CLI の `add_snmp_agent_address()` と `del_snmp_agent_address()` は最後に `
 
 minigraph.py は `MGMT_VRF_CONFIG` を先行して格納後、`mgmt_intf`（MGMT_INTERFACE）と `lo_intfs`（LOOPBACK_INTERFACE）のアドレスを列挙して `SNMP_AGENT_ADDRESS_CONFIG` エントリを生成する。multi-asic 環境または `asic_name` 指定時は常に空辞書になる（L2312-2324）。[^5]
 
-**순序**: `sonic-cfggen` が minigraph 一括処理する場合は自動的に順序保証される（手動介入不要）。
+**順序**: `sonic-cfggen` が minigraph 一括処理する場合は自動的に順序保証される（手動介入不要）。
 
 ### 書込み順序依存サマリ
 
