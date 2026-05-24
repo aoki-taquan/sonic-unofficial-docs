@@ -21,7 +21,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-buildimage/src/sonic-frr/dplane_fpm_sonic/dplane_fpm_sonic.c` L170/L3467 で `prov_name = "dplane_fpm_sonic"` 登録、`patch/series` L11 で `0012-SONiC-ONLY-build-dplane-fpm-sonic-module.patch` 適用、`dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2` L46 で `zebra ... -M dplane_fpm_sonic` 起動、`sonic-swss/fpmsyncd/fpmlink.h` L18 で `RTM_NEWSRV6LOCALSID = 1000`、`fpmlink.cpp` L46 で dispatch を確認 (verified at: 2026-05-09)。
 
 # 新 FRR-SONiC 通信チャネル（`dplane_fpm_sonic` モジュール）

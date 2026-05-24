@@ -34,7 +34,7 @@ related:
 
 # Local ARS（Adaptive Routing & Switching の local 完結版）
 
-## design 意図
+## 設計意図
 
 Local ARS は [ECMP](../reference/glossary.md#term-ecmp) の next-hop 選択を **静的ハッシュではなく、出力キューの瞬時負荷や link 利用率に応じて動的に変える** 機能[^1]。AI / HPC 向けに RDMA 通信の hot-spot を抑え、tail latency を低減することを狙う。
 

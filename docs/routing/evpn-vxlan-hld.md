@@ -161,14 +161,6 @@ EVPN VXLAN 中核は実装されているが、HLD と実装の **名称・配�
 EVPN VXLAN セッションと VNI mapping を確認する。
 
 ```bash
-show vxlan tunnel
-show vxlan vlanvnimap
-show bgp l2vpn evpn summary 2>/dev/null | head
-```
-
-## 確認コマンド
-
-```bash
 # VTEP / tunnel の oper 状態
 show vxlan tunnel
 show vxlan vlanvnimap
@@ -196,12 +188,6 @@ docker exec bgp vtysh -c 'show evpn vni'
 
 - Topics: [VXLAN/EVPN 概念](../topics/03-vxlan-evpn/concept.md), [VXLAN/EVPN 構築](../topics/03-vxlan-evpn/setup.md), [VXLAN/EVPN 内部実装](../topics/03-vxlan-evpn/internals.md), [VXLAN/EVPN 運用](../topics/03-vxlan-evpn/operations.md)
 - 関連 HLD: [EVPN VXLAN Multihoming](evpn-vxlan-multihoming.md), [Overlay ECMP with BFD Monitoring](overlay-ecmp-with-bfd-monitoring.md)
-
-## 制限事項
-
-- EVPN type-2 / type-5 同時運用時に MAC mobility と prefix route の競合で経路収束が遅れるケースがある。
-- VTEP は単一 VLAN-aware bridge 前提で、MLAG 配下の dual-active VTEP では追加の MAC sync 機構が必要となる。
-- BUM トラフィックの ingress replication 対応のみ広く実装されており、PIM-SM/SSM ベースのマルチキャストレプリケーションはサポート範囲外の platform がある。
 
 ## 引用元
 
