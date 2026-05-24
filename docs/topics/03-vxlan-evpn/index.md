@@ -83,11 +83,11 @@ related:
 
 | ページ | 状態 | verification |
 |---|---|---|
-| concept | ✅ 完成 (173 行) | meta |
-| setup | ✅ 完成 (240 行) | meta |
-| operations | ✅ 完成 (167 行) | meta |
-| internals | ✅ 完成 (130 行) | meta |
-| advanced | ✅ 完成 (100 行) | meta |
+| concept | ✅ 完成 (220 行) | meta |
+| setup | ✅ 完成 (283 行) | meta |
+| operations | ✅ 完成 (206 行) | meta |
+| internals | ✅ 完成 (164 行) | meta |
+| advanced | ✅ 完成 (139 行) | meta |
 
 <!-- /chapter-progress -->
 
