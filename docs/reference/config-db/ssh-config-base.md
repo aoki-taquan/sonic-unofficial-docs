@@ -153,7 +153,7 @@ hostcfgd 起動
 
 ### max_sessions の書込み先分離
 
-`max_sessions` は `SSH_CONFIG_NAMES` に含まれず `set_policies()` 内で `continue`（スキップ）される。代わりに後続の `PamLimitsCfg.update_config_file()` が `/etc/security/limits.d/` に `maxlogins` として書き込む。このため `ssh_handler` では sshd_config 更新 → PAM limits 更新の順序が固定されている。
+`max_sessions` は `SSH_CONFIG_NAMES` に含まれず `set_policies()` 内で `continue`（スキップ）される。代わりに後続の `PamLimitsCfg.update_config_file()` が `/etc/security/limits.conf` に `maxsyslogins` として書き込む。このため `ssh_handler` では sshd_config 更新 → PAM limits 更新の順序が固定されている。
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1161 (SshServer クラス) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L2191-2277 (HostConfigDaemon.__init__ / load) -->
