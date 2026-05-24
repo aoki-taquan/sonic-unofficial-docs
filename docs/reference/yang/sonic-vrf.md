@@ -81,6 +81,14 @@ module: sonic-vrf
            +--rw vni?        uint32
 ```
 
+## container / list 一覧
+
+| 種別 | パス | key | 説明 |
+|------|------|-----|------|
+| `container` | `sonic-vrf` |  |  |
+| `container` | `sonic-vrf/VRF` |  | VRF instance configuration table |
+| `list` | `sonic-vrf/VRF/VRF_LIST` | `name` | Configuration entry for a VRF instance |
+
 ## leaf 一覧
 
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
