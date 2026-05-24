@@ -101,7 +101,7 @@ gnmic -a <switch>:8080 --tls-ca ca.pem --tls-cert client.pem --tls-key client.ke
 
 ## 関連ページ
 
-- [./telemetry-dialout-not-sending.md](./telemetry-dialout-not-sending.md)
+- [telemetry-dialout-not-sending.md](telemetry-dialout-not-sending.md)
 - [../../topics/10-gnmi-openconfig/operations.md](../../topics/10-gnmi-openconfig/operations.md)
 
 ## 引用元

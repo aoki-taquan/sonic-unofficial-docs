@@ -28,23 +28,6 @@ related:
 - `show interfaces counters errors` の `RX_ERR` / `FCS` が増加
 - [BGP](../../reference/glossary.md#term-bgp) peer が頻繁に flap
 
-## 確認コマンド
-
-```bash
-# flap 頻度 (直近 syslog)
-sudo grep "oper status changed" /var/log/syslog | grep Ethernet0 | tail -20
-
-# 光モジュール DOM
-show interfaces transceiver eeprom -d Ethernet0
-
-# FEC / RX エラー
-show interfaces counters fec-stats
-show interfaces counters errors Ethernet0
-
-# ASIC port_state_change の trigger
-docker logs syncd 2>&1 | grep -i "port_state_change" | tail -20
-```
-
 ## 想定原因（優先度順）
 
 1. **光モジュール (SFP/QSFP) の劣化**: DOM 値が閾値外
@@ -66,6 +49,8 @@ flowchart TD
     D -- Yes --> D1[fec-errors runbook へ]
     D -- No --> E[対向 LACP / autoneg の状態を確認]
 ```
+
+## 確認コマンド
 
 ### 1. flap 頻度の定量化
 
