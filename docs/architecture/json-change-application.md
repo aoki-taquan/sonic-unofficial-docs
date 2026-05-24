@@ -44,7 +44,8 @@ related:
 ### 入力契約
 
 ```python
-void apply_change(JsonChange jsonChange)  # エラーは例外
+def apply_change(json_change: JsonChange) -> None:  # エラーは例外
+    ...
 ```
 
 | 項目 | 内容 |
