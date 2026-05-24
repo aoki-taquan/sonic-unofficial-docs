@@ -2,9 +2,8 @@
 title: クリティカルリソースモニタリング (CRM) 要件
 description: クリティカルリソースモニタリング (CRM) 要件 — SONiC が稼働するスイッチ ASIC は、ルート / Nexthop / Neighbor / ACL TCAM / FDB といった テーブル容量が有限なリソース を抱えている。
 area: system
-verification: discrepancy-found
+verification: code-verified
 last_verified: 2026-05-13
-monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
   path: doc/crm/CRM_requirements.md
@@ -25,8 +24,8 @@ related:
   - sonic-flex_counter
 ---
 
-!!! warning "裏取りステータス: discrepancy-found"
-    このページは公式 HLD（要件定義文書）のみを根拠に書かれている。`orchagent` の CRM 実装、CLI (`crm show`)、CONFIG_DB の `CRM` テーブル等の実装裏取りは未済。詳細は末尾の裏取りメモを参照。
+!!! success "裏取りステータス: code-verified"
+    `orchagent` の CRM 実装（`crmorch.cpp` / `crmorch.h`）、CLI (`crm show`)、CONFIG_DB の `CRM` テーブルを確認済み。詳細は末尾の裏取りメモを参照。
 
 # クリティカルリソースモニタリング (CRM) 要件
 
@@ -144,11 +143,11 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 
 ### 関連する CONFIG_DB
 
-要件 HLD 上はテーブル名が明示されていない。実装側で `CRM` テーブルが追加されている可能性が高いが、本ページでは未確認のため空配列とする。実装裏取り（`code-verified` 昇格）時に追記する想定。
+実装では `CRM` テーブル（`CRM|Config` キー）が使用される。`sonic-yang-models/yang-models/sonic-crm.yang` にスキーマ定義あり。要件 HLD 上はテーブル名が明示されていない点に注意。
 
 ### 関連する CLI
 
-要件 HLD は `show` 系コマンドの提供を要求しているのみで、具体的なコマンド名は規定していない。実装としては `crm config thresholds` / `crm show resources` などが提供されている可能性があるが、本ページでは未確認。
+実装では `crm config thresholds` / `crm show resources` / `crm show thresholds` 等が `sonic-utilities` に提供されている。要件 HLD は `show` 系コマンドの提供を要求しているのみで、具体的なコマンド名は規定していない。
 
 ### 設定例
 
@@ -226,8 +225,8 @@ HLD の主要要件（SAI 経由のポーリング・しきい値超過時の sy
 
 ## 実装との乖離 / 補足
 
-- 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。新規テーブル名は HLD で明示されておらず、実装側で追加されている可能性が高い旨を本文で「未確認」と明示している。
-- 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+- Verifier batch 29 にて `code-verified` に昇格 (2026-05-13)。CRM Orch 実装・CLI・YANG の三点裏取り完了。
+- 要件 HLD はテーブル名を明示していないが、実装側で `CRM|Config` として追加されており整合を確認。
 
 ## 関連 Topics
 
