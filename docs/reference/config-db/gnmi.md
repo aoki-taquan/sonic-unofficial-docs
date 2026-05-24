@@ -397,7 +397,7 @@ Go バイナリの `setupFlags()` が引数を検証し、不正な組み合わ�
 |---|---|---|---|---|
 | [STATE_DB](../../reference/glossary.md#term-state_db) | `TELEMETRY_CONNECTIONS` (Hash) | デーモン起動 (`PrepareRedis()`) | 全既存エントリを `HDel` で削除 (起動時クリア) | `connection_manager.go:52-60` |
 | [STATE_DB](../../reference/glossary.md#term-state_db) | `TELEMETRY_CONNECTIONS` (Hash) | gNMI Subscribe RPC 開始 (`Add()`) | `HSet(table, key, "active")` | `connection_manager.go:116` |
-| STATE_DB | `TELEMETRY_CONNECTIONS` (Hash) | gNMI Subscribe RPC 終了 (`Remove()`) | `HDel(table, key)` | `connection_manager.go:127` |
+| [STATE_DB](../../reference/glossary.md#term-state_db) | `TELEMETRY_CONNECTIONS` (Hash) | gNMI Subscribe RPC 終了 (`Remove()`) | `HDel(table, key)` | `connection_manager.go:127` |
 
 **Hash フィールド (connection key) の生成規則**: `createKey()` が `<peer_ip:port>|<target_1>|<target_2>|...|<RFC3339_timestamp>` 形式で生成する (`connection_manager.go:94-108`)。値は常にハードコード `"active"` 固定。
 

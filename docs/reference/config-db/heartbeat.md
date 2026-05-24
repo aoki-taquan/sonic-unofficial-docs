@@ -111,7 +111,7 @@ YANG default は libyang/[sonic-mgmt](../../reference/glossary.md#term-sonic-mgm
 ### 典型値
 
 - key 形式: `HEARTBEAT|<key>`。
-- `interval`: 秒単位の hearbeat 間隔。デフォルトはイメージ依存。
+- `interval`: 秒単位の heartbeat 間隔。デフォルトはイメージ依存。
 
 ### よくある誤設定
 
