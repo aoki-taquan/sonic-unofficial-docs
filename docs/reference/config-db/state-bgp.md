@@ -262,7 +262,7 @@ CONFIG_DB BMP|table:
 
 ### BGP_PEER_CONFIGURED_TABLE — bgpcfgd による FRR 設定投入完了確認
 
-`bgpcfgd` の `BGPPeerMgrBase.update_state_db()` が FRR コンフィグ push 直後に書き込む。前提依存の詳細は [bgp-state.md の Phase B](bgp-state.md) を参照。主な順序制約:
+`bgpcfgd` の `BGPPeerMgrBase.update_state_db()` が FRR コンフィグ push 直後に書き込む。前提依存の詳細は本ページの「書込み順依存」セクションを参照。主な順序制約:
 
 - **SET**: FRR `cfg_mgr.push()` 成功後にのみ HSET。テンプレートレンダリング失敗時は書き込まれない。
 - **DEL**: FRR `no neighbor` 発行後に DELETE。`config reload` 時は全エントリを先に削除してから [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が再投入する。
