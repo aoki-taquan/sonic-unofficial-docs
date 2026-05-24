@@ -122,10 +122,11 @@ for ns in $(sudo ip netns list | awk '{print $1}'); do
 done
 ```
 
-## 関連 Topics
+## 関連ページ
 
 - [Topics 12 Multi-ASIC / VOQ - architecture](../topics/12-multi-asic-voq/architecture.md)
 - [Topics 12 Multi-ASIC / VOQ - internals](../topics/12-multi-asic-voq/internals.md)
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 - 関連 HLD: [Fabric port support (VOQ chassis)](fabric-port-support-on-sonic.md) / [Recirculation port (VOQ chassis)](recirculation-port-support-on-voq-chassis.md) / [Everflow on VOQ chassis](everflow-support-on-voq-chassis.md) / [Single-ASIC VOQ fixed system](single-asic-voq-fixed-system-sonic.md)
 
 ## 引用元
@@ -133,10 +134,6 @@ done
 [^1]: `sonic-net/SONiC` `doc/voq/voq_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## 関連 Topics (カテゴリ)
-
-- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
-
 <!-- /topics-back-ref -->
 
 <!-- glossary-links-injected: ec18b66e3507 -->
