@@ -207,7 +207,7 @@ flowchart LR
 
 ### 何を解決するか
 
-- **テナント / SLA 別の経路指定** → SRv6 Policy / Binding SID で「この trafic は東経路、別 traffic は西経路」のような明示経路を作る
+- **テナント / SLA 別の経路指定** → SRv6 Policy / Binding SID で「この traffic は東経路、別 traffic は西経路」のような明示経路を作る
 - **L3VPN / L2VPN underlay の現代化** → SRv6 で IPv6 だけの underlay に L3VPN を載せる（MPLS underlay を畳む）
 - **既存 MPLS 網との接続** — SONiC を MPLS LSR として配置し、静的 LSP で連携する
 - **障害観測の解像度向上** → Path Tracing で経路上の各 hop の通過時刻と nexthop を probe 単位で取る
