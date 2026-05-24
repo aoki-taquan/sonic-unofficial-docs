@@ -269,7 +269,7 @@ HLD で並列提示された Option 1 (recycle port 方式) / Option 2 (dst LC �
 
 <!-- /topics-back-ref -->
 
-## 参考リンク
+## 関連リファレンス
 
 本ページに関連する参照ドキュメント:
 

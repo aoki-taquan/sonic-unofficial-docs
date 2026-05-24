@@ -165,7 +165,7 @@ reasoning: namespace layer 1 段追加でスキーマ拡張する設計の根拠
 -->
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## 関連 Topics (カテゴリ)
 
 - [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
 

@@ -123,7 +123,7 @@ show interface counter fec-stat
 [^1]: `sonic-net/SONiC` `doc/port_fec-ber/port_fec_ber.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## 関連 Topics (カテゴリ)
 
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
