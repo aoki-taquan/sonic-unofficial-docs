@@ -35,7 +35,7 @@ hard: 0
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>BGP_GLOBALS_AF")]
-  DM["bgpcfgd"]
+  DM["frrcfgd"]
   CDB --> DM
 ```
 
@@ -47,6 +47,11 @@ flowchart LR
 
 ```text
 BGP_GLOBALS_AF|<vrf_name>|<afi_safi>
+```
+
+派生テーブルのキー構造:
+
+```text
 BGP_GLOBALS_AF_AGGREGATE_ADDR|<vrf_name>|<afi_safi>|<ip_prefix>
 BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 ```
@@ -103,9 +108,8 @@ BGP_GLOBALS_AF_NETWORK|<vrf_name>|<afi_safi>|<ip_prefix>
 
 ## 購読者
 
-- `bgpcfgd`: [CONFIG_DB](../../reference/glossary.md#term-config_db) の [BGP](../../reference/glossary.md#term-bgp) global AF 設定を [FRR](../../reference/glossary.md#term-frr) address-family 設定へ変換する。
-- `frr-mgmt-framework`: `DEVICE_METADATA.frr_mgmt_framework_config = true` のときに generic [BGP](../../reference/glossary.md#term-bgp) model として処理する。
-- `bgpd` ([FRR](../../reference/glossary.md#term-frr)): [vtysh](../../reference/glossary.md#term-vtysh) / mgmt framework 経由で最終的な AF 設定を保持する。
+- `frr-mgmt-framework` (`frrcfgd`): `BGP_GLOBALS_AF` を購読し、[CONFIG_DB](../../reference/glossary.md#term-config_db) の AF 設定を [FRR](../../reference/glossary.md#term-frr) address-family 設定へ変換する（`bgpcfgd` は本テーブルを購読しない）。
+- `bgpd` ([FRR](../../reference/glossary.md#term-frr)): [vtysh](../../reference/glossary.md#term-vtysh) 経由で最終的な AF 設定を保持する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -195,7 +199,7 @@ FRR `bgp_damp.h` 定数 (ソース: `sonic-frr/bgpd/bgp_damp.h`):
 
 ### 典型値
 
-- key 形式: `BGP_GLOBALS_AF|<vrf>|<af>` (af = `ipv4_unicast` / `ipv6_unicast` / `l2vpn_evpn` 等)`。
+- key 形式: `BGP_GLOBALS_AF|<vrf>|<af>` (af = `ipv4_unicast` / `ipv6_unicast` / `l2vpn_evpn` 等)。
 - `max_ebgp_paths` / `max_ibgp_paths`: 64（[ECMP](../../reference/glossary.md#term-ecmp) 上限）。`network_import_check`: `true`。
 
 ### よくある誤設定
