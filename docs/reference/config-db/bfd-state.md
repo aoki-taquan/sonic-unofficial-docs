@@ -2,7 +2,6 @@
 title: BFD_SESSION_TABLE (STATE_DB)
 description: "STATE_DB BFD_SESSION_TABLE — bfdorch が SAI セッション作成後に書き込む BFD セッション状態フィールド。SAI 通知受信ごとに state フィールドが更新される。"
 area: reference
-hard: 0
 verification: code-verified
 last_verified: 2026-05-16
 sources:
@@ -558,11 +557,6 @@ HW BFD 経路では SAI 通知が ASIC 内のタイマ精度に依存する。br
 - CLI: `show bfd peers`, `show bfd peers <ip>`, `show bfd peers details`
 
 <!-- ref-triangle:start -->
-
-## 関連リファレンス (補足)
-
-- CONFIG_DB: [`BFD_SESSION`](bfd-session.md)
-
 <!-- ref-triangle:end -->
 
 ## 引用元
