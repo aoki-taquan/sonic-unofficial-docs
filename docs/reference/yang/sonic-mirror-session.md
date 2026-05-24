@@ -1,6 +1,6 @@
 ---
 title: sonic-mirror-session YANG
-description: "sonic-mirror-session YANG — SONiC Mirror session yang model"
+description: "sonic-mirror-session YANG — ERSPAN / SPAN ミラーセッションの設定（セッション名・タイプ・src/dst IP・GRE type・DSCP・TTL・キュー・ポリサー）を保持する YANG モジュール。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -138,7 +138,7 @@ module: sonic-mirror-session
 
 ### よくある落とし穴
 
-- `dst_ip` leafref に loopback IP を入れる構成で、loopback 削除 → mirror session が orphan 化して route lookup 失敗を起こす。
+- `dst_ip`（ERSPAN 宛先 IP）に loopback IP を設定している場合、loopback 削除後も mirror session が残存（orphan 化）して route lookup 失敗を起こす。
 
 ### 関連する config / show コマンド
 
