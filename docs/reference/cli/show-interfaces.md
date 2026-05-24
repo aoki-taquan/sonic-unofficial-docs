@@ -239,7 +239,6 @@ show interfaces description
 - **multi-[ASIC](../../reference/glossary.md#term-asic) で `counterpoll` を namespace 指定しても default DB が更新される** (issue [#4375](https://github.com/sonic-net/sonic-utilities/issues/4375)): `sudo ip netns exec asic0 counterpoll pg-drop disable` のように `ip netns exec` 経由で呼んでも `CONFIG_DB`（asic0 の DB）ではなく default namespace の DB が更新される。`counterpoll pg-drop disable -n asic0` を使うこと。
 - **QSFP+C トランシーバで 8 lanes が表示される** (issue [#4065](https://github.com/sonic-net/sonic-utilities/issues/4065)): CMIS 管理の QSFP+C は物理 4 lanes だが `show interfaces transceiver status` / `eeprom` が lane 1-8 を出力し、lanes 5-8 は `Unknown` / `False` / 0 が並ぶ。表示上のノイズであり実際の lane 状態は 1-4 のみ参照すること。
 - **sfputil の読み取り系コマンドが `--help` に表示されない** (issue [#4518](https://github.com/sonic-net/sonic-utilities/issues/4518)): `sfputil lpmode --help` や `sfputil firmware --help` には変更コマンドしか表示されず、読み取り系の `sfputil show lpmode` / `sfputil show fwversion` は別の `show` グループにある。`sfputil show --help` で確認すること。
-- **multi-[ASIC](../../reference/glossary.md#term-asic) の `show ip tunnel` / tunnel 表で `val_state` 欠落時にカラムがズレる** (issue [#4480](https://github.com/sonic-net/sonic-utilities/issues/4480)): multi-ASIC モック環境や一部の実装で `val_state` が返らない場合、`status` カラムが 1 列ずれて表示される既知の不具合がある。
 
 ### 関連する show / debug
 
