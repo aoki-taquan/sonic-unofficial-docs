@@ -32,7 +32,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! note "裏取りステータス: code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-buildimage/files/image_config/cli_sessions/` 配下に `serial-config.service`, `serial-config.sh`, `tmout-env.sh.j2`, `sysrq-sysctl.conf.j2` が存在。`sonic-host-services/scripts/hostcfgd` 内 `serial_console_config_handler`（`config_db.subscribe('SERIAL_CONSOLE', ...)` を含む）と `init_data.get('SERIAL_CONSOLE', {})` 初期化を確認。
 
 # シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）
