@@ -529,6 +529,4 @@ ENI 統計 (`ENI_STAT_COUNTER_FLEX_COUNTER_GROUP`) および Meter 統計 (`METE
 
 [^orch]: `sonic-net/sonic-swss/orchagent/dash/dashorch.cpp` — `doTaskEniTable()` (L1045–1097), `addEniObject()` (L566–768), `removeEniObject()` (L896–942), `addEniAddrMapEntry()` (L770–800), `removeEniAddrMapEntry()` (L944–974), `addEniMapEntry()` (L1368–1383), `removeEniMapEntry()` (L1385–1397), `setEniRoute()` (L1181–1241), `removeEniRoute()` (L1243–1279).
 
-<!-- glossary-links-injected: dash-eni-2026-0514 -->
-
 <!-- glossary-links-injected: f9445b5b4106 -->

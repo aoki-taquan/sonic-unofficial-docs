@@ -131,7 +131,7 @@ DASH_ACL_RULE_TABLE:<group_id>:<rule_num>
 - `DashAclGroupMgr`: グループ・ルールの CRUD、ENI へのバインド/アンバインドを管理
 - `DashTagMgr`: `src_tag` / `dst_tag` の展開とタグ更新時のグループ再構築を担当
 
-## 関連 CONFIG_DB / YANG / CLI
+## 関連 APP_DB / YANG / CLI
 
 - 関連 APP_DB: `DASH_PREFIX_TAG_TABLE`、`DASH_ENI_TABLE`
 - 関連 CLI: なし（SDN コントローラ / [gNMI](../../reference/glossary.md#term-gnmi) 経由投入が主体）
