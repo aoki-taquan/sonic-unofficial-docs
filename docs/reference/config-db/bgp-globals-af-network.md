@@ -489,7 +489,7 @@ FRR [vtysh](../../reference/glossary.md#term-vtysh) コマンドリテラル、�
 <!-- /constants -->
 
 <!-- cross-refs -->
-## 暗黙参照テーブル (Task F Phase C)
+## 暗黙参照テーブル (Phase C)
 
 `frrcfgd` の `BGP_GLOBALS_AF_NETWORK` ハンドラが直接・間接に参照する他テーブルの一覧。
 

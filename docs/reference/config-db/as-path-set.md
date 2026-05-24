@@ -444,20 +444,19 @@ vtysh -c "show ip as-path-access-list"
 
 | # | ルール | 根拠 |
 |---|--------|------|
-| 6 | `AS_PATH_SET|T2_GROUP_ASNS` という名前は予約 (`AsPathMgr` が独占) | `managers_as_path.py:7, 43, 52, 56, 65` — frrcfgd 経路と AsPathMgr 経路が同名 access-list を取り合い不安定化 |
-| 7 | DEL は `ROUTE_MAP.match_as_path` を先に → `AS_PATH_SET|<name>` を後 | `frrcfgd.py:3008-3009` の `no bgp as-path access-list <name>` 発行後、ROUTE_MAP `match_as_path` は silent skip 状態で残る |
+| 5 | `AS_PATH_SET|T2_GROUP_ASNS` という名前は予約 (`AsPathMgr` が独占) | `managers_as_path.py:7, 43, 52, 56, 65` — frrcfgd 経路と AsPathMgr 経路が同名 access-list を取り合い不安定化 |
+| 6 | DEL は `ROUTE_MAP.match_as_path` を先に → `AS_PATH_SET|<name>` を後 | `frrcfgd.py:3008-3009` の `no bgp as-path access-list <name>` 発行後、ROUTE_MAP `match_as_path` は silent skip 状態で残る |
 
 ### 順序依存サマリ
 
 | # | 依存関係 | 区分 | 緩和策 |
 |---|----------|------|--------|
 | 1 | AS_PATH_SET SET → ROUTE_MAP `match_as_path` SET | 強制先行 | 順序遵守 |
-| 2 | UPDATE は全 no → 全 permit | 実装挙動（差分追加不可） | メンテ窓で実施 |
+| 2 | [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).type/subtype → bgpcfgd 再起動 → AsPathMgr 起動 | 強制先行（gate） | type/subtype 変更後 bgpcfgd 再起動 |
 | 3 | bgpd 起動: route_map.j2 → AS_PATH_SET レンダリング順 | 一過性窓（自然解消） | 運用無視可 |
 | 4 | bgpd 起動完了 → frrcfgd ハンドラ | supervisord + init キャッシュで吸収 | なし |
-| 5 | [DEVICE_METADATA](../../reference/glossary.md#term-device_metadata).type/subtype → bgpcfgd 再起動 → AsPathMgr 起動 | 強制先行（gate） | type/subtype 変更後 bgpcfgd 再起動 |
-| 6 | `T2_GROUP_ASNS` 名は予約 | 運用ルール | ユーザ AS_PATH_SET 名から除外 |
-| 7 | DEL: ROUTE_MAP match_as_path 先 → AS_PATH_SET 後 | 推奨 | 逆順でも DB 整合性は壊れない |
+| 5 | `T2_GROUP_ASNS` 名は予約 | 運用ルール | ユーザ AS_PATH_SET 名から除外 |
+| 6 | DEL: ROUTE_MAP match_as_path 先 → AS_PATH_SET 後 | 推奨 | 逆順でも DB 整合性は壊れない |
 
 <!-- evidence: managers_as_path.py:7,30-66; main.py:122-130; frrcfgd.py:96,1009-1020,1940,2248-2253,3005-3011; bgpd.conf.db.j2:6-20; sonic-route-map.yang:263-268 -->
 
