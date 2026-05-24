@@ -1,6 +1,6 @@
 ---
 title: sonic-bgp-peergroup YANG
-description: "sonic-bgp-peergroup YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
+description: "sonic-bgp-peergroup YANG — sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-bgp-peergroup.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -56,10 +56,6 @@ flowchart LR
 ### 関連 CLI
 
 - [`config bgp`](../cli/config-bgp.md)
-
-### 関連 HLD
-
-- [sonic-bgp-sentinel YANG](../../reference/yang/sonic-bgp-sentinel.md)
 
 <!-- /yang-xref -->
 

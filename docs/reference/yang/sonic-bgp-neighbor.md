@@ -1,6 +1,6 @@
 ---
 title: sonic-bgp-neighbor YANG
-description: "sonic-bgp-neighbor YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-bgp-neighbor.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
+description: "sonic-bgp-neighbor YANG — sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-bgp-neighbor.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -56,11 +56,6 @@ flowchart LR
 ### 関連 CLI
 
 - [`config bgp`](../cli/config-bgp.md)
-
-### 関連 HLD
-
-- [sonic-bgp-aggregate-address YANG](../../reference/yang/sonic-bgp-aggregate-address.md)
-- [sonic-bgp-sentinel YANG](../../reference/yang/sonic-bgp-sentinel.md)
 
 <!-- /yang-xref -->
 
@@ -301,14 +296,6 @@ sonic-db-cli CONFIG_DB keys 'BGP_NEIGHBOR|*'
 show ip bgp summary
 ```
 <!-- /ops-hint -->
-
-## 参考リンク
-
-- [CONFIG_DB: BGP_NEIGHBOR](../config-db/bgp-neighbor.md)
-- [CLI: show bgp](../cli/show-bgp.md)
-- [CLI: config bgp](../cli/config-bgp.md)
-- [Topics: BGP](../../topics/02-bgp/index.md)
-- [Runbook: BGP session down](../runbooks/bgp-session-down.md)
 
 ## 引用元
 
