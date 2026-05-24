@@ -201,10 +201,6 @@ sudo grep -i 'buffermgrd' /var/log/syslog | tail -50
 - shared headroom pool 更新時の profile 再計算: L1609-L1681
 - PG への適用ガード: L1737-L1757
 
-## 関連トピック
-
-- [Topics: QoS / Buffer](../topics/08-qos-buffer/index.md)
-
 ## 関連ページ
 
 - [Reclaim Reserved Buffer](./reclaim-reserved-buffer.md)
