@@ -131,13 +131,12 @@ tcp         198.51.100.4:53245  203.0.113.10:80   198.51.100.4:53245   10.10.0.5
 sudo config nat add pool POOL1 203.0.113.32-203.0.113.47
 sudo config acl add table NAT_ACL L3 -p Ethernet48
 sudo config acl rule create NAT_ACL R10 --src-ip 10.10.0.0/24 --action FORWARD
-sudo config nat add binding BIND1 --pool POOL1 --acl-name NAT_ACL --nat-type dnat
+sudo config nat add binding BIND1 POOL1 NAT_ACL -nat_type snat
 ```
 
 `NAT_POOL` / `NAT_BINDINGS` テーブルに反映され、`natsyncd` が conntrack を作成して `APPL_DB:NAT_TABLE` 経由で [SAI](../../reference/glossary.md#term-sai) へ流します。
 
 ## 設定シナリオ 3: ToR の DHCP relay と giaddr 固定
-
 
 
 VLAN 10 / 20 を持つ ToR で、外部 DHCP server に中継する最小構成は次の通りです。
