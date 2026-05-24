@@ -23,7 +23,7 @@ related:
 
 # 内部実装
 
-[gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig の内部実装は、`telemetry` コンテナの中に gNMI server があり、translib / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common 経由で [YANG](../../reference/glossary.md#term-yang) → [CONFIG_DB](../../reference/glossary.md#term-config_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) に変換するという縦の流れを押さえると整理できます。GET / SET / SUBSCRIBE で経路がそれぞれ違うのが特徴です。
+[gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig の内部実装は、`telemetry` コンテナの中に gNMI server があり、translib / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-common 経由で [YANG](../../reference/glossary.md#term-yang) → [CONFIG_DB](../../reference/glossary.md#term-config_db) / [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) に変換するという縦の流れを押さえると整理できる。GET / SET / SUBSCRIBE で経路がそれぞれ違うのが特徴である。
 
 ## データフロー
 
