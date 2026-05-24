@@ -128,7 +128,7 @@ Subnet decap は VXLAN overlay ではなく、[VLAN](../../reference/glossary.md
 - KVM-based VS lab (`sonic-mgmt` ansible playbook 中の `vxlan-evpn` topology) で EVPN Type-2/3/5 の基本動作を再現できる。`virsh` で VTEP を 3 台立て、leaf-spine で `bgp l2vpn evpn` を運用する。
 - DASH/SmartSwitch 系の検証は DPU sim (`sonic-dash-kvm` HLD 参照) を併用する。VNET tunnel と ENI redirect の責務分担を観察できる。
 
-## 関連ページ (追補)
+## 参照 HLD ページ
 
 - [Overlay ECMP enhancements](../../routing/overlay-ecmp-enhancements.md)
 - [Overlay ECMP with BFD monitoring](../../routing/overlay-ecmp-with-bfd-monitoring.md)

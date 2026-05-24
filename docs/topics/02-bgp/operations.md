@@ -81,7 +81,7 @@ Peers 24, using 502080 KiB of memory
 Peer groups 4, using 256 bytes of memory
 
 
-Neighbhor      V     AS    MsgRcvd    MsgSent    TblVer    InQ    OutQ  Up/Down    State/PfxRcd    NeighborName
+Neighbor       V     AS    MsgRcvd    MsgSent    TblVer    InQ    OutQ  Up/Down    State/PfxRcd    NeighborName
 -----------  ---  -----  ---------  ---------  --------  -----  ------  ---------  --------------  --------------
 10.0.0.1       4  65200       5919       2717         0      0       0  1d21h11m   6402            ARISTA01T2
 10.0.0.5       4  65200       5916       2714         0      0       0  1d21h10m   6402            ARISTA03T2
