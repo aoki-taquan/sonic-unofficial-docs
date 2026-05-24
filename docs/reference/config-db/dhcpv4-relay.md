@@ -528,8 +528,8 @@ COUNTERS_DB COUNTERS_DHCPV4|<Vlan>|TX  {Discover: N, Offer: N, ..., Dropped: N}
 
 ### 典型値
 
-- key 形式: `DHCP_RELAY|<vlan>` (DHCPv4 relay)`。
-- `dhcp_servers`: relay 先 IPv4。`source_interface`: 任意の SVI / Loopback。
+- key 形式: `DHCPV4_RELAY|<vlan>`。
+- `dhcpv4_servers`: relay 先 IPv4。`source_interface`: 任意の SVI / Loopback。
 
 ### よくある誤設定
 
