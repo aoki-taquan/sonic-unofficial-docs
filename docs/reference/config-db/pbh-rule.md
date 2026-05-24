@@ -283,7 +283,7 @@ PBH_TABLE|<table_name>  DEL  または  PBH_HASH|<hash_name>  DEL
 | `inner_ether_type` | `0xFFFF`（16 bit 完全一致） | `pbhmgr.cpp:658` |
 
 !!! note "discrepancy: YANG に mask 仕様なし"
-    YANG (`sonic-pbh.yang`) はこれら match フィールドの型を hex 文字列として定義するが、mask の値域については記述しない。实際に適用される完全一致 mask はコードのみで決定され、YANG 経由で変更できない。
+    YANG (`sonic-pbh.yang`) はこれら match フィールドの型を hex 文字列として定義するが、mask の値域については記述しない。実際に適用される完全一致 mask はコードのみで決定され、YANG 経由で変更できない。
 
 ### 固定文字列定数 (pbhschema.h)
 
