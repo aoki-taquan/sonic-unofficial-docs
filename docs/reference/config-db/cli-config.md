@@ -199,7 +199,7 @@ show ssh
 sonic-db-cli CONFIG_DB hgetall 'SSH_SERVER|POLICIES'
 
 # 適用済み sshd_config の確認
-sudo sshd -T | grep -E 'maxauthtries|logingracetimedead|port|clientaliveinterval|passwordauthentication'
+sudo sshd -T | grep -E 'maxauthtries|logingracetime|port|clientaliveinterval|passwordauthentication'
 ```
 <!-- /ops-hint -->
 

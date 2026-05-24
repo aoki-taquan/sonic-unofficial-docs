@@ -67,7 +67,7 @@ BFD_SESSION_TABLE:<vrf>:<interface>:<peer_ip>
 | `rx_interval` | uint32 (ms) | `1000` | 最小受信間隔 (ミリ秒)。SAI 投入時に ×1000 してマイクロ秒変換 |
 | `multiplier` | uint8 | `10` (hardware) / `3` (software) | 検知乗数 (detect multiplier) |
 | `multihop` | boolean string | `"false"` | マルチホップ BFD を有効化 |
-| `tos` | uint8 | `192` | IP TOS / [DSCP](../../reference/glossary.md#term-dscp) 値。デフォルト [DSCP](../../reference/glossary.md#term-dscp) 48 (EF) を 2 ビット左シフトして 192 (0xC0) |
+| `tos` | uint8 | `192` | IP TOS / [DSCP](../../reference/glossary.md#term-dscp) 値。デフォルト [DSCP](../../reference/glossary.md#term-dscp) 48 (CS6) を 2 ビット左シフトして 192 (0xC0) |
 | `dst_mac` | MAC アドレス (string) | 条件付き必須 | 宛先 MAC アドレス。`interface != "default"` の場合のみ有効・必須 |
 | `shutdown_bfd_during_tsa` | boolean string | 未指定 = TSA 連動なし | `"true"` のとき TSA 状態で BFD セッションを削除し Down 通知 |
 
@@ -473,7 +473,7 @@ APPL_DB `BFD_SESSION_TABLE` に対応する [YANG](../../reference/glossary.md#t
 | `tx_interval` | `1000` ms | `#define BFD_SESSION_DEFAULT_TX_INTERVAL 1000` — `bfdorch.cpp:15` | SAI 投入時は ×1000 μs |
 | `rx_interval` | `1000` ms | `#define BFD_SESSION_DEFAULT_RX_INTERVAL 1000` — `bfdorch.cpp:16` | SAI 投入時は ×1000 μs |
 | `multiplier` | `10` (hardware) / `3` (software) | `#define BFD_SESSION_DEFAULT_DETECT_MULTIPLIER 10` — `bfdorch.cpp:17`; `MULTIPLIER = 3` — `managers_bfd.py:13` | `use_software_bfd` 経路で値が異なる |
-| `tos` | `192` ([DSCP](../../reference/glossary.md#term-dscp) 48) | `#define BFD_SESSION_DEFAULT_TOS 192` — `bfdorch.cpp:18-19` | DSCP 48 << 2 \| ECN 0 = 0xC0 |
+| `tos` | `192` ([DSCP](../../reference/glossary.md#term-dscp) 48) | `#define BFD_SESSION_DEFAULT_TOS 192` — `bfdorch.cpp:18-19` | DSCP 48 (CS6) << 2 \| ECN 0 = 0xC0 |
 | `multihop` | `false` | `bool multihop = false` — `bfdorch.cpp:347` | |
 | `local_addr` | **必須 (省略不可)** | `src_ip_provided == false` → エラーログ + スキップ — `bfdorch.cpp:409-413` | [YANG](../../reference/glossary.md#term-yang) mandatory なし、コードレベル強制 |
 | `dst_mac` | 条件付き必須 | `alias != "default"` のとき必須 — `bfdorch.cpp:491-495` | |

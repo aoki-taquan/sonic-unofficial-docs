@@ -205,8 +205,8 @@ vtysh -c 'show bgp neighbor <ip>'
 対象テーブル: `BGP_NEIGHBOR_AF`
 
 ### CLI
-- `vtysh` 経由 neighbor address-family コマンド群 ([bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が [CONFIG_DB](../../reference/glossary.md#term-config_db) へ書き戻し)
-  - ソース: `sonic-frr bgpcfgd`
+- `vtysh` 経由 neighbor address-family コマンド群 (`frrcfgd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) へ書き戻し)
+  - ソース: `sonic-frr-mgmt-framework frrcfgd`
 
 ### minigraph / sonic-cfggen
 - あり: `sonic-cfggen -m <minigraph.xml>` 実行時に本テーブルが生成・上書きされる

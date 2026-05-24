@@ -19,7 +19,6 @@ related:
     - config bgp
   yang:
     - sonic-bgp-peerrange
-hard: 0
 ---
 
 # BGP_PEER_RANGE テーブル
