@@ -90,7 +90,7 @@ excerpt: |
 `show route-map` 自体は [CONFIG_DB](../../reference/glossary.md#term-config_db) を参照しない。[SONiC](../../reference/glossary.md#term-sonic) で route-map を定義するには `ROUTE_MAP` / `ROUTE_MAP_SET` などのテーブルか、または FRR config を直接書く方法のみで、`config route-map` 系の CLI は **コミュニティ版 master には存在しない**（`config/main.py` 上では `route-map` グループは未定義）。
 
 <!-- cli-mermaid -->
-### データフロー (自動生成)
+### データフロー (手動作成)
 
 ```mermaid
 flowchart LR

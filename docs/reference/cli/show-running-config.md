@@ -48,9 +48,9 @@ related:
 | `show runningconfiguration ntp` | `/etc/chrony/chrony.conf` を grep | ファイルパース |
 | `show runningconfiguration snmp` | [SNMP](../../reference/glossary.md#term-snmp) / SNMP_COMMUNITY / SNMP_USER 全部 | `show_run_snmp` |
 | `show runningconfiguration snmp community` | community のみテーブル表示 | [CONFIG_DB](../../reference/glossary.md#term-config_db) |
-| `show runningconfiguration snmp contact` | contact 表示 | CONFIG_DB |
-| `show runningconfiguration snmp location` | location 表示 | CONFIG_DB |
-| `show runningconfiguration snmp user` | user 一覧 | CONFIG_DB |
+| `show runningconfiguration snmp contact` | contact 表示 | [CONFIG_DB](../../reference/glossary.md#term-config_db) |
+| `show runningconfiguration snmp location` | location 表示 | [CONFIG_DB](../../reference/glossary.md#term-config_db) |
+| `show runningconfiguration snmp user` | user 一覧 | [CONFIG_DB](../../reference/glossary.md#term-config_db) |
 | `show runningconfiguration syslog` | `/etc/rsyslog.conf` から `omfwd` Target を抽出 | ファイルパース |
 | `show runningconfiguration spanning_tree` | STP / STP_PORT / STP_VLAN / STP_VLAN_PORT を順次 | `sonic-cfggen` |
 | `show runningconfiguration copp` | COPP_GROUP / COPP_TRAP | `sonic-cfggen` |
