@@ -172,12 +172,6 @@ redis-cli -n 0 keys 'NEXT_HOP_GROUP_TABLE*' | head
 show ip route summary
 ```
 
-## 関連トピック
-
-- [Topics: VRF / ECMP](../topics/04-vrf-ecmp/index.md) — next-hop group / ECMP の全体像
-- [fpmsyncd-nexthop-group-enhancement-high-level-design-document](fpmsyncd-nexthop-group-enhancement-high-level-design-document.md)
-- [sonic-weighted-ecmp](sonic-weighted-ecmp.md)
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ip/next_hop_group_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
@@ -186,6 +180,8 @@ show ip route summary
 ## 関連 Topics
 
 - [Topics: VRF / ECMP / RIB-FIB パイプライン](../topics/04-vrf-ecmp/index.md)
+- [fpmsyncd-nexthop-group-enhancement-high-level-design-document](fpmsyncd-nexthop-group-enhancement-high-level-design-document.md)
+- [sonic-weighted-ecmp](sonic-weighted-ecmp.md)
 
 <!-- /topics-back-ref -->
 

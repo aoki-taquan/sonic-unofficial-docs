@@ -153,6 +153,9 @@ sudo ip rule del from <重複IP> lookup mgmt
 - スイッチ発のアプリは 201911 では `cgexec` 接頭辞が必要（透過しない）
 - `lo-m` ダミーループバックは NTP `ntpq` 用の workaround
 - 詳細フローと各アプリ改修箇所は HLD `doc/mgmt/sonic_stretch_management_vrf_design.md` を参照
+- 本設計は 201911 リリース時点のもので、master ブランチでは netns ベースの management VRF (`mgmt`) 実装に置き換わっており、CLI / sysctl 周りで挙動が異なる
+- non-default VRF からの DNS / NTP / TACACS+ 利用は各サービスが VRF-aware に再実装される必要があり、サービスにより未対応のものがある
+- snmpd / sshd の bind を mgmt VRF に閉じる場合、systemd ユニット側で `ip vrf exec` ラップを行う必要がある
 
 ## 7. 干渉する機能
 
@@ -181,12 +184,6 @@ ip route show vrf mgmt
 
 - Topics: [VRF / ECMP 概念](../topics/04-vrf-ecmp/concept.md), [VRF / ECMP 構築](../topics/04-vrf-ecmp/setup.md), [VRF / ECMP 運用](../topics/04-vrf-ecmp/operations.md)
 - 関連 HLD: [SONiC VRF Support Design Spec](sonic-vrf-support-design-spec-draft.md)
-
-## 制限事項
-
-- 本設計は 201911 リリース時点のもので、master ブランチでは netns ベースの management VRF (`mgmt`) 実装に置き換わっており、CLI / sysctl 周りで挙動が異なる。
-- non-default VRF からの DNS / NTP / TACACS+ 利用は各サービスが VRF-aware に再実装される必要があり、サービスにより未対応のものがある。
-- snmpd / sshd の bind を mgmt VRF に閉じる場合、systemd ユニット側で `ip vrf exec` ラップを行う必要がある。
 
 ## 引用元
 

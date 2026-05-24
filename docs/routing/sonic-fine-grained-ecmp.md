@@ -155,6 +155,9 @@ SAI_NEXT_HOP_GROUP_MEMBER_ATTR_INDEX     # bucket index
 - スケール: グループ数 8、bucket size は HW 依存（最大 4k）[^1]
 - 全 prefix に consistent ECMP を効かせる「動的有効化」は [HLD](../reference/glossary.md#term-hld) スコープ外[^1]
 - route/nexthop モードでは `FG_NHG_MEMBER` 未定義の NH は **黙って ASIC に伝播されない**（syslog エラーのみ）[^1]
+- FG-ECMP は per-prefix の hash bucket 制御を [SAI](../reference/glossary.md#term-sai) 経由で行うため、ASIC が `SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP` を未サポートだと有効化できない
+- bucket 数は platform 依存 (典型的に 16 / 64 / 256) で、`FG_NHG` テーブルで指定したサイズと一致しない場合は flap 時の影響範囲が変わる
+- inactive nexthop の bucket 入れ替え動作は実装/HLD 間で差異が報告されており、`saidump` で実際の bucket 配列を検証することを推奨
 
 ## 8. 干渉する機能
 
@@ -181,12 +184,6 @@ redis-cli -n 4 keys 'FG_NHG*'
 
 - Topics: [VRF / ECMP 概念](../topics/04-vrf-ecmp/concept.md), [ECMP 詳細](../topics/04-vrf-ecmp/ecmp.md), [VRF / ECMP 内部実装](../topics/04-vrf-ecmp/internals.md), [VRF / ECMP 運用](../topics/04-vrf-ecmp/operations.md)
 - 関連 HLD: [SONiC Weighted ECMP](sonic-weighted-ecmp.md), [Local ARS HLD](local-ars-hld.md), [Overlay ECMP Enhancements](overlay-ecmp-enhancements.md), [Multiple Nexthop Route HLD](multiple-nexthop-route-hld.md)
-
-## 制限事項
-
-- FG-ECMP は per-prefix の hash bucket 制御を SAI 経由で行うため、ASIC が `SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP` を未サポートだと有効化できない。
-- bucket 数は platform 依存 (典型的に 16 / 64 / 256) で、`FG_NHG` テーブルで指定したサイズと一致しない場合は flap 時の影響範囲が変わる。
-- inactive nexthop の bucket 入れ替え動作は実装/HLD 間で差異が報告されており、`saidump` で実際の bucket 配列を検証することを推奨。
 
 ## 引用元
 
