@@ -119,7 +119,7 @@ sudo config switchport mode routed PortChannel1
 - **`Error: Got unexpected extra argument`**: HLD の `config switchport mode access <port> <vlan>` 形を打った場合に出る。`<vlan>` は別コマンド (`config vlan member add`) に分離する
 
 
-### コマンド例
+## コマンド例（確認）
 
 switchport CLI 操作後の CONFIG_DB 状態を確認する。
 
