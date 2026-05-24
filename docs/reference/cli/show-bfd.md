@@ -16,7 +16,7 @@ related:
   cli:
   - show bfd
   yang:
-  - sonic-interface
+  - sonic-bfd
 ---
 
 # show bfd サブコマンド
