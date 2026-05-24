@@ -200,7 +200,7 @@ flowchart LR
 ### 典型的な使い方
 
 ```bash
-# 例 1: VxLAN tunnel と EVPN map を構成
+# 例 1: VXLAN tunnel と EVPN map を構成
 sudo config vxlan add vtep1 10.0.0.1
 sudo config vxlan map add vtep1 100 10100
 ```
@@ -217,7 +217,7 @@ sudo config vxlan del vtep1
 ### 期待される出力 (抜粋)
 
 ```text
-VxLAN tunnel vtep1 added.
+VXLAN tunnel vtep1 added.
 ```
 <!-- /usage-example -->
 
@@ -226,7 +226,7 @@ VxLAN tunnel vtep1 added.
 
 ### 典型的な利用シーン
 
-- VxLAN tunnel 作成、VLAN-VNI map、EVPN VNI 紐付け。
+- VXLAN tunnel 作成、VLAN-VNI map、EVPN VNI 紐付け。
 - [VNET](../../reference/glossary.md#term-vnet) (asymmetric IRB) のセットアップ起点。
 
 ### よくある落とし穴
