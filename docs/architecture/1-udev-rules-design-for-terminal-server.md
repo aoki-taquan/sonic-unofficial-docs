@@ -189,11 +189,11 @@ ls -l /dev/Mytty*
 下記コマンドを順に実行することで、udev rules の適用状態とハードウェア symlink、関連 syslog の整合を一通り突き合わせ確認できる（本 HLD は SONiC 内部 DB と対話しない）。
 
 ```bash
-# udev rule の適用状態と /dev/console-* シンボリックリンクを確認
-ls -l /dev/console-*
+# udev rule の適用状態と /dev/Mytty-* シンボリックリンクを確認
+ls -l /dev/Mytty*
 udevadm info --query=all --name=/dev/ttyUSB0 | head -30
-# console_mgr / line-card 認識ログ
-sudo grep -Ei 'udev|console' /var/log/syslog | tail -30
+# udev / cp210x 認識ログ
+sudo grep -Ei 'udev|cp210x|ttyUSB' /var/log/syslog | tail -30
 ```
 
 

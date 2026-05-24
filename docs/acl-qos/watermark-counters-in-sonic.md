@@ -42,7 +42,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（キー名は TELEMETRY_INTERVAL）"
+!!! success "裏取りステータス: code-verified（キー名は TELEMETRY_INTERVAL）"
     `sonic-swss/orchagent/watermarkorch.{h,cpp}` で `WatermarkOrch` 実装、`DEFAULT_TELEMETRY_INTERVAL=120` (cpp L9)、`CFG_WATERMARK_TABLE.TELEMETRY_INTERVAL` キー処理 (cpp L97) を確認。Lua plugin `watermark_bufferpool.lua` / `watermark_pg.lua` / `watermark_queue.lua` あり。`STATS_MODE_READ_AND_CLEAR` は `bufferorch.cpp` L334 / `portsorch.cpp` L868/L874 で利用。**HLD の `TELEMETRY_PERIOD` 表記は実装では `TELEMETRY_INTERVAL`** (verified at: 2026-05-09)。
 
 # バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）
