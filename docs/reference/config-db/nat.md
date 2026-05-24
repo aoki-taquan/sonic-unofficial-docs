@@ -158,7 +158,7 @@ show nat translations
 - **nat_timeout が 300-432000 の範囲外 → YANG が拒否 (デフォルト 600)**: `range "300..432000"` / `default "600"`。
 - **nat_tcp_timeout が 300-432000 の範囲外 → YANG が拒否**: `range "300..432000"`。
 - **nat_udp_timeout が 120-600 の範囲外 → YANG が拒否**: `range "120..600"`。
-- **nat_type のデフォルト = "dnat"**: YANG `default dnat`。省略時は DNAT エントリとして処理される。
+- **STATIC_NAT / STATIC_NAPT の nat_type デフォルト = "dnat"**: YANG `default dnat`。省略時は DNAT エントリとして処理される。一方 NAT_BINDINGS の `nat_type` デフォルトは `"snat"` であり逆方向であることに注意。
 - **デフォルトルート / サブネットルートの更新は無視**: routeOrch からのルート更新イベントでデフォルトルートまたはサブネットベースのルートは `"Ignore default or subnet nexthop update event"` としてスキップ (`natorch.cpp` L185-189)。
 
 <!-- value-behavior -->
