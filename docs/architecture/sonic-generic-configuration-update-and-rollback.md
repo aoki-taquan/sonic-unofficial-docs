@@ -117,20 +117,6 @@ sudo config checkpoint list
 sudo config rollback <checkpoint>
 ```
 
-### コマンド例: GCU 動作確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# GCU patch の適用とチェックポイント
-sudo config apply-patch /tmp/patch.json --dry-run
-sudo config checkpoint list
-sudo config rollback <checkpoint>
-```
-
-
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/config-generic-update-rollback/SONiC_Generic_Config_Update_and_Rollback_Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
