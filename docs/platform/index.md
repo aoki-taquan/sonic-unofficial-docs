@@ -78,8 +78,7 @@ last_verified: 2026-05-13
 | [platform.json の capabilities 拡張（LED 色 / fan speed 範囲 / controllable）](platform-capability-file-enhancement.md) | Code-verified |
 | [psud（PSU 監視デーモン / power threshold ヒステリシス）](sonic-psu-daemon-design.md) | Code-verified |
 | [sai_query_stats_capability による Counter Capability 一括取得](query-stats-capability-new-sai-api-indroduction.md) | Code-verified |
-| [sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）](sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs.md) | Code-verified |
-| [sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作）](sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset.md) | Code-verified |
+| [sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）](sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset.md) | Code-verified |
 | [ポート / LAG の TPID 設定（0x8100/0x9100/0x9200/0x88A8）](sonictpidsettinghld1.md) | Code-verified |
 | [単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）](single-asic-voq-fixed-system-sonic.md) | Code-verified |
 | [拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）](enhanced-lpo-debug-registers-hld.md) | HLD-only |
