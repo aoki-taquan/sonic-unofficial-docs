@@ -16,9 +16,9 @@ sources:
 - docs/architecture/sonic-port-configuration-refactor-design.md
 related:
   cli:
-  - config qos
-  - show acl
-  - config acl
+  - show interfaces status
+  - config interface speed
+  - show interfaces transceiver
   config_db:
   - PORT
   - ACL_RULE
