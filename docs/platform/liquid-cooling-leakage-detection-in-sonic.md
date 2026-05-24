@@ -53,7 +53,7 @@ related:
 flowchart LR
   HW[Leak Sensor] --> API[LiquidCoolingBase Platform API]
   API --> TC[thermalctld<br>LiquidCoolingUpdater 別スレッド]
-  TC --> SDB[(STATE_DB:<br>LIQUID_COOLING_DEVICE)]
+  TC --> SDB[(STATE_DB:<br>LIQUID_COOLING_INFO)]
   SDB --> SH[system-health<br>hardware_checker.py]
   SH -->|gNMI event| EXT[外部監視]
   TC --> SYSLOG[syslog ERROR]
