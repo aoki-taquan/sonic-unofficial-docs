@@ -42,6 +42,7 @@ L2 / link layer の制御面を扱う。具体的には:
 - L2 over IP ([VXLAN](../reference/glossary.md#term-vxlan) / NVGRE / VNet) は [overlay](../overlay/index.md) 章
 - [ACL](../reference/glossary.md#term-acl) / [QoS](../reference/glossary.md#term-qos) / buffer / scheduler は [acl-qos](../acl-qos/index.md) 章
 - PortChannel / VLAN の **CLI コマンド一覧** や **[CONFIG_DB](../reference/glossary.md#term-config_db) テーブル定義** は [reference](../reference/index.md) 章
+
 ## 検証状況
 - ページ数: 19
 - 分布: Code-verified: 12 / Discrepancy-found: 4 / HLD-only: 3
