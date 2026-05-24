@@ -56,7 +56,7 @@ flowchart LR
 
 - [`config qos`](../cli/config-qos.md)
 
-### 関連 HLD
+### 関連 YANG
 
 - [sonic-dscp-tc-map YANG](../../reference/yang/sonic-dscp-tc-map.md)
 - [sonic-tc-queue-map YANG](../../reference/yang/sonic-tc-queue-map.md)
