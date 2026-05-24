@@ -224,7 +224,7 @@ config bgp error-handling disable
 BGP route install error の有効状態と ERROR_DB を確認する (現行 master では未実装、Suppress FIB Pending に置換)。
 
 ```bash
-show runningconfig bgp | grep -iE 'error|suppress'
+docker exec bgp vtysh -c 'show running-config' | grep -iE 'error|suppress'
 redis-cli -n 0 keys 'ERROR_ROUTE_TABLE*'
 docker exec bgp vtysh -c 'show bgp summary' | head
 ```
