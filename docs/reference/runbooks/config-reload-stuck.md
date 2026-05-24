@@ -23,9 +23,6 @@ related:
 
 # Runbook: config reload が完了しない / hang する
 
-!!! warning "HLD-only"
-    `config reload` の標準フロー (stop services → load config_db → start services) に基づく運用ノート。
-
 !!! danger "実行前提"
     `config reload -y` は全 SONiC container を再起動するため転送断が発生する。in-service の機器では warm-reboot か事前 traffic drain を行う。途中で Ctrl-C すると中途半端な状態になりやすく、復旧には reboot が必要になることがある。
 
