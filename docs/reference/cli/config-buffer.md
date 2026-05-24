@@ -138,7 +138,7 @@ flowchart LR
 ### 典型的な利用シーン
 
 - dynamic buffer モードと traditional モードの切り替え。
-- lossless プロファイル ($headroom$) の最適化。
+- lossless プロファイル（headroom）の最適化。
 
 ### よくある落とし穴
 

@@ -183,7 +183,7 @@ flowchart LR
 
 ```bash
 show dhcp_relay
-show runningconfiguration | grep -i dhcp
+show runningconfiguration all | grep -i dhcp
 docker logs dhcp_relay
 ```
 <!-- /ops-hint -->
