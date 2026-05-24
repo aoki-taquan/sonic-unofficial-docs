@@ -31,7 +31,7 @@ related:
 
 # L3 Scaling と Performance 強化 制限事項と HLD との乖離
 
-このページは [L3 Scaling と Performance 強化（概要ハブ）](l3-scaling-and-performance-enhancements.md) の派生で、**制限事項と実装乖離** に絞る。概念は [l3-scaling-and-performance-enhancements-concepts.md](l3-scaling-and-performance-enhancements-concepts.md)、設定 / CLI は [l3-scaling-and-performance-enhancements-operations.md](l3-scaling-and-performance-enhancements-operations.md)、内部実装は [l3-scaling-and-performance-enhancements-internals.md](l3-scaling-and-performance-enhancements-internals.md) を参照。
+このページは [L3 Scaling と Performance 強化（概要ハブ）](l3-scaling-and-performance-enhancements.md) の派生で、**制限事項と実装乖離** に絞る。概念は [概念・スケール目標](l3-scaling-and-performance-enhancements-concepts.md)、設定 / CLI は [設定・運用](l3-scaling-and-performance-enhancements-operations.md)、内部実装は [内部実装](l3-scaling-and-performance-enhancements-internals.md) を参照。
 
 ## 1. HLD レベルの制限事項
 
@@ -107,9 +107,9 @@ RouteOrch::RouteOrch(DBConnector *db, vector<table_name_with_pri_t> &tableNames,
 ## 関連ページ
 
 - [L3 Scaling と Performance 強化（概要ハブ）](l3-scaling-and-performance-enhancements.md)
-- [l3-scaling-and-performance-enhancements-concepts.md](l3-scaling-and-performance-enhancements-concepts.md)
-- [l3-scaling-and-performance-enhancements-operations.md](l3-scaling-and-performance-enhancements-operations.md)
-- [l3-scaling-and-performance-enhancements-internals.md](l3-scaling-and-performance-enhancements-internals.md)
+- [L3 Scaling と Performance 強化 概念・スケール目標](l3-scaling-and-performance-enhancements-concepts.md)
+- [L3 Scaling と Performance 強化 設定・運用](l3-scaling-and-performance-enhancements-operations.md)
+- [L3 Scaling と Performance 強化 内部実装](l3-scaling-and-performance-enhancements-internals.md)
 
 <!-- phase-boundary -->
 ## 実装フェーズ境界
