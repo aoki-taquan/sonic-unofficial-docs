@@ -33,7 +33,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 05 章: Dual ToR / MUX / アクティブ冗長](../topics/05-dual-tor/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/muxorch.h` L205 で MUX_CABLE の `neighbor_mode` フィールドが `REQ_T_STRING` で受け付けられ、`muxorch.cpp` L1172 `MuxPrefixBasedNbrHandler` クラス、L2238-2286 で `neighbor_mode` 値を読み取り `MuxNbrHandlerType::NBR_HANDLER_PREFIX_BASED / HOST_ROUTE` に分岐し、STATE_DB `MUX_CABLE_TABLE` に `neighbor_mode = "prefix-route" / "host-route"` を反映することを確認。`SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE` は `sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp` L154 ほかで使用済み (verified at: 2026-05-09)。
 
 # プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）

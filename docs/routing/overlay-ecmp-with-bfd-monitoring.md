@@ -1,7 +1,7 @@
 ---
 title: Overlay ECMP with BFD monitoring（VxLAN VNet ルートと BFD 連動）
 description: Overlay ECMP with BFD monitoring — VxLAN VNet 経路 (VNET_ROUTE_TUNNEL_TABLE)
-  に 複数 endpoint を ECMP で並べ、各 endpoint の生存性を BFD で確認 し、Down メンバを NHG から外したい。
+  に複数 endpoint を ECMP で並べ、各 endpoint の生存性を BFD で確認し、Down メンバを NHG から外したい。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
