@@ -9,8 +9,6 @@ last_verified: 2026-05-12
 sources:
 - docs/architecture/sonic-application-extension-infrastructure.md
 - docs/architecture/build-system-improvements.md
-- docs/management/feature-management-enhancements.md
-- docs/reference/cli/config-feature.md
 - docs/reference/cli/sonic-package-manager.md
 - docs/reference/config-db/feature.md
 related:
@@ -157,7 +155,6 @@ SONIC_BUILD_JOBS=8 make target/sonic-broadcom.bin
 
 ## 関連リファレンス
 
-- [show feature](../../reference/cli/show-feature.md)
 - [show feature](../../reference/cli/show-feature.md)
 - [FEATURE table](../../reference/config-db/feature.md)
 - [Application Extension Infrastructure](../../architecture/sonic-application-extension-infrastructure.md)
