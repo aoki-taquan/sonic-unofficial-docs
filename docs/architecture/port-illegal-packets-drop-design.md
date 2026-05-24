@@ -246,7 +246,7 @@ sudo grep -Ei 'drop|illegal' /var/log/syslog | tail -50
 
 <!-- /topics-back-ref -->
 
-## 参考リンク
+## 自動収集された参考リンク
 
 本ページに関連する参照ドキュメント:
 

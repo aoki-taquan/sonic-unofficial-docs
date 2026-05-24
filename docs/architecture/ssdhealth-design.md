@@ -364,7 +364,7 @@ sudo smartctl -A /dev/sda
 
 <!-- /topics-back-ref -->
 
-## 参考リンク
+## 自動収集された参考リンク
 
 本ページに関連する参照ドキュメント:
 

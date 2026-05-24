@@ -280,7 +280,7 @@ docker exec swss show copp 2>&1 | tail
 
 <!-- /topics-back-ref -->
 
-## 参考リンク
+## 自動収集された参考リンク
 
 本ページに関連する参照ドキュメント:
 

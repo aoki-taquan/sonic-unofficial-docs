@@ -174,7 +174,7 @@ reasoning: identifier-based spec 判定への切替の根拠。
 -->
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## Topics 索引
 
 - [Topics: Platform / Port / Optics / PHY](../topics/14-platform-port-optics/index.md)
 
