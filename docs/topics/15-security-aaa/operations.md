@@ -72,7 +72,7 @@ local user のパスワードに対する最低長、強度、履歴、有効期
 ### password policy / lockout 確認
 
 ```bash
-admin@sonic:~$ show passw policy
+admin@sonic:~$ show passwh policies
 Lockout: enabled
 Lockout threshold: 5
 Lockout duration: 600

@@ -109,6 +109,7 @@ SONiC のセキュリティは大きく三つの層に分かれます。第一�
 | ページ | 状態 | verification |
 |---|---|---|
 | concept | ✅ 完成 (154 行) | meta |
+| architecture | ✅ 完成 (80 行) | meta |
 | setup | ✅ 完成 (211 行) | meta |
 | operations | ✅ 完成 (193 行) | meta |
 | internals | ✅ 完成 (132 行) | meta |
@@ -128,15 +129,12 @@ SONiC のセキュリティは大きく三つの層に分かれます。第一�
 - [内部実装](internals.md)
 - [発展トピック](advanced.md)
 
-**関連する HLD 7 件**
+**関連する HLD 4 件**
 
 - [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)
 - [TACACS+ 認証（pam_tacplus / nss_tacplus と AAA / TACPLUS テーブル）](../../management/tacacs-authentication.md)
 - [TACACS+ 認証テストプラン（pam_tacplus + ssh login）](../../management/tacacs-test-plan.md)
-- [P4Runtime PacketIO（generic netlink + send_to_ingress）](../../management/packetio.md)
-- [Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）](../../management/send-to-ingress-hld.md)
 - [TACACS+ コマンド authorization / accounting（patched bash + audisp-tacplus）](../../management/sonic-tacacs-improvement.md)
-- [config reload の event-driven 化（FEATURE.delayed + PortInitDone）](../../management/config-reload-enhancement.md)
 
 **関連トラブルシュート 5 件**
 
