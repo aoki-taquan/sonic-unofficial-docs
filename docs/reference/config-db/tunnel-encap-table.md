@@ -391,7 +391,7 @@ DEL 成功時は当該エントリが APPL_STATE_DB から削除される。
 swss::IpAddress neighbor_id;
 ```
 
-`neighbor_id = encap_dst_ip` の拘束はコード内に BRCM SAI 要件として明記されている[^6]。他のベンダー SAI では本制約が不要な場合があるが、`GreTunnelManager` はすべてのプラットフォームで同一ロジックを適用する。
+`neighbor_id = encap_dst_ip` の拘束はコード内に BRCM SAI 要件として明記されている[^4]。他のベンダー SAI では本制約が不要な場合があるが、`GreTunnelManager` はすべてのプラットフォームで同一ロジックを適用する。
 
 ### `SAI_TUNNEL_ATTR_OVERLAY_INTERFACE` — 暫定ワークアラウンド
 
