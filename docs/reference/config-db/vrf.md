@@ -135,7 +135,7 @@ VRF|<name>
 
 - key 形式: `VRF|Vrf<name>` (例 `VRF|VrfRed`)。
 - `vni`: L3 VNI（[VXLAN](../../reference/glossary.md#term-vxlan) [EVPN](../../reference/glossary.md#term-evpn) tenant L3）。
-- `fallback`: `true` で default VRF にフォールバック。
+- `fallback`: `true` に設定しても実際には dead field であり動作変化なし（詳細は「暗黙デフォルト・コード由来挙動」参照）。
 
 ### よくある誤設定
 
