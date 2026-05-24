@@ -268,7 +268,7 @@ YANG `default disable` はスキーマ上の宣言であり、DB エントリ自
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
 
-`ipv6_use_link_local_only` フィールドへの SET/DEL を受けた `intfmgrd` は CONFIG_DB 以外に **APP_DB と STATE_DB** へ副次書込を行う。詳細スキャンノート: [`meta/_intermediate/cdb-flow/ipv6-link-local-side-effects.md`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/ipv6-link-local-side-effects.md)。
+`ipv6_use_link_local_only` フィールドへの SET/DEL を受けた `intfmgrd` は CONFIG_DB 以外に **APP_DB と STATE_DB** へ副次書込を行う。
 
 ### APP_DB への書込
 
