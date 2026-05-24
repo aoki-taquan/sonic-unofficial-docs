@@ -310,9 +310,9 @@ config muxcable mode auto all
 
 ```bash
 # Dual ToR mux 状態と切替メトリクス
-show mux status
-show mux config
-redis-cli -n 0 keys 'MUX_CABLE_TABLE:*'
+show muxcable status
+show muxcable config
+redis-cli -n 6 keys 'MUX_CABLE_TABLE:*'
 redis-cli -n 6 hgetall 'MUX_LINKMGR_TABLE|Ethernet0'
 redis-cli -n 6 hgetall 'LINK_PROBE_STATS|Ethernet0'
 ```
