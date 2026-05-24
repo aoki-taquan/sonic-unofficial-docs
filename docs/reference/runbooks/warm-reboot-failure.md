@@ -149,9 +149,9 @@ sudo grep -i SAI_KEY_WARM_BOOT /usr/share/sonic/hwsku/*/sai.profile 2>/dev/null
 
 ## 関連ページ
 
-- [../../topics/11-reboot/operations.md](../../topics/11-reboot/operations.md)
-- [../../topics/11-reboot/concept.md](../../topics/11-reboot/concept.md)
-- [../cli/reboot-fast-warm.md](../cli/reboot-fast-warm.md)
+- [Reboot 運用](../../topics/11-reboot/operations.md)
+- [Reboot 概念](../../topics/11-reboot/concept.md)
+- [reboot / fast-reboot / warm-reboot CLI](../cli/reboot-fast-warm.md)
 
 ## 引用元
 

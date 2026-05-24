@@ -147,7 +147,7 @@ Built by: johnar@jenkins-worker-8
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`/etc/sonic/sonic_version.yml` はビルド時に生成される静的ファイルであり、[CONFIG_DB](../../reference/glossary.md#term-config_db) / STATE_DB への書込みは行わない。ただし、ビルドパイプライン内の変数確定順序と、ランタイムでの読込みキャッシュ挙動に順序依存が存在する。
+`/etc/sonic/sonic_version.yml` はビルド時に生成される静的ファイルであり、[CONFIG_DB](../../reference/glossary.md#term-config_db) / [STATE_DB](../../reference/glossary.md#term-state_db) への書込みは行わない。ただし、ビルドパイプライン内の変数確定順序と、ランタイムでの読込みキャッシュ挙動に順序依存が存在する。
 
 ### 検出された順序依存
 
