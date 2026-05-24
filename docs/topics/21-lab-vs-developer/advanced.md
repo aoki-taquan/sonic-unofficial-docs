@@ -71,7 +71,7 @@ ALViS / KNE は、多数ノードを軽量にデプロイしたい場合の選�
 
 CI 構成自体（GitHub Actions、Azure Pipelines）は本リポジトリの非公式ドキュメントの対象外です。upstream SONiC repo の `.github` と `azure-pipelines.yml` が一次資料になります。
 
-## 発展トピック
+## 追加の発展トピック
 
 - **Multi-DUT topology in [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)**: 複数 DUT を仮想で組み、Dual-ToR / MC-[LAG](../../reference/glossary.md#term-lag) / Chassis シナリオを CI で回す。ansible inventory と PTF docker を組合せる。
 - **kvm 仮想 SONiC chassis**: 仮想 supervisor + 仮想 line card 構成を kvm 上で動かす。chassis_db の挙動を VS で検証できる。

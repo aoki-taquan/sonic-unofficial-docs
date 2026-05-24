@@ -59,7 +59,7 @@ EVPN/[VXLAN](../../reference/glossary.md#term-vxlan) では [FRR](../../referenc
 - [BGP セッション向け BFD ハードウェアオフロード](../../routing/bfd-hw-offload-for-bgp-session.md)
 - [EVPN VXLAN](../../routing/evpn-vxlan-hld.md)
 
-## 発展トピック
+## 追加の発展トピック
 
 基本の peer/policy 設定を超えた領域では、SONiC は FRR の機能を [Redis](../../reference/glossary.md#term-redis) スキーマ経由で順次取り込んでいる。代表的なものを挙げる。
 

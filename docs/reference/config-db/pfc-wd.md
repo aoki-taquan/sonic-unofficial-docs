@@ -393,7 +393,7 @@ db_migrator.py が旧テーブル名 `PFC_WD_TABLE` → `PFC_WD` へのデータ
 <!-- /handler-branching -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存 (Phase B) (補足)
 
 <!-- evidence: meta/_intermediate/cdb-flow/pfc-wd-ordering.md -->
 

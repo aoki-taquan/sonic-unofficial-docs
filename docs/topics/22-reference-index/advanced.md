@@ -83,7 +83,7 @@ drift をゼロにすることは目的ではありません。「drift が出�
 - [内部実装](internals.md)
 - [reference/index.md](../../reference/index.md)
 
-## 発展トピック
+## 追加の発展トピック
 
 - **OpenConfig vs [SONiC](../../reference/glossary.md#term-sonic) YANG の対応表自動生成**: `sonic-mgmt-common` の transformer 定義から OC ↔ sonic-* YANG のペアを抽出し、`yang-index.md` に差し込む取り組み。10 章 ([gNMI](../../reference/glossary.md#term-gnmi) / OpenConfig) と直接連動する。
 - **discrepancy-found ページの一覧ビュー**: `verification: discrepancy-found` のページを横断的に集める dashboard。`gen_discrepancy_index.py` が起点。

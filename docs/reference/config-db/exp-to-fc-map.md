@@ -291,7 +291,7 @@ sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順依存 (Phase B)
+## 書込み順依存 (Phase B) (補足)
 
 > 調査証跡: `meta/_intermediate/cdb-flow/exp-to-fc-map-ordering.md`
 
