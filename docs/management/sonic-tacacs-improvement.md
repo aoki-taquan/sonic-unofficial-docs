@@ -27,7 +27,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-buildimage/files/build/versions-public/host-image/versions-deb-trixie` L6 で `audisp-tacplus==1.0.2`、L280 で `libtac2==1.4.1-1`、`files/build/versions-public/default/versions-git` L4 で `audisp-tacplus.git` の SHA を確認。各 `sonic-slave-{buster,bullseye,trixie,jessie}/Dockerfile.j2` に `# For audisp-tacplus` セクションがあり、ビルドスレーブ側に取り込み済み。`files/build_templates/sonic_debian_extension.j2` L318 で `libtac2_*.deb` をホストイメージにインストール。`sonic-utilities/config/aaa.py` L157-175 で `aaa authorization` / `aaa accounting` CLI を確認（verified at: 2026-05-09）。
 
 # TACACS+ コマンド authorization / accounting（patched bash + `audisp-tacplus`）
@@ -66,7 +66,7 @@ flowchart LR
 |------|------|
 | プライマリ TACACS+ 不達 | 次のサーバへ |
 | 全サーバ不達 | TACACS+ 認可は失敗 |
-| 認可失敗時 fallback | 設定可能。`local` を fallover にすれば Linux ローカル permission に従う |
+| 認可失敗時 fallback | 設定可能。`local` を fallback にすれば Linux ローカル permission に従う |
 | ローカルアカウントログイン | 当該セッションでは TACACS+ authn/authz を無効化（不達時の救済路）[^1] |
 
 #### 代替案として却下された tacplus-auth[^1]
@@ -112,7 +112,7 @@ flowchart LR
 # Authorization
 config aaa authorization local
 config aaa authorization tacacs+
-config aaa authorization tacacs+ local        # TACACS+ → local fallover
+config aaa authorization tacacs+ local        # TACACS+ → local fallback
 
 # Accounting
 config aaa accounting local

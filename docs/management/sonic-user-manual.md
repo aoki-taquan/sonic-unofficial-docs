@@ -69,7 +69,7 @@ flowchart LR
 
 - **初期投入**: `minigraph.xml`（旧）または `config_db.json`（推奨）を `/etc/sonic/` に配置 → `config load_minigraph` / `config reload`
 - **永続化**: `config save -y` で `/etc/sonic/config_db.json` に書き戻す（`save-on-set` 系の自動保存もある）
-- **trouble shoot**: `show techsupport` でログ・running config・SAI dump を一括収集
+- **トラブルシューティング**: `show techsupport` でログ・running config・SAI dump を一括収集
 
 ## 制限事項
 
