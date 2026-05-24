@@ -8,24 +8,15 @@ last_verified: 2026-05-11
 sources: []
 related:
   cli:
-  - config bgp
-  - show bgp
+  - reboot
+  - fast-reboot
+  - warm-reboot
+  - sonic-installer
   config_db:
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_PEER_GROUP
-  - BGP_NEIGHBOR_AF
-  - BGP_NEIGHBOR
+  - WARM_RESTART
+  - DEVICE_METADATA
   yang:
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
+  - sonic-warm-restart
 ---
 
 # 内部実装

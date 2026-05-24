@@ -44,7 +44,7 @@ flowchart LR
   Select[set-default / set-next-boot]
   Reboot[reboot / fast-reboot / warm-reboot]
   Validate[起動後検証]
-  Fetch --> Install --> Select --> Verify --> Reboot --> Validate
+  Fetch --> Install --> Verify --> Select --> Reboot --> Validate
 ```
 
 ## secure upgrade

@@ -18,22 +18,16 @@ related:
   - show pfc
   - show acl
   - config acl
+  - warm-reboot
   config_db:
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_PEER_GROUP
-  - BGP_NEIGHBOR_AF
   - BGP_NEIGHBOR
+  - WARM_RESTART
+  - PORT
+  - CHASSIS_MODULE
   yang:
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
   - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
+  - sonic-warm-restart
+  - sonic-chassis-module
 ---
 
 # 発展トピック

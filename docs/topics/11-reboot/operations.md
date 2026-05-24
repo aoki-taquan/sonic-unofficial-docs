@@ -14,27 +14,16 @@ sources:
 - docs/system/swss-docker-warm-restart-code-reference.md
 related:
   cli:
-  - show bgp
-  - show interfaces
+  - show reboot-cause
+  - show warm_restart
+  - show interfaces portchannel
   - show techsupport
   - show version
-  - config bgp
   config_db:
+  - WARM_RESTART
   - BGP_NEIGHBOR
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_PEER_GROUP
-  - BGP_NEIGHBOR_AF
   yang:
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
+  - sonic-warm-restart
 ---
 
 # Reboot 運用と障害調査
@@ -168,6 +157,9 @@ May 10 11:01:09 sw01 INFO swss#orchagent: EOIU received from all components
 | reconciliation が終わらない | `show warm_restart state` | 該当 component の syslog |
 | ASIC namespace だけ再起動したい | `warm-reboot -m <namespace>` | multi-ASIC HLD 参照 |
 | panic を保全したい | `show kdump status` | 章 [09](../09-telemetry-snmp/operations.md) |
+| reconciliation log | `grep -i reconcil /var/log/syslog` | syslog から一括確認 |
+| 直近 cause の生ファイル | `cat /host/reboot-cause/reboot-cause.txt` | `/host/reboot-cause/` 配下 |
+| 前回 cause（JSON） | `cat /host/reboot-cause/previous-reboot-cause.json` | 前回 cause 詳細 |
 
 ## CONFIG_DB / STATE_DB 関連 key
 
@@ -204,19 +196,6 @@ May 10 11:01:09 sw01 INFO swss#orchagent: EOIU received from all components
 3. **multi-ASIC で一部 ASIC のみ再起動** — 対象 namespace を特定 → `warm-reboot -m <namespace>` または該当 namespace の `swss`/`syncd` を `systemctl restart` → 残り ASIC が影響を受けていないことを `show interfaces counters` の連続性で確認。
 4. **fast-reboot で image 切替** — `sonic-installer set-default <image>` → `fast-reboot` → 起動後 `show version` で image を確認 → BGP/LAG/route 件数が事前メモと合っているかを確認。
 5. **reboot 履歴の定期点検** — `show reboot-cause history` を週次で確認し、`Watchdog` / `Hardware - reason` が一度でも出ていれば platform team に escalate、`Kernel Panic` が複数回なら同 stack trace を比較。
-
-## 対応コマンド追加
-
-| 目的 | コマンド |
-|---|---|
-| 直近 cause の生ファイル | `cat /host/reboot-cause/reboot-cause.txt` |
-| 前回 cause（JSON） | `cat /host/reboot-cause/previous-reboot-cause.json` |
-| reboot 一覧履歴 | `show reboot-cause history` |
-| warm-restart 設定 | `show warm_restart config` |
-| warm-restart 状態 | `show warm_restart state` |
-| Graceful Restart 状態（BGP） | `vtysh -c "show bgp neighbor <ip> graceful-restart"` |
-| kdump 状態 | `show kdump status`、`ls /var/crash/` |
-| reconciliation log | `grep -i reconcil /var/log/syslog` |
 
 ## 関連ページ
 
