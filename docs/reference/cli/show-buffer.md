@@ -37,7 +37,7 @@ related:
 **用法**:
 
 ```bash
-show buffer configuration [--namespace <ns>|--namespace all] [--verbose]
+show buffer configuration [--namespace <ns>|all] [--verbose]
 ```
 
 実行コマンドは次の通り。
