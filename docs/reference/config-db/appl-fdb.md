@@ -43,19 +43,18 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>FDB")]
+  KERN["カーネル FDB 学習 / fdbsyncd"]
+  VLAN["vlanmgr / swssconfig"]
+  APPDB[("APPL_DB<br/>FDB_TABLE")]
   DM["FdbOrch"]
-  CDB --> DM
-  APPDB[("APP_DB<br/>APP_FDB_TABLE")]
-  DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
   SAI["SAI<br/>sai_fdb_api"]
-  SYNCD --> SAI
+  KERN --> APPDB
+  VLAN --> APPDB
+  APPDB --> DM --> SAI
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+    APPL_DB 書き込み元から SAI までの典型経路を示す簡略図。詳細・例外は本ページ本文を参照。
 <!-- /cdb-mermaid -->
 
 ## コード由来デフォルト
