@@ -30,8 +30,10 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>FEATURE")]
-  DM["coppmgrd"]
+  DM["featured / hostcfgd"]
   CDB --> DM
+  SDB[("STATE_DB<br/>FEATURE")]
+  DM --> SDB
 ```
 
 !!! note "凡例"
@@ -182,7 +184,7 @@ show feature status
 
 ### 段階 1 — Consumer 登録
 
-`hostcfgd` の `FeatureHandler` + `containercfgd` + `coppmgrd` + `dhcprelayd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `FEATURE` テーブルを購読する。
+`hostcfgd` の `FeatureHandler` + `containercfgd` + `dhcprelayd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `FEATURE` テーブルを購読する。
 
 `FEATURE` の key はフィーチャー名 (例: `bgp`, `swss`, `lldp`)。`always_enabled` フィーチャーは disable 不可。
 
