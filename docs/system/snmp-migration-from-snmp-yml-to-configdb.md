@@ -34,7 +34,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+!!! success "裏取りステータス: code-verified（基本構成のみ）"
     現行 master で `config snmp` グループ (`sonic-utilities/config/main.py:4261`)、`docker-snmp/snmpd.conf.j2` の CONFIG_DB ベース設定、`sonic-yang-models` の `sonic-snmp.yang` を確認。SNMP / SNMP_COMMUNITY / SNMP_USER テーブルは現行 yang に取り込まれている。`snmp.yml` → CONFIG_DB ワンタイム変換スクリプトの場所は明示できなかったが、CONFIG_DB ベース運用は標準化済み（verified at: 2026-05-09）。
 
 # SNMP 設定の snmp.yml → CONFIG_DB 移行

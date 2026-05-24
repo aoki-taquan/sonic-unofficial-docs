@@ -14,9 +14,6 @@ related:
   config_db:
   - SNMP
   - SNMP_AGENT_ADDRESS_CONFIG
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DPU
   - SNMP_COMMUNITY
   - SNMP_USER
   cli:
