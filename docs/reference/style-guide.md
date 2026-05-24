@@ -147,10 +147,4 @@ MkDocs Material の admonition は次の用途に絞って使う。
 
 本ページはプロジェクト内ルールを集約した `meta` ページであり、SONiC 一次情報源を持たない。スキーマ・テンプレートの正本は `meta/templates/` 配下のファイルである。
 
-## 関連 reference
-
-- [Reference index](index.md)
-- [Glossary](glossary.md)
-- [Topics: Reference index](../topics/22-reference-index/index.md)
-
 <!-- glossary-links-injected: 8ba32e5aa69d -->

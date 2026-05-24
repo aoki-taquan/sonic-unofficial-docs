@@ -98,8 +98,8 @@ docker exec pmon i2cdetect -y <bus>
 
 ## 関連ページ
 
-- [./dualtor-mux.md](./dualtor-mux.md)
-- [../../topics/05-dual-tor/operations.md](../../topics/05-dual-tor/operations.md)
+- [Dual ToR MUX ケーブル Runbook](./dualtor-mux.md)
+- [Dual ToR 運用](../../topics/05-dual-tor/operations.md)
 
 ## 引用元
 
