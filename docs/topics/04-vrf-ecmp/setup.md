@@ -220,7 +220,7 @@ blackhole route (流入 packet を破棄):
 }
 ```
 
-`blackhole=true` の場合 `nexthop` は空でよい ([orchagent](../../reference/glossary.md#term-orchagent) が null route を installs)。
+`blackhole=true` の場合 `nexthop` は空でよい ([orchagent](../../reference/glossary.md#term-orchagent) が null route を install する)。
 
 ## CONFIG_DB で見る形
 
