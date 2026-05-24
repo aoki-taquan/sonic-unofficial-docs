@@ -79,16 +79,16 @@ Temperature: N/A
 
 ```mermaid
 flowchart LR
-    USER[user] --> SHOW["show platform ssdhealth\n(show/main.py)"]
-    SHOW -->|exec| UTIL["ssdhealth -d /dev/sdX -v / -e"]
-    UTIL --> BASE["SsdBase\n(sonic_platform_base/sonic_ssd)"]
+    USER[user] --> SHOW["show platform ssdhealth\n(show/platform.py)"]
+    SHOW -->|exec| UTIL["ssdutil -d /dev/sdX -v / -e"]
+    UTIL --> BASE["SsdBase\n(sonic_platform_base/sonic_storage)"]
     BASE --> VENDOR["SsdUtil\n(device/<vendor>/platform/plugins/ssdutil.py)"]
     BASE -.fallback.-> SCTL[smartctl]
     VENDOR --> ISMART["iSmart / SmartCmd 等\nベンダ純正"]
     UTIL --> OUT[stdout]
 ```
 
-`show platform ssdhealth` は内部で `ssdhealth -d /dev/sdX [options]` を呼ぶだけのラッパ。コア処理は `ssdhealth` スクリプト側にある[^1]。
+`show platform ssdhealth` は内部で `ssdutil -d /dev/sdX [options]` を呼ぶラッパ（現行 master 実装。HLD では `ssdhealth` スクリプトと記載）[^1]。
 
 ### `ssdhealth` ユーティリティ
 
@@ -214,7 +214,7 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 | `show platform ssdhealth` | 簡易表示 |
 | `show platform ssdhealth verbose` | 詳細表示 |
 | `show platform ssdhealth vendor` | ベンダツール生出力 |
-| `ssdhealth -d /dev/sdX [-v|-e]` | 内部ラッパが呼ぶスクリプトを直接実行 |
+| `ssdutil -d /dev/sdX [-v|-e]` | 内部ラッパが呼ぶスクリプトを直接実行（現行 master）|
 
 ## 制限事項
 
@@ -266,7 +266,7 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 
     監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
 
-    - `SsdBase` / `SsdUtil` / `show platform ssdhealth` は実装済み (`sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py`, `sonic-utilities/show/platform.py`)。HLD の主要パスは到達済み。
+    - `SsdBase` / `SsdUtil` / `show platform ssdhealth` は実装済み (`sonic-platform-common/sonic_platform_base/sonic_storage/storage_base.py` 等、`sonic-utilities/show/platform.py`)。HLD の主要パスは到達済み（パスは HLD 記載の `sonic_ssd/ssd_base.py` から `sonic_storage/` 配下に変更）。
     - HLD の Open Question として残されていた `ssdmond` 常時監視デーモンは未実装。`sonic-platform-daemons/` 配下に `ssdmond` ディレクトリ無し (`find . -iname 'ssdmond*'` 結果 0)。
     - SNMP MIB 露出も未実装（HLD でも明示的にスコープ外と記載）。
     - 関連 PR: `sonic-platform-common` への SsdBase 取り込みは 2019-2020 年に merge 済み。`ssdmond` は提案 PR 無し。
@@ -282,18 +282,6 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 ### コマンド例: SSD health 確認
 
 下記コマンドで関連する [CONFIG_DB](../reference/glossary.md#term-config_db) / APP_DB / [STATE_DB](../reference/glossary.md#term-state_db) と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# SSD 健全性情報と Wear level
-sudo show platform ssdhealth
-sudo smartctl -a /dev/sda | head -40
-redis-cli -n 6 hgetall 'SSD_INFO|/dev/sda'
-```
-
-### コマンド例: SSD health 確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
 突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
 
 ```bash

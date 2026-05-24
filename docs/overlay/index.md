@@ -39,6 +39,7 @@ last_verified: 2026-05-13
 - SmartSwitch ハードウェア依存層（DPU カード固有の bring-up は [platform](../platform/index.md) 章）
 - DASH の上位 API スキーマ詳細（[reference](../reference/index.md) 章の [CONFIG_DB](../reference/glossary.md#term-config_db) / [YANG](../reference/glossary.md#term-yang) リファレンスを参照）
 - ベンダー版 SONiC の overlay 実装差分（コミュニティ版 `master` のみ扱う）
+
 ## 検証状況
 - ページ数: 9
 - 分布: Code-verified: 8 / Discrepancy-found: 1
