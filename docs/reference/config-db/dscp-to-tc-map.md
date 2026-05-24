@@ -54,7 +54,7 @@ DSCP_TO_TC_MAP|<name>|<dscp>
 |-----------|----|------|------|
 | `name` (key) | string (1..32) | ✅ | マップ名 |
 | `dscp` (key) | string `0..63` | ✅ | [DSCP](../../reference/glossary.md#term-dscp) 値 |
-| `tc` | `tc_type` (0..7) | - | 対応 TC |
+| `tc` | `tc_type` (0..15) | - | 対応 TC。YANG 上限は 15 だが大多数の ASIC は 0..7 のみサポート |
 
 [YANG](../../reference/glossary.md#term-yang) 上は親子 list 構造。[Redis](../../reference/glossary.md#term-redis) に展開すると `DSCP_TO_TC_MAP|<name>` の hash field として `<dscp>: <tc>` ペアが格納される。
 
@@ -68,12 +68,12 @@ DSCP_TO_TC_MAP|<name>|<dscp>
 | `0`..`63` | qosorch が SAI_QOS_MAP_TYPE_DSCP_TO_TC エントリを生成 |
 | 範囲外 | YANG 違反で reject |
 
-### `tc` (tc_type: 0..7)
+### `tc` (tc_type: 0..15)
 
 | 値 | 挙動 |
 |----|------|
 | `0`..`7` | [SAI](../../reference/glossary.md#term-sai) QoS map オブジェクトの Traffic Class 値として設定 |
-| 8 以上 | [ASIC](../../reference/glossary.md#term-asic) が拒否（SAI エラー） |
+| `8`..`15` | YANG 上は許容されるが、大多数の ASIC では SAI エラー → `task_failed` |
 
 > 明示的な enum 制約なし（スパース定義可能）。PORT_QOS_MAP.dscp_to_tc_map から参照されない限り SAI に反映されない。未定義 [DSCP](../../reference/glossary.md#term-dscp) はデフォルト TC=0 になるのが一般的。
 
@@ -119,7 +119,7 @@ DSCP_TO_TC_MAP|<name>|<dscp>
 
 ### よくある誤設定
 
-- TC を 8 以上に書くと [ASIC](../../reference/glossary.md#term-asic) が拒否（TC は 0..7）。
+- TC を 8 以上に書くと多くの ASIC が拒否（YANG は 0..15 だが実運用上は 0..7 が安全）。
 
 ### 確認コマンド
 
@@ -327,7 +327,7 @@ select タイムアウト: **1000 ms**（`SELECT_TIMEOUT`、`orchdaemon.cpp:23`�
 
 - CONFIG_DB に格納される型は **string** (`"0"`..`"63"`)
 - `qosorch.cpp:245`: `(uint8_t)stoi(fvField(*i))` で uint8 変換 → SAI へ渡す
-- **例外処理なし**: 数値以外の文字列を書くと `std::invalid_argument` が投げられ `task_failed`（[`Dot1pToTcMapHandler`](../../reference/glossary.md#term-orchagent) は try/catch あり、`DscpToTcMapHandler` は **なし**）
+- **例外処理なし**: 数値以外の文字列を書くと `std::invalid_argument` が投げられ `task_failed`（`Dot1pToTcMapHandler` は try/catch あり、`DscpToTcMapHandler` は **なし**）
 
 ### 未定義 DSCP のデフォルト TC (スパース定義時)
 
