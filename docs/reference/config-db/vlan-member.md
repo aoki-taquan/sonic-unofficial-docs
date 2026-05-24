@@ -35,7 +35,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>VLAN")]
   DM["vlanmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_VLAN_TABLE")]
+  APPDB[("APPL_DB<br/>APP_VLAN_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

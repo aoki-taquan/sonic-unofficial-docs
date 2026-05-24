@@ -40,7 +40,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>FDB")]
   DM["FdbOrch"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_FDB_TABLE")]
+  APPDB[("APPL_DB<br/>APP_FDB_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

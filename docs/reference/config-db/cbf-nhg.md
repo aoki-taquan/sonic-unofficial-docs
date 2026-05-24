@@ -21,6 +21,9 @@ related:
 
 # CLASS_BASED_NEXT_HOP_GROUP テーブル
 
+!!! note "APPL_DB テーブル"
+    `CLASS_BASED_NEXT_HOP_GROUP_TABLE` は **CONFIG_DB ではなく APPL_DB** に保持されるテーブルである。カスタムアプリケーションまたは修正版 fpmsyncd が書き込み、`CbfNhgOrch` (orchagent) が読み出して SAI へプログラムする。
+
 ## 概要
 
 Class Based Forwarding (CBF) 用のクラスベース次ホップグループを [APPL_DB](../../reference/glossary.md#term-appl_db) に保持するテーブル[^1]。`sonic-swss` の `CbfNhgOrch` が [APPL_DB](../../reference/glossary.md#term-appl_db) の `CLASS_BASED_NEXT_HOP_GROUP_TABLE` を購読し、[SAI](../../reference/glossary.md#term-sai) の `SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED` グループを作成・削除する。

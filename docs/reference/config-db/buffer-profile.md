@@ -34,7 +34,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>BUFFER_PROFILE")]
   DM["buffermgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_BUFFER_PROFILE_TABLE")]
+  APPDB[("APPL_DB<br/>APP_BUFFER_PROFILE_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

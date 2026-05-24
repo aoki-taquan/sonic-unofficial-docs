@@ -37,7 +37,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>VNET")]
   DM["vrfmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_VNET_TABLE")]
+  APPDB[("APPL_DB<br/>APP_VNET_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

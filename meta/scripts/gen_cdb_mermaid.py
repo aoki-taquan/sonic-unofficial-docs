@@ -130,6 +130,17 @@ FALLBACK_MAP: dict[str, dict[str, Optional[str]]] = {
 }
 
 
+# Pages that document APPL_DB tables (not CONFIG_DB → orch pipelines).
+# The auto-generated CONFIG_DB-perspective mermaid block is incorrect for
+# these pages and they carry their own detailed dataflow diagrams.
+EXCLUDE_PAGES: set[str] = {
+    "app-route.md",
+    "appl-acl.md",
+    "appl-buffer.md",
+    "appl-db-route.md",
+    "appl-fdb.md",
+}
+
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
 
 
@@ -170,7 +181,7 @@ def build_mermaid(table: str, info: dict[str, Optional[str]]) -> str:
         prev = node
     if app:
         node = "APPDB"
-        lines.append(f'  {node}[("APP_DB<br/>{app}")]')
+        lines.append(f'  {node}[("APPL_DB<br/>{app}")]')
         lines.append(f"  {prev} --> {node}")
         prev = node
         lines.append('  SYNCD["syncd"]')
@@ -244,7 +255,7 @@ def main() -> int:
     drift: list[str] = []
 
     for page in sorted(PAGES_DIR.glob("*.md")):
-        if page.name == "index.md":
+        if page.name == "index.md" or page.name in EXCLUDE_PAGES:
             continue
         text = page.read_text(encoding="utf-8")
         table = get_first_config_db_table(text)

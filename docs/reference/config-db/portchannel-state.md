@@ -37,7 +37,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>PORTCHANNEL")]
   DM["teammgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_LAG_TABLE")]
+  APPDB[("APPL_DB<br/>APP_LAG_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

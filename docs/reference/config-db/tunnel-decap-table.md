@@ -39,7 +39,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>TUNNEL_DECAP_TABLE")]
   DM["tunneldecaporch"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_TUNNEL_DECAP_TABLE")]
+  APPDB[("APPL_DB<br/>APP_TUNNEL_DECAP_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

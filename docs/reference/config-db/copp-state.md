@@ -34,7 +34,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>COPP_GROUP")]
   DM["coppmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_DB")]
+  APPDB[("APPL_DB<br/>APP_DB")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD
@@ -70,7 +70,7 @@ COPP_GROUP_TABLE|<group-name>
 
 | フィールド | 型 | 説明 |
 |---|---|---|
-| `state` | string | 常に `"ok"`。エントリの存在自体がグループが [APP_DB](../../reference/glossary.md#term-appl_db) に書き込まれたことを示す。 |
+| `state` | string | 常に `"ok"`。エントリの存在自体がグループが [APPL_DB](../../reference/glossary.md#term-appl_db) に書き込まれたことを示す。 |
 
 ### 書き込みタイミング
 

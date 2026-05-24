@@ -34,7 +34,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>SFLOW_SESSION")]
   DM["sflowmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_SFLOW_SESSION_TABLE")]
+  APPDB[("APPL_DB<br/>APP_SFLOW_SESSION_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

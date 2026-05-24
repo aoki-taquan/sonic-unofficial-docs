@@ -34,7 +34,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>VXLAN_TUNNEL_MAP")]
   DM["vxlanmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_VXLAN_TUNNEL_MAP_TABLE")]
+  APPDB[("APPL_DB<br/>APP_VXLAN_TUNNEL_MAP_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

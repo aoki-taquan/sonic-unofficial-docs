@@ -75,26 +75,6 @@ ROUTE_TABLE|Vrf<name>:<prefix>
 - `orchagent` / `RouteOrch`: `ROUTE_TABLE` を `ConsumerStateTable` で購読。`sai_route_api->create_route_entry()` でハードウェアに経路を書き込む。ECMP の場合は `sai_next_hop_group_api` と連携。
 - `warmRestartHelper`: ウォームリブート時に [APPL_DB](../../reference/glossary.md#term-appl_db) エントリを一時保持し、[FRR](../../reference/glossary.md#term-frr) 再接続後に再生する。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>STATIC_ROUTE")]
-  DM["fpmsyncd"]
-  CDB --> DM
-  APPDB[("APP_DB<br/>APP_ROUTE_TABLE")]
-  DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
-  SAI["SAI<br/>sai_route_api"]
-  SYNCD --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
-
 ## 制約
 
 - `nexthop_group` と `nexthop` / `ifname` は排他。両方を指定するとエラー[^rorch]。

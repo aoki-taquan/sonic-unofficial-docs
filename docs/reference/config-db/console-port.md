@@ -436,13 +436,13 @@ CONSOLE_PORT テーブルを購読する常駐デーモンは存在しない。`
   - ソース: `sonic-utilities/config/console.py`
 
 ### minigraph / sonic-cfggen
-- なし
+- `minigraph.py:2516` が XML `<Console>` エントリから `CONSOLE_PORT` テーブルを生成する。`CONSOLE_SWITCH` は同ファイル L2728 でデバイスタイプ (`MgmtTsToR`) 判定後に生成される。
 
 ### REST / gNMI (sonic-mgmt-common)
 - なし (対応 OpenConfig/[SONiC](../../reference/glossary.md#term-sonic) YANG transformer なし)
 
 ### db_migrator
-- なし
+- `migrate_console_switch()` が `CONSOLE_SWITCH|console_mgmt` key 不在時のみ移行値を書き込む。
 
 ### ビルド時デフォルト (init_cfg / j2 テンプレート)
 - なし

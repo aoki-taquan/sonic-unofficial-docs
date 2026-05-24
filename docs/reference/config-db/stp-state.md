@@ -50,7 +50,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>STP")]
   DM["stpmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_DB")]
+  APPDB[("APPL_DB<br/>APP_DB")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

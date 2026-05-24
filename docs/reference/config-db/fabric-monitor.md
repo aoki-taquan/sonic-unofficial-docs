@@ -33,7 +33,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>FABRIC_MONITOR")]
   DM["fabricmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_FABRIC_MONITOR_DATA_TABLE")]
+  APPDB[("APPL_DB<br/>APP_FABRIC_MONITOR_DATA_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

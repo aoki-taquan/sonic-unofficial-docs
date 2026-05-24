@@ -34,7 +34,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>VXLAN_EVPN_NVO")]
   DM["vxlanmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_VXLAN_EVPN_NVO_TABLE")]
+  APPDB[("APPL_DB<br/>APP_VXLAN_EVPN_NVO_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

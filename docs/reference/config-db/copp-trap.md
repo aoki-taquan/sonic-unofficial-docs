@@ -33,7 +33,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>COPP_TRAP")]
   DM["coppmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_COPP_TABLE")]
+  APPDB[("APPL_DB<br/>APP_COPP_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD
@@ -62,7 +62,7 @@ COPP_TRAP|<name>
 ## 動作上の注意
 
 - `always_enabled = true` のエントリ (例: [BGP](../../reference/glossary.md#term-bgp) / [LLDP](../../reference/glossary.md#term-lldp) のシステム必須 trap) はユーザの `config feature state` 操作と独立にインストールされる
-- 既定の `COPP_TRAP` 群は `dockers/docker-orchagent/copp_cfg.j2` および `files/image_config/copp/copp_cfg.j2` 由来でビルド時に生成される
+- 既定の `COPP_TRAP` 群は `files/image_config/copp/copp_cfg.j2` 由来でビルド時に生成される
 
 <!-- cdb-exceptions -->
 ## 例外条件・特殊挙動

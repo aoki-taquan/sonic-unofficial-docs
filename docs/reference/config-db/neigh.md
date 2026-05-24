@@ -52,7 +52,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>NEIGH")]
   DM["nbrmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_NEIGH_TABLE")]
+  APPDB[("APPL_DB<br/>APP_NEIGH_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD
