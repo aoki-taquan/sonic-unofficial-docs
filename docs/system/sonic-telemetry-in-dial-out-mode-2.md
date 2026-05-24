@@ -24,7 +24,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! info "裏取りステータス: code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-gnmi/dialout/{dialout_client,dialout_client_cli,dialout_server,dialout_server_cli}/` の Go 実装と `dialout_client.go`（`TELEMETRY_CLIENT` 読み出し / DestinationGroup / Subscription 走査）、および `sonic_data_client/{db_client,mixed_db_client}.go` を確認。openconfig telemetry YANG との完全 mapping は範囲外（実装は SONiC 独自 schema 中心）。
 
 # telemetry dial-out モード（gNMIDialOut.Publish / TELEMETRY_CLIENT）
@@ -61,7 +61,7 @@ service gNMIDialOut {
 | `encoding` | `JSON_IETF` / `ASCII` / `BYTES` / `PROTO` | `JSON_IETF` |
 | `src_ip` | 接続元 IP | mgmt IP |
 | `retry_interval` | 失敗時リトライ間隔（秒）| 30 |
-| `unidirectional` | `true` で `PublishResponse` 不要に | false（双方向）|
+| `unidirectional` | `true` で `PublishResponse` 不要に | true（一方向）|
 
 #### 2. `DestinationGroup_<name>`
 
