@@ -75,7 +75,7 @@ related:
 
 - `community` 文字列は最大 32 文字、`@` `:` を含まないこと（`snmp_community_secret_check`）。
 - `string_type` は `RO` / `RW` の 2 値。
-- 既存と重複なら sys.exit(3)、その後 `set_entry('SNMP_COMMUNITY', community, {'TYPE': string_type})`。
+- 既存と重複なら sys.exit(3) で終了。重複がなければ `set_entry('SNMP_COMMUNITY', community, {'TYPE': string_type})`。
 - 完了後に `systemctl reset-failed` + `systemctl restart snmp.service`。
 
 <!-- evidence:
