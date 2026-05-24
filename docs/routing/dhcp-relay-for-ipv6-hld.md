@@ -233,7 +233,6 @@ show ipv6 dhcp-relay counters
 
 - [CLI: config dhcp-relay](../reference/cli/config-dhcp-relay.md)
 - [Runbook: dhcp-relay](../reference/runbooks/dhcp-relay.md)
-- [Topics: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md)
 
 ## 引用元
 
