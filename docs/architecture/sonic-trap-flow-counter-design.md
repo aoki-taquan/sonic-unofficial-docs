@@ -15,8 +15,8 @@ related:
   - COPP_TRAP
   cli:
   - counterpoll
+  - show flowcnt trap stats
   - show flowcnt trap
-  - show flowcnt
   yang: []
 ---
 
