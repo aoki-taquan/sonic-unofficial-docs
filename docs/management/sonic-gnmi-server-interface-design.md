@@ -73,8 +73,8 @@ origin で **スキーマ**、`elem[0]` で **DB**、`elem[1]` で **インス�
 ```mermaid
 flowchart LR
   CL[gNMI client] --> SRV[gNMI server<br>sonic-telemetry]
-  SRV -->|origin=sonic_db<br>CONFIG_DB| GCU[generic_config_updater<br>+ sonic-config-engine]
-  SRV -->|origin=sonic_db<br>APPL_DB VNET_ROUTE| SCU[special_config_updater]
+  SRV -->|origin=sonic-db<br>CONFIG_DB| GCU[generic_config_updater<br>+ sonic-config-engine]
+  SRV -->|origin=sonic-db<br>APPL_DB VNET_ROUTE| SCU[special_config_updater]
   SRV -->|origin=sonic_yang| GCU
   GCU -->|YANG validate| YV[(sonic-yang-models)]
   GCU --> CDB[(CONFIG_DB)]
