@@ -209,7 +209,7 @@ sonic-installer upgrade-docker swss <new-tag> <url>
 
 ```bash
 # warm-restart 状態
-sudo config warm_restart show
+show warm_restart
 show warm_restart state
 
 # orchagent / portsyncd 等の warm-restart チェックポイント

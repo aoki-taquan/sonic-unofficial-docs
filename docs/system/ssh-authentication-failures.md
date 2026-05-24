@@ -69,7 +69,7 @@ ssh-add -D
 
 ## SONiC 側の設定確認
 
-SONiC デバイス側で `MaxAuthTries` を確認・変更するには。
+SONiC デバイス側で `MaxAuthTries` を確認・変更します。
 
 ```bash
 # 現在の sshd 設定を確認
