@@ -137,7 +137,7 @@ sequenceDiagram
 
 | モジュール | 対応 |
 |-----------|------|
-| `portsyncd` (SWSS) | ✅ ADD / DEL の追加対応必要 |
+| `portsyncd` (SWSS) | ✅ ADD / DEL 対応済み（PR #1808 MERGED）[^1] |
 | `portsorch` (SWSS) | ✅ flex counter 動的追加・削除を拡張 |
 | `portmgrd` | 既存ロジックで OK[^1] |
 | `sflowmgr` | 既存ロジックで OK[^1] |
@@ -294,8 +294,6 @@ redis-cli -n 4 HSET 'PORT|Ethernet0' admin_status up
     - ref counter の上流取り込みが必要な場合、新たな PR を `sonic-swss` 側に提案する（既存 #2022 のリベース）必要がある。
 <!-- /diff-admonition -->
 
-<!-- phase-boundary -->
-
 確認コマンド例:
 
 ```bash
@@ -305,6 +303,7 @@ redis-cli -n 4 keys 'PORT|*'
 docker logs swss 2>&1 | grep -i 'port_create\|port_remove' | tail
 ```
 
+<!-- phase-boundary -->
 ## 実装フェーズ境界
 
 !!! info "Phase 別の実装済 / 未実装 サマリ"
