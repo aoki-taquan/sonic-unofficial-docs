@@ -24,8 +24,8 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! warning "裏取りステータス: HLD-only"
-    HLD は 2024 年 1〜2 月版 (Rev 2.1)。`reset-local-users-passwords.service`、`sonic-platform-common` の `LocalUsersConfigurationResetBase`、各 vendor 実装、`/etc/sonic/default_users.json` のフォーマット、`ENABLE_LOCAL_USERS_PASSWORDS_RESET` ビルドフラグの現行 master 取り込みは未裏取り。
+!!! warning "裏取りステータス: discrepancy-found（部分実装）"
+    HLD は 2024 年 1〜2 月版 (Rev 2.1)。`reset-local-users-passwords.service`・`LocalUsersConfigurationResetBase`・専用 YANG・long reset button トリガは master 未取り込み。`default_users.json` 経由でのパスワード復元（reset-factory script）のみ実装済み。詳細は本ページ末尾の「HLD と実装の差分」を参照。
 
 # ローカルユーザパスワード init 時リセット（long reset button + `reset-local-users-passwords.service`）
 

@@ -41,7 +41,7 @@ related:
 
 ```mermaid
 flowchart LR
-    DM[Daemon\n image_config 由来] -->|2 分毎| SDB[(STATE_DB)]
+    DM["Daemon<br/>sonic-host-services 由来"] -->|2 分毎| SDB[(STATE_DB)]
     PS[ps -eo ...] --> DM
     DS[docker stats] --> DM
     SDB --> TA[Telemetry agent]
