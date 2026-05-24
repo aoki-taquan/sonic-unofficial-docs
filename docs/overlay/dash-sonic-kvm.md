@@ -11,25 +11,14 @@ sources:
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
   config_db:
-  - LLDP
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_PEER_GROUP
-  - BGP_NEIGHBOR_AF
+  - DASH_VNET_TABLE
+  - DASH_APPLIANCE_TABLE
+  - DASH_ENI_TABLE
   cli:
-  - config bgp
-  - show bgp
-  - show lldp
+  - show dash eni
+  - show dash vnet
   yang:
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
+  - sonic-dash
 ---
 
 <!-- topics-tip -->

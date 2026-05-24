@@ -81,21 +81,4 @@ HLD で挙げられているもの[^1]:
 
 [^1]: `sonic-net/SONiC` `doc/ssdhealth/ssdhealth_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-## 制限事項
-
-!!! diff "HLD と実装の乖離"
-    - HLD と実装の差分は本ページの章本文で逐次注記している
-    - 追加の境界事項は本セクションで列挙する
-
-## 確認コマンド
-
-SSD health concepts の動作確認に使う代表コマンド:
-
-```bash
-# 基本動作確認
-show platform summary
-show version
-docker logs --tail 200 $(docker ps --format "{{.Names}}" | head -1)
-```
-
 <!-- glossary-links-injected: 8ba32e5aa69d -->
