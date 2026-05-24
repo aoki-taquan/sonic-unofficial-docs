@@ -213,9 +213,6 @@ sudo grep -Ei 'drop|illegal' /var/log/syslog | tail -50
 
 ## 参考リンク
 
-- [CONFIG_DB: ACL_TABLE / ACL_RULE](../reference/config-db/acl-rule.md)
-- [CLI: config acl](../reference/cli/config-acl.md)
-- [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)
 - [Topics: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md)
 
 ## 引用元
