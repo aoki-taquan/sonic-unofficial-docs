@@ -82,7 +82,7 @@ sudo dpuctl exec DPU0 df -h /
 - 正しい DPU 向け image を再取得
 - DPU 上の不要 image 削除: `sudo dpuctl exec DPU0 sonic-installer cleanup -y`
 - chassisd 再起動: `sudo systemctl restart chassisd`
-- 強制 reboot DPU: `sudo config chassis modules startup DPU0`
+- 強制 reboot DPU: `sudo config chassis modules shutdown DPU0` → `sudo config chassis modules startup DPU0`
 
 ## 関連ページ
 
