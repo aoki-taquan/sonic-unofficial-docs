@@ -25,12 +25,12 @@ related:
 | **[YANG](../reference/glossary.md#term-yang)** | [yang/index.md](yang/index.md) | `sonic-yang-models` の native SONiC YANG モジュール。CONFIG_DB の正本 |
 | **Runbooks** | [runbooks/index.md](runbooks/index.md) | 症状逆引きの運用ハンドブック ([BGP](../reference/glossary.md#term-bgp) down, [PFC](../reference/glossary.md#term-pfc) bandwidth, warm-reboot 失敗 等) |
 | **Verification** | [verification/index.md](verification/index.md) | 裏取り運用方針と [discrepancy-index](verification/discrepancy-index.md) (HLD と実装の乖離一覧) |
+| **用語集** | [glossary.md](glossary.md) | SONiC 頻出用語・略語・コンポーネント名・DB 名の日本語説明。アルファベット順索引 |
 
 ### 将来追加予定 (未着手)
 
 | カテゴリ | 状態 |
 |---|---|
-| `glossary/` (用語集) | 未着手。現状は本文中で都度説明 |
 | `sai-attributes/` ([SAI](../reference/glossary.md#term-sai) 属性表) | 未着手。今後 `meta/index/sai.json` から生成予定 |
 | `config-db-orch-map/` (テーブル ↔ Orch マッピング) | 未着手。現状は CONFIG_DB ページ本文に分散 |
 

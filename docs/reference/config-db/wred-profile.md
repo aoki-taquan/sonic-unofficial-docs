@@ -117,7 +117,7 @@ WRED_PROFILE|<name>
 [^exc1]: `sonic-swss/orchagent/qosorch.cpp` (WredMapHandler) <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp>
 [^exc2]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-wred-profile.yang` <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-wred-profile.yang>
 
-<!-- value-behavior -->
+<!-- ecn-values -->
 ## `ecn` 値別挙動
 
 YANG 定義 8 値 (sonic-wred-profile.yang)、default `ecn_none`。
@@ -159,7 +159,7 @@ YANG 定義 8 値 (sonic-wred-profile.yang)、default `ecn_none`。
 | ecn_all | 2 | qosorch.cpp:44, yang:123 |
 
 全 8 値 hit。0 hit なし。
-<!-- /value-behavior -->
+<!-- /ecn-values -->
 
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
