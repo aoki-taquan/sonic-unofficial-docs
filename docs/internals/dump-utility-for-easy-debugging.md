@@ -146,7 +146,7 @@ dump state copp all                            # CONFIG_FILE も含む
 
 ## 既知の問題
 
-### orchagent が `transfer_attributes: src vs dst attr id don't m（sonic-buildimage#3832）
+### orchagent が `transfer_attributes: src vs dst attr id don't match` でクラッシュする問題（sonic-buildimage#3832）
 
 orchagent が `transfer_attributes: src vs dst attr id don't match` でクラッシュする問題。[syncd](../reference/glossary.md#term-syncd) と orchagent の互換性を確認すること
 
@@ -175,7 +175,7 @@ S6100 T0 での cold reboot 後に syncd クラッシュが発生する問題 (H
 - 参照: [sonic-net/sonic-buildimage#4428](https://github.com/sonic-net/sonic-buildimage/issues/4428)
 
 
-### `collectPortCounters: Failed to get stats of port 0` エラーが sy（sonic-buildimage#4586）
+### `collectPortCounters: Failed to get stats of port 0` エラーが syncd ログに出力される問題（sonic-buildimage#4586）
 
 `collectPortCounters: Failed to get stats of port 0` エラーが syncd ログに出力される問題。CPU ポート(port 0)の統計収集が SAI でサポートされていないプラットフォームで発生
 
@@ -190,7 +190,7 @@ S6100 T0 での cold reboot 後に syncd クラッシュが発生する問題 (H
 - 参照: [sonic-net/sonic-buildimage#4907](https://github.com/sonic-net/sonic-buildimage/issues/4907)
 
 
-### Z9264/201911-170 での warm-reboot 中に orchagent と Python プロセスがク（sonic-buildimage#5258）
+### Z9264/201911-170 での warm-reboot 中に orchagent と Python プロセスがクラッシュしカーネルクラッシュが発生する問題（sonic-buildimage#5258）
 
 Z9264/201911-170 での warm-reboot 中に orchagent と Python プロセスがクラッシュし、カーネルクラッシュが発生する問題
 
@@ -212,14 +212,14 @@ Z9264/201911-170 での warm-reboot 中に orchagent と Python プロセスが�
 - 参照: [sonic-net/sonic-buildimage#6253](https://github.com/sonic-net/sonic-buildimage/issues/6253)
 
 
-### `SAI_OBJECT_TYPE_PORT` の削除をサポートしない SAI 実装で orchagent がクラッシュす（sonic-buildimage#6459）
+### `SAI_OBJECT_TYPE_PORT` の削除をサポートしない SAI 実装で orchagent がクラッシュする問題（sonic-buildimage#6459）
 
 `SAI_OBJECT_TYPE_PORT` の削除をサポートしない SAI 実装で orchagent がクラッシュする問題。port deletion は全 SAI プラットフォームでサポートされているわけではない
 
 - 参照: [sonic-net/sonic-buildimage#6459](https://github.com/sonic-net/sonic-buildimage/issues/6459)
 
 
-### `SAI_SWITCH_ATTR_AVAILABLE_IPMC_ENTRY` 属性がサポートされていない SAI 実装で（sonic-buildimage#6563）
+### `SAI_SWITCH_ATTR_AVAILABLE_IPMC_ENTRY` 属性がサポートされていない SAI 実装でエラーが発生する問題（sonic-buildimage#6563）
 
 `SAI_SWITCH_ATTR_AVAILABLE_IPMC_ENTRY` 属性がサポートされていない SAI 実装でエラーが発生する問題。[CRM](../reference/glossary.md#term-crm) での IPMC エントリ監視が利用できないプラットフォームがある
 
