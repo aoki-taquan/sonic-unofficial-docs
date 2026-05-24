@@ -102,7 +102,7 @@ related:
 - PFC end-to-end の検証は `sonic-mgmt` の `qos/test_qos_sai.py` で行う。SAI 側 attribute と [Redis](../../reference/glossary.md#term-redis) 設定の整合確認が含まれる。
 - 動的 buffer model の alpha チューニングは、合成 burst (microburst injector) を流して `BUFFER_POOL_WATERMARK_STAT_COUNTER` の peak を観察する手順が標準。
 
-## 関連ページ (追補)
+## 関連ページ
 
 - [Asymmetric PFC test plan](../../acl-qos/asymmetric-pfc-test-plan.md)
 - [Dynamically headroom calculation](../../acl-qos/dynamically-headroom-calculation.md)
@@ -110,7 +110,7 @@ related:
 - [Egress outer DSCP change table](../../acl-qos/egress-outer-dscp-change-table.md)
 - [WRED and ECN statistics](../../acl-qos/wred-and-ecn-statistics.md)
 - [Watermark counters in SONiC](../../acl-qos/watermark-counters-in-sonic.md)
-- [SONiC QoS scheduler and shaping](../../acl-qos/sonic-qos-scheduler-and-shaping.md)
+- [SONiC QoS Scheduler and Shaping](../../acl-qos/sonic-qos-scheduler-and-shaping.md)
 - [Configurable drop counters in SONiC](../../acl-qos/configurable-drop-counters-in-sonic.md)
 - [DSCP remapping for tunnel traffic](../../overlay/dscp-remapping-for-tunnel-traffic.md)
 - [Distributed forwarding in a VOQ architecture](../../acl-qos/distributed-forwarding-in-a-virtual-output-queue-voq-architecture.md)
@@ -122,13 +122,5 @@ related:
 - [Egress mirroring support and ACL action capability check](../../acl-qos/egress-mirroring-support-and-acl-action-capability-check.md)
 - [Enhancements on show acl commands](../../acl-qos/enhancements-on-show-acl-commands.md)
 - [Everflow test plan (mirror counter 観点)](../../acl-qos/everflow-test-plan.md)
-
-## 関連ページ
-
-- [SONiC QoS Scheduler and Shaping](../../acl-qos/sonic-qos-scheduler-and-shaping.md)
-- [WRED と ECN の統計](../../acl-qos/wred-and-ecn-statistics.md)
-- [Asymmetric PFC test plan](../../acl-qos/asymmetric-pfc-test-plan.md)
-- [Watermark Counters](../../acl-qos/watermark-counters-in-sonic.md)
-- [Tunnel DSCP remap](../../overlay/dscp-remapping-for-tunnel-traffic.md)
 
 <!-- glossary-links-injected: ec18b66e3507 -->
