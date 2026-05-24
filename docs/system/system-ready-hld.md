@@ -116,7 +116,7 @@ journalctl -u system-health 2>/dev/null
 [^1]: `sonic-net/SONiC` `doc/system_health_monitoring/system-ready-HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## 関連 Topics
+## Topics 一覧
 
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 
