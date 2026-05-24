@@ -155,7 +155,7 @@ module: sonic-pbh
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `PBH_HASH_FIELD`
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `PBH_HASH`
 - [CONFIG_DB](../../reference/glossary.md#term-config_db): `PBH_RULE`
-- CONFIG_DB: `PBH_TABLE`
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `PBH_TABLE`
 - CLI: なし
 
 <!-- yang-sibling -->

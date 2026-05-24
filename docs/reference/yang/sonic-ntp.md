@@ -175,7 +175,7 @@ module: sonic-ntp
 
 ### よくある落とし穴
 
-- VRF 配下に NTP server を置く場合、`NTP|global` の `vrf` leaf 設定漏れで mgmt-vrf 内パケットが起こらない。
+- VRF 配下に NTP server を置く場合、`NTP|global` の `vrf` leaf 設定漏れで mgmt-vrf 内パケットが通らない。
 
 ### 関連する config / show コマンド
 
