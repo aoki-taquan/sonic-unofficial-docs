@@ -417,7 +417,7 @@ hostcfgd は常時起動し `RADIUS_SERVER` テーブルを無条件購読する
 ### 段階 2: CFG → APPL 翻訳
 
 - hostcfgd の `modify_conf_file()` が各 RADIUS_SERVER エントリと RADIUS|global をマージし `/etc/pam_radius_auth.d/<ip>_<port>.conf` を生成。
-- NSS 設定 (`/etc/sonic/radius_nss.conf`) も更新。
+- NSS 設定 (`/etc/radius_nss.conf`) も更新。
 - APP_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI
@@ -492,7 +492,7 @@ CONFIG_DB RADIUS_SERVER キー変更
                       ├─ src_intf あり → get_interface_ip() で src_ip 解決
                       ├─ jinja2 テンプレート展開
                       │    → /etc/pam_radius_auth.d/<ip>_<auth_port>.conf
-                      ├─ /etc/sonic/radius_nss.conf 更新
+                      ├─ /etc/radius_nss.conf 更新
                       ├─ common-auth-sonic PAM スタック更新
                       └─ aaastatsd を start/stop (サーバリスト空否で分岐)
 ```

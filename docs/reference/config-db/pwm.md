@@ -263,7 +263,7 @@ telemetry タイマーが満了するたびに `clearSingleWm()` が呼ばれ、
 
 ### 手動クリア — COUNTERS_DB `PERSISTENT_WATERMARKS` / `USER_WATERMARKS`
 
-`watermarkcfg clear` CLI が [APPL_DB](../../reference/glossary.md#term-appl_db) `WATERMARK_CLEAR_REQUEST` 通知チャネルへ送信すると、`WatermarkOrch::doTask(NotificationConsumer)` が対応する COUNTERS_DB テーブルをゼロクリアする。
+`watermarkstat -c` CLI が [APPL_DB](../../reference/glossary.md#term-appl_db) `WATERMARK_CLEAR_REQUEST` 通知チャネルへ送信すると、`WatermarkOrch::doTask(NotificationConsumer)` が対応する COUNTERS_DB テーブルをゼロクリアする。
 
 | `op` 値 | `data` 値 | 対象 DB / テーブル | 書込内容 |
 |---------|---------|-----------------|---------|
