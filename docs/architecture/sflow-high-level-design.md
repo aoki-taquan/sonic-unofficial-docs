@@ -199,25 +199,15 @@ config sflow interface sample-rate Ethernet0 10000
     - [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #16607: \[sflow\] Remove the ENABLE_SFLOW_DROPMON flag (merged)](https://github.com/sonic-net/sonic-buildimage/pull/16607) — sflow ビルドフラグの整理 PR。HLD 上の dropmon オプション扱いと差分あり。
 <!-- /diff-admonition -->
 
-### コマンド例: sFlow 動作確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
+## 確認コマンド
 
 ```bash
 # sFlow agent / collector 設定と送信状況
 show sflow
 redis-cli -n 4 hgetall 'SFLOW|global'
 redis-cli -n 4 keys 'SFLOW_COLLECTOR|*'
-# hsflowd ログ
-docker logs sflow 2>&1 | tail -50
-```
 
-## 確認コマンド
-
-```bash
-# sFlow グローバル設定 / コレクタ / エージェント
-show sflow
+# sFlow グローバル設定 / コレクタ / セッション（CONFIG_DB）
 sonic-db-cli CONFIG_DB KEYS 'SFLOW|*'
 sonic-db-cli CONFIG_DB KEYS 'SFLOW_COLLECTOR|*'
 sonic-db-cli CONFIG_DB KEYS 'SFLOW_SESSION|*'
@@ -225,6 +215,9 @@ sonic-db-cli CONFIG_DB KEYS 'SFLOW_SESSION|*'
 # hsflowd プロセス確認
 docker exec sflow supervisorctl status
 docker exec sflow cat /etc/hsflowd.conf
+
+# hsflowd ログ
+docker logs sflow 2>&1 | tail -50
 
 # サンプル送出統計
 docker exec sflow hsflowd -d -F 2>&1 | head -40

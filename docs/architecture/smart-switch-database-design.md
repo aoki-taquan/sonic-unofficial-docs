@@ -209,15 +209,11 @@ redis-cli -h 169.254.200.254 -p 6381 KEYS "DASH_*" | head
 
 [^1]: `sonic-net/SONiC` `doc/smart-switch/smart-switch-database-architecture/smart-switch-database-design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-## 関連ページ
-
-- [Topic: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md)
-- [Topic: SWSS / SAI / Redis 内部](../topics/20-swss-sai-redis/index.md)
-
 <!-- topics-back-ref -->
 ## 関連 Topics
 
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+- [Topics: SWSS / SAI / Redis 内部](../topics/20-swss-sai-redis/index.md)
 
 <!-- /topics-back-ref -->
 

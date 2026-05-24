@@ -61,7 +61,7 @@ T0 上で [SONiC](../reference/glossary.md#term-sonic) sFlow 機能を機能検�
 ### TC1 の詳細
 
 1. 4 IF で sflow 有効化 + collector 1 (default port 6343) + global enable → 両方の確認
-2. collector 削除 → trafffic で sample なし → 再追加で復活
+2. collector 削除 → traffic で sample なし → 再追加で復活
 3. **2 つ目の collector** を非 default port (6344) で追加 → 両 collector が受信
 4. 2 つ目を削除 → 1 つ目だけが受信
 5. 2 つ目を復活 → 両者受信
