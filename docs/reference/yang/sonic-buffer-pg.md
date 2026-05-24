@@ -24,7 +24,7 @@ related:
 - import: `sonic-port`, `sonic-buffer-profile`
 - top container: `sonic-buffer-pg`
 
-Ingress buffer priority group configuration for [SONiC](../../reference/glossary.md#term-sonic) ports.[^1]
+SONiC ポートの Ingress バッファ優先グループ ([Priority Group](../../reference/glossary.md#term-priority-group)) 設定を管理する [YANG](../../reference/glossary.md#term-yang) モジュール。[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -52,7 +52,7 @@ flowchart LR
 
 - [`BUFFER_PG`](../config-db/buffer-pg.md)
 
-### 関連 HLD
+### 関連 YANG モジュール
 
 - [sonic-buffer-pool YANG](../../reference/yang/sonic-buffer-pool.md)
 

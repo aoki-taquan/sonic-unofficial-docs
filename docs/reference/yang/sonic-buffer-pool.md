@@ -28,7 +28,7 @@ related:
 - import: `sonic-device_metadata`
 - top container: `sonic-buffer-pool`
 
-Shared and dedicated memory pool configuration for packet buffering.[^1]
+パケットバッファリング用の共有・専用メモリプール設定を管理する [YANG](../../reference/glossary.md#term-yang) モジュール。[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
