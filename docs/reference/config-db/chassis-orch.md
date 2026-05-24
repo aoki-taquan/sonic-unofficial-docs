@@ -599,7 +599,7 @@ ChassisOrch の生成にこの値は使用されない。ハードウェアベ�
 ## 関連 CONFIG_DB / APP_DB
 
 - 関連 CONFIG_DB: `VNET_ROUTE_TABLE`（VNet ルート設定）
-- 関連 APP_DB: `PASS_THROUGH_ROUTE_TABLE`（ChassisOrch の書き込み先）、`SYSTEM_NEIGH`、`SYSTEM_LAG_TABLE`（chassis app DB クリーンアップ対象）
+- 関連 APP_DB: `PASS_THROUGH_ROUTE_TABLE`（ChassisOrch の書き込み先）
 
 <!-- ref-triangle:start -->
 
