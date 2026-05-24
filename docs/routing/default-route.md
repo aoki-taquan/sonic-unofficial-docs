@@ -33,8 +33,8 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
-    このページは公式 HLD のみを根拠に書かれている。`sonic-linkmgrd` の実コード（`LinkProberStateMachine` / `MuxStateMachine` 等）での裏取りは未済。
+!!! success "裏取りステータス: code-verified"
+    `sonic-linkmgrd/src/MuxManager.cpp:104` で `MuxManager::initialize(bool enable_feature_measurement, bool enable_feature_default_route)` と `mMuxConfig.enableDefaultRouteFeature(enable_feature_default_route)`（L121）を確認。`sonic-swss/orchagent/routeorch.cpp:127` で `m_stateDefaultRouteTb` が STATE_DB の ROUTE state テーブルを open する実装を確認。HLD の主張（orchagent が STATE_DB にデフォルトルート状態を書き、linkmgrd がオプトインで mux 健全性に反映）は実装と整合（verified at: 2026-05-11）。
 
 # linkmgrd のデフォルトルート連動（DualToR mux 制御）
 
