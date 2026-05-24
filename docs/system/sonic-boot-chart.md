@@ -134,7 +134,7 @@ admin@sonic:~$ sudo sonic-bootchart config --time-span 50 --frequency 10
 ```text
 admin@sonic:~$ sudo sonic-bootchart show
 Status     Operational Status   Frequency  Time Span (sec)  Output
-enabled    in-active            10         50               /run/log/bootchart-20220504-1325.svg
+enabled    inactive            10         50               /run/log/bootchart-20220504-1325.svg
 ```
 
 | フィールド | 意味 |
@@ -219,7 +219,7 @@ sudo sonic-bootchart show
 ## トラブルシューティング
 
 - `sonic-bootchart enable` で `not installed` → image を `INCLUDE_BOOTCHART=y` で再ビルド
-- reboot 後 SVG が無い → `Operational Status` が `in-active` か（= 完了済み）、`Time Span` が経過しているかを確認
+- reboot 後 SVG が無い → `Operational Status` が `inactive` か（= 完了済み）、`Time Span` が経過しているかを確認
 - SVG が生成されているのに古いまま → `/run/log/bootchart-*.svg` の timestamp、最新 boot の SVG が tmpfs に存在するか
 - 設定を変えても反映されない → `config` 後に **必ず reboot** が必要、`/etc/systemd/bootchart.conf` の現在値を直接確認
 
@@ -232,7 +232,7 @@ boot 所要時間の breakdown を確認する。
 systemd-analyze
 systemd-analyze blame | head -20
 systemd-analyze critical-chain
-ls /host/boot-chart/
+ls /run/log/bootchart-*.svg
 ```
 
 ## 関連リファレンス

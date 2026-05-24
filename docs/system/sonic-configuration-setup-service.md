@@ -26,7 +26,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: code-verified (2026-05-10)"
+!!! warning "裏取りステータス: discrepancy-found (2026-05-13)"
     `sonic-buildimage/files/build_templates/config-setup.service.j2` で systemd unit が組み込まれ、`files/image_config/config-setup/config-setup` (本体スクリプト) と `config-setup.conf` が image に同梱される。`updategraph*` のソースは見つからず、HLD の方針どおり責務が `config-setup` に集約された結果と整合。`first_boot` / `factory_reset` / `migration` の各ハンドラは config-setup スクリプト本体に実装。
 
 # config-setup サービス（first-boot config 生成 / 版間 migration）

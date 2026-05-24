@@ -26,7 +26,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! warning "裏取りステータス: code-verified"
+!!! warning "裏取りステータス: discrepancy-found"
     各 docker の現行 supervisor / docker_image_ctl テンプレートでの cap-drop / read-only 適用状況は未確認。
 
 !!! note "Verifier 注記（2026-05-10）"
