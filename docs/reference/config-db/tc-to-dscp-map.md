@@ -11,7 +11,7 @@ sources:
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
   - repo: sonic-net/sonic-swss
     path: orchagent/qosorch.cpp
-    ref: 4305596
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
 related:
   config_db:
     - TC_TO_DSCP_MAP

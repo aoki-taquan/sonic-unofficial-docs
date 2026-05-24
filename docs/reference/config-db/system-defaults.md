@@ -22,7 +22,7 @@ related:
 
 ## 概要
 
-システム共通の機能既定値 (デフォルトの enable / disable 状態) を定義する。`init_cfg.json` 由来の値を保持し、`db_migrator` が初期化時にエントリの有無を確認する[^1]。具体的なキーは `tunnel_qos_remap`、`synchronous_mode`、`dhcp_server` など (時期により異なる) で、各機能の起動前提として参照される。
+システム共通の機能既定値 (デフォルトの enable / disable 状態) を定義する。`init_cfg.json` 由来の値を保持し、`db_migrator` が初期化時にエントリの有無を確認する[^1]。具体的なキーは `tunnel_qos_remap`、`mux_tunnel_egress_acl`、`software_bfd` など (時期により異なる) で、各機能の起動前提として参照される。なお `synchronous_mode` の実体は `DEVICE_METADATA|localhost`、`dhcp_server` の実体は `FEATURE` テーブルであり、このテーブルには格納されない（よくある誤解）。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -135,11 +135,11 @@ sonic-db-cli CONFIG_DB keys 'SYSTEM_DEFAULTS|*'
 
 ### Phase 6: 自動派生
 
-各サービスが `SYSTEM_DEFAULTS` を参照して起動時のデフォルト動作を決定する。`synchronous_mode==enable` → [orchagent](../../reference/glossary.md#term-orchagent) が [SAI](../../reference/glossary.md#term-sai) call を synchronous モードで実行。`interface_naming_mode==alias` → [portsyncd](../../reference/glossary.md#term-portsyncd) / [intfmgrd](../../reference/glossary.md#term-intfmgrd) がエイリアス名を使用。`frr_mgmt_framework_config==true` → [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework が [FRR](../../reference/glossary.md#term-frr) 設定を管理。
+各サービスが `SYSTEM_DEFAULTS` を参照して起動時のデフォルト動作を決定する。`synchronous_mode==enabled` → [orchagent](../../reference/glossary.md#term-orchagent) が [SAI](../../reference/glossary.md#term-sai) call を synchronous モードで実行。`interface_naming_mode==alias` → [portsyncd](../../reference/glossary.md#term-portsyncd) / [intfmgrd](../../reference/glossary.md#term-intfmgrd) がエイリアス名を使用。`frr_mgmt_framework_config==true` → [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework が [FRR](../../reference/glossary.md#term-frr) 設定を管理。
 
 ### Phase 7: 条件付き登録 (add_manager 条件)
 
-db_migrator が起動時に `SYSTEM_DEFAULTS` テーブルを初期化・マイグレーションする。orchagent は起動時に `synchronous_mode` を読み取って起動モードを決定する（起動後の変更は無効）。`SYSTEM_DEFAULTS|GLOBAL` エントリのみ有効（シングルトン制約）。
+db_migrator が起動時に `SYSTEM_DEFAULTS` テーブルを初期化・マイグレーションする。orchagent は起動時に `synchronous_mode` を読み取って起動モードを決定する（起動後の変更は無効）。
 
 <!-- /derivation -->
 
@@ -148,8 +148,8 @@ db_migrator が起動時に `SYSTEM_DEFAULTS` テーブルを初期化・マイ�
 
 | Handler | 分岐条件 | 効果 | evidence |
 |---|---|---|---|
-| `orchagent` 起動 | `synchronous_mode==enable` | [SAI](../../reference/glossary.md#term-sai) API を synchronous モードで呼び出し | `orchagent/main.cpp` |
-| `orchagent` 起動 | `synchronous_mode==disable` または未設定 | SAI API を asynchronous モードで呼び出し | `orchagent/main.cpp` |
+| `orchagent` 起動 | `synchronous_mode==enabled` | [SAI](../../reference/glossary.md#term-sai) API を synchronous モードで呼び出し | `orchagent/main.cpp` |
+| `orchagent` 起動 | `synchronous_mode==disabled` または未設定 | SAI API を asynchronous モードで呼び出し | `orchagent/main.cpp` |
 | 各サービス | `frr_mgmt_framework_config==true` | [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-framework による [FRR](../../reference/glossary.md#term-frr) 設定管理を有効化 | 複数サービス |
 | `portsyncd` / `intfmgrd` | `interface_naming_mode==alias` | インターフェース alias 名を使用 | `portsyncd` |
 | `portsyncd` / `intfmgrd` | `interface_naming_mode==default` | 標準 IF 名を使用 | `portsyncd` |
