@@ -9407,17 +9407,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#iptables-32-sonic-buildimage4797" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        iptables が /32 ループバックアドレスへのアクセスをブロックする問題（sonic-buildimage#4797）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#ospfclient-sonic-docker-sonic-buildimage4961" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35744,17 +35733,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#iptables-32-sonic-buildimage4797" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        iptables が /32 ループバックアドレスへのアクセスをブロックする問題（sonic-buildimage#4797）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#ospfclient-sonic-docker-sonic-buildimage4961" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36116,11 +36094,6 @@ reasoning: bgpcfgd / frrcfgd の切替フィールドと warm boot スコープ�
 <p>CONFIG_DB の BGP_PEER_RANGE 設定が FRR 設定に変換されない問題。sonic-cfggen のテンプレートが BGP_PEER_RANGE テーブルを処理していないため、直接 FRR コマンドで設定する必要がある</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/4664">sonic-net/sonic-buildimage#4664</a></li>
-</ul>
-<h3 id="iptables-32-sonic-buildimage4797">iptables が /32 ループバックアドレスへのアクセスをブロックする問題（sonic-buildimage#4797）<a class="headerlink" href="#iptables-32-sonic-buildimage4797" title="Permanent link">&para;</a></h3>
-<p>iptables が /32 ループバックアドレスへのアクセスをブロックする問題。management VRF 有効時に iptables ルールが自動的に追加されるが、/32 アドレスに対するルールが不足していることがある</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/4797">sonic-net/sonic-buildimage#4797</a></li>
 </ul>
 <h3 id="ospfclient-sonic-docker-sonic-buildimage4961">ospfclient が SONiC docker コンテナ内で起動できない問題（sonic-buildimage#4961）<a class="headerlink" href="#ospfclient-sonic-docker-sonic-buildimage4961" title="Permanent link">&para;</a></h3>
 <p>ospfclient が SONiC docker コンテナ内で起動できない問題。コンテナ内の FRR ソケットパスが <code>/var/run/frr</code> であることを明示的に指定すること</p>

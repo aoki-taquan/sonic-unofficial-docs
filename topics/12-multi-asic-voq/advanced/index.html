@@ -4236,7 +4236,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        発展トピック
+        追加の発展トピック
       
     </span>
   </a>
@@ -35335,7 +35335,7 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        発展トピック
+        追加の発展トピック
       
     </span>
   </a>
@@ -35475,7 +35475,7 @@
 </ul>
 <h2 id="_2">まとめ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>VOQ chassis 固有のテーマは、機能としては既存の章（BGP、LAG、Mirror、Reboot）に属しつつ、namespace 跨ぎ / line card 跨ぎ / Chassis DB との協調という観点を持ちます。各章本文で機能の中身を読み、本章の <a href="../concept/">概念</a> と <a href="../architecture/">アーキテクチャ</a> で「どこが namespace を超えるか」を意識すると、HLD を縦横に往復しやすくなります。</p>
-<h2 id="_3">発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">追加の発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Fabric link telemetry</strong>: VOQ chassis では fabric link 自体が監視対象。<code>FABRIC_PORT_TABLE</code> の counter / error / link state を telemetry agent から export し、cell drop の兆候を早期検出する。</li>
 <li><strong>VOQ scheduling と credit loop</strong>: ingress VOQ が egress credit を受けて送出する仕組みで、credit return が遅延すると HOL blocking が出る。<a href="../../../reference/glossary/#term-sai">SAI</a> 側 <code>SAI_QUEUE_ATTR_PFC_DLR_INIT_TYPE</code> などで dead-lock 検出と復旧を行う。</li>

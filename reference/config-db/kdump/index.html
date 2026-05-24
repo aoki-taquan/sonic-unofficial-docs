@@ -24457,45 +24457,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#phase-c_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗黙参照 (Phase C)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="暗黙参照 (Phase C)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#device_metadata_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DEVICE_METADATA への暗黙参照
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#feature_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FEATURE テーブルとの関係
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -36691,45 +36652,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#phase-c_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        暗黙参照 (Phase C)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="暗黙参照 (Phase C)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#device_metadata_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DEVICE_METADATA への暗黙参照
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#feature_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        FEATURE テーブルとの関係
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -37594,54 +37516,6 @@ grub.cfg と <code>/etc/default/kdump-tools</code> の更新のみを行い、
 </span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>  (次回 reboot でカーネル反映)
 </span></code></pre></div>
 <!-- /pubsub -->
-
-<!-- cross-refs -->
-<h2 id="phase-c_1">暗黙参照 (Phase C)<a class="headerlink" href="#phase-c_1" title="Permanent link">&para;</a></h2>
-<h3 id="device_metadata_1">DEVICE_METADATA への暗黙参照<a class="headerlink" href="#device_metadata_1" title="Permanent link">&para;</a></h3>
-<p><code>KDUMP|config|enabled</code> のデフォルト値はビルド時プラットフォーム識別子 (<code>sonic_asic_platform</code>) で分岐する。
-<code>cisco-8000</code> プラットフォームでは <code>enabled: true</code> がデフォルトになり、他プラットフォームでは <code>false</code>。
-これは <code>DEVICE_METADATA|localhost|platform</code> に対応するビルド時設定であり、<code>init_cfg.json.j2</code> 経由で注入される。</p>
-<p>また <code>hostcfgd</code> 起動時に <code>/proc/cmdline</code> の <code>crashkernel=</code> パラメータを確認し、存在する場合は
-<code>KDUMP|config|enabled</code> と <code>KDUMP|config|memory</code> を CLI 設定より優先して自動上書きする
-(<code>sonic-host-services/scripts/hostcfgd:1179-1207</code>)。</p>
-<h3 id="feature_1">FEATURE テーブルとの関係<a class="headerlink" href="#feature_1" title="Permanent link">&para;</a></h3>
-<p><code>KDUMP</code> テーブルは <code>FEATURE</code> テーブルの管理対象外。kdump は独立した Docker コンテナを持たず、
-<code>docker-config-engine</code> コンテナ内の <code>hostcfgd</code> が <code>KDUMP</code> テーブルを直接購読・処理する。
-<code>FEATURE|&lt;name&gt;</code> の <code>state</code> フィールドによる有効化フローは存在しない。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>KDUMP (CONFIG_DB) 変更
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  → hostcfgd.kdump_handler()           # subscribe(&#39;KDUMP&#39;, ...)
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>  → KdumpCfg.kdump_update()
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>  → sonic-kdump-config (--enable/--disable/--memory/--num_dumps/--ssh_string/--ssh_path/--remote)
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>  → /etc/default/kdump-tools 更新
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>  → 次回システム再起動で反映
-</span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>暗黙参照元</th>
-<th>参照先</th>
-<th>種別</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>KDUMP|config|enabled</code> デフォルト</td>
-<td><code>DEVICE_METADATA|localhost|platform</code> (cisco-8000 判定)</td>
-<td>ビルド時条件分岐</td>
-</tr>
-<tr>
-<td><code>KDUMP|config|enabled/memory</code></td>
-<td><code>/proc/cmdline</code> の <code>crashkernel=</code></td>
-<td>起動時自動上書き</td>
-</tr>
-<tr>
-<td><code>KDUMP</code> 全フィールド</td>
-<td><code>hostcfgd</code> (docker-config-engine)</td>
-<td>ランタイム購読 (FEATURE 非管理)</td>
-</tr>
-</tbody>
-</table>
-<!-- /cross-refs -->
 
 <!-- glossary-links-injected: 572b8e3657dc -->
 

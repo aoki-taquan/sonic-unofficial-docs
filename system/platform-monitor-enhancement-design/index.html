@@ -14278,17 +14278,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#lldp-portidsubtype-locally-assigned-mac-addresssonic-buildimage1457" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LLDP の portidsubtype が "locally assigned" ではなく "mac address"（sonic-buildimage#1457）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#sonic-sonic-buildimage4646" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -14304,17 +14293,6 @@
     <span class="md-ellipsis">
       
         最新ビルドで show interface transceiver コマンドが壊れている問題（sonic-buildimage#5001）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#snmp-ifmib-ifname-sonic-buildimage5592" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SNMP の ifMIB ifName が間違った値を返す問題（sonic-buildimage#5592）
       
     </span>
   </a>
@@ -35528,17 +35506,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#lldp-portidsubtype-locally-assigned-mac-addresssonic-buildimage1457" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LLDP の portidsubtype が "locally assigned" ではなく "mac address"（sonic-buildimage#1457）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#sonic-sonic-buildimage4646" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35554,17 +35521,6 @@
     <span class="md-ellipsis">
       
         最新ビルドで show interface transceiver コマンドが壊れている問題（sonic-buildimage#5001）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#snmp-ifmib-ifname-sonic-buildimage5592" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SNMP の ifMIB ifName が間違った値を返す問題（sonic-buildimage#5592）
       
     </span>
   </a>
@@ -35800,11 +35756,6 @@ reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/633">sonic-net/sonic-buildimage#633</a></li>
 </ul>
-<h3 id="lldp-portidsubtype-locally-assigned-mac-addresssonic-buildimage1457">LLDP の portidsubtype が "locally assigned" ではなく "mac address"（sonic-buildimage#1457）<a class="headerlink" href="#lldp-portidsubtype-locally-assigned-mac-addresssonic-buildimage1457" title="Permanent link">&para;</a></h3>
-<p><a href="../../reference/glossary/#term-lldp">LLDP</a> の portidsubtype が "locally assigned" ではなく "mac address" にセットされる問題。lldpd の設定で <code>configure lldp portidsubtype local</code> を明示指定することで回避可能</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/1457">sonic-net/sonic-buildimage#1457</a></li>
-</ul>
 <h3 id="sonic-sonic-buildimage4646">ポートのステータス変更が SONiC に反映されない問題（sonic-buildimage#4646）<a class="headerlink" href="#sonic-sonic-buildimage4646" title="Permanent link">&para;</a></h3>
 <p>ポートのステータス変更が <a href="../../reference/glossary/#term-sonic">SONiC</a> に反映されない問題。xcvrd または <a href="../../reference/glossary/#term-portsyncd">portsyncd</a> がポートの物理状態変更を正しく検知できていない場合に発生。<code>sudo systemctl restart pmon</code> で回復できることがある</p>
 <ul>
@@ -35814,11 +35765,6 @@ reasoning: 直接 plugin アクセス → STATE_DB 集約への移行根拠。
 <p>最新ビルドで <code>show interface transceiver</code> コマンドが壊れている問題。xcvrd の Python 3 移行後にインターフェース取得ロジックが変更されたため、パッケージのバージョン整合性を確認すること</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5001">sonic-net/sonic-buildimage#5001</a></li>
-</ul>
-<h3 id="snmp-ifmib-ifname-sonic-buildimage5592">SNMP の ifMIB ifName が間違った値を返す問題（sonic-buildimage#5592）<a class="headerlink" href="#snmp-ifmib-ifname-sonic-buildimage5592" title="Permanent link">&para;</a></h3>
-<p>SNMP の ifMIB ifName が間違った値を返す問題。<code>show interfaces status</code> の表示名と SNMP の ifName が一致しない場合、インターフェース名のマッピングを確認すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5592">sonic-net/sonic-buildimage#5592</a></li>
 </ul>
 <h3 id="master-pmon-platform-monitor-sonic-buildimage5759">最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題（sonic-buildimage#5759）<a class="headerlink" href="#master-pmon-platform-monitor-sonic-buildimage5759" title="Permanent link">&para;</a></h3>
 <p>最新 master イメージで pmon (Platform Monitor) が即座にクラッシュする問題。プラットフォーム固有のドライバと pmon の Python 3 互換性を確認すること</p>

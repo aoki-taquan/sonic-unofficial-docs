@@ -6197,17 +6197,6 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        内部実装章のスコープ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         機能章との重複を避けるための切り分け
       
     </span>
@@ -6227,7 +6216,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章での読み方
@@ -6238,7 +6227,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         読了後にできること
@@ -6249,7 +6238,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -6260,7 +6249,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -35379,17 +35368,6 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        内部実装章のスコープ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         機能章との重複を避けるための切り分け
       
     </span>
@@ -35409,7 +35387,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章での読み方
@@ -35420,7 +35398,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         読了後にできること
@@ -35431,7 +35409,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -35442,7 +35420,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         この章の前提知識
@@ -35620,7 +35598,6 @@
 </tbody>
 </table>
 <h2 id="_7">内部実装章のスコープ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<h2 id="_8">内部実装章のスコープ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>この章は機能（BGP、L2、ACL、VRF など）を語らない。代わりに、機能章のどこにでも出てくる次の要素を扱う。</p>
 <table>
 <thead>
@@ -35659,7 +35636,7 @@
 </tbody>
 </table>
 <p>機能章で個別に出てきた話を「内部実装側の共通テーマ」に揃え直すための章である。スキーマの全カラム表や CLI の細則は <a href="../../../reference/"><code>docs/reference/</code></a> が引き受け、個別 <a href="../../../reference/glossary/#term-hld">HLD</a> は <code>docs/internals/</code> / <code>docs/architecture/</code> / <code>docs/platform/</code> / <code>docs/system/</code> 配下に残す。</p>
-<h2 id="_9">機能章との重複を避けるための切り分け<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">機能章との重複を避けるための切り分け<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>機能章は「特定機能を運用するためにどの DB を見て、どの daemon を疑うか」を読み手の目的順で書く。この章は「DB と daemon そのものがどう設計されているか」を書く。</p>
 <ul>
 <li>例: BGP route が ASIC に入るまでの経路は <a href="../../02-bgp/architecture/">BGP アーキテクチャ</a> で読む。一方、<a href="../../../reference/glossary/#term-route_table">ROUTE_TABLE</a> 全般がどう APPL_DB と ASIC_DB に流れるか、ProducerStateTable とは何か、view switching とは何か、はここで読む。</li>
@@ -35721,9 +35698,9 @@
 </tbody>
 </table>
 <p>スキーマの一次ソースは <a href="../../../internals/swss-schema/">swss-schema</a> を読む。</p>
-<h2 id="_10">この章での読み方<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">この章での読み方<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <p>DB と daemon の地図がほしい人は <a href="../architecture/">アーキテクチャ</a> を先に読む。multi-namespace（<a href="../../../reference/glossary/#term-multi-asic">Multi-ASIC</a>）や独自 Redis instance を構成したい人は <a href="../setup/">設定</a> に進む。SAI 失敗の見方を覚えたい人は <a href="../operations/">運用</a> と <a href="../internals/">内部実装</a> を続けて読む。bulk/flex counter、debug、dump の設計差は <a href="../internals/">内部実装</a> を読む。startup や warm reboot の view switching は <a href="../advanced/">発展トピック</a> に置いた。</p>
-<h2 id="_11">読了後にできること<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_10">読了後にできること<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
 <li>「ROUTE_TABLE は APPL_DB と CONFIG_DB のどちらに置くべきか」のような質問に、書き手と読み手の役割で即答できる。</li>
 <li>orchagent が APPL_DB を読み、ASIC_DB に書き、syncd が SAI を呼ぶ流れを、矢印 4 本で説明できる。</li>
@@ -35731,14 +35708,14 @@
 <li>bulk counter と flex counter の違いを、登録単位と取得タイミングの観点で説明できる。</li>
 <li>続く <a href="../architecture/">アーキテクチャ</a> / <a href="../setup/">設定</a> / <a href="../operations/">運用</a> / <a href="../internals/">内部実装</a> / <a href="../advanced/">発展トピック</a> で出てくる固有名詞の 9 割を、章を行き来せずに位置付けられる。</li>
 </ul>
-<h2 id="_12">関連ページ<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../internals/swss-schema/">swss-schema（APPL_DB / STATE_DB の中心スキーマ参照）</a></li>
 <li><a href="../../../internals/why-need-health-check/">コンテナ health-check（k8s readiness probe）</a></li>
 <li><a href="../../../internals/zmq-producer-consumer-state-table-design/">ZMQ ProducerStateTable / ConsumerStateTable 設計</a></li>
 </ul>
 <!-- xref-prereq -->
-<h2 id="_13">この章の前提知識<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_12">この章の前提知識<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <p>この章を読み進める前に、次の章を押さえておくと迷子になりにくい。</p>
 <ul>
 <li><a href="../../01-overview/">SONiC 全体像と設定基盤</a></li>

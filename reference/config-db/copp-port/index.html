@@ -25843,56 +25843,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        書込み順依存 (Phase B)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#allportsready_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        allPortsReady() ゲート
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#orchdaemoncpp_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        orchdaemon.cpp における初期化順序
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB 書込み順序（運用）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36557,56 +36507,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-b_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        書込み順依存 (Phase B)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="書込み順依存 (Phase B)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#allportsready_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        allPortsReady() ゲート
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#orchdaemoncpp_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        orchdaemon.cpp における初期化順序
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config_db_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CONFIG_DB 書込み順序（運用）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -37400,45 +37300,6 @@
 <p><code>coppmgr</code> コンストラクタ (<code>coppmgr.cpp:334, L372</code>) は <code>COPP_TRAP</code> を先にマージしてから <code>COPP_GROUP</code> をマージする。genetlink フィールドを持つ <code>queue2_group1</code> を APPL_DB に書き込む際、<code>sample_packet</code> を担当する COPP_TRAP エントリが先に処理されていれば <code>trap_ids</code> が正しく付与される。直接 APPL_DB を操作する場合は <code>COPP_TRAP</code> エントリを先に書き込むこと。<!-- evidence: coppmgr.cpp L334, L372 --></p>
 <!-- /ordering -->
 
-<!-- ordering -->
-<h2 id="phase-b_1">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
-<h3 id="allportsready_1"><code>allPortsReady()</code> ゲート<a class="headerlink" href="#allportsready_1" title="Permanent link">&para;</a></h3>
-<p><code>CoppOrch::doTask()</code> の先頭で <code>gPortsOrch-&gt;allPortsReady()</code> を確認する（<code>copporch.cpp:885-888</code>）。全ポートの SAI 初期化が完了するまで <code>COPP_GROUP</code>（genetlink フィールド含む）の処理はスキップされ、<code>m_toSync</code> キューに蓄積される。<code>allPortsReady()</code> が true になった後に順次処理される。</p>
-<h3 id="orchdaemoncpp_1">orchdaemon.cpp における初期化順序<a class="headerlink" href="#orchdaemoncpp_1" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>L232: gPortsOrch = new PortsOrch(...)   # PortsOrch を最初に生成
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>...
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>L341: gCoppOrch = new CoppOrch(...)     # PortsOrch 生成後に CoppOrch を生成
-</span></code></pre></div>
-<p><code>CoppOrch</code> コンストラクタ内の <code>initDefaultHostIntfTable()</code> / <code>initDefaultTrapGroup()</code> / <code>initDefaultTrapIds()</code> は <code>allPortsReady()</code> に依存せず即時実行される。<code>m_orchList</code> では <code>gCoppOrch</code> は <code>gPortsOrch</code>・<code>gBufferOrch</code> の後に位置し、ポート・バッファ初期化後に COPP 処理が行われる。<!-- evidence: orchdaemon.cpp L232,341,500 --></p>
-<h3 id="config_db_1">CONFIG_DB 書込み順序（運用）<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>制約</th>
-<th>違反時の結果</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>起動時 genetlink HostIf 作成</td>
-<td><code>allPortsReady()</code> が true になるまで自動遅延</td>
-<td><code>m_toSync</code> に蓄積 → PortsOrch 初期化後に自動処理</td>
-</tr>
-<tr>
-<td>新規 COPP_GROUP (genetlink フィールド付き) 書込み</td>
-<td>PortsOrch 初期化後が理想。事前書込みは自動遅延</td>
-<td><code>allPortsReady()</code> 前はスキップ、次回 <code>doTask</code> 呼出しで再処理</td>
-</tr>
-<tr>
-<td>COPP_GROUP DEL (genetlink フィールドあり)</td>
-<td>順序制約なし（<code>allPortsReady()</code> ゲートは存在）</td>
-<td><code>allPortsReady()</code> 前は DEL も遅延</td>
-</tr>
-</tbody>
-</table>
-<!-- /ordering -->
-
 <!-- cross-refs -->
 <h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
 <p><code>COPP_GROUP</code> の genetlink フィールド (<code>genetlink_name</code> / <code>genetlink_mcgrp_name</code>) が処理される際に
@@ -37512,12 +37373,12 @@
 <p><code>doTask()</code> 冒頭の <code>allPortsReady()</code> チェック (<code>copporch.cpp:885-888</code>) が false の場合、即 <code>return</code> して全エントリを <code>m_toSync</code> に保留する。genetlink HostIf / HostIfTable は一切作成されず、PortsOrch 初期化完了後に次サイクルで自動再処理される。</p>
 <h3 id="b-genetlink-hostif-task_failed">B. Genetlink HostIf 二重作成 → <code>task_failed</code> → 後続処理停止<a class="headerlink" href="#b-genetlink-hostif-task_failed" title="Permanent link">&para;</a></h3>
 <p><code>copporch.cpp:835-840</code>:</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_trap_group_hostif_map</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">m_trap_group_map</span><span class="p">[</span><span class="n">trap_group_name</span><span class="p">])</span><span class="w"> </span><span class="o">!=</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">        </span><span class="n">m_trap_group_hostif_map</span><span class="p">.</span><span class="n">end</span><span class="p">())</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">{</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Genetlink hostif exists for the trap group %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">task_process_status</span><span class="o">::</span><span class="n">task_failed</span><span class="p">;</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="p">}</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_trap_group_hostif_map</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">m_trap_group_map</span><span class="p">[</span><span class="n">trap_group_name</span><span class="p">])</span><span class="w"> </span><span class="o">!=</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">        </span><span class="n">m_trap_group_hostif_map</span><span class="p">.</span><span class="n">end</span><span class="p">())</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="p">{</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="n">SWSS_LOG_ERROR</span><span class="p">(</span><span class="s">&quot;Genetlink hostif exists for the trap group %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">task_process_status</span><span class="o">::</span><span class="n">task_failed</span><span class="p">;</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
 </span></code></pre></div>
 <p>同一 trap_group に genetlink フィールドを持つエントリが重複 SET された場合（<a href="../../glossary/#term-orchagent">orchagent</a> 再起動なしに CONFIG_DB を再書き込みした場合など）、<code>processCoppRule()</code> が <code>task_failed</code> を返す。<code>doTask()</code> は当該エントリを erase して <code>return</code> し、<strong>後続の全 pending エントリの処理も停止する</strong>（<code>copporch.cpp:920-923</code>）。</p>
 <h3 id="c-create_hostif-sai-task_failed">C. <code>create_hostif()</code> SAI 失敗 → <code>task_failed</code><a class="headerlink" href="#c-create_hostif-sai-task_failed" title="Permanent link">&para;</a></h3>
@@ -37598,9 +37459,9 @@
 <p>これらは YANG モデルに対応する定義がなく、CONFIG_DB / APPL_DB への書き込み時はこの文字列と完全一致する必要がある。</p>
 <h3 id="chardata">chardata バッファサイズ上限<a class="headerlink" href="#chardata" title="Permanent link">&para;</a></h3>
 <p><code>getAttribsFromTrapGroup()</code> 内の genetlink フィールド格納処理 (<code>copporch.cpp:1271-1275</code>, <code>1281-1285</code>):</p>
-<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">chardata</span><span class="p">);</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">strncpy</span><span class="p">(</span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">chardata</span><span class="p">,</span><span class="w"> </span><span class="n">fvValue</span><span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">).</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">chardata</span><span class="p">[</span><span class="n">size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">chardata</span><span class="p">);</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">strncpy</span><span class="p">(</span><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">chardata</span><span class="p">,</span><span class="w"> </span><span class="n">fvValue</span><span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">).</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">attr</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">chardata</span><span class="p">[</span><span class="n">size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span>
 </span></code></pre></div>
 <p><code>sai_attribute_value_t::chardata</code> は標準 SAI で <strong>32 バイト</strong>。<code>strncpy</code> 上限は <code>size - 1 = 31</code> 文字で、末尾 NUL を強制書き込みするため <strong>実効最大長は 31 文字</strong>。31 文字超の値はサイレントに切り詰められ、SAI <code>create_hostif()</code> が失敗する可能性がある。</p>
 <h3 id="flexcounter">FlexCounter 関連定数<a class="headerlink" href="#flexcounter" title="Permanent link">&para;</a></h3>
@@ -37858,18 +37719,18 @@
 </table>
 <p>APPL_DB の <code>COPP_TABLE</code> から <code>genetlink_name</code> / <code>genetlink_mcgrp_name</code> を非同期 subscribe するデーモンは存在しない。<code>CoppOrch</code> が受信して SAI に適用するのみ。</p>
 <h3 id="_18">データフロー図<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>CONFIG_DB[COPP_GROUP|&lt;group-name&gt;] (genetlink_name, genetlink_mcgrp_name, ...)
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  ↓ SubscriberStateTable (keyspace notification)
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>coppmgrd: CoppMgr::doCoppGroupTask()
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>  ↓ ProducerStateTable::set()
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>APPL_DB[COPP_TABLE|&lt;group-name&gt;] (全フィールド透過転送)
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>  ↓ Consumer (keyspace notification)
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>orchagent: CoppOrch::doTask()
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>  ↓   [allPortsReady() チェック — PortsOrch 完了まで保留]
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>  ↓ processCoppRule() → getAttribsFromTrapGroup()
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>  ↓   genetlink_attribs が非空の場合のみ:
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>  ↓ createGenetlinkHostIf() → sai_hostif_api-&gt;create_hostif() (TYPE_GENETLINK)
-</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>  ↓ createGenetlinkHostIfTable() → sai_hostif_api-&gt;create_hostif_table_entry() (CHANNEL_TYPE_GENETLINK)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>CONFIG_DB[COPP_GROUP|&lt;group-name&gt;] (genetlink_name, genetlink_mcgrp_name, ...)
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  ↓ SubscriberStateTable (keyspace notification)
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>coppmgrd: CoppMgr::doCoppGroupTask()
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>  ↓ ProducerStateTable::set()
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>APPL_DB[COPP_TABLE|&lt;group-name&gt;] (全フィールド透過転送)
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>  ↓ Consumer (keyspace notification)
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>orchagent: CoppOrch::doTask()
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>  ↓   [allPortsReady() チェック — PortsOrch 完了まで保留]
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>  ↓ processCoppRule() → getAttribsFromTrapGroup()
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>  ↓   genetlink_attribs が非空の場合のみ:
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>  ↓ createGenetlinkHostIf() → sai_hostif_api-&gt;create_hostif() (TYPE_GENETLINK)
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>  ↓ createGenetlinkHostIfTable() → sai_hostif_api-&gt;create_hostif_table_entry() (CHANNEL_TYPE_GENETLINK)
 </span></code></pre></div>
 <blockquote>
 <p><strong>スキャン証跡</strong>: <code>coppmgrd.cpp</code> 全行読了。<code>coppmgr.cpp</code> L298-310, L510-530 読了。<code>copporch.cpp</code> L191-215, L880-935 読了。<code>orchdaemon.cpp</code> L341 確認。<code>show/copp.py</code> <code>dump/plugins/copp.py</code> で genetlink 読み出し consumer 不在を確認。中間ファイル: <code>meta/_intermediate/cdb-flow/copp-port-pubsub.md</code></p>

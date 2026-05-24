@@ -13102,17 +13102,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dhcp_relay-systemctl-stop-swss-swss-dhcsonic-buildimage2752" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        dhcp_relay サービスが systemctl stop swss で停止するが、swss 再起動時に dhc（sonic-buildimage#2752）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#warm-reboot-redis-lua-sonic-buildimage3008" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -13234,17 +13223,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#iccpd-sonic-mainline-sonic-buildimage5310" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        iccpd サービスが最新 SONiC mainline ビルドのイメージで実行されていない問題（sonic-buildimage#5310）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#warm-boot-sonic-buildimage5439" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -13278,17 +13256,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#in-band-dhcp-sonic-buildimage5732" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        In-band ポートに DHCP アドレスを割り当てられない問題（sonic-buildimage#5732）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#config-reload-y-oops-sonic-buildimage5857" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -13304,17 +13271,6 @@
     <span class="md-ellipsis">
       
         ブート時に determine-reboot-cause スクリプトが TypeError で失敗する問題（sonic-buildimage#6009）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dhcp-relay-dhcp-dhcp-sonic-buildimage6052" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DHCP relay が不正な DHCP クライアントパケットを DHCP サーバに転送する問題（sonic-buildimage#6052）
       
     </span>
   </a>
@@ -35787,17 +35743,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dhcp_relay-systemctl-stop-swss-swss-dhcsonic-buildimage2752" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        dhcp_relay サービスが systemctl stop swss で停止するが、swss 再起動時に dhc（sonic-buildimage#2752）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#warm-reboot-redis-lua-sonic-buildimage3008" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35919,17 +35864,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#iccpd-sonic-mainline-sonic-buildimage5310" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        iccpd サービスが最新 SONiC mainline ビルドのイメージで実行されていない問題（sonic-buildimage#5310）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#warm-boot-sonic-buildimage5439" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35963,17 +35897,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#in-band-dhcp-sonic-buildimage5732" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        In-band ポートに DHCP アドレスを割り当てられない問題（sonic-buildimage#5732）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#config-reload-y-oops-sonic-buildimage5857" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35989,17 +35912,6 @@
     <span class="md-ellipsis">
       
         ブート時に determine-reboot-cause スクリプトが TypeError で失敗する問題（sonic-buildimage#6009）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dhcp-relay-dhcp-dhcp-sonic-buildimage6052" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        DHCP relay が不正な DHCP クライアントパケットを DHCP サーバに転送する問題（sonic-buildimage#6052）
       
     </span>
   </a>
@@ -36279,11 +36191,6 @@ reasoning: finalizer 流用と新 flag 導入の根拠。
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/762">sonic-net/sonic-buildimage#762</a></li>
 </ul>
-<h3 id="dhcp_relay-systemctl-stop-swss-swss-dhcsonic-buildimage2752">dhcp_relay サービスが <code>systemctl stop swss</code> で停止するが、swss 再起動時に dhc（sonic-buildimage#2752）<a class="headerlink" href="#dhcp_relay-systemctl-stop-swss-swss-dhcsonic-buildimage2752" title="Permanent link">&para;</a></h3>
-<p>dhcp_relay サービスが <code>systemctl stop swss</code> で停止するが、swss 再起動時に dhcp_relay が自動的に再起動されない問題。手動で <code>systemctl restart dhcp_relay</code> が必要</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/2752">sonic-net/sonic-buildimage#2752</a></li>
-</ul>
 <h3 id="warm-reboot-redis-lua-sonic-buildimage3008">warm-reboot 中に Redis が Lua スクリプト実行でビジー状態となりアプリがクラッシュする問題（sonic-buildimage#3008）<a class="headerlink" href="#warm-reboot-redis-lua-sonic-buildimage3008" title="Permanent link">&para;</a></h3>
 <p>warm-reboot 中に Redis が Lua スクリプト実行でビジー状態となりアプリがクラッシュする問題。warm-reboot 前に Redis のビジー状態を確認すること</p>
 <ul>
@@ -36339,11 +36246,6 @@ reasoning: finalizer 流用と新 flag 導入の根拠。
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5217">sonic-net/sonic-buildimage#5217</a></li>
 </ul>
-<h3 id="iccpd-sonic-mainline-sonic-buildimage5310">iccpd サービスが最新 SONiC mainline ビルドのイメージで実行されていない問題（sonic-buildimage#5310）<a class="headerlink" href="#iccpd-sonic-mainline-sonic-buildimage5310" title="Permanent link">&para;</a></h3>
-<p>iccpd サービスが最新 SONiC mainline ビルドのイメージで実行されていない問題。iccpd は MC-<a href="../../reference/glossary/#term-lag">LAG</a> 機能に必要なサービスで、docker-teamd コンテナ内で動作する</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5310">sonic-net/sonic-buildimage#5310</a></li>
-</ul>
 <h3 id="warm-boot-sonic-buildimage5439">warm-boot 実行中に断続的なエラーが発生する問題（sonic-buildimage#5439）<a class="headerlink" href="#warm-boot-sonic-buildimage5439" title="Permanent link">&para;</a></h3>
 <p>warm-boot 実行中に断続的なエラーが発生する問題。<code>/var/log/warm-reboot</code> で確認し、失敗箇所を特定すること</p>
 <ul>
@@ -36359,11 +36261,6 @@ reasoning: finalizer 流用と新 flag 導入の根拠。
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5663">sonic-net/sonic-buildimage#5663</a></li>
 </ul>
-<h3 id="in-band-dhcp-sonic-buildimage5732">In-band ポートに DHCP アドレスを割り当てられない問題（sonic-buildimage#5732）<a class="headerlink" href="#in-band-dhcp-sonic-buildimage5732" title="Permanent link">&para;</a></h3>
-<p>In-band ポートに DHCP アドレスを割り当てられない問題。dhcp_relay が In-band インターフェースをサポートしていない制約</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5732">sonic-net/sonic-buildimage#5732</a></li>
-</ul>
 <h3 id="config-reload-y-oops-sonic-buildimage5857">config reload -y でカーネル Oops が発生する問題（sonic-buildimage#5857）<a class="headerlink" href="#config-reload-y-oops-sonic-buildimage5857" title="Permanent link">&para;</a></h3>
 <p>config reload -y でカーネル Oops が発生する問題。特定のカーネルバージョンと config reload の組み合わせで、ネットワークドライバが不正アクセスを起こす</p>
 <ul>
@@ -36373,11 +36270,6 @@ reasoning: finalizer 流用と新 flag 導入の根拠。
 <p>ブート時に <code>determine-reboot-cause</code> スクリプトが TypeError で失敗する問題。reboot-cause ファイルのフォーマットが新バージョンで変更された場合に発生</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6009">sonic-net/sonic-buildimage#6009</a></li>
-</ul>
-<h3 id="dhcp-relay-dhcp-dhcp-sonic-buildimage6052">DHCP relay が不正な DHCP クライアントパケットを DHCP サーバに転送する問題（sonic-buildimage#6052）<a class="headerlink" href="#dhcp-relay-dhcp-dhcp-sonic-buildimage6052" title="Permanent link">&para;</a></h3>
-<p>DHCP relay が不正な DHCP クライアントパケットを DHCP サーバに転送する問題。クライアントの MAC アドレスと giaddr の整合性チェックが必要</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6052">sonic-net/sonic-buildimage#6052</a></li>
 </ul>
 <h3 id="warm-reboot-syncd-apply_view-orchagent-sonic-buildimage6069">warm reboot 後の syncd APPLY_VIEW 失敗が orchagent クラッシュを引き起こす問題（sonic-buildimage#6069）<a class="headerlink" href="#warm-reboot-syncd-apply_view-orchagent-sonic-buildimage6069" title="Permanent link">&para;</a></h3>
 <p>warm reboot 後の syncd APPLY_VIEW 失敗が <a href="../../reference/glossary/#term-orchagent">orchagent</a> クラッシュを引き起こす問題。syncd の warm-reboot ビュー適用に失敗すると orchagent が接続できなくなる</p>
