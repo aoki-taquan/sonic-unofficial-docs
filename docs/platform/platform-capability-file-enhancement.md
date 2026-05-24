@@ -9,11 +9,7 @@ sources:
   path: doc/platform-json/platform_json_enhancement.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - CHASSIS_MODULE
-  - MID_PLANE_BRIDGE
-  - DPU
-  - CRM
+  config_db: []
   cli:
   - show platform
   yang:
@@ -52,7 +48,7 @@ HLD 当時の用途[^1]:
 | キー | 型 | 意味 |
 |------|-----|------|
 | `controllable` | bool | NOS から制御可能なら `true`、不可なら `false`。既定 `true` |
-| status LED の `colors` | list of string | 取りうる LED 色のリスト |
+| status LED の `color` | list of string | 取りうる LED 色のリスト |
 | fan speed の `minimum` | number | 設定可能な fan speed の推奨最小値 |
 | fan speed の `maximum` | number | 設定可能な fan speed の推奨最大値 |
 
