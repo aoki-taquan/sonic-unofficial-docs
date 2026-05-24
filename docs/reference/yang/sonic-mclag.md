@@ -1,6 +1,6 @@
 ---
 title: sonic-mclag YANG
-description: "sonic-mclag YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-mclag.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
+description: "sonic-mclag YANG — MCLAG（Multi-Chassis LAG）ドメイン・インタフェース・Unique IP を定義する YANG モジュール。ピア間の keepalive / session timeout 等のパラメータを CONFIG_DB に保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-port`, `sonic-portchannel`
 - top container: `sonic-mclag`
 
-SONIC [MCLAG](../../reference/glossary.md#term-mclag)[^1]
+MCLAG（Multi-Chassis Link Aggregation Group）のドメイン設定・インタフェース割り当て・Unique IP 設定を定義する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。`MCLAG_DOMAIN` でピア間 keepalive / session timeout を、`MCLAG_INTERFACE` でポートチャネルとドメインの紐付けを、`MCLAG_UNIQUE_IP` で VLAN インタフェースへのユニーク IP 割り当てを管理する。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)

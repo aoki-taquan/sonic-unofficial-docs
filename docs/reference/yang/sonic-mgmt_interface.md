@@ -119,7 +119,7 @@ module: sonic-mgmt_interface
 
 ### よくある落とし穴
 
-- `gwaddr` leaf に同一サブネット外の GW を入れると default route が adoption されない。
+- `gwaddr` leaf に同一サブネット外の GW を入れると default route が適用されない。
 
 ### 関連する config / show コマンド
 
