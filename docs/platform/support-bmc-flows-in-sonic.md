@@ -206,16 +206,13 @@ redis-cli -n 6 keys 'BMC_*'
 
 - [Topics: Platform / Port / Optics](../topics/14-platform-port-optics/index.md)
 - [HLD: s3ip-sysfs-specification](s3ip-sysfs-specification.md)
+- [CLI: show-platform](../reference/cli/show-platform.md)
+- [CLI: config-platform-firmware](../reference/cli/config-platform-firmware.md)
 - [Reference index](../reference/index.md)
 
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bmc/bmc_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
-
-## 関連ページ
-
-- [CLI: show-platform](../reference/cli/show-platform.md)
-- [CLI: config-platform-firmware](../reference/cli/config-platform-firmware.md)
 
 <!-- concerns hint:
 - sonic-platform-common の RedfishClient / ComponentBMC 取り込みは確認済み (2026-05-11)
@@ -229,16 +226,6 @@ redis-cli -n 6 keys 'BMC_*'
 
 <!-- /topics-back-ref -->
 
-
-## 参考リンク
-
-本ページに関連する参照ドキュメント:
-
-- [`show platform bmc summary` CLI リファレンス](../reference/cli/show-platform.md)
-- [`show platform bmc eeprom` CLI リファレンス](../reference/cli/show-platform.md)
-- [`show platform firmware status` CLI リファレンス](../reference/cli/show-platform.md)
-- [`config platform firmware install` CLI リファレンス](../reference/cli/config-platform-firmware.md)
-- [`show platform` CLI リファレンス](../reference/cli/show-platform.md)
 
 <!-- augmented-links: v1 -->
 
