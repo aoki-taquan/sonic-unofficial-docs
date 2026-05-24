@@ -270,16 +270,6 @@ TACPLUS global passkey configured Yes
     - [sonic-utilities #3027: TACACSPLUS_PASSKEY_ENCRYPTION support Part - I (closed)](https://github.com/sonic-net/sonic-utilities/pull/3027) — CLI / hostcfgd 連携の Part-I PR。closed のため後続 PR が必要。
 <!-- /diff-admonition -->
 
-確認コマンド例:
-
-```bash
-# TACACS+ 認証状態確認
-show tacacs
-show aaa
-redis-cli -n 4 hgetall 'TACPLUS|global'
-journalctl -u hostcfgd | grep -i tacacs | tail
-```
-
 ## 参考リンク
 
 - [CONFIG_DB: TACPLUS / TACPLUS_SERVER](../reference/config-db/aaa.md)
@@ -303,7 +293,7 @@ sudo cat /etc/pam.d/common-auth | grep -i tacplus
 sudo grep -iE 'tacacs|pam_tacplus' /var/log/auth.log | tail
 ```
 
-## トラブルシュート
+## トラブルシューティング（追補）
 
 - passkey が CONFIG_DB に平文で残っている古い構成では `config tacacs passkey <key>` で再投入し暗号化形式に migration する。
 - 暗号化マスタキーが装置固有 (TPM / platform 固有値) の場合、`config_db.json` を別装置に流用しても TACACS+ 認証が失敗する。装置毎に再設定する運用にする。
