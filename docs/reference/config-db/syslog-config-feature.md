@@ -32,7 +32,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SYSLOG_CONFIG_FEATURE")]
-  DM["hostcfgd"]
+  DM["containercfgd"]
   CDB --> DM
 ```
 
@@ -484,7 +484,7 @@ SYSLOG_CONFIG_FEATURE テーブルへの書き込みが発生するコード経�
 
 ### CLI
 
-  - `config syslog rate-limit-feature ...` — `config/syslog.py` が SYSLOG_CONFIG_FEATURE を書き込む ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/syslog.py)
+  - `config syslog rate-limit-container ...` — `config/syslog.py` が SYSLOG_CONFIG_FEATURE を書き込む ([sonic-utilities](../../reference/glossary.md#term-sonic-utilities)/config/syslog.py)
 
 ### minigraph / sonic-cfggen
 

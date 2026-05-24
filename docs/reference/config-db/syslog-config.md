@@ -126,7 +126,7 @@ SYSLOG_CONFIG|GLOBAL
 ### 典型値
 
 - key 形式: `SYSLOG_CONFIG|GLOBAL`。
-- `format`: `standard`、`welf_facility`: 任意、`rate_limit_interval`/`rate_limit_burst` でドロップ閾値。
+- `format`: `standard`、`welf_firewall_name`: 任意、`rate_limit_interval`/`rate_limit_burst` でドロップ閾値。
 
 ### よくある誤設定
 
