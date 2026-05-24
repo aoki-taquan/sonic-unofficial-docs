@@ -179,7 +179,7 @@ ls -l /etc/sonic/reload.lock
 <!-- cli-sibling -->
 ### 関連 CLI コマンド
 
-- [`show mgmt vrf`](show-mgmt-vrf.md) — show mgmt-vrf サブコマンド
+- [`show mgmt-vrf`](show-mgmt-vrf.md) — show mgmt-vrf サブコマンド
 - [`show muxcable`](show-muxcable.md) — show muxcable サブコマンド
 - [`show running config`](show-running-config.md) — show runningconfiguration / startupconfiguration サブコマンド
 - [`config dhcp relay`](config-dhcp-relay.md) — config dhcp_relay / dhcpv4_relay サブコマンド
