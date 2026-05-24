@@ -1,6 +1,6 @@
 ---
 title: CONFIG_DB 横断索引
-description: CONFIG_DB 横断索引 — docs/reference/config-db/ 配下の 76 ページを、Phase B の機能章ごとに
+description: CONFIG_DB 横断索引 — docs/reference/config-db/ 配下の 293 ページを、Phase B の機能章ごとに
   table family で並べ直した索引である。
 area: topics
 verification: meta
@@ -23,7 +23,7 @@ related:
 
 # CONFIG_DB 横断索引
 
-`docs/reference/config-db/` 配下の 76 ページを、Phase B の機能章ごとに table family で並べ直した索引である。[CONFIG_DB](../../reference/glossary.md#term-config_db) は [SONiC](../../reference/glossary.md#term-sonic) の構成入力点であり、CLI / [YANG](../../reference/glossary.md#term-yang) / `config_db.json` の三者を裏で同一のスキーマでつないでいる。table 名から章を逆引きする場合も本ページを使う。
+`docs/reference/config-db/` 配下の 293 ページを、Phase B の機能章ごとに table family で並べ直した索引である。[CONFIG_DB](../../reference/glossary.md#term-config_db) は [SONiC](../../reference/glossary.md#term-sonic) の構成入力点であり、CLI / [YANG](../../reference/glossary.md#term-yang) / `config_db.json` の三者を裏で同一のスキーマでつないでいる。table 名から章を逆引きする場合も本ページを使う。
 
 ## 機能章別 table family
 
@@ -128,7 +128,7 @@ related:
 
 ## 辞書から章への逆引き
 
-`docs/reference/config-db/index.md` には全 76 table の一覧が並ぶ。読者が table 名を知っているが章を知らない場合、本ページの上記節のなかで table 名を検索すれば章に到達できる。
+`docs/reference/config-db/index.md` には全 293 table の一覧が並ぶ。読者が table 名を知っているが章を知らない場合、本ページの上記節のなかで table 名を検索すれば章に到達できる。
 
 ## 主入口が複数章にまたがる table
 
