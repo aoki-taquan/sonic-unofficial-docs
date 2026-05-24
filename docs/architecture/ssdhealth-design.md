@@ -80,7 +80,7 @@ Temperature: N/A
 ```mermaid
 flowchart LR
     USER[user] --> SHOW["show platform ssdhealth\n(show/main.py)"]
-    SHOW -->|exec| UTIL["ssdhealth -d /dev/sdX -v / -e"]
+    SHOW -->|exec| UTIL["ssdutil -d /dev/sdX -v / -e"]
     UTIL --> BASE["SsdBase\n(sonic_platform_base/sonic_ssd)"]
     BASE --> VENDOR["SsdUtil\n(device/<vendor>/platform/plugins/ssdutil.py)"]
     BASE -.fallback.-> SCTL[smartctl]
@@ -235,7 +235,7 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 - `Health: N/A`: smartctl が当該 disk を識別できていない可能性。`smartctl -i /dev/sdX` で raw に確認。ベンダプラグインが装備されているか `device/<vendor>/platform/plugins/ssdutil.py` の存在を確認。
 - `vendor` モードが空: `SsdUtil` の `get_vendor_output()` が未実装、もしくはベンダツールバイナリが image に含まれていない。
 - `Temperature: 0` と `N/A` の区別: API の戻り値仕様上、温度の取得不可は `0` となる。`0℃` と取得不可が見分けにくい点は HLD の制約[^1]。
-- `show platform ssdhealth` が `command not found`: `show/main.py` の `platform` メニューに項目が登録されているか、`ssdhealth` スクリプトが PATH にあるかを確認。
+- `show platform ssdhealth` が `command not found`: `show/platform.py` の `platform` グループに項目が登録されているか、`ssdutil` パッケージが PATH にあるかを確認。
 
 <!-- diff-admonition -->
 !!! diff "HLD と実装の差分"
@@ -266,7 +266,7 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
 
     監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
 
-    - `SsdBase` / `SsdUtil` / `show platform ssdhealth` は実装済み (`sonic-platform-common/sonic_platform_base/sonic_ssd/ssd_base.py`, `sonic-utilities/show/platform.py`)。HLD の主要パスは到達済み。
+    - `SsdBase` / `SsdUtil` / `show platform ssdhealth` は実装済み (`sonic-platform-common/sonic_platform_base/sonic_storage/storage_base.py` 等、`sonic-utilities/show/platform.py`)。HLD の主要パスは到達済み（パスは HLD 記載の `sonic_ssd/ssd_base.py` から `sonic_storage/` 配下に変更）。
     - HLD の Open Question として残されていた `ssdmond` 常時監視デーモンは未実装。`sonic-platform-daemons/` 配下に `ssdmond` ディレクトリ無し (`find . -iname 'ssdmond*'` 結果 0)。
     - SNMP MIB 露出も未実装（HLD でも明示的にスコープ外と記載）。
     - 関連 PR: `sonic-platform-common` への SsdBase 取り込みは 2019-2020 年に merge 済み。`ssdmond` は提案 PR 無し。
@@ -291,17 +291,6 @@ sudo smartctl -a /dev/sda | head -40
 redis-cli -n 6 hgetall 'SSD_INFO|/dev/sda'
 ```
 
-### コマンド例: SSD health 確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# SSD 健全性情報と Wear level
-sudo show platform ssdhealth
-sudo smartctl -a /dev/sda | head -40
-redis-cli -n 6 hgetall 'SSD_INFO|/dev/sda'
-```
 
 ## 参考リンク
 

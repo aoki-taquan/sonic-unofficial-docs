@@ -53,7 +53,7 @@ Temperature: N/A
 ```mermaid
 flowchart LR
     USER[user] --> SHOW["show platform ssdhealth\n(show/main.py)"]
-    SHOW -->|exec| UTIL["ssdhealth -d /dev/sdX -v / -e"]
+    SHOW -->|exec| UTIL["ssdutil -d /dev/sdX -v / -e"]
     UTIL --> BASE["SsdBase\n(sonic_platform_base/sonic_ssd)"]
     BASE --> VENDOR["SsdUtil\n(device/<vendor>/platform/plugins/ssdutil.py)"]
     BASE -.fallback.-> SCTL[smartctl]
@@ -76,7 +76,7 @@ flowchart LR
 | `show platform ssdhealth` | 簡易表示 |
 | `show platform ssdhealth verbose` | 詳細表示 |
 | `show platform ssdhealth vendor` | ベンダツール生出力 |
-| `ssdhealth -d /dev/sdX [-v|-e]` | 内部ラッパが呼ぶスクリプトを直接実行 |
+| `ssdutil -d /dev/sdX [-v|-e]` | 内部ラッパが呼ぶスクリプトを直接実行（現行 master） |
 
 ## 4. 確認コマンド
 
@@ -109,20 +109,4 @@ sudo smartctl -A /dev/sda
 
 <!-- glossary-links-injected: 20dbc11976b6 -->
 
-## 制限事項
-
-!!! diff "HLD と実装の乖離"
-    - HLD と実装の差分は本ページの章本文で逐次注記している
-    - 追加の境界事項は本セクションで列挙する
-
-## 確認コマンド
-
-SSD health operations の動作確認に使う代表コマンド:
-
-```bash
-# 基本動作確認
-show platform summary
-show version
-docker logs --tail 200 $(docker ps --format "{{.Names}}" | head -1)
-```
 

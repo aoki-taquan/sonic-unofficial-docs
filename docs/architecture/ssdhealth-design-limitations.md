@@ -94,14 +94,4 @@ related:
 
 <!-- glossary-links-injected: 1d579f83f1e2 -->
 
-## 確認コマンド
-
-SSD health limitations の動作確認に使う代表コマンド:
-
-```bash
-# 基本動作確認
-show platform summary
-show version
-docker logs --tail 200 $(docker ps --format "{{.Names}}" | head -1)
-```
 

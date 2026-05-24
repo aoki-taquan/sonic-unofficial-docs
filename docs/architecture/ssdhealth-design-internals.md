@@ -101,20 +101,3 @@ flowchart LR
 
 <!-- glossary-links-injected: 167700005048 -->
 
-## 制限事項
-
-!!! diff "HLD と実装の乖離"
-    - HLD と実装の差分は本ページの章本文で逐次注記している
-    - 追加の境界事項は本セクションで列挙する
-
-## 確認コマンド
-
-SSD health internals の動作確認に使う代表コマンド:
-
-```bash
-# 基本動作確認
-show platform summary
-show version
-docker logs --tail 200 $(docker ps --format "{{.Names}}" | head -1)
-```
-
