@@ -132,6 +132,8 @@ flowchart LR
 
 `SYSTEM_LAG_ID_START` / `SYSTEM_LAG_ID_END` の実際の値はプラットフォーム設定による（テスト環境では `1`/`2`）。
 
+<!-- /defaults -->
+
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
