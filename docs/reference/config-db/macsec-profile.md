@@ -47,72 +47,6 @@ flowchart LR
     CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
-<!-- pubsub -->
-## 通信メカニズム (Phase G)
-
-### MACsecMgr — CONFIG_DB Consumer 登録
-
-`MACsecMgr::MACsecMgr(cfgDb, stateDb, tables)` が `Orch(cfgDb, tables)` で次のテーブルを Consumer 登録する。
-
-| テーブル | DB | 目的 |
-|---|---|---|
-| `CFG_MACSEC_PROFILE_TABLE_NAME` ("MACSEC_PROFILE") | [CONFIG_DB](../../reference/glossary.md#term-config_db) | MKA プロファイル設定 (CAK/CKN/cipher_suite/policy 等) |
-| `CFG_PORT_TABLE_NAME` ("PORT") | [CONFIG_DB](../../reference/glossary.md#term-config_db) | ポートの `macsec` フィールドでプロファイル名参照 |
-
-`doTask()` の TaskMap:
-
-| テーブル | op | メソッド |
-|---|---|---|
-| `MACSEC_PROFILE` | SET | `loadProfile()` — プロファイルをキャッシュ |
-| `MACSEC_PROFILE` | DEL | `removeProfile()` — プロファイルを削除 |
-| `PORT` | SET | `enableMACsec()` — wpa_supplicant 起動・設定投入 |
-| `PORT` | DEL | `disableMACsec()` — wpa_supplicant 停止 |
-
-### wpa_supplicant 経路
-
-`enableMACsec()` が per-port の `wpa_supplicant` を `fork/exec` し、`wpa_cli` コマンドで MKA パラメータ (CAK/CKN/cipher_suite/rekey_period 等) を投入する。`wpa_supplicant` が MKA ネゴシエーションを行い MACsec SA を確立する。
-
-```
-/sbin/wpa_supplicant -s /var/run/<port>  (per-port ソケット)
-  └─ wpa_cli set_network <id> key_mgmt NONE
-  └─ wpa_cli set_network <id> ca_cert / psk (CAK/CKN)
-  └─ wpa_cli set_network <id> mka_rekey_period <N>
-  └─ wpa_cli set_network <id> macsec_policy / macsec_replay_protect
-```
-
-### APP_DB Publish → MACsecOrch → SAI
-
-`wpa_supplicant` の MKA 完了後、APP_DB の MACsec テーブルに書き込まれ `MACsecOrch` が [SAI](../../reference/glossary.md#term-sai) `sai_macsec_api` を呼び出す。
-
-| [SAI](../../reference/glossary.md#term-sai) API | 操作 |
-|---|---|
-| `create_macsec()` / `remove_macsec()` | ingress/egress MACsec オブジェクト |
-| `create_macsec_port()` / `remove_macsec_port()` | ポート MACsec |
-| `create_macsec_flow()` / `remove_macsec_flow()` | フロー |
-| `create_macsec_sc()` / `remove_macsec_sc()` | Secure Channel |
-| `create_macsec_sa()` / `remove_macsec_sa()` | Secure Association |
-
-### 通信フロー
-
-```
-CONFIG_DB MACSEC_PROFILE|<name>  (SET)
-  └─ macsecmgrd  MACsecMgr::loadProfile()
-
-CONFIG_DB PORT|<port>.macsec = <profile>  (SET)
-  └─ macsecmgrd  MACsecMgr::enableMACsec()
-       ├─ fork/exec /sbin/wpa_supplicant  (MKA ネゴシエーション)
-       │    └─ wpa_cli で CAK/CKN/cipher_suite 投入
-       └─ APP_DB APP_MACSEC_PORT_TABLE / *SC_TABLE / *SA_TABLE
-            └─ [orchagent] MACsecOrch::doTask()
-                 └─ sai_macsec_api->create_macsec_sa() 等
-
-ASIC_DB NOTIFICATIONS  (POST 完了通知)
-  └─ MACsecOrch::doTask(NotificationConsumer &)
-       └─ handleNotification() → 初期化継続
-```
-
-<!-- /pubsub -->
-
 ## key 構造
 
 ```text
@@ -499,62 +433,6 @@ MACsecOrch が SAI sai_macsec_api でセキュリティチャネル確立
 ```
 <!-- /cross-refs -->
 
-<!-- failure -->
-## 失敗挙動 (Phase D)
-
-<!-- source: sonic-swss/cfgmgr/macsecmgr.cpp -->
-
-### 不正 priority
-
-`priority` フィールドの値を uint8 に変換できない場合（例: 256 以上の数値・非数値文字列）、`get_value()` 内の `boost::bad_lexical_cast` が捕捉され `SWSS_LOG_ERROR("Cannot convert value(%s) in field(%s)")` が出力される。変換失敗時は `get_value` が `false` を返し、`MACsecProfile::update()` はデフォルト値 `priority = 255` を適用して処理を続行する。エントリ破棄は発生しない。
-
-```
-priority 変換失敗
-  └─ SWSS_LOG_ERROR("Cannot convert value(%s) in field(%s)")
-  └─ priority = 255 (デフォルト) で継続
-  └─ task_success（エントリ保持）
-```
-
-### CAK 長違反
-
-`primary_cak` / `fallback_cak` の hex 文字列長が `cipher_suite` と不一致の場合、`decodeKey()` が `std::invalid_argument("Invalid length for cipher_string : ...")` を送出する。これは `loadProfile()` の catch ブロックで捕捉され `SWSS_LOG_WARN` が出力されて `task_failed` が返る。**再試行なし**でエントリは破棄される。
-
-| cipher_suite | 期待 CAK 長 | 実際が異なる場合 |
-|---|---|---|
-| `GCM-AES-128` / `GCM-AES-XPN-128` | 66 hex 文字 | `throw std::invalid_argument` → `task_failed` |
-| `GCM-AES-256` / `GCM-AES-XPN-256` | 130 hex 文字 | `throw std::invalid_argument` → `task_failed` |
-
-```
-loadProfile()
-  └─ profile.update(profile_attr)
-       └─ GetValue(ta, primary_cak)
-            └─ decodeKey(cipher_str, cipher_suite)
-                 └─ length mismatch → throw invalid_argument
-  └─ catch(invalid_argument) → SWSS_LOG_WARN
-  └─ return task_failed  ← 再試行なし、エントリ破棄
-```
-
-### SAK refresh（wpa_cli コマンド）失敗
-
-`configureMACsec()` が `wpa_cli_exec_and_check()` を使い `mka_cak` / `mka_priority` 等を `wpa_supplicant` に設定する際、wpa_cli の応答が "OK" で始まらない場合は `std::runtime_error` が送出される。`configureMACsec()` の catch ブロックが `SWSS_LOG_WARN("Enable MACsec fail : %s")` を出力し `false` を返す。`enableMACsec()` はこれを受けて `disableMACsec()` を呼び出してポートを安全な状態に戻す。
-
-`wpa_supplicant` プロセス起動自体が失敗した場合（`startWPASupplicant()` が 0 を返す）は `task_failed`、-1 以下（`fork` 失敗）は `task_need_retry` となる。
-
-```
-enableMACsec()
-  └─ startWPASupplicant()
-       ├─ pid < 0  → SWSS_LOG_WARN → task_need_retry
-       └─ pid == 0 → SWSS_LOG_WARN → task_failed
-  └─ configureMACsec()
-       └─ wpa_cli_exec_and_check() → "OK" でない応答
-            └─ throw runtime_error
-       └─ catch → SWSS_LOG_WARN("Enable MACsec fail : %s")
-       └─ return false
-  └─ disableMACsec() 呼出し（ポートを非暗号化状態へ復元）
-```
-
-詳細分析: `meta/_intermediate/cdb-flow/macsec-profile-failure.md`
-<!-- /failure -->
 
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)

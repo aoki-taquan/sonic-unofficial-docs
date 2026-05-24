@@ -329,33 +329,6 @@ L341: gCoppOrch = new CoppOrch(...)     # PortsOrch 生成後に生成
 
 <!-- /ordering -->
 
-<!-- ordering -->
-## 書込み順依存 (Phase B)
-
-### `allPortsReady()` ゲート
-
-`CoppOrch::doTask()` の先頭で `gPortsOrch->allPortsReady()` を確認する（`copporch.cpp:885-888`）。全ポートの SAI 初期化が完了するまで `COPP_GROUP`（genetlink フィールド含む）の処理はスキップされ、`m_toSync` キューに蓄積される。`allPortsReady()` が true になった後に順次処理される。
-
-### orchdaemon.cpp における初期化順序
-
-```
-L232: gPortsOrch = new PortsOrch(...)   # PortsOrch を最初に生成
-...
-L341: gCoppOrch = new CoppOrch(...)     # PortsOrch 生成後に CoppOrch を生成
-```
-
-`CoppOrch` コンストラクタ内の `initDefaultHostIntfTable()` / `initDefaultTrapGroup()` / `initDefaultTrapIds()` は `allPortsReady()` に依存せず即時実行される。`m_orchList` では `gCoppOrch` は `gPortsOrch`・`gBufferOrch` の後に位置し、ポート・バッファ初期化後に COPP 処理が行われる。<!-- evidence: orchdaemon.cpp L232,341,500 -->
-
-### CONFIG_DB 書込み順序（運用）
-
-| 操作 | 制約 | 違反時の結果 |
-|------|------|------------|
-| 起動時 genetlink HostIf 作成 | `allPortsReady()` が true になるまで自動遅延 | `m_toSync` に蓄積 → PortsOrch 初期化後に自動処理 |
-| 新規 COPP_GROUP (genetlink フィールド付き) 書込み | PortsOrch 初期化後が理想。事前書込みは自動遅延 | `allPortsReady()` 前はスキップ、次回 `doTask` 呼出しで再処理 |
-| COPP_GROUP DEL (genetlink フィールドあり) | 順序制約なし（`allPortsReady()` ゲートは存在） | `allPortsReady()` 前は DEL も遅延 |
-
-<!-- /ordering -->
-
 <!-- cross-refs -->
 ## 暗黙参照テーブル (Phase C)
 

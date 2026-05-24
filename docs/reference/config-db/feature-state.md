@@ -523,12 +523,6 @@ show feature status bgp
 - CLI: `show feature status`, `show feature config`
 
 <!-- ref-triangle:start -->
-
-## 関連リファレンス
-
-- CONFIG_DB: [`FEATURE`](feature.md)
-- CONFIG_DB: [`KUBERNETES_MASTER`](kubernetes-master.md)
-
 <!-- ref-triangle:end -->
 
 ## 引用元
