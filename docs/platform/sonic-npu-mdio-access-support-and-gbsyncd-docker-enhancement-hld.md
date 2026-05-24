@@ -10,9 +10,7 @@ sources:
   path: doc/gearbox/gearbox_mdio-HLD.md
   ref: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06
 related:
-  config_db:
-  - CHASSIS_MODULE
-  - DPU
+  config_db: []
   cli:
   - show techsupport
   - show platform

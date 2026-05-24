@@ -172,22 +172,22 @@ reasoning: 2 段閾値ヒステリシスの根拠。
 
 ## 確認コマンド
 
-- `show platform psustatus` — `WARNING` ステータス（`power_overload`）が見える
-- `sonic-db-cli STATE_DB hgetall "PSU_INFO|PSU 1"` — voltage / current / power / threshold / overload を直接確認
-- `docker exec pmon supervisorctl status psud` — psud デーモンの動作確認
-- `docker logs pmon 2>&1 | grep -i psu` — psud のログを確認
-
-### コマンド例
-
 PSU の状態と daemon を確認する。
 
 ```bash
-# PSU
+# PSU 状態
 show platform psustatus
 redis-cli -n 6 keys 'PSU_INFO|*'
 redis-cli -n 6 hgetall 'PSU_INFO|PSU 1'
 ps aux | grep -E 'psud|pmon'
+docker exec pmon supervisorctl status psud
+docker logs pmon 2>&1 | grep -i psu
 ```
+
+- `show platform psustatus` — `WARNING` ステータス（`power_overload`）が見える
+- `sonic-db-cli STATE_DB hgetall "PSU_INFO|PSU 1"` — voltage / current / power / threshold / overload を直接確認
+- `docker exec pmon supervisorctl status psud` — psud デーモンの動作確認
+- `docker logs pmon 2>&1 | grep -i psu` — psud のログを確認
 
 ## 引用元
 
