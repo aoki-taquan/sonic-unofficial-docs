@@ -40,8 +40,8 @@ related:
 
 [SONiC](../reference/glossary.md#term-sonic) コミュニティが新機能を contribute する際の **品質レベル定義** [^1]。3 段階:
 
-- **Alpha**: 設計と最低限のテストはあるが、[SAI](../reference/glossary.md#term-sai) / 平台 vendor API がまだ無い段階
-- **Beta**: 1 vendor 以上で SAI / 平台 API が利用可能、テスト計画はレビュー済みで一部実装
+- **Alpha**: 設計と最低限のテストはあるが、[SAI](../reference/glossary.md#term-sai) / プラットフォーム vendor API がまだ無い段階
+- **Beta**: 1 vendor 以上で SAI / プラットフォーム API が利用可能、テスト計画はレビュー済みで一部実装
 - **GA (General Availability)**: テスト計画が sign-off + フル実装
 
 ## 動作仕様

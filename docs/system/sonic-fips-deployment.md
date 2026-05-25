@@ -186,7 +186,7 @@ openssl list -providers -verbose 2>&1 | grep -i fips
 cat /proc/cmdline | tr ' ' '\n' | grep fips
 ```
 
-## トラブルシュート
+### enforce モード起動時の追加確認
 
 - `fips=1` 起動なのに `fips_enabled=0` の場合、initramfs に FIPS module が含まれていない。`sonic-installer set-fips --enable` 後に reboot が必要。
 - SSH / [SNMP](../reference/glossary.md#term-snmp) / TACACS+ で許可されていない algorithm を使うと接続失敗する。`/etc/ssh/sshd_config` の `Ciphers` / `MACs` を FIPS-approved に絞る。
