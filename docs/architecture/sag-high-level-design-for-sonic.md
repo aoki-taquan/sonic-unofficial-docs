@@ -160,7 +160,8 @@ show static-anycast-gateway
 
 ```bash
 # SAG 設定 / 仮想 MAC / VLAN 適用状況
-show sag
+# 注意: community master では `show static-anycast-gateway` CLI は未実装。
+# 代わりに CONFIG_DB を直接参照する。
 redis-cli -n 4 keys 'SAG|*'
 redis-cli -n 4 hgetall 'SAG|GLOBAL'
 # kernel route と vlan の整合
