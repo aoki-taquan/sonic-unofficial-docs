@@ -120,7 +120,7 @@ DASH_ROUTE_RULE_TABLE:<eni>:<vni>:<prefix/tag>:<priority>
 - `orchagent` `DashRouteOrch`: 3 テーブルを subscribe し、SAI Outbound/Inbound Routing API 経由で [DPU](../../reference/glossary.md#term-dpu) に反映
 - ルートグループは [ENI](../../reference/glossary.md#term-eni) とのバインド管理を内部カウンタ (`route_group_bind_count_`) で追跡
 
-## 関連 CONFIG_DB / YANG / CLI
+## 関連 APP_DB / YANG / CLI
 
 - 関連 APP_DB: `DASH_ENI_ROUTE_TABLE`（グループと ENI のバインド）、`DASH_VNET_TABLE`、`DASH_TUNNEL_TABLE`
 - 関連 CLI: なし（SDN コントローラ / [gNMI](../../reference/glossary.md#term-gnmi) 経由投入が主体）
