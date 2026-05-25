@@ -139,8 +139,8 @@ DASH_PREFIX_TAG_TABLE:Tag2  prefix_list = 2.2.2.0/24
 DASH_PREFIX_TAG_TABLE:Tag3  prefix_list = 3.3.3.0/24
 
 DASH_ACL_RULE_TABLE:AclGroup1:AclRule1
-    src_addr = "Tag1,Tag2"   # tag 参照
-    dst_addr = "Tag3"
+    src_tag = "Tag1,Tag2"   # tag 参照
+    dst_tag = "Tag3"
 # DashAclOrch 内部展開後:
 #   src_tag → 1.1.1.0/24,1.1.2.0/24,2.2.2.0/24
 #   dst_tag → 3.3.3.0/24
@@ -159,7 +159,7 @@ CLI / [YANG](../reference/glossary.md#term-yang) 拡張・`CONFIG_DB` 変更は 
 DASH_PREFIX_TAG_TABLE:Tag1  ip_version=ipv4  prefix_list=1.1.1.0/24,1.1.2.0/24
 DASH_ACL_RULE_TABLE:AclGroup1:AclRule1
     priority=1 action=allow terminating=false
-    src_addr="Tag1,Tag2"   dst_addr="3.3.3.0/24"
+    src_tag="Tag1,Tag2"   dst_addr="3.3.3.0/24"
 ```
 
 ## 制限事項
@@ -189,20 +189,17 @@ sonic-db-cli APPL_DB keys 'DASH_ACL_RULE_TABLE:*'
 - tag 削除不可 → 参照ルールを先に削除
 - prefix_list 更新が反映されない → ENI bind 済なら新 group 再生成が走る。古い group が残っていないか
 
-## 関連 Topics
-
-- [13-dash-smartswitch/concept](../topics/13-dash-smartswitch/concept.md): DASH / [SmartSwitch](../reference/glossary.md#term-smartswitch) の全体像
-- [07-acl-copp-mirror/concept](../topics/07-acl-copp-mirror/concept.md): ACL と DASH ACL の置き場所
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/dash/dash-acl-tags/dash-acl-tags.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
 <!-- topics-back-ref -->
-## 関連 Topics (索引)
+## 関連 Topics
 
 - [Topics: ACL / CoPP / Mirror / Packet Action](../topics/07-acl-copp-mirror/index.md)
+- [07-acl-copp-mirror/concept](../topics/07-acl-copp-mirror/concept.md): ACL と DASH ACL の置き場所
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
+- [13-dash-smartswitch/concept](../topics/13-dash-smartswitch/concept.md): DASH / [SmartSwitch](../reference/glossary.md#term-smartswitch) の全体像
 
 <!-- /topics-back-ref -->
 

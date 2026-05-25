@@ -185,10 +185,6 @@ redis-cli -n 6 hgetall 'COPP_TRAP_TABLE|neighbor_miss'
 docker logs swss 2>&1 | grep -i copporch | tail
 ```
 
-## 関連トピック
-
-- [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)
-
 ## 関連ページ
 
 - [ACL Support in SONiC](./acl-support-in-sonic.md)
