@@ -95,7 +95,7 @@ net.ipv6.neigh.default.gc_thresh2=16000
 net.ipv6.neigh.default.gc_thresh3=32000
 ```
 
-burst 時の add/remove ループで entry が満杯にならない問題を解消する。
+burst 時の add/remove ループで entry が満杯になる問題を解消する。
 
 #### CoPP の ARP/ND 上限引き上げ
 
