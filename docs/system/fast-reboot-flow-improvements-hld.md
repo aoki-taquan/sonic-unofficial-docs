@@ -29,7 +29,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `warmboot-finalizer` の fast-reboot 兼用、`restore_neighbors.py`、enable_counters の遅延ロジックなどは現行 master の実装と差分の可能性。
 
 # Fast-reboot Flow Improvements（finalizer / reconciliation）
@@ -165,11 +165,17 @@ warm-reboot と fast-reboot で syncd がクラッシュまたはハングする
 
 ### mgmt-framework サービスが 201911 ブランチで起動失敗する問題（sonic-buildimage#4291）
 
+!!! note "スコープ注記"
+    本問題は **201911 ブランチ固有**。本ドキュメントは master ブランチのみを対象とするため、master では再現しない可能性が高い。
+
 mgmt-framework サービスが 201911 ブランチで起動失敗する問題。Python 3 移行後の依存パッケージ不足が原因の場合がある
 
 - 参照: [sonic-net/sonic-buildimage#4291](https://github.com/sonic-net/sonic-buildimage/issues/4291)
 
 ### 201811 から 201911 への warm reboot が失敗する問題（sonic-buildimage#4399）
+
+!!! note "スコープ注記"
+    本問題は **201811→201911 バージョン間 warm reboot 固有**。master ブランチのみを対象とする本ドキュメントのスコープ外。
 
 201811 から 201911 への warm reboot が失敗する問題。直接接続ルートの処理に互換性のない変更があるため、バージョン間の warm reboot サポート状況を事前確認すること
 
@@ -253,7 +259,7 @@ warm reboot 中に IO エラーが発生しサーバからのトラフィック�
 
 - 参照: [sonic-net/sonic-buildimage#6240](https://github.com/sonic-net/sonic-buildimage/issues/6240)
 
-### KVM での warm reboot 中に syncd が double-free-corruption でクラッシュす（sonic-buildimage#6466）
+### KVM での warm reboot 中に syncd が double-free-corruption でクラッシュする問題（sonic-buildimage#6466）
 
 KVM での warm reboot 中に syncd が double-free-corruption でクラッシュする問題。仮想環境では warm-reboot の動作が物理環境と異なる場合がある
 
