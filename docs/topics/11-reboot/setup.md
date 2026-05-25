@@ -11,25 +11,16 @@ sources:
 - docs/system/reboot-support-blockingmode-in-sonic.md
 related:
   cli:
-  - show ip
-  - show bgp
-  - config bgp
+  - show warm_restart
+  - config warm_restart
+  - reboot
+  - fast-reboot
+  - warm-reboot
   config_db:
   - FEATURE
   - WARM_RESTART
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_PEER_GROUP
   yang:
   - sonic-warm-restart
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
 ---
 
 # Reboot / warm restart の設定
