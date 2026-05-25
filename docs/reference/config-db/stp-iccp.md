@@ -69,7 +69,6 @@ STP との連携は主に以下の 2 つの側面で存在する:
     STP/ICCP 連携専用の CONFIG_DB テーブルは存在しない。
     連携は `MCLAG_DOMAIN` テーブルの `source_ip` / `peer_ip` フィールドを入力として iccpd 内部で処理される。
 
-<!-- ordering -->
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
@@ -90,6 +89,7 @@ flowchart LR
     CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
+<!-- ordering -->
 ## 書込み順序依存 (Phase B)
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-ordering.md -->
@@ -432,8 +432,8 @@ STP 設定テーブルの [YANG](../../reference/glossary.md#term-yang) 定義�
 
 <!-- /defaults -->
 
-<!-- ordering -->
-## 書込み順序依存 (Phase B) (補足)
+<!-- ordering-detail -->
+## 書込み順序依存 詳細 (Phase B)
 
 <!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-ordering.md -->
 
@@ -480,7 +480,7 @@ STP/ICCP 連携において iccpd が STP ロールを正しく決定するた�
 | 3 | `source_ip != peer_ip` | WARN のみ・ICCP 未確立 | 同一 IP 設定はサポート外 |
 | 4 | ICCP セッション確立 → STP ロール決定（1 回限り） | 強制 | ロール変更には iccpd 再起動が必要 |
 
-<!-- /ordering -->
+<!-- /ordering-detail -->
 
 <!-- failure -->
 ## 失敗挙動 (Phase D)

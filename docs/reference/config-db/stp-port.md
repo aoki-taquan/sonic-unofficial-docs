@@ -706,7 +706,7 @@ PVST が有効な環境でのみ `STP_PORT` が stpd に到達するため間接
 
 ## 関連ページ
 
-- STP / STP_VLAN / STP_PORT テーブル（全体）: `stp.md`
+- [CONFIG_DB: STP / STP_VLAN / STP_PORT テーブル（全体）](stp.md)
 - [CONFIG_DB: VLAN](vlan.md)
 - [CONFIG_DB: PORT](port.md)
 - [CONFIG_DB: PORTCHANNEL](portchannel.md)
