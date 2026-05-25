@@ -49,17 +49,19 @@ SCHEDULER|<name>
 
 ## フィールド一覧
 
-| フィールド | 型 | 必須 | デフォルト | 説明 |
-|-----------|----|------|-----------|------|
+| フィールド | 型 | 必須 | デフォルト (YANG) | 説明 |
+|-----------|----|------|-----------------|------|
 | `name` (key) | string | ✅ | - | スケジューラ名 |
-| `type` | enum `DWRR`/`WRR`/`STRICT` | - | `WRR` | スケジューリングアルゴリズム |
-| `weight` | uint8 (1..100) | - | `1` | 重み（[DWRR](../../reference/glossary.md#term-dwrr)/WRR で使用） |
-| `priority` | uint8 (0..9) | - | - | 優先度 |
-| `meter_type` | enum `packets`/`bytes` | - | `bytes` | meter 単位 |
+| `type` | enum `DWRR`/`WRR`/`STRICT` | - | `WRR` ※1 | スケジューリングアルゴリズム |
+| `weight` | uint8 (1..100) | - | `1` ※1 | 重み（[DWRR](../../reference/glossary.md#term-dwrr)/WRR で使用） |
+| `priority` | uint8 (0..9) | - | - | 優先度（**dead field**: qosorch 未実装。含めるとエントリ全体が SAI 未反映） |
+| `meter_type` | enum `packets`/`bytes` | - | `bytes` ※1 | meter 単位 |
 | `cir` | uint64 | - | - | committed information rate（Bps or Pps） |
 | `pir` | uint64 | - | - | peak information rate。`cir > 0` 必須、`pir >= cir` |
 | `cbs` | uint32 | - | - | committed burst size。`cir > 0` 必須 |
 | `pbs` | uint32 | - | - | excess/peak burst size。`pir > 0` 必須、`pbs >= cbs` |
+
+※1 YANG で定義されたデフォルト値。qosorch は省略時に SAI 属性を送信しないため、実際にはベンダー SAI のデフォルトが適用される（詳細は [`SCHEDULER — QosOrch 詳解`](scheduler-orch.md) を参照）。
 
 ## 制約 (must)
 
@@ -144,8 +146,8 @@ show queue counters
 - **type フィールドが未知の値**: `type` が `DWRR` / `WRR` / `STRICT` 以外の場合 `SWSS_LOG_ERROR("Unknown scheduler type value:%s")` を出して `task_invalid_entry` を返す。エントリは破棄されて SAI には反映されない。[^2]
 - **SAI scheduler profile 作成失敗**: `sai_scheduler_api->create_scheduler()` が失敗した場合 `SWSS_LOG_ERROR("Failed to create scheduler profile")` で処理中断。[^2]
 - **QUEUE 参照中の SCHEDULER 削除**: `handleSchedulerTable()` の DEL ハンドラは `sai_scheduler_api->remove_scheduler()` を呼ぶ前に `isObjectBeingReferenced()` でチェックを実施する。QUEUE からの参照が残っていれば `m_pendingRemove = true` をセットして `task_need_retry` を返す（SAI は呼ばれずエラーも発生しない）。QUEUE 参照が解除された後の次回 `doTask()` サイクルで自動的に SAI DEL が実行されるため、参照解除後の残留は起きない（SAI `remove_scheduler()` 自体が失敗したときのみ残留リスクあり）。[^2]
-- **weight のオーバーフロー**: `weight` フィールドは `uint8` にキャストされるため 0-255 の範囲外は暗黙に切り捨てられる（バリデーションなし）。[^2]
-- **QUEUE 参照がある間は削除不可**: QUEUE が参照している SCHEDULER を削除すると SAI レイヤで失敗する。QUEUE の参照を先に外してから削除する必要がある。[^2]
+- **weight のオーバーフロー**: `weight` フィールドは `uint8` にキャストされるため YANG `range "1..100"` はコード未検証。範囲外は暗黙に切り捨てられる（バリデーションなし）。[^2]
+- **QUEUE 参照がある間は削除不可**: QUEUE が参照している SCHEDULER を削除しようとすると DEL ハンドラが `isObjectBeingReferenced()` で検出し `m_pendingRemove = true` をセットして `task_need_retry` を返す（SAI 削除は行われない）。QUEUE の参照を先に解除してから削除すること。[^2]
 
 [^2]: qosorch 実装: `sonic-swss/orchagent/qosorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp>
 

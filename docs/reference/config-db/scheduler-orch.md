@@ -380,7 +380,7 @@ ASIC_DB への SAI 書き込み
 - `SELECT_TIMEOUT`（1000 ms）以内にイベントがない場合は `TIMEOUT` を返し、`flush()` による SAI パイプラインのフラッシュを行う。タイムアウトは SCHEDULER 処理の遅延上限に影響しない（通常はイベント到着即時処理）。
 - `allPortsReady()` が `false` の間は `doTask()` の冒頭チェックでスキップされ、イベントは `m_toSync` に蓄積される（`qosorch.cpp:2258-2261`）。PortsOrch が全ポート初期化を完了した時点で再処理が走る。
 
-> **参照ソース**: `orchestagent/orchdaemon.cpp:384, 943-959`（メインループ・addConsumer）、`orchagent/orch.cpp:1186-1190`（addConsumer / SubscriberStateTable 選択）、`common/subscriberstatetable.cpp:17-24`（PSUBSCRIBE 発行）、`common/subscriberstatetable.cpp:45-73`（readData / バッファリング）
+> **参照ソース**: `orchagent/orchdaemon.cpp:384, 943-959`（メインループ・addConsumer）、`orchagent/orch.cpp:1186-1190`（addConsumer / SubscriberStateTable 選択）、`common/subscriberstatetable.cpp:17-24`（PSUBSCRIBE 発行）、`common/subscriberstatetable.cpp:45-73`（readData / バッファリング）
 
 <!-- /pubsub -->
 
