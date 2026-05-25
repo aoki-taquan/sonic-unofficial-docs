@@ -53,7 +53,7 @@ flowchart LR
 
 - [`SCHEDULER`](../config-db/scheduler.md)
 
-### 関連 HLD
+### 対応 CONFIG_DB (追加)
 
 - [POLICER テーブル](../../reference/config-db/policer.md)
 
@@ -86,7 +86,7 @@ module: sonic-scheduler
 | `weight` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/weight` | `uint8` |  | 1 | range 1..100 | Scheduling algorithm weight |
 | `priority` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/priority` | `uint8` |  |  | range 0..9 | [Scheduler](../../reference/glossary.md#term-scheduler) priority |
 | `meter_type` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/meter_type` | `enumeration` |  | bytes | packets, bytes | Metering unit for shaping rates (packets or bytes). |
-| `cir` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/cir` | `uint64` |  |  |  | Committed information rate for the dual-rate token bucket policer.This value represents the rate at which tokens are added to the primary bucket.nt Units is Bps(Bytes per second) for meter type is ... |
+| `cir` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/cir` | `uint64` |  |  |  | Committed information rate for the dual-rate token bucket policer. This value represents the rate at which tokens are added to the primary bucket. Unit is Bps(Bytes per second) for meter type bytes else packets. |
 | `pir` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/pir` | `uint64` |  |  |  | Peak information rate for the dual-rate token bucket policer.This value represents the rate at which tokens are added to the secondary bucket.Unit is Bps(Bytes per second) for meter type bytes else... |
 | `cbs` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/cbs` | `uint32` |  |  |  | Committed burst size for the dual-rate token bucket policer.This value represents the depth of the token bucket.Unit is bytes for meter type bytes else packets for meter type is packets |
 | `pbs` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/pbs` | `uint32` |  |  |  | Excess burst size for the dual-rate token bucket policer. This value represents the depth of the secondary bucket. Unit is bytes for meter type bytes else packets for meter type is packets |

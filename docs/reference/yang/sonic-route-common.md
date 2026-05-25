@@ -1,6 +1,6 @@
 ---
 title: sonic-route-common YANG
-description: 'sonic-route-common YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-route-common.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd'
+description: "sonic-route-common YANG — ROUTE_REDISTRIBUTE テーブルを通じてルート再配送ポリシーを定義する共通 YANG モジュール"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09

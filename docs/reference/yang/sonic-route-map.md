@@ -1,6 +1,6 @@
 ---
 title: sonic-route-map YANG
-description: "sonic-route-map YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-route-map.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
+description: "sonic-route-map YANG — BGP ルートマップ (permit/deny + match/set) を ROUTE_MAP / ROUTE_MAP_SET テーブルで管理する YANG モジュール"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -187,7 +187,7 @@ module: sonic-route-map
 
 ## 関連リファレンス
 
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`ROUTE_MAP`](../config-db/route-map.md) / [`ROUTE_MAP_SET`](../config-db/route-map.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`ROUTE_MAP`](../config-db/route-map.md) / [`ROUTE_MAP_SET`](../config-db/route-map-set.md)
 
 <!-- ref-triangle:end -->
 

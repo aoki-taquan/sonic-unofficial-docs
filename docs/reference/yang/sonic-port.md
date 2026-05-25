@@ -1,6 +1,6 @@
 ---
 title: sonic-port YANG
-description: 'sonic-port YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-port.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd'
+description: 'sonic-port YANG — 物理ポート (Ethernet インタフェース) の速度・FEC・autoneg・MACsec など基本属性を定義する。'
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -122,7 +122,7 @@ module: sonic-port
 | `name` | `sonic-port/PORT/PORT_LIST/name` | `string` | yes |  | length 1..128 | Physical port name (e.g., Ethernet0). |
 | `core_id` | `sonic-port/PORT/PORT_LIST/core_id` | `string` |  |  | length 1..16 | The [ASIC](../../reference/glossary.md#term-asic) core where the port belongs to. |
 | `core_port_id` | `sonic-port/PORT/PORT_LIST/core_port_id` | `string` |  |  | length 1..16 | The [ASIC](../../reference/glossary.md#term-asic) core port for this port. |
-| `num_voq` | `sonic-port/PORT/PORT_LIST/num_voq` | `string` |  |  | length 1..16 | The number of virtual output queue supportted on this port. |
+| `num_voq` | `sonic-port/PORT/PORT_LIST/num_voq` | `string` |  |  | length 1..16 | The number of virtual output queue supported on this port. |
 | `alias` | `sonic-port/PORT/PORT_LIST/alias` | `string` |  |  | length 1..128 | Vendor-specific port alias or front-panel label. |
 | `lanes` | `sonic-port/PORT/PORT_LIST/lanes` | `string` | yes |  | length 1..128 | Number of hardware lanes for the port. This is mandatory for all devices except for chassis devices |
 | `mode` | `sonic-port/PORT/PORT_LIST/mode` | `stypes:switchport_mode` |  |  |  | SwitchPort Modes possible values are routed\|access\|trunk. Default value  for mode is routed |
