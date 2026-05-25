@@ -1,6 +1,6 @@
 ---
 title: sonic-warm-restart YANG
-description: sonic-warm-restart YANG — Warm restart configuration per module for hitless software upgrades。BGP EOIU 信号と各 syncd 系のタイマーをモジュール別に保持する。
+description: "sonic-warm-restart YANG — Warm restart configuration per module for hitless software upgrades. BGP EOIU 信号と各 syncd 系のタイマーをモジュール別に保持する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
