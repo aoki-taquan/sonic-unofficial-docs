@@ -222,10 +222,6 @@ redis-cli -n 2 hgetall COUNTERS_ACL_COUNTER_RULE_MAP
 redis-cli -n 4 hgetall 'FLEX_COUNTER_TABLE|ACL'
 ```
 
-## 関連トピック
-
-- [Topics: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md)
-
 ## 関連ページ
 
 - [ACL in SONiC](./acl-in-sonic.md)
