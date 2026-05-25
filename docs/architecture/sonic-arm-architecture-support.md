@@ -20,7 +20,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 19 章: Build / Packaging / Debian](../topics/19-build-packaging/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（slave 命名のみ進化）"
+!!! success "裏取りステータス: code-verified（slave 命名のみ進化）"
     `sonic-buildimage/Makefile.work:121-177` で `CONFIGURED_ARCH` / `PLATFORM_ARCH`（default `amd64`）と `SLAVE_BASE_IMAGE = $(SLAVE_DIR)-march-$(CONFIGURED_ARCH)` を確認。`onie-image.conf` / `onie-image-armhf.conf` / `onie-image-arm64.conf` がリポジトリルートに揃い、`platform/aspeed/onie-image-arm64.conf` 等も追加。`installer/install.sh` も存在。slave docker は `sonic-slave-{trixie,bookworm,buster}/Dockerfile*.j2` の per-distribution テンプレートに進化し、`-march-<arch>` サフィックスを実行時に付ける形（HLD の固定ディレクトリ `sonic-slave-armhf` / `arm64` は廃止）。動作枠組み・変数名は HLD と一致（verified at: 2026-05-09）。
 
 # SONiC の ARM (armhf / arm64) ビルドサポート（`PLATFORM_ARCH` と qemu-static）

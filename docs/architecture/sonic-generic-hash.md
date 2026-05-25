@@ -24,7 +24,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+!!! success "裏取りステータス: code-verified（基本構成のみ）"
     `sonic-swss/orchagent/switchorch.cpp:1507` の `CFG_SWITCH_HASH_TABLE_NAME` 処理、`switch/switch_helper.cpp` の `SAI_NATIVE_HASH_FIELD_IPV6_FLOW_LABEL` 等フィールド対応表（v0.4 の IPv6 flow label 追加が反映済み）、`sonic-utilities/show/plugins/sonic-hash.py` の `show switch-hash`、`sonic-yang-models` の `sonic-hash.yang` を確認。
 
 # Generic Hash（ECMP / LAG ハッシュフィールドとアルゴリズムの統一制御）
@@ -132,20 +132,6 @@ show switch-hash global
 redis-cli -n 4 hgetall 'SWITCH_HASH|GLOBAL'
 redis-cli -n 6 hget 'SWITCH_CAPABILITY|switch' HASH_FIELDS
 ```
-
-### コマンド例: Generic hash 設定確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# ECMP / LAG の hash 構成と algorithm
-show switch-hash global
-redis-cli -n 4 hgetall 'SWITCH_HASH|GLOBAL'
-redis-cli -n 6 hget 'SWITCH_CAPABILITY|switch' HASH_FIELDS
-```
-
-
 
 ## 引用元
 
