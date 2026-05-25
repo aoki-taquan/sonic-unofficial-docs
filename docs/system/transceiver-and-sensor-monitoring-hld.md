@@ -28,7 +28,7 @@ related:
   - sonic-snmp
 ---
 
-!!! success "裏取りステータス: Code-verified"
+!!! warning "裏取りステータス: discrepancy-found"
     `xcvrd` の現行構造、`TRANSCEIVER_INFO` / `TRANSCEIVER_DOM_SENSOR` / `TRANSCEIVER_STATUS` テーブルの現行スキーマ（CMIS 拡張で多数フィールド追加）、polling interval 60s の妥当性は未確認。
 
 # Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）
@@ -175,8 +175,6 @@ vendor 実装に依存。sysfs（`/sys/bus/i2c/.../qsfpN_eeprom`）または ven
 - HLD 提示の DOM フィールドは **当時の SFP/QSFP 想定**。CMIS（QSFP-DD / OSFP）導入後はフィールドが大幅増（VDM, page advertise 等）
 - polling interval 60s は妥当性検証済みではない
 - error bitmap は high temperature / bad cable などで「block を意味するか単なる warning か」は HLD では明記されない
-
-## 既知の問題（追加）
 
 ### thermalctld のトランシーバー温度二重ポーリング（修正済み）
 
