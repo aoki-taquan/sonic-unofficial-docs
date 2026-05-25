@@ -25,7 +25,7 @@ related:
 
 **DHCPv6 relay agent** の [VLAN](../../reference/glossary.md#term-vlan) インタフェース単位設定を保持する [CONFIG_DB](../../reference/glossary.md#term-config_db) テーブル[^1]。`dhcp6relay` プロセス (sonic-dhcp-relay リポ) が [CONFIG_DB](../../reference/glossary.md#term-config_db) から読み、IPv6 リレー対象 [VLAN](../../reference/glossary.md#term-vlan) と上流サーバを構築する。
 
-> 注: 名前は単に `DHCP_RELAY` だが、[YANG](../../reference/glossary.md#term-yang) モジュール名 `sonic-dhcpv6-relay` の通り **IPv6 リレー専用**。IPv4 リレーは `VLAN` テーブルの `dhcp_servers` フィールド（旧仕様）または `DHCP_SERVER_IPV4` (新仕様の DHCP サーバ機能) を参照。
+> 注: 名前は単に `DHCP_RELAY` だが、[YANG](../../reference/glossary.md#term-yang) モジュール名 `sonic-dhcpv6-relay` の通り **IPv6 リレー専用**。IPv4 リレーは `VLAN` テーブルの `dhcp_servers` フィールド（旧仕様）または `DHCPV4_RELAY` テーブル（新仕様）を参照。IPv4 の組み込みサーバ機能は別途 `DHCP_SERVER_IPV4` テーブルで管理される。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -126,7 +126,7 @@ DHCP_RELAY|<name>
 ### 典型値
 
 - key 形式: `DHCP_RELAY|<vlan>`。
-- `dhcp_servers`: relay 先サーバ IP の list、`rfc3046_compatibility`: `true`。
+- `dhcpv6_servers`: relay 先 DHCPv6 サーバの IPv6 アドレスリスト、`rfc6939_support`: `"true"`。
 
 ### よくある誤設定
 
@@ -136,7 +136,7 @@ DHCP_RELAY|<name>
 
 ```bash
 sonic-db-cli CONFIG_DB keys 'DHCP_RELAY|*'
-show dhcprelay_helper ipv4
+show dhcp_relay destination ipv6
 ```
 <!-- /ops-hint -->
 

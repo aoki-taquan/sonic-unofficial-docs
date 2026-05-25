@@ -585,7 +585,7 @@ eth0 の IP アドレスが変更される場合、`interfaces-config` サービ
 <!-- /side-effects -->
 
 <!-- phase-f -->
-## 副次 DB 書込 (Phase F) (補足)
+## 副次 DB 書込 (Phase F) — interfaces-config 詳細
 
 `MGMT_INTERFACE` テーブルへの書込が発生すると、以下の副次処理が連鎖して行われる。
 
