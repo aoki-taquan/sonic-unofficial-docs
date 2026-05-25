@@ -106,14 +106,14 @@ ACL は data plane の分類器、CoPP は control plane へ punt されるパ�
 <!-- chapter-progress -->
 ## 章構成と進捗
 
-| ページ | 状態 | verification |
-|---|---|---|
-| concept | ✅ 完成 (236 行) | meta |
-| architecture | ✅ 完成 (90 行) | meta |
-| setup | ✅ 完成 (315 行) | meta |
-| operations | ✅ 完成 (215 行) | meta |
-| internals | ✅ 完成 (155 行) | meta |
-| advanced | ✅ 完成 (148 行) | meta |
+| ページ | 行数 | 状態 | verification | 主目的 |
+|---|---|---|---|---|
+| concept | 196 | ✅ 完成 | meta | 概念・位置付け |
+| architecture | 64 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
+| setup | 282 | ✅ 完成 | meta | セットアップ手順 |
+| operations | 186 | ✅ 完成 | meta | 運用・デバッグ |
+| internals | 128 | ✅ 完成 | meta | 内部実装 |
+| advanced | 110 | ✅ 完成 | meta | 発展トピック |
 
 <!-- /chapter-progress -->
 

@@ -91,13 +91,13 @@ DASH 系と SmartSwitch 系の既存 [HLD](../../reference/glossary.md#term-hld)
 <!-- chapter-progress -->
 ## 章構成と進捗
 
-| ページ | 状態 | verification |
-|---|---|---|
-| concept | ✅ 完成 (213 行) | meta |
-| setup | ✅ 完成 (298 行) | meta |
-| operations | ✅ 完成 (266 行) | meta |
-| internals | ✅ 完成 (183 行) | meta |
-| advanced | ✅ 完成 (155 行) | meta |
+| ページ | 行数 | 状態 | verification | 主目的 |
+|---|---|---|---|---|
+| concept | 169 | ✅ 完成 | meta | 概念・位置付け |
+| internals | 155 | ✅ 完成 | meta | 内部実装 |
+| setup | 268 | ✅ 完成 | meta | セットアップ手順 |
+| operations | 236 | ✅ 完成 | meta | 運用・デバッグ |
+| advanced | 118 | ✅ 完成 | meta | 発展トピック |
 
 <!-- /chapter-progress -->
 

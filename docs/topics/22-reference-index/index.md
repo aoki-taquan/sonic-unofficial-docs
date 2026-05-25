@@ -88,13 +88,17 @@ related:
 <!-- chapter-progress -->
 ## 章構成と進捗
 
-| ページ | 状態 | verification |
-|---|---|---|
-| concept | ✅ 完成 (146 行) | meta |
-| setup | ✅ 完成 (153 行) | meta |
-| operations | ✅ 完成 (141 行) | meta |
-| internals | ✅ 完成 (168 行) | meta |
-| advanced | ✅ 完成 (119 行) | meta |
+| ページ | 行数 | 状態 | verification | 主目的 |
+|---|---|---|---|---|
+| concept | 107 | ✅ 完成 | meta | 概念・位置付け |
+| setup | 125 | ✅ 完成 | meta | セットアップ手順 |
+| operations | 113 | ✅ 完成 | meta | 運用・デバッグ |
+| internals | 134 | ✅ 完成 | meta | 内部実装 |
+| advanced | 101 | ✅ 完成 | meta | 発展トピック |
+| cli-index | 124 | ✅ 完成 | meta | CLI リファレンス索引 |
+| config-db-index | 121 | ✅ 完成 | meta | CONFIG_DB リファレンス索引 |
+| yang-index | 93 | ⚠️ プレースホルダ | meta | YANG リファレンス索引 |
+| quality-gaps | 51 | ⚠️ プレースホルダ | meta | 品質・カバレッジギャップ |
 
 <!-- /chapter-progress -->
 

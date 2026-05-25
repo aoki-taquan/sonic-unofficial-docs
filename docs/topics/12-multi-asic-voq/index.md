@@ -96,14 +96,14 @@ Multi-ASIC は同じ筐体内の複数 ASIC を namespace で分け、各 ASIC �
 <!-- chapter-progress -->
 ## 章構成と進捗
 
-| ページ | 状態 | verification |
-|---|---|---|
-| concept | ✅ 完成 (151 行) | meta |
-| architecture | ✅ 完成 (119 行) | meta |
-| setup | ✅ 完成 (232 行) | meta |
-| operations | ✅ 完成 (217 行) | meta |
-| internals | ✅ 完成 (140 行) | meta |
-| advanced | ✅ 完成 (108 行) | meta |
+| ページ | 行数 | 状態 | verification | 主目的 |
+|---|---|---|---|---|
+| concept | 151 | ✅ 完成 | meta | 概念・位置付け |
+| architecture | 93 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
+| setup | 232 | ✅ 完成 | meta | セットアップ手順 |
+| operations | 217 | ✅ 完成 | meta | 運用・デバッグ |
+| internals | 140 | ✅ 完成 | meta | 内部実装 |
+| advanced | 108 | ✅ 完成 | meta | 発展トピック |
 
 <!-- /chapter-progress -->
 

@@ -81,13 +81,14 @@ related:
 <!-- chapter-progress -->
 ## 章構成と進捗
 
-| ページ | 状態 | verification |
-|---|---|---|
-| concept | ✅ 完成 (220 行) | meta |
-| setup | ✅ 完成 (283 行) | meta |
-| operations | ✅ 完成 (206 行) | meta |
-| internals | ✅ 完成 (164 行) | meta |
-| advanced | ✅ 完成 (139 行) | meta |
+| ページ | 行数 | 状態 | verification | 主目的 |
+|---|---|---|---|---|
+| concept | 173 | ✅ 完成 | meta | 概念・位置付け |
+| architecture | 79 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
+| setup | 240 | ✅ 完成 | meta | セットアップ手順 |
+| operations | 167 | ✅ 完成 | meta | 運用・デバッグ |
+| internals | 130 | ✅ 完成 | meta | 内部実装 |
+| advanced | 100 | ✅ 完成 | meta | 発展トピック |
 
 <!-- /chapter-progress -->
 

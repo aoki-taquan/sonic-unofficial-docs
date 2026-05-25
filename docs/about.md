@@ -72,9 +72,6 @@ SONiC の公式ドキュメントには以下のような構造的な課題が�
 
 品質指標の最新値（総ページ数、`code-verified` / `discrepancy-found` 件数、Reference カバレッジ、監査平均評価など）は [`_meta/snapshot.md`](_meta/snapshot.md) を参照してください。本ページに数値を直書きすると更新漏れで実態と乖離するため、スナップショット側に一本化しています。
 
-- Topics 22 章 すべて 100% カバレッジ（概念 / 設定 / 運用 / 内部実装 / 障害切り分け 全部揃い）
-- Reference Mermaid 図カバレッジ: CONFIG_DB / CLI / YANG いずれも 100%
-
 最新の品質状態とロードマップは [`CHANGELOG`](https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/CHANGELOG.md) と `meta/roadmap-v2.md` を参照してください。
 
 ## ライセンス
