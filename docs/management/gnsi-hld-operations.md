@@ -28,7 +28,7 @@ related:
 このページは [gNSI（概要ハブ）](gnsi-hld.md) の派生で、**設定経路と運用イメージ** に絞る。概念は [gnsi-hld-concepts.md](gnsi-hld-concepts.md)、内部実装は [gnsi-hld-internals.md](gnsi-hld-internals.md)、制限と HLD 乖離は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
 
 !!! note "実装状況の境界（partially implemented）"
-    本ページが扱うフラグ / YANG / 運用フローのうち、**Certz 系の設定経路（`EnableCrl` / `CertCRLConfig` など）と Rotate / Finalize 運用は master に取り込み済** で動作する。一方 **Authz / Pathz / Credentialz 系のフラグ（`EnableAuthzPolicy` / `EnablePathzPolicy` / `SshCredMetaFile` など）は未実装** で対応 PR が未取り込み。詳細は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
+    本ページが扱うフラグ / YANG / 運用フローのうち、**Certz 系の設定経路（`CertCRLConfig` など）と Rotate / Finalize 運用は master に取り込み済** で動作する。一方 **Authz / Pathz / Credentialz 系のフラグ（`EnableAuthzPolicy` / `EnablePathzPolicy` / `SshCredMetaFile` など）は未実装** で対応 PR が未取り込み。詳細は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
 
 ## 1. gNMI / sonic-gnmi 側のフラグ追加
 
