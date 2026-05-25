@@ -123,7 +123,7 @@ ASIC_DB:
 ## ZMQ / Redis pub/sub
 
 - BGP 系で **ZMQ は使われません**。fpmsyncd → APPL_DB → orchagent の経路はすべて Redis pub/sub と [ProducerStateTable](../../reference/glossary.md#term-producerstatetable) です。
-- Loading Optimization では fpmsyncd 側の Redis pipeline flush と orchagent 側の ring buffer（`gRingBuffer`）+ assistant thread で大量 route 投入の throughput を上げます（→ 04 章参照）。
+- Loading Optimization では fpmsyncd 側の Redis pipeline flush と orchagent 側の ring buffer（`gRingBuffer`）+ assistant thread で大量 route 投入の throughput を上げます（→ [VRF/ECMP 章](../04-vrf-ecmp/index.md) 参照）。
 - `bgpd` は `fpm` socket（TCP localhost:2620）で zebra と通信し、Redis を介しません。
 
 ## 大量 route loading
@@ -149,7 +149,7 @@ dynamic peer modification は、peer range や dynamic peer の変更時に FRR 
 - **Suppress FIB Pending** は ASIC からの `offloaded` フィードバックが前提で、ベンダ [syncd](../../reference/glossary.md#term-syncd) が `STATE_DB.ROUTE_TABLE.offloaded` を更新しない場合は永続的に suppress 状態のままになります。FRR の `show bgp suppress-fib-pending` で詰まった prefix を確認する必要があります。
 - **BGP PIC** は ASIC 側で `NEXT_HOP_GROUP_MEMBER` の weight 動的更新がサポートされている前提です。member 単位の差し替えしか提供しないベンダ ASIC では PIC の benefit が出ません。
 - **bgpcfgd の jinja2 template** は SONiC 標準 `bgpd.main.conf.j2` 系を基準にしており、外部のカスタム template を差し込むと dynamic peer modification が partial update ではなく全 reload に劣化することがあります。
-- **graceful restart / warm restart** は FRR 側で実装されていますが、SONiC の warm-reboot framework (`WARM_RESTART_TABLE|bgp`) と必ずしも完全に同期しないため、reconcile timeout を CONFIG_DB の `WARM_RESTART` で十分に確保する必要があります（→ 11 章）。
+- **graceful restart / warm restart** は FRR 側で実装されていますが、SONiC の warm-reboot framework (`WARM_RESTART_TABLE|bgp`) と必ずしも完全に同期しないため、reconcile timeout を CONFIG_DB の `WARM_RESTART` で十分に確保する必要があります（→ [Reboot 章](../11-reboot/index.md)）。
 - **大量経路投入時** は orchagent の単一スレッド処理が bottleneck になりやすく、ring buffer / assistant thread の有効化が前提です。`gBufferOrchEnabled` 系のビルドフラグで挙動が変わります。
 
 ## bgpcfgd の manager 構成
