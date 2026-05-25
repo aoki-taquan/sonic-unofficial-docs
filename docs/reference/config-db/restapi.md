@@ -183,12 +183,12 @@ restapi サービス ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-
 
 ### 段階 1: Consumer 登録
 
-- **[hostcfgd](../../reference/glossary.md#term-hostcfgd)**: `RESTAPI` テーブルを `ConfigDBConnector` で購読。
+- **`rest-server.sh`** (`docker-sonic-mgmt-framework`): 起動時に `sonic-cfggen -d -t mgmt_vars.j2` で CONFIG_DB を**一括読み取り**するのみ。常駐デーモンによる subscribe なし（詳細は「通信メカニズム」参照）。
 
 ### 段階 2: CFG → APPL 翻訳
 
-- [hostcfgd](../../reference/glossary.md#term-hostcfgd) が REST API サービス (sonic-restapi / sonic-gnmi) の有効・無効設定を `/etc/sonic/` に書き込む。
-- APP_DB への書き込みなし。
+- `rest-server.sh` が `RESTAPI|config` / `RESTAPI|certs` の値を `rest_server` プロセスの起動引数に変換して渡す。
+- APPL_DB への書き込みなし。
 
 ### 段階 3: APPL → SAI
 
@@ -196,7 +196,7 @@ restapi サービス ([sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt)-
 
 ### 段階 4: タイミング + 副作用
 
-- [hostcfgd](../../reference/glossary.md#term-hostcfgd) が設定を反映後、対象サービスが再起動されるまで数秒。
+- `RESTAPI` テーブルを変更しても実行中の `rest_server` には通知されない（hot reload 未対応）。変更を反映するには `docker restart mgmt-framework` 等のコンテナ再起動が必要。
 - 副作用: REST API 無効化中に自動化スクリプトが接続しようとするとタイムアウトが発生。
 
 <!-- /runtime-trace -->
