@@ -88,11 +88,12 @@ related:
 
 | ページ | 状態 | verification |
 |---|---|---|
-| concept | ✅ 完成 (140 行) | meta |
+| concept | ✅ 完成 (181 行) | meta |
+| architecture | ✅ 完成 (90 行) | meta |
 | setup | ✅ 完成 (176 行) | meta |
 | operations | ✅ 完成 (192 行) | meta |
 | internals | ✅ 完成 (121 行) | meta |
-| advanced | ✅ 完成 (100 行) | meta |
+| advanced | ✅ 完成 (125 行) | meta |
 
 <!-- /chapter-progress -->
 

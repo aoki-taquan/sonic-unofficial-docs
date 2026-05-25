@@ -13,25 +13,14 @@ sources:
 - docs/system/multi-asic-warm-reboot.md
 related:
   cli:
-  - config bgp
-  - show bgp
-  - show bfd
+  - warm-reboot
+  - fast-reboot
+  - reboot
   config_db:
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_PEER_GROUP
-  - BGP_NEIGHBOR_AF
-  - BGP_NEIGHBOR
+  - WARM_RESTART
+  - CHASSIS_APP_DB
   yang:
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
+  - sonic-warm-restart
 ---
 
 # Reboot / Upgrade の発展トピック
@@ -103,7 +92,7 @@ reboot 前に BGP / BFD を drain する手順は `reliable-tsa` (Traffic Shift 
 - VS lab で warm reboot を再現するときは、`docker exec swss supervisorctl restart all` ではなく `sonic-installer` 経由の本物 warm reboot path を `pretest_warm_reboot.sh` で実行する。[orchagent](../../reference/glossary.md#term-orchagent) reconciliation 動作が VS でも観察可能。
 - chassis 級は `sonic-mgmt` の `chassis_reboot` test suite が CHASSIS_APP_DB の `module_state` 遷移を assertion している。
 
-## 関連ページ (追補)
+## 関連ページ
 
 - [Independent DPU upgrade](../../system/independent-dpu-upgrade.md)
 - [Reboot cause information via telemetry agent](../../system/reboot-cause-information-via-telemetry-agent.md)
@@ -122,14 +111,5 @@ reboot 前に BGP / BFD を drain する手順は `reliable-tsa` (Traffic Shift 
 - [13 DASH / SmartSwitch: DPU 独立 reboot との同期](../13-dash-smartswitch/index.md)
 - [02 BGP: graceful restart / LLGR と warm reboot の整合](../02-bgp/index.md)
 - [15 Security / AAA: secure upgrade と signed image](../15-security-aaa/index.md)
-
-## 関連ページ
-
-- [SONiC warm reboot](../../system/sonic-warm-reboot.md)
-- [Fast reboot flow improvements](../../system/fast-reboot-flow-improvements-hld.md)
-- [Express reboot HLD](../../system/sonic-express-reboot-hld-spec.md)
-- [System-wide warm boot](../../system/system-wide-warmboot.md)
-- [Multi-ASIC warm reboot](../../system/multi-asic-warm-reboot.md)
-- [12 Multi-ASIC / VOQ](../12-multi-asic-voq/index.md)
 
 <!-- glossary-links-injected: 5c9b3765d470 -->
