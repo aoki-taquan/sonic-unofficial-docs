@@ -36,7 +36,7 @@ related:
 
 ## dial-out と scale 設計の詳細
 
-gNMI dial-out (publish to collector) は server-driven Subscribe の補完で、target 側が active TCP connection を保ち、自分から push する。collector 側で session 数を減らせるため、数千台の fabric では運用負荷が下がる。SONiC の `telemetry` docker は dial-out 用の goroutine を spawn し、`DIALOUT_CLIENT` テーブルから dest list を読む。再接続 backoff、QoS [DSCP](../../reference/glossary.md#term-dscp) marking、TCP keepalive はチューニング対象になる。collector 側 (`gnmic`, `gnxi`) の prometheus exporter と組み合わせると metrics pipeline が完成する。
+gNMI dial-out (publish to collector) は server-driven Subscribe の補完で、target 側が active TCP connection を保ち、自分から push する。collector 側で session 数を減らせるため、数千台の fabric では運用負荷が下がる。SONiC の `telemetry` docker は dial-out 用の goroutine を spawn し、`TELEMETRY_CLIENT` テーブルから dest list を読む。再接続 backoff、QoS [DSCP](../../reference/glossary.md#term-dscp) marking、TCP keepalive はチューニング対象になる。collector 側 (`gnmic`, `gnxi`) の prometheus exporter と組み合わせると metrics pipeline が完成する。
 
 OpenConfig wildcard subscribe は `/interfaces/interface[name=*]/state/counters` のような path で per-port stream を一括取得するが、sample interval を 1s で全 port 投入すると server CPU が 100% に達する例がある。対策は (1) `STREAM` モードを `SAMPLE` に絞る、(2) heartbeat interval を 30s 以上に広げる、(3) collector を分割して target を pin する、の 3 通り。
 

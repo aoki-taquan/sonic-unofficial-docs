@@ -16,28 +16,13 @@ keywords:
 - gnxi
 related:
   cli:
-  - config bgp
-  - show bgp
-  - config snmp
-  - config portchannel
-  - config vlan
-  - show vlan
+  - show gnmi
+  - config gnmi
   config_db:
-  - SNMP
-  - VLAN
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_PEER_GROUP
+  - TELEMETRY
+  - TELEMETRY_CLIENT
   yang:
-  - sonic-port
-  - sonic-vlan
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
+  - sonic-telemetry
 ---
 
 # 概要

@@ -8,26 +8,13 @@ last_verified: 2026-05-10
 sources: []
 related:
   cli:
-  - config bgp
-  - show bgp
-  - config vlan
-  - show vlan
+  - show gnmi
+  - config gnmi
   config_db:
-  - VLAN
-  - BGP_PEER_GROUP_AF
-  - BGP_GLOBALS_AF_NETWORK
-  - BGP_GLOBALS_AF_AGGREGATE_ADDR
-  - BGP_AGGREGATE_ADDRESS
-  - BGP_PEER_GROUP
-  - BGP_NEIGHBOR_AF
+  - TELEMETRY
+  - TELEMETRY_CLIENT
   yang:
-  - sonic-bgp-monitor
-  - sonic-bgp-peergroup
-  - sonic-bgp-peerrange
-  - sonic-bgp-global
-  - sonic-bgp-bbr
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-sentinel
+  - sonic-telemetry
 ---
 
 # アーキテクチャ
