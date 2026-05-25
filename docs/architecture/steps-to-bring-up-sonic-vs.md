@@ -62,14 +62,14 @@ cd sonic-buildimage
 
 make init
 
-NOJESSIE=1 NOSTRETCH=1 NOBUSTER=1 NOBULLSEYE=1 SONIC_BUILD_JOBS=12 \
+NOJESSIE=1 NOSTRETCH=1 NOBUSTER=1 NOBULLSEYE=1 NOBOOKWORM=1 SONIC_BUILD_JOBS=12 \
   make configure PLATFORM=vs
 
-NOJESSIE=1 NOSTRETCH=1 NOBUSTER=1 NOBULLSEYE=1 SONIC_BUILD_JOBS=12 \
+NOJESSIE=1 NOSTRETCH=1 NOBUSTER=1 NOBULLSEYE=1 NOBOOKWORM=1 SONIC_BUILD_JOBS=12 \
   make target/sonic-vs.img.gz
 ```
 
-`NOJESSIE` / `NOSTRETCH` / `NOBUSTER` / `NOBULLSEYE` はそれぞれ古い Debian リリース向けビルドを **スキップ** するフラグ[^1]。Bookworm 等の現行向け 1 種だけをビルドする時短策。
+`NOJESSIE` / `NOSTRETCH` / `NOBUSTER` / `NOBULLSEYE` / `NOBOOKWORM` はそれぞれ古い Debian リリース向けビルドを **スキップ** するフラグ[^1]。最新の現行向け 1 種だけをビルドする時短策。
 
 成果物は `target/sonic-vs.img.gz`。
 
@@ -94,7 +94,7 @@ sudo systemctl start libvirtd
 ### 3. ホスト側ブリッジ作成
 
 ```bash
-brctl addbr mgtbr0 && sudo ifconfig mgtbr0 up
+sudo brctl addbr mgtbr0 && sudo ifconfig mgtbr0 up
 sudo brctl addbr vmbr0 && sudo ifconfig vmbr0 up
 ```
 
