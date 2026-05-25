@@ -135,7 +135,7 @@ VRF|<name>
 
 - key 形式: `VRF|Vrf<name>` (例 `VRF|VrfRed`)。
 - `vni`: L3 VNI（[VXLAN](../../reference/glossary.md#term-vxlan) [EVPN](../../reference/glossary.md#term-evpn) tenant L3）。
-- `fallback`: `true` で default VRF にフォールバック。
+- `fallback`: `true` に設定しても実際には dead field であり動作変化なし（詳細は「暗黙デフォルト・コード由来挙動」参照）。
 
 ### よくある誤設定
 
@@ -320,8 +320,6 @@ NEIGHBOR（neigh エントリ）は VRF の ref_count を直接操作しない�
 - **mgmt VRF 特例**: `MGMT_VRF_CONFIG|vrf_global.mgmtVrfEnabled=true` による mgmt VRF は [hostcfgd](../../reference/glossary.md#term-hostcfgd) の初期化済みを前提とし、Linux VRF デバイス `ip link add` をスキップする (vrfmgr.cpp:176-183)。通常の `VRF` テーブル書込みとは別経路。
 - **VNI 変更制限**: 既に VNI が設定されている VRF に別 VNI を上書きすることは不可。一旦 `vni=0` に SET してから新 VNI を SET する必要がある (vrfmgr.cpp:459-463)。
 - **SAI VR 削除シーケンス**: `delOperation` で `ref_count == 0` 確認後 `remove_virtual_router` → `vrf_table_.erase` → `delVrfVNIMap` → `m_stateVrfObjectTable.del()` の順に実行される (vrforch.cpp:173–193)。STATE_DB `VRF_OBJECT_TABLE` 消去が vrfmgrd の Linux VRF デバイス削除トリガになる。
-
-<!-- /ordering -->
 
 <!-- /ordering -->
 
