@@ -74,7 +74,7 @@ EVPN 学習経路と VNET API 経路は orchagent の中で同じ tunnel / encap
 | `VxlanTunnelMapOrch` | `VxlanTunnelMapOrch::doTask` | VNI ↔ [VLAN](../../reference/glossary.md#term-vlan) / [VRF](../../reference/glossary.md#term-vrf) の tunnel-map entry を管理 |
 | `VNetOrch` (`orchagent/vnetorch.cpp`) | `VNetOrch::doTask`、`VNetBitmapObject` / `VNetVrfObject` | `VNET` テーブルから vrf 実体（または bitmap 方式）を作成 |
 | `VNetRouteOrch` | `addRoute`、`addTunnelRoute` | `VNET_ROUTE_TABLE` / `VNET_ROUTE_TUNNEL_TABLE` を SAI nexthop / nexthop group へ |
-| `EvpnRemoteVnipOrch` / `EvpnNvoOrch` | `orchagent/vxlanorch.cpp` | type-2 で学んだ remote [VTEP](../../reference/glossary.md#term-vtep) を tunnel decap 側に登録 |
+| `EvpnRemoteVnip2pOrch` / `EvpnNvoOrch` | `orchagent/vxlanorch.cpp` | type-2 で学んだ remote [VTEP](../../reference/glossary.md#term-vtep) を tunnel decap 側に登録 |
 | `VRFOrch` | `orchagent/vrforch.cpp` | EVPN type-5 受信 vrf の作成・参照管理 |
 | `IntfsOrch` | `orchagent/intfsorch.cpp` | overlay SVI / router interface の作成 |
 | `bgpcfgd` (`dockers/docker-fpm-frr/bgpcfgd/`) | jinja2 + [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) | [CONFIG_DB](../../reference/glossary.md#term-config_db) の `BGP_*` / `DEVICE_METADATA` から FRR の [vtysh](../../reference/glossary.md#term-vtysh) config を生成 |
@@ -104,7 +104,7 @@ CONFIG_DB:
 
 APPL_DB:
   VNET_TABLE / VNET_ROUTE_TABLE / VNET_ROUTE_TUNNEL_TABLE ─> VNetOrch / VNetRouteOrch
-  EVPN_REMOTE_VNI_TABLE ─> EvpnRemoteVnipOrch
+  EVPN_REMOTE_VNI_TABLE ─> EvpnRemoteVnip2pOrch
   NEIGH_TABLE (type-2) ─> NeighOrch
 
 STATE_DB:
@@ -150,7 +150,7 @@ EVPN は VNI を L2（type-2）と L3（type-5）の両方で使うため、VNI 
 | P2MP | 任意 remote からの decap、特定 local IP | `DST_IP` のみ |
 | MP2MP | DCI 用、任意 source / 任意 destination | DST/SRC とも IP range |
 
-`EvpnRemoteVnipOrch` は remote VTEP を学習するごとに P2P term を追加する実装と、初回に P2MP を 1 件作って共有する実装が SONiC のバージョンによって混在します。`VxlanTunnelOrch::createTunnel` の `dip` 引数が空かどうかで分岐します。
+`EvpnRemoteVnip2pOrch` は remote VTEP を学習するごとに P2P term を追加する実装と、初回に P2MP を 1 件作って共有する実装が SONiC のバージョンによって混在します。`VxlanTunnelOrch::createTunnel` の `dip` 引数が空かどうかで分岐します。
 
 ## EVPN GR / fast convergence
 
