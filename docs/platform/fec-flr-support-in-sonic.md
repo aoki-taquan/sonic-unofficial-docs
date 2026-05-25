@@ -398,8 +398,7 @@ counterpoll --help 2>&1 | grep -iE 'flr|fec' || echo 'flr-interval-factor: 未�
 
 本ページに関連する参照ドキュメント:
 
-- [`show interfaces counters fec-stats` CLI リファレンス](../reference/cli/show-interfaces.md)
-- [`show interfaces` CLI リファレンス](../reference/cli/show-interfaces.md)
+- [`show interfaces counters fec-stats` / `show interfaces` CLI リファレンス](../reference/cli/show-interfaces.md)
 - [`FLEX_COUNTER_TABLE` CONFIG_DB スキーマ](../reference/config-db/flex-counter-table.md)
 - [`PORT` CONFIG_DB スキーマ](../reference/config-db/port.md)
 - [`PORT_STORM_CONTROL` CONFIG_DB スキーマ](../reference/config-db/port-storm-control.md)

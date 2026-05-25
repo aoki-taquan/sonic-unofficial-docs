@@ -118,7 +118,7 @@ redis-cli -n 2 hgetall 'RATES:oid:0x1000000000123'
 ```bash
 # 1. portstat で FLR(O) / FLR(P) / Accuracy を観測（運用での主要 view）
 show interfaces counters | head -3
-show interfaces counters -f Ethernet0 | grep -iE 'FLR|FEC'
+show interfaces counters fec-stats | grep -iE 'FLR|FEC'
 
 # 2. COUNTER_DB:RATES に FEC_FLR / FEC_FLR_PREDICTED / FEC_FLR_R_SQUARED が
 #    書かれていることを直接確認
