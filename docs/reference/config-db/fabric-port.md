@@ -609,11 +609,11 @@ APPL_DB (DB=0)
 ### 典型値
 
 - key 形式: `FABRIC_PORT|<Fabric>`。
-- `admin_status`: `up`、`isolate_status`: `False`、`lanes`: プラットフォーム既定値。
+- `isolateStatus`: `False`、`lanes`: プラットフォーム既定値、`alias`: ポート名と同値（`portconfig.py` デフォルト）。
 
 ### よくある誤設定
 
-- isolate_status=True のままにすると [VOQ](../../reference/glossary.md#term-voq) chassis 内で fabric リンクが trunk から外れたまま戻らない。
+- `isolateStatus=True` のままにすると [VOQ](../../reference/glossary.md#term-voq) chassis 内で fabric リンクが trunk から外れたまま戻らない。
 
 ### 確認コマンド
 
