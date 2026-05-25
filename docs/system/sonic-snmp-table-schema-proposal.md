@@ -32,7 +32,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! info "裏取りステータス: code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-snmp.yang` で SNMP/CONTACT/LOCATION コンテナ定義を確認。`sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2` で `SNMP_COMMUNITY` の RO/RW、`SNMP_USER` の RO/RW + auth/encryption、`SNMP.LOCATION.Location` / `SNMP.CONTACT` 取り込みを確認。SNMP_USER 側の `SNMP_USER_PERMISSION=RW` は実装済（`rwuser` 行で生成）。
 
 # SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）
@@ -117,7 +117,7 @@ reasoning: 後方互換のための j2 内分岐が HLD で明示されている
     ```text
     In repo *sonic-buildimage*:
     * *dockers/docker-snmp-v2/snmpd.conf.j2*:
-      * verify the existence of the SNMP table in the datatbase and fork behavior if present, if not continue using old method.
+      * verify the existence of the SNMP table in the database and fork behavior if present, if not continue using old method.
     ```
 
     **判断根拠**: 後方互換のための j2 内分岐が HLD で明示されている根拠。
