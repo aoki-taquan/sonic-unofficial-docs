@@ -133,7 +133,7 @@ Total number of entries 2
 ### よくある落とし穴
 
 - `show arp` は default [VRF](../../reference/glossary.md#term-vrf) のみ。[VRF](../../reference/glossary.md#term-vrf) 内 ARP を見るオプション (`-vrf` / `-V`) は arp コマンドには存在しないため、`ip neigh show vrf <vrf>` を使う。
-- [STATE_DB](../../reference/glossary.md#term-state_db) の NEIGH_TABLE と kernel ARP がズレる場合あり。両方で裏取り。
+- [APPL_DB](../../reference/glossary.md#term-appl_db) の NEIGH_TABLE と kernel ARP がズレる場合あり。両方で裏取り。
 
 ### 関連する show / debug
 

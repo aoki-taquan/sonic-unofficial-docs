@@ -153,15 +153,18 @@ excerpt: |
 
 ```mermaid
 flowchart LR
-  CLI["show bgp"]
+  CLI_BGP["show bgp (CONFIG_DB 直接)"]
+  CLI_IPBGP["show ip bgp / show ipv6 bgp (FRR 経由)"]
   CDB0[("CONFIG_DB<br/>BGP_DEVICE_GLOBAL")]
-  CDB0 --> CLI
   CDB1[("CONFIG_DB<br/>BGP_AGGREGATE_ADDRESS")]
-  CDB1 --> CLI
+  FRR["vtysh (FRR bgpd)"]
+  CDB0 --> CLI_BGP
+  CDB1 --> CLI_BGP
+  FRR --> CLI_IPBGP
 ```
 
 !!! note "凡例"
-    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+    `show bgp` は CONFIG_DB を直接読む。`show ip bgp` / `show ipv6 bgp` は vtysh 経由で FRR bgpd から取得する（CONFIG_DB は経由しない）。
 <!-- /cli-mermaid -->
 
 <!-- ref-triangle:start -->
