@@ -25,6 +25,7 @@ related:
   yang: []
   _no_related_cli: true
   _no_related_cdb: true
+  _no_related_yang: true
 ---
 
 # 設定
