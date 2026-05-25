@@ -122,7 +122,7 @@ for ns in $(sudo ip netns list | awk '{print $1}'); do
 done
 ```
 
-## 関連 Topics
+## 関連ページ
 
 - [Topics 12 Multi-ASIC / VOQ - architecture](../topics/12-multi-asic-voq/architecture.md)
 - [Topics 12 Multi-ASIC / VOQ - internals](../topics/12-multi-asic-voq/internals.md)
