@@ -13,7 +13,7 @@ related:
     - DHCP
   cli:
     - show dhcp6relay_counters
-    - sonic-clear dhcprelay_counters
+    - sonic-clear dhcp6relay_counters
   yang:
     - sonic-dhcpv6-relay
 ---
@@ -103,7 +103,7 @@ active/standby dual ToR で active が送った Relay-Forward の返答が **sta
 
 ```bash
 show dhcp6relay_counters
-sonic-clear dhcprelay_counters
+sonic-clear dhcp6relay_counters
 config dhcp6relay option79          enable|disable
 config dhcp6relay use-loopback-address enable|disable
 ```
