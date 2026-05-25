@@ -111,7 +111,7 @@ module: sonic-dhcp-server
 
 ### よくある落とし穴
 
-- `gateway` leaf が [VLAN](../../reference/glossary.md#term-vlan) interface IP と不一致だと割り当て後の通信が壊れる。[VLAN](../../reference/glossary.md#term-vlan) サブネットと整合確認が必須。
+- このモジュールは DHCP relay が参照するサーバ IP アドレスのリストのみを管理する。オンスイッチ DHCP サーバ (embedded kea) の詳細設定（gateway 等）は `sonic-dhcp-server-ipv4` が管轄するため混同しないこと。
 
 ### 関連する config / show コマンド
 
