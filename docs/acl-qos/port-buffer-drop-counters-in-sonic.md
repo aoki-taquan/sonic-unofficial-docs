@@ -41,7 +41,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/portsorch.h` L31 で `PORT_BUFFER_DROP_STAT_FLEX_COUNTER_GROUP="PORT_BUFFER_DROP_STAT"`、`portsorch.cpp` L88 で `PORT_BUFFER_DROP_STAT_POLLING_INTERVAL_MS=60000`、`sonic-utilities/counterpoll/main.py` L146-178 で `click.IntRange(30000, 300000)` バリデーション (verified at: 2026-05-09)。
 
 # ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）

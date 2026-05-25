@@ -37,7 +37,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-mgmt-common` 上の RCM 4 関数（`RedisClient` / `TransactionalRedisClient` / `TransactionalRedisClientWithOpts` / `CloseRedisClient`）の現行 master 取り込み、`DBStats` への counter 統合は未確認。
 
 # Redis Client Manager（RCM: connection pool / transactional client）

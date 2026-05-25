@@ -28,7 +28,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+!!! success "裏取りステータス: code-verified（基本構成のみ）"
     現行 master の `sonic-swss/orchagent/aclorch.cpp` で **byte counter** (`SAI_ACL_COUNTER_ATTR_ENABLE_BYTE_COUNT` 周辺、aclorch.cpp:517)、**IPv6 ルックアップ拡張** (`SAI_ACL_IP_TYPE_IPV6ANY` / `..._NON_IPV6` / `MATCH_INNER_ETHER_TYPE` 等、aclorch.cpp:84,508-509)、**LAG bind** (`SAI_ACL_BIND_POINT_TYPE_LAG`、aclorch.cpp:106,3733)、**MCLAG/portchannel リダイレクト** が実装されていることを確認済み。本ページは初期 HLD ベースで、後続の追加機能（DASH-ACL / flex counter / show acl 拡張等）は別ページ参照（verified at: 2026-05-09）。
 
 # ACL の基本設計（ACL_TABLE / ACL_RULE スキーマ）

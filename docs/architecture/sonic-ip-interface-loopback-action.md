@@ -29,7 +29,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-swss/cfgmgr/intfmgr.cpp` L782-896 で CONFIG_DB の `loopback_action` フィールド読み取りと APP_DB への伝播、`sonic-swss/orchagent/intfsorch.cpp` で `SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION` (L441) と `setIntfLoopbackAction` (L1001)、`loopbackActionMap` (L1148-) を確認。`sonic-utilities/config/main.py` L5881-5905 に `config interface loopback-action` CLI、`sonic-utilities/show/main.py` L1413-1438 に `show ip interfaces loopback-action` を確認 (verified at: 2026-05-09)。
 
 # IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）

@@ -17,7 +17,7 @@ related:
   - sonic-versions
 ---
 
-!!! success "裏取りステータス: Code-verified（一部例は未採用）"
+!!! success "裏取りステータス: code-verified（一部例は未採用）"
     `sonic-utilities/sonic_package_manager/` に実装。`manifest.py:179-185` で `version` / `depends`、`constraint.py:80-99` で `ComponentConstraints` と `VersionConstraint.parse`、`constraint.py:120-181` で `PackageConstraint.components` パース、`version.py:5-26` で `semantic_version` 利用を確認。HLD 例 4（`components` 制約）は実装済。一方 HLD 例 1 の `"^1.0.0,^2.0.0"` 並列 OR 表記は `semantic_version` ではカンマが AND のため不採用、HLD 例 3 の `SWSS_VERSION` 環境変数注入も grep ヒットなし（採用見送り）(verified at: 2026-05-09)。
 
 # SONiC OS と Docker イメージのセマンティックバージョニング

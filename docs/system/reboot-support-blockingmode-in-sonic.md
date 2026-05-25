@@ -23,7 +23,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-utilities/scripts/reboot` で実装を確認: `REBOOT_CONFIG_FILE="/etc/sonic/reboot.conf"` (L17)、デフォルト `BLOCKING_MODE="no"` / `BLOCKING_MODE_TIMEOUT_IN_SECOND=180` (L58-59)、`-b` で blocking mode、`-v` で verbose dot 出力 (L155-156, L230)、reboot.conf パーサで `blocking_mode` / `blocking_mode_timeout` キー処理 (L257-275)、blocking mode 時の deadloop と timeout 検出 (L390-408) を確認 (verified at: 2026-05-09)。
 
 # `reboot` コマンドの blocking mode（`reboot.conf` / `-b` / `-v`）

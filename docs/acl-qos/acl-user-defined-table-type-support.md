@@ -25,7 +25,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     現行 master で実装済みを確認。`sonic-swss/orchagent/aclorch.h:214-292` で `AclTableType` / `AclTableTypeBuilder` / `AclTableTypeParser`、`aclorch.h:591-609` で `addAclTable` / `addAclTableType` / `addAclRule` / `updateAclRule` API、`sonic-swss-common/common/schema.h:95` で `APP_ACL_TABLE_TYPE_TABLE_NAME`、`schema.h:418` で `STATE_ACL_STAGE_CAPABILITY_TABLE_NAME`、`aclorch.cpp:42,4014,4067` で `is_action_list_mandatory` フィールドの扱いを確認（verified at: 2026-05-09）。
 
 # ACL ユーザ定義テーブルタイプ（ACL_TABLE_TYPE と AclTableType）

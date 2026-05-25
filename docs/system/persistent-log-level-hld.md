@@ -23,7 +23,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（Phase 1 / 2 移行完了）"
+!!! success "裏取りステータス: code-verified（Phase 1 / 2 移行完了）"
     `sonic-swss-common/common/logger.cpp` L126-127 / L195-198 で `DBConnector("CONFIG_DB", 0)` + `Table(&db, CFG_LOGGER_TABLE_NAME)` および `SubscriberStateTable(CFG_LOGGER_TABLE_NAME)` 経由の購読を確認（LOGLEVEL_DB から完全に CONFIG_DB.LOGGER に移行済み）。`sonic-swss-common/common/loglevel.cpp` L31/L37/L99 で `swssloglevel -d`（全コンポーネントを default に戻す）オプションの実装を確認。`sonic-utilities/scripts/db_migrator.py` L94/L1207-1226 で旧 `LOGLEVEL_DB` → `CONFIG_DB.LOGGER` 変換と旧キー削除を確認 (verified at: 2026-05-09)。
 
 # ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）

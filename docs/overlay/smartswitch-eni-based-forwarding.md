@@ -31,7 +31,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 13 章: DASH / SmartSwitch](../topics/13-dash-smartswitch/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/dash/dashenifwdorch.h:69` で `TABLE_TYPE = "ENI_REDIRECT"`、L92 で `class DashEniFwdOrch : public Orch2, public Observer`、L51-58 で `DpuRegistry / EniNH / LocalEniNH / RemoteEniNH / EniAclRule / EniInfo / EniFwdCtx*` を確認。`dashenifwdinfo.cpp:6` で `EniAclRule::BASE_PRIORITY = 9996`、L194 で `BASE_PRIORITY + type_` により通常 9996 / TUNN_TERM 9997 を生成。`orchdaemon.{h,cpp}` への組み込み、mock `dashenifwdorch_ut.cpp` も確認（verified at: 2026-05-09）。
 
 # SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）

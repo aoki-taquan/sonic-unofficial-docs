@@ -24,7 +24,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-gnmi/gnmi_server/gnoi_healthz.go` L25-29 で `ddComponentAll = "all"` / `ddLogLvlAlert = "alert"` / `ddLogLvlCritical = "critical"` / `ddLogLvlAll = "all"` を定義、L39 `isDebugData(p)` / L91 `getDebugData(p)` / L191 `Get RPC` でパス解釈を確認。`sonic-host-services/host_modules/debug_info.py` L47 `class DebugArtifactCollector` の `collect_artifacts` / `_collect_counter_artifacts` / `_collect_teamdctl_data` / `_collect_host_files` 実装、`sonic-gnmi/sonic_service_client/dbus_client.go` の `HealthzClient` DBUS 経路、`gnoi_client/healthz/healthz.go` と `gnoi_client.go` L89-100 で `Get` / `Artifact` / `Acknowledge` / `List` / `Check` サブコマンドを確認（verified at: 2026-05-09）。
 
 # gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）

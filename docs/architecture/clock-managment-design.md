@@ -24,7 +24,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-utilities/config/main.py` L9758-9799 で `config clock timezone <tz>` / `config clock date <date> <time>` が `timedatectl` の薄いラッパーとして CONFIG_DB の `DEVICE_METADATA|localhost` の `timezone` を更新することを確認。`sonic-host-services/scripts/hostcfgd` L1482 の `DeviceMetaCfg` クラスが `apply_timezone_if_needed` (L1534) で `timedatectl set-timezone` を呼び、L1577 で `timezone` 変更ハンドラとして登録されることを確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang` L272-273 で `leaf timezone` の YANG 定義を確認（verified at: 2026-05-09）。
 
 # Clock 設定（`config clock date/timezone`, `DEVICE_METADATA.timezone`）

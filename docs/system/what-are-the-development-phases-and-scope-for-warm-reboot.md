@@ -39,7 +39,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Warm/Fast/Express/Cold](../topics/11-reboot/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-utilities/config/main.py` L3938-3969 で `config warm_restart` group / `enable` コマンドを確認。`sonic-utilities/sonic_installer/main.py` L800-814 で `sonic-installer upgrade-docker` (旧 `upgrade_docker` は deprecation warning) を確認。`sonic-utilities/scripts/warm-reboot` は `fast-reboot` への symlink として存在（verified 2026-05-09）。OID 復元戦略は **syncd view comparison** が master に採用されている（syncd 内 SAI redis view-comparison ロジック）。
 
 # Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）

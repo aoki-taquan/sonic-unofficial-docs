@@ -18,7 +18,7 @@ related:
     - sonic-dns
 ---
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-buildimage/files/image_config/resolv-config/` 配下に `resolv-config.service` / `resolv-config.sh` / `resolv.conf.j2` / `resolv.conf.head` / `update-containers` がすべて存在することを確認。`sonic-buildimage/src/sonic-config-engine/minigraph.py` L2648-2667 で `DnsNameserverResources` を `dns.j2` テンプレートで展開し `results['DNS_NAMESERVER']` に格納する実装を確認 (verified at: 2026-05-09)。
 
 # 静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）

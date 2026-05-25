@@ -30,7 +30,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（骨格のみ）"
+!!! success "裏取りステータス: code-verified（骨格のみ）"
     `sonic-swss-common/common/database_config.json` L8-11 で `redis_chassis` インスタンス（hostname `redis_chassis.server`、`/var/run/redis/redis_chassis.sock`）、L80-88 で `CHASSIS_APP_DB` が `redis_chassis` インスタンスに紐付くこと、`sonic-buildimage/dockers/docker-database/docker-database-init.sh` L85-86 で `database-chassis` 用の docker init 経路を確認（verified at: 2026-05-09）。詳細な FSI/SSI 制御プレーンや LAG / 内部データプレーンは別 HLD 領域。
 
 !!! note "area の経緯"

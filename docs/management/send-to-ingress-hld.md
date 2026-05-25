@@ -36,7 +36,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/portsorch.cpp` L771 で `m_sendToIngressPortTable(db, APP_SEND_TO_INGRESS_PORT_TABLE_NAME)` 登録、L6507 で `APP_SEND_TO_INGRESS_PORT_TABLE_NAME` 分岐、L7106 `addSendToIngressHostIf()` で `SAI_HOSTIF_TYPE_NETDEV` 属性を設定する hostif 作成を確認。`orchdaemon.cpp` L219 で `APP_SEND_TO_INGRESS_PORT_TABLE_NAME` を portsorch 優先度に登録。`cfgmgr/portmgrd.cpp` / `portmgr.cpp` 側の関連処理も確認（verified at: 2026-05-09）。
 
 # Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）

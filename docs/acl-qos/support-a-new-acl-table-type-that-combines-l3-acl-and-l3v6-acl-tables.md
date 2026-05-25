@@ -23,7 +23,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     sonic-swss `orchagent/aclorch.cpp` L44 で `STATE_DB_ACL_L3V4V6_SUPPORTED = "supported_L3V4V6"` 定義、L240 で `TABLE_TYPE_L3V4V6` を default table types に追加、L2737/L2739 で table 作成時に `isAclL3V4V6TableSupported(stage)` を判定、L3519/L3527 で `m_L3V4V6Capability` を ingress/egress 別に検出、L3541 でケーパビリティを SWSS_LOG に出力。`aclorch.h` L616 `isAclL3V4V6TableSupported` / L633 `m_L3V4V6Capability` マップを確認。CLI 側は sonic-utilities `acl_loader/main.py` L429-433 で `is_table_l3v4v6`、L780/L784 で `L3V4V6` 用 ethertype チェックを確認。YANG は sonic-yang-models `sonic-types.yang.j2` L115 `enum L3V4V6` を確認（verified at: 2026-05-09）。
 
 # L3V4V6 ACL テーブル型（v4 / v6 ルールを 1 SAI ACL テーブルに同居）

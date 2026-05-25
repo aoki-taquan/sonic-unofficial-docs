@@ -29,7 +29,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `portsorch.cpp` で `SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID = system_lag_id` の付与（L7988）、`SYSTEM_LAG_TABLE` / `SYSTEM_LAG_MEMBER_TABLE` への sync（L8037/L8114/L6354/L8212/L8260 のコメント＋コード）を確認。`orchagent/lagids.lua` に `add` / `del` / `get` の Lua atomic 実装と `SYSTEM_LAG_ID_START/END` の redis 読み込みを確認。`tests/test_virtual_chassis.py` の VS テストが CI で回っている（verified at: 2026-05-11）。
 
 # 分散 VOQ シャシでの LAG（`SYSTEM_LAG_TABLE` と `system_lag_id`）

@@ -32,7 +32,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     本テストプランが前提とする TACACS+ 認証経路（`hostcfgd` による PAM `/etc/pam.d/common-auth-sonic` 生成、`config tacacs` CLI、failthrough オプション、loopback source IP の挙動）は Verifier batch 29 で現行 master 実装を確認済み。詳細は本ページ末尾の裏取りメモを参照。
 
 # TACACS+ 認証テストプラン（`pam_tacplus` + ssh login）

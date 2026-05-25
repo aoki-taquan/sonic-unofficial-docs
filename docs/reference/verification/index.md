@@ -22,7 +22,7 @@ related:
 |----|------|--------|
 | `hld-only` | 公式 HLD のみを根拠に記述。コード未確認 | 📘 HLD-only |
 | `issue-confirmed` | issue / PR コメントで補強済み | 🔍 Issue-confirmed |
-| `code-verified` | 該当実装を読んで一致確認済み | ✅ Code-verified |
+| `code-verified` | 該当実装を読んで一致確認済み | ✅ code-verified |
 | `discrepancy-found` | HLD と実装に差分あり。本文に注記 | ⚠️ Discrepancy-found |
 | `stub` / `meta` | プレースホルダ / 仕様外ページ | （非表示） |
 

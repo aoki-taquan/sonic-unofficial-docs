@@ -23,7 +23,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-yang-models/yang-models/sonic-kdump.yang` L57-71 で `remote / ssh_string / ssh_path` の leaf を確認。`sonic-utilities/scripts/sonic-kdump-config` L261/283-294/346-357/429-444 で同フィールドの読み書きと kdump-tools への反映、`sonic-utilities/show/kdump.py` L88-95 で `show kdump config` 拡張、`sonic-host-services/scripts/hostcfgd` L1166-1270 でハンドラ、`sonic-buildimage/build_debian.sh` L426-433 で `network_setup.sh` / hook の initramfs 配置を確認 (verified at: 2026-05-09)。
 
 # kdump リモート転送（SSH）

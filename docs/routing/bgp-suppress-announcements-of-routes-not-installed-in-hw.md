@@ -41,7 +41,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `bgpd.main.conf.j2:107` で `bgp suppress-fib-pending` の無条件挿入 (FRR レベルでデフォルト有効)、`sonic-device_metadata.yang` での `suppress-fib-pending` leaf 定義、`fpmsyncd/routesync.{h,cpp}` で `RTM_F_OFFLOAD` 応答経路を確認 (verified 2026-05-11)。consistency monitoring script の現行 master 取り込みは未裏取りで継続課題。
 
 # BGP Suppress FIB Pending（dplane_fpm_nl + RTM_F_OFFLOAD）

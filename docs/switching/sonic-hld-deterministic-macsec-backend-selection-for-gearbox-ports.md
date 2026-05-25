@@ -35,7 +35,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     現行 master で実装済みを確認。`sonic-swss/gearsyncd/gearboxparser.cpp:161-164` で `macsec_supported` パース、`sonic-swss/lib/gearboxutils.h:67` で `gearbox_phy_t::macsec_supported` フィールド、`sonic-swss/lib/gearboxutils.cpp:141,199-201` で default true / `loadPhyMap` のパース。`sonic-swss/orchagent/macsecorch.cpp:363,409` で `force_npu = !phy->macsec_supported`、`macsecorch.cpp:2539-2563` で `phy->macsec_supported` 分岐ガード。HWSKU では `nexthop NH-5010-F-O32-C32` / `arista 7280R4-32QF-32DF` 等の `gearbox_config.json` に取り込み済み（verified at: 2026-05-09）。
 
 # Gearbox PHY ごとの MACsec backend 決定（`macsec_supported`）

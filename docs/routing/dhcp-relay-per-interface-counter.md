@@ -40,7 +40,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 16 章: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-buildimage/src/dhcpmon/` で dhcpmon 実装を確認。`sonic-buildimage/dockers/docker-dhcp-relay/cli/show/plugins/show_dhcp_relay.py` で `show dhcp_relay ipv4/ipv6 counter` CLI、`cli/clear/plugins/clear_dhcp_relay.py` で sonic-clear、`cli-plugin-tests/test_show_dhcpmon_counters.py` / `test_clear_dhcp_relay.py` で UT を確認（verified 2026-05-09）。`sonic-dhcp-relay/dhcp4relay` / `dhcp6relay` で relay daemon 本体を確認。
 
 # DHCP Relay per-interface counter（`dhcpmon` マルチスレッド + COUNTERS_DB 永続化）

@@ -22,7 +22,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-gnmi` の Set ハンドラ・`sonic-host-services` 側の DBUS エンドポイント・`telemetry.sh` 起動スクリプトをコードで確認済み（Verifier batch 29）。フラグ → 関数ポインタ → DBUS 経路が実コードと一致することを検証。
 
 # gNMI Save-On-Set（Set ごとの ConfigDB 永続化）

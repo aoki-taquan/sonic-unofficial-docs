@@ -23,7 +23,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+!!! success "裏取りステータス: code-verified（基本構成のみ）"
     現行 master の `sonic-host-services/scripts/hostcfgd:1848` に `MemoryStatisticsCfg` クラスがあり MEMORY_STATISTICS テーブル監視と SIGHUP 連携が実装。`sonic-utilities/config/memory_statistics.py` と `show/memory_statistics.py` で CLI が整備、`sonic-yang-models` の `sonic-memory-statistics.yang` も存在。memorystatsd デーモン名そのものは別ファイル名で実装されている可能性あり（verified at: 2026-05-09）。
 
 # メモリ統計収集（memorystatsd と MEMORY_STATISTICS テーブル）

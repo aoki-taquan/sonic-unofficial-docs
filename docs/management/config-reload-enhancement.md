@@ -35,7 +35,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 11 章: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     現行 master の `sonic-host-services/scripts/featured`（`delayed` フィールド処理 / `enable_delayed_services` / PORT_TABLE 購読 + PortInitDone ハンドラ / `handle_port_table_timeout` / `waitAdvancedBootDone`）、`sonic-utilities/scripts/db_migrator.py:719-726` の `has_timer`→`delayed` 移行、`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-feature.yang:67` の `delayed` leaf、`sonic-swss/portsyncd/portsyncd.cpp:134` の `PortInitDone` publish を確認済み（verified at: 2026-05-09）。
 
 # config reload の event-driven 化（FEATURE.delayed + PortInitDone）

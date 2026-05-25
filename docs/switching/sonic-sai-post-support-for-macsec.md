@@ -36,7 +36,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA / FIPS / Hardening](../topics/15-security-aaa/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     現行 master の `sonic-swss/orchagent/macsecpost.cpp` (`STATE_FIPS_MACSEC_POST_TABLE_NAME` を読み書き)、`sonic-swss-common/common/schema.h:471` の `STATE_FIPS_MACSEC_POST_TABLE_NAME = "FIPS_MACSEC_POST_TABLE"`、`sonic-buildimage/build_image.sh:214` の `sonic_fips=1` カーネルコマンドライン、`build_debian.sh:691-692` の `/etc/fips/fips_enable` 初期化、`dockers/docker-macsec/cli/show/plugins/show_macsec.py:351-389` の FIPS_MACSEC_POST_TABLE 読み出し CLI を確認済み（verified at: 2026-05-09）。
 
 # FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）

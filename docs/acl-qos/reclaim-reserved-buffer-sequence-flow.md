@@ -41,7 +41,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-swss/cfgmgr/buffermgrd.cpp` L26/L98-121 で `-z zero_profiles.json` オプションを確認。`buffermgrdyn.cpp` L245-275 で `pgs_to_apply_zero_profile` / `ingress_zero_profile` / `queues_to_apply_zero_profile` / `egress_zero_profile` のパースと zero profile 適用ロジックを確認。`buffermgrdyn.h` L33 で `zero_profile_name` メンバを確認。`sonic-swss-common/common/schema.h` L480 で `STATE_BUFFER_MAXIMUM_VALUE_TABLE = "BUFFER_MAX_PARAM_TABLE"` を確認（verified at: 2026-05-09）。
 
 # 未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス

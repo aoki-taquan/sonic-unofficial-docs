@@ -24,7 +24,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（命名差分あり）"
+!!! success "裏取りステータス: code-verified（命名差分あり）"
     現行 master で実装を確認: `sonic-swss/orchagent/aclorch.cpp` に `COUNTERS_ACL_COUNTER_RULE_MAP` 定義 (L45)、`ACL_COUNTER_DEFAULT_POLLING_INTERVAL_MS=10000`, `ACL_COUNTER_FLEX_COUNTER_GROUP` 経由の登録 (L4209)、SAI ACL counter 属性マッピング (L517-518)、CRM 連動 (L1940/L1982)。`sonic-utilities/counterpoll/main.py` に `counterpoll acl` グループと `acl interval/enable/disable` (L361-)、`sonic-utilities/scripts/aclshow` も存在。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-flex_counter.yang` L363 に `container ACL`（コメントで `ACL_STAT_COUNTER_FLEX_COUNTER_GROUP` を明示）。**HLD で言及される `m_acl_fc_mgr` メンバ名は実装上は generic な `m_flex_counter_manager`** (verified at: 2026-05-09)。
 
 # ACL カウンタの flex counter 化（`ACL_COUNTER` + `COUNTERS_ACL_COUNTER_RULE_MAP`）

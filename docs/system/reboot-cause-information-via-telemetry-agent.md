@@ -27,7 +27,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 09 章: Telemetry / SNMP / ログ](../topics/09-telemetry-snmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     現行 master で実装存在を確認。`sonic-host-services/scripts/determine-reboot-cause` および `scripts/process-reboot-cause` が systemd unit (`sonic-host-services-data.{determine,process}-reboot-cause.service`) として配置されている。`process-reboot-cause:27-34` で `REBOOT_CAUSE_DIR=/host/reboot-cause/`、`REBOOT_CAUSE_HISTORY_DIR=/host/reboot-cause/history/`、`PREVIOUS_REBOOT_CAUSE_FILE=previous-reboot-cause.json`、`REBOOT_CAUSE_TABLE_NAME="REBOOT_CAUSE"`、`MAX_HISTORY_FILES=10` を確認。`process-reboot-cause:62` で `min(MAX_HISTORY_FILES, ...)` の 10 件 cap も確認。CLI は `sonic-utilities/show/reboot_cause.py` の `fetch_reboot_cause_history_from_db` で `REBOOT_CAUSE|*` 走査を確認（verified at: 2026-05-09）。
 
 # Reboot-cause 履歴の STATE_DB / テレメトリ公開

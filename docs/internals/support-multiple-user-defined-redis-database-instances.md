@@ -21,7 +21,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-buildimage/dockers/docker-database/docker-database-init.sh` L55-61/L80-81 で `/etc/sonic/database_config$NAMESPACE_ID.json` を `/var/run/redis/sonic-db/database_config.json` にコピーし、不在時は `database_config.json.j2` または `multi_database_config.json.j2` を `jinjanate` で展開する起動順を確認。`sonic-buildimage/dockers/docker-database/` 配下に `database_config.json.j2` / `multi_database_config.json.j2` / `supervisord.conf.j2` を確認。`sonic-swss-common/common/dbconnector.h` L90 `DEFAULT_SONIC_DB_CONFIG_FILE = "/var/run/redis/sonic-db/database_config.json"`、`sonic-swss-common/common/database_config.json` で INSTANCES + DATABASES セクション仕様を、`tests/redis_multi_db_ut_config/database_config[0-5].json` で複数インスタンス UT 設定を確認（verified at: 2026-05-09）。詳細な C++ / Python API シグネチャは原文 HLD §New Design of {C++,Python} Interface を参照。
 
 # 複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）

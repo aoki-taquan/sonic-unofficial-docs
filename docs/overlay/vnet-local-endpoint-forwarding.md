@@ -34,7 +34,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 03 章: VXLAN / EVPN とオーバーレイ](../topics/03-vxlan-evpn/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/vnetorch.cpp:3213,3251-3253,3306,3334` で `check_directly_connected` のパースと `isPartiallyLocal` ガードを確認。`sonic-swss/orchagent/tunneltermhelper.h:12-15` で `VNET_TUNNEL_TERM_ACL_TABLE_TYPE = "VNET_LOCAL_ENDPOINT_REDIRECT"`、`VNET_TUNNEL_TERM_ACL_TABLE = "VNET_LOCAL_ENDPOINT"`、`BASE_PRIORITY = 9998`、`SUFFIX = "TUNN_TERM"` を確認。`sonic-dash-ha/crates/hamgrd` 側にも `check_directly_connected` あり（verified at: 2026-05-09）。
 
 # VNET の Local Endpoint Forwarding（DPU 直結 nexthop の最適化）

@@ -26,7 +26,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `switchorch.cpp:2094-2271`（`setFastLinkupCapability` / `doCfgSwitchFastLinkupTableTask`）、`portsorch.h:300`（`setPortFastLinkupEnabled`）、SAI `SAI_SWITCH_ATTR_FAST_LINKUP_POLLING_TIMEOUT[_RANGE]` / `_GUARD_TIMEOUT[_RANGE]` / `_BER_THRESHOLD`、`sonic-utilities/show/main.py:2933` / `config/main.py:5095` の `switch-fast-linkup` CLI を確認済み (verified at: 2026-05-09)。
 
 # SONiC Fast Link-Up

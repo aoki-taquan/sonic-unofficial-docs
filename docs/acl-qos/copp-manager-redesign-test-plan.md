@@ -40,7 +40,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+!!! success "裏取りステータス: code-verified（基本構成のみ）"
     現行 master の `sonic-swss/cfgmgr/coppmgr.cpp` に `always_enabled` フラグ判定 (line 88, 365)、CFG_FEATURE_TABLE 監視 (line 300)、trap 状態保持と差分処理 (543-619) を確認。`sonic-utilities/tests/copp_test.py`、`sonic-swss/tests/mock_tests/copp_ut.cpp` のテストハーネスも存在。Test plan の主要 4 ルールは coppmgr.cpp で網羅されている（verified at: 2026-05-09）。
 
 # CoPP Manager 再設計テストプラン（feature テーブル整合性 + `always_enabled`）

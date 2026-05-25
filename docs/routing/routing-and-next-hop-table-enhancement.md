@@ -39,7 +39,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/nhgorch.h:117` で `NhgOrch`、`sonic-swss-common/common/schema.h:56` で `APP_CLASS_BASED_NEXT_HOP_GROUP_TABLE_NAME`、`sonic-swss/orchagent/routeorch.cpp:771` で `ROUTE_TABLE.nexthop_group` パース、`routeorch.cpp:807-815` で `nexthop_group` と `ips/aliases` の排他検証を確認 (verified at: 2026-05-09)。
 
 # NEXT_HOP_GROUP_TABLE による APP_DB ルートとネクストホップ分離

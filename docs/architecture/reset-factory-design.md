@@ -31,7 +31,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-buildimage/files/image_config/reset-factory/reset-factory` で `/usr/bin/reset-factory` スクリプト本体を確認。`sonic-buildimage/files/image_config/config-setup/config-setup` L245-251 で `KEEP_BASIC_TABLES` で指定された CONFIG_DB テーブルのみ `jq` でフィルタする keep-basic 実装、`sonic-buildimage/files/image_config/config-setup/config-setup.conf` L4 で `KEEP_BASIC_TABLES='["MGMT_PORT","MGMT_INTERFACE","MGMT_VRF_CONFIG","PASSW_HARDENING"]'` の現行値を確認。`sonic-buildimage/files/build_templates/default_users.json.j2` の存在を確認（verified at: 2026-05-09）。
 
 # `reset-factory`（keep-basic / keep-all-config / only-config）

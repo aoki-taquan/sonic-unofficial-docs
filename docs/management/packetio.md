@@ -36,7 +36,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（SONiC 共通基盤）"
+!!! success "裏取りステータス: code-verified（SONiC 共通基盤）"
     `copporch` の `genetlink_name` / `genetlink_mcgrp_name` フィールドと `createGenetlinkHostIf()`、`portsorch` の `APP_SEND_TO_INGRESS_PORT_TABLE_NAME` 登録と `addSendToIngressHostIf()`、`copp_cfg.j2` の `queue2_group1` に `genetlink_mcgrp_name: "packets"` / `genetlink_name: "psample"` を確認。kernel `genl_packet` filter のベンダ側実装はリポジトリ外でスコープ外 (verified at: 2026-05-09)。
 
 # P4Runtime PacketIO
