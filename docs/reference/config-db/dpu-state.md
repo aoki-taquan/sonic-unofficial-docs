@@ -584,6 +584,7 @@ else:
 - 関連 [CONFIG_DB](../../reference/glossary.md#term-config_db): [`CHASSIS_MODULE`](chassis-module.md) — モジュール管理状態
 - 関連 STATE_DB: [`CHASSIS_STATE_DB 概要`](chassis-state.md) — CHASSIS_STATE_DB 全テーブルの一覧
 - 関連 CLI: `show dpu`
+- 詳細リファレンス: [`DPU_STATE フィールド詳細`](dpu-state-detail.md) — フィールドごとのデフォルト値・更新条件の詳細
 
 ## 引用元
 
