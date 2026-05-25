@@ -61,9 +61,12 @@ flowchart LR
 - [CONFIG_DB の永続化が失敗する](../../reference/runbooks/config-db-persistence-failure.md)
 - [config save 後に予期しない diff が出る](../../reference/runbooks/config-save-diff-unexpected.md)
 - [CONFIG_DB save / load が反映されない](../../reference/runbooks/config-save-load.md)
+- [config-setup サービス（first-boot config 生成 / 版間 migration）](../../system/sonic-configuration-setup-service.md)
+
+### 関連 YANG
+
 - [sonic-dns YANG](../../reference/yang/sonic-dns.md)
 - [sonic-feature YANG](../../reference/yang/sonic-feature.md)
-- [config-setup サービス（first-boot config 生成 / 版間 migration）](../../system/sonic-configuration-setup-service.md)
 
 <!-- /yang-xref -->
 

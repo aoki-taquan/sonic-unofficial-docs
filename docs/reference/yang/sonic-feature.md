@@ -59,11 +59,14 @@ flowchart LR
 ### 関連 HLD
 
 - [SONiC Application Extension 開発・移植ガイド](../../management/sonic-application-extension-guide.md)
-- [sonic-warm-restart YANG](../../reference/yang/sonic-warm-restart.md)
 - [SONiC Boot Chart（systemd-bootchart 統合）](../../system/sonic-boot-chart.md)
 - [config-setup サービス（first-boot config 生成 / 版間 migration）](../../system/sonic-configuration-setup-service.md)
 - [System Health Monitor（critical service / Monit / peripheral）](../../system/sonic-system-health-monitor-high-level-design.md)
 - [設定 / 運用](../../topics/19-build-packaging/operations.md)
+
+### 関連 YANG
+
+- [sonic-warm-restart YANG](../../reference/yang/sonic-warm-restart.md)
 
 <!-- /yang-xref -->
 

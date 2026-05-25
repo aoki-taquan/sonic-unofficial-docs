@@ -56,6 +56,9 @@ flowchart LR
 
 - [VOQ カウンタ集約（chassis supervisor からの aggregate 表示）](../../internals/aggregate-voq-counters-in-sonic.md)
 - [counter が更新されない (FLEX_COUNTER)](../../reference/runbooks/flex-counter-stuck.md)
+
+### 関連 YANG
+
 - [sonic-copp YANG](../../reference/yang/sonic-copp.md)
 
 <!-- /yang-xref -->

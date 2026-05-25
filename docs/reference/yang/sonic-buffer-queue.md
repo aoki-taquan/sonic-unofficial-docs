@@ -52,7 +52,7 @@ flowchart LR
 
 - [`BUFFER_QUEUE`](../config-db/buffer-queue.md)
 
-### 関連 HLD
+### 関連 YANG
 
 - [sonic-buffer-pool YANG](../../reference/yang/sonic-buffer-pool.md)
 

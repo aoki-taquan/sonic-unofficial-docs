@@ -65,7 +65,7 @@ flowchart LR
 
 - [`config vlan`](../cli/config-vlan.md)
 
-### 関連 HLD
+### 関連 YANG
 
 - [sonic-port YANG](../../reference/yang/sonic-port.md)
 
