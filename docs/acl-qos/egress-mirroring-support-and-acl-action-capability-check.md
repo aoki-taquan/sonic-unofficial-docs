@@ -46,7 +46,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: code-verified"
+!!! success "裏取りステータス: code-verified (2026-05-11)"
     HLD の主要要素は master に取り込み済: `ACTION_MIRROR_{INGRESS,EGRESS}_ACTION` 定数（`aclorch.h:70-71`）、`AclOrch::queryAclActionCapability()` / `putAclActionCapabilityInDB()`（`aclorch.cpp:3975`,`4056`）、`SWITCH_CAPABILITY` への `ACL_ACTIONS|<stage>` 書き込み（`aclorch.cpp:4061`）、`acl-loader full --mirror_stage {ingress,egress}`（`acl_loader/main.py:1209,1238`）、libsairedis の `queryAttributeEnumValuesCapability`（`RedisRemoteSaiInterface.cpp:1245`）。詳細は末尾「実装との乖離」。
 
 # ACL の egress mirror 対応と SAI ベース action capability 問い合わせ

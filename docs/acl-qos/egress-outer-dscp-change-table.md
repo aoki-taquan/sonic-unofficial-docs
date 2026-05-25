@@ -171,7 +171,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 show acl table
 show acl rule
 # STATE_DB の ACL アクション capability を確認
-redis-cli -n 6 hget 'SWITCH_CAPABILITY|switch' ACL_ACTIONS_EGRESS
+redis-cli -n 6 hget 'SWITCH_CAPABILITY|switch' 'ACL_ACTIONS|EGRESS'
 ```
 
 ## 裏取り済み実装位置 (2026-05-11)
