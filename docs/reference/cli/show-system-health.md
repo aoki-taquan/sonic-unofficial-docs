@@ -113,7 +113,7 @@ excerpt: |
 
 ### `show system-health dpu <module_name>`
 
-**前提**: `is_smartswitch()` が True の場合のみ実 動作（False の場合は黙って return）。
+**前提**: `is_smartswitch()` が True の場合のみ実動作（False の場合は黙って return）。
 
 **動作**:
 
