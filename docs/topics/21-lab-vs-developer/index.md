@@ -96,11 +96,11 @@ related:
 
 | ページ | 状態 | verification |
 |---|---|---|
-| concept | ✅ 完成 (141 行) | meta |
-| setup | ✅ 完成 (277 行) | meta |
-| operations | ✅ 完成 (176 行) | meta |
-| internals | ✅ 完成 (130 行) | meta |
-| advanced | ✅ 完成 (115 行) | meta |
+| concept | ✅ 完成 (177 行) | meta |
+| setup | ✅ 完成 (311 行) | meta |
+| operations | ✅ 完成 (210 行) | meta |
+| internals | ✅ 完成 (164 行) | meta |
+| advanced | ✅ 完成 (146 行) | meta |
 
 <!-- /chapter-progress -->
 
