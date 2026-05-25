@@ -1,6 +1,6 @@
 ---
 title: VRF / ECMP / RIB-FIB パイプライン
-description: VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APP_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…
+description: VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…
 area: topics
 verification: meta
 page_kind: chapter-index
@@ -50,7 +50,7 @@ related:
 
 # VRF / ECMP / RIB-FIB パイプライン
 
-この章は、[SONiC](../../reference/glossary.md#term-sonic) の L3 転送を「[VRF](../../reference/glossary.md#term-vrf) と interface を作る」「route が [FRR](../../reference/glossary.md#term-frr) から APP_DB に来る」「[orchagent](../../reference/glossary.md#term-orchagent) が [RIF](../../reference/glossary.md#term-rif) / next hop / route object を [ASIC](../../reference/glossary.md#term-asic) に作る」「[ECMP](../../reference/glossary.md#term-ecmp) の種類を選ぶ」という順番で読み直す入口です。
+この章は、[SONiC](../../reference/glossary.md#term-sonic) の L3 転送を「[VRF](../../reference/glossary.md#term-vrf) と interface を作る」「route が [FRR](../../reference/glossary.md#term-frr) から [APPL_DB](../../reference/glossary.md#term-appl_db) に来る」「[orchagent](../../reference/glossary.md#term-orchagent) が [RIF](../../reference/glossary.md#term-rif) / next hop / route object を [ASIC](../../reference/glossary.md#term-asic) に作る」「[ECMP](../../reference/glossary.md#term-ecmp) の種類を選ぶ」という順番で読み直す入口です。
 
 既存ページは VRF、static route、RIF counter、ECMP 拡張などの [HLD](../../reference/glossary.md#term-hld) 単位で分かれています。この章では、運用者や実装を追う読者が実際に持つ質問の順に並べ替え、詳細なスキーマやコード裏取りは各ページの関連リンクへ譲ります。
 
@@ -82,8 +82,10 @@ related:
 | ページ | 状態 | verification |
 |---|---|---|
 | concept | ✅ 完成 (180 行) | meta |
+| architecture | ✅ 完成 (113 行) | meta |
 | setup | ✅ 完成 (264 行) | meta |
 | operations | ✅ 完成 (188 行) | meta |
+| ecmp | ✅ 完成 (94 行) | meta |
 | internals | ✅ 完成 (128 行) | meta |
 | advanced | ✅ 完成 (100 行) | meta |
 
