@@ -571,7 +571,7 @@ if (nhg_key.is_srv6_nexthop()) {
 
 | プラットフォーム / 条件 | ECMP グループ上限補正 | ECMP メンバ上限 | CBF NHG マップ | SRv6 NHG |
 |------------------------|----------------------|-----------------|---------------|----------|
-| Mellanox | **SAI生値 / 32** (補正あり) | SAI 既定値 | SAI capability 次第 | SAI SAI capability 次第 |
+| Mellanox | **SAI生値 / 32** (補正あり) | SAI 既定値 | SAI capability 次第 | SAI capability 次第 |
 | Broadcom (XGS / DNX) | SAI 生値をそのまま採用 | SAI 既定値 | SAI capability 次第 | 一部 SKU 対応 |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (`switch_type=voq`) | SAI 生値をそのまま採用 | **128 に強制** | SAI capability 次第 | SAI capability 次第 |
 | VS (virtual) | SAI 生値をそのまま採用 | SAI 既定値 | SAI が 0 以外を返せば有効 | スタブ動作 |
