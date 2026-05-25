@@ -87,7 +87,7 @@ CoppOrch は **CPU queue ごとの新 trap group** を処理し、[ACL](../refer
 
 ## ベンダ kernel driver の責務（3 つ）
 
-[^1]
+以下の 3 点をベンダ kernel driver が実装する[^1]。
 
 1. **経路判定**: punt パケット header の識別子で netdev か genetlink か振り分け。`knet_filter_cb` で `GENL_PACKET_NAME` を分岐:
 

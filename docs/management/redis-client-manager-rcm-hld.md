@@ -184,7 +184,7 @@ redis-cli info clients
 
 | Phase | 実装済 | 未実装 |
 |-------|--------|--------|
-| Phase 1: 4 API（getClient / releaseClient / makeTransaction / makeMulti） | HLD 記載どおりに実装済（master 取り込み確認） | — |
+| Phase 1: 4 API（RedisClient / TransactionalRedisClient / TransactionalRedisClientWithOpts / CloseRedisClient） | HLD 記載どおりに実装済（master 取り込み確認） | — |
 | Phase 2: Init 段の事前 client cache 構築 | HLD 記載分は実装済 | 実 master での起動順序・タイミングは未確認 |
 | Phase 3: Counter / Metrics 統合 | — | RCM カウンタの上位 daemon 露出は未実装 / 未確認 |
 
