@@ -492,6 +492,4 @@ keyspace 通知による CONFIG_DB 直接購読は存在しない[^orch]。
 
 <!-- /defaults -->
 
-<!-- glossary-links-injected: dash-vnet-001 -->
-
 <!-- glossary-links-injected: f54c766199cc -->
