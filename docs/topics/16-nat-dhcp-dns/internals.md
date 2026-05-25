@@ -126,14 +126,14 @@ ASIC_DB:
 
 ## DHCP relay の packet path
 
-DHCP relay (`dhcprelayd` および `kea-dhcp4`/`kea-dhcp6` relay モード) は [CoPP](../../reference/glossary.md#term-copp) 経由で trap された DHCP パケットを処理します。
+DHCP relay (`dhcprelay` / `dhcp6relay` および `kea-dhcp4`/`kea-dhcp6` relay モード) は [CoPP](../../reference/glossary.md#term-copp) 経由で trap された DHCP パケットを処理します。
 
 ```mermaid
 flowchart LR
   CLIENT[DHCP client] -->|broadcast / multicast| PORT[ingress port]
   PORT -->|CoPP trap| CPU[CPU queue]
   CPU --> KERNEL[Linux kernel]
-  KERNEL --> RELAY[dhcprelayd / kea]
+  KERNEL --> RELAY[dhcprelay / kea]
   RELAY -->|unicast to server_vip| EGRESS[egress port]
   RELAY -->|stats| DHCPMON[dhcpmon NFLOG]
   DHCPMON --> STATE[(COUNTERS_DB<br/>DHCPV4_COUNTER_TABLE / DHCPV6_COUNTER_TABLE)]
