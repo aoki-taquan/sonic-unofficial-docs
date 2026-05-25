@@ -44,15 +44,15 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>VNET")]
-  DM["vrfmgrd"]
+  CDB[("CONFIG_DB<br/>VNET_ROUTE")]
+  DM["VNetCfgRouteOrch"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_VNET_TABLE")]
+  APPDB[("APP_DB<br/>VNET_ROUTE_TABLE")]
   DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
-  SAI["SAI<br/>sai_virtual_router_api"]
-  SYNCD --> SAI
+  ORCH["VNetRouteOrch"]
+  APPDB --> ORCH
+  SAI["SAI<br/>sai_route_api"]
+  ORCH --> SAI
 ```
 
 !!! note "凡例"

@@ -1,6 +1,6 @@
 ---
-title: VNET / VNET_ROUTE テーブル
-description: "VNET / VNET_ROUTE テーブル — VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル群。"
+title: VNET テーブル
+description: "VNET テーブル — VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル。VNET_ROUTE / VNET_ROUTE_TUNNEL は別ページ参照。"
 area: reference
 hard: 0
 verification: code-verified
@@ -23,7 +23,7 @@ related:
     - sonic-vnet
 ---
 
-# VNET / VNET_ROUTE テーブル
+# VNET テーブル
 
 ## 概要
 
@@ -145,6 +145,7 @@ VNET_ROUTE_TUNNEL|<vnet_name>|<prefix>
 
 ## 関連リファレンス
 
+- CONFIG_DB: [`VNET_ROUTE / VNET_ROUTE_TUNNEL`](./vnet-route.md)
 - YANG: [`sonic-vnet`](../yang/sonic-vnet.md)
 - CLI: [`config vxlan`](../cli/config-vxlan.md)
 
