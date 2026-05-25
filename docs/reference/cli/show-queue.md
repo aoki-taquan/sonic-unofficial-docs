@@ -70,7 +70,10 @@ show queue wredcounters [INTERFACE_NAME]
 
 ## 関連リファレンス
 
-- (関連リンクなし)
+- CLI: [show priority-group](show-priority-group.md) / [show buffer](show-buffer.md) / [show buffer pool](show-buffer-pool.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [BUFFER_QUEUE](../config-db/buffer-queue.md) / [BUFFER_POOL](../config-db/buffer-pool.md)
+- [YANG](../../reference/glossary.md#term-yang): [sonic-queue](../yang/sonic-queue.md) / [sonic-buffer-queue](../yang/sonic-buffer-queue.md)
+- Topic: [QoS / Buffer](../../topics/08-qos-buffer/index.md)
 
 <!-- ref-triangle:end -->
 
@@ -147,7 +150,9 @@ flowchart LR
 ```bash
 show queue counters
 show queue watermark unicast
-show queue persistent-watermark
+show queue persistent-watermark unicast
+show queue persistent-watermark multicast
+show queue persistent-watermark all
 ```
 <!-- /ops-hint -->
 
