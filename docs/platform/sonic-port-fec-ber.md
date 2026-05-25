@@ -14,15 +14,10 @@ related:
   config_db:
   - PORT
   - PORT_TABLE
-  - TRANSCEIVER_INFO
-  - TELEMETRY
-  - GNMI
   cli:
   - show interface counter fec-stat
   yang:
   - sonic-port
-  - sonic-port-qos-map
-  - sonic-crm
 ---
 
 <!-- topics-tip -->
@@ -113,10 +108,6 @@ show interface counter fec-stat
 - 空欄 → SAI カウンタ未対応か、speed/lanes が lookup 外
 - 値が異常に大きい → serdes 速度 lookup ミスマッチ
 - Post BER 常時 0 → uncorrectable frame が本当に 0 か、SAI 取得失敗
-
-## 関連 Topics
-
-- [14-platform-port-optics](../topics/14-platform-port-optics/index.md): port / optics / FEC
 
 ## 引用元
 
