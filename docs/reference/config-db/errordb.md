@@ -47,19 +47,6 @@ related:
 - **last-known error の上書き** — 同一オブジェクトが複数回失敗した場合は最新エラーで更新
 - **warm reboot 非対応** — ERROR_DB の内容は warm reboot をまたいで永続しない[^1]
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>BGP_GLOBALS")]
-  DM["bgpcfgd"]
-  CDB --> DM
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ---
 

@@ -38,27 +38,6 @@ related:
 
 `show dpu` CLI (`sonic-utilities/show/system_health.py:show_dpu_state()`) がこのテーブルを読み取り、[DPU](../../reference/glossary.md#term-dpu) ごとの運用状態 (`Online` / `Partial Online` / `Offline`) を表示する[^1]。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  PAL["Platform API\nget_oper_status()\nget_dataplane_state()\nget_controlplane_state()"]
-  SS_UPDATER["SmartSwitchModuleUpdater\n(supervisor chassisd)"]
-  DPU_UPDATER["DpuStateUpdater\n(DPU chassisd)"]
-  CSDB[("CHASSIS_STATE_DB\nDPU_STATE|DPU<N>")]
-  CLI["show dpu CLI"]
-
-  PAL --> SS_UPDATER
-  PAL --> DPU_UPDATER
-  SS_UPDATER --> CSDB
-  DPU_UPDATER --> CSDB
-  CSDB --> CLI
-```
-
-!!! note "凡例"
-    CHASSIS_STATE_DB は CONFIG_DB ではなく Redis DB ID=13。`sonic-db-cli CHASSIS_STATE_DB` でアクセスする。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

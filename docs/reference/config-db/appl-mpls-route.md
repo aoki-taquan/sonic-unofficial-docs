@@ -33,25 +33,6 @@ related:
 受信すると `LabelRouteTableFieldValueTupleWrapper` を通じて書き込む。
 `routeorch` の `doLabelTask()` がこのテーブルを購読し、[SAI](../../reference/glossary.md#term-sai) `inseg_entry` を作成・更新・削除する。
 
-<!-- cdb-mermaid -->
-### データフロー
-
-```mermaid
-flowchart LR
-  FRR["FRR / zebra<br/>(MPLS ラベル割当)"]
-  KERN["Linux kernel<br/>(MPLS ルーティング)"]
-  FPMS["fpmsyncd<br/>onLabelRouteMsg()"]
-  APPL[("APPL_DB<br/>LABEL_ROUTE_TABLE")]
-  RORCH["routeorch<br/>doLabelTask()"]
-  SAI["SAI MPLS API<br/>inseg_entry"]
-  HW["ASIC"]
-  FRR -->|FPM netlink| FPMS
-  KERN -->|netlink RTM_NEWROUTE| FPMS
-  FPMS -->|ProducerStateTable SET| APPL
-  APPL -->|ConsumerStateTable| RORCH
-  RORCH --> SAI --> HW
-```
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

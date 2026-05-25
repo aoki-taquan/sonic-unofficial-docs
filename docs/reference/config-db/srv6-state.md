@@ -37,25 +37,6 @@ related:
 !!! note "STATE_DB について"
     SONiC の SRv6 機能には専用の STATE_DB テーブルが存在しない。MySID の動作状態は COUNTERS_DB（カウンタ）と APP_DB（`SRV6_SID_LIST_TABLE` / `SRV6_MY_SID_TABLE`）の組み合わせで追跡する。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>SRV6_MY_SIDS")]
-  DM["Srv6Orch"]
-  CDB --> DM
-  APPDB[("APP_DB<br/>APP_SRV6_MY_SID_TABLE")]
-  DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
-  SAI["SAI<br/>sai_srv6_api"]
-  SYNCD --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## テーブル: `COUNTERS_SRV6_NAME_MAP`
 

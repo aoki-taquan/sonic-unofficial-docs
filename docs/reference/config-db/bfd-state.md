@@ -30,27 +30,6 @@ related:
 !!! note "CONFIG_DB との関係"
     BFD の **設定** は `CONFIG_DB` の [`BFD_SESSION`](bfd-session.md) テーブルで行う。`bfdorch` が APPL_DB `BFD_SESSION_TABLE` を経由して SAI セッションを作成した後、その結果と構成情報を本テーブルに書き戻す。
 
-<!-- cdb-mermaid -->
-### データフロー
-
-```mermaid
-flowchart LR
-  APPL[("APPL_DB<br/>BFD_SESSION_TABLE")]
-  OA["bfdorch<br/>(orchagent)"]
-  SAI["SAI BFD API"]
-  STATE[("STATE_DB<br/>BFD_SESSION_TABLE")]
-  NTFY["SAI 通知<br/>bfd_session_state_change"]
-  CONS["消費者<br/>(VNet Orch / BGP)"]
-
-  APPL -->|"doTask()"| OA
-  OA -->|"create_bfd_session()"| SAI
-  OA -->|"初期書き込み (state=Down)"| STATE
-  SAI -->|"state 変化通知"| NTFY
-  NTFY -->|"hset state"| STATE
-  STATE --> CONS
-```
-
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

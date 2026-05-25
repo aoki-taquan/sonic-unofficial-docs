@@ -45,30 +45,6 @@ related:
     同名テーブルが `APPL_DB`・`STATE_DB`・`APPL_STATE_DB` の 3 箇所に存在する。  
     STATE_DB の `ROUTE_TABLE` はデフォルト経路専用の別テーブル（[ROUTE_TABLE (STATE_DB)](route-state.md) 参照）。
 
-<!-- cdb-mermaid -->
-### データフロー
-
-```mermaid
-flowchart LR
-  FRR["FRR bgpd / zebra"]
-  FPMSYNCD["fpmsyncd"]
-  APPDB[("APPL_DB\nROUTE_TABLE\n(要求)")]
-  OA["RouteOrch\norchagent"]
-  SAI["SAI\nsai_route_api"]
-  APPLSTATE[("APPL_STATE_DB\nROUTE_TABLE\n(offload cache)")]
-  RESP["RESPONSE_CHANNEL\n通知"]
-
-  FRR -->|"FPM socket"| FPMSYNCD
-  FPMSYNCD --> APPDB
-  APPDB -->|"ConsumerStateTable"| OA
-  OA -->|"SAI call"| SAI
-  OA -->|"publishRouteState()"| RESP
-  RESP --> APPLSTATE
-  RESP -->|"onRouteResponse()"| FPMSYNCD
-  FPMSYNCD -->|"RTM_NEWROUTE offload"| FRR
-```
-
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

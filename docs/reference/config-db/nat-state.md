@@ -43,14 +43,15 @@ related:
 
 ```mermaid
 flowchart LR
-  SDB[("STATE_DB<br/>NAT_RESTORE_TABLE")]
-  RES["restore_nat_entries.py"]
-  RES --> SDB
-  CDB[("COUNTERS_DB<br/>COUNTERS_NAT*")]
-  ORCH["NatOrch (orchagent)"]
-  SAI["SAI<br/>sai_nat_api"]
-  SAI --> ORCH
-  ORCH --> CDB
+  CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
+  DM["natmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_switch_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"

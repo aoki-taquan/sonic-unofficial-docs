@@ -43,21 +43,6 @@ related:
 
 `sonic-utilities` の `config pbh` コマンドがこのテーブルを参照し、操作可否を事前検証する (`pbhcap.cpp:288-289`)。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>PBH_TABLE")]
-  DM["PbhOrch"]
-  CDB --> DM
-  SAI["SAI<br/>sai_acl_api"]
-  DM --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

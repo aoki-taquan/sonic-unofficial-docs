@@ -55,7 +55,7 @@ MC-[LAG](../../reference/glossary.md#term-lag) (Multi-Chassis Link Aggregation) 
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>MCLAG_UNIQUE_IP")]
+  CDB[("CONFIG_DB<br/>MCLAG_DOMAIN")]
   DM["MlagOrch"]
   CDB --> DM
   SAI["SAI<br/>sai_fdb_api"]

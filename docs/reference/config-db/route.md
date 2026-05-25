@@ -37,25 +37,6 @@ related:
 !!! warning "APPL_DB テーブル"
     `ROUTE_TABLE` は **APPL_DB** テーブルであり、**CONFIG_DB には存在しない**。静的経路は `CONFIG_DB` の `STATIC_ROUTE` テーブルで管理し、`bgpcfgd` / `staticd` を経由して最終的にこのテーブルに反映される。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>STATIC_ROUTE")]
-  DM["fpmsyncd"]
-  CDB --> DM
-  APPDB[("APP_DB<br/>APP_ROUTE_TABLE")]
-  DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
-  SAI["SAI<br/>sai_route_api"]
-  SYNCD --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

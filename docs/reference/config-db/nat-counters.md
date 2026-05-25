@@ -37,25 +37,6 @@ related:
 | `COUNTERS_TWICE_NAPT` | `<proto>:<src_ip>:<src_port>:<dst_ip>:<dst_port>` | Twice NAPT エントリのカウンタ |
 | `COUNTERS_GLOBAL_NAT` | `Values` (固定) | グローバル統計・設定サマリ |
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
-  DM["natmgrd"]
-  CDB --> DM
-  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
-  DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
-  SAI["SAI<br/>sai_switch_api"]
-  SYNCD --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

@@ -41,25 +41,6 @@ related:
 !!! note "`oper_status` はここではない"
     ポートの SAI oper-status (`up`/`down`) は `PortsOrch::updateDbPortOperStatus()` が **APP_DB** `PORT_TABLE` に書く（STATE_DB ではない）。`sonic-swss/orchagent/portsorch.cpp:3930` 参照。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>PORT")]
-  DM["portmgrd"]
-  CDB --> DM
-  APPDB[("APP_DB<br/>APP_PORT_TABLE")]
-  DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
-  SAI["SAI<br/>sai_port_api"]
-  SYNCD --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

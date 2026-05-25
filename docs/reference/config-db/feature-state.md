@@ -41,21 +41,6 @@ related:
 !!! note "CONFIG_DB との関係"
     機能の **設定**（有効化・無効化・再起動ポリシー）は `CONFIG_DB` の [`FEATURE`](feature.md) テーブルで行う。本テーブルは `featured` と `sonic-ctrmgrd` が設定を処理した結果を反映する。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>FEATURE")]
-  DM["featured / hostcfgd"]
-  CDB --> DM
-  SDB[("STATE_DB<br/>FEATURE")]
-  DM --> SDB
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

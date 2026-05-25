@@ -32,7 +32,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SYSLOG_CONFIG_FEATURE")]
-  DM["containercfgd"]
+  DM["hostcfgd"]
   CDB --> DM
 ```
 

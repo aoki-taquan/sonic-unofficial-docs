@@ -38,25 +38,6 @@ related:
 
 `NAT_TABLE`、`NAPT_TABLE`、`NAT_TWICE_TABLE`、`NAPT_TWICE_TABLE`、`NAT_GLOBAL_TABLE`、`NAT_DNAT_POOL_TABLE` は [APPL_DB](../../reference/glossary.md#term-appl_db) 上の [NAT](../../reference/glossary.md#term-nat) 関連テーブル群[^1]。`natmgrd` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の static [NAT](../../reference/glossary.md#term-nat)/NAPT 設定を変換してこれらへ書き込み、`natsyncd` が kernel conntrack から dynamic エントリを書き込む。`orchagent / NatOrch` が消費して [SAI](../../reference/glossary.md#term-sai) `sai_nat_api` 経由でハードウェアへ降ろす[^2]。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
-  DM["natmgrd"]
-  CDB --> DM
-  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
-  DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
-  SAI["SAI<br/>sai_switch_api"]
-  SYNCD --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

@@ -35,7 +35,7 @@ hard: 0
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>BGP_GLOBALS_AF")]
-  DM["frrcfgd"]
+  DM["bgpcfgd"]
   CDB --> DM
 ```
 

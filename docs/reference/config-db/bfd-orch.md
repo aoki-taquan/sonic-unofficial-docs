@@ -28,22 +28,6 @@ related:
 
 `BGP_DEVICE_GLOBAL.STATE.use_software_bfd = true` の場合、bfdorch は [SAI](../../reference/glossary.md#term-sai) を経由せず [STATE_DB](../../reference/glossary.md#term-state_db) の `SOFTWARE_BFD_SESSION_TABLE` にエントリを転記するのみで終了する (`bgpcfgd/BfdMgr` が [FRR](../../reference/glossary.md#term-frr) bfdd へ設定を注入)。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>BFD_SESSION")]
-  APPL[("APPL_DB<br/>BFD_SESSION_TABLE")]
-  OA["bfdorch<br/>(orchagent)"]
-  SAI["SAI BFD API"]
-  HW["ASIC"]
-  CDB --> APPL --> OA --> SAI --> HW
-```
-
-!!! note "凡例"
-    hardware BFD offload 経路 (`use_software_bfd = false`) の典型フロー。software BFD 経路では SAI を経由せず FRR bfdd へ直接注入される。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

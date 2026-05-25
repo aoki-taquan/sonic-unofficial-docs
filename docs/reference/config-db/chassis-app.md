@@ -49,7 +49,6 @@ related:
 
 非 VoQ 環境（`DEVICE_METADATA.localhost.switch_type != "voq"`）では `isChassisDbInUse()` が false を返し、これらのテーブルへの書き込みはすべてスキップされる。
 
-<!-- cdb-mermaid -->
 ### データフロー (自動生成)
 
 ```mermaid

@@ -11,6 +11,9 @@ Usage:
     python3 meta/scripts/gen_cdb_mermaid.py --check  # diff only
 
 The block is idempotent — re-running with no source changes yields no diff.
+
+Non-CONFIG_DB pages (APPL_DB, STATE_DB, COUNTERS_DB, etc.) are detected by
+title keywords and are skipped.  Any previously mis-inserted block is removed.
 """
 from __future__ import annotations
 
@@ -132,6 +135,75 @@ FALLBACK_MAP: dict[str, dict[str, Optional[str]]] = {
 
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
 
+# Keywords in the page title that indicate the page is NOT a CONFIG_DB page.
+# These pages must never receive (or retain) the auto-generated cdb-mermaid block.
+NON_CONFIG_DB_TITLE_MARKERS = (
+    "APPL_DB",
+    "(APPL_DB)",
+    "STATE_DB",
+    "COUNTERS_DB",
+    "EVENT_DB",
+    "ERROR_DB",
+    "CHASSIS_APP_DB",
+    "CHASSIS_STATE_DB",
+    "FLEX_COUNTER_DB",
+    "APPL_STATE_DB",
+)
+
+# Phrases in the description that indicate the page primarily documents a non-CONFIG_DB table.
+NON_CONFIG_DB_DESC_MARKERS = (
+    "APP_DB に保持",
+    "APPL_DB に保持",
+    "APP_DB 上の",
+    "APPL_DB 上の",
+    "APP_DB のテーブル",
+    "APPL_DB のテーブル",
+)
+
+
+def get_title(text: str) -> Optional[str]:
+    """Extract title value from frontmatter."""
+    m = FRONTMATTER_RE.match(text)
+    if not m:
+        return None
+    title_m = re.search(r'^title:\s*["\']?(.+?)["\']?\s*$', m.group(1), re.MULTILINE)
+    if title_m:
+        return title_m.group(1).strip()
+    return None
+
+
+def get_description(text: str) -> Optional[str]:
+    """Extract description value from frontmatter."""
+    m = FRONTMATTER_RE.match(text)
+    if not m:
+        return None
+    desc_m = re.search(r'^description:\s*["\']?(.+?)["\']?\s*$', m.group(1), re.MULTILINE)
+    if desc_m:
+        return desc_m.group(1).strip()
+    return None
+
+
+def is_non_config_db_page(page: pathlib.Path, text: str) -> bool:
+    """Return True if this page documents a non-CONFIG_DB table (APPL_DB, STATE_DB, etc.).
+
+    Such pages must never receive the auto-generated cdb-mermaid block.  Any
+    existing block that was incorrectly inserted will be removed.
+    """
+    title = get_title(text) or ""
+    for marker in NON_CONFIG_DB_TITLE_MARKERS:
+        if marker in title:
+            return True
+    # Slug-based fallback: slugs starting with "appl-" are APPL_DB pages
+    # even if the title does not explicitly say so.
+    if page.stem.startswith("appl-"):
+        return True
+    # Description-based fallback: page describes a table that lives in APP_DB/APPL_DB
+    desc = get_description(text) or ""
+    for marker in NON_CONFIG_DB_DESC_MARKERS:
+        if marker in desc:
+            return True
+    return False
+
 
 def get_first_config_db_table(text: str) -> Optional[str]:
     m = FRONTMATTER_RE.match(text)
@@ -241,12 +313,36 @@ def main() -> int:
     changed = 0
     inserted = 0
     skipped_no_map = 0
+    removed_non_cdb = 0
     drift: list[str] = []
 
     for page in sorted(PAGES_DIR.glob("*.md")):
         if page.name == "index.md":
             continue
         text = page.read_text(encoding="utf-8")
+
+        # --- Non-CONFIG_DB pages: remove any wrongly-inserted block and skip ---
+        if is_non_config_db_page(page, text):
+            if BEGIN_TAG in text:
+                if END_TAG in text:
+                    # Complete block: remove begin...end tags plus content
+                    new_text = BLOCK_RE.sub("", text)
+                else:
+                    # Orphaned open tag only: remove the lone BEGIN_TAG line
+                    new_text = re.sub(
+                        r"[ \t]*" + re.escape(BEGIN_TAG) + r"[ \t]*\n?",
+                        "",
+                        text,
+                    )
+                if new_text != text:
+                    if args.check:
+                        drift.append(str(page.relative_to(ROOT)))
+                    else:
+                        page.write_text(new_text, encoding="utf-8")
+                    changed += 1
+                    removed_non_cdb += 1
+            continue
+
         table = get_first_config_db_table(text)
         if not table:
             table = slug_to_table(page.stem)
@@ -282,7 +378,7 @@ def main() -> int:
 
     print(
         f"[gen_cdb_mermaid] inserted/updated: {changed} | total with block: {inserted} | "
-        f"skipped (no mapping): {skipped_no_map}",
+        f"skipped (no mapping): {skipped_no_map} | removed (non-CONFIG_DB): {removed_non_cdb}",
         file=sys.stderr,
     )
     if args.check and drift:

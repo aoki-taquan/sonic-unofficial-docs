@@ -44,21 +44,6 @@ related:
 
 本ページは **[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)**（DB 5）のランタイム状態フィールドと、[syncd](../../reference/glossary.md#term-syncd) 内 `FlexCounter` モジュールが持つコード由来デフォルト値を記述する。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  DM["syncd"]
-  CDB --> DM
-  SAI["SAI<br/>sai_*_stats"]
-  DM --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## FLEX_COUNTER_DB のテーブル構造
 

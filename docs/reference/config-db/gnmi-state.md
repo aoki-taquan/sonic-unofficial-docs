@@ -33,23 +33,6 @@ related:
 
 このテーブルは **[CONFIG_DB](../../reference/glossary.md#term-config_db) からは一切参照されない** 書き込み専用のランタイム状態テーブルである。[gNMI](../../reference/glossary.md#term-gnmi) サーバが起動するたびに既存エントリは全削除され、接続の開始・終了に合わせてエントリが追加・削除される。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  SRV["telemetry デーモン\n(gNMI サーバ)"]
-  CM["ConnectionManager\n(connection_manager.go)"]
-  SDB[("STATE_DB\nTELEMETRY_CONNECTIONS")]
-  CLIENT["gNMI クライアント"]
-  CLIENT -->|Subscribe RPC| SRV
-  SRV --> CM
-  CM -->|HSet / HDel| SDB
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

@@ -40,25 +40,6 @@ related:
 
 `ACL_TABLE_TABLE` と `ACL_RULE_TABLE` は書込み主体が [orchagent](../../reference/glossary.md#term-orchagent) のみであり、`show acl table` / `show acl rule` が参照する読み取り専用のステータスレジスタとして機能する。`ACL_STAGE_CAPABILITY_TABLE` は [orchagent](../../reference/glossary.md#term-orchagent) 起動時に一度書き込まれ、以降は変化しない。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>ACL_TABLE")]
-  DM["AclOrch"]
-  CDB --> DM
-  APPDB[("APP_DB<br/>APP_ACL_TABLE_TABLE")]
-  DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
-  SAI["SAI<br/>sai_acl_api"]
-  SYNCD --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## ACL_TABLE_TABLE
 
