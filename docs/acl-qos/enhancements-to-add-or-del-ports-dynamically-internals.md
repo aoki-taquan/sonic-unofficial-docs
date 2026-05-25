@@ -34,7 +34,7 @@ related:
 
 | モジュール | 対応 |
 |-----------|------|
-| `portsyncd` (SWSS) | ✅ ADD / DEL の追加対応必要 |
+| `portsyncd` (SWSS) | ✅ ADD / DEL 対応済み（PR #1808 MERGED）[^1] |
 | `portsorch` (SWSS) | ✅ flex counter 動的追加・削除を拡張 |
 | `portmgrd` | 既存ロジックで OK[^1] |
 | `sflowmgr` | 既存ロジックで OK[^1] |
