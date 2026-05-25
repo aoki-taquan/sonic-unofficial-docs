@@ -540,7 +540,7 @@ APPL_DB `VRF_TABLE` は YANG 未モデル化のオペレーショナルテーブ
 
 - [CONFIG_DB VRF テーブル](./vrf.md)
 - [STATE_DB VRF テーブル](./state-vrf.md)
-- [APPL_DB ROUTE_TABLE](./appl-db-route.md)
+- [APPL_DB ROUTE_TABLE](./app-route.md)
 - [HLD: VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
 
 <!-- glossary-links-injected: 89d665cbcf68 -->

@@ -804,7 +804,7 @@ APPL_STATE_DB> hgetall ROUTE_TABLE:192.168.0.0/16
 
 ## 関連ページ
 
-- [`ROUTE_TABLE (APPL_DB)`](appl-db-route.md) — fpmsyncd が書き込む経路要求テーブル
+- [`ROUTE_TABLE (APPL_DB)`](app-route.md) — fpmsyncd が書き込む経路要求テーブル
 - [`ROUTE_TABLE (STATE_DB / APPL_STATE_DB)`](route-state.md) — [STATE_DB](../../reference/glossary.md#term-state_db) のデフォルト経路状態テーブルも含む統合ページ
 - [`STATIC_ROUTE`](static-route.md) — CONFIG_DB の静的経路設定
 

@@ -1445,7 +1445,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [CRM](#term-crm)
 
 - [CRM テーブル](config-db/crm.md) (150)
-- [APPL_DB ROUTE_TABLE テーブル](config-db/appl-db-route.md) (43)
+- [ROUTE_TABLE (APPL_DB)](config-db/app-route.md) (43)
 - [Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）](../system/generic-sai-extension-critical-resource-monitoring-crm.md) (43)
 - [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (32)
 - [ROUTE_TABLE (APPL_DB)](config-db/app-route.md) (29)
@@ -1453,7 +1453,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ConsumerStateTable](#term-consumerstatetable)
 
 - [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (16)
-- [APPL_DB ROUTE_TABLE テーブル](config-db/appl-db-route.md) (15)
+- [ROUTE_TABLE (APPL_DB)](config-db/app-route.md) (15)
 - [DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)](config-db/dpu-orch.md) (13)
 - [ZMQ ProducerStateTable / ConsumerStateTable 設計](../internals/zmq-producer-consumer-state-table-design.md) (11)
 - [LABEL_ROUTE_TABLE (APPL_DB)](config-db/appl-mpls-route.md) (11)
@@ -1537,7 +1537,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SWITCH_HASH テーブル](config-db/switch-hash.md) (39)
 - [NEXTHOP_GROUP_TABLE (APPL_DB)](config-db/nhg.md) (37)
 - [サイトマップ](../_meta/sitemap.md) (36)
-- [APPL_DB ROUTE_TABLE テーブル](config-db/appl-db-route.md) (36)
+- [ROUTE_TABLE (APPL_DB)](config-db/app-route.md) (36)
 - [ROUTE_TABLE (APPL_DB)](config-db/app-route.md) (34)
 
 ### [ECN](#term-ecn)
