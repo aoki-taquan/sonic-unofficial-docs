@@ -101,7 +101,7 @@ Neighbor        V    AS  MsgRcvd  MsgSent  Up/Down   State/PfxRcd
 
 集約は以下の流れで行います。
 
-1. 各 line card の COUNTERS_DB が persys-port VOQ counter を持つ。
+1. 各 line card の COUNTERS_DB が per-sys-port VOQ counter を持つ。
 2. supervisor 側の aggregator が全 line card の COUNTERS_DB を購読する。
 3. egress system port 単位での合計値を Chassis DB 側に書き込む。
 4. CLI `show queue` 系が、aggregator 出力を整形して提示する。
@@ -133,7 +133,7 @@ admin@sup0:~$ show queue watermark --voq 'LINE-CARD1|asic0|Ethernet0'
 
 | DB | キー例 | 役割 |
 |---|---|---|
-| `COUNTERS_DB` (line card) | `COUNTERS:oid:0x15...` | persys-port VOQ の生 counter |
+| `COUNTERS_DB` (line card) | `COUNTERS:oid:0x15...` | per-sys-port VOQ の生 counter |
 | `CHASSIS_APP_DB` (supervisor) | `SYSTEM_PORT_TABLE:LINE-CARD1\|asic0\|Ethernet0` | aggregator 出力 |
 | `CHASSIS_STATE_DB` (supervisor) | `CHASSIS_MODULE_TABLE:LINE-CARD0` | module up/down 状態 |
 

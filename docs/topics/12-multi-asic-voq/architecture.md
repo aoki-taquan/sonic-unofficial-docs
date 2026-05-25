@@ -48,7 +48,7 @@ flowchart TB
     O1 --> S1 --> SY1
     O1 --> ST1
   end
-  subgraph LC2[Line Card 2 - asic0 namespace]
+  subgraph LC2[Line Card 2 - asic1 namespace]
     C2[(CONFIG_DB)]
     O2[orchagent]
     C2 --> O2
@@ -77,7 +77,7 @@ flowchart LR
   EGR --> EGP[Egress front-panel port]
 ```
 
-VOQ は ingress 側に存在し、egress system port ごとに credit を受け取って送出可否を決めます。これにより、egress 側で輻輳しても ingress でバッファリングされ、他の egress 宛て trafic は HOL blocking されません。
+VOQ は ingress 側に存在し、egress system port ごとに credit を受け取って送出可否を決めます。これにより、egress 側で輻輳しても ingress でバッファリングされ、他の egress 宛て traffic は HOL blocking されません。
 
 ## Fabric Port の役割
 
