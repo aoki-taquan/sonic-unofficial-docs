@@ -162,7 +162,7 @@ PAM テンプレート `common-auth-sonic.j2` が `login` 文字列に完全一�
 
 ### 典型値
 
-- key 形式: `AAA|<service>` (service = `authentication` / `authorization` / `accounting`)`。
+- key 形式: `AAA|<service>` (service = `authentication` / `authorization` / `accounting`)。
 - `authentication.login`: `local` または `tacacs+,local` のチェイン。
 - `failthrough`: `True` で前段失敗時に次の方式へフォールバック。
 
