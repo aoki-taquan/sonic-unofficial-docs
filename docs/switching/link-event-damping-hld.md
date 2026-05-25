@@ -58,13 +58,12 @@ related:
 
     `config_db.json` で永続化する場合は `PORT` セクションに 6 フィールドを記述。SwSS は 6 フィールドを **組として** 受けるので、欠落させると damping が disable になる点に注意（`porthlpr.cpp` L1345-L1373）。
 
-    # リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）
-
     #### 関連 GitHub Issue / PR
 
     - [sonic-swss #2933: Add SWSS support for link event damping feature (merged)](https://github.com/sonic-net/sonic-swss/pull/2933) — AIED アルゴリズム取り込みの本体 PR。
     - [sonic-swss #2916: Implement link event damping SWSS component (closed)](https://github.com/sonic-net/sonic-swss/pull/2916) — 上記の先行 PR (closed)。
     - SyncD intercept 経路の完成度については追加トラッキング Issue 未確認。
+
 <!-- /diff-admonition -->
 
 ## 概要
@@ -284,8 +283,6 @@ sudo config interface link_event_damping_algorithm Ethernet0 disabled
 - 期待より長く down のまま: 連続 DOWN で timer がリセットされている。`max_suppress_time` と decay の関係を再計算。
 - pre / post counter が乖離する: 抑制が効いている証拠。差分が大きい場合は flap 多発を疑う。
 
-<!-- phase-boundary -->
-
 ### コマンド例
 
 link event damping の有効状態とカウンタを確認する。
@@ -295,6 +292,8 @@ show interfaces link-event-damping
 redis-cli -n 4 keys 'PORT|Ethernet*' | head
 show interfaces counters errors
 ```
+
+<!-- phase-boundary -->
 
 ## 実装フェーズ境界
 

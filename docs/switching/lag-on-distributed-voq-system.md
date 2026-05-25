@@ -202,7 +202,7 @@ config portchannel member add PortChannel001 Ethernet4
 ## トラブルシューティング
 
 ```bash
-redis-cli -h <supervisor> -n CHASSIS_APP_DB hgetall 'SYSTEM_LAG_TABLE:<host>|<asic>|<lag>'
+sonic-db-cli CHASSIS_APP_DB hgetall 'SYSTEM_LAG_TABLE:<host>|<asic>|<lag>'
 # system_lag_id が remote ASIC でも programming されているかを確認
 ```
 
