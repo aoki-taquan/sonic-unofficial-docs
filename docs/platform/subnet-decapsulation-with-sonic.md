@@ -31,10 +31,10 @@ related:
 
 <!-- topics-tip -->
 !!! tip "Topics で読み物として読む"
-    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
+    この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 3 章: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     HLD は 2024 年 3 月版 (Rev 0.1)。`TunnelDecapOrch` の `SUBNET_DECAP` / `TUNNEL_DECAP_TABLE` / `TUNNEL_DECAP_TERM_TABLE` 取り込み、`MP2MP` 形式の decap term の SAI 実装、`IPINIP_SUBNET` / `IPINIP_V6_SUBNET` 自動生成、warm-reboot 対応 (`swssconfig.sh` 拡張) は **裏取り済み**（batch 30, 2026-05-11 のメモを参照）。
 
 # VLAN Subnet Decap（Netscan 用 IPinIP MP2MP デカプスル）
