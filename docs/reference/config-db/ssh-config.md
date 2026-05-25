@@ -324,7 +324,7 @@ self.pamLimitsCfg.update_config_file()
 <!-- /ordering -->
 
 <!-- cross-refs -->
-## 暗黙テーブル参照 (Phase D)
+## 暗黙テーブル参照 (Phase C)
 
 `SSH_SERVER` テーブルが直接・間接的に参照するテーブルと参照方向の一覧。
 
@@ -525,7 +525,5 @@ ssh_handler(key="POLICIES", op=SET, data={authentication_retries:"5", ...})
 
 > **証跡**: `hostcfgd:1045-1186` (`SshServer`)、`hostcfgd:1408-1476` (`PamLimitsCfg`)、`data/templates/limits.conf.j2` (platform 分岐なし)、`data/templates/pam_limits.j2` (platform 分岐なし); 詳細分析 `meta/_intermediate/cdb-flow/ssh-config-platform.md`
 <!-- /platform -->
-
-<!-- glossary-links-injected: ssh-config-2026-05-14 -->
 
 <!-- glossary-links-injected: adbc248f73ea -->

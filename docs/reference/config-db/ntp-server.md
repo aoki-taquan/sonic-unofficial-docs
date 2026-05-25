@@ -458,7 +458,7 @@ chronyc sources
 | `admin_state` | `enabled` (default) | サーバを chrony.conf に含める |
 | `admin_state` | `disabled` | サーバを chrony.conf から除外 |
 | `trusted` | `no` (default) | chrony で通常の優先度 |
-| `trusted` | `yes` | chrony の `prefer` オプション相当。当該サーバを優先同期先に |
+| `trusted` | `yes` | chrony の `trustedkey` に対象サーバの `resolve_as` を追加。`NTP.authentication=enabled` 時に当該サーバのみで時刻同期を許可する |
 | `version` | `4` (default) | NTPv4 を使用 |
 | `version` | `3` | NTPv3 を使用。古い NTP サーバとの互換向け |
 | `key` | NTP_KEY.id 参照 | chrony.conf に `key <id>` オプションを付与。`NTP.authentication=enabled` と組み合わせて認証 |
