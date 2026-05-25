@@ -24557,7 +24557,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35588,7 +35588,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-host-services/scripts/hostcfgd</code> L1045 <code>class SshServer</code>、L2245-2478 で <code>init_data['SSH_SERVER']</code> を読み <code>self.config_db.subscribe('SSH_SERVER', make_callback(self.ssh_handler))</code> する経路を確認。<code>SSH_CONFG = "/etc/ssh/sshd_config"</code> (L32) に書き込み、<code>LIMITS_CONF_TEMPLATE = "/usr/share/sonic/templates/limits.conf.j2"</code> (L82) と <code>PAM_LIMITS_CONF = "/etc/pam.d/pam-limits-conf"</code> (L83) を render する <code>limits.conf.j2</code> も <code>sonic-host-services/data/templates/limits.conf.j2</code> で確認。L1412-1478 で <code>SSH_SERVER</code> から <code>pam_limits</code> / <code>limits.conf</code> を render（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="ssh-ssh_serverpolicies">SSH サーバ全体設定（SSH_SERVER.POLICIES）<a class="headerlink" href="#ssh-ssh_serverpolicies" title="Permanent link">&para;</a></h1>

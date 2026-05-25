@@ -24557,7 +24557,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35588,7 +35588,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-swss/orchagent/portsorch.cpp</code> L771 で <code>m_sendToIngressPortTable(db, APP_SEND_TO_INGRESS_PORT_TABLE_NAME)</code> 登録、L6507 で <code>APP_SEND_TO_INGRESS_PORT_TABLE_NAME</code> 分岐、L7106 <code>addSendToIngressHostIf()</code> で <code>SAI_HOSTIF_TYPE_NETDEV</code> 属性を設定する hostif 作成を確認。<code>orchdaemon.cpp</code> L219 で <code>APP_SEND_TO_INGRESS_PORT_TABLE_NAME</code> を portsorch 優先度に登録。<code>cfgmgr/portmgrd.cpp</code> / <code>portmgr.cpp</code> 側の関連処理も確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="send-to-ingresscpu-ingress-pipeline-hostif">Send to Ingress（CPU から ingress pipeline へパケット注入する hostif）<a class="headerlink" href="#send-to-ingresscpu-ingress-pipeline-hostif" title="Permanent link">&para;</a></h1>

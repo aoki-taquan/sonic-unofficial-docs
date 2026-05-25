@@ -24568,7 +24568,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35610,7 +35610,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-buildimage/dockers/docker-dhcp-relay/docker-dhcp-relay.supervisord.conf.j2</code> L58 と <code>dhcp-relay.programs.j2</code> L7/L27 で <code>DHCP_RELAY[vlan_name]['dhcpv6_servers']</code> 条件で v6 用エントリを生成、<code>dhcpv6-relay.agents.j2</code> L3-4 で <code>dhcpv6_servers</code> ループによる <code>dhcrelay -6</code> 形式の上流サーバ展開を確認。<code>cli-plugin-tests/test_config_dhcp_relay.py</code> / <code>test_show_dhcp_relay.py</code> で <code>dhcpv6_servers</code> キーを使ったテスト構成を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="dhcpv6-dhcp-relay-docker-dhcrelay-6">DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）<a class="headerlink" href="#dhcpv6-dhcp-relay-docker-dhcrelay-6" title="Permanent link">&para;</a></h1>

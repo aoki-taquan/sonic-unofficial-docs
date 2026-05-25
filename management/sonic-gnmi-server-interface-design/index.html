@@ -24490,7 +24490,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35454,7 +35454,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-gnmi/gnmi_server/server.go</code> L925 で <code>origin == "sonic-db"</code> 判定、L60/L646 で <code>enableConfigDbJournal</code> フラグを確認。<code>sonic-gnmi/sonic_data_client/mixed_db_client.go</code> L65 <code>Name: "sonic-db"</code> / L1255-1267 で <code>import sonic_yang</code> Python 連携、L1433 <code>c.origin == "sonic-db"</code> の分岐、<code>sonic-gnmi/sonic_service_client/dbus_client_test.go</code> L233-313 で <code>ConfigReload</code> dbus client 経由の host service 呼び出し UT を確認（verified 2026-05-09）。</p>
 </div>
 <h1 id="sonic-gnmi-server">SONiC gNMI Server インタフェース設計<a class="headerlink" href="#sonic-gnmi-server" title="Permanent link">&para;</a></h1>

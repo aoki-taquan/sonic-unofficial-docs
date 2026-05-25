@@ -24462,7 +24462,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35391,7 +35391,7 @@
 
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（一部例は未採用）</p>
+<p class="admonition-title">裏取りステータス: code-verified（一部例は未採用）</p>
 <p><code>sonic-utilities/sonic_package_manager/</code> に実装。<code>manifest.py:179-185</code> で <code>version</code> / <code>depends</code>、<code>constraint.py:80-99</code> で <code>ComponentConstraints</code> と <code>VersionConstraint.parse</code>、<code>constraint.py:120-181</code> で <code>PackageConstraint.components</code> パース、<code>version.py:5-26</code> で <code>semantic_version</code> 利用を確認。HLD 例 4（<code>components</code> 制約）は実装済。一方 HLD 例 1 の <code>"^1.0.0,^2.0.0"</code> 並列 OR 表記は <code>semantic_version</code> ではカンマが AND のため不採用、HLD 例 3 の <code>SWSS_VERSION</code> 環境変数注入も grep ヒットなし（採用見送り）(verified at: 2026-05-09)。</p>
 </div>
 <h1 id="sonic-os-docker">SONiC OS と Docker イメージのセマンティックバージョニング<a class="headerlink" href="#sonic-os-docker" title="Permanent link">&para;</a></h1>

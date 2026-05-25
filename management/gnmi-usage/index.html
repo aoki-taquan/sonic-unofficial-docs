@@ -24585,7 +24585,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35644,7 +35644,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-gnmi/patches/gnmi_get.patch</code> L25 で <code>pathTarget = flag.String("xpath_target", "", "name of the target for which the path is a member")</code> を確認（<code>gnmi_set.patch</code> / <code>gnmi_cli.all.patch</code> も同等）。サーバ側 <code>sonic-gnmi/gnmi_server/server.go</code> L975-988 で <code>target == "OPERATIONAL" / "OTHERS" / "SHOW"</code> の特殊分岐と <code>sdc.IsTargetDb(target)</code> による <code>CONFIG_DB / COUNTERS_DB</code> 等 SONiC DB 名分岐を確認。<code>sonic-gnmi/sonic_data_client/db_client.go</code> L647 で <code>COUNTERS_DB</code> 専用処理を確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="gnmi-gnmi_get-gnmi_set-gnmi_cli">gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）<a class="headerlink" href="#gnmi-gnmi_get-gnmi_set-gnmi_cli" title="Permanent link">&para;</a></h1>

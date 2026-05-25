@@ -24546,7 +24546,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35566,7 +35566,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p class="admonition-title">裏取りステータス: code-verified（基本構成のみ）</p>
 <p>現行 master の <code>sonic-swss/orchagent/srv6orch.cpp</code> に <code>srv6_prefix_agg_id_table_</code> (1721-)、<code>createSrv6Vpn</code>/<code>deleteSrv6Vpn</code> (1025/776)、<code>vpn_sid</code> 管理が実装され、HLD の Prefix AGG_ID / VPN encap mapper 設計と一致。SRV6_MY_SID テーブル管理も APP_SRV6_MY_SID_TABLE_NAME / CFG_SRV6_MY_SID_TABLE_NAME 経由で確認済み。SRV6_POLICY_TABLE のキー名そのものは見えなかったが、内部データ構造として agg_id/vpn_sid が存在することを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="srv6-vpnl3vpn-over-srv6-srv6-policy">SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）<a class="headerlink" href="#srv6-vpnl3vpn-over-srv6-srv6-policy" title="Permanent link">&para;</a></h1>

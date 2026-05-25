@@ -24496,7 +24496,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35466,7 +35466,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-utilities/config/main.py</code> L3938-3969 で <code>config warm_restart</code> group / <code>enable</code> コマンドを確認。<code>sonic-utilities/sonic_installer/main.py</code> L800-814 で <code>sonic-installer upgrade-docker</code> (旧 <code>upgrade_docker</code> は deprecation warning) を確認。<code>sonic-utilities/scripts/warm-reboot</code> は <code>fast-reboot</code> への symlink として存在（verified 2026-05-09）。OID 復元戦略は <strong>syncd view comparison</strong> が master に採用されている（syncd 内 SAI redis view-comparison ロジック）。</p>
 </div>
 <h1 id="warm-reboot-oid-idempotent-libsairedis-vs-syncd-view-comparison">Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）<a class="headerlink" href="#warm-reboot-oid-idempotent-libsairedis-vs-syncd-view-comparison" title="Permanent link">&para;</a></h1>

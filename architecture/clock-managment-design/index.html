@@ -24532,7 +24532,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35563,7 +35563,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-utilities/config/main.py</code> L9758-9799 で <code>config clock timezone &lt;tz&gt;</code> / <code>config clock date &lt;date&gt; &lt;time&gt;</code> が <code>timedatectl</code> の薄いラッパーとして CONFIG_DB の <code>DEVICE_METADATA|localhost</code> の <code>timezone</code> を更新することを確認。<code>sonic-host-services/scripts/hostcfgd</code> L1482 の <code>DeviceMetaCfg</code> クラスが <code>apply_timezone_if_needed</code> (L1534) で <code>timedatectl set-timezone</code> を呼び、L1577 で <code>timezone</code> 変更ハンドラとして登録されることを確認。<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang</code> L272-273 で <code>leaf timezone</code> の YANG 定義を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="clock-config-clock-datetimezone-device_metadatatimezone">Clock 設定（<code>config clock date/timezone</code>, <code>DEVICE_METADATA.timezone</code>）<a class="headerlink" href="#clock-config-clock-datetimezone-device_metadatatimezone" title="Permanent link">&para;</a></h1>

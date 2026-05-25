@@ -24579,7 +24579,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35632,7 +35632,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（Phase 1 / 2 移行完了）</p>
+<p class="admonition-title">裏取りステータス: code-verified（Phase 1 / 2 移行完了）</p>
 <p><code>sonic-swss-common/common/logger.cpp</code> L126-127 / L195-198 で <code>DBConnector("CONFIG_DB", 0)</code> + <code>Table(&amp;db, CFG_LOGGER_TABLE_NAME)</code> および <code>SubscriberStateTable(CFG_LOGGER_TABLE_NAME)</code> 経由の購読を確認（LOGLEVEL_DB から完全に CONFIG_DB.LOGGER に移行済み）。<code>sonic-swss-common/common/loglevel.cpp</code> L31/L37/L99 で <code>swssloglevel -d</code>（全コンポーネントを default に戻す）オプションの実装を確認。<code>sonic-utilities/scripts/db_migrator.py</code> L94/L1207-1226 で旧 <code>LOGLEVEL_DB</code> → <code>CONFIG_DB.LOGGER</code> 変換と旧キー削除を確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="loglevel_db-config_dblogger">ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）<a class="headerlink" href="#loglevel_db-config_dblogger" title="Permanent link">&para;</a></h1>

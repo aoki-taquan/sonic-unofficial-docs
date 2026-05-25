@@ -24563,7 +24563,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35600,7 +35600,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-swss/orchagent/dash/dashenifwdorch.h:69</code> で <code>TABLE_TYPE = "ENI_REDIRECT"</code>、L92 で <code>class DashEniFwdOrch : public Orch2, public Observer</code>、L51-58 で <code>DpuRegistry / EniNH / LocalEniNH / RemoteEniNH / EniAclRule / EniInfo / EniFwdCtx*</code> を確認。<code>dashenifwdinfo.cpp:6</code> で <code>EniAclRule::BASE_PRIORITY = 9996</code>、L194 で <code>BASE_PRIORITY + type_</code> により通常 9996 / TUNN_TERM 9997 を生成。<code>orchdaemon.{h,cpp}</code> への組み込み、mock <code>dashenifwdorch_ut.cpp</code> も確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="smartswitch-eni-based-forwardingdashenifwdorch-eni_redirect-acl">SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）<a class="headerlink" href="#smartswitch-eni-based-forwardingdashenifwdorch-eni_redirect-acl" title="Permanent link">&para;</a></h1>

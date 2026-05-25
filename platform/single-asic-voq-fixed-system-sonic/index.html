@@ -24557,7 +24557,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35588,7 +35588,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>sonic-buildimage <code>src/sonic-py-common/sonic_py_common/device_info.py</code> L43 <code>CHASSIS_DB_CONF_FILENAME = "chassisdb.conf"</code>、L261/L265 で chassis_db_conf_path 候補列挙、L622 <code>is_chassis_config_absent()</code>、L630-635 <code>is_voq_chassis()</code> で <code>switch_type ∈ {voq, fabric} かつ not is_chassis_config_absent()</code> の判定（chassisdb.conf 存在チェックで single-ASIC VoQ を区別）を確認。L668 <code>is_chassis()</code> で voq+disagg 除外 / packet / virtual を OR 結合。bgpcfgd 側は <code>src/sonic-bgpcfgd/bgpcfgd/managers_device_global.py</code> L241 と <code>bgpcfgd/main.py</code> L112 で <code>device_info.is_chassis()</code> 分岐、テストデータ <code>tests/data/sonic-cfggen/bgpd.main.conf.j2/voq_chassis.json</code> L7 で <code>chassisdb_conf_present</code> フラグを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="asic-voq-chassisdbconf-is_voq_chassis">単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）<a class="headerlink" href="#asic-voq-chassisdbconf-is_voq_chassis" title="Permanent link">&para;</a></h1>

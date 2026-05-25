@@ -25178,7 +25178,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -36848,10 +36848,8 @@
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CDB[("CONFIG_DB&lt;br/&gt;FEATURE")]
-  DM["featured / hostcfgd"]
-  CDB --&gt; DM
-  SDB[("STATE_DB&lt;br/&gt;FEATURE")]
-  DM --&gt; SDB</code></pre>
+  DM["coppmgrd"]
+  CDB --&gt; DM</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
 <p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>

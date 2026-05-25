@@ -24554,7 +24554,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35607,7 +35607,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-buildimage/files/image_config/reset-factory/reset-factory</code> で <code>/usr/bin/reset-factory</code> スクリプト本体を確認。<code>sonic-buildimage/files/image_config/config-setup/config-setup</code> L245-251 で <code>KEEP_BASIC_TABLES</code> で指定された CONFIG_DB テーブルのみ <code>jq</code> でフィルタする keep-basic 実装、<code>sonic-buildimage/files/image_config/config-setup/config-setup.conf</code> L4 で <code>KEEP_BASIC_TABLES='["MGMT_PORT","MGMT_INTERFACE","MGMT_VRF_CONFIG","PASSW_HARDENING"]'</code> の現行値を確認。<code>sonic-buildimage/files/build_templates/default_users.json.j2</code> の存在を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="reset-factorykeep-basic-keep-all-config-only-config"><code>reset-factory</code>（keep-basic / keep-all-config / only-config）<a class="headerlink" href="#reset-factorykeep-basic-keep-all-config-only-config" title="Permanent link">&para;</a></h1>

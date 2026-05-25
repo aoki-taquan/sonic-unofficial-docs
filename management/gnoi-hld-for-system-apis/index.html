@@ -24590,7 +24590,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35654,7 +35654,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-gnmi/gnmi_server/gnoi_system.go</code> L34 <code>ValidateRebootRequest</code>、L116 <code>sendRebootReqOnNotifCh</code>（DB notification 経由で reboot 要求を書き込む）、L193 <code>Server.Reboot</code>、L241 <code>Server.RebootStatus</code>、L270 <code>Server.CancelReboot</code> のハンドラ実装を確認。<code>sonic-gnmi/pkg/gnoi/system/system.go</code> L22 <code>HandleReboot</code>、L180 <code>HandleDPUReboot</code> で DPU 対応も確認。<code>sonic-gnmi/gnoi_client/system/reboot.go</code> L13/25/42 で client 側 Reboot / CancelReboot / RebootStatus の 3 RPC を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="gnoi-system-reboot-rebootstatus-cancelrebootreboot-method-sanity-check">gNOI System Reboot / RebootStatus / CancelReboot（reboot method と sanity check）<a class="headerlink" href="#gnoi-system-reboot-rebootstatus-cancelrebootreboot-method-sanity-check" title="Permanent link">&para;</a></h1>

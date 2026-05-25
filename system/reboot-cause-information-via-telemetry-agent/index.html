@@ -24552,7 +24552,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35578,7 +35578,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>現行 master で実装存在を確認。<code>sonic-host-services/scripts/determine-reboot-cause</code> および <code>scripts/process-reboot-cause</code> が systemd unit (<code>sonic-host-services-data.{determine,process}-reboot-cause.service</code>) として配置されている。<code>process-reboot-cause:27-34</code> で <code>REBOOT_CAUSE_DIR=/host/reboot-cause/</code>、<code>REBOOT_CAUSE_HISTORY_DIR=/host/reboot-cause/history/</code>、<code>PREVIOUS_REBOOT_CAUSE_FILE=previous-reboot-cause.json</code>、<code>REBOOT_CAUSE_TABLE_NAME="REBOOT_CAUSE"</code>、<code>MAX_HISTORY_FILES=10</code> を確認。<code>process-reboot-cause:62</code> で <code>min(MAX_HISTORY_FILES, ...)</code> の 10 件 cap も確認。CLI は <code>sonic-utilities/show/reboot_cause.py</code> の <code>fetch_reboot_cause_history_from_db</code> で <code>REBOOT_CAUSE|*</code> 走査を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="reboot-cause-state_db">Reboot-cause 履歴の STATE_DB / テレメトリ公開<a class="headerlink" href="#reboot-cause-state_db" title="Permanent link">&para;</a></h1>

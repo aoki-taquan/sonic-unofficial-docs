@@ -24524,7 +24524,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35522,7 +35522,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p class="admonition-title">裏取りステータス: code-verified（基本構成のみ）</p>
 <p>現行 master の <code>sonic-swss/orchagent/mirrororch.cpp</code> に <code>MirrorOrch</code> クラス、SAI Mirror セッションの利用可能数取得 (<code>SAI_OBJECT_TYPE_MIRROR_SESSION</code> の object availability query, mirrororch.cpp:362) を確認。<code>sonic-utilities/config/main.py</code> の <code>mirror_session</code> グループ (3148-) と <code>validate_mirror_session_config</code>、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mirror-session.yang</code> も存在。Mirror Capability Discovery 名（<code>MIRROR_SESSION_CAPABILITY</code> テーブル）は明示見つからず、object availability query API 経由で代替されている可能性あり。詳細フロー / SAI 属性マッピングは元 HLD 参照（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="sonic-port-mirroringspan-erspan">SONiC Port Mirroring（SPAN / ERSPAN）<a class="headerlink" href="#sonic-port-mirroringspan-erspan" title="Permanent link">&para;</a></h1>

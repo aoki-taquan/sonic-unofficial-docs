@@ -24267,7 +24267,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -36501,7 +36501,6 @@
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><code>CHASSIS_APP_DB</code> は VoQ (Virtual Output Queue) チャシスシステム専用の <a href="../../glossary/#term-redis">Redis</a> DB（DB id=12、instance=<code>redis_chassis</code>）。チャシス内の全ラインカードが<strong>中央スーパーバイザーの <code>redis_chassis</code></strong> を共有し、ラインカード間でシステムポート・インタフェース・ネイバー・<a href="../../glossary/#term-lag">LAG</a> の情報を同期するために使用する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>非 VoQ 環境（<code>DEVICE_METADATA.localhost.switch_type != "voq"</code>）では <code>isChassisDbInUse()</code> が false を返し、これらのテーブルへの書き込みはすべてスキップされる。</p>
-<!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   INTF["intfsorch\n(orchagent)"]

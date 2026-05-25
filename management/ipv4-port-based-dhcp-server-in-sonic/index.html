@@ -24579,7 +24579,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35632,7 +35632,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-buildimage/dockers/docker-dhcp-server/</code> で dhcp_server コンテナ（Dockerfile.j2 / kea-dhcp4.conf.j2 / lease_update.sh / docker_init.sh / supervisord.conf）を確認。<code>sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py</code> で dhcpservd daemon、<code>dhcp_utilities/dhcprelayd/dhcprelayd.py</code> で dhcprelayd を確認。<code>sonic-buildimage/dockers/docker-dhcp-relay/docker-dhcp-relay.supervisord.conf.j2</code> L92-93 で <code>[program:dhcprelayd]</code> の supervisord 起動を確認。<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang</code> で YANG を確認（verified 2026-05-09）。</p>
 </div>
 <h1 id="ipv4-dhcp-serverkea-dhcp-server-dhcrelay-option-82">ポートベース IPv4 DHCP Server（<code>kea-dhcp-server</code> + <code>dhcrelay</code> Option 82 連携）<a class="headerlink" href="#ipv4-dhcp-serverkea-dhcp-server-dhcrelay-option-82" title="Permanent link">&para;</a></h1>

@@ -24474,7 +24474,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35422,7 +35422,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>sonic-utilities <code>acl_loader/main.py</code> L1140 <code>show</code> / L1198 <code>update</code> グループと <code>show_table</code> (L960) / <code>show_rule</code> (L1050) で現行 CLI 体系を確認。orchagent 側 egress ACL は <code>acltable.h</code> L67 で <code>STAGE_EGRESS → SAI_ACL_STAGE_EGRESS</code> マップ、<code>portsorch.cpp</code> L2741 で stage 判定の実装を確認。HLD で参照される <code>DATAINGRESS</code> / <code>DATAEGRESS</code> テーブル / 28 ルールセットは <code>sonic-net/SONiC</code> <code>doc/acl/ACL-Ingress-Egress-test-plan.md</code> 自体で定義されており、orchagent / SAI 側の egress stage 対応も現行 master に取り込み済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="acl-ingress-egress-dataingress-dataegress">ACL Ingress / Egress テストプラン（<code>DATAINGRESS</code> / <code>DATAEGRESS</code> テーブル）<a class="headerlink" href="#acl-ingress-egress-dataingress-dataegress" title="Permanent link">&para;</a></h1>

@@ -24554,7 +24554,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35607,7 +35607,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-swss/cfgmgr/intfmgr.cpp</code> L782-896 で CONFIG_DB の <code>loopback_action</code> フィールド読み取りと APP_DB への伝播、<code>sonic-swss/orchagent/intfsorch.cpp</code> で <code>SAI_ROUTER_INTERFACE_ATTR_LOOPBACK_PACKET_ACTION</code> (L441) と <code>setIntfLoopbackAction</code> (L1001)、<code>loopbackActionMap</code> (L1148-) を確認。<code>sonic-utilities/config/main.py</code> L5881-5905 に <code>config interface loopback-action</code> CLI、<code>sonic-utilities/show/main.py</code> L1413-1438 に <code>show ip interfaces loopback-action</code> を確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="ip-rif-dropforward">IP インタフェース ループバックアクション（同一 RIF 出戻りの drop/forward）<a class="headerlink" href="#ip-rif-dropforward" title="Permanent link">&para;</a></h1>

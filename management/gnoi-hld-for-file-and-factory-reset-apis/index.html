@@ -24496,7 +24496,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35466,7 +35466,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-host-services/host_modules/gnoi_reset.py</code> L28-78 で <code>factoryOs</code> / <code>zeroFill</code> / <code>retainCerts</code> フラグ受領と <code>factory_os_unsupported</code> / <code>zero_fill_unsupported</code> レスポンス分岐実装を確認。<code>sonic-gnmi/gnmi_server/gnoi_reset.go</code> L16-41 で <code>factory_reset.Start</code> ハンドラが DBus 経由 <code>FactoryReset</code> を呼ぶ実装、<code>sonic-gnmi/sonic_service_client/dbus_client.go</code> L353 で <code>DbusClient.FactoryReset</code>、<code>sonic-gnmi/pkg/gnoi/file/remove_test.go</code> L18-49 で File.Remove のパス検証（nil / config_db.json / <code>../../etc/passwd</code> リジェクト等）を確認。<code>sonic-gnmi/gnoi_client/file/file.go</code> L26-58 で File Stat/Get クライアント、<code>sonic-gnmi/gnoi_client/factory_reset/factory_reset.go</code> を確認。</p>
 </div>
 <h1 id="gnoi-fileremove-factoryresetstart">gNOI File.Remove と FactoryReset.Start<a class="headerlink" href="#gnoi-fileremove-factoryresetstart" title="Permanent link">&para;</a></h1>

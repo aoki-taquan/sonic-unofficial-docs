@@ -24267,7 +24267,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -29900,23 +29900,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="概要">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        データフロー (自動生成)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -29931,7 +29914,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールド一覧
@@ -30070,7 +30053,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         自動調停の仕組み
@@ -30309,7 +30292,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者サマリ
@@ -30392,7 +30375,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差サマリ
@@ -30408,7 +30391,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -30419,7 +30402,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -30430,7 +30413,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35646,23 +35629,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="概要">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        データフロー (自動生成)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -35677,7 +35643,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールド一覧
@@ -35816,7 +35782,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         自動調停の仕組み
@@ -36055,7 +36021,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         購読者サマリ
@@ -36138,7 +36104,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         プラットフォーム差サマリ
@@ -36154,7 +36120,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         例外条件・特殊挙動
@@ -36165,7 +36131,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -36176,7 +36142,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -36230,29 +36196,11 @@
   CDB --&gt; VRFMGR --&gt; APPDB --&gt; ORCH --&gt; SAI
   MGMT --&gt; VRFMGR
   ORCH --&gt; STATE</code></pre>
-<!-- cdb-mermaid -->
-<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-  CDB[("CONFIG_DB&lt;br/&gt;VRF")]
-  DM["vrfmgrd"]
-  CDB --&gt; DM
-  APPDB[("APP_DB&lt;br/&gt;APP_VRF_TABLE")]
-  DM --&gt; APPDB
-  SYNCD["syncd"]
-  APPDB --&gt; SYNCD
-  SAI["SAI&lt;br/&gt;sai_virtual_router_api"]
-  SYNCD --&gt; SAI</code></pre>
-<div class="admonition note">
-<p class="admonition-title">凡例</p>
-<p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>
-</div>
-<!-- /cdb-mermaid -->
-
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>VRF_TABLE:&lt;vrf_name&gt;
 </span></code></pre></div>
 <p><code>&lt;vrf_name&gt;</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> <code>VRF</code> テーブルの key と同一。<code>Vrf</code> プレフィクス付きが通常（例: <code>VRF_TABLE:VrfRed</code>）。<code>mgmt</code> は例外として固定テーブル ID <code>6000</code> を使用。</p>
-<h2 id="_3">フィールド一覧<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_2">フィールド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -36508,7 +36456,7 @@
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>DEL CONFIG_DB VRF|VrfRed
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a># → vrfmgrd が APPL_DB DEL → VRFOrch が SAI DEL → STATE_VRF_OBJECT_TABLE クリア → vrfmgrd が ip link del
 </span></code></pre></div>
-<h3 id="_4">自動調停の仕組み<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<h3 id="_3">自動調停の仕組み<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>VNI 解決待ち（doTask 再試行）</strong>: <code>addOperation</code> が <code>false</code> を返すと <code>Orch2::doTask()</code> が <code>m_toSync</code> にエントリを残したまま次ループへ。<a href="../../glossary/#term-evpn">EVPN</a> <a href="../../glossary/#term-vtep">VTEP</a> 作成後の次スケジュールで自動再評価される。</li>
 <li><strong>ref_count ガード（delOperation 再試行）</strong>: <code>delOperation</code> が <code>false</code> を返した場合も同様。参照 Orch（RouteOrch / IntfsOrch 等）が <code>decreaseVrfRefCount()</code> を呼び ref_count が 0 になるまでポーリングを繰り返す。</li>
@@ -36975,7 +36923,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>SUBSCRIBE VRF_TABLE_CHANNEL@0
 </span></code></pre></div>
 <p>イベント受信時に <code>consumer_state_table_pops.lua</code> が実行され <code>SPOP VRF_TABLE_KEY_SET</code> + <code>HGETALL _VRF_TABLE:&lt;key&gt;</code> でエントリを取り出し、<code>VRFOrch::addOperation()</code> / <code>delOperation()</code> に渡す。</p>
-<h3 id="_5">購読者サマリ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="_4">購読者サマリ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -37109,7 +37057,7 @@
 </tbody>
 </table>
 <p>この差異はプラットフォームではなく warm restart 設定依存だが、warm restart 非対応ハードウェア・構成では cold start 動作のみが発生する。</p>
-<h3 id="_6">プラットフォーム差サマリ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<h3 id="_5">プラットフォーム差サマリ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -37144,13 +37092,13 @@
 <p>詳細: <code>meta/_intermediate/cdb-flow/vrf-orch-platform.md</code></p>
 <!-- /platform -->
 
-<h2 id="_7">例外条件・特殊挙動<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">例外条件・特殊挙動<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>VRF 削除タイミング</strong>: VRFOrch が STATE_VRF_OBJECT_TABLE のエントリを削除するまで vrfmgrd は <code>ip link del</code> を遅延する。INTERFACE / ROUTE テーブルが VRF を参照中の場合は <code>ref_count</code> が非ゼロで <code>delOperation</code> が <code>false</code> を返して再キュー。</li>
 <li><strong><a href="../../glossary/#term-vxlan">VXLAN</a> EVPN 未設定時の VNI</strong>: <code>evpn_orch-&gt;getEVPNVtep()</code> が null を返す場合 <code>updateVrfVNIMap()</code> は <code>false</code> を返して VRF 作成を中断する (vrforch.cpp:228-230)。VNI 付き VRF は EVPN VTEP が先に設定されている必要がある。</li>
 <li><strong>VNI の SAI 非直接性</strong>: VNI は <code>sai_virtual_router_api</code> には渡されない。VXLAN Tunnel Orch が VNI-VRF マッピングを別途管理する。</li>
 </ul>
-<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../vrf/">CONFIG_DB VRF テーブル</a></li>
 <li><a href="../mgmt-vrf-config/">CONFIG_DB MGMT_VRF_CONFIG</a></li>
@@ -37158,7 +37106,7 @@
 <li><a href="../../yang/sonic-vrf/">YANG: sonic-vrf</a></li>
 <li><a href="../../cli/config-vrf/">CLI: config vrf</a></li>
 </ul>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 40f6eb604b2b -->
 
 

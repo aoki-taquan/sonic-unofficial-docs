@@ -24471,7 +24471,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35441,7 +35441,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-buildimage/dockers/docker-database/docker-database-init.sh</code> L55-61/L80-81 で <code>/etc/sonic/database_config$NAMESPACE_ID.json</code> を <code>/var/run/redis/sonic-db/database_config.json</code> にコピーし、不在時は <code>database_config.json.j2</code> または <code>multi_database_config.json.j2</code> を <code>jinjanate</code> で展開する起動順を確認。<code>sonic-buildimage/dockers/docker-database/</code> 配下に <code>database_config.json.j2</code> / <code>multi_database_config.json.j2</code> / <code>supervisord.conf.j2</code> を確認。<code>sonic-swss-common/common/dbconnector.h</code> L90 <code>DEFAULT_SONIC_DB_CONFIG_FILE = "/var/run/redis/sonic-db/database_config.json"</code>、<code>sonic-swss-common/common/database_config.json</code> で INSTANCES + DATABASES セクション仕様を、<code>tests/redis_multi_db_ut_config/database_config[0-5].json</code> で複数インスタンス UT 設定を確認（verified at: 2026-05-09）。詳細な C++ / Python API シグネチャは原文 HLD §New Design of {C++,Python} Interface を参照。</p>
 </div>
 <h1 id="redis-database_configjson-db">複数 Redis インスタンスのユーザ定義（database_config.json で DB を分散）<a class="headerlink" href="#redis-database_configjson-db" title="Permanent link">&para;</a></h1>

@@ -24640,7 +24640,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35754,7 +35754,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>現行 master で実装済みを確認。<code>sonic-swss/orchagent/vxlanorch.h:268,414,462,499,512,541</code> で <code>VxlanTunnelOrch</code> / <code>VxlanTunnelMapOrch</code> / <code>VxlanVrfMapOrch</code> / <code>EvpnRemoteVnip2pOrch</code> / <code>EvpnRemoteVnip2mpOrch</code> / <code>EvpnNvoOrch</code>、<code>vnetorch.h:250,362,381,504,618</code> で <code>VNetOrch</code> / <code>MonitorOrch</code> / <code>BfdMonitorOrch</code> / <code>VNetRouteOrch</code> / <code>VNetCfgRouteOrch</code>、<code>sonic-swss-common/common/schema.h:85-87,435</code> で <code>APP_VXLAN_TUNNEL_TABLE_NAME</code> / <code>APP_VXLAN_TUNNEL_MAP_TABLE_NAME</code> / <code>APP_VXLAN_FDB_TABLE_NAME</code> / <code>STATE_VXLAN_TUNNEL_TABLE_NAME</code>、<code>vxlanorch.cpp:534,903,1160</code> で EVPN 経由のトンネル生成 (<code>TNL_CREATION_SRC_EVPN</code>) を確認（verified at: 2026-05-09）。HLD で言及される実装は <code>VxlanOrch</code> ではなく <strong><code>VxlanTunnelOrch</code></strong>（複数の Orch2 派生クラスに分割）として現行 master に存在する。</p>
 </div>
 <h1 id="vxlan-vnet-vxlanorch-vnetorch-vrf-mapper">VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）<a class="headerlink" href="#vxlan-vnet-vxlanorch-vnetorch-vrf-mapper" title="Permanent link">&para;</a></h1>

@@ -24267,7 +24267,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -36439,18 +36439,18 @@ CLI 生成エントリ (<code>TNL_CREATION_SRC_CLI</code>) とは別物であり
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  BGP["FRR bgpd&lt;br/&gt;(EVPN type-3)"]
-  FBDS["fdbsyncd"]
-  BGP --&gt; FBDS
-  APPDB[("APP_DB&lt;br/&gt;VXLAN_REMOTE_VNI_TABLE")]
-  FBDS --&gt; APPDB
-  OA["orchagent&lt;br/&gt;EvpnRemoteVnip2pOrch"]
-  APPDB --&gt; OA
+  CDB[("CONFIG_DB&lt;br/&gt;VXLAN_TUNNEL")]
+  DM["vxlanmgrd"]
+  CDB --&gt; DM
+  APPDB[("APP_DB&lt;br/&gt;APP_VXLAN_TUNNEL_TABLE")]
+  DM --&gt; APPDB
+  SYNCD["syncd"]
+  APPDB --&gt; SYNCD
   SAI["SAI&lt;br/&gt;sai_tunnel_api"]
-  OA --&gt; SAI</code></pre>
+  SYNCD --&gt; SAI</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
-<p>EVPN DIP トンネルは CONFIG_DB に直接エントリを持たない。BGP EVPN がリモート VTEP を学習した際に <code>fdbsyncd</code> が APP_DB へ書き込み、<code>orchagent</code> が動的生成する。詳細は本ページ本文を参照。</p>
+<p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>
 </div>
 <!-- /cdb-mermaid -->
 

@@ -24548,7 +24548,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35595,7 +35595,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-swss/orchagent/portsorch.h</code> L30 (<code>PORT_RATE_COUNTER_FLEX_COUNTER_GROUP</code>) と <code>intfsorch.h</code> L20 (<code>RIF_RATE_COUNTER_FLEX_COUNTER_GROUP</code>)、Lua プラグイン <code>port_rates.lua</code> / <code>rif_rates.lua</code> / <code>trap_rates.lua</code> / <code>tunnel_rates.lua</code>（<code>Makefile.am</code> L20-32）、<code>flexcounterorch.cpp</code> L73/L83 で <code>PORT_RATES</code> / <code>RIF_RATES</code> の counterpoll キー登録を確認。<code>sonic-utilities/config/main.py</code> L9586 <code>smoothing_interval</code> CLI が <code>RATES:PORT</code> / <code>RATES:RIF</code> / <code>RATES:TRAP</code> を <code>CONFIG_DB</code> に書き込み、<code>alpha = 2/(N+1)</code> で EMA 係数を計算（書き込み先は本文の mermaid 図 L63–64 と CONFIG_DB スキーマ表 L163–171 と整合） (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="rates-ema">バイト/パケットレートとポート使用率（RATES テーブル + EMA）<a class="headerlink" href="#rates-ema" title="Permanent link">&para;</a></h1>

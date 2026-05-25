@@ -24546,7 +24546,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35566,7 +35566,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（命名差分あり）</p>
+<p class="admonition-title">裏取りステータス: code-verified（命名差分あり）</p>
 <p><code>sonic-pins/p4rt_app/p4runtime/p4runtime_impl.cc</code> および <code>p4runtime_read.cc</code> で実装を確認。HLD の <code>table_entry_cache_</code> は実装では <code>entity_cache_</code>（type は <code>absl::flat_hash_map&lt;pdpi::EntityKey, p4::v1::Entity&gt;</code>）に汎化されており、TableEntry に加え PacketReplicationEngineEntry も保持する。Write 連動更新は <code>UpdateCacheAndUtilizationState</code>（INSERT/MODIFY 反映 + DELETE で <code>erase</code>）、Read は <code>entity_cache_</code> 走査で AppDb を見ない経路 (<code>p4runtime_read.cc</code> AppendTableEntryReads)、検証ロジックは <code>P4RuntimeImpl::VerifyState()</code> で <code>VerifyP4rtTableWithCacheEntities</code> を呼ぶ実装を確認。warm boot は <code>warm_boot_state_adapter_</code> でフレームワーク化済み（HLD 記載の事前充填案を踏まえた基盤）(verified at: 2026-05-09)。</p>
 </div>
 <h1 id="p4rt-app-read-pi-table_entry_cache_">P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）<a class="headerlink" href="#p4rt-app-read-pi-table_entry_cache_" title="Permanent link">&para;</a></h1>

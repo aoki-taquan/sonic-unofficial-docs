@@ -24585,7 +24585,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35644,7 +35644,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-gnmi/gnmi_server/gnoi_healthz.go</code> L25-29 で <code>ddComponentAll = "all"</code> / <code>ddLogLvlAlert = "alert"</code> / <code>ddLogLvlCritical = "critical"</code> / <code>ddLogLvlAll = "all"</code> を定義、L39 <code>isDebugData(p)</code> / L91 <code>getDebugData(p)</code> / L191 <code>Get RPC</code> でパス解釈を確認。<code>sonic-host-services/host_modules/debug_info.py</code> L47 <code>class DebugArtifactCollector</code> の <code>collect_artifacts</code> / <code>_collect_counter_artifacts</code> / <code>_collect_teamdctl_data</code> / <code>_collect_host_files</code> 実装、<code>sonic-gnmi/sonic_service_client/dbus_client.go</code> の <code>HealthzClient</code> DBUS 経路、<code>gnoi_client/healthz/healthz.go</code> と <code>gnoi_client.go</code> L89-100 で <code>Get</code> / <code>Artifact</code> / <code>Acknowledge</code> / <code>List</code> / <code>Check</code> サブコマンドを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="gnoi-healthz-apiget-acknowledge-artifact-dbus-host-service">gNOI Healthz API（Get / Acknowledge / Artifact + DBUS host service）<a class="headerlink" href="#gnoi-healthz-apiget-acknowledge-artifact-dbus-host-service" title="Permanent link">&para;</a></h1>

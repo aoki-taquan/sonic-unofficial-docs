@@ -24267,7 +24267,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -28668,23 +28668,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="概要">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        データフロー (自動生成)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -28711,7 +28694,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールド一覧
@@ -28750,7 +28733,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         検出された順序依存
@@ -28911,7 +28894,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         ロケータビット長フォールバック
@@ -29133,7 +29116,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールド一覧
@@ -29160,7 +29143,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -29199,7 +29182,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連テーブル
@@ -35647,23 +35630,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="概要">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        データフロー (自動生成)
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -35690,7 +35656,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
+  <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールド一覧
@@ -35729,7 +35695,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
+  <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
         検出された順序依存
@@ -35890,7 +35856,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
+  <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
         ロケータビット長フォールバック
@@ -36112,7 +36078,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
+  <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
         フィールド一覧
@@ -36139,7 +36105,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定例
@@ -36178,7 +36144,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連テーブル
@@ -36224,24 +36190,6 @@
 <p>本ページは <strong><a href="../../glossary/#term-appl_db">APPL_DB</a> 側の 2 テーブル</strong>を解説する。
 これらは <code>fpmsyncd</code> が <a href="../../glossary/#term-frr">FRR</a> の netlink メッセージを受け取って書き込み、
 <code>Srv6Orch</code>（<code>sonic-swss/orchagent/srv6orch.cpp</code>）が消費して <a href="../../glossary/#term-sai">SAI</a> オブジェクトを作成する。</p>
-<!-- cdb-mermaid -->
-<h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
-<pre class="mermaid"><code>flowchart LR
-  CDB[("CONFIG_DB&lt;br/&gt;SRV6_MY_SIDS")]
-  DM["Srv6Orch"]
-  CDB --&gt; DM
-  APPDB[("APPL_DB&lt;br/&gt;SRV6_MY_SID_TABLE")]
-  DM --&gt; APPDB
-  SYNCD["syncd"]
-  APPDB --&gt; SYNCD
-  SAI["SAI&lt;br/&gt;sai_srv6_api"]
-  SYNCD --&gt; SAI</code></pre>
-<div class="admonition note">
-<p class="admonition-title">凡例</p>
-<p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>
-</div>
-<!-- /cdb-mermaid -->
-
 <hr />
 <h2 id="srv6_my_sid_table">SRV6_MY_SID_TABLE<a class="headerlink" href="#srv6_my_sid_table" title="Permanent link">&para;</a></h2>
 <h3 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h3>
@@ -36250,7 +36198,7 @@
 <p>例: <code>SRV6_MY_SID_TABLE|32:16:16:0:fc00:0:1:64::</code><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 <p>key 内の各長さフィールドはロケータのビット長を示し、<code>Srv6Orch</code> がパースして
 <code>sai_my_sid_entry_t</code> に詰める（<code>srv6orch.cpp:1453-1456</code>）。</p>
-<h3 id="_3">フィールド一覧<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<h3 id="_2">フィールド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36373,7 +36321,7 @@
 evidence: <code>meta/_intermediate/cdb-flow/srv6-applb-ordering.md</code></p>
 </blockquote>
 <p><a href="../../glossary/#term-appl_db">APPL_DB</a> <code>SRV6_MY_SID_TABLE</code> と <code>SRV6_SID_LIST_TABLE</code> はそれぞれ独立した Consumer (<code>m_mysidTable</code> / <code>m_sidTable</code>) で処理されるが、<code>adj</code> フィールドを持つ MySID エントリには隣接 (Neighbor) 解決の順序依存がある。</p>
-<h3 id="_4">検出された順序依存<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<h3 id="_3">検出された順序依存<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36644,7 +36592,7 @@ evidence: <code>meta/_intermediate/cdb-flow/srv6-applb-constants.md</code></p>
 <p><a href="../../glossary/#term-dscp">DSCP</a> モード設定を必要とする MySID エントリに対して <code>createMySidIpInIpTunnel()</code> がオーバーレイ <a href="../../glossary/#term-rif">RIF</a> を作成する際、
 MTU は <code>OVERLAY_RIF_DEFAULT_MTU = 9100</code> bytes に固定される (<code>srv6orch.cpp:502</code>)。
 この値は CONFIG_DB / APPL_DB のいずれからも取得されず、実行時に変更する手段はない。</p>
-<h3 id="_5">ロケータビット長フォールバック<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h3 id="_4">ロケータビット長フォールバック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <p><code>getLocatorCfgFromDb()</code> (<code>srv6orch.cpp:347-350</code>) は <code>SRV6_MY_LOCATORS</code> のビット長フィールドが欠落している場合、
 <code>LOCATOR_DEFAULT_{BLOCK,NODE,FUNC,ARG}_LEN</code> (<code>32</code>, <code>16</code>, <code>16</code>, <code>0</code>) をデフォルトとして使用する。
 これらは <code>SRV6_MY_LOCATORS</code> テーブルのフィールドに明示的な値を設定することで上書きできる。
@@ -36956,7 +36904,7 @@ evidence: <code>meta/_intermediate/cdb-flow/srv6-applb-platform.md</code></p>
 </span></code></pre></div>
 <p><code>&lt;sid_name&gt;</code> は通常 VPN SID の IPv6 アドレス文字列として <a href="../../glossary/#term-fpmsyncd">fpmsyncd</a> が設定する
 （<code>routesync.cpp:1408</code>）。</p>
-<h3 id="_6">フィールド一覧<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<h3 id="_5">フィールド一覧<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -37010,7 +36958,7 @@ FRR 経由で登録されるすべての SID リストは実質 <code>type=encap
 <!-- /defaults -->
 
 <hr />
-<h2 id="_7">設定例<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">設定例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="srv6_my_sid_table-enddt46">SRV6_MY_SID_TABLE エントリ（<code>end.dt46</code> 行動）<a class="headerlink" href="#srv6_my_sid_table-enddt46" title="Permanent link">&para;</a></h3>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="nt">&quot;SRV6_MY_SID_TABLE&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -37032,7 +36980,7 @@ FRR 経由で登録されるすべての SID リストは実質 <code>type=encap
 </span></code></pre></div>
 <p><code>type</code> フィールドを省略すると Orch が <code>encaps.red</code> として処理する。</p>
 <hr />
-<h2 id="_8">関連テーブル<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_7">関連テーブル<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>SRV6_MY_SIDS</code> (CONFIG_DB) — ユーザ設定。<a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> / fpmsyncd 経由で本テーブルへ反映</li>
 <li><code>SRV6_MY_LOCATORS</code> (CONFIG_DB) — ロケータ定義</li>

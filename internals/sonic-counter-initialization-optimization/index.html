@@ -24504,7 +24504,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35507,7 +35507,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（命名は FlexCounterCachedManager）</p>
+<p class="admonition-title">裏取りステータス: code-verified（命名は FlexCounterCachedManager）</p>
 <p><code>sonic-swss/orchagent/flex_counter/flex_counter_manager.h</code> で <code>FlexCounterCachedManager</code> テンプレート、<code>flush(group_name, cached_objects)</code> (L228, L233-235), <code>pending_sai_objects</code> 参照 (L190), 派生 <code>FlexCounterTaggedCachedManager</code> の <code>flush()</code> (L304, L345) を確認。<code>portsorch.h</code> L336 で <code>port_buffer_drop_stat_manager</code> が <code>FlexCounterTaggedCachedManager&lt;void&gt;</code> 型として実装。HLD の <code>batch_mode</code> 引数は実装上は専用クラス <code>FlexCounterCachedManager</code> で表現されており、構造設計は HLD どおり。queue UC/MC 分割や PG 系の cached 化も同ヘッダで対応 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="flex-counter-pending_sai_objects-bulk_get_stats">flex counter 初期化最適化（<code>pending_sai_objects</code> + バッチ <code>bulk_get_stats</code>）<a class="headerlink" href="#flex-counter-pending_sai_objects-bulk_get_stats" title="Permanent link">&para;</a></h1>

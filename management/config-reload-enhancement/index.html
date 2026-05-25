@@ -24596,7 +24596,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35666,7 +35666,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>現行 master の <code>sonic-host-services/scripts/featured</code>（<code>delayed</code> フィールド処理 / <code>enable_delayed_services</code> / PORT_TABLE 購読 + PortInitDone ハンドラ / <code>handle_port_table_timeout</code> / <code>waitAdvancedBootDone</code>）、<code>sonic-utilities/scripts/db_migrator.py:719-726</code> の <code>has_timer</code>→<code>delayed</code> 移行、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-feature.yang:67</code> の <code>delayed</code> leaf、<code>sonic-swss/portsyncd/portsyncd.cpp:134</code> の <code>PortInitDone</code> publish を確認済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="config-reload-event-driven-featuredelayed-portinitdone">config reload の event-driven 化（FEATURE.delayed + PortInitDone）<a class="headerlink" href="#config-reload-event-driven-featuredelayed-portinitdone" title="Permanent link">&para;</a></h1>

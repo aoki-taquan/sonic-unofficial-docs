@@ -24496,7 +24496,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35466,7 +35466,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（部分的に陳腐化、現行実装は iproute2 VRF master device 方式に移行）</p>
+<p class="admonition-title">裏取りステータス: code-verified（部分的に陳腐化、現行実装は iproute2 VRF master device 方式に移行）</p>
 <p><code>MGMT_VRF_CONFIG</code> テーブルは <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mgmt_vrf.yang</code> L17-33 で確認、<code>sonic-buildimage/files/image_config/interfaces/interfaces.j2</code> L5-20 で <code>iface mgmt / vrf-table 6000 / lo-m loopback</code> を確認、L90/L153 で eth0 への <code>vrf mgmt</code> バインドを確認（verified 2026-05-09）。<strong>HLD 記載の <code>cgexec -g l3mdev:mgmt</code> 起動ラッパー方式は現行 master では採用されておらず</strong>、ifupdown2 の <code>vrf</code> キーワード（Linux VRF master device 方式）に統一されている。Stretch カーネルパッチ（<code>udp_l3mdev_accept</code> / NSS/PAM <code>--use-mgmt-vrf</code>）の現行カーネル取り込み確認は範囲外（Buster 以降では mainline kernel 機能を使用）。<code>show mgmt-vrf</code> CLI は <code>sonic-utilities/show/main.py</code> L539 で確認。</p>
 </div>
 <h1 id="management-vrf-201911-release-l3mdev-cgroups">Management VRF 設計（201911 release / l3mdev + cgroups）<a class="headerlink" href="#management-vrf-201911-release-l3mdev-cgroups" title="Permanent link">&para;</a></h1>

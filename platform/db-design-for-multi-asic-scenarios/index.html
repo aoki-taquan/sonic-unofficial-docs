@@ -24579,7 +24579,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35632,7 +35632,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>sonic-utilities <code>config/main.py</code> L99 で <code>DEFAULT_GOLDEN_CONFIG_DB_FILE = '/etc/sonic/golden_config_db.json'</code> 定義、L2520 で <code>config reload</code> 内から <code>config override-config-table &lt;golden&gt;</code> を呼ぶ経路、L2580-2620 の <code>override_config_table</code> 実装で <code>multi_asic.is_multi_asic()</code> のとき <code>HOST_NAMESPACE</code> (= "localhost") キーを host CONFIG_DB に、各 namespace キーを ASIC CONFIG_DB に振り分ける処理を確認。L1548-1549 で <code>localhost</code> / <code>asicN</code> 階層への serialize、L1630-1631 で逆向きに <code>asic_name = HOST_NAMESPACE if ns == DEFAULT_NAMESPACE else ns</code> で各 ASIC config を取り出す経路を確認。L1917-1965 の <code>apply_patch</code> で <code>--parallel</code> で各 ASIC に並列適用、<code>_gcu_apply_patch_from_file</code> ベースの実装を確認。L2341-2352 で <code>load_minigraph --override_config -p &lt;golden_config_path&gt;</code> 経路、L2520 で reload 経由の override も確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="multi-asic-golden-config-json-localhost-asic0-asic1">multi-ASIC 用 Golden Config 単一 JSON フォーマット（<code>localhost</code> / <code>asic0</code> / <code>asic1</code> ...）<a class="headerlink" href="#multi-asic-golden-config-json-localhost-asic0-asic1" title="Permanent link">&para;</a></h1>

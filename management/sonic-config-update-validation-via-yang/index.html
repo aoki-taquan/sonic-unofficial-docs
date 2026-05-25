@@ -24596,7 +24596,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35666,7 +35666,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang</code> L148 で <code>yang_config_validation</code> leaf 定義、<code>Configuration.md</code> L1111 で既定 <code>"yang_config_validation": "disable"</code>、<code>tests/yang_model_tests/tests/device_metadata.json</code> でデフォルト validation テストを確認。<code>sonic-utilities/config/validated_config_db_connector.py</code> と <code>tests/validated_config_db_connector_test.py</code> で <code>ValidatedConfigDBConnector</code> クラスを確認、各 feature テスト（<code>tests/sflow_test.py</code> L66 ほか radius / kube / config_snmp / feature 等）が <code>validated_config_db_connector.device_info.is_yang_config_validation_enabled</code> と <code>ValidatedConfigDBConnector.validated_set_entry</code> / <code>validated_mod_entry</code> をモックする形で取り込みを確認。<code>sonic-utilities/generic_config_updater/main.py</code> で GCU エンジン（<code>GenericConfigUpdaterError</code> ほか）が patch ベース更新を担うことを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="yang-configdb-gcu-configdbconnector">YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）<a class="headerlink" href="#yang-configdb-gcu-configdbconnector" title="Permanent link">&para;</a></h1>

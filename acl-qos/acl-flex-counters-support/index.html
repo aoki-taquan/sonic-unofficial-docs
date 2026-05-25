@@ -24556,7 +24556,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35586,7 +35586,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（命名差分あり）</p>
+<p class="admonition-title">裏取りステータス: code-verified（命名差分あり）</p>
 <p>現行 master で実装を確認: <code>sonic-swss/orchagent/aclorch.cpp</code> に <code>COUNTERS_ACL_COUNTER_RULE_MAP</code> 定義 (L45)、<code>ACL_COUNTER_DEFAULT_POLLING_INTERVAL_MS=10000</code>, <code>ACL_COUNTER_FLEX_COUNTER_GROUP</code> 経由の登録 (L4209)、SAI ACL counter 属性マッピング (L517-518)、CRM 連動 (L1940/L1982)。<code>sonic-utilities/counterpoll/main.py</code> に <code>counterpoll acl</code> グループと <code>acl interval/enable/disable</code> (L361-)、<code>sonic-utilities/scripts/aclshow</code> も存在。<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-flex_counter.yang</code> L363 に <code>container ACL</code>（コメントで <code>ACL_STAT_COUNTER_FLEX_COUNTER_GROUP</code> を明示）。<strong>HLD で言及される <code>m_acl_fc_mgr</code> メンバ名は実装上は generic な <code>m_flex_counter_manager</code></strong> (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="acl-flex-counter-acl_counter-counters_acl_counter_rule_map">ACL カウンタの flex counter 化（<code>ACL_COUNTER</code> + <code>COUNTERS_ACL_COUNTER_RULE_MAP</code>）<a class="headerlink" href="#acl-flex-counter-acl_counter-counters_acl_counter_rule_map" title="Permanent link">&para;</a></h1>

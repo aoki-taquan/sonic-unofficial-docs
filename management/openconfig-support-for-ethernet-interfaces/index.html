@@ -24568,7 +24568,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35610,7 +35610,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-mgmt-common/models/yang/openconfig-if-ethernet.yang</code> L162 <code>identity SPEED_400GB</code> / L172 <code>identity SPEED_800GB</code> を確認（200/600GB も同 yang 内）。<code>sonic-mgmt-common/translib/transformer/xfmr_intf.go</code> L3796-3828 で <code>ipv6_use_link_local_only</code> フィールドの YangToDb / DbToYang transformer 実装を確認（<code>oc-ip:enabled</code> ↔ <code>ipv6_use_link_local_only</code> mapping）。<code>sonic-mgmt-common/models/yang/annotations/openconfig-interfaces-annot.yang</code> L54-90 で <code>oc-eth:ethernet/state/oc-lag:aggregate-id</code> の deviation と PortChannel min-links field-transformer を確認。translib transformer 配下に統合済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="openconfig-interfaces-yangethernet-restgnmi-sonic-mgmt-common-transformer">OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）<a class="headerlink" href="#openconfig-interfaces-yangethernet-restgnmi-sonic-mgmt-common-transformer" title="Permanent link">&para;</a></h1>

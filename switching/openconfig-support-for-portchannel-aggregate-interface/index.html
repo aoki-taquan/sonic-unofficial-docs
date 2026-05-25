@@ -24479,7 +24479,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35432,7 +35432,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-mgmt-common/translib/transformer/sw_portchannel.go</code> で PortChannel transformer を確認。<code>portchannel_openconfig_test.go</code> L54-73 で <code>interface[name=Ethernet0]/openconfig-if-ethernet:ethernet/config/openconfig-if-aggregate:aggregate-id</code> の PATCH と <code>interface[name=PortChannel111]/openconfig-if-aggregate:aggregation/config/min-links</code> の設定 REST テストを確認。<code>openconfig-interfaces-annot.yang</code> L87-90 で <code>min-links → min_links</code> の <code>lag_min_links_xfmr</code> field-transformer、<code>sonic-portchannel.yang</code> L51 で SONiC 側 <code>min_links</code> 定義を確認。subinterface は本 HLD のスコープ外。</p>
 </div>
 <h1 id="portchannel-lag-openconfig-yang">PortChannel (LAG) の OpenConfig YANG サポート<a class="headerlink" href="#portchannel-lag-openconfig-yang" title="Permanent link">&para;</a></h1>

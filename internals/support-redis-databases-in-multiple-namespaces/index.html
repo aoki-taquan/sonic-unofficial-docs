@@ -24543,7 +24543,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35585,7 +35585,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-swss-common/common/dbconnector.h</code> L44-49 で「namespace でコンテナ群を一意識別、空文字なら default(host) namespace」のコメント、L107 で <code>load_sonic_global_db_config(global_db_file_path=DEFAULT_SONIC_DB_GLOBAL_CONFIG_FILE, namespace=None, ignore_nonexistent=False)</code> Python API、L149/L151 で <code>{containerName, namespace}</code> キーの instance / database マップ実装を確認。<code>sonic-swss-common/common/dbconnector.cpp</code> L225 で <code>database_global.json</code> 未ロード時 <code>initializeGlobalConfig</code> を要請するエラー処理を確認。<code>sonic-swss-common/tests/redis_multi_db_ut_config/database_global.json</code> L4-28 で <code>include</code> ディレクティブによる per-namespace <code>database_config*.json</code> の集約形式を、<code>sonic-buildimage/dockers/docker-database/database_global.json.j2</code> テンプレ存在を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="multi-asic-redisdatabase_globaljson-sonicdbconfig">Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）<a class="headerlink" href="#multi-asic-redisdatabase_globaljson-sonicdbconfig" title="Permanent link">&para;</a></h1>

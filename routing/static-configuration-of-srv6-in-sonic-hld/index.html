@@ -24602,7 +24602,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35678,7 +35678,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>sonic-buildimage <code>src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py</code> L12 <code>SRV6_MY_SIDS_TABLE_NAME</code>、L14 <code>class SRv6Mgr(Manager)</code>、L37 <code>locators_set_handler</code> / L56 <code>sids_set_handler</code>（locator 不在時に <code>SRV6_MY_LOCATORS</code> を subscribe して deferred 解決する経路を含む）を確認。<code>src/sonic-bgpcfgd/bgpcfgd/main.py</code> L30 で <code>from .managers_srv6 import SRv6Mgr</code> を確認。<code>src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py</code> L121 で <code>'SRV6_MY_LOCATORS': ['zebra']</code> / L123 で <code>'SRV6_MY_SIDS': ['mgmtd']</code> のターゲット daemon 設定、L2732 SRV6_MY_LOCATORS handler、L2751-2768 SRV6_MY_SIDS handler で <code>vtysh -c "segment-routing" -c "srv6" -c "static-sids" -c "sid {} locator {} behavior {} vrf {}"</code> の vtysh コマンドラインを生成する経路を確認。YANG は sonic-yang-models <code>yang-models/sonic-srv6.yang</code> の <code>SRV6_MY_LOCATORS</code> / <code>SRV6_MY_SIDS</code> リスト定義を確認、<code>Configuration.md</code> L3281-3285 で SRv6 テーブルが正式に文書化されていることを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="srv6-static-sidlocator-config_db-bgpcfgd-frr">SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）<a class="headerlink" href="#srv6-static-sidlocator-config_db-bgpcfgd-frr" title="Permanent link">&para;</a></h1>

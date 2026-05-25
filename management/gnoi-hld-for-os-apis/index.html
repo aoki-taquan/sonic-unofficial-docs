@@ -24557,7 +24557,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35588,7 +35588,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-gnmi/gnmi_server/gnoi_os.go</code> L25-441 で <code>OSServer.processTransferReq</code> / <code>processTransferEnd</code> / <code>Activate</code> / <code>Verify</code> のサーバ実装を確認。<code>sonic-gnmi/gnoi_client/os/os.go</code> L20-72 で OS Verify / Activate / Install のクライアント実装を、<code>sonic-gnmi/gnoi_client/gnoi_client.go</code> L73-77 で <code>--module OS --rpc {Verify,Activate,Install}</code> ディスパッチを確認。<code>sonic-host-services/host_modules/image_service.py</code> L81-99 で DBUS の <code>install</code> メソッド（<code>/usr/local/bin/sonic-installer install -y</code> 呼び出し）と L165 <code>set_next_boot</code> 実装を確認（verified at: 2026-05-09）。HostModule 側の gNOI 統合（L229-251 <code>installos</code>）は現行 master では <code>ERROR_UNIMPLEMENTED</code> だが、別経路の <code>OSServer</code> （sonic-gnmi 側）で機能する。</p>
 </div>
 <h1 id="gnoi-os-apiinstall-activate-verify-sonic-installer">gNOI OS API（Install / Activate / Verify と sonic-installer 連携）<a class="headerlink" href="#gnoi-os-apiinstall-activate-verify-sonic-installer" title="Permanent link">&para;</a></h1>

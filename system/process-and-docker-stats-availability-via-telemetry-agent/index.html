@@ -24535,7 +24535,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35544,7 +35544,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（一部位置に乖離）</p>
+<p class="admonition-title">裏取りステータス: code-verified（一部位置に乖離）</p>
 <p>現行 master で実装済みを確認。デーモンは <code>sonic-host-services/scripts/procdockerstatsd</code>（HLD では <code>sonic-buildimage/files/image_config</code> 配下と記載されていたが、実際は sonic-host-services リポジトリに移管）。<code>procdockerstatsd:138</code> で <code>top_processes = sorted_processes[:1024]</code>、<code>procdockerstatsd:174</code> で <code>STATE_DB</code> の <code>PROCESS_STATS|*</code> 全削除、<code>procdockerstatsd:234-236</code> で <code>DOCKER_STATS|LastUpdateTime</code> / <code>PROCESS_STATS|LastUpdateTime</code> 更新、<code>procdockerstatsd:240-241</code> で <code>time.sleep(120)</code>（2 分周期）を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="process-docker-stats-process_stats-docker_stats">Process / Docker stats のテレメトリ公開（PROCESS_STATS / DOCKER_STATS）<a class="headerlink" href="#process-docker-stats-process_stats-docker_stats" title="Permanent link">&para;</a></h1>

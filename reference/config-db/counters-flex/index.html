@@ -24267,7 +24267,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -36341,9 +36341,9 @@
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CDB[("CONFIG_DB&lt;br/&gt;FLEX_COUNTER_TABLE")]
-  DM["syncd"]
+  DM["FlexCounterOrch"]
   CDB --&gt; DM
-  SAI["SAI&lt;br/&gt;sai_*_stats"]
+  SAI["SAI&lt;br/&gt;sai_counter_api"]
   DM --&gt; SAI</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>

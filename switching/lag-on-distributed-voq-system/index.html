@@ -24562,7 +24562,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35598,7 +35598,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>portsorch.cpp</code> で <code>SAI_LAG_ATTR_SYSTEM_PORT_AGGREGATE_ID = system_lag_id</code> の付与（L7988）、<code>SYSTEM_LAG_TABLE</code> / <code>SYSTEM_LAG_MEMBER_TABLE</code> への sync（L8037/L8114/L6354/L8212/L8260 のコメント＋コード）を確認。<code>orchagent/lagids.lua</code> に <code>add</code> / <code>del</code> / <code>get</code> の Lua atomic 実装と <code>SYSTEM_LAG_ID_START/END</code> の redis 読み込みを確認。<code>tests/test_virtual_chassis.py</code> の VS テストが CI で回っている（verified at: 2026-05-11）。</p>
 </div>
 <h1 id="voq-lagsystem_lag_table-system_lag_id">分散 VOQ シャシでの LAG（<code>SYSTEM_LAG_TABLE</code> と <code>system_lag_id</code>）<a class="headerlink" href="#voq-lagsystem_lag_table-system_lag_id" title="Permanent link">&para;</a></h1>

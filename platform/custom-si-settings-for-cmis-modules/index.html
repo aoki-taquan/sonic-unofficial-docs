@@ -24579,7 +24579,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35632,7 +35632,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>sonic-platform-daemons <code>sonic-xcvrd/xcvrd/xcvrd_utilities/optics_si_parser.py</code> L139 <code>get_optics_si_settings_value</code> / L179 <code>fetch_optics_si_setting</code> / L195 <code>load_optics_si_settings</code>、L199-205 で HWSKU フォルダ → platform フォルダの順で <code>optics_si_settings.json</code> を探すロジックを確認。<code>xcvrd/cmis/cmis_manager_task.py</code> L1131-1146 で AP_CONFIGURED フェーズで <code>optics_si_parser.optics_si_present()</code> 確認 → <code>fetch_optics_si_setting</code> 取得 → <code>api.stage_custom_si_settings(host_lanes_mask, optics_si_dict)</code> の経路、L1161-1162 で続く <code>CMIS_STATE_DP_INIT</code> 遷移を確認。<code>xcvrd_utilities/common.py</code> L27 <code>CMIS_STATE_AP_CONF</code> / L29 <code>CMIS_STATE_DP_INIT</code> の状態定義を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="cmis-custom-si-optics_si_settingjson-cmis-fsm-ec1">CMIS Custom SI 設定（optics_si_setting.json と CMIS FSM の EC=1 適用）<a class="headerlink" href="#cmis-custom-si-optics_si_settingjson-cmis-fsm-ec1" title="Permanent link">&para;</a></h1>

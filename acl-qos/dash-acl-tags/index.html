@@ -24496,7 +24496,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35466,7 +35466,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（Stage 1 のみ）</p>
+<p class="admonition-title">裏取りステータス: code-verified（Stage 1 のみ）</p>
 <p><code>sonic-swss-common/common/schema.h</code> L183 で <code>APP_DASH_PREFIX_TAG_TABLE_NAME = "DASH_PREFIX_TAG_TABLE"</code> を確認。<code>sonic-swss/orchagent/dash/dashaclorch.cpp</code> L111-112 で <code>APP_DASH_PREFIX_TAG_TABLE_NAME</code> の SET/DEL を <code>taskUpdateDashPrefixTag</code> / <code>taskRemoveDashPrefixTag</code> が処理、L283-310 で tag CRUD ハンドラを確認。<code>tests/dash/test_dash_acl.py</code> L186-194/L511 で <code>PrefixTag</code> proto による tag CRUD テストを確認（verified at: 2026-05-09）。Stage 2（SAI API でタグを ASIC へ）は本 HLD の対象外。</p>
 </div>
 <h1 id="dash-acl-dash_prefix_tag_table-dash_acl_rule_table">DASH ACL タグ（<code>DASH_PREFIX_TAG_TABLE</code> と <code>DASH_ACL_RULE_TABLE</code> 拡張）<a class="headerlink" href="#dash-acl-dash_prefix_tag_table-dash_acl_rule_table" title="Permanent link">&para;</a></h1>

@@ -24529,7 +24529,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35532,7 +35532,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（Broadcom 限定）</p>
+<p class="admonition-title">裏取りステータス: code-verified（Broadcom 限定）</p>
 <p>現行 master で実装を確認: <code>sonic-swss/orchagent/pfc_detect_broadcom.lua</code> に <code>EST_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US</code> / <code>EST_PORT_STAT_PFC_*_RECENT_PAUSE_TIME_US</code> 等の estimate フィールド (L20-45)、<code>sonic-swss/orchagent/pfcwdorch.cpp</code> に <code>PFC_STAT_HISTORY</code> 設定キー (L18)、<code>sonic-utilities/scripts/pfcstat</code> に <code>--history</code> オプション (L376) と <code>collect_history</code> / <code>get_history</code> 実装 (L154-)、<code>sonic-utilities/config/main.py</code> に <code>config pfcwd pfc_stat_history</code> (L3529-) と <code>config pfcwd start --pfc-stat-history</code> (L3457) を確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="pfc-pfcwd-lua-estimate-history-cli">PFC 履歴統計（PFCWD lua スクリプトによる estimate と <code>--history</code> CLI）<a class="headerlink" href="#pfc-pfcwd-lua-estimate-history-cli" title="Permanent link">&para;</a></h1>

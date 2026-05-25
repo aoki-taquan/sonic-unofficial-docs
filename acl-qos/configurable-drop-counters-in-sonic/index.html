@@ -24529,7 +24529,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35532,7 +35532,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p class="admonition-title">裏取りステータス: code-verified（基本構成のみ）</p>
 <p>現行 master の <code>sonic-swss/orchagent/debugcounterorch.cpp</code> で <code>DebugCounterOrch</code> クラスと <code>STATE_DEBUG_COUNTER_CAPABILITIES</code> テーブル登録 (debugcounterorch.cpp:31) を確認。<code>sonic-utilities</code> 側に <code>config dropcounters install/...</code> (config/main.py:8163-)、<code>show dropcounters persistent_drops</code> (show/dropcounters.py) が存在し、v1.1 の persistent drop monitoring まで取り込み済み。<code>sonic-yang-models/yang-models/sonic-debug-counter.yang</code> も存在。詳細属性は元 HLD 参照（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="drop-counterdebug_counter-sai-debug-counter">設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）<a class="headerlink" href="#drop-counterdebug_counter-sai-debug-counter" title="Permanent link">&para;</a></h1>

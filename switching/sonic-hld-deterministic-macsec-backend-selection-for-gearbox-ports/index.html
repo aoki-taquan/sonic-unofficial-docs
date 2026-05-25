@@ -24596,7 +24596,7 @@
   <span class="md-ellipsis">
     
   
-    APPL_DB ROUTE_TABLE テーブル
+    APPL_DB ROUTE_TABLE テーブル（旧ページ）
   
 
     
@@ -35666,7 +35666,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>現行 master で実装済みを確認。<code>sonic-swss/gearsyncd/gearboxparser.cpp:161-164</code> で <code>macsec_supported</code> パース、<code>sonic-swss/lib/gearboxutils.h:67</code> で <code>gearbox_phy_t::macsec_supported</code> フィールド、<code>sonic-swss/lib/gearboxutils.cpp:141,199-201</code> で default true / <code>loadPhyMap</code> のパース。<code>sonic-swss/orchagent/macsecorch.cpp:363,409</code> で <code>force_npu = !phy-&gt;macsec_supported</code>、<code>macsecorch.cpp:2539-2563</code> で <code>phy-&gt;macsec_supported</code> 分岐ガード。HWSKU では <code>nexthop NH-5010-F-O32-C32</code> / <code>arista 7280R4-32QF-32DF</code> 等の <code>gearbox_config.json</code> に取り込み済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="gearbox-phy-macsec-backend-macsec_supported">Gearbox PHY ごとの MACsec backend 決定（<code>macsec_supported</code>）<a class="headerlink" href="#gearbox-phy-macsec-backend-macsec_supported" title="Permanent link">&para;</a></h1>
