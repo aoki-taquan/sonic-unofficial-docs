@@ -124,7 +124,7 @@ ASIC_DB:
 
 ## 既知の実装上の制約
 
-- `linkmgrd` の状態機械は **per-port**で、複数ポートをまたぐ整合（例：同一サーバの A/A NIC 両側が同期して flip する）は明示的には保証されない。[HLD](../../reference/glossary.md#term-hld) では individual port basis 設計。
+- `linkmgrd` の状態機械は **per-port** で、複数ポートをまたぐ整合（例：同一サーバの A/A NIC 両側が同期して flip する）は明示的には保証されない。[HLD](../../reference/glossary.md#term-hld) では individual port basis 設計。
 - `MuxOrch` は active → standby 切替時に neighbor を**削除 → tunnel nexthop へ再作成**する path を取るため、ASIC で neighbor を作り直すコストが大きい場合の path として prefix-based mux neighbors が導入された。
 - Active-Active で SoC NIC が応答しない場合、`linkmgrd` 側は admin forwarding state を変えても operational state が追従しないため、observability が不十分という指摘が PR レビューで複数挙がっている。
 - gRPC channel が切断中は `linkmgrd` が default の "active" 想定で進む傾向があり、両 ToR で active になる split-brain 風の状態を運用で監視する必要がある。
