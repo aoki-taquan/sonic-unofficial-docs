@@ -217,7 +217,7 @@ show pfcwd stats
 
 ### 段階 4: タイミング + 副作用
 
-- `detection_time` ms 以内に PFC デッドロードを検知し、`restoration_time` ms 後に自動復旧。
+- `detection_time` ms 以内に PFC デッドロックを検知し、`restoration_time` ms 後に自動復旧。
 - 副作用: action=drop 時にトラフィックが一時的に DROP。lossless クラスのパケットロスが生じる可能性。
 - [STATE_DB](../../reference/glossary.md#term-state_db) `PFC_WD_TABLE` でデッドロック検知状態を確認可能。
 
