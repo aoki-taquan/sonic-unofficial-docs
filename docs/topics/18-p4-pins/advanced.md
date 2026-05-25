@@ -32,7 +32,7 @@ related:
 
 ## ハンドオフ
 
-- **概念とアーキテクチャ**は本章の [concept](concept.md) / [architecture](architecture.md) と、area HLD の [pins-hld](../../management/pins-hld.md), [p4rt-application-hld](../../management/p4rt-application-hld.md), [p4-orchagent](../../internals/p4-orchagent.md) で完結する。P4Runtime gRPC server と P4Orch の責務分担はそこに詳細がある。
+- **概念とアーキテクチャ**は兄弟ページの [concept](concept.md) / [architecture](architecture.md) と、area HLD の [pins-hld](../../management/pins-hld.md), [p4rt-application-hld](../../management/p4rt-application-hld.md), [p4-orchagent](../../internals/p4-orchagent.md) で完結する。P4Runtime gRPC server と P4Orch の責務分担はそこに詳細がある。
 - **設定とリファレンス**は [reference/cli](../../reference/cli/index.md) の `p4rt` 系コマンド (限定的)、[reference/config_db](../../reference/config-db/index.md) の `CFG_SWITCH_HASH_TABLE`, `COPP_TRAP` に集約されている。
 - **本ページ**は PINS 基本 (P4Runtime → P4Orch → SAI) を押さえた読者向けに、gNMI と PINS の二系統管理、HashOrch の HLD 乖離、gRIBI 統合、WCMP scale, PacketIO scale, PINS と standard ACL の TCAM 共存などの発展領域だけを扱う。
 
@@ -63,7 +63,7 @@ PacketIO の kernel 側（`genl_packet` filter 等）と、[SAI](../../reference
 
 ## 他章との接続
 
-- 管理面の入口は [10. gNMI / gNOI / OpenConfig / YANG](../../topics/index.md) 系の章で押さえる（章番号は読み物計画側を参照）。
+- 管理面の入口は [10. gNMI / gNOI / OpenConfig / YANG](../10-gnmi-openconfig/index.md) 系の章で押さえる（章番号は読み物計画側を参照）。
 - ACL / mirror / counter は [07. ACL / CoPP / Mirror / Packet Action](../07-acl-copp-mirror/index.md) と同じ部品を P4Orch 側でも使うため、`acl_table_manager` / `acl_rule_manager` / `mirror_session_manager` が共通点になる。
 - [ECMP](../../reference/glossary.md#term-ecmp) / next-hop の振る舞いは [04. VRF / ECMP / RIB-FIB パイプライン](../04-vrf-ecmp/index.md) で読んだものが P4Orch の `wcmp_manager` でも前提になる。
 
@@ -126,7 +126,5 @@ PacketIO の kernel 側（`genl_packet` filter 等）と、[SAI](../../reference
 - [04 VRF / ECMP: nexthop と WCMP の前提](../04-vrf-ecmp/index.md)
 - [07 ACL / CoPP / Mirror: P4Orch と AclOrch の共通部品](../07-acl-copp-mirror/index.md)
 - [10 gNMI / OpenConfig: 管理面 API との二系統運用](../10-gnmi-openconfig/index.md)
-
-<!-- glossary-links-injected: 4d9f23481e68 -->
 
 <!-- glossary-links-injected: 4b7e3e133212 -->
