@@ -222,7 +222,7 @@ module: sonic-spanning-tree
 
 ### 典型的なデプロイ位置
 
-- STP / RSTP / PVST 設定。`STP` / `STP_PORT` / `STP_VLAN*` を stpmgr / stpd が処理。
+- STP / RSTP / PVST 設定。`STP` / `STP_PORT` / `STP_VLAN*` を stpmgrd が処理。
 
 ### よくある落とし穴
 

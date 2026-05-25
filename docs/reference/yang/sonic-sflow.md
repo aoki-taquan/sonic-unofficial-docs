@@ -140,7 +140,7 @@ module: sonic-sflow
 
 ## 関連リファレンス
 
-- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`SFLOW`](../config-db/sflow.md) / [`SFLOW_COLLECTOR`](../config-db/sflow.md) / [`SFLOW_SESSION`](../config-db/sflow.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [`SFLOW`](../config-db/sflow.md) / [`SFLOW_COLLECTOR`](../config-db/sflow-collector.md) / [`SFLOW_SESSION`](../config-db/sflow-session.md)
 - CLI: [`config sflow`](../cli/config-sflow.md)
 
 <!-- ref-triangle:end -->
