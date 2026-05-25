@@ -133,6 +133,6 @@ flowchart LR
 
 [^2]: `debug.main` の import 時 FRR 判定 (`debug/main.py` L31-L32)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/debug/main.py#L31>
 
-[^3]: prefix バリデーション (`debug/main.py` L30 + L60-L63 etc.)。
+[^3]: prefix バリデーション (`debug/main.py` L30 + L60-L63 etc.)。<https://github.com/sonic-net/sonic-utilities/blob/39732bceb8bdefe706518ab40623bbbba6ff33b9/debug/main.py#L30>
 
 <!-- glossary-links-injected: 4184f5fdb3c1 -->
