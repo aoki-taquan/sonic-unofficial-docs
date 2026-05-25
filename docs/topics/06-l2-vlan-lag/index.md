@@ -71,9 +71,6 @@ related:
   - sonic-vlan-sub-interface
   - sonic-portchannel
   - sonic-mclag
-  - sonic-bgp-aggregate-address
-  - sonic-bgp-bbr
-  - sonic-bgp-global
 ---
 
 # L2 / VLAN / LAG / MC-LAG
@@ -113,11 +110,12 @@ related:
 
 | ページ | 状態 | verification |
 |---|---|---|
-| concept | ✅ 完成 (129 行) | meta |
-| setup | ✅ 完成 (272 行) | meta |
-| operations | ✅ 完成 (202 行) | meta |
-| internals | ✅ 完成 (128 行) | meta |
-| advanced | ✅ 完成 (107 行) | meta |
+| concept | ✅ 完成 (180 行) | meta |
+| architecture | ✅ 完成 (124 行) | meta |
+| setup | ✅ 完成 (321 行) | meta |
+| operations | ✅ 完成 (238 行) | meta |
+| internals | ✅ 完成 (152 行) | meta |
+| advanced | ✅ 完成 (145 行) | meta |
 
 <!-- /chapter-progress -->
 
