@@ -525,7 +525,7 @@ evidence: `portsorch.cpp:1842-1980`
 
 ### COUNTERS_DB:RATES:<oid> への Lua プラグイン書き込み
 
-orsorch コンストラクタで `port_rates.lua` と `port_flr.lua` を [Redis](../../reference/glossary.md#term-redis) にロードし、
+portsorch コンストラクタで `port_rates.lua` と `port_flr.lua` を [Redis](../../reference/glossary.md#term-redis) にロードし、
 `PORT_STAT_COUNTER_FLEX_COUNTER_GROUP` に Lua プラグインとして登録する
 （`portsorch.cpp:879-882`）。syncd が 1 s ごとのポーリングサイクルで Lua を実行し、
 SAI 生カウンタからレートを計算して **COUNTERS_DB:RATES:<oid>** に書き込む:

@@ -85,7 +85,7 @@ COUNTERS_DB / COUNTERS_RIF_NAME_MAP   (Hash)
 ```text
 COUNTERS_DB / COUNTERS_RIF_TYPE_MAP   (Hash)
   field: <SAI OID>
-  value: <type>       (例: port, lag, vlan, subport)
+  value: <type>       (例: SAI_ROUTER_INTERFACE_TYPE_PORT, SAI_ROUTER_INTERFACE_TYPE_VLAN, SAI_ROUTER_INTERFACE_TYPE_SUB_PORT)
 ```
 
 ### カウンタハッシュ
@@ -203,7 +203,7 @@ COUNTERS_DB / RATES:<oid>              (Hash)
 
 ### RIF タイプ別登録
 
-intfsorch は [RIF](../../reference/glossary.md#term-rif) ごとに `COUNTERS_RIF_TYPE_MAP` に OID→タイプ（`port`, `lag`, `vlan`, `subport` 等）を書く。`COUNTERS_RIF_NAME_MAP` には RIF 名（インタフェース名）→OID のマッピングが格納され、`intfstat` がこのマップを元にカウンタを引く。
+intfsorch は [RIF](../../reference/glossary.md#term-rif) ごとに `COUNTERS_RIF_TYPE_MAP` に OID→タイプ（`SAI_ROUTER_INTERFACE_TYPE_PORT`, `SAI_ROUTER_INTERFACE_TYPE_VLAN`, `SAI_ROUTER_INTERFACE_TYPE_SUB_PORT` 等）を書く。`COUNTERS_RIF_NAME_MAP` には RIF 名（インタフェース名）→OID のマッピングが格納され、`intfstat` がこのマップを元にカウンタを引く。
 
 ### SAI フィールド未サポート時の挙動
 
