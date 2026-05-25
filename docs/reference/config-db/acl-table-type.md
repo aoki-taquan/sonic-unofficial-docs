@@ -63,7 +63,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>ACL_TABLE_TYPE")]
   DM["AclOrch"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_DB")]
+  APPDB[("APP_DB<br/>ACL_TABLE_TYPE_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

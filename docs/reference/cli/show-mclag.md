@@ -125,14 +125,16 @@ Peer IP      : 10.0.0.2
 ```mermaid
 flowchart LR
   CLI["mclagdctl"]
+  SRC0[("iccpd<br/>Unix socket")]
   CDB0[("CONFIG_DB<br/>MCLAG_DOMAIN")]
-  CDB0 --> CLI
   CDB1[("CONFIG_DB<br/>MCLAG_INTERFACE")]
-  CDB1 --> CLI
+  CDB0 --> SRC0
+  CDB1 --> SRC0
+  SRC0 --> CLI
 ```
 
 !!! note "凡例"
-    show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は `docs/reference/config-db-orch-map.md` から機械生成。
+    mclagdctl は iccpd コンテナの Unix ソケット経由でランタイム情報を取得する。CONFIG_DB は iccpd が起動時に読み込む設定元であり、mclagdctl が直接読むわけではない。
 <!-- /cli-mermaid -->
 
 <!-- topics-back-ref -->
