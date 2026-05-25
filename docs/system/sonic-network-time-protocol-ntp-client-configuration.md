@@ -138,23 +138,11 @@ show ntp
     - mgmt VRF 経路は chrony 側で `bindcmdaddress` / `bindaddress` を mgmt VRF 内に固定する設定が必要（`chrony-config.sh` の VRF 分岐を参照）。
 <!-- /diff-admonition -->
 
-
-### コマンド例
-
-NTP クライアントの同期状態を確認する。
-
-```bash
-show ntp
-chronyc sources
-redis-cli -n 4 keys 'NTP*'
-config ntp add 10.0.0.1
-```
-
 ## 既知の問題
 
-### management VRF が有効な時に rsyslogd が "sendto() error: Network is（sonic-buildimage#5880）
+### management VRF が有効な時に rsyslogd が "sendto() error: Network is unreachable"（sonic-buildimage#5880）
 
-management VRF が有効な時に rsyslogd が "sendto() error: Network is unreachable" を出力する問題。rsyslog のバインドアドレスを management VRF に合わせて設定する必要がある
+management VRF が有効な時に rsyslogd が "sendto() error: Network is unreachable" を出力する問題。rsyslog のバインドアドレスを management VRF に合わせて設定する必要がある。
 
 - 参照: [sonic-net/sonic-buildimage#5880](https://github.com/sonic-net/sonic-buildimage/issues/5880)
 
@@ -172,9 +160,9 @@ management VRF が有効な時に rsyslogd が "sendto() error: Network is unrea
 - chrony 移行 HLD と本 HLD の重複・置換関係の現行整理状況
 -->
 
-### 深掘り（2026-05-11、batch q3-disc-detail）
+## 深掘り（2026-05-11、batch q3-disc-detail）
 
-#### HLD 記述と実装の差分（行番号 + コード抜粋）
+### HLD 記述と実装の差分（行番号 + コード抜粋）
 
 `sonic-buildimage/files/image_config/chrony/chrony.conf.j2` L18-L27:
 
@@ -191,14 +179,14 @@ management VRF が有効な時に rsyslogd が "sendto() error: Network is unrea
 - `NTP_SERVER|<host>` の hash field は `admin_state` / `association_type` (`server`/`pool`) / `resolve_as` / `iburst` 等。HLD が言及する旧 `NTP_SERVER` の field 名（minpoll / maxpoll / key 等）は形が異なる。
 - `ntp.conf.j2` および `ntpd.service` は **存在しない**。
 
-#### 読者への影響
+### 読者への影響
 
 - `ntpq -p` / `service ntp status` を期待しても `command not found` / `Unit ntp.service not found`。
 - `/etc/ntp.conf` を編集しても効かない。`/etc/chrony/chrony.conf` (jinja 生成) が真の設定。
 - HLD どおりに MD5 key を `/etc/ntp.keys` に書いても chrony は読まない（chrony は `keyfile` ディレクティブで `/etc/chrony/chrony.keys` を見る）。
 - mgmt VRF 経由で NTP 同期したい場合、HLD には書かれていない `bindcmdaddress` / `bindaddress` の VRF 分岐処理が `chrony-config.sh` 側にあり、それを知らずに `iburst` 設定だけ書くと **同期しない**（issue #24333）。
 
-#### 回避策の実コマンド
+### 回避策の実コマンド
 
 ```bash
 # 1) NTP サーバ追加（CLI 表面は維持）
@@ -223,14 +211,14 @@ sudo ip vrf exec mgmt chronyc sources   # mgmt VRF context で問合せ
 sudo systemctl restart chrony
 ```
 
-#### 関連 GitHub Issue / PR
+### 関連 GitHub Issue / PR
 
 - [sonic-buildimage #25729: Issue 25728: Add vrf ordering dependency to chrony config (merged)](https://github.com/sonic-net/sonic-buildimage/pull/25729) — chrony の VRF 起動順序バグ修正。
 - [sonic-buildimage #24333: Bug: NTP - chrony does not sync time over MGMT VRF (open)](https://github.com/sonic-net/sonic-buildimage/issues/24333) — mgmt VRF 越し同期失敗の既知バグ。HLD の理想動作と現実の乖離点。
 - [sonic-buildimage #23904: Failed to restart chrony.service on NTP server add (open, NVIDIA)](https://github.com/sonic-net/sonic-buildimage/issues/23904) — server add 直後の reload race。
 - [[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #25863: \[chrony\] NTP not synchronized when MGMT_INTERFACE IP is not static (open)](https://github.com/sonic-net/sonic-buildimage/issues/25863) — DHCP mgmt IP 利用時の起動順問題。
 
-#### 検証日
+### 検証日
 
 2026-05-11 (q3-disc-detail batch)
 

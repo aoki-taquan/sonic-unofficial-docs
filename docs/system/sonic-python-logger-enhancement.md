@@ -95,23 +95,23 @@ config syslog level -i <identifier> -l <log_level>
 
 検証ルール（HLD 例より）[^1]:
 
-- `--program` は `--service` と併用必須
-- `--service` 単独は不可（PID か program のどちらかが必要）
+- `--program` は `--container` と併用必須
+- `--container` 単独は不可（PID か program のどちらかが必要）
 
 例:
 
 ```bash
 # DB 更新のみ（refresh は別途）
-config syslog level -c xcvrd -l DEBUG
+config syslog level -i xcvrd -l DEBUG
 
 # DB 更新 + PMON コンテナ内の xcvrd に SIGHUP
-config syslog level -c xcvrd -l DEBUG --service pmon --program xcvrd
+config syslog level -i xcvrd -l DEBUG --container pmon --program xcvrd
 
 # DB 更新 + PMON コンテナ内 PID 20 に SIGHUP
-config syslog level -c xcvrd -l DEBUG --service pmon --pid 20
+config syslog level -i xcvrd -l DEBUG --container pmon --pid 20
 
 # DB 更新 + ホスト側 PID 20 に SIGHUP
-config syslog level -c xcvrd -l DEBUG --pid 20
+config syslog level -i xcvrd -l DEBUG --pid 20
 ```
 
 ### CONFIG_DB スキーマ追加
@@ -130,7 +130,7 @@ sequenceDiagram
     participant CLI as config syslog level
     participant DB as CONFIG_DB.LOGGER
     participant DEM as Python daemon
-    U->>CLI: config syslog level -c xcvrd -l DEBUG --service pmon --program xcvrd
+    U->>CLI: config syslog level -i xcvrd -l DEBUG --container pmon --program xcvrd
     CLI->>DB: SET LOGGER|xcvrd loglevel=DEBUG
     CLI->>DB: GET LOGGER|xcvrd require_manual_refresh
     alt require_manual_refresh=true
@@ -186,7 +186,7 @@ reasoning: 「singleton + 初期化時 load/save + SIGHUP refresh」という設
 
 | Command | 用途 |
 |---------|------|
-| `config syslog level -c <component> -l <level> [...]` | 当該 logger の level を CONFIG_DB に書き、必要なら SIGHUP |
+| `config syslog level -i <component> -l <level> [...]` | 当該 logger の level を CONFIG_DB に書き、必要なら SIGHUP |
 
 ### 関連する CONFIG_DB
 
@@ -275,11 +275,6 @@ docker exec swss kill -HUP $(docker exec swss pidof orchagent)
 
 - [CLI: config syslog](../reference/cli/config-syslog.md)
 - [YANG: sonic-syslog](../reference/yang/sonic-syslog.md)
-- [CONFIG_DB: SYSLOG_CONFIG](../reference/config-db/syslog-config.md)
-- [HLD: persistent-log-level](persistent-log-level-hld.md)
-
-## 関連 reference
-
 - [CONFIG_DB: SYSLOG_CONFIG](../reference/config-db/syslog-config.md)
 - [HLD: persistent-log-level](persistent-log-level-hld.md)
 
