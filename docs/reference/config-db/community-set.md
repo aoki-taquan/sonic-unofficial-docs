@@ -146,11 +146,11 @@ EXTENDED_COMMUNITY_SET|<name>
 ### 典型値
 
 - key 形式: `COMMUNITY_SET|<name>`。
-- `set_type`: `standard` / `expanded`。`match_action`: `any` / `all`。`community_member`: CSV。
+- `set_type`: `STANDARD` / `EXPANDED`（DB 格納値は大文字）。`match_action`: `ANY` / `ALL`（大文字）。`community_member`: CSV。
 
 ### よくある誤設定
 
-- `expanded` で正規表現を書いたのに `standard` 指定のままで全件 reject される。
+- `EXPANDED` で正規表現を書いたのに `STANDARD` 指定のままで全件 reject される。
 
 ### 確認コマンド
 
