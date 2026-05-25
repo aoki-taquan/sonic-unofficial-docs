@@ -281,7 +281,7 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
 !!! tip "読み手向け"
     - **本機能を実運用で使う場合**: 実装が無いため、本機能に依存した運用は不可。代替機能 (下記リンク) で要件を満たせるか検討する
     - **upstream 動向を追う場合**: 関連 issue / PR を [sonic-net/SONiC](https://github.com/sonic-net/SONiC) で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）
-    - **代替手段 / 関連 reference**: 本ページの frontmatter `related` が空のため、[Reference 索引](../reference/index.md) から関連テーブル / CLI / YANG を辿る
+    - **代替手段 / 関連 reference**: frontmatter の `related` に列挙された DEBUG_COUNTER / CRM / PORT 等の Reference ページ、または [Reference 索引](../reference/index.md) から関連テーブル / CLI / YANG を辿る
 
 !!! note "本ドキュメントの追跡"
     - monitor: `not_implemented` / last_verified: `2026-05-11`
