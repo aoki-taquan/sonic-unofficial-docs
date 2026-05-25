@@ -207,8 +207,8 @@ ip link show send_to_ingress
 
 ```bash
 # Host-CPU packet I/O / send-to-ingress 確認
-ip -s -s link show eth0
-redis-cli -n 4 hgetall 'HOST_INTERFACE|<name>'
+ip -s -s link show send_to_ingress
+redis-cli -n 4 hgetall 'SEND_TO_INGRESS_PORT|SEND_TO_INGRESS'
 docker logs swss 2>&1 | grep -i 'hostif' | tail
 ```
 
