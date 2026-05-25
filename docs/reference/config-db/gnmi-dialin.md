@@ -277,7 +277,7 @@ rsyslogd 起動 (priority=1)
 | `false` (default) | Set RPC 完了後に startup config を保存しない | `telemetry.go:583-585` |
 | `true` | `gnmi.SaveOnSetEnabled` を `s.SaveStartupConfig` に設定。Set RPC 成功時に startup config を自動書き込み | `telemetry.go:583-585` |
 
-> **注意**: `save_on_set` は `gnmi-native.sh` から自動読み取りされない。Go フラグ `--with-save-on-set` で手動指定が必要。
+> **注意**: `save_on_set` の変更を反映させるにはコンテナ再起動が必要。起動スクリプトが `--with-save-on-set=<値>` フラグを自動付与するが、実行中の `telemetry` デーモンはホットリロードしない。
 <!-- /value-behavior -->
 
 <!-- constants -->

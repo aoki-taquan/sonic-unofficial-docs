@@ -187,7 +187,7 @@ flag デフォルト (`telemetry.go:190`): `fs.Int("idle_conn_duration", 5, ...)
 
 ### `save_on_set`
 ```bash
-# telemetry.sh:110-113
+# gnmi-native.sh:110-113
 readonly SAVE_ON_SET=$(echo $GNMI | jq -r '.save_on_set // empty')
 if [ ! -z "$SAVE_ON_SET" ]; then
     TELEMETRY_ARGS+=" --with-save-on-set=$SAVE_ON_SET"
