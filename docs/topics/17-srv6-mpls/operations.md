@@ -132,8 +132,8 @@ enable
 admin@sonic:~$ vtysh -c "show mpls table"
  Inbound Label  Type        Nexthop         Outbound Label
  -----------------------------------------------------------
- 16             SR (LDP)    10.0.0.1        17
- 17             SR (LDP)    10.0.0.2        Pop Label
+ 16             Static      10.0.0.1        17
+ 17             Static      10.0.0.2        Pop Label
 ```
 
 LSP が消えるパターンは多くが LDP / [BGP](../../reference/glossary.md#term-bgp)-LU の neighbor down です。`vtysh -c "show mpls ldp neighbor"` / `vtysh -c "show bgp ipv4 labeled-unicast summary"` を最初に見ます。

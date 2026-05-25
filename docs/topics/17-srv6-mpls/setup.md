@@ -122,7 +122,7 @@ Path Tracing は per-port 設定です。`PORT|<port>` に 2 つのフィール�
 ```text
 PORT|Ethernet0:
   pt_interface_id        = 1234
-  pt_timestamp_template  = template_3
+  pt_timestamp_template  = template3
 ```
 
 `pt_interface_id` は MCD に刻まれる interface 識別、`pt_timestamp_template` は timestamp のビット切り出し方（例: `12_19` 系テンプレート）を決めます。[SAI](../../reference/glossary.md#term-sai) 側で対応する属性は `SAI_PORT_ATTR_PATH_TRACING_INTF` と `SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE` です。
@@ -212,11 +212,11 @@ show mpls ldp neighbor   # LDP を使う場合
 
 ## 設定シナリオ 3: Path Tracing Midpoint の最小投入
 
-`Ethernet0` を Midpoint として動作させ、ID `1234` を MCD に刻み、`template_3` でタイムスタンプを切り出します。
+`Ethernet0` を Midpoint として動作させ、ID `1234` を MCD に刻み、`template3` でタイムスタンプを切り出します。
 
 ```bash
 sudo config interface pt-interface-id Ethernet0 1234
-sudo config interface pt-timestamp-template Ethernet0 template_3
+sudo config interface pt-timestamp-template Ethernet0 template3
 show interface path-tracing
 ```
 
@@ -225,7 +225,7 @@ CONFIG_DB:
 ```json
 {
     "PORT": {
-        "Ethernet0": {"pt_interface_id": "1234", "pt_timestamp_template": "template_3"}
+        "Ethernet0": {"pt_interface_id": "1234", "pt_timestamp_template": "template3"}
     }
 }
 ```
@@ -235,7 +235,7 @@ CONFIG_DB:
 ```text
 Interface     PT Interface ID    Timestamp Template
 ------------  ----------------  --------------------
-Ethernet0     1234              template_3
+Ethernet0     1234              template3
 ```
 
 ## 設定エラーと対処
