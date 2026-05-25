@@ -27,7 +27,7 @@ related:
 このページは [gNSI（概要ハブ）](gnsi-hld.md) の派生で、**4 サービスのスコープと共通 Rotate モデル** に絞って整理する。設定 / CLI は [gnsi-hld-operations.md](gnsi-hld-operations.md)、内部実装（host service / handler）は [gnsi-hld-internals.md](gnsi-hld-internals.md)、制限と [HLD](../reference/glossary.md#term-hld) 乖離は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
 
 !!! note "実装状況の境界（partially implemented）"
-    本ページの概念は HLD ベースで記述しているが、master 実装には濃淡がある。**Certz**（証明書 / Trust Bundle / CRL）は `sonic-gnmi` に **取り込み済** で動作する一方、**Authz / Pathz / Credentialz** の handler や host service は **未実装** または部分実装の状態（対応 PR が未取り込み）。詳細な対応 PR と未取り込み箇所は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
+    本ページの概念は HLD ベースで記述しているが、master 実装には濃淡がある。**Certz / Authz / Pathz**（証明書・アクセス制御・パス認可）は `sonic-gnmi` に **取り込み済** で動作する一方、**Credentialz** の gNMI server handler は **未配線** の状態（対応 PR が未取り込み）。詳細な対応 PR と未取り込み箇所は [gnsi-hld-limitations.md](gnsi-hld-limitations.md) を参照。
 
 ## 1. gNSI とは
 
