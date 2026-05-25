@@ -60,28 +60,16 @@ keywords:
 - QSFP
 related:
   cli:
-  - config qos
-  - show acl
   - show platform
-  - config acl
-  - config snmp
   - show interfaces
   - config interface
+  - config platform firmware
   config_db:
   - PORT
-  - ACL_RULE
-  - ACL_TABLE
-  - SNMP
-  - SNMP_AGENT_ADDRESS_CONFIG
   - BREAKOUT_CFG
   - DEVICE_METADATA
   yang:
-  - sonic-snmp
   - sonic-port
-  - sonic-lldp
-  - sonic-portchannel
-  - sonic-vlan
-  - sonic-vlan-sub-interface
   - sonic-cable-length
 ---
 
@@ -125,11 +113,11 @@ related:
 
 | ページ | 状態 | verification |
 |---|---|---|
-| concept | ✅ 完成 (170 行) | meta |
-| setup | ✅ 完成 (211 行) | meta |
-| operations | ✅ 完成 (260 行) | meta |
-| internals | ✅ 完成 (144 行) | meta |
-| advanced | ✅ 完成 (103 行) | meta |
+| concept | ✅ 完成 | meta |
+| setup | ✅ 完成 | meta |
+| operations | ✅ 完成 | meta |
+| internals | ✅ 完成 | meta |
+| advanced | ✅ 完成 | meta |
 
 <!-- /chapter-progress -->
 

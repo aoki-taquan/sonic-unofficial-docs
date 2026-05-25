@@ -140,7 +140,7 @@ ASIC_DB:
 
 ## ZMQ / Redis pub/sub
 
-- ZMQ は使わない。
+- pmon 系 daemon 間では ZMQ は使わない。
 - `xcvrd` は sonic_platform plugin を直接呼び、結果を [Redis](../../reference/glossary.md#term-redis) に push。
 - PMON 系 daemon は `supervisord` で管理され、互いに Redis 経由でしか通信しない。
 - BMC 経路を持つ場合、`pmon` 配下の daemon が REST/Redfish を直接呼び、結果を STATE_DB に統一形式で書く。
