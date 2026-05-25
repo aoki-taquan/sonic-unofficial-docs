@@ -136,7 +136,9 @@ flowchart LR
 
 ## 関連リファレンス
 
-- (関連リンクなし)
+- CLI: [show runningconfiguration](show-runningconfiguration.md) — 内部で `sonic-cfggen -d --var-json` を呼ぶラッパ
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): [DEVICE_METADATA](../config-db/device-metadata.md)
+- [YANG](../../reference/glossary.md#term-yang): [sonic-device_metadata](../yang/sonic-device_metadata.md)
 
 <!-- ref-triangle:end -->
 
