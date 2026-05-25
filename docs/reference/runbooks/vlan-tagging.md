@@ -120,11 +120,11 @@ config vlan member add -u 100 Ethernet8
 
 ## 関連ページ
 
-- [../../topics/06-l2-vlan-lag/operations.md](../../topics/06-l2-vlan-lag/operations.md)
-- [../../topics/06-l2-vlan-lag/concept.md](../../topics/06-l2-vlan-lag/concept.md)
-- [../cli/config-vlan.md](../cli/config-vlan.md)
-- [../cli/show-vlan.md](../cli/show-vlan.md)
-- [../config-db/vlan-member.md](../config-db/vlan-member.md)
+- [L2 VLAN/LAG 運用](../../topics/06-l2-vlan-lag/operations.md)
+- [L2 VLAN/LAG 概念](../../topics/06-l2-vlan-lag/concept.md)
+- [config vlan](../cli/config-vlan.md)
+- [show vlan](../cli/show-vlan.md)
+- [VLAN_MEMBER](../config-db/vlan-member.md)
 
 ## 引用元
 

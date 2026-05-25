@@ -2,7 +2,7 @@
 title: BGP Graceful Restart のネゴシエーションに失敗する
 description: "Runbook: BGP Graceful Restart (GR) capability が対向と合致せず restart 時に経路断が発生する場合の切り分け"
 area: reference
-verification: runbook-verified
+verification: hld-only
 last_verified: 2026-05-11
 tags: [runbook, bgp, frr]
 sources:
