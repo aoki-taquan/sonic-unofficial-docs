@@ -11,24 +11,15 @@ sources:
 - docs/acl-qos/enhancements-to-add-or-del-ports-dynamically.md
 related:
   cli:
-  - show acl
-  - config snmp
-  - config qos
-  - config acl
-  - config vlan
-  - show vlan
+  - show interfaces transceiver
+  - config interface breakout
+  - show interface breakout
   config_db:
   - PORT
-  - VLAN
-  - SNMP
-  - SNMP_AGENT_ADDRESS_CONFIG
-  - ACL_RULE
+  - BREAKOUT_CFG
   - ACL_TABLE
-  - VLAN_SUB_INTERFACE
   yang:
-  - sonic-snmp
-  - sonic-vlan
-  - sonic-vlan-sub-interface
+  - sonic-port
 ---
 
 # 発展トピック

@@ -14,19 +14,13 @@ related:
   cli:
   - show feature
   - show platform
-  - config vnet
-  - show acl
-  - config acl
+  - show chassis modules status
   config_db:
-  - VNET
   - DEVICE_METADATA
-  - ACL_RULE
-  - ACL_TABLE
   - FEATURE
-  - VNET_ROUTE_TUNNEL
-  - VNET_ROUTE
+  - CHASSIS_MODULE
   yang:
-  - sonic-vnet
+  - sonic-device_metadata
 ---
 
 # DPU の IP 割当・gNMI 連携・KVM 検証
@@ -267,7 +261,7 @@ DPU 1 台が単独で稼働する形では HA の検証ができないため、�
         "version": "1",
         "vip_v4": "203.0.113.100",
         "owner": "switch",
-        "scope": "eni",
+        "scope": "dpu",
         "local_npu_ip": "25.1.1.1",
         "peer_ip": "25.1.1.2"
     },

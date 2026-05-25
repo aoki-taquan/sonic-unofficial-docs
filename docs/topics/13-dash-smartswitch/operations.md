@@ -15,16 +15,12 @@ sources:
 related:
   cli:
   - show platform
-  - show acl
-  - config acl
+  - show chassis modules status
+  - show system-health dpu
   config_db:
-  - ACL_RULE
-  - ACL_TABLE
   - CHASSIS_MODULE
   - MID_PLANE_BRIDGE
   - DPU
-  - DPUS
-  - VOQ_INBAND_INTERFACE
   yang:
   - sonic-crm
 ---
