@@ -74,11 +74,14 @@ related:
 
 | ページ | 状態 | verification |
 |---|---|---|
-| concept | ✅ 完成 (140 行) | meta |
-| setup | ✅ 完成 (208 行) | meta |
-| operations | ✅ 完成 (170 行) | meta |
-| internals | ✅ 完成 (126 行) | meta |
-| advanced | ⚠️ プレースホルダ (74 行) | meta |
+| concept | ✅ 完成 (181 行) | meta |
+| architecture | ✅ 完成 (96 行) | meta |
+| setup | ✅ 完成 (246 行) | meta |
+| operations | ✅ 完成 (204 行) | meta |
+| gnoi-gnsi | ✅ 完成 (71 行) | meta |
+| yang-reference | ✅ 完成 (69 行) | meta |
+| internals | ✅ 完成 (148 行) | meta |
+| advanced | ⚠️ プレースホルダ (90 行) | meta |
 
 <!-- /chapter-progress -->
 
