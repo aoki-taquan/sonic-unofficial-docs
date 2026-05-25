@@ -104,7 +104,7 @@ STATE_DB:
 - ビルドは **slave docker の rebuild が高頻度で必要**で、初回 build に 1〜2 時間かかります。`make -j` 並列度は host のメモリと swap に強く依存します。
 - submodule の SHA を上げると `make configure` の再走が必要で、incremental ではなく毎回 deb 系を作り直すケースがある（`*.flag` の依存解決が conservative）。
 - SPM の extension は **公式ビルドの [SONiC](../../reference/glossary.md#term-sonic) イメージ（PR build 含む）に対してのみテスト**されており、外部派生ビルドでの互換性は保証されません。manifest の `min-version` を確認してください。
-- `set_owner = kube` 系の機能は SONiC master でも実験的扱いの箇所があり、`feature` の状態遷移が Kubernetes 側の expected と zaeshigit ことがあります。
+- `set_owner = kube` 系の機能は SONiC master でも実験的扱いの箇所があり、`feature` の状態遷移が Kubernetes 側の expected とずれることがあります。
 - `sonic-buildimage` のターゲット platform は `PLATFORM=<vendor>` 環境変数で切替えますが、複数 platform を同時にビルドする supported workflow は無いに等しく、CI 側で逐次 build しています。
 - application extension の docker image は SONiC の base layer に依存していると更新時にサイズが膨らみ、`/host` の空き容量に注意が必要です。
 
