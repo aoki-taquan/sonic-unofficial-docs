@@ -80,6 +80,9 @@ SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産�
 - [Process / docker stats を telemetry に](../../system/process-and-docker-stats-availability-via-telemetry-agent.md)
 - [Memory statistics 機能](../../system/memory-statistics-feature-in-sonic.md)
 - [Reboot cause を telemetry に](../../system/reboot-cause-information-via-telemetry-agent.md)
+- [02 BGP: BMP との連携](../02-bgp/index.md)
+- [10 gNMI / OpenConfig: 変換層と subscribe path](../10-gnmi-openconfig/index.md)
+- [20 SWSS / SAI / Redis: COUNTERS_DB の polling 設計](../20-swss-sai-redis/index.md)
 
 ## 追加の発展トピック
 
@@ -135,14 +138,5 @@ SNMP の設定は CONFIG_DB に集約されつつありますが、過去資産�
 - SNMP scale 検証は `snmpwalk -t 30 -r 3` で entity MIB / transceiver MIB を large port count (256 ports〜) で取得する。target は 60 秒以内の完走。
 - DTel / sFlow の sampling 精度検証は、`pktgen` で既知レートのトラフィックを流し、collector 側で sample 数 × sampling rate ≒ 実トラフィックになることを確認する。
 
-## 関連ページ (追補)
-
-- [Dataplane telemetry in SONiC](../../system/dataplane-telemetry-in-sonic.md)
-- [sFlow high-level design](../../architecture/sflow-high-level-design.md)
-- [SONiC entity MIB / entity sensor MIB extension](../../system/sonic-entity-mib-and-entity-sensor-mib-extension.md)
-- [Reboot cause information via telemetry agent](../../system/reboot-cause-information-via-telemetry-agent.md)
-- [02 BGP: BMP との連携](../02-bgp/index.md)
-- [10 gNMI / OpenConfig: 変換層と subscribe path](../10-gnmi-openconfig/index.md)
-- [20 SWSS / SAI / Redis: COUNTERS_DB の polling 設計](../20-swss-sai-redis/index.md)
 
 <!-- glossary-links-injected: ec18b66e3507 -->

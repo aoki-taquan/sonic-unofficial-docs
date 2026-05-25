@@ -116,6 +116,7 @@ related:
 | ページ | 状態 | verification |
 |---|---|---|
 | concept | ✅ 完成 (140 行) | meta |
+| architecture | ✅ 完成 (97 行) | meta |
 | setup | ✅ 完成 (248 行) | meta |
 | operations | ✅ 完成 (187 行) | meta |
 | internals | ✅ 完成 (129 行) | meta |
