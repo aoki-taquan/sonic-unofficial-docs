@@ -16,7 +16,7 @@ sources:
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db: [TELEMETRY_CLIENT, TELEMETRY]
-  cli: [show feature status, show runningconfiguration telemetry]
+  cli: [show feature status, show runningconfiguration all]
   yang: [sonic-telemetry-client]
 ---
 

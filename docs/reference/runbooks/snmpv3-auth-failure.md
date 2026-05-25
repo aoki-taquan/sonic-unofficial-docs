@@ -98,8 +98,8 @@ sonic-db-cli CONFIG_DB keys "ACL_TABLE|*"
 
 ## 関連ページ
 
-- [../../topics/09-telemetry-snmp/concept.md](../../topics/09-telemetry-snmp/concept.md)
-- [../../topics/09-telemetry-snmp/operations.md](../../topics/09-telemetry-snmp/operations.md)
+- [SNMP / Telemetry コンセプト](../../topics/09-telemetry-snmp/concept.md)
+- [SNMP / Telemetry 運用ガイド](../../topics/09-telemetry-snmp/operations.md)
 
 ## 引用元
 
