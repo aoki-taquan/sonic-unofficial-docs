@@ -262,7 +262,7 @@ sonic-db-cli ASIC_DB KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 docker exec swss saidump | grep -A2 -E 'TUNNEL|DECAP_DSCP_TO_TC|ENCAP_TC_TO_DSCP' | head
 ```
 
-## トラブルシュート
+### 追加確認事項
 
 - decap 後の DSCP が期待通り再書き換えされない場合、`DSCP_TO_TC_MAP` と `TC_TO_DSCP_MAP` の TUNNEL 適用 (`config qos remap` / `TUNNEL` テーブル) を確認する。
 - [ASIC](../reference/glossary.md#term-asic) が DSCP 透過 (`SAI_TUNNEL_DECAP_TTL_MODE_PIPE_MODEL` の挙動差) の場合、`saidump` で `SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP` が NULL でないか確認する。

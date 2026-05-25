@@ -155,7 +155,7 @@ ssh -p 2001 admin@sonic-switch  # line 1 へ reverse SSH
 
 ## トラブルシューティング
 
-- session が肌触りで切れない → `consutil clear <line>` で強制クリア。`consutil sync` で STATE_DB を実状態に揃える
+- session がなかなか切れない → `consutil clear <line>` で強制クリア。`consutil sync` で STATE_DB を実状態に揃える
 - reverse SSH で繋がらない → SONiC sshd の port forwarding 設定、`/dev/ttyXXX` の存在 / 権限を確認
 
 <!-- phase-boundary -->

@@ -203,13 +203,15 @@ show nvgre-tunnel-map
 
 ### コマンド例
 
-トンネル [DSCP](../reference/glossary.md#term-dscp) マップと再書換ポリシーを確認する。
+NVGRE トンネルとマップの設定・ASIC 状態を確認する。
 
 ```bash
-# トンネル DSCP / マップ
-show tunnel
-redis-cli -n 4 keys 'TUNNEL_DECAP_TABLE:*'
-redis-cli -n 4 hgetall 'TC_TO_DSCP_MAP|AZURE'
+# CONFIG_DB の NVGRE 設定確認
+redis-cli -n 4 keys 'NVGRE_TUNNEL*'
+redis-cli -n 4 hgetall 'NVGRE_TUNNEL|tunnel1'
+redis-cli -n 4 keys 'NVGRE_TUNNEL_MAP*'
+
+# ASIC_DB で SAI オブジェクト確認
 redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*' | head
 ```
 
