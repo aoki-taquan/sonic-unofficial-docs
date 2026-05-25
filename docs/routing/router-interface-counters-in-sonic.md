@@ -160,7 +160,7 @@ HLD には専用の [CONFIG_DB](../reference/glossary.md#term-config_db) エン�
 引数なしの場合は全 RIF を表形式で表示[^1]。
 
 ```text
-      IFACE       RX_OK    RX_BPS    RX_PPS    RX_ERR    TX_OK    TX_BPS    Tx_PPS    TX_ERR
+      IFACE       RX_OK    RX_BPS    RX_PPS    RX_ERR    TX_OK    TX_BPS    TX_PPS    TX_ERR
 -----------       -------  --------  --------  ------    -------  --------  --------  --------
 Ethernet0         2180       N/A       N/A        0      44697      N/A       N/A     0
 Portchannel0002   2833       N/A       N/A        0          0      N/A       N/A     0
@@ -205,13 +205,12 @@ router interface (L3) のカウンタを確認する。
 
 ```bash
 show interfaces counters rif
-render-counters
 redis-cli -n 2 keys 'COUNTERS:oid:0x6*' | head
 ```
 
 ## 制限事項
 
-- counter は SAI の per-RIF counter を polling で取得しており、polling 間隔より短いバースト trafic は反映が遅れる。
+- counter は SAI の per-RIF counter を polling で取得しており、polling 間隔より短いバースト traffic は反映が遅れる。
 - [ASIC](../reference/glossary.md#term-asic) が per-RIF counter を持たない platform では本機能は no-op となり、`show interfaces counters rif` が常に 0 になる。
 - multi-asic chassis では namespace ごとに counter 表示が分かれるため、全 fabric を見たい場合は集約スクリプトが必要。
 
