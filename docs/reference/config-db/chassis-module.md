@@ -453,43 +453,6 @@ chassisd 内部では整数定数に変換して platform API へ渡す:
 > **Evidence**: `sonic-platform-daemons` `sonic-chassisd/scripts/chassisd:81-104`; `sonic-platform-common` `sonic_platform_base/module_base.py:34-57`
 <!-- /constants -->
 
-<!-- failure -->
-## 失敗挙動
-
-ソース: `sonic-net/sonic-platform-daemons/sonic-chassisd/scripts/chassisd`
-
-### カード切断 (offline 遷移)
-
-| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
-|---|---|---|---|
-| モジュールの `oper_status` が `Online` → 非 `Online` に遷移 | `ModuleUpdater.module_db_update()` L420-434 | `down_modules` dict に登録、ASIC テーブル更新をスキップ (`continue`) | LOG_WARNING "Module {} (Slot {}) went off-line!" |
-| `notOnlineModules` リストのモジュールに属する ASIC エントリ | `module_db_update()` L471-478 | `CHASSIS_ASIC_TABLE` から全 ASIC エントリを削除 | なし |
-| モジュールが 30 分以上 down のまま | `module_down_chassis_db_cleanup()` L663-664 | chassis app DB エントリをクリーンアップ。失敗時は `log_error` 出力し次周期に継続 | LOG_ERROR "Failed to clean up chassis app db entries for {}" |
-| platform API が `NotImplementedError` を返す | `try_get()` L125-141 | fallback: `oper_status='Offline'`, `slot=-1`, `asics=[]`, `midplane_ip='0.0.0.0'` — ASIC テーブル更新スキップ | なし (silent fallback) |
-| midplane 初期化失敗 (`init_midplane_switch()` が `False`) | `ModuleUpdater.__init__()` L309-311 | `midplane_initialized=False`、処理は継続するが midplane 依存機能が無効 | LOG_ERROR "Chassisd midplane intialization failed" |
-| `get_num_modules()` が 0 を返す | `modules_num_update()` L338-341 | STATE_DB への `chassis_num_cards` 書き込みをスキップ | LOG_ERROR "Chassisd has no modules available" |
-
-### admin_status 不正値
-
-| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
-|---|---|---|---|
-| `admin_state` が `0`/`1` 以外 (SmartSwitch) | `SmartSwitchModuleConfigUpdater.module_config_update()` L252-253 | `set_admin_state_gracefully()` 未呼び出し・スレッド起動なし (silent drop) | LOG_WARNING "Invalid admin_state value: {}" |
-| `key` が `LINE-CARD` / `FABRIC-CARD` / `SUPERVISOR` 以外 (非 SmartSwitch) | `ModuleConfigUpdater.module_config_update()` L192-200 | platform API 呼び出しをスキップして `return` | LOG_ERROR "Incorrect module-name {}. Should start with ..." |
-| `key` が `DPU` 始まりでない (SmartSwitch) | `SmartSwitchModuleConfigUpdater.module_config_update()` L236-239 | platform API 呼び出しをスキップして `return` | LOG_ERROR "Incorrect module-name {}. Should start with {}" |
-| `get_module_index(key)` が -1 を返す | `module_config_update()` L202-207 / L241-245 | `set_admin_state()` 未呼び出し・`return` | LOG_ERROR "Unable to get module-index for key {} to set admin-state {}" |
-| YANG 外の `admin_status` 値 (例: `"enabled"`) が CONFIG_DB に書き込まれた場合 | `get_module_admin_status()` L354-362 | 文字列をそのまま返す。`!= 'down'` 条件を満たし ASIC テーブル更新が継続 (意図せず up 扱い) | なし |
-
-### systemd 起動失敗
-
-| 失敗条件 | 検出箇所 | 結果 | ログ出力 |
-|---|---|---|---|
-| `sonic_platform.platform.Platform()` のインポート/初期化が例外 | `get_chassis()` L143-149 | `sys.exit(CHASSIS_LOAD_ERROR=1)` — supervisord が自動再起動 | LOG_ERROR "Failed to load chassis due to {}" |
-| 非 SmartSwitch で `my_slot` または `supervisor_slot` が -1 | `ChassisD.run()` L1424-1427 | `sys.exit(CHASSIS_NOT_SUPPORTED=2)` — supervisord は再起動しない | LOG_ERROR "Chassisd not supported for this platform" |
-| FABRIC-CARD shutdown 時に chassisd が未起動 | `config/chassis_modules.py` `check_config_module_state_with_timeout()` | `TIMEOUT_SECS=10` 秒待機後に `systemctl stop swss@<asic>.service` を強制実行 | なし |
-
-> **Evidence**: `chassisd:125-141,143-149,192-212,235-256,309-311,338-341,420-435,471-478,663-664,1424-1427`; `config/chassis_modules.py:12`
-<!-- /failure -->
-
 <!-- ordering -->
 ## 起動順序依存・CHASSIS_APP_DB 連携
 
