@@ -89,7 +89,7 @@ APPL_DB:
   ROUTE_TABLE     ─> RouteOrch
   NEIGH_TABLE     ─> NeighOrch
   NEXTHOP_GROUP_TABLE  ─> NhgOrch
-  LABEL_ROUTE_TABLE    ─> MplsRouteOrch (※17 章参照)
+  LABEL_ROUTE_TABLE    ─> MplsRouteOrch (※ MPLS 参照)
 
 STATE_DB:
   ROUTE_TABLE / NEIGH_RESOLVE_TABLE / FG_ROUTE_TABLE
@@ -134,7 +134,7 @@ CONFIG_DB:SWITCH_HASH|GLOBAL
   lag_hash:  "..."
 ```
 
-これは ASIC 全体 1 つの設定で、per-VRF / per-route の hash 切替は SONiC master でサポートされません。inner header をハッシュに含めるかは [VXLAN](../../reference/glossary.md#term-vxlan) / [SRv6](../../reference/glossary.md#term-srv6) でしばしば問題になります（→ 03 章、17 章）。
+これは ASIC 全体 1 つの設定で、per-VRF / per-route の hash 切替は SONiC master でサポートされません。inner header をハッシュに含めるかは [VXLAN](../../reference/glossary.md#term-vxlan) / [SRv6](../../reference/glossary.md#term-srv6) でしばしば問題になります（VXLAN/EVPN 章および SRv6 関連ページを参照）。
 
 ## NHG 参照カウントと resync
 

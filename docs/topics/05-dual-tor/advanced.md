@@ -140,7 +140,7 @@ sonic-clear dhcprelay_counters
 - tunnel DSCP remap の検証では、サーバ→standby ToR→active ToR→上流の経路で `tcpreplay` などにより 0.1〜10Gbps の負荷をかけ、`show queue counters` で tunnel 用 queue が分離されていること、PFC pause が通常経路へ波及しないことを確認する。
 - DHCPv6 loopback source mode は両 ToR で同時に `use-loopback-address enable` を設定したうえで、client → relay-forward → server → relay-reply の Wireshark/`tcpdump` キャプチャを取得し、loopback IP が source として一貫しているかを点検する。
 
-## 関連ページ (追補)
+## 横断参照 (追補)
 
 - [DSCP remapping for tunnel traffic](../../overlay/dscp-remapping-for-tunnel-traffic.md)
 - [DHCPv6 Relay Agent](../../architecture/dhcpv6-relay-agent.md)
