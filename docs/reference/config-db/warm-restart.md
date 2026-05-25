@@ -105,7 +105,7 @@ WARM_RESTART|<module>
 
 ## 例外条件・特殊挙動 <!-- cdb-exceptions -->
 
-<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang; sonic-swss/cfgmgr/vlanmgr.cpp -->
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang; sonic-swss-common/common/warm_restart.cpp -->
 
 - **`module` 列挙値 (YANG)**: `bgp` / `teamd` / `swss` / `system` のみ許可。それ以外は YANG バリデーションで reject される[^exc1]。
 - **フィールドとモジュールの対応 (YANG `must`)**:
@@ -119,7 +119,7 @@ WARM_RESTART|<module>
 - **warm-restart 有効化ログ**: `enable` が `true` の場合、各 mgr が起動後に `SWSS_LOG_NOTICE("warmstart state set to REPLAYED/RECONCILED")` を記録する[^exc2]。
 
 [^exc1]: `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang` <https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-warm-restart.yang>
-[^exc2]: `sonic-swss/cfgmgr/vlanmgr.cpp` (warmstart ロジック参照) <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp>
+[^exc2]: `sonic-swss-common/common/warm_restart.cpp` (warmstart 状態ログ) <https://github.com/sonic-net/sonic-swss-common/blob/master/common/warm_restart.cpp>
 
 <!-- ref-triangle:start -->
 
