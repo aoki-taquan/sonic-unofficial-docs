@@ -1,6 +1,6 @@
 ---
 title: sonic-copp YANG
-description: 'sonic-copp YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-copp.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd'
+description: "sonic-copp YANG — Control Plane Policing (CoPP) の YANG モデル。COPP_GROUP でポリサーを定義し COPP_TRAP でトラップ ID を紐付ける。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
@@ -67,7 +67,7 @@ flowchart LR
 
 ## ツリー
 
-```yaml
+```text
 module: sonic-copp
   +--rw sonic-copp
      +--rw COPP_GROUP
@@ -111,10 +111,10 @@ module: sonic-copp
 | `meter_type` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/meter_type` | `stypes:meter_type` | yes |  |  | Metering unit for the embedded policer (packets or bytes). |
 | `mode` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/mode` | `enumeration` | yes |  | sr_tcm, tr_tcm, storm | [Policer](../../reference/glossary.md#term-policer) mode: single-rate TCM, two-rate TCM, or storm control. |
 | `color` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/color` | `stypes:policer_color_source` |  |  |  | [Policer](../../reference/glossary.md#term-policer) color awareness mode (aware or blind). |
-| `cir` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/cir` | `uint64` |  | 0 |  | Committed information rate for the dual-rate token  					bucket policer.  This value represents the rate at which  					tokens are added to the primary bucket. |
-| `cbs` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/cbs` | `uint64` |  | 0 |  | Committed burst size for the dual-rate token bucket  					policer.  This value represents the depth of the token  					bucket. |
-| `pir` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/pir` | `uint64` |  |  |  | Peak information rate for the dual-rate token bucket  					policer.  This value represents the rate at which tokens  					are added to the secondary bucket. |
-| `pbs` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/pbs` | `uint64` |  |  |  | Excess burst size for the dual-rate token bucket policer.  					This value represents the depth of the secondary bucket. |
+| `cir` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/cir` | `uint64` |  | 0 |  | Committed information rate for the dual-rate token bucket policer. Rate at which tokens are added to the primary bucket. |
+| `cbs` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/cbs` | `uint64` |  | 0 |  | Committed burst size for the dual-rate token bucket policer. Depth of the primary token bucket. |
+| `pir` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/pir` | `uint64` |  |  |  | Peak information rate for the dual-rate token bucket policer. Rate at which tokens are added to the secondary bucket. |
+| `pbs` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/pbs` | `uint64` |  |  |  | Excess burst size for the dual-rate token bucket policer. Depth of the secondary token bucket. |
 | `green_action` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/green_action` | `stypes:policer_packet_action` |  | forward |  | Action for packets classified as green by the policer. |
 | `yellow_action` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/yellow_action` | `stypes:policer_packet_action` |  | forward |  | Action for packets classified as yellow by the policer. |
 | `red_action` | `sonic-copp/COPP_GROUP/COPP_GROUP_LIST/red_action` | `stypes:policer_packet_action` |  | forward |  | Action for packets classified as red by the policer. |
