@@ -140,7 +140,7 @@ excerpt: |
   provide a service/daemon in SONiC to run in DualToR mode, which can interact with Platform API as well interact with state machine (aka Linkmgr) and orchagent to provide capability for it to get/set Link State/Forwarding State etc. from SoC(gRPC server listening to the client)
   ... over a secure channel
   ... using a loopback IP as source IP
-  ... interface for SoC to notify this gRPC client about going to maintainence/shutdown via an asynchronous method
+  ... interface for SoC to notify this gRPC client about going to maintenance/shutdown via an asynchronous method
 reasoning: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notification) の根拠。
 -->
 
@@ -157,7 +157,7 @@ reasoning: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notifica
     provide a service/daemon in SONiC to run in DualToR mode, which can interact with Platform API as well interact with state machine (aka Linkmgr) and orchagent to provide capability for it to get/set Link State/Forwarding State etc. from SoC(gRPC server listening to the client)
     ... over a secure channel
     ... using a loopback IP as source IP
-    ... interface for SoC to notify this gRPC client about going to maintainence/shutdown via an asynchronous method
+    ... interface for SoC to notify this gRPC client about going to maintenance/shutdown via an asynchronous method
     ```
 
     **判断根拠**: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notification) の根拠。
