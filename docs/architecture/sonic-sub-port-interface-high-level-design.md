@@ -178,18 +178,6 @@ redis-cli -n 4 keys 'VLAN_SUB_INTERFACE|*'
 ip -d link show Ethernet0.10
 ```
 
-### コマンド例: Subport 動作確認
-
-下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。
-
-```bash
-# Subport (VLAN tagged subinterface) の認識状況
-show subinterface status
-redis-cli -n 4 keys 'VLAN_SUB_INTERFACE|*'
-ip -d link show Ethernet0.10
-```
-
 ## 裏取り済み実装位置 (2026-05-11)
 
 - SubIntf 共通ライブラリ: `sonic-swss/lib/subintf.cpp` / `sonic-swss/lib/subintf.h`
