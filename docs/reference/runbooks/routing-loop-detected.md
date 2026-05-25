@@ -26,7 +26,7 @@ related:
 
 - `traceroute` で同一 hop の繰り返し
 - TTL exceeded が大量に発生（`show interfaces counters` の `RX_ERR` 増加 / control plane CPU 急上昇）
-- pingが通らずレイテンシ巨大
+- ping が通らずレイテンシ巨大
 
 ## 想定原因（優先度順）
 
