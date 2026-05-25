@@ -8,19 +8,19 @@ last_verified: 2026-05-14
 sources:
   - repo: sonic-net/sonic-utilities
     path: pfcwd/main.py
-    ref: HEAD
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
   - repo: sonic-net/sonic-utilities
     path: scripts/ecnconfig
-    ref: HEAD
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
   - repo: sonic-net/sonic-utilities
     path: show/interfaces/__init__.py
-    ref: HEAD
+    ref: 39732bceb8bdefe706518ab40623bbbba6ff33b9
   - repo: sonic-net/sonic-buildimage
     path: dockers/docker-lldp/lldpmgrd
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py
-    ref: HEAD
+    ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
 related:
   config_db:
     - DEVICE_NEIGHBOR

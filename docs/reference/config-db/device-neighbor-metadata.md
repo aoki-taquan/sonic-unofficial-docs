@@ -30,7 +30,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>DEVICE_NEIGHBOR_METADATA")]
-  DM["lldpmgrd"]
+  DM["bgpcfgd"]
   CDB --> DM
 ```
 
@@ -355,9 +355,11 @@ self.selector.addSelectable(subscriber)
 
 ## 購読者
 
+- [bgpcfgd](../../reference/glossary.md#term-bgpcfgd): SubscriberStateTable で継続購読し、BGP ピア設定生成に使用
+- pfcwd: 起動時スナップショットで `type` フィールドを参照してサーバ向けポートを判定
+- `show interfaces neighbor expected`: コマンド実行時スナップショット
+- db_migrator (`update_edgezone_aggregator_config`): マイグレーション時スナップショット
 - minigraph パーサ ([sonic-cfggen](../../reference/glossary.md#term-sonic-cfggen)): minigraph から生成
-- 一部監視・トポロジ可視化スクリプトが参照
-- [BGP](../../reference/glossary.md#term-bgp) テンプレート生成 (`bgpcfgd` テンプレート) で hwsku/type を参照することがある
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -427,9 +429,9 @@ show lldp table
 
 ### 段階 4 — タイミングと副作用
 
-**適用タイミング**: CONFIG_DB に書き込まれると即時に参照可能。lldpmgrd が [LLDP](../../reference/glossary.md#term-lldp) neighbor との照合に使用。
+**適用タイミング**: CONFIG_DB に書き込まれると即時に参照可能。[bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が SubscriberStateTable で継続購読し、BGP ピア設定生成に使用する。pfcwd / show / db_migrator はスナップショット読み出し。
 
-**副作用**: neighbor metadata の変更は [LLDP](../../reference/glossary.md#term-lldp) 情報の表示 / 解釈に影響。ネットワーク動作への直接影響なし。
+**副作用**: neighbor metadata の変更は BGP セッション設定・pfcwd のポートロール判定・QoS 設定に影響。lldpmgrd は本テーブルを購読しない（pubsub セクション参照）。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
