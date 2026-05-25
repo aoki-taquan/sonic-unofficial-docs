@@ -125,7 +125,7 @@ flowchart LR
 
 ## 関連リファレンス
 
-- CONFIG_DB: `SSH_SERVER`
+- CONFIG_DB: [`SSH_SERVER`](../config-db/ssh-server.md)
 
 <!-- ref-triangle:end -->
 

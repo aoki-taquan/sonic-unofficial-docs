@@ -28,7 +28,7 @@ related:
 
 ## 概要
 
-`config route` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `STATIC_ROUTE` テーブルに対する static route の add / del を行う。[FRR](../../reference/glossary.md#term-frr) の Zebra に対しては `bgpcfgd` 経由で反映される（CLI は [CONFIG_DB](../../reference/glossary.md#term-config_db) のみを書く）。コマンドは `cli_sroute_to_config` という共通パーサで CLI トークンを解析し、`STATIC_ROUTE` テーブルのキー (`vrf|prefix` または `prefix`) と value 辞書 (`nexthop` / `nexthop-vrf` / `ifname` / `distance` / `blackhole`) に展開する[^1]。
+`config route` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `STATIC_ROUTE` テーブルに対する static route の add / del を行う。[FRR](../../reference/glossary.md#term-frr) の Zebra に対しては `staticd`（FRR の static route デーモン）経由で反映される（CLI は [CONFIG_DB](../../reference/glossary.md#term-config_db) のみを書く）。コマンドは `cli_sroute_to_config` という共通パーサで CLI トークンを解析し、`STATIC_ROUTE` テーブルのキー (`vrf|prefix` または `prefix`) と value 辞書 (`nexthop` / `nexthop-vrf` / `ifname` / `distance` / `blackhole`) に展開する[^1]。
 
 multi-[ASIC](../../reference/glossary.md#term-asic) 対応として `-n / --namespace` を持ち、対象 namespace の [CONFIG_DB](../../reference/glossary.md#term-config_db) に書く。
 
@@ -116,7 +116,7 @@ excerpt: |
 ## multi-ASIC
 
 - `-n / --namespace` 必須（multi-[ASIC](../../reference/glossary.md#term-asic) 環境）。
-- 各 namespace の CONFIG_DB に対して個別に書く。[FRR](../../reference/glossary.md#term-frr) への反映は namespace 内の `bgpcfgd` が担当する。
+- 各 namespace の CONFIG_DB に対して個別に書く。[FRR](../../reference/glossary.md#term-frr) への反映は namespace 内の `staticd` が担当する。
 
 ## 制限・癖
 
