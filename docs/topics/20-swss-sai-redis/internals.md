@@ -125,7 +125,7 @@ Debug Framework と dump utility はオペレータ目線、SAI failure dump は
 
 ## syncd の処理モデル
 
-`syncd` は SAI を呼び出す唯一のプロセスで、内部で以下のスレッド構成を持ちます。
+`syncd` は SAI を呼び出す唯一のプロセスで、内部で以下のスレッド構成を持つ。
 
 | スレッド | 役割 |
 | --- | --- |
@@ -134,7 +134,7 @@ Debug Framework と dump utility はオペレータ目線、SAI failure dump は
 | flexcounter | counter group ごとに polling し、`COUNTERS_DB` に書き込む（→ 09 章） |
 | dump | `SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP` 受信時に SAI / ASIC_DB を snapshot |
 
-sairedis library 側で async / sync モードが選べ、SONiC master はデフォルト async（pipeline で複数 op をまとめる）を採用しています。sync モードは SAI 失敗の即時検知に有用ですが throughput が落ちます。
+sairedis library 側で async / sync モードが選べ、SONiC master はデフォルト async（pipeline で複数 op をまとめる）を採用する。sync モードは SAI 失敗の即時検知に有用だが throughput が落ちる。
 
 ## orchagent が ASIC_DB に接続する仕組み
 
