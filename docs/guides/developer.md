@@ -38,7 +38,7 @@ related:
 ## 不足コンテンツ注記
 
 - 「新機能追加時のチェックリスト」がありません。YANG 追加、CONFIG_DB schema、CLI、orch / daemon、test plan、migration、docs 反映を 1 本の流れで示すページが必要です。
-- HLD と実コードの対応を横断検索する入口が弱い状態です。各ページの sources はありますが、開発者が「この CONFIG_DB テーブルを読む daemon はどれか」「この CLI がどの DB を書くか」を俯瞰する索引が欲しい状態です。
+- 「この CONFIG_DB テーブルを読む daemon はどれか」を俯瞰する索引として [CONFIG_DB ↔ orch 対応表](../reference/config-db-orch-map.md) があります。「この CLI がどの DB を書くか」の横断索引はまだ不足しています。
 - テスト観点の導線が area 別に散っているため、開発者向けに test plan の読み方、既存テストとの対応、検証粒度をまとめるとよいです。
 
 <!-- topics-back-ref -->

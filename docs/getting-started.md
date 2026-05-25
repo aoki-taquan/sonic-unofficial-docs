@@ -16,9 +16,9 @@ related:
 
 # 初めての方の必読 10 (Essentials)
 
-[SONiC](./reference/glossary.md#term-sonic) NOS（コミュニティ版・master）をこれから学ぶ読者向けに、本サイト 900 ページ超の中から **「最初に読めば SONiC の全体像が掴める」10 ページ** を順序立てて紹介します。[HLD](./reference/glossary.md#term-hld) 単位の網羅ではなく「学習導線」として並べ直しているため、上から順に読むと SONiC の設定・データ・制御プレーン・運用が一通り見えるようになります。
+[SONiC](./reference/glossary.md#term-sonic) NOS（コミュニティ版・master）をこれから学ぶ読者向けに、本サイト 1,000 ページ超の中から **「最初に読めば SONiC の全体像が掴める」10 ページ** を順序立てて紹介します。[HLD](./reference/glossary.md#term-hld) 単位の網羅ではなく「学習導線」として並べ直しているため、上から順に読むと SONiC の設定・データ・制御プレーン・運用が一通り見えるようになります。
 
-900 ページ全体を俯瞰したい方は [トップ index](index.md) と [読み手別ガイド (guides/)](guides/index.md) を、症状逆引きで Runbook を探したい方は [Runbooks 索引](reference/runbooks/index.md) を参照してください。
+1,000 ページ全体を俯瞰したい方は [トップ index](index.md) と [読み手別ガイド (guides/)](guides/index.md) を、症状逆引きで Runbook を探したい方は [Runbooks 索引](reference/runbooks/index.md) を参照してください。
 
 ---
 

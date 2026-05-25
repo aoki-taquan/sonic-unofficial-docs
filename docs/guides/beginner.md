@@ -30,11 +30,11 @@ related:
 8. [Zero Touch Provisioning](../system/zero-touch-provisioning-ztp.md)
 9. 関心に応じて [ルーティング](../routing/index.md)、[スイッチング](../switching/index.md)、[システム](../system/index.md)
 
-## 不足コンテンツ注記
+## 補足情報
 
-- 「SONiC の全体像」を 1 ページで説明する導入記事が不足しています。トップページには要約がありますが、[CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) / [ASIC_DB](../reference/glossary.md#term-asic_db)、SwSS、[syncd](../reference/glossary.md#term-syncd)、SAI の関係を初学者向けに順序立てて読む導線はまだ弱い状態です。
-- 「最小用語集」がありません。SAI、[orchagent](../reference/glossary.md#term-orchagent)、syncd、CONFIG_DB、[YANG](../reference/glossary.md#term-yang)、[FRR](../reference/glossary.md#term-frr)、PMON、multi-[ASIC](../reference/glossary.md#term-asic) などの用語は各ページに散っています。
-- area index の多くが stub のため、初学者が area の中で何を読むべきか判断しにくい状態です。
+- 全体像と DB の関係（CONFIG_DB / APPL_DB / STATE_DB / ASIC_DB、SwSS、syncd、SAI）については [初めての方の必読 10](../getting-started.md) の推奨読破順 1〜4 に沿って読むと把握しやすいです。
+- 用語は [用語集 (Glossary)](../reference/glossary.md) に一覧化されています。SAI、[orchagent](../reference/glossary.md#term-orchagent)、[syncd](../reference/glossary.md#term-syncd)、[CONFIG_DB](../reference/glossary.md#term-config_db)、[YANG](../reference/glossary.md#term-yang)、[FRR](../reference/glossary.md#term-frr)、PMON、multi-[ASIC](../reference/glossary.md#term-asic) などを読みながら逐次参照してください。
+- 各 area の読み進め方は [Topics 章扉](../topics/index.md) にまとまっています。
 
 <!-- topics-back-ref -->
 ## 関連 Topics
