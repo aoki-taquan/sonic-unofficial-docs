@@ -182,7 +182,7 @@ redis-cli -n 1 KEYS "ASIC_STATE:SAI_OBJECT_TYPE_INSEG_ENTRY:*" | head
 crm show resources mpls
 ```
 
-## 関連 Topic
+## 関連 Topics
 
 - [17 SRv6 / MPLS / concept](../topics/17-srv6-mpls/concept.md)
 - [17 SRv6 / MPLS / internals](../topics/17-srv6-mpls/internals.md)

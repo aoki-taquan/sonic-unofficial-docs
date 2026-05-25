@@ -37,8 +37,8 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! warning "裏取りステータス: HLD-only"
-    `fpmsyncd` の `RTM_NEWNEXTHOP` ハンドラ、`NEXTHOP_GROUP_TABLE` の APPL_DB スキーマ、`NhgOrch` の multipath 拡張、`fpm use-nexthop-groups` の有効化フローは現行 master 未裏取り。
+!!! warning "裏取りステータス: discrepancy-found"
+    `fpmsyncd` の `RTM_NEWNEXTHOP` ハンドラ・`NEXTHOP_GROUP_TABLE` の APPL_DB スキーマ・`NhgOrch` の multipath 拡張は master に実装済みだが、有効化キー名（HLD: `fpm_use_nexthop_groups` → 実装: `nexthop_group`）に乖離あり。詳細は「HLD と実装の差分」節を参照。
 
 # fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
 
@@ -167,20 +167,15 @@ HLD 内で専用 `config` CLI の言及は無い（CONFIG_DB 直接編集また�
 
 ## トラブルシューティング
 
-- 有効化しても `NEXTHOP_GROUP_TABLE` が空 → zebra 設定で `fpm use-nexthop-groups` が出ているか `vtysh -c 'show running'` 確認
+- 有効化しても `NEXTHOP_GROUP_TABLE` が空 → zebra 設定で `fpm use-nexthop-groups` が出ているか `vtysh -c 'show running'` 確認（有効化キーは `nexthop_group`。詳細は「HLD と実装の差分」節を参照）
 - libnl のバージョン違い → `RTM_NEWNEXTHOP` 受信が無い場合に発生
+- ルート学習後に [ASIC](../reference/glossary.md#term-asic) まで反映されない場合、`fpmsyncd` の NLMSG パースに失敗していないかを `docker logs bgp` と `/var/log/swss/swss.rec` の両方で確認
+- NHG 上限超過時は [orchagent](../reference/glossary.md#term-orchagent) が単一ホップにフォールバックする。`SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` と現在数 (`ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP` の総数) を比較する
+- FRR と kernel の NHG ID 対応が崩れた場合は `bgp` コンテナ再起動で再 sync するが、APPL_DB の stale エントリは `swssconfig` で flush することを検討
 
 ### コマンド例
 
 fpmsyncd の nexthop group メッセージ処理を確認する。
-
-```bash
-docker logs bgp 2>&1 | grep -i 'NEXTHOP_GROUP' | tail
-redis-cli -n 0 keys 'NEXTHOP_GROUP_TABLE*' | head
-redis-cli -n 1 hgetall 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP*' 2>/dev/null | head
-```
-
-## 確認コマンド
 
 ```bash
 # fpmsyncd の nexthop group 関連ログ
@@ -194,12 +189,6 @@ sonic-db-cli ASIC_DB KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP:*' | wc -l
 # FRR 側 NHG state
 docker exec bgp vtysh -c 'show nexthop-group rib'
 ```
-
-## トラブルシュート
-
-- ルート学習後に [ASIC](../reference/glossary.md#term-asic) まで反映されない場合、`fpmsyncd` の NLMSG パースに失敗していないかを `docker logs bgp` と `/var/log/swss/swss.rec` の両方で確認。
-- NHG 上限超過時は [orchagent](../reference/glossary.md#term-orchagent) が単一ホップにフォールバックする。`SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS` と現在数 (`ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP` の総数) を比較する。
-- FRR と kernel の NHG ID 対応が崩れた場合は `bgp` コンテナ再起動で再 sync するが、APPL_DB の stale エントリは `swssconfig` で flush することを検討。
 
 ## 引用元
 
