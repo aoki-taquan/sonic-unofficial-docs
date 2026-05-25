@@ -73,7 +73,8 @@ flowchart LR
 
 ## 関連リファレンス
 
-- (関連リンクなし)
+- CLI: [`config clock`](config-clock.md) / [`config ntp`](config-ntp.md)
+- [CONFIG_DB](../../reference/glossary.md#term-config_db): `DEVICE_METADATA|localhost` (`timezone` キー) / [NTP_SERVER](../config-db/ntp.md)
 
 <!-- ref-triangle:end -->
 

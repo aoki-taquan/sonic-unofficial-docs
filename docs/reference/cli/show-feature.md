@@ -83,7 +83,9 @@ CONFIG_DB の `FEATURE` テーブルから state / auto_restart / set_owner / no
 flowchart LR
   CLI["show feature"]
   CDB0[("CONFIG_DB<br/>FEATURE")]
+  SDB[("STATE_DB<br/>FEATURE")]
   CDB0 --> CLI
+  SDB --> CLI
 ```
 
 !!! note "凡例"
@@ -140,11 +142,10 @@ pmon           enabled   enabled        up
 <!-- cli-sibling -->
 ### 関連 CLI コマンド
 
-- [`config banner`](config-banner.md) — config banner サブコマンド
-- [`config clock`](config-clock.md) — config clock サブコマンド
-- [`config kdump`](config-kdump.md) — config kdump サブコマンド
-- [`config ntp`](config-ntp.md) — config ntp サブコマンド
-- [`config platform firmware`](config-platform-firmware.md) — config platform firmware サブコマンド
+- [`config feature`](config-feature.md) — config feature サブコマンド
+- [`show feature status`](show-feature.md) — feature ステータス表示
+- [`show feature config`](show-feature.md) — feature 設定値表示
+- [`show feature autorestart`](show-feature.md) — autorestart 設定表示
 
 <!-- /cli-sibling -->
 
