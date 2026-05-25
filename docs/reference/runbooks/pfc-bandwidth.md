@@ -88,7 +88,7 @@ pfcwd show stats
 sonic-db-cli COUNTERS_DB hgetall "COUNTERS:Ethernet0:PFC_WD"
 ```
 
-- 期待: `STORM` 検出が稀 / 数 0
+- 期待: `STORM` 検出が稀 / ゼロに近い
 - 異常: 特定 queue で連続検出 → ホストの PFC 発行を疑う
 
 ### 4. PFC counters (Rx / Tx pause frames)

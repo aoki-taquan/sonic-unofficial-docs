@@ -24,9 +24,6 @@ related:
 
 # Runbook: Port が admin up なのに oper down のまま
 
-!!! warning "HLD-only"
-    portsorch / xcvrd / SAI の標準動作に基づく運用ノート。
-
 ## 症状
 
 - `show interface status Ethernet0` で `Admin = up` だが `Oper = down`
@@ -82,6 +79,17 @@ ethtool Ethernet0
 `portsorch` は [CONFIG_DB](../../reference/glossary.md#term-config_db) の `PORT` 変更を [SAI](../../reference/glossary.md#term-sai) 属性 (`SAI_PORT_ATTR_ADMIN_STATE` 等) に変換して [syncd](../../reference/glossary.md#term-syncd) へ渡し、`xcvrd` は EEPROM 読出し結果を [STATE_DB](../../reference/glossary.md#term-state_db) の `TRANSCEIVER_INFO` に書き戻す[^1]。
 
 [^1]: `sonic-net/sonic-swss` `orchagent/portsorch.cpp` ([CONFIG_DB](../../reference/glossary.md#term-config_db) → [SAI](../../reference/glossary.md#term-sai) mapping) と `sonic-net/sonic-platform-daemons` の `sonic-xcvrd` (SFP EEPROM 監視) が分担する。
+
+## 確認
+
+対処後の正常化を以下で裏取りする。
+
+- **症状解消**: 「症状」節で挙げた事象 (counter / log / state) が回復していること
+- **再発監視**: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと
+- **副作用なし**: 関連サブシステム ([syslog](../../reference/glossary.md#term-syslog) / `show interfaces counters errors` / `show ip bgp summary` 等) に新規 error が出ていないこと
+- **永続化**: `sudo config save -y` 済みで `config_db.json` に変更が反映されていること (恒久対処の場合)
+
+短時間で再発する場合は「よくある原因」リストの次候補に進む。
 
 ## 関連 reference / topics
 
