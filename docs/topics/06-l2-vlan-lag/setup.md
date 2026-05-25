@@ -265,7 +265,7 @@ show vlan brief
 
 ## sonic-cfggen で部分パッチを当てる
 
-deployment template ではなく、運用中に [config_db.json](../../reference/glossary.md#term-config_db.json) の小規模変更を行うときの典型パタン:
+deployment template ではなく、運用中に [config_db.json](../../reference/glossary.md#term-config_db.json) の小規模変更を行うときの典型パターン:
 
 ```bash
 cat > /tmp/vlan_patch.json <<'EOF'
