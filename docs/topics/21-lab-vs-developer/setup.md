@@ -174,7 +174,7 @@ sudo config load /tmp/leaf1_config_db.json -y
 sudo config reload -y
 ```
 
-### 確認
+### containerlab 確認
 
 ```bash
 # BGP セッション (leaf-spine)
@@ -216,7 +216,7 @@ EOF
 sonic-cfggen -j /tmp/dash_vnet.json --write-to-db
 ```
 
-### 確認
+### DASH 確認
 
 ```bash
 # DASH 状態
