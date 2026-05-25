@@ -120,8 +120,8 @@ MUX_LINKMGR|SERVICE_MGMT
 
 ### 典型値
 
-- key 形式: `MUX_LINKMGR|LINK_PROBER` 等`。
-- `interval_v4_in_msec`: 100、`positive_signal_count`: 1、`negative_signal_count`: 3。
+- key 形式: `MUX_LINKMGR|LINK_PROBER` 等。
+- `interval_v4`: 100 ms、`positive_signal_count`: 1、`negative_signal_count`: 3。
 
 ### よくある誤設定
 
