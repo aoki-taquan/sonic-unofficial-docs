@@ -27720,7 +27720,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30100,7 +30100,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35663,7 +35663,7 @@
 <p><code>aggregate-voq-counters-in-sonic</code> <a href="../../../reference/glossary/#term-hld">HLD</a> は、VOQ counter が ASIC namespace ごとに分散している問題を解決します。VOQ は ingress 側で egress system port ごとに存在するため、「ある egress system port の輻輳」を知りたいときに、全 ingress line card の COUNTERS_DB を横断する必要があります。</p>
 <p>集約は以下の流れで行います。</p>
 <ol>
-<li>各 line card の COUNTERS_DB が persys-port VOQ counter を持つ。</li>
+<li>各 line card の COUNTERS_DB が per-sys-port VOQ counter を持つ。</li>
 <li>supervisor 側の aggregator が全 line card の COUNTERS_DB を購読する。</li>
 <li>egress system port 単位での合計値を Chassis DB 側に書き込む。</li>
 <li>CLI <code>show queue</code> 系が、aggregator 出力を整形して提示する。</li>
@@ -35699,7 +35699,7 @@
 <tr>
 <td><code>COUNTERS_DB</code> (line card)</td>
 <td><code>COUNTERS:oid:0x15...</code></td>
-<td>persys-port VOQ の生 counter</td>
+<td>per-sys-port VOQ の生 counter</td>
 </tr>
 <tr>
 <td><code>CHASSIS_APP_DB</code> (supervisor)</td>

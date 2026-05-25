@@ -9640,17 +9640,6 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -27654,7 +27643,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30034,7 +30023,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35448,17 +35437,6 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -35641,6 +35619,9 @@
 <li>スケール: グループ数 8、bucket size は HW 依存（最大 4k）<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>全 prefix に consistent ECMP を効かせる「動的有効化」は <a href="../../reference/glossary/#term-hld">HLD</a> スコープ外<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 <li>route/nexthop モードでは <code>FG_NHG_MEMBER</code> 未定義の NH は <strong>黙って ASIC に伝播されない</strong>（syslog エラーのみ）<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>FG-ECMP は per-prefix の hash bucket 制御を <a href="../../reference/glossary/#term-sai">SAI</a> 経由で行うため、ASIC が <code>SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP</code> を未サポートだと有効化できない</li>
+<li>bucket 数は platform 依存 (典型的に 16 / 64 / 256) で、<code>FG_NHG</code> テーブルで指定したサイズと一致しない場合は flap 時の影響範囲が変わる</li>
+<li>inactive nexthop の bucket 入れ替え動作は実装/HLD 間で差異が報告されており、<code>saidump</code> で実際の bucket 配列を検証することを推奨</li>
 </ul>
 <h2 id="8">8. 干渉する機能<a class="headerlink" href="#8" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35664,13 +35645,7 @@
 <li>Topics: <a href="../../topics/04-vrf-ecmp/concept/">VRF / ECMP 概念</a>, <a href="../../topics/04-vrf-ecmp/ecmp/">ECMP 詳細</a>, <a href="../../topics/04-vrf-ecmp/internals/">VRF / ECMP 内部実装</a>, <a href="../../topics/04-vrf-ecmp/operations/">VRF / ECMP 運用</a></li>
 <li>関連 HLD: <a href="../sonic-weighted-ecmp/">SONiC Weighted ECMP</a>, <a href="../local-ars-hld/">Local ARS HLD</a>, <a href="../overlay-ecmp-enhancements/">Overlay ECMP Enhancements</a>, <a href="../multiple-nexthop-route-hld/">Multiple Nexthop Route HLD</a></li>
 </ul>
-<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<ul>
-<li>FG-ECMP は per-prefix の hash bucket 制御を SAI 経由で行うため、ASIC が <code>SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP</code> を未サポートだと有効化できない。</li>
-<li>bucket 数は platform 依存 (典型的に 16 / 64 / 256) で、<code>FG_NHG</code> テーブルで指定したサイズと一致しない場合は flap 時の影響範囲が変わる。</li>
-<li>inactive nexthop の bucket 入れ替え動作は実装/HLD 間で差異が報告されており、<code>saidump</code> で実際の bucket 配列を検証することを推奨。</li>
-</ul>
-<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <!-- evidence:
 source: sonic-net/SONiC/doc/ecmp/fine_grained_next_hop_hld.md#L344-L352 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)
 excerpt: |

@@ -27699,7 +27699,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30079,7 +30079,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35664,7 +35664,7 @@
 <h4 id="show">show<a class="headerlink" href="#show" title="Permanent link">&para;</a></h4>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>admin@sonic:~$ sudo sonic-bootchart show
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Status     Operational Status   Frequency  Time Span (sec)  Output
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>enabled    in-active            10         50               /run/log/bootchart-20220504-1325.svg
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>enabled    inactive            10         50               /run/log/bootchart-20220504-1325.svg
 </span></code></pre></div>
 <table>
 <thead>
@@ -35779,7 +35779,7 @@
 <h2 id="_11">トラブルシューティング<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>sonic-bootchart enable</code> で <code>not installed</code> → image を <code>INCLUDE_BOOTCHART=y</code> で再ビルド</li>
-<li>reboot 後 SVG が無い → <code>Operational Status</code> が <code>in-active</code> か（= 完了済み）、<code>Time Span</code> が経過しているかを確認</li>
+<li>reboot 後 SVG が無い → <code>Operational Status</code> が <code>inactive</code> か（= 完了済み）、<code>Time Span</code> が経過しているかを確認</li>
 <li>SVG が生成されているのに古いまま → <code>/run/log/bootchart-*.svg</code> の timestamp、最新 boot の SVG が tmpfs に存在するか</li>
 <li>設定を変えても反映されない → <code>config</code> 後に <strong>必ず reboot</strong> が必要、<code>/etc/systemd/bootchart.conf</code> の現在値を直接確認</li>
 </ul>
@@ -35788,7 +35788,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>systemd-analyze
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>systemd-analyze<span class="w"> </span>blame<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>systemd-analyze<span class="w"> </span>critical-chain
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>ls<span class="w"> </span>/host/boot-chart/
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>ls<span class="w"> </span>/run/log/bootchart-*.svg
 </span></code></pre></div>
 <h2 id="_13">関連リファレンス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>

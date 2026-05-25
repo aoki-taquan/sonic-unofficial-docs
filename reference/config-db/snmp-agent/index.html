@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30686,7 +30686,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37170,7 +37170,7 @@
 <p>CLI の <code>add_snmp_agent_address()</code> と <code>del_snmp_agent_address()</code> は最後に <code>os.system("systemctl restart snmp")</code> を自動実行する（<code>config/main.py:4188-4190, 4208</code>）。<sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
 <h3 id="6-minigraph-mgmt_interface-loopback_interface">6. minigraph 経路: MGMT_INTERFACE / LOOPBACK_INTERFACE 先行書込み<a class="headerlink" href="#6-minigraph-mgmt_interface-loopback_interface" title="Permanent link">&para;</a></h3>
 <p>minigraph.py は <code>MGMT_VRF_CONFIG</code> を先行して格納後、<code>mgmt_intf</code>（MGMT_INTERFACE）と <code>lo_intfs</code>（LOOPBACK_INTERFACE）のアドレスを列挙して <code>SNMP_AGENT_ADDRESS_CONFIG</code> エントリを生成する。multi-asic 環境または <code>asic_name</code> 指定時は常に空辞書になる（L2312-2324）。<sup id="fnref3:5"><a class="footnote-ref" href="#fn:5">5</a></sup></p>
-<p><strong>순序</strong>: <code>sonic-cfggen</code> が minigraph 一括処理する場合は自動的に順序保証される（手動介入不要）。</p>
+<p><strong>順序</strong>: <code>sonic-cfggen</code> が minigraph 一括処理する場合は自動的に順序保証される（手動介入不要）。</p>
 <h3 id="_6">書込み順序依存サマリ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <table>
 <thead>

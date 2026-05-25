@@ -27664,7 +27664,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30044,7 +30044,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35631,12 +35631,12 @@
 <li>IPv6 NAT（NAT66 / NPTv6）は SAI で属性は定義されているが、SONiC <a href="../../../reference/glossary/#term-orchagent">orchagent</a> の対応が partial で、<a href="../../../reference/glossary/#term-hld">HLD</a> と実装の discrepancy が出やすい部分です。</li>
 </ul>
 <h2 id="dhcp-relay-packet-path">DHCP relay の packet path<a class="headerlink" href="#dhcp-relay-packet-path" title="Permanent link">&para;</a></h2>
-<p>DHCP relay (<code>dhcprelayd</code> および <code>kea-dhcp4</code>/<code>kea-dhcp6</code> relay モード) は <a href="../../../reference/glossary/#term-copp">CoPP</a> 経由で trap された DHCP パケットを処理します。</p>
+<p>DHCP relay (<code>dhcprelay</code> / <code>dhcp6relay</code> および <code>kea-dhcp4</code>/<code>kea-dhcp6</code> relay モード) は <a href="../../../reference/glossary/#term-copp">CoPP</a> 経由で trap された DHCP パケットを処理します。</p>
 <pre class="mermaid"><code>flowchart LR
   CLIENT[DHCP client] --&gt;|broadcast / multicast| PORT[ingress port]
   PORT --&gt;|CoPP trap| CPU[CPU queue]
   CPU --&gt; KERNEL[Linux kernel]
-  KERNEL --&gt; RELAY[dhcprelayd / kea]
+  KERNEL --&gt; RELAY[dhcprelay / kea]
   RELAY --&gt;|unicast to server_vip| EGRESS[egress port]
   RELAY --&gt;|stats| DHCPMON[dhcpmon NFLOG]
   DHCPMON --&gt; STATE[(COUNTERS_DB&lt;br/&gt;DHCPV4_COUNTER_TABLE / DHCPV6_COUNTER_TABLE)]</code></pre>

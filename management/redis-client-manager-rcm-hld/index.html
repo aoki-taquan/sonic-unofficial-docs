@@ -27648,7 +27648,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30028,7 +30028,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35641,7 +35641,7 @@ reasoning: 共有 client + DBNum cache + PoolSize 20 の根拠。
 </thead>
 <tbody>
 <tr>
-<td>Phase 1: 4 API（getClient / releaseClient / makeTransaction / makeMulti）</td>
+<td>Phase 1: 4 API（RedisClient / TransactionalRedisClient / TransactionalRedisClientWithOpts / CloseRedisClient）</td>
 <td>HLD 記載どおりに実装済（master 取り込み確認）</td>
 <td>—</td>
 </tr>

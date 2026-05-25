@@ -28071,7 +28071,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30451,7 +30451,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36953,7 +36953,7 @@
 </tbody>
 </table>
 <blockquote>
-<p><strong>注意</strong>: <code>save_on_set</code> は <code>gnmi-native.sh</code> から自動読み取りされない。Go フラグ <code>--with-save-on-set</code> で手動指定が必要。</p>
+<p><strong>注意</strong>: <code>save_on_set</code> の変更を反映させるにはコンテナ再起動が必要。起動スクリプトが <code>--with-save-on-set=&lt;値&gt;</code> フラグを自動付与するが、実行中の <code>telemetry</code> デーモンはホットリロードしない。</p>
 </blockquote>
 <!-- /value-behavior -->
 

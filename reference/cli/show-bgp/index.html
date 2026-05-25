@@ -27788,7 +27788,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30168,7 +30168,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35943,14 +35943,17 @@ excerpt: |
 <!-- cli-mermaid -->
 <h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  CLI["show bgp"]
+  CLI_BGP["show bgp (CONFIG_DB 直接)"]
+  CLI_IPBGP["show ip bgp / show ipv6 bgp (FRR 経由)"]
   CDB0[("CONFIG_DB&lt;br/&gt;BGP_DEVICE_GLOBAL")]
-  CDB0 --&gt; CLI
   CDB1[("CONFIG_DB&lt;br/&gt;BGP_AGGREGATE_ADDRESS")]
-  CDB1 --&gt; CLI</code></pre>
+  FRR["vtysh (FRR bgpd)"]
+  CDB0 --&gt; CLI_BGP
+  CDB1 --&gt; CLI_BGP
+  FRR --&gt; CLI_IPBGP</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
-<p>show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
+<p><code>show bgp</code> は CONFIG_DB を直接読む。<code>show ip bgp</code> / <code>show ipv6 bgp</code> は vtysh 経由で FRR bgpd から取得する（CONFIG_DB は経由しない）。</p>
 </div>
 <!-- /cli-mermaid -->
 

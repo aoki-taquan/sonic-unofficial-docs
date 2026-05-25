@@ -27682,7 +27682,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30062,7 +30062,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35565,8 +35565,8 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition note">
-<p class="admonition-title">裏取りステータス: code-verified（実装は緩和版）</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: discrepancy-found（HLD と実装に乖離あり）</p>
 <p><code>sonic-sairedis/configure.ac</code> (l.226-261) で <code>AC_CHECK_FUNCS(sai_query_api_version, [AC_TRY_RUN([...]) ])</code> の検査が確認できる。<code>sonic-sairedis/syncd/VendorSai.cpp</code> (l.52) で <code>.query_api_version = &amp;sai_query_api_version</code> も実装済。ただし HLD 提案の「MAJOR.MINOR 一致」相当ではなく、<strong><code>sai_api_version_t minversion = SAI_VERSION(1,9,0)</code> の floor チェック</strong> に緩和されており、<code>(version &lt; minversion) || (SAI_API_VERSION &lt; minversion)</code> だけが失敗条件（PATCH どころか MINOR の上方差も許容）。詳細は configure.ac のコメントで OCP PR 1297/1795 を引用して説明。</p>
 </div>
 <h1 id="sai-api-sai_query_api_version">SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）<a class="headerlink" href="#sai-api-sai_query_api_version" title="Permanent link">&para;</a></h1>

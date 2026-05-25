@@ -27787,7 +27787,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30167,7 +30167,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35776,8 +35776,8 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
-<p>このページは公式 HLD のみを根拠に書かれている。<code>sonic-linkmgrd</code> の実コード（<code>LinkProberStateMachine</code> / <code>MuxStateMachine</code> 等）での裏取りは未済。</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>sonic-linkmgrd/src/MuxManager.cpp:104</code> で <code>MuxManager::initialize(bool enable_feature_measurement, bool enable_feature_default_route)</code> と <code>mMuxConfig.enableDefaultRouteFeature(enable_feature_default_route)</code>（L121）を確認。<code>sonic-swss/orchagent/routeorch.cpp:127</code> で <code>m_stateDefaultRouteTb</code> が STATE_DB の ROUTE state テーブルを open する実装を確認。HLD の主張（orchagent が STATE_DB にデフォルトルート状態を書き、linkmgrd がオプトインで mux 健全性に反映）は実装と整合（verified at: 2026-05-11）。</p>
 </div>
 <h1 id="linkmgrd-dualtor-mux">linkmgrd のデフォルトルート連動（DualToR mux 制御）<a class="headerlink" href="#linkmgrd-dualtor-mux" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

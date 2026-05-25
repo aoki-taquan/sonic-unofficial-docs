@@ -27665,7 +27665,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30045,7 +30045,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35651,7 +35651,7 @@
 <li><code>ls /usr/local/lib/python3*/dist-packages/config/plugins/auto/</code> — 自動生成 plugin の有無</li>
 <li><code>ls /usr/local/yang-models/</code> — 対象 YANG モジュール一覧</li>
 <li><code>sonic-cli-gen generate config &lt;module&gt;</code> を実行し、生成 plugin の import エラーは <code>python3 -c "import config.plugins.auto.&lt;module&gt;_yang"</code> で確認</li>
-<li><code>docker exec sonic-package-manager sonic-package-manager list</code> — Application Extension の有効化状況</li>
+<li><code>sonic-package-manager list</code> — Application Extension の有効化状況</li>
 </ul>
 <p>確認コマンド例:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 自動生成 CLI の出力確認</span>

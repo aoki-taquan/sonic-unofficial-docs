@@ -10711,19 +10711,19 @@
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コマンド例
+        コマンド例（確認）
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -27909,7 +27909,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30289,7 +30289,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35838,19 +35838,19 @@
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コマンド例
+        コマンド例（確認）
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -36172,11 +36172,11 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 <tbody>
 <tr>
 <td><code>PORT.&lt;name&gt;</code></td>
-<td><code>switchport_mode</code> (新規)</td>
+<td><code>mode</code> (新規; YANG typedef 名は <code>switchport_mode</code>)</td>
 </tr>
 <tr>
 <td><code>PORTCHANNEL.&lt;name&gt;</code></td>
-<td><code>switchport_mode</code> (新規)</td>
+<td><code>mode</code> (新規; YANG typedef 名は <code>switchport_mode</code>)</td>
 </tr>
 <tr>
 <td><code>VLAN_MEMBER</code></td>
@@ -36315,15 +36315,14 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 </div>
 <!-- /diff-admonition -->
 
-<!-- phase-boundary -->
-
-<h3 id="_10">コマンド例<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<h2 id="_10">コマンド例（確認）<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>switchport mode と VLAN_MEMBER の整合を確認する。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>switchport<span class="w"> </span>status
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;VLAN_MEMBER|*&#39;</span>
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>config<span class="w"> </span>switchport<span class="w"> </span>mode<span class="w"> </span>trunk<span class="w"> </span>Ethernet0
 </span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>show<span class="w"> </span>vlan<span class="w"> </span>brief
 </span></code></pre></div>
+<!-- phase-boundary -->
 <h2 id="_11">実装フェーズ境界<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <div class="admonition info">
 <p class="admonition-title">Phase 別の実装済 / 未実装 サマリ</p>

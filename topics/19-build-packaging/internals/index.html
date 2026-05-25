@@ -27619,7 +27619,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29999,7 +29999,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35483,7 +35483,7 @@
 <li>ビルドは <strong>slave docker の rebuild が高頻度で必要</strong>で、初回 build に 1〜2 時間かかります。<code>make -j</code> 並列度は host のメモリと swap に強く依存します。</li>
 <li>submodule の SHA を上げると <code>make configure</code> の再走が必要で、incremental ではなく毎回 deb 系を作り直すケースがある（<code>*.flag</code> の依存解決が conservative）。</li>
 <li>SPM の extension は <strong>公式ビルドの <a href="../../../reference/glossary/#term-sonic">SONiC</a> イメージ（PR build 含む）に対してのみテスト</strong>されており、外部派生ビルドでの互換性は保証されません。manifest の <code>min-version</code> を確認してください。</li>
-<li><code>set_owner = kube</code> 系の機能は SONiC master でも実験的扱いの箇所があり、<code>feature</code> の状態遷移が Kubernetes 側の expected と zaeshigit ことがあります。</li>
+<li><code>set_owner = kube</code> 系の機能は SONiC master でも実験的扱いの箇所があり、<code>feature</code> の状態遷移が Kubernetes 側の expected とずれることがあります。</li>
 <li><code>sonic-buildimage</code> のターゲット platform は <code>PLATFORM=&lt;vendor&gt;</code> 環境変数で切替えますが、複数 platform を同時にビルドする supported workflow は無いに等しく、CI 側で逐次 build しています。</li>
 <li>application extension の docker image は SONiC の base layer に依存していると更新時にサイズが膨らみ、<code>/host</code> の空き容量に注意が必要です。</li>
 </ul>

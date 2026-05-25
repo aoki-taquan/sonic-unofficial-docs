@@ -27626,7 +27626,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30006,7 +30006,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35454,7 +35454,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（キー名は TELEMETRY_INTERVAL）</p>
+<p class="admonition-title">裏取りステータス: code-verified（キー名は TELEMETRY_INTERVAL）</p>
 <p><code>sonic-swss/orchagent/watermarkorch.{h,cpp}</code> で <code>WatermarkOrch</code> 実装、<code>DEFAULT_TELEMETRY_INTERVAL=120</code> (cpp L9)、<code>CFG_WATERMARK_TABLE.TELEMETRY_INTERVAL</code> キー処理 (cpp L97) を確認。Lua plugin <code>watermark_bufferpool.lua</code> / <code>watermark_pg.lua</code> / <code>watermark_queue.lua</code> あり。<code>STATS_MODE_READ_AND_CLEAR</code> は <code>bufferorch.cpp</code> L334 / <code>portsorch.cpp</code> L868/L874 で利用。<strong>HLD の <code>TELEMETRY_PERIOD</code> 表記は実装では <code>TELEMETRY_INTERVAL</code></strong> (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="watermark-pg-queue">バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）<a class="headerlink" href="#watermark-pg-queue" title="Permanent link">&para;</a></h1>

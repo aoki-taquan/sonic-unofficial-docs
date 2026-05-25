@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="VNET / VNET_ROUTE テーブル — VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル群。">
+        <meta name="description" content="VNET テーブル — VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル。VNET_ROUTE / VNET_ROUTE_TUNNEL は別ページ参照。">
       
       
       
@@ -27,7 +27,7 @@
     
     
       
-        <title>VNET / VNET_ROUTE テーブル - SONiC 非公式ドキュメント</title>
+        <title>VNET テーブル - SONiC 非公式ドキュメント</title>
       
     
     
@@ -63,16 +63,16 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="VNET / VNET_ROUTE テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="VNET / VNET_ROUTE テーブル — VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル群。" />
+<meta property="og:title" content="VNET テーブル - SONiC 非公式ドキュメント" />
+<meta property="og:description" content="VNET テーブル — VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル。VNET_ROUTE / VNET_ROUTE_TUNNEL は別ページ参照。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/vnet.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/vnet/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="VNET / VNET_ROUTE テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="VNET / VNET_ROUTE テーブル — VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル群。" />
+<meta property="twitter:title" content="VNET テーブル - SONiC 非公式ドキュメント" />
+<meta property="twitter:description" content="VNET テーブル — VNET は VXLAN overlay 上の仮想ネットワークを CONFIG_DB に定義するテーブル。VNET_ROUTE / VNET_ROUTE_TUNNEL は別ページ参照。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/vnet.png" />
 </head>
   
@@ -93,7 +93,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#vnet-vnet_route" class="md-skip">
+        <a href="#vnet" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -127,7 +127,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              VNET / VNET_ROUTE テーブル
+              VNET テーブル
             
           </span>
         </div>
@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29792,7 +29792,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -29810,7 +29810,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -29887,7 +29887,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#vnet" class="md-nav__link">
+  <a href="#vnet_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         VNET
@@ -30219,7 +30219,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#vnet_1" class="md-nav__link">
+  <a href="#vnet_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         VNET
@@ -35966,7 +35966,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#vnet" class="md-nav__link">
+  <a href="#vnet_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         VNET
@@ -36298,7 +36298,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#vnet_1" class="md-nav__link">
+  <a href="#vnet_2" class="md-nav__link">
     <span class="md-ellipsis">
       
         VNET
@@ -36765,7 +36765,7 @@
   
 
 
-<h1 id="vnet-vnet_route">VNET / VNET_ROUTE テーブル<a class="headerlink" href="#vnet-vnet_route" title="Permanent link">&para;</a></h1>
+<h1 id="vnet">VNET テーブル<a class="headerlink" href="#vnet" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><a href="../../glossary/#term-vnet">VNET</a> は <a href="../../glossary/#term-vxlan">VXLAN</a> overlay 上の仮想ネットワークを <a href="../../glossary/#term-config_db">CONFIG_DB</a> に定義するテーブル群。<code>VNET</code> が VNI と <a href="../../glossary/#term-vxlan">VXLAN</a> tunnel の対応を持ち、<code>VNET_ROUTE</code> と <code>VNET_ROUTE_TUNNEL</code> が <a href="../../glossary/#term-vnet">VNET</a> スコープの静的経路を表す<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">4</a></sup>。<code>schema.h</code> では <a href="../../glossary/#term-appl_db">APPL_DB</a> 側の <code>VNET_TABLE</code> / <code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> と、<a href="../../glossary/#term-config_db">CONFIG_DB</a> 側の <code>VNET_ROUTE</code> / <code>VNET_ROUTE_TUNNEL</code> 定数が定義されている<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">5</a></sup>。</p>
 <!-- cdb-mermaid -->
@@ -36793,7 +36793,7 @@
 </span></code></pre></div>
 <p><code>&lt;vnet_name&gt;</code> は <code>VNET.name</code> への leafref。<code>&lt;prefix&gt;</code> は IPv4 prefix。</p>
 <h2 id="_3">主要フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="vnet">VNET<a class="headerlink" href="#vnet" title="Permanent link">&para;</a></h3>
+<h3 id="vnet_1">VNET<a class="headerlink" href="#vnet_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -37011,6 +37011,7 @@
 
 <h2 id="_8">関連リファレンス<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
+<li>CONFIG_DB: <a href="../vnet-route/"><code>VNET_ROUTE / VNET_ROUTE_TUNNEL</code></a></li>
 <li>YANG: <a href="../../yang/sonic-vnet/"><code>sonic-vnet</code></a></li>
 <li>CLI: <a href="../../cli/config-vxlan/"><code>config vxlan</code></a></li>
 </ul>
@@ -37082,7 +37083,7 @@
 
 <!-- defaults -->
 <h2 id="_16">コード由来の暗黙デフォルト<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
-<h3 id="vnet_1">VNET<a class="headerlink" href="#vnet_1" title="Permanent link">&para;</a></h3>
+<h3 id="vnet_2">VNET<a class="headerlink" href="#vnet_2" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>

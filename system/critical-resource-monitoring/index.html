@@ -27726,7 +27726,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30106,7 +30106,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35646,9 +35646,9 @@
   
 
 
-<div class="admonition warning">
-<p class="admonition-title">裏取りステータス: discrepancy-found</p>
-<p>このページは公式 HLD（要件定義文書）のみを根拠に書かれている。<code>orchagent</code> の CRM 実装、CLI (<code>crm show</code>)、CONFIG_DB の <code>CRM</code> テーブル等の実装裏取りは未済。詳細は末尾の裏取りメモを参照。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: code-verified</p>
+<p><code>orchagent</code> の CRM 実装（<code>crmorch.cpp</code> / <code>crmorch.h</code>）、CLI (<code>crm show</code>)、CONFIG_DB の <code>CRM</code> テーブルを確認済み。詳細は末尾の裏取りメモを参照。</p>
 </div>
 <h1 id="crm">クリティカルリソースモニタリング (CRM) 要件<a class="headerlink" href="#crm" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -35774,9 +35774,9 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 
 <h2 id="_8">設定<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <h3 id="config_db">関連する CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<p>要件 HLD 上はテーブル名が明示されていない。実装側で <code>CRM</code> テーブルが追加されている可能性が高いが、本ページでは未確認のため空配列とする。実装裏取り（<code>code-verified</code> 昇格）時に追記する想定。</p>
+<p>実装では <code>CRM</code> テーブル（<code>CRM|Config</code> キー）が使用される。<code>sonic-yang-models/yang-models/sonic-crm.yang</code> にスキーマ定義あり。要件 HLD 上はテーブル名が明示されていない点に注意。</p>
 <h3 id="cli">関連する CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<p>要件 HLD は <code>show</code> 系コマンドの提供を要求しているのみで、具体的なコマンド名は規定していない。実装としては <code>crm config thresholds</code> / <code>crm show resources</code> などが提供されている可能性があるが、本ページでは未確認。</p>
+<p>実装では <code>crm config thresholds</code> / <code>crm show resources</code> / <code>crm show thresholds</code> 等が <code>sonic-utilities</code> に提供されている。要件 HLD は <code>show</code> 系コマンドの提供を要求しているのみで、具体的なコマンド名は規定していない。</p>
 <h3 id="_9">設定例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <p>要件文書のため具体的な設定コマンド例は記載されていない。</p>
 <h2 id="_10">干渉する機能<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
@@ -35861,8 +35861,8 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 </table>
 <h2 id="_17">実装との乖離 / 補足<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <ul>
-<li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。新規テーブル名は HLD で明示されておらず、実装側で追加されている可能性が高い旨を本文で「未確認」と明示している。</li>
-<li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>
+<li>Verifier batch 29 にて <code>code-verified</code> に昇格 (2026-05-13)。CRM Orch 実装・CLI・YANG の三点裏取り完了。</li>
+<li>要件 HLD はテーブル名を明示していないが、実装側で <code>CRM|Config</code> として追加されており整合を確認。</li>
 </ul>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

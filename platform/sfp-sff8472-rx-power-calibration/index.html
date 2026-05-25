@@ -27543,7 +27543,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29923,7 +29923,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35364,12 +35364,13 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># SFP の DOM 情報を確認</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>interfaces<span class="w"> </span>transceiver<span class="w"> </span>detail<span class="w"> </span>Ethernet0
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># raw EEPROM データを確認（外部キャリブレーション判定: Byte 92 bit 4）</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># raw EEPROM データを確認（外部キャリブレーション判定: Byte 92 bit 4=1、内部: bit 3=1）</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>sudo<span class="w"> </span>sfputil<span class="w"> </span>show<span class="w"> </span>eeprom<span class="w"> </span>-p<span class="w"> </span>Ethernet0
 </span></code></pre></div>
-<p>Byte 92 の値（Status/Control）で：
-- Bit 4 = 0 → 内部キャリブレーション（Internal Calibration）
-- Bit 4 = 1 → 外部キャリブレーション（External Calibration）</p>
+<p>Byte 92（Diagnostic Monitoring Type）で：
+- Bit 4 = 1 → 外部キャリブレーション（Externally Calibrated）
+- Bit 3 = 1 → 内部キャリブレーション（Internally Calibrated）</p>
+<p>なお Bit 4 と Bit 3 は排他であり、「Bit 4=0 → 内部」ではなく Bit 3 の値で判定する点に注意。</p>
 <h2 id="_5">注意事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>外部キャリブレーション SFP は主にコスト重視の汎用品や古い SFP で見られる</li>

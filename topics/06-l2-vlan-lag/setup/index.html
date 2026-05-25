@@ -27691,7 +27691,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30071,7 +30071,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35675,7 +35675,7 @@
 </span></code></pre></div>
 <p><code>show ip interfaces</code> の出力で <code>Vlan100</code> に IP が付き、<code>Oper</code> が <code>up</code> になれば SVI として動作。<code>down</code> の場合は VLAN 配下に operational up な member が無い可能性が高いです (member が全 link down)。</p>
 <h2 id="sonic-cfggen">sonic-cfggen で部分パッチを当てる<a class="headerlink" href="#sonic-cfggen" title="Permanent link">&para;</a></h2>
-<p>deployment template ではなく、運用中に <a href="../../../reference/glossary/#term-config_db.json">config_db.json</a> の小規模変更を行うときの典型パタン:</p>
+<p>deployment template ではなく、運用中に <a href="../../../reference/glossary/#term-config_db.json">config_db.json</a> の小規模変更を行うときの典型パターン:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>cat<span class="w"> </span>&gt;<span class="w"> </span>/tmp/vlan_patch.json<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
 </span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="s">{</span>
 </span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="s">  &quot;VLAN&quot;: { &quot;Vlan300&quot;: { &quot;vlanid&quot;: &quot;300&quot; } },</span>

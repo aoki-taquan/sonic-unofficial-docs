@@ -27652,7 +27652,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30032,7 +30032,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35601,7 +35601,7 @@
 <h2 id="_2">既知の実装上の制約<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
 <li>counter の polling interval は group 単位で、CONFIG_DB に書いてから ASIC_DB に反映されるまで一拍ある。高頻度（&lt; 1s）の interval は ASIC 側 SDK の負荷が無視できない。</li>
-<li><code>RATES:</code> table は <code>portstat</code> 等の user-space ツールが計算するもので、Redis 上には rate のスナップショット保存しか無く、過去 N 秒の rate を gNMI から sample しても粒度は polling interval に律速される。</li>
+<li><code>RATES:</code> table は <code>portstat</code> 等の user-space ツールが計算するもので、Redis 上には rate のスナップショット保存しかなく、過去 N 秒の rate を gNMI から sample しても粒度は polling interval に律速される。</li>
 <li>SNMP subagent は OID から Redis path への mapping を<strong>ハードコード</strong>しており、新 MIB の追加には subagent コード変更が必要。</li>
 <li>auto-techsupport は dump サイズが /var/dump 上限を超えると古いものから削除し、保存し損ねるケースがある。</li>
 <li>syslog の container 二段ホップは container 内 rsyslog が停止すると host 側に何も流れない silent 失敗が起きる。</li>

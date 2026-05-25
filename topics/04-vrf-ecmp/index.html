@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APP_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…">
+        <meta name="description" content="VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="VRF / ECMP / RIB-FIB パイプライン - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APP_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…" />
+<meta property="og:description" content="VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/04-vrf-ecmp/index.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/04-vrf-ecmp/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="VRF / ECMP / RIB-FIB パイプライン - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APP_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…" />
+<meta property="twitter:description" content="VRF / ECMP / RIB-FIB パイプライン — この章は、SONiC の L3 転送を「VRF と interface を作る」「route が FRR から APPL_DB に来る」「orchagent が RIF / next hop / route object を ASIC に作る」「ECMP の種…" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/04-vrf-ecmp/index.png" />
 </head>
   
@@ -27462,7 +27462,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29842,7 +29842,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35189,7 +35189,7 @@
 
 
 <h1 id="vrf-ecmp-rib-fib">VRF / ECMP / RIB-FIB パイプライン<a class="headerlink" href="#vrf-ecmp-rib-fib" title="Permanent link">&para;</a></h1>
-<p>この章は、<a href="../../reference/glossary/#term-sonic">SONiC</a> の L3 転送を「<a href="../../reference/glossary/#term-vrf">VRF</a> と interface を作る」「route が <a href="../../reference/glossary/#term-frr">FRR</a> から APP_DB に来る」「<a href="../../reference/glossary/#term-orchagent">orchagent</a> が <a href="../../reference/glossary/#term-rif">RIF</a> / next hop / route object を <a href="../../reference/glossary/#term-asic">ASIC</a> に作る」「<a href="../../reference/glossary/#term-ecmp">ECMP</a> の種類を選ぶ」という順番で読み直す入口です。</p>
+<p>この章は、<a href="../../reference/glossary/#term-sonic">SONiC</a> の L3 転送を「<a href="../../reference/glossary/#term-vrf">VRF</a> と interface を作る」「route が <a href="../../reference/glossary/#term-frr">FRR</a> から <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> に来る」「<a href="../../reference/glossary/#term-orchagent">orchagent</a> が <a href="../../reference/glossary/#term-rif">RIF</a> / next hop / route object を <a href="../../reference/glossary/#term-asic">ASIC</a> に作る」「<a href="../../reference/glossary/#term-ecmp">ECMP</a> の種類を選ぶ」という順番で読み直す入口です。</p>
 <p>既存ページは VRF、static route、RIF counter、ECMP 拡張などの <a href="../../reference/glossary/#term-hld">HLD</a> 単位で分かれています。この章では、運用者や実装を追う読者が実際に持つ質問の順に並べ替え、詳細なスキーマやコード裏取りは各ページの関連リンクへ譲ります。</p>
 <h2 id="_1">この章で答える質問<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35228,6 +35228,11 @@
 <td>meta</td>
 </tr>
 <tr>
+<td>architecture</td>
+<td>✅ 完成 (113 行)</td>
+<td>meta</td>
+</tr>
+<tr>
 <td>setup</td>
 <td>✅ 完成 (264 行)</td>
 <td>meta</td>
@@ -35235,6 +35240,11 @@
 <tr>
 <td>operations</td>
 <td>✅ 完成 (188 行)</td>
+<td>meta</td>
+</tr>
+<tr>
+<td>ecmp</td>
+<td>✅ 完成 (94 行)</td>
 <td>meta</td>
 </tr>
 <tr>

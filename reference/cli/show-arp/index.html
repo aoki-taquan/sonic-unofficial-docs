@@ -27655,7 +27655,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30035,7 +30035,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35625,7 +35625,7 @@
 <h3 id="_14">よくある落とし穴<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>show arp</code> は default <a href="../../glossary/#term-vrf">VRF</a> のみ。<a href="../../glossary/#term-vrf">VRF</a> 内 ARP を見るオプション (<code>-vrf</code> / <code>-V</code>) は arp コマンドには存在しないため、<code>ip neigh show vrf &lt;vrf&gt;</code> を使う。</li>
-<li><a href="../../glossary/#term-state_db">STATE_DB</a> の NEIGH_TABLE と kernel ARP がズレる場合あり。両方で裏取り。</li>
+<li><a href="../../glossary/#term-appl_db">APPL_DB</a> の NEIGH_TABLE と kernel ARP がズレる場合あり。両方で裏取り。</li>
 </ul>
 <h3 id="show-debug">関連する show / debug<a class="headerlink" href="#show-debug" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>show<span class="w"> </span>arp

@@ -27649,7 +27649,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30029,7 +30029,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35500,7 +35500,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p class="admonition-title">裏取りステータス: code-verified（基本構成のみ）</p>
 <p>現行 master で <code>config snmp</code> グループ (<code>sonic-utilities/config/main.py:4261</code>)、<code>docker-snmp/snmpd.conf.j2</code> の CONFIG_DB ベース設定、<code>sonic-yang-models</code> の <code>sonic-snmp.yang</code> を確認。SNMP / SNMP_COMMUNITY / SNMP_USER テーブルは現行 yang に取り込まれている。<code>snmp.yml</code> → CONFIG_DB ワンタイム変換スクリプトの場所は明示できなかったが、CONFIG_DB ベース運用は標準化済み（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="snmp-snmpyml-config_db">SNMP 設定の snmp.yml → CONFIG_DB 移行<a class="headerlink" href="#snmp-snmpyml-config_db" title="Permanent link">&para;</a></h1>

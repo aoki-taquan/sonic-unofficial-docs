@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30945,7 +30945,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37699,7 +37699,7 @@
 <li><strong>名前長制限 (YANG)</strong>: 15 文字超の場合 YANG <code>must</code> 制約で <code>"please follow vlan sub interface naming convention"</code> エラー<sup id="fnref:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
 <li><strong>親インタフェース存在 (YANG)</strong>: ドット前部分が <code>PORT_LIST</code> または <code>PORTCHANNEL_LIST</code> に存在しない場合 YANG が reject<sup id="fnref2:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。</li>
 <li><strong>VLAN ID 範囲 (YANG)</strong>: ドット後 ID は 1〜4094 の範囲が必要<sup id="fnref3:exc2"><a class="footnote-ref" href="#fn:exc2">2</a></sup>。short-name 形式では <code>vlan</code> フィールドも必須。</li>
-<li><strong><code>isValid()</code> チェック</strong>: <code>intfmgrd</code> が <code>subIntf::isValid()</code> で不正と判定した場合 <code>SWSS_LOG_ERROR("Invalid subnitf")</code> を記録してスキップ<sup id="fnref:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
+<li><strong><code>isValid()</code> チェック</strong>: <code>intfmgrd</code> が <code>subIntf::isValid()</code> で不正と判定した場合 <code>SWSS_LOG_ERROR("Invalid subintf")</code> を記録してスキップ<sup id="fnref:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 <li><strong>VLAN ID 未設定スキップ</strong>: short-name 形式で <code>vlan</code> が <code>"0"</code> または空の場合リトライ待ち<sup id="fnref2:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 <li><strong>netdev コマンド失敗</strong>: ip link add / MTU / admin_status 設定で <code>runtime_error</code> 発生時は <code>SWSS_LOG_NOTICE</code> を記録してリトライ待ち<sup id="fnref3:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
 <li><strong>デフォルト補完</strong>: <code>mtu</code> 省略時は <code>MTU_INHERITANCE</code>（親継承）、<code>admin_status</code> 省略時は <code>"up"</code>（親の admin status で実効値が決定）<sup id="fnref4:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>

@@ -27621,7 +27621,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30001,7 +30001,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35444,7 +35444,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>bgpcfgd/bgpmon/bgpmon.py</code> L15-17 で 15 秒ポーリング + <code>/var/log/frr/frr.log</code> mtime 監視、L51/131-179/203 で <code>STATE_DB.NEIGH_STATE_TABLE|&lt;peer_ip&gt;</code> への <code>state</code> 書き込み。supervisord 登録は <code>docker-fpm-frr/frr/supervisord/supervisord.conf.j2</code> L198-199。読み手は <code>sonic-snmpagent/.../cisco/bgp4.py</code> L22/L30 で <code>Namespace.init_namespace_dbs()</code> + 全 namespace の <code>NEIGH_STATE_TABLE|*</code> を束ねる実装 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="ciscobgp4mib-state_db">CiscoBgp4MIB の STATE_DB 経由化<a class="headerlink" href="#ciscobgp4mib-state_db" title="Permanent link">&para;</a></h1>

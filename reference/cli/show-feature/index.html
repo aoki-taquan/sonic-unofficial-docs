@@ -27644,7 +27644,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30024,7 +30024,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35579,7 +35579,9 @@
 <pre class="mermaid"><code>flowchart LR
   CLI["show feature"]
   CDB0[("CONFIG_DB&lt;br/&gt;FEATURE")]
-  CDB0 --&gt; CLI</code></pre>
+  SDB[("STATE_DB&lt;br/&gt;FEATURE")]
+  CDB0 --&gt; CLI
+  SDB --&gt; CLI</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
 <p>show 系 (CONFIG_DB → CLI) のミニ図。テーブル → daemon 対応は <code>docs/reference/config-db-orch-map.md</code> から機械生成。</p>
@@ -35619,11 +35621,10 @@
 <!-- cli-sibling -->
 <h3 id="cli">関連 CLI コマンド<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../config-banner/"><code>config banner</code></a> — config banner サブコマンド</li>
-<li><a href="../config-clock/"><code>config clock</code></a> — config clock サブコマンド</li>
-<li><a href="../config-kdump/"><code>config kdump</code></a> — config kdump サブコマンド</li>
-<li><a href="../config-ntp/"><code>config ntp</code></a> — config ntp サブコマンド</li>
-<li><a href="../config-platform-firmware/"><code>config platform firmware</code></a> — config platform firmware サブコマンド</li>
+<li><a href="config-feature.md"><code>config feature</code></a> — config feature サブコマンド</li>
+<li><a href="./"><code>show feature status</code></a> — feature ステータス表示</li>
+<li><a href="./"><code>show feature config</code></a> — feature 設定値表示</li>
+<li><a href="./"><code>show feature autorestart</code></a> — autorestart 設定表示</li>
 </ul>
 <!-- /cli-sibling -->
 

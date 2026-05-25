@@ -7493,17 +7493,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#generic-hash_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: Generic hash 設定確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -27618,7 +27607,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29998,7 +29987,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35392,17 +35381,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#generic-hash_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例: Generic hash 設定確認
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -35463,7 +35441,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（基本構成のみ）</p>
+<p class="admonition-title">裏取りステータス: code-verified（基本構成のみ）</p>
 <p><code>sonic-swss/orchagent/switchorch.cpp:1507</code> の <code>CFG_SWITCH_HASH_TABLE_NAME</code> 処理、<code>switch/switch_helper.cpp</code> の <code>SAI_NATIVE_HASH_FIELD_IPV6_FLOW_LABEL</code> 等フィールド対応表（v0.4 の IPv6 flow label 追加が反映済み）、<code>sonic-utilities/show/plugins/sonic-hash.py</code> の <code>show switch-hash</code>、<code>sonic-yang-models</code> の <code>sonic-hash.yang</code> を確認。</p>
 </div>
 <h1 id="generic-hashecmp-lag">Generic Hash（ECMP / LAG ハッシュフィールドとアルゴリズムの統一制御）<a class="headerlink" href="#generic-hashecmp-lag" title="Permanent link">&para;</a></h1>
@@ -35560,14 +35538,6 @@
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>switch-hash<span class="w"> </span>global
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SWITCH_HASH|GLOBAL&#39;</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;SWITCH_CAPABILITY|switch&#39;</span><span class="w"> </span>HASH_FIELDS
-</span></code></pre></div>
-<h3 id="generic-hash_1">コマンド例: Generic hash 設定確認<a class="headerlink" href="#generic-hash_1" title="Permanent link">&para;</a></h3>
-<p>下記コマンドで関連する CONFIG_DB / APP_DB / STATE_DB と CLI 出力・syslog を
-突き合わせ、HLD 記載の挙動と現在の挙動が一致しているか確認できる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># ECMP / LAG の hash 構成と algorithm</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>show<span class="w"> </span>switch-hash<span class="w"> </span>global
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SWITCH_HASH|GLOBAL&#39;</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hget<span class="w"> </span><span class="s1">&#39;SWITCH_CAPABILITY|switch&#39;</span><span class="w"> </span>HASH_FIELDS
 </span></code></pre></div>
 <h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <h2 id="_11">関連ページ<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>

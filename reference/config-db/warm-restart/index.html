@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29783,7 +29783,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36756,7 +36756,7 @@
 <!-- /value-behavior -->
 
 <h2 id="_7">例外条件・特殊挙動 <!-- cdb-exceptions --><a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang; sonic-swss/cfgmgr/vlanmgr.cpp -->
+<!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang; sonic-swss-common/common/warm_restart.cpp -->
 
 <ul>
 <li><strong><code>module</code> 列挙値 (YANG)</strong>: <code>bgp</code> / <code>teamd</code> / <code>swss</code> / <code>system</code> のみ許可。それ以外は YANG バリデーションで reject される<sup id="fnref:exc1"><a class="footnote-ref" href="#fn:exc1">1</a></sup>。</li>
@@ -37662,7 +37662,7 @@ channel ベース通知が使われるが、<code>WARM_RESTART</code> テーブ�
 <p><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-warm-restart.yang</code> <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-warm-restart.yang">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-yang-models/yang-models/sonic-warm-restart.yang</a>&#160;<a class="footnote-backref" href="#fnref:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:exc1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:exc1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:exc2">
-<p><code>sonic-swss/cfgmgr/vlanmgr.cpp</code> (warmstart ロジック参照) <a href="https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp">https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/vlanmgr.cpp</a>&#160;<a class="footnote-backref" href="#fnref:exc2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><code>sonic-swss-common/common/warm_restart.cpp</code> (warmstart 状態ログ) <a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/warm_restart.cpp">https://github.com/sonic-net/sonic-swss-common/blob/master/common/warm_restart.cpp</a>&#160;<a class="footnote-backref" href="#fnref:exc2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:1">
 <p>YANG 定義: <code>sonic-warm-restart.yang</code>. <a href="https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-warm-restart.yang">https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-warm-restart.yang</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 3 in the text">&#8617;</a></p>

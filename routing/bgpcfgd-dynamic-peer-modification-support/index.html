@@ -27710,7 +27710,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30090,7 +30090,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35776,7 +35776,7 @@
 <li><strong>Jinja2 template</strong>: <code>general/instance.conf.j2</code> 等が <code>| ipv4</code> / <code>| ipv6</code> フィルタで分岐するため、インタフェース名だと両方とも <code>False</code> になりアドレスファミリブロックがスキップされる</li>
 </ol>
 <p><strong>回避策</strong>: <code>frrcfgd</code> 経由または <code>vtysh</code> で直接 FRR 設定を投入する（FRR 自体は unnumbered BGP をサポート済み）。</p>
-<p><strong>参照</strong>: sonic-net/<a href="../../reference/glossary/#term-sonic-buildimage">sonic-buildimage</a>#26960（Bug, Triaged、修正 PR 検討中）</p>
+<p><strong>参照</strong>: <a href="https://github.com/sonic-net/sonic-buildimage/issues/26960">sonic-net/sonic-buildimage#26960</a>（Bug, Triaged、修正 PR 検討中）</p>
 <hr />
 <ul>
 <li><strong><code>update.conf.j2</code> / <code>delete.conf.j2</code> が peer_type の template directory に無いと機能しない</strong><sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。dynamic peer の動的編集が peer_type 依存</li>

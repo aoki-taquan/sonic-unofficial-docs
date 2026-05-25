@@ -27710,7 +27710,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30090,7 +30090,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35623,7 +35623,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: Code-verified</p>
-<p>本テストプランの設計記述。<code>hostcfgd</code> による PAM (<code>/etc/pam.d/common-auth-sonic</code>) 生成、<code>config tacacs</code> CLI、failthrough オプション、loopback source IP の挙動の現行 master 実装は未裏取り。</p>
+<p>本テストプランが前提とする TACACS+ 認証経路（<code>hostcfgd</code> による PAM <code>/etc/pam.d/common-auth-sonic</code> 生成、<code>config tacacs</code> CLI、failthrough オプション、loopback source IP の挙動）は Verifier batch 29 で現行 master 実装を確認済み。詳細は本ページ末尾の裏取りメモを参照。</p>
 </div>
 <h1 id="tacacs-pam_tacplus-ssh-login">TACACS+ 認証テストプラン（<code>pam_tacplus</code> + ssh login）<a class="headerlink" href="#tacacs-pam_tacplus-ssh-login" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

@@ -28304,7 +28304,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30684,7 +30684,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36848,7 +36848,7 @@
 <th>フィールド</th>
 <th>型</th>
 <th>必須</th>
-<th>デフォルト</th>
+<th>デフォルト (YANG)</th>
 <th>説明</th>
 </tr>
 </thead>
@@ -36864,14 +36864,14 @@
 <td><code>type</code></td>
 <td>enum <code>DWRR</code>/<code>WRR</code>/<code>STRICT</code></td>
 <td>-</td>
-<td><code>WRR</code></td>
+<td><code>WRR</code> ※1</td>
 <td>スケジューリングアルゴリズム</td>
 </tr>
 <tr>
 <td><code>weight</code></td>
 <td>uint8 (1..100)</td>
 <td>-</td>
-<td><code>1</code></td>
+<td><code>1</code> ※1</td>
 <td>重み（<a href="../../glossary/#term-dwrr">DWRR</a>/WRR で使用）</td>
 </tr>
 <tr>
@@ -36879,13 +36879,13 @@
 <td>uint8 (0..9)</td>
 <td>-</td>
 <td>-</td>
-<td>優先度</td>
+<td>優先度（<strong>dead field</strong>: qosorch 未実装。含めるとエントリ全体が SAI 未反映）</td>
 </tr>
 <tr>
 <td><code>meter_type</code></td>
 <td>enum <code>packets</code>/<code>bytes</code></td>
 <td>-</td>
-<td><code>bytes</code></td>
+<td><code>bytes</code> ※1</td>
 <td>meter 単位</td>
 </tr>
 <tr>
@@ -36918,6 +36918,7 @@
 </tr>
 </tbody>
 </table>
+<p>※1 YANG で定義されたデフォルト値。qosorch は省略時に SAI 属性を送信しないため、実際にはベンダー SAI のデフォルトが適用される（詳細は <a href="../scheduler-orch/"><code>SCHEDULER — QosOrch 詳解</code></a> を参照）。</p>
 <h2 id="must">制約 (must)<a class="headerlink" href="#must" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>pir</code> 単独設定禁止（<code>cir</code> 必須・<code>cir &gt; 0</code>）</li>
@@ -37034,8 +37035,8 @@
 <li><strong>type フィールドが未知の値</strong>: <code>type</code> が <code>DWRR</code> / <code>WRR</code> / <code>STRICT</code> 以外の場合 <code>SWSS_LOG_ERROR("Unknown scheduler type value:%s")</code> を出して <code>task_invalid_entry</code> を返す。エントリは破棄されて SAI には反映されない。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>SAI scheduler profile 作成失敗</strong>: <code>sai_scheduler_api-&gt;create_scheduler()</code> が失敗した場合 <code>SWSS_LOG_ERROR("Failed to create scheduler profile")</code> で処理中断。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>QUEUE 参照中の SCHEDULER 削除</strong>: <code>handleSchedulerTable()</code> の DEL ハンドラは <code>sai_scheduler_api-&gt;remove_scheduler()</code> を呼ぶ前に <code>isObjectBeingReferenced()</code> でチェックを実施する。QUEUE からの参照が残っていれば <code>m_pendingRemove = true</code> をセットして <code>task_need_retry</code> を返す（SAI は呼ばれずエラーも発生しない）。QUEUE 参照が解除された後の次回 <code>doTask()</code> サイクルで自動的に SAI DEL が実行されるため、参照解除後の残留は起きない（SAI <code>remove_scheduler()</code> 自体が失敗したときのみ残留リスクあり）。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
-<li><strong>weight のオーバーフロー</strong>: <code>weight</code> フィールドは <code>uint8</code> にキャストされるため 0-255 の範囲外は暗黙に切り捨てられる（バリデーションなし）。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
-<li><strong>QUEUE 参照がある間は削除不可</strong>: QUEUE が参照している SCHEDULER を削除すると SAI レイヤで失敗する。QUEUE の参照を先に外してから削除する必要がある。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>weight のオーバーフロー</strong>: <code>weight</code> フィールドは <code>uint8</code> にキャストされるため YANG <code>range "1..100"</code> はコード未検証。範囲外は暗黙に切り捨てられる（バリデーションなし）。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>QUEUE 参照がある間は削除不可</strong>: QUEUE が参照している SCHEDULER を削除しようとすると DEL ハンドラが <code>isObjectBeingReferenced()</code> で検出し <code>m_pendingRemove = true</code> をセットして <code>task_need_retry</code> を返す（SAI 削除は行われない）。QUEUE の参照を先に解除してから削除すること。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
 <!-- failure -->
 <h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>

@@ -27655,7 +27655,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30035,7 +30035,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35525,7 +35525,7 @@
 
 <h1 id="config-route-static-route">config route サブコマンド（static route）<a class="headerlink" href="#config-route-static-route" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><code>config route</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>STATIC_ROUTE</code> テーブルに対する static route の add / del を行う。<a href="../../glossary/#term-frr">FRR</a> の Zebra に対しては <code>bgpcfgd</code> 経由で反映される（CLI は <a href="../../glossary/#term-config_db">CONFIG_DB</a> のみを書く）。コマンドは <code>cli_sroute_to_config</code> という共通パーサで CLI トークンを解析し、<code>STATIC_ROUTE</code> テーブルのキー (<code>vrf|prefix</code> または <code>prefix</code>) と value 辞書 (<code>nexthop</code> / <code>nexthop-vrf</code> / <code>ifname</code> / <code>distance</code> / <code>blackhole</code>) に展開する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>config route</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>STATIC_ROUTE</code> テーブルに対する static route の add / del を行う。<a href="../../glossary/#term-frr">FRR</a> の Zebra に対しては <code>staticd</code>（FRR の static route デーモン）経由で反映される（CLI は <a href="../../glossary/#term-config_db">CONFIG_DB</a> のみを書く）。コマンドは <code>cli_sroute_to_config</code> という共通パーサで CLI トークンを解析し、<code>STATIC_ROUTE</code> テーブルのキー (<code>vrf|prefix</code> または <code>prefix</code>) と value 辞書 (<code>nexthop</code> / <code>nexthop-vrf</code> / <code>ifname</code> / <code>distance</code> / <code>blackhole</code>) に展開する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>multi-<a href="../../glossary/#term-asic">ASIC</a> 対応として <code>-n / --namespace</code> を持ち、対象 namespace の <a href="../../glossary/#term-config_db">CONFIG_DB</a> に書く。</p>
 <h2 id="_2">コマンド一覧<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
@@ -35631,7 +35631,7 @@ excerpt: |
 <h2 id="multi-asic">multi-ASIC<a class="headerlink" href="#multi-asic" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>-n / --namespace</code> 必須（multi-<a href="../../glossary/#term-asic">ASIC</a> 環境）。</li>
-<li>各 namespace の CONFIG_DB に対して個別に書く。<a href="../../glossary/#term-frr">FRR</a> への反映は namespace 内の <code>bgpcfgd</code> が担当する。</li>
+<li>各 namespace の CONFIG_DB に対して個別に書く。<a href="../../glossary/#term-frr">FRR</a> への反映は namespace 内の <code>staticd</code> が担当する。</li>
 </ul>
 <h2 id="_5">制限・癖<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>

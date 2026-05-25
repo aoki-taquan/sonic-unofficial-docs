@@ -27619,7 +27619,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29999,7 +29999,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35407,7 +35407,7 @@
 <li><strong>本ページ</strong> では、上の基本パスを踏まえた上での「規模拡張」「認証境界」「新 RPC への追従」という運用観点の発展トピックだけを扱う。</li>
 </ul>
 <h2 id="dial-out-scale">dial-out と scale 設計の詳細<a class="headerlink" href="#dial-out-scale" title="Permanent link">&para;</a></h2>
-<p>gNMI dial-out (publish to collector) は server-driven Subscribe の補完で、target 側が active TCP connection を保ち、自分から push する。collector 側で session 数を減らせるため、数千台の fabric では運用負荷が下がる。SONiC の <code>telemetry</code> docker は dial-out 用の goroutine を spawn し、<code>DIALOUT_CLIENT</code> テーブルから dest list を読む。再接続 backoff、QoS <a href="../../../reference/glossary/#term-dscp">DSCP</a> marking、TCP keepalive はチューニング対象になる。collector 側 (<code>gnmic</code>, <code>gnxi</code>) の prometheus exporter と組み合わせると metrics pipeline が完成する。</p>
+<p>gNMI dial-out (publish to collector) は server-driven Subscribe の補完で、target 側が active TCP connection を保ち、自分から push する。collector 側で session 数を減らせるため、数千台の fabric では運用負荷が下がる。SONiC の <code>telemetry</code> docker は dial-out 用の goroutine を spawn し、<code>TELEMETRY_CLIENT</code> テーブルから dest list を読む。再接続 backoff、QoS <a href="../../../reference/glossary/#term-dscp">DSCP</a> marking、TCP keepalive はチューニング対象になる。collector 側 (<code>gnmic</code>, <code>gnxi</code>) の prometheus exporter と組み合わせると metrics pipeline が完成する。</p>
 <p>OpenConfig wildcard subscribe は <code>/interfaces/interface[name=*]/state/counters</code> のような path で per-port stream を一括取得するが、sample interval を 1s で全 port 投入すると server CPU が 100% に達する例がある。対策は (1) <code>STREAM</code> モードを <code>SAMPLE</code> に絞る、(2) heartbeat interval を 30s 以上に広げる、(3) collector を分割して target を pin する、の 3 通り。</p>
 <h2 id="gnoi-gnsi">gNOI / gNSI の運用境界<a class="headerlink" href="#gnoi-gnsi" title="Permanent link">&para;</a></h2>
 <p>gNOI OS の <code>Install</code> / <code>Activate</code> / <code>Verify</code> は SONiC の <code>sonic-installer</code> を内側で呼ぶ。<code>Install</code> は image を <code>/host/image-&lt;ver&gt;/</code> に展開、<code>Activate</code> は <code>next-boot</code> を切り替える。warm/fast reboot と組み合わせるなら、<code>Activate</code> 直後に gNOI System.Reboot を <code>WARM</code> mode で呼ぶ。失敗した場合の rollback は <code>Activate</code> で前 image を指定するだけで再起動を要するため、運用 runbook 側で plan B を持つ。</p>

@@ -28657,7 +28657,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -31037,7 +31037,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37531,7 +37531,7 @@
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><strong>DHCPv6 relay agent</strong> の <a href="../../glossary/#term-vlan">VLAN</a> インタフェース単位設定を保持する <a href="../../glossary/#term-config_db">CONFIG_DB</a> テーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>dhcp6relay</code> プロセス (sonic-dhcp-relay リポ) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> から読み、IPv6 リレー対象 <a href="../../glossary/#term-vlan">VLAN</a> と上流サーバを構築する。</p>
 <blockquote>
-<p>注: 名前は単に <code>DHCP_RELAY</code> だが、<a href="../../glossary/#term-yang">YANG</a> モジュール名 <code>sonic-dhcpv6-relay</code> の通り <strong>IPv6 リレー専用</strong>。IPv4 リレーは <code>VLAN</code> テーブルの <code>dhcp_servers</code> フィールド（旧仕様）または <code>DHCP_SERVER_IPV4</code> (新仕様の DHCP サーバ機能) を参照。</p>
+<p>注: 名前は単に <code>DHCP_RELAY</code> だが、<a href="../../glossary/#term-yang">YANG</a> モジュール名 <code>sonic-dhcpv6-relay</code> の通り <strong>IPv6 リレー専用</strong>。IPv4 リレーは <code>VLAN</code> テーブルの <code>dhcp_servers</code> フィールド（旧仕様）または <code>DHCPV4_RELAY</code> テーブル（新仕様）を参照。IPv4 の組み込みサーバ機能は別途 <code>DHCP_SERVER_IPV4</code> テーブルで管理される。</p>
 </blockquote>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -37684,7 +37684,7 @@
 <h3 id="_10">典型値<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>DHCP_RELAY|&lt;vlan&gt;</code>。</li>
-<li><code>dhcp_servers</code>: relay 先サーバ IP の list、<code>rfc3046_compatibility</code>: <code>true</code>。</li>
+<li><code>dhcpv6_servers</code>: relay 先 DHCPv6 サーバの IPv6 アドレスリスト、<code>rfc6939_support</code>: <code>"true"</code>。</li>
 </ul>
 <h3 id="_11">よくある誤設定<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
@@ -37692,7 +37692,7 @@
 </ul>
 <h3 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;DHCP_RELAY|*&#39;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>dhcprelay_helper<span class="w"> </span>ipv4
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>show<span class="w"> </span>dhcp_relay<span class="w"> </span>destination<span class="w"> </span>ipv6
 </span></code></pre></div>
 <!-- /ops-hint -->
 

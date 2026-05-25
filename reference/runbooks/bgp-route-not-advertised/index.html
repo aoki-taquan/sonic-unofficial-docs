@@ -27401,7 +27401,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29781,7 +29781,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35438,7 +35438,7 @@
     C -- No --&gt; C1[route-map / prefix-list で deny されていないか]
     C -- Yes --&gt; D{outbound policy 適用順序 OK?}
     D -- No --&gt; D1[route-map seq 番号と match 条件を修正]
-    D -- Yes --&gt; E[clear bgp &lt;peer&gt; soft out で再送信]</code></pre>
+    D -- Yes --&gt; E[clear ip bgp &lt;peer&gt; soft out で再送信]</code></pre>
 <h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-local-rib-adj-rib-out">1. local RIB と Adj-RIB-Out<a class="headerlink" href="#1-local-rib-adj-rib-out" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show ip bgp 1.1.1.0/24&quot;</span>

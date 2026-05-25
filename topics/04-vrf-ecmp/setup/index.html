@@ -27658,7 +27658,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30038,7 +30038,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35595,7 +35595,7 @@
 </span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><code>blackhole=true</code> の場合 <code>nexthop</code> は空でよい (<a href="../../../reference/glossary/#term-orchagent">orchagent</a> が null route を installs)。</p>
+<p><code>blackhole=true</code> の場合 <code>nexthop</code> は空でよい (<a href="../../../reference/glossary/#term-orchagent">orchagent</a> が null route を install する)。</p>
 <h2 id="config_db_1">CONFIG_DB で見る形<a class="headerlink" href="#config_db_1" title="Permanent link">&para;</a></h2>
 <p>VRF は <code>VRF|&lt;name&gt;</code>、物理 L3 interface は <code>INTERFACE|&lt;name&gt;</code>、static route は <code>STATIC_ROUTE|&lt;vrf&gt;|&lt;prefix&gt;</code> を見ます。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>VRF|Vrf_blue

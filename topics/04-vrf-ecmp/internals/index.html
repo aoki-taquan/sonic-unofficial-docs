@@ -27619,7 +27619,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29999,7 +29999,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35497,7 +35497,7 @@
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ROUTE_TABLE     ─&gt; RouteOrch</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">NEIGH_TABLE     ─&gt; NeighOrch</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">NEXTHOP_GROUP_TABLE  ─&gt; NhgOrch</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">LABEL_ROUTE_TABLE    ─&gt; MplsRouteOrch (※17 章参照)</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">LABEL_ROUTE_TABLE    ─&gt; MplsRouteOrch (※ MPLS 参照)</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nt">STATE_DB</span><span class="p">:</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ROUTE_TABLE / NEIGH_RESOLVE_TABLE / FG_ROUTE_TABLE</span>
@@ -35554,7 +35554,7 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ecmp_hash</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;SRC_IP,DST_IP,IP_PROTOCOL,L4_SRC_PORT,L4_DST_PORT,INNER_*&quot;</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">lag_hash</span><span class="p">:</span><span class="w">  </span><span class="s">&quot;...&quot;</span>
 </span></code></pre></div>
-<p>これは ASIC 全体 1 つの設定で、per-VRF / per-route の hash 切替は SONiC master でサポートされません。inner header をハッシュに含めるかは <a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-srv6">SRv6</a> でしばしば問題になります（→ 03 章、17 章）。</p>
+<p>これは ASIC 全体 1 つの設定で、per-VRF / per-route の hash 切替は SONiC master でサポートされません。inner header をハッシュに含めるかは <a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-srv6">SRv6</a> でしばしば問題になります（VXLAN/EVPN 章および SRv6 関連ページを参照）。</p>
 <h2 id="nhg-resync">NHG 参照カウントと resync<a class="headerlink" href="#nhg-resync" title="Permanent link">&para;</a></h2>
 <p><code>NhgOrch</code> は同一の <code>(prefix, nexthop set)</code> を共有して SAI 上の <code>NEXT_HOP_GROUP</code> を再利用します。参照カウントは以下のように動きます。</p>
 <table>

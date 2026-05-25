@@ -28364,7 +28364,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30744,7 +30744,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37554,8 +37554,8 @@
 <tr>
 <td>2</td>
 <td>FG_NHG SET → FG_NHG_PREFIX SET</td>
-<td>強制先行（再試行なし）</td>
-<td>PREFIX を先に書くと破棄される</td>
+<td>強制先行（自動 retry あり）</td>
+<td>親 FG_NHG 未存在時は <code>return false</code> でキューに残り自動再試行</td>
 </tr>
 <tr>
 <td>3</td>

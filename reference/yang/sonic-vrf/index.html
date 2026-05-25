@@ -27401,7 +27401,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29781,7 +29781,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -30917,6 +30917,17 @@
     <span class="md-ellipsis">
       
         ツリー
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#container-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        container / list 一覧
       
     </span>
   </a>
@@ -35350,6 +35361,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#container-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        container / list 一覧
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#leaf" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35510,6 +35532,37 @@
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>           +--rw fallback?   boolean
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>           +--rw vni?        uint32
 </span></code></pre></div>
+<h2 id="container-list">container / list 一覧<a class="headerlink" href="#container-list" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>種別</th>
+<th>パス</th>
+<th>key</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>container</code></td>
+<td><code>sonic-vrf</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>container</code></td>
+<td><code>sonic-vrf/VRF</code></td>
+<td></td>
+<td>VRF instance configuration table</td>
+</tr>
+<tr>
+<td><code>list</code></td>
+<td><code>sonic-vrf/VRF/VRF_LIST</code></td>
+<td><code>name</code></td>
+<td>Configuration entry for a VRF instance</td>
+</tr>
+</tbody>
+</table>
 <h2 id="leaf">leaf 一覧<a class="headerlink" href="#leaf" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

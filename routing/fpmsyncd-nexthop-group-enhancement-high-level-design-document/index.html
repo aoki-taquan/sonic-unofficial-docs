@@ -9528,28 +9528,6 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        確認コマンド
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシュート
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -9582,7 +9560,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -9593,7 +9571,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -9615,7 +9593,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -9636,7 +9614,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -27771,7 +27749,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30151,7 +30129,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35593,28 +35571,6 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        確認コマンド
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシュート
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -35647,7 +35603,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -35658,7 +35614,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -35680,7 +35636,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -35701,7 +35657,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -35744,8 +35700,8 @@
 <!-- /topics-tip -->
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p><code>fpmsyncd</code> の <code>RTM_NEWNEXTHOP</code> ハンドラ、<code>NEXTHOP_GROUP_TABLE</code> の APPL_DB スキーマ、<code>NhgOrch</code> の multipath 拡張、<code>fpm use-nexthop-groups</code> の有効化フローは現行 master 未裏取り。</p>
+<p class="admonition-title">裏取りステータス: discrepancy-found</p>
+<p><code>fpmsyncd</code> の <code>RTM_NEWNEXTHOP</code> ハンドラ・<code>NEXTHOP_GROUP_TABLE</code> の APPL_DB スキーマ・<code>NhgOrch</code> の multipath 拡張は master に実装済みだが、有効化キー名（HLD: <code>fpm_use_nexthop_groups</code> → 実装: <code>nexthop_group</code>）に乖離あり。詳細は「HLD と実装の差分」節を参照。</p>
 </div>
 <h1 id="fpmsyncd-nexthop-group-dplane_fpm_nl-nexthop_group_table">fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）<a class="headerlink" href="#fpmsyncd-nexthop-group-dplane_fpm_nl-nexthop_group_table" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -35839,34 +35795,26 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
-<li>有効化しても <code>NEXTHOP_GROUP_TABLE</code> が空 → zebra 設定で <code>fpm use-nexthop-groups</code> が出ているか <code>vtysh -c 'show running'</code> 確認</li>
+<li>有効化しても <code>NEXTHOP_GROUP_TABLE</code> が空 → zebra 設定で <code>fpm use-nexthop-groups</code> が出ているか <code>vtysh -c 'show running'</code> 確認（有効化キーは <code>nexthop_group</code>。詳細は「HLD と実装の差分」節を参照）</li>
 <li>libnl のバージョン違い → <code>RTM_NEWNEXTHOP</code> 受信が無い場合に発生</li>
+<li>ルート学習後に <a href="../../reference/glossary/#term-asic">ASIC</a> まで反映されない場合、<code>fpmsyncd</code> の NLMSG パースに失敗していないかを <code>docker logs bgp</code> と <code>/var/log/swss/swss.rec</code> の両方で確認</li>
+<li>NHG 上限超過時は <a href="../../reference/glossary/#term-orchagent">orchagent</a> が単一ホップにフォールバックする。<code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> と現在数 (<code>ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP</code> の総数) を比較する</li>
+<li>FRR と kernel の NHG ID 対応が崩れた場合は <code>bgp</code> コンテナ再起動で再 sync するが、APPL_DB の stale エントリは <code>swssconfig</code> で flush することを検討</li>
 </ul>
 <h3 id="_8">コマンド例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p>fpmsyncd の nexthop group メッセージ処理を確認する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>logs<span class="w"> </span>bgp<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;NEXTHOP_GROUP&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NEXTHOP_GROUP_TABLE*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP*&#39;</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># fpmsyncd の nexthop group 関連ログ</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">200</span><span class="w"> </span>/var/log/zebra.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;nexthop|nhg&#39;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;nexthop_group&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># APPL_DB / ASIC_DB の NEXT_HOP_GROUP オブジェクト</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;NEXTHOP_GROUP_TABLE:*&#39;</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># FRR 側 NHG state</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show nexthop-group rib&#39;</span>
 </span></code></pre></div>
-<h2 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># fpmsyncd の nexthop group 関連ログ</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">200</span><span class="w"> </span>/var/log/zebra.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;nexthop|nhg&#39;</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;nexthop_group&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># APPL_DB / ASIC_DB の NEXT_HOP_GROUP オブジェクト</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;NEXTHOP_GROUP_TABLE:*&#39;</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>sonic-db-cli<span class="w"> </span>ASIC_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="c1"># FRR 側 NHG state</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show nexthop-group rib&#39;</span>
-</span></code></pre></div>
-<h2 id="_10">トラブルシュート<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<ul>
-<li>ルート学習後に <a href="../../reference/glossary/#term-asic">ASIC</a> まで反映されない場合、<code>fpmsyncd</code> の NLMSG パースに失敗していないかを <code>docker logs bgp</code> と <code>/var/log/swss/swss.rec</code> の両方で確認。</li>
-<li>NHG 上限超過時は <a href="../../reference/glossary/#term-orchagent">orchagent</a> が単一ホップにフォールバックする。<code>SAI_SWITCH_ATTR_NUMBER_OF_ECMP_GROUPS</code> と現在数 (<code>ASIC_STATE:SAI_OBJECT_TYPE_NEXT_HOP_GROUP</code> の総数) を比較する。</li>
-<li>FRR と kernel の NHG ID 対応が崩れた場合は <code>bgp</code> コンテナ再起動で再 sync するが、APPL_DB の stale エントリは <code>swssconfig</code> で flush することを検討。</li>
-</ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - fpmsyncd の RTM_NEWNEXTHOP / RTM_DELNEXTHOP ハンドラ実装存在確認
 - NhgOrch multipath 拡張の現行 master 取り込み確認
@@ -35894,44 +35842,44 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 <h3 id="2026-05-11batch-q3-disc-detail">深掘り（2026-05-11、batch q3-disc-detail）<a class="headerlink" href="#2026-05-11batch-q3-disc-detail" title="Permanent link">&para;</a></h3>
 <h4 id="hld">HLD 記述と実装の差分（行番号 + コード抜粋）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h4>
 <p><code>sonic-buildimage/dockers/docker-fpm-frr/frr/zebra/zebra.conf.j2</code> L9-L26:</p>
-<div class="language-jinja highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="cp">{%</span> <span class="k">block</span> <span class="nv">zebra_nexthop</span> <span class="cp">%}</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="cp">{%</span> <span class="k">if</span> <span class="o">((</span><span class="s1">&#39;localhost&#39;</span> <span class="k">in</span> <span class="nv">DEVICE_METADATA</span><span class="o">)</span> <span class="k">and</span> <span class="o">(</span><span class="s1">&#39;zebra_nexthop&#39;</span> <span class="k">in</span> <span class="nv">DEVICE_METADATA</span><span class="o">[</span><span class="s1">&#39;localhost&#39;</span><span class="o">])</span> <span class="k">and</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>       <span class="o">(</span><span class="nv">DEVICE_METADATA</span><span class="o">[</span><span class="s1">&#39;localhost&#39;</span><span class="o">][</span><span class="s1">&#39;zebra_nexthop&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;disabled&#39;</span><span class="o">))</span> <span class="cp">%}</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="x">no zebra nexthop kernel enable</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="cp">{%</span> <span class="k">else</span> <span class="cp">%}</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="x">zebra nexthop kernel enable</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="cp">{%</span> <span class="k">endblock</span> <span class="nv">zebra_nexthop</span> <span class="cp">%}</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="cp">{%</span> <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="s1">&#39;localhost&#39;</span> <span class="k">in</span> <span class="nv">DEVICE_METADATA</span><span class="o">)</span> <span class="k">and</span> <span class="o">(</span><span class="s1">&#39;nexthop_group&#39;</span> <span class="k">in</span>  <span class="nv">DEVICE_METADATA</span><span class="o">[</span><span class="s1">&#39;localhost&#39;</span><span class="o">])</span> <span class="k">and</span>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>        <span class="o">(</span><span class="nv">DEVICE_METADATA</span><span class="o">[</span><span class="s1">&#39;localhost&#39;</span><span class="o">][</span><span class="s1">&#39;nexthop_group&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;enabled&#39;</span><span class="o">)</span> <span class="o">)</span> <span class="cp">%}</span>
-</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="x">...</span>
-</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="x">fpm use-next-hop-groups</span>
-</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="cp">{%</span> <span class="k">else</span> <span class="cp">%}</span>
-</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="x">no fpm use-next-hop-groups</span>
-</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
+<div class="language-jinja highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="cp">{%</span> <span class="k">block</span> <span class="nv">zebra_nexthop</span> <span class="cp">%}</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="cp">{%</span> <span class="k">if</span> <span class="o">((</span><span class="s1">&#39;localhost&#39;</span> <span class="k">in</span> <span class="nv">DEVICE_METADATA</span><span class="o">)</span> <span class="k">and</span> <span class="o">(</span><span class="s1">&#39;zebra_nexthop&#39;</span> <span class="k">in</span> <span class="nv">DEVICE_METADATA</span><span class="o">[</span><span class="s1">&#39;localhost&#39;</span><span class="o">])</span> <span class="k">and</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>       <span class="o">(</span><span class="nv">DEVICE_METADATA</span><span class="o">[</span><span class="s1">&#39;localhost&#39;</span><span class="o">][</span><span class="s1">&#39;zebra_nexthop&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;disabled&#39;</span><span class="o">))</span> <span class="cp">%}</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="x">no zebra nexthop kernel enable</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="cp">{%</span> <span class="k">else</span> <span class="cp">%}</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="x">zebra nexthop kernel enable</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="cp">{%</span> <span class="k">endblock</span> <span class="nv">zebra_nexthop</span> <span class="cp">%}</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="cp">{%</span> <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="s1">&#39;localhost&#39;</span> <span class="k">in</span> <span class="nv">DEVICE_METADATA</span><span class="o">)</span> <span class="k">and</span> <span class="o">(</span><span class="s1">&#39;nexthop_group&#39;</span> <span class="k">in</span>  <span class="nv">DEVICE_METADATA</span><span class="o">[</span><span class="s1">&#39;localhost&#39;</span><span class="o">])</span> <span class="k">and</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>        <span class="o">(</span><span class="nv">DEVICE_METADATA</span><span class="o">[</span><span class="s1">&#39;localhost&#39;</span><span class="o">][</span><span class="s1">&#39;nexthop_group&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;enabled&#39;</span><span class="o">)</span> <span class="o">)</span> <span class="cp">%}</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="x">...</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="x">fpm use-next-hop-groups</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="cp">{%</span> <span class="k">else</span> <span class="cp">%}</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="x">no fpm use-next-hop-groups</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
 </span></code></pre></div>
 <ul>
 <li>有効化 key の実装名: <code>DEVICE_METADATA.localhost.nexthop_group</code> (= <code>enabled</code> / <code>disabled</code>)、および <code>DEVICE_METADATA.localhost.zebra_nexthop</code>（kernel への NHG push を抑止する場合 <code>disabled</code> を指定）。</li>
 <li>HLD 表記の <code>fpm_use_nexthop_groups</code> という単一キー名は <strong>実装に存在しない</strong>。</li>
 </ul>
-<h4 id="_12">読者への影響<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<h4 id="_10">読者への影響<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
 <ul>
 <li>HLD 通りに <code>redis-cli -n 4 hset 'DEVICE_METADATA|localhost' fpm_use_nexthop_groups enabled</code> を打っても、<code>zebra.conf</code> 再生成では <code>no fpm use-next-hop-groups</code> が出力されたままで <strong>NHG 機能は有効化されない</strong>。<code>fpmsyncd</code> 起動ログを見ても <code>RTM_NEWNEXTHOP</code> を受け取らないため <code>NEXTHOP_GROUP_TABLE</code> は空のまま。</li>
 <li>key 名を勘違いしたまま BGP PIC を運用設計すると、ECMP 切替時の収束が NHG 経由ではなく従来の per-route 経路で行われ、HLD が謳う収束時間短縮が得られない。</li>
 </ul>
-<h4 id="_13">回避策の実コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># 正しい有効化（実装側 key 名）</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hset<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span>nexthop_group<span class="w"> </span>enabled
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c1"># kernel NHG push を残したい場合（デフォルト動作）は zebra_nexthop は未設定 or &quot;enabled&quot;</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>sudo<span class="w"> </span>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hset<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span>zebra_nexthop<span class="w"> </span>enabled
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="c1"># 反映: BGP container 再起動が必要</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>bgp
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="c1"># 確認</span>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show running-config zebra&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;fpm use-next-hop-groups\|nexthop kernel&quot;</span>
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NEXTHOP_GROUP_TABLE:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+<h4 id="_11">回避策の実コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># 正しい有効化（実装側 key 名）</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hset<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span>nexthop_group<span class="w"> </span>enabled
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># kernel NHG push を残したい場合（デフォルト動作）は zebra_nexthop は未設定 or &quot;enabled&quot;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>sudo<span class="w"> </span>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hset<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span>zebra_nexthop<span class="w"> </span>enabled
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># 反映: BGP container 再起動が必要</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>bgp
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="c1"># 確認</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show running-config zebra&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;fpm use-next-hop-groups\|nexthop kernel&quot;</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;NEXTHOP_GROUP_TABLE:*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>
 <p><code>fpm use-next-hop-groups</code> が <code>running-config</code> に出ていれば成功。<code>NEXTHOP_GROUP_TABLE:*</code> キーが見えれば <a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> 経路も生きている。</p>
 <h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
@@ -35940,13 +35888,13 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/23500">sonic-buildimage #23500: [frr] update next hop group support by metadata value with disabled as the default value (merged, 202511)</a> — default を <code>disabled</code> に固定する change。デフォルトでは NHG が <strong>無効</strong> な点に注意。</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/16941">sonic-buildimage #16941: [action][PR:16747] fix default zebra config not inserted into empty zebra.conf (merged)</a> — 関連の zebra.conf 生成バグ修正。</li>
 </ul>
-<h4 id="_14">検証日<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
+<h4 id="_12">検証日<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 </div>
 <!-- /diff-admonition -->
 
 <!-- next-action -->
-<h2 id="_15">このページを読んだ後の次アクション<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h2 id="_13">このページを読んだ後の次アクション<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

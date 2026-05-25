@@ -27671,7 +27671,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30051,7 +30051,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35553,7 +35553,7 @@
 <h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">構成<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-    DM[Daemon\n image_config 由来] --&gt;|2 分毎| SDB[(STATE_DB)]
+    DM["Daemon&lt;br/&gt;sonic-host-services 由来"] --&gt;|2 分毎| SDB[(STATE_DB)]
     PS[ps -eo ...] --&gt; DM
     DS[docker stats] --&gt; DM
     SDB --&gt; TA[Telemetry agent]

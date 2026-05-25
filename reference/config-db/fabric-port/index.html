@@ -28447,7 +28447,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30827,7 +30827,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -38435,11 +38435,11 @@
 <h3 id="_19">典型値<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>FABRIC_PORT|&lt;Fabric&gt;</code>。</li>
-<li><code>admin_status</code>: <code>up</code>、<code>isolate_status</code>: <code>False</code>、<code>lanes</code>: プラットフォーム既定値。</li>
+<li><code>isolateStatus</code>: <code>False</code>、<code>lanes</code>: プラットフォーム既定値、<code>alias</code>: ポート名と同値（<code>portconfig.py</code> デフォルト）。</li>
 </ul>
 <h3 id="_20">よくある誤設定<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <ul>
-<li>isolate_status=True のままにすると <a href="../../glossary/#term-voq">VOQ</a> chassis 内で fabric リンクが trunk から外れたまま戻らない。</li>
+<li><code>isolateStatus=True</code> のままにすると <a href="../../glossary/#term-voq">VOQ</a> chassis 内で fabric リンクが trunk から外れたまま戻らない。</li>
 </ul>
 <h3 id="_21">確認コマンド<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;FABRIC_PORT|*&#39;</span>

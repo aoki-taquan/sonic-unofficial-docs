@@ -27,7 +27,7 @@
     
     
       
-        <title>NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform) - SONiC 非公式ドキュメント</title>
+        <title>NTP テーブル群 - SONiC 非公式ドキュメント</title>
       
     
     
@@ -63,7 +63,7 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform) - SONiC 非公式ドキュメント" />
+<meta property="og:title" content="NTP テーブル群 - SONiC 非公式ドキュメント" />
 <meta property="og:description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop、書込み順依存、hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動、ハードコード定数、/etc/chrony への副次ファイル書込と systemd 経路、CONFIG_DB Subscribe 通信メカニズム、および SmartSwitch / MGMT_VRF / multi-asic プラットフォーム差を網羅した調査ページ。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/ntp.png" />
 <meta property="og:image:type" content="image/png" />
@@ -71,7 +71,7 @@
 <meta property="og:image:height" content="630" />
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/ntp/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform) - SONiC 非公式ドキュメント" />
+<meta property="twitter:title" content="NTP テーブル群 - SONiC 非公式ドキュメント" />
 <meta property="twitter:description" content="NTP / NTP_SERVER / NTP_KEY の各フィールドに対するコード由来の暗黙デフォルト・乖離・dead field・silent drop、書込み順依存、hostcfgd / chrony テンプレート・chronyd-starter.sh の失敗挙動、ハードコード定数、/etc/chrony への副次ファイル書込と systemd 経路、CONFIG_DB Subscribe 通信メカニズム、および SmartSwitch / MGMT_VRF / multi-asic プラットフォーム差を網羅した調査ページ。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/ntp.png" />
 </head>
@@ -93,7 +93,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#_1" class="md-skip">
+        <a href="#ntp-phase-a-phase-b-phase-d-phase-f-phase-g-phase-h" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -127,7 +127,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+              NTP テーブル群
             
           </span>
         </div>
@@ -27402,6 +27402,8 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
           
@@ -27410,7 +27412,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -27428,7 +27430,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -27443,6 +27445,8 @@
 <nav class="md-nav md-nav--secondary" aria-label="目次">
   
   
+  
+    
   
   
     <label class="md-nav__title" for="__toc">
@@ -27463,18 +27467,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ntp-phase-a-phase-b-phase-d-phase-f-phase-g-phase-h" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F) + 通信メカニズム (Phase G) + プラットフォーム差 (Phase H)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F) + 通信メカニズム (Phase G) + プラットフォーム差 (Phase H)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27629,8 +27621,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27640,8 +27632,8 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27718,8 +27710,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#phase-b" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27812,8 +27804,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#ntpcfg-config_db-phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27873,8 +27865,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#phase-e" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27934,8 +27926,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -27995,8 +27987,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#phase-g-config_db-subscribe-chrony-sighup" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28067,8 +28059,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28128,8 +28120,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28139,8 +28131,8 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28148,11 +28140,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -30531,7 +30518,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35780,6 +35767,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -35799,18 +35788,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ntp-phase-a-phase-b-phase-d-phase-f-phase-g-phase-h" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F) + 通信メカニズム (Phase G) + プラットフォーム差 (Phase H)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F) + 通信メカニズム (Phase G) + プラットフォーム差 (Phase H)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35965,8 +35942,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35976,8 +35953,8 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36054,8 +36031,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#phase-b" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36148,8 +36125,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#ntpcfg-config_db-phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36209,8 +36186,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#phase-e" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36270,8 +36247,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#db-phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36331,8 +36308,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#phase-g-config_db-subscribe-chrony-sighup" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36403,8 +36380,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#phase-h" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36464,8 +36441,8 @@
     </nav>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36475,8 +36452,8 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -36484,11 +36461,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -36517,6 +36489,7 @@
   
 
 
+<h1 id="ntp-phase-a-phase-b-phase-d-phase-f-phase-g-phase-h">NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F) + 通信メカニズム (Phase G) + プラットフォーム差 (Phase H)<a class="headerlink" href="#ntp-phase-a-phase-b-phase-d-phase-f-phase-g-phase-h" title="Permanent link">&para;</a></h1>
 <!-- cdb-mermaid -->
 <h3 id="_1">データフロー (自動生成)<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -36529,7 +36502,6 @@
 </div>
 <!-- /cdb-mermaid -->
 
-<h1 id="ntp-phase-a-phase-b-phase-d-phase-f-phase-g-phase-h">NTP テーブル群 — コード由来デフォルト (Phase A) + 書込み順依存 (Phase B) + 失敗挙動 (Phase D) + 副次ファイル書込 (Phase F) + 通信メカニズム (Phase G) + プラットフォーム差 (Phase H)<a class="headerlink" href="#ntp-phase-a-phase-b-phase-d-phase-f-phase-g-phase-h" title="Permanent link">&para;</a></h1>
 <blockquote>
 <p>このページは <code>NTP</code> / <code>NTP_SERVER</code> / <code>NTP_KEY</code> 3 テーブルを横断して、<a href="../../glossary/#term-yang">YANG</a> 定義・<code>init_cfg.json.j2</code>・<code>chrony.conf.j2</code> テンプレート・<code>hostcfgd</code> ハンドラの全行精読から得た<strong>暗黙デフォルト</strong>・<strong>乖離</strong>・<strong>dead field</strong>・<strong>silent drop</strong> を記録する。各テーブルの詳細は <a href="../ntp-global/"><code>NTP (global)</code></a>・<a href="../ntp-server/"><code>NTP_SERVER</code></a>・<a href="../ntp-key/"><code>NTP_KEY</code></a> を参照。</p>
 </blockquote>

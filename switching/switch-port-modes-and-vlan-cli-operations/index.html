@@ -10565,22 +10565,16 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="トラブルシューティング">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コマンド例
+        コマンド例（確認）
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -27582,7 +27576,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29962,7 +29956,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35281,22 +35275,16 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="トラブルシューティング">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        コマンド例
+        コマンド例（確認）
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -35478,7 +35466,7 @@
 <li><strong>範囲指定 CLI が一部しか反映されない</strong>: truncate ポリシーで途中エラーで停止した可能性。エラーメッセージを確認し、不正 VID を除外して再実行</li>
 <li><strong><code>Error: Got unexpected extra argument</code></strong>: HLD の <code>config switchport mode access &lt;port&gt; &lt;vlan&gt;</code> 形を打った場合に出る。<code>&lt;vlan&gt;</code> は別コマンド (<code>config vlan member add</code>) に分離する</li>
 </ul>
-<h3 id="_5">コマンド例<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h2 id="_5">コマンド例（確認）<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p>switchport CLI 操作後の CONFIG_DB 状態を確認する。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>switchport<span class="w"> </span>status
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;PORT|Ethernet0&#39;</span>

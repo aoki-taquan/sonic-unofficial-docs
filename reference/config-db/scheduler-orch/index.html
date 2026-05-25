@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30352,7 +30352,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36740,7 +36740,7 @@
 <li><code>allPortsReady()</code> が <code>false</code> の間は <code>doTask()</code> の冒頭チェックでスキップされ、イベントは <code>m_toSync</code> に蓄積される（<code>qosorch.cpp:2258-2261</code>）。PortsOrch が全ポート初期化を完了した時点で再処理が走る。</li>
 </ul>
 <blockquote>
-<p><strong>参照ソース</strong>: <code>orchestagent/orchdaemon.cpp:384, 943-959</code>（メインループ・addConsumer）、<code>orchagent/orch.cpp:1186-1190</code>（addConsumer / SubscriberStateTable 選択）、<code>common/subscriberstatetable.cpp:17-24</code>（PSUBSCRIBE 発行）、<code>common/subscriberstatetable.cpp:45-73</code>（readData / バッファリング）</p>
+<p><strong>参照ソース</strong>: <code>orchagent/orchdaemon.cpp:384, 943-959</code>（メインループ・addConsumer）、<code>orchagent/orch.cpp:1186-1190</code>（addConsumer / SubscriberStateTable 選択）、<code>common/subscriberstatetable.cpp:17-24</code>（PSUBSCRIBE 発行）、<code>common/subscriberstatetable.cpp:45-73</code>（readData / バッファリング）</p>
 </blockquote>
 <!-- /pubsub -->
 

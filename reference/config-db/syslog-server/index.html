@@ -28370,7 +28370,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30750,7 +30750,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37135,7 +37135,7 @@
 
 <!-- cdb-exceptions -->
 <h2 id="_10">例外条件・特殊挙動<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<!-- evidence: sonic-host-services/scripts/hostcfgd@c5bbbe8b07b96f078fa4b761316627404b01bd04 L2417-2415 -->
+<!-- evidence: sonic-host-services/scripts/hostcfgd@c5bbbe8b07b96f078fa4b761316627404b01bd04 L2415-2417 -->
 
 <ul>
 <li><strong>SYSLOG_CONFIG と合算で再評価</strong>: <code>rsyslog_server_handler()</code> はエントリの追加/削除/変更のいずれでも <code>SYSLOG_CONFIG</code> と <code>SYSLOG_SERVER</code> 両テーブルを再取得し <code>rsyslog-config</code> サービスを再起動する。サーバ 1 台の変更でも全設定が再生成される点に注意。</li>

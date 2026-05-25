@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="sonic-copp YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-copp.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd">
+        <meta name="description" content="sonic-copp YANG — Control Plane Policing (CoPP) の YANG モデル。COPP_GROUP でポリサーを定義し COPP_TRAP でトラップ ID を紐付ける。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="sonic-copp YANG - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="sonic-copp YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-copp.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd" />
+<meta property="og:description" content="sonic-copp YANG — Control Plane Policing (CoPP) の YANG モデル。COPP_GROUP でポリサーを定義し COPP_TRAP でトラップ ID を紐付ける。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/yang/sonic-copp.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-copp/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="sonic-copp YANG - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="sonic-copp YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-copp.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd" />
+<meta property="twitter:description" content="sonic-copp YANG — Control Plane Policing (CoPP) の YANG モデル。COPP_GROUP でポリサーを定義し COPP_TRAP でトラップ ID を紐付ける。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/yang/sonic-copp.png" />
 </head>
   
@@ -27401,7 +27401,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29781,7 +29781,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35600,36 +35600,36 @@
 <!-- /yang-xref -->
 
 <h2 id="_4">ツリー<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sonic-copp</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">+--rw sonic-copp</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">+--rw COPP_GROUP</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|  +--rw COPP_GROUP_LIST* [name]</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw name             string</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw queue?           uint32</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw trap_priority?   uint32</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw trap_action      stypes:policer_packet_action</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw meter_type       stypes:meter_type</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw mode             enumeration</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw color?           stypes:policer_color_source</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw cir?             uint64</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw cbs?             uint64</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw pir?             uint64</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw pbs?             uint64</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw green_action?    stypes:policer_packet_action</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw yellow_action?   stypes:policer_packet_action</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">|     +--rw red_action?      stypes:policer_packet_action</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">+--rw COPP_TRAP</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">+--rw COPP_TRAP_LIST* [name]</span>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">           </span><span class="l l-Scalar l-Scalar-Plain">+--rw name              string</span>
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">           </span><span class="l l-Scalar l-Scalar-Plain">+--rw trap_ids          string</span>
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">           </span><span class="l l-Scalar l-Scalar-Plain">+--rw trap_group?       -&gt; /sonic-copp/COPP_GROUP/COPP_GROUP_LIST/name</span>
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">           </span><span class="l l-Scalar l-Scalar-Plain">+--rw always_enabled?   boolean</span>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>module: sonic-copp
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  +--rw sonic-copp
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>     +--rw COPP_GROUP
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>     |  +--rw COPP_GROUP_LIST* [name]
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>     |     +--rw name             string
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>     |     +--rw queue?           uint32
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>     |     +--rw trap_priority?   uint32
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>     |     +--rw trap_action      stypes:policer_packet_action
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>     |     +--rw meter_type       stypes:meter_type
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>     |     +--rw mode             enumeration
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>     |     +--rw color?           stypes:policer_color_source
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>     |     +--rw cir?             uint64
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>     |     +--rw cbs?             uint64
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>     |     +--rw pir?             uint64
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>     |     +--rw pbs?             uint64
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>     |     +--rw green_action?    stypes:policer_packet_action
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>     |     +--rw yellow_action?   stypes:policer_packet_action
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>     |     +--rw red_action?      stypes:policer_packet_action
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>     +--rw COPP_TRAP
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>        +--rw COPP_TRAP_LIST* [name]
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>           +--rw name              string
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>           +--rw trap_ids          string
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>           +--rw trap_group?       -&gt; /sonic-copp/COPP_GROUP/COPP_GROUP_LIST/name
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>           +--rw always_enabled?   boolean
 </span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">rpcs</span><span class="p p-Indicator">:</span>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">+---x get-match-protocols</span>
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">       </span><span class="l l-Scalar l-Scalar-Plain">+--ro output</span>
-</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">+--ro Match_protocols* [Protocol]</span>
-</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">             </span><span class="l l-Scalar l-Scalar-Plain">+--ro Protocol    string</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>  rpcs:
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>    +---x get-match-protocols
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>       +--ro output
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>          +--ro Match_protocols* [Protocol]
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>             +--ro Protocol    string
 </span></code></pre></div>
 <h2 id="leaf">leaf 一覧<a class="headerlink" href="#leaf" title="Permanent link">&para;</a></h2>
 <table>
@@ -35715,7 +35715,7 @@
 <td></td>
 <td>0</td>
 <td></td>
-<td>Committed information rate for the dual-rate token                     bucket policer.  This value represents the rate at which                    tokens are added to the primary bucket.</td>
+<td>Committed information rate for the dual-rate token bucket policer. Rate at which tokens are added to the primary bucket.</td>
 </tr>
 <tr>
 <td><code>cbs</code></td>
@@ -35724,7 +35724,7 @@
 <td></td>
 <td>0</td>
 <td></td>
-<td>Committed burst size for the dual-rate token bucket                    policer.  This value represents the depth of the token                      bucket.</td>
+<td>Committed burst size for the dual-rate token bucket policer. Depth of the primary token bucket.</td>
 </tr>
 <tr>
 <td><code>pir</code></td>
@@ -35733,7 +35733,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>Peak information rate for the dual-rate token bucket                    policer.  This value represents the rate at which tokens                    are added to the secondary bucket.</td>
+<td>Peak information rate for the dual-rate token bucket policer. Rate at which tokens are added to the secondary bucket.</td>
 </tr>
 <tr>
 <td><code>pbs</code></td>
@@ -35742,7 +35742,7 @@
 <td></td>
 <td></td>
 <td></td>
-<td>Excess burst size for the dual-rate token bucket policer.                   This value represents the depth of the secondary bucket.</td>
+<td>Excess burst size for the dual-rate token bucket policer. Depth of the secondary token bucket.</td>
 </tr>
 <tr>
 <td><code>green_action</code></td>

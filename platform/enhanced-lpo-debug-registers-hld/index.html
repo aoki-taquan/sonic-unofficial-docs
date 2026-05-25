@@ -27610,7 +27610,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29990,7 +29990,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35422,8 +35422,8 @@
 <!-- /topics-tip -->
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は 2025 年 2 月 (Rev 1.0) Arista 提案。<code>CmisEnhancedLpoApi</code> クラスと <code>xcvr_api_factory.py</code> の vendor 分岐、<code>TRANSCEIVER_INFO</code> / <code>TRANSCEIVER_DOM_SENSOR</code> / <code>TRANSCEIVER_DOM_THRESHOLD</code> / <code>TRANSCEIVER_DOM_FLAG*</code> への新キー追加の現行実装は未裏取り。</p>
+<p class="admonition-title">裏取りステータス: discrepancy-found（master 未取り込み）</p>
+<p>HLD は 2025 年 2 月 (Rev 1.0) Arista 提案。<code>CmisEnhancedLpoApi</code> クラスと <code>xcvr_api_factory.py</code> の vendor 分岐、<code>TRANSCEIVER_INFO</code> / <code>TRANSCEIVER_DOM_SENSOR</code> / <code>TRANSCEIVER_DOM_THRESHOLD</code> / <code>TRANSCEIVER_DOM_FLAG*</code> への新キー追加はいずれも master に未取り込み (<code>monitor: not_implemented</code>)。frontmatter の <code>verification: discrepancy-found</code> を参照。</p>
 </div>
 <h1 id="lpo-vma-oma-per-lane-redis">拡張 LPO デバッグレジスタ（VMA / OMA per-lane モニタを Redis に公開）<a class="headerlink" href="#lpo-vma-oma-per-lane-redis" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

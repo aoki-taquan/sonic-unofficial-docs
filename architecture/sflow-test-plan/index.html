@@ -27590,7 +27590,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29970,7 +29970,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35457,7 +35457,7 @@
 <h3 id="tc1">TC1 の詳細<a class="headerlink" href="#tc1" title="Permanent link">&para;</a></h3>
 <ol>
 <li>4 IF で sflow 有効化 + collector 1 (default port 6343) + global enable → 両方の確認</li>
-<li>collector 削除 → trafffic で sample なし → 再追加で復活</li>
+<li>collector 削除 → traffic で sample なし → 再追加で復活</li>
 <li><strong>2 つ目の collector</strong> を非 default port (6344) で追加 → 両 collector が受信</li>
 <li>2 つ目を削除 → 1 つ目だけが受信</li>
 <li>2 つ目を復活 → 両者受信</li>

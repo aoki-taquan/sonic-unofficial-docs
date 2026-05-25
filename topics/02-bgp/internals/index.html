@@ -27652,7 +27652,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30032,7 +30032,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35621,7 +35621,7 @@
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
 <li>BGP 系で <strong>ZMQ は使われません</strong>。fpmsyncd → APPL_DB → orchagent の経路はすべて Redis pub/sub と <a href="../../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> です。</li>
-<li>Loading Optimization では fpmsyncd 側の Redis pipeline flush と orchagent 側の ring buffer（<code>gRingBuffer</code>）+ assistant thread で大量 route 投入の throughput を上げます（→ 04 章参照）。</li>
+<li>Loading Optimization では fpmsyncd 側の Redis pipeline flush と orchagent 側の ring buffer（<code>gRingBuffer</code>）+ assistant thread で大量 route 投入の throughput を上げます（→ <a href="../../04-vrf-ecmp/">VRF/ECMP 章</a> 参照）。</li>
 <li><code>bgpd</code> は <code>fpm</code> socket（TCP localhost:2620）で zebra と通信し、Redis を介しません。</li>
 </ul>
 <h2 id="route-loading">大量 route loading<a class="headerlink" href="#route-loading" title="Permanent link">&para;</a></h2>
@@ -35638,7 +35638,7 @@
 <li><strong>Suppress FIB Pending</strong> は ASIC からの <code>offloaded</code> フィードバックが前提で、ベンダ <a href="../../../reference/glossary/#term-syncd">syncd</a> が <code>STATE_DB.ROUTE_TABLE.offloaded</code> を更新しない場合は永続的に suppress 状態のままになります。FRR の <code>show bgp suppress-fib-pending</code> で詰まった prefix を確認する必要があります。</li>
 <li><strong>BGP PIC</strong> は ASIC 側で <code>NEXT_HOP_GROUP_MEMBER</code> の weight 動的更新がサポートされている前提です。member 単位の差し替えしか提供しないベンダ ASIC では PIC の benefit が出ません。</li>
 <li><strong>bgpcfgd の jinja2 template</strong> は SONiC 標準 <code>bgpd.main.conf.j2</code> 系を基準にしており、外部のカスタム template を差し込むと dynamic peer modification が partial update ではなく全 reload に劣化することがあります。</li>
-<li><strong>graceful restart / warm restart</strong> は FRR 側で実装されていますが、SONiC の warm-reboot framework (<code>WARM_RESTART_TABLE|bgp</code>) と必ずしも完全に同期しないため、reconcile timeout を CONFIG_DB の <code>WARM_RESTART</code> で十分に確保する必要があります（→ 11 章）。</li>
+<li><strong>graceful restart / warm restart</strong> は FRR 側で実装されていますが、SONiC の warm-reboot framework (<code>WARM_RESTART_TABLE|bgp</code>) と必ずしも完全に同期しないため、reconcile timeout を CONFIG_DB の <code>WARM_RESTART</code> で十分に確保する必要があります（→ <a href="../../11-reboot/">Reboot 章</a>）。</li>
 <li><strong>大量経路投入時</strong> は orchagent の単一スレッド処理が bottleneck になりやすく、ring buffer / assistant thread の有効化が前提です。<code>gBufferOrchEnabled</code> 系のビルドフラグで挙動が変わります。</li>
 </ul>
 <h2 id="bgpcfgd-manager">bgpcfgd の manager 構成<a class="headerlink" href="#bgpcfgd-manager" title="Permanent link">&para;</a></h2>

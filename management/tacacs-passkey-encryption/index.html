@@ -16239,7 +16239,7 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシュート
+        トラブルシューティング（追補）
       
     </span>
   </a>
@@ -27782,7 +27782,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30162,7 +30162,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35643,7 +35643,7 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシュート
+        トラブルシューティング（追補）
       
     </span>
   </a>
@@ -36061,13 +36061,6 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 </div>
 <!-- /diff-admonition -->
 
-<p>確認コマンド例:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># TACACS+ 認証状態確認</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>tacacs
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>show<span class="w"> </span>aaa
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;TACPLUS|global&#39;</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>hostcfgd<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>tacacs<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
-</span></code></pre></div>
 <h2 id="_11">参考リンク<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../reference/config-db/aaa/">CONFIG_DB: TACPLUS / TACPLUS_SERVER</a></li>
@@ -36076,19 +36069,19 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 <li><a href="../../topics/15-security-aaa/">Topics: Security / AAA</a></li>
 </ul>
 <h2 id="_12">確認コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># TACACS+ サーバ設定 (passkey は CONFIG_DB に暗号化されて保存)</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>show<span class="w"> </span>tacacs
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;TACPLUS|global&#39;</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;TACPLUS_SERVER|*&#39;</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># 暗号化に使われた master key の生成元 (platform 依存)</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>ls<span class="w"> </span>-l<span class="w"> </span>/etc/sonic/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>key
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/pam.d/common-auth<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>tacplus
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># TACACS+ 認証試行のログ</span>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;tacacs|pam_tacplus&#39;</span><span class="w"> </span>/var/log/auth.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># TACACS+ サーバ設定 (passkey は CONFIG_DB に暗号化されて保存)</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>show<span class="w"> </span>tacacs
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;TACPLUS|global&#39;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;TACPLUS_SERVER|*&#39;</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># 暗号化に使われた master key の生成元 (platform 依存)</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>ls<span class="w"> </span>-l<span class="w"> </span>/etc/sonic/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>key
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/pam.d/common-auth<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>tacplus
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># TACACS+ 認証試行のログ</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;tacacs|pam_tacplus&#39;</span><span class="w"> </span>/var/log/auth.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
 </span></code></pre></div>
-<h2 id="_13">トラブルシュート<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_13">トラブルシューティング（追補）<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
 <li>passkey が CONFIG_DB に平文で残っている古い構成では <code>config tacacs passkey &lt;key&gt;</code> で再投入し暗号化形式に migration する。</li>
 <li>暗号化マスタキーが装置固有 (TPM / platform 固有値) の場合、<code>config_db.json</code> を別装置に流用しても TACACS+ 認証が失敗する。装置毎に再設定する運用にする。</li>

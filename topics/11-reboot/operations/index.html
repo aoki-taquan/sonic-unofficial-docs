@@ -3955,17 +3955,6 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        対応コマンド追加
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         関連ページ
       
     </span>
@@ -27658,7 +27647,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30038,7 +30027,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35424,17 +35413,6 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        対応コマンド追加
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         関連ページ
       
     </span>
@@ -35635,6 +35613,21 @@
 <td><code>show kdump status</code></td>
 <td>章 <a href="../../09-telemetry-snmp/operations/">09</a></td>
 </tr>
+<tr>
+<td>reconciliation log</td>
+<td><code>grep -i reconcil /var/log/syslog</code></td>
+<td>syslog から一括確認</td>
+</tr>
+<tr>
+<td>直近 cause の生ファイル</td>
+<td><code>cat /host/reboot-cause/reboot-cause.txt</code></td>
+<td><code>/host/reboot-cause/</code> 配下</td>
+</tr>
+<tr>
+<td>前回 cause（JSON）</td>
+<td><code>cat /host/reboot-cause/previous-reboot-cause.json</code></td>
+<td>前回 cause 詳細</td>
+</tr>
 </tbody>
 </table>
 <h2 id="config_db-state_db-key">CONFIG_DB / STATE_DB 関連 key<a class="headerlink" href="#config_db-state_db-key" title="Permanent link">&para;</a></h2>
@@ -35735,50 +35728,7 @@
 <li><strong>fast-reboot で image 切替</strong> — <code>sonic-installer set-default &lt;image&gt;</code> → <code>fast-reboot</code> → 起動後 <code>show version</code> で image を確認 → BGP/LAG/route 件数が事前メモと合っているかを確認。</li>
 <li><strong>reboot 履歴の定期点検</strong> — <code>show reboot-cause history</code> を週次で確認し、<code>Watchdog</code> / <code>Hardware - reason</code> が一度でも出ていれば platform team に escalate、<code>Kernel Panic</code> が複数回なら同 stack trace を比較。</li>
 </ol>
-<h2 id="_6">対応コマンド追加<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>目的</th>
-<th>コマンド</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>直近 cause の生ファイル</td>
-<td><code>cat /host/reboot-cause/reboot-cause.txt</code></td>
-</tr>
-<tr>
-<td>前回 cause（JSON）</td>
-<td><code>cat /host/reboot-cause/previous-reboot-cause.json</code></td>
-</tr>
-<tr>
-<td>reboot 一覧履歴</td>
-<td><code>show reboot-cause history</code></td>
-</tr>
-<tr>
-<td>warm-restart 設定</td>
-<td><code>show warm_restart config</code></td>
-</tr>
-<tr>
-<td>warm-restart 状態</td>
-<td><code>show warm_restart state</code></td>
-</tr>
-<tr>
-<td>Graceful Restart 状態（BGP）</td>
-<td><code>vtysh -c "show bgp neighbor &lt;ip&gt; graceful-restart"</code></td>
-</tr>
-<tr>
-<td>kdump 状態</td>
-<td><code>show kdump status</code>、<code>ls /var/crash/</code></td>
-</tr>
-<tr>
-<td>reconciliation log</td>
-<td><code>grep -i reconcil /var/log/syslog</code></td>
-</tr>
-</tbody>
-</table>
-<h2 id="_7">関連ページ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">関連ページ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../../system/reboot-cause-information-via-telemetry-agent/">Reboot-cause 履歴の STATE_DB / テレメトリ公開</a></li>
 <li><a href="../../../switching/increasing-lacp-pdu-timeout-during-warm-reboot/">Warm-reboot 中の LACP retry count 拡張</a></li>

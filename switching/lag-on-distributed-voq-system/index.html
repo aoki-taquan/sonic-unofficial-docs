@@ -27698,7 +27698,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30078,7 +30078,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35757,7 +35757,7 @@
 <li>既存 VOQ neighbor 共有: 同じ CHASSIS_APP_DB を利用する先行例</li>
 </ul>
 <h2 id="_7">トラブルシューティング<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>redis-cli<span class="w"> </span>-h<span class="w"> </span>&lt;supervisor&gt;<span class="w"> </span>-n<span class="w"> </span>CHASSIS_APP_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SYSTEM_LAG_TABLE:&lt;host&gt;|&lt;asic&gt;|&lt;lag&gt;&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sonic-db-cli<span class="w"> </span>CHASSIS_APP_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SYSTEM_LAG_TABLE:&lt;host&gt;|&lt;asic&gt;|&lt;lag&gt;&#39;</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># system_lag_id が remote ASIC でも programming されているかを確認</span>
 </span></code></pre></div>
 <ul>

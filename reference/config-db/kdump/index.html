@@ -28232,7 +28232,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30612,7 +30612,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36866,7 +36866,7 @@
 <td>DB には書けるが kdump kernel 起動失敗（コード上のバリデーションなし、YANG 経由時のみ検証）</td>
 </tr>
 <tr>
-<td><code>num_dumps</code> が 0 以下</td>
+<td><code>num_dumps</code> が 0 や負値</td>
 <td>CLI は <code>int</code> として受け取るが下限チェックなし。<a href="../../glossary/#term-hostcfgd">hostcfgd</a> が <code>kdump-config</code> にそのまま渡すため動作は実装依存</td>
 </tr>
 <tr>

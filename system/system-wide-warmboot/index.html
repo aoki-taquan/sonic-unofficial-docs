@@ -13464,7 +13464,7 @@
   <a href="#5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. 制限事項と干渉する機能
+        5. 干渉する機能
       
     </span>
   </a>
@@ -27621,7 +27621,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30001,7 +30001,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35349,7 +35349,7 @@
   <a href="#5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. 制限事項と干渉する機能
+        5. 干渉する機能
       
     </span>
   </a>
@@ -35518,11 +35518,8 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 
 <h2 id="4">4. 設定<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <p><code>config warm_restart enable system</code> で <code>WARM_RESTART_TABLE</code> を有効化。docker 別の有効化や CLI 一覧は <a href="../sonic-warm-reboot/"><code>sonic-warm-reboot.md</code></a> を参照。</p>
-<h2 id="5">5. 制限事項と干渉する機能<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
+<h2 id="5">5. 干渉する機能<a class="headerlink" href="#5" title="Permanent link">&para;</a></h2>
 <ul>
-<li>同 image 同士または version upgrade のみ対象、<strong>downgrade は対象外</strong></li>
-<li>すべての docker / SAI vendor が warm restart 実装している前提</li>
-<li><code>SONIC_BOOT_TYPE</code> 表記揺れ（<code>fast-reboot</code> vs <code>fast</code>）は将来変わる可能性</li>
 <li><strong>fast-reboot</strong>: 同基盤・同 kernel arg を共有</li>
 <li><strong>Warmboot Manager</strong>: 後発の shutdown orchestrator、共存設計</li>
 <li><strong><a href="../../reference/glossary/#term-bgp">BGP</a> graceful restart / teamd 90s timer</strong>: control plane downtime &lt;90s に必須</li>
@@ -35545,6 +35542,8 @@ reasoning: SAI 側 warm shutdown / recovery の API 契約根拠。
 </ul>
 <h2 id="_2">制限事項<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
+<li>同 image 同士または version upgrade のみ対象、<strong>downgrade は対象外</strong>。</li>
+<li>すべての docker / SAI vendor が warm restart 実装している前提。<code>SONIC_BOOT_TYPE</code> 表記揺れ（<code>fast-reboot</code> vs <code>fast</code>）は将来変わる可能性がある。</li>
 <li>system-wide warm-boot は全ての SONiC コンテナが warm-restart 対応であることを前提とし、サードパーティ追加コンテナがある環境では成立しない。</li>
 <li>BGP / <a href="../../reference/glossary/#term-lacp">LACP</a> / <a href="../../reference/glossary/#term-bfd">BFD</a> の hold/keepalive タイマーは warm-restart 期間より十分長く設定する必要があり、デフォルト値で運用すると瞬断扱いとなる事がある。</li>
 <li><a href="../../reference/glossary/#term-asic-sdk">ASIC SDK</a> が warm-boot 非対応のリビジョンでは fall-back で cold-boot 化されるため、ベンダー SDK バージョンとの整合確認が必須。</li>

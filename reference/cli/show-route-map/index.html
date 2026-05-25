@@ -20061,7 +20061,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        データフロー (自動生成)
+        データフロー (手動作成)
       
     </span>
   </a>
@@ -27572,7 +27572,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29952,7 +29952,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35281,7 +35281,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        データフロー (自動生成)
+        データフロー (手動作成)
       
     </span>
   </a>
@@ -35427,7 +35427,7 @@ excerpt: |
 <h2 id="config_db">関連 CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
 <p><code>show route-map</code> 自体は <a href="../../glossary/#term-config_db">CONFIG_DB</a> を参照しない。<a href="../../glossary/#term-sonic">SONiC</a> で route-map を定義するには <code>ROUTE_MAP</code> / <code>ROUTE_MAP_SET</code> などのテーブルか、または FRR config を直接書く方法のみで、<code>config route-map</code> 系の CLI は <strong>コミュニティ版 master には存在しない</strong>（<code>config/main.py</code> 上では <code>route-map</code> グループは未定義）。</p>
 <!-- cli-mermaid -->
-<h3 id="_6">データフロー (自動生成)<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<h3 id="_6">データフロー (手動作成)<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CLI["show route-map"]
   SRC0[("FRR (vtysh)")]

@@ -28121,7 +28121,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30501,7 +30501,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36658,7 +36658,7 @@ flag デフォルト (<code>telemetry.go:176</code>): <code>fs.Int("v", 2, ...)<
 <p>flag デフォルト (<code>telemetry.go:190</code>): <code>fs.Int("idle_conn_duration", 5, ...)</code>.
 スクリプト側も <code>null</code> / GNMI エントリ未設定時に <code>--idle_conn_duration 5</code> を付与。</p>
 <h3 id="save_on_set"><code>save_on_set</code><a class="headerlink" href="#save_on_set" title="Permanent link">&para;</a></h3>
-<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># telemetry.sh:110-113</span>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># gnmi-native.sh:110-113</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nb">readonly</span><span class="w"> </span><span class="nv">SAVE_ON_SET</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="nv">$GNMI</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.save_on_set // empty&#39;</span><span class="k">)</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>!<span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SAVE_ON_SET</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="nv">TELEMETRY_ARGS</span><span class="o">+=</span><span class="s2">&quot; --with-save-on-set=</span><span class="nv">$SAVE_ON_SET</span><span class="s2">&quot;</span>

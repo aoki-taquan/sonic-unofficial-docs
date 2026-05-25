@@ -28038,7 +28038,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30418,7 +30418,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36354,8 +36354,8 @@
 <tr>
 <td><code>multiplier</code></td>
 <td>uint8</td>
-<td><code>10</code></td>
-<td>検知乗数 (detect multiplier)。<code>tx_interval × multiplier</code> で隣接ダウン判定</td>
+<td><code>10</code> (hardware) / <code>3</code> (software)</td>
+<td>検知乗数 (detect multiplier)。<code>tx_interval × multiplier</code> で隣接ダウン判定。software BFD 経路 (<code>bgpcfgd/BfdMgr</code>) のデフォルトは <code>3</code></td>
 </tr>
 <tr>
 <td><code>multihop</code></td>
@@ -36367,7 +36367,7 @@
 <td><code>tos</code></td>
 <td>uint8</td>
 <td><code>192</code></td>
-<td>IP TOS / <a href="../../glossary/#term-dscp">DSCP</a> 値。デフォルト <a href="../../glossary/#term-dscp">DSCP</a> 48 (EF) を 2 ビット左シフトして 192 (0xC0)</td>
+<td>IP TOS / <a href="../../glossary/#term-dscp">DSCP</a> 値。デフォルト <a href="../../glossary/#term-dscp">DSCP</a> 48 (CS6) を 2 ビット左シフトして 192 (0xC0)</td>
 </tr>
 <tr>
 <td><code>dst_mac</code></td>
@@ -36546,7 +36546,7 @@
 <tbody>
 <tr>
 <td><code>192</code> (既定)</td>
-<td><a href="../../glossary/#term-dscp">DSCP</a> 48 (EF class) &lt;&lt; 2 | ECN 0 = 0xC0</td>
+<td><a href="../../glossary/#term-dscp">DSCP</a> 48 (CS6) &lt;&lt; 2 | ECN 0 = 0xC0</td>
 <td><code>bfdorch.cpp:18-19</code></td>
 </tr>
 <tr>
@@ -36908,7 +36908,7 @@
 <td><code>BFD_SESSION_DEFAULT_TOS</code></td>
 <td><code>192</code> (0xC0)</td>
 <td>—</td>
-<td><code>tos</code> 未指定時のデフォルト。DSCP 48 (EF) &lt;&lt; 2 | ECN 0</td>
+<td><code>tos</code> 未指定時のデフォルト。DSCP 48 (CS6) &lt;&lt; 2 | ECN 0</td>
 <td><code>bfdorch.cpp:19</code></td>
 </tr>
 <tr>

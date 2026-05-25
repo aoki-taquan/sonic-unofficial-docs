@@ -27771,7 +27771,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30151,7 +30151,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35863,7 +35863,7 @@
 <ul>
 <li><code>community</code> 文字列は最大 32 文字、<code>@</code> <code>:</code> を含まないこと（<code>snmp_community_secret_check</code>）。</li>
 <li><code>string_type</code> は <code>RO</code> / <code>RW</code> の 2 値。</li>
-<li>既存と重複なら sys.exit(3)、その後 <code>set_entry('SNMP_COMMUNITY', community, {'TYPE': string_type})</code>。</li>
+<li>既存と重複なら sys.exit(3) で終了。重複がなければ <code>set_entry('SNMP_COMMUNITY', community, {'TYPE': string_type})</code>。</li>
 <li>完了後に <code>systemctl reset-failed</code> + <code>systemctl restart snmp.service</code>。</li>
 </ul>
 <!-- evidence:

@@ -28321,7 +28321,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30701,7 +30701,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36862,7 +36862,7 @@
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CDB[("CONFIG_DB&lt;br/&gt;BGP_GLOBALS_AF")]
-  DM["bgpcfgd"]
+  DM["frrcfgd"]
   CDB --&gt; DM</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
@@ -36872,8 +36872,10 @@
 
 <h2 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BGP_GLOBALS_AF|&lt;vrf_name&gt;|&lt;afi_safi&gt;
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>BGP_GLOBALS_AF_AGGREGATE_ADDR|&lt;vrf_name&gt;|&lt;afi_safi&gt;|&lt;ip_prefix&gt;
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>BGP_GLOBALS_AF_NETWORK|&lt;vrf_name&gt;|&lt;afi_safi&gt;|&lt;ip_prefix&gt;
+</span></code></pre></div>
+<p>派生テーブルのキー構造:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>BGP_GLOBALS_AF_AGGREGATE_ADDR|&lt;vrf_name&gt;|&lt;afi_safi&gt;|&lt;ip_prefix&gt;
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>BGP_GLOBALS_AF_NETWORK|&lt;vrf_name&gt;|&lt;afi_safi&gt;|&lt;ip_prefix&gt;
 </span></code></pre></div>
 <p><code>&lt;vrf_name&gt;</code> は <code>BGP_GLOBALS.vrf_name</code> への leafref。<code>&lt;afi_safi&gt;</code> は address family 名文字列。</p>
 <h2 id="_3">主要フィールド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
@@ -37060,9 +37062,8 @@
 </ul>
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>bgpcfgd</code>: <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <a href="../../glossary/#term-bgp">BGP</a> global AF 設定を <a href="../../glossary/#term-frr">FRR</a> address-family 設定へ変換する。</li>
-<li><code>frr-mgmt-framework</code>: <code>DEVICE_METADATA.frr_mgmt_framework_config = true</code> のときに generic <a href="../../glossary/#term-bgp">BGP</a> model として処理する。</li>
-<li><code>bgpd</code> (<a href="../../glossary/#term-frr">FRR</a>): <a href="../../glossary/#term-vtysh">vtysh</a> / mgmt framework 経由で最終的な AF 設定を保持する。</li>
+<li><code>frr-mgmt-framework</code> (<code>frrcfgd</code>): <code>BGP_GLOBALS_AF</code> を購読し、<a href="../../glossary/#term-config_db">CONFIG_DB</a> の AF 設定を <a href="../../glossary/#term-frr">FRR</a> address-family 設定へ変換する（<code>bgpcfgd</code> は本テーブルを購読しない）。</li>
+<li><code>bgpd</code> (<a href="../../glossary/#term-frr">FRR</a>): <a href="../../glossary/#term-vtysh">vtysh</a> 経由で最終的な AF 設定を保持する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -37218,10 +37219,10 @@ comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去され�
 <code>route_flap_dampen=true</code> + <code>route_flap_dampen_half_life</code> のみ設定した場合、frrcfgd は
 <code>bgp dampening &lt;half_life&gt;</code> だけを発行し、残りの引数は FRR 側デフォルト (reuse=750, suppress=2000, max_suppress=4×half_life) が使われる。</p>
 <p>FRR <code>bgp_damp.h</code> 定数 (ソース: <code>sonic-frr/bgpd/bgp_damp.h</code>):</p>
-<div class="language-c highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="cp">#define DEFAULT_HALF_LIFE  15      </span><span class="cm">/* minutes */</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="cp">#define DEFAULT_REUSE      750</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="cp">#define DEFAULT_SUPPRESS   2000</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="cm">/* max_suppress = half_life * 4 (frrcfgd L514) */</span>
+<div class="language-c highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="cp">#define DEFAULT_HALF_LIFE  15      </span><span class="cm">/* minutes */</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="cp">#define DEFAULT_REUSE      750</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="cp">#define DEFAULT_SUPPRESS   2000</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="cm">/* max_suppress = half_life * 4 (frrcfgd L514) */</span>
 </span></code></pre></div>
 <!-- /defaults -->
 
@@ -37229,7 +37230,7 @@ comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去され�
 <h2 id="_10">運用ヒント<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
-<li>key 形式: <code>BGP_GLOBALS_AF|&lt;vrf&gt;|&lt;af&gt;</code> (af = <code>ipv4_unicast</code> / <code>ipv6_unicast</code> / <code>l2vpn_evpn</code> 等)`。</li>
+<li>key 形式: <code>BGP_GLOBALS_AF|&lt;vrf&gt;|&lt;af&gt;</code> (af = <code>ipv4_unicast</code> / <code>ipv6_unicast</code> / <code>l2vpn_evpn</code> 等)。</li>
 <li><code>max_ebgp_paths</code> / <code>max_ibgp_paths</code>: 64（<a href="../../glossary/#term-ecmp">ECMP</a> 上限）。<code>network_import_check</code>: <code>true</code>。</li>
 </ul>
 <h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
@@ -37237,8 +37238,8 @@ comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去され�
 <li><code>l2vpn_evpn</code> AF を有効化しても <code>advertise-all-vni</code> を入れ忘れ Type-3 が広告されない。</li>
 </ul>
 <h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_GLOBALS_AF|*&#39;</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp l2vpn evpn summary&#39;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_GLOBALS_AF|*&#39;</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show bgp l2vpn evpn summary&#39;</span>
 </span></code></pre></div>
 <!-- /ops-hint -->
 
@@ -37601,13 +37602,13 @@ comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去され�
 <h3 id="_21">詳細<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
 <h4 id="1-bgp_globalslocal_asn">(1) <code>BGP_GLOBALS.local_asn</code> 先行必須<a class="headerlink" href="#1-bgp_globalslocal_asn" title="Permanent link">&para;</a></h4>
 <p><code>frrcfgd</code> の <code>__update_bgp()</code> は、VRF ベーステーブル（<code>BGP_GLOBALS_AF</code> を含む）を処理する際に必ず <code>__get_vrf_asn(vrf)</code> を呼ぶ。対象 VRF の <code>local_asn</code> が未設定の場合は <code>continue</code> でイベントを黙って捨てる<sup id="fnref:ord1"><a class="footnote-ref" href="#fn:ord1">3</a></sup>。</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># frrcfgd.py L2658-2662</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__vrf_based_table</span><span class="p">(</span><span class="n">table</span><span class="p">):</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">vrf</span> <span class="o">=</span> <span class="n">prefix</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">local_asn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_vrf_asn</span><span class="p">(</span><span class="n">vrf</span><span class="p">)</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="k">if</span> <span class="n">local_asn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">table</span> <span class="o">!=</span> <span class="s1">&#39;BGP_GLOBALS&#39;</span> <span class="ow">or</span> <span class="s1">&#39;local_asn&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">):</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>        <span class="n">syslog</span><span class="o">.</span><span class="n">syslog</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="s1">&#39;ignore table </span><span class="si">{}</span><span class="s1"> update because local_asn for VRF </span><span class="si">{}</span><span class="s1"> was not configured&#39;</span><span class="p">)</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        <span class="k">continue</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># frrcfgd.py L2658-2662</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__vrf_based_table</span><span class="p">(</span><span class="n">table</span><span class="p">):</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">vrf</span> <span class="o">=</span> <span class="n">prefix</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">local_asn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_vrf_asn</span><span class="p">(</span><span class="n">vrf</span><span class="p">)</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="k">if</span> <span class="n">local_asn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">table</span> <span class="o">!=</span> <span class="s1">&#39;BGP_GLOBALS&#39;</span> <span class="ow">or</span> <span class="s1">&#39;local_asn&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">):</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>        <span class="n">syslog</span><span class="o">.</span><span class="n">syslog</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="s1">&#39;ignore table </span><span class="si">{}</span><span class="s1"> update because local_asn for VRF </span><span class="si">{}</span><span class="s1"> was not configured&#39;</span><span class="p">)</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>        <span class="k">continue</span>
 </span></code></pre></div>
 <p>推奨書込み順（非 default VRF）:</p>
 <ol>
@@ -37620,10 +37621,10 @@ comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去され�
 <p><code>frrcfgd</code> の <code>main()</code> は <code>BgpdClientMgr.start()</code> → <code>BGPConfigDaemon.start()</code> の順で起動する。<code>BgpdClientMgr</code> は <code>/run/frr/bgpd.vty</code> ソケットへの接続を最大 100 回（2 秒間隔、計 200 秒）リトライするため、<code>bgpd</code> が起動済みでない限り CONFIG_DB 購読を開始しない<sup id="fnref:ord3"><a class="footnote-ref" href="#fn:ord3">5</a></sup>。</p>
 <h4 id="5-bgpd-cli">(5) bgpd CLI コマンド順<a class="headerlink" href="#5-bgpd-cli" title="Permanent link">&para;</a></h4>
 <p><code>BGP_GLOBALS_AF</code> 処理時、frrcfgd は以下の固定順で vtysh コマンドを積み上げる<sup id="fnref:ord4"><a class="footnote-ref" href="#fn:ord4">6</a></sup>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>configure terminal
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>router bgp &lt;asn&gt; [vrf &lt;vrf&gt;]
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>address-family &lt;af&gt; &lt;safi&gt;
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>&lt;AF フィールドコマンド群&gt;
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>configure terminal
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>router bgp &lt;asn&gt; [vrf &lt;vrf&gt;]
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>address-family &lt;af&gt; &lt;safi&gt;
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>&lt;AF フィールドコマンド群&gt;
 </span></code></pre></div>
 <p><code>local_asn</code> ガード（依存 #1）により <code>router bgp</code> インスタンスが確立済みであることが保証される。</p>
 <h4 id="6-comb_attr_list-3-set">(6) comb_attr_list: 3 フィールドは同一 SET に含める<a class="headerlink" href="#6-comb_attr_list-3-set" title="Permanent link">&para;</a></h4>
@@ -37826,14 +37827,14 @@ comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去され�
 </table>
 <p><code>bgpcfgd</code> は <code>BGP_GLOBALS_AF</code> を購読しない。<code>orchagent</code> / <code>syncd</code> も本テーブルを読まず、FRR <code>bgpd</code> のソフト処理経路で完結する。</p>
 <h3 id="keyspace">keyspace 通知の仕組み<a class="headerlink" href="#keyspace" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># frrcfgd.py:1536-1552 (ExtConfigDBConnector.listen_thread / listen)</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">listen_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="n">sub_key_space</span> <span class="o">=</span> <span class="s2">&quot;__keyspace@</span><span class="si">{}</span><span class="s2">__:*&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_dbid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_name</span><span class="p">))</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">pubsub</span><span class="o">.</span><span class="n">psubscribe</span><span class="p">(</span><span class="n">sub_key_space</span><span class="p">)</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">__listen_thread_running</span><span class="p">:</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>        <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pubsub</span><span class="o">.</span><span class="n">get_message</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>        <span class="k">if</span> <span class="n">msg</span><span class="p">:</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sub_msg_handler</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>   <span class="c1"># → _ConfigDBConnector__fire → bgp_af_handler</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># frrcfgd.py:1536-1552 (ExtConfigDBConnector.listen_thread / listen)</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">listen_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">sub_key_space</span> <span class="o">=</span> <span class="s2">&quot;__keyspace@</span><span class="si">{}</span><span class="s2">__:*&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_dbid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_name</span><span class="p">))</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">pubsub</span><span class="o">.</span><span class="n">psubscribe</span><span class="p">(</span><span class="n">sub_key_space</span><span class="p">)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">__listen_thread_running</span><span class="p">:</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>        <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pubsub</span><span class="o">.</span><span class="n">get_message</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>        <span class="k">if</span> <span class="n">msg</span><span class="p">:</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sub_msg_handler</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>   <span class="c1"># → _ConfigDBConnector__fire → bgp_af_handler</span>
 </span></code></pre></div>
 <ul>
 <li>通知ペイロードは操作名 (<code>hset</code> / <code>del</code>) のみ。値は <code>client.hgetall(key)</code> で再取得 (<code>frrcfgd.py:1527</code>)。</li>
@@ -37842,12 +37843,12 @@ comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去され�
 <h3 id="config-replay">起動時 config replay<a class="headerlink" href="#config-replay" title="Permanent link">&para;</a></h3>
 <p><code>subscribe_all()</code> 前に <code>config_db.get_table_data([...])</code> で全テーブルのスナップショットを一括取得。<code>config_mode == "unified"</code> のとき <code>bgp_message</code> キュー経由で <code>__update_bgp()</code> が初期設定を replay する (<code>frrcfgd.py:2340-2357</code>)。</p>
 <h3 id="keyspace-frr">データフロー (keyspace → FRR)<a class="headerlink" href="#keyspace-frr" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>CONFIG_DB hset &#39;BGP_GLOBALS_AF|default|ipv4_unicast&#39; max_ebgp_paths 8
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  ↓ Redis keyspace PUBLISH &quot;__keyspace@4__:BGP_GLOBALS_AF|default|ipv4_unicast&quot; &quot;hset&quot;
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  ↓ ExtConfigDBConnector.listen_thread() (frrcfgd.py:1536)
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  ↓ client.hgetall(key) → raw_to_typed() → __fire(&quot;BGP_GLOBALS_AF&quot;, &quot;default|ipv4_unicast&quot;, data)
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  ↓ bgp_af_handler → bgp_message キュー → __update_bgp()
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>  ↓ vtysh: configure terminal / router bgp &lt;asn&gt; / address-family ipv4 unicast / maximum-paths 8
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>CONFIG_DB hset &#39;BGP_GLOBALS_AF|default|ipv4_unicast&#39; max_ebgp_paths 8
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  ↓ Redis keyspace PUBLISH &quot;__keyspace@4__:BGP_GLOBALS_AF|default|ipv4_unicast&quot; &quot;hset&quot;
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  ↓ ExtConfigDBConnector.listen_thread() (frrcfgd.py:1536)
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>  ↓ client.hgetall(key) → raw_to_typed() → __fire(&quot;BGP_GLOBALS_AF&quot;, &quot;default|ipv4_unicast&quot;, data)
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  ↓ bgp_af_handler → bgp_message キュー → __update_bgp()
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>  ↓ vtysh: configure terminal / router bgp &lt;asn&gt; / address-family ipv4 unicast / maximum-paths 8
 </span></code></pre></div>
 <p>DEL (<code>data is None</code>) では <code>del_table=True</code> が設定され AF 設定全体を FRR から削除 (<code>frrcfgd.py:3918</code>)。プロセス再起動は発生しない。</p>
 <p>詳細根拠: <code>meta/_intermediate/cdb-flow/bgp-globals-af-pubsub.md</code>。</p>

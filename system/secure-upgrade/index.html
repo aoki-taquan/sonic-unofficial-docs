@@ -27621,7 +27621,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30001,7 +30001,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35443,7 +35443,7 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition info">
+<div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-buildimage</code> master の <code>slave.mk</code> / <code>rules/config</code> / <code>onie-mk-demo.sh</code> / <code>files/build_templates/sonic_version.yml.j2</code> で <code>SECURE_UPGRADE_MODE</code> 分岐を確認。<code>sign_image_dev</code> 系の参照も <code>onie-mk-demo.sh</code> に存在。<code>sonic-utilities/sonic_installer/main.py</code> には <code>verify_secureboot_image</code> / <code>is_secure_upgrade_image_verification_supported</code> の検証経路が実装されている。secure boot HLD（hld_secure_boot.md）と対をなす。</p>
 </div>

@@ -27680,7 +27680,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30060,7 +30060,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35706,7 +35706,7 @@
 </table>
 <p>Debug Framework と dump utility はオペレータ目線、SAI failure dump はベンダ調査目線で読むと整理しやすい。</p>
 <h2 id="syncd">syncd の処理モデル<a class="headerlink" href="#syncd" title="Permanent link">&para;</a></h2>
-<p><code>syncd</code> は SAI を呼び出す唯一のプロセスで、内部で以下のスレッド構成を持ちます。</p>
+<p><code>syncd</code> は SAI を呼び出す唯一のプロセスで、内部で以下のスレッド構成を持つ。</p>
 <table>
 <thead>
 <tr>
@@ -35733,7 +35733,7 @@
 </tr>
 </tbody>
 </table>
-<p>sairedis library 側で async / sync モードが選べ、SONiC master はデフォルト async（pipeline で複数 op をまとめる）を採用しています。sync モードは SAI 失敗の即時検知に有用ですが throughput が落ちます。</p>
+<p>sairedis library 側で async / sync モードが選べ、SONiC master はデフォルト async（pipeline で複数 op をまとめる）を採用する。sync モードは SAI 失敗の即時検知に有用だが throughput が落ちる。</p>
 <h2 id="orchagent-asic_db">orchagent が ASIC_DB に接続する仕組み<a class="headerlink" href="#orchagent-asic_db" title="Permanent link">&para;</a></h2>
 <p>orchagent は <code>DBConnector</code> で <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> を直接読むが、ASIC_DB には <strong>直接書かない</strong>。代わりに <code>sairedis</code> クライアントライブラリ（<code>libsairedis</code>）が間に入り、SAI API 呼び出しを ASIC_DB の <code>ASIC_STATE:*</code> key に変換してから publish する（issue #466 の解説より）。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>orchagent

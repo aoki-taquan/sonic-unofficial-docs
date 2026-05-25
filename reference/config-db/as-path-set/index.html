@@ -28209,7 +28209,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30589,7 +30589,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37552,12 +37552,12 @@
 </thead>
 <tbody>
 <tr>
-<td>6</td>
+<td>5</td>
 <td><code>AS_PATH_SET|T2_GROUP_ASNS</code> という名前は予約 (<code>AsPathMgr</code> が独占)</td>
 <td><code>managers_as_path.py:7, 43, 52, 56, 65</code> — frrcfgd 経路と AsPathMgr 経路が同名 access-list を取り合い不安定化</td>
 </tr>
 <tr>
-<td>7</td>
+<td>6</td>
 <td>DEL は <code>ROUTE_MAP.match_as_path</code> を先に → <code>AS_PATH_SET|&lt;name&gt;</code> を後</td>
 <td><code>frrcfgd.py:3008-3009</code> の <code>no bgp as-path access-list &lt;name&gt;</code> 発行後、ROUTE_MAP <code>match_as_path</code> は silent skip 状態で残る</td>
 </tr>
@@ -37582,9 +37582,9 @@
 </tr>
 <tr>
 <td>2</td>
-<td>UPDATE は全 no → 全 permit</td>
-<td>実装挙動（差分追加不可）</td>
-<td>メンテ窓で実施</td>
+<td><a href="../../glossary/#term-device_metadata">DEVICE_METADATA</a>.type/subtype → bgpcfgd 再起動 → AsPathMgr 起動</td>
+<td>強制先行（gate）</td>
+<td>type/subtype 変更後 bgpcfgd 再起動</td>
 </tr>
 <tr>
 <td>3</td>
@@ -37600,18 +37600,12 @@
 </tr>
 <tr>
 <td>5</td>
-<td><a href="../../glossary/#term-device_metadata">DEVICE_METADATA</a>.type/subtype → bgpcfgd 再起動 → AsPathMgr 起動</td>
-<td>強制先行（gate）</td>
-<td>type/subtype 変更後 bgpcfgd 再起動</td>
-</tr>
-<tr>
-<td>6</td>
 <td><code>T2_GROUP_ASNS</code> 名は予約</td>
 <td>運用ルール</td>
 <td>ユーザ AS_PATH_SET 名から除外</td>
 </tr>
 <tr>
-<td>7</td>
+<td>6</td>
 <td>DEL: ROUTE_MAP match_as_path 先 → AS_PATH_SET 後</td>
 <td>推奨</td>
 <td>逆順でも DB 整合性は壊れない</td>

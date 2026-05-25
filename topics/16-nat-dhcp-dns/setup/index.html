@@ -27630,7 +27630,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30010,7 +30010,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35481,7 +35481,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>pool<span class="w"> </span>POOL1<span class="w"> </span><span class="m">203</span>.0.113.32-203.0.113.47
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>acl<span class="w"> </span>add<span class="w"> </span>table<span class="w"> </span>NAT_ACL<span class="w"> </span>L3<span class="w"> </span>-p<span class="w"> </span>Ethernet48
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>acl<span class="w"> </span>rule<span class="w"> </span>create<span class="w"> </span>NAT_ACL<span class="w"> </span>R10<span class="w"> </span>--src-ip<span class="w"> </span><span class="m">10</span>.10.0.0/24<span class="w"> </span>--action<span class="w"> </span>FORWARD
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>binding<span class="w"> </span>BIND1<span class="w"> </span>--pool<span class="w"> </span>POOL1<span class="w"> </span>--acl-name<span class="w"> </span>NAT_ACL<span class="w"> </span>--nat-type<span class="w"> </span>dnat
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>sudo<span class="w"> </span>config<span class="w"> </span>nat<span class="w"> </span>add<span class="w"> </span>binding<span class="w"> </span>BIND1<span class="w"> </span>POOL1<span class="w"> </span>NAT_ACL<span class="w"> </span>-nat_type<span class="w"> </span>snat
 </span></code></pre></div>
 <p><code>NAT_POOL</code> / <code>NAT_BINDINGS</code> テーブルに反映され、<code>natsyncd</code> が conntrack を作成して <code>APPL_DB:NAT_TABLE</code> 経由で <a href="../../../reference/glossary/#term-sai">SAI</a> へ流します。</p>
 <h2 id="3-tor-dhcp-relay-giaddr">設定シナリオ 3: ToR の DHCP relay と giaddr 固定<a class="headerlink" href="#3-tor-dhcp-relay-giaddr" title="Permanent link">&para;</a></h2>

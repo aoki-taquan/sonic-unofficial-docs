@@ -28303,7 +28303,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30683,7 +30683,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37695,7 +37695,7 @@
 <tr>
 <td><code>trusted</code></td>
 <td><code>yes</code></td>
-<td>chrony の <code>prefer</code> オプション相当。当該サーバを優先同期先に</td>
+<td>chrony の <code>trustedkey</code> に対象サーバの <code>resolve_as</code> を追加。<code>NTP.authentication=enabled</code> 時に当該サーバのみで時刻同期を許可する</td>
 </tr>
 <tr>
 <td><code>version</code></td>

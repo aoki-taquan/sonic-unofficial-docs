@@ -28259,7 +28259,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30639,7 +30639,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36733,7 +36733,7 @@
 
 <h1 id="system_defaults">SYSTEM_DEFAULTS テーブル<a class="headerlink" href="#system_defaults" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>システム共通の機能既定値 (デフォルトの enable / disable 状態) を定義する。<code>init_cfg.json</code> 由来の値を保持し、<code>db_migrator</code> が初期化時にエントリの有無を確認する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体的なキーは <code>tunnel_qos_remap</code>、<code>synchronous_mode</code>、<code>dhcp_server</code> など (時期により異なる) で、各機能の起動前提として参照される。</p>
+<p>システム共通の機能既定値 (デフォルトの enable / disable 状態) を定義する。<code>init_cfg.json</code> 由来の値を保持し、<code>db_migrator</code> が初期化時にエントリの有無を確認する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。具体的なキーは <code>tunnel_qos_remap</code>、<code>mux_tunnel_egress_acl</code>、<code>software_bfd</code> など (時期により異なる) で、各機能の起動前提として参照される。なお <code>synchronous_mode</code> の実体は <code>DEVICE_METADATA|localhost</code>、<code>dhcp_server</code> の実体は <code>FEATURE</code> テーブルであり、このテーブルには格納されない（よくある誤解）。</p>
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -36876,9 +36876,9 @@
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
-<p>各サービスが <code>SYSTEM_DEFAULTS</code> を参照して起動時のデフォルト動作を決定する。<code>synchronous_mode==enable</code> → <a href="../../glossary/#term-orchagent">orchagent</a> が <a href="../../glossary/#term-sai">SAI</a> call を synchronous モードで実行。<code>interface_naming_mode==alias</code> → <a href="../../glossary/#term-portsyncd">portsyncd</a> / <a href="../../glossary/#term-intfmgrd">intfmgrd</a> がエイリアス名を使用。<code>frr_mgmt_framework_config==true</code> → <a href="../../glossary/#term-sonic-mgmt">sonic-mgmt</a>-framework が <a href="../../glossary/#term-frr">FRR</a> 設定を管理。</p>
+<p>各サービスが <code>SYSTEM_DEFAULTS</code> を参照して起動時のデフォルト動作を決定する。<code>synchronous_mode==enabled</code> → <a href="../../glossary/#term-orchagent">orchagent</a> が <a href="../../glossary/#term-sai">SAI</a> call を synchronous モードで実行。<code>interface_naming_mode==alias</code> → <a href="../../glossary/#term-portsyncd">portsyncd</a> / <a href="../../glossary/#term-intfmgrd">intfmgrd</a> がエイリアス名を使用。<code>frr_mgmt_framework_config==true</code> → <a href="../../glossary/#term-sonic-mgmt">sonic-mgmt</a>-framework が <a href="../../glossary/#term-frr">FRR</a> 設定を管理。</p>
 <h3 id="phase-7-add_manager">Phase 7: 条件付き登録 (add_manager 条件)<a class="headerlink" href="#phase-7-add_manager" title="Permanent link">&para;</a></h3>
-<p>db_migrator が起動時に <code>SYSTEM_DEFAULTS</code> テーブルを初期化・マイグレーションする。orchagent は起動時に <code>synchronous_mode</code> を読み取って起動モードを決定する（起動後の変更は無効）。<code>SYSTEM_DEFAULTS|GLOBAL</code> エントリのみ有効（シングルトン制約）。</p>
+<p>db_migrator が起動時に <code>SYSTEM_DEFAULTS</code> テーブルを初期化・マイグレーションする。orchagent は起動時に <code>synchronous_mode</code> を読み取って起動モードを決定する（起動後の変更は無効）。</p>
 <!-- /derivation -->
 
 <!-- handler-branching -->
@@ -36895,13 +36895,13 @@
 <tbody>
 <tr>
 <td><code>orchagent</code> 起動</td>
-<td><code>synchronous_mode==enable</code></td>
+<td><code>synchronous_mode==enabled</code></td>
 <td><a href="../../glossary/#term-sai">SAI</a> API を synchronous モードで呼び出し</td>
 <td><code>orchagent/main.cpp</code></td>
 </tr>
 <tr>
 <td><code>orchagent</code> 起動</td>
-<td><code>synchronous_mode==disable</code> または未設定</td>
+<td><code>synchronous_mode==disabled</code> または未設定</td>
 <td>SAI API を asynchronous モードで呼び出し</td>
 <td><code>orchagent/main.cpp</code></td>
 </tr>

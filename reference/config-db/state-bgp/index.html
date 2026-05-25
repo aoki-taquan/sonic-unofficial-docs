@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30485,7 +30485,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36808,7 +36808,7 @@
 </ol>
 <p><code>BGP_STATE_TABLE</code> と <a href="../../glossary/#term-appl_db">APPL_DB</a> <code>ROUTE_TABLE</code> への書き込みは独立した経路であり、EOIU マーカーが存在しても reconciliation 開始前は <a href="../../glossary/#term-route_table">ROUTE_TABLE</a> の再投入は保留される。</p>
 <h3 id="bgp_peer_configured_table-bgpcfgd-frr">BGP_PEER_CONFIGURED_TABLE — bgpcfgd による FRR 設定投入完了確認<a class="headerlink" href="#bgp_peer_configured_table-bgpcfgd-frr" title="Permanent link">&para;</a></h3>
-<p><code>bgpcfgd</code> の <code>BGPPeerMgrBase.update_state_db()</code> が FRR コンフィグ push 直後に書き込む。前提依存の詳細は <a href="../bgp-state/">bgp-state.md の Phase B</a> を参照。主な順序制約:</p>
+<p><code>bgpcfgd</code> の <code>BGPPeerMgrBase.update_state_db()</code> が FRR コンフィグ push 直後に書き込む。前提依存の詳細は本ページの「書込み順依存」セクションを参照。主な順序制約:</p>
 <ul>
 <li><strong>SET</strong>: FRR <code>cfg_mgr.push()</code> 成功後にのみ HSET。テンプレートレンダリング失敗時は書き込まれない。</li>
 <li><strong>DEL</strong>: FRR <code>no neighbor</code> 発行後に DELETE。<code>config reload</code> 時は全エントリを先に削除してから <a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> が再投入する。</li>

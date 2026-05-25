@@ -27703,7 +27703,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30083,7 +30083,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35647,8 +35647,8 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic:~$<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;show mpls table&quot;</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w"> </span>Inbound<span class="w"> </span>Label<span class="w">  </span>Type<span class="w">        </span>Nexthop<span class="w">         </span>Outbound<span class="w"> </span>Label
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w"> </span>-----------------------------------------------------------
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w"> </span><span class="m">16</span><span class="w">             </span>SR<span class="w"> </span><span class="o">(</span>LDP<span class="o">)</span><span class="w">    </span><span class="m">10</span>.0.0.1<span class="w">        </span><span class="m">17</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w"> </span><span class="m">17</span><span class="w">             </span>SR<span class="w"> </span><span class="o">(</span>LDP<span class="o">)</span><span class="w">    </span><span class="m">10</span>.0.0.2<span class="w">        </span>Pop<span class="w"> </span>Label
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w"> </span><span class="m">16</span><span class="w">             </span>Static<span class="w">      </span><span class="m">10</span>.0.0.1<span class="w">        </span><span class="m">17</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w"> </span><span class="m">17</span><span class="w">             </span>Static<span class="w">      </span><span class="m">10</span>.0.0.2<span class="w">        </span>Pop<span class="w"> </span>Label
 </span></code></pre></div>
 <p>LSP が消えるパターンは多くが LDP / <a href="../../../reference/glossary/#term-bgp">BGP</a>-LU の neighbor down です。<code>vtysh -c "show mpls ldp neighbor"</code> / <code>vtysh -c "show bgp ipv4 labeled-unicast summary"</code> を最初に見ます。</p>
 <h3 id="app_db-asic_db">APP_DB と ASIC_DB<a class="headerlink" href="#app_db-asic_db" title="Permanent link">&para;</a></h3>

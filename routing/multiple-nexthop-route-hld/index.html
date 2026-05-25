@@ -27632,7 +27632,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30012,7 +30012,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35466,7 +35466,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-swss/orchagent/muxorch.cpp</code> L1585 <code>MuxOrch::updateRoute(const IpPrefix &amp;pfx)</code>、L2058 <code>MuxOrch::containsNextHop()</code>、L1824/1926/2019/2045/2050 の <code>mux_nexthop_tb_</code> 出入り、L700 <code>MuxCable::updateRoutes()</code> / L724 <code>MuxCable::updateRoutesForNextHop()</code> から <code>mux_orch_-&gt;updateRoute(rt-&gt;prefix)</code> が駆動される経路を確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="dual-tor-mux-multi-nexthop-route-muxorchupdateroute">dual-tor mux 跨ぎの multi-nexthop route ループ回避（<code>MuxOrch::updateRoute</code>）<a class="headerlink" href="#dual-tor-mux-multi-nexthop-route-muxorchupdateroute" title="Permanent link">&para;</a></h1>

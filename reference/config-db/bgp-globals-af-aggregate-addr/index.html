@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル — BGP_GLOBALS_AF で AF レベルの設定（multipath、route distance、L2VPN advertise-all-vni 等）を行い、その AF 配下の aggregate prefix をこのテーブルで列挙する。">
+        <meta name="description" content="BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル — VRF × アドレスファミリ単位の BGP aggregate-address 設定を保持する。BGP_GLOBALS_AF の AF コンテキスト配下で集約プレフィックスを列挙する。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル — BGP_GLOBALS_AF で AF レベルの設定（multipath、route distance、L2VPN advertise-all-vni 等）を行い、その AF 配下の aggregate prefix をこのテーブルで列挙する。" />
+<meta property="og:description" content="BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル — VRF × アドレスファミリ単位の BGP aggregate-address 設定を保持する。BGP_GLOBALS_AF の AF コンテキスト配下で集約プレフィックスを列挙する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/bgp-globals-af-aggregate-addr.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/config-db/bgp-globals-af-aggregate-addr/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル — BGP_GLOBALS_AF で AF レベルの設定（multipath、route distance、L2VPN advertise-all-vni 等）を行い、その AF 配下の aggregate prefix をこのテーブルで列挙する。" />
+<meta property="twitter:description" content="BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル — VRF × アドレスファミリ単位の BGP aggregate-address 設定を保持する。BGP_GLOBALS_AF の AF コンテキスト配下で集約プレフィックスを列挙する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/config-db/bgp-globals-af-aggregate-addr.png" />
 </head>
   
@@ -28220,7 +28220,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30600,7 +30600,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     

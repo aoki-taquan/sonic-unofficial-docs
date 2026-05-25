@@ -27649,7 +27649,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30029,7 +30029,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35500,7 +35500,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-swss/orchagent/srv6orch.cpp</code> L41-62 の <code>end_behavior_map</code> に <code>un / ua / udt4 / udt6 / udt46 / udx4 / udx6</code> 等が登録され、<code>SAI_MY_SID_ENTRY_ENDPOINT_BEHAVIOR_UN</code>・<code>UA</code>・<code>UDT*</code>・<code>UDX*</code> を参照していることを確認。L1369-1410 で behavior 別の VRF / nexthop バリデーションも分岐済み（verified at: 2026-05-09）。FRR 系 SRv6 制御プレーンは引き続き本 HLD のスコープ外。</p>
 </div>
 <h1 id="srv6-usidsrv6orch-unuaudtudx">SRv6 uSID（srv6orch の uN/uA/uDT/uDX 拡張）<a class="headerlink" href="#srv6-usidsrv6orch-unuaudtudx" title="Permanent link">&para;</a></h1>

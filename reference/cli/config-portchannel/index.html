@@ -27721,7 +27721,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30101,7 +30101,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35869,14 +35869,12 @@ excerpt: |
 <h3 id="_10">データフロー (自動生成)<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CLI["config portchannel"]
-  SC["sonic-cfggen&lt;br/&gt;(config CLI のみ)"]
-  CLI --&gt; SC
   CDB0[("CONFIG_DB&lt;br/&gt;PORTCHANNEL")]
-  SC --&gt; CDB0
+  CLI --&gt; CDB0
   DM0["teammgrd"]
   CDB0 --&gt; DM0
   CDB1[("CONFIG_DB&lt;br/&gt;PORTCHANNEL_MEMBER")]
-  SC --&gt; CDB1
+  CLI --&gt; CDB1
   DM1["teammgrd"]
   CDB1 --&gt; DM1</code></pre>
 <div class="admonition note">
@@ -35896,7 +35894,7 @@ excerpt: |
 <h2 id="_11">運用ヒント<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <h3 id="_12">典型的な利用シーン<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
-<li>LAG 新設、メンバ追加、<code>min-links</code> / <code>fallback</code> / <code>lacp_key</code> の設定。</li>
+<li>LAG 新設、メンバ追加、<code>min-links</code> / <code>fallback</code> / <code>fast-rate</code> の設定（<code>lacp_key</code> は <code>auto</code> 固定でCLIから変更不可）。</li>
 <li>MC-LAG 配下の LAG 設定の前段。</li>
 </ul>
 <h3 id="_13">よくある落とし穴<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>

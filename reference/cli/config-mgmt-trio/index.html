@@ -27655,7 +27655,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30035,7 +30035,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35601,7 +35601,7 @@ target を読み込み、<code>GenericUpdater().replace(...)</code> が現在の
 </table>
 <h2 id="_3">注意<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>config save</code> → ファイルを sort して書き戻すため、手書き JSON を <code>save</code> 経由で経由させると <strong>キー順が変わる</strong>。<code>git diff</code> で純粋な差分を見たい場合は注意。</li>
+<li><code>config save</code> → ファイルを sort して書き戻すため、手書き JSON を <code>save</code> 経由で適用させると <strong>キー順が変わる</strong>。<code>git diff</code> で純粋な差分を見たい場合は注意。</li>
 <li><code>config reload</code> は <strong>CONFIG_DB を完全に置き換える</strong>。<code>config save</code> していない一時的な設定変更は失われる。</li>
 <li><code>config replace</code> の <code>--format SONICYANG</code> 指定時は <a href="../../glossary/#term-yang">YANG</a> モデルバリデーションが有効で、不適合な値は <code>--ignore-non-yang-tables</code> 等で個別に逃がす必要がある。</li>
 <li><code>config load</code> は merge なので、<strong>削除した設定は CONFIG_DB に残る</strong>。クリーンな状態にしたいなら必ず <code>config reload</code> を使う。</li>
@@ -35656,7 +35656,7 @@ target を読み込み、<code>GenericUpdater().replace(...)</code> が現在の
 <!-- cli-sibling -->
 <h3 id="cli">関連 CLI コマンド<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../show-mgmt-vrf/"><code>show mgmt vrf</code></a> — show mgmt-vrf サブコマンド</li>
+<li><a href="../show-mgmt-vrf/"><code>show mgmt-vrf</code></a> — show mgmt-vrf サブコマンド</li>
 <li><a href="../show-muxcable/"><code>show muxcable</code></a> — show muxcable サブコマンド</li>
 <li><a href="../show-running-config/"><code>show running config</code></a> — show runningconfiguration / startupconfiguration サブコマンド</li>
 <li><a href="../config-dhcp-relay/"><code>config dhcp relay</code></a> — config dhcp_relay / dhcpv4_relay サブコマンド</li>

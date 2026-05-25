@@ -13686,21 +13686,27 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enforce" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシュート
+        enforce モード起動時の追加確認
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -27648,7 +27654,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30028,7 +30034,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35430,21 +35436,27 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enforce" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシュート
+        enforce モード起動時の追加確認
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35691,13 +35703,13 @@
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># kernel cmdline (fips=1)</span>
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>cat<span class="w"> </span>/proc/cmdline<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span><span class="s1">&#39; &#39;</span><span class="w"> </span><span class="s1">&#39;\n&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>fips
 </span></code></pre></div>
-<h2 id="_10">トラブルシュート<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h3 id="enforce">enforce モード起動時の追加確認<a class="headerlink" href="#enforce" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>fips=1</code> 起動なのに <code>fips_enabled=0</code> の場合、initramfs に FIPS module が含まれていない。<code>sonic-installer set-fips --enable</code> 後に reboot が必要。</li>
 <li>SSH / <a href="../../reference/glossary/#term-snmp">SNMP</a> / TACACS+ で許可されていない algorithm を使うと接続失敗する。<code>/etc/ssh/sshd_config</code> の <code>Ciphers</code> / <code>MACs</code> を FIPS-approved に絞る。</li>
 <li>FIPS 有効時は MD5 / DES 等が利用不可になり、古い NMS との互換性問題が発生する。事前に運用ツールの compliance を確認。</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics_1">関連 Topics (索引)<a class="headerlink" href="#topics_1" title="Permanent link">&para;</a></h2>
 <ul>

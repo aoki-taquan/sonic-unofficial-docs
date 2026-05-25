@@ -27564,7 +27564,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29944,7 +29944,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35291,7 +35291,7 @@
   Select[set-default / set-next-boot]
   Reboot[reboot / fast-reboot / warm-reboot]
   Validate[起動後検証]
-  Fetch --&gt; Install --&gt; Select --&gt; Verify --&gt; Reboot --&gt; Validate</code></pre>
+  Fetch --&gt; Install --&gt; Verify --&gt; Select --&gt; Reboot --&gt; Validate</code></pre>
 <h2 id="secure-upgrade">secure upgrade<a class="headerlink" href="#secure-upgrade" title="Permanent link">&para;</a></h2>
 <p>secure upgrade は image の署名と install 時の検証を扱います。build 側では署名済み artifact を作り、install 側では <code>SECURE_UPGRADE_MODE</code> などの条件に応じて検証します。upgrade/downgrade の許可関係は <a href="../../../system/secure-upgrade/">Secure Upgrade</a> の matrix を確認します。</p>
 <p>secure upgrade は reboot を速くする機能ではなく、reboot 前に「次に起動する image を信頼できるか」を決める機能です。そのため、fast/warm reboot の設計とは独立していても、運用フロー上は必ず reboot 前の gate になります。</p>

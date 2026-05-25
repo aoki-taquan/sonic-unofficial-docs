@@ -27699,7 +27699,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30079,7 +30079,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35765,7 +35765,7 @@ reasoning: BPS / PPS の計算式と表示形式の根拠。
 </table>
 <h3 id="_6">表示例<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <p>引数なしの場合は全 RIF を表形式で表示<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>      IFACE       RX_OK    RX_BPS    RX_PPS    RX_ERR    TX_OK    TX_BPS    Tx_PPS    TX_ERR
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>      IFACE       RX_OK    RX_BPS    RX_PPS    RX_ERR    TX_OK    TX_BPS    TX_PPS    TX_ERR
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>-----------       -------  --------  --------  ------    -------  --------  --------  --------
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Ethernet0         2180       N/A       N/A        0      44697      N/A       N/A     0
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Portchannel0002   2833       N/A       N/A        0          0      N/A       N/A     0
@@ -35802,12 +35802,11 @@ reasoning: BPS / PPS の計算式と表示形式の根拠。
 <h3 id="_9">コマンド例<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <p>router interface (L3) のカウンタを確認する。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>show<span class="w"> </span>interfaces<span class="w"> </span>counters<span class="w"> </span>rif
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>render-counters
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;COUNTERS:oid:0x6*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">2</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;COUNTERS:oid:0x6*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>
 <h2 id="_10">制限事項<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <ul>
-<li>counter は SAI の per-RIF counter を polling で取得しており、polling 間隔より短いバースト trafic は反映が遅れる。</li>
+<li>counter は SAI の per-RIF counter を polling で取得しており、polling 間隔より短いバースト traffic は反映が遅れる。</li>
 <li><a href="../../reference/glossary/#term-asic">ASIC</a> が per-RIF counter を持たない platform では本機能は no-op となり、<code>show interfaces counters rif</code> が常に 0 になる。</li>
 <li>multi-asic chassis では namespace ごとに counter 表示が分かれるため、全 fabric を見たい場合は集約スクリプトが必要。</li>
 </ul>

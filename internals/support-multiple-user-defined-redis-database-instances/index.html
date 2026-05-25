@@ -18517,45 +18517,6 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既知の問題
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="既知の問題">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sai_status_table_full-orchagent-sonic-buildimage2125" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI_STATUS_TABLE_FULL エラーで orchagent がシャットダウンする問題（sonic-buildimage#2125）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#arp-show-interfaces-sonic-buildimage5031" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ARP テーブルが上限に近い状態だと show interfaces の一部インターフェースが表示されない問題（sonic-buildimage#5031）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -27646,7 +27607,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30026,7 +29987,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35440,45 +35401,6 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        既知の問題
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="既知の問題">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sai_status_table_full-orchagent-sonic-buildimage2125" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SAI_STATUS_TABLE_FULL エラーで orchagent がシャットダウンする問題（sonic-buildimage#2125）
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#arp-show-interfaces-sonic-buildimage5031" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ARP テーブルが上限に近い状態だと show interfaces の一部インターフェースが表示されない問題（sonic-buildimage#5031）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -35639,7 +35561,7 @@ reasoning: 2 インスタンス分割の実測効果の根拠。
 <li><strong>DB id の競合に注意</strong>: 上記既定例で <code>PFC_WD_DB</code> と <code>FLEX_COUNTER_DB</code> が同じ id=5 を共有しているように、Redis の同一インスタンス内 db index を共用する書き方が許される。インスタンスを分けるなら id 衝突は問題ないが、命名・運用上は注意<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong><code>supervisord.conf</code> を直接編集しない</strong>: j2 テンプレ展開で毎回再生成される<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
 <li><strong>詳細仕様は原文必読</strong>: 1000 行超の HLD のうち、本ページは起動・JSON フォーマット・性能根拠に絞っている。Python / C++ API の細部は原文を参照<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</li>
-<li><strong>新 docker entrypoint<code>docker-database-init.sh</code> の前後互換</strong>: 既存運用スクリプトが <code>/usr/bin/supervisord</code> を直接想定していた場合、調整が必要。</li>
+<li><strong>新 docker entrypoint <code>docker-database-init.sh</code> の前後互換</strong>: 既存運用スクリプトが <code>/usr/bin/supervisord</code> を直接想定していた場合、調整が必要。</li>
 </ul>
 <h2 id="_7">干渉する機能<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35653,18 +35575,7 @@ reasoning: 2 インスタンス分割の実測効果の根拠。
 <li>DB が想定と違うインスタンスに接続される: アプリが正しい SDK API（<code>SonicV2Connector</code>）を使っているか、JSON の <code>instance</code> フィールドが意図どおりか。</li>
 <li><code>ping_pong_db_insts</code> が fail: redis の <code>unix_socket_path</code> パーミッション、port 重複を確認。</li>
 </ul>
-<h2 id="_9">既知の問題<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h3 id="sai_status_table_full-orchagent-sonic-buildimage2125">SAI_STATUS_TABLE_FULL エラーで orchagent がシャットダウンする問題（sonic-buildimage#2125）<a class="headerlink" href="#sai_status_table_full-orchagent-sonic-buildimage2125" title="Permanent link">&para;</a></h3>
-<p>SAI_STATUS_TABLE_FULL エラーで <a href="../../reference/glossary/#term-orchagent">orchagent</a> がシャットダウンする問題。SAI テーブルの容量制限に達した場合、orchagent は自動シャットダウンする設計。HW ごとのテーブル容量を事前確認すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/2125">sonic-net/sonic-buildimage#2125</a></li>
-</ul>
-<h3 id="arp-show-interfaces-sonic-buildimage5031">ARP テーブルが上限に近い状態だと <code>show interfaces</code> の一部インターフェースが表示されない問題（sonic-buildimage#5031）<a class="headerlink" href="#arp-show-interfaces-sonic-buildimage5031" title="Permanent link">&para;</a></h3>
-<p><a href="../../reference/glossary/#term-arp">ARP</a> テーブルが上限に近い状態だと <code>show interfaces</code> の一部インターフェースが表示されない問題。<code>net.ipv4.neigh.default.gc_thresh3</code> を確認し必要に応じて拡張すること</p>
-<ul>
-<li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5031">sonic-net/sonic-buildimage#5031</a></li>
-</ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 6c10aba0a4c8 -->
 
 <div class="footnote">

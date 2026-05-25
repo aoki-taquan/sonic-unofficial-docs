@@ -28049,7 +28049,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30429,7 +30429,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36785,7 +36785,7 @@
 
 <!-- side-effects -->
 <h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
-<p><code>ipv6_use_link_local_only</code> フィールドへの SET/DEL を受けた <code>intfmgrd</code> は CONFIG_DB 以外に <strong>APP_DB と STATE_DB</strong> へ副次書込を行う。詳細スキャンノート: <a href="https://github.com/aoki-taquan/sonic-unofficial-docs/blob/main/meta/_intermediate/cdb-flow/ipv6-link-local-side-effects.md"><code>meta/_intermediate/cdb-flow/ipv6-link-local-side-effects.md</code></a>。</p>
+<p><code>ipv6_use_link_local_only</code> フィールドへの SET/DEL を受けた <code>intfmgrd</code> は CONFIG_DB 以外に <strong>APP_DB と STATE_DB</strong> へ副次書込を行う。</p>
 <h3 id="app_db">APP_DB への書込<a class="headerlink" href="#app_db" title="Permanent link">&para;</a></h3>
 <table>
 <thead>

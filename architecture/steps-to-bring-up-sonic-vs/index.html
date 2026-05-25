@@ -27635,7 +27635,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30015,7 +30015,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35522,13 +35522,13 @@
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>make<span class="w"> </span>init
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nv">NOJESSIE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOSTRETCH</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOBUSTER</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOBULLSEYE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">SONIC_BUILD_JOBS</span><span class="o">=</span><span class="m">12</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nv">NOJESSIE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOSTRETCH</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOBUSTER</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOBULLSEYE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOBOOKWORM</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">SONIC_BUILD_JOBS</span><span class="o">=</span><span class="m">12</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span>make<span class="w"> </span>configure<span class="w"> </span><span class="nv">PLATFORM</span><span class="o">=</span>vs
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nv">NOJESSIE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOSTRETCH</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOBUSTER</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOBULLSEYE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">SONIC_BUILD_JOBS</span><span class="o">=</span><span class="m">12</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nv">NOJESSIE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOSTRETCH</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOBUSTER</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOBULLSEYE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">NOBOOKWORM</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">SONIC_BUILD_JOBS</span><span class="o">=</span><span class="m">12</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span>make<span class="w"> </span>target/sonic-vs.img.gz
 </span></code></pre></div>
-<p><code>NOJESSIE</code> / <code>NOSTRETCH</code> / <code>NOBUSTER</code> / <code>NOBULLSEYE</code> はそれぞれ古い Debian リリース向けビルドを <strong>スキップ</strong> するフラグ<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。Bookworm 等の現行向け 1 種だけをビルドする時短策。</p>
+<p><code>NOJESSIE</code> / <code>NOSTRETCH</code> / <code>NOBUSTER</code> / <code>NOBULLSEYE</code> / <code>NOBOOKWORM</code> はそれぞれ古い Debian リリース向けビルドを <strong>スキップ</strong> するフラグ<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。最新の現行向け 1 種だけをビルドする時短策。</p>
 <p>成果物は <code>target/sonic-vs.img.gz</code>。</p>
 <h3 id="2-kvm-libvirt">2. KVM / libvirt の準備<a class="headerlink" href="#2-kvm-libvirt" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>kvm-ok<span class="w">                              </span><span class="c1"># 仮想化サポート確認</span>
@@ -35543,7 +35543,7 @@
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>libvirtd
 </span></code></pre></div>
 <h3 id="3">3. ホスト側ブリッジ作成<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>brctl<span class="w"> </span>addbr<span class="w"> </span>mgtbr0<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>ifconfig<span class="w"> </span>mgtbr0<span class="w"> </span>up
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>brctl<span class="w"> </span>addbr<span class="w"> </span>mgtbr0<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>ifconfig<span class="w"> </span>mgtbr0<span class="w"> </span>up
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>brctl<span class="w"> </span>addbr<span class="w"> </span>vmbr0<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>ifconfig<span class="w"> </span>vmbr0<span class="w"> </span>up
 </span></code></pre></div>
 <p><code>mgtbr0</code> は管理ネット用、<code>vmbr0</code> は VM 間トラフィック用<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。VM の libvirt XML がこれらに繋がる。</p>

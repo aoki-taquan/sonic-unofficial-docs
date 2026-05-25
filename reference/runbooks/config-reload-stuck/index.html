@@ -27401,7 +27401,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29781,7 +29781,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35271,10 +35271,6 @@
 
 
 <h1 id="runbook-config-reload-hang">Runbook: config reload が完了しない / hang する<a class="headerlink" href="#runbook-config-reload-hang" title="Permanent link">&para;</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">HLD-only</p>
-<p><code>config reload</code> の標準フロー (stop services → load config_db → start services) に基づく運用ノート。</p>
-</div>
 <div class="admonition danger">
 <p class="admonition-title">実行前提</p>
 <p><code>config reload -y</code> は全 SONiC container を再起動するため転送断が発生する。in-service の機器では warm-reboot か事前 traffic drain を行う。途中で Ctrl-C すると中途半端な状態になりやすく、復旧には reboot が必要になることがある。</p>

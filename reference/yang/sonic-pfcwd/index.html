@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="sonic-pfcwd YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-pfcwd.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd">
+        <meta name="description" content="sonic-pfcwd YANG — PFC Watchdog (PFC WD) の検知・復旧タイマーとポーリング間隔を PORT ごとに設定する。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="sonic-pfcwd YANG - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="sonic-pfcwd YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-pfcwd.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd" />
+<meta property="og:description" content="sonic-pfcwd YANG — PFC Watchdog (PFC WD) の検知・復旧タイマーとポーリング間隔を PORT ごとに設定する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/yang/sonic-pfcwd.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-pfcwd/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="sonic-pfcwd YANG - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="sonic-pfcwd YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-pfcwd.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd" />
+<meta property="twitter:description" content="sonic-pfcwd YANG — PFC Watchdog (PFC WD) の検知・復旧タイマーとポーリング間隔を PORT ごとに設定する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/yang/sonic-pfcwd.png" />
 </head>
   
@@ -27401,7 +27401,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29781,7 +29781,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35553,7 +35553,7 @@
 </table>
 <h2 id="leafref">leafref / 依存<a class="headerlink" href="#leafref" title="Permanent link">&para;</a></h2>
 <ul>
-<li>なし（このモジュール内で直接 leafref を持つ leaf はない）</li>
+<li><code>sonic-pfcwd/PFC_WD/PFC_WD_LIST/ifname</code> → <code>/prt:sonic-port/prt:PORT/prt:PORT_LIST/prt:name</code>（union の一方。文字列 <code>"GLOBAL"</code> も許容）</li>
 </ul>
 <h2 id="augment-deviation">augment / deviation<a class="headerlink" href="#augment-deviation" title="Permanent link">&para;</a></h2>
 <ul>

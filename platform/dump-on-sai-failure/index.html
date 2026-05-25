@@ -16996,28 +16996,6 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        確認コマンド
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシュート
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -27654,7 +27632,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30034,7 +30012,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35448,28 +35426,6 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
-        確認コマンド
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシュート
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -35693,25 +35649,7 @@
 <li><a href="../../topics/20-swss-sai-redis/">20-swss-sai-redis</a>: SAI / sairedis / syncd 全般</li>
 <li><a href="../../topics/11-reboot/">11-reboot</a>: abort 後の再起動経路</li>
 </ul>
-<h2 id="_9">確認コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># SAI failure dump 機能の有効状態</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>HGETALL<span class="w"> </span><span class="s1">&#39;DEVICE_METADATA|localhost&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>sai_fail
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>KEYS<span class="w"> </span><span class="s1">&#39;SUPPRESS_ASIC_SDK_HEALTH_EVENT|*&#39;</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># dump 出力先</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>ls<span class="w"> </span>-lt<span class="w"> </span>/var/dump/<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>ls<span class="w"> </span>-lt<span class="w"> </span>/var/log/<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>sai
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1"># dump 生成トリガとなった SAI status code</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>syncd<span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;dump&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
-</span></code></pre></div>
-<h2 id="_10">トラブルシュート<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<ul>
-<li>dump 機能が無効になっている platform では HLD どおり動作しない。<code>/etc/sonic/sonic_version.yml</code> のベンダー platform 名を確認のうえ SAI ベンダーに有効化を依頼。</li>
-<li>dump が大量生成されてディスクを圧迫する場合は <code>logrotate</code> 設定 (<code>/etc/logrotate.d/</code>) で世代管理する。</li>
-<li>dump 採取後は <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> の同タイムスタンプ snapshot (<code>show techsupport</code>) と一緒に保管するとベンダー解析が早い。</li>
-</ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: f18034062bd1 -->
 
 <div class="footnote">

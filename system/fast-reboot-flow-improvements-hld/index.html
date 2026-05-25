@@ -13325,7 +13325,7 @@
   <a href="#kvm-warm-reboot-syncd-double-free-corruption-sonic-buildimage6466" class="md-nav__link">
     <span class="md-ellipsis">
       
-        KVM での warm reboot 中に syncd が double-free-corruption でクラッシュす（sonic-buildimage#6466）
+        KVM での warm reboot 中に syncd が double-free-corruption でクラッシュする問題（sonic-buildimage#6466）
       
     </span>
   </a>
@@ -27957,7 +27957,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30337,7 +30337,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35966,7 +35966,7 @@
   <a href="#kvm-warm-reboot-syncd-double-free-corruption-sonic-buildimage6466" class="md-nav__link">
     <span class="md-ellipsis">
       
-        KVM での warm reboot 中に syncd が double-free-corruption でクラッシュす（sonic-buildimage#6466）
+        KVM での warm reboot 中に syncd が double-free-corruption でクラッシュする問題（sonic-buildimage#6466）
       
     </span>
   </a>
@@ -36116,7 +36116,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>warmboot-finalizer</code> の fast-reboot 兼用、<code>restore_neighbors.py</code>、enable_counters の遅延ロジックなどは現行 master の実装と差分の可能性。</p>
 </div>
 <h1 id="fast-reboot-flow-improvementsfinalizer-reconciliation">Fast-reboot Flow Improvements（finalizer / reconciliation）<a class="headerlink" href="#fast-reboot-flow-improvementsfinalizer-reconciliation" title="Permanent link">&para;</a></h1>
@@ -36217,11 +36217,19 @@ reasoning: finalizer 流用と新 flag 導入の根拠。
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/3934">sonic-net/sonic-buildimage#3934</a></li>
 </ul>
 <h3 id="mgmt-framework-201911-sonic-buildimage4291">mgmt-framework サービスが 201911 ブランチで起動失敗する問題（sonic-buildimage#4291）<a class="headerlink" href="#mgmt-framework-201911-sonic-buildimage4291" title="Permanent link">&para;</a></h3>
+<div class="admonition note">
+<p class="admonition-title">スコープ注記</p>
+<p>本問題は <strong>201911 ブランチ固有</strong>。本ドキュメントは master ブランチのみを対象とするため、master では再現しない可能性が高い。</p>
+</div>
 <p>mgmt-framework サービスが 201911 ブランチで起動失敗する問題。Python 3 移行後の依存パッケージ不足が原因の場合がある</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/4291">sonic-net/sonic-buildimage#4291</a></li>
 </ul>
 <h3 id="201811-201911-warm-reboot-sonic-buildimage4399">201811 から 201911 への warm reboot が失敗する問題（sonic-buildimage#4399）<a class="headerlink" href="#201811-201911-warm-reboot-sonic-buildimage4399" title="Permanent link">&para;</a></h3>
+<div class="admonition note">
+<p class="admonition-title">スコープ注記</p>
+<p>本問題は <strong>201811→201911 バージョン間 warm reboot 固有</strong>。master ブランチのみを対象とする本ドキュメントのスコープ外。</p>
+</div>
 <p>201811 から 201911 への warm reboot が失敗する問題。直接接続ルートの処理に互換性のない変更があるため、バージョン間の warm reboot サポート状況を事前確認すること</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/4399">sonic-net/sonic-buildimage#4399</a></li>
@@ -36291,7 +36299,7 @@ reasoning: finalizer 流用と新 flag 導入の根拠。
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6240">sonic-net/sonic-buildimage#6240</a></li>
 </ul>
-<h3 id="kvm-warm-reboot-syncd-double-free-corruption-sonic-buildimage6466">KVM での warm reboot 中に syncd が double-free-corruption でクラッシュす（sonic-buildimage#6466）<a class="headerlink" href="#kvm-warm-reboot-syncd-double-free-corruption-sonic-buildimage6466" title="Permanent link">&para;</a></h3>
+<h3 id="kvm-warm-reboot-syncd-double-free-corruption-sonic-buildimage6466">KVM での warm reboot 中に syncd が double-free-corruption でクラッシュする問題（sonic-buildimage#6466）<a class="headerlink" href="#kvm-warm-reboot-syncd-double-free-corruption-sonic-buildimage6466" title="Permanent link">&para;</a></h3>
 <p>KVM での warm reboot 中に syncd が double-free-corruption でクラッシュする問題。仮想環境では warm-reboot の動作が物理環境と異なる場合がある</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/6466">sonic-net/sonic-buildimage#6466</a></li>

@@ -27765,7 +27765,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30145,7 +30145,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35748,7 +35748,7 @@
 <pre class="mermaid"><code>flowchart LR
   HW[Leak Sensor] --&gt; API[LiquidCoolingBase Platform API]
   API --&gt; TC[thermalctld&lt;br&gt;LiquidCoolingUpdater 別スレッド]
-  TC --&gt; SDB[(STATE_DB:&lt;br&gt;LIQUID_COOLING_DEVICE)]
+  TC --&gt; SDB[(STATE_DB:&lt;br&gt;LIQUID_COOLING_INFO)]
   SDB --&gt; SH[system-health&lt;br&gt;hardware_checker.py]
   SH --&gt;|gNMI event| EXT[外部監視]
   TC --&gt; SYSLOG[syslog ERROR]</code></pre>

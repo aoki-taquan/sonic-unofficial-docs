@@ -9931,17 +9931,6 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -27693,7 +27682,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30073,7 +30062,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35526,17 +35515,6 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -35694,13 +35672,7 @@
 <li>Topics: <a href="../../topics/17-srv6-mpls/concept/">SRv6 / MPLS 概念</a>, <a href="../../topics/17-srv6-mpls/architecture/">SRv6 / MPLS アーキテクチャ</a>, <a href="../../topics/17-srv6-mpls/internals/">SRv6 / MPLS 内部実装</a></li>
 <li>関連 HLD: <a href="../srv6-sid-l3adj/">SRv6 SID L3 Adjacency</a>, <a href="../segment-routing-over-ipv6-srv6-hld/">SRv6 over IPv6 HLD</a>, <a href="../static-configuration-of-srv6-in-sonic-hld/">Static Configuration of SRv6</a>, <a href="../sonic-usid/">SONiC uSID</a></li>
 </ul>
-<h2 id="_3">制限事項<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<ul>
-<li>SRv6 VPN は ASIC SAI capability (<code>SAI_SWITCH_ATTR_SRV6_*</code>) に依存し、未対応 <a href="../../reference/glossary/#term-npu">NPU</a> では機能しない。</li>
-<li>locator / behavior (<code>End</code>, <code>End.DT4</code>, <code>End.DT6</code>, <code>End.DX4</code> 等) のサポート範囲は SAI 実装ベンダーごとに差があり、HLD の網羅範囲とは一致しない。</li>
-<li>FRR と SAI 間の MSDP 等周辺プロトコル協調はまだ実験的で、商用配備例は限定的。</li>
-</ul>
-<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

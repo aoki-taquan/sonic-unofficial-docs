@@ -23301,10 +23301,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#tc-tc_type-07" class="md-nav__link">
+  <a href="#tc-tc_type-015" class="md-nav__link">
     <span class="md-ellipsis">
       
-        tc (tc_type: 0..7)
+        tc (tc_type: 0..15)
       
     </span>
   </a>
@@ -28331,7 +28331,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30711,7 +30711,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36043,10 +36043,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#tc-tc_type-07" class="md-nav__link">
+  <a href="#tc-tc_type-015" class="md-nav__link">
     <span class="md-ellipsis">
       
-        tc (tc_type: 0..7)
+        tc (tc_type: 0..15)
       
     </span>
   </a>
@@ -36921,9 +36921,9 @@
 </tr>
 <tr>
 <td><code>tc</code></td>
-<td><code>tc_type</code> (0..7)</td>
+<td><code>tc_type</code> (0..15)</td>
 <td>-</td>
-<td>対応 TC</td>
+<td>対応 TC。YANG 上限は 15 だが大多数の ASIC は 0..7 のみサポート</td>
 </tr>
 </tbody>
 </table>
@@ -36949,7 +36949,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="tc-tc_type-07"><code>tc</code> (tc_type: 0..7)<a class="headerlink" href="#tc-tc_type-07" title="Permanent link">&para;</a></h3>
+<h3 id="tc-tc_type-015"><code>tc</code> (tc_type: 0..15)<a class="headerlink" href="#tc-tc_type-015" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -36963,8 +36963,8 @@
 <td><a href="../../glossary/#term-sai">SAI</a> QoS map オブジェクトの Traffic Class 値として設定</td>
 </tr>
 <tr>
-<td>8 以上</td>
-<td><a href="../../glossary/#term-asic">ASIC</a> が拒否（SAI エラー）</td>
+<td><code>8</code>..<code>15</code></td>
+<td>YANG 上は許容されるが、大多数の ASIC では SAI エラー → <code>task_failed</code></td>
 </tr>
 </tbody>
 </table>
@@ -37009,7 +37009,7 @@
 </ul>
 <h3 id="_10">よくある誤設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
 <ul>
-<li>TC を 8 以上に書くと <a href="../../glossary/#term-asic">ASIC</a> が拒否（TC は 0..7）。</li>
+<li>TC を 8 以上に書くと多くの ASIC が拒否（YANG は 0..15 だが実運用上は 0..7 が安全）。</li>
 </ul>
 <h3 id="_11">確認コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;DSCP_TO_TC_MAP|AZURE&#39;</span>
@@ -37355,7 +37355,7 @@
 <ul>
 <li>CONFIG_DB に格納される型は <strong>string</strong> (<code>"0"</code>..<code>"63"</code>)</li>
 <li><code>qosorch.cpp:245</code>: <code>(uint8_t)stoi(fvField(*i))</code> で uint8 変換 → SAI へ渡す</li>
-<li><strong>例外処理なし</strong>: 数値以外の文字列を書くと <code>std::invalid_argument</code> が投げられ <code>task_failed</code>（<a href="../../glossary/#term-orchagent"><code>Dot1pToTcMapHandler</code></a> は try/catch あり、<code>DscpToTcMapHandler</code> は <strong>なし</strong>）</li>
+<li><strong>例外処理なし</strong>: 数値以外の文字列を書くと <code>std::invalid_argument</code> が投げられ <code>task_failed</code>（<code>Dot1pToTcMapHandler</code> は try/catch あり、<code>DscpToTcMapHandler</code> は <strong>なし</strong>）</li>
 </ul>
 <h3 id="dscp-tc">未定義 DSCP のデフォルト TC (スパース定義時)<a class="headerlink" href="#dscp-tc" title="Permanent link">&para;</a></h3>
 <ul>

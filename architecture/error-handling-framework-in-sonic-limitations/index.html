@@ -27579,7 +27579,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29959,7 +29959,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35484,14 +35484,14 @@
 <tr>
 <td>Phase 1 — 基本機能</td>
 <td>HLD §概要 / §設計の中核ユースケース</td>
-<td>取り込み済 — 本ページの「実装の概観」「実装詳細」節および <code>diff</code> admonition の現状側を参照</td>
-<td>— (Phase 1 は実装済)</td>
+<td>部分取り込み済 — <code>SWSS_RC_*</code> enum (<code>status_code_util.h:11-25</code>) のみ取り込み済み</td>
+<td>ERROR_DB / ErrorListener / ErrorReporter / CLI — 未実装（本ページ「実装との乖離」節参照）</td>
 </tr>
 <tr>
 <td>Phase 2 — 拡張機能</td>
 <td>HLD §拡張 / §追加要件 / §周辺統合</td>
-<td>一部のみ取り込み済 — 本ページ「実装詳細」の補足参照</td>
-<td>未実装 / 未マージ — HLD §未対応箇所、本ページ「制限事項」および <code>diff</code> admonition の差分側に列挙</td>
+<td>—</td>
+<td>未実装 / 未マージ — HLD §未対応箇所は本ページ「HLD レベルの制限事項」節を参照</td>
 </tr>
 <tr>
 <td>Phase 3 — 将来拡張</td>

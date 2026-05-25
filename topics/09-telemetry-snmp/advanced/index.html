@@ -3467,17 +3467,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連ページ (追補)
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -27685,7 +27674,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30065,7 +30054,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35485,17 +35474,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連ページ (追補)
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -35555,6 +35533,9 @@
 <li><a href="../../../system/process-and-docker-stats-availability-via-telemetry-agent/">Process / docker stats を telemetry に</a></li>
 <li><a href="../../../system/memory-statistics-feature-in-sonic/">Memory statistics 機能</a></li>
 <li><a href="../../../system/reboot-cause-information-via-telemetry-agent/">Reboot cause を telemetry に</a></li>
+<li><a href="../../02-bgp/">02 BGP: BMP との連携</a></li>
+<li><a href="../../10-gnmi-openconfig/">10 gNMI / OpenConfig: 変換層と subscribe path</a></li>
+<li><a href="../../20-swss-sai-redis/">20 SWSS / SAI / Redis: COUNTERS_DB の polling 設計</a></li>
 </ul>
 <h2 id="_3">追加の発展トピック<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35609,16 +35590,6 @@
 <li>gNMI subscribe の性能検証は <code>gnmi_cli -subscribe</code> で 1k〜10k path を sample 並列受信し、telemetry agent の CPU/メモリと、<code>COUNTERS_DB</code> の polling 間隔への影響を計測する。</li>
 <li>SNMP scale 検証は <code>snmpwalk -t 30 -r 3</code> で entity MIB / transceiver MIB を large port count (256 ports〜) で取得する。target は 60 秒以内の完走。</li>
 <li>DTel / sFlow の sampling 精度検証は、<code>pktgen</code> で既知レートのトラフィックを流し、collector 側で sample 数 × sampling rate ≒ 実トラフィックになることを確認する。</li>
-</ul>
-<h2 id="_9">関連ページ (追補)<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../../system/dataplane-telemetry-in-sonic/">Dataplane telemetry in SONiC</a></li>
-<li><a href="../../../architecture/sflow-high-level-design/">sFlow high-level design</a></li>
-<li><a href="../../../system/sonic-entity-mib-and-entity-sensor-mib-extension/">SONiC entity MIB / entity sensor MIB extension</a></li>
-<li><a href="../../../system/reboot-cause-information-via-telemetry-agent/">Reboot cause information via telemetry agent</a></li>
-<li><a href="../../02-bgp/">02 BGP: BMP との連携</a></li>
-<li><a href="../../10-gnmi-openconfig/">10 gNMI / OpenConfig: 変換層と subscribe path</a></li>
-<li><a href="../../20-swss-sai-redis/">20 SWSS / SAI / Redis: COUNTERS_DB の polling 設計</a></li>
 </ul>
 <!-- glossary-links-injected: ec18b66e3507 -->
 

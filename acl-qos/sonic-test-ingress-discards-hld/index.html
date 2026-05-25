@@ -27654,7 +27654,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30034,7 +30034,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35667,7 +35667,7 @@ reasoning: ベンダ依存の counter 集約方式（合算 vs 分離）の根�
 </span></code></pre></div>
 <h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>VM trafic 無効化が前提</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-bgp">BGP</a> keepalive 等が走っていると counter が汚れる</li>
+<li><strong>VM traffic 無効化が前提</strong><sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-bgp">BGP</a> keepalive 等が走っていると counter が汚れる</li>
 <li>destination IP は <strong>routable</strong> であることを確認した上で injection（routing で出ていかない / かつ discard 経路に乗る）</li>
 <li>ベンダ間で L2/L3 counter 合算挙動が異なるため、合否判定は per-vendor のロジックを必要とする</li>
 <li>21 ケース中、<a href="../../reference/glossary/#term-sai">SAI</a> 属性 / CONFIG_DB の特定 attribute によっては <strong>deprecated</strong> されたものがあれば注意</li>

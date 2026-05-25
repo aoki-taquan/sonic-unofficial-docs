@@ -27601,7 +27601,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29981,7 +29981,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35493,7 +35493,7 @@
 </table>
 <pre class="mermaid"><code>classDiagram
     class FlexCounter {
-        - m_counterContext: map&lt;string, BaseCounterContext*&gt;
+        - m_counterContext: map&lt;string, shared_ptr~BaseCounterContext~&gt;
         + addCounter(...)
         + collectCounters(Table&amp;)
         + runPlugins(DBConnector&amp;)

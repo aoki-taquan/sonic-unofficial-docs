@@ -27715,7 +27715,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30095,7 +30095,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35686,7 +35686,7 @@
     end</code></pre>
 <p>CoppOrch は <strong>CPU queue ごとの新 trap group</strong> を処理し、<a href="../../reference/glossary/#term-acl">ACL</a> entry 単位で trap を作る<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="kernel-driver-3">ベンダ kernel driver の責務（3 つ）<a class="headerlink" href="#kernel-driver-3" title="Permanent link">&para;</a></h2>
-<p><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>以下の 3 点をベンダ kernel driver が実装する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <ol>
 <li>
 <p><strong>経路判定</strong>: punt パケット header の識別子で netdev か genetlink か振り分け。<code>knet_filter_cb</code> で <code>GENL_PACKET_NAME</code> を分岐:</p>

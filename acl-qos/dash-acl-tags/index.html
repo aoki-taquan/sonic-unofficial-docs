@@ -12026,17 +12026,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#topics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 Topics
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -12048,10 +12037,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#topics_1" class="md-nav__link">
+  <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 Topics (索引)
+        関連 Topics
       
     </span>
   </a>
@@ -27643,7 +27632,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30023,7 +30012,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35423,17 +35412,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#topics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 Topics
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35445,10 +35423,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#topics_1" class="md-nav__link">
+  <a href="#topics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連 Topics (索引)
+        関連 Topics
       
     </span>
   </a>
@@ -35588,8 +35566,8 @@
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>DASH_PREFIX_TAG_TABLE:Tag3  prefix_list = 3.3.3.0/24
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>DASH_ACL_RULE_TABLE:AclGroup1:AclRule1
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    src_addr = &quot;Tag1,Tag2&quot;   # tag 参照
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    dst_addr = &quot;Tag3&quot;
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    src_tag = &quot;Tag1,Tag2&quot;   # tag 参照
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    dst_tag = &quot;Tag3&quot;
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a># DashAclOrch 内部展開後:
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>#   src_tag → 1.1.1.0/24,1.1.2.0/24,2.2.2.0/24
 </span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>#   dst_tag → 3.3.3.0/24
@@ -35620,7 +35598,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>DASH_PREFIX_TAG_TABLE:Tag1  ip_version=ipv4  prefix_list=1.1.1.0/24,1.1.2.0/24
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>DASH_ACL_RULE_TABLE:AclGroup1:AclRule1
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    priority=1 action=allow terminating=false
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    src_addr=&quot;Tag1,Tag2&quot;   dst_addr=&quot;3.3.3.0/24&quot;
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    src_tag=&quot;Tag1,Tag2&quot;   dst_addr=&quot;3.3.3.0/24&quot;
 </span></code></pre></div>
 <h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35647,17 +35625,14 @@
 <li>tag 削除不可 → 参照ルールを先に削除</li>
 <li>prefix_list 更新が反映されない → ENI bind 済なら新 group 再生成が走る。古い group が残っていないか</li>
 </ul>
-<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../topics/13-dash-smartswitch/concept/">13-dash-smartswitch/concept</a>: DASH / <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> の全体像</li>
-<li><a href="../../topics/07-acl-copp-mirror/concept/">07-acl-copp-mirror/concept</a>: ACL と DASH ACL の置き場所</li>
-</ul>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
-<h2 id="topics_1">関連 Topics (索引)<a class="headerlink" href="#topics_1" title="Permanent link">&para;</a></h2>
+<h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror / Packet Action</a></li>
+<li><a href="../../topics/07-acl-copp-mirror/concept/">07-acl-copp-mirror/concept</a>: ACL と DASH ACL の置き場所</li>
 <li><a href="../../topics/13-dash-smartswitch/">Topics: DASH と SmartSwitch</a></li>
+<li><a href="../../topics/13-dash-smartswitch/concept/">13-dash-smartswitch/concept</a>: DASH / <a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> の全体像</li>
 </ul>
 <!-- /topics-back-ref -->
 

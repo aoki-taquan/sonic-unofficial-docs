@@ -28203,7 +28203,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30583,7 +30583,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37618,7 +37618,7 @@
 （<code>portstat.py:297-329</code>）。ASIC が未サポートの場合、<code>portstat</code> 表示から WRED フィールドが事前除外される。
 evidence: <code>portsorch.cpp:1842-1980</code></p>
 <h3 id="counters_dbrates-lua">COUNTERS_DB:RATES:<oid> への Lua プラグイン書き込み<a class="headerlink" href="#counters_dbrates-lua" title="Permanent link">&para;</a></h3>
-<p>orsorch コンストラクタで <code>port_rates.lua</code> と <code>port_flr.lua</code> を <a href="../../glossary/#term-redis">Redis</a> にロードし、
+<p>portsorch コンストラクタで <code>port_rates.lua</code> と <code>port_flr.lua</code> を <a href="../../glossary/#term-redis">Redis</a> にロードし、
 <code>PORT_STAT_COUNTER_FLEX_COUNTER_GROUP</code> に Lua プラグインとして登録する
 （<code>portsorch.cpp:879-882</code>）。syncd が 1 s ごとのポーリングサイクルで Lua を実行し、
 SAI 生カウンタからレートを計算して <strong>COUNTERS_DB:RATES:<oid></strong> に書き込む:</p>

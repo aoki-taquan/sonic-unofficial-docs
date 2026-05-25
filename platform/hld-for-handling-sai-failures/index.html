@@ -17113,7 +17113,7 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシュート
+        トラブルシューティング補足
       
     </span>
   </a>
@@ -27743,7 +27743,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30123,7 +30123,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35626,7 +35626,7 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシュート
+        トラブルシューティング補足
       
     </span>
   </a>
@@ -35942,7 +35942,7 @@ reasoning: ERROR_DB のキー命名規則と上位プロセス側コンシュー
 </span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>swss
 </span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>swss<span class="w"> </span>--since<span class="w"> </span><span class="s1">&#39;-1d&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s1">&#39;restart|exit&#39;</span>
 </span></code></pre></div>
-<h2 id="_12">トラブルシュート<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_12">トラブルシューティング補足<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li>SAI 失敗で orchagent が exit-loop に入る場合、<code>sairedis.rec</code> の最後の数十エントリを確認して再生原因の操作を特定する。</li>
 <li>ベンダー SAI が NULL pointer dereference 等で syncd 自体を落とす場合、<code>/var/core/</code> の core dump を採取し SAI ベンダーへ提供。</li>

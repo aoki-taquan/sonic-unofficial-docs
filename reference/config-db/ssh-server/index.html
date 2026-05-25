@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30501,7 +30501,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36583,7 +36583,7 @@
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
 <li>関連 <a href="../../glossary/#term-config_db">CONFIG_DB</a>: <code>DEVICE_METADATA</code>（hostname 参照）</li>
-<li>関連 CLI: <code>config ssh</code></li>
+<li>関連 CLI: <code>config ssh-server</code></li>
 <li>関連 <a href="../../glossary/#term-yang">YANG</a>: <code>sonic-ssh-server</code></li>
 </ul>
 <!-- ref-triangle:start -->
@@ -36625,7 +36625,7 @@
 <tr>
 <td><code>max_sessions</code></td>
 <td><code>1</code>以上</td>
-<td><code>/etc/security/limits.d/</code> に <code>maxlogins</code> として書き込み</td>
+<td><code>/etc/security/limits.conf</code> に <code>maxsyslogins</code> として書き込み</td>
 </tr>
 <tr>
 <td><code>password_authentication</code></td>
@@ -36743,7 +36743,7 @@
 <tr>
 <td><code>PamLimitsCfg</code></td>
 <td><code>max_sessions &gt; 0</code></td>
-<td><code>maxlogins</code> を PAM limits に書き込み</td>
+<td><code>maxsyslogins</code> を <code>/etc/security/limits.conf</code> に書き込み</td>
 <td><code>hostcfgd</code> L1440</td>
 </tr>
 </tbody>
@@ -37272,7 +37272,7 @@ sshd_config 更新成功後に PAM limits 更新が失敗した場合、両者�
 <p><code>PamLimitsCfg.update_config_file()</code> の副作用は以下に限られる:</p>
 <ul>
 <li><code>/etc/pam.d/pam-limits-conf</code> の Jinja2 テンプレート再生成</li>
-<li><code>/etc/security/limits.conf</code> の Jinja2 テンプレート再生成 (<code>max_sessions &gt; 0</code> のとき <code>maxlogins</code> 設定を含む)</li>
+<li><code>/etc/security/limits.conf</code> の Jinja2 テンプレート再生成 (<code>max_sessions &gt; 0</code> のとき <code>maxsyslogins</code> 設定を含む)</li>
 </ul>
 <p>詳細スキャン手順と grep 結果は <code>meta/_intermediate/cdb-flow/ssh-server-side.md</code> を参照。</p>
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1175 (SshServer — DB 書込なし確認) -->

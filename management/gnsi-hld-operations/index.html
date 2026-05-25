@@ -27554,7 +27554,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29934,7 +29934,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35306,7 +35306,7 @@
 <p>このページは <a href="../gnsi-hld/">gNSI（概要ハブ）</a> の派生で、<strong>設定経路と運用イメージ</strong> に絞る。概念は <a href="../gnsi-hld-concepts/">gnsi-hld-concepts.md</a>、内部実装は <a href="../gnsi-hld-internals/">gnsi-hld-internals.md</a>、制限と HLD 乖離は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
 <div class="admonition note">
 <p class="admonition-title">実装状況の境界（partially implemented）</p>
-<p>本ページが扱うフラグ / YANG / 運用フローのうち、<strong>Certz 系の設定経路（<code>EnableCrl</code> / <code>CertCRLConfig</code> など）と Rotate / Finalize 運用は master に取り込み済</strong> で動作する。一方 <strong>Authz / Pathz / Credentialz 系のフラグ（<code>EnableAuthzPolicy</code> / <code>EnablePathzPolicy</code> / <code>SshCredMetaFile</code> など）は未実装</strong> で対応 PR が未取り込み。詳細は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
+<p>本ページが扱うフラグ / YANG / 運用フローのうち、<strong>Certz 系の設定経路（<code>CertCRLConfig</code> など）と Rotate / Finalize 運用は master に取り込み済</strong> で動作する。一方 <strong>Authz / Pathz / Credentialz 系のフラグ（<code>EnableAuthzPolicy</code> / <code>EnablePathzPolicy</code> / <code>SshCredMetaFile</code> など）は未実装</strong> で対応 PR が未取り込み。詳細は <a href="../gnsi-hld-limitations/">gnsi-hld-limitations.md</a> を参照。</p>
 </div>
 <h2 id="1-gnmi-sonic-gnmi">1. gNMI / sonic-gnmi 側のフラグ追加<a class="headerlink" href="#1-gnmi-sonic-gnmi" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/glossary/#term-hld">HLD</a> は <a href="../../reference/glossary/#term-gnmi">gNMI</a> server に以下のフラグを追加する想定<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>

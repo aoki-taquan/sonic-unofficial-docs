@@ -27630,7 +27630,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30010,7 +30010,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35412,7 +35412,7 @@
 
 
 <h1 id="_1">内部実装<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p><a href="../../../reference/glossary/#term-gnmi">gNMI</a> / OpenConfig の内部実装は、<code>telemetry</code> コンテナの中に gNMI server があり、translib / <a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a>-common 経由で <a href="../../../reference/glossary/#term-yang">YANG</a> → <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に変換するという縦の流れを押さえると整理できます。GET / SET / SUBSCRIBE で経路がそれぞれ違うのが特徴です。</p>
+<p><a href="../../../reference/glossary/#term-gnmi">gNMI</a> / OpenConfig の内部実装は、<code>telemetry</code> コンテナの中に gNMI server があり、translib / <a href="../../../reference/glossary/#term-sonic-mgmt">sonic-mgmt</a>-common 経由で <a href="../../../reference/glossary/#term-yang">YANG</a> → <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> に変換するという縦の流れを押さえると整理できる。GET / SET / SUBSCRIBE で経路がそれぞれ違うのが特徴である。</p>
 <h2 id="_2">データフロー<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   CLIENT[gNMI client] --&gt;|gRPC TLS| GNMI[telemetry / gnmi server&lt;br/&gt;sonic-gnmi]

@@ -27699,7 +27699,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30079,7 +30079,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35599,7 +35599,7 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition info">
+<div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-snmp.yang</code> で SNMP/CONTACT/LOCATION コンテナ定義を確認。<code>sonic-buildimage/dockers/docker-snmp/snmpd.conf.j2</code> で <code>SNMP_COMMUNITY</code> の RO/RW、<code>SNMP_USER</code> の RO/RW + auth/encryption、<code>SNMP.LOCATION.Location</code> / <code>SNMP.CONTACT</code> 取り込みを確認。SNMP_USER 側の <code>SNMP_USER_PERMISSION=RW</code> は実装済（<code>rwuser</code> 行で生成）。</p>
 </div>
@@ -35661,7 +35661,7 @@ reasoning: 後方互換のための j2 内分岐が HLD で明示されている
 <p><strong>抜粋</strong>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>In repo *sonic-buildimage*:
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>* *dockers/docker-snmp-v2/snmpd.conf.j2*:
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  * verify the existence of the SNMP table in the datatbase and fork behavior if present, if not continue using old method.
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  * verify the existence of the SNMP table in the database and fork behavior if present, if not continue using old method.
 </span></code></pre></div>
 <p><strong>判断根拠</strong>: 後方互換のための j2 内分岐が HLD で明示されている根拠。</p>
 </details>

@@ -27660,7 +27660,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30040,7 +30040,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35643,7 +35643,7 @@ reasoning: hostcfgd が「変更購読」と「起動時の現状突合」の両
 <div class="admonition warning">
 <p class="admonition-title">実装との差分（HLD 仕様 vs 現行 master）</p>
 <ul>
-<li>CLI: HLD は <code>config feature enable|disable &lt;name&gt;</code> を提案するが、現行実装は <strong><code>config feature state &lt;name&gt; enabled|disabled</code></strong>（本ページ L172 のコマンド例も実装版）</li>
+<li>CLI: HLD は <code>config feature enable|disable &lt;name&gt;</code> を提案するが、現行実装は <strong><code>config feature state &lt;name&gt; enabled|disabled</code></strong>（本ページのコマンド例も実装版）</li>
 <li>フィールド名: HLD は <code>FEATURE.status=enabled</code> だが、現行 CONFIG_DB は <strong><code>state</code></strong> フィールド（<code>docs/reference/config-db/feature.md</code> L54 参照）</li>
 <li>L33 / L42 / L75 / L113 / L114 / L127 / L137 / L143 / L161 の HLD 表記は <strong>未採用の初版設計</strong> として残置</li>
 </ul>

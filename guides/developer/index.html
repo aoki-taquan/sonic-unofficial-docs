@@ -27490,7 +27490,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29870,7 +29870,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35217,7 +35217,7 @@
 <h2 id="_3">不足コンテンツ注記<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
 <li>「新機能追加時のチェックリスト」がありません。YANG 追加、CONFIG_DB schema、CLI、orch / daemon、test plan、migration、docs 反映を 1 本の流れで示すページが必要です。</li>
-<li>HLD と実コードの対応を横断検索する入口が弱い状態です。各ページの sources はありますが、開発者が「この CONFIG_DB テーブルを読む daemon はどれか」「この CLI がどの DB を書くか」を俯瞰する索引が欲しい状態です。</li>
+<li>「この CONFIG_DB テーブルを読む daemon はどれか」を俯瞰する索引として <a href="../../reference/config-db-orch-map/">CONFIG_DB ↔ orch 対応表</a> があります。「この CLI がどの DB を書くか」の横断索引はまだ不足しています。</li>
 <li>テスト観点の導線が area 別に散っているため、開発者向けに test plan の読み方、既存テストとの対応、検証粒度をまとめるとよいです。</li>
 </ul>
 <!-- topics-back-ref -->

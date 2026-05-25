@@ -27663,7 +27663,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30043,7 +30043,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35620,7 +35620,7 @@
 </span></code></pre></div>
 <h2 id="zmq-redis-pubsub">ZMQ / Redis pub/sub<a class="headerlink" href="#zmq-redis-pubsub" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ZMQ は使わない。</li>
+<li>pmon 系 daemon 間では ZMQ は使わない。</li>
 <li><code>xcvrd</code> は sonic_platform plugin を直接呼び、結果を <a href="../../../reference/glossary/#term-redis">Redis</a> に push。</li>
 <li>PMON 系 daemon は <code>supervisord</code> で管理され、互いに Redis 経由でしか通信しない。</li>
 <li>BMC 経路を持つ場合、<code>pmon</code> 配下の daemon が REST/Redfish を直接呼び、結果を STATE_DB に統一形式で書く。</li>

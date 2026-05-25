@@ -27693,7 +27693,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30073,7 +30073,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35588,7 +35588,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_chassis_app_db.py</code> L8 <code>ChassisAppDbMgr</code> が L20 で <code>CONFIG_DB BGP_DEVICE_GLOBAL.tsa_enabled</code> を subscribe し、L44 で <code>dev_cfg_mgr.isolate_unisolate_device</code> を呼ぶ経路を確認。<code>main.py</code> L113 で <code>ChassisAppDbMgr(common_objs, "CHASSIS_APP_DB", "BGP_DEVICE_GLOBAL")</code> 登録、<code>managers_device_global.py</code> L91-104 / L246-247 で <code>CHASSIS_APP_DB</code> への <code>tsa_enabled</code> 書き込みと <code>BGP_DEVICE_GLOBAL|STATE</code> 読み出しを確認。<code>sonic-buildimage/dockers/docker-fpm-frr/base_image_files/TSA</code> / <code>TSB</code> / <code>TS</code> で <code>CHASSIS_APP_DB HMSET "BGP_DEVICE_GLOBAL|STATE" tsa_enabled</code> を行うこと、<code>files/build_templates/startup_tsa_tsb.service</code> と <code>files/scripts/startup_tsa_tsb.py</code> 存在を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="reliable-tsavoq-chassis-tsa-chassis_app_db">Reliable TSA（VoQ Chassis 全体での TSA を CHASSIS_APP_DB で同期）<a class="headerlink" href="#reliable-tsavoq-chassis-tsa-chassis_app_db" title="Permanent link">&para;</a></h1>

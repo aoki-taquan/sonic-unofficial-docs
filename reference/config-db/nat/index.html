@@ -28431,7 +28431,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30811,7 +30811,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37262,7 +37262,7 @@
 <li><strong>nat_timeout が 300-432000 の範囲外 → YANG が拒否 (デフォルト 600)</strong>: <code>range "300..432000"</code> / <code>default "600"</code>。</li>
 <li><strong>nat_tcp_timeout が 300-432000 の範囲外 → YANG が拒否</strong>: <code>range "300..432000"</code>。</li>
 <li><strong>nat_udp_timeout が 120-600 の範囲外 → YANG が拒否</strong>: <code>range "120..600"</code>。</li>
-<li><strong>nat_type のデフォルト = "dnat"</strong>: YANG <code>default dnat</code>。省略時は DNAT エントリとして処理される。</li>
+<li><strong>STATIC_NAT / STATIC_NAPT の nat_type デフォルト = "dnat"</strong>: YANG <code>default dnat</code>。省略時は DNAT エントリとして処理される。一方 NAT_BINDINGS の <code>nat_type</code> デフォルトは <code>"snat"</code> であり逆方向であることに注意。</li>
 <li><strong>デフォルトルート / サブネットルートの更新は無視</strong>: routeOrch からのルート更新イベントでデフォルトルートまたはサブネットベースのルートは <code>"Ignore default or subnet nexthop update event"</code> としてスキップ (<code>natorch.cpp</code> L185-189)。</li>
 </ul>
 <!-- value-behavior -->

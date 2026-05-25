@@ -27965,7 +27965,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30345,7 +30345,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36222,7 +36222,7 @@
 <td><code>tos</code></td>
 <td>uint8</td>
 <td><code>192</code></td>
-<td>IP TOS / <a href="../../glossary/#term-dscp">DSCP</a> 値。デフォルト <a href="../../glossary/#term-dscp">DSCP</a> 48 (EF) を 2 ビット左シフトして 192 (0xC0)</td>
+<td>IP TOS / <a href="../../glossary/#term-dscp">DSCP</a> 値。デフォルト <a href="../../glossary/#term-dscp">DSCP</a> 48 (CS6) を 2 ビット左シフトして 192 (0xC0)</td>
 </tr>
 <tr>
 <td><code>dst_mac</code></td>
@@ -36898,9 +36898,9 @@
 </tr>
 <tr>
 <td><code>tos</code></td>
-<td><code>192</code> (<a href="../../glossary/#term-dscp">DSCP</a> 48)</td>
+<td><code>192</code> (<a href="../../glossary/#term-dscp">DSCP</a> 48 = CS6)</td>
 <td><code>#define BFD_SESSION_DEFAULT_TOS 192</code> — <code>bfdorch.cpp:18-19</code></td>
-<td>DSCP 48 &lt;&lt; 2 | ECN 0 = 0xC0</td>
+<td>DSCP 48 (CS6) &lt;&lt; 2 | ECN 0 = 0xC0</td>
 </tr>
 <tr>
 <td><code>multihop</code></td>

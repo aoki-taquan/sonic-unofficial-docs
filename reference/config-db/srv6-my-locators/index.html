@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30368,7 +30368,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36196,13 +36196,13 @@
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CDB[("CONFIG_DB&lt;br/&gt;SRV6_MY_LOCATORS")]
-  DM["Srv6Orch"]
+  DM["bgpcfgd / frrcfgd"]
   CDB --&gt; DM
-  SAI["SAI&lt;br/&gt;sai_srv6_api"]
-  DM --&gt; SAI</code></pre>
+  FRR["FRR zebra"]
+  DM --&gt; FRR</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
-<p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>
+<p>CONFIG_DB から FRR までの典型経路を示す。<code>SRV6_MY_LOCATORS</code> は bgpcfgd / frrcfgd 経由で FRR zebra へ通知され、SAI / ASIC への直接操作は行わない。詳細は本ページ本文を参照。</p>
 </div>
 <!-- /cdb-mermaid -->
 

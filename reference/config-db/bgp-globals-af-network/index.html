@@ -25432,10 +25432,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#task-f-phase-c" class="md-nav__link">
+  <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙参照テーブル (Task F Phase C)
+        暗黙参照テーブル (Phase C)
       
     </span>
   </a>
@@ -28192,7 +28192,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30572,7 +30572,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36551,10 +36551,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#task-f-phase-c" class="md-nav__link">
+  <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙参照テーブル (Task F Phase C)
+        暗黙参照テーブル (Phase C)
       
     </span>
   </a>
@@ -37003,7 +37003,7 @@
 <p>なし (FRR BGP network コマンド)</p>
 <h3 id="4">段階 4 — タイミングと副作用<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
 <p><strong>適用タイミング</strong>: 変化検知後 FRR に <code>network &lt;prefix&gt;</code> コマンドを発行。次回 BGP Update で広告開始。</p>
-<p><strong>副作用</strong>: 指定プレフィクスが BGP テーブルに inject されピアに広告される。ルートが存在しない場合 null-route が生成される可能性。</p>
+<p><strong>副作用</strong>: 指定プレフィックスが BGP テーブルに inject されピアに広告される。<code>network_import_check=true</code>（FRR デフォルト）の場合、RIB にルートが存在しないと BGP UPDATE への注入は行われない。</p>
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -37386,7 +37386,7 @@ FRR <a href="../../glossary/#term-vtysh">vtysh</a> コマンドリテラル、�
 <!-- /constants -->
 
 <!-- cross-refs -->
-<h2 id="task-f-phase-c">暗黙参照テーブル (Task F Phase C)<a class="headerlink" href="#task-f-phase-c" title="Permanent link">&para;</a></h2>
+<h2 id="phase-c">暗黙参照テーブル (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
 <p><code>frrcfgd</code> の <code>BGP_GLOBALS_AF_NETWORK</code> ハンドラが直接・間接に参照する他テーブルの一覧。</p>
 <table>
 <thead>

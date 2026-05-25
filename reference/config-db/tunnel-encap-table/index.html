@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30340,7 +30340,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36864,7 +36864,7 @@
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1">// neighbor entry needs to be created before GRE tunnel object</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">swss</span><span class="o">::</span><span class="n">IpAddress</span><span class="w"> </span><span class="n">neighbor_id</span><span class="p">;</span>
 </span></code></pre></div>
-<p><code>neighbor_id = encap_dst_ip</code> の拘束はコード内に BRCM SAI 要件として明記されている[^6]。他のベンダー SAI では本制約が不要な場合があるが、<code>GreTunnelManager</code> はすべてのプラットフォームで同一ロジックを適用する。</p>
+<p><code>neighbor_id = encap_dst_ip</code> の拘束はコード内に BRCM SAI 要件として明記されている<sup id="fnref3:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。他のベンダー SAI では本制約が不要な場合があるが、<code>GreTunnelManager</code> はすべてのプラットフォームで同一ロジックを適用する。</p>
 <h3 id="sai_tunnel_attr_overlay_interface"><code>SAI_TUNNEL_ATTR_OVERLAY_INTERFACE</code> — 暫定ワークアラウンド<a class="headerlink" href="#sai_tunnel_attr_overlay_interface" title="Permanent link">&para;</a></h3>
 <p><code>SAI_TUNNEL_ATTR_OVERLAY_INTERFACE</code> は SAI 仕様上必須属性だが、P4RT GRE encap トンネルには専用の overlay RIF は存在しない。<code>createGreTunnels()</code> はグローバルループバック RIF (<code>gUnderlayIfId</code>) を代用する:</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// gre_tunnel_manager.cpp:417-420</span>
@@ -36872,7 +36872,7 @@
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1">// Use gUnderlayIfId, a shared global loopback rif, for encap tunnels</span>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">entries</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">overlay_if_oid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gUnderlayIfId</span><span class="p">;</span>
 </span></code></pre></div>
-<p>将来 SAI 仕様変更でこの属性が任意になれば本ワークアラウンドは削除される予定<sup id="fnref3:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
+<p>将来 SAI 仕様変更でこの属性が任意になれば本ワークアラウンドは削除される予定<sup id="fnref4:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
 <h3 id="sai-gre-tunnel-asic">SAI GRE Tunnel 対応の ASIC 依存性<a class="headerlink" href="#sai-gre-tunnel-asic" title="Permanent link">&para;</a></h3>
 <p><code>SAI_TUNNEL_TYPE_IPINIP_GRE</code> の実装状況はベンダー SAI によって異なる:</p>
 <table>
@@ -36928,7 +36928,7 @@
 <p>SAI 属性設定: <code>gre_tunnel_manager.cpp</code> <code>prepareSaiAttrs()</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L37-L65">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L37-L65</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
-<p><code>createGreTunnels()</code> overlay_if / neighbor_id: <code>gre_tunnel_manager.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L400-L425">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L400-L425</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p><code>createGreTunnels()</code> overlay_if / neighbor_id: <code>gre_tunnel_manager.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L400-L425">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L400-L425</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:5">
 <p>P4Orch マネージャ ADD 優先順位 (<code>m_p4ManagerAddPrecedence</code>): <code>p4orch.cpp</code>. <a href="https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/p4orch.cpp#L88-L102">https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/p4orch.cpp#L88-L102</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>

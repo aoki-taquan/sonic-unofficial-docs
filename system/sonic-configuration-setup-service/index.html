@@ -27698,7 +27698,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30078,7 +30078,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35597,8 +35597,8 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: discrepancy-found (2026-05-13)</p>
 <p><code>sonic-buildimage/files/build_templates/config-setup.service.j2</code> で systemd unit が組み込まれ、<code>files/image_config/config-setup/config-setup</code> (本体スクリプト) と <code>config-setup.conf</code> が image に同梱される。<code>updategraph*</code> のソースは見つからず、HLD の方針どおり責務が <code>config-setup</code> に集約された結果と整合。<code>first_boot</code> / <code>factory_reset</code> / <code>migration</code> の各ハンドラは config-setup スクリプト本体に実装。</p>
 </div>
 <h1 id="config-setup-first-boot-config-migration">config-setup サービス（first-boot config 生成 / 版間 migration）<a class="headerlink" href="#config-setup-first-boot-config-migration" title="Permanent link">&para;</a></h1>

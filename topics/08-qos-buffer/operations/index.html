@@ -27625,7 +27625,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30005,7 +30005,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35527,7 +35527,7 @@
 </span></code></pre></div>
 <p><code>STORM DETECTED</code> の累計が秒〜分のオーダーで増え続けるなら、PFC を出している側を直さない限り収束しません。応急で PFCWD <code>action: forward</code> にすると drop を止められますが、ingress 側の buffer 圧迫が他 PG に飛び火するので恒久対応にはしません。</p>
 <h2 id="buffer-pool">Buffer pool の枯渇を見つける<a class="headerlink" href="#buffer-pool" title="Permanent link">&para;</a></h2>
-<p><code>show buffer pool persistent-watermark</code> で、ingress / egress / lossless / lossy pool の peak バイトを見ます。</p>
+<p><code>show buffer_pool persistent-watermark</code> で、ingress / egress / lossless / lossy pool の peak バイトを見ます。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>admin@sonic:~$ show buffer_pool persistent-watermark
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>       Pool                   Bytes
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>-----------  ----------------------
@@ -35536,7 +35536,7 @@
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>egress_lossless_pool          9876500
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>egress_lossy_pool              780000
 </span></code></pre></div>
-<p>pool size に近い値が peak で出ている場合、burst 時に shared pool が頭打ちになっていた可能性が高いです。<code>show buffer_pool</code> (現在値) と差を取り、常時忙しいのか瞬間 burst かを判別します。</p>
+<p>pool size に近い値が peak で出ている場合、burst 時に shared pool が頭打ちになっていた可能性が高いです。<code>show buffer_pool watermark</code> (現在値) と差を取り、常時忙しいのか瞬間 burst かを判別します。</p>
 <p><code>BUFFER_POOL</code> テーブルの <code>size</code> と <code>xoff</code> (lossless のみ) が一次的なつまみで、<code>BUFFER_PROFILE</code> の <code>dynamic_th</code> / <code>static_th</code> がポートごとの shared 割当 ratio になります。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>admin@sonic:~$ redis-cli -n 4 hgetall &quot;BUFFER_PROFILE|pg_lossless_100000_5m_profile&quot;
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>1) &quot;pool&quot;
@@ -35552,7 +35552,7 @@
 </span></code></pre></div>
 <p><code>xoff</code> (PFC 発火閾値) と <code>xon</code> (停止解除閾値) は cable length / link speed 依存で計算されるため、手で書き換える前に <a href="../../../reference/config-db/buffer-profile/">buffer profile スキーマ</a> と shared headroom pool の有無を確認します。</p>
 <h2 id="watermark">Watermark の見方と落とし穴<a class="headerlink" href="#watermark" title="Permanent link">&para;</a></h2>
-<p>Watermark は <code>show queue persistent-watermark</code>、<code>show priority-group persistent-watermark</code>、<code>show buffer pool persistent-watermark</code> の 3 系統と、それぞれの <code>clear</code> コマンドがあります。</p>
+<p>Watermark は <code>show queue persistent-watermark</code>、<code>show priority-group persistent-watermark</code>、<code>show buffer_pool persistent-watermark</code> の 3 系統と、それぞれの <code>clear</code> コマンドがあります。</p>
 <ul>
 <li><code>watermark</code> と <code>persistent-watermark</code> は別系統で、前者は短期、後者はクリアするまで保持。</li>
 <li>観測対象は「ConfigDB 上で有効なポート/queue/PG だけ」に限定されるように改善されており、port を削除した直後に幽霊オブジェクトの古い値が残らないようになっています（<a href="../../../acl-qos/align-watermark-flow-with-port-configuration-hld/">align watermark flow with port configuration</a>）。</li>
@@ -35560,7 +35560,7 @@
 </ul>
 <h2 id="show-buffer"><code>show buffer</code> 系の使い分け<a class="headerlink" href="#show-buffer" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>show buffer pool</code> — プールの使用量と peak。</li>
+<li><code>show buffer_pool</code> — プールの使用量と peak。</li>
 <li><code>show buffer profile</code> — どの profile があるか、サイズ・閾値・参照プール。</li>
 <li><code>show priority-group</code> — PG ごとの shared / headroom の使用と xoff/xon time。</li>
 <li><code>show queue</code> — queue ごとの bytes、packets、drops、WRED drop / ECN mark。</li>
@@ -35603,7 +35603,7 @@
 </tr>
 <tr>
 <td>全体的に遅い・bursty</td>
-<td><code>show buffer pool persistent-watermark</code></td>
+<td><code>show buffer_pool persistent-watermark</code></td>
 <td>shared pool 枯渇</td>
 </tr>
 <tr>

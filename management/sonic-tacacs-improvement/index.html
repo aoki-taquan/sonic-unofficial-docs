@@ -27671,7 +27671,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30051,7 +30051,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35544,7 +35544,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-buildimage/files/build/versions-public/host-image/versions-deb-trixie</code> L6 で <code>audisp-tacplus==1.0.2</code>、L280 で <code>libtac2==1.4.1-1</code>、<code>files/build/versions-public/default/versions-git</code> L4 で <code>audisp-tacplus.git</code> の SHA を確認。各 <code>sonic-slave-{buster,bullseye,trixie,jessie}/Dockerfile.j2</code> に <code># For audisp-tacplus</code> セクションがあり、ビルドスレーブ側に取り込み済み。<code>files/build_templates/sonic_debian_extension.j2</code> L318 で <code>libtac2_*.deb</code> をホストイメージにインストール。<code>sonic-utilities/config/aaa.py</code> L157-175 で <code>aaa authorization</code> / <code>aaa accounting</code> CLI を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="tacacs-authorization-accountingpatched-bash-audisp-tacplus">TACACS+ コマンド authorization / accounting（patched bash + <code>audisp-tacplus</code>）<a class="headerlink" href="#tacacs-authorization-accountingpatched-bash-audisp-tacplus" title="Permanent link">&para;</a></h1>
@@ -35589,7 +35589,7 @@
 </tr>
 <tr>
 <td>認可失敗時 fallback</td>
-<td>設定可能。<code>local</code> を fallover にすれば Linux ローカル permission に従う</td>
+<td>設定可能。<code>local</code> を fallback にすれば Linux ローカル permission に従う</td>
 </tr>
 <tr>
 <td>ローカルアカウントログイン</td>
@@ -35628,7 +35628,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Authorization</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>config<span class="w"> </span>aaa<span class="w"> </span>authorization<span class="w"> </span><span class="nb">local</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>config<span class="w"> </span>aaa<span class="w"> </span>authorization<span class="w"> </span>tacacs+
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>config<span class="w"> </span>aaa<span class="w"> </span>authorization<span class="w"> </span>tacacs+<span class="w"> </span><span class="nb">local</span><span class="w">        </span><span class="c1"># TACACS+ → local fallover</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>config<span class="w"> </span>aaa<span class="w"> </span>authorization<span class="w"> </span>tacacs+<span class="w"> </span><span class="nb">local</span><span class="w">        </span><span class="c1"># TACACS+ → local fallback</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Accounting</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>config<span class="w"> </span>aaa<span class="w"> </span>accounting<span class="w"> </span><span class="nb">local</span>

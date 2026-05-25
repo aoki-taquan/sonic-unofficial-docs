@@ -4193,10 +4193,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#asic-namespace-config_db_1" class="md-nav__link">
+  <a href="#cli-db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ASIC namespace と CONFIG_DB の見取り図 (改めて)
+        CLI / DB アクセス分担の見取り図
       
     </span>
   </a>
@@ -27652,7 +27652,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30032,7 +30032,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35398,10 +35398,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#asic-namespace-config_db_1" class="md-nav__link">
+  <a href="#cli-db" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ASIC namespace と CONFIG_DB の見取り図 (改めて)
+        CLI / DB アクセス分担の見取り図
       
     </span>
   </a>
@@ -35603,7 +35603,7 @@
 </span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>sonic-fixed-voq-01<span class="p">|</span>Ethernet0<span class="w">  </span>MC0<span class="w">   </span>...
 </span></code></pre></div>
 <p>通常の <code>show queue</code> 出力に system port 由来の queue が混じる点だけ意識します。</p>
-<h2 id="asic-namespace-config_db_1">ASIC namespace と CONFIG_DB の見取り図 (改めて)<a class="headerlink" href="#asic-namespace-config_db_1" title="Permanent link">&para;</a></h2>
+<h2 id="cli-db">CLI / DB アクセス分担の見取り図<a class="headerlink" href="#cli-db" title="Permanent link">&para;</a></h2>
 <p>CLI / DB アクセスの分担を改めて図にする。</p>
 <pre class="mermaid"><code>flowchart LR
   C[config CLI] -- "--namespace asic0" --&gt; A0

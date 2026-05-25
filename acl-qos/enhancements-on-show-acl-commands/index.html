@@ -12107,17 +12107,6 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連トピック
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         関連ページ
       
     </span>
@@ -12126,7 +12115,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -27676,7 +27665,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30056,7 +30045,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35481,17 +35470,6 @@
   <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連トピック
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         関連ページ
       
     </span>
@@ -35500,7 +35478,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35554,7 +35532,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-09)</p>
 <p><code>sonic-swss/orchagent/aclorch.cpp</code> L4201-4202 で <code>m_aclTableStateTable(stateDb, STATE_ACL_TABLE_TABLE_NAME)</code> / <code>m_aclRuleStateTable(stateDb, STATE_ACL_RULE_TABLE_NAME)</code> を確認、<code>sonic-swss-common/common/schema.h</code> L514-515 で <code>STATE_ACL_TABLE_TABLE_NAME = "ACL_TABLE_TABLE"</code> / <code>STATE_ACL_RULE_TABLE_NAME = "ACL_RULE_TABLE"</code> を確認。<code>sonic-utilities/show/acl.py</code> の <code>show acl table</code> / <code>show acl rule</code> が <code>acl-loader show table/rule</code> を呼び、<code>sonic-utilities/acl_loader/main.py</code> L76-80/L324-340 で STATE_DB の <code>ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> ステータスを参照することを確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="show-acl-state_dbacl_table_table-acl_rule_table-status"><code>show acl</code> 強化（<code>STATE_DB.ACL_TABLE_TABLE</code> / <code>ACL_RULE_TABLE</code> の status）<a class="headerlink" href="#show-acl-state_dbacl_table_table-acl_rule_table-status" title="Permanent link">&para;</a></h1>
@@ -35675,16 +35653,12 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;ACL_RULE_TABLE|*&#39;</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">6</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;ACL_RULE_TABLE|DATAACL|RULE_1&#39;</span>
 </span></code></pre></div>
-<h2 id="_8">関連トピック<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror</a></li>
-</ul>
-<h2 id="_9">関連ページ<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_8">関連ページ<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../acl-in-sonic/">ACL in SONiC</a></li>
 <li><a href="../acl-flex-counters-support/">ACL Flex Counters Support</a></li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - aclorch の STATE_DB ACL_TABLE_TABLE / ACL_RULE_TABLE 書き込み実装
 - STATE_DB ルール側キー (ACL_RULE_TABLE|... vs ACL_RULE|...) の最終形

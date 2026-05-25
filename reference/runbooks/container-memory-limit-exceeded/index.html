@@ -27401,7 +27401,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29781,7 +29781,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35434,7 +35434,7 @@
     A["container OOM / RSS 異常増加"] --&gt; B{docker stats で RSS 増?}
     B -- No --&gt; B1["memory leak ではない / 他要因調査"]
     B -- Yes --&gt; C{cgroup limit 設定?}
-    C -- No --&gt; C1["/etc/sonic/docker_image_ctl で limit 調整"]
+    C -- No --&gt; C1["/usr/share/sonic/templates/docker_image_ctl.j2 で limit 調整 (要 build)"]
     C -- Yes --&gt; D{特定プロセスの RSS 偏り?}
     D -- Yes --&gt; D1["該当プロセスの core / heap profile 採取"]
     D -- No --&gt; E[techsupport 採取しコミュニティへ報告]</code></pre>
@@ -35460,7 +35460,7 @@
 <h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>container 再起動: <code>sudo systemctl restart &lt;feature&gt;</code></li>
-<li>limit 引き上げ: <code>/usr/share/sonic/templates/&lt;container&gt;/docker-image-create.sh</code> 見直し（要 build）</li>
+<li>limit 引き上げ: <code>/usr/share/sonic/templates/docker_image_ctl.j2</code> を修正してイメージを再 build（sonic-buildimage ビルド時に各コンテナの起動スクリプトへ展開される）</li>
 <li>leak 疑い → memory profiling し upstream issue</li>
 <li>不要 feature 無効化: <code>sudo config feature state &lt;feat&gt; disabled</code></li>
 </ul>

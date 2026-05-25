@@ -27671,7 +27671,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30051,7 +30051,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35544,8 +35544,8 @@
 <!-- /topics-tip -->
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>HLD は 2024 年 1〜2 月版 (Rev 2.1)。<code>reset-local-users-passwords.service</code>、<code>sonic-platform-common</code> の <code>LocalUsersConfigurationResetBase</code>、各 vendor 実装、<code>/etc/sonic/default_users.json</code> のフォーマット、<code>ENABLE_LOCAL_USERS_PASSWORDS_RESET</code> ビルドフラグの現行 master 取り込みは未裏取り。</p>
+<p class="admonition-title">裏取りステータス: discrepancy-found（部分実装）</p>
+<p>HLD は 2024 年 1〜2 月版 (Rev 2.1)。<code>reset-local-users-passwords.service</code>・<code>LocalUsersConfigurationResetBase</code>・専用 YANG・long reset button トリガは master 未取り込み。<code>default_users.json</code> 経由でのパスワード復元（reset-factory script）のみ実装済み。詳細は本ページ末尾の「HLD と実装の差分」を参照。</p>
 </div>
 <h1 id="init-long-reset-button-reset-local-users-passwordsservice">ローカルユーザパスワード init 時リセット（long reset button + <code>reset-local-users-passwords.service</code>）<a class="headerlink" href="#init-long-reset-button-reset-local-users-passwordsservice" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

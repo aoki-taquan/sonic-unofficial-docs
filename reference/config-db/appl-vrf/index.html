@@ -28048,7 +28048,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30428,7 +30428,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36403,7 +36403,7 @@
   CDB[("CONFIG_DB&lt;br/&gt;VRF")]
   DM["vrfmgrd"]
   CDB --&gt; DM
-  APPDB[("APP_DB&lt;br/&gt;APP_VRF_TABLE")]
+  APPDB[("APPL_DB&lt;br/&gt;APP_VRF_TABLE")]
   DM --&gt; APPDB
   SYNCD["syncd"]
   APPDB --&gt; SYNCD
@@ -36458,7 +36458,7 @@
 <p>調査日 2026-05-15。ソース: <code>sonic-swss/orchagent/vrforch.cpp</code>、<code>vrforch.h</code>、<code>cfgmgr/vrfmgr.cpp</code>、<code>sonic-swss-common/common/schema.h</code></p>
 </blockquote>
 <h3 id="vrfmgrd-pass-through">vrfmgrd の pass-through 挙動<a class="headerlink" href="#vrfmgrd-pass-through" title="Permanent link">&para;</a></h3>
-<p><code>vrfmgrd</code> (<code>vrfmgr.cpp:303</code>) は CONFIG_DB フィールドを加工せずそのまま APP_DB へ転送する。フィールド省略はそのまま省略として <code>VRFOrch</code> に届く。</p>
+<p><code>vrfmgrd</code> (<code>vrfmgr.cpp:303</code>) は CONFIG_DB フィールドを加工せずそのまま APPL_DB へ転送する。フィールド省略はそのまま省略として <code>VRFOrch</code> に届く。</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">m_appVrfTableProducer</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">vrfName</span><span class="p">,</span><span class="w"> </span><span class="n">kfvFieldsValues</span><span class="p">(</span><span class="n">t</span><span class="p">));</span>
 </span></code></pre></div>
 <h3 id="vni-0"><code>vni</code> — コード由来デフォルト <code>0</code><a class="headerlink" href="#vni-0" title="Permanent link">&para;</a></h3>
@@ -36507,7 +36507,7 @@
 </tr>
 </tbody>
 </table>
-<p>いずれも <code>request.getAttrPacketAction(name)</code> で SAI attrs に変換されるが、YANG 未定義のため通常 APP_DB に書き込まれない。</p>
+<p>いずれも <code>request.getAttrPacketAction(name)</code> で SAI attrs に変換されるが、YANG 未定義のため通常 APPL_DB に書き込まれない。</p>
 <h3 id="mgmtvrfenabled-in_band_mgmt_enabled-explicit-ignore"><code>mgmtVrfEnabled</code> / <code>in_band_mgmt_enabled</code> — explicit ignore<a class="headerlink" href="#mgmtvrfenabled-in_band_mgmt_enabled-explicit-ignore" title="Permanent link">&para;</a></h3>
 <p><code>VRFOrch</code> はこれらのフィールドを明示的に読み飛ばす。SAI 属性への変換も <a href="../../glossary/#term-state_db">STATE_DB</a> への書き込みも行わない。</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// vrforch.cpp:74-78</span>
@@ -36520,7 +36520,7 @@
 <h3 id="fallback-dead-field-silent-drop-at-orchagent"><code>fallback</code> — dead field (silent drop at orchagent)<a class="headerlink" href="#fallback-dead-field-silent-drop-at-orchagent" title="Permanent link">&para;</a></h3>
 <p><code>vrforch.h:34</code> で <code>{ "fallback", REQ_T_BOOL }</code> として宣言されているが、<code>VRFOrch::addOperation</code> のすべての if/else チェーンに <code>"fallback"</code> の分岐が存在しない。結果として <code>else</code> ブランチに落ち <code>SWSS_LOG_ERROR("Logic error: Unknown attribute: %s")</code> が出力されてフィールドが破棄される。</p>
 <ul>
-<li><code>vrfmgrd</code> は <code>fallback</code> を pass-through するため APP_DB には届く</li>
+<li><code>vrfmgrd</code> は <code>fallback</code> を pass-through するため APPL_DB には届く</li>
 <li><code>VRFOrch</code> がそれを silent drop → <strong>SAI・Linux カーネル・<a href="../../glossary/#term-frr">FRR</a> のいずれにも影響しない</strong></li>
 <li><code>fallback=true</code> を CONFIG_DB に設定してもデフォルト VRF へのフォールバックは機能しない</li>
 <li>これは <strong>dead field</strong> であり YANG <code>default false</code> のみが有効な設定状態</li>
@@ -36763,7 +36763,7 @@
 </span></code></pre></div>
 <p>このパスでは <code>vrf_vni_map_table_[vrf_name] = vni</code> も <code>l3vni_table_[vni].vlan_id</code> も呼ばれず、<code>STATE_VRF_OBJECT_TABLE</code> <code>state=ok</code> 書き込みも前段で return しているため発生しない。新規作成パスでは <strong>SAI Virtual Router 自体は手前で既に成功している</strong> ため、<code>vrf_table_.find(vrf_name)</code> 以後の retry は update パス側 (<code>set_virtual_router_attribute</code>) に流れる。ログレベルが <code>NOTICE</code> のみで <code>ERROR</code> を出さないため運用上は <strong>silent skip</strong> と認識されやすい。</p>
 <h3 id="fallback">fallback 未処理<a class="headerlink" href="#fallback" title="Permanent link">&para;</a></h3>
-<p><code>vrfmgrd</code> は <code>fallback</code> を pass-through で APP_DB に届けるが、<code>VRFOrch::addOperation</code> の if/else チェーン (<code>vrforch.cpp:36-83</code>) には <code>"fallback"</code> の専用分岐が存在しない。結果として最後の <code>else</code> で <code>SWSS_LOG_ERROR "Logic error: Unknown attribute: fallback"</code> を出してから <code>continue</code> で抜ける。SAI 属性化されず、retry にも繋がらず、STATE_DB にも残らない。<strong>dead field</strong>。</p>
+<p><code>vrfmgrd</code> は <code>fallback</code> を pass-through で APPL_DB に届けるが、<code>VRFOrch::addOperation</code> の if/else チェーン (<code>vrforch.cpp:36-83</code>) には <code>"fallback"</code> の専用分岐が存在しない。結果として最後の <code>else</code> で <code>SWSS_LOG_ERROR "Logic error: Unknown attribute: fallback"</code> を出してから <code>continue</code> で抜ける。SAI 属性化されず、retry にも繋がらず、STATE_DB にも残らない。<strong>dead field</strong>。</p>
 <h3 id="rollback">部分適用 / rollback 不在<a class="headerlink" href="#rollback" title="Permanent link">&para;</a></h3>
 <p><code>addOperation</code> の update パス (<code>vrforch.cpp:129-141</code>) は attribute を逐次 SAI に流すため、途中失敗時の rollback が一切無い。<code>l3_mc_action</code> のような SAI 任意属性が未対応 <a href="../../glossary/#term-asic">ASIC</a> で <code>NOT_SUPPORTED</code> を返すと、<strong>先行属性 (例: <code>src_mac</code>) は SAI に書込済みのまま</strong> エントリは削除される。STATE_DB の整合チェック側でも検出されないため、ユーザは <code>sonic-db-cli ASIC_DB hgetall ASIC_STATE:SAI_OBJECT_TYPE_VIRTUAL_ROUTER:&lt;oid&gt;</code> で実状態を直接確認する必要がある。</p>
 <!-- /failure -->

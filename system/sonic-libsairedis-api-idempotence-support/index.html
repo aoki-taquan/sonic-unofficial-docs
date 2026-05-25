@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止） — orchagent と syncd の間にある libsairedis API の create / set / remove / get を idempotent にし、orc…">
+        <meta name="description" content="libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止） — orchagent と syncd の間にある libsairedis API の create / set / remove / get を idempotent にし、orchagent が warm restart 後に同じ呼び出しを繰り返しても data plane に影響を与えない設計。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止） — orchagent と syncd の間にある libsairedis API の create / set / remove / get を idempotent にし、orc…" />
+<meta property="og:description" content="libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止） — orchagent と syncd の間にある libsairedis API の create / set / remove / get を idempotent にし、orchagent が warm restart 後に同じ呼び出しを繰り返しても data plane に影響を与えない設計。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/sonic-libsairedis-api-idempotence-support.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-libsairedis-api-idempotence-support/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止） — orchagent と syncd の間にある libsairedis API の create / set / remove / get を idempotent にし、orc…" />
+<meta property="twitter:description" content="libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止） — orchagent と syncd の間にある libsairedis API の create / set / remove / get を idempotent にし、orchagent が warm restart 後に同じ呼び出しを繰り返しても data plane に影響を与えない設計。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/sonic-libsairedis-api-idempotence-support.png" />
 </head>
   
@@ -27671,7 +27671,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30051,7 +30051,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     

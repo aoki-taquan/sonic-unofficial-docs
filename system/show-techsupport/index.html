@@ -27676,7 +27676,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30056,7 +30056,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35553,9 +35553,9 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition success">
-<p class="admonition-title">裏取りステータス: code-verified (2026-05-10)</p>
-<p>YANG モデル <code>sonic-mgmt-common/models/yang/sonic/sonic-show-techsupport.yang</code> に <code>rpc sonic-show-techsupport-info</code> が定義され、annotations <code>sonic-showtech-annot.yang</code> で transformer に紐付け済み。tarball 採取本体は <code>sonic-utilities/scripts/generate_dump</code> (techsupport_cleanup.py / bmc_techsupport.py が呼ぶ) で従来どおり。<code>sonic-buildimage</code> には <code>sonic-auto_techsupport.yang</code> も存在。RPC 起動経路は HLD どおり実装。</p>
+<div class="admonition warning">
+<p class="admonition-title">裏取りステータス: discrepancy-found (2026-05-13)</p>
+<p>YANG モデル <code>sonic-mgmt-common/models/yang/sonic/sonic-show-techsupport.yang</code> に <code>rpc sonic-show-techsupport-info</code> が定義され、annotations <code>sonic-showtech-annot.yang</code> で transformer に紐付け済み。tarball 採取本体は <code>sonic-utilities/scripts/generate_dump</code> (techsupport_cleanup.py / bmc_techsupport.py が呼ぶ) で従来どおり。<code>sonic-buildimage</code> には <code>sonic-auto_techsupport.yang</code> も存在。RPC 起動経路は HLD どおり実装。ただし HLD が中心的に提案する Management Framework (REST/gNMI) 経由の RPC ＋ IETF <code>since</code> パラメータの YANG モデル化は現行 master で十分に取り込まれておらず、乖離あり（<code>partially_implemented</code>）。</p>
 </div>
 <h1 id="management-framework-show-techsupportrestgnmiietf-since">Management Framework 経由の show techsupport（REST/gNMI/IETF since 形式）<a class="headerlink" href="#management-framework-show-techsupportrestgnmiietf-since" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

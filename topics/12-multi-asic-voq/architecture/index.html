@@ -27586,7 +27586,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29966,7 +29966,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35342,7 +35342,7 @@
     O1 --&gt; S1 --&gt; SY1
     O1 --&gt; ST1
   end
-  subgraph LC2[Line Card 2 - asic0 namespace]
+  subgraph LC2[Line Card 2 - asic1 namespace]
     C2[(CONFIG_DB)]
     O2[orchagent]
     C2 --&gt; O2
@@ -35362,7 +35362,7 @@
   VOQ --&gt; FAB[Fabric ASIC&lt;br&gt;cell switching]
   FAB --&gt; EGR[Egress LC pipeline]
   EGR --&gt; EGP[Egress front-panel port]</code></pre>
-<p>VOQ は ingress 側に存在し、egress system port ごとに credit を受け取って送出可否を決めます。これにより、egress 側で輻輳しても ingress でバッファリングされ、他の egress 宛て trafic は HOL blocking されません。</p>
+<p>VOQ は ingress 側に存在し、egress system port ごとに credit を受け取って送出可否を決めます。これにより、egress 側で輻輳しても ingress でバッファリングされ、他の egress 宛て traffic は HOL blocking されません。</p>
 <h2 id="fabric-port">Fabric Port の役割<a class="headerlink" href="#fabric-port" title="Permanent link">&para;</a></h2>
 <p>fabric port は line card と fabric card の間を結ぶ内部リンクです。L2 / L3 アドレスは持たず、cell スイッチングのためのリソースとして扱われます。fabric ASIC は forwarding decision をせず、ingress line card がつけた destination 情報に従って cell を中継します。</p>
 <p>fabric port は <code>STATE_FABRIC_PORT_TABLE</code> や <code>STATE_FABRIC_LINK_MONITORING</code> のような state を持ち、<code>show fabric</code> 系コマンドや link monitoring サブシステムから運用上の異常を検出できます。</p>

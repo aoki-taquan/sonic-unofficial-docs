@@ -28474,7 +28474,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30854,7 +30854,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37324,7 +37324,7 @@
 <ul>
 <li>key 形式: <code>VRF|Vrf&lt;name&gt;</code> (例 <code>VRF|VrfRed</code>)。</li>
 <li><code>vni</code>: L3 VNI（<a href="../../glossary/#term-vxlan">VXLAN</a> <a href="../../glossary/#term-evpn">EVPN</a> tenant L3）。</li>
-<li><code>fallback</code>: <code>true</code> で default VRF にフォールバック。</li>
+<li><code>fallback</code>: <code>true</code> に設定しても実際には dead field であり動作変化なし（詳細は「暗黙デフォルト・コード由来挙動」参照）。</li>
 </ul>
 <h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
@@ -37619,8 +37619,6 @@
 <li><strong>VNI 変更制限</strong>: 既に VNI が設定されている VRF に別 VNI を上書きすることは不可。一旦 <code>vni=0</code> に SET してから新 VNI を SET する必要がある (vrfmgr.cpp:459-463)。</li>
 <li><strong>SAI VR 削除シーケンス</strong>: <code>delOperation</code> で <code>ref_count == 0</code> 確認後 <code>remove_virtual_router</code> → <code>vrf_table_.erase</code> → <code>delVrfVNIMap</code> → <code>m_stateVrfObjectTable.del()</code> の順に実行される (vrforch.cpp:173–193)。STATE_DB <code>VRF_OBJECT_TABLE</code> 消去が vrfmgrd の Linux VRF デバイス削除トリガになる。</li>
 </ul>
-<!-- /ordering -->
-
 <!-- /ordering -->
 
 <!-- cross-refs -->

@@ -28181,7 +28181,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30561,7 +30561,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36820,11 +36820,11 @@
 <h3 id="_11">典型値<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>BGP_AGGREGATE_ADDRESS|&lt;aggregate-address&gt;</code>。</li>
-<li><code>as_set</code>: <code>false</code>、<code>summary_only</code>: <code>true</code>（詳細経路を抑制して集約のみ広告）。</li>
+<li><code>as-set</code>: <code>false</code>、<code>summary-only</code>: <code>true</code>（詳細経路を抑制して集約のみ広告）。</li>
 </ul>
 <h3 id="_12">よくある誤設定<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>summary_only=true</code> のまま contributing route が無い状態で参照経路を期待しても集約広告されない。</li>
+<li><code>summary-only=true</code> のまま contributing route が無い状態で参照経路を期待しても集約広告されない。</li>
 </ul>
 <h3 id="_13">確認コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BGP_AGGREGATE_ADDRESS|*&#39;</span>

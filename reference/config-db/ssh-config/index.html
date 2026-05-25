@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29305,15 +29305,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-d" class="md-nav__link">
+  <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙テーブル参照 (Phase D)
+        暗黙テーブル参照 (Phase C)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase D)">
+    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase C)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -29333,7 +29333,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-d_1" class="md-nav__link">
+  <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
         失敗挙動マトリクス (Phase D)
@@ -30552,7 +30552,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36260,15 +36260,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-d" class="md-nav__link">
+  <a href="#phase-c" class="md-nav__link">
     <span class="md-ellipsis">
       
-        暗黙テーブル参照 (Phase D)
+        暗黙テーブル参照 (Phase C)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase D)">
+    <nav class="md-nav" aria-label="暗黙テーブル参照 (Phase C)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -36288,7 +36288,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phase-d_1" class="md-nav__link">
+  <a href="#phase-d" class="md-nav__link">
     <span class="md-ellipsis">
       
         失敗挙動マトリクス (Phase D)
@@ -37084,7 +37084,7 @@
 <!-- /ordering -->
 
 <!-- cross-refs -->
-<h2 id="phase-d">暗黙テーブル参照 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
+<h2 id="phase-c">暗黙テーブル参照 (Phase C)<a class="headerlink" href="#phase-c" title="Permanent link">&para;</a></h2>
 <p><code>SSH_SERVER</code> テーブルが直接・間接的に参照するテーブルと参照方向の一覧。</p>
 <table>
 <thead>
@@ -37123,7 +37123,7 @@
 <!-- /cross-refs -->
 
 <!-- failure -->
-<h2 id="phase-d_1">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d_1" title="Permanent link">&para;</a></h2>
+<h2 id="phase-d">失敗挙動マトリクス (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>
 <p>ソース: <code>sonic-net/sonic-host-services/scripts/hostcfgd</code> (コミット <code>c5bbbe8b</code>)</p>
 <h3 id="set">SET 処理における失敗経路<a class="headerlink" href="#set" title="Permanent link">&para;</a></h3>
 <h4 id="sshserverset_policies">SshServer.set_policies() 内<a class="headerlink" href="#sshserverset_policies" title="Permanent link">&para;</a></h4>
@@ -37576,8 +37576,6 @@
 <p><strong>証跡</strong>: <code>hostcfgd:1045-1186</code> (<code>SshServer</code>)、<code>hostcfgd:1408-1476</code> (<code>PamLimitsCfg</code>)、<code>data/templates/limits.conf.j2</code> (platform 分岐なし)、<code>data/templates/pam_limits.j2</code> (platform 分岐なし); 詳細分析 <code>meta/_intermediate/cdb-flow/ssh-config-platform.md</code></p>
 </blockquote>
 <!-- /platform -->
-
-<!-- glossary-links-injected: ssh-config-2026-05-14 -->
 
 <!-- glossary-links-injected: adbc248f73ea -->
 

@@ -27721,7 +27721,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30101,7 +30101,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35644,7 +35644,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p>sonic-sairedis <code>syncd/CommandLineOptions.h</code> L13 <code>STRING_SAI_START_TYPE_EXPRESS_BOOT="express"</code> / L36 <code>SAI_START_TYPE_EXPRESS_BOOT=4</code>、<code>CommandLineOptions.cpp</code> L105-106 で文字列 "express" → enum マッピング、<code>RequestShutdownCommandLineOptions.cpp</code> L59/L88 で <code>SYNCD_RESTART_TYPE_EXPRESS</code>、<code>RequestShutdownCommandLineOptionsParser.cpp</code> L65 で setRestartType(SYNCD_RESTART_TYPE_EXPRESS) を確認。<code>Syncd.h</code> L111 <code>setPreShutdownOnAllSwitches()</code>、<code>Syncd.cpp</code> L282 / L4566-L4570 で start_type==EXPRESS_BOOT 分岐、L4772/L5665 で <code>SAI_SWITCH_ATTR_FAST_API_ENABLE</code> 操作、L5690 <code>setPreShutdownOnAllSwitches</code> 実装、L5946 で fail 時 cold restart fallback、L5956 で setPreShutdownOnAllSwitches 呼び出し、L6058-L6072 で SYNCD_RESTART_TYPE_EXPRESS の shutdown 分岐を確認。sonic-utilities <code>scripts/express-reboot</code> symlink、<code>scripts/fast-reboot</code> L375 / L402-403 / L454 / L749 / L795 / L883-884 / L931 / L965-967 (BOOT_TYPE_ARG="express") / L1167 / L1182 で express-reboot 経路を確認。sonic-host-services <code>scripts/determine-reboot-cause</code> L43 <code>REBOOT_TYPE_KEXEC_PATTERN_EXPRESS</code> / L68 <code>'express-reboot'</code> 認識を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="express-rebootcisco-8000">Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）<a class="headerlink" href="#express-rebootcisco-8000" title="Permanent link">&para;</a></h1>

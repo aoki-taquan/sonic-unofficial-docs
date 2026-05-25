@@ -27641,7 +27641,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30021,7 +30021,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35679,10 +35679,10 @@
 <li><code>CONFIG_DB:MUX_CABLE|&lt;port&gt;</code> — <code>state</code>（auto / active / standby / manual）、<code>server_ipv4</code>、<code>server_ipv6</code>、<code>soc_ipv4</code>、<code>soc_ipv6</code>、<code>cable_type</code>。</li>
 <li><code>CONFIG_DB:MUX_LINKMGR|LINK_PROBER</code> — <code>interval_v4</code>、<code>interval_v6</code>、<code>positive_signal_count</code>、<code>negative_signal_count</code>、<code>prober_type</code>（software / hardware）。</li>
 <li><code>APPL_DB:MUX_CABLE_TABLE:&lt;port&gt;</code> — linkmgrd 出力の現在 state（active / standby / unknown）。</li>
-<li><code>STATE_DB:MUX_CABLE_TABLE\|&lt;port&gt;</code> — <code>state</code>、<code>peer_state</code>、<code>gRPC</code> connectivity。</li>
-<li><code>STATE_DB:HW_MUX_CABLE_TABLE\|&lt;port&gt;</code> — HW 実状態。</li>
-<li><code>STATE_DB:MUX_LINKMGR_TABLE\|&lt;port&gt;</code> — link prober の現在値。</li>
-<li><code>STATE_DB:LINK_PROBE_STATS\|&lt;port&gt;</code> — <code>pck_loss_count</code>、<code>pck_expected_count</code>、unknown event タイムスタンプ。</li>
+<li><code>STATE_DB:MUX_CABLE_TABLE|&lt;port&gt;</code> — <code>state</code>、<code>peer_state</code>、gRPC connectivity。</li>
+<li><code>STATE_DB:HW_MUX_CABLE_TABLE|&lt;port&gt;</code> — HW 実状態。</li>
+<li><code>STATE_DB:MUX_LINKMGR_TABLE|&lt;port&gt;</code> — link prober の現在値。</li>
+<li><code>STATE_DB:LINK_PROBE_STATS|&lt;port&gt;</code> — <code>pck_loss_count</code>、<code>pck_expected_count</code>、unknown event タイムスタンプ。</li>
 <li><code>APPL_DB:TUNNEL_ROUTE_TABLE:&lt;port&gt;</code> — server / soc 向け <code>/32</code> / <code>/128</code> の install 状態。</li>
 <li><code>APPL_DB:NEIGH_TABLE</code> — mux active 時に再 install される neighbor。</li>
 <li><code>COUNTERS_DB:COUNTERS_TUNNEL_NAME_MAP</code> — Dual-ToR tunnel encap counter。</li>

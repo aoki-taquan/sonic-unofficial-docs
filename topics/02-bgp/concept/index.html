@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="概要 — 「SONiC で BGP を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、SONiC と FRR の境界がどこにあるか が見えづらいことです。">
+        <meta name="description" content="概要 — 「SONiC で BGP を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、SONiC と FRR の境界がどこにあるか が見えづらいことである。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="概要 - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="概要 — 「SONiC で BGP を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、SONiC と FRR の境界がどこにあるか が見えづらいことです。" />
+<meta property="og:description" content="概要 — 「SONiC で BGP を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、SONiC と FRR の境界がどこにあるか が見えづらいことである。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/02-bgp/concept.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/topics/02-bgp/concept/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="概要 - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="概要 — 「SONiC で BGP を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、SONiC と FRR の境界がどこにあるか が見えづらいことです。" />
+<meta property="twitter:description" content="概要 — 「SONiC で BGP を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、SONiC と FRR の境界がどこにあるか が見えづらいことである。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/topics/02-bgp/concept.png" />
 </head>
   
@@ -27735,7 +27735,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30115,7 +30115,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35622,17 +35622,17 @@
 
 
 <h1 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>「<a href="../../../reference/glossary/#term-sonic">SONiC</a> で <a href="../../../reference/glossary/#term-bgp">BGP</a> を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、<strong>SONiC と <a href="../../../reference/glossary/#term-frr">FRR</a> の境界がどこにあるか</strong> が見えづらいことです。BGP のプロトコル処理は FRR（オープンソースのルーティング suite）が行い、SONiC は設定の受付と <a href="../../../reference/glossary/#term-asic">ASIC</a> への反映を担当しますが、両者の橋渡しに複数の daemon と DB が並んでいるため、どこで何が起きているかを掴むのに時間がかかります。</p>
-<p>この章は、その境界線をはっきりさせるための入口です。</p>
+<p>「<a href="../../../reference/glossary/#term-sonic">SONiC</a> で <a href="../../../reference/glossary/#term-bgp">BGP</a> を読む」ときに最初にぶつかる困りごとは、BGP プロトコルそのものではなく、<strong>SONiC と <a href="../../../reference/glossary/#term-frr">FRR</a> の境界がどこにあるか</strong> が見えづらいことである。BGP のプロトコル処理は FRR（オープンソースのルーティング suite）が行い、SONiC は設定の受付と <a href="../../../reference/glossary/#term-asic">ASIC</a> への反映を担当するが、両者の橋渡しに複数の daemon と DB が並んでいるため、どこで何が起きているかを掴むのに時間がかかる。</p>
+<p>この章は、その境界線をはっきりさせるための入口である。</p>
 <h2 id="sonic-bgp">SONiC の BGP は何の問題を解決するか<a class="headerlink" href="#sonic-bgp" title="Permanent link">&para;</a></h2>
-<p>データセンタースイッチでは、BGP は単に AS 間の経路交換ではなく、<strong>EBGP unnumbered で leaf-spine のあらゆる link 上で動かす <a href="../../../reference/glossary/#term-ecmp">ECMP</a> fabric の制御面</strong> として使われます。SONiC はこの利用形態を前提に、以下を引き受けます。</p>
+<p>データセンタースイッチでは、BGP は単に AS 間の経路交換ではなく、<strong>EBGP unnumbered で leaf-spine のあらゆる link 上で動かす <a href="../../../reference/glossary/#term-ecmp">ECMP</a> fabric の制御面</strong> として使われる。SONiC はこの利用形態を前提に、以下を引き受ける。</p>
 <ul>
 <li>BGP neighbor / policy / route-map を <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../../reference/glossary/#term-yang">YANG</a> / CLI で受ける。</li>
 <li>FRR の vty / 設定ファイルへ差分反映する。</li>
 <li>FRR から到達した経路を <a href="../../../reference/glossary/#term-fpm">FPM</a> 経由で受け取り、ASIC の FIB に書き込む。</li>
 <li>BGP 由来のイベント（peer down、route flap）を <a href="../../../reference/glossary/#term-state_db">STATE_DB</a> / telemetry に出す。</li>
 </ul>
-<p>つまり SONiC の BGP は「FRR をうまく使うための包み」と考えると、<a href="../../../reference/glossary/#term-hld">HLD</a> を読むときの迷子が減ります。</p>
+<p>つまり SONiC の BGP は「FRR をうまく使うための包み」と考えると、<a href="../../../reference/glossary/#term-hld">HLD</a> を読むときの迷子が減る。</p>
 <h2 id="sonic">SONiC の中での位置<a class="headerlink" href="#sonic" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35656,7 +35656,7 @@
 </tr>
 </tbody>
 </table>
-<p>BGP は <strong>management と control の橋渡し</strong> が大半で、data plane 側はほぼ汎用の RouteOrch を使います。BGP 固有のロジックの多くは「CONFIG_DB → FRR」と「FRR → <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a>」の 2 つの方向にあります。</p>
+<p>BGP は <strong>management と control の橋渡し</strong> が大半で、data plane 側はほぼ汎用の RouteOrch を使う。BGP 固有のロジックの多くは「CONFIG_DB → FRR」と「FRR → <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a>」の 2 つの方向にある。</p>
 <h2 id="_2">最初に押さえる用語<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35737,7 +35737,7 @@
 </tr>
 </tbody>
 </table>
-<p>従来の中心は <code>bgpcfgd</code> で、Jinja template と一部の動的反映により FRR 設定を作ります。OpenConfig BGP を Management Framework から扱う構成では <code>frrcfgd</code> が CONFIG_DB の差分から FRR vty コマンドを生成します。両者は同時に動かす前提ではなく、<code>DEVICE_METADATA.localhost.frr_mgmt_framework_config</code> で切り替える設計です。詳しくは <a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">FRR-BGP Unified Mgmt Framework</a> を参照してください。</p>
+<p>従来の中心は <code>bgpcfgd</code> で、Jinja template と一部の動的反映により FRR 設定を作る。OpenConfig BGP を Management Framework から扱う構成では <code>frrcfgd</code> が CONFIG_DB の差分から FRR vty コマンドを生成する。両者は同時に動かす前提ではなく、<code>DEVICE_METADATA.localhost.frr_mgmt_framework_config</code> で切り替える設計である。詳細は <a href="../../../routing/sonic-frr-bgp-extended-unified-configuration-management-framework/">FRR-BGP Unified Mgmt Framework</a> を参照する。</p>
 <h2 id="_4">典型的な使用シーン<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-leaf-spine-fabric-ebgp-unnumbered">シーン 1: leaf-spine fabric の EBGP unnumbered<a class="headerlink" href="#1-leaf-spine-fabric-ebgp-unnumbered" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -35747,13 +35747,13 @@
   S2 ---|EBGP unnumbered| L2
   L1 --- H1[Host]
   L2 --- H2[Host]</code></pre>
-<p>Spine と Leaf の各リンクで EBGP を張り、IPv6 link-local + RFC 5549 で IPv4 prefix を運ぶのが典型です。SONiC では <code>BGP_NEIGHBOR</code> ではなく <code>BGP_PEER_RANGE</code> / unnumbered 用の templates が使われることが多く、router-id の決まり方が hostname / loopback / metadata に依存する点が落とし穴になりがちです。</p>
+<p>Spine と Leaf の各リンクで EBGP を張り、IPv6 link-local + RFC 5549 で IPv4 prefix を運ぶのが典型である。SONiC では <code>BGP_NEIGHBOR</code> ではなく <code>BGP_PEER_RANGE</code> / unnumbered 用の templates が使われることが多く、router-id の決まり方が hostname / loopback / metadata に依存する点が落とし穴になりがちである。</p>
 <h3 id="2-bgp-evpn-vxlan-overlay">シーン 2: BGP-EVPN を被せた VXLAN overlay<a class="headerlink" href="#2-bgp-evpn-vxlan-overlay" title="Permanent link">&para;</a></h3>
-<p><a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-evpn">EVPN</a> を被せる場合は、同じ BGP セッションの上に <code>l2vpn evpn</code> AFI が乗ります。BGP 自体の設定パスは同じですが、経路を受け取る先が <code>VXLAN_*</code> / <code>EVPN_*</code> テーブルや FRR の EVPN モジュールに広がります。詳細は <a href="../../03-vxlan-evpn/concept/">03 章 VXLAN / EVPN</a> を併せて読みます。</p>
+<p><a href="../../../reference/glossary/#term-vxlan">VXLAN</a> / <a href="../../../reference/glossary/#term-evpn">EVPN</a> を被せる場合は、同じ BGP セッションの上に <code>l2vpn evpn</code> AFI が乗る。BGP 自体の設定パスは同じだが、経路を受け取る先が <code>VXLAN_*</code> / <code>EVPN_*</code> テーブルや FRR の EVPN モジュールに広がる。詳細は <a href="../../03-vxlan-evpn/concept/">03 章 VXLAN / EVPN</a> を併せて読む。</p>
 <h2 id="router-id">router-id はどこで決まるか<a class="headerlink" href="#router-id" title="Permanent link">&para;</a></h2>
-<p>BGP router-id は、明示設定がない場合に既存ロジックで決まります。明示したい場合は <code>DEVICE_METADATA.localhost.bgp_router_id</code> を使う設計があります。これは FRR 側だけの設定ではなく、SONiC の起動時設定生成に関わるため、どの値が最終的に FRR に入るかを確認する必要があります。詳細は <a href="../../../routing/bgp-router-id-explicitly-configured/">BGP router-id を明示的に設定する</a> にまとまっています。</p>
+<p>BGP router-id は、明示設定がない場合に既存ロジックで決まる。明示したい場合は <code>DEVICE_METADATA.localhost.bgp_router_id</code> を使う設計がある。これは FRR 側だけの設定ではなく、SONiC の起動時設定生成に関わるため、どの値が最終的に FRR に入るかを確認する必要がある。詳細は <a href="../../../routing/bgp-router-id-explicitly-configured/">BGP router-id を明示的に設定する</a> にまとまっている。</p>
 <h2 id="frr-upgrade">FRR upgrade は何に影響するか<a class="headerlink" href="#frr-upgrade" title="Permanent link">&para;</a></h2>
-<p>FRR upgrade は単なるパッケージ更新ではありません。SONiC では FRR fork、patch、docker image、起動テンプレート、FPM plugin、Management Framework との接点が絡みます。BGP 機能を読むときは、HLD が前提にする FRR version と現在の SONiC 実装が一致するかを確認してください。upgrade 手順と patch 管理の観点は <a href="../../../routing/detailed-steps-to-upgrade-frr-in-sonic/">SONiC における FRR upgrade</a> を参照します。</p>
+<p>FRR upgrade は単なるパッケージ更新ではない。SONiC では FRR fork、patch、docker image、起動テンプレート、FPM plugin、Management Framework との接点が絡む。BGP 機能を読むときは、HLD が前提にする FRR version と現在の SONiC 実装が一致するかを確認する。upgrade 手順と patch 管理の観点は <a href="../../../routing/detailed-steps-to-upgrade-frr-in-sonic/">SONiC における FRR upgrade</a> を参照する。</p>
 <h2 id="_5">似た機能との違い<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -35808,7 +35808,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>show ip route</code> は FRR 側を見ているのか SONiC 側を見ているのかが混ざりやすい点に注意します。確実な切り分けは「FRR の vty」と「<a href="../../../reference/glossary/#term-redis">Redis</a> の APPL_DB / ASIC_DB」を別個に確認することです。</p>
+<p><code>show ip route</code> は FRR 側を見ているのか SONiC 側を見ているのかが混ざりやすい点に注意する。確実な切り分けは「FRR の vty」と「<a href="../../../reference/glossary/#term-redis">Redis</a> の APPL_DB / ASIC_DB」を別個に確認することである。</p>
 <h2 id="_6">問題を切り分けるための流れ図<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <p>「BGP がおかしい」と感じたとき、どの章のどの節を先に読むかを決めるための地図。SONiC の BGP は <strong>設定経路（CONFIG_DB → FRR）</strong> と <strong>学習経路（FRR → FPM → APPL_DB → ASIC_DB）</strong> の 2 方向にまたがるため、症状から逆引きで節境界をまたぐ。</p>
 <pre class="mermaid"><code>flowchart TD
@@ -35823,7 +35823,7 @@
   D --&gt;|No| E[operations.md: counter / show 入口で観測の出発点を決める]</code></pre>
 <p>この流れ図で行き先が分かったら、各節へジャンプ。<code>internals.md</code> は複数 HLD を「同じ問題群」として比較表で並べてあるため、節をまたがず 1 ページで読める。</p>
 <h2 id="_7">この章での読み方<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>BGP の設定問題は <a href="../setup/">設定</a> へ進みます。経路が ASIC に入らない、advertise が遅れる問題は <a href="../architecture/">アーキテクチャ</a> と <a href="../operations/">運用</a> を先に読みます。大量経路、障害収束、FIB pending、dynamic peer のように実装差分が大きい機能は <a href="../internals/">内部実装</a> で比較します。</p>
+<p>BGP の設定問題は <a href="../setup/">設定</a> へ進む。経路が ASIC に入らない、advertise が遅れる問題は <a href="../architecture/">アーキテクチャ</a> と <a href="../operations/">運用</a> を先に読む。大量経路、障害収束、FIB pending、dynamic peer のように実装差分が大きい機能は <a href="../internals/">内部実装</a> で比較する。</p>
 <h2 id="_8">読み終わったあとにできるようになること<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>「BGP の問題」を、CONFIG_DB / FRR / FPM / APPL_DB / ASIC_DB のどこで起きているか切り分けられる。</li>
@@ -35832,7 +35832,7 @@
 <li>HLD を読むとき、その記述が FRR version 依存か SONiC patch 依存かに当たりを付けられる。</li>
 </ul>
 <h2 id="config_db">CONFIG_DB の主要テーブル<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h2>
-<p>BGP まわりで最初に把握しておくべき CONFIG_DB は次のとおりです。詳細は <code>docs/reference/config-db/</code> 配下の各ページに辞書化されています。</p>
+<p>BGP まわりで最初に把握しておくべき CONFIG_DB は次のとおりである。詳細は <code>docs/reference/config-db/</code> 配下の各ページに辞書化されている。</p>
 <table>
 <thead>
 <tr>
@@ -35871,16 +35871,16 @@
 </tr>
 </tbody>
 </table>
-<p><code>bgpcfgd</code> 構成では Jinja テンプレートでこれらを FRR <code>vtysh</code> 設定に reduce します。<code>frrcfgd</code> 構成では Management Framework が差分を vty コマンドに翻訳します。同じ CONFIG_DB を読んでいるように見えても、生成される FRR 設定の経路が違う点に注意してください。</p>
+<p><code>bgpcfgd</code> 構成では Jinja テンプレートでこれらを FRR <code>vtysh</code> 設定に reduce する。<code>frrcfgd</code> 構成では Management Framework が差分を vty コマンドに翻訳する。同じ CONFIG_DB を読んでいるように見えても、生成される FRR 設定の経路が違う点に注意する。</p>
 <h2 id="bgpcfgd-frrcfgd">bgpcfgd と frrcfgd の切替<a class="headerlink" href="#bgpcfgd-frrcfgd" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
   CDB[(CONFIG_DB)] --&gt;|legacy| Bgpcfgd[bgpcfgd&lt;br/&gt;Jinja template]
   CDB --&gt;|OpenConfig 経由| Frrcfgd[frrcfgd&lt;br/&gt;vty 変換]
   Bgpcfgd --&gt; FRR[FRR bgpd]
   Frrcfgd --&gt; FRR</code></pre>
-<p>切替キーは <code>DEVICE_METADATA.localhost.frr_mgmt_framework_config</code> です。<code>true</code> で frrcfgd 経路、未設定 / <code>false</code> で bgpcfgd 経路。両方を同時に動かす設計ではないため、機能 HLD を読むときは「どちらの経路を前提とした記述か」を判定する必要があります。新しい OpenConfig BGP 機能は frrcfgd 側に寄り、レガシー Jinja で扱いづらかった政策系の入力経路が広がっています。</p>
+<p>切替キーは <code>DEVICE_METADATA.localhost.frr_mgmt_framework_config</code> である。<code>true</code> で frrcfgd 経路、未設定 / <code>false</code> で bgpcfgd 経路。両方を同時に動かす設計ではないため、機能 HLD を読むときは「どちらの経路を前提とした記述か」を判定する必要がある。新しい OpenConfig BGP 機能は frrcfgd 側に寄り、レガシー Jinja で扱いづらかった政策系の入力経路が広がっている。</p>
 <h2 id="asic">経路が ASIC に入るまでの段<a class="headerlink" href="#asic" title="Permanent link">&para;</a></h2>
-<p><code>show ip route</code> が同じプレフィックスを返しても、それが FRR RIB か Linux FIB か ASIC FIB のどれかで切り分けが必要です。</p>
+<p><code>show ip route</code> が同じプレフィックスを返しても、それが FRR RIB か Linux FIB か ASIC FIB のどれかで切り分けが必要である。</p>
 <table>
 <thead>
 <tr>
@@ -35912,9 +35912,9 @@
 </tr>
 </tbody>
 </table>
-<p>特に <strong>大量経路 + 障害収束</strong> の場面では、「BGP は受け取ったが FPM が詰まって APPL_DB に来ていない」「APPL_DB には入ったが orchagent が SAI へ書き切れていない」のような中間状態が観測されます。</p>
+<p>特に <strong>大量経路 + 障害収束</strong> の場面では、「BGP は受け取ったが FPM が詰まって APPL_DB に来ていない」「APPL_DB には入ったが orchagent が SAI へ書き切れていない」のような中間状態が観測される。</p>
 <h2 id="_9">大量経路 / 高速収束で押さえる機能<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<p>DC 規模では <strong>route scale が秒間数万 update</strong> に達することがあり、収束時間を延ばす主な要因は FRR ↔ SONiC 境界です。SONiC 側で確認すべき機能は次のとおりです。</p>
+<p>DC 規模では <strong>route scale が秒間数万 update</strong> に達することがあり、収束時間を延ばす主な要因は FRR ↔ SONiC 境界である。SONiC 側で確認すべき機能は次のとおりである。</p>
 <ul>
 <li><strong>BGP suppress-fib-pending</strong>: ASIC FIB に入っていない経路の advertise を抑止し、ブラックホールを避ける（<a href="../../../routing/bgp-suppress-announcements-of-routes-not-installed-in-hw/">詳細</a>）</li>
 <li><strong>dplane_fpm_sonic plugin の合体送信</strong>: FRR 側で複数 update をまとめて FPM に流す（<a href="../../../routing/new-frr-sonic-communication-channel/">FRR-SONiC FPM channel</a>）</li>

@@ -27660,7 +27660,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30040,7 +30040,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35606,7 +35606,7 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>明示要求<span class="w"> </span><span class="o">(</span>chronyc<span class="w"> </span>makestep<span class="w"> </span>/<span class="w"> </span>config<span class="w"> </span>maxchange<span class="o">)</span><span class="w"> </span>のときのみ<span class="w"> </span>step
 </span></code></pre></div>
 <ul>
-<li>起動直後の <strong>初期同期</strong> で大きくズレている場合のみ step を許可するのが現実的（HLD には初期 step の取扱いが明示的議論される）</li>
+<li>起動直後の <strong>初期同期</strong> で大きくズレている場合のみ step を許可するのが現実的（HLD では初期 step の取り扱いが明示的に議論されている）</li>
 <li>ユーザは <code>config ntp ...</code> 系 CLI（既存 NTP CLI）を chrony 用に翻訳する裏側処理に意識せず使える</li>
 </ul>
 <h3 id="hardware-clock">Hardware Clock 連携<a class="headerlink" href="#hardware-clock" title="Permanent link">&para;</a></h3>

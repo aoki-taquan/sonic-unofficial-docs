@@ -27652,7 +27652,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30032,7 +30032,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35492,7 +35492,7 @@
 <h2 id="3">3 つの観測経路<a class="headerlink" href="#3" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Polling 系</strong>: SNMP、<code>show</code> コマンド、CLI 経由の counter 読み取り。スナップショットを欲しいときに使います。値は Redis（COUNTERS_DB / STATE_DB / <a href="../../../reference/glossary/#term-appl_db">APPL_DB</a>）か直接 SAI / Linux に取りに行きます。</li>
-<li><strong>Streaming 系</strong>: gNMI telemetry、sFlow、DTel。ON_CHANGE か SAMPLE の subscribe を受けて push します。短い間隔で大量の集めるなら polling より向きます。</li>
+<li><strong>Streaming 系</strong>: gNMI telemetry、sFlow、DTel。ON_CHANGE か SAMPLE の subscribe を受けて push します。短い間隔で大量に集めるなら polling より向きます。</li>
 <li><strong>証跡系</strong>: syslog、event、core dump、kdump、auto-techsupport。障害が起きた瞬間の状態を残し、後から <code>show techsupport</code> の tarball や dump utility で取り出します。</li>
 </ul>
 <p>同じ「ポートの利用率」を見るのでも、SNMP では IF-MIB の counter、telemetry では <code>COUNTERS:Ethernet*</code> の path、CLI では <code>show interfaces counters</code> と入口が変わります。元データは多くの場合 <code>COUNTERS_DB</code> の同じ entry で、上に何を被せるかの違いです。</p>

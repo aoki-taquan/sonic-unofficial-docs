@@ -28282,7 +28282,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30662,7 +30662,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36784,7 +36784,7 @@
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CDB[("CONFIG_DB&lt;br/&gt;DEVICE_NEIGHBOR_METADATA")]
-  DM["lldpmgrd"]
+  DM["bgpcfgd"]
   CDB --&gt; DM</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
@@ -37473,9 +37473,11 @@ minigraph 経由では <code>type</code> が常に書き込まれるが、直接
 
 <h2 id="_13">購読者<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <ul>
+<li><a href="../../glossary/#term-bgpcfgd">bgpcfgd</a>: SubscriberStateTable で継続購読し、BGP ピア設定生成に使用</li>
+<li>pfcwd: 起動時スナップショットで <code>type</code> フィールドを参照してサーバ向けポートを判定</li>
+<li><code>show interfaces neighbor expected</code>: コマンド実行時スナップショット</li>
+<li>db_migrator (<code>update_edgezone_aggregator_config</code>): マイグレーション時スナップショット</li>
 <li>minigraph パーサ (<a href="../../glossary/#term-sonic-cfggen">sonic-cfggen</a>): minigraph から生成</li>
-<li>一部監視・トポロジ可視化スクリプトが参照</li>
-<li><a href="../../glossary/#term-bgp">BGP</a> テンプレート生成 (<code>bgpcfgd</code> テンプレート) で hwsku/type を参照することがある</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -37547,8 +37549,8 @@ minigraph 経由では <code>type</code> が常に書き込まれるが、直接
 <h3 id="3-applsai">段階 3 — APPL→SAI<a class="headerlink" href="#3-applsai" title="Permanent link">&para;</a></h3>
 <p>なし (<a href="../../glossary/#term-sai">SAI</a> 非経由 — <a href="../../glossary/#term-lldp">LLDP</a> / neighbor テーブルのメタデータとして参照)</p>
 <h3 id="4">段階 4 — タイミングと副作用<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
-<p><strong>適用タイミング</strong>: CONFIG_DB に書き込まれると即時に参照可能。lldpmgrd が <a href="../../glossary/#term-lldp">LLDP</a> neighbor との照合に使用。</p>
-<p><strong>副作用</strong>: neighbor metadata の変更は <a href="../../glossary/#term-lldp">LLDP</a> 情報の表示 / 解釈に影響。ネットワーク動作への直接影響なし。</p>
+<p><strong>適用タイミング</strong>: CONFIG_DB に書き込まれると即時に参照可能。<a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> が SubscriberStateTable で継続購読し、BGP ピア設定生成に使用する。pfcwd / show / db_migrator はスナップショット読み出し。</p>
+<p><strong>副作用</strong>: neighbor metadata の変更は BGP セッション設定・pfcwd のポートロール判定・QoS 設定に影響。lldpmgrd は本テーブルを購読しない（pubsub セクション参照）。</p>
 <!-- /runtime-trace -->
 
 <!-- entry-points -->

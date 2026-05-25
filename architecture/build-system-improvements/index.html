@@ -7365,10 +7365,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sonic-slave-debootstrap-proc-docker-rusonic-buildimage27" class="md-nav__link">
+  <a href="#sonic-slave-debootstrap-proc-sonic-buildimage27" class="md-nav__link">
     <span class="md-ellipsis">
       
-        sonic-slave コンテナ内で debootstrap が proc マウントに失敗する場合、`docker ru（sonic-buildimage#27）
+        sonic-slave コンテナ内で debootstrap が proc マウントに失敗する場合（sonic-buildimage#27）
       
     </span>
   </a>
@@ -7387,10 +7387,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sonic-slave-docker-run-v-varrundockersocksonic-buildimage2029" class="md-nav__link">
+  <a href="#sonic-slave-sonic-buildimage2029" class="md-nav__link">
     <span class="md-ellipsis">
       
-        sonic-slave コンテナに入る方法: `docker run -v /var/run/docker.sock:/（sonic-buildimage#2029）
+        sonic-slave コンテナに入る方法（sonic-buildimage#2029）
       
     </span>
   </a>
@@ -7655,17 +7655,6 @@
     <span class="md-ellipsis">
       
         引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        自動収集された参考リンク
       
     </span>
   </a>
@@ -27955,7 +27944,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30335,7 +30324,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35797,10 +35786,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sonic-slave-debootstrap-proc-docker-rusonic-buildimage27" class="md-nav__link">
+  <a href="#sonic-slave-debootstrap-proc-sonic-buildimage27" class="md-nav__link">
     <span class="md-ellipsis">
       
-        sonic-slave コンテナ内で debootstrap が proc マウントに失敗する場合、`docker ru（sonic-buildimage#27）
+        sonic-slave コンテナ内で debootstrap が proc マウントに失敗する場合（sonic-buildimage#27）
       
     </span>
   </a>
@@ -35819,10 +35808,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sonic-slave-docker-run-v-varrundockersocksonic-buildimage2029" class="md-nav__link">
+  <a href="#sonic-slave-sonic-buildimage2029" class="md-nav__link">
     <span class="md-ellipsis">
       
-        sonic-slave コンテナに入る方法: `docker run -v /var/run/docker.sock:/（sonic-buildimage#2029）
+        sonic-slave コンテナに入る方法（sonic-buildimage#2029）
       
     </span>
   </a>
@@ -36093,17 +36082,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        自動収集された参考リンク
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -36310,7 +36288,7 @@ reasoning: sairedis 2 度ビルドの問題と修正方針の根拠。
 <td>~2.5h</td>
 </tr>
 <tr>
-<td><code>SONIC_USE_BUILD_KIT=y</code> 追加</td>
+<td><code>SONIC_USE_DOCKER_BUILDKIT=y</code> 追加</td>
 <td>~1.5h</td>
 </tr>
 </tbody>
@@ -36371,7 +36349,7 @@ reasoning: sairedis 2 度ビルドの問題と修正方針の根拠。
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/SONiC/issues/1065">sonic-net/SONiC#1065</a></li>
 </ul>
-<h3 id="sonic-slave-debootstrap-proc-docker-rusonic-buildimage27">sonic-slave コンテナ内で debootstrap が proc マウントに失敗する場合、`docker ru（sonic-buildimage#27）<a class="headerlink" href="#sonic-slave-debootstrap-proc-docker-rusonic-buildimage27" title="Permanent link">&para;</a></h3>
+<h3 id="sonic-slave-debootstrap-proc-sonic-buildimage27">sonic-slave コンテナ内で debootstrap が proc マウントに失敗する場合（sonic-buildimage#27）<a class="headerlink" href="#sonic-slave-debootstrap-proc-sonic-buildimage27" title="Permanent link">&para;</a></h3>
 <p>sonic-slave コンテナ内で debootstrap が proc マウントに失敗する場合、<code>docker run --privileged</code> フラグが必須。通常の docker run では /proc マウントの権限不足でビルドが中断する</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/27">sonic-net/sonic-buildimage#27</a></li>
@@ -36381,7 +36359,7 @@ reasoning: sairedis 2 度ビルドの問題と修正方針の根拠。
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/1519">sonic-net/sonic-buildimage#1519</a></li>
 </ul>
-<h3 id="sonic-slave-docker-run-v-varrundockersocksonic-buildimage2029">sonic-slave コンテナに入る方法: `docker run -v /var/run/docker.sock:/（sonic-buildimage#2029）<a class="headerlink" href="#sonic-slave-docker-run-v-varrundockersocksonic-buildimage2029" title="Permanent link">&para;</a></h3>
+<h3 id="sonic-slave-sonic-buildimage2029">sonic-slave コンテナに入る方法（sonic-buildimage#2029）<a class="headerlink" href="#sonic-slave-sonic-buildimage2029" title="Permanent link">&para;</a></h3>
 <p>sonic-slave コンテナに入る方法: <code>docker run -v /var/run/docker.sock:/var/run/docker.sock --privileged -it sonic-slave bash</code>。<code>--privileged</code> フラグなしでは proc マウント等が失敗する</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/2029">sonic-net/sonic-buildimage#2029</a></li>
@@ -36514,15 +36492,6 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 - sonic-buildimage/rules/sairedis.mk に SAIREDIS_DPKG_TARGET=binary-syncd の指定なし; slave.mk:879 $(if $($*_DPKG_TARGET),...) 汎用機構経由
 -->
 
-<h2 id="_14">自動収集された参考リンク<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
-<p>本ページに関連する参照ドキュメント:</p>
-<ul>
-<li><a href="../../reference/cli/config-snmp/"><code>config snmp</code> CLI リファレンス</a></li>
-<li><a href="../../reference/config-db/snmp/"><code>SNMP</code> CONFIG_DB スキーマ</a></li>
-<li><a href="../../reference/config-db/snmp-agent-address-config/"><code>SNMP_AGENT_ADDRESS_CONFIG</code> CONFIG_DB スキーマ</a></li>
-<li><a href="../../reference/config-db/mgmt-vrf-config/"><code>MGMT_VRF_CONFIG</code> CONFIG_DB スキーマ</a></li>
-<li><a href="../../reference/yang/sonic-snmp/"><code>sonic-snmp</code> YANG モジュール</a></li>
-</ul>
 <!-- augmented-links: v1 -->
 
 <!-- glossary-links-injected: c79120f885b8 -->

@@ -11790,16 +11790,22 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシュート
+        追加確認事項
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -27737,7 +27743,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30117,7 +30123,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35597,16 +35603,22 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
+    <nav class="md-nav" aria-label="確認コマンド">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        トラブルシュート
+        追加確認事項
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -35970,7 +35982,7 @@ reasoning: バウンスバック経路の DSCP/TC/PG/Queue 遷移の根拠。
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># tunnel に紐付く SAI QoS map 種別 (DECAP_DSCP_TO_TC / ENCAP_TC_TO_DSCP)</span>
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>swss<span class="w"> </span>saidump<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A2<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;TUNNEL|DECAP_DSCP_TO_TC|ENCAP_TC_TO_DSCP&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </span></code></pre></div>
-<h2 id="_12">トラブルシュート<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h3 id="_12">追加確認事項<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>decap 後の DSCP が期待通り再書き換えされない場合、<code>DSCP_TO_TC_MAP</code> と <code>TC_TO_DSCP_MAP</code> の TUNNEL 適用 (<code>config qos remap</code> / <code>TUNNEL</code> テーブル) を確認する。</li>
 <li><a href="../../reference/glossary/#term-asic">ASIC</a> が DSCP 透過 (<code>SAI_TUNNEL_DECAP_TTL_MODE_PIPE_MODEL</code> の挙動差) の場合、<code>saidump</code> で <code>SAI_TUNNEL_ATTR_DECAP_QOS_DSCP_TO_TC_MAP</code> が NULL でないか確認する。</li>

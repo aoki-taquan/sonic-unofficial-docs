@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30740,7 +30740,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36940,15 +36940,15 @@
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
-  CDB[("CONFIG_DB&lt;br/&gt;VNET")]
-  DM["vrfmgrd"]
+  CDB[("CONFIG_DB&lt;br/&gt;VNET_ROUTE")]
+  DM["VNetCfgRouteOrch"]
   CDB --&gt; DM
-  APPDB[("APP_DB&lt;br/&gt;APP_VNET_TABLE")]
+  APPDB[("APP_DB&lt;br/&gt;VNET_ROUTE_TABLE")]
   DM --&gt; APPDB
-  SYNCD["syncd"]
-  APPDB --&gt; SYNCD
-  SAI["SAI&lt;br/&gt;sai_virtual_router_api"]
-  SYNCD --&gt; SAI</code></pre>
+  ORCH["VNetRouteOrch"]
+  APPDB --&gt; ORCH
+  SAI["SAI&lt;br/&gt;sai_route_api"]
+  ORCH --&gt; SAI</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
 <p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>

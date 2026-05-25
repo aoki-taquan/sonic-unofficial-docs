@@ -27610,7 +27610,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29990,7 +29990,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35422,7 +35422,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-buildimage/src/sonic-frr/dplane_fpm_sonic/dplane_fpm_sonic.c</code> L170/L3467 で <code>prov_name = "dplane_fpm_sonic"</code> 登録、<code>patch/series</code> L11 で <code>0012-SONiC-ONLY-build-dplane-fpm-sonic-module.patch</code> 適用、<code>dockers/docker-fpm-frr/frr/supervisord/supervisord.conf.j2</code> L46 で <code>zebra ... -M dplane_fpm_sonic</code> 起動、<code>sonic-swss/fpmsyncd/fpmlink.h</code> L18 で <code>RTM_NEWSRV6LOCALSID = 1000</code>、<code>fpmlink.cpp</code> L46 で dispatch を確認 (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="frr-sonic-dplane_fpm_sonic">新 FRR-SONiC 通信チャネル（<code>dplane_fpm_sonic</code> モジュール）<a class="headerlink" href="#frr-sonic-dplane_fpm_sonic" title="Permanent link">&para;</a></h1>

@@ -27562,7 +27562,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29942,7 +29942,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35344,7 +35344,7 @@
 
 
 <h1 id="l3-scaling-performance">L3 Scaling と Performance 強化 設定・運用<a class="headerlink" href="#l3-scaling-performance" title="Permanent link">&para;</a></h1>
-<p>このページは <a href="../l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（概要ハブ）</a> の派生で、<strong>設定 / CLI / 確認手順</strong> に絞る。概念は <a href="../l3-scaling-and-performance-enhancements-concepts/">l3-scaling-and-performance-enhancements-concepts.md</a>、内部実装は <a href="../l3-scaling-and-performance-enhancements-internals/">l3-scaling-and-performance-enhancements-internals.md</a>、制限事項と乖離は <a href="../l3-scaling-and-performance-enhancements-limitations/">l3-scaling-and-performance-enhancements-limitations.md</a> を参照。</p>
+<p>このページは <a href="../l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（概要ハブ）</a> の派生で、<strong>設定 / CLI / 確認手順</strong> に絞る。概念は <a href="../l3-scaling-and-performance-enhancements-concepts/">概念・スケール目標</a>、内部実装は <a href="../l3-scaling-and-performance-enhancements-internals/">内部実装</a>、制限事項と乖離は <a href="../l3-scaling-and-performance-enhancements-limitations/">制限事項と HLD との乖離</a> を参照。</p>
 <h2 id="1-cli-config_db-yang">1. CLI / CONFIG_DB / YANG<a class="headerlink" href="#1-cli-config_db-yang" title="Permanent link">&para;</a></h2>
 <p>新規 CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> なし<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。設定は <strong>kernel sysctl</strong> と <strong><code>COPP_TABLE</code></strong> 値、CLI 改修（<code>show arp</code> 高速化）に閉じる。</p>
 <h2 id="2-config_db">2. 関連する CONFIG_DB<a class="headerlink" href="#2-config_db" title="Permanent link">&para;</a></h2>
@@ -35445,9 +35445,9 @@
 <h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../l3-scaling-and-performance-enhancements/">L3 Scaling と Performance 強化（概要ハブ）</a></li>
-<li><a href="../l3-scaling-and-performance-enhancements-concepts/">l3-scaling-and-performance-enhancements-concepts.md</a></li>
-<li><a href="../l3-scaling-and-performance-enhancements-internals/">l3-scaling-and-performance-enhancements-internals.md</a></li>
-<li><a href="../l3-scaling-and-performance-enhancements-limitations/">l3-scaling-and-performance-enhancements-limitations.md</a></li>
+<li><a href="../l3-scaling-and-performance-enhancements-concepts/">L3 Scaling と Performance 強化 概念・スケール目標</a></li>
+<li><a href="../l3-scaling-and-performance-enhancements-internals/">L3 Scaling と Performance 強化 内部実装</a></li>
+<li><a href="../l3-scaling-and-performance-enhancements-limitations/">L3 Scaling と Performance 強化 制限事項と HLD との乖離</a></li>
 </ul>
 <!-- phase-boundary -->
 <h2 id="_2">実装フェーズ境界<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>

@@ -28314,7 +28314,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30694,7 +30694,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36848,8 +36848,10 @@
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CDB[("CONFIG_DB&lt;br/&gt;FEATURE")]
-  DM["coppmgrd"]
-  CDB --&gt; DM</code></pre>
+  DM["featured / hostcfgd"]
+  CDB --&gt; DM
+  SDB[("STATE_DB&lt;br/&gt;FEATURE")]
+  DM --&gt; SDB</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
 <p>CONFIG_DB から SAI までの典型経路を <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。</p>
@@ -37174,7 +37176,7 @@
 <!-- runtime-trace -->
 <h2 id="_13">実コンテナ動作トレース<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>hostcfgd</code> の <code>FeatureHandler</code> + <code>containercfgd</code> + <code>coppmgrd</code> + <code>dhcprelayd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>FEATURE</code> テーブルを購読する。</p>
+<p><code>hostcfgd</code> の <code>FeatureHandler</code> + <code>containercfgd</code> + <code>dhcprelayd</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>FEATURE</code> テーブルを購読する。</p>
 <p><code>FEATURE</code> の key はフィーチャー名 (例: <code>bgp</code>, <code>swss</code>, <code>lldp</code>)。<code>always_enabled</code> フィーチャーは disable 不可。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継なし)</p>

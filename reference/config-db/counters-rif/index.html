@@ -28231,7 +28231,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30611,7 +30611,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36701,7 +36701,7 @@
 <h3 id="rif-oid_1">RIF タイプ→OID マップ<a class="headerlink" href="#rif-oid_1" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>COUNTERS_DB / COUNTERS_RIF_TYPE_MAP   (Hash)
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  field: &lt;SAI OID&gt;
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  value: &lt;type&gt;       (例: port, lag, vlan, subport)
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  value: &lt;type&gt;       (例: SAI_ROUTER_INTERFACE_TYPE_PORT, SAI_ROUTER_INTERFACE_TYPE_VLAN, SAI_ROUTER_INTERFACE_TYPE_SUB_PORT)
 </span></code></pre></div>
 <h3 id="_3">カウンタハッシュ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>COUNTERS_DB / COUNTERS:&lt;oid&gt;           (Hash)
@@ -36912,7 +36912,7 @@
 </table>
 <p>これにより <a href="../../glossary/#term-orchagent">orchagent</a> / syncd が完全に初期化される前に <code>RATES:RIF</code> が書かれることを防いでいる。</p>
 <h3 id="rif_1">RIF タイプ別登録<a class="headerlink" href="#rif_1" title="Permanent link">&para;</a></h3>
-<p>intfsorch は <a href="../../glossary/#term-rif">RIF</a> ごとに <code>COUNTERS_RIF_TYPE_MAP</code> に OID→タイプ（<code>port</code>, <code>lag</code>, <code>vlan</code>, <code>subport</code> 等）を書く。<code>COUNTERS_RIF_NAME_MAP</code> には RIF 名（インタフェース名）→OID のマッピングが格納され、<code>intfstat</code> がこのマップを元にカウンタを引く。</p>
+<p>intfsorch は <a href="../../glossary/#term-rif">RIF</a> ごとに <code>COUNTERS_RIF_TYPE_MAP</code> に OID→タイプ（<code>SAI_ROUTER_INTERFACE_TYPE_PORT</code>, <code>SAI_ROUTER_INTERFACE_TYPE_VLAN</code>, <code>SAI_ROUTER_INTERFACE_TYPE_SUB_PORT</code> 等）を書く。<code>COUNTERS_RIF_NAME_MAP</code> には RIF 名（インタフェース名）→OID のマッピングが格納され、<code>intfstat</code> がこのマップを元にカウンタを引く。</p>
 <h3 id="sai">SAI フィールド未サポート時の挙動<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
 <p><a href="../../glossary/#term-asic">ASIC</a> が対応していない SAI カウンタは <code>intfstat</code> の <code>get_counters()</code> で <code>STATUS_NA</code> ('N/A') として扱われ、表示に <code>N/A</code> が出る（scripts/intfstat:93-98）。</p>
 <!-- /defaults -->

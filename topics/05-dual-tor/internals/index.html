@@ -27641,7 +27641,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30021,7 +30021,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35577,7 +35577,7 @@
 </ul>
 <h2 id="_2">既知の実装上の制約<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>linkmgrd</code> の状態機械は <strong>per-port</strong>で、複数ポートをまたぐ整合（例：同一サーバの A/A NIC 両側が同期して flip する）は明示的には保証されない。<a href="../../../reference/glossary/#term-hld">HLD</a> では individual port basis 設計。</li>
+<li><code>linkmgrd</code> の状態機械は <strong>per-port</strong> で、複数ポートをまたぐ整合（例：同一サーバの A/A NIC 両側が同期して flip する）は明示的には保証されない。<a href="../../../reference/glossary/#term-hld">HLD</a> では individual port basis 設計。</li>
 <li><code>MuxOrch</code> は active → standby 切替時に neighbor を<strong>削除 → tunnel nexthop へ再作成</strong>する path を取るため、ASIC で neighbor を作り直すコストが大きい場合の path として prefix-based mux neighbors が導入された。</li>
 <li>Active-Active で SoC NIC が応答しない場合、<code>linkmgrd</code> 側は admin forwarding state を変えても operational state が追従しないため、observability が不十分という指摘が PR レビューで複数挙がっている。</li>
 <li>gRPC channel が切断中は <code>linkmgrd</code> が default の "active" 想定で進む傾向があり、両 ToR で active になる split-brain 風の状態を運用で監視する必要がある。</li>

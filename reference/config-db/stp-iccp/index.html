@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29422,12 +29422,12 @@
   <a href="#phase-b_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        書込み順序依存 (Phase B) (補足)
+        書込み順序依存 詳細 (Phase B)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="書込み順序依存 (Phase B) (補足)">
+    <nav class="md-nav" aria-label="書込み順序依存 詳細 (Phase B)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -30496,7 +30496,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36069,12 +36069,12 @@
   <a href="#phase-b_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        書込み順序依存 (Phase B) (補足)
+        書込み順序依存 詳細 (Phase B)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="書込み順序依存 (Phase B) (補足)">
+    <nav class="md-nav" aria-label="書込み順序依存 詳細 (Phase B)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -36463,7 +36463,6 @@ STP との連携は主に以下の 2 つの側面で存在する:</p>
 <p>STP/ICCP 連携専用の CONFIG_DB テーブルは存在しない。
 連携は <code>MCLAG_DOMAIN</code> テーブルの <code>source_ip</code> / <code>peer_ip</code> フィールドを入力として iccpd 内部で処理される。</p>
 </div>
-<!-- ordering -->
 <!-- cdb-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
@@ -36482,6 +36481,7 @@ STP との連携は主に以下の 2 つの側面で存在する:</p>
 </div>
 <!-- /cdb-mermaid -->
 
+<!-- ordering -->
 <h2 id="phase-b">書込み順序依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
 <!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-ordering.md -->
 
@@ -37190,8 +37190,8 @@ MST 有効化時に CLI が書き込む実際の値は <code>1</code> であり�
 <p>証跡: <code>sonic-spanning-tree.yang:86-105, 150-165, 380-432</code></p>
 <!-- /defaults -->
 
-<!-- ordering -->
-<h2 id="phase-b_1">書込み順序依存 (Phase B) (補足)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
+<!-- ordering-detail -->
+<h2 id="phase-b_1">書込み順序依存 詳細 (Phase B)<a class="headerlink" href="#phase-b_1" title="Permanent link">&para;</a></h2>
 <!-- evidence: meta/_intermediate/cdb-flow/stp-iccp-ordering.md -->
 
 <p>STP/ICCP 連携において iccpd が STP ロールを正しく決定するためには、以下の順序依存がある。</p>
@@ -37292,7 +37292,7 @@ MST 有効化時に CLI が書き込む実際の値は <code>1</code> であり�
 </tr>
 </tbody>
 </table>
-<!-- /ordering -->
+<!-- /ordering-detail -->
 
 <!-- failure -->
 <h2 id="phase-d">失敗挙動 (Phase D)<a class="headerlink" href="#phase-d" title="Permanent link">&para;</a></h2>

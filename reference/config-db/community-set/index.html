@@ -28392,7 +28392,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30772,7 +30772,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37210,11 +37210,11 @@
 <h3 id="_12">典型値<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>COMMUNITY_SET|&lt;name&gt;</code>。</li>
-<li><code>set_type</code>: <code>standard</code> / <code>expanded</code>。<code>match_action</code>: <code>any</code> / <code>all</code>。<code>community_member</code>: CSV。</li>
+<li><code>set_type</code>: <code>STANDARD</code> / <code>EXPANDED</code>（DB 格納値は大文字）。<code>match_action</code>: <code>ANY</code> / <code>ALL</code>（大文字）。<code>community_member</code>: CSV。</li>
 </ul>
 <h3 id="_13">よくある誤設定<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>expanded</code> で正規表現を書いたのに <code>standard</code> 指定のままで全件 reject される。</li>
+<li><code>EXPANDED</code> で正規表現を書いたのに <code>STANDARD</code> 指定のままで全件 reject される。</li>
 </ul>
 <h3 id="_14">確認コマンド<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;COMMUNITY_SET|*&#39;</span>

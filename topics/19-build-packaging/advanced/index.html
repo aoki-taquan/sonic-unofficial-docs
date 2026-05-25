@@ -6041,61 +6041,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        追加の発展トピック
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既知の制約と回避方法
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        将来計画 / ロードマップ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#rfc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 RFC / 仕様書
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#upstream" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        upstream 開発の最新動向
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -27663,7 +27608,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30043,7 +29988,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35397,61 +35342,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        追加の発展トピック
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        既知の制約と回避方法
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        将来計画 / ロードマップ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#rfc" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 RFC / 仕様書
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#upstream" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        upstream 開発の最新動向
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -35528,7 +35418,7 @@
 <li>影響パッケージを SBOM (CycloneDX 出力) で grep し、SONiC image に含まれているかを確認。</li>
 <li>含まれていれば <code>apt-get changelog</code> で fix 版を特定し、<code>Makefile.work</code> の <code>DEBIAN_VERSION</code> ピンを更新するか、<code>src/&lt;pkg&gt;/patch/</code> で個別 patch を当てる。</li>
 <li>syncd / kernel module 配下の CVE は vendor SAI / vendor kernel patch の追従が要るため、vendor SDK PR と組で進める。</li>
-<li>修正後は <code>mkdocs build --strict</code> ではなく実 image build と nightly test plan で regression を見るのが原則。</li>
+<li>修正後は実 image build と nightly test plan で regression を見るのが原則。</li>
 </ul>
 <h2 id="_3">関連ページ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35536,43 +35426,6 @@
 <li><a href="../../../system/sonic-container-hardening/">Container hardening</a></li>
 <li><a href="../../../system/sonic-feature-quality-definition/">Feature quality definition</a></li>
 <li><a href="../../../system/analysis-of-disk-writers-in-sonic-devices/">Disk writers analysis</a></li>
-</ul>
-<h2 id="_4">追加の発展トピック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>再現可能ビルド (reproducible build)</strong>: 同じソースから誰がビルドしても bit 一致を狙う取り組み。timestamp / build-id / dependency 順序などの非決定性を排除する。supply chain 監査の前提。</li>
-<li><strong>SBOM (Software Bill of Materials)</strong>: SONiC image を構成する OSS パッケージ一覧と版数を SPDX / CycloneDX で出力する。CVE 監視と運用評価に必須。</li>
-<li><strong>SPM (SONiC Package Manager) と extension repo</strong>: extension docker の配布 / 認証 / aging を一元化する。manifest と署名検証が信頼チェーンの核。</li>
-<li><strong>kernel customization</strong>: 特定 platform 向け kernel patch を <code>src/sonic-linux-kernel</code> で当てるパス。upstream kernel 追従と patch 維持の運用コストが論点。</li>
-<li><strong>debian / bullseye → bookworm 移行</strong>: SONiC は debian ベースで、debian release upgrade に追随する移行が定期的に発生する。<code>Makefile.work</code> の dist 選択と sonic-slave docker が変わる。</li>
-</ul>
-<h2 id="_5">既知の制約と回避方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>ビルド時間の長さ</strong>: フル build は CPU / IO 双方で重い。CI ではキャッシュ (<code>SONIC_DPKG_CACHE_METHOD=cache</code>) と分割ビルド (<code>make target/...</code>) で短縮する。</li>
-<li><strong>arm64 / armhf でのビルド分岐</strong>: docker base image 選択や cross-build toolchain で詰まる。<code>PLATFORM_ARCH</code> を必ず指定し、<code>sonic-slave-bookworm-&lt;arch&gt;</code> の存在を確認する。</li>
-<li><strong>container hardening と機能テスト</strong>: capability を絞ると debug tool が動かない。CI / debug 用に <code>privileged</code> テスト image を別途用意する。</li>
-<li><strong>SPM extension の依存解決</strong>: extension 間依存と SONiC core 依存の二重解決があり、failure 時のエラーが分かりにくい。manifest を最小限に保つ。</li>
-</ul>
-<h2 id="_6">将来計画 / ロードマップ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<ul>
-<li>bookworm 移行と LTS kernel 追随。</li>
-<li>SBOM 自動生成と signing pipeline 整備。</li>
-<li>SPM の認証 / RBAC 拡張と community marketplace 構想。</li>
-<li>再現可能ビルドの段階対応 (timestamp / order / docker layer)。</li>
-</ul>
-<h2 id="rfc">関連 RFC / 仕様書<a class="headerlink" href="#rfc" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="https://spdx.dev/">SPDX 2.x</a> — SBOM フォーマット</li>
-<li><a href="https://cyclonedx.org/">CycloneDX</a> — SBOM フォーマット</li>
-<li><a href="https://www.sigstore.dev/">Sigstore</a> — Container 署名 (supply chain)</li>
-<li><a href="https://slsa.dev/">SLSA framework</a> — Supply chain Levels for Software Artifacts</li>
-<li><a href="https://reproducible-builds.org/">Reproducible Builds</a> — 再現可能ビルド指針</li>
-</ul>
-<h2 id="upstream">upstream 開発の最新動向<a class="headerlink" href="#upstream" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>sonic-buildimage</code> で bookworm 対応と armhf / arm64 build matrix 拡張の PR が継続。</li>
-<li>container hardening (各 docker の <code>--privileged</code> 縮減) PR が漸進的に進む。</li>
-<li>SPM (<code>sonic-package-manager</code>) で manifest schema 拡張と署名検証関連の議論が継続。</li>
-<li>SBOM 出力と CVE スキャン自動化の PR が CI 周りで議題化。</li>
 </ul>
 <!-- glossary-links-injected: 8ba32e5aa69d -->
 

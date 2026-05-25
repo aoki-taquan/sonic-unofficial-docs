@@ -27401,7 +27401,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29781,7 +29781,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35685,11 +35685,11 @@
 <h2 id="_6">運用ヒント<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="_7">典型的なデプロイ位置<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <ul>
-<li>BGP のデバイス全体パラメータ。<code>BGP_DEVICE_GLOBAL|STATE</code> を介して <a href="../../glossary/#term-frr">FRR</a> の <code>bgp</code> グローバル設定 (TCP-AO 等) を制御する。</li>
+<li>BGP のデバイス全体パラメータ。<code>BGP_DEVICE_GLOBAL|STATE</code> を介して TSA (Traffic Shift Away) / WCMP (Weighted ECMP) / IDF isolation 状態を制御し、<code>BGP_DEVICE_GLOBAL|CONFED</code> で confederation ASN・peers を設定する。変更は <a href="../../glossary/#term-bgpcfgd">bgpcfgd</a> / BgpGlobalStateOrch が <a href="../../glossary/#term-frr">FRR</a> へ反映する。</li>
 </ul>
 <h3 id="_8">よくある落とし穴<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>tcp_ao_enabled</code> を true にする場合は対向ルータ側との鍵設定整合を要する。leafref で keychain 名を参照する派生実装あり。</li>
+<li><code>idf_isolation_state</code> の enum 値 (<code>isolated_no_export</code> / <code>isolated_withdraw_all</code> / <code>unisolated</code>) はスペルが厳密。CLI 経由では検証されるが <code>sonic-db-cli</code> で直書きすると YANG バリデーションが効かないため任意文字列が混入しうる。</li>
 </ul>
 <h3 id="config-show">関連する config / show コマンド<a class="headerlink" href="#config-show" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;BGP_DEVICE_GLOBAL|STATE&#39;</span>

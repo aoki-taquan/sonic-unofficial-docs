@@ -27651,7 +27651,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30031,7 +30031,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35529,7 +35529,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified（slave 命名のみ進化）</p>
+<p class="admonition-title">裏取りステータス: code-verified（slave 命名のみ進化）</p>
 <p><code>sonic-buildimage/Makefile.work:121-177</code> で <code>CONFIGURED_ARCH</code> / <code>PLATFORM_ARCH</code>（default <code>amd64</code>）と <code>SLAVE_BASE_IMAGE = $(SLAVE_DIR)-march-$(CONFIGURED_ARCH)</code> を確認。<code>onie-image.conf</code> / <code>onie-image-armhf.conf</code> / <code>onie-image-arm64.conf</code> がリポジトリルートに揃い、<code>platform/aspeed/onie-image-arm64.conf</code> 等も追加。<code>installer/install.sh</code> も存在。slave docker は <code>sonic-slave-{trixie,bookworm,buster}/Dockerfile*.j2</code> の per-distribution テンプレートに進化し、<code>-march-&lt;arch&gt;</code> サフィックスを実行時に付ける形（HLD の固定ディレクトリ <code>sonic-slave-armhf</code> / <code>arm64</code> は廃止）。動作枠組み・変数名は HLD と一致（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="sonic-arm-armhf-arm64-platform_arch-qemu-static">SONiC の ARM (armhf / arm64) ビルドサポート（<code>PLATFORM_ARCH</code> と qemu-static）<a class="headerlink" href="#sonic-arm-armhf-arm64-platform_arch-qemu-static" title="Permanent link">&para;</a></h1>

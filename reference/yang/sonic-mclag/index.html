@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="sonic-mclag YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-mclag.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd">
+        <meta name="description" content="sonic-mclag YANG — MCLAG（Multi-Chassis LAG）ドメイン・インタフェース・Unique IP を定義する YANG モジュール。ピア間の keepalive / session timeout 等のパラメータを CONFIG_DB に保持する。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="sonic-mclag YANG - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="sonic-mclag YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-mclag.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd" />
+<meta property="og:description" content="sonic-mclag YANG — MCLAG（Multi-Chassis LAG）ドメイン・インタフェース・Unique IP を定義する YANG モジュール。ピア間の keepalive / session timeout 等のパラメータを CONFIG_DB に保持する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/yang/sonic-mclag.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-mclag/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="sonic-mclag YANG - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="sonic-mclag YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-mclag.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd" />
+<meta property="twitter:description" content="sonic-mclag YANG — MCLAG（Multi-Chassis LAG）ドメイン・インタフェース・Unique IP を定義する YANG モジュール。ピア間の keepalive / session timeout 等のパラメータを CONFIG_DB に保持する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/yang/sonic-mclag.png" />
 </head>
   
@@ -27401,7 +27401,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29781,7 +29781,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35444,7 +35444,7 @@
 <li>import: <code>ietf-inet-types</code>, <code>sonic-port</code>, <code>sonic-portchannel</code></li>
 <li>top container: <code>sonic-mclag</code></li>
 </ul>
-<p>SONIC <a href="../../glossary/#term-mclag">MCLAG</a><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>MCLAG（Multi-Chassis Link Aggregation Group）のドメイン設定・インタフェース割り当て・Unique IP 設定を定義する <a href="../../glossary/#term-yang">YANG</a> モジュール<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>MCLAG_DOMAIN</code> でピア間 keepalive / session timeout を、<code>MCLAG_INTERFACE</code> でポートチャネルとドメインの紐付けを、<code>MCLAG_UNIQUE_IP</code> で VLAN インタフェースへのユニーク IP 割り当てを管理する。</p>
 <!-- yang-mermaid -->
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR

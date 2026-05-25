@@ -27693,7 +27693,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30073,7 +30073,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35772,7 +35772,7 @@ reasoning: 多重 role と getpwnam 先行の鶏卵問題の根拠。
 <li><code>/etc/pam.d/sshd</code> / <code>/etc/pam.d/login</code> への <code>@include common-auth-sonic</code> 切替: L748-L752 で <code>sed</code> 相当の置換を実装</li>
 <li>認証順序（PAM auth stack）と NSS 並べ替えは <code>failthrough</code> / <code>login</code> / <code>auth_type</code> 設定により AaaCfg が動的生成</li>
 </ul>
-<p>ただし HLD が掲げる「nss-mapper による remote_user 共有 / D-Bus 経由の RBAC 多重ロール」の発展拡張は、現行 master の <code>hostcfgd</code> 単体実装ではまだ統合されていない（<code>nss-mapper</code> という独立コンポーネントは検出できず、<code>remote_user</code> 共有は <code>tacplus_nss.conf</code> / <code>radius_nss.conf</code> 経由の素朴な実装）。本ページの主たる主張（PAM + NSS による AAA 統合の現状）は実コードと一致するため <code>code-verified</code> に昇格。</p>
+<p>ただし HLD が掲げる「nss-mapper による remote_user 共有 / D-Bus 経由の RBAC 多重ロール」の発展拡張は、現行 master の <code>hostcfgd</code> 単体実装ではまだ統合されていない（<code>nss-mapper</code> という独立コンポーネントは検出できず、<code>remote_user</code> 共有は <code>tacplus_nss.conf</code> / <code>radius_nss.conf</code> 経由の素朴な実装）。PAM + NSS 統合の基本部分は実コードと一致するが、RBAC 多重ロール / D-Bus NSS 等の中心提案は未実装のため、<code>verification: discrepancy-found</code> / <code>monitor: partially_implemented</code> を維持する。</p>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

@@ -28436,7 +28436,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30816,7 +30816,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37439,7 +37439,7 @@
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>sflowmgrd</strong> (<code>sonic-swss/cfgmgr/sflowmgr.cpp</code>): <code>SFLOW</code> / <code>SFLOW_SESSION</code> テーブルを <code>ConfigDBConnector</code> で購読。</li>
+<li><strong>sflowmgrd</strong> (<code>sonic-swss/cfgmgr/sflowmgr.cpp</code>): <code>SFLOW</code> / <code>SFLOW_SESSION</code> テーブルを <code>SubscriberStateTable</code> (keyspace 通知) で購読。</li>
 </ul>
 <h3 id="2-cfg-appl">段階 2: CFG → APPL 翻訳<a class="headerlink" href="#2-cfg-appl" title="Permanent link">&para;</a></h3>
 <ul>

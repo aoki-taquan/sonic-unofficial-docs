@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="sonic-port YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-port.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd">
+        <meta name="description" content="sonic-port YANG — 物理ポート (Ethernet インタフェース) の速度・FEC・autoneg・MACsec など基本属性を定義する。">
       
       
       
@@ -64,7 +64,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="sonic-port YANG - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="sonic-port YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-port.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd" />
+<meta property="og:description" content="sonic-port YANG — 物理ポート (Ethernet インタフェース) の速度・FEC・autoneg・MACsec など基本属性を定義する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/yang/sonic-port.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -72,7 +72,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/reference/yang/sonic-port/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="sonic-port YANG - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="sonic-port YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-port.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd" />
+<meta property="twitter:description" content="sonic-port YANG — 物理ポート (Ethernet インタフェース) の速度・FEC・autoneg・MACsec など基本属性を定義する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/reference/yang/sonic-port.png" />
 </head>
   
@@ -27401,7 +27401,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29781,7 +29781,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35640,8 +35640,7 @@
 </ul>
 <h3 id="hld">関連 HLD<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h3>
 <ul>
-<li><a href="../../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs/">sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）</a></li>
-<li><a href="../../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/">sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作）</a></li>
+<li><a href="../../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset/">sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）</a></li>
 <li><a href="../sonic-loopback-interface/">sonic-loopback-interface YANG</a></li>
 <li><a href="../../../topics/14-platform-port-optics/operations/">運用</a></li>
 </ul>
@@ -35735,7 +35734,7 @@
 <td></td>
 <td></td>
 <td>length 1..16</td>
-<td>The number of virtual output queue supportted on this port.</td>
+<td>The number of virtual output queue supported on this port.</td>
 </tr>
 <tr>
 <td><code>alias</code></td>

@@ -27626,7 +27626,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30006,7 +30006,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35500,8 +35500,8 @@
 <p>1 リクエスト中で <strong>YANG path と DB path を混在不可</strong>。Stage 1 では DB schema のみ、Stage 2 で YANG path を追加<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart LR
   CL[gNMI client] --&gt; SRV[gNMI server&lt;br&gt;sonic-telemetry]
-  SRV --&gt;|origin=sonic_db&lt;br&gt;CONFIG_DB| GCU[generic_config_updater&lt;br&gt;+ sonic-config-engine]
-  SRV --&gt;|origin=sonic_db&lt;br&gt;APPL_DB VNET_ROUTE| SCU[special_config_updater]
+  SRV --&gt;|origin=sonic-db&lt;br&gt;CONFIG_DB| GCU[generic_config_updater&lt;br&gt;+ sonic-config-engine]
+  SRV --&gt;|origin=sonic-db&lt;br&gt;APPL_DB VNET_ROUTE| SCU[special_config_updater]
   SRV --&gt;|origin=sonic_yang| GCU
   GCU --&gt;|YANG validate| YV[(sonic-yang-models)]
   GCU --&gt; CDB[(CONFIG_DB)]

@@ -27619,7 +27619,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29999,7 +29999,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35446,7 +35446,7 @@
 <td><code>VNET_ROUTE_TABLE</code> / <code>VNET_ROUTE_TUNNEL_TABLE</code> を SAI nexthop / nexthop group へ</td>
 </tr>
 <tr>
-<td><code>EvpnRemoteVnipOrch</code> / <code>EvpnNvoOrch</code></td>
+<td><code>EvpnRemoteVnip2pOrch</code> / <code>EvpnNvoOrch</code></td>
 <td><code>orchagent/vxlanorch.cpp</code></td>
 <td>type-2 で学んだ remote <a href="../../../reference/glossary/#term-vtep">VTEP</a> を tunnel decap 側に登録</td>
 </tr>
@@ -35520,7 +35520,7 @@
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nt">APPL_DB</span><span class="p">:</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">VNET_TABLE / VNET_ROUTE_TABLE / VNET_ROUTE_TUNNEL_TABLE ─&gt; VNetOrch / VNetRouteOrch</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">EVPN_REMOTE_VNI_TABLE ─&gt; EvpnRemoteVnipOrch</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">EVPN_REMOTE_VNI_TABLE ─&gt; EvpnRemoteVnip2pOrch</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">NEIGH_TABLE (type-2) ─&gt; NeighOrch</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="nt">STATE_DB</span><span class="p">:</span>
@@ -35599,7 +35599,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>EvpnRemoteVnipOrch</code> は remote VTEP を学習するごとに P2P term を追加する実装と、初回に P2MP を 1 件作って共有する実装が SONiC のバージョンによって混在します。<code>VxlanTunnelOrch::createTunnel</code> の <code>dip</code> 引数が空かどうかで分岐します。</p>
+<p><code>EvpnRemoteVnip2pOrch</code> は remote VTEP を学習するごとに P2P term を追加する実装と、初回に P2MP を 1 件作って共有する実装が SONiC のバージョンによって混在します。<code>VxlanTunnelOrch::createTunnel</code> の <code>dip</code> 引数が空かどうかで分岐します。</p>
 <h2 id="evpn-gr-fast-convergence">EVPN GR / fast convergence<a class="headerlink" href="#evpn-gr-fast-convergence" title="Permanent link">&para;</a></h2>
 <p>EVPN の障害収束は FRR の <code>bgp graceful-restart</code> と SONiC の <code>EVPN_REMOTE_VNI_TABLE</code> の TTL に依存します。FRR 側が下流 advertise を止めた後、<code>VxlanTunnelOrch</code> が remote VTEP を保持する期間（HOLD time）に traffic を blackhole しないようにする <code>restart-time</code> 系のパラメータが <code>BGP_NEIGHBOR.graceful_restart_helper_only</code> で制御されます。</p>
 <h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>

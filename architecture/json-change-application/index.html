@@ -27601,7 +27601,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29981,7 +29981,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35445,7 +35445,8 @@
 <p>親 <a href="../../reference/glossary/#term-hld">HLD</a> <code>Generic Config Update and Rollback</code> で定義された <code>apply-change(JsonChange)</code> の実装設計<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<strong>table 単位 alphabetical 順</strong> で <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 書込み → service 再起動（必要時）→ 反映確認 → 最終 diff 検証。失敗しても自動 rollback はせず、上位 <code>apply-patch</code> が責任を持つ。</p>
 <h2 id="_3">動作仕様<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="_4">入力契約<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">void</span> <span class="n">apply_change</span><span class="p">(</span><span class="n">JsonChange</span> <span class="n">jsonChange</span><span class="p">)</span>  <span class="c1"># エラーは例外</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">apply_change</span><span class="p">(</span><span class="n">json_change</span><span class="p">:</span> <span class="n">JsonChange</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># エラーは例外</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="o">...</span>
 </span></code></pre></div>
 <table>
 <thead>

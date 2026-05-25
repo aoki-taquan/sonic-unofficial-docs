@@ -27682,7 +27682,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30062,7 +30062,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35565,7 +35565,7 @@
 </div>
 <!-- /topics-tip -->
 
-<div class="admonition info">
+<div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-gnmi/dialout/{dialout_client,dialout_client_cli,dialout_server,dialout_server_cli}/</code> の Go 実装と <code>dialout_client.go</code>（<code>TELEMETRY_CLIENT</code> 読み出し / DestinationGroup / Subscription 走査）、および <code>sonic_data_client/{db_client,mixed_db_client}.go</code> を確認。openconfig telemetry YANG との完全 mapping は範囲外（実装は SONiC 独自 schema 中心）。</p>
 </div>
@@ -35614,7 +35614,7 @@
 <tr>
 <td><code>unidirectional</code></td>
 <td><code>true</code> で <code>PublishResponse</code> 不要に</td>
-<td>false（双方向）</td>
+<td>true（一方向）</td>
 </tr>
 </tbody>
 </table>

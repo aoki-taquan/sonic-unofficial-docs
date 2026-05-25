@@ -25302,17 +25302,6 @@
   <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス (補足)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -25321,7 +25310,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -25344,7 +25333,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある確認ポイント
@@ -28182,7 +28171,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30562,7 +30551,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36495,17 +36484,6 @@
   <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス (補足)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -36514,7 +36492,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -36537,7 +36515,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある確認ポイント
@@ -37829,16 +37807,11 @@
 <li>CLI: <code>show bfd peers</code>, <code>show bfd peers &lt;ip&gt;</code>, <code>show bfd peers details</code></li>
 </ul>
 <!-- ref-triangle:start -->
-
-<h2 id="_18">関連リファレンス (補足)<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
-<ul>
-<li>CONFIG_DB: <a href="../bfd-session/"><code>BFD_SESSION</code></a></li>
-</ul>
 <!-- ref-triangle:end -->
 
-<h2 id="_19">引用元<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h2>
+<h2 id="_18">引用元<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <!-- ops-hint -->
-<h2 id="_20">運用ヒント<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h2>
+<h2 id="_19">運用ヒント<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h2>
 <h3 id="state_db_2">STATE_DB 確認コマンド<a class="headerlink" href="#state_db_2" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># BFD セッション一覧</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s1">&#39;BFD_SESSION_TABLE|*&#39;</span>
@@ -37854,7 +37827,7 @@
 </span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>show<span class="w"> </span>bfd<span class="w"> </span>peers<span class="w"> </span><span class="m">10</span>.0.0.1
 </span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>show<span class="w"> </span>bfd<span class="w"> </span>peers<span class="w"> </span>details
 </span></code></pre></div>
-<h3 id="_21">よくある確認ポイント<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h3>
+<h3 id="_20">よくある確認ポイント<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>state</code> が <code>"Down"</code> のまま変化しない場合は SAI / ASIC の BFD offload 対応を確認</li>
 <li><code>local_discriminator</code> がセッションごとに異なる値になることは正常動作</li>

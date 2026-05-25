@@ -27647,7 +27647,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30027,7 +30027,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35508,7 +35508,7 @@
 <p>Path Tracing は per-port 設定です。<code>PORT|&lt;port&gt;</code> に 2 つのフィールドを足します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>PORT|Ethernet0:
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  pt_interface_id        = 1234
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  pt_timestamp_template  = template_3
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  pt_timestamp_template  = template3
 </span></code></pre></div>
 <p><code>pt_interface_id</code> は MCD に刻まれる interface 識別、<code>pt_timestamp_template</code> は timestamp のビット切り出し方（例: <code>12_19</code> 系テンプレート）を決めます。<a href="../../../reference/glossary/#term-sai">SAI</a> 側で対応する属性は <code>SAI_PORT_ATTR_PATH_TRACING_INTF</code> と <code>SAI_PORT_ATTR_PATH_TRACING_TIMESTAMP_TYPE</code> です。</p>
 <p>PT Source / Sink / Regional Collector は SONiC 外側で構築するため、SONiC 単体としては Midpoint 設定だけで完結します。</p>
@@ -35569,22 +35569,22 @@
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>show<span class="w"> </span>mpls<span class="w"> </span>ldp<span class="w"> </span>neighbor<span class="w">   </span><span class="c1"># LDP を使う場合</span>
 </span></code></pre></div>
 <h2 id="3-path-tracing-midpoint">設定シナリオ 3: Path Tracing Midpoint の最小投入<a class="headerlink" href="#3-path-tracing-midpoint" title="Permanent link">&para;</a></h2>
-<p><code>Ethernet0</code> を Midpoint として動作させ、ID <code>1234</code> を MCD に刻み、<code>template_3</code> でタイムスタンプを切り出します。</p>
+<p><code>Ethernet0</code> を Midpoint として動作させ、ID <code>1234</code> を MCD に刻み、<code>template3</code> でタイムスタンプを切り出します。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>pt-interface-id<span class="w"> </span>Ethernet0<span class="w"> </span><span class="m">1234</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>pt-timestamp-template<span class="w"> </span>Ethernet0<span class="w"> </span>template_3
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>pt-timestamp-template<span class="w"> </span>Ethernet0<span class="w"> </span>template3
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>show<span class="w"> </span>interface<span class="w"> </span>path-tracing
 </span></code></pre></div>
 <p>CONFIG_DB:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="p">{</span>
 </span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">    </span><span class="nt">&quot;PORT&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">        </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;pt_interface_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1234&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;pt_timestamp_template&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;template_3&quot;</span><span class="p">}</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">        </span><span class="nt">&quot;Ethernet0&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;pt_interface_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1234&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;pt_timestamp_template&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;template3&quot;</span><span class="p">}</span>
 </span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="p">}</span>
 </span></code></pre></div>
 <p><code>show interface path-tracing</code> 期待出力:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Interface     PT Interface ID    Timestamp Template
 </span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>------------  ----------------  --------------------
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>Ethernet0     1234              template_3
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>Ethernet0     1234              template3
 </span></code></pre></div>
 <h2 id="_2">設定エラーと対処<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <table>

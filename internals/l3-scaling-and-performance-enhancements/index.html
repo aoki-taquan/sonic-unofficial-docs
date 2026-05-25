@@ -27763,7 +27763,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30143,7 +30143,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35847,7 +35847,7 @@
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>net.ipv6.neigh.default.gc_thresh2=16000
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>net.ipv6.neigh.default.gc_thresh3=32000
 </span></code></pre></div>
-<p>burst 時の add/remove ループで entry が満杯にならない問題を解消する。</p>
+<p>burst 時の add/remove ループで entry が満杯になる問題を解消する。</p>
 <h4 id="copp-arpnd">CoPP の ARP/ND 上限引き上げ<a class="headerlink" href="#copp-arpnd" title="Permanent link">&para;</a></h4>
 <p>旧: ARP/ND の最大 600 pps → <strong>8000 pps</strong> に引き上げ<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。学習時間の短縮を狙う。<code>COPP_TABLE</code> の ARP/ND group の <code>cir</code>/<code>cbs</code> を変更する想定。</p>
 <h3 id="2-route-programming">2. Route programming 時間短縮<a class="headerlink" href="#2-route-programming" title="Permanent link">&para;</a></h3>

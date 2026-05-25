@@ -27724,7 +27724,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30104,7 +30104,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35710,7 +35710,7 @@
 </table>
 <p>VRF の設計詳細は <a href="../../../routing/sonic-vrf-support-design-spec-draft/">VRF サポート</a> が入口です。static route の <a href="../../../reference/glossary/#term-config_db">CONFIG_DB</a> から FRR への経路は <a href="../../../routing/static-ip-route-configuration/">Static IP Route 設定</a> を参照してください。</p>
 <h2 id="vrf-linux-asic">VRF は Linux と ASIC の両方に現れる<a class="headerlink" href="#vrf-linux-asic" title="Permanent link">&para;</a></h2>
-<p>SONiC の VRF は、Linux 上では VRF master device として、ASIC 側では SAI Virtual Router として扱われます。<code>vrfmgrd</code> は <code>CONFIG_DB.VRF</code> から Linux VRF を作り、<code>VRFOrch</code> は <code>APP_DB.VRF_TABLE</code> 側を受けて SAI Virtual Router を作ります。interface は <code>intfmgrd</code> / <code>IntfsOrch</code> を通って Linux と ASIC の両方に反映されます。</p>
+<p>SONiC の VRF は、Linux 上では VRF master device として、ASIC 側では SAI Virtual Router として扱われます。<code>vrfmgrd</code> は <code>CONFIG_DB.VRF</code> から Linux VRF を作り、<code>VRFOrch</code> は <code>APPL_DB.VRF_TABLE</code> 側を受けて SAI Virtual Router を作ります。interface は <code>intfmgrd</code> / <code>IntfsOrch</code> を通って Linux と ASIC の両方に反映されます。</p>
 <p>重要なのは、VRF は単なる CLI 上の名前ではなく、FRR、kernel、<a href="../../../reference/glossary/#term-orchagent">orchagent</a>、SAI の共通キーになることです。non-default VRF の経路を調べるときは、常に「その route はどの VRF の route か」「next hop は同じ VRF か、<code>nexthop-vrf</code> で別 VRF を参照しているか」を確認します。</p>
 <h2 id="_3">典型的な使用シーン<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <h3 id="1-tenant-data-vrf-mgmt-vrf">シーン 1: tenant 分離のための data VRF + mgmt VRF<a class="headerlink" href="#1-tenant-data-vrf-mgmt-vrf" title="Permanent link">&para;</a></h3>
@@ -35762,7 +35762,7 @@
 </tr>
 <tr>
 <td>ECMP vs WCMP vs FG-ECMP</td>
-<td>ECMP は等分散、WCMP は重み付き、FG-ECMP は flowlet 単位の動的分散</td>
+<td>ECMP は等分散、WCMP は重み付き、FG-ECMP は固定 bucket で flow 移動を抑制する安定分散</td>
 </tr>
 <tr>
 <td>Mgmt VRF vs data VRF</td>

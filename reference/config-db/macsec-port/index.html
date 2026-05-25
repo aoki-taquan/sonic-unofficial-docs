@@ -28248,7 +28248,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30628,7 +30628,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36718,13 +36718,13 @@
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CDB[("CONFIG_DB&lt;br/&gt;PORT")]
-  DM["portmgrd"]
+  DM["macsecmgrd"]
   CDB --&gt; DM
-  APPDB[("APP_DB&lt;br/&gt;APP_PORT_TABLE")]
+  APPDB[("APP_DB&lt;br/&gt;MACSEC_PORT_TABLE")]
   DM --&gt; APPDB
   SYNCD["syncd"]
   APPDB --&gt; SYNCD
-  SAI["SAI&lt;br/&gt;sai_port_api"]
+  SAI["SAI&lt;br/&gt;sai_macsec_api"]
   SYNCD --&gt; SAI</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>

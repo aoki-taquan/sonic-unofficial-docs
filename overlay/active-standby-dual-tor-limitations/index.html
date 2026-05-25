@@ -27521,7 +27521,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29901,7 +29901,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35253,8 +35253,8 @@
 <li><a href="../../reference/glossary/#term-linkmgrd">linkmgrd</a> の LinkProber / MuxState / LinkState / LinkManager 4 サブモジュールの現行実装確認 — 実装の構成は <code>link_prober/</code> / <code>mux_state/</code> / <code>link_manager/</code> の 3 ディレクトリ + <code>DbInterface.cpp</code> で概ね一致を確認済</li>
 <li>MuxOrch の neighbor handling 3 案のうちどれが採用されているか確認 — <code>createStandaloneTunnelRoute</code> / <code>removeStandaloneTunnelRoute</code> 案で確定</li>
 <li>ycabled の I2C リトライ + MUX_FAIL 報告ロジック実装確認</li>
-<li>6.3.5.1 の Loopback0 宛 encap パケット listen + ping 駆動 service の所在確認</li>
-<li>6.3.5.2 の zero mac neighbor + tunnel route 自動 install の <a href="../../reference/glossary/#term-neighsyncd">neighsyncd</a> / <a href="../../reference/glossary/#term-muxorch">muxorch</a> 実装確認</li>
+<li>Loopback0 宛 encap パケット listen + ping 駆動 service の所在確認（HLD §6.3.5.1 相当）</li>
+<li>zero mac neighbor + tunnel route 自動 install の <a href="../../reference/glossary/#term-neighsyncd">neighsyncd</a> / <a href="../../reference/glossary/#term-muxorch">muxorch</a> 実装確認（HLD §6.3.5.2 相当）</li>
 <li>arp_update の FAILED → INCOMPLETE 書き換えの取り込み確認</li>
 <li>accept_untracked_na の kernel backport 状況確認</li>
 </ul>
@@ -35264,7 +35264,7 @@
 <li><strong><code>orchagent</code> (<code>MuxCfgOrch</code> / <code>MuxOrch</code> / <code>TunnelOrch</code>)</strong>: <a href="../../reference/glossary/#term-sai">SAI</a> 反映 + tunnel + <a href="../../reference/glossary/#term-acl">ACL</a> drop</li>
 <li><strong><code>ycabled</code> (旧 <code>xcvrd</code>)</strong>: I2C 経由の <a href="../../reference/glossary/#term-mux">MUX</a> 制御</li>
 <li><strong><code>nbrmgrd</code> / <code>arp_update</code> / kernel sysctl</strong>: proxy ARP / GARP / <a href="../../reference/glossary/#term-ndp">NDP</a> / proxy_ndp / accept_untracked_na</li>
-<li><strong>decap-after-tunnel CPU trap 対策の Python service</strong>: 6.3.5.1 の neighbor miss 解消用</li>
+<li><strong>decap-after-tunnel CPU trap 対策の Python service</strong>: encap パケット受信時の neighbor miss 解消用（HLD §6.3.5.1 相当）</li>
 <li><strong><code>bgpd</code></strong>: 両 ToR が同じ <a href="../../reference/glossary/#term-vlan">VLAN</a> を広告</li>
 </ul>
 <h2 id="_1">関連ページ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>

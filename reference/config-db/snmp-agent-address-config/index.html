@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30794,7 +30794,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37228,7 +37228,7 @@
 <li><strong>エントリが空の場合はデフォルトリッスンアドレス</strong>: <code>SNMP_AGENT_ADDRESS_CONFIG</code> にエントリが 1 件もない場合、snmpd.conf テンプレートは <code>agentAddress udp:161</code> / <code>agentAddress udp6:161</code> をデフォルトとして出力する。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>VRF が実際に存在しない場合</strong>: <code>vrf</code> フィールドを指定しても VRF が実際に存在しない場合、snmpd は起動後そのアドレスでのリッスンに失敗するが CONFIG_DB レベルでは検知されない。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>設定変更の反映はコンテナ再起動時のみ</strong>: テーブル変更は <code>docker-snmp</code> コンテナの再起動 / snmpd プロセスリロードまで snmpd.conf に反映されない。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
-<li><strong>key フォーマット</strong>: key は <code>&lt;ip&gt;|&lt;port&gt;|&lt;vrf&gt;</code> または <code>&lt;ip&gt;|&lt;port&gt;</code> 形式。区切りが正しくない場合はテンプレートレンダリングエラーになる。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>key フォーマット</strong>: key は <code>&lt;ip&gt;|&lt;port&gt;|&lt;vrf&gt;</code> の 3 要素形式が必須。YANG は <code>key "agent_ip port vrf_name"</code> で 3 要素を要求する。区切りが正しくない場合はテンプレートレンダリングエラーになる。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>

@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30291,7 +30291,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36220,7 +36220,7 @@
 <h3 id="sshd">sshd 検証ゲート<a class="headerlink" href="#sshd" title="Permanent link">&para;</a></h3>
 <p><code>set_policies()</code> の末尾で <code>sshd -T -f &lt;tmp&gt;</code> を実行し、非ゼロの場合は tmp を削除してロールバック（<code>systemctl restart ssh</code> もスキップ）。フィールド単位のロールバックは行われない（全フィールド適用 or 全棄却）。</p>
 <h3 id="max_sessions">max_sessions の書込み先分離<a class="headerlink" href="#max_sessions" title="Permanent link">&para;</a></h3>
-<p><code>max_sessions</code> は <code>SSH_CONFIG_NAMES</code> に含まれず <code>set_policies()</code> 内で <code>continue</code>（スキップ）される。代わりに後続の <code>PamLimitsCfg.update_config_file()</code> が <code>/etc/security/limits.d/</code> に <code>maxlogins</code> として書き込む。このため <code>ssh_handler</code> では sshd_config 更新 → PAM limits 更新の順序が固定されている。</p>
+<p><code>max_sessions</code> は <code>SSH_CONFIG_NAMES</code> に含まれず <code>set_policies()</code> 内で <code>continue</code>（スキップ）される。代わりに後続の <code>PamLimitsCfg.update_config_file()</code> が <code>/etc/security/limits.conf</code> に <code>maxsyslogins</code> として書き込む。このため <code>ssh_handler</code> では sshd_config 更新 → PAM limits 更新の順序が固定されている。</p>
 <!-- evidence: sonic-host-services/scripts/hostcfgd L1045-1161 (SshServer クラス) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L2191-2277 (HostConfigDaemon.__init__ / load) -->
 <!-- evidence: sonic-host-services/scripts/hostcfgd L2297-2299 (ssh_handler) -->

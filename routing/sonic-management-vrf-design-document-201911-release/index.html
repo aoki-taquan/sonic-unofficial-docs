@@ -9360,17 +9360,6 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -27643,7 +27632,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30023,7 +30012,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35437,17 +35426,6 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         引用元
       
     </span>
@@ -35637,6 +35615,9 @@
 <li>スイッチ発のアプリは 201911 では <code>cgexec</code> 接頭辞が必要（透過しない）</li>
 <li><code>lo-m</code> ダミーループバックは NTP <code>ntpq</code> 用の workaround</li>
 <li>詳細フローと各アプリ改修箇所は HLD <code>doc/mgmt/sonic_stretch_management_vrf_design.md</code> を参照</li>
+<li>本設計は 201911 リリース時点のもので、master ブランチでは netns ベースの management VRF (<code>mgmt</code>) 実装に置き換わっており、CLI / sysctl 周りで挙動が異なる</li>
+<li>non-default VRF からの DNS / NTP / TACACS+ 利用は各サービスが VRF-aware に再実装される必要があり、サービスにより未対応のものがある</li>
+<li>snmpd / sshd の bind を mgmt VRF に閉じる場合、systemd ユニット側で <code>ip vrf exec</code> ラップを行う必要がある</li>
 </ul>
 <h2 id="7">7. 干渉する機能<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
 <ul>
@@ -35662,13 +35643,7 @@
 <li>Topics: <a href="../../topics/04-vrf-ecmp/concept/">VRF / ECMP 概念</a>, <a href="../../topics/04-vrf-ecmp/setup/">VRF / ECMP 構築</a>, <a href="../../topics/04-vrf-ecmp/operations/">VRF / ECMP 運用</a></li>
 <li>関連 HLD: <a href="../sonic-vrf-support-design-spec-draft/">SONiC VRF Support Design Spec</a></li>
 </ul>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<ul>
-<li>本設計は 201911 リリース時点のもので、master ブランチでは netns ベースの management VRF (<code>mgmt</code>) 実装に置き換わっており、CLI / sysctl 周りで挙動が異なる。</li>
-<li>non-default VRF からの DNS / NTP / TACACS+ 利用は各サービスが VRF-aware に再実装される必要があり、サービスにより未対応のものがある。</li>
-<li>snmpd / sshd の bind を mgmt VRF に閉じる場合、systemd ユニット側で <code>ip vrf exec</code> ラップを行う必要がある。</li>
-</ul>
-<h2 id="_5">引用元<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: c17daefc2a7d -->
 
 <div class="footnote">

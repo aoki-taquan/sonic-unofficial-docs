@@ -27401,7 +27401,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29781,7 +29781,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35426,7 +35426,7 @@
 <ol>
 <li><strong><code>/etc/sonic/config_db.json</code> の権限 / オーナーが root 以外で書き込み失敗</strong></li>
 <li><strong>multi-asic 環境で host 側だけ save し、<code>config_db&lt;N&gt;.json</code> が更新されていない</strong></li>
-<li><strong><a href="../../glossary/#term-yang">YANG</a> / <a href="../../glossary/#term-sonic-cfggen">sonic-cfggen</a> 検証で reject されたが ユーザが気付いていない</strong></li>
+<li><strong><a href="../../glossary/#term-yang">YANG</a> / <a href="../../glossary/#term-sonic-cfggen">sonic-cfggen</a> 検証で reject されたがユーザーが気付いていない</strong></li>
 <li><strong>db_migrator のバージョン不整合</strong>: ファイル format version と <a href="../../glossary/#term-sonic">SONiC</a> ビルドの期待バージョン不一致</li>
 <li><strong><a href="../../glossary/#term-minigraph.xml">minigraph.xml</a> を編集したのに <code>load_minigraph</code> を打たず <code>reload</code> だけしている</strong></li>
 </ol>

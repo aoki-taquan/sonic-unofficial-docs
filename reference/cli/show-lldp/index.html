@@ -27683,7 +27683,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30063,7 +30063,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35653,7 +35653,7 @@ excerpt: |
 <code>sudo lldpshow</code> を引数なしで実行し、隣接を tabular 形式で出力する。</p>
 <h2 id="_4">補足<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>show lldp</code> は明示的なデフォルト subcommand を持つが、Click グループとしては <code>neighbors</code> を default として明示せず、引数なしで <code>show lldp</code> を呼ぶと help が表示される（<code>neighbors</code> を呼びたい場合は明示する）</li>
+<li><code>show lldp</code> を引数なしで呼ぶと help が表示される。隣接詳細を見るには <code>show lldp neighbors</code> と明示する必要がある</li>
 <li>LLDP の有効・無効や送信間隔などの設定は本コマンドのスコープ外（<code>lldpd.conf</code> / <code>LLDP*</code> テーブル管理ツール側）</li>
 </ul>
 <!-- cli-mermaid -->

@@ -27419,7 +27419,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29799,7 +29799,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35140,11 +35140,12 @@
 <p>目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。<code>Discrepancy-found</code> は <a href="../reference/glossary/#term-hld">HLD</a> と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。</p>
 <h2 id="_3">検証状況<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <ul>
-<li>ページ数: 71</li>
-<li>分布: Code-verified: 55 / Discrepancy-found: 6 / HLD-only: 9 / Meta: 1</li>
+<li>ページ数: 76</li>
+<li>分布: Code-verified: 58 / Discrepancy-found: 7 / HLD-only: 9 / Issue-confirmed: 1 / Meta: 1</li>
 </ul>
 <h2 id="_4">実装差分があるページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
+<li><a href="kdump/">kdump（kexec ベース kernel crash dump / makedumpfile）</a></li>
 <li><a href="sonic-fips-deployment/">SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）</a></li>
 <li><a href="sonic-network-time-protocol-ntp-client-configuration/">SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）</a></li>
 <li><a href="hld-secure-boot/">SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust）</a></li>
@@ -35262,11 +35263,19 @@
 <td>Code-verified</td>
 </tr>
 <tr>
+<td><a href="ssh-authentication-failures/">SSH 接続時の「Too many authentication failures」エラー</a></td>
+<td>Issue-confirmed</td>
+</tr>
+<tr>
 <td><a href="sonic-bmc-platform-management-monitoring/">SONiC BMC Platform Management &amp; Monitoring（pmon ↔ BMC 連携）</a></td>
 <td>Code-verified</td>
 </tr>
 <tr>
 <td><a href="sonic-boot-chart/">SONiC Boot Chart（systemd-bootchart 統合）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="buildimage-build-system-known-issues/">SONiC ビルドシステム既知問題</a></td>
 <td>Code-verified</td>
 </tr>
 <tr>
@@ -35374,6 +35383,10 @@
 <td>HLD-only</td>
 </tr>
 <tr>
+<td><a href="yang-model-issues-and-validation/">YANG モデル既知問題と検証</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
 <td><a href="zero-touch-provisioning-ztp/">Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）</a></td>
 <td>Code-verified</td>
 </tr>
@@ -35391,7 +35404,7 @@
 </tr>
 <tr>
 <td><a href="kdump/">kdump（kexec ベース kernel crash dump / makedumpfile）</a></td>
-<td>Code-verified</td>
+<td>Discrepancy-found</td>
 </tr>
 <tr>
 <td><a href="sonic-libsairedis-api-idempotence-support/">libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）</a></td>
@@ -35451,6 +35464,14 @@
 </tr>
 <tr>
 <td><a href="sonic-dynamic-port-breakout-feature-high-level-design/">動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成）</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="dynamic-port-breakout-known-issues/">動的ポートブレイクアウト（DPB）既知問題と YANG モデル</a></td>
+<td>Code-verified</td>
+</tr>
+<tr>
+<td><a href="warmboot-known-issues-and-troubleshooting/">ウォームブート既知問題とトラブルシューティング</a></td>
 <td>Code-verified</td>
 </tr>
 <tr>

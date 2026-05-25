@@ -27911,7 +27911,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30291,7 +30291,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36279,7 +36279,7 @@
 
 <!-- ordering -->
 <h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
-<p><code>/etc/sonic/sonic_version.yml</code> はビルド時に生成される静的ファイルであり、<a href="../../glossary/#term-config_db">CONFIG_DB</a> / STATE_DB への書込みは行わない。ただし、ビルドパイプライン内の変数確定順序と、ランタイムでの読込みキャッシュ挙動に順序依存が存在する。</p>
+<p><code>/etc/sonic/sonic_version.yml</code> はビルド時に生成される静的ファイルであり、<a href="../../glossary/#term-config_db">CONFIG_DB</a> / <a href="../../glossary/#term-state_db">STATE_DB</a> への書込みは行わない。ただし、ビルドパイプライン内の変数確定順序と、ランタイムでの読込みキャッシュ挙動に順序依存が存在する。</p>
 <h3 id="_7">検出された順序依存<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <table>
 <thead>

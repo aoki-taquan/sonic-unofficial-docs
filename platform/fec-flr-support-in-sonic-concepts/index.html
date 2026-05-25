@@ -27576,7 +27576,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29956,7 +29956,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35443,7 +35443,7 @@
 <p>概念レベルでの読み手向け前提条件。実装側の詳細制限は <a href="../fec-flr-support-in-sonic-limitations/">limitations</a> を参照。</p>
 <ul>
 <li><strong>FLR は確率指標であって実観測ではない</strong>: Predicted FLR は CER (Codeword Error Rate) と interleaving factor <code>X</code> から外挿される値。実トラフィックに直接観測される frame loss とは値域が一致しない。</li>
-<li><strong>CER → FLR 変換は <a href="../../reference/glossary/#term-asic">ASIC</a> ベンダ依存</strong>: interleaving factor <code>X</code> はベンダ実装で異なる (典型 4 or 8)。ベンダ仕様を取らずに公開値だけで他機種と比較しない。</li>
+<li><strong>CER → FLR 変換は <a href="../../reference/glossary/#term-asic">ASIC</a> ベンダ依存</strong>: interleaving factor <code>X</code> はポート速度・レーン数で決まり、HLD 定義では 1〜4 の範囲（100G×1lane が 1 or 2、400G 以上が 2 or 4）。ベンダ仕様を取らずに公開値だけで他機種と比較しない。</li>
 <li><strong>計算周期は秒オーダ</strong>: 短時間バースト (ms オーダ) の劣化は <code>FLR(O)</code> には反映されにくく、<code>FLR(P)</code> の経時変化として遅れて見える。リアルタイム障害検知用ではなく、劣化傾向検知用と理解する。</li>
 <li><strong>低 BER 領域の <code>Accuracy</code> 低下</strong>: errored codeword サンプル数が少ない健全リンクでは R² (Accuracy 列) が下がり、<code>FLR(P)</code> の絶対値の信頼性が落ちる。健全時の値はベースラインとしてのみ扱う。</li>
 <li><strong><code>FLR(P)</code> ≪ <code>FLR(O)</code> の領域は外挿が破綻</strong>: Observed が立った時点で外挿モデルの仮定 (低 BER) を超えており、Predicted を運用判断に使うべきではない。</li>

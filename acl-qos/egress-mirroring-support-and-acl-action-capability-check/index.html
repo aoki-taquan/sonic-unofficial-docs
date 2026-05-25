@@ -27676,7 +27676,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30056,7 +30056,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35554,7 +35554,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified (2026-05-11)</p>
 <p>HLD の主要要素は master に取り込み済: <code>ACTION_MIRROR_{INGRESS,EGRESS}_ACTION</code> 定数（<code>aclorch.h:70-71</code>）、<code>AclOrch::queryAclActionCapability()</code> / <code>putAclActionCapabilityInDB()</code>（<code>aclorch.cpp:3975</code>,<code>4056</code>）、<code>SWITCH_CAPABILITY</code> への <code>ACL_ACTIONS|&lt;stage&gt;</code> 書き込み（<code>aclorch.cpp:4061</code>）、<code>acl-loader full --mirror_stage {ingress,egress}</code>（<code>acl_loader/main.py:1209,1238</code>）、libsairedis の <code>queryAttributeEnumValuesCapability</code>（<code>RedisRemoteSaiInterface.cpp:1245</code>）。詳細は末尾「実装との乖離」。</p>
 </div>
 <h1 id="acl-egress-mirror-sai-action-capability">ACL の egress mirror 対応と SAI ベース action capability 問い合わせ<a class="headerlink" href="#acl-egress-mirror-sai-action-capability" title="Permanent link">&para;</a></h1>

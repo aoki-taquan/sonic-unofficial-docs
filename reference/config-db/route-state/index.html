@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30530,7 +30530,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36532,7 +36532,7 @@
 </tr>
 <tr>
 <td><strong><code>STATE_DB</code></strong></td>
-<td>デフォルト経路 (0.0.0.0/0 / ::0/0) の存在状態のみを書き込む</td>
+<td>デフォルト経路 (0.0.0.0/0 / ::/0) の存在状態のみを書き込む</td>
 <td><code>RouteOrch</code></td>
 </tr>
 <tr>
@@ -36569,7 +36569,7 @@
 <h3 id="key">key 構造<a class="headerlink" href="#key" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ROUTE_TABLE|&lt;prefix&gt;
 </span></code></pre></div>
-<p><code>&lt;prefix&gt;</code> は IPv4 デフォルト経路（<code>0.0.0.0/0</code>）または IPv6 デフォルト経路（<code>::0/0</code> / <code>::/0</code>）のみ。<br />
+<p><code>&lt;prefix&gt;</code> は IPv4 デフォルト経路（<code>0.0.0.0/0</code>）または IPv6 デフォルト経路（<code>::/0</code>）のみ。<br />
 一般のユニキャスト経路は <a href="../../glossary/#term-state_db">STATE_DB</a> の <a href="../../glossary/#term-route_table">ROUTE_TABLE</a> には書き込まれない。</p>
 <h3 id="_3">フィールド一覧<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <table>

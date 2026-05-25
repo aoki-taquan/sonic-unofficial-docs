@@ -27757,7 +27757,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30137,7 +30137,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35862,7 +35862,7 @@
 <p>通常の routing が「どこ宛か」を決めるのに対し、この章は「どのラベル / セグメント / 観測メタを積むか」を扱います。</p>
 <h3 id="_11">何を解決するか<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>テナント / SLA 別の経路指定</strong> → SRv6 Policy / Binding SID で「この trafic は東経路、別 traffic は西経路」のような明示経路を作る</li>
+<li><strong>テナント / SLA 別の経路指定</strong> → SRv6 Policy / Binding SID で「この traffic は東経路、別 traffic は西経路」のような明示経路を作る</li>
 <li><strong>L3VPN / L2VPN underlay の現代化</strong> → SRv6 で IPv6 だけの underlay に L3VPN を載せる（MPLS underlay を畳む）</li>
 <li><strong>既存 MPLS 網との接続</strong> — SONiC を MPLS LSR として配置し、静的 LSP で連携する</li>
 <li><strong>障害観測の解像度向上</strong> → Path Tracing で経路上の各 hop の通過時刻と nexthop を probe 単位で取る</li>

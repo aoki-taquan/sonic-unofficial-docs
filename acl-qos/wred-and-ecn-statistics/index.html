@@ -27676,7 +27676,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30056,7 +30056,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35554,7 +35554,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-swss/orchagent/portsorch.h</code> L42 で <code>WRED_QUEUE_STAT_COUNTER_FLEX_COUNTER_GROUP = "WRED_ECN_QUEUE_STAT_COUNTER"</code> を確認、<code>flexcounterorch.cpp</code> L62/L95 で <code>WRED_QUEUE_KEY = "WRED_ECN_QUEUE"</code> のマッピングを確認。<code>portsorch.cpp</code> L433 で <code>SAI_QUEUE_STAT_WRED_DROPPED_PACKETS</code> を、L1872-1901 で <code>m_queueCounterCapabilitiesTable</code> への <code>WRED_ECN_QUEUE_*_COUNTER</code> capability 書き込みを確認。<code>sonic-utilities/counterpoll/main.py</code> L609-L624 で <code>counterpoll wredqueue</code> サブコマンド群、<code>tests/counterpoll_test.py</code> L326-L374 で <code>wredport</code> / <code>wredqueue</code> enable/interval を確認（verified at: 2026-05-09）。</p>
 </div>
 <h1 id="wred-ecn-per-queue-per-portcapability">WRED / ECN 統計（per-queue / per-port、capability ベース）<a class="headerlink" href="#wred-ecn-per-queue-per-portcapability" title="Permanent link">&para;</a></h1>

@@ -27698,7 +27698,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30078,7 +30078,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35675,7 +35675,7 @@ excerpt: |
   provide a service/daemon in SONiC to run in DualToR mode, which can interact with Platform API as well interact with state machine (aka Linkmgr) and orchagent to provide capability for it to get/set Link State/Forwarding State etc. from SoC(gRPC server listening to the client)
   ... over a secure channel
   ... using a loopback IP as source IP
-  ... interface for SoC to notify this gRPC client about going to maintainence/shutdown via an asynchronous method
+  ... interface for SoC to notify this gRPC client about going to maintenance/shutdown via an asynchronous method
 reasoning: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notification) の根拠。
 -->
 
@@ -35688,7 +35688,7 @@ reasoning: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notifica
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>provide a service/daemon in SONiC to run in DualToR mode, which can interact with Platform API as well interact with state machine (aka Linkmgr) and orchagent to provide capability for it to get/set Link State/Forwarding State etc. from SoC(gRPC server listening to the client)
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>... over a secure channel
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>... using a loopback IP as source IP
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>... interface for SoC to notify this gRPC client about going to maintainence/shutdown via an asynchronous method
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>... interface for SoC to notify this gRPC client about going to maintenance/shutdown via an asynchronous method
 </span></code></pre></div>
 <p><strong>判断根拠</strong>: 主要要件 (linkmgr 連携 / TLS / loopback src IP / async notification) の根拠。</p>
 </details>

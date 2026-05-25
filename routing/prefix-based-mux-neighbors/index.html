@@ -27710,7 +27710,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30090,7 +30090,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35622,7 +35622,7 @@
 <!-- /topics-tip -->
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-swss/orchagent/muxorch.h</code> L205 で MUX_CABLE の <code>neighbor_mode</code> フィールドが <code>REQ_T_STRING</code> で受け付けられ、<code>muxorch.cpp</code> L1172 <code>MuxPrefixBasedNbrHandler</code> クラス、L2238-2286 で <code>neighbor_mode</code> 値を読み取り <code>MuxNbrHandlerType::NBR_HANDLER_PREFIX_BASED / HOST_ROUTE</code> に分岐し、STATE_DB <code>MUX_CABLE_TABLE</code> に <code>neighbor_mode = "prefix-route" / "host-route"</code> を反映することを確認。<code>SAI_NEIGHBOR_ENTRY_ATTR_NO_HOST_ROUTE</code> は <code>sonic-swss/orchagent/p4orch/l3_multicast_manager.cpp</code> L154 ほかで使用済み (verified at: 2026-05-09)。</p>
 </div>
 <h1 id="mux-dual-tor">プレフィックスルート方式の Mux ネイバ（Dual-ToR の状態遷移最適化）<a class="headerlink" href="#mux-dual-tor" title="Permanent link">&para;</a></h1>

@@ -27401,7 +27401,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29781,7 +29781,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -34585,6 +34585,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reference-topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35188,6 +35199,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        確認
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reference-topics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -35249,10 +35271,6 @@
 
 
 <h1 id="runbook-port-admin-up-oper-down">Runbook: Port が admin up なのに oper down のまま<a class="headerlink" href="#runbook-port-admin-up-oper-down" title="Permanent link">&para;</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">HLD-only</p>
-<p>portsorch / xcvrd / SAI の標準動作に基づく運用ノート。</p>
-</div>
 <h2 id="_1">症状<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>show interface status Ethernet0</code> で <code>Admin = up</code> だが <code>Oper = down</code></li>
@@ -35299,6 +35317,15 @@
 <li><strong>kernel netdev は up だが <a href="../../glossary/#term-asic">ASIC</a> 側で down</strong> — host-side のみ up となる multi-asic 構成の罠</li>
 </ol>
 <p><code>portsorch</code> は <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>PORT</code> 変更を <a href="../../glossary/#term-sai">SAI</a> 属性 (<code>SAI_PORT_ATTR_ADMIN_STATE</code> 等) に変換して <a href="../../glossary/#term-syncd">syncd</a> へ渡し、<code>xcvrd</code> は EEPROM 読出し結果を <a href="../../glossary/#term-state_db">STATE_DB</a> の <code>TRANSCEIVER_INFO</code> に書き戻す<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<h2 id="_5">確認<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>対処後の正常化を以下で裏取りする。</p>
+<ul>
+<li><strong>症状解消</strong>: 「症状」節で挙げた事象 (counter / log / state) が回復していること</li>
+<li><strong>再発監視</strong>: 数分〜数十分の間隔で同コマンドを再実行し、値がフラップしていないこと</li>
+<li><strong>副作用なし</strong>: 関連サブシステム (<a href="../../glossary/#term-syslog">syslog</a> / <code>show interfaces counters errors</code> / <code>show ip bgp summary</code> 等) に新規 error が出ていないこと</li>
+<li><strong>永続化</strong>: <code>sudo config save -y</code> 済みで <code>config_db.json</code> に変更が反映されていること (恒久対処の場合)</li>
+</ul>
+<p>短時間で再発する場合は「よくある原因」リストの次候補に進む。</p>
 <h2 id="reference-topics">関連 reference / topics<a class="headerlink" href="#reference-topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../asic-link-autoneg-mismatch/">asic-link-autoneg-mismatch.md</a></li>

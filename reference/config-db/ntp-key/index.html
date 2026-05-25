@@ -28115,34 +28115,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#db-phase-f" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        副次 DB 書込 (Phase F)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ファイルシステムへの副次書込（DB 外）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -28315,7 +28287,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30695,7 +30667,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36641,34 +36613,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#db-phase-f" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        副次 DB 書込 (Phase F)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="副次 DB 書込 (Phase F)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ファイルシステムへの副次書込（DB 外）
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#phase-f" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -37521,73 +37465,6 @@ NTP_KEY の SET 操作だけでは <code>trusted_str</code> は変わらず、NT
 </div>
 <p>詳細調査メモ: <code>meta/_intermediate/cdb-flow/ntp-key-constants.md</code>。</p>
 <!-- /constants -->
-
-<!-- side-effects -->
-<h2 id="db-phase-f">副次 DB 書込 (Phase F)<a class="headerlink" href="#db-phase-f" title="Permanent link">&para;</a></h2>
-<p>CONFIG_DB <code>NTP_KEY</code> テーブルの変更に伴って <code>hostcfgd</code> の <code>NtpCfg</code> ハンドラが副次的に書き込む DB エントリは <strong>存在しない</strong>。副作用はすべて Linux ホスト OS の設定ファイル書き換えと <code>chrony</code> サービス再起動に閉じる。</p>
-<table>
-<thead>
-<tr>
-<th>副次 DB</th>
-<th>書込有無</th>
-<th>根拠</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="../../glossary/#term-appl_db">APPL_DB</a></td>
-<td>なし</td>
-<td><code>NtpCfg.ntp_srv_key_update()</code> 内に <code>set(</code>/<code>hset(</code>/<code>Producer</code>/<code>Notification</code> の呼出 0 件 (<code>hostcfgd:1366-1406</code> を grep して 0 ヒット)</td>
-</tr>
-<tr>
-<td><a href="../../glossary/#term-state_db">STATE_DB</a></td>
-<td>なし</td>
-<td><code>NtpCfg</code> は <code>state_db_conn</code> を保持しない。<a href="../../glossary/#term-state_db">STATE_DB</a> 書込は <code>FipsCfg</code> (<code>hostcfgd:1759-1821</code>) のみ</td>
-</tr>
-<tr>
-<td><a href="../../glossary/#term-counters_db">COUNTERS_DB</a></td>
-<td>なし</td>
-<td><code>hostcfgd</code> 全体に <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> 書込参照なし。NTP は <a href="../../glossary/#term-sai">SAI</a> カウンタを持たない</td>
-</tr>
-<tr>
-<td><a href="../../glossary/#term-asic_db">ASIC_DB</a> / <a href="../../glossary/#term-flex_counter_db">FLEX_COUNTER_DB</a> / <a href="../../glossary/#term-loglevel_db">LOGLEVEL_DB</a></td>
-<td>なし</td>
-<td><a href="../../glossary/#term-sai">SAI</a> 非経由。<code>NTP_KEY</code> を購読する <a href="../../glossary/#term-orchagent">orchagent</a> は <code>sonic-swss/</code> に存在しない</td>
-</tr>
-</tbody>
-</table>
-<h3 id="db">ファイルシステムへの副次書込（DB 外）<a class="headerlink" href="#db" title="Permanent link">&para;</a></h3>
-<p><code>ntp_srv_key_update()</code> は <code>run_cmd(self.CHRONY_RESTART)</code> によって <code>systemctl restart chrony</code> を実行する。chrony 再起動に先立ち、<code>ntp-config.service</code> の <code>ExecStartPre</code> 相当として <code>chrony-config.sh</code> がテンプレートを再展開する。</p>
-<table>
-<thead>
-<tr>
-<th>書込先ファイル</th>
-<th>生成手段</th>
-<th>根拠</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>/etc/chrony/chrony.keys</code></td>
-<td><code>sonic-cfggen -d -t /usr/share/sonic/templates/chrony.keys.j2</code></td>
-<td><code>chrony-config.sh:10</code></td>
-</tr>
-<tr>
-<td><code>/etc/chrony/chrony.conf</code></td>
-<td><code>sonic-cfggen -d -t /usr/share/sonic/templates/chrony.conf.j2</code></td>
-<td><code>chrony-config.sh:9</code></td>
-</tr>
-</tbody>
-</table>
-<p><code>chrony.keys.j2</code> は <code>NTP_KEY</code> 全件を走査し、<code>type</code> と <code>value</code> が有効なエントリのみ <code>&lt;id&gt; &lt;TYPE&gt; &lt;decoded-value&gt;[ trusted_str]</code> 形式で書き出す。<code>NTP_SERVER.trusted == 'yes'</code> のサーバ IP リストが <code>trusted_str</code> として各行末に付与される (<code>chrony.keys.j2:8-17</code>)。<code>chrony.conf.j2</code> は <code>NTP|global.authentication == 'enabled'</code> のとき <code>keyfile /etc/chrony/chrony.keys</code> を出力する (<code>chrony.conf.j2:127</code>)。</p>
-<div class="admonition note">
-<p class="admonition-title">NTP_KEY 変更は chrony.conf も再生成する</p>
-<p><code>hostcfgd</code> の <code>run_cmd(CHRONY_RESTART)</code> は <code>chrony-config.sh</code> 経由で <code>chrony.conf</code> と <code>chrony.keys</code> を両方再生成してから chrony を再起動する。NTP_KEY の変更一件が chrony.conf と chrony.keys の両ファイルを上書きするため、同一 restart トリガで <code>NTP</code> / <code>NTP_SERVER</code> の設定変更も chrony に反映される。</p>
-</div>
-<blockquote>
-<p><strong>Evidence</strong>: <code>sonic-host-services/scripts/hostcfgd</code> L1272–1406 (<code>NtpCfg.__init__</code> / <code>ntp_srv_key_update</code>); <code>sonic-buildimage/files/image_config/chrony/chrony-config.sh</code> L9-11; <code>chrony.keys.j2</code> L1-18。詳細スキャン結果は <code>meta/_intermediate/cdb-flow/ntp-key-side.md</code> を参照。</p>
-</blockquote>
-<!-- /side-effects -->
 
 <!-- side-effects -->
 <h2 id="phase-f">副次ファイル書込 (Phase F)<a class="headerlink" href="#phase-f" title="Permanent link">&para;</a></h2>

@@ -11922,7 +11922,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連トピック
+        関連ページ
       
     </span>
   </a>
@@ -11933,17 +11933,6 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         制限事項
       
     </span>
@@ -11952,7 +11941,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -27670,7 +27659,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30050,7 +30039,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35458,7 +35447,7 @@
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連トピック
+        関連ページ
       
     </span>
   </a>
@@ -35469,17 +35458,6 @@
   <a href="#_5" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
         制限事項
       
     </span>
@@ -35488,7 +35466,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35730,16 +35708,12 @@ reasoning: Rev 1.1 で VXLAN inner src MAC rewrite が追加されたことの�
 <li><strong>ACL Flex Counters</strong>: Phase 2 から導入</li>
 <li><strong>port / LAG</strong>: <code>ports</code> で bind。LAG 解体時の rebind は AclOrch 側ロジック</li>
 </ul>
-<h2 id="_4">関連トピック<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../topics/07-acl-copp-mirror/">Topics: ACL / CoPP / Mirror</a></li>
-</ul>
-<h2 id="_5">関連ページ<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<h2 id="_4">関連ページ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../acl-flex-counters-support/">ACL Flex Counters Support</a></li>
 <li><a href="../sonic-port-mirroring-hld/">SONiC Port Mirroring HLD</a></li>
 </ul>
-<h2 id="_6">制限事項<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_5">制限事項<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>ASIC TCAM 容量に直結</strong>: ACL_TABLE / ACL_RULE は SAI 経由で TCAM を消費する。<code>CRM</code> (Critical Resource Monitor) で <code>acl_table</code> / <code>acl_entry</code> / <code>acl_counter</code> のしきい値超過時、新規 rule 追加は失敗する。</li>
 <li><strong>type ごとの match / action 制約</strong>: <code>L3</code> / <code>L3V6</code> / <code>MIRROR</code> / <code>MIRRORV6</code> / <code>PFCWD</code> / <code>DROP</code> / <code>MUX</code> で利用できる match field と action は異なる。ベンダー SAI 実装によっては HLD で許される組み合わせの一部が未対応。</li>
@@ -35749,7 +35723,7 @@ reasoning: Rev 1.1 で VXLAN inner src MAC rewrite が追加されたことの�
 <li><strong><code>SAI_STATUS_INSUFFICIENT_RESOURCES</code> 時のリトライ優先度</strong> (<a href="https://github.com/sonic-net/sonic-swss/issues/4406">sonic-swss#4406</a>): <code>handleSai</code> が SAI_STATUS_INSUFFICIENT_RESOURCES を受け取った際に ACL ACE のリトライキューが蓄積し、ルートプログラミングよりも優先されてしまう問題がある。高負荷時に ACL エントリの追加が失敗し続ける環境では、<a href="../../reference/glossary/#term-orchagent">orchagent</a> が本来のルート更新より ACL リトライを繰り返すことでルート収束が遅延する可能性がある。</li>
 <li><strong><code>TABLE_TYPE_MIRRORV6</code> の IN_PORTS 非サポート</strong> (<a href="https://github.com/sonic-net/sonic-swss/issues/2204">sonic-swss#2204</a>): <code>MIRRORV6</code> テーブルタイプでは <code>IN_PORTS</code> マッチフィールドが実装されていない。IPv6 ミラーセッションで入力ポートを限定したい場合は <code>MIRRORV6</code> が使えない制約がある。</li>
 </ul>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <ul>

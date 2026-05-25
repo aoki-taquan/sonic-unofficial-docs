@@ -27401,7 +27401,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29781,7 +29781,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35431,6 +35431,16 @@
 <li><strong>multi-asic namespace の reflection 遅延</strong></li>
 </ol>
 <h2 id="_3">切り分け手順<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[APPL_DB の更新が ASIC_DB に反映されない] --&gt; B{APPL_DB にキーが存在する?}
+    B -- No --&gt; B1[上流ルーティングデーモン / config ツールの出力確認]
+    B -- Yes --&gt; C{orchagent が動いているか?}
+    C -- No --&gt; C1[docker restart swss でリカバリ]
+    C -- Yes --&gt; D{CRM リソース枯渇?}
+    D -- Yes --&gt; D1[route summarization / リソース再見積もり]
+    D -- No --&gt; E{syncd / SAI からエラー?}
+    E -- Yes --&gt; E1[ベンダ SDK ログ / vendor support]
+    E -- No --&gt; F[multi-asic namespace の反映確認]</code></pre>
 <h2 id="_4">確認コマンド<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <h3 id="1-db">1. DB 規模・差分<a class="headerlink" href="#1-db" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sonic-db-cli<span class="w"> </span>APPL_DB<span class="w"> </span>dbsize

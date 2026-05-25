@@ -27643,7 +27643,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30023,7 +30023,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35481,7 +35481,7 @@
 
 
 <div class="admonition success">
-<p class="admonition-title">裏取りステータス: Code-verified</p>
+<p class="admonition-title">裏取りステータス: code-verified</p>
 <p><code>sonic-swss/orchagent/switchorch.cpp</code> L488-501 で <code>SAI_NEXT_HOP_GROUP_TYPE_DYNAMIC_ORDERED_ECMP</code> の capability query と <code>SWITCH_CAPABILITY_TABLE_ORDERED_ECMP_CAPABLE</code> (switchorch.h L18) の APP_DB 公開を確認。<code>routeorch.cpp</code> L1557 / <code>vnetorch.cpp</code> L804 で <code>checkOrderedEcmpEnable()</code> 経由の nexthop group type 切替を確認。<code>sonic-swss/tests/test_nhg.py</code> L1006 / <code>tests/vnet_lib.py</code> L1139-1187 で <code>SAI_NEXT_HOP_GROUP_MEMBER_ATTR_SEQUENCE_ID</code> 検証 UT を確認（verified 2026-05-09）。</p>
 </div>
 <h1 id="ordered-ecmpip-nexthop-sequence_id-torappliance">Ordered ECMP（IP ソート順で nexthop に <code>sequence_id</code> を付け同一フローを同 ToR/Appliance に固定）<a class="headerlink" href="#ordered-ecmpip-nexthop-sequence_id-torappliance" title="Permanent link">&para;</a></h1>

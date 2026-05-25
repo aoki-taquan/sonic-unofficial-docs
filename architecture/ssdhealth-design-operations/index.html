@@ -8439,28 +8439,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        確認コマンド
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -27596,7 +27574,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -29976,7 +29954,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35364,28 +35342,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        確認コマンド
-      
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -35429,9 +35385,9 @@
 <p>ベンダ提供のユーティリティ生出力をそのまま貼る。例えば InnoDisk なら <code>iSmart V3.9.41</code> の出力（SMART attribute id とその raw value 一覧、P/E Cycle、Lifespan、bad block 数等）が出る<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="2">2. コマンドのチェーン<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    USER[user] --&gt; SHOW["show platform ssdhealth\n(show/main.py)"]
-    SHOW --&gt;|exec| UTIL["ssdhealth -d /dev/sdX -v / -e"]
-    UTIL --&gt; BASE["SsdBase\n(sonic_platform_base/sonic_ssd)"]
+    USER[user] --&gt; SHOW["show platform ssdhealth\n(show/platform.py)"]
+    SHOW --&gt;|exec| UTIL["ssdutil -d /dev/sdX -v / -e"]
+    UTIL --&gt; BASE["SsdBase\n(sonic_platform_base/sonic_storage)"]
     BASE --&gt; VENDOR["SsdUtil\n(device/&lt;vendor&gt;/platform/plugins/ssdutil.py)"]
     BASE -.fallback.-&gt; SCTL[smartctl]
     VENDOR --&gt; ISMART["iSmart / SmartCmd 等\nベンダ純正"]
@@ -35462,8 +35418,8 @@
 <td>ベンダツール生出力</td>
 </tr>
 <tr>
-<td><code>ssdhealth -d /dev/sdX [-v|-e]</code></td>
-<td>内部ラッパが呼ぶスクリプトを直接実行</td>
+<td><code>ssdutil -d /dev/sdX [-v|-e]</code></td>
+<td>内部ラッパが呼ぶスクリプトを直接実行（現行 master）</td>
 </tr>
 </tbody>
 </table>
@@ -35492,21 +35448,6 @@
 <h2 id="_1">引用元<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 20dbc11976b6 -->
 
-<h2 id="_2">制限事項<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<div class="admonition diff">
-<p class="admonition-title">HLD と実装の乖離</p>
-<ul>
-<li>HLD と実装の差分は本ページの章本文で逐次注記している</li>
-<li>追加の境界事項は本セクションで列挙する</li>
-</ul>
-</div>
-<h2 id="_3">確認コマンド<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>SSD health operations の動作確認に使う代表コマンド:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 基本動作確認</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>show<span class="w"> </span>platform<span class="w"> </span>summary
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>show<span class="w"> </span>version
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>docker<span class="w"> </span>logs<span class="w"> </span>--tail<span class="w"> </span><span class="m">200</span><span class="w"> </span><span class="k">$(</span>docker<span class="w"> </span>ps<span class="w"> </span>--format<span class="w"> </span><span class="s2">&quot;{{.Names}}&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1<span class="k">)</span>
-</span></code></pre></div>
 <div class="footnote">
 <hr />
 <ol>

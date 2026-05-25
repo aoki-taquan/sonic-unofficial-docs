@@ -27403,7 +27403,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30789,7 +30789,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -37787,7 +37787,7 @@
 <h3 id="2-cfg-appl">段階 2: CFG → APPL 翻訳<a class="headerlink" href="#2-cfg-appl" title="Permanent link">&para;</a></h3>
 <ul>
 <li>hostcfgd の <code>modify_conf_file()</code> が各 RADIUS_SERVER エントリと RADIUS|global をマージし <code>/etc/pam_radius_auth.d/&lt;ip&gt;_&lt;port&gt;.conf</code> を生成。</li>
-<li>NSS 設定 (<code>/etc/sonic/radius_nss.conf</code>) も更新。</li>
+<li>NSS 設定 (<code>/etc/radius_nss.conf</code>) も更新。</li>
 <li>APP_DB への書き込みなし。</li>
 </ul>
 <h3 id="3-appl-sai">段階 3: APPL → SAI<a class="headerlink" href="#3-appl-sai" title="Permanent link">&para;</a></h3>
@@ -37886,7 +37886,7 @@
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>                      ├─ src_intf あり → get_interface_ip() で src_ip 解決
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>                      ├─ jinja2 テンプレート展開
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>                      │    → /etc/pam_radius_auth.d/&lt;ip&gt;_&lt;auth_port&gt;.conf
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>                      ├─ /etc/sonic/radius_nss.conf 更新
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>                      ├─ /etc/radius_nss.conf 更新
 </span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>                      ├─ common-auth-sonic PAM スタック更新
 </span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>                      └─ aaastatsd を start/stop (サーバリスト空否で分岐)
 </span></code></pre></div>

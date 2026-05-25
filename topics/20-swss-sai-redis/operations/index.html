@@ -27691,7 +27691,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30071,7 +30071,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -35585,7 +35585,7 @@
 </table>
 <div class="admonition warning">
 <p class="admonition-title">ERROR_DB は未実装</p>
-<p><code>ERROR_DB</code> は HLD 上の提案で <code>database_config.json</code> には登録されておらず、<code>sonic-swss-common/common/schema.h</code> にもテーブル define は存在しません。詳細は <a href="../../../architecture/error-handling-framework-in-sonic-limitations/">error-handling-framework-in-sonic-limitations</a> を参照してください。以下の <code>redis-cli -n 13</code> ベースの ERROR_DB 確認手順はあくまで HLD ベースの参考例で、現状の master では機能しません。</p>
+<p><code>ERROR_DB</code> は HLD 上の提案で <code>database_config.json</code> には登録されておらず、<code>sonic-swss-common/common/schema.h</code> にもテーブル define は存在しません。詳細は <a href="../../../architecture/error-handling-framework-in-sonic-limitations/">error-handling-framework-in-sonic-limitations</a> を参照してください。後述の ERROR_DB 確認手順はあくまで HLD ベースの参考例で、現状の master では機能しません。</p>
 </div>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>admin@sonic:~$<span class="w"> </span>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;ASIC_STATE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head

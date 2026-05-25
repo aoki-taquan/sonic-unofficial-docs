@@ -28143,7 +28143,7 @@
   <span class="md-ellipsis">
     
   
-    NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)
+    NTP テーブル群
   
 
     
@@ -30523,7 +30523,7 @@
   <span class="md-ellipsis">
     
   
-    VNET / VNET_ROUTE テーブル
+    VNET テーブル
   
 
     
@@ -36500,6 +36500,10 @@
 
 
 <h1 id="class_based_next_hop_group">CLASS_BASED_NEXT_HOP_GROUP テーブル<a class="headerlink" href="#class_based_next_hop_group" title="Permanent link">&para;</a></h1>
+<div class="admonition note">
+<p class="admonition-title">APPL_DB テーブル</p>
+<p><code>CLASS_BASED_NEXT_HOP_GROUP_TABLE</code> は <strong>CONFIG_DB ではなく APPL_DB</strong> に保持されるテーブルである。カスタムアプリケーションまたは修正版 fpmsyncd が書き込み、<code>CbfNhgOrch</code> (orchagent) が読み出して SAI へプログラムする。</p>
+</div>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>Class Based Forwarding (CBF) 用のクラスベース次ホップグループを <a href="../../glossary/#term-appl_db">APPL_DB</a> に保持するテーブル<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<code>sonic-swss</code> の <code>CbfNhgOrch</code> が <a href="../../glossary/#term-appl_db">APPL_DB</a> の <code>CLASS_BASED_NEXT_HOP_GROUP_TABLE</code> を購読し、<a href="../../glossary/#term-sai">SAI</a> の <code>SAI_NEXT_HOP_GROUP_TYPE_CLASS_BASED</code> グループを作成・削除する。</p>
 <p>CBF は <a href="../../glossary/#term-dscp">DSCP</a>/EXP 値から決定した Forwarding Class (FC) 値に基づいて、同じ宛先に対して複数の NHG のうちの 1 つへパケットをステアリングする機能<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。CBF NHG は通常 NHG (NEXT_HOP_GROUP) をメンバーとして持ち、<code>selection_map</code> によって FC 値と NHG メンバー (インデックス) の対応を定義する。</p>
