@@ -140,7 +140,7 @@ show kdump config
 |------|------|
 | `enabled` 変更は即時反映されない | grub エントリ変更のため次回 reboot 後に有効化。現行カーネルへの影響なし |
 | `memory` の値が小さすぎる | DB には書けるが kdump kernel 起動失敗（コード上のバリデーションなし、YANG 経由時のみ検証） |
-| `num_dumps` が 0 以下 | CLI は `int` として受け取るが下限チェックなし。[hostcfgd](../../reference/glossary.md#term-hostcfgd) が `kdump-config` にそのまま渡すため動作は実装依存 |
+| `num_dumps` が 0 や負値 | CLI は `int` として受け取るが下限チェックなし。[hostcfgd](../../reference/glossary.md#term-hostcfgd) が `kdump-config` にそのまま渡すため動作は実装依存 |
 | SSH key の不正フォーマット | `is_valid_ssh_key()` で検証 → エラーメッセージ出力して DB 書き込み中断 |
 | remote 未 enable 状態で remote サーバ設定 | `"Remote feature is not enabled. Please enable the remote feature first."` を表示して中断 |
 | SSH path の不正フォーマット | `is_valid_ssh_path()` で検証 → エラーメッセージ出力して DB 書き込み中断 |
