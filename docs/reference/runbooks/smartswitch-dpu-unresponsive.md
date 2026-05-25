@@ -8,9 +8,9 @@ sources:
 - repo: sonic-net/sonic-platform-daemons
   path: sonic-chassisd/scripts/chassisd
   ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
-- repo: sonic-net/sonic-platform-daemons
-  path: sonic-chassisd/tests/test_dpu_chassisd.py
-  ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
+- repo: sonic-net/sonic-host-services
+  path: scripts/dpu-state
+  ref: c5bbbe8
 related:
   config_db:
   - CHASSIS_MODULE
