@@ -230,7 +230,7 @@ sonic-fixed-voq-01|Ethernet0  MC0   ...
 
 通常の `show queue` 出力に system port 由来の queue が混じる点だけ意識します。
 
-## ASIC namespace と CONFIG_DB の見取り図 (改めて)
+## CLI / DB アクセス分担の見取り図
 
 CLI / DB アクセスの分担を改めて図にする。
 
