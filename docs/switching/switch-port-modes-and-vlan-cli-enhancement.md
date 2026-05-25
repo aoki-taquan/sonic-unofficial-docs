@@ -199,8 +199,8 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 
 | Table | フィールド |
 |-------|-----------|
-| `PORT.<name>` | `switchport_mode` (新規) |
-| `PORTCHANNEL.<name>` | `switchport_mode` (新規) |
+| `PORT.<name>` | `mode` (新規; YANG typedef 名は `switchport_mode`) |
+| `PORTCHANNEL.<name>` | `mode` (新規; YANG typedef 名は `switchport_mode`) |
 | `VLAN_MEMBER` | 既存 (`tagging_mode`)。CLI から複数指定可能になる |
 | `VLAN` | 既存 (`vlanid`)。複数追加可能 |
 
@@ -328,9 +328,7 @@ VLAN に既に割り当てられているインターフェースにルーター
     `config vlan member add` の `--untagged` フラグで native VLAN を、無印で tagged VLAN を表現する。VLAN range の一括指定（`20-22`）は `config vlan add/del` 側でサポート（`config/vlan.py`）。
 <!-- /diff-admonition -->
 
-<!-- phase-boundary -->
-
-### コマンド例
+## コマンド例（確認）
 
 switchport mode と VLAN_MEMBER の整合を確認する。
 
@@ -341,6 +339,7 @@ config switchport mode trunk Ethernet0
 show vlan brief
 ```
 
+<!-- phase-boundary -->
 ## 実装フェーズ境界
 
 !!! info "Phase 別の実装済 / 未実装 サマリ"

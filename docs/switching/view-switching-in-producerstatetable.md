@@ -126,7 +126,7 @@ sequenceDiagram
 - 切替途中で producer クラッシュ → `m_tempViewState` はメモリ消失。apply 前なら Redis は旧 view のまま、再構築可能
 
 
-### コマンド例
+## コマンド例（確認）
 
 ProducerStateTable の view 切替挙動を確認する。
 
