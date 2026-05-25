@@ -23,10 +23,6 @@ related:
   cli:
   - show error-database
   - sonic-clear error-database
-  - clear
-  - show ip
-  - show bgp
-  - config bgp
   yang:
   - sonic-bgp-global
   - sonic-bgp-neighbor
