@@ -67,8 +67,11 @@ flowchart LR
 ### 関連 HLD
 
 - [sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）](../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset.md)
-- [sonic-loopback-interface YANG](../../reference/yang/sonic-loopback-interface.md)
 - [運用](../../topics/14-platform-port-optics/operations.md)
+
+### 関連 YANG
+
+- [sonic-loopback-interface YANG](../../reference/yang/sonic-loopback-interface.md)
 
 ### 関連 Topics
 

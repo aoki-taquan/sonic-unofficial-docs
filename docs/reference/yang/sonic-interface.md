@@ -56,7 +56,7 @@ flowchart LR
 
 - [`config interface`](../cli/config-interface.md)
 
-### 関連 HLD
+### 関連 YANG
 
 - [sonic-loopback-interface YANG](../../reference/yang/sonic-loopback-interface.md)
 - [sonic-nat YANG](../../reference/yang/sonic-nat.md)

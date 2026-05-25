@@ -51,7 +51,7 @@ flowchart LR
 
 本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
-### 関連 HLD
+### 関連 YANG
 
 - [sonic-static-route YANG](../../reference/yang/sonic-static-route.md)
 - [sonic-vrf YANG](../../reference/yang/sonic-vrf.md)

@@ -65,13 +65,16 @@ flowchart LR
 ### 関連 HLD
 
 - [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)
+- [発展トピック](../../topics/15-security-aaa/advanced.md)
+
+### 関連 YANG
+
 - [sonic-banner YANG](../../reference/yang/sonic-banner.md)
 - [sonic-fips YANG](../../reference/yang/sonic-fips.md)
 - [sonic-ntp YANG](../../reference/yang/sonic-ntp.md)
 - [sonic-passwh YANG](../../reference/yang/sonic-passw-hardening.md)
 - [sonic-snmp YANG](../../reference/yang/sonic-snmp.md)
 - [sonic-ssh-server YANG](../../reference/yang/sonic-ssh-server.md)
-- [発展トピック](../../topics/15-security-aaa/advanced.md)
 
 <!-- /yang-xref -->
 
