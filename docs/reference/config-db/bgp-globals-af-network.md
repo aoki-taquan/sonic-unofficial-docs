@@ -272,7 +272,7 @@ vtysh -c "show ip bgp"
 
 **適用タイミング**: 変化検知後 FRR に `network <prefix>` コマンドを発行。次回 BGP Update で広告開始。
 
-**副作用**: 指定プレフィクスが BGP テーブルに inject されピアに広告される。ルートが存在しない場合 null-route が生成される可能性。
+**副作用**: 指定プレフィックスが BGP テーブルに inject されピアに広告される。`network_import_check=true`（FRR デフォルト）の場合、RIB にルートが存在しないと BGP UPDATE への注入は行われない。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
