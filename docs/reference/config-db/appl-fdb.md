@@ -38,24 +38,6 @@ related:
 [CONFIG_DB](../../reference/glossary.md#term-config_db) の `FDB` テーブルが静的エントリの設定ソースであるのに対し、`APPL_DB FDB_TABLE` はカーネルの [FDB](../../reference/glossary.md#term-fdb) 学習イベント (`fdbsyncd`) や `swssconfig` 投入、PAC/802.1X 認証 (`VlanMgr`) など複数の書き込み経路を持ち、`orchagent` の `FdbOrch` が [SAI](../../reference/glossary.md#term-sai) [FDB](../../reference/glossary.md#term-fdb) エントリへと変換する。
 
 <!-- defaults -->
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  KERN["カーネル FDB 学習 / fdbsyncd"]
-  VLAN["vlanmgr / swssconfig"]
-  APPDB[("APPL_DB<br/>FDB_TABLE")]
-  DM["FdbOrch"]
-  SAI["SAI<br/>sai_fdb_api"]
-  KERN --> APPDB
-  VLAN --> APPDB
-  APPDB --> DM --> SAI
-```
-
-!!! note "凡例"
-    APPL_DB 書き込み元から SAI までの典型経路を示す簡略図。詳細・例外は本ページ本文を参照。
-<!-- /cdb-mermaid -->
 
 ## コード由来デフォルト
 

@@ -46,19 +46,19 @@ CLI 生成エントリ (`TNL_CREATION_SRC_CLI`) とは別物であり、オペ�
 
 ```mermaid
 flowchart LR
-  BGP["FRR bgpd<br/>(EVPN type-3)"]
-  FBDS["fdbsyncd"]
-  BGP --> FBDS
-  APPDB[("APP_DB<br/>VXLAN_REMOTE_VNI_TABLE")]
-  FBDS --> APPDB
-  OA["orchagent<br/>EvpnRemoteVnip2pOrch"]
-  APPDB --> OA
+  CDB[("CONFIG_DB<br/>VXLAN_TUNNEL")]
+  DM["vxlanmgrd"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_VXLAN_TUNNEL_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
   SAI["SAI<br/>sai_tunnel_api"]
-  OA --> SAI
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    EVPN DIP トンネルは CONFIG_DB に直接エントリを持たない。BGP EVPN がリモート VTEP を学習した際に `fdbsyncd` が APP_DB へ書き込み、`orchagent` が動的生成する。詳細は本ページ本文を参照。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## トンネル識別

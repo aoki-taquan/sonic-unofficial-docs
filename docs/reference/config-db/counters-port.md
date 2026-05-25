@@ -33,21 +33,6 @@ related:
 
 [portsorch](../../reference/glossary.md#term-portsorch)（[orchagent](../../reference/glossary.md#term-orchagent) 内）が [SAI](../../reference/glossary.md#term-sai) の flex counter 機構を通じて物理ポートごとに取得する統計カウンタ群[^1]。値は `COUNTERS_DB` の `COUNTERS:<oid>` に格納され、`portstat` / `show interface counters` が読み出す。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  DM["syncd"]
-  CDB --> DM
-  SAI["SAI<br/>sai_*_stats"]
-  DM --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

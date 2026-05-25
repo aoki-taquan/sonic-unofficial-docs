@@ -34,19 +34,6 @@ related:
 
 `chassisd` は `CHASSIS_INFO_UPDATE_PERIOD_SECS = 10` 秒間隔のポーリングと、midplane 状態変化のイベント駆動で CHASSIS_STATE_DB を更新する。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>CHASSIS_MODULE")]
-  DM["chassisd"]
-  CDB --> DM
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## テーブル一覧
 

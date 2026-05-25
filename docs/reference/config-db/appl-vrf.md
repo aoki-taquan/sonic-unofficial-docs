@@ -66,25 +66,6 @@ VRF_TABLE|<vrfName>
 
 - `orchagent` / `VRFOrch`: `VRF_TABLE` を `SubscriberStateTable` で購読。`sai_virtual_router_api->create_virtual_router()` または `set_virtual_router_attribute()` を呼ぶ。成功後 `STATE_VRF_OBJECT_TABLE|<vrfName>` に `state=ok` を書き込む[^vrforch]。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>VRF")]
-  DM["vrfmgrd"]
-  CDB --> DM
-  APPDB[("APPL_DB<br/>APP_VRF_TABLE")]
-  DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
-  SAI["SAI<br/>sai_virtual_router_api"]
-  SYNCD --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)

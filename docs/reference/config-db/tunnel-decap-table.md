@@ -31,25 +31,6 @@ related:
 
 `tunneldecaporch` が消費する **アプリケーション層テーブル**。[CONFIG_DB](../../reference/glossary.md#term-config_db) の [`TUNNEL`](./tunnel.md) を `tunnelmgrd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に投影する形で生成され、[SAI](../../reference/glossary.md#term-sai) tunnel/tunnel-term オブジェクトに反映される[^1]。[STATE_DB](../../reference/glossary.md#term-state_db) にも同名のミラーがある。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>TUNNEL")]
-  MGR["tunnelmgrd"]
-  CDB --> MGR
-  APPDB[("APPL_DB<br/>TUNNEL_DECAP_TABLE")]
-  MGR --> APPDB
-  DM["tunneldecaporch"]
-  APPDB --> DM
-  SAI["SAI<br/>sai_tunnel_api"]
-  DM --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## DB / key
 

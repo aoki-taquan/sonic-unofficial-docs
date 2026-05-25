@@ -32,25 +32,6 @@ related:
 受信すると `RouteTableFieldValueTupleWrapper` を通じて書き込む。
 `routeorch` の `doRouteTask()` がこのテーブルを購読し、[SAI](../../reference/glossary.md#term-sai) `route_entry` を作成・更新・削除する。
 
-<!-- cdb-mermaid -->
-### データフロー
-
-```mermaid
-flowchart LR
-  FRR["FRR / zebra<br/>(ルートテーブル管理)"]
-  KERN["Linux kernel<br/>(IP ルーティング)"]
-  FPMS["fpmsyncd<br/>onRouteMsg()"]
-  APPL[("APPL_DB<br/>ROUTE_TABLE")]
-  RORCH["routeorch<br/>doRouteTask()"]
-  SAI["SAI Route API<br/>route_entry"]
-  HW["ASIC"]
-  FRR -->|FPM netlink| FPMS
-  KERN -->|netlink RTM_NEWROUTE| FPMS
-  FPMS -->|ProducerStateTable SET| APPL
-  APPL -->|ConsumerStateTable| RORCH
-  RORCH --> SAI --> HW
-```
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

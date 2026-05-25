@@ -40,19 +40,6 @@ related:
 
 `NEIGH_STATE_TABLE` は [BGP](../../reference/glossary.md#term-bgp) セッションのライブ状態 ([FRR](../../reference/glossary.md#term-frr) `show bgp summary json` の出力) を表し、`BGP_PEER_CONFIGURED_TABLE` は [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が [CONFIG_DB](../../reference/glossary.md#term-config_db) のネイバー設定を [FRR](../../reference/glossary.md#term-frr) に投入済みであることを示す確認テーブルである。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>BGP_NEIGHBOR")]
-  DM["bgpcfgd"]
-  CDB --> DM
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## テーブル 1: NEIGH_STATE_TABLE
 

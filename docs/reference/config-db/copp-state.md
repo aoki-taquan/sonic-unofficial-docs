@@ -26,25 +26,6 @@ hard: 0
 
 [STATE_DB](../../reference/glossary.md#term-state_db) には [CoPP](../../reference/glossary.md#term-copp) に関連する 3 つのテーブルが存在する。`COPP_GROUP_TABLE` と `COPP_TRAP_TABLE` は `coppmgrd` が書き込む適用状態フラグであり、`COPP_TRAP_TABLE` の `hw_status` フィールドは `orchagent` (`CoppOrch`) が [SAI](../../reference/glossary.md#term-sai) 操作の結果を反映する。`COPP_TRAP_CAPABILITY_TABLE` はプラットフォームがサポートするトラップ ID 一覧を `CoppOrch` 初期化時に公開する。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>COPP_GROUP")]
-  DM["coppmgrd"]
-  CDB --> DM
-  APPDB[("APP_DB<br/>APP_DB")]
-  DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
-  SAI["SAI<br/>sai_hostif_api"]
-  SYNCD --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## テーブル一覧
 

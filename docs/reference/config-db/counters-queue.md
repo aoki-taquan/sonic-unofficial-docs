@@ -54,21 +54,6 @@ related:
 
 [SONiC](../../reference/glossary.md#term-sonic) の `portsorch`（[orchagent](../../reference/glossary.md#term-orchagent) 内）は、ポートの Queue（送信キュー）と [Priority Group](../../reference/glossary.md#term-priority-group)（優先度グループ、PG）ごとの [SAI](../../reference/glossary.md#term-sai) ハードウェアカウンタを [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に収集する[^1]。このページではカウンタ収集に使われる [Redis](../../reference/glossary.md#term-redis) テーブル群・フィールド一覧・[FlexCounter](../../reference/glossary.md#term-flexcounter) グループのコード由来デフォルトを解説する。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  DM["syncd"]
-  CDB --> DM
-  SAI["SAI<br/>sai_*_stats"]
-  DM --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ---
 

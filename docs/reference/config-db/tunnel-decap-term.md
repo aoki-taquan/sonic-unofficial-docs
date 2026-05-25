@@ -36,27 +36,6 @@ related:
 
 `tunneldecaporch` が消費する **アプリケーション層テーブル**。[CONFIG_DB](../../reference/glossary.md#term-config_db) の [`TUNNEL`](./tunnel.md) を `tunnelmgrd` が [APPL_DB](../../reference/glossary.md#term-appl_db) に投影する形で生成される[^1]。subnet decap 機能では `ipinip.json.j2` テンプレートから `swssconfig` が書き込む。`tunneldecaporch` ([orchagent](../../reference/glossary.md#term-orchagent)) が [SAI](../../reference/glossary.md#term-sai) `create_tunnel_term_table_entry()` を呼び出してハードウェアに設定する。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>TUNNEL")]
-  TM["tunnelmgrd"]
-  CDB --> TM
-  APPDB[("APP_DB<br/>TUNNEL_DECAP_TERM_TABLE")]
-  TM --> APPDB
-  ORCH["tunneldecaporch"]
-  APPDB --> ORCH
-  SYNCD["syncd"]
-  ORCH --> SYNCD
-  SAI["SAI<br/>sai_tunnel_api"]
-  SYNCD --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路。subnet decap の場合は `ipinip.json.j2` → `swssconfig` → APPL_DB の経路も存在する。
-<!-- /cdb-mermaid -->
 
 ## DB / key
 

@@ -38,20 +38,6 @@ related:
 
 `LLDP_LOC_CHASSIS` は自ノードのローカル [LLDP](../../reference/glossary.md#term-lldp) 情報を保持する単一エントリテーブルで、同様に [APPL_DB](../../reference/glossary.md#term-appl_db) に存在する[^2]。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  lldpd["lldpd (open-lldp)"]
-  syncd["lldp-syncd"]
-  APPL[("APPL_DB<br/>LLDP_ENTRY_TABLE")]
-  lldpd --> syncd --> APPL
-```
-
-!!! note "凡例"
-    本テーブルは CONFIG_DB ではなく APPL_DB テーブル。lldpd が受信した LLDP PDU を lldp-syncd が APPL_DB に書き込む。外部からの書き込みは存在しない。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

@@ -36,21 +36,6 @@ related:
 通常の [CONFIG_DB](../../reference/glossary.md#term-config_db) `MIRROR_SESSION` テーブルとは独立したパスであり、[P4RT](../../reference/glossary.md#term-p4rt) 経由のプログラムにのみ利用される。
 セッションタイプは常に **ERSPAN (Enhanced Remote SPAN)** に固定され、GRE トンネルパラメータをすべて明示的に指定する必要がある。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>MIRROR_SESSION")]
-  DM["MirrorOrch"]
-  CDB --> DM
-  SAI["SAI<br/>sai_mirror_api"]
-  DM --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

@@ -40,25 +40,6 @@ related:
 
 [CONFIG_DB](../../reference/glossary.md#term-config_db) の静的エントリ (`FDB` テーブル) とは異なり、本テーブルはランタイム動的学習エントリのみを保持する。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  NL["カーネル netlink<br/>(RTM_NEWNEIGH)"]
-  FBDS["fdbsyncd"]
-  NL --> FBDS
-  APPDB[("APP_DB<br/>VXLAN_FDB_TABLE")]
-  FBDS --> APPDB
-  OA["orchagent<br/>FdbOrch"]
-  APPDB --> OA
-  SAI["SAI<br/>sai_fdb_api"]
-  OA --> SAI
-```
-
-!!! note "凡例"
-    このテーブルは APP_DB に存在し、`fdbsyncd` が netlink イベントから書き込む。CONFIG_DB を起点とする通常の config-db フローとは異なる。詳細は本ページ本文を参照。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

@@ -33,26 +33,6 @@ CBF は [DSCP](../../reference/glossary.md#term-dscp)/EXP 値から決定した 
 !!! note "fpmsyncd との関係"
     HLD Rev 0.2 の Restrictions 節に記載のとおり、標準の `fpmsyncd` はこのテーブルを書き込まない。本テーブルを利用するには修正版 fpmsyncd またはカスタムアプリケーションが APPL_DB に直接書き込む必要がある。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  APPL[("APPL_DB\nCLASS_BASED_NEXT_HOP_GROUP_TABLE")]
-  OA["CbfNhgOrch\n(orchagent)"]
-  NhgOrch["NhgOrch\n(メンバー NHG 参照)"]
-  NhgMapOrch["NhgMapOrch\n(selection_map 参照)"]
-  SAI["SAI NHG API\n(CLASS_BASED)"]
-  HW["ASIC"]
-  APPL --> OA
-  OA --> NhgOrch
-  OA --> NhgMapOrch
-  OA --> SAI --> HW
-```
-
-!!! note "凡例"
-    APPL_DB エントリを CbfNhgOrch が受信し、メンバー NHG および選択マップの存在を確認してから SAI へプログラムする。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

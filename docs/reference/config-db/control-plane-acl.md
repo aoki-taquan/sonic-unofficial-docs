@@ -46,17 +46,19 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>ACL_TABLE\n(type=CTRLPLANE)")]
-  ACLORCH["AclOrch\nm_ctrlAclTables\n登録のみ"]
-  CACLMGRD["caclmgrd"]
-  IPTABLES["iptables/ip6tables\n(カーネル)"]
-  CDB --> ACLORCH
-  CDB --> CACLMGRD
-  CACLMGRD --> IPTABLES
+  CDB[("CONFIG_DB<br/>ACL_TABLE")]
+  DM["AclOrch"]
+  CDB --> DM
+  APPDB[("APP_DB<br/>APP_ACL_TABLE_TABLE")]
+  DM --> APPDB
+  SYNCD["syncd"]
+  APPDB --> SYNCD
+  SAI["SAI<br/>sai_acl_api"]
+  SYNCD --> SAI
 ```
 
 !!! note "凡例"
-    CTRLPLANE ACL は SAI に投入されない。`AclOrch` は `m_ctrlAclTables` に記録するのみで、実際の CPU 宛パケット制御は `caclmgrd` が iptables を書き換えることで行う。
+    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

@@ -41,30 +41,6 @@ related:
 - `action=ACK_ALARM` 受信 → `acknowledged=true`、`acknowledge-time` 更新
 - `action=UNACK_ALARM` 受信 → `acknowledged=false`、`acknowledge-time` 更新
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  APP["アプリケーション<br/>(pmon/swss/bgp等)"]
-  ZMQ["zmqproxy"]
-  ED["eventd<br/>Alarm Consumer"]
-  EVDB[("EVENT_DB<br/>ALARM")]
-  ASTATS[("EVENT_DB<br/>ALARM_STATS")]
-  NBI["CLI/REST/gNMI"]
-  LED["System LED<br/>(pmon)"]
-
-  APP -- "event_publish(RAISE_ALARM)" --> ZMQ
-  ZMQ --> ED
-  ED -- "HSET ALARM|id ..." --> EVDB
-  ED --> ASTATS
-  NBI -- "hgetall" --> EVDB
-  ASTATS --> LED
-```
-
-!!! note "凡例"
-    EVENT_DB 内の ALARM テーブルへの書き込み経路を示す。CONFIG_DB 経由ではない。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

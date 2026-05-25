@@ -29,21 +29,6 @@ related:
 
 [PFC Watchdog](../../reference/glossary.md#term-pfc-watchdog) の runtime 状態・カウンタは **[COUNTERS_DB](../../reference/glossary.md#term-counters_db)** の `COUNTERS:<queue_oid>` ハッシュに書き込まれる（[STATE_DB](../../reference/glossary.md#term-state_db) ではない）。`pfcwdorch` が [CONFIG_DB](../../reference/glossary.md#term-config_db) `PFC_WD|<port>` を読み込んで [PFC](../../reference/glossary.md#term-pfc) WD を有効化した際に初期フィールドが書き込まれ、以降は storm 検知・復旧のたびに更新される。[^1]
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>PFC_WD")]
-  DM["PfcWdSwOrch"]
-  CDB --> DM
-  SAI["SAI<br/>sai_acl_api"]
-  DM --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

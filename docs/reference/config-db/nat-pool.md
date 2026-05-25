@@ -45,10 +45,10 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>NAT_POOL")]
+  CDB[("CONFIG_DB<br/>NAT_GLOBAL")]
   DM["natmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>NAT_DNAT_POOL_TABLE")]
+  APPDB[("APP_DB<br/>APP_NAT_GLOBAL_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

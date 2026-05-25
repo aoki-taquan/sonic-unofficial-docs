@@ -43,7 +43,7 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>DHCP_SERVER_IPV6")]
+  CDB[("CONFIG_DB<br/>DHCP_SERVER_IPV4")]
   DM["dhcpservd"]
   CDB --> DM
 ```

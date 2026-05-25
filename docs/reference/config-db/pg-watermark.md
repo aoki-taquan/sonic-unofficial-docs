@@ -48,9 +48,9 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
-  DM["syncd"]
+  DM["FlexCounterOrch"]
   CDB --> DM
-  SAI["SAI<br/>sai_*_stats"]
+  SAI["SAI<br/>sai_counter_api"]
   DM --> SAI
 ```
 

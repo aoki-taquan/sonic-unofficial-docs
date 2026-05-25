@@ -45,21 +45,6 @@ gNSI Certz は gRPC 経由の `certz.Rotate` RPC で証明書を更新し、確�
 
 デフォルトプロファイル名は `"gnxi"` で、起動時に `bootstrapDefaultProfile()` が自動生成する[^1]。
 
-<!-- cdb-mermaid -->
-### データフロー
-
-```mermaid
-flowchart LR
-  GNSI["gNSI Certz<br/>(gnsi_certz.go)"]
-  SDB[("STATE_DB<br/>CREDENTIALS|CERT|&lt;profileID&gt;")]
-  CRL["ファイルシステム<br/>CRL ディレクトリ"]
-  GNSI -->|writeEntityFreshness| SDB
-  GNSI -->|ファイル書き込み| CRL
-```
-
-!!! note "凡例"
-    gNSI Certz が証明書 Rotate 時に STATE_DB へ直接書き込むフロー（CONFIG_DB・SAI 経路は存在しない）。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ## key 構造
 

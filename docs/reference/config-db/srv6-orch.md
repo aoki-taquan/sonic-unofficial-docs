@@ -48,7 +48,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>SRV6_MY_SIDS")]
   DM["Srv6Orch"]
   CDB --> DM
-  APPDB[("APPL_DB<br/>SRV6_MY_SID_TABLE")]
+  APPDB[("APP_DB<br/>APP_SRV6_MY_SID_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD

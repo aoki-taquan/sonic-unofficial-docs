@@ -39,25 +39,6 @@ hard: 0
 これらは `fpmsyncd` が [FRR](../../reference/glossary.md#term-frr) の netlink メッセージを受け取って書き込み、
 `Srv6Orch`（`sonic-swss/orchagent/srv6orch.cpp`）が消費して [SAI](../../reference/glossary.md#term-sai) オブジェクトを作成する。
 
-<!-- cdb-mermaid -->
-### データフロー (自動生成)
-
-```mermaid
-flowchart LR
-  CDB[("CONFIG_DB<br/>SRV6_MY_SIDS")]
-  DM["Srv6Orch"]
-  CDB --> DM
-  APPDB[("APPL_DB<br/>SRV6_MY_SID_TABLE")]
-  DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
-  SAI["SAI<br/>sai_srv6_api"]
-  SYNCD --> SAI
-```
-
-!!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
-<!-- /cdb-mermaid -->
 
 ---
 
