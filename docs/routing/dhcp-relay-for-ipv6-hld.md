@@ -39,7 +39,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 16 章: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-buildimage/dockers/docker-dhcp-relay/docker-dhcp-relay.supervisord.conf.j2` L58 と `dhcp-relay.programs.j2` L7/L27 で `DHCP_RELAY[vlan_name]['dhcpv6_servers']` 条件で v6 用エントリを生成、`dhcpv6-relay.agents.j2` L3-4 で `dhcpv6_servers` ループによる `dhcrelay -6` 形式の上流サーバ展開を確認。`cli-plugin-tests/test_config_dhcp_relay.py` / `test_show_dhcp_relay.py` で `dhcpv6_servers` キーを使ったテスト構成を確認（verified at: 2026-05-09）。
 
 # DHCPv6 リレー（dhcp-relay docker 内の dhcrelay -6 プロセス）

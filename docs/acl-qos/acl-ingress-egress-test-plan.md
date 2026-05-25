@@ -24,7 +24,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     sonic-utilities `acl_loader/main.py` L1140 `show` / L1198 `update` グループと `show_table` (L960) / `show_rule` (L1050) で現行 CLI 体系を確認。orchagent 側 egress ACL は `acltable.h` L67 で `STAGE_EGRESS → SAI_ACL_STAGE_EGRESS` マップ、`portsorch.cpp` L2741 で stage 判定の実装を確認。HLD で参照される `DATAINGRESS` / `DATAEGRESS` テーブル / 28 ルールセットは `sonic-net/SONiC` `doc/acl/ACL-Ingress-Egress-test-plan.md` 自体で定義されており、orchagent / SAI 側の egress stage 対応も現行 master に取り込み済み（verified at: 2026-05-09）。
 
 # ACL Ingress / Egress テストプラン（`DATAINGRESS` / `DATAEGRESS` テーブル）

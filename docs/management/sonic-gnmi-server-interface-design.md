@@ -38,7 +38,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-gnmi/gnmi_server/server.go` L925 で `origin == "sonic-db"` 判定、L60/L646 で `enableConfigDbJournal` フラグを確認。`sonic-gnmi/sonic_data_client/mixed_db_client.go` L65 `Name: "sonic-db"` / L1255-1267 で `import sonic_yang` Python 連携、L1433 `c.origin == "sonic-db"` の分岐、`sonic-gnmi/sonic_service_client/dbus_client_test.go` L233-313 で `ConfigReload` dbus client 経由の host service 呼び出し UT を確認（verified 2026-05-09）。
 
 # SONiC gNMI Server インタフェース設計

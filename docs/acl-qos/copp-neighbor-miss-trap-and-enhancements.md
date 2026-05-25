@@ -23,7 +23,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     現行 master の `sonic-swss/orchagent/copporch.cpp:99` で `neighbor_miss → SAI_HOSTIF_TRAP_TYPE_NEIGHBOR_MISS` マップ、line 106 の `default_supported_trap_ids`、line 199 の `STATE_COPP_TRAP_CAPABILITY_TABLE_NAME`、line 222-235 の `updateTrapOperStatus` (`hw_status` 公開)、line 239-287 の `query_objecttype_implementation`/`enum_values_capability` クエリ、`sonic-buildimage/files/image_config/copp/copp_cfg.j2:66,135` の `queue1_group3` / `neighbor_miss` 追加、`sonic-utilities/show/copp.py:189-206` の `show copp configuration` CLI を確認済み（verified at: 2026-05-09）。
 
 # CoPP Neighbor Miss trap と enum capability query（`show copp configuration`）

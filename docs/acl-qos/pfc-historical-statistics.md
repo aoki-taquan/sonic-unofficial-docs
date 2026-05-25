@@ -30,7 +30,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 08 章: QoS / Buffer / PFC](../topics/08-qos-buffer/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（Broadcom 限定）"
+!!! success "裏取りステータス: code-verified（Broadcom 限定）"
     現行 master で実装を確認: `sonic-swss/orchagent/pfc_detect_broadcom.lua` に `EST_PORT_STAT_PFC_*_RX_PAUSE_DURATION_US` / `EST_PORT_STAT_PFC_*_RECENT_PAUSE_TIME_US` 等の estimate フィールド (L20-45)、`sonic-swss/orchagent/pfcwdorch.cpp` に `PFC_STAT_HISTORY` 設定キー (L18)、`sonic-utilities/scripts/pfcstat` に `--history` オプション (L376) と `collect_history` / `get_history` 実装 (L154-)、`sonic-utilities/config/main.py` に `config pfcwd pfc_stat_history` (L3529-) と `config pfcwd start --pfc-stat-history` (L3457) を確認 (verified at: 2026-05-09)。
 
 # PFC 履歴統計（PFCWD lua スクリプトによる estimate と `--history` CLI）

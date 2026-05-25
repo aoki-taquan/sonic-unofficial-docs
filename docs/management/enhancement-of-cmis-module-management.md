@@ -22,7 +22,7 @@ related:
   - sonic-crm
 ---
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/portsorch.cpp` L948-953 で `SAI_PORT_ATTR_HOST_TX_SIGNAL_ENABLE` capability query、L959-981 で `SAI_SWITCH_ATTR_PORT_HOST_TX_READY_NOTIFY` の switch attribute 設定、L1366 / L6024-6038 で port 単位の `HOST_TX_SIGNAL_ENABLE` set ロジックを確認（verified 2026-05-09）。
 
 # CMIS モジュール管理拡張（`host_tx_signal` / `host_tx_ready` の同期）

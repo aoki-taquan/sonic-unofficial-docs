@@ -22,7 +22,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 16 章: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-buildimage/src/isc-dhcp/patch/0015-option-to-set-primary-address-in-interface.patch` で dhcrelay の `-pg` オプション実装パッチを確認。`sonic-buildimage/dockers/docker-dhcp-relay/dhcpv4-relay.agents.j2` L27-28 で `VLAN_INTERFACE | get_primary_addr` を回して primary IPv4 のみ `-pg <gateway>` 引数を組み立てる Jinja を確認。`get_primary_addr` フィルタは `sonic-buildimage/src/sonic-config-engine/sonic-cfggen` L168 で定義（secondary を除外して primary のみ返す）、L302 で env.filters に登録。`sonic-utilities/config/main.py` L5680 で `--secondary/-s` フラグ、L5794-L5806 で VLAN_INTERFACE への `secondary: "true"` 書き込みを確認（verified at: 2026-05-09）。
 
 # DHCPv4 Relay の giaddr を Primary サブネットに固定（VLAN_INTERFACE secondary）

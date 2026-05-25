@@ -19,7 +19,7 @@ related:
     - sonic-syslog
 ---
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `rsyslog-config.service` / `rsyslog-config.sh`（`sonic-buildimage/files/image_config/rsyslog/`）が CONFIG_DB の SYSLOG_SERVER / SYSLOG_CONFIG を読み rsyslog テンプレを再生成。YANG: `sonic-yang-models/yang-models/sonic-syslog.yang` に SYSLOG_SERVER / SYSLOG_CONFIG が定義（source IP / VRF / port / severity / message_format 等）。`config syslog` / `show syslog` CLI は sonic-utilities に存在。HLD の主要構造（rsyslog omfwd + source IP + VRF binding + IP_FREEBIND）は実装に反映。
 
 # Syslog Source IP

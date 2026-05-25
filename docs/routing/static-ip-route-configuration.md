@@ -26,7 +26,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+!!! success "裏取りステータス: code-verified（基本構成のみ）"
     現行 master の `sonic-buildimage/src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` で STATIC_ROUTE 監視 (`'STATIC_ROUTE': ['mgmtd']`, `nexthop/ifname/distance/nexthop-vrf/blackhole/track` フィールド) を確認、staticd.db.conf.j2 テンプレートで実 staticd 設定生成。`sonic-utilities/config/main.py` に `config route add/del`、テストでも STATIC_ROUTE への書き込みを検証。HLD は古いが現行実装と整合（verified at: 2026-05-09）。
 
 # Static IP Route 設定（STATIC_ROUTE → frrcfgd → FRR）

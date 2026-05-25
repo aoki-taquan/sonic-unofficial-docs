@@ -36,7 +36,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     現行 master の `sonic-swss/orchagent/icmporch.cpp`（`IcmpOrch::create_icmp_session` 等、`sai_icmp_echo_api` 利用）、`sonic-linkmgrd/src/link_prober/LinkProberBase.cpp:702-729` の GUID 生成、`SAI_ICMP_ECHO_SESSION_ATTR_GUID`（icmporch.cpp:457）の使用を確認済み（verified at: 2026-05-09）。
 
 # ICMP Hardware Offload（DualToR link prober の NPU 化）

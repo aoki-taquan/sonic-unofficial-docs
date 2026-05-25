@@ -45,7 +45,7 @@ L2 / link layer の制御面を扱う。具体的には:
 
 ## 検証状況
 - ページ数: 19
-- 分布: Code-verified: 12 / Discrepancy-found: 4 / HLD-only: 3
+- 分布: code-verified: 12 / Discrepancy-found: 4 / HLD-only: 3
 
 ## 実装差分があるページ
 - [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](layer-2-forwarding-enhancements.md)
@@ -61,24 +61,24 @@ L2 / link layer の制御面を扱う。具体的には:
 
 | ページ | 検証 |
 |---|---|
-| [BUM ストームコントロール（PORT_STORM_CONTROL）](sonic-bum-storm-control.md) | Code-verified |
-| [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](sonic-sai-post-support-for-macsec.md) | Code-verified |
-| [Gearbox PHY ごとの MACsec backend 決定（macsec_supported）](sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md) | Code-verified |
+| [BUM ストームコントロール（PORT_STORM_CONTROL）](sonic-bum-storm-control.md) | code-verified |
+| [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](sonic-sai-post-support-for-macsec.md) | code-verified |
+| [Gearbox PHY ごとの MACsec backend 決定（macsec_supported）](sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md) | code-verified |
 | [ICCPd 内部構成（MC-LAG / MLACP FSM ファイル別マップ）](brief-introduction-of-iccp-code.md) | HLD-only |
-| [IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）](sonic-ip-lag-incremental-update.md) | Code-verified |
+| [IP / LAG / MTU の Incremental Update（portmgrd / intfmgrd / teammgrd 分担）](sonic-ip-lag-incremental-update.md) | code-verified |
 | [L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）](layer-2-forwarding-enhancements.md) | Discrepancy-found |
-| [MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）](macsec-sonic-high-level-design-document.md) | Code-verified |
-| [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](mclag-enhancements.md) | Code-verified |
-| [Multiple Spanning Tree Protocol (MSTP) on SONiC](multiple-spanning-tree-protocol.md) | Code-verified |
-| [PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）](openconfig-support-for-portchannel-aggregate-interface.md) | Code-verified |
-| [ProducerStateTable の view switching（warm reboot 用の差分適用）](view-switching-in-producerstatetable.md) | Code-verified |
-| [SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）](sonic-basic-l2-mode-test-plan.md) | Code-verified |
+| [MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）](macsec-sonic-high-level-design-document.md) | code-verified |
+| [MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）](mclag-enhancements.md) | code-verified |
+| [Multiple Spanning Tree Protocol (MSTP) on SONiC](multiple-spanning-tree-protocol.md) | code-verified |
+| [PortChannel (LAG) の OpenConfig YANG サポート（REST / gNMI）](openconfig-support-for-portchannel-aggregate-interface.md) | code-verified |
+| [ProducerStateTable の view switching（warm reboot 用の差分適用）](view-switching-in-producerstatetable.md) | code-verified |
+| [SONiC Basic L2 モードテストプラン（FDB / VLAN / SNMP の最小機能検証）](sonic-basic-l2-mode-test-plan.md) | code-verified |
 | [SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約](control-sonic-behaviors-with-system-defaults-table.md) | HLD-only |
 | [Switchport モード（access / trunk / routed）と VLAN CLI 拡張](switch-port-modes-and-vlan-cli-enhancement.md) | Discrepancy-found |
-| [VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）](add-support-for-vlan-interface-using-openconfig-yang.md) | Code-verified |
+| [VLAN インタフェースの OpenConfig YANG 対応（REST / gNMI）](add-support-for-vlan-interface-using-openconfig-yang.md) | code-verified |
 | [Wake-on-LAN（wol CLI と SonicWolService gNOI）](wake-on-lan-in-sonic.md) | Discrepancy-found |
-| [Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）](increasing-lacp-pdu-timeout-during-warm-reboot.md) | Code-verified |
+| [Warm-reboot 中の LACP retry count 拡張（LACP version 0xf1 / 新規 TLV）](increasing-lacp-pdu-timeout-during-warm-reboot.md) | code-verified |
 | [リンクイベントダンピング（AIED アルゴリズムと SyncD intercept）](link-event-damping-hld.md) | Discrepancy-found |
-| [分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）](lag-on-distributed-voq-system.md) | Code-verified |
+| [分散 VOQ シャシでの LAG（SYSTEM_LAG_TABLE と system_lag_id）](lag-on-distributed-voq-system.md) | code-verified |
 
 <!-- glossary-links-injected: 65a8d86c0245 -->

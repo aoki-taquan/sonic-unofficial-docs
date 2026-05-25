@@ -22,7 +22,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 20 章: SWSS / SAI / Redis](../topics/20-swss-sai-redis/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-swss-common/common/dbconnector.h` L44-49 で「namespace でコンテナ群を一意識別、空文字なら default(host) namespace」のコメント、L107 で `load_sonic_global_db_config(global_db_file_path=DEFAULT_SONIC_DB_GLOBAL_CONFIG_FILE, namespace=None, ignore_nonexistent=False)` Python API、L149/L151 で `{containerName, namespace}` キーの instance / database マップ実装を確認。`sonic-swss-common/common/dbconnector.cpp` L225 で `database_global.json` 未ロード時 `initializeGlobalConfig` を要請するエラー処理を確認。`sonic-swss-common/tests/redis_multi_db_ut_config/database_global.json` L4-28 で `include` ディレクティブによる per-namespace `database_config*.json` の集約形式を、`sonic-buildimage/dockers/docker-database/database_global.json.j2` テンプレ存在を確認（verified at: 2026-05-09）。
 
 # Multi-ASIC 名前空間の Redis（database_global.json と SonicDBConfig）

@@ -38,7 +38,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-mgmt-common/models/yang/openconfig-if-ethernet.yang` L162 `identity SPEED_400GB` / L172 `identity SPEED_800GB` を確認（200/600GB も同 yang 内）。`sonic-mgmt-common/translib/transformer/xfmr_intf.go` L3796-3828 で `ipv6_use_link_local_only` フィールドの YangToDb / DbToYang transformer 実装を確認（`oc-ip:enabled` ↔ `ipv6_use_link_local_only` mapping）。`sonic-mgmt-common/models/yang/annotations/openconfig-interfaces-annot.yang` L54-90 で `oc-eth:ethernet/state/oc-lag:aggregate-id` の deviation と PortChannel min-links field-transformer を確認。translib transformer 配下に統合済み（verified at: 2026-05-09）。
 
 # OpenConfig Interfaces YANG（Ethernet 設定の REST/gNMI 対応と sonic-mgmt-common transformer）

@@ -33,7 +33,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 01 章: SONiC 概要](../topics/01-overview/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     このページは公式 HLD のみを根拠に書かれている。`db_migrator.py` / `minigraph.py` / `sonic-cfggen` 等の実装による裏取りは未済。
 
 # SYSTEM_DEFAULTS テーブルによる SONiC 既定値の集約

@@ -17,7 +17,7 @@ related: {}
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（命名差分あり）"
+!!! success "裏取りステータス: code-verified（命名差分あり）"
     `sonic-pins/p4rt_app/p4runtime/p4runtime_impl.cc` および `p4runtime_read.cc` で実装を確認。HLD の `table_entry_cache_` は実装では `entity_cache_`（type は `absl::flat_hash_map<pdpi::EntityKey, p4::v1::Entity>`）に汎化されており、TableEntry に加え PacketReplicationEngineEntry も保持する。Write 連動更新は `UpdateCacheAndUtilizationState`（INSERT/MODIFY 反映 + DELETE で `erase`）、Read は `entity_cache_` 走査で AppDb を見ない経路 (`p4runtime_read.cc` AppendTableEntryReads)、検証ロジックは `P4RuntimeImpl::VerifyState()` で `VerifyP4rtTableWithCacheEntities` を呼ぶ実装を確認。warm boot は `warm_boot_state_adapter_` でフレームワーク化済み（HLD 記載の事前充填案を踏まえた基盤）(verified at: 2026-05-09)。
 
 # P4RT App の Read キャッシュ（PI 形式の table_entry_cache_）

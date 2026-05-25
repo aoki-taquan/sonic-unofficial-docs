@@ -37,7 +37,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     sonic-buildimage `src/sonic-bgpcfgd/bgpcfgd/managers_srv6.py` L12 `SRV6_MY_SIDS_TABLE_NAME`、L14 `class SRv6Mgr(Manager)`、L37 `locators_set_handler` / L56 `sids_set_handler`（locator 不在時に `SRV6_MY_LOCATORS` を subscribe して deferred 解決する経路を含む）を確認。`src/sonic-bgpcfgd/bgpcfgd/main.py` L30 で `from .managers_srv6 import SRv6Mgr` を確認。`src/sonic-frr-mgmt-framework/frrcfgd/frrcfgd.py` L121 で `'SRV6_MY_LOCATORS': ['zebra']` / L123 で `'SRV6_MY_SIDS': ['mgmtd']` のターゲット daemon 設定、L2732 SRV6_MY_LOCATORS handler、L2751-2768 SRV6_MY_SIDS handler で `vtysh -c "segment-routing" -c "srv6" -c "static-sids" -c "sid {} locator {} behavior {} vrf {}"` の vtysh コマンドラインを生成する経路を確認。YANG は sonic-yang-models `yang-models/sonic-srv6.yang` の `SRV6_MY_LOCATORS` / `SRV6_MY_SIDS` リスト定義を確認、`Configuration.md` L3281-3285 で SRv6 テーブルが正式に文書化されていることを確認（verified at: 2026-05-09）。
 
 # SRv6 Static SID/Locator 設定（CONFIG_DB → bgpcfgd → FRR）

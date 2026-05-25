@@ -27,7 +27,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 16 章: NAT / DHCP / DNS](../topics/16-nat-dhcp-dns/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-buildimage/dockers/docker-dhcp-server/` で dhcp_server コンテナ（Dockerfile.j2 / kea-dhcp4.conf.j2 / lease_update.sh / docker_init.sh / supervisord.conf）を確認。`sonic-buildimage/src/sonic-dhcp-utilities/dhcp_utilities/dhcpservd/dhcpservd.py` で dhcpservd daemon、`dhcp_utilities/dhcprelayd/dhcprelayd.py` で dhcprelayd を確認。`sonic-buildimage/dockers/docker-dhcp-relay/docker-dhcp-relay.supervisord.conf.j2` L92-93 で `[program:dhcprelayd]` の supervisord 起動を確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dhcp-server-ipv4.yang` で YANG を確認（verified 2026-05-09）。
 
 # ポートベース IPv4 DHCP Server（`kea-dhcp-server` + `dhcrelay` Option 82 連携）

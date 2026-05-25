@@ -34,7 +34,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 12 章: Multi-ASIC / VoQ / Chassis](../topics/12-multi-asic-voq/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     sonic-utilities `config/main.py` L99 で `DEFAULT_GOLDEN_CONFIG_DB_FILE = '/etc/sonic/golden_config_db.json'` 定義、L2520 で `config reload` 内から `config override-config-table <golden>` を呼ぶ経路、L2580-2620 の `override_config_table` 実装で `multi_asic.is_multi_asic()` のとき `HOST_NAMESPACE` (= "localhost") キーを host CONFIG_DB に、各 namespace キーを ASIC CONFIG_DB に振り分ける処理を確認。L1548-1549 で `localhost` / `asicN` 階層への serialize、L1630-1631 で逆向きに `asic_name = HOST_NAMESPACE if ns == DEFAULT_NAMESPACE else ns` で各 ASIC config を取り出す経路を確認。L1917-1965 の `apply_patch` で `--parallel` で各 ASIC に並列適用、`_gcu_apply_patch_from_file` ベースの実装を確認。L2341-2352 で `load_minigraph --override_config -p <golden_config_path>` 経路、L2520 で reload 経由の override も確認（verified at: 2026-05-09）。
 
 # multi-ASIC 用 Golden Config 単一 JSON フォーマット（`localhost` / `asic0` / `asic1` ...）

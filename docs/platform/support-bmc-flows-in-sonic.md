@@ -29,7 +29,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-platform-common/sonic_platform_base/redfish_client.py` の `RedfishClient`、`bmc_base.py` の `ComponentBMC` / `BmcBase`、`sonic-utilities/show/platform.py` の `def bmc()` / `def bmc_summary()` Click グループが master に存在。`generate_dump` の BMC dump 取り込み経路も確認済み。HLD と実装は一致 (verified at: 2026-05-11)。
 
 # BMC / Redfish 統合

@@ -30,7 +30,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 07 章: ACL / CoPP / Mirror](../topics/07-acl-copp-mirror/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（基本構成のみ）"
+!!! success "裏取りステータス: code-verified（基本構成のみ）"
     現行 master の `sonic-swss/orchagent/debugcounterorch.cpp` で `DebugCounterOrch` クラスと `STATE_DEBUG_COUNTER_CAPABILITIES` テーブル登録 (debugcounterorch.cpp:31) を確認。`sonic-utilities` 側に `config dropcounters install/...` (config/main.py:8163-)、`show dropcounters persistent_drops` (show/dropcounters.py) が存在し、v1.1 の persistent drop monitoring まで取り込み済み。`sonic-yang-models/yang-models/sonic-debug-counter.yang` も存在。詳細属性は元 HLD 参照（verified at: 2026-05-09）。
 
 # 設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）

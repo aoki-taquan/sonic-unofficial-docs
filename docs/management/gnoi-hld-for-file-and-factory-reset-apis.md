@@ -26,7 +26,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-host-services/host_modules/gnoi_reset.py` L28-78 で `factoryOs` / `zeroFill` / `retainCerts` フラグ受領と `factory_os_unsupported` / `zero_fill_unsupported` レスポンス分岐実装を確認。`sonic-gnmi/gnmi_server/gnoi_reset.go` L16-41 で `factory_reset.Start` ハンドラが DBus 経由 `FactoryReset` を呼ぶ実装、`sonic-gnmi/sonic_service_client/dbus_client.go` L353 で `DbusClient.FactoryReset`、`sonic-gnmi/pkg/gnoi/file/remove_test.go` L18-49 で File.Remove のパス検証（nil / config_db.json / `../../etc/passwd` リジェクト等）を確認。`sonic-gnmi/gnoi_client/file/file.go` L26-58 で File Stat/Get クライアント、`sonic-gnmi/gnoi_client/factory_reset/factory_reset.go` を確認。
 
 # gNOI File.Remove と FactoryReset.Start

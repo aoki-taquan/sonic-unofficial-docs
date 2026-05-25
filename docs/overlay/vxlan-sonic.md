@@ -41,7 +41,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 03 章: VXLAN / EVPN とオーバーレイ](../topics/03-vxlan-evpn/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     現行 master で実装済みを確認。`sonic-swss/orchagent/vxlanorch.h:268,414,462,499,512,541` で `VxlanTunnelOrch` / `VxlanTunnelMapOrch` / `VxlanVrfMapOrch` / `EvpnRemoteVnip2pOrch` / `EvpnRemoteVnip2mpOrch` / `EvpnNvoOrch`、`vnetorch.h:250,362,381,504,618` で `VNetOrch` / `MonitorOrch` / `BfdMonitorOrch` / `VNetRouteOrch` / `VNetCfgRouteOrch`、`sonic-swss-common/common/schema.h:85-87,435` で `APP_VXLAN_TUNNEL_TABLE_NAME` / `APP_VXLAN_TUNNEL_MAP_TABLE_NAME` / `APP_VXLAN_FDB_TABLE_NAME` / `STATE_VXLAN_TUNNEL_TABLE_NAME`、`vxlanorch.cpp:534,903,1160` で EVPN 経由のトンネル生成 (`TNL_CREATION_SRC_EVPN`) を確認（verified at: 2026-05-09）。HLD で言及される実装は `VxlanOrch` ではなく **`VxlanTunnelOrch`**（複数の Orch2 派生クラスに分割）として現行 master に存在する。
 
 # VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper）

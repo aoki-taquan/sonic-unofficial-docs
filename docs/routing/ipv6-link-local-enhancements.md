@@ -41,7 +41,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 02 章: BGP と FRR 制御プレーン](../topics/02-bgp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-swss/cfgmgr/intfmgr.cpp:817` で `ipv6_use_link_local_only` ハンドリング、L926 で APP_DB 伝搬。`sonic-swss/orchagent/nexthopkey.h:27-28` で `NextHopKey` が `(IpAddress, alias)` 構造。`routeorch.cpp:176-190` で /128 IP2ME と `fe80::/10` の両ルートを `addLinkLocalRouteToMe` でプログラム。CLI は `sonic-utilities/show/main.py` で確認 (verified at: 2026-05-09)。
 
 # IPv6 Link-Local アドレス管理（自動生成と use-link-local-only）

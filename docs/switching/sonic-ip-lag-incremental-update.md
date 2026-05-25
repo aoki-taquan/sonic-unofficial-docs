@@ -47,7 +47,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 06 章: L2 / VLAN / LAG](../topics/06-l2-vlan-lag/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `portmgrd` / `intfmgrd` / `teammgrd` の 3 daemon は現行 master の `sonic-swss/cfgmgr/{portmgr,intfmgr,teammgr}.cpp` に存在し、HLD の責務分担と一致。`config portchannel add` は `min_links` / `fallback` を受け付ける（`sonic-utilities/config/main.py:2835-2853`）。Phase 1/2（loopback の portmgrd 移管、teamd docker 再起動の状態復元）の現状は別途裏取り。
 
 # IP / LAG / MTU の Incremental Update

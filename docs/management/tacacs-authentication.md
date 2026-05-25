@@ -30,7 +30,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 15 章: Security / AAA](../topics/15-security-aaa/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `hostcfgd` の `class AaaCfg` で `AAA` / `TACPLUS` / `TACPLUS_SERVER` を購読し `/etc/pam.d/common-auth-sonic` と `/etc/tacplus_nss.conf` を生成、`pam_tacplus` の `source_ip` パッチ (`0006-Add-support-for-source-ip-address.patch`)、`sonic-utilities/config/aaa.py` の `config tacacs` CLI 群を確認済み（verified at: 2026-05-09）。
 
 # TACACS+ 認証

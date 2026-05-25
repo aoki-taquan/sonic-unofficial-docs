@@ -41,7 +41,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-device_metadata.yang` L148 で `yang_config_validation` leaf 定義、`Configuration.md` L1111 で既定 `"yang_config_validation": "disable"`、`tests/yang_model_tests/tests/device_metadata.json` でデフォルト validation テストを確認。`sonic-utilities/config/validated_config_db_connector.py` と `tests/validated_config_db_connector_test.py` で `ValidatedConfigDBConnector` クラスを確認、各 feature テスト（`tests/sflow_test.py` L66 ほか radius / kube / config_snmp / feature 等）が `validated_config_db_connector.device_info.is_yang_config_validation_enabled` と `ValidatedConfigDBConnector.validated_set_entry` / `validated_mod_entry` をモックする形で取り込みを確認。`sonic-utilities/generic_config_updater/main.py` で GCU エンジン（`GenericConfigUpdaterError` ほか）が patch ベース更新を担うことを確認（verified at: 2026-05-09）。
 
 # YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）

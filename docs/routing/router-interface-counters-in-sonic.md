@@ -40,7 +40,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 04 章: VRF / ECMP / 経路選択](../topics/04-vrf-ecmp/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified（CLI 実体名差分あり）"
+!!! success "裏取りステータス: code-verified（CLI 実体名差分あり）"
     `sonic-swss/orchagent/intfsorch.cpp` で `COUNTERS_RIF_NAME_MAP` の生成 (L70)、`RIF_STAT_COUNTER_FLEX_COUNTER_GROUP` 経由の flex counter 登録 (L96, L1573) と `generateInterfaceMap()` (L1576) を確認。`sonic-utilities/clear/main.py` の `rifcounters` (L175) と RIF 統計表示スクリプト `sonic-utilities/scripts/intfstat`（`SAI_ROUTER_INTERFACE_STAT_*` 8 種を扱う）を確認。**HLD 本文での実体スクリプト名は `rifstat` ではなく `intfstat` が現行実装** (verified at: 2026-05-09)。
 
 # ルータインタフェース (RIF) カウンタ
