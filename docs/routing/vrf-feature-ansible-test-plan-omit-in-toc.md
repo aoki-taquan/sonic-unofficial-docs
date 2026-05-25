@@ -86,7 +86,7 @@ VRF 跨ぎリダイレクトでは **outgoing interface も明示** が必要[^1
 | 4 | VRF 隔離 | 異 VRF で同一 prefix を広報し、neighbor / route が混ざらないこと |
 | 5 | ACL redirect | `<ip>@<intf>` リダイレクト先で受信、複数 nexthop の load balance |
 | 6 | loopback IF | 異 VRF の loopback、loopback を bgp `update-source` に使い session Established |
-| 7 | warm-reboot | system warm + swss warm 中の連続トラフィック無断 |
+| 7 | warm-reboot | system warm + swss warm 中の連続トラフィック無断絶 |
 | 8 | 1000 VRF | 1000 VLAN + 1000 VRF を CLI 生成、エラー無し + ping 通る |
 | 9 | unbind | VRF unbind 時の neighbor/route 削除と他 IF への波及無し |
 | 10 | VRF 削除 | bind 中 IF ごと VRF 削除、IP/neighbor/route が連動削除、他 VRF 不変 |
