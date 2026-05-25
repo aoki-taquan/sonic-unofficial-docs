@@ -33,14 +33,14 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>SRV6_MY_LOCATORS")]
-  DM["Srv6Orch"]
+  DM["bgpcfgd / frrcfgd"]
   CDB --> DM
-  SAI["SAI<br/>sai_srv6_api"]
-  DM --> SAI
+  FRR["FRR zebra"]
+  DM --> FRR
 ```
 
 !!! note "凡例"
-    CONFIG_DB から SAI までの典型経路を `docs/reference/config-db-orch-map.md` から機械生成したミニ図。詳細・例外は本ページ本文と対応表を参照。
+    CONFIG_DB から FRR までの典型経路を示す。`SRV6_MY_LOCATORS` は bgpcfgd / frrcfgd 経由で FRR zebra へ通知され、SAI / ASIC への直接操作は行わない。詳細は本ページ本文を参照。
 <!-- /cdb-mermaid -->
 
 ## key 構造

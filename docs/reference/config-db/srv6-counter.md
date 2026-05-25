@@ -8,28 +8,28 @@ hard: 0
 sources:
   - repo: sonic-net/sonic-swss
     path: orchagent/srv6orch.cpp
-    ref: master
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: orchagent/srv6orch.h
-    ref: master
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: orchagent/flexcounterorch.cpp
-    ref: master
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss
     path: orchagent/flex_counter/flow_counter_handler.cpp
-    ref: master
+    ref: 4305596156d70e9797e8a881b3d19b46de0bce0d
   - repo: sonic-net/sonic-swss-common
     path: common/schema.h
-    ref: master
+    ref: main
   - repo: sonic-net/sonic-buildimage
     path: src/sonic-yang-models/yang-models/sonic-flex_counter.yang
     ref: 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd
   - repo: sonic-net/sonic-utilities
     path: counterpoll/main.py
-    ref: master
+    ref: main
   - repo: sonic-net/sonic-utilities
     path: utilities_common/srv6stat.py
-    ref: master
+    ref: main
 related:
   config_db:
     - FLEX_COUNTER_TABLE
