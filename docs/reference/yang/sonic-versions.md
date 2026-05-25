@@ -50,9 +50,12 @@ flowchart LR
 
 本 YANG モジュールに対応する CONFIG_DB / CLI / HLD / Topics への相互リンク。`inject_yang_xref.py` により自動生成されます。
 
-### 関連 HLD
+### 関連 YANG
 
 - [sonic-feature YANG](../../reference/yang/sonic-feature.md)
+
+### 関連 HLD
+
 - [Secure Upgrade（image 署名検証 / SECURE_UPGRADE_MODE）](../../system/secure-upgrade.md)
 - [設定 / 運用](../../topics/19-build-packaging/operations.md)
 

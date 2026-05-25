@@ -1,6 +1,6 @@
 ---
 title: sonic-vlan YANG
-description: "sonic-vlan YANG — : sonic-net/sonic-buildimage src/sonic-yang-models/yang-models/sonic-vlan.yang @ 9ea932ec2e18f35e58268ec2e4456b1d4afd65cd"
+description: "sonic-vlan YANG — VLAN / VLAN_INTERFACE / VLAN_MEMBER の設定を保持する YANG モジュール。VLAN の作成・メンバーポート管理・VLAN インタフェースへの IP アドレス/VRF バインドを定義する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
