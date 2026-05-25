@@ -101,7 +101,7 @@ container `SNMP` の下に 2 つのシングルトン container (`CONTACT`/`LOCA
 
 ### 典型値
 
-- key 形式: `SNMP|<community>` / `SNMP|LOCATION` / `SNMP|CONTACT`。
+- key 形式: `SNMP|LOCATION` / `SNMP|CONTACT`。コミュニティ設定は `SNMP_COMMUNITY|<name>` テーブルで管理。
 - `SNMP_COMMUNITY|<name>` の `TYPE: RO`。
 
 ### よくある誤設定
