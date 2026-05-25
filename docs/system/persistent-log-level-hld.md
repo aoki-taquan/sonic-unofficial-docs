@@ -1,6 +1,6 @@
 ---
 title: ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）
-description: "ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行） — SONiC では swssloglevel コマンドで orchagent / syncd / 各種 mgrd / syncd / SAI API ごとに動的にログ深さを変えられる。"
+description: "ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行） — SONiC では swssloglevel コマンドで orchagent / syncd / 各種 mgrd / SAI API ごとに動的にログ深さを変えられる。"
 area: system
 verification: code-verified
 last_verified: 2026-05-09
