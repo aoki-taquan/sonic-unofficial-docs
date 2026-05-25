@@ -47,7 +47,7 @@ flowchart TD
     C -- No --> C1[route-map / prefix-list で deny されていないか]
     C -- Yes --> D{outbound policy 適用順序 OK?}
     D -- No --> D1[route-map seq 番号と match 条件を修正]
-    D -- Yes --> E[clear bgp <peer> soft out で再送信]
+    D -- Yes --> E[clear ip bgp <peer> soft out で再送信]
 ```
 
 ## 確認コマンド
