@@ -36,15 +36,15 @@ related:
 
 ```mermaid
 flowchart LR
-  CDB[("CONFIG_DB<br/>TUNNEL_DECAP_TABLE")]
+  CDB[("CONFIG_DB<br/>TUNNEL")]
+  MGR["tunnelmgrd"]
+  CDB --> MGR
+  APPDB[("APPL_DB<br/>TUNNEL_DECAP_TABLE")]
+  MGR --> APPDB
   DM["tunneldecaporch"]
-  CDB --> DM
-  APPDB[("APP_DB<br/>APP_TUNNEL_DECAP_TABLE")]
-  DM --> APPDB
-  SYNCD["syncd"]
-  APPDB --> SYNCD
+  APPDB --> DM
   SAI["SAI<br/>sai_tunnel_api"]
-  SYNCD --> SAI
+  DM --> SAI
 ```
 
 !!! note "凡例"
@@ -158,7 +158,7 @@ APPL_DB:   TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip>   # 終端 IP の管�
 ### 確認コマンド
 
 ```bash
-sonic-db-cli CONFIG_DB keys 'TUNNEL_DECAP_TABLE|*'
+sonic-db-cli APPL_DB keys 'TUNNEL_DECAP_TABLE:*'
 ```
 <!-- /ops-hint -->
 

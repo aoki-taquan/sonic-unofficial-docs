@@ -424,7 +424,7 @@ dialout クライアントは `gnmi-native` プロセス (supervisord 管理) �
 | `dialout_client` | `DestinationGroup` の `dst_addr` 未解決 | 接続未確立、`retry_interval` ごとに再試行 | `dialout_client.go` |
 | `dialout_client` | `report_type=stream` + `report_interval` | 周期 streaming subscription | `dialout_client.go` |
 | `dialout_client` | `report_type=once` | 単発取得 | `dialout_client.go` |
-| `dialout_client` | `report_type=poll` | poll-based subscription | `dialout_client.go` |
+| `dialout_client` | `report_type=once` | 単発取得後に切断 | `dialout_client.go` |
 | `dialout_client` | `unidirectional=true` (Global) | 片方向ストリーミング (応答チャネルなし) | `dialout_client.go` |
 
 > **スキャン証跡**: `TELEMETRY_CLIENT` は [gNMI](../../reference/glossary.md#term-gnmi) dial-out のクライアント設定。スキーマには `tls_cert` / `tls_key` / `enabled` フィールドは存在せず、TLS 設定は `TELEMETRY` テーブル側で管理される。主要分岐は `report_type` と `DestinationGroup` 解決状態。
