@@ -179,27 +179,6 @@ redis-cli -n 6 keys 'ASIC_SDK_HEALTH_EVENT*'
 - [20-swss-sai-redis](../topics/20-swss-sai-redis/index.md): SAI / sairedis / syncd 全般
 - [11-reboot](../topics/11-reboot/index.md): abort 後の再起動経路
 
-## 確認コマンド
-
-```bash
-# SAI failure dump 機能の有効状態
-sonic-db-cli CONFIG_DB HGETALL 'DEVICE_METADATA|localhost' | grep -i sai_fail
-sonic-db-cli CONFIG_DB KEYS 'SUPPRESS_ASIC_SDK_HEALTH_EVENT|*'
-
-# dump 出力先
-ls -lt /var/dump/ | head
-ls -lt /var/log/ | grep -i sai
-
-# dump 生成トリガとなった SAI status code
-docker exec syncd grep -i 'dump' /var/log/syslog | tail
-```
-
-## トラブルシュート
-
-- dump 機能が無効になっている platform では HLD どおり動作しない。`/etc/sonic/sonic_version.yml` のベンダー platform 名を確認のうえ SAI ベンダーに有効化を依頼。
-- dump が大量生成されてディスクを圧迫する場合は `logrotate` 設定 (`/etc/logrotate.d/`) で世代管理する。
-- dump 採取後は [CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [ASIC_DB](../reference/glossary.md#term-asic_db) の同タイムスタンプ snapshot (`show techsupport`) と一緒に保管するとベンダー解析が早い。
-
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/SAI_failure_handling/dump_on_sai_failure.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
