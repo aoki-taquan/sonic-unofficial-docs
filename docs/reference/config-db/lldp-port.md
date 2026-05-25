@@ -277,7 +277,7 @@ inband / recirc / backplane prefix を持つポートは `LLDP_PORT` エント�
 <!-- /entry-points -->
 
 <!-- ordering -->
-## 書込み順序依存 (Phase F)
+## 書込み順序依存 (Phase B)
 
 > 根拠: `dockers/docker-lldp/lldpmgrd`, `src/sonic-yang-models/yang-models/sonic-lldp.yang`
 
