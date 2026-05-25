@@ -11,10 +11,11 @@ reboot、warm restart、telemetry、logging、security、techsupport など装�
 ## この章の読み方
 目的の機能名からページを選び、設定名や CLI 名が必要な場合はリファレンス章を併読する。`Discrepancy-found` は [HLD](../reference/glossary.md#term-hld) と現行実装に差分が見つかったページなので、設計値として読む前に本文の注記を確認する。
 ## 検証状況
-- ページ数: 71
-- 分布: Code-verified: 55 / Discrepancy-found: 6 / HLD-only: 9 / Meta: 1
+- ページ数: 76
+- 分布: Code-verified: 58 / Discrepancy-found: 7 / HLD-only: 9 / Issue-confirmed: 1 / Meta: 1
 
 ## 実装差分があるページ
+- [kdump（kexec ベース kernel crash dump / makedumpfile）](kdump.md)
 - [SONiC FIPS 140-3 デプロイ（FIPS table と /etc/fips/fips_enabled）](sonic-fips-deployment.md)
 - [SONiC NTP client（chrony / NTP_SERVER / mgmt VRF）](sonic-network-time-protocol-ntp-client-configuration.md)
 - [SONiC Secure Boot（shim/grub/vmlinuz/KO の chain of trust）](hld-secure-boot.md)
@@ -59,8 +60,10 @@ reboot、warm restart、telemetry、logging、security、techsupport など装�
 | [SNMP TABLE スキーマ提案（SNMP / SNMP_COMMUNITY / SNMP_USER）](sonic-snmp-table-schema-proposal.md) | Code-verified |
 | [SNMP Transceiver Monitoring テストプラン（Entity MIB / Entity Sensor MIB）](snmp-transceiver-monitoring-testbed-test-plan.md) | Code-verified |
 | [SNMP 設定の snmp.yml → CONFIG_DB 移行](snmp-migration-from-snmp-yml-to-configdb.md) | Code-verified |
+| [SSH 接続時の「Too many authentication failures」エラー](ssh-authentication-failures.md) | Issue-confirmed |
 | [SONiC BMC Platform Management & Monitoring（pmon ↔ BMC 連携）](sonic-bmc-platform-management-monitoring.md) | Code-verified |
 | [SONiC Boot Chart（systemd-bootchart 統合）](sonic-boot-chart.md) | Code-verified |
+| [SONiC ビルドシステム既知問題](buildimage-build-system-known-issues.md) | Code-verified |
 | [SONiC Container Hardening（capability / read-only / privileged 削減）](sonic-container-hardening.md) | Code-verified |
 | [SONiC Debian アップグレード方針（base / container / 廃止 cadence）](sonic-debian-upgrade-cadence.md) | Code-verified |
 | [SONiC Disk I/O 削減（writer 分析と tmpfs 化）](analysis-of-disk-writers-in-sonic-devices.md) | Code-verified |
@@ -87,11 +90,12 @@ reboot、warm restart、telemetry、logging、security、techsupport など装�
 | [Transceiver / DOM Sensor Monitoring（xcvrd / TRANSCEIVER_*）](transceiver-and-sensor-monitoring-hld.md) | HLD-only |
 | [Warm Reboot 開発フェーズと OID 復元戦略（idempotent libsairedis vs syncd view comparison）](what-are-the-development-phases-and-scope-for-warm-reboot.md) | Code-verified |
 | [Warmboot Manager（shutdown orchestration / reconciliation 統一）](warmboot-manager-hld.md) | HLD-only |
+| [YANG モデル既知問題と検証](yang-model-issues-and-validation.md) | Code-verified |
 | [Zero Touch Provisioning（ZTP・DHCP option / plugin / state machine）](zero-touch-provisioning-ztp.md) | Code-verified |
 | [config-setup サービス（first-boot config 生成 / 版間 migration）](sonic-configuration-setup-service.md) | Code-verified |
 | [gNMI dial-out モード（dialout_client_cli + gNMIDialOut.Publish）](sonic-telemetry-in-dial-out-mode.md) | Code-verified |
 | [kdump リモート転送（SSH）](kdump-remote-ssh.md) | Code-verified |
-| [kdump（kexec ベース kernel crash dump / makedumpfile）](kdump.md) | Code-verified |
+| [kdump（kexec ベース kernel crash dump / makedumpfile）](kdump.md) | Discrepancy-found |
 | [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](sonic-libsairedis-api-idempotence-support.md) | Discrepancy-found |
 | [ntpd → chrony 移行（slew 専念 / kernel time discipline 維持）](sonic-migration-to-chrony.md) | Code-verified |
 | [pmon 強化（PSU/FAN/syseeprom 周辺データ STATE_DB 集約）](platform-monitor-enhancement-design.md) | Code-verified |
@@ -107,6 +111,8 @@ reboot、warm restart、telemetry、logging、security、techsupport など装�
 | [ログレベルの永続化（LOGLEVEL_DB → CONFIG_DB.LOGGER への移行）](persistent-log-level-hld.md) | Code-verified |
 | [ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）](reset-local-users-passwords-during-init-hld.md) | HLD-only |
 | [動的ポートブレイクアウト（dynamic port breakout・lanes / interface再構成）](sonic-dynamic-port-breakout-feature-high-level-design.md) | Code-verified |
+| [動的ポートブレイクアウト（DPB）既知問題と YANG モデル](dynamic-port-breakout-known-issues.md) | Code-verified |
+| [ウォームブート既知問題とトラブルシューティング](warmboot-known-issues-and-troubleshooting.md) | Code-verified |
 | [静的 DNS 設定（DNS_NAMESERVER と resolvconf 連携）](static-dns-configuration.md) | Code-verified |
 
 <!-- glossary-links-injected: 167700005048 -->

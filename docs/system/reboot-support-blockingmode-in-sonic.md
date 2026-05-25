@@ -221,7 +221,7 @@ sudo reboot -b -v
 blocking-mode reboot の進捗とエラーを確認する。
 
 ```bash
-sudo reboot --wait
+sudo reboot -b
 show reboot-cause
 grep -iE 'reboot|blocking' /var/log/syslog | tail
 show system-health summary
