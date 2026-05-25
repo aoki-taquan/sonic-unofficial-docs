@@ -160,7 +160,7 @@ sonic-cli-gen remove   config sonic-acl
 - `ls /usr/local/lib/python3*/dist-packages/config/plugins/auto/` — 自動生成 plugin の有無
 - `ls /usr/local/yang-models/` — 対象 YANG モジュール一覧
 - `sonic-cli-gen generate config <module>` を実行し、生成 plugin の import エラーは `python3 -c "import config.plugins.auto.<module>_yang"` で確認
-- `docker exec sonic-package-manager sonic-package-manager list` — Application Extension の有効化状況
+- `sonic-package-manager list` — Application Extension の有効化状況
 
 確認コマンド例:
 
