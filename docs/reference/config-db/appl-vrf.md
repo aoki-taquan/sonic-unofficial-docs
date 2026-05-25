@@ -74,7 +74,7 @@ flowchart LR
   CDB[("CONFIG_DB<br/>VRF")]
   DM["vrfmgrd"]
   CDB --> DM
-  APPDB[("APP_DB<br/>APP_VRF_TABLE")]
+  APPDB[("APPL_DB<br/>APP_VRF_TABLE")]
   DM --> APPDB
   SYNCD["syncd"]
   APPDB --> SYNCD
@@ -145,7 +145,7 @@ VxlanTunnelOrch* tunnel_orch = gDirectory.get<VxlanTunnelOrch*>();
 
 ### vrfmgrd の pass-through 挙動
 
-`vrfmgrd` (`vrfmgr.cpp:303`) は CONFIG_DB フィールドを加工せずそのまま APP_DB へ転送する。フィールド省略はそのまま省略として `VRFOrch` に届く。
+`vrfmgrd` (`vrfmgr.cpp:303`) は CONFIG_DB フィールドを加工せずそのまま APPL_DB へ転送する。フィールド省略はそのまま省略として `VRFOrch` に届く。
 
 ```cpp
 m_appVrfTableProducer.set(vrfName, kfvFieldsValues(t));
@@ -186,7 +186,7 @@ if (vni != 0)
 | `ip_opt_action` | `VIOLATION_IP_OPTIONS_PACKET_ACTION` | SAI デフォルト |
 | `l3_mc_action` | `UNKNOWN_L3_MULTICAST_PACKET_ACTION` | SAI デフォルト |
 
-いずれも `request.getAttrPacketAction(name)` で SAI attrs に変換されるが、YANG 未定義のため通常 APP_DB に書き込まれない。
+いずれも `request.getAttrPacketAction(name)` で SAI attrs に変換されるが、YANG 未定義のため通常 APPL_DB に書き込まれない。
 
 ### `mgmtVrfEnabled` / `in_band_mgmt_enabled` — explicit ignore
 
@@ -205,7 +205,7 @@ else if ((name == "mgmtVrfEnabled") || (name == "in_band_mgmt_enabled"))
 
 `vrforch.h:34` で `{ "fallback", REQ_T_BOOL }` として宣言されているが、`VRFOrch::addOperation` のすべての if/else チェーンに `"fallback"` の分岐が存在しない。結果として `else` ブランチに落ち `SWSS_LOG_ERROR("Logic error: Unknown attribute: %s")` が出力されてフィールドが破棄される。
 
-- `vrfmgrd` は `fallback` を pass-through するため APP_DB には届く
+- `vrfmgrd` は `fallback` を pass-through するため APPL_DB には届く
 - `VRFOrch` がそれを silent drop → **SAI・Linux カーネル・[FRR](../../reference/glossary.md#term-frr) のいずれにも影響しない**
 - `fallback=true` を CONFIG_DB に設定してもデフォルト VRF へのフォールバックは機能しない
 - これは **dead field** であり YANG `default false` のみが有効な設定状態
@@ -326,7 +326,7 @@ if(!evpn_vtep_ptr)
 
 ### fallback 未処理
 
-`vrfmgrd` は `fallback` を pass-through で APP_DB に届けるが、`VRFOrch::addOperation` の if/else チェーン (`vrforch.cpp:36-83`) には `"fallback"` の専用分岐が存在しない。結果として最後の `else` で `SWSS_LOG_ERROR "Logic error: Unknown attribute: fallback"` を出してから `continue` で抜ける。SAI 属性化されず、retry にも繋がらず、STATE_DB にも残らない。**dead field**。
+`vrfmgrd` は `fallback` を pass-through で APPL_DB に届けるが、`VRFOrch::addOperation` の if/else チェーン (`vrforch.cpp:36-83`) には `"fallback"` の専用分岐が存在しない。結果として最後の `else` で `SWSS_LOG_ERROR "Logic error: Unknown attribute: fallback"` を出してから `continue` で抜ける。SAI 属性化されず、retry にも繋がらず、STATE_DB にも残らない。**dead field**。
 
 ### 部分適用 / rollback 不在
 

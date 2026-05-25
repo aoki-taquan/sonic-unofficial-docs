@@ -110,7 +110,7 @@ BGP_GLOBALS|<vrf_name>
 
 ## 購読者
 
-- `bgpcfgd` / `frr-mgmt-framework`: [CONFIG_DB](../../reference/glossary.md#term-config_db) → [vtysh](../../reference/glossary.md#term-vtysh) / [FRR](../../reference/glossary.md#term-frr) config に変換
+- `frr-mgmt-framework` (`frrcfgd`): [CONFIG_DB](../../reference/glossary.md#term-config_db) → [vtysh](../../reference/glossary.md#term-vtysh) / [FRR](../../reference/glossary.md#term-frr) config に変換（`bgpcfgd` は本テーブルを購読しない）
 - `bgpd` ([FRR](../../reference/glossary.md#term-frr))
 
 ## 関連 CONFIG_DB / YANG / CLI

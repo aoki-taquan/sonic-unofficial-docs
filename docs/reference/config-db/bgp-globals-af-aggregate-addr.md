@@ -1,6 +1,6 @@
 ---
 title: BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル
-description: "BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル — BGP_GLOBALS_AF で AF レベルの設定（multipath、route distance、L2VPN advertise-all-vni 等）を行い、その AF 配下の aggregate prefix をこのテーブルで列挙する。"
+description: "BGP_GLOBALS_AF_AGGREGATE_ADDR テーブル — VRF × アドレスファミリ単位の BGP aggregate-address 設定を保持する。BGP_GLOBALS_AF の AF コンテキスト配下で集約プレフィックスを列挙する。"
 area: reference
 verification: code-verified
 last_verified: 2026-05-11

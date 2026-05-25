@@ -193,7 +193,7 @@ AUTO_TECHSUPPORT_FEATURE|<feature_name>
 
 | 定数 | 値 | 用途 |
 |------|----|------|
-| `TIME_BUF` | `20` 秒 | rate-limit 判定の許容バッファ (`rate_limit_interval` 経過後 +20 秒の猶予) |
+| `TIME_BUF` | `20` 秒 | coredump ファイル生成後の有効期間。`verify_recent_file_creation` が使用し、20 秒以上前のファイルは偽陽性として無視する |
 | `SINCE_DEFAULT` | `"2 days ago"` | `since` 未設定 / `date` パース失敗時の二重 fallback |
 | `TS_GLOBAL_TIMEOUT` | `"60"` (秒) | `show techsupport` 実行のグローバルタイムアウト |
 
@@ -313,47 +313,6 @@ show auto-techsupport global
 ### ランタイム注入 (デーモン自動書き込み)
 - なし
 <!-- /entry-points -->
-
-<!-- constants -->
-## ハードコード定数 (coredump_gen_handler / auto_techsupport_helper)
-
-`coredump_gen_handler.py` および `utilities_common/auto_techsupport_helper.py` にハードコードされた定数。CONFIG_DB フィールドで上書きできない固定値。
-
-| 定数名 | 値 | 用途 |
-|--------|-----|------|
-| `CORE_DUMP_DIR` | `"/var/core"` | コアダンプ保存ディレクトリ |
-| `CORE_DUMP_PTRN` | `"*.core.gz"` | コアダンプファイルのグロブパターン |
-| `TS_DIR` | `"/var/dump"` | techsupport ダンプ保存ディレクトリ |
-| `TS_PTRN` | `"sonic_dump_.*tar.*"` | techsupport ダンプ名の正規表現パターン |
-| `AUTO_TS` | `"AUTO_TECHSUPPORT\|GLOBAL"` | CONFIG_DB キー名 |
-| `CFG_STATE` | `"state"` | state フィールド名 (値: `"enabled"` / `"disabled"`) |
-| `TIME_BUF` | `20` (秒) | coredump ファイル生成後の有効期間。`verify_recent_file_creation` が使用し、20秒以上前のファイルは偽陽性として無視 |
-| `SINCE_DEFAULT` | `"2 days ago"` | `since` フィールド未設定時のデフォルト収集期間 |
-| `EXT_SUCCESS` | `0` | `show techsupport` の正常終了コード |
-| `EXT_LOCKFAIL` | `2` | 別インスタンスが実行中の場合の終了コード |
-| `EXT_RETRY` | `4` | リトライ要求の終了コード |
-| `MAX_RETRY_LIMIT` | `2` | `show techsupport` の最大リトライ回数 |
-| `TS_GLOBAL_TIMEOUT` | `"60"` (秒) | `show techsupport --global-timeout` に渡すタイムアウト値 |
-
-### `state` フィールドの有効 enum 値
-
-`AUTO_TECHSUPPORT|GLOBAL` および `AUTO_TECHSUPPORT_FEATURE|<feature>` の `state` フィールドで受け付ける値:
-
-| 値 | 意味 |
-|----|------|
-| `"enabled"` | coredump 駆動 techsupport 収集を有効化 |
-| `"disabled"` | coredump 駆動 techsupport 収集を無効化 (デフォルト動作は無効) |
-
-`coredump_gen_handler.py:17` で `!= "enabled"` チェックをしており、それ以外の文字列はすべて `disabled` と同等に扱われる。
-
-### systemd-coredump 統合
-
-`coredump-compress` スクリプト (`sonic-utilities/scripts/coredump-compress`) が kernel の `core_pattern` ハンドラとして動作し、コア生成後に `/var/core/${PREFIX}core.gz` へ gzip 圧縮保存する。その後 `coredump_gen_handler.py` を非同期起動 (`setsid ... &`)。ログは `/tmp/coredump_gen_handler.log` に出力される。
-
-<!-- evidence: sonic-net/sonic-utilities/utilities_common/auto_techsupport_helper.py:33-84 -->
-<!-- evidence: sonic-net/sonic-utilities/scripts/coredump_gen_handler.py:14-78 -->
-<!-- evidence: sonic-net/sonic-utilities/scripts/coredump-compress:19-31 -->
-<!-- /constants -->
 
 <!-- side-effects -->
 ## 副次 DB 書込 (Phase F)
