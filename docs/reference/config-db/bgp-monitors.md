@@ -86,6 +86,7 @@ BGP_MONITORS|<addr>
 
 - [YANG](../../reference/glossary.md#term-yang): [`sonic-bgp-monitor`](../yang/sonic-bgp-monitor.md) / `sonic-bgp-common`
 - CLI: [`config bgp`](../cli/config-bgp.md)
+- CONFIG_DB: [BGP_NEIGHBOR](bgp-neighbor.md)
 
 <!-- ref-triangle:end -->
 
@@ -93,16 +94,13 @@ BGP_MONITORS|<addr>
 
 [^1]: YANG 定義: `sonic-bgp-monitor.yang`. <https://github.com/sonic-net/sonic-buildimage/blob/9ea932ec2e18f35e58268ec2e4456b1d4afd65cd/src/sonic-yang-models/yang-models/sonic-bgp-monitor.yang>; 共通 leaf grouping は `sonic-bgp-common.yang` の `sonic-bgp-cmn-neigh`
 
-## 関連ページ
-- [CONFIG_DB: BGP_NEIGHBOR](bgp-neighbor.md)
-
 <!-- ops-hint -->
 ## 運用ヒント
 
 ### 典型値
 
 - key 形式: `BGP_MONITORS|<ip>`。
-- `asn`: 監視先 AS。`admin_status`: `up`。`name`: 識別名。
+- `asn`: CONFIG_DB に書いても **bgpcfgd は参照しない**（dead field）。FRR の `remote-as` は常に `DEVICE_METADATA.bgp_asn` が使われる。`admin_status`: `up`。`name`: `BGPMonitor` 固定（YANG `must` で強制）。
 
 ### よくある誤設定
 
