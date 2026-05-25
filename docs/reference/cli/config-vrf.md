@@ -212,7 +212,7 @@ VRF Vrf_Red added.
 <!-- cli-sibling -->
 ### 関連 CLI コマンド
 
-- [`show mgmt vrf`](show-mgmt-vrf.md) — show mgmt-vrf サブコマンド
+- [`show mgmt-vrf`](show-mgmt-vrf.md) — show mgmt-vrf サブコマンド
 - [`show arp`](show-arp.md) — show arp サブコマンド
 - [`show bfd`](show-bfd.md) — show bfd サブコマンド
 - [`show bgp`](show-bgp.md) — show bgp / show ip bgp / show ipv6 bgp サブコマンド
