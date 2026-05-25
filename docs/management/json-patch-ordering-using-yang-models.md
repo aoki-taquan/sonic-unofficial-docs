@@ -173,7 +173,7 @@ reasoning: create-only 拡張のセマンティクスを直接引用
 
 <!-- evidence-rendered:end -->
 
-## 関連 CLI
+## 主要 CLI コマンド
 
 | Command | 用途 |
 |---------|------|
