@@ -140,7 +140,7 @@ Platform system health において ASIC キーが適切に処理されない問
 - 参照: [sonic-net/sonic-buildimage#6343](https://github.com/sonic-net/sonic-buildimage/issues/6343)
 
 
-### BRCM Th3 Z9332 で SER (Single Error Recovery) が注入されたメモリの修正システ（sonic-buildimage#6392）
+### BRCM Th3 Z9332 で SER (Single Error Recovery) が注入されたメモリの修正システム（sonic-buildimage#6392）
 
 BRCM Th3 Z9332 で SER (Single Error Recovery) が注入されたメモリの修正システムが正しく動作しない問題。ECC エラー監視の設定を確認すること
 

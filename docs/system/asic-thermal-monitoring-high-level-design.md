@@ -34,7 +34,7 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 14 章: Platform / Port / Optics](../topics/14-platform-port-optics/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: Code-verified"
+!!! success "裏取りステータス: code-verified"
     `sonic-swss/orchagent/switchorch.h:12-14, 170-179` で `ASIC_SENSORS_POLLER_*` 定数と `m_asicSensorsTable / m_sensorsPollerTimer / m_sensorsPollerEnabled` メンバ、`sonic-swss-common/common/schema.h:138` で `ASIC_TEMPERATURE_INFO_TABLE_NAME`、`switchorch.cpp:154,173,402,408,425-436` で `SelectableTimer` 実装と `ASIC_SENSORS` 動的反映を確認（verified at: 2026-05-09）。
 
 # ASIC 内部温度センサのポーリング（`ASIC_SENSORS` / `ASIC_TEMPERATURE_INFO`）
