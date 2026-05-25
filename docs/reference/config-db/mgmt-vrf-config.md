@@ -208,7 +208,7 @@ MGMT_VRF_CONFIG テーブルへの書き込みが発生するコード経路を�
 
 ### minigraph / sonic-cfggen
 
-minigraph.py で `MGMT_VRF_CONFIG` は生成されない
+**minigraph.py** `parse_device_desc_xml()` が XML `<MgmtVrf>` ノードを解析し `results['MGMT_VRF_CONFIG']` に投入する (`sonic-buildimage/src/sonic-config-engine/minigraph.py:2308`)。`<MgmtVrf>` ノードが存在しない場合は空辞書 `{}` が設定されエントリが書き込まれない。
 
 ### REST / gNMI
 
