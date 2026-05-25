@@ -50,7 +50,7 @@ related:
 - CLI ページ: 72 件 (`config-*` / `show-*` / `debug-*` / `clear` / `reboot-fast-warm` / `sonic-*` ツール)
 - CONFIG_DB ページ: 293 件 (table family ごと)
 - YANG ページ: 84 件 (`sonic-*` モジュールごと)
-- Runbooks: 45 件 (症状逆引き)
+- Runbooks: 52 件 (症状逆引き)
 - Verification: 1 件 (`discrepancy-index`)
 
 この章では、これらを「機能章のどこから引かれるか」「逆に辞書からどの章へ戻るか」の対応表で並べ直す。既存 reference ページの本文と frontmatter は変更しない。
@@ -90,11 +90,11 @@ related:
 
 | ページ | 状態 | verification |
 |---|---|---|
-| concept | ✅ 完成 (107 行) | meta |
-| setup | ✅ 完成 (125 行) | meta |
-| operations | ✅ 完成 (113 行) | meta |
-| internals | ✅ 完成 (134 行) | meta |
-| advanced | ✅ 完成 (101 行) | meta |
+| concept | ✅ 完成 (146 行) | meta |
+| setup | ✅ 完成 (153 行) | meta |
+| operations | ✅ 完成 (141 行) | meta |
+| internals | ✅ 完成 (168 行) | meta |
+| advanced | ✅ 完成 (119 行) | meta |
 
 <!-- /chapter-progress -->
 
