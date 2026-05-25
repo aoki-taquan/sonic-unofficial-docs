@@ -29,7 +29,6 @@ related:
     - sonic-vlan
     - sonic-mirror-session
     - sonic-snmp
-hard: 0
 ---
 
 !!! success "裏取りステータス: code-verified"
