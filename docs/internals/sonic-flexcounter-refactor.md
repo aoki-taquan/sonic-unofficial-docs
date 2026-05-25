@@ -63,7 +63,7 @@ related:
 ```mermaid
 classDiagram
     class FlexCounter {
-        - m_counterContext: map<string, BaseCounterContext*>
+        - m_counterContext: map<string, shared_ptr~BaseCounterContext~>
         + addCounter(...)
         + collectCounters(Table&)
         + runPlugins(DBConnector&)

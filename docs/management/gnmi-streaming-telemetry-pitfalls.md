@@ -55,8 +55,8 @@ dial-in ストリーミングでは、gNMI サーバ（スイッチ側）がサ�
 # gnmi プロセスのメモリ使用量を確認
 ps aux | grep gnmi
 
-# Docker コンテナのメモリ使用量を確認（gnmi は telemetry コンテナ内）
-docker stats telemetry --no-stream
+# Docker コンテナのメモリ使用量を確認（gnmi コンテナ）
+docker stats gnmi --no-stream
 ```
 
 ## gNMIc を使ったテスト

@@ -170,7 +170,7 @@ sudo systemctl restart database
 - **DB id の競合に注意**: 上記既定例で `PFC_WD_DB` と `FLEX_COUNTER_DB` が同じ id=5 を共有しているように、Redis の同一インスタンス内 db index を共用する書き方が許される。インスタンスを分けるなら id 衝突は問題ないが、命名・運用上は注意[^1]。
 - **`supervisord.conf` を直接編集しない**: j2 テンプレ展開で毎回再生成される[^1]。
 - **詳細仕様は原文必読**: 1000 行超の HLD のうち、本ページは起動・JSON フォーマット・性能根拠に絞っている。Python / C++ API の細部は原文を参照[^1]。
-- **新 docker entrypoint`docker-database-init.sh` の前後互換**: 既存運用スクリプトが `/usr/bin/supervisord` を直接想定していた場合、調整が必要。
+- **新 docker entrypoint `docker-database-init.sh` の前後互換**: 既存運用スクリプトが `/usr/bin/supervisord` を直接想定していた場合、調整が必要。
 
 ## 干渉する機能
 
@@ -183,20 +183,6 @@ sudo systemctl restart database
 - redis インスタンスが起動しない: `supervisord.conf` 生成結果（`/etc/supervisor/conf.d/`）と `database_config.json` の `INSTANCES` 整合を確認。
 - DB が想定と違うインスタンスに接続される: アプリが正しい SDK API（`SonicV2Connector`）を使っているか、JSON の `instance` フィールドが意図どおりか。
 - `ping_pong_db_insts` が fail: redis の `unix_socket_path` パーミッション、port 重複を確認。
-
-## 既知の問題
-
-### SAI_STATUS_TABLE_FULL エラーで orchagent がシャットダウンする問題（sonic-buildimage#2125）
-
-SAI_STATUS_TABLE_FULL エラーで [orchagent](../reference/glossary.md#term-orchagent) がシャットダウンする問題。SAI テーブルの容量制限に達した場合、orchagent は自動シャットダウンする設計。HW ごとのテーブル容量を事前確認すること
-
-- 参照: [sonic-net/sonic-buildimage#2125](https://github.com/sonic-net/sonic-buildimage/issues/2125)
-
-### ARP テーブルが上限に近い状態だと `show interfaces` の一部インターフェースが表示されない問題（sonic-buildimage#5031）
-
-[ARP](../reference/glossary.md#term-arp) テーブルが上限に近い状態だと `show interfaces` の一部インターフェースが表示されない問題。`net.ipv4.neigh.default.gc_thresh3` を確認し必要に応じて拡張すること
-
-- 参照: [sonic-net/sonic-buildimage#5031](https://github.com/sonic-net/sonic-buildimage/issues/5031)
 
 ## 引用元
 
