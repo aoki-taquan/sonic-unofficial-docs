@@ -107,6 +107,10 @@ flowchart LR
   SC --> CDB1
   DM1["MlagOrch"]
   CDB1 --> DM1
+  CDB2[("CONFIG_DB<br/>MCLAG_UNIQUE_IP")]
+  SC --> CDB2
+  DM2["MlagOrch"]
+  CDB2 --> DM2
 ```
 
 !!! note "凡例"
