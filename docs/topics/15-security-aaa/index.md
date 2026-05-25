@@ -106,13 +106,14 @@ SONiC のセキュリティは大きく三つの層に分かれます。第一�
 <!-- chapter-progress -->
 ## 章構成と進捗
 
-| ページ | 状態 | verification |
-|---|---|---|
-| concept | ✅ 完成 | meta |
-| setup | ✅ 完成 | meta |
-| operations | ✅ 完成 | meta |
-| internals | ✅ 完成 | meta |
-| advanced | ✅ 完成 | meta |
+| ページ | 行数 | 状態 | verification | 主目的 |
+|---|---|---|---|---|
+| advanced | 105 | ✅ 完成 | meta | 発展トピック |
+| architecture | 52 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
+| concept | 154 | ✅ 完成 | meta | 概念・位置付け |
+| internals | 132 | ✅ 完成 | meta | 内部実装 |
+| operations | 193 | ✅ 完成 | meta | 運用・デバッグ |
+| setup | 211 | ✅ 完成 | meta | セットアップ手順 |
 
 <!-- /chapter-progress -->
 

@@ -90,13 +90,13 @@ related:
 <!-- chapter-progress -->
 ## 章構成と進捗
 
-| ページ | 状態 | verification |
-|---|---|---|
-| concept | ✅ 完成 (188 行) | meta |
-| setup | ✅ 完成 (244 行) | meta |
-| operations | ✅ 完成 (195 行) | meta |
-| internals | ✅ 完成 (122 行) | meta |
-| advanced | ✅ 完成 (116 行) | meta |
+| ページ | 行数 | 状態 | verification | 主目的 |
+|---|---|---|---|---|
+| concept | 188 | ✅ 完成 | meta | 概念・位置付け |
+| internals | 122 | ✅ 完成 | meta | 内部実装 |
+| setup | 244 | ✅ 完成 | meta | セットアップ手順 |
+| operations | 195 | ✅ 完成 | meta | 運用・デバッグ |
+| advanced | 116 | ✅ 完成 | meta | 発展トピック |
 
 <!-- /chapter-progress -->
 

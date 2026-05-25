@@ -84,14 +84,14 @@ PINS の中心は 4 点です。コントローラと話す **[P4RT](../../refer
 <!-- chapter-progress -->
 ## 章構成と進捗
 
-| ページ | 状態 | verification |
-|---|---|---|
-| concept | ✅ 完成 (142 行) | meta |
-| architecture | ✅ 完成 (82 行) | meta |
-| setup | ✅ 完成 (288 行) | meta |
-| operations | ✅ 完成 (180 行) | meta |
-| internals | ✅ 完成 (134 行) | meta |
-| advanced | ✅ 完成 (132 行) | meta |
+| ページ | 行数 | 状態 | verification | 主目的 |
+|---|---|---|---|---|
+| advanced | 103 | ✅ 完成 | meta | 発展トピック |
+| architecture | 49 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
+| concept | 142 | ✅ 完成 | meta | 概念・位置付け |
+| internals | 134 | ✅ 完成 | meta | 内部実装 |
+| operations | 180 | ✅ 完成 | meta | 運用・デバッグ |
+| setup | 288 | ✅ 完成 | meta | セットアップ手順 |
 
 <!-- /chapter-progress -->
 

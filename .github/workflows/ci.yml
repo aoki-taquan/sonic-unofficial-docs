@@ -157,9 +157,12 @@ jobs:
       - name: snapshot.md drift (strict)
         run: python3 meta/scripts/gen_snapshot.py --check
 
+      # chapter-progress は .pages 順に全サブページを走査してテーブルを生成。
+      # フロントマター行数が実ファイルと乖離しないよう strict 化。
+      - name: chapter-progress drift (strict)
+        run: python3 meta/scripts/gen_chapter_progress.py --check
+
       # --- informational checks (`|| true` で落とさない) ---------------
-      - name: chapter-progress drift (informational)
-        run: python3 meta/scripts/gen_chapter_progress.py --check || true
 
       - name: next-reads drift (informational)
         run: python3 meta/scripts/gen_next_reads.py --check || true

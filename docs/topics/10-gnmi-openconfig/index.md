@@ -72,16 +72,16 @@ related:
 <!-- chapter-progress -->
 ## 章構成と進捗
 
-| ページ | 状態 | verification |
-|---|---|---|
-| concept | ✅ 完成 (181 行) | meta |
-| architecture | ✅ 完成 (96 行) | meta |
-| setup | ✅ 完成 (246 行) | meta |
-| operations | ✅ 完成 (204 行) | meta |
-| gnoi-gnsi | ✅ 完成 (71 行) | meta |
-| yang-reference | ✅ 完成 (69 行) | meta |
-| internals | ✅ 完成 (148 行) | meta |
-| advanced | ⚠️ プレースホルダ (90 行) | meta |
+| ページ | 行数 | 状態 | verification | 主目的 |
+|---|---|---|---|---|
+| concept | 140 | ✅ 完成 | meta | 概念・位置付け |
+| architecture | 65 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
+| setup | 208 | ✅ 完成 | meta | セットアップ手順 |
+| operations | 170 | ✅ 完成 | meta | 運用・デバッグ |
+| internals | 126 | ✅ 完成 | meta | 内部実装 |
+| gnoi-gnsi | 53 | ⚠️ プレースホルダ | meta | gNOI / gNSI API |
+| yang-reference | 35 | ⚠️ プレースホルダ | meta | YANG リファレンス |
+| advanced | 74 | ⚠️ プレースホルダ | meta | 発展トピック |
 
 <!-- /chapter-progress -->
 

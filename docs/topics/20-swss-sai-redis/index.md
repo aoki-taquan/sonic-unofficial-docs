@@ -70,14 +70,14 @@ related:
 <!-- chapter-progress -->
 ## 章構成と進捗
 
-| ページ | 状態 | verification |
-|---|---|---|
-| concept | ✅ 完成 (158 行) | meta |
-| architecture | ✅ 完成 (118 行) | meta |
-| setup | ✅ 完成 (275 行) | meta |
-| operations | ✅ 完成 (230 行) | meta |
-| internals | ✅ 完成 (163 行) | meta |
-| advanced | ✅ 完成 (155 行) | meta |
+| ページ | 行数 | 状態 | verification | 主目的 |
+|---|---|---|---|---|
+| advanced | 155 | ✅ 完成 | meta | 発展トピック |
+| architecture | 90 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
+| concept | 156 | ✅ 完成 | meta | 概念・位置付け |
+| internals | 163 | ✅ 完成 | meta | 内部実装 |
+| operations | 230 | ✅ 完成 | meta | 運用・デバッグ |
+| setup | 275 | ✅ 完成 | meta | セットアップ手順 |
 
 <!-- /chapter-progress -->
 

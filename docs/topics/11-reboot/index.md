@@ -86,14 +86,15 @@ related:
 <!-- chapter-progress -->
 ## 章構成と進捗
 
-| ページ | 状態 | verification |
-|---|---|---|
-| concept | ✅ 完成 (181 行) | meta |
-| architecture | ✅ 完成 (90 行) | meta |
-| setup | ✅ 完成 (176 行) | meta |
-| operations | ✅ 完成 (192 行) | meta |
-| internals | ✅ 完成 (121 行) | meta |
-| advanced | ✅ 完成 (125 行) | meta |
+| ページ | 行数 | 状態 | verification | 主目的 |
+|---|---|---|---|---|
+| concept | 140 | ✅ 完成 | meta | 概念・位置付け |
+| architecture | 57 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
+| setup | 176 | ✅ 完成 | meta | セットアップ手順 |
+| operations | 182 | ✅ 完成 | meta | 運用・デバッグ |
+| internals | 121 | ✅ 完成 | meta | 内部実装 |
+| upgrade | 47 | ⚠️ プレースホルダ | meta | アップグレード手順 |
+| advanced | 91 | ⚠️ プレースホルダ | meta | 発展トピック |
 
 <!-- /chapter-progress -->
 

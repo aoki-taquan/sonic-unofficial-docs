@@ -101,14 +101,14 @@ NAT は data plane に踏み込むがフローテーブル管理が中心、DHCP
 <!-- chapter-progress -->
 ## 章構成と進捗
 
-| ページ | 状態 | verification |
-|---|---|---|
-| concept | ✅ 完成 (229 行) | meta |
-| setup | ✅ 完成 (263 行) | meta |
-| architecture | ✅ 完成 (129 行) | meta |
-| operations | ✅ 完成 (251 行) | meta |
-| internals | ✅ 完成 (153 行) | meta |
-| advanced | ✅ 完成 (154 行) | meta |
+| ページ | 行数 | 状態 | verification | 主目的 |
+|---|---|---|---|---|
+| advanced | 120 | ✅ 完成 | meta | 発展トピック |
+| architecture | 90 | ⚠️ プレースホルダ | meta | アーキテクチャ・データフロー |
+| concept | 187 | ✅ 完成 | meta | 概念・位置付け |
+| internals | 128 | ✅ 完成 | meta | 内部実装 |
+| operations | 215 | ✅ 完成 | meta | 運用・デバッグ |
+| setup | 224 | ✅ 完成 | meta | セットアップ手順 |
 
 <!-- /chapter-progress -->
 
