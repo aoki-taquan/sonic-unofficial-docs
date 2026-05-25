@@ -62,9 +62,9 @@ BFD_SESSION|<vrf>|<interface>|<peer_ip>
 | `type` | enum | `"async_active"` | BFD セッション種別。`async_active` / `async_passive` / `demand_active` / `demand_passive` |
 | `tx_interval` | uint32 (ms) | `1000` | 送信間隔 (ミリ秒)。[SAI](../../reference/glossary.md#term-sai) 投入時に ×1000 してマイクロ秒変換 |
 | `rx_interval` | uint32 (ms) | `1000` | 最小受信間隔 (ミリ秒)。SAI 投入時に ×1000 してマイクロ秒変換 |
-| `multiplier` | uint8 | `10` | 検知乗数 (detect multiplier)。`tx_interval × multiplier` で隣接ダウン判定 |
+| `multiplier` | uint8 | `10` (hardware) / `3` (software) | 検知乗数 (detect multiplier)。`tx_interval × multiplier` で隣接ダウン判定。software BFD 経路 (`bgpcfgd/BfdMgr`) のデフォルトは `3` |
 | `multihop` | boolean string | `"false"` | マルチホップ BFD を有効化。`"true"` のとき `SAI_BFD_SESSION_ATTR_MULTIHOP = true` をセット |
-| `tos` | uint8 | `192` | IP TOS / [DSCP](../../reference/glossary.md#term-dscp) 値。デフォルト [DSCP](../../reference/glossary.md#term-dscp) 48 (EF) を 2 ビット左シフトして 192 (0xC0) |
+| `tos` | uint8 | `192` | IP TOS / [DSCP](../../reference/glossary.md#term-dscp) 値。デフォルト [DSCP](../../reference/glossary.md#term-dscp) 48 (CS6) を 2 ビット左シフトして 192 (0xC0) |
 | `dst_mac` | MAC アドレス (string) | 条件付き必須 | 宛先 MAC アドレス。`interface != "default"` の場合は必須、`interface == "default"` では指定禁止 |
 | `shutdown_bfd_during_tsa` | boolean string | 未指定 = TSA 連動なし | `"true"` のとき TSA (Traffic Shift Away) 状態になると BFD セッションを削除し Down を通知 |
 
@@ -130,7 +130,7 @@ BFD_SESSION|<vrf>|<interface>|<peer_ip>
 
 | 値 | 意味 | evidence |
 |---|---|---|
-| `192` (既定) | [DSCP](../../reference/glossary.md#term-dscp) 48 (EF class) << 2 \| ECN 0 = 0xC0 | `bfdorch.cpp:18-19` |
+| `192` (既定) | [DSCP](../../reference/glossary.md#term-dscp) 48 (CS6) << 2 \| ECN 0 = 0xC0 | `bfdorch.cpp:18-19` |
 | 任意 uint8 | 上位 6 ビット = DSCP, 下位 2 ビット = ECN | `bfdorch.cpp:395-397` |
 
 ### `multihop` (boolean string)
@@ -284,7 +284,7 @@ show bfd peers details
 | `BFD_SESSION_DEFAULT_TX_INTERVAL` | `1000` | ms | `tx_interval` 未指定時のデフォルト送信間隔 | `bfdorch.cpp:15` |
 | `BFD_SESSION_DEFAULT_RX_INTERVAL` | `1000` | ms | `rx_interval` 未指定時のデフォルト最小受信間隔 | `bfdorch.cpp:16` |
 | `BFD_SESSION_DEFAULT_DETECT_MULTIPLIER` | `10` | — | `multiplier` 未指定時のデフォルト検知乗数 (hardware 経路) | `bfdorch.cpp:17` |
-| `BFD_SESSION_DEFAULT_TOS` | `192` (0xC0) | — | `tos` 未指定時のデフォルト。DSCP 48 (EF) << 2 \| ECN 0 | `bfdorch.cpp:19` |
+| `BFD_SESSION_DEFAULT_TOS` | `192` (0xC0) | — | `tos` 未指定時のデフォルト。DSCP 48 (CS6) << 2 \| ECN 0 | `bfdorch.cpp:19` |
 | `BFD_SESSION_MILLISECOND_TO_MICROSECOND` | `1000` | — | ms → μs 変換係数。SAI `MIN_TX` / `MIN_RX` 投入時に乗算 | `bfdorch.cpp:20, 452, 457` |
 | `BFD_SRCPORTINIT` | `49152` | — | BFD UDP 送信元ポート範囲下限 (IANA dynamic/ephemeral 開始) | `bfdorch.cpp:21` |
 | `BFD_SRCPORTMAX` | `65536` | — | BFD UDP 送信元ポート範囲上限 (排他。実効最大値は `65535`) | `bfdorch.cpp:22` |

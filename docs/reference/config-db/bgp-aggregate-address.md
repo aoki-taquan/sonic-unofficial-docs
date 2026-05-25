@@ -153,11 +153,11 @@ BGP_AGGREGATE_ADDRESS|<aggregate-address>
 ### 典型値
 
 - key 形式: `BGP_AGGREGATE_ADDRESS|<aggregate-address>`。
-- `as_set`: `false`、`summary_only`: `true`（詳細経路を抑制して集約のみ広告）。
+- `as-set`: `false`、`summary-only`: `true`（詳細経路を抑制して集約のみ広告）。
 
 ### よくある誤設定
 
-- `summary_only=true` のまま contributing route が無い状態で参照経路を期待しても集約広告されない。
+- `summary-only=true` のまま contributing route が無い状態で参照経路を期待しても集約広告されない。
 
 ### 確認コマンド
 
