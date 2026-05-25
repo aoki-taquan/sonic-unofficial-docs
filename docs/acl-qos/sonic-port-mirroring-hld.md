@@ -143,7 +143,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。
 # Mirror session の状態と CONFIG_DB / STATE_DB を確認
 show mirror_session
 redis-cli -n 4 keys 'MIRROR_SESSION|*'
-redis-cli -n 6 hgetall 'MIRROR_SESSION_TABLE|everflow0'
+redis-cli -n 0 hgetall 'MIRROR_SESSION_TABLE|everflow0'
 ```
 
 

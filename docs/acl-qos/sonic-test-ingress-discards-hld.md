@@ -169,7 +169,7 @@ aclshow -a
 
 ## 制限事項
 
-- **VM trafic 無効化が前提**[^1]。[BGP](../reference/glossary.md#term-bgp) keepalive 等が走っていると counter が汚れる
+- **VM traffic 無効化が前提**[^1]。[BGP](../reference/glossary.md#term-bgp) keepalive 等が走っていると counter が汚れる
 - destination IP は **routable** であることを確認した上で injection（routing で出ていかない / かつ discard 経路に乗る）
 - ベンダ間で L2/L3 counter 合算挙動が異なるため、合否判定は per-vendor のロジックを必要とする
 - 21 ケース中、[SAI](../reference/glossary.md#term-sai) 属性 / CONFIG_DB の特定 attribute によっては **deprecated** されたものがあれば注意
