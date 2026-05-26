@@ -230,9 +230,7 @@ CLI 自体の追加・削除は提案されていない。`show interface` 等�
 
     **本 HLD は採用されなかった**。現行 master は従来通り `EthernetN`（内部）+ `Ethernet<panel>/<sub>`（alias）の 2 階層命名で安定しており、本ページの記述は「提案として残った歴史的設計」として読むこと。実運用で参照すべきは各 SKU の `port_config.ini` および `CONFIG_DB.PORT` の実値。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - 提案 4 stage のいずれも採用されていない。`sonic-buildimage/device/<vendor>/<sku>/port_config.ini` の alias 列は `Ethernet<panel>/<sub>` 形式が標準で `etsXpY` 系は 0 件 (`grep -rn 'ets[0-9]' .cache/sonic-sources/sonic-buildimage/device/` ヒット 0)。
     - 内部キー `EthernetN` も変更されておらず、CLI / config / 監視ツールはすべて `EthernetN` 前提のまま。

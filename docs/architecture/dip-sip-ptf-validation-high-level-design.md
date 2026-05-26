@@ -269,9 +269,7 @@ sudo -H ansible-playbook test_sonic.yml -i inventory \
     - **テストを読み解く**: 本体ロジックは `sonic-mgmt/tests/ipfwd/test_dip_sip.py` を `grep -n` で参照する。クラス名 / log 名のドキュメント不一致は本ページの記述ではなくコード側を真として扱う。
     - **新規 topology / RIF を追加する**: pytest 側の parametrize / fixture を編集し、必要なら `dip_sip.yml` の `test_node` 指定とは別経路で `pytestmark` の設定を変える。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - 旧 PTF スクリプト `ansible/roles/test/files/ptftests/dip_sip.py` は GitHub `sonic-net/sonic-mgmt` master でヒット 0（削除確定）。
     - 現行本体 `tests/ipfwd/test_dip_sip.py` は pytest 形式で、`DipSipTest` 同等のテストが pytest case にリファクタされている。

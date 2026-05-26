@@ -174,9 +174,7 @@ sudo config console-switch model simulator
     - 動的 USB console 追加が必要な場合は、ホスト側 udev rule（`/etc/udev/rules.d/`）で `ttyUSB*` を固定 path にバインドし、`CONSOLE_PORT` テーブルに静的に登録する（`config console add <line>`）。
     - HLD 提案フィールドを使った設定は、上流に PR が取り込まれるまでは独自パッチでの運用となる。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-console.yang` L79-90 の `console_mgmt` には `enabled` と `default_escape_char` のみ。`autodetect` / `vendor_name` / `model_name` フィールドは未追加。
     - `sonic-utilities/config/console.py` L22 (`enable_console_switch`) / L43 (`disable_console_switch`) は `CONSOLE_SWITCH|console_mgmt:enabled` を yes/no で操作するのみ。`autodetect` 系サブコマンド無し。

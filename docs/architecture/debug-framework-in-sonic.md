@@ -233,9 +233,7 @@ reasoning: 2 つの登録 API と Redis pub/sub ベースのトリガ機構の�
     - **特定 Orch の internal dump**: `docker exec swss debugsh -c 'show <subsystem>'` 系の swss-side CLI を直接叩く。HLD 経由ではなく各 Orch の hand-crafted dump が個別に存在する。
     - 本 framework の取り込みを推進する場合、HLD 自体を現行 master 構造（`swss-common` の `ConfigDBConnector` / `Producer/ConsumerStateTable` 前提）に合わせて再ドラフトする必要がある。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - `sonic-swss-common` master HEAD で `Debugframework` クラス・`linkWithFramework` シンボルともに 0 件 (`grep -rn 'class Debugframework\|linkWithFramework' .cache/sonic-sources/sonic-swss-common/`)。
     - `sonic-swss/orchagent/natorch.cpp` の `#ifdef DEBUG_FRAMEWORK` ブロック (L40-42, L138-142, L4591 付近) は HLD 当時の死コード。マクロ定義側 (`Makefile.am` / `configure.ac`) で `DEBUG_FRAMEWORK` を立てる箇所は存在しない。

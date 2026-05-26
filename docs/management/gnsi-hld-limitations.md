@@ -64,7 +64,7 @@ related:
     - Authz / Pathz / CRL を有効化する設定は、telemetry config 構造体の `AuthzPolicy = true` / `AuthzPolicyFile = "/path/to/policy.json"` / `PathzPolicy = true` / `PathzPolicyFile = "..."` / `CertCRLConfig = "..."` を設定する。HLD の flag 名表記には引きずられない。
     - gNSI profile state を観測したい場合は、gNMI Probe / Get RPC を直接叩いて handler の戻り値を見る。STATE_DB 経由は機能しない。
 
-    ### 監査 round 2 追補（2026-05-11）
+    ### 再裏取り追補（2026-05-11）
 
     - `sonic-gnmi/gnmi_server/gnsi_authz.go` / `gnsi_certz.go` / `gnsi_pathz.go` は実装済みだが、`gnsi_credentialz.go` 相当のサーバハンドラは不在 (`ls .cache/sonic-sources/sonic-gnmi/gnmi_server/gnsi_*.go` で credentialz ファイル無し)。
     - フラグ名差異: HLD `EnableAuthzPolicy` → 実装 `AuthzPolicy` (`server.go:240,243`)、ポリシーファイル `AuthzPolicyFile` / `PathzPolicyFile`、CRL は `CertCRLConfig`。

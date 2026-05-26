@@ -250,9 +250,7 @@ TACPLUS global passkey configured Yes
     - master key インフラを使った暗号化を試したい場合は、`security_cipher.py` の `encrypt`/`decrypt` API を直接呼んで passkey を加工し、独自スクリプトで hostcfgd の代わりに `/etc/pam.d/common-auth-sonic` に注入する独自経路を組む必要がある（保守性は低い）。
     - 上流の CLI / hostcfgd 取り込み PR を待つのが本筋。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - master key ファイル名差異: HLD `/etc/cipher_pass` → 実装 `/etc/cipher_pass.json` (`sonic_py_common/security_cipher.py:18`)。JSON 構造で暗号化ペイロードを保持する設計に進化。
     - YANG `key_encrypt` leaf は取り込み済み (`sonic-system-tacacs.yang` L47/L100-101/L148-149)。

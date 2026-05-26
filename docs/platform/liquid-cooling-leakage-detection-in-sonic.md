@@ -269,9 +269,7 @@ leak_sensors3     Not OK    LiquidCooling
     - **読者への影響**: HLD だけ読むと「実装責務はベンダー」で終わるが、実機検証では platform 側の対応が前提で、対応 SKU は限られる。
     - **回避策**: 対応プラットフォームかどうかは `mlnx-platform-api/sonic_platform/liquid_cooling.py` 相当のベンダー実装が `LiquidCoolingBase` を継承しているかで判断する。未対応 platform では `enable_liquid_cooling` を立てても sensor 検出に至らない。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - STATE_DB テーブル名差異: HLD `LIQUID_COOLING_DEVICE` → 実装 `LIQUID_COOLING_INFO` (`sonic-platform-daemons/sonic-thermalctld/scripts/thermalctld:526, 547`)。
     - 追加テーブル: HLD に無い `SYSTEM_LEAK_STATUS` (L548) / `LEAK_PROFILE` (L551) が追加実装。

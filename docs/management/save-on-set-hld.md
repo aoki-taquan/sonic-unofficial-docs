@@ -23,7 +23,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
-    `sonic-gnmi` の Set ハンドラ・`sonic-host-services` 側の DBUS エンドポイント・`telemetry.sh` 起動スクリプトをコードで確認済み（Verifier batch 29）。フラグ → 関数ポインタ → DBUS 経路が実コードと一致することを検証。
+    `sonic-gnmi` の Set ハンドラ・`sonic-host-services` 側の DBUS エンドポイント・`telemetry.sh` 起動スクリプトをコードで確認済み。フラグ → 関数ポインタ → DBUS 経路が実コードと一致することを検証。
 
 # gNMI Save-On-Set（Set ごとの ConfigDB 永続化）
 
@@ -218,7 +218,7 @@ diff /etc/sonic/config_db.json <(show runningconfiguration all)
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/save_on_set.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-## 裏取りメモ（Verifier batch 29）
+## 裏取りメモ
 
 `sonic-gnmi` の telemetry エントリポイントと Set ハンドラに Save-On-Set 実装を確認した。
 

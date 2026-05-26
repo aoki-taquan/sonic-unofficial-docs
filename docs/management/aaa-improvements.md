@@ -188,7 +188,7 @@ sudo cat /etc/pam.d/common-auth-sonic
 - container 内認証の現行解決策確認
 -->
 
-## 裏取りメモ（Verifier batch 29）
+## 裏取りメモ
 
 実コードを照合し、HLD が提起する多重 role / PAM / NSS / nss-mapper 構成のうち、現行 master の `hostcfgd` 内 `AaaCfg` クラスで以下の要素が実装されていることを確認した。
 

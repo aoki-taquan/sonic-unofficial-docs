@@ -204,9 +204,7 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 
     - 上記乖離は HLD の v0.1 と現行実装の間で構造そのものがリファクタされたことを示唆する。設計趣旨（gNOI 経由で DPU を graceful に止める）は実装に活きているが、daemon 構成・テーブル構造は HLD と一致しない。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - `gnoi_reboot_daemon.py` は未実装 (`find .cache/sonic-sources/sonic-platform-daemons -iname '*gnoi*'` 結果 0)。
     - 代替実装: `sonic-chassisd/scripts/chassisd` L256/L1362 で `module.set_admin_state_gracefully(admin_state)` を直接呼び、L1373 で `module.clear_module_gnoi_halt_in_progress()`。

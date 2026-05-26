@@ -140,7 +140,7 @@ queue depth/latency 閾値超過時に report:
 
 [^1]: [sonic-net/SONiC doc/barefoot_dtel/Dtel-test-plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/barefoot_dtel/Dtel-test-plan.md)
 
-## 裏取りメモ（Verifier batch 29）
+## 裏取りメモ
 
 DTel の主要 orch 実装は `sonic-swss` に取り込まれている。
 

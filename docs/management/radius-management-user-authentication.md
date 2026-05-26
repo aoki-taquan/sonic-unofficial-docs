@@ -220,7 +220,7 @@ cat /etc/pam.d/common-auth | head
 - 古い HLD（2019-2020）のため AAA Improvements との関係確認（priority=high）
 -->
 
-## 裏取りメモ（Verifier batch 29）
+## 裏取りメモ
 
 RADIUS authentication の PAM/NSS 実装の現行 master 取り込みを `hostcfgd` で確認した。
 

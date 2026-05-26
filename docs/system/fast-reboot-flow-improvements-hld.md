@@ -321,7 +321,7 @@ grep -i 'fast-reboot' /var/log/syslog | tail
 - HLD 実測値（28s/25s）の現行マスターでの再現性確認
 -->
 
-## 裏取りメモ（Verifier batch 29）
+## 裏取りメモ
 
 fast-reboot Flow Improvements の中核 (`warmboot-finalizer` の fast-reboot 兼用) は master に存在。
 

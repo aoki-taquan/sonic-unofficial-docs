@@ -231,9 +231,7 @@ show bfd summary
 
     本ページの記述は **HLD の Proposal 仕様** であり、現行 master では `bfdsyncd` / `bfd_hw_offload` / remote 系 SAI get 経路のいずれも実装されていない。SAI 側に HW BFD 機能はあるため、static route 用 HW BFD HLD の経路を経由してマニュアルにセッションを張ることは可能。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - `bfdsyncd` プロセスは未実装 (`find .cache/sonic-sources/sonic-buildimage/dockers/docker-fpm-frr -name '*bfdsync*'` 結果 0)。
     - BGP container `supervisord.conf.j2` に `bfdsyncd` プログラムエントリ無し。FRR-bfdd → APPL_DB の翻訳役が居ない。

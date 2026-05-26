@@ -226,9 +226,7 @@ docker logs p4rt 2>&1 | tail -100
     - 設計ドキュメントを書く際は HashOrch ではなく **SwitchOrch のハッシュ責務** として記述する。
     - ハッシュフィールド名の対応は `switch_helper.cpp:24-` のテーブルを正として参照。新規フィールド追加時はこのマップに対応エントリを足す必要がある。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - `HashOrch` クラスは存在せず、`SwitchOrch` が `CFG_SWITCH_HASH_TABLE_NAME` を消費 (`sonic-swss/orchagent/switchorch.cpp:1507`, `orchdaemon.cpp:199`)。
     - `switch_helper.cpp:24-` に `SWITCH_HASH_FIELD_*` → `SAI_NATIVE_HASH_FIELD_*` の対応マップ。
