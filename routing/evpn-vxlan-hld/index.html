@@ -16,7 +16,7 @@
         <link rel="prev" href="../dhcp-relay-per-interface-counter/">
       
       
-        <link rel="next" href="../evpn-vxlan-multihoming/">
+        <link rel="next" href="../evpn-vxlan-hld-concepts/">
       
       
         
@@ -8782,6 +8782,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -10206,6 +10212,90 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evpn-vxlan-hld-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EVPN VXLAN 概念（Route Type 2/3/5 / L2VNI / L3VNI / IRB）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evpn-vxlan-hld-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EVPN VXLAN 内部実装（FRR → fpmsyncd → APPL_DB → orchagent → SAI）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evpn-vxlan-hld-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EVPN VXLAN 設定・運用（vtysh / show evpn / show bgp l2vpn）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -35906,6 +35996,15 @@
 <div class="admonition warning">
 <p class="admonition-title">裏取りステータス: discrepancy-found / 大規模 HLD</p>
 <p>HLD は 70KB。本ページは EVPN VXLAN の中核（control plane = BGP-EVPN、data plane = VXLAN、Type-2 host route と Type-5 IP prefix の役割境界）に絞る。multihoming は別 HLD（同 area）。</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">章分割済み</p>
+<p>本ページは EVPN VXLAN HLD の <strong>概要ハブ</strong> として保持。詳細は以下の派生ページを参照:</p>
+<ul>
+<li><strong><a href="../evpn-vxlan-hld-concepts/">EVPN VXLAN 概念（Route Type 2/3/5 / L2VNI / L3VNI / IRB）</a></strong> — control plane の概念と Symmetric / Asymmetric IRB、想定構成</li>
+<li><strong><a href="../evpn-vxlan-hld-internals/">EVPN VXLAN 内部実装（FRR → fpmsyncd → APPL_DB → orchagent → SAI）</a></strong> — Orch クラス相関と VRF / Tenant 隔離、CONFIG_DB / APPL_DB / STATE_DB の流れ</li>
+<li><strong><a href="../evpn-vxlan-hld-operations/">EVPN VXLAN 設定・運用（vtysh / show evpn / show bgp l2vpn）</a></strong> — CLI 設定例、FRR vtysh、トラブルシュート手順</li>
+</ul>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Verifier 注記（2026-05-10）</p>
