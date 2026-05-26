@@ -32,6 +32,9 @@ nav:
   - sflow-test-plan.md
   - smart-switch-database-design.md
   - smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md
+  - smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-concepts.md
+  - smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-internals.md
+  - smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-operations.md
   - smartswitch-high-availability-manager-daemon-hamgrd-design.md
   - smartswitch-high-availability-manager-daemon-hamgrd-design-concepts.md
   - smartswitch-high-availability-manager-daemon-hamgrd-design-operations.md

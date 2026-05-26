@@ -3,7 +3,8 @@ title: SmartSwitch HA - DPU-Scope-DPU-Driven 構成
 description: SmartSwitch HA - DPU-Scope-DPU-Driven 構成 — SmartSwitch の HA はもともと ENI-Scope-NPU-Driven（NPU 上の hamgrd が ENI 単位で active/standby 状態機械を回す）が主案として設計されていた。
 area: architecture
 verification: code-verified
-last_verified: 2026-05-09
+last_verified: 2026-05-26
+page_kind: split-hub
 sources:
 - repo: sonic-net/SONiC
   path: doc/smart-switch/high-availability/smart-switch-ha-dpu-scope-dpu-driven-setup.md
@@ -36,6 +37,12 @@ related:
     実装裏取り済み（下記コード位置）。DASH HA tables: sonic-swss/orchagent/orchdaemon.cpp:1354-1355 で APP_DASH_HA_SET_TABLE_NAME / APP_DASH_HA_SCOPE_TABLE_NAME を確認。SAI ha_set_event / ha_scope_event: sonic-swss/orchagent/notifications.cpp:65,79。
 
 # SmartSwitch HA - DPU-Scope-DPU-Driven 構成
+
+この HLD はボリュームが大きいため、ハブ＋派生ページ構成に分割している。本ページは **概要・差分・章まとめ** を扱う。
+
+- [概念（pairing / scope / owner / mode）](smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-concepts.md): 4 軸の差分・想定 topology・DPU-level forwarding・split-brain の前提
+- [内部実装（状態遷移と再同期）](smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-internals.md): liveness probe 二段、HA 状態集合、role activation、HA set creation / planned shutdown / unplanned failover シーケンス
+- [運用（CLI / 設定 / failover 確認）](smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-operations.md): DASH 経由の設定手順、状態と forwarding 確認、トラブルシュート、制限事項、干渉機能
 
 ## 概要
 
