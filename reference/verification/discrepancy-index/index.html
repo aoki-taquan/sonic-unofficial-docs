@@ -35681,7 +35681,7 @@
 </tr>
 <tr>
 <td><a href="#area-platform"><code>platform</code></a></td>
-<td style="text-align: right;">12</td>
+<td style="text-align: right;">13</td>
 </tr>
 <tr>
 <td><a href="#area-reference"><code>reference</code></a></td>
@@ -35697,7 +35697,7 @@
 </tr>
 <tr>
 <td><a href="#area-system"><code>system</code></a></td>
-<td style="text-align: right;">19</td>
+<td style="text-align: right;">18</td>
 </tr>
 </tbody>
 </table>
@@ -35950,6 +35950,10 @@
   area: <code>management</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
 <li>
+<p><a href="../../../platform/sai-api-version-check/">SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）</a><br />
+  area: <code>platform</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-09</code></p>
+</li>
+<li>
 <p><a href="../../../platform/everflow-support-on-voq-chassis/">VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）</a><br />
   area: <code>platform</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></p>
 </li>
@@ -36103,13 +36107,6 @@
 <p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。storagemond の現行 master 実装、CLI 名・テーブル名の正確な値は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
 </li>
 <li>
-<p><a href="../../../system/critical-resource-monitoring/">クリティカルリソースモニタリング (CRM) 要件</a><br />
-  area: <code>system</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></p>
-</li>
-<li>
-<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。新規テーブル名は HLD で明示されておらず、実装側で追加されている可能性が高い旨を本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
-</li>
-<li>
 <p><a href="../../../system/reset-local-users-passwords-during-init-hld/">ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）</a><br />
   area: <code>system</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-11</code></p>
 </li>
@@ -36161,9 +36158,6 @@
   area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
 </li>
 <li>
-<p>HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する</p>
-</li>
-<li>
 <p><a href="../../../architecture/ssdhealth-design-limitations/">SSD ヘルスチェック 制限事項と HLD-実装乖離</a><br />
   area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
 </li>
@@ -36175,14 +36169,8 @@
   area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
 </li>
 <li>
-<p>HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する</p>
-</li>
-<li>
 <p><a href="../../../architecture/ssdhealth-design-operations/">SSD ヘルスチェック 運用（CLI / 表示モード）</a><br />
   area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
-</li>
-<li>
-<p>HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する</p>
 </li>
 <li>
 <p><a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）</a><br />
@@ -36418,9 +36406,6 @@
   area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
 </li>
 <li>
-<p>HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する</p>
-</li>
-<li>
 <p><a href="../../../architecture/ssdhealth-design-limitations/">SSD ヘルスチェック 制限事項と HLD-実装乖離</a><br />
   area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
 </li>
@@ -36432,14 +36417,8 @@
   area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
 </li>
 <li>
-<p>HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する</p>
-</li>
-<li>
 <p><a href="../../../architecture/ssdhealth-design-operations/">SSD ヘルスチェック 運用（CLI / 表示モード）</a><br />
   area: <code>architecture</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
-</li>
-<li>
-<p>HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する</p>
 </li>
 <li>
 <p><a href="../../../architecture/ssdhealth-design/">SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）</a><br />
@@ -36637,8 +36616,14 @@
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。本機能の <strong>コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み</strong>だが、<strong><a href="../../glossary/#term-hld">HLD</a> で示唆された動的設定 CLI（<code>counterpoll port flr-interval-factor</code>）は未実装</strong>であり、poll 周期は lua スクリプト内のハードコード値に固定されている。</p>
 <ul>
-<li><a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）</a><br />
-  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></li>
+<li>
+<p><a href="../../../platform/sai-api-version-check/">SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）</a><br />
+  area: <code>platform</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-09</code></p>
+</li>
+<li>
+<p><a href="../../../platform/hld-for-handling-sai-failures/">SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）</a><br />
+  area: <code>platform</code> / monitor: <code>evolved_beyond_hld</code>（HLD と乖離した形で実装/進化） / last_verified: <code>2026-05-11</code></p>
+</li>
 </ul>
 <p>2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:</p>
 <ul>
@@ -36905,13 +36890,6 @@
 </li>
 <li>
 <p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。storagemond の現行 master 実装、CLI 名・テーブル名の正確な値は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
-</li>
-<li>
-<p><a href="../../../system/critical-resource-monitoring/">クリティカルリソースモニタリング (CRM) 要件</a><br />
-  area: <code>system</code> / monitor: <code>partially_implemented</code>（部分実装） / last_verified: <code>2026-05-13</code></p>
-</li>
-<li>
-<p>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。新規テーブル名は HLD で明示されておらず、実装側で追加されている可能性が高い旨を本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</p>
 </li>
 <li>
 <p><a href="../../../system/reset-local-users-passwords-during-init-hld/">ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）</a><br />
