@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -37155,7 +37158,7 @@
 
 <!-- defaults -->
 <h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-yang">YANG</a> 定義外の COUNTERS_DB 実行時テーブルのためコード hardcode 値のみ。</p>
+<p><a href="../../glossary/#term-yang">YANG</a> 定義外の <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> 実行時テーブルのためコード hardcode 値のみ。</p>
 <table>
 <thead>
 <tr>
@@ -37282,7 +37285,7 @@
 
 <!-- ordering -->
 <h2 id="phase-b">書込み順依存 (Phase B)<a class="headerlink" href="#phase-b" title="Permanent link">&para;</a></h2>
-<p><code>NatOrch</code> が COUNTERS_DB の 5 つのカウンタテーブルを書き込む際の順序依存を示す。書き込みは「コンストラクタ初期化 → エントリ追加時のゼロ初期化 → タイマー周期ポーリング」という 3 段階で行われ、各段階の前提条件が成立しない場合にカウンタが更新されない状態が発生する。</p>
+<p><code>NatOrch</code> が <a href="../../glossary/#term-counters_db">COUNTERS_DB</a> の 5 つのカウンタテーブルを書き込む際の順序依存を示す。書き込みは「コンストラクタ初期化 → エントリ追加時のゼロ初期化 → タイマー周期ポーリング」という 3 段階で行われ、各段階の前提条件が成立しない場合にカウンタが更新されない状態が発生する。</p>
 <h3 id="_14">検出された順序依存<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -37837,7 +37840,7 @@
 <tr>
 <td><code>MAX_NAT_ENTRIES</code> / <code>TIMEOUT</code> / <code>UDP_TIMEOUT</code> / <code>TCP_TIMEOUT</code></td>
 <td>NatOrch コンストラクタ (1 回のみ)</td>
-<td>orchagent 起動</td>
+<td><a href="../../glossary/#term-orchagent">orchagent</a> 起動</td>
 </tr>
 <tr>
 <td><code>STATIC_NAT_ENTRIES</code> 等のエントリ数カウンタ</td>
@@ -37938,7 +37941,7 @@
 </blockquote>
 <!-- /platform -->
 
-<!-- glossary-links-injected: 3e9c2d98212a -->
+<!-- glossary-links-injected: 6ebbfd73f35d -->
 
 <div class="footnote">
 <hr />

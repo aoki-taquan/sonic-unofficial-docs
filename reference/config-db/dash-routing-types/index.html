@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -36908,7 +36911,7 @@
 </tr>
 <tr>
 <td><code>maprouting</code></td>
-<td>VNET マッピングテーブル参照でオーバーレイアドレスを解決</td>
+<td><a href="../../glossary/#term-vnet">VNET</a> マッピングテーブル参照でオーバーレイアドレスを解決</td>
 <td><code>vnet</code>、<code>vnet_direct</code></td>
 </tr>
 <tr>
@@ -36918,7 +36921,7 @@
 </tr>
 <tr>
 <td>その他</td>
-<td>orchagent 処理対象外 (protobuf のみ記録)</td>
+<td><a href="../../glossary/#term-orchagent">orchagent</a> 処理対象外 (protobuf のみ記録)</td>
 <td>appliance、servicetunnel 等</td>
 </tr>
 </tbody>
@@ -36929,7 +36932,7 @@
 <p><code>action.has_vni()</code> が false（protobuf フィールド未設定）の場合、<code>routing_type_tunnel_key = 0</code> のまま推移し、VNI 属性は SAI に設定されない (<code>dashvnetorch.cpp:341-343</code>)。</p>
 <!-- defaults -->
 <h2 id="phase-a">フィールド暗黙デフォルト (Phase A — コード由来)<a class="headerlink" href="#phase-a" title="Permanent link">&para;</a></h2>
-<p><a href="../../glossary/#term-yang">YANG</a> schema (<code>sonic-dash.yang</code>) は <code>DASH_ROUTING_TYPE_LIST</code> の各フィールドに明示的な <code>default</code> ステートメントを持たない。実行時のデフォルト・フォールバックはすべて orchagent コード (<code>dashorch.cpp</code>、<code>dashvnetorch.cpp</code>) による。</p>
+<p><a href="../../glossary/#term-yang">YANG</a> schema (<code>sonic-dash.yang</code>) は <code>DASH_ROUTING_TYPE_LIST</code> の各フィールドに明示的な <code>default</code> ステートメントを持たない。実行時のデフォルト・フォールバックはすべて <a href="../../glossary/#term-orchagent">orchagent</a> コード (<code>dashorch.cpp</code>、<code>dashvnetorch.cpp</code>) による。</p>
 <table>
 <thead>
 <tr>
@@ -36996,7 +36999,7 @@
 </thead>
 <tbody>
 <tr>
-<td>routing type 未登録で VNET マッピング投入</td>
+<td>routing type 未登録で <a href="../../glossary/#term-vnet">VNET</a> マッピング投入</td>
 <td><code>getRouteTypeActions()</code> が <code>false</code> → VnetMap リトライ</td>
 <td>routing type 登録後の次 doTask() で自動解消</td>
 </tr>
@@ -37006,7 +37009,7 @@
 <td>自動回復なし（DEL → SET が必要）</td>
 </tr>
 <tr>
-<td>VNET マッピング残存状態で routing type DEL</td>
+<td><a href="../../glossary/#term-vnet">VNET</a> マッピング残存状態で routing type DEL</td>
 <td><code>routing_type_entries_</code> から即時削除（SAI ガードなし）</td>
 <td>孤立エントリが <a href="../../glossary/#term-dpu">DPU</a> 側に残る</td>
 </tr>
@@ -37724,7 +37727,7 @@
 </ul>
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 6d4619f4b469 -->
+<!-- glossary-links-injected: 5a96587fd90c -->
 
 <div class="footnote">
 <hr />

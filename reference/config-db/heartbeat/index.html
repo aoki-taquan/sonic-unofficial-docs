@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -37223,7 +37226,7 @@ eventd.cpp 側の <code>interval</code> とはスキーマが別（秒単位）�
 <!-- runtime-trace -->
 <h2 id="_14">実コンテナ動作トレース<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>heartbeat</code> daemon / <code>system_health_monitor</code> が CONFIG_DB の <code>HEARTBEAT</code> テーブルを購読する。</p>
+<p><code>heartbeat</code> daemon / <code>system_health_monitor</code> が <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>HEARTBEAT</code> テーブルを購読する。</p>
 <p><code>HEARTBEAT</code> はシステムヘルスモニタリング機能の設定。<code>system_health_monitor</code> と連携。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (<a href="../../glossary/#term-appl_db">APPL_DB</a> 中継なし)</p>
@@ -37677,7 +37680,7 @@ eventd.cpp 側の <code>interval</code> とはスキーマが別（秒単位）�
 </ul>
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 26210b4650d1 -->
+<!-- glossary-links-injected: 896d391185a9 -->
 
 <div class="footnote">
 <hr />

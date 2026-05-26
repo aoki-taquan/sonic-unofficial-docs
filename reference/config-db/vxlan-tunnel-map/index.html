@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -38197,7 +38200,7 @@ HW にマッピング実体が存在しない状態となる。後続の <code>d
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer-config_db-vxlanmgrd">段階 1: Consumer 登録 (CONFIG_DB → vxlanmgrd)<a class="headerlink" href="#1-consumer-config_db-vxlanmgrd" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>vxlanmgrd (VxlanMgr)</strong>: CONFIG_DB の <code>VXLAN_TUNNEL_MAP</code> テーブルを <code>SubscriberStateTable</code> で購読 (<code>vxlanmgrd.cpp:46-51</code>)。</li>
+<li><strong><a href="../../glossary/#term-vxlanmgrd">vxlanmgrd</a> (VxlanMgr)</strong>: CONFIG_DB の <code>VXLAN_TUNNEL_MAP</code> テーブルを <code>SubscriberStateTable</code> で購読 (<code>vxlanmgrd.cpp:46-51</code>)。</li>
 </ul>
 <h3 id="2-cfg-appl-vxlanmgrd">段階 2: CFG → APPL 翻訳 (vxlanmgrd)<a class="headerlink" href="#2-cfg-appl-vxlanmgrd" title="Permanent link">&para;</a></h3>
 <ul>
@@ -38278,7 +38281,7 @@ HW にマッピング実体が存在しない状態となる。後続の <code>d
 (<code>VLAN</code> は <code>VXLAN_TUNNEL_MAP</code> 全削除後に削除可)</p>
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: ef52452d313c -->
+<!-- glossary-links-injected: 287238f257a0 -->
 
 <div class="footnote">
 <hr />

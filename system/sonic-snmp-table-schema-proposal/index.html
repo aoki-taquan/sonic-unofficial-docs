@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -36111,7 +36114,7 @@ reasoning: 後方互換のための j2 内分岐が HLD で明示されている
 <p><strong>抜粋</strong>:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>In repo *sonic-buildimage*:
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>* *dockers/docker-snmp-v2/snmpd.conf.j2*:
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  * verify the existence of the SNMP table in the database and fork behavior if present, if not continue using old method.
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  * verify the existence of the SNMP table in the datatbase and fork behavior if present, if not continue using old method.
 </span></code></pre></div>
 <p><strong>判断根拠</strong>: 後方互換のための j2 内分岐が HLD で明示されている根拠。</p>
 </details>

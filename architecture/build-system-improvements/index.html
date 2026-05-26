@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -36840,12 +36843,12 @@ reasoning: sairedis 2 度ビルドの問題と修正方針の根拠。
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/4404">sonic-net/sonic-buildimage#4404</a></li>
 </ul>
 <h3 id="sonic-cfggen-cpu-sonic-buildimage4553">スイッチ起動時に sonic-cfggen が大量の CPU を消費する問題（sonic-buildimage#4553）<a class="headerlink" href="#sonic-cfggen-cpu-sonic-buildimage4553" title="Permanent link">&para;</a></h3>
-<p>スイッチ起動時に sonic-cfggen が大量の CPU を消費する問題。起動時に複数のサービスが同時に sonic-cfggen を呼び出すため。<code>systemd-analyze blame</code> でボトルネックを特定すること</p>
+<p>スイッチ起動時に <a href="../../reference/glossary/#term-sonic-cfggen">sonic-cfggen</a> が大量の CPU を消費する問題。起動時に複数のサービスが同時に sonic-cfggen を呼び出すため。<code>systemd-analyze blame</code> でボトルネックを特定すること</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/4553">sonic-net/sonic-buildimage#4553</a></li>
 </ul>
 <h3 id="sonic-cfggen-varrunredisredissock-sonic-buildimage5277">sonic-cfggen が <code>/var/run/redis/redis.sock</code> への接続に失敗する問題（sonic-buildimage#5277）<a class="headerlink" href="#sonic-cfggen-varrunredisredissock-sonic-buildimage5277" title="Permanent link">&para;</a></h3>
-<p>sonic-cfggen が <code>/var/run/redis/redis.sock</code> への接続に失敗する問題。Redis ソケットファイルが存在しない状態で実行された場合に発生</p>
+<p>sonic-cfggen が <code>/var/run/redis/redis.sock</code> への接続に失敗する問題。<a href="../../reference/glossary/#term-redis">Redis</a> ソケットファイルが存在しない状態で実行された場合に発生</p>
 <ul>
 <li>参照: <a href="https://github.com/sonic-net/sonic-buildimage/issues/5277">sonic-net/sonic-buildimage#5277</a></li>
 </ul>
@@ -36944,7 +36947,7 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: c79120f885b8 -->
+<!-- glossary-links-injected: 52137ef90356 -->
 
 <div class="footnote">
 <hr />

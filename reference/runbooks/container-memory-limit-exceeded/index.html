@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -35910,7 +35913,7 @@
 <h2 id="_5">対処方法<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li>container 再起動: <code>sudo systemctl restart &lt;feature&gt;</code></li>
-<li>limit 引き上げ: <code>/usr/share/sonic/templates/docker_image_ctl.j2</code> を修正してイメージを再 build（sonic-buildimage ビルド時に各コンテナの起動スクリプトへ展開される）</li>
+<li>limit 引き上げ: <code>/usr/share/sonic/templates/docker_image_ctl.j2</code> を修正してイメージを再 build（<a href="../../glossary/#term-sonic-buildimage">sonic-buildimage</a> ビルド時に各コンテナの起動スクリプトへ展開される）</li>
 <li>leak 疑い → memory profiling し upstream issue</li>
 <li>不要 feature 無効化: <code>sudo config feature state &lt;feat&gt; disabled</code></li>
 </ul>
@@ -35930,7 +35933,7 @@
 </ul>
 <h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <p>本ページの根拠は引用元 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> を参照。</p>
-<!-- glossary-links-injected: cdc10e959ceb -->
+<!-- glossary-links-injected: 75921d013977 -->
 
 <div class="footnote">
 <hr />

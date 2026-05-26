@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -37854,7 +37857,7 @@
 </blockquote>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
 <p>hostcfgd は <code>LDAP_SERVER</code> テーブルを受信後、<code>modify_conf_file()</code> 内で以下の自動補完・派生処理を行う。</p>
-<p><strong>ldap_global_default は空 dict</strong>: <code>AaaCfg.__init__()</code> で <code>self.ldap_global_default = {}</code> と初期化する (<code>hostcfgd:386</code>)。TACACS+ / RADIUS と異なり LDAP は hostcfgd レイヤでのデフォルト注入を行わない。未設定フィールドの fallback は <code>LdapCfg</code> クラス属性が担う。</p>
+<p><strong>ldap_global_default は空 dict</strong>: <code>AaaCfg.__init__()</code> で <code>self.ldap_global_default = {}</code> と初期化する (<code>hostcfgd:386</code>)。TACACS+ / <a href="../../glossary/#term-radius">RADIUS</a> と異なり LDAP は hostcfgd レイヤでのデフォルト注入を行わない。未設定フィールドの fallback は <code>LdapCfg</code> クラス属性が担う。</p>
 <p><strong>LdapCfg クラス属性による fallback 補完</strong>: <code>modify_conf_file()</code> は Jinja2 テンプレートへ <code>ldap_cfg=ldap.LdapCfg</code> を渡す (<code>hostcfgd:855, 863</code>)。テンプレートが <code>ldap_cfg</code> を参照して CONFIG_DB に値が存在しないフィールドを補完する。</p>
 <table>
 <thead>
@@ -37971,7 +37974,7 @@
 <td>CONFIG_DB</td>
 <td>読み取り (hostcfgd 初期化時)</td>
 <td>なし</td>
-<td>任意 (LDAP 動作への直接影響なし; RADIUS <code>nas_id</code> で使用)</td>
+<td>任意 (LDAP 動作への直接影響なし; <a href="../../glossary/#term-radius">RADIUS</a> <code>nas_id</code> で使用)</td>
 <td><code>hostcfgd:1422-1496</code>, <code>hostcfgd:675-678</code></td>
 </tr>
 </tbody>
@@ -38288,7 +38291,7 @@
 </thead>
 <tbody>
 <tr>
-<td>APPL_DB</td>
+<td><a href="../../glossary/#term-appl_db">APPL_DB</a></td>
 <td>なし</td>
 <td><code>ldap_server_update</code> / <code>ldap_global_update</code> 内に Producer/Table の書込呼出が 0 件 (<code>sonic-host-services/scripts/hostcfgd:547-564</code> を <code>set(</code>/<code>hset</code>/<code>Producer</code>/<code>Notification</code> で grep して 0 ヒット)</td>
 </tr>
@@ -38305,7 +38308,7 @@
 <tr>
 <td>その他 (<a href="../../glossary/#term-asic_db">ASIC_DB</a> / <a href="../../glossary/#term-flex_counter_db">FLEX_COUNTER_DB</a> / <a href="../../glossary/#term-loglevel_db">LOGLEVEL_DB</a>)</td>
 <td>なし</td>
-<td>SAI 非経由（実コンテナ動作トレース参照）。<code>LDAP_SERVER</code> テーブルを購読する mgrd/<a href="../../glossary/#term-orchagent">orchagent</a> は <code>sonic-swss/</code> に存在しない</td>
+<td><a href="../../glossary/#term-sai">SAI</a> 非経由（実コンテナ動作トレース参照）。<code>LDAP_SERVER</code> テーブルを購読する mgrd/<a href="../../glossary/#term-orchagent">orchagent</a> は <code>sonic-swss/</code> に存在しない</td>
 </tr>
 </tbody>
 </table>
@@ -38510,7 +38513,7 @@
 </blockquote>
 <!-- /platform -->
 
-<!-- glossary-links-injected: 35b0ac51c6c5 -->
+<!-- glossary-links-injected: 2bdabe30dcfb -->
 
 <div class="footnote">
 <hr />

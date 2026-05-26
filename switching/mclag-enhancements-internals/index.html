@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -35893,27 +35896,27 @@
 <tr>
 <td><strong>iccpd</strong></td>
 <td><code>sonic-buildimage/src/iccpd/src/</code> (<code>iccp_main.c</code>, <code>iccp_csm.c</code>, <code>mlacp_fsm.c</code>, <code>mlacp_sync_*.c</code>, <code>mlacp_link_handler.c</code> ほか)</td>
-<td>ICCP プロトコル本体。peer との session / FDB / interface state / isolation 同期</td>
+<td>ICCP プロトコル本体。peer との session / <a href="../../reference/glossary/#term-fdb">FDB</a> / interface state / isolation 同期</td>
 </tr>
 <tr>
 <td><strong>MclagSyncd</strong></td>
 <td><code>sonic-swss/mclagsyncd/mclaglink.cpp</code> (約 1964 行) + <code>mclagsyncd.cpp</code></td>
-<td>ICCPd と Redis (CONFIG_DB / APPL_DB / STATE_DB) の橋渡し。Unix socket で ICCPd と message 交換</td>
+<td>ICCPd と <a href="../../reference/glossary/#term-redis">Redis</a> (<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> / <a href="../../reference/glossary/#term-state_db">STATE_DB</a>) の橋渡し。Unix socket で ICCPd と message 交換</td>
 </tr>
 <tr>
 <td><strong>FdbOrch</strong></td>
 <td><code>sonic-swss/orchagent/fdborch.cpp</code></td>
-<td><code>APP_MCLAG_FDB_TABLE</code> を subscribe、<code>FDB_ORIGIN_MCLAG_ADVERTIZED</code> 起源の MAC を ASIC に program</td>
+<td><code>APP_MCLAG_FDB_TABLE</code> を subscribe、<code>FDB_ORIGIN_MCLAG_ADVERTIZED</code> 起源の MAC を <a href="../../reference/glossary/#term-asic">ASIC</a> に program</td>
 </tr>
 <tr>
 <td><strong>IsolationGroupOrch</strong></td>
 <td><code>sonic-swss/orchagent/isolationgrouporch.cpp</code> (749 行)</td>
-<td><code>APP_ISOLATION_GROUP_TABLE</code> を subscribe、SAI isolation group を生成・bridge port に attach</td>
+<td><code>APP_ISOLATION_GROUP_TABLE</code> を subscribe、<a href="../../reference/glossary/#term-sai">SAI</a> isolation group を生成・bridge port に attach</td>
 </tr>
 <tr>
 <td><strong>PortsOrch</strong></td>
 <td><code>sonic-swss/orchagent/portsorch.cpp</code></td>
-<td><code>traffic_disable</code> LAG attribute を実装。interface up ack 待ちの間 LAG member を ASIC に程式しない</td>
+<td><code>traffic_disable</code> <a href="../../reference/glossary/#term-lag">LAG</a> attribute を実装。interface up ack 待ちの間 LAG member を ASIC に程式しない</td>
 </tr>
 <tr>
 <td><strong>FdbSyncd</strong></td>
@@ -35935,8 +35938,8 @@
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w w-Error">  </span><span class="l l-Scalar l-Scalar-Plain">MCLAG_UNIQUE_IP|&lt;vlan_intf&gt;</span><span class="w">         </span><span class="c1"># CFG_MCLAG_UNIQUE_IP_TABLE_NAME</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="nt">unique_ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;enable&quot;</span>
 </span></code></pre></div>
-<p><code>domain_id</code> は 1–4095。MCLAG インタフェースは <strong>両 peer で同じ PortChannel 名</strong> を使う必要がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<p>YANG は <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang</code> に <code>MCLAG_DOMAIN</code> / <code>MCLAG_INTERFACE</code> / <code>MCLAG_UNIQUE_IP</code> の 3 container として定義（行 37 以降）。</p>
+<p><code>domain_id</code> は 1–4095。<a href="../../reference/glossary/#term-mclag">MCLAG</a> インタフェースは <strong>両 peer で同じ <a href="../../reference/glossary/#term-portchannel">PortChannel</a> 名</strong> を使う必要がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-yang">YANG</a> は <code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang</code> に <code>MCLAG_DOMAIN</code> / <code>MCLAG_INTERFACE</code> / <code>MCLAG_UNIQUE_IP</code> の 3 container として定義（行 37 以降）。</p>
 <h2 id="3-appl_db">3. APPL_DB スキーマ<a class="headerlink" href="#3-appl_db" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">APPL_DB</span><span class="p">:</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">ISOLATION_GROUP_TABLE:&lt;name&gt;</span><span class="w">        </span><span class="c1"># APP_ISOLATION_GROUP_TABLE_NAME = &quot;ISOLATION_GROUP_TABLE&quot; (schema.h:119)</span>
@@ -35952,7 +35955,7 @@
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w w-Error">  </span><span class="l l-Scalar l-Scalar-Plain">LAG_TABLE:&lt;lag&gt;</span>
 </span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">traffic_disable</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="err"> &quot;false&quot;</span><span class="w"> </span><span class="c1"># PortsOrch が解釈、interface up ack 待ち中は member を ASIC 未追加</span>
 </span></code></pre></div>
-<p><code>MclagSyncd</code> の <code>mclaglink.cpp:1811-1812</code> で <code>APP_ISOLATION_GROUP_TABLE_NAME</code> / <code>APP_MCLAG_FDB_TABLE_NAME</code> の ProducerStateTable を確保している<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p><code>MclagSyncd</code> の <code>mclaglink.cpp:1811-1812</code> で <code>APP_ISOLATION_GROUP_TABLE_NAME</code> / <code>APP_MCLAG_FDB_TABLE_NAME</code> の <a href="../../reference/glossary/#term-producerstatetable">ProducerStateTable</a> を確保している<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <h2 id="4-state_db">4. STATE_DB スキーマ<a class="headerlink" href="#4-state_db" title="Permanent link">&para;</a></h2>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">STATE_DB</span><span class="p">:</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">MCLAG_TABLE|&lt;domain_id&gt;</span><span class="w">              </span><span class="c1"># STATE_MCLAG_TABLE_NAME (schema.h:440)</span>
@@ -36037,18 +36040,18 @@
 <li>IsolationGroupOrch が <code>SAI_OBJECT_TYPE_ISOLATION_GROUP</code> を <code>SAI_ISOLATION_GROUP_TYPE_BRIDGE_PORT</code> で作成</li>
 <li><code>MEMBERS</code> の各 bridge port を <code>SAI_ISOLATION_GROUP_MEMBER</code> として attach</li>
 <li><code>PORTS</code>（= peer-link）に対し <code>SAI_BRIDGE_PORT_ATTR_ISOLATION_GROUP</code> を set</li>
-<li>platform が isolation group 未対応の場合、<code>mlacp_link_handler.c</code> 内の旧 egress ACL 経路に fallback</li>
+<li>platform が isolation group 未対応の場合、<code>mlacp_link_handler.c</code> 内の旧 egress <a href="../../reference/glossary/#term-acl">ACL</a> 経路に fallback</li>
 </ol>
 <p>これにより peer-link ingress traffic は <strong>MCLAG メンバ port 宛て分のみ drop</strong> され、orphan port 宛ては通過する<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="7-unique-ip">7. Unique IP の実装ポイント<a class="headerlink" href="#7-unique-ip" title="Permanent link">&para;</a></h2>
 <p><code>mclaglink.cpp:1672</code> の <code>MCLAG_SUB_OPTION_TYPE_ISOLATION_STATE</code> 等、ICCPd から MclagSyncd への message に unique IP 関連 sub-option が追加されている<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。Standby 側で行う処理<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>active 側 VLAN interface MAC を My-Station TCAM へ program <strong>しない</strong>（自分宛として終端しない）</li>
+<li>active 側 <a href="../../reference/glossary/#term-vlan">VLAN</a> interface MAC を My-Station <a href="../../reference/glossary/#term-tcam">TCAM</a> へ program <strong>しない</strong>（自分宛として終端しない）</li>
 <li>kernel に active 側 MAC を反映しない</li>
 <li>L2 table に <code>peer VLAN intf MAC → peer-link</code> を program（MAC learning は peer-link で disable のため手動 program）</li>
-<li>ARP / ND を local VLAN interface IP について sync</li>
+<li><a href="../../reference/glossary/#term-arp">ARP</a> / ND を local VLAN interface IP について sync</li>
 </ul>
-<p>データプレーン gateway は SAG / VRRP が別途必要（HLD §1.1.5 / §3.3.6）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>データプレーン gateway は SAG / <a href="../../reference/glossary/#term-vrrp">VRRP</a> が別途必要（<a href="../../reference/glossary/#term-hld">HLD</a> §1.1.5 / §3.3.6）<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="8-iccp-debug-counters">8. ICCP メッセージ統計（debug counters）<a class="headerlink" href="#8-iccp-debug-counters" title="Permanent link">&para;</a></h2>
 <p><code>mclagdctl -i &lt;domain&gt; dump debug counters</code> で観測できる主な TLV<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <table>
@@ -36110,6 +36113,8 @@
 <li><a href="../../topics/05-dual-tor/">Topics: Dual ToR</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ba38183152a1 -->
 
 <div class="footnote">
 <hr />

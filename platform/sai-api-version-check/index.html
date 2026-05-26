@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -17578,6 +17581,17 @@
       
         <li class="md-nav__item">
   <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         引用元
@@ -35976,6 +35990,17 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -36174,7 +36199,9 @@ reasoning: AC_TRY_RUN ベースのビルド時検査と、PATCH 緩和ポリシ�
 <li><strong>runtime バグの取り逃し</strong>: vendor libsai が <code>SAI_API_VERSION</code> を実態と異なる値で返すバグは検知できない。属性 ID / enum 値の異常は依然発生し得る。</li>
 <li><strong>vendor 越境の責任分界</strong>: <code>sonic-sairedis</code> 更新時には対応する vendor libsai を同 PR で更新する責任が CI workflow にハードコードされており、片側だけ更新すると CI が落ちる。</li>
 </ul>
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_11">実装との乖離<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<p><code>monitor: partially_implemented</code> — HLD は SAI バージョン比較を <strong>MAJOR.MINOR の等値比較</strong> とするが、実装（<code>sonic-sairedis/configure.ac</code> l.226-261）は <code>minversion = SAI_VERSION(1,9,0)</code> の <strong>floor チェック</strong> に緩和されている（<code>return (version &lt; minversion) || (SAI_API_VERSION &lt; minversion);</code> のみが失敗条件）。MAJOR ずれや MINOR 上方差も許容するため、HLD 提案より実装は大幅に緩い。緩和の根拠は configure.ac コメントで OCP SAI PR 1297（enum binary backward compat）および PR 1795（structs）を引用。<code>syncd/VendorSai.cpp</code> l.52 の <code>.query_api_version = &amp;sai_query_api_version</code> は実装済みで、<code>sai_query_api_version()</code> の呼び出し自体は機能する。</p>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-19):
 - sonic-sairedis `configure.ac` l.226-261: `AC_CHECK_FUNCS(sai_query_api_version, [AC_MSG_CHECKING([SAI headers API version and library version check]) AC_TRY_RUN([...])`
 - 実装は **`minversion = SAI_VERSION(1,9,0)` floor** で `return (version < minversion) || (SAI_API_VERSION < minversion);` のみ判定（HLD 案の MAJOR.MINOR equality より緩い）。理由は configure.ac コメントで OCP SAI PR 1297（enum binary backward compat）と PR 1795（structs）を参照

@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -37697,7 +37700,7 @@
 </span></code></pre></div>
 <p>ソース: <code>cfgmgr/macsecmgr.cpp</code> L635–678</p>
 <h3 id="sai-macsec_sa-macsecorch">SAI macsec_sa 作成順 (macsecorch)<a class="headerlink" href="#sai-macsec_sa-macsecorch" title="Permanent link">&para;</a></h3>
-<p><code>MACsecOrch</code> では SAI オブジェクトを以下の厳密な順序で作成する。前段オブジェクトが未作成の場合は <code>task_need_retry</code> を返し待機する。</p>
+<p><code>MACsecOrch</code> では <a href="../../glossary/#term-sai">SAI</a> オブジェクトを以下の厳密な順序で作成する。前段オブジェクトが未作成の場合は <code>task_need_retry</code> を返し待機する。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>1. MACsec Switch Object (initMACsecObject)  ← スイッチ単位で 1 回のみ
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>     ↓
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>2. MACsec Port Object (createMACsecPort)    ← PORT ごと
@@ -37835,7 +37838,7 @@
 </tr>
 <tr>
 <td>9</td>
-<td>SAI <code>create/set macsec</code> 恒久エラー</td>
+<td><a href="../../glossary/#term-sai">SAI</a> <code>create/set macsec</code> 恒久エラー</td>
 <td><code>parseHandleSaiStatusFailure()</code></td>
 <td><code>task_failed</code></td>
 <td>なし</td>
@@ -37866,7 +37869,7 @@
 <ul>
 <li>SAI POST 失敗のみ <a href="../../glossary/#term-state_db">STATE_DB</a> に記録される（<code>MACSEC_POST|switch</code> エントリ）</li>
 <li>その他の失敗は <code>syslog</code>（<code>SWSS_LOG_WARN</code> / <code>SWSS_LOG_ERROR</code>）への出力のみ</li>
-<li>CONFIG_DB のエントリは失敗後も残る</li>
+<li><a href="../../glossary/#term-config_db">CONFIG_DB</a> のエントリは失敗後も残る</li>
 </ul>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># syslog 確認</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>macsecmgrd<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;fail|warn|error&quot;</span>
@@ -37881,7 +37884,7 @@
 <!-- runtime-trace -->
 <h2 id="_17">実コンテナ動作トレース<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1 — Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
-<p><code>macsecmgrd</code> → <code>MACsecOrch</code> (<a href="../../glossary/#term-appl_db">APPL_DB</a> 経由) が CONFIG_DB の <code>MACSEC_PROFILE</code> テーブルを購読する。</p>
+<p><code>macsecmgrd</code> → <code>MACsecOrch</code> (<a href="../../glossary/#term-appl_db">APPL_DB</a> 経由) が <a href="../../glossary/#term-config_db">CONFIG_DB</a> の <code>MACSEC_PROFILE</code> テーブルを購読する。</p>
 <p><code>MACSEC_PROFILE</code> の key はプロファイル名。<code>primary_cak</code> / <code>fallback_cak</code> / <code>cipher_suite</code> 等のキー情報を保持。</p>
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p><code>APP_MACSEC_TABLE</code> / <code>APP_MACSEC_PORT_TABLE</code> 等に書き込み</p>
@@ -38549,7 +38552,7 @@
 </ul>
 <!-- /platform -->
 
-<!-- glossary-links-injected: 7a8bade35b7c -->
+<!-- glossary-links-injected: 6f36db8074ad -->
 
 <div class="footnote">
 <hr />

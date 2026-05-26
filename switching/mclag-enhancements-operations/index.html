@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -36138,7 +36141,7 @@
 </div>
 <h2 id="1">1. 前提<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>両 peer で <strong>同じ PortChannel 名</strong> を MCLAG メンバとして用意する</li>
+<li>両 peer で <strong>同じ <a href="../../reference/glossary/#term-portchannel">PortChannel</a> 名</strong> を <a href="../../reference/glossary/#term-mclag">MCLAG</a> メンバとして用意する</li>
 <li>L2 MCLAG では <code>peer_link</code> は必須、L3 MCLAG では optional</li>
 <li>ICCP は <strong>2 台ピアまで</strong>。3-way は非対応</li>
 </ul>
@@ -36262,7 +36265,7 @@
 <tbody>
 <tr>
 <td><code>Session Status : Down</code> 持続</td>
-<td><code>peer-link</code> の VLAN tag 通過 / <code>source_ip</code> の reachability / firewall。<code>ping &lt;peer-ip&gt;</code> で peer に届くか確認</td>
+<td><code>peer-link</code> の <a href="../../reference/glossary/#term-vlan">VLAN</a> tag 通過 / <code>source_ip</code> の reachability / firewall。<code>ping &lt;peer-ip&gt;</code> で peer に届くか確認</td>
 </tr>
 <tr>
 <td>keep-alive が頻繁にロス</td>
@@ -36278,7 +36281,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>mclagdctl<span class="w"> </span>-i<span class="w"> </span><span class="m">1</span><span class="w"> </span>dump<span class="w"> </span>debug<span class="w"> </span>counters<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;MacInfo|FdbChange&quot;</span>
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>KEYS<span class="w"> </span><span class="s2">&quot;MCLAG_FDB_TABLE:*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
 </span></code></pre></div>
-<p><code>MacInfo TX</code> が増えない場合 ICCPd 側、<code>FdbChange RX</code> が来ているのに APPL_DB に上がらない場合 MclagSyncd 側、APPL_DB にあるのに ASIC に乗らない場合 FdbOrch 側を疑う。</p>
+<p><code>MacInfo TX</code> が増えない場合 ICCPd 側、<code>FdbChange RX</code> が来ているのに <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> に上がらない場合 MclagSyncd 側、APPL_DB にあるのに <a href="../../reference/glossary/#term-asic">ASIC</a> に乗らない場合 FdbOrch 側を疑う。</p>
 <h3 id="63-bum-peer-link-mhd">6.3 BUM が peer-link 経由で MHD に重複到達<a class="headerlink" href="#63-bum-peer-link-mhd" title="Permanent link">&para;</a></h3>
 <p>isolation group が attach されていない可能性。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">0</span><span class="w"> </span>HGETALL<span class="w"> </span><span class="s2">&quot;ISOLATION_GROUP_TABLE:1&quot;</span>
@@ -36286,7 +36289,7 @@
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>syslog<span class="w"> </span>で<span class="w"> </span><span class="s2">&quot;isolation group&quot;</span><span class="w"> </span>/<span class="w"> </span><span class="s2">&quot;ACL fallback&quot;</span><span class="w"> </span>を<span class="w"> </span>grep
 </span></code></pre></div>
 <h3 id="64-l2-mc-lag-icmpv6-rsns-1253">6.4 L2 MC-LAG 環境での ICMPv6 RS/NS ループ（#1253）<a class="headerlink" href="#64-l2-mc-lag-icmpv6-rsns-1253" title="Permanent link">&para;</a></h3>
-<p>L2 MC-LAG 構成において、ICMPv6 Router Solicitation (type 133) や Neighbor Solicitation (type 135) パケットが peer-link を経由してループを形成する既知の問題がある。SONiC kernel がこれらのパケットを処理する際に isolation group を迂回するためと考えられる<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
+<p>L2 MC-<a href="../../reference/glossary/#term-lag">LAG</a> 構成において、ICMPv6 Router Solicitation (type 133) や Neighbor Solicitation (type 135) パケットが peer-link を経由してループを形成する既知の問題がある。<a href="../../reference/glossary/#term-sonic">SONiC</a> kernel がこれらのパケットを処理する際に isolation group を迂回するためと考えられる<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>。</p>
 <p><strong>回避策（再起動で消えるため startup script 化推奨）:</strong></p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sudo<span class="w"> </span>ebtables<span class="w"> </span>-A<span class="w"> </span>FORWARD<span class="w"> </span>-p<span class="w"> </span>802_1Q<span class="w"> </span>--vlan-encap<span class="w"> </span>IPv6<span class="w"> </span>-j<span class="w"> </span>DROP
 </span></code></pre></div>
@@ -36295,16 +36298,16 @@
 <li><code>MCLAG_UNIQUE_IP</code> テーブルに該当 VLAN intf が登録されているか</li>
 <li>両 peer で <strong>異なる IP</strong> を設定しているか（同一 IP のままだと旧モードで重複検知に陥る）</li>
 <li>Standby 側で peer の VLAN intf MAC が L2 table に program されているか (<code>show mac | grep &lt;peer-mac&gt;</code>)</li>
-<li>隣接が片方向の場合は ARP / ND sync 経路を疑う</li>
+<li>隣接が片方向の場合は <a href="../../reference/glossary/#term-arp">ARP</a> / ND sync 経路を疑う</li>
 </ul>
 <h2 id="7">7. 制限事項<a class="headerlink" href="#7" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ICCP は <strong>2 台ピアまで</strong>（3-way 以上は未対応）</li>
-<li>isolation group は SAI 対応必須。未対応 ASIC では peer-link 経由のループ抑止は egress ACL fallback</li>
-<li>unique IP では active/active 両方が L3 で見える。OSPF cost / BGP を peer 間で揃える必要</li>
+<li>isolation group は <a href="../../reference/glossary/#term-sai">SAI</a> 対応必須。未対応 ASIC では peer-link 経由のループ抑止は egress <a href="../../reference/glossary/#term-acl">ACL</a> fallback</li>
+<li>unique IP では active/active 両方が L3 で見える。OSPF cost / <a href="../../reference/glossary/#term-bgp">BGP</a> を peer 間で揃える必要</li>
 <li>大量 static MAC sync は ICCP メッセージ量増、scalability 影響あり</li>
 <li>旧版（<code>config_db.json</code> 直書き）からの <strong>upgrade / downgrade は非対応</strong><sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
-<li>Warm Boot 後は ICCP が local FDB を再 advertise する必要がある（HLD §6）</li>
+<li>Warm Boot 後は ICCP が local <a href="../../reference/glossary/#term-fdb">FDB</a> を再 advertise する必要がある（<a href="../../reference/glossary/#term-hld">HLD</a> §6）</li>
 </ul>
 <h2 id="8">8. 引用元<a class="headerlink" href="#8" title="Permanent link">&para;</a></h2>
 <!-- topics-back-ref -->
@@ -36314,6 +36317,8 @@
 <li><a href="../../topics/05-dual-tor/">Topics: Dual ToR</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 639b1e55333b -->
 
 <div class="footnote">
 <hr />

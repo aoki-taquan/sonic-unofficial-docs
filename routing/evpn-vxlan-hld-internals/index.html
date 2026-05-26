@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -35881,7 +35884,7 @@
 <p><code>sonic-swss/orchagent/vxlanorch.h:541</code> <code>class EvpnNvoOrch</code>、<code>vxlanorch.cpp:1678/1733/1795</code> <code>gDirectory.get&lt;EvpnNvoOrch*&gt;()</code>、<code>routeorch.cpp:3048/3068</code> で Type-5 install 経路の EvpnNvoOrch 連携、<code>fdborch.cpp:847</code> で Type-2 経由 MAC 学習通知、<code>sonic-swss/cfgmgr/vxlanmgr.cpp:189/239</code> で <code>VXLAN_EVPN_NVO</code> テーブル名、<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang:106</code> <code>container VXLAN_EVPN_NVO</code> を確認。</p>
 </div>
 <h2 id="1-type-2-type-3-type-5">1. 全体フロー（Type-2 / Type-3 / Type-5 共通）<a class="headerlink" href="#1-type-2-type-3-type-5" title="Permanent link">&para;</a></h2>
-<p>BGP-EVPN のメッセージは FRR <code>bgpd</code> で受信され、種別ごとに異なる経路で SONiC の orchagent → SAI に下りる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-bgp">BGP</a>-<a href="../../reference/glossary/#term-evpn">EVPN</a> のメッセージは <a href="../../reference/glossary/#term-frr">FRR</a> <code>bgpd</code> で受信され、種別ごとに異なる経路で <a href="../../reference/glossary/#term-sonic">SONiC</a> の <a href="../../reference/glossary/#term-orchagent">orchagent</a> → <a href="../../reference/glossary/#term-sai">SAI</a> に下りる<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <pre class="mermaid"><code>flowchart TB
     BGPD[FRR bgpd&lt;br/&gt;受信した EVPN route] --&gt; ZEBRA[FRR zebra]
     ZEBRA --&gt;|Type-5: IP prefix| FPMSYNCD[fpmsyncd]
@@ -35898,9 +35901,9 @@
 <h2 id="2-control-plane-frr-bgpd-zebra">2. control plane: FRR bgpd / zebra<a class="headerlink" href="#2-control-plane-frr-bgpd-zebra" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>bgpd</strong>: <code>address-family l2vpn evpn</code> で EVPN session を張り、Route Type 2 / 3 / 5 を送受信。SONiC 側では <code>dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2</code> テンプレートで生成</li>
-<li><strong>zebra</strong>: bgpd から渡された route を Linux RIB / FDB に install する責務。Type-5 は kernel routing table へ、Type-2 / Type-3 は kernel bridge FDB / vni device 経由で配信</li>
-<li><strong>fpmsyncd</strong> (FPM channel 経由): zebra からの IP route 通知を受け取り、<code>APPL_DB</code> の <code>ROUTE_TABLE</code> / <code>VRF_ROUTE_TABLE</code> に書き込む。VXLAN next-hop のときは <code>vni_label</code> / <code>router_mac</code> フィールドが付与される</li>
-<li><strong>fdbsyncd</strong> (SwSS 側で追加された process): Linux bridge FDB を netlink subscribe し、Vxlan interface 経由で学習された MAC を <code>APPL_DB</code> の <code>VXLAN_FDB_TABLE</code> / <code>VXLAN_REMOTE_VNI_TABLE</code> に書き込む<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><strong><a href="../../reference/glossary/#term-zebra">zebra</a></strong>: bgpd から渡された route を Linux RIB / <a href="../../reference/glossary/#term-fdb">FDB</a> に install する責務。Type-5 は kernel routing table へ、Type-2 / Type-3 は kernel bridge FDB / vni device 経由で配信</li>
+<li><strong><a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a></strong> (<a href="../../reference/glossary/#term-fpm">FPM</a> channel 経由): zebra からの IP route 通知を受け取り、<code>APPL_DB</code> の <code>ROUTE_TABLE</code> / <code>VRF_ROUTE_TABLE</code> に書き込む。<a href="../../reference/glossary/#term-vxlan">VXLAN</a> next-hop のときは <code>vni_label</code> / <code>router_mac</code> フィールドが付与される</li>
+<li><strong><a href="../../reference/glossary/#term-fdbsyncd">fdbsyncd</a></strong> (SwSS 側で追加された process): Linux bridge FDB を netlink subscribe し、Vxlan interface 経由で学習された MAC を <code>APPL_DB</code> の <code>VXLAN_FDB_TABLE</code> / <code>VXLAN_REMOTE_VNI_TABLE</code> に書き込む<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h2 id="3-data-plane-orchagent">3. data plane: orchagent クラス相関<a class="headerlink" href="#3-data-plane-orchagent" title="Permanent link">&para;</a></h2>
 <p>EVPN VXLAN は単一の orch ではなく <strong>複数の Orch2 派生クラスが協調</strong> する。実装上の中心は <code>vxlanorch.{h,cpp}</code>。</p>
@@ -35916,17 +35919,17 @@
 <tr>
 <td><code>VxlanTunnelOrch</code></td>
 <td><code>vxlanorch.h:268</code></td>
-<td><code>VXLAN_TUNNEL</code> を読んで VTEP loopback の SAI tunnel object を作る</td>
+<td><code>VXLAN_TUNNEL</code> を読んで <a href="../../reference/glossary/#term-vtep">VTEP</a> loopback の SAI tunnel object を作る</td>
 </tr>
 <tr>
 <td><code>VxlanTunnelMapOrch</code></td>
 <td><code>vxlanorch.h:414</code></td>
-<td><code>VXLAN_TUNNEL_MAP</code> の L2VNI ↔ VLAN を SAI tunnel map entry に登録</td>
+<td><code>VXLAN_TUNNEL_MAP</code> の L2VNI ↔ <a href="../../reference/glossary/#term-vlan">VLAN</a> を SAI tunnel map entry に登録</td>
 </tr>
 <tr>
 <td><code>VxlanVrfMapOrch</code></td>
 <td><code>vxlanorch.h:462</code></td>
-<td>L3VNI ↔ VRF を SAI tunnel map entry に登録</td>
+<td>L3VNI ↔ <a href="../../reference/glossary/#term-vrf">VRF</a> を SAI tunnel map entry に登録</td>
 </tr>
 <tr>
 <td><code>EvpnNvoOrch</code></td>
@@ -35966,7 +35969,7 @@
 <tr>
 <th>テーブル</th>
 <th>役割</th>
-<th>HLD 記載との差</th>
+<th><a href="../../reference/glossary/#term-hld">HLD</a> 記載との差</th>
 </tr>
 </thead>
 <tbody>
@@ -36046,7 +36049,7 @@
 <h2 id="5-vrf-tenant">5. VRF / Tenant 隔離の実装<a class="headerlink" href="#5-vrf-tenant" title="Permanent link">&para;</a></h2>
 <p>Symmetric IRB + Type-5 のテナント隔離は <strong>L3VNI ↔ VRF の 1:1 bind</strong> で実現する。</p>
 <ol>
-<li>管理者が <code>VRF|Vrf-Red</code> に <code>vni = 5000</code> を設定（CONFIG_DB）</li>
+<li>管理者が <code>VRF|Vrf-Red</code> に <code>vni = 5000</code> を設定（<a href="../../reference/glossary/#term-config_db">CONFIG_DB</a>）</li>
 <li><code>vrfmgr</code> がこれを <code>APPL_DB:VRF_TABLE</code> にコピー</li>
 <li><code>vrforch</code> が SAI VR (virtual router) を作成し、L3VNI 5000 を bind</li>
 <li>FRR 側でも対応する VRF に L3VNI を bind（<code>vtysh</code> の <code>vni 5000</code>）</li>
@@ -36066,12 +36069,12 @@
 <ul>
 <li>HLD の <code>EVPN_NVO</code> は実装上 <code>VXLAN_EVPN_NVO</code></li>
 <li>HLD で複数 orch に分散とされる中身は <strong><code>vxlanorch.{h,cpp}</code> 1 ファイルに集約</strong> された複数の Orch2 派生クラス</li>
-<li>ARP/ND suppression は HLD には記載があるが実装は未完（<a href="https://github.com/sonic-net/sonic-swss/issues/2181">sonic-swss #2181</a>）</li>
+<li><a href="../../reference/glossary/#term-arp">ARP</a>/ND suppression は HLD には記載があるが実装は未完（<a href="https://github.com/sonic-net/sonic-swss/issues/2181">sonic-swss #2181</a>）</li>
 </ul>
 <h2 id="8">8. 次に読む<a class="headerlink" href="#8" title="Permanent link">&para;</a></h2>
 <ul>
 <li>概念 / Route Type / IRB: <a href="../evpn-vxlan-hld-concepts/">evpn-vxlan-hld-concepts.md</a></li>
-<li>CLI 設定 / vtysh / トラブルシュート: <a href="../evpn-vxlan-hld-operations/">evpn-vxlan-hld-operations.md</a></li>
+<li>CLI 設定 / <a href="../../reference/glossary/#term-vtysh">vtysh</a> / トラブルシュート: <a href="../evpn-vxlan-hld-operations/">evpn-vxlan-hld-operations.md</a></li>
 <li>関連 HLD: <a href="../overlay-ecmp-with-bfd-monitoring/">overlay ECMP with BFD monitoring</a>, <a href="../fpmsyncd-nexthop-group-enhancement-high-level-design-document/">fpmsyncd nexthop group enhancement</a></li>
 </ul>
 <h2 id="_1">引用元<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -36081,6 +36084,8 @@
 <li><a href="../../topics/03-vxlan-evpn/internals/">Topics: VXLAN / EVPN / VNET オーバーレイ — 内部実装</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7909000d1ad5 -->
 
 <div class="footnote">
 <hr />

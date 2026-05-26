@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -35955,19 +35958,19 @@
 <h1 id="evpn-vxlan-route-type-235-l2vni-l3vni-irb">EVPN VXLAN 概念（Route Type 2/3/5 / L2VNI / L3VNI / IRB）<a class="headerlink" href="#evpn-vxlan-route-type-235-l2vni-l3vni-irb" title="Permanent link">&para;</a></h1>
 <p>このページは <a href="../evpn-vxlan-hld/">EVPN VXLAN HLD（概要ハブ）</a> の派生ページで、<strong>control plane の概念・用語・deployment モデル</strong> に絞って整理する。内部実装は <a href="../evpn-vxlan-hld-internals/">evpn-vxlan-hld-internals.md</a>、CLI 設定・運用は <a href="../evpn-vxlan-hld-operations/">evpn-vxlan-hld-operations.md</a> を参照。</p>
 <h2 id="1-control-plane-data-plane">1. control plane / data plane の分業<a class="headerlink" href="#1-control-plane-data-plane" title="Permanent link">&para;</a></h2>
-<p>EVPN VXLAN は <strong>control plane と data plane を明確に分離</strong> する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-evpn">EVPN</a> <a href="../../reference/glossary/#term-vxlan">VXLAN</a> は <strong>control plane と data plane を明確に分離</strong> する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <ul>
-<li><strong>control plane</strong>: BGP の <strong>MP-BGP EVPN address-family</strong> (<code>l2vpn evpn</code>) が MAC / IP / IP prefix の到達情報を VTEP 間で広告する。SONiC は FRR の <code>bgpd</code> を採用</li>
+<li><strong>control plane</strong>: <a href="../../reference/glossary/#term-bgp">BGP</a> の <strong>MP-BGP EVPN address-family</strong> (<code>l2vpn evpn</code>) が MAC / IP / IP prefix の到達情報を <a href="../../reference/glossary/#term-vtep">VTEP</a> 間で広告する。<a href="../../reference/glossary/#term-sonic">SONiC</a> は <a href="../../reference/glossary/#term-frr">FRR</a> の <code>bgpd</code> を採用</li>
 <li><strong>data plane</strong>: VXLAN encap/decap で L2 over L3 のトンネルを張る。各 VTEP が loopback IP を SIP とし、対向 VTEP の loopback を DIP とする UDP/4789 のカプセル化</li>
 </ul>
-<p>HLD では「FRR を control plane と仮定するが、本設計に準拠する任意の BGP-EVPN 実装で代替可能」と明記<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> では「FRR を control plane と仮定するが、本設計に準拠する任意の BGP-EVPN 実装で代替可能」と明記<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h2 id="2-deployment">2. 想定 deployment<a class="headerlink" href="#2-deployment" title="Permanent link">&para;</a></h2>
 <p>HLD の Target use cases<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li><strong>IP Fabric Leaf-Spine</strong> のリーフノード</li>
 <li>従来型 Access / Aggregator / Core トポロジの集約 / コアノード</li>
 <li>マルチテナント環境</li>
-<li>IP WAN 越しの VLAN 拡張</li>
+<li>IP WAN 越しの <a href="../../reference/glossary/#term-vlan">VLAN</a> 拡張</li>
 <li>L2 / L3 ハンドオフを使うデータセンタ間接続 (DCI)</li>
 </ul>
 <h2 id="3-evpn-route-type">3. EVPN Route Type の使い分け<a class="headerlink" href="#3-evpn-route-type" title="Permanent link">&para;</a></h2>
@@ -35987,7 +35990,7 @@
 <td>2</td>
 <td>MAC/IP Advertisement</td>
 <td>host MAC（任意で IP）</td>
-<td>L2 stretch、host-route 配布、ARP/ND suppression</td>
+<td>L2 stretch、host-route 配布、<a href="../../reference/glossary/#term-arp">ARP</a>/ND suppression</td>
 <td>L2VNI（任意で L3VNI 併記）</td>
 </tr>
 <tr>
@@ -36009,14 +36012,14 @@
 <h3 id="31-type-2-macip-advertisement">3.1 Type-2 (MAC/IP Advertisement)<a class="headerlink" href="#31-type-2-macip-advertisement" title="Permanent link">&para;</a></h3>
 <p>ローカル VTEP が学習した host MAC（必要なら IP も）を BGP-EVPN で広告する。受信側 VTEP は:</p>
 <ul>
-<li>remote MAC を Linux FDB → <code>VXLAN_FDB_TABLE</code> 経由で <code>fdborch</code> に渡し、<code>SAI_FDB_ENTRY</code> を programmatic に install</li>
+<li>remote MAC を Linux <a href="../../reference/glossary/#term-fdb">FDB</a> → <code>VXLAN_FDB_TABLE</code> 経由で <code>fdborch</code> に渡し、<code>SAI_FDB_ENTRY</code> を programmatic に install</li>
 <li>MAC-IP の binding を <strong>ARP / ND suppression</strong> のローカルキャッシュとして使い、broadcast を抑制<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
 </ul>
 <h3 id="32-type-3-imet">3.2 Type-3 (IMET)<a class="headerlink" href="#32-type-3-imet" title="Permanent link">&para;</a></h3>
 <p>VLAN-VNI mapping が programming されたタイミングで <code>zebra</code> が trigger し、<code>bgpd</code> が <strong>「私はこの VNI を持っている」</strong> を周辺 VTEP に通知する。受信側は <strong>ingress replication list</strong> に remote VTEP を追加し、BUM (broadcast / unknown unicast / multicast) を ingress 複製する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <p>multicast underlay は HLD のスコープ外。ingress replication 一択。</p>
 <h3 id="33-type-5-ip-prefix">3.3 Type-5 (IP Prefix)<a class="headerlink" href="#33-type-5-ip-prefix" title="Permanent link">&para;</a></h3>
-<p>VRF に属する <strong>IP prefix を L3VNI 経由で広告</strong> する。受信側 VTEP は:</p>
+<p><a href="../../reference/glossary/#term-vrf">VRF</a> に属する <strong>IP prefix を L3VNI 経由で広告</strong> する。受信側 VTEP は:</p>
 <ul>
 <li>prefix を該当 VRF のルーティングテーブルに install</li>
 <li>next-hop に <strong>remote VTEP IP + L3VNI + router MAC</strong> を埋め、<code>VRF_ROUTE_TABLE</code> の <code>vni_label</code> / <code>router_mac</code> フィールドに記録<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
@@ -36044,7 +36047,7 @@
 </tr>
 </tbody>
 </table>
-<p>CONFIG_DB では:</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> では:</p>
 <ul>
 <li>L2VNI: <code>VXLAN_TUNNEL_MAP|&lt;vtep&gt;|&lt;map&gt;</code> の <code>vlan</code> / <code>vni</code> フィールド</li>
 <li>L3VNI: <code>VRF|&lt;vrf&gt;</code> の <code>vni</code> フィールド</li>
@@ -36099,7 +36102,7 @@
 </ul>
 <h2 id="8">8. 次に読む<a class="headerlink" href="#8" title="Permanent link">&para;</a></h2>
 <ul>
-<li>内部実装（FRR → APPL_DB → orchagent → SAI のフロー、Orch クラス相関）: <a href="../evpn-vxlan-hld-internals/">evpn-vxlan-hld-internals.md</a></li>
+<li>内部実装（FRR → <a href="../../reference/glossary/#term-appl_db">APPL_DB</a> → <a href="../../reference/glossary/#term-orchagent">orchagent</a> → <a href="../../reference/glossary/#term-sai">SAI</a> のフロー、Orch クラス相関）: <a href="../evpn-vxlan-hld-internals/">evpn-vxlan-hld-internals.md</a></li>
 <li>CLI 設定 / 運用 / トラブルシュート: <a href="../evpn-vxlan-hld-operations/">evpn-vxlan-hld-operations.md</a></li>
 <li>multihoming（ESI / DF election）: <a href="../evpn-vxlan-multihoming/">evpn-vxlan-multihoming.md</a></li>
 <li>Topics 読み物: <a href="../../topics/03-vxlan-evpn/concept/">VXLAN/EVPN 概念</a></li>
@@ -36111,6 +36114,8 @@
 <li><a href="../../topics/03-vxlan-evpn/">Topics: VXLAN / EVPN / VNET オーバーレイ</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 09cf395c72a3 -->
 
 <div class="footnote">
 <hr />

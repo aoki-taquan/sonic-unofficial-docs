@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -36168,9 +36171,11 @@ excerpt: |
 <h3 id="_5">データフロー (自動生成)<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   CLI["config ntp"]
+  SC["sonic-cfggen&lt;br/&gt;(config CLI のみ)"]
+  CLI --&gt; SC
   CDB0[("CONFIG_DB&lt;br/&gt;NTP_SERVER")]
-  CLI --&gt; CDB0
-  DM0["ntp-config&lt;br/&gt;(chrony 再起動)"]
+  SC --&gt; CDB0
+  DM0["ntp-config"]
   CDB0 --&gt; DM0</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>

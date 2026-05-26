@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -37827,10 +37830,10 @@ comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去され�
 <h3 id="2-cfgappl">段階 2 — CFG→APPL 翻訳<a class="headerlink" href="#2-cfgappl" title="Permanent link">&para;</a></h3>
 <p>なし (FRR <a href="../../glossary/#term-vtysh">vtysh</a> 経由)</p>
 <h3 id="3-applsai">段階 3 — APPL→SAI<a class="headerlink" href="#3-applsai" title="Permanent link">&para;</a></h3>
-<p>なし (FRR BGP の AF レベル設定)</p>
+<p>なし (FRR <a href="../../glossary/#term-bgp">BGP</a> の AF レベル設定)</p>
 <h3 id="4">段階 4 — タイミングと副作用<a class="headerlink" href="#4" title="Permanent link">&para;</a></h3>
 <p><strong>適用タイミング</strong>: 変化検知後 FRR に AF の global 設定コマンドを発行。既存セッションへの影響は AF の再ネゴシエーションを要する場合がある。</p>
-<p><strong>副作用</strong>: Maximum-paths, redistribute 設定など AF 全体の動作に影響。変更によっては BGP session reset が発生する。</p>
+<p><strong>副作用</strong>: Maximum-paths, redistribute 設定など AF 全体の動作に影響。変更によっては <a href="../../glossary/#term-bgp">BGP</a> session reset が発生する。</p>
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -38610,7 +38613,7 @@ comb_attr_list 第 2 要素。不揃い時は 3 フィールドが除去され�
 </blockquote>
 <!-- /constants -->
 
-<!-- glossary-links-injected: f0885c9f6a91 -->
+<!-- glossary-links-injected: 758aafff1fd5 -->
 
 <div class="footnote">
 <hr />

@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -36215,10 +36218,10 @@
 <p><strong>以下の CLI / REST API は HLD 提案ベース</strong>。現行 SONiC master にはコマンド自体が存在しないため、そのまま打っても <code>Error: No such command "evpn-esi"</code> 等で失敗する。実機の dual-attach 構成には <a href="../../switching/mclag-enhancements/">MC-LAG enhancements</a> を使う。差分節は本ページ末尾。</p>
 </div>
 <h1 id="evpn-vxlan-multihoming">EVPN VXLAN Multihoming 運用<a class="headerlink" href="#evpn-vxlan-multihoming" title="Permanent link">&para;</a></h1>
-<p>本ページは <a href="../evpn-vxlan-multihoming/">EVPN VXLAN Multihoming（概要ハブ）</a> の派生で、HLD §3.5 を中心に <strong>CLI / show / REST API / 差分・回避策</strong> を整理する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。概念は <a href="../evpn-vxlan-multihoming-concepts/">concepts</a>、実装内部は <a href="../evpn-vxlan-multihoming-internals/">internals</a> を参照。</p>
+<p>本ページは <a href="../evpn-vxlan-multihoming/">EVPN VXLAN Multihoming（概要ハブ）</a> の派生で、<a href="../../reference/glossary/#term-hld">HLD</a> §3.5 を中心に <strong>CLI / show / REST API / 差分・回避策</strong> を整理する<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。概念は <a href="../evpn-vxlan-multihoming-concepts/">concepts</a>、実装内部は <a href="../evpn-vxlan-multihoming-internals/">internals</a> を参照。</p>
 <h2 id="1-cli">1. 設定 CLI<a class="headerlink" href="#1-cli" title="Permanent link">&para;</a></h2>
 <h3 id="11-ethernet-segment">1.1 Ethernet Segment 設定<a class="headerlink" href="#11-ethernet-segment" title="Permanent link">&para;</a></h3>
-<p>ESI を PortChannel に割り当てる。Type-3（system-mac ベース、推奨）の例:</p>
+<p>ESI を <a href="../../reference/glossary/#term-portchannel">PortChannel</a> に割り当てる。Type-3（system-mac ベース、推奨）の例:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># system-mac は同一 ES を共有する全 VTEP で一致させる</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>sys-mac<span class="w"> </span>add<span class="w"> </span>PortChannel1<span class="w"> </span><span class="m">00</span>:00:00:0a:00:01
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
@@ -36237,7 +36240,7 @@
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>evpn-df-pref<span class="w"> </span>del<span class="w"> </span>PortChannel1
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sudo<span class="w"> </span>config<span class="w"> </span>interface<span class="w"> </span>sys-mac<span class="w"> </span>del<span class="w"> </span>PortChannel1<span class="w"> </span><span class="m">00</span>:00:00:0a:00:01
 </span></code></pre></div>
-<p><code>auto-lacp</code>（LACP system ID から生成）も HLD には記載されているが、SONiC 採用は <code>auto-system-mac</code> / 直値が主<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><code>auto-lacp</code>（<a href="../../reference/glossary/#term-lacp">LACP</a> system ID から生成）も HLD には記載されているが、<a href="../../reference/glossary/#term-sonic">SONiC</a> 採用は <code>auto-system-mac</code> / 直値が主<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <h3 id="12-evpn-mh-global">1.2 EVPN-MH global 設定<a class="headerlink" href="#12-evpn-mh-global" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 起動直後の MH ES hold 時間 (0..3600 sec, default 300, 0=disabled)</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>evpn-mh<span class="w"> </span>startup-delay<span class="w"> </span><span class="m">180</span>
@@ -36248,7 +36251,7 @@
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># Proxy advertisement の ARP/ND 保持時間 (0..86400 sec, default 1080)</span>
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>sudo<span class="w"> </span>config<span class="w"> </span>evpn-mh<span class="w"> </span>neigh-holdtime<span class="w"> </span><span class="m">1080</span>
 </span></code></pre></div>
-<p><strong>MCLAG が設定されていると上記は reject される</strong>（<a href="../evpn-vxlan-multihoming-concepts/">concepts</a> の MCLAG 相互排他節を参照）。</p>
+<p><strong><a href="../../reference/glossary/#term-mclag">MCLAG</a> が設定されていると上記は reject される</strong>（<a href="../evpn-vxlan-multihoming-concepts/">concepts</a> の MCLAG 相互排他節を参照）。</p>
 <h3 id="13-ad-per-evi-frr-vtysh">1.3 AD-per-EVI 無効化（FRR vtysh）<a class="headerlink" href="#13-ad-per-evi-frr-vtysh" title="Permanent link">&para;</a></h3>
 <p>scale 試験などで AD-per-EVI を抑制したい場合:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sonic(config)# router bgp 65000
@@ -36258,7 +36261,7 @@
 </span></code></pre></div>
 <h2 id="2-show-sonic-click">2. show コマンド（SONiC click）<a class="headerlink" href="#2-show-sonic-click" title="Permanent link">&para;</a></h2>
 <h3 id="21-show-vxlan-ethernet-segment">2.1 show vxlan ethernet-segment<a class="headerlink" href="#21-show-vxlan-ethernet-segment" title="Permanent link">&para;</a></h3>
-<p>ES 単位の DF 状態 / peer VTEP / NHG ID を一覧:</p>
+<p>ES 単位の DF 状態 / peer <a href="../../reference/glossary/#term-vtep">VTEP</a> / NHG ID を一覧:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>admin@sonic$ show vxlan ethernet-segment
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>+--------------+----------+-----+---------+-----+
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>| Interface    | VLAN     | DF  | Peers   | NHG |
@@ -36284,7 +36287,7 @@
 </span></code></pre></div>
 <p>NHG 10 が group（child = 20/30/40）、NHG 20/30/40 が single-path の recursive 構造。</p>
 <h3 id="23-show-vxlan-remotemac">2.3 show vxlan remotemac<a class="headerlink" href="#23-show-vxlan-remotemac" title="Permanent link">&para;</a></h3>
-<p>既存コマンドだが、<strong>Tunnel カラムが複数行になる</strong>（複数 VTEP の ECMP メンバを列挙）:</p>
+<p>既存コマンドだが、<strong>Tunnel カラムが複数行になる</strong>（複数 VTEP の <a href="../../reference/glossary/#term-ecmp">ECMP</a> メンバを列挙）:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>admin@sonic$ show vxlan remotemac
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>+---------+-------------------+----------------+-------+---------+
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>| VLAN    | MAC               | RemoteTunnel   |   VNI | Type    |
@@ -36319,7 +36322,7 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sonic# show evpn es-evi detail
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sonic# show evpn es-evi 100
 </span></code></pre></div>
-<p>EVPN L2 next-hop の一覧:</p>
+<p><a href="../../reference/glossary/#term-evpn">EVPN</a> L2 next-hop の一覧:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sonic# show evpn l2-nh
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>VTEP          NH id      #ES
 </span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>1.1.1.1       268435462  1
@@ -36334,7 +36337,7 @@
 </span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>  uplink-cfg-cnt: 0, uplink-active-cnt: 0
 </span></code></pre></div>
 <h3 id="32-show-bgp-l2vpn-evpn-es-es-evi-es-vrf-next-hop">3.2 show bgp l2vpn evpn es / es-evi / es-vrf / next-hop<a class="headerlink" href="#32-show-bgp-l2vpn-evpn-es-es-evi-es-vrf-next-hop" title="Permanent link">&para;</a></h3>
-<p>BGP テーブル視点での ES（RD / Originator-IP / VTEP 群 / DF preference）:</p>
+<p><a href="../../reference/glossary/#term-bgp">BGP</a> テーブル視点での ES（RD / Originator-IP / VTEP 群 / DF preference）:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sonic# show bgp l2vpn evpn es detail
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>ESI: 03:00:00:00:11:22:33:00:00:01
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a> Type: LR
@@ -36352,14 +36355,14 @@
 </span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>VNI      ESI                            Flags VTEPs
 </span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>100      03:00:00:11:22:33:03:00:00:03  LR    2.1.1.1(EV),3.1.1.1(EV),4.1.1.1(EV)
 </span></code></pre></div>
-<p>ES-VRF（IRB next-hop group の参照確認）:</p>
+<p>ES-<a href="../../reference/glossary/#term-vrf">VRF</a>（IRB next-hop group の参照確認）:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sonic# show bgp l2vpn evpn es-vrf detail
 </span></code></pre></div>
 <p>L3 EVPN next-hop と RMAC:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>sonic# show bgp l2vpn evpn next-hops
 </span></code></pre></div>
 <h2 id="4">4. デバッグコマンド<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
-<p>FRR / Zebra 側のデバッグログを有効化:</p>
+<p><a href="../../reference/glossary/#term-frr">FRR</a> / Zebra 側のデバッグログを有効化:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>sonic(config)# log syslog debugging
 </span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>sonic(config)# debug bgp evpn mh
 </span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>  es     Ethernet Segment debugging
@@ -36408,8 +36411,8 @@
 </tr>
 <tr>
 <td>BUM がループする / 別 leaf 経由で戻ってくる</td>
-<td><code>EVPN_SPLIT_HORIZON_TABLE</code> の <code>vteps</code> が peer を含むか、ASIC の isolation group member が正しいか</td>
-<td>ShlOrch ログ、SAI isolation group dump</td>
+<td><code>EVPN_SPLIT_HORIZON_TABLE</code> の <code>vteps</code> が peer を含むか、<a href="../../reference/glossary/#term-asic">ASIC</a> の isolation group member が正しいか</td>
+<td>ShlOrch ログ、<a href="../../reference/glossary/#term-sai">SAI</a> isolation group dump</td>
 </tr>
 <tr>
 <td>MH host 向け unicast の load-balance が偏る</td>
@@ -36517,6 +36520,8 @@
 </ul>
 </div>
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 771af53c8382 -->
 
 <div class="footnote">
 <hr />

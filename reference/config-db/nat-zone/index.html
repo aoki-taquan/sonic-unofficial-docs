@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -37184,7 +37187,7 @@
 </tbody>
 </table>
 <h3 id="sai">フィールド省略時は SAI 書き込みなし<a class="headerlink" href="#sai" title="Permanent link">&para;</a></h3>
-<p><code>nat_zone</code> フィールドが <a href="../../glossary/#term-config_db">CONFIG_DB</a> に存在しない場合、<code>IntfsOrch</code> の <code>nat_zone</code> 文字列変数は空のままとなり、SAI 呼び出し (<code>setRouterIntfsNatZoneId</code>) はスキップされる (<code>intfsorch.cpp:974</code>)。この場合 <code>m_nat_zone_id</code> は初期値 <code>0</code> のままで SAI には降りない。</p>
+<p><code>nat_zone</code> フィールドが <a href="../../glossary/#term-config_db">CONFIG_DB</a> に存在しない場合、<code>IntfsOrch</code> の <code>nat_zone</code> 文字列変数は空のままとなり、<a href="../../glossary/#term-sai">SAI</a> 呼び出し (<code>setRouterIntfsNatZoneId</code>) はスキップされる (<code>intfsorch.cpp:974</code>)。この場合 <code>m_nat_zone_id</code> は初期値 <code>0</code> のままで <a href="../../glossary/#term-sai">SAI</a> には降りない。</p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// intfsorch.cpp:974-986</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="o">!</span><span class="n">nat_zone</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="p">(</span><span class="n">port</span><span class="p">.</span><span class="n">m_nat_zone_id</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">nat_zone_id</span><span class="p">))</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">{</span>
@@ -37210,7 +37213,7 @@
 <h2 id="_5">購読者<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><code>natmgrd</code></strong> (<code>NatMgr::doNatZoneIntfTask</code>): <code>INTERFACE</code>・<code>VLAN_INTERFACE</code>・<code>PORTCHANNEL_INTERFACE</code>・<code>LOOPBACK_INTERFACE</code> テーブルを購読し、<code>nat_zone</code> フィールドの変化を検知して kernel iptables mangle テーブルの MARK ルールを更新する。</li>
-<li><strong><code>orchagent / IntfsOrch</code></strong> (<code>doIntfTask</code>): 同テーブルを購読し、<code>nat_zone</code> フィールドの変化を検知して SAI RIF 属性 <code>SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID</code> を更新する。</li>
+<li><strong><code>orchagent / IntfsOrch</code></strong> (<code>doIntfTask</code>): 同テーブルを購読し、<code>nat_zone</code> フィールドの変化を検知して SAI <a href="../../glossary/#term-rif">RIF</a> 属性 <code>SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID</code> を更新する。</li>
 </ul>
 <h2 id="config_db-yang-cli">関連 CONFIG_DB / YANG / CLI<a class="headerlink" href="#config_db-yang-cli" title="Permanent link">&para;</a></h2>
 <ul>
@@ -37317,13 +37320,13 @@
 <h2 id="cdb">CDB → 実コンテナ動作トレース<a class="headerlink" href="#cdb" title="Permanent link">&para;</a></h2>
 <h3 id="1-consumer">段階 1: Consumer 登録<a class="headerlink" href="#1-consumer" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>natmgrd</strong> (<code>NatMgr</code>): <code>CFG_INTF_TABLE_NAME</code>・<code>CFG_VLAN_INTF_TABLE_NAME</code>・<code>CFG_LAG_INTF_TABLE_NAME</code>・<code>CFG_LOOPBACK_INTERFACE_TABLE_NAME</code> を購読し <code>doNatZoneIntfTask</code> にディスパッチ。</li>
-<li><strong>orchagent</strong> (<code>IntfsOrch</code>): 同テーブルを <code>SubscriberStateTable</code> で購読し <code>doIntfTask</code> にディスパッチ。</li>
+<li><strong><a href="../../glossary/#term-natmgrd-natsyncd">natmgrd</a></strong> (<code>NatMgr</code>): <code>CFG_INTF_TABLE_NAME</code>・<code>CFG_VLAN_INTF_TABLE_NAME</code>・<code>CFG_LAG_INTF_TABLE_NAME</code>・<code>CFG_LOOPBACK_INTERFACE_TABLE_NAME</code> を購読し <code>doNatZoneIntfTask</code> にディスパッチ。</li>
+<li><strong><a href="../../glossary/#term-orchagent">orchagent</a></strong> (<code>IntfsOrch</code>): 同テーブルを <code>SubscriberStateTable</code> で購読し <code>doIntfTask</code> にディスパッチ。</li>
 </ul>
 <h3 id="2-cfg-iptables-sai">段階 2: CFG → iptables / SAI<a class="headerlink" href="#2-cfg-iptables-sai" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>NatMgr</code> が <code>nat_zone</code> 値を読み、+1 した値を mangle MARK として kernel iptables に設定。</li>
-<li><code>IntfsOrch</code> が <code>nat_zone</code> 値を <code>uint32_t</code> に変換し、<code>setRouterIntfsNatZoneId(port)</code> 経由で SAI RIF 属性 <code>SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID</code> を更新。</li>
+<li><code>IntfsOrch</code> が <code>nat_zone</code> 値を <code>uint32_t</code> に変換し、<code>setRouterIntfsNatZoneId(port)</code> 経由で SAI <a href="../../glossary/#term-rif">RIF</a> 属性 <code>SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID</code> を更新。</li>
 </ul>
 <h3 id="3">段階 3: タイミング + 副作用<a class="headerlink" href="#3" title="Permanent link">&para;</a></h3>
 <ul>
@@ -37352,28 +37355,28 @@
 <tr>
 <td>1</td>
 <td><code>PortsOrch::allPortsReady()</code> が true</td>
-<td>orchagent (IntfsOrch)</td>
+<td><a href="../../glossary/#term-orchagent">orchagent</a> (IntfsOrch)</td>
 <td>強制先行 (全ポート初期化待ち)</td>
 <td>全ポート初期化完了まで SAI 書き込みをスキップ、完了後 <code>doTask()</code> が自動再実行 (<code>intfsorch.cpp:665-668</code>)</td>
 </tr>
 <tr>
 <td>2</td>
 <td><code>isPortStateOk(port)</code> が true (zone エントリ・非 Loopback)</td>
-<td>natmgrd</td>
+<td><a href="../../glossary/#term-natmgrd-natsyncd">natmgrd</a></td>
 <td>強制先行</td>
 <td>ポート ready になると自動再試行 (<code>natmgr.cpp:7493-7499</code>)</td>
 </tr>
 <tr>
 <td>3</td>
 <td><code>isIntfStateOk(key)</code> が true (IP プレフィックス付きエントリ)</td>
-<td>natmgrd</td>
+<td><a href="../../glossary/#term-natmgrd-natsyncd">natmgrd</a></td>
 <td>強制先行</td>
 <td>インタフェース IP 有効化後に自動再試行 (<code>natmgr.cpp:7595-7601</code>)</td>
 </tr>
 <tr>
 <td>4</td>
 <td><code>gIsNatSupported == true</code> (SAI capability クエリ結果)</td>
-<td>orchagent (IntfsOrch)</td>
+<td><a href="../../glossary/#term-orchagent">orchagent</a> (IntfsOrch)</td>
 <td>強制先行 (プラットフォーム制約)</td>
 <td>false の場合は SAI 書き込みを silent skip、iptables は正常設定 (<code>intfsorch.cpp:977-985</code>)</td>
 </tr>
@@ -37420,7 +37423,7 @@
 <td><code>natmgr.cpp:96-131</code>, <code>natmgr.cpp:7493-7499</code></td>
 </tr>
 <tr>
-<td>natmgrd → STATE_DB</td>
+<td>natmgrd → <a href="../../glossary/#term-state_db">STATE_DB</a></td>
 <td><code>isIntfStateOk()</code></td>
 <td><code>STATE_INTERFACE_TABLE</code></td>
 <td><code>&lt;intf&gt;\|&lt;ip&gt;/&lt;prefix&gt;</code></td>
@@ -37552,7 +37555,7 @@
 </tr>
 <tr>
 <td>3</td>
-<td>SAI RIF zone_id set 失敗</td>
+<td>SAI <a href="../../glossary/#term-rif">RIF</a> zone_id set 失敗</td>
 <td>IntfsOrch</td>
 <td><code>SWSS_LOG_ERROR "Failed to set router interface ... NAT Zone Id"</code></td>
 <td>SAI 依存</td>
@@ -37649,7 +37652,7 @@
 <tr>
 <td><code>LAG_PREFIX</code></td>
 <td><code>"PortChannel"</code></td>
-<td>PortChannel (LAG) 判定 (<code>natmgr.h:77</code>)</td>
+<td><a href="../../glossary/#term-portchannel">PortChannel</a> (<a href="../../glossary/#term-lag">LAG</a>) 判定 (<code>natmgr.h:77</code>)</td>
 </tr>
 <tr>
 <td><code>LOOPBACK_PREFIX</code></td>
@@ -37954,7 +37957,7 @@
 </blockquote>
 <!-- /platform -->
 
-<!-- glossary-links-injected: e89d811d1f2b -->
+<!-- glossary-links-injected: 876f1b587d85 -->
 
 <div class="footnote">
 <hr />

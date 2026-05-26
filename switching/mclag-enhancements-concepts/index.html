@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -35825,7 +35828,7 @@
 <p>スキーマ名・SAI 属性・テーブル定義は <code>sonic-swss-common/common/schema.h</code>・<code>sonic-swss/orchagent/fdborch.cpp</code>・<code>sonic-swss/mclagsyncd/mclaglink.cpp</code> で確認済み。</p>
 </div>
 <h2 id="1">1. なぜ拡張するのか<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
-<p>オリジナルの SONiC <a href="../../reference/glossary/#term-mclag">MCLAG</a> は <code>config_db.json</code> 直書きで起動時にしか反映できず、また static MAC 同期 / L3 プロトコル / BUM 制御に弱点があった。本 HLD はこれらを 7 軸で塞ぐ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p>オリジナルの <a href="../../reference/glossary/#term-sonic">SONiC</a> <a href="../../reference/glossary/#term-mclag">MCLAG</a> は <code>config_db.json</code> 直書きで起動時にしか反映できず、また static MAC 同期 / L3 プロトコル / BUM 制御に弱点があった。本 <a href="../../reference/glossary/#term-hld">HLD</a> はこれらを 7 軸で塞ぐ<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -35838,7 +35841,7 @@
 <tr>
 <td>1</td>
 <td>dynamic config</td>
-<td><code>config_db.json</code> 編集 + 再起動なしで MCLAG domain / interface を CONFIG_DB から操作したい</td>
+<td><code>config_db.json</code> 編集 + 再起動なしで MCLAG domain / interface を <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> から操作したい</td>
 </tr>
 <tr>
 <td>2</td>
@@ -35848,7 +35851,7 @@
 <tr>
 <td>3</td>
 <td>static MAC support</td>
-<td>旧版は FDB TLV で static フラグを送らず、peer に static として伝播しない</td>
+<td>旧版は <a href="../../reference/glossary/#term-fdb">FDB</a> TLV で static フラグを送らず、peer に static として伝播しない</td>
 </tr>
 <tr>
 <td>4</td>
@@ -35863,12 +35866,12 @@
 <tr>
 <td>6</td>
 <td>isolation group</td>
-<td>peer-link 経由の duplicate BUM 抑止が egress ACL ベースで非効率</td>
+<td>peer-link 経由の duplicate BUM 抑止が egress <a href="../../reference/glossary/#term-acl">ACL</a> ベースで非効率</td>
 </tr>
 <tr>
 <td>7</td>
 <td>unique IP</td>
-<td>MCLAG <a href="../../reference/glossary/#term-vlan">VLAN</a> interface が同一 IP 必須 → OSPF / <a href="../../reference/glossary/#term-bgp">BGP</a> / BFD などの L3 隣接が成立しない</td>
+<td>MCLAG <a href="../../reference/glossary/#term-vlan">VLAN</a> interface が同一 IP 必須 → OSPF / <a href="../../reference/glossary/#term-bgp">BGP</a> / <a href="../../reference/glossary/#term-bfd">BFD</a> などの L3 隣接が成立しない</td>
 </tr>
 </tbody>
 </table>
@@ -35898,14 +35901,14 @@
 <ul>
 <li>設定経路は <code>CONFIG_DB → MclagSyncd → ICCPd</code>（旧 <code>config_db.json</code> 起動時読み込みは deprecated）</li>
 <li>データ経路は <code>ICCPd → MclagSyncd → APPL_DB(MCLAG_FDB/ISOLATION_GROUP) → FdbOrch/IsolationGroupOrch → ASIC</code></li>
-<li>旧 MclagSyncd 内部 FDB cache は廃止、APPL_DB の <code>MCLAG_FDB_TABLE</code> に集約</li>
+<li>旧 MclagSyncd 内部 FDB cache は廃止、<a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の <code>MCLAG_FDB_TABLE</code> に集約</li>
 </ul>
 <h2 id="3-dynamic-configuration-1">3. Dynamic configuration（軸 1）<a class="headerlink" href="#3-dynamic-configuration-1" title="Permanent link">&para;</a></h2>
 <p>旧版は MCLAG docker 起動 <strong>前</strong> に <code>config_db.json</code> に MCLAG 設定を書き込む必要があった。enhancement では以下を実現<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
 <li>MclagSyncd が <code>CONFIG_DB</code> の <code>MCLAG_DOMAIN</code> / <code>MCLAG_INTERFACE</code> を SubscriberStateTable で監視</li>
 <li>設定変化を ICCPd に message で通知</li>
-<li>MCLAG interface の <strong>pre-provisioning</strong>（PortChannel 作成前に MCLAG メンバ宣言可能）</li>
+<li>MCLAG interface の <strong>pre-provisioning</strong>（<a href="../../reference/glossary/#term-portchannel">PortChannel</a> 作成前に MCLAG メンバ宣言可能）</li>
 </ul>
 <h2 id="4-keep-alive-session-timeout-2">4. Keep-alive / session timeout（軸 2）<a class="headerlink" href="#4-keep-alive-session-timeout-2" title="Permanent link">&para;</a></h2>
 <table>
@@ -35939,7 +35942,7 @@
 <li>削除時は withdraw</li>
 <li>remote static が存在する宛先への dynamic MAC move は FdbOrch が <strong>拒否</strong>（後述 internals 参照）</li>
 </ul>
-<p>ユースケース: server NIC bonding で fixed MAC を持つ機器を MCLAG 配下に置く構成、HSRP / VRRP gateway MAC のような fixed L2 destination。</p>
+<p>ユースケース: server NIC bonding で fixed MAC を持つ機器を MCLAG 配下に置く構成、HSRP / <a href="../../reference/glossary/#term-vrrp">VRRP</a> gateway MAC のような fixed L2 destination。</p>
 <h2 id="6-aging-disable-4">6. Aging disable（軸 4）<a class="headerlink" href="#6-aging-disable-4" title="Permanent link">&para;</a></h2>
 <p>旧版は ICCP 由来 MAC を dynamic として programming → aging timer 経過で削除 → trafficが来ると再学習 → ICCPd 再 program、というループが BUM flooding を起こしていた。</p>
 <p>新版は ICCP 由来 MAC に SAI 属性 <code>SAI_FDB_ENTRY_ATTR_ALLOW_MAC_MOVE</code> を立て、aging は無効化しつつ legitimate な MAC move は許容する<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
@@ -35987,9 +35990,9 @@
 <p>旧版は MCLAG VLAN interface に <strong>両 peer で同一 IP</strong> が必須で、<code>active/active</code> で gateway を提供できるが、OSPF / BGP / BFD のような <strong>個別 router を識別する L3 プロトコルは隣接が成立しない</strong>。</p>
 <p>新版で MCLAG VLAN interface に <strong>peer ごとに別 IP</strong> を許可する <code>MCLAG_UNIQUE_IP</code> テーブルを追加<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li>Standby 側で active 側 MAC を My-Station TCAM に program しない</li>
+<li>Standby 側で active 側 MAC を My-Station <a href="../../reference/glossary/#term-tcam">TCAM</a> に program しない</li>
 <li>VLAN interface MAC を peer 間で sync、L2 table に peer MAC → peer-link で program</li>
-<li>ARP / ND を local VLAN interface IP について sync</li>
+<li><a href="../../reference/glossary/#term-arp">ARP</a> / ND を local VLAN interface IP について sync</li>
 </ul>
 <p>ユースケース<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
@@ -36005,6 +36008,8 @@
 <li><a href="../../topics/05-dual-tor/">Topics: Dual ToR</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 601242a17776 -->
 
 <div class="footnote">
 <hr />

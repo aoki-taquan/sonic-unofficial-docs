@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -32214,17 +32217,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -32320,7 +32312,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#yang_1" class="md-nav__link">
+  <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連 YANG モジュール
@@ -35855,17 +35847,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#yang" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 YANG
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -35961,7 +35942,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#yang_1" class="md-nav__link">
+  <a href="#yang" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連 YANG モジュール
@@ -36087,10 +36068,14 @@
 <h3 id="_2">データフロー (自動生成)<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <pre class="mermaid"><code>flowchart LR
   Y["sonic-flex_counter"]
-  C1[("CONFIG_DB&lt;br/&gt;FLOW_COUNTER_ROUTE_PATTERN")]
+  C1[("CONFIG_DB&lt;br/&gt;FLEX_COUNTER_TABLE")]
   Y --&gt; C1
-  D1["FlowCounterRouteOrch"]
-  C1 --&gt; D1</code></pre>
+  D1["FlexCounterOrch"]
+  C1 --&gt; D1
+  C2[("CONFIG_DB&lt;br/&gt;FLOW_COUNTER_ROUTE_PATTERN")]
+  Y --&gt; C2
+  D2["FlowCounterRouteOrch"]
+  C2 --&gt; D2</code></pre>
 <div class="admonition note">
 <p class="admonition-title">凡例</p>
 <p>YANG モジュールから CONFIG_DB テーブル経由で subscribe する daemon/orch までを <code>docs/reference/config-db-orch-map.md</code> から機械生成したミニ図。詳細・例外は本ページ本文を参照。</p>
@@ -36109,9 +36094,6 @@
 <ul>
 <li><a href="../../../internals/aggregate-voq-counters-in-sonic/">VOQ カウンタ集約（chassis supervisor からの aggregate 表示）</a></li>
 <li><a href="../../runbooks/flex-counter-stuck/">counter が更新されない (FLEX_COUNTER)</a></li>
-</ul>
-<h3 id="yang">関連 YANG<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
-<ul>
 <li><a href="../sonic-copp/">sonic-copp YANG</a></li>
 </ul>
 <!-- /yang-xref -->
@@ -36371,7 +36353,7 @@
 <li>CLI: <code>counterpoll &lt;group&gt; {enable|disable|interval &lt;ms&gt;}</code></li>
 </ul>
 <!-- yang-sibling -->
-<h3 id="yang_1">関連 YANG モジュール<a class="headerlink" href="#yang_1" title="Permanent link">&para;</a></h3>
+<h3 id="yang">関連 YANG モジュール<a class="headerlink" href="#yang" title="Permanent link">&para;</a></h3>
 <p>意味的に関連する SONiC YANG モジュール (slug prefix / curated group / frontmatter <code>related.yang</code> から自動抽出):</p>
 <ul>
 <li><a href="../sonic-debug-counter/"><code>sonic-debug-counter</code></a></li>

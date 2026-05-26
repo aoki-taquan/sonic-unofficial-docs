@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -36055,7 +36058,7 @@
 <h1 id="evpn-vxlan-vtysh-show-evpn-show-bgp-l2vpn">EVPN VXLAN 設定・運用（vtysh / show evpn / show bgp l2vpn）<a class="headerlink" href="#evpn-vxlan-vtysh-show-evpn-show-bgp-l2vpn" title="Permanent link">&para;</a></h1>
 <p>このページは <a href="../evpn-vxlan-hld/">EVPN VXLAN HLD（概要ハブ）</a> の派生ページで、<strong>設定 CLI と運用・トラブルシュート手順</strong> に絞って整理する。概念は <a href="../evpn-vxlan-hld-concepts/">evpn-vxlan-hld-concepts.md</a>、内部実装は <a href="../evpn-vxlan-hld-internals/">evpn-vxlan-hld-internals.md</a> を参照。</p>
 <h2 id="1">1. 設定の全体像<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
-<p>EVPN VXLAN を最小構成で動かすには <strong>SONiC CLI 側と FRR vtysh 側の両方</strong> に設定を入れる必要がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
+<p><a href="../../reference/glossary/#term-evpn">EVPN</a> <a href="../../reference/glossary/#term-vxlan">VXLAN</a> を最小構成で動かすには <strong><a href="../../reference/glossary/#term-sonic">SONiC</a> CLI 側と <a href="../../reference/glossary/#term-frr">FRR</a> <a href="../../reference/glossary/#term-vtysh">vtysh</a> 側の両方</strong> に設定を入れる必要がある<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 <table>
 <thead>
 <tr>
@@ -36065,7 +36068,7 @@
 </thead>
 <tbody>
 <tr>
-<td>VXLAN tunnel (VTEP loopback)</td>
+<td>VXLAN tunnel (<a href="../../reference/glossary/#term-vtep">VTEP</a> loopback)</td>
 <td>SONiC CLI (<code>config vxlan ...</code>)</td>
 </tr>
 <tr>
@@ -36073,19 +36076,19 @@
 <td>SONiC CLI</td>
 </tr>
 <tr>
-<td>VLAN ↔ L2VNI mapping</td>
+<td><a href="../../reference/glossary/#term-vlan">VLAN</a> ↔ L2VNI mapping</td>
 <td>SONiC CLI</td>
 </tr>
 <tr>
-<td>VRF ↔ L3VNI mapping</td>
+<td><a href="../../reference/glossary/#term-vrf">VRF</a> ↔ L3VNI mapping</td>
 <td>SONiC CLI + FRR vtysh</td>
 </tr>
 <tr>
-<td>BGP-EVPN session + <code>address-family l2vpn evpn</code></td>
+<td><a href="../../reference/glossary/#term-bgp">BGP</a>-EVPN session + <code>address-family l2vpn evpn</code></td>
 <td>FRR vtysh (or <code>frr.conf</code> template)</td>
 </tr>
 <tr>
-<td>ARP/ND suppression (per VLAN)</td>
+<td><a href="../../reference/glossary/#term-arp">ARP</a>/ND suppression (per VLAN)</td>
 <td>SONiC CLI</td>
 </tr>
 </tbody>
@@ -36101,7 +36104,7 @@
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># EVPN NVO instance を紐づけ</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>config<span class="w"> </span>vxlan<span class="w"> </span>evpn_nvo<span class="w"> </span>add<span class="w"> </span>nvo1<span class="w"> </span>vtep1
 </span></code></pre></div>
-<p>CONFIG_DB 上は以下のようになる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+<p><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> 上は以下のようになる<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&quot;VXLAN_TUNNEL&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;vtep1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;src_ip&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.1.1.1&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nt">&quot;VXLAN_EVPN_NVO&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;nvo1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;source_vtep&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;vtep1&quot;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
@@ -36228,21 +36231,21 @@
 <h3 id="51-vtep">5.1 対向 VTEP に届かない<a class="headerlink" href="#51-vtep" title="Permanent link">&para;</a></h3>
 <ol>
 <li><strong>underlay reachability</strong> を確認: <code>ping -I Loopback0 &lt;remote-vtep-loopback&gt;</code></li>
-<li><strong>tunnel object</strong> が SAI に作られているか: <code>show vxlan tunnel</code> の operstatus、ASIC_DB の <code>SAI_OBJECT_TYPE_TUNNEL</code> 件数</li>
+<li><strong>tunnel object</strong> が <a href="../../reference/glossary/#term-sai">SAI</a> に作られているか: <code>show vxlan tunnel</code> の operstatus、<a href="../../reference/glossary/#term-asic_db">ASIC_DB</a> の <code>SAI_OBJECT_TYPE_TUNNEL</code> 件数</li>
 <li><strong>MTU</strong>: VXLAN ヘッダ 50 byte 増。fragmention 不可なら underlay の MTU を 50+ 上乗せ</li>
 </ol>
 <h3 id="52-mac-type-2">5.2 MAC が学習されない (Type-2 受信問題)<a class="headerlink" href="#52-mac-type-2" title="Permanent link">&para;</a></h3>
 <ol>
 <li><strong>BGP-EVPN session の状態</strong>: <code>show bgp l2vpn evpn summary</code> で peer が <code>Established</code> か</li>
 <li><strong>対向の <code>advertise-all-vni</code> 設定</strong>: 入っていないと Type-2 を送らない</li>
-<li><strong>fdbsyncd 動作</strong>: <code>show vxlan remote_mac all</code> に何も出ない場合は <code>docker logs swss | grep -i fdbsync</code></li>
+<li><strong><a href="../../reference/glossary/#term-fdbsyncd">fdbsyncd</a> 動作</strong>: <code>show vxlan remote_mac all</code> に何も出ない場合は <code>docker logs swss | grep -i fdbsync</code></li>
 <li><strong>VXLAN_FDB_TABLE が空</strong>: <code>sonic-db-cli APPL_DB KEYS 'VXLAN_FDB_TABLE:*'</code> で確認</li>
 </ol>
 <h3 id="53-type-5">5.3 Type-5 ルートが入らない<a class="headerlink" href="#53-type-5" title="Permanent link">&para;</a></h3>
 <ol>
 <li><strong>L3VNI ↔ VRF mapping</strong>: <code>show vxlan vrfvnimap</code> と FRR 側 <code>show evpn vni detail</code> で L3VNI が同じ値か</li>
 <li><strong>VRF が SAI に作られているか</strong>: <code>sonic-db-cli ASIC_DB KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_VIRTUAL_ROUTER*'</code></li>
-<li><strong>APPL_DB の VRF_ROUTE_TABLE</strong>: <code>vni_label</code> / <code>router_mac</code> フィールドが入っているか</li>
+<li><strong><a href="../../reference/glossary/#term-appl_db">APPL_DB</a> の VRF_ROUTE_TABLE</strong>: <code>vni_label</code> / <code>router_mac</code> フィールドが入っているか</li>
 <li>既知 issue: <a href="https://github.com/sonic-net/sonic-swss/issues/3384">sonic-swss #3384 NEIGH_TABLE not populated with VXLAN routes</a></li>
 </ol>
 <h3 id="54-imet-type-3">5.4 IMET (Type-3) が交換されない<a class="headerlink" href="#54-imet-type-3" title="Permanent link">&para;</a></h3>
@@ -36252,9 +36255,9 @@
 </ul>
 <h2 id="6">6. 制限事項（運用視点）<a class="headerlink" href="#6" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>下位 ASIC 依存</strong>: VXLAN encap/decap、tunnel termination の SAI 実装が必須</li>
+<li><strong>下位 <a href="../../reference/glossary/#term-asic">ASIC</a> 依存</strong>: VXLAN encap/decap、tunnel termination の SAI 実装が必須</li>
 <li><strong>MTU</strong>: VXLAN ヘッダ 50 byte 分の余裕を underlay に持たせる。不足は黙ってドロップしがち</li>
-<li><strong>multihoming</strong>: 別 HLD (<a href="../evpn-vxlan-multihoming/">evpn-vxlan-multihoming.md</a>)</li>
+<li><strong>multihoming</strong>: 別 <a href="../../reference/glossary/#term-hld">HLD</a> (<a href="../evpn-vxlan-multihoming/">evpn-vxlan-multihoming.md</a>)</li>
 <li><strong>BUM</strong>: ingress replication のみ。multicast underlay は範囲外</li>
 <li><strong>ARP/ND suppression</strong>: 実装未完（<a href="https://github.com/sonic-net/sonic-swss/issues/2181">#2181</a>）</li>
 </ul>
@@ -36273,6 +36276,8 @@
 <li><a href="../../topics/03-vxlan-evpn/setup/">Topics: VXLAN / EVPN / VNET オーバーレイ — 構築</a></li>
 </ul>
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: b6dbf651eb0c -->
 
 <div class="footnote">
 <hr />

@@ -22,6 +22,9 @@
         
       
       
+        <link rel="alternate" type="application/rss+xml" title="新しいページのRSSフィード" href="../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="更新されたページのRSSフィード" href="../../../feed_rss_updated.xml">
+      
       <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
@@ -37804,7 +37807,7 @@
 <li><strong>hsflowd サービス制御失敗</strong>: <code>service hsflowd restart/stop</code> が失敗した場合 <code>SWSS_LOG_ERROR("Command failed with rc %d")</code> を出す。CONFIG_DB の状態と実際のサービス状態がずれる。<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>ポート名が map に未登録</strong>: per-port のサンプリングレート算出時に PORT_TABLE に存在しないポートを指定すると <code>SWSS_LOG_ERROR("%s not found in port configuration map")</code> → <code>ERROR_SPEED</code> を返す。<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong><a href="../../glossary/#term-sai">SAI</a> sample packet session 作成失敗</strong>: <code>sai_samplepacket_api-&gt;create_samplepacket()</code> が失敗した場合 <code>SWSS_LOG_ERROR("Failed to create sample packet session")</code> → sFlow セッションが有効化されない。<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
-<li><strong>既存セッションのクリーンアップ失敗</strong>: レート変更時に古いセッションの destroy に失敗すると複数レートのセッションが ASIC に残留する可能性がある。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>既存セッションのクリーンアップ失敗</strong>: レート変更時に古いセッションの destroy に失敗すると複数レートのセッションが <a href="../../glossary/#term-asic">ASIC</a> に残留する可能性がある。<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 <li><strong>グローバル無効はローカル設定を上書き</strong>: <code>isPortEnabled()</code> は <code>m_gEnable &amp;&amp; (m_intfAllConf || ...)</code> で判定するため、グローバル sflow が無効なら per-port 設定に関わらず全ポートで sFlow は停止する。<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
 </ul>
 <!-- failure -->
@@ -37932,7 +37935,7 @@
 <h2 id="db-phase-f-direction-b">副次 DB 書込 (Phase F — Direction B)<a class="headerlink" href="#db-phase-f-direction-b" title="Permanent link">&para;</a></h2>
 <p>CONFIG_DB SFLOW / SFLOW_SESSION テーブルへの書込をトリガーとして、他 DB・テーブルへ副次的に書き込まれる経路を <code>sflowmgr.cpp</code> / <code>sfloworch.cpp</code> から抽出した。</p>
 <h3 id="1-appl_db-sflow_table-sflowmgrd">1. APPL_DB <code>SFLOW_TABLE</code> への書込 (sflowmgrd 直接転送)<a class="headerlink" href="#1-appl_db-sflow_table-sflowmgrd" title="Permanent link">&para;</a></h3>
-<p><code>SFLOW|global</code> SET 時に <code>m_appSflowTable.set(key, values)</code> でフィールドをそのまま <a href="../../glossary/#term-appl_db">APPL_DB</a> <code>SFLOW_TABLE</code> に転送する (sflowmgr.cpp:468)。DEL 時は <code>m_appSflowTable.del(key)</code> (sflowmgr.cpp:550)。SflowOrch はこの <a href="../../glossary/#term-appl_db">APPL_DB</a> エントリを購読して <code>m_sflowStatus</code> を更新し、SAI samplepacket 操作の前提条件とする。<sup id="fnref8:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
+<p><code>SFLOW|global</code> SET 時に <code>m_appSflowTable.set(key, values)</code> でフィールドをそのまま <a href="../../glossary/#term-appl_db">APPL_DB</a> <code>SFLOW_TABLE</code> に転送する (sflowmgr.cpp:468)。DEL 時は <code>m_appSflowTable.del(key)</code> (sflowmgr.cpp:550)。SflowOrch はこの <a href="../../glossary/#term-appl_db">APPL_DB</a> エントリを購読して <code>m_sflowStatus</code> を更新し、<a href="../../glossary/#term-sai">SAI</a> samplepacket 操作の前提条件とする。<sup id="fnref8:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
 <h3 id="2-appl_db-sflow_session_table-sflowmgrd">2. APPL_DB <code>SFLOW_SESSION_TABLE</code> への書込 (sflowmgrd)<a class="headerlink" href="#2-appl_db-sflow_session_table-sflowmgrd" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -38254,7 +38257,7 @@
 </tr>
 <tr>
 <td><code>PORT_TABLE\|&lt;name&gt;</code></td>
-<td>STATE_DB</td>
+<td><a href="../../glossary/#term-state_db">STATE_DB</a></td>
 <td>読み取り (oper_speed 変化 → サンプリングレート更新)</td>
 <td>なし</td>
 <td>実質必須</td>
@@ -38378,7 +38381,7 @@
 </blockquote>
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: d6084d14649a -->
+<!-- glossary-links-injected: be30c0005cb2 -->
 
 <div class="footnote">
 <hr />
