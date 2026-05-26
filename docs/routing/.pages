@@ -42,6 +42,9 @@ nav:
   - dhcp-relay-per-interface-counter.md
   - evpn-vxlan-hld.md
   - evpn-vxlan-multihoming.md
+  - evpn-vxlan-multihoming-concepts.md
+  - evpn-vxlan-multihoming-internals.md
+  - evpn-vxlan-multihoming-operations.md
   - local-ars-hld.md
   - prefix-based-mux-neighbors.md
   - reliable-tsa.md
