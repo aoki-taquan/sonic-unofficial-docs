@@ -29297,7 +29297,7 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離
       
     </span>
   </a>
@@ -29308,7 +29308,7 @@
   <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -29317,6 +29317,17 @@
       
         <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -29328,7 +29339,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -29339,7 +29350,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定手順
@@ -29350,7 +29361,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -29389,7 +29400,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装コードの調査結果
@@ -36522,7 +36533,7 @@
   <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離
       
     </span>
   </a>
@@ -36533,7 +36544,7 @@
   <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連ページ
+        引用元
       
     </span>
   </a>
@@ -36542,6 +36553,17 @@
       
         <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連ページ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用ヒント
@@ -36553,7 +36575,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         典型値
@@ -36564,7 +36586,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         設定手順
@@ -36575,7 +36597,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
+  <a href="#_19" class="md-nav__link">
     <span class="md-ellipsis">
       
         よくある誤設定
@@ -36614,7 +36636,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
+  <a href="#_20" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装コードの調査結果
@@ -36655,8 +36677,8 @@
 
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: HLD-only</p>
-<p>このページは公式 HLD (<code>SONiC/doc/sag/sag-HLD.md</code>) と <code>sonic-swss-common/common/schema.h</code> の定数定義のみを根拠に書かれています。現行 sonic-swss ソースツリーに <code>sagmgr.cpp</code> / <code>sagorch.cpp</code> 等の独立した実装ファイルが確認できなかったため、コードレベルの裏取りは未済です。</p>
+<p class="admonition-title">裏取りステータス: discrepancy-found (not_implemented)</p>
+<p>HLD (<code>SONiC/doc/sag/sag-HLD.md</code>) では <code>intfmgrd</code> / <code>IntfsOrch</code> が <code>SAG|GLOBAL</code> を処理する設計だが、現行 <code>sonic-swss</code> master の <code>intfmgr.cpp</code> / <code>intfsorch.cpp</code> に SAG ハンドラは<strong>マージされていない</strong>。<code>schema.h</code> のキー定数（<code>CFG_SAG_TABLE_NAME</code> / <code>APP_SAG_TABLE_NAME</code>）のみ存在し、機能実装は未マージ。</p>
 </div>
 <h1 id="sag">SAG テーブル<a class="headerlink" href="#sag" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -37232,20 +37254,45 @@
 </blockquote>
 <!-- /pubsub -->
 
-<h2 id="_13">引用元<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
-<h2 id="_14">関連ページ<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_13">実装との乖離<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<p><code>sonic-swss-common/common/schema.h</code> に <code>CFG_SAG_TABLE_NAME = "SAG"</code> (L393) および <code>APP_SAG_TABLE_NAME = "SAG_TABLE"</code> (L127) の定数定義は存在するが、これを消費する実装が現行 master に存在しない。</p>
+<table>
+<thead>
+<tr>
+<th>HLD 記載</th>
+<th>実装状況</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>intfmgrd</code> / <code>IntfMgr</code> が <code>CFG_SAG_TABLE_NAME</code> を <code>SubscriberStateTable</code> で購読し APPL_DB へ転送</td>
+<td><code>cfgmgr/intfmgrd.cpp</code> に <code>CFG_SAG_TABLE_NAME</code> の登録<strong>なし</strong>（2026-05-26 確認）</td>
+</tr>
+<tr>
+<td><code>orchagent</code> / <code>IntfsOrch</code> が <code>APP_SAG_TABLE_NAME</code> を <code>ConsumerStateTable</code> で購読し SAI RIF を更新</td>
+<td><code>orchagent/intfsorch.cpp</code> に <code>SAG_TABLE</code> への参照<strong>なし</strong></td>
+</tr>
+<tr>
+<td><code>sagmgr.cpp</code> / <code>sagorch.cpp</code> 等の独立 SAG 実装ファイル</td>
+<td>sonic-swss master に<strong>存在しない</strong></td>
+</tr>
+</tbody>
+</table>
+<p>以上より <code>monitor: not_implemented</code>。機能は HLD 設計段階にとどまっており、コミュニティ版 master への実装マージは未完了。</p>
+<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_15">関連ページ<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../">CONFIG_DB index</a></li>
 <li><a href="../vlan-interface/">VLAN_INTERFACE テーブル</a></li>
 </ul>
 <!-- ops-hint -->
-<h2 id="_15">運用ヒント<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
-<h3 id="_16">典型値<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h3>
+<h2 id="_16">運用ヒント<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<h3 id="_17">典型値<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
 <ul>
 <li>key 形式: <code>SAG|GLOBAL</code></li>
 <li><code>gateway_mac</code>: <code>00:11:22:33:44:0f</code> (全 leaf で統一)</li>
 </ul>
-<h3 id="_17">設定手順<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h3>
+<h3 id="_18">設定手順<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># SAG グローバル MAC 設定</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>config<span class="w"> </span>static-anycast-gateway<span class="w"> </span>mac_address<span class="w"> </span>add<span class="w"> </span><span class="m">00</span>:11:22:33:44:0f
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
@@ -37256,7 +37303,7 @@
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;SAG|GLOBAL&#39;</span>
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;VLAN_INTERFACE|Vlan201&#39;</span>
 </span></code></pre></div>
-<h3 id="_18">よくある誤設定<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<h3 id="_19">よくある誤設定<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
 <ul>
 <li>SAG MAC を変更する際に <code>del</code> を忘れて <code>add</code> を実行すると CLI が reject する。必ず <code>del &lt;old_mac&gt;</code> → <code>add &lt;new_mac&gt;</code> の順で操作する。</li>
 </ul>
@@ -37270,7 +37317,7 @@
 <p>SAG のコードパスにはプラットフォーム固有の分岐は<strong>存在しない</strong>。</p>
 <h3 id="sai-asic">SAI レベルで ASIC 非依存<a class="headerlink" href="#sai-asic" title="Permanent link">&para;</a></h3>
 <p>HLD §SAI API に "There are no changes to SAI headers/implementation to support this feature." と明記されている<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。SAG の本質は VLAN インターフェースの SAI RIF 属性 <code>SAI_ROUTER_INTERFACE_ATTR_SRC_MAC_ADDRESS</code> を仮想 MAC に差し替えるだけであり、この属性はすべての主要 <a href="../../glossary/#term-asic">ASIC</a> ベンダーが SAI v1 時点からサポートしている。</p>
-<h3 id="_19">実装コードの調査結果<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h3>
+<h3 id="_20">実装コードの調査結果<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h3>
 <p>sonic-swss master に SAG 専用の実装ファイル（<code>sagmgr.cpp</code> / <code>sagorch.cpp</code> 等）は存在しない。<code>intfmgr.cpp</code> および <code>intfsorch.cpp</code> にも SAG ハンドラは未マージのため、現時点では <code>switch_type</code>・<code>platform</code>・<code>sub_platform</code> に依存するコード分岐を確認できない。</p>
 <table>
 <thead>

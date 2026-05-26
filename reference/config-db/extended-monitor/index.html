@@ -27374,7 +27374,7 @@
   <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離
       
     </span>
   </a>
@@ -27383,6 +27383,17 @@
       
         <li class="md-nav__item">
   <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -36843,7 +36854,7 @@
   <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離
       
     </span>
   </a>
@@ -36852,6 +36863,17 @@
       
         <li class="md-nav__item">
   <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         関連ページ
@@ -38129,8 +38151,29 @@ Critical/Major アラームあり → Red、Minor/Warning のみ → Amber、ア
 <p><code>MAX_CACHE_SIZE = MB(100) / EVT_SIZE_AVG (150 bytes) ≈ 699,050</code> イベントが上限のデフォルト値である（<code>eventd.cpp:31-33</code>）。<code>get_config_data(CACHE_MAX_CNT, MAX_CACHE_SIZE)</code> が <code>/etc/eventd.json</code> から上書き値を読む。RAM が少ない組み込みプラットフォームでは <code>eventd.json</code> で <code>cache_max_cnt</code> を下げる運用が推奨される（HLD section 3.1.7）。SAI・ASIC 種別とは無関係で、搭載 RAM 量のみに依存する。</p>
 <!-- /platform -->
 
-<h2 id="_16">引用元<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
-<h2 id="_17">関連ページ<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<h2 id="_16">実装との乖離<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<p><code>eventd</code> のコアロジック（ZMQ ブローカー・stats_collector・capture_service）は <code>sonic-buildimage/src/sonic-eventd/src/eventd.cpp</code> で確認済み（<code>verification: discrepancy-found</code>）。ただし以下の差分が存在する。</p>
+<table>
+<thead>
+<tr>
+<th>HLD 記載</th>
+<th>実装状況</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/etc/eventd.json</code> の <code>no-of-records</code> / <code>no-of-days</code> 読み込みロジック（HLD section 3.1.7）</td>
+<td><code>eventd.cpp</code> に対応する読み込みコードが<strong>確認できない</strong>。キャッシュ上限 (<code>cache_max_cnt</code>) は <code>get_config_data()</code> 経由で読むが、EVENT テーブル保持上限の <code>no-of-records</code>/<code>no-of-days</code> 取得箇所が不在</td>
+</tr>
+<tr>
+<td><code>DBStats</code> API への RCM counter 統合</td>
+<td>HLD 記載の設計だが <code>eventd.cpp</code> および <code>events_common.h</code> に実装確認なし（<code>COUNTERS_EVENTS_PUBLISHED</code> / <code>COUNTERS_EVENTS_MISSED_CACHE</code> は存在するが DBStats 統合 API は未確認）</td>
+</tr>
+</tbody>
+</table>
+<p>上記差分は <code>monitor: partially_implemented</code> として記録する。<code>eventd</code> のメインフロー（ZMQ ブローカー・evprofile 読み込み・ALARM_STATS 書き込み等）は実装確認済み。</p>
+<h2 id="_17">引用元<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<h2 id="_18">関連ページ<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../event-publisher/">イベントパブリッシャー設定</a></li>
 <li><a href="../suppress-asic-sdk-health-event/">SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブル</a></li>

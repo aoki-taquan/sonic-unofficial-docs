@@ -36109,7 +36109,7 @@
 <li><a href="../../management/serial-console-global-config-hld/">シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES）</a> — [code-verified] シリアルコンソール全体設定（SERIAL_CONSOLE.POLICIES） — シリアル（tty）経由のローカルログインは、ネットワークが切れた状況下での最…</li>
 <li><a href="../../management/sonic-console-switch/">Console Switch（serial hub の reverse SSH 集約）</a> — [discrepancy-found] Console Switch（serial hub の reverse SSH 集約） — SONiC スイッチを「network 機器を console（s…</li>
 <li><a href="../../management/ssh-server-global-config-hld/">SSH サーバ全体設定（SSH_SERVER.POLICIES）</a> — [code-verified] SSH サーバ全体設定（SSH_SERVER.POLICIES） — SONiC の SSH サーバは Debian 標準 sshd をそのまま使う構成で、運…</li>
-<li><a href="../../management/redis-client-manager-rcm-hld/">Redis Client Manager（RCM: connection pool / transactional client）</a> — [code-verified] Redis Client Manager（RCM: connection pool / transactional client） — sonic-mgmt-…</li>
+<li><a href="../../management/redis-client-manager-rcm-hld/">Redis Client Manager（RCM: connection pool / transactional client）</a> — [discrepancy-found] Redis Client Manager（RCM: connection pool / transactional client） — sonic-mgmt-…</li>
 <li><a href="../../management/sonic-application-extension-guide/">SONiC Application Extension 開発・移植ガイド</a> — [discrepancy-found] SONiC Application Extension 開発・移植ガイド — SONiC の docker 化された機能（DHCP relay 等）を App…</li>
 <li><a href="../../management/sonic-user-manual/">SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像</a> — [code-verified] SONiC User Manual の位置づけと SONiC CLI / 運用フローの全体像 — SONiC のユーザマニュアルは「日常運用と機能設定を一冊で…</li>
 <li><a href="../../management/config-reload-enhancement/">config reload の event-driven 化（FEATURE.delayed + PortInitDone）</a> — [code-verified] config reload の event-driven 化（FEATURE.delayed + PortInitDone） — 従来の config rel…</li>
@@ -36428,7 +36428,7 @@
 <li><a href="../../reference/config-db/erspan/">MIRROR_SESSION (ERSPAN 種別)</a> — [code-verified] MIRROR_SESSION テーブルの ERSPAN 種別詳細 — 外側 GRE/IP ヘッダ各フィールドのコード由来の暗黙デフォルト、プラットフォーム依存…</li>
 <li><a href="../../reference/config-db/event-publisher/">イベントパブリッシャー設定 (init_cfg events)</a> — [code-verified] eventd が読み込む ZMQ エンドポイント・ハートビート・キャッシュ上限などのイベントフレームワーク設定。CONFIG_DB テーブルではなく /etc…</li>
 <li><a href="../../reference/config-db/exp-to-fc-map/">EXP_TO_FC_MAP テーブル</a> — [code-verified] EXP_TO_FC_MAP テーブル — MPLS EXP ビット (0..7) を Forwarding Class へマップする CBF 用 ingres…</li>
-<li><a href="../../reference/config-db/extended-monitor/">イベント/アラーム拡張監視設定 (extended-monitor)</a> — [hld-only] eventd が読み込む EVENT テーブル保持上限 (eventd.json) とイベントプロファイル (/etc/evprofile/default.j…</li>
+<li><a href="../../reference/config-db/extended-monitor/">イベント/アラーム拡張監視設定 (extended-monitor)</a> — [discrepancy-found] eventd が読み込む EVENT テーブル保持上限 (eventd.json) とイベントプロファイル (/etc/evprofile/default.j…</li>
 <li><a href="../../reference/config-db/fabric-monitor/">FABRIC_MONITOR テーブル</a> — [code-verified] FABRIC_MONITOR テーブル — FABRIC_MONITOR テーブルは VOQ chassis のファブリックリンク監視 (FABRIC_POR…</li>
 <li><a href="../../reference/config-db/fabric-port/">FABRIC_PORT テーブル</a> — [code-verified] FABRIC_PORT テーブル — FABRIC_PORT テーブルは VOQ chassis におけるラインカード間ファブリックリンクの設定を CONFI…</li>
 <li><a href="../../reference/config-db/fdb-aging/">FDB Aging Time (SWITCH_TABLE.fdb_aging_time)</a> — [code-verified] SWITCH_TABLE の fdb_aging_time フィールド — FDB (Forwarding Database) エントリのエージングタイムアウ…</li>
@@ -36504,7 +36504,7 @@
 <li><a href="../../reference/config-db/route-rule/">DASH_ROUTE_RULE_TABLE テーブル</a> — [code-verified] DASH_ROUTE_RULE_TABLE — DASH インバウンドルーティングエントリ (Inbound Routing Rule) を保持するテーブル。…</li>
 <li><a href="../../reference/config-db/route-state/">ROUTE_TABLE (STATE_DB / APPL_STATE_DB)</a> — [code-verified] STATE_DB ROUTE_TABLE と APPL_STATE_DB ROUTE_TABLE — RouteOrch がデフォルト経路の存在状態と経路処理…</li>
 <li><a href="../../reference/config-db/route/">ROUTE_TABLE (APPL_DB)</a> — [code-verified] ROUTE_TABLE — fpmsyncd が FRR (zebra/FPM) からの netlink メッセージを受信して APPL_DB に書き込む経路…</li>
-<li><a href="../../reference/config-db/sag/">SAG テーブル</a> — [hld-only] SAG テーブル — Static Anycast Gateway (SAG) のグローバル仮想 MAC アドレスを保持する CONFIG_DB テーブル。E…</li>
+<li><a href="../../reference/config-db/sag/">SAG テーブル</a> — [discrepancy-found] SAG テーブル — Static Anycast Gateway (SAG) のグローバル仮想 MAC アドレスを保持する CONFIG_DB テーブル。E…</li>
 <li><a href="../../reference/config-db/scheduler-orch/">SCHEDULER — QosOrch SchedulerOrch コード由来デフォルト詳解</a> — [code-verified] orchagent QosOrch::handleSchedulerTable() が CONFIG_DB SCHEDULER テーブルを処理する際のフィール…</li>
 <li><a href="../../reference/config-db/sflow-collector/">SFLOW_COLLECTOR テーブル</a> — [code-verified] SFLOW_COLLECTOR テーブル — sFlow コレクタ宛先 (IP / UDP ポート / VRF) を定義する。最大 2 コレクタ。hsflow…</li>
 <li><a href="../../reference/config-db/sflow-session/">SFLOW_SESSION テーブル</a> — [code-verified] SFLOW_SESSION テーブル — sFlow の per-port サンプリング設定。key が 'all' のときは全ポートへのグローバル既定として…</li>
@@ -36715,10 +36715,10 @@
 <li><a href="../../reference/runbooks/smartswitch-dpu-image-install-failure/">SmartSwitch DPU image インストールが失敗する</a> — [code-verified] Runbook: SmartSwitch DPU image インストールが失敗する — : sonic-net/sonic-platform-daemons…</li>
 <li><a href="../../reference/runbooks/platform-fan-psu-anomaly/">show platform fan / psu で異常値が出る</a> — [code-verified] Runbook: show platform fan / psu で異常値が出る — : sonic-net/sonic-platform-daemons @…</li>
 <li><a href="../../reference/runbooks/interface-counters-reset/">show interfaces counters が突然リセットされる</a> — [runbook-verified] Runbook: show interfaces counters が突然リセットされる — : sonic-net/sonic-utilities @ 39…</li>
-<li><a href="../../reference/runbooks/bgp-graceful-restart-failure/">BGP Graceful Restart のネゴシエーションに失敗する</a> — [hld-only] Runbook: BGP Graceful Restart (GR) capability が対向と合致せず restart 時に経路断が発生する場合の切り分け</li>
+<li><a href="../../reference/runbooks/bgp-graceful-restart-failure/">BGP Graceful Restart のネゴシエーションに失敗する</a> — [runbook-verified] Runbook: BGP Graceful Restart (GR) capability が対向と合致せず restart 時に経路断が発生する場合の切り分け</li>
 <li><a href="../../reference/runbooks/lldp-neighbor-flapping/">LLDP 隣接が頻繁に up/down する</a> — [runbook-verified] Runbook: LLDP neighbor が短周期で消える / 再出現する場合の切り分け</li>
 <li><a href="../../reference/runbooks/port-admin-up-oper-down/">Port が admin up なのに oper down のまま</a> — [runbook-verified] Runbook: <code>config interface startup</code> 済みでも oper down が解けない場合の切り分け</li>
-<li><a href="../../reference/runbooks/arp-entry-stuck/">ARP / Neighbor エントリが古い IP-MAC を保持し続ける</a> — [hld-only] Runbook: ARP テーブルが stale な MAC を返し続けて traffic が黒穴化する場合の切り分け</li>
+<li><a href="../../reference/runbooks/arp-entry-stuck/">ARP / Neighbor エントリが古い IP-MAC を保持し続ける</a> — [runbook-verified] Runbook: ARP テーブルが stale な MAC を返し続けて traffic が黒穴化する場合の切り分け</li>
 <li><a href="../../reference/runbooks/swss-orchagent-busy-loop/">orchagent が CPU 100% で詰まる</a> — [runbook-verified] Runbook: swss/orchagent が busy loop に陥り、新規設定変更が反映されなくなる場合の切り分け</li>
 <li><a href="../../reference/runbooks/config-reload-stuck/">config reload が完了しない / hang する</a> — [runbook-verified] Runbook: <code>config reload -y</code> が長時間応答せず終わらない場合の切り分け</li>
 <li><a href="../../reference/runbooks/route-not-installed-in-fib/">経路は RIB にあるが FIB / ASIC に降りない</a> — [runbook-verified] Runbook: <code>show ip route</code> には出るが ASIC に書き込まれず、転送に使われない経路の切り分け</li>

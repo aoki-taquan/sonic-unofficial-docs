@@ -35702,9 +35702,9 @@
 
 
 <h1 id="runbook-bgp-graceful-restart">Runbook: BGP Graceful Restart のネゴシエーションに失敗する<a class="headerlink" href="#runbook-bgp-graceful-restart" title="Permanent link">&para;</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">HLD-only</p>
-<p>本ページは HLD と FRR の一般動作から再構成した運用ノートで、実コード追跡は一部に留まる。SHA は参考。</p>
+<div class="admonition success">
+<p class="admonition-title">裏取りステータス: runbook-verified</p>
+<p><code>sonic-frr/bgpd/bgp_open.c</code> の <code>bgp_capability_restart()</code> 関数で GR capability ネゴシエーション実装を確認済み（<code>PEER_CAP_RESTART_RCV</code> / <code>peer-&gt;v_gr_restart</code> セット等）。症状・切り分けフローは実コードに基づく。</p>
 </div>
 <div class="admonition danger">
 <p class="admonition-title">実行前提</p>
