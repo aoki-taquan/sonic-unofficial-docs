@@ -311,9 +311,7 @@ docker exec swss grep FEC_FLR_POLL_INTERVAL /usr/share/swss/port_flr.lua
     - 計算閾値の調整も同様に lua スクリプトレベル。動的にはチューニング不可。
     - 動的設定を求めるなら、`counterpoll port flr-interval-factor` CLI の上流 PR 追跡が必要。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - コアロジックと表示は取り込み済み: `sonic-swss/orchagent/port_flr.lua` L1-460、`sonic-swss/crates/countersyncd/src/sai/saiport.rs` L766-782 で SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S16 を列挙（ただし FLR 計算側 `port_flr.lua` L135 は S0..S15 の 16 bin のみ使用、S16 は拡張定義）、`sonic-utilities/utilities_common/portstat.py` L50/L271-273/L671-673 で表示列追加。
     - ハードコード値: `port_flr.lua` L29-32 で `BIN_FILTER_VALUE=10` / `MIN_SIGNIFICANT_BINS=2` / `MFC=8`、L31 で `FEC_FLR_POLL_INTERVAL=120`（秒固定）。

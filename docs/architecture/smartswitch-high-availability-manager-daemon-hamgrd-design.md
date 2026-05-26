@@ -230,9 +230,7 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
     - **ベンダー版 SmartSwitch を採用**: NVIDIA Spectrum-X / 等の vendor SmartSwitch では hamgrd 相当が動く可能性。ただし community SONiC のスコープ外（本サイトの対象外）。
     - 上流取り込み推進: hamgrd 実装本体（C++/Rust 何れか）+ swbus + `DASH_HA_DPU_STATE` / `VDPU_TABLE` の schema 追加 + CLI の 4 点セットが必要。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - `hamgrd` バイナリは community master の `sonic-buildimage/dockers/` 配下に存在しない (`find .cache/sonic-sources/sonic-buildimage/dockers -name '*hamgr*'` 結果 0)。`sonic-swss/orchagent/dash/` にも hamgrd 相当の actor framework は未取り込み。
     - schema は `sonic-swss-common/common/schema.h` L180-454 周辺に `DASH_HA_SET_CONFIG_TABLE` / `DASH_HA_SCOPE_CONFIG_TABLE` / `DASH_HA_GLOBAL_CONFIG` / `STATE_DASH_HA_SCOPE_STATE_TABLE` が定義され先行採用。一方 `DASH_HA_DPU_STATE` / `VDPU_TABLE` は未定義。

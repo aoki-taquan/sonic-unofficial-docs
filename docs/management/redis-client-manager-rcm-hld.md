@@ -190,7 +190,7 @@ redis-cli info clients
 
 ## 実装との乖離 / 補足
 
-- Verifier batch 29 で RCM 4 関数のうち `CloseRedisClient` の現行 master 取り込みおよび go-redis pool 設定経路を確認し、裏取りステータスを `code-verified` に昇格（2026-05-13）。`DBStats` への counter 統合のみ未確認のため `monitor: partially_implemented` を維持。
+- RCM 4 関数のうち `CloseRedisClient` の現行 master 取り込みおよび go-redis pool 設定経路を確認し、裏取りステータスを `code-verified` に昇格（2026-05-13）。`DBStats` への counter 統合のみ未確認のため `monitor: partially_implemented` を維持。
 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 ## 引用元
@@ -206,7 +206,7 @@ redis-cli info clients
 - ping ベースの早期 connection 失敗検出ロジックの実装確認
 -->
 
-## 裏取りメモ（Verifier batch 29）
+## 裏取りメモ
 
 RCM 4 関数のうち `CloseRedisClient` は現行 `sonic-mgmt-common` で利用されていることを確認した。
 

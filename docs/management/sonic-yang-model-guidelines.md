@@ -234,9 +234,7 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
     - southbound yang（`sonic-buildimage/src/sonic-yang-models/yang-models/`）では `map-list` / `key-delim` を使わず、`sonic-mgmt-common` 側の同名 yang でのみ使う（責務分担を意識）。
     - ガイドライン #14（`error-app-tag`）/ #18（list 分割キー衝突）は既存 yang への遡及修正がほぼ進んでいないため、新規 yang のレビュー時にチェックリスト化するのが現実的。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - 拡張定義リポ分裂: `sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-extension.yang.j2` L18-22 に `db-name`、L24-39 に `custom-validation-cvl` / `dependent-on` (`{% if yang_model_type == 'cvl' %}` 条件付き)。一方 `sonic-mgmt-common/models/yang/sonic/common/sonic-extension.yang` には `map-list` (L38-) / `key-delim` (L26) も含む拡張セットを持つ。
     - southbound (`sonic-buildimage`) と northbound (`sonic-mgmt-common`) で拡張定義のサブセットが異なるため、HLD のガイドラインを片方リポ視点で読むと欠落エラーになる。

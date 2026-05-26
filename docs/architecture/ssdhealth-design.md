@@ -262,9 +262,7 @@ reasoning: 二段プラグイン構造（SsdBase / SsdUtil）の配置と役割�
     - 温度 `0` を観測したら、必ず `smartctl -A /dev/sdX | grep -i temperature` で raw 値を併読する運用にする。
     - ベンダープラグインが無い platform で `vendor` モードが空になる場合は、`device/<vendor>/platform/plugins/ssdutil.py` の存在を `dpkg -L sonic-platform-<vendor>` 等で確認。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - `SsdBase` / `SsdUtil` / `show platform ssdhealth` は実装済み (`sonic-platform-common/sonic_platform_base/sonic_storage/storage_base.py` 等、`sonic-utilities/show/platform.py`)。HLD の主要パスは到達済み（パスは HLD 記載の `sonic_ssd/ssd_base.py` から `sonic_storage/` 配下に変更）。
     - HLD の Open Question として残されていた `ssdmond` 常時監視デーモンは未実装。`sonic-platform-daemons/` 配下に `ssdmond` ディレクトリ無し (`find . -iname 'ssdmond*'` 結果 0)。

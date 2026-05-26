@@ -261,9 +261,7 @@ docker exec telemetry cat /proc/$(docker exec telemetry pidof telemetry)/cmdline
     - 機能を有効化したい場合は `/etc/sonic/telemetry/` 系の設定または systemd unit を変更し、`--with-master-arbitration` を付与した状態で telemetry を再起動する。動的切替が必要な場合は上流に CONFIG_DB 駆動の有効化パスを PR する必要がある。
     - マルチ ASIC 構成では `masterEID` がプロセスごとに揮発するため、ASIC ごとに別 telemetry が立つ場合はコントローラ側で各 ASIC への `Set` ごとに EID を主張し直す。
 
-    ### 監査 round 2 追補（2026-05-11）
-
-    監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。
+    ### 再裏取り追補（2026-05-11）
 
     - `sonic-gnmi/gnmi_server/server.go:1329-1331` で `ma.Role != nil` → `codes.Unimplemented`。HLD は「無視」と記載するが実装は **明示拒否**。
     - `--with-master-arbitration` 起動フラグ (`telemetry/telemetry.go:62, 188, 587-588`) でのみ有効化。CONFIG_DB 駆動の動的 ON/OFF は未実装。

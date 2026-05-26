@@ -225,7 +225,7 @@ show platform temperature
 - vendor platform API（sfputil base）と xcvrd の event 連携確認
 -->
 
-## 裏取りメモ（Verifier batch 29）
+## 裏取りメモ
 
 `xcvrd` 本体と TRANSCEIVER_* テーブル更新ロジックは現行 `sonic-platform-daemons` に取り込み済み。
 

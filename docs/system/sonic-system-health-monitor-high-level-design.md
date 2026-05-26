@@ -20,7 +20,7 @@ related:
 ---
 
 !!! success "裏取りステータス: code-verified"
-    `healthd`（`sonic-buildimage/src/system-health/scripts/healthd`）と external_checker / supervisor 連携、`show system-health` の sonic-utilities 統合を確認（Verifier batch 29）。HLD の「critical service / Monit / peripheral の 3 系統 + STATE_DB 経由表示」設計と実コードが一致。
+    `healthd`（`sonic-buildimage/src/system-health/scripts/healthd`）と external_checker / supervisor 連携、`show system-health` の sonic-utilities 統合を確認。HLD の「critical service / Monit / peripheral の 3 系統 + STATE_DB 経由表示」設計と実コードが一致。
 
 # System Health Monitor（critical service / Monit / peripheral）
 

@@ -33,7 +33,7 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified"
-    本テストプランが前提とする TACACS+ 認証経路（`hostcfgd` による PAM `/etc/pam.d/common-auth-sonic` 生成、`config tacacs` CLI、failthrough オプション、loopback source IP の挙動）は Verifier batch 29 で現行 master 実装を確認済み。詳細は本ページ末尾の裏取りメモを参照。
+    本テストプランが前提とする TACACS+ 認証経路（`hostcfgd` による PAM `/etc/pam.d/common-auth-sonic` 生成、`config tacacs` CLI、failthrough オプション、loopback source IP の挙動）は現行 master 実装を確認済み。詳細は本ページ末尾の裏取りメモを参照。
 
 # TACACS+ 認証テストプラン（`pam_tacplus` + ssh login）
 
@@ -163,7 +163,7 @@ journalctl -u hostcfgd | grep -i tacacs | tail
 
 [^1]: [sonic-net/SONiC doc/aaa/TACACS+ Test Plan.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/aaa/TACACS%2B%20Test%20Plan.md)
 
-## 裏取りメモ（Verifier batch 29）
+## 裏取りメモ
 
 テストプランが前提とする TACACS+ 認証経路の各実装を `hostcfgd` で確認した。
 

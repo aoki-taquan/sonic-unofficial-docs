@@ -200,7 +200,7 @@ redis-cli -n 2 hgetall 'CRM:STATS'
 
 [^1]: `sonic-net/SONiC` `doc/crm/CRM_requirements.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-## 裏取りメモ（Verifier batch 29）
+## 裏取りメモ
 
 CRM 要件 HLD の実装は `sonic-swss` の `orchagent` と `sonic-utilities` の `crm` CLI に取り込み済み。
 
@@ -225,7 +225,7 @@ HLD の主要要件（SAI 経由のポーリング・しきい値超過時の sy
 
 ## 実装との乖離 / 補足
 
-- Verifier batch 29 にて `code-verified` に昇格 (2026-05-13)。CRM Orch 実装・CLI・YANG の三点裏取り完了。
+- 実裏取りで `code-verified` に昇格 (2026-05-13)。CRM Orch 実装・CLI・YANG の三点裏取り完了。
 - 要件 HLD はテーブル名を明示していないが、実装側で `CRM|Config` として追加されており整合を確認。
 
 ## 関連 Topics
