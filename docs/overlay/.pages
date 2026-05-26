@@ -17,4 +17,7 @@ nav:
   - dash-sonic-kvm.md
   - smartswitch-eni-based-forwarding.md
   - sonic-dash-hld.md
+  - sonic-dash-hld-concepts.md
+  - sonic-dash-hld-operations.md
+  - sonic-dash-hld-internals.md
   - dscp-remapping-for-tunnel-traffic.md

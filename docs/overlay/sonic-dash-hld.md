@@ -32,7 +32,14 @@ related:
 <!-- /topics-tip -->
 
 !!! success "裏取りステータス: code-verified（中核アーキテクチャの抜粋範囲のみ）"
-    `sonic-swss/orchagent/dash/dashorch.h` L63 `class DashOrch : public ZmqOrch`、`dashvnetorch.cpp` L49-50 で `APP_DASH_VNET_TABLE_NAME` / `APP_DASH_VNET_MAPPING_TABLE_NAME` 操作、`dashaclorch.cpp` / `dashmeterorch.cpp` / `dashhaorch.cpp` / `dashhafloworch.cpp` / `dashenifwdorch.cpp` / `dashcounter.cpp` で各 Orch を確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dash.yang` L36 `container DASH_VNET` / L119 `container DASH_ENI` で YANG を確認、`sonic-buildimage/src/sonic-dash-api` を確認（verified 2026-05-09）。**詳細仕様（FastPath / Service Tunnel / Private Link / Floating NIC / PL-NSG）は本ページの抜粋範囲外であり完全な裏取りではない**。章単位分割は別 issue で実施。
+    `sonic-swss/orchagent/dash/dashorch.h` L63 `class DashOrch : public ZmqOrch`、`dashvnetorch.cpp` L49-50 で `APP_DASH_VNET_TABLE_NAME` / `APP_DASH_VNET_MAPPING_TABLE_NAME` 操作、`dashaclorch.cpp` / `dashmeterorch.cpp` / `dashhaorch.cpp` / `dashhafloworch.cpp` / `dashenifwdorch.cpp` / `dashcounter.cpp` で各 Orch を確認。`sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dash.yang` L36 `container DASH_VNET` / L119 `container DASH_ENI` で YANG を確認、`sonic-buildimage/src/sonic-dash-api` を確認（verified 2026-05-09）。
+
+!!! info "詳細は派生ページへ分割済み"
+    本ページは **概観 + 元 HLD の章扉** として残し、詳細は以下の 3 派生ページに分割した:
+
+    - [SONiC-DASH 概念](sonic-dash-hld-concepts.md) — ENI / VNet / routing_type / ACL ステージ / メータリング / ST / PL / FastPath / FNIC の意味論
+    - [SONiC-DASH 内部実装](sonic-dash-hld-internals.md) — DASH APP DB スキーマ全テーブル、SAI DASH API マッピング、dashorch サブ Orch 構成、暗黙削除、SWSS Lite、Underlay routing
+    - [SONiC-DASH 運用](sonic-dash-hld-operations.md) — CLI、設定例（VNet-VNet / ST / PL / Meter）、redis / state 確認、トラブルシュート
 
 # SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観
 
