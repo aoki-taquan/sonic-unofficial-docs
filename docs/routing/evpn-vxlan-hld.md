@@ -4,7 +4,8 @@ description: "EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5） — EVPN
 area: routing
 verification: discrepancy-found
 monitor: evolved_beyond_hld
-last_verified: 2026-05-11
+last_verified: 2026-05-26
+page_kind: split-parent
 sources:
   - repo: sonic-net/SONiC
     path: doc/vxlan/EVPN/EVPN_VXLAN_HLD.md
@@ -32,6 +33,13 @@ related:
 
 !!! warning "裏取りステータス: discrepancy-found / 大規模 HLD"
     HLD は 70KB。本ページは EVPN VXLAN の中核（control plane = BGP-EVPN、data plane = VXLAN、Type-2 host route と Type-5 IP prefix の役割境界）に絞る。multihoming は別 HLD（同 area）。
+
+!!! info "章分割済み"
+    本ページは EVPN VXLAN HLD の **概要ハブ** として保持。詳細は以下の派生ページを参照:
+
+    - **[EVPN VXLAN 概念（Route Type 2/3/5 / L2VNI / L3VNI / IRB）](evpn-vxlan-hld-concepts.md)** — control plane の概念と Symmetric / Asymmetric IRB、想定構成
+    - **[EVPN VXLAN 内部実装（FRR → fpmsyncd → APPL_DB → orchagent → SAI）](evpn-vxlan-hld-internals.md)** — Orch クラス相関と VRF / Tenant 隔離、CONFIG_DB / APPL_DB / STATE_DB の流れ
+    - **[EVPN VXLAN 設定・運用（vtysh / show evpn / show bgp l2vpn）](evpn-vxlan-hld-operations.md)** — CLI 設定例、FRR vtysh、トラブルシュート手順
 
 !!! note "Verifier 注記（2026-05-10）"
     実コード裏取り: `sonic-swss/orchagent/vxlanorch.cpp` に `VxlanOrch / VxlanTunnelOrch / VxlanTunnelMapOrch / EvpnNvoOrch` 系の実装存在を確認。yang は `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-vxlan.yang` に `VXLAN_TUNNEL / VXLAN_TUNNEL_MAP / VXLAN_EVPN_NVO` を確認。CLI は `sonic-utilities/show/vxlan.py` に存在。**ただし** CONFIG_DB の NVO テーブル名は `VXLAN_EVPN_NVO`（実装・yang）であり、本ページが冒頭で `EVPN_NVO` と表記している部分は `VXLAN_EVPN_NVO` の略記である点に注意。実装で `CFG_VXLAN_EVPN_NVO_TABLE_NAME` (`sonic-swss/cfgmgr/vxlanmgr.cpp:189`) を確認。
