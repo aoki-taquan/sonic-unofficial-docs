@@ -46,7 +46,6 @@ related:
     現場で「動かない」を解く Runbook と、実装と HLD の乖離の一覧。
 
     [Runbook 一覧](reference/runbooks/index.md){ .md-button }
-    [実装との乖離](_meta/discrepancies.md)
 
 </div>
 

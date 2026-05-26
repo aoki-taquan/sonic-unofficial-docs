@@ -90,6 +90,12 @@ plugins:
   # 設定すれば cards 生成を抑止できる（ローカルで imaging deps が無い場合等）。
   - social:
       cards: !ENV [MKDOCS_SOCIAL_CARDS, true]
+  - rss:
+      match_path: ".*"
+      date_from_meta:
+        as_creation: date
+      categories:
+        - tags
 
 extra_css:
   - stylesheets/extra.css
