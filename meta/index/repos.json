@@ -1,28 +1,28 @@
 [
   {
     "repo": "sonic-net/SONiC",
-    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "ref": "4fda6b77e4fda2db76591143d03544f7895df40b",
     "default_branch": "master",
     "description": "SONiC top-level docs and HLDs",
     "included": true
   },
   {
     "repo": "sonic-net/sonic-buildimage",
-    "ref": "9ea932ec2e18f35e58268ec2e4456b1d4afd65cd",
+    "ref": "94bbc6554fc0afadfc5668178309bc25968aaa61",
     "default_branch": "master",
     "description": "Build infrastructure and Docker images for SONiC",
     "included": true
   },
   {
     "repo": "sonic-net/sonic-utilities",
-    "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9",
+    "ref": "28f404332291dc56b42f774b90a1b784d3f5af72",
     "default_branch": "master",
     "description": "CLI utilities (config, show, clear, sonic-installer, etc.)",
     "included": true
   },
   {
     "repo": "sonic-net/sonic-swss",
-    "ref": "4305596156d70e9797e8a881b3d19b46de0bce0d",
+    "ref": "70bf79ea65a15ebf7066e84ab2188bc49d5fccfa",
     "default_branch": "master",
     "description": "Switch State Service - orchestration agents (orchagent, etc.)",
     "included": true

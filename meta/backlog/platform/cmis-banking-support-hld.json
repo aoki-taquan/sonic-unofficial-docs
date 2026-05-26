@@ -1,0 +1,16 @@
+{
+  "title": "CMIS Banking Support HLD",
+  "slug": "cmis-banking-support-hld",
+  "area": "platform",
+  "type": "hld-port",
+  "target_path": "docs/platform/cmis-banking-support-hld.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/layer1/cmis_banking_support.md",
+      "ref": "4fda6b77e4fda2db76591143d03544f7895df40b"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=43972; Added in master-sync-2026-05-26"
+}

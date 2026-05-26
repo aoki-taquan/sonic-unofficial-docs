@@ -1,0 +1,16 @@
+{
+  "title": "Support PDB Flows",
+  "slug": "support-pdb-flows",
+  "area": "architecture",
+  "type": "hld-port",
+  "target_path": "docs/architecture/support-pdb-flows.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/pdb/support_pdb_flows.md",
+      "ref": "4fda6b77e4fda2db76591143d03544f7895df40b"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=13086; Added in master-sync-2026-05-26"
+}

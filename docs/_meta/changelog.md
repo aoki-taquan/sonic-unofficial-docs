@@ -23,6 +23,8 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-26 #5018 fix(ux): RSS plugin registration + Japanese tab labels + index repair card cleanup
+- 2026-05-26 #5016 fix(ci): resolve frontmatter page_kind violations + regen drift files
 - 2026-05-26 #5014 feat(routing): split EVPN-VXLAN HLD into concepts/internals/operations slugs
 - 2026-05-26 #5013 feat(routing): split EVPN multihoming HLD into concepts/internals/operations slugs
 - 2026-05-26 #5012 feat(architecture): split SmartSwitch HA DPU scope HLD into concepts/internals/operations slugs
@@ -521,6 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3834 docs(config-db): add Phase D failure-behavior block to lossless-traffic-pattern
 - 2026-05-19 #3833 docs(config-db): add Phase G pubsub block to FABRIC_PORT
 - 2026-05-19 #3831 docs(config-db): add Phase C cross-refs block to mux-cable-port page
-- 2026-05-19 #3830 docs(config-db): add Phase F side-effects block to pbh-state
-- 2026-05-19 #3829 docs(config-db): add Phase D failure-behavior block to STP page
 

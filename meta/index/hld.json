@@ -545,6 +545,14 @@
   },
   {
     "repo": "sonic-net/SONiC",
+    "path": "doc/console/Console-Monitor-High-Level-Design.md",
+    "ref": "4fda6b77e4fda2db76591143d03544f7895df40b",
+    "title": "SONiC Console Monitor High Level Design",
+    "area_hint": "system",
+    "size_bytes": 30965
+  },
+  {
+    "repo": "sonic-net/SONiC",
     "path": "doc/console/Portable-Console-Device-High-Level-Design.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Portable Console Device Design",
@@ -1017,19 +1025,19 @@
   },
   {
     "repo": "sonic-net/SONiC",
-    "path": "doc/ip/next_hop_group_hld.md",
-    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
-    "title": "Routing and Next Hop Table Enhancement",
-    "area_hint": "routing",
-    "size_bytes": 11983
-  },
-  {
-    "repo": "sonic-net/SONiC",
     "path": "doc/ip-interface/loopback-action/ip-interface-loopback-action-design.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC IP Interface Loopback Action",
     "area_hint": "architecture",
     "size_bytes": 13803
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/ip/next_hop_group_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Routing and Next Hop Table Enhancement",
+    "area_hint": "routing",
+    "size_bytes": 11983
   },
   {
     "repo": "sonic-net/SONiC",
@@ -1105,6 +1113,14 @@
   },
   {
     "repo": "sonic-net/SONiC",
+    "path": "doc/layer1/cmis_banking_support.md",
+    "ref": "4fda6b77e4fda2db76591143d03544f7895df40b",
+    "title": "CMIS Banking Support HLD",
+    "area_hint": "platform",
+    "size_bytes": 43972
+  },
+  {
+    "repo": "sonic-net/SONiC",
     "path": "doc/layer1/l1-meetings.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Meeting Recordings",
@@ -1145,19 +1161,19 @@
   },
   {
     "repo": "sonic-net/SONiC",
-    "path": "doc/macsec/MACsec_hld.md",
-    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
-    "title": "MACsec SONiC High Level Design Document",
-    "area_hint": "switching",
-    "size_bytes": 59508
-  },
-  {
-    "repo": "sonic-net/SONiC",
     "path": "doc/macsec-gearbox/macsec_backend_gearbox.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "SONiC HLD: Deterministic MACsec backend selection for gearbox ports",
     "area_hint": "switching",
     "size_bytes": 7577
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/macsec/MACsec_hld.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "MACsec SONiC High Level Design Document",
+    "area_hint": "switching",
+    "size_bytes": 59508
   },
   {
     "repo": "sonic-net/SONiC",
@@ -1505,6 +1521,14 @@
   },
   {
     "repo": "sonic-net/SONiC",
+    "path": "doc/pdb/support_pdb_flows.md",
+    "ref": "4fda6b77e4fda2db76591143d03544f7895df40b",
+    "title": "Support PDB Flows",
+    "area_hint": "architecture",
+    "size_bytes": 13086
+  },
+  {
+    "repo": "sonic-net/SONiC",
     "path": "doc/pfc_asym/PFC_Asymmetric_Test_HLD.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Asymmetric PFC Test Plan",
@@ -1585,6 +1609,14 @@
   },
   {
     "repo": "sonic-net/SONiC",
+    "path": "doc/platform-json/platform_json_enhancement.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Platform capability file enhancement",
+    "area_hint": "platform",
+    "size_bytes": 4191
+  },
+  {
+    "repo": "sonic-net/SONiC",
     "path": "doc/platform/brcm_pdk_pddf.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "List of Tables",
@@ -1606,14 +1638,6 @@
     "title": "Feature Name",
     "area_hint": "system",
     "size_bytes": 12038
-  },
-  {
-    "repo": "sonic-net/SONiC",
-    "path": "doc/platform-json/platform_json_enhancement.md",
-    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
-    "title": "Platform capability file enhancement",
-    "area_hint": "platform",
-    "size_bytes": 4191
   },
   {
     "repo": "sonic-net/SONiC",
@@ -2033,11 +2057,43 @@
   },
   {
     "repo": "sonic-net/SONiC",
+    "path": "doc/ribfib/sonic-fib_lld.md",
+    "ref": "4fda6b77e4fda2db76591143d03544f7895df40b",
+    "title": "sonic-fib Low Level Design",
+    "area_hint": "routing",
+    "size_bytes": 8264
+  },
+  {
+    "repo": "sonic-net/SONiC",
     "path": "doc/rif-counters/RIF_counters.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Router interface counters in SONiC",
     "area_hint": "routing",
     "size_bytes": 7582
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/route-performance/README.md",
+    "ref": "4fda6b77e4fda2db76591143d03544f7895df40b",
+    "title": "Route Performance",
+    "area_hint": "routing",
+    "size_bytes": 4532
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/route-performance/benchmarks/README.md",
+    "ref": "4fda6b77e4fda2db76591143d03544f7895df40b",
+    "title": "Route Performance Benchmarks",
+    "area_hint": "routing",
+    "size_bytes": 2005
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/route-performance/strategies/large-scale-datacenter-clos-fabric.md",
+    "ref": "4fda6b77e4fda2db76591143d03544f7895df40b",
+    "title": "SONiC Route Download Performance: Large-Scale Datacenter CLOS Fabric Strategy",
+    "area_hint": "routing",
+    "size_bytes": 19376
   },
   {
     "repo": "sonic-net/SONiC",
@@ -2078,6 +2134,14 @@
     "title": "Secure upgrade",
     "area_hint": "system",
     "size_bytes": 12145
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/sed/change_sed_password_hld.md",
+    "ref": "4fda6b77e4fda2db76591143d03544f7895df40b",
+    "title": "SED Password Management HLD",
+    "area_hint": "system",
+    "size_bytes": 6687
   },
   {
     "repo": "sonic-net/SONiC",
@@ -2433,6 +2497,14 @@
   },
   {
     "repo": "sonic-net/SONiC",
+    "path": "doc/sonic-redfish/HLD.md",
+    "ref": "4fda6b77e4fda2db76591143d03544f7895df40b",
+    "title": "SONiC Redfish with D-Bus Bridge",
+    "area_hint": "management",
+    "size_bytes": 43726
+  },
+  {
+    "repo": "sonic-net/SONiC",
     "path": "doc/sonic-reduce-disk-io/sonic-reduce-disk-io.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "Analysis of Disk Writers in SONiC Devices",
@@ -2649,14 +2721,6 @@
   },
   {
     "repo": "sonic-net/SONiC",
-    "path": "doc/test/Bring-up_Sonic-VS_on_Cloud_top.md",
-    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
-    "title": "Steps to Bring-Up SONiC-VS",
-    "area_hint": "architecture",
-    "size_bytes": 2401
-  },
-  {
-    "repo": "sonic-net/SONiC",
     "path": "doc/test-plans/SONiC Test Plan Template.md",
     "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
     "title": "",
@@ -2670,6 +2734,14 @@
     "title": "",
     "area_hint": "switching",
     "size_bytes": 3400
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/test/Bring-up_Sonic-VS_on_Cloud_top.md",
+    "ref": "49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06",
+    "title": "Steps to Bring-Up SONiC-VS",
+    "area_hint": "architecture",
+    "size_bytes": 2401
   },
   {
     "repo": "sonic-net/SONiC",
@@ -2830,6 +2902,14 @@
     "title": "Virtual Router Redundancy Protocol Adaptation HLD",
     "area_hint": "routing",
     "size_bytes": 31042
+  },
+  {
+    "repo": "sonic-net/SONiC",
+    "path": "doc/vxlan/Consistent_ecmp_for_Vxlan_tunnel.md",
+    "ref": "4fda6b77e4fda2db76591143d03544f7895df40b",
+    "title": "Consistent ECMP for Vxlan Tunnels",
+    "area_hint": "overlay",
+    "size_bytes": 10798
   },
   {
     "repo": "sonic-net/SONiC",
@@ -3006,69 +3086,5 @@
     "title": "Zero Touch Provisioning (ZTP)",
     "area_hint": "system",
     "size_bytes": 118947
-  },
-  {
-    "repo": "sonic-net/sonic-utilities",
-    "path": "doc/Command-Reference.md",
-    "ref": "39732bceb8bdefe706518ab40623bbbba6ff33b9",
-    "title": "SONiC Command Line Interface Guide",
-    "area_hint": "system",
-    "size_bytes": 607576
-  },
-  {
-    "repo": "sonic-net/sonic-swss",
-    "path": "doc/swss-schema.md",
-    "ref": "4305596156d70e9797e8a881b3d19b46de0bce0d",
-    "title": "",
-    "area_hint": "internals",
-    "size_bytes": 53703
-  },
-  {
-    "repo": "sonic-net/sonic-linkmgrd",
-    "path": "doc/default_route.md",
-    "ref": "65f563308c689e3225fdf3fc249a132350e9879b",
-    "title": "Default Route",
-    "area_hint": "routing",
-    "size_bytes": 5413
-  },
-  {
-    "repo": "sonic-net/sonic-gnmi",
-    "path": "doc/dialout.md",
-    "ref": "eb635b7679b260c3fd0786a6d0734fc8e82c9a22",
-    "title": "SONiC telemetry in dial-out mode",
-    "area_hint": "system",
-    "size_bytes": 11647
-  },
-  {
-    "repo": "sonic-net/sonic-gnmi",
-    "path": "doc/gNMI_usage_examples.md",
-    "ref": "eb635b7679b260c3fd0786a6d0734fc8e82c9a22",
-    "title": "gNMI Usage:",
-    "area_hint": "management",
-    "size_bytes": 4945
-  },
-  {
-    "repo": "sonic-net/sonic-gnmi",
-    "path": "doc/grpc_telemetry.md",
-    "ref": "eb635b7679b260c3fd0786a6d0734fc8e82c9a22",
-    "title": "SONiC gRPC data telemetry",
-    "area_hint": "system",
-    "size_bytes": 52137
-  },
-  {
-    "repo": "sonic-net/sonic-frr",
-    "path": "doc/developer/ldpd-basic-test-setup.md",
-    "ref": "799f47f215e4266063c4ebde0041a0c7dd2d11d0",
-    "title": "sysctl -w net.ipv4.ip_forward=1",
-    "area_hint": "routing",
-    "size_bytes": 18821
-  },
-  {
-    "repo": "sonic-net/sonic-frr",
-    "path": "doc/user/Useful_Sysctl_Settings.md",
-    "ref": "799f47f215e4266063c4ebde0041a0c7dd2d11d0",
-    "title": "Useful Sysctl Settings",
-    "area_hint": "system",
-    "size_bytes": 1910
   }
 ]

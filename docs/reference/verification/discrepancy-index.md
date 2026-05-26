@@ -118,7 +118,7 @@ last_verified: 2026-05-13
 - [EVPN VXLAN Multihoming（概要ハブ）](../../routing/evpn-vxlan-multihoming.md)  
   area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
-  `monitor: not_implemented` — 2026-05 時点の現行 master では EVPN-MH 機能全体が未実装。`EVPN_ETHERNET_SEGMENT` テーブル・`EvpnMhOrch`・`L2nhgOrch`・`ShlOrch`・`config interface evpn-esi` CLI・`sonic-evpn-mh.yang` のいずれも確認できない。HLD は提案段階であり、関連 PR（sonic-swss #4262 / #4206 / #4039）は open のまま。dual-attached host が必要な場合は **MC-LAG**（`mclag-enhancements.md`）を選択すること。
+  `monitor: not_implemented` — 2026-05 時点の現行 master では EVPN-MH 機能全体が未実装。`EVPN_ETHERNET_SEGMENT` テーブル・`EvpnMhOrch`・`L2nhgOrch`・`ShlOrch`・`config interface evpn-esi` CLI・`sonic-evpn-mh.yang` のいずれも確認できない。HLD は提案段階であり、関連 PR（[sonic-swss](../../reference/glossary.md#term-sonic-swss) #4262 / #4206 / #4039）は open のまま。dual-attached host が必要な場合は **MC-LAG**（`mclag-enhancements.md`）を選択すること。
 
 - [Local ARS（Adaptive Routing & Switching の local 完結版）](../../routing/local-ars-hld.md)  
   area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
@@ -914,7 +914,7 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
 - [EVPN VXLAN Multihoming（概要ハブ）](../../routing/evpn-vxlan-multihoming.md)  
   area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
-  `monitor: not_implemented` — 2026-05 時点の現行 master では EVPN-MH 機能全体が未実装。`EVPN_ETHERNET_SEGMENT` テーブル・`EvpnMhOrch`・`L2nhgOrch`・`ShlOrch`・`config interface evpn-esi` CLI・`sonic-evpn-mh.yang` のいずれも確認できない。HLD は提案段階であり、関連 PR（sonic-swss #4262 / #4206 / #4039）は open のまま。dual-attached host が必要な場合は **MC-LAG**（`mclag-enhancements.md`）を選択すること。
+  `monitor: not_implemented` — 2026-05 時点の現行 master では EVPN-MH 機能全体が未実装。`EVPN_ETHERNET_SEGMENT` テーブル・`EvpnMhOrch`・`L2nhgOrch`・`ShlOrch`・`config interface evpn-esi` CLI・`sonic-evpn-mh.yang` のいずれも確認できない。HLD は提案段階であり、関連 PR（[sonic-swss](../../reference/glossary.md#term-sonic-swss) #4262 / #4206 / #4039）は open のまま。dual-attached host が必要な場合は **MC-LAG**（`mclag-enhancements.md`）を選択すること。
 
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../../routing/evpn-vxlan-hld.md)  
   area: `routing` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-26`
