@@ -48,6 +48,14 @@ related:
 
 > 大きな [HLD](../reference/glossary.md#term-hld)（42 KB）。本ページは architecturally distinctive な要素に絞る。詳細は `doc/mclag/MCLAG_Enhancements_HLD.md` を参照。
 
+## 派生ページ（章ごとの詳細）
+
+このページは概要ハブ。掘り下げは派生ページに分割した:
+
+- [MCLAG Enhancements 概念](mclag-enhancements-concepts.md) — 7 軸拡張のユースケース整理（dynamic config / timer / static MAC / aging / sync 最適化 / isolation group / unique IP）
+- [MCLAG Enhancements 内部実装](mclag-enhancements-internals.md) — iccpd / MclagSyncd / FdbOrch / IsolationGroupOrch / PortsOrch の役割分担と APPL_DB / STATE_DB スキーマ・ICCP TLV
+- [MCLAG Enhancements 運用](mclag-enhancements-operations.md) — click / KLISH CLI、典型設定、show / mclagdctl / redis-cli 確認、トラブルシュート
+
 ## なぜ拡張するのか
 
 [MCLAG](../reference/glossary.md#term-mclag)（Multi-Chassis [LAG](../reference/glossary.md#term-lag)）は 2 台が **互いに peer** となり、下流ホストから 1 個の LAG（ICCP 同期）として見える冗長構成。本 HLD は以下 7 軸で拡張する[^1]:
