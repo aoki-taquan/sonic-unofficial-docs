@@ -1577,8 +1577,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）](../routing/evpn-vxlan-multihoming-concepts.md) (11)
 - [EVPN VXLAN Multihoming 運用（config interface evpn-esi / show vxlan ethernet-segment / 差分）](../routing/evpn-vxlan-multihoming-operations.md) (5)
 - [EVPN VXLAN Multihoming（概要ハブ）](../routing/evpn-vxlan-multihoming.md) (3)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (2)
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (1)
-- [EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）](../routing/evpn-vxlan-multihoming-internals.md) (1)
 
 ### [EXP](#term-exp)
 
@@ -1697,11 +1697,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (240)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (244)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
-- [SAG テーブル](config-db/sag.md) (42)
+- [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
-- [サイトマップ](../_meta/sitemap.md) (36)
+- [イベント/アラーム拡張監視設定 (extended-monitor)](config-db/extended-monitor.md) (39)
 
 ### [Headroom](#term-headroom)
 

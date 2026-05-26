@@ -11,7 +11,7 @@ last_verified: 2026-05-13
 
     SONiC コミュニティ master の HLD は **設計提案リポジトリ** であり、現行コードと一致しているとは限りません。本ページは「HLD だけ読んで誤解しがちな機能」を一望できる USP ページです。読み手は、まず後述の **monitor subtype 別セクション** で該当機能の乖離タイプ（未実装 / 部分実装 / 進化置換 / 廃止）を把握し、そこから個別ページへ降りて `last_verified` と「実装との乖離」セクションの裏取り根拠を確認してください。area 横断で探す場合は末尾の **area 別索引** から辿れます。
 
-`verification: discrepancy-found` が付いた全 **109** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
+`verification: discrepancy-found` が付いた全 **112** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
 
 ## サマリ
 
@@ -19,8 +19,8 @@ last_verified: 2026-05-13
 
 | monitor | 件数 | 意味 |
 |---------|-----:|------|
-| [`not_implemented`](#monitor-not-implemented) | 17 | 未実装 |
-| [`partially_implemented`](#monitor-partially-implemented) | 59 | 部分実装 |
+| [`not_implemented`](#monitor-not-implemented) | 18 | 未実装 |
+| [`partially_implemented`](#monitor-partially-implemented) | 61 | 部分実装 |
 | [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 30 | HLD と乖離した形で実装/進化 |
 | [`deprecated`](#monitor-deprecated) | 3 | deprecated（廃止予定 / 撤去済み） |
 
@@ -31,10 +31,10 @@ last_verified: 2026-05-13
 | [`acl-qos`](#area-acl-qos) | 6 |
 | [`architecture`](#area-architecture) | 25 |
 | [`internals`](#area-internals) | 6 |
-| [`management`](#area-management) | 15 |
+| [`management`](#area-management) | 16 |
 | [`overlay`](#area-overlay) | 1 |
 | [`platform`](#area-platform) | 13 |
-| [`reference`](#area-reference) | 6 |
+| [`reference`](#area-reference) | 8 |
 | [`routing`](#area-routing) | 11 |
 | [`switching`](#area-switching) | 8 |
 | [`system`](#area-system) | 18 |
@@ -43,7 +43,7 @@ last_verified: 2026-05-13
 
 各 subtype を material 組み込みの色付き admonition でラップしています。色は重要度ではなく **読み手が誤読する危険度** の目安です（赤=実装ゼロ、黄=一部のみ、青=設計と別物、灰=廃止）。
 
-### `not_implemented` — 未実装 (17 件) { #monitor-not-implemented }
+### `not_implemented` — 未実装 (18 件) { #monitor-not-implemented }
 
 !!! danger "未実装"
 
@@ -94,6 +94,11 @@ last_verified: 2026-05-13
   
   `HARDWARE|ACCESS_LIST` テーブルの主要な乖離は **community [sonic-swss](../../reference/glossary.md#term-sonic-swss)/[orchagent](../../reference/glossary.md#term-orchagent) がこのテーブルを購読していない**点である。
 
+- [SAG テーブル](../../reference/config-db/sag.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-26`
+  
+  `sonic-swss-common/common/schema.h` に `CFG_SAG_TABLE_NAME = "SAG"` (L393) および `APP_SAG_TABLE_NAME = "SAG_TABLE"` (L127) の定数定義は存在するが、これを消費する実装が現行 master に存在しない。
+
 - [SECURITY_PROFILES / PKI テーブル](../../reference/config-db/pki-trusted-certs.md)  
   area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
   
@@ -130,7 +135,7 @@ last_verified: 2026-05-13
   
   per-page queue で既出の通り提案 HLD は未採用。再走査でも:
 
-### `partially_implemented` — 部分実装 (59 件) { #monitor-partially-implemented }
+### `partially_implemented` — 部分実装 (61 件) { #monitor-partially-implemented }
 
 !!! warning "部分実装"
 
@@ -237,6 +242,11 @@ last_verified: 2026-05-13
   
   per-page queue で既出の通り、HLD 1.1 の中核実装は部分的のみ。再確認した結果:
 
+- [Redis Client Manager（RCM: connection pool / transactional client）](../../management/redis-client-manager-rcm-hld.md)  
+  area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-26`
+  
+  - RCM 4 関数のうち `CloseRedisClient` の現行 master 取り込みおよび go-redis pool 設定経路を確認し、裏取りステータスを `code-verified` に昇格（2026-05-13）。`DBStats` への counter 統合のみ未確認のため `monitor: partially_implemented` を維持。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 - [SONiC Application Extension 開発・移植ガイド](../../management/sonic-application-extension-guide.md)  
   area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
@@ -295,6 +305,11 @@ last_verified: 2026-05-13
   area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
   - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。`--namespace` 引数サポートの有無は CLI コマンド間で混在しており、本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は [HLD](../../reference/glossary.md#term-hld) と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [イベント/アラーム拡張監視設定 (extended-monitor)](../../reference/config-db/extended-monitor.md)  
+  area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-26`
+  
+  `eventd` のコアロジック（ZMQ ブローカー・stats_collector・capture_service）は `sonic-buildimage/src/sonic-eventd/src/eventd.cpp` で確認済み（`verification: discrepancy-found`）。ただし以下の差分が存在する。
 
 - [VoQ シャーシでの BGP 構成（iBGP フルメッシュ + addpath / multipath-relax）](../../routing/bgp-setup-for-voq-chassis.md)  
   area: `routing` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
@@ -741,6 +756,11 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   
   2026-05-09 時点の現行 master を裏取り。HLD が掲げる「USB 接続のポータブル console-switch デバイス」を制御するための実装は、CLI / YANG / [CONFIG_DB](../../reference/glossary.md#term-config_db) スキーマのいずれにも入っていない。
 
+- [Redis Client Manager（RCM: connection pool / transactional client）](../../management/redis-client-manager-rcm-hld.md)  
+  area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-26`
+  
+  - RCM 4 関数のうち `CloseRedisClient` の現行 master 取り込みおよび go-redis pool 設定経路を確認し、裏取りステータスを `code-verified` に昇格（2026-05-13）。`DBStats` への counter 統合のみ未確認のため `monitor: partially_implemented` を維持。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
+
 - [SONiC Application Extension 開発・移植ガイド](../../management/sonic-application-extension-guide.md)  
   area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
@@ -878,6 +898,11 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   
   `HARDWARE|ACCESS_LIST` テーブルの主要な乖離は **community [sonic-swss](../../reference/glossary.md#term-sonic-swss)/[orchagent](../../reference/glossary.md#term-orchagent) がこのテーブルを購読していない**点である。
 
+- [SAG テーブル](../../reference/config-db/sag.md)  
+  area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-26`
+  
+  `sonic-swss-common/common/schema.h` に `CFG_SAG_TABLE_NAME = "SAG"` (L393) および `APP_SAG_TABLE_NAME = "SAG_TABLE"` (L127) の定数定義は存在するが、これを消費する実装が現行 master に存在しない。
+
 - [SECURITY_PROFILES / PKI テーブル](../../reference/config-db/pki-trusted-certs.md)  
   area: `reference` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-14`
   
@@ -887,6 +912,11 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
   - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。`--namespace` 引数サポートの有無は CLI コマンド間で混在しており、本文で「要確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は [HLD](../../reference/glossary.md#term-hld) と実装の差分が未特定であることを示し、後続の裏取り対象。
+
+- [イベント/アラーム拡張監視設定 (extended-monitor)](../../reference/config-db/extended-monitor.md)  
+  area: `reference` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-26`
+  
+  `eventd` のコアロジック（ZMQ ブローカー・stats_collector・capture_service）は `sonic-buildimage/src/sonic-eventd/src/eventd.cpp` で確認済み（`verification: discrepancy-found`）。ただし以下の差分が存在する。
 
 ### routing { #area-routing }
 
