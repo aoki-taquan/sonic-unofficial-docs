@@ -11,6 +11,9 @@ nav:
   - brief-introduction-of-iccp-code.md
   - lag-on-distributed-voq-system.md
   - mclag-enhancements.md
+  - mclag-enhancements-concepts.md
+  - mclag-enhancements-internals.md
+  - mclag-enhancements-operations.md
   - openconfig-support-for-portchannel-aggregate-interface.md
   - sonic-ip-lag-incremental-update.md
   - multiple-spanning-tree-protocol.md
