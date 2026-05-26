@@ -114,13 +114,13 @@ DASH 系と SmartSwitch 系の既存 [HLD](../../reference/glossary.md#term-hld)
 
 **関連する HLD 7 件**
 
-- [DASH SONiC KVM（BMv2 ベース仮想 DPU）](../../overlay/dash-sonic-kvm.md)
 - [単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）](../../platform/single-asic-voq-fixed-system-sonic.md)
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../../platform/hld-for-handling-sai-failures.md)
 - [SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）](../../overlay/smartswitch-eni-based-forwarding.md)
+- [SONiC-DASH 内部実装（DASH APP DB スキーマ / dashorch / SAI DASH API）](../../overlay/sonic-dash-hld-internals.md)
+- [SONiC-DASH 運用（CLI / 設定例 / トラブルシュート）](../../overlay/sonic-dash-hld-operations.md)
 - [ICMP Hardware Offload（DualToR link prober の NPU 化）](../../platform/icmp-hardware-offload.md)
-- [SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観](../../overlay/sonic-dash-hld.md)
-- [VXLAN / VNet 概念（VTEP + VNet + L2/L3 トンネル）](../../overlay/vxlan-sonic-concepts.md)
+- [SONiC-DASH 概念（ENI / VNet / route_type / ACL / メータリング）](../../overlay/sonic-dash-hld-concepts.md)
 
 **関連トラブルシュート 5 件**
 

@@ -30,7 +30,7 @@ related:
 - import: `ietf-inet-types`
 - top container: `sonic-bgp-aggregate-address`
 
-SONiC [BGP](../../reference/glossary.md#term-bgp) aggregate address configuration module.[^1]
+[SONiC](../../reference/glossary.md#term-sonic) [BGP](../../reference/glossary.md#term-bgp) aggregate address configuration module.[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -155,4 +155,4 @@ vtysh -c 'show ip bgp summary'
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-aggregate-address.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 7d57ed947e8f -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

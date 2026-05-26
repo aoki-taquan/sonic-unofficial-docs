@@ -57,6 +57,10 @@ flowchart LR
 
 - [`config bgp`](../cli/config-bgp.md)
 
+### 関連 HLD
+
+- [sonic-bgp-sentinel YANG](../../reference/yang/sonic-bgp-sentinel.md)
+
 <!-- /yang-xref -->
 
 ## ツリー

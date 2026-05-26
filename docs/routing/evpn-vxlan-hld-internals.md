@@ -41,7 +41,7 @@ related:
 
 ## 1. 全体フロー（Type-2 / Type-3 / Type-5 共通）
 
-BGP-EVPN のメッセージは FRR `bgpd` で受信され、種別ごとに異なる経路で SONiC の orchagent → SAI に下りる[^1]。
+[BGP](../reference/glossary.md#term-bgp)-[EVPN](../reference/glossary.md#term-evpn) のメッセージは [FRR](../reference/glossary.md#term-frr) `bgpd` で受信され、種別ごとに異なる経路で [SONiC](../reference/glossary.md#term-sonic) の [orchagent](../reference/glossary.md#term-orchagent) → [SAI](../reference/glossary.md#term-sai) に下りる[^1]。
 
 ```mermaid
 flowchart TB
@@ -62,9 +62,9 @@ flowchart TB
 ## 2. control plane: FRR bgpd / zebra
 
 - **bgpd**: `address-family l2vpn evpn` で EVPN session を張り、Route Type 2 / 3 / 5 を送受信。SONiC 側では `dockers/docker-fpm-frr/frr/bgpd/bgpd.main.conf.j2` テンプレートで生成
-- **zebra**: bgpd から渡された route を Linux RIB / FDB に install する責務。Type-5 は kernel routing table へ、Type-2 / Type-3 は kernel bridge FDB / vni device 経由で配信
-- **fpmsyncd** (FPM channel 経由): zebra からの IP route 通知を受け取り、`APPL_DB` の `ROUTE_TABLE` / `VRF_ROUTE_TABLE` に書き込む。VXLAN next-hop のときは `vni_label` / `router_mac` フィールドが付与される
-- **fdbsyncd** (SwSS 側で追加された process): Linux bridge FDB を netlink subscribe し、Vxlan interface 経由で学習された MAC を `APPL_DB` の `VXLAN_FDB_TABLE` / `VXLAN_REMOTE_VNI_TABLE` に書き込む[^1]
+- **[zebra](../reference/glossary.md#term-zebra)**: bgpd から渡された route を Linux RIB / [FDB](../reference/glossary.md#term-fdb) に install する責務。Type-5 は kernel routing table へ、Type-2 / Type-3 は kernel bridge FDB / vni device 経由で配信
+- **[fpmsyncd](../reference/glossary.md#term-fpmsyncd)** ([FPM](../reference/glossary.md#term-fpm) channel 経由): zebra からの IP route 通知を受け取り、`APPL_DB` の `ROUTE_TABLE` / `VRF_ROUTE_TABLE` に書き込む。[VXLAN](../reference/glossary.md#term-vxlan) next-hop のときは `vni_label` / `router_mac` フィールドが付与される
+- **[fdbsyncd](../reference/glossary.md#term-fdbsyncd)** (SwSS 側で追加された process): Linux bridge FDB を netlink subscribe し、Vxlan interface 経由で学習された MAC を `APPL_DB` の `VXLAN_FDB_TABLE` / `VXLAN_REMOTE_VNI_TABLE` に書き込む[^1]
 
 ## 3. data plane: orchagent クラス相関
 
@@ -72,9 +72,9 @@ EVPN VXLAN は単一の orch ではなく **複数の Orch2 派生クラスが�
 
 | クラス | ヘッダ / cpp 位置 | 役割 |
 |--------|-------------------|------|
-| `VxlanTunnelOrch` | `vxlanorch.h:268` | `VXLAN_TUNNEL` を読んで VTEP loopback の SAI tunnel object を作る |
-| `VxlanTunnelMapOrch` | `vxlanorch.h:414` | `VXLAN_TUNNEL_MAP` の L2VNI ↔ VLAN を SAI tunnel map entry に登録 |
-| `VxlanVrfMapOrch` | `vxlanorch.h:462` | L3VNI ↔ VRF を SAI tunnel map entry に登録 |
+| `VxlanTunnelOrch` | `vxlanorch.h:268` | `VXLAN_TUNNEL` を読んで [VTEP](../reference/glossary.md#term-vtep) loopback の SAI tunnel object を作る |
+| `VxlanTunnelMapOrch` | `vxlanorch.h:414` | `VXLAN_TUNNEL_MAP` の L2VNI ↔ [VLAN](../reference/glossary.md#term-vlan) を SAI tunnel map entry に登録 |
+| `VxlanVrfMapOrch` | `vxlanorch.h:462` | L3VNI ↔ [VRF](../reference/glossary.md#term-vrf) を SAI tunnel map entry に登録 |
 | `EvpnNvoOrch` | `vxlanorch.h:541` | `VXLAN_EVPN_NVO` を読んで EVPN NVO instance を保持し、dynamic tunnel 生成のアンカーとする |
 | `EvpnRemoteVnip2pOrch` | `vxlanorch.h:499` | IMET (Type-3) 受信時に **per-VTEP の P2P dynamic tunnel** を生成（SAI が P2P tunnel peer mode サポート時）|
 | `EvpnRemoteVnip2mpOrch` | `vxlanorch.h:512` | IMET 受信時に **既存 P2MP tunnel** に L2MC group member を追加（P2P peer mode 非対応時）|
@@ -88,7 +88,7 @@ EVPN VXLAN は単一の orch ではなく **複数の Orch2 派生クラスが�
 
 ### 4.1 CONFIG_DB（人/yang 経由で設定）
 
-| テーブル | 役割 | HLD 記載との差 |
+| テーブル | 役割 | [HLD](../reference/glossary.md#term-hld) 記載との差 |
 |----------|------|----------------|
 | `VXLAN_TUNNEL\|<vtep>` | source IP (`src_ip`) のみ持つ VTEP loopback トンネル | 一致 |
 | `VXLAN_TUNNEL_MAP\|<vtep>\|<map>` | L2VNI: `vni` / `vlan` フィールド | 一致 |
@@ -115,7 +115,7 @@ EVPN VXLAN は単一の orch ではなく **複数の Orch2 派生クラスが�
 
 Symmetric IRB + Type-5 のテナント隔離は **L3VNI ↔ VRF の 1:1 bind** で実現する。
 
-1. 管理者が `VRF|Vrf-Red` に `vni = 5000` を設定（CONFIG_DB）
+1. 管理者が `VRF|Vrf-Red` に `vni = 5000` を設定（[CONFIG_DB](../reference/glossary.md#term-config_db)）
 2. `vrfmgr` がこれを `APPL_DB:VRF_TABLE` にコピー
 3. `vrforch` が SAI VR (virtual router) を作成し、L3VNI 5000 を bind
 4. FRR 側でも対応する VRF に L3VNI を bind（`vtysh` の `vni 5000`）
@@ -139,12 +139,12 @@ dynamic tunnel は **refcount 0 で自動削除**。IMET / MAC / Type-5 のい�
 
 - HLD の `EVPN_NVO` は実装上 `VXLAN_EVPN_NVO`
 - HLD で複数 orch に分散とされる中身は **`vxlanorch.{h,cpp}` 1 ファイルに集約** された複数の Orch2 派生クラス
-- ARP/ND suppression は HLD には記載があるが実装は未完（[sonic-swss #2181](https://github.com/sonic-net/sonic-swss/issues/2181)）
+- [ARP](../reference/glossary.md#term-arp)/ND suppression は HLD には記載があるが実装は未完（[sonic-swss #2181](https://github.com/sonic-net/sonic-swss/issues/2181)）
 
 ## 8. 次に読む
 
 - 概念 / Route Type / IRB: [evpn-vxlan-hld-concepts.md](evpn-vxlan-hld-concepts.md)
-- CLI 設定 / vtysh / トラブルシュート: [evpn-vxlan-hld-operations.md](evpn-vxlan-hld-operations.md)
+- CLI 設定 / [vtysh](../reference/glossary.md#term-vtysh) / トラブルシュート: [evpn-vxlan-hld-operations.md](evpn-vxlan-hld-operations.md)
 - 関連 HLD: [overlay ECMP with BFD monitoring](overlay-ecmp-with-bfd-monitoring.md), [fpmsyncd nexthop group enhancement](fpmsyncd-nexthop-group-enhancement-high-level-design-document.md)
 
 ## 引用元
@@ -157,3 +157,5 @@ dynamic tunnel は **refcount 0 で自動削除**。IMET / MAC / Type-5 のい�
 - [Topics: VXLAN / EVPN / VNET オーバーレイ — 内部実装](../topics/03-vxlan-evpn/internals.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 7909000d1ad5 -->

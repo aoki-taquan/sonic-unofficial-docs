@@ -43,7 +43,6 @@ related:
 
 `sonic-utilities` の `config pbh` コマンドがこのテーブルを参照し、操作可否を事前検証する (`pbhcap.cpp:288-289`)。
 
-
 ## key 構造
 
 ```text

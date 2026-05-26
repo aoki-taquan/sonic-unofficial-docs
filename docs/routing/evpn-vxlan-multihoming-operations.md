@@ -30,13 +30,13 @@ related:
 
 # EVPN VXLAN Multihoming 運用
 
-本ページは [EVPN VXLAN Multihoming（概要ハブ）](evpn-vxlan-multihoming.md) の派生で、HLD §3.5 を中心に **CLI / show / REST API / 差分・回避策** を整理する[^1]。概念は [concepts](evpn-vxlan-multihoming-concepts.md)、実装内部は [internals](evpn-vxlan-multihoming-internals.md) を参照。
+本ページは [EVPN VXLAN Multihoming（概要ハブ）](evpn-vxlan-multihoming.md) の派生で、[HLD](../reference/glossary.md#term-hld) §3.5 を中心に **CLI / show / REST API / 差分・回避策** を整理する[^1]。概念は [concepts](evpn-vxlan-multihoming-concepts.md)、実装内部は [internals](evpn-vxlan-multihoming-internals.md) を参照。
 
 ## 1. 設定 CLI
 
 ### 1.1 Ethernet Segment 設定
 
-ESI を PortChannel に割り当てる。Type-3（system-mac ベース、推奨）の例:
+ESI を [PortChannel](../reference/glossary.md#term-portchannel) に割り当てる。Type-3（system-mac ベース、推奨）の例:
 
 ```bash
 # system-mac は同一 ES を共有する全 VTEP で一致させる
@@ -64,7 +64,7 @@ sudo config interface evpn-df-pref del PortChannel1
 sudo config interface sys-mac del PortChannel1 00:00:00:0a:00:01
 ```
 
-`auto-lacp`（LACP system ID から生成）も HLD には記載されているが、SONiC 採用は `auto-system-mac` / 直値が主[^1]。
+`auto-lacp`（[LACP](../reference/glossary.md#term-lacp) system ID から生成）も HLD には記載されているが、[SONiC](../reference/glossary.md#term-sonic) 採用は `auto-system-mac` / 直値が主[^1]。
 
 ### 1.2 EVPN-MH global 設定
 
@@ -79,7 +79,7 @@ sudo config evpn-mh mac-holdtime 1080
 sudo config evpn-mh neigh-holdtime 1080
 ```
 
-**MCLAG が設定されていると上記は reject される**（[concepts](evpn-vxlan-multihoming-concepts.md) の MCLAG 相互排他節を参照）。
+**[MCLAG](../reference/glossary.md#term-mclag) が設定されていると上記は reject される**（[concepts](evpn-vxlan-multihoming-concepts.md) の MCLAG 相互排他節を参照）。
 
 ### 1.3 AD-per-EVI 無効化（FRR vtysh）
 
@@ -96,7 +96,7 @@ sonic(config-router-bgp-af)# disable-ead-evi-tx
 
 ### 2.1 show vxlan ethernet-segment
 
-ES 単位の DF 状態 / peer VTEP / NHG ID を一覧:
+ES 単位の DF 状態 / peer [VTEP](../reference/glossary.md#term-vtep) / NHG ID を一覧:
 
 ```
 admin@sonic$ show vxlan ethernet-segment
@@ -132,7 +132,7 @@ NHG 10 が group（child = 20/30/40）、NHG 20/30/40 が single-path の recurs
 
 ### 2.3 show vxlan remotemac
 
-既存コマンドだが、**Tunnel カラムが複数行になる**（複数 VTEP の ECMP メンバを列挙）:
+既存コマンドだが、**Tunnel カラムが複数行になる**（複数 VTEP の [ECMP](../reference/glossary.md#term-ecmp) メンバを列挙）:
 
 ```
 admin@sonic$ show vxlan remotemac
@@ -181,7 +181,7 @@ sonic# show evpn es-evi detail
 sonic# show evpn es-evi 100
 ```
 
-EVPN L2 next-hop の一覧:
+[EVPN](../reference/glossary.md#term-evpn) L2 next-hop の一覧:
 
 ```
 sonic# show evpn l2-nh
@@ -203,7 +203,7 @@ EVPN MH:
 
 ### 3.2 show bgp l2vpn evpn es / es-evi / es-vrf / next-hop
 
-BGP テーブル視点での ES（RD / Originator-IP / VTEP 群 / DF preference）:
+[BGP](../reference/glossary.md#term-bgp) テーブル視点での ES（RD / Originator-IP / VTEP 群 / DF preference）:
 
 ```
 sonic# show bgp l2vpn evpn es detail
@@ -227,7 +227,7 @@ VNI      ESI                            Flags VTEPs
 100      03:00:00:11:22:33:03:00:00:03  LR    2.1.1.1(EV),3.1.1.1(EV),4.1.1.1(EV)
 ```
 
-ES-VRF（IRB next-hop group の参照確認）:
+ES-[VRF](../reference/glossary.md#term-vrf)（IRB next-hop group の参照確認）:
 
 ```
 sonic# show bgp l2vpn evpn es-vrf detail
@@ -241,7 +241,7 @@ sonic# show bgp l2vpn evpn next-hops
 
 ## 4. デバッグコマンド
 
-FRR / Zebra 側のデバッグログを有効化:
+[FRR](../reference/glossary.md#term-frr) / Zebra 側のデバッグログを有効化:
 
 ```
 sonic(config)# log syslog debugging
@@ -288,7 +288,7 @@ curl -X PATCH "https://SWITCH_IP:9090/restconf/data/openconfig-network-instance:
 | 症状 | 確認ポイント | 対応 |
 |------|------------|------|
 | BUM が host に重複到達 | `show evpn es detail` で DF/NDF を確認、`show vxlan ethernet-segment` の DF が両側で `DF` になっていないか | DF election timer (3s) の起動直後を疑う。`startup-delay` で待つ |
-| BUM がループする / 別 leaf 経由で戻ってくる | `EVPN_SPLIT_HORIZON_TABLE` の `vteps` が peer を含むか、ASIC の isolation group member が正しいか | ShlOrch ログ、SAI isolation group dump |
+| BUM がループする / 別 leaf 経由で戻ってくる | `EVPN_SPLIT_HORIZON_TABLE` の `vteps` が peer を含むか、[ASIC](../reference/glossary.md#term-asic) の isolation group member が正しいか | ShlOrch ログ、[SAI](../reference/glossary.md#term-sai) isolation group dump |
 | MH host 向け unicast の load-balance が偏る | Type-1 (per-ES) の受信、L2 NHG member 数、ECMP hash seed | `show evpn l2-nh`、`show bgp l2vpn evpn es-evi` |
 | MAC が片側でしか見えない | proxy advertisement / holdtime 不整合 | `mac_holdtime` を peer 全 box で揃える、`debug zebra evpn mh mac` |
 | ES link down 後にしばらく drop | backup NHG / protection NHG 未設定 | `EVPN_ES_BACKUP_NHG_TABLE` 存在確認、SAI `PROTECTION_NEXT_HOP_GROUP_ID` |
@@ -377,3 +377,5 @@ docker exec bgp vtysh -c 'show bgp l2vpn evpn route type 1'
     - monitor: `not_implemented` / last_verified: `2026-05-11`
     - 次回再裏取りトリガ: quarterly + sonic-swss #4262 merge。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照（運用詳細は repo の `meta/discrepancy-operations.md`）
 <!-- /next-action -->
+
+<!-- glossary-links-injected: 771af53c8382 -->

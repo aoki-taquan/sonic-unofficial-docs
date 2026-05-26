@@ -117,7 +117,7 @@ reasoning: 後方互換のための j2 内分岐が HLD で明示されている
     ```text
     In repo *sonic-buildimage*:
     * *dockers/docker-snmp-v2/snmpd.conf.j2*:
-      * verify the existence of the SNMP table in the database and fork behavior if present, if not continue using old method.
+      * verify the existence of the SNMP table in the datatbase and fork behavior if present, if not continue using old method.
     ```
 
     **判断根拠**: 後方互換のための j2 内分岐が HLD で明示されている根拠。

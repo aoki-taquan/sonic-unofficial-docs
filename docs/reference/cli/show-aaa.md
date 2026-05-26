@@ -129,7 +129,9 @@ show radius
 ### 関連 CLI コマンド
 
 - [`config aaa`](config-aaa.md) — config aaa / tacacs / radius サブコマンド
+- [`config acl`](config-acl.md) — config acl サブコマンド
 - [`config ssh`](config-ssh.md) — config ssh サブコマンド
+- [`show acl`](show-acl.md) — show acl サブコマンド
 
 <!-- /cli-sibling -->
 

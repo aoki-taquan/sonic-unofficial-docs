@@ -127,7 +127,7 @@ module: sonic-bgp-device-global
 
 ### よくある落とし穴
 
-- `idf_isolation_state` の enum 値 (`isolated_no_export` / `isolated_withdraw_all` / `unisolated`) はスペルが厳密。CLI 経由では検証されるが `sonic-db-cli` で直書きすると YANG バリデーションが効かないため任意文字列が混入しうる。
+- `idf_isolation_state` の enum 値 (`isolated_no_export` / `isolated_withdraw_all` / `unisolated`) はスペルが厳密。CLI 経由では検証されるが `sonic-db-cli` で直書きすると [YANG](../../reference/glossary.md#term-yang) バリデーションが効かないため任意文字列が混入しうる。
 
 ### 関連する config / show コマンド
 
@@ -141,4 +141,4 @@ vtysh -c 'show bgp summary'
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-bgp-device-global.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: d5320e852f7a -->

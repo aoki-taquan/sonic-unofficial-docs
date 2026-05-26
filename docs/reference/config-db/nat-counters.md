@@ -37,7 +37,6 @@ related:
 | `COUNTERS_TWICE_NAPT` | `<proto>:<src_ip>:<src_port>:<dst_ip>:<dst_port>` | Twice NAPT エントリのカウンタ |
 | `COUNTERS_GLOBAL_NAT` | `Values` (固定) | グローバル統計・設定サマリ |
 
-
 ## key 構造
 
 ```text
@@ -211,7 +210,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-[YANG](../../reference/glossary.md#term-yang) 定義外の COUNTERS_DB 実行時テーブルのためコード hardcode 値のみ。
+[YANG](../../reference/glossary.md#term-yang) 定義外の [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 実行時テーブルのためコード hardcode 値のみ。
 
 | フィールド | テーブル | 初期値 | ソース |
 |-----------|---------|--------|--------|
@@ -243,7 +242,7 @@ sonic-db-cli COUNTERS_DB keys 'COUNTERS_NAT*'
 <!-- ordering -->
 ## 書込み順依存 (Phase B)
 
-`NatOrch` が COUNTERS_DB の 5 つのカウンタテーブルを書き込む際の順序依存を示す。書き込みは「コンストラクタ初期化 → エントリ追加時のゼロ初期化 → タイマー周期ポーリング」という 3 段階で行われ、各段階の前提条件が成立しない場合にカウンタが更新されない状態が発生する。
+`NatOrch` が [COUNTERS_DB](../../reference/glossary.md#term-counters_db) の 5 つのカウンタテーブルを書き込む際の順序依存を示す。書き込みは「コンストラクタ初期化 → エントリ追加時のゼロ初期化 → タイマー周期ポーリング」という 3 段階で行われ、各段階の前提条件が成立しない場合にカウンタが更新されない状態が発生する。
 
 ### 検出された順序依存
 
@@ -486,7 +485,7 @@ NAT データパスには `NotificationConsumer / NotificationProducer` によ�
 
 | フィールド | 書き込みタイミング | トリガ |
 |---|---|---|
-| `MAX_NAT_ENTRIES` / `TIMEOUT` / `UDP_TIMEOUT` / `TCP_TIMEOUT` | NatOrch コンストラクタ (1 回のみ) | orchagent 起動 |
+| `MAX_NAT_ENTRIES` / `TIMEOUT` / `UDP_TIMEOUT` / `TCP_TIMEOUT` | NatOrch コンストラクタ (1 回のみ) | [orchagent](../../reference/glossary.md#term-orchagent) 起動 |
 | `STATIC_NAT_ENTRIES` 等のエントリ数カウンタ | `addHwSnatEntry()` / `removeHwSnatEntry()` 成功時 | APPL_DB [ConsumerStateTable](../../reference/glossary.md#term-consumerstatetable) イベント |
 | `SNAT_ENTRIES` / `DNAT_ENTRIES` | SAI エントリ追加/削除ごとに即時 | 同上 |
 
@@ -546,4 +545,4 @@ SNAT / NAPT / Twice NAT エントリおよび `COUNTERS_GLOBAL_NAT` の書き込
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 3e9c2d98212a -->
+<!-- glossary-links-injected: 6ebbfd73f35d -->

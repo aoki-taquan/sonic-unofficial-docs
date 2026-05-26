@@ -58,7 +58,6 @@ related:
 - **Port バッファドロップ**: ポート単位 in/out バッファドロップ数を `COUNTERS:<oid>` に格納
 - **[Buffer Pool](../../reference/glossary.md#term-buffer-pool) ウォーターマーク**: プール単位の最大占有量を `USER/PERSISTENT/PERIODIC_WATERMARKS:<oid>` に格納
 
-
 ## key 構造
 
 ### Queue カウンタ

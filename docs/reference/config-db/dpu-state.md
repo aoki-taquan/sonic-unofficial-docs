@@ -38,7 +38,6 @@ related:
 
 `show dpu` CLI (`sonic-utilities/show/system_health.py:show_dpu_state()`) がこのテーブルを読み取り、[DPU](../../reference/glossary.md#term-dpu) ごとの運用状態 (`Online` / `Partial Online` / `Offline`) を表示する[^1]。
 
-
 ## key 構造
 
 ```text

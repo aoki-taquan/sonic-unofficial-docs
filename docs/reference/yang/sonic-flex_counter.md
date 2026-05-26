@@ -32,10 +32,14 @@ related:
 ```mermaid
 flowchart LR
   Y["sonic-flex_counter"]
-  C1[("CONFIG_DB<br/>FLOW_COUNTER_ROUTE_PATTERN")]
+  C1[("CONFIG_DB<br/>FLEX_COUNTER_TABLE")]
   Y --> C1
-  D1["FlowCounterRouteOrch"]
+  D1["FlexCounterOrch"]
   C1 --> D1
+  C2[("CONFIG_DB<br/>FLOW_COUNTER_ROUTE_PATTERN")]
+  Y --> C2
+  D2["FlowCounterRouteOrch"]
+  C2 --> D2
 ```
 
 !!! note "凡例"
@@ -56,9 +60,6 @@ flowchart LR
 
 - [VOQ カウンタ集約（chassis supervisor からの aggregate 表示）](../../internals/aggregate-voq-counters-in-sonic.md)
 - [counter が更新されない (FLEX_COUNTER)](../../reference/runbooks/flex-counter-stuck.md)
-
-### 関連 YANG
-
 - [sonic-copp YANG](../../reference/yang/sonic-copp.md)
 
 <!-- /yang-xref -->

@@ -40,7 +40,6 @@ related:
 
 `NEIGH_STATE_TABLE` は [BGP](../../reference/glossary.md#term-bgp) セッションのライブ状態 ([FRR](../../reference/glossary.md#term-frr) `show bgp summary json` の出力) を表し、`BGP_PEER_CONFIGURED_TABLE` は [bgpcfgd](../../reference/glossary.md#term-bgpcfgd) が [CONFIG_DB](../../reference/glossary.md#term-config_db) のネイバー設定を [FRR](../../reference/glossary.md#term-frr) に投入済みであることを示す確認テーブルである。
 
-
 ## テーブル 1: NEIGH_STATE_TABLE
 
 ### key 構造

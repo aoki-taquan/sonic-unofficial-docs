@@ -36,7 +36,6 @@ related:
 通常の [CONFIG_DB](../../reference/glossary.md#term-config_db) `MIRROR_SESSION` テーブルとは独立したパスであり、[P4RT](../../reference/glossary.md#term-p4rt) 経由のプログラムにのみ利用される。
 セッションタイプは常に **ERSPAN (Enhanced Remote SPAN)** に固定され、GRE トンネルパラメータをすべて明示的に指定する必要がある。
 
-
 ## key 構造
 
 ```text

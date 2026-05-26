@@ -65,7 +65,7 @@ flowchart LR
 
 - [`config portchannel`](../cli/config-portchannel.md)
 
-### 関連 YANG
+### 関連 HLD
 
 - [sonic-port YANG](../../reference/yang/sonic-port.md)
 
@@ -123,7 +123,7 @@ module: sonic-portchannel
 | `name` | `sonic-portchannel/PORTCHANNEL_MEMBER/PORTCHANNEL_MEMBER_LIST/name` | `leafref` | yes |  | /lag:sonic-portchannel/lag:PORTCHANNEL/lag:PORTCHANNEL_LIST/lag:name | Reference to the parent PortChannel interface |
 | `port` | `sonic-portchannel/PORTCHANNEL_MEMBER/PORTCHANNEL_MEMBER_LIST/port` | `leafref` | yes |  | /port:sonic-port/port:PORT/port:PORT_LIST/port:name | Reference to the physical port that is a member of this PortChannel |
 | `name` | `sonic-portchannel/PORTCHANNEL_INTERFACE/PORTCHANNEL_INTERFACE_LIST/name` | `leafref` | yes |  | /lag:sonic-portchannel/lag:PORTCHANNEL/lag:PORTCHANNEL_LIST/lag:name | Reference to the PortChannel interface |
-| `vrf_name` | `sonic-portchannel/PORTCHANNEL_INTERFACE/PORTCHANNEL_INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:VRF/vrf:VRF_LIST/vrf:name | [VRF](../../reference/glossary.md#term-vrf) instance to which this PortChannel interface is bound |
+| `vrf_name` | `sonic-portchannel/PORTCHANNEL_INTERFACE/PORTCHANNEL_INTERFACE_LIST/vrf_name` | `leafref` |  |  | /vrf:sonic-vrf/vrf:[VRF](../../reference/glossary.md#term-vrf)/vrf:VRF_LIST/vrf:name | [VRF](../../reference/glossary.md#term-vrf) instance to which this PortChannel interface is bound |
 | `loopback_action` | `sonic-portchannel/PORTCHANNEL_INTERFACE/PORTCHANNEL_INTERFACE_LIST/loopback_action` | `stypes:loopback_action` |  |  |  | Packet action when a packet ingress and gets routed on the same IP interface |
 | `nat_zone` | `sonic-portchannel/PORTCHANNEL_INTERFACE/PORTCHANNEL_INTERFACE_LIST/nat_zone` | `uint8` |  | 0 | range 0..3 | [NAT](../../reference/glossary.md#term-nat) Zone for the portchannel interface |
 | `mpls` | `sonic-portchannel/PORTCHANNEL_INTERFACE/PORTCHANNEL_INTERFACE_LIST/mpls` | `enumeration` |  |  | enable, disable | Enable/disable [MPLS](../../reference/glossary.md#term-mpls) routing for the portchannel interface |
@@ -203,4 +203,4 @@ show interfaces portchannel
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: 8b572e7ecef7 -->

@@ -11,7 +11,7 @@ last_verified: 2026-05-13
 
     SONiC コミュニティ master の HLD は **設計提案リポジトリ** であり、現行コードと一致しているとは限りません。本ページは「HLD だけ読んで誤解しがちな機能」を一望できる USP ページです。読み手は、まず後述の **monitor subtype 別セクション** で該当機能の乖離タイプ（未実装 / 部分実装 / 進化置換 / 廃止）を把握し、そこから個別ページへ降りて `last_verified` と「実装との乖離」セクションの裏取り根拠を確認してください。area 横断で探す場合は末尾の **area 別索引** から辿れます。
 
-`verification: discrepancy-found` が付いた全 **106** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
+`verification: discrepancy-found` が付いた全 **109** ページを自動収集しています。本ページは `meta/scripts/gen_discrepancy_index.py` が生成し、CI (`--check`) で常時鮮度を保証します。
 
 ## サマリ
 
@@ -19,7 +19,7 @@ last_verified: 2026-05-13
 
 | monitor | 件数 | 意味 |
 |---------|-----:|------|
-| [`not_implemented`](#monitor-not-implemented) | 14 | 未実装 |
+| [`not_implemented`](#monitor-not-implemented) | 17 | 未実装 |
 | [`partially_implemented`](#monitor-partially-implemented) | 59 | 部分実装 |
 | [`evolved_beyond_hld`](#monitor-evolved-beyond-hld) | 30 | HLD と乖離した形で実装/進化 |
 | [`deprecated`](#monitor-deprecated) | 3 | deprecated（廃止予定 / 撤去済み） |
@@ -35,7 +35,7 @@ last_verified: 2026-05-13
 | [`overlay`](#area-overlay) | 1 |
 | [`platform`](#area-platform) | 13 |
 | [`reference`](#area-reference) | 6 |
-| [`routing`](#area-routing) | 8 |
+| [`routing`](#area-routing) | 11 |
 | [`switching`](#area-switching) | 8 |
 | [`system`](#area-system) | 18 |
 
@@ -43,7 +43,7 @@ last_verified: 2026-05-13
 
 各 subtype を material 組み込みの色付き admonition でラップしています。色は重要度ではなく **読み手が誤読する危険度** の目安です（赤=実装ゼロ、黄=一部のみ、青=設計と別物、灰=廃止）。
 
-### `not_implemented` — 未実装 (14 件) { #monitor-not-implemented }
+### `not_implemented` — 未実装 (17 件) { #monitor-not-implemented }
 
 !!! danger "未実装"
 
@@ -104,10 +104,21 @@ last_verified: 2026-05-13
   
   2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
-- [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](../../routing/evpn-vxlan-multihoming.md)  
+- [EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）](../../routing/evpn-vxlan-multihoming-internals.md)  
+  area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
+
+- [EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）](../../routing/evpn-vxlan-multihoming-concepts.md)  
+  area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
+
+- [EVPN VXLAN Multihoming 運用（config interface evpn-esi / show vxlan ethernet-segment / 差分）](../../routing/evpn-vxlan-multihoming-operations.md)  
   area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   2026-05-10 時点の現行 master を裏取り。**EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない**。
+
+- [EVPN VXLAN Multihoming（概要ハブ）](../../routing/evpn-vxlan-multihoming.md)  
+  area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
+  
+  `monitor: not_implemented` — 2026-05 時点の現行 master では EVPN-MH 機能全体が未実装。`EVPN_ETHERNET_SEGMENT` テーブル・`EvpnMhOrch`・`L2nhgOrch`・`ShlOrch`・`config interface evpn-esi` CLI・`sonic-evpn-mh.yang` のいずれも確認できない。HLD は提案段階であり、関連 PR（sonic-swss #4262 / #4206 / #4039）は open のまま。dual-attached host が必要な場合は **MC-LAG**（`mclag-enhancements.md`）を選択すること。
 
 - [Local ARS（Adaptive Routing & Switching の local 完結版）](../../routing/local-ars-hld.md)  
   area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
@@ -257,6 +268,8 @@ last_verified: 2026-05-13
 
 - [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../../platform/sai-api-version-check.md)  
   area: `platform` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-09`
+  
+  `monitor: partially_implemented` — HLD は SAI バージョン比較を **MAJOR.MINOR の等値比較** とするが、実装（`sonic-sairedis/configure.ac` l.226-261）は `minversion = SAI_VERSION(1,9,0)` の **floor チェック** に緩和されている（`return (version < minversion) || (SAI_API_VERSION < minversion);` のみが失敗条件）。MAJOR ずれや MINOR 上方差も許容するため、HLD 提案より実装は大幅に緩い。緩和の根拠は configure.ac コメントで OCP SAI PR 1297（enum binary backward compat）および PR 1795（structs）を引用。…
 
 - [VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）](../../platform/everflow-support-on-voq-chassis.md)  
   area: `platform` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
@@ -493,7 +506,7 @@ last_verified: 2026-05-13
   2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../../routing/evpn-vxlan-hld.md)  
-  area: `routing` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
+  area: `routing` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-26`
 
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md)  
   area: `routing` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -805,6 +818,8 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
 
 - [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../../platform/sai-api-version-check.md)  
   area: `platform` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-09`
+  
+  `monitor: partially_implemented` — HLD は SAI バージョン比較を **MAJOR.MINOR の等値比較** とするが、実装（`sonic-sairedis/configure.ac` l.226-261）は `minversion = SAI_VERSION(1,9,0)` の **floor チェック** に緩和されている（`return (version < minversion) || (SAI_API_VERSION < minversion);` のみが失敗条件）。MAJOR ずれや MINOR 上方差も許容するため、HLD 提案より実装は大幅に緩い。緩和の根拠は configure.ac コメントで OCP SAI PR 1297（enum binary backward compat）および PR 1795（structs）を引用。…
 
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../../platform/hld-for-handling-sai-failures.md)  
   area: `platform` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -885,13 +900,24 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   
   2026-05-09 時点の現行 master を裏取り。HLD と実装には次の乖離がある:
 
-- [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](../../routing/evpn-vxlan-multihoming.md)  
+- [EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）](../../routing/evpn-vxlan-multihoming-internals.md)  
+  area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
+
+- [EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）](../../routing/evpn-vxlan-multihoming-concepts.md)  
+  area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
+
+- [EVPN VXLAN Multihoming 運用（config interface evpn-esi / show vxlan ethernet-segment / 差分）](../../routing/evpn-vxlan-multihoming-operations.md)  
   area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
   
   2026-05-10 時点の現行 master を裏取り。**EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない**。
 
+- [EVPN VXLAN Multihoming（概要ハブ）](../../routing/evpn-vxlan-multihoming.md)  
+  area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`
+  
+  `monitor: not_implemented` — 2026-05 時点の現行 master では EVPN-MH 機能全体が未実装。`EVPN_ETHERNET_SEGMENT` テーブル・`EvpnMhOrch`・`L2nhgOrch`・`ShlOrch`・`config interface evpn-esi` CLI・`sonic-evpn-mh.yang` のいずれも確認できない。HLD は提案段階であり、関連 PR（sonic-swss #4262 / #4206 / #4039）は open のまま。dual-attached host が必要な場合は **MC-LAG**（`mclag-enhancements.md`）を選択すること。
+
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../../routing/evpn-vxlan-hld.md)  
-  area: `routing` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
+  area: `routing` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-26`
 
 - [Local ARS（Adaptive Routing & Switching の local 完結版）](../../routing/local-ars-hld.md)  
   area: `routing` / monitor: `not_implemented`（未実装） / last_verified: `2026-05-11`

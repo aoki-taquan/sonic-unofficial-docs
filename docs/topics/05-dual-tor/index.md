@@ -114,12 +114,12 @@ related:
 **関連する HLD 7 件**
 
 - [Active-Active Dual ToR（gRPC ベース cable control + prefix-based neighbor）](../../overlay/active-active-dual-tor.md)
-- [DASH SONiC KVM（BMv2 ベース仮想 DPU）](../../overlay/dash-sonic-kvm.md)
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../../overlay/active-standby-dual-tor.md)
 - [Active-Standby Dual ToR 内部実装（state machine / MuxOrch / neighbor 取扱い）](../../overlay/active-standby-dual-tor-internals.md)
 - [Active-Standby Dual ToR 設定と運用（CONFIG_DB / CLI / トラブルシューティング）](../../overlay/active-standby-dual-tor-operations.md)
 - [Active-Standby Dual ToR 制限事項と既知の課題](../../overlay/active-standby-dual-tor-limitations.md)
 - [Active-Standby Dual ToR 概念（構成と要件）](../../overlay/active-standby-dual-tor-concepts.md)
+- [ProducerStateTable の view switching（warm reboot 用の差分適用）](../../switching/view-switching-in-producerstatetable.md)
 
 **関連トラブルシュート 5 件**
 

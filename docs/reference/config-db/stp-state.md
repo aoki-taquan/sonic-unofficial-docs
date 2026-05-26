@@ -42,7 +42,6 @@ related:
 |---------|----------------|---------|
 | `orchagent` (`StpOrch`) | 起動時に [SAI](../../reference/glossary.md#term-sai) から `SAI_SWITCH_ATTR_MAX_STP_INSTANCE` 取得成功時 | `orchagent/stporch.cpp` |
 
-
 ## key 構造
 
 ```text

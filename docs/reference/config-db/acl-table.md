@@ -203,7 +203,7 @@ DEL 受信
 
 ### `type` 値別挙動
 
-YANG 参照値 (sonic-acl.yang:59-65 ACL_RULE コンテナ内 type 列挙): `MIRROR/MIRRORV6/L3/L3V6`（ACL_TABLE コンテナは YANG 未定義だが ACL_RULE 側の type 列挙として言及あり）。
+[YANG](../../reference/glossary.md#term-yang) 参照値 (sonic-acl.yang:59-65 ACL_RULE コンテナ内 type 列挙): `MIRROR/MIRRORV6/L3/L3V6`（ACL_TABLE コンテナは YANG 未定義だが ACL_RULE 側の type 列挙として言及あり）。
 実装定義マクロ (acltable.h:26-42): `TABLE_TYPE_L3` / `TABLE_TYPE_L3V6` / `TABLE_TYPE_L3V4V6` / `TABLE_TYPE_MIRROR` / `TABLE_TYPE_MIRRORV6` / `TABLE_TYPE_MIRROR_DSCP` / `TABLE_TYPE_PFCWD` / `TABLE_TYPE_CTRLPLANE` / `TABLE_TYPE_MCLAG` / `TABLE_TYPE_MUX` / `TABLE_TYPE_DROP` / `TABLE_TYPE_MARK_META` / `TABLE_TYPE_MARK_META_V6` / `TABLE_TYPE_EGR_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCP` / `TABLE_TYPE_UNDERLAY_SET_DSCPV6`。`processAclTableType()` は type 空文字のみ reject、それ以外はそのまま通す (aclorch.cpp:5821-5833)。
 
 | 値 | 動作 | [ASIC](../../reference/glossary.md#term-asic) 確認 | evidence |
@@ -803,4 +803,4 @@ sonic-db-cli COUNTERS_DB hgetall ACL_COUNTER_RULE_MAP
 > **証跡**: `setAclTableStatus()` L6088-6098、`removeAllAclTableStatus()` L6119-6125、`putAclActionCapabilityInDB()` L4056-4101、`registerFlexCounter()` L6020-6042、`deregisterFlexCounter()` L6044-6048、`incCrmAclUsedCounter()` L2855、`decCrmAclUsedCounter()` L4877。全行精読 + `schema.h:418,514` 確認。
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 0be4a4cb0c83 -->
+<!-- glossary-links-injected: d5320e852f7a -->

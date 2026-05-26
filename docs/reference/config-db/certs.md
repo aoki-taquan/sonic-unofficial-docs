@@ -45,7 +45,6 @@ gNSI Certz は gRPC 経由の `certz.Rotate` RPC で証明書を更新し、確�
 
 デフォルトプロファイル名は `"gnxi"` で、起動時に `bootstrapDefaultProfile()` が自動生成する[^1]。
 
-
 ## key 構造
 
 ```text

@@ -287,13 +287,13 @@ master mainline でのビルドエラー。`git submodule update --init --recurs
 
 ### スイッチ起動時に sonic-cfggen が大量の CPU を消費する問題（sonic-buildimage#4553）
 
-スイッチ起動時に sonic-cfggen が大量の CPU を消費する問題。起動時に複数のサービスが同時に sonic-cfggen を呼び出すため。`systemd-analyze blame` でボトルネックを特定すること
+スイッチ起動時に [sonic-cfggen](../reference/glossary.md#term-sonic-cfggen) が大量の CPU を消費する問題。起動時に複数のサービスが同時に sonic-cfggen を呼び出すため。`systemd-analyze blame` でボトルネックを特定すること
 
 - 参照: [sonic-net/sonic-buildimage#4553](https://github.com/sonic-net/sonic-buildimage/issues/4553)
 
 ### sonic-cfggen が `/var/run/redis/redis.sock` への接続に失敗する問題（sonic-buildimage#5277）
 
-sonic-cfggen が `/var/run/redis/redis.sock` への接続に失敗する問題。Redis ソケットファイルが存在しない状態で実行された場合に発生
+sonic-cfggen が `/var/run/redis/redis.sock` への接続に失敗する問題。[Redis](../reference/glossary.md#term-redis) ソケットファイルが存在しない状態で実行された場合に発生
 
 - 参照: [sonic-net/sonic-buildimage#5277](https://github.com/sonic-net/sonic-buildimage/issues/5277)
 
@@ -350,7 +350,6 @@ ARM アーキテクチャの VS docker イメージでのパフォーマンス�
 make コマンドラインからコードの最適化を無効化できない問題。`SONIC_DEBUGGING_ON=y` オプションでデバッグビルドを有効化できるが、最適化レベルの個別制御はサポートされていない
 
 - 参照: [sonic-net/sonic-buildimage#6413](https://github.com/sonic-net/sonic-buildimage/issues/6413)
-
 
 ## 制限事項
 
@@ -409,4 +408,4 @@ docker images | grep sonic
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: c79120f885b8 -->
+<!-- glossary-links-injected: 52137ef90356 -->

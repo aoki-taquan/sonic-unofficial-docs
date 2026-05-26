@@ -84,9 +84,9 @@ DASH_ROUTING_TYPE_TABLE|<routing_type>
 | `action_type` | [SAI](../../reference/glossary.md#term-sai) 変換 | 使用場面 |
 |--------------|---------|---------|
 | `staticencap` | [VXLAN](../../reference/glossary.md#term-vxlan)/NVGRE カプセル化アクション生成 (`SAI_DASH_ENCAPSULATION_VXLAN` 等) | `vnet_encap`、`privatelink` 等 |
-| `maprouting` | VNET マッピングテーブル参照でオーバーレイアドレスを解決 | `vnet`、`vnet_direct` |
+| `maprouting` | [VNET](../../reference/glossary.md#term-vnet) マッピングテーブル参照でオーバーレイアドレスを解決 | `vnet`、`vnet_direct` |
 | `drop` | 明示的な破棄 | `drop` routing type |
-| その他 | orchagent 処理対象外 (protobuf のみ記録) | appliance、servicetunnel 等 |
+| その他 | [orchagent](../../reference/glossary.md#term-orchagent) 処理対象外 (protobuf のみ記録) | appliance、servicetunnel 等 |
 
 #### `encap_type` の条件
 
@@ -99,7 +99,7 @@ DASH_ROUTING_TYPE_TABLE|<routing_type>
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
-[YANG](../../reference/glossary.md#term-yang) schema (`sonic-dash.yang`) は `DASH_ROUTING_TYPE_LIST` の各フィールドに明示的な `default` ステートメントを持たない。実行時のデフォルト・フォールバックはすべて orchagent コード (`dashorch.cpp`、`dashvnetorch.cpp`) による。
+[YANG](../../reference/glossary.md#term-yang) schema (`sonic-dash.yang`) は `DASH_ROUTING_TYPE_LIST` の各フィールドに明示的な `default` ステートメントを持たない。実行時のデフォルト・フォールバックはすべて [orchagent](../../reference/glossary.md#term-orchagent) コード (`dashorch.cpp`、`dashvnetorch.cpp`) による。
 
 | フィールド | コード由来デフォルト / fallback | 種別 | evidence |
 |-----------|-------------------------------|------|----------|
@@ -135,9 +135,9 @@ DASH_ROUTING_TYPE_TABLE|<routing_type>
 
 | 違反パターン | 挙動 | 自動回復 |
 |---|---|---|
-| routing type 未登録で VNET マッピング投入 | `getRouteTypeActions()` が `false` → VnetMap リトライ | routing type 登録後の次 doTask() で自動解消 |
+| routing type 未登録で [VNET](../../reference/glossary.md#term-vnet) マッピング投入 | `getRouteTypeActions()` が `false` → VnetMap リトライ | routing type 登録後の次 doTask() で自動解消 |
 | 同一 routing type への SET 二重投入 | `addRoutingTypeEntry()` が `SWSS_LOG_WARN` + スキップ | 自動回復なし（DEL → SET が必要） |
-| VNET マッピング残存状態で routing type DEL | `routing_type_entries_` から即時削除（SAI ガードなし） | 孤立エントリが [DPU](../../reference/glossary.md#term-dpu) 側に残る |
+| [VNET](../../reference/glossary.md#term-vnet) マッピング残存状態で routing type DEL | `routing_type_entries_` から即時削除（SAI ガードなし） | 孤立エントリが [DPU](../../reference/glossary.md#term-dpu) 側に残る |
 
 ### 削除の逆順制約
 
@@ -488,4 +488,4 @@ sonic-db-cli APPL_DB keys 'DASH_ROUTING_TYPE_TABLE|*' | sort
 - **更新は削除→再作成が必要**: `addRoutingTypeEntry()` は既存エントリをスキップするため、routing type の変更は DEL → SET の順で実施する
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 6d4619f4b469 -->
+<!-- glossary-links-injected: 5a96587fd90c -->

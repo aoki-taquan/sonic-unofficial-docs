@@ -21,7 +21,7 @@ related:
 
 - module: `sonic-system-defaults`
 - namespace: `http://github.com/Azure/system-defaults`
-- revision: なし（ソース YANG に revision ステートメント未定義）
+- revision: なし（ソース [YANG](../../reference/glossary.md#term-yang) に revision ステートメント未定義）
 - import: `sonic-types`
 - top container: `sonic-system-defaults`
 
@@ -61,12 +61,9 @@ flowchart LR
 - [CONFIG_DB の永続化が失敗する](../../reference/runbooks/config-db-persistence-failure.md)
 - [config save 後に予期しない diff が出る](../../reference/runbooks/config-save-diff-unexpected.md)
 - [CONFIG_DB save / load が反映されない](../../reference/runbooks/config-save-load.md)
-- [config-setup サービス（first-boot config 生成 / 版間 migration）](../../system/sonic-configuration-setup-service.md)
-
-### 関連 YANG
-
 - [sonic-dns YANG](../../reference/yang/sonic-dns.md)
 - [sonic-feature YANG](../../reference/yang/sonic-feature.md)
+- [config-setup サービス（first-boot config 生成 / 版間 migration）](../../system/sonic-configuration-setup-service.md)
 
 <!-- /yang-xref -->
 
@@ -125,4 +122,4 @@ module: sonic-system-defaults
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-system-defaults.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: d5320e852f7a -->

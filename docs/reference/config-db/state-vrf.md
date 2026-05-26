@@ -50,7 +50,6 @@ related:
 
 [CONFIG_DB](../../reference/glossary.md#term-config_db) の設定フィールドを保持する [`VRF` テーブル](vrf.md) とは別物。このページで説明するテーブルは読み取り専用の状態情報。
 
-
 ## VRF_TABLE
 
 ### key 構造

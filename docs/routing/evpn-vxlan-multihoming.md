@@ -5,7 +5,7 @@ area: routing
 verification: discrepancy-found
 monitor: not_implemented
 last_verified: 2026-05-11
-page_kind: split-overview
+page_kind: split-hub
 sources:
   - repo: sonic-net/SONiC
     path: doc/vxlan/EVPN/EVPN_VxLAN_Multihoming.md
@@ -78,6 +78,10 @@ flowchart LR
 
 dual-attached host を現行 master で扱う場合は **MC-LAG**（[MC-LAG enhancements](../switching/mclag-enhancements.md)）を選択する。詳細な差分・回避策は派生 [operations ページの差分節](evpn-vxlan-multihoming-operations.md) を参照。
 
+## 実装との乖離
+
+`monitor: not_implemented` — 2026-05 時点の現行 master では EVPN-MH 機能全体が未実装。`EVPN_ETHERNET_SEGMENT` テーブル・`EvpnMhOrch`・`L2nhgOrch`・`ShlOrch`・`config interface evpn-esi` CLI・`sonic-evpn-mh.yang` のいずれも確認できない。HLD は提案段階であり、関連 PR（[sonic-swss](../reference/glossary.md#term-sonic-swss) #4262 / #4206 / #4039）は open のまま。dual-attached host が必要な場合は **MC-LAG**（`mclag-enhancements.md`）を選択すること。
+
 ## 4. 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/EVPN/EVPN_VxLAN_Multihoming.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
@@ -97,4 +101,4 @@ dual-attached host を現行 master で扱う場合は **MC-LAG**（[MC-LAG enha
     - 次回再裏取りトリガ: quarterly + 上記 sonic-swss PR の merge イベント。一覧は [discrepancy-index](../reference/verification/discrepancy-index.md) を参照
 <!-- /next-action -->
 
-<!-- glossary-links-injected: fa8c7b4a1c0b -->
+<!-- glossary-links-injected: 1fe559aeba2e -->

@@ -41,7 +41,6 @@ related:
 実際のカウンタ値は `COUNTERS:<oid>` テーブルに格納され、[FlexCounter](../../reference/glossary.md#term-flexcounter) が定期 polling する。
 レート値（BPS/PPS）は `rif_rates.lua` Lua プラグインが `RATES:<oid>` テーブルに書き込む。
 
-
 ## テーブル構造
 
 ### COUNTERS_LAG_NAME_MAP

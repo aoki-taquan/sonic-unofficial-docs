@@ -1287,18 +1287,18 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [AAA](#term-aaa)
 
 - [AAA テーブル](config-db/aaa.md) (50)
-- [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../management/aaa-improvements.md) (24)
 - [sonic-system-aaa YANG](yang/sonic-system-aaa.md) (24)
-- [LDAP_SERVER テーブル](config-db/ldap-server.md) (22)
+- [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../management/aaa-improvements.md) (23)
 - [TACPLUS_SERVER テーブル](config-db/tacplus-server.md) (22)
+- [RADIUS テーブル](config-db/radius.md) (20)
 
 ### [ACL](#term-acl)
 
-- [APPL_DB ACL テーブル群](config-db/appl-acl.md) (251)
-- [ACL_TABLE テーブル](config-db/acl-table.md) (243)
+- [APPL_DB ACL テーブル群](config-db/appl-acl.md) (249)
+- [ACL_TABLE テーブル](config-db/acl-table.md) (246)
 - [ACL_RULE テーブル](config-db/acl-rule.md) (226)
 - [ACL_TABLE_TYPE テーブル](config-db/acl-table-type.md) (169)
-- [ACL orchagent STATE_DB テーブル](config-db/aclorch-state.md) (161)
+- [ACL orchagent STATE_DB テーブル](config-db/aclorch-state.md) (159)
 
 ### [AQM](#term-aqm)
 
@@ -1310,7 +1310,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (76)
 - [APPL_DB ACL テーブル群](config-db/appl-acl.md) (73)
 - [APPL_DB LAG_TABLE (portchannel ステータス)](config-db/portchannel-status.md) (66)
-- [サイトマップ](../_meta/sitemap.md) (57)
+- [サイトマップ](../_meta/sitemap.md) (56)
 - [FABRIC_MONITOR テーブル](config-db/fabric-monitor.md) (54)
 
 ### [ARP](#term-arp)
@@ -1353,18 +1353,18 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [BFD](#term-bfd)
 
-- [BFD_SESSION_TABLE (STATE_DB)](config-db/bfd-state.md) (168)
-- [APPL_DB BFD_SESSION_TABLE (bfdorch)](config-db/bfd-orch.md) (160)
-- [BFD_SESSION テーブル](config-db/bfd-session.md) (159)
+- [BFD_SESSION_TABLE (STATE_DB)](config-db/bfd-state.md) (164)
+- [BFD_SESSION テーブル](config-db/bfd-session.md) (160)
+- [APPL_DB BFD_SESSION_TABLE (bfdorch)](config-db/bfd-orch.md) (155)
 - [BGP セッション向け BFD ハードウェアオフロード（bfdsyncd 経路）](../routing/bfd-hw-offload-for-bgp-session.md) (77)
 - [BFD ハードウェアオフロード（BfdOrch / BFD_SESSION）](../routing/bfd-hw-offload.md) (75)
 
 ### [BGP](#term-bgp)
 
-- [sonic-bgp-neighbor YANG](yang/sonic-bgp-neighbor.md) (248)
+- [sonic-bgp-neighbor YANG](yang/sonic-bgp-neighbor.md) (245)
 - [sonic-bgp-peergroup YANG](yang/sonic-bgp-peergroup.md) (233)
 - [sonic-bgp-global YANG](yang/sonic-bgp-global.md) (216)
-- [STATE_DB BGP 関連テーブル](config-db/state-bgp.md) (170)
+- [STATE_DB BGP 関連テーブル](config-db/state-bgp.md) (169)
 - [BGP_PEER_GROUP テーブル](config-db/bgp-peer-group.md) (139)
 
 ### [bgpcfgd](#term-bgpcfgd)
@@ -1405,9 +1405,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [CONFIG_DB](#term-config_db)
 
 - [サイトマップ](../_meta/sitemap.md) (129)
-- [APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)](config-db/appl-mirror.md) (60)
+- [APPL_DB FIXED_MIRROR_SESSION_TABLE (P4RT)](config-db/appl-mirror.md) (58)
 - [IPv6 Link-local モード](config-db/ipv6-link-local.md) (54)
-- [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (52)
+- [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (50)
 - [BANNER_MESSAGE テーブル](config-db/banner-message.md) (46)
 
 ### [config_db.json](#term-config_db.json)
@@ -1428,7 +1428,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [COUNTERS_DB](#term-counters_db)
 
-- [COUNTERS_DB NAT カウンタテーブル群](config-db/nat-counters.md) (50)
+- [COUNTERS_DB NAT カウンタテーブル群](config-db/nat-counters.md) (45)
 - [COUNTERS_DB QUEUE カウンタ](config-db/queue-counter.md) (41)
 - [COUNTERS_DB RIF カウンタ](config-db/counters-rif.md) (38)
 - [PFC_WD 状態フィールド (COUNTERS_DB)](config-db/pfcwd-state.md) (38)
@@ -1445,18 +1445,18 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [CRM](#term-crm)
 
 - [CRM テーブル](config-db/crm.md) (150)
-- [ROUTE_TABLE (APPL_DB)](config-db/app-route.md) (43)
 - [Generic SAI Extension テーブルの CRM（CRM_EXT_TABLE）](../system/generic-sai-extension-critical-resource-monitoring-crm.md) (43)
-- [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (32)
+- [クリティカルリソースモニタリング (CRM) 要件](../system/critical-resource-monitoring.md) (35)
 - [ROUTE_TABLE (APPL_DB)](config-db/app-route.md) (29)
+- [DASH_ACL_* テーブル](config-db/dash-acl.md) (25)
 
 ### [ConsumerStateTable](#term-consumerstatetable)
 
 - [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (16)
-- [ROUTE_TABLE (APPL_DB)](config-db/app-route.md) (15)
 - [DPU Orchagent 設定 (DEVICE_METADATA — DPU 固有フィールド)](config-db/dpu-orch.md) (13)
 - [ZMQ ProducerStateTable / ConsumerStateTable 設計](../internals/zmq-producer-consumer-state-table-design.md) (11)
-- [LABEL_ROUTE_TABLE (APPL_DB)](config-db/appl-mpls-route.md) (11)
+- [APPL_DB BUFFER_* テーブル群](config-db/appl-buffer.md) (10)
+- [LABEL_ROUTE_TABLE (APPL_DB)](config-db/appl-mpls-route.md) (10)
 
 ### [CBF](#term-cbf)
 
@@ -1488,14 +1488,14 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SmartSwitch DPU テーブル群](config-db/smart-switch-dpu.md) (186)
 - [DPU テーブル](config-db/dpu.md) (174)
 - [HA / PMON / reboot / upgrade の運用](../topics/13-dash-smartswitch/operations.md) (107)
-- [DPU_STATE テーブル (CHASSIS_STATE_DB)](config-db/dpu-state.md) (98)
+- [DPU_STATE テーブル (CHASSIS_STATE_DB)](config-db/dpu-state.md) (93)
 
 ### [DPB](#term-dpb)
 
 - [動的ポートブレイクアウト（DPB）既知問題と YANG モデル](../system/dynamic-port-breakout-known-issues.md) (22)
 - [BREAKOUT_CFG テーブル](config-db/breakout-cfg.md) (20)
 - [BREAKOUT_CFG テーブル (DPB)](config-db/dpb.md) (14)
-- [ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）](../architecture/build-system-improvements.md) (11)
+- [ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）](../architecture/build-system-improvements.md) (8)
 - [サイトマップ](../_meta/sitemap.md) (5)
 
 ### [DPDK](#term-dpdk)
@@ -1537,8 +1537,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SWITCH_HASH テーブル](config-db/switch-hash.md) (39)
 - [NEXTHOP_GROUP_TABLE (APPL_DB)](config-db/nhg.md) (37)
 - [サイトマップ](../_meta/sitemap.md) (36)
-- [ROUTE_TABLE (APPL_DB)](config-db/app-route.md) (36)
 - [ROUTE_TABLE (APPL_DB)](config-db/app-route.md) (34)
+- [NEXTHOP_GROUP_TABLE / CLASS_BASED_NEXT_HOP_GROUP_TABLE](config-db/nhg-table.md) (34)
 
 ### [ECN](#term-ecn)
 
@@ -1568,23 +1568,24 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [EVPN DIP トンネル (動的生成)](config-db/vxlan-evpn-tunnel.md) (95)
 - [VXLAN_EVPN_NVO テーブル](config-db/vxlan-evpn-nvo.md) (66)
+- [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (58)
 - [VXLAN トンネルポート (Port::TUNNEL)](config-db/tunnel-port.md) (56)
-- [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (55)
 - [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (45)
 
 ### [EVPN-MH](#term-evpn-mh)
 
-- [EVPN VXLAN Multihoming（ESI / DF election / split-horizon）](../routing/evpn-vxlan-multihoming.md) (10)
+- [EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）](../routing/evpn-vxlan-multihoming-concepts.md) (11)
+- [EVPN VXLAN Multihoming 運用（config interface evpn-esi / show vxlan ethernet-segment / 差分）](../routing/evpn-vxlan-multihoming-operations.md) (5)
+- [EVPN VXLAN Multihoming（概要ハブ）](../routing/evpn-vxlan-multihoming.md) (3)
 - [EVPN VXLAN（FRR BGP-EVPN / VTEP / VRF / Type-2/Type-5）](../routing/evpn-vxlan-hld.md) (1)
-- [Overlay 発展トピック](../topics/03-vxlan-evpn/advanced.md) (1)
-- [内部実装](../topics/06-l2-vlan-lag/internals.md) (1)
+- [EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）](../routing/evpn-vxlan-multihoming-internals.md) (1)
 
 ### [EXP](#term-exp)
 
 - [EXP_TO_FC_MAP テーブル](config-db/exp-to-fc-map.md) (84)
 - [Express Reboot（Cisco 8000 向けサブ秒データプレーン断のリブート）](../system/sonic-express-reboot-hld-spec.md) (14)
+- [COMMUNITY_SET テーブル](config-db/community-set.md) (10)
 - [MPLS TC → TC map（MPLS パケットの QoS classification）](../routing/mpls-tc-to-tc-map.md) (9)
-- [COMMUNITY_SET テーブル](config-db/community-set.md) (8)
 - [DSCP_TO_FC_MAP テーブル](config-db/dscp-to-fc-map.md) (8)
 
 ### [Fast Reboot](#term-fast-reboot)
@@ -1594,7 +1595,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [FDB](#term-fdb)
 
-- [APPL_DB FDB_TABLE](config-db/appl-fdb.md) (172)
+- [APPL_DB FDB_TABLE](config-db/appl-fdb.md) (170)
 - [FDB テーブル](config-db/fdb.md) (147)
 - [VXLAN_FDB_TABLE テーブル](config-db/vxlan-fdb.md) (110)
 - [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (54)
@@ -1605,8 +1606,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [VXLAN_FDB_TABLE テーブル](config-db/vxlan-fdb.md) (38)
 - [EVPN DIP トンネル (動的生成)](config-db/vxlan-evpn-tunnel.md) (10)
 - [APPL_DB FDB_TABLE](config-db/appl-fdb.md) (8)
+- [EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）](../routing/evpn-vxlan-multihoming-internals.md) (6)
 - [MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル](config-db/mclag-domain.md) (5)
-- [内部実装](../topics/06-l2-vlan-lag/internals.md) (5)
 
 ### [FLEX_COUNTER_DB](#term-flex_counter_db)
 
@@ -1636,13 +1637,13 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [ROUTE_TABLE handler 分岐 (fpmsyncd / RouteSync)](config-db/route-handler.md) (35)
 - [概要](../topics/02-bgp/concept.md) (16)
-- [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (12)
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (9)
 - [内部実装](../topics/02-bgp/internals.md) (8)
+- [概念](../topics/17-srv6-mpls/concept.md) (8)
 
 ### [fpmsyncd](#term-fpmsyncd)
 
-- [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (88)
+- [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (85)
 - [ROUTE_TABLE handler 分岐 (fpmsyncd / RouteSync)](config-db/route-handler.md) (78)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (57)
 - [RouteOrch event / notification (ResponsePublisher + NextHopObserver)](config-db/route-orch-event.md) (45)
@@ -1673,7 +1674,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [GCU](#term-gcu)
 
 - [YANG モデルによる ConfigDB 更新検証（GCU + ConfigDBConnector デコレータ）](../management/sonic-config-update-validation-via-yang.md) (19)
-- [Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）](../architecture/sonic-generic-configuration-update-and-rollback.md) (10)
+- [Generic Config Update / Rollback（GCU・JSON Patch・checkpoint）](../architecture/sonic-generic-configuration-update-and-rollback.md) (8)
 - [サイトマップ](../_meta/sitemap.md) (5)
 - [概念と読み始め方](../topics/01-overview/concept.md) (5)
 - [gNMI / gNOI / OpenConfig 関連](../categories/gnmi-openconfig.md) (4)
@@ -1688,19 +1689,19 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [Graceful Restart](#term-graceful-restart)
 
-- [Reboot 運用と障害調査](../topics/11-reboot/operations.md) (5)
 - [BGP Graceful Restart のネゴシエーションに失敗する](runbooks/bgp-graceful-restart-failure.md) (4)
+- [Reboot 運用と障害調査](../topics/11-reboot/operations.md) (4)
 - [サイトマップ](../_meta/sitemap.md) (2)
 - [Reboot / Upgrade の発展トピック](../topics/11-reboot/advanced.md) (2)
 - [Reboot family の選び方](../topics/11-reboot/concept.md) (2)
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (248)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (238)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (42)
 - [VRRP テーブル](config-db/vrrp.md) (41)
-- [イベント/アラーム拡張監視設定 (extended-monitor)](config-db/extended-monitor.md) (37)
+- [サイトマップ](../_meta/sitemap.md) (36)
 
 ### [Headroom](#term-headroom)
 
@@ -1716,7 +1717,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [AAA テーブル](config-db/aaa.md) (121)
 - [SERIAL_CONSOLE / SSH_SERVER テーブル](config-db/cli-config.md) (114)
 - [RADIUS_SERVER テーブル](config-db/radius-server.md) (113)
-- [LDAP_SERVER テーブル](config-db/ldap-server.md) (108)
+- [LDAP_SERVER テーブル](config-db/ldap-server.md) (93)
 
 ### [HwSku](#term-hwsku)
 
@@ -1790,31 +1791,31 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [LAG](#term-lag)
 
-- [APPL_DB MCLAG/ICCP 関連テーブル](config-db/appl-mclag.md) (160)
+- [APPL_DB MCLAG/ICCP 関連テーブル](config-db/appl-mclag.md) (159)
 - [MCLAG_INTERFACE テーブル](config-db/mclag-interface.md) (155)
 - [MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル](config-db/mclag-domain.md) (154)
-- [APPL_DB LAG_TABLE (portchannel ステータス)](config-db/portchannel-status.md) (142)
+- [APPL_DB LAG_TABLE (portchannel ステータス)](config-db/portchannel-status.md) (141)
 - [PORTCHANNEL テーブル](config-db/portchannel.md) (140)
 
 ### [linkmgrd](#term-linkmgrd)
 
 - [MUX_LINKMGR テーブル](config-db/mux-linkmgr.md) (85)
 - [MUX_CABLE テーブル（per-port フィールド詳細）](config-db/mux-cable-port.md) (52)
-- [MUX_CABLE テーブル](config-db/mux-cable.md) (33)
-- [linkmgrd のデフォルトルート連動（DualToR mux 制御）](../routing/default-route.md) (26)
+- [MUX_CABLE テーブル](config-db/mux-cable.md) (30)
+- [linkmgrd のデフォルトルート連動（DualToR mux 制御）](../routing/default-route.md) (27)
 - [Active-Standby Dual ToR（y-cable + linkmgrd state machine + IPinIP tunnel）](../overlay/active-standby-dual-tor.md) (19)
 
 ### [LLDP](#term-lldp)
 
-- [LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル (APPL_DB)](config-db/lldp-state.md) (119)
+- [LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル (APPL_DB)](config-db/lldp-state.md) (118)
 - [LLDP / LLDP_PORT テーブル](config-db/lldp.md) (102)
 - [LLDP_PORT テーブル](config-db/lldp-port.md) (86)
-- [sonic-lldp YANG](yang/sonic-lldp.md) (35)
+- [sonic-lldp YANG](yang/sonic-lldp.md) (46)
 - [サイトマップ](../_meta/sitemap.md) (20)
 
 ### [MPLS](#term-mpls)
 
-- [LABEL_ROUTE_TABLE (APPL_DB)](config-db/appl-mpls-route.md) (90)
+- [LABEL_ROUTE_TABLE (APPL_DB)](config-db/appl-mpls-route.md) (87)
 - [概念](../topics/17-srv6-mpls/concept.md) (51)
 - [MPLS TC → TC map（MPLS パケットの QoS classification）](../routing/mpls-tc-to-tc-map.md) (45)
 - [SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）](../routing/mpls-for-sonic-high-level-design-document.md) (37)
@@ -1823,7 +1824,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [MCLAG](#term-mclag)
 
 - [MCLAG_INTERFACE テーブル](config-db/mclag-interface.md) (139)
-- [APPL_DB MCLAG/ICCP 関連テーブル](config-db/appl-mclag.md) (134)
+- [APPL_DB MCLAG/ICCP 関連テーブル](config-db/appl-mclag.md) (133)
 - [MCLAG_DOMAIN / MCLAG_INTERFACE / MCLAG_UNIQUE_IP テーブル](config-db/mclag-domain.md) (121)
 - [MCLAG_UNIQUE_IP テーブル](config-db/mclag-unique-ip.md) (113)
 - [STP / ICCP 連携 — コード由来デフォルト詳細](config-db/stp-iccp.md) (67)
@@ -1840,22 +1841,22 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 - [COMMUNITY_SET テーブル](config-db/community-set.md) (67)
 - [SNMP_COMMUNITY テーブル](config-db/community-list.md) (56)
-- [SNMP テーブル](config-db/snmp.md) (32)
+- [SNMP テーブル](config-db/snmp.md) (33)
 - [sonic-route-map YANG](yang/sonic-route-map.md) (24)
 - [BGP_ALLOWED_PREFIXES テーブル](config-db/bgp-allowed-prefixes.md) (19)
 
 ### [MUX](#term-mux)
 
-- [MUX_CABLE_TABLE / HW_MUX_CABLE_TABLE (STATE_DB)](config-db/mux-cable-state.md) (144)
+- [MUX_CABLE_TABLE / HW_MUX_CABLE_TABLE (STATE_DB)](config-db/mux-cable-state.md) (143)
 - [MUX_CABLE テーブル（per-port フィールド詳細）](config-db/mux-cable-port.md) (126)
 - [MUX_LINKMGR テーブル](config-db/mux-linkmgr.md) (120)
-- [MUX_CABLE テーブル](config-db/mux-cable.md) (119)
+- [MUX_CABLE テーブル](config-db/mux-cable.md) (117)
 - [PEER_SWITCH テーブル](config-db/peer-switch.md) (53)
 
 ### [MAC](#term-mac)
 
-- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (203)
 - [PORT (macsec フィールド)](config-db/macsec-port.md) (186)
+- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (170)
 - [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (83)
 - [SAG テーブル](config-db/sag.md) (76)
 - [STATE_DB orchagent 共通テーブル](config-db/orchagent-state.md) (59)
@@ -1863,7 +1864,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [MACsec](#term-macsec)
 
 - [PORT (macsec フィールド)](config-db/macsec-port.md) (126)
-- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (119)
+- [MACSEC_PROFILE テーブル](config-db/macsec-profile.md) (92)
 - [FIPS 向け MACsec SAI POST（FIPS_MACSEC_POST_TABLE）](../switching/sonic-sai-post-support-for-macsec.md) (35)
 - [Gearbox PHY ごとの MACsec backend 決定（macsec_supported）](../switching/sonic-hld-deterministic-macsec-backend-selection-for-gearbox-ports.md) (27)
 - [MACsec on SONiC（wpa_supplicant + MACsec Mgr/Orch + SAI）](../switching/macsec-sonic-high-level-design-document.md) (25)
@@ -1878,8 +1879,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [muxorch](#term-muxorch)
 
-- [MUX_CABLE テーブル](config-db/mux-cable.md) (82)
-- [MUX_CABLE_TABLE / HW_MUX_CABLE_TABLE (STATE_DB)](config-db/mux-cable-state.md) (64)
+- [MUX_CABLE テーブル](config-db/mux-cable.md) (74)
+- [MUX_CABLE_TABLE / HW_MUX_CABLE_TABLE (STATE_DB)](config-db/mux-cable-state.md) (66)
 - [PEER_SWITCH テーブル](config-db/peer-switch.md) (44)
 - [MUX_CABLE テーブル（per-port フィールド詳細）](config-db/mux-cable-port.md) (43)
 - [SYSTEM_DEFAULTS テーブル](config-db/system-defaults.md) (34)
@@ -1887,9 +1888,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [NAT](#term-nat)
 
 - [NAT_BINDINGS テーブル](config-db/nat-bindings.md) (331)
-- [NAT_GLOBAL / NAT_POOL テーブル](config-db/nat.md) (318)
+- [NAT_GLOBAL / NAT_POOL テーブル](config-db/nat.md) (320)
 - [NAT_RESTORE_TABLE / COUNTERS_NAT テーブル](config-db/nat-state.md) (301)
-- [COUNTERS_DB NAT カウンタテーブル群](config-db/nat-counters.md) (300)
+- [COUNTERS_DB NAT カウンタテーブル群](config-db/nat-counters.md) (282)
 - [NAT_POOL テーブル](config-db/nat-pool.md) (248)
 
 ### [natmgrd / natsyncd](#term-natmgrd-natsyncd)
@@ -1918,8 +1919,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [L3 基盤と VRF](../topics/04-vrf-ecmp/concept.md) (5)
 - [P4Orch（PINS の P4Runtime 用 orchagent / 同期書き込み）](../internals/p4-orchagent.md) (1)
 - [VNET_ROUTE / VNET_ROUTE_TUNNEL テーブル](config-db/vnet-route.md) (1)
-- [VNET / VNET_ROUTE テーブル](config-db/vnet.md) (1)
-- [発展トピックへの橋渡し](../topics/04-vrf-ecmp/advanced.md) (1)
+- [VNET テーブル](config-db/vnet.md) (1)
+- [EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）](../routing/evpn-vxlan-multihoming-concepts.md) (1)
 
 ### [NDP](#term-ndp)
 
@@ -1948,7 +1949,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [PFC](#term-pfc)
 
 - [PFC_WD テーブル](config-db/pfc-wd.md) (175)
-- [PFC_WD 状態フィールド (COUNTERS_DB)](config-db/pfcwd-state.md) (139)
+- [PFC_WD 状態フィールド (COUNTERS_DB)](config-db/pfcwd-state.md) (138)
 - [MAP_PFC_PRIORITY_TO_QUEUE テーブル](config-db/map-pfc-priority-to-queue.md) (76)
 - [PFC_PRIORITY_TO_PRIORITY_GROUP_MAP テーブル](config-db/pfc-priority-to-priority-group-map.md) (62)
 - [サイトマップ](../_meta/sitemap.md) (39)
@@ -1969,8 +1970,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [portmgrd](#term-portmgrd)
 
 - [PORT テーブル](config-db/port.md) (25)
-- [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (23)
-- [PORT_TABLE ステータスフィールド（STATE_DB）](config-db/ports-status.md) (20)
+- [APPL_DB PORT_TABLE](config-db/appl-port-table.md) (22)
+- [PORT_TABLE ステータスフィールド（STATE_DB）](config-db/ports-status.md) (19)
 - [BREAKOUT_CFG テーブル (DPB)](config-db/dpb.md) (16)
 - [DHCP DoS 緩和（ポート単位 DHCP レート制限・Linux TC ベース）](../acl-qos/dhcp-dos-mitigation-in-sonic.md) (13)
 
@@ -2073,7 +2074,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [Redis](#term-redis)
 
 - [TELEMETRY_CONNECTIONS テーブル (STATE_DB)](config-db/gnmi-state.md) (75)
-- [Redis Client Manager（RCM: connection pool / transactional client）](../management/redis-client-manager-rcm-hld.md) (40)
+- [Redis Client Manager（RCM: connection pool / transactional client）](../management/redis-client-manager-rcm-hld.md) (44)
 - [サイトマップ](../_meta/sitemap.md) (32)
 - [Redis DB 設定 (database_config.json)](config-db/redis-db-config.md) (24)
 - [ZMQ 関連 CONFIG_DB フィールド (DEVICE_METADATA / DPU)](config-db/zmq.md) (22)
@@ -2088,8 +2089,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [ROUTE_TABLE](#term-route_table)
 
-- [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (73)
-- [ROUTE_TABLE (STATE_DB / APPL_STATE_DB)](config-db/route-state.md) (64)
+- [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (71)
+- [ROUTE_TABLE (STATE_DB / APPL_STATE_DB)](config-db/route-state.md) (63)
 - [RouteOrch event / notification (ResponsePublisher + NextHopObserver)](config-db/route-orch-event.md) (56)
 - [ROUTE_TABLE handler 分岐 (fpmsyncd / RouteSync)](config-db/route-handler.md) (53)
 - [DASH_ROUTE_* テーブル](config-db/dash-routing-table.md) (50)
@@ -2115,7 +2116,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [SNMP テーブル](config-db/snmp.md) (153)
 - [SNMP_AGENT_ADDRESS_CONFIG / SNMP_USER テーブル (デフォルト詳細)](config-db/snmp-agent.md) (139)
 - [SNMP_COMMUNITY テーブル](config-db/community-list.md) (86)
-- [sonic-snmp YANG](yang/sonic-snmp.md) (73)
+- [sonic-snmp YANG](yang/sonic-snmp.md) (75)
 - [SNMP_AGENT_ADDRESS_CONFIG テーブル](config-db/snmp-agent-address-config.md) (72)
 
 ### [SRv6](#term-srv6)
@@ -2124,15 +2125,15 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [発展トピック](../topics/17-srv6-mpls/advanced.md) (46)
 - [Srv6Orch — APP_DB SRV6 テーブル](config-db/srv6-orch.md) (42)
 - [サイトマップ](../_meta/sitemap.md) (35)
-- [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../routing/srv6-vpn-hld.md) (31)
+- [SRv6 VPN（L3VPN over SRv6 と SRv6 Policy）](../routing/srv6-vpn-hld.md) (30)
 
 ### [SAI](#term-sai)
 
 - [頻出 SAI 属性早見表](sai-attributes.md) (241)
 - [WRED_PROFILE テーブル](config-db/wred-profile.md) (162)
 - [ACL_RULE テーブル](config-db/acl-rule.md) (141)
-- [COUNTERS_DB PORT カウンタ](config-db/counters-port.md) (135)
 - [POLICER テーブル](config-db/policer.md) (134)
+- [COUNTERS_DB PORT カウンタ](config-db/counters-port.md) (131)
 
 ### [SerDes](#term-serdes)
 
@@ -2153,17 +2154,17 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [sonic-buildimage](#term-sonic-buildimage)
 
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (130)
-- [Fast-reboot Flow Improvements（finalizer / reconciliation）](../system/fast-reboot-flow-improvements-hld.md) (90)
-- [ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）](../architecture/build-system-improvements.md) (78)
-- [FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）](../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md) (52)
-- [dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）](../internals/dump-utility-for-easy-debugging.md) (51)
+- [Fast-reboot Flow Improvements（finalizer / reconciliation）](../system/fast-reboot-flow-improvements-hld.md) (78)
+- [ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）](../architecture/build-system-improvements.md) (63)
+- [FRR-BGP Unified Mgmt Framework（frrcfgd / OpenConfig BGP）](../routing/sonic-frr-bgp-extended-unified-configuration-management-framework.md) (49)
+- [BGP_AGGREGATE_ADDRESS テーブル](config-db/bgp-aggregate-address.md) (31)
 
 ### [sonic-cfggen](#term-sonic-cfggen)
 
 - [DEVICE_RUNTIME_METADATA テーブル](config-db/device-runtime-metadata.md) (19)
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (18)
+- [RESTAPI テーブル](config-db/restapi.md) (17)
 - [DEVICE_NEIGHBOR_METADATA テーブル](config-db/device-neighbor-metadata.md) (16)
-- [RESTAPI テーブル](config-db/restapi.md) (16)
 - [cluster フィールド (DEVICE_METADATA / DEVICE_NEIGHBOR_METADATA)](config-db/cluster.md) (15)
 
 ### [sonic-mgmt](#term-sonic-mgmt)
@@ -2187,12 +2188,12 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [Redis DB 設定 (database_config.json)](config-db/redis-db-config.md) (16)
 - [LOGGER テーブル](config-db/log-config.md) (14)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (13)
+- [WARM_RESTART テーブル](config-db/warm-restart.md) (12)
 - [ALARM テーブル (EVENT_DB)](config-db/alarm-table.md) (10)
-- [Error Handling Framework（ERROR_DB / SAI 失敗の app への伝搬）](../architecture/error-handling-framework-in-sonic.md) (9)
 
 ### [sonic-sairedis](#term-sonic-sairedis)
 
-- [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../platform/sai-api-version-check.md) (15)
+- [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../platform/sai-api-version-check.md) (16)
 - [NPU MDIO アクセスと gbsyncd 単一 docker 化](../platform/sonic-npu-mdio-access-support-and-gbsyncd-docker-enhancement-hld.md) (8)
 - [libsairedis API idempotence（warm restart 用 OID キャッシュと duplicate 抑止）](../system/sonic-libsairedis-api-idempotence-support.md) (8)
 - [Bulk Counter（sai_bulk_object_get_stats / chunk size）](../architecture/sonic-bulk-counter-design.md) (7)
@@ -2201,9 +2202,9 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [sonic-utilities](#term-sonic-utilities)
 
 - [AUTO_TECHSUPPORT_FEATURE テーブル](config-db/auto-techsupport-feature.md) (53)
-- [AUTO_TECHSUPPORT テーブル](config-db/auto-techsupport.md) (20)
+- [AUTO_TECHSUPPORT テーブル](config-db/auto-techsupport.md) (16)
 - [BREAKOUT_CFG テーブル](config-db/breakout-cfg.md) (14)
-- [DEVICE_NEIGHBOR 動作状態（device op state）](config-db/deviceop-state.md) (14)
+- [DEVICE_NEIGHBOR 動作状態（device op state）](config-db/deviceop-state.md) (13)
 - [config bgp サブコマンド](cli/config-bgp.md) (12)
 
 ### [Scheduler](#term-scheduler)
@@ -2236,11 +2237,11 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [SmartSwitch](#term-smartswitch)
 
-- [CHASSIS_MODULE テーブル](config-db/chassis-module.md) (84)
+- [CHASSIS_MODULE テーブル](config-db/chassis-module.md) (78)
 - [サイトマップ](../_meta/sitemap.md) (53)
 - [SmartSwitch 関連テーブル (MID_PLANE_BRIDGE / DHCP_SERVER_IPV4_PORT)](config-db/smart-switch.md) (51)
-- [NTP テーブル群 (Phase A defaults + Phase B ordering + Phase D failure + Phase E constants + Phase F side-effects + Phase G pubsub + Phase H platform)](config-db/ntp.md) (35)
-- [DPU_STATE テーブル (CHASSIS_STATE_DB)](config-db/dpu-state.md) (33)
+- [NTP テーブル群](config-db/ntp.md) (35)
+- [CHASSIS_STATE_DB テーブル群](config-db/chassis-state.md) (32)
 
 ### [Strict Priority](#term-strict-priority)
 
@@ -2248,10 +2249,10 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [STATE_DB](#term-state_db)
 
-- [BFD_SESSION_TABLE (STATE_DB)](config-db/bfd-state.md) (110)
+- [BFD_SESSION_TABLE (STATE_DB)](config-db/bfd-state.md) (109)
 - [ROUTE_TABLE (STATE_DB / APPL_STATE_DB)](config-db/route-state.md) (101)
 - [FEATURE (STATE_DB)](config-db/feature-state.md) (91)
-- [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (86)
+- [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (85)
 - [サイトマップ](../_meta/sitemap.md) (78)
 
 ### [swssconfig](#term-swssconfig)
@@ -2264,7 +2265,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [syncd](#term-syncd)
 
-- [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (88)
+- [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (85)
 - [APPL_DB MCLAG/ICCP 関連テーブル](config-db/appl-mclag.md) (83)
 - [WARM_RESTART テーブル](config-db/warm-restart.md) (82)
 - [MCLAG_INTERFACE テーブル](config-db/mclag-interface.md) (79)
@@ -2283,8 +2284,8 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [サイトマップ](../_meta/sitemap.md) (352)
 - [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (31)
 - [概要](../topics/10-gnmi-openconfig/concept.md) (28)
-- [GNS3 VM 上での SONiC 動作（sonic-vs.img と Qemu テンプレート）](../architecture/sonic-on-gns3-vm.md) (27)
 - [概要](../topics/02-bgp/concept.md) (27)
+- [アーキテクチャ](../topics/21-lab-vs-developer/architecture.md) (26)
 
 ### [TAM](#term-tam)
 
@@ -2310,16 +2311,16 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [ToS](#term-tos)
 
 - [APPL_DB STP Orchagent テーブル — フィールドとコード由来デフォルト](config-db/stp-orch.md) (20)
+- [SmartSwitch HA DPU-Scope-DPU-Driven 内部実装（状態遷移と再同期）](../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-internals.md) (7)
 - [SmartSwitch HA - DPU-Scope-DPU-Driven 構成](../architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup.md) (7)
 - [FEC ステート（STATE_DB PORT_TABLE FEC フィールド）](config-db/fec-state.md) (6)
 - [DASH_ACL_* テーブル](config-db/dash-acl.md) (3)
-- [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (3)
 
 ### [tunnelmgrd](#term-tunnelmgrd)
 
 - [TUNNEL テーブル](config-db/tunnel.md) (29)
 - [SUBNET_DECAP テーブル](config-db/subnet-decap.md) (13)
-- [TUNNEL_DECAP_TERM_TABLE (APPL_DB)](config-db/tunnel-decap-term.md) (13)
+- [TUNNEL_DECAP_TERM_TABLE (APPL_DB)](config-db/tunnel-decap-term.md) (12)
 - [TUNNEL_DECAP_TABLE (APPL_DB)](config-db/tunnel-decap-table.md) (8)
 - [PEER_SWITCH テーブル](config-db/peer-switch.md) (5)
 
@@ -2350,74 +2351,74 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 ### [VLAN](#term-vlan)
 
 - [STP_VLAN / STP_VLAN_PORT テーブル](config-db/stp-vlan.md) (251)
-- [APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル](config-db/appl-vlan.md) (221)
+- [APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル](config-db/appl-vlan.md) (219)
 - [VLAN テーブル](config-db/vlan.md) (182)
 - [VLAN_MEMBER テーブル](config-db/vlan-member.md) (164)
-- [STATE_DB VLAN_TABLE（VLAN 状態テーブル）](config-db/vlan-state.md) (148)
+- [STATE_DB VLAN_TABLE（VLAN 状態テーブル）](config-db/vlan-state.md) (146)
 
 ### [vlanmgrd](#term-vlanmgrd)
 
 - [VLAN テーブル](config-db/vlan.md) (36)
-- [STATE_DB VLAN_TABLE（VLAN 状態テーブル）](config-db/vlan-state.md) (35)
 - [VLAN_MEMBER テーブル](config-db/vlan-member.md) (34)
-- [APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル](config-db/appl-vlan.md) (32)
+- [STATE_DB VLAN_TABLE（VLAN 状態テーブル）](config-db/vlan-state.md) (34)
+- [APPL_DB VLAN_TABLE / VLAN_MEMBER_TABLE テーブル](config-db/appl-vlan.md) (31)
 - [VRRP テーブル](config-db/vrrp.md) (27)
 
 ### [VNET](#term-vnet)
 
 - [VNET_ROUTE / VNET_ROUTE_TUNNEL テーブル](config-db/vnet-route.md) (180)
-- [VNET / VNET_ROUTE テーブル](config-db/vnet.md) (176)
+- [VNET テーブル](config-db/vnet.md) (177)
 - [DASH_VNET テーブル](config-db/dash-vnet.md) (119)
-- [sonic-vnet YANG](yang/sonic-vnet.md) (87)
-- [DASH_ROUTING_TYPE テーブル](config-db/dash-routing-types.md) (47)
+- [sonic-vnet YANG](yang/sonic-vnet.md) (88)
+- [VXLAN / VNET / EVPN の概要](../topics/03-vxlan-evpn/concept.md) (47)
 
 ### [VRF](#term-vrf)
 
-- [VRF テーブル](config-db/vrf.md) (268)
-- [VRF ステートテーブル（STATE_DB）](config-db/state-vrf.md) (254)
-- [APPL_DB VRF_TABLE (VRFOrch)](config-db/vrf-orch.md) (222)
-- [APPL_DB VRF_TABLE テーブル](config-db/appl-vrf.md) (169)
+- [VRF テーブル](config-db/vrf.md) (267)
+- [VRF ステートテーブル（STATE_DB）](config-db/state-vrf.md) (252)
+- [APPL_DB VRF_TABLE (VRFOrch)](config-db/vrf-orch.md) (220)
+- [APPL_DB VRF_TABLE テーブル](config-db/appl-vrf.md) (167)
 - [MGMT_VRF_CONFIG テーブル](config-db/mgmt-vrf-config.md) (143)
 
 ### [vrfmgrd](#term-vrfmgrd)
 
 - [VRF テーブル](config-db/vrf.md) (54)
-- [VRF ステートテーブル（STATE_DB）](config-db/state-vrf.md) (52)
-- [APPL_DB VRF_TABLE (VRFOrch)](config-db/vrf-orch.md) (47)
-- [APPL_DB VRF_TABLE テーブル](config-db/appl-vrf.md) (31)
+- [VRF ステートテーブル（STATE_DB）](config-db/state-vrf.md) (51)
+- [APPL_DB VRF_TABLE (VRFOrch)](config-db/vrf-orch.md) (46)
+- [APPL_DB VRF_TABLE テーブル](config-db/appl-vrf.md) (30)
 - [MGMT_VRF_CONFIG テーブル](config-db/mgmt-vrf-config.md) (17)
 
 ### [VXLAN](#term-vxlan)
 
-- [VXLAN_FDB_TABLE テーブル](config-db/vxlan-fdb.md) (116)
+- [VXLAN_FDB_TABLE テーブル](config-db/vxlan-fdb.md) (114)
 - [VXLAN_TUNNEL テーブル](config-db/vxlan-tunnel.md) (94)
 - [VxlanTunnelOrch — encap 処理詳細](config-db/tunnel-encap-orch.md) (68)
 - [VXLAN_EVPN_NVO テーブル](config-db/vxlan-evpn-nvo.md) (67)
-- [EVPN DIP トンネル (動的生成)](config-db/vxlan-evpn-tunnel.md) (59)
+- [VXLAN_TUNNEL_MAP テーブル](config-db/vxlan-tunnel-map.md) (62)
 
 ### [vxlanmgrd](#term-vxlanmgrd)
 
-- [VNET / VNET_ROUTE テーブル](config-db/vnet.md) (19)
+- [VNET テーブル](config-db/vnet.md) (19)
 - [VXLAN_TUNNEL テーブル](config-db/vxlan-tunnel.md) (17)
+- [VXLAN_TUNNEL_MAP テーブル](config-db/vxlan-tunnel-map.md) (13)
 - [VXLAN_EVPN_NVO テーブル](config-db/vxlan-evpn-nvo.md) (10)
 - [STATE_DB VLAN_TABLE（VLAN 状態テーブル）](config-db/vlan-state.md) (9)
-- [VXLAN_TUNNEL_MAP テーブル](config-db/vxlan-tunnel-map.md) (9)
 
 ### [VRRP](#term-vrrp)
 
 - [VRRP テーブル](config-db/vrrp.md) (194)
 - [VRRP_TRACK テーブル](config-db/vrrp-track.md) (124)
 - [VRRP（FRR vrrpd 連携 / VRRPv2/v3 / uplink tracking）](../routing/virtual-router-redundancy-protocol-adaptation-hld.md) (36)
+- [config interface サブコマンド](cli/config-interface.md) (14)
 - [サイトマップ](../_meta/sitemap.md) (13)
-- [config interface サブコマンド](cli/config-interface.md) (12)
 
 ### [VTEP](#term-vtep)
 
 - [EVPN DIP トンネル (動的生成)](config-db/vxlan-evpn-tunnel.md) (38)
 - [VXLAN トンネルポート (Port::TUNNEL)](config-db/tunnel-port.md) (35)
 - [VXLAN_EVPN_NVO テーブル](config-db/vxlan-evpn-nvo.md) (34)
+- [EVPN VXLAN 概念（Route Type 2/3/5 / L2VNI / L3VNI / IRB）](../routing/evpn-vxlan-hld-concepts.md) (26)
 - [VXLAN_TUNNEL テーブル](config-db/vxlan-tunnel.md) (22)
-- [VXLAN_FDB_TABLE テーブル](config-db/vxlan-fdb.md) (18)
 
 ### [vtysh](#term-vtysh)
 
@@ -2464,7 +2465,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - [DEVICE_METADATA テーブル](config-db/device-metadata.md) (42)
 - [fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）](../routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.md) (31)
 - [debug / undebug コマンド群](cli/debug-group.md) (25)
-- [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (25)
+- [APPL_STATE_DB ROUTE_TABLE (route offload cache)](config-db/route-cache.md) (24)
 - [ROUTE_TABLE handler 分岐 (fpmsyncd / RouteSync)](config-db/route-handler.md) (23)
 
 ### [ZTP](#term-ztp)

@@ -33,7 +33,6 @@ related:
 
 > **関連ページ**: PG（[Priority Group](../../reference/glossary.md#term-priority-group)）カウンタおよびウォーターマーク体系の全体像は [`COUNTERS_DB キュー / PG カウンタテーブル群`](counters-queue.md) を参照。
 
-
 ## key 構造
 
 ### キュー名→OID マップ

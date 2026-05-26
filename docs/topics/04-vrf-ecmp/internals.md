@@ -134,7 +134,7 @@ CONFIG_DB:SWITCH_HASH|GLOBAL
   lag_hash:  "..."
 ```
 
-これは ASIC 全体 1 つの設定で、per-VRF / per-route の hash 切替は SONiC master でサポートされません。inner header をハッシュに含めるかは [VXLAN](../../reference/glossary.md#term-vxlan) / [SRv6](../../reference/glossary.md#term-srv6) でしばしば問題になります（VXLAN/EVPN 章および SRv6 関連ページを参照）。
+これは ASIC 全体 1 つの設定で、per-VRF / per-route の hash 切替は SONiC master でサポートされません。inner header をハッシュに含めるかは [VXLAN](../../reference/glossary.md#term-vxlan) / [SRv6](../../reference/glossary.md#term-srv6) でしばしば問題になります（VXLAN/[EVPN](../../reference/glossary.md#term-evpn) 章および SRv6 関連ページを参照）。
 
 ## NHG 参照カウントと resync
 
@@ -158,4 +158,4 @@ PIC では member の `weight=0` 化のみで NHG 自体は維持するため、
 - [Routing / Next Hop table enhancement](../../routing/routing-and-next-hop-table-enhancement.md)
 - [VRF design spec (draft)](../../routing/sonic-vrf-support-design-spec-draft.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 23f2999cb556 -->

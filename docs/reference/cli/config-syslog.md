@@ -129,8 +129,11 @@ systemctl status rsyslog
 <!-- cli-sibling -->
 ### 関連 CLI コマンド
 
-- [`config vrf`](config-vrf.md) — config vrf サブコマンド（syslog の --vrf オプションで参照する VRF 管理）
-- [`config interface`](config-interface.md) — config interface サブコマンド（--source に使う IP を持つインタフェース管理）
+- [`show flowcnt`](show-flowcnt.md) — show flowcnt-trap / flowcnt-route サブコマンド
+- [`show snmpagentaddress`](show-snmpagentaddress.md) — show snmpagentaddress サブコマンド
+- [`show snmptrap`](show-snmptrap.md) — show snmptrap サブコマンド
+- [`show techsupport`](show-techsupport.md) — show techsupport コマンド
+- [`config mirror session`](config-mirror-session.md) — config mirror_session サブコマンド
 
 <!-- /cli-sibling -->
 

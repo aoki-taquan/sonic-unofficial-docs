@@ -38,7 +38,7 @@ related:
 
 ## 1. 前提
 
-- 両 peer で **同じ PortChannel 名** を MCLAG メンバとして用意する
+- 両 peer で **同じ [PortChannel](../reference/glossary.md#term-portchannel) 名** を [MCLAG](../reference/glossary.md#term-mclag) メンバとして用意する
 - L2 MCLAG では `peer_link` は必須、L3 MCLAG では optional
 - ICCP は **2 台ピアまで**。3-way は非対応
 
@@ -194,7 +194,7 @@ redis-cli -n 6 KEYS "MCLAG_REMOTE_FDB_TABLE|*" | head
 
 | 観察 | 切り分け |
 |------|---------|
-| `Session Status : Down` 持続 | `peer-link` の VLAN tag 通過 / `source_ip` の reachability / firewall。`ping <peer-ip>` で peer に届くか確認 |
+| `Session Status : Down` 持続 | `peer-link` の [VLAN](../reference/glossary.md#term-vlan) tag 通過 / `source_ip` の reachability / firewall。`ping <peer-ip>` で peer に届くか確認 |
 | keep-alive が頻繁にロス | `keepalive-interval` を 1s から 2-3s に緩める。`session-timeout` を `keepalive × 3` 以上にする |
 | 片側だけ Active | `mclagdctl -i <id> dump state` で system MAC を比較。tie-break で低い MAC が Active |
 
@@ -205,7 +205,7 @@ mclagdctl -i 1 dump debug counters | grep -E "MacInfo|FdbChange"
 redis-cli -n 0 KEYS "MCLAG_FDB_TABLE:*" | wc -l
 ```
 
-`MacInfo TX` が増えない場合 ICCPd 側、`FdbChange RX` が来ているのに APPL_DB に上がらない場合 MclagSyncd 側、APPL_DB にあるのに ASIC に乗らない場合 FdbOrch 側を疑う。
+`MacInfo TX` が増えない場合 ICCPd 側、`FdbChange RX` が来ているのに [APPL_DB](../reference/glossary.md#term-appl_db) に上がらない場合 MclagSyncd 側、APPL_DB にあるのに [ASIC](../reference/glossary.md#term-asic) に乗らない場合 FdbOrch 側を疑う。
 
 ### 6.3 BUM が peer-link 経由で MHD に重複到達
 
@@ -219,7 +219,7 @@ syslog で "isolation group" / "ACL fallback" を grep
 
 ### 6.4 L2 MC-LAG 環境での ICMPv6 RS/NS ループ（#1253）
 
-L2 MC-LAG 構成において、ICMPv6 Router Solicitation (type 133) や Neighbor Solicitation (type 135) パケットが peer-link を経由してループを形成する既知の問題がある。SONiC kernel がこれらのパケットを処理する際に isolation group を迂回するためと考えられる[^2]。
+L2 MC-[LAG](../reference/glossary.md#term-lag) 構成において、ICMPv6 Router Solicitation (type 133) や Neighbor Solicitation (type 135) パケットが peer-link を経由してループを形成する既知の問題がある。[SONiC](../reference/glossary.md#term-sonic) kernel がこれらのパケットを処理する際に isolation group を迂回するためと考えられる[^2]。
 
 **回避策（再起動で消えるため startup script 化推奨）:**
 
@@ -232,16 +232,16 @@ sudo ebtables -A FORWARD -p 802_1Q --vlan-encap IPv6 -j DROP
 - `MCLAG_UNIQUE_IP` テーブルに該当 VLAN intf が登録されているか
 - 両 peer で **異なる IP** を設定しているか（同一 IP のままだと旧モードで重複検知に陥る）
 - Standby 側で peer の VLAN intf MAC が L2 table に program されているか (`show mac | grep <peer-mac>`)
-- 隣接が片方向の場合は ARP / ND sync 経路を疑う
+- 隣接が片方向の場合は [ARP](../reference/glossary.md#term-arp) / ND sync 経路を疑う
 
 ## 7. 制限事項
 
 - ICCP は **2 台ピアまで**（3-way 以上は未対応）
-- isolation group は SAI 対応必須。未対応 ASIC では peer-link 経由のループ抑止は egress ACL fallback
-- unique IP では active/active 両方が L3 で見える。OSPF cost / BGP を peer 間で揃える必要
+- isolation group は [SAI](../reference/glossary.md#term-sai) 対応必須。未対応 ASIC では peer-link 経由のループ抑止は egress [ACL](../reference/glossary.md#term-acl) fallback
+- unique IP では active/active 両方が L3 で見える。OSPF cost / [BGP](../reference/glossary.md#term-bgp) を peer 間で揃える必要
 - 大量 static MAC sync は ICCP メッセージ量増、scalability 影響あり
 - 旧版（`config_db.json` 直書き）からの **upgrade / downgrade は非対応**[^1]
-- Warm Boot 後は ICCP が local FDB を再 advertise する必要がある（HLD §6）
+- Warm Boot 後は ICCP が local [FDB](../reference/glossary.md#term-fdb) を再 advertise する必要がある（[HLD](../reference/glossary.md#term-hld) §6）
 
 ## 8. 引用元
 
@@ -255,3 +255,5 @@ sudo ebtables -A FORWARD -p 802_1Q --vlan-encap IPv6 -j DROP
 - [Topics: Dual ToR](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 639b1e55333b -->

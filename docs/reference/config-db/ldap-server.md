@@ -297,7 +297,7 @@ sudo cat /etc/nslcd.conf
 
 hostcfgd は `LDAP_SERVER` テーブルを受信後、`modify_conf_file()` 内で以下の自動補完・派生処理を行う。
 
-**ldap_global_default は空 dict**: `AaaCfg.__init__()` で `self.ldap_global_default = {}` と初期化する (`hostcfgd:386`)。TACACS+ / RADIUS と異なり LDAP は hostcfgd レイヤでのデフォルト注入を行わない。未設定フィールドの fallback は `LdapCfg` クラス属性が担う。
+**ldap_global_default は空 dict**: `AaaCfg.__init__()` で `self.ldap_global_default = {}` と初期化する (`hostcfgd:386`)。TACACS+ / [RADIUS](../../reference/glossary.md#term-radius) と異なり LDAP は hostcfgd レイヤでのデフォルト注入を行わない。未設定フィールドの fallback は `LdapCfg` クラス属性が担う。
 
 **LdapCfg クラス属性による fallback 補完**: `modify_conf_file()` は Jinja2 テンプレートへ `ldap_cfg=ldap.LdapCfg` を渡す (`hostcfgd:855, 863`)。テンプレートが `ldap_cfg` を参照して CONFIG_DB に値が存在しないフィールドを補完する。
 
@@ -344,7 +344,7 @@ hostcfgd は起動時から `LDAP` / `LDAP_SERVER` テーブルを常時購読�
 |---|---|---|---|---|---|
 | `AAA\|authentication` (`login` フィールド) | CONFIG_DB | 読み取り (`is_ldap_config_complete()` 判定) | なし | **必須** (未設定または `login` に `ldap` なしで nslcd 停止) | `hostcfgd:437-442`, `hostcfgd:241-251` |
 | `LDAP\|global` (`bind_dn`, `base_dn`, `bind_password`) | CONFIG_DB | 読み取り (nslcd.conf 生成・completeness チェック) | なし (同一 YANG モジュール内の別コンテナ) | **必須** (未設定で nslcd 停止・`LdapCfg` fallback 値使用) | `hostcfgd:437-442`, `hostcfgd:650-651`, `hostcfgd:706-713` |
-| `DEVICE_METADATA\|localhost` (`hostname`) | CONFIG_DB | 読み取り (hostcfgd 初期化時) | なし | 任意 (LDAP 動作への直接影響なし; RADIUS `nas_id` で使用) | `hostcfgd:1422-1496`, `hostcfgd:675-678` |
+| `DEVICE_METADATA\|localhost` (`hostname`) | CONFIG_DB | 読み取り (hostcfgd 初期化時) | なし | 任意 (LDAP 動作への直接影響なし; [RADIUS](../../reference/glossary.md#term-radius) `nas_id` で使用) | `hostcfgd:1422-1496`, `hostcfgd:675-678` |
 
 ### AAA|authentication — LDAP 有効化ゲート
 
@@ -467,10 +467,10 @@ CONFIG_DB `LDAP_SERVER` / `LDAP|global` テーブルの変更に伴って `hostc
 
 | 副次 DB | 書込有無 | 根拠 |
 |---|---|---|
-| APPL_DB | なし | `ldap_server_update` / `ldap_global_update` 内に Producer/Table の書込呼出が 0 件 (`sonic-host-services/scripts/hostcfgd:547-564` を `set(`/`hset`/`Producer`/`Notification` で grep して 0 ヒット) |
+| [APPL_DB](../../reference/glossary.md#term-appl_db) | なし | `ldap_server_update` / `ldap_global_update` 内に Producer/Table の書込呼出が 0 件 (`sonic-host-services/scripts/hostcfgd:547-564` を `set(`/`hset`/`Producer`/`Notification` で grep して 0 ヒット) |
 | [STATE_DB](../../reference/glossary.md#term-state_db) | なし | `hostcfgd` の `STATE_DB` 参照は `FipsCfg` (`hostcfgd:1792`) と `RestartWaiter` 用 (`hostcfgd:2160-2163`) のみ。`AaaCfg` は `state_db_conn` を保持しない |
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) | なし | `hostcfgd` 全体に [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 参照なし。LDAP は認証経路のため統計テーブルも存在しない |
-| その他 ([ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db)) | なし | SAI 非経由（実コンテナ動作トレース参照）。`LDAP_SERVER` テーブルを購読する mgrd/[orchagent](../../reference/glossary.md#term-orchagent) は `sonic-swss/` に存在しない |
+| その他 ([ASIC_DB](../../reference/glossary.md#term-asic_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) / [LOGLEVEL_DB](../../reference/glossary.md#term-loglevel_db)) | なし | [SAI](../../reference/glossary.md#term-sai) 非経由（実コンテナ動作トレース参照）。`LDAP_SERVER` テーブルを購読する mgrd/[orchagent](../../reference/glossary.md#term-orchagent) は `sonic-swss/` に存在しない |
 
 ### Linux ホスト OS 副作用（ファイル書換とサービス再起動）
 
@@ -589,4 +589,4 @@ LDAP_SERVER / LDAP|global テーブルには RADIUS の `vrf` フィールドに
 > 詳細証跡: `meta/_intermediate/cdb-flow/ldap-server-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 35b0ac51c6c5 -->
+<!-- glossary-links-injected: 2bdabe30dcfb -->

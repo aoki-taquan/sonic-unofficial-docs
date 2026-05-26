@@ -2,7 +2,7 @@
 title: 変更履歴
 description: "変更履歴 — このページは merged PR のメタデータから meta/scripts/gen_changelog.py で機械生成されています。手で編集しないでください。"
 verification: meta
-last_verified: 2026-05-21
+last_verified: 2026-05-26
 tags:
   - changelog
   - meta
@@ -23,6 +23,231 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-26 #5014 feat(routing): split EVPN-VXLAN HLD into concepts/internals/operations slugs
+- 2026-05-26 #5013 feat(routing): split EVPN multihoming HLD into concepts/internals/operations slugs
+- 2026-05-26 #5012 feat(architecture): split SmartSwitch HA DPU scope HLD into concepts/internals/operations slugs
+- 2026-05-26 #5011 feat(overlay): split DASH HLD into concepts/internals/operations slugs
+- 2026-05-26 #5010 feat(switching): split MCLAG HLD into concepts/internals/operations slugs (pilot)
+- 2026-05-26 #4909 fix(runbooks): correct sonic-platform-daemons ref in fec-errors [fanout-review]
+- 2026-05-26 #5009 chore: strip internal QA process metadata (audit rounds, batch numbers) from user-facing docs
+- 2026-05-26 #5008 chore: regen discrepancy-index after fanout-review merges
+- 2026-05-25 #5007 fix(scripts): correct cdb-mermaid for APPL_DB/STATE_DB pages
+- 2026-05-25 #5006 chore: rename misclassified 関連 HLD → 関連 YANG in yang reference pages
+- 2026-05-25 #5005 fix: resolve fanout-review issues #4797 #4831 #4866
+- 2026-05-25 #5004 feat(scripts): auto-generate chapter-progress tables in topics index pages
+- 2026-05-25 #5003 chore: normalize Code-verified → code-verified casing across docs
+- 2026-05-25 #4956 review: batch 183 fixes [fanout-review]
+- 2026-05-25 #5002 review: batch 155 fixes [fanout-review]
+- 2026-05-25 #5001 review: batch 081 fixes [fanout-review]
+- 2026-05-25 #5000 review: batch 105 fixes [fanout-review]
+- 2026-05-25 #4999 review: batch 090 fixes [fanout-review]
+- 2026-05-25 #4998 review: batch 135 fixes [fanout-review]
+- 2026-05-25 #4997 review: batch 154 fixes [fanout-review]
+- 2026-05-25 #4996 review: batch 100 fixes
+- 2026-05-25 #4995 review: batch 102 fixes [fanout-review]
+- 2026-05-25 #4994 review: batch 132 fixes [fanout-review]
+- 2026-05-25 #4993 review: batch 084 fixes
+- 2026-05-25 #4992 review: batch 216 fixes [fanout-review]
+- 2026-05-25 #4991 review: batch 215 fixes [fanout-review]
+- 2026-05-25 #4990 review: batch 214 fixes [fanout-review]
+- 2026-05-25 #4989 review: batch 213 fixes [fanout-review]
+- 2026-05-25 #4988 review: batch 212 fixes [fanout-review]
+- 2026-05-25 #4987 review: batch 211 fixes [fanout-review]
+- 2026-05-25 #4986 review: batch 210 fixes [fanout-review]
+- 2026-05-25 #4985 review: batch 209 fixes (18-p4-pins) [fanout-review]
+- 2026-05-25 #4984 review: batch 208 fixes (17-srv6-mpls) [fanout-review]
+- 2026-05-25 #4983 review: batch 207 fixes [fanout-review]
+- 2026-05-25 #4982 review: batch 206 fixes [fanout-review]
+- 2026-05-25 #4980 review: batch 204 fixes [fanout-review]
+- 2026-05-25 #4979 review: batch 203 fixes [fanout-review]
+- 2026-05-25 #4978 review: batch 202 fixes [fanout-review]
+- 2026-05-25 #4977 review: batch 200 fixes [fanout-review]
+- 2026-05-25 #4976 review: batch 201 fixes (multi-asic-voq) [fanout-review]
+- 2026-05-25 #4975 review: batch 199 fixes [fanout-review]
+- 2026-05-25 #4974 review: batch 198 fixes (gnmi-openconfig) [fanout-review]
+- 2026-05-25 #4973 review: batch 197 fixes [fanout-review]
+- 2026-05-25 #4972 review: batch 196 fixes [fanout-review]
+- 2026-05-25 #4971 review: batch 195 fixes [fanout-review]
+- 2026-05-25 #4970 review: batch 193 fixes [fanout-review]
+- 2026-05-25 #4969 review: batch 194 fixes [fanout-review]
+- 2026-05-25 #4968 review: batch 192 fixes [fanout-review]
+- 2026-05-25 #4967 review: batch 191 fixes [fanout-review]
+- 2026-05-25 #4966 review: batch 190 fixes [fanout-review]
+- 2026-05-25 #4965 review: batch 186 fixes [fanout-review]
+- 2026-05-25 #4964 review: batch 189 fixes [fanout-review]
+- 2026-05-25 #4963 review: batch 188 fixes [fanout-review]
+- 2026-05-25 #4962 review: batch 187 fixes [fanout-review]
+- 2026-05-25 #4961 review: batch 181 fixes [fanout-review]
+- 2026-05-25 #4960 review: batch 185 fixes [fanout-review]
+- 2026-05-25 #4959 review: batch 184 fixes [fanout-review]
+- 2026-05-25 #4958 review: batch 182 fixes [fanout-review]
+- 2026-05-25 #4957 review: batch 180 fixes [fanout-review]
+- 2026-05-25 #4955 review: batch 178 fixes (5 system pages) [fanout-review]
+- 2026-05-25 #4954 review: batch 177 fixes [fanout-review]
+- 2026-05-25 #4953 review: batch 176 fixes [fanout-review]
+- 2026-05-25 #4952 review: batch 175 fixes [fanout-review]
+- 2026-05-25 #4951 review: batch 172 fixes (system area) [fanout-review]
+- 2026-05-25 #4950 review: batch 174 fixes [fanout-review]
+- 2026-05-25 #4949 review: batch 173 fixes [fanout-review]
+- 2026-05-25 #4948 review: batch 170 fixes [fanout-review]
+- 2026-05-25 #4947 review: batch 171 fixes [fanout-review]
+- 2026-05-25 #4946 review: batch 168 fixes [fanout-review]
+- 2026-05-25 #4945 review: batch 169 fixes [fanout-review]
+- 2026-05-25 #4944 review: batch 166 fixes [fanout-review]
+- 2026-05-25 #4943 review: batch 167 fixes [fanout-review]
+- 2026-05-25 #4942 review: batch 165 fixes [fanout-review]
+- 2026-05-25 #4941 review: batch 164 fixes [fanout-review]
+- 2026-05-25 #4940 review: batch 163 fixes [fanout-review]
+- 2026-05-25 #4939 review: batch 157 fixes [fanout-review]
+- 2026-05-25 #4938 review: batch 162 fixes [fanout-review]
+- 2026-05-25 #4937 review: batch 158 fixes [fanout-review]
+- 2026-05-25 #4936 review: batch 159 fixes (routing 5 pages) [fanout-review]
+- 2026-05-25 #4935 review: batch 160 fixes [fanout-review]
+- 2026-05-25 #4934 review: batch 156 fixes [fanout-review]
+- 2026-05-25 #4933 review: batch 151 fixes [fanout-review]
+- 2026-05-25 #4932 review: batch 153 fixes [fanout-review]
+- 2026-05-25 #4931 review: batch 150 fixes [fanout-review]
+- 2026-05-25 #4930 review: batch 152 fixes [fanout-review]
+- 2026-05-25 #4929 review: batch 145 fixes (mgmt_vrf / mirror-session / nat) [fanout-review]
+- 2026-05-25 #4928 review: batch 144 fixes [fanout-review]
+- 2026-05-25 #4927 review: batch 147 fixes [fanout-review]
+- 2026-05-25 #4926 review: batch 149 fixes
+- 2026-05-25 #4925 review: batch 146 fixes [fanout-review]
+- 2026-05-25 #4924 review: batch 148 fixes (yang route-common/route-map/scheduler) [fanout-review]
+- 2026-05-25 #4923 review: batch 138 fixes [fanout-review]
+- 2026-05-25 #4922 review: batch 143 fixes [fanout-review]
+- 2026-05-25 #4921 review: batch 140 + 142 fixes (YANG reference pages) [fanout-review]
+- 2026-05-25 #4920 review: batch 136 fixes [fanout-review]
+- 2026-05-25 #4919 review: batch 141 fixes [fanout-review]
+- 2026-05-25 #4918 review: batch 139 fixes [fanout-review]
+- 2026-05-25 #4917 review: batch 134 fixes [fanout-review]
+- 2026-05-25 #4916 review: batch 133 fixes [fanout-review]
+- 2026-05-25 #4915 review: batch 137 fixes [fanout-review]
+- 2026-05-25 #4914 review: batch 121 fixes [fanout-review]
+- 2026-05-25 #4913 review: batch 131 fixes [fanout-review]
+- 2026-05-25 #4912 review: batch 124 fixes [fanout-review]
+- 2026-05-25 #4911 review: batch 126 fixes [fanout-review]
+- 2026-05-25 #4910 review: batch 127 fixes [fanout-review]
+- 2026-05-25 #4908 review: batch 130 fixes [fanout-review]
+- 2026-05-25 #4907 review: batch 123 fixes [fanout-review]
+- 2026-05-25 #4906 review: batch 122 fixes (vrf/vrrp pages) [fanout-review]
+- 2026-05-25 #4905 review: batch 112 fixes (ssh-config/ssh-server/ssh-config-base) [fanout-review]
+- 2026-05-25 #4904 review: batch 120 fixes [fanout-review]
+- 2026-05-25 #4903 review: batch 118 fixes [fanout-review]
+- 2026-05-25 #4902 review: batch 117 fixes [fanout-review]
+- 2026-05-25 #4901 review: batch 099 fixes [fanout-review]
+- 2026-05-25 #4900 review: batch 115 fixes
+- 2026-05-25 #4899 review: batch 116 fixes [fanout-review]
+- 2026-05-25 #4898 review: batch 113 fixes
+- 2026-05-25 #4897 review: batch 111 fixes [fanout-review]
+- 2026-05-25 #4896 review: batch 114 fixes [fanout-review]
+- 2026-05-25 #4895 review: batch 110 fixes
+- 2026-05-25 #4894 review: batch 101 fixes [fanout-review]
+- 2026-05-25 #4893 review: batch 108 fixes
+- 2026-05-25 #4892 review: batch 109 fixes (scheduler/sflow 5 pages) [fanout-review]
+- 2026-05-25 #4891 review: batch 106 fixes [fanout-review]
+- 2026-05-25 #4890 review: batch 103 fixes [fanout-review]
+- 2026-05-25 #4889 review: batch 087 fixes
+- 2026-05-25 #4888 review: batch 092 fixes
+- 2026-05-25 #4887 review: batch 097 fixes
+- 2026-05-25 #4886 review: batch 096 fixes
+- 2026-05-25 #4885 review: batch 098 fixes
+- 2026-05-25 #4884 review: batch 085 fixes
+- 2026-05-25 #4883 review: batch 094 fixes
+- 2026-05-25 #4882 review: batch 095 fixes
+- 2026-05-25 #4881 review: batch 083 fixes
+- 2026-05-25 #4880 review: batch 088 fixes
+- 2026-05-25 #4879 review: batch 093 fixes
+- 2026-05-25 #4878 review: batch 089 fixes
+- 2026-05-25 #4877 review: batch 086 fixes
+- 2026-05-25 #4876 review: batch 091 fixes
+- 2026-05-25 #4875 review: batch 082 fixes
+- 2026-05-25 #4874 review: batch 075 fixes
+- 2026-05-25 #4872 review: batch 071 fixes
+- 2026-05-25 #4871 review: batch 080 fixes
+- 2026-05-25 #4870 review: batch 076 fixes
+- 2026-05-25 #4869 review: batch 072 fixes (bgp-monitors/bgp-neighbor-af)
+- 2026-05-25 #4868 review: batch 069 fixes
+- 2026-05-25 #4867 review: batch 077 fixes
+- 2026-05-25 #4865 review: batch 070 fixes
+- 2026-05-25 #4864 review: batch 074 fixes
+- 2026-05-25 #4863 review: batch 065 fixes
+- 2026-05-25 #4861 review: batch 079 fixes
+- 2026-05-25 #4860 review: batch 073 fixes
+- 2026-05-25 #4859 review: batch 066 fixes
+- 2026-05-25 #4858 review: batch 061 fixes
+- 2026-05-25 #4857 review: batch 057 fixes
+- 2026-05-25 #4856 review: batch 056 fixes
+- 2026-05-25 #4855 review: batch 050 fixes
+- 2026-05-25 #4854 review: batch 060 fixes
+- 2026-05-25 #4853 review: batch 058 fixes
+- 2026-05-25 #4852 review: batch 059 fixes
+- 2026-05-25 #4851 review: batch 063 fixes
+- 2026-05-25 #4850 review: batch 064 fixes
+- 2026-05-25 #4849 review: batch 051 fixes
+- 2026-05-25 #4848 review: batch 053 fixes
+- 2026-05-25 #4847 review: batch 055 fixes
+- 2026-05-25 #4846 review: batch 052 fixes
+- 2026-05-25 #4845 review: batch 054 fixes
+- 2026-05-25 #4844 review: batch 037 fixes (overlay/active-standby-dual-tor)
+- 2026-05-25 #4842 review: batch 049 fixes
+- 2026-05-25 #4841 review: batch 047 fixes
+- 2026-05-25 #4840 review: batch 043 fixes
+- 2026-05-25 #4839 review: batch 042 fixes
+- 2026-05-25 #4838 review: batch 048 fixes (platform 5 pages)
+- 2026-05-25 #4837 review: batch 045 fixes (platform pages)
+- 2026-05-25 #4836 review: batch 044-046 fixes
+- 2026-05-25 #4835 review: batch 041 platform fixes
+- 2026-05-25 #4834 review: batch 034 fixes (management 5 pages)
+- 2026-05-25 #4833 review: batch 024 fixes
+- 2026-05-25 #4832 review: batch 038 fixes
+- 2026-05-25 #4830 review: batch 040 fixes
+- 2026-05-25 #4829 review: batch 023 fixes
+- 2026-05-25 #4828 review: batch 033 fixes
+- 2026-05-25 #4827 review: batch 036 fixes
+- 2026-05-25 #4826 review: batch 032 fixes
+- 2026-05-25 #4825 review: batch 028 fixes
+- 2026-05-25 #4824 review: batch 035 fixes
+- 2026-05-25 #4823 review: batch 009 fixes
+- 2026-05-25 #4822 review: batch 027 fixes
+- 2026-05-25 #4821 review: batch 019 fixes
+- 2026-05-25 #4820 review: batch 021 fixes
+- 2026-05-25 #4819 review: batch 026 fixes
+- 2026-05-25 #4818 review: batch 030 fixes
+- 2026-05-25 #4817 review: batch 031 fixes
+- 2026-05-25 #4816 review: batch 022 fixes
+- 2026-05-25 #4815 review: batch 029 fixes
+- 2026-05-25 #4814 review: batch 020 fixes
+- 2026-05-25 #4813 review: batch 017 fixes
+- 2026-05-25 #4812 review: batch 002 fixes
+- 2026-05-25 #4811 review: batch 013 fixes
+- 2026-05-25 #4810 review: batch 001 fixes (acl-qos 5 pages)
+- 2026-05-25 #4809 review: batch 003 fixes (acl-qos)
+- 2026-05-25 #4808 review: batch 006 fixes (acl-qos 5 pages)
+- 2026-05-25 #4807 review: batch 015 fixes
+- 2026-05-25 #4806 review: batch 004 fixes
+- 2026-05-25 #4805 review: batch 014 fixes
+- 2026-05-25 #4804 review: batch 016 fixes
+- 2026-05-25 #4803 review: batch 011 fixes
+- 2026-05-25 #4802 review: batch 005 fixes (acl-qos 5 pages)
+- 2026-05-25 #4801 review: batch 010 fixes
+- 2026-05-25 #4800 review: batch 007 fixes
+- 2026-05-25 #4799 review: batch 012 fixes
+- 2026-05-25 #4798 review: batch 008 fixes
+- 2026-05-25 #4796 review: batch 000 fixes (5 pages)
+- 2026-05-24 #4795 chore: gitignore .fanout/ (parallel-fanout skill run state dir)
+- 2026-05-24 #4794 chore: dedupe H2 (batch 3: acl-qos/architecture/platform)
+- 2026-05-24 #4793 chore: dedupe H2 (batch 6: topics/advanced + config-db Phase headings)
+- 2026-05-24 #4792 chore: dedupe Phase H2 duplicates in config-db (batch 7)
+- 2026-05-24 #4791 chore: dedupe H2 in config-db (batch 8)
+- 2026-05-24 #4790 chore: dedupe H2 (batch 4: platform/management)
+- 2026-05-24 #4789 chore: dedupe H1/H2 collision in topics/*/advanced.md (batch 5)
+- 2026-05-24 #4788 chore: dedupe H2 (batch 0: routing/switching)
+- 2026-05-24 #4787 chore: prune unrelated GitHub issues from 'Known Issues' sections
+- 2026-05-24 #4786 chore: dedupe H2 (batch 2: system/internals/acl-qos)
+- 2026-05-24 #4785 chore: dedupe H2 (batch 1: switching/system)
+- 2026-05-21 #4783 chore: rebalance top nav to 7 tabs
+- 2026-05-21 #4782 chore: regroup top nav into 4 tabs + clean up top page
 - 2026-05-21 #4781 chore: add CI badges to README + branch protection setup doc
 - 2026-05-21 #4780 chore: fix textlint/prh violations and flip textlint CI to strict
 - 2026-05-21 #4779 chore: fix typos and flip typos CI to strict
@@ -286,7 +511,6 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3848 docs(config-db): add Phase F side-effects block to subnet-decap
 - 2026-05-19 #3845 docs(config-db): add Phase G pubsub block to vxlan-tunnel-map
 - 2026-05-19 #3844 docs(config-db): add Phase E hardcoded-constants block to pbh-rule
-- 2026-05-19 #3827 docs(config-db): add Phase G pubsub block to fabric-port page
 - 2026-05-19 #3843 docs(config-db): add Phase D failure-behavior block to vxlan-evpn-tunnel
 - 2026-05-19 #3832 docs(config-db): add Phase E hardcoded-constants block to suppress-asic-sdk-health-event
 - 2026-05-19 #3841 docs(config-db): add Phase E hardcoded-constants block to SUBNET_DECAP
@@ -295,232 +519,8 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3837 docs(config-db): add Phase C cross-refs block to RESTAPI page
 - 2026-05-19 #3835 docs(config-db): add Phase F side-effects block to FIPS table page
 - 2026-05-19 #3834 docs(config-db): add Phase D failure-behavior block to lossless-traffic-pattern
-- 2026-05-19 #3828 docs(config-db): add Phase D failure-behavior block to vrf-orch
 - 2026-05-19 #3833 docs(config-db): add Phase G pubsub block to FABRIC_PORT
 - 2026-05-19 #3831 docs(config-db): add Phase C cross-refs block to mux-cable-port page
-- 2026-05-19 #3821 docs(config-db): add Phase D failure block tag to NTP_KEY page
 - 2026-05-19 #3830 docs(config-db): add Phase F side-effects block to pbh-state
 - 2026-05-19 #3829 docs(config-db): add Phase D failure-behavior block to STP page
-- 2026-05-19 #3826 docs(config-db): add Phase D failure-behavior block to subnet-decap
-- 2026-05-19 #3825 docs(config-db): add Phase F side-effects block to gnmi-dialin
-- 2026-05-19 #3824 docs(config-db): add Phase F side-effects block to route-map-set
-- 2026-05-19 #3823 docs(config-db): add Phase D failure-behavior block to ip-mcast-route
-- 2026-05-19 #3822 docs(config-db): add Phase E hardcoded-constants block to gnmi-counter
-- 2026-05-19 #3820 docs(config-db): add Phase C cross-refs block to vxlan-evpn-tunnel
-- 2026-05-19 #3819 docs(config-db): add Phase E hardcoded-constants block to STP_PORT page
-- 2026-05-19 #3818 docs(config-db): add Phase E hardcoded-constants block to VRRP_TRACK
-- 2026-05-19 #3817 docs(config-db): add Phase D failure-behavior block to log-config
-- 2026-05-19 #3814 docs(config-db): add Phase D failure-behavior block to ipv6-link-local
-- 2026-05-19 #3813 docs(config-db): add Phase E hardcoded-constants block to NTP_SERVER
-- 2026-05-19 #3812 docs(config-db): add Phase D failure-behavior block to redis-db-config
-- 2026-05-19 #3811 docs(config-db): add Phase C cross-refs block to ip-mcast-route
-- 2026-05-19 #3810 docs(config-db): add Phase D failure-behavior block to vnet-route
-- 2026-05-19 #3809 docs(config-db): add Phase C cross-refs block to LOGGER table
-- 2026-05-19 #3808 docs(config-db): add Phase C cross-refs block to lossless-traffic-pattern
-- 2026-05-19 #3807 docs(config-db): add Phase E/F/G blocks to NTP_GLOBAL page
-- 2026-05-19 #3806 docs(config-db): add Phase E hardcoded-constants block to pbh-state
-- 2026-05-19 #3805 docs(config-db): add Phase H platform block to stp-mst
-- 2026-05-19 #3804 docs(config-db): add Phase C cross-refs block to vrf-orch
-- 2026-05-19 #3803 docs(config-db): add Phase H platform block to SAG page
-- 2026-05-19 #3802 docs(config-db): add Phase C cross-refs block to ipv6-link-local
-- 2026-05-19 #3801 docs(config-db): add Phase E hardcoded-constants to pki-trusted-certs
-- 2026-05-19 #3800 docs(config-db): add Phase E hardcoded-constants block to RADIUS page
-- 2026-05-19 #3797 docs(config-db): add Phase E hardcoded-constants block to fips
-- 2026-05-19 #3795 docs(config-db): add Phase D failure-behavior block to suppress-asic-sdk-health-event
-- 2026-05-19 #3788 docs(config-db): add Phase E hardcoded-constants block to gnmi-dialin
-- 2026-05-19 #3793 docs(config-db): add Phase C cross-refs block to vnet-route
-- 2026-05-19 #3791 docs(config-db): add Phase D failure-behavior block to pki-trusted-certs
-- 2026-05-19 #3786 docs(config-db): add Phase B ordering block to mux-cable-state
-- 2026-05-19 #3790 docs(config-db): add Phase G pubsub block to ports-status
-- 2026-05-19 #3789 docs(config-db): add Phase D failure-behavior block to gnmi-counter
-- 2026-05-19 #3787 docs(config-db): add Phase E hardcoded-constants block to stp-orch
-- 2026-05-19 #3776 docs(config-db): add Phase B ordering block to ipv6-link-local
-- 2026-05-19 #3785 docs(config-db): add Phase D failure-behavior block to fips
-- 2026-05-19 #3784 docs(config-db): add Phase G pubsub block to gnmi-server
-- 2026-05-19 #3775 docs(config-db): add Phase B ordering block to log-config (LOGGER)
-- 2026-05-19 #3783 docs(config-db): add Phase B ordering block to lossless-traffic-pattern
-- 2026-05-19 #3782 docs(config-db): add Phase C cross-refs block to kubernetes-master
-- 2026-05-19 #3781 docs(config-db): add Phase D failure-behavior block to stp-port
-- 2026-05-19 #3779 docs(config-db): add Phase D failure-behavior block to switch-hash
-- 2026-05-19 #3778 docs(config-db): add Phase G pubsub block to fdb-aging
-- 2026-05-19 #3777 docs(config-db): add Phase B ordering block to mux-cable-port
-- 2026-05-19 #3774 docs(config-db): add Phase C cross-refs block to zmq
-- 2026-05-19 #3773 docs(config-db): add Phase D failure-behavior block to gnmi-dialin
-- 2026-05-19 #3762 docs(config-db): add Phase H platform block to ntp-global
-- 2026-05-19 #3772 docs(config-db): add Phase B ordering block to kubernetes-master
-- 2026-05-19 #3771 docs(config-db): add Phase G pubsub block to stp-mst
-- 2026-05-19 #3770 docs(config-db): fix platform marker in erspan (Phase H)
-- 2026-05-19 #3768 docs(config-db): add Phase H platform block to default-lossless-buffer-parameter
-- 2026-05-19 #3769 docs(config-db): add Phase E hardcoded-constants block to gnmi-server
-- 2026-05-19 #3763 docs(config-db): add Phase H platform block to vrrp
-- 2026-05-19 #3752 docs(config-db): add Phase H platform block to gnmi
-- 2026-05-19 #3764 docs(config-db): add Phase G pubsub block to fabric-monitor
-- 2026-05-19 #3767 docs(config-db): add Phase D failure-behavior block to gnmi-state
-- 2026-05-19 #3765 docs(config-db): add Phase D failure-behavior block to RADIUS
-- 2026-05-19 #3757 docs(config-db): add Phase E constants marker to dpu-counter
-- 2026-05-19 #3754 docs(config-db): add Phase F side-effects block to fabric-monitor
-- 2026-05-19 #3761 docs(config-db): add Phase F side-writes block to fabric-port
-- 2026-05-19 #3760 docs(config-db): add Phase B ordering block to ip-mcast-route
-- 2026-05-19 #3756 docs(config-db): add Phase G pubsub block to fabric-monitor
-- 2026-05-19 #3755 docs(config-db): add Phase H platform-diff block to fec-state
-- 2026-05-19 #3753 docs(config-db): add Phase G pubsub block to default-lossless-buffer-parameter
-- 2026-05-19 #3751 docs(config-db): add Phase H platform-diff block to dpu-counter
-- 2026-05-19 #3741 docs(config-db): add Phase D failure-behavior block to gnmi-server
-- 2026-05-19 #3750 docs(config-db): add Phase G pubsub block to dpu-orch
-- 2026-05-19 #3744 docs(config-db): add Phase F side-effects block to fabric-monitor
-- 2026-05-19 #3747 docs(config-db): add Phase D failure-behavior block to ntp-global
-- 2026-05-19 #3746 docs(config-db): add Phase F side-effects block to dot1p-to-tc-map
-- 2026-05-19 #3743 docs(config-db): add Phase G pubsub block to fec-state
-- 2026-05-19 #3740 docs(config-db): add Phase H platform block to mclag-interface
-- 2026-05-19 #3723 docs(config-db): add Phase F side-effects block to default-lossless-buffer-parameter
-- 2026-05-19 #3739 docs(config-db): add Phase H platform-diff block to nhg-table
-- 2026-05-19 #3738 docs(config-db): add Phase H platform block to fabric-monitor
-- 2026-05-19 #3692 docs(config-db): add Phase H platform-diff block to HARDWARE table
-- 2026-05-19 #3737 docs(config-db): add Phase H platform-diff block to mclag-unique-ip
-- 2026-05-19 #3735 docs(config-db): add Phase G pubsub block to dpu-counter
-- 2026-05-19 #3736 docs(config-db): add Phase G pubsub block to DOT1P_TO_TC_MAP
-- 2026-05-19 #3734 docs(config-db): add Phase G pubsub block to gnmi
-- 2026-05-19 #3732 docs(config-db): add Phase H platform-diff block to dpu-orch
-- 2026-05-19 #3726 docs(config-db): add Phase H platform block to fdb-aging
-- 2026-05-19 #3731 docs(config-db): add Phase E hardcoded-constants block to fabric-port
-- 2026-05-19 #3730 docs(config-db): add Phase G pubsub block to mclag-interface
-- 2026-05-19 #3729 docs(config-db): add Phase F side-effects block to fec-state
-- 2026-05-19 #3728 docs(config-db): add Phase E hardcoded-constants block to fabric-monitor
-- 2026-05-19 #3725 docs(config-db): add Phase G pubsub block to mclag-unique-ip
-- 2026-05-19 #3721 docs(config-db): add Phase H platform-diff block to fdb-aging
-- 2026-05-19 #3724 docs(config-db): add Phase F side-effects block to gnmi
-- 2026-05-19 #3722 docs(config-db): add Phase G pubsub block to nhg-table
-- 2026-05-19 #3719 docs(config-db): add Phase F side-effects block to dpu-orch
-- 2026-05-19 #3718 docs(config-db): add Phase F side-effects block to dpu-counter
-- 2026-05-19 #3717 docs(config-db): add Phase F side-effects block to mclag-interface
-- 2026-05-19 #3716 docs(config-db): add Phase E hardcoded-constants block to fec-state
-- 2026-05-19 #3715 docs(config-db): add Phase F side-effects block to mclag-unique-ip
-- 2026-05-19 #3714 docs(config-db): add Phase F side-effects block to fdb-aging
-- 2026-05-19 #3696 docs(config-db): add Phase H platform block to dot1p-to-tc-map
-- 2026-05-19 #3713 docs(config-db): add Phase H platform block to nat-pool
-- 2026-05-19 #3712 docs(config-db): add Phase E hardcoded-constants block to gnmi
-- 2026-05-19 #3711 docs(config-db): add Phase E hardcoded-constants block to default-lossless-buffer-parameter
-- 2026-05-19 #3710 docs(config-db): add Phase H platform-diff block to ntp-key
-- 2026-05-19 #3709 docs(config-db): add Phase F side-effects block to nhg-table
-- 2026-05-19 #3708 docs(config-db): add Phase E hardcoded-constants block to fdb-aging
-- 2026-05-19 #3707 docs(config-db): add Phase E hardcoded-constants block to mclag-interface
-- 2026-05-19 #3706 docs(config-db): add Phase E hardcoded-constants block to dpu-orch
-- 2026-05-19 #3705 docs(config-db): add Phase E hardcoded-constants block to dpu-counter
-- 2026-05-19 #3704 docs(config-db): add Phase H platform-diff block to errordb
-- 2026-05-19 #3703 docs(config-db): add Phase D failure-behavior block to fdb-aging
-- 2026-05-19 #3702 docs(config-db): add Phase E hardcoded-constants block to MCLAG_UNIQUE_IP
-- 2026-05-19 #3701 docs(config-db): add Phase G pubsub block to nat-pool
-- 2026-05-19 #3700 docs(config-db): add Phase D failure-behavior block to default-lossless-buffer-parameter
-- 2026-05-19 #3698 docs(config-db): add Phase G pubsub block to NTP_KEY
-- 2026-05-19 #3693 docs(config-db): add Phase D failure-behavior block to mclag-interface
-- 2026-05-19 #3662 docs(config-db): add Phase F/G/H to hardware (side-effects/pubsub/platform)
-- 2026-05-19 #3695 docs(config-db): add Phase E hardcoded-constants block to nhg-table
-- 2026-05-19 #3694 docs(config-db): add Phase D failure-behavior block to dpu-orch
-- 2026-05-19 #3683 docs(config-db): add Phase D failure-behavior block to GNMI page
-- 2026-05-19 #3689 docs(config-db): add Phase D failure-behavior block to dpu-counter
-- 2026-05-19 #3682 docs(config-db): add Phase C cross-refs block to default-lossless-buffer-parameter
-- 2026-05-19 #3680 docs(config-db): add Phase H platform block to deviceop-state
-- 2026-05-19 #3691 docs(config-db): add Phase F secondary DB writes block to nat-pool
-- 2026-05-19 #3690 docs(config-db): add Phase D failure-behavior block to MCLAG_UNIQUE_IP
-- 2026-05-19 #3688 docs(config-db): add Phase D failure-behavior block to MCLAG_INTERFACE
-- 2026-05-19 #3685 docs(config-db): add Phase F side-effects block to ntp-key
-- 2026-05-19 #3687 docs(config-db): add Phase C implicit cross-refs block to dpu-counter
-- 2026-05-19 #3686 docs(config-db): add Phase D failure-behavior block to nhg-table
-- 2026-05-19 #3684 docs(config-db): add Phase E hardcoded-constants block to dot1p-to-tc-map
-- 2026-05-19 #3681 docs(config-db): add Phase C implicit cross-refs block to dpu-orch
-- 2026-05-19 #3678 docs(config-db): add Phase C cross-refs block to gnmi-state
-- 2026-05-19 #3679 docs(config-db): add Phase G pubsub block to errordb
-- 2026-05-19 #3677 docs(config-db): add Phase F side-effects block to ntp-key
-- 2026-05-19 #3676 docs(config-db): add Phase C cross-refs block to gnmi-dialin
-- 2026-05-19 #3675 docs(config-db): add Phase F side-effects block to hardware
-- 2026-05-19 #3674 docs(config-db): add Phase C implicit cross-refs block to fips
-- 2026-05-19 #3673 docs(config-db): add Phase C cross-refs block to gnmi-server
-- 2026-05-19 #3672 docs(config-db): add Phase C implicit-reference map to gnmi-counter
-- 2026-05-19 #3671 docs(config-db): add Phase D failure-behavior block to fabric-port
-- 2026-05-19 #3670 docs(config-db): add Phase E constants/platform blocks to deviceop-state
-- 2026-05-19 #3669 docs(config-db): add Phase D failure-behavior block to fabric-monitor
-- 2026-05-19 #3668 docs(config-db): add Phase H platform block to neigh
-- 2026-05-19 #3667 docs(config-db): add Phase C implicit cross-table refs block to nhg-table
-- 2026-05-19 #3659 docs(config-db): add Phase H platform block to DASH_ROUTE_RULE_TABLE
-- 2026-05-19 #3665 docs(config-db): add Phase C cross-refs block to mclag-unique-ip
-- 2026-05-19 #3663 docs(config-db): add Phase H platform block to device-runtime-metadata
-- 2026-05-19 #3666 docs(config-db): add Phase C implicit-reference map to MCLAG_INTERFACE
-- 2026-05-19 #3664 docs(config-db): add Phase D failure-behavior block to fec-state
-- 2026-05-19 #3657 docs(config-db): add Phase C cross-refs block to fdb-aging
-- 2026-05-19 #3654 docs(config-db): add Phase H platform block to extended-monitor
-- 2026-05-19 #3661 docs(config-db): add Phase H platform block to device-neighbor
-- 2026-05-19 #3660 docs(config-db): add Phase C implicit cross-table refs block to ntp-global
-- 2026-05-19 #3658 docs(config-db): add Phase E hardcoded-constants block to nat-pool
-- 2026-05-19 #3656 docs(config-db): add Phase F side-effects block to errordb
-- 2026-05-19 #3655 docs(config-db): add Phase D failure-behavior block to dot1p-to-tc-map
-- 2026-05-19 #3652 docs(config-db): add Phase H platform block to device-runtime-metadata
-- 2026-05-19 #3651 docs(config-db): add Phase H platform block to extended-monitor
-- 2026-05-19 #3650 docs(config-db): add Phase H platform block to heartbeat
-- 2026-05-19 #3649 docs(config-db): add Phase H platform block to image-state
-- 2026-05-19 #3643 docs(config-db): add Phase G pubsub block to neigh
-- 2026-05-19 #3647 docs(config-db): add Phase H platform block to route-cache
-- 2026-05-19 #3648 docs(config-db): add Phase H platform block to device-neighbor-metadata
-- 2026-05-19 #3646 docs(config-db): add Phase H platform block to vnet
-- 2026-05-19 #3644 docs(config-db): add Phase H platform block to erspan
-- 2026-05-19 #3642 docs(config-db): add Phase D failure block to map-pfc-priority-to-queue
-- 2026-05-19 #3641 docs(config-db): add Phase G pubsub block to device-neighbor
-- 2026-05-19 #3640 docs(config-db): add Phase H platform block to prefix-set
-- 2026-05-19 #3639 docs(config-db): add Phase H platform block to erspan
-- 2026-05-19 #3637 docs(config-db): add Phase H platform block to route-orch-event
-- 2026-05-19 #3638 docs(config-db): add Phase H platform block to tunnel-port
-- 2026-05-19 #3636 docs(config-db): add Phase H platform-diff block to event-publisher
-- 2026-05-19 #3627 docs(config-db): add Phase H platform block to queue-state
-- 2026-05-19 #3635 docs(config-db): add Phase H platform block to pfc-wd
-- 2026-05-19 #3633 docs(config-db): add Phase G pubsub block to image-state
-- 2026-05-19 #3630 docs(config-db): add Phase G pubsub block to route-orch-event
-- 2026-05-19 #3631 docs(config-db): add Phase B ordering block to mgmt-interface
-- 2026-05-19 #3629 docs(config-db): add Phase H platform-diff block to counters-flex
-- 2026-05-19 #3628 docs(config-db): add Phase H platform-diff block to pwm
-- 2026-05-19 #3626 docs(config-db): add Phase H platform-diff block to tc-to-priority-group-map
-- 2026-05-19 #3625 docs(config-db): add Phase G pubsub block to route-rule
-- 2026-05-19 #3623 docs(config-db): add Phase F side-effects block to image-state
-- 2026-05-19 #3622 docs(config-db): add Phase H platform block to pg-watermark
-- 2026-05-19 #3621 docs(config-db): add Phase G pubsub block to deviceop-state
-- 2026-05-19 #3620 docs(config-db): add Phase H platform-diff block to queue-state
-- 2026-05-19 #3618 docs(config-db): add Phase E hardcoded-constants block to errordb
-- 2026-05-19 #3603 docs(config-db): add Phase G pubsub block to device-neighbor-metadata
-- 2026-05-19 #3617 docs(config-db): add Phase G pubsub block to erspan
-- 2026-05-19 #3615 docs(config-db): add Phase H platform block to queue-counter
-- 2026-05-19 #3612 docs(config-db): add Phase H platform-diff block to route-common
-- 2026-05-19 #3610 docs(config-db): add Phase F side-effects block to deviceop-state
-- 2026-05-19 #3609 docs(config-db): add Phase G pubsub block to pg-watermark
-- 2026-05-19 #3608 docs(config-db): add Phase E hardcoded-constants block to image-state
-- 2026-05-19 #3607 docs(config-db): add Phase H platform-diff block to state-db-port
-- 2026-05-19 #3606 docs(config-db): add Phase G pubsub block to queue-state
-- 2026-05-19 #3605 docs(config-db): add Phase G pubsub block to extended-monitor
-- 2026-05-19 #3602 docs(config-db): add Phase B ordering label to nhg-orch
-- 2026-05-19 #3599 docs(config-db): add Phase G pubsub block to route-common
-- 2026-05-19 #3597 docs(config-db): add Phase E hardcoded-constants block to deviceop-state
-- 2026-05-19 #3596 docs(config-db): add Phase H platform-diff block to state-vrf
-- 2026-05-19 #3595 docs(config-db): add Phase F side-effects block to pg-watermark
-- 2026-05-19 #3594 docs(config-db): add Phase H platform-diff block to dhcpv4-relay
-- 2026-05-19 #3592 docs(config-db): add Phase D failure-behavior block to image-state
-- 2026-05-19 #3591 docs(config-db): add Phase G pubsub block to queue-counter
-- 2026-05-19 #3590 docs(config-db): add Phase H platform-diff block to dot1p-to-pg-map
-- 2026-05-19 #3589 docs(config-db): add Phase G pubsub block to state-db-port
-- 2026-05-19 #3588 docs(config-db): add Phase F side-effects block to device-neighbor-metadata
-- 2026-05-19 #3587 docs(config-db): add Phase F side-effects block to route-common (ROUTE_REDISTRIBUTE)
-- 2026-05-19 #3586 docs(config-db): add Phase G pubsub block to heartbeat
-- 2026-05-19 #3585 docs(config-db): add Phase H platform block to state-bgp
-- 2026-05-19 #3584 docs(config-db): add Phase G pubsub block to device-runtime-metadata
-- 2026-05-19 #3582 docs(config-db): add Phase E hardcoded-constants block to pg-watermark
-- 2026-05-19 #3581 docs(config-db): add Phase H platform-diff block to nat-state
-- 2026-05-19 #3580 docs(config-db): add Phase G pubsub block to dhcpv4-relay
-- 2026-05-19 #3579 docs(config-db): add Phase H platform-diff block to nhg
-- 2026-05-19 #3578 docs(config-db): add Phase H platform block to scheduler-orch
-- 2026-05-19 #3576 docs(config-db): add Phase H platform block to nat-zone
-- 2026-05-19 #3575 docs(config-db): add Phase F side-effects block to heartbeat
-- 2026-05-19 #3574 docs(config-db): add Phase G pubsub block to state-vrf
-- 2026-05-19 #3573 docs(config-db): add Phase D failure-behavior block to pg-watermark
-- 2026-05-19 #3572 docs(config-db): add Phase F side-effects block to state-db-port
-- 2026-05-19 #3571 docs(config-db): add Phase H platform-diff block to portchannel-status
-- 2026-05-19 #3570 docs(config-db): add Phase E hardcoded-constants block to heartbeat
-- 2026-05-19 #3569 docs(config-db): add Phase H platform block to voq-inband-interface
-- 2026-05-19 #3568 docs(config-db): add Phase H platform block to nat-counters
-- 2026-05-19 #3567 docs(config-db): add Phase H platform block to dpu-state-detail
 

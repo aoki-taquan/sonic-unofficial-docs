@@ -36,7 +36,6 @@ related:
 |---------|----------------|---------|
 | `vlanmgrd` | [CONFIG_DB](../../reference/glossary.md#term-config_db) `VLAN` テーブルへの SET 操作が処理完了したとき | `cfgmgr/vlanmgr.cpp` |
 
-
 ## key 構造
 
 ```text

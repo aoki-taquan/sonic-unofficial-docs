@@ -56,7 +56,7 @@ flowchart LR
 - [`ROUTE_MAP`](../config-db/route-map.md)
 - [`ROUTE_MAP_SET`](../config-db/route-map-set.md)
 
-### 関連 YANG
+### 関連 HLD
 
 - [sonic-bgp-aggregate-address YANG](../../reference/yang/sonic-bgp-aggregate-address.md)
 - [sonic-route-common YANG](../../reference/yang/sonic-route-common.md)

@@ -2,7 +2,7 @@
 title: スナップショット
 area: meta
 verification: meta
-last_verified: 2026-05-21
+last_verified: 2026-05-26
 sources: []
 ---
 
@@ -16,30 +16,30 @@ sources: []
 
 ## verification 分布
 
-全 **1089** ページ。
+全 **1104** ページ。
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 735 |
-| runbook-verified | 27 |
-| discrepancy-found | 106 |
+| code-verified | 746 |
+| runbook-verified | 25 |
+| discrepancy-found | 109 |
 | issue-confirmed | 10 |
-| hld-only | 2 |
-| meta | 208 |
+| hld-only | 4 |
+| meta | 209 |
 | stub | 1 |
-| **合計** | **1089** |
+| **合計** | **1104** |
 
 ## last_verified 鮮度
 
-基準日 **2026-05-21**。
+基準日 **2026-05-26**。
 
 | バケツ | 件数 |
 |---|---:|
-| 今日 (0d) | 2 |
-| 7 日以内 (1-7d) | 189 |
-| 30 日以内 (8-30d) | 896 |
+| 今日 (0d) | 12 |
+| 7 日以内 (1-7d) | 23 |
+| 30 日以内 (8-30d) | 1066 |
 | 30 日超 / 古い | 0 |
-| 不明 / パース不可 | 2 |
+| 不明 / パース不可 | 3 |
 
 ## Topics 22 章 sub-page 完成度
 
@@ -47,8 +47,8 @@ sources: []
 
 | 状態 | 件数 |
 |---|---:|
-| 完成 | 69 |
-| placeholder | 41 |
+| 完成 | 68 |
+| placeholder | 42 |
 | 欠落 | 0 |
 | **合計** | **110** |
 
@@ -66,7 +66,7 @@ sources: []
 
 | 種別 | mermaid あり | 総ページ | カバレッジ |
 |---|---:|---:|---:|
-| CONFIG_DB | 288 | 293 | 98.3% |
+| CONFIG_DB | 236 | 293 | 80.5% |
 | CLI | 72 | 72 | 100.0% |
 | YANG | 84 | 84 | 100.0% |
 
@@ -79,7 +79,7 @@ sources: []
 | 項目 | 値 |
 |---|---:|
 | 用語数 (`### ` アンカー) | 335 |
-| docs 内被リンク数 | 19545 |
+| docs 内被リンク数 | 19679 |
 
 ## 直近 5 round quality-audit
 

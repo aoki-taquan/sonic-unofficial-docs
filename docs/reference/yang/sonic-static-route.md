@@ -61,7 +61,7 @@ flowchart LR
 
 - [`config route`](../cli/config-route.md)
 
-### 関連 YANG
+### 関連 HLD
 
 - [sonic-route-common YANG](../../reference/yang/sonic-route-common.md)
 

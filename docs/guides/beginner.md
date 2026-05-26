@@ -32,7 +32,7 @@ related:
 
 ## 補足情報
 
-- 全体像と DB の関係（CONFIG_DB / APPL_DB / STATE_DB / ASIC_DB、SwSS、syncd、SAI）については [初めての方の必読 10](../getting-started.md) の推奨読破順 1〜4 に沿って読むと把握しやすいです。
+- 全体像と DB の関係（CONFIG_DB / [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db) / [ASIC_DB](../reference/glossary.md#term-asic_db)、SwSS、syncd、SAI）については [初めての方の必読 10](../getting-started.md) の推奨読破順 1〜4 に沿って読むと把握しやすいです。
 - 用語は [用語集 (Glossary)](../reference/glossary.md) に一覧化されています。SAI、[orchagent](../reference/glossary.md#term-orchagent)、[syncd](../reference/glossary.md#term-syncd)、[CONFIG_DB](../reference/glossary.md#term-config_db)、[YANG](../reference/glossary.md#term-yang)、[FRR](../reference/glossary.md#term-frr)、PMON、multi-[ASIC](../reference/glossary.md#term-asic) などを読みながら逐次参照してください。
 - 各 area の読み進め方は [Topics 章扉](../topics/index.md) にまとまっています。
 
@@ -44,4 +44,4 @@ related:
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: b8175455c8ca -->

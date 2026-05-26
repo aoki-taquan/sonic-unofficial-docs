@@ -41,7 +41,6 @@ related:
 !!! note "CONFIG_DB との関係"
     FEC の **設定** は `CONFIG_DB` の `PORT` テーブル (`fec` フィールド) で行う。このページで説明するフィールドはその設定が ASIC に適用された結果として STATE_DB に書き戻される oper 状態値。
 
-
 ## key 構造
 
 ```text

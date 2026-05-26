@@ -445,7 +445,7 @@ CLI / [gNMI](../../reference/glossary.md#term-gnmi) 経由の CONFIG_DB 書き�
 
 ### APPL_DB / STATE_DB への副次書込
 
-**0 件。** `NtpCfg` は `ProducerStateTable` / `NotificationProducer` 等の DB 書込メンバを保有せず、`NTP_KEY` 変更を [APPL_DB](../../reference/glossary.md#term-appl_db)・STATE_DB・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) いずれにも伝播しない。
+**0 件。** `NtpCfg` は `ProducerStateTable` / `NotificationProducer` 等の DB 書込メンバを保有せず、`NTP_KEY` 変更を [APPL_DB](../../reference/glossary.md#term-appl_db)・[STATE_DB](../../reference/glossary.md#term-state_db)・[COUNTERS_DB](../../reference/glossary.md#term-counters_db)・[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) いずれにも伝播しない。
 
 ### ファイル書込: `/etc/chrony/chrony.keys`
 
@@ -554,4 +554,4 @@ ntp_srv_key_handler(key="1", op="SET", data={...})
 [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) (`type=SmartSwitchDPU`) は `169.254.200.254`（midplane ブリッジ）を NTP ソースとして使用し、midplane 経由で [NPU](../../reference/glossary.md#term-npu) 側の chrony と時刻同期する。midplane NTP サーバは通常 NTP 認証を要求しないため、`NTP_KEY` は設定されないのが一般的である（テストデータ: `ntp_smartswitch_dpu_interfaces.json` — `authentication=disabled`）。`NTP_KEY` を設定した場合も `chrony.keys.j2` は標準処理で鍵ファイルを生成し、DPU 固有の特別処理は発生しない。
 <!-- /platform -->
 
-<!-- glossary-links-injected: e09d41125b61 -->
+<!-- glossary-links-injected: 6981be1a469d -->

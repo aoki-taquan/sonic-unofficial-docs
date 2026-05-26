@@ -468,7 +468,7 @@ show vxlan vlanvnimap
 
 ### 段階 1: Consumer 登録 (CONFIG_DB → vxlanmgrd)
 
-- **vxlanmgrd (VxlanMgr)**: CONFIG_DB の `VXLAN_TUNNEL_MAP` テーブルを `SubscriberStateTable` で購読 (`vxlanmgrd.cpp:46-51`)。
+- **[vxlanmgrd](../../reference/glossary.md#term-vxlanmgrd) (VxlanMgr)**: CONFIG_DB の `VXLAN_TUNNEL_MAP` テーブルを `SubscriberStateTable` で購読 (`vxlanmgrd.cpp:46-51`)。
 
 ### 段階 2: CFG → APPL 翻訳 (vxlanmgrd)
 
@@ -568,4 +568,4 @@ VRF  (VRFOrch)  ───┼──→ VXLAN_TUNNEL ──→ VXLAN_TUNNEL_MAP
 
 <!-- /cross-refs -->
 
-<!-- glossary-links-injected: ef52452d313c -->
+<!-- glossary-links-injected: 287238f257a0 -->

@@ -147,12 +147,12 @@ related:
 **関連する HLD 7 件**
 
 - [Dynamic Headroom Calculation（buffer_model = dynamic）](../../acl-qos/dynamically-headroom-calculation.md)
-- [Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）](../../acl-qos/asymmetric-pfc-test-plan.md)
 - [未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス](../../acl-qos/reclaim-reserved-buffer-sequence-flow.md)
 - [Reclaim Reserved Buffer（admin-down ポートの zero_profile）](../../acl-qos/reclaim-reserved-buffer.md)
 - [バッファ Watermark カウンタ（PG / queue 占有量の最大値追跡）](../../acl-qos/watermark-counters-in-sonic.md)
-- [設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）](../../acl-qos/configurable-drop-counters-in-sonic.md)
+- [Asymmetric PFC テストプラン（PTF + sonic-mgmt fixtures）](../../acl-qos/asymmetric-pfc-test-plan.md)
 - [ポートの動的 add / del（zero-port 起動と post-init 操作）](../../acl-qos/enhancements-to-add-or-del-ports-dynamically.md)
+- [ポートバッファドロップカウンタ（PORT_BUFFER_DROP FC group）](../../acl-qos/port-buffer-drop-counters-in-sonic.md)
 
 **関連トラブルシュート 5 件**
 

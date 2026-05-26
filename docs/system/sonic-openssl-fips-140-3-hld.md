@@ -133,7 +133,7 @@ reasoning: kernel cmdline 切替と debian 同梱パッケージの根拠。
     ... Provide SymCrypt OpenSSL debian package. Package name: symcrypt-openssl
     ```
 
-    **判断根拠**: kernel cmdline 切替と debian 同梱パッケージの根拠。なお、上記抜粋中の `fips=1` は upstream HLD L94 の表記だが、同 HLD L131 では SONiC 固有パラメタとして `sonic_fips=1` を明示している。本文の説明はこの区別に従う。
+    **判断根拠**: kernel cmdline 切替と debian 同梱パッケージの根拠。
 
 <!-- evidence-rendered:end -->
 

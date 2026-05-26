@@ -50,7 +50,6 @@ related:
 
 ---
 
-
 ## BGP_STATE_TABLE (STATE_DB)
 
 ### 目的

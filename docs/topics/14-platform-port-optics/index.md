@@ -64,13 +64,23 @@ related:
   - show interfaces
   - config interface
   - config platform firmware
+  - show interfaces transceiver
+  - config acl
+  - config interface breakout
   config_db:
   - PORT
   - BREAKOUT_CFG
   - DEVICE_METADATA
+  - ACL_TABLE
+  - ACL_RULE
+  - PORTCHANNEL
+  - BUFFER_PG
   yang:
   - sonic-port
   - sonic-cable-length
+  - sonic-crm
+  - sonic-snmp
+  - sonic-xcvrd-log
 ---
 
 # Platform / Port / Optics / PHY
@@ -137,20 +147,20 @@ related:
 **関連する HLD 7 件**
 
 - [sfputil read-eeprom / write-eeprom（ページ + オフセット指定で SFP/QSFP EEPROM 操作）](../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset.md)
-- [SONiC ポート命名規則の変更案（et[sX]pY[abcd]）](../../platform/sonic-port-naming-convention-change.md)
-- [VOQ シャーシの Fabric ポート（fabric ASIC 管理 / link monitoring）](../../platform/fabric-port-support-on-sonic.md)
+- [sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）](../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offs.md)
+- [FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）](../../platform/fec-flr-support-in-sonic-concepts.md)
+- [FEC FLR 制限事項と HLD との乖離（CLI 未取り込み / ハードコード値）](../../platform/fec-flr-support-in-sonic-limitations.md)
 - [FEC FLR 設定・運用（counterpoll / show interfaces counters fec-stats / portstat -f）](../../platform/fec-flr-support-in-sonic-operations.md)
 - [新 Platform API（sonic_platform / Chassis / PSU/Fan/Sfp の Python クラス階層）](../../platform/global-platform-specific-psuutil-class-instance.md)
-- [sfputil read-eeprom / write-eeprom（page+offset 単位の生 EEPROM 読み書き）](../../platform/sfputil-add-the-ability-to-read-write-any-byte-from-eerpom-both-by-page-and-offset.md)
-- [FEC FLR 概念（FLR / CER / interleaving / observed vs predicted）](../../platform/fec-flr-support-in-sonic-concepts.md)
+- [FEC FLR 内部実装（port_flr.lua / FlexCounterOrch / SAI counter mapping）](../../platform/fec-flr-support-in-sonic-internals.md)
 
 **関連トラブルシュート 5 件**
 
 - [CONFIG_DB の永続化が失敗する](../../reference/runbooks/config-db-persistence-failure.md)
-- [PINS gRPC (P4Runtime) が応答しない](../../reference/runbooks/pins-grpc-unresponsive.md)
 - [minigraph 適用後に reload が完了しない / 起動が固まる](../../reference/runbooks/minigraph-reload-stuck.md)
 - [Multi-ASIC で namespace 間通信できない](../../reference/runbooks/multi-asic-namespace.md)
 - [counter が更新されない (FLEX_COUNTER)](../../reference/runbooks/flex-counter-stuck.md)
+- [PINS gRPC (P4Runtime) が応答しない](../../reference/runbooks/pins-grpc-unresponsive.md)
 
 <!-- /next-reads -->
 

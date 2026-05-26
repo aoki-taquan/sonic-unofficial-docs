@@ -45,7 +45,6 @@ related:
     同名テーブルが `APPL_DB`・`STATE_DB`・`APPL_STATE_DB` の 3 箇所に存在する。  
     STATE_DB の `ROUTE_TABLE` はデフォルト経路専用の別テーブル（[ROUTE_TABLE (STATE_DB)](route-state.md) 参照）。
 
-
 ## key 構造
 
 ```text
@@ -126,7 +125,7 @@ if (m_enable_db_write_and_notify &&
 
 ## fpmsyncd による購読 — `onRouteResponse()`
 
-ソース: `fpmsyncd/routesync.cpp` lines 3165–3265[^fpmsyncd]
+ソース: `fpmsyncd/routesync.cpp` lines 3165–3265[^[fpmsyncd](../../reference/glossary.md#term-fpmsyncd)]
 
 `fpmsyncd` は `APPL_DB_ROUTE_TABLE_RESPONSE_CHANNEL` を `NotificationConsumer` で購読し、通知を `onRouteResponse()` に渡す。
 
@@ -160,7 +159,7 @@ for (const auto& fieldValue: fieldValues)
 
 ## Warm Restart 時の動作
 
-Warm restart 完了後、`fpmsyncd::onWarmStartEnd()` が呼ばれる際に `markRoutesOffloaded()` が実行される[^fpmsyncd]:
+Warm restart 完了後、`fpmsyncd::onWarmStartEnd()` が呼ばれる際に `markRoutesOffloaded()` が実行される[^[fpmsyncd](../../reference/glossary.md#term-fpmsyncd)]:
 
 ```cpp
 void RouteSync::markRoutesOffloaded(swss::DBConnector& db)
@@ -791,4 +790,4 @@ APPL_STATE_DB> hgetall ROUTE_TABLE:192.168.0.0/16
 [^fpmsyncd]: fpmsyncd onRouteResponse / markRoutesOffloaded 実装: `fpmsyncd/routesync.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/fpmsyncd/routesync.cpp#L3165>
 [^schema]: テーブル名・DB インデックス定数: `common/schema.h`. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h#L27>
 
-<!-- glossary-links-injected: 5d1acc823840 -->
+<!-- glossary-links-injected: d9fdc0139788 -->

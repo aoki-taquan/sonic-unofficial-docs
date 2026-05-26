@@ -41,7 +41,6 @@ related:
 !!! note "`oper_status` はここではない"
     ポートの SAI oper-status (`up`/`down`) は `PortsOrch::updateDbPortOperStatus()` が **APP_DB** `PORT_TABLE` に書く（STATE_DB ではない）。`sonic-swss/orchagent/portsorch.cpp:3930` 参照。
 
-
 ## key 構造
 
 ```text

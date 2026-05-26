@@ -38,7 +38,6 @@ related:
 
 `LLDP_LOC_CHASSIS` は自ノードのローカル [LLDP](../../reference/glossary.md#term-lldp) 情報を保持する単一エントリテーブルで、同様に [APPL_DB](../../reference/glossary.md#term-appl_db) に存在する[^2]。
 
-
 ## key 構造
 
 ```text

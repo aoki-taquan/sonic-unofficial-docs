@@ -231,6 +231,10 @@ redis-cli -n 6 keys 'ASIC_SDK_HEALTH_EVENT*'
 - **runtime バグの取り逃し**: vendor libsai が `SAI_API_VERSION` を実態と異なる値で返すバグは検知できない。属性 ID / enum 値の異常は依然発生し得る。
 - **vendor 越境の責任分界**: `sonic-sairedis` 更新時には対応する vendor libsai を同 PR で更新する責任が CI workflow にハードコードされており、片側だけ更新すると CI が落ちる。
 
+## 実装との乖離
+
+`monitor: partially_implemented` — HLD は SAI バージョン比較を **MAJOR.MINOR の等値比較** とするが、実装（`sonic-sairedis/configure.ac` l.226-261）は `minversion = SAI_VERSION(1,9,0)` の **floor チェック** に緩和されている（`return (version < minversion) || (SAI_API_VERSION < minversion);` のみが失敗条件）。MAJOR ずれや MINOR 上方差も許容するため、HLD 提案より実装は大幅に緩い。緩和の根拠は configure.ac コメントで OCP SAI PR 1297（enum binary backward compat）および PR 1795（structs）を引用。`syncd/VendorSai.cpp` l.52 の `.query_api_version = &sai_query_api_version` は実装済みで、`sai_query_api_version()` の呼び出し自体は機能する。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/sonic-build-system/saiversioncheck.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
