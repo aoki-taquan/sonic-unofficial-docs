@@ -15768,15 +15768,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -35225,15 +35225,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -35343,7 +35343,7 @@
 <li>Authz / Pathz / CRL を有効化する設定は、telemetry config 構造体の <code>AuthzPolicy = true</code> / <code>AuthzPolicyFile = "/path/to/policy.json"</code> / <code>PathzPolicy = true</code> / <code>PathzPolicyFile = "..."</code> / <code>CertCRLConfig = "..."</code> を設定する。HLD の flag 名表記には引きずられない。</li>
 <li>gNSI profile state を観測したい場合は、gNMI Probe / Get RPC を直接叩いて handler の戻り値を見る。STATE_DB 経由は機能しない。</li>
 </ul>
-<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
+<h3 id="2026-05-11">再裏取り追補（2026-05-11）<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>sonic-gnmi/gnmi_server/gnsi_authz.go</code> / <code>gnsi_certz.go</code> / <code>gnsi_pathz.go</code> は実装済みだが、<code>gnsi_credentialz.go</code> 相当のサーバハンドラは不在 (<code>ls .cache/sonic-sources/sonic-gnmi/gnmi_server/gnsi_*.go</code> で credentialz ファイル無し)。</li>
 <li>フラグ名差異: HLD <code>EnableAuthzPolicy</code> → 実装 <code>AuthzPolicy</code> (<code>server.go:240,243</code>)、ポリシーファイル <code>AuthzPolicyFile</code> / <code>PathzPolicyFile</code>、CRL は <code>CertCRLConfig</code>。</li>

@@ -14501,10 +14501,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verifier-batch-29" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        裏取りメモ（Verifier batch 29）
+        裏取りメモ
       
     </span>
   </a>
@@ -14512,7 +14512,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装フェーズ境界
@@ -14523,7 +14523,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離 / 補足
@@ -35612,10 +35612,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verifier-batch-29" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        裏取りメモ（Verifier batch 29）
+        裏取りメモ
       
     </span>
   </a>
@@ -35623,7 +35623,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装フェーズ境界
@@ -35634,7 +35634,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離 / 補足
@@ -35885,7 +35885,7 @@ reasoning: 60s polling と error 時 DOM 停止 / static 保持の根拠。
 - vendor platform API（sfputil base）と xcvrd の event 連携確認
 -->
 
-<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<h2 id="_10">裏取りメモ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p><code>xcvrd</code> 本体と TRANSCEIVER_* テーブル更新ロジックは現行 <code>sonic-platform-daemons</code> に取り込み済み。</p>
 <ul>
 <li><code>xcvrd</code> ディレクトリ: <code>.cache/sonic-sources/sonic-platform-daemons/sonic-xcvrd/xcvrd/</code></li>
@@ -35896,7 +35896,7 @@ reasoning: 60s polling と error 時 DOM 停止 / static 保持の根拠。
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
-<h2 id="_10">実装フェーズ境界<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">実装フェーズ境界<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <p>本ページは <code>monitor: partially_implemented</code> のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。</p>
 <table>
 <thead>
@@ -35924,7 +35924,7 @@ reasoning: 60s polling と error 時 DOM 停止 / static 保持の根拠。
 </tr>
 </tbody>
 </table>
-<h2 id="_11">実装との乖離 / 補足<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">実装との乖離 / 補足<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <ul>
 <li>裏取りステータスを <code>code-verified</code> から <code>discrepancy-found</code> （<code>monitor: partially_implemented</code>）に降格 (2026-05-13)。xcvrd の現行構造、TRANSCEIVER_* テーブルの現行スキーマ（CMIS 拡張による多数フィールド追加）、polling interval 60s の妥当性は本文で「未確認」と明示している。</li>
 <li>本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。</li>

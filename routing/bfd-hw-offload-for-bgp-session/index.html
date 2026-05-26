@@ -9032,15 +9032,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -35623,15 +35623,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -35922,8 +35922,7 @@ reasoning: link-local シナリオでの inject-down モード要件と、MAC �
 </ul>
 <h3 id="_9">結論<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
 <p>本ページの記述は <strong>HLD の Proposal 仕様</strong> であり、現行 master では <code>bfdsyncd</code> / <code>bfd_hw_offload</code> / remote 系 SAI get 経路のいずれも実装されていない。SAI 側に HW BFD 機能はあるため、static route 用 HW BFD HLD の経路を経由してマニュアルにセッションを張ることは可能。</p>
-<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
-<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<h3 id="2026-05-11">再裏取り追補（2026-05-11）<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>bfdsyncd</code> プロセスは未実装 (<code>find .cache/sonic-sources/sonic-buildimage/dockers/docker-fpm-frr -name '*bfdsync*'</code> 結果 0)。</li>
 <li>BGP container <code>supervisord.conf.j2</code> に <code>bfdsyncd</code> プログラムエントリ無し。FRR-bfdd → APPL_DB の翻訳役が居ない。</li>

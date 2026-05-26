@@ -16225,10 +16225,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verifier-batch-29" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        裏取りメモ（Verifier batch 29）
+        裏取りメモ
       
     </span>
   </a>
@@ -16247,7 +16247,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -35529,10 +35529,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verifier-batch-29" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        裏取りメモ（Verifier batch 29）
+        裏取りメモ
       
     </span>
   </a>
@@ -35551,7 +35551,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -35623,7 +35623,7 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified</p>
-<p>本テストプランが前提とする TACACS+ 認証経路（<code>hostcfgd</code> による PAM <code>/etc/pam.d/common-auth-sonic</code> 生成、<code>config tacacs</code> CLI、failthrough オプション、loopback source IP の挙動）は Verifier batch 29 で現行 master 実装を確認済み。詳細は本ページ末尾の裏取りメモを参照。</p>
+<p>本テストプランが前提とする TACACS+ 認証経路（<code>hostcfgd</code> による PAM <code>/etc/pam.d/common-auth-sonic</code> 生成、<code>config tacacs</code> CLI、failthrough オプション、loopback source IP の挙動）は現行 master 実装を確認済み。詳細は本ページ末尾の裏取りメモを参照。</p>
 </div>
 <h1 id="tacacs-pam_tacplus-ssh-login">TACACS+ 認証テストプラン（<code>pam_tacplus</code> + ssh login）<a class="headerlink" href="#tacacs-pam_tacplus-ssh-login" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
@@ -35777,7 +35777,7 @@
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>journalctl<span class="w"> </span>-u<span class="w"> </span>hostcfgd<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>tacacs<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
 </span></code></pre></div>
 <h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<h2 id="_10">裏取りメモ<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>テストプランが前提とする TACACS+ 認証経路の各実装を <code>hostcfgd</code> で確認した。</p>
 <ul>
 <li>TACACS+ 既定値: <code>.cache/sonic-sources/sonic-host-services/scripts/hostcfgd</code> L87-L89 (<code>TACPLUS_SERVER_PASSKEY_DEFAULT=""</code>, <code>TACPLUS_SERVER_TIMEOUT_DEFAULT="5"</code>, <code>TACPLUS_SERVER_AUTH_TYPE_DEFAULT="pap"</code>)</li>
@@ -35797,7 +35797,7 @@
 <!-- glossary-links-injected: 9bd150521228 -->
 
 <!-- ops-entry -->
-<h2 id="_10">運用入口<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_11">運用入口<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <p>この <a href="../../reference/glossary/#term-hld">HLD</a> に対応する運用面の入口（CLI / <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / <a href="../../reference/glossary/#term-yang">YANG</a> / Runbook）を以下にまとめる。</p>
 <h3 id="cli_1">関連 CLI<a class="headerlink" href="#cli_1" title="Permanent link">&para;</a></h3>
 <ul>

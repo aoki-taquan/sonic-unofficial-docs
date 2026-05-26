@@ -16181,15 +16181,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -35585,15 +35585,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -36039,8 +36039,7 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 <li>master key インフラを使った暗号化を試したい場合は、<code>security_cipher.py</code> の <code>encrypt</code>/<code>decrypt</code> API を直接呼んで passkey を加工し、独自スクリプトで hostcfgd の代わりに <code>/etc/pam.d/common-auth-sonic</code> に注入する独自経路を組む必要がある（保守性は低い）。</li>
 <li>上流の CLI / hostcfgd 取り込み PR を待つのが本筋。</li>
 </ul>
-<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
-<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<h3 id="2026-05-11">再裏取り追補（2026-05-11）<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>master key ファイル名差異: HLD <code>/etc/cipher_pass</code> → 実装 <code>/etc/cipher_pass.json</code> (<code>sonic_py_common/security_cipher.py:18</code>)。JSON 構造で暗号化ペイロードを保持する設計に進化。</li>
 <li>YANG <code>key_encrypt</code> leaf は取り込み済み (<code>sonic-system-tacacs.yang</code> L47/L100-101/L148-149)。</li>

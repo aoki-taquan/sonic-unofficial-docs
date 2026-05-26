@@ -17867,15 +17867,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -35501,15 +35501,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -35822,8 +35822,7 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 <ul>
 <li>上記乖離は HLD の v0.1 と現行実装の間で構造そのものがリファクタされたことを示唆する。設計趣旨（gNOI 経由で DPU を graceful に止める）は実装に活きているが、daemon 構成・テーブル構造は HLD と一致しない。</li>
 </ul>
-<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
-<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<h3 id="2026-05-11">再裏取り追補（2026-05-11）<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>gnoi_reboot_daemon.py</code> は未実装 (<code>find .cache/sonic-sources/sonic-platform-daemons -iname '*gnoi*'</code> 結果 0)。</li>
 <li>代替実装: <code>sonic-chassisd/scripts/chassisd</code> L256/L1362 で <code>module.set_admin_state_gracefully(admin_state)</code> を直接呼び、L1373 で <code>module.clear_module_gnoi_halt_in_progress()</code>。</li>

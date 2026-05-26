@@ -13952,10 +13952,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verifier-batch-29" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
-        裏取りメモ（Verifier batch 29）
+        裏取りメモ
       
     </span>
   </a>
@@ -13963,7 +13963,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装フェーズ境界
@@ -13974,7 +13974,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離 / 補足
@@ -35578,10 +35578,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verifier-batch-29" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
-        裏取りメモ（Verifier batch 29）
+        裏取りメモ
       
     </span>
   </a>
@@ -35589,7 +35589,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装フェーズ境界
@@ -35600,7 +35600,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
+  <a href="#_18" class="md-nav__link">
     <span class="md-ellipsis">
       
         実装との乖離 / 補足
@@ -35820,7 +35820,7 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 <li><strong>複数 ASIC</strong>: multi-ASIC では namespace ごとに <code>crm</code> を実行する必要があり、グローバルな集計ビューは標準提供されない。</li>
 </ul>
 <h2 id="_15">引用元<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
-<h2 id="verifier-batch-29">裏取りメモ（Verifier batch 29）<a class="headerlink" href="#verifier-batch-29" title="Permanent link">&para;</a></h2>
+<h2 id="_16">裏取りメモ<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <p>CRM 要件 HLD の実装は <code>sonic-swss</code> の <code>orchagent</code> と <code>sonic-utilities</code> の <code>crm</code> CLI に取り込み済み。</p>
 <ul>
 <li>CRM Orch 実装: <code>.cache/sonic-sources/sonic-swss/orchagent/crmorch.cpp</code> / <code>crmorch.h</code>（Route / Nexthop / Neighbor / NextHop Group / ACL Table / ACL Group / ACL Counter / FDB / IPMC / SNAT / DNAT 等の resource 使用量を SAI 経由でポーリングし、threshold 超過時 syslog WARNING を出す）</li>
@@ -35831,7 +35831,7 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 <!-- topics-back-ref -->
 
 <!-- demoted-by:q52-az-b-demote -->
-<h2 id="_16">実装フェーズ境界<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<h2 id="_17">実装フェーズ境界<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <p>本ページは <code>monitor: partially_implemented</code> のため、HLD 記載どおり master に取り込み済 (実装済) の範囲と、現行 master との差分が未確認 (未実装相当) の範囲を Phase 別に切り分けて示す。詳細は本文・[実装との乖離 / 補足] 節および各引用元 HLD を参照。</p>
 <table>
 <thead>
@@ -35859,9 +35859,9 @@ reasoning: 「使用数は orchagent 追跡」「空き数は SAI API」「FLEX 
 </tr>
 </tbody>
 </table>
-<h2 id="_17">実装との乖離 / 補足<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
+<h2 id="_18">実装との乖離 / 補足<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Verifier batch 29 にて <code>code-verified</code> に昇格 (2026-05-13)。CRM Orch 実装・CLI・YANG の三点裏取り完了。</li>
+<li>実裏取りで <code>code-verified</code> に昇格 (2026-05-13)。CRM Orch 実装・CLI・YANG の三点裏取り完了。</li>
 <li>要件 HLD はテーブル名を明示していないが、実装側で <code>CRM|Config</code> として追加されており整合を確認。</li>
 </ul>
 <h2 id="topics">関連 Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>

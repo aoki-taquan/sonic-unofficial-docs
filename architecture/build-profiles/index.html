@@ -7370,15 +7370,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -35643,15 +35643,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -35972,8 +35972,7 @@ reasoning: 取り込み順位と後方互換性の根拠。
 <li><strong>複数フラグを並べる従来形に倒す</strong>: <code>make ENABLE_FOO=y ENABLE_BAR=y all</code> をそのまま CI に書き、可読性は CI ファイル側で補う。</li>
 <li>上流取り込みを推進する場合は <code>sonic-buildimage</code> 側に <code>Makefile.work</code> の 1 行 patch (<code>-include rules/profiles/$(PROFILE).mk</code>) + <code>rules/profiles/</code> ディレクトリ追加の PR を出すのが最小コスト。</li>
 </ul>
-<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
-<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<h3 id="2026-05-11">再裏取り追補（2026-05-11）<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>sonic-buildimage/Makefile.work</code> 全行を再 grep しても <code>rules/profiles/</code> を include する行は 0 件 (<code>grep -n profiles .cache/sonic-sources/sonic-buildimage/Makefile.work</code> でヒット無し)。HLD は提案段階のまま。</li>
 <li><code>rules/config</code> (L1 以降) と <code>rules/config.user</code> (<code>Makefile.work</code> 末尾の <code>-include</code>) の 2 段のみ存在し、3 段目は不在。</li>

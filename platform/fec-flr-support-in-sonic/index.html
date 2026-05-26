@@ -17324,15 +17324,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -35546,15 +35546,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -36029,8 +36029,7 @@ reasoning: counter poll プラグインの登録位置と FLR_INTERVAL_FACTOR �
 <li>計算閾値の調整も同様に lua スクリプトレベル。動的にはチューニング不可。</li>
 <li>動的設定を求めるなら、<code>counterpoll port flr-interval-factor</code> CLI の上流 PR 追跡が必要。</li>
 </ul>
-<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
-<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<h3 id="2026-05-11">再裏取り追補（2026-05-11）<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>コアロジックと表示は取り込み済み: <code>sonic-swss/orchagent/port_flr.lua</code> L1-460、<code>sonic-swss/crates/countersyncd/src/sai/saiport.rs</code> L766-782 で SAI_PORT_STAT_IF_IN_FEC_CODEWORD_ERRORS_S0..S16 を列挙（ただし FLR 計算側 <code>port_flr.lua</code> L135 は S0..S15 の 16 bin のみ使用、S16 は拡張定義）、<code>sonic-utilities/utilities_common/portstat.py</code> L50/L271-273/L671-673 で表示列追加。</li>
 <li>ハードコード値: <code>port_flr.lua</code> L29-32 で <code>BIN_FILTER_VALUE=10</code> / <code>MIN_SIGNIFICANT_BINS=2</code> / <code>MFC=8</code>、L31 で <code>FEC_FLR_POLL_INTERVAL=120</code>（秒固定）。</li>

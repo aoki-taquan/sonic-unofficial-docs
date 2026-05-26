@@ -16259,15 +16259,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -35596,15 +35596,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#round-2-2026-05-11" class="md-nav__link">
+  <a href="#2026-05-11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        監査 round 2 追補（2026-05-11）
+        再裏取り追補（2026-05-11）
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="監査 round 2 追補（2026-05-11）">
+    <nav class="md-nav" aria-label="再裏取り追補（2026-05-11）">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -35901,8 +35901,7 @@ reasoning: APPL_STATE_DB の役割と失敗時のロールバック動作の根�
 <li>設計ドキュメントを書く際は HashOrch ではなく <strong>SwitchOrch のハッシュ責務</strong> として記述する。</li>
 <li>ハッシュフィールド名の対応は <code>switch_helper.cpp:24-</code> のテーブルを正として参照。新規フィールド追加時はこのマップに対応エントリを足す必要がある。</li>
 </ul>
-<h3 id="round-2-2026-05-11">監査 round 2 追補（2026-05-11）<a class="headerlink" href="#round-2-2026-05-11" title="Permanent link">&para;</a></h3>
-<p>監査 round 2 で再裏取りした結果と、運用者向けの追加情報を補強する。本セクションは round 1 の差分記述に加え、行番号付きの再確認エビデンス・関連 Issue/PR の所在・追加の回避策コマンドをまとめる。</p>
+<h3 id="2026-05-11">再裏取り追補（2026-05-11）<a class="headerlink" href="#2026-05-11" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>HashOrch</code> クラスは存在せず、<code>SwitchOrch</code> が <code>CFG_SWITCH_HASH_TABLE_NAME</code> を消費 (<code>sonic-swss/orchagent/switchorch.cpp:1507</code>, <code>orchdaemon.cpp:199</code>)。</li>
 <li><code>switch_helper.cpp:24-</code> に <code>SWITCH_HASH_FIELD_*</code> → <code>SAI_NATIVE_HASH_FIELD_*</code> の対応マップ。</li>
