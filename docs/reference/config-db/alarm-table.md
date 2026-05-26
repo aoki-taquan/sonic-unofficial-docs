@@ -41,7 +41,6 @@ related:
 - `action=ACK_ALARM` 受信 → `acknowledged=true`、`acknowledge-time` 更新
 - `action=UNACK_ALARM` 受信 → `acknowledged=false`、`acknowledge-time` 更新
 
-
 ## key 構造
 
 ```text

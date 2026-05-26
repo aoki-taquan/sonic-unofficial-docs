@@ -53,7 +53,7 @@ related:
 このページは概要ハブ。掘り下げは派生ページに分割した:
 
 - [MCLAG Enhancements 概念](mclag-enhancements-concepts.md) — 7 軸拡張のユースケース整理（dynamic config / timer / static MAC / aging / sync 最適化 / isolation group / unique IP）
-- [MCLAG Enhancements 内部実装](mclag-enhancements-internals.md) — iccpd / MclagSyncd / FdbOrch / IsolationGroupOrch / PortsOrch の役割分担と APPL_DB / STATE_DB スキーマ・ICCP TLV
+- [MCLAG Enhancements 内部実装](mclag-enhancements-internals.md) — iccpd / MclagSyncd / FdbOrch / IsolationGroupOrch / PortsOrch の役割分担と APPL_DB / [STATE_DB](../reference/glossary.md#term-state_db) スキーマ・ICCP TLV
 - [MCLAG Enhancements 運用](mclag-enhancements-operations.md) — click / KLISH CLI、典型設定、show / mclagdctl / redis-cli 確認、トラブルシュート
 
 ## なぜ拡張するのか
@@ -189,8 +189,7 @@ redis-cli -n 0 HGETALL "ISOLATION_GROUP_TABLE:1"
 ## 関連 Topics
 
 - [Topics: L2 / VLAN / LAG / MC-LAG](../topics/06-l2-vlan-lag/index.md)
-- [Topics: Dual ToR](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f08c435ee15d -->
+<!-- glossary-links-injected: 6981be1a469d -->

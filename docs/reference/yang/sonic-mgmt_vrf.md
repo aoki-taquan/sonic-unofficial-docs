@@ -56,7 +56,7 @@ flowchart LR
 
 - [`config vrf`](../cli/config-vrf.md)
 
-### 関連 YANG
+### 関連 HLD
 
 - [sonic-ntp YANG](../../reference/yang/sonic-ntp.md)
 - [sonic-snmp YANG](../../reference/yang/sonic-snmp.md)

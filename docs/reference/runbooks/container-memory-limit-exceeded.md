@@ -87,7 +87,7 @@ sonic-db-cli CONFIG_DB hgetall "FEATURE|<feature>"
 ## 対処方法
 
 - container 再起動: `sudo systemctl restart <feature>`
-- limit 引き上げ: `/usr/share/sonic/templates/docker_image_ctl.j2` を修正してイメージを再 build（sonic-buildimage ビルド時に各コンテナの起動スクリプトへ展開される）
+- limit 引き上げ: `/usr/share/sonic/templates/docker_image_ctl.j2` を修正してイメージを再 build（[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) ビルド時に各コンテナの起動スクリプトへ展開される）
 - leak 疑い → memory profiling し upstream issue
 - 不要 feature 無効化: `sudo config feature state <feat> disabled`
 
@@ -114,4 +114,4 @@ sonic-db-cli CONFIG_DB hgetall "FEATURE|<feature>"
 [^1]: sonic-net/[sonic-buildimage](../../reference/glossary.md#term-sonic-buildimage) @ 4305596 — sonic_debian_extension
 [^2]: sonic-net/sonic-host-services @ 4305596 — [hostcfgd](../../reference/glossary.md#term-hostcfgd) feature mgr
 
-<!-- glossary-links-injected: cdc10e959ceb -->
+<!-- glossary-links-injected: 75921d013977 -->

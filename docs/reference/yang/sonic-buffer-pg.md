@@ -24,7 +24,7 @@ related:
 - import: `sonic-port`, `sonic-buffer-profile`
 - top container: `sonic-buffer-pg`
 
-SONiC ポートの Ingress バッファ優先グループ ([Priority Group](../../reference/glossary.md#term-priority-group)) 設定を管理する [YANG](../../reference/glossary.md#term-yang) モジュール。[^1]
+[SONiC](../../reference/glossary.md#term-sonic) ポートの Ingress バッファ優先グループ ([Priority Group](../../reference/glossary.md#term-priority-group)) 設定を管理する [YANG](../../reference/glossary.md#term-yang) モジュール。[^1]
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -52,7 +52,7 @@ flowchart LR
 
 - [`BUFFER_PG`](../config-db/buffer-pg.md)
 
-### 関連 YANG モジュール
+### 関連 HLD
 
 - [sonic-buffer-pool YANG](../../reference/yang/sonic-buffer-pool.md)
 
@@ -141,4 +141,4 @@ show priority-group persistent-watermark headroom
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 593d34fc1826 -->
+<!-- glossary-links-injected: 8ba32e5aa69d -->

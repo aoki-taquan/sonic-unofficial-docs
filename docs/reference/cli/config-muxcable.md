@@ -204,7 +204,7 @@ show muxcable hwmode state
 ### 関連 CLI コマンド
 
 - [`show muxcable`](show-muxcable.md) — show muxcable サブコマンド
-- [`show mgmt-vrf`](show-mgmt-vrf.md) — show mgmt-vrf サブコマンド
+- [`show mgmt vrf`](show-mgmt-vrf.md) — show mgmt-vrf サブコマンド
 - [`show running config`](show-running-config.md) — show runningconfiguration / startupconfiguration サブコマンド
 - [`config dhcp relay`](config-dhcp-relay.md) — config dhcp_relay / dhcpv4_relay サブコマンド
 - [`config mgmt trio`](config-mgmt-trio.md) — config save / load / reload / replace / qos reload

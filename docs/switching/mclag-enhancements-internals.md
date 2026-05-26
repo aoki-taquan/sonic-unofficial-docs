@@ -44,11 +44,11 @@ related:
 
 | プロセス | 実装位置 | 役割 |
 |---------|---------|------|
-| **iccpd** | `sonic-buildimage/src/iccpd/src/` (`iccp_main.c`, `iccp_csm.c`, `mlacp_fsm.c`, `mlacp_sync_*.c`, `mlacp_link_handler.c` ほか) | ICCP プロトコル本体。peer との session / FDB / interface state / isolation 同期 |
-| **MclagSyncd** | `sonic-swss/mclagsyncd/mclaglink.cpp` (約 1964 行) + `mclagsyncd.cpp` | ICCPd と Redis (CONFIG_DB / APPL_DB / STATE_DB) の橋渡し。Unix socket で ICCPd と message 交換 |
-| **FdbOrch** | `sonic-swss/orchagent/fdborch.cpp` | `APP_MCLAG_FDB_TABLE` を subscribe、`FDB_ORIGIN_MCLAG_ADVERTIZED` 起源の MAC を ASIC に program |
-| **IsolationGroupOrch** | `sonic-swss/orchagent/isolationgrouporch.cpp` (749 行) | `APP_ISOLATION_GROUP_TABLE` を subscribe、SAI isolation group を生成・bridge port に attach |
-| **PortsOrch** | `sonic-swss/orchagent/portsorch.cpp` | `traffic_disable` LAG attribute を実装。interface up ack 待ちの間 LAG member を ASIC に程式しない |
+| **iccpd** | `sonic-buildimage/src/iccpd/src/` (`iccp_main.c`, `iccp_csm.c`, `mlacp_fsm.c`, `mlacp_sync_*.c`, `mlacp_link_handler.c` ほか) | ICCP プロトコル本体。peer との session / [FDB](../reference/glossary.md#term-fdb) / interface state / isolation 同期 |
+| **MclagSyncd** | `sonic-swss/mclagsyncd/mclaglink.cpp` (約 1964 行) + `mclagsyncd.cpp` | ICCPd と [Redis](../reference/glossary.md#term-redis) ([CONFIG_DB](../reference/glossary.md#term-config_db) / [APPL_DB](../reference/glossary.md#term-appl_db) / [STATE_DB](../reference/glossary.md#term-state_db)) の橋渡し。Unix socket で ICCPd と message 交換 |
+| **FdbOrch** | `sonic-swss/orchagent/fdborch.cpp` | `APP_MCLAG_FDB_TABLE` を subscribe、`FDB_ORIGIN_MCLAG_ADVERTIZED` 起源の MAC を [ASIC](../reference/glossary.md#term-asic) に program |
+| **IsolationGroupOrch** | `sonic-swss/orchagent/isolationgrouporch.cpp` (749 行) | `APP_ISOLATION_GROUP_TABLE` を subscribe、[SAI](../reference/glossary.md#term-sai) isolation group を生成・bridge port に attach |
+| **PortsOrch** | `sonic-swss/orchagent/portsorch.cpp` | `traffic_disable` [LAG](../reference/glossary.md#term-lag) attribute を実装。interface up ack 待ちの間 LAG member を ASIC に程式しない |
 | **FdbSyncd** | `sonic-swss/fdbsyncd/` | `STATE_DB` の `MCLAG_REMOTE_FDB_TABLE` を subscribe、kernel FDB に reflect |
 
 ## 2. CONFIG_DB スキーマ
@@ -67,9 +67,9 @@ CONFIG_DB:
     unique_ip: "enable"
 ```
 
-`domain_id` は 1–4095。MCLAG インタフェースは **両 peer で同じ PortChannel 名** を使う必要がある[^1]。
+`domain_id` は 1–4095。[MCLAG](../reference/glossary.md#term-mclag) インタフェースは **両 peer で同じ [PortChannel](../reference/glossary.md#term-portchannel) 名** を使う必要がある[^1]。
 
-YANG は `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang` に `MCLAG_DOMAIN` / `MCLAG_INTERFACE` / `MCLAG_UNIQUE_IP` の 3 container として定義（行 37 以降）。
+[YANG](../reference/glossary.md#term-yang) は `sonic-buildimage/src/sonic-yang-models/yang-models/sonic-mclag.yang` に `MCLAG_DOMAIN` / `MCLAG_INTERFACE` / `MCLAG_UNIQUE_IP` の 3 container として定義（行 37 以降）。
 
 ## 3. APPL_DB スキーマ
 
@@ -89,7 +89,7 @@ APPL_DB:
     traffic_disable: "true" | "false" # PortsOrch が解釈、interface up ack 待ち中は member を ASIC 未追加
 ```
 
-`MclagSyncd` の `mclaglink.cpp:1811-1812` で `APP_ISOLATION_GROUP_TABLE_NAME` / `APP_MCLAG_FDB_TABLE_NAME` の ProducerStateTable を確保している[^2]。
+`MclagSyncd` の `mclaglink.cpp:1811-1812` で `APP_ISOLATION_GROUP_TABLE_NAME` / `APP_MCLAG_FDB_TABLE_NAME` の [ProducerStateTable](../reference/glossary.md#term-producerstatetable) を確保している[^2]。
 
 ## 4. STATE_DB スキーマ
 
@@ -175,7 +175,7 @@ FdbOrch の実装ポイント[^3]:
 2. IsolationGroupOrch が `SAI_OBJECT_TYPE_ISOLATION_GROUP` を `SAI_ISOLATION_GROUP_TYPE_BRIDGE_PORT` で作成
 3. `MEMBERS` の各 bridge port を `SAI_ISOLATION_GROUP_MEMBER` として attach
 4. `PORTS`（= peer-link）に対し `SAI_BRIDGE_PORT_ATTR_ISOLATION_GROUP` を set
-5. platform が isolation group 未対応の場合、`mlacp_link_handler.c` 内の旧 egress ACL 経路に fallback
+5. platform が isolation group 未対応の場合、`mlacp_link_handler.c` 内の旧 egress [ACL](../reference/glossary.md#term-acl) 経路に fallback
 
 これにより peer-link ingress traffic は **MCLAG メンバ port 宛て分のみ drop** され、orphan port 宛ては通過する[^1]。
 
@@ -183,12 +183,12 @@ FdbOrch の実装ポイント[^3]:
 
 `mclaglink.cpp:1672` の `MCLAG_SUB_OPTION_TYPE_ISOLATION_STATE` 等、ICCPd から MclagSyncd への message に unique IP 関連 sub-option が追加されている[^2]。Standby 側で行う処理[^1]:
 
-- active 側 VLAN interface MAC を My-Station TCAM へ program **しない**（自分宛として終端しない）
+- active 側 [VLAN](../reference/glossary.md#term-vlan) interface MAC を My-Station [TCAM](../reference/glossary.md#term-tcam) へ program **しない**（自分宛として終端しない）
 - kernel に active 側 MAC を反映しない
 - L2 table に `peer VLAN intf MAC → peer-link` を program（MAC learning は peer-link で disable のため手動 program）
-- ARP / ND を local VLAN interface IP について sync
+- [ARP](../reference/glossary.md#term-arp) / ND を local VLAN interface IP について sync
 
-データプレーン gateway は SAG / VRRP が別途必要（HLD §1.1.5 / §3.3.6）[^1]。
+データプレーン gateway は SAG / [VRRP](../reference/glossary.md#term-vrrp) が別途必要（[HLD](../reference/glossary.md#term-hld) §1.1.5 / §3.3.6）[^1]。
 
 ## 8. ICCP メッセージ統計（debug counters）
 
@@ -219,3 +219,5 @@ FdbOrch の実装ポイント[^3]:
 - [Topics: Dual ToR](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: ba38183152a1 -->

@@ -54,7 +54,6 @@ related:
 
 [SONiC](../../reference/glossary.md#term-sonic) の `portsorch`（[orchagent](../../reference/glossary.md#term-orchagent) 内）は、ポートの Queue（送信キュー）と [Priority Group](../../reference/glossary.md#term-priority-group)（優先度グループ、PG）ごとの [SAI](../../reference/glossary.md#term-sai) ハードウェアカウンタを [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に収集する[^1]。このページではカウンタ収集に使われる [Redis](../../reference/glossary.md#term-redis) テーブル群・フィールド一覧・[FlexCounter](../../reference/glossary.md#term-flexcounter) グループのコード由来デフォルトを解説する。
 
-
 ---
 
 ## COUNTERS_DB テーブル体系

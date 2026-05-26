@@ -163,7 +163,7 @@ sonic-db-cli CONFIG_DB keys 'HEARTBEAT|*'
 
 ### 段階 1 — Consumer 登録
 
-`heartbeat` daemon / `system_health_monitor` が CONFIG_DB の `HEARTBEAT` テーブルを購読する。
+`heartbeat` daemon / `system_health_monitor` が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `HEARTBEAT` テーブルを購読する。
 
 `HEARTBEAT` はシステムヘルスモニタリング機能の設定。`system_health_monitor` と連携。
 
@@ -424,4 +424,4 @@ vs 環境でも `supervisor-proc-exit-listener` は同一コードで動作す�
 - `system-health` / `watchdog` 系デーモンが定期的に heartbeat タイムスタンプを書き込む。CLI 書き込みパスなし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 26210b4650d1 -->
+<!-- glossary-links-injected: 896d391185a9 -->

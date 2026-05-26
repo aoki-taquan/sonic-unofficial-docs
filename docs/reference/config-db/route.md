@@ -37,7 +37,6 @@ related:
 !!! warning "APPL_DB テーブル"
     `ROUTE_TABLE` は **APPL_DB** テーブルであり、**CONFIG_DB には存在しない**。静的経路は `CONFIG_DB` の `STATIC_ROUTE` テーブルで管理し、`bgpcfgd` / `staticd` を経由して最終的にこのテーブルに反映される。
 
-
 ## key 構造
 
 ```text

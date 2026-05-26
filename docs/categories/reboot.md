@@ -75,3 +75,10 @@ related:
 - [SAI 拡張属性追加系](sai-extensions.md)
 
 <!-- glossary-links-injected: 5c9b3765d470 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Reboot / Upgrade / Lifecycle](../topics/11-reboot/index.md)
+
+<!-- /topics-back-ref -->

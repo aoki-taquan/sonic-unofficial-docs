@@ -213,7 +213,6 @@ redis-cli -h 169.254.200.254 -p 6381 KEYS "DASH_*" | head
 ## 関連 Topics
 
 - [Topics: DASH と SmartSwitch](../topics/13-dash-smartswitch/index.md)
-- [Topics: SWSS / SAI / Redis 内部](../topics/20-swss-sai-redis/index.md)
 
 <!-- /topics-back-ref -->
 

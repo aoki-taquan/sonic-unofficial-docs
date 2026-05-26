@@ -142,10 +142,11 @@ pmon           enabled   enabled        up
 <!-- cli-sibling -->
 ### 関連 CLI コマンド
 
-- [`config feature`](config-feature.md) — config feature サブコマンド
-- [`show feature status`](show-feature.md) — feature ステータス表示
-- [`show feature config`](show-feature.md) — feature 設定値表示
-- [`show feature autorestart`](show-feature.md) — autorestart 設定表示
+- [`config banner`](config-banner.md) — config banner サブコマンド
+- [`config clock`](config-clock.md) — config clock サブコマンド
+- [`config kdump`](config-kdump.md) — config kdump サブコマンド
+- [`config ntp`](config-ntp.md) — config ntp サブコマンド
+- [`config platform firmware`](config-platform-firmware.md) — config platform firmware サブコマンド
 
 <!-- /cli-sibling -->
 

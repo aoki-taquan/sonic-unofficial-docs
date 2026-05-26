@@ -78,6 +78,9 @@ related:
 ### 関連 CLI コマンド
 
 - [`config acl`](config-acl.md) — config acl サブコマンド
+- [`config aaa`](config-aaa.md) — config aaa / tacacs / radius サブコマンド
+- [`config ssh`](config-ssh.md) — config ssh サブコマンド
+- [`show aaa`](show-aaa.md) — show aaa サブコマンド
 
 <!-- /cli-sibling -->
 

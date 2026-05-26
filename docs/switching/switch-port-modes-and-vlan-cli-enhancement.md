@@ -199,7 +199,7 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 
 | Table | フィールド |
 |-------|-----------|
-| `PORT.<name>` | `mode` (新規; YANG typedef 名は `switchport_mode`) |
+| `PORT.<name>` | `mode` (新規; [YANG](../reference/glossary.md#term-yang) typedef 名は `switchport_mode`) |
 | `PORTCHANNEL.<name>` | `mode` (新規; YANG typedef 名は `switchport_mode`) |
 | `VLAN_MEMBER` | 既存 (`tagging_mode`)。CLI から複数指定可能になる |
 | `VLAN` | 既存 (`vlanid`)。複数追加可能 |
@@ -461,4 +461,4 @@ show interfaces status  # PR #3788 取込後は switchport mode 列が出る
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e450780bcf68 -->
+<!-- glossary-links-injected: d5320e852f7a -->

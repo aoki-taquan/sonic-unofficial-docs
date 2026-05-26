@@ -271,13 +271,13 @@ vtysh -c 'show bgp l2vpn evpn summary'
 
 ### 段階 3 — APPL→SAI
 
-なし (FRR BGP の AF レベル設定)
+なし (FRR [BGP](../../reference/glossary.md#term-bgp) の AF レベル設定)
 
 ### 段階 4 — タイミングと副作用
 
 **適用タイミング**: 変化検知後 FRR に AF の global 設定コマンドを発行。既存セッションへの影響は AF の再ネゴシエーションを要する場合がある。
 
-**副作用**: Maximum-paths, redistribute 設定など AF 全体の動作に影響。変更によっては BGP session reset が発生する。
+**副作用**: Maximum-paths, redistribute 設定など AF 全体の動作に影響。変更によっては [BGP](../../reference/glossary.md#term-bgp) session reset が発生する。
 <!-- /runtime-trace -->
 
 <!-- entry-points -->
@@ -617,4 +617,4 @@ DEL (`data is None`) では `del_table=True` が設定され AF 設定全体を 
 > **スキャン証跡**: `frrcfgd.py` L82 / L813 / L1389-1396 / L1824-1864 / L2107 / L2136-2140 / L2297 / L2771-2782 / L3938-3941 を確認。FRR コマンド literal 27 件 + vtysh prefix 3 件 + AF 文字列 3 件 + FRR デフォルト値 6 件 + enum 変換 1 件 + comb_attr_list 2 件 = 計 42 件抽出。中間ファイル: `meta/_intermediate/cdb-flow/bgp-globals-af-constants.md`
 <!-- /constants -->
 
-<!-- glossary-links-injected: f0885c9f6a91 -->
+<!-- glossary-links-injected: 758aafff1fd5 -->

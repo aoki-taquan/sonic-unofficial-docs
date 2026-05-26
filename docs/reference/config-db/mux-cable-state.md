@@ -43,7 +43,6 @@ Dual-ToR 構成における mux cable の実行時状態は [STATE_DB](../../ref
 
 本ページは **[STATE_DB](../../reference/glossary.md#term-state_db) テーブルのフィールド**・**コード由来デフォルト**・**書き込みタイミング**に焦点を当てる。[CONFIG_DB](../../reference/glossary.md#term-config_db) の設定については [`MUX_CABLE`](mux-cable.md) / [`MUX_CABLE (per-port 詳細)`](mux-cable-port.md) を参照。
 
-
 ## key 構造
 
 ```text

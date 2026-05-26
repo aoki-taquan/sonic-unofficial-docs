@@ -44,7 +44,6 @@ related:
 
 本ページは **[FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db)**（DB 5）のランタイム状態フィールドと、[syncd](../../reference/glossary.md#term-syncd) 内 `FlexCounter` モジュールが持つコード由来デフォルト値を記述する。
 
-
 ## FLEX_COUNTER_DB のテーブル構造
 
 ### FLEX_COUNTER_GROUP_TABLE — グループ制御

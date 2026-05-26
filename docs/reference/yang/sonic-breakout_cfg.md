@@ -35,7 +35,7 @@ flowchart LR
   Y["sonic-breakout_cfg"]
   C1[("CONFIG_DB<br/>BREAKOUT_CFG")]
   Y --> C1
-  D1["portsyncd / orchagent"]
+  D1["xcvrd"]
   C1 --> D1
 ```
 
@@ -53,7 +53,7 @@ flowchart LR
 
 - [`BREAKOUT_CFG`](../config-db/breakout-cfg.md)
 
-### 関連 YANG モジュール
+### 関連 HLD
 
 - [sonic-port YANG](../../reference/yang/sonic-port.md)
 

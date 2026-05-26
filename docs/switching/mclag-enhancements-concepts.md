@@ -34,17 +34,17 @@ related:
 
 ## 1. なぜ拡張するのか
 
-オリジナルの SONiC [MCLAG](../reference/glossary.md#term-mclag) は `config_db.json` 直書きで起動時にしか反映できず、また static MAC 同期 / L3 プロトコル / BUM 制御に弱点があった。本 HLD はこれらを 7 軸で塞ぐ[^1]。
+オリジナルの [SONiC](../reference/glossary.md#term-sonic) [MCLAG](../reference/glossary.md#term-mclag) は `config_db.json` 直書きで起動時にしか反映できず、また static MAC 同期 / L3 プロトコル / BUM 制御に弱点があった。本 [HLD](../reference/glossary.md#term-hld) はこれらを 7 軸で塞ぐ[^1]。
 
 | # | 軸 | 解決したい問題 |
 |---|----|----------------|
-| 1 | dynamic config | `config_db.json` 編集 + 再起動なしで MCLAG domain / interface を CONFIG_DB から操作したい |
+| 1 | dynamic config | `config_db.json` 編集 + 再起動なしで MCLAG domain / interface を [CONFIG_DB](../reference/glossary.md#term-config_db) から操作したい |
 | 2 | timer 設定 | keep-alive (default 1s) / session-timeout (default 15s) が hardcode で運用上柔軟性に欠ける |
-| 3 | static MAC support | 旧版は FDB TLV で static フラグを送らず、peer に static として伝播しない |
+| 3 | static MAC support | 旧版は [FDB](../reference/glossary.md#term-fdb) TLV で static フラグを送らず、peer に static として伝播しない |
 | 4 | aging disable | peer 学習 MAC が local aging で消える → 再学習トリガで transient flooding |
 | 5 | MAC sync 最適化 | 60s 周期 polling、linked list、32B 文字列 MAC など scale (40K MAC / 4K VLAN) に耐えない |
-| 6 | isolation group | peer-link 経由の duplicate BUM 抑止が egress ACL ベースで非効率 |
-| 7 | unique IP | MCLAG [VLAN](../reference/glossary.md#term-vlan) interface が同一 IP 必須 → OSPF / [BGP](../reference/glossary.md#term-bgp) / BFD などの L3 隣接が成立しない |
+| 6 | isolation group | peer-link 経由の duplicate BUM 抑止が egress [ACL](../reference/glossary.md#term-acl) ベースで非効率 |
+| 7 | unique IP | MCLAG [VLAN](../reference/glossary.md#term-vlan) interface が同一 IP 必須 → OSPF / [BGP](../reference/glossary.md#term-bgp) / [BFD](../reference/glossary.md#term-bfd) などの L3 隣接が成立しない |
 
 ## 2. 全体構造（再掲）
 
@@ -76,7 +76,7 @@ flowchart LR
 
 - 設定経路は `CONFIG_DB → MclagSyncd → ICCPd`（旧 `config_db.json` 起動時読み込みは deprecated）
 - データ経路は `ICCPd → MclagSyncd → APPL_DB(MCLAG_FDB/ISOLATION_GROUP) → FdbOrch/IsolationGroupOrch → ASIC`
-- 旧 MclagSyncd 内部 FDB cache は廃止、APPL_DB の `MCLAG_FDB_TABLE` に集約
+- 旧 MclagSyncd 内部 FDB cache は廃止、[APPL_DB](../reference/glossary.md#term-appl_db) の `MCLAG_FDB_TABLE` に集約
 
 ## 3. Dynamic configuration（軸 1）
 
@@ -84,7 +84,7 @@ flowchart LR
 
 - MclagSyncd が `CONFIG_DB` の `MCLAG_DOMAIN` / `MCLAG_INTERFACE` を SubscriberStateTable で監視
 - 設定変化を ICCPd に message で通知
-- MCLAG interface の **pre-provisioning**（PortChannel 作成前に MCLAG メンバ宣言可能）
+- MCLAG interface の **pre-provisioning**（[PortChannel](../reference/glossary.md#term-portchannel) 作成前に MCLAG メンバ宣言可能）
 
 ## 4. Keep-alive / session timeout（軸 2）
 
@@ -101,7 +101,7 @@ flowchart LR
 - 削除時は withdraw
 - remote static が存在する宛先への dynamic MAC move は FdbOrch が **拒否**（後述 internals 参照）
 
-ユースケース: server NIC bonding で fixed MAC を持つ機器を MCLAG 配下に置く構成、HSRP / VRRP gateway MAC のような fixed L2 destination。
+ユースケース: server NIC bonding で fixed MAC を持つ機器を MCLAG 配下に置く構成、HSRP / [VRRP](../reference/glossary.md#term-vrrp) gateway MAC のような fixed L2 destination。
 
 ## 6. Aging disable（軸 4）
 
@@ -142,9 +142,9 @@ flowchart LR
 
 新版で MCLAG VLAN interface に **peer ごとに別 IP** を許可する `MCLAG_UNIQUE_IP` テーブルを追加[^1]:
 
-- Standby 側で active 側 MAC を My-Station TCAM に program しない
+- Standby 側で active 側 MAC を My-Station [TCAM](../reference/glossary.md#term-tcam) に program しない
 - VLAN interface MAC を peer 間で sync、L2 table に peer MAC → peer-link で program
-- ARP / ND を local VLAN interface IP について sync
+- [ARP](../reference/glossary.md#term-arp) / ND を local VLAN interface IP について sync
 
 ユースケース[^1]:
 
@@ -163,3 +163,5 @@ flowchart LR
 - [Topics: Dual ToR](../topics/05-dual-tor/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 601242a17776 -->

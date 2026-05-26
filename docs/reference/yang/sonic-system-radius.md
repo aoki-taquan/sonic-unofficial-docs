@@ -59,11 +59,8 @@ flowchart LR
 ### 関連 HLD
 
 - [AAA Improvements（PAM / NSS / D-Bus / RBAC 多重ロール）](../../management/aaa-improvements.md)
-- [発展トピック](../../topics/15-security-aaa/advanced.md)
-
-### 関連 YANG
-
 - [sonic-system-aaa YANG](../../reference/yang/sonic-system-aaa.md)
+- [発展トピック](../../topics/15-security-aaa/advanced.md)
 
 <!-- /yang-xref -->
 

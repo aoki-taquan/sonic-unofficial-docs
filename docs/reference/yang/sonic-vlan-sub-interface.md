@@ -52,7 +52,7 @@ flowchart LR
 
 - [`VLAN_SUB_INTERFACE`](../config-db/vlan-sub-interface.md)
 
-### 関連 YANG
+### 関連 HLD
 
 - [sonic-loopback-interface YANG](../../reference/yang/sonic-loopback-interface.md)
 

@@ -67,8 +67,6 @@ flowchart LR
 ### 対応 CONFIG_DB
 
 - [`SNMP`](../config-db/snmp.md)
-- [`SNMP_COMMUNITY`](../config-db/snmp.md)
-- [`SNMP_USER`](../config-db/snmp.md)
 - [`SNMP_AGENT_ADDRESS_CONFIG`](../config-db/snmp-agent-address-config.md)
 
 ### 関連 CLI

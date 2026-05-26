@@ -39,7 +39,6 @@ related:
 !!! warning "設定 DB ではない"
     STATE_DB / APPL_STATE_DB の `ROUTE_TABLE` はどちらも **読み取り専用の状態情報**。経路の追加・削除は APPL_DB の `ROUTE_TABLE` または CONFIG_DB の `STATIC_ROUTE` で行う。
 
-
 ---
 
 ## STATE_DB ROUTE_TABLE

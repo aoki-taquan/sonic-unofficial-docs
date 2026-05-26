@@ -31,12 +31,12 @@ related:
 
 ## 1. control plane / data plane の分業
 
-EVPN VXLAN は **control plane と data plane を明確に分離** する[^1]。
+[EVPN](../reference/glossary.md#term-evpn) [VXLAN](../reference/glossary.md#term-vxlan) は **control plane と data plane を明確に分離** する[^1]。
 
-- **control plane**: BGP の **MP-BGP EVPN address-family** (`l2vpn evpn`) が MAC / IP / IP prefix の到達情報を VTEP 間で広告する。SONiC は FRR の `bgpd` を採用
+- **control plane**: [BGP](../reference/glossary.md#term-bgp) の **MP-BGP EVPN address-family** (`l2vpn evpn`) が MAC / IP / IP prefix の到達情報を [VTEP](../reference/glossary.md#term-vtep) 間で広告する。[SONiC](../reference/glossary.md#term-sonic) は [FRR](../reference/glossary.md#term-frr) の `bgpd` を採用
 - **data plane**: VXLAN encap/decap で L2 over L3 のトンネルを張る。各 VTEP が loopback IP を SIP とし、対向 VTEP の loopback を DIP とする UDP/4789 のカプセル化
 
-HLD では「FRR を control plane と仮定するが、本設計に準拠する任意の BGP-EVPN 実装で代替可能」と明記[^1]。
+[HLD](../reference/glossary.md#term-hld) では「FRR を control plane と仮定するが、本設計に準拠する任意の BGP-EVPN 実装で代替可能」と明記[^1]。
 
 ## 2. 想定 deployment
 
@@ -45,7 +45,7 @@ HLD の Target use cases[^1]:
 - **IP Fabric Leaf-Spine** のリーフノード
 - 従来型 Access / Aggregator / Core トポロジの集約 / コアノード
 - マルチテナント環境
-- IP WAN 越しの VLAN 拡張
+- IP WAN 越しの [VLAN](../reference/glossary.md#term-vlan) 拡張
 - L2 / L3 ハンドオフを使うデータセンタ間接続 (DCI)
 
 ## 3. EVPN Route Type の使い分け
@@ -54,7 +54,7 @@ EVPN は複数の route type を定義するが、SONiC HLD が主に扱うの�
 
 | Type | 名称 | 広告対象 | 主用途 | L2/L3 VNI |
 |------|------|----------|--------|-----------|
-| 2 | MAC/IP Advertisement | host MAC（任意で IP） | L2 stretch、host-route 配布、ARP/ND suppression | L2VNI（任意で L3VNI 併記）|
+| 2 | MAC/IP Advertisement | host MAC（任意で IP） | L2 stretch、host-route 配布、[ARP](../reference/glossary.md#term-arp)/ND suppression | L2VNI（任意で L3VNI 併記）|
 | 3 | Inclusive Multicast Ethernet Tag | VTEP の所属 VNI | BUM ingress replication 用 VTEP 通知（IMET）| L2VNI |
 | 5 | IP Prefix Route | IP prefix（subnet）| L3 ルーティング、外部 prefix の流通 | L3VNI |
 
@@ -62,7 +62,7 @@ EVPN は複数の route type を定義するが、SONiC HLD が主に扱うの�
 
 ローカル VTEP が学習した host MAC（必要なら IP も）を BGP-EVPN で広告する。受信側 VTEP は:
 
-- remote MAC を Linux FDB → `VXLAN_FDB_TABLE` 経由で `fdborch` に渡し、`SAI_FDB_ENTRY` を programmatic に install
+- remote MAC を Linux [FDB](../reference/glossary.md#term-fdb) → `VXLAN_FDB_TABLE` 経由で `fdborch` に渡し、`SAI_FDB_ENTRY` を programmatic に install
 - MAC-IP の binding を **ARP / ND suppression** のローカルキャッシュとして使い、broadcast を抑制[^1]
 
 ### 3.2 Type-3 (IMET)
@@ -73,7 +73,7 @@ multicast underlay は HLD のスコープ外。ingress replication 一択。
 
 ### 3.3 Type-5 (IP Prefix)
 
-VRF に属する **IP prefix を L3VNI 経由で広告** する。受信側 VTEP は:
+[VRF](../reference/glossary.md#term-vrf) に属する **IP prefix を L3VNI 経由で広告** する。受信側 VTEP は:
 
 - prefix を該当 VRF のルーティングテーブルに install
 - next-hop に **remote VTEP IP + L3VNI + router MAC** を埋め、`VRF_ROUTE_TABLE` の `vni_label` / `router_mac` フィールドに記録[^1]
@@ -86,7 +86,7 @@ VRF に属する **IP prefix を L3VNI 経由で広告** する。受信側 VTEP
 | **L2VNI** | VLAN ↔ VNI | 同一 subnet 内の L2 forwarding（Type-2 / Type-3）|
 | **L3VNI** | VRF ↔ VNI | VRF 内の inter-subnet routing（Type-5、Symmetric IRB の中継 VNI）|
 
-CONFIG_DB では:
+[CONFIG_DB](../reference/glossary.md#term-config_db) では:
 
 - L2VNI: `VXLAN_TUNNEL_MAP|<vtep>|<map>` の `vlan` / `vni` フィールド
 - L3VNI: `VRF|<vrf>` の `vni` フィールド
@@ -149,7 +149,7 @@ flowchart LR
 
 ## 8. 次に読む
 
-- 内部実装（FRR → APPL_DB → orchagent → SAI のフロー、Orch クラス相関）: [evpn-vxlan-hld-internals.md](evpn-vxlan-hld-internals.md)
+- 内部実装（FRR → [APPL_DB](../reference/glossary.md#term-appl_db) → [orchagent](../reference/glossary.md#term-orchagent) → [SAI](../reference/glossary.md#term-sai) のフロー、Orch クラス相関）: [evpn-vxlan-hld-internals.md](evpn-vxlan-hld-internals.md)
 - CLI 設定 / 運用 / トラブルシュート: [evpn-vxlan-hld-operations.md](evpn-vxlan-hld-operations.md)
 - multihoming（ESI / DF election）: [evpn-vxlan-multihoming.md](evpn-vxlan-multihoming.md)
 - Topics 読み物: [VXLAN/EVPN 概念](../topics/03-vxlan-evpn/concept.md)
@@ -164,3 +164,5 @@ flowchart LR
 - [Topics: VXLAN / EVPN / VNET オーバーレイ](../topics/03-vxlan-evpn/index.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: 09cf395c72a3 -->

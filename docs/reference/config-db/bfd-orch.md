@@ -28,7 +28,6 @@ related:
 
 `BGP_DEVICE_GLOBAL.STATE.use_software_bfd = true` の場合、bfdorch は [SAI](../../reference/glossary.md#term-sai) を経由せず [STATE_DB](../../reference/glossary.md#term-state_db) の `SOFTWARE_BFD_SESSION_TABLE` にエントリを転記するのみで終了する (`bgpcfgd/BfdMgr` が [FRR](../../reference/glossary.md#term-frr) bfdd へ設定を注入)。
 
-
 ## key 構造
 
 ```text

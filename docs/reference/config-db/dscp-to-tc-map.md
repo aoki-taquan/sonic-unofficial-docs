@@ -54,7 +54,7 @@ DSCP_TO_TC_MAP|<name>|<dscp>
 |-----------|----|------|------|
 | `name` (key) | string (1..32) | ✅ | マップ名 |
 | `dscp` (key) | string `0..63` | ✅ | [DSCP](../../reference/glossary.md#term-dscp) 値 |
-| `tc` | `tc_type` (0..15) | - | 対応 TC。YANG 上限は 15 だが大多数の ASIC は 0..7 のみサポート |
+| `tc` | `tc_type` (0..15) | - | 対応 TC。YANG 上限は 15 だが大多数の [ASIC](../../reference/glossary.md#term-asic) は 0..7 のみサポート |
 
 [YANG](../../reference/glossary.md#term-yang) 上は親子 list 構造。[Redis](../../reference/glossary.md#term-redis) に展開すると `DSCP_TO_TC_MAP|<name>` の hash field として `<dscp>: <tc>` ペアが格納される。
 
@@ -73,7 +73,7 @@ DSCP_TO_TC_MAP|<name>|<dscp>
 | 値 | 挙動 |
 |----|------|
 | `0`..`7` | [SAI](../../reference/glossary.md#term-sai) QoS map オブジェクトの Traffic Class 値として設定 |
-| `8`..`15` | YANG 上は許容されるが、大多数の ASIC では SAI エラー → `task_failed` |
+| `8`..`15` | YANG 上は許容されるが、大多数の [ASIC](../../reference/glossary.md#term-asic) では SAI エラー → `task_failed` |
 
 > 明示的な enum 制約なし（スパース定義可能）。PORT_QOS_MAP.dscp_to_tc_map から参照されない限り SAI に反映されない。未定義 [DSCP](../../reference/glossary.md#term-dscp) はデフォルト TC=0 になるのが一般的。
 
@@ -579,4 +579,4 @@ YANG 定義は `tc_type: uint8 range "0..15"` だが、実際の ASIC 対応は�
 > **Evidence**: `qosorch.cpp:1955-1975` (capability check); `db_migrator.py:700-715` (Broadcom 限定自動生成); `qos_config.j2:437-447` (AZURE_UPLINK 条件分岐); `device/mellanox/.../qos.json.j2:23,160-170` (`different_dscp_to_tc_map`)
 <!-- /platform -->
 
-<!-- glossary-links-injected: c34ced7733b8 -->
+<!-- glossary-links-injected: e82be350a384 -->

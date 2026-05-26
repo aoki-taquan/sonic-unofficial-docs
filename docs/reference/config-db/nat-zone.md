@@ -113,7 +113,7 @@ if (fvField(idx) == NAT_ZONE)
 
 ### フィールド省略時は SAI 書き込みなし
 
-`nat_zone` フィールドが [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在しない場合、`IntfsOrch` の `nat_zone` 文字列変数は空のままとなり、SAI 呼び出し (`setRouterIntfsNatZoneId`) はスキップされる (`intfsorch.cpp:974`)。この場合 `m_nat_zone_id` は初期値 `0` のままで SAI には降りない。
+`nat_zone` フィールドが [CONFIG_DB](../../reference/glossary.md#term-config_db) に存在しない場合、`IntfsOrch` の `nat_zone` 文字列変数は空のままとなり、[SAI](../../reference/glossary.md#term-sai) 呼び出し (`setRouterIntfsNatZoneId`) はスキップされる (`intfsorch.cpp:974`)。この場合 `m_nat_zone_id` は初期値 `0` のままで [SAI](../../reference/glossary.md#term-sai) には降りない。
 
 ```cpp
 // intfsorch.cpp:974-986
@@ -146,7 +146,7 @@ if ((!nat_zone.empty()) and (port.m_nat_zone_id != nat_zone_id))
 ## 購読者
 
 - **`natmgrd`** (`NatMgr::doNatZoneIntfTask`): `INTERFACE`・`VLAN_INTERFACE`・`PORTCHANNEL_INTERFACE`・`LOOPBACK_INTERFACE` テーブルを購読し、`nat_zone` フィールドの変化を検知して kernel iptables mangle テーブルの MARK ルールを更新する。
-- **`orchagent / IntfsOrch`** (`doIntfTask`): 同テーブルを購読し、`nat_zone` フィールドの変化を検知して SAI RIF 属性 `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` を更新する。
+- **`orchagent / IntfsOrch`** (`doIntfTask`): 同テーブルを購読し、`nat_zone` フィールドの変化を検知して SAI [RIF](../../reference/glossary.md#term-rif) 属性 `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` を更新する。
 
 ## 関連 CONFIG_DB / YANG / CLI
 
@@ -232,13 +232,13 @@ enum 等なし（uint8 数値のみ）。
 
 ### 段階 1: Consumer 登録
 
-- **natmgrd** (`NatMgr`): `CFG_INTF_TABLE_NAME`・`CFG_VLAN_INTF_TABLE_NAME`・`CFG_LAG_INTF_TABLE_NAME`・`CFG_LOOPBACK_INTERFACE_TABLE_NAME` を購読し `doNatZoneIntfTask` にディスパッチ。
-- **orchagent** (`IntfsOrch`): 同テーブルを `SubscriberStateTable` で購読し `doIntfTask` にディスパッチ。
+- **[natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd)** (`NatMgr`): `CFG_INTF_TABLE_NAME`・`CFG_VLAN_INTF_TABLE_NAME`・`CFG_LAG_INTF_TABLE_NAME`・`CFG_LOOPBACK_INTERFACE_TABLE_NAME` を購読し `doNatZoneIntfTask` にディスパッチ。
+- **[orchagent](../../reference/glossary.md#term-orchagent)** (`IntfsOrch`): 同テーブルを `SubscriberStateTable` で購読し `doIntfTask` にディスパッチ。
 
 ### 段階 2: CFG → iptables / SAI
 
 - `NatMgr` が `nat_zone` 値を読み、+1 した値を mangle MARK として kernel iptables に設定。
-- `IntfsOrch` が `nat_zone` 値を `uint32_t` に変換し、`setRouterIntfsNatZoneId(port)` 経由で SAI RIF 属性 `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` を更新。
+- `IntfsOrch` が `nat_zone` 値を `uint32_t` に変換し、`setRouterIntfsNatZoneId(port)` 経由で SAI [RIF](../../reference/glossary.md#term-rif) 属性 `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` を更新。
 
 ### 段階 3: タイミング + 副作用
 
@@ -258,10 +258,10 @@ enum 等なし（uint8 数値のみ）。
 
 | # | 先行必須条件 | 処理系 | 方向 | 緩和策 |
 |---|------------|--------|------|--------|
-| 1 | `PortsOrch::allPortsReady()` が true | orchagent (IntfsOrch) | 強制先行 (全ポート初期化待ち) | 全ポート初期化完了まで SAI 書き込みをスキップ、完了後 `doTask()` が自動再実行 (`intfsorch.cpp:665-668`) |
-| 2 | `isPortStateOk(port)` が true (zone エントリ・非 Loopback) | natmgrd | 強制先行 | ポート ready になると自動再試行 (`natmgr.cpp:7493-7499`) |
-| 3 | `isIntfStateOk(key)` が true (IP プレフィックス付きエントリ) | natmgrd | 強制先行 | インタフェース IP 有効化後に自動再試行 (`natmgr.cpp:7595-7601`) |
-| 4 | `gIsNatSupported == true` (SAI capability クエリ結果) | orchagent (IntfsOrch) | 強制先行 (プラットフォーム制約) | false の場合は SAI 書き込みを silent skip、iptables は正常設定 (`intfsorch.cpp:977-985`) |
+| 1 | `PortsOrch::allPortsReady()` が true | [orchagent](../../reference/glossary.md#term-orchagent) (IntfsOrch) | 強制先行 (全ポート初期化待ち) | 全ポート初期化完了まで SAI 書き込みをスキップ、完了後 `doTask()` が自動再実行 (`intfsorch.cpp:665-668`) |
+| 2 | `isPortStateOk(port)` が true (zone エントリ・非 Loopback) | [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) | 強制先行 | ポート ready になると自動再試行 (`natmgr.cpp:7493-7499`) |
+| 3 | `isIntfStateOk(key)` が true (IP プレフィックス付きエントリ) | [natmgrd](../../reference/glossary.md#term-natmgrd-natsyncd) | 強制先行 | インタフェース IP 有効化後に自動再試行 (`natmgr.cpp:7595-7601`) |
+| 4 | `gIsNatSupported == true` (SAI capability クエリ結果) | [orchagent](../../reference/glossary.md#term-orchagent) (IntfsOrch) | 強制先行 (プラットフォーム制約) | false の場合は SAI 書き込みを silent skip、iptables は正常設定 (`intfsorch.cpp:977-985`) |
 
 ### ゾーン変更時の内部順序 (副作用)
 
@@ -292,7 +292,7 @@ Loopback インタフェースは `isPortStateOk()` チェック対象外であ�
 | 依存方向 | 参照元 | 参照先テーブル | 参照先キー形式 | 依存内容 | 証跡 |
 |---------|--------|--------------|--------------|---------|------|
 | natmgrd → [STATE_DB](../../reference/glossary.md#term-state_db) | `isPortStateOk()` | `STATE_PORT_TABLE` / `STATE_LAG_TABLE` / `STATE_VLAN_TABLE` | `<port_name>` | Ethernet / [PortChannel](../../reference/glossary.md#term-portchannel) / Vlan の `nat_zone` 設定前にポートが [STATE_DB](../../reference/glossary.md#term-state_db) に登録されている必要あり。未登録の場合 `it++; continue` で再キューされ自動再試行 | `natmgr.cpp:96-131`, `natmgr.cpp:7493-7499` |
-| natmgrd → STATE_DB | `isIntfStateOk()` | `STATE_INTERFACE_TABLE` | `<intf>\|<ip>/<prefix>` | IP プレフィックス付きエントリ（key サイズ 2）処理前にインタフェースが STATE_DB に登録されている必要あり。未登録の場合再キューして自動再試行 | `natmgr.cpp:135-145`, `natmgr.cpp:7595-7601` |
+| natmgrd → [STATE_DB](../../reference/glossary.md#term-state_db) | `isIntfStateOk()` | `STATE_INTERFACE_TABLE` | `<intf>\|<ip>/<prefix>` | IP プレフィックス付きエントリ（key サイズ 2）処理前にインタフェースが STATE_DB に登録されている必要あり。未登録の場合再キューして自動再試行 | `natmgr.cpp:135-145`, `natmgr.cpp:7595-7601` |
 | natmgrd 内部 | `doNatZoneIntfTask` | `m_natIpInterfaceInfo` 内部キャッシュ | `port → set<ip_prefix>` | ゾーン変更時に IP インタフェースキャッシュの有無で Static / Dynamic NAT iptables ルール再構築の要否を判定。IP プレフィックスエントリ（key サイズ 2）が先に処理され `m_natIpInterfaceInfo` に登録されている場合のみ NAT ルールが再構築される | `natmgr.cpp:7532-7568` |
 | orchagent → PortsOrch | `allPortsReady()` | PortsOrch 内部フラグ (PORT_TABLE 処理完了) | — | 全ポート初期化完了前は `nat_zone` を含む全 INTERFACE テーブルイベントの SAI 反映がスキップされ、`m_toSync` に蓄積。`allPortsReady()` が true になった後の次回 `doTask()` で一括処理される | `intfsorch.cpp:665-668` |
 | orchagent → SAI switch | `gIsNatSupported` | SAI `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` | — | `SNAT_ENTRY` capability が 0 のプラットフォームでは `nat_zone` の SAI `SAI_ROUTER_INTERFACE_ATTR_NAT_ZONE_ID` 設定が silent skip される（`SWSS_LOG_NOTICE` のみ出力） | `intfsorch.cpp:978-985` |
@@ -362,7 +362,7 @@ if (status != SAI_STATUS_SUCCESS)
 |---|------|------------|------|-------|--------------|
 | 1 | iptables mangle ADD 失敗 | natmgrd | `SWSS_LOG_ERROR "Command '...' failed"` | なし | なし |
 | 2 | iptables mangle DELETE 失敗 | natmgrd | `SWSS_LOG_ERROR "Command '...' failed"` | なし | なし |
-| 3 | SAI RIF zone_id set 失敗 | IntfsOrch | `SWSS_LOG_ERROR "Failed to set router interface ... NAT Zone Id"` | SAI 依存 | なし |
+| 3 | SAI [RIF](../../reference/glossary.md#term-rif) zone_id set 失敗 | IntfsOrch | `SWSS_LOG_ERROR "Failed to set router interface ... NAT Zone Id"` | SAI 依存 | なし |
 | 4 | RIF 未存在で zone_id 設定 | IntfsOrch | `SWSS_LOG_WARN "Router interface is not exists"` | なし (silent skip) | なし |
 | 5 | 非整数値の nat_zone | natmgrd | `SWSS_LOG_ERROR "Invalid nat_zone ..., skipping"` | なし (erase) | なし |
 | 6 | 非整数値の nat_zone | IntfsOrch | `SWSS_LOG_ERROR "Invalid argument ... for nat zone"` | なし (continue) | なし |
@@ -390,7 +390,7 @@ if (status != SAI_STATUS_SUCCESS)
 |------|----|------|
 | `ETHERNET_PREFIX` | `"Ethernet"` | Ethernet ポート判定（iptables mangle + SAI 両対応） (`natmgr.h:78`) |
 | `VLAN_PREFIX` | `"Vlan"` | Vlan インタフェース判定 (`natmgr.h:76`) |
-| `LAG_PREFIX` | `"PortChannel"` | PortChannel (LAG) 判定 (`natmgr.h:77`) |
+| `LAG_PREFIX` | `"PortChannel"` | [PortChannel](../../reference/glossary.md#term-portchannel) ([LAG](../../reference/glossary.md#term-lag)) 判定 (`natmgr.h:77`) |
 | `LOOPBACK_PREFIX` | `"Loopback"` | Loopback 判定 — iptables mangle スキップ分岐で参照 (`natmgr.h:79`) |
 
 上記 4 プレフィックス以外で始まるキーは `doNatZoneIntfTask` で `SWSS_LOG_INFO` + erase される (`natmgr.cpp:7412-7420`)。
@@ -583,4 +583,4 @@ Loopback (`Loopback*`) インタフェースは iptables MARK ルールの設定
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: e89d811d1f2b -->
+<!-- glossary-links-injected: 876f1b587d85 -->

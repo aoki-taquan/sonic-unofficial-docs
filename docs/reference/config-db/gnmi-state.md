@@ -33,7 +33,6 @@ related:
 
 このテーブルは **[CONFIG_DB](../../reference/glossary.md#term-config_db) からは一切参照されない** 書き込み専用のランタイム状態テーブルである。[gNMI](../../reference/glossary.md#term-gnmi) サーバが起動するたびに既存エントリは全削除され、接続の開始・終了に合わせてエントリが追加・削除される。
 
-
 ## key 構造
 
 ```text

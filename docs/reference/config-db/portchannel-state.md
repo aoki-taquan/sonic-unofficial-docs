@@ -29,7 +29,6 @@ related:
 
 [CONFIG_DB](../../reference/glossary.md#term-config_db) の [`PORTCHANNEL`](portchannel.md) テーブルとは別テーブルであり、こちらは設定ではなく実行時状態を格納する。
 
-
 ## key 構造
 
 ```text

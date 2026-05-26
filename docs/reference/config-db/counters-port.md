@@ -33,7 +33,6 @@ related:
 
 [portsorch](../../reference/glossary.md#term-portsorch)（[orchagent](../../reference/glossary.md#term-orchagent) 内）が [SAI](../../reference/glossary.md#term-sai) の flex counter 機構を通じて物理ポートごとに取得する統計カウンタ群[^1]。値は `COUNTERS_DB` の `COUNTERS:<oid>` に格納され、`portstat` / `show interface counters` が読み出す。
 
-
 ## key 構造
 
 ### ポート名→OID マップ

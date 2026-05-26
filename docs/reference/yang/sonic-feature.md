@@ -24,7 +24,7 @@ related:
 
 - module: `sonic-feature`
 - namespace: `http://github.com/sonic-net/sonic-feature`
-- revision: （YANG ファイル内に revision ステートメントなし）
+- revision: （[YANG](../../reference/glossary.md#term-yang) ファイル内に revision ステートメントなし）
 - import: `sonic-types`
 - top container: `sonic-feature`
 
@@ -38,7 +38,7 @@ flowchart LR
   Y["sonic-feature"]
   C1[("CONFIG_DB<br/>FEATURE")]
   Y --> C1
-  D1["hostcfgd"]
+  D1["coppmgrd"]
   C1 --> D1
 ```
 
@@ -59,14 +59,11 @@ flowchart LR
 ### 関連 HLD
 
 - [SONiC Application Extension 開発・移植ガイド](../../management/sonic-application-extension-guide.md)
+- [sonic-warm-restart YANG](../../reference/yang/sonic-warm-restart.md)
 - [SONiC Boot Chart（systemd-bootchart 統合）](../../system/sonic-boot-chart.md)
 - [config-setup サービス（first-boot config 生成 / 版間 migration）](../../system/sonic-configuration-setup-service.md)
 - [System Health Monitor（critical service / Monit / peripheral）](../../system/sonic-system-health-monitor-high-level-design.md)
 - [設定 / 運用](../../topics/19-build-packaging/operations.md)
-
-### 関連 YANG
-
-- [sonic-warm-restart YANG](../../reference/yang/sonic-warm-restart.md)
 
 <!-- /yang-xref -->
 
@@ -163,4 +160,4 @@ show feature status
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-feature.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 7fcd30b4fb74 -->
+<!-- glossary-links-injected: d5320e852f7a -->

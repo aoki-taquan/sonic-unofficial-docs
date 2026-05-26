@@ -52,7 +52,7 @@ flowchart LR
 
 - [`BUFFER_PROFILE`](../config-db/buffer-profile.md)
 
-### 関連 YANG
+### 関連 HLD
 
 - [sonic-buffer-pool YANG](../../reference/yang/sonic-buffer-pool.md)
 

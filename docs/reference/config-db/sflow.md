@@ -175,7 +175,7 @@ show sflow
 - **hsflowd サービス制御失敗**: `service hsflowd restart/stop` が失敗した場合 `SWSS_LOG_ERROR("Command failed with rc %d")` を出す。CONFIG_DB の状態と実際のサービス状態がずれる。[^2]
 - **ポート名が map に未登録**: per-port のサンプリングレート算出時に PORT_TABLE に存在しないポートを指定すると `SWSS_LOG_ERROR("%s not found in port configuration map")` → `ERROR_SPEED` を返す。[^2]
 - **[SAI](../../reference/glossary.md#term-sai) sample packet session 作成失敗**: `sai_samplepacket_api->create_samplepacket()` が失敗した場合 `SWSS_LOG_ERROR("Failed to create sample packet session")` → sFlow セッションが有効化されない。[^2]
-- **既存セッションのクリーンアップ失敗**: レート変更時に古いセッションの destroy に失敗すると複数レートのセッションが ASIC に残留する可能性がある。[^2]
+- **既存セッションのクリーンアップ失敗**: レート変更時に古いセッションの destroy に失敗すると複数レートのセッションが [ASIC](../../reference/glossary.md#term-asic) に残留する可能性がある。[^2]
 - **グローバル無効はローカル設定を上書き**: `isPortEnabled()` は `m_gEnable && (m_intfAllConf || ...)` で判定するため、グローバル sflow が無効なら per-port 設定に関わらず全ポートで sFlow は停止する。[^2]
 
 [^2]: sflowmgr / sfloworch 実装: `sonic-swss/cfgmgr/sflowmgr.cpp`, `sonic-swss/orchagent/sfloworch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/cfgmgr/sflowmgr.cpp>
@@ -302,7 +302,7 @@ CONFIG_DB SFLOW / SFLOW_SESSION テーブルへの書込をトリガーとして
 
 ### 1. APPL_DB `SFLOW_TABLE` への書込 (sflowmgrd 直接転送)
 
-`SFLOW|global` SET 時に `m_appSflowTable.set(key, values)` でフィールドをそのまま [APPL_DB](../../reference/glossary.md#term-appl_db) `SFLOW_TABLE` に転送する (sflowmgr.cpp:468)。DEL 時は `m_appSflowTable.del(key)` (sflowmgr.cpp:550)。SflowOrch はこの [APPL_DB](../../reference/glossary.md#term-appl_db) エントリを購読して `m_sflowStatus` を更新し、SAI samplepacket 操作の前提条件とする。[^3]
+`SFLOW|global` SET 時に `m_appSflowTable.set(key, values)` でフィールドをそのまま [APPL_DB](../../reference/glossary.md#term-appl_db) `SFLOW_TABLE` に転送する (sflowmgr.cpp:468)。DEL 時は `m_appSflowTable.del(key)` (sflowmgr.cpp:550)。SflowOrch はこの [APPL_DB](../../reference/glossary.md#term-appl_db) エントリを購読して `m_sflowStatus` を更新し、[SAI](../../reference/glossary.md#term-sai) samplepacket 操作の前提条件とする。[^3]
 
 ### 2. APPL_DB `SFLOW_SESSION_TABLE` への書込 (sflowmgrd)
 
@@ -511,7 +511,7 @@ APP_SFLOW_TABLE  SET  →  APP_SFLOW_SESSION_TABLE  SET
 | 参照先 | DB | 参照方向 | YANG leafref | 実装上の必須度 | 証拠 |
 |---|---|---|---|---|---|
 | `PORT\|<name>` | CONFIG_DB | 読み取り (speed → デフォルトサンプリングレート算出) | なし | 実質必須 | sflowmgr.cpp:26,34,409 |
-| `PORT_TABLE\|<name>` | STATE_DB | 読み取り (oper_speed 変化 → サンプリングレート更新) | なし | 実質必須 | sflowmgr.cpp:414,184,195 |
+| `PORT_TABLE\|<name>` | [STATE_DB](../../reference/glossary.md#term-state_db) | 読み取り (oper_speed 変化 → サンプリングレート更新) | なし | 実質必須 | sflowmgr.cpp:414,184,195 |
 | `PORT\|<name>` (gPortsOrch 経由) | CONFIG_DB | 読み取り (ポート OID → SAI samplepacket 設定) | なし | 実質必須 | sfloworch.cpp:370,382 |
 | `MGMT_VRF_CONFIG\|vrf_global` | CONFIG_DB | 読み取り (mgmtVrfEnabled チェック) | must 制約 | `collector_vrf=mgmt` 時必須 | sonic-sflow.yang must 制約 |
 
@@ -596,4 +596,4 @@ PORT oper_speed 変化  →  STATE_DB PORT_TABLE 更新
 > **Evidence**: `sonic-swss/cfgmgr/sflowmgrd.cpp:31-46` (テーブル登録・起動スナップショット)、`sonic-swss/cfgmgr/sflowmgr.h:39-40` (`ProducerStateTable` 宣言)、`sonic-swss/cfgmgr/sflowmgr.cpp:403-410` (`doTask` テーブル名ルーティング)、`sonic-swss/orchagent/orchdaemon.cpp:439-444` (`SflowOrch` 登録)、`sonic-swss/orchagent/sfloworch.cpp:359-369` (APPL_DB 振り分け); 詳細分析 `meta/_intermediate/cdb-flow/sflow-pubsub.md`
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: d6084d14649a -->
+<!-- glossary-links-injected: be30c0005cb2 -->

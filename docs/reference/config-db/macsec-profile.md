@@ -263,7 +263,7 @@ configureMACsec() — wpa_cli 経由でインターフェース追加・MKA 設�
 
 ### SAI macsec_sa 作成順 (macsecorch)
 
-`MACsecOrch` では SAI オブジェクトを以下の厳密な順序で作成する。前段オブジェクトが未作成の場合は `task_need_retry` を返し待機する。
+`MACsecOrch` では [SAI](../../reference/glossary.md#term-sai) オブジェクトを以下の厳密な順序で作成する。前段オブジェクトが未作成の場合は `task_need_retry` を返し待機する。
 
 ```
 1. MACsec Switch Object (initMACsecObject)  ← スイッチ単位で 1 回のみ
@@ -320,7 +320,7 @@ configureMACsec() — wpa_cli 経由でインターフェース追加・MKA 設�
 | 6 | MKA プロファイルロード失敗 | `loadMKAProfile()` | `SWSS_LOG_WARN("The MACsec profile '%s' on the port '%s' loading fail")` → `task_failed` | なし |
 | 7 | `enableMACsec()` 内 `runtime_error` | `catch(runtime_error)` | `SWSS_LOG_WARN("Enable MACsec fail : %s")` → ポート非暗号化のまま継続 | なし |
 | 8 | `disableMACsec()` で wpa_supplicant 停止失敗 | `stopMKASession()` / `stopWPASupplicant()` | `SWSS_LOG_WARN("Cannot stop MKA session ...")` / `SWSS_LOG_WARN("Cannot stop WPA_SUPPLICANT ...")` → `task_failed`、プロセス残留の可能性 | なし |
-| 9 | SAI `create/set macsec` 恒久エラー | `parseHandleSaiStatusFailure()` | `task_failed` | なし |
+| 9 | [SAI](../../reference/glossary.md#term-sai) `create/set macsec` 恒久エラー | `parseHandleSaiStatusFailure()` | `task_failed` | なし |
 | 10 | SAI MACsec POST 失敗通知 | `doPostCompletionTask()` | `setMacsecPostState(m_state_db, "fail")` + `SWSS_LOG_ERROR("MACSec POST failed")` | なし |
 | 11 | プロファイル DEL 時にポートが使用中 | `removeProfile()` | `task_need_retry`（全ポート MACsec 無効化まで待機） | 無制限 |
 
@@ -340,7 +340,7 @@ configureMACsec() — wpa_cli 経由でインターフェース追加・MKA 設�
 
 - SAI POST 失敗のみ [STATE_DB](../../reference/glossary.md#term-state_db) に記録される（`MACSEC_POST|switch` エントリ）
 - その他の失敗は `syslog`（`SWSS_LOG_WARN` / `SWSS_LOG_ERROR`）への出力のみ
-- CONFIG_DB のエントリは失敗後も残る
+- [CONFIG_DB](../../reference/glossary.md#term-config_db) のエントリは失敗後も残る
 
 ```bash
 # syslog 確認
@@ -357,7 +357,7 @@ sonic-db-cli STATE_DB hgetall 'MACSEC_POST|switch'
 
 ### 段階 1 — Consumer 登録
 
-`macsecmgrd` → `MACsecOrch` ([APPL_DB](../../reference/glossary.md#term-appl_db) 経由) が CONFIG_DB の `MACSEC_PROFILE` テーブルを購読する。
+`macsecmgrd` → `MACsecOrch` ([APPL_DB](../../reference/glossary.md#term-appl_db) 経由) が [CONFIG_DB](../../reference/glossary.md#term-config_db) の `MACSEC_PROFILE` テーブルを購読する。
 
 `MACSEC_PROFILE` の key はプロファイル名。`primary_cak` / `fallback_cak` / `cipher_suite` 等のキー情報を保持。
 
@@ -432,7 +432,6 @@ MACsecOrch が SAI sai_macsec_api でセキュリティチャネル確立
   → APPL_DB PORT_TABLE.pfc_encryption_mode も暗黙参照（PFC ACL 生成時）
 ```
 <!-- /cross-refs -->
-
 
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
@@ -679,4 +678,4 @@ attr.value.booldata = true;
 - master ブランチ以外のバックポート差異はスコープ外
 <!-- /platform -->
 
-<!-- glossary-links-injected: 7a8bade35b7c -->
+<!-- glossary-links-injected: 6f36db8074ad -->

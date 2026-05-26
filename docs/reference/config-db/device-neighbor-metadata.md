@@ -70,7 +70,7 @@ DEVICE_NEIGHBOR_METADATA|<name>
 | 値の例 | 挙動 |
 |-------|------|
 | `ToRRouter` / `LeafRouter` / `SpineRouter` | [BGP](../../reference/glossary.md#term-bgp) テンプレ生成（[bgpcfgd](../../reference/glossary.md#term-bgpcfgd)）で role を参照し、eBGP セッション設定を分岐させることがある |
-| `Server` | 末端ホスト扱い（BGP テンプレでは直接利用されないことが多い） |
+| `Server` | 末端ホスト扱い（[BGP](../../reference/glossary.md#term-bgp) テンプレでは直接利用されないことが多い） |
 | 任意の文字列 | YANG 上 string 型で制約なし |
 
 ### IP 系フィールド (`lo_addr` / `lo_addr_v6` / `mgmt_addr` / `mgmt_addr_v6`)
@@ -585,4 +585,4 @@ bgpcfgd の `BGPPeerMgrBase` は `constants.bgp.use_neighbors_meta == True` の�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: eb5039340089 -->
+<!-- glossary-links-injected: 1c59d90c07b4 -->

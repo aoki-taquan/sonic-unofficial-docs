@@ -24,7 +24,7 @@ related:
 - import: `ietf-inet-types`, `sonic-port`, `sonic-portchannel`
 - top container: `sonic-mclag`
 
-MCLAG（Multi-Chassis Link Aggregation Group）のドメイン設定・インタフェース割り当て・Unique IP 設定を定義する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。`MCLAG_DOMAIN` でピア間 keepalive / session timeout を、`MCLAG_INTERFACE` でポートチャネルとドメインの紐付けを、`MCLAG_UNIQUE_IP` で VLAN インタフェースへのユニーク IP 割り当てを管理する。
+[MCLAG](../../reference/glossary.md#term-mclag)（Multi-Chassis Link Aggregation Group）のドメイン設定・インタフェース割り当て・Unique IP 設定を定義する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。`MCLAG_DOMAIN` でピア間 keepalive / session timeout を、`MCLAG_INTERFACE` でポートチャネルとドメインの紐付けを、`MCLAG_UNIQUE_IP` で [VLAN](../../reference/glossary.md#term-vlan) インタフェースへのユニーク IP 割り当てを管理する。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -144,4 +144,4 @@ module: sonic-mclag
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-mclag.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 26ca9e81c971 -->
+<!-- glossary-links-injected: 96a9d55b5750 -->

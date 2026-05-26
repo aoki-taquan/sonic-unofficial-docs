@@ -173,7 +173,7 @@ flowchart LR
 - [`config muxcable`](config-muxcable.md) — config muxcable サブコマンド
 - [`config dhcp relay`](config-dhcp-relay.md) — config dhcp_relay / dhcpv4_relay サブコマンド
 - [`config mgmt trio`](config-mgmt-trio.md) — config save / load / reload / replace / qos reload
-- [`show mgmt-vrf`](show-mgmt-vrf.md) — show mgmt-vrf サブコマンド
+- [`show mgmt vrf`](show-mgmt-vrf.md) — show mgmt-vrf サブコマンド
 - [`show running config`](show-running-config.md) — show runningconfiguration / startupconfiguration サブコマンド
 
 <!-- /cli-sibling -->

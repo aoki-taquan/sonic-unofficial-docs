@@ -149,7 +149,7 @@ dump state copp all                            # CONFIG_FILE も含む
 [^1]: [sonic-net/SONiC `doc/dump-utility/Dump-Utility.md` @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/dump-utility/Dump-Utility.md)
 
 <!-- topics-back-ref -->
-## 関連 Topics (索引)
+## 関連 Topics
 
 - [Topics: Telemetry / SNMP / Observability](../topics/09-telemetry-snmp/index.md)
 

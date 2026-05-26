@@ -226,7 +226,7 @@ VXLAN tunnel vtep1 added.
 
 ### 典型的な利用シーン
 
-- VXLAN tunnel 作成、VLAN-VNI map、EVPN VNI 紐付け。
+- [VXLAN](../../reference/glossary.md#term-vxlan) tunnel 作成、VLAN-VNI map、EVPN VNI 紐付け。
 - [VNET](../../reference/glossary.md#term-vnet) (asymmetric IRB) のセットアップ起点。
 
 ### よくある落とし穴
@@ -259,4 +259,4 @@ show vxlan name <tunnel>
 - [CONFIG_DB: VXLAN_TUNNEL_MAP](../config-db/vxlan-tunnel-map.md)
 - [YANG: sonic-vxlan](../yang/sonic-vxlan.md)
 
-<!-- glossary-links-injected: 639b97382f4c -->
+<!-- glossary-links-injected: 7e2e79cf3524 -->

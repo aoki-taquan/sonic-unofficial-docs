@@ -33,16 +33,16 @@ related:
 
 ## 1. 設定の全体像
 
-EVPN VXLAN を最小構成で動かすには **SONiC CLI 側と FRR vtysh 側の両方** に設定を入れる必要がある[^1]。
+[EVPN](../reference/glossary.md#term-evpn) [VXLAN](../reference/glossary.md#term-vxlan) を最小構成で動かすには **[SONiC](../reference/glossary.md#term-sonic) CLI 側と [FRR](../reference/glossary.md#term-frr) [vtysh](../reference/glossary.md#term-vtysh) 側の両方** に設定を入れる必要がある[^1]。
 
 | 設定対象 | 入れる場所 |
 |---------|------------|
-| VXLAN tunnel (VTEP loopback) | SONiC CLI (`config vxlan ...`) |
+| VXLAN tunnel ([VTEP](../reference/glossary.md#term-vtep) loopback) | SONiC CLI (`config vxlan ...`) |
 | EVPN NVO instance | SONiC CLI |
-| VLAN ↔ L2VNI mapping | SONiC CLI |
-| VRF ↔ L3VNI mapping | SONiC CLI + FRR vtysh |
-| BGP-EVPN session + `address-family l2vpn evpn` | FRR vtysh (or `frr.conf` template) |
-| ARP/ND suppression (per VLAN) | SONiC CLI |
+| [VLAN](../reference/glossary.md#term-vlan) ↔ L2VNI mapping | SONiC CLI |
+| [VRF](../reference/glossary.md#term-vrf) ↔ L3VNI mapping | SONiC CLI + FRR vtysh |
+| [BGP](../reference/glossary.md#term-bgp)-EVPN session + `address-family l2vpn evpn` | FRR vtysh (or `frr.conf` template) |
+| [ARP](../reference/glossary.md#term-arp)/ND suppression (per VLAN) | SONiC CLI |
 
 ## 2. SONiC CLI 設定例
 
@@ -59,7 +59,7 @@ config vxlan add vtep1 1.1.1.1
 config vxlan evpn_nvo add nvo1 vtep1
 ```
 
-CONFIG_DB 上は以下のようになる[^1]:
+[CONFIG_DB](../reference/glossary.md#term-config_db) 上は以下のようになる[^1]:
 
 ```json
 "VXLAN_TUNNEL": { "vtep1": { "src_ip": "1.1.1.1" } }
@@ -212,21 +212,21 @@ sonic-db-cli ASIC_DB KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL_MAP*'
 ### 5.1 対向 VTEP に届かない
 
 1. **underlay reachability** を確認: `ping -I Loopback0 <remote-vtep-loopback>`
-2. **tunnel object** が SAI に作られているか: `show vxlan tunnel` の operstatus、ASIC_DB の `SAI_OBJECT_TYPE_TUNNEL` 件数
+2. **tunnel object** が [SAI](../reference/glossary.md#term-sai) に作られているか: `show vxlan tunnel` の operstatus、[ASIC_DB](../reference/glossary.md#term-asic_db) の `SAI_OBJECT_TYPE_TUNNEL` 件数
 3. **MTU**: VXLAN ヘッダ 50 byte 増。fragmention 不可なら underlay の MTU を 50+ 上乗せ
 
 ### 5.2 MAC が学習されない (Type-2 受信問題)
 
 1. **BGP-EVPN session の状態**: `show bgp l2vpn evpn summary` で peer が `Established` か
 2. **対向の `advertise-all-vni` 設定**: 入っていないと Type-2 を送らない
-3. **fdbsyncd 動作**: `show vxlan remote_mac all` に何も出ない場合は `docker logs swss | grep -i fdbsync`
+3. **[fdbsyncd](../reference/glossary.md#term-fdbsyncd) 動作**: `show vxlan remote_mac all` に何も出ない場合は `docker logs swss | grep -i fdbsync`
 4. **VXLAN_FDB_TABLE が空**: `sonic-db-cli APPL_DB KEYS 'VXLAN_FDB_TABLE:*'` で確認
 
 ### 5.3 Type-5 ルートが入らない
 
 1. **L3VNI ↔ VRF mapping**: `show vxlan vrfvnimap` と FRR 側 `show evpn vni detail` で L3VNI が同じ値か
 2. **VRF が SAI に作られているか**: `sonic-db-cli ASIC_DB KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_VIRTUAL_ROUTER*'`
-3. **APPL_DB の VRF_ROUTE_TABLE**: `vni_label` / `router_mac` フィールドが入っているか
+3. **[APPL_DB](../reference/glossary.md#term-appl_db) の VRF_ROUTE_TABLE**: `vni_label` / `router_mac` フィールドが入っているか
 4. 既知 issue: [sonic-swss #3384 NEIGH_TABLE not populated with VXLAN routes](https://github.com/sonic-net/sonic-swss/issues/3384)
 
 ### 5.4 IMET (Type-3) が交換されない
@@ -236,9 +236,9 @@ sonic-db-cli ASIC_DB KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL_MAP*'
 
 ## 6. 制限事項（運用視点）
 
-- **下位 ASIC 依存**: VXLAN encap/decap、tunnel termination の SAI 実装が必須
+- **下位 [ASIC](../reference/glossary.md#term-asic) 依存**: VXLAN encap/decap、tunnel termination の SAI 実装が必須
 - **MTU**: VXLAN ヘッダ 50 byte 分の余裕を underlay に持たせる。不足は黙ってドロップしがち
-- **multihoming**: 別 HLD ([evpn-vxlan-multihoming.md](evpn-vxlan-multihoming.md))
+- **multihoming**: 別 [HLD](../reference/glossary.md#term-hld) ([evpn-vxlan-multihoming.md](evpn-vxlan-multihoming.md))
 - **BUM**: ingress replication のみ。multicast underlay は範囲外
 - **ARP/ND suppression**: 実装未完（[#2181](https://github.com/sonic-net/sonic-swss/issues/2181)）
 
@@ -260,3 +260,5 @@ sonic-db-cli ASIC_DB KEYS 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL_MAP*'
 - [Topics: VXLAN / EVPN / VNET オーバーレイ — 構築](../topics/03-vxlan-evpn/setup.md)
 
 <!-- /topics-back-ref -->
+
+<!-- glossary-links-injected: b6dbf651eb0c -->

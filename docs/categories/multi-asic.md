@@ -87,3 +87,10 @@ VOQ シャシでは **CHASSIS_APP_DB** が新しい広域 DB として登場し�
 - [Container / Build system 関連](container-build.md)
 
 <!-- glossary-links-injected: 5c9b3765d470 -->
+
+<!-- topics-back-ref -->
+## 関連 Topics
+
+- [Topics: Multi-ASIC / VOQ Chassis](../topics/12-multi-asic-voq/index.md)
+
+<!-- /topics-back-ref -->

@@ -5,7 +5,7 @@ area: routing
 verification: discrepancy-found
 monitor: evolved_beyond_hld
 last_verified: 2026-05-26
-page_kind: split-parent
+page_kind: split-hub
 sources:
   - repo: sonic-net/SONiC
     path: doc/vxlan/EVPN/EVPN_VXLAN_HLD.md

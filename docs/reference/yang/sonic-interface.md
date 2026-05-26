@@ -24,7 +24,7 @@ related:
 - import: `ietf-yang-types`, `sonic-types`, `sonic-port`, `sonic-vrf`, `sonic-vnet`
 - top container: `sonic-interface`
 
-物理 Ethernet インターフェイスの L3 設定（IP アドレス付与・[VRF](../../reference/glossary.md#term-vrf) バインド・[NAT](../../reference/glossary.md#term-nat) ゾーン・MPLS 有効化など）を管理する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。
+物理 Ethernet インターフェイスの L3 設定（IP アドレス付与・[VRF](../../reference/glossary.md#term-vrf) バインド・[NAT](../../reference/glossary.md#term-nat) ゾーン・[MPLS](../../reference/glossary.md#term-mpls) 有効化など）を管理する [YANG](../../reference/glossary.md#term-yang) モジュール[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -56,7 +56,7 @@ flowchart LR
 
 - [`config interface`](../cli/config-interface.md)
 
-### 関連 YANG
+### 関連 HLD
 
 - [sonic-loopback-interface YANG](../../reference/yang/sonic-loopback-interface.md)
 - [sonic-nat YANG](../../reference/yang/sonic-nat.md)
@@ -164,4 +164,4 @@ show ip interface
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-interface.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 3c20ea1bfa8f -->

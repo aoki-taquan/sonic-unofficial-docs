@@ -42,7 +42,6 @@ related:
 | `QUEUE_COUNTER_CAPABILITIES` | [portsorch](../../reference/glossary.md#term-portsorch) (`initCounterCapabilities`) | queuestat CLI |
 | `DEBUG_COUNTER_CAPABILITIES` | debugcounterorch (`publishDropCounterCapabilities`) | show debug-counter capabilities |
 
-
 ---
 
 ## PORT_COUNTER_CAPABILITIES テーブル

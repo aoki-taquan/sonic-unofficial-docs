@@ -173,7 +173,7 @@ reasoning: 2023 年 12 月の Rev 1.1 で追加された list キー衝突回避
 -->
 
 <!-- evidence-rendered:start -->
-??? note "検証エビデンス: sonic-net/SONiC/doc/mgmt/SONiC_YANG_Model_Guidelines.md#L500-L600 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
+??? note "📋 検証エビデンス: sonic-net/SONiC/doc/mgmt/SONiC_YANG_Model_Guidelines.md#L500-L600 (sha: 49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06)"
 
     **出典**:
 

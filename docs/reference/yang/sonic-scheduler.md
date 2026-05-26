@@ -53,7 +53,7 @@ flowchart LR
 
 - [`SCHEDULER`](../config-db/scheduler.md)
 
-### 対応 CONFIG_DB (追加)
+### 関連 HLD
 
 - [POLICER テーブル](../../reference/config-db/policer.md)
 

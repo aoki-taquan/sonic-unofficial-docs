@@ -40,7 +40,6 @@ related:
 
 [CONFIG_DB](../../reference/glossary.md#term-config_db) の静的エントリ (`FDB` テーブル) とは異なり、本テーブルはランタイム動的学習エントリのみを保持する。
 
-
 ## key 構造
 
 ```text

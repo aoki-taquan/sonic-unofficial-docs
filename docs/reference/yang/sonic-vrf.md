@@ -61,7 +61,7 @@ flowchart LR
 
 - [`config vrf`](../cli/config-vrf.md)
 
-### 関連 YANG
+### 関連 HLD
 
 - [sonic-nat YANG](../../reference/yang/sonic-nat.md)
 - [sonic-route-common YANG](../../reference/yang/sonic-route-common.md)

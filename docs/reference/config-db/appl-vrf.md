@@ -66,7 +66,6 @@ VRF_TABLE|<vrfName>
 
 - `orchagent` / `VRFOrch`: `VRF_TABLE` を `SubscriberStateTable` で購読。`sai_virtual_router_api->create_virtual_router()` または `set_virtual_router_attribute()` を呼ぶ。成功後 `STATE_VRF_OBJECT_TABLE|<vrfName>` に `state=ok` を書き込む[^vrforch]。
 
-
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 

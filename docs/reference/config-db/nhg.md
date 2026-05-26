@@ -31,7 +31,6 @@ related:
 
 `fpmsyncd` (`routesync.cpp`) が [FRR](../../reference/glossary.md#term-frr)/Zebra から kernel netlink 経由で受信した [ECMP](../../reference/glossary.md#term-ecmp) ルートを変換して書き込む。`NhgOrch` が APPL\_DB を購読し、[SAI](../../reference/glossary.md#term-sai) の `sai_next_hop_group_api` を使って next hop group を作成・更新する。
 
-
 ## key 構造
 
 ```text

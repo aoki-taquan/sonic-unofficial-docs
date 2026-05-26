@@ -459,7 +459,7 @@ EventDB service (`eventd` 内の event_consumer + alarm_consumer) が `/etc/evpr
 |---|---|---|---|
 | `eventd` (設定読み込み) | `ifstream` ファイル直接 | `/etc/eventd.json`, `/etc/evprofile/default.json` | 起動時 1 回読み込み。変更反映は `systemctl restart eventd` が必要 |
 | event producer (全コンテナ) | ZMQ XSUB `zmq_connect` | `:5570` (`xsub_path`) | `event_publish()` 経由でイベントを送信。eventd proxy が XSUB→XPUB 間で転送 |
-| `stats_collector` (内部サブスクライバー) | ZMQ XPUB `events_init_subscriber` | `:5571` (`xpub_path`) | 全イベントを受信してハートビート検知 + COUNTERS_DB 書き込み (`eventd.cpp:244`) |
+| `stats_collector` (内部サブスクライバー) | ZMQ XPUB `events_init_subscriber` | `:5571` (`xpub_path`) | 全イベントを受信してハートビート検知 + [COUNTERS_DB](../../reference/glossary.md#term-counters_db) 書き込み (`eventd.cpp:244`) |
 | telemetry (gnmi_server) | ZMQ XPUB subscribe + REQ/REP | `:5571` / `:5572` | `EVENT_CACHE_INIT` → `EVENT_CACHE_START` → `EVENT_CACHE_STOP` → `EVENT_CACHE_READ` でキャッシュ制御 |
 | capture_service (内部) | ZMQ SUB `zmq_connect` | `:5573` (`capture_path`) | キャプチャ専用チャネルでイベントをバッファリング (HLD section 3.1.8) |
 | `pmon` | `EVENT_DB.ALARM_STATS` 購読 | `EVENT_DB` (Redis index 19) | ALARM_STATS の severity 別カウンタ変化を監視してシステム LED を制御: Critical/Major → Red、Minor/Warning → Amber、なし → Green (HLD section 3.1.3) |
@@ -544,4 +544,4 @@ VM テストベッド（`sonic-vs`）でも `eventd` は同一バイナリで動
 - [SUPPRESS_ASIC_SDK_HEALTH_EVENT テーブル](suppress-asic-sdk-health-event.md)
 - [CONFIG_DB index](index.md)
 
-<!-- glossary-links-injected: 25891596365f -->
+<!-- glossary-links-injected: e623639a93e5 -->
