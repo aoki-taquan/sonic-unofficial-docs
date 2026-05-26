@@ -2,8 +2,8 @@
 title: BGP Graceful Restart のネゴシエーションに失敗する
 description: "Runbook: BGP Graceful Restart (GR) capability が対向と合致せず restart 時に経路断が発生する場合の切り分け"
 area: reference
-verification: hld-only
-last_verified: 2026-05-11
+verification: runbook-verified
+last_verified: 2026-05-26
 tags: [runbook, bgp, frr]
 sources:
   - repo: sonic-net/sonic-frr
@@ -20,8 +20,8 @@ related:
 
 # Runbook: BGP Graceful Restart のネゴシエーションに失敗する
 
-!!! warning "HLD-only"
-    本ページは HLD と FRR の一般動作から再構成した運用ノートで、実コード追跡は一部に留まる。SHA は参考。
+!!! success "裏取りステータス: runbook-verified"
+    `sonic-frr/bgpd/bgp_open.c` の `bgp_capability_restart()` 関数で GR capability ネゴシエーション実装を確認済み（`PEER_CAP_RESTART_RCV` / `peer->v_gr_restart` セット等）。症状・切り分けフローは実コードに基づく。
 
 !!! danger "実行前提"
     `clear ip bgp *` / `systemctl restart bgp` は全 neighbor を一旦切る。GR の検証時は片方向ずつ行い、ECMP の他経路で fail-over できることを確認してから実行する。

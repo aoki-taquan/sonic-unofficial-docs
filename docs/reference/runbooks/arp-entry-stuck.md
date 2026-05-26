@@ -2,8 +2,8 @@
 title: ARP / Neighbor エントリが古い IP-MAC を保持し続ける
 description: "Runbook: ARP テーブルが stale な MAC を返し続けて traffic が黒穴化する場合の切り分け"
 area: reference
-verification: hld-only
-last_verified: 2026-05-11
+verification: runbook-verified
+last_verified: 2026-05-26
 tags: [runbook, arp, neighbor]
 sources:
   - repo: sonic-net/sonic-swss
@@ -23,8 +23,8 @@ related:
 
 # Runbook: ARP / Neighbor エントリが古い IP-MAC を保持し続ける
 
-!!! warning "HLD-only"
-    `neighsyncd` / `neighorch` の標準動作 + Linux neighbor subsystem からの再構成。
+!!! success "裏取りステータス: runbook-verified"
+    `sonic-swss/neighsyncd/neighsync.cpp` および `orchagent/neighorch.cpp` の実コードでネイバー同期・flush フローを確認済み。症状・切り分けフローは実装に基づく。
 
 !!! danger "実行前提"
     `ip neigh flush` は ARP 全削除の resolve storm を引き起こす。本番では対象 IP のみ `ip neigh del <ip> dev <if>` で削除する。

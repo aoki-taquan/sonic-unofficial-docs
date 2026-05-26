@@ -4,8 +4,8 @@ description: 'Redis Client Manager（RCM: connection pool / transactional client
   sonic-mgmt-common の translib（gNMI GET/SET/SUBSCRIBE 処理）は内部で 大量の Redis client を作成し、Redis
   TCP…'
 area: management
-verification: code-verified
-last_verified: 2026-05-13
+verification: discrepancy-found
+last_verified: 2026-05-26
 monitor: partially_implemented
 sources:
 - repo: sonic-net/SONiC
@@ -37,8 +37,8 @@ related:
     この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は [Topics 10 章: gNMI / OpenConfig / 管理プレーン](../topics/10-gnmi-openconfig/index.md) を参照。
 <!-- /topics-tip -->
 
-!!! success "裏取りステータス: code-verified"
-    `sonic-mgmt-common` 上の RCM 4 関数（`RedisClient` / `TransactionalRedisClient` / `TransactionalRedisClientWithOpts` / `CloseRedisClient`）の現行 master 取り込み、`DBStats` への counter 統合は未確認。
+!!! warning "裏取りステータス: discrepancy-found (partially_implemented)"
+    `sonic-mgmt-common` 上の RCM 4 関数（`RedisClient` / `TransactionalRedisClient` / `TransactionalRedisClientWithOpts` / `CloseRedisClient`）の現行 master 取り込みは確認済み。`DBStats` への counter 統合は未確認（HLD 記載の Phase 3 が未実装相当）。
 
 # Redis Client Manager（RCM: connection pool / transactional client）
 

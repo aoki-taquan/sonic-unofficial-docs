@@ -4,7 +4,6 @@ description: "DHCP_SERVER_IPV6 テーブル — 組み込み DHCPv6 サーバ機
 area: reference
 hard: 0
 verification: stub
-monitor: not_implemented
 last_verified: 2026-05-16
 sources:
   - repo: sonic-net/sonic-buildimage
