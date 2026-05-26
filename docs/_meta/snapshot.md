@@ -20,11 +20,11 @@ sources: []
 
 | verification | 件数 |
 |---|---:|
-| code-verified | 746 |
-| runbook-verified | 25 |
-| discrepancy-found | 109 |
+| code-verified | 745 |
+| runbook-verified | 27 |
+| discrepancy-found | 112 |
 | issue-confirmed | 10 |
-| hld-only | 4 |
+| hld-only | 0 |
 | meta | 209 |
 | stub | 1 |
 | **合計** | **1104** |
@@ -35,9 +35,9 @@ sources: []
 
 | バケツ | 件数 |
 |---|---:|
-| 今日 (0d) | 12 |
-| 7 日以内 (1-7d) | 23 |
-| 30 日以内 (8-30d) | 1066 |
+| 今日 (0d) | 16 |
+| 7 日以内 (1-7d) | 24 |
+| 30 日以内 (8-30d) | 1061 |
 | 30 日超 / 古い | 0 |
 | 不明 / パース不可 | 3 |
 
@@ -79,7 +79,7 @@ sources: []
 | 項目 | 値 |
 |---|---:|
 | 用語数 (`### ` アンカー) | 335 |
-| docs 内被リンク数 | 19679 |
+| docs 内被リンク数 | 19505 |
 
 ## 直近 5 round quality-audit
 
@@ -99,8 +99,8 @@ sources: []
 
 | 項目 | 件数 |
 |---|---:|
-| frontmatter-lint (hard) | 0 |
-| frontmatter-lint (warn) | 0 |
+| frontmatter-lint (hard) | — |
+| frontmatter-lint (warn) | 3 |
 | link-density low (<2.0/1k) | 68 |
 | link-density high (>30.0/1k) | 0 |
 | discrepancy-related-yang violations | 0 |
@@ -112,7 +112,7 @@ sources: []
 | 項目 | 値 |
 |---|---:|
 | 低密度ページ残数 (link-density < 2) | 68 |
-| backlog 残数 (active) | 10 |
+| backlog 残数 (active) | 20 |
 
 ## 関連メタページ
 

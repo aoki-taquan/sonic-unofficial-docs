@@ -1,0 +1,16 @@
+{
+  "title": "sonic-fib Low Level Design",
+  "slug": "sonic-fib-low-level-design",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/sonic-fib-low-level-design.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/ribfib/sonic-fib_lld.md",
+      "ref": "4fda6b77e4fda2db76591143d03544f7895df40b"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=8264; Added in master-sync-2026-05-26"
+}

@@ -1,0 +1,16 @@
+{
+  "title": "Route Performance",
+  "slug": "route-performance",
+  "area": "routing",
+  "type": "hld-port",
+  "target_path": "docs/routing/route-performance.md",
+  "primary_sources": [
+    {
+      "repo": "sonic-net/SONiC",
+      "path": "doc/route-performance/README.md",
+      "ref": "4fda6b77e4fda2db76591143d03544f7895df40b"
+    }
+  ],
+  "reader_questions": [],
+  "notes": "size_bytes=4532; Added in master-sync-2026-05-26; covers community route performance analysis hub"
+}
