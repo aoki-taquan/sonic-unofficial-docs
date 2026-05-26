@@ -16,7 +16,7 @@
         <link rel="prev" href="../smartswitch-eni-based-forwarding/">
       
       
-        <link rel="next" href="../dscp-remapping-for-tunnel-traffic/">
+        <link rel="next" href="../sonic-dash-hld-concepts/">
       
       
         
@@ -11084,6 +11084,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -11847,6 +11853,90 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-dash-hld-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC-DASH 概念（ENI / VNet / route_type / ACL / メータリング）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-dash-hld-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC-DASH 運用（CLI / 設定例 / トラブルシュート）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sonic-dash-hld-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SONiC-DASH 内部実装（DASH APP DB スキーマ / dashorch / SAI DASH API）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -35657,7 +35747,16 @@
 
 <div class="admonition success">
 <p class="admonition-title">裏取りステータス: code-verified（中核アーキテクチャの抜粋範囲のみ）</p>
-<p><code>sonic-swss/orchagent/dash/dashorch.h</code> L63 <code>class DashOrch : public ZmqOrch</code>、<code>dashvnetorch.cpp</code> L49-50 で <code>APP_DASH_VNET_TABLE_NAME</code> / <code>APP_DASH_VNET_MAPPING_TABLE_NAME</code> 操作、<code>dashaclorch.cpp</code> / <code>dashmeterorch.cpp</code> / <code>dashhaorch.cpp</code> / <code>dashhafloworch.cpp</code> / <code>dashenifwdorch.cpp</code> / <code>dashcounter.cpp</code> で各 Orch を確認。<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dash.yang</code> L36 <code>container DASH_VNET</code> / L119 <code>container DASH_ENI</code> で YANG を確認、<code>sonic-buildimage/src/sonic-dash-api</code> を確認（verified 2026-05-09）。<strong>詳細仕様（FastPath / Service Tunnel / Private Link / Floating NIC / PL-NSG）は本ページの抜粋範囲外であり完全な裏取りではない</strong>。章単位分割は別 issue で実施。</p>
+<p><code>sonic-swss/orchagent/dash/dashorch.h</code> L63 <code>class DashOrch : public ZmqOrch</code>、<code>dashvnetorch.cpp</code> L49-50 で <code>APP_DASH_VNET_TABLE_NAME</code> / <code>APP_DASH_VNET_MAPPING_TABLE_NAME</code> 操作、<code>dashaclorch.cpp</code> / <code>dashmeterorch.cpp</code> / <code>dashhaorch.cpp</code> / <code>dashhafloworch.cpp</code> / <code>dashenifwdorch.cpp</code> / <code>dashcounter.cpp</code> で各 Orch を確認。<code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-dash.yang</code> L36 <code>container DASH_VNET</code> / L119 <code>container DASH_ENI</code> で YANG を確認、<code>sonic-buildimage/src/sonic-dash-api</code> を確認（verified 2026-05-09）。</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">詳細は派生ページへ分割済み</p>
+<p>本ページは <strong>概観 + 元 HLD の章扉</strong> として残し、詳細は以下の 3 派生ページに分割した:</p>
+<ul>
+<li><a href="../sonic-dash-hld-concepts/">SONiC-DASH 概念</a> — ENI / VNet / routing_type / ACL ステージ / メータリング / ST / PL / FastPath / FNIC の意味論</li>
+<li><a href="../sonic-dash-hld-internals/">SONiC-DASH 内部実装</a> — DASH APP DB スキーマ全テーブル、SAI DASH API マッピング、dashorch サブ Orch 構成、暗黙削除、SWSS Lite、Underlay routing</li>
+<li><a href="../sonic-dash-hld-operations/">SONiC-DASH 運用</a> — CLI、設定例（VNet-VNet / ST / PL / Meter）、redis / state 確認、トラブルシュート</li>
+</ul>
 </div>
 <h1 id="sonic-dashdisaggregated-apis-for-sonic-hosts">SONiC-DASH（Disaggregated APIs for SONiC Hosts）アーキテクチャ概観<a class="headerlink" href="#sonic-dashdisaggregated-apis-for-sonic-hosts" title="Permanent link">&para;</a></h1>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
