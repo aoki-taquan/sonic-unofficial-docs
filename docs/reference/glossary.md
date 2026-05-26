@@ -1697,7 +1697,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 
 ### [HLD](#term-hld)
 
-- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (244)
+- [HLD と実装の乖離 一覧（discrepancy-index）](verification/discrepancy-index.md) (246)
 - [ERROR_DB テーブル (ERROR_ROUTE_TABLE / ERROR_NEIGH_TABLE)](config-db/errordb.md) (88)
 - [SAG テーブル](config-db/sag.md) (43)
 - [VRRP テーブル](config-db/vrrp.md) (41)
