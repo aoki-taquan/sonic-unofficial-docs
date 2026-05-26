@@ -41,6 +41,9 @@ nav:
   - dhcp-relay-for-ipv6-hld.md
   - dhcp-relay-per-interface-counter.md
   - evpn-vxlan-hld.md
+  - evpn-vxlan-hld-concepts.md
+  - evpn-vxlan-hld-internals.md
+  - evpn-vxlan-hld-operations.md
   - evpn-vxlan-multihoming.md
   - local-ars-hld.md
   - prefix-based-mux-neighbors.md
