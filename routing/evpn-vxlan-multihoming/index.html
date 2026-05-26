@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="EVPN VXLAN Multihoming（ESI / DF election / split-horizon） — EVPN multihoming（MH）は MC-LAG / vPC を使わず、BGP-EVPN だけで host を複数 leaf にマルチホーム接続する RFC 7432 / RFC 8365…">
+        <meta name="description" content="EVPN VXLAN Multihoming（ESI / DF election / split-horizon）の概要ハブ。RFC 7432 / RFC 8365 に基づく all-active 冗長を MC-LAG なしで実現する SONiC 設計の入口。詳細は派生ページへ。">
       
       
       
@@ -16,7 +16,7 @@
         <link rel="prev" href="../evpn-vxlan-hld/">
       
       
-        <link rel="next" href="../local-ars-hld/">
+        <link rel="next" href="../evpn-vxlan-multihoming-concepts/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>EVPN VXLAN Multihoming（ESI / DF election / split-horizon） - SONiC 非公式ドキュメント</title>
+        <title>EVPN VXLAN Multihoming（概要ハブ） - SONiC 非公式ドキュメント</title>
       
     
     
@@ -63,16 +63,16 @@
     
   
 <meta property="og:type" content="website" />
-<meta property="og:title" content="EVPN VXLAN Multihoming（ESI / DF election / split-horizon） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="EVPN VXLAN Multihoming（ESI / DF election / split-horizon） — EVPN multihoming（MH）は MC-LAG / vPC を使わず、BGP-EVPN だけで host を複数 leaf にマルチホーム接続する RFC 7432 / RFC 8365…" />
+<meta property="og:title" content="EVPN VXLAN Multihoming（概要ハブ） - SONiC 非公式ドキュメント" />
+<meta property="og:description" content="EVPN VXLAN Multihoming（ESI / DF election / split-horizon）の概要ハブ。RFC 7432 / RFC 8365 に基づく all-active 冗長を MC-LAG なしで実現する SONiC 設計の入口。詳細は派生ページへ。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/evpn-vxlan-multihoming.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/evpn-vxlan-multihoming/" />
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:title" content="EVPN VXLAN Multihoming（ESI / DF election / split-horizon） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="EVPN VXLAN Multihoming（ESI / DF election / split-horizon） — EVPN multihoming（MH）は MC-LAG / vPC を使わず、BGP-EVPN だけで host を複数 leaf にマルチホーム接続する RFC 7432 / RFC 8365…" />
+<meta property="twitter:title" content="EVPN VXLAN Multihoming（概要ハブ） - SONiC 非公式ドキュメント" />
+<meta property="twitter:description" content="EVPN VXLAN Multihoming（ESI / DF election / split-horizon）の概要ハブ。RFC 7432 / RFC 8365 に基づく all-active 冗長を MC-LAG なしで実現する SONiC 設計の入口。詳細は派生ページへ。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/evpn-vxlan-multihoming.png" />
 </head>
   
@@ -93,7 +93,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#evpn-vxlan-multihomingesi-df-election-split-horizon" class="md-skip">
+        <a href="#evpn-vxlan-multihoming" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -127,7 +127,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              EVPN VXLAN Multihoming（ESI / DF election / split-horizon）
+              EVPN VXLAN Multihoming（概要ハブ）
             
           </span>
         </div>
@@ -8776,6 +8776,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -9976,7 +9982,7 @@
   <span class="md-ellipsis">
     
   
-    EVPN VXLAN Multihoming（ESI / DF election / split-horizon）
+    EVPN VXLAN Multihoming（概要ハブ）
   
 
     
@@ -9994,7 +10000,7 @@
   <span class="md-ellipsis">
     
   
-    EVPN VXLAN Multihoming（ESI / DF election / split-horizon）
+    EVPN VXLAN Multihoming（概要ハブ）
   
 
     
@@ -10020,190 +10026,51 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 本ページの位置づけ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 全体像（俯瞰）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ステータス（discrepancy 概要）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="トラブルシューティング">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-evpn_ethernet_segment-orch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. EVPN_ETHERNET_SEGMENT テーブル / orch が未実装
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-frr-evpn-mh-sonic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. FRR EVPN-MH 側のみ存在しても SONiC 連携が無い
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-sai-esi-label-split-horizon" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. SAI ESI label / split-horizon 拡張のサポートも未確認
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        結論
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="結論">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#github-issue-pr" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 GitHub Issue / PR
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -10217,6 +10084,90 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evpn-vxlan-multihoming-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EVPN VXLAN Multihoming 概念（ESI / DF election / Split-horizon / Aliasing）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evpn-vxlan-multihoming-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EVPN VXLAN Multihoming 実装内部（EvpnMhOrch / L2nhgOrch / ShlOrch / SAI L2 NHG）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evpn-vxlan-multihoming-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EVPN VXLAN Multihoming 運用（config interface evpn-esi / show vxlan ethernet-segment / 差分）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -35566,190 +35517,51 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 本ページの位置づけ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 全体像（俯瞰）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-discrepancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ステータス（discrepancy 概要）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        概要
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        動作仕様
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        設定
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="設定">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#config_db" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 CONFIG_DB
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 CLI
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        制限事項
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        干渉する機能
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        トラブルシューティング
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="トラブルシューティング">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-evpn_ethernet_segment-orch" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. EVPN_ETHERNET_SEGMENT テーブル / orch が未実装
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-frr-evpn-mh-sonic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. FRR EVPN-MH 側のみ存在しても SONiC 連携が無い
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-sai-esi-label-split-horizon" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. SAI ESI label / split-horizon 拡張のサポートも未確認
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        結論
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="結論">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#github-issue-pr" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        関連 GitHub Issue / PR
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        コマンド例
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        引用元
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -35787,204 +35599,92 @@
 <!-- topics-tip -->
 <div class="admonition tip">
 <p class="admonition-title">Topics で読み物として読む</p>
-<p>この HLD は実装詳細を含みます。機能の概念・設定・運用を読み物として読みたい場合は <a href="../../topics/03-vxlan-evpn/">Topics 03 章: VXLAN / EVPN とオーバーレイ</a> を参照。</p>
+<p>本機能の概念は <a href="../../topics/03-vxlan-evpn/">Topics 03 章: VXLAN / EVPN とオーバーレイ</a> を参照。</p>
 </div>
 <!-- /topics-tip -->
 
 <div class="admonition warning">
-<p class="admonition-title">裏取りステータス: discrepancy-found / 大規模 HLD</p>
-<p>HLD は 80KB。本ページは EVPN MH の中核（ESI / Type-1 / Type-4 / DF election / split-horizon）に絞る。基本の EVPN VXLAN は同 area の <code>evpn-vxlan-hld.md</code> を参照。</p>
+<p class="admonition-title">裏取りステータス: discrepancy-found / 大規模 HLD 分割</p>
+<p>HLD は 80KB（1650 行）。本ページは <strong>概要ハブ</strong> とし、詳細は 3 派生ページへ分割した。<strong>EVPN MH は HLD 提案段階で、現行 master では機能利用不可</strong>（詳細は本ページ末尾の差分節）。</p>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Verifier 注記（2026-05-10）</p>
-<p>実コード裏取り: 現行 master の <code>sonic-swss/orchagent/</code>、<code>sonic-buildimage/src/sonic-yang-models/yang-models/</code>、<code>sonic-utilities/</code> を grep した範囲では <strong><code>EVPN_ETHERNET_SEGMENT</code> テーブル / <code>EthernetSegment</code> orch / <code>config evpn ethernet-segment</code> CLI / EVPN-MH 用 yang は確認できない</strong>。HLD は提案レベルで、sonic-net のメインリポジトリには未取り込みの可能性が高い。利用可否は upstream FRR の EVPN-MH と vendor SAI の ESI label / split-horizon サポートに依存する。</p>
-</div>
-<h1 id="evpn-vxlan-multihomingesi-df-election-split-horizon">EVPN VXLAN Multihoming（ESI / DF election / split-horizon）<a class="headerlink" href="#evpn-vxlan-multihomingesi-df-election-split-horizon" title="Permanent link">&para;</a></h1>
-<h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p><a href="../../reference/glossary/#term-evpn">EVPN</a> multihoming（MH）は <strong>MC-<a href="../../reference/glossary/#term-lag">LAG</a> / vPC を使わず、<a href="../../reference/glossary/#term-bgp">BGP</a>-EVPN だけで host を複数 leaf にマルチホーム接続する</strong> RFC 7432 / RFC 8365 の仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-sonic">SONiC</a> は <a href="../../reference/glossary/#term-frr">FRR</a> の <a href="../../reference/glossary/#term-evpn-mh">EVPN-MH</a> と <a href="../../reference/glossary/#term-sai">SAI</a> レイヤを組合せる。</p>
-<p>主要な構成:</p>
-<ul>
-<li><strong>Ethernet Segment (ES)</strong>: 複数 leaf が共有する論理 link を表す。<strong>ESI（Ethernet Segment Identifier）</strong> で一意化</li>
-<li><strong>Type-1 (Auto-Discovery / per-ES, per-EVI)</strong>: ES の到達性と aliasing 用 next-hop を広告</li>
-<li><strong>Type-4 (ES Route)</strong>: 同一 ES のメンバ leaf を相互に発見し、<strong>Designated Forwarder（DF）election</strong> を行う</li>
-<li><strong>Split-horizon</strong>: ES に向かうトラフィックがその ES の他メンバに重複ループしないよう、ESI label を付けてフィルタする</li>
-</ul>
-<h2 id="_2">動作仕様<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h1 id="evpn-vxlan-multihoming">EVPN VXLAN Multihoming（概要ハブ）<a class="headerlink" href="#evpn-vxlan-multihoming" title="Permanent link">&para;</a></h1>
+<h2 id="1">1. 本ページの位置づけ<a class="headerlink" href="#1" title="Permanent link">&para;</a></h2>
+<p><a href="../../reference/glossary/#term-evpn">EVPN</a> Multihoming（<a href="../../reference/glossary/#term-evpn-mh">EVPN-MH</a>）は、<strong>MC-<a href="../../reference/glossary/#term-lag">LAG</a> / vPC を使わず、<a href="../../reference/glossary/#term-bgp">BGP</a>-EVPN だけで host を複数 leaf にマルチホーム接続する</strong> RFC 7432 / RFC 8365 / RFC 8584 + <code>draft-ietf-bess-evpn-pref-df</code> の仕組み<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。<a href="../../reference/glossary/#term-sonic">SONiC</a> は <a href="../../reference/glossary/#term-frr">FRR</a> の EVPN-MH（Type-1 EAD / Type-4 ES route / preference-based DF）と <a href="../../reference/glossary/#term-sai">SAI</a> レイヤ（L2 <a href="../../reference/glossary/#term-ecmp">ECMP</a> bridge port / isolation group / protection nexthop）を組合せる設計になっている。</p>
+<p><a href="../../reference/glossary/#term-hld">HLD</a> はボリュームが大きいため、目的別に 3 派生ページへ分割した。</p>
+<table>
+<thead>
+<tr>
+<th>ページ</th>
+<th>目的</th>
+<th>主な内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../evpn-vxlan-multihoming-concepts/">evpn-vxlan-multihoming-concepts.md</a></td>
+<td><strong>概念</strong></td>
+<td>ESI（Type-0/Type-3）、Type-1 EAD、Type-4 ES route、DF election、Aliasing、Split-horizon、Local-bias、Proxy advertisement、SAG、MC-LAG との相互排他</td>
+</tr>
+<tr>
+<td><a href="../evpn-vxlan-multihoming-internals/">evpn-vxlan-multihoming-internals.md</a></td>
+<td><strong>実装</strong></td>
+<td><a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> / APP_DB スキーマ、EvpnMhOrch / L2nhgOrch / ShlOrch、Fpmsyncd / Fdbsyncd 拡張、SAI L2 NHG bridge port / protection NHG、MAC handling シーケンス</td>
+</tr>
+<tr>
+<td><a href="../evpn-vxlan-multihoming-operations/">evpn-vxlan-multihoming-operations.md</a></td>
+<td><strong>運用</strong></td>
+<td><code>config interface evpn-esi</code> / <code>config evpn-mh</code> CLI、<code>show vxlan ethernet-segment</code> / <code>show evpn es*</code> / <code>show bgp l2vpn evpn es*</code>、REST API、デバッグ手順、トラブルシュート</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2">2. 全体像（俯瞰）<a class="headerlink" href="#2" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
     H[Multi-homed Host\nLAG bond] --- L1[Leaf 1\nESI 0xAA]
     H --- L2[Leaf 2\nESI 0xAA]
-    L1 -. Type-4 .- L2
+    L1 -. Type-4 ES route .- L2
     L1 --- SP[(Spine)]
     L2 --- SP
     SP --- L3["Leaf 3\n(remote)"]
-    L1 -.Type-2 (MAC) ＋ Aliasing Type-1.-&gt; L3</code></pre>
-<p>主要動作<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
+    L1 -.Type-2 (MAC) + Aliasing Type-1.-&gt; L3</code></pre>
+<p>主要な構成要素<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>
 <ul>
-<li><strong>DF election</strong>: ES メンバ間で BUM の <strong>forwarder を 1 つに選ぶ</strong>（<a href="../../reference/glossary/#term-vlan">VLAN</a> 単位）。Type-4 で見つかったメンバ群を IP / DF algo で並べる</li>
-<li><strong>Aliasing (Type-1)</strong>: remote leaf は ES 全メンバを <a href="../../reference/glossary/#term-ecmp">ECMP</a> next-hop として使い、トラフィックを load-balance</li>
-<li><strong>Split-horizon (ESI label)</strong>: ingress leaf が ESI label を付与、egress leaf は同 ESI 受信なら local ES に出さない</li>
-<li><strong>Single-Active vs All-Active</strong>: ES が All-Active か Single-Active かを ESI / config で区別</li>
+<li><strong>Ethernet Segment (ES)</strong>: 複数 leaf が共有する論理 link。<strong>ESI</strong>（10 byte）で一意化。Type-0（運用者設定）/ Type-3（system-mac + <a href="../../reference/glossary/#term-portchannel">PortChannel</a> 番号から自動生成）</li>
+<li><strong>Type-1 (Auto-Discovery)</strong>: ES の到達性と aliasing 用 next-hop を広告（per-ES / per-EVI）</li>
+<li><strong>Type-4 (ES Route)</strong>: 同一 ES のメンバ leaf を相互発見し、<strong>DF election</strong> を行う</li>
+<li><strong>Split-horizon (Local-bias)</strong>: ingress leaf が自身の ES に向けた BUM を origin <a href="../../reference/glossary/#term-vtep">VTEP</a> の Isolation group で抑止</li>
+<li><strong>DF election</strong>: ES メンバ間で BUM forwarder を 1 つに選出（preference-based / Algo 2 を採用）</li>
 </ul>
-<h2 id="_3">設定<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<h3 id="config_db">関連 CONFIG_DB<a class="headerlink" href="#config_db" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Table</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>EVPN_ETHERNET_SEGMENT</code></td>
-<td>ESI、関連する LAG / interface、type (single-active / all-active)、DF preference</td>
-</tr>
-<tr>
-<td><code>PORTCHANNEL</code></td>
-<td>ES に紐づく LAG</td>
-</tr>
-<tr>
-<td><code>VXLAN_TUNNEL</code></td>
-<td><a href="../../reference/glossary/#term-vtep">VTEP</a> loopback（前提）</td>
-</tr>
-</tbody>
-</table>
-<h3 id="cli">関連 CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>config evpn ethernet-segment add &lt;name&gt; esi &lt;id&gt;</code></td>
-<td>ES 定義</td>
-</tr>
-<tr>
-<td><code>config evpn ethernet-segment &lt;name&gt; interface &lt;portchannel&gt;</code></td>
-<td>LAG 紐付け</td>
-</tr>
-<tr>
-<td><code>show evpn ethernet-segment</code></td>
-<td>DF / メンバ一覧</td>
-</tr>
-<tr>
-<td><code>show evpn vni &lt;vni&gt; mh</code></td>
-<td>MH 視点</td>
-</tr>
-</tbody>
-</table>
-<h2 id="_4">制限事項<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="3-discrepancy">3. ステータス（discrepancy 概要）<a class="headerlink" href="#3-discrepancy" title="Permanent link">&para;</a></h2>
+<p>2026-05 時点の現行 master を grep した範囲では、<strong><code>EVPN_ETHERNET_SEGMENT</code> テーブル / <code>EvpnMhOrch</code> / <code>L2nhgOrch</code> / <code>ShlOrch</code> / <code>config interface evpn-esi</code> CLI / <code>sonic-evpn-mh.yang</code> のいずれも見つからない</strong>。HLD は提案段階で、関連 PR は以下が open のまま。</p>
 <ul>
-<li><strong>対応 <a href="../../reference/glossary/#term-asic">ASIC</a> のみ</strong>: ESI label / split-horizon を SAI で扱える <a href="../../reference/glossary/#term-npu">NPU</a> が必要</li>
-<li><strong>DF election timer</strong>: 起動直後の不安定期に BUM が断する可能性。<code>hold timer</code> で対処</li>
-<li><strong>VLAN ↔ ES の整合</strong>: ES に紐づく VLAN は両 leaf で同一定義であること</li>
-<li><strong>MAC mobility</strong>: host が ES 内で移動した時の MAC mobility extended community 処理に依存</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/pull/4262">sonic-swss #4262</a>: EVPN <a href="../../reference/glossary/#term-vxlan">VXLAN</a> Multihoming feature support（本体）</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/pull/4206">sonic-swss #4206</a>: EVPN MH protocol field</li>
+<li><a href="https://github.com/sonic-net/sonic-swss/pull/4039">sonic-swss #4039</a>: Fdbsyncd changes for EVPN MH</li>
 </ul>
-<h2 id="_5">干渉する機能<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>EVPN <a href="../../reference/glossary/#term-vxlan">VXLAN</a> <a href="../../reference/glossary/#term-hld">HLD</a></strong>: 上位の Type-2 / Type-5 流通の前提</li>
-<li><strong>MC-LAG</strong>: 同じ目的を別アプローチで解く。両者の違いを理解した上で選択</li>
-<li><strong>port-channel / <a href="../../reference/glossary/#term-lacp">LACP</a></strong>: ES の物理リンク基盤</li>
-<li><strong><a href="../../reference/glossary/#term-fpmsyncd">fpmsyncd</a> / nexthop group</strong>: aliasing による ECMP next-hop インストール</li>
-</ul>
-<h2 id="_6">トラブルシューティング<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<ul>
-<li>BUM ループ → ESI label / split-horizon フィルタが ASIC で効いているか</li>
-<li>DF が両側で active → Type-4 受信の確認、<code>show evpn ethernet-segment</code> の DF 状態</li>
-<li>aliasing で trafic が偏る → ECMP hash 設定、remote leaf の Type-1 受信状況</li>
-</ul>
-<!-- diff-admonition -->
-<div class="admonition diff">
-<p class="admonition-title">HLD と実装の差分</p>
-<p>2026-05-10 時点の現行 master を裏取り。<strong>EVPN Multihoming 機能は SONiC メインリポジトリには取り込まれていない</strong>。</p>
-<h3 id="1-evpn_ethernet_segment-orch">1. <code>EVPN_ETHERNET_SEGMENT</code> テーブル / orch が未実装<a class="headerlink" href="#1-evpn_ethernet_segment-orch" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>HLD 記述</strong>: <a href="../../reference/glossary/#term-config_db">CONFIG_DB</a> に <code>EVPN_ETHERNET_SEGMENT</code> テーブルを置き、ESI / 紐づく LAG / single-active か all-active か / DF preference を管理。orch（仮称 <code>EthernetSegmentOrch</code>）が SAI へ反映。</li>
-<li><strong>実装位置</strong>: <code>sonic-swss/</code>、<code>sonic-buildimage/src/sonic-yang-models/yang-models/</code>、<code>sonic-utilities/</code> のいずれにも <code>EVPN_ETHERNET_SEGMENT</code> / <code>EthernetSegment</code> / <code>ESI</code> 関連のシンボルは見つからない（grep ヒット 0）。yang module <code>sonic-evpn-mh.yang</code> のような派生 module も存在しない。</li>
-<li><strong>差分の中身</strong>: テーブル定義 / orch クラス / yang model / CLI のいずれも欠落。HLD は提案段階で止まっている。</li>
-<li><strong>読者への影響</strong>: <code>config evpn ethernet-segment add ...</code> を打っても CLI コマンド自体が存在せず、CONFIG_DB に書いても受ける側がいないため何も起こらない。EVPN MH に依存する設計（dual-attached host）を組み立てると動かない。</li>
-<li><strong>回避策</strong>:</li>
-<li>dual-attach 構成が必要なら <strong>MC-LAG</strong>（<a href="../../switching/mclag-enhancements/">../switching/mclag-enhancements.md</a> 等）を使う。MC-LAG は EVPN MH の代替アプローチで、SONiC では実装済み。</li>
-<li>どうしても EVPN MH が必要なら、ベンダー版 SONiC（一部ベンダーが独自実装を持つ）または upstream FRR の EVPN-MH（FRR 7.5+ で実装）+ 独自 SAI 連携を自前で書く必要がある。</li>
-</ul>
-<h3 id="2-frr-evpn-mh-sonic">2. FRR EVPN-MH 側のみ存在しても SONiC 連携が無い<a class="headerlink" href="#2-frr-evpn-mh-sonic" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>HLD 記述</strong>: FRR の BGP-EVPN MH（Type-1 EAD、Type-4 ES route）が SONiC <a href="../../reference/glossary/#term-orchagent">orchagent</a> に EAD-per-ES / EAD-per-EVI / ES import-RT を渡し、SAI ESI label / split-horizon を設定する。</li>
-<li><strong>実装位置</strong>: SONiC 側受け取り経路（<code>fpmsyncd</code> の MH 拡張、<code>EvpnNvoOrch</code> への Type-1/Type-4 ハンドラ）は確認できず。</li>
-<li><strong>差分の中身</strong>: FRR 単体では EVPN-MH を pcap で観察できても、SONiC の ASIC まで通知が伝わらない。</li>
-<li><strong>読者への影響</strong>: FRR で EVPN-MH を有効化しても、SONiC 側で DF election・ESI label による split-horizon・aliasing による ECMP は ASIC レベルで効かない。</li>
-<li><strong>回避策</strong>: 上記のとおり MC-LAG を使うか、独自 patch を入れる。</li>
-</ul>
-<h3 id="3-sai-esi-label-split-horizon">3. SAI ESI label / split-horizon 拡張のサポートも未確認<a class="headerlink" href="#3-sai-esi-label-split-horizon" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>HLD 記述</strong>: SAI 側に ESI 関連属性（split-horizon filter / DF flag 等）の拡張を要求。</li>
-<li><strong>実装位置</strong>: <code>sonic-sairedis</code> の SAI header に <code>SAI_TUNNEL_ATTR_*</code> の ESI 関連属性は確認できない（コミュニティ SAI に取り込まれていない可能性が高い）。</li>
-<li><strong>読者への影響</strong>: ASIC vendor が SAI 経由で ESI 機能を露出していないため、たとえ orch を自前実装してもベンダー SAI 側が受け付けない可能性が高い。</li>
-<li><strong>回避策</strong>: ASIC ベンダーに ESI 対応 SAI 拡張のサポートを問い合わせる。現状は SONiC コミュニティ master では非対応と認識する。</li>
-</ul>
-<h3 id="_7">結論<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<p><strong>本ページの記述は HLD 提案レベルで、現行 master では機能として利用できない</strong>。dual-attached host を扱う実運用構成では MC-LAG を選択する。本 HLD は将来的な機能ロードマップとして参考に留める。</p>
-<h4 id="github-issue-pr">関連 GitHub Issue / PR<a class="headerlink" href="#github-issue-pr" title="Permanent link">&para;</a></h4>
-<ul>
-<li><a href="https://github.com/sonic-net/sonic-swss/pull/4262">[sonic-swss](../reference/glossary.md#term-sonic-swss) #4262: [EVPN-MH] Add EVPN VXLAN Multihoming feature support (open)</a> — EVPN MH 機能の本体取り込み大型 PR。</li>
-<li><a href="https://github.com/sonic-net/sonic-swss/pull/4206">sonic-swss #4206: Add support for EVPN MH protocol field (open)</a> — MH プロトコルフィールド追加 PR。</li>
-<li><a href="https://github.com/sonic-net/sonic-swss/pull/4039">sonic-swss #4039: Fdbsyncd changes for EVPN MH feature (open)</a> — MH 向け <a href="../../reference/glossary/#term-fdbsyncd">fdbsyncd</a> 改修 PR。</li>
-<li>いずれも 2026-05 時点で open であり、ESI / DF election / split-horizon の master 取り込みは未完了。</li>
-</ul>
-</div>
-<!-- /diff-admonition -->
-
-<h3 id="_8">コマンド例<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<p>EVPN multihoming の ESI / DF election 状態を確認する。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show evpn es&#39;</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show evpn es-evi&#39;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>show<span class="w"> </span>bgp<span class="w"> </span>l2vpn<span class="w"> </span>evpn<span class="w"> </span>route<span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-</span></code></pre></div>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<!-- concerns hint:
-- VxlanOrch / EvpnOrch の MH 拡張（ESI / DF / Type-1/Type-4）の現行実装存在確認
-- CONFIG_DB EVPN_ETHERNET_SEGMENT スキーマと sonic-yang-models 取り込み確認
-- FRR EVPN-MH（bgpd / zebra）の SONiC ビルド取り込み version 確認
-- SAI ESI label / split-horizon サポート（SAI_TUNNEL_ATTR / SAI_TUNNEL_TERM_TABLE_ENTRY 拡張）の community SAI 取り込み確認
-- show evpn ethernet-segment / config evpn ethernet-segment CLI の sonic-utilities 取り込み確認
-- DF election timer / hold timer の現行既定値と挙動確認
--->
-
+<p>dual-attached host を現行 master で扱う場合は <strong>MC-LAG</strong>（<a href="../../switching/mclag-enhancements/">MC-LAG enhancements</a>）を選択する。詳細な差分・回避策は派生 <a href="../evpn-vxlan-multihoming-operations/">operations ページの差分節</a> を参照。</p>
+<h2 id="4">4. 引用元<a class="headerlink" href="#4" title="Permanent link">&para;</a></h2>
 <!-- next-action -->
-<h2 id="_10">このページを読んだ後の次アクション<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_1">このページを読んだ後の次アクション<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>
-<li><strong>本機能を実運用で使う場合</strong>: 実装が無いため、本機能に依存した運用は不可。代替機能 (下記リンク) で要件を満たせるか検討する</li>
-<li><strong>upstream 動向を追う場合</strong>: 関連 issue / PR を <a href="https://github.com/sonic-net/SONiC">sonic-net/SONiC</a> で検索（HLD タイトル / CONFIG_DB テーブル名 / Orch クラス名で grep するのが速い）</li>
-<li><strong>代替手段 / 回避策</strong> (EVPN ESI / MH が master 未実装の間、dual-attached host を SONiC 上で動かす手順):<ol>
-<li>MC-LAG で代替する: <code>sudo config mclag add 1 10.0.0.1 10.0.0.2</code> で MC-LAG ドメインを作り、<code>sudo config mclag member add 1 PortChannel1</code> で対象 LAG を投入する（<a href="../../switching/mclag-enhancements/">MC-LAG enhancements</a> 参照）</li>
-<li>EVPN VXLAN は single-home のままで運用: <code>sudo config vxlan add vtep0 10.1.0.1</code> と <code>sudo config vxlan map add vtep0 Vlan100 1000</code> で L2 VNI を張り、ESI 由来の DF election は MC-LAG の active-active 動作に委ねる</li>
-<li>FRR 側で EVPN-MH を有効化しても SONiC 側に通らないことを確認: <code>vtysh -c 'show evpn es'</code> で FRR は ES を持つが、<code>sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_BRIDGE_PORT*'</code> に ESI label 属性が反映されないため、必ず MC-LAG 側で split-horizon を担保する</li>
-<li>受け取り側のフィルタを手動で組む: <code>sudo sonic-db-cli APPL_DB hset 'VXLAN_REMOTE_VNI_TABLE:Vlan100:10.1.0.2' vni 1000</code> で remote VTEP を明示し、HLD が想定する EAD-per-ES の自動 split-horizon を <strong>静的設定</strong>で代替する</li>
-<li>upstream 追従: <code>git -C .cache/sonic-sources/sonic-swss log --oneline --grep="EVPN MH"</code> で PR #4262 / #4206 / #4039 の取り込み状況を定期確認し、merge され次第 monitor を <code>partially_implemented</code> へ昇格させる</li>
-</ol>
-</li>
-<li><strong>関連 reference</strong>:<ul>
-<li><a href="../../reference/config-db/portchannel/">CONFIG_DB: PORTCHANNEL</a></li>
-<li><a href="../../reference/config-db/vxlan-tunnel/">CONFIG_DB: VXLAN_TUNNEL</a></li>
-</ul>
-</li>
+<li><strong>概念から知りたい</strong>: <a href="../evpn-vxlan-multihoming-concepts/">evpn-vxlan-multihoming-concepts.md</a></li>
+<li><strong>実装内部を追いたい</strong>: <a href="../evpn-vxlan-multihoming-internals/">evpn-vxlan-multihoming-internals.md</a></li>
+<li><strong>CLI / 運用 / 差分</strong>: <a href="../evpn-vxlan-multihoming-operations/">evpn-vxlan-multihoming-operations.md</a></li>
+<li><strong>dual-attach の代替</strong>: <a href="../../switching/mclag-enhancements/">MC-LAG enhancements</a></li>
+<li><strong>基本の EVPN VXLAN</strong>: <a href="../evpn-vxlan-hld/">evpn-vxlan-hld.md</a></li>
 </ul>
 </div>
 <div class="admonition note">
 <p class="admonition-title">本ドキュメントの追跡</p>
 <ul>
 <li>monitor: <code>not_implemented</code> / last_verified: <code>2026-05-11</code></li>
-<li>次回再裏取りトリガ: quarterly。一覧は <a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照（運用詳細は repo の <code>meta/discrepancy-operations.md</code>）</li>
+<li>次回再裏取りトリガ: quarterly + 上記 sonic-swss PR の merge イベント。一覧は <a href="../../reference/verification/discrepancy-index/">discrepancy-index</a> を参照</li>
 </ul>
 </div>
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 7b27b638c4f3 -->
+<!-- glossary-links-injected: fa8c7b4a1c0b -->
 
 <div class="footnote">
 <hr />

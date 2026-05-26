@@ -3201,6 +3201,18 @@
          <lastmod>2026-05-26</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/routing/evpn-vxlan-multihoming-concepts/</loc>
+         <lastmod>2026-05-26</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/routing/evpn-vxlan-multihoming-internals/</loc>
+         <lastmod>2026-05-26</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/routing/evpn-vxlan-multihoming-operations/</loc>
+         <lastmod>2026-05-26</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/routing/evpn-vxlan-multihoming/</loc>
          <lastmod>2026-05-26</lastmod>
     </url>
