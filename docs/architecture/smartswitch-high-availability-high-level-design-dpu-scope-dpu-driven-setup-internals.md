@@ -179,7 +179,7 @@ sequenceDiagram
   participant S1N as DPU1 NPU
   participant ALL as 全 NPU
 
-  S0D-XS0D: DPU0 ダウン
+  S0D--xS0D: DPU0 ダウン
   S0N->>S0N: PMON が DPU dead 検知
   ALL->>ALL: BFD 失敗 → next hop を DPU1 に
   S1D->>S1D: DPU-to-DPU probe 失敗
@@ -196,10 +196,10 @@ sequenceDiagram
 
 HA pair を別 DPU に組み替える手順[^1]:
 
-1. 取り外す DPU に対し [Planned shutdown](#5-planned-shutdown-シーケンスactive-側を落とす) を実施
+1. 取り外す DPU に対し [Planned shutdown](#5-planned-shutdown-active) を実施
 2. 全 NPU と関連 DPU の HA set 情報を更新（旧 HA set object 削除、新 HA set object 作成）。新 DPU は Dead で待機
 3. 新 DPU に対し全 [ENI](../reference/glossary.md#term-eni) を program
-4. SDN controller が AdminState=Enabled → [HA set creation](#4-ha-set-creation-シーケンス) フローへ
+4. SDN controller が AdminState=Enabled → [HA set creation](#4-ha-set-creation) フローへ
 
 ## 8. Split-brain 解消
 

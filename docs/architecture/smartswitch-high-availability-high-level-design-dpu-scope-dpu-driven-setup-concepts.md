@@ -101,7 +101,7 @@ bulk sync は flow table を揃えるが、**ENI / policy の同期は保証し�
 - ENI が片側に欠けていれば既存 flow が drop
 - policy が片側で古ければ新規 flow が誤った policy で確立
 
-これを防ぐため、bulk sync 完了後の DPU は一旦 `PendingActive/Standby/StandaloneActivation` という dormant 状態で停まり、**SDN controller の role activation 承認** を待つ。承認後にはじめて BFD 応答を開始し traffic を取り始める。詳細手順は [internals](smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-internals.md#3-role-activation-プロトコル) を参照。
+これを防ぐため、bulk sync 完了後の DPU は一旦 `PendingActive/Standby/StandaloneActivation` という dormant 状態で停まり、**SDN controller の role activation 承認** を待つ。承認後にはじめて BFD 応答を開始し traffic を取り始める。詳細手順は [internals](smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-internals.md#3-role-activation) を参照。
 
 ## 6. Split-brain と再 pair の前提
 
