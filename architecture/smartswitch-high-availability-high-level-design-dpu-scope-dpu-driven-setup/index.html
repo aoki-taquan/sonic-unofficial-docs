@@ -16,7 +16,7 @@
         <link rel="prev" href="../smart-switch-database-design/">
       
       
-        <link rel="next" href="../smartswitch-high-availability-manager-daemon-hamgrd-design/">
+        <link rel="next" href="../smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-concepts/">
       
       
         
@@ -6839,6 +6839,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -8061,6 +8067,90 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SmartSwitch HA DPU-Scope-DPU-Driven 概念（pairing / scope / owner / mode）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SmartSwitch HA DPU-Scope-DPU-Driven 内部実装（状態遷移と再同期）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SmartSwitch HA DPU-Scope-DPU-Driven 運用（CLI / 設定 / failover 確認）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -35803,6 +35893,12 @@
 <p>実装裏取り済み（下記コード位置）。DASH HA tables: sonic-swss/orchagent/orchdaemon.cpp:1354-1355 で APP_DASH_HA_SET_TABLE_NAME / APP_DASH_HA_SCOPE_TABLE_NAME を確認。SAI ha_set_event / ha_scope_event: sonic-swss/orchagent/notifications.cpp:65,79。</p>
 </div>
 <h1 id="smartswitch-ha-dpu-scope-dpu-driven">SmartSwitch HA - DPU-Scope-DPU-Driven 構成<a class="headerlink" href="#smartswitch-ha-dpu-scope-dpu-driven" title="Permanent link">&para;</a></h1>
+<p>この HLD はボリュームが大きいため、ハブ＋派生ページ構成に分割している。本ページは <strong>概要・差分・章まとめ</strong> を扱う。</p>
+<ul>
+<li><a href="../smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-concepts/">概念（pairing / scope / owner / mode）</a>: 4 軸の差分・想定 topology・DPU-level forwarding・split-brain の前提</li>
+<li><a href="../smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-internals/">内部実装（状態遷移と再同期）</a>: liveness probe 二段、HA 状態集合、role activation、HA set creation / planned shutdown / unplanned failover シーケンス</li>
+<li><a href="../smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-operations/">運用（CLI / 設定 / failover 確認）</a>: DASH 経由の設定手順、状態と forwarding 確認、トラブルシュート、制限事項、干渉機能</li>
+</ul>
 <h2 id="_1">概要<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p><a href="../../reference/glossary/#term-smartswitch">SmartSwitch</a> の HA はもともと <strong><a href="../../reference/glossary/#term-eni">ENI</a>-Scope-<a href="../../reference/glossary/#term-npu">NPU</a>-Driven</strong>（NPU 上の <code>hamgrd</code> が ENI 単位で active/standby 状態機械を回す）が主案として設計されていた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。本 <a href="../../reference/glossary/#term-hld">HLD</a> はその拡張として <strong><a href="../../reference/glossary/#term-dpu">DPU</a>-Scope-DPU-Driven</strong> という別形態を定義する。</p>
 <p>主 HLD との差分の本質は 4 軸<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>:</p>

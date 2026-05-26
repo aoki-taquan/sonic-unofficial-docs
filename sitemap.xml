@@ -305,6 +305,18 @@
          <lastmod>2026-05-26</lastmod>
     </url>
     <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-concepts/</loc>
+         <lastmod>2026-05-26</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-internals/</loc>
+         <lastmod>2026-05-26</lastmod>
+    </url>
+    <url>
+         <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup-operations/</loc>
+         <lastmod>2026-05-26</lastmod>
+    </url>
+    <url>
          <loc>https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/smartswitch-high-availability-high-level-design-dpu-scope-dpu-driven-setup/</loc>
          <lastmod>2026-05-26</lastmod>
     </url>
