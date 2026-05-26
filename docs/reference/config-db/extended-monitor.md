@@ -3,8 +3,9 @@ title: イベント/アラーム拡張監視設定 (extended-monitor)
 description: "eventd が読み込む EVENT テーブル保持上限 (eventd.json) とイベントプロファイル (/etc/evprofile/default.json) を中心とした、event/alarm framework の拡張監視設定ガイド。CONFIG_DB テーブルではなくファイルベース設定として管理される。"
 area: reference
 hard: 0
-verification: hld-only
-last_verified: 2026-05-15
+verification: discrepancy-found
+monitor: partially_implemented
+last_verified: 2026-05-26
 sources:
   - repo: sonic-net/SONiC
     path: doc/event-alarm-framework/event-alarm-framework.md
@@ -530,6 +531,17 @@ VM テストベッド（`sonic-vs`）でも `eventd` は同一バイナリで動
 [^5]: evprofile デフォルト定義: `SONiC/doc/event-alarm-framework/event-alarm-framework.md` section 3.1.5. <https://github.com/sonic-net/SONiC/blob/master/doc/event-alarm-framework/event-alarm-framework.md>
 
 <!-- /platform -->
+
+## 実装との乖離
+
+`eventd` のコアロジック（ZMQ ブローカー・stats_collector・capture_service）は `sonic-buildimage/src/sonic-eventd/src/eventd.cpp` で確認済み（`verification: discrepancy-found`）。ただし以下の差分が存在する。
+
+| HLD 記載 | 実装状況 |
+|----------|---------|
+| `/etc/eventd.json` の `no-of-records` / `no-of-days` 読み込みロジック（HLD section 3.1.7） | `eventd.cpp` に対応する読み込みコードが**確認できない**。キャッシュ上限 (`cache_max_cnt`) は `get_config_data()` 経由で読むが、EVENT テーブル保持上限の `no-of-records`/`no-of-days` 取得箇所が不在 |
+| `DBStats` API への RCM counter 統合 | HLD 記載の設計だが `eventd.cpp` および `events_common.h` に実装確認なし（`COUNTERS_EVENTS_PUBLISHED` / `COUNTERS_EVENTS_MISSED_CACHE` は存在するが DBStats 統合 API は未確認） |
+
+上記差分は `monitor: partially_implemented` として記録する。`eventd` のメインフロー（ZMQ ブローカー・evprofile 読み込み・ALARM_STATS 書き込み等）は実装確認済み。
 
 ## 引用元
 

@@ -23,6 +23,8 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 
 ## 2026-05
 
+- 2026-05-26 #5019 feat(master-sync): index 10 new HLDs and clean up 8 removed from upstream master
+- 2026-05-26 #5015 fix(links): resolve 5 broken internal links
 - 2026-05-26 #5018 fix(ux): RSS plugin registration + Japanese tab labels + index repair card cleanup
 - 2026-05-26 #5016 fix(ci): resolve frontmatter page_kind violations + regen drift files
 - 2026-05-26 #5014 feat(routing): split EVPN-VXLAN HLD into concepts/internals/operations slugs
@@ -514,7 +516,6 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3845 docs(config-db): add Phase G pubsub block to vxlan-tunnel-map
 - 2026-05-19 #3844 docs(config-db): add Phase E hardcoded-constants block to pbh-rule
 - 2026-05-19 #3843 docs(config-db): add Phase D failure-behavior block to vxlan-evpn-tunnel
-- 2026-05-19 #3832 docs(config-db): add Phase E hardcoded-constants block to suppress-asic-sdk-health-event
 - 2026-05-19 #3841 docs(config-db): add Phase E hardcoded-constants block to SUBNET_DECAP
 - 2026-05-19 #3838 docs(config-db): add Phase F side-effects block to FIPS page
 - 2026-05-19 #3839 docs(config-db): add Phase C cross-refs block to PBH_TABLE page
@@ -522,5 +523,4 @@ merged PR を `mergedAt` 降順・月単位でグルーピングして並べて�
 - 2026-05-19 #3835 docs(config-db): add Phase F side-effects block to FIPS table page
 - 2026-05-19 #3834 docs(config-db): add Phase D failure-behavior block to lossless-traffic-pattern
 - 2026-05-19 #3833 docs(config-db): add Phase G pubsub block to FABRIC_PORT
-- 2026-05-19 #3831 docs(config-db): add Phase C cross-refs block to mux-cable-port page
 

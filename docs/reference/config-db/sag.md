@@ -2,8 +2,9 @@
 title: SAG テーブル
 description: "SAG テーブル — Static Anycast Gateway (SAG) のグローバル仮想 MAC アドレスを保持する CONFIG_DB テーブル。EVPN/VXLAN ファブリック内で全 leaf switch が同一ゲートウェイ IP/MAC を共有するために使用する。"
 area: reference
-verification: hld-only
-last_verified: 2026-05-16
+verification: discrepancy-found
+monitor: not_implemented
+last_verified: 2026-05-26
 sources:
   - repo: sonic-net/SONiC
     path: doc/sag/sag-HLD.md
@@ -20,8 +21,8 @@ related:
     - config vlan static-anycast-gateway
 ---
 
-!!! warning "裏取りステータス: HLD-only"
-    このページは公式 HLD (`SONiC/doc/sag/sag-HLD.md`) と `sonic-swss-common/common/schema.h` の定数定義のみを根拠に書かれています。現行 sonic-swss ソースツリーに `sagmgr.cpp` / `sagorch.cpp` 等の独立した実装ファイルが確認できなかったため、コードレベルの裏取りは未済です。
+!!! warning "裏取りステータス: discrepancy-found (not_implemented)"
+    HLD (`SONiC/doc/sag/sag-HLD.md`) では `intfmgrd` / `IntfsOrch` が `SAG|GLOBAL` を処理する設計だが、現行 `sonic-swss` master の `intfmgr.cpp` / `intfsorch.cpp` に SAG ハンドラは**マージされていない**。`schema.h` のキー定数（`CFG_SAG_TABLE_NAME` / `APP_SAG_TABLE_NAME`）のみ存在し、機能実装は未マージ。
 
 # SAG テーブル
 
@@ -333,6 +334,18 @@ HLD 設計では `IntfsOrch` が APPL_DB `SAG_TABLE` を `ConsumerStateTable` �
 > **schema.h 確認**: `CFG_SAG_TABLE_NAME = "SAG"` (schema.h:393)、`APP_SAG_TABLE_NAME = "SAG_TABLE"` (schema.h:127) は存在確認済み。intfmgrd / IntfMgr / IntfsOrch の SAG ハンドラは未確認。
 
 <!-- /pubsub -->
+
+## 実装との乖離
+
+`sonic-swss-common/common/schema.h` に `CFG_SAG_TABLE_NAME = "SAG"` (L393) および `APP_SAG_TABLE_NAME = "SAG_TABLE"` (L127) の定数定義は存在するが、これを消費する実装が現行 master に存在しない。
+
+| HLD 記載 | 実装状況 |
+|----------|---------|
+| `intfmgrd` / `IntfMgr` が `CFG_SAG_TABLE_NAME` を `SubscriberStateTable` で購読し APPL_DB へ転送 | `cfgmgr/intfmgrd.cpp` に `CFG_SAG_TABLE_NAME` の登録**なし**（2026-05-26 確認） |
+| `orchagent` / `IntfsOrch` が `APP_SAG_TABLE_NAME` を `ConsumerStateTable` で購読し SAI RIF を更新 | `orchagent/intfsorch.cpp` に `SAG_TABLE` への参照**なし** |
+| `sagmgr.cpp` / `sagorch.cpp` 等の独立 SAG 実装ファイル | sonic-swss master に**存在しない** |
+
+以上より `monitor: not_implemented`。機能は HLD 設計段階にとどまっており、コミュニティ版 master への実装マージは未完了。
 
 ## 引用元
 
