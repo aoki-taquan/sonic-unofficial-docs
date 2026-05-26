@@ -33,11 +33,11 @@ last_verified: 2026-05-13
 | [`internals`](#area-internals) | 6 |
 | [`management`](#area-management) | 15 |
 | [`overlay`](#area-overlay) | 1 |
-| [`platform`](#area-platform) | 12 |
+| [`platform`](#area-platform) | 13 |
 | [`reference`](#area-reference) | 6 |
 | [`routing`](#area-routing) | 8 |
 | [`switching`](#area-switching) | 8 |
-| [`system`](#area-system) | 19 |
+| [`system`](#area-system) | 18 |
 
 ## monitor subtype 別
 
@@ -255,6 +255,9 @@ last_verified: 2026-05-13
 - [gNSI 設定と運用（gNMI フラグ / YANG / 運用イメージ）](../../management/gnsi-hld-operations.md)  
   area: `management` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
 
+- [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../../platform/sai-api-version-check.md)  
+  area: `platform` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-09`
+
 - [VoQ Chassis での Everflow ミラー（recycle port 経由の rewrite）](../../platform/everflow-support-on-voq-chassis.md)  
   area: `platform` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
@@ -372,11 +375,6 @@ last_verified: 2026-05-13
   
   - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。storagemond の現行 master 実装、CLI 名・テーブル名の正確な値は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
-- [クリティカルリソースモニタリング (CRM) 要件](../../system/critical-resource-monitoring.md)  
-  area: `system` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
-  
-  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。新規テーブル名は HLD で明示されておらず、実装側で追加されている可能性が高い旨を本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
-
 - [ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）](../../system/reset-local-users-passwords-during-init-hld.md)  
   area: `system` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
   
@@ -415,8 +413,6 @@ last_verified: 2026-05-13
 
 - [SSD ヘルスチェック 内部実装（API 仕様 / ssdmond）](../../architecture/ssdhealth-design-internals.md)  
   area: `architecture` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
-  
-  - HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する
 
 - [SSD ヘルスチェック 制限事項と HLD-実装乖離](../../architecture/ssdhealth-design-limitations.md)  
   area: `architecture` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -425,13 +421,9 @@ last_verified: 2026-05-13
 
 - [SSD ヘルスチェック 概念（SsdBase / SsdUtil 二段プラグイン）](../../architecture/ssdhealth-design-concepts.md)  
   area: `architecture` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
-  
-  - HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する
 
 - [SSD ヘルスチェック 運用（CLI / 表示モード）](../../architecture/ssdhealth-design-operations.md)  
   area: `architecture` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
-  
-  - HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する
 
 - [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../../architecture/ssdhealth-design.md)  
   area: `architecture` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -635,8 +627,6 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
 
 - [SSD ヘルスチェック 内部実装（API 仕様 / ssdmond）](../../architecture/ssdhealth-design-internals.md)  
   area: `architecture` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
-  
-  - HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する
 
 - [SSD ヘルスチェック 制限事項と HLD-実装乖離](../../architecture/ssdhealth-design-limitations.md)  
   area: `architecture` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -645,13 +635,9 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
 
 - [SSD ヘルスチェック 概念（SsdBase / SsdUtil 二段プラグイン）](../../architecture/ssdhealth-design-concepts.md)  
   area: `architecture` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
-  
-  - HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する
 
 - [SSD ヘルスチェック 運用（CLI / 表示モード）](../../architecture/ssdhealth-design-operations.md)  
   area: `architecture` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
-  
-  - HLD と実装の差分は本ページの章本文で逐次注記している - 追加の境界事項は本セクションで列挙する
 
 - [SSD ヘルスチェック（show platform ssdhealth + ssdutil プラグイン）](../../architecture/ssdhealth-design.md)  
   area: `architecture` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -816,6 +802,9 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   area: `platform` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
   
   2026-05-09 時点の現行 master を裏取り。本機能の **コアロジック (port_flr.lua) と CLI 表示 (portstat) は取り込み済み**だが、**[HLD](../../reference/glossary.md#term-hld) で示唆された動的設定 CLI（`counterpoll port flr-interval-factor`）は未実装**であり、poll 周期は lua スクリプト内のハードコード値に固定されている。
+
+- [SAI API バージョン整合チェック（sai_query_api_version + ビルド時検査）](../../platform/sai-api-version-check.md)  
+  area: `platform` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-09`
 
 - [SAI 失敗ハンドリング（handleSai*Status virtual + ERROR_DB）](../../platform/hld-for-handling-sai-failures.md)  
   area: `platform` / monitor: `evolved_beyond_hld`（HLD と乖離した形で実装/進化） / last_verified: `2026-05-11`
@@ -1044,11 +1033,6 @@ area 横断で機能を探したい読み手向けの索引。各エントリは
   area: `system` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
   
   - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。storagemond の現行 master 実装、CLI 名・テーブル名の正確な値は本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
-
-- [クリティカルリソースモニタリング (CRM) 要件](../../system/critical-resource-monitoring.md)  
-  area: `system` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-13`
-  
-  - 裏取りステータスを `code-verified` から `discrepancy-found` （`monitor: partially_implemented`）に降格 (2026-05-13)。新規テーブル名は HLD で明示されておらず、実装側で追加されている可能性が高い旨を本文で「未確認」と明示している。 - 本文に残る「未確認 / 要確認 / 要追跡 / TBD」等の hedge 表現は HLD と実装の差分が未特定であることを示し、後続の裏取り対象。
 
 - [ローカルユーザパスワード init 時リセット（long reset button + reset-local-users-passwords.service）](../../system/reset-local-users-passwords-during-init-hld.md)  
   area: `system` / monitor: `partially_implemented`（部分実装） / last_verified: `2026-05-11`
