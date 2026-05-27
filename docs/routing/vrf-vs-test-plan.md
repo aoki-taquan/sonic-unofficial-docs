@@ -1,7 +1,6 @@
 ---
 title: VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）
-description: 'VRF VS テストプラン（vrfmgrd / intfmgrd / Orchagent → APP_DB / ASIC_DB / kernel）
-  — VRF（Virtual Routing and Forwarding）の SwSS パスを VS テストフレームワークで機械的に検証する。観点は:'
+description: VRF の SwSS パスを VS テストフレームワークで機械的に検証するテストプラン。vrfmgrd / intfmgrd / Orchagent が CONFIG_DB → APP_DB → ASIC_DB / Linux kernel に VRF 設定を正しく伝播させることを 53 項目で確認する。
 area: routing
 verification: code-verified
 last_verified: 2026-05-11

@@ -1,6 +1,6 @@
 ---
 title: L2 Forwarding 強化（FDB flush / aging / static MAC / VLAN range）
-description: 'L2 Forwarding 強化 — SONiC 初期の L2 機能に欠けていた 6 項目を一括導入する HLD:'
+description: SONiC 初期 L2 に欠けていた FDB flush・MAC move・aging 設定・static FDB・VLAN range CLI 等 6 項目を一括導入する HLD。orchagent は実装済みだが一部 CLI は現行 master に存在しない乖離あり。
 area: switching
 verification: discrepancy-found
 monitor: partially_implemented

@@ -1,8 +1,6 @@
 ---
 title: dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute）
-description: dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute） — Gemini
-  active-standby サーバ環境では 1 経路に複数の next-hop neighbor が指定され、それぞれが 異なる Ethernet ポート (=
-  異なる…
+description: dual-tor active-standby 環境の ECMP ループを回避する設計。MuxOrch::updateRoute が standby nexthop を除去して active nexthop のみに絞り、peer ToR トンネルへの無限ループを防ぐ仕組みを解説する。
 area: routing
 verification: code-verified
 last_verified: 2026-05-09
