@@ -85,9 +85,12 @@ plugins:
   - awesome-pages
   - tags
   # OG カード生成。mkdocs-material 標準の social プラグイン。
-  # 画像生成に cairosvg / Pillow を要するため requirements.txt は
-  # `mkdocs-material[imaging]` を指定している。MKDOCS_SOCIAL_CARDS=0 を
-  # 設定すれば cards 生成を抑止できる（ローカルで imaging deps が無い場合等）。
+  # 画像生成に cairosvg / Pillow + system libcairo を要するため requirements.txt
+  # は `mkdocs-material[imaging]` を指定している。libcairo が入っていないローカル
+  # 環境（devcontainer 等）では 1000+ 件の WARNING が出て `mkdocs build --strict`
+  # が abort するため、`MKDOCS_SOCIAL_CARDS=false` を設定して cards 生成を抑止する。
+  # NOTE: `!ENV` は文字列を返すので bool 値を渡すときは `true` / `false`
+  # を使うこと（`0` / `1` は int として解釈され plugin が type error を出す）。
   - social:
       cards: !ENV [MKDOCS_SOCIAL_CARDS, true]
   - rss:
