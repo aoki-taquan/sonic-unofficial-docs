@@ -1,7 +1,6 @@
 ---
 title: SensorMon（PMON 内の voltage / current センサ監視）
-description: 'SensorMon（PMON 内の voltage / current センサ監視） — ボード上には電圧コントローラ / 電流センサ
-  / 高度センサ等、温度以外の 環境センサ が多数ある。Linux の lm-sensors / hwmon でも一部読めるが、HLD は次の限界を指摘:'
+description: SensorMon（PMON 内の voltage / current センサ監視） — ボード上の電圧・電流・高度センサ等を hwmon 経由で収集し、VOLTAGE_INFO / CURRENT_INFO テーブルへ書き込む PMON デーモンの設計と実装を解説する。
 area: system
 verification: code-verified
 last_verified: 2026-05-10

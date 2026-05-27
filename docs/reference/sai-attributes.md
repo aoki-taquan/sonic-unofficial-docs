@@ -1,6 +1,6 @@
 ---
 title: 頻出 SAI 属性早見表
-description: "頻出 SAI 属性早見表 — SONiC syncd は SAI (Switch Abstraction Interface) を介して ASIC に設定を投入する。本ページは"
+description: 頻出 SAI 属性早見表 — SONiC syncd が SAI (Switch Abstraction Interface) 経由で ASIC に投入する代表的な属性を、オブジェクト種別ごとに整理した参照用インデックス。
 area: reference
 verification: code-verified
 last_verified: 2026-05-11
