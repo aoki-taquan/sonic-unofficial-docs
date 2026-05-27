@@ -86,7 +86,7 @@ related:
 
 | CONFIG_DB | subscribe 主体 | APPL_DB 中継 | SAI 経路 |
 |---|---|---|---|
-| `STATIC_ROUTE` | `fpmsyncd` ([FRR](../reference/glossary.md#term-frr) 経由) → `RouteOrch` (`APP_ROUTE_TABLE`) | ✓ | `sai_route_api` |
+| `STATIC_ROUTE` | `bgpcfgd` (`managers_static_rt`) → [FRR](../reference/glossary.md#term-frr) `staticd` (vtysh); kernel route は `fpmsyncd` 経由で `RouteOrch` (`APP_ROUTE_TABLE`) を経て APPL_DB | ✓ | `sai_route_api` |
 | `BGP_NEIGHBOR` | `bgpcfgd` → FRR [vtysh](../reference/glossary.md#term-vtysh) | (FRR) | (FRR が APPL_DB に route 書込) |
 | `BGP_PEER_GROUP` | `bgpcfgd` | (FRR) | — |
 | `BGP_DEVICE_GLOBAL` | `BgpGlobalStateOrch` (直接 CFG) | — | `sai_switch_api` (TCP MD5 等の hint) |
