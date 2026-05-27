@@ -1,8 +1,6 @@
 ---
 title: SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）
-description: SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6） — SONiC
-  の SRv6 サポートは別 HLD（srv6_hld.md）で定義済みだが、cross-connect 系 behavior（uA / End.X / uDX4
-  / uDX6…
+description: 'SONiC の SRv6 SID L3 隣接拡張を解説する。cross-connect 系 behavior（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）が出口の L3 隣接（L3Adj）を必要とするため、SRv6Orch に adj パラメータ処理を追加した。NeighOrch との連携による pending 解決フロー、SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID のプログラミング経路を詳述する。'
 area: routing
 verification: code-verified
 last_verified: 2026-05-09

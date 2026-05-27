@@ -1,6 +1,6 @@
 ---
 title: SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP）
-description: "SONiC の MPLS 基盤 — SONiC の初期 MPLS 対応は 静的 LSP を前提に、IPv4/IPv6 routing インフラを MPLS にも拡げる方針:"
+description: "SONiC の MPLS 基盤設計を解説する。静的 LSP を前提に per-RIF での MPLS enable/disable、Push / Pop / Swap ラベル操作、LABEL_ROUTE_TABLE への fpmsyncd 書き込み、SAI による INSEG_ENTRY プログラミング、CRM 統合を扱う。LDP / RSVP-TE・L3VPN はスコープ外。CONFIG_DB・APPL_DB・CLI・YANG の各スキーマも含む。"
 area: routing
 verification: code-verified
 last_verified: 2026-05-10

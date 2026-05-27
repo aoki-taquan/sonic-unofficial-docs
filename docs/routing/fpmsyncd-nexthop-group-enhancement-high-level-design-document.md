@@ -1,7 +1,6 @@
 ---
 title: fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE）
-description: fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE） — FRR
-  zebra は dplane_fpm_nl プラグインで Linux kernel の NextHop Group (NHG) netlink メッセージ（RTM_NEWNEXTH…
+description: 'fpmsyncd の NextHop Group 拡張を解説する。FRR zebra が dplane_fpm_nl で流す RTM_NEWNEXTHOP / RTM_DELNEXTHOP メッセージを fpmsyncd が受け取り、APPL_DB.NEXTHOP_GROUP_TABLE に NHG エンティティを書き込む仕組み。BGP PIC・recursive route 対応と orchagent / SAI 流量削減が目的。有効化キー名（HLD: fpm_use_nexthop_groups vs 実装: nexthop_group）の乖離も記載。'
 area: routing
 verification: discrepancy-found
 monitor: evolved_beyond_hld

@@ -1,6 +1,6 @@
 ---
 title: SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL）
-description: 'SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL） — SmartSwitch（NPU + 複数 DPU）で NPU↔DPU の転送モデルは 2 案:'
+description: 'SmartSwitch（NPU + 複数 DPU）における ENI ベース転送の設計を解説する。ホストはスイッチ単位の VIP のみを使い、NPU 上の ENI_REDIRECT ACL が local / remote DPU へリダイレクトする。DashEniFwdOrch が DASH_ENI_FORWARD_TABLE を読み取り ACL ルールを生成する仕組みと、VIP ベースとの比較・Phase 分けを網羅する。'
 area: overlay
 verification: code-verified
 last_verified: 2026-05-09
