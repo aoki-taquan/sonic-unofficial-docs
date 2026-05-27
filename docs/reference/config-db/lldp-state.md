@@ -1,5 +1,5 @@
 ---
-title: LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル (APPL_DB)
+title: "[APPL_DB] LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル"
 description: "LLDP_ENTRY_TABLE / LLDP_LOC_CHASSIS テーブル — lldp-syncd が lldpd の受信 PDU 情報を書き込む APPL_DB テーブル。隣接ノードの chassis / port / capability 情報を保持し、SNMP agent と REST/gNMI が参照する。"
 area: reference
 verification: code-verified

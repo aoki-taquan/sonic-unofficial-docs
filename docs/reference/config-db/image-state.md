@@ -1,5 +1,5 @@
 ---
-title: SONiC イメージバージョン情報 (sonic_version.yml)
+title: "[STATE_DB] SONiC イメージバージョン情報 (sonic_version.yml)"
 description: "SONiC OS イメージのバージョン・ビルド情報を保持するファイル /etc/sonic/sonic_version.yml のフィールド仕様。sonic-buildimage のビルドスクリプトが Jinja2 テンプレートから生成し、sonic-py-common の device_info.get_sonic_version_info() で参照される。"
 area: reference
 hard: 0
