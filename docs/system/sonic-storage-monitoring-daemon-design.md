@@ -1,7 +1,6 @@
 ---
 title: storagemond（SSD / eMMC の health 監視）
-description: 'storagemond（SSD / eMMC の health 監視） — storagemond は SSD / eMMC など内部ストレージの
-  health / wear-out を定期監視し、STATE_DB に publish する pmon 系 daemon。狙いは:'
+description: storagemond は SSD / eMMC など内部ストレージの health / wear-out を定期監視して STATE_DB に publish する pmon 系 daemon で、ハードウェア障害の事前検知と運用者への早期警告を目的とする。
 area: system
 verification: discrepancy-found
 last_verified: 2026-05-13

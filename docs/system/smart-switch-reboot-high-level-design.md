@@ -1,6 +1,6 @@
 ---
 title: SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot）
-description: SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot） — SmartSwitch は NPU 1 個 + 複数 DPU から成り、DPU は PCIe で NPU 側 CPU に接続される（front panel は NPU の…
+description: SmartSwitch の reboot 手順を規定する HLD で、NPU が各 DPU へ gNOI HALT を送り PCIe detach 後に個別 reboot する順序制御と、reboot 後の DPU 復旧フローを解説する。
 area: system
 verification: code-verified
 last_verified: 2026-05-10
