@@ -291,8 +291,6 @@ db_migrator.py での PORTCHANNEL_INTERFACE マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: e41770dcd7bc -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -836,4 +834,4 @@ if (rc == 0) {
 <!-- evidence: sonic-swss/cfgmgr/intfmgr.cpp:169-190,601-611 (platform/getenv grep = 0 hits); sonic-swss/orchagent/intfsorch.cpp:1146-1164,1180-1243 (platform/getenv grep = 0 hits) -->
 <!-- /platform -->
 
-<!-- glossary-links-injected: 9cf92acb8f8c -->
+<!-- glossary-links-injected: e41770dcd7bc -->

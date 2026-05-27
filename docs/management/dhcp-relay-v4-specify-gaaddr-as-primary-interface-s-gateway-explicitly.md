@@ -209,8 +209,6 @@ docker logs dhcp_relay 2>&1 | tail -30
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 800751a0842d -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -234,4 +232,4 @@ docker logs dhcp_relay 2>&1 | tail -30
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 800751a0842d -->

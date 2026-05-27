@@ -196,8 +196,6 @@ docker logs gnmi 2>&1 | tail -30
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c3f4e76fa339 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -215,4 +213,4 @@ docker logs gnmi 2>&1 | tail -30
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: c3f4e76fa339 -->

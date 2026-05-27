@@ -223,8 +223,6 @@ enum: `unique_ip` = `enable` のみ (無効化はエントリ削除)。
 - なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: f50d4e92baed -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -661,4 +659,4 @@ MCLAG は kernel bridge (`brX`) を iccpd が直接操作しない設計。FDB �
 > 中間調査詳細: `meta/_intermediate/cdb-flow/mclag-domain-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: fc6086834412 -->
+<!-- glossary-links-injected: f50d4e92baed -->

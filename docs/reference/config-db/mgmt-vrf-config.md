@@ -231,8 +231,6 @@ db_migrator.py での MGMT_VRF_CONFIG マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: ca16c59f26d9 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -611,4 +609,4 @@ mgmt VRF の Linux ルーティングテーブル ID は **コンパイル時定
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: c1e8ab826600 -->
+<!-- glossary-links-injected: ca16c59f26d9 -->

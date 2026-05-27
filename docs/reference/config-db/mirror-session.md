@@ -258,8 +258,6 @@ db_migrator.py での MIRROR_SESSION マイグレーションなし
 minigraph 経路は実質デッドコード (コメントアウト)
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: c326cbcc6490 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -750,4 +748,4 @@ STATE_DB MIRROR_SESSION_TABLE|<name> {status, next_hop_ip, monitor_port, ...}
 
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 552ed2176f8b -->
+<!-- glossary-links-injected: c326cbcc6490 -->

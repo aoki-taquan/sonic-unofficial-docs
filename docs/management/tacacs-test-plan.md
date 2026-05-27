@@ -182,8 +182,6 @@ journalctl -u hostcfgd | grep -i tacacs | tail
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9bd150521228 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -204,4 +202,4 @@ journalctl -u hostcfgd | grep -i tacacs | tail
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 9bd150521228 -->

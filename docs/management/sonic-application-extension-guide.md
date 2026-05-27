@@ -162,8 +162,6 @@ docker ps -a --format '{{.Names}}	{{.Status}}'
 
 [^1]: `sonic-net/SONiC` `doc/sonic-application-extension/sonic-application-extension-guide.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -175,4 +173,4 @@ docker ps -a --format '{{.Names}}	{{.Status}}'
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 20dbc11976b6 -->

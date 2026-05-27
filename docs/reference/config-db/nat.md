@@ -315,8 +315,6 @@ YANG default 以外の実装 hardcode fallback。`NatOrch` コンストラクタ
 
 <!-- /defaults -->
 
-<!-- glossary-links-injected: a6fe2efe021a -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -751,4 +749,4 @@ SWSS_LOG_NOTICE("DNAT nexthop tracking is %s",
 > 中間調査詳細: `meta/_intermediate/cdb-flow/nat-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: 2b20cf8cec64 -->
+<!-- glossary-links-injected: a6fe2efe021a -->

@@ -340,8 +340,6 @@ orchagent 起動時は `#define PFC_WD_POLL_MSECS 100` (`orchdaemon.cpp:24`) を
 
 <!-- /defaults -->
 
-<!-- glossary-links-injected: 62798bcc4162 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -713,4 +711,4 @@ PFC_WD の platform 差は community [SONiC](../../reference/glossary.md#term-so
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 70a7b3e57d8b -->
+<!-- glossary-links-injected: 62798bcc4162 -->

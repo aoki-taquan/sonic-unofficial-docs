@@ -241,8 +241,6 @@ show services
 
 [^1]: `sonic-net/SONiC` `doc/config_reload/config_reload_enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 50471caccd14 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -263,4 +261,4 @@ show services
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: 50471caccd14 -->

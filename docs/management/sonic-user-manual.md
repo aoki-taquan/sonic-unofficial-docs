@@ -119,8 +119,6 @@ diff /etc/sonic/config_db.json <(show runningconfiguration all)
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1103f073f6d0 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -134,4 +132,4 @@ diff /etc/sonic/config_db.json <(show runningconfiguration all)
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 1103f073f6d0 -->

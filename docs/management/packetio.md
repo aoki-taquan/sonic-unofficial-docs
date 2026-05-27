@@ -213,8 +213,6 @@ docker logs swss 2>&1 | grep -i 'hostif' | tail
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 334f0ec53f10 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -226,4 +224,4 @@ docker logs swss 2>&1 | grep -i 'hostif' | tail
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: c006405759d8 -->
+<!-- glossary-links-injected: 334f0ec53f10 -->

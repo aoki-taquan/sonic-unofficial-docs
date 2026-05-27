@@ -209,8 +209,6 @@ db_migrator.py での MUX_CABLE マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 68cc248286f2 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -609,4 +607,4 @@ flowchart TD
 
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 26e09bfefeb5 -->
+<!-- glossary-links-injected: 68cc248286f2 -->

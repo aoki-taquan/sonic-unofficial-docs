@@ -197,8 +197,6 @@ docker logs gnmi 2>&1 | tail -30
 - [HLD: gNOI healthz API](gnoi-hld-for-healthz-api.md)
 - [HLD: SONiC gNMI Server インタフェース設計](sonic-gnmi-server-interface-design.md)
 
-<!-- glossary-links-injected: b4b6b56d361a -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -210,4 +208,4 @@ docker logs gnmi 2>&1 | tail -30
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: b4b6b56d361a -->

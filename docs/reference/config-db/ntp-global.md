@@ -502,8 +502,6 @@ MGMT VRF は single-asic / multi-asic 双方の host 単位で有効化される
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 8b572e7ecef7 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -539,4 +537,4 @@ minigraph.py からの `NTP_GLOBAL` 自動派生はなし。`NTP_SERVER` のみ 
 
 <!-- /handler-branching -->
 
-<!-- glossary-links-injected: 8105a4a5d3c4 -->
+<!-- glossary-links-injected: 8b572e7ecef7 -->

@@ -258,8 +258,6 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 7c180e687fe7 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -789,4 +787,4 @@ orchagent は `platform` 環境変数の部分文字列でベンダーを識別�
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 54971d8beceb -->
+<!-- glossary-links-injected: 7c180e687fe7 -->

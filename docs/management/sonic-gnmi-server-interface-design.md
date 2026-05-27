@@ -147,8 +147,6 @@ CONFIG_DB の Set 成功は `/etc/sonic/config_db.json` に永続化、APPL_DB �
 - [HLD: Mgmt-Framework Transformer の model-based PUT/REPLACE と DELETE](model-based-replace-delete-in-mgmt-framework-transformer.md)
 - [HLD: JSON patch ordering using YANG models](json-patch-ordering-using-yang-models.md)
 
-<!-- glossary-links-injected: f0f2a1d6c824 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -165,4 +163,4 @@ CONFIG_DB の Set 成功は `/etc/sonic/config_db.json` に永続化、APPL_DB �
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: f0f2a1d6c824 -->

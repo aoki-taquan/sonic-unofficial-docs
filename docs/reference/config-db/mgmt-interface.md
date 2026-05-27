@@ -266,8 +266,6 @@ enum なし。
 - `caclmgrd` / `mgmtstatsd` が eth0 の状態変化を反映
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 896d391185a9 -->
-
 <!-- cross-refs -->
 ## 暗黙参照 — Phase C (cross-table refs)
 
@@ -688,4 +686,4 @@ DPU ノードで `MGMT_INTERFACE` エントリが存在しない場合、`eth0` 
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 7e3467b30cfc -->
+<!-- glossary-links-injected: 896d391185a9 -->

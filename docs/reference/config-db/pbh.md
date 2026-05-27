@@ -424,8 +424,6 @@ db_migrator.py での PBH マイグレーションなし
 
 <!-- /defaults -->
 
-<!-- glossary-links-injected: 32758c44ab11 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -798,4 +796,4 @@ sonic-db-cli STATE_DB hgetall 'PBH_CAPABILITIES|hash'
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 33cbd4cf768b -->
+<!-- glossary-links-injected: 32758c44ab11 -->

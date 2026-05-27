@@ -237,8 +237,6 @@ HLD が記述する `pam_radius` + nsswitch RADIUS NSS の二段構成（ssh log
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 1efb6dec9331 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -257,4 +255,4 @@ HLD が記述する `pam_radius` + nsswitch RADIUS NSS の二段構成（ssh log
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: db62d2100cef -->
+<!-- glossary-links-injected: 1efb6dec9331 -->

@@ -206,8 +206,6 @@ sudo cat /etc/pam.d/common-auth-sonic
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: a9c18564f33f -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -229,4 +227,4 @@ sudo cat /etc/pam.d/common-auth-sonic
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: db62d2100cef -->
+<!-- glossary-links-injected: a9c18564f33f -->

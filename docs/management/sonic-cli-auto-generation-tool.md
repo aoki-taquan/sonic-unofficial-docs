@@ -183,8 +183,6 @@ ls /usr/local/lib/python*/dist-packages/show/plugins
 - [HLD: SONiC Management Framework](sonic-management-framework.md)
 - [HLD: SONiC Application Extension Guide](sonic-application-extension-guide.md)
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -196,4 +194,4 @@ ls /usr/local/lib/python*/dist-packages/show/plugins
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 20dbc11976b6 -->

@@ -400,8 +400,6 @@ db_migrator.py での PORT_STORM_CONTROL マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 16a5b728a75a -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -593,4 +591,4 @@ CONFIG_DB `PORT_STORM_CONTROL` への変更が連鎖して書き込まれる副�
 4. [APPL_DB](../../reference/glossary.md#term-appl_db) / [STATE_DB](../../reference/glossary.md#term-state_db) / [COUNTERS_DB](../../reference/glossary.md#term-counters_db) への書込は **なし**。[CRM](../../reference/glossary.md#term-crm) カウンタ更新も **なし**
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 33f9c0c82ff8 -->
+<!-- glossary-links-injected: 16a5b728a75a -->

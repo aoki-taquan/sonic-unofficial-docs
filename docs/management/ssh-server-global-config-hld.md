@@ -230,8 +230,6 @@ redis-cli -n 4 hgetall 'SSH_SERVER|POLICIES'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ff031fbb8bc1 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -247,4 +245,4 @@ redis-cli -n 4 hgetall 'SSH_SERVER|POLICIES'
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: ff031fbb8bc1 -->

@@ -268,8 +268,6 @@ show runningconfiguration all | jq .INTERFACE
 - 重複 IP 検出の実装位置（transformer / SONiC YANG validator）
 -->
 
-<!-- glossary-links-injected: 34da0d5f7679 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -291,4 +289,4 @@ show runningconfiguration all | jq .INTERFACE
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 34da0d5f7679 -->

@@ -269,8 +269,6 @@ platform が `generate_pfc_to_queue_map` を定義している場合はそちら
 
 <!-- /ordering -->
 
-<!-- glossary-links-injected: d2191ccfe0bd -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -537,4 +535,4 @@ VOQ chassis でも `MAP_PFC_PRIORITY_TO_QUEUE` マップオブジェクト自体
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: b06d06441389 -->
+<!-- glossary-links-injected: d2191ccfe0bd -->

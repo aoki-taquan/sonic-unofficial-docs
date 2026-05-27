@@ -201,8 +201,6 @@ redis-cli -n 4 hgetall 'DHCP_SERVER_IPV4|Vlan1000'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 987cec9fd0c5 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -227,4 +225,4 @@ redis-cli -n 4 hgetall 'DHCP_SERVER_IPV4|Vlan1000'
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 987cec9fd0c5 -->

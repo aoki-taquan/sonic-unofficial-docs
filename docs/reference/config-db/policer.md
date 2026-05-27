@@ -371,8 +371,6 @@ db_migrator.py での POLICER マイグレーションなし
 `acl_loader/main.py` が POLICER テーブルを参照する (読み取り専用); 直接 set_entry なし — `sonic load_minigraph` での JSON 投入が主経路
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 849eee828f8c -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -728,4 +726,4 @@ evidence: `p4orch/acl_rule_manager.cpp:762-804`
 
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: e0fafad0a1f4 -->
+<!-- glossary-links-injected: 849eee828f8c -->
