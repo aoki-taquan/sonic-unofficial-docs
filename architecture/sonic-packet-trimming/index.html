@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Packet Trimming（symmetric / asymmetric DSCP / ACL disable） — Packet Trimming（PT）はバッファ枯渇で drop されるはずの大きな packet を、L2 + L3/L4 ヘッダ + 先頭 payload N bytes だけ残して NIC（…">
+        <meta name="description" content="Packet Trimming（symmetric / asymmetric DSCP / ACL disable） — バッファ枯渇で破棄される大きなパケットを L2/L3/L4 ヘッダ＋先頭 N バイトに切り詰めて NIC へ転送することで、輻輳検知とデバッグを両立する SONiC の機能。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Packet Trimming（symmetric / asymmetric DSCP / ACL disable） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="Packet Trimming（symmetric / asymmetric DSCP / ACL disable） — Packet Trimming（PT）はバッファ枯渇で drop されるはずの大きな packet を、L2 + L3/L4 ヘッダ + 先頭 payload N bytes だけ残して NIC（…" />
+<meta property="og:description" content="Packet Trimming（symmetric / asymmetric DSCP / ACL disable） — バッファ枯渇で破棄される大きなパケットを L2/L3/L4 ヘッダ＋先頭 N バイトに切り詰めて NIC へ転送することで、輻輳検知とデバッグを両立する SONiC の機能。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/architecture/sonic-packet-trimming.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/architecture/sonic-packet-trimming/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="Packet Trimming（symmetric / asymmetric DSCP / ACL disable） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="Packet Trimming（symmetric / asymmetric DSCP / ACL disable） — Packet Trimming（PT）はバッファ枯渇で drop されるはずの大きな packet を、L2 + L3/L4 ヘッダ + 先頭 payload N bytes だけ残して NIC（…" />
+<meta property="twitter:description" content="Packet Trimming（symmetric / asymmetric DSCP / ACL disable） — バッファ枯渇で破棄される大きなパケットを L2/L3/L4 ヘッダ＋先頭 N バイトに切り詰めて NIC へ転送することで、輻輳検知とデバッグを両立する SONiC の機能。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/architecture/sonic-packet-trimming.png" />
 </head>
   

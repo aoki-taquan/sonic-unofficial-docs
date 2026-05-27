@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL） — SmartSwitch（NPU + 複数 DPU）で NPU↔DPU の転送モデルは 2 案:">
+        <meta name="description" content="SmartSwitch（NPU + 複数 DPU）における ENI ベース転送の設計を解説する。ホストはスイッチ単位の VIP のみを使い、NPU 上の ENI_REDIRECT ACL が local / remote DPU へリダイレクトする。DashEniFwdOrch が DASH_ENI_FORWARD_TABLE を読み取り ACL ルールを生成する仕組みと、VIP ベースとの比較・Phase 分けを網羅する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL） — SmartSwitch（NPU + 複数 DPU）で NPU↔DPU の転送モデルは 2 案:" />
+<meta property="og:description" content="SmartSwitch（NPU + 複数 DPU）における ENI ベース転送の設計を解説する。ホストはスイッチ単位の VIP のみを使い、NPU 上の ENI_REDIRECT ACL が local / remote DPU へリダイレクトする。DashEniFwdOrch が DASH_ENI_FORWARD_TABLE を読み取り ACL ルールを生成する仕組みと、VIP ベースとの比較・Phase 分けを網羅する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/overlay/smartswitch-eni-based-forwarding.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/smartswitch-eni-based-forwarding/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SmartSwitch ENI Based Forwarding（DashEniFwdOrch / ENI_REDIRECT ACL） — SmartSwitch（NPU + 複数 DPU）で NPU↔DPU の転送モデルは 2 案:" />
+<meta property="twitter:description" content="SmartSwitch（NPU + 複数 DPU）における ENI ベース転送の設計を解説する。ホストはスイッチ単位の VIP のみを使い、NPU 上の ENI_REDIRECT ACL が local / remote DPU へリダイレクトする。DashEniFwdOrch が DASH_ENI_FORWARD_TABLE を読み取り ACL ルールを生成する仕組みと、VIP ベースとの比較・Phase 分けを網羅する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/overlay/smartswitch-eni-based-forwarding.png" />
 </head>
   

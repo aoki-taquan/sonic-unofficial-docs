@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="ntpd → chrony 移行（slew 専念 / kernel time discipline 維持） — SONiC 既存の ntpd（202405 以降は NTPsec、ntpd の security-hardened fork）には次の問題があった:">
+        <meta name="description" content="SONiC が ntpd（202405 以降は NTPsec）から chrony へ移行した経緯・設計を解説する。chrony は slew 専念で kernel time discipline を維持し、閉塞・再起動時の時刻飛びリスクを低減する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="ntpd → chrony 移行（slew 専念 / kernel time discipline 維持） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="ntpd → chrony 移行（slew 専念 / kernel time discipline 維持） — SONiC 既存の ntpd（202405 以降は NTPsec、ntpd の security-hardened fork）には次の問題があった:" />
+<meta property="og:description" content="SONiC が ntpd（202405 以降は NTPsec）から chrony へ移行した経緯・設計を解説する。chrony は slew 専念で kernel time discipline を維持し、閉塞・再起動時の時刻飛びリスクを低減する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/sonic-migration-to-chrony.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-migration-to-chrony/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="ntpd → chrony 移行（slew 専念 / kernel time discipline 維持） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="ntpd → chrony 移行（slew 専念 / kernel time discipline 維持） — SONiC 既存の ntpd（202405 以降は NTPsec、ntpd の security-hardened fork）には次の問題があった:" />
+<meta property="twitter:description" content="SONiC が ntpd（202405 以降は NTPsec）から chrony へ移行した経緯・設計を解説する。chrony は slew 専念で kernel time discipline を維持し、閉塞・再起動時の時刻飛びリスクを低減する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/sonic-migration-to-chrony.png" />
 </head>
   

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SensorMon（PMON 内の voltage / current センサ監視） — ボード上には電圧コントローラ / 電流センサ / 高度センサ等、温度以外の 環境センサ が多数ある。Linux の lm-sensors / hwmon でも一部読めるが、HLD は次の限界を指摘:">
+        <meta name="description" content="SensorMon（PMON 内の voltage / current センサ監視） — ボード上の電圧・電流・高度センサ等を hwmon 経由で収集し、VOLTAGE_INFO / CURRENT_INFO テーブルへ書き込む PMON デーモンの設計と実装を解説する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SensorMon（PMON 内の voltage / current センサ監視） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SensorMon（PMON 内の voltage / current センサ監視） — ボード上には電圧コントローラ / 電流センサ / 高度センサ等、温度以外の 環境センサ が多数ある。Linux の lm-sensors / hwmon でも一部読めるが、HLD は次の限界を指摘:" />
+<meta property="og:description" content="SensorMon（PMON 内の voltage / current センサ監視） — ボード上の電圧・電流・高度センサ等を hwmon 経由で収集し、VOLTAGE_INFO / CURRENT_INFO テーブルへ書き込む PMON デーモンの設計と実装を解説する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/sonic-pmon-sensor-monitoring-enhancement.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-pmon-sensor-monitoring-enhancement/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SensorMon（PMON 内の voltage / current センサ監視） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SensorMon（PMON 内の voltage / current センサ監視） — ボード上には電圧コントローラ / 電流センサ / 高度センサ等、温度以外の 環境センサ が多数ある。Linux の lm-sensors / hwmon でも一部読めるが、HLD は次の限界を指摘:" />
+<meta property="twitter:description" content="SensorMon（PMON 内の voltage / current センサ監視） — ボード上の電圧・電流・高度センサ等を hwmon 経由で収集し、VOLTAGE_INFO / CURRENT_INFO テーブルへ書き込む PMON デーモンの設計と実装を解説する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/sonic-pmon-sensor-monitoring-enhancement.png" />
 </head>
   

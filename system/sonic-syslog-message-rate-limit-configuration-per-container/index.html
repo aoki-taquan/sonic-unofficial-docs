@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="syslog rate limit のコンテナ単位設定 — SONiC の syslog は コンテナ毎の rsyslogd + host の rsyslogd で構成され、コンテナ rsyslog は従来 ハードコード で:">
+        <meta name="description" content="syslog rate limit のコンテナ単位設定 — SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE テーブルを用いてコンテナごとの rsyslogd バーストレートを動的に制御する設計と CLI 操作を解説する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="syslog rate limit のコンテナ単位設定（SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="syslog rate limit のコンテナ単位設定 — SONiC の syslog は コンテナ毎の rsyslogd + host の rsyslogd で構成され、コンテナ rsyslog は従来 ハードコード で:" />
+<meta property="og:description" content="syslog rate limit のコンテナ単位設定 — SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE テーブルを用いてコンテナごとの rsyslogd バーストレートを動的に制御する設計と CLI 操作を解説する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/sonic-syslog-message-rate-limit-configuration-per-container.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/system/sonic-syslog-message-rate-limit-configuration-per-container/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="syslog rate limit のコンテナ単位設定（SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="syslog rate limit のコンテナ単位設定 — SONiC の syslog は コンテナ毎の rsyslogd + host の rsyslogd で構成され、コンテナ rsyslog は従来 ハードコード で:" />
+<meta property="twitter:description" content="syslog rate limit のコンテナ単位設定 — SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE テーブルを用いてコンテナごとの rsyslogd バーストレートを動的に制御する設計と CLI 操作を解説する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/sonic-syslog-message-rate-limit-configuration-per-container.png" />
 </head>
   

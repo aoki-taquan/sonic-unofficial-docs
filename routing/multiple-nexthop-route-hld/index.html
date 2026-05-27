@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute） — Gemini active-standby サーバ環境では 1 経路に複数の next-hop neighbor が指定され、それぞれが 異なる Ethernet ポート (= 異なる…">
+        <meta name="description" content="dual-tor active-standby 環境の ECMP ループを回避する設計。MuxOrch::updateRoute が standby nexthop を除去して active nexthop のみに絞り、peer ToR トンネルへの無限ループを防ぐ仕組みを解説する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute） — Gemini active-standby サーバ環境では 1 経路に複数の next-hop neighbor が指定され、それぞれが 異なる Ethernet ポート (= 異なる…" />
+<meta property="og:description" content="dual-tor active-standby 環境の ECMP ループを回避する設計。MuxOrch::updateRoute が standby nexthop を除去して active nexthop のみに絞り、peer ToR トンネルへの無限ループを防ぐ仕組みを解説する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/multiple-nexthop-route-hld.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/multiple-nexthop-route-hld/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="dual-tor mux 跨ぎの multi-nexthop route ループ回避（MuxOrch::updateRoute） — Gemini active-standby サーバ環境では 1 経路に複数の next-hop neighbor が指定され、それぞれが 異なる Ethernet ポート (= 異なる…" />
+<meta property="twitter:description" content="dual-tor active-standby 環境の ECMP ループを回避する設計。MuxOrch::updateRoute が standby nexthop を除去して active nexthop のみに絞り、peer ToR トンネルへの無限ループを防ぐ仕組みを解説する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/multiple-nexthop-route-hld.png" />
 </head>
   

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE） — FRR zebra は dplane_fpm_nl プラグインで Linux kernel の NextHop Group (NHG) netlink メッセージ（RTM_NEWNEXTH…">
+        <meta name="description" content="fpmsyncd の NextHop Group 拡張を解説する。FRR zebra が dplane_fpm_nl で流す RTM_NEWNEXTHOP / RTM_DELNEXTHOP メッセージを fpmsyncd が受け取り、APPL_DB.NEXTHOP_GROUP_TABLE に NHG エンティティを書き込む仕組み。BGP PIC・recursive route 対応と orchagent / SAI 流量削減が目的。有効化キー名（HLD: fpm_use_nexthop_groups vs 実装: nexthop_group）の乖離も記載。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE） — FRR zebra は dplane_fpm_nl プラグインで Linux kernel の NextHop Group (NHG) netlink メッセージ（RTM_NEWNEXTH…" />
+<meta property="og:description" content="fpmsyncd の NextHop Group 拡張を解説する。FRR zebra が dplane_fpm_nl で流す RTM_NEWNEXTHOP / RTM_DELNEXTHOP メッセージを fpmsyncd が受け取り、APPL_DB.NEXTHOP_GROUP_TABLE に NHG エンティティを書き込む仕組み。BGP PIC・recursive route 対応と orchagent / SAI 流量削減が目的。有効化キー名（HLD: fpm_use_nexthop_groups vs 実装: nexthop_group）の乖離も記載。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="fpmsyncd NextHop Group 拡張（dplane_fpm_nl / NEXTHOP_GROUP_TABLE） — FRR zebra は dplane_fpm_nl プラグインで Linux kernel の NextHop Group (NHG) netlink メッセージ（RTM_NEWNEXTH…" />
+<meta property="twitter:description" content="fpmsyncd の NextHop Group 拡張を解説する。FRR zebra が dplane_fpm_nl で流す RTM_NEWNEXTHOP / RTM_DELNEXTHOP メッセージを fpmsyncd が受け取り、APPL_DB.NEXTHOP_GROUP_TABLE に NHG エンティティを書き込む仕組み。BGP PIC・recursive route 対応と orchagent / SAI 流量削減が目的。有効化キー名（HLD: fpm_use_nexthop_groups vs 実装: nexthop_group）の乖離も記載。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/fpmsyncd-nexthop-group-enhancement-high-level-design-document.png" />
 </head>
   

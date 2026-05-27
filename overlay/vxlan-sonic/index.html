@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper） — SONiC の VXLAN は VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ で実装される。HLD は次のスコープを定める:">
+        <meta name="description" content="SONiC の VXLAN / VNet 全体設計を解説する。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせで実装され、Phase 1 では VM↔ベアメタル間の VNet ピアリングと Symmetric IRB、Phase 2 では BGP EVPN 統合・L2 VXLAN・HER を扱う。VxlanTunnelOrch / VnetOrch / VRF mapper の役割と CONFIG_DB / APP_DB スキーマを網羅する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper） — SONiC の VXLAN は VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ で実装される。HLD は次のスコープを定める:" />
+<meta property="og:description" content="SONiC の VXLAN / VNet 全体設計を解説する。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせで実装され、Phase 1 では VM↔ベアメタル間の VNet ピアリングと Symmetric IRB、Phase 2 では BGP EVPN 統合・L2 VXLAN・HER を扱う。VxlanTunnelOrch / VnetOrch / VRF mapper の役割と CONFIG_DB / APP_DB スキーマを網羅する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/overlay/vxlan-sonic.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/overlay/vxlan-sonic/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="VXLAN / VNet 全体設計（VxlanOrch / VnetOrch / VRF mapper） — SONiC の VXLAN は VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせ で実装される。HLD は次のスコープを定める:" />
+<meta property="twitter:description" content="SONiC の VXLAN / VNet 全体設計を解説する。VTEP（VXLAN Tunnel End Point）と VNet（Virtual Network）の組み合わせで実装され、Phase 1 では VM↔ベアメタル間の VNet ピアリングと Symmetric IRB、Phase 2 では BGP EVPN 統合・L2 VXLAN・HER を扱う。VxlanTunnelOrch / VnetOrch / VRF mapper の役割と CONFIG_DB / APP_DB スキーマを網羅する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/overlay/vxlan-sonic.png" />
 </head>
   

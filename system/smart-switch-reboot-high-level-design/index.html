@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot） — SmartSwitch は NPU 1 個 + 複数 DPU から成り、DPU は PCIe で NPU 側 CPU に接続される（front panel は NPU の…">
+        <meta name="description" content="SmartSwitch の reboot 手順を規定する HLD で、NPU が各 DPU へ gNOI HALT を送り PCIe detach 後に個別 reboot する順序制御と、reboot 後の DPU 復旧フローを解説する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot） — SmartSwitch は NPU 1 個 + 複数 DPU から成り、DPU は PCIe で NPU 側 CPU に接続される（front panel は NPU の…" />
+<meta property="og:description" content="SmartSwitch の reboot 手順を規定する HLD で、NPU が各 DPU へ gNOI HALT を送り PCIe detach 後に個別 reboot する順序制御と、reboot 後の DPU 復旧フローを解説する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/smart-switch-reboot-high-level-design.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/system/smart-switch-reboot-high-level-design/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SmartSwitch reboot 順序（NPU → 各 DPU の gNOI HALT → PCI detach → 個別 reboot） — SmartSwitch は NPU 1 個 + 複数 DPU から成り、DPU は PCIe で NPU 側 CPU に接続される（front panel は NPU の…" />
+<meta property="twitter:description" content="SmartSwitch の reboot 手順を規定する HLD で、NPU が各 DPU へ gNOI HALT を送り PCIe detach 後に個別 reboot する順序制御と、reboot 後の DPU 復旧フローを解説する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/system/smart-switch-reboot-high-level-design.png" />
 </head>
   

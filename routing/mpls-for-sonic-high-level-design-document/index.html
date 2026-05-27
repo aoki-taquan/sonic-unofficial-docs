@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SONiC の MPLS 基盤 — SONiC の初期 MPLS 対応は 静的 LSP を前提に、IPv4/IPv6 routing インフラを MPLS にも拡げる方針:">
+        <meta name="description" content="SONiC の MPLS 基盤設計を解説する。静的 LSP を前提に per-RIF での MPLS enable/disable、Push / Pop / Swap ラベル操作、LABEL_ROUTE_TABLE への fpmsyncd 書き込み、SAI による INSEG_ENTRY プログラミング、CRM 統合を扱う。LDP / RSVP-TE・L3VPN はスコープ外。CONFIG_DB・APPL_DB・CLI・YANG の各スキーマも含む。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SONiC の MPLS 基盤 — SONiC の初期 MPLS 対応は 静的 LSP を前提に、IPv4/IPv6 routing インフラを MPLS にも拡げる方針:" />
+<meta property="og:description" content="SONiC の MPLS 基盤設計を解説する。静的 LSP を前提に per-RIF での MPLS enable/disable、Push / Pop / Swap ラベル操作、LABEL_ROUTE_TABLE への fpmsyncd 書き込み、SAI による INSEG_ENTRY プログラミング、CRM 統合を扱う。LDP / RSVP-TE・L3VPN はスコープ外。CONFIG_DB・APPL_DB・CLI・YANG の各スキーマも含む。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/mpls-for-sonic-high-level-design-document.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/mpls-for-sonic-high-level-design-document/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SONiC の MPLS 基盤（per-RIF MPLS / LABEL_ROUTE_TABLE / 静的 LSP） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SONiC の MPLS 基盤 — SONiC の初期 MPLS 対応は 静的 LSP を前提に、IPv4/IPv6 routing インフラを MPLS にも拡げる方針:" />
+<meta property="twitter:description" content="SONiC の MPLS 基盤設計を解説する。静的 LSP を前提に per-RIF での MPLS enable/disable、Push / Pop / Swap ラベル操作、LABEL_ROUTE_TABLE への fpmsyncd 書き込み、SAI による INSEG_ENTRY プログラミング、CRM 統合を扱う。LDP / RSVP-TE・L3VPN はスコープ外。CONFIG_DB・APPL_DB・CLI・YANG の各スキーマも含む。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/mpls-for-sonic-high-level-design-document.png" />
 </head>
   

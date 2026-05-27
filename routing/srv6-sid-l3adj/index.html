@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6） — SONiC の SRv6 サポートは別 HLD（srv6_hld.md）で定義済みだが、cross-connect 系 behavior（uA / End.X / uDX4 / uDX6…">
+        <meta name="description" content="SONiC の SRv6 SID L3 隣接拡張を解説する。cross-connect 系 behavior（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）が出口の L3 隣接（L3Adj）を必要とするため、SRv6Orch に adj パラメータ処理を追加した。NeighOrch との連携による pending 解決フロー、SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID のプログラミング経路を詳述する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6） — SONiC の SRv6 サポートは別 HLD（srv6_hld.md）で定義済みだが、cross-connect 系 behavior（uA / End.X / uDX4 / uDX6…" />
+<meta property="og:description" content="SONiC の SRv6 SID L3 隣接拡張を解説する。cross-connect 系 behavior（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）が出口の L3 隣接（L3Adj）を必要とするため、SRv6Orch に adj パラメータ処理を追加した。NeighOrch との連携による pending 解決フロー、SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID のプログラミング経路を詳述する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/srv6-sid-l3adj.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/routing/srv6-sid-l3adj/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="SRv6 SID の L3 隣接（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6） — SONiC の SRv6 サポートは別 HLD（srv6_hld.md）で定義済みだが、cross-connect 系 behavior（uA / End.X / uDX4 / uDX6…" />
+<meta property="twitter:description" content="SONiC の SRv6 SID L3 隣接拡張を解説する。cross-connect 系 behavior（uA / End.X / uDX4 / uDX6 / End.DX4 / End.DX6）が出口の L3 隣接（L3Adj）を必要とするため、SRv6Orch に adj パラメータ処理を追加した。NeighOrch との連携による pending 解決フロー、SAI_MY_SID_ENTRY_ATTR_NEXT_HOP_ID のプログラミング経路を詳述する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/routing/srv6-sid-l3adj.png" />
 </head>
   

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="P4Runtime PacketIO — 通常 netdev では すべての punt パケット が同じ経路に来てしまい、メタデータも input port のみ。P4Runtime（PINS / SDN コントローラ）は次が必要:">
+        <meta name="description" content="P4Runtime / PINS 環境で punt パケットに ingress port などのメタデータを付与しコントローラへ送り返すための generic netlink ベースの PacketIO 設計と send_to_ingress フロー制御を解説する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="P4Runtime PacketIO（generic netlink + send_to_ingress） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="P4Runtime PacketIO — 通常 netdev では すべての punt パケット が同じ経路に来てしまい、メタデータも input port のみ。P4Runtime（PINS / SDN コントローラ）は次が必要:" />
+<meta property="og:description" content="P4Runtime / PINS 環境で punt パケットに ingress port などのメタデータを付与しコントローラへ送り返すための generic netlink ベースの PacketIO 設計と send_to_ingress フロー制御を解説する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/packetio.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/management/packetio/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="P4Runtime PacketIO（generic netlink + send_to_ingress） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="P4Runtime PacketIO — 通常 netdev では すべての punt パケット が同じ経路に来てしまい、メタデータも input port のみ。P4Runtime（PINS / SDN コントローラ）は次が必要:" />
+<meta property="twitter:description" content="P4Runtime / PINS 環境で punt パケットに ingress port などのメタデータを付与しコントローラへ送り返すための generic netlink ベースの PacketIO 設計と send_to_ingress フロー制御を解説する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/management/packetio.png" />
 </head>
   

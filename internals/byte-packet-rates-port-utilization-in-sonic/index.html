@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="バイト/パケットレートとポート使用率（RATES テーブル + EMA） — portstat / intfstat が表示する RX_BPS / RX_PPS / RX_UTIL 等のレート列は、長らく CLI 側でカウンタの差分を計算する 方式で実装されていた。問題は次の通り:">
+        <meta name="description" content="バイト/パケットレートとポート使用率（RATES テーブル + EMA） — portstat / intfstat が表示する RX_BPS / RX_PPS / RX_UTIL 等を、RATES テーブルと指数移動平均（EMA）でカウンタ集約する仕組みを解説する。">
       
       
       
@@ -67,7 +67,7 @@
   
 <meta property="og:type" content="website" />
 <meta property="og:title" content="バイト/パケットレートとポート使用率（RATES テーブル + EMA） - SONiC 非公式ドキュメント" />
-<meta property="og:description" content="バイト/パケットレートとポート使用率（RATES テーブル + EMA） — portstat / intfstat が表示する RX_BPS / RX_PPS / RX_UTIL 等のレート列は、長らく CLI 側でカウンタの差分を計算する 方式で実装されていた。問題は次の通り:" />
+<meta property="og:description" content="バイト/パケットレートとポート使用率（RATES テーブル + EMA） — portstat / intfstat が表示する RX_BPS / RX_PPS / RX_UTIL 等を、RATES テーブルと指数移動平均（EMA）でカウンタ集約する仕組みを解説する。" />
 <meta property="og:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/byte-packet-rates-port-utilization-in-sonic.png" />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
@@ -75,7 +75,7 @@
 <meta property="og:url" content="https://aoki-taquan.github.io/sonic-unofficial-docs/internals/byte-packet-rates-port-utilization-in-sonic/" />
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:title" content="バイト/パケットレートとポート使用率（RATES テーブル + EMA） - SONiC 非公式ドキュメント" />
-<meta property="twitter:description" content="バイト/パケットレートとポート使用率（RATES テーブル + EMA） — portstat / intfstat が表示する RX_BPS / RX_PPS / RX_UTIL 等のレート列は、長らく CLI 側でカウンタの差分を計算する 方式で実装されていた。問題は次の通り:" />
+<meta property="twitter:description" content="バイト/パケットレートとポート使用率（RATES テーブル + EMA） — portstat / intfstat が表示する RX_BPS / RX_PPS / RX_UTIL 等を、RATES テーブルと指数移動平均（EMA）でカウンタ集約する仕組みを解説する。" />
 <meta property="twitter:image" content="https://aoki-taquan.github.io/sonic-unofficial-docs/assets/images/social/internals/byte-packet-rates-port-utilization-in-sonic.png" />
 </head>
   
