@@ -1,7 +1,6 @@
 ---
 title: バイト/パケットレートとポート使用率（RATES テーブル + EMA）
-description: 'バイト/パケットレートとポート使用率（RATES テーブル + EMA） — portstat / intfstat が表示する RX_BPS
-  / RX_PPS / RX_UTIL 等のレート列は、長らく CLI 側でカウンタの差分を計算する 方式で実装されていた。問題は次の通り:'
+description: バイト/パケットレートとポート使用率（RATES テーブル + EMA） — portstat / intfstat が表示する RX_BPS / RX_PPS / RX_UTIL 等を、RATES テーブルと指数移動平均（EMA）でカウンタ集約する仕組みを解説する。
 area: internals
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,6 +1,6 @@
 ---
 title: ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics）
-description: "ZR / ZR+ 向け CMIS / C-CMIS サポート（xcvrd / DSP / coherent optics） — QSFP-DD ZR / ZR+ のような coherent optics は従来の grey optics と比べ:"
+description: "QSFP-DD ZR / ZR+ などのコヒーレント光トランシーバーを CMIS / C-CMIS プロトコルで制御するための SONiC xcvrd 拡張と DSP 設定フロー、Host Tx Ready 管理の仕組みを解説する。"
 area: platform
 verification: code-verified
 last_verified: 2026-05-10

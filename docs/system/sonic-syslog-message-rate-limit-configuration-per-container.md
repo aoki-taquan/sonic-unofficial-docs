@@ -1,7 +1,6 @@
 ---
 title: syslog rate limit のコンテナ単位設定（SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE）
-description: 'syslog rate limit のコンテナ単位設定 — SONiC の syslog は コンテナ毎の rsyslogd + host
-  の rsyslogd で構成され、コンテナ rsyslog は従来 ハードコード で:'
+description: syslog rate limit のコンテナ単位設定 — SYSLOG_CONFIG / SYSLOG_CONFIG_FEATURE テーブルを用いてコンテナごとの rsyslogd バーストレートを動的に制御する設計と CLI 操作を解説する。
 area: system
 verification: code-verified
 last_verified: 2026-05-10

@@ -1,6 +1,6 @@
 ---
 title: gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli）
-description: 'gNMI クライアントツールの使い方（gnmi_get / gnmi_set / gnmi_cli） — SONiC の telemetry コンテナには 3 つの gNMI クライアントツール が /usr/bin に同梱されており、運用検証や疎通確認に使う:'
+description: "SONiC の telemetry コンテナに同梱される gnmi_get / gnmi_set / gnmi_cli の 3 つのクライアントツールを用いた gNMI 疎通確認・設定取得・変更操作の手順を解説する。"
 area: management
 verification: code-verified
 last_verified: 2026-05-09
