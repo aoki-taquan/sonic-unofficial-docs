@@ -16703,7 +16703,7 @@
   <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離
       
     </span>
   </a>
@@ -16712,6 +16712,17 @@
       
         <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -16733,7 +16744,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -36107,7 +36118,7 @@
   <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離
       
     </span>
   </a>
@@ -36116,6 +36127,17 @@
       
         <li class="md-nav__item">
   <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36137,7 +36159,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
+  <a href="#_17" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -36539,7 +36561,9 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 <li>暗号化マスタキーが装置固有 (TPM / platform 固有値) の場合、<code>config_db.json</code> を別装置に流用しても TACACS+ 認証が失敗する。装置毎に再設定する運用にする。</li>
 <li>TACACS+ サーバ到達性問題と passkey 不一致は同じ「Auth failed」ログとなる事が多い。まず <code>tcpdump -i &lt;mgmt&gt; port 49</code> でパケット到達を確認してから passkey を疑う。</li>
 </ul>
-<h2 id="_14">引用元<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_14">実装との乖離<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<h2 id="_15">引用元<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - hostcfgd の暗号化 passkey 復号 + master key 読み込みパスの実装
 - /etc/cipher_pass のパーミッション・パッケージング (sonic-buildimage)
@@ -36551,7 +36575,7 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 -->
 
 <!-- next-action -->
-<h2 id="_15">このページを読んだ後の次アクション<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h2 id="_16">このページを読んだ後の次アクション<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>
@@ -36579,10 +36603,8 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 5491cc477cce -->
-
 <!-- ops-entry -->
-<h2 id="_16">運用入口<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
+<h2 id="_17">運用入口<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h2>
 <p>この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。</p>
 <h3 id="cli_2">関連 CLI<a class="headerlink" href="#cli_2" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36599,7 +36621,7 @@ reasoning: 「PAM が平文を要求するので hostcfgd で復号する」「�
 </ul>
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: db62d2100cef -->
+<!-- glossary-links-injected: 5491cc477cce -->
 
 <div class="footnote">
 <hr />

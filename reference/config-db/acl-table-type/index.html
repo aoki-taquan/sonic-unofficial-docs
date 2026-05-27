@@ -37879,9 +37879,6 @@ CONFIG_DB / <a href="../../glossary/#term-appl_db">APPL_DB</a> の他テーブ�
 <li id="fn:2">
 <p>副作用の調査は <code>sonic-swss/orchagent/aclorch.cpp</code> (sha <code>43055961</code>) <code>doAclTableTypeTask()</code> L5738-5774、<code>addAclTableType()</code> L4912-4930、<code>removeAclTableType()</code> L4932-4948、<code>doAclTableTask()</code> L5432 (<code>getAclTableType()</code> による retry 制御) より。STATE_DB テーブル名は <code>sonic-swss-common/common/schema.h</code> L418/514/515 より。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
-<li id="fn:3">
-<p>通信メカニズムの調査は <code>sonic-swss/orchagent/aclorch.cpp</code> (sha <code>43055961</code>) L4197-4299 (AclOrch ctor、doTask)、<code>orchagent/orchdaemon.cpp</code> L408-422, L533-534 (TableConnector 構築)、<code>orchagent/orch.cpp</code> L1186-1196 (addConsumer DB 種別分岐)、<code>orchagent/vnetorch.cpp</code> L3738, L3781、<code>orchagent/dash/dashenifwdorch.cpp</code> L404, L625, L649、<code>sonic-swss-common/common/schema.h</code> L95 (<code>APP_ACL_TABLE_TYPE_TABLE_NAME</code>) より。&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
-</li>
 </ol>
 </div>
 

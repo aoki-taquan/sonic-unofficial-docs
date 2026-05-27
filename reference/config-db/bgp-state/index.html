@@ -37451,7 +37451,7 @@
 
 <!-- failure -->
 <h2 id="phase-d-bgppeermgrbase">失敗挙動 (Phase D — BGPPeerMgrBase)<a class="headerlink" href="#phase-d-bgppeermgrbase" title="Permanent link">&para;</a></h2>
-<p><code>bgpcfgd</code> の <code>BGPPeerMgrBase</code> が <code>BGP_PEER_CONFIGURED_TABLE</code> を書き込む際の失敗・retry 分岐を示す<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>。</p>
+<p><code>bgpcfgd</code> の <code>BGPPeerMgrBase</code> が <code>BGP_PEER_CONFIGURED_TABLE</code> を書き込む際の失敗・retry 分岐を示す<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">1</a></sup>。</p>
 <h3 id="frr-push-apply_op-true">FRR push 結果は非同期 — <code>apply_op</code> は常に <code>True</code> を返す<a class="headerlink" href="#frr-push-apply_op-true" title="Permanent link">&para;</a></h3>
 <p><code>BGPPeerMgrBase.apply_op()</code> (L494–508) は <code>cfg_mgr.push(cmd)</code> でコマンドをキューに入れるだけで、FRR 側の実行結果を確認しない。返値は<strong>常に <code>True</code></strong>。FRR がコマンドを拒否してもハンドラは成功扱いとなり、<code>BGP_PEER_CONFIGURED_TABLE</code> への書き込みが行われる。エラーは FRR ログにのみ現れ、<strong>retry なし</strong>。</p>
 <h3 id="add_peer-state_db"><code>add_peer</code> — テンプレートレンダリング失敗 → STATE_DB 未書き込み<a class="headerlink" href="#add_peer-state_db" title="Permanent link">&para;</a></h3>
@@ -37746,23 +37746,8 @@
 <div class="footnote">
 <hr />
 <ol>
-<li id="fn:1">
-<p><code>sonic-buildimage/src/sonic-bgpcfgd/bgpmon/bgpmon.py</code> (L37-51 BgpStateGet.<strong>init</strong>, L70-76 update_new_peer_states, L154-189 update_neigh_states, L163,171 peerType 判定). <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpmon/bgpmon.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpmon/bgpmon.py</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
-</li>
-<li id="fn:2">
-<p><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py</code> (L284-303 update_state_db). <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
-</li>
-<li id="fn:3">
-<p><code>sonic-net/SONiC/doc/snmp/snmp_ciscobgp4mib.md</code> (NEIGH_STATE_TABLE スキーマ定義, L27-32). <a href="https://github.com/sonic-net/SONiC/blob/master/doc/snmp/snmp_ciscobgp4mib.md">https://github.com/sonic-net/SONiC/blob/master/doc/snmp/snmp_ciscobgp4mib.md</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
-</li>
-<li id="fn:4">
-<p><code>sonic-net/SONiC/doc/BGP/Bgpcfgd-dyn-peer-modification-support.md</code> (BGP_PEER_CONFIGURED_TABLE スキーマ定義, §2.2). <a href="https://github.com/sonic-net/SONiC/blob/master/doc/BGP/Bgpcfgd-dyn-peer-modification-support.md">https://github.com/sonic-net/SONiC/blob/master/doc/BGP/Bgpcfgd-dyn-peer-modification-support.md</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
-</li>
-<li id="fn:5">
-<p><code>sonic-swss-common/common/schema.h</code> (L437 STATE_BGP_TABLE_NAME, L511 STATE_BGP_PEER_CONFIGURED_TABLE_NAME). <a href="https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h">https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
-</li>
 <li id="fn:6">
-<p><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py</code> (L229–243 add_peer テンプレート失敗分岐, L271–304 update_state_db 例外処理, L446–492 del_handler 失敗・順序乖離, L494–508 apply_op 常時 True). <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+<p><code>sonic-buildimage/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py</code> (L229–243 add_peer テンプレート失敗分岐, L271–304 update_state_db 例外処理, L446–492 del_handler 失敗・順序乖離, L494–508 apply_op 常時 True). <a href="https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py">https://github.com/sonic-net/sonic-buildimage/blob/master/src/sonic-bgpcfgd/bgpcfgd/managers_bgp.py</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

@@ -13149,6 +13149,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -35735,6 +35746,17 @@
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -35921,7 +35943,9 @@ CLI 表示・syslog の整合を一通り突き合わせ確認できる。</p>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># 動的変更時の orchagent ログ</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>sudo<span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;portsorch|PortConfigDone|PortInitDone&#39;</span><span class="w"> </span>/var/log/syslog<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
 </span></code></pre></div>
-<h2 id="_2">引用元<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h2 id="_2">実装との乖離<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del 設定と運用 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
+<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 889740d66e5f -->
 
 <div class="footnote">

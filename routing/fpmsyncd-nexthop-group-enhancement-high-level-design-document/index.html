@@ -9633,6 +9633,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -9665,7 +9676,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -9676,7 +9687,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -9698,7 +9709,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -9719,7 +9730,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36024,6 +36035,17 @@
   <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -36056,7 +36078,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -36067,7 +36089,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -36089,7 +36111,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -36110,7 +36132,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36267,7 +36289,9 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># FRR 側 NHG state</span>
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>bgp<span class="w"> </span>vtysh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;show nexthop-group rib&#39;</span>
 </span></code></pre></div>
-<h2 id="_9">引用元<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_9">実装との乖離<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p><code>monitor: evolved_beyond_hld</code> — <code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - fpmsyncd の RTM_NEWNEXTHOP / RTM_DELNEXTHOP ハンドラ実装存在確認
 - NhgOrch multipath 拡張の現行 master 取り込み確認
@@ -36316,12 +36340,12 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 <li>有効化 key の実装名: <code>DEVICE_METADATA.localhost.nexthop_group</code> (= <code>enabled</code> / <code>disabled</code>)、および <code>DEVICE_METADATA.localhost.zebra_nexthop</code>（kernel への NHG push を抑止する場合 <code>disabled</code> を指定）。</li>
 <li>HLD 表記の <code>fpm_use_nexthop_groups</code> という単一キー名は <strong>実装に存在しない</strong>。</li>
 </ul>
-<h4 id="_10">読者への影響<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<h4 id="_11">読者への影響<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
 <ul>
 <li>HLD 通りに <code>redis-cli -n 4 hset 'DEVICE_METADATA|localhost' fpm_use_nexthop_groups enabled</code> を打っても、<code>zebra.conf</code> 再生成では <code>no fpm use-next-hop-groups</code> が出力されたままで <strong>NHG 機能は有効化されない</strong>。<code>fpmsyncd</code> 起動ログを見ても <code>RTM_NEWNEXTHOP</code> を受け取らないため <code>NEXTHOP_GROUP_TABLE</code> は空のまま。</li>
 <li>key 名を勘違いしたまま BGP PIC を運用設計すると、ECMP 切替時の収束が NHG 経由ではなく従来の per-route 経路で行われ、HLD が謳う収束時間短縮が得られない。</li>
 </ul>
-<h4 id="_11">回避策の実コマンド<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<h4 id="_12">回避策の実コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># 正しい有効化（実装側 key 名）</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hset<span class="w"> </span><span class="s2">&quot;DEVICE_METADATA|localhost&quot;</span><span class="w"> </span>nexthop_group<span class="w"> </span>enabled
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># kernel NHG push を残したい場合（デフォルト動作）は zebra_nexthop は未設定 or &quot;enabled&quot;</span>
@@ -36341,13 +36365,13 @@ reasoning: 拡張のスコープ・既存互換性・有効化スイッチの根
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/23500">sonic-buildimage #23500: [frr] update next hop group support by metadata value with disabled as the default value (merged, 202511)</a> — default を <code>disabled</code> に固定する change。デフォルトでは NHG が <strong>無効</strong> な点に注意。</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/16941">sonic-buildimage #16941: [action][PR:16747] fix default zebra config not inserted into empty zebra.conf (merged)</a> — 関連の zebra.conf 生成バグ修正。</li>
 </ul>
-<h4 id="_12">検証日<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<h4 id="_13">検証日<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 </div>
 <!-- /diff-admonition -->
 
 <!-- next-action -->
-<h2 id="_13">このページを読んだ後の次アクション<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">このページを読んだ後の次アクション<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

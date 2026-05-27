@@ -7919,6 +7919,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -7951,7 +7962,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -7962,7 +7973,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -7984,7 +7995,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -8005,7 +8016,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36065,6 +36076,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -36097,7 +36119,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -36108,7 +36130,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -36130,7 +36152,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -36151,7 +36173,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36345,7 +36367,9 @@
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># kernel route と vlan の整合</span>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>ip<span class="w"> </span>addr<span class="w"> </span>show<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A2<span class="w"> </span>Vlan
 </span></code></pre></div>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <h3 id="2026-05-11batch-q3-disc-detail">深掘り（2026-05-11、batch q3-disc-detail）<a class="headerlink" href="#2026-05-11batch-q3-disc-detail" title="Permanent link">&para;</a></h3>
 <h4 id="hld">HLD 記述と実装の差分（行番号 + コード抜粋）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h4>
 <p>community master 側に SAG 関連の実装は <strong>依然として全く無い</strong>:</p>
@@ -36361,13 +36385,13 @@
 <li><code>sonic-utilities/config/sag.py</code> — PR #2881 / #3339 で提案中、未マージ</li>
 <li><code>sonic-buildimage/src/sonic-yang-models/yang-models/sonic-sag.yang</code> — PR #19069 で提案中、未マージ</li>
 </ul>
-<h4 id="_11">読者への影響<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<h4 id="_12">読者への影響<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
 <ul>
 <li>HLD どおりに <code>sudo config static-anycast-gateway mac_address add 00:11:22:33:44:0f</code> を叩くと <code>Error: No such command "static-anycast-gateway"</code> で終了。CLI ハンドラが click ツリーに登録されていない。</li>
 <li><code>CONFIG_DB</code> に直接 <code>SAG|GLOBAL</code> / <code>VLAN_INTERFACE|Vlan100</code> の <code>static_anycast_gateway</code> を書いても、それを購読する <code>SagOrch</code> が起動していないため <a href="../../reference/glossary/#term-sai">SAI</a> 側に何も伝播しない（YANG validation も無いので <code>config save</code> 後に <code>config load</code> で消えないだけ）。</li>
 <li>EVPN-VXLAN の leaf 冗長構成で「同一仮想 GW MAC」運用を community master 標準だけで実現する手段は <strong>無い</strong>。ベンダー fork（NVIDIA / Edgecore Enterprise SONiC / <a href="../../reference/glossary/#term-asternos">AsterNOS</a>）か、手動の anycast 設定（後述）で代替。</li>
 </ul>
-<h4 id="_12">回避策の実コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<h4 id="_13">回避策の実コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
 <p>community master で SAG 相当を <strong>手動で</strong>作る方法:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># 1) leaf 全台で同じ MAC を VLAN RIF に振る（hostcfgd は MAC を上書きしないので /etc/network/interfaces.d/ で固定）</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nv">SAG_MAC</span><span class="o">=</span><span class="s2">&quot;00:11:22:33:44:0f&quot;</span>
@@ -36395,10 +36419,10 @@
 <li><a href="https://github.com/sonic-net/sonic-buildimage/pull/19069">[sonic-buildimage](../reference/glossary.md#term-sonic-buildimage) #19069: [Yang] Add SAG Yang models (open)</a> — YANG 側提案 PR。</li>
 <li><a href="https://github.com/sonic-net/sonic-buildimage/issues/13676">sonic-buildimage #13676: Defining a SAG setup on an ISP connected route/switch breaks Uplink BGP peer settings (open, Edgecore)</a> — ベンダー fork 上でも組み合わせバグが既知。</li>
 </ul>
-<h4 id="_13">検証日<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<h4 id="_14">検証日<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 <!-- next-action -->
-<h2 id="_14">このページを読んだ後の次アクション<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_15">このページを読んだ後の次アクション<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

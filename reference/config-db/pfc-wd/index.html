@@ -38164,8 +38164,6 @@
 <p><code>DEVICE_METADATA.default_pfcwd_status == enable</code> の場合のみ動作。<code>port_num = len(PORT)</code> から <code>multiply = max(1, (port_num-1)//32+1)</code> を算出し <code>detection_time = restoration_time = 200 * multiply</code> ms、<code>POLL_INTERVAL = min(200 * multiply, 1000)</code> ms を書き込む (ポート数 ≤32 → 200ms、33–64 → 400ms、65–96 → 600ms 等)。</p>
 <!-- /defaults -->
 
-<!-- glossary-links-injected: 62798bcc4162 -->
-
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
@@ -39128,7 +39126,7 @@ PFC_WD per-port エントリ処理時に <code>getPortPfcWatchdogStatus()</code>
 <p><code>pfcwdorch.cpp</code> に <code>gMySwitchType</code>・<code>gFabricPortsOrch</code>・<code>IS_MULTI_NPU</code> 参照はゼロ。multi-asic 構成では各 <a href="../../glossary/#term-asic">ASIC</a> namespace の orchagent が独立して <code>PFC_WD</code> テーブルを購読するが、コードパスは同一。VoQ chassis・<a href="../../glossary/#term-dash">DASH</a> 環境でも PFC_WD の動作ロジックは変化しない。</p>
 <!-- /platform -->
 
-<!-- glossary-links-injected: 70a7b3e57d8b -->
+<!-- glossary-links-injected: 62798bcc4162 -->
 
 <div class="footnote">
 <hr />

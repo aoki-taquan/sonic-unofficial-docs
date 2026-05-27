@@ -13326,6 +13326,17 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -13358,7 +13369,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -13369,7 +13380,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -13391,7 +13402,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -13412,7 +13423,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36301,6 +36312,17 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -36333,7 +36355,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -36344,7 +36366,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -36366,7 +36388,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -36387,7 +36409,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
+  <a href="#_16" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36794,7 +36816,9 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 </div>
 <!-- /phase-boundary -->
 
-<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_11">実装との乖離<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<h2 id="_12">引用元<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <h3 id="2026-05-11batch-q3-disc-detail">深掘り（2026-05-11、batch q3-disc-detail）<a class="headerlink" href="#2026-05-11batch-q3-disc-detail" title="Permanent link">&para;</a></h3>
 <h4 id="hld">HLD 記述と実装の差分（行番号 + コード抜粋）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h4>
 <p><code>sonic-swss/portsyncd/portsyncd.cpp</code> L122-L176 で <code>PortInitDone</code> 通知 + zero-port boot 対応が入っているが、HLD が要求する <strong>port 削除時の ref-count 拒否</strong> は未実装:</p>
@@ -36803,7 +36827,7 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># 0 件</span>
 </span></code></pre></div>
 <p><code>sonic-swss/orchagent/portsorch.cpp</code> 内の <code>removePort()</code> / <code>del PORT</code> 経路は依然として SAI 削除を試み、失敗時の syslog 出力のみで上位（VLAN / LAG / ACL / buffer PG）側の依存をチェックしない。</p>
-<h4 id="_12">読者への影響<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<h4 id="_13">読者への影響<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
 <ul>
 <li><code>sudo config interface shutdown EthernetX</code> 後に CONFIG_DB から直接 <code>PORT|EthernetX</code> を消すと、orchagent が以下を順次出す:</li>
 <li><code>SAI_STATUS_OBJECT_IN_USE</code>（VLAN_MEMBER / ACL_TABLE / <a href="../../reference/glossary/#term-buffer-pg">BUFFER_PG</a> が参照中）</li>
@@ -36812,7 +36836,7 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 <li>chassis line card 投入で「init 時に空 → 後から PORT を投入」フローを使うと、buffermgrd / lldpmgrd の起動順次第で <code>pending_cmds</code> が滞留し、lldp neighbor 表に古い情報が残る。</li>
 <li>HLD で「ref counter で守られているから順序気にせず消してよい」と読んで自動化スクリプトを書くと、上記 race を踏む。</li>
 </ul>
-<h4 id="_13">回避策の実コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<h4 id="_14">回避策の実コマンド<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
 <p>port 削除の安全手順:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nv">PORT</span><span class="o">=</span>Ethernet64
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
@@ -36856,10 +36880,10 @@ reasoning: buffer ref counter による delete ガードと lldp host-i/f チェ
 <li><a href="https://github.com/sonic-net/sonic-swss/pull/1112">sonic-swss #1112: [DPB portsyncd/[portmgrd](../reference/glossary.md#term-portmgrd)/portorch] Support dynamic port add/deletion without dependencies (merged)</a> — 動的 port add/del のコア実装（<a href="../../reference/glossary/#term-dpb">DPB</a>: Dynamic Port Breakout の派生）。HLD が想定する第二段階（ref-count）はこの PR には含まれない。</li>
 <li>HLD 内で言及されていた PR #2022（port buffer ref counter）は CLOSED で未マージのまま。後継 PR も提案されておらず、機能ギャップは継続。</li>
 </ul>
-<h4 id="_14">検証日<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
+<h4 id="_15">検証日<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 <!-- next-action -->
-<h2 id="_15">このページを読んだ後の次アクション<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
+<h2 id="_16">このページを読んだ後の次アクション<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

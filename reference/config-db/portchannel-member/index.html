@@ -37625,8 +37625,6 @@
 </span></code></pre></div>
 <!-- /ordering -->
 
-<!-- glossary-links-injected: 38b4c0ae7d80 -->
-
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
@@ -38229,7 +38227,7 @@ teamd プロセスに直接ポートの追加/削除を指示する。この経�
 <p>メンバ追加直後は <code>LAG_MEMBER_TABLE.status = disabled</code> であり、ASIC_DB の lag_member に <code>EGRESS_DISABLE=true</code> / <code>INGRESS_DISABLE=true</code> が設定される。LACP ネゴシエーション完了後、teamd が <code>TEAM_PORT_CHANGE</code> で <code>status=enabled</code> を通知 → teamsyncd が <code>LAG_MEMBER_TABLE</code> を更新 → <a href="../../glossary/#term-portsorch">portsorch</a> が SAI attribute を解除する (<code>portsorch.cpp:8295-8340</code>)。</p>
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: beb53a235508 -->
+<!-- glossary-links-injected: 38b4c0ae7d80 -->
 
 <div class="footnote">
 <hr />

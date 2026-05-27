@@ -13983,6 +13983,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -14015,7 +14026,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -14026,7 +14037,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -14048,7 +14059,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -14069,7 +14080,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -35912,6 +35923,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -35944,7 +35966,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -35955,7 +35977,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -35977,7 +35999,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
+  <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -35998,7 +36020,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36161,7 +36183,9 @@ reasoning: 共存方針と「warm shutdown のみ」スコープの根拠。
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sonic-db-cli<span class="w"> </span>STATE_DB<span class="w"> </span>keys<span class="w"> </span><span class="s2">&quot;WARM_RESTART_TABLE|*&quot;</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>docker<span class="w"> </span>logs<span class="w"> </span>swss<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-iE<span class="w"> </span><span class="s2">&quot;Phase|freeze|checkpoint&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-50
 </span></code></pre></div>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - Warmboot Manager daemon の現行 master 採用状況確認（Rev 0.1, Google 2023 提案）
 - 既存 fast-reboot / finalize-warmboot.sh との共存実装確認
@@ -36204,13 +36228,13 @@ reasoning: 共存方針と「warm shutdown のみ」スコープの根拠。
 <li>実装は <strong><code>reconciled</code> 一状態待ち</strong> + <code>*_reconcile</code> ファイルでコンポーネントを拡張する仕組みのみ。</li>
 </ul>
 <p><code>grep -rn "warmboot-manager\|warmbootmgrd\|WarmbootMgr" .cache/sonic-sources/</code> は 0 件で、daemon コードは未マージ。</p>
-<h4 id="_8">読者への影響<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
+<h4 id="_9">読者への影響<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
 <ul>
 <li>HLD 記載の <code>STATE_DB:WARMBOOT_COMPONENT_TABLE</code> を購読するアプリを書いても、誰もそのテーブルに書き込まないため永久に通知が来ない。</li>
 <li>「Phase 2 freeze 中は xcvrd / DOM polling が止まる」と読んで運用設計すると、現行では止まらない（finalize-warmboot.sh は freeze に介入しない）。<code>warm-reboot</code> 中の DOM polling 由来の i2c エラーは現行版で出る可能性がある。</li>
 <li><code>unfreeze on failure</code> の自動ロールバックは無いので、warm-reboot 失敗時のリカバリは手動。</li>
 </ul>
-<h4 id="_9">回避策の実コマンド<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<h4 id="_10">回避策の実コマンド<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
 <p>現行 master での warm-reboot 監視・操作:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1) reconcile 待機状態の確認</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>warmboot-finalizer
@@ -36235,13 +36259,13 @@ reasoning: 共存方針と「warm shutdown のみ」スコープの根拠。
 <li>本 HLD（Google Rev 0.1）に対応する upstream PR は <strong>未提出 / 未マージ</strong>。GitHub 上では本 HLD ドキュメント自体の追加 PR (<code>sonic-net/SONiC</code> <code>doc/warm-reboot/Warmboot_Manager_HLD.md</code>) のみ存在。</li>
 <li>現行の <code>finalize-warmboot.sh</code> ベースの reconcile 機構は <code>sonic-buildimage</code> 内で漸進的に更新されており、<code>*_reconcile</code> ファイル拡張は実装済み。</li>
 </ul>
-<h4 id="_10">検証日<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<h4 id="_11">検証日<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 </div>
 <!-- /diff-admonition -->
 
 <!-- next-action -->
-<h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

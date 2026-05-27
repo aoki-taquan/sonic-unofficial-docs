@@ -16390,6 +16390,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -16415,7 +16426,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -16437,7 +16448,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -35924,6 +35935,17 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -35949,7 +35971,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -35971,7 +35993,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
+  <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -36219,7 +36241,9 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>docker<span class="w"> </span>logs<span class="w"> </span>gnmi<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tail
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>redis-cli<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;GNMI|certs&#39;</span>
 </span></code></pre></div>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- diff-admonition -->
 <div class="admonition diff">
 <p class="admonition-title">HLD と実装の差分</p>
@@ -36239,7 +36263,7 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 <!-- /diff-admonition -->
 
 <!-- next-action -->
-<h2 id="_8">このページを読んだ後の次アクション<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">このページを読んだ後の次アクション<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>
@@ -36278,10 +36302,8 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 </ul>
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: e6fe2bd4ede5 -->
-
 <!-- ops-entry -->
-<h2 id="_9">運用入口<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<h2 id="_10">運用入口<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
 <p>この HLD に対応する運用面の入口（CLI / CONFIG_DB / <a href="../../reference/glossary/#term-yang">YANG</a> / Runbook）を以下にまとめる。</p>
 <h3 id="runbook">関連 Runbook<a class="headerlink" href="#runbook" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36289,7 +36311,7 @@ reasoning: 非同期反映 + version_id 付き結果書き戻しの根拠。
 </ul>
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: e6fe2bd4ede5 -->
 
 <div class="footnote">
 <hr />

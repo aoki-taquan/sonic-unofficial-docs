@@ -14088,6 +14088,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -14120,7 +14131,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -14131,7 +14142,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -14153,7 +14164,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -14174,7 +14185,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36234,6 +36245,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -36266,7 +36288,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -36277,7 +36299,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -36299,7 +36321,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -36320,7 +36342,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36549,7 +36571,9 @@
 <li><code>STATE_DB</code> の <code>WARM_RESTART_TABLE|&lt;app&gt;</code> が <code>reconciled</code> に遷移しないアプリケーションを特定し、該当 syncd のログを優先確認。</li>
 <li>同一ホスト上で swss と syncd の warm-restart タイミングがずれると <a href="../../reference/glossary/#term-asic">ASIC</a> 上の stale エントリが残る。<code>docker exec syncd ls /var/warmboot/</code> の checkpoint ファイル mtime で順序を確認。</li>
 </ul>
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p><code>monitor: evolved_beyond_hld</code> — <code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <h3 id="2026-05-11batch-q3-disc-detail">深掘り（2026-05-11、batch q3-disc-detail）<a class="headerlink" href="#2026-05-11batch-q3-disc-detail" title="Permanent link">&para;</a></h3>
 <h4 id="hld">HLD 記述と実装の差分（行番号 + コード抜粋）<a class="headerlink" href="#hld" title="Permanent link">&para;</a></h4>
 <p><code>sonic-swss-common/common/warm_restart.cpp</code> L56-L58:</p>
@@ -36559,13 +36583,13 @@
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Table</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Table</span><span class="p">(</span><span class="n">warmStart</span><span class="p">.</span><span class="n">m_cfgDb</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span><span class="w"> </span><span class="n">CFG_WARM_RESTART_TABLE_NAME</span><span class="p">));</span>
 </span></code></pre></div>
 <p>同 L223 で <code>WarmStart::setWarmStartState()</code> が <code>STATE_WARM_RESTART_TABLE_NAME</code> 側に書き込み、CONFIG 側は <code>CFG_WARM_RESTART_TABLE_NAME</code> で別。HLD が <code>WARM_RESTART_TABLE</code> 1 系統で書いている記述は <strong>実装と異なる</strong>。</p>
-<h4 id="_11">読者への影響<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<h4 id="_12">読者への影響<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
 <ul>
 <li>HLD 内に貼られた <code>jipanyang</code> の compare URL から実装を読もうとすると 404 / fork 迷子。</li>
 <li>「<code>WARM_RESTART_TABLE|&lt;app&gt;</code> に restart_count と state が並ぶ」と読んでデバッグスクリプトを書くと、現行では <code>STATE_DB/WARM_RESTART_TABLE</code> と <code>CONFIG_DB/WARM_RESTART</code> の二系統を別々に見ないと完全な情報が取れず、片側だけ見て「state が無い」と誤判定する。</li>
 <li><code>swss-flushdb</code> の名前で <code>sudo /usr/bin/swss-flushdb</code> を期待しても見つからない。</li>
 </ul>
-<h4 id="_12">回避策の実コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<h4 id="_13">回避策の実コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># 1) CONFIG 側設定（enable/disable, timer 値）</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART|swss&#39;</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>sonic-db-cli<span class="w"> </span>CONFIG_DB<span class="w"> </span>hgetall<span class="w"> </span><span class="s1">&#39;WARM_RESTART|bgp&#39;</span>
@@ -36591,10 +36615,10 @@
 <li>現行 master に取り込まれている warm restart 系の改修は多数。HLD 当時の特定 PR を辿る代わりに、<code>sonic-swss-common/common/warm_restart.{h,cpp}</code> の git log と <code>doc/warm-reboot/SONiC_Warmboot.md</code> を参照することを推奨。</li>
 <li>HLD ページ自身が古い fork URL を含むため、本ページは仕様史料として残し、デバッグ手順は本「深掘り」セクションを優先する。</li>
 </ul>
-<h4 id="_13">検証日<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<h4 id="_14">検証日<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 <!-- next-action -->
-<h2 id="_14">このページを読んだ後の次アクション<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_15">このページを読んだ後の次アクション<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

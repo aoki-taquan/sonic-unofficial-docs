@@ -8132,7 +8132,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離
       
     </span>
   </a>
@@ -8141,6 +8141,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -35976,7 +35987,7 @@
   <a href="#_6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離
       
     </span>
   </a>
@@ -35985,6 +35996,17 @@
       
         <li class="md-nav__item">
   <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36304,7 +36326,9 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
 </div>
 <!-- /phase-boundary -->
 
-<h2 id="_6">引用元<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h2 id="_6">実装との乖離<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-19):
 - sonic-swss-common `common/schema.h` の HA 関連 table 定義（実装済）:
   - APP DB: `APP_DASH_HA_SET_CONFIG_TABLE_NAME "DASH_HA_SET_CONFIG_TABLE"`, `APP_DASH_HA_SET_TABLE_NAME "DASH_HA_SET_TABLE"`, `APP_DASH_HA_SCOPE_CONFIG_TABLE_NAME "DASH_HA_SCOPE_CONFIG_TABLE"`, `APP_DASH_HA_SCOPE_TABLE_NAME "DASH_HA_SCOPE_TABLE"`
@@ -36327,7 +36351,7 @@ reasoning: actor と CONFIG_DB / STATE_DB table 対応の根拠。
 -->
 
 <!-- next-action -->
-<h2 id="_7">このページを読んだ後の次アクション<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_8">このページを読んだ後の次アクション<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

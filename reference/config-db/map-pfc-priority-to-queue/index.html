@@ -37494,8 +37494,6 @@
 <p><strong>QosOrch 内部ドレイン順序 (依存 #3)</strong>: <code>QosOrch::doTask()</code> (<code>qosorch.cpp:2231-2251</code>) は <code>PORT_QOS_MAP</code> と <code>QUEUE</code> を除く全マップハンドラを先にドレインし、その後 <code>PORT_QOS_MAP</code>、最後に <code>QUEUE</code> をドレインする。これにより起動時・再起動時も <code>MAP_PFC_PRIORITY_TO_QUEUE</code> エントリが <code>PORT_QOS_MAP</code> より先に SAI へ反映される（evidence: <code>qosorch.cpp:2238-2251</code>）。</p>
 <!-- /ordering -->
 
-<!-- glossary-links-injected: d2191ccfe0bd -->
-
 <!-- derivation -->
 <h2 id="phase-67">派生・条件付き登録 (Phase 6/7)<a class="headerlink" href="#phase-67" title="Permanent link">&para;</a></h2>
 <h3 id="phase-6">Phase 6: 自動派生<a class="headerlink" href="#phase-6" title="Permanent link">&para;</a></h3>
@@ -38091,7 +38089,7 @@
 </blockquote>
 <!-- /platform -->
 
-<!-- glossary-links-injected: b06d06441389 -->
+<!-- glossary-links-injected: d2191ccfe0bd -->
 
 <div class="footnote">
 <hr />

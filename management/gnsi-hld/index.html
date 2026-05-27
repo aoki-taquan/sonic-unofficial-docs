@@ -16378,7 +16378,7 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離
       
     </span>
   </a>
@@ -16389,7 +16389,7 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        このページを読んだ後の次アクション
+        引用元
       
     </span>
   </a>
@@ -16400,7 +16400,7 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        このページを読んだ後の次アクション
       
     </span>
   </a>
@@ -16409,6 +16409,17 @@
       
         <li class="md-nav__item">
   <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -36219,7 +36230,7 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離
       
     </span>
   </a>
@@ -36230,7 +36241,7 @@
   <a href="#_11" class="md-nav__link">
     <span class="md-ellipsis">
       
-        このページを読んだ後の次アクション
+        引用元
       
     </span>
   </a>
@@ -36241,7 +36252,7 @@
   <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
-        関連リファレンス
+        このページを読んだ後の次アクション
       
     </span>
   </a>
@@ -36250,6 +36261,17 @@
       
         <li class="md-nav__item">
   <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        関連リファレンス
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         運用入口
@@ -36674,7 +36696,9 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 </div>
 <!-- /phase-boundary -->
 
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p><code>monitor: evolved_beyond_hld</code> — <code>monitor: evolved_beyond_hld</code> の HLD と実装の差分。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - sonic-gnmi / sonic-mgmt-common の Certz/Authz/Pathz/Credentialz handler 実装存否
 - console_mgmt / ssh_mgmt host service モジュール実装存否
@@ -36685,7 +36709,7 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 -->
 
 <!-- next-action -->
-<h2 id="_11">このページを読んだ後の次アクション<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<h2 id="_12">このページを読んだ後の次アクション<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>
@@ -36703,7 +36727,7 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 </div>
 <!-- /next-action -->
 
-<h2 id="_12">関連リファレンス<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<h2 id="_13">関連リファレンス<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
 <p>本ページに関連する参照ドキュメント:</p>
 <ul>
 <li><a href="../../reference/config-db/telemetry/"><code>TELEMETRY</code> CONFIG_DB スキーマ</a></li>
@@ -36712,10 +36736,8 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 </ul>
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: bd7e9f303d6c -->
-
 <!-- ops-entry -->
-<h2 id="_13">運用入口<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<h2 id="_14">運用入口<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
 <p>この HLD に対応する運用面の入口（CLI / CONFIG_DB / YANG / Runbook）を以下にまとめる。</p>
 <h3 id="yang_1">関連 YANG<a class="headerlink" href="#yang_1" title="Permanent link">&para;</a></h3>
 <ul>
@@ -36726,7 +36748,7 @@ reasoning: console_mgmt / ssh_mgmt の責務分担と sshd 再起動仕様の根
 </ul>
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: db62d2100cef -->
+<!-- glossary-links-injected: bd7e9f303d6c -->
 
 <div class="footnote">
 <hr />

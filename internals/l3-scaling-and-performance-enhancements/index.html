@@ -19317,6 +19317,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -19349,7 +19360,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -19360,7 +19371,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -19382,7 +19393,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -19403,7 +19414,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36077,6 +36088,17 @@
   <a href="#_10" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -36109,7 +36131,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
+  <a href="#_12" class="md-nav__link">
     <span class="md-ellipsis">
       
         読者への影響
@@ -36120,7 +36142,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
+  <a href="#_13" class="md-nav__link">
     <span class="md-ellipsis">
       
         回避策の実コマンド
@@ -36142,7 +36164,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
+  <a href="#_14" class="md-nav__link">
     <span class="md-ellipsis">
       
         検証日
@@ -36163,7 +36185,7 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
+  <a href="#_15" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36539,7 +36561,9 @@
 </div>
 <!-- /phase-boundary -->
 
-<h2 id="_10">引用元<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<h2 id="_10">実装との乖離<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<h2 id="_11">引用元<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
 <!-- concerns hint:
 - /etc/sysctl.d 配下の SONiC default で net.ipv4/ipv6.neigh.default.gc_thresh* が設定されているか未確認
 - COPP_TABLE の ARP/ND group の cir/cbs が 600 → 8000 pps に上がっているか未確認
@@ -36570,13 +36594,13 @@
 </span></code></pre></div>
 <p>→ bulker は <strong>取り込み済み</strong>。</p>
 <p><code>sonic-swss/fpmsyncd/routesync.cpp</code> L2077-L2082 で <code>rt_table == 0</code> 時の master device lookup スキップは <strong>取り込み済み</strong>。</p>
-<h4 id="_11">読者への影響<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<h4 id="_12">読者への影響<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
 <ul>
 <li>HLD 数値（ARP 32k スケール）を前提にスケール試験を組むと、<code>net.ipv4.neigh.default.gc_thresh3=4096</code> で gc が走り、<strong>dmesg に <code>neighbour: arp_cache: neighbor table overflow!</code></strong> が出て学習に失敗。</li>
 <li>CoPP ARP 600 pps なので <strong>大規模 L2 sweep / failover 時に ARP / ND 学習が間に合わない</strong>。HLD で謳う 8000 pps での収束 SLA を計算に入れた設計は破綻する。</li>
 <li>一方、bulk route programming と master device lookup スキップは入っているので、<strong>routing path 自体の latency 改善は HLD どおりに享受できる</strong>。誤解しないようにスケールと latency を分けて見積もる必要がある。</li>
 </ul>
-<h4 id="_12">回避策の実コマンド<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<h4 id="_13">回避策の実コマンド<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 1) ARP/ND テーブル拡大（恒久化、image 再ビルド不要、runtime 上書き）</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/sysctl.d/99-arp-scale.conf<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="s">net.ipv4.neigh.default.gc_thresh1=8192</span>
@@ -36607,10 +36631,10 @@
 <li>bulk route 関連: <code>sonic-swss/orchagent/routeorch.cpp</code> の <code>gRouteBulker</code> 追加は複数 PR で漸進的に成立。<code>grep -n "bulker" sonic-swss/orchagent/routeorch.cpp</code> で詳細を追える。</li>
 <li>VnetOrch の bulker 拡張は <a href="https://github.com/sonic-net/sonic-swss/pull/4303">sonic-swss #4303 (open)</a>。HLD 当時カバーされていなかった VNET ルート bulk programming の続き。</li>
 </ul>
-<h4 id="_13">検証日<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<h4 id="_14">検証日<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h4>
 <p>2026-05-11 (q3-disc-detail batch)</p>
 <!-- next-action -->
-<h2 id="_14">このページを読んだ後の次アクション<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<h2 id="_15">このページを読んだ後の次アクション<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>

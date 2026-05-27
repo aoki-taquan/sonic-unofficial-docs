@@ -13121,6 +13121,17 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -35735,6 +35746,17 @@
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
       
+        実装との乖離
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
         引用元
       
     </span>
@@ -35892,7 +35914,9 @@
   POR-&gt;&gt;ADB: oper_state 反映</code></pre>
 <h3 id="_2">ポート削除<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <p><code>portmgrd</code> 経由で APP_DB から削除し、portsorch が SAI port + host i/f を削除する。state-db のクリーンアップは host i/f の netlink 削除イベント受領後に portsyncd が行う<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
-<h2 id="_3">引用元<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">実装との乖離<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p><code>monitor: partially_implemented</code> — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ <a href="../enhancements-to-add-or-del-ports-dynamically/">動的ポート add/del 概念 親ページ</a> の同セクション（<code>## 実装との乖離</code> または <code>!!! diff</code> ブロック）を参照のこと。</p>
+<h2 id="_4">引用元<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <!-- glossary-links-injected: 4e8b9837844c -->
 
 <div class="footnote">

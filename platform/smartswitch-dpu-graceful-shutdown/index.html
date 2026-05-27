@@ -18367,7 +18367,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離
       
     </span>
   </a>
@@ -18376,6 +18376,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36001,7 +36012,7 @@
   <a href="#_7" class="md-nav__link">
     <span class="md-ellipsis">
       
-        引用元
+        実装との乖離
       
     </span>
   </a>
@@ -36010,6 +36021,17 @@
       
         <li class="md-nav__item">
   <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        引用元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       
         このページを読んだ後の次アクション
@@ -36315,7 +36337,9 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 </span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>config<span class="w"> </span>chassis<span class="w"> </span>module<span class="w"> </span>shutdown<span class="w"> </span>DPU0
 </span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>show<span class="w"> </span>chassis<span class="w"> </span>modules<span class="w"> </span>status
 </span></code></pre></div>
-<h2 id="_7">引用元<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h2 id="_7">実装との乖離<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p><code>monitor: not_implemented</code> — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページ末尾近くの <code>!!! diff "HLD と実装の差分"</code> ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。</p>
+<h2 id="_8">引用元<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
 <!-- evidence (verifier-batch-20):
 - sonic-platform-common/sonic_platform_base/module_base.py L429 set_admin_state_gracefully(up), L468 _graceful_shutdown_handler() (private), L588- gnoi_halt_in_progress フラグで制御
 - sonic-platform-common/sonic_platform_base/module_base.py L624 set_module_state_transition() は CHASSIS_MODULE_TABLE|<name> に transition_in_progress / transition_type / start_time を hset (HLD の CHASSIS_MODULE_INFO_TABLE / state_transition_in_progress とは別キー)
@@ -36334,7 +36358,7 @@ reasoning: PMON 制限下での実装方針と Redis pub/sub への分離の根�
 -->
 
 <!-- next-action -->
-<h2 id="_8">このページを読んだ後の次アクション<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<h2 id="_9">このページを読んだ後の次アクション<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">読み手向け</p>
 <ul>
