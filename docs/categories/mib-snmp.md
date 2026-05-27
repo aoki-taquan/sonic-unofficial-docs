@@ -1,8 +1,6 @@
 ---
 title: MIB / SNMP 関連
-description: MIB / SNMP 関連 — SONiC の SNMP エージェントは Net-SNMP + sonic_ax_impl (AgentX
-  subagent) で構成され、snmpd が標準 MIB を提供し、Python ベースの subagent が SONiC 固有 MIB（ポート / インタフェース
-  / 物理…
+description: SONiC の SNMP エージェントは Net-SNMP + sonic_ax_impl (AgentX subagent) で構成され、snmpd が標準 MIB を提供し、Python ベースの subagent がポート / インタフェース / 物理エンティティ / センサー / トランシーバ等の SONiC 固有 MIB を実装する。
 area: categories
 verification: meta
 last_verified: 2026-05-10

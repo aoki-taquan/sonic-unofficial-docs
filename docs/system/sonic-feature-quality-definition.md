@@ -1,7 +1,6 @@
 ---
 title: SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動）
-description: 'SONiC Feature Quality 定義（Alpha / Beta / GA とリリースノート連動） — SONiC コミュニティが新機能を
-  contribute する際の 品質レベル定義 。3 段階:'
+description: SONiC コミュニティが新機能を contribute する際の品質レベル定義で、Alpha・Beta・GA の 3 段階を設け、各段階のテスト要件・ドキュメント要件・リリースノート連動ルールを規定する。
 area: system
 verification: meta
 last_verified: 2026-05-09
