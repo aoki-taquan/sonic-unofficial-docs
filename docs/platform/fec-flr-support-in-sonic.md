@@ -356,6 +356,10 @@ redis-cli -n 2 hgetall 'RATES:oid:0x10000000000XX' | grep -iE 'FEC_FLR'
 counterpoll --help 2>&1 | grep -iE 'flr|fec' || echo 'flr-interval-factor: 未実装 (HLD と乖離)'
 ```
 
+## 実装との乖離
+
+`monitor: evolved_beyond_hld` — `monitor: evolved_beyond_hld` の HLD と実装の差分。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_fec_flr/port_fec_flr.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

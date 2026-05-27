@@ -109,6 +109,10 @@ app は `rc` フィールドだけ見ればよく、SAI ヘッダ依存が消え
     凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。
 <!-- /phase-boundary -->
 
+## 実装との乖離
+
+`monitor: partially_implemented` — 部分実装 — [HLD](../reference/glossary.md#term-hld) の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ [Error Handling Framework 内部実装 親ページ](error-handling-framework-in-sonic.md) の同セクション（`## 実装との乖離` または `!!! diff` ブロック）を参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/error-handling/error_handling_design_spec.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
@@ -127,4 +131,4 @@ app は `rc` フィールドだけ見ればよく、SAI ヘッダ依存が消え
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: 562a036f4d4a -->
+<!-- glossary-links-injected: 167700005048 -->

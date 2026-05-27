@@ -229,6 +229,10 @@ redis-cli -n 0 keys 'ERROR_ROUTE_TABLE*'
 docker exec bgp vtysh -c 'show bgp summary' | head
 ```
 
+## 実装との乖離
+
+`monitor: deprecated` — `monitor: deprecated` の HLD と実装の差分。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/bgp_error_handling/BGP_Route_Error_Handling_Arlo.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

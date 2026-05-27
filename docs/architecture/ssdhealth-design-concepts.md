@@ -77,6 +77,10 @@ HLD で挙げられているもの[^1]:
 - [ssdhealth-design-internals.md](ssdhealth-design-internals.md) — API 仕様 / `ssdmond` デーモン
 - [ssdhealth-design-limitations.md](ssdhealth-design-limitations.md) — 制限と HLD-実装乖離
 
+## 実装との乖離
+
+`monitor: evolved_beyond_hld` — `monitor: evolved_beyond_hld` の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ [SSD ヘルスチェック 概念 親ページ](ssdhealth-design.md) の同セクション（`## 実装との乖離` または `!!! diff` ブロック）を参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/ssdhealth/ssdhealth_design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

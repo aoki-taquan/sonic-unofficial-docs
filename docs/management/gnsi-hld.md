@@ -333,6 +333,10 @@ redis-cli -n 4 hgetall 'GNMI|certs'
     凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。
 <!-- /phase-boundary -->
 
+## 実装との乖離
+
+`monitor: evolved_beyond_hld` — `monitor: evolved_beyond_hld` の HLD と実装の差分。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/gnsi.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
@@ -370,8 +374,6 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: bd7e9f303d6c -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -386,4 +388,4 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: db62d2100cef -->
+<!-- glossary-links-injected: bd7e9f303d6c -->

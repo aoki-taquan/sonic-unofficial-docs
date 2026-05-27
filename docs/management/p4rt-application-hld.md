@@ -266,6 +266,10 @@ docker logs swss 2>&1 | grep -iE 'SwitchOrch|HashOrch' | tail -20
 上記コマンドで `HashOrch` クラスの痕跡が swss コンテナ内に存在しないこと、
 代わりに `SwitchOrch` が `SWITCH_HASH` を購読していることが確認できる。
 
+## 実装との乖離
+
+`monitor: evolved_beyond_hld` — `monitor: evolved_beyond_hld` の HLD と実装の差分。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/pins/p4rt_app_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
@@ -291,8 +295,6 @@ docker logs swss 2>&1 | grep -iE 'SwitchOrch|HashOrch' | tail -20
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f369e75e8733 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -308,4 +310,4 @@ docker logs swss 2>&1 | grep -iE 'SwitchOrch|HashOrch' | tail -20
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 4b7e3e133212 -->
+<!-- glossary-links-injected: f369e75e8733 -->

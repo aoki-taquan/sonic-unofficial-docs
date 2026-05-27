@@ -299,6 +299,10 @@ docker logs gnmi 2>&1 | grep -iE 'master|arbitration|PermissionDenied|Unimplemen
 上記 4 ステップを順に走らせると、HLD と実装の差分（Role 拒否 / CONFIG_DB 経路無し）が
 runtime ログと CONFIG_DB の状態から具体的に確認できる。
 
+## 実装との乖離
+
+`monitor: evolved_beyond_hld` — `monitor: evolved_beyond_hld` の HLD と実装の差分。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/mgmt/gnmi/master_arbitration.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
@@ -327,8 +331,6 @@ runtime ログと CONFIG_DB の状態から具体的に確認できる。
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: edc6102d5d8f -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -344,4 +346,4 @@ runtime ログと CONFIG_DB の状態から具体的に確認できる。
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: edc6102d5d8f -->

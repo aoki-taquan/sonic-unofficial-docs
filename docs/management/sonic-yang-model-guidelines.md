@@ -291,6 +291,10 @@ docker exec mgmt-framework sonic-cfggen -d --print-data | \
     凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。
 <!-- /phase-boundary -->
 
+## 実装との乖離
+
+`monitor: evolved_beyond_hld` — `monitor: evolved_beyond_hld` の HLD と実装の差分。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/mgmt/SONiC_YANG_Model_Guidelines.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/mgmt/SONiC_YANG_Model_Guidelines.md)
@@ -327,8 +331,6 @@ docker exec mgmt-framework sonic-cfggen -d --print-data | \
 
 <!-- /next-action -->
 
-<!-- glossary-links-injected: f83beef3850a -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -347,4 +349,4 @@ docker exec mgmt-framework sonic-cfggen -d --print-data | \
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: f83beef3850a -->

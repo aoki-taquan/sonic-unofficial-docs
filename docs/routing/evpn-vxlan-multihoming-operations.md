@@ -360,6 +360,10 @@ docker exec bgp vtysh -c 'show bgp l2vpn evpn route type 1'
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/EVPN/EVPN_VxLAN_Multihoming.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
+## 実装との乖離
+
+`monitor: not_implemented` — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ [EVPN VXLAN Multihoming 運用 親ページ](evpn-vxlan-multihoming.md) の同セクション（`## 実装との乖離` または `!!! diff` ブロック）を参照のこと。
+
 <!-- next-action -->
 ## このページを読んだ後の次アクション
 
