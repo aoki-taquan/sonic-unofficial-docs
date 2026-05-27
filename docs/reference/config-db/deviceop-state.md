@@ -1,5 +1,5 @@
 ---
-title: DEVICE_NEIGHBOR 動作状態（device op state）
+title: "[STATE_DB] DEVICE_NEIGHBOR 動作状態（device op state）"
 description: "DEVICE_NEIGHBOR テーブルがランタイムで果たす「外部ポート一覧」としての役割と、pfcwd / ecnconfig / show interfaces / bgpcfgd 各 consumer のコード由来デフォルト・副作用を解説するリファレンス。"
 area: reference
 hard: 0

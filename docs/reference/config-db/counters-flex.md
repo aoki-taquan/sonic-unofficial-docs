@@ -1,5 +1,5 @@
 ---
-title: FLEX_COUNTER 個別カウンタフィールド
+title: "[COUNTERS_DB] FLEX_COUNTER 個別カウンタフィールド"
 description: "FLEX_COUNTER 個別カウンタフィールド — orchagent が FLEX_COUNTER_DB に自動書き込む per-OID カウンタ ID リスト（COUNTER_ID_LIST / ATTR_ID_LIST）の構造とコード由来デフォルト。"
 area: reference
 verification: code-verified

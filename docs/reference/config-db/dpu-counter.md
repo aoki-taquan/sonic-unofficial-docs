@@ -1,5 +1,5 @@
 ---
-title: DPU カウンタ (ENI / DASH_METER) テーブル
+title: "[COUNTERS_DB] DPU カウンタ (ENI / DASH_METER) テーブル"
 description: "FLEX_COUNTER_TABLE|ENI と FLEX_COUNTER_TABLE|DASH_METER — DPU (SmartSwitch Data Processing Unit) 専用の DASH ENI カウンタおよび DASH メータカウンタのポーリング制御を CONFIG_DB に保持するエントリ。"
 area: reference
 hard: 0

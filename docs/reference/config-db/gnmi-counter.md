@@ -1,5 +1,5 @@
 ---
-title: gNMI 内部リクエストカウンタ
+title: "[COUNTERS_DB] gNMI 内部リクエストカウンタ"
 description: "gNMI 内部リクエストカウンタ — telemetryd (sonic-gnmi) が共有メモリに記録するリクエスト数・エラー数の種別一覧とコード由来のデフォルト挙動。gnmi_dump で読み出す。"
 area: reference
 verification: code-verified
