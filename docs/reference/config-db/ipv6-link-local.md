@@ -395,7 +395,7 @@ flowchart TD
 |------|------|
 | single-asic | intfmgrd が 1 インスタンス、host CONFIG_DB を購読 |
 | multi-asic ([VOQ](../../reference/glossary.md#term-voq) chassis 含む) | intfmgrd は host 側で 1 インスタンスのみ起動。各 asic namespace の CONFIG_DB には `INTERFACE` テーブルが存在せず、per-asic intfmgrd インスタンスも起動しない |
-| Virtual Switch (VS) | 挙動は real [ASIC](../../reference/glossary.md#term-asic) と同一。sysctl は実行されるが Linux カーネルの動作に依存 |
+| Virtual Switch ([VS](../../reference/glossary.md#term-vs)) | 挙動は real [ASIC](../../reference/glossary.md#term-asic) と同一。sysctl は実行されるが Linux カーネルの動作に依存 |
 
 ### Linux sysctl 依存（カーネルドライバ不問）
 
@@ -466,4 +466,4 @@ show ipv6 link-local-mode
 - [CONFIG_DB index](index.md)
 - [INTERFACE テーブル](interface.md)
 
-<!-- glossary-links-injected: fefdf2960634 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

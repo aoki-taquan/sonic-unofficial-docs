@@ -110,8 +110,8 @@ module: sonic-flex_counter
 | `FLOW_CNT_TRAP` | trap フローカウンタ | ○ |
 | `FLOW_CNT_ROUTE` | route フローカウンタ | ○ |
 | `TUNNEL` | トンネル統計 | ○ |
-| `WRED_ECN_QUEUE` | [WRED](../../reference/glossary.md#term-wred)/ECN キュー統計 | ○ |
-| `WRED_ECN_PORT` | [WRED](../../reference/glossary.md#term-wred)/ECN ポート統計 | ○ |
+| `WRED_ECN_QUEUE` | [WRED](../../reference/glossary.md#term-wred)/[ECN](../../reference/glossary.md#term-ecn) キュー統計 | ○ |
+| `WRED_ECN_PORT` | [WRED](../../reference/glossary.md#term-wred)/[ECN](../../reference/glossary.md#term-ecn) ポート統計 | ○ |
 | `SRV6` | [SRv6](../../reference/glossary.md#term-srv6) 統計 | ○ |
 | `SWITCH` | スイッチ全体統計 | ○ |
 
@@ -202,4 +202,4 @@ counterpoll show
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-flex_counter.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 69034d0d8988 -->
+<!-- glossary-links-injected: 27618ff2c697 -->

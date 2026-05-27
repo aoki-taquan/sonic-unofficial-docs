@@ -65,8 +65,8 @@ TUNNEL|<mux_tunnel>
 | `src_ip` | leafref → `PEER_SWITCH.address_ipv4` | トンネル送信元 (= peer ToR の IPv4) |
 | `dst_ip` | inet:ipv4-address | トンネル宛先 (自スイッチの IPv4) |
 | `dscp_mode` | string `uniform`/`pipe` | [DSCP](../../reference/glossary.md#term-dscp) 継承モード |
-| `ecn_mode` | string `copy_from_outer`/`standard` | デカプセル時 ECN 処理 |
-| `encap_ecn_mode` | string `standard` | カプセル時 ECN マーキング |
+| `ecn_mode` | string `copy_from_outer`/`standard` | デカプセル時 [ECN](../../reference/glossary.md#term-ecn) 処理 |
+| `encap_ecn_mode` | string `standard` | カプセル時 [ECN](../../reference/glossary.md#term-ecn) マーキング |
 | `ttl_mode` | string `uniform`/`pipe` | TTL 継承モード |
 | `decap_dscp_to_tc_map` | string | デカプセル時 [DSCP](../../reference/glossary.md#term-dscp)→TC マップ名 |
 | `decap_tc_to_pg_map` | string | デカプセル時 TC→PG マップ名 |
@@ -120,7 +120,7 @@ TUNNEL|<mux_tunnel>
 | `tunnel_type` | `IPINIP` 以外 | キャッシュには追加されるが APPL_DB に通知されない |
 | `dscp_mode` | `uniform` | 外側ヘッダの DSCP を内側パケットにコピー |
 | `dscp_mode` | `pipe` | 内側ヘッダの DSCP を保持 |
-| `ecn_mode` | `copy_from_outer` | 外側 ECN フィールドを内側にコピー |
+| `ecn_mode` | `copy_from_outer` | 外側 [ECN](../../reference/glossary.md#term-ecn) フィールドを内側にコピー |
 | `ecn_mode` | `standard` | RFC 6040 準拠 ECN 処理 |
 | `ttl_mode` | `uniform` | 外側 TTL を内側にコピー |
 | `ttl_mode` | `pipe` | 内側 TTL を保持 |
@@ -588,4 +588,4 @@ Overlay loopback ルータインターフェースの MTU は `OVERLAY_RIF_DEFAU
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: ec4124ebe1c6 -->
+<!-- glossary-links-injected: 7071347b3cf9 -->

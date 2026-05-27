@@ -80,7 +80,7 @@ Ethernet0 Tx     0       0       0       0     0       0       0       0
 1. `show interfaces counters` で port 全体の drop を確認。
 2. `show queue counters` で egress 側 queue の drop が立っているか。立っていればその queue を持つ flow（[DSCP](../../reference/glossary.md#term-dscp) / TC）を [`DSCP_TO_TC_MAP`](../../reference/config-db/dscp-to-tc-map.md) と [`TC_TO_QUEUE_MAP`](../../reference/config-db/tc-to-queue-map.md) から逆引き。
 3. 立っていなければ ingress 側を疑い、[port buffer drop counters](../../acl-qos/port-buffer-drop-counters-in-sonic.md) の系列カウンタ（`SAI_PORT_STAT_IN_DROPPED_PKTS` 系 / `SAI_PORT_STAT_PFC_*_RX_PKTS` など）を `portstat -j` 系で取り、ingress PG drop かどうかを切り分け。
-4. [WRED](../../reference/glossary.md#term-wred) / ECN が動いている経路なら [WRED and ECN statistics](../../acl-qos/wred-and-ecn-statistics.md) のカウンタで、drop と mark の比率を見る。
+4. [WRED](../../reference/glossary.md#term-wred) / [ECN](../../reference/glossary.md#term-ecn) が動いている経路なら [WRED and ECN statistics](../../acl-qos/wred-and-ecn-statistics.md) のカウンタで、drop と mark の比率を見る。
 
 切り分けは「どの DB に何が出ているか」を意識すると速いです:
 
@@ -223,4 +223,4 @@ ACL_STAT                 5000                enable
 - 章 [10 gNMI / OpenConfig](../10-gnmi-openconfig/operations.md) — [QoS](../../reference/glossary.md#term-qos) / Buffer の宣言的設定
 - [Buffer Pool / Profile スキーマ](../../reference/config-db/buffer-pool.md)
 
-<!-- glossary-links-injected: e1fd4940b990 -->
+<!-- glossary-links-injected: d17c6a828148 -->

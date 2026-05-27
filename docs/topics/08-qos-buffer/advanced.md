@@ -60,7 +60,7 @@ related:
 - **PFC watchdog の per-queue 詳細化**: storm 検出窓 / restore 窓を queue ごとにチューニングし、不要な polling load を減らす。`PFC_WD_TABLE` のパラメータ調整。
 - **Tunnel [DSCP](../../reference/glossary.md#term-dscp) remap**: standby ToR → active ToR の bounce-back を別 PG/queue に逃がす設定。詳細は [05 Dual-ToR](../05-dual-tor/advanced.md) と相互参照。
 - **[Headroom](../../reference/glossary.md#term-headroom) pool**: PFC pause 受信中に必要な headroom buffer を共有 pool で確保する設計。port shutdown 時に headroom が解放される動作の理解が必要。
-- **[WRED](../../reference/glossary.md#term-wred) / ECN の細分化**: green / yellow / red の閾値別ドロップ確率と、ECN-marking 閾値を queue ごとに調整。CSE 系 telemetry と組み合わせて congestion 兆候を捕捉する。
+- **[WRED](../../reference/glossary.md#term-wred) / [ECN](../../reference/glossary.md#term-ecn) の細分化**: green / yellow / red の閾値別ドロップ確率と、ECN-marking 閾値を queue ごとに調整。CSE 系 telemetry と組み合わせて congestion 兆候を捕捉する。
 - **Watermark の align-with-port-config**: port admin down 時に watermark を 0 に clear する整合性改善で、運用 dashboard の誤検知を減らす。
 
 ## 既知の制約と回避方法
@@ -79,10 +79,10 @@ related:
 ## 関連 RFC / 仕様書
 
 - [IEEE 802.1Qbb](https://1.ieee802.org/dcb/) — PFC
-- [IEEE 802.1Qaz](https://1.ieee802.org/dcb/) — ETS (Enhanced Transmission Selection)
+- [IEEE 802.1Qaz](https://1.ieee802.org/dcb/) — [ETS](../../reference/glossary.md#term-ets) (Enhanced Transmission Selection)
 - [RFC 3168](https://datatracker.ietf.org/doc/html/rfc3168) — ECN
 - [RFC 8257](https://datatracker.ietf.org/doc/html/rfc8257) — DCTCP
-- [RFC 7567](https://datatracker.ietf.org/doc/html/rfc7567) — AQM Recommendations (WRED 議論)
+- [RFC 7567](https://datatracker.ietf.org/doc/html/rfc7567) — [AQM](../../reference/glossary.md#term-aqm) Recommendations (WRED 議論)
 - [RFC 2474](https://datatracker.ietf.org/doc/html/rfc2474) — DSCP
 
 ## upstream 開発の最新動向
@@ -123,4 +123,4 @@ related:
 - [Enhancements on show acl commands](../../acl-qos/enhancements-on-show-acl-commands.md)
 - [Everflow test plan (mirror counter 観点)](../../acl-qos/everflow-test-plan.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: e74af460f6e2 -->

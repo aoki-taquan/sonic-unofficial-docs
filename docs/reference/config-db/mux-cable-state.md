@@ -518,7 +518,7 @@ ycabled は `HW_MUX_CABLE_TABLE` の **書き込み側** であり、このテ�
 <!-- platform -->
 ## プラットフォーム / SAI Capability 差異 (Phase H)
 
-`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の動作は **`getenv("platform")` 参照なし**で設計されているが、(1) `neighbor_mode = "prefix-route"` の有効化は SAI capability クエリでゲートされ、(2) `cable_type` によって gRPC 経路とレガシー経路で ycabled の動作が大きく変わり、(3) VS (virtual switch) プラットフォームは専用フォールバックパスを持つ。
+`MUX_CABLE_TABLE` / `HW_MUX_CABLE_TABLE` (STATE_DB) の動作は **`getenv("platform")` 参照なし**で設計されているが、(1) `neighbor_mode = "prefix-route"` の有効化は SAI capability クエリでゲートされ、(2) `cable_type` によって gRPC 経路とレガシー経路で ycabled の動作が大きく変わり、(3) [VS](../../reference/glossary.md#term-vs) (virtual switch) プラットフォームは専用フォールバックパスを持つ。
 
 > 調査証跡: muxorch.cpp — platform 環境変数なし。neighorch.cpp:78-104、y_cable_helper.py:42-44,178,222
 
@@ -550,7 +550,7 @@ ycabled は `HW_MUX_CABLE_TABLE` の **書き込み側** であり、このテ�
 
 ### VS (virtual switch) プラットフォームの特殊挙動
 
-ycabled は `is_vs` パラメータで VS プラットフォームを検出し、グローバル変数 `y_cable_is_platform_vs` に保存する (y_cable_helper.py:1363,1369)。VS 環境では以下の挙動が変わる。
+ycabled は `is_vs` パラメータで [VS](../../reference/glossary.md#term-vs) プラットフォームを検出し、グローバル変数 `y_cable_is_platform_vs` に保存する (y_cable_helper.py:1363,1369)。[VS](../../reference/glossary.md#term-vs) 環境では以下の挙動が変わる。
 
 | 関数 | 通常プラットフォーム | VS (`y_cable_is_platform_vs == True`) |
 |---|---|---|
@@ -567,4 +567,4 @@ ycabled は `/etc/sonic/mux_simulator.json` ファイルの存在を検出し、
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: c72fa8275590 -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

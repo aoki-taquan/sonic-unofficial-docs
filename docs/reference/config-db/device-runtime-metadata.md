@@ -285,7 +285,7 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 | `platform_env.conf` (ファイルシステム) | 読み取り → `module_type` / `MACSEC_SUPPORTED` 決定 | `is_chassis()=True` 時（`module_type` 判定）または常時（`MACSEC_SUPPORTED` 判定）。`supervisor=1` 行で `module_type='supervisor'`、`macsec_enabled=1` 行で `MACSEC_SUPPORTED=True`、ファイル不在時は両方 `False` / `'linecard'` | `device_info.py:228-248` (`get_platform_env_conf_file_path`), L699-712 (`is_supervisor`), L715-732 (`is_macsec_supported`) |
 | `chassisdb.conf` (ファイルシステム) | 存在確認 → `is_voq_chassis()` 分岐 | `switch_type=voq/fabric` の場合のみ参照。ファイル存在 = `is_chassis_config_absent()=False` → `CHASSIS_METADATA` 生成対象として確定 | `device_info.py:251-268` (`get_chassis_db_conf_file_path`), L630-634 (`is_voq_chassis`) |
 | `port_config.ini` / `platform.json` (ファイルシステム) | 存在確認 → `ETHERNET_PORTS_PRESENT` 決定 | 常時。`get_path_to_port_config_file()` がプラットフォーム hwsku ディレクトリを探索。supervisor / fabric カードでは不在のため `False` となる | `device_info.py:445-509` (`get_path_to_port_config_file`), L741 |
-| `sonic_version.yml` (ファイルシステム) | 読み取り → `is_virtual_chassis()` 判定 | VS / テスト環境で `asic_type=vs` かつ `switch_type` が `dummy-sup`/`voq`/`chassis-packet` のとき。`CHASSIS_METADATA` が生成される | `device_info.py:511-523` (`get_sonic_version_info`), L658-664 (`is_virtual_chassis`) |
+| `sonic_version.yml` (ファイルシステム) | 読み取り → `is_virtual_chassis()` 判定 | [VS](../../reference/glossary.md#term-vs) / テスト環境で `asic_type=vs` かつ `switch_type` が `dummy-sup`/`voq`/`chassis-packet` のとき。`CHASSIS_METADATA` が生成される | `device_info.py:511-523` (`get_sonic_version_info`), L658-664 (`is_virtual_chassis`) |
 
 !!! note "CONFIG_DB 参照は `get_platform_info()` のグローバルキャッシュ経由"
     `get_platform_info()` は `hw_info_dict` グローバル変数にキャッシュするため (`device_info.py:541-542`)、同一プロセス内では `DEVICE_METADATA` が変化しても再読み込みされない。`DEVICE_RUNTIME_METADATA` の値はプロセス起動時点の `switch_type` に固定される。ファイルシステム系関数 (`is_supervisor` / `is_macsec_supported` / `get_path_to_port_config_file`) はキャッシュを持たず、呼び出しごとにファイルを開く。
@@ -353,7 +353,7 @@ sonic-cfggen -d -v "DEVICE_RUNTIME_METADATA['ETHERNET_PORTS_PRESENT']"
 | `HOST_DEVICE_PATH` | `"/usr/share/sonic/device"` | プラットフォームディレクトリ探索全般 |
 | `CONTAINER_PLATFORM_PATH` | `"/usr/share/sonic/platform"` | コンテナ内プラットフォームパス |
 | `MACHINE_CONF_PATH` | `"/host/machine.conf"` | プラットフォーム名解決 |
-| `SONIC_VERSION_YAML_PATH` | `"/etc/sonic/sonic_version.yml"` | VS/仮想シャーシ判定 |
+| `SONIC_VERSION_YAML_PATH` | `"/etc/sonic/sonic_version.yml"` | [VS](../../reference/glossary.md#term-vs)/仮想シャーシ判定 |
 | `PORT_CONFIG_FILE` | `"port_config.ini"` | `ETHERNET_PORTS_PRESENT` |
 | `PLATFORM_JSON_FILE` | `"platform.json"` | `ETHERNET_PORTS_PRESENT` (代替候補) |
 | `PLATFORM_ENV_CONF_FILENAME` | `"platform_env.conf"` | `module_type`, `MACSEC_SUPPORTED` |
@@ -483,7 +483,7 @@ get_path_to_port_config_file(hwsku=None, asic="0" if is_multi_npu() else None)
 | [VOQ](../../reference/glossary.md#term-voq) chassis (linecard) | `switch_type=voq` + `chassisdb.conf` 存在 + `supervisor=1` なし | あり | `'voq'` | `'linecard'` |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor) | `switch_type=voq` + `chassisdb.conf` 存在 + `platform_env.conf` に `supervisor=1` | あり | `'voq'` | `'supervisor'` |
 | Packet chassis | `switch_type=chassis-packet` | あり | `'packet'` | `supervisor=1` 有無で決定 |
-| Virtual chassis (VS) | `asic_type=vs` (`sonic_version.yml`) + `switch_type` が `dummy-sup`/`voq`/`chassis-packet` のいずれか | あり | `'voq'` or `'packet'` | VS 内 `supervisor=1` 有無 |
+| Virtual chassis ([VS](../../reference/glossary.md#term-vs)) | `asic_type=vs` (`sonic_version.yml`) + `switch_type` が `dummy-sup`/`voq`/`chassis-packet` のいずれか | あり | `'voq'` or `'packet'` | VS 内 `supervisor=1` 有無 |
 | Disaggregated chassis | `switch_type=voq` + `disaggregated_chassis=1` in `platform_env.conf` | **生成されない** | — | — |
 
 (evidence: `device_info.py:630-668`, `device_info.py:737-739`)
@@ -519,4 +519,4 @@ MACsec 対応の宣言は `platform_env.conf` の `macsec_enabled=1` 行のみ�
 > **Evidence**: `device_info.py:630-668` (`is_voq_chassis` / `is_packet_chassis` / `is_virtual_chassis` / `is_chassis`)、`device_info.py:699-732` (`is_supervisor` / `is_macsec_supported`)、`device_info.py:735-747` (`get_device_runtime_metadata`)
 <!-- /platform -->
 
-<!-- glossary-links-injected: 8a6399b9f9f9 -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

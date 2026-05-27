@@ -468,7 +468,7 @@ if (platform && strstr(platform, BRCM_PLATFORM_SUBSTRING))
 
 ### VS / テスト環境
 
-VS プラットフォームは `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` をサポートしないため `gIsNatSupported = false` となり、NAT 機能全体が無効化される。APPL_DB への書き込みは受け付けるが SAI には降りない。
+[VS](../../reference/glossary.md#term-vs) プラットフォームは `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` をサポートしないため `gIsNatSupported = false` となり、NAT 機能全体が無効化される。APPL_DB への書き込みは受け付けるが SAI には降りない。
 
 > **Evidence**: `sonic-swss/orchagent/natorch.cpp:39-44` (`gIsNatSupported` extern / `gNhTrackingSupported` 宣言); `natorch.cpp:144-149` (platform 文字列チェック); `natorch.cpp:2541-2544` (`enableNatFeature()` の `gIsNatSupported` ガード); `natorch.cpp:1923-1963, 2017-2054` (`gNhTrackingSupported` による DNAT NH キャッシュ分岐); `sonic-swss/orchagent/main.cpp:936-948` (`gIsNatSupported` 設定); `sonic-swss/orchagent/orch.h` (`BRCM_PLATFORM_SUBSTRING = "broadcom"`)
 <!-- /platform -->
@@ -547,4 +547,4 @@ show nat config
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 984cade7acb2 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

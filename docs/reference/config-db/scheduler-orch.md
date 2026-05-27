@@ -253,7 +253,7 @@ DEL が `m_pendingRemove` 状態のまま同一名の SET を発行すると、S
 |--------|----|------|------|
 | `scheduler_algo_type_field_name` | `"type"` | `qosorch.h:44` | スケジューリングアルゴリズム種別フィールド識別子 |
 | `scheduler_algo_DWRR` | `"DWRR"` | `qosorch.h:45` | `type` フィールドの [DWRR](../../reference/glossary.md#term-dwrr) 値文字列 |
-| `scheduler_algo_WRR` | `"WRR"` | `qosorch.h:46` | `type` フィールドの WRR 値文字列 |
+| `scheduler_algo_WRR` | `"WRR"` | `qosorch.h:46` | `type` フィールドの [WRR](../../reference/glossary.md#term-wrr) 値文字列 |
 | `scheduler_algo_STRICT` | `"STRICT"` | `qosorch.h:47` | `type` フィールドの STRICT 値文字列 |
 | `scheduler_weight_field_name` | `"weight"` | `qosorch.h:48` | スケジューリング重みフィールド識別子 |
 | `scheduler_meter_type_field_name` | `"meter_type"` | `qosorch.h:49` | メータタイプフィールド識別子 |
@@ -474,4 +474,4 @@ sudo grep -i "Unknown field\|scheduler" /var/log/swss/orchagent.log | tail -20
 ```
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: 77b2922d0a9d -->
+<!-- glossary-links-injected: cf7467e40bec -->

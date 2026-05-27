@@ -35,7 +35,7 @@ related:
 
 # 内部実装
 
-仮想 lab とテストフレームワークの内部構造で、章本文を読むときに前提として知っておくと便利な点を集めます。[SAI](../../reference/glossary.md#term-sai) VS や PTF の中身を全部書き下すのではなく、[HLD](../../reference/glossary.md#term-hld) ページへの導線を整理する位置付けです。
+仮想 lab とテストフレームワークの内部構造で、章本文を読むときに前提として知っておくと便利な点を集めます。[SAI](../../reference/glossary.md#term-sai) [VS](../../reference/glossary.md#term-vs) や PTF の中身を全部書き下すのではなく、[HLD](../../reference/glossary.md#term-hld) ページへの導線を整理する位置付けです。
 
 ## SAI VS が何を代替するか
 
@@ -161,4 +161,4 @@ VS test plan に書かれているテストでも、CI 側で実行対象にな�
 
 このページが `verification: meta` なのは、lab / 開発者ワークフローは「実装の状態」ではなく「複数 HLD への横断ガイド」だからです。SAI VS / [sonic-mgmt](../../reference/glossary.md#term-sonic-mgmt) / PTF / KNE / Alpine それぞれに別途 `code-verified` ページがあり、ここで重複して裏取りする必要はありません。サブ章で言及するコンポーネント別の挙動裏取りは、リンク先の章を参照してください。
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

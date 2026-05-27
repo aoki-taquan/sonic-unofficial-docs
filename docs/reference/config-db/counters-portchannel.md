@@ -480,7 +480,7 @@ Mellanox SAI は collection=false かつ distribution=true の「distribution-on
 
 ### `gTraditionalFlexCounter` による RIF カウンタ登録タイミング差
 
-`gTraditionalFlexCounter = true` 環境（一部旧構成・VS デフォルト）では `intfsorch` がタイマーループで `ASIC_DB VIDTORID` の確定を待ってから `COUNTERS_RIF_NAME_MAP` を書き込む (`intfsorch.cpp:1627`)。`gTraditionalFlexCounter = false` の環境では即座に書き込まれる。前者ではポートチャンネル RIF 作成後、`COUNTERS_RIF_NAME_MAP` への反映まで最大数秒の遅延がある。
+`gTraditionalFlexCounter = true` 環境（一部旧構成・[VS](../../reference/glossary.md#term-vs) デフォルト）では `intfsorch` がタイマーループで `ASIC_DB VIDTORID` の確定を待ってから `COUNTERS_RIF_NAME_MAP` を書き込む (`intfsorch.cpp:1627`)。`gTraditionalFlexCounter = false` の環境では即座に書き込まれる。前者ではポートチャンネル RIF 作成後、`COUNTERS_RIF_NAME_MAP` への反映まで最大数秒の遅延がある。
 
 ### VS（Virtual Switch）— RIF カウンタ値は 0 固定
 
@@ -529,4 +529,4 @@ sonic-db-cli COUNTERS_DB hgetall COUNTERS_LAG_NAME_MAP
 
 <!-- ref-triangle:end -->
 
-<!-- glossary-links-injected: 5f7f63b2853e -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

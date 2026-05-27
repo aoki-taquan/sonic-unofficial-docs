@@ -24,7 +24,7 @@ related:
 - import: なし
 - top container: `sonic-wred-profile`
 
-Weighted Random Early Detection ([WRED](../../reference/glossary.md#term-wred)) プロファイルを名前付きで保持する。色 (green/yellow/red) 毎の min/max 閾値、ドロップ確率、 ECN 有効化、 [WRED](../../reference/glossary.md#term-wred) 有効化を保持する[^1]。
+Weighted Random Early Detection ([WRED](../../reference/glossary.md#term-wred)) プロファイルを名前付きで保持する。色 (green/yellow/red) 毎の min/max 閾値、ドロップ確率、 [ECN](../../reference/glossary.md#term-ecn) 有効化、 [WRED](../../reference/glossary.md#term-wred) 有効化を保持する[^1]。
 
 <!-- yang-mermaid -->
 ### データフロー (自動生成)
@@ -92,7 +92,7 @@ module: sonic-wred-profile
 | `yellow_max_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/yellow_max_threshold` | `uint64` |  |  |  | Queue depth (bytes) at which WRED drops all yellow packets |
 | `green_max_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/green_max_threshold` | `uint64` |  |  |  | Queue depth (bytes) at which WRED drops all green packets |
 | `red_max_threshold` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/red_max_threshold` | `uint64` |  |  |  | Queue depth (bytes) at which WRED drops all red packets |
-| `ecn` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/ecn` | `enumeration` |  |  | ecn_none, ecn_green, ecn_yellow, ecn_red, ecn_green_yellow, ecn_green_red, ecn_yellow_red, ecn_all | ECN marking mode |
+| `ecn` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/ecn` | `enumeration` |  |  | ecn_none, ecn_green, ecn_yellow, ecn_red, ecn_green_yellow, ecn_green_red, ecn_yellow_red, ecn_all | [ECN](../../reference/glossary.md#term-ecn) marking mode |
 | `wred_green_enable` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/wred_green_enable` | `boolean` |  |  |  | Enable WRED for green traffic |
 | `wred_yellow_enable` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/wred_yellow_enable` | `boolean` |  |  |  | Enable WRED for yellow traffic |
 | `wred_red_enable` | `sonic-wred-profile/WRED_PROFILE/WRED_PROFILE_LIST/wred_red_enable` | `boolean` |  |  |  | Enable WRED for red traffic |
@@ -138,4 +138,4 @@ module: sonic-wred-profile
 
 [^1]: `sonic-net/sonic-buildimage` `src/sonic-yang-models/yang-models/sonic-wred-profile.yang` @ `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`
 
-<!-- glossary-links-injected: 20dbc11976b6 -->
+<!-- glossary-links-injected: 27618ff2c697 -->

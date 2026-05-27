@@ -714,7 +714,7 @@ if (gIsNatSupported == false) {
 |------------|-------------------|------------|
 | NAT HW オフロード対応 ASIC | `true` | `SAI_SWITCH_ATTR_NAT_ENABLE=true` が設定され SNAT/DNAT エントリが ASIC に投入 |
 | NAT 非対応 ASIC (`AVAILABLE_SNAT_ENTRY=0` を返す) | `false` | `enableNatFeature()` は即 return。CONFIG_DB への書込みは成功するが ASIC 反映なし |
-| VS (virtual switch) | `true` (`AVAILABLE_SNAT_ENTRY=100`) | HW NAT 動作するが実際のパケット変換は software で実施 |
+| [VS](../../reference/glossary.md#term-vs) (virtual switch) | `true` (`AVAILABLE_SNAT_ENTRY=100`) | HW NAT 動作するが実際のパケット変換は software で実施 |
 
 ### gNhTrackingSupported — Broadcom プラットフォームのみ DNAT nexthop 待ち
 
@@ -749,4 +749,4 @@ SWSS_LOG_NOTICE("DNAT nexthop tracking is %s",
 > 中間調査詳細: `meta/_intermediate/cdb-flow/nat-platform.md`
 <!-- /platform -->
 
-<!-- glossary-links-injected: a6fe2efe021a -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

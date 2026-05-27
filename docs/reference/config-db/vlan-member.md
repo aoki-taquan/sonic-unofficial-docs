@@ -560,7 +560,7 @@ db_migrator.py での VLAN_MEMBER マイグレーションなし
 
 ### EVPN `end_point_ip` — `SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` 非対応 ASIC でメンバ追加失敗
 
-APP_DB `VLAN_MEMBER_TABLE` エントリに `end_point_ip` が付与される [EVPN](../../reference/glossary.md#term-evpn) [VXLAN](../../reference/glossary.md#term-vxlan) BUM flooding 構成では、`addVlanMember()` (portsorch.cpp:7517-7521) が起動時照会した flood control capability に `SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` が含まれない場合 `"Flood group with end point ip is not supported"` を返して即時失敗する。VS SAI は `ALL` / `NONE` / `L2MC_GROUP` の 3 種のみ返すため、**VS 環境では `end_point_ip` を持つ VLAN_MEMBER は常に設定不可**。Broadcom TD3/TH 系は多くの場合 `COMBINED` をサポートする。CONFIG_DB の VLAN_MEMBER テーブル自体は `end_point_ip` フィールドを持たない（YANG 外・VxlanOrch が APP_DB に動的注入）。
+APP_DB `VLAN_MEMBER_TABLE` エントリに `end_point_ip` が付与される [EVPN](../../reference/glossary.md#term-evpn) [VXLAN](../../reference/glossary.md#term-vxlan) BUM flooding 構成では、`addVlanMember()` (portsorch.cpp:7517-7521) が起動時照会した flood control capability に `SAI_VLAN_FLOOD_CONTROL_TYPE_COMBINED` が含まれない場合 `"Flood group with end point ip is not supported"` を返して即時失敗する。[VS](../../reference/glossary.md#term-vs) SAI は `ALL` / `NONE` / `L2MC_GROUP` の 3 種のみ返すため、**[VS](../../reference/glossary.md#term-vs) 環境では `end_point_ip` を持つ VLAN_MEMBER は常に設定不可**。Broadcom TD3/TH 系は多くの場合 `COMBINED` をサポートする。CONFIG_DB の VLAN_MEMBER テーブル自体は `end_point_ip` フィールドを持たない（YANG 外・VxlanOrch が APP_DB に動的注入）。
 
 ### TUNNEL ポートへの PVID 設定スキップ
 
@@ -584,4 +584,4 @@ APP_DB `VLAN_MEMBER_TABLE` エントリに `end_point_ip` が付与される [EV
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: d654b1dcf7c9 -->
+<!-- glossary-links-injected: 0af8863862be -->

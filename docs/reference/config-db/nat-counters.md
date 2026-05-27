@@ -505,7 +505,7 @@ NAT データパスには `NotificationConsumer / NotificationProducer` によ�
 | `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY == 0` または取得失敗 | `false` | `false` | `enableNatFeature()` が即 return → `m_natQueryTimer` 未起動 → `COUNTERS_NAT*` のエントリ数カウンタは 0 のまま。エントリ追加時のゼロ初期化 `update*Counters(0,0)` は呼ばれるが、5 秒タイマー更新が来ない |
 | `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY > 0` かつ非 Broadcom | `true` | `false` | DNAT エントリは APPL_DB 受信と同時に `addHwDnatEntry()` を即時呼び出し → `COUNTERS_NAT` に即座にキーが生成。5 秒タイマーによるカウンタ更新あり |
 | `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY > 0` かつ `broadcom` | `true` | `true` | DNAT エントリは NeighOrch / RouteOrch のネクストホップ解決後に `addHwDnatEntry()` が遅延呼び出しされる。NH 未解決の間は `COUNTERS_NAT` にキーが存在しない |
-| VS / テスト環境 (`sw.sonic-test`) | `false` | `false` | `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` 未サポート → `gIsNatSupported=false`。NAT 機能全体が無効。CLI は受け付けるが APPL_DB エントリが SAI に降りないため `COUNTERS_NAT*` 実測値は更新されない |
+| [VS](../../reference/glossary.md#term-vs) / テスト環境 (`sw.sonic-test`) | `false` | `false` | `SAI_SWITCH_ATTR_AVAILABLE_SNAT_ENTRY` 未サポート → `gIsNatSupported=false`。NAT 機能全体が無効。CLI は受け付けるが APPL_DB エントリが SAI に降りないため `COUNTERS_NAT*` 実測値は更新されない |
 
 ### `gIsNatSupported` の決定経路
 
@@ -545,4 +545,4 @@ SNAT / NAPT / Twice NAT エントリおよび `COUNTERS_GLOBAL_NAT` の書き込
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 6ebbfd73f35d -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

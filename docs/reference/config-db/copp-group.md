@@ -312,7 +312,7 @@ show copp config
 |---|---|---|
 | Mellanox (NVIDIA) | `"mellanox"` を含む | **スキップ**（SAI 非対応） |
 | Marvell Prestera | `"marvell-prestera"` を含む | **スキップ**（SAI 非対応） |
-| その他（Broadcom / VS 等） | 上記以外または未設定 | 設定する |
+| その他（Broadcom / [VS](../../reference/glossary.md#term-vs) 等） | 上記以外または未設定 | 設定する |
 
 デフォルトトラップ初期化時（`initDefaultTrapIds()`）とユーザ設定反映時（`parseTrapGroupAttribute()`）の両方で同じチェックが行われる。Mellanox / Marvell では CONFIG_DB に `trap_priority` を設定しても **無視される**（エラーログなし）。<!-- evidence: copporch.cpp L347-359, L1184-1194; orch.h L41-42 -->
 
@@ -601,4 +601,4 @@ sonic-db-cli COUNTERS_DB hgetall COUNTERS_TRAP_NAME_MAP
 ```
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 153220ca9c35 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

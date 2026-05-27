@@ -111,7 +111,7 @@ DB 更新を切ると Redis に痕跡が残らない。観測性は失うが Red
 zmq_bind failed on endpoint: ipc:///zmq_swss/p4orch_zmq_swss_ep, zmqerrno: 2
 ```
 
-**原因**: 実機では `/zmq_swss` が `docker-orchagent.mk` の `-v /zmq_swss:/zmq_swss:rw` bind-mount で提供されるが、VS docker はスタンドアロン起動のためホスト側マウントが存在しない。[sonic-swss](../reference/glossary.md#term-sonic-swss)#4243（2026-04-01 merge）以降に顕在化。
+**原因**: 実機では `/zmq_swss` が `docker-orchagent.mk` の `-v /zmq_swss:/zmq_swss:rw` bind-mount で提供されるが、[VS](../reference/glossary.md#term-vs) docker はスタンドアロン起動のためホスト側マウントが存在しない。[sonic-swss](../reference/glossary.md#term-sonic-swss)#4243（2026-04-01 merge）以降に顕在化。
 
 **回避策**:
 ```bash
@@ -186,4 +186,4 @@ docker exec <container> mkdir -p /zmq_swss
 
 [^1]: `sonic-net/SONiC` `doc/sonic-swss-common/ZMQ producer-consumer state table design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: 7c9bb45c2f86 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

@@ -573,7 +573,7 @@ Broadcom / Mellanox / Marvell / Barefoot 系 HwSku ではバイパス条件を�
 
 ### VS / テストシミュレーター
 
-VS (libsaivs) 環境では `DEVICE_METADATA|localhost.hwsku` が非 Cisco 値（例: `Force10-S6000`）となるため `checkSKU()` は常に `false` を返し、`GNMI_SET_BYPASS` は発生しない。SysV 共有メモリ自体は Linux カーネルが提供するため VS 上でも正常動作する。
+[VS](../../reference/glossary.md#term-vs) (libsaivs) 環境では `DEVICE_METADATA|localhost.hwsku` が非 Cisco 値（例: `Force10-S6000`）となるため `checkSKU()` は常に `false` を返し、`GNMI_SET_BYPASS` は発生しない。SysV 共有メモリ自体は Linux カーネルが提供するため [VS](../../reference/glossary.md#term-vs) 上でも正常動作する。
 
 ### プラットフォーム別カウンタ挙動まとめ
 
@@ -582,7 +582,7 @@ VS (libsaivs) 環境では `DEVICE_METADATA|localhost.hwsku` が非 Cisco 値（
 | Cisco-8102 / 8101 / 8223 | **発生あり**（バイパス条件充足時） | N/A | 正常 |
 | Broadcom / Mellanox 等 | 常に 0 | N/A | 正常 |
 | SmartSwitch (NPU 側) | HwSku 依存 | DPU 側は別 SHM | 正常 |
-| VS / シミュレーター | 常に 0 | N/A | 正常 |
+| [VS](../../reference/glossary.md#term-vs) / シミュレーター | 常に 0 | N/A | 正常 |
 
 詳細根拠は `meta/_intermediate/cdb-flow/gnmi-counter-platform.md` を参照。
 <!-- /platform -->
@@ -624,4 +624,4 @@ DBUS fail---0
 
 [^1]: `common_utils/context.go`, `common_utils/shareMem.go`, `gnmi_dump/gnmi_dump.go` — sonic-net/sonic-gnmi (master). <https://github.com/sonic-net/sonic-gnmi/blob/master/common_utils/context.go>
 
-<!-- glossary-links-injected: 035658f68767 -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

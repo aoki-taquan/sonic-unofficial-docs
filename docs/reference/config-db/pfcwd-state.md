@@ -437,7 +437,7 @@ Cisco 8000 のみ restore スクリプトが専用ファイルに分離されて
 | Cisco 8000 + `action=forward` | `task_invalid_entry` → 書き込みなし |
 | Broadcom + DLR + 複数ポートで `action` 不一致 | `task_invalid_entry` → 書き込みなし |
 | PFC lossless TC が未設定 (全プラットフォーム) | `registerInWdDb()` が空集合で return → 書き込みなし |
-| VS (仮想スイッチ) | 正常書き込みだが storm 検知は模擬実装 |
+| [VS](../../reference/glossary.md#term-vs) (仮想スイッチ) | 正常書き込みだが storm 検知は模擬実装 |
 | その他プラットフォーム | 標準フロー通りに書き込み |
 
 <!-- /platform -->
@@ -465,4 +465,4 @@ show pfcwd stats
 
 [^1]: `pfcactionhandler.cpp` および `pfcwdorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/pfcactionhandler.cpp>
 
-<!-- glossary-links-injected: d2191ccfe0bd -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

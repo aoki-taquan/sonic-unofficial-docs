@@ -409,7 +409,7 @@ traditional モードは古い Broadcom SDK 系 ASIC などで使用されるこ
 
 ### 差異 3: VS / SAI 未実装プラットフォーム
 
-VS (Virtual Switch) など `sai_query_attribute_capability()` 自体が `SAI_STATUS_NOT_IMPLEMENTED` を返す SAI 実装では、`queryMySidCountersCapability()` が false を返して `COUNTERS_SRV6_NAME_MAP` への書き込みは発生しない。
+[VS](../../reference/glossary.md#term-vs) (Virtual Switch) など `sai_query_attribute_capability()` 自体が `SAI_STATUS_NOT_IMPLEMENTED` を返す SAI 実装では、`queryMySidCountersCapability()` が false を返して `COUNTERS_SRV6_NAME_MAP` への書き込みは発生しない。
 
 ### プラットフォーム別まとめ
 
@@ -418,7 +418,7 @@ VS (Virtual Switch) など `sai_query_attribute_capability()` 自体が `SAI_STA
 | HW ASIC（対応 SAI）+ デフォルト | `true` | `false` | MySID 追加後 ~1 秒で出現 |
 | HW ASIC（対応 SAI）+ traditional | `true` | `true` | VIDTORID 確定後に出現（追加遅延あり） |
 | HW ASIC（非対応 SAI） | `false` | — | 常に空 |
-| VS / ソフトウェア SAI | `false`（多くの場合） | `false` | 常に空 |
+| [VS](../../reference/glossary.md#term-vs) / ソフトウェア SAI | `false`（多くの場合） | `false` | 常に空 |
 
 `COUNTERS:<oid>` の値は FlexCounter 登録完了後、`SRV6_STAT_COUNTER_POLLING_INTERVAL_MS = 10000 ms` ごとに syncd が更新する。この間隔はプラットフォーム間で変わらない（コード固定値）。
 
@@ -436,4 +436,4 @@ VS (Virtual Switch) など `sai_query_attribute_capability()` 自体が `SAI_STA
 [^1]: [SRv6](../../reference/glossary.md#term-srv6) カウンタ管理: `srv6orch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/srv6orch.cpp>
 [^2]: FlexCounter スキーマ定義: `schema.h` L257, L313. <https://github.com/sonic-net/sonic-swss-common/blob/master/common/schema.h>
 
-<!-- glossary-links-injected: fdd18c72e6f4 -->
+<!-- glossary-links-injected: 0af8863862be -->

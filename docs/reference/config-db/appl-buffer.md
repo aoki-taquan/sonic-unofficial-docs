@@ -149,7 +149,7 @@ APPL_DB に書き込まれる `type` フィールドは raw 文字列（`"both"`
 
 ### `size` (BUFFER_POOL_TABLE) — dynamic_size 時は Lua plugin へサイレント委譲
 
-`buffermgrdyn.cpp` L2525/2534: `size` フィールドが CONFIG_DB に存在しない場合、`bufferPool.dynamic_size = true` を立て APPL_DB への書き込みを遅延する。実効サイズは Mellanox/Barefoot の Lua plugin (`buffer_pool_<platform>.lua`) が MMU 使用量から逆算して書き込む。さらに `ingress_lossless_pool` において `overSubscribeRatio` 非ゼロかつ SHP が size で有効でない場合、`dontUpdatePoolToDb=true` となり直接書き込みが完全にスキップされる (`buffermgrdyn.cpp` L2555-2628)。
+`buffermgrdyn.cpp` L2525/2534: `size` フィールドが CONFIG_DB に存在しない場合、`bufferPool.dynamic_size = true` を立て APPL_DB への書き込みを遅延する。実効サイズは Mellanox/Barefoot の Lua plugin (`buffer_pool_<platform>.lua`) が [MMU](../../reference/glossary.md#term-mmu) 使用量から逆算して書き込む。さらに `ingress_lossless_pool` において `overSubscribeRatio` 非ゼロかつ SHP が size で有効でない場合、`dontUpdatePoolToDb=true` となり直接書き込みが完全にスキップされる (`buffermgrdyn.cpp` L2555-2628)。
 
 ### `xoff` (BUFFER_POOL_TABLE) — 省略 = 0 相当
 
@@ -404,7 +404,7 @@ handler ごと・行番号付きの完全な失敗・retry 分岐マトリクス
 |------|----------------|-----------|--------|----------|
 | set | `BUFFER_MAX_PARAM_TABLE\|global` (定数 `STATE_BUFFER_MAXIMUM_VALUE_TABLE`) | `mmu_size` (bytes; `SAI_SWITCH_ATTR_MAX_BUFFER_SIZE` × 1024) | `BufferOrch` ctor の `getMMUSize()` で起動時 1 回のみ | `bufferorch.cpp:53-62, 206-230` |
 
-> SET/DEL ハンドラ自体は [STATE_DB](../../reference/glossary.md#term-state_db) に書込まない。[STATE_DB](../../reference/glossary.md#term-state_db) は MMU 全体サイズの公開専用。
+> SET/DEL ハンドラ自体は [STATE_DB](../../reference/glossary.md#term-state_db) に書込まない。[STATE_DB](../../reference/glossary.md#term-state_db) は [MMU](../../reference/glossary.md#term-mmu) 全体サイズの公開専用。
 
 ### COUNTERS_DB
 
@@ -659,7 +659,7 @@ bufferorch は静的にベンダ名を判定せず、**SAI 戻り値で実行時
 
 | ベンダ | model | size 空時の挙動 |
 |---|---|---|
-| Mellanox SN シリーズ | dynamic (`buffermgrdyn`) | `buffer_pool_mlnx.lua` が SAI MMU から逆算して APPL_DB に書き戻す |
+| Mellanox SN シリーズ | dynamic (`buffermgrdyn`) | `buffer_pool_mlnx.lua` が SAI [MMU](../../reference/glossary.md#term-mmu) から逆算して APPL_DB に書き戻す |
 | Barefoot Tofino | dynamic (`buffermgrdyn`) | `buffer_pool_bfn.lua` |
 | Broadcom (多くの platform) | static (`buffermgr`) | CONFIG_DB を pass-through (空なら空のまま) |
 
@@ -845,4 +845,4 @@ APPL_DB の `BUFFER_*_TABLE` 群を `BufferOrch` が処理する際に SAI OID �
 
 [^schema]: `sonic-swss-common/common/schema.h` — `APP_BUFFER_*_TABLE_NAME` 定数. <https://github.com/sonic-net/sonic-swss-common/blob/158de8d3463ff4b841653f6d57190bb142b80d9c/common/schema.h>
 
-<!-- glossary-links-injected: dc591bfe9826 -->
+<!-- glossary-links-injected: 6df020b9096a -->

@@ -191,7 +191,7 @@ Built by: johnar@jenkins-worker-8
 
 ### `asic_type` フィールドの重要性
 
-`asic_type` は最も多くのコンポーネントが参照するフィールドであり、`db_migrator`・`gcu`・mirrororch (`gre_type` プラットフォーム分岐)・各 show プラグインが `asic_type` に基づいて動作を切り替える。ビルド時には必ず `sonic_asic_platform` 変数から設定される必須フィールドだが、テスト環境・VS 環境では `asic_type: vs` が入る。
+`asic_type` は最も多くのコンポーネントが参照するフィールドであり、`db_migrator`・`gcu`・mirrororch (`gre_type` プラットフォーム分岐)・各 show プラグインが `asic_type` に基づいて動作を切り替える。ビルド時には必ず `sonic_asic_platform` 変数から設定される必須フィールドだが、テスト環境・[VS](../../reference/glossary.md#term-vs) 環境では `asic_type: vs` が入る。
 
 <!-- /cross-refs -->
 
@@ -363,7 +363,7 @@ Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書�
 
 | 観点 | 結果 | 根拠 |
 |------|------|------|
-| テンプレート (`sonic_version.yml.j2`) | 実質差なし | VS プラットフォーム固有テンプレート (`platform/vs/sonic-version/sonic_version.yml.j2`) が存在するが、共通版 (`files/build_templates/sonic_version.yml.j2`) と**内容完全一致**。他プラットフォームに固有テンプレートはない |
+| テンプレート (`sonic_version.yml.j2`) | 実質差なし | [VS](../../reference/glossary.md#term-vs) プラットフォーム固有テンプレート (`platform/vs/sonic-version/sonic_version.yml.j2`) が存在するが、共通版 (`files/build_templates/sonic_version.yml.j2`) と**内容完全一致**。他プラットフォームに固有テンプレートはない |
 | フィールド定義・YANG | 差なし | YANG モジュール未定義。全プラットフォームで同一フィールド構造 |
 | `asic_type` の値 | プラットフォーム依存 | `broadcom` / `mellanox` / `marvell` / `vs` 等、ビルドターゲット (`sonic_asic_platform`) がそのまま入る |
 | `asic_subtype` の値 | HW SKU 依存 | `TARGET_MACHINE` 変数。空の場合はフィールド自体が省略される |
@@ -380,7 +380,7 @@ Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書�
 | `cisco-8000` | `profile.ini` namespace 付き → `eth0` → `decode-syseeprom` の順 (`device_info.py:888-913`) |
 | `pensando` | `eth0-midplane` から取得 (`device_info.py:914-917`) |
 | `centec` | `eth0` 取得後、最終バイトを +1 してアライン (`device_info.py:936-940`) |
-| VS (`x86_64-kvm_x86_64-r0`) | `generate_mac_for_vs(hostname, namespace)` に委譲 (`device_info.py:848`) |
+| [VS](../../reference/glossary.md#term-vs) (`x86_64-kvm_x86_64-r0`) | `generate_mac_for_vs(hostname, namespace)` に委譲 (`device_info.py:848`) |
 | その他 (Broadcom 等) | `/sys/class/net/eth0/address` から読む (`device_info.py:918-921`) |
 
 詳細根拠は `meta/_intermediate/cdb-flow/image-state-platform.md` を参照。
@@ -392,4 +392,4 @@ Redis pub/sub が存在しないため、`/etc/sonic/sonic_version.yml` を書�
 
 [^2]: `sonic-buildimage/functions.sh:sonic_get_version()` L53-68 — build_version 文字列の生成ロジック。<https://github.com/sonic-net/sonic-buildimage/blob/master/functions.sh>
 
-<!-- glossary-links-injected: b2ce91fb8966 -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

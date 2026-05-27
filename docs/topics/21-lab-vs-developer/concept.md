@@ -80,7 +80,7 @@ flowchart LR
 
 | 用語 | 意味 | 補足 |
 | --- | --- | --- |
-| SONiC-VS | [SAI](../../reference/glossary.md#term-sai) VS を使った仮想 SONiC | Linux bridge を [ASIC](../../reference/glossary.md#term-asic) 代わりに使う |
+| SONiC-[VS](../../reference/glossary.md#term-vs) | [SAI](../../reference/glossary.md#term-sai) VS を使った仮想 SONiC | Linux bridge を [ASIC](../../reference/glossary.md#term-asic) 代わりに使う |
 | SAI VS | virtual switch 実装の SAI | counter / capability は限定的 |
 | PTF | Packet Test Framework | scapy ベースで packet を生成して検証 |
 | spytest | 物理 / 仮想両対応のテストランナー | feature テストの主要枠 |
@@ -174,4 +174,4 @@ test plan ページは「機能章の検証可能性を読み解く参考」と�
 
 - [SONiC 全体像と設定基盤](../01-overview/index.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

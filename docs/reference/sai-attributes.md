@@ -178,7 +178,7 @@ related:
 | `SAI_ACL_TABLE_ATTR_ACL_STAGE` | INGRESS / EGRESS | `AclOrch` (`ACL_TABLE\|stage`) |
 | `SAI_ACL_TABLE_ATTR_ACL_BIND_POINT_TYPE_LIST` | port / lag / vlan / switch | `AclOrch` (`bind_points`) |
 | `SAI_ACL_TABLE_ATTR_ACL_ACTION_TYPE_LIST` | 許可アクション | `AclOrch` |
-| `SAI_ACL_TABLE_ATTR_FIELD_*` (DST_IP / SRC_IP / DST_IPV6 / SRC_IPV6 / DST_MAC / SRC_MAC / ETHER_TYPE / IP_PROTOCOL / L4_SRC_PORT / L4_DST_PORT / TCP_FLAGS / DSCP / ECN / TTL / ICMP_TYPE / ICMP_CODE / ICMPV6_TYPE / ICMPV6_CODE / IN_PORT / OUT_PORT / ACL_RANGE_TYPE / ACL_IP_TYPE / ACL_IP_FRAG / GRE_KEY / TUNNEL_VNI / INNER_*) | マッチ可能フィールド | `AclOrch` (`match` 列) |
+| `SAI_ACL_TABLE_ATTR_FIELD_*` (DST_IP / SRC_IP / DST_IPV6 / SRC_IPV6 / DST_MAC / SRC_MAC / ETHER_TYPE / IP_PROTOCOL / L4_SRC_PORT / L4_DST_PORT / TCP_FLAGS / DSCP / [ECN](../reference/glossary.md#term-ecn) / TTL / ICMP_TYPE / ICMP_CODE / ICMPV6_TYPE / ICMPV6_CODE / IN_PORT / OUT_PORT / ACL_RANGE_TYPE / ACL_IP_TYPE / ACL_IP_FRAG / GRE_KEY / TUNNEL_VNI / INNER_*) | マッチ可能フィールド | `AclOrch` (`match` 列) |
 | `SAI_ACL_TABLE_ATTR_AVAILABLE_ACL_ENTRY` / `AVAILABLE_ACL_COUNTER` | エントリ残 | `CrmOrch` |
 | `SAI_ACL_ENTRY_ATTR_TABLE_ID` | 所属テーブル | `AclOrch` |
 | `SAI_ACL_ENTRY_ATTR_PRIORITY` | エントリ優先度 | `AclOrch` (`priority`) |
@@ -236,7 +236,7 @@ related:
 | `SAI_QUEUE_ATTR_WRED_PROFILE_ID` | [WRED](../reference/glossary.md#term-wred) バインド | `QosOrch` |
 | `SAI_QUEUE_ATTR_PAUSE_STATUS` | PFC pause 状態 (RO) | `PfcWdOrch` |
 | `SAI_QUEUE_ATTR_PFC_DLR_INIT` | DLR トリガ | `PfcWdOrch` |
-| `SAI_SCHEDULER_ATTR_SCHEDULING_TYPE` | SP / WRR / [DWRR](../reference/glossary.md#term-dwrr) | `QosOrch` (`SCHEDULER\|type`) |
+| `SAI_SCHEDULER_ATTR_SCHEDULING_TYPE` | SP / [WRR](../reference/glossary.md#term-wrr) / [DWRR](../reference/glossary.md#term-dwrr) | `QosOrch` (`SCHEDULER\|type`) |
 | `SAI_SCHEDULER_ATTR_SCHEDULING_WEIGHT` | weight | `QosOrch` (`weight`) |
 | `SAI_SCHEDULER_ATTR_METER_TYPE` | bytes / packets | `QosOrch` |
 | `SAI_SCHEDULER_ATTR_MIN_BANDWIDTH_RATE` / `MIN_BANDWIDTH_BURST_RATE` | min shaper | `QosOrch` |
@@ -371,4 +371,4 @@ related:
 - [sonic-net/sonic-swss `orchagent/`](https://github.com/sonic-net/sonic-swss/tree/master/orchagent) — `SAI_*_ATTR_*` の全件 grep より抽出
 - SAI ヘッダ本体: [sonic-net/SAI](https://github.com/sonic-net/SAI) の `inc/sai*.h`
 
-<!-- glossary-links-injected: 86b69c729fae -->
+<!-- glossary-links-injected: b62afb596de5 -->

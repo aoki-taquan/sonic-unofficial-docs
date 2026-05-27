@@ -355,7 +355,7 @@ VRFOrch は SAI VR 作成成功直後に `gFlowCounterRouteOrch->onAddVR(router_
 |---|---|---|---|---|
 | [COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) | ルートパターンに一致するカウンタエントリ | `onAddVR` / `onRemoveVR` 呼出し時（`mRouteFlowCounterSupported=true` の場合のみ） | ルートフローカウンタの作成 / 削除 | `flowcounterrouteorch.cpp:401-451` |
 
-`mRouteFlowCounterSupported=false` の環境（多くの VS / stub SAI）では `onAddVR` / `onRemoveVR` は即座に `return` し、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書込みは発生しない (`flowcounterrouteorch.cpp:404-407`)。
+`mRouteFlowCounterSupported=false` の環境（多くの [VS](../../reference/glossary.md#term-vs) / stub SAI）では `onAddVR` / `onRemoveVR` は即座に `return` し、[COUNTERS_DB](../../reference/glossary.md#term-counters_db) / [FLEX_COUNTER_DB](../../reference/glossary.md#term-flex_counter_db) への書込みは発生しない (`flowcounterrouteorch.cpp:404-407`)。
 
 ### gPortsOrch — VLAN VE インターフェイス UP/DOWN 通知
 
@@ -484,7 +484,7 @@ fabric [ASIC](../../reference/glossary.md#term-asic) スロット（chassis line
 | `SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_IP_OPTIONS_PACKET_ACTION` | `ip_opt_action` | 同上 |
 | `SAI_VIRTUAL_ROUTER_ATTR_UNKNOWN_L3_MULTICAST_PACKET_ACTION` | `l3_mc_action` | 同上 |
 
-フィールド省略時は attrs ベクタに追加されないため、`create_virtual_router()` 呼び出し時に SAI 実装側デフォルト値が適用される。VS（仮想スイッチ）SAI は `create_virtual_router` を正常終了させるが、attribute の実値は無視することが多い。
+フィールド省略時は attrs ベクタに追加されないため、`create_virtual_router()` 呼び出し時に SAI 実装側デフォルト値が適用される。[VS](../../reference/glossary.md#term-vs)（仮想スイッチ）SAI は `create_virtual_router` を正常終了させるが、attribute の実値は無視することが多い。
 
 ### 3. カーネル l3mdev モジュール依存
 
@@ -533,4 +533,4 @@ vrfmgrd コンストラクタは `WarmStart::isWarmStart()` で以下のよう�
 
 ## 引用元
 
-<!-- glossary-links-injected: 40f6eb604b2b -->
+<!-- glossary-links-injected: 0af8863862be -->

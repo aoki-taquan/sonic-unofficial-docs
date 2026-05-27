@@ -506,7 +506,7 @@ LLDP テーブルへの書き込み自体はサービス再起動を伴わない
 | multi-asic — sonic-snmpagent | **Namespace API 対応済み** | `Namespace.init_namespace_dbs()` / `get_sync_d_from_all_namespace()` で全 namespace の APPL_DB を横断取得 (`ieee802_1ab.py:118, 157, 182`) |
 | multi-asic — inband / recirc / backplane ポート | **LLDP 対象外** | `lldpmgrd` がこれらプレフィックスのポートをスキップするため `LLDP_ENTRY_TABLE` のキーとして現れない (`lldpmgrd:143-145`) |
 | [VOQ](../../reference/glossary.md#term-voq) chassis (supervisor + line cards) | 各 host で独立動作 | LLDP テーブルは host/namespace スコープ。集中管理機構なし |
-| VS (virtual switch / KVM) | **動作制限あり** | VS 環境では NIC が LLDP PDU を pass-through しないことが多く、`LLDP_ENTRY_TABLE` が空になる場合がある。sonic-snmpagent テストでは mock_tables を使用 |
+| [VS](../../reference/glossary.md#term-vs) (virtual switch / KVM) | **動作制限あり** | [VS](../../reference/glossary.md#term-vs) 環境では NIC が LLDP PDU を pass-through しないことが多く、`LLDP_ENTRY_TABLE` が空になる場合がある。sonic-snmpagent テストでは mock_tables を使用 |
 
 ### multi-asic 構成での LLDP_ENTRY_TABLE スコープ
 
@@ -547,4 +547,4 @@ capability 情報は別途 `lldpCapTableMap` (bool map) として管理され、
 
 <!-- glossary-links-injected: lldp-state-v1 -->
 
-<!-- glossary-links-injected: 867c5781472f -->
+<!-- glossary-links-injected: 0af8863862be -->

@@ -91,7 +91,7 @@ def validate_decorator(config_db_connector):
 
 `config <feature>` 系 CLI のうち、[HLD](../reference/glossary.md#term-hld) で列挙されているもの[^1]:
 
-> [AAA](../reference/glossary.md#term-aaa) / [ACL](../reference/glossary.md#term-acl) / [BGP](../reference/glossary.md#term-bgp) / Console / [DHCP Relay](../reference/glossary.md#term-dhcp-relay) / Drop Counter / Dynamic Buffer Management / ECN / Feature / Interface / Interface Naming Mode / Interface Vrf Binding / IPv6 Link Local / Kubernetes / Linux Kernel Dump / Loopback Interfaces / [VRF](../reference/glossary.md#term-vrf) / Management VRF / Mirroring / Muxcable / [NAT](../reference/glossary.md#term-nat) / NTP / NVGRE / PBH / Platform Component Firmware / [PortChannel](../reference/glossary.md#term-portchannel) / [QoS](../reference/glossary.md#term-qos) / sFlow / [SNMP](../reference/glossary.md#term-snmp) / Subinterfaces / [Syslog](../reference/glossary.md#term-syslog) / [VLAN](../reference/glossary.md#term-vlan) / Warm Restart / Watermark / [ZTP](../reference/glossary.md#term-ztp)
+> [AAA](../reference/glossary.md#term-aaa) / [ACL](../reference/glossary.md#term-acl) / [BGP](../reference/glossary.md#term-bgp) / Console / [DHCP Relay](../reference/glossary.md#term-dhcp-relay) / Drop Counter / Dynamic Buffer Management / [ECN](../reference/glossary.md#term-ecn) / Feature / Interface / Interface Naming Mode / Interface Vrf Binding / IPv6 Link Local / Kubernetes / Linux Kernel Dump / Loopback Interfaces / [VRF](../reference/glossary.md#term-vrf) / Management VRF / Mirroring / Muxcable / [NAT](../reference/glossary.md#term-nat) / NTP / NVGRE / PBH / Platform Component Firmware / [PortChannel](../reference/glossary.md#term-portchannel) / [QoS](../reference/glossary.md#term-qos) / sFlow / [SNMP](../reference/glossary.md#term-snmp) / Subinterfaces / [Syslog](../reference/glossary.md#term-syslog) / [VLAN](../reference/glossary.md#term-vlan) / Warm Restart / Watermark / [ZTP](../reference/glossary.md#term-ztp)
 
 加えて ACL rules（incremental update / delete）、`pfc`、`crm`、`mclag`、`counterpoll`、および以下のスクリプト: `configlet` / `db_migrator` / `dropconfig` / `mellanox_buffer_migrator` / `neighbor_advertisor` / `null_route_helper` / `hostcfgd`。
 
@@ -240,4 +240,4 @@ yangcli --module=sonic-port -- 'xget /sonic-port:sonic-port'
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: a0345c62ade3 -->
+<!-- glossary-links-injected: d17c6a828148 -->

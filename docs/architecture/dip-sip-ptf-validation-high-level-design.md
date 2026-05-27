@@ -228,7 +228,7 @@ sudo -H ansible-playbook test_sonic.yml -i inventory \
 - テストが fail する: ログ `/tmp/dip_sip.DipSipTest.<ts>.log` の expected / received ダンプを比較[^1]。MAC が書き換わっていなければ L3 ルーティングが起きていない（L2 で落ちている可能性）。pytest 化以降は `--log-cli-level=DEBUG` で再実行し、注入パケットと受信パケットの diff を確認する。
 - TTL が想定と違う: TTL/HL が 1 減っていない場合、DUT 側で L3 forwarding せず L2 で抜けている可能性。
 - port index 不一致: `dst_port_ids` / `src_port_ids` の配列が空、または PTF port 番号と DUT 側の物理 port のマッピングがズレている。`dip_sip.yml` の前処理ログ（minigraph / LLDP gather）を確認。
-- VS テストベッド (KVM) と物理テストベッドで挙動が異なる場合があるため、まず KVM で再現するか確認してから物理機を疑う。
+- [VS](../reference/glossary.md#term-vs) テストベッド (KVM) と物理テストベッドで挙動が異なる場合があるため、まず KVM で再現するか確認してから物理機を疑う。
 - DIP/SIP 検査機能自体が [NPU](../reference/glossary.md#term-npu) 依存で実装されていない platform では skip / xfail マーク扱い。`pytest --collect-only` でテスト適用範囲を事前確認。
 
 <!-- diff-admonition -->
@@ -353,4 +353,4 @@ show mirror_session
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

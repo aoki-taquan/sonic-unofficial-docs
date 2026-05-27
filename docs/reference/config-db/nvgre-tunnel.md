@@ -278,7 +278,7 @@ sonic-db-cli ASIC_DB keys 'ASIC_STATE:SAI_OBJECT_TYPE_TUNNEL:*'
 ### 段階 2: CFG → APPL 翻訳
 
 - NvgreTunnelOrch がエントリを解析し APP_DB `TUNNEL_DECAP_TABLE` に書き込む (一部実装)。
-- 実装は VS/仮想 [ASIC](../../reference/glossary.md#term-asic) 向けが主体で、物理 [ASIC](../../reference/glossary.md#term-asic) サポートはベンダー依存。
+- 実装は [VS](../../reference/glossary.md#term-vs)/仮想 [ASIC](../../reference/glossary.md#term-asic) 向けが主体で、物理 [ASIC](../../reference/glossary.md#term-asic) サポートはベンダー依存。
 
 ### 段階 3: APPL → SAI
 
@@ -513,7 +513,7 @@ multi-asic 構成では orchagent が `asic0`/`asic1`/... ごとに独立起動�
 | SAI capability 事前照会 | なし |
 | multi-asic での挙動差 | なし（各 orchagent が同一処理） |
 | 非サポート ASIC での帰結 | orchagent abort（SAI 失敗 → runtime_error） |
-| VS (仮想 ASIC) | テスト (`test_nvgre_tunnel.py`) が VS 上で動作確認済み |
+| [VS](../../reference/glossary.md#term-vs) (仮想 ASIC) | テスト (`test_nvgre_tunnel.py`) が [VS](../../reference/glossary.md#term-vs) 上で動作確認済み |
 
 <!-- /platform -->
 
@@ -532,4 +532,4 @@ multi-asic 構成では orchagent が `asic0`/`asic1`/... ごとに独立起動�
 
 <!-- /handler-branching -->
 
-<!-- glossary-links-injected: 91a36a875109 -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

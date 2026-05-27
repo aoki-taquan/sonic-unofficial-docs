@@ -33,7 +33,7 @@ related:
 
 ## これは何か（一行で）
 
-[SAI](../reference/glossary.md#term-sai) が出す [WRED](../reference/glossary.md#term-wred) ドロップ / ECN マーク専用カウンタを Flex Counter で `COUNTERS_DB` に出し、`show queue wredcounters` および `show interfaces counters detailed` の拡張で見えるようにする[^1]。
+[SAI](../reference/glossary.md#term-sai) が出す [WRED](../reference/glossary.md#term-wred) ドロップ / [ECN](../reference/glossary.md#term-ecn) マーク専用カウンタを Flex Counter で `COUNTERS_DB` に出し、`show queue wredcounters` および `show interfaces counters detailed` の拡張で見えるようにする[^1]。
 
 ## どんなときに使うか
 
@@ -198,4 +198,4 @@ redis-cli -n 2 keys 'COUNTERS:*' | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 881c373e11ef -->
+<!-- glossary-links-injected: d17c6a828148 -->

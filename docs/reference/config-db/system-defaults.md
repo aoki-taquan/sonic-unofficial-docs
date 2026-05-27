@@ -474,7 +474,7 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 
 ### platform 別 SYSTEM_DEFAULTS エントリ一覧
 
-| エントリキー | Mellanox | Broadcom | KVM/VS | SmartSwitch DPU (Pensando hwsku) |
+| エントリキー | Mellanox | Broadcom | KVM/[VS](../../reference/glossary.md#term-vs) | SmartSwitch DPU (Pensando hwsku) |
 |---|---|---|---|---|
 | `mux_tunnel_egress_acl` | `enabled` | `disabled` | Dual-ToR ビルド次第 | Dual-ToR ビルド次第 |
 | `tunnel_qos_remap` | Gemini/Libra 構成時 `enabled`、それ以外不在 | 同左 | **常に不在** | — |
@@ -484,4 +484,4 @@ SYSTEM_DEFAULTS の処理順は 3 段階に整理できる:
 > **Evidence**: `sonic-buildimage/files/build_templates/init_cfg.json.j2:188-197`（SHA `9ea932ec2e18f35e58268ec2e4456b1d4afd65cd`）; `sonic-buildimage/src/sonic-config-engine/minigraph.py:2202-2215`; `sonic-buildimage/src/sonic-config-engine/config_samples.py:179-188`; `sonic-swss/orchagent/muxorch.cpp:1389-1393`; `sonic-swss/orchagent/aclorch.h:111-112`（SHA `4305596156d70e9797e8a881b3d19b46de0bce0d`）。詳細は `meta/_intermediate/cdb-flow/system-defaults-platform.md` を参照。
 <!-- /platform -->
 
-<!-- glossary-links-injected: 33e760a5e1b0 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

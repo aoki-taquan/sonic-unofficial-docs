@@ -40,7 +40,7 @@ related:
 
 [SONiC](../reference/glossary.md#term-sonic) の [QoS](../reference/glossary.md#term-qos) には **scheduling** と **shaping** の 2 軸がある[^1]:
 
-- **Scheduling**: egress queue への帯域配分。SP / WRR / [DWRR](../reference/glossary.md#term-dwrr) の 3 方式
+- **Scheduling**: egress queue への帯域配分。SP / [WRR](../reference/glossary.md#term-wrr) / [DWRR](../reference/glossary.md#term-dwrr) の 3 方式
 - **[Shaping](../reference/glossary.md#term-shaping)**: queue / port 単位の最大帯域（および queue では最小帯域）制限
 
 scheduler オブジェクトは **profile** 単位で定義し、queue または port にバインドする。[SAI](../reference/glossary.md#term-sai) レイヤでは `saischeduler.h` の `create_scheduler` / `set_scheduler_group_attribute` / `set_port_attribute` を使う[^1]。
@@ -186,4 +186,4 @@ show interfaces counters rates
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: cf7467e40bec -->

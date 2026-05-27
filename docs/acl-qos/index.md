@@ -16,8 +16,8 @@ last_verified: 2026-05-13
 - **ACL**: テーブル型、ingress / egress、ユーザ定義テーブル型、L3V4V6 統合、flex counter 化
 - **CoPP**: Manager 再設計、neighbor miss trap、enum capability query
 - **Mirror / Everflow**: SPAN / ERSPAN、egress mirror + action capability
-- **Buffer / PFC**: dynamic headroom、reclaim reserved buffer、PFC 履歴統計、[WRED](../reference/glossary.md#term-wred) / ECN
-- **QoS scheduler**: SP / WRR / [DWRR](../reference/glossary.md#term-dwrr)、min/max bandwidth、shaper
+- **Buffer / PFC**: dynamic headroom、reclaim reserved buffer、PFC 履歴統計、[WRED](../reference/glossary.md#term-wred) / [ECN](../reference/glossary.md#term-ecn)
+- **QoS scheduler**: SP / [WRR](../reference/glossary.md#term-wrr) / [DWRR](../reference/glossary.md#term-dwrr)、min/max bandwidth、shaper
 - **Watermark / Drop counter**: PG / queue 占有量、buffer drop、configurable drop counter
 
 ## この章の読み方
@@ -95,4 +95,4 @@ last_verified: 2026-05-13
 | [未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス](reclaim-reserved-buffer-sequence-flow.md) | code-verified |
 | [設定可能な Drop Counter（DEBUG_COUNTER と SAI debug counter）](configurable-drop-counters-in-sonic.md) | code-verified |
 
-<!-- glossary-links-injected: 58337c3c8df8 -->
+<!-- glossary-links-injected: b62afb596de5 -->

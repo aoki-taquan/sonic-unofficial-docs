@@ -46,7 +46,7 @@ flowchart LR
   Q2 --- Q3[Qemu VM<br>SONiC #3]
 ```
 
-GNS3 は Qemu/KVM を介して SONiC VS イメージを起動する。各ノードは GNS3 GUI 上でリンクを引いて接続する[^1]。
+GNS3 は Qemu/KVM を介して SONiC [VS](../reference/glossary.md#term-vs) イメージを起動する。各ノードは GNS3 GUI 上でリンクを引いて接続する[^1]。
 
 ### SONiC イメージ取得
 
@@ -174,4 +174,4 @@ ip -br link | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

@@ -394,7 +394,7 @@ CONFIG_DB NEIGH|<port>|<ip> SET
 | `DEVICE_METADATA.switch_type` | CONFIG_DB hget | `"voq"` 判定で NbrMgr の SYSTEM_NEIGH 購読を追加 |
 | `isChassisDbInUse()` (関数) | chassis DB 接続有無 | NeighOrch の CHASSIS_APP_DB 購読 / voqSync 有効化 |
 | `gMySwitchType` (グローバル変数) | orchagent 初期化時設定 | addNeighbor() での addVoqEncapIndex() 呼び出し判定 |
-| `ASIC_VENDOR` 環境変数 | `getenv("ASIC_VENDOR")` | VS platform 判定 (`VS_PLATFORM_SUBSTRING = "vs"`) |
+| `ASIC_VENDOR` 環境変数 | `getenv("ASIC_VENDOR")` | [VS](../../reference/glossary.md#term-vs) platform 判定 (`VS_PLATFORM_SUBSTRING = "vs"`) |
 
 > **Evidence**: `orch.h:45` (`VS_PLATFORM_SUBSTRING`), `nbrmgr.cpp:74-83`, `neighorch.cpp:22-23,28,51-57,1313`
 
@@ -476,10 +476,10 @@ vlan 型 inband ではこのガードはなく、ポート状態に依存せず�
 | inband 型 / platform | STATE_DB に書かれる MAC |
 |---------------------|------------------------|
 | `Port::VLAN` 型 inband | 元のリモート neighbor MAC（差し替えなし） |
-| `port` 型 inband (非 VS) | `gMacAddress`（スイッチ自身の MAC）に差し替え |
+| `port` 型 inband (非 [VS](../../reference/glossary.md#term-vs)) | `gMacAddress`（スイッチ自身の MAC）に差し替え |
 | `port` 型 inband + **`ASIC_VENDOR=vs`** | 元のリモート neighbor MAC（差し替えなし） |
 
-> VS platform では inband MAC が固定されていないため、実際の neighbor MAC を維持する必要がある。定数: `VS_PLATFORM_SUBSTRING = "vs"` (`orch.h:45`)。Evidence: `neighorch.cpp:2213-2217`
+> [VS](../../reference/glossary.md#term-vs) platform では inband MAC が固定されていないため、実際の neighbor MAC を維持する必要がある。定数: `VS_PLATFORM_SUBSTRING = "vs"` (`orch.h:45`)。Evidence: `neighorch.cpp:2213-2217`
 
 ---
 
@@ -667,4 +667,4 @@ NbrMgr nbrmgr(&cfgDb, &appDb, &stateDb, cfg_nbr_tables);
 ASIC への neighbor プログラムは `neighsyncd` が APPL_DB `NEIGH_TABLE` を経由して `neighorch` へ伝達する別経路で行われる。
 <!-- /runtime-trace -->
 
-<!-- glossary-links-injected: e24cef6e1a5e -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

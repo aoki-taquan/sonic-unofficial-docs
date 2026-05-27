@@ -553,7 +553,7 @@ if (gIsNatSupported) {
 |------------------------|---------------------|
 | NAT HW オフロード対応 [ASIC](../../reference/glossary.md#term-asic) | 反映される |
 | NAT 非対応 ASIC (SAI が `AVAILABLE_SNAT_ENTRY=0` を返す) | 黙殺 |
-| VS (virtual switch) | 反映される (`AVAILABLE_SNAT_ENTRY=100` を返す) |
+| [VS](../../reference/glossary.md#term-vs) (virtual switch) | 反映される (`AVAILABLE_SNAT_ENTRY=100` を返す) |
 
 ### `ipv6_use_link_local_only` — Mellanox/NVIDIA 専用 SAI プロファイルキー
 
@@ -586,7 +586,7 @@ if (port.m_type == Port::VLAN) {
 
 ### `mac_addr` — VS プラットフォームでの特例
 
-実 ASIC では orchagent が `mac_addr` 省略時に switch global MAC (`gMacAddress`) を SAI に設定する。VS (virtual switch) プラットフォーム (`ASIC_VENDOR=vs`) では、近傍プログラミング時に `gMacAddress` への置換をスキップし元の MAC を保持する特例がある（`neighorch.cpp:2213-2218`）。
+実 ASIC では orchagent が `mac_addr` 省略時に switch global MAC (`gMacAddress`) を SAI に設定する。[VS](../../reference/glossary.md#term-vs) (virtual switch) プラットフォーム (`ASIC_VENDOR=vs`) では、近傍プログラミング時に `gMacAddress` への置換をスキップし元の MAC を保持する特例がある（`neighorch.cpp:2213-2218`）。
 
 ### SAI 初期化ファイルによる RIF 上限差
 
@@ -758,4 +758,4 @@ YANG leafref を超えた他テーブル・他 DB・プラットフォームフ�
 
 <!-- /constants -->
 
-<!-- glossary-links-injected: 7ab64fed4f92 -->
+<!-- glossary-links-injected: 0af8863862be -->

@@ -24,7 +24,7 @@ related:
 
 ## 概要
 
-ポートの egress queue ごとに `SCHEDULER` (WRR/[DWRR](../../reference/glossary.md#term-dwrr)/STRICT) と `WRED_PROFILE` を割り当てる[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) queue scheduler / [WRED](../../reference/glossary.md#term-wred) を設定する。[VOQ](../../reference/glossary.md#term-voq) シャーシでは `QUEUE_LIST` ではなく `VOQ_QUEUE_LIST` を使う。
+ポートの egress queue ごとに `SCHEDULER` ([WRR](../../reference/glossary.md#term-wrr)/[DWRR](../../reference/glossary.md#term-dwrr)/STRICT) と `WRED_PROFILE` を割り当てる[^1]。`qosorch` が [SAI](../../reference/glossary.md#term-sai) queue scheduler / [WRED](../../reference/glossary.md#term-wred) を設定する。[VOQ](../../reference/glossary.md#term-voq) シャーシでは `QUEUE_LIST` ではなく `VOQ_QUEUE_LIST` を使う。
 
 <!-- cdb-mermaid -->
 ### データフロー (自動生成)
@@ -121,7 +121,7 @@ QUEUE|<hostname>|<asic_name>|<ifname>|<qindex>
 
 ### よくある誤設定
 
-- [PFC](../../reference/glossary.md#term-pfc) 対応 queue に `wred_profile` を当てて ECN を有効にしないと、輻輳時に [PFC](../../reference/glossary.md#term-pfc) が連続発火する。
+- [PFC](../../reference/glossary.md#term-pfc) 対応 queue に `wred_profile` を当てて [ECN](../../reference/glossary.md#term-ecn) を有効にしないと、輻輳時に [PFC](../../reference/glossary.md#term-pfc) が連続発火する。
 
 ### 確認コマンド
 
@@ -696,4 +696,4 @@ DPC ポートは q3/q4 も `"scheduler.0"` (lossless なし)。VOQ remote port �
 
 <!-- /constants -->
 
-<!-- glossary-links-injected: 103cf38cde92 -->
+<!-- glossary-links-injected: b62afb596de5 -->

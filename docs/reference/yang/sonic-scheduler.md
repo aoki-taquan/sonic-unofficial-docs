@@ -82,7 +82,7 @@ module: sonic-scheduler
 | leaf | パス | 型 | 必須 | デフォルト | enum / 範囲 / leafref | 説明 |
 |------|------|----|------|-----------|----------------------|------|
 | `name` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/name` | `string` | yes |  |  | [Scheduler](../../reference/glossary.md#term-scheduler) name |
-| `type` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/type` | `enumeration` |  | WRR | [DWRR](../../reference/glossary.md#term-dwrr), WRR, STRICT | Scheduling algorithm type |
+| `type` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/type` | `enumeration` |  | [WRR](../../reference/glossary.md#term-wrr) | [DWRR](../../reference/glossary.md#term-dwrr), [WRR](../../reference/glossary.md#term-wrr), STRICT | Scheduling algorithm type |
 | `weight` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/weight` | `uint8` |  | 1 | range 1..100 | Scheduling algorithm weight |
 | `priority` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/priority` | `uint8` |  |  | range 0..9 | [Scheduler](../../reference/glossary.md#term-scheduler) priority |
 | `meter_type` | `sonic-scheduler/SCHEDULER/SCHEDULER_LIST/meter_type` | `enumeration` |  | bytes | packets, bytes | Metering unit for shaping rates (packets or bytes). |
@@ -135,4 +135,4 @@ module: sonic-scheduler
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 012a493efd9b -->

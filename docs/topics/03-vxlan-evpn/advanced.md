@@ -125,7 +125,7 @@ Subnet decap は VXLAN overlay ではなく、[VLAN](../../reference/glossary.md
 
 ## 検証パスとラボ要件
 
-- KVM-based VS lab (`sonic-mgmt` ansible playbook 中の `vxlan-evpn` topology) で EVPN Type-2/3/5 の基本動作を再現できる。`virsh` で VTEP を 3 台立て、leaf-spine で `bgp l2vpn evpn` を運用する。
+- KVM-based [VS](../../reference/glossary.md#term-vs) lab (`sonic-mgmt` ansible playbook 中の `vxlan-evpn` topology) で EVPN Type-2/3/5 の基本動作を再現できる。`virsh` で VTEP を 3 台立て、leaf-spine で `bgp l2vpn evpn` を運用する。
 - DASH/SmartSwitch 系の検証は DPU sim (`sonic-dash-kvm` HLD 参照) を併用する。VNET tunnel と ENI redirect の責務分担を観察できる。
 
 ## 参照 HLD ページ
@@ -136,4 +136,4 @@ Subnet decap は VXLAN overlay ではなく、[VLAN](../../reference/glossary.md
 - [SONiC DASH HLD](../../overlay/sonic-dash-hld.md)
 - [VXLAN SONiC concepts/internals/operations](../../overlay/vxlan-sonic.md)
 
-<!-- glossary-links-injected: 7b27b638c4f3 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

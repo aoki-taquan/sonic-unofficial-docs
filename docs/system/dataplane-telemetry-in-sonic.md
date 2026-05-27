@@ -161,7 +161,7 @@ reasoning: DtelOrch の demux 動作と再起動時 replay の順序保証の根
 - 専用 CLI が無く、redis-cli / SwSS SDK / euclid から設定
 - INT sink port / queue report は **物理ポートのみ**
 - vendor SAI で DTel 全機能をサポートする必要がある
-- v0.2 と古いため、新しい INT / IFA 系の上書き仕様には未対応の可能性
+- v0.2 と古いため、新しい INT / [IFA](../reference/glossary.md#term-ifa) 系の上書き仕様には未対応の可能性
 
 ## 干渉する機能
 
@@ -190,4 +190,4 @@ reasoning: DtelOrch の demux 動作と再起動時 replay の順序保証の根
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: fad4d220bc71 -->

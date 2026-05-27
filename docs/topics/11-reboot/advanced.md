@@ -89,7 +89,7 @@ reboot 前に BGP / BFD を drain する手順は `reliable-tsa` (Traffic Shift 
 
 ## 検証パスとラボ要件
 
-- VS lab で warm reboot を再現するときは、`docker exec swss supervisorctl restart all` ではなく `sonic-installer` 経由の本物 warm reboot path を `pretest_warm_reboot.sh` で実行する。[orchagent](../../reference/glossary.md#term-orchagent) reconciliation 動作が VS でも観察可能。
+- [VS](../../reference/glossary.md#term-vs) lab で warm reboot を再現するときは、`docker exec swss supervisorctl restart all` ではなく `sonic-installer` 経由の本物 warm reboot path を `pretest_warm_reboot.sh` で実行する。[orchagent](../../reference/glossary.md#term-orchagent) reconciliation 動作が VS でも観察可能。
 - chassis 級は `sonic-mgmt` の `chassis_reboot` test suite が CHASSIS_APP_DB の `module_state` 遷移を assertion している。
 
 ## 関連ページ
@@ -112,4 +112,4 @@ reboot 前に BGP / BFD を drain する手順は `reliable-tsa` (Traffic Shift 
 - [02 BGP: graceful restart / LLGR と warm reboot の整合](../02-bgp/index.md)
 - [15 Security / AAA: secure upgrade と signed image](../15-security-aaa/index.md)
 
-<!-- glossary-links-injected: 5c9b3765d470 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

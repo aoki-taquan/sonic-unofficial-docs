@@ -128,8 +128,8 @@ VoQ モードでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PACKE
 
 | フィールド | 説明 |
 |---------|------|
-| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | ECN マーキングパケット数 |
-| `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | ECN マーキングバイト数 |
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | [ECN](../../reference/glossary.md#term-ecn) マーキングパケット数 |
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | [ECN](../../reference/glossary.md#term-ecn) マーキングバイト数 |
 | `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` | [WRED](../../reference/glossary.md#term-wred) ドロップパケット数 |
 | `SAI_QUEUE_STAT_WRED_DROPPED_BYTES` | [WRED](../../reference/glossary.md#term-wred) ドロップバイト数 |
 
@@ -291,7 +291,7 @@ supervisor による orchagent 自動再起動後に再試行される。SAI ド
 
 `isPortStatSupported()` (`portsorch.cpp:664-680`) が `sai_query_stats_capability` で WRED stat サポートを確認できない場合（`SAI_STATUS_SUCCESS` 以外）、`return false` を返して WRED 統計を silent に非登録にする。エラーログは出力されない。
 
-[ASIC](../../reference/glossary.md#term-asic) が WRED/ECN 統計をサポートしない環境では `FLEX_COUNTER_TABLE|WRED_ECN_QUEUE = enable` にしても COUNTERS_DB に WRED フィールドが現れない。`counterpoll show` の STATUS が enable に見えても実カウンタは常にゼロになる。
+[ASIC](../../reference/glossary.md#term-asic) が WRED/[ECN](../../reference/glossary.md#term-ecn) 統計をサポートしない環境では `FLEX_COUNTER_TABLE|WRED_ECN_QUEUE = enable` にしても COUNTERS_DB に WRED フィールドが現れない。`counterpoll show` の STATUS が enable に見えても実カウンタは常にゼロになる。
 
 ### Redis 接続断 — orchagent クラッシュ
 
@@ -677,4 +677,4 @@ sonic-db-cli COUNTERS_DB hgetall "COUNTERS:<OID>"
 
 [^6]: portsorch.cpp:8525, 8754, 8819, 8886, 8941, 9099 — Queue / PG マッピング書き込み・削除関数での `CounterCheckOrch::getInstance().addPort()` / `removePort()` 呼び出し。`countercheckorch.cpp:43-50` の 5 分タイマーで `mcCounterCheck()` と `pfcFrameCounterCheck()` を実行。
 
-<!-- glossary-links-injected: e7b8356788d9 -->
+<!-- glossary-links-injected: 7071347b3cf9 -->

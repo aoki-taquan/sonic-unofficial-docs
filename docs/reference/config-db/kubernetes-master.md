@@ -342,7 +342,7 @@ INCLUDE_KUBERNETES_MASTER ?= n
 | `INCLUDE_KUBERNETES_MASTER=n`（デフォルト） | kubelet / kubeadm 未インストール。join は常に失敗し JOIN_RETRY が継続する |
 | `INCLUDE_KUBERNETES_MASTER=y` | kubelet / kubeadm インストール済み。`ip` / `disable` 設定後に join 可能 |
 
-CI ビルド (`azure-pipelines-build.yml:148`) では VS (Virtual Switch) イメージのみ `y` でビルドしており、`broadcom` / `mellanox` 等のプラットフォームでは一般に `n` が使われる（ベンダー判断依存）。
+CI ビルド (`azure-pipelines-build.yml:148`) では [VS](../../reference/glossary.md#term-vs) (Virtual Switch) イメージのみ `y` でビルドしており、`broadcom` / `mellanox` 等のプラットフォームでは一般に `n` が使われる（ベンダー判断依存）。
 
 ### `worker.sonic/platform` ラベルへの platform 文字列設定 (ctrmgrd.py:304-305)
 
@@ -356,7 +356,7 @@ labels["worker.sonic/platform"] = platform if platform is not None else ""
 | 環境 | `get_platform()` の返り値 | `worker.sonic/platform` ラベル値 |
 |------|--------------------------|----------------------------------|
 | 実機（例: `x86_64-grub`） | プラットフォームディレクトリ名文字列 | そのまま送信 |
-| VS (Virtual Switch) / UNIT_TESTING | `None` または `""` の場合あり | 空文字列 `""` に置換 |
+| [VS](../../reference/glossary.md#term-vs) (Virtual Switch) / UNIT_TESTING | `None` または `""` の場合あり | 空文字列 `""` に置換 |
 
 この値は Kubernetes API Server への K8s ラベルとして送信されるだけで、ctrmgrd のローカル動作（join / reset / retry タイマー）には影響しない。`hwsku` ラベル (`ctrmgrd.py:302`) も同様に機種依存文字列だが処理ロジックへの影響はない。
 
@@ -558,4 +558,4 @@ show kube server config
 - `kubemgrd` が Kubernetes 接続状態を CONFIG_DB と同期
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 37ccd09dcbd2 -->
+<!-- glossary-links-injected: 0af8863862be -->

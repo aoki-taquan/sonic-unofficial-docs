@@ -154,7 +154,7 @@ sequenceDiagram
 
 ## 4. vslib / VS test
 
-vslib は `SAI_SWITCH_ATTR_ACL_STAGE_{INGRESS,EGRESS}` をサポートし、**「全 action を supported として返す」** 案を採用（device 別 emulation は保守性が悪い）[^1]。VS テスト追加:
+vslib は `SAI_SWITCH_ATTR_ACL_STAGE_{INGRESS,EGRESS}` をサポートし、**「全 action を supported として返す」** 案を採用（device 別 emulation は保守性が悪い）[^1]。[VS](../reference/glossary.md#term-vs) テスト追加:
 
 - ingress / egress テーブル × ingress / egress mirror ルールの全組合せ作成検査
 - `setReadOnlyAttribute` で `SAI_SWITCH_ATTR_ACL_STAGE_*` を上書き → orchagent 再起動 → 未対応 action ルールが [ASIC_DB](../reference/glossary.md#term-asic_db) に出ないこと
@@ -214,4 +214,4 @@ master（2026-05 時点）での裏取り結果:
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

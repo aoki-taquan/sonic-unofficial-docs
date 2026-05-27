@@ -65,10 +65,11 @@ STOPLIST: set[str] = {
 # require an explicit allow-list.  Anything not listed here that is <= 3 chars
 # (e.g. "VS") is skipped.
 ALLOW_SHORT: set[str] = {
-    "AAA", "ACL", "ARP", "BFD", "BGP", "CRM", "DPB", "DPU",
-    "FDB", "FPM", "FRR", "GCU", "HLD", "INT", "LAG", "MUX",
-    "NAT", "NDP", "NPU", "PFC", "RIF", "QoS", "SAI", "TAM",
-    "VRF", "VOQ", "WRED", "ZTP", "ENI", "MPLS",
+    "AAA", "ACL", "AQM", "ARP", "BFD", "BGP", "CRM", "DPB", "DPU",
+    "ECN", "ENI", "ETS", "FDB", "FPM", "FRR", "GCU", "HLD", "IFA",
+    "INT", "LAG", "MMU", "MPLS", "MUX", "NAT", "NDP", "NPU", "PFC",
+    "QoS", "RIF", "SAI", "TAM", "ToS", "VRF", "VOQ", "VS",
+    "WRED", "WRR", "ZTP",
 }
 
 

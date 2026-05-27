@@ -365,7 +365,7 @@ APPL_DB `VRF_TABLE` への SET/DEL は、`orchagent` 内の `VRFOrch` (`vrforch.
 <!-- platform -->
 ## プラットフォーム / SAI Capability 差異 (Phase H)
 
-APPL_DB `VRF_TABLE` のスキーマ自体はプラットフォーム共通だが、`VRFOrch::addOperation` が SAI Virtual Router に渡す拡張属性 4 種 (`src_mac` / `ttl_action` / `ip_opt_action` / `l3_mc_action`) は SAI 任意属性であり、[ASIC](../../reference/glossary.md#term-asic) SAI 実装と VS/VPP シムで挙動が異なる。さらに `vni != 0` の L3 VNI マッピングは [EVPN](../../reference/glossary.md#term-evpn) VTEP 事前作成を必須とする。
+APPL_DB `VRF_TABLE` のスキーマ自体はプラットフォーム共通だが、`VRFOrch::addOperation` が SAI Virtual Router に渡す拡張属性 4 種 (`src_mac` / `ttl_action` / `ip_opt_action` / `l3_mc_action`) は SAI 任意属性であり、[ASIC](../../reference/glossary.md#term-asic) SAI 実装と [VS](../../reference/glossary.md#term-vs)/VPP シムで挙動が異なる。さらに `vni != 0` の L3 VNI マッピングは [EVPN](../../reference/glossary.md#term-evpn) VTEP 事前作成を必須とする。
 
 ### VRF / VNET capability 4 属性
 
@@ -373,10 +373,10 @@ APPL_DB `VRF_TABLE` のスキーマ自体はプラットフォーム共通だが
 
 | APPL_DB フィールド | SAI 属性 | 実装状況 |
 |--------------------|---------|---------|
-| `src_mac` | `SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS` | 主要 ASIC 必須属性。VS / VPP も受理 (no-op) |
+| `src_mac` | `SAI_VIRTUAL_ROUTER_ATTR_SRC_MAC_ADDRESS` | 主要 ASIC 必須属性。[VS](../../reference/glossary.md#term-vs) / VPP も受理 (no-op) |
 | `ttl_action` | `SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_TTL1_PACKET_ACTION` | SAI 任意。Broadcom / Mellanox / Cisco silicon-one OK。古い SDK / VPP は `NOT_SUPPORTED` の可能性 |
 | `ip_opt_action` | `SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_IP_OPTIONS_PACKET_ACTION` | 同上 |
-| `l3_mc_action` | `SAI_VIRTUAL_ROUTER_ATTR_UNKNOWN_L3_MULTICAST_PACKET_ACTION` | L3 マルチキャスト未対応 ASIC / VS / VPP では `NOT_SUPPORTED` の可能性 |
+| `l3_mc_action` | `SAI_VIRTUAL_ROUTER_ATTR_UNKNOWN_L3_MULTICAST_PACKET_ACTION` | L3 マルチキャスト未対応 ASIC / [VS](../../reference/glossary.md#term-vs) / VPP では `NOT_SUPPORTED` の可能性 |
 
 YANG `sonic-vrf.yang` には 4 属性のいずれも定義がない（`vni` / `fallback` / `description` のみ）ため、`config vrf add` 経由では書き込まれない。`VNET` テーブル経由で `vnetorch` が APPL_DB `VRF_TABLE` を直書きする非標準経路でのみ capability 差が顕在化する。
 
@@ -523,4 +523,4 @@ APPL_DB `VRF_TABLE` は YANG 未モデル化のオペレーショナルテーブ
 - [APPL_DB ROUTE_TABLE](./app-route.md)
 - [HLD: VRF サポート](../../routing/sonic-vrf-support-design-spec-draft.md)
 
-<!-- glossary-links-injected: 89d665cbcf68 -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

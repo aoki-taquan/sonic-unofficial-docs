@@ -170,7 +170,7 @@ show fgnhg active-hops
 |----------|--------|------|
 | `SAI_NEXT_HOP_GROUP_ATTR_TYPE` | `SAI_NEXT_HOP_GROUP_TYPE_FINE_GRAIN_ECMP` | NHG 作成時に固定設定。通常 ECMP とは別コードパス |
 | `SAI_NEXT_HOP_GROUP_ATTR_CONFIGURED_SIZE` | `bucket_size` | [CONFIG_DB](../../reference/glossary.md#term-config_db) の `bucket_size` をそのまま渡す |
-| `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` | ハードウェア返却値 | VS プラットフォーム以外で SAI get により実バケット数を確認。VS では `configured_bucket_size` を `real_bucket_size` として使用（TODO コメントあり） |
+| `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` | ハードウェア返却値 | [VS](../../reference/glossary.md#term-vs) プラットフォーム以外で SAI get により実バケット数を確認。[VS](../../reference/glossary.md#term-vs) では `configured_bucket_size` を `real_bucket_size` として使用（TODO コメントあり） |
 
 ### SAI next-hop group メンバ属性
 
@@ -706,7 +706,7 @@ else
 
 | プラットフォーム | `real_bucket_size` 決定方法 | SAI クエリ失敗時 |
 |---|---|---|
-| VS (`platform=vs`) | `configured_bucket_size`（CONFIG_DB の `bucket_size` 値）をそのまま使用 | クエリなし（スキップ） |
+| [VS](../../reference/glossary.md#term-vs) (`platform=vs`) | `configured_bucket_size`（CONFIG_DB の `bucket_size` 値）をそのまま使用 | クエリなし（スキップ） |
 | 実 [ASIC](../../reference/glossary.md#term-asic) (Broadcom / Mellanox 等) | SAI `SAI_NEXT_HOP_GROUP_ATTR_REAL_SIZE` クエリ結果を使用 | NHG ロールバック後 `return false`（作成失敗） |
 
 !!! note "VS 環境での注意"
@@ -755,4 +755,4 @@ FgNhgOrch のコードには [VOQ](../../reference/glossary.md#term-voq) (Virtua
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: d9f5bb08c70f -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

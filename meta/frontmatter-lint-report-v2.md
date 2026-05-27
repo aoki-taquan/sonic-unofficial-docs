@@ -2,7 +2,14 @@
 
 - Scanned: 1104 files
 - Hard violations: 0 files
-- Warnings (path liveness): 0 files
-- Path liveness check: skipped (no .cache/sonic-sources)
+- Warnings (path liveness): 2 files
+- Path liveness check: enabled
 
-All checks pass.
+## Warnings (do not fail build)
+
+### `docs/reference/config-db/dot1x.md`
+- h: source path not found in cache: sonic-net/sonic-buildimage doc/pac/Port Access Control.md
+
+### `docs/reference/runbooks/smartswitch-dpu-image-install-failure.md`
+- h: source path not found in cache: sonic-net/sonic-utilities scripts/sonic-installer
+

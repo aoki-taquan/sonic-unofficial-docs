@@ -96,8 +96,8 @@ VoQ システムでは追加フィールド `SAI_QUEUE_STAT_CREDIT_WD_DELETED_PA
 
 | COUNTERS:<oid> フィールド | 説明 |
 |--------------------------|------|
-| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | [WRED](../../reference/glossary.md#term-wred) ECN マーキングパケット数 |
-| `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | [WRED](../../reference/glossary.md#term-wred) ECN マーキングバイト数 |
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` | [WRED](../../reference/glossary.md#term-wred) [ECN](../../reference/glossary.md#term-ecn) マーキングパケット数 |
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_BYTES` | [WRED](../../reference/glossary.md#term-wred) [ECN](../../reference/glossary.md#term-ecn) マーキングバイト数 |
 | `SAI_QUEUE_STAT_WRED_DROPPED_PACKETS` | WRED ドロップパケット数 |
 | `SAI_QUEUE_STAT_WRED_DROPPED_BYTES` | WRED ドロップバイト数 |
 
@@ -542,7 +542,7 @@ QUEUE カウンタの有効化ロジックは `gMySwitchType` によって分岐
 
 | SAI ケイパビリティ | 登録されるカウンタ |
 |------------------|-----------------|
-| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` 対応 | `COUNTERS_DB:QUEUE_COUNTER_CAPABILITY_TABLE\|WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` が書かれ、WRED ECN パケットカウンタが FlexCounter に登録される |
+| `SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS` 対応 | `COUNTERS_DB:QUEUE_COUNTER_CAPABILITY_TABLE\|WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` が書かれ、WRED [ECN](../../reference/glossary.md#term-ecn) パケットカウンタが FlexCounter に登録される |
 | 非対応 / SAI GET 失敗 | `SWSS_LOG_NOTICE("Queue stat capability get failed...")` のみ記録。WRED カウンタは FlexCounter に追加されない |
 
 ### VoQ システム固有の OID キー形式
@@ -585,4 +585,4 @@ VOQ モードでは `COUNTERS_QUEUE_NAME_MAP` のキー形式が通常と異な�
 
 [^5]: `sonic-swss/orchagent/portsorch.cpp:6583-6598,8391-8443,8700-8755` / `sonic-swss/orchagent/flexcounterorch.cpp:127-136,156-167,247-252,544-554` — 書込み順序依存・タイミング依存の実装根拠。<https://github.com/sonic-net/sonic-swss/blob/4305596156d7/orchagent/flexcounterorch.cpp>
 
-<!-- glossary-links-injected: 6851583676b8 -->
+<!-- glossary-links-injected: 7071347b3cf9 -->

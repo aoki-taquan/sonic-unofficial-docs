@@ -523,7 +523,7 @@ broadcom-dnx では PFCWD テーブルが switch 単位バインドになり、C
 |------------|-----------|-------------|
 | ingress/egress action list | `SAI_SWITCH_ATTR_ACL_STAGE_INGRESS` / `..._EGRESS` の `aclcapability` | `initDefaultAclActionCapabilities(stage)` が組み込みデフォルト値を使用 |
 | `is_action_list_mandatory` | 同上 | false 扱い（mandatory action 自動付与なし） |
-| META_DATA 系 | `sai_query_attribute_capability()` (VS のみ固定 true) | 未実装 → `ACL_TABLE_TYPE` の `META_DATA` match / action が SAI に反映されない可能性あり |
+| META_DATA 系 | `sai_query_attribute_capability()` ([VS](../../reference/glossary.md#term-vs) のみ固定 true) | 未実装 → `ACL_TABLE_TYPE` の `META_DATA` match / action が SAI に反映されない可能性あり |
 
 capability 結果は `STATE_DB` の `ACL_STAGE_CAPABILITY_TABLE|{INGRESS,EGRESS}` に記録される (`aclorch.cpp:4056-4101`)。
 
@@ -566,4 +566,4 @@ capability 結果は `STATE_DB` の `ACL_STAGE_CAPABILITY_TABLE|{INGRESS,EGRESS}
 [^1]: テーブル定義は `sonic-buildimage/src/sonic-yang-models/yang-templates/sonic-acl.yang.j2` (sha `9ea932ec`) L354-388 (`ACL_TABLE_TYPE` コンテナ) より。処理ロジックは `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) L752-895 (`AclTableTypeParser`)、L4912-4942 (`addAclTableType`/`removeAclTableType`)、L5740-5773 (`doAclTableTypeTask`)、L3724 (`initDefaultTableTypes`) より。フィールド定数は `orchagent/acltable.h` L18-20 より。
 [^2]: 副作用の調査は `sonic-swss/orchagent/aclorch.cpp` (sha `43055961`) `doAclTableTypeTask()` L5738-5774、`addAclTableType()` L4912-4930、`removeAclTableType()` L4932-4948、`doAclTableTask()` L5432 (`getAclTableType()` による retry 制御) より。STATE_DB テーブル名は `sonic-swss-common/common/schema.h` L418/514/515 より。
 
-<!-- glossary-links-injected: 994156b26b07 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

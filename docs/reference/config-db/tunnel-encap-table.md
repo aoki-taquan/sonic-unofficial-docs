@@ -413,7 +413,7 @@ entries[i].overlay_if_oid = gUnderlayIfId;
 | プラットフォーム | 状況 |
 |----------------|------|
 | Broadcom (BRCM SAI) | 対応（`neighbor_id = encap_dst_ip` の事前生成が必要） |
-| VS / VPP (libsaivs / libsaivpp) | create_tunnels が `SAI_STATUS_SUCCESS` を返すがハードウェア転送なし。CI / テスト専用 |
+| [VS](../../reference/glossary.md#term-vs) / VPP (libsaivs / libsaivpp) | create_tunnels が `SAI_STATUS_SUCCESS` を返すがハードウェア転送なし。CI / テスト専用 |
 | その他 [ASIC](../../reference/glossary.md#term-asic) | SAI 実装次第。`SAI_STATUS_NOT_SUPPORTED` 返却時は `SWSS_LOG_ERROR` のみでロールバック不可 |
 
 ### SAI Bulk モード固定
@@ -440,4 +440,4 @@ entries[i].overlay_if_oid = gUnderlayIfId;
 [^4]: `createGreTunnels()` overlay_if / neighbor_id: `gre_tunnel_manager.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/gre_tunnel_manager.cpp#L400-L425>
 [^5]: P4Orch マネージャ ADD 優先順位 (`m_p4ManagerAddPrecedence`): `p4orch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/4305596156d70e9797e8a881b3d19b46de0bce0d/orchagent/p4orch/p4orch.cpp#L88-L102>
 
-<!-- glossary-links-injected: 5ffd2d685877 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

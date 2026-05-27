@@ -174,6 +174,6 @@ ASIC_DB:
 - `BUFFER_PROFILE` の共有は同一の dimensions（speed / cable / mtu）でのみ。CLI から無理に異なる name を作っても SAI 側 reuse は効かない。
 - reclaim は port admin-down → admin-up の cycle で**毎回 profile 再計算が走る**ため、port flap が多い環境で buffermgrd の CPU を消費する。
 - PFC watchdog は queue 単位の statistical detection で、瞬間的な burst にも反応する設計。`detection_time` / `restoration_time` のチューニングが必要。
-- WRED / ECN の閾値は ASIC で粒度（cell vs byte）が違い、`SAI_WRED_ATTR_*` の単位解釈が SDK ベンダごとに分かれる。
+- WRED / [ECN](../../reference/glossary.md#term-ecn) の閾値は ASIC で粒度（cell vs byte）が違い、`SAI_WRED_ATTR_*` の単位解釈が SDK ベンダごとに分かれる。
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: d17c6a828148 -->

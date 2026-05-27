@@ -173,7 +173,7 @@ syncd は起動時に `sai_query_attribute_capability` を呼び、各 SAI objec
 error: 'sai_query_attribute_capability' method is missing from libsai.so
 ```
 
-対処: ベンダ SAI のヘッダ・実装が最新 SAI spec に追従していることを確認する。VS ビルドでは `sai_query_attribute_capability` のスタブ実装が必要な場合がある。
+対処: ベンダ SAI のヘッダ・実装が最新 SAI spec に追従していることを確認する。[VS](../../reference/glossary.md#term-vs) ビルドでは `sai_query_attribute_capability` のスタブ実装が必要な場合がある。
 
 ## 関連ページ
 
@@ -187,4 +187,4 @@ error: 'sai_query_attribute_capability' method is missing from libsai.so
 - [dump utility（モジュール単位で複数 DB から関連 key を集約する debug CLI）](../../internals/dump-utility-for-easy-debugging.md)
 - [SAI 失敗時の dump 取得（syncd_dump.sh / SAI_REDIS_NOTIFY_SYNCD_INVOKE_DUMP）](../../platform/dump-on-sai-failure.md)
 
-<!-- glossary-links-injected: 4ac0f29322c4 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

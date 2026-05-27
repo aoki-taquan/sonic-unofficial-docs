@@ -949,7 +949,7 @@ if (status == SAI_STATUS_SUCCESS)
 |-----------------|-------------|--------------------------|
 | Broadcom 等物理 ASIC | 成功 (255 以上が多い) | `SAI 値 - 1` (デフォルト STP インスタンスを除く) |
 | 一部 Marvell / 低グレード ASIC | 成功 (値が少ない) | `SAI 値 - 1`。STP_VLAN 有効化数が制限される |
-| VS (仮想スイッチ) | 失敗または 0 返却 | `STP_DEFAULT_MAX_INSTANCES` = 255 (フォールバック)[^2] |
+| [VS](../../reference/glossary.md#term-vs) (仮想スイッチ) | 失敗または 0 返却 | `STP_DEFAULT_MAX_INSTANCES` = 255 (フォールバック)[^2] |
 
 ### C. ebtables PVST マルチキャストフィルタ
 
@@ -963,7 +963,7 @@ PVST モード有効化時に `stpmgr` は Cisco PVST+ マルチキャストア�
 ```
 
 - **物理 ASIC (Broadcom / Mellanox 等)**: ebtables が有効なため PVST マルチキャストが適切に遮断される。
-- **VS (仮想スイッチ)**: `ebtables` バイナリが存在しない場合は `system()` が失敗し `SWSS_LOG_DEBUG` のみ出力される。PVST マルチキャストの遮断は機能しないが、VS 環境ではハードウェアフラッディングがないため実害なし。
+- **[VS](../../reference/glossary.md#term-vs) (仮想スイッチ)**: `ebtables` バイナリが存在しない場合は `system()` が失敗し `SWSS_LOG_DEBUG` のみ出力される。PVST マルチキャストの遮断は機能しないが、[VS](../../reference/glossary.md#term-vs) 環境ではハードウェアフラッディングがないため実害なし。
 - **[SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu)**: [DPU](../../reference/glossary.md#term-dpu) 側では `stpmgrd` は通常起動しないため非適用。
 
 ### プラットフォーム差異要約
@@ -1005,4 +1005,4 @@ PVST モード有効化時に `stpmgr` は Cisco PVST+ マルチキャストア�
 - [CONFIG_DB: VLAN](vlan.md)
 - [CONFIG_DB: PORT](port.md)
 
-<!-- glossary-links-injected: 07d24e4e47ef -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

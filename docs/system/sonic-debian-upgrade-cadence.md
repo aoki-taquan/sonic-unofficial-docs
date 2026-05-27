@@ -67,7 +67,7 @@ gantt
 | 新 Azure pipeline 設定 | 2 日 |
 | Kernel 更新 (`sonic-linux-kernel`) | 1.5 週 |
 | `slave.mk` 改修 | 1 日 |
-| VS image build (module disable 込み) | 2.5 週 |
+| [VS](../reference/glossary.md#term-vs) image build (module disable 込み) | 2.5 週 |
 | 各 platform module / Python の更新 | 6 週 |
 | VS の TODO 解消 | 2-3 週（並列）|
 | Kernel 安定化と全 image 動作確認 | 1 週 |
@@ -207,4 +207,4 @@ show version
 - 廃止された Debian バージョンと release ノート整合確認
 -->
 
-<!-- glossary-links-injected: 0e972d0bdf59 -->
+<!-- glossary-links-injected: 9fb3fca99a59 -->

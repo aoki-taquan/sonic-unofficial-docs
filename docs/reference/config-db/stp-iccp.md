@@ -668,7 +668,7 @@ static const unordered_set<string> supported {
 | プラットフォーム | 経路 | DB 書き込み先 | 方式 |
 |----------------|------|-------------|------|
 | Broadcom / Barefoot / Centec / Clounix / Marvell-Prestera / Marvell-Teralynx | 経路 A | `APPL_DB ISOLATION_GROUP_TABLE\|MCLAG_ISO_GRP` | Isolation Group |
-| Mellanox / VS / その他（ホワイトリスト外） | 経路 B | `APPL_DB ACL_TABLE_TABLE\|mclag` + `ACL_RULE_TABLE\|mclag:mclag` | [ACL](../../reference/glossary.md#term-acl) ベース |
+| Mellanox / [VS](../../reference/glossary.md#term-vs) / その他（ホワイトリスト外） | 経路 B | `APPL_DB ACL_TABLE_TABLE\|mclag` + `ACL_RULE_TABLE\|mclag:mclag` | [ACL](../../reference/glossary.md#term-acl) ベース |
 
 **経路 A（Isolation Group）の特徴**:
 - `MEMBERS` に `Ethernet` プレフィックスのインターフェースは除外し PortChannel のみ含める（`mclaglink.cpp:258-261`）
@@ -693,12 +693,12 @@ static const unordered_set<string> supported {
 
 | 環境 | 挙動 |
 |------|------|
-| VS（仮想スイッチ）| platform がホワイトリスト外のため **ACL 方式** にフォールバック。STP ロール決定ロジック自体は物理 [ASIC](../../reference/glossary.md#term-asic) と同一 |
+| [VS](../../reference/glossary.md#term-vs)（仮想スイッチ）| platform がホワイトリスト外のため **ACL 方式** にフォールバック。STP ロール決定ロジック自体は物理 [ASIC](../../reference/glossary.md#term-asic) と同一 |
 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) | `docker-iccpd` は [DPU](../../reference/glossary.md#term-dpu) 上では起動しないため STP/ICCP 連携は非適用。[SmartSwitch](../../reference/glossary.md#term-smartswitch) [NPU](../../reference/glossary.md#term-npu) 側では通常動作 |
 
 ### プラットフォーム差異要約
 
-| 観点 | Broadcom / Barefoot / Centec / Clounix / Marvell | Mellanox / VS / その他 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) |
+| 観点 | Broadcom / Barefoot / Centec / Clounix / Marvell | Mellanox / [VS](../../reference/glossary.md#term-vs) / その他 | [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) |
 |------|--------------------------------------------------|----------------------|-----------------|
 | ポート隔離方式 | Isolation Group (`APPL_DB`) | ACL テーブル/ルール (`APPL_DB`) | N/A（非起動） |
 | STP ロール決定 | IP 数値比較（共通） | IP 数値比較（共通） | N/A |
@@ -728,4 +728,4 @@ static const unordered_set<string> supported {
 - [CONFIG_DB: MCLAG_DOMAIN](mclag-domain.md)
 - [CONFIG_DB: PORTCHANNEL](portchannel.md)
 
-<!-- glossary-links-injected: f4b4be230bca -->
+<!-- glossary-links-injected: ca6bc30b1f0e -->

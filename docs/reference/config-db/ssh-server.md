@@ -529,7 +529,7 @@ FIPS モードが有効なビルドでは `sonic-buildimage/rules/sonic-fips.mk`
 | 構成 | 動作 |
 |------|------|
 | ベアメタル | 標準 |
-| VS (Virtual Switch) | 同一。`SshServer` / `PamLimitsCfg` に VS 固有ブランチなし |
+| [VS](../../reference/glossary.md#term-vs) (Virtual Switch) | 同一。`SshServer` / `PamLimitsCfg` に [VS](../../reference/glossary.md#term-vs) 固有ブランチなし |
 | multi-[ASIC](../../reference/glossary.md#term-asic) | 同一。hostcfgd は CONFIG_DB 接続 1 本のみ使用。namespace 分割なし |
 
 <!-- evidence: sonic-host-services/scripts/hostcfgd:101-103 (DEFAULT_FIPS_RESTART_SERVICES) -->
@@ -540,4 +540,4 @@ FIPS モードが有効なビルドでは `sonic-buildimage/rules/sonic-fips.mk`
 <!-- evidence: sonic-buildimage/src/sonic-yang-models/yang-models/sonic-ssh-server.yang:77-132 (cipher/kex/mac enum) -->
 <!-- /platform -->
 
-<!-- glossary-links-injected: 874f822400fb -->
+<!-- glossary-links-injected: 0af8863862be -->

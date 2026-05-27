@@ -38,13 +38,6 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: パケット分類・許可/拒否・ミラー/カウンタ等を行う機能。SONiC では `aclorch` が CONFIG_DB の `ACL_TABLE` / `ACL_RULE` を SAI ACL に変換する。
 - **関連**: [ACL/CoPP/Mirror トピック](../topics/07-acl-copp-mirror/index.md)
 
-### AF_XDP {#term-af-xdp}
-
-- **略称**: AF_XDP (Address Family eXpress Data Path)
-- **日本語訳**: AF_XDP
-- **説明**: Linux カーネルの XDP を用いた高速パケットソケット。SONiC では一部の DPU / vs プラットフォームで NPU バイパス用途に利用される。
-- **関連**: [DPDK](#term-dpdk)
-
 ### AQM {#term-aqm}
 
 - **略称**: AQM (Active Queue Management)
@@ -101,13 +94,6 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: 双方向フォワーディング検出
 - **説明**: 高速な対向疎通検出プロトコル (RFC 5880)。SONiC では `bfdorch` / `bfd_offload` 等で扱う。
 - **関連**: [BFD HLD ページ群](../routing/index.md)
-
-### BFM {#term-bfm}
-
-- **略称**: BFM (Buffer Flow Model / Buffer Function Model)
-- **日本語訳**: バッファ機能モデル
-- **説明**: スイッチ ASIC 内のバッファ／キュー振る舞いを抽象化したモデル。SONiC では `bufferorch` / `BUFFER_PROFILE` を介して MMU の Ingress/Egress バッファプールやしきい値を構成し、ベンダー SAI 実装が ASIC 固有 BFM にマップする。
-- **関連**: [Buffer Model](#term-buffer-model)、[MMU](#term-mmu)
 
 ### BGP {#term-bgp}
 
@@ -309,7 +295,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: Egress Queue
 - **日本語訳**: 送信キュー
 - **説明**: 各物理ポートの送信側に存在する優先度別キュー (通常 8 本)。SAI Queue オブジェクトとしてモデル化され、`QUEUE` テーブルでスケジューラ / WRED プロファイルが結び付けられる。COUNTERS_DB に PG / queue 単位の統計が定期収集される。
-- **関連**: [Per-port Queue](#term-per-port-queue)、[QoS](#term-qos)、[Buffer Pool](#term-buffer-pool)
+- **関連**: [QoS](#term-qos)、[Buffer Pool](#term-buffer-pool)
 
 ### ENI {#term-eni}
 
@@ -385,7 +371,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: FPGA (Field Programmable Gate Array)
 - **日本語訳**: フィールドプログラマブルゲートアレイ
 - **説明**: 再構成可能な論理回路デバイス。一部 SONiC 対応プラットフォームでは光モジュール制御 / Retimer / リファレンス NIC のデータパスに FPGA が搭載され、`pmon` 配下のプラットフォームドライバが SysFS / I2C 経由で制御する。
-- **関連**: [NPU](#term-npu)、[NIC ASIC](#term-nic-asic)
+- **関連**: [NPU](#term-npu)
 
 ### FPM {#term-fpm}
 
@@ -485,21 +471,6 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: インバンドネットワークテレメトリ
 - **説明**: データパケットにテレメトリメタデータを埋め込む計測手法 (P4.org 仕様)。SONiC では TAM / DASH / PINS の一部で扱われる。
 
-### INT-XD {#term-int-xd}
-
-- **略称**: INT-XD (INT eXport Data)
-- **日本語訳**: INT エクスポートデータモード
-- **説明**: INT 仕様におけるモードの 1 つで、パケットには変更を加えずスイッチがテレメトリ情報を別途コレクタへエクスポートする方式 (INT-MD / INT-MX と並ぶモード)。SONiC では TAM IFA / Postcard 系実装の根拠仕様として参照される。
-- **関連**: [INT](#term-int)、[IFA](#term-ifa)、[TAM](#term-tam)
-
-### Ingress Port Group {#term-ingress-port-group}
-
-- **略称**: PG (Priority Group)
-- **日本語訳**: 入力プライオリティグループ
-- **説明**: 各物理ポート受信側で優先度ごとに割り当てられるバッファ管理単位 (通常 8 個)。SONiC では `BUFFER_PG` テーブルでサイズ / xon / xoff / プロファイルを設定し、PFC のヘッドルーム計算と直結する。COUNTERS_DB に PG ドロップ統計が記録される。
-- **関連**: [PFC](#term-pfc)、[Headroom](#term-headroom)、[Buffer Pool](#term-buffer-pool)
-- **関連**: [TAM](#term-tam)、[PINS](#term-pins)
-
 ### intfmgrd {#term-intfmgrd}
 
 - **略称**: intfmgrd
@@ -548,13 +519,6 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: LAG (Link Aggregation Group) / PortChannel
 - **日本語訳**: リンク集約 / ポートチャネル
 - **説明**: 複数物理ポートを 1 論理リンクに束ねる機能。CONFIG_DB では `PORTCHANNEL` テーブルで表現。
-
-### Leaky Bucket {#term-leaky-bucket}
-
-- **略称**: Leaky Bucket
-- **日本語訳**: リーキーバケット
-- **説明**: 一定速度でトークンが「漏れる」モデルで送出レートを平滑化する古典的アルゴリズム。Shaping (整形) で用いられ、バースト許容のない厳格な平均レート制御に適する。SONiC では SAI Policer / Scheduler 実装の内部アルゴリズムとして、ベンダー ASIC が Token Bucket と組み合わせて採用する。
-- **関連**: [Token Bucket](#term-token-bucket)、[Shaper](#term-shaper)、[Policer](#term-policer)
 
 ### linkmgrd {#term-linkmgrd}
 
@@ -609,7 +573,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: MMU (Memory Management Unit)
 - **日本語訳**: ASIC メモリ管理ユニット
 - **説明**: スイッチ ASIC 内のパケットバッファ管理ブロック。Ingress / Egress バッファプール、PG / Queue 単位の閾値、admission control を担当する。SONiC では `bufferorch` が SAI Buffer Pool / Profile API を通じて MMU を構成する。
-- **関連**: [Buffer Pool](#term-buffer-pool)、[Buffer Model](#term-buffer-model)、[BFM](#term-bfm)
+- **関連**: [Buffer Pool](#term-buffer-pool)、[Buffer Model](#term-buffer-model)
 
 ### MUX {#term-mux}
 
@@ -682,20 +646,6 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: IPv6 のリンクローカル隣接探索プロトコル (RFC 4861)。SONiC では Linux カーネルが処理し、`neighsyncd` 経由で APPL_DB の `NEIGH_TABLE` に反映される。
 - **関連**: [ARP](#term-arp)、[neighsyncd](#term-neighsyncd)
 
-### NIC ASIC {#term-nic-asic}
-
-- **略称**: NIC ASIC
-- **日本語訳**: NIC ASIC
-- **説明**: サーバ／DPU 上の高機能 NIC を構成する ASIC。SmartSwitch / DASH 構成では NIC ASIC 側で ENI / 暗号化 / フローオフロードを処理する。SONiC では DPU 側インスタンスが SAI で NIC ASIC を抽象化する。
-- **関連**: [DPU](#term-dpu)、[SmartNIC](#term-smartnic)、[SAI](#term-sai)
-
-### NPL {#term-npl}
-
-- **略称**: NPL (Network Programming Language)
-- **日本語訳**: ネットワークプログラミング言語
-- **説明**: Broadcom 系プログラマブル ASIC (Trident4 等) 向けの高位記述言語。P4 と類似のデータプレーン記述用 DSL で、ASIC SDK / SAI 実装の下回りでパイプライン定義に用いられる。
-- **関連**: [P4-Runtime](#term-p4-runtime)、[ASIC SDK](#term-asic-sdk)
-
 ### NPU {#term-npu}
 
 - **略称**: NPU (Network Processing Unit)
@@ -731,13 +681,6 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: PFC ストーム
 - **説明**: 受信側 NIC やスイッチが PFC PAUSE フレームを継続的に送出し続け、上流リンクが慢性的に停止してしまう障害状態。RoCEv2 環境で typified に発生する。SONiC では `pfcwd` が連続 PAUSE をキュー単位で検出してドレインモードに遷移させ、ネットワーク全体への波及を抑止する。
 - **関連**: [PFC Watchdog](#term-pfc-watchdog)、[PFC](#term-pfc)、[RoCE](#term-roce)
-
-### Per-port Queue {#term-per-port-queue}
-
-- **略称**: Per-port Queue
-- **日本語訳**: ポート単位キュー
-- **説明**: 各物理ポートごとに割り当てられた送信キュー集合 (通常 8 本)。SONiC では `QUEUE|<port>|<index>` 形式で CONFIG_DB / APPL_DB に表現され、`SCHEDULER` / `WRED_PROFILE` がポート単位で適用される。VOQ アーキテクチャの ASIC ではキュー粒度がさらに細分化される。
-- **関連**: [Egress Queue](#term-egress-queue)、[VOQ](#term-voq)、[QoS](#term-qos)
 
 ### PG (Priority Group) {#term-pg}
 
@@ -833,13 +776,6 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: QoS
 - **説明**: `TC_TO_QUEUE_MAP` / `DSCP_TO_TC_MAP` / `SCHEDULER` 等で構成される SONiC のキューイング・スケジューリング・マーキング機構。
 
-### QSGMII {#term-qsgmii}
-
-- **略称**: QSGMII (Quad Serial Gigabit Media Independent Interface)
-- **日本語訳**: QSGMII
-- **説明**: 1 本の SerDes レーンに 4 ポート分の 1G イーサネットを多重化する SGMII の拡張規格。SONiC では管理ポートや低速フロントパネルポートを持つ一部プラットフォームの `port_config.ini` / `platform.json` で speed/lanes 設定に現れる。
-- **関連**: [SerDes](#term-serdes)、[port_config.ini](#term-port-config-ini)
-
 ## R
 
 ### RoCE {#term-roce}
@@ -889,13 +825,6 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: 旧来の運用監視プロトコル (RFC 3416)。SONiC では `docker-snmp` 内で Net-SNMP + `sonic_ax_impl` AgentX サブエージェントが Redis から MIB を提供する。
 - **関連**: [Tech Support](#term-tech-support)
 
-### SRAM {#term-sram}
-
-- **略称**: SRAM (Static Random Access Memory)
-- **日本語訳**: 静的 RAM
-- **説明**: スイッチ ASIC 内蔵の高速メモリ。MAC テーブル・LPM ルートテーブル・カウンタ等の格納に使われる。TCAM とは異なり exact-match 索引が中心。SONiC では資源使用量が CRM 経由で `fdb_entry` / `ipv4_route` / `ipv6_route` 等として可視化される。
-- **関連**: [TCAM](#term-tcam)、[CRM](#term-crm)、[MAC Table](#term-mac-table)
-
 ### SRv6 {#term-srv6}
 
 - **略称**: SRv6 (Segment Routing over IPv6)
@@ -915,7 +844,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: SerDes (Serializer/Deserializer)
 - **日本語訳**: SerDes
 - **説明**: 高速シリアルレーンと並列バスを変換する ASIC 内ブロック。レーン速度 (例: 56G PAM4 / 112G PAM4) によりフロントパネルポート速度が決まる。SONiC では `port_config.ini` / `platform.json` の lanes 設定と、ベンダー固有 `media_settings.json` / Tx FIR チューニングが SerDes パラメータを供給する。
-- **関連**: [port_config.ini](#term-port-config-ini)、[QSGMII](#term-qsgmii)
+- **関連**: [port_config.ini](#term-port-config-ini)
 
 ### sFlow Agent {#term-sflow-agent}
 
@@ -974,13 +903,6 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **説明**: `config` / `show` / `sonic-installer` 等の Python CLI が置かれるリポ。
 - **関連**: [CLI Reference](./cli/index.md)
 
-### saiserver {#term-saiserver}
-
-- **略称**: saiserver
-- **日本語訳**: SAI サーバ
-- **説明**: SAI 呼び出しを Thrift RPC で外部に公開するテスト用バイナリ (`sonic-sairedis/saiserver`)。`PTF` ベースの SAI 単体試験で利用される。`docker-saiserver` で配布。
-- **関連**: [SAI](#term-sai)、[VS](#term-vs)
-
 ### Scheduler {#term-scheduler}
 
 - **略称**: Scheduler
@@ -993,7 +915,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: Shaper
 - **日本語訳**: シェイパー
 - **説明**: 送信レートに上限を設けて超過分をキューイングし、均された速度で送出する QoS 機構。SONiC では `SCHEDULER` テーブルの `pir` / `meter_type` で表現し、SAI Scheduler の `max_bandwidth_*` 属性として実装される。
-- **関連**: [Shaping](#term-shaping)、[Scheduler](#term-scheduler)、[Leaky Bucket](#term-leaky-bucket)
+- **関連**: [Shaping](#term-shaping)、[Scheduler](#term-scheduler)
 
 ### Shaping {#term-shaping}
 
@@ -1014,7 +936,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: SmartNIC
 - **日本語訳**: SmartNIC
 - **説明**: プログラマブルなデータパス／オフロード機能を持つ高機能 NIC の総称。Dual-ToR の MUX 機構や DASH の DPU 側など、SONiC の周辺アーキテクチャで参照される。
-- **関連**: [DPU](#term-dpu)、[NIC ASIC](#term-nic-asic)、[MUX](#term-mux)
+- **関連**: [DPU](#term-dpu)、[MUX](#term-mux)
 
 ### SmartSwitch {#term-smartswitch}
 
@@ -1088,7 +1010,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: TCAM (Ternary Content Addressable Memory)
 - **日本語訳**: 三値連想メモリ
 - **説明**: ワイルドカード付きパケット分類を 1 サイクルで実行できる特殊メモリ。ACL ルール / LPM ルート / PBR / Mirror セッションのマッチ部に使われ、容量が ASIC の上限要因となりやすい。SONiC では CRM が ACL TCAM 使用量を `acl_table` / `acl_group` / `acl_entry` などとして監視する。
-- **関連**: [ACL](#term-acl)、[CRM](#term-crm)、[SRAM](#term-sram)
+- **関連**: [ACL](#term-acl)、[CRM](#term-crm)
 
 ### Tech Support {#term-tech-support}
 
@@ -1108,7 +1030,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: Token Bucket
 - **日本語訳**: トークンバケット
 - **説明**: 一定速度でトークンを生成し、パケット送信時にバケットからトークンを消費するレート制御アルゴリズム。バケット容量分のバーストを許容しつつ平均レートを保証する。SONiC の Policer / Shaper の CIR / CBS / PIR / PBS は Token Bucket パラメータに対応し、RFC 2697 srTCM / RFC 2698 trTCM のメータリングを表現する。
-- **関連**: [Leaky Bucket](#term-leaky-bucket)、[Policer](#term-policer)、[Shaper](#term-shaper)
+- **関連**: [Policer](#term-policer)、[Shaper](#term-shaper)
 
 ### ToS {#term-tos}
 
@@ -1144,7 +1066,7 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **略称**: VS (Virtual Switch)
 - **日本語訳**: 仮想スイッチ
 - **説明**: SAI VS バックエンドを用いた SONiC のソフトウェアスイッチ実装 (`docker-sonic-vs`)。CI 上の機能試験・KVM ベースの開発環境 (`sonic-mgmt-vs`) で利用される。
-- **関連**: [saiserver](#term-saiserver)、[sonic-mgmt](#term-sonic-mgmt)
+- **関連**: [sonic-mgmt](#term-sonic-mgmt)
 
 ### VLAN {#term-vlan}
 
@@ -1239,12 +1161,6 @@ SONiC NOS で頻出する固有用語・略語・コンポーネント名・デ�
 - **日本語訳**: YANG
 - **説明**: RFC 7950 のモデリング言語。SONiC は `sonic-yang-models` で CONFIG_DB スキーマを YANG 化している。
 - **関連**: [YANG Reference](./yang/index.md)
-
-### yang-validator {#term-yang-validator}
-
-- **略称**: yang-validator
-- **日本語訳**: YANG バリデータ
-- **説明**: `sonic-yang-mgmt` が提供する Python ライブラリ。CONFIG_DB の内容が YANG スキーマに合致するか検証する。
 
 ## Z
 

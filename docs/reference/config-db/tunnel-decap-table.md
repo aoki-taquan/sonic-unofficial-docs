@@ -49,8 +49,8 @@ APPL_DB:   TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip>   # 終端 IP の管�
 | `src_ip` | IPv4 アドレス | トンネル送信元 IP |
 | `dst_ip` | IPv4 アドレスのカンマ区切りリスト | 終端 IP 群（`TUNNEL_DECAP_TERM_TABLE` で個別管理） |
 | `dscp_mode` | string `uniform`/`pipe` | [DSCP](../../reference/glossary.md#term-dscp) 継承 |
-| `ecn_mode` | string `copy_from_outer`/`standard` | ECN モード（create-only） |
-| `encap_ecn_mode` | string `standard` | カプセル時 ECN |
+| `ecn_mode` | string `copy_from_outer`/`standard` | [ECN](../../reference/glossary.md#term-ecn) モード（create-only） |
+| `encap_ecn_mode` | string `standard` | カプセル時 [ECN](../../reference/glossary.md#term-ecn) |
 | `ttl_mode` | string `uniform`/`pipe` | TTL モード |
 | `decap_dscp_to_tc_map` | string | [DSCP](../../reference/glossary.md#term-dscp)→TC マップ名（OID 解決） |
 | `decap_tc_to_pg_map` | string | TC→PG マップ名 |
@@ -98,7 +98,7 @@ APPL_DB:   TUNNEL_DECAP_TERM_TABLE:<tunnel_name>:<dst_ip>   # 終端 IP の管�
 | `dscp_mode` | `uniform` | 外側 DSCP を内側にコピー |
 | `dscp_mode` | `pipe` | 内側 DSCP を保持 |
 | `dscp_mode` | 上記以外 | LOG_ERROR してエントリをスキップ |
-| `ecn_mode` | `copy_from_outer` | 外側 ECN を内側にコピー |
+| `ecn_mode` | `copy_from_outer` | 外側 [ECN](../../reference/glossary.md#term-ecn) を内側にコピー |
 | `ecn_mode` | `standard` | RFC 6040 ECN 処理 |
 | `encap_ecn_mode` | `standard` 以外 | LOG_ERROR して拒否 |
 | `ecn_mode` | 作成後に変更 | SAI create-only 属性のため変更スキップ (WARN ログ) |
@@ -560,4 +560,4 @@ SAI `create_tunnel()` / `create_tunnel_term_table_entry()` 成功後、`stateTun
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: da83a21dfcb6 -->
+<!-- glossary-links-injected: 7071347b3cf9 -->

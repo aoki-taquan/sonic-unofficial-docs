@@ -138,7 +138,7 @@ flowchart LR
 ### 典型的な利用シーン
 
 - ポート別 queue 占有・dropped packets の確認。
-- [WRED](../../reference/glossary.md#term-wred) / ECN マークの効果検証。
+- [WRED](../../reference/glossary.md#term-wred) / [ECN](../../reference/glossary.md#term-ecn) マークの効果検証。
 
 ### よくある落とし穴
 
@@ -167,4 +167,4 @@ show queue persistent-watermark all
 
 <!-- /cli-sibling -->
 
-<!-- glossary-links-injected: bda56a5a95c2 -->
+<!-- glossary-links-injected: d17c6a828148 -->

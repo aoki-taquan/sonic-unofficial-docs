@@ -37,7 +37,7 @@ related:
 
 `STATE_DB` の `QUEUE_COUNTER_CAPABILITIES` テーブルは、`sonic-swss` の `portsorch` が [orchagent](../../reference/glossary.md#term-orchagent) 起動時に [SAI](../../reference/glossary.md#term-sai) ケイパビリティクエリ（`sai_query_stats_capability`）を実行した結果を書き込む読み取り専用テーブルである[^1]。
 
-書き込まれるフィールドは [WRED](../../reference/glossary.md#term-wred)/ECN キューカウンタ 4 種のサポート可否フラグ（`isSupported: "true"/"false"`）のみ。`wredstat` スクリプトおよび `portstat.py` がこのフラグを参照して、未サポートの [ASIC](../../reference/glossary.md#term-asic) では [COUNTERS_DB](../../reference/glossary.md#term-counters_db) から対応フィールドを除外する。
+書き込まれるフィールドは [WRED](../../reference/glossary.md#term-wred)/[ECN](../../reference/glossary.md#term-ecn) キューカウンタ 4 種のサポート可否フラグ（`isSupported: "true"/"false"`）のみ。`wredstat` スクリプトおよび `portstat.py` がこのフラグを参照して、未サポートの [ASIC](../../reference/glossary.md#term-asic) では [COUNTERS_DB](../../reference/glossary.md#term-counters_db) から対応フィールドを除外する。
 
 !!! note "CONFIG_DB との関係"
     `QUEUE_COUNTER_CAPABILITIES` は STATE_DB の**読み取り専用**テーブルであり、CONFIG_DB には対応する設定テーブルが存在しない。WRED/ECN カウンタの有効化は `FLEX_COUNTER_TABLE|WRED_ECN_QUEUE` の `FLEX_COUNTER_STATUS` で行うが、ASIC が対応していない場合はフラグが `"false"` のまま残る。
@@ -64,7 +64,7 @@ QUEUE_COUNTER_CAPABILITIES|<capability_name>
 
 | フィールド | 型 | 書込み主体 | デフォルト | 説明 |
 |-----------|----|-----------|-----------|------|
-| `isSupported` | boolean string | `portsorch` (initCounterCapabilities) | `"false"` | [ASIC](../../reference/glossary.md#term-asic) が当該 [WRED](../../reference/glossary.md#term-wred)/ECN カウンタをサポートする場合 `"true"`、未サポートの場合 `"false"` |
+| `isSupported` | boolean string | `portsorch` (initCounterCapabilities) | `"false"` | [ASIC](../../reference/glossary.md#term-asic) が当該 [WRED](../../reference/glossary.md#term-wred)/[ECN](../../reference/glossary.md#term-ecn) カウンタをサポートする場合 `"true"`、未サポートの場合 `"false"` |
 
 ## 書き込みロジック詳細
 
@@ -111,7 +111,7 @@ if (SAI_QUEUE_STAT_WRED_ECN_MARKED_PACKETS == queue_stats_capability.list[it].st
 
 ### 補足
 
-- **全デフォルトは `"false"`**: [ASIC](../../reference/glossary.md#term-asic) が [WRED](../../reference/glossary.md#term-wred)/ECN 統計をまったくサポートしない環境では、4 フィールド全てが `"false"` のままとなる。`wredstat` は N/A を表示し、counterpoll の WRED_ECN_QUEUE を `enable` にしても [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に対応フィールドが現れない（silent non-addition）。
+- **全デフォルトは `"false"`**: [ASIC](../../reference/glossary.md#term-asic) が [WRED](../../reference/glossary.md#term-wred)/[ECN](../../reference/glossary.md#term-ecn) 統計をまったくサポートしない環境では、4 フィールド全てが `"false"` のままとなる。`wredstat` は N/A を表示し、counterpoll の WRED_ECN_QUEUE を `enable` にしても [COUNTERS_DB](../../reference/glossary.md#term-counters_db) に対応フィールドが現れない（silent non-addition）。
 - **[orchagent](../../reference/glossary.md#term-orchagent) 再起動でリセット**: `initCounterCapabilities()` は起動のたびに実行される。ただし `sai_query_stats_capability()` の結果が一貫しているため、再起動ごとに同じフラグが書き込まれる。
 - **部分サポートあり**: ECN マーキングのみサポートし WRED ドロップはサポートしない ASIC の場合、`WRED_ECN_QUEUE_ECN_MARKED_PKT_COUNTER` / `WRED_ECN_QUEUE_ECN_MARKED_BYTE_COUNTER` のみ `"true"` となる（独立したフラグ）。
 - **`PORT_COUNTER_CAPABILITIES` との対称性**: 同じ `initCounterCapabilities()` 内でポート側の `PORT_COUNTER_CAPABILITIES` テーブルも同様のパターンで書き込まれる。ポート側は `SAI_OBJECT_TYPE_PORT` でクエリする。
@@ -444,4 +444,4 @@ wredstat
 
 <!-- /ops-hint -->
 
-<!-- glossary-links-injected: d888931b5354 -->
+<!-- glossary-links-injected: 7071347b3cf9 -->

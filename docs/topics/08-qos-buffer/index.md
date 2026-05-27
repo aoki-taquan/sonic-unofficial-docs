@@ -94,7 +94,7 @@ related:
 ## この章で答える質問
 
 - Buffer pool / profile / PG / queue はどのテーブルから読み始めるのか。
-- [WRED](../../reference/glossary.md#term-wred) / ECN、scheduler / shaper、PFC、watermark はどこで交わるのか。
+- [WRED](../../reference/glossary.md#term-wred) / [ECN](../../reference/glossary.md#term-ecn)、scheduler / shaper、PFC、watermark はどこで交わるのか。
 - Reclaim reserved buffer と dynamic headroom は何の問題を解決しているのか。
 - `show buffer`、`show queue`、`show priority-group`、`show pfc` は何を見せてくれるのか。
 - 輻輳で困ったとき、どの順番で観測コマンドを叩けばよいのか。
@@ -183,4 +183,4 @@ related:
 - [L2 / VLAN / LAG / MC-LAG](../06-l2-vlan-lag/index.md)
 - [Multi-ASIC / VOQ Chassis](../12-multi-asic-voq/index.md)
 
-<!-- glossary-links-injected: ec18b66e3507 -->
+<!-- glossary-links-injected: d17c6a828148 -->
