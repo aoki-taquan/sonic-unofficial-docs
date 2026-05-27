@@ -1,6 +1,6 @@
 ---
 title: NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI）
-description: "NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI） — SONiC は Linux kernel の conntrack/iptables を真実源 として、ハードウェア NAT エンジン（SAI NAT API）にエントリを同期する 2 段構成を採る。設計上の役割分担:"
+description: "NAT in SONiC（natsyncd / NatOrch / iptables ↔ SAI） — Linux kernel の conntrack/iptables を真実源としてハードウェア NAT エンジン（SAI NAT API）にエントリを同期する natsyncd / NatOrch の 2 段構成を解説する。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10

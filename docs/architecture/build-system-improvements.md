@@ -1,7 +1,6 @@
 ---
 title: ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離）
-description: 'ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離） — 本 HLD
-  は主に第 2 段階に焦点を当て、4 つの最適化を提案する:'
+description: 'ビルド時間最適化（Dockerfile レイヤ削減 / BuildKit / 並列 dh / sairedis 分離） — Dockerfile レイヤ最適化・BuildKit キャッシュ活用・並列 dh_make・sairedis 分離ビルドの 4 手法で SONiC のビルド時間を大幅に短縮する設計。'
 area: architecture
 verification: code-verified
 last_verified: 2026-05-09

@@ -1,6 +1,6 @@
 ---
 title: Packet Trimming（symmetric / asymmetric DSCP / ACL disable）
-description: "Packet Trimming（symmetric / asymmetric DSCP / ACL disable） — Packet Trimming（PT）はバッファ枯渇で drop されるはずの大きな packet を、L2 + L3/L4 ヘッダ + 先頭 payload N bytes だけ残して NIC（…"
+description: "Packet Trimming（symmetric / asymmetric DSCP / ACL disable） — バッファ枯渇で破棄される大きなパケットを L2/L3/L4 ヘッダ＋先頭 N バイトに切り詰めて NIC へ転送することで、輻輳検知とデバッグを両立する SONiC の機能。"
 area: architecture
 verification: code-verified
 last_verified: 2026-05-11

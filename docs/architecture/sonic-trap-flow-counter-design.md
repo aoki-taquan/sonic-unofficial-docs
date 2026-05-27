@@ -1,7 +1,6 @@
 ---
 title: Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計）
-description: Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計） — ホストインタフェース
-  trap（CoPP で ASIC から CPU へ punt されるパケット種別。
+description: Trap Flow Counter（Host I/F Trap 単位の Generic Counter 集計） — CoPP で ASIC から CPU へ punt されるパケット種別ごとに Generic Counter を用いてトラフィック統計を収集・可視化する SONiC の機能。
 area: architecture
 verification: code-verified
 last_verified: 2026-05-10

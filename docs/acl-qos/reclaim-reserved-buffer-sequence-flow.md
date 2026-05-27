@@ -1,8 +1,6 @@
 ---
 title: 未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス
-description: 未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス — SONiC のバッファ管理は buffer
-  pool / profile / PG / queue で構成され、各ポートに priority group (PG) と queue ごとの 予約バッファ（reserved
-  +…
+description: 未使用ポートの予約バッファ回収（reclaim reserved buffer）シーケンス — SONiC のバッファ管理は buffer pool / profile / PG / queue で構成され、未使用ポートの予約バッファを動的に解放することでハードウェアリソースを最適化する。
 area: acl-qos
 verification: code-verified
 last_verified: 2026-05-09

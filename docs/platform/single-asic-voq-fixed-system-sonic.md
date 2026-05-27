@@ -1,8 +1,6 @@
 ---
 title: 単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐）
-description: 単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐） — VoQ（Virtual
-  Output Queue）アーキテクチャはこれまで マルチ ASIC のシャーシシステム でのみ前提とされ、Chassis DB（chassisdb.conf
-  の有無で識別され…
+description: 単一 ASIC VoQ 固定システム（chassisdb.conf による is_voq_chassis 分岐） — これまでマルチ ASIC シャーシ専用だった VoQ アーキテクチャを、chassisdb.conf の is_voq_chassis フラグで単一 ASIC 固定システムでも有効化できるようにした設計。
 area: platform
 verification: code-verified
 last_verified: 2026-05-09
