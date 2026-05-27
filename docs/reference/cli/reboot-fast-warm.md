@@ -1,7 +1,6 @@
 ---
 title: reboot / fast-reboot / warm-reboot コマンド
-description: 'reboot / fast-reboot / warm-reboot コマンド — SONiC の再起動コマンドは Click ベースではなく
-  bash スクリプト として実装されており、sonic-utilities/scripts/ 配下に置かれる。本ページは以下の 3 系統を一括して扱う:'
+description: 'reboot / fast-reboot / warm-reboot コマンド — SONiC の再起動コマンドは Click ベースではなく bash スクリプトとして実装されており、通常再起動・データプレーン高速再起動・コントロールプレーン無停止再起動の 3 系統を sonic-utilities/scripts/ 配下に提供する。'
 area: reference
 verification: code-verified
 last_verified: 2026-05-09
