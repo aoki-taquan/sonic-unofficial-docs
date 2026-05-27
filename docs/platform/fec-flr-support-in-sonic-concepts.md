@@ -139,6 +139,10 @@ docker exec swss head -50 /usr/share/swss/port_flr.lua
 サポートしていない可能性が高い。S0..S16 のうち 1 つでも非ゼロが出ていれば
 概念ページの計算式が回っている。
 
+## 実装との乖離
+
+`monitor: evolved_beyond_hld` — `monitor: evolved_beyond_hld` の HLD と実装の差分。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ [FEC FLR 概念 親ページ](fec-flr-support-in-sonic.md) の同セクション（`## 実装との乖離` または `!!! diff` ブロック）を参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port_fec_flr/port_fec_flr.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

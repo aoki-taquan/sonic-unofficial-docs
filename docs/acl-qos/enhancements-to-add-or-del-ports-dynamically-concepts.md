@@ -113,6 +113,10 @@ sequenceDiagram
 
 `portmgrd` 経由で APP_DB から削除し、portsorch が SAI port + host i/f を削除する。state-db のクリーンアップは host i/f の netlink 削除イベント受領後に portsyncd が行う[^1]。
 
+## 実装との乖離
+
+`monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child のため、差分の主要根拠 / 影響 / 回避策は親ページ [動的ポート add/del 概念 親ページ](enhancements-to-add-or-del-ports-dynamically.md) の同セクション（`## 実装との乖離` または `!!! diff` ブロック）を参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/port-add-del-dynamically/dynamic_port_add_del_hld.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

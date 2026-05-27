@@ -115,6 +115,10 @@ elif vendor_name == 'Arista' and re.match(ARISTA_ENHANCED_LPO, vendor_pn):
 - **CmisApi / CCmisApi**: 同階層の sibling
 - **vendor 個別 PN マッチ**: vendor が増えるほど factory 分岐が増える
 
+## 実装との乖離
+
+`monitor: not_implemented` — 未実装 — HLD 提案がコードベース master に取り込まれていない、または主要パスが欠落している。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/cmis-lpo-enhancement/cmis-lpo-enhancement.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/cmis-lpo-enhancement/cmis-lpo-enhancement.md)

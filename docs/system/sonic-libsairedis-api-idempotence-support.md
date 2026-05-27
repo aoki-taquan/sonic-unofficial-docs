@@ -170,6 +170,10 @@ libsai / SDK 起動時に作る default object（例: default switch）に orcha
     - [GitHub Issue / PR の関連リンクは未確認] — warm restart 用 OID キャッシュ / duplicate 抑止は [sonic-sairedis](../reference/glossary.md#term-sonic-sairedis) 内部リファクタとして散発的に取り込まれており、HLD と直接紐づくトラッキング Issue / PR は確認できず。
 <!-- /diff-admonition -->
 
+## 実装との乖離
+
+`monitor: deprecated` — `monitor: deprecated` の HLD と実装の差分。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
+
 ## 引用元
 
 [^1]: [sonic-net/SONiC doc/warm-reboot/sai_redis_api_idempotence.md @ 49bab5b](https://github.com/sonic-net/SONiC/blob/49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06/doc/warm-reboot/sai_redis_api_idempotence.md)

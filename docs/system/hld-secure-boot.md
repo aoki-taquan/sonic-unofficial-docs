@@ -238,6 +238,10 @@ sudo tpm2_pcrread sha256:0,1,2,3,7
 - MOK 鍵入れ替え後は `mokutil --import` → 再起動 → MOK Manager での承認が必須。承認漏れで初回起動失敗する事例が多い。
 - ベンダー BIOS の DB / DBX 更新により以前のイメージが起動拒否される場合がある。新旧イメージで Secure Boot を切り替える運用は避ける。
 
+## 実装との乖離
+
+`monitor: evolved_beyond_hld` — `monitor: evolved_beyond_hld` の HLD と実装の差分。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/secure_boot/hld_secure_boot.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

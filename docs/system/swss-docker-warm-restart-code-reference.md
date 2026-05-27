@@ -226,6 +226,10 @@ docker logs swss 2>&1 | grep -iE 'warm|restoration|reconcile' | tail -40
 - `STATE_DB` の `WARM_RESTART_TABLE|<app>` が `reconciled` に遷移しないアプリケーションを特定し、該当 syncd のログを優先確認。
 - 同一ホスト上で swss と syncd の warm-restart タイミングがずれると [ASIC](../reference/glossary.md#term-asic) 上の stale エントリが残る。`docker exec syncd ls /var/warmboot/` の checkpoint ファイル mtime で順序を確認。
 
+## 実装との乖離
+
+`monitor: evolved_beyond_hld` — `monitor: evolved_beyond_hld` の HLD と実装の差分。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/warm-reboot/code_implementation.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

@@ -127,6 +127,10 @@ reasoning: 影響範囲を CLI と CONFIG_DB に閉じる設計と既定モー�
 - HLD と実装の乖離: [switch-port-modes-and-vlan-cli-discrepancy](switch-port-modes-and-vlan-cli-discrepancy.md)
 - CONFIG_DB: [PORT](../reference/config-db/port.md) / [PORTCHANNEL](../reference/config-db/portchannel.md) / [VLAN_MEMBER](../reference/config-db/vlan-member.md)
 
+## 実装との乖離
+
+`monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページは split-child。差分の根拠 / 影響 / 回避策は親ページの同セクションを参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vlan/switchport-mode-support/Switchport Mode and VLAN CLI Enhancement.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

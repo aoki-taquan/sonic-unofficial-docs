@@ -197,6 +197,10 @@ docker exec bgp vtysh -c 'show evpn vni'
 - Topics: [VXLAN/EVPN 概念](../topics/03-vxlan-evpn/concept.md), [VXLAN/EVPN 構築](../topics/03-vxlan-evpn/setup.md), [VXLAN/EVPN 内部実装](../topics/03-vxlan-evpn/internals.md), [VXLAN/EVPN 運用](../topics/03-vxlan-evpn/operations.md)
 - 関連 HLD: [EVPN VXLAN Multihoming](evpn-vxlan-multihoming.md), [Overlay ECMP with BFD Monitoring](overlay-ecmp-with-bfd-monitoring.md)
 
+## 実装との乖離
+
+`monitor: evolved_beyond_hld` — `monitor: evolved_beyond_hld` の HLD と実装の差分。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/vxlan/EVPN/EVPN_VXLAN_HLD.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`

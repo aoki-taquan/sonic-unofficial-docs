@@ -186,6 +186,10 @@ ls -l /dev/ttyUSB* /dev/ttyS*
     凡例: 「実装済」=現行 master で動作確認できる範囲 / 「未実装」=HLD には記載があるが対応 PR が未マージまたは設計のみで code が存在しない範囲。
 <!-- /phase-boundary -->
 
+## 実装との乖離
+
+`monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/console/SONiC-Console-Switch-High-Level-Design.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
@@ -236,8 +240,6 @@ ls -l /dev/ttyUSB* /dev/ttyS*
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c4cccaa7fc71 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -261,4 +263,4 @@ ls -l /dev/ttyUSB* /dev/ttyS*
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: db62d2100cef -->
+<!-- glossary-links-injected: c4cccaa7fc71 -->

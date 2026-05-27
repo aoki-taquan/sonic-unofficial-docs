@@ -297,6 +297,10 @@ sudo grep -iE 'tacacs|pam_tacplus' /var/log/auth.log | tail
 - 暗号化マスタキーが装置固有 (TPM / platform 固有値) の場合、`config_db.json` を別装置に流用しても TACACS+ 認証が失敗する。装置毎に再設定する運用にする。
 - TACACS+ サーバ到達性問題と passkey 不一致は同じ「Auth failed」ログとなる事が多い。まず `tcpdump -i <mgmt> port 49` でパケット到達を確認してから passkey を疑う。
 
+## 実装との乖離
+
+`monitor: partially_implemented` — 部分実装 — HLD の中核は実装済みだが、フィールド / API / 制約のいくつかが上流に未取り込み、または挙動が緩和されている。 本ページ末尾近くの `!!! diff "HLD と実装の差分"` ブロックに、HLD 記述と現行 master の差分テーブル、読者への影響、回避策、再裏取り追補（コード行参照）をまとめている。本セクションはその概要見出しであり、詳細はそのブロックを参照のこと。
+
 ## 引用元
 
 [^1]: `sonic-net/SONiC` `doc/tacacs-passkey/TACACSPLUS_PASSKEY_ENCRYPTION.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
@@ -333,8 +337,6 @@ sudo grep -iE 'tacacs|pam_tacplus' /var/log/auth.log | tail
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 5491cc477cce -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -355,4 +357,4 @@ sudo grep -iE 'tacacs|pam_tacplus' /var/log/auth.log | tail
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: db62d2100cef -->
+<!-- glossary-links-injected: 5491cc477cce -->
