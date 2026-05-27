@@ -39,7 +39,7 @@ flowchart LR
   Y["sonic-static-route"]
   C1[("CONFIG_DB<br/>STATIC_ROUTE")]
   Y --> C1
-  D1["fpmsyncd"]
+  D1["bgpcfgd"]
   C1 --> D1
 ```
 

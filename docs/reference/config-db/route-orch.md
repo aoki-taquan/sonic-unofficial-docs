@@ -52,7 +52,7 @@ related:
 ```mermaid
 flowchart LR
   CDB[("CONFIG_DB<br/>STATIC_ROUTE")]
-  DM["fpmsyncd"]
+  DM["bgpcfgd"]
   CDB --> DM
   APPDB[("APP_DB<br/>APP_ROUTE_TABLE")]
   DM --> APPDB
