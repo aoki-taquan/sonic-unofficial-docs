@@ -1,8 +1,6 @@
 ---
 title: Container / Build system 関連
-description: Container / Build system 関連 — SONiC は sonic-buildimage リポジトリで Debian
-  ベースの host OS + 機能ごとの Docker コンテナ（swss / syncd / bgp / lldp / pmon / snmp / database
-  / team…
+description: SONiC の container / build / image / upgrade に関わるページを area 横断でまとめたカテゴリ索引。sonic-buildimage の多段ビルド構造・container hardening・secure upgrade・warm restart など 14 ページを扱う。
 area: categories
 verification: meta
 last_verified: 2026-05-10

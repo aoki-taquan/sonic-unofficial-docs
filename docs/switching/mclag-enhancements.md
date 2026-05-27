@@ -1,7 +1,6 @@
 ---
 title: MCLAG Enhancements（dynamic config / unique IP / isolation group / static MAC）
-description: 'MCLAG Enhancements — MCLAG（Multi-Chassis LAG）は 2 台が 互いに peer となり、下流ホストから
-  1 個の LAG（ICCP 同期）として見える冗長構成。本 HLD は以下 7 軸で拡張する:'
+description: MCLAG を 7 軸（dynamic config・タイマ設定・static MAC 同期・aging 無効化・MAC sync 最適化・isolation group・unique IP）で強化する HLD の概要ハブ。再起動なし設定変更と L3 プロトコル対応を実現。
 area: switching
 verification: code-verified
 last_verified: 2026-05-10
