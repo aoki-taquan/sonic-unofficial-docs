@@ -183,8 +183,6 @@ redis-cli -n 0 keys 'P4RT_TABLE:*' | head
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: f235cb0ee2df -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -196,4 +194,4 @@ redis-cli -n 0 keys 'P4RT_TABLE:*' | head
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 4702d64416ec -->
+<!-- glossary-links-injected: f235cb0ee2df -->

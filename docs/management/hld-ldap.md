@@ -177,8 +177,6 @@ journalctl -u nslcd | tail
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 6674ed3c9f67 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -202,4 +200,4 @@ journalctl -u nslcd | tail
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: db62d2100cef -->
+<!-- glossary-links-injected: 6674ed3c9f67 -->

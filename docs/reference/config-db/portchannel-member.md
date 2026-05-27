@@ -302,8 +302,6 @@ DEL PORTCHANNEL|PortChannel0001
 
 <!-- /ordering -->
 
-<!-- glossary-links-injected: 38b4c0ae7d80 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -551,4 +549,4 @@ STATE_DB に `LAG_MEMBER_TABLE` は書き込まれない。LAG メンバの状�
 
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: beb53a235508 -->
+<!-- glossary-links-injected: 38b4c0ae7d80 -->

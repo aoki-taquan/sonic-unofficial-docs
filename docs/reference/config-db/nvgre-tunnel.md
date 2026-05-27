@@ -325,8 +325,6 @@ db_migrator.py での NVGRE マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 91a36a875109 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -534,4 +532,4 @@ multi-asic 構成では orchagent が `asic0`/`asic1`/... ごとに独立起動�
 
 <!-- /handler-branching -->
 
-<!-- glossary-links-injected: ff34a209121d -->
+<!-- glossary-links-injected: 91a36a875109 -->

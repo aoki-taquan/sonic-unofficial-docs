@@ -523,8 +523,6 @@ db_migrator.py での NTP_SERVER マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: b5626ca1f0f9 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -636,4 +634,4 @@ mgmt VRF で chronyd を起動する場合、NTP パケットは Linux の mgmt 
 > **スキャン証跡**: `sonic-buildimage/files/image_config/chrony/chrony.conf.j2` 全行スキャン、`chronyd-starter.sh` 全行スキャン、`hostcfgd:1278-1410` 確認。`getenv("platform")` 参照なし — 誤読なし。
 <!-- /platform -->
 
-<!-- glossary-links-injected: 39526757e7ca -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

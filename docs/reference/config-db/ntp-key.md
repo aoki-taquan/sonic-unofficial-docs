@@ -258,8 +258,6 @@ db_migrator.py での NTP_KEY マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: d5320e852f7a -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -554,4 +552,4 @@ ntp_srv_key_handler(key="1", op="SET", data={...})
 [SmartSwitch](../../reference/glossary.md#term-smartswitch) [DPU](../../reference/glossary.md#term-dpu) (`type=SmartSwitchDPU`) は `169.254.200.254`（midplane ブリッジ）を NTP ソースとして使用し、midplane 経由で [NPU](../../reference/glossary.md#term-npu) 側の chrony と時刻同期する。midplane NTP サーバは通常 NTP 認証を要求しないため、`NTP_KEY` は設定されないのが一般的である（テストデータ: `ntp_smartswitch_dpu_interfaces.json` — `authentication=disabled`）。`NTP_KEY` を設定した場合も `chrony.keys.j2` は標準処理で鍵ファイルを生成し、DPU 固有の特別処理は発生しない。
 <!-- /platform -->
 
-<!-- glossary-links-injected: 6981be1a469d -->
+<!-- glossary-links-injected: d5320e852f7a -->

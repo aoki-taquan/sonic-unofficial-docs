@@ -257,8 +257,6 @@ db_migrator.py での PEER_SWITCH マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: b5626ca1f0f9 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -585,4 +583,4 @@ PEER_SWITCH が未設定の場合、`mux_peer_switch_.isZero()` が true とな�
 
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: f9445b5b4106 -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

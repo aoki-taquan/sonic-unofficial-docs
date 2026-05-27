@@ -228,8 +228,6 @@ db_migrator.py での MUX_LINKMGR マイグレーションなし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: b1f2d0ff40fd -->
-
 <!-- defaults -->
 ## フィールド暗黙デフォルト (Phase A — コード由来)
 
@@ -669,4 +667,4 @@ linkmgrd SubscriberStateTable (appDbForwardingResponseTable)
 
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 6b5c377c7f42 -->
+<!-- glossary-links-injected: b1f2d0ff40fd -->

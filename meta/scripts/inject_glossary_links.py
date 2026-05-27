@@ -290,11 +290,16 @@ def process_file(
     page_cap = PAGE_CAP_REFERENCE if is_reference_boost else PAGE_CAP_DEFAULT
 
     # Strip any pre-existing marker line so we can recompute it.
+    # Strip ALL pre-existing marker lines (anywhere in body, not just at end).
+    # Earlier versions anchored the strip to ``$`` only, so if another generator
+    # appended content after the marker, a later inject run emitted a *second*
+    # marker at the new tail. We now remove every marker and recompute one.
     body_stripped = re.sub(
-        r"\n*<!-- glossary-links-injected: [0-9a-f]+ -->\s*$",
-        "",
+        r"\n*<!-- glossary-links-injected: [0-9a-f]+ -->[ \t]*\n?",
+        "\n",
         body,
     )
+    body_stripped = re.sub(r"\n{3,}$", "\n\n", body_stripped)
 
     lines = body_stripped.splitlines()
 
@@ -539,9 +544,14 @@ def process_file(
                     boost_added += 1
                     search_from = p + len(link)
 
-    if injected_count == 0 and demote_count == 0:
-        # No new injections and no demotions.  Preserve existing file content
-        # verbatim so that a re-run is a true no-op (idempotent).
+    # Count marker occurrences in the ORIGINAL body. If >1, the file is in
+    # duplicate-marker drift state (from an older non-idempotent run) and must
+    # be rewritten even when this pass had no new injections.
+    orig_marker_count = len(MARKER_RE.findall(body))
+
+    if injected_count == 0 and demote_count == 0 and orig_marker_count <= 1:
+        # No new injections, no demotions, no duplicate-marker cleanup needed.
+        # Preserve existing file content verbatim so a re-run is a true no-op.
         return original, 0, []
 
     if injected_count > 0:

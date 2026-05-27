@@ -192,8 +192,6 @@ db_migrator.py での MGMT_PORT マイグレーションなし
 MGMT_PORT へのプログラム書き込みは minigraph 経由が唯一の実装経路
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: b5626ca1f0f9 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -508,4 +506,4 @@ if alias in port_speeds_default:
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 50ba612caf81 -->
+<!-- glossary-links-injected: b5626ca1f0f9 -->

@@ -234,8 +234,6 @@ db_migrator.py での PFC_PRIORITY_TO_PRIORITY_GROUP_MAP マイグレーショ�
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: c8fc2a4df2a1 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -559,4 +557,4 @@ Mellanox DualToR 構成 (`port_names_list_extra_queues` が非空) では `AZURE
 <!-- evidence: meta/_intermediate/cdb-flow/pfc-priority-to-priority-group-map-platform.md -->
 <!-- /platform -->
 
-<!-- glossary-links-injected: c806097fdbe7 -->
+<!-- glossary-links-injected: c8fc2a4df2a1 -->

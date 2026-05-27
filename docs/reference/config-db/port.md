@@ -305,8 +305,6 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし (POR
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: 16a5b728a75a -->
-
 <!-- defaults -->
 ## コード由来の暗黙デフォルト (Phase A)
 
@@ -1081,4 +1079,4 @@ Gearbox（外付け PHY）が搭載されたプラットフォーム（例: Bare
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 858afbae41e9 -->
+<!-- glossary-links-injected: 16a5b728a75a -->

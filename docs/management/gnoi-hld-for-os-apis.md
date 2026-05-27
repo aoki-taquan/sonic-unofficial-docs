@@ -250,8 +250,6 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: c671e32e187d -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -264,4 +262,4 @@ redis-cli -n 4 hgetall 'GNMI|certs'
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: c671e32e187d -->

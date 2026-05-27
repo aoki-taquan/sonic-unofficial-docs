@@ -256,8 +256,6 @@ docker logs gnmi 2>&1 | tail -30
 
 <!-- augmented-links: v1 -->
 
-<!-- glossary-links-injected: c671e32e187d -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -269,4 +267,4 @@ docker logs gnmi 2>&1 | tail -30
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: c671e32e187d -->

@@ -221,8 +221,6 @@ yangcli --module=sonic-port -- 'xget /sonic-port:sonic-port'
 
 [^1]: `sonic-net/SONiC` `doc/config_yang_validation/config_db_yang_validation.md` @ `49bab5b5ff0e924f1ea52b3d9db0dfa4191a7c06`
 
-<!-- glossary-links-injected: a0345c62ade3 -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -242,4 +240,4 @@ yangcli --module=sonic-port -- 'xget /sonic-port:sonic-port'
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: a0345c62ade3 -->

@@ -381,8 +381,6 @@ REST/[gNMI](../../reference/glossary.md#term-gnmi) 書き込み経路なし
 なし
 <!-- /entry-points -->
 
-<!-- glossary-links-injected: eebb97ac8e67 -->
-
 <!-- derivation -->
 ## 派生・条件付き登録 (Phase 6/7)
 
@@ -659,4 +657,4 @@ evidence: `qosorch.cpp:1951-1976, 2030`
 
 <!-- /side-effects -->
 
-<!-- glossary-links-injected: 7a1c4da4bc40 -->
+<!-- glossary-links-injected: eebb97ac8e67 -->

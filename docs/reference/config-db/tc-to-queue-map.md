@@ -505,8 +505,6 @@ sai_port_api->set_port_attribute(port.m_port_id, &attr);  // qosorch.cpp L2193
 
 <!-- /platform -->
 
-<!-- glossary-links-injected: 16a5b728a75a -->
-
 <!-- pubsub -->
 ## 通信メカニズム (Phase G)
 
@@ -554,4 +552,4 @@ SubscriberStateTable (PSUBSCRIBE keyspace)
 
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 5ce0fe87aa8f -->
+<!-- glossary-links-injected: 16a5b728a75a -->

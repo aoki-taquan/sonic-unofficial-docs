@@ -616,8 +616,6 @@ kernel.core_pattern=|/usr/local/bin/coredump-compress %e %t %p %P
 > **Evidence**: `sonic-utilities/scripts/coredump_gen_handler.py:47,54-55,60,69-71`、`sonic-utilities/scripts/techsupport_cleanup.py:22-39`、`sonic-utilities/scripts/memory_threshold_check.py:17-18,117-145`、`sonic-utilities/utilities_common/auto_techsupport_helper.py:315-326`、`sonic-utilities/scripts/coredump-compress:29-31`、`sonic-buildimage/files/image_config/sysctl/90-sonic.conf:45`、`sonic-host-services/scripts/hostcfgd` (grep `AUTO_TECHSUPPORT` 0 hit); 詳細分析 `meta/_intermediate/cdb-flow/auto-techsupport-pubsub.md`
 <!-- /pubsub -->
 
-<!-- glossary-links-injected: 48d5f456ebb6 -->
-
 <!-- ordering -->
 ## コア生成から techsupport 起動までの順序依存関係
 
@@ -681,4 +679,4 @@ kernel.core_pipe_limit = 16
 ```
 <!-- /ordering -->
 
-<!-- glossary-links-injected: 9bd150521228 -->
+<!-- glossary-links-injected: 48d5f456ebb6 -->

@@ -228,8 +228,6 @@ diff /etc/sonic/config_db.json <(show runningconfiguration all)
 
 HLD の「Set ごとに ConfigDB を JSON に永続化、コンテナ内では完結せず host DBUS 経由」「既定は disabled、`--with-save-on-set` で有効化」が実コードと厳密に一致。`code-verified` に昇格。
 
-<!-- glossary-links-injected: 36c0149d5a9b -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -246,4 +244,4 @@ HLD の「Set ごとに ConfigDB を JSON に永続化、コンテナ内では�
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 36c0149d5a9b -->

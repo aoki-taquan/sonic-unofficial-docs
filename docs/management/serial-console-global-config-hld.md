@@ -250,8 +250,6 @@ ls -l /dev/ttyUSB* /dev/ttyS*
 
 <!-- /topics-back-ref -->
 
-<!-- glossary-links-injected: 9b26b6a2b5fc -->
-
 <!-- ops-entry -->
 ## 運用入口
 
@@ -267,4 +265,4 @@ ls -l /dev/ttyUSB* /dev/ttyS*
 
 <!-- /ops-entry -->
 
-<!-- glossary-links-injected: 8ba32e5aa69d -->
+<!-- glossary-links-injected: 9b26b6a2b5fc -->
