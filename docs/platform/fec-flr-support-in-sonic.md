@@ -1,7 +1,6 @@
 ---
 title: FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
-description: 'FEC FLR（Frame Loss Ratio）算出と予測（port_flr.lua / counterpoll port flr-interval-factor）
-  — Frame Loss Ratio (FLR) は 送信フレームに対する欠落フレームの割合 で、リンク品質の代表指標:'
+description: "FEC カウンターから Frame Loss Ratio (FLR) を算出・予測し、リンク品質を定量評価するための port_flr.lua スクリプトと counterpoll flr-interval-factor 設定の仕組みを解説する。"
 area: platform
 verification: discrepancy-found
 last_verified: 2026-05-11

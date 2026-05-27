@@ -1,6 +1,6 @@
 ---
 title: 動的ポート add/del 制限事項と HLD との乖離（ref counter 未取り込み・race 残存）
-description: 動的ポート add/del の制限事項と実装乖離。HLD が提案した port buffer ref counter（sonic-swss PR #2022）は CLOSED で未マージで、削除時 race を HLD 設計どおりには守れない点を中心に整理する。
+description: 動的ポート add/del の制限事項と実装乖離 — HLD 提案の port buffer ref counter（sonic-swss PR #2022）が未マージのため、ポート削除時の race 条件が HLD 設計どおりには解消されていない点を中心に解説する。
 area: acl-qos
 verification: discrepancy-found
 monitor: partially_implemented
