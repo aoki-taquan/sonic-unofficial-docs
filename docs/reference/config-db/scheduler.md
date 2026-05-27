@@ -547,7 +547,6 @@ QosOrch::doTask(Consumer&)            (qosorch.cpp:2254)
 | `weight` 有効範囲 | 低 | YANG は 1..100 だが SAI は 0-255 を受け入れるベンダーもある |
 | CIR/PIR の `meter_type` | 低 | `SAI_METER_TYPE_PACKETS` / `SAI_METER_TYPE_BYTES` は SAI 標準で安定 |
 
-[^4]: Platform 分岐証跡: `sonic-swss/orchagent/qosorch.cpp` L1631–1710, L1772–1812. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/qosorch.cpp>
 
 <!-- /platform -->
 

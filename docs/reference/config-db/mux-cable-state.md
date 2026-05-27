@@ -120,9 +120,6 @@ ycabled が gRPC 経由でハードウェア (Y-Cable / SoC) から取得した 
 
 ## 引用元
 
-[^1]: orchagent MuxOrch / MuxStateOrch: `sonic-swss/orchagent/muxorch.cpp`. <https://github.com/sonic-net/sonic-swss/blob/master/orchagent/muxorch.cpp>
-[^2]: linkmgrd DbInterface: `sonic-linkmgrd/src/DbInterface.cpp`. <https://github.com/sonic-net/sonic-linkmgrd/blob/main/src/DbInterface.cpp>
-[^3]: ycabled y_cable_helper: `sonic-platform-daemons/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py`. <https://github.com/sonic-net/sonic-platform-daemons/blob/master/sonic-ycabled/ycable/ycable_utilities/y_cable_helper.py>
 
 <!-- topics-back-ref -->
 ## 関連 Topics
